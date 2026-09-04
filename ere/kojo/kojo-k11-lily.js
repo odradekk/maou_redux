@@ -12097,6 +12097,399 @@ async function kojo_message_com_11(rand) {
     return 0; // :6490
   } // :6491
 
+  // :6497-6683 SELECTCOM 46（灌肠肛塞 CFLAG:347）
+  if (era_flag.selectcom === 46 && era0(`tequip:${target}:46`) !== 0) {
+    if (kojo.灌肠肛塞 === 0) {
+      // :6499
+
+      if (assi_mao) {
+        // :6501
+        await era.printAndWait(`「啊啊啊……肚子，肚子好胀啊啊……好难受！」`); // :6502
+        if (chara(era_flag.assi).kojo.灌肠肛塞 >= 1) {
+          // :6503
+          await era.printAndWait(
+            `『忍住啊姐姐，一定要忍住忍住再忍住——等到终于忍不住了再突然一次全部排出去，那个感觉可是不输给小穴高潮的哦${heart(1)}』`,
+          ); // :6504
+        } else {
+          // :6505
+          await era.printAndWait(`『忍住啊姐姐，这种感觉要慢慢体验呢……』`); // :6506
+        } // :6507
+        await era.printAndWait(
+          `${player_name}舔着嘴唇，抚摸着${target_name}胀起的小腹，和塞住肛门的木栓。`,
+        ); // :6508
+        await era.printAndWait(`「不，不行了……真的，真的已经不行了！」`); // :6509
+        await era.printAndWait(`『别说笑话啦姐姐，游戏才刚刚开始呢。』`); // :6510
+      } else {
+        // :6511
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :6513
+          await era.printAndWait(`「这，这种……一点都不好玩啦……好，好难受！」`); // :6514
+          await era.printAndWait(
+            `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，她还得忍上好一会儿呢……`,
+          ); // :6515
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :6517
+          await era.printAndWait(`「好，好难受……魔王大人……饶，饶了人家吧……」`); // :6518
+          await era.printAndWait(
+            `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，她还得忍上好一会儿呢……`,
+          ); // :6519
+        } else {
+          // :6521
+          await era.printAndWait(
+            `「肚……肚子好痛……要，要死了……让人家上厕所吧，求你了！」`,
+          ); // :6522
+          await era.printAndWait(
+            `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，可不会那么轻易就让她解放啊。`,
+          ); // :6523
+        } // :6524
+      } // :6525
+      // CFLAG:TARGET:347  = 1（变量语义：CFLAG 族，TARGET:347） // :6526
+      kojo.灌肠肛塞 = 1; // :6526
+      return 0; // :6527
+    } else {
+      // :6529
+
+      if (assi_mao) {
+        // :6531
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :6533
+          await era.printAndWait(
+            `「啊……啊啊……肚子，肚子胀鼓鼓的${heart(1)} 嗯啊 ${heart(1)}」`,
+          ); // :6534
+          await era.printAndWait(
+            `『姐姐也挺厉害的呢，注入了这么多${heart(1)} 肛门夹得紧紧的，其实不用怕啦，这个木塞你自己是挤不出来的！』`,
+          ); // :6535
+          await era.printAndWait(
+            `「啊……啊啊……肚子${heart(1)} 好像……要坏掉了${heart(1)}」`,
+          ); // :6536
+          await era.printAndWait(
+            `${target_name}抱着自己胀起的小腹，拼命忍耐着排泄欲，内心却更加兴奋了……`,
+          ); // :6537
+          // CFLAG:347  = 7（变量语义：CFLAG 族，347） // :6538
+          kojo.灌肠肛塞 = 7; // :6538
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.灌肠肛塞 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :6540
+          await era.printAndWait(
+            `「${player_name}，不，不可以再注进去了……姐姐……要生气了…！」`,
+          ); // :6541
+          await era.printAndWait(
+            `『哎呀呀，姐姐这个表情，人家好怕怕哦，不过你是想我突然拔出来，然后全部拉在魔王大人的床上吗♪』`,
+          ); // :6542
+          await era.printAndWait(
+            `${player_name}恶意地笑着，边玩弄着肛塞，边看着${target_name}拼命忍耐着排泄欲的样子……`,
+          ); // :6543
+          // CFLAG:347  = 6（变量语义：CFLAG 族，347） // :6544
+          kojo.灌肠肛塞 = 6; // :6544
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.灌肠肛塞 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :6546
+          await era.printAndWait(
+            `「呜……呜呜……肚子，肚子明明好难受……可，可是……」`,
+          ); // :6547
+          await era.printAndWait(
+            `『哎呀呀，姐姐的表情明明很期待呢，这么喜欢公开排泄吗，真的是变态暴露狂呢！那以后和魔王大人羞羞的时候，记得让我在旁边观摩一下啊♪』`,
+          ); // :6548
+          await era.printAndWait(`「那……那种事……才，才不要${heart(1)}」`); // :6549
+          await era.printAndWait(
+            `${target_name}光是想象着妹妹描述的场景，就已经面红耳赤，排泄欲更加强烈了，身体却愈发地兴奋……`,
+          ); // :6550
+          // CFLAG:347  = 5（变量语义：CFLAG 族，347） // :6551
+          kojo.灌肠肛塞 = 5; // :6551
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.灌肠肛塞 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :6553
+          await era.printAndWait(
+            `「不，不要这样……折磨姐姐了，求你了，${player_name}…啊啊啊！」`,
+          ); // :6554
+          await era.printAndWait(
+            `『才不是虐待呢，姐姐，这是因为${player_name}喜欢姐姐才会对姐姐这样做呢，换别人我才懒得呢，你看，魔王大人也是这样想的♪』`,
+          ); // :6555
+          await era.printAndWait(
+            `${player_name}坏笑着，边玩弄着肛塞，欣赏着${target_name}拼命忍耐着排泄欲的样子……`,
+          ); // :6556
+          // CFLAG:347  = 4（变量语义：CFLAG 族，347） // :6557
+          kojo.灌肠肛塞 = 4; // :6557
+        } else if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :6559
+          await era.printAndWait(
+            `『哎呀呀，灌肠很舒服的嘛，为什么姐姐还要做出苦闷的表情？』`,
+          ); // :6560
+          await era.printAndWait(
+            `「明，明明很难受啊……以，以后不要这样了可以吗……算姐姐求你了……呜呜」`,
+          ); // :6561
+          await era.printAndWait(
+            `虽然嘴上这么说着，但是肛门微微的抽搐下，${target_name}却露出了痛苦交杂着享受的表情……`,
+          ); // :6562
+          // CFLAG:347  = 3（变量语义：CFLAG 族，347） // :6563
+          kojo.灌肠肛塞 = 3; // :6563
+        } else if (kojo.灌肠肛塞 <= 1 || game.kojo.口上开关 === 2) {
+          // :6565
+          await era.printAndWait(
+            `『哎呀呀，姐姐满头大汗了，已经充分感觉到灌肠的舒服了呢』`,
+          ); // :6566
+          await era.printAndWait(`「呜……呜呜……快，快点让姐姐上厕所吧……」`); // :6567
+          // CFLAG:347  = 2（变量语义：CFLAG 族，347） // :6568
+          kojo.灌肠肛塞 = 2; // :6568
+        } // :6569
+      } else {
+        // :6570
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.灌肠肛塞 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :6572
+          await era.printAndWait(
+            `「啊啊！肚子……肚子好胀${heart(1)} 呜？！塞子……太大了啊啊${heart(1)}」`,
+          ); // :6573
+          await era.printAndWait(
+            `${target_name}在痛苦与快感的交织中摇晃着臀部，肛塞上的铃铛也随之响了起来……`,
+          ); // :6574
+          // CFLAG:347  = 7（变量语义：CFLAG 族，347） // :6575
+          kojo.灌肠肛塞 = 7; // :6575
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.灌肠肛塞 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :6577
+          await era.printAndWait(
+            `「魔，魔王大人……这，这种游戏一点……都不有趣啊啊！」`,
+          ); // :6578
+          await era.printAndWait(
+            `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，她还得忍上好一会儿呢……`,
+          ); // :6579
+          // CFLAG:347  = 6（变量语义：CFLAG 族，347） // :6580
+          kojo.灌肠肛塞 = 6; // :6580
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.灌肠肛塞 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :6582
+          await era.printAndWait(
+            `「啊啊……肚子好胀……明明好难受……但……但是……为什么……屁股……还会很舒服……呜呜${heart(1)}」`,
+          ); // :6583
+          await era.printAndWait(
+            `${target_name}感受着灌肠液在体内的肆虐，不住地呻吟着，然而在震动肛塞刺激下抽搐着的肛门，却不住地传来快感…`,
+          ); // :6584
+          // CFLAG:347  = 5（变量语义：CFLAG 族，347） // :6585
+          kojo.灌肠肛塞 = 5; // :6585
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.灌肠肛塞 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :6587
+          await era.printAndWait(
+            `「呜……呜呜……魔，魔王大人……${target_name}已经，已经快要忍不住了………」`,
+          ); // :6588
+          await era.printAndWait(
+            `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，她还得忍上好一会儿呢……`,
+          ); // :6589
+          // CFLAG:347  = 4（变量语义：CFLAG 族，347） // :6590
+          kojo.灌肠肛塞 = 4; // :6590
+        } else if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.灌肠肛塞 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :6592
+          await era.printAndWait(`「啊啊……肚子，肚子好难受……魔王大人………」`); // :6593
+          await era.printAndWait(
+            `${target_name}在露出痛苦表情的同时，肛门却在肛塞刺激下抽搐着，明显是感觉到了快感……`,
+          ); // :6594
+          // CFLAG:347  = 3（变量语义：CFLAG 族，347） // :6595
+          kojo.灌肠肛塞 = 3; // :6595
+        } else if (kojo.灌肠肛塞 <= 1 || game.kojo.口上开关 === 2) {
+          // :6597
+          await era.printAndWait(`「呜……呜呜……求，求你了，让我上厕所吧…」`); // :6598
+          await era.printAndWait(
+            `${target_name}开始感受着灌肠液在体内肆虐的痛苦，不过，游戏才刚刚开始，她还得忍上好一会儿呢……`,
+          ); // :6599
+          // CFLAG:347  = 2（变量语义：CFLAG 族，347） // :6600
+          kojo.灌肠肛塞 = 2; // :6600
+        } // :6601
+      } // :6602
+      return 0; // :6603
+    } // :6604
+  } else if (era_flag.selectcom === 46 && era0(`tequip:${target}:46`) === 0) {
+    // :6606
+
+    if (assi_mao) {
+      // :6608
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :6610
+
+        if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3
+        ) {
+          // :6612
+          await era.printAndWait(`「出，出来了，全部出来了啊啊啊${heart(1)}」`); // :6613
+          await era.printAndWait(
+            `『嘿嘿，我说过了吧，这样忍到最后一次性全部排出来，很刺激很舒服吧♪？』`,
+          ); // :6614
+          await era.printAndWait(
+            `排泄完的${target_name}边喘息着，边点头同意着妹妹的话……`,
+          ); // :6615
+        } else {
+          // :6616
+          await era.printAndWait(`「出，出来了，全部出来了啊……呜啊啊！」`); // :6617
+          await era.printAndWait(
+            `${target_name}激烈地排泄着，脸上露出了痛苦和耻辱的表情。`,
+          ); // :6618
+          await era.printAndWait(
+            `『哎哎，姐姐看上去还不是很习惯啊，那就再来灌一次肠吧，可以吗，魔王大人？』`,
+          ); // :6619
+        } // :6620
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6622
+
+        if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3
+        ) {
+          // :6624
+          await era.printAndWait(
+            `「呜呜……呜啊啊啊……这样突然拔掉塞子……全，全部出来了啊啊！」`,
+          ); // :6625
+          await era.printAndWait(
+            `『哎呀呀，姐姐真应该照照镜子看看自己现在的表情，一脸享受呢，真的有那么舒服吗♪』`,
+          ); // :6626
+          await era.printAndWait(
+            `${target_name}忍耐到扭曲了的脸一下子松弛了，甚至可以说是享受地喘息着………`,
+          ); // :6627
+        } else {
+          // :6628
+          await era.printAndWait(
+            `「${player_name}，魔王大人！不，不要看啊啊！！！」`,
+          ); // :6629
+          await era.printAndWait(
+            `『太迟了呢姐姐，你排泄时的下流样子已经被我和魔王大人看的清清楚楚了呢』`,
+          ); // :6630
+          await era.printAndWait(
+            `${target_name}脱力地跪倒在地上，羞耻得泪流满面……`,
+          ); // :6631
+        } // :6632
+      } else {
+        // :6634
+
+        if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3
+        ) {
+          // :6636
+          await era.printAndWait(
+            `「这，这样突然拔掉塞子……会，会忍不住的啊啊啊！」`,
+          ); // :6637
+          await era.printAndWait(
+            `${target_name}的排泄声，和呻吟娇喘的声音交织在了一起。${player_name}捂着鼻子皱起了眉头。`,
+          ); // :6638
+          await era.printAndWait(`『哎呀呀，姐姐这个样子，是想再来一次吗？』`); // :6639
+        } else {
+          // :6640
+          await era.printAndWait(`「不，不要看，不要看啊啊啊！」`); // :6641
+          await era.printAndWait(
+            `${target_name}在痛苦的呻吟中排泄了出来。${player_name}捂着鼻子皱起了眉头。`,
+          ); // :6642
+          await era.printAndWait(
+            `『哎呀，肚子里攒了这么多脏东西啊姐姐，看来还得再来一次呢！』`,
+          ); // :6643
+        } // :6644
+      } // :6645
+    } else {
+      // :6646
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :6648
+
+        if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3
+        ) {
+          // :6650
+          await era.printAndWait(`「出，出来了，全部出来了啊啊啊${heart(1)}」`); // :6651
+          await era.printAndWait(
+            `${target_name}终于从痛苦的忍受中得到了解放，秽物从肛门一泄如注的同时发出了解脱和享受的娇喘。`,
+          ); // :6652
+          await era.printAndWait(`「好……好舒服啊啊${heart(1)}」`); // :6653
+        } else {
+          // :6654
+          await era.printAndWait(`「出，出来了，全部出来了啊啊啊！」`); // :6655
+          await era.printAndWait(
+            `${target_name}激烈地排泄着，脸上露出了痛苦和耻辱的表情。`,
+          ); // :6656
+          await era.printAndWait(`「呼啊……呼啊……好，好累，好难受……」`); // :6657
+        } // :6658
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6660
+
+        if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3
+        ) {
+          // :6662
+          await era.printAndWait(
+            `「这，这样突然拔掉塞子……会忍不住的啊啊啊啊！」`,
+          ); // :6663
+          await era.printAndWait(
+            `${target_name}忍耐到扭曲了的脸一下子松弛了，甚至享受地娇喘了起来……`,
+          ); // :6664
+          await era.printAndWait(`「啊……啊啊……排泄的感觉……好舒服${heart(1)}」`); // :6665
+        } else {
+          // :6666
+          await era.printAndWait(`「不，不要看，不要看啊啊啊……」`); // :6667
+          await era.printAndWait(
+            `被强制当着你的面排泄的${target_name}羞耻地哭泣了起来……`,
+          ); // :6668
+        } // :6669
+      } else {
+        // :6671
+
+        if (
+          chara(target).system.肛门感觉 >= 3 &&
+          chara(target).system.抖M气质 >= 3
+        ) {
+          // :6673
+          await era.printAndWait(
+            `「这，这样突然拔掉塞子……会，会忍不住的啊啊啊！！」`,
+          ); // :6674
+          await era.printAndWait(
+            `${target_name}的排泄声，和呻吟娇喘的声音交织在了一起。`,
+          ); // :6675
+        } else {
+          // :6676
+          await era.printAndWait(`「忍，忍不住了！不要看，不要看啊啊啊！」`); // :6677
+          await era.printAndWait(`${target_name}在痛苦的呻吟中排泄了出来`); // :6678
+        } // :6679
+      } // :6680
+    } // :6681
+    return 0; // :6682
+  } // :6683
+
   return 0;
 }
 

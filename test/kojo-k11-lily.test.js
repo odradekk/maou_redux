@@ -6807,3 +6807,113 @@ test('COM45 取下：淫乱、爱慕与其余三档推进', async () => {
     assert.equal(fixture.store.get(`cflag:${LILY}:386`), item.expected);
   }
 });
+
+// —— SELECTCOM 46（灌肠肛塞 CFLAG:347）——
+
+test('COM46 装上初めて：助手玛奥与非助手玛奥三档', async () => {
+  const cases = [
+    { assi: true, expected: '「啊啊啊……肚子，肚子好胀啊啊……好难受！」' },
+    { talent: 76, expected: '「这，这种……一点都不好玩啦……好，好难受！」' },
+    { talent: 85, expected: '「好，好难受……魔王大人……饶，饶了人家吧……」' },
+    { expected: '「肚……肚子好痛……要，要死了……让人家上厕所吧，求你了！」' },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      f.store.set(`tequip:${LILY}:46`, 1);
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 46);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.text_lines()[0], item.expected);
+    assert.equal(fixture.store.get(`cflag:${LILY}:347`), 1);
+  }
+});
+
+for (const [label, assistant] of [
+  ['助手玛奥', true],
+  ['非助手玛奥', false],
+]) {
+  test(`COM46 装上二回目：${label}六档推进`, async () => {
+    const cases = [
+      { talent: 76, abl3: 3, abl21: 3, expected: 7 },
+      { talent: 76, expected: 6 },
+      { talent: 85, abl3: 3, abl21: 3, expected: 5 },
+      { talent: 85, expected: 4 },
+      { abl3: 3, abl21: 3, expected: 3 },
+      { expected: 2 },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        f.store.set('flag:7', 2);
+        f.store.set(`tequip:${LILY}:46`, 1);
+        f.store.set(`cflag:${LILY}:347`, 1);
+        if (assistant) {
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+        if (item.talent !== undefined)
+          f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        if (item.abl3 !== undefined) f.store.set(`abl:${LILY}:3`, item.abl3);
+        if (item.abl21 !== undefined) f.store.set(`abl:${LILY}:21`, item.abl21);
+      }, 46);
+      if (assistant) {
+        fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+        fixture.era.addCharacter(MAO);
+      }
+      await speak_com11(fixture, seq_rand());
+      assert.equal(fixture.store.get(`cflag:${LILY}:347`), item.expected);
+    }
+  });
+}
+
+test('COM46 取下：助手与非助手的排泄分档', async () => {
+  const cases = [
+    {
+      assi: true,
+      talent: 76,
+      high: true,
+      expected: '「出，出来了，全部出来了啊啊啊♡」',
+    },
+    {
+      assi: true,
+      talent: 85,
+      expected: '「玛奥，魔王大人！不，不要看啊啊！！！」',
+    },
+    { talent: 76, high: true, expected: '「出，出来了，全部出来了啊啊啊♡」' },
+    { talent: 85, expected: '「不，不要看，不要看啊啊啊……」' },
+    {
+      high: true,
+      expected: '「这，这样突然拔掉塞子……会，会忍不住的啊啊啊！！」',
+    },
+    { expected: '「忍，忍不住了！不要看，不要看啊啊啊！」' },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+        era_flag.player = MAO;
+      }
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.high) {
+        f.store.set(`abl:${LILY}:3`, 3);
+        f.store.set(`abl:${LILY}:21`, 3);
+      }
+    }, 46);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.text_lines()[0], item.expected);
+  }
+});
