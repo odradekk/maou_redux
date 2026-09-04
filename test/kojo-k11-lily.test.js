@@ -6790,6 +6790,77 @@ test('NTR P=20：淫乱档按妊娠相手区分魔王之子', async () => {
   assert.ok(fixture.text_lines().join('').includes('我和魔王大人的孩子'));
 });
 
+test('处刑、博物馆、放逐、公开处刑与猎奇族均注册并保留空台词槽', async () => {
+  const fixture = setup_lily();
+  const { game } = fixture.load_module('facade/game');
+  const families = fixture.load_module('kojo/kojo-system');
+  const cases = [
+    ['犬射精或处刑口上', 'exucution_koujo_family', 4],
+    ['博物馆口上', 'museum_koujo_family', 8],
+    ['流放口上', 'banishment_koujo_family', 4],
+    ['公开处刑口上', 'public_exucution_koujo_family', 2],
+    ['猎奇处刑口上', 'grotesque_koujo_family', 6],
+  ];
+  for (const [flag, family, value] of cases) {
+    game.event[flag] = value;
+    const before = fixture.text_lines().length;
+    await families[family].call(11, { args: [] });
+    assert.deepEqual(fixture.text_lines().slice(before), [''], family);
+  }
+});
+
+test('ENTERENEMY：淫乱、爱慕与寻妹三档', async () => {
+  const cases = [
+    [76, '阴茎的味道'],
+    [85, '不能让玛奥独占'],
+    [undefined, '妹妹玛奥可能就在'],
+  ];
+  for (const [talent, fragment] of cases) {
+    const fixture = setup_lily((f) => {
+      if (talent !== undefined) f.store.set(`talent:${LILY}:${talent}`, 1);
+    });
+    const { enterenemy_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await enterenemy_koujo_family.call(11, { args: [] });
+    assert.ok(fixture.text_lines()[0].includes(fragment));
+  }
+});
+
+test('GOHOUBI_REQUEST：十种要求按 CFLAG:504 输出角色名与内容', async () => {
+  const fragments = [
+    '金钱',
+    '狗',
+    '猪',
+    '马',
+    '吻',
+    '交媾',
+    '精液',
+    '乱交',
+    '尿液',
+    '童贞',
+  ];
+  for (let request = 0; request <= 9; request += 1) {
+    const fixture = setup_lily((f) =>
+      f.store.set(`cflag:${LILY}:504`, request),
+    );
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(11, { args: [] });
+    const text = fixture.text_lines().join('');
+    assert.ok(text.includes('莉莉'), `要求 ${request} 显示角色名`);
+    assert.ok(text.includes(fragments[request]), `要求 ${request} 内容`);
+  }
+});
+
+test('GOHOUBI_AFTER 与 OSIOKI：choice 透传并保留原作空输出', async () => {
+  const fixture = setup_lily((f) => f.store.set(`cflag:${LILY}:504`, 5));
+  const { gohoubi_after_koujo_family, osioski_koujo_family } =
+    fixture.load_module('kojo/kojo-dungeon-after');
+  await gohoubi_after_koujo_family.call(11, { args: [LILY, 2] });
+  await osioski_koujo_family.call(11, { args: [LILY, 6] });
+  assert.deepEqual(fixture.text_lines().slice(-2), ['', '']);
+});
+
 // —— SELECTCOM 64（3P CFLAG:391）——
 
 test('COM64 守卫：助手不是玛奥时静默跳过', async () => {

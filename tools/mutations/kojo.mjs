@@ -10162,8 +10162,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4723 K11 NTR 假阳具判据漏掉 FLAG:500==2（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find:
-      "        era0('flag:500') === 0 || era0('flag:500') === 2\n          ? `双腿之间的巨根`\n          : `粗大的假阳具`,\n      ); // :12610-12614",
+    find: "        era0('flag:500') === 0 || era0('flag:500') === 2\n          ? `双腿之间的巨根`\n          : `粗大的假阳具`,\n      ); // :12610-12614",
     replace:
       "        era0('flag:500') === 0 || era0('flag:500') === 9\n          ? `双腿之间的巨根`\n          : `粗大的假阳具`,\n      ); // :12610-12614",
     tests: ['kojo-k11-lily'],
@@ -10176,6 +10175,72 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: '      if (chara(target).event.妊娠相手 === 2) { // 变异',
     tests: ['kojo-k11-lily'],
     must_mention: '按妊娠相手区分魔王之子',
+  },
+  ...[
+    [4725, 'exucution_koujo_family', 'exucution_koujo_k11'],
+    [4726, 'museum_koujo_family', 'museum_koujo_k11'],
+    [4727, 'banishment_koujo_family', 'banishment_koujo_k11'],
+    [4728, 'public_exucution_koujo_family', 'public_exucution_koujo_k11'],
+    [4729, 'grotesque_koujo_family', 'grotesque_koujo_k11'],
+  ].map(([id, family, handler]) => ({
+    desc: `M${id} K11 ${family} 注册号错位（#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `${family}.register(11, ${handler});`,
+    replace: `${family}.register(12, ${handler}); // 变异`,
+    tests: ['kojo-k11-lily'],
+    must_mention: '处刑、博物馆、放逐、公开处刑与猎奇族均注册',
+  })),
+  {
+    desc: 'M4730 K11 ENTERENEMY 注册号错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'enterenemy_koujo_family.register(11, enterenemy_koujo_k11);',
+    replace:
+      'enterenemy_koujo_family.register(12, enterenemy_koujo_k11); // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'ENTERENEMY：淫乱、爱慕与寻妹三档',
+  },
+  {
+    desc: 'M4731 K11 ENTERENEMY 淫乱判据错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '  if (era0(`talent:${a}:76`) === 1) {',
+    replace: '  if (era0(`talent:${a}:76`) === 9) { // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'ENTERENEMY：淫乱、爱慕与寻妹三档',
+  },
+  {
+    desc: 'M4732 K11 GOHOUBI_REQUEST 注册号错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'gohoubi_request_koujo_family.register(11, () => gohoubi_request_koujo_k11());',
+    replace:
+      'gohoubi_request_koujo_family.register(12, () => gohoubi_request_koujo_k11()); // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'GOHOUBI_REQUEST：十种要求',
+  },
+  {
+    desc: 'M4733 K11 GOHOUBI_REQUEST 兽种映射错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: "    await era.print(['', '狗', '猪', '马'][request]); // :12916-12922",
+    replace:
+      "    await era.print(['', '猪', '狗', '马'][request]); // :12916-12922 变异",
+    tests: ['kojo-k11-lily'],
+    must_mention: 'GOHOUBI_REQUEST：十种要求',
+  },
+  {
+    desc: 'M4734 K11 GOHOUBI_AFTER choice 2 被跳过（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '    (choice === 2 && request >= 0 && request <= 9)',
+    replace: '    (choice === 3 && request >= 0 && request <= 9)',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'GOHOUBI_AFTER 与 OSIOKI',
+  },
+  {
+    desc: 'M4735 K11 OSIOKI choice 6 输出被跳过（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: "  if (choice === 6 || choice === 7) {\n    await era.print(''); // :13074-13078\n  } else if (choice >= 0 && choice <= 9) {",
+    replace:
+      "  if (choice === 16 || choice === 7) {\n    await era.print(''); // :13074-13078\n  } else if (choice >= 0 && choice <= 9 && choice !== 6) { // 变异",
+    tests: ['kojo-k11-lily'],
+    must_mention: 'GOHOUBI_AFTER 与 OSIOKI',
   },
   {
     desc: 'M4686 PALAMCNG_11 非玛奥助手守卫被删除（#242）',

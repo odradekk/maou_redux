@@ -233,15 +233,26 @@ const {
   peek_aftertrain_s,
 } = require('#/event/event-aftertrain');
 const {
+  banishment_koujo_family,
   benki_koujo_family,
   dungeon_attack_family,
   dungeon_victory_family,
+  enterenemy_koujo_family,
+  exucution_koujo_family,
+  grotesque_koujo_family,
   kojo_message_com_family,
   kojo_message_markcng_family,
   kojo_message_palamcng_family,
+  museum_koujo_family,
   ntr_koujo_family,
+  public_exucution_koujo_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
+const {
+  gohoubi_after_koujo_family,
+  gohoubi_request_koujo_family,
+  osioski_koujo_family,
+} = require('#/kojo/kojo-dungeon-after');
 const {
   ryouzyoku_after_kojo_family,
   ryouzyoku_kojo_family,
@@ -24658,6 +24669,101 @@ async function ntr_koujo_k11(_rand, p = 0) {
   return 0; // :12776
 }
 
+/** 处刑/展示类原作仅保留空台词槽；按各自事件编号输出一行空文本。 */
+async function exucution_koujo_k11() {
+  if ([4, 5, 6, 7].includes(game.event.犬射精或处刑口上)) {
+    await era.printAndWait(''); // :12783-12794
+  }
+}
+
+async function museum_koujo_k11() {
+  if ([0, 1, 2, 3, 4, 5, 6, 7, 8].includes(game.event.博物馆口上)) {
+    await era.printAndWait(''); // :12801-12827
+  }
+}
+
+async function banishment_koujo_k11() {
+  if ([0, 1, 2, 3, 4].includes(game.event.流放口上)) {
+    await era.printAndWait(''); // :12834-12848
+  }
+}
+
+async function public_exucution_koujo_k11() {
+  if ([0, 1, 2].includes(game.event.公开处刑口上)) {
+    await era.printAndWait(''); // :12855-12863
+  }
+}
+
+async function grotesque_koujo_k11() {
+  if ([0, 1, 2, 3, 4, 5, 6].includes(game.event.猎奇处刑口上)) {
+    await era.printAndWait(''); // :12870-12890
+  }
+}
+
+/** 魔王被俘时，当前攻略角色进入迷宫的专属台词。 */
+async function enterenemy_koujo_k11() {
+  const a = era_flag.target;
+  if (era0(`talent:${a}:76`) === 1) {
+    await era.printAndWait(
+      `「才不是怀念魔王大人……阴茎的味道，才回到这里来的！」`,
+    ); // :12898
+  } else if (era0(`talent:${a}:85`) === 1) {
+    await era.printAndWait(
+      `「魔王大人，我回来了${heart(1)}　不能让玛奥独占魔王大人啊！」`,
+    ); // :12901
+  } else {
+    await era.printAndWait(`「我的妹妹玛奥可能就在这个洞穴里！」`); // :12903
+  }
+}
+
+/** 迎击成功后的奖赏请求说明；CFLAG:A:504 由 stronghold 门面承载。 */
+async function gohoubi_request_koujo_k11() {
+  const a = era_flag.target;
+  const name = chara_callname(a);
+  const request = chara(a).stronghold.要求奖赏;
+  if (request === 0) {
+    await era.printAndWait(`${name}要求了金钱`); // :12912
+  } else if (request >= 1 && request <= 3) {
+    await era.print(`${name}提出了和`); // :12915
+    await era.print(['', '狗', '猪', '马'][request]); // :12916-12922
+    await era.printAndWait(`进行兽交的请求`); // :12923
+  } else {
+    const descriptions = {
+      4: '要求了归还的吻',
+      5: '想要和魔王交媾',
+      6: '想要品尝精液',
+      7: '想要进行一次乱交',
+      8: '想要品尝尿液',
+      9: '想要和童贞的魔族少年交媾',
+    };
+    if (descriptions[request]) {
+      await era.printAndWait(`${name}${descriptions[request]}`); // :12924-12941
+    }
+  }
+}
+
+/** 奖赏结果原作各档均为空台词槽；choice 即源 TFLAG:18。 */
+async function gohoubi_after_koujo_k11(_rand, _cid, choice) {
+  const request = chara(era_flag.target).stronghold.要求奖赏;
+  if (
+    choice === 0 ||
+    choice === 1 ||
+    (choice === 2 && request >= 0 && request <= 9)
+  ) {
+    await era.printAndWait(''); // :12951-13020
+  }
+  return 0;
+}
+
+/** 迎击失败惩罚原作各档均为空；6/7 使用 PRINT，其余使用 PRINTFORMW。 */
+async function osioki_koujo_k11(_rand, _cid, choice) {
+  if (choice === 6 || choice === 7) {
+    await era.print(''); // :13074-13078
+  } else if (choice >= 0 && choice <= 9) {
+    await era.printAndWait(''); // :13031-13084
+  }
+}
+
 kojo_message_com_family.register(11, kojo_message_com_11);
 kojo_message_palamcng_family.register(11, kojo_message_palamcng_11);
 kojo_message_markcng_family.register(11, kojo_message_markcng_11);
@@ -24668,6 +24774,19 @@ benki_koujo_family.register(11, benki_koujo_k11);
 dungeon_victory_family.register(11, dungeon_victory_k11);
 dungeon_attack_family.register(11, dungeon_attack_k11);
 ntr_koujo_family.register(11, ntr_koujo_k11);
+exucution_koujo_family.register(11, exucution_koujo_k11);
+museum_koujo_family.register(11, museum_koujo_k11);
+banishment_koujo_family.register(11, banishment_koujo_k11);
+public_exucution_koujo_family.register(11, public_exucution_koujo_k11);
+grotesque_koujo_family.register(11, grotesque_koujo_k11);
+enterenemy_koujo_family.register(11, enterenemy_koujo_k11);
+gohoubi_request_koujo_family.register(11, () => gohoubi_request_koujo_k11());
+gohoubi_after_koujo_family.register(11, (cid, choice) =>
+  gohoubi_after_koujo_k11(undefined, cid, choice),
+);
+osioski_koujo_family.register(11, (cid, choice) =>
+  osioki_koujo_k11(undefined, cid, choice),
+);
 
 module.exports = {
   STUBBED_CALLS,
@@ -24676,10 +24795,14 @@ module.exports = {
   dungeon_ryouzyoku_after_k11,
   dungeon_ryouzyoku_k11,
   dungeon_victory_k11,
+  enterenemy_koujo_k11,
+  gohoubi_after_koujo_k11,
+  gohoubi_request_koujo_k11,
   k11_kojo2,
   kojo_message_com_11,
   kojo_message_markcng_11,
   kojo_message_palamcng_11,
   ntr_koujo_k11,
+  osioki_koujo_k11,
   self_kojo_k11,
 };
