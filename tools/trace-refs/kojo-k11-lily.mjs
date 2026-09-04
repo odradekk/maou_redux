@@ -25151,6 +25151,278 @@ export const FILES = [
           'PRINTFORMW %SAVESTR:TARGET%脸颊上满是屈辱的泪水，动作缓慢地侵犯着自己的妹妹。',
         ],
         ['8946', 'CFLAG:TARGET:366 = 2'],
+        ['8957', 'IF SELECTCOM == 66'],
+        [
+          '8964',
+          'PRINTFORMW 「哈啊……魔王大人和%SAVESTR:ASSI%的阴茎……都好棒啊%UNICODE(0x2661) *1%」',
+        ],
+        ['8965', 'PRINTFORMW 『姐姐，快点吸人家的小鸡鸡啦♪』'],
+        [
+          '8966',
+          'PRINTFORMW 正在为%SAVESTR:MASTER%口交的%SAVESTR:TARGET%，卖力地吸吮着口中的阴茎，%SAVESTR:ASSI%在一旁看得急不可耐的样子。',
+        ],
+        [
+          '8967',
+          'PRINTFORMW 「别急啦……让我先帮魔王大人口完就轮到你了%UNICODE(0x2661) *1% 咕呣……咕呣……%UNICODE(0x2661) *1% 魔王大人的阴茎的味道……好棒%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8968',
+          'PRINTFORMW 『魔王大人快点啦，快点把精液射在姐姐这淫荡的嘴巴小穴里……然后让我也享受一下啦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8969',
+          'PRINTFORMW %SAVESTR:ASSI%，用勃起的阴茎在%SAVESTR:TARGET%的脸上来回摩擦着，见状，%SAVESTR:TARGET%无奈地吐出了%SAVESTR:MASTER%的阴茎，转而舔着妹妹的。',
+        ],
+        [
+          '8970',
+          'PRINTFORMW 「哎哎，别那么急嘛%UNICODE(0x2661) *1% 你和魔王大人的阴茎，我都会用嘴巴小穴好好侍奉的%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8973',
+          'PRINTFORMW 「啊啊……两人的阴茎都已经……勃起得硬邦邦的了呀%UNICODE(0x2661) *1%」',
+        ],
+        ['8974', 'PRINTFORMW 『快点啊姐姐，要好好舔到我们满意为止哦！』'],
+        ['8975', 'PRINTFORMW 「好，好啦……不要那么急嘛♪」'],
+        [
+          '8976',
+          'PRINTFORMW %SAVESTR:TARGET%红着脸将两人的阴茎温柔地握在手心、然后低下头含住了%SAVESTR:MASTER%的阴茎，努力地吸吮着。',
+        ],
+        [
+          '8977',
+          'PRINTFORMW 「咕呣……咕呣……魔王大人的阴茎的味道%UNICODE(0x2661) *1% 光是这么含着……就感觉好舒服%UNICODE(0x2661) *1% %SAVESTR:ASSI%不要着急，我也会让你一起舒服的%UNICODE(0x2661) *1% 请两位……尽情享用%SAVESTR:TARGET%的嘴巴小穴吧%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '8978',
+          'PRINTFORMW %SAVESTR:TARGET%伸出舌头，轮流舔着两人的龟头，双手也抓着阴茎来回摩擦着。',
+        ],
+        [
+          '8979',
+          'PRINTFORMW 『啊啊……姐姐的舌头……好棒%UNICODE(0x2661) *1% 光是这么舔着……人家就已经要射了啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8982',
+          'PRINTFORMW 「一，一定要两个人一起来吗（明明……是这么讨厌的事情……为什么……视线完全移不开？）」',
+        ],
+        [
+          '8983',
+          'PRINTFORMW %SAVESTR:MASTER%和%SAVESTR:ASSI%的阴茎从左右两边逼近了%SAVESTR:TARGET%的脸，抵在了鼻子和嘴唇上。',
+        ],
+        ['8984', 'PRINTFORMW 『努力用嘴巴让我们射出来就行了，加油啊姐姐♪』'],
+        [
+          '8985',
+          'PRINTFORMW 望着妹妹那急不可耐的样子，%SAVESTR:TARGET%叹息了一声、张开嘴含住了妹妹的阴茎吸吮了起来。',
+        ],
+        ['8986', 'PRINTFORMW 「我会……好好口交的……咕呣……咕呣……！」'],
+        [
+          '8987',
+          'PRINTFORMW 『唔哇哇……姐姐的口交好舒服！已经被调教的这么好了呀！看，魔王大人也兴奋起来了呢♪』',
+        ],
+        [
+          '8988',
+          'PRINTFORMW %SAVESTR:MASTER%用勃起的阴茎在%SAVESTR:TARGET%脸上来回摩擦着，%SAVESTR:TARGET%的眼神黯淡了下去，露出完全屈服的表情，开始用嘴巴侍奉着%SAVESTR:MASTER%的阴茎……',
+        ],
+        ['8993', 'PRINTFORMW'],
+        ['8996', 'PRINTFORMW'],
+        ['8999', 'PRINTFORMW'],
+        ['9002', 'CFLAG:TARGET:367 = 1'],
+        [
+          '9012',
+          'PRINTFORMW 「呣啊……呣啊%UNICODE(0x2661) *1% 魔王大人……还有%SAVESTR:ASSI%的阴茎%UNICODE(0x2661) *1% 都好棒%UNICODE(0x2661) *1% 好好吃%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9013',
+          'PRINTFORMW %SAVESTR:TARGET%交替吸吮着%SAVESTR:MASTER%和%SAVESTR:ASSI%的阴茎，用灵巧的舌头不断刺激着龟头的敏感点。',
+        ],
+        [
+          '9014',
+          'PRINTFORML 『唔哇哇……姐姐的舌头%UNICODE(0x2661) *1% 好棒好舒服……表情也变得这么淫乱了，小鸡鸡真的那么好吃吗！？』',
+        ],
+        [
+          '9015',
+          'PRINTFORMW %SAVESTR:TARGET%精湛的口交技术让%SAVESTR:ASSI%和%SAVESTR:MASTER%的腰一阵阵酥麻，快感沿着脊髓一路上传到大脑。',
+        ],
+        [
+          '9016',
+          'PRINTFORMW 「咕呣……呣呣%UNICODE(0x2661) *1%…来吧……一起在我的嘴巴小穴射的满满的吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9017',
+          'PRINTFORMW %SAVESTR:TARGET%从口交侍奉中感到了极大的心理满足和快感，带着无比兴奋的表情，继续轮流吸吮着两人的阴茎……',
+        ],
+        [
+          '9019',
+          'PRINTFORMW %SAVESTR:TARGET%轮流吸吮着两人的阴茎，唾液从贪婪的嘴里不住地流出，沾满了整根茎身。',
+        ],
+        [
+          '9020',
+          'PRINTFORMW 「咕呣……呣呣%UNICODE(0x2661) *1% 阴茎……好棒……好好吃%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9021',
+          'PRINTFORML 『哎呀呀，姐姐吸小鸡鸡吸得这么起劲，在嘴里进进出出的…%UNICODE(0x2661) *1% 完全变成口交性奴了呢%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9022',
+          'PRINTFORMW 「是啊……是啊%UNICODE(0x2661) *1%…要让姐姐一次吸吮两根吗……也好啊，不过作为回报，你们得一起射在我的嘴里哦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9023',
+          'PRINTFORMW %SAVESTR:TARGET%说着淫乱不堪的台词，然后低下头继续用嘴侍奉着两人的阴茎……',
+        ],
+        [
+          '9025',
+          'PRINTFORMW 「咕啾……咕啾%UNICODE(0x2661) *1% 居然能独占%SAVESTR:ASSI%和魔王大人两人的阴茎……%UNICODE(0x2661) *1% 真是太幸福了%UNICODE(0x2661) *1%」',
+        ],
+        ['9026', 'PRINTFORML 『啊啊……姐姐吸吮得那么起劲！真的有那么好吃吗？』'],
+        [
+          '9027',
+          'PRINTFORMW %SAVESTR:TARGET%带着急促的呼吸，卖力地舔舐，吸吮着妹妹的阴茎，灵巧的舌头不断地刺激着龟头的敏感点。',
+        ],
+        [
+          '9028',
+          'PRINTFORMW 「是啊……人家的嘴巴小穴……最喜欢被阴茎塞得满满的%UNICODE(0x2661) *1% 咕呣……咕呣……咕呣%UNICODE(0x2661) *1% 精液……快点给我吧……%UNICODE(0x2661) *1% 咕呣咕呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9029',
+          'PRINTFORML 『啊啊……姐姐的口交好舒服，舒服得腰都快软掉了%UNICODE(0x2661) *1% 』',
+        ],
+        [
+          '9030',
+          'PRINTFORMW 「接下来是魔王大人的阴茎了哦%UNICODE(0x2661) *1% 来吧……尽情地侵犯%SAVESTR:TARGET%淫乱的嘴巴小穴里吧%UNICODE(0x2661) *1% 呣啾……呣啾%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9031',
+          'PRINTFORMW 在妹妹的称赞下得到极大心理满足的%SAVESTR:TARGET%向%SAVESTR:MASTER%露出娇媚而得意的表情，转而开始吸吮%SAVESTR:MASTER%的阴茎……',
+        ],
+        ['9033', 'CFLAG:367 = 5'],
+        [
+          '9038',
+          'PRINTFORMW 「请尽情享用%SAVESTR:TARGET%的嘴巴小穴吧%UNICODE(0x2661) *1% 咕呣……呣呣呣%UNICODE(0x2661) *1% ♪」',
+        ],
+        [
+          '9039',
+          'PRINTFORML 『姐姐，快点也吸一下人家的小鸡鸡%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9040',
+          'PRINTFORMW %SAVESTR:TARGET%低着头，轮流用嘴侍奉着%SAVESTR:MASTER%和%SAVESTR:ASSI%两人的阴茎。',
+        ],
+        [
+          '9041',
+          'PRINTFORMW 「咕呣……咕呣%UNICODE(0x2661) *1%…两人的阴茎%UNICODE(0x2661) *1% 都好热，好硬……咕呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9042',
+          'PRINTFORMW 『啊啊……对！就是那里！快点再舔那个位置%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9044',
+          'PRINTFORMW %SAVESTR:TARGET%低着头，轮流用嘴热情地侍奉着%SAVESTR:MASTER%和%SAVESTR:ASSI%两人的阴茎。',
+        ],
+        [
+          '9045',
+          'PRINTFORMW 「咕呣……咕呣%UNICODE(0x2661) *1%…阴茎在嘴巴里的感觉……好棒……咕呣呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9046',
+          'PRINTFORML 『啊啊……姐姐，快点吞到最里面啊%UNICODE(0x2661) *1% 让我感受一下姐姐的喉咙小穴%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9047',
+          'PRINTFORMW 「不，不要急啦……你和魔王大人都会有的%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9048',
+          'PRINTFORMW %SAVESTR:TARGET%微笑着，温柔地含住了%SAVESTR:ASSI%的阴茎，一直吞到了喉咙深处……',
+        ],
+        [
+          '9050',
+          'PRINTFORMW 「咕呣……咕呣%UNICODE(0x2661) *1% 呜啊……两人的阴茎……都在嘴里坚挺起来了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9051',
+          'PRINTFORML 『哎呀呀，姐姐完全兴奋起来了呢，连嘴巴小穴也能感觉到快感吗%UNICODE(0x2661) *1% 哈哈，魔王大人你看，以后就让姐姐当我们的口交性奴好了呢！』',
+        ],
+        [
+          '9052',
+          'PRINTFORMW 「才，才不会……有快感……呣呣呣……咕呣……咕呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9053',
+          'PRINTFORMW 被妹妹羞辱得满脸通红的%SAVESTR:TARGET%，内心却更加兴奋，继续卖力地吸吮着两人的阴茎\t。',
+        ],
+        [
+          '9054',
+          'PRINTFORMW 「咕呣……咕呣%UNICODE(0x2661) *1% 呣呣呣……%UNICODE(0x2661) *1% 要，要射精的时候……记得说一声%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9055',
+          'PRINTFORML 『啊啊%UNICODE(0x2661) *1% 看到姐姐口交时的淫荡样子就已经让人受不了了%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9056',
+          'PRINTFORMW %SAVESTR:TARGET%低着头，用舌尖缠卷着龟头，继续用嘴和喉咙侍奉着两人的阴茎……',
+        ],
+        ['9058', 'CFLAG:367 = 4'],
+        [
+          '9063',
+          'PRINTFORMW 「请……按顺序来啊……不要把阴茎……在人家的脸上来回蹭♪」',
+        ],
+        [
+          '9064',
+          'PRINTFORML 『哎呀，姐姐我实在是等不及了嘛……快点也给我舔啊♪』',
+        ],
+        [
+          '9065',
+          'PRINTFORMW 「好……好吧……咕呣……咕呣……呣呣呣（呜呜……为什么还不射……还要舔多久！）」',
+        ],
+        ['9067', 'PRINTFORMW 「咕呣……咕呣……两，两根一起吸的话……会有奖励吗♪」'],
+        [
+          '9068',
+          'PRINTFORML 『奖励？能让性奴姐姐和魔王大人的鸡鸡亲吻，还有什么不知足的%UNICODE(0x2661) *1% 快点吸啦%UNICODE(0x2661) *1%』',
+        ],
+        ['9069', 'PRINTFORMW 「好……好的……咕呣……呣呣呣♪」'],
+        ['9071', 'PRINTFORMW 「咕呣咕呣……呣呣……阴茎好烫，好硬……呣呣♪」'],
+        [
+          '9072',
+          'PRINTFORML 『哎嘿嘿，姐姐的嘴巴小穴还挺舒服的。%UNICODE(0x2661) *1% 呐，我和魔王大人的阴茎，哪一根吃起来比较舒服啊？不许思考，马上回答。答错了就要惩罚哦。』',
+        ],
+        ['9073', 'PRINTFORMW 「这……这种问题……咕呣……呣呣呣…♪」'],
+        [
+          '9074',
+          'PRINTFORMW %SAVESTR:TARGET%只能通过努力口交来回避这种怎么回答都是错误的问题……',
+        ],
+        ['9076', 'CFLAG:367 = 3'],
+        ['9081', 'PRINTFORMW 「呜呜……味道……好难闻……咕呣……咕呣！」'],
+        ['9082', 'PRINTFORML 『该吸吮人家的小鸡鸡了啦！快点快点』'],
+        ['9083', 'PRINTFORMW 「呜呜……饶，饶了姐姐吧……下巴好酸……」'],
+        [
+          '9085',
+          'PRINTFORMW 「唔呣……唔呣……不，不可以啊……两根……不能一起进到嘴巴里的！」',
+        ],
+        [
+          '9086',
+          'PRINTFORML 『那就要更努力地舔啊！不然的话就把姐姐的下巴卸脱臼，就可以两根一起进去了！』',
+        ],
+        [
+          '9087',
+          'PRINTFORMW 「不……不要对姐姐做那么可怕的事情……求你了……我，我会好好舔的…」',
+        ],
+        ['9089', 'PRINTFORMW 「呜呜……什么时候才能结束……咕呣……咕呣……」'],
+        [
+          '9090',
+          'PRINTFORML 『哎嘿嘿，姐姐的嘴巴小穴，还挺舒服呢%UNICODE(0x2661) *1%』',
+        ],
+        ['9091', 'PRINTFORMW 「然，然后轮到魔王大人了吗……咕呣……咕呣！」'],
+        ['9093', 'CFLAG:367 = 2'],
+        ['9098', 'PRINTFORMW'],
+        ['9099', 'CFLAG:367 = 5'],
+        ['9102', 'PRINTFORMW'],
+        ['9103', 'CFLAG:367 = 4'],
+        ['9106', 'PRINTFORMW'],
+        ['9107', 'CFLAG:367 = 3'],
+        ['9110', 'PRINTFORMW'],
+        ['9111', 'CFLAG:367 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

@@ -18099,6 +18099,378 @@ async function kojo_message_com_11(rand) {
     } // :8950
   } // :8951
 
+  if (era_flag.selectcom === 66) {
+    // :8957
+
+    if (kojo.双人口交 === 0) {
+      // :8959
+
+      if (assi_mao) {
+        // :8961
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :8963
+          await era.printAndWait(
+            `「哈啊……魔王大人和${assi_name}的阴茎……都好棒啊${heart(1)}」`,
+          ); // :8964
+          await era.printAndWait(`『姐姐，快点吸人家的小鸡鸡啦♪』`); // :8965
+          await era.printAndWait(
+            `正在为${master_name}口交的${target_name}，卖力地吸吮着口中的阴茎，${assi_name}在一旁看得急不可耐的样子。`,
+          ); // :8966
+          await era.printAndWait(
+            `「别急啦……让我先帮魔王大人口完就轮到你了${heart(1)} 咕呣……咕呣……${heart(1)} 魔王大人的阴茎的味道……好棒${heart(1)}」`,
+          ); // :8967
+          await era.printAndWait(
+            `『魔王大人快点啦，快点把精液射在姐姐这淫荡的嘴巴小穴里……然后让我也享受一下啦${heart(1)}』`,
+          ); // :8968
+          await era.printAndWait(
+            `${assi_name}，用勃起的阴茎在${target_name}的脸上来回摩擦着，见状，${target_name}无奈地吐出了${master_name}的阴茎，转而舔着妹妹的。`,
+          ); // :8969
+          await era.printAndWait(
+            `「哎哎，别那么急嘛${heart(1)} 你和魔王大人的阴茎，我都会用嘴巴小穴好好侍奉的${heart(1)}」`,
+          ); // :8970
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :8972
+          await era.printAndWait(
+            `「啊啊……两人的阴茎都已经……勃起得硬邦邦的了呀${heart(1)}」`,
+          ); // :8973
+          await era.printAndWait(`『快点啊姐姐，要好好舔到我们满意为止哦！』`); // :8974
+          await era.printAndWait(`「好，好啦……不要那么急嘛♪」`); // :8975
+          await era.printAndWait(
+            `${target_name}红着脸将两人的阴茎温柔地握在手心、然后低下头含住了${master_name}的阴茎，努力地吸吮着。`,
+          ); // :8976
+          await era.printAndWait(
+            `「咕呣……咕呣……魔王大人的阴茎的味道${heart(1)} 光是这么含着……就感觉好舒服${heart(1)} ${assi_name}不要着急，我也会让你一起舒服的${heart(1)} 请两位……尽情享用${target_name}的嘴巴小穴吧${heart(1)} 」`,
+          ); // :8977
+          await era.printAndWait(
+            `${target_name}伸出舌头，轮流舔着两人的龟头，双手也抓着阴茎来回摩擦着。`,
+          ); // :8978
+          await era.printAndWait(
+            `『啊啊……姐姐的舌头……好棒${heart(1)} 光是这么舔着……人家就已经要射了啊啊${heart(1)}』`,
+          ); // :8979
+        } else {
+          // :8981
+          await era.printAndWait(
+            `「一，一定要两个人一起来吗（明明……是这么讨厌的事情……为什么……视线完全移不开？）」`,
+          ); // :8982
+          await era.printAndWait(
+            `${master_name}和${assi_name}的阴茎从左右两边逼近了${target_name}的脸，抵在了鼻子和嘴唇上。`,
+          ); // :8983
+          await era.printAndWait(
+            `『努力用嘴巴让我们射出来就行了，加油啊姐姐♪』`,
+          ); // :8984
+          await era.printAndWait(
+            `望着妹妹那急不可耐的样子，${target_name}叹息了一声、张开嘴含住了妹妹的阴茎吸吮了起来。`,
+          ); // :8985
+          await era.printAndWait(`「我会……好好口交的……咕呣……咕呣……！」`); // :8986
+          await era.printAndWait(
+            `『唔哇哇……姐姐的口交好舒服！已经被调教的这么好了呀！看，魔王大人也兴奋起来了呢♪』`,
+          ); // :8987
+          await era.printAndWait(
+            `${master_name}用勃起的阴茎在${target_name}脸上来回摩擦着，${target_name}的眼神黯淡了下去，露出完全屈服的表情，开始用嘴巴侍奉着${master_name}的阴茎……`,
+          ); // :8988
+        } // :8989
+      } else {
+        // :8990
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :8992
+          await era.printAndWait(''); // :8993
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :8995
+          await era.printAndWait(''); // :8996
+        } else {
+          // :8998
+          await era.printAndWait(''); // :8999
+        } // :9000
+      } // :9001
+      // CFLAG:TARGET:367  = 1（变量语义：CFLAG 族，TARGET:367） // :9002
+      kojo.双人口交 = 1; // :9002
+      return 0; // :9003
+    } else {
+      // :9005
+
+      if (assi_mao) {
+        // :9007
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.双人口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9009
+          switch (
+            rand_n(3) // :9010
+          ) {
+            case 2: {
+              // :9011
+              await era.printAndWait(
+                `「呣啊……呣啊${heart(1)} 魔王大人……还有${assi_name}的阴茎${heart(1)} 都好棒${heart(1)} 好好吃${heart(1)}」`,
+              ); // :9012
+              await era.printAndWait(
+                `${target_name}交替吸吮着${master_name}和${assi_name}的阴茎，用灵巧的舌头不断刺激着龟头的敏感点。`,
+              ); // :9013
+              await era.print(
+                `『唔哇哇……姐姐的舌头${heart(1)} 好棒好舒服……表情也变得这么淫乱了，小鸡鸡真的那么好吃吗！？』`,
+              ); // :9014
+              await era.printAndWait(
+                `${target_name}精湛的口交技术让${assi_name}和${master_name}的腰一阵阵酥麻，快感沿着脊髓一路上传到大脑。`,
+              ); // :9015
+              await era.printAndWait(
+                `「咕呣……呣呣${heart(1)}…来吧……一起在我的嘴巴小穴射的满满的吧${heart(1)}」`,
+              ); // :9016
+              await era.printAndWait(
+                `${target_name}从口交侍奉中感到了极大的心理满足和快感，带着无比兴奋的表情，继续轮流吸吮着两人的阴茎……`,
+              ); // :9017
+              break; // :9018
+            } // :9018
+            case 1: {
+              // :9018
+              await era.printAndWait(
+                `${target_name}轮流吸吮着两人的阴茎，唾液从贪婪的嘴里不住地流出，沾满了整根茎身。`,
+              ); // :9019
+              await era.printAndWait(
+                `「咕呣……呣呣${heart(1)} 阴茎……好棒……好好吃${heart(1)}」`,
+              ); // :9020
+              await era.print(
+                `『哎呀呀，姐姐吸小鸡鸡吸得这么起劲，在嘴里进进出出的…${heart(1)} 完全变成口交性奴了呢${heart(1)}』`,
+              ); // :9021
+              await era.printAndWait(
+                `「是啊……是啊${heart(1)}…要让姐姐一次吸吮两根吗……也好啊，不过作为回报，你们得一起射在我的嘴里哦${heart(1)}」`,
+              ); // :9022
+              await era.printAndWait(
+                `${target_name}说着淫乱不堪的台词，然后低下头继续用嘴侍奉着两人的阴茎……`,
+              ); // :9023
+              break; // :9024
+            } // :9024
+            case 0: {
+              // :9024
+              await era.printAndWait(
+                `「咕啾……咕啾${heart(1)} 居然能独占${assi_name}和魔王大人两人的阴茎……${heart(1)} 真是太幸福了${heart(1)}」`,
+              ); // :9025
+              await era.print(
+                `『啊啊……姐姐吸吮得那么起劲！真的有那么好吃吗？』`,
+              ); // :9026
+              await era.printAndWait(
+                `${target_name}带着急促的呼吸，卖力地舔舐，吸吮着妹妹的阴茎，灵巧的舌头不断地刺激着龟头的敏感点。`,
+              ); // :9027
+              await era.printAndWait(
+                `「是啊……人家的嘴巴小穴……最喜欢被阴茎塞得满满的${heart(1)} 咕呣……咕呣……咕呣${heart(1)} 精液……快点给我吧……${heart(1)} 咕呣咕呣${heart(1)}」`,
+              ); // :9028
+              await era.print(
+                `『啊啊……姐姐的口交好舒服，舒服得腰都快软掉了${heart(1)} 』`,
+              ); // :9029
+              await era.printAndWait(
+                `「接下来是魔王大人的阴茎了哦${heart(1)} 来吧……尽情地侵犯${target_name}淫乱的嘴巴小穴里吧${heart(1)} 呣啾……呣啾${heart(1)}」`,
+              ); // :9030
+              await era.printAndWait(
+                `在妹妹的称赞下得到极大心理满足的${target_name}向${master_name}露出娇媚而得意的表情，转而开始吸吮${master_name}的阴茎……`,
+              ); // :9031
+              break; // :9032
+            } // :9032
+          } // :9032
+          // CFLAG:367  = 5（变量语义：CFLAG 族，367） // :9033
+          kojo.双人口交 = 5; // :9033
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.双人口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9035
+          switch (
+            rand_n(3) // :9036
+          ) {
+            case 2: {
+              // :9037
+              await era.printAndWait(
+                `「请尽情享用${target_name}的嘴巴小穴吧${heart(1)} 咕呣……呣呣呣${heart(1)} ♪」`,
+              ); // :9038
+              await era.print(`『姐姐，快点也吸一下人家的小鸡鸡${heart(1)}』`); // :9039
+              await era.printAndWait(
+                `${target_name}低着头，轮流用嘴侍奉着${master_name}和${assi_name}两人的阴茎。`,
+              ); // :9040
+              await era.printAndWait(
+                `「咕呣……咕呣${heart(1)}…两人的阴茎${heart(1)} 都好热，好硬……咕呣呣${heart(1)}」`,
+              ); // :9041
+              await era.printAndWait(
+                `『啊啊……对！就是那里！快点再舔那个位置${heart(1)}』`,
+              ); // :9042
+              break; // :9043
+            } // :9043
+            case 1: {
+              // :9043
+              await era.printAndWait(
+                `${target_name}低着头，轮流用嘴热情地侍奉着${master_name}和${assi_name}两人的阴茎。`,
+              ); // :9044
+              await era.printAndWait(
+                `「咕呣……咕呣${heart(1)}…阴茎在嘴巴里的感觉……好棒……咕呣呣${heart(1)}」`,
+              ); // :9045
+              await era.print(
+                `『啊啊……姐姐，快点吞到最里面啊${heart(1)} 让我感受一下姐姐的喉咙小穴${heart(1)}』`,
+              ); // :9046
+              await era.printAndWait(
+                `「不，不要急啦……你和魔王大人都会有的${heart(1)}」`,
+              ); // :9047
+              await era.printAndWait(
+                `${target_name}微笑着，温柔地含住了${assi_name}的阴茎，一直吞到了喉咙深处……`,
+              ); // :9048
+              break; // :9049
+            } // :9049
+            case 0: {
+              // :9049
+              await era.printAndWait(
+                `「咕呣……咕呣${heart(1)} 呜啊……两人的阴茎……都在嘴里坚挺起来了${heart(1)}」`,
+              ); // :9050
+              await era.print(
+                `『哎呀呀，姐姐完全兴奋起来了呢，连嘴巴小穴也能感觉到快感吗${heart(1)} 哈哈，魔王大人你看，以后就让姐姐当我们的口交性奴好了呢！』`,
+              ); // :9051
+              await era.printAndWait(
+                `「才，才不会……有快感……呣呣呣……咕呣……咕呣${heart(1)}」`,
+              ); // :9052
+              await era.printAndWait(
+                `被妹妹羞辱得满脸通红的${target_name}，内心却更加兴奋，继续卖力地吸吮着两人的阴茎	。`,
+              ); // :9053
+              await era.printAndWait(
+                `「咕呣……咕呣${heart(1)} 呣呣呣……${heart(1)} 要，要射精的时候……记得说一声${heart(1)}」`,
+              ); // :9054
+              await era.print(
+                `『啊啊${heart(1)} 看到姐姐口交时的淫荡样子就已经让人受不了了${heart(1)}』`,
+              ); // :9055
+              await era.printAndWait(
+                `${target_name}低着头，用舌尖缠卷着龟头，继续用嘴和喉咙侍奉着两人的阴茎……`,
+              ); // :9056
+              break; // :9057
+            } // :9057
+          } // :9057
+          // CFLAG:367  = 4（变量语义：CFLAG 族，367） // :9058
+          kojo.双人口交 = 4; // :9058
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.双人口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9060
+          switch (
+            rand_n(3) // :9061
+          ) {
+            case 2: {
+              // :9062
+              await era.printAndWait(
+                `「请……按顺序来啊……不要把阴茎……在人家的脸上来回蹭♪」`,
+              ); // :9063
+              await era.print(
+                `『哎呀，姐姐我实在是等不及了嘛……快点也给我舔啊♪』`,
+              ); // :9064
+              await era.printAndWait(
+                `「好……好吧……咕呣……咕呣……呣呣呣（呜呜……为什么还不射……还要舔多久！）」`,
+              ); // :9065
+              break; // :9066
+            } // :9066
+            case 1: {
+              // :9066
+              await era.printAndWait(
+                `「咕呣……咕呣……两，两根一起吸的话……会有奖励吗♪」`,
+              ); // :9067
+              await era.print(
+                `『奖励？能让性奴姐姐和魔王大人的鸡鸡亲吻，还有什么不知足的${heart(1)} 快点吸啦${heart(1)}』`,
+              ); // :9068
+              await era.printAndWait(`「好……好的……咕呣……呣呣呣♪」`); // :9069
+              break; // :9070
+            } // :9070
+            case 0: {
+              // :9070
+              await era.printAndWait(
+                `「咕呣咕呣……呣呣……阴茎好烫，好硬……呣呣♪」`,
+              ); // :9071
+              await era.print(
+                `『哎嘿嘿，姐姐的嘴巴小穴还挺舒服的。${heart(1)} 呐，我和魔王大人的阴茎，哪一根吃起来比较舒服啊？不许思考，马上回答。答错了就要惩罚哦。』`,
+              ); // :9072
+              await era.printAndWait(`「这……这种问题……咕呣……呣呣呣…♪」`); // :9073
+              await era.printAndWait(
+                `${target_name}只能通过努力口交来回避这种怎么回答都是错误的问题……`,
+              ); // :9074
+              break; // :9075
+            } // :9075
+          } // :9075
+          // CFLAG:367  = 3（变量语义：CFLAG 族，367） // :9076
+          kojo.双人口交 = 3; // :9076
+        } else if (kojo.双人口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9078
+          switch (
+            rand_n(3) // :9079
+          ) {
+            case 2: {
+              // :9080
+              await era.printAndWait(`「呜呜……味道……好难闻……咕呣……咕呣！」`); // :9081
+              await era.print(`『该吸吮人家的小鸡鸡了啦！快点快点』`); // :9082
+              await era.printAndWait(`「呜呜……饶，饶了姐姐吧……下巴好酸……」`); // :9083
+              break; // :9084
+            } // :9084
+            case 1: {
+              // :9084
+              await era.printAndWait(
+                `「唔呣……唔呣……不，不可以啊……两根……不能一起进到嘴巴里的！」`,
+              ); // :9085
+              await era.print(
+                `『那就要更努力地舔啊！不然的话就把姐姐的下巴卸脱臼，就可以两根一起进去了！』`,
+              ); // :9086
+              await era.printAndWait(
+                `「不……不要对姐姐做那么可怕的事情……求你了……我，我会好好舔的…」`,
+              ); // :9087
+              break; // :9088
+            } // :9088
+            case 0: {
+              // :9088
+              await era.printAndWait(
+                `「呜呜……什么时候才能结束……咕呣……咕呣……」`,
+              ); // :9089
+              await era.print(
+                `『哎嘿嘿，姐姐的嘴巴小穴，还挺舒服呢${heart(1)}』`,
+              ); // :9090
+              await era.printAndWait(
+                `「然，然后轮到魔王大人了吗……咕呣……咕呣！」`,
+              ); // :9091
+              break; // :9092
+            } // :9092
+          } // :9092
+          // CFLAG:367  = 2（变量语义：CFLAG 族，367） // :9093
+          kojo.双人口交 = 2; // :9093
+        } // :9094
+      } else {
+        // :9095
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.双人口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9097
+          await era.printAndWait(''); // :9098
+          // CFLAG:367  = 5（变量语义：CFLAG 族，367） // :9099
+          kojo.双人口交 = 5; // :9099
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.双人口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9101
+          await era.printAndWait(''); // :9102
+          // CFLAG:367  = 4（变量语义：CFLAG 族，367） // :9103
+          kojo.双人口交 = 4; // :9103
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.双人口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9105
+          await era.printAndWait(''); // :9106
+          // CFLAG:367  = 3（变量语义：CFLAG 族，367） // :9107
+          kojo.双人口交 = 3; // :9107
+        } else if (kojo.双人口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9109
+          await era.printAndWait(''); // :9110
+          // CFLAG:367  = 2（变量语义：CFLAG 族，367） // :9111
+          kojo.双人口交 = 2; // :9111
+        } // :9112
+      } // :9113
+      return 0; // :9114
+    } // :9115
+  } // :9116
+
   return 0;
 }
 

@@ -6900,6 +6900,80 @@ test('COM65 二回目：玛奥助手八档推进', async () => {
   }
 });
 
+// —— SELECTCOM 66（双人口交 CFLAG:367）——
+
+test('COM66 初めて：玛奥助手淫乱、爱慕与其余三档', async () => {
+  for (const talent of [76, 85, undefined]) {
+    const fixture = setup_lily((f, era_flag) => {
+      preset_chara_17(f);
+      f.era.addCharacter(MAO);
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      if (talent !== undefined) f.store.set(`talent:${LILY}:${talent}`, 1);
+    }, 66);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0, 'COM66 首次各档均有输出');
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:367`),
+      1,
+      'COM66 首次推进 CFLAG:367=1',
+    );
+  }
+});
+
+test('COM66 初めて：没有玛奥助手时保留空模板并推进首次标志', async () => {
+  const fixture = setup_lily(undefined, 66);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), ['']);
+  assert.equal(fixture.store.get(`cflag:${LILY}:367`), 1);
+});
+
+test('COM66 二回目：玛奥助手四档与 RAND 三分支', async () => {
+  const cases = [
+    { talent: 76, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    for (const draw of [0, 1, 2]) {
+      const fixture = setup_lily((f, era_flag) => {
+        preset_chara_17(f);
+        f.era.addCharacter(MAO);
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+        f.store.set(`cflag:${LILY}:367`, 1);
+        if (item.talent !== undefined)
+          f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+      }, 66);
+      await speak_com11(fixture, seq_rand(draw));
+      assert.ok(fixture.text_lines().length > 0, 'COM66 后续随机档有输出');
+      assert.equal(fixture.store.get(`cflag:${LILY}:367`), item.expected);
+    }
+  }
+});
+
+test('COM66 二回目：没有玛奥助手时四档只推进空模板', async () => {
+  const cases = [
+    { talent: 76, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`cflag:${LILY}:367`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 66);
+    await speak_com11(fixture, seq_rand());
+    assert.deepEqual(fixture.text_lines(), ['']);
+    assert.equal(fixture.store.get(`cflag:${LILY}:367`), item.expected);
+  }
+});
+
 // —— SELECTCOM 56（交谈 CFLAG:357）——
 
 test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {
