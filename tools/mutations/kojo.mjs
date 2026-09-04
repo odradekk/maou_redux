@@ -10144,6 +10144,40 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '肉便器、胜利与攻击口上注册进各自分发族',
   },
   {
+    desc: 'M4721 K11 NTR 口上注册号错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'ntr_koujo_family.register(11, ntr_koujo_k11);',
+    replace: 'ntr_koujo_family.register(12, ntr_koujo_k11); // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'NTR P=1-7',
+  },
+  {
+    desc: 'M4722 K11 NTR P=4 场景记录错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '    chara(target).kojo.NTR_654 = 1; // :12713 CFLAG:654',
+    replace: '    chara(target).kojo.NTR_655 = 1; // :12713 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'NTR P=1-7',
+  },
+  {
+    desc: 'M4723 K11 NTR 假阳具判据漏掉 FLAG:500==2（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find:
+      "        era0('flag:500') === 0 || era0('flag:500') === 2\n          ? `双腿之间的巨根`\n          : `粗大的假阳具`,\n      ); // :12610-12614",
+    replace:
+      "        era0('flag:500') === 0 || era0('flag:500') === 9\n          ? `双腿之间的巨根`\n          : `粗大的假阳具`,\n      ); // :12610-12614",
+    tests: ['kojo-k11-lily'],
+    must_mention: 'FLAG:500 在肉棒与假阳具称呼间分岔',
+  },
+  {
+    desc: 'M4724 K11 NTR 公开生育妊娠相手判据错位（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: '      if (chara(target).event.妊娠相手 === 1) {',
+    replace: '      if (chara(target).event.妊娠相手 === 2) { // 变异',
+    tests: ['kojo-k11-lily'],
+    must_mention: '按妊娠相手区分魔王之子',
+  },
+  {
     desc: 'M4686 PALAMCNG_11 非玛奥助手守卫被删除（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: '  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {\n    // :11466',

@@ -6747,6 +6747,49 @@ for (const [label, assistant] of [
   });
 }
 
+// —— NTR 再捕获口上 ——
+
+test('NTR P=1-7：首次置再捕获标志并分别记录场景编号', async () => {
+  for (let p = 1; p <= 7; p += 1) {
+    const fixture = setup_lily();
+    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await ntr_koujo_family.call(11, { args: [seq_rand(), p] });
+    assert.equal(fixture.store.get(`cflag:${LILY}:650`), 1, `P=${p} 再捕获`);
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:${650 + p}`),
+      1,
+      `P=${p} 场景`,
+    );
+  }
+});
+
+test('NTR P=1：FLAG:500 在肉棒与假阳具称呼间分岔', async () => {
+  const body = setup_lily((f) => {
+    f.store.set('flag:500', 2);
+    f.store.set(`talent:${LILY}:76`, 1);
+  });
+  const body_family = body.load_module('kojo/kojo-system').ntr_koujo_family;
+  await body_family.call(11, { args: [seq_rand(), 1] });
+  const toy = setup_lily((f) => {
+    f.store.set('flag:500', 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+  });
+  const toy_family = toy.load_module('kojo/kojo-system').ntr_koujo_family;
+  await toy_family.call(11, { args: [seq_rand(), 1] });
+  assert.ok(body.text_lines().join('').includes('双腿之间的巨根'));
+  assert.ok(toy.text_lines().join('').includes('粗大的假阳具'));
+});
+
+test('NTR P=20：淫乱档按妊娠相手区分魔王之子', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`cflag:${LILY}:102`, 1);
+  });
+  const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+  await ntr_koujo_family.call(11, { args: [seq_rand(), 20] });
+  assert.ok(fixture.text_lines().join('').includes('我和魔王大人的孩子'));
+});
+
 // —— SELECTCOM 64（3P CFLAG:391）——
 
 test('COM64 守卫：助手不是玛奥时静默跳过', async () => {

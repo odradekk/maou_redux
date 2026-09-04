@@ -239,6 +239,7 @@ const {
   kojo_message_com_family,
   kojo_message_markcng_family,
   kojo_message_palamcng_family,
+  ntr_koujo_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
 const {
@@ -24364,6 +24365,299 @@ async function colosseum_kojo_11(rand) {
 
 // @NTR_KOUJO_K11 // :12597
 
+// NTR 再捕获场景：P 是外部事件传入的场景编号（1-7、20）。
+async function ntr_koujo_k11(_rand, p = 0) {
+  const target = era_flag.target;
+  const target_name = chara_callname(target); // %SAVESTR:TARGET%
+  const player_name = chara_callname(era_flag.player); // %SAVESTR:PLAYER%
+
+  if (chara(target).kojo.NTR再捕获 === 0) {
+    chara(target).kojo.NTR再捕获 = 1; // :12602 CFLAG:650
+  }
+
+  if (p === 1) {
+    if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      await era.printAndWait(`「住，住手啊……我只是附近的村姑啊啊！」`); // :12608
+      await era.print(
+        `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用`,
+      ); // :12609
+      await era.print(
+        era0('flag:500') === 0 || era0('flag:500') === 2
+          ? `双腿之间的巨根`
+          : `粗大的假阳具`,
+      ); // :12610-12614
+      await era.printAndWait(`径直插入了${target_name}的处女蜜穴之中。`); // :12615
+      await era.printAndWait(
+        `「啊……啊啊！！一，一点都不痛！完全不痛……呜呜……啊啊啊啊」`,
+      ); // :12616
+      await era.printAndWait(
+        `${target_name}咬着嘴唇，强忍着破处的痛苦。看着这勇敢的表情，狂王舔着舌头，往${target_name}的处女蜜穴更深处顶入。`,
+      ); // :12617
+      await era.printAndWait(`「呜……呜呜……没，没什么大不了——呜啊啊啊！」`); // :12618
+      await era.printAndWait(
+        `${target_name}的双腿之间，纯洁的处女血流了出来。在确认过之后，狂王笑着，动着腰，更用力地侵犯着${target_name}的处女蜜穴。`,
+      ); // :12619
+      await era.printAndWait(
+        `旁边的水晶球忠实地记录着${target_name}被用各种体位侵犯的全过程……`,
+      ); // :12620
+    } else {
+      await era.print(
+        `双手被抓住的${target_name}拼命挣扎着，但狂王只是哈哈大笑着用`,
+      ); // :12622
+      await era.print(
+        era0('flag:500') === 0 || era0('flag:500') === 2
+          ? `双腿之间的巨根`
+          : `粗大的假阳具`,
+      ); // :12623-12627
+      await era.printAndWait(`径直插入了${target_name}的蜜穴之中。`); // :12628
+      await era.printAndWait(
+        `「讨，讨厌啊啊！不，不要动得那么……激烈啊啊啊啊！！」`,
+      ); // :12629
+      await era.printAndWait(
+        `${target_name}的双腿之间，纯洁的处女血流了出来。在确认过之后，狂王笑着，动着腰，更用力地侵犯着${target_name}的处女蜜穴。`,
+      ); // :12630
+      await era.printAndWait(
+        `旁边的水晶球忠实地记录着${target_name}被用各种体位侵犯的全过程……`,
+      ); // :12631
+    }
+    chara(target).kojo.NTR_651 = 1; // :12633 CFLAG:651
+  } else if (p === 2) {
+    if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      await era.printAndWait(
+        `「”只有下贱的女人才会有肛门快感”这种事情什么……怎么可能…呜啊……啊啊啊！」`,
+      ); // :12637
+      await era.print(`${target_name}被`); // :12638
+      await era.print(
+        era0('flag:500') === 0 || era0('flag:500') === 2
+          ? `狂王的巨根`
+          : `粗大的假阳具`,
+      ); // :12639-12643
+      await era.printAndWait(
+        `撑开肛门，径直插了进去。在狂王的持续侵犯下，${target_name}不住地呻吟了起来。`,
+      ); // :12644
+      if (era0(`abl:${target}:3`) >= 3) {
+        await era.printAndWait(
+          `「嗯啊……啊啊啊${heart(1)} 感觉……好舒服啊啊……${heart(1)}」`,
+        ); // :12646
+        await era.printAndWait(
+          `旁边的水晶球忠实地记录着${target_name}被用各种体位侵犯着肛门的全过程……`,
+        ); // :12647
+        await era.printAndWait(
+          `「要，要去了${heart(1)} 要用肛门去了啊啊${heart(1)} 和狂王大人肛交……真是太棒了啊啊啊${heart(1)}」`,
+        ); // :12648
+      } else {
+        await era.printAndWait(
+          `「呜……呜啊啊……不，不可以这样……侵犯……肛门啊……屁股，感觉变得奇怪了啊啊啊…」`,
+        ); // :12650
+        await era.printAndWait(
+          `旁边的水晶球忠实地记录着${target_name}被用各种体位侵犯着肛门的全过程……`,
+        ); // :12651
+      }
+    } else {
+      await era.printAndWait(
+        `「呜……呜啊啊……不，不可以这样……侵犯……肛门啊……屁股，会合不上的啊啊啊！」`,
+      ); // :12654
+      await era.print(`${target_name}的肛门被`); // :12655
+      await era.print(
+        era0('flag:500') === 0 || era0('flag:500') === 2
+          ? `狂王的巨根`
+          : `粗大的假阳具`,
+      ); // :12656-12660
+      await era.printAndWait(`撑开了肛门，插了进去。`); // :12661
+      await era.printAndWait(
+        `${target_name}被强行扩张的肛门痛得像要裂开了一样，但狂王只是更加乐在其中，继续侵犯着${target_name}……`,
+      ); // :12662
+    }
+    chara(target).kojo.NTR_652 = 1; // :12664 CFLAG:652
+  } else if (p === 3) {
+    if (era0(`talent:${target}:136`)) {
+      await era.printAndWait(
+        `「呜……呜啊${heart(1)} 野狗大人的阴茎……好棒啊${heart(1)} 嗯啊……要，要去了啊啊啊${heart(1)}」`,
+      ); // :12668
+      await era.printAndWait(
+        `${target_name}在围观人群的视线下，更加沉浸在兽交的变态快乐之中……`,
+      ); // :12669
+    } else if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      await era.printAndWait(
+        `「呜……呜啊……太，太激烈了${heart(1)} 好，好像要去了啊啊！」`,
+      ); // :12671
+      await era.printAndWait(
+        `${target_name}在野狗的侵犯下却有了快感，在周围人群的视线下羞耻得面红耳赤……`,
+      ); // :12672
+    } else {
+      await era.printAndWait(
+        `「放，放开我啊啊，快拔出去，拔出去啊！呜……呜啊……好像……更加膨大了……呜呜呜」`,
+      ); // :12674
+      await era.printAndWait(
+        `${target_name}当着众人的面被野狗趴在身上侵犯着，屈辱和羞耻让她泪流满面……`,
+      ); // :12675
+    }
+    chara(target).kojo.NTR_653 = 1; // :12677 CFLAG:653
+  } else if (p === 4) {
+    if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      await era.printAndWait(
+        `「哈……哈啊……插到……最里面了……子宫口……啊啊……嗯啊啊${heart(1)}」`,
+      ); // :12681
+      await era.print(
+        era0('flag:500') === 0 || era0('flag:500') === 2
+          ? `狂王的巨根`
+          : `粗大的假阳具`,
+      ); // :12682-12686
+      await era.printAndWait(
+        `持续地侵犯着${target_name}的蜜穴，${target_name}感受着交媾的快感，发出了甘甜的娇喘。`,
+      ); // :12687
+      if (era0(`abl:${target}:2`) >= 3) {
+        await era.printAndWait(
+          `「哈啊……啊啊……狂王大人${heart(1)} 更用力地侵犯这淫荡的呃小穴吧${heart(1)}」`,
+        ); // :12689
+        await era.printAndWait(
+          `${target_name}被狂王紧紧抱着，激烈地扭动着腰肢抽插着。`,
+        ); // :12690
+        await era.printAndWait(
+          `两人如同恋人一样接吻，交媾，一次次绝顶高潮的画面也被水晶球忠实地记录了下来………`,
+        ); // :12691
+      } else {
+        await era.printAndWait(
+          `「嗯啊……啊啊……我会……用蜜穴努力侍奉……狂王大人的啊啊……${heart(1)}」`,
+        ); // :12693
+        await era.printAndWait(
+          `${target_name}被狂王紧紧抱着、感受着与巨根交媾的痛苦和快感，呻吟着。`,
+        ); // :12694
+        await era.printAndWait(
+          `两人如同恋人一样接吻，交媾，一次次绝顶高潮的画面也被水晶球忠实地记录了下来………`,
+        ); // :12695
+      }
+    } else {
+      await era.printAndWait(`「呜……啊啊！太，太激烈……了，要坏掉了啊啊♪」`); // :12698
+      await era.print(
+        era0('flag:500') === 0 || era0('flag:500') === 2
+          ? `狂王的巨根`
+          : `粗大的假阳具`,
+      ); // :12699-12703
+      await era.printAndWait(
+        `持续地侵犯着${target_name}的蜜穴，${target_name}不住地呻吟着。`,
+      ); // :12704
+      if (era0(`abl:${target}:2`) >= 3) {
+        await era.printAndWait(
+          `「嗯啊……啊啊啊……被狂王大人……侵犯得要坏掉了啊啊♪」`,
+        ); // :12706
+        await era.printAndWait(
+          `${target_name}在狂王的怀抱里一次次绝顶高潮的画面也被水晶球忠实地记录了下来……`,
+        ); // :12707
+      } else {
+        await era.printAndWait(`「嗯啊……啊啊……狂王大人啊啊啊♪」`); // :12709
+        await era.printAndWait(
+          `${target_name}在狂王的怀抱里一次次绝顶高潮的画面也被水晶球忠实地记录了下来……`,
+        ); // :12710
+      }
+    }
+    chara(target).kojo.NTR_654 = 1; // :12713 CFLAG:654
+  } else if (p === 5) {
+    if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      await era.printAndWait(
+        `「哈……哈啊……${heart(1)} 还要${heart(1)} 还想要更多${heart(1)} 嗯啊……啊啊啊${heart(1)}」`,
+      ); // :12717
+      await era.printAndWait(
+        `被男人排着队轮番侵犯着蜜穴，肛门和嘴巴的${target_name}，完全沉浸在乱交的快感之中。`,
+      ); // :12718
+      await era.printAndWait(
+        `「${target_name}是大家的性奴便器……请尽情地使用${target_name}吧${heart(1)} …肛门也好，蜜穴也好，嘴巴也好…请不用客气${heart(1)}」`,
+      ); // :12719
+    } else {
+      await era.printAndWait(`「呜……呜啊啊……这样……太激烈了啊♪ 嗯啊……啊啊♪」`); // :12721
+      await era.print(`${target_name}的蜜穴和肛门`); // :12722
+      await era.print(
+        era0('flag:500') === 0 || era0('flag:500') === 2
+          ? `被不同的阴茎持续侵犯着，精液一次次注入又漏出…`
+          : `被假阳具持续地侵犯着，爱液不住地渗出……`,
+      ); // :12723-12727
+    }
+    chara(target).kojo.NTR_655 = 1; // :12729 CFLAG:655
+  } else if (p === 6) {
+    if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      await era.printAndWait(
+        `「${target_name}是下贱的公用肉便器，请大家尽情地使用吧」`,
+      ); // :12733
+      await era.printAndWait(
+        `${target_name}光着身子趴在地上，对着围观的男人们说道。`,
+      ); // :12734
+      await era.printAndWait(
+        `「嘴巴小穴也好，蜜穴和肛门也好……所有的地方都请大家——呜啊……这样就插进嘴里……！？唔呣……唔呣……」`,
+      ); // :12735
+      await era.printAndWait(
+        `第一个男人抓着${target_name}的头发，迫不及待的将阴茎插进了${target_name}的嘴里，开始抽插起来，每次都插到喉咙深处。`,
+      ); // :12736
+      await era.printAndWait(
+        `${target_name}作为肉便器服侍众人的新一天又开始………`,
+      ); // :12737
+    } else {
+      await era.printAndWait(
+        `「我，我是……下贱的肉便器，请大家……呜呜……这种话……说不出口啊啊！」`,
+      ); // :12739
+      await era.printAndWait(
+        `${target_name}话还没说完，就被下级兵士按在地上，持续侵犯着蜜穴，肛门和嘴巴……`,
+      ); // :12740
+    }
+    chara(target).kojo.NTR_656 = 1; // :12742 CFLAG:656
+  } else if (p === 7) {
+    if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      await era.printAndWait(
+        `「我会好好侍奉狂王大人的……所以，请不要抛弃我${heart(1)}」`,
+      ); // :12746
+      await era.printAndWait(`${target_name}边用身体侍奉着狂王边请求着。`); // :12747
+      await era.printAndWait(
+        `「魔王什么的……根本比不上狂王大人，让我一直呆在你的身边吧…${heart(1)}」`,
+      ); // :12748
+      await era.printAndWait(
+        `水晶球忠实的记录下了${target_name}的话音和侍奉狂王时发出的甘甜的喘息……`,
+      ); // :12749
+    } else {
+      await era.printAndWait(
+        `「狂王大人……让人家……好好侍奉你吧……什么样的服务都可以的哦…♪」`,
+      ); // :12751
+      await era.printAndWait(
+        `${target_name}被狂王摸着头，露出了幸福的笑容，撒娇着将手伸向了狂王的胯下。`,
+      ); // :12752
+      await era.printAndWait(
+        `水晶球忠实的记录下了${target_name}侍奉狂王的样子……`,
+      ); // :12753
+    }
+    chara(target).kojo.NTR_657 = 1; // :12755 CFLAG:657
+  } else if (p === 20) {
+    if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
+      if (chara(target).event.妊娠相手 === 1) {
+        await era.printAndWait(
+          `「还，还给我啊……那是我和魔王大人的孩子……啊啊啊……」`,
+        ); // :12761
+        await era.printAndWait(
+          `${target_name}与${player_name}诞下的孩子被观众们当做玩物一样传递观赏着。`,
+        ); // :12762
+        await era.printAndWait(
+          `受到这种刺激，大概再也无法以正常的状态回去了………`,
+        ); // :12763
+      } else {
+        await era.printAndWait(`「要……要在大家面前……公开生孩子了……」`); // :12765
+        await era.printAndWait(
+          `${target_name}的视线通过水晶球，望向${player_name}，边呻吟着说道。`,
+        ); // :12766
+        await era.printAndWait(
+          `「今后……也会努力为狂王大人生小宝宝的${heart(1)}」`,
+        ); // :12767
+      }
+    } else {
+      await era.printAndWait(`「要……要在大家面前……公开生宝宝了……」`); // :12770
+      await era.printAndWait(
+        `呆呆的${target_name}在狂王的耳语下又继续对着水晶球说着。`,
+      ); // :12771
+      await era.printAndWait(
+        `「今，今后也会生下更多不同种类的宝宝的……请魔王大人期待吧……」`,
+      ); // :12772
+    }
+  }
+
+  return 0; // :12776
+}
+
 kojo_message_com_family.register(11, kojo_message_com_11);
 kojo_message_palamcng_family.register(11, kojo_message_palamcng_11);
 kojo_message_markcng_family.register(11, kojo_message_markcng_11);
@@ -24373,6 +24667,7 @@ ryouzyoku_after_kojo_family.register(11, dungeon_ryouzyoku_after_k11);
 benki_koujo_family.register(11, benki_koujo_k11);
 dungeon_victory_family.register(11, dungeon_victory_k11);
 dungeon_attack_family.register(11, dungeon_attack_k11);
+ntr_koujo_family.register(11, ntr_koujo_k11);
 
 module.exports = {
   STUBBED_CALLS,
@@ -24385,5 +24680,6 @@ module.exports = {
   kojo_message_com_11,
   kojo_message_markcng_11,
   kojo_message_palamcng_11,
+  ntr_koujo_k11,
   self_kojo_k11,
 };
