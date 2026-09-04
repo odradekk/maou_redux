@@ -11650,6 +11650,296 @@ async function kojo_message_com_11(rand) {
     return 0; // :6261
   } // :6262
 
+  // :6268-6404 SELECTCOM 44（绳 CFLAG:345 / CFLAG:385）
+  if (era_flag.selectcom === 44 && era0(`tequip:${target}:44`) !== 0) {
+    if (kojo.绳子 === 0) {
+      // :6270
+
+      if (assi_mao) {
+        // :6272
+        await era.printAndWait(
+          `『姐姐这样的身材绑起来才好看，这淫乱的胸部，被绳子一勒看上去更大了呢♪』`,
+        ); // :6273
+        await era.printAndWait(`「勒……勒得太紧了……稍微放松一点不行吗……」`); // :6274
+        await era.printAndWait(`『想得美，这可不是过家家哦姐姐』`); // :6275
+      } else {
+        // :6276
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :6278
+          await era.printAndWait(
+            `「把人家捆绑起来，是想做什么呢魔王大人${heart(1)}」`,
+          ); // :6279
+          await era.printAndWait(
+            `${target_name}舔着嘴唇，配合地让${player_name}将自己的身体束缚起来……`,
+          ); // :6280
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :6282
+          await era.printAndWait(
+            `「魔，魔王大人……请不要绑得那么紧……可以吗，人家……会好好配合的！」`,
+          ); // :6283
+          await era.printAndWait(
+            `被${player_name}用绳子粗暴地捆住了手脚和身体，${target_name}发出了吃痛的呻吟……`,
+          ); // :6284
+        } else {
+          // :6286
+          await era.printAndWait(
+            `「绑，绑成这个样子……有什么意义！好，好痛啊！」`,
+          ); // :6287
+          await era.printAndWait(
+            `${target_name}痛苦的呻吟被完全无视了，绳子一圈圈地将她牢牢捆成了魔王想要的造型……`,
+          ); // :6288
+        } // :6289
+      } // :6290
+      // CFLAG:TARGET:345  = 1（变量语义：CFLAG 族，TARGET:345） // :6291
+      kojo.绳子 = 1; // :6291
+      return 0; // :6292
+    } else {
+      // :6294
+
+      if (assi_mao) {
+        // :6296
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.绳子 <= 8 || game.kojo.口上开关 === 2)
+        ) {
+          // :6298
+          await era.printAndWait(
+            `『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』`,
+          ); // :6299
+          await era.printAndWait(
+            `「没，没有啦……哪里有兴奋啦${heart(1)} 嗯啊啊」`,
+          ); // :6300
+          await era.printAndWait(
+            `『什么，原来已经发情了呢，被绳子一摩擦下面就这么湿了！居然连我都骗过去了，真是变态受虐狂姐姐！』`,
+          ); // :6301
+          await era.printAndWait(
+            `${player_name}哼笑着，继续用绳子将${target_name}的四肢反绑起来，吊在调教室中间……`,
+          ); // :6302
+          // CFLAG:TARGET:345  = 9（变量语义：CFLAG 族，TARGET:345） // :6303
+          kojo.绳子 = 9; // :6303
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.绳子 <= 7 || game.kojo.口上开关 === 2)
+        ) {
+          // :6305
+          await era.printAndWait(
+            `『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』`,
+          ); // :6306
+          await era.printAndWait(`「感觉什么的……才没有呢……哈啊${heart(1)}」`); // :6307
+          // CFLAG:TARGET:345  = 8（变量语义：CFLAG 族，TARGET:345） // :6308
+          kojo.绳子 = 8; // :6308
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.绳子 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :6310
+          await era.printAndWait(
+            `『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』`,
+          ); // :6311
+          await era.printAndWait(`「好，好痛……轻一点啦，${player_name}」`); // :6312
+          // CFLAG:TARGET:345  = 7（变量语义：CFLAG 族，TARGET:345） // :6313
+          kojo.绳子 = 7; // :6313
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.绳子 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :6315
+          await era.printAndWait(
+            `『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』`,
+          ); // :6316
+          await era.printAndWait(`「呜……呜啊……才，才没什么兴奋呢……！啊啊……」`); // :6317
+          await era.printAndWait(
+            `『都舒服成这个样子了还嘴硬，被绳结摩擦着阴蒂，那么舒服吗♪』`,
+          ); // :6318
+          await era.printAndWait(
+            `「啊……嗯啊啊……不，不要这样玩了啦${heart(1)}！」`,
+          ); // :6319
+          // CFLAG:TARGET:345  = 6（变量语义：CFLAG 族，TARGET:345） // :6320
+          kojo.绳子 = 6; // :6320
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.绳子 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :6322
+          await era.printAndWait(
+            `『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』`,
+          ); // :6323
+          await era.printAndWait(`「什……什么啦……哪有兴奋什么的！」`); // :6324
+          // CFLAG:TARGET:345  = 5（变量语义：CFLAG 族，TARGET:345） // :6325
+          kojo.绳子 = 5; // :6325
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.绳子 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :6327
+          await era.printAndWait(
+            `『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』`,
+          ); // :6328
+          await era.printAndWait(`「绳子……太紧了……只感觉痛而已啦！」`); // :6329
+          // CFLAG:TARGET:345  = 4（变量语义：CFLAG 族，TARGET:345） // :6330
+          kojo.绳子 = 4; // :6330
+        } else if (
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.绳子 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :6332
+          await era.printAndWait(
+            `『姐姐的身体，真是很适合被捆绑呢，胸部被这么一勒，显得更大了呢，啧啧啧』`,
+          ); // :6333
+          await era.printAndWait(`「不，不要……说这种话了……快点放姐姐下来！」`); // :6334
+          // CFLAG:TARGET:345  = 3（变量语义：CFLAG 族，TARGET:345） // :6335
+          kojo.绳子 = 3; // :6335
+        } else if (kojo.绳子 <= 1 || game.kojo.口上开关 === 2) {
+          // :6337
+          await era.printAndWait(
+            `『姐姐，不要抵抗了，老老实实被吊起来，接受我和魔王大人的疼爱吧』`,
+          ); // :6338
+          await era.printAndWait(`「放，放开我啊啊！」`); // :6339
+          // CFLAG:TARGET:345  = 2（变量语义：CFLAG 族，TARGET:345） // :6340
+          kojo.绳子 = 2; // :6340
+        } // :6341
+      } else {
+        // :6342
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.绳子 <= 8 || game.kojo.口上开关 === 2)
+        ) {
+          // :6344
+          await era.printAndWait(
+            `「哈啊……哈啊${heart(1)} 被这样绑起来侵犯的感觉${heart(1)} 啊啊……有点等不及了${heart(1)}」`,
+          ); // :6345
+          await era.printAndWait(
+            `被${player_name}用绳子捆住四肢，展露着下体的${target_name}只能一扭一扭地呻吟着，渴求着侵犯和调教……`,
+          ); // :6346
+          // CFLAG:TARGET:345  = 9（变量语义：CFLAG 族，TARGET:345） // :6347
+          kojo.绳子 = 9; // :6347
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.绳子 <= 7 || game.kojo.口上开关 === 2)
+        ) {
+          // :6349
+          await era.printAndWait(
+            `「啊啊……来吧，魔王大人……就这样把人家侵犯得……乱七八糟吧，反正人家动不了了呢${heart(1)}」`,
+          ); // :6350
+          await era.printAndWait(
+            `被绳子捆住四肢，展露着下体的${target_name}向${player_name}露出诱惑的媚笑`,
+          ); // :6351
+          // CFLAG:TARGET:345  = 8（变量语义：CFLAG 族，TARGET:345） // :6352
+          kojo.绳子 = 8; // :6352
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.绳子 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :6354
+          await era.printAndWait(
+            `「哎哎……人家明明什么都会听魔王大人的，为什么还要绑成这样呢！」`,
+          ); // :6355
+          await era.printAndWait(
+            `${target_name}吐着舌头，被${player_name}捆住了四肢，展露着下体……`,
+          ); // :6356
+          // CFLAG:TARGET:345  = 7（变量语义：CFLAG 族，TARGET:345） // :6357
+          kojo.绳子 = 7; // :6357
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 5 &&
+          (kojo.绳子 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :6359
+          await era.printAndWait(
+            `「魔，魔王大人……想对${target_name}做怎样的事情……都可以${heart(1)} 啊啊……绳结，摩擦到阴蒂了……嗯啊啊${heart(1)}」`,
+          ); // :6360
+          await era.printAndWait(
+            `${player_name}用绳子捆住四肢，展露着下体的${target_name}扭动着身体，感受着绳子摩擦着身体的敏感点……`,
+          ); // :6361
+          // CFLAG:TARGET:345  = 6（变量语义：CFLAG 族，TARGET:345） // :6362
+          kojo.绳子 = 6; // :6362
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.绳子 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :6364
+          await era.printAndWait(`「哼啊……魔王大人……这么想虐待人家吗♪」`); // :6365
+          await era.printAndWait(
+            `被${player_name}用绳子捆住四肢${target_name}顺从地展露着下体……`,
+          ); // :6366
+          // CFLAG:TARGET:345  = 5（变量语义：CFLAG 族，TARGET:345） // :6367
+          kojo.绳子 = 5; // :6367
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.绳子 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :6369
+          await era.printAndWait(
+            `「哎……哎……有，有点痛……不过既然是魔王大人的要求……」`,
+          ); // :6370
+          await era.printAndWait(
+            `被${player_name}用绳子捆住四肢、${target_name}忍耐着肌肤，还有双乳紧勒的痛楚……`,
+          ); // :6371
+          // CFLAG:TARGET:345  = 4（变量语义：CFLAG 族，TARGET:345） // :6372
+          kojo.绳子 = 4; // :6372
+        } else if (
+          chara(target).system.抖M气质 >= 3 &&
+          (kojo.绳子 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :6374
+          await era.printAndWait(`「嗯啊……还，还是有点痛……但，但是………」`); // :6375
+          await era.printAndWait(
+            `${target_name}痛得眼睛都湿润了，但却顺从地让${player_name}继续捆缚着自己的身体……`,
+          ); // :6376
+          // CFLAG:TARGET:345  = 3（变量语义：CFLAG 族，TARGET:345） // :6377
+          kojo.绳子 = 3; // :6377
+        } else if (kojo.绳子 <= 1 || game.kojo.口上开关 === 2) {
+          // :6379
+          await era.printAndWait(`「放，放开我啊啊……捆绑什么的，超讨厌啊！」`); // :6380
+          await era.printAndWait(
+            `无视${target_name}的痛苦呻吟和挣扎、${player_name}继续用绳子一圈圈束缚着${target_name}诱人的身体……`,
+          ); // :6381
+          // CFLAG:TARGET:345  = 2（变量语义：CFLAG 族，TARGET:345） // :6382
+          kojo.绳子 = 2; // :6382
+        } // :6383
+      } // :6384
+      return 0; // :6385
+    } // :6386
+  } else if (era_flag.selectcom === 44 && era0(`tequip:${target}:44`) === 0) {
+    // :6388
+
+    if (
+      era.get(`talent:${target}:76`) === 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :6390
+      await era.printAndWait(`「哎……啊……这就结束了么……其实，感觉还挺棒的…」`); // :6391
+      // CFLAG:385  = 2（变量语义：CFLAG 族，385） // :6392
+      kojo.绳子着脱 = 2; // :6392
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.绳子着脱 < 2 || game.kojo.口上开关 === 2)
+    ) {
+      // :6394
+      await era.printAndWait(
+        `「啊啊……皮肤上的勒痕……要很久才能消掉呢……不过只要魔王大人高兴就好…」`,
+      ); // :6395
+      // CFLAG:385  = 2（变量语义：CFLAG 族，385） // :6396
+      kojo.绳子着脱 = 2; // :6396
+    } else if (kojo.绳子着脱 < 1 || game.kojo.口上开关 === 2) {
+      // :6398
+      await era.printAndWait(`「终……终于……能轻松一些了」`); // :6399
+      // CFLAG:385  = 1（变量语义：CFLAG 族，385） // :6400
+      kojo.绳子着脱 = 1; // :6400
+    } // :6401
+    return 0; // :6402
+  } // :6403
+
   return 0;
 }
 

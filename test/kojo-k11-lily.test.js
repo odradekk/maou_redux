@@ -6653,3 +6653,95 @@ test('COM43 取下：淫乱、爱慕与其余三档推进', async () => {
     assert.equal(fixture.store.get(`cflag:${LILY}:380`), item.expected);
   }
 });
+
+// —— SELECTCOM 44（绳 CFLAG:345 / CFLAG:385）——
+
+test('COM44 装上初めて：助手玛奥与非助手玛奥三档', async () => {
+  const cases = [
+    {
+      assi: true,
+      expected:
+        '『姐姐这样的身材绑起来才好看，这淫乱的胸部，被绳子一勒看上去更大了呢♪』',
+    },
+    { talent: 76, expected: '「把人家捆绑起来，是想做什么呢魔王大人♡」' },
+    {
+      talent: 85,
+      expected:
+        '「魔，魔王大人……请不要绑得那么紧……可以吗，人家……会好好配合的！」',
+    },
+    { expected: '「绑，绑成这个样子……有什么意义！好，好痛啊！」' },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      f.store.set(`tequip:${LILY}:44`, 1);
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 44);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.text_lines()[0], item.expected);
+    assert.equal(fixture.store.get(`cflag:${LILY}:345`), 1);
+  }
+});
+
+for (const [label, assistant] of [
+  ['助手玛奥', true],
+  ['非助手玛奥', false],
+]) {
+  test(`COM44 装上二回目：${label}八档推进`, async () => {
+    const cases = [
+      { talent: 76, abl: 5, expected: 9 },
+      { talent: 76, abl: 3, expected: 8 },
+      { talent: 76, expected: 7 },
+      { talent: 85, abl: 5, expected: 6 },
+      { talent: 85, abl: 3, expected: 5 },
+      { talent: 85, expected: 4 },
+      { abl: 3, expected: 3 },
+      { expected: 2 },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        f.store.set('flag:7', 2);
+        f.store.set(`tequip:${LILY}:44`, 1);
+        f.store.set(`cflag:${LILY}:345`, 1);
+        if (assistant) {
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+        if (item.talent !== undefined)
+          f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        if (item.abl !== undefined) f.store.set(`abl:${LILY}:21`, item.abl);
+      }, 44);
+      if (assistant) {
+        fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+        fixture.era.addCharacter(MAO);
+      }
+      await speak_com11(fixture, seq_rand());
+      assert.equal(fixture.store.get(`cflag:${LILY}:345`), item.expected);
+    }
+  });
+}
+
+test('COM44 取下：淫乱、爱慕与其余三档推进', async () => {
+  const cases = [
+    { talent: 76, expected: 2 },
+    { talent: 85, expected: 2 },
+    { expected: 1 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 2);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 44);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.store.get(`cflag:${LILY}:385`), item.expected);
+  }
+});

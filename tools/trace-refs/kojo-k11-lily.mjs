@@ -19703,6 +19703,180 @@ export const FILES = [
         ['6258', 'PRINTFORMW 「呼……呼…」'],
         ['6259', 'CFLAG:380 = 1'],
       ].map(([ref, line]) => exact_line(ref, line)),
+      ...[
+        ['6268', 'IF SELECTCOM == 44 && TEQUIP:44'],
+        [
+          '6273',
+          'PRINTFORMW 『姐姐这样的身材绑起来才好看，这淫乱的胸部，被绳子一勒看上去更大了呢♪』',
+        ],
+        ['6274', 'PRINTFORMW 「勒……勒得太紧了……稍微放松一点不行吗……」'],
+        ['6275', 'PRINTFORMW 『想得美，这可不是过家家哦姐姐』'],
+        [
+          '6279',
+          'PRINTFORMW 「把人家捆绑起来，是想做什么呢魔王大人%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '6280',
+          'PRINTFORMW %SAVESTR:TARGET%舔着嘴唇，配合地让%SAVESTR:PLAYER%将自己的身体束缚起来……',
+        ],
+        [
+          '6283',
+          'PRINTFORMW 「魔，魔王大人……请不要绑得那么紧……可以吗，人家……会好好配合的！」',
+        ],
+        [
+          '6284',
+          'PRINTFORMW 被%SAVESTR:PLAYER%用绳子粗暴地捆住了手脚和身体，%SAVESTR:TARGET%发出了吃痛的呻吟……',
+        ],
+        ['6287', 'PRINTFORMW 「绑，绑成这个样子……有什么意义！好，好痛啊！」'],
+        [
+          '6288',
+          'PRINTFORMW %SAVESTR:TARGET%痛苦的呻吟被完全无视了，绳子一圈圈地将她牢牢捆成了魔王想要的造型……',
+        ],
+        ['6291', 'CFLAG:TARGET:345 = 1'],
+        [
+          '6299',
+          'PRINTFORMW 『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』',
+        ],
+        [
+          '6300',
+          'PRINTFORMW 「没，没有啦……哪里有兴奋啦%UNICODE(0x2661) *1% 嗯啊啊」',
+        ],
+        [
+          '6301',
+          'PRINTFORMW 『什么，原来已经发情了呢，被绳子一摩擦下面就这么湿了！居然连我都骗过去了，真是变态受虐狂姐姐！』',
+        ],
+        [
+          '6302',
+          'PRINTFORMW %SAVESTR:PLAYER%哼笑着，继续用绳子将%SAVESTR:TARGET%的四肢反绑起来，吊在调教室中间……',
+        ],
+        ['6303', 'CFLAG:TARGET:345 = 9'],
+        [
+          '6306',
+          'PRINTFORMW 『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』',
+        ],
+        [
+          '6307',
+          'PRINTFORMW 「感觉什么的……才没有呢……哈啊%UNICODE(0x2661) *1%」',
+        ],
+        ['6308', 'CFLAG:TARGET:345 = 8'],
+        [
+          '6311',
+          'PRINTFORMW 『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』',
+        ],
+        ['6312', 'PRINTFORMW 「好，好痛……轻一点啦，%SAVESTR:PLAYER%」'],
+        ['6313', 'CFLAG:TARGET:345 = 7'],
+        [
+          '6316',
+          'PRINTFORMW 『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』',
+        ],
+        ['6317', 'PRINTFORMW 「呜……呜啊……才，才没什么兴奋呢……！啊啊……」'],
+        [
+          '6318',
+          'PRINTFORMW 『都舒服成这个样子了还嘴硬，被绳结摩擦着阴蒂，那么舒服吗♪』',
+        ],
+        [
+          '6319',
+          'PRINTFORMW 「啊……嗯啊啊……不，不要这样玩了啦%UNICODE(0x2661) *1%！」',
+        ],
+        ['6320', 'CFLAG:TARGET:345 = 6'],
+        [
+          '6323',
+          'PRINTFORMW 『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』',
+        ],
+        ['6324', 'PRINTFORMW 「什……什么啦……哪有兴奋什么的！」'],
+        ['6325', 'CFLAG:TARGET:345 = 5'],
+        [
+          '6328',
+          'PRINTFORMW 『在魔王大人面前被捆绑，姐姐是不是更加兴奋了呢♪』',
+        ],
+        ['6329', 'PRINTFORMW 「绳子……太紧了……只感觉痛而已啦！」'],
+        ['6330', 'CFLAG:TARGET:345 = 4'],
+        [
+          '6333',
+          'PRINTFORMW 『姐姐的身体，真是很适合被捆绑呢，胸部被这么一勒，显得更大了呢，啧啧啧』',
+        ],
+        ['6334', 'PRINTFORMW 「不，不要……说这种话了……快点放姐姐下来！」'],
+        ['6335', 'CFLAG:TARGET:345 = 3'],
+        [
+          '6338',
+          'PRINTFORMW 『姐姐，不要抵抗了，老老实实被吊起来，接受我和魔王大人的疼爱吧』',
+        ],
+        ['6339', 'PRINTFORMW 「放，放开我啊啊！」'],
+        ['6340', 'CFLAG:TARGET:345 = 2'],
+        [
+          '6345',
+          'PRINTFORMW 「哈啊……哈啊%UNICODE(0x2661) *1% 被这样绑起来侵犯的感觉%UNICODE(0x2661) *1% 啊啊……有点等不及了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '6346',
+          'PRINTFORMW 被%SAVESTR:PLAYER%用绳子捆住四肢，展露着下体的%SAVESTR:TARGET%只能一扭一扭地呻吟着，渴求着侵犯和调教……',
+        ],
+        ['6347', 'CFLAG:TARGET:345 = 9'],
+        [
+          '6350',
+          'PRINTFORMW 「啊啊……来吧，魔王大人……就这样把人家侵犯得……乱七八糟吧，反正人家动不了了呢%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '6351',
+          'PRINTFORMW 被绳子捆住四肢，展露着下体的%SAVESTR:TARGET%向%SAVESTR:PLAYER%露出诱惑的媚笑',
+        ],
+        ['6352', 'CFLAG:TARGET:345 = 8'],
+        [
+          '6355',
+          'PRINTFORMW 「哎哎……人家明明什么都会听魔王大人的，为什么还要绑成这样呢！」',
+        ],
+        [
+          '6356',
+          'PRINTFORMW %SAVESTR:TARGET%吐着舌头，被%SAVESTR:PLAYER%捆住了四肢，展露着下体……',
+        ],
+        ['6357', 'CFLAG:TARGET:345 = 7'],
+        [
+          '6360',
+          'PRINTFORMW 「魔，魔王大人……想对%SAVESTR:TARGET%做怎样的事情……都可以%UNICODE(0x2661) *1% 啊啊……绳结，摩擦到阴蒂了……嗯啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '6361',
+          'PRINTFORMW %SAVESTR:PLAYER%用绳子捆住四肢，展露着下体的%SAVESTR:TARGET%扭动着身体，感受着绳子摩擦着身体的敏感点……',
+        ],
+        ['6362', 'CFLAG:TARGET:345 = 6'],
+        ['6365', 'PRINTFORMW 「哼啊……魔王大人……这么想虐待人家吗♪」'],
+        [
+          '6366',
+          'PRINTFORMW 被%SAVESTR:PLAYER%用绳子捆住四肢%SAVESTR:TARGET%顺从地展露着下体……',
+        ],
+        ['6367', 'CFLAG:TARGET:345 = 5'],
+        [
+          '6370',
+          'PRINTFORMW 「哎……哎……有，有点痛……不过既然是魔王大人的要求……」',
+        ],
+        [
+          '6371',
+          'PRINTFORMW 被%SAVESTR:PLAYER%用绳子捆住四肢、%SAVESTR:TARGET%忍耐着肌肤，还有双乳紧勒的痛楚……',
+        ],
+        ['6372', 'CFLAG:TARGET:345 = 4'],
+        ['6375', 'PRINTFORMW 「嗯啊……还，还是有点痛……但，但是………」'],
+        [
+          '6376',
+          'PRINTFORMW %SAVESTR:TARGET%痛得眼睛都湿润了，但却顺从地让%SAVESTR:PLAYER%继续捆缚着自己的身体……',
+        ],
+        ['6377', 'CFLAG:TARGET:345 = 3'],
+        ['6380', 'PRINTFORMW 「放，放开我啊啊……捆绑什么的，超讨厌啊！」'],
+        [
+          '6381',
+          'PRINTFORMW 无视%SAVESTR:TARGET%的痛苦呻吟和挣扎、%SAVESTR:PLAYER%继续用绳子一圈圈束缚着%SAVESTR:TARGET%诱人的身体……',
+        ],
+        ['6382', 'CFLAG:TARGET:345 = 2'],
+        ['6388', 'ELSEIF SELECTCOM == 44 && TEQUIP:44 == 0'],
+        ['6391', 'PRINTFORMW 「哎……啊……这就结束了么……其实，感觉还挺棒的…」'],
+        ['6392', 'CFLAG:385 = 2'],
+        [
+          '6395',
+          'PRINTFORMW 「啊啊……皮肤上的勒痕……要很久才能消掉呢……不过只要魔王大人高兴就好…」',
+        ],
+        ['6396', 'CFLAG:385 = 2'],
+        ['6399', 'PRINTFORMW 「终……终于……能轻松一些了」'],
+        ['6400', 'CFLAG:385 = 1'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];
