@@ -24907,6 +24907,250 @@ export const FILES = [
           '8804',
           'PRINTFORMW %SAVESTR:TARGET%只能拼命忍耐着肛门被侵犯的不适，同时竭力吸吮着%SAVESTR:MASTER%的阴茎……直到两人满意为止',
         ],
+        ['8818', 'IF SELECTCOM == 65'],
+        [
+          '8830',
+          'PRINTFORMW 「哎哎？原来你还没有被魔王大人疼爱过呀……那就让姐姐来帮你变成真正的女人吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8831',
+          'PRINTFORMW 『不，不要啊……是想留给魔王大人的啊啊……绝对不会原谅你的！！！』',
+        ],
+        [
+          '8832',
+          'PRINTFORMW %SAVESTR:TARGET%听从着你的命令，嬉笑着抱住%SAVESTR:PLAYER%，夺走了妹妹的处女。',
+        ],
+        [
+          '8833',
+          'PRINTFORMW 激烈的交合下，%SAVESTR:PLAYER%的蜜穴里流出的纯洁的处女之血四溅到了地上，床上。',
+        ],
+        [
+          '8834',
+          'PRINTFORMW 「身体放松，再放松一些%UNICODE(0x2661) *1% 马上就会舒服起来的%UNICODE(0x2661) *1%」',
+        ],
+        ['8835', 'PRINTFORMW 『呜啊啊！好痛！好痛！温柔一点啊啊！』'],
+        ['8838', 'PRINTFORMW 『呜……呜啊……姐姐，慢一点，有点痛……！』'],
+        ['8839', 'PRINTFORMW 「咦咦？难道……%SAVESTR:PLAYER%你是第一次？」'],
+        [
+          '8840',
+          'PRINTFORMW 『是啊……姐姐，虽说本来是想留给魔王大人的%UNICODE(0x2661) *1% 不过给姐姐的话我也不介意啦！』',
+        ],
+        [
+          '8841',
+          'PRINTFORMW 这个意外的发现让%SAVESTR:TARGET%有些震撼，交合的动作也停了下来。',
+        ],
+        [
+          '8842',
+          'PRINTFORMW 但是%SAVESTR:PLAYER%却撒娇似地环住了姐姐的脖子，坐在%SAVESTR:TARGET%的腿上，自己动起了腰',
+        ],
+        [
+          '8843',
+          'PRINTFORMW 『没关系的姐姐，尽情侵犯我吧！因为人家最喜欢姐姐了啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8844',
+          'PRINTFORMW 「呜啊啊！对不起，%SAVESTR:PLAYER%！我也最喜欢你了！」',
+        ],
+        [
+          '8845',
+          'PRINTFORMW 从%SAVESTR:PLAYER%的蜜穴里慢慢淌出了纯洁的处女之血……',
+        ],
+        [
+          '8848',
+          'PRINTFORMW 『啊啊……被，被姐姐夺去处女了啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8849',
+          'PRINTFORMW 「呜呜，对不起，对不起，%SAVESTR:PLAYER%……真的……呜呜呜」',
+        ],
+        [
+          '8850',
+          'PRINTFORMW 在%SAVESTR:MASTER%的命令下，%SAVESTR:TARGET%，哭泣着侵犯了自己妹妹，夺去了%SAVESTR:PLAYER%的处女身。',
+        ],
+        [
+          '8851',
+          'PRINTFORMW 极度的屈辱，痛苦与内疚让她眼泪不住地往下流，而%SAVESTR:MASTER%抓着她的腰，强迫她继续着。',
+        ],
+        [
+          '8852',
+          'PRINTFORMW 从%SAVESTR:PLAYER%的蜜穴里慢慢淌出了纯洁的处女之血……',
+        ],
+        [
+          '8857',
+          'PRINTFORMW 「哎哎……差点都忘记%SAVESTR:PLAYER%已经不再是女孩子了呢！那就不用客气了呢！」',
+        ],
+        [
+          '8858',
+          'PRINTFORMW %SAVESTR:TARGET%兴奋地扭动着腰，尽情地侵犯着%SAVESTR:PLAYER%。',
+        ],
+        [
+          '8859',
+          'PRINTFORMW 「哎呀呀，被姐姐侵犯也会这么有感觉呢，不过反正都不是处女了，也不奇怪！」',
+        ],
+        [
+          '8860',
+          'PRINTFORMW 『呜……啊啊……姐姐好棒……一点都不输给男人啊啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8861',
+          'PRINTFORMW 已经被充分调教过的%SAVESTR:PLAYER%在如此激烈的交合下，感受到了无上的快感。',
+        ],
+        ['8862', 'PRINTFORMW 这场姐妹的乱伦盛宴让你大饱眼福……'],
+        ['8865', 'PRINTFORMW 『哎呀呀……姐姐技术很生疏呢%UNICODE(0x2661) *1%』'],
+        [
+          '8866',
+          'PRINTFORMW %SAVESTR:PLAYER%被%SAVESTR:TARGET%抱在怀里，很快就适应了姐姐腰部动作的节奏，甚至自己扭起腰来。',
+        ],
+        ['8867', 'PRINTFORMW 「…为什么……会这么熟练的？」'],
+        [
+          '8868',
+          'PRINTFORMW 『嘿嘿……是因为已经被魔王大人用各种方式调教过了呢%UNICODE(0x2661) *1% 』',
+        ],
+        [
+          '8869',
+          'PRINTFORMW %SAVESTR:PLAYER%从容的姿态让%SAVESTR:TARGET%皱起了眉头，但很快就恢复了笑容，加快了抽插的速度。',
+        ],
+        [
+          '8870',
+          'PRINTFORMW 「这样的话会舒服一些吗，%SAVESTR:PLAYER%……嗯啊啊？」',
+        ],
+        ['8871', 'PRINTFORMW 『哈啊……舒服多了……姐姐好棒啊！』'],
+        [
+          '8874',
+          'PRINTFORMW %SAVESTR:TARGET%在你的命令下，不得不开始侵犯自己的妹妹。',
+        ],
+        ['8875', 'PRINTFORMW 「呜呜……对不起，%SAVESTR:PLAYER%，对不起……」'],
+        [
+          '8876',
+          'PRINTFORMW 无法违抗你的命令的%SAVESTR:TARGET%只能泪流满面地扭动着腰。',
+        ],
+        [
+          '8877',
+          'PRINTFORMW 『哎呀呀……姐姐技术不行啊！腰动得这么慢，一点感觉都没有，哼♪』',
+        ],
+        ['8878', 'PRINTFORMW 「可，可是……呜呜呜！」'],
+        [
+          '8879',
+          'PRINTFORMW %SAVESTR:PLAYER%毫无廉耻的态度和语气让%SAVESTR:TARGET%羞得满脸通红，无奈地加快了抽插的速度………',
+        ],
+        ['8883', 'CFLAG:TARGET:366 = 1'],
+        [
+          '8891',
+          'PRINTFORMW 『哈啊……姐姐来吧……我准备好了哦%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8892',
+          'PRINTFORMW %SAVESTR:PLAYER%用四肢趴在床上，让%SAVESTR:TARGET%从后面进入了自己的身体。',
+        ],
+        [
+          '8893',
+          'PRINTFORMW 「嘿嘿，妹妹变这么坦率，姐姐真高兴%UNICODE(0x2661) *1% 接下来就要一直侵犯到高潮为止了哦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8894',
+          'PRINTFORMW 『呜啊……啊啊啊……姐姐好棒%UNICODE(0x2661) *1% 最喜欢姐姐了……最喜欢了啊啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8895',
+          'PRINTFORMW %SAVESTR:TARGET%听到妹妹的夸奖，心满意足地加快了抽插的动作……',
+        ],
+        ['8896', 'CFLAG:TARGET:366 = 9'],
+        [
+          '8899',
+          'PRINTFORMW 「%SAVESTR:PLAYER%乖乖趴着，屁股再翘高一点……对，就是这样……恩恩，姐姐最喜欢坦率的%SAVESTR:PLAYER%了%UNICODE(0x2661) *1%」',
+        ],
+        ['8900', 'PRINTFORMW 『哎哎……这次要稍微温柔一点哦姐姐，不要弄痛我！』'],
+        [
+          '8901',
+          'PRINTFORMW %SAVESTR:TARGET%舔着嘴唇，抓着%SAVESTR:PLAYER%的臀部，一口气贯入到了蜜穴最深处。',
+        ],
+        ['8902', 'PRINTFORMW 『呜……呜啊啊……太深了，都说……温柔一点了啊啊！』'],
+        [
+          '8903',
+          'PRINTFORMW 「这可不是你说了算哦，接下来就要侵犯到%SAVESTR:PLAYER%失神为止了哦，嘿嘿嘿。」',
+        ],
+        ['8904', 'CFLAG:TARGET:366 = 8'],
+        [
+          '8907',
+          'PRINTFORMW 「老实一点啊，%SAVESTR:PLAYER%，不然会很痛的哦%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8908',
+          'PRINTFORMW %SAVESTR:TARGET%舔着嘴唇，开始侵犯妹妹%SAVESTR:PLAYER%幼小而紧致的蜜穴。',
+        ],
+        ['8909', 'PRINTFORMW 『呜……啊啊……姐姐……不，不能再进去了啊啊！』'],
+        [
+          '8910',
+          'PRINTFORMW 「哎呀呀！不好意思……不过呢，我可没打算停下来呀%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '8911',
+          'PRINTFORMW %SAVESTR:TARGET%脸上浮现了兴奋的笑容，继续侵犯着%SAVESTR:PLAYER%……',
+        ],
+        ['8912', 'CFLAG:TARGET:366 = 7'],
+        [
+          '8915',
+          'PRINTFORMW 「嗯啊……%UNICODE(0x2661) *1% 虽然一直喜欢你，但只有这样，%SAVESTR:PLAYER%才会真正变成属于我的了啊啊啊！」',
+        ],
+        ['8916', 'PRINTFORMW 『我，我也最爱姐姐啊%UNICODE(0x2661) *1%』'],
+        [
+          '8917',
+          'PRINTFORMW %SAVESTR:TARGET%和%SAVESTR:PLAYER%两具身躯淫靡的交缠在一起，尽情享受着百合之交的极度快感。',
+        ],
+        ['8918', 'PRINTFORMW 姐妹百合淫靡而甘甜的气味，飘散在调教室的空气中……'],
+        ['8919', 'CFLAG:TARGET:366 = 6'],
+        ['8922', 'PRINTFORMW 「啊啊，姐姐最爱你了，%SAVESTR:PLAYER%♪」'],
+        [
+          '8923',
+          'PRINTFORMW %SAVESTR:TARGET%的眼中泛着爱的光芒，将%SAVESTR:PLAYER%压在自己的身下，侵犯着小小的蜜穴。',
+        ],
+        [
+          '8924',
+          'PRINTFORMW 『说，说什么呢啊姐姐……我，我可是属于魔王大人的呢%UNICODE(0x2661) *1% 不过……姐姐的动作好温柔，好舒服啊啊…%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8925',
+          'PRINTFORMW 「姐姐也很舒服啊，%SAVESTR:PLAYER%，%SAVESTR:PLAYER%……让我们永远在一起吧%UNICODE(0x2661) *1%」',
+        ],
+        ['8926', 'CFLAG:TARGET:366 = 5'],
+        ['8929', 'PRINTFORMW 『呜……啊啊……姐姐的身体……好温暖！』'],
+        [
+          '8930',
+          'PRINTFORMW 「啊啊，%SAVESTR:PLAYER%！%SAVESTR:PLAYER%的身体也是啊！」',
+        ],
+        [
+          '8931',
+          'PRINTFORMW %SAVESTR:TARGET%抱着身下的%SAVESTR:PLAYER%，温和地侵入着妹妹小小的蜜穴……',
+        ],
+        ['8932', 'CFLAG:TARGET:366 = 4'],
+        [
+          '8935',
+          'PRINTFORMW 「对不起，%SAVESTR:PLAYER%…真的对不起……呜呜……姐姐也不知道为什么自己会变成这样！」',
+        ],
+        ['8936', 'PRINTFORMW %SAVESTR:TARGET%道着歉的同时，动作也停了下来。'],
+        [
+          '8937',
+          'PRINTFORMW 『没关系的……姐姐%UNICODE(0x2661) *1% 来吧……侵犯%SAVESTR:PLAYER%吧%UNICODE(0x2661) *1% 因为……%SAVESTR:PLAYER%…最喜欢姐姐了啊！』',
+        ],
+        [
+          '8938',
+          'PRINTFORMW 听到%SAVESTR:PLAYER%呻吟着的回答，%SAVESTR:TARGET%吻着自己的妹妹，重新动起了腰……',
+        ],
+        ['8939', 'CFLAG:TARGET:366 = 3'],
+        [
+          '8942',
+          'PRINTFORMW %SAVESTR:TARGET%在你的命令下，无可奈何地开始侵犯自己的妹妹。',
+        ],
+        ['8943', 'PRINTFORMW 「呜呜……对不起，对不起，%SAVESTR:PLAYER%………」'],
+        [
+          '8944',
+          'PRINTFORMW 『哈啊……姐姐……没关系啦。被姐姐侵犯，%SAVESTR:PLAYER%其实……一点都不介意呀%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '8945',
+          'PRINTFORMW %SAVESTR:TARGET%脸颊上满是屈辱的泪水，动作缓慢地侵犯着自己的妹妹。',
+        ],
+        ['8946', 'CFLAG:TARGET:366 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

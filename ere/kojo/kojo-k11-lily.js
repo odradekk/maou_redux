@@ -17806,6 +17806,299 @@ async function kojo_message_com_11(rand) {
     } // :8813
   } // :8814
 
+  if (era_flag.selectcom === 65) {
+    // :8818
+
+    if (kojo.侵犯助手 === 0) {
+      // :8822
+
+      if (assi_mao) {
+        // :8824
+
+        if (era.get(`cflag:${player}:15`) === 305) {
+          // :8827
+
+          if (era.get(`talent:${target}:76`) === 1) {
+            // :8829
+            await era.printAndWait(
+              `「哎哎？原来你还没有被魔王大人疼爱过呀……那就让姐姐来帮你变成真正的女人吧${heart(1)}」`,
+            ); // :8830
+            await era.printAndWait(
+              `『不，不要啊……是想留给魔王大人的啊啊……绝对不会原谅你的！！！』`,
+            ); // :8831
+            await era.printAndWait(
+              `${target_name}听从着你的命令，嬉笑着抱住${player_name}，夺走了妹妹的处女。`,
+            ); // :8832
+            await era.printAndWait(
+              `激烈的交合下，${player_name}的蜜穴里流出的纯洁的处女之血四溅到了地上，床上。`,
+            ); // :8833
+            await era.printAndWait(
+              `「身体放松，再放松一些${heart(1)} 马上就会舒服起来的${heart(1)}」`,
+            ); // :8834
+            await era.printAndWait(`『呜啊啊！好痛！好痛！温柔一点啊啊！』`); // :8835
+          } else if (era.get(`talent:${target}:85`) === 1) {
+            // :8837
+            await era.printAndWait(`『呜……呜啊……姐姐，慢一点，有点痛……！』`); // :8838
+            await era.printAndWait(
+              `「咦咦？难道……${player_name}你是第一次？」`,
+            ); // :8839
+            await era.printAndWait(
+              `『是啊……姐姐，虽说本来是想留给魔王大人的${heart(1)} 不过给姐姐的话我也不介意啦！』`,
+            ); // :8840
+            await era.printAndWait(
+              `这个意外的发现让${target_name}有些震撼，交合的动作也停了下来。`,
+            ); // :8841
+            await era.printAndWait(
+              `但是${player_name}却撒娇似地环住了姐姐的脖子，坐在${target_name}的腿上，自己动起了腰`,
+            ); // :8842
+            await era.printAndWait(
+              `『没关系的姐姐，尽情侵犯我吧！因为人家最喜欢姐姐了啊啊${heart(1)}』`,
+            ); // :8843
+            await era.printAndWait(
+              `「呜啊啊！对不起，${player_name}！我也最喜欢你了！」`,
+            ); // :8844
+            await era.printAndWait(
+              `从${player_name}的蜜穴里慢慢淌出了纯洁的处女之血……`,
+            ); // :8845
+          } else {
+            // :8847
+            await era.printAndWait(
+              `『啊啊……被，被姐姐夺去处女了啊啊${heart(1)}』`,
+            ); // :8848
+            await era.printAndWait(
+              `「呜呜，对不起，对不起，${player_name}……真的……呜呜呜」`,
+            ); // :8849
+            await era.printAndWait(
+              `在${master_name}的命令下，${target_name}，哭泣着侵犯了自己妹妹，夺去了${player_name}的处女身。`,
+            ); // :8850
+            await era.printAndWait(
+              `极度的屈辱，痛苦与内疚让她眼泪不住地往下流，而${master_name}抓着她的腰，强迫她继续着。`,
+            ); // :8851
+            await era.printAndWait(
+              `从${player_name}的蜜穴里慢慢淌出了纯洁的处女之血……`,
+            ); // :8852
+          } // :8853
+        } else {
+          // :8854
+
+          if (era.get(`talent:${target}:76`) === 1) {
+            // :8856
+            await era.printAndWait(
+              `「哎哎……差点都忘记${player_name}已经不再是女孩子了呢！那就不用客气了呢！」`,
+            ); // :8857
+            await era.printAndWait(
+              `${target_name}兴奋地扭动着腰，尽情地侵犯着${player_name}。`,
+            ); // :8858
+            await era.printAndWait(
+              `「哎呀呀，被姐姐侵犯也会这么有感觉呢，不过反正都不是处女了，也不奇怪！」`,
+            ); // :8859
+            await era.printAndWait(
+              `『呜……啊啊……姐姐好棒……一点都不输给男人啊啊啊${heart(1)}』`,
+            ); // :8860
+            await era.printAndWait(
+              `已经被充分调教过的${player_name}在如此激烈的交合下，感受到了无上的快感。`,
+            ); // :8861
+            await era.printAndWait(`这场姐妹的乱伦盛宴让你大饱眼福……`); // :8862
+          } else if (era.get(`talent:${target}:85`) === 1) {
+            // :8864
+            await era.printAndWait(`『哎呀呀……姐姐技术很生疏呢${heart(1)}』`); // :8865
+            await era.printAndWait(
+              `${player_name}被${target_name}抱在怀里，很快就适应了姐姐腰部动作的节奏，甚至自己扭起腰来。`,
+            ); // :8866
+            await era.printAndWait(`「…为什么……会这么熟练的？」`); // :8867
+            await era.printAndWait(
+              `『嘿嘿……是因为已经被魔王大人用各种方式调教过了呢${heart(1)} 』`,
+            ); // :8868
+            await era.printAndWait(
+              `${player_name}从容的姿态让${target_name}皱起了眉头，但很快就恢复了笑容，加快了抽插的速度。`,
+            ); // :8869
+            await era.printAndWait(
+              `「这样的话会舒服一些吗，${player_name}……嗯啊啊？」`,
+            ); // :8870
+            await era.printAndWait(`『哈啊……舒服多了……姐姐好棒啊！』`); // :8871
+          } else {
+            // :8873
+            await era.printAndWait(
+              `${target_name}在你的命令下，不得不开始侵犯自己的妹妹。`,
+            ); // :8874
+            await era.printAndWait(
+              `「呜呜……对不起，${player_name}，对不起……」`,
+            ); // :8875
+            await era.printAndWait(
+              `无法违抗你的命令的${target_name}只能泪流满面地扭动着腰。`,
+            ); // :8876
+            await era.printAndWait(
+              `『哎呀呀……姐姐技术不行啊！腰动得这么慢，一点感觉都没有，哼♪』`,
+            ); // :8877
+            await era.printAndWait(`「可，可是……呜呜呜！」`); // :8878
+            await era.printAndWait(
+              `${player_name}毫无廉耻的态度和语气让${target_name}羞得满脸通红，无奈地加快了抽插的速度………`,
+            ); // :8879
+          } // :8880
+        } // :8881
+      } // :8882
+      // CFLAG:TARGET:366  = 1（变量语义：CFLAG 族，TARGET:366） // :8883
+      kojo.侵犯助手 = 1; // :8883
+      return 0; // :8884
+    } else {
+      // :8886
+
+      if (assi_mao) {
+        // :8888
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).chara.百合气质 >= 5 &&
+          (kojo.侵犯助手 <= 8 || game.kojo.口上开关 === 2)
+        ) {
+          // :8890
+          await era.printAndWait(`『哈啊……姐姐来吧……我准备好了哦${heart(1)}』`); // :8891
+          await era.printAndWait(
+            `${player_name}用四肢趴在床上，让${target_name}从后面进入了自己的身体。`,
+          ); // :8892
+          await era.printAndWait(
+            `「嘿嘿，妹妹变这么坦率，姐姐真高兴${heart(1)} 接下来就要一直侵犯到高潮为止了哦${heart(1)}」`,
+          ); // :8893
+          await era.printAndWait(
+            `『呜啊……啊啊啊……姐姐好棒${heart(1)} 最喜欢姐姐了……最喜欢了啊啊啊${heart(1)}』`,
+          ); // :8894
+          await era.printAndWait(
+            `${target_name}听到妹妹的夸奖，心满意足地加快了抽插的动作……`,
+          ); // :8895
+          // CFLAG:TARGET:366  = 9（变量语义：CFLAG 族，TARGET:366） // :8896
+          kojo.侵犯助手 = 9; // :8896
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.侵犯助手 <= 7 || game.kojo.口上开关 === 2)
+        ) {
+          // :8898
+          await era.printAndWait(
+            `「${player_name}乖乖趴着，屁股再翘高一点……对，就是这样……恩恩，姐姐最喜欢坦率的${player_name}了${heart(1)}」`,
+          ); // :8899
+          await era.printAndWait(
+            `『哎哎……这次要稍微温柔一点哦姐姐，不要弄痛我！』`,
+          ); // :8900
+          await era.printAndWait(
+            `${target_name}舔着嘴唇，抓着${player_name}的臀部，一口气贯入到了蜜穴最深处。`,
+          ); // :8901
+          await era.printAndWait(
+            `『呜……呜啊啊……太深了，都说……温柔一点了啊啊！』`,
+          ); // :8902
+          await era.printAndWait(
+            `「这可不是你说了算哦，接下来就要侵犯到${player_name}失神为止了哦，嘿嘿嘿。」`,
+          ); // :8903
+          // CFLAG:TARGET:366  = 8（变量语义：CFLAG 族，TARGET:366） // :8904
+          kojo.侵犯助手 = 8; // :8904
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.侵犯助手 <= 6 || game.kojo.口上开关 === 2)
+        ) {
+          // :8906
+          await era.printAndWait(
+            `「老实一点啊，${player_name}，不然会很痛的哦${heart(1)}」`,
+          ); // :8907
+          await era.printAndWait(
+            `${target_name}舔着嘴唇，开始侵犯妹妹${player_name}幼小而紧致的蜜穴。`,
+          ); // :8908
+          await era.printAndWait(`『呜……啊啊……姐姐……不，不能再进去了啊啊！』`); // :8909
+          await era.printAndWait(
+            `「哎呀呀！不好意思……不过呢，我可没打算停下来呀${heart(1)}」`,
+          ); // :8910
+          await era.printAndWait(
+            `${target_name}脸上浮现了兴奋的笑容，继续侵犯着${player_name}……`,
+          ); // :8911
+          // CFLAG:TARGET:366  = 7（变量语义：CFLAG 族，TARGET:366） // :8912
+          kojo.侵犯助手 = 7; // :8912
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).chara.百合气质 >= 5 &&
+          (kojo.侵犯助手 <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :8914
+          await era.printAndWait(
+            `「嗯啊……${heart(1)} 虽然一直喜欢你，但只有这样，${player_name}才会真正变成属于我的了啊啊啊！」`,
+          ); // :8915
+          await era.printAndWait(`『我，我也最爱姐姐啊${heart(1)}』`); // :8916
+          await era.printAndWait(
+            `${target_name}和${player_name}两具身躯淫靡的交缠在一起，尽情享受着百合之交的极度快感。`,
+          ); // :8917
+          await era.printAndWait(
+            `姐妹百合淫靡而甘甜的气味，飘散在调教室的空气中……`,
+          ); // :8918
+          // CFLAG:TARGET:366  = 6（变量语义：CFLAG 族，TARGET:366） // :8919
+          kojo.侵犯助手 = 6; // :8919
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.侵犯助手 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :8921
+          await era.printAndWait(`「啊啊，姐姐最爱你了，${player_name}♪」`); // :8922
+          await era.printAndWait(
+            `${target_name}的眼中泛着爱的光芒，将${player_name}压在自己的身下，侵犯着小小的蜜穴。`,
+          ); // :8923
+          await era.printAndWait(
+            `『说，说什么呢啊姐姐……我，我可是属于魔王大人的呢${heart(1)} 不过……姐姐的动作好温柔，好舒服啊啊…${heart(1)}』`,
+          ); // :8924
+          await era.printAndWait(
+            `「姐姐也很舒服啊，${player_name}，${player_name}……让我们永远在一起吧${heart(1)}」`,
+          ); // :8925
+          // CFLAG:TARGET:366  = 5（变量语义：CFLAG 族，TARGET:366） // :8926
+          kojo.侵犯助手 = 5; // :8926
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.侵犯助手 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :8928
+          await era.printAndWait(`『呜……啊啊……姐姐的身体……好温暖！』`); // :8929
+          await era.printAndWait(
+            `「啊啊，${player_name}！${player_name}的身体也是啊！」`,
+          ); // :8930
+          await era.printAndWait(
+            `${target_name}抱着身下的${player_name}，温和地侵入着妹妹小小的蜜穴……`,
+          ); // :8931
+          // CFLAG:TARGET:366  = 4（变量语义：CFLAG 族，TARGET:366） // :8932
+          kojo.侵犯助手 = 4; // :8932
+        } else if (
+          chara(target).chara.百合气质 >= 3 &&
+          (kojo.侵犯助手 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :8934
+          await era.printAndWait(
+            `「对不起，${player_name}…真的对不起……呜呜……姐姐也不知道为什么自己会变成这样！」`,
+          ); // :8935
+          await era.printAndWait(
+            `${target_name}道着歉的同时，动作也停了下来。`,
+          ); // :8936
+          await era.printAndWait(
+            `『没关系的……姐姐${heart(1)} 来吧……侵犯${player_name}吧${heart(1)} 因为……${player_name}…最喜欢姐姐了啊！』`,
+          ); // :8937
+          await era.printAndWait(
+            `听到${player_name}呻吟着的回答，${target_name}吻着自己的妹妹，重新动起了腰……`,
+          ); // :8938
+          // CFLAG:TARGET:366  = 3（变量语义：CFLAG 族，TARGET:366） // :8939
+          kojo.侵犯助手 = 3; // :8939
+        } else if (kojo.侵犯助手 <= 1 || game.kojo.口上开关 === 2) {
+          // :8941
+          await era.printAndWait(
+            `${target_name}在你的命令下，无可奈何地开始侵犯自己的妹妹。`,
+          ); // :8942
+          await era.printAndWait(`「呜呜……对不起，对不起，${player_name}………」`); // :8943
+          await era.printAndWait(
+            `『哈啊……姐姐……没关系啦。被姐姐侵犯，${player_name}其实……一点都不介意呀${heart(1)}』`,
+          ); // :8944
+          await era.printAndWait(
+            `${target_name}脸颊上满是屈辱的泪水，动作缓慢地侵犯着自己的妹妹。`,
+          ); // :8945
+          // CFLAG:TARGET:366  = 2（变量语义：CFLAG 族，TARGET:366） // :8946
+          kojo.侵犯助手 = 2; // :8946
+        } // :8947
+      } // :8948
+      return 0; // :8949
+    } // :8950
+  } // :8951
+
   return 0;
 }
 

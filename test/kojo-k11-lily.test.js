@@ -6841,6 +6841,65 @@ test('COM64 根据主人和助手性器素质显示电动假阳具或阴茎', as
   }
 });
 
+// —— SELECTCOM 65（侵犯助手 CFLAG:366）——
+
+test('COM65 初めて：玛奥是否处女×淫乱、爱慕与其余三档', async () => {
+  for (const virgin of [true, false]) {
+    for (const talent of [76, 85, undefined]) {
+      const fixture = setup_lily((f, era_flag) => {
+        preset_chara_17(f);
+        f.era.addCharacter(MAO);
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+        if (virgin) f.store.set(`cflag:${MAO}:15`, 305);
+        if (talent !== undefined) f.store.set(`talent:${LILY}:${talent}`, 1);
+      }, 65);
+      await speak_com11(fixture, seq_rand());
+      assert.ok(fixture.text_lines().length > 0, 'COM65 首次各档均有输出');
+      assert.equal(
+        fixture.store.get(`cflag:${LILY}:366`),
+        1,
+        'COM65 首次推进 CFLAG:366=1',
+      );
+    }
+  }
+});
+
+test('COM65 初めて：没有玛奥助手时无输出但仍推进首次标志', async () => {
+  const fixture = setup_lily(undefined, 65);
+  await speak_com11(fixture, seq_rand());
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get(`cflag:${LILY}:366`), 1);
+});
+
+test('COM65 二回目：玛奥助手八档推进', async () => {
+  const cases = [
+    { talent: 76, abl: 5, expected: 9 },
+    { talent: 76, abl: 3, expected: 8 },
+    { talent: 76, expected: 7 },
+    { talent: 85, abl: 5, expected: 6 },
+    { talent: 85, abl: 3, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      preset_chara_17(f);
+      f.era.addCharacter(MAO);
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set(`cflag:${LILY}:366`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:22`, item.abl);
+    }, 65);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0, 'COM65 后续各档均有输出');
+    assert.equal(fixture.store.get(`cflag:${LILY}:366`), item.expected);
+  }
+});
+
 // —— SELECTCOM 56（交谈 CFLAG:357）——
 
 test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {
