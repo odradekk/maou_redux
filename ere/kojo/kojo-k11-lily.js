@@ -20041,6 +20041,176 @@ async function kojo_message_com_11(rand) {
     } // :9852
   } // :9853
 
+  if (era_flag.selectcom === 124) {
+    // :9858
+
+    if (kojo.深喉 === 0) {
+      // :9860
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :9862
+        await era.printAndWait(
+          `「我开动了哦…${heart(1)} 唔呣……唔唔唔${heart(1)}」`,
+        ); // :9863
+        await era.printAndWait(
+          `${target_name}带着淫媚的表情，努力地将${player_name}的阴茎吞入到了喉咙最深处……`,
+        ); // :9864
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :9866
+        await era.printAndWait(
+          `「${player_name}的阴茎，我会全部吞下去的${heart(1)} 唔呣……唔唔唔${heart(1)}」`,
+        ); // :9867
+        await era.printAndWait(
+          `${target_name}对${player_name}微笑了一下，然后将勃起的阴茎含入嘴里，慢慢吞入到了喉咙最深处…`,
+        ); // :9868
+      } else if (chara(target).system.侍奉精神 >= 3) {
+        // :9870
+        await era.printAndWait(`「要……要用喉咙吗……呜呜……咕呜……咕呣……！」`); // :9871
+        await era.printAndWait(
+          `${target_name}带着些许兴奋的表情，将${player_name}的阴茎含到了喉咙最深处……`,
+        ); // :9872
+      } else {
+        // :9874
+        await era.printAndWait(`「要……要用喉咙吗……呜呜……咕呜……咕呣……！」`); // :9875
+        await era.printAndWait(
+          `${target_name}带着些许犹豫的表情，将${player_name}的阴茎含到了喉咙最深处……`,
+        ); // :9876
+      } // :9877
+      // CFLAG:TARGET:365  = 1（变量语义：CFLAG 族，TARGET:365） // :9878
+      kojo.深喉 = 1; // :9878
+      return 0; // :9879
+    } else {
+      // :9881
+
+      if (assi_mao) {
+        // :9883
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9885
+          await era.printAndWait(
+            `「人家继续了哦……${heart(1)} 呜呜……咕呜……咕呣…${heart(1)}」`,
+          ); // :9886
+          await era.printAndWait(
+            `${target_name}将${player_name}的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。`,
+          ); // :9887
+          await era.printAndWait(
+            `『哈啊……哈啊${heart(1)} 淫乱的姐姐把人家的小鸡鸡全部吃进去了呢${heart(1)}』`,
+          ); // :9888
+          // CFLAG:365  = 5（变量语义：CFLAG 族，365） // :9889
+          kojo.深喉 = 5; // :9889
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9891
+          await era.printAndWait(
+            `「${player_name}的小鸡鸡，我要全部吃下去了哦${heart(1)}  呜呜……咕呜……咕呣…${heart(1)}」`,
+          ); // :9892
+          await era.printAndWait(
+            `${target_name}带着笑容，将${player_name}的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。`,
+          ); // :9893
+          await era.printAndWait(
+            `『唔哇哇、我会把姐姐的喉咙里射的满满都是精液的${heart(1)} 再，再深一点！』`,
+          ); // :9894
+          // CFLAG:365  = 4（变量语义：CFLAG 族，365） // :9895
+          kojo.深喉 = 4; // :9895
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.真空口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9897
+          await era.printAndWait(
+            `「要，要进到喉，喉咙深处吗……呜呜……咕呜……咕呣…！」`,
+          ); // :9898
+          await era.printAndWait(
+            `${target_name}口交的时候大概是过于兴奋了，将${player_name}的阴茎吞入到了喉咙最深处`,
+          ); // :9899
+          await era.printAndWait(
+            `『唔哇哇！姐姐什么时候变得这么喜欢的口交的……！小鸡鸡在喉咙里面好舒服！』`,
+          ); // :9900
+          // CFLAG:365  = 3（变量语义：CFLAG 族，365） // :9901
+          kojo.深喉 = 3; // :9901
+        } else if (kojo.真空口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9903
+          await era.printAndWait(`「喉，喉咙深处也要吗……呜呜……咕呜……咕呣…！」`); // :9904
+          await era.printAndWait(
+            `${target_name}口交的时候大概是过于激烈了，将${player_name}的阴茎吞入到了喉咙最深处`,
+          ); // :9905
+          await era.printAndWait(
+            `『唔哇哇，把整根都吞下去了呢，姐姐真的是个口交变态呢！』`,
+          ); // :9906
+          // CFLAG:365  = 2（变量语义：CFLAG 族，365） // :9907
+          kojo.深喉 = 2; // :9907
+        } // :9908
+      } else {
+        // :9909
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9911
+          await era.printAndWait(
+            `「人家继续了哦，魔王大人……${heart(1)} 呜呜……咕呜……咕呣…${heart(1)}」`,
+          ); // :9912
+          await era.printAndWait(
+            `${target_name}将${player_name}的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。`,
+          ); // :9913
+          await era.printAndWait(
+            `「咕呜……咕呜…${heart(1)} 人家的喉咙小穴……舒服吗${heart(1)} 」`,
+          ); // :9914
+          // CFLAG:365  = 5（变量语义：CFLAG 族，365） // :9915
+          kojo.深喉 = 5; // :9915
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9917
+          await era.printAndWait(
+            `「${player_name}的阴茎，我会好好地全部吃下去的${heart(1)} 呜呜……咕呜……咕呣…${heart(1)}」`,
+          ); // :9918
+          await era.printAndWait(
+            `${target_name}带着笑容，将${player_name}的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。`,
+          ); // :9919
+          await era.printAndWait(
+            `「咕呜……咕呜…${heart(1)} 请${player_name}把精液全部射进喉咙里吧…${heart(1)} 呜呜……咕呜${heart(1)}」`,
+          ); // :9920
+          // CFLAG:365  = 4（变量语义：CFLAG 族，365） // :9921
+          kojo.深喉 = 4; // :9921
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.真空口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9923
+          await era.printAndWait(`「呜呜……咕呜……喉咙好热的感觉……呜呣……」`); // :9924
+          await era.printAndWait(
+            `${target_name}口交的时候大概是过于兴奋了，将${player_name}的阴茎吞入到了喉咙最深处`,
+          ); // :9925
+          await era.printAndWait(
+            `「哈……哈啊……光是用喉咙吸着阴茎……整个人就已经…♪」`,
+          ); // :9926
+          // CFLAG:365  = 3（变量语义：CFLAG 族，365） // :9927
+          kojo.深喉 = 3; // :9927
+        } else if (kojo.真空口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9929
+          await era.printAndWait(`「呜呜……咕呜……整根都……唔呣！」`); // :9930
+          await era.printAndWait(
+            `${target_name}口交的时候大概是过于激烈了，将${player_name}的阴茎吞入到了喉咙最深处`,
+          ); // :9931
+          await era.printAndWait(
+            `「呜……呜呜……进，进到喉咙最里面了……唔呣……唔呣！」`,
+          ); // :9932
+          // CFLAG:365  = 2（变量语义：CFLAG 族，365） // :9933
+          kojo.深喉 = 2; // :9933
+        } // :9934
+      } // :9935
+      return 0; // :9936
+    } // :9937
+  } // :9938
+
   return 0;
 }
 

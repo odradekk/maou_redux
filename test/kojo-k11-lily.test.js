@@ -7301,6 +7301,60 @@ for (const assistant of [true, false]) {
   });
 }
 
+// —— SELECTCOM 124（深喉 CFLAG:365；后续门槛误读 CFLAG:363）——
+
+test('COM124 初めて：淫乱、爱慕、侍奉精神与其余四档', async () => {
+  for (const item of [{ talent: 76 }, { talent: 85 }, { abl: 3 }, {}]) {
+    const fixture = setup_lily((f) => {
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 124);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0);
+    assert.equal(fixture.store.get(`cflag:${LILY}:365`), 1);
+  }
+});
+
+for (const assistant of [true, false]) {
+  test(`COM124 二回目：${assistant ? '助手玛奥' : '非助手玛奥'}四档推进`, async () => {
+    const cases = [
+      { talent: 76, expected: 5 },
+      { talent: 85, expected: 4 },
+      { abl: 3, expected: 3 },
+      { expected: 2 },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        f.store.set(`cflag:${LILY}:365`, 1);
+        if (assistant) {
+          preset_chara_17(f);
+          f.era.addCharacter(MAO);
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+        if (item.talent !== undefined)
+          f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+      }, 124);
+      await speak_com11(fixture, seq_rand());
+      assert.ok(fixture.text_lines().length > 0);
+      assert.equal(fixture.store.get(`cflag:${LILY}:365`), item.expected);
+    }
+  });
+}
+
+test('COM124 二回目门槛按原作读取真空口交 CFLAG:363，而非深喉 CFLAG:365', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('flag:7', 0);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`cflag:${LILY}:365`, 9);
+    f.store.set(`cflag:${LILY}:363`, 4);
+  }, 124);
+  await speak_com11(fixture, seq_rand());
+  assert.equal(fixture.store.get(`cflag:${LILY}:365`), 5);
+});
+
 // —— SELECTCOM 56（交谈 CFLAG:357）——
 
 test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {

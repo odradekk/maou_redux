@@ -26641,6 +26641,123 @@ export const FILES = [
           'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
         ],
         ['9848', 'CFLAG:370 = 2'],
+        ['9858', 'IF SELECTCOM == 124'],
+        [
+          '9863',
+          'PRINTFORMW 「我开动了哦…%UNICODE(0x2661) *1% 唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9864',
+          'PRINTFORMW %SAVESTR:TARGET%带着淫媚的表情，努力地将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处……',
+        ],
+        [
+          '9867',
+          'PRINTFORMW 「%SAVESTR:PLAYER%的阴茎，我会全部吞下去的%UNICODE(0x2661) *1% 唔呣……唔唔唔%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9868',
+          'PRINTFORMW %SAVESTR:TARGET%对%SAVESTR:PLAYER%微笑了一下，然后将勃起的阴茎含入嘴里，慢慢吞入到了喉咙最深处…',
+        ],
+        ['9871', 'PRINTFORMW 「要……要用喉咙吗……呜呜……咕呜……咕呣……！」'],
+        [
+          '9872',
+          'PRINTFORMW %SAVESTR:TARGET%带着些许兴奋的表情，将%SAVESTR:PLAYER%的阴茎含到了喉咙最深处……',
+        ],
+        ['9875', 'PRINTFORMW 「要……要用喉咙吗……呜呜……咕呜……咕呣……！」'],
+        [
+          '9876',
+          'PRINTFORMW %SAVESTR:TARGET%带着些许犹豫的表情，将%SAVESTR:PLAYER%的阴茎含到了喉咙最深处……',
+        ],
+        ['9878', 'CFLAG:TARGET:365 = 1'],
+        [
+          '9886',
+          'PRINTFORMW 「人家继续了哦……%UNICODE(0x2661) *1% 呜呜……咕呜……咕呣…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9887',
+          'PRINTFORMW %SAVESTR:TARGET%将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。',
+        ],
+        [
+          '9888',
+          'PRINTFORMW 『哈啊……哈啊%UNICODE(0x2661) *1% 淫乱的姐姐把人家的小鸡鸡全部吃进去了呢%UNICODE(0x2661) *1%』',
+        ],
+        ['9889', 'CFLAG:365 = 5'],
+        [
+          '9892',
+          'PRINTFORMW 「%SAVESTR:PLAYER%的小鸡鸡，我要全部吃下去了哦%UNICODE(0x2661) *1%  呜呜……咕呜……咕呣…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9893',
+          'PRINTFORMW %SAVESTR:TARGET%带着笑容，将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。',
+        ],
+        [
+          '9894',
+          'PRINTFORMW 『唔哇哇、我会把姐姐的喉咙里射的满满都是精液的%UNICODE(0x2661) *1% 再，再深一点！』',
+        ],
+        ['9895', 'CFLAG:365 = 4'],
+        [
+          '9898',
+          'PRINTFORMW 「要，要进到喉，喉咙深处吗……呜呜……咕呜……咕呣…！」',
+        ],
+        [
+          '9899',
+          'PRINTFORMW %SAVESTR:TARGET%口交的时候大概是过于兴奋了，将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处',
+        ],
+        [
+          '9900',
+          'PRINTFORMW 『唔哇哇！姐姐什么时候变得这么喜欢的口交的……！小鸡鸡在喉咙里面好舒服！』',
+        ],
+        ['9901', 'CFLAG:365 = 3'],
+        ['9904', 'PRINTFORMW 「喉，喉咙深处也要吗……呜呜……咕呜……咕呣…！」'],
+        [
+          '9905',
+          'PRINTFORMW %SAVESTR:TARGET%口交的时候大概是过于激烈了，将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处',
+        ],
+        [
+          '9906',
+          'PRINTFORMW 『唔哇哇，把整根都吞下去了呢，姐姐真的是个口交变态呢！』',
+        ],
+        ['9907', 'CFLAG:365 = 2'],
+        [
+          '9912',
+          'PRINTFORMW 「人家继续了哦，魔王大人……%UNICODE(0x2661) *1% 呜呜……咕呜……咕呣…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9913',
+          'PRINTFORMW %SAVESTR:TARGET%将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。',
+        ],
+        [
+          '9914',
+          'PRINTFORMW 「咕呜……咕呜…%UNICODE(0x2661) *1% 人家的喉咙小穴……舒服吗%UNICODE(0x2661) *1% 」',
+        ],
+        ['9915', 'CFLAG:365 = 5'],
+        [
+          '9918',
+          'PRINTFORMW 「%SAVESTR:PLAYER%的阴茎，我会好好地全部吃下去的%UNICODE(0x2661) *1% 呜呜……咕呜……咕呣…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9919',
+          'PRINTFORMW %SAVESTR:TARGET%带着笑容，将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处吸吮着，发出了咕啾咕啾的不堪入耳的声音。',
+        ],
+        [
+          '9920',
+          'PRINTFORMW 「咕呜……咕呜…%UNICODE(0x2661) *1% 请%SAVESTR:PLAYER%把精液全部射进喉咙里吧…%UNICODE(0x2661) *1% 呜呜……咕呜%UNICODE(0x2661) *1%」',
+        ],
+        ['9921', 'CFLAG:365 = 4'],
+        ['9924', 'PRINTFORMW 「呜呜……咕呜……喉咙好热的感觉……呜呣……」'],
+        [
+          '9925',
+          'PRINTFORMW %SAVESTR:TARGET%口交的时候大概是过于兴奋了，将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处',
+        ],
+        ['9926', 'PRINTFORMW 「哈……哈啊……光是用喉咙吸着阴茎……整个人就已经…♪」'],
+        ['9927', 'CFLAG:365 = 3'],
+        ['9930', 'PRINTFORMW 「呜呜……咕呜……整根都……唔呣！」'],
+        [
+          '9931',
+          'PRINTFORMW %SAVESTR:TARGET%口交的时候大概是过于激烈了，将%SAVESTR:PLAYER%的阴茎吞入到了喉咙最深处',
+        ],
+        ['9932', 'PRINTFORMW 「呜……呜呜……进，进到喉咙最里面了……唔呣……唔呣！」'],
+        ['9933', 'CFLAG:365 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

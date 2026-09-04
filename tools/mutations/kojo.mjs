@@ -9839,6 +9839,41 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention,
   })),
+  ...[
+    [4631, '初次', 1, '9878', 'COM124 初めて：淫乱、爱慕、侍奉精神与其余四档'],
+    [4632, '助手淫乱', 5, '9889', 'COM124 二回目：助手玛奥四档推进'],
+    [4633, '助手爱慕', 4, '9895', 'COM124 二回目：助手玛奥四档推进'],
+    [4634, '助手侍奉精神', 3, '9901', 'COM124 二回目：助手玛奥四档推进'],
+    [4635, '助手其余', 2, '9907', 'COM124 二回目：助手玛奥四档推进'],
+    [4636, '非助手淫乱', 5, '9915', 'COM124 二回目：非助手玛奥四档推进'],
+    [4637, '非助手爱慕', 4, '9921', 'COM124 二回目：非助手玛奥四档推进'],
+    [4638, '非助手侍奉精神', 3, '9927', 'COM124 二回目：非助手玛奥四档推进'],
+    [4639, '非助手其余', 2, '9933', 'COM124 二回目：非助手玛奥四档推进'],
+  ].map(([id, tier, value, ref, must_mention]) => ({
+    desc: `M${id} COM124 ${tier} CFLAG:365 写错（#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.深喉 = ${value}; // :${ref}`,
+    replace: `kojo.深喉 = 99; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4640 COM124 后续淫乱门槛误改为读取深喉 CFLAG:365（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9911`,
+    replace: `        if (
+          era.get(\`talent:\${target}:76\`) === 1 &&
+          (kojo.深喉 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9911`,
+    tests: ['kojo-k11-lily'],
+    must_mention:
+      'COM124 二回目门槛按原作读取真空口交 CFLAG:363，而非深喉 CFLAG:365',
+  },
   {
     desc: 'M4284 COM28 助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
