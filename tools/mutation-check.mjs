@@ -209,7 +209,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 2874; // #242 +11（M4525-M4535，SELECTCOM 55，放置PLAY CFLAG:356）；合并后整表加载实测 2874。
+const LEDGER_COUNT_BASELINE = 2876; // #242 +2（M4536-M4537，SELECTCOM 56，交谈 CFLAG:357／录像位）；合并后整表加载实测 2876。
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若

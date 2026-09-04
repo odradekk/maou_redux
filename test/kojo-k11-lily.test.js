@@ -6729,6 +6729,99 @@ for (const [label, assistant] of [
   });
 }
 
+// —— SELECTCOM 56（交谈 CFLAG:357）——
+
+test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {
+  const cases = [
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:89`, 1),
+      fragment: '迄今为止的性经验',
+      records: true,
+    },
+    {
+      seed: (f) => {
+        f.store.set('palamlv:4', 100);
+        f.store.set(`palam:${LILY}:5`, 100);
+        f.store.set(`talent:${LILY}:76`, 1);
+      },
+      fragment: '每天都在渴望着魔王大人的调教和侵犯',
+      records: true,
+    },
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:85`, 1),
+      fragment: '洞窟附近的村女',
+      records: true,
+    },
+    { seed: () => {}, fragment: '还需要继续调教', records: false },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:53`, 1);
+      f.store.set('tflag:32', 4);
+      item.seed(f);
+    }, 56);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(
+      fixture.text_lines().join('\n').includes(item.fragment),
+      `COM56 初次录像分档：${item.fragment}`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:357`),
+      1,
+      'COM56 首次推进 CFLAG:357=1',
+    );
+    assert.equal(
+      fixture.store.get('tflag:32'),
+      item.records ? 6 : 4,
+      'COM56 录像内容按位保留',
+    );
+  }
+});
+
+test('COM56 初めて通常交谈：助手玛奥与非助手分支', async () => {
+  for (const assistant of [true, false]) {
+    const fixture = setup_lily((f, era_flag) => {
+      f.store.set('palamlv:2', 100);
+      f.store.set('palamlv:4', 200);
+      if (assistant) {
+        preset_chara_17(f);
+        f.era.addCharacter(MAO);
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+    }, 56);
+    await speak_com11(fixture, seq_rand());
+    const text = fixture.text_lines().join('\n');
+    assert.ok(
+      text.includes(assistant ? '真的对不起' : '不太想说话'),
+      `COM56 初次通常交谈：${assistant ? '助手玛奥' : '非助手'}`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:357`),
+      1,
+      'COM56 首次通常交谈推进',
+    );
+  }
+});
+
+test('COM56 二回目：复用交谈分档且不改写 CFLAG:357', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`cflag:${LILY}:357`, 9);
+    f.store.set(`tequip:${LILY}:53`, 1);
+    f.store.set(`talent:${LILY}:89`, 1);
+  }, 56);
+  await speak_com11(fixture, seq_rand());
+  assert.ok(
+    fixture.text_lines().join('\n').includes('迄今为止的性经验'),
+    'COM56 二次录像仍输出自我介绍',
+  );
+  assert.equal(
+    fixture.store.get(`cflag:${LILY}:357`),
+    9,
+    'COM56 二次不改写 CFLAG:357',
+  );
+});
+
 test('COM44 取下：淫乱、爱慕与其余三档推进', async () => {
   const cases = [
     { talent: 76, expected: 2 },

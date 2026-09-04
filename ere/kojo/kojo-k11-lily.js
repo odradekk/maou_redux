@@ -12778,6 +12778,483 @@ async function kojo_message_com_11(rand) {
     } // :6828
   } // :6829
 
+  // :6835-7010 IF SELECTCOM == 56（交谈 CFLAG:357）
+  if (era_flag.selectcom === 56) {
+    // :6835
+
+    if (kojo.交谈 === 0) {
+      // :6837
+      if (era.get(`tequip:${target}:53`) === 1) {
+        // :6838
+
+        await era.print(
+          `在${player_name}的命令下，${target_name}进行了自我介绍、`,
+        ); // :6840
+        if (
+          era.get(`talent:${target}:89`) ||
+          chara(target).system.露出癖 >= 5
+        ) {
+          // :6841
+          await era.print(`${target_name}介绍了自己的名字和迄今为止的性经验`); // :6842
+          if (chara(target).train.自慰中毒 >= 3) {
+            // :6844
+            await era.print(`、自慰的时候幻想的内容和对象也说出来了`); // :6844
+          } // :6844
+          await era.print(`说得自己都兴奋起来了……`); // :6845
+          await era.print(
+            `似乎在期待着被全村的人看到自己现在的样子，股间也开始湿润了……`,
+          ); // :6846
+          await era.printAndWait(
+            `「啊啊……我，我最喜欢在魔王大人的视线下自慰了……那样特别有感觉${heart(1)} 自慰的时候……我会想着叔父和他的小儿子……想着被他们一起侵犯${heart(1)}」`,
+          ); // :6847
+          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6848
+          game.kojo.录像内容 |= 2; // :6848
+        } else if (
+          chara(target).train.欲情 >= era0('palamlv:4') &&
+          (era.get(`talent:${target}:76`) || chara(target).system.欲望 >= 5)
+        ) {
+          // :6849
+          await era.print(`${target_name}开始对着水晶球说着不知廉耻的话。`); // :6850
+          await era.printAndWait(
+            `「我……${target_name}是魔王大人的性奴，每天都在渴望着魔王大人的调教和侵犯……♪」`,
+          ); // :6851
+          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6852
+          game.kojo.录像内容 |= 2; // :6852
+        } else if (
+          era.get(`talent:${target}:85`) ||
+          chara(target).system.顺从 >= 3 ||
+          chara(target).system.欲望 >= 4 ||
+          chara(target).system.露出癖 >= 2
+        ) {
+          // :6853
+          await era.print(`${target_name}向水晶球勉为其难地介绍着自己`); // :6854
+          await era.printAndWait(
+            `我……我是住在通往魔王宫殿的洞窟附近的村女……名叫${target_name}……」`,
+          ); // :6855
+          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6856
+          game.kojo.录像内容 |= 2; // :6856
+        } else {
+          // :6857
+          await era.printAndWait(
+            `${target_name}瞪视着水晶球，一副极不情愿的样子。`,
+          ); // :6858
+          await era.printAndWait(`「我，我的名字是……」`); // :6859
+          await era.printAndWait(
+            `还没有说完，就抿着嘴沉默了，看来还需要继续调教……`,
+          ); // :6860
+        } // :6861
+      } else {
+        // :6862
+
+        if (assi_mao) {
+          // :6864
+          await era.print(`面对${player_name}`); // :6865
+          if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:85`) ||
+              chara(target).system.顺从 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6866
+            await era.print(
+              `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,
+            ); // :6867
+            await era.printAndWait(
+              `「呜……呜啊啊……好，好舒服${heart(1)} 姐姐……这么淫乱……真是对不起呢……！」`,
+            ); // :6868
+          } else if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:76`) ||
+              chara(target).system.欲望 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6869
+            await era.print(
+              `边侵犯边用语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,
+            ); // :6870
+            await era.printAndWait(
+              `「嗯啊……啊啊……我，我正在，正在被妹妹看着自慰${heart(1)} 但是……但是好舒服……${heart(1)} …要，要去了啊啊${heart(1)}」`,
+            ); // :6871
+          } else if (
+            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+              chara(target).system.顺从 >= 5 ||
+              era.get(`talent:${target}:76`) ||
+              era.get(`talent:${target}:85`)) &&
+            chara(target).train.欲情 >= era0('palamlv:4')
+          ) {
+            // :6872
+            await era.print(`的语言调戏，${target_name}`); // :6873
+            if (
+              era.get(`tequip:${target}:11`) ||
+              era.get(`tequip:${target}:13`) ||
+              era.get(`tequip:${target}:14`) ||
+              era.get(`tequip:${target}:15`) ||
+              era.get(`tequip:${target}:16`) ||
+              era.get(`tequip:${target}:17`)
+            ) {
+              // :6874
+              await era.print(`却乐在其中`); // :6875
+            } else if (
+              era.get(`tequip:${target}:44`) ||
+              era.get(`tequip:${target}:49`)
+            ) {
+              // :6876
+              await era.print(`无比痛苦`); // :6877
+            } // :6878
+            await era.print(`地回应着。`); // :6879
+            await era.printAndWait(`「不，不要再，再对姐姐恶作剧了」`); // :6880
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era.get(`talent:${target}:85`) ||
+            chara(target).system.顺从 >= 5
+          ) {
+            // :6881
+            await era.print(
+              `的语言调戏、${target_name}一点也不生气，看来姐妹关系已经很融洽了。`,
+            ); // :6882
+            await era.printAndWait(
+              `「只，只要能和${player_name}在一起，即使是做魔王大人的性奴，姐姐也很高兴！」`,
+            ); // :6883
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            chara(target).system.顺从 >= 3
+          ) {
+            // :6884
+            await era.print(`的语言调戏、${target_name}小声地回答着`); // :6885
+            await era.printAndWait(
+              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,
+            ); // :6886
+          } else {
+            // :6887
+            await era.print(
+              `的语言羞辱，${target_name}只是红着脸，低着头听着…`,
+            ); // :6888
+            await era.printAndWait(`「为，为什么……会变成这个样子…」`); // :6889
+            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`); // :6890
+          } // :6891
+        } else {
+          // :6892
+          await era.print(`${player_name}`); // :6893
+          if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:85`) ||
+              chara(target).system.顺从 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6894
+            await era.print(
+              `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,
+            ); // :6895
+            await era.printAndWait(
+              `「魔，魔王大人……${heart(1)} 你，你是我的全部……嗯啊${heart(1)} 啊啊啊${heart(1)} 我的身体……全部是属于大人的啊啊啊${heart(1)}`,
+            ); // :6896
+          } else if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:76`) ||
+              chara(target).system.欲望 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6897
+            await era.print(
+              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,
+            ); // :6898
+            await era.printAndWait(
+              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,
+            ); // :6899
+          } else if (
+            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+              chara(target).system.顺从 >= 5 ||
+              era.get(`talent:${target}:76`) ||
+              era.get(`talent:${target}:85`)) &&
+            chara(target).train.欲情 >= era0('palamlv:4')
+          ) {
+            // :6900
+            await era.print(`的语言调戏，${target_name}`); // :6901
+            if (
+              era.get(`tequip:${target}:11`) ||
+              era.get(`tequip:${target}:13`) ||
+              era.get(`tequip:${target}:14`) ||
+              era.get(`tequip:${target}:15`) ||
+              era.get(`tequip:${target}:16`) ||
+              era.get(`tequip:${target}:17`)
+            ) {
+              // :6902
+              await era.print(`乐在其中`); // :6903
+            } else if (
+              era.get(`tequip:${target}:44`) ||
+              era.get(`tequip:${target}:49`)
+            ) {
+              // :6904
+              await era.print(`无比痛苦`); // :6905
+            } // :6906
+            await era.print(`地努力回答着`); // :6907
+            await era.printAndWait(
+              `「呜啊啊！人，人家没关系的……请，请魔王大人……随意调教！」`,
+            ); // :6908
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era.get(`talent:${target}:85`) ||
+            chara(target).system.顺从 >= 5
+          ) {
+            // :6909
+            await era.print(`的语言挑逗、${target_name}有些害羞地应答着`); // :6910
+            await era.printAndWait(
+              `「请，请魔王大人……随意调教${target_name}」`,
+            ); // :6911
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            chara(target).system.顺从 >= 3
+          ) {
+            // :6912
+            await era.print(`的语言挑逗、${target_name}结结巴巴地回答着`); // :6913
+            await era.printAndWait(`「应，应该回答什么…？」`); // :6914
+          } else {
+            // :6915
+            await era.print(`的语言挑逗、${target_name}听清楚了吗…`); // :6916
+            await era.printAndWait(`「…不，不太想说话…」`); // :6917
+          } // :6918
+        } // :6919
+      } // :6920
+      // CFLAG:357  = 1（变量语义：CFLAG 族，357） // :6921
+      kojo.交谈 = 1; // :6921
+      return 0; // :6922
+    } else {
+      // :6924
+      if (era.get(`tequip:${target}:53`) === 1) {
+        // :6925
+
+        await era.print(
+          `在${player_name}的命令下，${target_name}进行了自我介绍、`,
+        ); // :6927
+        if (
+          era.get(`talent:${target}:89`) ||
+          chara(target).system.露出癖 >= 5
+        ) {
+          // :6928
+          await era.print(`${target_name}介绍了自己的名字和迄今为止的性经验`); // :6929
+          if (chara(target).train.自慰中毒 >= 3) {
+            // :6931
+            await era.print(`、自慰的时候幻想的内容和对象也说出来了`); // :6931
+          } // :6931
+          await era.print(`说得自己都兴奋起来了……`); // :6932
+          await era.print(
+            `似乎在期待着被全村的人看到自己现在的样子，股间也开始湿润了……`,
+          ); // :6933
+          await era.printAndWait(
+            `「啊啊……我，我最喜欢在魔王大人的视线下自慰了……那样特别有感觉${heart(1)} 自慰的时候……我会想着叔父和他的小儿子……想着被他们一起侵犯${heart(1)}」`,
+          ); // :6934
+          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6935
+          game.kojo.录像内容 |= 2; // :6935
+        } else if (
+          chara(target).train.欲情 >= era0('palamlv:4') &&
+          (era.get(`talent:${target}:76`) || chara(target).system.欲望 >= 5)
+        ) {
+          // :6936
+          await era.print(`${target_name}开始对着水晶球说着不知廉耻的话。`); // :6937
+          await era.printAndWait(
+            `「我……${target_name}是魔王大人的性奴，每天都在渴望着魔王大人的调教和侵犯……♪」`,
+          ); // :6938
+          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6939
+          game.kojo.录像内容 |= 2; // :6939
+        } else if (
+          era.get(`talent:${target}:85`) ||
+          chara(target).system.顺从 >= 3 ||
+          chara(target).system.欲望 >= 4 ||
+          chara(target).system.露出癖 >= 2
+        ) {
+          // :6940
+          await era.print(`${target_name}向水晶球勉为其难地介绍着自己`); // :6941
+          await era.printAndWait(
+            `我……我是住在通往魔王宫殿的洞窟附近的村女……名叫${target_name}……」`,
+          ); // :6942
+          // TFLAG:32 | = 2（变量语义：TFLAG 族，32 |） // :6943
+          game.kojo.录像内容 |= 2; // :6943
+        } else {
+          // :6944
+          await era.printAndWait(
+            `${target_name}瞪视着水晶球，一副极不情愿的样子。`,
+          ); // :6945
+          await era.printAndWait(`「我，我的名字是……」`); // :6946
+          await era.printAndWait(
+            `还没有说完，就抿着嘴沉默了，看来还需要继续调教……`,
+          ); // :6947
+        } // :6948
+      } else {
+        // :6949
+
+        if (assi_mao) {
+          // :6951
+          await era.print(`面对${player_name}`); // :6952
+          if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:85`) ||
+              chara(target).system.顺从 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6953
+            await era.print(
+              `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,
+            ); // :6954
+            await era.printAndWait(
+              `「呜……呜啊啊……好，好舒服${heart(1)} 姐姐……这么淫乱……真是对不起呢……！」`,
+            ); // :6955
+          } else if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:76`) ||
+              chara(target).system.欲望 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6956
+            await era.print(
+              `的语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,
+            ); // :6957
+            await era.printAndWait(
+              `「嗯啊……啊啊……我，我正在，正在被妹妹看着自慰${heart(1)} 但是……但是好舒服……${heart(1)} …要，要去了啊啊${heart(1)}」`,
+            ); // :6958
+          } else if (
+            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+              chara(target).system.顺从 >= 5 ||
+              era.get(`talent:${target}:76`) ||
+              era.get(`talent:${target}:85`)) &&
+            chara(target).train.欲情 >= era0('palamlv:4')
+          ) {
+            // :6959
+            await era.print(`的语言调戏，${target_name}`); // :6960
+            if (
+              era.get(`tequip:${target}:11`) ||
+              era.get(`tequip:${target}:13`) ||
+              era.get(`tequip:${target}:14`) ||
+              era.get(`tequip:${target}:15`) ||
+              era.get(`tequip:${target}:16`) ||
+              era.get(`tequip:${target}:17`)
+            ) {
+              // :6961
+              await era.print(`害羞`); // :6962
+            } else if (
+              era.get(`tequip:${target}:44`) ||
+              era.get(`tequip:${target}:49`)
+            ) {
+              // :6963
+              await era.print(`无比痛苦`); // :6964
+            } // :6965
+            await era.print(`地回应着`); // :6966
+            await era.printAndWait(`「不，不要再，再对姐姐恶作剧了」`); // :6967
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era.get(`talent:${target}:85`) ||
+            chara(target).system.顺从 >= 5
+          ) {
+            // :6968
+            await era.print(
+              `的语言调戏、${target_name}一点也不生气，看来姐妹关系已经很融洽了。`,
+            ); // :6969
+            await era.printAndWait(
+              `「只，只要能和${player_name}在一起，即使是做魔王大人的性奴，姐姐也很高兴！」`,
+            ); // :6970
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            chara(target).system.顺从 >= 3
+          ) {
+            // :6971
+            await era.print(`的语言调戏、${target_name}小声地回答着`); // :6972
+            await era.printAndWait(
+              `「不，不要说这些了……和，和姐姐一起回家吧……好吗？」`,
+            ); // :6973
+          } else {
+            // :6974
+            await era.print(
+              `的语言羞辱，${target_name}只是红着脸，低着头听着…`,
+            ); // :6975
+            await era.printAndWait(`「为，为什么……会变成这个样子…」`); // :6976
+            await era.printAndWait(`「对不起……${player_name}…真的对不起…」`); // :6977
+          } // :6978
+        } else {
+          // :6979
+          await era.print(`面对${player_name}`); // :6980
+          if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:85`) ||
+              chara(target).system.顺从 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6981
+            await era.print(
+              `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,
+            ); // :6982
+            await era.printAndWait(
+              `「魔，魔王大人……${heart(1)} 你，你是我的全部……嗯啊${heart(1)} 啊啊啊${heart(1)} 我的身体……全部是属于大人的啊啊啊${heart(1)}`,
+            ); // :6983
+          } else if (
+            chara(target).train.欲情 >= era0('palamlv:4') &&
+            (era.get(`talent:${target}:76`) ||
+              chara(target).system.欲望 >= 5) &&
+            game.event.插着不拔
+          ) {
+            // :6984
+            await era.print(
+              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,
+            ); // :6985
+            await era.printAndWait(
+              `「嗯啊……啊啊${heart(1)} 好舒服……${heart(1)} 最，最喜欢……这样被魔王大人${heart(1)} 看着……自慰了${heart(1)} 啊啊啊${heart(1)}」`,
+            ); // :6986
+          } else if (
+            (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+              chara(target).system.顺从 >= 5 ||
+              era.get(`talent:${target}:76`) ||
+              era.get(`talent:${target}:85`)) &&
+            chara(target).train.欲情 >= era0('palamlv:4')
+          ) {
+            // :6987
+            await era.print(`的语言调戏，${target_name}`); // :6988
+            if (
+              era.get(`tequip:${target}:11`) ||
+              era.get(`tequip:${target}:13`) ||
+              era.get(`tequip:${target}:14`) ||
+              era.get(`tequip:${target}:15`) ||
+              era.get(`tequip:${target}:16`) ||
+              era.get(`tequip:${target}:17`)
+            ) {
+              // :6989
+              await era.print(`乐在其中`); // :6990
+            } else if (
+              era.get(`tequip:${target}:44`) ||
+              era.get(`tequip:${target}:49`)
+            ) {
+              // :6991
+              await era.print(`无比痛苦`); // :6992
+            } // :6993
+            await era.print(`地努力回答着`); // :6994
+            await era.printAndWait(
+              `「呜啊啊！人，人家没关系的……请，请魔王大人……随意调教！」`,
+            ); // :6995
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:4') ||
+            era.get(`talent:${target}:85`) ||
+            chara(target).system.顺从 >= 5
+          ) {
+            // :6996
+            await era.print(`的语言挑逗、${target_name}有些害羞地应答着`); // :6997
+            await era.printAndWait(
+              `「请，请魔王大人……随意调教${target_name}」`,
+            ); // :6998
+          } else if (
+            era0(`palam:${target}:4`) >= era0('palamlv:2') ||
+            chara(target).system.顺从 >= 3
+          ) {
+            // :6999
+            await era.print(`的语言挑逗、${target_name}结结巴巴地回答着`); // :7000
+            await era.printAndWait(`「应，应该回答什么…？」`); // :7001
+          } else {
+            // :7002
+            await era.print(`的语言挑逗、${target_name}听清楚了吗…`); // :7003
+            await era.printAndWait(`「…不，不太想说话…」`); // :7004
+          } // :7005
+        } // :7006
+      } // :7007
+      return 0; // :7008
+    } // :7009
+  } // :7010
+
   return 0;
 }
 

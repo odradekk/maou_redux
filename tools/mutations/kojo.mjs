@@ -9526,6 +9526,22 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention,
   })),
   {
+    desc: 'M4536 COM56 首次 CFLAG:357 推进写错（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'kojo.交谈 = 1; // :6921',
+    replace: 'kojo.交谈 = 2; // :6921',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM56 首次推进 CFLAG:357=1',
+  },
+  {
+    desc: 'M4537 COM56 录像内容未按位保留（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: 'game.kojo.录像内容 |= 2; // :6848',
+    replace: 'game.kojo.录像内容 = 2; // :6848',
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM56 录像内容按位保留',
+  },
+  {
     desc: 'M4284 COM28 助手淫乱＋A感覚门槛 >=3 改 >=4（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find: `    if (assi_mao) {
