@@ -28281,6 +28281,406 @@ export const FILES = [
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
+  {
+    src: K11_SOURCE,
+    ref: '11881-12261',
+    any: [
+      ...[
+        ['11881', '@SELF_KOJO_K11'],
+        [
+          '11888',
+          'PRINTFORMW 「嘻嘻嘻……哈哈……嘿嘿……咕嘿嘿%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11889',
+          'PRINTFORMW %SAVESTR:TARGET%一只手扩张着自己爱液泛滥的蜜穴，另一只手近乎发狂一样地自慰着……',
+        ],
+        [
+          '11892',
+          'PRINTFORMW 「嗯啊……啊啊……%SAVESTR:ASSI%…%UNICODE(0x2661) *1%…%SAVESTR:ASSI%……想要你在我身边%UNICODE(0x2661) *1%…嗯啊啊！」',
+        ],
+        [
+          '11893',
+          'PRINTFORMW %SAVESTR:TARGET%呓语着助手的名字，连续地自慰着……',
+        ],
+        [
+          '11896',
+          'PRINTFORMW 「啊啊……身体……好想要和野狗交配……嘴，小穴……肛门都想要！」',
+        ],
+        [
+          '11897',
+          'PRINTFORMW %SAVESTR:TARGET%妄想着自己正在兽交的样子，边自慰着……',
+        ],
+        [
+          '11902',
+          'PRINTFORMW 「把人家的欲火撩起来后就置之不理了，真过分呢…嗯啊…啊啊…啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11903',
+          'PRINTFORMW %SAVESTR:TARGET%带着好像要融化一样的表情不停地自慰着。',
+        ],
+        [
+          '11904',
+          'PRINTFORMW 「嗯啊…啊啊%UNICODE(0x2661) *1% 好像要%UNICODE(0x2661) *1% 好像要%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11905',
+          'PRINTFORMW %SAVESTR:TARGET%的双手同时自慰着前后两穴，和被调教之前的淳朴的村姑形象形成了鲜明的对比。',
+        ],
+        ['11906', 'PRINTFORMW 「可是…还是不能满足啊啊啊……」'],
+        ['11907', 'CFLAG:261 = 4'],
+        ['11910', 'PRINTFORMW 「哈啊…啊啊…我到底…在做什么啊…嗯啊啊」'],
+        [
+          '11911',
+          'PRINTFORMW %SAVESTR:TARGET%趴在床上，嘴里咬着床单，双手同时自慰着前后的两穴。',
+        ],
+        [
+          '11912',
+          'PRINTFORMW 「嗯啊……啊啊%UNICODE(0x2661) *1% 可是……好想要…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11913',
+          'PRINTFORMW 自慰的快感促使%SAVESTR:TARGET%不自觉地摇着腰身，手指在蜜穴和阴蒂上更加用力摩擦，搓揉起来，舒服的娇喘声在房间里回荡着………',
+        ],
+        ['11914', 'CFLAG:261 = 3'],
+        [
+          '11917',
+          'PRINTFORMW 「哈啊…嗯啊啊…为什么…手指不听指挥…停不下来啊啊啊……」',
+        ],
+        [
+          '11918',
+          'PRINTFORMW %SAVESTR:TARGET%的理性还在抗拒着，但手却忍不住更加激烈地自慰着。',
+        ],
+        ['11919', 'PRINTFORMW 「呜啊啊…可是…这样摸…好舒服……啊啊…嗯啊啊……」'],
+        ['11920', 'CFLAG:261 = 2'],
+        [
+          '11923',
+          'PRINTFORMW 「明明已经调教完了，为什么身体还这么热…好难受，好痒…已经忍不住了…嗯啊啊…啊啊」',
+        ],
+        ['11924', 'PRINTFORMW 「呜呜呜…为什么…我会做这样的事……」'],
+        [
+          '11925',
+          'PRINTFORMW %SAVESTR:TARGET%内心充满了罪恶感，却又无法停下自慰的动作………',
+        ],
+        ['11926', 'CFLAG:261 = 1'],
+        ['11937', 'PRINTFORMW 「咕嘿……咕嘿嘿嘿……」'],
+        [
+          '11938',
+          'PRINTFORMW 精神已经崩坏的%SAVESTR:TARGET%凭着本能，沉浸在与%SAVESTR:ASSI%的百合之乐中……',
+        ],
+        ['11939', 'CFLAG:262 = 6'],
+        ['11942', 'PRINTFORMW 「嗯啊……啊啊……好，好厉害%UNICODE(0x2661) *1%」'],
+        [
+          '11943',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:ASSI%用出色的技巧玩弄着身体，连连喘息着，丝毫不掩饰享受的样子。',
+        ],
+        [
+          '11944',
+          'PRINTFORMW 「继，继续……这样玩我……还想要，更多%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11945',
+          'PRINTFORMW %SAVESTR:ASSI%面对着%SAVESTR:TARGET%的反应，笑着继续玩弄着对方身体的敏感点……',
+        ],
+        ['11946', 'CFLAG:262 = 5'],
+        ['11949', 'PRINTFORMW 「嗯啊……啊啊……不，不行啊！」'],
+        [
+          '11950',
+          'PRINTFORMW %SAVESTR:TARGET%躺在床上，被%SAVESTR:ASSI%用出色的技巧玩弄着身体的敏感点。',
+        ],
+        [
+          '11951',
+          'PRINTFORMW 「但，但是为什么……这么有感觉啊啊……魔，魔王大人……原谅我……嗯啊啊！」',
+        ],
+        [
+          '11952',
+          'PRINTFORMW 随着%SAVESTR:ASSI%指尖的动作，%SAVESTR:TARGET%身体随着强烈的快感弹了起来，颤抖个不停，%SAVESTR:ASSI%也尽情欣赏着对方高潮的样子…',
+        ],
+        ['11953', 'CFLAG:262 = 4'],
+        [
+          '11956',
+          'PRINTFORMW 「还，还想要%UNICODE(0x2661) *1% 人家的身体还想要更多啊啊，%SAVESTR:ASSI%大人%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11957',
+          'PRINTFORMW %SAVESTR:TARGET%用淫媚的声音向着%SAVESTR:ASSI%边撒娇边呻吟着。',
+        ],
+        ['11958', 'PRINTFORMW 身体已经完全离不开百合之乐，沉沦其间了……'],
+        ['11959', 'CFLAG:262 = 3'],
+        [
+          '11962',
+          'PRINTFORMW 「呜啊……嗯啊……稍微……温柔一点！不过……好舒服啊……」',
+        ],
+        [
+          '11963',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:ASSI%的指尖下，发出了舒服的喘息声…',
+        ],
+        ['11964', 'CFLAG:262 = 2'],
+        ['11967', 'PRINTFORMW 「住，住手啊……我们……都是女人啊啊…！」'],
+        [
+          '11968',
+          'PRINTFORMW %SAVESTR:ASSI%把%SAVESTR:TARGET%按倒在床上，肆意地玩弄着身下的娇躯………',
+        ],
+        ['11969', 'CFLAG:262 = 1'],
+        ['11979', 'PRINTFORMW 「咕呣……咕呣…♪」'],
+        ['11980', 'PRINTFORMW %SAVESTR:TARGET%带着茫然的表情舔着阴茎……'],
+        ['11981', 'CFLAG:263 = 4'],
+        [
+          '11984',
+          'PRINTFORMW 「咕呣……咕呣%UNICODE(0x2661) *1% 好美味%UNICODE(0x2661) *1% 魔王大人的味道%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11985',
+          'PRINTFORMW %SAVESTR:TARGET%舔舐着%SAVESTR:PLAYER%刚刚射完精液的阴茎，吸吮着上面残余的精液，直到口中的阴茎再度勃起。',
+        ],
+        [
+          '11986',
+          'PRINTFORMW 「唔呣……早上好……唔呣%UNICODE(0x2661) *1% …魔王大人的肉棒……今天也是元气满满的呢%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11987',
+          'PRINTFORMW %SAVESTR:TARGET%带着淫媚的笑容，低下头继续吸吮着阴茎……',
+        ],
+        ['11988', 'CFLAG:263 = 3'],
+        [
+          '11991',
+          'PRINTFORMW 「唔呣……唔呣……哈啊……魔王大人在我的嘴里发射了呢…%UNICODE(0x2661) *1% %SAVESTR:TARGET%很高兴能为魔王大人做早晨口交侍奉呢…%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11992',
+          'PRINTFORMW %SAVESTR:TARGET%脸颊，嘴唇上满是黏糊糊的精液，露出了微笑。',
+        ],
+        [
+          '11993',
+          'PRINTFORMW 「请魔王大人不要动，让我为您清洁干净吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11994',
+          'PRINTFORMW 带着淳朴的乡下少女的笑容、%SAVESTR:TARGET%低下头，吸吮着%SAVESTR:PLAYER%的阴茎上残余的精液，进行着清洁……',
+        ],
+        ['11995', 'CFLAG:263 = 3'],
+        [
+          '11998',
+          'PRINTFORMW 「早，早上好，我，我来为……魔王大人进行……造成口交侍奉了……咕呣……咕呣♪」',
+        ],
+        [
+          '11999',
+          'PRINTFORMW 对%SAVESTR:TARGET%的调教显然已经卓有成效，%SAVESTR:TARGET%低下头，将%SAVESTR:PLAYER%的阴茎含在嘴里，仔细地清洁着上面残余得精液……',
+        ],
+        ['12000', 'CFLAG:263 = 2'],
+        [
+          '12003',
+          'PRINTFORMW 「我，我按照命令……来为魔王大人进行……早晨的口交侍奉了……咕呣……咕呣」',
+        ],
+        [
+          '12004',
+          'PRINTFORMW %SAVESTR:TARGET%斜着眼为%SAVESTR:PLAYER%进行着早晨口交侍奉……',
+        ],
+        ['12005', 'CFLAG:263 = 1'],
+        ['12015', 'PRINTFORMW'],
+        ['12016', 'CFLAG:264 = 3'],
+        [
+          '12020',
+          'PRINTFORMW 「用力地侵犯这个淫荡的小穴吧……妹妹，村子什么的……已经统统不重要了！」',
+        ],
+        [
+          '12022',
+          'PRINTFORMW 「再，再用力一点……再深一点……把人家的淫穴……搞得乱七八糟吧！」',
+        ],
+        [
+          '12024',
+          'PRINTFORMW %SAVESTR:TARGET%被%SAVESTR:PLAYER%紧紧抱在身下侵犯着，随着快感激烈地扭动着腰肢，口中不住地娇喘着',
+        ],
+        [
+          '12025',
+          'PRINTFORML 「呜啊啊……好舒服……和魔王大人……做爱……真的是……太舒服……太幸福了啊啊啊！」',
+        ],
+        [
+          '12026',
+          'PRINTFORMW %SAVESTR:TARGET%被充分调教，开发过的蜜穴分泌着泛滥的爱液，紧紧夹着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        [
+          '12027',
+          'PRINTFORMW 「呜啊……啊啊啊%UNICODE(0x2661) *1% 小穴%UNICODE(0x2661) *1% 在小穴里面%UNICODE(0x2661) *1% 尽情地射精吧啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '12028',
+          'PRINTFORMW %SAVESTR:TARGET%双腿交缠着%SAVESTR:PLAYER%的腰，直到灼热的精液射进子宫。',
+        ],
+        [
+          '12030',
+          'PRINTFORMW %SAVESTR:TARGET%被中出了{s}回之后，才精疲力尽而满意地松开了手………',
+        ],
+        ['12031', 'CFLAG:264 = 2'],
+        [
+          '12034',
+          'PRINTFORMW 「呜啊……啊啊……魔王大人……尽情侵犯我吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '12035',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%有力的怀抱中享受着交媾的快感，娇喘了起来',
+        ],
+        ['12036', 'PRINTFORML 「呜呜……好舒服……舒服得……已经没办法思考了……」'],
+        [
+          '12037',
+          'PRINTFORMW 「哈……哈啊……精液，满满的……射进去了……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '12038',
+          'PRINTFORMW 被中出了{s}回之后，精液缓缓从%SAVESTR:TARGET%的双腿之间渗出……',
+        ],
+        ['12039', 'CFLAG:264 = 1'],
+        ['12049', 'PRINTFORMW 「哈啊……啊啊……天花板好亮啊……」'],
+        [
+          '12050',
+          'PRINTFORMW 已经精神崩溃的%SAVESTR:TARGET%被自己的主人抱着，回到了%CALLNAME:MASTER%的房间………',
+        ],
+        ['12051', 'CFLAG:265 = 2'],
+        [
+          '12053',
+          'PRINTFORMW 「以前都是和妹妹一起睡的……现在只剩下一个人……有点寂寞。魔王大人，可不可以……陪%SAVESTR:TARGET%一起睡？」',
+        ],
+        [
+          '12054',
+          'PRINTFORMW %SAVESTR:TARGET%红着脸踏入了%CALLNAME:MASTER%的房间，甚至等不及回答就已经爬进了%CALLNAME:MASTER%的被窝里，俯在%CALLNAME:MASTER%的身上。',
+        ],
+        [
+          '12055',
+          'PRINTFORMW 「真的是太寂寞了，满脑子里只想要被魔王大人疼爱……」',
+        ],
+        [
+          '12057',
+          'PRINTFORMW %SAVESTR:TARGET%拉着%CALLNAME:MASTER%的手伸向自己的双腿之间，爱抚着已经湿透了的蜜穴………',
+        ],
+        [
+          '12059',
+          'PRINTFORMW %SAVESTR:TARGET%拉着%CALLNAME:MASTER%的手伸向自己的双腿之间，爱抚着已经被爱液浸润的肛门………',
+        ],
+        ['12061', 'CFLAG:265 = 1'],
+        ['12071', 'PRINTFORMW'],
+        ['12074', 'PRINTFORMW'],
+        ['12077', 'PRINTFORMW'],
+        ['12080', 'PRINTFORMW'],
+        [
+          '12093',
+          'PRINTFORMW 「为什么我非得遇上这种事啊……啊啊啊……不要啊……哈哈哈哈哈」',
+        ],
+        ['12094', 'PRINTFORMW %SAVESTR:TARGET%的精神彻底崩溃了……'],
+        [
+          '12097',
+          'PRINTFORMW 「魔王大人……人家……怀上了你的孩子了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '12098',
+          'PRINTFORMW %SAVESTR:TARGET%带着幸福的笑容，告诉了%SAVESTR:MASTER%自己怀孕的事…',
+        ],
+        [
+          '12101',
+          'PRINTFORMW 「好，好像怀孕了……应该是%CSTR:2%的孩子呢，真是的……！」',
+        ],
+        [
+          '12102',
+          'PRINTFORMW %SAVESTR:TARGET%将自己怀孕的事报告了%SAVESTR:MASTER%……',
+        ],
+        [
+          '12105',
+          'PRINTFORMW 「好，好像怀孕了……应该是%CSTR:2%的孩子呢，怀上了女人的孩子……感觉好奇怪……」',
+        ],
+        [
+          '12106',
+          'PRINTFORMW %SAVESTR:TARGET%将自己怀孕的事报告了%SAVESTR:MASTER%……',
+        ],
+        [
+          '12109',
+          'PRINTFORMW 「人家怀孕了……是魔王大人饲养的那头健壮勇猛的野狗的孩子呢……会像父亲一样强壮的，请祝福它吧，魔王大人♪」',
+        ],
+        ['12112', 'PRINTFORMW 「为，为什么会怀上……狗的孩子！」'],
+        [
+          '12115',
+          'PRINTFORMW 「怀，怀上狂王大人的孩子了……好像还要公开妊娠表演……这，这种事情！」',
+        ],
+        ['12118', 'PRINTFORMW 「被侵犯得怀孕了……呜呜……可是，也没有办法了……」'],
+        ['12120', 'CFLAG:271 = 1'],
+        [
+          '12124',
+          'PRINTFORMW 「又，又怀上新的宝宝了……哈，哈哈……这次会生出什么怪物呢……」',
+        ],
+        ['12125', 'PRINTFORMW %SAVESTR:TARGET%流着口水，目瞪口呆的样子…'],
+        [
+          '12128',
+          'PRINTFORMW 「魔王大人……人家……怀上了你的孩子了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '12129',
+          'PRINTFORMW %SAVESTR:TARGET%带着微微的幸福笑容，告诉了%SAVESTR:MASTER%自己怀孕的事…',
+        ],
+        [
+          '12132',
+          'PRINTFORMW 「好，好像怀孕了……应该是%CSTR:2%的孩子呢，真是的……！」',
+        ],
+        [
+          '12133',
+          'PRINTFORMW %SAVESTR:TARGET%将自己怀孕的事报告了%SAVESTR:MASTER%……',
+        ],
+        [
+          '12136',
+          'PRINTFORMW 「好，好像怀孕了……应该是%CSTR:2%的孩子呢，怀上了女人的孩子……总感觉有点奇怪……」',
+        ],
+        [
+          '12137',
+          'PRINTFORMW %SAVESTR:TARGET%将自己怀孕的事报告了%SAVESTR:MASTER%……',
+        ],
+        [
+          '12140',
+          'PRINTFORMW 「人家怀孕了……是魔王大人饲养的那头健壮勇猛的野狗的孩子呢……会像父亲一样强壮的，请祝福它吧，魔王大人♪」',
+        ],
+        ['12143', 'PRINTFORMW 「为，为什么会怀上……狗的孩子！」'],
+        [
+          '12146',
+          'PRINTFORMW 「怀，怀上狂王大人的孩子了……好像还要公开妊娠表演……这，这种事情！」',
+        ],
+        ['12149', 'PRINTFORMW 「被侵犯得怀孕了……呜呜……可是，也没有办法了……」'],
+        ['12151', 'CFLAG:271 = 1'],
+        ['12163', 'PRINTFORMW 「哈……哈啊……啊啊啊！啊啊啊啊！」'],
+        [
+          '12164',
+          'PRINTFORMW 已经彻底精神崩坏的%SAVESTR:TARGET%在哭泣中胡乱喊叫着……',
+        ],
+        [
+          '12167',
+          'PRINTFORMW 「看，这是我们爱情的结晶呢、快点带他去洗个澡吧……」',
+        ],
+        ['12168', 'PRINTFORMW %SAVESTR:TARGET%抱着你的孩子，幸福地笑了……'],
+        ['12171', 'PRINTFORMW 「呼，呼……孩，孩子出生了……」'],
+        ['12173', 'CFLAG:272 = 1'],
+        ['12177', 'PRINTFORMW 「嘿……嘿嘿……哈啊……哈啊……啊啊啊！啊啊啊啊！！」'],
+        [
+          '12178',
+          'PRINTFORMW 已经彻底精神崩坏的%SAVESTR:TARGET%在哭泣中胡乱喊叫着……',
+        ],
+        ['12181', 'PRINTFORMW 「看，这是我们又一个孩子呢……嘻嘻」'],
+        ['12182', 'PRINTFORMW %SAVESTR:TARGET%抱着你的孩子，幸福地笑了……'],
+        ['12185', 'PRINTFORMW 「呼，呼……孩，孩子出生了……」'],
+        ['12187', 'CFLAG:272 = 1'],
+        [
+          '12199',
+          'PRINTFORMW 「是特意来看我吗？感觉才没多久肚子就已经这么大了呢………」',
+        ],
+        [
+          '12200',
+          'PRINTFORMW 即将临盆的%SAVESTR:TARGET%抚摸着自己胀鼓鼓的肚子……',
+        ],
+        ['12203', 'PRINTFORMW 「看，魔王大人来探望你了，快点打个招呼吧？」'],
+        ['12204', 'PRINTFORMW %SAVESTR:TARGET%哄着孩子……'],
+        ['12207', 'CFLAG:273 = 1'],
+        ['12214', 'PRINTFORMW 「啊啊、那孩子走了………」'],
+        ['12215', 'CFLAG:274 = 1'],
+        ['12224', 'PRINTFORMW'],
+        ['12227', 'PRINTFORMW'],
+        ['12234', 'TFLAG:13 = 0'],
+      ].map(([ref, line]) => exact_line(ref, line)),
+    ],
+  },
 ];
 
 export const LOG_REFS = [];

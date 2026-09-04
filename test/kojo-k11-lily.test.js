@@ -62,6 +62,11 @@ async function speak_markcng11(fixture) {
   return kojo_message_markcng_family.call(11, { args: [] });
 }
 
+async function speak_self11(fixture, rand = seq_rand()) {
+  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  return self_kojo_family.call(11, { args: [rand] });
+}
+
 // RAND:N 定值序：draws 依次被消费，越界取模（K3 test 同款先例）
 const seq_rand =
   (...draws) =>
@@ -7705,6 +7710,67 @@ test('MARKCNG_11 非玛奥助手参与调教时整段静默跳过', async () => 
   await speak_markcng11(fixture);
   assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get(`cflag:${LILY}:297`), undefined);
+});
+
+// —— @SELF_KOJO_K11 ——
+
+test('SELF_KOJO_K11 九个事件阶段分别推进 CFLAG:261-265、271-274 并清 TFLAG:13', async () => {
+  for (const [phase, flag] of [
+    [1, 261],
+    [2, 262],
+    [3, 263],
+    [4, 264],
+    [5, 265],
+    [11, 271],
+    [12, 272],
+    [13, 273],
+    [14, 274],
+  ]) {
+    const fixture = setup_lily((f) => f.store.set('tflag:13', phase));
+    await speak_self11(fixture);
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:${flag}`),
+      1,
+      `TFLAG:13=${phase} 推进 CFLAG:${flag}`,
+    );
+    assert.equal(fixture.store.get('tflag:13'), 0);
+  }
+});
+
+test('SELF_KOJO_K11 调教后性交读取 aftertrain 的 S，并在三回以上补充次数', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('tflag:13', 4);
+    f.store.set(`abl:${LILY}:2`, 4);
+  });
+  fixture.load_module('event/event-aftertrain').remember_aftertrain_s(3);
+  await speak_self11(fixture, seq_rand(0));
+  assert.match(fixture.text_lines().join('\n'), /被中出了3回之后/);
+  assert.equal(fixture.store.get(`cflag:${LILY}:264`), 2);
+});
+
+test('SELF_KOJO_K11 夜袭按原作单字母全局 F 选择蜜穴或肛门', async () => {
+  for (const [f_value, expected] of [
+    [1, /湿透了的蜜穴/],
+    [0, /爱液浸润的肛门/],
+  ]) {
+    const fixture = setup_lily((f) => {
+      f.store.set('tflag:13', 5);
+      f.store.set('f:0', f_value);
+    });
+    await speak_self11(fixture);
+    assert.match(fixture.text_lines().join('\n'), expected);
+  }
+});
+
+test('SELF_KOJO_K11 妊娠发觉按 CFLAG:102 与 CSTR:2 插入生父称呼', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set(`cflag:${LILY}:102`, 2);
+    f.store.set(`cstr:${LILY}:2`, '玛奥');
+  });
+  await speak_self11(fixture);
+  assert.match(fixture.text_lines().join('\n'), /应该是玛奥的孩子/);
+  assert.equal(fixture.store.get(`cflag:${LILY}:271`), 1);
 });
 
 // —— SELECTCOM 56（交谈 CFLAG:357）——
