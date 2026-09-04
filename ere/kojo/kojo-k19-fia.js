@@ -23,12 +23,13 @@
 
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
+const {
+  peek_aftertrain_q,
+  peek_aftertrain_s,
+} = require('#/event/event-aftertrain');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { heart, self_call } = require('#/kojo/kojo-text');
-const { chara } = require('#/facade/chara');
-const { game } = require('#/facade/game');
-const { chara_callname } = require('#/utils/callname-utils');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -55,20 +56,15 @@ const {
   gohoubi_after_koujo_family,
   osioski_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
-const {
-  peek_aftertrain_q,
-  peek_aftertrain_s,
-} = require('#/event/event-aftertrain');
+const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
+const { chara_callname } = require('#/utils/callname-utils');
 
 const PBAND = 4; // ITEM:PBAND = ITEM:4（SYSTEM ver1.0.3.ERB:42）
 const era0 = (key) => era.get(key) || 0;
 
-// 需要复核 agent 补的导入（产物初稿不 require，保真锁会红）：
-// const era = require('#/era-electron');
-// const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
-// const { chara_callname } = require('#/utils/callname-utils');
-// 以及 target_name / player_name / assi_name / master_name / sc() / scf()
-// 的取值（${target_name} 等插值的 JS 侧表达式）。
+// 反复出现的原作变量语义：TALENT:179 = 菲娅口上素质；TALENT:314 = 魔族种族；
+// TEQUIP:45/55/89/90 = 口塞/死斗场/兽奸/触手；TFLAG:899 = 失神状态。
 
 // @EVENTTRAIN // :51
 on(

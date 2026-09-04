@@ -28,6 +28,12 @@ async function setup_k19(seed, selectcom = 0) {
   era_flag.assiplay = 0;
   era_flag.selectcom = selectcom;
   fixture.store.set(`talent:${CID}:179`, 1);
+  for (const talent of [0, 9, 76, 85, 314]) {
+    fixture.store.set(`talent:${CID}:${talent}`, 0);
+  }
+  for (const mark of [0, 1, 2, 3]) {
+    fixture.store.set(`mark:${CID}:${mark}`, 0);
+  }
   fixture.store.set('flag:119', 1);
   fixture.store.set('flag:7', 2);
   if (seed) seed(fixture, era_flag);
@@ -89,6 +95,47 @@ test('EVENTTRAIN 初调教推进 CFLAG:201，人类与魔族分档', async () =>
   await emit(demon, 'EVENTTRAIN');
   assert.equal(demon.store.get(`cflag:${CID}:201`), 1, '魔族初调教推进到 1');
   assert.equal(demon.store.get(`cflag:${CID}:370`), 1, '魔族化计数置 1');
+});
+
+test('EVENTTRAIN CFLAG:201 主状态机逐档推进到 2–9', async () => {
+  const cases = [
+    [1, 2, (f) => f.store.set(`mark:${CID}:2`, 1)],
+    [2, 3, (f) => f.store.set(`mark:${CID}:2`, 2)],
+    [3, 4, (f) => f.store.set(`mark:${CID}:2`, 3)],
+    [4, 5, (f) => f.store.set(`talent:${CID}:76`, 1)],
+    [
+      5,
+      6,
+      (f) => {
+        f.store.set(`talent:${CID}:314`, 9);
+        f.store.set(`talent:${CID}:76`, 1);
+      },
+    ],
+    [6, 7, (f) => f.store.set(`talent:${CID}:85`, 1)],
+    [
+      7,
+      8,
+      (f) => {
+        f.store.set(`talent:${CID}:314`, 9);
+        f.store.set(`talent:${CID}:85`, 1);
+        f.store.set(`cflag:${CID}:370`, 1);
+      },
+    ],
+    [8, 9, (f) => f.store.set(`talent:${CID}:9`, 1)],
+  ];
+  for (const [before, after, seed] of cases) {
+    const fixture = await setup_k19((f) => {
+      f.store.set(`cflag:${CID}:201`, before);
+      f.store.set(`cflag:${CID}:650`, 0);
+      seed(f);
+    });
+    await emit(fixture, 'EVENTTRAIN');
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:201`),
+      after,
+      `初调教主状态机 ${before} → ${after}`,
+    );
+  }
 });
 
 for (const guard of [
@@ -205,6 +252,86 @@ test('KOJO_MESSAGE_COM：全部 SELECTCOM 顶层分支的首回合状态可达',
   }
 });
 
+test('KOJO_MESSAGE_COM：全部可达计数器至少推进一个后续档', async () => {
+  const cases = [
+    [0, 301, 2],
+    [1, 302, 2],
+    [2, 303, 2],
+    [3, 304, 2],
+    [5, 306, 2],
+    [6, 307, 2],
+    [8, 309, 2],
+    [9, 310, 2],
+    [10, 311, 2],
+    [11, 312, 2, 11, 1],
+    [11, 372, 3, 11, 0, 85],
+    [12, 313, 2],
+    [13, 314, 2, 13, 1],
+    [13, 374, 3, 13, 0, 85],
+    [14, 315, 2, 14, 1],
+    [14, 375, 2, 14, 0, 85],
+    [15, 316, 2, 15, 1],
+    [15, 376, 2, 15, 0, 85],
+    [19, 320, 2, 19, 1],
+    [19, 379, 3, 19, 0, 85],
+    [20, 321, 2],
+    [21, 322, 2],
+    [22, 323, 2],
+    [23, 324, 2],
+    [26, 327, 2],
+    [27, 328, 2],
+    [28, 329, 2],
+    [29, 337, 2],
+    [30, 331, 2],
+    [31, 332, 2],
+    [32, 333, 2],
+    [33, 334, 2],
+    [34, 335, 2],
+    [35, 336, 2],
+    [36, 337, 2],
+    [37, 338, 2],
+    [38, 339, 2],
+    [40, 341, 2],
+    [41, 342, 2],
+    [42, 343, 2],
+    [43, 344, 2, 43, 1],
+    [43, 380, 2, 43, 0, 85],
+    [44, 345, 2, 44, 1],
+    [44, 385, 2, 44, 0, 85],
+    [45, 346, 2, 45, 1],
+    [45, 386, 2, 45, 0, 85],
+    [46, 347, 2, 46, 1],
+    [55, 356, 2, 55, 0],
+    [56, 357, 1, 55, 0],
+    [125, 361, 2],
+    [126, 362, 2],
+    [127, 363, 2],
+    [69, 364, 2],
+    [124, 365, 2],
+    [80, 381, 2],
+  ];
+  for (const [
+    selectcom,
+    counter,
+    expected,
+    tequip,
+    equipped,
+    talent,
+  ] of cases) {
+    const fixture = await setup_k19((f) => {
+      f.store.set(`cflag:${CID}:${counter}`, 1);
+      if (tequip) f.store.set(`tequip:${CID}:${tequip}`, equipped);
+      if (talent) f.store.set(`talent:${CID}:${talent}`, 1);
+    }, selectcom);
+    await speak_k19(fixture);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:${counter}`),
+      expected,
+      `SELECTCOM ${selectcom}${tequip ? ` TEQUIP:${tequip}=${equipped}` : ''} 后续档推进 CFLAG:${counter}=${expected}`,
+    );
+  }
+});
+
 test('原作缺陷：SELECTCOM 56 少 ENDIF，使 SELECTCOM 123 不可达', async () => {
   const fixture = await setup_k19(undefined, 123);
   await speak_k19(fixture);
@@ -217,12 +344,17 @@ test('原作缺陷：SELECTCOM 56 少 ENDIF，使 SELECTCOM 123 不可达', asyn
 
 test('PALAMCNG：润滑首超、四类 NOWEX 首次绝顶分别推进状态', async () => {
   const fixture = await setup_k19((f) => {
-    f.store.set(`palam:${CID}:3`, 600);
+    for (const index of [3, 5, 8, 10])
+      f.store.set(`palam:${CID}:${index}`, 600);
+    f.store.set('tflag:3', 1);
     for (const index of [0, 1, 2, 3]) f.store.set(`nowex:${CID}:${index}`, 1);
   });
   await palam_k19(fixture);
   for (const [index, label] of [
     [221, '首次润滑'],
+    [222, '首次欲情'],
+    [223, '首次耻情'],
+    [224, '首次恐怖'],
     [225, '首次C绝顶'],
     [226, '首次V绝顶'],
     [227, '首次A绝顶'],
@@ -230,6 +362,7 @@ test('PALAMCNG：润滑首超、四类 NOWEX 首次绝顶分别推进状态', as
   ]) {
     assert.equal(fixture.store.get(`cflag:${CID}:${index}`), 1, `${label}推进`);
   }
+  assert.equal(fixture.store.get(`cflag:${CID}:229`), 1, '处女丧失推进');
 });
 
 test('MARKCNG：苦痛、快乐、屈服、反抗刻印首超分别推进', async () => {
@@ -267,6 +400,33 @@ test('SELF_KOJO 读取全局 Q 并在结束时清 TFLAG:13', async () => {
   assert.equal(after.peek_aftertrain_q(), 1, '全局 Q 由调教后判定置 1');
   assert.equal(fixture.store.get('tflag:13'), 0, 'SELF_KOJO 清 TFLAG:13');
   assert.ok(fixture.text_lines().length > 0, 'SELF_KOJO Q==1 有输出');
+});
+
+test('SELF_KOJO 各阶段推进 CFLAG:261–265 与 271–274', async () => {
+  for (const [phase, counter] of [
+    [1, 261],
+    [2, 262],
+    [3, 263],
+    [4, 264],
+    [5, 265],
+    [11, 271],
+    [12, 272],
+    [13, 273],
+    [14, 274],
+  ]) {
+    const fixture = await setup_k19((f) => f.store.set('tflag:13', phase));
+    await self_k19(fixture);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:${counter}`),
+      1,
+      `SELF_KOJO TFLAG:13=${phase} 推进 CFLAG:${counter}`,
+    );
+    assert.equal(
+      fixture.store.get('tflag:13'),
+      0,
+      `SELF_KOJO ${phase} 后清 TFLAG:13`,
+    );
+  }
 });
 
 test('原作缺陷：自己扒开用 308 判首次、二次却推进胸部爱抚 306', async () => {
