@@ -6045,8 +6045,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4004 COM13 TEQUIP:13 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'if (era.get(`tequip:${target}:13`)) {',
-    replace: 'if (!era.get(`tequip:${target}:13`)) {',
+    find: `if (era_flag.selectcom === 13) {
+    if (era.get(\`tequip:\${target}:13\`)) {`,
+    replace: `if (era_flag.selectcom === 13) {
+    if (!era.get(\`tequip:\${target}:13\`)) {`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM13 初めて（TEQUIP:13）：助手玛奥推进到 1',
   },
@@ -6527,8 +6529,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4038 COM14 TEQUIP:14 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'if (era.get(`tequip:${target}:14`)) {',
-    replace: 'if (!era.get(`tequip:${target}:14`)) {',
+    find: `if (era_flag.selectcom === 14) {
+    if (era.get(\`tequip:\${target}:14\`)) {`,
+    replace: `if (era_flag.selectcom === 14) {
+    if (!era.get(\`tequip:\${target}:14\`)) {`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM14 初めて：助手玛奥推进到 1',
   },
@@ -6773,8 +6777,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4057 COM15 TEQUIP:15 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'if (era.get(`tequip:${target}:15`)) {',
-    replace: 'if (!era.get(`tequip:${target}:15`)) {',
+    find: `if (era_flag.selectcom === 15) {
+    if (era.get(\`tequip:\${target}:15\`)) {`,
+    replace: `if (era_flag.selectcom === 15) {
+    if (!era.get(\`tequip:\${target}:15\`)) {`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM15 初めて：助手玛奥推进到 1',
   },
@@ -7019,8 +7025,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4076 COM16 TEQUIP:16 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'if (era.get(`tequip:${target}:16`)) {',
-    replace: 'if (!era.get(`tequip:${target}:16`)) {',
+    find: `if (era_flag.selectcom === 16) {
+    if (era.get(\`tequip:\${target}:16\`)) {`,
+    replace: `if (era_flag.selectcom === 16) {
+    if (!era.get(\`tequip:\${target}:16\`)) {`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM16 初めて：助手玛奥推进到 1',
   },
@@ -7278,8 +7286,10 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M4096 COM19 TEQUIP:19 已装/未装判据取反（#242）',
     file: 'ere/kojo/kojo-k11-lily.js',
-    find: 'if (era.get(`tequip:${target}:19`)) {',
-    replace: 'if (!era.get(`tequip:${target}:19`)) {',
+    find: `if (era_flag.selectcom === 19) {
+    if (era.get(\`tequip:\${target}:19\`)) {`,
+    replace: `if (era_flag.selectcom === 19) {
+    if (!era.get(\`tequip:\${target}:19\`)) {`,
     tests: ['kojo-k11-lily'],
     must_mention: 'COM19 初めて：助手玛奥推进到 1',
   },
@@ -10862,6 +10872,26 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM46 装上初めて：助手玛奥与非助手玛奥三档',
   },
+  ...[
+    [4525, '初次', '1', '2', '6737', 'COM55 初めて：淫乱、爱慕与其余三档'],
+    [4526, '助手档6', '6', '5', '6747', 'COM55 二回目：助手玛奥五档推进'],
+    [4527, '助手档5', '5', '4', '6751', 'COM55 二回目：助手玛奥五档推进'],
+    [4528, '助手档4', '4', '3', '6756', 'COM55 二回目：助手玛奥五档推进'],
+    [4529, '助手档3', '3', '2', '6760', 'COM55 二回目：助手玛奥五档推进'],
+    [4530, '助手档2', '2', '1', '6764', 'COM55 二回目：助手玛奥五档推进'],
+    [4531, '非助手档6', '6', '5', '6771', 'COM55 二回目：非助手玛奥五档推进'],
+    [4532, '非助手档5', '5', '4', '6775', 'COM55 二回目：非助手玛奥五档推进'],
+    [4533, '非助手档4', '4', '3', '6780', 'COM55 二回目：非助手玛奥五档推进'],
+    [4534, '非助手档3', '3', '2', '6784', 'COM55 二回目：非助手玛奥五档推进'],
+    [4535, '非助手档2', '2', '1', '6788', 'COM55 二回目：非助手玛奥五档推进'],
+  ].map(([id, tier, value, replacement, ref, must_mention]) => ({
+    desc: `M${id} COM55 ${tier} CFLAG:356 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.放置PLAY = ${value}; // :${ref}`,
+    replace: `kojo.放置PLAY = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',

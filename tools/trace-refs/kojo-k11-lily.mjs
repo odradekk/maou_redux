@@ -20215,6 +20215,137 @@ export const FILES = [
         ['6677', 'PRINTFORMW 「忍，忍不住了！不要看，不要看啊啊啊！」'],
         ['6678', 'PRINTFORMW %SAVESTR:TARGET%在痛苦的呻吟中排泄了出来'],
       ].map(([ref, line]) => exact_line(ref, line)),
+      ...[
+        ['6688', 'IF SELECTCOM == 55'],
+        ['6693', 'PRINTFORMW 「哎哎，这就结束了吗？真没劲。」'],
+        ['6696', 'PRINTFORMW 「为，为什么不继续了呢？」'],
+        ['6699', 'PRINTFORMW 「不，不要用那种眼神看着人家………」'],
+        [
+          '6703',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴里，蠕虫一直在躁动个不停，侵犯，刺激着每一处敏感点。',
+        ],
+        [
+          '6706',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门里，蠕虫一直在躁动个不停，侵犯，刺激着敏感的直肠。',
+        ],
+        [
+          '6709',
+          'PRINTFORMW %SAVESTR:TARGET%肛门里的珠串慢慢地震动了起来，刺激着敏感的直肠。',
+        ],
+        [
+          '6712',
+          'PRINTFORMW %SAVESTR:TARGET%的阴蒂被电动阴蒂夹持续刺激着，已经有些红肿。',
+        ],
+        [
+          '6715',
+          'PRINTFORMW %SAVESTR:TARGET%的乳头被电动夹子持续刺激着，已经有些红肿。',
+        ],
+        [
+          '6721',
+          'PRINTFORMW %SAVESTR:TARGET%的阴茎还在被电动飞机杯持续摩擦刺激着，只能拼命忍耐着射精的欲望。',
+        ],
+        ['6724', 'PRINTFORMW %SAVESTR:TARGET%眼前依旧漆黑一片。'],
+        [
+          '6727',
+          'PRINTFORMW %SAVESTR:TARGET%的身体依旧被紧紧束缚着，动弹不得。',
+        ],
+        [
+          '6730',
+          'PRINTFORMW %SAVESTR:TARGET%的肚子里，灌肠液依旧在肆虐着，只能拼命忍耐着排泄的欲望，但是还是有一丝丝液体从肛塞边缘漏出',
+        ],
+        [
+          '6733',
+          'PRINTFORMW %SAVESTR:TARGET%肛门里的电极还在传递着微微的电流，刺激得括约肌一阵阵抽搐。',
+        ],
+        ['6736', 'PRINTFORMW 水晶球忠实的记录下%SAVESTR:TARGET%此刻的身姿……'],
+        ['6737', 'CFLAG:356 = 1'],
+        [
+          '6745',
+          'PRINTFORMW 『哎呀呀，姐姐，被放置play的感觉如何，想要的话就大声说出来呀♪』',
+        ],
+        [
+          '6746',
+          'PRINTFORMW %SAVESTR:TARGET%体内的欲火被妹妹燎拨着，燃烧得更旺了……',
+        ],
+        ['6747', 'CFLAG:356 = 6'],
+        ['6750', 'PRINTFORMW 『哼哼哼，那样的表情，姐姐等得受不了了吗？』'],
+        ['6751', 'CFLAG:356 = 5'],
+        [
+          '6754',
+          'PRINTFORMW 「不，不要那样让姐姐……等着了……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '6755',
+          'PRINTFORMW %SAVESTR:TARGET%体内的欲火被妹妹用眼神和语言燎拨着，燃烧得更旺了……',
+        ],
+        ['6756', 'CFLAG:356 = 4'],
+        [
+          '6759',
+          'PRINTFORMW 『不，不要用那样的眼神看姐姐啦，%SAVESTR:PLAYER%………』',
+        ],
+        ['6760', 'CFLAG:356 = 3'],
+        ['6763', 'PRINTFORMW 『哎呀，别用那样的眼神瞪我嘛……』'],
+        ['6764', 'CFLAG:356 = 2'],
+        [
+          '6769',
+          'PRINTFORMW 「魔，魔王大人真是坏心眼…%UNICODE(0x2661) *1% 这么把人家……晾在一边……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '6770',
+          'PRINTFORMW 欲火难耐的%SAVESTR:TARGET%焦躁地摇摆着身体，诱惑着%SAVESTR:PLAYER%，渴求着调教和侵犯……',
+        ],
+        ['6771', 'CFLAG:356 = 6'],
+        ['6774', 'PRINTFORMW 「啊……啊……不，不会就这么结束了吧？」'],
+        ['6775', 'CFLAG:356 = 5'],
+        ['6778', 'PRINTFORMW 「不可以急躁，不可以急躁……」'],
+        [
+          '6779',
+          'PRINTFORMW 欲火难耐的%SAVESTR:TARGET%不断地自言自语着，然而渴望的视线却一直投向%SAVESTR:PLAYER%……',
+        ],
+        ['6780', 'CFLAG:356 = 4'],
+        ['6783', 'PRINTFORMW 「唔……我，我会……乖乖的……」'],
+        ['6784', 'CFLAG:356 = 3'],
+        ['6787', 'PRINTFORMW 「别，别用那样的眼神看人家……」'],
+        ['6788', 'CFLAG:356 = 2'],
+        [
+          '6793',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴里，蠕虫一直在躁动个不停，侵犯，刺激着每一处敏感点。',
+        ],
+        [
+          '6796',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门里，蠕虫一直在躁动个不停，侵犯，刺激着敏感的直肠。',
+        ],
+        [
+          '6799',
+          'PRINTFORMW %SAVESTR:TARGET%肛门里的珠串慢慢地震动了起来，刺激着敏感的直肠。',
+        ],
+        [
+          '6802',
+          'PRINTFORMW %SAVESTR:TARGET%的阴蒂被电动阴蒂夹持续刺激着，已经有些红肿。',
+        ],
+        [
+          '6805',
+          'PRINTFORMW %SAVESTR:TARGET%的乳头被电动夹子持续刺激着，已经有些红肿。',
+        ],
+        [
+          '6811',
+          'PRINTFORMW %SAVESTR:TARGET%的阴茎还在被电动飞机杯持续摩擦刺激着，只能拼命忍耐着射精的欲望。',
+        ],
+        ['6814', 'PRINTFORMW %SAVESTR:TARGET%眼前依旧漆黑一片。'],
+        [
+          '6817',
+          'PRINTFORMW %SAVESTR:TARGET%的身体依旧被紧紧束缚着，动弹不得。',
+        ],
+        [
+          '6820',
+          'PRINTFORMW %SAVESTR:TARGET%的肚子里，灌肠液依旧在肆虐着，只能拼命忍耐着排泄的欲望，但是还是有一丝丝液体从肛塞边缘漏出',
+        ],
+        [
+          '6823',
+          'PRINTFORMW %SAVESTR:TARGET%肛门里的电极还在传递着微微的电流，刺激得括约肌一阵阵抽搐。',
+        ],
+        ['6826', 'PRINTFORMW 水晶球忠实的记录下%SAVESTR:TARGET%此刻的身姿……'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];

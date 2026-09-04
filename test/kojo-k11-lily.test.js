@@ -6917,3 +6917,82 @@ test('COM46 取下：助手与非助手的排泄分档', async () => {
     assert.equal(fixture.text_lines()[0], item.expected);
   }
 });
+
+// —— SELECTCOM 55（放置PLAY CFLAG:356）——
+
+test('COM55 初めて：淫乱、爱慕与其余三档', async () => {
+  const cases = [
+    { talent: 76, expected: '「哎哎，这就结束了吗？真没劲。」' },
+    { talent: 85, expected: '「为，为什么不继续了呢？」' },
+    { expected: '「不，不要用那种眼神看着人家………」' },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+    }, 55);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(fixture.text_lines()[0], item.expected);
+    assert.equal(fixture.store.get(`cflag:${LILY}:356`), 1);
+  }
+});
+
+test('COM55 初めて：逐项输出仍在工作的放置器具', async () => {
+  const fixture = setup_lily((f) => {
+    for (const id of [11, 13, 19, 14, 15, 16, 17, 43, 44, 46, 49, 53])
+      f.store.set(`tequip:${LILY}:${id}`, 1);
+  }, 55);
+  await speak_com11(fixture, seq_rand());
+  const text = fixture.text_lines().join('\n');
+  for (const fragment of [
+    '蜜穴里，蠕虫',
+    '肛门里，蠕虫',
+    '肛门里的珠串',
+    '电动阴蒂夹',
+    '电动夹子',
+    '榨乳机',
+    '电动飞机杯',
+    '漆黑一片',
+    '紧紧束缚',
+    '灌肠液',
+    '肛门里的电极',
+    '水晶球',
+  ])
+    assert.ok(text.includes(fragment), `COM55 放置器具输出：${fragment}`);
+});
+
+for (const [label, assistant] of [
+  ['助手玛奥', true],
+  ['非助手玛奥', false],
+]) {
+  test(`COM55 二回目：${label}五档推进`, async () => {
+    const cases = [
+      { talent: 76, arousal: 100, expected: 6 },
+      { talent: 76, expected: 5 },
+      { talent: 85, arousal: 100, expected: 4 },
+      { talent: 85, expected: 3 },
+      { expected: 2 },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        f.store.set('flag:7', 1);
+        f.store.set('palamlv:3', 100);
+        f.store.set(`cflag:${LILY}:356`, 1);
+        if (assistant) {
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+        if (item.talent !== undefined)
+          f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        if (item.arousal !== undefined)
+          f.store.set(`palam:${LILY}:5`, item.arousal);
+      }, 55);
+      if (assistant) {
+        fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+        fixture.era.addCharacter(MAO);
+      }
+      await speak_com11(fixture, seq_rand());
+      assert.equal(fixture.store.get(`cflag:${LILY}:356`), item.expected);
+    }
+  });
+}

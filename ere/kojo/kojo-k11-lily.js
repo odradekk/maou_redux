@@ -12490,6 +12490,294 @@ async function kojo_message_com_11(rand) {
     return 0; // :6682
   } // :6683
 
+  // :6688-6829 IF SELECTCOM === 55（放置PLAY CFLAG:356）
+  if (era_flag.selectcom === 55) {
+    if (kojo.放置PLAY === 0) {
+      // :6690
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :6692
+        await era.printAndWait(`「哎哎，这就结束了吗？真没劲。」`); // :6693
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :6695
+        await era.printAndWait(`「为，为什么不继续了呢？」`); // :6696
+      } else {
+        // :6698
+        await era.printAndWait(`「不，不要用那种眼神看着人家………」`); // :6699
+      } // :6700
+
+      if (era.get(`tequip:${target}:11`)) {
+        // :6703
+        await era.printAndWait(
+          `${target_name}的蜜穴里，蠕虫一直在躁动个不停，侵犯，刺激着每一处敏感点。`,
+        ); // :6703
+      } // :6703
+
+      if (era.get(`tequip:${target}:13`)) {
+        // :6706
+        await era.printAndWait(
+          `${target_name}的肛门里，蠕虫一直在躁动个不停，侵犯，刺激着敏感的直肠。`,
+        ); // :6706
+      } // :6706
+
+      if (era.get(`tequip:${target}:19`)) {
+        // :6709
+        await era.printAndWait(
+          `${target_name}肛门里的珠串慢慢地震动了起来，刺激着敏感的直肠。`,
+        ); // :6709
+      } // :6709
+
+      if (era.get(`tequip:${target}:14`)) {
+        // :6712
+        await era.printAndWait(
+          `${target_name}的阴蒂被电动阴蒂夹持续刺激着，已经有些红肿。`,
+        ); // :6712
+      } // :6712
+
+      if (era.get(`tequip:${target}:15`)) {
+        // :6715
+        await era.printAndWait(
+          `${target_name}的乳头被电动夹子持续刺激着，已经有些红肿。`,
+        ); // :6715
+      } // :6715
+
+      if (era.get(`tequip:${target}:16`)) {
+        // :6718
+        await era.print(`${target_name}被榨乳机持续榨取着母乳。`); // :6718
+      } // :6718
+
+      if (era.get(`tequip:${target}:17`)) {
+        // :6721
+        await era.printAndWait(
+          `${target_name}的阴茎还在被电动飞机杯持续摩擦刺激着，只能拼命忍耐着射精的欲望。`,
+        ); // :6721
+      } // :6721
+
+      if (era.get(`tequip:${target}:43`)) {
+        // :6724
+        await era.printAndWait(`${target_name}眼前依旧漆黑一片。`); // :6724
+      } // :6724
+
+      if (era.get(`tequip:${target}:44`)) {
+        // :6727
+        await era.printAndWait(
+          `${target_name}的身体依旧被紧紧束缚着，动弹不得。`,
+        ); // :6727
+      } // :6727
+
+      if (era.get(`tequip:${target}:46`)) {
+        // :6730
+        await era.printAndWait(
+          `${target_name}的肚子里，灌肠液依旧在肆虐着，只能拼命忍耐着排泄的欲望，但是还是有一丝丝液体从肛塞边缘漏出`,
+        ); // :6730
+      } // :6730
+
+      if (era.get(`tequip:${target}:49`)) {
+        // :6733
+        await era.printAndWait(
+          `${target_name}肛门里的电极还在传递着微微的电流，刺激得括约肌一阵阵抽搐。`,
+        ); // :6733
+      } // :6733
+
+      if (era.get(`tequip:${target}:53`)) {
+        // :6736
+        await era.printAndWait(`水晶球忠实的记录下${target_name}此刻的身姿……`); // :6736
+      } // :6736
+      // CFLAG:356  = 1（变量语义：CFLAG 族，356） // :6737
+      kojo.放置PLAY = 1; // :6737
+      return 0; // :6738
+    } else {
+      // :6740
+
+      if (assi_mao) {
+        // :6742
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).train.欲情 >= era0('palamlv:3') &&
+          (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :6744
+          await era.printAndWait(
+            `『哎呀呀，姐姐，被放置play的感觉如何，想要的话就大声说出来呀♪』`,
+          ); // :6745
+          await era.printAndWait(
+            `${target_name}体内的欲火被妹妹燎拨着，燃烧得更旺了……`,
+          ); // :6746
+          // CFLAG:356  = 6（变量语义：CFLAG 族，356） // :6747
+          kojo.放置PLAY = 6; // :6747
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.放置PLAY <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :6749
+          await era.printAndWait(
+            `『哼哼哼，那样的表情，姐姐等得受不了了吗？』`,
+          ); // :6750
+          // CFLAG:356  = 5（变量语义：CFLAG 族，356） // :6751
+          kojo.放置PLAY = 5; // :6751
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).train.欲情 >= era0('palamlv:3') &&
+          (kojo.放置PLAY <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :6753
+          await era.printAndWait(`「不，不要那样让姐姐……等着了……${heart(1)}」`); // :6754
+          await era.printAndWait(
+            `${target_name}体内的欲火被妹妹用眼神和语言燎拨着，燃烧得更旺了……`,
+          ); // :6755
+          // CFLAG:356  = 4（变量语义：CFLAG 族，356） // :6756
+          kojo.放置PLAY = 4; // :6756
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.放置PLAY <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :6758
+          await era.printAndWait(
+            `『不，不要用那样的眼神看姐姐啦，${player_name}………』`,
+          ); // :6759
+          // CFLAG:356  = 3（变量语义：CFLAG 族，356） // :6760
+          kojo.放置PLAY = 3; // :6760
+        } else if (kojo.放置PLAY <= 1 || game.kojo.口上开关 === 2) {
+          // :6762
+          await era.printAndWait(`『哎呀，别用那样的眼神瞪我嘛……』`); // :6763
+          // CFLAG:356  = 2（变量语义：CFLAG 族，356） // :6764
+          kojo.放置PLAY = 2; // :6764
+        } // :6765
+      } else {
+        // :6766
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          chara(target).train.欲情 >= era0('palamlv:3') &&
+          (kojo.放置PLAY <= 5 || game.kojo.口上开关 === 2)
+        ) {
+          // :6768
+          await era.printAndWait(
+            `「魔，魔王大人真是坏心眼…${heart(1)} 这么把人家……晾在一边……${heart(1)}」`,
+          ); // :6769
+          await era.printAndWait(
+            `欲火难耐的${target_name}焦躁地摇摆着身体，诱惑着${player_name}，渴求着调教和侵犯……`,
+          ); // :6770
+          // CFLAG:356  = 6（变量语义：CFLAG 族，356） // :6771
+          kojo.放置PLAY = 6; // :6771
+        } else if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.放置PLAY <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :6773
+          await era.printAndWait(`「啊……啊……不，不会就这么结束了吧？」`); // :6774
+          // CFLAG:356  = 5（变量语义：CFLAG 族，356） // :6775
+          kojo.放置PLAY = 5; // :6775
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          chara(target).train.欲情 >= era0('palamlv:3') &&
+          (kojo.放置PLAY <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :6777
+          await era.printAndWait(`「不可以急躁，不可以急躁……」`); // :6778
+          await era.printAndWait(
+            `欲火难耐的${target_name}不断地自言自语着，然而渴望的视线却一直投向${player_name}……`,
+          ); // :6779
+          // CFLAG:356  = 4（变量语义：CFLAG 族，356） // :6780
+          kojo.放置PLAY = 4; // :6780
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.放置PLAY <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :6782
+          await era.printAndWait(`「唔……我，我会……乖乖的……」`); // :6783
+          // CFLAG:356  = 3（变量语义：CFLAG 族，356） // :6784
+          kojo.放置PLAY = 3; // :6784
+        } else if (kojo.放置PLAY <= 1 || game.kojo.口上开关 === 2) {
+          // :6786
+          await era.printAndWait(`「别，别用那样的眼神看人家……」`); // :6787
+          // CFLAG:356  = 2（变量语义：CFLAG 族，356） // :6788
+          kojo.放置PLAY = 2; // :6788
+        } // :6789
+      } // :6790
+
+      if (era.get(`tequip:${target}:11`)) {
+        // :6793
+        await era.printAndWait(
+          `${target_name}的蜜穴里，蠕虫一直在躁动个不停，侵犯，刺激着每一处敏感点。`,
+        ); // :6793
+      } // :6793
+
+      if (era.get(`tequip:${target}:13`)) {
+        // :6796
+        await era.printAndWait(
+          `${target_name}的肛门里，蠕虫一直在躁动个不停，侵犯，刺激着敏感的直肠。`,
+        ); // :6796
+      } // :6796
+
+      if (era.get(`tequip:${target}:19`)) {
+        // :6799
+        await era.printAndWait(
+          `${target_name}肛门里的珠串慢慢地震动了起来，刺激着敏感的直肠。`,
+        ); // :6799
+      } // :6799
+
+      if (era.get(`tequip:${target}:14`)) {
+        // :6802
+        await era.printAndWait(
+          `${target_name}的阴蒂被电动阴蒂夹持续刺激着，已经有些红肿。`,
+        ); // :6802
+      } // :6802
+
+      if (era.get(`tequip:${target}:15`)) {
+        // :6805
+        await era.printAndWait(
+          `${target_name}的乳头被电动夹子持续刺激着，已经有些红肿。`,
+        ); // :6805
+      } // :6805
+
+      if (era.get(`tequip:${target}:16`)) {
+        // :6808
+        await era.print(`${target_name}被榨乳机持续榨取着母乳。`); // :6808
+      } // :6808
+
+      if (era.get(`tequip:${target}:17`)) {
+        // :6811
+        await era.printAndWait(
+          `${target_name}的阴茎还在被电动飞机杯持续摩擦刺激着，只能拼命忍耐着射精的欲望。`,
+        ); // :6811
+      } // :6811
+
+      if (era.get(`tequip:${target}:43`)) {
+        // :6814
+        await era.printAndWait(`${target_name}眼前依旧漆黑一片。`); // :6814
+      } // :6814
+
+      if (era.get(`tequip:${target}:44`)) {
+        // :6817
+        await era.printAndWait(
+          `${target_name}的身体依旧被紧紧束缚着，动弹不得。`,
+        ); // :6817
+      } // :6817
+
+      if (era.get(`tequip:${target}:46`)) {
+        // :6820
+        await era.printAndWait(
+          `${target_name}的肚子里，灌肠液依旧在肆虐着，只能拼命忍耐着排泄的欲望，但是还是有一丝丝液体从肛塞边缘漏出`,
+        ); // :6820
+      } // :6820
+
+      if (era.get(`tequip:${target}:49`)) {
+        // :6823
+        await era.printAndWait(
+          `${target_name}肛门里的电极还在传递着微微的电流，刺激得括约肌一阵阵抽搐。`,
+        ); // :6823
+      } // :6823
+
+      if (era.get(`tequip:${target}:53`)) {
+        // :6826
+        await era.printAndWait(`水晶球忠实的记录下${target_name}此刻的身姿……`); // :6826
+      } // :6826
+      return 0; // :6827
+    } // :6828
+  } // :6829
+
   return 0;
 }
 
