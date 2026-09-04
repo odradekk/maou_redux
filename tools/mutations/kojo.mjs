@@ -20,7 +20,10 @@ export default [
     desc: 'M58 口上存在判定删除（FLAG:LOCAL == 0 改恒 false）',
     file: 'ere/kojo/kojo-system.js',
     find: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
-  if ((era.get(\`flag:\${local}\`) || 0) === 0) {`,
+  if (
+    (era.get(\`flag:\${local}\`) || 0) === 0 &&
+    era_exflag.get(local - 900) === 0
+  ) {`,
     replace: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
   if (false) { // 变异：存在判定删除`,
     tests: ['kojo-system'],
@@ -11577,5 +11580,78 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace: 'chara(target).kojo.亲离 = 2; // :5752',
     tests: ['kojo-k19-fia'],
     must_mention: 'SELF_KOJO TFLAG:13=14 推进 CFLAG:274',
+  },
+  {
+    desc: 'M6200 K902 EVENTTRAIN EX_FLAG:102 置位删除（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '    era_exflag.set(102, 1); // :19 EX_FLAG:102 = K902 口上存在标志',
+    replace: '    // 变异：EX_FLAG:102 置位删除',
+    tests: ['kojo-k902-princess'],
+    must_mention: 'EVENTTRAIN 置 EX_FLAG:102',
+  },
+  {
+    desc: 'M6201 K902 EVENTEND EX_FLAG:102 清除删除（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: "on('EVENTEND', () => era_exflag.set(102, 0), TIER.LATER); // :25",
+    replace: "on('EVENTEND', () => {}, TIER.LATER); // :25（变异：清除删除）",
+    tests: ['kojo-k902-princess'],
+    must_mention: 'EVENTEND 清 EX_FLAG:102',
+  },
+  {
+    desc: 'M6202 K902 EVENTTRAIN EX_TALENT 守卫错读 103（#248）',
+    file: 'ere/kojo/kojo-k902-princess.js',
+    find: '  if ((era.get(`ex_talent:${target}:102`) || 0) != 1) {',
+    replace: '  if ((era.get(`ex_talent:${target}:103`) || 0) != 1) {',
+    tests: ['kojo-k902-princess'],
+    must_mention: 'EVENTTRAIN 守卫读 EX_TALENT:TARGET:102',
+  },
+  {
+    desc: 'M6204 EX_FLAG 动态读取下标偏移（#248）',
+    file: 'ere/era-utils/era-exflag.js',
+    find: 'era_exflag.get = (index) => era.get(`exflag:${index}`) || 0;',
+    replace: 'era_exflag.get = (index) => era.get(`exflag:${index + 1}`) || 0;',
+    tests: ['kojo-system'],
+    must_mention: '动态读取 EX_FLAG:102',
+  },
+  {
+    desc: 'M6205 EX_FLAG 动态写入下标偏移（#248）',
+    file: 'ere/era-utils/era-exflag.js',
+    find: 'era_exflag.set = (index, value) => era.set(`exflag:${index}`, value);',
+    replace:
+      'era_exflag.set = (index, value) => era.set(`exflag:${index + 1}`, value);',
+    tests: ['kojo-system'],
+    must_mention: '动态写入 EX_FLAG:102',
+  },
+  {
+    desc: 'M6206 GET_EX_KOJO_NUM 扫描漏掉 EX_TALENT:102（#248）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  for (let count = 101; count < 801; count += 1) {',
+    replace: '  for (let count = 101; count < 102; count += 1) {',
+    tests: ['kojo-system', 'kojo-k902-princess'],
+    must_mention: 'EX_TALENT:102 → 口上编号 1002',
+  },
+  {
+    desc: 'M6207 GET_EX_KOJO_NUM 映射偏移 +900 改 +901（#248）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '      get_ex_kojo_num_local = count + 900;',
+    replace: '      get_ex_kojo_num_local = count + 901;',
+    tests: ['kojo-system', 'kojo-k902-princess'],
+    must_mention: 'EX_TALENT:102 → 口上编号 1002',
+  },
+  {
+    desc: 'M6208 GET_KOJO_NUM 删除 EX 扫描接入（#248）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  let local = get_ex_kojo_num(cid); // :135 EX 口上先判，普通素质后写覆盖',
+    replace: '  let local = 0; // 变异：删除 EX 扫描接入',
+    tests: ['kojo-system', 'kojo-k902-princess'],
+    must_mention: 'EX_TALENT:102 → 口上编号 1002',
+  },
+  {
+    desc: 'M6209 KOJO_MESSAGE_COM 的 EX_FLAG 下标偏移（#248）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    era_exflag.get(local - 900) === 0',
+    replace: '    era_exflag.get(local - 901) === 0',
+    tests: ['kojo-system'],
+    must_mention: 'K902 扩展口上',
   },
 ];
