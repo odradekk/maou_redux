@@ -1869,7 +1869,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
-        ref: '786-4787',
+        ref: '786-4907',
         any: [
           /^\s*IF SELECTCOM == 0\s*$\s*^\s*;初めて\s*$\s*^\s*IF CFLAG:301 == 0\s*$\s*^\s*;助手マオ\s*$\s*^\s*IF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\s*$\s*^\s*PRINTFORMW 『姐姐的身材，真好，真漂亮…♪』\s*$\s*^\s*PRINTFORMW 「不行…不行啊…啊啊！」\s*$\s*^\s*;屈服刻印Lv2以上\s*$/m,
         ],
@@ -17137,6 +17137,496 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
         ref: '4782',
         any: [new RegExp('^\\s*\t\t\t\tCFLAG:331 = 2\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4792-4907',
+        any: [
+          new RegExp(
+            '\\s*IF SELECTCOM == 31\\s*$\\n\\s*\t;初めて\\s*$\\n\\s*\tIF CFLAG:TARGET:332 == 0\\s*$\\n\\s*\t\t;助手マオ\\s*$\\n\\s*\t\tIF ASSI > 0 && ASSIPLAY && NO:ASSI == 17\\s*$\\n\\s*\t\t\t;淫乱\\s*$\\n\\s*\t\t\tIF TALENT:TARGET:76 == 1\\s*$\\n\\s*\t\t\t\tPRINTFORMW 「唔呣……唔呣……阴茎……好喜欢%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4794',
+        any: [new RegExp('^\\s*\tIF CFLAG:TARGET:332 == 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4799',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「唔呣……唔呣……阴茎……好喜欢%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4800',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『看到鸡鸡就这么兴奋，姐姐真是个变态呢…』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4803',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「要……要姐姐去吸妹妹腿间长出来的…奇怪东西……这种事实在是…唔呣……唔唔」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4804',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『噢噢，姐姐在为妹妹的扶他鸡鸡口交啊……果然是变态呢。不过放心好了，这样的变态姐姐才是我和魔王大人喜欢的！』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4807',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「唔呣……唔唔……唔呣……这，这样可以吗……还要继续？」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4808',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『当然要继续啦，姐姐的嘴巴很舒服呢……一会儿就射在姐姐的嘴里好了♪』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4811',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『哎嘿嘿 ，被姐姐舔着小鸡鸡的感觉，好像在做梦一样♪』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4812',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「唔呣……唔呣……求求你，放过姐姐吧！」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4813',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『笨蛋，要舔到射精为止啊%UNICODE\\(0x2661\\) \\*1%　要是在魔王大人面前说出“含在嘴里真讨厌”这样的话，可是会被拔掉所有牙齿的哦？』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4818',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「哈啊……唔呣……呣呣……阴茎的味道……好棒%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4819',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW %SAVESTR:TARGET%趴伏在%SAVESTR:PLAYER%的双腿之间，积极地进行着口交侍奉………\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4822',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「%SAVESTR:TARGET%会好好侍奉陛下的阴茎的%UNICODE\\(0x2661\\) \\*1%……唔呣……唔呣%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4823',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW %SAVESTR:TARGET%的眼睛里充满了爱意，卖力地吸吮着%SAVESTR:PLAYER%的阴茎……\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4826',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「嗯哈…嗯啾…咻…哈呣…嗯噗…啊啊，可不要把我当那种看到阴茎就想舔上去的女人啊！这个是…没办法的事，所以……所以…嗯…啾……………」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4827',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW %SAVESTR:PLAYER%听着%SAVESTR:TARGET%含糊辩解，笑了起来，继续享受着%SAVESTR:TARGET%的口交侍奉……\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4830',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「呜呜……唔呣……如，如果我这么做了……能放过我的妹妹嘛……唔呣……嗯噗」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4831',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW %SAVESTR:TARGET%流着泪边进行着口交侍奉边乞求着…\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4834',
+        any: [new RegExp('^\\s*\t\tCFLAG:TARGET:332 = 1\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4842',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「唔呣……唔唔……阴茎的味道……好喜欢……唔唔……呣呣%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4843',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『哈啊…原来姐姐这么喜欢鸡鸡啊……有点吃惊呢，算了反正舔得很舒服♪』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4844',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 5\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4847',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「唔呣……唔唔……唔呣………进，进到喉咙里了…呜呜……不能…再深入了唔唔」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4848',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『加油啊姐姐，魔王大人也会给你打气的哦。呜哇哇……小鸡鸡进到喉咙里面好舒服！』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4849',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「不，不行了——唔呣……唔唔…！」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4850',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 4\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4853',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「唔呣……唔唔……唔呣……在，在人家嘴里胀得这么大……好，好吃力……唔呣」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4854',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『啊啊！姐姐在咕啾咕啾地吸着人家的小鸡鸡！对，就是这里！』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4855',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 3\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4858',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「姐，姐姐会努力的……所以请早点射精吧…呜呜呜……唔呣，唔呣」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4859',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 『姐姐的嘴巴真是差劲，要好好地舔啊，对这里，还有这里♪』\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4860',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 2\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4866',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「哈啊……唔呣……呣呣……阴茎的味道……吸吮起来好棒%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4867',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW %SAVESTR:TARGET%趴伏在%SAVESTR:PLAYER%的双腿之间，积极地进行着口交侍奉………\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4869',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW 「唔呣……呣呣……魔王大人的……阴茎在%SAVESTR:TARGET%的嘴里……涨得好大%UNICODE\\(0x2661\\) \\*1% 哈啊……唔呣……呣呣……%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4870',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW %SAVESTR:TARGET%含着%SAVESTR:PLAYER%的阴茎，用舌头舔舐着，发出一阵阵下流的声音………\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4872',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW 「还，还想要更多……唔呣%UNICODE\\(0x2661\\) \\*1% 唔呣%UNICODE\\(0x2661\\) \\*1% 再深入到%SAVESTR:TARGET%的嘴里吧%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4873',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW %SAVESTR:TARGET%带着淫媚贪婪的表情，深深含住了%SAVESTR:PLAYER%的阴茎，开始进行口交侍奉………\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4875',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 5\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4879',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW 「能侍奉魔王大人的阴茎……是我的幸运%UNICODE\\(0x2661\\) \\*1% 唔呣……呣呣……%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4880',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW %SAVESTR:TARGET%眼神里充满了爱意，低头吸吮着%SAVESTR:PLAYER%的阴茎………\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4882',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW 「哈啊……阴茎在%SAVESTR:TARGET%的嘴里……变得这么兴奋了%UNICODE\\(0x2661\\) \\*1%…唔呣……唔呣……呣呣……%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4883',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW %SAVESTR:TARGET%用舌头缠绕，舔舐着%SAVESTR:PLAYER%的阴茎，热情地进行着口交侍奉……\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4885',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW 「在，在%SAVESTR:TARGET%的嘴里全部射出来吧，我会好好喝下去的%UNICODE\\(0x2661\\) \\*1%」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4886',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW %SAVESTR:TARGET%说完，努力地吸吮着%SAVESTR:PLAYER%的阴茎，促进着射精……\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4888',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 4\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4892',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW 「我，我会努力的……唔呣……呣呣……魔王大人……这样舒服吗……唔呣」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4894',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\t\tPRINTFORMW 「唔呣……呣呣……魔王大人的阴茎……在嘴巴里勃起了……唔呣……唔呣……呣呣」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4896',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW %SAVESTR:TARGET%已经渐渐被你调教的热衷于侍奉了，正在仔细地舔舐着%SAVESTR:PLAYER%的阴茎……\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4897',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 3\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4900',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW 「唔呣……呣呣……这么丢人的事……唔呣……」\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4901',
+        any: [
+          new RegExp(
+            '^\\s*\t\t\t\tPRINTFORMW %SAVESTR:TARGET%瞥视着%SAVESTR:PLAYER%，边进行着生疏的口交侍奉………\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K11_リリィ.ERB',
+        ref: '4902',
+        any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 2\\s*$', 'm')],
       },
     ],
   },
