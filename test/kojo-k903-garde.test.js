@@ -72,6 +72,19 @@ test('EX_TALENT:103 缺席时不进入嘉德调教口上', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
+test('调教结束正文因 K902/K903 两个同名 EVENTEND 执行两遍', async () => {
+  const fixture = await setup_k903((f) => {
+    f.store.set(`base:${CID}:0`, 100);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['「啊……可恶……已经………………」', '「啊……可恶……已经………………」'],
+    'K902 :422 与 K903 :464 的 EVENTEND 正文各执行一次',
+  );
+});
+
 test('CFLAG:201：初调教、屈服 1-3、淫乱、爱慕六档都按源推进，NTR:650 清零', async () => {
   const cases = [
     [{}, 1],
@@ -529,7 +542,7 @@ test('GOHOUBI_REQUEST 保留 Y=0：奖励 2 不补公猪或雄马', async () => 
   );
 });
 
-test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、EVENTEND 后段不可达、模板空槽', async () => {
+test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模板空槽', async () => {
   const talk = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:357`, 2);
     f.store.set(`talent:${CID}:76`, 1);
@@ -551,21 +564,6 @@ test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、EVEN
   assert.ok(
     colosseum.text_lines().some((line) => line.includes('」」')),
     '死斗场原文多余双引号保留',
-  );
-
-  const end = await setup_k903((f) => {
-    f.store.set('exflag:103', 1);
-    f.store.set(`cflag:${CID}:211`, 0);
-    f.store.set('mark:33:3', 3);
-    f.store.set(`base:${CID}:0`, 100);
-  });
-  const { emit } = end.load_module('system/event/registry');
-  await emit('EVENTEND');
-  assert.equal(end.store.get('exflag:103'), 0, '前一个 EVENTEND 仍清存在标志');
-  assert.deepEqual(
-    end.text_lines(),
-    ['「啊……可恶……已经………………」'],
-    '后一个 EVENTEND 只输出 RETURN 前一行，后段不可达',
   );
 
   const template = await setup_k903(

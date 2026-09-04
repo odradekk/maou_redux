@@ -10695,6 +10695,17 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace:
       '  if (era0(`base:${target}:0`) <= 0) await era.printAndWait(`「啊……可恶……已经………………」`); // :473-474（变异）',
     tests: ['kojo-k903-garde'],
-    must_mention: '原作缺陷：357 淫乱条件误读爱慕',
+    must_mention: 'K902 :422 与 K903 :464 的 EVENTEND 正文各执行一次',
+  },
+  {
+    desc: 'M6439 K903 K902 复制的 EVENTEND 第二次注册删除（#249）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `// 源: target/ERB/口上/EVENT_K902_普林希丝 ver1.0.3.ERB :422-489
+// @EVENTEND。事件函数无 #ONLY，故同一正文还会再执行一次（issue #14）。
+on('EVENTEND', eventend_kojo_903);`,
+    replace: `// 变异：删除 K902 :422 的第二次事件注册。
+// @EVENTEND。事件函数无 #ONLY，故同一正文还会再执行一次（issue #14）。`,
+    tests: ['kojo-k903-garde'],
+    must_mention: 'K902 :422 与 K903 :464 的 EVENTEND 正文各执行一次',
   },
 ];

@@ -3,6 +3,7 @@
 // 无载荷结构行已在 JS 注释中并入紧邻有效载荷的最小区间，空 PRINTFORM 保持整行锚。
 
 const SOURCE = 'target/ERB/口上/EVENT_K903_嘉德.ERB';
+const K902_SOURCE = 'target/ERB/口上/EVENT_K902_普林希丝 ver1.0.3.ERB';
 
 const refs = [
   ['59-64', '^#PRI\\s*$[\\s\\S]*?^\\s*EX_FLAG:103 = 1\\s*$'],
@@ -9681,11 +9682,19 @@ const refs = [
 export const FILES = [
   {
     js: 'ere/kojo/kojo-k903-garde.js',
-    refs: refs.map(([ref, anchor]) => ({
-      src: SOURCE,
-      ref,
-      any: [new RegExp(anchor, 'm')],
-    })),
+    refs: refs
+      .map(([ref, anchor]) => ({
+        src: SOURCE,
+        ref,
+        any: [new RegExp(anchor, 'm')],
+      }))
+      .concat({
+        src: K902_SOURCE,
+        ref: '422-489',
+        any: [
+          /^\s*@EVENTEND\s*$\s*^\s*SIF FLAG:7 <= 0\s*$\s*^\s*RETURN 0\s*$\s*^\s*SIF EX_TALENT:103 != 1\s*$/m,
+        ],
+      }),
   },
 ];
 

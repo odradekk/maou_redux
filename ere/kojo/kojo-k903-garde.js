@@ -26,7 +26,9 @@
  *
  * 缺陷 2（裁定见 issue #14）：EVENT_K902 文件另含一份逐字节相同的
  * _903 定义，并因加载顺序在前而在原作中胜出、吞掉本文件的同名定义；
- * 两份定义完全相同，因此没有可观测差异，移植只保留本模块这一份实现。
+ * 两份普通函数定义完全相同，因此没有可观测差异，移植只保留本模块这一份
+ * 实现。但同名事件函数会全部执行：K902 第 422 行与 K903 第 464 行的 EVENTEND
+ * 正文各执行一次，故下方以同一个处理器注册两次（同一裁定的事件侧缺陷）。
  */
 
 'use strict';
@@ -591,8 +593,8 @@ async function k903_kojo2() {
   return 0; // :455-458
 }
 
-// @EVENTEND（:464-531）：调教结束口上。
-on('EVENTEND', async () => {
+// @EVENTEND（K903 源 :464-531）：调教结束口上正文。
+async function eventend_kojo_903() {
   const target = era_flag.target;
   const target_name = chara_callname(target);
 
@@ -688,7 +690,13 @@ on('EVENTEND', async () => {
     return 1; // :523-524
   } // :523-525
   return 0; // :526-528
-});
+}
+
+// 源: target/ERB/口上/EVENT_K903_嘉德.ERB :464-531 @EVENTEND。
+on('EVENTEND', eventend_kojo_903);
+// 源: target/ERB/口上/EVENT_K902_普林希丝 ver1.0.3.ERB :422-489
+// @EVENTEND。事件函数无 #ONLY，故同一正文还会再执行一次（issue #14）。
+on('EVENTEND', eventend_kojo_903);
 
 // @KOJO_MESSAGE_COM_903 // :532
 async function kojo_message_com_903(rand = default_rand) {
