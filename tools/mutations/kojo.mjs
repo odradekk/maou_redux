@@ -9991,6 +9991,54 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM31 非助手玛奥奉仕精神 RAND 第二档台词',
   },
+  ...[
+    [4346, '初次', '1', '2', '4939', 'COM32 初次第 1 档推进'],
+    [4347, '助手淫乱', '5', '4', '4954', 'COM32 助手玛奥第 1 档推进'],
+    [4348, '助手爱慕', '4', '3', '4964', 'COM32 助手玛奥第 2 档推进'],
+    [4349, '助手奉仕', '3', '2', '4969', 'COM32 助手玛奥第 3 档推进'],
+    [4350, '助手其余', '2', '1', '4974', 'COM32 助手玛奥第 4 档推进'],
+    [4351, '非助手淫乱', '5', '4', '4986', 'COM32 非助手玛奥第 1 档推进'],
+    [4352, '非助手爱慕', '4', '3', '4996', 'COM32 非助手玛奥第 2 档推进'],
+    [4353, '非助手奉仕', '3', '2', '5001', 'COM32 非助手玛奥第 3 档推进'],
+    [4354, '非助手其余', '2', '1', '5006', 'COM32 非助手玛奥第 4 档推进'],
+  ].map(([id, tier, value, replacement, ref, must_mention]) => ({
+    desc: `M${id} COM32 ${tier} CFLAG:333 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.乳交 = ${value}; // :${ref}`,
+    replace: `kojo.乳交 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4355 COM32 初次奉仕精神门槛 >=3 改 >=4（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      } else if (chara(target).system.侍奉精神 >= 3) {
+        await era.printAndWait(\`「呜啊啊…用，用胸部这样做……感觉舒服吗？」\`);`,
+    replace: `      } else if (chara(target).system.侍奉精神 >= 4) {
+        await era.printAndWait(\`「呜啊啊…用，用胸部这样做……感觉舒服吗？」\`);`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM32 初次第 4 档台词',
+  },
+  {
+    desc: 'M4356 COM32 助手淫乱守卫误读 CFLAG:332 改成 CFLAG:333（原作缺陷，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        // 原作 :4946 误读 CFLAG:332（口交），而非本支 CFLAG:333，1:1 保留。
+        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `        // 原作 :4946 误读 CFLAG:332（口交），而非本支 CFLAG:333，1:1 保留。
+        (kojo.乳交 <= 4 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM32 助手误读仍可输出',
+  },
+  {
+    desc: 'M4357 COM32 非助手淫乱守卫误读 CFLAG:332 改成 CFLAG:333（原作缺陷，#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      // 原作 :4978 同样误读 CFLAG:332，1:1 保留。
+      (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)`,
+    replace: `      // 原作 :4978 同样误读 CFLAG:332，1:1 保留。
+      (kojo.乳交 <= 4 || game.kojo.口上开关 === 2)`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM32 非助手误读仍可输出',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',

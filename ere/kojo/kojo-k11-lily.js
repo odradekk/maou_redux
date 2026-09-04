@@ -9076,6 +9076,159 @@ async function kojo_message_com_11(rand) {
     }
   }
 
+  // :4912-5015 IF SELECTCOM == 32（乳交 CFLAG:333）
+  if (era_flag.selectcom === 32) {
+    if (kojo.乳交 === 0) {
+      if (assi_mao) {
+        await era.printAndWait(
+          `『被姐姐的巨乳这么侍奉着小鸡鸡…啊啊我也想要这么大的胸部啊${heart(1)}』`,
+        ); // :4917
+        await era.printAndWait(`「呜呜……这样会很舒服吗${player_name}？」`); // :4918
+        await era.printAndWait(
+          `『简直……再舒服不过啦！啊啊，被姐姐的巨乳包裹着，小鸡鸡一下子就要射精了！』`,
+        ); // :4919
+      } else if (era.get(`talent:${target}:76`) === 1) {
+        await era.printAndWait(
+          `「听说男人都很喜欢被这样进行乳交侍奉呢、啊啊……乳房这样摩擦着，感觉也兴奋起来了${heart(1)}」`,
+        ); // :4923
+        await era.printAndWait(
+          `${target_name}的眼神里充满了情欲，呼吸也变得急促了起来，更加卖力地进行着乳交侍奉……`,
+        ); // :4924
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        await era.printAndWait(
+          `「啊啊……魔王大人喜欢${target_name}的乳交侍奉吗…好高兴${heart(1)}」`,
+        ); // :4927
+        await era.printAndWait(
+          `${target_name}红着脸，边笑着边用乳房侍奉着的${player_name}的阴茎……`,
+        ); // :4928
+      } else if (chara(target).system.侍奉精神 >= 3) {
+        await era.printAndWait(`「呜啊啊…用，用胸部这样做……感觉舒服吗？」`); // :4931
+        await era.printAndWait(
+          `${target_name}小心翼翼地用巨乳夹着${player_name}的阴茎、摩擦着进行着乳交侍奉……`,
+        ); // :4932
+      } else {
+        await era.printAndWait(`「呜呜……胸部…明明不是用来做这种事情的……」`); // :4935
+        await era.printAndWait(`${target_name}皱着眉头，用双乳侍奉着阴茎……`); // :4936
+      }
+      // CFLAG:TARGET:333 = 1（乳交初次）
+      kojo.乳交 = 1; // :4939
+      return 0;
+    }
+
+    if (assi_mao) {
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        // 原作 :4946 误读 CFLAG:332（口交），而非本支 CFLAG:333，1:1 保留。
+        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+      ) {
+        if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `「哈啊…${player_name}的阴茎在我的乳沟里面摩擦……感觉很舒服吧${heart(1)}」`,
+          ); // :4948
+          await era.printAndWait(
+            `『嗯嗯、姐姐的乳沟真是太棒了……啊啊，要射精了！』`,
+          ); // :4949
+        } else {
+          await era.printAndWait(
+            `「感觉舒服了的话${heart(1)}　射在姐姐脸上也可以哦${heart(1)} 」`,
+          ); // :4951
+          await era.printAndWait(
+            `『嗯嗯……要来了哦，会全部射在姐姐脸上的${heart(1)}』`,
+          ); // :4952
+        }
+        kojo.乳交 = 5; // :4954
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (kojo.乳交 <= 3 || game.kojo.口上开关 === 2)
+      ) {
+        if (rand_n(2) === 0) {
+          await era.printAndWait(
+            `『啊啊……姐姐的胸部好舒服啊，平时也是这么侍奉魔王大人的吗？』`,
+          ); // :4958
+          await era.printAndWait(
+            `「是，是啊，姐姐的胸部就是用来侍奉魔王大人和${player_name}的……」`,
+          ); // :4959
+        } else {
+          await era.printAndWait(`「这，这样舒服吗…？能感到满意就好了…」`); // :4961
+          await era.printAndWait(
+            `『啊啊，侵犯姐姐的胸部太舒服了，舒服到要射精了、唔唔……再夹紧一点！』`,
+          ); // :4962
+        }
+        kojo.乳交 = 4; // :4964
+      } else if (
+        chara(target).system.侍奉精神 >= 3 &&
+        (kojo.乳交 <= 2 || game.kojo.口上开关 === 2)
+      ) {
+        await era.printAndWait(
+          `『哎哎，姐姐学得挺快呀，这样就可以满足魔王陛下了哦～』`,
+        ); // :4967
+        await era.printAndWait(
+          `「这……这种事情人家不知道啦……如果觉得舒服……就快射精吧${player_name}…唔唔唔唔～！」`,
+        ); // :4968
+        kojo.乳交 = 3; // :4969
+      } else if (kojo.乳交 <= 1 || game.kojo.口上开关 === 2) {
+        await era.printAndWait(`『啊啊，姐姐的乳交好舒服${heart(1)}』`); // :4972
+        await era.printAndWait(`「呜，呜呜……快点射精然后结束吧…」`); // :4973
+        kojo.乳交 = 2; // :4974
+      }
+    } else if (
+      era.get(`talent:${target}:76`) === 1 &&
+      // 原作 :4978 同样误读 CFLAG:332，1:1 保留。
+      (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+    ) {
+      if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `「啊啊，魔王大人的阴茎……炽热地在乳沟里摩擦着${heart(1)}　哈啊……很快就要射精了吧${heart(1)}」`,
+        ); // :4980
+        await era.printAndWait(
+          `${target_name}的眼睛里充满了情欲，呼吸也变得急促起来`,
+        ); // :4981
+      } else {
+        await era.printAndWait(
+          `「哈啊……我的胸部……就是为了侍奉魔王大人而存在的${heart(1)}　啊啊……感觉好舒服${heart(1)}」`,
+        ); // :4983
+        await era.printAndWait(
+          `${target_name}像狗一样谄媚地伸着舌头，进行着乳交侍奉……`,
+        ); // :4984
+      }
+      kojo.乳交 = 5; // :4986
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      (kojo.乳交 <= 3 || game.kojo.口上开关 === 2)
+    ) {
+      if (rand_n(2) === 0) {
+        await era.printAndWait(
+          `「啊啊……胸部在侍奉魔王大人的时候……也感觉好舒服${heart(1)}」`,
+        ); // :4990
+        await era.printAndWait(
+          `${target_name}微微抬起头，笑着偷看了一下${player_name}的脸，然后继续进行着乳交侍奉………`,
+        ); // :4991
+      } else {
+        await era.printAndWait(`「能侍奉魔王大人……是我的幸福${heart(1)}」`); // :4993
+        await era.printAndWait(
+          `${target_name}用乳交侍奉着阴茎，侍奉得欲火焚身了起来，双腿相互摩擦着……`,
+        ); // :4994
+      }
+      kojo.乳交 = 4; // :4996
+    } else if (
+      chara(target).system.侍奉精神 >= 3 &&
+      (kojo.乳交 <= 2 || game.kojo.口上开关 === 2)
+    ) {
+      await era.printAndWait(`「这，这样真得很舒服吗……乳房感觉……好奇怪…」`); // :4999
+      await era.printAndWait(
+        `${target_name}呼吸变得急促了起来，面红耳赤地侍奉着${player_name}的阴茎……`,
+      ); // :5000
+      kojo.乳交 = 3; // :5001
+    } else if (kojo.乳交 <= 1 || game.kojo.口上开关 === 2) {
+      await era.printAndWait(`「这……这样真的……会感觉舒服吗……呜呜」`); // :5004
+      await era.printAndWait(
+        `${target_name}一边流着眼泪，一边战战兢兢地为${player_name}进行着乳交侍奉……`,
+      ); // :5005
+      kojo.乳交 = 2; // :5006
+    }
+    return 0;
+  }
+
   return 0;
 }
 

@@ -5679,3 +5679,132 @@ test('COM31 二回目：非助手玛奥奉仕精神 RAND 第二档', async () =>
     'COM31 非助手玛奥奉仕精神 RAND 第二档台词',
   );
 });
+
+// —— SELECTCOM 32（乳交 CFLAG:333）——
+
+test('COM32 初めて：助手玛奥与非助手玛奥各四档', async () => {
+  const cases = [
+    {
+      assi: true,
+      expected: '『被姐姐的巨乳这么侍奉着小鸡鸡…啊啊我也想要这么大的胸部啊♡』',
+    },
+    {
+      talent: 76,
+      expected:
+        '「听说男人都很喜欢被这样进行乳交侍奉呢、啊啊……乳房这样摩擦着，感觉也兴奋起来了♡」',
+    },
+    { talent: 85, expected: '「啊啊……魔王大人喜欢莉莉的乳交侍奉吗…好高兴♡」' },
+    { abl: 3, expected: '「呜啊啊…用，用胸部这样做……感觉舒服吗？」' },
+    { expected: '「呜呜……胸部…明明不是用来做这种事情的……」' },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 32);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.text_lines()[0],
+      item.expected,
+      `COM32 初次第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:333`),
+      1,
+      `COM32 初次第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM32 二回目：助手玛奥四档推进', async () => {
+  const cases = [
+    { talent: 76, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f, era_flag) => {
+      era_flag.assi = MAO;
+      era_flag.assiplay = 1;
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:332`, 1);
+      f.store.set(`cflag:${LILY}:333`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 32);
+    fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+    fixture.era.addCharacter(MAO);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:333`),
+      item.expected,
+      `COM32 助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM32 二回目：非助手玛奥四档推进', async () => {
+  const cases = [
+    { talent: 76, expected: 5 },
+    { talent: 85, expected: 4 },
+    { abl: 3, expected: 3 },
+    { expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:7', 1);
+      f.store.set(`cflag:${LILY}:332`, 1);
+      f.store.set(`cflag:${LILY}:333`, 1);
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 32);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:333`),
+      item.expected,
+      `COM32 非助手玛奥第 ${index + 1} 档推进`,
+    );
+  }
+});
+
+test('COM32 二回目：两处淫乱守卫 1:1 误读前一支 CFLAG:332', async () => {
+  for (const assi of [false, true]) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      f.store.set('flag:7', 1);
+      f.store.set(`talent:${LILY}:76`, 1);
+      f.store.set(`cflag:${LILY}:332`, 4);
+      f.store.set(`cflag:${LILY}:333`, 5);
+    }, 32);
+    if (assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:333`),
+      5,
+      `COM32 ${assi ? '助手' : '非助手'}淫乱守卫误读 CFLAG:332`,
+    );
+    assert.notEqual(
+      fixture.text_lines().length,
+      0,
+      `COM32 ${assi ? '助手' : '非助手'}误读仍可输出`,
+    );
+  }
+});

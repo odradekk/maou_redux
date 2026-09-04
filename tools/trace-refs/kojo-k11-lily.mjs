@@ -1,6 +1,17 @@
 // 源: tools/trace-check.mjs  @FILES/@LOG_REFS/@SAMPLE_LOG_REFS
 // issue #290 按 js 文件拆出：kojo-k11-lily.mjs（issue #242，WIP 1/N）
 
+const K11_SOURCE = 'target/ERB/口上/EVENT_K11_リリィ.ERB';
+
+function exact_line(ref, line) {
+  const escaped = line.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return {
+    src: K11_SOURCE,
+    ref,
+    any: [new RegExp(`^\\s*${escaped}\\s*$`, 'm')],
+  };
+}
+
 export const FILES = [
   {
     js: 'ere/kojo/kojo-k11-lily.js',
@@ -17628,6 +17639,136 @@ export const FILES = [
         ref: '4902',
         any: [new RegExp('^\\s*\t\t\t\tCFLAG:332 = 2\\s*$', 'm')],
       },
+      exact_line('4912-5015', 'IF SELECTCOM == 32'),
+      exact_line(
+        '4946',
+        'IF TALENT:TARGET:76 == 1 && (CFLAG:332 <= 4 || FLAG:7 == 2)',
+      ),
+      exact_line(
+        '4978',
+        'IF TALENT:TARGET:76 == 1 && (CFLAG:332 <= 4 || FLAG:7 == 2)',
+      ),
+      ...[
+        [
+          '4917',
+          'PRINTFORMW 『被姐姐的巨乳这么侍奉着小鸡鸡…啊啊我也想要这么大的胸部啊%UNICODE(0x2661) *1%』',
+        ],
+        ['4918', 'PRINTFORMW 「呜呜……这样会很舒服吗%SAVESTR:PLAYER%？」'],
+        [
+          '4919',
+          'PRINTFORMW 『简直……再舒服不过啦！啊啊，被姐姐的巨乳包裹着，小鸡鸡一下子就要射精了！』',
+        ],
+        [
+          '4923',
+          'PRINTFORMW 「听说男人都很喜欢被这样进行乳交侍奉呢、啊啊……乳房这样摩擦着，感觉也兴奋起来了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '4924',
+          'PRINTFORMW %SAVESTR:TARGET%的眼神里充满了情欲，呼吸也变得急促了起来，更加卖力地进行着乳交侍奉……',
+        ],
+        [
+          '4927',
+          'PRINTFORMW 「啊啊……魔王大人喜欢%SAVESTR:TARGET%的乳交侍奉吗…好高兴%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '4928',
+          'PRINTFORMW %SAVESTR:TARGET%红着脸，边笑着边用乳房侍奉着的%SAVESTR:PLAYER%的阴茎……',
+        ],
+        ['4931', 'PRINTFORMW 「呜啊啊…用，用胸部这样做……感觉舒服吗？」'],
+        [
+          '4932',
+          'PRINTFORMW %SAVESTR:TARGET%小心翼翼地用巨乳夹着%SAVESTR:PLAYER%的阴茎、摩擦着进行着乳交侍奉……',
+        ],
+        ['4935', 'PRINTFORMW 「呜呜……胸部…明明不是用来做这种事情的……」'],
+        ['4936', 'PRINTFORMW %SAVESTR:TARGET%皱着眉头，用双乳侍奉着阴茎……'],
+        ['4939', 'CFLAG:TARGET:333 = 1'],
+        [
+          '4948',
+          'PRINTFORMW 「哈啊…%SAVESTR:PLAYER%的阴茎在我的乳沟里面摩擦……感觉很舒服吧%UNICODE(0x2661) *1%」',
+        ],
+        ['4949', 'PRINTFORMW 『嗯嗯、姐姐的乳沟真是太棒了……啊啊，要射精了！』'],
+        [
+          '4951',
+          'PRINTFORMW 「感觉舒服了的话%UNICODE(0x2661) *1%　射在姐姐脸上也可以哦%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '4952',
+          'PRINTFORMW 『嗯嗯……要来了哦，会全部射在姐姐脸上的%UNICODE(0x2661) *1%』',
+        ],
+        ['4954', 'CFLAG:333 = 5'],
+        [
+          '4958',
+          'PRINTFORMW 『啊啊……姐姐的胸部好舒服啊，平时也是这么侍奉魔王大人的吗？』',
+        ],
+        [
+          '4959',
+          'PRINTFORMW 「是，是啊，姐姐的胸部就是用来侍奉魔王大人和%SAVESTR:PLAYER%的……」',
+        ],
+        ['4961', 'PRINTFORMW 「这，这样舒服吗…？能感到满意就好了…」'],
+        [
+          '4962',
+          'PRINTFORMW 『啊啊，侵犯姐姐的胸部太舒服了，舒服到要射精了、唔唔……再夹紧一点！』',
+        ],
+        ['4964', 'CFLAG:333 = 4'],
+        [
+          '4967',
+          'PRINTFORMW 『哎哎，姐姐学得挺快呀，这样就可以满足魔王陛下了哦～』',
+        ],
+        [
+          '4968',
+          'PRINTFORMW 「这……这种事情人家不知道啦……如果觉得舒服……就快射精吧%SAVESTR:PLAYER%…唔唔唔唔～！」',
+        ],
+        ['4969', 'CFLAG:333 = 3'],
+        ['4972', 'PRINTFORMW 『啊啊，姐姐的乳交好舒服%UNICODE(0x2661) *1%』'],
+        ['4973', 'PRINTFORMW 「呜，呜呜……快点射精然后结束吧…」'],
+        ['4974', 'CFLAG:333 = 2'],
+        [
+          '4980',
+          'PRINTFORMW 「啊啊，魔王大人的阴茎……炽热地在乳沟里摩擦着%UNICODE(0x2661) *1%　哈啊……很快就要射精了吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '4981',
+          'PRINTFORMW %SAVESTR:TARGET%的眼睛里充满了情欲，呼吸也变得急促起来',
+        ],
+        [
+          '4983',
+          'PRINTFORMW 「哈啊……我的胸部……就是为了侍奉魔王大人而存在的%UNICODE(0x2661) *1%　啊啊……感觉好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '4984',
+          'PRINTFORMW %SAVESTR:TARGET%像狗一样谄媚地伸着舌头，进行着乳交侍奉……',
+        ],
+        ['4986', 'CFLAG:333 = 5'],
+        [
+          '4990',
+          'PRINTFORMW 「啊啊……胸部在侍奉魔王大人的时候……也感觉好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '4991',
+          'PRINTFORMW %SAVESTR:TARGET%微微抬起头，笑着偷看了一下%SAVESTR:PLAYER%的脸，然后继续进行着乳交侍奉………',
+        ],
+        [
+          '4993',
+          'PRINTFORMW 「能侍奉魔王大人……是我的幸福%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '4994',
+          'PRINTFORMW %SAVESTR:TARGET%用乳交侍奉着阴茎，侍奉得欲火焚身了起来，双腿相互摩擦着……',
+        ],
+        ['4996', 'CFLAG:333 = 4'],
+        ['4999', 'PRINTFORMW 「这，这样真得很舒服吗……乳房感觉……好奇怪…」'],
+        [
+          '5000',
+          'PRINTFORMW %SAVESTR:TARGET%呼吸变得急促了起来，面红耳赤地侍奉着%SAVESTR:PLAYER%的阴茎……',
+        ],
+        ['5001', 'CFLAG:333 = 3'],
+        ['5004', 'PRINTFORMW 「这……这样真的……会感觉舒服吗……呜呜」'],
+        [
+          '5005',
+          'PRINTFORMW %SAVESTR:TARGET%一边流着眼泪，一边战战兢兢地为%SAVESTR:PLAYER%进行着乳交侍奉……',
+        ],
+        ['5006', 'CFLAG:333 = 2'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];
