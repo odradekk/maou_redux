@@ -26472,6 +26472,175 @@ export const FILES = [
           'PRINTFORMW %SAVESTR:TARGET%被强迫进行着真空口交侍奉，屈辱得泪流满面…',
         ],
         ['9725', 'CFLAG:363 = 2'],
+        ['9735', 'IF SELECTCOM == 69'],
+        ['9740', 'LOCALS:0 = 阴茎'],
+        ['9741', 'LOCALS:1 = 阴茎'],
+        ['9743', 'LOCALS:0 = 蜜穴'],
+        ['9744', 'LOCALS:1 = 阴蒂'],
+        ['9748', 'LOCALS:2 = 阴茎'],
+        ['9749', 'LOCALS:3 = 阴茎'],
+        ['9751', 'LOCALS:2 = 蜜穴'],
+        ['9752', 'LOCALS:3 = 阴蒂'],
+        [
+          '9758',
+          'PRINTFORMW 「咕呣……咕呣……咕呣%SAVESTR:PLAYER%的%LOCALS:1%……味道好棒……好喜欢%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9759',
+          'PRINTFORMW 『啊啊……姐姐的%LOCALS:3%也很棒啊……%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9762',
+          'PRINTFORMW 「呣呣……呣呣………%UNICODE(0x2661) *1% %SAVESTR:PLAYER%这样舒服吗？%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9763',
+          'PRINTFORMW 『啊啊啊姐姐……舔得人家好舒服……我也不会输的%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9766',
+          'PRINTFORMW 「呜呜呜……明明……不喜欢这种事情……为什么……却停不下来……而且……好舒服啊啊！」',
+        ],
+        [
+          '9767',
+          'PRINTFORMW 『啊啊……和姐姐互相舔下体……好棒……好舒服啊啊%UNICODE(0x2661) *1% 』',
+        ],
+        [
+          '9770',
+          'PRINTFORMW 「唔呣……唔呣……呜呜呜，为什么……要做这种下流的事……！」',
+        ],
+        [
+          '9771',
+          'PRINTFORMW 『啊哈……姐姐的%LOCALS:1%一抖一抖的，好可爱……我舔得很舒服吧%UNICODE(0x2661) *1% 但是姐姐你也不能偷懒啊♪』',
+        ],
+        [
+          '9777',
+          'PRINTFORMW 「呣呣……呣呣啊……%UNICODE(0x2661) *1% 魔王大人……舔得人家……太舒服了%UNICODE(0x2661) *1% 但是……人家不会认输的%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9778',
+          'PRINTFORMW %SAVESTR:TARGET%忍耐着%LOCALS:2%的快感，专心致志地舔舐着的%SAVESTR:PLAYER%的%LOCALS:0%……',
+        ],
+        [
+          '9781',
+          'PRINTFORMW 「唔呣……唔呣……啊啊啊%UNICODE(0x2661) *1% 魔王大人……舔得人家……太舒服了……%UNICODE(0x2661) *1%……我，我也会好好侍奉魔王大人的……」',
+        ],
+        [
+          '9782',
+          'PRINTFORMW %SAVESTR:TARGET%深吸一口气，忍耐着下体传来的强烈快感，继续卖力地舔吮着%SAVESTR:PLAYER%的阴茎……',
+        ],
+        [
+          '9785',
+          'PRINTFORMW 「唔呣……唔呣……唔啊啊啊……为，为什么……会这么舒服的……！」',
+        ],
+        [
+          '9786',
+          'PRINTFORMW %SAVESTR:TARGET%忍耐着快感，努力用舌头舔舐着%SAVESTR:PLAYER%的%LOCALS:0%……',
+        ],
+        ['9789', 'PRINTFORMW 「唔呣……唔呣……？！不，不可以咬那里啊啊啊啊！」'],
+        [
+          '9790',
+          'PRINTFORMW 嫌弃%SAVESTR:TARGET%舔舐的动作太敷衍，%SAVESTR:PLAYER%微微用牙齿咬了咬%SAVESTR:TARGET%的阴蒂，立即听到一阵痛苦的悲鸣……',
+        ],
+        ['9793', 'CFLAG:TARGET:370 = 1'],
+        [
+          '9801',
+          'PRINTFORMW 「咕呣呣……唔呣……唔呣……%SAVESTR:PLAYER%的%LOCALS:1%……味道真好……真喜欢%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9802',
+          'PRINTFORMW 『呜啊啊……姐姐的%LOCALS:1%也很棒啊……%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9803',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9804', 'CFLAG:370 = 5'],
+        [
+          '9807',
+          'PRINTFORMW 「唔呣……唔呣……%UNICODE(0x2661) *1% 啊啊啊……%SAVESTR:PLAYER%舔得姐姐好舒服……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9808',
+          'PRINTFORMW 『啊啊啊……姐姐也舔得人家的小穴舒服的要上天了啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9809',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9810', 'CFLAG:370 = 4'],
+        [
+          '9813',
+          'PRINTFORMW 「呜呜呜……明明……不喜欢这种事情……为什么……却停不下来……而且……好舒服啊啊！！」',
+        ],
+        [
+          '9814',
+          'PRINTFORMW 『嘿嘿嘿，和妹妹互相舔下体的感觉……很棒很舒服吧%UNICODE(0x2661) *1% 呣呣呣……呣呣%UNICODE(0x2661) *1%……』',
+        ],
+        [
+          '9815',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9816', 'CFLAG:370 = 3'],
+        ['9819', 'PRINTFORMW 「呜呜呜……为什么……要做这种这么下流的事情！」'],
+        [
+          '9820',
+          'PRINTFORMW 『啊哈……姐姐的%LOCALS:1%一抖一抖的，好可爱……我舔得很舒服吧%UNICODE(0x2661) *1% 但是姐姐你也不能偷懒啊，快点给人家舔啊♪』',
+        ],
+        [
+          '9821',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9822', 'CFLAG:370 = 2'],
+        [
+          '9827',
+          'PRINTFORMW 「呣呣……呣呣啊……%UNICODE(0x2661) *1% 魔王大人……舔得人家……太舒服了%UNICODE(0x2661) *1% 但是……人家不会认输的……一定要让魔王大人先射出来%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9828',
+          'PRINTFORMW %SAVESTR:TARGET%忍耐着%LOCALS:2%的快感，专心致志地吸吮着的%SAVESTR:PLAYER%的阴茎…',
+        ],
+        [
+          '9829',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9830', 'CFLAG:370 = 5'],
+        [
+          '9833',
+          'PRINTFORMW 「唔呣……唔呣……啊啊啊%UNICODE(0x2661) *1% 魔王大人……舔得人家……太舒服了……%UNICODE(0x2661) *1%但，但我不能松懈……我，我也要好好侍奉魔王大人……」',
+        ],
+        [
+          '9834',
+          'PRINTFORMW %SAVESTR:TARGET%深吸一口气，忍耐着下体传来的强烈快感，继续卖力地舔吮着%SAVESTR:PLAYER%的阴茎……',
+        ],
+        [
+          '9835',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9836', 'CFLAG:370 = 4'],
+        [
+          '9839',
+          'PRINTFORMW 「唔呣……唔呣……唔啊啊啊……为，为什么……会这么舒服的……脑子还是下面都……乱七八糟了啊啊！」',
+        ],
+        [
+          '9840',
+          'PRINTFORMW %SAVESTR:TARGET%忍耐着快感，努力用舌头舔舐着%SAVESTR:PLAYER%的%LOCALS:0%……',
+        ],
+        [
+          '9841',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9842', 'CFLAG:370 = 3'],
+        ['9845', 'PRINTFORMW 「唔呣……唔呣……？！不，不可以咬那里啊啊啊啊！」'],
+        [
+          '9846',
+          'PRINTFORMW 嫌弃%SAVESTR:TARGET%舔舐的动作太敷衍，%SAVESTR:PLAYER%微微用牙齿咬了咬%SAVESTR:TARGET%的阴蒂，立即听到一阵痛苦的悲鸣……',
+        ],
+        [
+          '9847',
+          'PRINTFORMW %SAVESTR:TARGET%的%LOCALS:2%和%SAVESTR:PLAYER%的%LOCALS:0%沾满了彼此的唾液，隐隐反射着调教室的火光……',
+        ],
+        ['9848', 'CFLAG:370 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

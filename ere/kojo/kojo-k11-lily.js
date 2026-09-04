@@ -19789,6 +19789,258 @@ async function kojo_message_com_11(rand) {
     } // :9729
   } // :9730
 
+  let locals_0 = ''; // LOCALS:0，调教者性器
+  let locals_1 = ''; // LOCALS:1，调教者敏感部位
+  let locals_2 = ''; // LOCALS:2，莉莉性器
+  let locals_3 = ''; // LOCALS:3，莉莉敏感部位
+
+  // K11 原作把 CFLAG:370 复用于六九式口上计数；该角色的魔族化另存 CFLAG:400。
+  if (era_flag.selectcom === 69) {
+    // :9735
+
+    if (kojo.魔族化 === 0) {
+      // :9737
+
+      if (
+        era.get(`talent:${player}:121`) === 1 ||
+        era.get(`talent:${player}:122`) === 1
+      ) {
+        // :9739
+        locals_0 = '阴茎'; // :9740
+        locals_1 = '阴茎'; // :9741
+      } else {
+        // :9742
+        locals_0 = '蜜穴'; // :9743
+        locals_1 = '阴蒂'; // :9744
+      } // :9745
+
+      if (
+        era.get(`talent:${target}:121`) === 1 ||
+        era.get(`talent:${target}:122`) === 1
+      ) {
+        // :9747
+        locals_2 = '阴茎'; // :9748
+        locals_3 = '阴茎'; // :9749
+      } else {
+        // :9750
+        locals_2 = '蜜穴'; // :9751
+        locals_3 = '阴蒂'; // :9752
+      } // :9753
+
+      if (assi_mao) {
+        // :9755
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :9757
+          await era.printAndWait(
+            `「咕呣……咕呣……咕呣${player_name}的${locals_1}……味道好棒……好喜欢${heart(1)}」`,
+          ); // :9758
+          await era.printAndWait(
+            `『啊啊……姐姐的${locals_3}也很棒啊……${heart(1)}』`,
+          ); // :9759
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :9761
+          await era.printAndWait(
+            `「呣呣……呣呣………${heart(1)} ${player_name}这样舒服吗？${heart(1)}」`,
+          ); // :9762
+          await era.printAndWait(
+            `『啊啊啊姐姐……舔得人家好舒服……我也不会输的${heart(1)}』`,
+          ); // :9763
+        } else if (chara(target).system.侍奉精神 >= 3) {
+          // :9765
+          await era.printAndWait(
+            `「呜呜呜……明明……不喜欢这种事情……为什么……却停不下来……而且……好舒服啊啊！」`,
+          ); // :9766
+          await era.printAndWait(
+            `『啊啊……和姐姐互相舔下体……好棒……好舒服啊啊${heart(1)} 』`,
+          ); // :9767
+        } else {
+          // :9769
+          await era.printAndWait(
+            `「唔呣……唔呣……呜呜呜，为什么……要做这种下流的事……！」`,
+          ); // :9770
+          await era.printAndWait(
+            `『啊哈……姐姐的${locals_1}一抖一抖的，好可爱……我舔得很舒服吧${heart(1)} 但是姐姐你也不能偷懒啊♪』`,
+          ); // :9771
+        } // :9772
+      } else {
+        // :9773
+
+        if (era.get(`talent:${target}:76`) === 1) {
+          // :9776
+          await era.printAndWait(
+            `「呣呣……呣呣啊……${heart(1)} 魔王大人……舔得人家……太舒服了${heart(1)} 但是……人家不会认输的${heart(1)}」`,
+          ); // :9777
+          await era.printAndWait(
+            `${target_name}忍耐着${locals_2}的快感，专心致志地舔舐着的${player_name}的${locals_0}……`,
+          ); // :9778
+        } else if (era.get(`talent:${target}:85`) === 1) {
+          // :9780
+          await era.printAndWait(
+            `「唔呣……唔呣……啊啊啊${heart(1)} 魔王大人……舔得人家……太舒服了……${heart(1)}……我，我也会好好侍奉魔王大人的……」`,
+          ); // :9781
+          await era.printAndWait(
+            `${target_name}深吸一口气，忍耐着下体传来的强烈快感，继续卖力地舔吮着${player_name}的阴茎……`,
+          ); // :9782
+        } else if (chara(target).system.侍奉精神 >= 3) {
+          // :9784
+          await era.printAndWait(
+            `「唔呣……唔呣……唔啊啊啊……为，为什么……会这么舒服的……！」`,
+          ); // :9785
+          await era.printAndWait(
+            `${target_name}忍耐着快感，努力用舌头舔舐着${player_name}的${locals_0}……`,
+          ); // :9786
+        } else {
+          // :9788
+          await era.printAndWait(
+            `「唔呣……唔呣……？！不，不可以咬那里啊啊啊啊！」`,
+          ); // :9789
+          await era.printAndWait(
+            `嫌弃${target_name}舔舐的动作太敷衍，${player_name}微微用牙齿咬了咬${target_name}的阴蒂，立即听到一阵痛苦的悲鸣……`,
+          ); // :9790
+        } // :9791
+      } // :9792
+      // CFLAG:TARGET:370  = 1（变量语义：CFLAG 族，TARGET:370） // :9793
+      kojo.魔族化 = 1; // :9793
+      return 0; // :9794
+    } else {
+      // :9796
+
+      if (assi_mao) {
+        // :9798
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.魔族化 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9800
+          await era.printAndWait(
+            `「咕呣呣……唔呣……唔呣……${player_name}的${locals_1}……味道真好……真喜欢${heart(1)}」`,
+          ); // :9801
+          await era.printAndWait(
+            `『呜啊啊……姐姐的${locals_1}也很棒啊……${heart(1)}』`,
+          ); // :9802
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9803
+          // CFLAG:370  = 5（变量语义：CFLAG 族，370） // :9804
+          kojo.魔族化 = 5; // :9804
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.魔族化 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9806
+          await era.printAndWait(
+            `「唔呣……唔呣……${heart(1)} 啊啊啊……${player_name}舔得姐姐好舒服……${heart(1)}」`,
+          ); // :9807
+          await era.printAndWait(
+            `『啊啊啊……姐姐也舔得人家的小穴舒服的要上天了啊啊${heart(1)}』`,
+          ); // :9808
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9809
+          // CFLAG:370  = 4（变量语义：CFLAG 族，370） // :9810
+          kojo.魔族化 = 4; // :9810
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.魔族化 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9812
+          await era.printAndWait(
+            `「呜呜呜……明明……不喜欢这种事情……为什么……却停不下来……而且……好舒服啊啊！！」`,
+          ); // :9813
+          await era.printAndWait(
+            `『嘿嘿嘿，和妹妹互相舔下体的感觉……很棒很舒服吧${heart(1)} 呣呣呣……呣呣${heart(1)}……』`,
+          ); // :9814
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9815
+          // CFLAG:370  = 3（变量语义：CFLAG 族，370） // :9816
+          kojo.魔族化 = 3; // :9816
+        } else if (kojo.魔族化 <= 1 || game.kojo.口上开关 === 2) {
+          // :9818
+          await era.printAndWait(
+            `「呜呜呜……为什么……要做这种这么下流的事情！」`,
+          ); // :9819
+          await era.printAndWait(
+            `『啊哈……姐姐的${locals_1}一抖一抖的，好可爱……我舔得很舒服吧${heart(1)} 但是姐姐你也不能偷懒啊，快点给人家舔啊♪』`,
+          ); // :9820
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9821
+          // CFLAG:370  = 2（变量语义：CFLAG 族，370） // :9822
+          kojo.魔族化 = 2; // :9822
+        } // :9823
+      } else {
+        // :9824
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.魔族化 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9826
+          await era.printAndWait(
+            `「呣呣……呣呣啊……${heart(1)} 魔王大人……舔得人家……太舒服了${heart(1)} 但是……人家不会认输的……一定要让魔王大人先射出来${heart(1)}」`,
+          ); // :9827
+          await era.printAndWait(
+            `${target_name}忍耐着${locals_2}的快感，专心致志地吸吮着的${player_name}的阴茎…`,
+          ); // :9828
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9829
+          // CFLAG:370  = 5（变量语义：CFLAG 族，370） // :9830
+          kojo.魔族化 = 5; // :9830
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.魔族化 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9832
+          await era.printAndWait(
+            `「唔呣……唔呣……啊啊啊${heart(1)} 魔王大人……舔得人家……太舒服了……${heart(1)}但，但我不能松懈……我，我也要好好侍奉魔王大人……」`,
+          ); // :9833
+          await era.printAndWait(
+            `${target_name}深吸一口气，忍耐着下体传来的强烈快感，继续卖力地舔吮着${player_name}的阴茎……`,
+          ); // :9834
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9835
+          // CFLAG:370  = 4（变量语义：CFLAG 族，370） // :9836
+          kojo.魔族化 = 4; // :9836
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.魔族化 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9838
+          await era.printAndWait(
+            `「唔呣……唔呣……唔啊啊啊……为，为什么……会这么舒服的……脑子还是下面都……乱七八糟了啊啊！」`,
+          ); // :9839
+          await era.printAndWait(
+            `${target_name}忍耐着快感，努力用舌头舔舐着${player_name}的${locals_0}……`,
+          ); // :9840
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9841
+          // CFLAG:370  = 3（变量语义：CFLAG 族，370） // :9842
+          kojo.魔族化 = 3; // :9842
+        } else if (kojo.魔族化 <= 1 || game.kojo.口上开关 === 2) {
+          // :9844
+          await era.printAndWait(
+            `「唔呣……唔呣……？！不，不可以咬那里啊啊啊啊！」`,
+          ); // :9845
+          await era.printAndWait(
+            `嫌弃${target_name}舔舐的动作太敷衍，${player_name}微微用牙齿咬了咬${target_name}的阴蒂，立即听到一阵痛苦的悲鸣……`,
+          ); // :9846
+          await era.printAndWait(
+            `${target_name}的${locals_2}和${player_name}的${locals_0}沾满了彼此的唾液，隐隐反射着调教室的火光……`,
+          ); // :9847
+          // CFLAG:370  = 2（变量语义：CFLAG 族，370） // :9848
+          kojo.魔族化 = 2; // :9848
+        } // :9849
+      } // :9850
+      return 0; // :9851
+    } // :9852
+  } // :9853
+
   return 0;
 }
 

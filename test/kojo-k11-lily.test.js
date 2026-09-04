@@ -7257,6 +7257,50 @@ for (const assistant of [true, false]) {
   });
 }
 
+// —— SELECTCOM 69（六九式；K11 复用 CFLAG:370）——
+
+test('COM69 初めて：双方性器名由 LOCALS:0-3 代入，四档推进到 1', async () => {
+  for (const item of [{ talent: 76 }, { talent: 85 }, { abl: 3 }, {}]) {
+    const fixture = setup_lily((f) => {
+      if (item.talent !== undefined)
+        f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+    }, 69);
+    await speak_com11(fixture, seq_rand());
+    assert.ok(fixture.text_lines().length > 0);
+    assert.equal(fixture.store.get(`cflag:${LILY}:370`), 1);
+    assert.equal(fixture.text_lines().join('\n').includes('%LOCALS:'), false);
+  }
+});
+
+for (const assistant of [true, false]) {
+  test(`COM69 二回目：${assistant ? '助手玛奥' : '非助手玛奥'}四档推进`, async () => {
+    const cases = [
+      { talent: 76, expected: 5 },
+      { talent: 85, expected: 4 },
+      { abl: 3, expected: 3 },
+      { expected: 2 },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        f.store.set(`cflag:${LILY}:370`, 1);
+        if (assistant) {
+          preset_chara_17(f);
+          f.era.addCharacter(MAO);
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+        if (item.talent !== undefined)
+          f.store.set(`talent:${LILY}:${item.talent}`, 1);
+        if (item.abl !== undefined) f.store.set(`abl:${LILY}:16`, item.abl);
+      }, 69);
+      await speak_com11(fixture, seq_rand());
+      assert.ok(fixture.text_lines().length > 0);
+      assert.equal(fixture.store.get(`cflag:${LILY}:370`), item.expected);
+    }
+  });
+}
+
 // —— SELECTCOM 56（交谈 CFLAG:357）——
 
 test('COM56 初めて录像：露出狂、欲情、顺从与其余四档', async () => {
