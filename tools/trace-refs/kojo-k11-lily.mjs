@@ -26159,6 +26159,170 @@ export const FILES = [
           'PRINTFORMW 「（为，为什么我会……做这样的事情…）唔呣……唔呣……还，还要这样多久？」',
         ],
         ['9527', 'CFLAG:361 = 2'],
+        +['9537', 'IF SELECTCOM == 126'],
+        ['9542', 'PRINTFORMW 「唔唔……唔呣……唔呣%UNICODE(0x2661) *1%」'],
+        ['9543', 'PRINTFORMW 「嘿嘿，边被手指摩擦着边口交，很舒服吧？」'],
+        [
+          '9544',
+          'PRINTFORMW %SAVESTR:TARGET%脸上浮现出了淫媚的笑容，用舌尖舔弄着%SAVESTR:PLAYER%的龟头，边用手指摩擦着根部……',
+        ],
+        [
+          '9547',
+          'PRINTFORMW 「唔呣……唔呣%UNICODE(0x2661) *1% 阴茎……热热的……感觉好舒服……%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9548',
+          'PRINTFORMW %SAVESTR:TARGET%边%SAVESTR:PLAYER%吸吮着阴茎边用手指按摩着，表情充满了发自内心的幸福感。',
+        ],
+        [
+          '9549',
+          'PRINTFORMW 「唔唔……唔呣……唔呣…%SAVESTR:PLAYER%%UNICODE(0x2661) *1% 要，要在嘴里发射了吗%UNICODE(0x2661) *1%」',
+        ],
+        ['9552', 'PRINTFORMW 「唔唔……唔唔……唔呣%UNICODE(0x2661) *1%」'],
+        [
+          '9553',
+          'PRINTFORMW %SAVESTR:TARGET%手和嘴并用地侍奉着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        ['9554', 'PRINTFORMW 「这，这样感觉舒服吗……要不要再温柔一些……」'],
+        [
+          '9555',
+          'PRINTFORMW %SAVESTR:PLAYER%微笑着说道，已经从侍奉%SAVESTR:TARGET%的过程中感到了愉悦感……',
+        ],
+        ['9558', 'PRINTFORMW 「唔唔……唔唔……唔呣！」'],
+        [
+          '9559',
+          'PRINTFORMW %SAVESTR:TARGET%还不习惯同时用手和嘴侍奉阴茎，动作十分笨拙。',
+        ],
+        [
+          '9560',
+          'PRINTFORMW %SAVESTR:PLAYER%不满的挺起腰，将阴茎在%SAVESTR:TARGET%的嘴里抽插了几下，%SAVESTR:TARGET%难受得哭泣了起来。',
+        ],
+        [
+          '9561',
+          'PRINTFORMW 「呜……呜呜……对，对不起……请饶了我吧……我会好好学习的！」',
+        ],
+        ['9563', 'CFLAG:TARGET:362 = 1'],
+        ['9571', 'PRINTFORMW 「咕呣……咕呣……这样很舒服吧%UNICODE(0x2661) *1%」'],
+        [
+          '9572',
+          'PRINTFORMW 『啊啊……姐姐……人家要忍不住了啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9573',
+          'PRINTFORMW 「来吧，全部射在姐姐的嘴里吧%UNICODE(0x2661) *1% %SAVESTR:PLAYER%浓浓的精液…%UNICODE(0x2661) *1% 咕呣……咕呣%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9574',
+          'PRINTFORMW %SAVESTR:TARGET%脸上浮现出了妖艳的笑容，用舌头拨弄着%SAVESTR:PLAYER%的龟头，手指按摩着根部………',
+        ],
+        ['9575', 'CFLAG:362 = 5'],
+        [
+          '9578',
+          'PRINTFORMW 「咕呣……唔唔%UNICODE(0x2661) *1% %SAVESTR:PLAYER%的阴茎……好硬……好烫%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9579',
+          'PRINTFORMW 『呜啊啊……姐姐……人家要忍不住了啊啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '9580',
+          'PRINTFORMW %SAVESTR:TARGET%同时用手和嘴侍奉着%SAVESTR:PLAYER%的阴茎，看上去已经完全乐在其中了',
+        ],
+        [
+          '9581',
+          'PRINTFORMW 「咕呣……来吧，%SAVESTR:PLAYER%%UNICODE(0x2661) *1% 射在姐姐嘴里吧%UNICODE(0x2661) *1%」',
+        ],
+        ['9582', 'CFLAG:362 = 4'],
+        ['9585', 'PRINTFORMW 「咕呣……咕呣……呣呣……」'],
+        [
+          '9586',
+          'PRINTFORMW %SAVESTR:TARGET%手口并用地侍奉着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        [
+          '9587',
+          'PRINTFORMW 『啊啊， 姐姐的侍奉好棒……这样感觉好舒服%UNICODE(0x2661) *1%』',
+        ],
+        ['9588', 'PRINTFORMW 「咕呣……呣呣……不，不要射在姐姐嘴里……就可以了……」'],
+        [
+          '9589',
+          'PRINTFORMW %SAVESTR:PLAYER%尽情享受着%SAVESTR:TARGET%的努力侍奉……',
+        ],
+        ['9590', 'CFLAG:362 = 3'],
+        ['9593', 'PRINTFORMW 「咕呣……咕呣……呣呣……」'],
+        [
+          '9594',
+          'PRINTFORMW %SAVESTR:TARGET%还不习惯用手和嘴同时侍奉阴茎，动作显得相当笨拙。',
+        ],
+        [
+          '9595',
+          'PRINTFORMW %SAVESTR:PLAYER%不满地顶起腰，用阴茎在%SAVESTR:TARGET%的嘴里抽插了几下，%SAVESTR:TARGET%难受得哭泣了起来。',
+        ],
+        [
+          '9596',
+          'PRINTFORMW 『哼，再不好好侍奉的话，下次就要一口气插进姐姐喉咙里去了♪』',
+        ],
+        ['9597', 'PRINTFORMW 「对，对不起……姐姐会好好学的……饶，饶了姐姐吧！」'],
+        ['9598', 'CFLAG:362 = 2'],
+        ['9603', 'PRINTFORMW 「咕呣……咕呣……%UNICODE(0x2661) *1%」'],
+        [
+          '9604',
+          'PRINTFORMW 「如何，魔王大人，阴茎一边被舔一边被手指按摩的感觉，很舒服吧？」',
+        ],
+        [
+          '9605',
+          'PRINTFORMW %SAVESTR:TARGET%带着淫媚的笑容看着你，然后低下头继续用舌头舔着%SAVESTR:PLAYER%的龟头，手指则娴熟地按摩着睾丸。',
+        ],
+        [
+          '9606',
+          'PRINTFORMW 「咕呣……呣呣……%UNICODE(0x2661) *1% 魔王大人%UNICODE(0x2661) *1% 这次是要射在人家手上……还是嘴里呢%UNICODE(0x2661) *1%」',
+        ],
+        ['9607', 'CFLAG:362 = 5'],
+        [
+          '9610',
+          'PRINTFORMW 「咕呣……唔唔%UNICODE(0x2661) *1% 魔王大人的阴茎……好硬……好烫%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9611',
+          'PRINTFORMW %SAVESTR:TARGET%手口并用地侍奉着%SAVESTR:PLAYER%的阴茎，吸吮着龟头，并且是发自内心地享受着侍奉的快乐。',
+        ],
+        [
+          '9612',
+          'PRINTFORMW 「呣呣…%UNICODE(0x2661) *1% 好喜欢……魔王大人的阴茎%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '9613',
+          'PRINTFORMW 「当然了……魔王大人的人……我也一样喜欢%UNICODE(0x2661) *1%」',
+        ],
+        ['9614', 'CFLAG:362 = 4'],
+        ['9617', 'PRINTFORMW 「咕呣……唔唔……唔唔！」'],
+        [
+          '9618',
+          'PRINTFORMW %SAVESTR:TARGET%手口并用，努力侍奉着%SAVESTR:PLAYER%的阴茎。',
+        ],
+        [
+          '9619',
+          'PRINTFORMW 边舔着阴茎，%SAVESTR:TARGET%边抬起眼皮看着你，用讨好的声音问着。',
+        ],
+        [
+          '9620',
+          'PRINTFORMW 「魔，魔王大人……这样感觉舒服吗………还是要按摩其他的部位？」',
+        ],
+        [
+          '9621',
+          'PRINTFORMW %SAVESTR:PLAYER%露出了满意的笑容，继续享受着%SAVESTR:TARGET%的侍奉',
+        ],
+        ['9622', 'CFLAG:362 = 3'],
+        ['9625', 'PRINTFORMW 「咕呣……唔唔……呕！」'],
+        [
+          '9626',
+          'PRINTFORMW %SAVESTR:TARGET%还不习惯用手和嘴同时侍奉阴茎，动作显得相当笨拙。',
+        ],
+        [
+          '9627',
+          'PRINTFORMW %SAVESTR:PLAYER%不满的挺起腰，将阴茎在%SAVESTR:TARGET%的嘴里抽插了几下，%SAVESTR:TARGET%难受得哭泣了起来。',
+        ],
+        ['9628', 'PRINTFORMW 「对，对不起……魔王大人……我，我会努力学的……」'],
+        ['9629', 'CFLAG:362 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },

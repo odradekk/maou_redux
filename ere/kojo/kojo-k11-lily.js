@@ -19387,6 +19387,215 @@ async function kojo_message_com_11(rand) {
     } // :9531
   } // :9532
 
+  if (era_flag.selectcom === 126) {
+    // :9537
+
+    if (kojo.手搓口交 === 0) {
+      // :9539
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :9541
+        await era.printAndWait(`「唔唔……唔呣……唔呣${heart(1)}」`); // :9542
+        await era.printAndWait(`「嘿嘿，边被手指摩擦着边口交，很舒服吧？」`); // :9543
+        await era.printAndWait(
+          `${target_name}脸上浮现出了淫媚的笑容，用舌尖舔弄着${player_name}的龟头，边用手指摩擦着根部……`,
+        ); // :9544
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :9546
+        await era.printAndWait(
+          `「唔呣……唔呣${heart(1)} 阴茎……热热的……感觉好舒服……${heart(1)}」`,
+        ); // :9547
+        await era.printAndWait(
+          `${target_name}边${player_name}吸吮着阴茎边用手指按摩着，表情充满了发自内心的幸福感。`,
+        ); // :9548
+        await era.printAndWait(
+          `「唔唔……唔呣……唔呣…${player_name}${heart(1)} 要，要在嘴里发射了吗${heart(1)}」`,
+        ); // :9549
+      } else if (chara(target).system.侍奉精神 >= 3) {
+        // :9551
+        await era.printAndWait(`「唔唔……唔唔……唔呣${heart(1)}」`); // :9552
+        await era.printAndWait(
+          `${target_name}手和嘴并用地侍奉着${player_name}的阴茎。`,
+        ); // :9553
+        await era.printAndWait(`「这，这样感觉舒服吗……要不要再温柔一些……」`); // :9554
+        await era.printAndWait(
+          `${player_name}微笑着说道，已经从侍奉${target_name}的过程中感到了愉悦感……`,
+        ); // :9555
+      } else {
+        // :9557
+        await era.printAndWait(`「唔唔……唔唔……唔呣！」`); // :9558
+        await era.printAndWait(
+          `${target_name}还不习惯同时用手和嘴侍奉阴茎，动作十分笨拙。`,
+        ); // :9559
+        await era.printAndWait(
+          `${player_name}不满的挺起腰，将阴茎在${target_name}的嘴里抽插了几下，${target_name}难受得哭泣了起来。`,
+        ); // :9560
+        await era.printAndWait(
+          `「呜……呜呜……对，对不起……请饶了我吧……我会好好学习的！」`,
+        ); // :9561
+      } // :9562
+      // CFLAG:TARGET:362  = 1（变量语义：CFLAG 族，TARGET:362） // :9563
+      kojo.手搓口交 = 1; // :9563
+      return 0; // :9564
+    } else {
+      // :9566
+
+      if (assi_mao) {
+        // :9568
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.手搓口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9570
+          await era.printAndWait(`「咕呣……咕呣……这样很舒服吧${heart(1)}」`); // :9571
+          await era.printAndWait(
+            `『啊啊……姐姐……人家要忍不住了啊啊${heart(1)}』`,
+          ); // :9572
+          await era.printAndWait(
+            `「来吧，全部射在姐姐的嘴里吧${heart(1)} ${player_name}浓浓的精液…${heart(1)} 咕呣……咕呣${heart(1)}」`,
+          ); // :9573
+          await era.printAndWait(
+            `${target_name}脸上浮现出了妖艳的笑容，用舌头拨弄着${player_name}的龟头，手指按摩着根部………`,
+          ); // :9574
+          // CFLAG:362  = 5（变量语义：CFLAG 族，362） // :9575
+          kojo.手搓口交 = 5; // :9575
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.手搓口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9577
+          await era.printAndWait(
+            `「咕呣……唔唔${heart(1)} ${player_name}的阴茎……好硬……好烫${heart(1)}」`,
+          ); // :9578
+          await era.printAndWait(
+            `『呜啊啊……姐姐……人家要忍不住了啊啊${heart(1)}』`,
+          ); // :9579
+          await era.printAndWait(
+            `${target_name}同时用手和嘴侍奉着${player_name}的阴茎，看上去已经完全乐在其中了`,
+          ); // :9580
+          await era.printAndWait(
+            `「咕呣……来吧，${player_name}${heart(1)} 射在姐姐嘴里吧${heart(1)}」`,
+          ); // :9581
+          // CFLAG:362  = 4（变量语义：CFLAG 族，362） // :9582
+          kojo.手搓口交 = 4; // :9582
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手搓口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9584
+          await era.printAndWait(`「咕呣……咕呣……呣呣……」`); // :9585
+          await era.printAndWait(
+            `${target_name}手口并用地侍奉着${player_name}的阴茎。`,
+          ); // :9586
+          await era.printAndWait(
+            `『啊啊， 姐姐的侍奉好棒……这样感觉好舒服${heart(1)}』`,
+          ); // :9587
+          await era.printAndWait(
+            `「咕呣……呣呣……不，不要射在姐姐嘴里……就可以了……」`,
+          ); // :9588
+          await era.printAndWait(
+            `${player_name}尽情享受着${target_name}的努力侍奉……`,
+          ); // :9589
+          // CFLAG:362  = 3（变量语义：CFLAG 族，362） // :9590
+          kojo.手搓口交 = 3; // :9590
+        } else if (kojo.手搓口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9592
+          await era.printAndWait(`「咕呣……咕呣……呣呣……」`); // :9593
+          await era.printAndWait(
+            `${target_name}还不习惯用手和嘴同时侍奉阴茎，动作显得相当笨拙。`,
+          ); // :9594
+          await era.printAndWait(
+            `${player_name}不满地顶起腰，用阴茎在${target_name}的嘴里抽插了几下，${target_name}难受得哭泣了起来。`,
+          ); // :9595
+          await era.printAndWait(
+            `『哼，再不好好侍奉的话，下次就要一口气插进姐姐喉咙里去了♪』`,
+          ); // :9596
+          await era.printAndWait(
+            `「对，对不起……姐姐会好好学的……饶，饶了姐姐吧！」`,
+          ); // :9597
+          // CFLAG:362  = 2（变量语义：CFLAG 族，362） // :9598
+          kojo.手搓口交 = 2; // :9598
+        } // :9599
+      } else {
+        // :9600
+
+        if (
+          era.get(`talent:${target}:76`) === 1 &&
+          (kojo.手搓口交 <= 4 || game.kojo.口上开关 === 2)
+        ) {
+          // :9602
+          await era.printAndWait(`「咕呣……咕呣……${heart(1)}」`); // :9603
+          await era.printAndWait(
+            `「如何，魔王大人，阴茎一边被舔一边被手指按摩的感觉，很舒服吧？」`,
+          ); // :9604
+          await era.printAndWait(
+            `${target_name}带着淫媚的笑容看着你，然后低下头继续用舌头舔着${player_name}的龟头，手指则娴熟地按摩着睾丸。`,
+          ); // :9605
+          await era.printAndWait(
+            `「咕呣……呣呣……${heart(1)} 魔王大人${heart(1)} 这次是要射在人家手上……还是嘴里呢${heart(1)}」`,
+          ); // :9606
+          // CFLAG:362  = 5（变量语义：CFLAG 族，362） // :9607
+          kojo.手搓口交 = 5; // :9607
+        } else if (
+          era.get(`talent:${target}:85`) === 1 &&
+          (kojo.手搓口交 <= 3 || game.kojo.口上开关 === 2)
+        ) {
+          // :9609
+          await era.printAndWait(
+            `「咕呣……唔唔${heart(1)} 魔王大人的阴茎……好硬……好烫${heart(1)}」`,
+          ); // :9610
+          await era.printAndWait(
+            `${target_name}手口并用地侍奉着${player_name}的阴茎，吸吮着龟头，并且是发自内心地享受着侍奉的快乐。`,
+          ); // :9611
+          await era.printAndWait(
+            `「呣呣…${heart(1)} 好喜欢……魔王大人的阴茎${heart(1)}」`,
+          ); // :9612
+          await era.printAndWait(
+            `「当然了……魔王大人的人……我也一样喜欢${heart(1)}」`,
+          ); // :9613
+          // CFLAG:362  = 4（变量语义：CFLAG 族，362） // :9614
+          kojo.手搓口交 = 4; // :9614
+        } else if (
+          chara(target).system.侍奉精神 >= 3 &&
+          (kojo.手搓口交 <= 2 || game.kojo.口上开关 === 2)
+        ) {
+          // :9616
+          await era.printAndWait(`「咕呣……唔唔……唔唔！」`); // :9617
+          await era.printAndWait(
+            `${target_name}手口并用，努力侍奉着${player_name}的阴茎。`,
+          ); // :9618
+          await era.printAndWait(
+            `边舔着阴茎，${target_name}边抬起眼皮看着你，用讨好的声音问着。`,
+          ); // :9619
+          await era.printAndWait(
+            `「魔，魔王大人……这样感觉舒服吗………还是要按摩其他的部位？」`,
+          ); // :9620
+          await era.printAndWait(
+            `${player_name}露出了满意的笑容，继续享受着${target_name}的侍奉`,
+          ); // :9621
+          // CFLAG:362  = 3（变量语义：CFLAG 族，362） // :9622
+          kojo.手搓口交 = 3; // :9622
+        } else if (kojo.手搓口交 <= 1 || game.kojo.口上开关 === 2) {
+          // :9624
+          await era.printAndWait(`「咕呣……唔唔……呕！」`); // :9625
+          await era.printAndWait(
+            `${target_name}还不习惯用手和嘴同时侍奉阴茎，动作显得相当笨拙。`,
+          ); // :9626
+          await era.printAndWait(
+            `${player_name}不满的挺起腰，将阴茎在${target_name}的嘴里抽插了几下，${target_name}难受得哭泣了起来。`,
+          ); // :9627
+          await era.printAndWait(
+            `「对，对不起……魔王大人……我，我会努力学的……」`,
+          ); // :9628
+          // CFLAG:362  = 2（变量语义：CFLAG 族，362） // :9629
+          kojo.手搓口交 = 2; // :9629
+        } // :9630
+      } // :9631
+      return 0; // :9632
+    } // :9633
+  } // :9634
+
   return 0;
 }
 
