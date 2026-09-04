@@ -17883,6 +17883,602 @@ export const FILES = [
         ],
         ['5095', 'CFLAG:334 = 2'],
       ].map(([ref, line]) => exact_line(ref, line)),
+      exact_line('5106-5414', 'IF SELECTCOM == 34'),
+      ...[
+        [
+          '5115',
+          'PRINTFORMW 「呜……我的处女……居然要献给妹妹了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5116',
+          'PRINTFORMW %SAVESTR:TARGET%屈服地落下了身子，骑在%SAVESTR:PLAYER%身上、让自己的妹妹夺走了自己的处女身。',
+        ],
+        [
+          '5117',
+          'PRINTFORMW 『啊啊啊%UNICODE(0x2661) *1% 姐姐的处女，我就收下了！！最喜欢姐姐了♪』',
+        ],
+        [
+          '5118',
+          'PRINTFORMW 「唔……唔啊啊……我，我也喜欢%SAVESTR:PLAYER%了啊啊！如果是别人……才不可能……有这么舒服啊啊啊！」',
+        ],
+        [
+          '5119',
+          'PRINTFORMW 『真，真的吗？听到姐姐这么说，好高兴！！那么姐姐小穴的第一次高潮，也由我来给予吧！』',
+        ],
+        [
+          '5120',
+          'PRINTFORMW 欣喜若狂的%SAVESTR:PLAYER%，挺起腰，开始自下而上地侵犯%SAVESTR:TARGET%的处女蜜穴……',
+        ],
+        ['5123', 'PRINTFORMW 「呜……呜啊……我的处女……就这样……」'],
+        [
+          '5124',
+          'PRINTFORMW %SAVESTR:TARGET%屈服地落下了身子，骑在%SAVESTR:PLAYER%身上、让自己的妹妹夺走了自己的处女身。',
+        ],
+        [
+          '5125',
+          'PRINTFORMW 『人家好高兴%UNICODE(0x2661) *1% 能够收下最爱的姐姐的处女♪』',
+        ],
+        [
+          '5126',
+          'PRINTFORMW 「哈啊……啊啊……其，其实不大……想让魔王大人……看见！」',
+        ],
+        [
+          '5127',
+          'PRINTFORMW 『知道姐姐喜欢魔王大人啦、不过事到如今，反悔也没有用了哦%UNICODE(0x2661) *1% 还是说……难道姐姐不喜欢%SAVESTR:PLAYER%了吗？』',
+        ],
+        ['5128', 'PRINTFORMW 「对，对不起……人家不是反悔啦……」'],
+        [
+          '5129',
+          'PRINTFORMW %SAVESTR:PLAYER%舔着嘴唇、挺起腰，开始自下而上地侵犯%SAVESTR:TARGET%的处女蜜穴……',
+        ],
+        [
+          '5132',
+          'PRINTFORMW 「呜……呜呜……求你了……放过姐姐吧，姐姐还是处女啊……」',
+        ],
+        [
+          '5133',
+          'PRINTFORMW %SAVESTR:TARGET%未经人事的蜜穴，被%SAVESTR:PLAYER%挺起腰，慢慢穿透了。',
+        ],
+        ['5134', 'PRINTFORMW 『哎嘿嘿，感觉到处女膜了……给我……破掉吧！』'],
+        ['5135', 'PRINTFORMW 「住，住手，不可以不可以不可以啊啊啊！」'],
+        [
+          '5136',
+          'PRINTFORMW %SAVESTR:PLAYER%紧紧抓着%SAVESTR:TARGET%的腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@不由分说地贯穿了处女蜜穴',
+        ],
+        [
+          '5137',
+          'PRINTFORMW 『哈啊啊！姐姐的处女归我了！从此以后变成我的性奴吧%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '5138',
+          'PRINTFORMW 「呜呜……呜呜呜……太过分了——等等！不，不能再往里进了！好痛，好痛啊啊」',
+        ],
+        [
+          '5143',
+          'PRINTFORMW 「哈啊……哈啊……魔王大人……进到我的处女小穴里了……从今以后……我就是真正属于魔王大人的了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5144',
+          'PRINTFORMW %SAVESTR:TARGET%淫浪的摇着腰，用初经人事的蜜穴将%SAVESTR:PLAYER%的阴茎完全吞入了。',
+        ],
+        [
+          '5145',
+          'PRINTFORMW 「魔王大人的阴茎……在人家的小穴里……搅动着……好舒服%UNICODE(0x2661) *1% 原来……做爱……是这么舒服的事情啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5146',
+          'PRINTFORMW %SAVESTR:TARGET%背部绷得紧紧的，尽情享受着初次交媾的快感，蜜穴紧紧夹着阴茎。',
+        ],
+        [
+          '5147',
+          'PRINTFORMW 「不，不行了……舒服得……没有力气了%UNICODE(0x2661) *1% 接下来……魔王大人……尽情……啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5150',
+          'PRINTFORMW 「哈啊……哈啊……感受到……魔王大人的阴茎了……请，请收下%SAVESTR:TARGET%的处女吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5151',
+          'PRINTFORMW %SAVESTR:TARGET%满脸通红，骑跨自%SAVESTR:PLAYER%身上，慢慢沉下了腰。',
+        ],
+        [
+          '5152',
+          'PRINTFORMW %SAVESTR:PLAYER%的龟头刚刚穿透处女膜，上方就响起了%SAVESTR:TARGET%交织着痛苦与享受的呻吟。',
+        ],
+        [
+          '5153',
+          'PRINTFORMW 「呜……呜啊啊……有点痛%UNICODE(0x2661) *1% 但……但是……魔王大人……从此我就是属于你的了啊啊啊！」',
+        ],
+        [
+          '5154',
+          'PRINTFORMW %SAVESTR:TARGET%一鼓作气地坐了下来，让阴茎完全进入了自己的处女小穴中。',
+        ],
+        [
+          '5155',
+          'PRINTFORMW 破处的疼痛让她流出了泪水，但是脸上却充满了幸福的笑容。',
+        ],
+        [
+          '5156',
+          'PRINTFORMW 「我爱你……魔王大人……永远爱你……%UNICODE(0x2661) *1%」',
+        ],
+        ['5159', 'PRINTFORMW 「不，不行！放开我，放开我……求你了……！」'],
+        [
+          '5160',
+          'PRINTFORMW %SAVESTR:PLAYER%抓着%SAVESTR:TARGET%的腰，勃起的阴茎自下而上穿透了未经人事的紧致蜜穴。',
+        ],
+        ['5161', 'PRINTFORMW 「好，好痛！！快停下来，停下来啊啊！」'],
+        [
+          '5162',
+          'PRINTFORMW 破处的疼痛让%SAVESTR:TARGET%痛苦地悲鸣了起来，但这声音却只让%SAVESTR:PLAYER%更加的兴奋……',
+        ],
+        [
+          '5171',
+          'PRINTFORMW 「呜啊……啊啊……顶，顶到最里面了……好舒服%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5172',
+          'PRINTFORMW %SAVESTR:TARGET%前后扭着腰，让%SAVESTR:PLAYER%的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@在自己的蜜穴里一次次进出着。',
+        ],
+        [
+          '5173',
+          'PRINTFORML 『哎呀呀，姐姐这么兴奋，那么喜欢被魔王大人视奸的感觉吗？』',
+        ],
+        [
+          '5174',
+          'PRINTFORMW 「是……是啊……姐姐，最喜欢被别人看着自己淫乱的样子了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5175',
+          'PRINTFORMW %SAVESTR:TARGET%带着一脸沉醉的表情，完全沉浸在交媾的快感之中……',
+        ],
+        [
+          '5178',
+          'PRINTFORMW 「呜……呜啊……在魔王大人……面前用这种姿势……实在太害羞了！」',
+        ],
+        [
+          '5179',
+          'PRINTFORMW %SAVESTR:PLAYER%抱着%SAVESTR:TARGET%的腰，用股间高高耸立的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@一次次顶入姐姐的蜜穴中。',
+        ],
+        [
+          '5180',
+          'PRINTFORML 『哼，嘴上这么说，小穴却夹得更紧了，明明就是很想被魔王大人视奸吧，变态姐姐♪』',
+        ],
+        [
+          '5181',
+          'PRINTFORMW 「嗯啊……啊啊……姐姐这么变态……真是对，对不起啊啊……！」',
+        ],
+        [
+          '5182',
+          'PRINTFORMW %SAVESTR:TARGET%在深爱的%SAVESTR:MASTER%的注视下，被自己的妹妹不断从身下侵犯着，内心却涌起了异样的快感……',
+        ],
+        ['5185', 'PRINTFORML 『姐姐，腰要好好地动起来啊，难道你想挨罚吗？！』'],
+        [
+          '5186',
+          'PRINTFORMW 「呜……呜啊啊……饶了姐姐吧……姐姐真的……已经不行了！」',
+        ],
+        [
+          '5187',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴被%SAVESTR:PLAYER%侵犯得一塌糊涂，痛苦地悲鸣着……',
+        ],
+        [
+          '5192',
+          'PRINTFORMW 像娼馆的妓女一样扭着腰的%SAVESTR:TARGET%，完全沉浸在交媾的快感之中。',
+        ],
+        [
+          '5193',
+          'PRINTFORMW 「哈啊……啊啊……这样自己动……真的是太舒服了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5194',
+          'PRINTFORMW %SAVESTR:PLAYER%欣赏着%SAVESTR:TARGET%的娇喘，任由阴茎随着%SAVESTR:TARGET%的动过在爱液泛滥的蜜穴里进出着……',
+        ],
+        [
+          '5197',
+          'PRINTFORMW %SAVESTR:TARGET%带着一脸的幸福，有些笨拙地扭动着腰，让%SAVESTR:PLAYER%的阴茎在自己爱液泛滥的蜜穴里进出着。',
+        ],
+        [
+          '5198',
+          'PRINTFORMW 「哈啊……哈啊……魔王大人……这样信任我……让我自己动……好幸福%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5199',
+          'PRINTFORMW 为了寻求更多的快感，%SAVESTR:TARGET%加大了腰部动作的幅度…',
+        ],
+        [
+          '5202',
+          'PRINTFORMW %SAVESTR:TARGET%屈辱而痛苦的咬着嘴唇，在%SAVESTR:PLAYER%的命令下上下扭动着腰。',
+        ],
+        ['5203', 'PRINTFORMW 「呜啊啊……什么时候……才可以停下来……好难受！」'],
+        ['5204', 'PRINTFORMW'],
+        ['5208', 'CFLAG:TARGET:335 = 1'],
+        [
+          '5217',
+          'PRINTFORML 「不，不行了……小穴……舒服得……要上天了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5219',
+          'PRINTFORML 『哎呀呀，姐姐的叫声这么淫乱，魔王大人都听见了啊！』',
+        ],
+        [
+          '5220',
+          'PRINTFORMW %SAVESTR:TARGET%扭着腰，尽情享受着与%SAVESTR:PLAYER%交媾的快感，连绵的娇喘在调教室里回荡着。',
+        ],
+        [
+          '5221',
+          'PRINTFORMW 「呜啊啊……被，被自己的妹妹侵犯……原来是这么舒服的事情啊啊啊魔王大人%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5223',
+          'PRINTFORML 『呜哇，姐姐的娇喘声音原来这么好听的%UNICODE(0x2661) *1% 真不愧是我的淫乱姐姐%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '5224',
+          'PRINTFORMW %SAVESTR:PLAYER%一次次顶起腰，侵犯着骑在自己身上的%SAVESTR:TARGET%。',
+        ],
+        [
+          '5225',
+          'PRINTFORMW %SAVESTR:TARGET%敏感的蜜穴在妹妹的侵犯下，向大脑传递着一阵又一阵强烈的快感。',
+        ],
+        [
+          '5226',
+          'PRINTFORMW 「嗯啊啊……好舒服%UNICODE(0x2661) *1% 这个姿势……比我想象的……还要舒服啊啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '5228',
+          'PRINTFORML 『哎呀呀，我都还没说自己就动起腰来了，真的有那么舒服吗！』',
+        ],
+        [
+          '5229',
+          'PRINTFORMW %SAVESTR:TARGET%带着淫媚而享受的笑容，一上一下地尽情地扭动着腰。',
+        ],
+        [
+          '5230',
+          'PRINTFORMW 「好舒服%UNICODE(0x2661) *1%…… 真的好舒服%UNICODE(0x2661) *1%…… %SAVESTR:PLAYER%的阴茎……插得姐姐……要去了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5231',
+          'PRINTFORMW %SAVESTR:TARGET%完全沉浸在被自己妹妹侵犯的背德快感之中，整个人都忘乎所以了……',
+        ],
+        [
+          '5233',
+          'PRINTFORML 『姐姐啊！姐姐啊%UNICODE(0x2661) *1% 魔王大人给人家装上的小鸡鸡，感觉如何啊%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '5234',
+          'PRINTFORMW %SAVESTR:TARGET%上下动着腰，让%SAVESTR:PLAYER%的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@在自己的蜜穴里反复进出着。',
+        ],
+        [
+          '5235',
+          'PRINTFORMW 「很……很舒服啊%UNICODE(0x2661) *1% 舒服得姐姐……要去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5236',
+          'PRINTFORMW 『哈啊……姐姐的蜜穴……也很紧很舒服啊啊啊%UNICODE(0x2661) *1% 』',
+        ],
+        [
+          '5237',
+          'PRINTFORMW 两人的交合处，爱液喷溅着，姐妹两人的乱伦之乐还在继续……',
+        ],
+        [
+          '5240',
+          'PRINTFORMW 「呜……呜啊……顶，顶到最里面了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5241',
+          'PRINTFORMW %SAVESTR:TARGET%上下扭动着腰，让%SAVESTR:PLAYER%的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@在自己的蜜穴里进出着。',
+        ],
+        [
+          '5242',
+          'PRINTFORML 『哎哟哟，姐姐这么兴奋，那么喜欢被魔王大人视奸的感觉吗？』',
+        ],
+        [
+          '5243',
+          'PRINTFORMW 「是……是啊……姐姐，最喜欢被别人看着自己淫乱的样子了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5244',
+          'PRINTFORMW %SAVESTR:TARGET%带着一脸沉醉的表情，完全沉浸在交媾的快感之中……',
+        ],
+        ['5246', 'CFLAG:335 = 6'],
+        [
+          '5250',
+          'PRINTFORML 「呜啊……啊啊啊……不，不行了……真的……要不行了%UNICODE(0x2661) *1%」',
+        ],
+        ['5252', 'PRINTFORML 『哎嘿嘿，姐姐的娇喘声被魔王大人听到了哦！』'],
+        [
+          '5253',
+          'PRINTFORMW %SAVESTR:PLAYER%顶着腰，持续地侵犯着%SAVESTR:TARGET%蜜穴的最深处。',
+        ],
+        [
+          '5254',
+          'PRINTFORMW 沉浸在快感中的%SAVESTR:TARGET%已经再也无法忍耐，甘甜的娇喘从唇边流泻而出。',
+        ],
+        [
+          '5255',
+          'PRINTFORMW 「真，真的好舒服%UNICODE(0x2661) *1%……舒服得……已经没有办法思考了啊啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '5257',
+          'PRINTFORML 『呜哇，姐姐的娇喘声音原来这么好听的%UNICODE(0x2661) *1% 真不愧是我的姐姐%UNICODE(0x2661) *1%』',
+        ],
+        [
+          '5258',
+          'PRINTFORMW %SAVESTR:PLAYER%舔着嘴唇，一次次顶起腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着姐姐的蜜穴里的敏感点。',
+        ],
+        [
+          '5259',
+          'PRINTFORMW %SAVESTR:TARGET%享受而甘甜的娇喘，则是这场姐妹乱伦狂欢的最好伴奏。',
+        ],
+        [
+          '5260',
+          'PRINTFORMW 「嗯啊……啊啊啊%UNICODE(0x2661) *1% 好舒服……舒服得……已经不想思考了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5262',
+          'PRINTFORML 『哎呀呀，我都还没说自己就动起腰来了，真的有那么舒服吗，母猪姐姐！』',
+        ],
+        [
+          '5263',
+          'PRINTFORMW 尽管在身下的是自己的亲妹妹，%SAVESTR:TARGET%还是完全无法停住腰部的动作。',
+        ],
+        [
+          '5264',
+          'PRINTFORMW 经过充分开发和调教的蜜穴，在一次次的交合中，感受到了极致的快感。',
+        ],
+        [
+          '5265',
+          'PRINTFORMW 「好舒服……%SAVESTR:PLAYER%的阴茎……插在姐姐的小穴里……舒服得不行了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5267',
+          'PRINTFORML 『姐姐啊！姐姐啊%UNICODE(0x2661) *1% 这个东西，可是人家为了能让姐姐舒服，才让魔王大人给我装上的哦，感觉如何呀%UNICODE(0x2661) *1% 』',
+        ],
+        [
+          '5268',
+          'PRINTFORMW %SAVESTR:TARGET%似乎是被妹妹的话感动了，更积极地扭着腰，寻求着更强烈的快感。',
+        ],
+        [
+          '5269',
+          'PRINTFORMW 「多，多谢%SAVESTR:PLAYER%了……姐姐，的确很舒服……舒服得……要上天了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5270',
+          'PRINTFORMW 『哎呀呀，姐姐要当着我和魔王大人的面高潮了吗！？』',
+        ],
+        [
+          '5273',
+          'PRINTFORMW 「呜……呜啊啊……可不可以……不要当着魔王大人的面……啊啊啊！」',
+        ],
+        [
+          '5274',
+          'PRINTFORMW %SAVESTR:PLAYER%紧抱着%SAVESTR:TARGET%的腰身，用自己股间的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@用力侵犯着姐姐的蜜穴。',
+        ],
+        [
+          '5275',
+          'PRINTFORML 『嘿嘿，虽然嘴上这么说，但是蜜穴却夹得更紧了呢，真是变态暴露狂姐姐啊♪』',
+        ],
+        ['5276', 'PRINTFORMW 「呜……不，不是那样的啊啊！」'],
+        [
+          '5277',
+          'PRINTFORMW 当着深爱的%SAVESTR:MASTER%的面，%SAVESTR:TARGET%被%SAVESTR:PLAYER%从下方持续地侵犯着，反而更加兴奋了………',
+        ],
+        ['5279', 'CFLAG:335 = 5'],
+        [
+          '5282',
+          'PRINTFORML 「好舒服……已经舒服得……没有办法思考了%UNICODE(0x2661) *1%」',
+        ],
+        ['5284', 'PRINTFORML 『哎嘿嘿，姐姐也忍不住娇喘了呢♪』'],
+        [
+          '5285',
+          'PRINTFORMW %SAVESTR:PLAYER%舔着嘴唇，一次次顶起腰，用\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@侵犯着姐姐的蜜穴里的敏感点。',
+        ],
+        [
+          '5286',
+          'PRINTFORMW 内心的屈辱和悲伤很快就被强烈的快感淹没，%SAVESTR:TARGET%再次发出了享受的娇喘。',
+        ],
+        [
+          '5287',
+          'PRINTFORML 「呜呜……要，要去了，要去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5289',
+          'PRINTFORML 『哎呀，原来姐姐的身体这么淫乱的，亏我还被瞒了那么久。』',
+        ],
+        [
+          '5290',
+          'PRINTFORMW 「不，不是那样子的……都是因为你们……的调教啊啊啊！」',
+        ],
+        [
+          '5291',
+          'PRINTFORMW %SAVESTR:TARGET%爱液泛滥的蜜穴被%SAVESTR:PLAYER%从下身下一次次顶到最深处，强烈的快感让争辩变成了甘甜的喘息………',
+        ],
+        ['5293', 'PRINTFORML 『呜哇……听姐姐的娇喘，听得我也兴奋起来了呢♪』'],
+        [
+          '5294',
+          'PRINTFORMW %SAVESTR:PLAYER%紧抱着%SAVESTR:TARGET%的腰身，用自己股间的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@用力侵犯着姐姐的蜜穴。',
+        ],
+        ['5295', 'PRINTFORMW 「呜……呜啊啊……太激烈了……姐姐……已经不行了啊啊！」'],
+        [
+          '5296',
+          'PRINTFORMW 『哈啊啊，姐姐的小穴突然夹得……这么紧……人，人家也要高潮了！姐姐，一起在魔王大人面前高潮吧！』',
+        ],
+        ['5298', 'PRINTFORML 『哎嘿嘿，姐姐没有我的允许不可以高潮哦♪』'],
+        [
+          '5299',
+          'PRINTFORMW %SAVESTR:PLAYER%不紧不慢地说着，而身上的%SAVESTR:TARGET%为了寻求更多的快感，红着脸，不断扭动着腰身。',
+        ],
+        [
+          '5300',
+          'PRINTFORMW %SAVESTR:PLAYER%紧抱着%SAVESTR:TARGET%的腰身，用自己股间的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@用力侵犯着姐姐的蜜穴。',
+        ],
+        [
+          '5301',
+          'PRINTFORMW 「呜……呜啊啊……已，已经不行了……让，让姐姐高潮吧！」',
+        ],
+        [
+          '5302',
+          'PRINTFORMW 那纠结在屈辱与快感之中的表情，勾起了%SAVESTR:MASTER%强烈的欲望……',
+        ],
+        ['5304', 'CFLAG:335 = 4'],
+        ['5307', 'PRINTFORML 『哎呀，姐姐居然肯听话自己动了，我好感动♪』'],
+        [
+          '5308',
+          'PRINTFORMW %SAVESTR:TARGET%在%SAVESTR:PLAYER%的命令下，骑在妹妹身上，上下动着腰。',
+        ],
+        ['5309', 'PRINTFORMW 「为，为什么要这么折磨姐姐……呜呜呜！」'],
+        [
+          '5310',
+          'PRINTFORMW %SAVESTR:PLAYER%紧抱着%SAVESTR:TARGET%的腰身，用自己股间的\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 电动假阳具 # 阴茎\\@用力侵犯着姐姐的蜜穴。',
+        ],
+        ['5311', 'PRINTFORMW 『哎，姐姐技术还是不行，接下来还是让我来吧♪』'],
+        ['5312', 'CFLAG:335 = 3'],
+        ['5315', 'PRINTFORML 『笨蛋姐姐，腰也要自己动起来啊！』'],
+        [
+          '5316',
+          'PRINTFORMW 「呜呜……饶，饶了姐姐吧……不，不能再往里面顶了……真的会死的啊啊！」',
+        ],
+        [
+          '5317',
+          'PRINTFORMW %SAVESTR:TARGET%被身下的%SAVESTR:PLAYER%侵犯着蜜穴，痛苦不堪的悲鸣着……',
+        ],
+        ['5318', 'CFLAG:335 = 2'],
+        [
+          '5324',
+          'PRINTFORML 「尽情……尽情地把%SAVESTR:TARGET%的小穴……侵犯到坏掉吧啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5326',
+          'PRINTFORMW 「呜啊%UNICODE(0x2661) *1%…… 好……好舒服%UNICODE(0x2661) *1% 舒服得……不行了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5328',
+          'PRINTFORMW 「好，好激烈……魔王大人%UNICODE(0x2661) *1% 不过……人家……人家还想要更多啊啊啊%UNICODE(0x2661) *1% 」',
+        ],
+        [
+          '5330',
+          'PRINTFORMW 「好，好舒服啊啊%UNICODE(0x2661) *1% 能够这么独占魔王大人的阴茎……实在是太棒了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5332',
+          'PRINTFORMW 「哈啊……腰部的动作……完全停不下来了%UNICODE(0x2661) *1% 因为……和魔王大人做爱，实在是太棒了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5335',
+          'PRINTFORMW %SAVESTR:TARGET%脸上浮现出充满享受的淫媚笑容，骑在%SAVESTR:PLAYER%的身上扭动着腰………',
+        ],
+        [
+          '5337',
+          'PRINTFORMW %SAVESTR:TARGET%为了寻求更强烈的快感，更激烈地上下扭着腰………',
+        ],
+        [
+          '5339',
+          'PRINTFORMW 随着%SAVESTR:PLAYER%一次次顶起腰、%SAVESTR:TARGET%淫浪的娇喘声随着交合快感而增强了………',
+        ],
+        [
+          '5341',
+          'PRINTFORMW %SAVESTR:TARGET%已经完全被快感和欲望所支配，上下扭动着腰的动作已经完全停不下来了………',
+        ],
+        [
+          '5344',
+          'PRINTFORMW 「啊啊……人家的小穴……被%SAVESTR:PLAYER%的阴茎……顶到最里面了啊啊！」',
+        ],
+        [
+          '5345',
+          'PRINTFORML 「顶，顶到子宫口了……比刚刚……更舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5346',
+          'PRINTFORMW %SAVESTR:TARGET%娇喘着，享受着骑乘位交合的快感………',
+        ],
+        ['5348', 'CFLAG:335 = 6'],
+        [
+          '5352',
+          'PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5354',
+          'PRINTFORMW 「好，好喜欢魔王大人%UNICODE(0x2661) *1%…… 最喜欢了%UNICODE(0x2661) *1% 让我永远呆在你的身边吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5356',
+          'PRINTFORMW 「好……好激烈%UNICODE(0x2661) *1%…… 魔王大人……实在是太厉害了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5358',
+          'PRINTFORMW 「好，好舒服%UNICODE(0x2661) *1% 能够……被魔王大人……这样疼爱，实在是太幸福了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5360',
+          'PRINTFORMW 「哈啊……腰部的动作……完全停不下来了%UNICODE(0x2661) *1% 因为……和魔王大人做爱，实在是太幸福了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5363',
+          'PRINTFORMW %SAVESTR:TARGET%脸上浮现出幸福的笑容，骑在%SAVESTR:PLAYER%的身上扭动着腰，尽情地娇喘着………',
+        ],
+        [
+          '5365',
+          'PRINTFORMW %SAVESTR:TARGET%上下扭着腰，呼唤着%SAVESTR:PLAYER%的名字，……',
+        ],
+        [
+          '5367',
+          'PRINTFORMW 随着%SAVESTR:PLAYER%一次次顶起腰、%SAVESTR:TARGET%在交合的快感下不住地娇喘着……',
+        ],
+        [
+          '5369',
+          'PRINTFORMW %SAVESTR:TARGET%已经完全被快感和对你的爱所支配，上下扭动着腰的动作已经完全停不下来了………',
+        ],
+        [
+          '5372',
+          'PRINTFORML 「好舒服……已经舒服得……没有办法思考了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '5373',
+          'PRINTFORMW 「我，我会自己动的，魔，魔王大人……请……好好享受就行了……！」',
+        ],
+        [
+          '5374',
+          'PRINTFORMW %SAVESTR:TARGET%娇喘着，享受着骑乘位交合的快感………',
+        ],
+        ['5376', 'CFLAG:335 = 5'],
+        ['5379', 'PRINTFORML 「嗯啊……啊啊啊……呜呜%UNICODE(0x2661) *1%」'],
+        ['5381', 'PRINTFORMW 「呜？！不要看……不要盯着我的脸看啊啊啊！」'],
+        [
+          '5383',
+          'PRINTFORMW 「这样的姿势……太羞耻了！但……但是真的……好舒服啊啊」',
+        ],
+        ['5385', 'PRINTFORMW 「不，不行了……人家真的不行了啊啊啊！」'],
+        ['5387', 'PRINTFORMW 「为，为什么会这么舒服啊啊啊！」'],
+        [
+          '5390',
+          'PRINTFORMW %SAVESTR:TARGET%脸上露出了享受的表情，骑在%SAVESTR:PLAYER%的身上扭动着腰，尽情地娇喘着………',
+        ],
+        [
+          '5392',
+          'PRINTFORMW %SAVESTR:TARGET%上下扭着腰，甘甜的娇喘在调教室里回荡着……',
+        ],
+        [
+          '5394',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴被一次次贯入最深处，爱液不住地渗到你的身上……',
+        ],
+        [
+          '5396',
+          'PRINTFORMW %SAVESTR:TARGET%虽然一脸的屈辱与羞耻，但是按捺不住的娇喘却暴露着内心的真正感受………',
+        ],
+        ['5398', 'CFLAG:335 = 4'],
+        ['5401', 'PRINTFORML 「嗯啊啊……魔王大人……下面……还要人家做什么……」'],
+        ['5402', 'PRINTFORMW 「呜……呜呜……我，我明白了……我会自己动起来的！」'],
+        [
+          '5403',
+          'PRINTFORMW %SAVESTR:TARGET%咬着嘴唇，带着屈服的表情上下扭动着腰……',
+        ],
+        ['5404', 'CFLAG:335 = 3'],
+        ['5407', 'PRINTFORMW 「呜……呜呜……这种丢人的姿势……！」'],
+        [
+          '5408',
+          'PRINTFORMW %SAVESTR:TARGET%咬着嘴唇，带着屈辱的表情上下扭动着腰……',
+        ],
+        ['5409', 'CFLAG:335 = 2'],
+      ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
 ];

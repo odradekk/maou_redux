@@ -10091,6 +10091,70 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     tests: ['kojo-k11-lily'],
     must_mention: 'COM33 非助手玛奥第 1 档推进',
   },
+  ...[
+    [4371, '初次', '1', '2', '5208', 'COM34 初次第 1 档推进'],
+    [4372, '助手淫乱', '6', '5', '5246', 'COM34 助手玛奥第 1 档推进'],
+    [4373, '助手爱慕', '5', '4', '5279', 'COM34 助手玛奥第 2 档推进'],
+    [
+      4374,
+      '助手屈服刻印＋私处感觉',
+      '4',
+      '3',
+      '5304',
+      'COM34 助手玛奥第 3 档推进',
+    ],
+    [4375, '助手屈服刻印', '3', '2', '5312', 'COM34 助手玛奥第 4 档推进'],
+    [4376, '助手其余', '2', '1', '5318', 'COM34 助手玛奥第 5 档推进'],
+    [4377, '非助手淫乱', '6', '5', '5348', 'COM34 非助手玛奥第 1 档推进'],
+    [4378, '非助手爱慕', '5', '4', '5376', 'COM34 非助手玛奥第 2 档推进'],
+    [
+      4379,
+      '非助手屈服刻印＋私处感觉',
+      '4',
+      '3',
+      '5398',
+      'COM34 非助手玛奥第 3 档推进',
+    ],
+    [4380, '非助手屈服刻印', '3', '2', '5404', 'COM34 非助手玛奥第 4 档推进'],
+    [4381, '非助手其余', '2', '1', '5409', 'COM34 非助手玛奥第 5 档推进'],
+  ].map(([id, tier, value, replacement, ref, must_mention]) => ({
+    desc: `M${id} COM34 ${tier} CFLAG:335 写错（${value} 改 ${replacement}，#242）`,
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `kojo.骑乘位 = ${value}; // :${ref}`,
+    replace: `kojo.骑乘位 = ${replacement}; // :${ref}`,
+    tests: ['kojo-k11-lily'],
+    must_mention,
+  })),
+  {
+    desc: 'M4382 COM34 电动假阳具判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `  // :5106-5414 IF SELECTCOM == 34（骑乘位 CFLAG:335）
+  if (era_flag.selectcom === 34) {
+    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) === 0`,
+    replace: `  // :5106-5414 IF SELECTCOM == 34（骑乘位 CFLAG:335）
+  if (era_flag.selectcom === 34) {
+    const weapon =
+      era0(\`talent:\${player}:121\`) === 0 && era0(\`talent:\${player}:122\`) !== 0`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM34 初次第 3 档条件性器文本',
+  },
+  {
+    desc: 'M4383 COM34 初次处女助手玛奥判据取反（#242）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `      if (era.get(\`talent:\${target}:0\`) === 1) {
+        if (assi_mao) {
+          if (era.get(\`talent:\${target}:76\`) === 1) {
+            await era.printAndWait(
+              \`「呜……我的处女`,
+    replace: `      if (era.get(\`talent:\${target}:0\`) === 1) {
+        if (!assi_mao) {
+          if (era.get(\`talent:\${target}:76\`) === 1) {
+            await era.printAndWait(
+              \`「呜……我的处女`,
+    tests: ['kojo-k11-lily'],
+    must_mention: 'COM34 初次第 1 档台词',
+  },
   {
     desc: 'M2270 K10 EVENTTRAIN #PRI 存在标志写错值（FLAG:110=1 改 2，#241）',
     file: 'ere/kojo/kojo-k10-club.js',
