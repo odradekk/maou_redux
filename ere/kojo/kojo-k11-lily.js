@@ -117,11 +117,7 @@
  * NTR再捕获，均已在 tools/facade-names.js 登记），本文件因此并入
  * test/gen-facade.test.js 的口上严格检查清单（同 K3/K9/K10 先例）。
  *
- * 本票剩余工作（未落地，占全文 13468 行的约 63.5%）：@KOJO_MESSAGE_COM_11 的
- * SELECTCOM 32 起（源文件第 4912 至 10657 行，约 21 条剩余分支，见源文件
- * 内存根已占位）、@DOG_KOJO_11（第 10658 至 11462 行，兽奸）、
- * @KOJO_MESSAGE_PALAMCNG_11（第 11463 至 11793 行）、
- * @KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
+ * 本票剩余工作：@KOJO_MESSAGE_MARKCNG_11（第 11794 至 11880 行）、@SELF_KOJO_K11（第
  * 11881 至 12261 行），以及死斗场/NTR/处刑/展览/放逐/奖赏/惩罚等非调教
  * 口上（第 12262 至 13468 行）。见 issue #242 的进度评论获取认领点。
  *
@@ -233,7 +229,10 @@ const { on, TIER } = require('#/system/event/registry');
 const { piercing_state } = require('#/system/train/piercing-state');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
-const { kojo_message_com_family } = require('#/kojo/kojo-system');
+const {
+  kojo_message_com_family,
+  kojo_message_palamcng_family,
+} = require('#/kojo/kojo-system');
 const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
@@ -22648,6 +22647,548 @@ async function dog_kojo_11(rand) {
   return 0; // :11456
 }
 
-kojo_message_com_family.register(11, kojo_message_com_11);
+/**
+ * @KOJO_MESSAGE_PALAMCNG_11（:11463-11793）：参数变动口上。
+ * 首超润滑/欲情/耻情/恐怖 Lv2、四类首次绝顶与处女丧失。
+ */
+async function kojo_message_palamcng_11(rand) {
+  const target = era_flag.target;
+  const target_name = chara_callname(target);
+  const player = era_flag.player;
+  const player_name = chara_callname(player);
+  const kojo = chara(target).kojo;
+  const weapon =
+    era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
+      ? '震动假阳具'
+      : '阴茎';
+  void rand;
 
-module.exports = { STUBBED_CALLS, k11_kojo2, kojo_message_com_11 };
+  if (era_flag.assi > 0 && era_flag.assiplay && era_flag.assi !== 17) {
+    // :11466
+    return 0; // :11466
+  } // :11466
+
+  if (era.get(`tequip:${target}:45`)) {
+    // :11469
+    return 0; // :11469
+  } // :11469
+
+  if (game.train.失神) {
+    // :11472
+    return 0; // :11472
+  } // :11472
+
+  if (era.get(`tequip:${target}:89`)) {
+    // :11475
+    return 0; // :11475
+  } // :11475
+
+  if (era.get(`tequip:${target}:90`)) {
+    // :11478
+    return 0; // :11478
+  } // :11478
+
+  if (era.get(`tequip:${target}:55`)) {
+    // :11480
+    return 0; // :11481
+  } // :11482
+
+  if (era.get(`talent:${target}:9`) === 1) {
+    // :11485
+    return 0; // :11485
+  } // :11485
+
+  const p1 = era0(`palam:${target}:3`) + era0(`delta:${target}:3`); // :11493
+  if (p1 > PALAMLV[2] && kojo.首次润滑Lv2 === 0) {
+    // :11494
+
+    if (era.get(`talent:${target}:85`) === 1) {
+      // :11496
+
+      if (era_flag.selectcom === 50) {
+        // :11498
+        await era.printAndWait(
+          `${target_name}的蜜穴和肛门完全被特制的润滑液充分地浸润了。`,
+        ); // :11499
+        await era.printAndWait(`「其……其实不需要这个啦……」`); // :11500
+        await era.printAndWait(`―――润滑首次超过Lv2。`); // :11501
+      } else {
+        // :11503
+        await era.printAndWait(
+          `${target_name}的蜜穴里，爱液正如注般地流出，连肛门也被浸润了。`,
+        ); // :11504
+        await era.printAndWait(
+          `「人，人家已经准备好……接受魔王大人的疼爱了…♪」`,
+        ); // :11505
+        await era.printAndWait(`―――润滑首次超过Lv2。`); // :11506
+      } // :11507
+    } else {
+      // :11509
+
+      if (era_flag.selectcom === 50) {
+        // :11511
+        await era.printAndWait(
+          `${target_name}的蜜穴和肛门完全被特制的润滑液充分地浸润了。`,
+        ); // :11512
+        await era.printAndWait(`「这，这是什么啊啊…！」`); // :11513
+        await era.printAndWait(`―――润滑首次超过Lv2。`); // :11514
+      } else {
+        // :11516
+        await era.printAndWait(
+          `${target_name}的蜜穴里，爱液正如注般地流出，连肛门也被浸润了。`,
+        ); // :11517
+        await era.printAndWait(`「好……好丢人……不要看啊……！」`); // :11518
+        await era.printAndWait(`―――润滑首次超过Lv2。`); // :11519
+      } // :11520
+    } // :11521
+    // CFLAG:TARGET:221  = 1（变量语义：CFLAG 族，TARGET:221） // :11522
+    kojo.首次润滑Lv2 = 1; // :11522
+  } // :11523
+
+  const p2 = era0(`palam:${target}:5`) + era0(`delta:${target}:5`); // :11528
+  if (p2 > PALAMLV[2] && kojo.首次欲情Lv2 === 0) {
+    // :11529
+
+    if (era.get(`talent:${target}:85`) === 1) {
+      // :11531
+
+      if (era_flag.selectcom === 51) {
+        // :11533
+        await era.printAndWait(`「其实不，不需要特意用这样的……东西啦………」`); // :11534
+        await era.printAndWait(
+          `${target_name}顺从地喝下了媚药，立即就出现了反应。`,
+        ); // :11535
+        await era.printAndWait(`「哈啊……啊啊……魔王大人……我……我已经……！」`); // :11536
+        await era.printAndWait(
+          `${target_name}的瞳孔扩大了，被欲火焚烤着的身体，只渴求着一件事情——交媾。`,
+        ); // :11537
+        await era.printAndWait(`―――情欲首次超过Lv2。`); // :11538
+      } else {
+        // :11540
+        await era.printAndWait(
+          `「魔，魔王大人………快点……开始调教，侵犯人家吧！」`,
+        ); // :11541
+        await era.printAndWait(`${target_name}的身体完全屈从于欲望了。`); // :11542
+        await era.printAndWait(`―――情欲首次超过Lv2。`); // :11543
+      } // :11544
+    } else {
+      // :11546
+
+      if (era_flag.selectcom === 51) {
+        // :11548
+        await era.printAndWait(`「这……这种奇怪的感觉……难道是催淫药？…」`); // :11549
+        await era.printAndWait(
+          `炼金术特制的媚药，即使是处女也会屈从于其药效之下。`,
+        ); // :11550
+        await era.printAndWait(
+          `${target_name}第一次体验到身体被欲望控制的感觉。。`,
+        ); // :11551
+        await era.printAndWait(`―――情欲首次超过Lv2。`); // :11552
+      } else {
+        // :11554
+        await era.printAndWait(`「身……身体好热……感觉好奇怪……」`); // :11555
+        await era.printAndWait(`${target_name}脸色潮红，呼吸也加快了。`); // :11556
+        await era.printAndWait(`―――情欲首次超过Lv2。`); // :11557
+      } // :11558
+    } // :11559
+    // CFLAG:222  = 1（变量语义：CFLAG 族，222） // :11560
+    kojo.首次欲情Lv2 = 1; // :11560
+  } // :11561
+
+  const p3 = era0(`palam:${target}:8`) + era0(`delta:${target}:8`); // :11566
+  if (p3 > PALAMLV[2] && kojo.首次耻情Lv2 === 0) {
+    // :11567
+
+    if (era.get(`talent:${target}:85`) === 1) {
+      // :11569
+      await era.printAndWait(`「好，好羞耻啊……不要那样盯着人家看啦！♪」`); // :11570
+      await era.printAndWait(`${target_name}半掩着脸，露出了害羞的笑容。`); // :11571
+      await era.printAndWait(`―――耻情首次超过Lv2。`); // :11572
+    } else {
+      // :11574
+      await era.printAndWait(`「不要啊啊，这，这样……太羞耻了！」`); // :11575
+      await era.printAndWait(`${target_name}羞耻得涨红了脸，眼神里满是屈辱。`); // :11576
+      await era.printAndWait(`―――耻情首次超过Lv2`); // :11577
+    } // :11578
+    // CFLAG:223  = 1（变量语义：CFLAG 族，223） // :11579
+    kojo.首次耻情Lv2 = 1; // :11579
+  } // :11580
+
+  const p4 = era0(`palam:${target}:10`) + era0(`delta:${target}:10`); // :11585
+  if (p4 > PALAMLV[2] && kojo.首次恐怖Lv2 === 0) {
+    // :11586
+
+    if (era.get(`talent:${target}:85`) === 1) {
+      // :11588
+      await era.printAndWait(`「呜呜，为，为什么有这样的事情……！」`); // :11589
+      await era.printAndWait(`${target_name}害怕得闭上了眼睛……`); // :11590
+      await era.printAndWait(`―――恐惧首次超过Lv2。`); // :11591
+    } else {
+      // :11593
+      await era.printAndWait(`「不，不要啊……这种事情……太可怕了……！」`); // :11594
+      await era.printAndWait(
+        `${target_name}害怕得脸皱成一团，眼睛都不敢睁开………`,
+      ); // :11595
+      await era.printAndWait(`―――恐惧首次超过Lv2。`); // :11596
+    } // :11597
+    // CFLAG:224  = 1（变量语义：CFLAG 族，224） // :11598
+    kojo.首次恐怖Lv2 = 1; // :11598
+  } // :11599
+
+  if (era0(`nowex:${target}:0`) > 0 && kojo.首次C绝顶 === 0) {
+    // :11604
+
+    if (era.get(`talent:${target}:85`) === 1) {
+      // :11606
+      await era.printAndWait(
+        `「哈啊……哈啊！为什么……小豆豆……被摸……会，会这么舒服啊啊${heart(1)}」`,
+      ); // :11607
+      await era.printAndWait(
+        `―――${target_name}第一次品味到了阴蒂高潮的极度快感。`,
+      ); // :11608
+      await era.printAndWait(`「可，可是身，身体……更热了……更想要了…」`); // :11609
+      await era.printAndWait(`${target_name}弓起腰身，渴望着更多的快感………`); // :11610
+    } else {
+      // :11612
+      await era.printAndWait(
+        `「不，不能……再摸那里了……！阴蒂的感觉……好奇怪啊啊啊！」`,
+      ); // :11613
+      await era.printAndWait(
+        `―――${target_name}第一次品味到了阴蒂高潮的极度快感。`,
+      ); // :11614
+      await era.printAndWait(`「为……为什么……会这么舒服啊啊啊！」`); // :11615
+      await era.printAndWait(`${target_name}的身体还沉浸在阴蒂高潮的余韵中………`); // :11616
+    } // :11617
+    // CFLAG:225  = 1（变量语义：CFLAG 族，225） // :11618
+    kojo.首次C绝顶 = 1; // :11618
+  } // :11619
+
+  if (era0(`nowex:${target}:1`) > 0 && kojo.首次V绝顶 === 0) {
+    // :11624
+
+    if (era.get(`talent:${target}:76`) === 1) {
+      // :11626
+      await era.printAndWait(
+        `「呜啊啊……蜜穴好，好舒服${heart(1)} 好像……要上天了一样${heart(1)}」`,
+      ); // :11627
+      await era.printAndWait(
+        `${target_name}整个腰身都弓了起来，全身不停地颤抖着，即将高潮的蜜穴，泛滥的爱液不住地涌出。`,
+      ); // :11628
+      await era.printAndWait(
+        `「哈啊……啊啊啊${heart(1)} 要，要去了啊啊……蜜穴……魔王大人……好好欣赏……${target_name}高潮的样子吧${heart(1)}」`,
+      ); // :11629
+      await era.printAndWait(
+        `${target_name}淫浪地尖叫着，向${player_name}展示着第一次高潮的蜜穴`,
+      ); // :11630
+    } else if (era.get(`talent:${target}:85`) === 1) {
+      // :11632
+      await era.printAndWait(
+        `「呜啊啊啊……不行了……已，已经……忍不住了……啊啊啊！快感……为什么……会这么……强烈啊啊啊！」`,
+      ); // :11633
+      await era.printAndWait(
+        `${target_name}感受着阴道传来的越来越炽烈的快感，让她整个人都不知所措地颤抖着。`,
+      ); // :11634
+      await era.printAndWait(
+        `「不，不行了啊啊！${target_name}已经忍，忍不住了啊啊啊……！魔王大人……不……不要这样盯着${target_name}看啊啊」`,
+      ); // :11635
+      await era.printAndWait(`「去，去了……！真的……去了……」`); // :11636
+      await era.printAndWait(
+        `${target_name}当着${player_name}的面，第一次品尝到了蜜穴高潮的极度快感。`,
+      ); // :11637
+    } else {
+      // :11639
+      await era.printAndWait(
+        `「呜啊啊啊……不行了……已，已经……忍不住了……啊啊啊！」`,
+      ); // :11640
+      await era.printAndWait(
+        `${target_name}感受着阴道传来的越来越炽烈的快感，让她整个人都不知所措地颤抖着。`,
+      ); // :11641
+      await era.printAndWait(
+        `「为，为什么……蜜穴……感觉越来越奇怪了啊啊啊！！！！」`,
+      ); // :11642
+      await era.printAndWait(
+        `${target_name}当着${player_name}的面，第一次品尝到了蜜穴高潮的极度快感。`,
+      ); // :11643
+    } // :11644
+    // CFLAG:TARGET:226  = 1（变量语义：CFLAG 族，TARGET:226） // :11645
+    kojo.首次V绝顶 = 1; // :11645
+  } else if (era0(`nowex:${target}:1`) > 0 && kojo.首次V绝顶 === 1) {
+    // :11647
+
+    if (era.get(`talent:${target}:76`) === 1 && game.event.插着不拔 === 1) {
+      // :11649
+      await era.print(
+        `「哈啊${heart(1)} ……啊啊${heart(1)} 蜜穴${heart(1)} 舒服得……要疯了${heart(1)}」`,
+      ); // :11650
+      await era.printAndWait(
+        `${target_name}的蜜穴在${weapon}的侵犯下，很快迎来了高潮。`,
+      ); // :11651
+      await era.print(
+        `「啊啊……淫穴${heart(1)} ${target_name}的淫穴${heart(1)} 去了啊啊啊${heart(1)}」`,
+      ); // :11652
+      await era.printAndWait(
+        `${target_name}当着${player_name}的面，高潮得一塌糊涂………`,
+      ); // :11653
+    } else if (
+      era.get(`talent:${target}:85`) === 1 &&
+      game.event.插着不拔 === 1
+    ) {
+      // :11655
+      await era.print(
+        `「呜啊……啊啊啊！要……要疯了……蜜穴……舒服……得……要疯了啊啊啊${heart(1)}」`,
+      ); // :11656
+      await era.printAndWait(
+        `${target_name}的蜜穴被${weapon}连续侵犯着，交合处发出一声声不堪入耳的响声。`,
+      ); // :11657
+      await era.print(
+        `「哈啊……哈啊……${heart(1)} 要……要去了……蜜穴${heart(1)} 高潮了啊啊啊${heart(1)}」`,
+      ); // :11658
+      await era.printAndWait(
+        `${target_name}在高潮的极度快感中，整个身体都弓了起来………`,
+      ); // :11659
+    } else if (game.event.插着不拔 === 1) {
+      // :11661
+      await era.print(`「呜啊……啊啊啊……蜜穴……为什么……会这么舒服啊啊！」`); // :11662
+      await era.print(`「哈啊……啊啊啊！已经……忍不住了啊啊啊！！！！」`); // :11663
+      await era.printAndWait(`${target_name}在高潮中不住地颤抖着……`); // :11664
+    } // :11665
+  } // :11666
+
+  if (era0(`nowex:${target}:2`) > 0 && kojo.首次A绝顶 === 0) {
+    // :11671
+
+    if (era.get(`talent:${target}:76`) === 1) {
+      // :11673
+      await era.printAndWait(
+        `「哈啊……啊啊${heart(1)} 屁股舒，舒服得${heart(1)} 合，合不上了啊啊${heart(1)}」`,
+      ); // :11674
+      await era.printAndWait(
+        `${target_name}的肛门在反复的调教开发下，终于饱尝到了极度的快感，${target_name}在这快感的冲击下，一脸登顶了的表情，舌头都伸到外面了。`,
+      ); // :11675
+      await era.printAndWait(
+        `「呜啊……啊啊啊${heart(1)} 这就是肛门……${heart(1)} 肛门高潮的感觉吗${heart(1)} 真的是……太舒服了啊啊啊${heart(1)}」`,
+      ); // :11676
+      await era.printAndWait(
+        `${target_name}弓着身体，大声地淫叫了出来，品味着人生第一次肛门高潮………`,
+      ); // :11677
+    } else if (era.get(`talent:${target}:85`) === 1) {
+      // :11679
+      await era.printAndWait(
+        `「呜啊啊啊…屁股……已经舒服到……无法忍受了啊啊${heart(1)} 这种感觉……真是……太羞耻了……！」`,
+      ); // :11680
+      await era.printAndWait(
+        `${target_name}的肛门在反复地调教下，终于饱尝到了快感，当着${player_name}的面，不争气地高潮了。`,
+      ); // :11681
+      await era.printAndWait(
+        `「魔王大人，不，不要看啊，这个样子……太丢人了啊啊啊啊啊！！！」`,
+      ); // :11682
+      await era.printAndWait(
+        `${target_name}羞耻地蜷起了身子，却无法忍住舒服的娇喘，品味着人生第一次肛门高潮………`,
+      ); // :11683
+    } else {
+      // :11685
+      await era.printAndWait(
+        `「啊啊……屁股……感觉……越来越奇怪了……合，合不上了啊啊……呜呜！」`,
+      ); // :11686
+      await era.printAndWait(
+        `${target_name}的肛门在反复地调教下，终于饱尝到了快感，当着${player_name}的面，不争气地高潮了。`,
+      ); // :11687
+      await era.printAndWait(`「呜啊啊啊……为什么……屁股会这么……舒服的啊啊！」`); // :11688
+      await era.printAndWait(
+        `${target_name}的身体蜷成一团，不住地呻吟着，品味着人生第一次肛门高潮。`,
+      ); // :11689
+    } // :11690
+    // CFLAG:227  = 1（变量语义：CFLAG 族，227） // :11691
+    kojo.首次A绝顶 = 1; // :11691
+  } else if (era0(`nowex:${target}:2`) > 0 && kojo.首次A绝顶 === 1) {
+    // :11693
+
+    if (era.get(`talent:${target}:76`) === 1) {
+      // :11695
+      await era.print(`「哈啊……屁股……已经……已经舒服得……不行了${heart(1)}」`); // :11696
+      await era.printAndWait(
+        `${target_name}的肛门在连绵的快感刺激下，开始不自觉地一张一合着，进入了高潮的前兆`,
+      ); // :11697
+      await era.print(
+        `「呜，呜呜啊啊啊${heart(1)} 去了${heart(1)} ${target_name}要用淫乱的肛门小穴……高潮了啊啊啊${heart(1)}」`,
+      ); // :11698
+      await era.printAndWait(
+        `${target_name}在肛门高潮的极度快感中，不顾廉耻地发出淫浪的尖叫……`,
+      ); // :11699
+    } else if (era.get(`talent:${target}:85`) === 1) {
+      // :11701
+      await era.print(
+        `「不，不行了……不可以再欺负……屁股了啊啊……真的要……忍不住了嗯啊啊啊！」`,
+      ); // :11702
+      await era.printAndWait(
+        `${target_name}的肛门在连绵的快感刺激下，开始不自觉地一张一合着，进入了高潮的前兆`,
+      ); // :11703
+      await era.print(
+        `「呜啊啊……不，不要看啊${heart(1)} 不要……盯着……人家的屁股看啊${heart(1)} 去了……用屁股去了啊啊啊！」`,
+      ); // :11704
+      await era.printAndWait(
+        `${target_name}满脸通红，肛门在极度的快感刺激下高潮了……`,
+      ); // :11705
+    } else {
+      // :11707
+      await era.print(`「不，不可以再欺负……屁股了啊啊……真的……嗯啊啊啊！」`); // :11708
+      await era.printAndWait(
+        `${target_name}的肛门已经脱离了意志的控制，反复地一张一合着。`,
+      ); // :11709
+      await era.print(
+        `「哈啊……啊啊……不，不行了……要，要用屁股……这种……肮脏的地方……高潮了啊啊！」`,
+      ); // :11710
+      await era.printAndWait(`${target_name}的肛门在极度的快感刺激下高潮了……`); // :11711
+    } // :11712
+  } // :11713
+
+  if (era0(`nowex:${target}:3`) > 0 && kojo.首次B绝顶 === 0) {
+    // :11718
+
+    if (era.get(`talent:${target}:76`) === 1) {
+      // :11720
+      await era.printAndWait(
+        `「再，再用力！魔王大人……${heart(1)} ${target_name}淫荡的乳头……还想要更多的……快感啊啊${heart(1)}」`,
+      ); // :11721
+      await era.printAndWait(
+        `${target_name}口吐着淫浪之词，颤抖的身体来回摇晃着，抖动着丰满的双乳和挺立，肿胀的乳头。`,
+      ); // :11722
+      await era.printAndWait(
+        `「对……对……就是这样啊啊${heart(1)} 乳头……舒，舒服得要上天了啊啊啊${heart(1)}」`,
+      ); // :11723
+      await era.printAndWait(
+        `―――${target_name}第一次感受到了乳头高潮的极度快感。`,
+      ); // :11724
+      await era.printAndWait(
+        `「哈啊……啊啊……这感觉…好棒……好想再来一次……魔王大人，请把${target_name}的乳头彻底玩坏吧${heart(1)}」`,
+      ); // :11725
+      await era.printAndWait(
+        `${target_name}向${player_name}露出了淫媚的笑容………`,
+      ); // :11726
+    } else if (era.get(`talent:${target}:85`) === 1) {
+      // :11728
+      await era.printAndWait(`「呜呜……乳头……乳头为什么……！」`); // :11729
+      await era.printAndWait(
+        `${target_name}敏感的乳头，在${player_name}的玩弄下不住地颤抖着，将一阵阵强烈的快感传递到神经中枢。`,
+      ); // :11730
+      await era.printAndWait(
+        `「好奇怪……乳头的感觉……好奇怪……但是……好舒服啊啊啊${heart(1)}」`,
+      ); // :11731
+      await era.printAndWait(
+        `―――${target_name}第一次感受到了乳头高潮的极度快感。`,
+      ); // :11732
+      await era.printAndWait(`「太，太舒服了……好想……再来一次…」`); // :11733
+      await era.printAndWait(
+        `${target_name}向${player_name}露出了要融化般的笑容………`,
+      ); // :11734
+    } else {
+      // :11736
+      await era.printAndWait(
+        `「不，不可以……再这么玩……乳头了！都……都已经肿起来了啊啊……」`,
+      ); // :11737
+      await era.printAndWait(
+        `虽然${target_name}口头上不住地抗拒着，但潮红的脸上却充满了期待和渴望的表情`,
+      ); // :11738
+      await era.printAndWait(`「哈啊……啊啊……真的，不行了啊啊啊啊！」`); // :11739
+      await era.printAndWait(
+        `―――${target_name}第一次感受到了乳头高潮，极度的快感让整个身体脱力地颤抖着。`,
+      ); // :11740
+      await era.printAndWait(`「明明，都说了……不行了…」`); // :11741
+    } // :11742
+    // CFLAG:TARGET:228  = 1（变量语义：CFLAG 族，TARGET:228） // :11743
+    kojo.首次B绝顶 = 1; // :11743
+  } // :11744
+
+  const pain = era0(`delta:${target}:11`) + era0(`delta:${target}:12`); // :11749
+  if (game.train.处女丧失 === 1 && kojo.处女丧失 === 0) {
+    // :11750
+
+    if (game.train.主人导致处女丧失 === 1) {
+      // :11752
+
+      if (
+        era.get(`talent:${target}:76`) === 1 &&
+        (pain < 500 || game.system.反抗刻印回避 === 1)
+      ) {
+        // :11754
+        await era.printAndWait(
+          `「第一次……献给了魔王大人……真是……开心${heart(1)}」`,
+        ); // :11755
+        await era.printAndWait(
+          `「虽然……这次只是单纯的觉的痛而已、不过大概多被${weapon}侵犯几次就会舒服起来了吧！」`,
+        ); // :11756
+        await era.printAndWait(
+          `${target_name}一点都没有惋惜自己失去处女身这件事，反而发自心底地期待着对蜜穴的进一步调教………`,
+        ); // :11757
+      } else if (
+        era.get(`talent:${target}:85`) === 1 &&
+        (pain < 500 || game.system.反抗刻印回避 === 1)
+      ) {
+        // :11759
+        await era.printAndWait(
+          `「哈啊……啊啊……魔王大人${heart(1)} 我的处女身……属于你了啊啊啊！」`,
+        ); // :11760
+        await era.printAndWait(
+          `「一，一点都不痛……没关系的……请，请魔王大人……继续疼爱${target_name}吧！」`,
+        ); // :11761
+        await era.printAndWait(
+          `${target_name}不住地流着泪水，去向${player_name}强作着笑容……`,
+        ); // :11762
+      } else {
+        // :11764
+        await era.printAndWait(
+          `「住，住手啊啊啊！放开我，放开我！快点拔出去啊啊啊！！！」`,
+        ); // :11765
+        await era.printAndWait(`「我，我的第一次……呜呜呜呜！」`); // :11766
+        await era.printAndWait(
+          `${target_name}承受着破处的痛苦和屈辱，咬着双唇呜咽了起来………`,
+        ); // :11767
+      } // :11768
+    } else {
+      // :11770
+
+      if (era.get(`talent:${target}:76`) === 1) {
+        // :11772
+        await era.printAndWait(
+          `「啊嘿嘿……这个碍事的处女膜……终于这样去掉了${heart(1)}」`,
+        ); // :11773
+        await era.printAndWait(
+          `「呼哈……啊啊……请毫不留情地……将${target_name}的蜜穴……侵犯得一塌糊涂吧${heart(1)}」`,
+        ); // :11774
+        await era.printAndWait(
+          `${target_name}一点都没有惋惜自己失去处女身这件事，反而发自心底地期待着对蜜穴的进一步调教………`,
+        ); // :11775
+      } else if (era.get(`talent:${target}:85`) === 1) {
+        // :11777
+        await era.printAndWait(
+          `「呜啊啊……好，好痛啊啊！本来……想把处女……献给魔王大人的呜呜呜……」`,
+        ); // :11778
+        await era.printAndWait(
+          `${target_name}看着从自己蜜穴里流出来的处女血，悲伤得无以复加`,
+        ); // :11779
+      } else {
+        // :11781
+        await era.printAndWait(
+          `「住，住手啊！求求你，拔出去啊！我还是处女啊啊啊啊——」`,
+        ); // :11782
+        await era.printAndWait(
+          `${target_name}承受着破处的痛苦和屈辱，咬着双唇呜咽了起来………`,
+        ); // :11783
+      } // :11784
+    } // :11785
+    // CFLAG:TARGET:229  = 1（变量语义：CFLAG 族，TARGET:229） // :11786
+    kojo.处女丧失 = 1; // :11786
+  } // :11787
+}
+
+// @KOJO_MESSAGE_MARKCNG_11 // :11794
+
+kojo_message_com_family.register(11, kojo_message_com_11);
+kojo_message_palamcng_family.register(11, kojo_message_palamcng_11);
+
+module.exports = {
+  STUBBED_CALLS,
+  k11_kojo2,
+  kojo_message_com_11,
+  kojo_message_palamcng_11,
+};

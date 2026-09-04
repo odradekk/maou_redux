@@ -27783,6 +27783,418 @@ export const FILES = [
       ].map(([ref, line]) => exact_line(ref, line)),
     ],
   },
+  {
+    src: K11_SOURCE,
+    ref: '11463-11793',
+    any: [
+      ...[
+        ['11463', '@KOJO_MESSAGE_PALAMCNG_11'],
+        ['11493', 'P = PALAM:3 + UP:3'],
+        [
+          '11499',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴和肛门完全被特制的润滑液充分地浸润了。',
+        ],
+        ['11500', 'PRINTFORMW 「其……其实不需要这个啦……」'],
+        ['11501', 'PRINTFORMW ―――润滑首次超过Lv2。'],
+        [
+          '11504',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴里，爱液正如注般地流出，连肛门也被浸润了。',
+        ],
+        ['11505', 'PRINTFORMW 「人，人家已经准备好……接受魔王大人的疼爱了…♪」'],
+        ['11506', 'PRINTFORMW ―――润滑首次超过Lv2。'],
+        [
+          '11512',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴和肛门完全被特制的润滑液充分地浸润了。',
+        ],
+        ['11513', 'PRINTFORMW 「这，这是什么啊啊…！」'],
+        ['11514', 'PRINTFORMW ―――润滑首次超过Lv2。'],
+        [
+          '11517',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴里，爱液正如注般地流出，连肛门也被浸润了。',
+        ],
+        ['11518', 'PRINTFORMW 「好……好丢人……不要看啊……！」'],
+        ['11519', 'PRINTFORMW ―――润滑首次超过Lv2。'],
+        ['11522', 'CFLAG:TARGET:221 = 1'],
+        ['11528', 'P = PALAM:5 + UP:5'],
+        ['11534', 'PRINTFORMW 「其实不，不需要特意用这样的……东西啦………」'],
+        [
+          '11535',
+          'PRINTFORMW %SAVESTR:TARGET%顺从地喝下了媚药，立即就出现了反应。',
+        ],
+        ['11536', 'PRINTFORMW 「哈啊……啊啊……魔王大人……我……我已经……！」'],
+        [
+          '11537',
+          'PRINTFORMW %SAVESTR:TARGET%的瞳孔扩大了，被欲火焚烤着的身体，只渴求着一件事情——交媾。',
+        ],
+        ['11538', 'PRINTFORMW ―――情欲首次超过Lv2。'],
+        ['11541', 'PRINTFORMW 「魔，魔王大人………快点……开始调教，侵犯人家吧！」'],
+        ['11542', 'PRINTFORMW %SAVESTR:TARGET%的身体完全屈从于欲望了。'],
+        ['11543', 'PRINTFORMW ―――情欲首次超过Lv2。'],
+        ['11549', 'PRINTFORMW 「这……这种奇怪的感觉……难道是催淫药？…」'],
+        [
+          '11550',
+          'PRINTFORMW 炼金术特制的媚药，即使是处女也会屈从于其药效之下。',
+        ],
+        [
+          '11551',
+          'PRINTFORMW %SAVESTR:TARGET%第一次体验到身体被欲望控制的感觉。。',
+        ],
+        ['11552', 'PRINTFORMW ―――情欲首次超过Lv2。'],
+        ['11555', 'PRINTFORMW 「身……身体好热……感觉好奇怪……」'],
+        ['11556', 'PRINTFORMW %SAVESTR:TARGET%脸色潮红，呼吸也加快了。'],
+        ['11557', 'PRINTFORMW ―――情欲首次超过Lv2。'],
+        ['11560', 'CFLAG:222 = 1'],
+        ['11566', 'P = PALAM:8 + UP:8'],
+        ['11570', 'PRINTFORMW 「好，好羞耻啊……不要那样盯着人家看啦！♪」'],
+        ['11571', 'PRINTFORMW %SAVESTR:TARGET%半掩着脸，露出了害羞的笑容。'],
+        ['11572', 'PRINTFORMW ―――恥情首次超过Lv2。'],
+        ['11575', 'PRINTFORMW 「不要啊啊，这，这样……太羞耻了！」'],
+        [
+          '11576',
+          'PRINTFORMW %SAVESTR:TARGET%羞耻得涨红了脸，眼神里满是屈辱。',
+        ],
+        ['11577', 'PRINTFORMW ―――恥情首次超过Lv2'],
+        ['11579', 'CFLAG:223 = 1'],
+        ['11585', 'P = PALAM:10 + UP:10'],
+        ['11589', 'PRINTFORMW 「呜呜，为，为什么有这样的事情……！」'],
+        ['11590', 'PRINTFORMW %SAVESTR:TARGET%害怕得闭上了眼睛……'],
+        ['11591', 'PRINTFORMW ―――恐惧首次超过Lv2。'],
+        ['11594', 'PRINTFORMW 「不，不要啊……这种事情……太可怕了……！」'],
+        [
+          '11595',
+          'PRINTFORMW %SAVESTR:TARGET%害怕得脸皱成一团，眼睛都不敢睁开………',
+        ],
+        ['11596', 'PRINTFORMW ―――恐惧首次超过Lv2。'],
+        ['11598', 'CFLAG:224 = 1'],
+        [
+          '11607',
+          'PRINTFORMW 「哈啊……哈啊！为什么……小豆豆……被摸……会，会这么舒服啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11608',
+          'PRINTFORMW ―――%SAVESTR:TARGET%第一次品味到了阴蒂高潮的极度快感。',
+        ],
+        ['11609', 'PRINTFORMW 「可，可是身，身体……更热了……更想要了…」'],
+        ['11610', 'PRINTFORMW %SAVESTR:TARGET%弓起腰身，渴望着更多的快感………'],
+        [
+          '11613',
+          'PRINTFORMW 「不，不能……再摸那里了……！阴蒂的感觉……好奇怪啊啊啊！」',
+        ],
+        [
+          '11614',
+          'PRINTFORMW ―――%SAVESTR:TARGET%第一次品味到了阴蒂高潮的极度快感。',
+        ],
+        ['11615', 'PRINTFORMW 「为……为什么……会这么舒服啊啊啊！」'],
+        [
+          '11616',
+          'PRINTFORMW %SAVESTR:TARGET%的身体还沉浸在阴蒂高潮的余韵中………',
+        ],
+        ['11618', 'CFLAG:225 = 1'],
+        [
+          '11627',
+          'PRINTFORMW 「呜啊啊……蜜穴好，好舒服%UNICODE(0x2661) *1% 好像……要上天了一样%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11628',
+          'PRINTFORMW %SAVESTR:TARGET%整个腰身都弓了起来，全身不停地颤抖着，即将高潮的蜜穴，泛滥的爱液不住地涌出。',
+        ],
+        [
+          '11629',
+          'PRINTFORMW 「哈啊……啊啊啊%UNICODE(0x2661) *1% 要，要去了啊啊……蜜穴……魔王大人……好好欣赏……%SAVESTR:TARGET%高潮的样子吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11630',
+          'PRINTFORMW %SAVESTR:TARGET%淫浪地尖叫着，向%SAVESTR:PLAYER%展示着第一次高潮的蜜穴',
+        ],
+        [
+          '11633',
+          'PRINTFORMW 「呜啊啊啊……不行了……已，已经……忍不住了……啊啊啊！快感……为什么……会这么……强烈啊啊啊！」',
+        ],
+        [
+          '11634',
+          'PRINTFORMW %SAVESTR:TARGET%感受着阴道传来的越来越炽烈的快感，让她整个人都不知所措地颤抖着。',
+        ],
+        [
+          '11635',
+          'PRINTFORMW 「不，不行了啊啊！%SAVESTR:TARGET%已经忍，忍不住了啊啊啊……！魔王大人……不……不要这样盯着%SAVESTR:TARGET%看啊啊」',
+        ],
+        ['11636', 'PRINTFORMW 「去，去了……！真的……去了……」'],
+        [
+          '11637',
+          'PRINTFORMW %SAVESTR:TARGET%当着%SAVESTR:PLAYER%的面，第一次品尝到了蜜穴高潮的极度快感。',
+        ],
+        [
+          '11640',
+          'PRINTFORMW 「呜啊啊啊……不行了……已，已经……忍不住了……啊啊啊！」',
+        ],
+        [
+          '11641',
+          'PRINTFORMW %SAVESTR:TARGET%感受着阴道传来的越来越炽烈的快感，让她整个人都不知所措地颤抖着。',
+        ],
+        [
+          '11642',
+          'PRINTFORMW 「为，为什么……蜜穴……感觉越来越奇怪了啊啊啊！！！！」',
+        ],
+        [
+          '11643',
+          'PRINTFORMW %SAVESTR:TARGET%当着%SAVESTR:PLAYER%的面，第一次品尝到了蜜穴高潮的极度快感。',
+        ],
+        ['11645', 'CFLAG:TARGET:226 = 1'],
+        [
+          '11650',
+          'PRINTFORML 「哈啊%UNICODE(0x2661) *1% ……啊啊%UNICODE(0x2661) *1% 蜜穴%UNICODE(0x2661) *1% 舒服得……要疯了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11651',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴在\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 震动假阳具 # 阴茎\\@的侵犯下，很快迎来了高潮。',
+        ],
+        [
+          '11652',
+          'PRINTFORML 「啊啊……淫穴%UNICODE(0x2661) *1% %SAVESTR:TARGET%的淫穴%UNICODE(0x2661) *1% 去了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11653',
+          'PRINTFORMW %SAVESTR:TARGET%当着%SAVESTR:PLAYER%的面，高潮得一塌糊涂………',
+        ],
+        [
+          '11656',
+          'PRINTFORML 「呜啊……啊啊啊！要……要疯了……蜜穴……舒服……得……要疯了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11657',
+          'PRINTFORMW %SAVESTR:TARGET%的蜜穴被\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 震动假阳具 # 阴茎\\@连续侵犯着，交合处发出一声声不堪入耳的响声。',
+        ],
+        [
+          '11658',
+          'PRINTFORML 「哈啊……哈啊……%UNICODE(0x2661) *1% 要……要去了……蜜穴%UNICODE(0x2661) *1% 高潮了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11659',
+          'PRINTFORMW %SAVESTR:TARGET%在高潮的极度快感中，整个身体都弓了起来………',
+        ],
+        [
+          '11662',
+          'PRINTFORML 「呜啊……啊啊啊……蜜穴……为什么……会这么舒服啊啊！」',
+        ],
+        ['11663', 'PRINTFORML 「哈啊……啊啊啊！已经……忍不住了啊啊啊！！！！」'],
+        ['11664', 'PRINTFORMW %SAVESTR:TARGET%在高潮中不住地颤抖着……'],
+        [
+          '11674',
+          'PRINTFORMW 「哈啊……啊啊%UNICODE(0x2661) *1% 屁股舒，舒服得%UNICODE(0x2661) *1% 合，合不上了啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11675',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门在反复的调教开发下，终于饱尝到了极度的快感，%SAVESTR:TARGET%在这快感的冲击下，一脸登顶了的表情，舌头都伸到外面了。',
+        ],
+        [
+          '11676',
+          'PRINTFORMW 「呜啊……啊啊啊%UNICODE(0x2661) *1% 这就是肛门……%UNICODE(0x2661) *1% 肛门高潮的感觉吗%UNICODE(0x2661) *1% 真的是……太舒服了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11677',
+          'PRINTFORMW %SAVESTR:TARGET%弓着身体，大声地淫叫了出来，品味着人生第一次肛门高潮………',
+        ],
+        [
+          '11680',
+          'PRINTFORMW 「呜啊啊啊…屁股……已经舒服到……无法忍受了啊啊%UNICODE(0x2661) *1% 这种感觉……真是……太羞耻了……！」',
+        ],
+        [
+          '11681',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门在反复地调教下，终于饱尝到了快感，当着%SAVESTR:PLAYER%的面，不争气地高潮了。',
+        ],
+        [
+          '11682',
+          'PRINTFORMW 「魔王大人，不，不要看啊，这个样子……太丢人了啊啊啊啊啊！！！」',
+        ],
+        [
+          '11683',
+          'PRINTFORMW %SAVESTR:TARGET%羞耻地蜷起了身子，却无法忍住舒服的娇喘，品味着人生第一次肛门高潮………',
+        ],
+        [
+          '11686',
+          'PRINTFORMW 「啊啊……屁股……感觉……越来越奇怪了……合，合不上了啊啊……呜呜！」',
+        ],
+        [
+          '11687',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门在反复地调教下，终于饱尝到了快感，当着%SAVESTR:PLAYER%的面，不争气地高潮了。',
+        ],
+        ['11688', 'PRINTFORMW 「呜啊啊啊……为什么……屁股会这么……舒服的啊啊！」'],
+        [
+          '11689',
+          'PRINTFORMW %SAVESTR:TARGET%的身体蜷成一团，不住地呻吟着，品味着人生第一次肛门高潮。',
+        ],
+        ['11691', 'CFLAG:227 = 1'],
+        [
+          '11696',
+          'PRINTFORML 「哈啊……屁股……已经……已经舒服得……不行了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11697',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门在连绵的快感刺激下，开始不自觉地一张一合着，进入了高潮的前兆',
+        ],
+        [
+          '11698',
+          'PRINTFORML 「呜，呜呜啊啊啊%UNICODE(0x2661) *1% 去了%UNICODE(0x2661) *1% %SAVESTR:TARGET%要用淫乱的肛门小穴……高潮了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11699',
+          'PRINTFORMW %SAVESTR:TARGET%在肛门高潮的极度快感中，不顾廉耻地发出淫浪的尖叫……',
+        ],
+        [
+          '11702',
+          'PRINTFORML 「不，不行了……不可以再欺负……屁股了啊啊……真的要……忍不住了嗯啊啊啊！」',
+        ],
+        [
+          '11703',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门在连绵的快感刺激下，开始不自觉地一张一合着，进入了高潮的前兆',
+        ],
+        [
+          '11704',
+          'PRINTFORML 「呜啊啊……不，不要看啊%UNICODE(0x2661) *1% 不要……盯着……人家的屁股看啊%UNICODE(0x2661) *1% 去了……用屁股去了啊啊啊！」',
+        ],
+        [
+          '11705',
+          'PRINTFORMW %SAVESTR:TARGET%满脸通红，肛门在极度的快感刺激下高潮了……',
+        ],
+        [
+          '11708',
+          'PRINTFORML 「不，不可以再欺负……屁股了啊啊……真的……嗯啊啊啊！」',
+        ],
+        [
+          '11709',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门已经脱离了意志的控制，反复地一张一合着。',
+        ],
+        [
+          '11710',
+          'PRINTFORML 「哈啊……啊啊……不，不行了……要，要用屁股……这种……肮脏的地方……高潮了啊啊！」',
+        ],
+        [
+          '11711',
+          'PRINTFORMW %SAVESTR:TARGET%的肛门在极度的快感刺激下高潮了……',
+        ],
+        [
+          '11721',
+          'PRINTFORMW 「再，再用力！魔王大人……%UNICODE(0x2661) *1% %SAVESTR:TARGET%淫荡的乳头……还想要更多的……快感啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11722',
+          'PRINTFORMW %SAVESTR:TARGET%口吐着淫浪之词，颤抖的身体来回摇晃着，抖动着丰满的双乳和挺立，肿胀的乳头。',
+        ],
+        [
+          '11723',
+          'PRINTFORMW 「对……对……就是这样啊啊%UNICODE(0x2661) *1% 乳头……舒，舒服得要上天了啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11724',
+          'PRINTFORMW ―――%SAVESTR:TARGET%第一次感受到了乳头高潮的极度快感。',
+        ],
+        [
+          '11725',
+          'PRINTFORMW 「哈啊……啊啊……这感觉…好棒……好想再来一次……魔王大人，请把%SAVESTR:TARGET%的乳头彻底玩坏吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11726',
+          'PRINTFORMW %SAVESTR:TARGET%向%SAVESTR:PLAYER%露出了淫媚的笑容………',
+        ],
+        ['11729', 'PRINTFORMW 「呜呜……乳头……乳头为什么……！」'],
+        [
+          '11730',
+          'PRINTFORMW %SAVESTR:TARGET%敏感的乳头，在%SAVESTR:PLAYER%的玩弄下不住地颤抖着，将一阵阵强烈的快感传递到神经中枢。',
+        ],
+        [
+          '11731',
+          'PRINTFORMW 「好奇怪……乳头的感觉……好奇怪……但是……好舒服啊啊啊%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11732',
+          'PRINTFORMW ―――%SAVESTR:TARGET%第一次感受到了乳头高潮的极度快感。',
+        ],
+        ['11733', 'PRINTFORMW 「太，太舒服了……好想……再来一次…」'],
+        [
+          '11734',
+          'PRINTFORMW %SAVESTR:TARGET%向%SAVESTR:PLAYER%露出了要融化般的笑容………',
+        ],
+        [
+          '11737',
+          'PRINTFORMW 「不，不可以……再这么玩……乳头了！都……都已经肿起来了啊啊……」',
+        ],
+        [
+          '11738',
+          'PRINTFORMW 虽然%SAVESTR:TARGET%口头上不住地抗拒着，但潮红的脸上却充满了期待和渴望的表情',
+        ],
+        ['11739', 'PRINTFORMW 「哈啊……啊啊……真的，不行了啊啊啊啊！」'],
+        [
+          '11740',
+          'PRINTFORMW ―――%SAVESTR:TARGET%第一次感受到了乳头高潮，极度的快感让整个身体脱力地颤抖着。',
+        ],
+        ['11741', 'PRINTFORMW 「明明，都说了……不行了…」'],
+        ['11743', 'CFLAG:TARGET:228 = 1'],
+        ['11749', 'A = UP:11 + UP:12'],
+        [
+          '11755',
+          'PRINTFORMW 「第一次……献给了魔王大人……真是……开心%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11756',
+          'PRINTFORMW 「虽然……这次只是单纯的觉的痛而已、不过大概多被\\@TALENT:PLAYER:121 == 0 && TALENT:PLAYER:122 == 0 ? 震动假阳具 # 阴茎\\@侵犯几次就会舒服起来了吧！」',
+        ],
+        [
+          '11757',
+          'PRINTFORMW %SAVESTR:TARGET%一点都没有惋惜自己失去处女身这件事，反而发自心底地期待着对蜜穴的进一步调教………',
+        ],
+        [
+          '11760',
+          'PRINTFORMW 「哈啊……啊啊……魔王大人%UNICODE(0x2661) *1% 我的处女身……属于你了啊啊啊！」',
+        ],
+        [
+          '11761',
+          'PRINTFORMW 「一，一点都不痛……没关系的……请，请魔王大人……继续疼爱%SAVESTR:TARGET%吧！」',
+        ],
+        [
+          '11762',
+          'PRINTFORMW %SAVESTR:TARGET%不住地流着泪水，去向%SAVESTR:PLAYER%强作着笑容……',
+        ],
+        [
+          '11765',
+          'PRINTFORMW 「住，住手啊啊啊！放开我，放开我！快点拔出去啊啊啊！！！」',
+        ],
+        ['11766', 'PRINTFORMW 「我，我的第一次……呜呜呜呜！」'],
+        [
+          '11767',
+          'PRINTFORMW %SAVESTR:TARGET%承受着破处的痛苦和屈辱，咬着双唇呜咽了起来………',
+        ],
+        [
+          '11773',
+          'PRINTFORMW 「啊嘿嘿……这个碍事的处女膜……终于这样去掉了%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11774',
+          'PRINTFORMW 「呼哈……啊啊……请毫不留情地……将%SAVESTR:TARGET%的蜜穴……侵犯得一塌糊涂吧%UNICODE(0x2661) *1%」',
+        ],
+        [
+          '11775',
+          'PRINTFORMW %SAVESTR:TARGET%一点都没有惋惜自己失去处女身这件事，反而发自心底地期待着对蜜穴的进一步调教………',
+        ],
+        [
+          '11778',
+          'PRINTFORMW 「呜啊啊……好，好痛啊啊！本来……想把处女……献给魔王大人的呜呜呜……」',
+        ],
+        [
+          '11779',
+          'PRINTFORMW %SAVESTR:TARGET%看着从自己蜜穴里流出来的处女血，悲伤得无以复加',
+        ],
+        [
+          '11782',
+          'PRINTFORMW 「住，住手啊！求求你，拔出去啊！我还是处女啊啊啊啊——」',
+        ],
+        [
+          '11783',
+          'PRINTFORMW %SAVESTR:TARGET%承受着破处的痛苦和屈辱，咬着双唇呜咽了起来………',
+        ],
+        ['11786', 'CFLAG:TARGET:229 = 1'],
+      ].map(([ref, line]) => exact_line(ref, line)),
+    ],
+  },
 ];
 
 export const LOG_REFS = [];

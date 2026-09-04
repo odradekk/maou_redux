@@ -50,6 +50,12 @@ async function speak_com11(fixture, rand) {
   return kojo_message_com_family.call(11, { args: [rand] });
 }
 
+async function speak_palamcng11(fixture) {
+  const { kojo_message_palamcng_family } =
+    fixture.load_module('kojo/kojo-system');
+  return kojo_message_palamcng_family.call(11, { args: [] });
+}
+
 // RAND:N 定值序：draws 依次被消费，越界取模（K3 test 同款先例）
 const seq_rand =
   (...draws) =>
@@ -7589,6 +7595,78 @@ test('DOG_KOJO_11 录像交谈后续牝犬档推进 CFLAG:357=5', async () => {
   }, 56);
   await speak_com11(fixture, seq_rand());
   assert.equal(fixture.store.get(`cflag:${LILY}:357`), 5);
+});
+
+// —— @KOJO_MESSAGE_PALAMCNG_11 ——
+
+test('PALAMCNG_11 四类参数首超由 PALAM+UP 严格越过 Lv2，并依次推进 221-224', async () => {
+  const fixture = setup_lily((f) => {
+    for (const index of [3, 5, 8, 10]) {
+      f.store.set(`palam:${LILY}:${index}`, 250);
+      f.store.set(`delta:${LILY}:${index}`, 251);
+    }
+  });
+  await speak_palamcng11(fixture);
+  for (const flag of [221, 222, 223, 224]) {
+    assert.equal(fixture.store.get(`cflag:${LILY}:${flag}`), 1);
+  }
+});
+
+test('PALAMCNG_11 PALAM+UP 恰等于 Lv2 时不触发首超', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`palam:${LILY}:3`, 250);
+    f.store.set(`delta:${LILY}:3`, 250);
+  });
+  await speak_palamcng11(fixture);
+  assert.equal(fixture.store.get(`cflag:${LILY}:221`), undefined);
+});
+
+test('PALAMCNG_11 四类首次绝顶分别推进 CFLAG:225-228', async () => {
+  const fixture = setup_lily((f) => {
+    for (const index of [0, 1, 2, 3]) {
+      f.store.set(`nowex:${LILY}:${index}`, 1);
+    }
+  });
+  await speak_palamcng11(fixture);
+  for (const flag of [225, 226, 227, 228]) {
+    assert.equal(fixture.store.get(`cflag:${LILY}:${flag}`), 1);
+  }
+});
+
+test('PALAMCNG_11 V 绝顶二回目仅在插着不拔时输出，A 绝顶二回目不受此限制', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set(`nowex:${LILY}:1`, 1);
+    f.store.set(`nowex:${LILY}:2`, 1);
+    f.store.set(`cflag:${LILY}:226`, 1);
+    f.store.set(`cflag:${LILY}:227`, 1);
+  });
+  await speak_palamcng11(fixture);
+  assert.match(fixture.text_lines().join('\n'), /肛门已经脱离了意志的控制/);
+  assert.doesNotMatch(fixture.text_lines().join('\n'), /蜜穴.*侵犯|蜜穴.*高潮/);
+});
+
+test('PALAMCNG_11 处女丧失累计 UP11+UP12，并按玩家性器插入文案后推进 229', async () => {
+  const fixture = setup_lily((f) => {
+    f.store.set('tflag:3', 1);
+    f.store.set('tflag:20', 1);
+    f.store.set(`talent:${LILY}:76`, 1);
+    f.store.set(`delta:${LILY}:11`, 200);
+    f.store.set(`delta:${LILY}:12`, 200);
+  });
+  await speak_palamcng11(fixture);
+  assert.match(fixture.text_lines().join('\n'), /多被阴茎侵犯几次/);
+  assert.equal(fixture.store.get(`cflag:${LILY}:229`), 1);
+});
+
+test('PALAMCNG_11 非玛奥助手参与调教时整段静默跳过', async () => {
+  const fixture = setup_lily((f, era_flag) => {
+    era_flag.assi = 7;
+    era_flag.assiplay = 1;
+    f.store.set(`palam:${LILY}:3`, 501);
+  });
+  await speak_palamcng11(fixture);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get(`cflag:${LILY}:221`), undefined);
 });
 
 // —— SELECTCOM 56（交谈 CFLAG:357）——
