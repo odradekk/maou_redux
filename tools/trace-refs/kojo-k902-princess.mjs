@@ -16,11 +16,6 @@ const refs = [
   ],
   ['25', '^\\s*EX_FLAG:102 = 0\\s*$'],
   ['34-35', '^\\s*SIF EX_TALENT:102 != 1\\s*$\\s*^\\s*RETURN 0\\s*$'],
-  [
-    '422-426',
-    '^\\s*@EVENTEND\\s*$\\s*^\\s*SIF FLAG:7 <= 0\\s*$\\s*^\\s*RETURN 0\\s*$\\s*^\\s*SIF EX_TALENT:103 != 1\\s*$\\s*^\\s*RETURN 0\\s*$',
-  ],
-  ['425-426', '^\\s*SIF EX_TALENT:103 != 1\\s*$\\s*^\\s*RETURN 0\\s*$'],
 ];
 
 export const FILES = [

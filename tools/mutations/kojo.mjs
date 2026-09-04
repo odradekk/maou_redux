@@ -10363,14 +10363,6 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'EVENTTRAIN 守卫读 EX_TALENT:TARGET:102',
   },
   {
-    desc: 'M6203 K902 EVENTEND 原作笔误改读 EX_TALENT:102（#248）',
-    file: 'ere/kojo/kojo-k902-princess.js',
-    find: '  if ((era.get(`ex_talent:${target}:103`) || 0) != 1) {',
-    replace: '  if ((era.get(`ex_talent:${target}:102`) || 0) != 1) {',
-    tests: ['kojo-k902-princess'],
-    must_mention: 'EVENTEND 原作笔误保留为 EX_TALENT:TARGET:103',
-  },
-  {
     desc: 'M6204 EX_FLAG 动态读取下标偏移（#248）',
     file: 'ere/era-utils/era-exflag.js',
     find: 'era_exflag.get = (index) => era.get(`exflag:${index}`) || 0;',

@@ -56,7 +56,7 @@ test('K902 事件钩子：没有 EX_TALENT:102 时不置存在标志', async () 
   assert.equal(fixture.store.get('flag:7'), 0, '守卫失败时不打开口上总开关');
 });
 
-test('K902 事件守卫：EVENTTRAIN 读 102，EVENTEND 保留误读 103', async () => {
+test('K902 事件边界：EVENTTRAIN 读 102，EVENTEND 不承接 K903 正文', async () => {
   const fixture = setup_k902();
 
   fixture.var_reads.length = 0;
@@ -68,14 +68,10 @@ test('K902 事件守卫：EVENTTRAIN 读 102，EVENTEND 保留误读 103', async
 
   fixture.var_reads.length = 0;
   await emit(fixture, 'EVENTEND');
-  assert.ok(
-    fixture.var_reads.some(({ name }) => name === `ex_talent:${CID}:103`),
-    'EVENTEND 原作笔误保留为 EX_TALENT:TARGET:103',
-  );
   assert.equal(
-    fixture.var_reads.some(({ name }) => name === `ex_talent:${CID}:102`),
+    fixture.var_reads.some(({ name }) => name.startsWith(`ex_talent:${CID}:`)),
     false,
-    'EVENTEND 不修正为 EX_TALENT:TARGET:102',
+    '复制来的 K903 EVENTEND 正文由 #249 负责双注册，本票不留空壳',
   );
 });
 

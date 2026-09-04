@@ -34,12 +34,3 @@ on(
 
 // @EVENTEND #LATER：调教结束清存在标志。 // :23-25
 on('EVENTEND', () => era_exflag.set(102, 0), TIER.LATER); // :25
-
-// 普通档 @EVENTEND 误读 EX_TALENT:103；按原作缺陷保留，不修成 102。 // :422-426
-on('EVENTEND', () => {
-  const target = era_flag.target;
-  if ((era.get(`ex_talent:${target}:103`) || 0) != 1) {
-    return 0; // :425-426
-  }
-  return 0;
-});
