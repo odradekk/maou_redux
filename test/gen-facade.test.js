@@ -409,6 +409,7 @@ test('口上样本里已有门面的读写不再拼 era.get/set 字符串', () =
     'kojo-k12-intellectual.js',
     'kojo-k903-garde.js',
     'kojo-k19-fia.js',
+    'kojo-k904-fia.js',
   ]) {
     const text = fs.readFileSync(
       path.join(REPO_ROOT, 'ere', 'kojo', file),
