@@ -88,21 +88,27 @@ npx prettier --check .   # 仅格式，--write 可自动改
 
 ### CI
 
-`.github/workflows/ci.yml` 在 PR 与 push 到 master 时于 ubuntu runner 上跑三个 job（#92 起，#302 补引擎）：
+`.github/workflows/ci.yml`（#92 起，#302 补引擎，阶段 4 收尾改分层）按触发方式分档：
 
-| job          | 环境   | 内容                                                  |
-| ------------ | ------ | ----------------------------------------------------- |
-| `engineless` | 无引擎 | `npm run test:ci` ＋ 跳过数守护 ＋ eslint ＋ prettier |
-| `engine`     | 有引擎 | `npm run test:ci` ＋ 跳过数守护（只能是 0）           |
-| `mutation`   | 有引擎 | 全量变异，隔离副本并行                                |
+| 触发           | job                     | 内容                                                                     |
+| -------------- | ----------------------- | ------------------------------------------------------------------------ |
+| `pull_request` | `pr`                    | `npm run test:related` ＋ 锚鉴别力（默认档）＋ eslint ＋ prettier        |
+| push 到 master | `engineless` / `engine` | 全库 `npm run test:ci` ＋ 跳过数守护，无引擎那侧另加锚质量全文量与格式档 |
+| 手动触发       | `mutation`              | 全量变异，带引擎，隔离副本 `--jobs 4`                                    |
+
+**分层的依据是一条实测**：一条变异条目的判定，只有在它的靶文件或守它的测试变了的时候才可能翻——做 K16 时重跑 K11 那 960 条，结论与上次逐字相同。全量唯一能抓、按面跑抓不到的，是「改了公共底座把别处的测试悄悄卸了武装」这类跨文件失效（#10 栽过），而那是慢积累的风险，不是每次提交的风险。
+
+**代价说清楚：PR 绿不再等于全库绿。** 兜底是 master push——合并后几分钟内就在同一份内容上跑全库。选择器本身不承担正确性，拿不准就退回全量，最坏等于从前的行为。
+
+**PR 档没有跳过数守护**：那道守护对着全量套件的基线核对，跑子集时数字必然对不上、会变成假红，所以只留在 master push 的两个 job 里。
+
+**全量变异不再挂自动触发。** 阶段收口时在本机满速跑一次（16 核）比在 4 核 runner 上挂 100 分钟划算；`workflow_dispatch` 留着，是为了不守着本机也能点一轮。
 
 **引擎经 release 资产上 runner**（`.github/actions/setup-engine`，下载 `engine-4.8.0` 的 `app.asar` 并校验 SHA256，导出 `ERE_ENGINE_ASAR`）。它不进 git——42 MB 会永久留在历史里；也不用 `actions/cache`，7 天不命中就被驱逐、会把「有没有引擎」变成时红时绿。**引擎换版时新开 tag 并改 action 里的 SHA256 断言**，那处 diff 就是换版的公告。
 
 **跳过数守护有两侧，两侧都要**：无引擎那侧对 `test/engine-skip-baseline.txt`（现 72），守的是「引擎缺席的代价必须是看得见的数字」——新增依赖引擎的用例必须同步改基线，让覆盖面的收缩是一次有意识的提交；有引擎那侧对 `test/engine-present-skip-baseline.txt`（只能是 0），守的是「引擎装上了却还有东西被跳过」——那意味着门控写错或 asar 没被 `locate_asar` 认出来。
 
-变异检查（#89）有两个执行点：**快速模式**（条目表的结构检查 `--verify`）随 `test/mutation-check.test.js` 进 `npm test`；**全量模式**在 CI 的 `mutation` job 上跑，带引擎，合格线是「全部拦下、零跳过、零红」。`--sample` 仍是工具支持的模式，CI 不再用它——全量在 PR 上就跑，抽样没有信息量了。
-
-**concurrency 只取消 PR 的陈旧运行，不取消 master push**：合并态的全量变异挂在后者上，被后一次 push 掐掉等于那一档从没跑过（#302 之前实测 40 次里 11 cancelled / 8 failure / 0 成功）。
+**concurrency 只取消 PR 的陈旧运行，不取消 master push**。但 `cancel-in-progress: false` 的语义是「排队中的 run 被后来者取代」，所以连着合并几张 PR 时，真正跑完的是**最终态**那一次，中间提交不会各跑一轮——对兜底来说够用，查红时要知道嫌疑范围是那一串合并而不是单个提交。
 
 ### 静态数据目录
 

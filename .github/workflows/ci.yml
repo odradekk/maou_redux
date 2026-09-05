@@ -1,18 +1,23 @@
-# CI（issue #92 起；#302 补引擎）：三项自检与变异检查在干净 Linux 上的
-# 自动执行点。三个 job 的分工：
+# CI（issue #92 起；#302 补引擎；阶段 4 收尾改分层）。
 #
-#   engineless —— 不放引擎。引擎比对用例整组跳过，跳过数由守护步对着
-#     test/engine-skip-baseline.txt 核对，偏离即红：覆盖面的收缩必须是
-#     一次有意识的提交。eslint / prettier 也在这里。
-#   engine ——  装引擎（release 资产，见 .github/actions/setup-engine）。
-#     跳过数必须是 0：引擎在场却仍有东西被跳过，说明门控写错或 asar 没被
-#     locate_asar 认出来。
-#   mutation —— 装引擎跑全量变异。「全部拦下、零跳过、零红」这条严标准
-#     自 #302 起有了自动执行点，不再只存在于派单人的本机。
+# 分层的理由是一条实测：**一条变异条目的判定，只有在它的靶文件或守它的
+# 测试变了的时候才可能翻。** 做 K16 时重跑 K11 那 960 条，得到的结论与上次
+# 逐字相同——那是纯空转。而全量唯一能抓、按面跑抓不到的，是「改了公共底座
+# 把别处的测试悄悄卸了武装」这类跨文件失效（#10 栽过）；它是慢积累的风险，
+# 不是每次提交的风险。所以：
 #
-# 仓库公开后标准 runner 分钟数免费不限量，所以全量变异挂在 pull_request 上
-# 而不是只挂 master push——#302 之前它只在 master push 上跑，而那一档因为
-# concurrency 秒级取消从来没成功过（40 次里 11 cancelled / 8 failure / 0 成功）。
+#   pull_request → pr           按**改动面**跑，目标 10 分钟以内。
+#                               选择器拿不准就退回全量，最坏等于从前的行为。
+#   push(master) → engineless   全库三项自检 + 跳过数守护 + 锚鉴别力全文量。
+#                  engine       同上，带引擎，跳过数必须是 0。
+#   手动         → mutation     全量变异。**不再挂自动触发**：阶段收口时在
+#                               本机满速跑一次（16 核）比在 4 核 runner 上
+#                               挂 100 分钟划算，这里只留一个随时可点的口子。
+#
+# 代价说清楚：**PR 绿不再等于全库绿。** 兜底是 master push——合并后几分钟内
+# 就在同一份内容上跑全库。中间提交会被 concurrency 顶掉（`cancel-in-progress`
+# 对 push 为 false 时，排队中的 run 会被后来者取代），所以真正被验证的是
+# 每一串合并的**最终态**，这对兜底来说够用。
 name: CI
 
 on:
@@ -25,19 +30,48 @@ on:
 permissions:
   contents: read
 
-# PR 连更时取消陈旧运行（旧运行的结果不再有信息量）；**master push 不取消**
-# ——合并态的全量变异挂在它上面，被后一次 push 掐掉等于那一档从没跑过。
+# PR 连更时取消陈旧运行（旧运行的结果不再有信息量）；master push 不取消。
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # —— PR 档：按改动面 ——
+  #
+  # 这里**没有**跳过数守护：它对着全量套件的基线核对，跑子集时数字必然对不
+  # 上，会变成假红。那道守护留在 master push 的两个 job 里。
+  pr:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 取回 master（选择器按 merge-base 定改动面，浅克隆算不出来）
+        run: git fetch --no-tags origin +master:refs/remotes/origin/master
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: 安装依赖
+        run: npm ci
+      - name: 测试（按改动面选；选择器拿不准即退回全量）
+        run: npm run test:related
+      - name: 锚鉴别力（默认档只量未冻结文件——PR 新加的锚正好都在这里）
+        run: node tools/trace-check.mjs --anchor-quality
+      - name: ESLint（零警告，与本地三项自检同一标准）
+        run: npx eslint . --max-warnings 0
+      - name: Prettier（格式比对）
+        run: npx prettier --check .
+
+  # —— master push 档：全库 ——
   engineless:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     # 15 分钟在 #242（K11 莉莉，源码 25k 行 + 测试 8.4k 行）上被顶穿：两个
     # job 都在整 15 分钟被取消，engineless 已跑完测试、跳过数守护、锚质量、
-    # ESLint，倒在最后一步 Prettier 上。超时是防挂死的上限，不是预算——
-    # 每张口上票都在把仓库做大，这个数会需要再抬。
+    # ESLint，倒在最后一步 Prettier 上。超时是防挂死的上限，不是预算。
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
@@ -51,10 +85,9 @@ jobs:
         run: npm run test:ci
       - name: 跳过数守护（引擎缺失的代价必须是看得见的数字）
         run: node tools/skip-count-check.mjs test-report.tap
-      # 锚鉴别力全文量（#298）：默认路径只量未冻结文件，好让本机内环不为
-      # 存量付那 19s；代价是往**已冻结**的文件里塞 ENDIF 一类弱锚在默认路径
-      # 上看不见。`--all` 是唯一重算存量并核对总基线的地方，所以它必须有一个
-      # 自动执行点，否则「只减不增」就只是一句写在常量注释里的话。本机 13s。
+      # 默认路径只量未冻结文件，好让内环不为存量付那 19s；代价是往**已冻结**
+      # 的文件里塞 ENDIF 一类弱锚在默认路径上看不见。`--all` 是唯一重算存量
+      # 并核对总基线的地方，所以它必须有一个自动执行点。
       - name: 锚鉴别力全文量（弱锚只减不增，核对总基线）
         run: node tools/trace-check.mjs --anchor-quality --all
       - name: ESLint（零警告，与本地三项自检同一标准）
@@ -63,6 +96,7 @@ jobs:
         run: npx prettier --check .
 
   engine:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -78,20 +112,21 @@ jobs:
           node tools/skip-count-check.mjs test-report.tap
           --baseline test/engine-present-skip-baseline.txt
 
-  # 变异检查（#89）：「验证其余检查器守得住」的检查器的执行层。条目表的
-  # 三项结构检查（--verify）是秒级的，已随 test/mutation-check.test.js 进
-  # 上面两个 job 的 npm test；本 job 跑的是真执行全量。
+  # —— 手动档：全量变异 ——
   #
-  # --jobs N 用隔离临时副本并行，主树不写。残留守护与**检出基线**比对而非
-  # 假设干净——裸检出可能带既有脏度（#96 的 dev-guides CRLF），守护证的是
-  # 「变异逐字节还原」，不是「仓库本来干净」。
+  # 「验证其余检查器守得住」的检查器的执行层。条目表的三项结构检查
+  # （--verify）是秒级的，已随 test/mutation-check.test.js 进上面几个 job。
   #
-  # 超时按实测定：条目表 1270 条、本机 4 核约 1740s（且随每张口上票增长）；
-  # 超时是防挂死的上限，不是预算：条目表每张口上票都在涨，runner 快慢也差得多。
-  # 工具零第三方依赖，无需 npm ci。
+  # 只挂 workflow_dispatch：阶段收口时的正规跑法是在本机满速跑一次，这里留
+  # 着是为了不必守着本机也能点一轮。--jobs 4 的依据是 runner 实测 4 核 /
+  # 15Gi 内存 / 86G 空闲盘，而 --jobs 2 只用掉 1.5Gi 和 41% 盘。
+  #
+  # 残留守护与**检出基线**比对而非假设干净——裸检出可能带既有脏度（#96 的
+  # dev-guides CRLF），守护证的是「变异逐字节还原」，不是「仓库本来干净」。
   mutation:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -103,19 +138,6 @@ jobs:
       - name: runner 规格（--jobs 的上限由内存定，不是由核数定）
         run: |
           nproc; free -h; df -h /
-      # --jobs 4：runner 实测 4 核 / 15Gi 内存 / 86G 空闲盘，而 --jobs 2 只用掉
-      # 1.5Gi 和 41% 盘——核没吃满。#324（K11）在 --jobs 2 下顶穿了 120 分钟
-      # 上限，开到 4 是最便宜的那一档，上面那句「上限由内存定」有 15Gi 兜着。
-      #
-      # 并行此前在 CI 上「跑到一半神秘崩溃」，根因是 process.exit() 丢弃管道
-      # 上排队未写完的 stdout（实测写 836038 字节后立即 exit，管道对端只收到
-      # 65536 字节）——本机重定向到文件时 stdout 是同步写，所以复现不出来。
-      # 报告路径改 process.exitCode 后即好，源码锁与 M2901 守着这条。
-      #
-      # 串行基准：1467 条条目 38m50s（PR #307）。runner 之间快慢差得不少
-      # （同一个 engineless job 在两次运行里是 2m42s 与 4m32s），加上条目表
-      # 每张口上票都在涨，所以超时给到 120 分钟——它是防挂死的上限，不是
-      # 预算。下面的自诊断保留。
       - name: 变异全量（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
         run: |
           set +e
