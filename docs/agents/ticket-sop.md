@@ -156,7 +156,7 @@ worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.s
 ＋ **node tools/mutation-check.mjs --ids <你这一轮新加的编号>**（如 --ids M4246-M4273，
 每条约 0.35s）。改动面确实跨了多个文件时才用 bash tools/capped.sh npm run test:inner。
 交付前一次 bash tools/capped.sh npm run test:related ＋ eslint ＋ prettier。
-全量 npm test、无引擎重跑、全量变异都由 CI 在每次 push 上跑，你不必跑。
+全库测试由 CI 在合并后跑，全量变异由派单人在阶段收口跑一次——两样都不在你账上。
 
 **npm run test:related 不是内环，--files 也不是。** 两者都按「交付面」而非「本轮改了什么」
 选面，代价随交付面线性增长，到票的中段就把开发节奏压死：#242 实测 K11 的 test:related
@@ -164,8 +164,9 @@ worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.s
 一轮 20 分钟；--files 选中 526 条条目，一轮 51 分钟。而每加一条指令只新增二十几条条目。
 --ids 只跑点名的那几条，编号在表里不存在时工具当场报错，不会静默跑 0 条。
 
-**--files 那一步不许用 --verify 代替**：--verify 只查条目表结构、不执行任何变异。
+**--ids 那一步不许用 --verify 代替**：--verify 只查条目表结构、不执行任何变异。
 #231 只跑了它就交付，全量一跑出来 7 条「红=false」——变异改下去没有任何测试变红。
+全量已退到阶段收口，所以 --ids 是你的条目**唯一**被真正执行的地方。
 
 三个全局计数字段：tools/mutation-check.mjs 的 LEDGER_COUNT_BASELINE 现为 <n>，
 test/engine-skip-baseline.txt 现为 <m>，变异条目的 M 编号已用到 M<k>——**你的新
@@ -241,7 +242,7 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 | 层      | 谁     | 何时          | 内容                                                                      | 实测                  |
 | ------- | ------ | ------------- | ------------------------------------------------------------------------- | --------------------- |
 | **T1**  | agent  | 每个红绿切片  | 本票那一个测试文件 ＋ `mutation-check --ids <本轮新加的编号>`             | 6s ＋ 每条 0.35s      |
-| **T2**  | agent  | 提交前一次    | `test:related` ＋ eslint ＋ prettier                                      | 交付面越大越贵，见 §4 |
+| **T2**  | agent  | 提交前一次    | `test:related` ＋ eslint ＋ prettier                                      | 交付面越大越贵，见 §3 |
 | **T3**  | CI     | 每次 PR       | `pr`：`test:related` ＋ 锚鉴别力 ＋ eslint ＋ prettier                    | 目标 10 分以内        |
 | **T3′** | CI     | 合并到 master | `engineless` / `engine`：全库测试 ＋ 跳过数守护 ＋ 锚质量全文量 ＋ 格式档 | 无人等待              |
 | **T4**  | 派单人 | 阶段收口      | 本机满速全量变异 ＋ 引擎手工验收 ＋ 对拍，见 §5.6                         | —                     |
@@ -251,13 +252,13 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 1. **并上 master**（§5.5）——冲突只有人能解，也是最容易出错的一步。
 2. **开 PR，等 `pr` job 绿。** 不要在本机重跑 CI 已经跑的东西。合并后 master push 会在同一份内容上跑全库，红了嫌疑范围是那一串合并。
 3. **证伪探针**：防线类交付亲手还原它声称能防的场景（判据 6）。
-4. **逐条对照工单验收清单**（下面十一条判据）。
-
-**`--verify` 不能代替执行变异。** 它只查条目表结构、**不执行任何变异**；#231 的报告只跑了它，全量一跑出来 **7 条「红=false」**——变异改下去没有任何测试变红。所以 T1 每轮的 `--ids` 是硬要求：那是本票的条目唯一被真正执行的地方（全量已退到阶段收口）。
+4. **逐条对照工单验收清单**（下面十一条判据），并抽查本票新增条目真被拦下——`--ids <本票号段>`。全量已退到阶段收口，`--ids` 是这些条目唯一被真正执行的地方，而 `--verify` 只查结构、不执行任何变异（#231 只跑了它就交付，全量一跑出来 7 条「红=false」）。
 
 **引擎在 CI 上的位置有讲究**：asar 要落到 `~/.era-engine/app.asar`（`locate_asar` 的第 3 号候选），**不能只设 `ERE_ENGINE_ASAR`**。#302 首版用环境变量，结果 `M374`（拆掉 `ERE_ENGINE_ASAR === 'none'` 那道开关）在 CI 上判红=false——测试子进程里的 `none` 覆盖掉环境变量，而其余候选在 CI 上一个都不存在，于是拆掉开关后**仍然**是无引擎、测试照过、变异漏网。本机能判红只因为第 3 号候选存在。**CI 与本机不同构的地方，就是守卫会静默失效的地方。**
 
 **每条本机命令都用 `bash tools/capped.sh` 包一层**（限 CPU 到 4 核）。并发验收时这是机器还能不能用的分界：三个 agent 同时跑，不限流的交互延迟是 698ms，限流后 106ms，总耗时只多 5%。
+
+#### 跑出怪结果时先看这三条
 
 **验收期的读数不能与 `npm test` 或串行变异并发取。** `tools/mutation-check.mjs` 是**就地变异 + 还原**（文件头 `:30` 明写），而 `test/mutation-check.test.js` 的快速模式随 `npm test` 跑——那期间工作树是**间歇性坏的**。阶段 4 验收 #212 时踩过：一边跑着 `npm test`，一边 `node tools/compare/cli.js`，读回 54/112 而真值是 57/107，我据此误报了「对拍退化」。**判据是 `pgrep -f 'capped.sh|mutation-check.mjs'` 为空再读**，或者干脆串行：先跑完测试，再取对拍与快照类读数。`--jobs` 并行路径用隔离副本、不碰工作树，但快速模式与串行全量都碰。
 
@@ -405,10 +406,11 @@ git show <本票 sha>:<path>              # 从这里抽出本票新增的条目
 
 ## 5.6 T4 阶段闸（阶段收口时跑一次）
 
-触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。**#302 之后这里只剩两项**——无引擎重跑与全量变异都进了 CI 的每次 push，不必再手工跑：
+触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。三项：
 
-1. **引擎手工验收**：在主 checkout（`D:\Code\era`）里启动引擎跑一遍本阶段的贯通路径。CI 没有 GUI，这件事机器做不了。
-2. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
+1. **全量变异（带引擎）**：`node tools/mutation-check.mjs --jobs 4`。**严格标准是「全部拦下、零跳过、零红」。** 本机满速跑一次比在 4 核 runner 上挂 100 分钟划算，所以它自阶段 4 收尾起不再挂 CI 的自动触发（`workflow_dispatch` 留着，不守着本机时可以点一轮）。
+2. **引擎手工验收**：在主 checkout（`D:\Code\era`）里启动引擎跑一遍本阶段的贯通路径。CI 没有 GUI，这件事机器做不了。
+3. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
 
 **要在本机造出「无引擎」，`--asar none` 一个人做不到。** 它只改**父进程**对「引擎在不在场」的判定；子进程与测试各自走 `locate_asar`，会照样命中回落。两个一起给：
 
@@ -427,7 +429,7 @@ orca worktree rm --worktree "path:<绝对路径>" --force --json
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
 
-- **纯文档改动不必等 CI**：本地 `prettier --check` 过了就直接合。CI 的 `mutation` job 要 20–35 分钟，为一份没动代码的 `.md` 排队没有意义。
+- **纯文档改动不必等 CI**：本地 `prettier --check` 过了就直接合。
 - PR 正文以 `Closes #<n>` 结尾，合并即自动关票。
 - **改到 `.github/workflows/` 的分支要用 `env -u GITHUB_TOKEN` 推**：环境变量里那个 PAT 缺 `workflow` scope，remote 会直接拒收（`refusing to allow a Personal Access Token to create or update workflow`）；`~/.config/gh/hosts.yml` 里的细粒度 token 有。`gh pr create` / `gh pr merge` 同理。
 - **两个 checkout 都要 pull**（见 §0 的表）。漏掉 WSL 基座那条，下一张票就会从旧 master 建树，撞上 §5.5 那五处冲突。
