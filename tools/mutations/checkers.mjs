@@ -668,4 +668,36 @@ export default [
     tests: ['mutation-check'],
     must_mention: 'test_name 点名了用例就该只跑它',
   },
+  {
+    desc: 'M3706 --only 的范围过滤被拆（每个探针退回全量跑一遍——提速没了，判定却照旧红绿，只有范围外用例抓得住）',
+    file: 'tools/trace-check.mjs',
+    find: '  if (!in_scope(js)) continue;',
+    replace: '  // 变异：FILES 遍历不再按 --only 过滤',
+    tests: ['trace-check'],
+    must_mention: '范围限定在 K903，不该被核到',
+    // must_mention 是断言消息不是用例名；不点名用例，这条会跑整份
+    // trace-check.test.js——而它正好把提速拆了，那份文件退回 11 分钟。
+    test_name: '--only 只核范围内的文件：范围外的坏引用不报，范围内的必须报',
+  },
+  {
+    desc: 'M3707 限定范围的绿不再自报范围（一次 --only 的绿会被当成全量绿引用）',
+    file: 'tools/trace-check.mjs',
+    find: `const scope_note =
+  ONLY.length === 0
+    ? ''
+    : \`（本次限定范围：--only \${ONLY.join(',')}，不等于全量绿）\`;`,
+    replace: "const scope_note = '';",
+    tests: ['trace-check'],
+    must_mention: '限定范围的报告行必须自报范围',
+    test_name: '--only 的绿必须自报范围：不许被当成全量绿引用',
+  },
+  {
+    desc: 'M3708 --only 缺值不再报错（静默退化成全量，人以为限了范围其实没限）',
+    file: 'tools/trace-check.mjs',
+    find: '  if ((inline || i >= 0) && parts.length === 0) {',
+    replace: '  if (false) {',
+    tests: ['trace-check'],
+    must_mention: '--only 缺值必须退 1，实际',
+    test_name: '--only 不给值时当场报错退 1，不静默变成全量',
+  },
 ];

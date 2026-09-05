@@ -180,7 +180,10 @@ test('K19 错锚证伪：登记号随引用漂移，静态正文锚仍须判红'
       shard_text.replace(ref_anchor, "ref: '3006',"),
       'utf8',
     );
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/kojo/kojo-k19-fia.js',
+    ]);
     assert.notEqual(
       status,
       0,
@@ -194,7 +197,7 @@ test('K19 错锚证伪：登记号随引用漂移，静态正文锚仍须判红'
   } finally {
     refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/kojo/kojo-k19-fia.js']);
   assert.equal(
     restored.status,
     0,
@@ -223,7 +226,10 @@ test('探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且�
       ].join('\n'),
       'utf8',
     );
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/__trace_probe__.js',
+    ]);
     assert.notEqual(
       status,
       0,
@@ -242,7 +248,7 @@ test('探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且�
     cleanup();
   }
   // 删净之后复绿（也证明探针真的进过扫描）
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/__trace_probe__.js']);
   assert.equal(
     restored.status,
     0,
@@ -267,7 +273,10 @@ test('豁免清单只能变短：塞基线外条目进条目表，工具必须�
       original.replace(anchor, `${anchor}\n${probe_line}`),
       'utf8',
     );
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/page/page-main-menu.js',
+    ]);
     assert.notEqual(
       status,
       0,
@@ -285,7 +294,7 @@ test('豁免清单只能变短：塞基线外条目进条目表，工具必须�
     refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
   // 还原之后复绿（也证明探针真的改过条目表）
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/page/page-main-menu.js']);
   assert.equal(
     restored.status,
     0,
@@ -321,7 +330,10 @@ test('样本前缀引用：样本名未登记或引用未进锚表，都必须�
       ].join('\n'),
       'utf8',
     );
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/__prefix_probe__.js',
+    ]);
     assert.notEqual(
       status,
       0,
@@ -344,7 +356,7 @@ test('样本前缀引用：样本名未登记或引用未进锚表，都必须�
     cleanup();
   }
   // 删净之后复绿
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/__prefix_probe__.js']);
   assert.equal(
     restored.status,
     0,
@@ -416,7 +428,7 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
       ].join('\n'),
       'utf8',
     );
-    const green = run_tool_in(root);
+    const green = run_tool_in(root, ['--only', 'ere/__sample_ref_probe__.js']);
     assert.equal(
       green.status,
       0,
@@ -425,7 +437,7 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
 
     // 2) 样本内容漂移到锚不命中 → 红且报出该样本引用
     fs.writeFileSync(sample_path, 'XXXX 漂移\r\n', 'utf8');
-    const red = run_tool_in(root);
+    const red = run_tool_in(root, ['--only', 'ere/__sample_ref_probe__.js']);
     assert.notEqual(
       red.status,
       0,
@@ -441,7 +453,7 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
     refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
   // 还原之后复绿
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/__sample_ref_probe__.js']);
   assert.equal(
     restored.status,
     0,
@@ -523,7 +535,10 @@ test('新分片即入账：往 tools/trace-refs/ 丢一份假模块锚表，不�
       ].join('\n'),
       'utf8',
     );
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/kojo/kojo-k99-probe.js',
+    ]);
     assert.equal(status, 0, `新分片必须被加载器扫到并让工具全绿：\n${output}`);
     assert.match(
       output,
@@ -533,7 +548,7 @@ test('新分片即入账：往 tools/trace-refs/ 丢一份假模块锚表，不�
   } finally {
     cleanup();
   }
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/kojo/kojo-k99-probe.js']);
   assert.equal(restored.status, 0, `假模块删了还红：\n${restored.output}`);
 });
 
@@ -613,7 +628,10 @@ test('鉴别力：把锚改成 ENDIF，门必须红且点名位置与匹配行�
     refs: [{ ref: '3', any: String.raw`/^\s*ENDIF\s*$/m` }],
   });
   try {
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/__quality_endif__.js',
+    ]);
     assert.notEqual(
       status,
       0,
@@ -634,7 +652,7 @@ test('鉴别力：把锚改成 ENDIF，门必须红且点名位置与匹配行�
   } finally {
     probe.cleanup();
   }
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/__quality_endif__.js']);
   assert.equal(
     restored.status,
     0,
@@ -666,7 +684,10 @@ test('鉴别力：平行复现段落（命中多处但窗口逐字相同且有�
     ],
   });
   try {
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/__quality_parallel__.js',
+    ]);
     assert.equal(
       status,
       0,
@@ -696,7 +717,10 @@ test('鉴别力：空 PRINTFORMW 整行锚（#235）放行', () => {
     refs: [{ ref: '2', any: String.raw`/^\s*PRINTFORMW\s*$/m` }],
   });
   try {
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/__quality_printformw__.js',
+    ]);
     assert.equal(
       status,
       0,
@@ -727,13 +751,20 @@ test('鉴别力：段级多行锚按全文匹配，不得按单行逐行量成 0
     ],
   });
   try {
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/__quality_multiline__.js',
+    ]);
     assert.equal(
       status,
       0,
       `段级多行锚必须按全文匹配放行（#241 K10）：\n${output}`,
     );
-    const report = run_tool_in(root, ['--anchor-quality']);
+    const report = run_tool_in(root, [
+      '--only',
+      'ere/__quality_multiline__.js',
+      '--anchor-quality',
+    ]);
     assert.equal(
       report.status,
       0,
@@ -767,7 +798,7 @@ test('鉴别力基线只能变短：把冻结数改小一位，工具必须红',
       ),
       'utf8',
     );
-    const { status, output } = run_tool_in(root);
+    const { status, output } = run_tool_in(root, ['--only', 'ere/main.js']);
     assert.notEqual(
       status,
       0,
@@ -781,7 +812,7 @@ test('鉴别力基线只能变短：把冻结数改小一位，工具必须红',
   } finally {
     refresh_probe_repo(root, PROBE_REPO_ENTRIES);
   }
-  const restored = run_tool_in(root);
+  const restored = run_tool_in(root, ['--only', 'ere/main.js']);
   assert.equal(
     restored.status,
     0,
@@ -790,7 +821,7 @@ test('鉴别力基线只能变短：把冻结数改小一位，工具必须红',
 });
 
 test('默认路径不打印全文量分布（存量冻结面不进 npm test）', () => {
-  const { status, output } = run_tool();
+  const { status, output } = run_tool(['--only', 'ere/main.js']);
   assert.equal(status, 0, `默认路径在真树上必须全绿：\n${output}`);
   assert.ok(
     !output.includes('命中 1 处'),
@@ -809,7 +840,11 @@ test('--anchor-quality 给出可引用的量法（命中分布，不必另起扫
     refs: [{ ref: '2', any: String.raw`/PRINTFORMW 唯一一句有正文的台词/` }],
   });
   try {
-    const { status, output } = run_tool_in(root, ['--anchor-quality']);
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/__quality_report__.js',
+      '--anchor-quality',
+    ]);
     assert.equal(status, 0, `--anchor-quality 必须全绿：\n${output}`);
     assert.ok(
       output.includes('鉴别力') && /命中\s*1\s*处/.test(output),
@@ -822,4 +857,68 @@ test('--anchor-quality 给出可引用的量法（命中分布，不必另起扫
   } finally {
     probe.cleanup();
   }
+});
+
+/**
+ * `--only` 的两道守护（#242 收尾的提速开关）。
+ *
+ * 提速本身不会被现有探针抓住：把过滤器拆掉，每个探针只是退回全量跑一遍，
+ * 照样红、照样绿。所以判别式必须是「范围**外**的坏引用不该被报出来」——
+ * 同一处注入，换个 --only 就得一绿一红。
+ */
+test('--only 只核范围内的文件：范围外的坏引用不报，范围内的必须报', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', 'kojo', 'kojo-k19-fia.js');
+  const js_text = fs.readFileSync(js_path, 'utf8');
+  const js_anchor = '// :3001';
+  assert.equal(
+    js_text.split(js_anchor).length - 1,
+    1,
+    '本探针依赖 :3001 在 K19 里唯一',
+  );
+  try {
+    // 只改 K19：登记号不动，引用改掉 → 「js 里已不存在」那条必然触发
+    fs.writeFileSync(js_path, js_text.replace(js_anchor, '// :3006'), 'utf8');
+
+    const outside = run_tool_in(root, [
+      '--only',
+      'ere/kojo/kojo-k903-garde.js',
+    ]);
+    assert.equal(
+      outside.status,
+      0,
+      `坏引用在 K19、范围限定在 K903，不该被核到：\n${outside.output}`,
+    );
+
+    const inside = run_tool_in(root, ['--only', 'ere/kojo/kojo-k19-fia.js']);
+    assert.notEqual(
+      inside.status,
+      0,
+      `范围内的坏引用必须报出：\n${inside.output}`,
+    );
+    assert.ok(
+      inside.output.includes('kojo-k19-fia.js :3001'),
+      `必须点名那条引用：\n${inside.output}`,
+    );
+  } finally {
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+});
+
+test('--only 的绿必须自报范围：不许被当成全量绿引用', () => {
+  const { status, output } = run_tool(['--only', 'ere/main.js']);
+  assert.equal(status, 0, `限定范围应全绿，实际退出 ${status}：\n${output}`);
+  assert.ok(
+    output.includes('本次限定范围'),
+    `限定范围的报告行必须自报范围，否则一次 --only 的绿会被当成全量绿引用：\n${output}`,
+  );
+});
+
+test('--only 不给值时当场报错退 1，不静默变成全量', () => {
+  const { status, output } = run_tool(['--only']);
+  assert.equal(status, 1, `--only 缺值必须退 1，实际 ${status}：\n${output}`);
+  assert.ok(
+    output.includes('--only 需要至少一个路径子串'),
+    `报错要说清缺了什么：\n${output}`,
+  );
 });

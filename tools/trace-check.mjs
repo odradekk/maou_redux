@@ -74,6 +74,10 @@
 //       node tools/trace-check.mjs --anchor-quality --all
 //         全文量并打印分布（命中 1 处 / 平行复现 / 空 PRINTFORM 整行锚 /
 //         弱锚），供完成报告引用；不要再引「trace-check 全绿」。
+//       node tools/trace-check.mjs --only ere/kojo/kojo-k19-fia.js
+//         只核路径含该子串的文件（逗号分隔可给多个）。一次全量现在是
+//         96463 条引用 / 55 秒；限到一个文件是 3 秒。写坏型探针用它，
+//         **报告行会自报范围**——限定范围的绿不是全量绿。
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -93,6 +97,43 @@ const EMUERA_LOG = 'target/emuera.log';
 
 const WANT_QUALITY_REPORT = process.argv.includes('--anchor-quality');
 const WANT_QUALITY_ALL = process.argv.includes('--all');
+
+// `--only <子串[,子串…]>`：把三处文件扫描（FILES 遍历、log 引用完整性、
+// ERB 引用完整性）限定到路径含任一子串的文件。
+//
+// 为什么要有它：一次全量校核现在是 96463 条引用、44 秒，而 15 个写坏型
+// 探针每个都在临时副本里跑一遍全量——那个测试文件因此单跑 11 分钟，且它是
+// 全局锁，每个 PR 都要付。绝大多数探针只断言「我注入的这一处错误被报出
+// 来」，根本不需要扫全仓库。
+//
+// **限定范围的绿不等于全量绿。** 冻结基线那几项只读常量、与扫描面无关，
+// 照常核对；但报告行会显式标出范围，免得有人拿一次 `--only` 的绿当全量绿
+// 引用（`--verify` 被当成全量变异用过一次，见 SOP）。
+const ONLY = (() => {
+  const i = process.argv.indexOf('--only');
+  const inline = process.argv.find((a) => a.startsWith('--only='));
+  const raw = inline
+    ? inline.slice('--only='.length)
+    : i >= 0
+      ? process.argv[i + 1]
+      : '';
+  const parts = String(raw || '')
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean);
+  if ((inline || i >= 0) && parts.length === 0) {
+    console.error(
+      '✗ --only 需要至少一个路径子串（如 --only ere/kojo/kojo-k19-fia.js）',
+    );
+    process.exit(1);
+  }
+  return parts;
+})();
+
+/** 该文件是否在本次扫描面内（无 --only 时恒真） */
+function in_scope(rel) {
+  return ONLY.length === 0 || ONLY.some((p) => rel.includes(p));
+}
 
 // #282 注释自身的引用（本文件注释里写了 emuera.log:26，被完整性扫描
 // 扫到；登记后自洽）——条目仍挂本文件，不跟锚表一起搬走。
@@ -345,6 +386,7 @@ const quality_weak_by_file = new Map();
 const quality_new_weak = [];
 
 for (const { js, refs } of FILES) {
+  if (!in_scope(js)) continue;
   const js_path = path.join(REPO, js);
   const js_text = fs.readFileSync(js_path, 'utf8');
   let this_weak = 0;
@@ -542,6 +584,7 @@ for (const [sample_name, groups] of Object.entries(SAMPLE_LOG_REFS)) {
   }
 }
 for (const rel of ['ere', 'tools', 'test'].flatMap(list_js_files)) {
+  if (!in_scope(rel)) continue;
   const found = new Set(
     [...load_js_text(rel).matchAll(LOG_REF_RE)].map((m) => {
       const sample = m[1] ? m[1].slice(0, -1) : '';
@@ -1099,6 +1142,7 @@ for (const rel of list_js_files('ere')) {
   if (rel === 'ere/era-electron.js') {
     continue; // 引擎 SDK：JSDoc 示例不是移植注释
   }
+  if (!in_scope(rel)) continue;
   const found = scan_erb_refs(load_js_text(rel));
   erb_found_total += found.size;
   const registered = erb_registered_by_file.get(rel);
@@ -1220,9 +1264,13 @@ if (WANT_QUALITY_REPORT) {
   console.log(quality_line);
 }
 
+const scope_note =
+  ONLY.length === 0
+    ? ''
+    : `（本次限定范围：--only ${ONLY.join(',')}，不等于全量绿）`;
 console.log(
   failures === 0
-    ? `✓ ${checked} 条内联行号引用全部与源文件一致；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免 ${erb_exempt_total}/${erb_baseline_total} 条，#63 基线内只减不增，条目表见 tools/trace-exempt.mjs）`
-    : `✗ ${failures}/${checked} 条引用对不上（另有 ERB 完整性失守计入 failures）`,
+    ? `✓ ${checked} 条内联行号引用全部与源文件一致${scope_note}；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免 ${erb_exempt_total}/${erb_baseline_total} 条，#63 基线内只减不增，条目表见 tools/trace-exempt.mjs）`
+    : `✗ ${failures}/${checked} 条引用对不上${scope_note}（另有 ERB 完整性失守计入 failures）`,
 );
 process.exit(failures === 0 ? 0 : 1);
