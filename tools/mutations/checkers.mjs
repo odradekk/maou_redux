@@ -647,8 +647,8 @@ export default [
   {
     desc: 'M3703 用例过滤被拆（每条变异都重跑整份测试文件——口上票里那是每条几秒，K11 实测 51 分钟）',
     file: 'tools/mutation-check.mjs',
-    find: '    let run = m.must_mention',
-    replace: '    let run = false && m.must_mention',
+    find: '    let run = pattern',
+    replace: '    let run = false && pattern',
     tests: ['mutation-check'],
     must_mention: '过滤跑已经红了就该收手；旁支用例留了痕',
   },
@@ -659,5 +659,13 @@ export default [
     replace: '    if (!run) run = run_tests([]);',
     tests: ['mutation-check'],
     must_mention: '落回全文后仍应拦下，实际退出',
+  },
+  {
+    desc: 'M3705 test_name 逃生口被拆（must_mention 是运行期拼出的断言消息时，模式必然落空、只能跑全文）',
+    file: 'tools/mutation-check.mjs',
+    find: '    const pattern = m.test_name || m.must_mention;',
+    replace: '    const pattern = m.must_mention;',
+    tests: ['mutation-check'],
+    must_mention: 'test_name 点名了用例就该只跑它',
   },
 ];
