@@ -105,6 +105,7 @@ require('#/kojo/kojo-k15-clever');
 require('#/kojo/kojo-k12-intellectual');
 require('#/kojo/kojo-k903-garde');
 require('#/kojo/kojo-k19-fia');
+require('#/kojo/kojo-k904-fia');
 require('#/kojo/kojo-k902-princess');
 
 /**

@@ -12027,4 +12027,76 @@ on('EVENTEND', eventend_kojo_903);`,
     tests: ['kojo-system'],
     must_mention: 'K902 扩展口上',
   },
+  {
+    desc: 'M6500 K904 EVENTTRAIN EX_FLAG:104 置位删除（#250）',
+    file: 'ere/kojo/kojo-k904-fia.js',
+    find: '    era_exflag.set(104, 1); // :53',
+    replace: '    // 变异：EX_FLAG:104 置位删除',
+    tests: ['kojo-k904-fia'],
+    must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
+  },
+  {
+    desc: 'M6501 K904 EVENTEND EX_FLAG:104 清除删除（#250）',
+    file: 'ere/kojo/kojo-k904-fia.js',
+    find: '    era_exflag.set(104, 0); // :59',
+    replace: '    // 变异：EX_FLAG:104 清除删除',
+    tests: ['kojo-k904-fia'],
+    must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
+  },
+  {
+    desc: 'M6502 K904 EVENTTRAIN EX_TALENT:104 守卫错读 105（#250）',
+    file: 'ere/kojo/kojo-k904-fia.js',
+    find: `  if (era0(\`ex_talent:\${target}:104\`) != 1) {
+    // :68-69
+    return 0; // :68-69
+  } // :68-69`,
+    replace: `  if (era0(\`ex_talent:\${target}:105\`) != 1) {
+    // :68-69（变异）
+    return 0; // :68-69
+  } // :68-69`,
+    tests: ['kojo-k904-fia'],
+    must_mention: 'K904 EVENTTRAIN：EX_TALENT:104 缺席时不推进初调教',
+  },
+  {
+    desc: 'M6503 K904 EVENTEND EX_TALENT:104 守卫错读 105（#250）',
+    file: 'ere/kojo/kojo-k904-fia.js',
+    find: `  if (era0(\`ex_talent:\${target}:104\`) != 1) {
+    // :657-658
+    return 0; // :657-658
+  } // :657-658`,
+    replace: `  if (era0(\`ex_talent:\${target}:105\`) != 1) {
+    // :657-658（变异）
+    return 0; // :657-658
+  } // :657-658`,
+    tests: ['kojo-k904-fia'],
+    must_mention: 'K904 EVENTEND：EX_TALENT:104 缺席时不输出结束口上',
+  },
+  {
+    desc: 'M6504 K904 EVENTTRAIN 助手缺席分支调用名退回 K19（#250）',
+    file: 'ere/kojo/kojo-k904-fia.js',
+    find: `  } else if (era_flag.assi < 0) {
+    // :290
+    await k904_kojo2(); // :291`,
+    replace: `  } else if (era_flag.assi < 0) {
+    // :290
+    await k19_kojo2(); // :291（变异）`,
+    tests: ['kojo-k904-fia'],
+    must_mention: 'K904 事件钩子：EVENTTRAIN 置 EX_FLAG:104，EVENTEND 清除',
+  },
+  {
+    desc: 'M6505 K904 KOJO_MESSAGE_COM 族注册键退回 19（#250）',
+    file: 'ere/kojo/kojo-k904-fia.js',
+    find: 'kojo_message_com_family.register(904, kojo_message_com_904);',
+    replace: 'kojo_message_com_family.register(19, kojo_message_com_904);',
+    tests: ['kojo-k904-fia'],
+    must_mention: 'K904 分发：全部口上族注册键都是 904',
+  },
+  {
+    desc: 'M6506 主启动图删除 K904 口上装载（#250）',
+    file: 'ere/system/flow/main-loop.js',
+    find: "require('#/kojo/kojo-k904-fia');",
+    replace: '// 变异：删除 K904 口上装载',
+    tests: ['kojo-family-wiring'],
+    must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
+  },
 ];
