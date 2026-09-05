@@ -209,7 +209,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 3139; // #242 +5（M4736-M4740，AEGI 段数、词库与连接符分档）；#248 +9（M6200-M6209，EX 分发路径与 K902 失声）；#249 +40（M6400-M6439，K903 嘉德）；合并后整表加载实测 3128。+1（M3705，test_name 逃生口）；trace-check 提速 +3（M3706-M3708，--only 范围开关）；#250 +7（M6500-M6506，K904 菲娅 EX 注册路径）
+const LEDGER_COUNT_BASELINE = 3140; // #242 +5（M4736-M4740，AEGI 段数、词库与连接符分档）；#248 +9（M6200-M6209，EX 分发路径与 K902 失声）；#249 +40（M6400-M6439，K903 嘉德）；合并后整表加载实测 3128。+1（M3705，test_name 逃生口）；trace-check 提速 +3（M3706-M3708，--only 范围开关）；#321 +1（M3709，串行档的中断可达）；#250 +7（M6500-M6506，K904 菲娅 EX 注册路径）
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
@@ -736,9 +736,17 @@ function select_entries(entries, args) {
   return entries;
 }
 
-function execute(entries, args) {
+/**
+ * 串行执行。**每条之前让出一次事件循环**（#321）：整段都是 spawnSync，
+ * 循环不转，排队的 SIGINT 就永远派发不到那个「中断时先把靶文件还原」的
+ * 处理器上——实测 kill -INT 之后 21 秒仍在跑，靶文件停在变异态，最后只能
+ * 硬杀再 git checkout 手工还原。而并行档用隔离副本、根本不碰主工作树，
+ * 于是那个处理器唯一真正需要生效的场合，恰好是它到不了的那个。
+ */
+async function execute(entries, args) {
   const tally = { caught: 0, skipped: 0, red: 0 };
   for (const m of select_entries(entries, args)) {
+    await new Promise((resolve) => setImmediate(resolve));
     const r = run_one(args.root, m);
     if (r === 'caught') tally.caught += 1;
     else if (r === 'engine-skip') tally.skipped += 1;
@@ -953,7 +961,7 @@ async function main() {
   }
   const started = Date.now();
   const tally =
-    args.jobs > 1 ? await execute_jobs(args) : execute(entries, args);
+    args.jobs > 1 ? await execute_jobs(args) : await execute(entries, args);
   const elapsed = ((Date.now() - started) / 1000).toFixed(1);
   const problems = verdict_problems(tally, args, engine_present);
   console.log(

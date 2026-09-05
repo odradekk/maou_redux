@@ -46,7 +46,7 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const { spawnSync } = require('node:child_process');
+const { spawn, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -904,6 +904,73 @@ test('test_name 是 must_mention 不是测试名时的逃生口：仍只跑那�
       fs.existsSync(path.join(root, 'ran-other')),
       false,
       'test_name 点名了用例就该只跑它；旁支用例留了痕，说明逃生口没接上',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+/**
+ * 中断可达（#321）：串行档整段是 spawnSync，循环不转就没人派发 SIGINT，
+ * 那个「中断时先把靶文件还原」的处理器因此永远到不了——而并行档用隔离
+ * 副本、不碰主工作树，处理器唯一需要生效的场合正是它到不了的那个。
+ * 实测形态：kill -INT 之后 21 秒仍在跑，靶文件停在变异态。
+ */
+test('SIGINT 能中断串行档，并把靶文件还原', async () => {
+  const root = make_fixture();
+  try {
+    // 让每条变异都慢下来，信号才有机会落在两条之间
+    fs.writeFileSync(
+      path.join(root, 'test', 'calc.test.js'),
+      [
+        "const { test } = require('node:test');",
+        "const assert = require('node:assert/strict');",
+        "const { double } = require('../lib/calc');",
+        "test('加倍', () => {",
+        '  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 400);',
+        '  assert.equal(double(21), 42);',
+        '});',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M1 加倍系数改坏' },
+      { ...GOOD_ENTRY, desc: 'M2 加倍系数改坏' },
+      { ...GOOD_ENTRY, desc: 'M3 加倍系数改坏' },
+      { ...GOOD_ENTRY, desc: 'M4 加倍系数改坏' },
+    ]);
+    const original = fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8');
+    const child = spawn(
+      process.execPath,
+      [
+        TOOL,
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--baseline',
+        '4',
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+      ],
+      { cwd: REPO_ROOT, encoding: 'utf8' },
+    );
+    const status = await new Promise((resolve) => {
+      child.on('exit', (code, signal) => resolve(code ?? signal));
+      setTimeout(() => child.kill('SIGINT'), 700);
+    });
+    assert.equal(
+      status,
+      130,
+      `SIGINT 必须被处理器接住并退 130，实际 ${status}——串行档的循环不让出事件循环时，信号会一直排队到跑完`,
+    );
+    assert.equal(
+      fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
+      original,
+      '中断时靶文件必须已还原：还原不了就得手工 git checkout，而那一行变异看着像手改',
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

@@ -700,4 +700,13 @@ export default [
     must_mention: '--only 缺值必须退 1，实际',
     test_name: '--only 不给值时当场报错退 1，不静默变成全量',
   },
+  {
+    desc: 'M3709 串行档不再让出事件循环（SIGINT 排队到跑完才派发，中断时靶文件停在变异态）',
+    file: 'tools/mutation-check.mjs',
+    find: '    await new Promise((resolve) => setImmediate(resolve));',
+    replace: '    // 变异：串行档不让出事件循环',
+    tests: ['mutation-check'],
+    must_mention: '信号会一直排队到跑完',
+    test_name: 'SIGINT 能中断串行档，并把靶文件还原',
+  },
 ];
