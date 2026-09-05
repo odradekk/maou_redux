@@ -34,7 +34,11 @@ concurrency:
 jobs:
   engineless:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 15 分钟在 #242（K11 莉莉，源码 25k 行 + 测试 8.4k 行）上被顶穿：两个
+    # job 都在整 15 分钟被取消，engineless 已跑完测试、跳过数守护、锚质量、
+    # ESLint，倒在最后一步 Prettier 上。超时是防挂死的上限，不是预算——
+    # 每张口上票都在把仓库做大，这个数会需要再抬。
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -60,7 +64,7 @@ jobs:
 
   engine:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

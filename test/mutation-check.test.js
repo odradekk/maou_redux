@@ -878,3 +878,34 @@ test('must_mention 不是测试名时落回整份文件：判定不变，仍拦�
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
+
+test('test_name 是 must_mention 不是测试名时的逃生口：仍只跑那一个用例', () => {
+  const root = make_two_test_fixture();
+  try {
+    // must_mention 取断言消息（表驱动条目的常态：档位号是运行期拼进去的，
+    // 源码里没有这个字面量）；test_name 指出它所在的用例。
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, must_mention: '加倍系数必须是 2', test_name: '加倍' },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--baseline',
+      '1',
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+    ]);
+    assert.equal(status, 0, `变异应被拦下，实际退出 ${status}：\n${output}`);
+    assert.equal(
+      fs.existsSync(path.join(root, 'ran-other')),
+      false,
+      'test_name 点名了用例就该只跑它；旁支用例留了痕，说明逃生口没接上',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
