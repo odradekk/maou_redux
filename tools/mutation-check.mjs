@@ -209,7 +209,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
 // 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
 // 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
 // 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 3128; // #242 +5（M4736-M4740，AEGI 段数、词库与连接符分档）；#248 +9（M6200-M6209，EX 分发路径与 K902 失声）；#249 +40（M6400-M6439，K903 嘉德）；合并后整表加载实测 3128。
+const LEDGER_COUNT_BASELINE = 3136; // #242 +5（M4736-M4740，AEGI 段数、词库与连接符分档）；#248 +9（M6200-M6209，EX 分发路径与 K902 失声）；#249 +40（M6400-M6439，K903 嘉德）；合并后整表加载实测 3128。+1（M3705，test_name 逃生口）；#250 +7（M6500-M6506，K904 菲娅 EX 注册路径）
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
@@ -614,8 +614,13 @@ function run_one(root, m) {
     // **判定不会因此变松**：只有「过滤跑已经红了」才走快路，其余一律照旧
     // 重跑全文再判。模式一条也没匹配上时 node --test 退 0（实测），于是
     // 同样落回全文——最坏情况等于今天的行为多花 0.2 秒。
-    let run = m.must_mention
-      ? run_tests([`--test-name-pattern=${escape_regexp(m.must_mention)}`])
+    //
+    // `test_name` 是给「must_mention 是运行期拼出来的断言消息」用的逃生口：
+    // 表驱动的条目常把档位号插进消息里（`第 ${i + 1} 档推进`），源码里没有
+    // 这个字面量，模式必然落空。写上所在用例的名字，这类条目也能走快路。
+    const pattern = m.test_name || m.must_mention;
+    let run = pattern
+      ? run_tests([`--test-name-pattern=${escape_regexp(pattern)}`])
       : null;
     if (!run || run.status === 0) run = run_tests([]);
     output = `${run.stdout || ''}${run.stderr || ''}`;

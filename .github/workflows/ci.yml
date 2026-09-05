@@ -34,7 +34,11 @@ concurrency:
 jobs:
   engineless:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 15 分钟在 #242（K11 莉莉，源码 25k 行 + 测试 8.4k 行）上被顶穿：两个
+    # job 都在整 15 分钟被取消，engineless 已跑完测试、跳过数守护、锚质量、
+    # ESLint，倒在最后一步 Prettier 上。超时是防挂死的上限，不是预算——
+    # 每张口上票都在把仓库做大，这个数会需要再抬。
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -60,7 +64,7 @@ jobs:
 
   engine:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -99,7 +103,9 @@ jobs:
       - name: runner 规格（--jobs 的上限由内存定，不是由核数定）
         run: |
           nproc; free -h; df -h /
-      # --jobs 2：#304 修好并行之后开回来。
+      # --jobs 4：runner 实测 4 核 / 15Gi 内存 / 86G 空闲盘，而 --jobs 2 只用掉
+      # 1.5Gi 和 41% 盘——核没吃满。#324（K11）在 --jobs 2 下顶穿了 120 分钟
+      # 上限，开到 4 是最便宜的那一档，上面那句「上限由内存定」有 15Gi 兜着。
       #
       # 并行此前在 CI 上「跑到一半神秘崩溃」，根因是 process.exit() 丢弃管道
       # 上排队未写完的 stdout（实测写 836038 字节后立即 exit，管道对端只收到
@@ -113,7 +119,7 @@ jobs:
       - name: 变异全量（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
         run: |
           set +e
-          node tools/mutation-check.mjs --jobs 2
+          node tools/mutation-check.mjs --jobs 4
           rc=$?
           echo "=== 退出码 $rc ==="
           free -h
