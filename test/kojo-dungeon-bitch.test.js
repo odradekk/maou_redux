@@ -550,6 +550,10 @@ test('SELL_BITCH：完整流程（客循环 → 成功显示 → 经验/金钱/�
   assert.ok(lines.length > 0);
   // 经验（EXP:31:80 至少 +1）
   assert.ok((fixture.store.get('exp:31:80') || 0) >= 1);
+  assert.ok(
+    fixture.store.get('cflag:31:151') < -20,
+    '卖春次数经 KARMA 真身扣善恶值',
+  );
 });
 
 test('DUNGEON_WORK：内职收入（潜入中 ÷10；MONEY/EX_FLAG 入账）', () => {

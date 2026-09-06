@@ -386,7 +386,7 @@ test('SPY_BATTLE：三分支扣勇者 HP/气力并写 JUEL（谜药分支的欲�
   assert.equal(fixture.store.get('juel:2:5'), 26, '欲情珠 +10+技巧×8');
 });
 
-test('SPY_BATTLE：施虐狂 1.2 倍；KARMA 存根不动善恶值', async () => {
+test('SPY_BATTLE：施虐狂 1.2 倍；KARMA 真身扣善恶值', async () => {
   const fixture = setup_duel_world();
   const b2 = load(fixture, 'dungeon/dungeon-battle2');
   fixture.store.set('talent:1:83', 1); // 施虐狂
@@ -397,7 +397,7 @@ test('SPY_BATTLE：施虐狂 1.2 倍；KARMA 存根不动善恶值', async () =>
   // 下剤：HDMG = 10+0、MDMG = 10+0、KDMG = 2；施虐狂 ×1.2 → 12/12
   assert.equal(fixture.store.get('base:2:0'), 2000 - 12, 'HP -12（1.2 倍）');
   assert.equal(fixture.store.get('base:2:1'), 1000 - 12, '气力 -12');
-  assert.equal(fixture.store.get('cflag:2:151'), 50, 'KARMA 存根不动善恶值');
+  assert.equal(fixture.store.get('cflag:2:151'), 48, 'KARMA 真身扣善恶值 2');
 });
 
 test('DUNGEON_SPY：背叛成立时勇者陷落（CFLAG:1 = 0、party_del、赏金）', async () => {

@@ -68,7 +68,6 @@ const quest_mod = require('#/dungeon/dungeon-quest');
 const STUBBED_CALLS = [
   'DUNGEON_TOWN_LOVER',
   'SELL_EX_ITEM',
-  'KARMA',
   'ADD_EX_ITEM',
   'MONSTER_PLAY',
   'SHOW_LIST_TRAINABLE',

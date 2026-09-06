@@ -15,13 +15,14 @@
  */
 
 const era = require('#/era-electron');
+const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { clothtype_text } = require('#/page/page-clothtype');
 const { juel_check_main } = require('#/system/train/juel-check');
 const { chara } = require('#/facade/chara');
 const { stub_line } = require('#/utils/stub-line');
-const STUBBED_CALLS = ['KARMA', 'AUTO_ABLUP'];
+const STUBBED_CALLS = ['AUTO_ABLUP'];
 
 /**
  * 获取角色称呼（SAVESTR / CALLNAME）
@@ -95,12 +96,12 @@ async function after_autotrain(target) {
   if (era.get(`ex:${target}:1`)) {
     era.print('(私处绝顶导致善良值下降:-1)');
     await era.waitAnyKey();
-    stub_line('KARMA', '善恶值增减');
+    karma(target, -1);
   }
   if (era.get(`ex:${target}:2`)) {
     era.print('(肛门绝顶导致善良值下降:-2)');
     await era.waitAnyKey();
-    stub_line('KARMA', '善恶值增减');
+    karma(target, -2);
   }
 
   // 常时发情

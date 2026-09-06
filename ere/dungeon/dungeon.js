@@ -45,10 +45,11 @@
  */
 
 const era = require('#/era-electron');
+const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { stub_line_wait } = require('#/utils/stub-line');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { party_del } = require('#/dungeon/dungeon-party');
@@ -58,7 +59,7 @@ const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // karma / add_ex_item / use_ex_item 存根是函数内延迟 require（避开循环
 // 初始化），本文件对它们是顶层引用——两侧只在一处顶层引用，无环。
 // H7（#176）陷阱真身在 ere/dungeon/dungeon-trap.js（其对 dungeon.js 的
-// KARMA 存根是延迟 require，同款防环；DARK_JUEL :1344 唯一调用点）。
+// KARMA 真身是延迟 require，同款防环；DARK_JUEL :1344 唯一调用点）。
 // H8（#177）房间与设施真身在 ere/dungeon/dungeon-room.js（其对 dungeon.js
 // 的 ADD_EX_ITEM / KARMA / CAMPAIGN_ROOM 存根是延迟 require，同款防环）
 const battle_mod = require('#/dungeon/dungeon-battle');
@@ -76,7 +77,6 @@ const town_mod = require('#/dungeon/dungeon-town');
  * ere/dungeon/dungeon-town.js，撤到迷宫外的调用点经模块对象 town_mod）。
  */
 const STUBBED_CALLS = [
-  'KARMA',
   'ADD_EX_ITEM',
   'USE_EX_ITEM',
   'CAMPAIGN_QUEST',
@@ -114,18 +114,6 @@ function default_rand(n) {
 // @DUNGEON_TOWN（迷宮/DUNGEON_TOWN.ERB）：#178（H9）起为真身
 // ere/dungeon/dungeon-town.js 的 dungeon_town（撤到迷宫外时的城镇事件——
 // 补给 / 任务 / 娼馆，CFLAG:580 所持金的消费端）。
-
-/**
- * @KARMA 存根（キャラ関数/CHAR_ST.ERB:71；善恶值票，阶段 5）：善恶值
- * 增减。存根不改善恶值（ENTER_ENEMY 的 CM_KIND 值域 [0,199] 恒非负，
- * 本票全部善恶阈值分支结构保留、不达）。
- * @param {number} cid 角色
- * @param {number} delta 增减量
- * @returns {void} 原作无 RESULT 消费
- */
-function karma() {
-  stub_line('KARMA', '善恶值增减', '随善恶值票（阶段 5）');
-}
 
 /**
  * @ADD_EX_ITEM 存根（其他/USE_EX_ITEM.ERB:127；EX 道具票，阶段 5）：战利
@@ -1169,7 +1157,7 @@ async function run_dungeon(arg0, rand) {
   // === 休憩フェイズ（:762-849）===
 
   // :764-777 勇者に紛れ込んだ奴隷が暗躍します（同伴是迎击奴隶 3 时，
-  // 熟睡后对同伴降善恶值——KARMA 存根不动值，演出保留）
+  // 熟睡后对同伴降善恶值）
   if (sidea > 0 && chara(sidea).invasion.状态 === 3) {
     era.print(
       `${name_of(sidea)}在大家都熟睡后开始了奇妙的仪式……（同伴的善良值-1）`,

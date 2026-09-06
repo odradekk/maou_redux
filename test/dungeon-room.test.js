@@ -697,7 +697,7 @@ test('博物馆·早退：展品 FLAG:84 <= 0 直接返回（:872-874）', async
 
 // —— @DUNGEON_HOTEL（:915-1013，娼馆街）——
 
-test('娼馆街·男淫魔档：低善恶非处女 → 入账扣款 + KARMA 存根（:946-948/:1008-1011）', async () => {
+test('娼馆街·男淫魔档：低善恶非处女 → 入账扣款 + KARMA 真身（:946-948/:1008-1011）', async () => {
   const fixture = setup_world(507, 0);
   fixture.store.set('cflag:1:151', -30); // < -20
   fixture.store.set('cflag:1:9', 2); // COST = 2×8+150 = 166
@@ -710,7 +710,7 @@ test('娼馆街·男淫魔档：低善恶非处女 → 入账扣款 + KARMA 存�
     834,
     'CFLAG:580 -= COST（:1010）',
   );
-  assert.equal(stub_count(fixture, 'KARMA'), 1, 'CALL KARMA, A, -1（:1011）');
+  assert.equal(fixture.store.get('cflag:1:151'), -31, 'CALL KARMA, A, -1');
 });
 
 test('娼馆街·业态覆盖序：萝莉控（142）压过善恶档（:961-963）', async () => {

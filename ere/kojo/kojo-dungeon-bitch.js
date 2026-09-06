@@ -40,6 +40,7 @@
  */
 
 const era = require('#/era-electron');
+const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -60,22 +61,13 @@ const {
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['KARMA', '强制肉偿'];
+const STUBBED_CALLS = ['强制肉偿'];
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** 角色的显示名（%SAVESTR:ARG% 的等价物） */
 const name_of = (cid) => chara_callname(cid);
-
-/**
- * 原作 @KARMA（CHAR_ST.ERB:71）的存根：善恶值增减（阶段 5）。
- * @param {number} cid 角色 ID
- * @param {number} delta 增减量
- */
-function karma(cid, delta) {
-  stub_line('KARMA', `善恶值增减 ${delta}`);
-}
 
 /**
  * @DUNGEON_BITCH（:3-50）：地下城内卖春入口。

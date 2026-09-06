@@ -312,7 +312,7 @@ test('AUTOTRAIN: com63_auto 分档计算', async () => {
   assert.equal(fixture.store.get('cflag:17:666'), 1);
 });
 
-test('AUTOTRAIN: after_autotrain ex:1/ex:2 KARMA 占位', async () => {
+test('AUTOTRAIN: after_autotrain ex:1/ex:2 接入 KARMA 真身', async () => {
   const { fixture } = seed_autotrain_world();
   const { after_autotrain } = fixture.load_module('event/event-autotrain');
   fixture.store.set('cflag:17:666', 1);
@@ -320,6 +320,7 @@ test('AUTOTRAIN: after_autotrain ex:1/ex:2 KARMA 占位', async () => {
   await after_autotrain(17);
   let texts = fixture.text_lines();
   assert.ok(texts.some((l) => l.includes('(私处绝顶导致善良值下降:-1)')));
+  assert.equal(fixture.store.get('cflag:17:151'), -1);
 
   // 第二个用例：ex:2 肛门绝顶
   const { fixture: f2 } = seed_autotrain_world();
@@ -329,6 +330,7 @@ test('AUTOTRAIN: after_autotrain ex:1/ex:2 KARMA 占位', async () => {
   await aa2(17);
   texts = f2.text_lines();
   assert.ok(texts.some((l) => l.includes('(肛门绝顶导致善良值下降:-2)')));
+  assert.equal(f2.store.get('cflag:17:151'), -2);
 });
 
 test('AUTOTRAIN: after_autotrain 常时发情蓄积（flag:75 与 TALENT:271 两道闸）', async () => {
