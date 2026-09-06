@@ -2,7 +2,8 @@
 // #63 起 ERB 侧补齐同款扫描完整性；#156 起多样本：引用前缀按样本名派生；
 // #290 起锚表按 js 文件拆进 tools/trace-refs/，本文件只留校核；
 // #298 起量鉴别力：命中 1 处 / 平行复现放行 / 空 PRINTFORM 整行锚放行，
-// 其余弱锚冻结成只减不增的基线）。
+// 其余弱锚冻结成只减不增的基线；#331 起 --coverage 独占模式出移植状态表，
+// 判定面在 tools/trace-coverage.mjs）。
 //
 // 守什么：ere/ 移植文件正文里的 `// :N 原作片段` 注释，以及 #48 起
 // tools/compare 等处指向黄金样本 target/emuera.log 的 `log:N` 注释。文件头
@@ -78,6 +79,12 @@
 //         只核路径含该子串的文件（逗号分隔可给多个）。一次全量现在是
 //         96463 条引用 / 55 秒；限到一个文件是 3 秒。写坏型探针用它，
 //         **报告行会自报范围**——限定范围的绿不是全量绿。
+//       node tools/trace-check.mjs --coverage
+//         移植状态表（#331，独占模式——不跑上面的锚校验）：target/ERB/
+//         346 个文件逐个归为 已移植 / 部分移植 / 已判定不实现 / 待移植 /
+//         纯声明，分母与待移植基线写死、未归类即失败。判据与证据面见
+//         tools/trace-coverage.mjs 头注。`--coverage --list` 逐文件列出
+//         （验收对账用）；`--only` 在本模式下限定 **target 文件**路径。
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -133,6 +140,19 @@ const ONLY = (() => {
 /** 该文件是否在本次扫描面内（无 --only 时恒真） */
 function in_scope(rel) {
   return ONLY.length === 0 || ONLY.some((p) => rel.includes(p));
+}
+
+// #331：--coverage 独占模式——只出移植状态表，不跑锚校验（两者成本与
+// 判定面不同：状态表读注释与清单，锚校验跑 9.6 万条引用）。--only 在
+// 此模式下限定 target 文件路径（上文的解析对两种模式通用）。
+if (process.argv.includes('--coverage')) {
+  const { run_coverage } = await import('./trace-coverage.mjs');
+  const failures = await run_coverage({
+    repo: REPO,
+    only: ONLY,
+    list: process.argv.includes('--list'),
+  });
+  process.exit(failures === 0 ? 0 : 1);
 }
 
 // #282 注释自身的引用（本文件注释里写了 emuera.log:26，被完整性扫描
