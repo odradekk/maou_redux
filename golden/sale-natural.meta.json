@@ -1,0 +1,13 @@
+{
+  "macro_key": "manual",
+  "autosave": false,
+  "history_lines": 5000,
+  "build": "93106",
+  "save": "save99（第 7 日午前）",
+  "sample": "sale-natural",
+  "segment": "据点主菜单→[105] 能力值提升（进出触发可售判定）→[106] 贩卖奴隶→选人→确认→出售口上→[0] 魔界的黑市→末路演出→回选人列表→主菜单",
+  "state": "natural",
+  "seed_string": "ABL:TARGET:10 = 4\nABL:TARGET:11 = 5\nABL:TARGET:0 = 3",
+  "recorded_at": "2026-09-06",
+  "notes": "角色温妮（save99 的调教目标，随机生成、不在 Chara*.csv 内）：性格【高贵】= 素质 163 → K3 口上 → 调 SELL_MATURO_K0；反抗刻印 LV1（≠3，故全段不经过 SELL_MATURO.ERB:84 那支，5 处 RAND 一处未走，输出逐字确定）；女性、人类、职业弓手。卖价 S = 14,430（>0 且 <100000）。落点 SELL_MATURO.ERB:2024/2079-2080：ELSE 顶层分支（无爱慕 TALENT:85、无淫乱 TALENT:76）→ 非魔族 → 10万未満 → 售出对象 LOCAL == 0（其他职业，LOCALS = 公厕）→ 非肉便器（TALENT:204 == 0）两行。口上侧只出一行告别台词。全程未存档。 录制时 target/emuera.config 的履歴ログ行数仍是缺省 5000（未按备料抬到 50000），本段实录 271 行、远未触及截断，故样本不受影响；头注按实际取值记 5000。 一处未查明的原作行为，样本里已录进去：第一次输入 999 退出温妮的个人能力界面、CHECK_SELLASSIABLE 触发之后，重画的奴隶一览里温妮消失（log 第 149 行只剩「[ 0] 你」），而 @LIFE_LIST_SALAVE（SHOP/LIFE_LIST.ERB:188）的过滤只看 CFLAG:COUNT:1（状态）与 BASE:COUNT:0，按代码读她不该消失。不影响本样本有效性（忠实录进去了），但比对到那一段的人要能复现它。该段属 SHOP/，在阶段 5b 范围内。"
+}

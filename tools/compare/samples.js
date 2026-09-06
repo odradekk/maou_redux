@@ -36,6 +36,12 @@ const SAMPLES = {
   'daycycle-max': 'golden/daycycle-max.log',
   'train-natural': 'golden/train-natural.log',
   'train-upgrade': 'golden/train-upgrade.log',
+  // sale-*（#334）：出售段一态。样本已入库，但 cli 的段分流（cli.js:186）
+  // 会走 replay-b 的 replay_scope_b('sale', …)，而那个回放驱动要等出售
+  // 逻辑移植出来（#338 / #339）才存在——在此之前 --sample sale-natural
+  // 会以「未知段「sale」」停在 replay-b.js:117。登记先行是为了让 trace-check
+  // 的 `sale-natural-log:行号` 引用前缀现在就能解析。
+  'sale-natural': 'golden/sale-natural.log',
 };
 
 /**
