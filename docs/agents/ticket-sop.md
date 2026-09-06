@@ -179,14 +179,19 @@ tools/mutation-check.mjs 的 ENGINE_SKIP_BASELINE，两处不一致 npm test 当
 对拍基线四数当前是 <样本: m/v/s/u ...>。并行票也会动它——只管把自己分支的
 数改对，合并态由派单人重测。
 
-自检与提交：
-- npm run test:related 全绿，外加 npx eslint . --max-warnings 0、npx prettier --check .
-- 逐条对照验收清单
-- 验收里写着「且此行为有测试」的每一条，做变异测试自证：把被测规则改坏，
-  确认真的有用例失败（本项目在 #10 出过事：测试全绿，规则却已失效）
-- 按 Conventional Commits 提交，scope 用 <scope>
-- 完成后停下等验收，合并与开 PR 由派单人做
+自检与提交（**这四条全部做到才算交付**）：
+- npm run test:related **必须跑，且必须全绿**——不是「跑一下看看」。它是本票
+  在 CI 的 pr job 上要过的同一道，本地红了推上去照样红。
+- npx eslint . --max-warnings 0 与 npx prettier --check . 全绿
+- 逐条对照验收清单；写着「且此行为有测试」的每一条做变异测试自证：把被测
+  规则改坏，确认真的有用例失败（本项目在 #10 出过事：测试全绿，规则却已失效）
+- 按 Conventional Commits 提交，scope 用 <scope>。**提交信息要有正文**：改了
+  什么、为什么这么改、有意的取舍各一段，只有标题一行不算数
+- 提交完 git status 必须干净（新文件也要 git add），然后停下等验收。
+  合并与开 PR 由派单人做
 ```
+
+**派 codex 的票，判交付前先看提交，别看终端。** #332/#333 两张连续踩同三条：做完 50 分钟的活之后**停在「确认按此提交吗？」等输入**（此时分支零提交、工作区三十几个文件是脏的）；提交信息**只有标题一行**、无正文无票号；`test:related` **没跑或跑了没看**（#333 的 `test/dungeon-battle.test.js` 在选择面内，CI 一跑就红）。上面模板里那四条就是照这三次写的，别删。判据仍是 §4 那两条：`git log origin/master..HEAD` 有提交、`git status --short` 干净。
 
 **简报里绝不要写 `gh issue view … --comments`。** 本机 `gh` 的 `issue view` 仍在 GraphQL 里请求已下线的 `repository.issue.projectCards`，**该命令必然失败**，只吐一行「Projects (classic) is being deprecated」——阶段 4 派头两张票时两个 agent 同时撞上，白烧一轮。模板里的 `--json` 形式是验证过的替代（正文与全部评论一次拿到）。`gh issue comment` / `edit` / `close` 不受影响。
 
