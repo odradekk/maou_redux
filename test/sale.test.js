@@ -209,19 +209,30 @@ test('ESTIMATE_CHARA：素质倍率及条件分支生成可渲染明细', () => 
   assert.equal(estimate_chara(31).talent_multipliers[314], 80, '矮人种族');
 });
 
-test('ESTIMATE_CHARA：卖淫影响 2 按配置契约不加减也不乘经验倍率', () => {
+test('ESTIMATE_CHARA：卖淫影响 2 首次用零，随后沿用 E:74 的旧倍率', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('abl:31:10', 1); // 顺从 +200；欲望 LV0 固有 +10
   fixture.store.set('abl:31:37', 5); // mode 2 不应用 ±10000
-  fixture.store.set('exp:31:74', 500); // mode 2 不应用卖淫经验倍率
-  fixture.store.set('talent:31:180', 1); // mode 2 不应用妓女倍率
+  fixture.store.set('exp:31:74', 500);
   const { estimate_chara } = fixture.load_module('system/stronghold/sale');
 
-  const result = estimate_chara(31, { prostitution_effect: 2 });
+  let result = estimate_chara(31, { prostitution_effect: 2 });
+  assert.equal(result.price, 0);
+  assert.equal(result.experience_multipliers[74], 0);
 
-  assert.equal(result.price, 210);
-  assert.equal(result.experience_multipliers[74], 100);
+  fixture.store.set('abl:31:37', 0);
+  result = estimate_chara(31, { prostitution_effect: 0 });
+  assert.equal(result.price, 42);
+  assert.equal(result.experience_multipliers[74], 20);
+
+  fixture.store.set('abl:31:37', 5);
+  result = estimate_chara(31, { prostitution_effect: 2 });
+  assert.equal(result.price, 42);
+  assert.equal(result.experience_multipliers[74], 20);
+
+  fixture.store.set('talent:31:180', 1); // mode 2 不应用妓女倍率
+  result = estimate_chara(31, { prostitution_effect: 2 });
   assert.equal(result.talent_multipliers[180], 100);
 });
 

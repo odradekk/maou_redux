@@ -106,16 +106,16 @@ export default [
   {
     desc: 'M6614 ESTIMATE_CHARA 卖淫经验负面低档倍率改坏',
     file: 'ere/system/stronghold/sale.js',
-    find: '    return exp < 50 ? 40 : 20;',
-    replace: '    return exp < 50 ? 41 : 20;',
+    find: '    let multiplier = exp < 50 ? 40 : 20;',
+    replace: '    let multiplier = exp < 50 ? 41 : 20;',
     tests: ['sale'],
     must_mention: '负面项',
   },
   {
     desc: 'M6615 ESTIMATE_CHARA 倾城高卖淫经验正面倍率改坏',
     file: 'ere/system/stronghold/sale.js',
-    find: '    if (talent(181)) return exp > 5000 ? 300 : 250;',
-    replace: '    if (talent(181)) return exp > 5000 ? 299 : 250;',
+    find: '    if (talent(181)) multiplier = exp > 5000 ? 300 : 250;',
+    replace: '    if (talent(181)) multiplier = exp > 5000 ? 299 : 250;',
     tests: ['sale'],
     must_mention: '卖淫正面模式',
   },
@@ -305,15 +305,12 @@ export default [
     must_mention: '卖淫影响 2',
   },
   {
-    desc: 'M6638 ESTIMATE_CHARA 卖淫无影响模式误乘零',
+    desc: 'M6638 ESTIMATE_CHARA 顺手修正卖淫无影响模式的残留倍率',
     file: 'ere/system/stronghold/sale.js',
-    find: `  // CONFIG.ERB:136-143 把 2 明确定义为「无影响」。源函数漏写这一支，会让
-  // E:74 继承上次调用的临时槽甚至首次为 0；此处按配置契约消除跨调用污染。
-  return 100;`,
-    replace: `  // 变异：重现源函数的未初始化槽污染
-  return 0;`,
+    find: "  experience_multipliers[74] = era.get('e:74') || 0;",
+    replace: '  experience_multipliers[74] = 100;',
     tests: ['sale'],
-    must_mention: '卖淫影响 2',
+    must_mention: '沿用 E:74',
   },
   {
     desc: 'M6639 SELL_MILK 第二档经验倍率改坏',

@@ -13,7 +13,8 @@
  * 变量语义：ABL 0-3 = 阴蒂/乳房/私处/肛门感觉，10-17 = 顺从/欲望/
  * 技巧/侍奉技术/露出/话术/侍奉精神/露出癖，20-23 = 抖S/抖M/百合/断背
  * 气质，30-33/37/39 = 性交/肛交/精液/百合/卖淫/兽奸中毒；EXP 54/60/74
- * = 挤奶/生育/卖淫经验；CFLAG 71 = 处女丧失时是否纯洁；TFLAG 35/402
+ * = 挤奶/生育/卖淫经验；E 74 = 上次估价留下的卖淫经验倍率；CFLAG 71
+ * = 处女丧失时是否纯洁；TFLAG 35/402
  * = 本轮母乳量/死斗场收入；TEQUIP 55 = 死斗场观战中；ITEM 35 = 观战卷；
  * EX_FLAG 4444 = 非作弊资金。TALENT 0/9/12/15/20-22/24/27/33/42/46/63/
  * 70/71/73/76/91/92 = 处女/崩坏/刚强/高姿态/克制/冷漠/感情淡薄/
@@ -122,21 +123,23 @@ function sadomasochism_multiplier(level) {
   return 300;
 }
 
-function prostitution_exp_multiplier(exp, talent, prostitution_effect) {
-  if (exp <= 0) return 100;
+function update_prostitution_exp_multiplier(exp, talent, prostitution_effect) {
+  if (exp <= 0) {
+    era.set('e:74', 100);
+    return;
+  }
   if (prostitution_effect === 0) {
-    if (talent(181)) return 80;
-    if (talent(180)) return 60;
-    return exp < 50 ? 40 : 20;
+    let multiplier = exp < 50 ? 40 : 20;
+    if (talent(181)) multiplier = 80;
+    else if (talent(180)) multiplier = 60;
+    era.set('e:74', multiplier);
   }
   if (prostitution_effect === 1) {
-    if (talent(181)) return exp > 5000 ? 300 : 250;
-    if (talent(180)) return 200;
-    return exp < 500 ? 120 : 150;
+    let multiplier = exp < 500 ? 120 : 150;
+    if (talent(181)) multiplier = exp > 5000 ? 300 : 250;
+    else if (talent(180)) multiplier = 200;
+    era.set('e:74', multiplier);
   }
-  // CONFIG.ERB:136-143 把 2 明确定义为「无影响」。源函数漏写这一支，会让
-  // E:74 继承上次调用的临时槽甚至首次为 0；此处按配置契约消除跨调用污染。
-  return 100;
 }
 
 function birth_exp_multiplier(exp) {
@@ -263,11 +266,14 @@ function estimate_chara(
   }
 
   const experience_multipliers = Array(75).fill(100);
-  experience_multipliers[74] = prostitution_exp_multiplier(
+  update_prostitution_exp_multiplier(
     experience(74),
     talent,
     prostitution_effect,
   );
+  // 原作缺陷 1:1（#14）：EXP:74 > 0 且卖淫影响为 2 时不写可保存的 E:74，
+  // 因而沿用上次估价的倍率；首次调用读到 0，会把售价直接归零。
+  experience_multipliers[74] = era.get('e:74') || 0;
   price = multiply_percent(price, experience_multipliers[74]);
   experience_multipliers[60] = birth_exp_multiplier(experience(60));
   price = multiply_percent(price, experience_multipliers[60]);
