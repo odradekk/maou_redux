@@ -42,11 +42,10 @@
  *     经 era_flag.target（run_dungeon :37 置位；直调需先置）；
  *   - MONEY / EX_FLAG:4444 → era_flag.money / era_exflag.legit_money
  *     （dungeon.js 先例）；EX_FLAG:99（威望）→ era_exflag.prestige；
- *   - ADD_EX_ITEM / KARMA / CAMPAIGN_ROOM 经函数内延迟 require 复用
- *     dungeon.js 的域内存根（避开循环初始化，#175/#176 先例）；
- *     CAMPAIGN_ROOM_EXTRA / SELL_EX_ITEM / EX_ITEM_NAME /
- *     RAND_MONSTER_NUMBER 是本文件的域内存根（STUBBED_CALLS，
- *     docs/stub-registry.md）；
+ *   - KARMA / CAMPAIGN_ROOM 经函数内延迟 require 复用 dungeon.js 的域内
+ *     存根（避开循环初始化，#175/#176 先例）；ADD_EX_ITEM / SELL_EX_ITEM /
+ *     EX_ITEM_NAME 随 #344 复用 ex-item.js 真身；CAMPAIGN_ROOM_EXTRA /
+ *     RAND_MONSTER_NUMBER 仍是本文件的域内存根；
  *   - CFLAG:503 是位域（门面名「休憩」只覆盖位 0；#176 约定）：本文件
  *     只动位 5（32 = 博物馆陈列架的先制封印，:900），位操作裸寻址；
  *   - TIMES COST, 1.1 → Math.floor(cost * 1.1)（截断，#176 同款）；
@@ -66,18 +65,14 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line, stub_line_wait, stub_text } = require('#/utils/stub-line');
+const { stub_line } = require('#/utils/stub-line');
+const ex_item_mod = require('#/dungeon/ex-item');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = [
-  'RAND_MONSTER_NUMBER',
-  'SELL_EX_ITEM',
-  'EX_ITEM_NAME',
-  'CAMPAIGN_ROOM_EXTRA',
-];
+const STUBBED_CALLS = ['RAND_MONSTER_NUMBER', 'CAMPAIGN_ROOM_EXTRA'];
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -101,26 +96,6 @@ function default_rand(n) {
 function rand_monster_number() {
   stub_line('RAND_MONSTER_NUMBER', '怪物抽选', '随怪物票');
   return 100;
-}
-
-/**
- * @SELL_EX_ITEM 存根（其他/USE_EX_ITEM.ERB；EX 道具票，阶段 5）：把身上
- * 的 EX 道具卖给店（RESULT 无消费者）。
- * @returns {Promise<void>} 原作无 RESULT 消费
- */
-async function sell_ex_item() {
-  await stub_line_wait('SELL_EX_ITEM', 'EX 道具贩卖', '随 EX 道具票（阶段 5）');
-}
-
-/**
- * @EX_ITEM_NAME 存根（其他/USE_EX_ITEM.ERB:230；EX 道具票，阶段 5）：
- * EX 道具名的行内打印（PRINTFORM 习语）。ere 侧改为返回占位串，由调用方
- * 拼进同一显示行（文件头「拼接归并」条）。
- * @param {number} no 道具番号（原作 ARG:0）
- * @returns {string} 道具名（存根为占位文案）
- */
-function ex_item_name() {
-  return stub_text('EX_ITEM_NAME', 'EX 道具名', '随 EX 道具票（阶段 5）');
 }
 
 /**
@@ -179,7 +154,7 @@ async function dungeon_room(arg0, rand, ctx) {
 
   // :20-26 店遭遇の可能性——戦闘が発生しないフラグを返す
   if (rand_n(10) === 0) {
-    await dungeon_shop_itemsell(arg0);
+    await dungeon_shop_itemsell(arg0, rand_n);
     return 1;
   }
 
@@ -364,9 +339,8 @@ async function dungeon_shop(a, extra, rand_n) {
       return 0;
     }
 
-    // :208 CALL ADD_EX_ITEM, -2, A, 1（域内延迟 require，文件头）
-    const dungeon_mod = require('#/dungeon/dungeon');
-    const result = await dungeon_mod.add_ex_item(-2, a, 1);
+    // :208 CALL ADD_EX_ITEM, -2, A, 1
+    const result = await ex_item_mod.add_ex_item(-2, a, 1, rand_n);
     if (show && result > 0) {
       era.print(`现金收入+${cost}`); // :210
       await era.waitAnyKey();
@@ -397,8 +371,7 @@ async function dungeon_shop(a, extra, rand_n) {
     }
 
     // :234 CALL ADD_EX_ITEM, -3, A, 1
-    const dungeon_mod = require('#/dungeon/dungeon');
-    const result = await dungeon_mod.add_ex_item(-3, a, 1);
+    const result = await ex_item_mod.add_ex_item(-3, a, 1, rand_n);
     if (show && result > 0) {
       era.print(`现金收入+${cost}`); // :236
       await era.waitAnyKey();
@@ -444,13 +417,13 @@ async function dungeon_shop(a, extra, rand_n) {
  *
  * 店遭遇（dungeon_room 的 1/10 掷，:21）时调用：否定の珠（JUEL:100）
  * 2000 以上换 500 所持金；反発刻印（MARK:3）1 点换 1000 经验值
- * （EXP:80）；卖掉身上 EX 道具（存根）；钱够再买一件补给（ADD_EX_ITEM
- * -3）。RESULT 语义由调用方转成「不发生战斗」。
+ * （EXP:80）；卖掉身上 EX 道具；钱够再买一件补给（ADD_EX_ITEM -3）。
+ * RESULT 语义由调用方转成「不发生战斗」。
  *
  * @param {number} a 受者（原作全局 A）
  * @returns {Promise<number>} 原作 RETURN 0
  */
-async function dungeon_shop_itemsell(a) {
+async function dungeon_shop_itemsell(a, rand_n = default_rand) {
   const show = ((era.get('flag:5') || 0) & 32) !== 0;
 
   // :275-279 COST = 値段（最大 1000）
@@ -492,7 +465,7 @@ async function dungeon_shop_itemsell(a) {
   }
 
   // :304-305 アイテム売却（域内存根）
-  await sell_ex_item(a);
+  ex_item_mod.sell_ex_item(a, rand_n);
 
   // :307-312 钱检
   if ((era.get(`cflag:${a}:580`) || 0) < cost) {
@@ -503,8 +476,7 @@ async function dungeon_shop_itemsell(a) {
   }
 
   // :314-322 CALL ADD_EX_ITEM, -3, A, 1
-  const dungeon_mod = require('#/dungeon/dungeon');
-  const result = await dungeon_mod.add_ex_item(-3, a, 1);
+  const result = await ex_item_mod.add_ex_item(-3, a, 1, rand_n);
   if (show && result > 0) {
     era.print(`现金收入+${cost}`); // :316 PRINTFORML（无读键）
   }
@@ -939,7 +911,9 @@ async function dungeon_ice(a, extra, rand_n) {
     // :706-714 吹雪（アイテム破壊）——LOCAL = RAND:5 + 560 的 CFLAG 槽
     const slot = rand_n(5) + 560;
     if ((era.get(`cflag:${a}:${slot}`) || 0) > 0 && show) {
-      era.print(`激烈的飞雪把${ex_item_name()}破坏了……`); // :709-711 拼行
+      era.print(
+        `激烈的飞雪把${ex_item_mod.ex_item_name(era.get(`cflag:${a}:${slot}`) || 0)}破坏了……`,
+      ); // :709-711 拼行
       await era.waitAnyKey();
     }
     era.set(`cflag:${a}:${slot}`, 0); // :713（破坏无条件）

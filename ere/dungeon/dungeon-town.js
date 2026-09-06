@@ -55,20 +55,19 @@ const bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // 本票（#178）真身：@SET_QUEST（:56 受注，必须在 PLANNING 之后——读
 // CFLAG:520 目标阶层）
 const quest_mod = require('#/dungeon/dungeon-quest');
+const ex_item_mod = require('#/dungeon/ex-item');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。三个域内新存根（DUNGEON_TOWN_LOVER /
- * SELL_EX_ITEM / COM63_AUTO）与 RAND_AUTOTRAIN 在文件下方定义；KARMA /
- * ADD_EX_ITEM / BEFORE_AUTOTRAIN / COM0_AUTO / SOURCE_CHECK_AUTO 复用既有
- * 域内存根（#176「复用 + 调用点列补新处」先例）——对 dungeon.js /
+ * 核对固定）；名单变动必须同步清单。DUNGEON_TOWN_LOVER / COM63_AUTO 与
+ * RAND_AUTOTRAIN 在文件下方定义；KARMA / BEFORE_AUTOTRAIN / COM0_AUTO /
+ * SOURCE_CHECK_AUTO 复用既有域内存根；SELL_EX_ITEM / ADD_EX_ITEM 随 #344
+ * 复用 ex-item.js 真身。对 dungeon.js /
  * dungeon-battle.js / dungeon-trap.js 的引用一律函数内延迟 require 防环
  * （dungeon.js → 本文件是顶层引用，反向只许延迟）。
  */
 const STUBBED_CALLS = [
   'DUNGEON_TOWN_LOVER',
-  'SELL_EX_ITEM',
-  'ADD_EX_ITEM',
   'MONSTER_PLAY',
   'SHOW_LIST_TRAINABLE',
   'CHARADEAD_CHECK',
@@ -113,20 +112,6 @@ async function dungeon_town_lover(cid) {
 }
 
 /**
- * @SELL_EX_ITEM 存根（其他/USE_EX_ITEM.ERB:74；EX 道具票，阶段 5——与
- * ADD_EX_ITEM / USE_EX_ITEM 同族）：战利品（EX 道具）换钱。
- * @param {number} cid 角色
- * @returns {Promise<void>} 原作无 RESULT 消费（换金直接写 CFLAG:580/581）
- */
-async function sell_ex_item(cid) {
-  await stub_line_wait(
-    'SELL_EX_ITEM',
-    `道具出售（${name_of(cid)}）`,
-    '随 EX 道具票（阶段 5）',
-  );
-}
-
-/**
  * @DUNGEON_TOWN（:5-75）：勇者撤到迷宫外时的城镇事件主流程。
  *
  * 顺序（原作 :27-67）：再起点恢复 → 全员升级 → 资金调达 → 日常 → 采购
@@ -167,7 +152,7 @@ async function dungeon_town(arg0, rand = default_rand) {
   // :41-44 日常フェイズ
   await town_pt_dayevent(pm[0], pm[1], pm[2]);
   // :45-48 アイテムの購入
-  await town_pt_shopping(pm[0], pm[1], pm[2]);
+  await town_pt_shopping(pm[0], pm[1], pm[2], rand_n);
   // :49-52 冒険の計画
   await town_pt_planning(pm[0], pm[1], pm[2], rand_n);
   // :53-56 クエスト受注（SET_QUEST 必须在 PLANNING 之后，读 CFLAG:520）
@@ -242,7 +227,7 @@ async function town_pt_funding(pm0, pm1, pm2, rand_n) {
     }
     const cid = pm[lcount];
     chara(cid).dungeon.所持金 += local; // :121 CFLAG:580 += LOCAL
-    await sell_ex_item(cid); // :123 CALL SELL_EX_ITEM（域内存根）
+    ex_item_mod.sell_ex_item(cid, rand_n); // :123 CALL SELL_EX_ITEM
     town_sell(cid); // :125 CALL TOWN_SELL
     await town_hoshounin(cid); // :127 CALL TOWN_HOSHOUNIN
     await town_hensai(cid); // :129 CALL TOWN_HENSAI
@@ -479,9 +464,10 @@ async function town_loan(arg, rand_n) {
 /**
  * @TOWN_PT_SHOPPING（:331-343）：采购段。每人 @TOWN_SHOPPING，末尾 WAIT。
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
+ * @param {(n: number) => number} rand_n RAND:N 随机源
  * @returns {Promise<void>} 原作无 RETURN
  */
-async function town_pt_shopping(pm0, pm1, pm2) {
+async function town_pt_shopping(pm0, pm1, pm2, rand_n = default_rand) {
   const pm = [pm0, pm1, pm2];
   if ((era.get('flag:5') || 0) & 32) {
     era.print(`${name_of(pm[0])}的队伍在道具店进行了攻略的准备工作…`);
@@ -490,7 +476,7 @@ async function town_pt_shopping(pm0, pm1, pm2) {
     if (pm[lcount] <= 0) {
       continue;
     }
-    await town_shopping(pm[lcount]);
+    await town_shopping(pm[lcount], rand_n);
   }
   await era.waitAnyKey(); // :343 WAIT
 }
@@ -499,9 +485,10 @@ async function town_pt_shopping(pm0, pm1, pm2) {
  * @TOWN_SHOPPING（:346-357）：个人采购。所持金 ≥ 3000 才买（ADD_EX_ITEM
  * -3 补给购买），RESULT 非 0（买到）时扣 500。
  * @param {number} arg 角色
+ * @param {(n: number) => number} rand_n RAND:N 随机源
  * @returns {Promise<number>} 原作 RETURN 0
  */
-async function town_shopping(arg) {
+async function town_shopping(arg, rand_n = default_rand) {
   if (arg <= 0) {
     return 0; // :349-350
   }
@@ -509,9 +496,8 @@ async function town_shopping(arg) {
   if (chara(arg).dungeon.所持金 < 3000) {
     return 0;
   }
-  const { add_ex_item } = require('#/dungeon/dungeon');
-  const bought = await add_ex_item(-3, arg, 1); // :354 CALL ADD_EX_ITEM, -3, ARG, 1
-  // :355-357 代金を支払う（存根恒 0 = 没买到，不扣款——存根语义自洽）
+  const bought = await ex_item_mod.add_ex_item(-3, arg, 1, rand_n); // :354 CALL ADD_EX_ITEM
+  // :355-357 代金を支払う（RESULT 非 0 才扣款）
   if (bought) {
     chara(arg).dungeon.所持金 -= 500;
   }
@@ -879,6 +865,6 @@ module.exports = {
   town_pt_party,
   town_pt_dayevent,
   dungeon_town_lover,
-  sell_ex_item,
+  sell_ex_item: ex_item_mod.sell_ex_item,
   STUBBED_CALLS,
 };

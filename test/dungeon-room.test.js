@@ -79,22 +79,16 @@ function setup_world(facility = 0, extra = 0) {
 
 // —— @DUNGEON_ROOM 分发器（:2-73）——
 
-test('分发·店遭遇：RAND:10 == 0 时 RESULT 1（不发生战斗），卖珠/刻印后钱不够不买', async () => {
+test('分发·店遭遇：RESULT 1（不发生战斗），出售与购买 EX 道具真身接通', async () => {
   const fixture = setup_world();
   const { dungeon_room } = load(fixture);
-  // rand ≡ 0：店遭遇掷必中
-  const ret = await dungeon_room(1, () => 0);
+  // 店遭遇掷 0；出售五槽均掷 1；ADD_EX_ITEM 的武器掷、种类、未鉴定掷均 1。
+  const ret = await dungeon_room(1, seq([0, 1, 1, 1, 1, 1, 1, 1, 1]));
   assert.equal(ret, 1, 'RESULT 1 = 戦闘が発生しないフラグ（:25）');
-  // ITEMSSELL：等级 0 → COST = 50；所持金 1000 ≥ 50 → 走购买，但
-  // ADD_EX_ITEM 存根 RESULT 0（没找到）→ 不转账（:318）
-  assert.equal(
-    stub_count(fixture, 'SELL_EX_ITEM'),
-    1,
-    '卖 EX 道具的域内存根被调（:305）',
-  );
-  assert.equal(stub_count(fixture, 'ADD_EX_ITEM'), 1, '购买走存根（:314）');
-  assert.equal(fixture.store.get('flag:10004') ?? 0, 0, 'RESULT 0 → 不入账');
-  assert.equal(fixture.store.get('cflag:1:580'), 1000, '所持金不动');
+  // 等级 0 → COST = 50；买到 401 后店铺入账、勇者付款。
+  assert.equal(fixture.store.get('cflag:1:560'), 401, '补给进入首个空槽');
+  assert.equal(fixture.store.get('flag:10004'), 50, '买到后入账（:317）');
+  assert.equal(fixture.store.get('cflag:1:580'), 950, '所持金扣 50');
 });
 
 test('分发·无设施：FLAG:(阶层+349) <= 0 直接返回 0，不掷设施', async () => {
@@ -363,26 +357,29 @@ test('商店街·逛街档：扣所持金入账，体力 +20 气力 +50（:254-2
   assert.equal(fixture.store.get('base:1:1'), 1050, '气力 +50（:258）');
 });
 
-test('商店街·武器屋：扩张位 0 + RAND:3 == 0 → 换算式，存根 RESULT 0 不转账（:193-218）', async () => {
+test('商店街·武器屋：扩张位 0 + RAND:3 == 0 → 真身换武器并转账（:193-218）', async () => {
   const fixture = setup_world(500, 1);
   fixture.store.set('cflag:1:9', 2); // 武器档 COST = 2×8+20 = 36
+  fixture.store.set('talent:1:200', 1); // 战士可装备 RAND:11 == 0 的剑
   const { dungeon_shop } = load(fixture);
   await dungeon_shop(1, 1, seq([0]));
-  assert.equal(stub_count(fixture, 'ADD_EX_ITEM'), 1, 'ADD_EX_ITEM -2（:208）');
+  assert.equal(fixture.store.get('cflag:1:550'), 1040, '第 1 层的剑入装备槽');
   assert.equal(
-    fixture.store.get('flag:10004') ?? 0,
-    0,
-    'RESULT 0 → 不入账（:212）',
+    fixture.store.get('flag:10004'),
+    36,
+    'RESULT > 0 → 入账（:212）',
   );
-  assert.equal(fixture.store.get('cflag:1:580'), 1000, '所持金不动');
+  assert.equal(fixture.store.get('cflag:1:580'), 964, '所持金扣 36');
 });
 
 test('商店街·道具屋：扩张位 1 + RAND:2 == 0（武器掷不中）（:219-244）', async () => {
   const fixture = setup_world(500, 2);
   fixture.store.set('cflag:1:9', 2);
   const { dungeon_shop } = load(fixture);
-  await dungeon_shop(1, 2, seq([0])); // extra&1 = 0 短路武器掷 → rand(2) = 0 中道具
-  assert.equal(stub_count(fixture, 'ADD_EX_ITEM'), 1, 'ADD_EX_ITEM -3（:234）');
+  await dungeon_shop(1, 2, seq([0, 1, 1, 1])); // 道具店掷中，ADD 的武器掷不中
+  assert.equal(fixture.store.get('cflag:1:560'), 401, '随机补给进入首个空槽');
+  assert.equal(fixture.store.get('flag:10004'), 32, '买到后入账');
+  assert.equal(fixture.store.get('cflag:1:580'), 968, '扣道具价 32');
 });
 
 test('商店街·钱不够：逛街档 CFLAG:580 < COST 直接返回（:247-252）', async () => {
@@ -401,7 +398,8 @@ test('不可思议的房间：否定の珠 > 2000 换 500 所持金（:286-293�
   const fixture = setup_world();
   fixture.store.set('juel:1:100', 2500);
   const { dungeon_shop_itemsell } = load(fixture);
-  await dungeon_shop_itemsell(1);
+  // SELL_EX_ITEM 五次均不中；随后 ADD_EX_ITEM 的武器掷中但职业不适用，购买失败。
+  await dungeon_shop_itemsell(1, seq([1, 1, 1, 1, 1, 0, 0]));
   assert.equal(
     fixture.store.get('juel:1:100'),
     2000,
@@ -754,7 +752,26 @@ test('贯通·店遭遇：:386 的 RESULT 1 累进 NO_BATTLE，战斗相位走�
   const { run_dungeon } = fixture.load_module('dungeon/dungeon');
   // 掷序：rand(20)×1 + rand(10)×6（WALK = 10 + 0×6 = 10 → 滞留臂）→
   // rand(3)×1 + rand(2)×1（受者掷选 → 队长）→ 房间的 rand(10) = 0 → 店遭遇
-  const seq_rand = seq([10, 0, 0, 0, 0, 0, 0, 1, 1, 0]);
+  const seq_rand = seq([
+    10,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    0, // 走到店遭遇
+    1,
+    1,
+    1,
+    1,
+    1, // 五个空槽均不卖
+    1,
+    1,
+    1, // 买到 401
+  ]);
   await run_dungeon(1, seq_rand);
   assert.equal(fixture.store.get('cflag:1:502'), 10, '侵攻度 = WALK（滞留臂）');
   assert.equal(
@@ -762,11 +779,7 @@ test('贯通·店遭遇：:386 的 RESULT 1 累进 NO_BATTLE，战斗相位走�
     5,
     'NO_BATTLE > 0 → 训练臂加魔王等级（:434）而非战斗',
   );
-  assert.equal(
-    stub_count(fixture, 'SELL_EX_ITEM'),
-    1,
-    '店遭遇真跑（房间模块经 dungeon.js 接入）',
-  );
+  assert.equal(fixture.store.get('cflag:1:560'), 401, '店遭遇真买到补给');
 });
 
 test('贯通·迷阵：MASE 的 D:20 写经 ctx 收回侵攻度（:835 ↔ :748）', async () => {

@@ -311,7 +311,7 @@ test('借贷三段连转：担保人背债 → 加息偿还 → 金额守恒', a
 
 // —— 采购 ——
 
-test('TOWN_SHOPPING：3000 门槛 + ADD_EX_ITEM 存根恒 0 = 不扣款', async () => {
+test('TOWN_SHOPPING：3000 门槛 + ADD_EX_ITEM 真身买到后扣款', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:580', 2999);
   const { town_shopping } = load(fixture);
@@ -319,12 +319,9 @@ test('TOWN_SHOPPING：3000 门槛 + ADD_EX_ITEM 存根恒 0 = 不扣款', async 
   assert.equal(fixture.store.get('cflag:1:580'), 2999, '钱不够不买');
   const f2 = setup_world();
   f2.store.set('cflag:1:580', 3000);
-  await load(f2).town_shopping(1);
-  assert.equal(
-    f2.store.get('cflag:1:580'),
-    3000,
-    '买到与否取决于 RESULT（存根恒 0 → 不扣）',
-  );
+  await load(f2).town_shopping(1, () => 1);
+  assert.equal(f2.store.get('cflag:1:580'), 2500, '买到后按 RESULT 扣 500');
+  assert.equal(f2.store.get('cflag:1:560'), 401, '补给进入首个空槽');
 });
 
 // —— @TOWN_PT_PLANNING ——
