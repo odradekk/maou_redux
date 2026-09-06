@@ -169,7 +169,7 @@ export default [
     file: 'ere/dungeon/dungeon.js',
     find: `        // :441-477 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
         let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
-        await battle_mod.dungeon_party_battle(arg0, rand_n);`,
+        await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);`,
     replace: `        // :441-477 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
         let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
         // 变异：勇者臂的战斗调用删（勇者不遇敌、不掉气力）`,
@@ -881,5 +881,236 @@ export default [
       '  const t = arg; // 变异：TARGET 读改 ARG 读\n  if (\n    (era.get(`exp:${t}:0`) || 0) > 0 &&',
     tests: ['dungeon-quest'],
     must_mention: '失贞：处女素质消去',
+  },
+  {
+    desc: 'M6722 魔法伤害封顶的负等级差下限改坏（-99 改 -100）',
+    file: 'ere/dungeon/magic.js',
+    find: '    cap_bonus = -99;',
+    replace: '    cap_bonus = -100; // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '等级差调整上限',
+  },
+  {
+    desc: 'M6723 魔法伤害最低效果改坏（1 改 0）',
+    file: 'ere/dungeon/magic.js',
+    find: '  return damage <= 0 ? 1 : damage;',
+    replace: '  return damage <= 0 ? 0 : damage; // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '非正伤害抬到 1',
+  },
+  {
+    desc: 'M6724 角色对 Boss 的魔法减伤改坏（十分之一改五分之一）',
+    file: 'ere/dungeon/magic.js',
+    find: '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv(damage, 10);',
+    replace:
+      '  if (e_get(monster_head + 8) === 1) {\n    damage = idiv(damage, 5); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: 'Boss',
+  },
+  {
+    desc: 'M6725 怪物魔法减益的自然衰减删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '    era.set(`cflag:${cid}:682`, debuff);\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {',
+    replace:
+      '    // 变异：低段魔法减益不写回衰减\n  }\n  if (chara(cid).dungeon.凌辱畏怖记忆_怪物 === e_get(monster_head)) {',
+    tests: ['dungeon-magic'],
+    must_mention: '魔法减益',
+  },
+  {
+    desc: 'M6726 角色对角色的目标魔法耐性删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '    if (talent(defender, 257)) {',
+    replace: '    if (false) { // 变异：目标耐性删',
+    tests: ['dungeon-magic'],
+    must_mention: '耐性',
+  },
+  {
+    desc: 'M6727 普通魔法选择映射改坏（索引 4 不再选吸收）',
+    file: 'ere/dungeon/magic.js',
+    find: '  return [0, 3, 2, 1, 4, 5, 5][magic_lv];',
+    replace: '  return [0, 3, 2, 1, 3, 5, 5][magic_lv]; // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: 'MAGIC_SELECT',
+  },
+  {
+    desc: 'M6728 魔力暴走的 HP 扣减方向改坏',
+    file: 'ere/dungeon/magic.js',
+    find: '    add_base(caster, 0, -hp_damage);',
+    replace: '    add_base(caster, 0, hp_damage); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '暴走伤害',
+  },
+  {
+    desc: 'M6729 咒术选择映射改坏（索引 2 不再选诅咒）',
+    file: 'ere/dungeon/magic.js',
+    find: '  return [0, 3, 7, 1, 8, 9, 9][magic_lv];',
+    replace: '  return [0, 3, 6, 1, 8, 9, 9][magic_lv]; // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: 'SHAMAN_SELECT',
+  },
+  {
+    desc: 'M6730 法术编号 3 的调度改坏（魔法箭改魔法吸收）',
+    file: 'ere/dungeon/magic.js',
+    find: '    3: () => energy_bolt_magic(target_type, a, b),',
+    replace: '    3: () => energy_drain_magic(target_type, a, b), // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '调度怪物的魔法箭',
+  },
+  {
+    desc: 'M6731 传送术不再写回侵攻度',
+    file: 'ere/dungeon/magic.js',
+    find: '    move_ctx.d20 = rand(100);\n    return 999;',
+    replace: '    // 变异：D:20 写回删除\n    return 999;',
+    tests: ['dungeon-magic'],
+    must_mention: '写回侵攻度',
+  },
+  {
+    desc: 'M6732 勇者对奴隶传送的原作 CFLAG:3 写入删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '    chara(b).train.公开自慰经验 = rand(100); // CFLAG:3，原作第 431 行',
+    replace: '    // 变异：CFLAG:3 写入删除',
+    tests: ['dungeon-magic'],
+    must_mention: 'CFLAG:3',
+  },
+  {
+    desc: 'M6733 睡眠咒语的攻击力削减方向改坏',
+    file: 'ere/dungeon/magic.js',
+    find: '  const value = chara(defender).dungeon.攻击力 - rand(damage);',
+    replace:
+      '  const value = chara(defender).dungeon.攻击力 + rand(damage); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '削攻击与防御',
+  },
+  {
+    desc: 'M6734 诅咒术的防御力削减方向改坏',
+    file: 'ere/dungeon/magic.js',
+    find: '  const value = chara(defender).dungeon.防御力 - idiv(rand(damage), 2);',
+    replace:
+      '  const value = chara(defender).dungeon.防御力 + idiv(rand(damage), 2); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '削攻击与防御',
+  },
+  {
+    desc: 'M6735 对人格斗魔法箭的倍率改坏（五倍改四倍）',
+    file: 'ere/dungeon/magic.js',
+    find: '  await print_wait(`${name_of(caster)}咏唱了魔法箭！`);\n  add_base(caster, 1, -15);\n  damage = magic_bonus_c_to_c(caster, get_cflag(caster, 9) * 5, defender);',
+    replace:
+      '  await print_wait(`${name_of(caster)}咏唱了魔法箭！`);\n  add_base(caster, 1, -15);\n  damage = magic_bonus_c_to_c(caster, get_cflag(caster, 9) * 4, defender); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '造成伤害并消灭怪物',
+  },
+  {
+    desc: 'M6736 火球术的怪物数量扣减删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 800);\n    const killed = kill_monsters(a, b, damage);',
+    replace:
+      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 800);\n    const killed = 0; // 变异：不消灭怪物',
+    tests: ['dungeon-magic'],
+    must_mention: '消灭怪物',
+  },
+  {
+    desc: 'M6737 魔法吸收的施法者体力回复删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '  add_base(caster, 0, damage);\n  await print_wait(`魔法吸取了${damage}气力！`);\n  await print_wait(`恢复了HP${damage}点！`);',
+    replace:
+      '  // 变异：施法者体力回复删除\n  await print_wait(`魔法吸取了${damage}气力！`);\n  await print_wait(`恢复了HP${damage}点！`);',
+    tests: ['dungeon-magic'],
+    must_mention: '回复体力或气力',
+  },
+  {
+    desc: 'M6738 精神吸收的施法者气力回复删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '  add_base(defender, 1, -damage);\n  add_base(caster, 1, damage);\n  await print_wait(`精神吸收了${damage}点气力！`);',
+    replace:
+      '  add_base(defender, 1, -damage);\n  // 变异：施法者气力回复删除\n  await print_wait(`精神吸收了${damage}点气力！`);',
+    tests: ['dungeon-magic'],
+    must_mention: '回复体力或气力',
+  },
+  {
+    desc: 'M6739 治疗术不再选择队列中最后一个重伤成员',
+    file: 'ere/dungeon/magic.js',
+    find: '        patient = cid;',
+    replace: '        patient ||= cid; // 变异：固定第一个',
+    tests: ['dungeon-magic'],
+    must_mention: '最后一个重伤成员',
+  },
+  {
+    desc: 'M6740 无参 SHIELD_MAGIC 被擅自赋予效果',
+    file: 'ere/dungeon/magic.js',
+    find: 'async function shield_magic() {\n  return 0;\n}',
+    replace:
+      'async function shield_magic() {\n  chara(1).dungeon.防御力 += 1; // 变异\n  return 0;\n}',
+    tests: ['dungeon-magic'],
+    must_mention: '无效果语义',
+  },
+  {
+    desc: 'M6741 经验吸取的手动降级删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '    view.chara.等级 -= 1;',
+    replace: '    // 变异：等级递减删除',
+    tests: ['dungeon-magic'],
+    must_mention: '同步等级四维',
+  },
+  {
+    desc: 'M6742 怪物经验吸取不给魔王分一半经验',
+    file: 'ere/dungeon/magic.js',
+    find: '    add_exp(0, idiv(damage, 2));',
+    replace: '    // 变异：魔王经验加算删除',
+    tests: ['dungeon-magic'],
+    must_mention: '一半经验给魔王',
+  },
+  {
+    desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: "const STUBBED_CALLS = [\n  'MONSTER_SKILL',",
+    replace:
+      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'MONSTER_SKILL',",
+    tests: ['dungeon-magic'],
+    must_mention: '不再登记为存根',
+  },
+  {
+    desc: 'M6744 决斗的无参 MAGIC 被擅自传成 X:1 战斗类型',
+    file: 'ere/dungeon/dungeon-battle2.js',
+    find: '  if ((await battle.magic(0, magic_a, magic_b, rand, move_ctx)) === 999) {',
+    replace:
+      '  if ((await battle.magic(reverse_ab ? 3 : 4, magic_a, magic_b, rand, move_ctx)) === 999) { // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '无参 MAGIC 保留 TARGET_TYPE=0',
+  },
+  {
+    desc: 'M6745 群体法术过量击杀按理论值播报（不钳现存怪物数）',
+    file: 'ere/dungeon/magic.js',
+    find: '    add_exp(a, e_get(b + 1) * killed);\n    return killed;',
+    replace:
+      '    add_exp(a, e_get(b + 1) * killed);\n    return kill_mons; // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '过量击杀按现存怪物数播报',
+  },
+  {
+    desc: 'M6746 怪物火球漏掉等级差伤害上限',
+    file: 'ere/dungeon/magic.js',
+    find: '    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 10, b);\n    damage = magic_damage_cap(e_get(b + 1), get_cflag(a, 9), damage, 800);',
+    replace:
+      '    damage = magic_bonus_m_to_c(a, (e_get(b + 1) + get_cflag(0, 9)) * 10, b);\n    // 变异：等级差伤害上限删除',
+    tests: ['dungeon-magic'],
+    must_mention: '怪物火球同样受等级差伤害上限约束',
+  },
+  {
+    desc: 'M6747 魔法箭把未知 TARGET_TYPE 当成角色对角色分支',
+    file: 'ere/dungeon/magic.js',
+    find: '  if (target_type !== 3 && target_type !== 4) {\n    return 0;\n  }\n  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了魔法箭！`);',
+    replace:
+      '  if (false) { // 变异：未知类型落进角色法术\n    return 0;\n  }\n  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了魔法箭！`);',
+    tests: ['dungeon-magic'],
+    must_mention: '未命中任何法术分支',
+  },
+  {
+    desc: 'M6748 治疗术把未知 TARGET_TYPE 当成角色 3 分支',
+    file: 'ere/dungeon/magic.js',
+    find: '  if (target_type !== 3) {\n    return 0;\n  }\n  // 原作第 895 行的条件方向如此：低于六成反而直接返回。',
+    replace:
+      '  if (false) { // 变异：未知类型落进治疗\n    return 0;\n  }\n  // 原作第 895 行的条件方向如此：低于六成反而直接返回。',
+    tests: ['dungeon-magic'],
+    must_mention: '未命中任何法术分支',
   },
 ];

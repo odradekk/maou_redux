@@ -74,6 +74,10 @@ const cflag = {
     ),
   ),
   2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),
+  3: named_tail(
+    '公开自慰经验',
+    src(SRC_FLAG, ':262 CFLAG:3 公開オナニーの経験'),
+  ),
   4: named(
     '灌肠经验',
     src(SRC_FLAG, 'CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）'),

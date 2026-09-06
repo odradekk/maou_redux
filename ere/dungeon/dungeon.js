@@ -703,7 +703,8 @@ async function run_dungeon(arg0, rand) {
       } else {
         // :441-477 戦闘（H6（#175）真身：勇者会掉 HP/气力、会投降）
         let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
-        await battle_mod.dungeon_party_battle(arg0, rand_n);
+        await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx);
+        walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
         // :445 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
@@ -829,7 +830,8 @@ async function run_dungeon(arg0, rand) {
         }
       } else {
         let turnend = 0;
-        await battle_mod.dungeon_party_battle(arg0, rand_n); // :536
+        await battle_mod.dungeon_party_battle(arg0, rand_n, move_ctx); // :536
+        walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
         // :537-543 陥落したか否か（队长）
         if (
           chara(arg0).invasion.状态 !== 2 &&
@@ -873,7 +875,8 @@ async function run_dungeon(arg0, rand) {
       // —— 勇者と元勇者の戦闘（:564-588 迎击 3）——H6（#175）真身：
       // RESULT 与败者号 B 经返回值显式传出（#5 决议第六条，文件头）
       const { result: battle2r, loser: b } =
-        await battle2_mod.dungeon_battle2_party(arg0, rand_n);
+        await battle2_mod.dungeon_battle2_party(arg0, rand_n, move_ctx);
+      walk20 = move_ctx.d20; // MAGIC/TELEPORT_MAGIC 的 D:20 写回
       if (battle2r === 2) {
         // :568-571 迎击方的 B 被打倒
         await get_down_enemy(b); // :569（复活，依据 #103）

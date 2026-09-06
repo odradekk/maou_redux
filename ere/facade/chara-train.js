@@ -29,6 +29,21 @@ class TrainFacade {
   }
 
   /**
+   * 公开自慰经验（cflag:cid:3 ↔ CFLAG:3）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行262 CFLAG:3 公開オナニーの経験
+   * @returns {number}
+   */
+  get 公开自慰经验() {
+    return era.get(`cflag:${this.cid}:3`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 公开自慰经验(v) {
+    era.set(`cflag:${this.cid}:3`, v);
+  }
+
+  /**
    * 野外露出经验（cflag:cid:5 ↔ CFLAG:5）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:5 野外露出経験
    * @returns {number}
