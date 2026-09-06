@@ -9,7 +9,7 @@
  * 其后的善恶值/时常发情/气力回复/JUEL_CHECK/指针还原按原作一并跳过。
  *
  * 存根（docs/stub-registry.md 函数表）：CHARADEAD_CHECK / SELF_CHECK /
- * SELL_MILK / SELL_VIDEO / SELL_FIGHTMONEY / AFTERTRAIN_CLOTH /
+ * SELL_MILK / SELL_FIGHTMONEY / AFTERTRAIN_CLOTH /
  * RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET / MAOU_TENSHIN / KARMA。
  * @JUEL_CHECK（:421 的一次性珠结算）已随 #47 实现
  * （system/train/juel-check.js，含与 era.endTrain 的职责划分定案）。
@@ -21,6 +21,7 @@ const { name_reset } = require('#/chara/char-make');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { run_juel_check } = require('#/system/train/juel-check');
+const { sell_video } = require('#/system/stronghold/sell-video');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 // AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身（train 域的
@@ -37,7 +38,6 @@ const { self_check } = require('#/event/event-aftertrain');
 const STUBBED_CALLS = [
   'CHARADEAD_CHECK',
   'SELL_MILK',
-  'SELL_VIDEO',
   'SELL_FIGHTMONEY',
   'PARTY_CHAR_DEL',
   'MAOU_TENSHIN',
@@ -83,9 +83,9 @@ on(
       era.drawLine(); // :344
     }
 
-    // :347-354 三笔卖出结算（存根）
+    // :347-354 三笔卖出结算（录像 #336 起为真身）
     stub_line('SELL_MILK', '母乳出售');
-    stub_line('SELL_VIDEO', '录像出售');
+    await sell_video(era_flag.target, era_flag.assi);
     stub_line('SELL_FIGHTMONEY', '死斗场观战费');
 
     // :356-361 生きていて着衣モードなら調教後の衣類の処理（FLAG:37 =
