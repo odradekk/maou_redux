@@ -115,9 +115,11 @@ const REPO = path.resolve(__dirname, '..');
 // 不再走存根占位：自然态 matched 1108→1114、stub 525→483；升格态
 // matched 257→259、stub 245→236。回放预置 CFLAG:201/221-225，中途档
 // 不再打出首次台词。未解释恒 0。
+// 【#336（L5）SELL_VIDEO 真身落地后重测】调教结束不再输出该存根占位，
+// 两态各少 1 条 stub；录像无有效帧时真身按原作静默返回。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1114, version: 0, stub: 483, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 236, unexplained: 0 },
+  'train-natural': { matched: 1114, version: 0, stub: 482, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 235, unexplained: 0 },
 };
 
 async function build_report(sample) {

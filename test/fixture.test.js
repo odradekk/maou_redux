@@ -943,7 +943,13 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
   // 两个 ColumnObject 的全部格子共享同一个 Row 号（引擎渲染层把整次调用
   // 装进一个 inColRows 行对象，#68 实证）
   assert.deepEqual(fixture.lines, [
-    { type: 'text', text: '列组形态', content: '列组形态', row: 0 },
+    {
+      type: 'text',
+      text: '列组形态',
+      content: '列组形态',
+      grid_width: 24,
+      row: 0,
+    },
     {
       type: 'button',
       text: '裸数组形态',
