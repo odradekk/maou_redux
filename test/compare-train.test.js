@@ -115,9 +115,11 @@ const REPO = path.resolve(__dirname, '..');
 // 不再走存根占位：自然态 matched 1108→1114、stub 525→483；升格态
 // matched 257→259、stub 245→236。回放预置 CFLAG:201/221-225，中途档
 // 不再打出首次台词。未解释恒 0。
+// 【#335（L4）母乳与死斗场结算真身落地后重测】两份样本各少两条对应
+// 存根归因；可见输出不在当前窗口内，因此 matched 与 unexplained 不变。
 const BASELINE = {
-  'train-natural': { matched: 1114, version: 0, stub: 483, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 236, unexplained: 0 },
+  'train-natural': { matched: 1114, version: 0, stub: 481, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 234, unexplained: 0 },
 };
 
 async function build_report(sample) {
