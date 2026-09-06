@@ -29,6 +29,7 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
   kojo_message_com_family,
+  ntr_koujo_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
 const {
@@ -10696,8 +10697,7 @@ async function colosseum_kojo_2(rand) {
 }
 
 // @NTR_KOUJO_K2 // :6760
-async function ntr_koujo_k2(rand) {
-  let P = 0;
+async function ntr_koujo_k2(rand, p = 0) {
   const { target, target_name, sc, view, kojo } = bind_ctx(rand);
 
   if (kojo.NTR再捕获 === 0) {
@@ -10706,7 +10706,7 @@ async function ntr_koujo_k2(rand) {
     kojo.NTR再捕获 = 1; // :6764
   } // :6764
 
-  if (P === 1) {
+  if (p === 1) {
     // :6767
 
     if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
@@ -10717,7 +10717,7 @@ async function ntr_koujo_k2(rand) {
     }
     // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :6774
     kojo.NTR_651 = 1; // :6774
-  } else if (P === 2) {
+  } else if (p === 2) {
     // :6776
     if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
       // :6777
@@ -10727,7 +10727,7 @@ async function ntr_koujo_k2(rand) {
     }
     // CFLAG:652  = 1（变量语义：CFLAG 族，652） // :6782
     kojo.NTR_652 = 1; // :6782
-  } else if (P === 3) {
+  } else if (p === 3) {
     // :6784
     if (era.get(`talent:${target}:136`)) {
       // :6785
@@ -10745,7 +10745,7 @@ async function ntr_koujo_k2(rand) {
     }
     // CFLAG:653  = 1（变量语义：CFLAG 族，653） // :6792
     kojo.NTR_653 = 1; // :6792
-  } else if (P === 4) {
+  } else if (p === 4) {
     // :6794
     if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
       // :6795
@@ -10759,7 +10759,7 @@ async function ntr_koujo_k2(rand) {
     }
     // CFLAG:654  = 1（变量语义：CFLAG 族，654） // :6800
     kojo.NTR_654 = 1; // :6800
-  } else if (P === 5) {
+  } else if (p === 5) {
     // :6802
     if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
       // :6803
@@ -10773,7 +10773,7 @@ async function ntr_koujo_k2(rand) {
     }
     // CFLAG:655  = 1（变量语义：CFLAG 族，655） // :6808
     kojo.NTR_655 = 1; // :6808
-  } else if (P === 6) {
+  } else if (p === 6) {
     // :6810
     if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
       // :6811
@@ -10787,7 +10787,7 @@ async function ntr_koujo_k2(rand) {
     }
     // CFLAG:656  = 1（变量语义：CFLAG 族，656） // :6816
     kojo.NTR_656 = 1; // :6816
-  } else if (P === 7) {
+  } else if (p === 7) {
     // :6818
     if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
       // :6819
@@ -10803,7 +10803,7 @@ async function ntr_koujo_k2(rand) {
     }
     // CFLAG:657  = 1（变量语义：CFLAG 族，657） // :6826
     kojo.NTR_657 = 1; // :6826
-  } else if (P === 20) {
+  } else if (p === 20) {
     // :6828
     if (era.get(`talent:${target}:76`) || era.get(`talent:${target}:85`)) {
       // :6829
@@ -11253,6 +11253,7 @@ gohoubi_after_koujo_family.register(2, gohoubi_after_koujo_k2);
 osioski_koujo_family.register(2, osioki_koujo_k2);
 ryouzyoku_kojo_family.register(2, dungeon_ryouzyoku_k2);
 ryouzyoku_after_kojo_family.register(2, dungeon_ryouzyoku_after_k2);
+ntr_koujo_family.register(2, ntr_koujo_k2);
 
 module.exports = {
   STUBBED_CALLS,

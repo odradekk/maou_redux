@@ -37,12 +37,12 @@
  *     abl:17/21（system）、abl:20（train）、exp:0/5/10/80（dungeon）、
  *     base:0/1（dungeon）是跨域写）。其余（talent/cflag 的 chara 属主
  *     下标、exp:60）域内裸寻址即合法，读全部放行（#70）；
- *   - @CM_FAMILY_TALENT 的 CALL SEARCH_FAMILY 存根 RESULT 恒 0 →
- *     FAMILY_ID = 0 → :905 起的 IF FAMILY_ID > 0 继承块整体不进（结构
- *     1:1 保留，家族票落地后可达）。
+ *   - @CM_FAMILY_TALENT 的 CALL SEARCH_FAMILY 已接家族检索真身，找到
+ *     家族成员后进入 :905 起的素质继承块。
  */
 
 const era = require('#/era-electron');
+const { search_family } = require('#/chara/chara-family');
 const { random_self_call } = require('#/chara/chara-init');
 const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
 const { chara_name_random_define } = require('#/chara/chara-name');
@@ -60,7 +60,6 @@ const STUBBED_CALLS = [
   'FAMILY_REGISTER',
   'CHAR_BODY_GENERATE_WAPPED',
   'LOOK_SET',
-  'SEARCH_FAMILY',
   'CHARA_FIRST_EXP',
   'CMI_CONFLICT_CHECK',
   'ST_UP',
@@ -1087,9 +1086,8 @@ async function cm_st_ace(cid, rand_n) {
 /**
  * @CM_FAMILY_TALENT（:896-1042）：根据家族成员继承身体素质。
  *
- * SEARCH_FAMILY 存根 RESULT 恒 0 → FAMILY_ID = 0 → :905 的
- * IF FAMILY_ID > 0 继承块整体不进（结构 1:1 保留全量搬移，家族票
- * 落地后可达）。家族成员寻址以 family_id 为 cid（era.get 三段读）。
+ * SEARCH_FAMILY 返回找到的家族成员；未找到时为 -1，继承块不进。家族
+ * 成员寻址以 family_id 为 cid（era.get 三段读）。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
@@ -1097,9 +1095,8 @@ async function cm_st_ace(cid, rand_n) {
 async function cm_family_talent(cid, rand_n) {
   // :900-901 LOCAL = CFLAG:A:605 与 LOCAL:1 = LOCAL % 10 —— 后者无消费者
   // （原作死赋值），照搬注释不落变量
-  // :902 CALL SEARCH_FAMILY, A
-  stub_line('SEARCH_FAMILY', '家族检索', '随家族票');
-  const family_id = 0; // :903 FAMILY_ID = RESULT（存根恒 0 → 继承块不进）
+  // :902 CALL SEARCH_FAMILY, A；:903 FAMILY_ID = RESULT
+  const family_id = search_family(cid);
 
   if (family_id > 0) {
     const f = (n) => era.get(`talent:${family_id}:${n}`) || 0;

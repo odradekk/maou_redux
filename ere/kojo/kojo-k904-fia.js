@@ -39,6 +39,7 @@ const {
   benki_koujo_family,
   dungeon_victory_family,
   dungeon_attack_family,
+  adapt_legacy_ntr_koujo,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
@@ -11310,7 +11311,7 @@ ryouzyoku_after_kojo_family.register(904, dungeon_ryouzyoku_after_k904);
 benki_koujo_family.register(904, benki_koujo_k904);
 dungeon_victory_family.register(904, dungeon_victory_k904);
 dungeon_attack_family.register(904, dungeon_attack_k904);
-ntr_koujo_family.register(904, ntr_koujo_k904);
+ntr_koujo_family.register(904, adapt_legacy_ntr_koujo(ntr_koujo_k904));
 exucution_koujo_family.register(904, exucution_koujo_k904);
 museum_koujo_family.register(904, museum_koujo_k904);
 banishment_koujo_family.register(904, banishment_koujo_k904);

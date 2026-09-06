@@ -288,15 +288,14 @@ test('PARTY_DEL：对不上号按解散处理（バグ対策）', async () => {
   assert.equal(fixture.store.get('cflag:3:533'), 0);
 });
 
-test('PARTY_DEL：结婚对象尾数 9 走 SEARCH_FAMILY 存根（不可达清零）', async () => {
+test('PARTY_DEL：结婚对象尾数 9 走 SEARCH_FAMILY 真身清除对方登记', async () => {
   const fixture = setup_world();
-  fixture.store.set('cflag:1:533', 1); // 自为队长（无同伴）
-  fixture.store.set('cflag:1:601', 119); // 尾数 9
+  fixture.store.set('cflag:0:601', 9);
+  fixture.store.set('cflag:2:601', 901);
   const { party_del } = load(fixture);
 
-  party_del(1);
-  // SEARCH_FAMILY 存根恒 0 → :293 的清零不达，登记在案即可
-  assert.equal(fixture.store.get('cflag:1:601'), 119, '存根下不动结婚对象');
+  party_del(0);
+  assert.equal(fixture.store.get('cflag:2:601'), 0, '找到的结婚对象登记清零');
 });
 
 // —— @PARTY_CHAR_DEL ——

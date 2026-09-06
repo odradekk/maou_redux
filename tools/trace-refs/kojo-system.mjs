@@ -82,6 +82,11 @@ export const FILES = [
         any: [/@SELF_KOJO/, /TRYCALLFORM SELF_KOJO_K/],
       },
       {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '342-354',
+        any: [/@NTR_KOUJO/, /TRYCALLFORM NTR_KOUJO_K/],
+      },
+      {
         src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
         ref: '657-665',
         any: [/^	Q = 1$/m, /^	Q = 2$/m, /^	Q = 0$/m],

@@ -110,9 +110,11 @@ test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 mon
     ...load(fixture, 'dungeon/monster-data').STUBBED_CALLS,
     ...load(fixture, 'kojo/kojo-dungeon-ravish').STUBBED_CALLS,
   ];
-  // #217 起 SELECT_BENKI_MENU/NAME_BENKI_MENU/GET_EXP_BENKI_MENU 换真身
-  // （system/train/benki.js），战斗三份名单减 3 条
-  assert.ok(names.length >= 13, `四份名单合计 ${names.length} 条（应 ≥ 13）`);
+  // 这里只防循环空转，不锁条数。原为 `>= 13` 的下限锁，而存根被实现掉时
+  // 这个数只会减（#217 换三个真身减 3、#333 换 CAMPAIGN_DUNGEON_LV 再减 1），
+  // 于是每张实现存根的票都被迫改它一次——SOP §5 判据 5 记的正是这种路障。
+  // 真正的契约是下面那个循环：每个登记名都必须在存根清单里查得到。
+  assert.ok(names.length > 0, '四份名单全空，下面的循环会空过');
 
   for (const name of names) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);

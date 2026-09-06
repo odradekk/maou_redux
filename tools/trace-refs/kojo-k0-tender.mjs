@@ -8953,6 +8953,31 @@ export const FILES = [
         ref: '8079-8121',
         any: [/IF CFLAG:A:604 > 0 && CFLAG:A:605 > 0/m],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8080-8081',
+        any: [/LOCAL = CFLAG:A:605\s+LOCAL:1 = LOCAL % 10/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8082-8083',
+        any: [/CALL SEARCH_FAMILY, A\s+LOCAL:2 = RESULT/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8084-8119',
+        any: [/SELECTCASE LOCAL:1[\s\S]*ENDSELECT/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8093',
+        any: [/PRINTFORM 「%SAVESTR:\(LOCAL:2\)%……等着我！」/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '8120',
+        any: [/^\s*PRINTL\s*$/m],
+      },
 
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',

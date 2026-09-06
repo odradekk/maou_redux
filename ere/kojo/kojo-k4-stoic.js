@@ -64,6 +64,7 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
   kojo_message_com_family,
+  ntr_koujo_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
 const { heart } = require('#/kojo/kojo-text');
@@ -5327,6 +5328,7 @@ async function self_kojo_k4() {
 
 // 注册进事件口上分发族（TRYCALLFORM SELF_KOJO_K4 的等价物）
 self_kojo_family.register(4, self_kojo_k4);
+ntr_koujo_family.register(4, (rand, p) => ntr_koujo_k4(p));
 
 /**
  * @DUNGEON_RYOUZYOKU_K4（:4463-4551）：迷宫凌辱前的口上（H13 分派，TARGET = ARG）。

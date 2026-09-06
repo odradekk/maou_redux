@@ -73,6 +73,21 @@ class SystemFacade {
     era.set(`cflag:${this.cid}:104`, v);
   }
 
+  /**
+   * 狂王膣内射精（cflag:cid:108 ↔ CFLAG:108）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行324 CFLAG:108 狂王からの中田氏カウント用
+   * @returns {number}
+   */
+  get 狂王膣内射精() {
+    return era.get(`cflag:${this.cid}:108`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 狂王膣内射精(v) {
+    era.set(`cflag:${this.cid}:108`, v);
+  }
+
   // —— cstr ——
   /**
    * 故事名（cstr:cid:99 ↔ CSTR:99）
