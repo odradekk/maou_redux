@@ -76,7 +76,10 @@ test('存根清单可检索：docs/stub-registry.md 收录城镇文件的新增�
     'utf8',
   );
   const names = [...load(fixture).STUBBED_CALLS];
-  assert.ok(names.length >= 7, `名单 ${names.length} 条（应 ≥ 7）`);
+  // 只防循环空转，不锁条数：存根被实现掉时这个数只会减，锁下限等于
+  // 给每张实现存根的票设路障（SOP §5 判据 5；#333 已在
+  // dungeon-battle.test.js 踩过一次）。契约是下面那个循环。
+  assert.ok(names.length > 0, '名单为空，下面的循环会空过');
   for (const name of names) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
