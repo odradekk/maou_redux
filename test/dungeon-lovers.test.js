@@ -158,6 +158,185 @@ test('DUNGEON_TOWN_LOVER：未知正数沿用 ERROR 并继续结算', async () =
   assert.equal(fixture.store.get('cstr:1:4'), 'ERROR');
 });
 
+const LOVE_EXP_CASES = [
+  {
+    dimension: '0 接吻累计',
+    lover: 1,
+    love_lv: 10,
+    scene: '开始约会了',
+    summary: '接吻：1次',
+  },
+  {
+    dimension: '1 吸烟次数',
+    lover: 3,
+    love_lv: 20,
+    scene: '抽起了事后烟',
+    summary: '吸烟：1根',
+  },
+  {
+    dimension: '2 药物经验',
+    lover: 23,
+    love_lv: 40,
+    scene: '被暗黑精灵抱住',
+    summary: '药物经验＋1',
+    expected: { 'exp:1:57': 1 },
+  },
+  {
+    dimension: '3 口交加成',
+    lover: 61,
+    love_lv: 20,
+    scene: '自由进出懦弱少年的家',
+    summary: '口交经验＋19',
+    seed: {
+      'abl:1:12': 2,
+      'abl:1:13': 3,
+      'abl:1:16': 4,
+      'abl:1:32': 2,
+      'talent:1:52': 1,
+      'talent:1:61': 1,
+      'talent:1:62': 1,
+    },
+    expected: { 'exp:1:22': 19 },
+  },
+  {
+    dimension: '4 私处性交加成',
+    lover: 2,
+    love_lv: 20,
+    scene: '家里做客、被推倒',
+    summary: '私处经验＋7',
+    seed: {
+      'abl:1:2': 4,
+      'talent:1:103': 1,
+      'talent:1:104': 1,
+      'talent:1:75': 1,
+      'talent:1:232': 1,
+    },
+    expected: { 'exp:1:0': 7 },
+  },
+  {
+    dimension: '5 肛门性交加成',
+    lover: 2,
+    love_lv: 20,
+    scene: '家里做客、被推倒',
+    summary: '肛门经验＋7',
+    seed: {
+      'talent:1:273': 1,
+      'abl:1:3': 4,
+      'talent:1:105': 1,
+      'talent:1:106': 1,
+      'talent:1:77': 1,
+      'talent:1:233': 1,
+    },
+    expected: { 'exp:1:0': 0, 'exp:1:1': 7 },
+  },
+  {
+    dimension: '6 百合加成',
+    lover: 41,
+    love_lv: 20,
+    scene: '自由进出妓女的家',
+    summary: '点数＋40',
+    seed: {
+      'abl:1:22': 2,
+      'abl:1:33': 3,
+      'talent:1:81': 1,
+      'talent:1:82': 1,
+    },
+  },
+  {
+    dimension: '6 男性不吃百合加成',
+    lover: 41,
+    love_lv: 20,
+    scene: '自由进出妓女的家',
+    summary: '点数＋5',
+    seed: {
+      'talent:1:122': 1,
+      'abl:1:22': 2,
+      'abl:1:33': 3,
+      'talent:1:81': 1,
+      'talent:1:82': 1,
+    },
+  },
+  {
+    dimension: '7 兽奸加成及口交回填',
+    lover: 81,
+    love_lv: 40,
+    scene: '被大型宠物狗艹上瘾',
+    summary: '兽奸经验＋9',
+    seed: {
+      'talent:1:种族': 2,
+      'talent:1:317': 12,
+      'abl:1:39': 2,
+      'talent:1:136': 1,
+    },
+    expected: { 'exp:1:0': 11, 'exp:1:22': 11, 'exp:1:56': 9 },
+  },
+  {
+    dimension: '8 拍摄倾向',
+    lover: 1,
+    love_lv: 0,
+    scene: '帮了阿尔一把',
+    summary: '拍摄经验＋7',
+    seed: {
+      'talent:1:10': 1,
+      'talent:1:20': 1,
+      'talent:1:23': 1,
+      'talent:1:27': 1,
+      'talent:1:28': 1,
+      'talent:1:89': 1,
+      'abl:1:17': 4,
+    },
+    expected: { 'exp:1:70': 7 },
+  },
+  {
+    dimension: '9 前戏加成',
+    lover: 2,
+    love_lv: 20,
+    scene: '家里做客、被推倒',
+    summary: '点数＋50',
+    seed: {
+      'abl:1:0': 2,
+      'abl:1:1': 3,
+      'talent:1:101': 1,
+      'talent:1:102': 1,
+      'talent:1:107': 1,
+      'talent:1:108': 1,
+      'talent:1:74': 1,
+      'talent:1:78': 1,
+      'talent:1:230': 1,
+      'talent:1:231': 1,
+    },
+  },
+  {
+    dimension: '9 淫核独立加成',
+    lover: 2,
+    love_lv: 20,
+    scene: '家里做客、被推倒',
+    summary: '点数＋10',
+    seed: { 'talent:1:230': 1 },
+  },
+];
+
+for (const love_case of LOVE_EXP_CASES) {
+  test(`LOVE_EXP 维度表：${love_case.dimension}`, async () => {
+    const fixture = setup_world();
+    fixture.store.set('cflag:1:606', love_case.lover);
+    fixture.store.set('cflag:1:607', love_case.love_lv);
+    fixture.store.set('cflag:1:16', -1);
+    for (const [key, value] of Object.entries(love_case.seed || {})) {
+      fixture.store.set(key, value);
+    }
+
+    await load(fixture).dungeon_town_lover(1, () => 99);
+
+    const output = text_lines(fixture).join('\n');
+    assert(output.includes(love_case.scene), '必须命中该维度对应的演出档');
+    assert(output.includes(love_case.summary), '必须输出该维度的最终结算值');
+    for (const [key, value] of Object.entries(love_case.expected || {})) {
+      assert.equal(fixture.store.get(key) || 0, value, `${key} 最终值`);
+    }
+  });
+}
+
 test('DUNGEON_TOWN_LOVER_CHARA_ENTER：条件满足时双向记录恋人', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:8', 4);
