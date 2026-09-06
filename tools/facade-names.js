@@ -117,6 +117,10 @@ const cflag = {
       ':320 CFLAG:104 奴隷から助手への膣内射精カウント用（SYSTEM_SOURCE.ERB:461/464/470）',
     ),
   ),
+  105: named_tail(
+    '客膣内射精',
+    src(SRC_FLAG, ':321 CFLAG:105 娼館などの客から奴隷への中田氏カウント用'),
+  ),
   106: named_tail(
     '犬膣内射精',
     src(
@@ -130,6 +134,10 @@ const cflag = {
       SRC_FLAG,
       ':323 CFLAG:107 モンスター・触手から奴隷への膣内射精カウント用（SYSTEM_SOURCE.ERB:451/457）',
     ),
+  ),
+  108: named_tail(
+    '狂王膣内射精',
+    src(SRC_FLAG, ':324 CFLAG:108 狂王からの中田氏カウント用'),
   ),
   21: named('肉亲_0', src(SRC_FLAG, 'CFLAG:21～25 肉亲关系')),
   201: named('初调教', src(SRC_KXX, ':57 初调教时')),

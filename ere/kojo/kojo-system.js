@@ -379,6 +379,23 @@ async function attack_koujo(cid, rand) {
   return result;
 }
 
+/**
+ * @NTR_KOUJO（EVENT_K.ERB:342-354）：按当前目标的性格编号分发 NTR 口上。
+ * 族的统一参数顺序是 [rand, P]；少数旧 handler 的单参数注册在各自模块处
+ * 适配，避免把随机源误当成原作全局 P。
+ */
+function adapt_legacy_ntr_koujo(handler) {
+  return (rand, p) => handler(p ?? rand);
+}
+
+async function ntr_koujo(p, rand) {
+  const id = kojo_handler_id();
+  if (id >= 0) {
+    await ntr_koujo_family.call(id, { whenMissing: 0, args: [rand, p] });
+  }
+  return 0;
+}
+
 async function enterenemy_koujo(cid, rand) {
   const target_pool = era_flag.target;
   era_flag.target = cid;
@@ -440,6 +457,8 @@ module.exports = {
   dungeon_victory_family,
   attack_koujo,
   dungeon_attack_family,
+  adapt_legacy_ntr_koujo,
+  ntr_koujo,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,

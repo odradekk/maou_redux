@@ -91,7 +91,6 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
     'CMI_CONFLICT_CHECK',
     'LOOK_SET',
     'CHARA_FIRST_EXP',
-    'SEARCH_FAMILY',
   ]) {
     assert(
       texts.some((line) => line.includes(`@${name}`)),
@@ -633,22 +632,19 @@ test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级',
   assert.equal(count, 6, '(60 + 2) / 10 = 6 次逐级');
 });
 
-// —— @CM_FAMILY_TALENT（:896-1042，存根下不可达的结构锁）——
+// —— @CM_FAMILY_TALENT（:896-1042）——
 
-test('cm_family_talent：SEARCH_FAMILY 存根 RESULT 0 → 继承块不进', async () => {
+test('cm_family_talent：SEARCH_FAMILY 真身找到家族后进入继承块', async () => {
   const fixture = create_era_fixture();
+  fixture.seed_chara(3, { id: 3, name: '村娘A' });
+  fixture.seed_chara(4, { id: 4, name: '村娘B' });
+  fixture.era.addCharacter(3);
+  fixture.era.addCharacter(4);
+  fixture.store.set('talent:3:165', 1);
+  fixture.store.set('talent:4:171', 1);
   const { cm_family_talent } = load(fixture);
   await cm_family_talent(3, always);
-  assert(
-    stub_texts(fixture).some((line) => line.includes('@SEARCH_FAMILY')),
-    '家族检索的占位行可见（登记项）',
-  );
-  // 块不进：RAND:5 != 0 才落发色，always（== 0）下若块可达会写 talent:300
-  assert.equal(
-    fixture.store.get('talent:3:300'),
-    undefined,
-    'FAMILY_ID = 0：继承块整体不进（1:1 保留待家族票）',
-  );
+  assert.equal(fixture.store.get('talent:3:110'), 1, '未成年家族使胸围升一段');
 });
 
 // —— @CM_NS_EXP（:1045-1119）——

@@ -38,6 +38,7 @@ const {
   benki_koujo_family,
   dungeon_victory_family,
   dungeon_attack_family,
+  adapt_legacy_ntr_koujo,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
@@ -11309,7 +11310,7 @@ ryouzyoku_after_kojo_family.register(19, dungeon_ryouzyoku_after_k19);
 benki_koujo_family.register(19, benki_koujo_k19);
 dungeon_victory_family.register(19, dungeon_victory_k19);
 dungeon_attack_family.register(19, dungeon_attack_k19);
-ntr_koujo_family.register(19, ntr_koujo_k19);
+ntr_koujo_family.register(19, adapt_legacy_ntr_koujo(ntr_koujo_k19));
 exucution_koujo_family.register(19, exucution_koujo_k19);
 museum_koujo_family.register(19, museum_koujo_k19);
 banishment_koujo_family.register(19, banishment_koujo_k19);

@@ -104,6 +104,21 @@ class DungeonFacade {
   }
 
   /**
+   * 客膣内射精（cflag:cid:105 ↔ CFLAG:105）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行321 CFLAG:105 娼館などの客から奴隷への中田氏カウント用
+   * @returns {number}
+   */
+  get 客膣内射精() {
+    return era.get(`cflag:${this.cid}:105`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 客膣内射精(v) {
+    era.set(`cflag:${this.cid}:105`, v);
+  }
+
+  /**
    * 犬膣内射精（cflag:cid:106 ↔ CFLAG:106）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行322 CFLAG:106 ノラ犬からの中田氏カウント用（SYSTEM_SOURCE.ERB:445）
    * @returns {number}

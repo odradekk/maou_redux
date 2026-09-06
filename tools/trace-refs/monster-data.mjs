@@ -88,6 +88,26 @@ export const FILES = [
         ref: '96-110',
         any: [/;16 射撃/],
       },
+      {
+        src: 'target/ERB/侵略/ENEMY_DATA.ERB',
+        ref: '1-8',
+        any: [/@ENEMY_DATA_CHECK, ARG:0, ARG:1/],
+      },
+      {
+        src: 'target/ERB/侵略/ENEMY_DATA.ERB',
+        ref: '10-40',
+        any: [/@CRUSADER, ARG:0, ARG:1/],
+      },
+      {
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '250-257',
+        any: [/@CAMPAIGN_DUNGEON_LV/],
+      },
+      {
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_1.ERB',
+        ref: '278-282',
+        any: [/@CAMPAIGN_DUNGEON_LV_1/, /RETURN 45/],
+      },
     ],
   },
 ];

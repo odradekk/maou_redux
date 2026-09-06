@@ -36,7 +36,6 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { stub_line } = require('#/utils/stub-line');
 const { MONSTER_DATABASE } = require('#/data/monster-database');
 
 /** 原作 RAND:N（0..N-1）的缺省实现 */
@@ -47,15 +46,28 @@ function default_rand(n) {
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 核对）。
  */
-const STUBBED_CALLS = ['CAMPAIGN_DUNGEON_LV'];
+const STUBBED_CALLS = [];
 
 /**
- * @CAMPAIGN_DUNGEON_LV 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役迷宫
- * 的等级表。存根返回 0（#175 登记）。
- * @returns {number} 原作 RESULT（存根恒 0）
+ * 源: target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB
+ *   @CAMPAIGN_DUNGEON_LV（:250-257）。FLAG:400 < 1 为 0，否则按战役号
+ *   TRY 调用专属实现；专属函数缺失时保留预置 RESULT=0。当前唯一专属
+ *   函数 CAMPAIGN_DUNGEON_LV_1 恒返 45（CAMPAIGN_1.ERB:278-282）。
  */
 function campaign_dungeon_lv() {
-  return stub_line('CAMPAIGN_DUNGEON_LV', '战役迷宫等级', '随战役票（阶段 5）');
+  const campaign = era.get('flag:400') || 0; // FLAG:400 当前战役编号
+  return campaign === 1 ? 45 : 0;
+}
+
+/**
+ * @ENEMY_DATA_CHECK（侵略/ENEMY_DATA.ERB:1-8）与 @CRUSADER（:10-40）。
+ * 原作把 ARG 声明成形参，却漏了 INUM/TOP 的赋值，导致字面执行恒为 0；
+ * #333 没有修复源缺陷的裁定，因此这里 1:1 保留无操作行为。
+ */
+function enemy_data_check(inum, top) {
+  void inum;
+  void top;
+  return 0;
 }
 
 /** E 数组读：未写槽兜 0（Emuera 全局数组初始 0 的等价物） */
@@ -198,8 +210,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   // —— 怪物生成レベル（:96-110）——
   let lv;
   if (inum >= 600) {
-    // イベント領域のモンスター：CAMPAIGN_DUNGEON_LV（战役等级，存根恒 0
-    // → LV = 2；RAND:10 < 0 恒假不加）
+    // イベント領域のモンスター：CAMPAIGN_DUNGEON_LV（战役等级）
     const camp_lv = campaign_dungeon_lv();
     lv = Math.floor(camp_lv / 10) + 2;
     if (rand_n(10) < camp_lv % 10) {
@@ -326,6 +337,8 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     e_set(top + 6, row.魔法);
     e_set(top + 7, row.凌辱类型);
     e_set(top + 10, row.耐性);
+  } else if (inum >= 1000 && inum < 2000) {
+    enemy_data_check(inum, top);
   } else {
     // ELSE 臂：未知识别号 → 骷髅兵（SKELETON 的 ARG:1 用勇者A）
     skeleton(top, arg2, rand_n);
@@ -431,6 +444,8 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
 
 module.exports = {
   STUBBED_CALLS,
+  campaign_dungeon_lv,
+  enemy_data_check,
   e_get,
   e_set,
   item_name,

@@ -24,8 +24,8 @@
  *     角色号是预设号、removeCharacter 后**不重排**（#21），照抄重排会把
  *     活引用改写成不存在的号——按死代码处理，注释保留原文说明；
  *   - PARTY_DEL 对 CFLAG:601（结婚对象，属主 chara）的清零经门面
- *     chara(cid).chara.结婚对象（#172 补名），SEARCH_FAMILY 存根恒返 0
- *     下该写不可达、结构 1:1 保留；
+ *     chara(cid).chara.结婚对象（#172 补名），SEARCH_FAMILY 查找配偶
+ *     后清除双方记录；
  *   - 原作 PRINTFORMW 一行 + 读键，ere 侧 era.print + era.waitAnyKey
  *     （引擎 print 每调用一行，同一显示行的拼接归并为一次 print）；
  *   - `SIF CFLAG:CHARID:533 == 0 && CHARID == NEW` 的「自己成为队长」与
@@ -34,32 +34,18 @@
  */
 
 const era = require('#/era-electron');
+const { search_family } = require('#/chara/chara-family');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SEARCH_FAMILY'];
+const STUBBED_CALLS = [];
 
 /** 原作 CHARANUM 的等价物（在场角色数） */
 function charanum() {
   return era.getAddedCharacters().length;
-}
-
-/**
- * @SEARCH_FAMILY（キャラ関数/CHAR_ST.ERB 家族系；PARTY_DEL :291 的调用点）
- * 的存根：按关系检索家族成员。恒返回 0（未找到）——PARTY_DEL 的结婚对象
- * 清零（:293）随之不可达，结构 1:1 保留。存根不消费参数（先例
- * medal_bonus()），调用点保持 1:1 传参。
- * @param {number} cid 角色
- * @param {string} kind 关系种类（原作字符串实参，如 "MARRIAGE"）
- * @returns {number} 原作 RETURN：0 = 未找到
- */
-function search_family() {
-  stub_line('SEARCH_FAMILY', '家族检索', '随家族票');
-  return 0;
 }
 
 /**
@@ -298,13 +284,13 @@ function party_del(cid) {
   }
 
   // 结婚对象编号清除（:287-294）：尾数 9（对象是勇者编号段）时经
-  // SEARCH_FAMILY 找到对方清掉登记——存根恒 0 下不可达，1:1 保留
+  // SEARCH_FAMILY 找到对方后清掉登记
   let marriage = era.get(`cflag:${cid}:601`) || 0;
   marriage %= 10;
   if (marriage === 9) {
-    const partner = search_family(cid, 'MARRIAGE');
+    const partner = search_family(cid, 'MARRIAGE'); // :291
     if (partner > 0) {
-      chara(partner).chara.结婚对象 = 0; // CFLAG:RESULT:601 = 0
+      chara(partner).chara.结婚对象 = 0; // :293 CFLAG:RESULT:601 = 0
     }
   }
 }

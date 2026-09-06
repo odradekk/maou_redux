@@ -79,8 +79,7 @@
 const era = require('#/era-electron');
 
 const { on, TIER } = require('#/system/event/registry');
-const era_flag = require('#/era-utils/era-flag');
-const { PALAMLV } = require('#/era-utils/palam-level');
+const { search_family } = require('#/chara/chara-family');
 const {
   kojo_message_com_family,
   self_kojo_family,
@@ -91,6 +90,7 @@ const {
   enterenemy_koujo_family,
   dungeon_victory_family,
   dungeon_attack_family,
+  adapt_legacy_ntr_koujo,
   ntr_koujo_family,
   exucution_koujo_family,
   museum_koujo_family,
@@ -118,6 +118,8 @@ const {
 const { chara } = require('#/facade/chara');
 
 const { game } = require('#/facade/game');
+const era_flag = require('#/era-utils/era-flag');
+const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 /**
@@ -2562,7 +2564,7 @@ async function gobi_koujo_k0(arg_0) {
 }
 
 /**
- * @ENTERENEMY_KOUJO_K0（K0 慈爱）：迷宫来袭口上（:8063-8076 素质分档；:8079-8121 家人检索待办）。
+ * @ENTERENEMY_KOUJO_K0（K0 慈爱）：迷宫来袭口上（:8063-8076 素质分档；:8079-8121 家人检索）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */
@@ -2599,8 +2601,59 @@ async function enterenemy_koujo_k0() {
 
     await era.printAndWait(`「用${sc()}的爱…让世界恢复和平！」`); // :8075
   } // :8075-8076
-  // :8079-8121 SEARCH_FAMILY 未移植，家人检索 switch 段待办（随家人检索票）
-  return 0; // :8079-8121（SEARCH_FAMILY 未移植）
+
+  // CFLAG:604 = 家族所属编号；CFLAG:605 个位 = 本人相对家人的关系。
+  if (
+    (era.get(`cflag:${target}:604`) || 0) > 0 &&
+    (era.get(`cflag:${target}:605`) || 0) > 0
+  ) {
+    const relation = (era.get(`cflag:${target}:605`) || 0) % 10; // :8080-8081
+    const family_id = search_family(target); // :8082-8083
+    let line;
+
+    switch (relation) {
+      case 1:
+        line = '「哥哥……等着我！」';
+        break;
+      case 2:
+        line = '「姐姐……我来救你了！」';
+        break;
+      case 3:
+        line =
+          family_id < 0
+            ? '「可爱的弟弟……等着我！」'
+            : `「${chara_callname(family_id)}……等着我！」`; // :8093
+        break;
+      case 4:
+        line =
+          family_id < 0
+            ? '「可爱的妹妹……我来救你了！」'
+            : `「${chara_callname(family_id)}……我来救你了！」`;
+        break;
+      case 5:
+        line = '「爸爸……等着我！」';
+        break;
+      case 6:
+        line = '「妈妈……我来就你了！';
+        break;
+      case 7:
+        line =
+          family_id < 0
+            ? '「可爱的儿子……等着我！」'
+            : `「${chara_callname(family_id)}……等着我！」`;
+        break;
+      case 8:
+        line =
+          family_id < 0
+            ? '「可爱的女儿……我来就你了！」'
+            : `「${chara_callname(family_id)}……我来就你了！」`;
+        break;
+      default:
+        line = '「重要的家人……我来就你了！」';
+    } // :8084-8119
+    era.print(line); // :8120 PRINTL
+  }
+  return 0;
 }
 
 // 注册进分发族（TRYCALLFORM BENKI/VICTORY/ATTACK/GOBI/ENTERENEMY_KOUJO_K0 的等价物）
@@ -3111,7 +3164,7 @@ async function colosseum_kojo_0() {
 }
 
 // 注册进分发族（TRYCALLFORM NTR/处刑系/COLOSSEUM_KOUJO_K0 的等价物）
-ntr_koujo_family.register(0, ntr_koujo_k0);
+ntr_koujo_family.register(0, adapt_legacy_ntr_koujo(ntr_koujo_k0));
 exucution_koujo_family.register(0, exucution_koujo_k0);
 museum_koujo_family.register(0, museum_koujo_k0);
 banishment_koujo_family.register(0, banishment_koujo_k0);

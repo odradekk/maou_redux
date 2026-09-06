@@ -499,7 +499,7 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
   // #288 守卫上线即红，挪进函数体后恢复绿）
   const cases = [
     ['ere/system/train/com-service.js', 1911, false],
-    ['ere/kojo/kojo-k2-timid.js', 1285, false],
+    ['ere/kojo/kojo-k2-timid.js', 1286, false],
     ['ere/kojo/kojo-k3-noble.js', 8543, false],
     ['ere/system/train/com-tentacle.js', 394, false],
   ];
