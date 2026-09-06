@@ -117,9 +117,12 @@ const REPO = path.resolve(__dirname, '..');
 // 不再打出首次台词。未解释恒 0。
 // 【#336（L5）SELL_VIDEO 真身落地后重测】调教结束不再输出该存根占位，
 // 两态各少 1 条 stub；录像无有效帧时真身按原作静默返回。未解释恒 0。
+// 【#335 与 #336 合并态重测】两票各自删掉一批存根归因（#336 单独 482/235、
+// #335 单独 481/234），合并后 480/233——既不是任一单票的数也不是相加，
+// 按 SOP §5.5 实跑 cli --sample 取准。matched 与 unexplained 不变。
 const BASELINE = {
-  'train-natural': { matched: 1114, version: 0, stub: 482, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 235, unexplained: 0 },
+  'train-natural': { matched: 1114, version: 0, stub: 480, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 233, unexplained: 0 },
 };
 
 async function build_report(sample) {

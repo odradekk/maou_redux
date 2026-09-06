@@ -9,8 +9,8 @@
  * 其后的善恶值/时常发情/气力回复/JUEL_CHECK/指针还原按原作一并跳过。
  *
  * 存根（docs/stub-registry.md 函数表）：CHARADEAD_CHECK / SELF_CHECK /
- * SELL_MILK / SELL_FIGHTMONEY / AFTERTRAIN_CLOTH /
- * RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET / MAOU_TENSHIN / KARMA。
+ * AFTERTRAIN_CLOTH / RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET /
+ * MAOU_TENSHIN / KARMA。
  * @JUEL_CHECK（:421 的一次性珠结算）已随 #47 实现
  * （system/train/juel-check.js，含与 era.endTrain 的职责划分定案）。
  */
@@ -28,6 +28,7 @@ const { stub_line } = require('#/utils/stub-line');
 // ere/system/train/cloth.js——@EVENTEND 在 endTrain 之前发（run_aftertrain
 // 的既有次序），TFLAG:45 的读写落在火车表内，原生成立）
 const { aftertrain_cloth, re_clothed } = require('#/system/train/cloth');
+const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -35,13 +36,7 @@ const { aftertrain_cloth, re_clothed } = require('#/system/train/cloth');
  */
 const { self_check } = require('#/event/event-aftertrain');
 
-const STUBBED_CALLS = [
-  'CHARADEAD_CHECK',
-  'SELL_MILK',
-  'SELL_FIGHTMONEY',
-  'PARTY_CHAR_DEL',
-  'MAOU_TENSHIN',
-];
+const STUBBED_CALLS = ['CHARADEAD_CHECK', 'PARTY_CHAR_DEL', 'MAOU_TENSHIN'];
 
 on(
   'EVENTEND',
@@ -83,10 +78,10 @@ on(
       era.drawLine(); // :344
     }
 
-    // :347-354 三笔卖出结算（录像 #336 起为真身）
-    stub_line('SELL_MILK', '母乳出售');
+    // :347-354 三笔卖出结算（母乳与死斗场 #335、录像 #336 起全为真身）
+    await sell_milk();
     await sell_video(era_flag.target, era_flag.assi);
-    stub_line('SELL_FIGHTMONEY', '死斗场观战费');
+    await sell_fightmoney();
 
     // :356-361 生きていて着衣モードなら調教後の衣類の処理（FLAG:37 =
     // 着衣系统，@EVENTFIRST 开局置 1；#215 真身——调教内调用，TFLAG:45

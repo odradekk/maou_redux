@@ -68,7 +68,7 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
   // 存根各打一行占位（可检索）
-  for (const name of ['CHARADEAD_CHECK', 'SELL_MILK', 'SELL_FIGHTMONEY']) {
+  for (const name of ['CHARADEAD_CHECK']) {
     assert(
       fixture.text_lines().some((line) => line.includes(`@${name}`)),
       `存根 ${name} 必须打印含函数名的占位行`,
@@ -228,8 +228,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
 
   assert.deepEqual(STUBBED_CALLS, [
     'CHARADEAD_CHECK',
-    'SELL_MILK',
-    'SELL_FIGHTMONEY',
     'PARTY_CHAR_DEL',
     'MAOU_TENSHIN',
   ]);
