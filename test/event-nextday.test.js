@@ -318,6 +318,29 @@ test('排卵诱发剂效果消去：CFLAG:109 非零时播报 + 清零（走门�
   );
 });
 
+test('录像日收益接线：EVENT_NEXTDAY 在每角色循环调用 EVENT_VIDEO_DAY 真身', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  join_slave_chara(fixture, 31, '温妮');
+  fixture.store.set('cflag:31:497', 1);
+  fixture.store.set('cflag:31:493', 1000);
+  fixture.store.set('cstr:31:6', '温妮的调教');
+  fixture.override_math_random(() => 0);
+  const { run_event_nextday } = fixture.load_module('event/event-nextday');
+  try {
+    await run_event_nextday();
+  } finally {
+    fixture.restore_math_random();
+  }
+
+  assert.equal(fixture.store.get('cflag:31:495'), 100, '每日浏览数已累计');
+  assert.equal(fixture.store.get('flag:10004'), 100, '每日收益已入账');
+  assert(
+    !fixture.text_lines().some((line) => line.includes('@EVENT_VIDEO_DAY')),
+  );
+});
+
 test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、ENDCHECK 在普通档尾部', async () => {
   const world = setup_nextday();
   join_slave_chara(world.fixture, 31, '温妮');
@@ -393,7 +416,6 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'SABBATH',
     'SABBATH_DAY',
     'NTR_VIDEO',
-    'EVENT_VIDEO_DAY',
     'TAX_GET',
     'SENGEN_VIDEO_DE',
     'MAOU_KOUHO',

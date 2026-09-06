@@ -85,6 +85,16 @@ const cflag = {
     src(SRC_FLAG, 'CFLAG:32 媚薬中毒の禁断症状判定'),
   ),
   491: named_tail('录像时间', src(SRC_FLAG, 'CFLAG:491 撮影時間')),
+  493: named_tail('录像价值', src(SRC_FLAG, 'CFLAG:493 評価')),
+  495: named_tail('录像浏览数', src(SRC_FLAG, 'CFLAG:495 閲覧者数')),
+  496: named_tail(
+    '录像粉丝信数',
+    erb('售卻相關/SELL_VIDEO.ERB', ':1116-1126 FAV（粉丝信数）累积'),
+  ),
+  498: named_tail(
+    '录像属性',
+    src(SRC_FLAG, 'CFLAG:498 属性（1=清純 -1=不純）'),
+  ),
   499: named_tail('水晶球充能次数', src(SRC_FLAG, 'CFLAG:499 水晶球充能回数')),
   9: named(
     '等级',
@@ -769,6 +779,11 @@ const cstr = {
   4: named_tail(
     '初吻对象名',
     erb('口上/EVENT_K8_スペード.ERB', ':393 CSTR:TARGET:4 = %SAVESTR:ASSI%'),
+  ),
+  // 录像标题：出售成功时生成，日程收益与录像书架读取。属主 stronghold。
+  6: named_tail(
+    '录像标题',
+    erb('售卻相關/SELL_VIDEO.ERB', ':1072 CSTR:6 = %LOCALS%'),
   ),
 };
 
