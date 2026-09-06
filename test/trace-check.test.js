@@ -28,6 +28,13 @@
  *   7. #290 新分片即入账：往副本的 `tools/trace-refs/` 丢一份新锚表（不改
  *      任何既有文件），工具必须认得——加载器按目录扫描，不靠 index 的
  *      import 清单（那份清单会变成下一处跨票冲突面）。
+ *   8. #331 移植状态表：`--coverage` 把 target/ERB/ 的 346 个文件归五类，
+ *      合计恰为分母、真值点（K7 / COMF31 / MUSEUM）与两类误报规则（范围
+ *      式引用展开、yml 承载）判对；存根归因把「有证据 + 欠账」记部分移植、
+ *      判死登记不算欠账、清单行**管道符后带/不带空格两种形态都认**（验收
+ *      缺陷：30 行无空格形态曾被跳过，MONSTER_SETUP 所在文件被报成已移植）；
+ *      证据悬空、分母漂移、已判定表悬空、待移植基线与归因不到基线超限
+ *      各自即红；`--only` 在该模式下限定 target 路径并自报范围。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  *
@@ -100,6 +107,8 @@ const PROBE_REPO_ENTRIES = [
   'tools',
   'test',
   'golden',
+  // #331：--coverage 的部分移植信号读存根清单，共享副本要带一份
+  'docs/stub-registry.md',
   ...listed_trace_sources(),
 ];
 
@@ -114,6 +123,9 @@ function probe_repo() {
 after(() => {
   if (probe_repo_cache) {
     fs.rmSync(probe_repo_cache, { recursive: true, force: true });
+  }
+  if (coverage_full_repo_cache) {
+    fs.rmSync(coverage_full_repo_cache, { recursive: true, force: true });
   }
 });
 
@@ -920,5 +932,336 @@ test('--only 不给值时当场报错退 1，不静默变成全量', () => {
   assert.ok(
     output.includes('--only 需要至少一个路径子串'),
     `报错要说清缺了什么：\n${output}`,
+  );
+});
+
+// —— #331：移植状态表（--coverage，判定面在 tools/trace-coverage.mjs）。
+//    三层守护：真树全量对账（只读）；共享副本里的规则行为探针（--only
+//    限定 target 路径——分母/基线核对在限定模式下跳过，报告行自报范围）；
+//    全树副本里的失败判据探针（分母漂移 / 待移植基线 / 已判定表悬空
+//    只在非限定模式核对，需要 346 个文件都在场，故单独拷一份 target/ERB）。 ——
+
+test('移植状态表全绿（真树）：合计恰为 346，真值点与两类误报规则判对', () => {
+  const { status, output } = run_tool(['--coverage', '--list']);
+  // 断言顺序：形状 → 逐类片段 → status 收尾。变异多数走「基线红」，status
+  // 放最前会遮住后面的片段断言（红的理由丢失，must_mention 无从命中）。
+  assert.match(
+    output,
+    /移植状态表（#331）：已移植 \d+；部分移植 \d+；已判定不实现 \d+；待移植 \d+；纯声明 \d+；合计 346\/346/,
+    '--coverage 必须输出移植状态表（而不是落回锚校验），且合计恰为分母 346',
+  );
+  // 三个真值点（#331 验收点名）。MUSEUM 的「待移植」是当前真值——
+  // MUSEUM 票交付时此断言随 PENDING_BASELINE 一并翻转，那正是本表作为
+  // 验收基准的机械形态（每张票的 diff 里看得见分类移动）。
+  assert.ok(
+    output.includes('已移植 target/ERB/口上/EVENT_K7_ハート.ERB'),
+    `真值点：K7（kojo-k7-heart.js 真身，STUBBED_CALLS 空）必须判已移植：\n${output}`,
+  );
+  assert.ok(
+    output.includes('已移植 target/ERB/調教相關/COMF31_フェラチオ.ERB') &&
+      output.includes('已移植 target/ERB/調教相關/COMF32_パイズリ.ERB') &&
+      output.includes('已移植 target/ERB/調教相關/COMF38_足コキ.ERB'),
+    `范围式引用必须展开（#331 误报规则 1：COMF31-38 无直陈提及，只经 com-service.js:4 的「至」形态）：\n${output}`,
+  );
+  assert.ok(
+    output.includes('待移植 target/ERB/處刑相關/MUSEUM.ERB'),
+    `真值点：MUSEUM.ERB 当前必须判待移植（#331 验收；其票交付时随基线一并翻转）：\n${output}`,
+  );
+  assert.ok(
+    output.includes('已移植 target/ERB/キャラ関数/CHARA0.ERB') &&
+      output.includes('已移植 target/ERB/キャラ関数/CHARA777.ERB'),
+    `yml 承载的 EX_TALENT 空壳必须计已移植（#331 误报规则 2）：\n${output}`,
+  );
+  assert.ok(
+    output.includes('已判定不实现 target/ERB/TITLE.ERB') &&
+      output.includes('已判定不实现 target/ERB/其他/DATA_FIX.ERB'),
+    `已判定不实现表必须生效（#12 根 TITLE / ADR-0006 DATA_FIX）：\n${output}`,
+  );
+  assert.ok(
+    output.includes('纯声明 target/ERB/音声相关/音声的全局变量.erh'),
+    `纯声明必须按大小写不敏感计 .erh（分母 346 的前提，敏感计数只有 345）：\n${output}`,
+  );
+  const baseline_m = output.match(/待移植 (\d+) \/ 基线 (\d+)（#331 只减不增/);
+  assert.ok(
+    baseline_m !== null && Number(baseline_m[1]) <= Number(baseline_m[2]),
+    `待移植 ${baseline_m?.[1]} 不得超出基线 ${baseline_m?.[2]}（证据面静默失效只有这道能拦）`,
+  );
+  assert.equal(status, 0, `--coverage 应全绿（真树移植状态表）：\n${output}`);
+});
+
+test('移植状态表：yml 承载与存根归因的规则行为（--only 限定，共享副本）', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', '__cov_probe__.js');
+  const erb_901 = path.join(
+    root,
+    'target',
+    'ERB',
+    'キャラ関数',
+    'CHARA901.ERB',
+  );
+  const yml_901 = path.join(root, 'yml', 'Chara901.yml');
+  const part = path.join(root, 'target', 'ERB', '__cov_probe__', 'PART.ERB');
+  const dead = path.join(root, 'target', 'ERB', '__cov_probe__', 'DEAD.ERB');
+  const nop2 = path.join(root, 'target', 'ERB', '__cov_probe__', 'NOP2.ERB');
+  const reg_path = path.join(root, 'docs', 'stub-registry.md');
+  const args = ['--coverage', '--list', '--only', '__cov_probe__,CHARA901'];
+  const cleanup = () => {
+    for (const p of [js_path, erb_901, yml_901, part, dead, nop2]) {
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    }
+  };
+  cleanup(); // 上一次异常退出留下的残骸先清
+  try {
+    // 合成证据：js 头注释声明两个探针源；CHARA901 配 yml（承载正例）
+    fs.mkdirSync(path.dirname(part), { recursive: true });
+    fs.mkdirSync(path.dirname(erb_901), { recursive: true });
+    fs.mkdirSync(path.dirname(yml_901), { recursive: true });
+    fs.writeFileSync(part, '@PROBE_PART\n', 'utf8');
+    fs.writeFileSync(dead, '@PROBE_DEAD\n', 'utf8');
+    fs.writeFileSync(nop2, '@PROBE_NOP2\n', 'utf8');
+    fs.writeFileSync(erb_901, '@CHARA_EX_901\n', 'utf8');
+    fs.writeFileSync(yml_901, '"番号": 901\n', 'utf8');
+    fs.writeFileSync(
+      js_path,
+      [
+        '/**',
+        ' * 探针模块（test/trace-check.test.js 写入，跑完即删）。',
+        ' * 源: target/ERB/__cov_probe__/PART.ERB  @PROBE_PART',
+        ' *     target/ERB/__cov_probe__/DEAD.ERB  @PROBE_DEAD',
+        ' *     target/ERB/__cov_probe__/NOP2.ERB  @PROBE_NOP2',
+        ' */',
+        'module.exports = {};',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    // 合成清单行：存根（真欠账）与登记（判死——完结方式，不是欠账）。
+    // 管道符后带/不带空格两种形态各一行——真清单里两种都有（254/30 行），
+    // 只认一种会把另一种形态的欠账静默漏成已移植（验收缺陷，M6520 钉住）。
+    // 无空格形态指向独立文件 NOP2：两行若指向同一文件，跳过一行不可观测。
+    const reg_text = fs.readFileSync(reg_path, 'utf8');
+    const sec = reg_text.indexOf('## 函数级存根');
+    const at = reg_text.indexOf('\n## ', sec + 1);
+    const rows = [
+      '| `__COV_PART` | __cov_probe__/PART.ERB:1 | 探针 | 探针 | 探针 | 存根（运行时占位，探针） |',
+      '|`__COV_NOP2` | __cov_probe__/NOP2.ERB:1 | 探针 | 探针 | 探针 | 存根（运行时占位，探针） |',
+      '| `__COV_DEAD` | __cov_probe__/DEAD.ERB:1 | 探针 | 探针 | 探针 | 登记（判死不移植，探针） |',
+      '',
+    ].join('\n');
+    fs.writeFileSync(
+      reg_path,
+      `${reg_text.slice(0, at)}\n${rows}${reg_text.slice(at)}`,
+      'utf8',
+    );
+    const r = run_tool_in(root, args);
+    assert.equal(r.status, 0, `限定范围的移植状态表应全绿：\n${r.output}`);
+    assert.ok(
+      r.output.includes('本次限定范围'),
+      `限定模式必须自报范围：\n${r.output}`,
+    );
+    assert.ok(
+      r.output.includes('部分移植 target/ERB/__cov_probe__/PART.ERB'),
+      `存根归因必须把未了结项记成部分移植（有证据 + 存根欠账）：\n${r.output}`,
+    );
+    assert.ok(
+      r.output.includes('部分移植 target/ERB/__cov_probe__/NOP2.ERB'),
+      `无空格清单行必须照常归因（真清单 30 行是此形态）：\n${r.output}`,
+    );
+    assert.ok(
+      r.output.includes('已移植 target/ERB/__cov_probe__/DEAD.ERB'),
+      `判死登记不是欠账（计入会把带死分支的已移植文件永远卡在部分移植）：\n${r.output}`,
+    );
+    assert.ok(
+      r.output.includes('已移植 target/ERB/キャラ関数/CHARA901.ERB'),
+      `yml 承载必须计已移植：\n${r.output}`,
+    );
+    // 拿掉 yml → 退回待移植（规则真的在判，不是查表）
+    fs.unlinkSync(yml_901);
+    const r2 = run_tool_in(root, args);
+    assert.ok(
+      r2.output.includes('待移植 target/ERB/キャラ関数/CHARA901.ERB'),
+      `yml 不在场时空壳必须退回待移植：\n${r2.output}`,
+    );
+  } finally {
+    cleanup();
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+  const restored = run_tool_in(root, args);
+  assert.equal(restored.status, 0, `探针删净后必须复绿：\n${restored.output}`);
+});
+
+test('移植状态表：证据悬空即红（--only 限定）', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', '__cov_dangling__.js');
+  const cleanup = () => {
+    if (fs.existsSync(js_path)) fs.unlinkSync(js_path);
+  };
+  cleanup();
+  try {
+    fs.writeFileSync(
+      js_path,
+      [
+        '/**',
+        ' * 探针模块（test/trace-check.test.js 写入，跑完即删）。',
+        ' * 源: target/ERB/__cov_dangling__/NOPE.ERB  @NOPE',
+        ' */',
+        'module.exports = {};',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const r = run_tool_in(root, ['--coverage', '--only', '__cov_dangling__']);
+    assert.notEqual(
+      r.status,
+      0,
+      '拼错路径的移植声明等于没声明，证据悬空必须红（否则对应文件假性待移植）',
+    );
+    assert.ok(
+      r.output.includes('证据悬空') && r.output.includes('NOPE.ERB'),
+      `必须点名悬空路径：\n${r.output}`,
+    );
+  } finally {
+    cleanup();
+  }
+  const restored = run_tool_in(root, [
+    '--coverage',
+    '--only',
+    '__cov_dangling__',
+  ]);
+  assert.equal(restored.status, 0, `探针删净后必须复绿：\n${restored.output}`);
+});
+
+// 全树副本（分母 / 基线 / 表悬空只在非限定模式核对）：共享副本的 target/
+// 只带被引用的源，非限定跑必红（分母漂移），失败判据探针因此单独拷整棵
+// target/ERB（12MB，进程内单例、文件内串行复用）。
+const COVERAGE_FULL_ENTRIES = [
+  ...PROBE_REPO_ENTRIES,
+  'docs/stub-registry.md',
+  'yml',
+  'target/ERB',
+];
+let coverage_full_repo_cache;
+function coverage_full_repo() {
+  coverage_full_repo_cache ??= make_probe_repo(COVERAGE_FULL_ENTRIES);
+  return coverage_full_repo_cache;
+}
+
+test('移植状态表：分母漂移与已判定表悬空即红（全树副本）', () => {
+  const root = coverage_full_repo();
+  const drift = path.join(root, 'target', 'ERB', 'ZZ_DRIFT.ERB');
+  const title = path.join(root, 'target', 'ERB', 'TITLE.ERB');
+  try {
+    fs.writeFileSync(drift, '@ZZ_DRIFT\n', 'utf8');
+    const r = run_tool_in(root, ['--coverage']);
+    assert.notEqual(
+      r.status,
+      0,
+      'target/ERB 多出一个文件必须红（分母 346 写死）',
+    );
+    assert.ok(
+      r.output.includes('分母漂移') && r.output.includes('347'),
+      `必须报出分母漂移与实测数：\n${r.output}`,
+    );
+    fs.unlinkSync(drift);
+    fs.unlinkSync(title);
+    const r2 = run_tool_in(root, ['--coverage']);
+    assert.ok(
+      r2.output.includes('已判定不实现表悬空') &&
+        r2.output.includes('TITLE.ERB'),
+      `表项文件消失必须点名报出：\n${r2.output}`,
+    );
+  } finally {
+    if (fs.existsSync(drift)) fs.unlinkSync(drift);
+    if (!fs.existsSync(title)) {
+      fs.copyFileSync(path.join(REPO_ROOT, 'target/ERB/TITLE.ERB'), title); // 单文件回拷，省一次 12MB 整拷
+    }
+  }
+  const restored = run_tool_in(root, ['--coverage']);
+  assert.equal(restored.status, 0, `副本还原后必须复绿：\n${restored.output}`);
+});
+
+test('移植状态表：待移植基线只减不增（全树副本，改小一位必须红）', () => {
+  const root = coverage_full_repo();
+  const tool_path = path.join(root, 'tools', 'trace-coverage.mjs');
+  const original = fs.readFileSync(tool_path, 'utf8');
+  const m = original.match(/export const PENDING_BASELINE = (\d+);/);
+  assert.ok(m, 'PENDING_BASELINE 必须内嵌在工具里——规则不复制到别处');
+  const current = Number(m[1]);
+  assert.ok(current > 0, '基线必须大于 0（现状冻结，不是空表）');
+  try {
+    fs.writeFileSync(
+      tool_path,
+      original.replace(
+        `export const PENDING_BASELINE = ${current};`,
+        `export const PENDING_BASELINE = ${current - 1};`,
+      ),
+      'utf8',
+    );
+    const r = run_tool_in(root, ['--coverage']);
+    assert.notEqual(
+      r.status,
+      0,
+      '待移植基线改小一位必须红——「只减不增」不在退出码语义里就是空话',
+    );
+    assert.ok(
+      r.output.includes('超出 #331 基线'),
+      `红的原因必须是待移植基线失守：\n${r.output}`,
+    );
+  } finally {
+    fs.writeFileSync(tool_path, original, 'utf8'); // 单文件还原，省一次整目录回拷
+  }
+  const restored = run_tool_in(root, ['--coverage']);
+  assert.equal(restored.status, 0, `基线还原后必须复绿：\n${restored.output}`);
+});
+
+test('移植状态表：清单归因不到行数基线只减不增（全树副本，改小一位必须红）', () => {
+  const root = coverage_full_repo();
+  const tool_path = path.join(root, 'tools', 'trace-coverage.mjs');
+  const original = fs.readFileSync(tool_path, 'utf8');
+  const m = original.match(/export const UNATTRIBUTED_BASELINE = (\d+);/);
+  assert.ok(m, 'UNATTRIBUTED_BASELINE 必须内嵌在工具里——规则不复制到别处');
+  const current = Number(m[1]);
+  assert.ok(current > 0, '基线必须大于 0（现状冻结，不是空表）');
+  try {
+    fs.writeFileSync(
+      tool_path,
+      original.replace(
+        `export const UNATTRIBUTED_BASELINE = ${current};`,
+        `export const UNATTRIBUTED_BASELINE = ${current - 1};`,
+      ),
+      'utf8',
+    );
+    const r = run_tool_in(root, ['--coverage']);
+    assert.notEqual(
+      r.status,
+      0,
+      '归因不到基线改小一位必须红——静默多出的归因不到行正是欠账被漏成已实现的方向',
+    );
+    assert.ok(
+      r.output.includes('清单归因不到'),
+      `红的原因必须是归因不到基线失守：\n${r.output}`,
+    );
+  } finally {
+    fs.writeFileSync(tool_path, original, 'utf8'); // 单文件还原，省一次整目录回拷
+  }
+  const restored = run_tool_in(root, ['--coverage']);
+  assert.equal(restored.status, 0, `基线还原后必须复绿：\n${restored.output}`);
+});
+
+test('移植状态表 --only：限定范围跳过全局核对（残缺 target 也能跑且自报范围）', () => {
+  const root = probe_repo(); // 共享副本的 target 只有被引用的源：非限定必红（分母），限定必须绿
+  const r = run_tool_in(root, ['--coverage', '--list', '--only', 'EVENT_K7']);
+  assert.equal(
+    r.status,
+    0,
+    `限定范围必须跳过分母核对（否则写坏型探针没法用共享副本跑）：\n${r.output}`,
+  );
+  assert.ok(
+    r.output.includes('本次限定范围'),
+    `限定范围的报告行必须自报范围：\n${r.output}`,
+  );
+  assert.ok(
+    r.output.includes('已移植 target/ERB/口上/EVENT_K7_ハート.ERB'),
+    `限定模式下分类照常进行：\n${r.output}`,
   );
 });
