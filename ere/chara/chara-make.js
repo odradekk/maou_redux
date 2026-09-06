@@ -44,6 +44,8 @@
 
 const era = require('#/era-electron');
 const { random_self_call } = require('#/chara/chara-init');
+const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
+const { chara_name_random_define } = require('#/chara/chara-name');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
@@ -55,7 +57,6 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'CHARA_NAME_RANDOM_DEFINE',
   'FAMILY_REGISTER',
   'CHAR_BODY_GENERATE_WAPPED',
   'LOOK_SET',
@@ -92,9 +93,9 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand) {
     await cm_gender(cid, rand_n);
   }
 
-  // :18-20 命名（跨文件存根；后代由 CALL 方先命名并设好家族关系）
+  // :18-20 命名（后代由 CALL 方先命名并设好家族关系）
   if (!offspring) {
-    stub_line('CHARA_NAME_RANDOM_DEFINE', '随机命名', '随角色名票');
+    chara_name_random_define(cid, -1, rand_n);
   }
 
   // :22-24 等级与经验值
@@ -1018,7 +1019,7 @@ async function cm_skill(cid, rand_n) {
   }
 
   // :858 （stick 增加）冲突检查
-  stub_line('CMI_CONFLICT_CHECK', '素质冲突检查', '随角色继承票');
+  cmi_conflict_check(cid);
 }
 
 /**

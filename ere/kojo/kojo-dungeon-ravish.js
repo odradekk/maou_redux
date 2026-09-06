@@ -154,7 +154,7 @@ const { equip_database } = require('#/system/equip/equip-lookup');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['CHA_IMG2', 'SHOW_DATA', 'KARMA'];
+const STUBBED_CALLS = ['CHA_IMG2', 'SHOW_DATA'];
 
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
@@ -3695,8 +3695,8 @@ async function victory_ryouzyoku(arg = -1, rand) {
       `冒险者被魔界的瘴气侵袭着，玩弄起${monstername(local_1)}来。（善恶值:-10）`,
     ); // :2793
     // :2792 CALL KARMA, ARG, -10（阶段 5 存根）
-    const { karma: karma_stub } = require('#/dungeon/dungeon');
-    karma_stub(arg, -10);
+    const { karma } = require('#/dungeon/dungeon');
+    karma(arg, -10);
   }
 
   // :2796-2822 ペニスを使った凌辱を先行実装（E:C 分派；注释掉的死分支保留）

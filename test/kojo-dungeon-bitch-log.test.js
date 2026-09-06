@@ -324,7 +324,7 @@ test('【验收】kojo-dungeon-bitch.js 的 STUBBED_CALLS 已删前六项（真�
       `STUBBED_CALLS 应已删 ${name}`,
     );
   }
-  assert.deepEqual(mod.STUBBED_CALLS, ['KARMA', '强制肉偿']);
+  assert.deepEqual(mod.STUBBED_CALLS, ['强制肉偿']);
 });
 
 test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BITCH 真身文本）', async () => {

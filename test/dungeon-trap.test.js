@@ -602,10 +602,7 @@ test('DARK_JUEL（:1295）：掠夺换金（CFLAG:581）+ 屈服宝珠 + 善恶�
   // 阶层 1：floor(100×(99+1)/100) = 100；无素质补正
   assert.equal(fixture.store.get('cflag:1:581') || 0, 100, '掠夺换金（:1337）');
   assert.equal(fixture.store.get('juel:1:6'), 10, '屈服宝珠 +DICE/10（:1339）');
-  assert.ok(
-    text_lines(fixture).some((line) => line.includes('原作 @KARMA，')),
-    'KARMA 存根被调（:1344，善恶值 -1）',
-  );
+  assert.equal(fixture.store.get('cflag:1:151'), 199, 'KARMA 真身扣善恶值 1');
   // 素质补正：好奇心 +5、盗贼 +DICE/5
   fixture.store.set('talent:1:23', 1);
   fixture.store.set('talent:1:203', 1);

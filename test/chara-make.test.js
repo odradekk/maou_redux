@@ -83,10 +83,11 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
   // 一人称（RANDOM_SELF_CALL 的 <9 直设）
   assert.equal(fixture.store.get('cstr:1:60'), '我', 'CSTR:60 一人称');
   assert.equal(fixture.store.get('cflag:1:450'), 9, 'CFLAG:450 一人称档位');
-  // 占位可见性：五处跨文件/跨段存根在、三处条件不达的存根不在
+  // 随机命名已是真身，末端 JUMP 到 CHARA_NAME_DEFINE 范围外存根；其余
+  // 四处跨文件/跨段存根仍可见。
   const texts = stub_texts(fixture);
   for (const name of [
-    'CHARA_NAME_RANDOM_DEFINE',
+    'CHARA_NAME_DEFINE',
     'CMI_CONFLICT_CHECK',
     'LOOK_SET',
     'CHARA_FIRST_EXP',

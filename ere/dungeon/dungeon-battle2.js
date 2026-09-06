@@ -806,7 +806,7 @@ async function spy_battle(arg0, arg1, rand) {
   chara(arg1).dungeon.体力 -= hdmg;
   chara(arg1).dungeon.气力 -= mdmg;
 
-  // :1293 CALL KARMA, ARG:1, KDMG（dungeon.js 的既有存根，不动值）
+  // :1293 CALL KARMA, ARG:1, KDMG
   const { karma } = require('#/dungeon/dungeon');
   karma(arg1, kdmg);
 

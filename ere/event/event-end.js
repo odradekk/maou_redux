@@ -16,6 +16,8 @@
  */
 
 const era = require('#/era-electron');
+const { karma } = require('#/chara/chara-stats');
+const { name_reset } = require('#/chara/char-make');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { run_juel_check } = require('#/system/train/juel-check');
@@ -38,9 +40,7 @@ const STUBBED_CALLS = [
   'SELL_VIDEO',
   'SELL_FIGHTMONEY',
   'PARTY_CHAR_DEL',
-  'NAME_RESET',
   'MAOU_TENSHIN',
-  'KARMA',
 ];
 
 on(
@@ -116,7 +116,7 @@ on(
       stub_line('PARTY_CHAR_DEL', '队伍移除');
       // DELCHARA：引擎等价物 removeCharacter（从已加入列表除名）
       era.removeCharacter(target);
-      stub_line('NAME_RESET', '名字重置');
+      await name_reset();
       begin(STATE.TURNEND); // :375 —— 结束本函数，其后结算整段跳过
     } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
       // :376-378 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）
@@ -127,12 +127,12 @@ on(
     if (era.get(`ex:${era_flag.target}:1`)) {
       era.print('(私处绝顶使善恶值:-1)'); // :383 PRINTW
       await era.waitAnyKey(); // PRINTW 的读键
-      stub_line('KARMA', '善恶值增减'); // :384 CALL KARMA, TARGET, -1
+      karma(era_flag.target, -1); // :384 CALL KARMA, TARGET, -1
     }
     if (era.get(`ex:${era_flag.target}:2`)) {
       era.print('(肛门绝顶使善恶值:-2)'); // :388
       await era.waitAnyKey();
-      stub_line('KARMA', '善恶值增减'); // :389
+      karma(era_flag.target, -2); // :389
     }
 
     // :392-406 时常发情（非「时常发情」体质时，润滑/欲情各按万分比蓄积

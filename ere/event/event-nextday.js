@@ -32,6 +32,7 @@
  */
 
 const era = require('#/era-electron');
+const { karma, faith } = require('#/chara/chara-stats');
 const { run_endcheck } = require('#/event/event-endcheck');
 const { auto_save } = require('#/page/page-save-load');
 const { chara } = require('#/facade/chara');
@@ -65,8 +66,6 @@ const STUBBED_CALLS = [
   'SABBATH_DAY',
   'NTR_VIDEO',
   'EVENT_VIDEO_DAY',
-  'KARMA',
-  'FAITH',
   'TAX_GET',
   'SENGEN_VIDEO_DE',
   'MAOU_KOUHO',
@@ -246,18 +245,18 @@ async function run_event_nextday() {
     // :146-154 善恶值随机变动（KARMA 四支；:147 条件是非处女——与原作
     // 注释「处女の場合」相反，条件照搬，见文件头）
     if (!(era.get(`talent:${cid}:0`) || 0) && rand(3) === 0) {
-      stub_line('KARMA', '善恶值变动');
+      karma(cid, 1);
     }
     if ((era.get(`talent:${cid}:85`) || 0) === 1 && rand(3) === 0) {
-      stub_line('KARMA', '善恶值变动');
+      karma(cid, 1);
     }
     if (chara(cid).invasion.状态 === 2 && rand(3) === 0) {
-      stub_line('KARMA', '善恶值变动');
+      karma(cid, 1);
     }
     if (rand(2) === 0) {
-      stub_line('KARMA', '善恶值变动');
+      karma(cid, 1);
     } else {
-      stub_line('KARMA', '善恶值变动');
+      karma(cid, -1);
     }
 
     // :162-175 信仰值增减：圣女（TALENT:315 == 12，成为勇者前的生活）/
@@ -267,13 +266,13 @@ async function run_event_nextday() {
       era.get(`talent:${cid}:202`) ||
       era.get(`talent:${cid}:206`)
     ) {
-      stub_line('FAITH', '信仰值变动');
+      faith(cid, 1);
     } else if ((era.get(`cflag:${cid}:152`) || 0) < 30) {
-      stub_line('FAITH', '信仰值变动');
+      faith(cid, -1);
     } else if (rand(4) === 0) {
-      stub_line('FAITH', '信仰值变动');
+      faith(cid, 1);
     } else if (rand(3) === 0) {
-      stub_line('FAITH', '信仰值变动');
+      faith(cid, -1);
     }
   }
 

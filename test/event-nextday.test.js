@@ -394,8 +394,6 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'SABBATH_DAY',
     'NTR_VIDEO',
     'EVENT_VIDEO_DAY',
-    'KARMA',
-    'FAITH',
     'TAX_GET',
     'SENGEN_VIDEO_DE',
     'MAOU_KOUHO',

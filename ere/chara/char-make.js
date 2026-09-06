@@ -4,9 +4,9 @@
  *
  * 源: target/ERB/キャラ関数/CHAR_MAKE.ERB  @CHAR_MAKE（:2-4）、
  *       @NAMING（:7-9）、@NAME_RESET（:12-14）、@SET_CHAR_CLOTH（:17-19）、
- *       @CHAR_MAKE_INPORT（:27-34）。@CHAR_INIT（:22-25）的 ere 形态是
- *       ere/chara/chara-init.js（#118，其文件头已声明本壳）；@CHAR_INHERIT
- *       与 @RAND_CHARA_MAKE 不在本票范围（#169：随机生成线不在阶段 3）。
+ *       @CHAR_MAKE_INPORT（:27-34）、@CHAR_INHERIT（:37-39）。@CHAR_INIT
+ *       （:22-25）的 ere 形态是 ere/chara/chara-init.js（#118，其文件头已
+ *       声明本壳）；@RAND_CHARA_MAKE 不在本票范围。
  *
  * 转发不折叠（工单验收第 2 条）：调用点的名字稳定在转发层上，真身可随
  * 后续票替换。JUMP 的指针语义（A / TARGET 隐式传递）由 ere 侧显式传参
@@ -15,6 +15,8 @@
 
 const { chara_make, cm_cloth } = require('#/chara/chara-make');
 const { char_init } = require('#/chara/chara-init');
+const { chara_make_inherit } = require('#/chara/chara-make-inherit');
+const { chara_name_define, cn_rebuild } = require('#/chara/chara-name');
 const { stub_line } = require('#/utils/stub-line');
 
 /**
@@ -47,15 +49,15 @@ async function char_make(cid, arg0 = 0, arg1 = 0, rand) {
  */
 async function naming(cid) {
   // :9 JUMP CHARA_NAME_DEFINE(A)（真身落地前无副作用，占位行携带角色号）
-  stub_line('CHARA_NAME_DEFINE', `角色称呼定义（角色 ${cid}）`);
+  chara_name_define(cid);
 }
 
 /**
- * @NAME_RESET（:12-14）：JUMP CN_REBUILD——名字重建（存根，随角色名票）。
+ * @NAME_RESET（:12-14）：JUMP CN_REBUILD（范围外存根）。
  */
 async function name_reset() {
   // :14 JUMP CN_REBUILD
-  stub_line('CN_REBUILD', '名字重建');
+  return cn_rebuild();
 }
 
 /**
@@ -90,6 +92,16 @@ async function char_make_inport(arg0 = 1, rand) {
   return 0;
 }
 
+/**
+ * @CHAR_INHERIT（:37-39）：JUMP CHARA_MAKE_INHERIT(A, B)。
+ * @param {number} child 子代角色 ID（原作全局 A）
+ * @param {number} parent 亲本角色 ID（原作全局 B）
+ * @returns {void} JUMP 不向原调用点返回结果
+ */
+function char_inherit(child, parent) {
+  chara_make_inherit(child, parent);
+}
+
 module.exports = {
   STUBBED_CALLS,
   char_make,
@@ -97,5 +109,6 @@ module.exports = {
   name_reset,
   set_char_cloth,
   char_make_inport,
+  char_inherit,
   char_init, // @CHAR_INIT（:22-25）：ere 形态即 chara-init.js（#118），转发层 re-export
 };

@@ -75,7 +75,7 @@ test('存根清单可检索：docs/stub-registry.md 收录任务两文件的复�
     'utf8',
   );
   const names = [...load(fixture).STUBBED_CALLS];
-  assert.ok(names.length >= 3, `名单 ${names.length} 条（应 ≥ 3）`);
+  assert.ok(names.length >= 2, `名单 ${names.length} 条（应 ≥ 2）`);
   for (const name of names) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

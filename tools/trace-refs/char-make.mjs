@@ -65,6 +65,11 @@ export const FILES = [
         ref: '34',
         any: [/JUMP CHARA_MAKE_INPORT/],
       },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '37-39',
+        any: [/@CHAR_INHERIT/, /JUMP CHARA_MAKE_INHERIT\(A, B\)/],
+      },
     ],
   },
 ];

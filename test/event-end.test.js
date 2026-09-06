@@ -217,9 +217,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'SELL_VIDEO',
     'SELL_FIGHTMONEY',
     'PARTY_CHAR_DEL',
-    'NAME_RESET',
     'MAOU_TENSHIN',
-    'KARMA',
   ]);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
