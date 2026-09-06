@@ -55,18 +55,19 @@ const bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // 本票（#178）真身：@SET_QUEST（:56 受注，必须在 PLANNING 之后——读
 // CFLAG:520 目标阶层）
 const quest_mod = require('#/dungeon/dungeon-quest');
+// L10（#341）真身：@DUNGEON_TOWN_LOVER（:697 城镇日常恋人事件）。
+const lovers_mod = require('#/dungeon/dungeon-lovers');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。三个域内新存根（DUNGEON_TOWN_LOVER /
- * SELL_EX_ITEM / COM63_AUTO）与 RAND_AUTOTRAIN 在文件下方定义；KARMA /
+ * 核对固定）；名单变动必须同步清单。域内存根 SELL_EX_ITEM / COM63_AUTO
+ * 与 RAND_AUTOTRAIN 在文件下方定义；KARMA /
  * ADD_EX_ITEM / BEFORE_AUTOTRAIN / COM0_AUTO / SOURCE_CHECK_AUTO 复用既有
  * 域内存根（#176「复用 + 调用点列补新处」先例）——对 dungeon.js /
  * dungeon-battle.js / dungeon-trap.js 的引用一律函数内延迟 require 防环
  * （dungeon.js → 本文件是顶层引用，反向只许延迟）。
  */
 const STUBBED_CALLS = [
-  'DUNGEON_TOWN_LOVER',
   'SELL_EX_ITEM',
   'ADD_EX_ITEM',
   'MONSTER_PLAY',
@@ -97,20 +98,6 @@ function party_of(arg) {
 }
 
 // —— 域内存根层（本票新增，登记 docs/stub-registry.md）——
-
-/**
- * @DUNGEON_TOWN_LOVER 存根（其他/LOVERS.ERB:144；恋人系统票）：城镇日常
- * 的恋人事件。原作无 RESULT 消费。
- * @param {number} cid 角色（原作 TARGET——DAYEVENT 段已换手）
- * @returns {Promise<void>}
- */
-async function dungeon_town_lover(cid) {
-  await stub_line_wait(
-    'DUNGEON_TOWN_LOVER',
-    `恋人事件（${name_of(cid)}）`,
-    '随恋人系统票',
-  );
-}
 
 /**
  * @SELL_EX_ITEM 存根（其他/USE_EX_ITEM.ERB:74；EX 道具票，阶段 5——与
@@ -846,7 +833,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
 
 /**
  * @TOWN_PT_DAYEVENT（:686-700）：日常段。每人换手 TARGET 后走恋人事件
- * （DUNGEON_TOWN_LOVER——域内存根，随恋人系统票）。
+ * （DUNGEON_TOWN_LOVER——#341 真身）。
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @returns {Promise<number>} 原作 RETURN 0
  */
@@ -858,7 +845,7 @@ async function town_pt_dayevent(pm0, pm1, pm2) {
       continue;
     }
     era_flag.target = pm[lcount]; // :696 TARGET = PM:LCOUNT
-    await dungeon_town_lover(pm[lcount]); // :697 CALL DUNGEON_TOWN_LOVER
+    await lovers_mod.dungeon_town_lover(pm[lcount]); // :697 CALL DUNGEON_TOWN_LOVER
   }
   return 0;
 }
@@ -878,7 +865,6 @@ module.exports = {
   town_pt_planning,
   town_pt_party,
   town_pt_dayevent,
-  dungeon_town_lover,
   sell_ex_item,
   STUBBED_CALLS,
 };
