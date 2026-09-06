@@ -36,11 +36,7 @@ const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
  */
 const { self_check } = require('#/event/event-aftertrain');
 
-const STUBBED_CALLS = [
-  'CHARADEAD_CHECK',
-  'PARTY_CHAR_DEL',
-  'MAOU_TENSHIN',
-];
+const STUBBED_CALLS = ['CHARADEAD_CHECK', 'PARTY_CHAR_DEL', 'MAOU_TENSHIN'];
 
 on(
   'EVENTEND',
