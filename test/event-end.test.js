@@ -68,7 +68,7 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
   // 存根各打一行占位（可检索）
-  for (const name of ['CHARADEAD_CHECK', 'SELL_VIDEO']) {
+  for (const name of ['CHARADEAD_CHECK']) {
     assert(
       fixture.text_lines().some((line) => line.includes(`@${name}`)),
       `存根 ${name} 必须打印含函数名的占位行`,
@@ -89,6 +89,26 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   assert.equal(target_writes[target_writes.length - 1].value, 31);
   assert.equal(era_flag.target, 31);
   assert.equal(era_flag.assi, 32);
+});
+
+test('录像出售接线：EVENTEND 在调教表销毁前结算有效录像', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('base:31:0', 2000);
+  fixture.store.set('cflag:31:491', 2);
+  fixture.store.set('cflag:31:460', 0);
+  fixture.store.set('abl:31:70', 2);
+  fixture.set_inputs(999);
+
+  await run_eventend(fixture);
+
+  assert.equal(
+    fixture.store.get('cflag:31:493'),
+    50,
+    'SELL_VIDEO 真身完成定价',
+  );
+  assert.equal(fixture.store.get('cstr:31:6'), '奴隶的调教');
+  assert(!fixture.text_lines().some((line) => line.includes('@SELL_VIDEO')));
 });
 
 test('失神旗标：TFLAG:860 = 1 → FLAG:7 = 1 并清零', async () => {
@@ -208,7 +228,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
 
   assert.deepEqual(STUBBED_CALLS, [
     'CHARADEAD_CHECK',
-    'SELL_VIDEO',
     'PARTY_CHAR_DEL',
     'MAOU_TENSHIN',
   ]);

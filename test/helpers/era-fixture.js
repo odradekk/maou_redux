@@ -289,7 +289,11 @@ function create_era_fixture() {
       return make_button_entry(obj.content, obj.accelerator, obj.config);
     }
     if (obj?.type === 'text') {
-      return make_text_entry(obj.content);
+      const entry = make_text_entry(obj.content);
+      // 引擎网格为 24 列；GridObject 未给 width 时独占 24 列。保留实际宽度，
+      // 让三列布局等渲染行为可断言，而不只记录扁平文本。
+      entry.grid_width = obj.config?.width ?? 24;
+      return entry;
     }
     if (obj?.type === 'divider') {
       return {
