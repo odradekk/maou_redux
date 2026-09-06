@@ -44,17 +44,22 @@
 //      （docs/stub-registry.md 第一张表「函数级存根」——#329 普查用的
 //      同一张）仍有未了结项归因到该文件。归因按「源」列：整路径包含、
 //      裸文件名全库唯一、前缀速记（目录/前缀（……））三段匹配，兼容
-//      清单里的 \_ 转义与 * 代 _ 两种写法。未了结 = 状态以
+//      清单里的 \_ 转义与 * 代 _ 两种写法；**表行的管道符后带不带空格
+//      两种形态都认**（`| \`FN\`` 254 行与 `|\`FN\`` 30 行——人工维护的
+//      表，prettier 对两种都判合格，规范化它会在下一次手写时重新失效，
+//      后者手写清单行时照这两种形态之一写即可）。未了结 = 状态以
 //      存根 / 部分实现 开头，或 登记（ 开头且不带死标记（判死 / 不移植
 //      / 不实现 / 不可达 / 落空）——登记行一半是「判死 1:1 保留」，那
 //      不是欠账是完结方式，计入会把带死分支的已移植文件永远卡在
-//      部分移植。已实现行不欠账，不归因。只解析第一张表：变量级 /
+//      部分移植。已实现行不欠账，不归因。归因不到的行（待核 / 无源 /
+//      内建函数 / 目录级引用）不构成信号，由 UNATTRIBUTED_BASELINE
+//      钉住总数（见判据 ⑥）。只解析第一张表：变量级 /
 //      资源级 / @USERSHOP 各表粒度不同，#329 普查同样只认第一张。
 //   5. 有证据、无未了结项 → 已移植。
 //   6. 无任何证据 → 待移植（正判据是「三路证据并集为空」，不是兜底：
 //      证据面坏了会被待移植基线拦下，见下）。
 //
-// 失败判据（#331 验收：「无未归类项」的具体化 + 一道只减不增基线）：
+// 失败判据（#331 验收：「无未归类项」的具体化 + 两道只减不增基线）：
 //   ① 分母漂移：target/ERB 枚举数 ≠ 346 即红——target/ 是只读输入，
 //      变动必须显式重新裁定（改 DENOMINATOR）；
 //   ② 证据悬空：注释/锚表/范围展开指向不存在的 .ER[BH] 即红——拼错
@@ -67,7 +72,13 @@
 //      346）。基线让每张移植票交付时必须显式抬低这个数——这正是
 //      #331 把本表定为验收基准的机械形态；发现分类错了往回调同样
 //      显式（改基线就是公告）。与 ANCHOR_QUALITY_BASELINE 同款
-//      冻结语义。
+//      冻结语义；
+//   ⑥ 归因不到行数基线只减不增：UNATTRIBUTED_BASELINE 冻结现值，超出
+//      即红——静默多出一行归因不到，正是「欠账被漏成已实现」的方向
+//      （待移植数与五类合计都不动，⑤ 也盲；验收实证：30 行无空格形态
+//      被跳过时 MONSTER_SETUP 所在文件被报成已移植而无人看见）。新增
+//      归因不到的行必须显式抬基线——那是把「这行确实挂不到文件上」
+//      写成公告的时机。
 //
 // 用法（挂在 tools/trace-check.mjs 的 --coverage 下，本模块不进 CLI）：
 //   node tools/trace-check.mjs --coverage            五类计数 + 基线
@@ -104,6 +115,16 @@ export const DENOMINATOR = 346;
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
 export const PENDING_BASELINE = 116;
+
+/**
+ * 存根清单「归因不到」行数基线（#331 验收整改冻结，只减不增）。归因不到
+ * 的行（待核 / 无源 / 内建函数 / 目录级引用）不构成部分移植信号，本身
+ * 合法——但**静默多出来一行**正是「欠账被漏成已实现」的方向：待移植数
+ * 与五类合计都不动，其余判据全盲（验收实证：30 行无空格形态被跳过时，
+ * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
+ * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
+ */
+export const UNATTRIBUTED_BASELINE = 21;
 
 /** 文件级「已判定不实现」显式表：推翻裁定 = 改这里（每条注明出处）。 */
 export const RULINGS = [
@@ -295,7 +316,11 @@ export function attribute_stub_rows(repo, files) {
   const attributed = new Map();
   let unattributed = 0;
   for (const line of parse_stub_registry(text)) {
-    if (!line.startsWith('| `')) continue;
+    // 行形态两种都认：`| \`FN\``（带空格，254 行）与 `|\`FN\``（无空格，30 行，
+    // 含 MONSTER_SETUP / PASSOUT_CHECK / SEIIN_START 等——漏掉即把它们静默
+    // 报成已实现。清单是人工维护的表，两种形态 prettier 都判合格，规范化
+    // 会在下一次有人手写时重新失效，所以认两种而不是改表）
+    if (!/^\|\s*`/.test(line)) continue;
     const cells = line
       .split('|')
       .map((c) => c.trim())
@@ -409,7 +434,7 @@ export async function run_coverage({ repo, only = [], list = false }) {
   );
 
   // 未了结存根归因（部分移植信号）
-  const { attributed } = attribute_stub_rows(repo, files);
+  const { attributed, unattributed } = attribute_stub_rows(repo, files);
 
   const ruled = new Map(RULINGS.map((r) => [r.path, r.reason]));
   const categories = {
@@ -456,6 +481,11 @@ export async function run_coverage({ repo, only = [], list = false }) {
       `✗ 待移植 ${categories['待移植'].length} 条，超出 #331 基线 ${PENDING_BASELINE}（只减不增：移植票交付必须显式抬低；超出 = 证据面失效或内容回退）`,
     );
   }
+  if (!scoped && unattributed > UNATTRIBUTED_BASELINE) {
+    fail(
+      `✗ 清单归因不到 ${unattributed} 行，超出 #331 基线 ${UNATTRIBUTED_BASELINE}（只减不增：新行写清「源」列即可归因；确实挂不到文件上时显式抬基线——静默多出的归因不到正是欠账被漏成已实现的方向）`,
+    );
+  }
 
   // —— 输出 ——
   const parts = Object.entries(categories).map(([k, v]) => `${k} ${v.length}`);
@@ -468,6 +498,9 @@ export async function run_coverage({ repo, only = [], list = false }) {
   if (!scoped) {
     console.log(
       `待移植 ${categories['待移植'].length} / 基线 ${PENDING_BASELINE}（#331 只减不增，每张移植票交付时显式抬低）`,
+    );
+    console.log(
+      `清单归因不到 ${unattributed} 行 / 基线 ${UNATTRIBUTED_BASELINE}（#331 只减不增，新行写清「源」列即可归因）`,
     );
   }
   if (list) {

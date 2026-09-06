@@ -31,8 +31,10 @@
  *   8. #331 移植状态表：`--coverage` 把 target/ERB/ 的 346 个文件归五类，
  *      合计恰为分母、真值点（K7 / COMF31 / MUSEUM）与两类误报规则（范围
  *      式引用展开、yml 承载）判对；存根归因把「有证据 + 欠账」记部分移植、
- *      判死登记不算欠账；证据悬空、分母漂移、已判定表悬空、待移植基线
- *      超限各自即红；`--only` 在该模式下限定 target 路径并自报范围。
+ *      判死登记不算欠账、清单行**管道符后带/不带空格两种形态都认**（验收
+ *      缺陷：30 行无空格形态曾被跳过，MONSTER_SETUP 所在文件被报成已移植）；
+ *      证据悬空、分母漂移、已判定表悬空、待移植基线与归因不到基线超限
+ *      各自即红；`--only` 在该模式下限定 target 路径并自报范围。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  *
@@ -1000,10 +1002,11 @@ test('移植状态表：yml 承载与存根归因的规则行为（--only 限定
   const yml_901 = path.join(root, 'yml', 'Chara901.yml');
   const part = path.join(root, 'target', 'ERB', '__cov_probe__', 'PART.ERB');
   const dead = path.join(root, 'target', 'ERB', '__cov_probe__', 'DEAD.ERB');
+  const nop2 = path.join(root, 'target', 'ERB', '__cov_probe__', 'NOP2.ERB');
   const reg_path = path.join(root, 'docs', 'stub-registry.md');
   const args = ['--coverage', '--list', '--only', '__cov_probe__,CHARA901'];
   const cleanup = () => {
-    for (const p of [js_path, erb_901, yml_901, part, dead]) {
+    for (const p of [js_path, erb_901, yml_901, part, dead, nop2]) {
       if (fs.existsSync(p)) fs.unlinkSync(p);
     }
   };
@@ -1015,6 +1018,7 @@ test('移植状态表：yml 承载与存根归因的规则行为（--only 限定
     fs.mkdirSync(path.dirname(yml_901), { recursive: true });
     fs.writeFileSync(part, '@PROBE_PART\n', 'utf8');
     fs.writeFileSync(dead, '@PROBE_DEAD\n', 'utf8');
+    fs.writeFileSync(nop2, '@PROBE_NOP2\n', 'utf8');
     fs.writeFileSync(erb_901, '@CHARA_EX_901\n', 'utf8');
     fs.writeFileSync(yml_901, '"番号": 901\n', 'utf8');
     fs.writeFileSync(
@@ -1024,18 +1028,23 @@ test('移植状态表：yml 承载与存根归因的规则行为（--only 限定
         ' * 探针模块（test/trace-check.test.js 写入，跑完即删）。',
         ' * 源: target/ERB/__cov_probe__/PART.ERB  @PROBE_PART',
         ' *     target/ERB/__cov_probe__/DEAD.ERB  @PROBE_DEAD',
+        ' *     target/ERB/__cov_probe__/NOP2.ERB  @PROBE_NOP2',
         ' */',
         'module.exports = {};',
         '',
       ].join('\n'),
       'utf8',
     );
-    // 合成清单行：存根（真欠账）与登记（判死——完结方式，不是欠账）
+    // 合成清单行：存根（真欠账）与登记（判死——完结方式，不是欠账）。
+    // 管道符后带/不带空格两种形态各一行——真清单里两种都有（254/30 行），
+    // 只认一种会把另一种形态的欠账静默漏成已移植（验收缺陷，M6520 钉住）。
+    // 无空格形态指向独立文件 NOP2：两行若指向同一文件，跳过一行不可观测。
     const reg_text = fs.readFileSync(reg_path, 'utf8');
     const sec = reg_text.indexOf('## 函数级存根');
     const at = reg_text.indexOf('\n## ', sec + 1);
     const rows = [
       '| `__COV_PART` | __cov_probe__/PART.ERB:1 | 探针 | 探针 | 探针 | 存根（运行时占位，探针） |',
+      '|`__COV_NOP2` | __cov_probe__/NOP2.ERB:1 | 探针 | 探针 | 探针 | 存根（运行时占位，探针） |',
       '| `__COV_DEAD` | __cov_probe__/DEAD.ERB:1 | 探针 | 探针 | 探针 | 登记（判死不移植，探针） |',
       '',
     ].join('\n');
@@ -1053,6 +1062,10 @@ test('移植状态表：yml 承载与存根归因的规则行为（--only 限定
     assert.ok(
       r.output.includes('部分移植 target/ERB/__cov_probe__/PART.ERB'),
       `存根归因必须把未了结项记成部分移植（有证据 + 存根欠账）：\n${r.output}`,
+    );
+    assert.ok(
+      r.output.includes('部分移植 target/ERB/__cov_probe__/NOP2.ERB'),
+      `无空格清单行必须照常归因（真清单 30 行是此形态）：\n${r.output}`,
     );
     assert.ok(
       r.output.includes('已移植 target/ERB/__cov_probe__/DEAD.ERB'),
@@ -1193,6 +1206,40 @@ test('移植状态表：待移植基线只减不增（全树副本，改小一�
     assert.ok(
       r.output.includes('超出 #331 基线'),
       `红的原因必须是待移植基线失守：\n${r.output}`,
+    );
+  } finally {
+    fs.writeFileSync(tool_path, original, 'utf8'); // 单文件还原，省一次整目录回拷
+  }
+  const restored = run_tool_in(root, ['--coverage']);
+  assert.equal(restored.status, 0, `基线还原后必须复绿：\n${restored.output}`);
+});
+
+test('移植状态表：清单归因不到行数基线只减不增（全树副本，改小一位必须红）', () => {
+  const root = coverage_full_repo();
+  const tool_path = path.join(root, 'tools', 'trace-coverage.mjs');
+  const original = fs.readFileSync(tool_path, 'utf8');
+  const m = original.match(/export const UNATTRIBUTED_BASELINE = (\d+);/);
+  assert.ok(m, 'UNATTRIBUTED_BASELINE 必须内嵌在工具里——规则不复制到别处');
+  const current = Number(m[1]);
+  assert.ok(current > 0, '基线必须大于 0（现状冻结，不是空表）');
+  try {
+    fs.writeFileSync(
+      tool_path,
+      original.replace(
+        `export const UNATTRIBUTED_BASELINE = ${current};`,
+        `export const UNATTRIBUTED_BASELINE = ${current - 1};`,
+      ),
+      'utf8',
+    );
+    const r = run_tool_in(root, ['--coverage']);
+    assert.notEqual(
+      r.status,
+      0,
+      '归因不到基线改小一位必须红——静默多出的归因不到行正是欠账被漏成已实现的方向',
+    );
+    assert.ok(
+      r.output.includes('清单归因不到'),
+      `红的原因必须是归因不到基线失守：\n${r.output}`,
     );
   } finally {
     fs.writeFileSync(tool_path, original, 'utf8'); // 单文件还原，省一次整目录回拷

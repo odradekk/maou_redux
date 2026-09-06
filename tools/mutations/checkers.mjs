@@ -837,4 +837,23 @@ export default [
     test_name: '移植状态表全绿',
     must_mention: '必须输出移植状态表',
   },
+  {
+    desc: 'M6520 清单行判据退回只认带空格形态（30 行无空格欠账被静默跳过——归因用例必须红）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    if (!/^\\|\\s*`/.test(line)) continue;',
+    replace: "    if (!line.startsWith('| `')) continue;",
+    tests: ['trace-check'],
+    test_name: 'yml 承载与存根归因',
+    must_mention: '无空格清单行必须照常归因',
+  },
+  {
+    desc: 'M6521 归因不到基线校验焊死（静默多出的归因不到行无人拦——欠账漏成已实现的方向）',
+    file: 'tools/trace-coverage.mjs',
+    find: '  if (!scoped && unattributed > UNATTRIBUTED_BASELINE) {',
+    replace:
+      '  if (false && !scoped && unattributed > UNATTRIBUTED_BASELINE) {',
+    tests: ['trace-check'],
+    test_name: '归因不到行数基线',
+    must_mention: '归因不到基线改小一位必须红',
+  },
 ];
