@@ -74,6 +74,66 @@ class StrongholdFacade {
   }
 
   /**
+   * 录像价值（cflag:cid:493 ↔ CFLAG:493）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:493 評価
+   * @returns {number}
+   */
+  get 录像价值() {
+    return era.get(`cflag:${this.cid}:493`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 录像价值(v) {
+    era.set(`cflag:${this.cid}:493`, v);
+  }
+
+  /**
+   * 录像浏览数（cflag:cid:495 ↔ CFLAG:495）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:495 閲覧者数
+   * @returns {number}
+   */
+  get 录像浏览数() {
+    return era.get(`cflag:${this.cid}:495`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 录像浏览数(v) {
+    era.set(`cflag:${this.cid}:495`, v);
+  }
+
+  /**
+   * 录像粉丝信数（cflag:cid:496 ↔ CFLAG:496）
+   * 源: target/ERB/售卻相關/SELL_VIDEO.ERB 行1116-1126 FAV（粉丝信数）累积
+   * @returns {number}
+   */
+  get 录像粉丝信数() {
+    return era.get(`cflag:${this.cid}:496`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 录像粉丝信数(v) {
+    era.set(`cflag:${this.cid}:496`, v);
+  }
+
+  /**
+   * 录像属性（cflag:cid:498 ↔ CFLAG:498）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:498 属性（1=清純 -1=不純）
+   * @returns {number}
+   */
+  get 录像属性() {
+    return era.get(`cflag:${this.cid}:498`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 录像属性(v) {
+    era.set(`cflag:${this.cid}:498`, v);
+  }
+
+  /**
    * 迷宫内行动（cflag:cid:500 ↔ CFLAG:500）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行385 CFLAG:500 = ダンジョン内行動(0:内職 1:売春 2:罠補充 3:施設拡張 4:潜入)
    * @returns {number}
@@ -101,6 +161,22 @@ class StrongholdFacade {
    */
   set 要求奖赏(v) {
     era.set(`cflag:${this.cid}:504`, v);
+  }
+
+  // —— cstr ——
+  /**
+   * 录像标题（cstr:cid:6 ↔ CSTR:6）
+   * 源: target/ERB/售卻相關/SELL_VIDEO.ERB 行1072 CSTR:6 = %LOCALS%
+   * @returns {string}
+   */
+  get 录像标题() {
+    return era.get(`cstr:${this.cid}:6`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 录像标题(v) {
+    era.set(`cstr:${this.cid}:6`, v);
   }
 
   // —— base ——

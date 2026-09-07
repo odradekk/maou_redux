@@ -31,4 +31,4 @@
 #   90  前回指令名：@P_C 写（TRAIN_MAIN.ERB:771-780），@SHOW_USERCOM 的
 #       「＜上次的调教指令：…＞」读（USERCOM.ERB:93-100）；
 #   30  售卖物名暂存：售卻/處刑一族写（SELL_MATURO/EXECUTION 等）、
-#       SELL_VIDEO 读后清（阶段 5 售卻票）——同表承载，届时直接寻址。
+#       SELL_VIDEO 读后清（#336 已实现）——同表承载，直接寻址。

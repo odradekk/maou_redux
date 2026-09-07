@@ -1,0 +1,6 @@
+# 水晶录像书架：原作 `#DIMS SAVEDATA SUISEI_STR, 20000`
+# （target/ERB/其他/EXCOM.ERH:15）的 EraElectron 落点。
+#
+# 空表即够用：文件名令引擎注册扩展普通表 `videoarchive`，数字下标可按原作
+# 0..19999 直接寻址；不声明条目，避免字符串槽被 fillData 预填成数字 0。
+# saveData/resetData 会随普通表整存整清，与 SAVEDATA 生命周期一致。
