@@ -288,11 +288,13 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       'FLAG:82 == 1：ENDING_1 中场演出先至（2D 慢线的必然，见文件头）',
     );
     // 封顶 = 10000 的瞬时值不可回看（已征服反抗臂的 KYOTEN_EVENT 夺回线
-    // 此后缓慢回吐侵攻度，实测终局 ~9175 / 134 日）——断言收敛在「接近
-    // 封顶」区间，与 FLAG:82 / 横幅两证互补
+    // 此后缓慢回吐侵攻度；#342 接通结婚日后，未婚角色的恋人判定也参与
+    // 全局随机序列，实测终局约 8775）——断言收敛在「接近封顶」区间，
+    // 与 FLAG:82 / 横幅两证互补。
+    const invasion = fixture.store.get('flag:81') ?? 0;
     assert.ok(
-      (fixture.store.get('flag:81') ?? 0) > 9000,
-      'FLAG:81 接近封顶（ENDING_1 的触发条件留证，衰减回吐后仍 > 9000）',
+      invasion > 8500,
+      `FLAG:81 接近封顶（ENDING_1 的触发条件留证，衰减回吐后仍 > 8500；实测 ${invasion}）`,
     );
     assert(
       texts.some((line) => line.includes('魔王终于再次掌握了世界')),
