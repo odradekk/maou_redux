@@ -193,6 +193,66 @@ class DungeonFacade {
     era.set(`cflag:${this.cid}:580`, v);
   }
 
+  /**
+   * 恋人（cflag:cid:606 ↔ CFLAG:606）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行469 CFLAG:606 = 恋人（LOVERS.ERB）
+   * @returns {number}
+   */
+  get 恋人() {
+    return era.get(`cflag:${this.cid}:606`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 恋人(v) {
+    era.set(`cflag:${this.cid}:606`, v);
+  }
+
+  /**
+   * 恋人爱情（cflag:cid:607 ↔ CFLAG:607）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行470 CFLAG:607 = 恋人愛情（LOVERS.ERB）
+   * @returns {number}
+   */
+  get 恋人爱情() {
+    return era.get(`cflag:${this.cid}:607`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 恋人爱情(v) {
+    era.set(`cflag:${this.cid}:607`, v);
+  }
+
+  /**
+   * 恋人名字（cflag:cid:608 ↔ CFLAG:608）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行471 CFLAG:608 = 恋人の名前（LOVERS.ERB）
+   * @returns {number}
+   */
+  get 恋人名字() {
+    return era.get(`cflag:${this.cid}:608`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 恋人名字(v) {
+    era.set(`cflag:${this.cid}:608`, v);
+  }
+
+  /**
+   * 恋人ID（cflag:cid:610 ↔ CFLAG:610）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行473 CFLAG:610 = 恋人のID（キャラのときのみ）
+   * @returns {number}
+   */
+  get 恋人ID() {
+    return era.get(`cflag:${this.cid}:610`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 恋人ID(v) {
+    era.set(`cflag:${this.cid}:610`, v);
+  }
+
   // —— base ——
   /**
    * 体力（base:cid:0 ↔ BASE:0）
