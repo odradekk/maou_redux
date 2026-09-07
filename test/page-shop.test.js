@@ -23,7 +23,7 @@
  *   6. 存根清单核对（docs/stub-registry.md）。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：作用域外的每个指令壳只抽查代表
- * （101/777/200/888/199/525 + 498/499 + 999 + 7788 未逐个断言）——壳的
+ * （101/777/200/888/199/525 + 498/499 + 999 未逐个断言）——壳的
  * 完整性由 STUBBED_CALLS 核对与链结构的 deepEqual 之外的代码评审承担；
  * 删掉某个未抽查的壳（如 102 DUNGEON_INFO2）测试仍绿，认领对应子系统票时
  * 以 docs/stub-registry.md 的专节为核对依据。
@@ -307,7 +307,7 @@ async function dispatch(...results) {
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
   // 六次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
   // 200 自 #136 起是真身存档界面（下方独立用例），不再走占位
-  const fixture = await dispatch(101, 777, 888, 199, 525, 7788);
+  const fixture = await dispatch(101, 777, 888, 199, 525);
   const texts = history_texts(fixture);
   for (const name of [
     '@CHARA_INFO',
@@ -315,7 +315,6 @@ test('作用域外的指令分支：壳占位带原作调用名（代表抽查�
     '@MAOUNET',
     '@BEGIN TURNEND',
     '@SHOW_FLOOR',
-    '@RELATION_DEBUGPRINT',
   ]) {
     assert(
       texts.some((line) => line.includes(name)),
@@ -485,6 +484,24 @@ test('999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达）', asy
   );
 });
 
+test('7788 接通 RELATION_DEBUGPRINT：输出关系矩阵并等待按键', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.era.addCharacter(1);
+  fixture.store.set('cflag:1:6', 1001); // CFLAG:A:6 名字编号（NID）
+  const { usershop } = fixture.load_module('page/page-shop');
+
+  await usershop(7788);
+
+  assert.ok(
+    fixture.lines_history.some(
+      (line) => line.type === 'text' && /^1>[ ]{3}0[ ]{4}$/.test(line.text),
+    ),
+    '调试后门必须打印关系矩阵',
+  );
+  assert.equal(fixture.waits.at(-1).waited, true);
+});
+
 test('498/499 无守卫：指针未选也照原作进分支', async () => {
   const fixture = await dispatch(498, 499);
   assert.equal(
@@ -531,7 +548,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'SHOW_FLOOR',
     'MONSTER_SHOP',
     'DEBUG_MENU_U',
-    'RELATION_DEBUGPRINT',
   ]);
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
   for (const name of STUBBED_CALLS) {

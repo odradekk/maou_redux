@@ -42,7 +42,7 @@
  */
 
 const era = require('#/era-electron');
-const { search_family } = require('#/chara/chara-family');
+const { family_register, search_family } = require('#/chara/chara-family');
 const { random_self_call } = require('#/chara/chara-init');
 const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
 const { chara_name_random_define } = require('#/chara/chara-name');
@@ -57,7 +57,6 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'FAMILY_REGISTER',
   'CHAR_BODY_GENERATE_WAPPED',
   'LOOK_SET',
   'CHARA_FIRST_EXP',
@@ -156,7 +155,7 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand) {
 
   // :100-102 新的家族系统（后代不设定家族；RAND:4 == 0 时）
   if (rand_n(4) === 0 && !offspring) {
-    stub_line('FAMILY_REGISTER', '家族登记', '随家族票');
+    family_register(cid, rand_n);
   }
 
   // :105 根据家族成员继承素质

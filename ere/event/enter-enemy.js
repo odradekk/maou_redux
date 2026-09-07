@@ -58,6 +58,7 @@ const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
 const { char_make, char_make_inport } = require('#/chara/char-make');
 const { add_chara_ex } = require('#/chara/chara-ex');
+const { family_register } = require('#/chara/chara-family');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 const { enterenemy_koujo } = require('#/kojo/kojo-system');
 
@@ -69,7 +70,6 @@ const STUBBED_CALLS = [
   'ENTERENEMY_KOUJO',
   'SHOW_CHARA_INFO',
   'CHAR_BODY_GENERATE_WAPPED',
-  'FAMILY_REGISTER',
 ];
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
@@ -180,7 +180,7 @@ async function enter_enemy(arg0 = 0, rand) {
   // :14-16 莉莉出現（ARG:0 == 0 的通常来袭，或对方持 TALENT:村娘Ａ）
   // TALENT:村娘Ａ = talent:165（yml/Talent.yml id 165）
   if (arg0 === 0 || (era.get(`talent:${arg0}:165`) || 0) !== 0) {
-    await k_11_lily();
+    await k_11_lily(rand_n);
   }
 
   // :18-19 狂王出现（无条件）
@@ -320,7 +320,7 @@ async function enter_enemy(arg0 = 0, rand) {
  *
  * @returns {Promise<number>} 原作无显式 RETURN（隐式 0）
  */
-async function k_11_lily() {
+async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
   // :173-174 エントリーフラグが立っていると出ない（FLAG:223 莉莉登场済，
   // event 域内直写）
   if ((era.get('flag:223') || 0) === 1) {
@@ -363,7 +363,7 @@ async function k_11_lily() {
     '角色身体数据生成',
     '随角色身体票',
   ); // :204
-  stub_line('FAMILY_REGISTER', '家族登记', '随家族票'); // :205
+  family_register(a, rand_n); // :205
   era_flag.target = 0; // :206 TARGET = FLAG:1（MASTER 恒角色 0，CONTEXT.md）
   chara(a).dungeon.侵攻阶层 = 1; // :207 CFLAG:A:501
   chara(a).event.侵攻度 = 0; // :208 CFLAG:A:502

@@ -3,8 +3,9 @@ export default [
   {
     desc: 'M6562 SEARCH_FAMILY 村娘 A 标志改错',
     file: 'ere/chara/chara-family.js',
-    find: 'if (era.get(`talent:${cid}:165`)) {',
-    replace: 'if (era.get(`talent:${cid}:166`)) {',
+    find: '  if (era.get(`talent:${cid}:165`)) {\n    for (const candidate of added) {',
+    replace:
+      '  if (era.get(`talent:${cid}:166`)) {\n    for (const candidate of added) {',
     tests: ['cross-stubs'],
     must_mention: '村娘 A/B 走专用互找分支',
   },
@@ -94,8 +95,8 @@ export default [
   {
     desc: 'M6573 FAMILY_BIRTHTO_MOM 母亲关系码 6 改为 5',
     file: 'ere/chara/chara-family.js',
-    find: '  return rf_join_to(child, mother, 6);',
-    replace: '  return rf_join_to(child, mother, 5);',
+    find: '  return rf_join_to(child, mother, 6, 0, rand);',
+    replace: '  return rf_join_to(child, mother, 5, 0, rand);',
     tests: ['cross-stubs'],
     must_mention: '普通父母先重建关系，再以 6/5 加入家庭',
   },
@@ -110,8 +111,8 @@ export default [
   {
     desc: 'M6575 FAMILY_BIRTHTO_DAD 父亲关系码 5 改为 6',
     file: 'ere/chara/chara-family.js',
-    find: '  return rf_join_to(child, father, 5);',
-    replace: '  return rf_join_to(child, father, 6);',
+    find: '  return rf_join_to(child, father, 5, 0, rand);',
+    replace: '  return rf_join_to(child, father, 6, 0, rand);',
     tests: ['cross-stubs'],
     must_mention: '普通父母先重建关系，再以 6/5 加入家庭',
   },

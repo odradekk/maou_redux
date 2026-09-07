@@ -384,6 +384,8 @@ function setup_lily() {
   fixture.era.addCharacter(0);
   fixture.era.addCharacter(17);
   fixture.store.set('talent:17:85', 1); // TALENT:17:85【爱】
+  fixture.store.set('talent:17:165', 1); // 村娘 A（玛奥）
+  fixture.store.set('talent:24:171', 1); // 村娘 B（莉莉）
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.day_count = 200;
   return { fixture, era_flag };
@@ -410,6 +412,12 @@ test('K_11_LILY 出场：CFLAG:1 = 2、FLAG:223、初期装备、再起点不写
     '初期装備：剑（CFLAG:550）',
   );
   assert.equal(fixture.store.get('cstr:24:1'), '莉莉', 'CSTR:A:1 = 名字');
+  assert.equal(
+    fixture.store.get('c_relation:24:17') % 10,
+    4,
+    'K_11 FAMILY_REGISTER 接线：莉莉登记为玛奥的妹妹',
+  );
+  assert.equal(fixture.store.get('c_relation:17:24') % 10, 2);
   assert(
     text_lines(fixture).includes('村娘莉莉开始了地下城的攻略！'),
     '村娘演出行',

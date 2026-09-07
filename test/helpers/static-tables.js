@@ -31,6 +31,8 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
 // 比对与实机装载一致——虽然常规批 Chara*.yml 没有 ex_talent 预设段，但
 // extendedCharaTables 里的表理应在装载循环视野内（空名字表建
 // staticData.ex_talent，数字下标寻址的回落依赖它）。
+// C_Relation/C_Relation_Sub（#349，原作 RELATION.ERH 的 CHARADATA）：空
+// 名字表同样必须进入 staticData，三段数字下标才能被扩展角色表接受。
 const TABLE_FILES = [
   ['Base.yml', 'base'],
   ['Talent.yml', 'talent'],
@@ -38,6 +40,8 @@ const TABLE_FILES = [
   ['CFlag.yml', 'cflag'],
   ['PortCFlag.yml', 'portcflag'],
   ['Ex_Talent.yml', 'ex_talent'],
+  ['C_Relation.yml', 'c_relation'],
+  ['C_Relation_Sub.yml', 'c_relation_sub'],
   ['Abl.yml', 'abl'],
   ['CStr.yml', 'cstr'],
   ['Mark.yml', 'mark'],

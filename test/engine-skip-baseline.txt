@@ -99,4 +99,5 @@
 # 算式：67（既有）+ 5（tstr-train-table 的 engine_test）= 72；本票其余新用例
 #（train-name/page-train 槽条段/p_c/compare-normalize 扩展）全走 era-fixture
 # 或纯解析路径，无 engine-bundle 门控。
-72
+# #349（L18 家族关系）：chara-family 的扩展角色表建桶、寻址与存档往返 +1。
+73
