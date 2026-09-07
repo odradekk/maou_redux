@@ -1113,4 +1113,116 @@ export default [
     tests: ['dungeon-magic'],
     must_mention: '未命中任何法术分支',
   },
+  {
+    desc: 'M6749 怪物对角色的高段魔法减益阈值分支删坏',
+    file: 'ere/dungeon/magic.js',
+    find: '  let debuff = get_cflag(cid, 682);\n  if (debuff > 50) {\n    damage += idiv(damage, 2);',
+    replace:
+      '  let debuff = get_cflag(cid, 682);\n  if (false) { // 变异：高段减益分支删除\n    damage += idiv(damage, 2);',
+    tests: ['dungeon-magic'],
+    must_mention: '魔法减益',
+  },
+  {
+    desc: 'M6750 怪物目标误入 SHAMAN_SELECT 的角色随机分派',
+    file: 'ere/dungeon/magic.js',
+    find: '  if (target_type === 2) {\n    return 0;\n  }\n  let magic_lv = 0;',
+    replace:
+      '  if (false) { // 变异：怪物目标守卫删除\n    return 0;\n  }\n  let magic_lv = 0;',
+    tests: ['dungeon-magic'],
+    must_mention: 'SHAMAN_SELECT',
+  },
+  {
+    desc: 'M6751 SLEEP_MAGIC 角色对怪物分支的返回值改坏',
+    file: 'ere/dungeon/magic.js',
+    find: "      await print_wait('咒语的效果消失了'); // 原作 Y 默认 0，文件头\n    }\n    return 0;\n  }\n  if (target_type === 2) {",
+    replace:
+      "      await print_wait('咒语的效果消失了'); // 原作 Y 默认 0，文件头\n    }\n    return 1; // 变异\n  }\n  if (target_type === 2) {",
+    tests: ['dungeon-magic'],
+    must_mention: 'SLEEP_MAGIC',
+  },
+  {
+    desc: 'M6752 ENERGY_DRAIN_MAGIC 把未知目标当角色对角色分支',
+    file: 'ere/dungeon/magic.js',
+    find: '  if (target_type !== 3 && target_type !== 4) {\n    return 0;\n  }\n  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了魔法吸取！`);',
+    replace:
+      '  if (false) { // 变异：目标守卫删除\n    return 0;\n  }\n  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了魔法吸取！`);',
+    tests: ['dungeon-magic'],
+    must_mention: '未命中任何法术分支',
+  },
+  {
+    desc: 'M6753 怪物传送不再给勇者写迷惑状态',
+    file: 'ere/dungeon/magic.js',
+    find: '    era.set(`cflag:${a}:509`, 1); // CFLAG:509 = 迷惑状态（dungeon 域）',
+    replace: '    // 变异：迷惑状态写入删除',
+    tests: ['dungeon-magic'],
+    must_mention: '怪物传送写迷惑',
+  },
+  {
+    desc: 'M6754 怪物睡眠术打到怪物列号而非勇者',
+    file: 'ere/dungeon/magic.js',
+    find: '    const value = chara(a).dungeon.攻击力 - rand(damage);',
+    replace:
+      '    const value = chara(b).dungeon.攻击力 - rand(damage); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '睡眠按目标类型命中',
+  },
+  {
+    desc: 'M6755 怪物魔法箭不再扣勇者体力',
+    file: 'ere/dungeon/magic.js',
+    find: '    add_base(a, 0, -damage);\n    await print_wait(`魔法箭造成了${damage}伤害！`);',
+    replace:
+      '    add_base(b, 0, -damage); // 变异：打到怪物列号\n    await print_wait(`魔法箭造成了${damage}伤害！`);',
+    tests: ['dungeon-magic'],
+    must_mention: '魔法箭按目标类型命中',
+  },
+  {
+    desc: 'M6756 角色对怪物的魔法吸收不回复施法者体力',
+    file: 'ere/dungeon/magic.js',
+    find: '    add_base(a, 0, damage);\n    await print_wait(`恢复了HP${damage}点！`);',
+    replace:
+      '    // 变异：施法者体力回复删除\n    await print_wait(`恢复了HP${damage}点！`);',
+    tests: ['dungeon-magic'],
+    must_mention: '按目标回复施法者体力',
+  },
+  {
+    desc: 'M6757 奴隶火球误伤施法者而非勇者',
+    file: 'ere/dungeon/magic.js',
+    find: '  const caster = target_type === 3 ? b : a;\n  const defender = target_type === 3 ? a : b;\n  await print_wait(`${name_of(caster)}咏唱了火球术！`);',
+    replace:
+      '  const caster = target_type === 3 ? b : a;\n  const defender = b; // 变异：type 3 也打 B\n  await print_wait(`${name_of(caster)}咏唱了火球术！`);',
+    tests: ['dungeon-magic'],
+    must_mention: '按目标类型伤害角色或怪物群',
+  },
+  {
+    desc: 'M6758 怪物治疗漏掉固定增加的一点',
+    file: 'ere/dungeon/magic.js',
+    find: '    e_set(b + 3, e_get(b + 3) + 1 + idiv(damage, 60));',
+    replace: '    e_set(b + 3, e_get(b + 3) + idiv(damage, 60)); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '治疗 2',
+  },
+  {
+    desc: 'M6759 角色诅咒不再削怪物防御槽',
+    file: 'ere/dungeon/magic.js',
+    find: '    e_set(b + 3, value);',
+    replace: '    // 变异：怪物防御槽写回删除',
+    tests: ['dungeon-magic'],
+    must_mention: '诅咒 1',
+  },
+  {
+    desc: 'M6760 对人格斗的精神吸收不回复施法者气力',
+    file: 'ere/dungeon/magic.js',
+    find: '  add_base(caster, 1, damage);',
+    replace: '  // 变异：施法者气力回复删除',
+    tests: ['dungeon-magic'],
+    must_mention: '按目标削气力并回复施法者气力',
+  },
+  {
+    desc: 'M6761 对人格斗的经验吸取把经验给受术者',
+    file: 'ere/dungeon/magic.js',
+    find: '  add_exp(caster, idiv(damage, 2));',
+    replace: '  add_exp(defender, idiv(damage, 2)); // 变异',
+    tests: ['dungeon-magic'],
+    must_mention: '按目标削经验与体力并给施法者经验',
+  },
 ];
