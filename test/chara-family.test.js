@@ -51,6 +51,22 @@ function seq(values) {
   };
 }
 
+function setup_sibling_search(
+  fixture,
+  { search_type, source_family, target_family, male = false },
+) {
+  add_chara(fixture, 1, '检索者');
+  add_chara(fixture, 2, '候选者');
+  fixture.store.set('cflag:1:605', search_type); // 血缘关系压缩数据个位
+  fixture.store.set('cflag:2:605', 1); // 候选者有家族照
+  fixture.store.set('cflag:2:604', 1001); // 候选家族照所指名字编号
+  fixture.store.set('talent:1:320', source_family); // 检索者家族构成
+  fixture.store.set('talent:2:320', target_family); // 候选者家族构成
+  fixture.store.set('talent:2:160', 1); // 家族照性格位 0 + 160
+  if (male) fixture.store.set('talent:1:122', 1); // 男人
+  return fixture.load_module('chara/chara-family');
+}
+
 test('关系读写区分登录角色与外部对象，并在读取前修复角色对角标识', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0);
@@ -152,6 +168,51 @@ test('家族查询可分别忽略性别与兄弟姐妹长幼，并包含外部�
     '保留原作外部对象返回正循环下标的行为',
   );
   assert.equal(family.rf_first(4), -99);
+});
+
+test('手足匹配：姐姐数量取十万位，不能误读一万位', () => {
+  const fixture = create_era_fixture();
+  const family = setup_sibling_search(fixture, {
+    search_type: 2,
+    source_family: 100_001,
+    target_family: 10_000_001,
+  });
+
+  assert.equal(family.search_family(1), 2);
+});
+
+test('手足匹配：检索哥哥时只扣源侧哥哥数量', () => {
+  const fixture = create_era_fixture();
+  const family = setup_sibling_search(fixture, {
+    search_type: 1,
+    source_family: 1_000_001,
+    target_family: 10_000_001,
+  });
+
+  assert.equal(family.search_family(1), 2);
+});
+
+test('手足匹配：男性检索弟弟时扣候选侧哥哥而非姐姐', () => {
+  const fixture = create_era_fixture();
+  const family = setup_sibling_search(fixture, {
+    search_type: 3,
+    source_family: 100_000_001,
+    target_family: 1_000_001,
+    male: true,
+  });
+
+  assert.equal(family.search_family(1), 2);
+});
+
+test('NID 特殊角色边界包含角色 40', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 40);
+  const family = fixture.load_module('chara/chara-family');
+
+  family.relation_rebuild();
+
+  assert.equal(fixture.store.get('cflag:40:6'), 10_040);
+  assert.equal(fixture.store.get('c_relation:40:40'), 10_040);
 });
 
 test('加入父母家庭时继承既有孩子为手足，随机源由调用者确定', () => {

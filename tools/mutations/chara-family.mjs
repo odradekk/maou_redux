@@ -1,4 +1,4 @@
-// issue #349：家族关系设置全目录（M6982-M7021）。
+// issue #349：家族关系设置全目录（M6982-M7025）。
 const code = 'ere/chara/chara-family.js';
 const make = (id, desc, find, replace, file = code, must_mention = '家族') => ({
   desc: `M${id} ${desc}`,
@@ -269,5 +269,37 @@ export default [
     '外部父亲误走家庭加入',
     'if (father < 0) return rf_set_both(child, father, 5);',
     'if (father > 0) return rf_set_both(child, father, 5);',
+  ),
+  make(
+    7022,
+    '姐姐数量误读一万位',
+    '    older_sister: digit(source_family, 100_000),',
+    '    older_sister: digit(source_family, 10_000),',
+    code,
+    '姐姐数量取十万位',
+  ),
+  make(
+    7023,
+    '检索哥哥时未扣源侧哥哥数量',
+    '  if (search_type === 1) source.older_brother -= 1;',
+    '  if (search_type === 2) source.older_brother -= 1;',
+    code,
+    '检索哥哥时只扣源侧哥哥数量',
+  ),
+  make(
+    7024,
+    '男性检索弟弟时误扣候选侧姐姐',
+    '    target.older_brother -= 1;',
+    '    target.older_sister -= 1;',
+    code,
+    '男性检索弟弟时扣候选侧哥哥而非姐姐',
+  ),
+  make(
+    7025,
+    '特殊角色 NID 上界漏掉角色 40',
+    'if (cid === 0 || (cid >= 17 && cid <= 40)) {',
+    'if (cid === 0 || (cid >= 17 && cid <= 39)) {',
+    code,
+    'NID 特殊角色边界包含角色 40',
   ),
 ];
