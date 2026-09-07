@@ -40,19 +40,24 @@ const REPO = path.resolve(__dirname, '..');
 // 面板真身化后尾部 DISPLAY_DUNGEON_DAILY 存根行进 stub 计数（mainmenu
 // +1/+2、daycycle +3——样本过 5 号面板的次数），两读数真身行经归因规则
 // 进 matched/stub 的其余部分不变。
+// #339 推进：角色出售接进 DRAW_MAINMENU 的条件入口面板（:208-319）后，
+// 此前记作「条件入口灰条未渲染」的 [---] 分隔行开始渲染并对上 golden，
+// 逐样本 matched 升、stub 等量降（mainmenu +1/+2、saveload +4、daycycle
+// +3——各样本走过该面板的次数），unexplained 仍 0。基线漏测在 PR 档没
+// 被选中，由 master push 兜住（fb96276d 起连红三次）。
 const BASELINE = {
-  'mainmenu-natural': { matched: 34, version: 2, stub: 81, unexplained: 0 },
-  'mainmenu-max': { matched: 41, version: 2, stub: 111, unexplained: 0 },
+  'mainmenu-natural': { matched: 35, version: 2, stub: 80, unexplained: 0 },
+  'mainmenu-max': { matched: 43, version: 2, stub: 109, unexplained: 0 },
   // saveload 两份自 #228 起 150/213：diff.js 的 menu 集合比对改「相等
   // token 先配」（同号槽位条目在两侧次序受重绘影响，按下标配对会把同形
   // 条目错开成伪 change 对——存读档槽位组正撞此形，+4 匹配 / −8 存根）。
   // 补偿该假差异的 <TS> 备注错位归因规则随之无消费者，与配对修正一并
   // 拆除（rules.js 原位留注、M305 删——删前删后四数逐数不变、
   // unexplained 仍 0，验收反馈一）
-  'saveload-natural': { matched: 150, version: 2, stub: 213, unexplained: 0 },
-  'saveload-max': { matched: 150, version: 2, stub: 213, unexplained: 0 },
-  'daycycle-natural': { matched: 46, version: 2, stub: 221, unexplained: 0 },
-  'daycycle-max': { matched: 46, version: 2, stub: 261, unexplained: 0 },
+  'saveload-natural': { matched: 154, version: 2, stub: 209, unexplained: 0 },
+  'saveload-max': { matched: 154, version: 2, stub: 209, unexplained: 0 },
+  'daycycle-natural': { matched: 49, version: 2, stub: 218, unexplained: 0 },
+  'daycycle-max': { matched: 49, version: 2, stub: 258, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {
