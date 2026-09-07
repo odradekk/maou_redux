@@ -417,7 +417,10 @@ test('不可思议的房间：反発刻印 1 点换 1000 战斗经验并递减�
   fixture.store.set('mark:1:3', 2);
   fixture.store.set('cflag:1:580', 0); // 钱不够 → 购买段早退
   const { dungeon_shop_itemsell } = load(fixture);
-  await dungeon_shop_itemsell(1);
+  // SELL_EX_ITEM 五次均不中。这个随机源不能省：原作对空槽也照卖（RAND:10 == 0
+  // 就入账 200，USE_EX_ITEM.ERB:100-104 不看槽里有没有东西），真随机下有
+  // 1 - 0.9^5 = 41% 的概率把 CFLAG:580 垫高、拆掉本例「钱不够」的前提。
+  await dungeon_shop_itemsell(1, seq([1, 1, 1, 1, 1]));
   assert.equal(fixture.store.get('exp:1:80'), 2000, 'EXP:80 += 2×1000（:300）');
   assert.equal(fixture.store.get('mark:1:3'), 1, 'MARK:3 -= 1（:301）');
   assert.equal(
