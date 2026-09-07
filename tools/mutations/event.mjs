@@ -686,4 +686,204 @@ export default [
     tests: ['source-check'],
     must_mention: '3P 主人优先于兽奸',
   },
+  // —— #347 L16：MUSEUM 博物馆处刑 ——
+  {
+    desc: 'M6942 MUSEUM 魔王保护：删掉 A=0 的提前返回',
+    file: 'ere/event/event-museum.js',
+    find: '  if (a === 0) return 0;',
+    replace: '  if (false) return 0;',
+    tests: ['event-museum'],
+    must_mention: '魔王不能成为展品',
+  },
+  {
+    desc: 'M6943 MUSEUM 家具分类：FLAG:608 错记到画像计数',
+    file: 'ere/event/event-museum.js',
+    find: '    game.event.家具数 += 1;',
+    replace: '    game.event.绘画数 += 1;',
+    tests: ['event-museum'],
+    must_mention: '十类展品各写正确名称与分类计数',
+  },
+  {
+    desc: 'M6944 MUSEUM 录像标题：SUISEI_STR:A 丢失展品名',
+    file: 'ere/event/event-museum.js',
+    find: '  era.set(`videoarchive:${a}`, archive_title);',
+    replace: "  era.set(`videoarchive:${a}`, '');",
+    tests: ['event-museum'],
+    must_mention: '家具化后记录展品',
+  },
+  {
+    desc: 'M6945 MUSEUM 录像归档：漏调 VIDEO_MATURO',
+    file: 'ere/event/event-museum.js',
+    find: '  video_maturo(a);',
+    replace: '  // 变异：漏调 VIDEO_MATURO',
+    tests: ['event-museum'],
+    must_mention: '家具化后记录展品',
+  },
+  {
+    desc: 'M6946 MUSEUM 角色处置：漏掉 DELCHARA 等价调用',
+    file: 'ere/event/event-museum.js',
+    find: '  era.removeCharacter(a);',
+    replace: '  // 变异：角色未除名',
+    tests: ['event-museum'],
+    must_mention: '家具化后记录展品',
+  },
+  {
+    desc: 'M6947 MUSEUM 经验结算：漏加魔王战斗经验',
+    file: 'ere/event/event-museum.js',
+    find: '  chara(0).dungeon.战斗经验 += lv;',
+    replace: '  // 变异：漏加战斗经验',
+    tests: ['event-museum'],
+    must_mention: '家具化后记录展品',
+  },
+  {
+    desc: 'M6948 MUSEUM 造型王：60 日前边界错成 59 日前',
+    file: 'ere/event/event-museum.js',
+    find: 'era_flag.day_count < 60',
+    replace: 'era_flag.day_count < 59',
+    tests: ['event-museum'],
+    must_mention: '家族末路、装备回收、威望与造型王实绩',
+  },
+  {
+    desc: 'M6949 MUSEUM 装备回收：回收后槽位未置 -1',
+    file: 'ere/event/event-museum.js',
+    find: '    owner[field] = -1;',
+    replace: '    owner[field] = 0;',
+    tests: ['event-museum'],
+    must_mention: '家族末路、装备回收、威望与造型王实绩',
+  },
+  {
+    desc: 'M6950 MUSEUM 输入校验：错误接受越界选项 10',
+    file: 'ere/event/event-museum.js',
+    find: '  } while (result < 0 || (result >= 10 && result !== 100));',
+    replace: '  } while (result < 0 || (result > 10 && result !== 100));',
+    tests: ['event-museum'],
+    must_mention: '拒绝范围外输入',
+  },
+  {
+    desc: 'M6951 MUSEUM 口上分发：把性格处理器编号误写成角色 ID',
+    file: 'ere/event/event-museum.js',
+    find: '    await museum_koujo_family.call(kojo_id, {',
+    replace: '    await museum_koujo_family.call(a, {',
+    tests: ['event-museum'],
+    must_mention: '按角色性格分发口上',
+  },
+  {
+    desc: 'M6952 MUSEUM PRINTFORM：家具变形片段被拆成独立行',
+    file: 'ere/event/event-museum.js',
+    find: '    await era.printAndWait(`${line}的样子。`);',
+    replace: "    await era.printAndWait('的样子。');",
+    tests: ['event-museum'],
+    must_mention: '连续 PRINTFORM 片段必须留在同一输出行',
+  },
+  {
+    desc: 'M6953 MUSEUM 宝石支：错误清空函数静态 LOCALS',
+    file: 'ere/event/event-museum.js',
+    find: '    game.event.金属像数_2 += 1;',
+    replace: `    game.event.金属像数_2 += 1;
+    locals = '';`,
+    tests: ['event-museum'],
+    must_mention: '保留原作 LOCALS 跨调用残值',
+  },
+  {
+    desc: 'M6954 MUSEUM 隐藏输入：错误启用按钮规则而拒绝 100',
+    file: 'ere/event/event-museum.js',
+    find: '    result = await era.input({ useRule: false });',
+    replace: '    result = await era.input();',
+    tests: ['event-museum'],
+    must_mention: '保留原作隐藏输入 100',
+  },
+  {
+    desc: 'M6955 MUSEUM K2 口上：漏注册博物馆处理器',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: 'museum_koujo_family.register(2, museum_koujo_k2);',
+    replace: '// 变异：K2 博物馆口上未注册',
+    tests: ['event-museum'],
+    must_mention: 'K2 与 K4 口上模块注册博物馆处理器',
+  },
+  {
+    desc: 'M6956 MUSEUM K4 口上：漏注册博物馆处理器',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: 'museum_koujo_family.register(4, museum_koujo_k4);',
+    replace: '// 变异：K4 博物馆口上未注册',
+    tests: ['event-museum'],
+    must_mention: 'K2 与 K4 口上模块注册博物馆处理器',
+  },
+  {
+    desc: 'M6957 MUSEUM 石像材质：ELSEIF 漏掉第二次 RAND',
+    file: 'ere/event/event-museum.js',
+    find: '    } else if (rand_n(3) === 1) {',
+    replace: '    } else if (false) {',
+    tests: ['event-museum'],
+    must_mention: '原作 ELSEIF 会重新掷 RAND',
+  },
+  {
+    desc: 'M6958 MUSEUM 隐藏输入：错误清空函数静态 MATURO',
+    file: 'ere/event/event-museum.js',
+    find: `  const target = a;
+  const family_id = search_family(a);`,
+    replace: `  const target = a;
+  maturo = '';
+  const family_id = search_family(a);`,
+    tests: ['event-museum'],
+    must_mention: '隐藏输入 100 继承原作 MATURO 静态残值',
+  },
+  {
+    desc: 'M6959 MUSEUM 装备回收：漏掉第二装饰槽',
+    file: 'ere/event/event-museum.js',
+    find: "    [target_chara.event, '装饰2'],",
+    replace: '    // 变异：漏回收 CFLAG:552 装饰2',
+    tests: ['event-museum'],
+    must_mention: '装饰2退回库存',
+  },
+  {
+    desc: 'M6960 MUSEUM 造型王：错误把双倍显示值计入实际经验',
+    file: 'ere/event/event-museum.js',
+    find: `  chara(0).dungeon.战斗经验 += lv;
+  // TALENT:329 = 造型王实绩；原作先加经验再翻倍显示值，顺序 1:1 保留。
+  if (get('talent:0:329')) lv *= 2;`,
+    replace: `  if (get('talent:0:329')) lv *= 2;
+  chara(0).dungeon.战斗经验 += lv;`,
+    tests: ['event-museum'],
+    must_mention: '已有造型王只翻倍显示经验',
+  },
+  {
+    desc: 'M6961 MUSEUM 反抗口上：反抗刻印 Lv3 错判为 Lv2',
+    file: 'ere/event/event-museum.js',
+    find: `        locals = '射精';
+
+        if (get(\`talent:\${a}:130\`)) {
+          await era.printAndWait(
+            \`稍微一碰就会喷出母乳的\${chara_callname(a)}的乳首也被变换、从勃起的尖端喷出了水…\`,
+          );
+          locals += '喷乳';
+        }
+
+        if (
+          get(\`mark:\${target}:3\`) === 3 &&
+          (get(\`talent:\${a}:11\`) ||`,
+    replace: `        locals = '射精';
+
+        if (get(\`talent:\${a}:130\`)) {
+          await era.printAndWait(
+            \`稍微一碰就会喷出母乳的\${chara_callname(a)}的乳首也被变换、从勃起的尖端喷出了水…\`,
+          );
+          locals += '喷乳';
+        }
+
+        if (
+          get(\`mark:\${target}:3\`) === 2 &&
+          (get(\`talent:\${a}:11\`) ||`,
+    tests: ['event-museum'],
+    must_mention: '反抗刻印 3 与反抗素质进入叛逆口上',
+  },
+  {
+    desc: 'M6962 MUSEUM 金属像：漏加装饰品总数',
+    file: 'ere/event/event-museum.js',
+    find: `  } else if (game.event.博物馆口上 === 7) {
+    game.event.装饰品数 += 1;`,
+    replace: `  } else if (game.event.博物馆口上 === 7) {
+    game.event.装饰品数 += 0;`,
+    tests: ['event-museum'],
+    must_mention: '金属像分支增加装饰品总数',
+  },
 ];
