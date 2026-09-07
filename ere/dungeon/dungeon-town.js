@@ -46,7 +46,6 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait } = require('#/utils/stub-line');
 // H10（#179）真身：@LVUP（DUNGEON_TOWN.ERB:34 的 CALL LVUP, PM:LOCAL）
 const { lvup } = require('#/dungeon/dungeon-lvup');
 // H15（#184）真身：@HEROINE_BITCH（:134 城镇侧卖春入口；log_try_bitch 的
