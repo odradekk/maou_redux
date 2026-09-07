@@ -483,11 +483,21 @@ test('对比：同一种子下，接入战斗后勇者到达的层数与 H3 存�
   async function run_world(stub_battle) {
     const fixture = setup_world();
     const { run_dungeon } = load(fixture, 'dungeon/dungeon');
+    const battle = load(fixture, 'dungeon/dungeon-battle');
+    let battle_calls = 0;
     if (stub_battle) {
       // H3 存根行为：占位 + return 0（不改任何状态）——替换模块导出即短路
       // （disable_enter_enemy 的先例：调用点经模块对象属性查找）
-      const battle = load(fixture, 'dungeon/dungeon-battle');
-      battle.dungeon_party_battle = async () => 0;
+      battle.dungeon_party_battle = async () => {
+        battle_calls += 1;
+        return 0;
+      };
+    } else {
+      const real_battle = battle.dungeon_party_battle;
+      battle.dungeon_party_battle = async (...args) => {
+        battle_calls += 1;
+        return real_battle(...args);
+      };
     }
     fixture.override_math_random(mulberry32(SEED));
     try {
@@ -500,6 +510,7 @@ test('对比：同一种子下，接入战斗后勇者到达的层数与 H3 存�
         floors,
         hp: fixture.store.get('base:1:0') ?? 2000,
         wp: fixture.store.get('base:1:1') ?? 1000,
+        battle_calls,
       };
     } finally {
       fixture.restore_math_random();
@@ -509,11 +520,10 @@ test('对比：同一种子下，接入战斗后勇者到达的层数与 H3 存�
   const stub_world = await run_world(true);
   const real_world = await run_world(false);
 
-  // 战斗确实让勇者损耗了（存根态满状态推进）
-  assert(
-    real_world.wp < stub_world.wp,
-    `真身态气力 ${real_world.wp} < 存根态 ${stub_world.wp}（战斗的逃跑段扣气力）`,
-  );
+  // EX 道具真身也会消费全局随机序列，存根态与战斗态此时可能走进不同的
+  // 陷阱/回复分支，不能再用两边终态气力的大小关系证明战斗接线。
+  assert(real_world.battle_calls > 0, '真身态实际进入过战斗');
+  assert(real_world.wp < 1000, '战斗态气力产生了损耗');
   // 同一种子下层数轨迹出现分歧（PRNG 消费序列被战斗掷点推移——WALK 与
   // 战斗共用 Math.random，序列一旦错位，后续踏破/滞留轮次重排）
   const diff_at = stub_world.floors.findIndex(

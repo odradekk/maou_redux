@@ -571,18 +571,18 @@ export default [
   {
     desc: 'M600 ROOM 分发·店遭遇的 RESULT 1 改坏（战斗照发生）',
     file: 'ere/dungeon/dungeon-room.js',
-    find: '    await dungeon_shop_itemsell(arg0);\n    return 1;',
+    find: '    await dungeon_shop_itemsell(arg0, rand_n);\n    return 1;',
     replace:
-      '    await dungeon_shop_itemsell(arg0);\n    return 0; // 变异：RESULT 1 改 0',
+      '    await dungeon_shop_itemsell(arg0, rand_n);\n    return 0; // 变异：RESULT 1 改 0',
     tests: ['dungeon-room'],
     must_mention: 'RESULT 1 = 戦闘が発生しないフラグ',
   },
   {
     desc: 'M601 ROOM 分发·店遭遇掷删（RAND:10 == 0 恒不中）',
     file: 'ere/dungeon/dungeon-room.js',
-    find: '  if (rand_n(10) === 0) {\n    await dungeon_shop_itemsell(arg0);',
+    find: '  if (rand_n(10) === 0) {\n    await dungeon_shop_itemsell(arg0, rand_n);',
     replace:
-      '  if (rand_n(10) === -1) {\n    await dungeon_shop_itemsell(arg0);',
+      '  if (rand_n(10) === -1) {\n    await dungeon_shop_itemsell(arg0, rand_n);',
     tests: ['dungeon-room'],
     must_mention: 'RESULT 1 = 戦闘が発生しないフラグ',
   },

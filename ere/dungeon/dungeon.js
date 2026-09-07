@@ -56,17 +56,17 @@ const { party_del } = require('#/dungeon/dungeon-party');
 const { ending_2 } = require('#/event/event-ending');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch');
 // H6（#175）战斗真身：dungeon-battle / dungeon-battle2 对 dungeon.js 的
-// karma / add_ex_item / use_ex_item 存根是函数内延迟 require（避开循环
-// 初始化），本文件对它们是顶层引用——两侧只在一处顶层引用，无环。
+// karma 与 EX 道具兼容出口是函数内延迟 require（避开循环初始化）。
 // H7（#176）陷阱真身在 ere/dungeon/dungeon-trap.js（其对 dungeon.js 的
 // KARMA 真身是延迟 require，同款防环；DARK_JUEL :1344 唯一调用点）。
-// H8（#177）房间与设施真身在 ere/dungeon/dungeon-room.js（其对 dungeon.js
-// 的 ADD_EX_ITEM / KARMA / CAMPAIGN_ROOM 存根是延迟 require，同款防环）
+// H8（#177）房间与设施真身在 ere/dungeon/dungeon-room.js（其 KARMA /
+// CAMPAIGN_ROOM 存根经延迟 require 复用；EX 道具随 #344 直连真身）。
 const battle_mod = require('#/dungeon/dungeon-battle');
 const battle2_mod = require('#/dungeon/dungeon-battle2');
 const trap_mod = require('#/dungeon/dungeon-trap');
 const room_mod = require('#/dungeon/dungeon-room');
 const town_mod = require('#/dungeon/dungeon-town');
+const ex_item_mod = require('#/dungeon/ex-item');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -77,8 +77,6 @@ const town_mod = require('#/dungeon/dungeon-town');
  * ere/dungeon/dungeon-town.js，撤到迷宫外的调用点经模块对象 town_mod）。
  */
 const STUBBED_CALLS = [
-  'ADD_EX_ITEM',
-  'USE_EX_ITEM',
   'CAMPAIGN_QUEST',
   'CAMPAIGN_ENDING',
   'CAMPAIGN_ROOM',
@@ -107,39 +105,12 @@ function default_rand(n) {
 // （调用点经模块对象引用 room_mod，同款可替换；RESULT 语义与 D:20 ctx
 // 透传见 :386 调用点）。
 // H9（#178）起 DUNGEON_TOWN 存根换成真身：ere/dungeon/dungeon-town.js
-// （:294 调用点经模块对象引用 town_mod，同款可替换；其对 dungeon.js 的
-// KARMA/ADD_EX_ITEM 存根是函数内延迟 require，防环——本文件对它顶层引用
-// 只此一处，与 battle_mod 同构）。
+// （:294 调用点经模块对象引用 town_mod，同款可替换；其余反向引用用函数内
+// 延迟 require 防环）。
 
 // @DUNGEON_TOWN（迷宮/DUNGEON_TOWN.ERB）：#178（H9）起为真身
 // ere/dungeon/dungeon-town.js 的 dungeon_town（撤到迷宫外时的城镇事件——
 // 补给 / 任务 / 娼馆，CFLAG:580 所持金的消费端）。
-
-/**
- * @ADD_EX_ITEM 存根（其他/USE_EX_ITEM.ERB:127；EX 道具票，阶段 5）：战利
- * 品 / 补给入手。RESULT == 0 时上层打「没找到什么有用的」——存根返回 0
- * 与之自洽。
- * @param {number} kind 入手种类（原作 ARG:0：-1 踏破战利品 / -3 补给购买）
- * @param {number} cid 角色（原作 ARG:1）
- * @param {number} flag 购买标志（原作 ARG:2）
- * @returns {Promise<number>} 原作 RESULT（存根恒 0 = 没找到）
- */
-async function add_ex_item() {
-  await stub_line_wait('ADD_EX_ITEM', '道具入手', '随 EX 道具票（阶段 5）');
-  return 0;
-}
-
-/**
- * @USE_EX_ITEM 存根（其他/USE_EX_ITEM.ERB；EX 道具票，阶段 5）：道具使用。
- * 原作读全局 A（使用者），存根签名按此预留。
- * @param {string} timing 使用时机（原作字符串实参，如 "战斗后"）
- * @param {number} cid 使用者（原作 A）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
- */
-async function use_ex_item() {
-  await stub_line_wait('USE_EX_ITEM', '道具使用', '随 EX 道具票（阶段 5）');
-  return 0;
-}
 
 /**
  * @CAMPAIGN_QUEST 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役中的踏破
@@ -397,7 +368,7 @@ async function run_dungeon(arg0, rand) {
           era.print('搜刮战利品中…');
         }
         // :188 CALL ADD_EX_ITEM, -1, ARG:0, 0（战利品；RESULT == 0 没找到）
-        const loot = await add_ex_item(-1, arg0, 0);
+        const loot = await ex_item_mod.add_ex_item(-1, arg0, 0, rand_n);
         if ((settings & 32) !== 0 && loot === 0) {
           era.print('没找到什么有用的。'); // :190-191
         }
@@ -1128,12 +1099,12 @@ async function run_dungeon(arg0, rand) {
   }
 
   // === アイテムの使用（:735-744 CALL USE_EX_ITEM,"战斗后"）===
-  await use_ex_item('战斗后', arg0); // :736（A = ARG:0）
+  await ex_item_mod.use_ex_item('战斗后', arg0, rand_n); // :736（A = ARG:0）
   if (sidea > 0) {
-    await use_ex_item('战斗后', sidea); // :739（A = SIDEA）
+    await ex_item_mod.use_ex_item('战斗后', sidea, rand_n); // :739（A = SIDEA）
   }
   if (sideb > 0) {
-    await use_ex_item('战斗后', sideb); // :743（A = SIDEB）
+    await ex_item_mod.use_ex_item('战斗后', sideb, rand_n); // :743（A = SIDEB）
   }
 
   // === 移動を反映（:748-753 CFLAG:502 = D:20，队长与同伴）===
@@ -1472,7 +1443,7 @@ module.exports = {
   // 引用——单点登记，docs/stub-registry.md 不重复收录）。#177 起增补
   // campaign_room（dungeon-room.js 战役分支的延迟 require 同款）
   karma,
-  add_ex_item,
-  use_ex_item,
+  add_ex_item: ex_item_mod.add_ex_item,
+  use_ex_item: ex_item_mod.use_ex_item,
   campaign_room,
 };
