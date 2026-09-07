@@ -362,7 +362,7 @@ test('USERSHOP 106：从据点分发进入 CHARA_SALE 真身', async () => {
   assert(!fixture.text_lines().some((line) => line.includes('@CHARA_SALE')));
 });
 
-test('CHECK_SELLASSIABLE：回合结束与珠结算两个入口都调用真身', async () => {
+test('CHECK_SELLASSIABLE：回合结束与珠结算两个入口，以及能力提升出口都调用真身', async () => {
   const turnend = create_era_fixture();
   seed_world(turnend);
   for (const id of [0, 10, 11, 12, 22]) {
@@ -385,6 +385,17 @@ test('CHECK_SELLASSIABLE：回合结束与珠结算两个入口都调用真身',
   assert.equal(juel.store.get('cflag:31:0'), 2);
   assert(
     !juel.text_lines().some((line) => line.includes('@CHECK_SELLASSIABLE')),
+  );
+
+  const ability = create_era_fixture();
+  seed_world(ability);
+  for (const id of [0, 10, 11, 12, 22]) {
+    ability.store.set(`abl:31:${id}`, id === 22 ? 3 : id === 11 ? 4 : 5);
+  }
+  await ability.load_module('page/page-shop').usershop(105);
+  assert.equal(ability.store.get('cflag:31:0'), 2);
+  assert(
+    !ability.text_lines().some((line) => line.includes('@CHECK_SELLASSIABLE')),
   );
 });
 

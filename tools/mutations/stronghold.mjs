@@ -947,4 +947,12 @@ export default [
     tests: ['sale-chara'],
     must_mention: '崩坏时一并失去淫乱',
   },
+  {
+    desc: 'M6839 ABILITY_UP 出口断开出售资格复核',
+    file: 'ere/page/page-shop.js',
+    find: '    await check_sellassiable(era_flag.target);',
+    replace: '    // 变异：漏掉能力提升出口的出售资格复核',
+    tests: ['sale-chara'],
+    must_mention: '能力提升出口都调用真身',
+  },
 ];

@@ -15,7 +15,7 @@
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, emit, TIER } = require('#/system/event/registry');
-const { chara_sale } = require('#/system/stronghold/sale');
+const { chara_sale, check_sellassiable } = require('#/system/stronghold/sale');
 const {
   create_main_menu,
   reset_out_of_range_pointers,
@@ -244,9 +244,10 @@ async function usershop(result) {
     // 迎击（:113）
     await stub_line_wait('INTERCEPT', '迎击', '随迎击票');
   } else if (result === 105) {
-    // 能力值提升（:115）。本分支整体仍是存根；原作 SHOP_2.ERB:248 在
-    // ABILITY_UP 完成后调用的出售资格复核，随能力票在正确时机接入。
+    // 能力值提升（:115）本体仍是存根；原作 SHOP_2.ERB:248 在其返回后
+    // 复核当前目标的出售资格，因此先把这条已知尾接缝落在原位。
     await stub_line_wait('ABILITY_UP', '能力值提升', '随能力票');
+    await check_sellassiable(era_flag.target);
   } else if (result === 106) {
     // 贩卖奴隶（:117，#339 真身）
     await chara_sale();
