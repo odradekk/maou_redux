@@ -21,8 +21,8 @@
  *     消费点据此取 battle2.loser（原作 :569 的 B）；
  *   - @SPEED_PLUS2 的「A/B 换手查装备」（:620-630，原作靠改写全局 A 让
  *     EQUIP_CHECK 查对手）改为对两人各查一次；
- *   - @DUEL_ATTACK 的 X:1（:675-681 的 3/4 赋值）无读者——原作疑似给旧版
- *     MAGIC 的传参残留，1:1 保留赋值、不落用途（注释留痕）；
+ *   - @DUEL_ATTACK 的 X:1（:675-681 的 3/4）无读者；随后 CALL MAGIC
+ *     省略参数，TARGET_TYPE 因此为 0。#343 显式传 A/B，但保留这两个缺陷；
  *   - :967 的「奇襲成功！！」是原作漏译（同函数 :716 已译「偷袭成功！！」），
  *     按 #60 归一为简体「奇袭成功！！」；
  *   - %SHE(ARG)% / %阴核(ARG)%（魔改新增/文本校正.ERB 的三行纯函数）
@@ -317,7 +317,7 @@ function attack_chara_extra_dmg_battle2(
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {Promise<number>} 原作 RETURN：0 = 通常 / 999 = 中断（存根下不达）
  */
-async function duel_attack(arg0, arg1, arg2, arg3, rand) {
+async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
   // :661-664 一応代入（A/B/TARGET）
   era_flag.target = arg0;
@@ -329,12 +329,13 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand) {
     await battle.source_check_auto();
   }
 
-  // :674-681 X:1 = 3/4——无读者（旧版 MAGIC 传参残留），1:1 保留赋值语义：
-  // 值不落地、注释留痕。AB 逆转（ARG:3 == 0/2 时）同样只影响后续 SAVESTR
-  // 取向，ere 侧显式传参后无全局可逆
-
-  // :683-686 发动魔法（无参 CALL——TARGET_TYPE 缺省 0；存根）
-  if (battle.magic() === 999) {
+  // :674-681 X:1 = 3/4，但后续没有读者。
+  const reverse_ab = arg3 === 0 || arg3 === 2;
+  // :675-681 原作在 X:1 = 3 时交换 A/B。
+  const magic_a = reverse_ab ? arg2 : arg0;
+  const magic_b = reverse_ab ? arg0 : arg2;
+  // :683-686 CALL MAGIC 省略形参，TARGET_TYPE 按 ERB 规则取 0。
+  if ((await battle.magic(0, magic_a, magic_b, rand, move_ctx)) === 999) {
     return 999;
   }
 
@@ -1022,7 +1023,7 @@ async function dungeon_spy(arg0, rand) {
  *   败者号，@DUNGEON :569 的 B）/ 0 = 无事结束。loser 仅在 result == 2 时
  *   有意义（显式传参替代原作全局 B 换手，#5 决议第六条）
  */
-async function dungeon_battle2_party(arg0, rand) {
+async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
   const rand_n = rand ?? default_rand;
   const settings = era.get('flag:5') || 0;
 
@@ -1129,7 +1130,7 @@ async function dungeon_battle2_party(arg0, rand) {
         era.print('因为障碍物的阻挡未能先发制人……');
       }
     } else if ((era.get(`talent:${atker}:252`) || 0) === 1) {
-      await duel_attack(atker, 2, defer, 1, rand_n);
+      await duel_attack(atker, 2, defer, 1, rand_n, move_ctx);
     }
     break; // :136
   }
@@ -1160,7 +1161,7 @@ async function dungeon_battle2_party(arg0, rand) {
       }
     } else if ((era.get(`talent:${defer}:252`) || 0) === 1) {
       era_flag.target = defer;
-      await battle.enemy_attack(defer, 2, rand_n);
+      await battle.enemy_attack(defer, 2, rand_n, move_ctx);
     }
   }
 
@@ -1224,17 +1225,21 @@ async function dungeon_battle2_party(arg0, rand) {
       const speed = battle.speed_plus(defer, rand_n);
       let interrupted = false;
       if (speed > 0) {
-        if ((await battle.enemy_attack(atker, 0, rand_n)) === 0) {
-          if ((await battle.monster_attack(atker, turn, rand_n)) === 999) {
+        if ((await battle.enemy_attack(atker, 0, rand_n, move_ctx)) === 0) {
+          if (
+            (await battle.monster_attack(atker, turn, rand_n, move_ctx)) === 999
+          ) {
             interrupted = true;
           }
-        } else if ((await battle.enemy_attack(atker, 0, rand_n)) === 999) {
+        } else if (
+          (await battle.enemy_attack(atker, 0, rand_n, move_ctx)) === 999
+        ) {
           interrupted = true;
         }
       } else {
-        const r1 = await battle.monster_attack(atker, turn, rand_n);
+        const r1 = await battle.monster_attack(atker, turn, rand_n, move_ctx);
         if (r1 === 0) {
-          if ((await battle.enemy_attack(atker, 1, rand_n)) === 999) {
+          if ((await battle.enemy_attack(atker, 1, rand_n, move_ctx)) === 999) {
             interrupted = true;
           }
         } else if (r1 === 999) {
@@ -1295,7 +1300,7 @@ async function dungeon_battle2_party(arg0, rand) {
     let interrupted = false;
     if (speed > 0) {
       // 奴隷先攻
-      await duel_attack(atker, 0, defer, 1, rand_n);
+      await duel_attack(atker, 0, defer, 1, rand_n, move_ctx);
       const dc = death_check2(atker, defer);
       if (dc === 2) {
         if ((settings & 1) !== 0) {
@@ -1308,7 +1313,7 @@ async function dungeon_battle2_party(arg0, rand) {
       }
       // 勇者後攻（SIF RESULT == 0——DEATH_CHECK2 返回 0 时才打）
       if (dc === 0) {
-        if ((await duel_attack(defer, 1, atker, 0, rand_n)) === 999) {
+        if ((await duel_attack(defer, 1, atker, 0, rand_n, move_ctx)) === 999) {
           interrupted = true;
         }
       }
@@ -1320,7 +1325,7 @@ async function dungeon_battle2_party(arg0, rand) {
       }
     } else {
       // 勇者先攻
-      await duel_attack(defer, 0, atker, 0, rand_n);
+      await duel_attack(defer, 0, atker, 0, rand_n, move_ctx);
       const dc = death_check2(atker, defer);
       if (dc === 2) {
         if ((settings & 1) !== 0) {
@@ -1333,7 +1338,7 @@ async function dungeon_battle2_party(arg0, rand) {
       }
       // 奴隷後攻
       if (dc === 0) {
-        if ((await duel_attack(atker, 1, defer, 1, rand_n)) === 999) {
+        if ((await duel_attack(atker, 1, defer, 1, rand_n, move_ctx)) === 999) {
           interrupted = true;
         }
       }

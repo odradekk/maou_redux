@@ -23,8 +23,7 @@
  *     前提（#173 mulberry32 先例）；
  *   - 原作全局 A/B/C/X/Y/Z/W/TURN 的换手改显式传参与返回值（#5 决议
  *     第六条）：A/ATKER → atker 参数，W 数组 → equip-lookup 的装备记录
- *     对象，MAGIC 的 B 出参（目标重定向）在存根下不存在（magic() 不动
- *     目标列头）；
+ *     对象；#343 起 MAGIC 收到显式施法者、目标列头和 D:20 共享槽；
  *   - **E 数组走引擎变量**（yml/E.yml，ere/dungeon/monster-data.js 的
  *     e_get/e_set）；
  *   - 原作 PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
@@ -57,6 +56,7 @@ const {
   monstername,
   monster_name,
 } = require('#/dungeon/monster-data');
+const magic_mod = require('#/dungeon/magic');
 // H9（#178）任务真身：QUEST_BATTLE_SET / RESULT_QUEST 经模块对象引用
 // （对比测试可替换导出）。dungeon-quest 对本文件的 CAMPAIGN_MONSTER_LIST
 // 存根是函数内延迟 require——两侧只一处顶层引用，无环（dungeon.js ↔
@@ -76,7 +76,6 @@ const {
  * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除。
  */
 const STUBBED_CALLS = [
-  'MAGIC',
   'MONSTER_SKILL',
   'CAMPAIGN_MONSTER_LIST',
   'BEFORE_AUTOTRAIN',
@@ -102,17 +101,6 @@ function she(cid) {
 }
 
 // —— 存根层（#175 登记，归属见 docs/stub-registry.md）——
-
-/**
- * @MAGIC 存根（其他/MAGIC.ERB；魔法票）：战斗魔法（传送/睡眠/能量箭/
- * 火球/治疗/护盾）。原作以全局 B 传入目标列头、可在 B 上重定向攻击目标
- * （TELEPORT_MAGIC）；存根返回 0（无魔法发生）、不动目标。RESULT 999 的
- * 战斗中断分支因此不达。
- * @returns {number} 原作 RESULT（存根恒 0）
- */
-function magic() {
-  return stub_line('MAGIC', '战斗魔法', '随魔法票');
-}
 
 /**
  * @MONSTER_SKILL 存根（怪物相關/MONSTER_SKILL.ERB；怪物技能票）：怪物的
@@ -579,7 +567,7 @@ function pick_defender_column() {
  * @returns {Promise<number>} 原作 RETURN：0 = 通常 / 1 = 怪物（列）全灭 /
  *   999 = 战斗中断（MAGIC 存根下不达）
  */
-async function enemy_attack(arg0, arg1, rand) {
+async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
   // :561-562 一応代入（A / TARGET）
   era_flag.target = arg0;
@@ -609,7 +597,7 @@ async function enemy_attack(arg0, arg1, rand) {
 
   // :597-601 B = C; CALL MAGIC,1; C = B（MAGIC 可重定向目标列——存根不动）
   let target_head = c;
-  if (magic(1) === 999) {
+  if ((await magic_mod.magic(1, arg0, target_head, rand, move_ctx)) === 999) {
     return 999;
   }
   target_head = c;
@@ -1033,7 +1021,7 @@ async function slave_monster_attack(rand) {
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {Promise<number>} 原作 RETURN：0 = 通常 / 1 = 怪物全灭 / 999 = 中断
  */
-async function monster_attack(arg0, arg1, rand) {
+async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
   const settings = era.get('flag:5') || 0;
   // :1024-1030 生存怪物数を求める
   let member = 0;
@@ -1068,7 +1056,7 @@ async function monster_attack(arg0, arg1, rand) {
   monid -= 100;
 
   // :1054-1057 B = MONID; CALL MAGIC,2（存根不动目标）
-  if (magic(2) === 999) {
+  if ((await magic_mod.magic(2, arg0, monid, rand, move_ctx)) === 999) {
     return 999;
   }
 
@@ -1273,7 +1261,7 @@ async function victory_get(arg0, rand) {
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
  * @returns {Promise<number>} 原作 RETURN 0（陷落信息经 CFLAG:1 传递）
  */
-async function dungeon_party_battle(arg0, rand) {
+async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
   const rand_n = rand ?? default_rand;
   const settings = era.get('flag:5') || 0;
 
@@ -1369,8 +1357,8 @@ async function dungeon_party_battle(arg0, rand) {
       }
     } else if ((era.get(`talent:${atker_slot}:252`) || 0) === 1) {
       // Z = 0（先制标记；主循环 Z == 1 读者恒假，文件头注释）
-      if ((await enemy_attack(atker_slot, 2, rand_n)) === 999) {
-        // 存根 magic 下不达；结构保留
+      if ((await enemy_attack(atker_slot, 2, rand_n, move_ctx)) === 999) {
+        // 传送术等中断先制攻击；主循环仍按原作进入后续中断判定。
       }
     }
   }
@@ -1518,10 +1506,10 @@ async function dungeon_party_battle(arg0, rand) {
     let interrupted = false;
     if (speed > 0) {
       // 勇者が先攻
-      const r1 = await enemy_attack(atker, 0, rand_n);
+      const r1 = await enemy_attack(atker, 0, rand_n, move_ctx);
       if (r1 !== 999) {
         // 強制中断以外、全滅しても攻撃を行う
-        if ((await monster_attack(atker, turn, rand_n)) === 999) {
+        if ((await monster_attack(atker, turn, rand_n, move_ctx)) === 999) {
           if ((settings & 32) !== 0) {
             era.print('战斗中断了');
           }
@@ -1535,10 +1523,10 @@ async function dungeon_party_battle(arg0, rand) {
       }
     } else {
       // 怪物が先攻
-      const r1 = await monster_attack(atker, turn, rand_n);
+      const r1 = await monster_attack(atker, turn, rand_n, move_ctx);
       if (r1 === 0) {
         // 敗北も中断も無い場合、勇者の後攻
-        if ((await enemy_attack(atker, 1, rand_n)) === 999) {
+        if ((await enemy_attack(atker, 1, rand_n, move_ctx)) === 999) {
           if ((settings & 32) !== 0) {
             era.print('战斗中断了');
           }
@@ -1635,7 +1623,7 @@ module.exports = {
   STUBBED_CALLS,
   name_of,
   she,
-  magic,
+  magic: magic_mod.magic,
   monster_list,
   select_atker,
   speed_plus,
