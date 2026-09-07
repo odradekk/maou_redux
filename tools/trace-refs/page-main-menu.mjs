@@ -79,6 +79,11 @@ export const FILES = [
         any: [/^REDRAW 0$/m],
       },
       {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '267-271',
+        any: [/^IF B > 0$/m, /贩卖奴隶/],
+      },
+      {
         src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
         ref: '7-12',
         any: [/バグ対策/],

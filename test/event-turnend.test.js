@@ -619,7 +619,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   // EVENT_NEXTMONTH 换成真身（ere/event/event-nextday.js、event-nextmonth.js），
   // 不再占位；#171 起 ENTER_ENEMY 换真身（ere/event/enter-enemy.js）
   assert.deepEqual(pri_stubs, [
-    'CHECK_SELLASSIABLE',
     'CHECK_SPECIALSKIL',
     'IN_VAGINA_ALL',
     'CONCEPTION_CHECK_ALL',

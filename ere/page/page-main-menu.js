@@ -27,11 +27,12 @@ const {
   menu_button,
   MENU_BUTTON_DIM_COLOR,
 } = require('#/page/components/menu-button');
+const { display_dungeon_daily } = require('#/page/page-dungeon-daily');
+const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
 const { stub_line } = require('#/utils/stub-line');
-const { display_dungeon_daily } = require('#/page/page-dungeon-daily');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -150,8 +151,7 @@ function apply_bug_guards() {
  * usershop）；渲染与分发两次求值之间无写入路径，分发时重算等价。
  *
  * ere 侧按角色 ID 寻址（#21），与原作的 CHARANUM 序号世界等价。B
- * （CFLAG:x:0 > 0 的已调教计数，[106] 贩卖奴隶的可用性判据）无当前消费者，
- * 随指令面板段渲染（:208-319）一并落地。
+ * （CFLAG:x:0 > 0 的已调教计数）由下方 [106] 贩卖奴隶入口消费。
  *
  * @returns {number}
  */
@@ -265,7 +265,7 @@ function draw_main_menu() {
   era.print([{ content: `${FULL_WIDTH_SPACE}▌Commands`, fontWeight: 'bold' }]);
 
   // :211-219 A/B 计数：A（可选奴隶数）已前移为 count_selectable_slaves，
-  // B（被调教过的奴隶数）随用到它的入口。
+  // B（被调教过的奴隶数）在下方 [106] 入口消费。
   //
   // :226-231 [100] 调教 —— 指令面板里**唯一已接入**的入口：分发本体在
   // page-shop.js 的 usershop（#24），调教域自 #44/#45/#47 起可用。原作
@@ -289,6 +289,19 @@ function draw_main_menu() {
   // 2D 模式的设定一问随 #181 H12，当前恒 0）。形态同 [100]：列排版文本改
   // 按钮（PR #53），正文不写 [102] 前缀（PR #30）。
   era.printButton((era.get('flag:502') || 0) === 0 ? '地下城' : '场子', 102);
+
+  // :267-271 [106] 贩卖奴隶。B > 0 时显示按钮；B 只看
+  // CFLAG:0（是否达到出售资格），实际列表再排除濒死/影子/占用角色。
+  const sellable_count = era
+    .getAddedCharacters()
+    .filter(
+      (cid) => cid !== 0 && chara(cid).stronghold.出售与助手资格 > 0,
+    ).length;
+  if (sellable_count > 0) {
+    era.printButton('贩卖奴隶', 106);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
 
   // :282-283 [109] 侵略 —— 指令面板里第二个接通的真身入口：分发在
   // page-shop.js 的 usershop（#117 起 INVASION 真身 + BEGIN TURNEND 真转场）。
@@ -316,8 +329,8 @@ function draw_main_menu() {
   era.printButton('保存', 200);
   era.printButton('读取', 300);
 
-  // :232-319 指令面板其余各项（[101]-[888] 减去已落地的 [100]/[109]/
-  // [200]/[300]，可用性依 A/B 计数与 FLAG 状态）：随各自子系统票落地。
+  // :232-319 指令面板其余各项（[101]-[888] 减去已落地的 [100]/[106]/
+  // [109]/[200]/[300]，可用性依 A/B 计数与 FLAG 状态）：随各自子系统票落地。
   // 普查（#129）：这些项的分发分支全部仍是存根（usershop 的
   // stub_line_wait），补按钮只会造出「点了打一行占位」的死入口——按钮与
   // 真身同票落地，登记见 docs/stub-registry.md 的 DRAW_MAINMENU 行与

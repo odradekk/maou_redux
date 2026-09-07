@@ -16761,12 +16761,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3171 K0 SELF_KOJO 总开关守卫删松（FLAG:7 <= 0 改 < 0）（#231）',
     file: 'ere/kojo/kojo-system.js',
-    find: `  if ((era.get('flag:7') || 0) <= 0) {
-    const { game } = require('#/facade/game');
-    game.train.怪物射精或购入金 = 0;`,
-    replace: `  if ((era.get('flag:7') || 0) < 0) {
-    const { game } = require('#/facade/game');
-    game.train.怪物射精或购入金 = 0;`,
+    find: `async function self_kojo(rand, q, outside_train = false) {
+  // 第一道守卫：总开关 FLAG:7 <= 0
+  if ((era.get('flag:7') || 0) <= 0) {`,
+    replace: `async function self_kojo(rand, q, outside_train = false) {
+  // 第一道守卫：总开关 FLAG:7 <= 0
+  if ((era.get('flag:7') || 0) < 0) {`,
     tests: ['kojo-k0-tender'],
     must_mention: 'SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15',
   },

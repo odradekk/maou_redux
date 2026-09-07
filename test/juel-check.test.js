@@ -399,11 +399,7 @@ test('交互循环：选 999 退出，收尾三查各占位一行', async () => 
     { api: 'waitAnyKey' }, // :439 WAIT（结算表后的读键）
     { api: 'input', value: 999 }, // :461 INPUT → :540 退出
   ]);
-  for (const name of [
-    'YOKUBO_UP_CHECK',
-    'CHECK_SELLASSIABLE',
-    'CHECK_SPECIALSKIL',
-  ]) {
+  for (const name of ['YOKUBO_UP_CHECK', 'CHECK_SPECIALSKIL']) {
     assert(
       fixture.text_lines().some((line) => line.includes(`@${name}`)),
       `${name} 占位行必须出现`,
@@ -686,7 +682,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.equal(STUBBED_CALLS.length, 30); // 26 个 ABLUPxx + 4 个收尾/自动
+  assert.equal(STUBBED_CALLS.length, 29); // 26 个 ABLUPxx + 3 个收尾/自动
   for (const name of STUBBED_CALLS) {
     assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
   }
