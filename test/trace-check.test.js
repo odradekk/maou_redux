@@ -950,9 +950,7 @@ test('移植状态表全绿（真树）：合计恰为 346，真值点与两类�
     /移植状态表（#331）：已移植 \d+；部分移植 \d+；已判定不实现 \d+；待移植 \d+；纯声明 \d+；合计 346\/346/,
     '--coverage 必须输出移植状态表（而不是落回锚校验），且合计恰为分母 346',
   );
-  // 三个真值点（#331 验收点名）。MUSEUM 的「待移植」是当前真值——
-  // MUSEUM 票交付时此断言随 PENDING_BASELINE 一并翻转，那正是本表作为
-  // 验收基准的机械形态（每张票的 diff 里看得见分类移动）。
+  // 三个真值点（#331 验收点名）。
   assert.ok(
     output.includes('已移植 target/ERB/口上/EVENT_K7_ハート.ERB'),
     `真值点：K7（kojo-k7-heart.js 真身，STUBBED_CALLS 空）必须判已移植：\n${output}`,
@@ -964,8 +962,8 @@ test('移植状态表全绿（真树）：合计恰为 346，真值点与两类�
     `范围式引用必须展开（#331 误报规则 1：COMF31-38 无直陈提及，只经 com-service.js:4 的「至」形态）：\n${output}`,
   );
   assert.ok(
-    output.includes('待移植 target/ERB/處刑相關/MUSEUM.ERB'),
-    `真值点：MUSEUM.ERB 当前必须判待移植（#331 验收；其票交付时随基线一并翻转）：\n${output}`,
+    output.includes('已移植 target/ERB/處刑相關/MUSEUM.ERB'),
+    `真值点：MUSEUM.ERB 真身必须判已移植（#347）：\n${output}`,
   );
   assert.ok(
     output.includes('已移植 target/ERB/キャラ関数/CHARA0.ERB') &&
