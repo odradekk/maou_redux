@@ -1,9 +1,11 @@
 /**
- * @file 怪物状态生成（issue #175，阶段 3 H6）：@MONSTER_DATA 分发器与
- *     骷髅兵、怪物名两个纯函数。
+ * @file 怪物状态生成与改造。issue #175（阶段 3 H6）实现 @MONSTER_DATA、
+ *     骷髅兵和怪物名；issue #340（阶段 5a L9）补齐怪物改造菜单与判定。
  *
  * 源: target/ERB/怪物相關/MONSTER_DATA.ERB  @MONSTER_DATA（:2-461，
  *       分发器）、@SKELETON（:1994-2032，动态等级的骷髅兵）、
+ *       @MONSTER_SETUP（:2479-2645，怪物改造菜单）、@MONSTER_SETUP_ABLE
+ *       （:2648-2698，改造可用性判定）、
  *       @MONSTERNAME（:2701-2766，#FUNCTIONS 名字拼接）、@MONSTER_NAME
  *       （:2772-2878，打印型名字拼接）
  *
@@ -36,6 +38,9 @@
 'use strict';
 
 const era = require('#/era-electron');
+const era_flag = require('#/era-utils/era-flag');
+const era_exflag = require('#/era-utils/era-exflag');
+const { select_yes_no } = require('#/page/page-life-list');
 const { MONSTER_DATABASE } = require('#/data/monster-database');
 
 /** 原作 RAND:N（0..N-1）的缺省实现 */
@@ -185,6 +190,139 @@ function monstername(id) {
 function monster_name(id) {
   // :2861-2875 的 STRLENS 空格对齐段：ere 无字宽对齐通道，不移植
   return monstername(id);
+}
+
+/**
+ * @MONSTER_SETUP_ABLE（:2648-2698）：判定怪物能否选择指定改造或兵种。
+ * @param {number} id 怪物识别号（原作 ARG）
+ * @param {number} selection 改造菜单号（原作 ARG:1）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @returns {number} 1 = 可选，0 = 不可选
+ */
+function monster_setup_able(id, selection, rand = default_rand) {
+  // :2648-2698 无改造、上级化对全种族可用；土地适应只限常规怪物。
+  if (selection === 0 || selection === 1) return 1;
+  if (selection === 2 && id < 190) return 1;
+
+  // :2648-2698 怪物种族与法术取自 MONSTER_DATA 的第 0 防卫列。
+  monster_data(id, 0, -1, -1, -1, rand);
+  const type = e_get(7); // E:7 = 凌辱类型（怪物种族）
+  const magic = e_get(6); // E:6 = 怪物固有魔法
+
+  if ((type === 2 || type === 5) && selection === 3) return 1;
+  if (type !== 2 && selection === 5) return 1;
+
+  const humanoid = [1, 6, 7, 8, 9].includes(type);
+  if (humanoid) {
+    if ([50, 51, 54].includes(selection)) return 1;
+    if (selection === 52 && magic !== 3) return 1;
+    if (selection === 53 && magic !== 2) return 1;
+  } else if (selection === 4) {
+    return 1;
+  }
+  return 0;
+}
+
+/** 改造菜单正文（原作 :2479-2645） */
+const MONSTER_MOD_LABELS = Object.freeze({
+  0: '无改造',
+  1: '上级化',
+  2: '土地适应',
+  3: '酸性化',
+  4: '猛毒化',
+  5: '装甲化',
+});
+
+/** 兵种菜单正文（原作 :2479-2645） */
+const MONSTER_TROOP_LABELS = Object.freeze({
+  50: '普通兵',
+  51: '弓兵',
+  52: '魔导兵',
+  53: '催眠师',
+  54: '肉铠兵',
+});
+
+/**
+ * @MONSTER_SETUP（:2479-2645）：怪物改造菜单。选择可用改造、确认并支付
+ * 1000 资金后更新 FLAG:(怪物号+700)，随后留在菜单继续选择。
+ *
+ * 原作 KAI_LIST 是调用方部下一览的死回传（DUNGEON_INFO2.ERB:439 赋值后
+ * 无读者）；ere 调用方同样不消费，因此所有退出路径统一返回 0。
+ * @param {number} id 怪物识别号（100-199）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @returns {Promise<number>} 0；非法识别号返回 999
+ */
+async function monster_setup(id, rand = default_rand) {
+  // :2479-2645 错误值直接退回。
+  if (id === 999 || id < 100 || id > 199) return 999;
+
+  const floor = id < 190 ? Math.trunc((id - 100) / 10) + 1 : 0;
+  const room = floor > 0 ? era.get(`flag:${floor + 349}`) || 0 : 0;
+
+  for (;;) {
+    const extra = monster_extra(id); // FLAG:(ARG + 700) = 改造位
+    era.print(`${monster_name(id)}的改造`);
+    era.print(`所持金 ${era_flag.money}`);
+    era.print(
+      room >= 500 && room < 510 ? `设施：${item_name(room)}` : '设施：道路',
+    );
+
+    const selected_mod = extra % 100;
+    for (let selection = 0; selection < 10; selection += 1) {
+      const able = monster_setup_able(id, selection, rand);
+      const label = MONSTER_MOD_LABELS[selection];
+      if (label !== undefined && able === 1) {
+        era.printButton(
+          `${label}${selected_mod === selection ? ' *' : ''}`,
+          selection,
+        );
+      }
+    }
+
+    // :2479-2645 只有人形五种族显示兵种菜单。
+    monster_data(id, 0, -1, -1, -1, rand);
+    if ([1, 6, 7, 8, 9].includes(e_get(7))) {
+      era.print('--- 兵种 ---');
+      const selected_troop = (Math.trunc(extra / 100) % 100) + 50;
+      for (let selection = 50; selection < 60; selection += 1) {
+        const able = monster_setup_able(id, selection, rand);
+        const label = MONSTER_TROOP_LABELS[selection];
+        if (label !== undefined && able === 1) {
+          era.printButton(
+            `${label}${selected_troop === selection ? ' *' : ''}`,
+            selection,
+          );
+        }
+      }
+    }
+
+    era.drawLine();
+    era.printButton('返回', 999);
+    // 原作 PRINT 菜单 + INPUT 是自由输入；按钮只改善可点击性，不收紧输入集。
+    const selection = await era.input({ useRule: false });
+    if (selection === 999) return 0;
+    if (monster_setup_able(id, selection, rand) === 0) return 0;
+
+    era.print('改造需要１０００资金');
+    if (era_flag.money < 1000) {
+      await era.printAndWait('没钱还是用杂鱼兵吧！');
+      return 0;
+    }
+    if ((await select_yes_no()) === 1) return 0;
+
+    let next_extra;
+    if (selection < 50) {
+      next_extra = Math.trunc(extra / 100) * 100 + selection;
+    } else {
+      next_extra =
+        Math.trunc(extra / 10000) * 10000 +
+        (selection - 50) * 100 +
+        (extra % 100);
+    }
+    era.set(`flag:${id + 700}`, next_extra);
+    era_flag.money -= 1000;
+    era_exflag.legit_money -= 1000;
+  }
 }
 
 /**
@@ -450,6 +588,8 @@ module.exports = {
   e_set,
   item_name,
   monster_data,
+  monster_setup,
+  monster_setup_able,
   skeleton,
   monster_extra,
   monstername,

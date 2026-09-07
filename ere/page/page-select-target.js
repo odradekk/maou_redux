@@ -24,13 +24,13 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
+const monster_play_mod = require('#/dungeon/monster-play');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
  */
-const STUBBED_CALLS = ['MONSTER_PLAY', 'SHOW_LIST_TRAINABLE'];
+const STUBBED_CALLS = ['SHOW_LIST_TRAINABLE'];
 
 /**
  * @IS_TRAINABLE（SHOP_FUNCTION.ERB:105-113，#FUNCTION）：编号可调教返回 0，
@@ -115,8 +115,8 @@ function show_list_trainable(no_page, num_page) {
  * 目标），选中可助手指针时置 ASSI 与 FLAG:2（原作如此——目标画面也能挑
  * 助手）。返回 0 = 取消/列表为空，1 = 选中。
  *
- * @returns {Promise<number>} 0 / 1（[1002] 其它入口的返回值随 MONSTER_PLAY
- *   存根恒 0）
+ * @returns {Promise<number>} 0 / 1；[1002] 其它入口进入怪物玩弄，完成后
+ *   由 MONSTER_PLAY 发出 BEGIN TURNEND
  */
 async function select_target() {
   const num_page = 26; // #DIM NUM_PAGE = 26
@@ -155,9 +155,8 @@ async function select_target() {
       return 0;
     }
     if (result === 1002) {
-      // :297-300 其它 → CALL MONSTER_PLAY（怪物游玩，存根）；RETURN RESULT
-      stub_line('MONSTER_PLAY', '其它（怪物游玩）', '随怪物票');
-      return 0;
+      // :297-300 其它 → CALL MONSTER_PLAY（#340 真身）；RETURN RESULT。
+      return monster_play_mod.monster_play();
     }
     if (is_trainable(result) === 0) {
       // :301-305 調教可能な対象 → TARGET = RESULT；FLAG:1 = TARGET；RETURN 1

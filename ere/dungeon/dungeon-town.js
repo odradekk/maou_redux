@@ -69,7 +69,6 @@ const ex_item_mod = require('#/dungeon/ex-item');
  * （dungeon.js → 本文件是顶层引用，反向只许延迟）。
  */
 const STUBBED_CALLS = [
-  'MONSTER_PLAY',
   'SHOW_LIST_TRAINABLE',
   'CHARADEAD_CHECK',
   'SELL_MILK',
