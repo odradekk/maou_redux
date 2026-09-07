@@ -48,8 +48,8 @@
  *     域内存根（避开循环初始化，#175 先例）；
  *   - BEFORE_AUTOTRAIN / COM13_AUTO / SOURCE_CHECK_AUTO 复用 #175 在
  *     dungeon-battle.js 的域内存根（经模块对象引用，测试可替换）；
- *     COM0_AUTO / COM3_AUTO / COM50_AUTO / SUMMON_MONSTER / CAMPAIGN_TRAP
- *     是本文件的域内存根（STUBBED_CALLS，docs/stub-registry.md）；
+ *     COM0_AUTO / COM3_AUTO / COM50_AUTO / CAMPAIGN_TRAP 是本文件的域内
+ *     存根；SUMMON_MONSTER 已复用 monster-summon.js 真身；
  *   - 原作 PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
  *     的拼接归并为一次 era.print（引擎 print 每调用一行，dungeon.js
  *     先例）；PRINTW/PRINTFORMW 是 print + 读键；
@@ -74,18 +74,13 @@ const party_mod = require('#/dungeon/dungeon-party');
 // 自动调教三件套复用 #175 的域内存根（经模块对象引用——测试可替换导出
 // 断言被调，dungeon-battle2.js 先例）
 const battle = require('#/dungeon/dungeon-battle');
+const summon_mod = require('#/dungeon/monster-summon');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = [
-  'CAMPAIGN_TRAP',
-  'SUMMON_MONSTER',
-  'COM0_AUTO',
-  'COM3_AUTO',
-  'COM50_AUTO',
-];
+const STUBBED_CALLS = ['CAMPAIGN_TRAP', 'COM0_AUTO', 'COM3_AUTO', 'COM50_AUTO'];
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -114,17 +109,6 @@ function cbit(cid, idx, bit) {
  */
 function campaign_trap() {
   return stub_line('CAMPAIGN_TRAP', '战役陷阱槽', '随战役票（阶段 5）');
-}
-
-/**
- * @SUMMON_MONSTER 存根（怪物相關/SUMMON_MONSTER.ERB:5；怪物票）：怪物
- * 召唤（往战斗列加怪物）。event-nextday.js 的行内存根之外，本文件
- * 是第二个调用点（DUNGEON_TRAP.ERB:729，实参 -1）。
- * @param {number} kind 召唤种类（原作 ARG:0）
- * @returns {void} 原作无 RESULT 消费
- */
-function summon_monster() {
-  stub_line('SUMMON_MONSTER', '怪物召唤', '随怪物票');
 }
 
 /**
@@ -1138,7 +1122,7 @@ async function summon_trap(a, rand_n) {
   }
 
   // :729
-  summon_monster(-1);
+  await summon_mod.summon_monster(-1, rand_n);
 
   // :731-735
   if (diff > 0) {

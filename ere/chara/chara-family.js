@@ -226,6 +226,15 @@ function nid(cid) {
   return era.get(`cflag:${cid}:6`) || 0;
 }
 
+/** @NID_R：按名字编号反查当前已加入角色；找不到返回 -1。 */
+function nid_r(value) {
+  return (
+    era
+      .getAddedCharacters()
+      .find((cid) => (era.get(`cflag:${cid}:6`) || 0) === value) ?? -1
+  );
+}
+
 function r_get(a, b) {
   const table = b >= 0 ? 'c_relation' : 'c_relation_sub';
   return era.get(`${table}:${a}:${Math.abs(b)}`) || 0;
@@ -795,6 +804,9 @@ module.exports = {
   f_check_relevant,
   f_is_close_experience,
   f_is_same_race,
+  nid,
+  nid_r,
+  nid_get_type,
   dec_get_bit,
   dec_set_bit,
   dec_bit_add,

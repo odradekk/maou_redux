@@ -178,6 +178,22 @@ class EventFacade {
     era.set(`cflag:${this.cid}:667`, v);
   }
 
+  // —— cstr ——
+  /**
+   * 孩子父亲名字（cstr:cid:2 ↔ CSTR:2）
+   * 源: target/ERB/其他/NINSIN.ERB 行316 CSTR:2 = 孩子父亲的名字
+   * @returns {string}
+   */
+  get 孩子父亲名字() {
+    return era.get(`cstr:${this.cid}:2`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 孩子父亲名字(v) {
+    era.set(`cstr:${this.cid}:2`, v);
+  }
+
   // —— tequip ——
   /**
    * 主人避孕套（tequip:cid:35 ↔ TEQUIP:35）

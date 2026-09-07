@@ -44,8 +44,8 @@
  *     （dungeon.js 先例）；EX_FLAG:99（威望）→ era_exflag.prestige；
  *   - KARMA / CAMPAIGN_ROOM 经函数内延迟 require 复用 dungeon.js 的域内
  *     存根（避开循环初始化，#175/#176 先例）；ADD_EX_ITEM / SELL_EX_ITEM /
- *     EX_ITEM_NAME 随 #344 复用 ex-item.js 真身；CAMPAIGN_ROOM_EXTRA /
- *     RAND_MONSTER_NUMBER 仍是本文件的域内存根；
+ *     EX_ITEM_NAME 随 #344 复用 ex-item.js 真身；RAND_MONSTER_NUMBER
+ *     复用 monster-summon.js 真身；CAMPAIGN_ROOM_EXTRA 仍是域内存根；
  *   - CFLAG:503 是位域（门面名「休憩」只覆盖位 0；#176 约定）：本文件
  *     只动位 5（32 = 博物馆陈列架的先制封印，:900），位操作裸寻址；
  *   - TIMES COST, 1.1 → Math.floor(cost * 1.1)（截断，#176 同款）；
@@ -67,12 +67,13 @@ const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
 const { stub_line } = require('#/utils/stub-line');
 const ex_item_mod = require('#/dungeon/ex-item');
+const summon_mod = require('#/dungeon/monster-summon');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['RAND_MONSTER_NUMBER', 'CAMPAIGN_ROOM_EXTRA'];
+const STUBBED_CALLS = ['CAMPAIGN_ROOM_EXTRA'];
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -85,18 +86,6 @@ function default_rand(n) {
 }
 
 // —— 域内存根（#177 登记，归属见 docs/stub-registry.md）——
-
-/**
- * @RAND_MONSTER_NUMBER 存根（怪物相關/SUMMON_MONSTER.ERB:185；怪物票）：
- * 怪物番号抽选（原作从 100-189 随机抽，满 999 只时重抽）。存根返回下界
- * 100（第一层第一种怪物）作确定性占位——FARM 的 ITEM:100 只数写入因此
- * 落在真实怪物槽上，不污染非怪物槽；抽选随机性随怪物票换真身。
- * @returns {number} 怪物番号（存根恒 100）
- */
-function rand_monster_number() {
-  stub_line('RAND_MONSTER_NUMBER', '怪物抽选', '随怪物票');
-  return 100;
-}
 
 /**
  * @CAMPAIGN_ROOM_EXTRA 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役迷宫
@@ -741,7 +730,7 @@ async function dungeon_farm(extra, rand_n) {
   const sell_baby = ((flags614 >> 1) & 1) !== 0;
 
   // :439-449 怪物抽选与只数
-  const mon_id = rand_monster_number(); // :439-440（域内存根，恒 100）
+  const mon_id = summon_mod.rand_monster_number(rand_n); // :439-440
   let mon_num = era.get(`item:${mon_id}`) || 0; // :441
   if (sell_baby) {
     era_flag.money += meat_count * 10; // :443

@@ -16,8 +16,8 @@
  *   - 原作经全局 A 传角色（SWAP A, ARG 的 EraBasic 传参惯例）、经全局 X/
  *     TARGET 换手调 LOOK_SET / WEARING_CLOTH_ABLE，ere 侧一律显式传参
  *     （#5 决议第六条：指针不隐式读全局），SWAP 语义随传参消解；
- *   - NO:A == cid（ere 以角色 ID = 原作 NO 寻址，ere/chara/chara-ex.js 先例），
- *     @CHARA_MAKE 的 INRANGE(NO:A,1,16) 直接对 cid 判定；
+ *   - 通常角色的 NO:A == cid；复制预设生成的后代由第四参数传入原作 NO，
+ *     使同一预设可生成多个稳定 ID 的角色。
  *   - MASTER 恒角色 ID 0（魔王，CONTEXT.md），@CM_ST_ACE 的
  *     CFLAG:MASTER:9 落 cflag:0:9；
  *   - 冒險者性別（魔改使用.ERH:2，GLOBAL SAVEDATA）未入 yml/Global.yml
@@ -79,9 +79,10 @@ const STUBBED_CALLS = [
  * @param {number} [arg2] 种族设定（@CM_LOOK 的实参；缺省 0）
  * @param {(n: number) => number} [rand] 原作 RAND:N（[0,n) 整数）的随机源，
  *   缺省均匀随机，测试注入定值序
+ * @param {number} [template_id] 复制预设时对应原作 NO；通常角色等于 cid
  * @returns {Promise<number>} 原作 RETURN ARG（角色号）
  */
-async function chara_make(cid, arg1 = 0, arg2 = 0, rand) {
+async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   // :12 SWAP A, ARG —— 指针传参消解（文件头）
   const offspring = (era.get(`ex_talent:${cid}:2`) || 0) !== 0; // EX_TALENT:A:2 后代
@@ -122,10 +123,10 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand) {
     await cm_base(cid); // :50 职业、基础
   }
 
-  // :54-60 口上性格（NO:A == cid；精英 200-211 暂用勇者口上）
-  if (cid >= 1 && cid <= 16) {
+  // :54-60 口上性格（精英 200-211 暂用勇者口上）
+  if (template_id >= 1 && template_id <= 16) {
     await cm_kj(cid, arg1, rand_n);
-  } else if (cid >= 200 && cid <= 211) {
+  } else if (template_id >= 200 && template_id <= 211) {
     // :58 精英，暂用勇者口上
     await cm_kj(cid, arg1, rand_n);
   }

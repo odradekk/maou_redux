@@ -33,6 +33,8 @@
 
 const era = require('#/era-electron');
 const { karma, faith } = require('#/chara/chara-stats');
+const pregnancy_mod = require('#/chara/chara-pregnancy');
+const summon_mod = require('#/dungeon/monster-summon');
 const { run_endcheck } = require('#/event/event-endcheck');
 const { auto_save } = require('#/page/page-save-load');
 const { chara } = require('#/facade/chara');
@@ -58,10 +60,8 @@ const STUBBED_CALLS = [
   'EVENT_MAZOKU',
   'APHRODISIAC_ADDICT',
   'SOUL_DISLOCATION',
-  'NINSIN_MAIN',
   'OFFERVIRGIN_CHECK',
   'NIGHT_STALKING_CHECK',
-  'SUMMON_MONSTER',
   'PILLORY',
   'SABBATH',
   'SABBATH_DAY',
@@ -171,12 +171,12 @@ async function run_event_nextday() {
   game.stronghold.每日香料购买数 = 0;
 
   // :67 妊娠\出産\育児室関連处理
-  stub_line('NINSIN_MAIN', '妊娠出产处理');
+  await pregnancy_mod.ninsin_main();
 
   // :69-95 出産日播报（FOR LOCAL, 0, CHARANUM 含 0 号位；妊娠 153 / 育儿
   // 中 154；:75/:84/:88 的三个 CALL 是注释态，1:1 不调用——只剩分隔线）。
   // CFLAG:110 出産日の属主即 event 域（ownership/cflag-ownership.yml），域内
-  // 直读；写点在妊娠系统（NINSIN_MAIN 存根），本处只读比较
+  // 直读；写点在妊娠系统，本处只读比较
   for (const cid of era.getAddedCharacters()) {
     if (era.get(`talent:${cid}:153`) || era.get(`talent:${cid}:154`)) {
       const name = chara_callname(cid);
@@ -227,7 +227,7 @@ async function run_event_nextday() {
   // :126 设施効果（均无条件；DUNGEON_ROOM_DAY #177 起真身——商店街税入
   // 与牧场结算，九层房间表 FLAG:350-358 全 0 的世界零输出零随机消费）
   await curse_equip_ring();
-  stub_line('SUMMON_MONSTER', '怪物召唤');
+  await summon_mod.summon_monster(0);
   await room_day_mod.dungeon_room_day();
 
   // :129-178 角色事件循环（REPEAT 跳过 0 号位）

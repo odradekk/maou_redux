@@ -224,6 +224,21 @@ class TrainFacade {
   }
 
   /**
+   * 异常妊娠部位（cflag:cid:113 ↔ CFLAG:113）
+   * 源: target/ERB/其他/NINSIN.ERB 行86-103/行202-234 CFLAG:113 = 异常妊娠部位
+   * @returns {number}
+   */
+  get 异常妊娠部位() {
+    return era.get(`cflag:${this.cid}:113`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 异常妊娠部位(v) {
+    era.set(`cflag:${this.cid}:113`, v);
+  }
+
+  /**
    * 录像时间（cflag:cid:491 ↔ CFLAG:491）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:491 撮影時間
    * @returns {number}
