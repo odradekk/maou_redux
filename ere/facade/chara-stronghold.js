@@ -14,6 +14,21 @@ class StrongholdFacade {
 
   // —— cflag ——
   /**
+   * 出售与助手资格（cflag:cid:0 ↔ CFLAG:0）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行259 CFLAG:0 = 売却及び助手可能 1=売却可 2=助手可
+   * @returns {number}
+   */
+  get 出售与助手资格() {
+    return era.get(`cflag:${this.cid}:0`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 出售与助手资格(v) {
+    era.set(`cflag:${this.cid}:0`, v);
+  }
+
+  /**
    * 调教回数（cflag:cid:10 ↔ CFLAG:10）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行269 CFLAG:10 = 調教回数
    * @returns {number}

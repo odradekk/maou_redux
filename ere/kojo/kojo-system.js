@@ -251,13 +251,16 @@ async function kojo_message_com(rand) {
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @param {number} [q] 自慰妄想对象（EVENT_AFTERTRAIN :657-665 的 Q：0 主人 / 1 助手 / 2 野狗）
+ * @param {boolean} [outside_train] 调教外事件不写只在调教期存在的 TFLAG:15
  * @returns {Promise<number>} 0
  */
-async function self_kojo(rand, q) {
+async function self_kojo(rand, q, outside_train = false) {
   // 第一道守卫：总开关 FLAG:7 <= 0
   if ((era.get('flag:7') || 0) <= 0) {
-    const { game } = require('#/facade/game');
-    game.train.怪物射精或购入金 = 0;
+    if (!outside_train) {
+      const { game } = require('#/facade/game');
+      game.train.怪物射精或购入金 = 0;
+    }
     return 0;
   }
 

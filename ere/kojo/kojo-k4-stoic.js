@@ -891,7 +891,7 @@ async function kojo_message_com_4(rand) {
   }
 
   if (era_flag.selectcom == 6) {
-    if (era0(`cflag:${target}:307`) == 0 && era0('tflag:13')) {
+    if (era0(`cflag:${target}:307`) == 0 && game.train.初吻与自我口上) {
       if (
         era0(`talent:${target}:76`) == 1 &&
         era_flag.assiplay == 0 &&
@@ -3958,7 +3958,7 @@ async function dog_kojo_4(rand) {
   }
 
   if (era_flag.selectcom == 6) {
-    if (era0(`cflag:${target}:307`) == 0 && era0('tflag:13')) {
+    if (era0(`cflag:${target}:307`) == 0 && game.train.初吻与自我口上) {
       if (era0(`talent:${target}:136`) == 1) {
         await era.printAndWait(`「呵呵～人家的初吻…被你这家伙拿到了～…♪」`); // :3236
       } else if (era0(`talent:${target}:76`) == 1) {
@@ -5071,7 +5071,7 @@ async function self_kojo_k4() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
 
-  if (era0('tflag:13') == 1) {
+  if (game.train.初吻与自我口上 == 1) {
     if (
       era0(`talent:${target}:76`) &&
       (era0(`cflag:${target}:261`) < 4 || era0('flag:7') == 2)
@@ -5104,7 +5104,7 @@ async function self_kojo_k4() {
     }
   }
 
-  if (era0('tflag:13') == 2) {
+  if (game.train.初吻与自我口上 == 2) {
     if (
       era0(`talent:${target}:76`) &&
       (era0(`cflag:${target}:262`) < 5 || era0('flag:7') == 2)
@@ -5144,7 +5144,7 @@ async function self_kojo_k4() {
     }
   }
 
-  if (era0('tflag:13') == 3) {
+  if (game.train.初吻与自我口上 == 3) {
     if (
       era0(`talent:${target}:76`) == 1 &&
       (era0(`cflag:${target}:263`) < 3 || era0('flag:7') == 2)
@@ -5186,7 +5186,7 @@ async function self_kojo_k4() {
     }
   }
 
-  if (era0('tflag:13') == 4) {
+  if (game.train.初吻与自我口上 == 4) {
     if (
       era0(`abl:${target}:2`) >= 4 &&
       (era0(`cflag:${target}:264`) < 2 || era0('flag:7') == 2)
@@ -5205,7 +5205,7 @@ async function self_kojo_k4() {
     }
   }
 
-  if (era0('tflag:13') == 5) {
+  if (game.train.初吻与自我口上 == 5) {
     if (era0(`cflag:${target}:265`) < 1 || era0('flag:7') == 2) {
       await era.printAndWait(
         `「请……用力地抱着我吧……实在是疼得没办法了………想你想得快发疯啦！！」`,
@@ -5215,7 +5215,7 @@ async function self_kojo_k4() {
     }
   }
 
-  if (era0('tflag:13') == 6) {
+  if (game.train.初吻与自我口上 == 6) {
     if (era0(`talent:${target}:85`) && era0(`mark:${target}:3`) < 3) {
       await era.printAndWait(''); // :4292
     } else if (era0(`mark:${target}:3`) == 3) {
@@ -5231,7 +5231,7 @@ async function self_kojo_k4() {
     }
   }
 
-  if (era0('tflag:13') == 11) {
+  if (game.train.初吻与自我口上 == 11) {
     if (era0(`cflag:${target}:271`) >= 1) {
       return 0;
     }
@@ -5258,7 +5258,7 @@ async function self_kojo_k4() {
     era.set(`cflag:${target}:271`, 1);
   }
 
-  if (era0('tflag:13') == 12) {
+  if (game.train.初吻与自我口上 == 12) {
     if (era0(`cflag:${target}:272`) >= 1) {
       return 0;
     }
@@ -5285,7 +5285,7 @@ async function self_kojo_k4() {
     era.set(`cflag:${target}:272`, 1);
   }
 
-  if (era0('tflag:13') == 13) {
+  if (game.train.初吻与自我口上 == 13) {
     if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
       if (era0(`talent:${target}:153`)) {
         await era.printAndWait(''); // :4380
@@ -5297,7 +5297,7 @@ async function self_kojo_k4() {
     era.set(`cflag:${target}:273`, 1);
   }
 
-  if (era0('tflag:13') == 14) {
+  if (game.train.初吻与自我口上 == 14) {
     if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
       await era.printAndWait(''); // :4395
     }
@@ -5305,7 +5305,7 @@ async function self_kojo_k4() {
     era.set(`cflag:${target}:274`, 1);
   }
 
-  if (era0('tflag:13') == 999) {
+  if (game.train.初吻与自我口上 == 999) {
     if (era0(`talent:${target}:85`)) {
       await era.printAndWait(''); // :4407
     } else {
@@ -5313,7 +5313,7 @@ async function self_kojo_k4() {
     }
   }
 
-  if (era0('tflag:13') == 998) {
+  if (game.train.初吻与自我口上 == 998) {
     if (era0(`talent:${target}:85`)) {
       await era.printAndWait(''); // :4420
     } else {

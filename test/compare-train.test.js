@@ -121,8 +121,8 @@ const REPO = path.resolve(__dirname, '..');
 // #335 单独 481/234），合并后 480/233——既不是任一单票的数也不是相加，
 // 按 SOP §5.5 实跑 cli --sample 取准。matched 与 unexplained 不变。
 const BASELINE = {
-  'train-natural': { matched: 1114, version: 0, stub: 480, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 233, unexplained: 0 },
+  'train-natural': { matched: 1114, version: 0, stub: 479, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 232, unexplained: 0 },
 };
 
 async function build_report(sample) {
