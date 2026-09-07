@@ -75,4 +75,33 @@ function nakadashi_check(cid, kind, rand = default_rand) {
   return 0;
 }
 
-module.exports = { nakadashi_check };
+/** @IN_VAGINA_SYOKU_TO_T（:143-151）：怪物/触手对当前目标的受胎概率检查。 */
+function in_vagina_syoku_to_t(rand = default_rand) {
+  const target = era_flag.target;
+  if (target >= 1 && !chara(target).chara.妊娠) {
+    nakadashi_check(target, 6, rand);
+  }
+  return 0;
+}
+
+/** @CONCEPTION_CHECK_SYOKU_TO_T（:389-399）：苗床受胎后的短孕期写入。 */
+function conception_check_syoku_to_t(rand = default_rand) {
+  const target = era_flag.target;
+  const view = chara(target);
+  if (
+    target >= 1 &&
+    !view.chara.妊娠 &&
+    view.event.妊娠相手 === 6 &&
+    view.event.预产日 === 0
+  ) {
+    view.event.预产日 = era_flag.day_count + 10 + rand(6);
+    view.event.孩子父亲 = -3;
+  }
+  return 0;
+}
+
+module.exports = {
+  conception_check_syoku_to_t,
+  in_vagina_syoku_to_t,
+  nakadashi_check,
+};
