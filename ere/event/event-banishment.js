@@ -7,6 +7,17 @@
 'use strict';
 
 const era = require('#/era-electron');
+const {
+  family_bits,
+  former_life_fate,
+} = require('#/event/event-banishment-fate');
+const {
+  apply_prestige,
+  archive_fate,
+  dispose_character,
+  get,
+  she,
+} = require('#/event/event-execution-common');
 const { search_family } = require('#/chara/chara-family');
 const {
   banishment_koujo_family,
@@ -16,13 +27,6 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
-const {
-  apply_prestige,
-  archive_fate,
-  dispose_character,
-  get,
-  she,
-} = require('#/event/event-execution-common');
 
 // 数字槽语义：TALENT:46/85/121/122/204/220 = 药瘾/爱慕/扶她/男人/
 // 肉便器/精英；244–247 = 恶魔外观；314–320 = 种族、前生活、成为勇者的
@@ -39,16 +43,6 @@ function has(cid, family, index) {
 
 async function printw(text) {
   await era.printAndWait(text);
-}
-
-function family_bits(cid) {
-  const relatives = get(`talent:${cid}:320`);
-  return {
-    sister: Math.floor((relatives % 1000000) / 100000),
-    brother: Math.floor((relatives % 10000000) / 1000000),
-    younger_sister: Math.floor((relatives % 100000000) / 10000000),
-    younger_brother: Math.floor((relatives % 1000000000) / 100000000),
-  };
 }
 
 function family_words(bits, kind) {
@@ -396,58 +390,6 @@ async function ordinary_fate(cid) {
   return '下落不明';
 }
 
-function former_life_fate(cid) {
-  const man = has(cid, 'talent', 122);
-  switch (get(`talent:${cid}:315`)) {
-    case 0:
-      return '下落不明';
-    case 1:
-      return `${has(cid, 'talent', 204) ? '淫荡' : ''}${has(cid, 'talent', 48) ? (man ? '眼镜仔' : '眼镜娘') : ''}${has(cid, 'talent', 180) ? '卖淫' : ''}学生`;
-    case 2:
-      return `${get(`abl:${cid}:13`) > 0 || has(cid, 'talent', 52) ? '沦为口交母猪的' : ''}${get(`abl:${cid}:3`) > 0 || has(cid, 'talent', 106) ? '尻穴买春的' : ''}${man ? '修士' : '修女'}`;
-    case 3:
-      return `${has(cid, 'talent', 13) ? '种田的' : ''}${get(`exp:${cid}:56`) >= 5 ? '兽奸的' : ''}${man ? '农民' : '农妇'}`;
-    case 4:
-      return `${has(cid, 'talent', 13) ? '工作上手的' : ''}${get(`exp:${cid}:74`) >= 5 ? '卖淫的' : ''}渔民`;
-    case 5:
-      return `${get(`abl:${cid}:21`) > 0 ? '手交猪猡' : ''}${get(`abl:${cid}:17`) > 0 || has(cid, 'talent', 28) ? '露出狂' : ''}娼妓`;
-    case 6:
-      return `${get(`abl:${cid}:22`) > 0 || has(cid, 'talent', 81) || has(cid, 'talent', 82) ? '诱拐人口的' : ''}盗贼`;
-    case 7:
-      return `${has(cid, 'talent', 180) ? '低贱的' : ''}乞丐娼妓`;
-    case 8:
-      return `贵族的${get(`abl:${cid}:11`) > 0 || has(cid, 'talent', 102) || has(cid, 'talent', 60) ? '手淫中毒的' : ''}${man ? '大少爷' : '千金小姐'}`;
-    case 9:
-      return `${get(`exp:${cid}:70`) >= 5 ? (man ? '前男优' : '前女优') : ''}贫民`;
-    case 10:
-      return `${get(`abl:${cid}:17`) > 0 || has(cid, 'talent', 28) ? '露出狂' : ''}守墓人`;
-    case 11:
-      return `${get(`abl:${cid}:3`) > 0 || has(cid, 'talent', 106) ? '肛交卖淫的' : ''}${man ? '巫者' : '巫女'}`;
-    case 12:
-      return `${get(`abl:${cid}:13`) > 0 || has(cid, 'talent', 52) ? '沦为口交母猪的' : ''}${man ? '圣者' : '圣女'}`;
-    case 13:
-      return `${get(`abl:${cid}:13`) > 0 || has(cid, 'talent', 52) ? '沦为口交母猪的' : ''}预言者`;
-    case 14:
-      return `${get(`abl:${cid}:11`) > 0 || has(cid, 'talent', 36) ? '性骚扰' : ''}占卜师`;
-    case 15:
-      return `${has(cid, 'talent', 204) ? '沦为肉便器的' : ''}看板娘`;
-    case 16:
-      return `${get(`abl:${cid}:17`) > 0 || has(cid, 'talent', 28) ? '裸体' : ''}${man ? '村民' : '村娘'}`;
-    case 17:
-      return `${get(`abl:${cid}:17`) > 0 || has(cid, 'talent', 28) ? '神秘的' : ''}隐居者`;
-    case 18:
-      return `面包店的${has(cid, 'talent', 204) ? '沦为肉便器的' : ''}看板娘`;
-    case 19:
-      return `${get(`exp:${cid}:70`) >= 5 ? '耻辱的' : ''}${man ? '将校' : '女将校'}`;
-    case 20:
-      return `${has(cid, 'talent', 143) || has(cid, 'talent', 13) ? '少年专用的' : ''}奴隶`;
-    case 21:
-      return `${get(`exp:${cid}:56`) >= 5 ? '爱好兽奸的' : ''}${man ? '主夫' : '主妇'}`;
-    default:
-      return '下落不明';
-  }
-}
-
 async function narrate_former_life(cid) {
   const name = chara_callname(cid);
   const man = has(cid, 'talent', 122);
@@ -650,7 +592,9 @@ async function animal_fate(cid, rand_n) {
   else if (rand_n(8) === 4) selected = animals[4];
   else if (rand_n(8) === 5) selected = animals[5];
   else selected = ['一只猫', '喵~'];
-  await era.printAndWait(`随后你将${she(cid)}变成了${selected[0]}的样子。`);
+  await era.printAndWait(
+    `随后${chara_callname(0)}将${she(cid)}变成了${selected[0]}的样子。`,
+  );
   return selected[1];
 }
 
@@ -760,7 +704,7 @@ async function banishment(cid, rand_n = default_rand) {
     await printw(
       `${name}所有的力量都在烙印被打上的那一瞬间被封印了，女性的肉体被咒语改变成为了男性，不可逆转。`,
     );
-    await printw(`被你男性化的${name}体力耗尽，被放逐了。`);
+    await printw(`被${chara_callname(0)}男性化的${name}体力耗尽，被放逐了。`);
     await printw(
       '放逐的过程中也渐渐忘记了自己曾是女性的事实，决定今后将作为男性继续活下去……',
     );
@@ -769,18 +713,24 @@ async function banishment(cid, rand_n = default_rand) {
     await era.printAndWait(
       `${name}所有的力量都在烙印被打上的那一瞬间被封印了，迄今为止所有的人生记忆也被全部抹去。`,
     );
-    await era.printAndWait(`被你抹去记忆的${name}茫然失措，被放逐了`);
+    await era.printAndWait(
+      `被${chara_callname(0)}抹去记忆的${name}茫然失措，被放逐了`,
+    );
     await era.printAndWait(`${she(cid)}还在彷徨地回想着自己是谁…`);
     fate = '记忆碎片';
   } else if (result === 3) {
     await era.printAndWait(
-      `${name}所有的力量和关于“自己曾是人类”的记忆都被封锁。`,
+      `${name}所有的力量都在被${chara_callname(0)}打上烙印的那一瞬间封印了，`,
     );
+    await era.printAndWait(`加上${name}所有关于“自己曾是人类”的记忆都被封锁。`);
     fate = await animal_fate(cid, rand_n);
-    await era.printAndWait(`你将已经变成小动物的${name}放逐了。`);
+    await era.printAndWait(
+      `${chara_callname(0)}将已经变成小动物的${name}放逐了。`,
+    );
+    await era.printAndWait(`${she(cid)}以后不会记得自己曾经是人类了……`);
   } else if (result === 4) {
     await era.printAndWait(
-      `${name}所有的力量都在被你打上烙印的那一瞬间封印了，`,
+      `${name}所有的力量都在被${chara_callname(0)}打上烙印的那一瞬间封印了，`,
     );
     await era.printAndWait('被放逐回成为勇者前的生活');
     // 源 :613 先清空函数静态 MATURO；JS 中以本次局部 fate 取代该残值。

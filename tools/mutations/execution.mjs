@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 34;
+export const COUNT = 70;
 
 export default [
   {
@@ -189,7 +189,7 @@ export default [
   },
   {
     desc: 'M7282 流放：守墓人标题重复追加职业名',
-    file: 'ere/event/event-banishment.js',
+    file: 'ere/event/event-banishment-fate.js',
     find: "      return `${get(`abl:${cid}:17`) > 0 || has(cid, 'talent', 28) ? '露出狂' : ''}守墓人`;",
     replace:
       "      return `${get(`abl:${cid}:17`) > 0 || has(cid, 'talent', 28) ? '露出狂' : ''}守墓人守墓人`;",
@@ -291,5 +291,312 @@ export default [
     replace: '  // 变异：继续使用调用前的处分方式',
     tests: ['event-execution'],
     must_mention: '按性格处理器分发口上并归档选择的末路',
+  },
+  {
+    desc: 'M7294 流放亲属：兄长位多取一个十进制位',
+    file: 'ere/event/event-banishment-fate.js',
+    find: '    brother: Math.floor((relatives % 10000000) / 1000000),',
+    replace: '    brother: Math.floor((relatives % 100000000) / 1000000),',
+    tests: ['event-execution'],
+    must_mention: '亲属构成四个位分别提取姐、兄、妹、弟',
+  },
+  {
+    desc: 'M7295 前世学生：漏掉卖淫素质前缀',
+    file: 'ere/event/event-banishment-fate.js',
+    find: "${has(cid, 'talent', 180) ? '卖淫' : ''}学生`;",
+    replace: "${false ? '卖淫' : ''}学生`;",
+    tests: ['event-execution'],
+    must_mention: '前世末路覆盖全部职业与每路素质开关两侧',
+  },
+  {
+    desc: 'M7296 人类牧场：零台肉便器不再提前返回',
+    file: 'ere/page/page-infrastructure.js',
+    find: `  if (count === 0) {
+    await era.printAndWait('还没放置过肉便器。');
+    return;
+  }`,
+    replace: `  if (count === 0) {
+    await era.printAndWait('还没放置过肉便器。');
+  }`,
+    tests: ['event-execution'],
+    must_mention: '零台肉便器时牧场提示后立即返回',
+  },
+  {
+    desc: 'M7297 人类牧场：俘虏中年与少年说明互换',
+    file: 'ere/page/page-infrastructure.js',
+    find: "  if (get('flag:613') === 1) {",
+    replace: "  if (get('flag:613') === 2) {",
+    tests: ['event-execution'],
+    must_mention: '牧场四种播种者分别显示对应使用者与说明',
+  },
+  {
+    desc: 'M7298 前世农民：兽奸经验门槛从 5 抬到 50',
+    file: 'ere/event/event-banishment-fate.js',
+    find: "${get(`exp:${cid}:56`) >= 5 ? '兽奸的' : ''}${man ? '农民' : '农妇'}`;",
+    replace:
+      "${get(`exp:${cid}:56`) >= 50 ? '兽奸的' : ''}${man ? '农民' : '农妇'}`;",
+    tests: ['event-execution'],
+    must_mention: '前世末路覆盖全部职业与每路素质开关两侧',
+  },
+  {
+    desc: 'M7299 普通流放：漏判恶魔尾巴',
+    file: 'ere/event/event-banishment.js',
+    find: '[244, 245, 246, 247].some',
+    replace: '[244, 245, 246].some',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7300 普通流放：肉便器总门失效',
+    file: 'ere/event/event-banishment.js',
+    find: `  if (has(cid, 'talent', 204)) {
+    await printw(`,
+    replace: `  if (true) {
+    await printw(`,
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7301 普通流放：漏判看轻贞操的滥交女优',
+    file: 'ere/event/event-banishment.js',
+    find: '[75, 76, 31].some',
+    replace: '[75, 76].some',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7302 普通流放：巨根扶她错判为短小',
+    file: 'ere/event/event-banishment.js',
+    find: "has(cid, 'talent', 121) && get(`talent:${cid}:318`) === 1",
+    replace: "has(cid, 'talent', 121) && get(`talent:${cid}:318`) === 2",
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7303 普通流放：男性也进入阴蒂肥大分支',
+    file: 'ere/event/event-banishment.js',
+    find: "      !has(cid, 'talent', 122)",
+    replace: '      true',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7304 普通流放：药物上瘾分支被跳过',
+    file: 'ere/event/event-banishment.js',
+    find: "  if (has(cid, 'talent', 46)) {",
+    replace: '  if (false) {',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7305 普通流放：原贵族前世错判编号',
+    file: 'ere/event/event-banishment.js',
+    find: '  if (get(`talent:${cid}:315`) === 8) {',
+    replace: '  if (get(`talent:${cid}:315`) === 9) {',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7306 普通流放：家庭喜好错判编号',
+    file: 'ere/event/event-banishment.js',
+    find: '  if (get(`talent:${cid}:317`) === 8) {',
+    replace: '  if (get(`talent:${cid}:317`) === 9) {',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7307 回归前世：学生援交叙述被跳过',
+    file: 'ere/event/event-banishment.js',
+    find: "      if (has(cid, 'talent', 180))\n        await printw(`放学后，${name}靠援交挣钱养活自己。`);",
+    replace:
+      '      if (false)\n        await printw(`放学后，${name}靠援交挣钱养活自己。`);',
+    tests: ['event-execution'],
+    must_mention: '回归前世叙述覆盖全部职业与可选句开关',
+  },
+  {
+    desc: 'M7308 回归前世：农民兽奸经验门槛从 5 抬到 50',
+    file: 'ere/event/event-banishment.js',
+    find: '      if (get(`exp:${cid}:56`) >= 5)\n        await printw(\n          `似乎${name}无法忘却那些交尾的经验，他们家农耕用的家畜似乎都很活跃呢……`,',
+    replace:
+      '      if (get(`exp:${cid}:56`) >= 50)\n        await printw(\n          `似乎${name}无法忘却那些交尾的经验，他们家农耕用的家畜似乎都很活跃呢……`,',
+    tests: ['event-execution'],
+    must_mention: '回归前世叙述覆盖全部职业与可选句开关',
+  },
+  {
+    desc: 'M7309 回归前世：预言者错落入占卜师分支',
+    file: 'ere/event/event-banishment.js',
+    find: '    case 12:\n    case 13:',
+    replace: '    case 12:\n    case 99:',
+    tests: ['event-execution'],
+    must_mention: '回归前世叙述覆盖全部职业与可选句开关',
+  },
+  {
+    desc: 'M7310 动物末路：马分支判据错位',
+    file: 'ere/event/event-banishment.js',
+    find: '  if (rand_n(8) === 0) selected = animals[0];',
+    replace: '  if (rand_n(8) === 1) selected = animals[0];',
+    tests: ['event-execution'],
+    must_mention: '动物末路逐支重掷并覆盖马犬鸟兔羊狐猫',
+  },
+  {
+    desc: 'M7311 动物末路：狐狸分支判据错位',
+    file: 'ere/event/event-banishment.js',
+    find: '  else if (rand_n(8) === 5) selected = animals[5];',
+    replace: '  else if (rand_n(8) === 6) selected = animals[5];',
+    tests: ['event-execution'],
+    must_mention: '动物末路逐支重掷并覆盖马犬鸟兔羊狐猫',
+  },
+  {
+    desc: 'M7312 动物放生：漏掉失去人类记忆的结句',
+    file: 'ere/event/event-banishment.js',
+    find: '    await era.printAndWait(`${she(cid)}以后不会记得自己曾经是人类了……`);',
+    replace: '    // 变异：漏掉失去人类记忆的结句',
+    tests: ['event-execution'],
+    must_mention: '动物放生保留主角名与失去人类记忆的结句',
+  },
+  {
+    desc: 'M7313 动物放生：把主角名写死成你',
+    file: 'ere/event/event-banishment.js',
+    find: '      `${chara_callname(0)}将已经变成小动物的${name}放逐了。`,',
+    replace: '      `你将已经变成小动物的${name}放逐了。`,',
+    tests: ['event-execution'],
+    must_mention: '动物放生保留主角名与失去人类记忆的结句',
+  },
+  {
+    desc: 'M7314 亲属组合：掩码漏掉弟弟位',
+    file: 'ere/event/event-banishment.js',
+    find: '  const mask = [sister, brother, younger_sister, younger_brother]',
+    replace: '  const mask = [sister, brother, younger_sister, younger_sister]',
+    tests: ['event-execution'],
+    must_mention: '家庭喜好覆盖亲属存在性的十六种组合',
+  },
+  {
+    desc: 'M7315 人类牧场：扶她淫魔说明被跳过',
+    file: 'ere/page/page-infrastructure.js',
+    find: "  } else if (get('flag:613') === 3) {",
+    replace: "  } else if (get('flag:613') === 4) {",
+    tests: ['event-execution'],
+    must_mention: '牧场四种播种者分别显示对应使用者与说明',
+  },
+  {
+    desc: 'M7316 流放演出：失忆支把主角名写死成你',
+    file: 'ere/event/event-banishment.js',
+    find: '      `被${chara_callname(0)}抹去记忆的${name}茫然失措，被放逐了`,',
+    replace: '      `被你抹去记忆的${name}茫然失措，被放逐了`,',
+    tests: ['event-execution'],
+    must_mention: '诅咒、失忆与回归前世均使用实际主角名',
+  },
+  {
+    desc: 'M7317 肉便器后日谈：漏掉原军人分支',
+    file: 'ere/event/event-banishment.js',
+    find: '      } else if (former === 19) {',
+    replace: '      } else if (former === 99) {',
+    tests: ['event-execution'],
+    must_mention: '肉便器录像后日谈覆盖全部前世分支与优先级',
+  },
+  {
+    desc: 'M7318 前世盗贼：漏判讨厌男人素质',
+    file: 'ere/event/event-banishment-fate.js',
+    find: "has(cid, 'talent', 81) || has(cid, 'talent', 82)",
+    replace: "has(cid, 'talent', 81)",
+    tests: ['event-execution'],
+    must_mention: '前世末路覆盖全部职业与每路素质开关两侧',
+  },
+  {
+    desc: 'M7319 前世奴隶：漏判慈爱素质',
+    file: 'ere/event/event-banishment-fate.js',
+    find: "return `${has(cid, 'talent', 143) || has(cid, 'talent', 13) ? '少年专用的' : ''}奴隶`;",
+    replace: "return `${has(cid, 'talent', 13) ? '少年专用的' : ''}奴隶`;",
+    tests: ['event-execution'],
+    must_mention: '前世末路覆盖全部职业与每路素质开关两侧',
+  },
+  {
+    desc: 'M7320 普通流放：唱歌喜好错判编号',
+    file: 'ere/event/event-banishment.js',
+    find: '  if (favorite === 3) {',
+    replace: '  if (favorite === 2) {',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7321 普通流放：原贫民兜底错判编号',
+    file: 'ere/event/event-banishment.js',
+    find: '  if (former === 9) {',
+    replace: '  if (former === 8) {',
+    tests: ['event-execution'],
+    must_mention: '普通流放末路覆盖完整优先链与嵌套开关',
+  },
+  {
+    desc: 'M7322 回归前世：主妇兽奸经验门槛从 5 抬到 50',
+    file: 'ere/event/event-banishment.js',
+    find: '      if (get(`exp:${cid}:56`) >= 5)\n        await printw(\n          `${name}最近新买了一只宠物犬。',
+    replace:
+      '      if (get(`exp:${cid}:56`) >= 50)\n        await printw(\n          `${name}最近新买了一只宠物犬。',
+    tests: ['event-execution'],
+    must_mention: '回归前世叙述覆盖全部职业与可选句开关',
+  },
+  {
+    desc: 'M7323 流放亲属：姐姐位多取一个十进制位',
+    file: 'ere/event/event-banishment-fate.js',
+    find: '    sister: Math.floor((relatives % 1000000) / 100000),',
+    replace: '    sister: Math.floor((relatives % 10000000) / 100000),',
+    tests: ['event-execution'],
+    must_mention: '亲属构成四个位分别提取姐、兄、妹、弟',
+  },
+  {
+    desc: 'M7324 流放亲属：妹妹位多取一个十进制位',
+    file: 'ere/event/event-banishment-fate.js',
+    find: '    younger_sister: Math.floor((relatives % 100000000) / 10000000),',
+    replace:
+      '    younger_sister: Math.floor((relatives % 1000000000) / 10000000),',
+    tests: ['event-execution'],
+    must_mention: '亲属构成四个位分别提取姐、兄、妹、弟',
+  },
+  {
+    desc: 'M7325 流放亲属：弟弟位少取一个十进制位',
+    file: 'ere/event/event-banishment-fate.js',
+    find: '    younger_brother: Math.floor((relatives % 1000000000) / 100000000),',
+    replace:
+      '    younger_brother: Math.floor((relatives % 100000000) / 100000000),',
+    tests: ['event-execution'],
+    must_mention: '亲属构成四个位分别提取姐、兄、妹、弟',
+  },
+  {
+    desc: 'M7326 原贵族普通末路：漏掉姐妹同时存在分支',
+    file: 'ere/event/event-banishment.js',
+    find: '${bits.sister && bits.younger_sister ?',
+    replace: '${false ?',
+    tests: ['event-execution'],
+    must_mention: '原贵族普通末路区分无姐妹、姐姐、妹妹和姐妹',
+  },
+  {
+    desc: 'M7327 肉便器后日谈：恋人分支不再优先',
+    file: 'ere/event/event-banishment.js',
+    find: '      if ([4, 11].includes(favorite)) {',
+    replace: '      if (false) {',
+    tests: ['event-execution'],
+    must_mention: '肉便器录像后日谈覆盖全部前世分支与优先级',
+  },
+  {
+    desc: 'M7328 动物放生：封印演出把主角名写死成你',
+    file: 'ere/event/event-banishment.js',
+    find: `  } else if (result === 3) {
+    await era.printAndWait(
+      \`\${name}所有的力量都在被\${chara_callname(0)}打上烙印的那一瞬间封印了，\`,
+    );`,
+    replace: `  } else if (result === 3) {
+    await era.printAndWait(
+      \`\${name}所有的力量都在被你打上烙印的那一瞬间封印了，\`,
+    );`,
+    tests: ['event-execution'],
+    must_mention: '动物放生保留主角名与失去人类记忆的结句',
+  },
+  {
+    desc: 'M7329 动物末路：变形演出把主角名写死成你',
+    file: 'ere/event/event-banishment.js',
+    find: '    `随后${chara_callname(0)}将${she(cid)}变成了${selected[0]}的样子。`,',
+    replace: '    `随后你将${she(cid)}变成了${selected[0]}的样子。`,',
+    tests: ['event-execution'],
+    must_mention: '动物放生保留主角名与失去人类记忆的结句',
   },
 ];

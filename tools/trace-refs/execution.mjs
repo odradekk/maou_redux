@@ -5,6 +5,21 @@ const DIR = 'target/ERB/處刑相關';
 
 export const FILES = [
   {
+    js: 'ere/event/event-banishment-fate.js',
+    refs: [
+      {
+        src: `${DIR}/BANISHMENT.ERB`,
+        ref: '269-552',
+        any: [/^\s*LOCAL:3 = TALENT:A:320 % 1000000000$/m],
+      },
+      {
+        src: `${DIR}/BANISHMENT.ERB`,
+        ref: '612-890',
+        any: [/^\s*SELECTCASE TALENT:\(A\):成为勇者前的生活$/m],
+      },
+    ],
+  },
+  {
     js: 'ere/event/event-banishment.js',
     refs: [
       {
