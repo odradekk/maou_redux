@@ -1,0 +1,2 @@
+# 家族关系矩阵：移植自 RELATION.ERH 的 C_RELATION（200 槽）。
+# 空名字表即可：代码只按数字角色 ID 寻址。二维生效依赖 _fixed.json 登记。

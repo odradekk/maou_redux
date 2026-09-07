@@ -28,7 +28,12 @@ export default [
   {
     desc: 'M114 登记被删（_fixed.json 清空——契约锁必须红）',
     file: 'yml/_fixed.json',
-    find: `"extendedCharaTables": ["portcflag", "ex_talent"],`,
+    find: `"extendedCharaTables": [
+      "portcflag",
+      "ex_talent",
+      "c_relation",
+      "c_relation_sub"
+    ],`,
     replace: `"extendedCharaTables": [],`,
     tests: ['portcflag-table'],
     must_mention: '登记清单为空',
@@ -36,16 +41,35 @@ export default [
   {
     desc: 'M240 ex_talent 登记被删（_fixed.json 只留 portcflag——降一维回到 #21 缺口，写入全部静默丢弃，#138）',
     file: 'yml/_fixed.json',
-    find: `"extendedCharaTables": ["portcflag", "ex_talent"],`,
-    replace: `"extendedCharaTables": ["portcflag"],`,
+    find: `"extendedCharaTables": [
+      "portcflag",
+      "ex_talent",
+      "c_relation",
+      "c_relation_sub"
+    ],`,
+    replace: `"extendedCharaTables": [
+      "portcflag",
+      "c_relation",
+      "c_relation_sub"
+    ],`,
     tests: ['extalent-table'],
     must_mention: '九处写入全部静默丢弃',
   },
   {
     desc: 'M241 登记名丢下划线（ex_talent 改 extalent——文件名/寻址前缀/登记名三处一致性破，#138）',
     file: 'yml/_fixed.json',
-    find: `"extendedCharaTables": ["portcflag", "ex_talent"],`,
-    replace: `"extendedCharaTables": ["portcflag", "extalent"],`,
+    find: `"extendedCharaTables": [
+      "portcflag",
+      "ex_talent",
+      "c_relation",
+      "c_relation_sub"
+    ],`,
+    replace: `"extendedCharaTables": [
+      "portcflag",
+      "extalent",
+      "c_relation",
+      "c_relation_sub"
+    ],`,
     tests: ['portcflag-table', 'extalent-table'],
     must_mention: '没有对应名字表',
   },
@@ -61,17 +85,17 @@ export default [
     must_mention: '与读源 CSV 不一致',
   },
   {
-    desc: 'M244 版本轴退回 0.0.0（【版本】改 0 而【版本代号】仍是当前串——编码一致性用例红，#138 抬版本的机器可查子集；find 随 #188 抬 0.0.2、#215 抬 0.0.3、#217 抬 0.0.4 同步）',
+    desc: 'M244 版本轴退回 0.0.0（【版本】改 0 而【版本代号】仍是当前串——编码一致性用例红，#138 抬版本的机器可查子集；find 随 #188 抬 0.0.2、#215 抬 0.0.3、#217 抬 0.0.4、#349 抬 0.0.5 同步）',
     file: 'yml/GameBase.yml',
-    find: `"版本": 4`,
+    find: `"版本": 5`,
     replace: `"版本": 0`,
     tests: ['extalent-table'],
     must_mention: '的编码不一致',
   },
   {
-    desc: 'M246 版本退回 0（loadData 的 truthy 短路把所有存档拒掉——版本下限与闸门用例双红，#138 追加；find 随 #188 抬 0.0.2、#215 抬 0.0.3、#217 抬 0.0.4 同步）',
+    desc: 'M246 版本退回 0（loadData 的 truthy 短路把所有存档拒掉——版本下限与闸门用例双红，#138 追加；find 随 #188 抬 0.0.2、#215 抬 0.0.3、#217 抬 0.0.4、#349 抬 0.0.5 同步）',
     file: 'yml/GameBase.yml',
-    find: `"版本": 4`,
+    find: `"版本": 5`,
     replace: `"版本": 0`,
     tests: ['extalent-table'],
     must_mention: '低于引擎最小可用值 1',

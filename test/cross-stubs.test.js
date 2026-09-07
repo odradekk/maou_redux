@@ -136,35 +136,27 @@ test('SEARCH_FAMILY：慈爱来袭口上会找到家人并按关系称呼', asyn
   assert.ok(text_lines(fixture).includes('「家人……等着我！」'));
 });
 
-test('FAMILY_BIRTHTO_MOM/DAD：非法母亲抛错，父亲负号只记双方关系', () => {
+test('FAMILY_BIRTHTO_MOM/DAD：非法母亲抛错，父亲负号只记关系', () => {
   const fixture = create_era_fixture();
-  const { family_birth_to_mom, family_birth_to_dad, STUBBED_CALLS } =
+  add_chara(fixture, 10);
+  const { family_birth_to_mom, family_birth_to_dad, rf_get } =
     fixture.load_module('chara/chara-family');
 
   assert.throws(() => family_birth_to_mom(10, -4), /不可能作为母亲/);
   assert.equal(family_birth_to_dad(10, -4), 0);
-  assert.deepEqual(STUBBED_CALLS, [
-    'RELATION_REBUILD',
-    'RF_JOINTO',
-    'RF_SETBOTH',
-  ]);
-  assert.match(text_lines(fixture)[0], /@RF_SETBOTH/);
-  assert.match(text_lines(fixture)[0], /\(10,-4,5\)/);
+  assert.equal(rf_get(10, -4), 5);
 });
 
 test('FAMILY_BIRTHTO_MOM/DAD：普通父母先重建关系，再以 6/5 加入家庭', () => {
   const fixture = create_era_fixture();
-  const { family_birth_to_mom, family_birth_to_dad } =
+  for (const cid of [2, 3, 10]) add_chara(fixture, cid);
+  const { family_birth_to_mom, family_birth_to_dad, rf_get } =
     fixture.load_module('chara/chara-family');
 
-  family_birth_to_mom(10, 2);
-  family_birth_to_dad(10, 3);
-  assert.deepEqual(
-    text_lines(fixture).map((line) => line.match(/原作 @(\w+)/)?.[1]),
-    ['RELATION_REBUILD', 'RF_JOINTO', 'RELATION_REBUILD', 'RF_JOINTO'],
-  );
-  assert.match(text_lines(fixture)[1], /\(10,2,6\)/);
-  assert.match(text_lines(fixture)[3], /\(10,3,5\)/);
+  family_birth_to_mom(10, 2, () => 0);
+  family_birth_to_dad(10, 3, () => 0);
+  assert.equal(rf_get(10, 2), 6);
+  assert.equal(rf_get(10, 3), 5);
 });
 
 test('SELECT_YES_NO：非法输入重问，直到返回 0 或 1', async () => {

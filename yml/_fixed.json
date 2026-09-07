@@ -1,6 +1,11 @@
 {
   "system": {
-    "extendedCharaTables": ["portcflag", "ex_talent"],
+    "extendedCharaTables": [
+      "portcflag",
+      "ex_talent",
+      "c_relation",
+      "c_relation_sub"
+    ],
     "saveFiles": 99
   }
 }

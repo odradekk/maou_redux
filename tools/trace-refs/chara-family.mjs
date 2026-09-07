@@ -11,13 +11,16 @@ export const FILES = [
       },
       {
         src: 'target/ERB/關係設置/RELATION_FAMILY.ERB',
-        ref: '328-337',
-        any: [/@FAMILY_BIRTHTO_MOM\(L_A, L_B\)/],
+        ref: '24-1011',
+        any: [
+          /@FAMILY_REGISTER\(L_A\)/,
+          /@DEC_BITADD\(L_NUM, L_BIT, L_VALUE\)/,
+        ],
       },
       {
-        src: 'target/ERB/關係設置/RELATION_FAMILY.ERB',
-        ref: '343-353',
-        any: [/@FAMILY_BIRTHTO_DAD\(L_A, L_B\)/],
+        src: 'target/ERB/關係設置/RELATION.ERB',
+        ref: '8-301',
+        any: [/@RELATION_GET\(L_A, L_B\)/, /@RELATION_DEBUGPRINT/],
       },
     ],
   },

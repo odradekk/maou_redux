@@ -23,7 +23,7 @@
  *     deltabase/ex/nowex/stain/source/tequip/tcvar（era-fixture 的
  *     TRAIN_ONLY_TABLES 同款清单）；
  *   - yml/_fixed.json 的 extendedCharaTables（tableType.chara）：
- *     portcflag/ex_talent。
+ *     portcflag/ex_talent/c_relation/c_relation_sub。
  * **不在名单**（二段是其合法形态，勿误伤）：callname/relation/love——
  * setVar 二段 switch 的显式 case（callname:c 与 relation:c 返回行对象、
  * love:c 是按角色的值）；flag/tflag/tstr/global/item 等平表。
@@ -72,6 +72,8 @@ const CHARA_TABLE_FAMILIES = [
   // yml/_fixed.json 的 extendedCharaTables（tableType.chara）
   'portcflag',
   'ex_talent',
+  'c_relation',
+  'c_relation_sub',
 ];
 
 // 二段字面量：引号包住、恰一个冒号、第二段纯数字。模板串里是表达式
@@ -154,6 +156,8 @@ test('守卫（阳性对照）：清单与期望名单一致，且每个表族�
     'tcvar',
     'portcflag',
     'ex_talent',
+    'c_relation',
+    'c_relation_sub',
   ];
   assert.deepEqual(
     new Set(CHARA_TABLE_FAMILIES),

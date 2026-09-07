@@ -13,6 +13,7 @@
  */
 
 const era = require('#/era-electron');
+const { relation_debugprint } = require('#/chara/chara-family');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, emit, TIER } = require('#/system/event/registry');
 const { chara_sale, check_sellassiable } = require('#/system/stronghold/sale');
@@ -55,7 +56,6 @@ const STUBBED_CALLS = [
   'SHOW_FLOOR',
   'MONSTER_SHOP',
   'DEBUG_MENU_U',
-  'RELATION_DEBUGPRINT',
 ];
 
 /**
@@ -356,7 +356,7 @@ async function usershop(result) {
   // 输入再查一次 7788。链上的提前 return 都在 100 分支内（取消 :68 与
   // 育儿室 :96，同原作），其余分支落到这里时 result 必非 7788，判定等价。
   if (result === 7788) {
-    await stub_line_wait('RELATION_DEBUGPRINT', '关系调试打印', '随调试票');
+    await relation_debugprint();
   }
   // :229 RETURN 0：认不出 / 守卫拦下的输入一律落到这里，回 @SHOW_SHOP
   // 重绘（run_shop 的下一轮循环）。原作的 RETURN 0/1 都被引擎循环忽略、

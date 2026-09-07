@@ -64,6 +64,27 @@ test('三分叉·普通勇者：CM_STP 落 CFLAG:1 = 2、501 = 1、502 = 0、508
   assert.equal(fixture.store.get('cflag:1:508'), 3, 'CFLAG:A:508 再起点');
 });
 
+test('FAMILY_REGISTER 调用真身：命中四分之一分支后重建关系对角 NID', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.era.addCharacter(1);
+  fixture.store.set('cflag:1:6', 1001); // CFLAG:A:6 名字编号（NID）
+  const { chara_make } = load(fixture);
+
+  await chara_make(1, 0, 0, always);
+
+  assert.notEqual(
+    fixture.store.get('c_relation:1:1'),
+    undefined,
+    'CHARA_MAKE :101 的家族登记调用已执行',
+  );
+  assert.equal(
+    fixture.store.get('c_relation:1:1'),
+    fixture.store.get('cflag:1:6'),
+    '关系对角保存随机命名后的当前 NID',
+  );
+});
+
 test('三分叉·普通勇者主流程：初值四项与可见占位', async () => {
   const fixture = create_era_fixture();
   const { chara_make } = load(fixture);
@@ -213,13 +234,13 @@ test('FLAG:5 位 12 开：CHAR_BODY_GENERATE_WAPPED 占位可见', async () => {
   );
 });
 
-test('RAND:4 == 0 且非后代：FAMILY_REGISTER 占位可见', async () => {
+test('RAND:4 == 0 且非后代：FAMILY_REGISTER 已接真身', async () => {
   const fixture = create_era_fixture();
   const { chara_make } = load(fixture);
   await chara_make(1, 0, 0, always);
-  assert(
+  assert.equal(
     stub_texts(fixture).some((line) => line.includes('@FAMILY_REGISTER')),
-    '家族登记的占位行可见（登记项）',
+    false,
   );
 });
 
