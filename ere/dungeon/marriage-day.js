@@ -761,6 +761,7 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
     `${name_of(cid)}和${marriage_name(cid)}在洞穴里生活着。`,
   );
 
+  let jump_to_day40 = false;
   if (cid == 0 && chara(cid).chara.结婚爱情 < 40) {
     if (rand(2) == 0) {
       if (
@@ -801,8 +802,11 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
         // CFLAG[107] + = y（变量语义：CFLAG 族，(cid)[107] +）
         era.add(`cflag:${cid}:107`, y);
       }
+      await era.waitAnyKey();
+      return y;
     } else if (chara(cid).chara.结婚爱情 > 40) {
       // RAW: GOTO ORC_MARRIAGE_DAY40
+      jump_to_day40 = true;
     } else {
       await era.printAndWait(
         `${name_of(cid)}在${marriage_name(cid)}身上感到了爱意。`,
@@ -813,8 +817,11 @@ async function orc_marriage_day(cid, y = 1, rand = default_rand) {
       era.add(`exp:${cid}:22`, y);
       // EXP[20] + = y（变量语义：EXP 族，(cid)[20] +）
       era.add(`exp:${cid}:20`, y);
+      await era.waitAnyKey();
+      return y;
     }
-  } else if (chara(cid).chara.结婚爱情 > 40) {
+  }
+  if (jump_to_day40 || chara(cid).chara.结婚爱情 > 40) {
     // RAW: $ORC_MARRIAGE_DAY40
 
     y = 10 + chara(cid).system.欲望 + chara(cid).train.侍奉技术;

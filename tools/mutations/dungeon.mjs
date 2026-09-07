@@ -1797,4 +1797,110 @@ export default [
     tests: ['marriage-day'],
     must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
   },
+  {
+    desc: 'M6911 兽人低爱情误跳高爱情标签',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '    } else if (chara(cid).chara.结婚爱情 > 40) {\n      // RAW: GOTO ORC_MARRIAGE_DAY40',
+    replace:
+      '    } else if (chara(cid).chara.结婚爱情 > 30) {\n      // 变异：低爱情误跳高爱情标签',
+    tests: ['marriage-day'],
+    must_mention: 'ORC：低爱情的随机分支不会误跳高爱情标签',
+  },
+  {
+    desc: 'M6912 巨人高爱情展示漏加肛门经验',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '        era.print(`肛门扩张经验+1`);\n        // EXP[1] + = y（变量语义：EXP 族，(cid)[1] +）\n        era.add(`exp:${cid}:1`, y);\n        // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）',
+    replace:
+      '        era.print(`肛门扩张经验+1`);\n        // 变异：漏加肛门经验\n        // EXP[5] + = y（变量语义：EXP 族，(cid)[5] +）',
+    tests: ['marriage-day'],
+    must_mention: 'GIANT：高爱情展示的肛交分支增加肛门经验',
+  },
+  {
+    desc: 'M6913 男性配偶高爱情分支颠倒私处封印',
+    file: 'ere/dungeon/marriage-day.js',
+    find: "      description += '和睦地相拥着，';\n    }\n\n    if (\n      chara(cid).chara.私处封印 == 1 ||",
+    replace:
+      "      description += '和睦地相拥着，';\n    }\n\n    if (\n      chara(cid).chara.私处封印 == 0 || // 变异：颠倒私处封印",
+    tests: ['marriage-day'],
+    must_mention: 'MAN：高爱情夫妻分支尊重私处封印',
+  },
+  {
+    desc: 'M6914 女性配偶百合气质门槛抬高',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  } else if (chara(cid).chara.百合气质 >= 1) {',
+    replace: '  } else if (chara(cid).chara.百合气质 > 1) { // 变异：门槛抬高',
+    tests: ['marriage-day'],
+    must_mention: 'GIRL：百合气质角色接受妻子且不进入惩罚分支',
+  },
+  {
+    desc: 'M6915 史莱姆低欲望误加自慰经验',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (chara(cid).system.欲望 >= 3) {\n    // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）',
+    replace:
+      '  if (chara(cid).system.欲望 >= 2) { // 变异：低欲望也加自慰经验\n    // EXP:cid[10] + = y（变量语义：EXP 族，cid[10] +）',
+    tests: ['marriage-day'],
+    must_mention: 'SLIME：低欲望不会获得自慰经验',
+  },
+  {
+    desc: 'M6916 虫族男性误入母乳进化分支',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (chara(cid).chara.处女 == 0 && chara(cid).chara.男人 == 0) {',
+    replace:
+      '  if (chara(cid).chara.处女 == 0 && chara(cid).chara.男人 == 1) { // 变异：男性误入',
+    tests: ['marriage-day'],
+    must_mention: 'INSECT：男性不会进入母乳进化分支',
+  },
+  {
+    desc: 'M6917 藤蔓低欲望误入主动侍奉分支',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (chara(cid).system.欲望 >= 4) {',
+    replace: '  if (chara(cid).system.欲望 >= 3) { // 变异：降低主动侍奉门槛',
+    tests: ['marriage-day'],
+    must_mention: 'IVY：低欲望不会进入主动侍奉分支',
+  },
+  {
+    desc: 'M6918 触手把未封印女性误判为封印分支',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '    chara(cid).chara.男人 == 1\n  ) {\n    era.print(\n      `${clitoris_word(cid)},乳房,肛门点数+',
+    replace:
+      '    chara(cid).chara.男人 == 0 // 变异：颠倒身体分流\n  ) {\n    era.print(\n      `${clitoris_word(cid)},乳房,肛门点数+',
+    tests: ['marriage-day'],
+    must_mention: 'SYOKUSYU：未封印女性获得私处经验',
+  },
+  {
+    desc: 'M6919 妖精教学随机范围扩大',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (rand(10) == 0) {\n    await era.printAndWait(\n      `${marriage_name(cid)}对${name_of(cid)}淫荡的身体非常满意',
+    replace:
+      '  if (rand(10) <= 1) { // 变异：扩大教学随机范围\n    await era.printAndWait(\n      `${marriage_name(cid)}对${name_of(cid)}淫荡的身体非常满意',
+    tests: ['marriage-day'],
+    must_mention: 'FAILY：教学随机未命中时不会授予魅惑',
+  },
+  {
+    desc: 'M6920 兽类高爱情错误要求同时具备兽奸中毒',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  } else if (chara(cid).train.兽奸中毒 >= 1 || chara(cid).chara.结婚爱情 > 40) {\n    if (\n      chara(cid).chara.私处封印 == 1 ||\n      (chara(cid).chara.特别服装类型 == 79 &&\n        chara(cid).train.着衣状态 & 64 &&\n        game.system.着衣系统) ||\n      chara(cid).chara.男人 == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
+    replace:
+      '  } else if (chara(cid).train.兽奸中毒 >= 1 && chara(cid).chara.结婚爱情 > 40) { // 变异：错用且\n    if (\n      chara(cid).chara.私处封印 == 1 ||\n      (chara(cid).chara.特别服装类型 == 79 &&\n        chara(cid).train.着衣状态 & 64 &&\n        game.system.着衣系统) ||\n      chara(cid).chara.男人 == 1\n    ) {\n      await era.printAndWait(\n        `${name_of(cid)}如牝犬一般吐着舌头兴奋地扭动腰肢迎接着${marriage_name(cid)}。`,',
+    tests: ['marriage-day'],
+    must_mention: 'BEAST：高爱情角色进入高收益兽奸分支',
+  },
+  {
+    desc: 'M6921 脑寄生扩大漏尿随机命中范围',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (chara(cid).event.漏尿癖 == 1 || rand(20) == 0) {',
+    replace:
+      '  if (chara(cid).event.漏尿癖 == 1 || rand(20) <= 1) { // 变异：扩大漏尿随机范围',
+    tests: ['marriage-day'],
+    must_mention: 'BRAIN：漏尿随机未命中时进入脑侵与幻觉分支',
+  },
+  {
+    desc: 'M6922 马匹把饮精随机误判为交合',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (chara(cid).event.牝犬 == 1 || cid === 0) {\n    if (rand(2) == 0) {\n      if (',
+    replace:
+      '  if (chara(cid).event.牝犬 == 1 || cid === 0) {\n    if (rand(2) <= 1) { // 变异：饮精随机误入交合\n      if (',
+    tests: ['marriage-day'],
+    must_mention: 'HORSE：饮精分支获得五倍口交与兽奸经验',
+  },
 ];

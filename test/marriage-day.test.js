@@ -279,3 +279,101 @@ test('BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态', asy
   assert.equal(horse.fixture.store.get('cflag:0:107'), 3);
   assert.equal(horse.fixture.store.get('exp:0:56'), 30);
 });
+
+test('ORC：低爱情的随机分支不会误跳高爱情标签', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('cflag:0:602', 35);
+  await api.orc_marriage_day(0, 3, seq([1]));
+  assert.equal(fixture.store.get('exp:0:22'), 3);
+  assert.equal(fixture.store.get('exp:0:20'), 3);
+});
+
+test('SLIME：低欲望不会获得自慰经验', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('abl:1:11', 2);
+  await api.slime_marriage_day(1, 3);
+  assert.equal(fixture.store.get('exp:1:10') || 0, 0);
+});
+
+test('INSECT：男性不会进入母乳进化分支', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('abl:1:11', 5);
+  fixture.store.set('talent:1:0', 0);
+  fixture.store.set('talent:1:122', 1);
+  await api.insect_marriage_day(1, 3, seq([0]));
+  assert.equal(fixture.store.get('talent:1:130') || 0, 0);
+});
+
+test('IVY：低欲望不会进入主动侍奉分支', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('abl:1:11', 3);
+  fixture.store.set('abl:1:16', 1);
+  fixture.store.set('abl:1:31', 1);
+  await api.ivy_marriage_day(1, 3);
+  assert.equal(fixture.store.get('cflag:1:2') || 0, 0);
+  assert.equal(fixture.store.get('exp:1:10') || 0, 0);
+});
+
+test('SYOKUSYU：未封印女性获得私处经验', async () => {
+  const { fixture, api } = setup();
+  await api.syokusyu_marriage_day(1, 3);
+  assert.equal(fixture.store.get('exp:1:0'), 3);
+  assert.equal(fixture.store.get('juel:1:1'), 10);
+});
+
+test('FAILY：教学随机未命中时不会授予魅惑', async () => {
+  const { fixture, api } = setup();
+  await api.faily_marriage_day(1, 3, seq([1]));
+  assert.equal(fixture.store.get('talent:1:91') || 0, 0);
+});
+
+test('GIANT：高爱情展示的肛交分支增加肛门经验', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('cflag:1:602', 51);
+  fixture.store.set('talent:1:122', 1);
+  await api.giant_marriage_day(1, 3, seq([0, 0, 0, 0]));
+  assert.equal(fixture.store.get('exp:1:1'), 13);
+  assert.equal(fixture.store.get('exp:1:0') || 0, 0);
+});
+
+test('MAN：高爱情夫妻分支尊重私处封印', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('cflag:1:602', 51);
+  fixture.store.set('talent:1:273', 1);
+  await api.man_marriage_day(1, 3, seq([]));
+  assert.equal(fixture.store.get('exp:1:1'), 3);
+  assert.equal(fixture.store.get('exp:1:0') || 0, 0);
+});
+
+test('GIRL：百合气质角色接受妻子且不进入惩罚分支', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('abl:1:22', 1);
+  await api.girl_marriage_day(1, 3, seq([]));
+  assert(texts(fixture).some((line) => line.includes('也不是不能接受')));
+  assert.equal(fixture.store.get('exp:1:2') || 0, 0);
+});
+
+test('BEAST：高爱情角色进入高收益兽奸分支', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('cflag:1:602', 41);
+  await api.beast_marriage_day(1, 3);
+  assert.equal(fixture.store.get('exp:1:56'), 6);
+});
+
+test('BRAIN：漏尿随机未命中时进入脑侵与幻觉分支', async () => {
+  const { fixture, api } = setup();
+  fixture.store.set('talent:1:57', 0);
+  fixture.store.set('abl:1:11', 2);
+  await api.brain_marriage_day(1, 3, seq([1, 0]));
+  assert(texts(fixture).some((line) => line.includes('从耳朵侵犯脑部')));
+  assert.equal(fixture.store.get('talent:1:57') || 0, 0);
+  assert.equal(fixture.store.get('exp:1:65'), 1);
+});
+
+test('HORSE：饮精分支获得五倍口交与兽奸经验', async () => {
+  const { fixture, api } = setup();
+  await api.horse_marriage_day(0, 3, seq([1]));
+  assert.equal(fixture.store.get('exp:0:22'), 15);
+  assert.equal(fixture.store.get('exp:0:56'), 15);
+  assert.equal(fixture.store.get('cflag:0:107') || 0, 0);
+});
