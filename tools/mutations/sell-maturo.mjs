@@ -1,6 +1,6 @@
-// issue #337：成熟奴隶异族市场与宠物市场末路（M7100-M7111）。
+// issue #337：成熟奴隶异族市场与宠物市场末路（M7100-M7127）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 12;
+export const COUNT = 28;
 
 const code = 'ere/system/stronghold/sell-maturo.js';
 const make = (id, desc, find, replace, must_mention) => ({
@@ -96,5 +96,117 @@ export default [
     'if (family_id >= 0) chara(family_id).event.家人末路 = `${ending}${name}`;',
     "if (family_id >= 0) chara(family_id).event.家人末路 = '';",
     '找到家人时同步记录其末路称号',
+  ),
+  make(
+    7112,
+    'K2 五十万价格档整体不可达',
+    "if (price >= 500_000) {\n    if (sex_maniac) return ['魔界牝犬饲养员', 51, '高级母种犬'];",
+    "if (false) {\n    if (sex_maniac) return ['魔界牝犬饲养员', 51, '高级母种犬'];",
+    '牝犬四个价格档与三个素质维度',
+  ),
+  make(
+    7113,
+    'K2 十万价格档整体不可达',
+    "if (price >= 100_000) {\n    if (sex_maniac) return ['魔界个体饲养员', 11, '牝犬饲养员'];",
+    "if (false) {\n    if (sex_maniac) return ['魔界个体饲养员', 11, '牝犬饲养员'];",
+    '牝犬四个价格档与三个素质维度',
+  ),
+  make(
+    7114,
+    'K2 五十万档话术门槛抬高',
+    "if (speech_level >= 5) return ['魔界圆形剧场', 52, '高级牝犬女优'];",
+    "if (speech_level >= 50) return ['魔界圆形剧场', 52, '高级牝犬女优'];",
+    '牝犬四个价格档与三个素质维度',
+  ),
+  make(
+    7115,
+    'K2 十万以下性交狂分支不可达',
+    "if (sex_maniac) return ['魔犬', 1, '魔犬新娘'];",
+    "if (false) return ['魔犬', 1, '魔犬新娘'];",
+    '牝犬四个价格档与三个素质维度',
+  ),
+  make(
+    7116,
+    'K2 主流程恒分发到第 3 个结局',
+    '  await sell_maturo_k2_branch(branch, cid);',
+    '  await sell_maturo_k2_branch(3, cid);',
+    '牝犬四个价格档与三个素质维度',
+  ),
+  make(
+    7117,
+    'K1 恶魔买家随机支取反',
+    "      } else {\n        if (rand_n(2) == 0) {\n          buyer = '恶魔的诸侯';",
+    "      } else {\n        if (rand_n(2) != 0) {\n          buyer = '恶魔的诸侯';",
+    '五处随机分支的两侧均由确定性随机源覆盖',
+  ),
+  make(
+    7118,
+    'K1 恶魔诸侯末路随机支取反',
+    '          if (rand_n(2) == 0) {\n            await era.printAndWait(\n              `反抗心很强的${target_name}成为了恶魔的玩具。`,',
+    '          if (rand_n(2) != 0) {\n            await era.printAndWait(\n              `反抗心很强的${target_name}成为了恶魔的玩具。`,',
+    '五处随机分支的两侧均由确定性随机源覆盖',
+  ),
+  make(
+    7119,
+    'K1 巨魔买家随机支取反',
+    "      } else {\n        if (rand_n(2) == 0) {\n          buyer = '巨魔佣兵团';",
+    "      } else {\n        if (rand_n(2) != 0) {\n          buyer = '巨魔佣兵团';",
+    '五处随机分支的两侧均由确定性随机源覆盖',
+  ),
+  make(
+    7120,
+    'K1 巨魔佣兵团末路随机支取反',
+    '          if (rand_n(2) == 0) {\n            await era.printAndWait(\n              `反抗心很强的${target_name}被改造成适应巨魔佣兵团团长的阴茎的飞机杯。`,',
+    '          if (rand_n(2) != 0) {\n            await era.printAndWait(\n              `反抗心很强的${target_name}被改造成适应巨魔佣兵团团长的阴茎的飞机杯。`,',
+    '五处随机分支的两侧均由确定性随机源覆盖',
+  ),
+  make(
+    7121,
+    'K1 常态魔族十万价格边界抬高',
+    "            ending = '兽人商人的情人';\n          }\n        }\n      } else if (price >= 100000) {",
+    "            ending = '兽人商人的情人';\n          }\n        }\n      } else if (price >= 100001) {",
+    '价格边界与种族、职业素质维度逐项分流',
+  ),
+  make(
+    7122,
+    'K1 常态魔族五十万价格边界抬高',
+    '  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {',
+    '  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500001) {',
+    '价格边界与种族、职业素质维度逐项分流',
+  ),
+  make(
+    7123,
+    'K1 爱慕淫乱魔族一百万价格边界抬高',
+    '  } else if (era.get(`talent:${cid}:85`) || era.get(`talent:${cid}:76`)) {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 1000000) {',
+    '  } else if (era.get(`talent:${cid}:85`) || era.get(`talent:${cid}:76`)) {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 1000001) {',
+    '价格边界与种族、职业素质维度逐项分流',
+  ),
+  make(
+    7124,
+    'K1 常态种族编号改错',
+    '  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {',
+    '  } else {\n    if (era.get(`talent:${cid}:314`) == 8) {\n      if (price >= 500000) {',
+    '价格边界与种族、职业素质维度逐项分流',
+  ),
+  make(
+    7125,
+    'K1 常态五十万档漏判战士职业',
+    '  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {\n        if (\n          era.get(`talent:${cid}:200`) == 1 ||\n          era.get(`talent:${cid}:203`) == 1',
+    '  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {\n        if (\n          era.get(`talent:${cid}:200`) == 2 ||\n          era.get(`talent:${cid}:203`) == 1',
+    '价格边界与种族、职业素质维度逐项分流',
+  ),
+  make(
+    7126,
+    'K1 食人魔佣兵团漏判文职职业',
+    '        if (route == 3) {\n          if (era.get(`talent:${cid}:203`) == 1) {\n            await era.printAndWait(\n              `${target_name}作为顾问，加入了食人魔佣兵团。`,',
+    '        if (route == 3) {\n          if (era.get(`talent:${cid}:203`) == 2) {\n            await era.printAndWait(\n              `${target_name}作为顾问，加入了食人魔佣兵团。`,',
+    '价格边界与种族、职业素质维度逐项分流',
+  ),
+  make(
+    7127,
+    'K1 常态五十万档漏判魔法职业',
+    "  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {\n        if (\n          era.get(`talent:${cid}:200`) == 1 ||\n          era.get(`talent:${cid}:203`) == 1\n        ) {\n          buyer = '食人魔佣兵团';\n          route = 3;\n        } else if (\n          era.get(`talent:${cid}:205`) == 1 ||",
+    "  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {\n        if (\n          era.get(`talent:${cid}:200`) == 1 ||\n          era.get(`talent:${cid}:203`) == 1\n        ) {\n          buyer = '食人魔佣兵团';\n          route = 3;\n        } else if (\n          era.get(`talent:${cid}:205`) == 2 ||",
+    '价格边界与种族、职业素质维度逐项分流',
   ),
 ];
