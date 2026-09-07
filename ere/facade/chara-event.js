@@ -178,6 +178,22 @@ class EventFacade {
     era.set(`cflag:${this.cid}:667`, v);
   }
 
+  // —— cstr ——
+  /**
+   * 家人末路（cstr:cid:5 ↔ CSTR:5）
+   * 源: target/ERB/售卻相關/SELL_MATURO_K1.ERB 行1370-1371 CSTR:(FAMILY:2)行5 = %MATURO%%SAVESTR:TARGET%（K2 行215-216 同构）
+   * @returns {string}
+   */
+  get 家人末路() {
+    return era.get(`cstr:${this.cid}:5`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 家人末路(v) {
+    era.set(`cstr:${this.cid}:5`, v);
+  }
+
   // —— tequip ——
   /**
    * 主人避孕套（tequip:cid:35 ↔ TEQUIP:35）

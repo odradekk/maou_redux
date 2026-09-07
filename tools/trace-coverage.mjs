@@ -114,7 +114,7 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 93; // #349：關係設置/ 全目录完成；合并阶段 5a 前四张后实测。
+export const PENDING_BASELINE = 91; // #337：SELL_MATURO_K1/K2 两文件完成。
 
 /**
  * 存根清单「归因不到」行数基线（#331 验收整改冻结，只减不增）。归因不到
