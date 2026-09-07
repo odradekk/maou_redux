@@ -74,6 +74,20 @@ test('CHECK_SELLASSIABLE：只达到出售门槛时停在一级状态', async ()
   assert.deepEqual(fixture.text_lines(), ['温妮可以卖掉了']);
 });
 
+test('CHECK_SELLASSIABLE：抖M气质三级可单独满足出售门槛', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('abl:31:0', 3); // 感觉前置；感觉合计仅 3
+  fixture.store.set('abl:31:10', 3); // 与欲望合计 6；自身未到出售门槛
+  fixture.store.set('abl:31:11', 3);
+  fixture.store.set('abl:31:21', 3); // 六项析取中唯一成立的一项
+
+  await fixture.load_module('system/stronghold/sale').check_sellassiable(31);
+
+  assert.equal(fixture.store.get('cflag:31:0'), 1);
+  assert.deepEqual(fixture.text_lines(), ['温妮可以卖掉了']);
+});
+
 test('CHECK_SELLASSIABLE：感觉、反抗系与克制系前置门槛分别生效', async () => {
   const cases = [
     { label: '感觉不足', patch: { 'abl:31:0': 2 } },

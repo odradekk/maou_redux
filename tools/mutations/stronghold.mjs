@@ -955,4 +955,12 @@ export default [
     tests: ['sale-chara'],
     must_mention: '能力提升出口都调用真身',
   },
+  {
+    desc: 'M6840 CHECK_SELLASSIABLE 抖M气质门槛抬高',
+    file: 'ere/system/stronghold/sale.js',
+    find: '    ability(21) >= 3 ||',
+    replace: '    ability(21) >= 4 ||',
+    tests: ['sale-chara'],
+    must_mention: '抖M气质三级可单独满足出售门槛',
+  },
 ];
