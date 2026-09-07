@@ -27,11 +27,12 @@ const {
   menu_button,
   MENU_BUTTON_DIM_COLOR,
 } = require('#/page/components/menu-button');
+const { display_dungeon_daily } = require('#/page/page-dungeon-daily');
+const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
 const { stub_line } = require('#/utils/stub-line');
-const { display_dungeon_daily } = require('#/page/page-dungeon-daily');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -150,8 +151,7 @@ function apply_bug_guards() {
  * usershop）；渲染与分发两次求值之间无写入路径，分发时重算等价。
  *
  * ere 侧按角色 ID 寻址（#21），与原作的 CHARANUM 序号世界等价。B
- * （CFLAG:x:0 > 0 的已调教计数，[106] 贩卖奴隶的可用性判据）无当前消费者，
- * 随指令面板段渲染（:208-319）一并落地。
+ * （CFLAG:x:0 > 0 的已调教计数）由下方 [106] 贩卖奴隶入口消费。
  *
  * @returns {number}
  */
@@ -294,7 +294,9 @@ function draw_main_menu() {
   // CFLAG:0（是否达到出售资格），实际列表再排除濒死/影子/占用角色。
   const sellable_count = era
     .getAddedCharacters()
-    .filter((cid) => cid !== 0 && (era.get(`cflag:${cid}:0`) || 0) > 0).length;
+    .filter(
+      (cid) => cid !== 0 && chara(cid).stronghold.出售与助手资格 > 0,
+    ).length;
   if (sellable_count > 0) {
     era.printButton('贩卖奴隶', 106);
   } else {

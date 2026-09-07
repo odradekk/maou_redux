@@ -2483,7 +2483,7 @@ async function kojo_message_com_7(rand) {
   }
 
   if (era_flag.selectcom == 6) {
-    if (era0(`cflag:${target}:307`) == 0 && era0('tflag:13')) {
+    if (era0(`cflag:${target}:307`) == 0 && game.train.初吻与自我口上) {
       await era.printAndWait(''); // :1373-1374
       // CFLAG:307  = 1（变量语义：CFLAG 族，307） // :1374
       era.set(`cflag:${target}:307`, 1); // :1374
@@ -11202,7 +11202,7 @@ async function dog_kojo_7(rand) {
   }
 
   if (era_flag.selectcom == 6) {
-    if (era0(`cflag:${target}:307`) == 0 && era0('tflag:13')) {
+    if (era0(`cflag:${target}:307`) == 0 && game.train.初吻与自我口上) {
       if (era0(`talent:${target}:136`) == 1) {
         await era.printAndWait(''); // :6422-6423
       } else if (era0(`talent:${target}:76`) == 1) {
@@ -12640,7 +12640,7 @@ async function self_kojo_k7(rand, q) {
   const master_name = chara_name(MASTER); // %CALLNAME:MASTER%
   const cstr2 = era.get(`cstr:${target}:2`) || ''; // %CSTR:2%（孩子生父的自定义称呼，K3 先例）
 
-  if (era0('tflag:13') == 1) {
+  if (game.train.初吻与自我口上 == 1) {
     if (era0(`talent:${target}:9`) == 1) {
       await era.printAndWait(`「啊哈啊…啊哈啊哈…啊哇哇啊…」`); // :7551
       await era.printAndWait(`${target_name}像坏掉的玩具一样疯狂的自慰着………`); // :7552
@@ -12723,7 +12723,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 2) {
+  if (game.train.初吻与自我口上 == 2) {
     if (era0(`talent:${target}:9`) == 1) {
       await era.printAndWait(`「啊呼——…嗯…呜呜——…啊——…啊啊啊——………」`); // :7600
       await era.printAndWait(
@@ -12811,7 +12811,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 3) {
+  if (game.train.初吻与自我口上 == 3) {
     if (era0(`talent:${target}:9`) == 1) {
       await era.printAndWait(`「啊唔…嗯…唔…悠棒…悠棒………♪」`); // :7645
       await era.printAndWait(`${target_name}就那样一脸呆滞的继续舔着阴茎………`); // :7646
@@ -12874,7 +12874,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 4) {
+  if (game.train.初吻与自我口上 == 4) {
     if (
       era0(`abl:${target}:2`) >= 4 &&
       (era0(`cflag:${target}:264`) < 2 || era0('flag:7') == 2)
@@ -12928,7 +12928,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 5) {
+  if (game.train.初吻与自我口上 == 5) {
     if (era0(`cflag:${target}:265`) < 1 || era0('flag:7') == 2) {
       if (
         era0(`talent:${target}:9`) == 1 &&
@@ -12957,7 +12957,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 6) {
+  if (game.train.初吻与自我口上 == 6) {
     if (era0(`talent:${target}:9`) == 1) {
       await era.printAndWait(`「呵呵呵…世界看起来是这么闪闪发光呢——………」`); // :7727
       await era.printAndWait(
@@ -13014,7 +13014,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 11) {
+  if (game.train.初吻与自我口上 == 11) {
     if (era0(`cflag:${target}:271`) == 0) {
       if (era0(`talent:${target}:9`) == 1) {
         await era.printAndWait(
@@ -13178,7 +13178,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 12) {
+  if (game.train.初吻与自我口上 == 12) {
     if (era0(`cflag:${target}:272`) == 0) {
       if (era0(`talent:${target}:9`) == 1) {
         await era.printAndWait(
@@ -13216,7 +13216,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 13) {
+  if (game.train.初吻与自我口上 == 13) {
     if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
       if (era0(`talent:${target}:153`)) {
         await era.printAndWait(`「啊啦、是不是来看我变大的肚子来了？」`); // :7890
@@ -13232,7 +13232,7 @@ async function self_kojo_k7(rand, q) {
     era.set(`cflag:${target}:273`, 1); // :7898
   }
 
-  if (era0('tflag:13') == 14) {
+  if (game.train.初吻与自我口上 == 14) {
     if (era0(`talent:${target}:85`) || era0(`talent:${target}:76`)) {
       await era.printAndWait(`「啊啊、我可爱的孩子离开了………」`); // :7907
     }
@@ -13240,7 +13240,7 @@ async function self_kojo_k7(rand, q) {
     era.set(`cflag:${target}:274`, 1); // :7909
   }
 
-  if (era0('tflag:13') == 999) {
+  if (game.train.初吻与自我口上 == 999) {
     if (era0(`talent:${target}:85`)) {
       await era.printAndWait(`「死在这里也…是命运吧………」`); // :7919
     } else {
@@ -13248,7 +13248,7 @@ async function self_kojo_k7(rand, q) {
     }
   }
 
-  if (era0('tflag:13') == 998) {
+  if (game.train.初吻与自我口上 == 998) {
     if (era0(`talent:${target}:85`)) {
       await era.printAndWait(''); // :7932-7933
     } else {

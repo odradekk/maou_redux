@@ -41,11 +41,11 @@
  */
 
 const era = require('#/era-electron');
-const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
+const { check_sellassiable } = require('#/system/stronghold/sale');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
-const { check_sellassiable } = require('#/system/stronghold/sale');
+const era_flag = require('#/era-utils/era-flag');
+const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试

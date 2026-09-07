@@ -187,6 +187,35 @@ test('SALE_CHARA：调教外事件码能抵达角色出售口上', async () => {
   assert(!fixture.calls.some(({ api }) => api === 'beginTrain'));
 });
 
+test('SALE_CHARA：K4/K7 在调教外从事件上下文取得出售事件码', async () => {
+  for (const [module_name, cid, talent_id] of [
+    ['kojo/kojo-k4-stoic', 4, 164],
+    ['kojo/kojo-k7-heart', 7, 167],
+  ]) {
+    const fixture = create_era_fixture();
+    join_slave_chara(fixture, 0, '你');
+    join_slave_chara(fixture, cid, `角色${cid}`);
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.target = cid;
+    fixture.store.set('flag:7', 1);
+    fixture.store.set(`base:${cid}:0`, 100);
+    fixture.store.set(`talent:${cid}:${talent_id}`, 1);
+    fixture.set_inputs(0);
+    fixture.load_module(module_name);
+
+    const price = await fixture
+      .load_module('system/stronghold/sale')
+      .sale_chara(cid, { rand: seq([0]) });
+
+    assert.equal(typeof price, 'number', module_name);
+    assert(
+      fixture.text_lines().some((line) => line.includes('卖掉了')),
+      module_name,
+    );
+    assert(!fixture.calls.some(({ api }) => api === 'beginTrain'), module_name);
+  }
+});
+
 test('LONG_GOOD_BYE：关系与性格累积压力，过百时崩坏并失去爱慕', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
@@ -202,6 +231,19 @@ test('LONG_GOOD_BYE：关系与性格累积压力，过百时崩坏并失去爱�
   assert(
     fixture.text_lines().some((line) => line.includes('心里什么东西坏掉了')),
   );
+});
+
+test('LONG_GOOD_BYE：崩坏时一并失去淫乱', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('cflag:32:21', 31);
+  fixture.store.set('cflag:32:22', 31);
+  fixture.store.set('talent:32:76', 1); // 淫乱：压力 -60，240 - 60 仍过百
+
+  await fixture.load_module('system/stronghold/sale').long_good_bye(31);
+
+  assert.equal(fixture.store.get('talent:32:9'), 1);
+  assert.equal(fixture.store.get('talent:32:76'), 0);
 });
 
 test('KILL_TARGET：经队伍门面除名，清除指向被售角色的历史指针', async () => {

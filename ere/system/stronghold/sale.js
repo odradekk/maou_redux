@@ -35,11 +35,11 @@ const { remember_sale_price } = require('#/event/event-aftertrain');
 const { name_reset } = require('#/chara/char-make');
 const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
 const { self_kojo } = require('#/kojo/kojo-system');
+const { game } = require('#/facade/game');
+const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { EXPLV } = require('#/era-utils/exp-level');
-const { game } = require('#/facade/game');
-const { chara } = require('#/facade/chara');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
 const MAX_SALE_PRICE = 25_000_000;
@@ -527,11 +527,13 @@ async function long_good_bye(cid = era_flag.target) {
       era.print(`${name}心里什么东西坏掉了……`);
       era.print(`${name}的精神【${static_name('talent', 9)}】了。`);
       await era.waitAnyKey();
-      for (const talent_id of [85, 76]) {
-        if (value('talent', other, talent_id)) {
-          era.print(`${name}的【${static_name('talent', talent_id)}】失去了。`);
-          era.set(`talent:${other}:${talent_id}`, 0);
-        }
+      if (chara(other).stronghold.爱慕) {
+        era.print(`${name}的【${static_name('talent', 85)}】失去了。`);
+        chara(other).stronghold.爱慕 = 0;
+      }
+      if (chara(other).stronghold.淫乱) {
+        era.print(`${name}的【${static_name('talent', 76)}】失去了。`);
+        chara(other).stronghold.淫乱 = 0;
       }
       chara(other).stronghold.崩坏 = 1;
       await era.waitAnyKey();

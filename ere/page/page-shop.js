@@ -15,18 +15,18 @@
 const era = require('#/era-electron');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, emit, TIER } = require('#/system/event/registry');
+const { chara_sale } = require('#/system/stronghold/sale');
 const {
   create_main_menu,
   reset_out_of_range_pointers,
   count_selectable_slaves,
 } = require('#/page/page-main-menu');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { select_target } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { save_game, load_game } = require('#/page/page-save-load');
-const { chara_sale } = require('#/system/stronghold/sale');
 const era_flag = require('#/era-utils/era-flag');
+const { stub_line_wait } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名（@SELECT_ASSI 的函数体与作用域外指令分支的壳
@@ -244,7 +244,8 @@ async function usershop(result) {
     // 迎击（:113）
     await stub_line_wait('INTERCEPT', '迎击', '随迎击票');
   } else if (result === 105) {
-    // 能力值提升（:115）
+    // 能力值提升（:115）。本分支整体仍是存根；原作 SHOP_2.ERB:248 在
+    // ABILITY_UP 完成后调用的出售资格复核，随能力票在正确时机接入。
     await stub_line_wait('ABILITY_UP', '能力值提升', '随能力票');
   } else if (result === 106) {
     // 贩卖奴隶（:117，#339 真身）

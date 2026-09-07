@@ -30,16 +30,16 @@
 const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
-const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
+const { check_sellassiable } = require('#/system/stronghold/sale');
 const { run_event_nextday } = require('#/event/event-nextday');
 const { run_event_nextmonth } = require('#/event/event-nextmonth');
-const { check_sellassiable } = require('#/system/stronghold/sale');
 // ENTER_ENEMY 经模块对象调用（不解构）：#171 的夹具隔离开关
 // （era-fixture.js 的 disable_enter_enemy，#168 裁定 4）就地替换本模块的
 // enter_enemy 导出，解构会把函数固化进本闭包、替换不可达——两个写法的
 // 游戏行为完全等价，差别只在导出表的属性查找发生在调用时
 const enter_enemy_mod = require('#/event/enter-enemy');
+const era_flag = require('#/era-utils/era-flag');
+const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
