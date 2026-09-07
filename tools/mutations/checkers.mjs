@@ -1,8 +1,10 @@
 // 变异条目表切片：tools/ 下的检查器与生成器自身（trace/domain/engine-contract/ownership/gen-facade/facade-names）。
-// 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
-// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
-// 重号由 gate_shape 随 --verify 秒级核对。
+// 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
+// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// ——重号由 gate_shape 随 --verify 秒级核对。
+/** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
+export const COUNT = 93;
+
 export default [
   {
     desc: 'M94 ERB 完整性检查焊死（未登记引用不再红——探针用例必须抓到失明）',
@@ -555,12 +557,20 @@ export default [
     must_mention: '报告路径要用 process.exitCode',
   },
   {
-    desc: 'M2902 并行子进程不再继承 --baseline（副本里当场撞计数门）（#304）',
+    desc: 'M7030 分片条数核对被拆（自报与实际分家，解析冲突时少收几条不再红）（#367）',
     file: 'tools/mutation-check.mjs',
-    find: "            '--baseline',\n            String(args.baseline),",
-    replace: '            // 变异：不传 --baseline',
+    find: '    if (s.entries.length !== s.declared) {',
+    replace: '    if (false) { // 变异：条数核对拆除',
     tests: ['mutation-check'],
-    must_mention: '父进程应如实累加两片的计数',
+    must_mention: '实际少于自报必须非 0',
+  },
+  {
+    desc: 'M7031 缺 COUNT 的分片不再点名（落回条数不符那句，报「自报 COUNT undefined」）（#367）',
+    file: 'tools/mutation-check.mjs',
+    find: "    if (typeof s.declared !== 'number') {",
+    replace: '    if (false) { // 变异：缺声明落回条数不符分支',
+    tests: ['mutation-check'],
+    must_mention: '没有导出 COUNT',
   },
   {
     desc: 'M2903 引擎声明门对并行子进程的豁免被删（换表时副本里撞门）（#304）',

@@ -1,4 +1,7 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
+/** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
+export const COUNT = 117;
+
 export default [
   {
     desc: 'M6642 VIDEO_BACKUP 跳过书架 0 号槽',

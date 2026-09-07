@@ -18,12 +18,16 @@ const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
 export const DEFAULT_LEDGER_DIR = path.join(TOOL_DIR, 'mutations');
 
 /**
- * 装载条目表全部分片并按文件名序汇总。
+ * 按文件名序装载条目表全部分片，保留分片边界。
+ *
+ * `declared` 是分片自报的条数（`export const COUNT`），核对在
+ * tools/mutation-check.mjs 的 gate_count 里；没声明的分片给 undefined，
+ * 由那道门报出，装载器本身不判。
  *
  * @param {string} dir 分片目录
- * @returns {Promise<Array<{desc: string, file: string, find: string, replace: string, tests: string[], must_mention: string, engine?: boolean}>>}
+ * @returns {Promise<Array<{name: string, entries: object[], declared: number|undefined}>>}
  */
-export async function load_ledger(dir) {
+export async function load_shards(dir) {
   const names = fs
     .readdirSync(dir)
     .filter((n) => n.endsWith('.mjs'))
@@ -31,13 +35,23 @@ export async function load_ledger(dir) {
   if (names.length === 0) {
     throw new Error(`条目表目录 ${dir} 里没有 .mjs 分片`);
   }
-  const entries = [];
+  const shards = [];
   for (const name of names) {
     const mod = await import(pathToFileURL(path.join(dir, name)).href);
     if (!Array.isArray(mod.default)) {
       throw new Error(`${name} 必须默认导出数组`);
     }
-    entries.push(...mod.default);
+    shards.push({ name, entries: mod.default, declared: mod.COUNT });
   }
-  return entries;
+  return shards;
+}
+
+/**
+ * 装载条目表全部分片并按文件名序汇总。
+ *
+ * @param {string} dir 分片目录
+ * @returns {Promise<Array<{desc: string, file: string, find: string, replace: string, tests: string[], must_mention: string, engine?: boolean}>>}
+ */
+export async function load_ledger(dir) {
+  return (await load_shards(dir)).flatMap((s) => s.entries);
 }

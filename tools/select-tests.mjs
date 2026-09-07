@@ -96,7 +96,7 @@ const LOCKS = [
   'domain-check', // 跨域写登记 + 目录认领：新文件的裸跨域写即红
   'ownership-scan', // 所有权产物漂移
   'static-table-coverage', // 新寻址族忘配表（名字表不在 + 桶在 = 实机崩溃）
-  'mutation-check', // 条目表三项检查：LEDGER_COUNT_BASELINE 等全局计数
+  'mutation-check', // 条目表四项检查：分片自报条数、M 编号唯一性等全表性质
   'asar-candidates', // 三处 ASAR_CANDIDATES 清单同步
   'worktree-write-lock', // 测试不写工作树
   'skip-count-check', // 跳过数守护工具自身

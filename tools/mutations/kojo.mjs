@@ -1,8 +1,10 @@
 // 变异条目表切片：ere/kojo/（口上状态机与文本插值）。
-// 字段与运行方式见 tools/mutation-check.mjs 头注释；新增/删除条目必须同步改
-// 工具里的 LEDGER_COUNT_BASELINE（两项检查）。desc 里的 M 编号不人工分配，
-// 只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）——
-// 重号由 gate_shape 随 --verify 秒级核对。
+// 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
+// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// ——重号由 gate_shape 随 --verify 秒级核对。
+/** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
+export const COUNT = 2229;
+
 export default [
   {
     desc: 'M57 口上总开关守卫删松（<= 0 改 < 0，flag:7 = 0 不再拦）',
