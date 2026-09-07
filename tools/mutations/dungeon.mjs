@@ -1543,4 +1543,258 @@ export default [
     tests: ['dungeon-lovers'],
     must_mention: 'LOVE_EXP 维度表：9 前戏加成',
   },
+  {
+    desc: 'M6882 结婚日主函数整体删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function marriage_day(cid, rand = default_rand, restart_turnend = true) {',
+    replace:
+      'async function marriage_day(cid, rand = default_rand, restart_turnend = true) {\n  return 0; // 变异：主函数删除',
+    tests: ['marriage-day'],
+    must_mention: '主函数：野狗婚姻完成分支后清记录并发出 TURNEND',
+  },
+  {
+    desc: 'M6883 野狗婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function marriage_day_dog(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function marriage_day_dog(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：野狗结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+  },
+  {
+    desc: 'M6884 魔王配偶婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function marriage_day_you(cid, y = 1) {',
+    replace:
+      'async function marriage_day_you(cid, y = 1) {\n  return 0; // 变异：魔王配偶结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+  },
+  {
+    desc: 'M6885 恋人配偶婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function marriage_day_lovers(lover_type, cid, rand = default_rand) {',
+    replace:
+      'async function marriage_day_lovers(lover_type, cid, rand = default_rand) {\n  return 0; // 变异：恋人配偶结算删除',
+    tests: ['marriage-day'],
+    must_mention: '角色与恋人配偶分支沿用现有名字并执行等待',
+  },
+  {
+    desc: 'M6886 角色配偶婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function marriage_day_slave(cid, spouse) {',
+    replace:
+      'async function marriage_day_slave(cid, spouse) {\n  return 0; // 变异：角色配偶结算删除',
+    tests: ['marriage-day'],
+    must_mention: '角色与恋人配偶分支沿用现有名字并执行等待',
+  },
+  {
+    desc: 'M6887 兽人婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function orc_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function orc_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：兽人结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'ORC/SLIME：种族正文按确定性随机源结算经验',
+  },
+  {
+    desc: 'M6888 史莱姆婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function slime_marriage_day(cid, y = 1) {',
+    replace:
+      'async function slime_marriage_day(cid, y = 1) {\n  return 0; // 变异：史莱姆结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'ORC/SLIME：种族正文按确定性随机源结算经验',
+  },
+  {
+    desc: 'M6889 虫族婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function insect_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function insect_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：虫族结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'INSECT：母乳进化经属主门面写素质与寄生经验',
+  },
+  {
+    desc: 'M6890 藤蔓婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function ivy_marriage_day(cid, y = 1) {',
+    replace:
+      'async function ivy_marriage_day(cid, y = 1) {\n  return 0; // 变异：藤蔓结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'IVY/SYOKUSYU：高欲望与身体分流分别结算',
+  },
+  {
+    desc: 'M6891 触手婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function syokusyu_marriage_day(cid, y = 1) {',
+    replace:
+      'async function syokusyu_marriage_day(cid, y = 1) {\n  return 0; // 变异：触手结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'IVY/SYOKUSYU：高欲望与身体分流分别结算',
+  },
+  {
+    desc: 'M6892 妖精婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function faily_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function faily_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：妖精结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'FAILY：依次授予魅惑，并用同一随机源决定教学',
+  },
+  {
+    desc: 'M6893 巨人婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function giant_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function giant_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：巨人结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算',
+  },
+  {
+    desc: 'M6894 男性婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function man_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function man_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：男性结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算',
+  },
+  {
+    desc: 'M6895 女性婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function girl_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function girl_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：女性结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'GIANT/MAN/GIRL：三种人形配偶都执行可区分的初婚结算',
+  },
+  {
+    desc: 'M6896 兽类婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function beast_marriage_day(cid, y = 1) {',
+    replace:
+      'async function beast_marriage_day(cid, y = 1) {\n  return 0; // 变异：兽类结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态',
+  },
+  {
+    desc: 'M6897 脑寄生婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function brain_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function brain_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：脑寄生结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态',
+  },
+  {
+    desc: 'M6898 马匹婚后结算删除',
+    file: 'ere/dungeon/marriage-day.js',
+    find: 'async function horse_marriage_day(cid, y = 1, rand = default_rand) {',
+    replace:
+      'async function horse_marriage_day(cid, y = 1, rand = default_rand) {\n  return 0; // 变异：马匹结算删除',
+    tests: ['marriage-day'],
+    must_mention: 'BEAST/BRAIN/HORSE：兽类、脑寄生与马匹分支写各自状态',
+  },
+  {
+    desc: 'M6899 TURNEND 结婚日调用断线',
+    file: 'ere/system/turnend-settle.js',
+    find: '    await marriage_day(cid, undefined, false);',
+    replace: '    // 变异：结婚日调用断线',
+    tests: ['event-turnend'],
+    must_mention: '结婚日接线：普通档逐角色调用真身，妊娠角色看到婚后生活',
+  },
+  {
+    desc: 'M6900 怪物库存零仍执行婚后事件',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '    if (monster_stock(monster_id) <= 0) return 0;',
+    replace:
+      '    if (monster_stock(monster_id) < 0) return 0; // 变异：零库存放行',
+    tests: ['marriage-day'],
+    must_mention: '主函数：怪物库存不足时爱情已增加，但不进入婚后事件',
+  },
+  {
+    desc: 'M6901 婚后不清异种妊娠对象记录',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  era.set(`cflag:${cid}:112`, 0); // CFLAG[112] = 异种妊娠对象',
+    replace: '  // 变异：不清异种妊娠对象记录',
+    tests: ['marriage-day'],
+    must_mention: '主函数：野狗婚姻完成分支后清记录并发出 TURNEND',
+  },
+  {
+    desc: 'M6902 婚后错误回到商店而非继续日结算',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (restart_turnend) begin(STATE.TURNEND);',
+    replace:
+      '  if (restart_turnend) begin(STATE.SHOP); // 变异：婚后错误回到商店',
+    tests: ['marriage-day'],
+    must_mention: '主函数：野狗婚姻完成分支后清记录并发出 TURNEND',
+  },
+  {
+    desc: 'M6903 种族分支修改后的 Y 未回传售乳结算',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '    if (branch) final_y = await branch(cid, y, rand);',
+    replace: '    if (branch) await branch(cid, y, rand); // 变异：丢掉 Y 回传',
+    tests: ['marriage-day'],
+    must_mention: '主函数：种族分支修改后的 Y 用于售乳双账本',
+  },
+  {
+    desc: 'M6904 非主角误入野狗的主角专属分支',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '    cid === 0 &&\n    chara(cid).event.牝犬 == 0 &&\n    (chara(cid).train.兽奸中毒 <= 1 || chara(cid).chara.结婚爱情 < 50)',
+    replace:
+      '    cid >= 0 && // 变异：所有角色都视为 A == 0\n    chara(cid).event.牝犬 == 0 &&\n    (chara(cid).train.兽奸中毒 <= 1 || chara(cid).chara.结婚爱情 < 50)',
+    tests: ['marriage-day'],
+    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+  },
+  {
+    desc: 'M6905 TURNEND 接线未关闭同状态重入',
+    file: 'ere/system/turnend-settle.js',
+    find: '    await marriage_day(cid, undefined, false);',
+    replace: '    await marriage_day(cid); // 变异：重新抛出同状态转场',
+    tests: ['event-turnend'],
+    must_mention: '结婚日接线：完成婚后事件后顺接剩余结算并回到 SHOP',
+  },
+  {
+    desc: 'M6906 种类零漏掉角色配偶回退',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '    else await marriage_day_slave(cid, marriage_chara);',
+    replace: '    // 变异：漏掉原作最终 ELSE 的角色配偶回退',
+    tests: ['marriage-day'],
+    must_mention: '主函数：种类零按原作回退到默认角色的同居正文',
+  },
+  {
+    desc: 'M6907 未知恋人类型错误补齐空白',
+    file: 'ere/dungeon/marriage-day.js',
+    find: "  return name ? name.padEnd(14, '　') : '';",
+    replace: "  return name.padEnd(14, '　'); // 变异：空名字也补齐",
+    tests: ['marriage-day'],
+    must_mention: '角色与恋人配偶分支沿用现有名字并执行等待',
+  },
+  {
+    desc: 'M6908 野狗婚后动态正文拆成多行',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  } else if (chara(cid).event.牝犬 == 1) {\n    let description = name_of(cid);',
+    replace:
+      "  } else if (chara(cid).event.牝犬 == 1) {\n    era.print(name_of(cid));\n    let description = ''; // 变异：拆开同一显示行",
+    tests: ['marriage-day'],
+    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+  },
+  {
+    desc: 'M6909 主标题只输出结婚生活后缀',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  await era.printAndWait(`*${name_of(cid)}和${spouse_name}的结婚生活*`);',
+    replace: "  await era.printAndWait('的结婚生活*'); // 变异：标题前段丢失",
+    tests: ['marriage-day'],
+    must_mention: '主函数：种类零按原作回退到默认角色的同居正文',
+  },
+  {
+    desc: 'M6910 魔王未声明状态误阻断共同生活',
+    file: 'ere/dungeon/marriage-day.js',
+    find: '  if (chara(cid).invasion.状态 != 0 || chara(0).invasion.状态 != 0) {',
+    replace:
+      "  if (chara(cid).invasion.状态 != 0 || era.get('cflag:0:1') != 0) { // 变异：未声明值不兜零",
+    tests: ['marriage-day'],
+    must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
+  },
 ];
