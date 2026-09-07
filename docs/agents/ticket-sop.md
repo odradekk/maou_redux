@@ -436,10 +436,12 @@ ERE_ENGINE_ASAR=none bash tools/capped.sh node tools/mutation-check.mjs --asar n
 
 ```
 gh pr create --repo odradekk/maou_redux --base master --head <branch> --title "<conventional commit>" --body-file -
-gh pr merge <pr> --repo odradekk/maou_redux --merge --delete-branch=false
-git -C /home/bam00n/era pull --ff-only origin master   # WSL 基座：下一张票的建树基线
-git -C /mnt/d/Code/era  pull --ff-only origin master   # 主 checkout：引擎手工验收用
-orca worktree rm --worktree "path:<绝对路径>" --force --json
+gh pr merge <pr> --repo odradekk/maou_redux --merge --delete-branch
+git -C /home/bam00n/era pull --prune --ff-only origin master   # WSL 基座：下一张票的建树基线
+git -C /mnt/d/Code/era  pull --prune --ff-only origin master   # 主 checkout：引擎手工验收用
+git -C /home/bam00n/era branch -d <branch>                     # 本地分支，-d 会拒绝未合并的
+orca.exe worktree rm --worktree "path:<绝对路径>" --force --json
+orca.exe terminal close --terminal <handle> --json              # worktree 删了终端不会自己走
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
 
@@ -448,6 +450,18 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
 - **改到 `.github/workflows/` 的分支要用 `env -u GITHUB_TOKEN` 推**：环境变量里那个 PAT 缺 `workflow` scope，remote 会直接拒收（`refusing to allow a Personal Access Token to create or update workflow`）；`~/.config/gh/hosts.yml` 里的细粒度 token 有。`gh pr create` / `gh pr merge` 同理。
 - **两个 checkout 都要 pull**（见 §0 的表）。漏掉 WSL 基座那条，下一张票就会从旧 master 建树，撞上 §5.5 那五处冲突。
 - **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
+- **一张票要清六处，少一处就「看着还开着」。** 本仓库 `deleteBranchOnMerge` 是 false，所以远端分支要靠 `--delete-branch` 删；删掉之后两个 checkout 的跟踪引用**不会自己消失**，得 `--prune`。worktree 用 `git worktree remove` 删也行，但 orca 的**终端会话不跟着走**——#344 就是这么留下一个指向已删目录的终端，看起来像票没关完。合并后跑一遍复核：
+
+  ```
+  gh issue view <n> --repo odradekk/maou_redux --json state -q .state   # CLOSED
+  gh pr view <pr>  --repo odradekk/maou_redux --json state -q .state    # MERGED
+  git ls-remote --heads origin "odradekk/t<n>*"                          # 空
+  git -C /home/bam00n/era branch -a --list "*t<n>*"                      # 空
+  git -C /home/bam00n/era worktree list                                  # 无本票
+  orca.exe terminal list --json                                          # 无本票标题
+  ```
+
+- **`orca` 在 WSL 里不是裸名字。** `ORCA_CLI_COMMAND` 报的是 `orca-ide`，但本机没装；PATH 上有 `/mnt/c/Users/s1n19/AppData/Local/Programs/orca/resources/bin`，里面只有 `orca.cmd` 与 `orca.exe`，所以**要写 `orca.exe`**，裸 `orca` 报 command not found。版本匹配的完整用法用 `orca.exe skills get orca-cli` 取，别凭记忆写子命令。
 - **需要启动引擎的手工验收，在合并之后、在主 checkout `D:\Code\era` 上做**：引擎【打开游戏】指向的是主 checkout，worktree 的存档也不会保留。这一步只有人能做，agent 的职责是交出**可复现的置位步骤**（改哪几行、从哪个画面进、看哪几个点），做完回票补一条确认评论。
 
   临时置位那几行**绝不能提交**：验完 `git checkout -- <文件>` 撤回，`git status` 确认干净。置位常常会让某条「全量写入」类用例变红（`test/event-first.test.js` 的 `expected_init_writes` 就是），**那是预期的，不要去改测试**。
