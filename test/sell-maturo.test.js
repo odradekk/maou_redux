@@ -226,6 +226,18 @@ test('SELL_MATURO_K1：五处随机分支的两侧均由确定性随机源覆盖
   }
 });
 
+test('SELL_MATURO_K1：原作漏判扶她素质，不进入奶罐分支', async () => {
+  const actual = await run_k1_case({
+    price: 99_999,
+    random: [1], // 恶魔大富豪支
+    talents: { 121: 1, 314: 9 }, // 只有扶她；巨乳、爆乳、超乳均为 0
+    mark: 3,
+  });
+
+  assert.equal(actual.buyer, '恶魔的大富豪买下温妮之后………');
+  assert.equal(actual.ending, '无脑的牝犬温妮');
+});
+
 test('SELL_MATURO_K1：价格边界与种族、职业素质维度逐项分流', async () => {
   const cases = [
     ['十万下侧', 99_999, { 314: 9 }, '街角的杂耍小屋'],

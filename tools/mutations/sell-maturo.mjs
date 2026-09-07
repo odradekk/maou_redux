@@ -1,6 +1,6 @@
-// issue #337：成熟奴隶异族市场与宠物市场末路（M7100-M7127）。
+// issue #337：成熟奴隶异族市场与宠物市场末路（M7100-M7128）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 28;
+export const COUNT = 29;
 
 const code = 'ere/system/stronghold/sell-maturo.js';
 const make = (id, desc, find, replace, must_mention) => ({
@@ -208,5 +208,12 @@ export default [
     "  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {\n        if (\n          era.get(`talent:${cid}:200`) == 1 ||\n          era.get(`talent:${cid}:203`) == 1\n        ) {\n          buyer = '食人魔佣兵团';\n          route = 3;\n        } else if (\n          era.get(`talent:${cid}:205`) == 1 ||",
     "  } else {\n    if (era.get(`talent:${cid}:314`) == 9) {\n      if (price >= 500000) {\n        if (\n          era.get(`talent:${cid}:200`) == 1 ||\n          era.get(`talent:${cid}:203`) == 1\n        ) {\n          buyer = '食人魔佣兵团';\n          route = 3;\n        } else if (\n          era.get(`talent:${cid}:205`) == 2 ||",
     '价格边界与种族、职业素质维度逐项分流',
+  ),
+  make(
+    7128,
+    'K1 把原作漏判扶她的重复超乳条件修正',
+    '          // 原作行 111 把超乳（119）写了两次、没有检查扶她（121）；按 1:1 保留。\n          if (\n            era.get(`talent:${cid}:110`) == 1 ||\n            era.get(`talent:${cid}:114`) == 1 ||\n            era.get(`talent:${cid}:119`) == 1 ||\n            era.get(`talent:${cid}:119`) == 1',
+    '          // 原作行 111 把超乳（119）写了两次、没有检查扶她（121）；按 1:1 保留。\n          if (\n            era.get(`talent:${cid}:110`) == 1 ||\n            era.get(`talent:${cid}:114`) == 1 ||\n            era.get(`talent:${cid}:119`) == 1 ||\n            era.get(`talent:${cid}:121`) == 1',
+    '原作漏判扶她素质，不进入奶罐分支',
   ),
 ];
