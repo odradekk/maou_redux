@@ -9,6 +9,9 @@ const make = (id, desc, find, replace, file = code, must_mention = '家族') => 
   must_mention,
 });
 
+/** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
+export const COUNT = 44;
+
 export default [
   {
     ...make(

@@ -1,13 +1,12 @@
 /**
- * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，十二条
- * 行为在此固定。全部通过临时目录夹具驱动（--root/--ledger-dir/--baseline/
- * --asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
+ * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，十四条
+ * 行为在此固定。全部通过临时目录夹具驱动（--root/--ledger-dir/--asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
  * 目录，进程怎么死都污染不到仓库。
  *
  *   1. 快速模式全绿：--verify 退出码 0——三项检查（形状/计数/失配/测试文件）
- *      由此进 npm test，变异检查拿到第一个自动执行点。本文件不持基线
- *      副本（数字只在工具里），只验行为。
+ *      由此进 npm test，变异检查拿到第一个自动执行点。本文件不持条数
+ *      副本（数字只在各分片里），只验行为。
  *   2. 拦截路径：夹具变异被夹具测试拦下（退出码 0），且靶文件逐字节还原
  *      ——还原读回校验从工具外侧再证一遍。
  *   3. 误报通过必红：变异不伤被测行为（测试照过）→ 退出码 1。
@@ -15,8 +14,9 @@
  *      （must_mention 的实义：证明红的正是被测行为，不是别的什么红了）。
  *   5. find 失配直接判失败：出现 0 次 / 2 次 → 退出码 1——重构靶代码后工具当场
  *      红，不静默失守（#89 复核报出的安全性质，不许拆）。
- *   6. 计数检查双向：条目少于基线（搬家丢条目）/多于基线（未宣告的增长）
- *      /desc 重复 → 退出码 1。
+ *   6. 计数检查双向（#367 起按分片自报）：实际条数少于分片 COUNT（搬家
+ *      丢条目、解析合并冲突时少收几条）/多于 COUNT（未宣告的增长）
+ *      /desc 重复 → 退出码 1，前两者报错点名分片与两个数。
  *   7. 测试文件检查：tests 引用不存在的测试文件 → 退出码 1（node --test 对
  *      缺失文件退非 0，不拦就是假拦截）。
  *   8. 无引擎跳过分类：引擎缺失（--asar none）时整组依赖引擎的变异按「跳过」
@@ -39,6 +39,9 @@
  *      "M1 A" 与 "M1 B"）→ 退出码 1，报错点名编号与两条 desc——M 编号是
  *      简报/issue/验收评论里指认条目的引用句柄，重号让句柄失效。desc
  *      完全相同（真重复）已由用例 6 的 desc 重复覆盖，不与本条重叠。
+ *  14. 分片没导出 COUNT（门 1，#367）→ 退出码 1：缺声明必须红，而不是
+ *      「没声明就不查」——后者会让新分片默认脱离门 1，正是「新增分片
+ *      即入账」要防的反面。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -86,12 +89,20 @@ function make_fixture() {
   return root;
 }
 
-function write_ledger(root, entries) {
+/**
+ * 写一份单分片条目表。`declared` 省略时按实际条数自报（门 1 放行），
+ * 传值即造「自报与实际不符」；传 null 造「分片没导出 COUNT」。
+ */
+function write_ledger(root, entries, declared) {
   const dir = path.join(root, 'ledger');
   fs.mkdirSync(dir, { recursive: true });
+  const count =
+    declared === null
+      ? ''
+      : `export const COUNT = ${declared === undefined ? entries.length : declared};\n`;
   fs.writeFileSync(
     path.join(dir, 'fx.mjs'),
-    'export default ' + JSON.stringify(entries) + ';\n',
+    count + 'export default ' + JSON.stringify(entries) + ';\n',
     'utf8',
   );
   return dir;
@@ -112,6 +123,31 @@ test('快速模式全绿：--verify 退出码 0（三项检查进 npm test，变
   assert.ok(output.includes('三项检查全过'), `应报告三项检查全过：\n${output}`);
 });
 
+test('门 1：分片没导出 COUNT → 退出码 1（缺声明不是免检）', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY], null);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+    ]);
+    assert.notEqual(status, 0, '缺 COUNT 必须非 0——否则新分片默认脱离门 1');
+    assert.ok(
+      output.includes('fx.mjs') && output.includes('没有导出 COUNT'),
+      `报错要点名分片与「没有导出 COUNT」——落回条数不符那句会得到「自报 ` +
+        `COUNT undefined」，看不出该补声明还是该改数：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('拦截路径：变异被拦下退出码 0，且靶文件逐字节还原', () => {
   const root = make_fixture();
   try {
@@ -121,8 +157,6 @@ test('拦截路径：变异被拦下退出码 0，且靶文件逐字节还原', 
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -150,8 +184,6 @@ test('误报通过必红：变异不伤被测行为（测试照过）→ 退出�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -175,8 +207,6 @@ test('未报出即红：测试红了但 must_mention 片段不在输出 → 退�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -200,8 +230,6 @@ test('find 失配直接判失败：出现 0 次或 2 次都退出码 1（重构�
       root,
       '--ledger-dir',
       zero,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -226,8 +254,6 @@ test('find 失配直接判失败：出现 0 次或 2 次都退出码 1（重构�
       root,
       '--ledger-dir',
       twice,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -242,14 +268,13 @@ test('find 失配直接判失败：出现 0 次或 2 次都退出码 1（重构�
 test('计数检查双向：丢条目 / 未宣告增长 / desc 重复都退出码 1', () => {
   const root = make_fixture();
   try {
-    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    // 自报 2 条、实际 1 条：解析合并冲突时少收一条就是这个形状
+    const ledger = write_ledger(root, [GOOD_ENTRY], 2);
     const low = run_tool([
       '--root',
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '2',
       '--asar',
       'none',
       '--skip-baseline',
@@ -258,26 +283,36 @@ test('计数检查双向：丢条目 / 未宣告增长 / desc 重复都退出码
     assert.notEqual(
       low.status,
       0,
-      '条目表少于基线必须非 0——搬家丢条目要有东西当场红',
+      '实际少于自报必须非 0——搬家丢条目要有东西当场红',
     );
     assert.ok(
-      low.output.includes('少了 1 条'),
-      `应以「少了 1 条」要报出来：\n${low.output}`,
+      low.output.includes('fx.mjs') &&
+        low.output.includes('实际 1 条') &&
+        low.output.includes('自报 COUNT 2') &&
+        low.output.includes('少了 1 条'),
+      `报错要点名分片与两个数，少一个就不知道该改哪份文件：\n${low.output}`,
     );
 
+    const grown = write_ledger(
+      root,
+      [GOOD_ENTRY, { ...GOOD_ENTRY, desc: 'T2' }],
+      1,
+    );
     const high = run_tool([
       '--root',
       root,
       '--ledger-dir',
-      ledger,
-      '--baseline',
-      '0',
+      grown,
       '--asar',
       'none',
       '--skip-baseline',
       '0',
     ]);
-    assert.notEqual(high.status, 0, '条目表多于基线必须非 0——增长须显式抬基线');
+    assert.notEqual(high.status, 0, '实际多于自报必须非 0——增长须同步抬 COUNT');
+    assert.ok(
+      high.output.includes('多出 1 条'),
+      `增长方向也要报出差额：\n${high.output}`,
+    );
 
     const dup = write_ledger(root, [
       GOOD_ENTRY,
@@ -288,8 +323,6 @@ test('计数检查双向：丢条目 / 未宣告增长 / desc 重复都退出码
       root,
       '--ledger-dir',
       dup,
-      '--baseline',
-      '2',
       '--asar',
       'none',
       '--skip-baseline',
@@ -315,8 +348,6 @@ test('M 编号唯一性（#295）：desc 开头的 M 编号相同、正文不同
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '2',
       '--asar',
       'none',
       '--skip-baseline',
@@ -348,8 +379,6 @@ test('测试文件检查：tests 引用不存在的测试文件 → 退出码 1'
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -388,7 +417,7 @@ test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场�
       // 必须已声明，否则 run_one 当场判红（声明与实测不许分家）。
       { ...GOOD_ENTRY, tests: ['gated'], engine: true },
     ]);
-    const args = ['--root', root, '--ledger-dir', ledger, '--baseline', '1'];
+    const args = ['--root', root, '--ledger-dir', ledger];
     const engineless = run_tool([
       ...args,
       '--asar',
@@ -430,8 +459,6 @@ test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场�
       root,
       '--ledger-dir',
       undeclared,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -464,8 +491,6 @@ test('抽样档不核对跳过基线：无引擎 + 抽样全拦（没抽中依�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '4',
       '--asar',
       'none',
       '--sample',
@@ -516,8 +541,6 @@ test('抽样含依赖引擎的条目同样退 0：抽样档不核对，依赖引
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '2',
       '--asar',
       'none',
       '--sample',
@@ -569,8 +592,6 @@ test('引擎在场的硬判不被抽样档短路：sample + 依赖引擎的条�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       path.join(root, 'lib', 'calc.js'), // 任意存在文件：引擎「在场」
       '--sample',
@@ -627,7 +648,10 @@ test('并行汇总不吞子进程的计数：一片全拦 + 一片判红 → cau
     ];
     fs.writeFileSync(
       path.join(root, 'tools', 'mutations', 'fx.mjs'),
-      'export default ' + JSON.stringify(entries) + ';\n',
+      `export const COUNT = ${entries.length};\n` +
+        'export default ' +
+        JSON.stringify(entries) +
+        ';\n',
       'utf8',
     );
     const { status, output } = run_tool([
@@ -635,8 +659,6 @@ test('并行汇总不吞子进程的计数：一片全拦 + 一片判红 → cau
       root,
       '--ledger-dir',
       path.join(root, 'tools', 'mutations'),
-      '--baseline',
-      '2',
       '--jobs',
       '2',
       '--asar',
@@ -703,8 +725,6 @@ test('--ids 只跑点名的编号：区间与单号取并集，其余条目不�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '3',
       '--asar',
       'none',
       '--skip-baseline',
@@ -738,8 +758,6 @@ test('--ids 点名的编号不存在时当场报错退 1，不静默跑 0 条', 
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -772,8 +790,6 @@ test('--ids 是子集档：不带 --skip-baseline 也不核对 ENGINE_SKIP_BASEL
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--ids',
@@ -826,8 +842,6 @@ test('must_mention 等于测试名时只跑那一个用例：同文件的旁支�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -857,8 +871,6 @@ test('must_mention 不是测试名时落回整份文件：判定不变，仍拦�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -892,8 +904,6 @@ test('test_name 是 must_mention 不是测试名时的逃生口：仍只跑那�
       root,
       '--ledger-dir',
       ledger,
-      '--baseline',
-      '1',
       '--asar',
       'none',
       '--skip-baseline',
@@ -949,8 +959,6 @@ test('SIGINT 能中断串行档，并把靶文件还原', async () => {
         root,
         '--ledger-dir',
         ledger,
-        '--baseline',
-        '4',
         '--asar',
         'none',
         '--skip-baseline',

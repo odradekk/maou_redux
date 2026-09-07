@@ -24,8 +24,14 @@
 //
 // 条目表四项检查（照 #72 domain-check 的两项检查形状，多一道测试文件存在性
 // 与一道引擎声明数）：
-//   1. 计数检查：条目表条数必须等于 LEDGER_COUNT_BASELINE——增删条目必须
-//      显式改这份常量，搬家丢条目、悄悄混条目都在版本库差异里看得见；
+//   1. 计数检查：每个分片的条数必须等于它自己导出的 COUNT——增删条目必须
+//      显式改同一份文件里的那个数，搬家丢条目、并表时把别人的条目解析掉，
+//      都当场红。这个数**按分片自报**（#367 从单个全局常量改来）：全局常量
+//      让每张实施票都改到同一行，一批五张票撞了五次；分片自报之后，声明
+//      落在本票本来就要改的那个分片里，冲突面只剩「两票同改一分片」，
+//      而那种情形条目数组本身也要合并，不多一处代价。
+//      整份分片被删仍是盲区（COUNT 随文件一起消失），但那是六百行的删除，
+//      不是解析冲突时悄悄少三条——后者才是这道门真正在守的东西。
 //   2. 失配检查：每条 find 在靶文件中恰好 1 次，靶文件必须存在；
 //   3. 测试文件检查：tests 引用的 test/<名字>.test.js 必须存在——文件
 //      不存在时 node --test 因「找不到文件」退出非 0，形同假拦截。
@@ -47,7 +53,6 @@
 //                             点名的编号在表里不存在时当场报错，不静默跑 0 条。
 //   --root <dir>            变异所在的仓库根（默认本工具的上级；测试夹具用）
 //   --ledger-dir <dir>      条目表目录（默认 tools/mutations；测试夹具用）
-//   --baseline <n>          覆盖计数检查基线（测试夹具用）
 //   --skip-baseline <n|off> 覆盖无引擎跳过基线（测试夹具与并行子进程用）
 //   --slice <i> <k>         只跑 sha1(desc) % k === i 的条目（并行子进程用）
 //   --asar <path|none>      显式指引擎 asar（none = 视为无引擎；给了就不再
@@ -96,120 +101,10 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { DEFAULT_LEDGER_DIR, load_ledger } from './load-mutations.mjs';
+import { DEFAULT_LEDGER_DIR, load_shards } from './load-mutations.mjs';
 
 const TOOL_DIR = path.dirname(fileURLToPath(import.meta.url));
 const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
-
-/**
- * 条目表计数基线（门 1）：条数只能通过显式改这份常量来变。
- * 增 = 新变异落地（公告）；减 = 变异被删（也应是公告）。
- * #115 起为 201：+6（M190-M195，日程推进与月份回绕）。
- * #119 起为 217：+3（M197-M199，KYOTEN_EVENT 日循环接线）。
- * #118 起为 226：+9（INVASION_CHECK 五组判据与 ENDING_1 链——page/wrapper
- * 切片的 M196-M198（#295 消重后改到 M2115-M2117）、M203-M204 与 event
- * 切片的 M205-M208）。
- * #120 起为 227：+1（M209 人间界结局判据整支删除——端到端用例的专属靶；
- * M157（#295 消重后为 M2101）/M188 的 tests 列表挂进 event-ending-e2e，
- * 条数不变）。
- */
-// #116 起抬 11（M209-M219，ENDCHECK 全链的行为锁）
-// #120 起抬 1（M220，端到端专属靶：人间界结局判据整支删除）
-// #129 起为 239：+1（M221，[109] 侵略按钮 accelerator——渲染守卫）。
-// #130 起为 240：+1（M179（#295 消重后为 M2113），input 白名单校验——喂未打印按钮值的防线）。
-// #133 rebase 到含 #136 的 master 后为 258：master 侧 253（含 #136 的
-// M223-M234 十二条）+ 本票 5 条（M235-M239，ownership 文件级归属的优先级/
-// 去偏导出/存在性与重复认领守卫/清单-产物互锁；另收紧 M135 的 must_mention——
-// 同款文案在宿主多处出现，按 SOP 判据 3 换成用例名独有片段，条数不变）。
-// 本票原编号 M223-M227 与 #136 撞号，按 SOP §5.5「后合并那批整体顺延」改号。
-// #138 起为 264：+6（M240 ex_talent 登记被删、M241 登记名丢下划线、
-// M242 FLAG:26 槽序颠倒、M243 Chara31 ABL 预设改坏、M244 版本轴退回、
-// M245 Chara34 MARK 预设段删；M114 的 find 串随 _fixed.json 登记集扩容同步
-// 更新，条数不变）。
-// #138 追加 +1：M246 版本退回 0（loadData truthy 短路拒档——版本下限
-// 文件级用例直接红，无引擎也拦，不进跳过数）。现为 265。
-// #148 起为 281：+3（M273 夹具 quit 的 throw 拆回普通返回——G5 镜像本体；
-// M274 ere 侧 quit 调用被拆、哨兵复辟；M275 INVASION_CHECK 吞掉 QUIT 异常。
-// 另同步 M206/M220 的 find 到 #148 改造后的代码形状，条数不变）。
-// #147 起为 288：+7（global 系存档镜像——M276 saveGlobal 盖戳写盘、
-// M277 loadGlobal 不匹配 throw、M278 loadGlobal 闸门被换成 truthy 写法、
-// M279 resetGlobal 重建、M280 listSaveFiles 对账整体跳过、M281 UNNAMED
-// 补名；M282 has_valid_save 的 FILE LOST 前缀分支——#147 点名的无钉住缺口）。
-// #147 验收补 +1，现为 289：M283 loadGlobal 闸门换成取反后忠实照抄的 truthy
-// 写法。M278 模拟的是漏取反的照抄（闸门整体反向，打死 4 条用例）；两种写法
-// 真正分道的取值是 version 0 且下限 0，此前只有对照用例覆盖、无条目钉住。
-// #156 起为 293：+4（对拍多样本机制——M284 样本登记表未知名静默回落、
-// M285 cli 缺席样本继续走、M286 引用前缀解析退回无前缀正则、M287 样本锚
-// 校验焊死）。这批的 M 编号在 rebase 时整体顺延（原 M276-M279 与 #147
-// 撞号，SOP §5.5）。
-// #149 起为 295：+2（M288 夹具 removeCharacter 只过滤列表、幸存者三段键
-// 清理被省；M289 返回值复辟成布尔）。这批 M 编号在 rebase 时顺延（原
-// M284/M285 与 #156 撞号，SOP §5.5）。
-// #150 起为 298：+3（角色列表顺序语义——M290 getAddedCharacters 退回
-// 插入序、M291 getCharactersInTrain 退回插入序、M292 getAllCharacters
-// 退回预设表插入序；三条同钉 fixture 的非升序正主用例，升序用例不误伤）。
-// #151 起为 301：+3（input 回传值的 getNumber 归一——M293 归一被拆
-// （#151 前的真实写法）、M294 归一加 typeof string 守卫、M295 归一换成
-// parseInt 截断解析；三条同钉 fixture 的字符串预置正主用例，数字预置的
-// 既有用例零误伤）。
-// #152 起为 304：+3（调教域表生命周期——M296 beginTrain 重建守卫被拆、
-// M297 删表范围收窄到 tflag、M298 resetData 调教态不清；三条各只死
-// fixture 的对应用例，单场调教的存量用例零误伤）。
-// #161 起为 312：+8（范围 B 对拍——归一化器扩展与样本登记的镜像本体）。
-// 本批 M 编号在 rebase 时整体顺延（原 M293-M300 与 #151/#152 撞号，SOP §5.5）。
-// #170 起为 315：+3（角色生成管线——M307 CM_STP 的 CFLAG:A:1 = 2 改 3、
-// M308 三分叉第一支守卫砍掉 !精英、M309 转发层折叠；三条同钉新宿主
-// chara-make，无老宿主代红之虞）。
-// #174 起为 333：+18（装备系统 M330-M347——数据表形状锁/逐分支等价/往返
-// 拆装六条、行为七条、回合结算接线两条、日循环接线一条、显示后缀一条）。
-// 本票 M 号段由派单简报显式隔开（#170 用 M307 起、本票 M330 起），零撞号。
-// #171 起为 343：+10（M348-M357，勇者来袭——月末守卫的反向变异、人数
-// 上限、恐惧早退、金钱上下限、座標、K_34/GET_ENEMY 的 CFLAG:1、:93 接线、
-// 夹具隔离开关）。
-// #188 起为 346：+3（简体锁收紧——M370 表外繁体判定器坏、M371 参考集数据
-// 删锚点字 贖、M372 归一表目标值映进繁侧；本票 M370 起由派单简报指定，与
-// #171 的 M348 号段零撞号）。
-// 变异条目计数基线：条目表条数必须与此相等（增删条目 = 显式改这里）。
-// #172（H3 迷宫主循环）+14（tools/mutations/dungeon.mjs，M375-M388）。
-// #173（H4 ENDING_2 与端到端）+7（event.mjs 的 M440-M445：QUIT 降格 /
-// 名字写死 / GAMEOVER 行删 / 横幅末行删 / INPUT 删 / 读键删；dungeon.mjs
-// 的 M446：魔王房间演出行删）。
-// #184（H15 地下城卖春系统）+4（kojo.mjs 的 M400-M403）。现为 373。
-// #175（H6 迷宫战斗）+8（dungeon.mjs 的 M480-M487）。现为 382
-// （rebase 相加：master 的 374 + 本票 8）。
-// #183（H14 迷宫凌辱男性对象）+5（kojo.mjs 的 M420-M424：同名函数区分、
-// %SAVESTR:ARG% 插值承载、史莱姆 BASE 回复、分派缺失、初吻推进）。
-// #176（H7 迷宫陷阱）+12（dungeon.mjs 的 M540-M551）。
-// #180（H11 迷宫情报与建设）+11（page.mjs 的 M560-M570）。
-// #182（H13 迷宫凌辱女性对象）+5（kojo.mjs 的 M488-M492：分派缺失、凌辱
-// 畏怖记忆推进、PC_RYOU 处女丧失、逃脱救援回城、胜利凌辱善恶门槛）。
-// #181（H12 2D 地下城）+8（dungeon.mjs 的 M580-M587）；返工 +2（M588/M589
-// 钉住 DA/DB/DC 引擎表承载不倒退）。
-// #179（H10 迷宫日程与战果）+13（dungeon.mjs 的 M620-M632）。
-// #185（H16 卖春记录与日志分支）+4（kojo.mjs 的 M520-M523）。
-
-// #177（H8 迷宫房间与设施）+22（dungeon.mjs 的 M600-M619 与 M633/M634：
-// 八设施效果各一条 + RESULT 契约 + 建设扩张 + 两条日结算 + 两处原作缺陷
-// 反向钉 + 接线两处 + 514 观测锚点自证。M620/M621 与 #179 撞号，验收时
-// 改到 M633/M634）。
-
-// #178（H9 城镇与任务）+14（dungeon.mjs 的 M640-M653：借贷还债担保三段、
-// 宴会预算不对称、任务受注与报酬结算、两处原作笔误反向钉、TARGET 语义
-// 两条）。现为 478。
-// #212（J2）+19：M700-M714（首轮）+ 返工 M715-M718（二段寻址守卫
-// M715/M716 与存量修复回退 M717/M718；M712 的 find 随三段形态更新，条数不变）
-// #211 第三段 +8：M660-M667（登记/回放序列/归因改正/窗口裁切）
-// #256（测试验收分层）+3：checkers.mjs 的 M730-M732（选择器的三条保守
-// 性质：全局锁恒在 / 兜底退回全量 / 目录探针不退化），再 +2：M733/M734
-// （引擎声明的门 4 与逐条交叉核对）。现为 510。
-//
-// **下面这行尾注是手写号段分配记录，不是核对来源；号段以条目表里 desc 的
-// M 编号实际使用为准，此注仅供人工检索参考。** 手写注释漂过至少两次
-// （#295 发现：#236/#237/#288/#290 四票的写法与实际使用的号段对不上，
-// 因为这里记的是「计划分配」而条目落地时常按实际空档调整）。真正的
-// 唯一性由 gate_shape 的 M 编号重复检查随 --verify 核对（#295），不靠
-// 这行注释——它红了也不代表号段记录错，注释错只是「不好查」，不是「不安全」。
-const LEDGER_COUNT_BASELINE = 3600; // #349 +44（M6982-M7025，家族关系设置与验收返工）；#242 +5（M4736-M4740，AEGI 段数、词库与连接符分档）；#248 +9（M6200-M6209，EX 分发路径与 K902 失声）；#249 +40（M6400-M6439，K903 嘉德）；合并后整表加载实测 3128。+1（M3705，test_name 逃生口）；trace-check 提速 +3（M3706-M3708，--only 范围开关）；#321 +1（M3709，串行档的中断可达）；#250 +7（M6500-M6506，K904 菲娅 EX 注册路径）；#331 +13（M6507-M6519，移植状态表 --coverage 的规则与失败判据）；#331 验收整改 +2（M6520-M6521，清单行两形态与归因不到基线）；#332 +23（M6522-M6544，角色侧八个前置函数与接线）；#333 +40（M6562-M6601，段 0 九函数与调用点）；#336 +38（M6642-M6679，录像出售、书架、指令元数据与事件接线）；#335 +40（M6602-M6641，出售估价与零散结算）；#341 +39（M6682-M6720，恋人四函数、城镇调用与 LOVE_EXP 维度）；#344 +40（M6762-M6801，EX 道具十八函数与接线）；#343 +40（M6722-M6761，魔法公式、十法术与战斗接线）；#347 +21（M6942-M6962，博物馆处刑与口上注册）；#342 验收返工 +12（M6911-M6922，十二种族主分叉）；#339 +39（M6802-M6840，角色出售五函数、三个调用点、调教外口上上下文与抖M气质门槛）；#340 +40（M6842-M6881，怪物改造、玩弄与三处接线）
 
 /**
  * 无引擎环境的预期跳过数：变异靶的测试整组依赖引擎的条目数。新变异若
@@ -278,7 +173,6 @@ function parse_args(argv) {
     slice: undefined,
     root: DEFAULT_ROOT,
     ledger_dir: DEFAULT_LEDGER_DIR,
-    baseline: LEDGER_COUNT_BASELINE,
     skip_baseline: undefined,
     asar: undefined,
     files: undefined,
@@ -304,7 +198,6 @@ function parse_args(argv) {
     else if (a === '--root') out.root = path.resolve(String(next()));
     else if (a === '--ledger-dir')
       out.ledger_dir = path.resolve(String(next()));
-    else if (a === '--baseline') out.baseline = Number(next());
     else if (a === '--skip-baseline') out.skip_baseline = String(next());
     else if (a === '--asar') out.asar = String(next());
     else throw new Error(`未知参数：${a}`);
@@ -409,15 +302,26 @@ function gate_shape(entries) {
   return errors;
 }
 
-function gate_count(entries, baseline) {
-  if (entries.length !== baseline) {
-    const dir =
-      entries.length > baseline
-        ? `多出 ${entries.length - baseline} 条（新变异落地须显式抬基线）`
-        : `少了 ${baseline - entries.length} 条（条目丢失或被删，须显式降基线）`;
-    return [`条目表条数 ${entries.length} ≠ 基线 ${baseline}：${dir}`];
+function gate_count(shards) {
+  const errors = [];
+  for (const s of shards) {
+    if (typeof s.declared !== 'number') {
+      errors.push(
+        `${s.name} 没有导出 COUNT——分片必须自报条数，缺了这道门对它失明`,
+      );
+      continue;
+    }
+    if (s.entries.length !== s.declared) {
+      const dir =
+        s.entries.length > s.declared
+          ? `多出 ${s.entries.length - s.declared} 条（新变异落地须同步抬 COUNT）`
+          : `少了 ${s.declared - s.entries.length} 条（条目丢失或被删，须同步降 COUNT）`;
+      errors.push(
+        `${s.name} 实际 ${s.entries.length} 条 ≠ 自报 COUNT ${s.declared}：${dir}`,
+      );
+    }
   }
-  return [];
+  return errors;
 }
 
 function gate_targets(root, entries) {
@@ -497,10 +401,10 @@ function gate_engine_declared(entries, args) {
       ];
 }
 
-function run_gates(entries, args) {
+function run_gates(shards, entries, args) {
   const errors = [
     ...gate_shape(entries),
-    ...gate_count(entries, args.baseline),
+    ...gate_count(shards),
     ...gate_targets(args.root, entries),
     ...gate_test_files(args.root, entries),
     ...gate_engine_declared(entries, args),
@@ -894,8 +798,6 @@ async function execute_jobs(args) {
             String(jobs),
             '--skip-baseline',
             'off',
-            '--baseline',
-            String(args.baseline),
             '--ledger-dir',
             in_root ? path.join(copy, rel_ledger) : args.ledger_dir,
           ],
@@ -937,12 +839,13 @@ async function execute_jobs(args) {
 
 async function main() {
   const args = parse_args(process.argv.slice(2));
-  const entries = await load_ledger(args.ledger_dir);
-  const gates_ok = run_gates(entries, args);
+  const shards = await load_shards(args.ledger_dir);
+  const entries = shards.flatMap((s) => s.entries);
+  const gates_ok = run_gates(shards, entries, args);
   if (args.verify) {
     if (gates_ok) {
       console.log(
-        `✓ 结构校验全绿：${entries.length} 条条目表，三项检查全过（计数基线 ${args.baseline}）`,
+        `✓ 结构校验全绿：${entries.length} 条条目表 / ${shards.length} 个分片，三项检查全过`,
       );
     } else {
       console.log('✗ 结构校验未过（三项检查见上）');

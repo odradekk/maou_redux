@@ -1,4 +1,7 @@
 // 变异条目表切片：issue #344（阶段 5a L13）EX 道具十八函数与五处接线。
+/** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
+export const COUNT = 40;
+
 export default [
   {
     desc: 'M6762 EX_ITEM_NAME 未鉴定阈值改坏（>1000 → >2000）',

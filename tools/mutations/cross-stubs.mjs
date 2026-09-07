@@ -1,4 +1,7 @@
 // issue #333：阶段 5a 段 0 的九个跨域前置函数。
+/** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
+export const COUNT = 40;
+
 export default [
   {
     desc: 'M6562 SEARCH_FAMILY 村娘 A 标志改错',
