@@ -182,6 +182,8 @@ function n_breast_grow(cid, rand = default_rand) {
 function n_breast_reverse(cid, rand = default_rand) {
   const view = chara(cid).chara;
   if (view.超乳) {
+    // 原作 :925-926 将已为 1 的超乳再次写成 1，是“超乳不退档”的字面
+    // 缺陷；按 #14 的先 1:1 原则保留，不改成 爆乳。
     view.超乳 = 1;
   } else if (view.爆乳) {
     view.爆乳 = 0;

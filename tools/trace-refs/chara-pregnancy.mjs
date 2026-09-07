@@ -12,6 +12,11 @@ export const FILES = [
       { src: NINSIN, ref: '202-234', any: [/@PREG_TALENT_GET/] },
       { src: NINSIN, ref: '887-916', any: [/@N_BREAST_GROW/] },
       { src: NINSIN, ref: '922-943', any: [/@N_BREAST_REVERSE/] },
+      {
+        src: NINSIN,
+        ref: '925-926',
+        any: [/TALENT:ARG:超乳 = 1/],
+      },
       { src: NINSIN, ref: '829-851', any: [/@N_RESET_STATUS/] },
       { src: NINSIN, ref: '856-867', any: [/@CHILD_BIRTH_PLACE/] },
       { src: NINSIN, ref: '647-823', any: [/@N_CHANGE_STATUS/] },

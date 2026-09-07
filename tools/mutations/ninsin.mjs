@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #346 妊娠、育儿与怪物召唤。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 22;
+export const COUNT = 40;
 
 export default [
   {
@@ -181,5 +181,154 @@ export default [
     replace: 'source = 201 + rand(11);',
     tests: ['chara-pregnancy'],
     must_mention: '模板 200 不存在时明确失败',
+  },
+  {
+    desc: 'M7202 绝壁升档后漏置贫乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    view.绝壁 = 0;\n    view.贫乳 = 1;',
+    replace: '    view.绝壁 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部升档覆盖绝壁',
+  },
+  {
+    desc: 'M7203 修正原作超乳不退档缺陷',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    // 缺陷；按 #14 的先 1:1 原则保留，不改成 爆乳。\n    view.超乳 = 1;',
+    replace:
+      '    // 缺陷；按 #14 的先 1:1 原则保留，不改成 爆乳。\n    view.超乳 = 0;\n    view.爆乳 = 1;',
+    tests: ['chara-pregnancy'],
+    must_mention: '超乳不退的原作缺陷',
+  },
+  {
+    desc: 'M7204 体型重算的两个独立设定位误改为同时成立',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    view.巨乳 = 1;\n  }\n  if (cid !== 0 && (setting_bit(12) || setting_bit(15))) {',
+    replace:
+      '    view.巨乳 = 1;\n  }\n  if (cid !== 0 && (setting_bit(12) && setting_bit(15))) {',
+    tests: ['chara-pregnancy'],
+    must_mention: '第 12 位或第 15 位单独开启',
+  },
+  {
+    desc: 'M7205 异常妊娠不再取得部位专属素质',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    era.set(`talent:${cid}:${special}`, 1);',
+    replace: '    void special;',
+    tests: ['chara-pregnancy'],
+    must_mention: '五种部位分别取得专属素质',
+  },
+  {
+    desc: 'M7206 妊娠发觉后漏清异常妊娠部位',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  chara(cid).train.异常妊娠部位 = 0;',
+    replace: '  void cid;',
+    tests: ['chara-pregnancy'],
+    must_mention: '发觉后清除部位',
+  },
+  {
+    desc: 'M7207 育儿结束后漏清母亲位置状态',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    chara(cid).invasion.状态 = 0;\n    chara(child).invasion.状态 = 0;',
+    replace: '    chara(child).invasion.状态 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '母亲与孩子都离开育儿室状态',
+  },
+  {
+    desc: 'M7208 育儿结束后漏清孩子位置状态',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    chara(cid).invasion.状态 = 0;\n    chara(child).invasion.状态 = 0;',
+    replace: '    chara(cid).invasion.状态 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '母亲与孩子都离开育儿室状态',
+  },
+  {
+    desc: 'M7209 贫乳升档后仍保留贫乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    view.贫乳 = 0;\n  } else if (view.巨乳) {',
+    replace: '    view.贫乳 = 1;\n  } else if (view.巨乳) {',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部升档覆盖绝壁',
+  },
+  {
+    desc: 'M7210 普通胸部升档后漏置巨乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  } else if (!view.超乳) {\n    era.print(',
+    replace: '  } else if (false) {\n    era.print(',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部升档覆盖绝壁',
+  },
+  {
+    desc: 'M7211 巨乳升档后漏置爆乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    view.巨乳 = 0;\n    view.爆乳 = 1;',
+    replace: '    view.巨乳 = 0;\n    view.爆乳 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部升档覆盖绝壁',
+  },
+  {
+    desc: 'M7212 爆乳升档后漏置超乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    view.爆乳 = 0;\n    view.超乳 = 1;',
+    replace: '    view.爆乳 = 0;\n    view.超乳 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部升档覆盖绝壁',
+  },
+  {
+    desc: 'M7213 爆乳降档后漏置巨乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    view.爆乳 = 0;\n    view.巨乳 = 1;',
+    replace: '    view.爆乳 = 0;\n    view.巨乳 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部降档覆盖超乳不退',
+  },
+  {
+    desc: 'M7214 巨乳降档后仍保留巨乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  } else if (view.巨乳) {\n    view.巨乳 = 0;\n  } else if (!view.贫乳',
+    replace:
+      '  } else if (view.巨乳) {\n    view.巨乳 = 1;\n  } else if (!view.贫乳',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部降档覆盖超乳不退',
+  },
+  {
+    desc: 'M7215 普通胸部降档后漏置贫乳',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  } else if (!view.贫乳 && !view.绝壁) {\n    view.贫乳 = 1;',
+    replace: '  } else if (!view.贫乳 && !view.绝壁) {\n    view.贫乳 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '胸部降档覆盖超乳不退',
+  },
+  {
+    desc: 'M7216 乳内妊娠错授精巢妊娠素质',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: 'const special = { 1: 341, 2: 342, 3: 343, 4: 344 }[kind];',
+    replace: 'const special = { 1: 342, 2: 342, 3: 343, 4: 344 }[kind];',
+    tests: ['chara-pregnancy'],
+    must_mention: '五种部位分别取得专属素质',
+  },
+  {
+    desc: 'M7217 异常妊娠取得专属素质但漏置通用妊娠素质',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  chara(cid).chara.妊娠 = 1;\n  chara(cid).train.异常妊娠部位 = 0;',
+    replace:
+      '  chara(cid).chara.妊娠 = 0;\n  chara(cid).train.异常妊娠部位 = 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '五种部位分别取得专属素质',
+  },
+  {
+    desc: 'M7218 育儿离室后漏做妊娠育儿完整重置',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  n_reset_status(cid, rand);\n  era.drawLine();\n  return 0;',
+    replace: '  void rand;\n  era.drawLine();\n  return 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '恢复妊娠时扣除的体力上限',
+  },
+  {
+    desc: 'M7219 胸部降档体型重算的两个独立设定位误改为同时成立',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  } else {\n    return 0;\n  }\n  if (cid !== 0 && (setting_bit(12) || setting_bit(15))) {',
+    replace:
+      '  } else {\n    return 0;\n  }\n  if (cid !== 0 && (setting_bit(12) && setting_bit(15))) {',
+    tests: ['chara-pregnancy'],
+    must_mention: '升降档在体型设定第 12 位或第 15 位单独开启',
   },
 ];

@@ -185,6 +185,155 @@ test('妊娠发觉的随机边界：幼年筛选 2 失败，普通概率 3 成�
   assert.equal(failed.store.get('cflag:1:102'), 0);
 });
 
+test('异常妊娠五种部位分别取得专属素质，并在发觉后清除部位', async () => {
+  const cases = [
+    [1, 341],
+    [2, 342],
+    [3, 343],
+    [4, 344],
+    [-1, undefined],
+  ];
+
+  for (const [place, special] of cases) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 1, '母亲');
+    fixture.store.set('cflag:1:113', place);
+    const { preg_talent_get } = fixture.load_module('chara/chara-pregnancy');
+
+    assert.equal(await preg_talent_get(1), 1, `部位 ${place}`);
+    assert.equal(
+      fixture.store.get('talent:1:153'),
+      1,
+      `部位 ${place} 获得妊娠`,
+    );
+    for (const talent of [341, 342, 343, 344]) {
+      assert.equal(
+        fixture.store.get(`talent:1:${talent}`) || 0,
+        talent === special ? 1 : 0,
+        `部位 ${place} 的专属素质 ${talent}`,
+      );
+    }
+    assert.equal(fixture.store.get('cflag:1:113'), 0, `部位 ${place} 已清除`);
+  }
+});
+
+const BREAST_TALENTS = {
+  绝壁: 116,
+  贫乳: 109,
+  巨乳: 110,
+  爆乳: 114,
+  超乳: 119,
+};
+
+function set_breast_state(fixture, state) {
+  for (const [name, talent] of Object.entries(BREAST_TALENTS)) {
+    fixture.store.set(`talent:1:${talent}`, name === state ? 1 : 0);
+  }
+}
+
+function breast_state(fixture) {
+  return Object.fromEntries(
+    Object.entries(BREAST_TALENTS).map(([name, talent]) => [
+      name,
+      fixture.store.get(`talent:1:${talent}`) || 0,
+    ]),
+  );
+}
+
+test('胸部升档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六种状态', () => {
+  const cases = [
+    ['绝壁', '贫乳'],
+    ['贫乳', undefined],
+    [undefined, '巨乳'],
+    ['巨乳', '爆乳'],
+    ['爆乳', '超乳'],
+    ['超乳', '超乳'],
+  ];
+
+  for (const [before, after] of cases) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 1);
+    set_breast_state(fixture, before);
+
+    fixture.load_module('chara/chara-pregnancy').n_breast_grow(1, seq([]));
+
+    assert.deepEqual(
+      breast_state(fixture),
+      Object.fromEntries(
+        Object.keys(BREAST_TALENTS).map((name) => [
+          name,
+          name === after ? 1 : 0,
+        ]),
+      ),
+      `${before ?? '普通'} → ${after ?? '普通'}`,
+    );
+  }
+});
+
+test('胸部降档覆盖超乳不退的原作缺陷及其余五种状态', () => {
+  const cases = [
+    ['绝壁', '绝壁'],
+    ['贫乳', '贫乳'],
+    [undefined, '贫乳'],
+    ['巨乳', undefined],
+    ['爆乳', '巨乳'],
+    ['超乳', '超乳'],
+  ];
+
+  for (const [before, after] of cases) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 1);
+    set_breast_state(fixture, before);
+
+    fixture.load_module('chara/chara-pregnancy').n_breast_reverse(1, seq([]));
+
+    assert.deepEqual(
+      breast_state(fixture),
+      Object.fromEntries(
+        Object.keys(BREAST_TALENTS).map((name) => [
+          name,
+          name === after ? 1 : 0,
+        ]),
+      ),
+      `${before ?? '普通'} → ${after ?? '普通'}`,
+    );
+  }
+});
+
+test('胸部升降档在体型设定第 12 位或第 15 位单独开启时都会重算', () => {
+  for (const [action, before] of [
+    ['n_breast_grow', undefined],
+    ['n_breast_reverse', '巨乳'],
+  ]) {
+    for (const bit of [12, 15]) {
+      const fixture = create_era_fixture();
+      add_chara(fixture, 1);
+      set_breast_state(fixture, before);
+      fixture.store.set('flag:5', 1 << bit);
+      fixture.store.set('cflag:1:451', 20);
+      fixture.store.set('cflag:1:453', 1600);
+      fixture.store.set('cflag:1:454', 500);
+      fixture.store.set('cflag:1:458', 100);
+      fixture.store.set('cflag:1:459', 700);
+      fixture.store.set('cflag:1:455', -1);
+
+      fixture
+        .load_module('chara/chara-pregnancy')
+        [action](1, seq(new Array(20).fill(0)));
+
+      assert.ok(
+        fixture.store.get('cflag:1:454') > 0,
+        `${action} 设定位 ${bit} 重算体重`,
+      );
+      assert.notEqual(
+        fixture.store.get('cflag:1:455'),
+        -1,
+        `${action} 设定位 ${bit} 重算胸围`,
+      );
+    }
+  }
+});
+
 test('清理受孕状态逐项走属主门面，保留排卵诱发剂位', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
@@ -264,6 +413,27 @@ test('近卫随机下界保留原作缺陷：模板 200 不存在时明确失败
   await assert.rejects(
     gb_add_guard(0, -2, seq([0])),
     /后代预设角色 200 不存在/,
+  );
+});
+
+test('育儿结束生成孩子后，母亲与孩子都离开育儿室状态并恢复妊娠时扣除的体力上限', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1, '母亲');
+  fixture.store.set('cflag:1:1', 2);
+  fixture.store.set('cflag:1:111', -4);
+  fixture.store.set('maxbase:1:0', 500);
+  fixture.store.set('talent:1:154', 1);
+  const { child_care_depart } = fixture.load_module('chara/chara-pregnancy');
+
+  await child_care_depart(1, seq(new Array(300).fill(0)));
+
+  assert.equal(fixture.store.get('cflag:1:1'), 0, '母亲状态归零');
+  assert.equal(fixture.store.get('cflag:1000:1'), 0, '孩子状态归零');
+  assert.equal(fixture.store.get('talent:1:154'), 0, '母亲结束育儿');
+  assert.equal(
+    fixture.store.get('maxbase:1:0'),
+    1000,
+    '恢复妊娠时扣除的体力上限',
   );
 });
 
