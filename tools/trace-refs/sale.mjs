@@ -11,6 +11,17 @@ export const FILES = [
         any: [/@ESTIMATE_CHARA/],
       },
       {
+        src: 'target/ERB/售卻相關/SELL_CHARA.ERB',
+        ref: '6-451',
+        any: [
+          /@CHECK_SELLASSIABLE/,
+          /@CHARA_SALE/,
+          /@KILL_TARGET/,
+          /@LONG_GOOD_BYE/,
+          /@SALE_CHARA/,
+        ],
+      },
+      {
         src: 'target/ERB/售卻相關/SELL_MILK.ERB',
         ref: '6-57',
         any: [/@SELL_MILK/],

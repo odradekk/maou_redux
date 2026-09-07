@@ -363,6 +363,24 @@ test('[100] 调教：A > 0 时是可点按钮，A == 0 时退化为灰色 [---] 
   assert.ok(placeholder, 'A == 0 时必须留灰色 [---] 占位（原作 PRINTLC）');
 });
 
+test('[106] 贩卖奴隶：B > 0 时是可点按钮，未解锁时不可点', () => {
+  const on = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+    fixture.store.set('cflag:31:0', 1);
+  });
+  const sell = button_of(on.fixture, 106);
+  assert.ok(sell);
+  assert.equal(sell.rendered, '[106] 贩卖奴隶');
+  assert.equal(sell.text, '贩卖奴隶');
+
+  const off = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+  });
+  assert.equal(button_of(off.fixture, 106), undefined);
+});
+
 test('[109] 侵略：无条件渲染按钮（原作 :283 无守卫），正文无手写前缀', () => {
   // 原作 :282-283 无条件 PRINTLCD [109] 侵略（对照 [100] 的 IF A > 0 守卫）
   // ——新档（A == 0）也必须打。分支真身自 #117 起（usershop 109 → INVASION

@@ -132,6 +132,7 @@ const KOJO_OUTPUT_NAME = {
 const KOJO_EXTRA_FILES = [
   ['target/ERB/迷宮/DUNGEON_BITCH.ERB', 'dungeon-bitch.js'],
   ['target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB', 'dungeon-bitch-log.js'],
+  ['target/ERB/處刑相關/MUSEUM.ERB', 'museum.js'],
 ];
 
 /**
