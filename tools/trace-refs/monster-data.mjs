@@ -38,6 +38,16 @@ export const FILES = [
       },
       {
         src: 'target/ERB/怪物相關/MONSTER_DATA.ERB',
+        ref: '2479-2645',
+        any: [/@MONSTER_SETUP\(ARG\)/, /EX_FLAG:4444 -= 1000/],
+      },
+      {
+        src: 'target/ERB/怪物相關/MONSTER_DATA.ERB',
+        ref: '2648-2698',
+        any: [/@MONSTER_SETUP_ABLE\(ARG,ARG:1\)/, /RETURN 0/],
+      },
+      {
+        src: 'target/ERB/怪物相關/MONSTER_DATA.ERB',
         ref: '216-339',
         any: [/LOCAL:0 = RAND:150 \+ 100/],
       },

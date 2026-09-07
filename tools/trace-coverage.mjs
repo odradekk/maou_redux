@@ -114,7 +114,7 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 98;
+export const PENDING_BASELINE = 97;
 
 /**
  * 存根清单「归因不到」行数基线（#331 验收整改冻结，只减不增）。归因不到
@@ -124,7 +124,7 @@ export const PENDING_BASELINE = 98;
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 15;
+export const UNATTRIBUTED_BASELINE = 14;
 
 /** 文件级「已判定不实现」显式表：推翻裁定 = 改这里（每条注明出处）。 */
 export const RULINGS = [
