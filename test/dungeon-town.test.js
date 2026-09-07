@@ -473,13 +473,15 @@ test('DUNGEON_TOWN：507 复位、再起点消耗与全恢复、9/10 散会', as
   assert(!lines.some((l) => l.includes('晚宴')), 'rand(10) > 0 散会不开宴');
 });
 
-test('DUNGEON_TOWN：日常段换手 TARGET 并调 LOVER 存根', async () => {
+test('DUNGEON_TOWN：日常段换手 TARGET 并调用恋人真身', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:580', 20000); // 钱够多（避开借款分支的掷点差异）
   fixture.store.set('cflag:1:507', 1);
+  fixture.store.set('cflag:1:606', 1); // 温柔的青年
   await load(fixture).town_pt_dayevent(1, 0, 0);
   assert(
-    text_lines(fixture).some((l) => l.includes('@DUNGEON_TOWN_LOVER')),
-    '恋人事件存根占位',
+    text_lines(fixture).some((l) => l.includes('温柔的青年')),
+    '恋人事件真身演出',
   );
+  assert.equal(fixture.store.get('cflag:1:607'), 1, '恋人爱情递增');
 });
