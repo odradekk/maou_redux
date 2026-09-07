@@ -452,6 +452,8 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
 - **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
 - **一张票要清六处，少一处就「看着还开着」。** 本仓库 `deleteBranchOnMerge` 是 false，所以远端分支要靠 `--delete-branch` 删；删掉之后两个 checkout 的跟踪引用**不会自己消失**，得 `--prune`。worktree 用 `git worktree remove` 删也行，但 orca 的**终端会话不跟着走**——#344 就是这么留下一个指向已删目录的终端，看起来像票没关完。合并后跑一遍复核：
 
+  **prune 与远端删分支之间有竞态**：紧跟在 `gh pr merge --delete-branch` 后面的那次 `pull --prune` 常常抓不到（GitHub 还没删完），跟踪引用就留下了。所以复核放在最后，发现还在就再 `git fetch --prune origin` 一次。
+
   ```
   gh issue view <n> --repo odradekk/maou_redux --json state -q .state   # CLOSED
   gh pr view <pr>  --repo odradekk/maou_redux --json state -q .state    # MERGED
