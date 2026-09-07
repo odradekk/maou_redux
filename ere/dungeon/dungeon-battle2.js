@@ -9,6 +9,7 @@
  *       @ATTACK_CHARA_EXTRA_DMG_BATTLE2（:897-993）、@DEATH_CHECK2
  *       （:996-1055）、@DUNGEON_SPY（:1058-1200，潜入工作）、@SPY_BATTLE
  *       （:1204-1298）
+ *     target/ERB/其他/TATOO.ERB  @GET_TATOO、@TATOO_LOCATE_NAME
  *
  * 与 DUNGEON_BATLLE（ere/dungeon/dungeon-battle.js）是两套战斗：那边的
  * @DUNGEON_PARTY_BATTLE 是侵攻勇者 vs 迷宫怪物，这边是**迎击**（勇者 vs
@@ -47,7 +48,7 @@ const { party_del } = require('#/dungeon/dungeon-party');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL', 'GET_TATTOO'];
+const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL'];
 
 /** 名字承载（#5 决议） */
 function name_of(cid) {
@@ -89,12 +90,34 @@ async function pc_ryou(arg0, arg1, rand) {
 }
 
 /**
- * @GET_TATTOO 存根（刺青票）：刺青检索。RESULT 0 = 无刺青——DUNGEON_SPY
- * 的刺青炫耀段因此跳过。
- * @returns {number} 原作 RESULT（存根恒 0）
+ * @GET_TATOO（其他/TATOO.ERB:14-25）：列出角色身上 10..19 号位置的
+ * 自定义刺青；狂王纹章不算在内。
+ * @param {number} cid 角色 ID
+ * @returns {number[]} 刺青位置（原作 RESULT:1..RESULT）
  */
-function get_tattoo() {
-  return stub_line('GET_TATTOO', '刺青检索', '随刺青票');
+function get_tatoo(cid) {
+  const positions = [];
+  for (let locate = 10; locate < 20; locate += 1) {
+    const text = era.get(`cstr:${cid}:${locate}`) ?? '';
+    if (text !== '' && text !== '狂王的纹章') positions.push(locate);
+  }
+  return positions;
+}
+
+/** @TATOO_LOCATE_NAME（其他/TATOO.ERB:28-49） */
+function tatoo_locate_name(locate) {
+  return (
+    {
+      10: '脸',
+      11: '胸',
+      12: '背',
+      13: '下腹',
+      14: '屁股',
+      15: '性器',
+      16: '肛门',
+      17: '大腿',
+    }[locate] ?? ''
+  );
 }
 
 /**
@@ -936,8 +959,19 @@ async function dungeon_spy(arg0, rand) {
       era.print('的样子，觉得正是时机，拔出了武器！');
       era.print('面对一脸茫然的勇者，');
       era.print(`${name_of(arg0)}`);
-      // 刺青がある場合は見せびらかす（GET_TATTOO 存根恒 0 → 跳过）
-      get_tattoo(arg0);
+      // :1131-1134 刺青炫耀。标签固定取第一项而非随机抽中项，是原作行为。
+      const tatoos = get_tatoo(arg0);
+      if (tatoos.length > 0 && (tatoos[0] !== 10 || tatoos.length >= 2)) {
+        const picked =
+          tatoos[
+            tatoos[0] === 10
+              ? rand_n(tatoos.length - 1) + 1
+              : rand_n(tatoos.length)
+          ];
+        era.print(
+          `敞开衣服，炫耀般地露出魔王亲自刻上『${era.get(`cstr:${arg0}:${picked}`) ?? ''}』的${tatoo_locate_name(tatoos[0])}的刺青。`,
+        );
+      }
       era.print('告诉了对方自己本来的目的，让其选择投降还是死亡。');
       era.print('勇者对同伴的背叛感到难以置信与');
       if (
@@ -1403,6 +1437,8 @@ module.exports = {
   STUBBED_CALLS,
   name_of,
   clitoris_word,
+  get_tatoo,
+  tatoo_locate_name,
   select_slave,
   speed_plus2,
   attack_chara_extra_dmg_battle2,

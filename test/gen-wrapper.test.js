@@ -128,14 +128,18 @@ test('渲染：getter 数字寻址 + || 0 兜底 + 中文 JSDoc；setter 成对'
   assert.ok(section.includes('const era_global = {'));
 });
 
-test('渲染：string 类型暂不支持，大声抛错而不是猜', () => {
+test('渲染：string 类型保留空串并只对 nullish 值回落', () => {
   const entries = parse_variable_yml(
     '"某文本":\n  id: 3\n  name: "some_text"\n  type: "string"\n',
   );
-  assert.throws(
-    () => render_generated_section('global', entries, { source_file: 'X.yml' }),
-    /暂不支持/,
+  const section = render_generated_section('global', entries, {
+    source_file: 'X.yml',
+  });
+  assert.ok(
+    section.includes("return era.get('global:3') ?? '';"),
+    'string getter 应保留合法空串，并以空串兜底未初始化值',
   );
+  assert.ok(section.includes('@returns {string}'));
 });
 
 test('新文件骨架：可编译、含 #/ 引用与手写区、LF、无 BOM、确定性', () => {

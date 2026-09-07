@@ -654,7 +654,7 @@ test('钩子副作用：DATA_FIX 三行对新档有语义的行在读档后被�
   assert.equal(fixture.store.get('maxbase:17:1'), 100, '恰等于下限不动');
 });
 
-test('钩子存根：CHARA_NAME_INIT / EX_TALENTNAME_INIT 打占位行（#105 决议，不落地）', async () => {
+test('读档钩子：CHARA_NAME_INIT 仍打占位，EX_TALENTNAME_INIT 已落真身', async () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 3, '三号档');
   const { load_game } = load_page(fixture);
@@ -667,10 +667,7 @@ test('钩子存根：CHARA_NAME_INIT / EX_TALENTNAME_INIT 打占位行（#105 �
     texts.some((t) => t.includes('CHARA_NAME_INIT')),
     '角色名初始化的存根占位行必须在读档路径出现',
   );
-  assert(
-    texts.some((t) => t.includes('EX_TALENTNAME_INIT')),
-    'EX素质名初始化的存根占位行必须在读档路径出现',
-  );
+  assert(!texts.some((t) => t.includes('EX_TALENTNAME_INIT')));
 });
 
 test('夹具镜像版本闸门：低版本存档 loadData 拒读，不转场、数据不被替换', async () => {

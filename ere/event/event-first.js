@@ -33,7 +33,7 @@ const {
   ask_initial_slave,
   ask_dungeon_mode,
 } = require('#/event/first-setting');
-const { add_chara_ex } = require('#/chara/chara-ex');
+const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -47,7 +47,6 @@ const { set_vil } = require('#/dungeon/labo-map');
  */
 const STUBBED_CALLS = [
   'CHARA_NAME_INIT',
-  'EX_TALENTNAME_INIT',
   'RAND_CHARA_MAKE',
   'CHARA_NAME_DEFINE',
   'CHAR_BODY_GENERATE_WAPPED',
@@ -170,9 +169,8 @@ on('EVENTFIRST', async () => {
 
   // :78 CALL CHARA_NAME_INIT —— 角色名初始化（存根）
   stub_line('CHARA_NAME_INIT', '角色名初始化');
-  // :80 CALL EX_TALENTNAME_INIT —— EX 素质名表初始化（存根，随数据管线：
-  // ex_talent/ex_talentname 表进 yml/ 时一并，见 #21 移交说明）
-  stub_line('EX_TALENTNAME_INIT', 'EX 素质名初始化');
+  // :80 CALL EX_TALENTNAME_INIT —— 非存档的 EX 素质名表。
+  ex_talentname_init();
 
   // :82-92 开场叙事：居中七行（:87 是两个空格的空行）→ 左对齐 → WAIT →
   // DRAWLINE。ere 的 print 自成一行，PRINTL 直接映射。

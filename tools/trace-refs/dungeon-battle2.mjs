@@ -53,6 +53,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BATLLE2.ERB',
+        ref: '1131-1134',
+        any: [/CALL GET_TATOO\(ARG:0\)/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_BATLLE2.ERB',
         ref: '1148-1150',
         any: [/MONEY \+= 100 \* CFLAG:LEADER:9/],
       },

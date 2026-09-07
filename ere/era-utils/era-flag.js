@@ -1246,6 +1246,18 @@ Object.defineProperty(era_flag, 'last_save_no', {
   },
 });
 
+Object.defineProperty(era_flag, 'communication_hero_level_one', {
+  configurable: true,
+  /** 通信勇者登场时是否压到 1 级（flag:77 的 bit 0，MAOUNET.ERB）。 */
+  get() {
+    return era.get('flag:77') || 0;
+  },
+  /** @param {number} v */
+  set(v) {
+    era.set('flag:77', v);
+  },
+});
+
 //
 // 变量语义补注（原作语义 + 来源，AGENTS.md「变量语义必须注释」）：
 //

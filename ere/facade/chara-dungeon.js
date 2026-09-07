@@ -919,4 +919,11 @@ class DungeonFacade {
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
+Object.defineProperty(DungeonFacade.prototype, '体力上限', {
+  /** MAXBASE:0 = 体力上限（yml/Base.yml id 0）。 */
+  get() {
+    return era.get(`maxbase:${this.cid}:0`) || 0;
+  },
+});
+
 module.exports = DungeonFacade;

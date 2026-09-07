@@ -41,3 +41,7 @@
   id: 99
   name: "greeting_collapsed"
   type: "number"
+"通信勇者记录":
+  id: 100
+  name: "communication_roster"
+  type: "string"

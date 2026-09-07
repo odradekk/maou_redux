@@ -415,7 +415,6 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'PILLORY',
     'SABBATH',
     'SABBATH_DAY',
-    'NTR_VIDEO',
     'TAX_GET',
     'SENGEN_VIDEO_DE',
     'MAOU_KOUHO',

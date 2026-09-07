@@ -16,15 +16,13 @@
  *     不镜像（page-title.js 同款结论）；
  *   - :764 CALL CHARA_NAME_INIT——**存根**（#105 决议：三个角色生成存根
  *     不进阶段 2，本票只交空钩子与「钩子被调用」的用例）；
- *   - :766 CALL EX_TALENTNAME_INIT——**存根**（同上；#138 落的
- *     yml/Ex_Talent.yml 是空名字表，名称条目随角色名初始化票在此补——
- *     补之前先看 yml/CStr.yml 头注的警告：登记进名字表的下标会被
- *     initCharaTable 预置 0）；
+ *   - :766 CALL EX_TALENTNAME_INIT——非存档的 EX 素质名表初始化，真身在
+ *     chara-ex.js；读档后重放，重复调用按原作守卫早退；
  *   - :768-772 LASTLOAD_NO == 999 → CALL MAOUNET + BEGIN SHOP、
  *     :773-774 LASTLOAD_NO ∈ [1000,1020) → CALL INPORT_B——跨作品数据
  *     交换，ere 读档界面只放行 0-99（page-save-load.js 的槽位分支），
- *     LASTLOAD_NO 永远取不到 999/1000+，**不可达，登记不占位**（#119
- *     KYOTEN_EVENT 先例；docs/stub-registry.md 的 MAOUNET/INPORT_B 行）；
+ *     LASTLOAD_NO 永远取不到 999/1000+，正常界面不可达；钩子仍恢复原作分支，
+ *     供 MAOUNET 的特殊档流程使用；
  *   - :775-776 注释态的 EX_FLAG:2801 钳制——活代码在 @SYSTEM_LOADGAME 的
  *     :74-75（ere 侧 load_game 已 1:1 保留），此处原作即注释态，不搬；
  *   - :779 CALL DATA_FIX——历史补丁体不移植（ADR-0006：修的全是 Emuera
@@ -48,14 +46,18 @@
  */
 
 const era = require('#/era-electron');
+const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, TIER } = require('#/system/event/registry');
+const maounet_mod = require('#/system/cross-save-sharing');
+const { ex_talentname_init } = require('#/chara/chara-ex');
 const { stub_line } = require('#/utils/stub-line');
+const era_flag = require('#/era-utils/era-flag');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（名单
  * 变动必须同步清单）。
  */
-const STUBBED_CALLS = ['CHARA_NAME_INIT', 'EX_TALENTNAME_INIT'];
+const STUBBED_CALLS = ['CHARA_NAME_INIT'];
 
 /**
  * @EVENTLOAD（SYSTEM ver1.0.3.ERB:760-778）：读档成功后的固定钩子。
@@ -67,11 +69,18 @@ on(
   async () => {
     // :764 角色名初始化（存根，#105——随角色名初始化票落地）
     stub_line('CHARA_NAME_INIT', '角色名初始化');
-    // :766 EX素质名初始化（存根，#105——名称条目补进 yml/Ex_Talent.yml）
-    stub_line('EX_TALENTNAME_INIT', 'EX素质名初始化');
+    // :766 EX素质名初始化（非存档表，读档后重放；重复调用按原作早退）
+    ex_talentname_init();
 
-    // :768-772 与 :773-774 999 → MAOUNET、1000-1020 → INPORT_B：不可达（读档界面只
-    // 放行 0-99），登记不占位——见文件头
+    // :768-772 与 :773-774：普通读档界面仍只放行 0-99，故两支不可达；
+    // 保留原作钩子，供 MAOUNET 的特殊档流程使用。
+    if (era_flag.last_load_no === 999) {
+      await maounet_mod.maounet();
+      begin(STATE.SHOP);
+    }
+    if (era_flag.last_load_no >= 1000 && era_flag.last_load_no < 1020) {
+      await maounet_mod.inport_b();
+    }
 
     // :779 CALL DATA_FIX 中三处对新档仍有语义的行（判定依据见文件头）。
     // 原作 FOR A,0,CHARANUM 对全部已加入角色（含 0 号位）
