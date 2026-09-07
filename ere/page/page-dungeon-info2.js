@@ -38,14 +38,17 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { menu_button } = require('#/page/components/menu-button');
 const { ScreenBlock } = require('#/page/components/screen-block');
-const { stub_line_wait } = require('#/utils/stub-line');
-const { item_name, monstername } = require('#/dungeon/monster-data');
+const {
+  item_name,
+  monster_setup,
+  monstername,
+} = require('#/dungeon/monster-data');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['MONSTER_SETUP'];
+const STUBBED_CALLS = [];
 
 // :65/:87/:107 SETCOLOR 128,255,0（选中项绿色）
 const COLOR_SELECTED = 'rgb(128, 255, 0)';
@@ -85,23 +88,6 @@ function cflag_get(cid, i) {
 /** SAVESTR:cid（部下显示名）——dungeon.js name_of 同款寻址（#5 决议） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
-}
-
-/**
- * @MONSTER_SETUP 存根（怪物相關/MONSTER_DATA.ERB:2479；怪物票）：把部下
- * 怪物设置到防卫位置。调用点在本界面部下一览的 [100-199] 输入分发
- * （:472），返回后 GOTO PRINT 重画；原作返回值此处不消费，存根 0 自洽。
- * @param {number} monster_id 怪物识别号（原作 ARG = RESULT；存根不消费）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
- */
-// eslint-disable-next-line no-unused-vars
-async function monster_setup(monster_id) {
-  await stub_line_wait(
-    'MONSTER_SETUP',
-    '怪物设置（把怪物配置到防卫位置）',
-    '随怪物票',
-  );
-  return 0;
 }
 
 /**

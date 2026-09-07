@@ -342,13 +342,13 @@ test('INFO2：[100] 怪物迎击 toggle 翻转 FLAG:5 位 4，文案随动', asy
   );
 });
 
-test('INFO2：部下状态总览（10）走 ENEMY_EXIST2 与楼层头，[100-199] 进 MONSTER_SETUP 存根', async () => {
+test('INFO2：部下状态总览（10）走 ENEMY_EXIST2，[100-199] 进 MONSTER_SETUP 真身', async () => {
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
   seed_invasion_party(fixture);
   fixture.store.set('item:105', 7); // 第 6 格怪物库存（5 只狗头人等价）
   fixture.store.set('itemname:105', '狗头人');
-  fixture.set_inputs(10, 105, 999, 999);
+  fixture.set_inputs(10, 105, 999, 999, 999);
   await dungeon_info2();
   const history = fixture.lines_history
     .filter((l) => l.type === 'text')
@@ -366,8 +366,11 @@ test('INFO2：部下状态总览（10）走 ENEMY_EXIST2 与楼层头，[100-199
     '怪物库存行（7 只狗头人）',
   );
   assert.ok(
-    history.some((t) => t.includes('MONSTER_SETUP') || t.includes('占位')),
-    '105 → MONSTER_SETUP 存根占位行',
+    history.some((t) => t.includes('狗头人的改造')),
+    '105 → 改造真身',
+  );
+  assert.ok(
+    !history.some((t) => t.includes('MONSTER_SETUP') || t.includes('占位')),
   );
 });
 

@@ -175,14 +175,15 @@ test('页首不再退：第一页输入 [1000] 维持原页', async () => {
   assert.equal(texts.filter((l) => l === '[31] 温妮').length, 2);
 });
 
-test('1002 其它：MONSTER_PLAY 存根占位，返回 0（取消语义透传）', async () => {
+test('1002 其它：进入 MONSTER_PLAY 真身，怪物菜单取消语义透传', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31);
   const { select_target } = load_page(fixture);
-  fixture.set_inputs(1002);
+  fixture.set_inputs(1002, 999);
 
   assert.equal(await select_target(), 0);
-  assert(fixture.text_lines().some((line) => line.includes('@MONSTER_PLAY')));
+  assert(fixture.text_lines().includes('请选择怪物'));
+  assert(!fixture.text_lines().some((line) => line.includes('@MONSTER_PLAY')));
 });
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
@@ -193,7 +194,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'utf8',
   );
 
-  assert.deepEqual(STUBBED_CALLS, ['MONSTER_PLAY', 'SHOW_LIST_TRAINABLE']);
+  assert.deepEqual(STUBBED_CALLS, ['SHOW_LIST_TRAINABLE']);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
