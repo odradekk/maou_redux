@@ -25,6 +25,7 @@ const { select_target } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { save_game, load_game } = require('#/page/page-save-load');
+const { chara_sale } = require('#/system/stronghold/sale');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
@@ -42,7 +43,6 @@ const STUBBED_CALLS = [
   '批量处刑',
   'INTERCEPT',
   'ABILITY_UP',
-  'CHARA_SALE',
   'ITEM_SHOP',
   'TAILOR_MAIN',
   'SECRET_LABO',
@@ -247,8 +247,8 @@ async function usershop(result) {
     // 能力值提升（:115）
     await stub_line_wait('ABILITY_UP', '能力值提升', '随能力票');
   } else if (result === 106) {
-    // 贩卖奴隶（:117，可用性判据 B 随指令面板段）
-    await stub_line_wait('CHARA_SALE', '贩卖奴隶', '随售却票');
+    // 贩卖奴隶（:117，#339 真身）
+    await chara_sale();
   } else if (result === 107) {
     // 购物（:119-120 BOUGHT = 1，下一轮 @SHOW_SHOP 跳 ITEM_SHOP）：BOUGHT
     // 无落点（恒 -1），整支随商店票——占位名沿用函数表的 ITEM_SHOP 行

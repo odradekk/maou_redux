@@ -45,6 +45,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
+const { check_sellassiable } = require('#/system/stronghold/sale');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -60,7 +61,6 @@ const STUBBED_CALLS = [
   ...ABLUP_IDS.map((id) => `ABLUP${id}`),
   'AUTO_ABLUP',
   'YOKUBO_UP_CHECK',
-  'CHECK_SELLASSIABLE',
   'CHECK_SPECIALSKIL',
 ];
 
@@ -360,7 +360,7 @@ async function run_juel_check() {
 
   // $LABEL_EXIT :541-546：收尾三查（各占位一行）
   stub_line('YOKUBO_UP_CHECK', '欲情变化检查'); // :542
-  stub_line('CHECK_SELLASSIABLE', '可售判定'); // :543
+  await check_sellassiable(target); // :543
   stub_line('CHECK_SPECIALSKIL', '特殊技能获得检查'); // :544
   // :545 LOCAL = TARGET —— CALL 方传 RESULT 的暂存，无人读，不镜像
 }

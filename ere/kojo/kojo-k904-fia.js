@@ -26,6 +26,7 @@ const { on, TIER } = require('#/system/event/registry');
 const {
   peek_aftertrain_q,
   peek_aftertrain_s,
+  peek_sale_price,
 } = require('#/event/event-aftertrain');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
@@ -9253,6 +9254,7 @@ async function self_kojo_k904() {
   const assi_name = chara_callname(era_flag.assi); // %SAVESTR:ASSI%
   const master_name = chara_callname(0); // %SAVESTR:MASTER%
   const sc = (cid = target) => self_call(cid);
+  const sale_price = peek_sale_price(); // TFLAG:13 == 6 分支的原作 S（售价）
   if (game.train.初吻与自我口上 == 1) {
     // :5291
 
@@ -9649,7 +9651,7 @@ async function self_kojo_k904() {
     if (era.get(`talent:${target}:85`)) {
       // :5513
 
-      if (peek_aftertrain_s() >= 1000000) {
+      if (sale_price >= 1000000) {
         // :5515
         await era.printAndWait(
           `就这样，${target_name}被卖给了现今当政的人类国王。`,
@@ -9678,7 +9680,7 @@ async function self_kojo_k904() {
         await era.printAndWait(
           `于是${master_name}与${target_name}再也没有见过面………`,
         ); // :5527
-      } else if (peek_aftertrain_s() >= 500000) {
+      } else if (sale_price >= 500000) {
         // :5529
         await era.printAndWait(`就这样，${target_name}被卖给了魔族的富豪。`); // :5530
         await era.printAndWait(
@@ -9709,7 +9711,7 @@ async function self_kojo_k904() {
         await era.printAndWait(
           `于是${master_name}与${target_name}再也没有见过面………`,
         ); // :5540
-      } else if (peek_aftertrain_s() >= 100000) {
+      } else if (sale_price >= 100000) {
         // :5542
         await era.printAndWait(`就这样，${target_name}被卖给了魔王城的娼馆。`); // :5543
         await era.printAndWait(
@@ -9776,7 +9778,7 @@ async function self_kojo_k904() {
     } else if (era.get(`talent:${target}:76`)) {
       // :5574
 
-      if (peek_aftertrain_s() >= 1000000) {
+      if (sale_price >= 1000000) {
         // :5576
         await era.printAndWait(`就这样，${target_name}被卖给了魔族的大将。`); // :5577
         await era.printAndWait(
@@ -9801,7 +9803,7 @@ async function self_kojo_k904() {
         await era.printAndWait(
           `于是${master_name}与${target_name}再也没有见过面………`,
         ); // :5585
-      } else if (peek_aftertrain_s() >= 500000) {
+      } else if (sale_price >= 500000) {
         // :5587
         await era.printAndWait(`就这样，${target_name}被卖给了魔界的艺术家。`); // :5588
         await era.printAndWait(
@@ -9822,7 +9824,7 @@ async function self_kojo_k904() {
         await era.printAndWait(
           `于是${master_name}与${target_name}再也没有见过面………`,
         ); // :5596
-      } else if (peek_aftertrain_s() >= 100000) {
+      } else if (sale_price >= 100000) {
         // :5598
         await era.printAndWait(`就这样，${target_name}被卖给了魔王城的娼馆。`); // :5599
         await era.printAndWait(

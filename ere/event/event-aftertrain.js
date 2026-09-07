@@ -40,8 +40,7 @@ let leftover_q = 0;
  */
 let leftover_s = 0;
 /**
- * 原作 S 在出售链是卖出价。SELL_CHARA 写完再 CALL SELF_KOJO；
- * 出售主体未移植时由测试写入。
+ * 原作 S 在出售链是卖出价。SELL_CHARA 写完再 CALL SELF_KOJO。
  */
 let leftover_sale = 0;
 
@@ -70,7 +69,7 @@ function peek_sale_price() {
 }
 
 /**
- * 出售主体未移植前，测试写入卖出价（原作 SELL_CHARA 的 S）。
+ * 写入出售口上要读的卖出价（原作 SELL_CHARA 的 S）。
  * @param {number} v
  */
 function remember_sale_price(v) {

@@ -34,6 +34,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { run_event_nextday } = require('#/event/event-nextday');
 const { run_event_nextmonth } = require('#/event/event-nextmonth');
+const { check_sellassiable } = require('#/system/stronghold/sale');
 // ENTER_ENEMY 经模块对象调用（不解构）：#171 的夹具隔离开关
 // （era-fixture.js 的 disable_enter_enemy，#168 裁定 4）就地替换本模块的
 // enter_enemy 导出，解构会把函数固化进本闭包、替换不可达——两个写法的
@@ -45,7 +46,6 @@ const enter_enemy_mod = require('#/event/enter-enemy');
  * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'CHECK_SELLASSIABLE',
   'CHECK_SPECIALSKIL',
   'IN_VAGINA_ALL',
   'CONCEPTION_CHECK_ALL',
@@ -66,7 +66,7 @@ on(
     // 原样还原）。CHECK_SPECIALSKIL 只对非当前目标执行（原行 19 的 SIF TARGET != LOCAL）。
     const saved_target = era_flag.target;
     for (const cid of era.getAddedCharacters()) {
-      stub_line('CHECK_SELLASSIABLE', '可售/可助手判定');
+      await check_sellassiable(cid);
       if (cid !== saved_target) {
         stub_line('CHECK_SPECIALSKIL', '特殊素质获得判定');
       }

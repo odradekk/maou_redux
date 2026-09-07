@@ -66,6 +66,10 @@ function erb(rel, extra) {
 
 const cflag = {
   // —— 低位共享状态（#114 回合结算接入；各下标属主见 ownership/cflag-ownership.yml）——
+  0: named(
+    '出售与助手资格',
+    src(SRC_FLAG, ':259 CFLAG:0 = 売却及び助手可能 1=売却可 2=助手可'),
+  ),
   1: named(
     '状态',
     src(

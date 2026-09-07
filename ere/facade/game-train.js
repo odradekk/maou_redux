@@ -1320,4 +1320,34 @@ const facade = new TrainGame();
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
+// EraElectron 只在 beginTrain/endTrain 之间提供 tflag 表；原作却也在据点
+// 出售时借 TFLAG:13 向 SELF_KOJO 传事件码。用调用链内的临时值承载该
+// 调教外语义，避免为一句口上伪造一次会结算 gotjewel 的调教期。
+let self_kojo_event;
+Object.defineProperty(facade, '初吻与自我口上', {
+  get() {
+    return self_kojo_event ?? era.get('tflag:13') ?? 0;
+  },
+  set(v) {
+    if (self_kojo_event === undefined) era.set('tflag:13', v);
+    else self_kojo_event = v;
+  },
+});
+
+/**
+ * 在调教外调用 SELF_KOJO 时临时提供事件码。
+ * @param {number} event 事件码（原作 TFLAG:13）
+ * @param {() => Promise<unknown>} callback 口上调用
+ * @returns {Promise<unknown>}
+ */
+facade.with_self_kojo_event = async (event, callback) => {
+  const previous = self_kojo_event;
+  self_kojo_event = event;
+  try {
+    return await callback();
+  } finally {
+    self_kojo_event = previous;
+  }
+};
+
 module.exports = facade;
