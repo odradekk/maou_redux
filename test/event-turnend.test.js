@@ -637,12 +637,11 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（labo-dungeon-map.js 与
   // labo-map.js）；#179 起 LVUP/DUNGEON_AFTER 换真身（dungeon-lvup.js 与
   // dungeon-after.js）；#217 起 BENKI 换真身（system/train/benki.js）——
-  // 四条均已从名单移除
+  // 四条均已从名单移除；#342 起 MARRIAGE_DAY 亦接真身
   assert.deepEqual(settle_stubs, [
     'FORMAT_AUTOTRAIN',
     '自動處刑',
     'NAEDOKO',
-    'MARRIAGE_DAY',
     'AUTOTRAIN',
     'CAMPAIGN_GAMEOVER',
     'GET_LOOK_INFO',
@@ -658,6 +657,39 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   for (const name of ['KYOTEN_EVENT', 'INVASION_CHECK']) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
+});
+
+test('结婚日接线：普通档逐角色调用真身，妊娠角色看到婚后生活', async () => {
+  const { fixture, emit, STATE } = setup_turnend();
+  fixture.store.set('cflag:0:601', 900); // CFLAG:601 = 结婚对象（野狗）
+  fixture.store.set('talent:0:153', 1); // TALENT:153 = 妊娠（在随机分派前返回）
+
+  assert.equal(await emit('EVENTTURNEND'), STATE.SHOP);
+  assert(
+    fixture.text_lines().some((line) => line.includes('期待着孩子的出生')),
+  );
+  assert(
+    !fixture
+      .text_lines()
+      .some((line) => line.includes('MARRIAGE_DAY 尚未移植')),
+  );
+});
+
+test('结婚日接线：完成婚后事件后顺接剩余结算并回到 SHOP', async () => {
+  const { fixture, emit, STATE } = setup_turnend();
+  fixture.store.set('cflag:0:601', 900); // CFLAG:601 = 结婚对象（野狗）
+
+  fixture.override_math_random(() => 0);
+  try {
+    assert.equal(await emit('EVENTTURNEND'), STATE.SHOP);
+  } finally {
+    fixture.restore_math_random();
+  }
+  assert.equal(fixture.store.get('cflag:0:602'), 1);
+  assert(
+    fixture.text_lines().some((line) => line.includes('@AUTOTRAIN')),
+    '结婚日后的自动调教结算仍可达',
+  );
 });
 
 // —— #179（H10）升级结算与战果结算的接线 ——
