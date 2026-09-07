@@ -182,6 +182,16 @@ test('MUSEUM：十类展品各写正确名称与分类计数', async (t) => {
   }
 });
 
+test('MUSEUM：金属像分支增加装饰品总数', async () => {
+  const fixture = seed_world();
+  fixture.set_inputs(7);
+  const { museum } = fixture.load_module('event/event-museum');
+
+  await museum(31, seq([0]));
+
+  assert.equal(fixture.store.get('flag:84'), 1);
+});
+
 test('MUSEUM：原作 ELSEIF 会重新掷 RAND', async () => {
   const fixture = seed_world();
   fixture.set_inputs(0);
@@ -190,6 +200,24 @@ test('MUSEUM：原作 ELSEIF 会重新掷 RAND', async () => {
   await museum(31, seq([2, 1]));
 
   assert.equal(fixture.store.get('videoarchive:31'), '大理石像温妮');
+});
+
+test('MUSEUM：反抗刻印 3 与反抗素质进入叛逆口上', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:121', 1); // 扶她，可制成喷水像
+  fixture.store.set('talent:31:11', 1); // 反抗的
+  fixture.store.set('mark:31:3', 3); // 反抗刻印 Lv3
+  fixture.set_inputs(0);
+  const { museum } = fixture.load_module('event/event-museum');
+
+  await museum(31, seq([0]));
+
+  assert(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('散发出稍有空隙就会马上袭击过来的气氛')),
+  );
+  assert.equal(fixture.store.get('videoarchive:31'), '射精叛逆石膏像温妮');
 });
 
 test('MUSEUM：保留原作 LOCALS 跨调用残值', async () => {

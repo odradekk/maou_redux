@@ -846,4 +846,44 @@ export default [
     tests: ['event-museum'],
     must_mention: '已有造型王只翻倍显示经验',
   },
+  {
+    desc: 'M6961 MUSEUM 反抗口上：反抗刻印 Lv3 错判为 Lv2',
+    file: 'ere/event/event-museum.js',
+    find: `        locals = '射精';
+
+        if (get(\`talent:\${a}:130\`)) {
+          await era.printAndWait(
+            \`稍微一碰就会喷出母乳的\${chara_callname(a)}的乳首也被变换、从勃起的尖端喷出了水…\`,
+          );
+          locals += '喷乳';
+        }
+
+        if (
+          get(\`mark:\${target}:3\`) === 3 &&
+          (get(\`talent:\${a}:11\`) ||`,
+    replace: `        locals = '射精';
+
+        if (get(\`talent:\${a}:130\`)) {
+          await era.printAndWait(
+            \`稍微一碰就会喷出母乳的\${chara_callname(a)}的乳首也被变换、从勃起的尖端喷出了水…\`,
+          );
+          locals += '喷乳';
+        }
+
+        if (
+          get(\`mark:\${target}:3\`) === 2 &&
+          (get(\`talent:\${a}:11\`) ||`,
+    tests: ['event-museum'],
+    must_mention: '反抗刻印 3 与反抗素质进入叛逆口上',
+  },
+  {
+    desc: 'M6962 MUSEUM 金属像：漏加装饰品总数',
+    file: 'ere/event/event-museum.js',
+    find: `  } else if (game.event.博物馆口上 === 7) {
+    game.event.装饰品数 += 1;`,
+    replace: `  } else if (game.event.博物馆口上 === 7) {
+    game.event.装饰品数 += 0;`,
+    tests: ['event-museum'],
+    must_mention: '金属像分支增加装饰品总数',
+  },
 ];
