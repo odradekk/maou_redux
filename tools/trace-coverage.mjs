@@ -114,7 +114,7 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 92; // #345：怪物相關/MONSTER_SKILL.ERB 完整移植后实测。
+export const PENDING_BASELINE = 86; // #348：處刑相關六文件完成；与 #345 合并后实测（93 − 6 − 1）。
 
 /**
  * 存根清单「归因不到」行数基线（#331 验收整改冻结，只减不增）。归因不到
