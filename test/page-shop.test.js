@@ -210,14 +210,14 @@ test('守卫 A == 0：496/497 与无效输入同路——无反馈、只重绘�
   );
   // 两次输入都被守卫拦下后落到链尾，回循环重绘（2 次输入 + 首轮 = 3 轮）
   assert.equal(rounds_drawn(fixture), 3);
-  // 除每轮固定的两行存根外无任何新增输出；行史文本行总数固定为每轮 6 行
+  // 除每轮固定的两行存根外无任何新增输出；行史文本行总数固定为每轮 7 行
   //（状态行 + 面板存根 + Commands 标题 + [100]/[106] 两个不可选占位
   // + 指令面板存根）
   //——多打任何一行（含给守卫拦下的输入加「提示」）都会在此红。A == 0 时
   // [100] 调教退化为灰色 [---] 文本（原作 :229-231），A > 0 时它是按钮、
   // 不计入文本行
   assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 3 * 2);
-  assert.equal(texts.length, 3 * 6);
+  assert.equal(texts.length, 3 * 7);
 
   // [100] 的守卫走直接分发验证：A == 0 时 [100] 不渲染（[---] 文本占位），
   // 引擎的 input() 不会送达 100（#130）——进不了调教分支只能经 usershop
@@ -249,7 +249,7 @@ test('未打印按钮的值引擎不送达：拒收且只画首轮（原作无 E
   );
   const texts = history_texts(fixture);
   assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 1 * 2);
-  assert.equal(texts.length, 1 * 6);
+  assert.equal(texts.length, 1 * 7);
 });
 
 test('连续多轮混合操作后状态一致', async () => {
@@ -442,7 +442,7 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
     '守卫不成立不得进 110',
   );
   assert(
-    !history_texts(off).some((line) => line.includes('@INFRASTRUCTURE')),
+    !history_texts(off).some((line) => line.includes('没有待机中的奴隶')),
     '守卫不成立不得进 111',
   );
 
@@ -459,8 +459,8 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
     '守卫成立应进 110',
   );
   assert(
-    history_texts(on).some((line) => line.includes('@INFRASTRUCTURE')),
-    '守卫成立应进 111',
+    history_texts(on).some((line) => line.includes('没有待机中的奴隶')),
+    '守卫成立应进设施真身',
   );
 });
 
@@ -539,7 +539,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'ITEM_SHOP',
     'TAILOR_MAIN',
     'SECRET_LABO',
-    'INFRASTRUCTURE',
     'BEGIN TURNEND',
     'CONFIG',
     'MAOUNET',

@@ -588,6 +588,24 @@ test('装备效果接入（#174 真身）：欲望戒指的陷落事件随 RESUL
   );
 });
 
+test('回合结算：苗床角色进入真实业务，不再停在 NAEDOKO 存根', async () => {
+  const world = setup_turnend();
+  join_slave_chara(world.fixture, 31, '温妮');
+  world.fixture.store.set('talent:31:209', 1); // 苗床
+  world.fixture.store.set('talent:31:122', 1); // 男性：两条随机支均有确定点数
+  world.fixture.store.set('cflag:0:9', 3); // 魔王等级
+
+  await world.emit('EVENTTURNEND');
+
+  const penis = world.fixture.store.get('juel:31:0') || 0;
+  const anal = world.fixture.store.get('juel:31:2') || 0;
+  assert.equal(penis + anal, 30, 'NAEDOKO 真身按魔王等级结算点数');
+  assert(
+    !world.fixture.text_lines().some((line) => line.includes('@NAEDOKO')),
+    '回合结算不得再输出 NAEDOKO 存根',
+  );
+});
+
 test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', async () => {
   const { fixture, emit, STATE } = setup_turnend();
   await emit('EVENTTURNEND');
@@ -640,7 +658,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   assert.deepEqual(settle_stubs, [
     'FORMAT_AUTOTRAIN',
     '自動處刑',
-    'NAEDOKO',
     'AUTOTRAIN',
     'CAMPAIGN_GAMEOVER',
     'GET_LOOK_INFO',

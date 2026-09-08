@@ -400,6 +400,21 @@ test('[109] 侵略：无条件渲染按钮（原作 :283 无守卫），正文�
   );
 });
 
+test('[111] 设施·设备：肉便器或展品存在时才渲染可点按钮', () => {
+  const empty = draw_menu_with(() => {});
+  assert.equal(button_of(empty.fixture, 111), undefined);
+
+  for (const flag of [83, 84]) {
+    const unlocked = draw_menu_with((fixture) => {
+      fixture.store.set(`flag:${flag}`, 1);
+    });
+    const infrastructure = button_of(unlocked.fixture, 111);
+    assert.ok(infrastructure, `FLAG:${flag} 应解锁设施入口`);
+    assert.equal(infrastructure.rendered, '[111] 设施·设备');
+    assert.equal(infrastructure.text, '设施·设备');
+  }
+});
+
 test('[200]/[300]：保存/读取按钮无条件渲染（原作 :303/:306 无守卫），正文无手写前缀', () => {
   // 原作 :303 PRINTLCD [200] 保存 / :306 PRINTLCD [300] 读取，前均无 IF
   // 守卫，无条件渲染（对照 [100] 的 IF A > 0）。分发真身自 #136 起在

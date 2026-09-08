@@ -53,6 +53,7 @@ const { lvup } = require('#/dungeon/dungeon-lvup');
 const { dungeon_after } = require('#/dungeon/dungeon-after');
 const { marriage_day } = require('#/dungeon/marriage-day');
 const { run_benki } = require('#/system/train/benki');
+const { run_seedbed } = require('#/system/train/seedbed');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -67,7 +68,6 @@ const { run_benki } = require('#/system/train/benki');
 const STUBBED_CALLS = [
   'FORMAT_AUTOTRAIN',
   '自動處刑',
-  'NAEDOKO',
   'AUTOTRAIN',
   'CAMPAIGN_GAMEOVER',
   'GET_LOOK_INFO',
@@ -524,7 +524,7 @@ on('EVENTTURNEND', async () => {
     // :729 CALL BENKI（#217 真身：肉便器业务——门槛不中静默返回，演出段
     // 输出 + BENKI_KOUJO 口上存根，见 ere/system/train/benki.js）
     await run_benki(cid);
-    stub_line('NAEDOKO', '苗床业务');
+    await run_seedbed(cid);
     // 已处于 TURNEND：原作子程序里的同状态 BEGIN 在这里等价为顺接后文；
     // 若让 BeginSignal 穿出，会中断本处理器并让主循环无限重进 TURNEND。
     await marriage_day(cid, undefined, false);

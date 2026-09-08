@@ -63,9 +63,13 @@ const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
+  banishment_koujo_family,
+  exucution_koujo_family,
+  grotesque_koujo_family,
   kojo_message_com_family,
   museum_koujo_family,
   ntr_koujo_family,
+  public_exucution_koujo_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
 const { heart } = require('#/kojo/kojo-text');
@@ -5331,6 +5335,10 @@ async function self_kojo_k4() {
 self_kojo_family.register(4, self_kojo_k4);
 ntr_koujo_family.register(4, (rand, p) => ntr_koujo_k4(p));
 museum_koujo_family.register(4, museum_koujo_k4);
+exucution_koujo_family.register(4, exucution_koujo_k4);
+banishment_koujo_family.register(4, banishment_koujo_k4);
+public_exucution_koujo_family.register(4, public_exucution_koujo_k4);
+grotesque_koujo_family.register(4, grotesque_koujo_k4);
 
 /**
  * @DUNGEON_RYOUZYOKU_K4（:4463-4551）：迷宫凌辱前的口上（H13 分派，TARGET = ARG）。
