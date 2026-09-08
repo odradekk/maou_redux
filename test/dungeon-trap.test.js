@@ -302,18 +302,16 @@ test('IMITATER（:635）：五宝珠齐涨 + 绝顶经验 + 攻防弱化', async
   assert.equal(fixture.store.get('juel:1:5'), 80, '浅档欲情 +30（累积）');
 });
 
-test('SUMMON（:711）：召唤存根被调、高难度时体力损耗', async () => {
+test('SUMMON（:711）：弱召唤真身入库、高难度时体力损耗', async () => {
   const fixture = setup_world();
   const { summon_trap } = load(fixture);
   assert.equal(await summon_trap(1, seq(1)), 1, 'Z>0 破坏阵（未作动）');
   await summon_trap(1, seq(0)); // 召唤
-  assert.ok(
-    text_lines(fixture).some((line) => line.includes('原作 @SUMMON_MONSTER，')),
-    'SUMMON_MONSTER 域内存根被调（DUNGEON_TRAP.ERB :729）',
-  );
+  assert.equal(fixture.store.get('item:100'), 2, '-1 实参触发两轮弱召唤');
   assert.equal(fixture.store.get('base:1:0'), 2000, 'FLAG:85=0 无魔力冲击');
   fixture.store.set('flag:85', 2);
   await summon_trap(1, seq(0));
+  assert.equal(fixture.store.get('item:100'), 4);
   assert.equal(fixture.store.get('base:1:0'), 2000 - 20, '体力 -= FLAG:85×10');
 });
 

@@ -149,6 +149,21 @@ class DungeonFacade {
   }
 
   /**
+   * 胎儿怪物编号（cflag:cid:112 ↔ CFLAG:112）
+   * 源: target/ERB/其他/NINSIN.ERB 行172-176 CFLAG:112 = 怀孕中的怪物编号
+   * @returns {number}
+   */
+  get 胎儿怪物编号() {
+    return era.get(`cflag:${this.cid}:112`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 胎儿怪物编号(v) {
+    era.set(`cflag:${this.cid}:112`, v);
+  }
+
+  /**
    * 侵攻阶层（cflag:cid:501 ↔ CFLAG:501）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行386 CFLAG:501 侵攻階層
    * @returns {number}
@@ -919,4 +934,14 @@ class DungeonFacade {
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
+Object.defineProperty(DungeonFacade.prototype, '体力上限', {
+  /** MAXBASE:0 与 BASE:0 同属 dungeon 域；生成器暂不生成 maxbase 门面。 */
+  get() {
+    return era.get(`maxbase:${this.cid}:0`) || 0;
+  },
+  set(v) {
+    era.set(`maxbase:${this.cid}:0`, v);
+  },
+});
+
 module.exports = DungeonFacade;

@@ -180,6 +180,21 @@ class EventFacade {
 
   // —— cstr ——
   /**
+   * 孩子父亲名字（cstr:cid:2 ↔ CSTR:2）
+   * 源: target/ERB/其他/NINSIN.ERB 行316 CSTR:2 = 孩子父亲的名字
+   * @returns {string}
+   */
+  get 孩子父亲名字() {
+    return era.get(`cstr:${this.cid}:2`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 孩子父亲名字(v) {
+    era.set(`cstr:${this.cid}:2`, v);
+  }
+
+  /**
    * 家人末路（cstr:cid:5 ↔ CSTR:5）
    * 源: target/ERB/售卻相關/SELL_MATURO_K1.ERB 行1370-1371 CSTR:(FAMILY:2)行5 = %MATURO%%SAVESTR:TARGET%（K2 行215-216 同构）
    * @returns {string}
