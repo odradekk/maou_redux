@@ -57,7 +57,7 @@ const BASELINE = {
   'daycycle-natural': { matched: 52, version: 2, stub: 215, unexplained: 0 },
   'daycycle-max': { matched: 52, version: 2, stub: 255, unexplained: 0 },
   // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
-  'sale-natural': { matched: 84, version: 2, stub: 206, unexplained: 0 },
+  'sale-natural': { matched: 86, version: 2, stub: 202, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {

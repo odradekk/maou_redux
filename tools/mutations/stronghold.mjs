@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 117;
+export const COUNT = 118;
 
 export default [
   {
@@ -965,5 +965,13 @@ export default [
     replace: '    ability(21) >= 4 ||',
     tests: ['sale-chara'],
     must_mention: '抖M气质三级可单独满足出售门槛',
+  },
+  {
+    desc: 'M7700 CHARA_SALE 所持金漏掉原作字面量 $（#338 返工）',
+    file: 'ere/system/stronghold/sale.js',
+    find: '    era.print(`所持金：$${era_flag.money}点`);',
+    replace: '    era.print(`所持金：${era_flag.money}点`);',
+    tests: ['sale-chara'],
+    must_mention: '所持金保留原作格式串中的字面量 $',
   },
 ];

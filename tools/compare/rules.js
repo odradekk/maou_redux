@@ -836,12 +836,11 @@ function classify_scope_b(entry, side, context) {
       if (
         entry.kind === 'text' &&
         (/^7日 (午前|上午)$/.test(entry.text) ||
-          /^所持金：\$?\d+点$/.test(entry.text))
+          /^所持金：\d+点$/.test(entry.text))
       ) {
         return {
           category: 'stub',
-          reason:
-            '出售列表状态头：项目统一用「上午/下午」且不保留 Emuera 格式串中的字面量 $（sale.js 的界面形态偏离）',
+          reason: '出售列表状态头：项目按 #60 统一用「上午/下午」（午前→上午）',
         };
       }
       if (
