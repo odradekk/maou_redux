@@ -59,7 +59,7 @@ test('缺省样本仍是 target/emuera.log：resolve 直达 + cli 全绿且四�
   assert.match(output, /\[结论\] 差异全部有名有姓/);
 });
 
-test('登记表覆盖范围 B 三段 × 两态 + 调教段两份，且路径都锚在 golden/（或旧样本）', () => {
+test('登记表覆盖范围 B 三段 × 两态、调教段两份与出售自然态，且路径都锚在 golden/', () => {
   const names = [
     'mainmenu-natural',
     'mainmenu-max',
@@ -70,6 +70,7 @@ test('登记表覆盖范围 B 三段 × 两态 + 调教段两份，且路径都�
     // #211 第三段：调教段全序列两份（自然态 + 升格加录）
     'train-natural',
     'train-upgrade',
+    'sale-natural',
   ];
   for (const name of names) {
     const resolved = resolve_sample(name);
@@ -96,6 +97,14 @@ test('调教段样本真库直跑：cli 走 train 分流（replay_train_sample �
     assert.match(output, /未解释 0/);
     assert.match(output, /调教段全序列/);
   }
+});
+
+test('出售段样本真库直跑：完整出售链回放且未解释差异归零', () => {
+  const { status, output } = run_cli(['--sample', 'sale-natural']);
+  assert.equal(status, 0, `出售样本完整比对应全绿：\n${output}`);
+  assert.ok(output.includes('[样本] sale-natural（golden/sale-natural.log）'));
+  assert.match(output, /\[事件流比对\] golden \d+ 条 vs ere \d+ 条/);
+  assert.match(output, /未解释 0/);
 });
 
 test('未登记样本名：非零退出 + 报出有效名单，绝不静默回落缺省', () => {

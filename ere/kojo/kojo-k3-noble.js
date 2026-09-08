@@ -38,12 +38,13 @@
  * FLAG:81 分档）与调教首次均推进到 1；二次以后按「淫乱 → 爱慕 → 顺从
  * Lv2 → それ以外」写入 5/4/3/2。
  *
- * 这张票存根（docs/stub-registry.md）：`SELL_MATURO_K0`（成熟出售口上，
- * 随售却票）。死斗场 / 兽奸 / PALAMCNG / MARKCNG / 其余 SELECTCOM 与
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通。死斗场 / 兽奸 / PALAMCNG /
+ * MARKCNG / 其余 SELECTCOM 与
  * 非调教入口均已随 #234 落地。
  */
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -73,7 +74,6 @@ const {
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const {
   gohoubi_after_koujo_family,
   osioski_koujo_family,
@@ -89,7 +89,7 @@ const {
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:81-85）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -12862,7 +12862,7 @@ async function self_kojo_k3(rand) {
     era.print(''); // :7670
     if (era.get(`talent:${target}:122`) !== 1) {
       // :7672
-      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :7672
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :7672
     } // :7672
   }
 

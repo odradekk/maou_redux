@@ -67,12 +67,12 @@
  *
  * 源文件 7953 行全部落地：头部守卫、开局/终局口上（CFLAG:201 状态机）、
  * K8_KOJO2、KOJO_MESSAGE_COM_8 的 51 个 SELECTCOM 分支、DOG_KOJO_8、
- * COLOSSEUM_KOJO_8、PALAMCNG/MARKCNG、SELF_KOJO_K8 与全部非调教函数。
- * STUBBED_CALLS 只剩 `SELL_MATURO_K0` 一条真外部调用（成熟出售口上，
- * 真身属售却票，不在本文件）。
+ * COLOSSEUM_KOJO_8、PALAMCNG/MARKCNG、SELF_KOJO_K8 与全部非调教函数；
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通，STUBBED_CALLS 已空。
  */
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -107,7 +107,6 @@ const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const { piercing_state } = require('#/system/train/piercing-state');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），TALENT/MARK/BASE/TEQUIP 一律 || 0 兜底 */
@@ -115,10 +114,10 @@ const era0 = (k) => era.get(k) || 0;
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。本文件已整份落地，只剩
- * `SELL_MATURO_K0` 一条——它是真外部调用（成熟出售口上，真身属售却票）。
+ * 核对固定）；名单变动必须同步清单。本文件已整份落地，成熟出售调用也已
+ * 随 #338 接通，因此清单为空。
  */
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:61-65）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -10889,7 +10888,7 @@ kojo_message_markcng_family.register(8, kojo_message_markcng_8);
  * 末行 TFLAG:13 = 0。死亡/寿命两支源作 PRINTFORMW 均为空（1:1 保真，源作
  * 未填写台词，非转译遗漏）。妊娠发觉/生产两支的「已发觉/已生产」分支与
  * 「首次发觉/生产」分支内容 1:1 重复（源作如此，同 SELECTCOM 87 先例）。
- * 卖却分支尾调 SELL_MATURO_K0（存根，见 docs/stub-registry.md）。
+ * 卖却分支尾调 SELL_MATURO_K0 已随 #338 接通。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未直接消费，随族签名保留）
  * @param {number} [q] 自慰妄想对象（Q：0 主人 / 1 助手 / 2 野狗，源 :6659/6663，
@@ -11306,7 +11305,7 @@ async function self_kojo_k8(rand, q) {
     }
     if (era0(`talent:${target}:122`) !== 1) {
       // :6870
-      stub_line('SELL_MATURO_K0', '出售成熟奴隶口上', '随出售票'); // CALL SELL_MATURO_K0 // :6871
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :6871
     }
   }
 

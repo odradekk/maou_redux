@@ -60,6 +60,7 @@
  */
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
@@ -75,7 +76,6 @@ const {
 const { heart } = require('#/kojo/kojo-text');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
@@ -84,7 +84,7 @@ const era0 = (k) => era.get(k) || 0;
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:61-65）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -5231,7 +5231,7 @@ async function self_kojo_k4() {
     }
     await era.print(''); // :4303
     if (era0(`talent:${target}:122`) != 1) {
-      stub_line('SELL_MATURO_K0', '卖却分支（成熟贩卖）', '随售却票');
+      await sell_maturo_k0(target); // CALL SELL_MATURO_K0（源行 4305）
     }
   }
 

@@ -576,7 +576,7 @@ async function chara_sale({ prostitution_effect = 0, rand } = {}) {
     era.print(
       `${era_flag.day_count + 1}日  ${era_flag.time === 0 ? '上午' : '下午'}`,
     );
-    era.print(`所持金：${era_flag.money}点`);
+    era.print(`所持金：$${era_flag.money}点`);
     era.drawLine();
     era.print('要卖掉谁呢？');
     era.drawLine({ content: '‥' });

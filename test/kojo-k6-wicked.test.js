@@ -12,7 +12,7 @@
  *   - PALAMCNG 处女丧失、MARKCNG 刻印取得、SELF_KOJO、NTR、GOBI、
  *     GOHOUBI_AFTER；
  *   - 阈值闸 FLAG:7 == 1 阶段耗尽不出声、== 2 旁路；
- *   - 存根清单核对（SELL_MATURO_K0）。
+ *   - 成熟出售调用（SELL_MATURO_K0，#338 接通）。
  */
 'use strict';
 
@@ -452,17 +452,17 @@ test('惩罚口上 choice == 0 支出力', async () => {
   );
 });
 
-test('卖却分支（TFLAG:13 == 6）：存根行（SELL_MATURO_K0 未移植）', async () => {
-  const fixture = await setup_k6((f) => f.store.set('tflag:13', 6));
+test('卖却分支（TFLAG:13 == 6）：进入 SELL_MATURO_K0 真身', async () => {
+  const fixture = await setup_k6((f) => {
+    f.store.set('tflag:13', 6);
+    f.set_inputs(999);
+  });
   const mod = fixture.load_module('kojo/kojo-k6-wicked');
   await mod.self_kojo_k6();
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('SELL_MATURO_K0')),
-    `卖却分支出存根行：${JSON.stringify(fixture.text_lines())}`,
-  );
+  assert.ok(fixture.text_lines().includes('要卖到哪个市场？'));
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', async () => {
+test('SELL_MATURO_K0 已从存根清单移除', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k6-wicked');
   const registry = fs.readFileSync(

@@ -19,12 +19,13 @@
  * それ以外」取首个命中；FLAG:7 == 2（默认）时 CFLAG 上限被旁路、同支
  * 每次出声；FLAG:7 == 1 时逐阶段各出一次声。
  *
- * 这张票存根（docs/stub-registry.md）：SELL_MATURO_K0（售卖扩展口上，
- * 随售卖票）。DOG_KOJO_2 有真身但 COM 头部守卫是静默跳过（:871），
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通。DOG_KOJO_2 有真身但 COM
+ * 头部守卫是静默跳过（:871），
  * 与 K5 同款、不调专用口上。
  */
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
@@ -51,13 +52,12 @@ const { game } = require('#/facade/game');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 /**
  * 口上函数共用的读取面：随机源、当前角色名、自称、门面。
@@ -9788,7 +9788,7 @@ async function self_kojo_k2(rand) {
     await era.print(''); // :6002
     if (era.get(`talent:${target}:122`) !== 1) {
       // :6004
-      stub_line('SELL_MATURO_K0', '售卖扩展口上', '随售卖票'); // :6004
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :6004
     } // :6004
   }
 

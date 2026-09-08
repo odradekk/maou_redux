@@ -12,7 +12,8 @@
  *     专用口上）@KOJO_MESSAGE_PALAMCNG_9（:6015-6307，CFLAG:221-229 首超
  *     阈值）@KOJO_MESSAGE_MARKCNG_9（:6308-6395，CFLAG:297-300 刻印Lv3
  *     首达）@SELF_KOJO_K9（:6396-6799，SELF 分发 + 育儿室/亲离/妊娠/生产/
- *     卖春存根）@DUNGEON_RYOUZYOKU_K9/_AFTER_K9（:6800-6874，H14 迷宫凌辱）
+ *     卖春；成熟出售真身随 #338 接通）@DUNGEON_RYOUZYOKU_K9/_AFTER_K9
+ *     （:6800-6874，H14 迷宫凌辱）
  *     @DUNGEON_VICTORY_K9/_ATTACK_K9（:6876-6932，死斗场）@BENKI_KOUJO_K9
  *     （:6933-7037，肉便器行动）@COLOSSEUM_KOJO_9（:7038-7176，死斗场
  *     专用口上，含 ITEM:PBAND 假阳具持有判定）@NTR_KOUJO_K9（:7177-7276，
@@ -62,6 +63,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -95,7 +97,6 @@ const { heart } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const { piercing_state } = require('#/system/train/piercing-state');
 const {
   peek_aftertrain_s,
@@ -106,7 +107,7 @@ const {
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:54-58）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -12275,7 +12276,7 @@ async function kojo_message_markcng_9() {
 /**
  * @self_kojo_k9（:6396-6799）：SELF 分发（Q 参数）+ 育儿室 CFLAG:273 +
  * 亲离 CFLAG:274 + 妊娠发觉 CFLAG:271（含 CSTR:2 生父自定义称呼插值）+
- * 生产 CFLAG:272 + 卖春（CALL SELL_MATURO_K0 存根）。
+ * 生产 CFLAG:272 + 卖春（CALL SELL_MATURO_K0，#338 接通）。
  */
 async function self_kojo_k9() {
   const target = era_flag.target;
@@ -12727,7 +12728,7 @@ async function self_kojo_k9() {
     await era.print(''); // :6612
     if (era.get(`talent:${target}:122`) != 1) {
       // :6614
-      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :6614
+      await sell_maturo_k0(target, { price: S }); // CALL SELL_MATURO_K0 // :6614
     } // :6614
   } // :6614-6615
 

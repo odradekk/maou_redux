@@ -50,6 +50,8 @@ const REPO = path.resolve(__dirname, '..');
 // #346、#350 三次合并各让 stub 再降 1/1/2/2/1/1。下面是 6fd00d0 的实测。
 // 又一次漏测：PR 档按改动面选不中本文件，master push 从 09cc886 起连红
 // 四次而无人看——判交付时 PR 绿不等于 master 绿，两处都要看。
+// #338 新增 sale-natural 一组（并入 master 后实测，stub 较分支点少 1）；
+// 六份既有读数与 master 一致，本票不改。
 const BASELINE = {
   'mainmenu-natural': { matched: 36, version: 2, stub: 78, unexplained: 0 },
   'mainmenu-max': { matched: 45, version: 2, stub: 106, unexplained: 0 },
@@ -63,6 +65,8 @@ const BASELINE = {
   'saveload-max': { matched: 158, version: 2, stub: 203, unexplained: 0 },
   'daycycle-natural': { matched: 52, version: 2, stub: 214, unexplained: 0 },
   'daycycle-max': { matched: 52, version: 2, stub: 254, unexplained: 0 },
+  // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
+  'sale-natural': { matched: 86, version: 2, stub: 201, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {
@@ -94,6 +98,30 @@ for (const [name, expected] of Object.entries(BASELINE)) {
     );
   });
 }
+
+test('出售资格提示属于已实现输出，缺失时必须进入未解释差异', async () => {
+  const { stream_source } = await replay_scope_b('sale', 'natural');
+  const golden = golden_stream(
+    fs.readFileSync(path.join(REPO, 'golden', 'sale-natural.log'), 'utf8'),
+  ).filter((e) => e.kind !== 'discard' && e.kind !== 'group');
+  const ere = fixture_stream(stream_source).filter(
+    (e) =>
+      e.kind !== 'discard' &&
+      e.kind !== 'group' &&
+      !(e.kind === 'text' && e.text === '温妮可以卖掉了'),
+  );
+  const report = diff_streams(golden, ere, { scope: 'B', segment: 'sale' });
+
+  assert.ok(
+    report.diffs.some(
+      (diff) =>
+        diff.side === 'golden' &&
+        diff.entry.text === '温妮可以卖掉了' &&
+        diff.category === 'unexplained',
+    ),
+  );
+  assert.equal(report.summary.unexplained, 1);
+});
 
 // —— 2. 回放器裁定行为 ——
 

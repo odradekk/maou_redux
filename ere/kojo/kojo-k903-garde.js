@@ -34,6 +34,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 const {
@@ -69,9 +70,8 @@ const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 const default_rand = (n) => Math.floor(Math.random() * n);
 // Emuera 数值变量未声明时为 0；EraElectron 原始 API 返回 undefined（#13）。
 const era0 = (key) => era.get(key) || 0;
@@ -7763,7 +7763,7 @@ async function self_kojo_k903(rand) {
     await era.print(''); // :4748
     if (era0(`talent:${target}:122`) != 1) {
       // :4750
-      stub_line('SELL_MATURO_K0'); // :4750
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :4750
     } // :4750
   } // :4750-4751
 

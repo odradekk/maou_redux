@@ -3,17 +3,17 @@
 把 ere 侧回放与 `target/emuera.log` 黄金样本归一成同一套事件流，逐条比对、
 逐条归因。工具在 `tools/compare/`（离线脚本，零第三方依赖）：
 
-| 文件            | 职责                                                                                      |
-| --------------- | ----------------------------------------------------------------------------------------- |
-| `normalize.js`  | 两侧原始输出 → 事件流（text / input / menu / gauge / lossbar / calc / image；装饰行丢弃） |
-| `diff.js`       | menu/gauge 集合比对 + 其余条目 LCS 对齐；差异经 rules 归因成 version / stub / unexplained |
-| `rules.js`      | 归因规则白名单，每条注明理由（范围 B 规则组受 scope 守卫，#161）                          |
-| `snapshot.js`   | 变量层快照展平与三类差异（变 / 增 / 删）；`era.raw()` 风险记录与 `era.get` 备用方案       |
-| `assertions.js` | 日志算式行 → 变量层断言（含自校验与链一致性）                                             |
-| `replay.js`     | ere 侧回放器（调教段）：#16 夹具 + 温妮播种 + 真实 `run_train` 驱动                       |
-| `replay-b.js`   | ere 侧回放器（范围 B 三段，#161）：世界播种 + 观测面裁定 + Emuera 自由输入通道            |
-| `samples.js`    | 样本名 → 文件的唯一真相源（#156 多样本）                                                  |
-| `cli.js`        | 命令行入口：`node tools/compare/cli.js [--sample <名>]`                                   |
+| 文件            | 职责                                                                                             |
+| --------------- | ------------------------------------------------------------------------------------------------ |
+| `normalize.js`  | 两侧原始输出 → 事件流（text / input / menu / gauge / lossbar / calc / image；装饰行丢弃）        |
+| `diff.js`       | menu/gauge 集合比对 + 其余条目 LCS 对齐；差异经 rules 归因成 version / stub / unexplained        |
+| `rules.js`      | 归因规则白名单，每条注明理由（范围 B 规则组受 scope 守卫，#161）                                 |
+| `snapshot.js`   | 变量层快照展平与三类差异（变 / 增 / 删）；`era.raw()` 风险记录与 `era.get` 备用方案              |
+| `assertions.js` | 日志算式行 → 变量层断言（含自校验与链一致性）                                                    |
+| `replay.js`     | ere 侧回放器（调教段）：#16 夹具 + 温妮播种 + 真实 `run_train` 驱动                              |
+| `replay-b.js`   | ere 侧回放器（范围 B 三段 + 出售自然态，#161/#338）：世界播种 + 观测面裁定 + Emuera 自由输入通道 |
+| `samples.js`    | 样本名 → 文件的唯一真相源（#156 多样本）                                                         |
+| `cli.js`        | 命令行入口：`node tools/compare/cli.js [--sample <名>]`                                          |
 
 测试：`test/compare-*.test.js`（分类器 / 差异引擎 / 快照 / 断言 / 首回合
 真实比对 / 样本登记 / 范围 B 基线锁）。变异自证：变异条目表
@@ -33,6 +33,10 @@
 tools/compare/cli.js --sample <名>` 逐份比对（六份的基线四数锁在
 `test/compare-scope-b.test.js`）。「范围 B 比对通过」= 这三段两态的
 输出流对得上，其中每条差异都有名有姓（rules.js 的范围 B 规则组）。
+
+**出售自然态（#338 起）**：`golden/sale-natural.log` 覆盖能力提升入口、出售
+确认、成熟奴隶市场选择与黑市自然态末路；回放仍由 `replay-b.js` 驱动，独立
+基线在 `test/compare-scope-b.test.js`。
 
 **范围 B 之外（迷宫、战斗、口上、调教深化）明确只靠单测与实机验收**，
 不做对拍（#109 裁定问题六）；移植到那些子系统时先补样本、扩归因，再谈

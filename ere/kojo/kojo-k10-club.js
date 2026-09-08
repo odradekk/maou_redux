@@ -37,13 +37,13 @@
  * GROTESQUE_KOUJO_K10（TFLAG:530 七档，源注释「内容参照 GROTESQUE.ERB」）均
  * 是空 PRINTFORMW 台词槽，原作留空、非转译缺陷，逐条核对 target/ 后保留。
  *
- * 这张票存根（docs/stub-registry.md）：`SELL_MATURO_K0`（成熟出售口上，
- * 随售却票，K1/K3/K4/K6 同款存根）。
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */
 
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -72,7 +72,6 @@ const {
   chara_name,
   chara_nickname,
 } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const { peek_aftertrain_s } = require('#/event/event-aftertrain');
 
 const { piercing_state } = require('#/system/train/piercing-state');
@@ -91,7 +90,7 @@ const {
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:62-67）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -11695,7 +11694,7 @@ async function self_kojo_k10(rand, q) {
     await era.print(''); // :6294
     if (era.get(`talent:${target}:122`) != 1) {
       // :6296
-      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :6296
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :6296
     } // :6296
   } // :6296-6298
 
