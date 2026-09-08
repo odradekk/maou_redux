@@ -239,6 +239,11 @@ export const FILES = [
         ref: '283',
         any: [/PRINTLCD \[109\] 侵略/],
       },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '290-292',
+        any: [/^IF FLAG:83 \|\| FLAG:84$/m, /PRINTLCD \[111\] 设施·设备/],
+      },
       // [200]/[300] 存读档按钮（#137：原作无条件渲染，:303/:306 前无 IF
       // 守卫；#136 勘误移交——渲染侧从未画过，据点两处入口实机不可达）
       {

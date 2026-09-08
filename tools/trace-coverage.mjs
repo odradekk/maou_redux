@@ -114,7 +114,7 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 89; // #350：MAOUNET/IKAI/TATOO 完成，TEST.ERB 判定不实现。
+export const PENDING_BASELINE = 78; // #350：其他/ 目录扫尾（含 TEST.ERB 判定不实现）；与 #337/#346 合并后实测（82 − 4）。
 
 /**
  * 存根清单「归因不到」行数基线（#331 验收整改冻结，只减不增）。归因不到

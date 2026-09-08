@@ -26,6 +26,7 @@ const {
 const { select_target } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
+const { infrastructure } = require('#/page/page-infrastructure');
 const { save_game, load_game } = require('#/page/page-save-load');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line_wait } = require('#/utils/stub-line');
@@ -48,7 +49,6 @@ const STUBBED_CALLS = [
   'ITEM_SHOP',
   'TAILOR_MAIN',
   'SECRET_LABO',
-  'INFRASTRUCTURE',
   'BEGIN TURNEND',
   'CONFIG',
   'LABO',
@@ -277,7 +277,7 @@ async function usershop(result) {
   ) {
     // 设施·设备（:132-133）：守卫 FLAG:83 || FLAG:84（肉便器 / 展品数，
     // DRAW_DUNGEON_OVERVIEW 的统计同源）
-    await stub_line_wait('INFRASTRUCTURE', '设施·设备', '随设施票');
+    await infrastructure(selectable_count);
   } else if (result === 199) {
     // 休息（:134-138）：内联文本 + FLAG:9 += 5（税金）+ BEGIN TURNEND
     // （出口之一）。半移植会落进「税金加了、回合没结」的错态，整支随

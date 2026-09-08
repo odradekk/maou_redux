@@ -1064,9 +1064,9 @@ export default [
   {
     desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = [\n  'MONSTER_SKILL',",
+    find: "const STUBBED_CALLS = [\n  'CAMPAIGN_MONSTER_LIST',",
     replace:
-      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'MONSTER_SKILL',",
+      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'CAMPAIGN_MONSTER_LIST',",
     tests: ['dungeon-magic'],
     must_mention: '不再登记为存根',
   },

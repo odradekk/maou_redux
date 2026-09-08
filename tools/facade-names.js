@@ -330,6 +330,14 @@ const cflag = {
       ':318 CFLAG:102 = 誰によって妊娠させられたか（マスター=1, 助手=2, 奴隷=3, 客=4, 犬=5, モンスター・触手=6, 狂王=7）',
     ),
   ),
+  112: named_tail(
+    '胎儿怪物编号',
+    erb('其他/NINSIN.ERB', ':172-176 CFLAG:112 = 怀孕中的怪物编号'),
+  ),
+  113: named_tail(
+    '异常妊娠部位',
+    erb('其他/NINSIN.ERB', ':86-103/:202-234 CFLAG:113 = 异常妊娠部位'),
+  ),
   ...fill(650, 657, (i) =>
     named(
       i === 650 ? 'NTR再捕获' : `NTR_${i}`,
@@ -772,6 +780,10 @@ const cstr = {
     '加入时名字',
     erb('EVENT/ENTER_ENEMY.ERB', ':198 CSTR:A:1 = %NAME:A%（SYSTEM 同款惯例）'),
   ),
+  2: named_tail(
+    '孩子父亲名字',
+    erb('其他/NINSIN.ERB', ':316 CSTR:2 = 孩子父亲的名字'),
+  ),
   // 初体验对象名：原作破处时把相手名抄进 CSTR:3（DUNGEON_RYOUZYOKU.ERB
   // :2445/:2595 等；CHARA_FIRST_EXP.ERB:17 读它显示）。属主 train
   // （ownership/cstr-ownership.yml "3-4"）；不进 yml/CStr.yml 的理由同上。
@@ -788,6 +800,15 @@ const cstr = {
   4: named_tail(
     '初吻对象名',
     erb('口上/EVENT_K8_スペード.ERB', ':393 CSTR:TARGET:4 = %SAVESTR:ASSI%'),
+  ),
+  // 家人末路：售出成熟角色后，把结局称号与角色名写给检索到的家人。
+  // 属主 event（ownership/cstr-ownership.yml "5"）；stronghold 必须经门面写。
+  5: named_tail(
+    '家人末路',
+    erb(
+      '售卻相關/SELL_MATURO_K1.ERB',
+      ':1370-1371 CSTR:(FAMILY:2):5 = %MATURO%%SAVESTR:TARGET%（K2 :215-216 同构）',
+    ),
   ),
   // 录像标题：出售成功时生成，日程收益与录像书架读取。属主 stronghold。
   6: named_tail(

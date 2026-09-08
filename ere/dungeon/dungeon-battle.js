@@ -57,6 +57,7 @@ const {
   monster_name,
 } = require('#/dungeon/monster-data');
 const magic_mod = require('#/dungeon/magic');
+const monster_skill_mod = require('#/dungeon/monster-skill');
 // H9（#178）任务真身：QUEST_BATTLE_SET / RESULT_QUEST 经模块对象引用
 // （对比测试可替换导出）。dungeon-quest 对本文件的 CAMPAIGN_MONSTER_LIST
 // 存根是函数内延迟 require——两侧只一处顶层引用，无环（dungeon.js ↔
@@ -76,7 +77,6 @@ const {
  * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除。
  */
 const STUBBED_CALLS = [
-  'MONSTER_SKILL',
   'CAMPAIGN_MONSTER_LIST',
   'BEFORE_AUTOTRAIN',
   'COM13_AUTO',
@@ -101,15 +101,6 @@ function she(cid) {
 }
 
 // —— 存根层（#175 登记，归属见 docs/stub-registry.md）——
-
-/**
- * @MONSTER_SKILL 存根（怪物相關/MONSTER_SKILL.ERB；怪物技能票）：怪物的
- * 特殊能力发动（粘液捕获/麻痹/诱惑等）。存根返回 0（不发动）。
- * @returns {number} 原作 RESULT（存根恒 0；999 = 中断战斗）
- */
-function monster_skill() {
-  return stub_line('MONSTER_SKILL', '怪物技能', '随怪物技能票');
-}
 
 // @QUEST_BATTLE_SET / @RESULT_QUEST（迷宮/DUNGEON_QUEST.ERB）：#178（H9）
 // 起为真身 ere/dungeon/dungeon-quest.js 的 quest_battle_set / result_quest
@@ -1062,7 +1053,9 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
 
   // :1060-1063 怪物技能（E:(MONID+5) 为技能号——off-by-one 下实读速度槽）
   const skill_no = e_get(monid + 5);
-  if (monster_skill(arg0, skill_no, monid) === 999) {
+  if (
+    (await monster_skill_mod.monster_skill(arg0, skill_no, monid, rand)) === 999
+  ) {
     return 999;
   }
 

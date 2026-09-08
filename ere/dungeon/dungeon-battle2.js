@@ -36,10 +36,10 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
 const { equip_check, equip_powerup } = require('#/system/equip/equip-check');
 const { equip_database } = require('#/system/equip/equip-lookup');
 const { e_get, e_set, monster_data } = require('#/dungeon/monster-data');
+const monster_skill_mod = require('#/dungeon/monster-skill');
 const battle = require('#/dungeon/dungeon-battle');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
 const { party_del } = require('#/dungeon/dungeon-party');
@@ -48,7 +48,7 @@ const { party_del } = require('#/dungeon/dungeon-party');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL'];
+const STUBBED_CALLS = [];
 
 /** 名字承载（#5 决议） */
 function name_of(cid) {
@@ -66,14 +66,6 @@ function clitoris_word(cid) {
 }
 
 // —— 存根层（#175 登记）——
-
-/**
- * @SLAVE_MONSTER_SKILL 存根（怪物技能票）：精英部下的特技。存根返回 0。
- * @returns {number} 原作 RESULT（存根恒 0；999 = 中断）
- */
-function slave_monster_skill() {
-  return stub_line('SLAVE_MONSTER_SKILL', '精英部下特技', '随怪物技能票');
-}
 
 /**
  * @PC_RYOU（迷宮/DUNGEON_RYOUZYOKU.ERB；#182 H13）：败者被凌辱的演出
@@ -362,8 +354,8 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     return 999;
   }
 
-  // :688-691 精英部下的特技（存根）
-  if (slave_monster_skill(arg2, arg0) === 999) {
+  // :688-691 精英部下的特技
+  if ((await monster_skill_mod.slave_monster_skill(arg2, arg0, rand)) === 999) {
     return 999;
   }
 

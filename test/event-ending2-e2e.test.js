@@ -133,6 +133,12 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
   const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
+  // #346 接入的每日召唤与本用例的勇者推进无关；隔离它的随机消费，避免
+  // 全局 PRNG 序列把固定剧本漂移到需要额外输入的凌辱分支。召唤自身及
+  // EVENT_NEXTDAY 接线由 chara-pregnancy.test.js 独立覆盖。
+  const summon_mod = fixture.load_module('dungeon/monster-summon');
+  summon_mod.summon_monster = async () => 0;
+
   // 勇者来袭开着（与阶段 1 e2e 的隔离方向相反，文件头）
   fixture.override_math_random(mulberry32(20250601));
   let rounds = 0;

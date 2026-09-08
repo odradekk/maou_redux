@@ -214,6 +214,7 @@ test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 EN
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
   fixture.store.set('flag:61', 3); // 熏香使用次数非零，验证清零
+  fixture.load_module('dungeon/monster-summon').summon_monster = async () => 0;
   const { run_event_nextday, run_event_newday } = fixture.load_module(
     'event/event-nextday',
   );
@@ -406,12 +407,10 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'EVENT_MAZOKU',
     'APHRODISIAC_ADDICT',
     'SOUL_DISLOCATION',
-    'NINSIN_MAIN',
     'OFFERVIRGIN_CHECK',
     'NIGHT_STALKING_CHECK',
     // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）；
     // #177 起 DUNGEON_ROOM_DAY 换真身（ere/dungeon/dungeon-room.js）
-    'SUMMON_MONSTER',
     'PILLORY',
     'SABBATH',
     'SABBATH_DAY',
