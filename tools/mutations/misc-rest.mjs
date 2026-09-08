@@ -1,4 +1,4 @@
-// issue #350：其他/ 残余七文件（M7220-M7259、M7340-M7353、M7440-M7559）。
+// issue #350：其他/ 残余七文件（M7220-M7259、M7340-M7353、M7440-M7561）。
 const make = (id, desc, file, find, replace, must_mention) => ({
   desc: `M${id} ${desc}`,
   file,
@@ -42,9 +42,11 @@ const export_menu_rules =
   'MAOUNET：导出菜单覆盖选中、取消选中、五人上限与两层确认';
 const import_rules = 'MAOUNET：导入菜单只接受 0..19 并尝试对应的 1000..1019 档';
 const menu_routes = 'MAOUNET：通信菜单的导出、导入、等级上限与等级一分支均可达';
+const export_candidates = 'MAOUNET：导出候选只显示据点内的非魔王角色';
+const level_one_toggle = 'MAOUNET：等级一开关连续点击两次回到关闭';
 
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 174;
+export const COUNT = 176;
 
 export default [
   make(
@@ -1447,5 +1449,21 @@ export default [
     'const level = chara(cid).train.异界综合征;',
     'const level = chara(cid + 1).train.异界综合征;',
     ikai,
+  ),
+  make(
+    7560,
+    '导出候选不再排除侵攻中角色',
+    'ere/system/cross-save-sharing.js',
+    'if (cid === 0 || chara(cid).invasion.状态 !== 0) continue;',
+    'if (cid === 0) continue;',
+    export_candidates,
+  ),
+  make(
+    7561,
+    '等级一开关恒置开启',
+    'ere/system/cross-save-sharing.js',
+    'era_flag.communication_hero_level_one ^= 1;',
+    'era_flag.communication_hero_level_one = 1;',
+    level_one_toggle,
   ),
 ];

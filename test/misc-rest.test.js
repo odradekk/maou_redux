@@ -1278,6 +1278,20 @@ test('MAOUNET：空选择时决定键不进入确认页', async () => {
   assert.deepEqual(inputs, []);
 });
 
+test('MAOUNET：导出候选只显示据点内的非魔王角色', async () => {
+  const { fixture, net } = setup_communication([0, 17, 18]);
+  fixture.store.set('cflag:18:1', 2);
+  fixture.set_inputs(0, 100, 9);
+
+  assert.equal(await net.maounet(), 0);
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button' && /^角色\d+ LV/.test(line.text))
+      .map(({ accelerator }) => accelerator),
+    [17],
+  );
+});
+
 test('MAOUNET：导出菜单覆盖选中、取消选中、五人上限与两层确认', async () => {
   const full = setup_communication([0, 17, 18, 19, 20, 21, 22]);
   full.fixture.set_inputs(0, 17, 18, 19, 20, 21, 22, 17, 99, 1, 100, 9);
@@ -1376,6 +1390,30 @@ test('MAOUNET：菜单可切换通信勇者等级规则并清空公共记录', a
     fixture.calls.some((call) => call.api === 'saveGlobal'),
     '清空通信记录后必须持久化公共存档',
   );
+});
+
+test('MAOUNET：等级一开关连续点击两次回到关闭', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:77', 0);
+  fixture.set_inputs(4, 4, 9);
+  const { maounet } = fixture.load_module('system/cross-save-sharing');
+
+  assert.equal(await maounet(), 0);
+  assert.deepEqual(
+    fixture.lines_history
+      .filter(
+        (line) =>
+          line.type === 'button' &&
+          line.text.startsWith('通信勇者登场时为等级1'),
+      )
+      .map(({ text }) => text),
+    [
+      '通信勇者登场时为等级1(现在:OFF)',
+      '通信勇者登场时为等级1(现在:ON)',
+      '通信勇者登场时为等级1(现在:OFF)',
+    ],
+  );
+  assert.equal(fixture.store.get('flag:77'), 0);
 });
 
 test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 分支', async () => {
