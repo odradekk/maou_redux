@@ -28,9 +28,13 @@ const era = require('#/era-electron');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
+  banishment_koujo_family,
+  exucution_koujo_family,
+  grotesque_koujo_family,
   kojo_message_com_family,
   museum_koujo_family,
   ntr_koujo_family,
+  public_exucution_koujo_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
 const {
@@ -11256,6 +11260,10 @@ ryouzyoku_kojo_family.register(2, dungeon_ryouzyoku_k2);
 ryouzyoku_after_kojo_family.register(2, dungeon_ryouzyoku_after_k2);
 ntr_koujo_family.register(2, ntr_koujo_k2);
 museum_koujo_family.register(2, museum_koujo_k2);
+exucution_koujo_family.register(2, exucution_koujo_k2);
+banishment_koujo_family.register(2, banishment_koujo_k2);
+public_exucution_koujo_family.register(2, public_exucution_koujo_k2);
+grotesque_koujo_family.register(2, grotesque_koujo_k2);
 
 module.exports = {
   STUBBED_CALLS,

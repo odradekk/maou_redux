@@ -316,6 +316,13 @@ function draw_main_menu() {
   // 校验见 #130）。
   era.printButton('侵略', 109);
 
+  // :290-292 [111] 设施·设备：肉便器或博物馆展品存在时才显示。
+  if ((era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0) {
+    era.printButton('设施·设备', 111);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
+
   // :303 [200] 保存 / :306 [300] 读取 —— 指令面板里第三、四个接通的真身
   // 入口：分发在 page-shop.js 的 usershop（200 → save_game、300 →
   // load_game，#136 落地）。原作 `PRINTLCD [200] 保存` / `PRINTLCD [300]
