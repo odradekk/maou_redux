@@ -238,21 +238,8 @@ function child_birth_place(cid) {
   return 0;
 }
 
-/** @N_CHANGE_STATUS（:647-823）：妊娠发觉时的身体与精神变化。 */
-async function n_change_status(cid, rand = default_rand) {
-  chara(cid).dungeon.体力上限 = Math.max(1, chara(cid).dungeon.体力上限 - 500);
-  chara(cid).dungeon.体力 = Math.min(
-    chara(cid).dungeon.体力上限,
-    chara(cid).dungeon.体力,
-  );
-  n_breast_grow(cid, rand);
-  era.print(`由于怀孕，${name_of(cid)}的胸部而变大了。`);
-  if (!chara(cid).chara.母乳体质) {
-    era.print(`${name_of(cid)}开始分泌母乳了。`);
-    await era.waitAnyKey();
-    chara(cid).chara.母乳体质 = 1;
-  }
-
+/** 妊娠压力公式；独立入口用于精确验证各项增减。 */
+function n_change_stress(cid) {
   const source = chara(cid).event.妊娠相手;
   const father = resolve_father(cid);
   const love = chara(cid).stronghold.爱慕;
@@ -288,6 +275,27 @@ async function n_change_status(cid, rand = default_rand) {
   if (chara(cid).chara.母性) stress -= 40;
   if (era.get(`talent:${cid}:134`)) stress += 20; // 软弱
   if (chara(cid).chara.生育经验) stress -= 20;
+  return stress;
+}
+
+/** @N_CHANGE_STATUS（:647-823）：妊娠发觉时的身体与精神变化。 */
+async function n_change_status(cid, rand = default_rand) {
+  chara(cid).dungeon.体力上限 = Math.max(1, chara(cid).dungeon.体力上限 - 500);
+  chara(cid).dungeon.体力 = Math.min(
+    chara(cid).dungeon.体力上限,
+    chara(cid).dungeon.体力,
+  );
+  n_breast_grow(cid, rand);
+  era.print(`由于怀孕，${name_of(cid)}的胸部而变大了。`);
+  if (!chara(cid).chara.母乳体质) {
+    era.print(`${name_of(cid)}开始分泌母乳了。`);
+    await era.waitAnyKey();
+    chara(cid).chara.母乳体质 = 1;
+  }
+
+  const stress = n_change_stress(cid);
+  const love = chara(cid).stronghold.爱慕;
+  const lewd = chara(cid).stronghold.淫乱;
 
   if (stress < 100 || cid === 0) {
     era.print(`${name_of(cid)}高兴地爱抚着自己的肚子………`);
@@ -793,6 +801,7 @@ module.exports = {
   gb_add_guard,
   gb_add_slave,
   gb_define_name,
+  n_change_stress,
   n_change_status,
   n_reset_status,
   child_birth_place,

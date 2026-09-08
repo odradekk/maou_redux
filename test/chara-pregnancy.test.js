@@ -37,6 +37,7 @@ const PREGNANCY_FUNCTIONS = [
   'gb_add_guard',
   'gb_add_slave',
   'gb_define_name',
+  'n_change_stress',
   'n_change_status',
   'n_reset_status',
   'child_birth_place',
@@ -48,7 +49,7 @@ const PREGNANCY_FUNCTIONS = [
   'child_care_depart',
 ];
 
-test('两份源文件的 23 个函数全部导出真身', () => {
+test('两份源文件的函数全部导出真身', () => {
   const fixture = create_era_fixture();
   const pregnancy = fixture.load_module('chara/chara-pregnancy');
   const summon = fixture.load_module('dungeon/monster-summon');
@@ -648,24 +649,66 @@ test('妊娠发觉覆盖七种受孕来源、怪物实名两侧和期限边界',
 
 test('妊娠压力覆盖各来源、关系与修正项，并区分崩坏、既有崩坏和魔王', async () => {
   const cases = [
-    { source: 1, lewd: 1, broken: 0 },
-    { source: 2, love: 1, relation: 0, broken: 0 },
-    { source: 2, lewd: 1, relation: 0, broken: 0 },
-    { source: 2, love: 1, relation: 50, broken: 0 },
-    { source: 2, love: 1, relation: -1000, broken: 1, loses_love: true },
-    { source: 3, lewd: 1, relation: 50, broken: 0 },
-    { source: 4, love: 1, weak: 1, broken: 1, loses_love: true },
-    { source: 4, lewd: 1, broken: 0 },
-    { source: 5, love: 1, broken: 1, loses_love: true },
-    { source: 5, lewd: 1, bitch: 1, dog_spouse: 1, broken: 0 },
-    { source: 5, broken: 0 },
-    { source: 6, love: 1, broken: 1, loses_love: true },
-    { source: 6, lewd: 1, demon: 1, spouse: 6, broken: 0 },
-    { source: 6, broken: 0 },
-    { source: 7, love: 1, weak: 1, broken: 1, loses_love: true },
-    { source: 7, lewd: 1, broken: 0 },
-    { source: 1, births: 2, broken: 0 },
-    { source: 6, lewd: 1, weak: 1, broken: 1, loses_lewd: true },
+    { source: 1, lewd: 1, stress: 30, broken: 0 },
+    { source: 2, love: 1, relation: 0, stress: 20, broken: 0 },
+    { source: 2, lewd: 1, relation: 0, stress: 10, broken: 0 },
+    { source: 2, love: 1, relation: 50, stress: 20, broken: 0 },
+    {
+      source: 2,
+      love: 1,
+      relation: -1000,
+      stress: 130,
+      broken: 1,
+      loses_love: true,
+    },
+    { source: 3, lewd: 1, relation: 50, stress: 10, broken: 0 },
+    {
+      source: 4,
+      love: 1,
+      weak: 1,
+      stress: 100,
+      broken: 1,
+      loses_love: true,
+    },
+    { source: 4, lewd: 1, stress: 50, broken: 0 },
+    { source: 5, love: 1, stress: 100, broken: 1, loses_love: true },
+    {
+      source: 5,
+      lewd: 1,
+      bitch: 1,
+      dog_spouse: 1,
+      stress: 0,
+      broken: 0,
+    },
+    { source: 5, stress: 90, broken: 0 },
+    { source: 6, love: 1, stress: 100, broken: 1, loses_love: true },
+    {
+      source: 6,
+      lewd: 1,
+      demon: 1,
+      spouse: 6,
+      stress: 0,
+      broken: 0,
+    },
+    { source: 6, stress: 90, broken: 0 },
+    {
+      source: 7,
+      love: 1,
+      weak: 1,
+      stress: 100,
+      broken: 1,
+      loses_love: true,
+    },
+    { source: 7, lewd: 1, stress: 30, broken: 0 },
+    { source: 1, births: 2, stress: 40, broken: 0 },
+    {
+      source: 6,
+      lewd: 1,
+      weak: 1,
+      stress: 100,
+      broken: 1,
+      loses_lewd: true,
+    },
     {
       source: 5,
       love: 1,
@@ -673,9 +716,10 @@ test('妊娠压力覆盖各来源、关系与修正项，并区分崩坏、既�
       maternal: 1,
       weak: 1,
       births: 2,
+      stress: 40,
       broken: 0,
     },
-    { source: 5, love: 1, already_broken: 1, broken: 1 },
+    { source: 5, love: 1, already_broken: 1, stress: 100, broken: 1 },
   ];
   for (const spec of cases) {
     const fixture = create_era_fixture();
@@ -699,9 +743,9 @@ test('妊娠压力覆盖各来源、关系与修正项，并区分崩坏、既�
     fixture.store.set('talent:1:314', spec.demon ? 9 : 0);
     fixture.store.set('cflag:1:601', spec.dog_spouse ? 900 : spec.spouse || 0);
 
-    await fixture
-      .load_module('chara/chara-pregnancy')
-      .n_change_status(1, seq([]));
+    const pregnancy = fixture.load_module('chara/chara-pregnancy');
+    assert.equal(pregnancy.n_change_stress(1), spec.stress);
+    await pregnancy.n_change_status(1, seq([]));
 
     assert.equal(view.stronghold.崩坏 || 0, spec.broken);
     if (spec.loses_love) assert.equal(view.stronghold.爱慕, 0);
