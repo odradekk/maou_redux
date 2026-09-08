@@ -58,6 +58,7 @@
  */
 
 const era = require('#/era-electron');
+const { get_ex_kojo_num } = require('#/chara/chara-ex');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
@@ -181,22 +182,6 @@ function kojo_handler_id(arg = -1) {
  * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）
  * @returns {number} 口上编号（普通 100-119；EX 1001-1700；无命中时 0）
  */
-let get_ex_kojo_num_local = 0;
-
-/**
- * @GET_EX_KOJO_NUM（EXCOM.ERB:31-38）：扩展素质 101-800 中最后一格命中者
- * 映射为 1001-1700。LOCAL 是按函数名持久化的 public static；原作未在调用
- * 开头清零，所以无命中时会残留上一次结果。该缺陷 1:1 保留。
- */
-function get_ex_kojo_num(cid) {
-  for (let count = 101; count < 801; count += 1) {
-    if (era.get(`ex_talent:${cid}:${count}`)) {
-      get_ex_kojo_num_local = count + 900;
-    }
-  }
-  return get_ex_kojo_num_local;
-}
-
 function get_kojo_num(arg = -1) {
   const cid = arg < 0 ? era_flag.target : arg; // :89-91
   let local = get_ex_kojo_num(cid); // :135 EX 口上先判，普通素质后写覆盖

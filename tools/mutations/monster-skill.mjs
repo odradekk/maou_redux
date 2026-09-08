@@ -325,9 +325,8 @@ export default [
   {
     desc: 'M7177 SLAVE_MONSTER_SKILL 重新登记成 dungeon-battle2 存根',
     file: 'ere/dungeon/dungeon-battle2.js',
-    find: "const STUBBED_CALLS = ['GET_TATTOO'];",
-    replace:
-      "const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL', 'GET_TATTOO']; // 变异",
+    find: 'const STUBBED_CALLS = [];',
+    replace: "const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL']; // 变异",
     tests: ['monster-skill'],
     must_mention: 'SLAVE_MONSTER_SKILL 不再登记为存根',
   },

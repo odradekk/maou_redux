@@ -166,7 +166,6 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   for (const name of [
     'FIRST_SETTING', // 其余各问的占位（first-setting.js 打印）
     'CHARA_NAME_INIT',
-    'EX_TALENTNAME_INIT',
     'CHARA_NAME_DEFINE', // 村娘分支内，#50 起可达
     'CHAR_BODY_GENERATE_WAPPED', // 同上
   ]) {
@@ -261,11 +260,10 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
     '11 个存读档指针槽必须初始化为 -1（登记后 fillData 补 0 会冒充 0 号槽）',
   );
   assert.deepEqual(fixture.var_writes, expected_init_writes(0));
-  // 存根清单核对用的导出（6 个：FIRST_SETTING 移交 first-setting.js 的
+  // 存根清单核对用的导出（FIRST_SETTING 移交 first-setting.js 的
   // 部分实现，村娘分支的两个存根自 #50 起在可达路径上）
   assert.deepEqual(STUBBED_CALLS, [
     'CHARA_NAME_INIT',
-    'EX_TALENTNAME_INIT',
     'RAND_CHARA_MAKE',
     'CHARA_NAME_DEFINE',
     'CHAR_BODY_GENERATE_WAPPED',

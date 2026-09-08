@@ -75,6 +75,19 @@ const era_global = {
   set greeting_collapsed(v) {
     era.set('global:99', v);
   },
+  /**
+   * 通信勇者记录（global:100 ↔ GLOBAL:100）
+   * @returns {string}
+   */
+  get communication_roster() {
+    return era.get('global:100') ?? '';
+  },
+  /**
+   * @param {string} v
+   */
+  set communication_roster(v) {
+    era.set('global:100', v);
+  },
 };
 // GENERATED END
 
@@ -97,6 +110,9 @@ const era_global = {
 //       TITLE ver1.0.8.ERB @SYSTEM_TITLE（IF GLOBAL:98 == 0 分支）。
 //   greeting_collapsed   GLOBAL:99 致辞折叠开关：0=展开完整制作名单、1=折叠为
 //       三行摘要；标题画面按钮 9 切换。源同上（IF GLOBAL:99 == 0 分支）。
+//   communication_roster GLOBAL:100 通信勇者记录：原作 GLOBALS:0..99 的字符串
+//       记录在 ere 中合并为 JSON 数组；元素仍保留 MAOUNET.ERB @INPORT_B 的
+//       下划线与斜线分隔格式。源: target/ERB/其他/MAOUNET.ERB。
 //
 // 持久化：global 表即公共存档 global.sav 的主体，引擎在每次脚本启动前自动
 // loadGlobal、在特定存档保存/读取等时机自动 saveGlobal。标题页改完开关后应像

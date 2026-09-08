@@ -16,6 +16,7 @@ const era = require('#/era-electron');
 const { relation_debugprint } = require('#/chara/chara-family');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, emit, TIER } = require('#/system/event/registry');
+const { maounet } = require('#/system/cross-save-sharing');
 const { chara_sale, check_sellassiable } = require('#/system/stronghold/sale');
 const {
   create_main_menu,
@@ -50,7 +51,6 @@ const STUBBED_CALLS = [
   'SECRET_LABO',
   'BEGIN TURNEND',
   'CONFIG',
-  'MAOUNET',
   'LABO',
   'CHARA_INFO_INDIVIDUAL_WAPPED',
   'SHOW_FLOOR',
@@ -296,7 +296,7 @@ async function usershop(result) {
     await stub_line_wait('CONFIG', '设定', '随设定票');
   } else if (result === 888) {
     // 通信（:146）
-    await stub_line_wait('MAOUNET', '通信', '随通信票');
+    await maounet();
   } else if (result === 400) {
     // LABO（:148；面板无此按钮，2D 迷宫地质相关的隐入口）
     await stub_line_wait('LABO', '2D 迷宫实验室', '随迷宫票');
@@ -399,7 +399,7 @@ async function run_shop({ skip_eventshop = false } = {}) {
 }
 
 // usershop 一并导出（#130）：引擎的 input() 只送达已打印按钮的快捷键，
-// 存根分支（101-888、498/499、52x、999）按政策不印按钮（按钮与真身同票
+// 未实现分支（101-777、498/499、52x、999）按政策不印按钮（按钮与真身同票
 // 落地，见 page-main-menu 的普查注释）——这些分支的分发行为只能经直接
 // 调用测试，不经输入通道
 module.exports = { run_shop, usershop, STUBBED_CALLS };

@@ -44,6 +44,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
 const { curse_equip_ring } = require('#/system/equip/equip-curse');
 const { event_video_day } = require('#/system/stronghold/sell-video');
+const { ntr_video } = require('#/system/ntr');
 // H8（#177）起 DUNGEON_ROOM_DAY 真身：设施日结算（商店街税入 + 牧场）。
 // 随机源不注入（缺省 Math.random）——日结算的税额掷与迷宫推进的随机源
 // 在原作同属全局 RAND 序列，ere 侧各自缺省即等价
@@ -65,7 +66,6 @@ const STUBBED_CALLS = [
   'PILLORY',
   'SABBATH',
   'SABBATH_DAY',
-  'NTR_VIDEO',
   'TAX_GET',
   'SENGEN_VIDEO_DE',
   'MAOU_KOUHO',
@@ -239,7 +239,7 @@ async function run_event_nextday() {
     stub_line('PILLORY', '示众台事件');
     stub_line('SABBATH', '安息日事件');
     stub_line('SABBATH_DAY', '安息日日程');
-    stub_line('NTR_VIDEO', 'NTR 影像事件');
+    await ntr_video(cid);
     await event_video_day(cid);
 
     // :146-154 善恶值随机变动（KARMA 四支；:147 条件是非处女——与原作
