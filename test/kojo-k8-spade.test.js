@@ -3827,14 +3827,12 @@ test('SELF_KOJO：卖却 それ以外 + 非扶她尾调 SELL_MATURO_K0', async (
   const fixture = await setup_k8((f) => {
     f.store.set('tflag:13', 6);
     f.store.set('talent:31:122', 0);
+    f.set_inputs(999);
   });
   await speak_self_kojo_k8(fixture);
   const lines = fixture.text_lines();
   assert.ok(lines.includes('「我的结局就是这样什么的…骗…骗人吧………」'));
-  assert.ok(
-    lines.some((l) => l.includes('SELL_MATURO_K0')),
-    '非扶她应尾调存根 SELL_MATURO_K0',
-  );
+  assert.ok(lines.includes('要卖到哪个市场？'));
 });
 
 test('SELF_KOJO：卖却 扶她（TALENT:122==1）不调 SELL_MATURO_K0', async () => {

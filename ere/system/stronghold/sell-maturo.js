@@ -19,6 +19,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo-k0');
 const { estimate_chara } = require('#/system/stronghold/sale');
 const { video_maturo } = require('#/system/stronghold/sell-video');
 const { search_family } = require('#/chara/chara-family');
@@ -2215,6 +2216,7 @@ async function sell_maturo_k2(cid = era_flag.target, { price } = {}) {
 }
 
 module.exports = {
+  sell_maturo_k0,
   sell_maturo_k1,
   sell_maturo_k2,
   sell_maturo_k2_branch,

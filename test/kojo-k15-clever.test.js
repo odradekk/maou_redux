@@ -2070,7 +2070,7 @@ test('SELF_KOJO 调教后自慰：それ以外写 CFLAG:261；Q==1 助手', asyn
   );
 });
 
-test('SELF_KOJO 夜袭 PRINTDATAL；出售爱慕 + SELL_MATURO 存根', async () => {
+test('SELF_KOJO 夜袭 PRINTDATAL；出售爱慕 + SELL_MATURO 真身', async () => {
   const night = await setup_k15((f) => f.store.set('tflag:13', 5));
   await self_k15(night, seq_rand(0));
   assert.ok(
@@ -2083,16 +2083,14 @@ test('SELF_KOJO 夜袭 PRINTDATAL；出售爱慕 + SELL_MATURO 存根', async ()
   const sell = await setup_k15((f) => {
     f.store.set('tflag:13', 6);
     f.store.set(`talent:${CID}:85`, 1);
+    f.set_inputs(999);
   });
   await self_k15(sell);
   assert.ok(
     sell.text_lines().some((l) => l.includes('以后…请您')),
     '出售爱慕',
   );
-  assert.ok(
-    sell.text_lines().some((l) => l.includes('@SELL_MATURO_K0')),
-    'SELL_MATURO_K0 存根行',
-  );
+  assert.ok(sell.text_lines().includes('要卖到哪个市场？'));
 });
 
 test('SELF_KOJO 妊娠发觉：爱慕+主人 CFLAG:102==1', async () => {
@@ -2109,14 +2107,14 @@ test('SELF_KOJO 妊娠发觉：爱慕+主人 CFLAG:102==1', async () => {
   assert.equal(fixture.store.get(`cflag:${CID}:271`), 1, '妊娠发觉 → 271=1');
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', async () => {
+test('SELL_MATURO_K0 已从存根清单移除', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k15-clever');
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.deepEqual(STUBBED_CALLS, ['SELL_MATURO_K0']);
+  assert.deepEqual(STUBBED_CALLS, []);
   for (const name of STUBBED_CALLS) {
     assert.ok(
       registry.includes(name),

@@ -25,7 +25,7 @@
  *     PUBLIC_EXUCUTION / GROTESQUE / ENTERENEMY / GOHOUBI_REQUEST /
  *     GOHOUBI_AFTER / OSIOKI / GOBI（ARG:0 分档）；
  *   - 阈值闸 FLAG:7 == 1 时阶段耗尽不出声、== 2 时旁路重出声；
- *   - 存根清单核对（docs/stub-registry.md 收录 SELL_MATURO_K0）。
+ *   - 成熟出售调用（SELL_MATURO_K0，#338 接通）。
  *
  * K4 与 K3 的区别（按源文 1:1，非缺移植）：COM 头部只有五道守卫；爱抚
  * 二回目以降的「それ以外」档在 FLAG:7 == 2 时**每次**出声（无随机尾，
@@ -630,14 +630,14 @@ test('调教后自慰的淫乱档（TALENT:76）：直接到 4', async () => {
   assert.equal(fixture.store.get('cflag:31:261'), 4);
 });
 
-test('卖却分支（TFLAG:13 == 6）：存根行（SELL_MATURO_K0 未移植）', async () => {
-  const fixture = await setup_k4((f) => f.store.set('tflag:13', 6));
+test('卖却分支（TFLAG:13 == 6）：进入 SELL_MATURO_K0 真身', async () => {
+  const fixture = await setup_k4((f) => {
+    f.store.set('tflag:13', 6);
+    f.set_inputs(999);
+  });
   const mod = fixture.load_module('kojo/kojo-k4-stoic');
   await mod.self_kojo_k4();
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('SELL_MATURO_K0')),
-    `卖却分支出存根行：${JSON.stringify(fixture.text_lines())}`,
-  );
+  assert.ok(fixture.text_lines().includes('要卖到哪个市场？'));
 });
 
 // —— NTR_KOUJO_K4（P 形参） ——

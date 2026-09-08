@@ -214,7 +214,7 @@ test('SALE_CHARA：K4/K7 在调教外从事件上下文取得出售事件码', a
     fixture.store.set('flag:7', 1);
     fixture.store.set(`base:${cid}:0`, 100);
     fixture.store.set(`talent:${cid}:${talent_id}`, 1);
-    fixture.set_inputs(0);
+    fixture.set_inputs(0, 999);
     fixture.load_module(module_name);
 
     const price = await fixture

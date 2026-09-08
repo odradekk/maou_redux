@@ -30,13 +30,13 @@
  *   4. TEQUIP:55（死斗场）→ 岔去本文件真身 COLOSSEUM_KOJO_15。
  * ASSI/ASSIPLAY 整行注释、无 TALENT:9、无 TEQUIP:90。
  *
- * 这张票存根（docs/stub-registry.md）：`SELL_MATURO_K0`（成熟出售口上，
- * 随售却票）。
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */
 
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -70,7 +70,6 @@ const { self_call } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
@@ -80,7 +79,7 @@ const era0 = (k) => era.get(k) || 0;
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:29-33）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -7863,7 +7862,7 @@ async function self_kojo_k15(rand) {
       ); // :5314
     } // :5314-5316
     if (!era0(`talent:${target}:122`)) {
-      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :5317
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :5317
     } // :5317
   } // :5317-5319
 

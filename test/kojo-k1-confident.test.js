@@ -8,7 +8,7 @@
  *   - FLAG:7 == 1 阈值闸与 == 2 旁路；
  *   - PALAMCNG / MARKCNG 真身；
  *   - DOG / COLOSSEUM / NTR / BENKI / ENTERENEMY / GOBI 入口；
- *   - 存根清单（SELL_MATURO_K0）。
+ *   - 成熟出售调用（SELL_MATURO_K0，#338 接通）。
  */
 const assert = require('node:assert/strict');
 const fs = require('node:fs');

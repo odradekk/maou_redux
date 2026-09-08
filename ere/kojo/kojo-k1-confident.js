@@ -17,12 +17,13 @@
  * 与 K5 同构：初回 → 1；二回目以降按素质/刻印取首个命中，FLAG:7 == 2（默认）
  * 时上限被旁路、同支每次出声；FLAG:7 == 1 时逐阶段各出一次声。
  *
- * 这张票存根（docs/stub-registry.md）：SELL_MATURO_K0（出售成熟奴隶口上）。
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */
 
 /* eslint-disable no-irregular-whitespace -- 台词含源 ERB 全角空格（U+3000），1:1 保真 */
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -60,9 +61,8 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { piercing_state } = require('#/system/train/piercing-state');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 const MASTER = 0;
 
 // @EVENTTRAIN // :84
@@ -11899,7 +11899,7 @@ async function self_kojo_k1(rand, q) {
     await era.print(''); // :7000-7001
     if (era.get(`talent:${target}:122`) !== 1) {
       // :7002
-      stub_line('SELL_MATURO_K0', '出售成熟奴隶口上', '随出售票'); // CALL SELL_MATURO_K0 // :7002
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :7002
     } // :7002
   } // :7002-7003
 

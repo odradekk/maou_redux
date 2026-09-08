@@ -77,6 +77,7 @@
  */
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 
 const { on, TIER } = require('#/system/event/registry');
 const { search_family } = require('#/chara/chara-family');
@@ -1261,7 +1262,7 @@ async function self_kojo_k0(_rand, q = 0) {
     era.print(''); // :6990
     if (era.get(`talent:${target}:122`) !== 1) {
       // :6992
-      // CALL SELL_MATURO_K0 // :6992
+      await sell_maturo_k0(target, { rand: _rand }); // CALL SELL_MATURO_K0 // :6992
     } // :6992
   } // :6993
 

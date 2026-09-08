@@ -22,13 +22,13 @@
  * EVENTTRAIN 屈服Lv2/Lv3/淫乱的 `TALENT:157 && TALENT:110 || TALENT:114 ||
  * TALENT:119` 先 AND 后 OR；EVENTEND 淫乱体力>=500 臂无 RETURN 1。
  *
- * 这张票存根（docs/stub-registry.md）：`SELL_MATURO_K0`（成熟出售口上，
- * 随售却票）。
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */
 
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -54,7 +54,6 @@ const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const {
   peek_aftertrain_q,
   peek_aftertrain_s,
@@ -69,7 +68,7 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
@@ -6515,7 +6514,7 @@ async function self_kojo_k13(rand) {
     } // :4878-4879
     if (era0(`talent:${target}:122`) != 1) {
       // :4880
-      stub_line('SELL_MATURO_K0', '卖却分支（成熟贩卖）', '随售却票'); // :4880
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :4880
     } // :4880
   } // :4880-4881
 

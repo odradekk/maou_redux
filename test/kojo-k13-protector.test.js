@@ -512,10 +512,10 @@ test('阈值闸：FLAG:7==1 时淫乱阶段耗尽不出声、==2 时旁路重出
   );
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', async () => {
+test('SELL_MATURO_K0 已从存根清单移除', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k13-protector');
-  assert.deepEqual(STUBBED_CALLS, ['SELL_MATURO_K0']);
+  assert.deepEqual(STUBBED_CALLS, []);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
@@ -677,16 +677,14 @@ test('SELECTCOM==20（正常位）初回处女：默认档推进 CFLAG:321', asy
 
 // —— SELF_KOJO ——
 
-test('SELF_KOJO_K13 TFLAG:13==6（卖却）：存根行 SELL_MATURO_K0', async () => {
+test('SELF_KOJO_K13 TFLAG:13==6（卖却）：进入 SELL_MATURO_K0 真身', async () => {
   const fixture = await setup_k13();
+  fixture.set_inputs(999);
   const { game } = fixture.load_module('facade/game');
   game.train.初吻与自我口上 = 6;
   const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
   await self_kojo_family.call(13, { args: [] });
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('SELL_MATURO_K0')),
-    'SELF_KOJO 卖却分支存根 SELL_MATURO_K0',
-  );
+  assert.ok(fixture.text_lines().includes('要卖到哪个市场？'));
 });
 
 // —— 迷宫 ——

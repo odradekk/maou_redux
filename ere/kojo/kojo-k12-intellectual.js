@@ -44,8 +44,8 @@
  *
  * == 跨文件调用 ==
  *
- * SELL_MATURO_K0（:4743，成熟出售口上，随售却票，K1/K3/K4/K6/K9/K10
- * 同款存根）→ stub_line；BENKI_PLAYER_NAME（:5106-5172 四处，真身
+ * SELL_MATURO_K0（:4743，成熟出售口上，随 #338 接通真身，K1/K3/K4/K6/
+ * K9/K10 同款）直接调用；BENKI_PLAYER_NAME（:5106-5172 四处，真身
  * ere/system/train/benki.js 的 benki_player_name()，延迟 require 防
  * 顶层漏装遮蔽，K3 的延迟 require 同款先例）。
  */
@@ -53,6 +53,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -61,7 +62,6 @@ const { piercing_state } = require('#/system/train/piercing-state');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const {
   kojo_message_com_family,
   kojo_message_palamcng_family,
@@ -89,7 +89,7 @@ const {
   osioski_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
 
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:67-71）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -6582,7 +6582,7 @@ dungeon_attack_family.register(12, dungeon_attack_k12);
 
 // @SELF_KOJO_K12（:4614-4869）：事件口上（self_kojo family）。TFLAG:13 事件
 // 类型分档：1 调教后自慰 / 2 百合PLAY / 3 朝口交 / 4 调教后性交 / 5 夜袭 /
-// 6 成熟出售（SELL_MATURO_K0 存根）/ 9-10 妊娠发觉前段 / 11 妊娠发觉 /
+// 6 成熟出售（SELL_MATURO_K0，#338 接通）/ 9-10 妊娠发觉前段 / 11 妊娠发觉 /
 // 12 生产 / 999-998 育儿室·亲离。q 为自慰妄想对象（kojo-system.self_kojo 传）。
 // 空 PRINTFORMW 台词槽源留空，1:1 保留。
 async function self_kojo_k12(rand, q) {
@@ -6771,7 +6771,7 @@ async function self_kojo_k12(rand, q) {
     } // :4741-4742
     if (era.get(`talent:${target}:122`) != 1) {
       // :4743
-      stub_line('SELL_MATURO_K0', '成熟出售口上', '随售却票'); // :4743
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :4743
     } // :4743
   } // :4744-4746
 

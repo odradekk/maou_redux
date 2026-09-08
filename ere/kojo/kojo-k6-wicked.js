@@ -32,11 +32,11 @@
  * それ以外」取首个命中；FLAG:7 == 2（默认）时 CFLAG 上限被旁路、同支
  * 每次出声；FLAG:7 == 1 时逐阶段各出一次声。
  *
- * 这张票存根（docs/stub-registry.md）：SELL_MATURO_K0（售卖扩展口上，
- * 随售卖票）。
+ * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
@@ -76,9 +76,8 @@ const {
   peek_aftertrain_s,
 } = require('#/event/event-aftertrain');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
-const STUBBED_CALLS = ['SELL_MATURO_K0'];
+const STUBBED_CALLS = [];
 
 /**
  * 口上函数共用的读取面：随机源、当前角色名、自称、门面。
@@ -12301,7 +12300,7 @@ async function self_kojo_k6(rand) {
     await era.print(''); // :6647
     if ((era.get(`talent:${target}:122`) || 0) !== 1) {
       // :6649
-      await stub_line('SELL_MATURO_K0'); // CALL SELL_MATURO_K0 // :6649
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :6649
     } // :6649
   } // :6649-6650
 

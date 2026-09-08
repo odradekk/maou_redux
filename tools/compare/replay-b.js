@@ -1,5 +1,5 @@
 /**
- * @file 范围 B 三段回放器（issue #161 阶段二；裁定依据见 #109 问题五）。
+ * @file 范围 B 三段与出售段回放器（#161 / #338）。
  *
  * 与 replay.js（调教段）并列的 ere 侧录制器：驱动真实游戏代码重走
  * 「标题 → 读档 → 据点主菜单（→ 存读档 / 日循环）」的原作路径，把夹具
@@ -103,6 +103,9 @@ const PLANS = {
   // 199 休息 ×2：ere 侧是 stub_line_wait（BEGIN TURNEND 待办），走输入
   // 通道可达（useRule:false，见文件头裁定 2）
   daycycle: ['0', '99', '199', '199', undefined],
+  // #338 出售段：能力提升存根返回后复核资格 → 出售温妮 → 选择黑市 →
+  // 回出售列表 → 主菜单。PRINTFORMW 的等待不经过 INPUT 计划。
+  sale: ['0', '99', '105', '106', '1', '0', '0', '999', undefined],
 };
 
 /** 输入计划（按段与态展开；max 态在尾部多一次 9999 重画触发） */
@@ -114,7 +117,9 @@ function get_plan(segment, state) {
   }
   const base = PLANS[segment];
   if (!base) {
-    throw new Error(`未知段「${segment}」（有效：mainmenu/saveload/daycycle）`);
+    throw new Error(
+      `未知段「${segment}」（有效：mainmenu/saveload/daycycle/sale）`,
+    );
   }
   return base;
 }
@@ -126,7 +131,7 @@ const REPLAY_DONE = '__replay_plan_exhausted__';
  * 播种范围 B 的世界：标题 global 状态 + save99 快照 + save00 备注。
  * @param {object} fixture
  */
-async function seed_scope_b(fixture) {
+async function seed_scope_b(fixture, { sale = false } = {}) {
   fixture.store.set('gamebase', { ...GAMEBASE });
   // 标题画面状态：致辞展开（GLOBAL:99==0，样本 :10-31 是完整名单）、联系
   // 方式未显示（GLOBAL:98==0，样本 :32 是「版本推进出问题 >>」）
@@ -140,24 +145,58 @@ async function seed_scope_b(fixture) {
   // —— save99 的世界（第 7 日午前，温妮调教中）——
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' }); // 魔王
   fixture.era.addCharacter(0);
-  fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
-  fixture.era.addCharacter(31);
+  const target = sale ? 1 : 31;
+  fixture.seed_chara(target, {
+    id: target,
+    name: '温妮',
+    callname: '温妮',
+  });
+  fixture.era.addCharacter(target);
   // SAVEINFO 的「正在调教:%名%」读 callname:TARGET（#5 决议：SAVESTR 由
   // 内置 callname 承载）
-  fixture.store.set('callname:31', '温妮');
+  fixture.store.set(`callname:${target}`, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.day_count = 6; // 第 7 日（状态行「（第7日）」= DAY+1，样本 :67）
   era_flag.month = 1; // 「1月7日」
   era_flag.date = 7;
   era_flag.time = 0; // 「上午」（午前）
   era_flag.money = 800; // (所持金：800 pts.)
-  era_flag.target = 31; // 调教目标温妮（备注「正在调教:温妮」）
+  era_flag.target = target; // 调教目标温妮（备注「正在调教:温妮」）
   era_flag.assi = -1; // 无助手（主菜单助手钮灰，样本 :69 同形态归因）
   // @SAVEINFO 的指针改写副作用读 FLAG:1/FLAG:2（前回调教目标/助手，
   // page-save-load.js 的 build_save_info）——保存 5 号槽时消费
-  fixture.store.set('flag:1', 31);
+  fixture.store.set('flag:1', target);
   fixture.store.set('flag:2', -1);
   // 魔王等级 LV0（备注「LV   0」＝ cflag:0:9 未声明读 0，不播即证据）
+
+  if (sale) {
+    // sale-natural-log:177-219：资格与估价明细的播种；组合精确得到 14,430。
+    fixture.store.set(`base:${target}:0`, 1198);
+    fixture.store.set(`abl:${target}:0`, 3);
+    fixture.store.set(`abl:${target}:10`, 4);
+    fixture.store.set(`abl:${target}:11`, 5);
+    fixture.store.set(`abl:${target}:12`, 1);
+    fixture.store.set(`abl:${target}:13`, 1);
+    fixture.store.set(`abl:${target}:21`, 3);
+    for (const [id, name] of [
+      [10, '顺从'],
+      [11, '欲望'],
+      [12, '技巧'],
+      [13, '侍奉技术'],
+      [21, '抖M气质'],
+    ]) {
+      fixture.store.set(`ablname:${id}`, name);
+    }
+    fixture.store.set(`talent:${target}:0`, 1);
+    fixture.store.set(`talent:${target}:110`, 1);
+    fixture.store.set(`talent:${target}:163`, 1); // 高贵 → SELF_KOJO_K3
+    fixture.store.set(`talent:${target}:314`, 0); // 人类
+    fixture.store.set(`mark:${target}:3`, 1); // 反抗刻印 LV1，避开随机支
+    fixture.store.set('talentname:0', '处女');
+    fixture.store.set('talentname:110', '巨乳');
+    fixture.store.set('talent:0:122', 1); // 无参 SHE() 读取魔王 → 「他」
+    fixture.store.set('flag:7', 1); // 启用口上分发
+  }
 
   // 快照落 99 号槽（真数据路径：版本闸门当前 1/1，loadData 放行）
   await fixture.era.saveData(99, SAVE99_REMARK);
@@ -182,7 +221,7 @@ function apply_max_seeds(fixture) {
 /**
  * 回放一段范围 B 流程，返回比对素材。
  *
- * @param {'mainmenu'|'saveload'|'daycycle'} segment 段名
+ * @param {'mainmenu'|'saveload'|'daycycle'|'sale'} segment 段名
  * @param {'natural'|'max'} [state='natural'] 自然态 / 置位最大态
  * @returns {Promise<{fixture: object, stream_source: Array<object>}>}
  *   fixture：夹具本体；stream_source：与黄金日志语义同构的比对流
@@ -190,7 +229,9 @@ function apply_max_seeds(fixture) {
  */
 async function replay_scope_b(segment, state = 'natural') {
   const fixture = create_era_fixture();
-  await seed_scope_b(fixture);
+  const sale = segment === 'sale';
+  await seed_scope_b(fixture, { sale });
+  if (sale) fixture.load_module('kojo/kojo-k3-noble');
 
   // —— 观测面：包装 clear，按调用栈区分两类清行（文件头注释）——
   // dropped：与原作 CLEARLINE 对应（非 ScreenBlock 重绘）的 clear 所删

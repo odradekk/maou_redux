@@ -4676,12 +4676,14 @@ test('SELF_KOJO：TFLAG:13==6 卖出（爱慕支 + 结尾清理 TFLAG:13=0）', 
   const fixture = await setup_k0((f) => {
     f.store.set('talent:31:85', 1);
     f.store.set('tflag:13', 6);
+    f.set_inputs(999);
   });
   await self_kojo_k0(fixture, 0);
   assert.ok(
     fixture.text_lines().some((line) => line.includes('明明以为你了解了')),
     '卖出爱慕支台词',
   );
+  assert.ok(fixture.text_lines().includes('要卖到哪个市场？'));
   assert.equal(fixture.store.get('tflag:13'), 0, '结尾清 TFLAG:13');
 });
 

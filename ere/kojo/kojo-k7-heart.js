@@ -30,6 +30,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { sell_maturo_k0 } = require('#/system/stronghold/sell-maturo');
 const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
@@ -13010,7 +13011,7 @@ async function self_kojo_k7(rand, q) {
       ); // :7753
     }
     if (era0(`talent:${target}:122`) != 1) {
-      // CALL SELL_MATURO_K0 // :7756
+      await sell_maturo_k0(target, { rand }); // CALL SELL_MATURO_K0 // :7756
     }
   }
 

@@ -784,12 +784,80 @@ function load_traincommand_names() {
  * @param {object} entry 差异条目
  * @param {'golden'|'ere'} side
  * @param {object} context { counterpart?: 对侧同 kind 条目,
- *   segment?: 'mainmenu'|'saveload'|'daycycle'（比对段，daycycle 的
- *   兜底规则用——该段 @EVENTTURNEND 整段未移植，ere 侧无任何日循环输出） }
+ *   segment?: 'mainmenu'|'saveload'|'daycycle'|'sale'（比对段；daycycle
+ *   有整段兜底，sale 有 #338 的能力提升与界面形态归因） }
  * @returns {{category: 'version'|'stub', reason: string} | null}
  */
 function classify_scope_b(entry, side, context) {
   {
+    if (context.segment === 'sale') {
+      // sale-natural-log:89-142 与 sale-natural-log:144-178 是原作
+      // ABILITY_UP 的角色选择与两页能力画面；:143「温妮可以卖掉了」来自
+      // 已经实现的资格复核，必须
+      // 留作真差异出口。ere/page/page-shop.js:246 当前只有带记录的
+      // ABILITY_UP 存根。行号只锚这份固定黄金样本，避免把后续出售链上
+      // 同号的 0/1/999 菜单误归到能力系统。
+      const golden_ability_up = (candidate) =>
+        Number.isInteger(candidate?.line) &&
+        candidate.line >= 89 &&
+        candidate.line <= 178 &&
+        candidate.line !== 143;
+      if (
+        (side === 'golden' && golden_ability_up(entry)) ||
+        (side === 'ere' && golden_ability_up(context.counterpart))
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '能力值提升画面未移植（sale-natural 的 89-142 与 144-178 行；page-shop.js 的 ABILITY_UP 存根，docs/stub-registry.md）',
+        };
+      }
+
+      if (
+        entry.kind === 'menu' &&
+        ['好的', '不要', '- 好的', '- 不要'].includes(entry.key)
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '出售确认按钮：Emuera 的正文含「-」且可同行，ere 由 printButton 统一渲染快捷键（引擎交互形态差）',
+        };
+      }
+      if (
+        entry.kind === 'menu' &&
+        /^温妮 \[评价额:14,430点\]$/.test(entry.key)
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '出售列表条目：Emuera 把编号与角色详情拼成定宽同行文本，ere 用独占行按钮承载同一入口（引擎交互形态差）',
+        };
+      }
+      if (
+        entry.kind === 'text' &&
+        (/^7日 (午前|上午)$/.test(entry.text) ||
+          /^所持金：\$?\d+点$/.test(entry.text))
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '出售列表状态头：项目统一用「上午/下午」且不保留 Emuera 格式串中的字面量 $（sale.js 的界面形态偏离）',
+        };
+      }
+      if (
+        entry.kind === 'text' &&
+        (/^\[\s*1\]\s*温妮\s*\[评价额:\s*14,430点\]$/.test(entry.text) ||
+          /^(顺从|欲望|技巧|侍奉技术) LV\s*\d+ ＋\s*\d+$/.test(entry.text) ||
+          /^抖M气质 LV\s*3 × 1\.30$/.test(entry.text))
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '出售列表/估价明细的定宽空白由 Emuera PRINTFORML 格式产生；ere 使用流式文本与按钮，由归一层忽略排版宽度',
+        };
+      }
+    }
+
     if (entry.kind === 'text') {
       if (
         side === 'golden' &&

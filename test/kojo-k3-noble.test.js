@@ -835,10 +835,10 @@ test('BENKI_KOUJO：肉便器行动 0 常识改写真身', async () => {
 
 // —— 存根清单核对 ——
 
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
+test('SELL_MATURO_K0 已从存根清单移除', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k3-noble');
-  assert.deepEqual(STUBBED_CALLS, ['SELL_MATURO_K0']);
+  assert.deepEqual(STUBBED_CALLS, []);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
