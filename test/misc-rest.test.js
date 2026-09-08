@@ -92,16 +92,68 @@ test('DRAW_EXT_COMM：两种彩条保留填充宽度、渐变颜色与配色表'
   });
 });
 
-test('IKAI_BONUS：异界综合征只生成原作临时倍率，四个空加成不虚构效果', () => {
+test('MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎', () => {
+  const fixture = create_era_fixture();
+  const { menu_button, MENU_BUTTON_DIM_COLOR } = fixture.load_module(
+    'page/components/menu-button',
+  );
+
+  menu_button('调教目标', 496, true);
+  menu_button('助手', 497, false);
+  const [dim, lit] = fixture.lines;
+
+  assert.equal(MENU_BUTTON_DIM_COLOR, '#bbbbbb');
+  assert.equal(dim.text, '▌调教目标');
+  assert.equal(dim.accelerator, 496);
+  assert.equal(dim.color, MENU_BUTTON_DIM_COLOR);
+  assert.equal(dim.rendered, '[496] ▌调教目标');
+  assert.equal(lit.text, '▌助手');
+  assert.equal(lit.accelerator, 497);
+  assert.equal(lit.color, undefined);
+  assert.equal(lit.rendered, '[497] ▌助手');
+});
+
+test('PRINT_COLORBAR：超上限、零值与零上限仍保持定宽输出', () => {
+  const fixture = create_era_fixture();
+  const { print_colorbar } = fixture.load_module('page/components/menu-button');
+
+  print_colorbar(125, 100, 4, '*', '.', 0xffffff, 0);
+  print_colorbar(0, 100, 4, '*', '.', 0xffffff, 0);
+  print_colorbar(1, 0, 4, '*', '.', 0xffffff, 0);
+
+  assert.deepEqual(fixture.text_lines(), ['****', '....', '****']);
+  assert.deepEqual(fixture.lines[0].content, [
+    { content: '****', color: '#ffffff' },
+  ]);
+  assert.deepEqual(fixture.lines[1].content, [
+    { content: '....', color: '#000000' },
+  ]);
+  assert.deepEqual(fixture.lines[2].content, [
+    { content: '****', color: '#ffffff' },
+  ]);
+});
+
+test('IKAI_BONUS：异界综合征只生成原作临时倍率，覆盖五档与边界', () => {
   const fixture = create_era_fixture();
   const ikai = fixture.load_module('system/otherworld-bonus');
-  fixture.store.set('mark:17:10', 4);
-
-  assert.deepEqual(ikai.ikai_source_check(17), {
-    overall: 70,
-    factors: [100, 100, 100, 100, 100, 100],
-  });
-  assert.equal(ikai.ikai_source_check(18), undefined);
+  for (const [level, overall] of [
+    [1, 95],
+    [2, 90],
+    [3, 80],
+    [4, 70],
+    [5, 60],
+    [6, 0],
+  ]) {
+    fixture.store.set('mark:17:10', level);
+    assert.deepEqual(ikai.ikai_source_check(17), {
+      overall,
+      factors: [100, 100, 100, 100, 100, 100],
+    });
+  }
+  for (const level of [0, -1]) {
+    fixture.store.set('mark:17:10', level);
+    assert.equal(ikai.ikai_source_check(17), undefined);
+  }
   assert.equal(ikai.ikai_undou_bonus(), undefined);
   assert.equal(ikai.ikai_kansei_bonus(), undefined);
   assert.equal(ikai.ikai_benkyou_bonus(), undefined);

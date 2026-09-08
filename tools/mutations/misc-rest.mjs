@@ -1,4 +1,4 @@
-// issue #350：其他/ 残余七文件（M7220-M7259）。
+// issue #350：其他/ 残余七文件（M7220-M7259、M7340-M7353）。
 const make = (id, desc, file, find, replace, must_mention) => ({
   desc: `M${id} ${desc}`,
   file,
@@ -11,6 +11,8 @@ const make = (id, desc, file, find, replace, must_mention) => ({
 const ex = 'EXCOM：扩展口上编号取最后命中项并保留静态局部';
 const tatoo = 'TATOO：只收集 10..19 的非空刺青';
 const draw = 'DRAW_EXT_COMM：两种彩条保留填充宽度';
+const menu_button = 'MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎';
+const colorbar_boundary = 'PRINT_COLORBAR：超上限、零值与零上限仍保持定宽输出';
 const ikai = 'IKAI_BONUS：异界综合征只生成原作临时倍率';
 const release = 'NTR_VIDEO：脱离分支恢复侵攻状态';
 const virgin = 'NTR_PLAY：处女分支按随机顺序进入肛交或破处';
@@ -21,7 +23,7 @@ const menu = 'MAOUNET：菜单可切换通信勇者等级规则并清空公共�
 const hooks = 'MAOUNET：据点 888 接入真身';
 
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 40;
+export const COUNT = 54;
 
 export default [
   make(
@@ -348,5 +350,118 @@ export default [
     '    await maounet();',
     '    return;',
     hooks,
+  ),
+
+  make(
+    7340,
+    '菜单按钮明暗条件反转',
+    'ere/page/components/menu-button.js',
+    'dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined',
+    '!dim ? { color: MENU_BUTTON_DIM_COLOR } : undefined',
+    menu_button,
+  ),
+  make(
+    7341,
+    '菜单按钮丢失块前缀',
+    'ere/page/components/menu-button.js',
+    '`▌${label}`',
+    'label',
+    menu_button,
+  ),
+  make(
+    7342,
+    '菜单按钮快捷键偏移',
+    'ere/page/components/menu-button.js',
+    '    accelerator,\n    dim ?',
+    '    accelerator + 1,\n    dim ?',
+    menu_button,
+  ),
+  make(
+    7343,
+    '菜单按钮调暗颜色损坏',
+    'ere/page/components/menu-button.js',
+    "const MENU_BUTTON_DIM_COLOR = '#bbbbbb';",
+    "const MENU_BUTTON_DIM_COLOR = '#bbbbba';",
+    menu_button,
+  ),
+  make(
+    7344,
+    '双色条超上限时取消填充宽度钳制',
+    'ere/page/components/menu-button.js',
+    'fill.repeat(Math.max(0, Math.min(width, filled)))',
+    'fill.repeat(Math.max(0, filled))',
+    colorbar_boundary,
+  ),
+  make(
+    7345,
+    '双色条零值时强制填充一格',
+    'ere/page/components/menu-button.js',
+    'fill.repeat(Math.max(0, Math.min(width, filled)))',
+    'fill.repeat(Math.max(1, Math.min(width, filled)))',
+    colorbar_boundary,
+  ),
+  make(
+    7346,
+    '双色条零值时少输出一格背景',
+    'ere/page/components/menu-button.js',
+    'width - Math.max(0, filled)',
+    'width - Math.max(1, filled)',
+    colorbar_boundary,
+  ),
+  make(
+    7347,
+    '双色条零上限不再填满',
+    'ere/page/components/menu-button.js',
+    '(value * width) / maximum',
+    '(value * width) / (maximum || width)',
+    colorbar_boundary,
+  ),
+  make(
+    7348,
+    '异界一级综合倍率改错',
+    'ere/system/otherworld-bonus.js',
+    '{ 1: 95, 2: 90, 3: 80, 4: 70, 5: 60 }',
+    '{ 1: 94, 2: 90, 3: 80, 4: 70, 5: 60 }',
+    ikai,
+  ),
+  make(
+    7349,
+    '异界二级综合倍率改错',
+    'ere/system/otherworld-bonus.js',
+    '{ 1: 95, 2: 90, 3: 80, 4: 70, 5: 60 }',
+    '{ 1: 95, 2: 85, 3: 80, 4: 70, 5: 60 }',
+    ikai,
+  ),
+  make(
+    7350,
+    '异界三级综合倍率改错',
+    'ere/system/otherworld-bonus.js',
+    '{ 1: 95, 2: 90, 3: 80, 4: 70, 5: 60 }',
+    '{ 1: 95, 2: 90, 3: 79, 4: 70, 5: 60 }',
+    ikai,
+  ),
+  make(
+    7351,
+    '异界五级综合倍率改错',
+    'ere/system/otherworld-bonus.js',
+    '{ 1: 95, 2: 90, 3: 80, 4: 70, 5: 60 }',
+    '{ 1: 95, 2: 90, 3: 80, 4: 70, 5: 59 }',
+    ikai,
+  ),
+  make(
+    7352,
+    '未登记异界等级回落为一',
+    'ere/system/otherworld-bonus.js',
+    '[level] ?? 0',
+    '[level] ?? 1',
+    ikai,
+  ),
+  make(
+    7353,
+    '负数异界等级仍生成倍率',
+    'ere/system/otherworld-bonus.js',
+    'if (level <= 0) return undefined;',
+    'if (level === 0) return undefined;',
+    ikai,
   ),
 ];
