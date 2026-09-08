@@ -574,7 +574,7 @@ test('妊娠发觉的全部前置条件均覆盖允许与拒绝两侧', async ()
   }
 });
 
-test('妊娠发觉覆盖七种受孕来源、怪物实名两侧和期限边界', async () => {
+test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／自然 5 的随机上界', async () => {
   const source_text = new Map([
     [1, '母亲好像有了魔王的孩子，'],
     [2, '母亲好像有了旅人的孩子，'],
@@ -639,11 +639,22 @@ test('妊娠发觉覆盖七种受孕来源、怪物实名两侧和期限边界',
   const induced = create_era_fixture();
   const induced_view = prepare_awareness(induced, 1);
   induced_view.stronghold.排卵诱发剂 = 1;
+  induced_view.event.预产日 = 55;
   assert.equal(
     await induced
       .load_module('chara/chara-pregnancy')
-      .ninsin_aware(1, seq([3])),
-    1,
+      .ninsin_aware(1, seq([9])),
+    0,
+  );
+
+  const natural = create_era_fixture();
+  const natural_view = prepare_awareness(natural, 1);
+  natural_view.event.预产日 = 55;
+  assert.equal(
+    await natural
+      .load_module('chara/chara-pregnancy')
+      .ninsin_aware(1, seq([4])),
+    0,
   );
 });
 

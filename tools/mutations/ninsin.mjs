@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #346 妊娠、育儿与怪物召唤。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 69;
+export const COUNT = 70;
 
 export default [
   {
@@ -565,5 +565,13 @@ export default [
     replace: '  if (source === 7) stress += love ? 80 : lewd ? 0 : 0;',
     tests: ['chara-pregnancy'],
     must_mention: '各来源、关系与修正项',
+  },
+  {
+    desc: 'M7409 排卵诱发剂的随机上界从十一降为九',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  const chance = chara(cid).stronghold.排卵诱发剂 ? 11 : 5;',
+    replace: '  const chance = chara(cid).stronghold.排卵诱发剂 ? 9 : 5;',
+    tests: ['chara-pregnancy'],
+    must_mention: '诱发剂 11／自然 5 的随机上界',
   },
 ];
