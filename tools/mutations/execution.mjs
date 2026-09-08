@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 70;
+export const COUNT = 72;
 
 export default [
   {
@@ -598,5 +598,21 @@ export default [
     replace: '    `随后你将${she(cid)}变成了${selected[0]}的样子。`,',
     tests: ['event-execution'],
     must_mention: '动物放生保留主角名与失去人类记忆的结句',
+  },
+  {
+    desc: 'M7330 流放口上：K0 处理器也误传随机源',
+    file: 'ere/event/event-banishment.js',
+    find: '    const kojo_arg = kojo_id === 0 ? result : rand_n;',
+    replace: '    const kojo_arg = rand_n;',
+    tests: ['event-execution'],
+    must_mention: 'K0 口上处理器接收处分编号',
+  },
+  {
+    desc: 'M7331 录像书架：零影像时不再提前返回',
+    file: 'ere/page/page-infrastructure.js',
+    find: '  if (stored_slots === 0) {',
+    replace: '  if (false) {',
+    tests: ['event-execution'],
+    must_mention: '录像架零影像早退，有影像时进入列表',
   },
 ];

@@ -849,6 +849,41 @@ test('BANISHMENT：诅咒、失忆与回归前世均使用实际主角名', asyn
   );
 });
 
+test('BANISHMENT：K0 口上处理器接收处分编号', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:160', 1); // 慈爱性格 → K0
+  fixture.set_inputs(2);
+  const { banishment } = fixture.load_module('event/event-banishment');
+  const { banishment_koujo_family } = fixture.load_module('kojo/kojo-system');
+  let observed;
+  banishment_koujo_family.register(0, async (result) => {
+    observed = result;
+    return 0;
+  });
+
+  await banishment(31, seq([6]));
+
+  assert.equal(observed, 2);
+});
+
+test('BANISHMENT：K1 以上口上处理器接收随机源', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:163', 1); // 高贵性格 → K3
+  fixture.set_inputs(2);
+  const { banishment } = fixture.load_module('event/event-banishment');
+  const { banishment_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const rand_n = seq([6]);
+  let observed;
+  banishment_koujo_family.register(3, async (received_rand_n) => {
+    observed = received_rand_n;
+    return 0;
+  });
+
+  await banishment(31, rand_n);
+
+  assert.equal(observed, rand_n);
+});
+
 test('EXECUTION：使用稳定角色 ID 选择第二名角色并路由到固定示众', async () => {
   const fixture = seed_world();
   fixture.set_inputs(1, 6);
@@ -914,6 +949,41 @@ test('INFRASTRUCTURE：无奴隶时提前返回；展品统计按对应计数输
   assert(
     fixture.text_lines().includes('那些话语和传说，已经不会被传达到了吧……'),
   );
+});
+
+test('INFRASTRUCTURE：石像数量为零时提示后不进入说明', async () => {
+  const fixture = seed_world();
+  fixture.set_inputs(0);
+  const { infrastructure } = fixture.load_module('page/page-infrastructure');
+
+  await infrastructure(2);
+
+  assert(fixture.text_lines().includes('还没制作过石像。'));
+  assert(!fixture.text_lines().some((line) => line.includes('石像上浮现')));
+});
+
+test('INFRASTRUCTURE：录像架零影像早退，有影像时进入列表', async () => {
+  const empty = seed_world();
+  empty.set_inputs(99);
+  const { infrastructure: show_empty } = empty.load_module(
+    'page/page-infrastructure',
+  );
+
+  await show_empty(2);
+
+  assert(empty.text_lines().includes('还没拍摄过任何影像。'));
+  assert(!empty.text_lines().some((line) => line.startsWith('总共拍摄了')));
+
+  const fixture = seed_world();
+  fixture.store.set('videoarchive:0', '旧片');
+  fixture.set_inputs(99, 999);
+  const { infrastructure } = fixture.load_module('page/page-infrastructure');
+
+  await infrastructure(2);
+
+  assert(fixture.text_lines().includes('总共拍摄了1部水晶球。'));
+  assert(fixture.text_lines().includes('《旧片》'));
+  assert(!fixture.text_lines().includes('还没拍摄过任何影像。'));
 });
 
 test('INFRASTRUCTURE：人类牧场可切换播种者、记录与出售开关', async () => {
