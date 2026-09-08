@@ -43,6 +43,51 @@ function setup_ntr() {
   return { fixture, ntr: fixture.load_module('system/ntr') };
 }
 
+function setup_communication(ids) {
+  const fixture = create_era_fixture();
+  for (const cid of ids) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+    fixture.store.set(`cflag:${cid}:9`, cid);
+  }
+  return { fixture, net: fixture.load_module('system/cross-save-sharing') };
+}
+
+function setup_spy_tattoo(tattoos) {
+  const fixture = create_era_fixture();
+  for (const cid of [1, 2]) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  seed_values(fixture, {
+    'cflag:2:531': 1,
+    'cflag:2:533': 2,
+    'cflag:1:533': 2,
+    'cflag:1:500': 4,
+    'cflag:2:9': 3,
+    'maxbase:2:0': 2000,
+    'maxbase:2:1': 1000,
+    'base:2:0': 10,
+    'base:2:1': 1,
+  });
+  for (const [locate, text] of tattoos) {
+    fixture.store.set(`cstr:1:${locate}`, text);
+  }
+  fixture.set_inputs(1);
+  return {
+    fixture,
+    battle: fixture.load_module('dungeon/dungeon-battle2'),
+  };
+}
+
 function seed_values(fixture, values) {
   for (const [key, value] of Object.entries(values))
     fixture.store.set(key, value);
@@ -124,6 +169,67 @@ test('EXCOM：扩展口上编号取最后命中项并保留静态局部，名称
   assert.equal(ex.ex_talentname_init(), false, '已有名称时整段早退');
 });
 
+test('ADDCHARA_EX：16 被守卫拦截，17 从精确下界进入分发', async () => {
+  const fixture = create_era_fixture();
+  const { add_chara_ex, chara_ex } = fixture.load_module('chara/chara-ex');
+  const called = [];
+  chara_ex.register(16, (cid) => called.push(cid));
+  chara_ex.register(17, (cid) => called.push(cid));
+
+  assert.equal(await add_chara_ex(16), 0);
+  assert.deepEqual(called, []);
+  await add_chara_ex(17);
+  assert.deepEqual(called, [17]);
+});
+
+test('EXCOM：名称表与八个 CHARA_EX 写槽逐项对应', async () => {
+  const fixture = create_era_fixture();
+  const ex = fixture.load_module('chara/chara-ex');
+  assert.equal(ex.ex_talentname_init(), true);
+  assert.deepEqual(
+    [
+      0, 1, 2, 3, 4, 101, 102, 103, 104, 200, 223, 777, 801, 901, 902, 903, 904,
+    ].map((id) => [id, ex.ex_talentname(id)]),
+    [
+      [0, '灵魂错位'],
+      [1, '近卫'],
+      [2, '后代'],
+      [3, '魔王替身'],
+      [4, '狂王替身'],
+      [101, '琼'],
+      [102, '普林希斯'],
+      [103, '嘉德'],
+      [104, '菲娅'],
+      [200, '魔王'],
+      [223, '丽塔'],
+      [777, '卡拉'],
+      [801, '无双'],
+      [901, '一人军团'],
+      [902, '魔女'],
+      [903, '魔界公主'],
+      [904, '天神'],
+    ],
+  );
+
+  for (const cid of [0, 31, 32, 33, 34, 35, 223, 777]) {
+    await ex.add_chara_ex(cid);
+  }
+  for (const key of [
+    'ex_talent:0:200',
+    'ex_talent:31:101',
+    'ex_talent:32:102',
+    'ex_talent:33:103',
+    'ex_talent:34:4',
+    'ex_talent:34:801',
+    'ex_talent:34:901',
+    'ex_talent:35:104',
+    'ex_talent:223:223',
+    'ex_talent:777:777',
+  ]) {
+    assert.equal(fixture.store.get(key), 1, key);
+  }
+});
+
 test('TATOO：只收集 10..19 的非空刺青，并排除狂王纹章', () => {
   const fixture = create_era_fixture();
   const { get_tatoo, tatoo_locate_name } = fixture.load_module(
@@ -137,8 +243,35 @@ test('TATOO：只收集 10..19 的非空刺青，并排除狂王纹章', () => {
 
   assert.deepEqual(get_tatoo(17), [10, 12, 19]);
   assert.equal(tatoo_locate_name(10), '脸');
-  assert.equal(tatoo_locate_name(16), '肛门');
+  assert.deepEqual(
+    Array.from({ length: 8 }, (_, offset) => tatoo_locate_name(offset + 10)),
+    ['脸', '胸', '背', '下腹', '屁股', '性器', '肛门', '大腿'],
+  );
+  assert.equal(tatoo_locate_name(9), '');
   assert.equal(tatoo_locate_name(18), '');
+});
+
+test('DUNGEON_SPY：刺青炫耀只在有可选图案时输出', async () => {
+  for (const [tattoos, expected] of [
+    [[], undefined],
+    [[[10, '脸纹']], undefined],
+    [
+      [
+        [10, '脸纹'],
+        [12, '背纹'],
+      ],
+      '『背纹』的脸的刺青',
+    ],
+    [[[12, '背纹']], '『背纹』的背的刺青'],
+  ]) {
+    const { fixture, battle } = setup_spy_tattoo(tattoos);
+    await battle.dungeon_spy(1, () => 0);
+    const boast = fixture
+      .text_lines()
+      .find((line) => line.includes('炫耀般地露出'));
+    if (expected === undefined) assert.equal(boast, undefined);
+    else assert(boast.includes(expected));
+  }
 });
 
 test('DRAW_EXT_COMM：两种彩条保留填充宽度、渐变颜色与配色表', () => {
@@ -166,6 +299,58 @@ test('DRAW_EXT_COMM：两种彩条保留填充宽度、渐变颜色与配色表'
     foreground: 0xc0c0c0,
     background: 0x202020,
   });
+});
+
+test('PRINT_COLORBAR2：临界值、空格颜色与 1/32 步长可观测', () => {
+  const fixture = create_era_fixture();
+  const { print_colorbar2 } = fixture.load_module(
+    'page/components/menu-button',
+  );
+
+  print_colorbar2(32, 33, 1, '*', '.', 0x123, 0x1000001, 1);
+  print_colorbar2(31.98, 33, 1, '*', '.', 0x123, 0x1000001, 1);
+  print_colorbar2(31, 33, 1, '*', '.', 0x123, 0x1000001, 1);
+
+  assert.deepEqual(fixture.text_lines(), ['*', '.', '.']);
+  assert.equal(fixture.lines[0].content[0].color, '#000123');
+  assert.equal(fixture.lines[1].content[0].color, '#000001');
+  assert.equal(fixture.lines[2].content[0].color, '#000001');
+  assert.equal(fixture.lines.length, 3, '每条宽度为 1，不得多输出一格');
+});
+
+test('BARCOLORSET：十种命名色与默认色逐项对应', () => {
+  const fixture = create_era_fixture();
+  const { bar_color_set } = fixture.load_module('page/components/menu-button');
+  assert.deepEqual(
+    Object.fromEntries(
+      [
+        '深红',
+        '红',
+        '蓝',
+        '藏青',
+        '绿',
+        '紫',
+        '黄',
+        '粉',
+        '青绿',
+        '灰',
+        '未知',
+      ].map((name) => [name, bar_color_set(name)]),
+    ),
+    {
+      深红: { foreground: 0xf06050, background: 0x701000 },
+      红: { foreground: 0xc07070, background: 0x502020 },
+      蓝: { foreground: 0x7070c0, background: 0x202050 },
+      藏青: { foreground: 0x6666ff, background: 0x000000 },
+      绿: { foreground: 0x66dd66, background: 0x205020 },
+      紫: { foreground: 0xc070c0, background: 0x502050 },
+      黄: { foreground: 0xc0b050, background: 0x505020 },
+      粉: { foreground: 0xffccff, background: 0x300020 },
+      青绿: { foreground: 0x70c0c0, background: 0x205050 },
+      灰: { foreground: 0x666666, background: 0x333333 },
+      未知: { foreground: 0xc0c0c0, background: 0x202020 },
+    },
+  );
 });
 
 test('MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎', () => {
@@ -984,6 +1169,198 @@ test('MAOUNET：INPORT_B 按原作字段格式写入通信记录并跳过重复�
   assert.match(records[0], /_12,翼纹\/$/);
   assert.equal(await net.inport_b(), 0, '同一唯一标记不得重复登记');
   assert.equal(JSON.parse(fixture.store.get('global:100')).length, 1);
+});
+
+test('MAOUNET：通信记录扫描每张表的首尾声明下标', () => {
+  const { fixture, net } = setup_communication([17]);
+  fixture.store.set('cflag:17:190', 12345);
+  const tables = [
+    ['abl', 110],
+    ['base', 100],
+    ['maxbase', 100],
+    ['cflag', 1000],
+    ['exp', 100],
+    ['equip', 100],
+    ['juel', 100],
+    ['talent', 10000],
+    ['mark', 100],
+    ['cstr', 100],
+  ];
+  for (const [table, size] of tables) {
+    fixture.store.set(`${table}:17:0`, -1);
+    fixture.store.set(`${table}:17:${size - 1}`, size);
+  }
+
+  const fields = net.serialize_character(17).split('_');
+  assert.deepEqual(fields.slice(0, 4), ['12345', '17', '17', '角色17']);
+  for (const [index, [, size]] of tables.entries()) {
+    assert(fields[index + 4].includes('0,-1/'));
+    assert(fields[index + 4].includes(`${size - 1},${size}/`));
+  }
+});
+
+test('MAOUNET：名册 50 人仍可追加，99 人只接收一人后报满', async () => {
+  const fifty = setup_communication([17]);
+  fifty.fixture.store.set(
+    'global:100',
+    JSON.stringify(Array.from({ length: 50 }, (_, id) => `${id}_记录`)),
+  );
+  fifty.fixture.store.set('cflag:17:190', 5000);
+  await fifty.fixture.era.saveData(999, '操作');
+  assert.equal(await fifty.net.inport_b(), 1);
+  assert.equal(JSON.parse(fifty.fixture.store.get('global:100')).length, 51);
+
+  const ninety_nine = setup_communication([17, 18]);
+  ninety_nine.fixture.store.set(
+    'global:100',
+    JSON.stringify(Array.from({ length: 99 }, (_, id) => `${id}_记录`)),
+  );
+  ninety_nine.fixture.store.set('cflag:17:190', 5000);
+  ninety_nine.fixture.store.set('cflag:18:190', 5001);
+  await ninety_nine.fixture.era.saveData(999, '操作');
+  assert.equal(await ninety_nine.net.inport_b(), 1);
+  assert.equal(
+    JSON.parse(ninety_nine.fixture.store.get('global:100')).length,
+    100,
+  );
+  assert(
+    ninety_nine.fixture.text_lines().some((line) => line.includes('已经满员')),
+  );
+});
+
+test('MAOUNET：导出只保留去重后的前五名并生成角色唯一标记', async () => {
+  const { fixture, net } = setup_communication([0, 17, 18, 19, 20, 21, 22]);
+  const shared = {};
+  const save_data = fixture.era.saveData;
+  fixture.era.saveData = async (slot, comment) => {
+    if (slot === 1000) {
+      shared.characters = fixture.era.getAddedCharacters();
+      shared.marks = shared.characters.map((cid) => [
+        cid,
+        fixture.store.get(`cflag:${cid}:190`),
+      ]);
+      shared.comment = comment;
+    }
+    return save_data(slot, comment);
+  };
+
+  assert.equal(
+    await net.export_characters(
+      [17, 17, 18, 19, 20, 21, 22],
+      '测试队',
+      () => 1000,
+    ),
+    5,
+  );
+  assert.deepEqual(shared.characters, [17, 18, 19, 20, 21]);
+  assert.deepEqual(shared.marks, [
+    [17, 1017],
+    [18, 1018],
+    [19, 1019],
+    [20, 1020],
+    [21, 1021],
+  ]);
+  assert(shared.comment.endsWith(' 测试队'));
+});
+
+test('MAOUNET：空选择时决定键不进入确认页', async () => {
+  const { fixture, net } = setup_communication([0, 17]);
+  fixture.store.set('cflag:17:1', 2);
+  const inputs = [0, 0, 17, 99, 100, 9];
+  fixture.era.input = async () => {
+    assert(inputs.length > 0, '菜单不得额外索要输入');
+    return inputs.shift();
+  };
+  assert.equal(await net.maounet(), 0);
+  assert(
+    !fixture.text_lines().some((line) => line.includes('0名勇者就可以了吗')),
+  );
+  assert.deepEqual(inputs, []);
+});
+
+test('MAOUNET：导出菜单覆盖选中、取消选中、五人上限与两层确认', async () => {
+  const full = setup_communication([0, 17, 18, 19, 20, 21, 22]);
+  full.fixture.set_inputs(0, 17, 18, 19, 20, 21, 22, 17, 99, 1, 100, 9);
+  assert.equal(await full.net.maounet(), 0);
+  assert(
+    full.fixture.lines_history.some((line) =>
+      line.text?.includes('一次最多送出5人'),
+    ),
+  );
+  assert(
+    full.fixture.lines_history.some((line) => line.text?.includes('4名勇者')),
+  );
+
+  const reject_name = setup_communication([17]);
+  reject_name.fixture.set_inputs(0, 17, 99, 0, '队名', 1, 100, 9);
+  assert.equal(await reject_name.net.maounet(), 0);
+  assert(
+    !reject_name.fixture.calls.some(
+      ({ api, args }) => api === 'saveData' && args[0] === 1000,
+    ),
+  );
+
+  const accept = setup_communication([17]);
+  accept.fixture.set_inputs(0, 17, 99, 0, '队名', 0, 9);
+  assert.equal(await accept.net.maounet(), 0);
+  assert(
+    accept.fixture.calls.some(
+      ({ api, args }) => api === 'saveData' && args[0] === 1000,
+    ),
+  );
+});
+
+test('MAOUNET：导入菜单只接受 0..19 并尝试对应的 1000..1019 档', async () => {
+  const fixture = create_era_fixture();
+  const inputs = [-1, 20, 0, 19, 99];
+  fixture.era.input = async () => {
+    assert(inputs.length > 0, '导入菜单不得额外索要输入');
+    return inputs.shift();
+  };
+  const net = fixture.load_module('system/cross-save-sharing');
+  assert.equal(await net.inport_a(), 0);
+  assert.deepEqual(
+    fixture.calls
+      .filter(({ api }) => api === 'loadData')
+      .map(({ args }) => args[0]),
+    [1000, 1019],
+  );
+  assert.equal(
+    fixture.calls.filter(
+      ({ api, args }) => api === 'saveData' && args[0] === 999,
+    ).length,
+    2,
+  );
+  assert(
+    fixture.lines_history.some(
+      (line) => line.type === 'button' && line.text === 'SAVE1000.sav',
+    ),
+  );
+  assert(
+    fixture.lines_history.some(
+      (line) => line.type === 'button' && line.accelerator === 19,
+    ),
+  );
+
+  const success = create_era_fixture();
+  await success.era.saveData(1019, '共享队伍');
+  success.set_inputs(19);
+  const success_net = success.load_module('system/cross-save-sharing');
+  assert.equal(await success_net.inport_a(), 0);
+  assert.equal(success.load_module('era-utils/era-flag').last_load_no, 1019);
+});
+
+test('MAOUNET：通信菜单的导出、导入、等级上限与等级一分支均可达', async () => {
+  const fixture = create_era_fixture();
+  fixture.set_inputs(0, 100, 1, 99, 3, -1, 4, 9);
+  const { maounet } = fixture.load_module('system/cross-save-sharing');
+  assert.equal(await maounet(), 0);
+  assert.equal(fixture.store.get('flag:76'), -1);
+  assert.equal(fixture.store.get('flag:77'), 1);
+  assert.deepEqual(
+    fixture.inputs_consumed.map(({ value }) => value),
+    [0, 100, 1, 99, 3, -1, 4, 9],
+  );
 });
 
 test('MAOUNET：菜单可切换通信勇者等级规则并清空公共记录', async () => {
