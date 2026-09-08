@@ -174,6 +174,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
   ```
 
 - **1:1 追溯** 靠文件头注释而非目录镜像（issue #11）：`// 源: target/ERB/SYSTEM/TITLE ver1.0.8.ERB  @SYSTEM_TITLE`。
+- **原作输出里紧挨着取值的 `$` 是字面量，移植时要写成 `$$`。** `PRINTFORML 所持金：${MONEY}点` 在 Emuera 里是「字面 `$` ＋ `{MONEY}` 取值」，输出 `所持金：$800点`；照抄进 JS 模板串写成 `` `所持金：${era_flag.money}点` `` 时，**`${` 整个被当成插值语法，那个 `$` 就没了**。正确写法是 `` `所持金：$${era_flag.money}点` ``。两种语言里 `${` 都合法、含义不同，eslint 与测试都不会报——只有逐字对拍看得见（#338 实测，M7700 钉住）。`target/` 里还有一处未移植的同款：`EVENT/EVENT_NEXTDAY.ERB:358` 的「生活费花了`${A}`点」。
 - **玩家可见文本一律简体**（issue #60，这是对 1:1 的有意偏离）：`target/` 汉化本身三种文字混用，照抄会把混乱带给玩家。归一表 `tools/lang-table.js` 是唯一真相源，三栏分别是字级繁/日→简机械映射、词级人工译法、整串豁免名单，不要混用。离线转换用 `node tools/lang-normalize.js [--write] <js 文件…>`，运行时不做任何转换。两道锁固定住结果：`test/output-lang-lock.test.js` 扫 `ere/` 全部字符串字面量与 `yml/` 产物串（引擎列名的豁免见表内清单），表内登记的非简体字符与**参考集认定的表外繁侧字**双路即红（#188 收紧：查表命中对表外繁体失明，第二路参考集 `tools/lang-simp-ref.js` 由 OpenCC 繁→简字表派生补上；表外**日文**新字体不在参考集内，仍靠归一表与转译期 REVIEW 兜底，假名按字符区间全量报出）；`test/kojo-text-fidelity.test.js` 把 D 文与 ERB 侧归一后比对。新字种和新词条必须先在语料里找到实据才能进表，**这张表只能有意识地增长**。
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（`train` / `ero` / `event` / `chara` / `page` / `data` / `util`）。
 
