@@ -21,11 +21,87 @@ function seq(values) {
   };
 }
 
+function seq_with_bounds(calls) {
+  let index = 0;
+  const rand = (n) => {
+    const call = calls[index++];
+    assert.notEqual(call, undefined, `第 ${index} 个随机调用未提供`);
+    const [bound, value] = call;
+    assert.equal(n, bound, `第 ${index} 个随机调用的上界`);
+    assert(value >= 0 && value < n, `随机值 ${value} 不在 RAND:${n} 范围内`);
+    return value;
+  };
+  rand.assert_exhausted = () =>
+    assert.equal(index, calls.length, '随机调用数必须与期望一致');
+  return rand;
+}
+
 function setup_ntr() {
   const fixture = create_era_fixture();
   fixture.seed_chara(17, { id: 17, name: '玛奥', callname: '玛奥' });
   fixture.era.addCharacter(17);
   return { fixture, ntr: fixture.load_module('system/ntr') };
+}
+
+function seed_values(fixture, values) {
+  for (const [key, value] of Object.entries(values))
+    fixture.store.set(key, value);
+}
+
+async function run_desire_offer({
+  level = 4,
+  abnormal = 10,
+  values = {},
+} = {}) {
+  const { fixture, ntr } = setup_ntr();
+  const initial_juel = 1_000_000;
+  seed_values(fixture, {
+    'cflag:17:1': 9,
+    'abl:17:2': 5,
+    'abl:17:3': 5,
+    'abl:17:11': level,
+    'exp:17:50': abnormal,
+    'juel:17:5': initial_juel,
+    ...values,
+  });
+
+  await ntr.ntr_video(17, seq([1, 1, 3]));
+  const upgraded = fixture.store.get('abl:17:11') === level + 1;
+  return {
+    upgraded,
+    cost: upgraded ? initial_juel + 1250 - fixture.store.get('juel:17:5') : 0,
+  };
+}
+
+async function run_sensation_offer({
+  kind = 'vaginal',
+  level = 3,
+  experience = 1_000_000,
+  juel = 1_000_000,
+  values = {},
+} = {}) {
+  const { fixture, ntr } = setup_ntr();
+  const vaginal = kind === 'vaginal';
+  const ability_id = vaginal ? 2 : 3;
+  const other_ability_id = vaginal ? 3 : 2;
+  const experience_id = vaginal ? 0 : 1;
+  const juel_id = vaginal ? 1 : 2;
+  seed_values(fixture, {
+    'cflag:17:1': 9,
+    [`abl:17:${ability_id}`]: level,
+    [`abl:17:${other_ability_id}`]: 5,
+    'abl:17:11': 10,
+    [`exp:17:${experience_id}`]: experience,
+    [`juel:17:${juel_id}`]: juel,
+    ...values,
+  });
+
+  await ntr.ntr_video(17, seq([1, 1, 3]));
+  const upgraded = fixture.store.get(`abl:17:${ability_id}`) === level + 1;
+  return {
+    upgraded,
+    cost: upgraded ? juel - fixture.store.get(`juel:17:${juel_id}`) : 0,
+  };
 }
 
 test('EXCOM：扩展口上编号取最后命中项并保留静态局部，名称只初始化一次', () => {
@@ -244,6 +320,648 @@ test('NTR_VIDEO：影像结束后按既有珠和经验提升三项能力', async
   assert.equal(fixture.store.get('juel:17:1'), 9);
   assert.equal(fixture.store.get('juel:17:2'), 9);
   assert.equal(fixture.store.get('juel:17:5'), 1255);
+});
+
+test('NTR_VIDEO：欲望出价的全部素质倍率独立生效', async () => {
+  assert.deepEqual(await run_desire_offer(), { upgraded: true, cost: 12000 });
+  for (const [key, cost] of [
+    ['talent:17:20', 14400], // 克制 1.2
+    ['talent:17:24', 13200], // 保守的 1.1
+    ['talent:17:30', 18000], // 看重贞操 1.5
+    ['talent:17:31', 11400], // 看轻贞操 0.95
+    ['talent:17:32', 18000], // 压抑 1.5
+    ['talent:17:33', 10800], // 开放 0.9
+    ['talent:17:34', 18000], // 抵抗 1.5
+    ['talent:17:35', 13200], // 害羞 1.1
+    ['talent:17:36', 11400], // 不知羞耻 0.95
+    ['talent:17:70', 9600], // 接受快感 0.8
+    ['talent:17:71', 18000], // 否定快感 1.5
+    ['talent:17:72', 11400], // 容易上瘾 0.95
+    ['talent:17:73', 6000], // 容易陷落 0.5
+    ['talent:17:76', 8400], // 淫乱 0.7
+    ['talent:17:180', 10800], // 妓女 0.9
+    ['talent:17:181', 9600], // 倾城 0.8
+    ['talent:17:157', 9600], // 人妻 0.8
+  ]) {
+    assert.deepEqual(await run_desire_offer({ values: { [key]: 1 } }), {
+      upgraded: true,
+      cost,
+    });
+  }
+});
+
+test('NTR_VIDEO：欲望零到九级的基础出价逐档可观测', async () => {
+  for (const [level, cost] of [
+    [0, 5],
+    [1, 50],
+    [2, 1000],
+    [3, 5000],
+    [4, 12000],
+    [5, 10000],
+    [6, 15000],
+    [7, 25000],
+    [8, 40000],
+    [9, 75000],
+  ]) {
+    const values = level >= 5 ? { 'talent:17:73': 1 } : {};
+    assert.deepEqual(await run_desire_offer({ level, values }), {
+      upgraded: true,
+      cost,
+    });
+  }
+});
+
+test('NTR_VIDEO：欲望出价的互斥分支、戒备分档和下限保持原作数值', async () => {
+  for (const [values, cost] of [
+    [{ 'talent:17:30': 1, 'talent:17:31': 1 }, 18000],
+    [{ 'talent:17:32': 1, 'talent:17:33': 1 }, 18000],
+    [{ 'talent:17:35': 1, 'talent:17:36': 1 }, 13200],
+    [{ 'talent:17:70': 1, 'talent:17:71': 1 }, 9600],
+  ]) {
+    assert.equal((await run_desire_offer({ values })).cost, cost);
+  }
+
+  for (const [level, values, cost] of [
+    [0, { 'talent:17:27': 1 }, 5],
+    [3, { 'talent:17:27': 1 }, 7500],
+    [4, { 'talent:17:27': 1 }, 24000],
+    [5, { 'talent:17:27': 1, 'talent:17:73': 1 }, 25000],
+    [6, { 'talent:17:27': 1, 'talent:17:73': 1 }, 45000],
+  ]) {
+    assert.equal((await run_desire_offer({ level, values })).cost, cost);
+  }
+
+  assert.equal(
+    (
+      await run_desire_offer({
+        level: 0,
+        values: {
+          'talent:17:31': 1,
+          'talent:17:33': 1,
+          'talent:17:36': 1,
+          'talent:17:70': 1,
+          'talent:17:72': 1,
+          'talent:17:73': 1,
+          'talent:17:76': 1,
+          'talent:17:180': 1,
+          'talent:17:181': 1,
+          'talent:17:157': 1,
+        },
+      })
+    ).cost,
+    1,
+  );
+});
+
+test('NTR_VIDEO：欲望等级与异常经验门槛两侧均可观测', async () => {
+  assert.equal((await run_desire_offer({ level: 5 })).upgraded, false);
+  assert.equal(
+    (await run_desire_offer({ level: 5, values: { 'talent:17:73': 1 } }))
+      .upgraded,
+    true,
+  );
+  assert.equal(
+    (await run_desire_offer({ level: 5, values: { 'talent:17:76': 1 } }))
+      .upgraded,
+    true,
+  );
+  assert.equal(
+    (await run_desire_offer({ level: 10, values: { 'talent:17:73': 1 } }))
+      .upgraded,
+    false,
+  );
+  assert.equal(
+    (await run_desire_offer({ level: 9, values: { 'talent:17:73': 1 } }))
+      .upgraded,
+    true,
+  );
+  for (const key of ['talent:17:73', 'talent:17:76']) {
+    assert.equal(
+      (
+        await run_desire_offer({
+          level: 7,
+          abnormal: 0,
+          values: { [key]: 1 },
+        })
+      ).upgraded,
+      true,
+      '七级能绕过早退的素质也会清除异常经验门槛',
+    );
+  }
+
+  assert.equal((await run_desire_offer({ abnormal: 0 })).upgraded, false);
+  assert.equal((await run_desire_offer({ abnormal: 1 })).upgraded, true);
+  for (const key of [
+    'talent:17:33',
+    'talent:17:70',
+    'talent:17:73',
+    'talent:17:76',
+    'talent:17:123',
+  ]) {
+    assert.equal(
+      (await run_desire_offer({ abnormal: 0, values: { [key]: 1 } })).upgraded,
+      true,
+    );
+  }
+  assert.equal(
+    (
+      await run_desire_offer({
+        values: { 'juel:17:5': 10749 },
+      })
+    ).upgraded,
+    false,
+  );
+});
+
+test('NTR_VIDEO：状态、随机、妊娠与角色 ID 共同决定是否脱离', async () => {
+  const inactive = setup_ntr();
+  await inactive.ntr.ntr_video(17, () => {
+    assert.fail('非 NTR 状态不应消费随机数');
+  });
+  assert.deepEqual(inactive.fixture.text_lines(), []);
+
+  const pregnant = setup_ntr();
+  seed_values(pregnant.fixture, {
+    'cflag:17:1': 9,
+    'talent:17:153': 1,
+  });
+  const pregnant_rand = seq_with_bounds([
+    [6, 0],
+    [10, 1],
+    [4, 3],
+  ]);
+  await pregnant.ntr.ntr_video(17, pregnant_rand);
+  pregnant_rand.assert_exhausted();
+  assert.equal(pregnant.fixture.store.get('cflag:17:1'), 9);
+
+  const zero = create_era_fixture();
+  zero.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  zero.era.addCharacter(0);
+  zero.store.set('cflag:0:1', 9);
+  const zero_rand = seq_with_bounds([
+    [6, 0],
+    [10, 1],
+    [4, 3],
+  ]);
+  await zero.load_module('system/ntr').ntr_video(0, zero_rand);
+  zero_rand.assert_exhausted();
+  assert.equal(zero.store.get('cflag:0:1'), 9);
+
+  for (const karma of [-50, -20]) {
+    const current = setup_ntr();
+    seed_values(current.fixture, {
+      'cflag:17:1': 9,
+      'cflag:17:151': karma,
+    });
+    const current_rand = seq_with_bounds([[6, 0]]);
+    await current.ntr.ntr_video(17, current_rand);
+    current_rand.assert_exhausted();
+    assert.equal(current.fixture.store.get('cflag:17:151'), karma);
+  }
+});
+
+test('NTR_PLAY：特别服装和私处封印均能独立进入肛交影像', async () => {
+  for (const values of [
+    { 'cflag:17:42': 79, 'cflag:17:40': 64, 'flag:37': 1 },
+    { 'talent:17:273': 1 },
+  ]) {
+    const current = setup_ntr();
+    seed_values(current.fixture, values);
+    await current.ntr.ntr_play(17, seq([]));
+    assert.equal(current.fixture.store.get('juel:17:2'), 2000);
+    assert.equal(current.fixture.store.get('juel:17:5'), 2500);
+    assert(
+      !current.fixture.inputs_consumed.some(({ api }) => api === 'waitAnyKey'),
+    );
+  }
+
+  for (const values of [
+    { 'cflag:17:42': 78, 'cflag:17:40': 64, 'flag:37': 1 },
+    { 'cflag:17:42': 79, 'cflag:17:40': 63, 'flag:37': 1 },
+    { 'cflag:17:42': 79, 'cflag:17:40': 64, 'flag:37': 0 },
+  ]) {
+    const current = setup_ntr();
+    seed_values(current.fixture, values);
+    await current.ntr.ntr_play(17, seq([1, 3]));
+    assert.equal(current.fixture.store.get('juel:17:2') || 0, 0);
+  }
+});
+
+test('NTR_PLAY：肛交影像按狂王性别写入精液或百合经验', async () => {
+  for (const [gender, semen, lily] of [
+    [0, 10, 0],
+    [1, 0, 5],
+    [2, 10, 0],
+  ]) {
+    const current = setup_ntr();
+    seed_values(current.fixture, {
+      'talent:17:0': 1,
+      'flag:500': gender,
+    });
+    await current.ntr.ntr_play(17, seq([0]));
+    assert.equal(current.fixture.store.get('exp:17:1'), 10);
+    assert.equal(current.fixture.store.get('exp:17:20') || 0, semen);
+    assert.equal(current.fixture.store.get('exp:17:40') || 0, lily);
+    assert.equal(current.fixture.store.get('juel:17:2'), 2000);
+    assert.equal(current.fixture.store.get('juel:17:5'), 2500);
+  }
+});
+
+test('NTR_PLAY：破处与兽交影像的全部数值和早退行为可观测', async () => {
+  const virgin = setup_ntr();
+  virgin.fixture.store.set('talent:17:0', 1);
+  await virgin.ntr.ntr_play(17, seq([1, 7]));
+  assert.equal(virgin.fixture.store.get('exp:17:0'), 3);
+  assert.equal(virgin.fixture.store.get('juel:17:1'), 600);
+  assert.equal(virgin.fixture.store.get('juel:17:5'), 750);
+  assert.equal(virgin.fixture.store.get('cflag:17:15'), 105);
+  assert.equal(virgin.fixture.store.get('talent:17:280'), 1);
+  assert.equal(virgin.fixture.store.get('cstr:17:17'), '狂王的纹章');
+  assert(
+    !virgin.fixture.inputs_consumed.some(({ api }) => api === 'waitAnyKey'),
+  );
+
+  for (const [man, config, vaginal, anal, inner] of [
+    [0, 0, 20, 0, 0],
+    [0, 4, 20, 0, 10],
+    [1, 4, 0, 20, 10],
+  ]) {
+    const current = setup_ntr();
+    seed_values(current.fixture, {
+      'abl:17:39': 1,
+      'talent:17:122': man,
+      'flag:5': config,
+    });
+    const current_rand = seq_with_bounds([[10, 0]]);
+    await current.ntr.ntr_play(17, current_rand);
+    current_rand.assert_exhausted();
+    assert.equal(current.fixture.store.get('exp:17:0') || 0, vaginal);
+    assert.equal(current.fixture.store.get('exp:17:1') || 0, anal);
+    assert.equal(current.fixture.store.get('exp:17:20'), 20);
+    assert.equal(current.fixture.store.get('exp:17:56'), 20);
+    assert.equal(current.fixture.store.get('juel:17:1') || 0, man ? 0 : 4000);
+    assert.equal(current.fixture.store.get('juel:17:5'), 5000);
+    assert.equal(current.fixture.store.get('cflag:17:106') || 0, inner);
+    assert(
+      !current.fixture.inputs_consumed.some(({ api }) => api === 'waitAnyKey'),
+    );
+  }
+});
+
+test('NTR_PLAY：四种常规影像的经验、珠、射精标记和初吻完整落盘', async () => {
+  const cases = [
+    {
+      pick: 0,
+      values: { 'flag:5': 4, 'cflag:17:16': -1 },
+      expected: {
+        'exp:17:0': 5,
+        'exp:17:20': 5,
+        'juel:17:1': 1000,
+        'juel:17:5': 1250,
+        'cflag:17:108': 10,
+        'cflag:17:16': 993,
+      },
+    },
+    {
+      pick: 1,
+      values: { 'flag:5': 4 },
+      expected: {
+        'exp:17:0': 10,
+        'exp:17:1': 10,
+        'exp:17:20': 10,
+        'juel:17:1': 2000,
+        'juel:17:2': 2000,
+        'juel:17:5': 2500,
+        'cflag:17:105': 10,
+      },
+    },
+    {
+      pick: 2,
+      values: { 'flag:5': 4 },
+      expected: {
+        'exp:17:0': 20,
+        'exp:17:1': 20,
+        'exp:17:20': 20,
+        'juel:17:1': 4000,
+        'juel:17:2': 4000,
+        'juel:17:5': 5000,
+        'cflag:17:105': 10,
+      },
+    },
+    {
+      pick: 3,
+      values: { 'cflag:17:16': -1 },
+      expected: {
+        'exp:17:22': 3,
+        'exp:17:20': 3,
+        'juel:17:5': 1250,
+        'cflag:17:16': 993,
+      },
+    },
+  ];
+  for (const { pick, values, expected } of cases) {
+    const current = setup_ntr();
+    seed_values(current.fixture, values);
+    await current.ntr.ntr_play(17, seq([1, pick]));
+    for (const [key, value] of Object.entries(expected))
+      assert.equal(current.fixture.store.get(key), value, key);
+    assert.equal(current.fixture.inputs_consumed.at(-1)?.api, 'waitAnyKey');
+  }
+});
+
+test('NTR_PLAY：七种影像向性格口上传入对应场景编号', async () => {
+  for (const { scene, values, rolls } of [
+    { scene: 1, values: { 'talent:17:0': 1 }, rolls: [1, 0] },
+    { scene: 2, values: { 'talent:17:273': 1 }, rolls: [] },
+    { scene: 3, values: { 'abl:17:39': 1 }, rolls: [0] },
+    { scene: 4, values: {}, rolls: [1, 0] },
+    { scene: 5, values: {}, rolls: [1, 1] },
+    { scene: 6, values: {}, rolls: [1, 2] },
+    { scene: 7, values: {}, rolls: [1, 3] },
+  ]) {
+    const current = setup_ntr();
+    seed_values(current.fixture, { 'talent:17:165': 1, ...values });
+    const scenes = [];
+    const { ntr_koujo_family } =
+      current.fixture.load_module('kojo/kojo-system');
+    ntr_koujo_family.register(5, async (_rand, p) => scenes.push(p));
+    await current.ntr.ntr_play(17, seq(rolls));
+    assert.deepEqual(scenes, [scene]);
+  }
+});
+
+test('NTR_PLAY：常规影像的男性与女狂王分支不共享副作用', async () => {
+  for (const [pick, gender, expected] of [
+    [0, 1, { 'exp:17:0': 5, 'exp:17:1': 5, 'exp:17:40': 5, 'juel:17:1': 1000 }],
+    [1, 1, { 'exp:17:1': 10, 'exp:17:40': 5, 'juel:17:1': 0 }],
+    [1, 0, { 'exp:17:1': 10, 'exp:17:20': 10, 'juel:17:1': 2000 }],
+    [2, 0, { 'exp:17:1': 20, 'exp:17:20': 20, 'juel:17:1': 0 }],
+    [3, 1, { 'exp:17:22': 0, 'exp:17:20': 0, 'cflag:17:16': -1 }],
+  ]) {
+    const current = setup_ntr();
+    seed_values(current.fixture, {
+      'talent:17:122': 1,
+      'flag:500': gender,
+      'flag:5': 4,
+      'cflag:17:16': -1,
+    });
+    await current.ntr.ntr_play(17, seq([1, pick]));
+    for (const [key, value] of Object.entries(expected))
+      assert.equal(current.fixture.store.get(key) || 0, value, key);
+  }
+});
+
+test('NTR_PLAY：正常与异常退出都恢复调教目标', async () => {
+  const normal = setup_ntr();
+  const normal_flag = normal.fixture.load_module('era-utils/era-flag');
+  normal_flag.target = 3;
+  await normal.ntr.ntr_play(17, seq([1, 3]));
+  assert.equal(normal_flag.target, 3);
+
+  const failure = setup_ntr();
+  const failure_flag = failure.fixture.load_module('era-utils/era-flag');
+  failure_flag.target = 3;
+  failure.fixture.store.set('talent:17:165', 1);
+  const { ntr_koujo_family } = failure.fixture.load_module('kojo/kojo-system');
+  ntr_koujo_family.register(5, async () => {
+    throw new Error('口上失败');
+  });
+  await assert.rejects(failure.ntr.ntr_play(17, seq([1, 3])), /口上失败/);
+  assert.equal(failure_flag.target, 3);
+});
+
+test('NTR_CHILD_BIRTH：性别、四种父系与三种怪物结局全部可达', async () => {
+  for (const [father, random_calls, text] of [
+    [7, [], '十人之后就没数了'],
+    [4, [], '连父亲都不知道'],
+    [2, [], '在勇者之间配对'],
+    [3, [], '在勇者之间配对'],
+    [6, [[3, 0]], '当场被肢解'],
+    [
+      6,
+      [
+        [3, 1],
+        [2, 0],
+      ],
+      '企图攻击狂王',
+    ],
+    [
+      6,
+      [
+        [3, 1],
+        [2, 1],
+      ],
+      '好几次，被摔死',
+    ],
+  ]) {
+    const current = setup_ntr();
+    current.fixture.load_module('era-utils/era-flag').target = 17;
+    current.fixture.store.set('cflag:17:102', father);
+    const current_rand = seq_with_bounds(random_calls);
+    assert.equal(await current.ntr.ntr_child_birth(current_rand), 0);
+    current_rand.assert_exhausted();
+    assert(current.fixture.text_lines().some((line) => line.includes(text)));
+  }
+
+  const man = setup_ntr();
+  man.fixture.load_module('era-utils/era-flag').target = 17;
+  seed_values(man.fixture, { 'talent:17:122': 1, 'cflag:17:102': 7 });
+  const man_rand = seq_with_bounds([]);
+  await man.ntr.ntr_child_birth(man_rand);
+  man_rand.assert_exhausted();
+  assert(
+    man.fixture.text_lines().some((line) => line.includes('以南人的身份')),
+  );
+});
+
+test('NTR_VIDEO：感觉出价十档基表与高等级增长逐档可观测', async () => {
+  for (const [level, cost, needed_exp] of [
+    [0, 1, 2],
+    [1, 20, 10],
+    [2, 400, 30],
+    [3, 8000, 75],
+    [4, 20000, 150],
+    [5, 32000, 144],
+    [6, 48000, 200],
+    [7, 72000, 280],
+    [8, 96000, 400],
+    [9, 144000, 480],
+  ]) {
+    const values = level >= 5 ? { 'talent:17:75': 1 } : {};
+    assert.deepEqual(
+      await run_sensation_offer({ level, experience: needed_exp, values }),
+      { upgraded: true, cost },
+    );
+    assert.equal(
+      (
+        await run_sensation_offer({
+          level,
+          experience: needed_exp - 1,
+          values,
+        })
+      ).upgraded,
+      false,
+    );
+  }
+
+  for (const [level, blocks, cost, needed_exp] of [
+    [10, [101], 168000, 524],
+    [14, [101], 439452, 963],
+    [15, [101, 105], 324352, 880],
+    [19, [101, 105], 720616, 1920],
+    [20, [101, 105, 107], 500602, 1844],
+    [24, [101, 105, 107], 938095, 4737],
+  ]) {
+    const values = { 'talent:17:75': 1 };
+    for (const id of blocks) values[`talent:17:${id}`] = 2;
+    assert.deepEqual(
+      await run_sensation_offer({ level, experience: needed_exp, values }),
+      { upgraded: true, cost },
+    );
+    assert.equal(
+      (
+        await run_sensation_offer({
+          level,
+          experience: needed_exp - 1,
+          values,
+        })
+      ).upgraded,
+      false,
+    );
+  }
+});
+
+test('NTR_VIDEO：感觉出价的封锁计数、分档与三种折扣均有反向样本', async () => {
+  assert.equal((await run_sensation_offer({ level: 5 })).upgraded, false);
+  assert.equal(
+    (await run_sensation_offer({ level: 5, values: { 'talent:17:75': 1 } }))
+      .upgraded,
+    true,
+  );
+  assert.equal(
+    (await run_sensation_offer({ values: { 'talent:17:103': 2 } })).upgraded,
+    false,
+  );
+  assert.deepEqual(
+    await run_sensation_offer({ values: { 'talent:17:103': 1 } }),
+    { upgraded: true, cost: 9600 },
+  );
+  assert.equal(
+    (
+      await run_sensation_offer({
+        experience: 81,
+        values: { 'talent:17:103': 1 },
+      })
+    ).upgraded,
+    false,
+  );
+  assert.deepEqual(
+    await run_sensation_offer({
+      experience: 82,
+      values: { 'talent:17:103': 1 },
+    }),
+    { upgraded: true, cost: 9600 },
+  );
+
+  for (const [values, cost] of [
+    [{ 'talent:17:27': 1 }, 8000],
+    [{ 'talent:17:76': 1 }, 6400],
+    [{ 'talent:17:75': 1 }, 6400],
+    [{ 'talent:17:104': 1 }, 6400],
+  ]) {
+    assert.equal((await run_sensation_offer({ values })).cost, cost);
+  }
+
+  for (const [level, block_ids, upgraded] of [
+    [10, [], false],
+    [10, [101], true],
+    [15, [101], false],
+    [15, [101, 105], true],
+    [20, [101, 105], false],
+    [20, [101, 105, 107], true],
+    [25, [101, 105, 107], false],
+  ]) {
+    const values = { 'talent:17:75': 1 };
+    for (const id of block_ids) values[`talent:17:${id}`] = 2;
+    assert.equal(
+      (await run_sensation_offer({ level, values })).upgraded,
+      upgraded,
+    );
+  }
+
+  assert.equal(
+    (
+      await run_sensation_offer({
+        level: 10,
+        values: { 'talent:17:75': 1, 'talent:17:101': 1 },
+      })
+    ).upgraded,
+    false,
+    '封锁位只认数值 2',
+  );
+});
+
+test('NTR_VIDEO：感觉戒备倍率、下限与珠经验双门槛均可观测', async () => {
+  for (const [level, cost, needed_exp] of [
+    [3, 8000, 75],
+    [4, 40000, 300],
+    [5, 80000, 360],
+    [6, 144000, 600],
+  ]) {
+    const values = {
+      'talent:17:27': 1,
+      ...(level >= 5 ? { 'talent:17:75': 1 } : {}),
+    };
+    assert.deepEqual(
+      await run_sensation_offer({ level, experience: needed_exp, values }),
+      { upgraded: true, cost },
+    );
+  }
+
+  assert.deepEqual(
+    await run_sensation_offer({
+      level: 0,
+      experience: 1,
+      values: {
+        'talent:17:75': 1,
+        'talent:17:76': 1,
+        'talent:17:104': 1,
+      },
+    }),
+    { upgraded: true, cost: 1 },
+  );
+  assert.equal(
+    (await run_sensation_offer({ juel: 7999, experience: 75 })).upgraded,
+    false,
+  );
+  assert.equal(
+    (await run_sensation_offer({ juel: 8000, experience: 74 })).upgraded,
+    false,
+  );
+  assert.equal(
+    (await run_sensation_offer({ juel: 8000, experience: 75 })).upgraded,
+    true,
+  );
+  assert.equal(
+    (
+      await run_sensation_offer({
+        kind: 'vaginal',
+        level: 0,
+        values: { 'talent:17:122': 1 },
+      })
+    ).upgraded,
+    false,
+  );
+  assert.equal(
+    (
+      await run_sensation_offer({
+        kind: 'anal',
+        level: 0,
+        values: { 'talent:17:122': 1 },
+      })
+    ).upgraded,
+    true,
+  );
 });
 
 test('MAOUNET：INPORT_B 按原作字段格式写入通信记录并跳过重复勇者', async () => {
