@@ -174,6 +174,58 @@ test('SELL_MATURO_K2：非牝犬按淫乱与售价选择分支', async () => {
   assert.equal(fixture.store.get('videoarchive:0'), '母种犬温妮');
 });
 
+test('SELL_MATURO_K2：主流程按牝犬、淫乱与售价分发实际结局文本', async () => {
+  const cases = [
+    [
+      '牝犬优先于淫乱',
+      1,
+      1,
+      950_000,
+      '被土豪买下作为宠物的温妮、优雅的作为牝犬生活着。',
+    ],
+    [
+      '淫乱百万档',
+      0,
+      1,
+      1_000_000,
+      '被土豪买下作为宠物的温妮、过上了淫乱的牝犬生活。',
+    ],
+    [
+      '淫乱五十万档',
+      0,
+      1,
+      500_000,
+      '温妮今天也作为魔族最高级母种犬孕育着幼犬。',
+    ],
+    ['淫乱低价档', 0, 1, 499_999, '温妮被拥有知性的魔犬买了下来。'],
+    [
+      '常态百万档',
+      0,
+      0,
+      1_000_000,
+      '被土豪买下作为宠物的温妮、过上了淫乱的牝犬生活。',
+    ],
+    ['常态五十万档', 0, 0, 500_000, '温妮被牝犬训练员作为模范牝犬买了下来。'],
+    [
+      '常态低价档',
+      0,
+      0,
+      499_999,
+      '被变态作为宠物买下的温妮、过上了奇妙的性生活的样子。',
+    ],
+  ];
+
+  for (const [label, dog, lewd, price, branch_text] of cases) {
+    const { fixture, api } = seed_world();
+    fixture.store.set('talent:31:136', dog); // 牝犬
+    fixture.store.set('talent:31:76', lewd); // 淫乱
+
+    await api.sell_maturo_k2(31, { price });
+
+    assert(fixture.text_lines().includes(branch_text), label);
+  }
+});
+
 test('SELL_MATURO_K2 分支族：15 个原函数均由一张表分发', async () => {
   const { fixture, api } = seed_world();
   const ids = [101, 102, 103, 104, 51, 52, 53, 54, 11, 12, 13, 1, 2, 3, 4];
