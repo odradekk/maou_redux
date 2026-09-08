@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #346 妊娠、育儿与怪物召唤。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 63;
+export const COUNT = 67;
 
 export default [
   {
@@ -517,5 +517,37 @@ export default [
     replace: '    false\n      ? nid_get_type(nid(father))',
     tests: ['chara-pregnancy'],
     must_mention: '依次采用父亲、母亲',
+  },
+  {
+    desc: 'M7403 主人妊娠的淫乱压力误抬到崩坏阈值',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  if (!love && lewd && source === 1) stress += 30;',
+    replace: '  if (!love && lewd && source === 1) stress += 100;',
+    tests: ['chara-pregnancy'],
+    must_mention: '各来源、关系与修正项',
+  },
+  {
+    desc: 'M7404 勇者双亲关系压力计算被删除',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '    stress += relation\n      ? 10 * int_div(200 - relation, 100) + (love ? 10 : 0)',
+    replace: '    stress += relation\n      ? 0',
+    tests: ['chara-pregnancy'],
+    must_mention: '各来源、关系与修正项',
+  },
+  {
+    desc: 'M7405 陌生人妊娠的爱慕压力被删除',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  if (source === 4) stress += love ? 80 : lewd ? 50 : 0;',
+    replace: '  if (source === 4) stress += love ? 0 : lewd ? 50 : 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '各来源、关系与修正项',
+  },
+  {
+    desc: 'M7406 狂王妊娠的爱慕压力被删除',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  if (source === 7) stress += love ? 80 : lewd ? 30 : 0;',
+    replace: '  if (source === 7) stress += love ? 0 : lewd ? 30 : 0;',
+    tests: ['chara-pregnancy'],
+    must_mention: '各来源、关系与修正项',
   },
 ];

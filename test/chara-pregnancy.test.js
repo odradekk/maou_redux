@@ -652,8 +652,9 @@ test('妊娠压力覆盖各来源、关系与修正项，并区分崩坏、既�
     { source: 2, love: 1, relation: 0, broken: 0 },
     { source: 2, lewd: 1, relation: 0, broken: 0 },
     { source: 2, love: 1, relation: 50, broken: 0 },
+    { source: 2, love: 1, relation: -1000, broken: 1, loses_love: true },
     { source: 3, lewd: 1, relation: 50, broken: 0 },
-    { source: 4, love: 1, broken: 0 },
+    { source: 4, love: 1, weak: 1, broken: 1, loses_love: true },
     { source: 4, lewd: 1, broken: 0 },
     { source: 5, love: 1, broken: 1, loses_love: true },
     { source: 5, lewd: 1, bitch: 1, dog_spouse: 1, broken: 0 },
@@ -661,7 +662,7 @@ test('妊娠压力覆盖各来源、关系与修正项，并区分崩坏、既�
     { source: 6, love: 1, broken: 1, loses_love: true },
     { source: 6, lewd: 1, demon: 1, spouse: 6, broken: 0 },
     { source: 6, broken: 0 },
-    { source: 7, love: 1, broken: 0 },
+    { source: 7, love: 1, weak: 1, broken: 1, loses_love: true },
     { source: 7, lewd: 1, broken: 0 },
     { source: 1, births: 2, broken: 0 },
     { source: 6, lewd: 1, weak: 1, broken: 1, loses_lewd: true },
@@ -780,21 +781,47 @@ test('近卫随机下界保留原作缺陷：模板 200 不存在时明确失败
 
 test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级两侧', async () => {
   const cases = [
-    { mother: 0, father: -4, rolls: new Array(300).fill(0), child: 1000 },
+    {
+      mother: 0,
+      father: -4,
+      rolls: new Array(300).fill(0),
+      child: 1000,
+      level: 1,
+    },
     {
       mother: 1,
       father: 0,
       rolls: [2, ...new Array(300).fill(0)],
       child: 1000,
+      level: 7,
     },
-    { mother: 201, father: 0, rolls: new Array(300).fill(0), child: 21000 },
-    { mother: 17, father: 0, rolls: new Array(300).fill(0), child: 1000 },
-    { mother: 2, father: 0, rolls: new Array(300).fill(0), child: 1100 },
+    {
+      mother: 201,
+      father: 0,
+      rolls: new Array(300).fill(0),
+      child: 21000,
+      level: 7,
+    },
+    {
+      mother: 17,
+      father: 0,
+      rolls: new Array(300).fill(0),
+      child: 1000,
+      level: 7,
+    },
+    {
+      mother: 2,
+      father: 0,
+      rolls: new Array(300).fill(0),
+      child: 1100,
+      level: 4,
+    },
     {
       mother: 0,
       father: -2,
       rolls: [1, ...new Array(300).fill(0)],
       child: 21000,
+      level: 7,
     },
   ];
   for (const spec of cases) {
@@ -826,6 +853,7 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
       );
     }
     assert.ok((fixture.store.get(`talent:${child}:322`) || 0) >= 191);
+    assert.equal(fixture.store.get(`cflag:${child}:9`), spec.level);
     assert.equal(
       fixture.store.get(`ex_talent:${child}:3`) || 0,
       spec.mother === 0 || spec.father === 0 ? 1 : 0,
@@ -835,10 +863,10 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
 
 test('普通后代生成覆盖普通、精英、随机模板及父亲有无的等级路径', async () => {
   const cases = [
-    { mother: 1, father: -4, child: 1000, source: 1, first_roll: 5 },
-    { mother: 201, father: 2, child: 21000, source: 201 },
-    { mother: 17, father: -1, child: 1000, source: 1 },
-    { mother: 2, father: 0, child: 1100, source: 2 },
+    { mother: 1, father: -4, child: 1000, source: 1, first_roll: 5, level: 8 },
+    { mother: 201, father: 2, child: 21000, source: 201, level: 10 },
+    { mother: 17, father: -1, child: 1000, source: 1, level: 7 },
+    { mother: 2, father: 0, child: 1100, source: 2, level: 1 },
   ];
   for (const spec of cases) {
     const fixture = create_era_fixture();
@@ -873,6 +901,7 @@ test('普通后代生成覆盖普通、精英、随机模板及父亲有无的�
       chara_view(fixture, child).invasion.状态,
       spec.mother === 201 ? 2 : 0,
     );
+    assert.equal(fixture.store.get(`cflag:${child}:9`), spec.level);
   }
 });
 
