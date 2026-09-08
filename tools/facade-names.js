@@ -157,6 +157,7 @@ const cflag = {
     '狂王膣内射精',
     src(SRC_FLAG, ':324 CFLAG:108 狂王からの中田氏カウント用'),
   ),
+  190: named('通信勇者唯一标记', erb('其他/MAOUNET.ERB', 'CFLAG:190')),
   21: named('肉亲_0', src(SRC_FLAG, 'CFLAG:21～25 肉亲关系')),
   201: named('初调教', src(SRC_KXX, ':57 初调教时')),
   202: named('简易助手_0', src(SRC_KXX, ':123 简易助手口上 CFLAG:202～210')),

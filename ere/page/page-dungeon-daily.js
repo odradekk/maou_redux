@@ -40,9 +40,8 @@
  *     加入列表」（page-main-menu.js 的 reset_out_of_range_pointers 同款）；
  *   - ere 无全局 RAND 序列（#117 决议），三次随机消费经注入 rand_n 掷出
  *     （缺省 Math.random）；
- *   - EX_TALENTNAME（:57）的名字表未落 yml/（yml/Ex_Talent.yml 空名字表，
- *     名称条目随读档钩子票，见该文件头注）——本函数照读，读不到时按空串
- *     （原作 EX_TALENTNAME_INIT 未跑时同为空）；EX_TALENT:x:2（女儿）当前
+ *   - EX_TALENTNAME（:57）读取 chara-ex.js 的非存档运行时名字表；若初始化
+ *     钩子尚未运行则按空串。EX_TALENT:x:2（女儿）当前
  *     无写入者（chara-ex.js 的八个实现写下标 4/101-104/200/223/777/801/
  *     901），结构 1:1 保留、当前不达；
  *   - 原文的全角空格以 \u3000 转义书写（page-main-menu.js 先例：prettier
@@ -52,6 +51,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { ex_talentname } = require('#/chara/chara-ex');
 const { chara } = require('#/facade/chara');
 const era_exflag = require('#/era-utils/era-exflag');
 
@@ -142,8 +142,8 @@ function display_dungeon_daily(rand = default_rand) {
     if (locals.length <= 1) {
       for (let count = 101; count < 200; count += 1) {
         if (era.get(`ex_talent:${daily_target}:${count}`)) {
-          // EX_TALENTNAME:COUNT——名字表未落（文件头），读不到按空串
-          locals = String(era.get(`ex_talentname:${count}`) ?? '');
+          // EX_TALENTNAME:COUNT——EXCOM.ERB 的非存档字符串表
+          locals = ex_talentname(count);
         }
       }
     }

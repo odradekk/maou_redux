@@ -159,10 +159,11 @@ function try_parse_variable_yml(text) {
 
 // —— 渲染 ——
 
-// type → JSDoc 类型与未初始化兜底值。#13：引擎对未声明序号返回 undefined，
-// getter 必须 `|| 兜底`；number 用 0（引擎声明表初始化值），string 暂未支持渲染
+// type → JSDoc 类型与未初始化兜底表达式。#13：引擎对未声明序号返回
+// undefined；number 用 0（引擎声明表初始化值），string 保留合法空串。
 const TYPE_RENDER = {
-  number: { js_type: 'number', fallback: '0' },
+  number: { js_type: 'number', fallback_expression: '|| 0' },
+  string: { js_type: 'string', fallback_expression: "?? ''" },
 };
 
 // 单个变量的 getter/setter 对（含中文 JSDoc 与双向寻址注释）
@@ -170,7 +171,7 @@ function render_entry(table, entry) {
   const render_type = TYPE_RENDER[entry.type ?? 'number'];
   if (!render_type) {
     throw new Error(
-      `「${entry.key}」的 type「${entry.type}」暂不支持渲染（当前仅 number）`,
+      `「${entry.key}」的 type「${entry.type}」暂不支持渲染（当前仅 number/string）`,
     );
   }
   const address = `${table}:${entry.id}`;
@@ -182,7 +183,7 @@ function render_entry(table, entry) {
     `   * @returns {${render_type.js_type}}`,
     '   */',
     `  get ${entry.name}() {`,
-    `    return era.get('${address}') || ${render_type.fallback};`,
+    `    return era.get('${address}') ${render_type.fallback_expression};`,
     '  },',
     '  /**',
     `   * @param {${render_type.js_type}} v`,

@@ -114,7 +114,7 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 81; // #338：SELL_MATURO_K0 全文件完成；实测 82 − 1。
+export const PENDING_BASELINE = 77; // #338：SELL_MATURO.ERB 完成；与 #350 合并后实测（78 − 1）。
 
 /**
  * 存根清单「归因不到」行数基线（#331 验收整改冻结，只减不增）。归因不到
@@ -124,7 +124,7 @@ export const PENDING_BASELINE = 81; // #338：SELL_MATURO_K0 全文件完成；�
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 14;
+export const UNATTRIBUTED_BASELINE = 13; // #350：GET_TATOO 清单行补回准确源文件。
 
 /** 文件级「已判定不实现」显式表：推翻裁定 = 改这里（每条注明出处）。 */
 export const RULINGS = [
@@ -159,6 +159,11 @@ export const RULINGS = [
     path: 'target/ERB/其他/DATA_FIX.ERB',
     reason:
       'ADR-0006：Emuera 旧档迁移补丁，读旧档已判出界（三行新档语义归读档钩子）',
+  },
+  {
+    path: 'target/ERB/其他/TEST.ERB',
+    reason:
+      '#14：ENDCHECKDRAGONSIS 与两个旗标换算函数全库无调用者，是开发残留死代码',
   },
 ];
 

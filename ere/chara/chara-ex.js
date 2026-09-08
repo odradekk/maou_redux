@@ -32,16 +32,73 @@ const DECLARED_CHARA_IDS = [
 
 const chara_ex = new DispatchFamily('CHARA_EX', DECLARED_CHARA_IDS);
 
+let get_ex_kojo_num_local = 0;
+const ex_talent_names = [];
+
+/**
+ * @GET_EX_KOJO_NUM（EXCOM.ERB:31-38）：扫描 EX 素质 101..800，最后一格
+ * 命中者映射到扩展口上编号。原作没有在函数开头清 LOCAL，因此无命中时
+ * 会残留上一次结果；这里保留该缺陷。
+ * @param {number} cid 角色 ID
+ * @returns {number} 扩展口上编号（1001..1700），或静态局部的既有值
+ */
+function get_ex_kojo_num(cid) {
+  for (let count = 101; count < 801; count += 1) {
+    if (era.get(`ex_talent:${cid}:${count}`)) {
+      get_ex_kojo_num_local = count + 900;
+    }
+  }
+  return get_ex_kojo_num_local;
+}
+
+/**
+ * @EX_TALENTNAME_INIT（EXCOM.ERB:39-68）：初始化非存档的 EX 素质名表。
+ * @returns {boolean} 本次是否执行了初始化
+ */
+function ex_talentname_init() {
+  if (
+    String(ex_talent_names[0] ?? '').length > 1 ||
+    String(ex_talent_names[1] ?? '').length > 1
+  ) {
+    return false;
+  }
+  Object.assign(ex_talent_names, {
+    0: '灵魂错位',
+    1: '近卫',
+    2: '后代',
+    3: '魔王替身',
+    4: '狂王替身',
+    101: '琼',
+    102: '普林希斯',
+    103: '嘉德',
+    104: '菲娅',
+    200: '魔王',
+    223: '丽塔',
+    777: '卡拉',
+    801: '无双',
+    901: '一人军团',
+    902: '魔女',
+    903: '魔界公主',
+    904: '天神',
+  });
+  return true;
+}
+
+/** @param {number} id EX 素质序号 */
+function ex_talentname(id) {
+  return ex_talent_names[id] ?? '';
+}
+
 // 8 个实现，存根级 1:1：函数体即原作的全部内容（各 1-3 行 EX_TALENT 赋值，
 // #11 已判定「数据不是代码」）。EX_TALENT 序号语义 = EXCOM.ERB
 // @EX_TALENTNAME_INIT 的名称表，注释逐个标注。
 //
-// ex_talent 表已随 #138 落地（yml/Ex_Talent.yml 空名字表 + _fixed.json 登记
+// ex_talent 表已随 #138 落地（yml/Ex_Talent.yml + _fixed.json 登记
 // extendedCharaTables，原作声明在 EXCOM.ERH:4 `#DIM SAVEDATA CHARADATA
 // EX_TALENT,1000`）：新档 resetData → fillData 建顶层桶，addCharacter 为每个
 // 角色建 data.ex_talent[cid]，下方写入真正生效（生效与未登记的反面均由
-// test/extalent-table.test.js 用引擎真方法断言）。名称条目随读档钩子票
-// （EX_TALENTNAME_INIT）落地时补，见 Ex_Talent.yml 头注。
+// test/extalent-table.test.js 用引擎真方法断言）。名称表不是静态数据；上方按
+// 原作在新游戏与读档钩子运行时初始化。
 chara_ex.register(0, (cid) => {
   // @CHARA_EX_0（CHARA0.ERB）：EX_TALENT:200 = 魔王
   era.set(`ex_talent:${cid}:200`, 1);
@@ -98,4 +155,11 @@ async function add_chara_ex(chara_id) {
   return chara_ex.call(chara_id, { whenMissing: 0, args: [chara_id] });
 }
 
-module.exports = { add_chara_ex, chara_ex, DECLARED_CHARA_IDS };
+module.exports = {
+  add_chara_ex,
+  chara_ex,
+  DECLARED_CHARA_IDS,
+  get_ex_kojo_num,
+  ex_talentname_init,
+  ex_talentname,
+};

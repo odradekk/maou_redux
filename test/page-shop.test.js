@@ -23,7 +23,7 @@
  *   6. 存根清单核对（docs/stub-registry.md）。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：作用域外的每个指令壳只抽查代表
- * （101/777/200/888/199/525 + 498/499 + 999 未逐个断言）——壳的
+ * （101/777/200/199/525 + 498/499 + 999 未逐个断言）——壳的
  * 完整性由 STUBBED_CALLS 核对与链结构的 deepEqual 之外的代码评审承担；
  * 删掉某个未抽查的壳（如 102 DUNGEON_INFO2）测试仍绿，认领对应子系统票时
  * 以 docs/stub-registry.md 的专节为核对依据。
@@ -293,7 +293,7 @@ test('连续多轮混合操作后状态一致', async () => {
   );
 });
 
-// 直接驱动 @USERSHOP 分发（#130）：存根分支（101-888、498/499、52x、999）
+// 直接驱动 @USERSHOP 分发（#130）：未实现分支（101-777、498/499、52x、999）
 // 按政策不印按钮（按钮与真身同票落地，见 page-main-menu 的普查注释），引擎
 // 的 input() 不会送达它们的编号——这些分支的分发行为只能经直调测试
 async function dispatch(...results) {
@@ -308,12 +308,11 @@ async function dispatch(...results) {
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
   // 六次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
   // 200 自 #136 起是真身存档界面（下方独立用例），不再走占位
-  const fixture = await dispatch(101, 777, 888, 199, 525);
+  const fixture = await dispatch(101, 777, 199, 525);
   const texts = history_texts(fixture);
   for (const name of [
     '@CHARA_INFO',
     '@CONFIG',
-    '@MAOUNET',
     '@BEGIN TURNEND',
     '@SHOW_FLOOR',
   ]) {
@@ -541,7 +540,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'SECRET_LABO',
     'BEGIN TURNEND',
     'CONFIG',
-    'MAOUNET',
     'LABO',
     'CHARA_INFO_INDIVIDUAL_WAPPED',
     'SHOW_FLOOR',

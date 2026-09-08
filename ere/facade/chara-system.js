@@ -14,6 +14,21 @@ class SystemFacade {
 
   // —— cflag ——
   /**
+   * 通信勇者唯一标记（cflag:cid:190 ↔ CFLAG:190）
+   * 源: target/ERB/其他/MAOUNET.ERB CFLAG:190
+   * @returns {number}
+   */
+  get 通信勇者唯一标记() {
+    return era.get(`cflag:${this.cid}:190`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 通信勇者唯一标记(v) {
+    era.set(`cflag:${this.cid}:190`, v);
+  }
+
+  /**
    * 从属怪物（cflag:cid:570 ↔ CFLAG:570）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:570 従属モンスター（使役パートナーの NO）
    * @returns {number}
@@ -488,4 +503,13 @@ class SystemFacade {
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
+/**
+ * 写入 NTR 破处演出的狂王纹章。CSTR:10..17 依次是脸、胸、背、
+ * 下腹、屁股、性器、肛门、大腿的刺青槽（其他/TATOO.ERB）。
+ * @param {number} locate 10..17 中的随机位置
+ */
+SystemFacade.prototype.设置狂王纹章 = function (locate) {
+  era.set(`cstr:${this.cid}:${locate}`, '狂王的纹章');
+};
+
 module.exports = SystemFacade;

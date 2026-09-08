@@ -12,6 +12,21 @@ export const FILES = [
         ref: '2',
         any: [/^@MENU_BUTTON/m],
       },
+      {
+        src: 'target/ERB/其他/DRAW_EXT_COMM.ERB',
+        ref: '22',
+        any: [/^@PRINT_COLORBAR\(/m],
+      },
+      {
+        src: 'target/ERB/其他/DRAW_EXT_COMM.ERB',
+        ref: '54',
+        any: [/^@PRINT_COLORBAR2/m],
+      },
+      {
+        src: 'target/ERB/其他/DRAW_EXT_COMM.ERB',
+        ref: '76',
+        any: [/^@BARCOLORSET/m],
+      },
     ],
   },
 ];
