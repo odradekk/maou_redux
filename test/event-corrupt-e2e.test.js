@@ -22,7 +22,16 @@ const TURN_MAX = 2;
 
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
-test('端到端：角色堕落长跑（调教回路闭合与刻印推进）', async () => {
+function seq(values) {
+  let index = 0;
+  return (n) => {
+    const value = values[index++ % values.length];
+    assert(Number.isInteger(value) && value >= 0 && value < n);
+    return value;
+  };
+}
+
+async function run_corrupt_path() {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   preset_chara_0(fixture);
@@ -141,5 +150,75 @@ test('端到端：角色堕落长跑（调教回路闭合与刻印推进）', as
     new_able46,
     1,
     '调教参数与能力满足门槛后 COM_ABLE:46 必须放行此前不可用的新指令',
+  );
+
+  return { fixture, era_flag };
+}
+
+test('端到端：角色堕落长跑（调教回路闭合与刻印推进）', async () => {
+  await run_corrupt_path();
+});
+
+test('端到端：角色堕落后完成奴隶出售全链', async () => {
+  const { fixture, era_flag } = await run_corrupt_path();
+
+  // 接续调教结果补到原作出售资格门槛；这些值也给出独立可复算的估价：
+  // (顺从 2000 + 欲望 1200 + 技巧 400) × 阴蒂感觉 LV4 的 110% = 3960。
+  fixture.store.set('abl:17:10', 5); // 顺从
+  fixture.store.set('abl:17:11', 4); // 欲望
+  fixture.store.set('abl:17:12', 3); // 技巧
+
+  const sale = fixture.load_module('system/stronghold/sale');
+  await sale.check_sellassiable(17);
+  assert.equal(
+    fixture.store.get('cflag:17:0'),
+    2,
+    'CHECK_SELLASSIABLE 必须把玛奥逐级解锁为可出售且可做助手',
+  );
+  assert(
+    fixture.text_lines().includes('玛奥可以卖掉了'),
+    'CHECK_SELLASSIABLE 的出售资格提示必须可观察',
+  );
+
+  const estimate = sale.estimate_chara(17);
+  assert.equal(
+    estimate.price,
+    3960,
+    'ESTIMATE_CHARA 必须按调教后的能力给出独立可复算的估价',
+  );
+
+  fixture.load_module('kojo/kojo-k0-tender');
+  fixture.store.set('flag:7', 1); // 口上总开关
+  fixture.store.set('talent:17:160', 1); // 慈爱性格：SELF_KOJO_K0
+  fixture.reset_inputs(17, 0, 0, 999); // 选玛奥、确认、黑市、返回据点
+  assert.equal(await sale.chara_sale({ rand: seq([0]) }), 999);
+
+  assert(
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 17 &&
+        line.text.includes('[评价额:3,960点]'),
+    ),
+    'CHARA_SALE 的候选按钮必须显示 ESTIMATE_CHARA 算出的 3,960 点',
+  );
+  assert(
+    fixture.text_lines().includes('公厕买下玛奥之后………'),
+    'SELL_MATURO_K0 必须进入低价自然态的黑市末路',
+  );
+  assert.equal(era_flag.money, 3960, 'CHARA_SALE 必须把估价计入所持金');
+  assert.equal(
+    fixture.store.get('exflag:4444'),
+    3960,
+    'CHARA_SALE 必须同步增加非作弊资金',
+  );
+  assert(
+    !fixture.era.getAddedCharacters().includes(17),
+    'CHARA_SALE 必须让已售角色离场',
+  );
+  assert.equal(
+    fixture.store.get('flag:216'),
+    1,
+    'CHARA_SALE 必须留下 17 号角色已售出的 FLAG:216 记录',
   );
 });

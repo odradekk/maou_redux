@@ -123,6 +123,36 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     fixture.store.set(`base:17:${idx}`, 1500);
     fixture.store.set(`maxbase:17:${idx}`, 1500);
   }
+  // 留一只最低级狗头人在防御库存，使勇者的真实循环必经战斗层；没有库存
+  // 时原作走“无敌人训练”分支，MAGIC / MONSTER_SKILL 都不会被调用。
+  fixture.store.set('item:100', 1);
+  fixture.store.set('itemname:100', '狗头人');
+
+  // 保留三块真身，只在模块对象边界计数。战斗模块也经同一对象调用，故这里
+  // 记录的是完整 ENDING_2 路径实际抵达次数，不是另开一条域内直调用例。
+  let magic_calls = 0;
+  let monster_skill_calls = 0;
+  let use_ex_item_in_battle_calls = 0;
+  let use_ex_item_after_battle_calls = 0;
+  const magic_mod = fixture.load_module('dungeon/magic');
+  const monster_skill_mod = fixture.load_module('dungeon/monster-skill');
+  const ex_item_mod = fixture.load_module('dungeon/ex-item');
+  const real_magic = magic_mod.magic;
+  const real_monster_skill = monster_skill_mod.monster_skill;
+  const real_use_ex_item = ex_item_mod.use_ex_item;
+  magic_mod.magic = async (...args) => {
+    magic_calls += 1;
+    return real_magic(...args);
+  };
+  monster_skill_mod.monster_skill = async (...args) => {
+    monster_skill_calls += 1;
+    return real_monster_skill(...args);
+  };
+  ex_item_mod.use_ex_item = async (timing, ...args) => {
+    if (timing === '战斗中') use_ex_item_in_battle_calls += 1;
+    if (timing === '战斗后') use_ex_item_after_battle_calls += 1;
+    return real_use_ex_item(timing, ...args);
+  };
 
   // 载入主循环模块：顶层 require 注册全部事件处理器（与引擎加载 ere/main.js
   // 的真实启动同一注册面）。本用例照 main-loop 的 STATE_HANDLERS 逐步驱动
@@ -269,6 +299,34 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     assert(
       !texts.some((line) => line.includes('魔王终于再次掌握了世界')),
       'ENDING_1 横幅未出现（两条结局的竞速由本票压住）',
+    );
+
+    // —— 阶段 5a 三块真身的贯通证据：既要实际抵达，也不许退回存根登记。——
+    const battle = fixture.load_module('dungeon/dungeon-battle');
+    console.log('[e2e] 阶段 5a 真身调用次数', {
+      magic_calls,
+      monster_skill_calls,
+      use_ex_item_in_battle_calls,
+      use_ex_item_after_battle_calls,
+    });
+    assert(
+      magic_calls > 0 && !battle.STUBBED_CALLS.includes('MAGIC'),
+      'MAGIC 在 ENDING_2 战斗路径实际执行且未退回存根',
+    );
+    assert(
+      monster_skill_calls > 0 &&
+        !battle.STUBBED_CALLS.includes('MONSTER_SKILL'),
+      'MONSTER_SKILL 在 ENDING_2 战斗路径实际执行且未退回存根',
+    );
+    // ENDING_2 不进入奴隶迎击的 duel_attack；SLAVE_MONSTER_SKILL 的接入
+    // 由 test/monster-skill.test.js:329 的模块边界用例负责。
+    assert(
+      use_ex_item_in_battle_calls > 0,
+      'USE_EX_ITEM 在 ENDING_2 战斗中调用点实际执行',
+    );
+    assert(
+      use_ex_item_after_battle_calls > 0,
+      'USE_EX_ITEM 在 ENDING_2 战斗后调用点实际执行',
     );
 
     // —— 天数（工单要求：断言区间 + 打印实测值）——
