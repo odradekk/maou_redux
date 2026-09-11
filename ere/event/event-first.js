@@ -9,9 +9,9 @@
  *     maxbase/relation/source/talent），未声明下标写入即落、可回读——
  *     #13 的「静默建变量」在写入侧是可用的通道，读侧仍须兜底；
  *   - 落不进去的不装样子写（表未声明，写了即静默 no-op），注释说明去向：
- *     PBAND、BOUGHT、冒險者性別、丽塔启动！——登记在 docs/stub-registry.md
- *     的「变量级待办」（FLAG:26/27 已随 #138 数组化落地，EX_FLAG 已随 #113
- *     落表并接入）；
+ *     PBAND、冒險者性別、丽塔启动！——登记在 docs/stub-registry.md 的
+ *     「变量级待办」（FLAG:26/27 已随 #138 数组化落地，EX_FLAG 已随 #113
+ *     落表并接入，BOUGHT 已随 #395 落表并接入）；
  *   - 约二十处调用绝大部分存根化：可达路径上的存根各打一行占位（含原作
  *     函数名，可检索可断言），不可达分支体内的调用仅登记不打印；
  *   - 被 FIRST_SETTING 钉在默认值的分支体：村娘分支（FLAG:501，:95-187）
@@ -101,9 +101,12 @@ on('EVENTFIRST', async () => {
     era.set(`flag:${i}`, -1);
   }
 
-  // :26 TARGET = -1（包装层：flag:10005）。:27 BOUGHT = -1 无 ere 落点
-  // （builtin 标量、未声明表），等需要它的子系统票再定（存根清单）。
+  // :26 TARGET = -1（包装层：flag:10005）。:27 BOUGHT = -1（#395 起落表：
+  // flag:10029，见 yml/Flag.yml「购入品指针」——BOUGHT 是无声明即写不进任何
+  // 表的 builtin 标量，新档不显式初始化会读回 fillData 补的 0（误判为「正在
+  // 购物道具 0 号」），必须与 TARGET 同处显式置 -1）。
   era_flag.target = -1;
+  era_flag.bought = -1;
 
   // :31 FLAG:5 = 17179934119 —— 战斗日志显示设置（位打包，见 :29-30 注释）
   era.set('flag:5', 17179934119);

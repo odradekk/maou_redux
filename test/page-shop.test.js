@@ -68,31 +68,41 @@ function join_selectable_slave(fixture, id) {
   fixture.era.addCharacter(id);
 }
 
-test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（不叠占位文本）', async () => {
-  const fixture = await run_shop_with(501, 504, 505, 500);
+test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（各面板真身内容）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('item:60', 1); // 落穴：给 DRAW_HAVETRAPS 一个可见标记
+  fixture.store.set('itemname:60', '落穴'); // 夹具不读 yml/，名字表须显式播种
+  fixture.set_inputs(501, 504, 505, 500);
+  const { run_shop } = fixture.load_module('page/page-shop');
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+
   // FLAG:36（信息面板选择）的写入序列恰为输入序列，末值 0（最后一次 500）
   assert.deepEqual(
     fixture.var_writes.filter((w) => w.name === 'flag:36').map((w) => w.value),
     [1, 4, 5, 0],
   );
   assert.equal(fixture.store.get('flag:36'), 0);
-  // 重绘即反馈：每轮恰两行占位（子面板 + 指令面板渲染），没有为面板按钮
-  // 多打一行「占位反馈」——叠了会在此红（派单核实事实 #2）。#180 起地城
-  // 两面板真身：轮 3（地城概况）只余指令面板占位 1 行；#179 起轮 4（地城
-  // 日常）尾部的 DISPLAY_DUNGEON_DAILY 亦为真身，同样只余指令面板占位
-  // 1 行——合计 2+2+1+1+2 = 8
+  // 首绘 + 4 次输入各触发一次重绘
   assert.equal(rounds_drawn(fixture), 5);
-  assert.equal(
-    history_texts(fixture).filter((line) => line.includes('尚未移植')).length,
-    8,
-  );
-  // 切换后的重绘确实换到了对应面板：第 2/3/4 轮的面板内容各自可见
-  //（HAVETRAPS 仍是存根占位；地城两面板 #180 起真身，看读数标记）
+
   const texts = history_texts(fixture);
+  // #395 起四个子面板与指令面板全部真身：混合切换不再产生任何存根占位行
   assert.equal(
-    texts.filter((line) => line.includes('@DRAW_HAVETRAPS')).length,
+    texts.filter((line) => line.includes('尚未移植')).length,
+    0,
+    '四个子面板 + 指令面板均已落真身，本轮组合不应再打任何存根占位',
+  );
+  // 切换后的重绘确实换到了对应面板：第 1/5 轮是 HAVEITEMS（技巧Lv 头行），
+  // 第 2 轮是 HAVETRAPS（落穴标记），第 3/4 轮是地城两面板真身读数
+  assert.equal(
+    texts.filter((line) => line.includes('技巧Lv')).length,
+    2,
+    '首轮与末轮（500 切回）都是 DRAW_HAVEITEMS',
+  );
+  assert.equal(
+    texts.filter((line) => line.includes('落穴')).length,
     1,
-    `切换后应恰一次重绘出 @DRAW_HAVETRAPS 面板`,
+    '切到 501 应恰一次重绘出 DRAW_HAVETRAPS 的道具网格',
   );
   for (const marker of ['迷宫Lv', '威望值']) {
     assert.equal(
@@ -101,42 +111,33 @@ test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（不叠�
       `切换后应恰一次重绘出「${marker}」读数`,
     );
   }
-  // 首轮面板是 DRAW_HAVEITEMS（FLAG:36 未声明读值 0），500 切回后恰两次
-  assert.equal(
-    texts.filter((line) => line.includes('@DRAW_HAVEITEMS')).length,
-    2,
-  );
 });
 
-test('496（A > 0）：SELECT_TARGET 真身列表可取消，497 仍为存根占位', async () => {
+test('496/497（A > 0）：SELECT_TARGET/SELECT_ASSI 均为真身，可取消回主菜单', async () => {
   const fixture = create_era_fixture();
   join_selectable_slave(fixture, 31);
-  fixture.set_inputs(496, 999, 497);
+  fixture.store.set('cflag:31:0', 2); // 31 同时挂助手役，497 才有候选可选
+  fixture.set_inputs(496, 999, 497, 999);
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
 
+  // 496/497：各自的真身选择画面（列表 + 999 取消——取消不选人、回主菜单
+  // 重绘；两个画面都作为分发期输出被就地重绘消费，取证在行史）
   const texts = history_texts(fixture);
-  // 496：真身选择画面（列表 + 999 取消——取消不选人、回主菜单重绘；选择
-  // 画面作为分发期输出被就地重绘消费，取证在行史）
   assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
-  // 奴隶行是按钮（#44 验收后实机修正）：断言看引擎渲染文本
+  assert(texts.includes('请魔王大人选择在调教过程当中的助手人选'));
+  // 候选行是按钮（#44/#395 验收后实机修正）：断言看引擎渲染文本
   assert(
     fixture.lines_history.some(
-      (line) => line.type === 'button' && line.rendered === '[31] 奴隶31',
+      (line) =>
+        line.type === 'button' && line.rendered?.startsWith('[31] 奴隶31'),
     ),
-    '奴隶行必须是可点击按钮，accelerator = 角色 ID',
+    '目标候选行必须是可点击按钮，accelerator = 角色 ID',
   );
-  assert(
-    texts.some((line) => line.includes('@SELECT_ASSI')),
-    '497 应占位 @SELECT_ASSI',
-  );
-  assert(
-    fixture.waits.some((w) => w.waited),
-    '497 的分发期存根必须等键（玩家先看到再被重绘清掉）',
-  );
+
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, -1, '取消不得选中目标');
-  assert.equal(era_flag.assi, -1, '存根不得选中助手');
+  assert.equal(era_flag.assi, -1, '取消不得选中助手');
 });
 
 test('100（A > 0）无目标：SELECT_TARGET 取消（返回 0）后回循环，不进调教', async () => {
@@ -210,14 +211,13 @@ test('守卫 A == 0：496/497 与无效输入同路——无反馈、只重绘�
   );
   // 两次输入都被守卫拦下后落到链尾，回循环重绘（2 次输入 + 首轮 = 3 轮）
   assert.equal(rounds_drawn(fixture), 3);
-  // 除每轮固定的两行存根外无任何新增输出；行史文本行总数固定为每轮 7 行
-  //（状态行 + 面板存根 + Commands 标题 + [100]/[106] 两个不可选占位
-  // + 指令面板存根）
-  //——多打任何一行（含给守卫拦下的输入加「提示」）都会在此红。A == 0 时
-  // [100] 调教退化为灰色 [---] 文本（原作 :229-231），A > 0 时它是按钮、
-  // 不计入文本行
-  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 3 * 2);
-  assert.equal(texts.length, 3 * 7);
+  // 行史文本行总数固定为每轮 13 行（状态行 1 + DRAW_HAVEITEMS 头行/两段
+  // 网格收尾 3 + Commands 标题 1 + 八个 A/B/FLAG 守卫不成立的 [---] 占位：
+  // [100][101][103][104][106][108][110][111]）——多打任何一行（含给守卫
+  // 拦下的输入加「提示」）都会在此红。#395 起四个子面板与指令面板全部
+  // 真身，A == 0 时不再有任何「尚未移植」存根占位
+  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 0);
+  assert.equal(texts.length, 3 * 13);
 
   // [100] 的守卫走直接分发验证：A == 0 时 [100] 不渲染（[---] 文本占位），
   // 引擎的 input() 不会送达 100（#130）——进不了调教分支只能经 usershop
@@ -248,8 +248,8 @@ test('未打印按钮的值引擎不送达：拒收且只画首轮（原作无 E
     '拒收后不得重绘（引擎在等下一次输入）',
   );
   const texts = history_texts(fixture);
-  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 1 * 2);
-  assert.equal(texts.length, 1 * 7);
+  assert.equal(texts.filter((line) => line.includes('尚未移植')).length, 0);
+  assert.equal(texts.length, 1 * 13);
 });
 
 test('连续多轮混合操作后状态一致', async () => {
@@ -293,9 +293,9 @@ test('连续多轮混合操作后状态一致', async () => {
   );
 });
 
-// 直接驱动 @USERSHOP 分发（#130）：未实现分支（101-777、498/499、52x、999）
-// 按政策不印按钮（按钮与真身同票落地，见 page-main-menu 的普查注释），引擎
-// 的 input() 不会送达它们的编号——这些分支的分发行为只能经直调测试
+// 直接驱动 @USERSHOP 分发（#130）：仍无按钮的分支（101-777 里除 199/888 外
+// 的分发本体、498/499、52x、999/7788）引擎的 input() 不会送达它们的编号
+// （无按钮或隐藏调试入口）——这些分支的分发行为只能经直调测试
 async function dispatch(...results) {
   const fixture = create_era_fixture();
   const { usershop } = fixture.load_module('page/page-shop');
@@ -306,21 +306,106 @@ async function dispatch(...results) {
 }
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
-  // 六次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
-  // 200 自 #136 起是真身存档界面（下方独立用例），不再走占位
-  const fixture = await dispatch(101, 777, 199, 525);
+  // 四次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
+  // 200 自 #136 起是真身存档界面（下方独立用例），199 自 #395 起是真身
+  // BEGIN TURNEND 转场（专属用例见下），均不再走占位
+  const fixture = await dispatch(101, 777, 103, 525);
   const texts = history_texts(fixture);
-  for (const name of [
-    '@CHARA_INFO',
-    '@CONFIG',
-    '@BEGIN TURNEND',
-    '@SHOW_FLOOR',
-  ]) {
+  for (const name of ['@CHARA_INFO', '@CONFIG', '@批量处刑', '@SHOW_FLOOR']) {
     assert(
       texts.some((line) => line.includes(name)),
       `指令壳应占位 ${name}`,
     );
   }
+});
+
+test('199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真能推进）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:9', 10);
+  const { usershop } = fixture.load_module('page/page-shop');
+  const { BeginSignal, STATE } = fixture.load_module(
+    'system/flow/begin-signal',
+  );
+
+  await assert.rejects(
+    () => usershop(199),
+    (e) => e instanceof BeginSignal && e.state === STATE.TURNEND,
+    '休息必须以 BEGIN TURNEND 转场（本票的到站标记）',
+  );
+  assert(
+    history_texts(fixture).includes('你专心于内政，稍作了休息……（税金+5%）'),
+    '必须打印原作的内联文本',
+  );
+  assert.equal(fixture.store.get('flag:9'), 15, 'FLAG:9（税金）必须 += 5');
+});
+
+test('107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位（#395 给 BOUGHT 落点）', async () => {
+  const fixture = create_era_fixture();
+  fixture.set_inputs(107, 500); // 107 后主菜单仍正常重绘，需再按一个真实按钮才能继续
+  const { run_shop } = fixture.load_module('page/page-shop');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+
+  const texts = history_texts(fixture);
+  assert(
+    texts.some(
+      (line) =>
+        line.includes('@ITEM_SHOP') && !line.includes('@ITEM_SHOP_TRAP'),
+    ),
+    '107 后下一轮 @SHOW_SHOP 应打道具商店存根（BOUGHT < 54）',
+  );
+  assert.equal(
+    era_flag.bought,
+    -1,
+    '存根显示后必须立即复位，不留在购物态（否则下一轮会再打一次）',
+  );
+});
+
+test('107 购物：BOUGHT >= 54 跳陷阱商店存根（ITEM_SHOP_TRAP）', async () => {
+  const fixture = create_era_fixture();
+  const { run_shop } = fixture.load_module('page/page-shop');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  // 真实路径只能置 1（[107] 分支），此处直接造世界验证 show_shop 自身对
+  // BOUGHT >= 54 的分支判据（原作 :29 ELSEIF BOUGHT >= 54）。@EVENTSHOP
+  // 会把 BOUGHT 重置为 -1（:20），所以要跳过它才能观测到这个分支
+  era_flag.bought = 54;
+  fixture.set_inputs(500);
+
+  await assert.rejects(
+    () => run_shop({ skip_eventshop: true }),
+    /预置输入已耗尽/,
+  );
+  const texts = history_texts(fixture);
+  assert(
+    texts.some((line) => line.includes('@ITEM_SHOP_TRAP')),
+    'BOUGHT >= 54 应打陷阱商店存根',
+  );
+  assert.equal(era_flag.bought, -1);
+});
+
+test('show_shop：BOUGHT == 0 边界仍在 >= 0 之内，打道具商店存根（非 > 0）', async () => {
+  const fixture = create_era_fixture();
+  const { run_shop } = fixture.load_module('page/page-shop');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  // 原作 :25 IF BOUGHT >= 0（闭区间下界），0 与 1 同属「已购物」——只探
+  // 0 这个边界点，>= 0 误写成 > 0 时它是唯一会漏判的输入
+  era_flag.bought = 0;
+  fixture.set_inputs(500);
+
+  await assert.rejects(
+    () => run_shop({ skip_eventshop: true }),
+    /预置输入已耗尽/,
+  );
+  const texts = history_texts(fixture);
+  assert(
+    texts.some(
+      (line) =>
+        line.includes('@ITEM_SHOP') && !line.includes('@ITEM_SHOP_TRAP'),
+    ),
+    'BOUGHT == 0 应打道具商店存根（>= 0 下界含 0）',
+  );
+  assert.equal(era_flag.bought, -1);
 });
 
 test('200/300：真身存读档界面（#136 接通，占位移除）', async () => {
@@ -525,20 +610,21 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   const registry = fs.readFileSync(registry_path, 'utf8');
 
   // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
-  // SELECT_TARGET 与 100 分支的 BEGIN TRAIN 自 #44、INVASION 与 109 分支的
-  // BEGIN TURNEND 自 #117 起为真身/真转场，SYSTEM_SAVEGAME / SYSTEM_LOADGAME
-  // 自 #136 起为真身（200/300 分支），DUNGEON_INFO2 自 #180 起为真身
-  //（102 分支，page-dungeon-info2.js），已移出
+  // SELECT_TARGET/SELECT_ASSI 与 100 分支的 BEGIN TRAIN 自 #44、INVASION 与
+  // 109 分支的 BEGIN TURNEND 自 #117、199 分支的 BEGIN TURNEND 自 #395 起
+  // 为真身/真转场，SYSTEM_SAVEGAME / SYSTEM_LOADGAME 自 #136 起为真身
+  // （200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
+  // page-dungeon-info2.js），已移出。ITEM_SHOP_TRAP 是 BOUGHT 落表后
+  // show_shop 的新运行时占位（#395），非 usershop 分支
   assert.deepEqual(STUBBED_CALLS, [
-    'SELECT_ASSI',
     'CHARA_INFO',
     '批量处刑',
     'INTERCEPT',
     'ABILITY_UP',
     'ITEM_SHOP',
+    'ITEM_SHOP_TRAP',
     'TAILOR_MAIN',
     'SECRET_LABO',
-    'BEGIN TURNEND',
     'CONFIG',
     'LABO',
     'CHARA_INFO_INDIVIDUAL_WAPPED',

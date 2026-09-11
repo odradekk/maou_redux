@@ -1,19 +1,19 @@
 /**
- * @file 据点主菜单（菜单骨架：状态行 + 六个功能入口 + 四个子面板）。
+ * @file 据点主菜单（菜单骨架：状态行 + 六个功能入口 + 四个子面板 + 指令面板）。
  *
  * 源: target/ERB/SHOP/DRAW_MAINMENU.ERB  @DRAW_MAINMENU（:5-325）/
- *     @DRAW_DUNGEON_OVERVIEW（:427-577，#180 起真身）/
+ *     @DRAW_HAVEITEMS（:331-393，#395 起真身）/@DRAW_HAVETRAPS（:400-421，
+ *     #395 起真身）/@DRAW_DUNGEON_OVERVIEW（:427-577，#180 起真身）/
  *     @DRAW_DUNGEON_DAILY（:583-601，#180 起真身；尾部的
  *     @DISPLAY_DUNGEON_DAILY（DUNGEON_DAILY.ERB:1）自 #179 起真身，
- *     page/page-dungeon-daily.js）；
- *     @DRAW_HAVEITEMS :331 / @DRAW_HAVETRAPS :400 两个子面板仍存根
+ *     page/page-dungeon-daily.js）
  *
  * 这张票（#23）范围：状态行（读真实变量）、六个功能入口（能显示、能点选；
- * 点选的分发已落 #24）、防御性修正（:20-39 照实移植）。作用域外，各留注释或
- * 存根：BGM 段（:11-17）自 #69 起接通（见 draw_main_menu 首段）、调教目标
- * 名/助手名按钮与生命条（:100-145）、物品/陷阱两个子面板的内容（:190-197
- * 的分发照搬、函数体存根）、指令面板的渲染（:203-319，随首个指令子系统票；
- * 分发本体在 page-shop.js 的 usershop）。
+ * 点选的分发已落 #24）、防御性修正（:20-39 照实移植）。#395 补全指令面板的
+ * 渲染（:203-320 的 [100]-[888]，分发本体在 page-shop.js 的 usershop）与
+ * 两个内容子面板（DRAW_HAVEITEMS/DRAW_HAVETRAPS）。作用域外，仍留注释：
+ * BGM 段（:11-17）自 #69 起接通（见 draw_main_menu 首段）、调教目标名/
+ * 助手名按钮与生命条（:100-145，随角色数据票）。
  *
  * #73 起本画面迁入组件层：menu_button 排版助手收敛到
  * page/components/menu-button.js（两条 UI 结论的唯一权威落点），整屏由
@@ -32,47 +32,24 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
-const { stub_line } = require('#/utils/stub-line');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）——后续票据此认领工作；名单变动必须同步清单。
- *
- * 注：DRAW_MAINMENU 指 @DRAW_MAINMENU 的指令面板段（:208-319 的 [100]-[888]
- * 按钮渲染；[100] 与 [109] 已分别随 #44/#117 的真身接通，[102] 地下城自
- * #180 起（DUNGEON_INFO2 真身在 page/page-dungeon-info2.js），[200]/[300]
- * 随 #136）——函数本体的骨架已实现（#23），占位的是其余各项；输入分发本体
- * 在 page/page-shop.js 的 usershop（#24）。
- *
- * DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件下方）；
- * DAILY 尾部的 DISPLAY_DUNGEON_DAILY 自 #179（H10）起为真身
- * （page/page-dungeon-daily.js），移出本名单。
- */
-const STUBBED_CALLS = ['DRAW_HAVEITEMS', 'DRAW_HAVETRAPS', 'DRAW_MAINMENU'];
+// 本文件曾经存根化的原作调用名：DRAW_HAVEITEMS/DRAW_HAVETRAPS/指令面板段
+// 均随 #395 转真身，清单归零。留空数组而非删除导出——
+// test/page-main-menu.test.js 的核对逻辑按「遍历 STUBBED_CALLS」运作，
+// 空数组时循环体不执行，天然通过，删导出反而要连带改测试。
+const STUBBED_CALLS = [];
 
 // 原文排版里的全角空格（UNICODE 0x3000）。以转义书写并集中定义：ESLint
 // 的 no-irregular-whitespace 拦裸写，prettier 会把字符串里的裸全角空格当
 // 可删空白吃掉。
 const FULL_WIDTH_SPACE = '\u3000';
 
-// :190-197 四个子面板的分发表：FLAG:36 的取值 → 原作函数。地城概况 /
-// 地城日常自 #180 起为真身（本文件下方）；物品/技能与持有陷阱仍存根
-//（owner 是认领该面板的子系统，见 docs/stub-registry.md 的归属列）。
-const PANEL_STUBS = {
-  0: {
-    erb_name: 'DRAW_HAVEITEMS',
-    label: '物品/技能面板',
-    owner: '随物品/技能子系统票',
-  },
-  1: {
-    erb_name: 'DRAW_HAVETRAPS',
-    label: '持有陷阱面板',
-    owner: '随陷阱/商店子系统票',
-  },
-};
-
-/** FLAG:36 → 子面板绘制函数（4/5 真身，其余存根；ELSE 回落物品/技能） */
+/** FLAG:36 → 子面板绘制函数（:190-200，ELSE 回落物品/技能；#395 四支全部真身） */
 function draw_panel(active_panel) {
+  if (active_panel === 1) {
+    draw_have_traps();
+    return;
+  }
   if (active_panel === 4) {
     draw_dungeon_overview();
     return;
@@ -81,12 +58,8 @@ function draw_panel(active_panel) {
     draw_dungeon_daily();
     return;
   }
-  const panel = PANEL_STUBS[active_panel] ?? PANEL_STUBS[0];
-  stub_line(panel.erb_name, panel.label, panel.owner);
+  draw_have_items();
 }
-
-// 存根占位自 #44 起收敛到 utils/stub-line.js（本文件是 #23 的先例、
-// page-shop.js 自 #24 起经本文件的 re-export 使用——导出保持，调用点不动）
 
 // menu_button 自 #73 起收敛到 page/components/menu-button.js（本文件原是
 // 它的唯一发明方；近似依据与两条 UI 结论的说明都在那边）。
@@ -254,9 +227,9 @@ function draw_main_menu() {
   menu_button('地城日常', 505, active_panel !== 5);
 
   // :190-200 四个子面板的分发（FLAG:36 → 专用函数，ELSE → 物品/技能）。
-  // 地城概况/地城日常自 #180 起为真身（draw_panel 内分发）；物品/陷阱
-  // 面板各打一行占位、标注归属（#23 验收），函数体
-  // （DRAW_MAINMENU.ERB:331-421）随各自子系统的票移植。
+  // 四支自 #180/#395 起全部真身（draw_panel 内分发）：地城概况/地城日常
+  // 随 #180，物品/技能（DRAW_HAVEITEMS）与持有陷阱（DRAW_HAVETRAPS）随
+  // 本票（:331-393/:400-421）。
   draw_panel(active_panel);
 
   // :203-207 分隔线 + 指令面板标题（▌Commands，粗体）
@@ -282,6 +255,15 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
+  // :232-234 [101] 能力显示 —— CALL CHARA_INFO（存根，随角色信息票）。
+  // 守卫 CHARANUM >= 1：魔王自身即角色 0，恒真——照原作保留判据，不发明
+  // 可用性规则（同 [109]/[200]/[300] 的处理原则）。
+  if (era.getAddedCharacters().length >= 1) {
+    era.printButton('能力显示', 101);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
+
   // :239-243 [102] 地下城 —— 指令面板里第五个接通的真身入口（#180）：
   // 分发在 page-shop.js 的 usershop（DUNGEON_INFO2 真身，ere/page/
   // page-dungeon-info2.js）。原作无 IF 守卫、无条件渲染（:239 的 IF 只切换
@@ -289,6 +271,26 @@ function draw_main_menu() {
   // 2D 模式的设定一问随 #181 H12，当前恒 0）。形态同 [100]：列排版文本改
   // 按钮（PR #53），正文不写 [102] 前缀（PR #30）。
   era.printButton((era.get('flag:502') || 0) === 0 ? '地下城' : '场子', 102);
+
+  // :247-251 [103] 处刑 —— CALL 批量处刑（存根，随处刑票）；守卫 A > 0
+  // （同 [100]/[104]，不发明可用性规则）。
+  if (count_selectable_slaves() > 0) {
+    era.printButton('处刑', 103);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
+
+  // :252-257 [104] 迎击 —— CALL INTERCEPT（存根，随迎击票）；守卫 A > 0。
+  if (count_selectable_slaves() > 0) {
+    era.printButton('迎击', 104);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
+
+  // :259-265 [105] 能力值提升 —— CALL ABILITY_UP（存根，随能力票）。原作
+  // 判据整段被注释掉（`; IF A > 0` / `; ELSE` 两支均带 `;` 前缀失效），
+  // 无条件渲染——照搬原作现状，不补一个原作自己都关掉的守卫。
+  era.printButton('能力值提升', 105);
 
   // :267-271 [106] 贩卖奴隶。B > 0 时显示按钮；B 只看
   // CFLAG:0（是否达到出售资格），实际列表再排除濒死/影子/占用角色。
@@ -299,6 +301,22 @@ function draw_main_menu() {
     ).length;
   if (sellable_count > 0) {
     era.printButton('贩卖奴隶', 106);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
+
+  // :272-273 [107] 购物 —— #395 起真身：BOUGHT = 1（分发在 usershop 的
+  // 107 分支），下一轮 @SHOW_SHOP 据此跳过主菜单、改打 ITEM_SHOP/
+  // ITEM_SHOP_TRAP 存根占位（商店本体随 #399）。原作无条件渲染，照搬——
+  // 没有这枚按钮，#399 交付的道具商店在实机上仍进不去（同 [200]/[300] 的
+  // #137 教训）。
+  era.printButton('购物', 107);
+
+  // :275-281 [108] 换装 —— CALL TAILOR_MAIN（存根，随换装票）；守卫
+  // A > 0 && FLAG:37 == 1（FLAG:37 未落表前未声明读值 undefined → || 0 →
+  // 恒不成立，落表后随设定生效）。
+  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {
+    era.printButton('换装', 108);
   } else {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
@@ -316,12 +334,30 @@ function draw_main_menu() {
   // 校验见 #130）。
   era.printButton('侵略', 109);
 
+  // :285-289 [110] 实验室 —— CALL SECRET_LABO（存根，随实验室票）；守卫
+  // TALENT:0:325 == 1（魔王的魔界知识，与 usershop 110 分支的分发守卫
+  // 同源）。
+  if ((era.get('talent:0:325') || 0) === 1) {
+    era.printButton('实验室', 110);
+  } else {
+    era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
+  }
+
   // :290-292 [111] 设施·设备：肉便器或博物馆展品存在时才显示。
   if ((era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0) {
     era.printButton('设施·设备', 111);
   } else {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
+
+  // :298-299 [120] 召唤 —— CALL MONSTER_SHOP（存根，随怪物/召唤票）；
+  // 无条件渲染。
+  era.printButton('召唤', 120);
+
+  // :300-301 [199] 休息（回合结束）—— #395 起真身：内联文本 + FLAG:9 +=5
+  // （税金）+ BEGIN TURNEND，分发在 page-shop.js 的 usershop。原作无条件
+  // 渲染，照搬——做完这一枚，引擎里第一次能把回合推过去（硬约束八）。
+  era.printButton('休息', 199);
 
   // :303 [200] 保存 / :306 [300] 读取 —— 指令面板里第三、四个接通的真身
   // 入口：分发在 page-shop.js 的 usershop（200 → save_game、300 →
@@ -336,20 +372,135 @@ function draw_main_menu() {
   era.printButton('保存', 200);
   era.printButton('读取', 300);
 
-  // :232-319 指令面板其余各项（[101]-[888] 减去已落地的 [100]/[106]/
-  // [109]/[200]/[300]，可用性依 A/B 计数与 FLAG 状态）：随各自子系统票落地。
-  // 普查（#129）：这些项的分发分支全部仍是存根（usershop 的
-  // stub_line_wait），补按钮只会造出「点了打一行占位」的死入口——按钮与
-  // 真身同票落地，登记见 docs/stub-registry.md 的 DRAW_MAINMENU 行与
-  // @USERSHOP 指令分支表。
-  stub_line(
-    'DRAW_MAINMENU',
-    '指令面板其余各项（[101]-[888] 按钮）渲染',
-    '随各自指令子系统票',
-  );
+  // :307-308 [777] 设定 —— CALL CONFIG（存根，随设定票）；无条件渲染。
+  era.printButton('设定', 777);
+
+  // :309-311 [888] 通信 —— CALL MAOUNET（真身，#350）；无条件渲染——原作
+  // 与分发真身早已接通（#350），渲染侧此前从未画过按钮，跨作品数据交换
+  // 入口在实机上因此不存在（同 [200]/[300] 的 #137 教训）。
+  era.printButton('通信', 888);
 
   // :320 底部双线
   era.drawLine({ isSolid: true });
+}
+
+/**
+ * 显示宽度（全角 2 / 半角 1）。原作 %str,width,LEFT% 按此口径计算填充（Emuera 显示
+ * 宽度，同 page-save-load.js 的同名助手）。
+ * @param {string} s
+ * @returns {number}
+ */
+function display_width(s) {
+  return [...s].reduce(
+    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
+    0,
+  );
+}
+
+/**
+ * 左对齐补空格到指定显示宽度（%str,width,LEFT% 的形态，本文件仅用于物品名）。
+ * @param {string} s
+ * @param {number} width
+ * @returns {string}
+ */
+function pad_display_left(s, width) {
+  const pad = width - display_width(s);
+  return pad > 0 ? s + ' '.repeat(pad) : s;
+}
+
+/** %ITEMNAME:id%（Item.yml 登记名） */
+function item_name(id) {
+  return era.get(`itemname:${id}`) ?? '';
+}
+
+/**
+ * 5 列一行的道具网格步进（DRAW_HAVEITEMS 两段 + DRAW_HAVETRAPS 一段共用，
+ * :359-372/:377-390/:404-418 结构相同，仅遍历的 id 范围不同）。
+ * ITEM:(id) > 0 才占列；列数到 5 时先补一个全角空格（FULL_WIDTH_SPACE）
+ * 换行，再继续本次判定——即使本格是空位也会触发换行（判据在
+ * 遍历前置检查，不在打印之后）。
+ *
+ * @param {{ line: string, column: number }} state 跨调用累积的当前行文本
+ *   与已占列数（调用方在段边界处自行决定是否清空——DRAW_HAVEITEMS 的
+ *   item91 特例会带着未清空的 line 进入第二段，见该函数头注）
+ * @param {number} id 道具 ID
+ */
+function append_item_slot(state, id) {
+  if (state.column >= 5) {
+    era.print(`${state.line}${FULL_WIDTH_SPACE}`);
+    state.line = '';
+    state.column = 0;
+  }
+  const count = era.get(`item:${id}`) || 0;
+  if (count <= 0) {
+    return;
+  }
+  if (state.column === 0) {
+    state.line += '  ';
+  }
+  state.line += `${FULL_WIDTH_SPACE}${pad_display_left(`${item_name(id)}(${count})`, 18)}`;
+  state.column += 1;
+}
+
+/**
+ * @DRAW_HAVEITEMS（:331-393，#395 起真身）：物品/技能面板（FLAG:36 == 0）。
+ *
+ * 头行（:333-350，ARG:0 恒 0——唯一调用点 :191/:199 都不传参）：技巧 Lv
+ * （ABL:MASTER:12）+ 所持知识四枚标签（TALENT:MASTER:55/325/327/328，对应
+ * 调合/魔界/淫魔/魔虫）。原作四条 PRINT/PRINTFORM 之间无 PRINTL，是同一
+ * 输出行，直到 :350 的 PRINTL 才换行——ere 侧拼成一个字符串、一次 print。
+ *
+ * :353-356 REPEAT 100 的旧道具枚举整段被 `;` 注释掉（死码），不移植。
+ *
+ * 两段 5 列网格（:359-372 ids 0-58、:377-390 ids 300-339）+ 装饰的戒指
+ * （item 91）特例：:375 的 SIF ITEM:91 是纯PRINTFORM（不换行），紧接着
+ * REPEAT 40 从 ARG:98 == 0 起步——戒指文本与第二网格的首个道具共享同一
+ * 输出行（无戒指时该行就是第二网格自己的首行）。append_item_slot 维护
+ * 跨段共享的 { line, column } 累积态，1:1 保留这个接续关系。
+ */
+function draw_have_items() {
+  const knowledge_tags = [
+    [55, '【调合知识】　'],
+    [325, '【魔界知识】　'],
+    [327, '【淫魔知识】'],
+    [328, '【魔虫知识】'],
+  ]
+    .filter(([id]) => (era.get(`talent:0:${id}`) || 0) === 1)
+    .map(([, label]) => label)
+    .join('');
+  era.print(
+    `${FULL_WIDTH_SPACE}技巧Lv： Lv${era.get('abl:0:12') || 0}${FULL_WIDTH_SPACE}${FULL_WIDTH_SPACE}所持知识： ${knowledge_tags} `,
+  );
+
+  const state = { line: '', column: 0 };
+  for (let id = 0; id <= 58; id += 1) {
+    append_item_slot(state, id);
+  }
+  era.print(`${state.line}  `);
+
+  state.line = '';
+  state.column = 0;
+  const ring_count = era.get('item:91') || 0;
+  if (ring_count > 0) {
+    state.line = `${item_name(91)}(${ring_count}) `;
+  }
+  for (let id = 300; id <= 339; id += 1) {
+    append_item_slot(state, id);
+  }
+  era.print(`${state.line}  `);
+}
+
+/**
+ * @DRAW_HAVETRAPS（:400-421，#395 起真身）：持有陷阱面板（FLAG:36 == 1）。无头
+ * 行，单一 5 列网格（ids 59-89，共与 DRAW_HAVEITEMS 同构，见 append_item_slot
+ * 文件头）。
+ */
+function draw_have_traps() {
+  const state = { line: '', column: 0 };
+  for (let id = 59; id <= 89; id += 1) {
+    append_item_slot(state, id);
+  }
+  era.print(`${state.line}  `);
 }
 
 /**
@@ -515,6 +666,7 @@ module.exports = {
   count_selectable_slaves,
   draw_dungeon_overview,
   draw_dungeon_daily,
-  stub_line,
+  draw_have_items,
+  draw_have_traps,
   STUBBED_CALLS,
 };

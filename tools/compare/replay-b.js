@@ -100,9 +100,14 @@ const PLANS = {
     '5', // 读入 → 回主菜单
     undefined,
   ],
-  // 199 休息 ×2：ere 侧是 stub_line_wait（BEGIN TURNEND 待办），走输入
-  // 通道可达（useRule:false，见文件头裁定 2）
-  daycycle: ['0', '99', '199', '199', undefined],
+  // 199 休息：#395 起真身（BEGIN TURNEND 真转场，回合真能推进），只送一次
+  // ——转场把 SHOP 状态真的推进到 EVENTTURNEND → 次日 SHOP 重绘（第二版
+  // 主菜单，即样本的日 8），第二次 era.input() 等待处即 undefined 收尾。
+  // golden 继续录到的第三次 199（daycycle-*-log 更靠后的内容）需要真实
+  // 的地下城随机数序列重放才能对齐（monster-summon.js 的召唤数掷骰），
+  // 与调教段 TRAIN_RAND_SEQ 同款重建暂未做——留给随机数确定性专项票，
+  // 这里只验证「回合真能推进」这一步（#395 范围），不追第二天之后。
+  daycycle: ['0', '99', '199', undefined],
   // #338 出售段：能力提升存根返回后复核资格 → 出售温妮 → 选择黑市 →
   // 回出售列表 → 主菜单。PRINTFORMW 的等待不经过 INPUT 计划。
   sale: ['0', '99', '105', '106', '1', '0', '0', '999', undefined],
@@ -197,6 +202,14 @@ async function seed_scope_b(fixture, { sale = false } = {}) {
     fixture.store.set('talent:0:122', 1); // 无参 SHE() 读取魔王 → 「他」
     fixture.store.set('flag:7', 1); // 启用口上分发
   }
+  // 物品栏基础持有物（振动宝石/振动杖/水晶球各 1 件，四段样本 :77 同款出现：
+  // #395 前 DRAW_HAVEITEMS 是存根、从未读到过这三个值
+  fixture.store.set('item:0', 1);
+  fixture.store.set('itemname:0', '振动宝石');
+  fixture.store.set('item:2', 1);
+  fixture.store.set('itemname:2', '振动杖');
+  fixture.store.set('item:6', 1);
+  fixture.store.set('itemname:6', '水晶球');
 
   // 快照落 99 号槽（真数据路径：版本闸门当前 1/1，loadData 放行）
   await fixture.era.saveData(99, SAVE99_REMARK);
@@ -215,7 +228,9 @@ function apply_max_seeds(fixture) {
   fixture.store.set('talent:0:325', MAX_SEEDS['talent:0:325']);
   fixture.store.set('cflag:31:0', MAX_SEEDS['cflag:31:0']);
   fixture.store.set('item:24', MAX_SEEDS.item24);
+  fixture.store.set('itemname:24', '安全套');
   fixture.store.set('item:25', MAX_SEEDS.item25);
+  fixture.store.set('itemname:25', '润滑液');
 }
 
 /**
