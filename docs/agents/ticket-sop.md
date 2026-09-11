@@ -14,7 +14,10 @@
 - **WSL 会话是个例外**：环境变量 `ORCA_CLI_COMMAND` 写着 `orca-ide`，但这台机器上没有这个可执行文件。可用的是 Windows 端的 `orca.exe`（在 PATH 上，`…/AppData/Local/Programs/orca/resources/bin`），它与 app 是同一份安装。
 - **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 17 次派发里出现 16 次，每次 worktree 都已在服务端建成**；阶段 3 后期连续四张票全是假失败）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，等 50 秒足够它出现；否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
   - **`terminal list` 里通常有不止一个 handle**：setup 钩子跑 `npm install` 的那个也在。**别挑错**——setup 那个的 `terminal read` 里是 `setup-runner.sh` 与 `npm audit` 的收尾输出。§3 的派法自己建终端并拿到 handle，不用猜。
-- **worktree 的选择器认 `displayName`，而它未必等于你传的 `--name`**：`--name t119-s7-kyoten` 实际落成 `odradekk/t119-s7-kyoten`，于是 `--worktree "name:t119-s7-kyoten"` 报错、`--worktree "name:odradekk/t119-s7-kyoten"` 才对。**别猜，用 `path:<绝对路径>`**——路径是 `worktree list` 里的 `path` 字段，稳定且唯一。
+- **worktree 选择器一律用 `issue:<票号>`。** 派单场景下票号本来就有，不必先查 list，也绕开下面两个坑：
+  - **`name:` 认的是 `displayName`，而它未必等于你传的 `--name`**：`--name t119-s7-kyoten` 实际落成 `odradekk/t119-s7-kyoten`，于是 `name:t119-s7-kyoten` 报错、`name:odradekk/t119-s7-kyoten` 才对。
+  - **`path:` 只认 `worktree list` 返回的那个串本身，而 WSL 上它是 UNC 形式**：`\\wsl.localhost\Debian\home\bam00n\orca\workspaces\era\<name>`。手写 POSIX 路径 `/home/bam00n/orca/workspaces/era/<name>` **必然报 `selector_not_found`**（#382 派单实测）。
+  - 同一棵树上 `issue:`、`branch:`、`path:`（UNC 形式）三种实测都通；`worktree list --json` 的条目**没有 `name` 字段**，照它写解析脚本会取到空。
 - **`--issue <N>` 不保证写上关联**：实测建出来的 worktree `linkedIssue` 仍是 `null`。卡片上看不到关联不代表 worktree 建错了，别据此重建。
 - **仓库里的 `orca.yaml` 钩子不会执行**（`commandSourcePolicy` 是 `local-only`，实测带 `--run-hooks` 删 worktree 时仓库脚本一行没跑）。所以钩子配在 Orca 的 **Settings → Repository → Hooks**，CLI 无法写这个字段。**WSL 基座的 `npm install` 钩子已配好**，新 worktree 建成即可直接 `npx eslint` / `npx prettier`，无须 `npm ci`。两个仓库 `displayName` 都是 `era`，GUI 里配错过一次——用 `orca repo list --json` 核对 `hookSettings.scripts.setup` 落在哪个 id 上。
 - 由此可知：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了，要留下的东西，删之前必须已经推走。
@@ -90,10 +93,10 @@ orca worktree ps --json
 #    失败返回先当假失败处理，见 §0；--repo 必须显式给 WSL 基座的 id
 orca worktree create --name t<N>-<slug> --no-parent --issue <N> \
   --repo id:71b28045-8ed3-4485-a036-2db90ae7758b --json
-orca worktree list --json          # 无论上一步返回什么，都来这一下确认，并取 path
+orca worktree list --json          # 无论上一步返回什么，都来这一下确认建成了（不必取 path，下面用 issue:）
 
 # 2. 起 agent：自己建终端，命令行里带模型与思考强度
-orca terminal create --worktree "path:<绝对路径>" --title AGENT \
+orca terminal create --worktree "issue:<N>" --title AGENT \
   --command "pi -a --model cpa/glm-5.3 --thinking max" --json
 #    handle 从这一步的 result.terminal.handle 直接拿，不用去 terminal list 里猜
 
@@ -103,8 +106,8 @@ orca terminal read --terminal <handle> --json
 # 4. 送简报（单行指向文件，绝不多行）
 orca terminal send --terminal <handle> --text "请读 /tmp/brief-<N>.txt 这份工单简报，按其中要求执行。" --enter --json
 
-# 5. 标记（选择器用 path:，见 §0）
-orca worktree set --worktree "path:<绝对路径>" --comment "<一句话>" --workspace-status in-progress --json
+# 5. 标记（选择器一律 issue:，理由见 §0）
+orca worktree set --worktree "issue:<N>" --comment "<一句话>" --workspace-status in-progress --json
 ```
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
@@ -232,7 +235,7 @@ grep -hoE "\bM[0-9]+\b" tools/mutations/*.mjs | sort -u -t M -k2 -n | tail -1
 ```
 orca terminal read --terminal <handle> --json
 orca terminal send --terminal <handle> --text "<追加指示>" --enter --json
-orca worktree set --worktree "path:<绝对路径>" --comment "<一句话进展>" --workspace-status in-review --json
+orca worktree set --worktree "issue:<N>" --comment "<一句话进展>" --workspace-status in-review --json
 ```
 
 发消息前先 `read`（`--for tui-idle` 对 pi 不可靠，见 §3，别拿它当发送时机）。handle 报 `terminal_handle_stale` 就用 `orca terminal list` 重取，只用最新那个。
@@ -500,7 +503,7 @@ gh pr merge <pr> --repo odradekk/maou_redux --merge --delete-branch
 git -C /home/bam00n/era pull --prune --ff-only origin master   # WSL 基座：下一张票的建树基线
 git -C /mnt/d/Code/era  pull --prune --ff-only origin master   # 主 checkout：引擎手工验收用
 git -C /home/bam00n/era branch -d <branch>                     # 本地分支，-d 会拒绝未合并的
-orca.exe worktree rm --worktree "path:<绝对路径>" --force --json
+orca.exe worktree rm --worktree "issue:<N>" --force --json
 orca.exe terminal close --terminal <handle> --json              # worktree 删了终端不会自己走
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
