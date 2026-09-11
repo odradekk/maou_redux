@@ -34,6 +34,7 @@
 const era = require('#/era-electron');
 const { karma, faith } = require('#/chara/chara-stats');
 const pregnancy_mod = require('#/chara/chara-pregnancy');
+const { soul_dislocation } = require('#/chara/chara-soul-transfer');
 const summon_mod = require('#/dungeon/monster-summon');
 const { run_endcheck } = require('#/event/event-endcheck');
 const { auto_save } = require('#/page/page-save-load');
@@ -60,7 +61,6 @@ const STUBBED_CALLS = [
   'EVENT_YOUJI',
   'EVENT_MAZOKU',
   'APHRODISIAC_ADDICT',
-  'SOUL_DISLOCATION',
   'OFFERVIRGIN_CHECK',
   'NIGHT_STALKING_CHECK',
   'PILLORY',
@@ -155,7 +155,7 @@ async function run_event_nextday() {
 
     // :47 媚药中毒 / :50 灵魂错位（无条件调用）
     stub_line('APHRODISIAC_ADDICT', '媚药中毒判定');
-    stub_line('SOUL_DISLOCATION', '灵魂错位判定');
+    soul_dislocation(cid);
   }
 
   // :55-61 排卵诱发剂效果结束（REPEAT 含 0 号位）：有效则播报 + 清零

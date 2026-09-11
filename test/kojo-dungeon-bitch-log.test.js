@@ -374,3 +374,53 @@ test('DUNGEON_ANAL_LOG：魔族少年（ARG:0 == 2）按 TALENT:TARGET:122 分�
     'TALENT:122 置位 → 哥哥臂（:1850）',
   );
 });
+
+// —— #391 补：种族2/种族12/性格/婚史（LOOK.ERB:3285/3309/3473/3490） ——
+
+test('GET_LOOK_INFO：种族2 按 TALENT:319 映射，未登记代号回落 $N（字面量 $，AGENTS.md 约定）', () => {
+  const { fixture, mod } = setup_log();
+  fixture.store.set('talent:31:319', 6); // 妖精
+  assert.equal(mod.get_look_info(31, '种族2'), '妖精');
+  fixture.store.set('talent:31:319', 47); // 未登记代号
+  assert.equal(mod.get_look_info(31, '种族2'), '$47');
+});
+
+test('GET_LOOK_INFO：种族12 按 TALENT:220（精英）在 种族/种族2 间切换', () => {
+  const { fixture, mod } = setup_log();
+  fixture.store.set('talent:31:314', 2); // 种族=狼人
+  fixture.store.set('talent:31:319', 6); // 种族2=妖精
+  assert.equal(mod.get_look_info(31, '种族12'), '狼人', '非精英走 种族');
+  fixture.store.set('talent:31:220', 1);
+  assert.equal(mod.get_look_info(31, '种族12'), '妖精', '精英走 种族2');
+});
+
+test('GET_LOOK_INFO：性格优先 TALENT[160,179)，找不到再退 [10,19)，都没有则不明', () => {
+  const { fixture, mod } = setup_log();
+  assert.equal(mod.get_look_info(31, '性格'), '不明');
+  fixture.store.set('talent:31:15', 1);
+  fixture.store.set('talentname:15', '爽朗');
+  assert.equal(mod.get_look_info(31, '性格'), '爽朗', '仅 [10,19) 命中时用它');
+  fixture.store.set('talent:31:165', 1);
+  fixture.store.set('talentname:165', '内向');
+  assert.equal(
+    mod.get_look_info(31, '性格'),
+    '内向',
+    '[160,179) 命中时优先于 [10,19)',
+  );
+});
+
+test('GET_LOOK_INFO：婚史按 TALENT:320 压缩家族码解码各分支', () => {
+  const { fixture, mod } = setup_log();
+  assert.equal(mod.get_look_info(31, '婚史'), '无', '全零：无');
+  fixture.store.set('talent:31:320', 10); // %10==0 且非 0 → 保密
+  assert.equal(mod.get_look_info(31, '婚史'), '婚史保密');
+  fixture.store.set('talent:31:320', 10001); // /10000%... category 1，kind 0 → 丈夫
+  assert.equal(mod.get_look_info(31, '婚史'), '已与丈夫结婚');
+  fixture.store.set('cflag:31:601', 900); // category 0 分支的「原」前缀判据
+  fixture.store.set('talent:31:320', 1); // category 0 → 未婚（前缀原）
+  assert.equal(mod.get_look_info(31, '婚史'), '原未婚');
+  fixture.store.set('talent:31:320', 50001); // category 5 → 未亡人
+  assert.equal(mod.get_look_info(31, '婚史'), '未亡人');
+  fixture.store.set('talent:31:320', 60001); // category 6（CASEELSE）→ 秘密
+  assert.equal(mod.get_look_info(31, '婚史'), '秘密');
+});

@@ -76,13 +76,16 @@ function palamname(idx) {
 }
 
 /**
- * %GET_LOOK_INFO(cid, kind)% 的子集实现（LOOK.ERB:2885 的一部分，本文件
- * 起用到的 7 个 kind；issue #383 补充第 8 个 kind「种族2」供
- * chara-self-call.js 的 CALC_SELFCALL_FACTOR 消费；完整函数随「角色信息」票）。
+ * %GET_LOOK_INFO(cid, kind)% 的子集实现（LOOK.ERB:2885 的一部分，仅本项目
+ * 各调用点用到的 11 个 kind；完整函数——含头发状态/长度/发型/瞳色/唇/
+ * 体型/乳头/职业/成为勇者的契机/阴茎的状态等——不在任何票的范围内，
+ * 有新调用点用到再补，不预先移植未使用的分支）。
  *
  * 源: target/ERB/キャラ関数/LOOK.ERB @GET_LOOK_INFO（:2885）——"头发颜色"
  *     （:2922）"目"（:3020）"阴毛状态"（:3095）"魅力点"（:3114）"癖"
- *     （:3180）"种族"（:3253）"种族2"（:3285）"成为勇者前的生活"（:3315）
+ *     （:3180）"种族"（:3253）"种族2"（:3285，#383 补、供 chara-self-call.js
+ *     的 calc_selfcall_factor 消费，#391 同样消费）"种族12"（:3309，#391 补）
+ *     "成为勇者前的生活"（:3315）"性格"（:3473，#391 补）"婚史"（:3490，#391 补）
  *
  * @param {number} cid 角色 ID
  * @param {string} kind 子集名
@@ -290,6 +293,72 @@ function get_look_info(cid, kind) {
         94: '魔族的孽种',
       };
       return map[v] ?? 'ERROR';
+    }
+    case '种族2': {
+      // LOOK.ERB:3285-3307
+      const map = {
+        1: '兽人',
+        2: '史莱姆',
+        3: '昆虫',
+        4: '植物',
+        5: '触手',
+        6: '妖精',
+        7: '巨人',
+        8: '魔族',
+        9: '魔族',
+        10: '魔兽',
+        11: '触手',
+        12: '魔兽',
+      };
+      const v = t(319);
+      return map[v] ?? `$${v}`; // CASEELSE = TOSTR(v, "$${0}")，字面量 $ 描述未登记的代号（AGENTS.md 的 $$ 转义约定）
+    }
+    case '种族12':
+      // LOOK.ERB:3309-3314 GOTO INFO_种族 / INFO_种族2：精英（TALENT:220）走 种族2，否则走 种族
+      return get_look_info(cid, t(220) ? '种族2' : '种族');
+    case '性格': {
+      // LOOK.ERB:3473-3489：先找 TALENT[160,179) 首个真值，找不到再找 [10,19)，都没有则不明
+      let idx = -1;
+      for (let tc = 160; tc < 179; tc += 1) {
+        if (t(tc)) idx = tc;
+      }
+      if (idx < 0) {
+        for (let tc = 10; tc < 19; tc += 1) {
+          if (t(tc)) idx = tc;
+        }
+      }
+      return idx >= 0 ? (era.get(`talentname:${idx}`) ?? 'ERROR') : '不明';
+    }
+    case '婚史': {
+      // LOOK.ERB:3490-3560：TALENT:320 压缩家族码解码（与 CHARA_MARRIGE_BEFORE 同源不同式，本函数永返回字符串，无 CHARA_MARRIGE_BEFORE 那类“只赋值不打印”的死代码)
+      const family = t(320);
+      const has_family = family % 10;
+      if (has_family === 0 && family !== 0) return '婚史保密';
+      if (family === 0) return '无';
+      const local1 = family % 100000;
+      const local2 = family % 10000000000;
+      const husband_kind = () => {
+        const kind = Math.trunc(local2 / 1000000000);
+        if ([0, 4, 8].includes(kind)) return '丈夫';
+        if ([1, 5, 7].includes(kind)) return '扶她妻子';
+        return '妻子';
+      };
+      switch (Math.trunc(local1 / 10000)) {
+        case 0:
+          return `${(era.get(`cflag:${cid}:601`) || 0) !== 0 ? '原' : ''}未婚`;
+        case 1:
+          return `已与${husband_kind()}结婚`;
+        case 2:
+          return `已与原${husband_kind()}离婚`;
+        case 3:
+          return `已与原${husband_kind()}复婚`;
+        case 4:
+          return `已与原${husband_kind()}离婚后重新结婚`;
+        case 5:
+          return '未亡人';
+        default:
+          return '秘密';
+      }
     }
     default:
       return 'ERROR';
