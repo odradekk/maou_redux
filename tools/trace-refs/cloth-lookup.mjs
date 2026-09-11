@@ -18,6 +18,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        cite: true, // 调用点回显（PRINTFORML 正文），非移植证据——真身出处见文件头 FUNC_CLOTH.ERB（#382）
         ref: '73',
         any: [
           /^\s*PRINTFORML %SAVESTR:TARGET%现在%GET_CLOTHTYPE_MAIN2\(TARGET,"身穿"\)%。$/m,
@@ -25,11 +26,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        cite: true, // 同上（#382）
         ref: '168',
         any: [/^\s*PRINTV GET_CLOTHTYPE_MAIN2\(TARGET,"脱下"\)$/m],
       },
       {
         src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        cite: true, // 同上（#382）
         ref: '176',
         any: [/^\s*PRINTFORML %GET_CLOTHTYPE_MAIN2\(TARGET,"换上"\)%了。$/m],
       },

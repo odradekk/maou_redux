@@ -1129,6 +1129,96 @@ test('移植状态表：证据悬空即红（--only 限定）', () => {
   assert.equal(restored.status, 0, `探针删净后必须复绿：\n${restored.output}`);
 });
 
+test('移植状态表：`cite` 标记的锚只验证正文，不构成移植证据（#382）——合成样本验证区分能力', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', '__cov_cite__.js');
+  const real_erb = path.join(root, 'target', 'ERB', '__cov_cite__', 'REAL.ERB');
+  const cited_erb = path.join(
+    root,
+    'target',
+    'ERB',
+    '__cov_cite__',
+    'CITED.ERB',
+  );
+  const shard_path = path.join(
+    root,
+    'tools',
+    'trace-refs',
+    '__cov_cite_probe__.mjs',
+  );
+  const args = ['--coverage', '--list', '--only', '__cov_cite__'];
+  const cleanup = () => {
+    for (const p of [js_path, real_erb, cited_erb, shard_path]) {
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    }
+  };
+  cleanup(); // 上一次异常退出留下的残骸先清
+  try {
+    // 合成证据：REAL.ERB 是 js 自报的真实源（无 cite）；CITED.ERB 只有一条
+    // 锚且标 cite: true——模拟 cloth-lookup.mjs 对 SHOP_TAILOR.ERB 那种「只核
+    // 对调用点回显」的锚，js 头部也不声明它为源。
+    fs.mkdirSync(path.dirname(real_erb), { recursive: true });
+    fs.writeFileSync(real_erb, '@PROBE_REAL\nPRINTFORML 真身正文\n', 'utf8');
+    fs.writeFileSync(
+      cited_erb,
+      '@PROBE_CITED\nPRINTFORML 只是被引用的调用点回显\n',
+      'utf8',
+    );
+    fs.writeFileSync(
+      js_path,
+      [
+        '/**',
+        ' * 探针模块（test/trace-check.test.js 写入，跑完即删）。',
+        ' * 源: target/ERB/__cov_cite__/REAL.ERB  @PROBE_REAL',
+        ' */',
+        'module.exports = {};',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    fs.mkdirSync(path.dirname(shard_path), { recursive: true });
+    fs.writeFileSync(
+      shard_path,
+      [
+        "const JS = 'ere/__cov_cite__.js';",
+        'export const FILES = [',
+        '  {',
+        '    js: JS,',
+        '    refs: [',
+        "      { src: 'target/ERB/__cov_cite__/REAL.ERB', ref: '1', any: [/@PROBE_REAL/] },",
+        '      {',
+        "        src: 'target/ERB/__cov_cite__/CITED.ERB',",
+        '        cite: true,',
+        "        ref: '2',",
+        '        any: [/PRINTFORML .只是被引用的调用点回显/],',
+        '      },',
+        '    ],',
+        '  },',
+        '];',
+        'export const LOG_REFS = [];',
+        'export const SAMPLE_LOG_REFS = {};',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const r = run_tool_in(root, args);
+    assert.equal(r.status, 0, `限定范围的移植状态表应全绿：\n${r.output}`);
+    assert.ok(
+      r.output.includes('已移植 target/ERB/__cov_cite__/REAL.ERB'),
+      `真实来源必须判已移植：\n${r.output}`,
+    );
+    assert.ok(
+      r.output.includes('待移植 target/ERB/__cov_cite__/CITED.ERB'),
+      `只被 cite 标记引用的文件必须判待移植（无产物，不是被引用就算数）：\n${r.output}`,
+    );
+  } finally {
+    cleanup();
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+  const restored = run_tool_in(root, args);
+  assert.equal(restored.status, 0, `探针删净后必须复绿：\n${restored.output}`);
+});
+
 // 全树副本（分母 / 基线 / 表悬空只在非限定模式核对）：共享副本的 target/
 // 只带被引用的源，非限定跑必红（分母漂移），失败判据探针因此单独拷整棵
 // target/ERB（12MB，进程内单例、文件内串行复用）。

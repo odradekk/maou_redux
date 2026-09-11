@@ -8,6 +8,7 @@ export const FILES = [
       // 分发期等键 = 原作 PRINTW 习语（print + 读键后清行回循环）
       {
         src: 'target/ERB/SHOP/SHOP_2.ERB',
+        cite: true, // 习语出处，非移植证据——本文件「源: 无对应源」（#382）
         ref: '124-126',
         any: [/PRINTW 数值已超出允许范围外/],
       },
