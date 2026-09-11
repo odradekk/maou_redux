@@ -403,7 +403,7 @@ export default [
     find: '    !(source >= 1 && source <= 7) ||',
     replace: '    !(source >= 1 && source <= 8) ||',
     tests: ['chara-pregnancy'],
-    must_mention: '期限边界',
+    must_mention: '来源 8／预产日 1',
   },
   {
     desc: 'M7389 胎儿怪物实名随机门槛取反',
@@ -411,7 +411,7 @@ export default [
     find: 'if (chara(cid).dungeon.胎儿怪物编号 > 0 && rand(3) === 0)',
     replace: 'if (chara(cid).dungeon.胎儿怪物编号 > 0 && rand(3) !== 0)',
     tests: ['chara-pregnancy'],
-    must_mention: '怪物实名两侧',
+    must_mention: '怪物实名 编号100／已知0',
   },
   {
     desc: 'M7390 野狗妊娠爱慕压力误降为九十',

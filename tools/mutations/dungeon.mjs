@@ -176,7 +176,7 @@ export default [
         let turnend = 0; // TURNEND：誰かが敗北して冒険が中断される
         // 变异：勇者臂的战斗调用删（勇者不遇敌、不掉气力）`,
     tests: ['dungeon-main', 'dungeon-battle'],
-    must_mention: '真身态气力',
+    must_mention: '真身态实际进入过战斗',
   },
   {
     desc: 'M481 DEATH_CHECK 投降臂的陷落写入删（CFLAG:1 = 0 不写）',
