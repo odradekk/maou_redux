@@ -152,7 +152,14 @@ if (process.argv.includes('--coverage')) {
     only: ONLY,
     list: process.argv.includes('--list'),
   });
-  process.exit(failures === 0 ? 0 : 1);
+  process.exitCode = failures === 0 ? 0 : 1;
+  // stdout 是管道时 console.log 是异步的，process.exit() 会丢掉还留在缓冲里
+  // 的部分。--list 要打三百多行，实测在 CI 上正好从「已判定不实现」那一段
+  // 起整段消失，而摘要行已经写出去了——于是分类明明是对的，调用方却读到
+  // 一份截断的报告（#387 合并后 master 的 engine job 连红，同一个用例在此
+  // 前的全量变异里也闪过一次）。等 stdout 排空再退。
+  await new Promise((resolve) => process.stdout.write('', resolve));
+  process.exit();
 }
 
 // #282 注释自身的引用（本文件注释里写了 emuera.log:26，被完整性扫描
@@ -1293,4 +1300,6 @@ console.log(
     ? `✓ ${checked} 条内联行号引用全部与源文件一致${scope_note}；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免 ${erb_exempt_total}/${erb_baseline_total} 条，#63 基线内只减不增，条目表见 tools/trace-exempt.mjs）`
     : `✗ ${failures}/${checked} 条引用对不上${scope_note}（另有 ERB 完整性失守计入 failures）`,
 );
-process.exit(failures === 0 ? 0 : 1);
+// 同上：锚校验模式也成批打印失败行，而这是文件最后一句，设 exitCode 让
+// 进程自然退出即可，不必显式排空。
+process.exitCode = failures === 0 ? 0 : 1;
