@@ -109,7 +109,7 @@ export default [
     find: '  if (father < 0) return rf_set_both(child, father, 5);',
     replace: '  if (father > 0) return rf_set_both(child, father, 5);',
     tests: ['cross-stubs'],
-    must_mention: '父亲负号只记双方关系',
+    must_mention: '父亲负号只记关系',
   },
   {
     desc: 'M6575 FAMILY_BIRTHTO_DAD 父亲关系码 5 改为 6',

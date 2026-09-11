@@ -809,9 +809,15 @@ test('主循环：TELEPORT 的 D:20 写回经 ctx（run_dungeon 集成）', asyn
   const fixture = setup_world();
   fixture.store.set('flag:300', 62); // 传送陷阱
   fixture.store.set('item:62', 2);
+  // FLAG:5 位 4（无敌人开关）：跳过战斗臂，让陷阱那条收线成为 D:20 的唯一
+  // 来源。战斗臂里 dungeon.js:678 的 `walk20 = move_ctx.d20` 在 MAGIC 落
+  // 真身后同样会写出 1（TELEPORT_MAGIC 与陷阱 TELEPORT 是同一个值），两条
+  // 路合流后本用例分不出陷阱收线在不在——阶段 5a 的 T4 全量变异 M551 实证。
+  fixture.store.set('flag:5', 16);
   const { run_dungeon } = fixture.load_module('dungeon/dungeon');
   // 恒 1 掷点：WALK = 1+6×1 = 7；装备判定 0 < 1 → 调 dungeon_trap；
-  // 回避判定 20 < 1 假 → TELEPORT：Z = 1 < 20 → ctx.d20 = 1
+  // 回避判定 20 < 1 假 → TELEPORT：Z = 1 < 20 → ctx.d20 = 1。
+  // 收线删掉时 walk20 停在 7（= WALK 累加值），故本断言两态可分。
   await run_dungeon(1, () => 1);
   assert.equal(
     fixture.store.get('cflag:1:502'),

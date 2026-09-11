@@ -611,7 +611,10 @@ test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／�
         .ninsin_aware(1, seq([3, known])),
       1,
     );
-    assert.ok(printed(fixture, expected));
+    assert.ok(
+      printed(fixture, expected),
+      `怪物实名 编号${monster_id}／已知${known}：${expected}`,
+    );
     assert.equal(
       view.dungeon.胎儿怪物编号,
       monster_id > 0 && known === 0 ? 100 : 0,
@@ -633,6 +636,7 @@ test('妊娠发觉覆盖七种来源、怪物实名、期限及诱发剂 11／�
         .load_module('chara/chara-pregnancy')
         .ninsin_aware(1, seq([3])),
       0,
+      `来源 ${source}／预产日 ${due}：来源越界或期限未到必须早退`,
     );
   }
 
