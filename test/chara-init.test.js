@@ -1,9 +1,11 @@
 /**
- * ere/chara/chara-init.js @CHAR_INIT / @RANDOM_SELF_CALL 窄路径的行为测试
+ * ere/chara/chara-init.js @CHAR_INIT 窄路径的行为测试
  * （issue #118，ENDING_1 的 ADDCHARA 链第三环）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开
- * 接口 char_init / random_self_call 直驱。
+ * 接口 char_init 直驱。一人称设定（@RANDOM_SELF_CALL）自 #383 起是完整实现，
+ * 落在 ere/chara/chara-self-call.js，分支覆盖见 test/chara-self-call.test.js，
+ * 本文件不重复。
  *
  * 窄路径的既定事实（chara-init.js 文件头）：菲娅 CFLAG:35:9 = 1（等级段
  * 不进）、CFLAG:35:450 无预设（一人称走 <9 直设）、FLAG:5 恒 0（身体数据
@@ -25,39 +27,6 @@ function history_texts(fixture) {
     .filter((line) => line.type === 'text')
     .map((line) => line.text);
 }
-
-test('一人称（<9 直设，SELF_CALL.ERB:38-42）：CSTR:60 = 我、CFLAG:450 = 9、返回 9', async () => {
-  const fixture = create_era_fixture();
-  const { random_self_call } = load(fixture);
-  // 菲娅形态：CFLAG:450 无预设 → 0 → <9 直设
-  assert.equal(await random_self_call(35), 9, 'RETURN 9');
-  assert.equal(fixture.store.get('cstr:35:60'), '我', 'CSTR:x:60 = 我');
-  assert.equal(fixture.store.get('cflag:35:450'), 9, 'CFLAG:x:450 = 9');
-});
-
-test('一人称档位 ≥200：CSV 回落档（CSVCSTR 存根），仍以「我」落地（预设空等价）', async () => {
-  const fixture = create_era_fixture();
-  fixture.store.set('cflag:35:450', 200);
-  const { random_self_call } = load(fixture);
-  assert.equal(await random_self_call(35), 9, '回落为空后走 <9 直设');
-  assert.equal(fixture.store.get('cstr:35:60'), '我');
-  assert(
-    history_texts(fixture).some((line) => line.includes('@CSVCSTR')),
-    '预设读取的占位行可见（登记项）',
-  );
-});
-
-test('一人称档位 [9,100)：SET_SUIT_SELFCALL 存根、CSTR 不写、档位不动', async () => {
-  const fixture = create_era_fixture();
-  fixture.store.set('cflag:35:450', 10);
-  const { random_self_call } = load(fixture);
-  assert.equal(await random_self_call(35), 10, '原档位原样返回');
-  assert.equal(fixture.store.get('cstr:35:60'), undefined, '未到直设分支');
-  assert(
-    history_texts(fixture).some((line) => line.includes('@SET_SUIT_SELFCALL')),
-    '合适一人称的占位行可见（登记项）',
-  );
-});
 
 test('char_init 窄路径（菲娅形态）：一人称直设 + 无服装静默 + 能力者全掷不中', async () => {
   const fixture = create_era_fixture();
