@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 93;
+export const COUNT = 95;
 
 export default [
   {
@@ -865,5 +865,26 @@ export default [
     tests: ['trace-check'],
     test_name: '归因不到行数基线',
     must_mention: '归因不到基线改小一位必须红',
+  },
+  {
+    desc: 'M7806 cite 标记失效（锚表 src 不论 cite 一律计入移植证据——只被引用的文件被误判已移植，#382）',
+    file: 'tools/trace-coverage.mjs',
+    find: '          if (!cite) src_evidence.add(src);',
+    replace: '          src_evidence.add(src); // 变异：cite 判定失效',
+    tests: ['trace-check'],
+    test_name:
+      '移植状态表：`cite` 标记的锚只验证正文，不构成移植证据（#382）——合成样本验证区分能力',
+    must_mention: '只被 cite 标记引用的文件必须判待移植',
+  },
+  {
+    desc: 'M7807 cite 字段不再解构（锚表条目的 cite 恒 undefined——即使显式标了 cite: true 也当普通证据算，#382）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    for (const { src, cite } of refs) {',
+    replace:
+      '    for (const { src } of refs) {\n      const cite = undefined; // 变异：cite 恒 undefined',
+    tests: ['trace-check'],
+    test_name:
+      '移植状态表：`cite` 标记的锚只验证正文，不构成移植证据（#382）——合成样本验证区分能力',
+    must_mention: '只被 cite 标记引用的文件必须判待移植',
   },
 ];

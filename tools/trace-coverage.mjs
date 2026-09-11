@@ -18,6 +18,16 @@
 //   (a) tools/trace-refs/ 锚表的 FILES.refs[].src——全项目唯一被测试
 //       守着的 js→ERB 映射（#290）；只有它会漏「有真身但正文没有内联
 //       :N 引用」的文件，所以要并 (b)。
+//       单条 ref 可显式标 `cite: true`（#382）：该锚只验证正文引用的
+//       行内容（调用点回显、习语出处一类），不是「这个文件被移植了」
+//       的声明——同一张表原本给两种目的共用，`cite` 把两者拆开。例：
+//       cloth-lookup.mjs 对 SHOP_TAILOR.ERB 三行的锚只是核对
+//       GET_CLOTHTYPE_MAIN2 调用点的 PRINTFORML 回显是否与文档一致，
+//       真身出处是同文件声明的 FUNC_CLOTH.ERB；stub-line.mjs 对
+//       SHOP_2.ERB 的锚只是记 PRINTW 习语的出处，该文件本身「源: 无
+//       对应源」。`cite` 只影响本表的证据判定，trace-check.mjs 的
+//       `:N` 在场校验与源文件锚校验不看这个字段——那两道验的是「引用
+//       写得对不对」，与「这算不算移植证据」是两件事。
 //   (b) ere/ 全部 .js 注释块（jsdoc 块注释 + 文件起首连续 // 行）里形如
 //       target/ERB/….ERB 的整路径提及。扫注释块而非全文：正文里的
 //       「调用点在 X.ERB:123」一类交叉引用不是移植声明，全文扫会把
@@ -114,8 +124,20 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 77; // #338：SELL_MATURO.ERB 完成；与 #350 合并后实测（78 − 1）。
-
+export const PENDING_BASELINE = 79; // #382：显式抬高，理由见下。
+// #382 抬高说明（77 → 79，非顺手改数字）：SHOP_TAILOR.ERB／SHOP_2.ERB 曾被
+// 三路证据里的锚表 src 误判成「已移植」——锚只是核对调用点回显 / 习语出处，
+// 不是这两个文件本身有产物（见 tools/trace-refs/cloth-lookup.mjs、
+// stub-line.mjs 新增的 `cite: true` 标记与其注释）。改用 `cite` 区分两种
+// 语义后，这两个文件三路证据并集为空，正判退回待移植：+2。同批查实的
+// 第三个文件 LIFE_LIST.ERB 未计入这次上抬——它的证据是真的（page-life-
+// list.js 的 @SELECT_YES_NO 确实源出该文件，原作里也是跨文件共享函数，
+// 见 CHARA_TEMPTATION.ERB 等四处 `CALL SELECT_YES_NO`），只是文件内其余
+// 7 个函数此前从未登记进 docs/stub-registry.md，导致「证据 ∩ 未了结存根」
+// 那条部分移植判据失效、整份文件被漏判已移植。回填这 7 行登记（本票的
+// docs/stub-registry.md 改动）后，它正确落在「部分移植」而非「待移植」
+// ——工单原估「待移植 77 → 80」按三个文件等价处理，实测按证据真实性区分
+// 后是 +2（79），如何取舍见交付说明。
 /**
  * 存根清单「归因不到」行数基线（#331 验收整改冻结，只减不增）。归因不到
  * 的行（待核 / 无源 / 内建函数 / 目录级引用）不构成部分移植信号，本身
@@ -394,10 +416,13 @@ export async function run_coverage({ repo, only = [], list = false }) {
   const { FILES } = await load_trace_refs(DEFAULT_TRACE_REFS_DIR);
   const src_evidence = new Set();
   for (const { refs } of FILES) {
-    for (const { src } of refs) {
+    for (const { src, cite } of refs) {
       if (/\.er[bh]$/i.test(src)) {
-        if (files_set.has(src)) src_evidence.add(src);
-        else if (!scoped || in_scope(src)) {
+        // cite: true——只核对锚（下方 dangling 检查仍执行），不算移植证据；
+        // 见文件头「证据 (a)」条。
+        if (files_set.has(src)) {
+          if (!cite) src_evidence.add(src);
+        } else if (!scoped || in_scope(src)) {
           fail(
             `✗ 锚表 src 悬空：${src}（FILES 登记，但 target/ERB/ 下不存在）`,
           );
