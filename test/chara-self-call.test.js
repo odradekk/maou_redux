@@ -370,6 +370,14 @@ test('set_nick_selfcall：NID 决定和名/洋名分派，含原作 [3000,4059) 
     ['NID<200 → 洋名（CASE0 直接照抄）', 0, 0, '索菲亚'],
     ['NID 落 [200,1000) → 和名（CASE1 挑字）', 200, 1, '索菲'],
     ['NID 落 [3000,+) 的重叠缺陷 → 仍判洋名', 3000, 0, '索菲亚'],
+    // 注：type===2（组合名）与 type===1（洋名）在此调用点走的是同一条
+    // "else" 分支（只判 === 0），本用例锁住的是"type!==0 一律落洋名"这条
+    // 契约，不锁 nid_get_type 内部 1e9 那条阈值本身——该阈值把
+    // 1_000_000_001 改判成 2_000_000_001 也不会改变这里的路由（两侧都非
+    // 0），nid_get_type 自身另一处消费者 chara-family.js 的
+    // f_check_relevant 同样用 Math.min(1,Math.max(0,...)) 把 1/2 钳成
+    // 同一档，全库当前没有任何消费者会区分 1 与 2，这条边界不可观察。
+    ['NID > 1e9（组合名类型）→ 同样落洋名分支', 1_500_000_000, 0, '索菲亚'],
   ];
   for (const [label, nid, expected_local, expected_cstr] of cases) {
     const fixture = create_era_fixture();

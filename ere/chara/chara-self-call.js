@@ -47,13 +47,17 @@
  *     身上，纯语法糖，不是真的换角色（函数结束前原样换回）。ere 侧显式传参
  *     （#5 决议第六条），本文件直接对 cid 取值，无需借道全局 TARGET。
  *
- *   - **`@NID_GET_TYPE`（CHARA_NAME.ERB:254-262）的最小子集移植**：
- *     `@SET_NICK_SELFCALL` 需要它判定姓名是「和名」还是「洋名」，但完整
- *     `CHARA_NAME.ERB` 属另一票（N2/#384）。本文件按源码逐字复刻这四行
- *     判断（含它自身也没有修的一处可疑重叠：`nid>=2000` 分支比
- *     `nid<1000||nid>=3000` 分支先判定，导致 [3000,4059) 的和名男性向 NID
- *     反而落进「洋名」返回值——1:1 保留，不是本票的判断，也不是本票能改的
- *     范围）。
+ *   - **`@NID_GET_TYPE`（CHARA_NAME.ERB:254-262）不在本文件重复实现**：
+ *     `@SET_NICK_SELFCALL` 需要它判定姓名是「和名」还是「洋名」，但
+ *     `ere/chara/chara-family.js`（#349）已经落过逐字实现——`nid()`/`nid_r()`
+ *     体系与家族相关判定共用同一份函数，`chara-pregnancy.js` 已在用。两份
+ *     真身比两份存根危险（将来谁改了一边，另一边会静默不同步且没有测试
+ *     会红），本文件直接 `require('#/chara/chara-family')` 复用，不新造
+ *     第二份。完整 `CHARA_NAME.ERB` 属另一票（N2/#384），落地时按该票裁定
+ *     处理这份共享函数的归属。该实现自身有一处未修的可疑重叠（`nid>=2000`
+ *     分支比 `nid<1000||nid>=3000` 分支先判定，导致 [3000,4059) 的和名
+ *     男性向 NID 反而落进「洋名」返回值）——1:1 保留，不是本票的判断，
+ *     也不是本票能改的范围，`@SET_NICK_SELFCALL` 调用点仍按此行为测试。
  *
  *   - **`@GET_LOOK_INFO` 的「种族2」kind 补进共享子集**
  *     （ere/kojo/kojo-dungeon-bitch-log.js，非本文件）：`CALC_SELFCALL_FACTOR`
@@ -69,6 +73,7 @@
 
 const era = require('#/era-electron');
 
+const { nid_get_type } = require('#/chara/chara-family');
 const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
 const { chara_callname } = require('#/utils/callname-utils');
 
@@ -115,29 +120,6 @@ function substringu(s, start, len) {
  */
 function is_all_fullwidth(s) {
   return Array.from(s).every((ch) => ch.codePointAt(0) > 0xff);
-}
-
-/**
- * @NID_GET_TYPE（CHARA_NAME.ERB:254-262）的逐字移植：NID 对应名字的类型。
- * 0 = 和名，1 = 洋名，2 = 组合名。四条 SIF 顺序判定，1:1（含文件头点名的
- * 可疑重叠，不改写）。**`nid > 1e9` 这条边界当前不可观察**：
- * `@SET_NICK_SELFCALL` 只判定返回值是否 `=== 0`，1（洋名）与 2（组合名）
- * 走同一条「洋名」分支，无法从外部区分——留给完整 `@NID_GET_TYPE`
- * 移植票（N2/#384）核对，本文件不为它单独造用例。
- * @param {number} nid
- * @returns {0 | 1 | 2}
- */
-function nid_get_type(nid) {
-  if (nid > 1000000000) {
-    return 2;
-  }
-  if (nid < 200 || nid >= 2000) {
-    return 1;
-  }
-  if (nid < 1000 || nid >= 3000) {
-    return 0;
-  }
-  return 1;
 }
 
 /**
