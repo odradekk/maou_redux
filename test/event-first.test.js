@@ -55,6 +55,7 @@ function expected_init_writes(initial_slave) {
       value: -1,
     })), // :21-24 FLAG:60..73 = -1
     { name: 'flag:10005', value: -1 }, // :26 TARGET = -1（指针槽）
+    { name: 'flag:10029', value: -1 }, // BOUGHT = -1（购入品指针，#395）
     { name: 'flag:5', value: 17179934119 }, // :31 战斗日志显示设置
     { name: 'flag:10001', value: 1 }, // :33 DAY:1 = 1（月）
     { name: 'itemsales:53', value: 1 }, // :35 53 号道具开局上架（#38 恢复：
@@ -235,7 +236,11 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     })),
     '@EVENTSHOP 必须依序清 100 个道具上架位',
   );
-  assert.deepEqual(writes[zero_start + 100], { name: 'flag:10002', value: 1 });
+  // @EVENTSHOP 清零之后紧接着把 BOUGHT 复位 -1（#395；与 @EVENTFIRST 的
+  // 初始化同一变量，见 page-shop.js 文件头 BOUGHT 段），随后才是原作
+  // @SHOW_SHOP 一侧的写入
+  assert.deepEqual(writes[zero_start + 100], { name: 'flag:10029', value: -1 });
+  assert.deepEqual(writes[zero_start + 101], { name: 'flag:10002', value: 1 });
 });
 
 test('初始化写入（随机）：问答选 0 后与原作开局值逐项一致（全量断言）', async () => {

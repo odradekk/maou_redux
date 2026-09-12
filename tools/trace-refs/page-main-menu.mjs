@@ -13,23 +13,52 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '331',
-        any: [/^@DRAW_HAVEITEMS/m],
+        ref: '331-393',
+        any: [/^@DRAW_HAVEITEMS\(ARG:0 = 0, ARG:98, ARG:99\)$/m],
+      },
+      // DRAW_HAVEITEMS 头行（ARG:0 恒 0）：四枚知识标签拼接同一行，直到 :350 的 PRINTL 才换行
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '333-350',
+        any: [/^IF ARG:0 == 0$/m, /^\tPRINTL $/m],
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '400',
-        any: [/^@DRAW_HAVETRAPS/m],
+        ref: '350',
+        any: [/^\tPRINTL $/m],
+      },
+      // 注释掉的旧道具枚举（死码，不移植）
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '353-356',
+        any: [/^;REPEAT 100$/m],
+      },
+      // 两段 5 列网格（ids 0-58 / 300-339）+ 装饰的戒指（item 91）特例
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '359-372',
+        any: [/^REPEAT 59$/m],
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '427',
-        any: [/^@DRAW_DUNGEON_OVERVIEW\s*$/m],
+        ref: '375',
+        any: [/^\tSIF ITEM:91 > 0$/m],
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '583',
-        any: [/^@DRAW_DUNGEON_DAILY\s*$/m],
+        ref: '377-390',
+        any: [/^REPEAT 40$/m],
+      },
+      // DRAW_HAVETRAPS 的单一 5 列网格（ids 59-89，与 DRAW_HAVEITEMS 同构）
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '404-418',
+        any: [/^REPEAT 31$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '400-421',
+        any: [/^@DRAW_HAVETRAPS\(ARG:0, ARG:98, ARG:99\)$/m],
       },
       // BGM 段（#69 起接通：开关开时播据点2.mp3，音量无引擎等价物）
       {
@@ -179,22 +208,30 @@ export const FILES = [
       // 子面板分发与指令面板
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '190-197',
-        any: [/^\t*CALL DRAW_HAVEITEMS$/m],
+        ref: '190-200',
+        any: [/CALL DRAW_DUNGEON_DAILY/],
+      },
+      // FLAG:36 == 0 / ELSE 两支各自的 CALL DRAW_HAVEITEMS（同一行文本重复
+      // 两处，见 append_item_slot 头注）
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '191',
+        any: [/^\tCALL DRAW_HAVEITEMS$/m],
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '190-200',
-        any: [/CALL DRAW_DUNGEON_DAILY/],
+        ref: '199',
+        any: [/^\tCALL DRAW_HAVEITEMS$/m],
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
         ref: '203-207',
         any: [/^PRINTFORML %UNICODE\(0x258c\)%Commands$/m],
       },
+      // 整个指令面板（[100]-[888]，#395 起全部真身渲染）
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '203-319',
+        ref: '203-320',
         any: [/^PRINTFORML %UNICODE\(0x258c\)%Commands$/m],
       },
       {
@@ -209,11 +246,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '208-319',
-        any: [/PRINTLCD \[100\] 调教/],
-      },
-      {
-        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
         ref: '211-219',
         any: [/^A = 0$/m],
       },
@@ -224,8 +256,58 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
-        ref: '232-319',
-        any: [/PRINTLCD \[101\] 能力显示/],
+        ref: '232-234',
+        any: [/^IF CHARANUM >= 1$/m, /PRINTLCD \[101\] 能力显示/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '247-251',
+        any: [/PRINTLCD \[103\] 处刑/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '252-257',
+        any: [/PRINTLCD \[104\] 迎击/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '259-265',
+        any: [/^; IF A > 0$/m, /PRINTLCD \[105\] 能力值提升/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '272-273',
+        any: [/PRINTLCD \[107\] 购物/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '275-281',
+        any: [/PRINTLCD \[108\] 换装/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '285-289',
+        any: [/PRINTLCD \[110\] 实验室/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '298-299',
+        any: [/PRINTLCD \[120\] 召唤/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '300-301',
+        any: [/PRINTLCD \[199\] 休息/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '307-308',
+        any: [/PRINTLCD \[777\] 设定/],
+      },
+      {
+        src: 'target/ERB/SHOP/DRAW_MAINMENU.ERB',
+        ref: '309-311',
+        any: [/PRINTLCD \[888\] 通信/],
       },
       // [109] 侵略按钮（#129：原作无条件渲染，:283 前无 IF 守卫，对照
       // [100] 的 226-231）

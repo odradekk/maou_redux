@@ -1,8 +1,13 @@
 /**
- * ere/page/page-select-target.js 的行为测试（issue #44：@SELECT_TARGET 真身）。
+ * ere/page/page-select-target.js 的行为测试（issue #44：@SELECT_TARGET 真身，
+ * #395 补全 @SELECT_ASSI 真身与两份列表的富化列）。
  *
  * 缝 = test/helpers/era-fixture.js。验收项：真实实现（分页列表 + 输入循环 +
- * 取消路径），判据 IS_TRAINABLE；**取消时回主菜单且不进调教，此行为有测试**。
+ * 取消路径），判据 IS_TRAINABLE/IS_ASSISTABLE；**取消时回主菜单且不进调教，
+ * 此行为有测试**。列表行的富化列（职业/等级/HP/调教回数/沦陷标签）用
+ * trainable_button_text/assistable_button_text 计算期望值——助手也是
+ * chara() 提供的角色，join_slave_chara 不预置这些字段，默认值走
+ * page-select-target.js 的 `|| 0` 兜底，两处计算式必须逐值对应。
  */
 
 const assert = require('node:assert/strict');
@@ -23,6 +28,24 @@ function rendered_lines(fixture) {
   return fixture.lines
     .filter((line) => line.type === 'text' || line.type === 'button')
     .map((line) => (line.type === 'button' ? line.rendered : line.text));
+}
+
+// 列表行的预期文本（showAcc 折叠连续空白为一个空格，约定同 page-main-menu.test.js）。
+// 默认无职业（job 占位空格）会被折叠掉，所以不传 job 参数时等同无职业。
+function trainable_button_text(
+  cid,
+  name,
+  { level = 0, hp = [0, 0], train_count = 0, tags = '<未沦陷>' } = {},
+) {
+  return `[${cid}] ${name} LV${level} HP(${hp[0]}/${hp[1]}) 调教回数:${train_count} ${tags}`;
+}
+
+function assistable_button_text(
+  cid,
+  name,
+  { level = 0, hp = [0, 0], tags = '<未沦陷>' } = {},
+) {
+  return `[${cid}] ${name} LV${level} HP(${hp[0]}/${hp[1]}) ${tags}`;
 }
 
 test('IS_TRAINABLE：范围外/魔王/占用/可选四态（ID 语义判据）', () => {
@@ -74,7 +97,7 @@ test('选中：输入角色 ID → 置 TARGET 与 FLAG:1，返回 1', async () =
   const texts = rendered_lines(fixture);
   assert(texts.includes('请魔王大人选择将要调教的奴隶人选'));
   assert(
-    texts.includes('[31] 温妮'),
+    texts.includes(trainable_button_text(31, '温妮')),
     '奴隶行必须是按钮（accelerator = 角色 ID），前缀由引擎拼',
   );
 });
@@ -149,12 +172,19 @@ test('翻页：27 人超过每页 26，[1001] 翻出第 27 人；[1000] 翻回',
   assert.equal(await select_target(), 0);
   const texts = rendered_lines(fixture);
   // 首页：1..26（27 号不在）；第二页：只有 27 号；翻回：又是 1 号开头
-  const first_draw = texts.findIndex((l) => l === '[1] 奴隶1');
+  const first_draw = texts.findIndex(
+    (l) => l === trainable_button_text(1, '奴隶1'),
+  );
   assert.ok(first_draw >= 0);
-  const page2_at = texts.findIndex((l) => l === '[27] 奴隶27');
+  const page2_at = texts.findIndex(
+    (l) => l === trainable_button_text(27, '奴隶27'),
+  );
   assert.ok(page2_at > first_draw, '第 27 人只能在翻页后出现');
   // 第二页不含 1 号（截取第 26 行到 27 号行之间的渲染）
-  const between = texts.slice(texts.lastIndexOf('[26] 奴隶26'), page2_at);
+  const between = texts.slice(
+    texts.lastIndexOf(trainable_button_text(26, '奴隶26')),
+    page2_at,
+  );
   assert(!between.some((l) => l.includes('奴隶1')));
   // 三轮绘制（首页/第二页/翻回首页）
   assert.equal(
@@ -172,7 +202,10 @@ test('页首不再退：第一页输入 [1000] 维持原页', async () => {
   assert.equal(await select_target(), 0);
   const texts = rendered_lines(fixture);
   // 两轮都显示同一人（页码没有变成 -1 导致列表消失）
-  assert.equal(texts.filter((l) => l === '[31] 温妮').length, 2);
+  assert.equal(
+    texts.filter((l) => l === trainable_button_text(31, '温妮')).length,
+    2,
+  );
 });
 
 test('1002 其它：进入 MONSTER_PLAY 真身，怪物菜单取消语义透传', async () => {
@@ -186,6 +219,112 @@ test('1002 其它：进入 MONSTER_PLAY 真身，怪物菜单取消语义透传'
   assert(!fixture.text_lines().some((line) => line.includes('@MONSTER_PLAY')));
 });
 
+test('SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1', async () => {
+  const fixture = create_era_fixture();
+  join_slave_chara(fixture, 32, '青岛');
+  fixture.store.set('cflag:32:0', 2); // 助手役
+  const { select_assi } = load_page(fixture);
+  fixture.set_inputs(32);
+
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.assi = -1;
+  assert.equal(await select_assi(), 1);
+  assert.equal(era_flag.assi, 32);
+  assert(
+    fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32),
+    'FLAG:2（前回助手）必须随选中置位',
+  );
+  const texts = rendered_lines(fixture);
+  assert(texts.includes('请魔王大人选择在调教过程当中的助手人选'));
+  assert(
+    texts.includes(assistable_button_text(32, '青岛')),
+    '候选行必须是按钮（accelerator = 角色 ID）',
+  );
+});
+
+test('GET_JOB_NAME：职业维度表驱动（TALENT 200-212 逐支断言，含 206 的巫者/巫女二级判据）', async () => {
+  // [素质编号, 附加素质, 期望职业名]——206 的两条分支合表：附加 talent:122
+  // 决定巫者/巫女，其余职业无第二判据（附加为空对象）
+  const JOB_TABLE = [
+    [200, {}, '战士'],
+    [201, {}, '魔法师'],
+    [202, {}, '神官'],
+    [203, {}, '盗贼'],
+    [204, {}, '肉便器'],
+    [205, {}, '骑士'],
+    [206, { 122: 1 }, '巫者'],
+    [206, { 122: 0 }, '巫女'],
+    [207, {}, '忍者'],
+    [208, {}, '弓手'],
+    [209, {}, '苗床'],
+    [210, {}, '魔界将军'],
+    [211, {}, '魔导神官'],
+    [212, {}, '魔物使'],
+  ];
+  for (const [job_talent, extra_talents, expected_label] of JOB_TABLE) {
+    const fixture = create_era_fixture();
+    join_slave_chara(fixture, 31, '无业');
+    fixture.store.set(`talent:31:${job_talent}`, 1);
+    for (const [extra_id, value] of Object.entries(extra_talents)) {
+      fixture.store.set(`talent:31:${extra_id}`, value);
+    }
+    const { select_target } = load_page(fixture);
+    fixture.set_inputs(999);
+
+    await select_target();
+    const texts = rendered_lines(fixture);
+    assert(
+      texts.some((l) => l.includes(expected_label)),
+      `TALENT:${job_talent}${
+        Object.keys(extra_talents).length
+          ? `（附加 ${JSON.stringify(extra_talents)}）`
+          : ''
+      } 必须映射为职业标签「${expected_label}」`,
+    );
+  }
+});
+
+test('love_status_tag：沦陷标签用真实 TALENT 值渲染（非默认空白）', async () => {
+  const fixture = create_era_fixture();
+  join_slave_chara(fixture, 31, '幽狼');
+  fixture.store.set('talent:31:85', 1); // 爱慕（love_status_tag）
+  const { select_target } = load_page(fixture);
+  fixture.set_inputs(999);
+
+  await assert.equal(await select_target(), 0);
+  const texts = rendered_lines(fixture);
+  assert(
+    texts.some((l) => l.includes('<爱慕>')),
+    'TALENT:85 必须映射为沦陷标签「<爱慕>」',
+  );
+});
+test('SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）', async () => {
+  const fixture = create_era_fixture();
+  join_slave_chara(fixture, 32);
+  fixture.store.set('cflag:32:0', 2);
+  const { select_assi } = load_page(fixture);
+  fixture.set_inputs(1002);
+
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.assi = 0;
+  assert.equal(await select_assi(), 0);
+  assert.equal(era_flag.assi, -1);
+  assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === -1));
+});
+
+test('SELECT_ASSI 我先想想（999）：返回 2（取消，与 SELECT_TARGET 的 999=0 不同码），不置 ASSI', async () => {
+  const fixture = create_era_fixture();
+  join_slave_chara(fixture, 32);
+  fixture.store.set('cflag:32:0', 2);
+  const { select_assi } = load_page(fixture);
+  fixture.set_inputs(999);
+
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.assi = -1;
+  assert.equal(await select_assi(), 2);
+  assert.equal(era_flag.assi, -1, '取消不得改动 ASSI');
+  assert(!fixture.var_writes.some((w) => w.name === 'flag:2'));
+});
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = load_page(fixture);
@@ -194,7 +333,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'utf8',
   );
 
-  assert.deepEqual(STUBBED_CALLS, ['SHOW_LIST_TRAINABLE']);
+  assert.deepEqual(STUBBED_CALLS, []);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

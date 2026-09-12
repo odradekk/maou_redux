@@ -30,6 +30,19 @@ export const FILES = [
         ref: '108-109',
         any: [/^ELSEIF RESULT == 102$/m, /^CALL DUNGEON_INFO2$/m],
       },
+      // BOUGHT 落点（#395）：@EVENTFIRST 的初始化（与 @EVENTSHOP 的 :20 同一
+      // 变量，见文件头 BOUGHT 段）
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '27',
+        any: [/^BOUGHT = -1$/m],
+      },
+      // 199 休息（#395 起真身：唯一的到站分支，见文件头 BOUGHT 段旁注）
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '134-139',
+        any: [/^\tFLAG:9 \+= 5\n\tBEGIN TURNEND\n\tRETURN 1$/m],
+      },
     ],
   },
 ];

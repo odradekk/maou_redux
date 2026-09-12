@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 91;
+export const COUNT = 113;
 
 export default [
   {
@@ -76,9 +76,11 @@ export default [
   {
     desc: 'M16 SELECT_TARGET 翻页：开窗判据边界错一格（下界改开区间）',
     file: 'ere/page/page-select-target.js',
-    find: '    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
+    // #395 起 show_list_assistable 复制了同一条件表达式，find 收窄到
+    // trainable.forEach 起始的整段（含两行注释）以恰中一处
+    find: '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗——原作缺陷的修正移植，见文件头）\n    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
     replace:
-      '    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
+      '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗——原作缺陷的修正移植，见文件头）\n    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
     tests: ['page-select-target'],
     must_mention: '翻页',
   },
@@ -227,8 +229,11 @@ export default [
   {
     desc: 'M143 主菜单改回纯追加（show_shop 的 redraw → draw，就地重绘失守）',
     file: 'ere/page/page-shop.js',
-    find: '  return main_menu.redraw();',
-    replace: '  return main_menu.draw();',
+    // #395 起 show_shop 变 async，redraw 调用点从 `return` 改成
+    // `const row_count = await`（BOUGHT 跳转判据要用到返回的行数），
+    // find 收窄到方法名本身
+    find: 'main_menu.redraw()',
+    replace: 'main_menu.draw()',
     tests: ['page-main-menu'],
     must_mention: '不涨屏',
   },
@@ -936,5 +941,243 @@ export default [
     replace: '  // 变异：服装表示行删',
     tests: ['page-train', 'compare-train'],
     must_mention: '服装表示行为【全裸】（着衣模式关）',
+  },
+  {
+    desc: 'M7888 199 休息：FLAG:9 税金增量算错（+5 改 +4）',
+    file: 'ere/page/page-shop.js',
+    find: `    era.print('你专心于内政，稍作了休息……（税金+5%）');
+    game.stronghold.税金修正 += 5;`,
+    replace: `    era.print('你专心于内政，稍作了休息……（税金+5%）');
+    game.stronghold.税金修正 += 4; // 变异：税金少算 1`,
+    tests: ['page-shop'],
+    must_mention:
+      '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真能推进）',
+  },
+  {
+    desc: 'M7889 199 休息：BEGIN TURNEND 删（回合推不动，本票到站标记失守）',
+    file: 'ere/page/page-shop.js',
+    find: `    game.stronghold.税金修正 += 5;
+    begin(STATE.TURNEND);`,
+    replace: `    game.stronghold.税金修正 += 5;
+    // 变异：BEGIN TURNEND 删`,
+    tests: ['page-shop'],
+    must_mention:
+      '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真能推进）',
+  },
+  {
+    desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转判据永不成立）',
+    file: 'ere/page/page-shop.js',
+    find: '    era_flag.bought = 1;',
+    replace: '    era_flag.bought = -1; // 变异：不再触发商店跳转',
+    tests: ['page-shop'],
+    must_mention:
+      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位（#395 给 BOUGHT 落点）',
+  },
+  {
+    desc: 'M7891 show_shop：BOUGHT 54 边界错一格（< 改 <=）',
+    file: 'ere/page/page-shop.js',
+    find: '    if (era_flag.bought < 54) {',
+    replace: '    if (era_flag.bought <= 54) {',
+    tests: ['page-shop'],
+    must_mention: '107 购物：BOUGHT >= 54 跳陷阱商店存根（ITEM_SHOP_TRAP）',
+  },
+  {
+    desc: 'M7892 show_shop：BOUGHT 复位删（存根显示后不退出购物态）',
+    file: 'ere/page/page-shop.js',
+    find: `    era_flag.bought = -1;
+  }
+
+  return row_count;`,
+    replace: `  }
+
+  return row_count; // 变异：BOUGHT 复位删`,
+    tests: ['page-shop'],
+    must_mention:
+      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位（#395 给 BOUGHT 落点）',
+  },
+  {
+    desc: 'M7893 SELECT_ASSI [1002]：ASSI 复位删（旧指针残留）',
+    file: 'ere/page/page-select-target.js',
+    find: `      era_flag.assi = -1;
+      game.event.上次助手 = -1;
+      return 0;`,
+    replace: `      game.event.上次助手 = -1;
+      return 0; // 变异：ASSI 未复位`,
+    tests: ['page-select-target'],
+    must_mention:
+      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+  },
+  {
+    desc: 'M7894 SELECT_ASSI [1002]：FLAG:2 写错值（0 代替 -1）',
+    file: 'ere/page/page-select-target.js',
+    find: `      era_flag.assi = -1;
+      game.event.上次助手 = -1;`,
+    replace: `      era_flag.assi = -1;
+      game.event.上次助手 = 0; // 变异：写错值`,
+    tests: ['page-select-target'],
+    must_mention:
+      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+  },
+  {
+    desc: 'M7895 SELECT_ASSI [1002]：返回值改 2（误判为取消，与 999 混淆）',
+    file: 'ere/page/page-select-target.js',
+    find: `      era_flag.assi = -1;
+      game.event.上次助手 = -1;
+      return 0;
+    }
+    if (result === 999) {`,
+    replace: `      era_flag.assi = -1;
+      game.event.上次助手 = -1;
+      return 2; // 变异：误判为取消
+    }
+    if (result === 999) {`,
+    tests: ['page-select-target'],
+    must_mention:
+      'SELECT_ASSI 我自己上阵（1002）：显式置 ASSI = -1，返回 0（不是取消）',
+  },
+  {
+    desc: 'M7896 SELECT_ASSI [999]：返回值改 0（误判为非取消，与 1002 混淆）',
+    file: 'ere/page/page-select-target.js',
+    find: `    if (result === 999) {
+      // :396-398 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）
+      return 2;
+    }`,
+    replace: `    if (result === 999) {
+      // :396-398 我先想想… → RETURN 2（取消，与 SELECT_TARGET 的 999 不同码）
+      return 0; // 变异：误判为非取消
+    }`,
+    tests: ['page-select-target'],
+    must_mention:
+      'SELECT_ASSI 我先想想（999）：返回 2（取消，与 SELECT_TARGET 的 999=0 不同码），不置 ASSI',
+  },
+  {
+    desc: 'M7897 SELECT_ASSI 正常选中：ASSI 未写（选中的人选丢失）',
+    file: 'ere/page/page-select-target.js',
+    find: `      era_flag.assi = result;
+      game.event.上次助手 = result;
+      return 1;`,
+    replace: `      game.event.上次助手 = result;
+      return 1; // 变异：ASSI 未写`,
+    tests: ['page-select-target'],
+    must_mention: 'SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
+  },
+  {
+    desc: 'M7898 SELECT_ASSI 正常选中：FLAG:2（上次助手）未写',
+    file: 'ere/page/page-select-target.js',
+    find: `      era_flag.assi = result;
+      game.event.上次助手 = result;
+      return 1;
+    }
+    if (result === 1000) {`,
+    replace: `      era_flag.assi = result;
+      return 1; // 变异：FLAG:2 未写
+    }
+    if (result === 1000) {`,
+    tests: ['page-select-target'],
+    must_mention: 'SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1',
+  },
+  {
+    desc: 'M7899 [101] 能力显示：CHARANUM 守卫边界错一格（>= 1 改 >= 2）',
+    file: 'ere/page/page-main-menu.js',
+    find: '  if (era.getAddedCharacters().length >= 1) {',
+    replace: '  if (era.getAddedCharacters().length >= 2) {',
+    tests: ['page-main-menu'],
+    must_mention:
+      '[101] 能力显示：CHARANUM >= 1 时是可点按钮，空档退化为灰色 [---]',
+  },
+  {
+    desc: 'M7900 [103] 处刑：A > 0 守卫取反',
+    file: 'ere/page/page-main-menu.js',
+    find: `  if (count_selectable_slaves() > 0) {
+    era.printButton('处刑', 103);`,
+    replace: `  if (count_selectable_slaves() <= 0) {
+    era.printButton('处刑', 103);`,
+    tests: ['page-main-menu'],
+    must_mention:
+      '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
+  },
+  {
+    desc: 'M7901 [104] 迎击：A > 0 守卫取反',
+    file: 'ere/page/page-main-menu.js',
+    find: `  if (count_selectable_slaves() > 0) {
+    era.printButton('迎击', 104);`,
+    replace: `  if (count_selectable_slaves() <= 0) {
+    era.printButton('迎击', 104);`,
+    tests: ['page-main-menu'],
+    must_mention:
+      '[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色',
+  },
+  {
+    desc: 'M7902 [108] 换装：FLAG:37 == 1 守卫取反',
+    file: 'ere/page/page-main-menu.js',
+    find: "  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 1) {",
+    replace:
+      "  if (count_selectable_slaves() > 0 && (era.get('flag:37') || 0) === 0) {",
+    tests: ['page-main-menu'],
+    must_mention:
+      '[108] 换装：A > 0 且 FLAG:37 == 1 才渲染（未落表前恒不成立）',
+  },
+  {
+    desc: 'M7903 [110] 实验室：TALENT:0:325 == 1 守卫取反',
+    file: 'ere/page/page-main-menu.js',
+    find: `  if ((era.get('talent:0:325') || 0) === 1) {
+    era.printButton('实验室', 110);`,
+    replace: `  if ((era.get('talent:0:325') || 0) === 0) {
+    era.printButton('实验室', 110);`,
+    tests: ['page-main-menu'],
+    must_mention: '[110] 实验室：TALENT:0:325 == 1（魔王的魔界知识）才渲染',
+  },
+  {
+    desc: 'M7904 [199] 休息按钮编号错位（199 改 198，键入 199 不再送达）',
+    file: 'ere/page/page-main-menu.js',
+    find: "  era.printButton('休息', 199);",
+    replace: "  era.printButton('休息', 198); // 变异：编号错位",
+    tests: ['page-main-menu'],
+    must_mention:
+      '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
+  },
+  {
+    desc: 'M7905 [777] 设定按钮编号错位',
+    file: 'ere/page/page-main-menu.js',
+    find: "  era.printButton('设定', 777);",
+    replace: "  era.printButton('设定', 776); // 变异：编号错位",
+    tests: ['page-main-menu'],
+    must_mention:
+      '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
+  },
+  {
+    desc: 'M7906 [888] 通信按钮编号错位',
+    file: 'ere/page/page-main-menu.js',
+    find: "  era.printButton('通信', 888);",
+    replace: "  era.printButton('通信', 887); // 变异：编号错位",
+    tests: ['page-main-menu'],
+    must_mention:
+      '[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀',
+  },
+  {
+    desc: 'M7907 道具网格：5 列换行阈值错一格（>= 5 改 >= 6）',
+    file: 'ere/page/page-main-menu.js',
+    find: '  if (state.column >= 5) {',
+    replace: '  if (state.column >= 6) {',
+    tests: ['page-main-menu'],
+    must_mention: 'DRAW_HAVEITEMS：5 个一行，第 6 个换行',
+  },
+  {
+    desc: 'M7908 DRAW_HAVEITEMS 第一段起点错一格（0 改 1，item:0 漏画）',
+    file: 'ere/page/page-main-menu.js',
+    find: '  for (let id = 0; id <= 58; id += 1) {',
+    replace: '  for (let id = 1; id <= 58; id += 1) {',
+    tests: ['page-main-menu'],
+    must_mention:
+      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+  },
+  {
+    desc: 'M7909 DRAW_HAVEITEMS 第二段起点错一格（300 改 301，item:300 漏画）',
+    file: 'ere/page/page-main-menu.js',
+    find: '  for (let id = 300; id <= 339; id += 1) {',
+    replace: '  for (let id = 301; id <= 339; id += 1) {',
+    tests: ['page-main-menu'],
+    must_mention:
+      'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
   },
 ];

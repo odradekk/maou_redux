@@ -52,21 +52,27 @@ const REPO = path.resolve(__dirname, '..');
 // 四次而无人看——判交付时 PR 绿不等于 master 绿，两处都要看。
 // #338 新增 sale-natural 一组（并入 master 后实测，stub 较分支点少 1）；
 // 六份既有读数与 master 一致，本票不改。
+// #395 推进：主菜单指令面板 [101]-[888] 全部按钮真身化（原作 guard 逐条
+// 复刻）+ SHOW_LIST_TRAINABLE/SHOW_LIST_ASSISTABLE 富化列，四段样本
+// matched 大幅上升、stub 等量下降（各样本按钮命中的守卫数量不同，涨幅
+// 不等）；199 休息真身化（BEGIN TURNEND 真转场）令 daycycle 段首次真的
+// 推进一次回合，回放计划相应改为只送一次 199（tools/compare/replay-b.js
+// 的 daycycle 计划注释）；unexplained 全部仍为 0。
 const BASELINE = {
-  'mainmenu-natural': { matched: 36, version: 2, stub: 78, unexplained: 0 },
-  'mainmenu-max': { matched: 45, version: 2, stub: 106, unexplained: 0 },
+  'mainmenu-natural': { matched: 48, version: 2, stub: 66, unexplained: 0 },
+  'mainmenu-max': { matched: 70, version: 2, stub: 79, unexplained: 0 },
   // saveload 两份自 #228 起 150/213：diff.js 的 menu 集合比对改「相等
   // token 先配」（同号槽位条目在两侧次序受重绘影响，按下标配对会把同形
   // 条目错开成伪 change 对——存读档槽位组正撞此形，+4 匹配 / −8 存根）。
   // 补偿该假差异的 <TS> 备注错位归因规则随之无消费者，与配对修正一并
   // 拆除（rules.js 原位留注、M305 删——删前删后四数逐数不变、
   // unexplained 仍 0，验收反馈一）
-  'saveload-natural': { matched: 158, version: 2, stub: 203, unexplained: 0 },
-  'saveload-max': { matched: 158, version: 2, stub: 203, unexplained: 0 },
-  'daycycle-natural': { matched: 52, version: 2, stub: 214, unexplained: 0 },
-  'daycycle-max': { matched: 52, version: 2, stub: 254, unexplained: 0 },
+  'saveload-natural': { matched: 206, version: 2, stub: 152, unexplained: 0 },
+  'saveload-max': { matched: 209, version: 2, stub: 146, unexplained: 0 },
+  'daycycle-natural': { matched: 71, version: 2, stub: 191, unexplained: 0 },
+  'daycycle-max': { matched: 71, version: 2, stub: 231, unexplained: 0 },
   // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
-  'sale-natural': { matched: 86, version: 2, stub: 201, unexplained: 0 },
+  'sale-natural': { matched: 123, version: 2, stub: 161, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {
@@ -166,7 +172,8 @@ test('最大态置位时序：首绘自然态、置位后重绘最大态（模�
 
 test('199/9999 经 useRule:false 通道可达（Emuera 自由输入语义）', async () => {
   // daycycle 的 199 在 ere 实机因按钮未渲染而不可达（#129/#130）；回放
-  // 模拟 Emuera 世界的输入，199 必须送达 usershop（存根行即证据）。
+  // 模拟 Emuera 世界的输入，199 必须送达 usershop。199 自 #395 起是真身
+  // （BEGIN TURNEND 真转场），存根行不再打印——改断言休息分支的真实文本。
   // 通道若被拆（恢复夹具白名单校验），199 会被拦下并抛
   // 「输入不合法！请输入以下值之一」——回放当场崩，本用例与基线锁全红
   const daycycle = await replay_scope_b('daycycle', 'natural');
@@ -174,8 +181,8 @@ test('199/9999 经 useRule:false 通道可达（Emuera 自由输入语义）', a
     .filter((l) => l.type === 'text')
     .map((l) => l.text);
   assert.ok(
-    texts.some((t) => t.includes('休息（回合结束）尚未移植')),
-    '199 分支的存根行必须在场——useRule:false 通道放行了无按钮输入',
+    texts.some((t) => t.includes('你专心于内政，稍作了休息……（税金+5%）')),
+    '199 分支的真身文本必须在场——useRule:false 通道放行了无按钮输入',
   );
   // mainmenu-max 的 9999（无效输入触发重绘）同理——0 的标记也在场
   //（读档成功直接转场，标题重绘的整屏 clear 未跑；见上一用例说明）

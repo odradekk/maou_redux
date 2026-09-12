@@ -911,6 +911,20 @@ function classify_scope_b(entry, side, context) {
             '条件入口灰条未渲染（DRAW_MAINMENU 指令面板段 :208-319 未移植，docs/stub-registry.md）',
         };
       }
+      // #395 起指令面板全部真身：[---] 不再是「整段未移植」的占位，而是
+      // 各按钮守卫求值为假时的原作复现（PRINTLC [---]，DRAW_MAINMENU 逐按钮
+      // 判据）。golden 录制时的世界状态满足某个守卫（渲染出真按钮，如
+      // 换装[108] 需 FLAG:37 == 1），回放夹具是最小世界、未播种同款 FLAG，
+      // 守卫落空只能得到灰条——两侧差异来自世界状态，不是移植缺陷。
+      if (side === 'ere' && entry.text === '[---]') {
+        return {
+          category: 'stub',
+          reason:
+            '条件入口灰条（DRAW_MAINMENU 逐按钮守卫，#395 起真身）：golden 录制' +
+            '世界满足该守卫、回放夹具未播种同款 FLAG，守卫落空得到灰条——世界' +
+            '状态差，非移植缺陷',
+        };
+      }
       if (side === 'golden' && entry.text === '温妮') {
         return {
           category: 'stub',
@@ -1012,10 +1026,13 @@ function classify_scope_b(entry, side, context) {
             '标题行输出（page-title.js 图片缺席的回退路径，#19；原作标题由图片承载、该行被注释）',
         };
       }
-      // daycycle 段兜底（放具体规则之后）：@EVENTTURNEND 整段未移植
-      //（199 存根），ere 侧无任何日循环输出——golden 侧无对侧的文本
-      //（日事件/素质条件列表/星号分割线等）统一归此类。仅限无对侧条目：
-      // ere 侧一旦输出了对侧（移植推进），该行自动脱离本规则
+      // daycycle 段兜底（放具体规则之后）：#395 起 199 是真转场（真实
+      // BEGIN TURNEND），回放只推进一次真转场、停在次日主菜单等待输入处
+      // （tools/compare/replay-b.js 的 daycycle 计划注释）——golden 继续
+      // 录到的第二次主菜单及其后内容（地下城随机事件、召唤数掷骰）需要
+      // 与调教段 TRAIN_RAND_SEQ 同款的随机数序列重放才能对齐，留给随机数
+      // 确定性专项票。仅限无对侧条目：ere 侧一旦输出了对侧（移植推进），
+      // 该条目自动脱离本规则
       if (
         side === 'golden' &&
         context.segment === 'daycycle' &&
@@ -1024,7 +1041,9 @@ function classify_scope_b(entry, side, context) {
         return {
           category: 'stub',
           reason:
-            '日循环（@EVENTTURNEND）未移植：199 存根无输出（docs/stub-registry.md 的 BEGIN TURNEND 行）',
+            '日循环（@EVENTTURNEND）真转场后的下游内容：回放只验证「回合真能推进」' +
+            '（#395 范围），次日主菜单及其后（含地下城随机序列）留给随机数确定性' +
+            '专项票（docs/stub-registry.md 的 BEGIN TURNEND 行）',
         };
       }
       // 命名流程三行：ere 侧存档画面循环尾统一清行（滚动视图决策，
@@ -1049,6 +1068,21 @@ function classify_scope_b(entry, side, context) {
         category: 'stub',
         reason:
           '标题读档分支的 CLEARLINE 1（清输入回显行）未镜像（#19 时认为 ere 输入无回显行；#68 实证引擎回显计行——补镜像随小票）',
+      };
+    }
+    // daycycle 段兜底的 input 版：同上方 text 版理由（第二次主菜单等待
+    // 输入之外，golden 继续录到的输入回显同样落在回放未追的下游）
+    if (
+      entry.kind === 'input' &&
+      side === 'golden' &&
+      context.segment === 'daycycle' &&
+      context.counterpart === undefined
+    ) {
+      return {
+        category: 'stub',
+        reason:
+          '日循环（@EVENTTURNEND）真转场后的下游输入：回放只验证「回合真能推进」' +
+          '（#395 范围），留给随机数确定性专项票',
       };
     }
     if (entry.kind === 'image' && side === 'golden') {
@@ -1095,6 +1129,20 @@ function classify_scope_b(entry, side, context) {
           category: 'stub',
           reason:
             '空槽 [N] ----：读档界面的 ere 半边是纯文本（page-save-load.js 有意偏离：不可选即等价）——读档空槽不进 menu 集合，无 ere 对应条目',
+        };
+      }
+      // daycycle 段兜底的 menu 版（同上方 text/input 版理由，放具体规则之后）：
+      // 第二次主菜单自身的按钮（如侵略[109]）同样落在回放未追的下游
+      if (
+        side === 'golden' &&
+        context.segment === 'daycycle' &&
+        context.counterpart === undefined
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '日循环（@EVENTTURNEND）真转场后的下游按钮：回放只验证「回合真能推进」' +
+            '（#395 范围），留给随机数确定性专项票',
         };
       }
       // 【#228 拆除】此处原是 <TS> 存档备注的错位归因规则：它补偿的是

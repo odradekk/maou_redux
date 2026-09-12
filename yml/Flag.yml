@@ -249,6 +249,16 @@
   id: 10028
   name: "last_save_no_9"
   type: "number"
+# 购入品指针（BOUGHT，Emuera 内置标量，issue #395 落表）：SHOP ver1.0.2.ERB
+# @EVENTSHOP 每轮进商店时重置为 -1（:20）；@USERSHOP 的 107 分支（购物）
+# 置 1，下一轮 @SHOW_SHOP 据此跳过主菜单、改向道具/陷阱商店（0-53 = 道具、
+# >=54 = 陷阱商店，SHOP_ITEM.ERB/SHOP_TRAP.ERB，商店票 #399 落真身）；
+# 新档不落表默认 0（fillData 语义，#13），必须显式初始化为 -1（event-first.js），
+# 否则新档第一次进商店会被误判为「正在购物道具 0 号」
+"购入品指针":
+  id: 10029
+  name: "bought"
+  type: "number"
 # —— 迷宫情报与建设一段（issue #180，语义依据 DUNGEON_INFO2.ERB /
 #     DUNGEON_SETUP.ERB / DRAW_MAINMENU.ERB @DRAW_DUNGEON_OVERVIEW）——
 # 迷宫布置区（寻址 FLAG:(层-1 + 列*10 + 300)，层 1-9、列 A/B/C 即 +0/+10/+20）。

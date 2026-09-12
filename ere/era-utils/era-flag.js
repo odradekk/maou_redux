@@ -583,6 +583,19 @@ const era_flag = {
     era.set('flag:10028', v);
   },
   /**
+   * 购入品指针（flag:10029 ↔ FLAG:10029）
+   * @returns {number}
+   */
+  get bought() {
+    return era.get('flag:10029') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set bought(v) {
+    era.set('flag:10029', v);
+  },
+  /**
    * 第1层陷阱A（flag:300 ↔ FLAG:300）
    * @returns {number}
    */

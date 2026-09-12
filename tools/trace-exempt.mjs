@@ -279,7 +279,6 @@ export const ERB_EXEMPT = {
     '1104-1105',
     '1108-1109',
   ],
-  'ere/page/page-select-target.js': ['10-52', '105-112', '116-133', '311-321'],
   'ere/page/page-shop.js': [
     '20',
     '22-38',
@@ -319,7 +318,6 @@ export const ERB_EXEMPT = {
     '127',
     '130-131',
     '132-133',
-    '134-138',
     '140',
     '142',
     '144',
@@ -341,8 +339,6 @@ export const ERB_EXEMPT = {
     '222-223',
     '226-227',
     '229',
-    '236-330',
-    '337-421',
   ],
   'ere/page/page-title.js': [
     '2',

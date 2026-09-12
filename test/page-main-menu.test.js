@@ -256,30 +256,89 @@ test('防御性修正：所指角色被占用（CFLAG:x:1 != 0）时重置', () 
   assert.equal(era_flag.assi, 1, '未占用的助手保留');
 });
 
-test('四个子面板：按 FLAG:36 分发——物品/陷阱占位，地城两面板真身（#180）', () => {
-  const stub_cases = [
-    [0, 'DRAW_HAVEITEMS', '物品/技能面板'],
-    [1, 'DRAW_HAVETRAPS', '持有陷阱面板'],
-    // ELSE 分支（:197-198）：未知值回落物品/技能面板
-    [2, 'DRAW_HAVEITEMS', '物品/技能面板'],
-  ];
-  for (const [flag_value, erb_name, label] of stub_cases) {
+test('边界：TARGET == 1 时 :31-34 守卫成立，占用即重置（>= 1 下界为真）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 1);
+    era_flag.target = 1; // 恰为边界值 1
+    era_flag.assi = -1; // 避开 :27-29 的 ASSI === TARGET 重置干扰
+    fixture.store.set('cflag:1:1', 2); // 目标被占用
+  });
+  assert.equal(
+    era_flag.target,
+    -1,
+    'TARGET == 1 且被占用时必须重置（>= 1 下界包含 1）',
+  );
+});
+
+test('边界：TARGET == 0（魔王）时 :31-34 守卫不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    era_flag.target = 0; // 恰在边界下方：0 不满足 >= 1
+    era_flag.assi = -1;
+    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但守卫不应读到这里
+  });
+  assert.equal(
+    era_flag.target,
+    0,
+    'TARGET == 0 时即使 CFLAG:0:1 非零也不得重置（>= 1 下界不含 0）',
+  );
+});
+
+test('边界：ASSI == 1 时 :36-39 守卫成立，占用即重置（>= 1 下界为真）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 1);
+    era_flag.target = -1; // 避开 ASSI === TARGET 重置干扰
+    era_flag.assi = 1; // 恰为边界值 1
+    fixture.store.set('cflag:1:1', 2); // 助手被占用
+  });
+  assert.equal(
+    era_flag.assi,
+    -1,
+    'ASSI == 1 且被占用时必须重置（>= 1 下界包含 1）',
+  );
+});
+
+test('边界：ASSI == 0（魔王）时 :36-39 守卫不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    era_flag.target = -1;
+    era_flag.assi = 0; // 恰在边界下方：0 不满足 >= 1
+    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但守卫不应读到这里
+  });
+  assert.equal(
+    era_flag.assi,
+    0,
+    'ASSI == 0 时即使 CFLAG:0:1 非零也不得重置（>= 1 下界不含 0）',
+  );
+});
+
+test('四个子面板：按 FLAG:36 分发——四支全部真身（#180/#395）', () => {
+  // 面板 0（DRAW_HAVEITEMS）：技巧 Lv 头行恒出现；ELSE 分支（:197-198）
+  // 未知值回落同一面板
+  for (const flag_value of [0, 2]) {
     const { fixture } = draw_menu_with((f) => {
       f.store.set('flag:36', flag_value);
     });
-    const stubs = fixture
-      .text_lines()
-      .filter((line) => line.includes('docs/stub-registry.md'));
     assert(
-      stubs.some((line) => line.includes(`@${erb_name}`)),
-      `FLAG:36=${flag_value} 应占位 @${erb_name}，实际 ${stubs}`,
-    );
-    assert(
-      stubs.some((line) => line.includes(label)),
-      `占位行应标注面板名 ${label}`,
+      fixture.text_lines().some((line) => line.includes('技巧Lv')),
+      `FLAG:36=${flag_value} 应显示 DRAW_HAVEITEMS 的技巧 Lv 头行`,
     );
   }
-  // 4/5 是真身：不再打子面板占位行，读数内容可见
+  // 面板 1（DRAW_HAVETRAPS）：给一个陷阱道具，断言真身网格把它画出来
+  {
+    const { fixture } = draw_menu_with((f) => {
+      f.store.set('flag:36', 1);
+      f.store.set('item:60', 1);
+      f.store.set('itemname:60', '落穴');
+    });
+    assert(
+      fixture.text_lines().some((line) => line.includes('落穴')),
+      'DRAW_HAVETRAPS 应画出持有陷阱的名字',
+    );
+  }
+  // 面板 4/5：地城两面板真身读数（#180 起真身，本票未改动）
   for (const [flag_value, marker] of [
     [4, '迷宫Lv'],
     [5, '威望值'],
@@ -291,19 +350,13 @@ test('四个子面板：按 FLAG:36 分发——物品/陷阱占位，地城两�
       fixture.text_lines().some((line) => line.includes(marker)),
       `FLAG:36=${flag_value} 应显示真身读数「${marker}」`,
     );
-    // 子面板本体不再占位（DAILY 尾部的 DISPLAY_DUNGEON_DAILY 自 #179 起
-    // 亦为真身，其输出在 page-dungeon-daily.test.js 直测）
-    assert(
-      !fixture
-        .text_lines()
-        .some((line) =>
-          line.includes(
-            `@${flag_value === 4 ? 'DRAW_DUNGEON_OVERVIEW' : 'DRAW_DUNGEON_DAILY'}`,
-          ),
-        ),
-      `FLAG:36=${flag_value} 的子面板本体不再打占位行`,
-    );
   }
+  // 四个子面板全部真身（#395 补全物品/陷阱两支）：不再打任何存根占位
+  const { fixture } = draw_menu_with((f) => f.store.set('flag:36', 0));
+  assert(
+    !fixture.text_lines().some((line) => line.includes('尚未移植')),
+    '四个子面板均已落真身，不应再出现存根占位',
+  );
 });
 
 test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位', () => {
@@ -316,8 +369,8 @@ test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位'
   assert.equal(dividers[dividers.length - 1].border, 'solid');
   assert(dividers.slice(1, -1).every((d) => d.border === 'dashed'));
 
-  // :207 ▌Commands 标题（粗体）+ 指令面板渲染占位（随首个指令子系统票；
-  // 输入分发本体在 page-shop.js，#24）
+  // :207 ▌Commands 标题（粗体）+ 指令面板渲染（#395 起全部真身；输入
+  // 分发本体在 page-shop.js，#24）
   const title = fixture.text_lines().find((line) => line.includes('Commands'));
   assert.ok(title);
   const title_record = fixture.lines.find((line) =>
@@ -325,8 +378,8 @@ test('骨架结构：双线/单线分隔、Commands 标题与指令面板占位'
   );
   assert(title_record.content.every((frag) => frag.fontWeight === 'bold'));
   assert(
-    fixture.text_lines().some((line) => line.includes('@DRAW_MAINMENU')),
-    '指令面板占位行必须含 @DRAW_MAINMENU（可检索）',
+    !fixture.text_lines().some((line) => line.includes('尚未移植')),
+    '指令面板已全部真身，骨架结构用例不应再见到任何存根占位',
   );
 });
 
@@ -415,6 +468,193 @@ test('[111] 设施·设备：肉便器或展品存在时才渲染可点按钮', 
   }
 });
 
+test('[101] 能力显示：CHARANUM >= 1 时是可点按钮，空档退化为灰色 [---]', () => {
+  const on = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+  });
+  const info = button_of(on.fixture, 101);
+  assert.ok(info, 'CHARANUM >= 1 时 [101] 必须是按钮');
+  assert.equal(info.rendered, '[101] 能力显示');
+  assert.equal(info.text, '能力显示');
+
+  const off = draw_menu_with(() => {});
+  assert.equal(
+    button_of(off.fixture, 101),
+    undefined,
+    'CHARANUM == 0 时不得渲染可点的 [101]',
+  );
+  assert(off.fixture.lines.some((line) => line.text?.includes('[---]')));
+});
+
+test('[103]/[104] 处刑/迎击：A > 0 时是可点按钮，A == 0 时退化灰色', () => {
+  const on = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+  });
+  for (const [id, label] of [
+    [103, '处刑'],
+    [104, '迎击'],
+  ]) {
+    const btn = button_of(on.fixture, id);
+    assert.ok(btn, `A > 0 时 [${id}] 应是按钮`);
+    assert.equal(btn.rendered, `[${id}] ${label}`);
+    assert.equal(btn.text, label);
+  }
+
+  const off = draw_menu_with((fixture) => join_chara(fixture, 0));
+  for (const id of [103, 104]) {
+    assert.equal(
+      button_of(off.fixture, id),
+      undefined,
+      `A == 0 时 [${id}] 不得渲染可点按钮`,
+    );
+  }
+});
+
+test('[108] 换装：A > 0 且 FLAG:37 == 1 才渲染（未落表前恒不成立）', () => {
+  const off = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+  });
+  assert.equal(
+    button_of(off.fixture, 108),
+    undefined,
+    'FLAG:37 未声明时读值 undefined → || 0 → 恒不成立',
+  );
+
+  const on = draw_menu_with((fixture) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 31);
+    fixture.store.set('flag:37', 1);
+  });
+  const btn = button_of(on.fixture, 108);
+  assert.ok(btn, 'A > 0 && FLAG:37 == 1 时必须是按钮');
+  assert.equal(btn.rendered, '[108] 换装');
+});
+
+test('[110] 实验室：TALENT:0:325 == 1（魔王的魔界知识）才渲染', () => {
+  const off = draw_menu_with(() => {});
+  assert.equal(button_of(off.fixture, 110), undefined);
+
+  const on = draw_menu_with((fixture) => {
+    fixture.store.set('talent:0:325', 1);
+  });
+  const btn = button_of(on.fixture, 110);
+  assert.ok(btn);
+  assert.equal(btn.rendered, '[110] 实验室');
+});
+
+test('[105]/[107]/[120]/[199]/[777]/[888]：无条件渲染，正文无手写前缀', () => {
+  const fresh = draw_menu_with(() => {});
+  const expected = [
+    [105, '能力值提升'],
+    [107, '购物'],
+    [120, '召唤'],
+    [199, '休息'],
+    [777, '设定'],
+    [888, '通信'],
+  ];
+  for (const [id, label] of expected) {
+    const btn = button_of(fresh.fixture, id);
+    assert.ok(btn, `[${id}] 必须无条件渲染`);
+    assert.equal(btn.rendered, `[${id}] ${label}`);
+    assert.equal(btn.text, label, `按钮正文不得手写 [${id}] 前缀`);
+  }
+});
+
+test('DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例', () => {
+  const { fixture } = draw_menu_with((f) => {
+    f.store.set('abl:0:12', 3);
+    f.store.set('talent:0:55', 1); // 调合知识
+    f.store.set('talent:0:327', 1); // 淫魔知识
+    f.store.set('item:0', 2);
+    f.store.set('itemname:0', '振动宝石');
+    f.store.set('item:91', 1);
+    f.store.set('itemname:91', '装饰的戒指');
+    f.store.set('item:300', 5);
+    f.store.set('itemname:300', '???');
+  });
+  const texts = fixture.text_lines();
+  assert(texts.some((l) => l.includes('技巧Lv： Lv3')));
+  assert(
+    texts.some((l) => l.includes('【调合知识】') && l.includes('【淫魔知识】')),
+    '两个标签应在同一行拼接',
+  );
+  assert(
+    texts.some((l) => l.includes('振动宝石(2)')),
+    '0-58 网格应画出持有道具',
+  );
+  assert(
+    texts.some((l) => l.includes('装饰的戒指(1)')),
+    'item 91 特例应单独打印',
+  );
+  assert(
+    texts.some((l) => l.includes('???(5)')),
+    '300-339 网格应画出持有道具',
+  );
+});
+
+test('DRAW_HAVEITEMS：5 个一行，第 6 个换行', () => {
+  const { fixture } = draw_menu_with((f) => {
+    for (let i = 0; i <= 5; i += 1) {
+      f.store.set(`item:${i}`, 1);
+      f.store.set(`itemname:${i}`, `道具${i}`);
+    }
+  });
+  const texts = fixture.text_lines();
+  const first_row = texts.find((l) => l.includes('道具0'));
+  assert.ok(first_row, '首行必须含道具 0');
+  for (let i = 1; i <= 4; i += 1) {
+    assert(first_row.includes(`道具${i}`), `首行应含道具${i}`);
+  }
+  assert(!first_row.includes('道具5'), '第 6 个应换到下一行');
+  const second_row = texts.find((l) => l !== first_row && l.includes('道具5'));
+  assert.ok(second_row, '道具5 应出现在换行后的新行');
+});
+
+test('DRAW_HAVETRAPS：单一网格（ids 59-89）', () => {
+  const { fixture } = draw_menu_with((f) => {
+    f.store.set('flag:36', 1);
+    f.store.set('item:60', 3);
+    f.store.set('itemname:60', '落穴');
+  });
+  assert(
+    fixture.text_lines().some((l) => l.includes('落穴(3)')),
+    'DRAW_HAVETRAPS 应画出持有陷阱',
+  );
+});
+
+test('DRAW_HAVETRAPS：边界闭区间 [59, 89]，界外相邻号不画', () => {
+  const { fixture } = draw_menu_with((f) => {
+    f.store.set('flag:36', 1);
+    f.store.set('item:59', 1);
+    f.store.set('itemname:59', '下界陷阱');
+    f.store.set('item:89', 1);
+    f.store.set('itemname:89', '上界陷阱');
+    f.store.set('item:58', 1);
+    f.store.set('itemname:58', '界外低');
+    f.store.set('item:90', 1);
+    f.store.set('itemname:90', '界外高');
+  });
+  const texts = fixture.text_lines();
+  assert(
+    texts.some((l) => l.includes('下界陷阱(1)')),
+    'id 59（下界）必须在网格内',
+  );
+  assert(
+    texts.some((l) => l.includes('上界陷阱(1)')),
+    'id 89（上界）必须在网格内',
+  );
+  assert(
+    !texts.some((l) => l.includes('界外低')),
+    'id 58 在陷阱网格范围外，不得出现',
+  );
+  assert(
+    !texts.some((l) => l.includes('界外高')),
+    'id 90 在陷阱网格范围外，不得出现',
+  );
+});
+
 test('[200]/[300]：保存/读取按钮无条件渲染（原作 :303/:306 无守卫），正文无手写前缀', () => {
   // 原作 :303 PRINTLCD [200] 保存 / :306 PRINTLCD [300] 读取，前均无 IF
   // 守卫，无条件渲染（对照 [100] 的 IF A > 0）。分发真身自 #136 起在
@@ -487,12 +727,9 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部待办'
   // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
   // DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件
   // 下方）；DAILY 尾部的 DISPLAY_DUNGEON_DAILY 自 #179（H10）起亦为真身
-  // （page/page-dungeon-daily.js），均移出
-  assert.deepEqual(STUBBED_CALLS, [
-    'DRAW_HAVEITEMS',
-    'DRAW_HAVETRAPS',
-    'DRAW_MAINMENU',
-  ]);
+  // （page/page-dungeon-daily.js）；DRAW_HAVEITEMS/DRAW_HAVETRAPS/指令
+  // 面板段自 #395 起均为真身，均移出——清单归零
+  assert.deepEqual(STUBBED_CALLS, []);
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
@@ -548,16 +785,16 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
 
 test('分发期输出玩家先看到再被重绘清掉：点未移植入口不留残行', async () => {
   // 102（地下城存根）不印按钮（按钮与真身同票落地的政策），引擎不会送达
-  // （#130）；已打印的存根分发入口是 [497] 助手（A > 0 才进 @SELECT_ASSI
-  // 存根），用它驱动同一形态
+  // （#130）；已打印的存根分发入口是 [101] 能力显示（CHARANUM >= 1 才进
+  // @CHARA_INFO 存根），用它驱动同一形态
   const stub_round = create_era_fixture();
   stub_round.era.print('上方一');
   stub_round.era.print('上方二');
-  join_chara(stub_round, 31); // A = 1：497 直达存根分支
+  join_chara(stub_round, 31); // CHARANUM >= 1：101 直达存根分支
   const { run_shop: run_stub } = stub_round.load_module('page/page-shop');
-  stub_round.set_inputs(497, 500);
+  stub_round.set_inputs(101, 500);
   await assert.rejects(() => run_stub(), /预置输入已耗尽/);
-  // 对照轮带同一世界（A = 1）：差异只剩「分发是否打存根」这一个变量
+  // 对照轮带同一世界（CHARANUM >= 1）：差异只剩「分发是否打存根」这一个变量
   const plain = create_era_fixture();
   plain.era.print('上方一');
   plain.era.print('上方二');
@@ -570,16 +807,16 @@ test('分发期输出玩家先看到再被重绘清掉：点未移植入口不�
   // 下一轮重绘才清掉。waits.rows_at_wait 是调用瞬间的行数，直接钉住
   // 「看到」发生在「消失」之前（#73 发回的验收项）。
   const waited = stub_round.waits.filter((w) => w.waited);
-  assert.equal(waited.length, 1, '497 分支必须等一次键');
+  assert.equal(waited.length, 1, '101 分支必须等一次键');
   const at_wait = stub_round.lines_history.filter(
     (l) => l.row !== undefined && l.row < waited[0].rows_at_wait,
   );
   assert(
-    at_wait.some((l) => l.text?.includes('SELECT_ASSI')),
+    at_wait.some((l) => l.text?.includes('CHARA_INFO')),
     '等键时存根行必须已在屏幕上',
   );
   // 重绘之后才消失：终态与无存根轮逐行同高、屏幕上看不见存根
-  assert(!stub_round.text_lines().some((l) => l.includes('SELECT_ASSI')));
+  assert(!stub_round.text_lines().some((l) => l.includes('CHARA_INFO')));
   assert.equal(stub_round.era.getLineCount(), plain.era.getLineCount());
 });
 

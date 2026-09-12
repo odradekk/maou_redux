@@ -3,13 +3,23 @@
  *
  * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @EVENTSHOP（:4-20，BEGIN SHOP 后
  *     最先执行一次）/@SHOW_SHOP（:22-38，绘制）/@USERSHOP（:40-229，输入
- *     分发，#24 落地；100 分支的助手循环与 BEGIN TRAIN 随 #44 补全）/
- *     @SELECT_ASSI（:337-421，函数体存根占位）；@SELECT_TARGET（:236-330）
- *     的真身在 page/page-select-target.js（#44）
+ *     分发，#24 落地；100 分支的助手循环与 BEGIN TRAIN 随 #44 补全；199
+ *     休息随 #395 真身，回合真正能推进）
  *
  * Emuera 语义（引擎行为，非 ERB 函数）：BEGIN SHOP 后引擎先调 @EVENTSHOP
  * 一次，随后循环「@SHOW_SHOP 绘制 → 等输入 → @USERSHOP 分发」。ere 侧把
  * 这一轮收进本模块导出的处理器，由 main-loop.js 的 STATE_HANDLERS 接驳。
+ *
+ * BOUGHT（购入品指针，#395 起落表：yml/Flag.yml「购入品指针」/
+ * ere-utils/era-flag.js 的 bought）：@SHOW_SHOP 的 :25-30 原作用 JUMP
+ * 整个接管本轮（不再画主菜单，改跑 ITEM_SHOP/ITEM_SHOP_TRAP 各自的完整
+ * 交互循环）。商店本体落地前（#399）ere 侧不能真的把玩家困在存根里——
+ * show_shop 因此只在正常重绘之后追加一行存根占位、立即把 bought 复位到
+ * -1，代价是玩家要多看一行提示而非被整段接管，换来的是回合无论如何都能
+ * 继续推进（不引入新的卡死点）。@USERSHOP 的 :44-57 店内购物段（997-999
+ * 且 BOUGHT >= 0）与 CLEAR_SHOP 因此仍保持「四个条件全部不成立、整段不
+ * 可达」——show_shop 在 usershop 跑到之前已经把 bought 清回 -1（见
+ * show_shop 尾注），这段不搬，商店票落地时恢复。
  */
 
 const era = require('#/era-electron');
@@ -23,33 +33,35 @@ const {
   reset_out_of_range_pointers,
   count_selectable_slaves,
 } = require('#/page/page-main-menu');
-const { select_target } = require('#/page/page-select-target');
+const { select_target, select_assi } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { infrastructure } = require('#/page/page-infrastructure');
 const { save_game, load_game } = require('#/page/page-save-load');
+const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line_wait } = require('#/utils/stub-line');
+const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
 /**
- * 本文件存根化的原作调用名（@SELECT_ASSI 的函数体与作用域外指令分支的壳
- * 占位）。docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 核对
- * 固定）；名单变动必须同步清单。SELECT_TARGET 与 100 分支的 BEGIN TRAIN
- * 自 #44 起为真身/真转场，INVASION 自 #117 起为真身（[109] 的 BEGIN
- * TURNEND 随之真转场；199 休息的出口仍是待办），SYSTEM_SAVEGAME /
- * SYSTEM_LOADGAME 自 #136 起为真身（200/300 分支），DUNGEON_INFO2 自 #180
- * 起为真身（102 分支，page-dungeon-info2.js），均移出本名单。
+ * 本文件存根化的原作调用名（作用域外指令分支的壳占位）。
+ * docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 核对固定）；
+ * 名单变动必须同步清单。SELECT_TARGET/SELECT_ASSI 与 100 分支的 BEGIN
+ * TRAIN 自 #44 起为真身/真转场，INVASION 自 #117 起为真身（[109] 的
+ * BEGIN TURNEND 随之真转场），199 休息自 #395 起为真身（回合结算的
+ * BEGIN TURNEND 出口），SYSTEM_SAVEGAME / SYSTEM_LOADGAME 自 #136 起为
+ * 真身（200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
+ * page-dungeon-info2.js），均移出本名单。ITEM_SHOP/ITEM_SHOP_TRAP 是
+ * BOUGHT 落表后的运行时占位（show_shop），非 usershop 分发分支的壳。
  */
 const STUBBED_CALLS = [
-  'SELECT_ASSI',
   'CHARA_INFO',
   '批量处刑',
   'INTERCEPT',
   'ABILITY_UP',
   'ITEM_SHOP',
+  'ITEM_SHOP_TRAP',
   'TAILOR_MAIN',
   'SECRET_LABO',
-  'BEGIN TURNEND',
   'CONFIG',
   'LABO',
   'CHARA_INFO_INDIVIDUAL_WAPPED',
@@ -80,8 +92,9 @@ on(
       era.set(`itemsales:${i}`, 0);
     }
 
-    // :20 BOUGHT = -1：BOUGHT 是 builtin 标量、无 ere 落点，仍登记
-    // docs/stub-registry.md 变量级待办（本处是第二个定值点）。
+    // :20 BOUGHT = -1（#395 起落表：flag:10029，与 @EVENTFIRST :27 的初始化
+    // 同一变量，见文件头 BOUGHT 段）。
+    era_flag.bought = -1;
   },
   TIER.NORMAL,
 );
@@ -92,14 +105,12 @@ on(
  * @param {import('#/page/components/screen-block').ScreenBlock} main_menu
  *   主菜单画面组件（run_shop 进入 SHOP 状态时创建；本函数即组件的每轮重入）
  */
-function show_shop(main_menu) {
+async function show_shop(main_menu) {
   // :24 SAVESTR:0 = 你（魔王的存档名字串）：SAVESTR 未落表，消费者（名字
   // 按钮 498/499 等）随角色数据票——登记 docs/stub-registry.md 变量级待办
-  // （#5 已决由内置 callname 承载，接入随彼票）。
-  // :25-30 CALL CLEAR_SHOP 与 BOUGHT 跳转（BOUGHT >= 0 才跳，进商店轮时
-  // 恒 -1，原作也不触发）：BOUGHT 无落点，整段登记 docs/stub-registry.md
-  // 函数级待办，商店票落地时一并。
-  //
+  // （#5 已决由内置 callname 承载，接入随彼票）。CLEAR_SHOP（:25-30）仍是
+  // 登记型待办（无运行时占位，见文件头 BOUGHT 段），不在本轮实现。
+
   // :33-36 防御性日期修正：月/日小于 1 时钳成 1。@EVENTFIRST 只初始化
   // DAY:1 = 1、DAY 与 DAY:2 留 0（#22 的 1:1 决定），玩家看到的开局因此是
   // 「第 0 年 1 月 1 日（第 1 日）」——修正只发生在 SHOP 侧，勿挪去初始
@@ -117,24 +128,23 @@ function show_shop(main_menu) {
   // 再重画，等价于原作引擎在 @USERSHOP 返回后重画主菜单；首绘（组件未画过）
   // 不清屏，保住上方内容（送行句/分割线等）。重绘只发生在玩家交互之后：
   // 本函数只在 run_shop 的循环里被调，输入先行（ADR-0003 的约定落点）。
-  return main_menu.redraw();
-}
+  const row_count = await main_menu.redraw();
 
-/**
- * @SELECT_ASSI（SHOP ver1.0.2.ERB:331-421）：助手选择画面。
- *
- * 与 @SELECT_TARGET 同构（判据换 IS_ASSISTABLE）；返回 0/1/2 = 无助手/
- * 选中/取消。函数体未移植，占位、返回 0（无助手语义）——100 分支的助手
- * 循环在单奴隶路径不可达（TEMP:3 == 0 跳过 CALL），497 入口随助手票落地。
- *
- * 分发期占位走 stub_line_wait：主菜单就地重绘后，纯 print 的存根会在玩家
- * 读到之前被下一轮清掉（#73 发回）。等键语义见 utils/stub-line.js 文件头。
- *
- * @returns {Promise<number>} 恒 0（无助手语义）
- */
-async function select_assi() {
-  await stub_line_wait('SELECT_ASSI', '助手选择画面', '随角色选择票');
-  return 0;
+  // :25-30 BOUGHT 跳转（#395 起落表，见文件头 BOUGHT 段）：原作 JUMP 在
+  // DRAW_MAINMENU 之前整个接管本轮；ere 侧改为主菜单照常画完后追加一行
+  // 存根占位（stub_line——绘制期，不额外等键，utils/stub-line.js 文件头
+  // 的语义区分），随后立即复位——玩家下一轮重绘时占位随锚点一起清掉，
+  // 不会卡住。0-53 = 道具商店、>= 54 = 陷阱商店（原作判据 1:1）。
+  if (era_flag.bought >= 0) {
+    if (era_flag.bought < 54) {
+      stub_line('ITEM_SHOP', '购物（道具商店）', '随商店票 #399');
+    } else {
+      stub_line('ITEM_SHOP_TRAP', '购物（陷阱商店）', '随商店票 #399');
+    }
+    era_flag.bought = -1;
+  }
+
+  return row_count;
 }
 
 /**
@@ -147,15 +157,15 @@ async function select_assi() {
  * 作用域外的指令分支按原作结构留壳：运行时打一行占位（原作调用名可检
  * 索），真行为整支欠着，docs/stub-registry.md 整组登记。100 分支自 #44 起
  * 是真身（SELECT_TARGET 真身 + BEGIN TRAIN 真转场）；109 分支自 #117 起
- * 是真身（INVASION 窄路径 + BEGIN TURNEND 真转场）；199 休息壳内的
- * BEGIN TURNEND 仍是出口待办（回合结算票）。
+ * 是真身（INVASION 窄路径 + BEGIN TURNEND 真转场）；199 休息自 #395 起
+ * 是真身（回合结算的 BEGIN TURNEND 出口，见函数体注释）。
  *
  * @param {number} result 玩家输入（原作 RESULT，即 era.input() 的返回值）
  */
 async function usershop(result) {
   // :44-57 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 跳
-  // 商店）：BOUGHT 是 builtin 标量、无 ere 落点（恒 -1 语义，变量级待办表
-  // 已登记），四个条件全部不成立、整段不可达，不搬——商店票落地时恢复。
+  // 商店）：BOUGHT 已随 #395 落表，但 show_shop 在本函数跑到之前已把它
+  // 复位为 -1（见 show_shop 尾注），四个条件全部不成立，整段仍不可达。
   //
   // A（可选奴隶数）：原作在 @DRAW_MAINMENU :208-216 算出，:59/:152/:154
   // 的守卫读它；渲染与分发两次求值之间无写入路径，分发时重算等价。实机
@@ -175,7 +185,7 @@ async function usershop(result) {
     }
     // $SELECT_ASSI_LOOP（:71-97）：助手候选计数 TEMP:3——CFLAG:x:0 == 2
     //（助手役）且 x != 0 且 CFLAG:x:1 == 0（未占用）且 x != TARGET。单奴隶
-    // 路径 TEMP:3 == 0 → 跳过 CALL SELECT_ASSI（存根，不可达登记）；
+    // 路径 TEMP:3 == 0 → 跳过 CALL SELECT_ASSI；
     // TARGET == ASSI 时助手作废、GOTO 回标签重查（循环等价物：continue 跳过
     // 尾检查，与原作 GOTO 直达标签一致）
     let select_assi_loop = true;
@@ -192,13 +202,25 @@ async function usershop(result) {
               era_flag.target !== cid,
           ).length;
         if (assi_candidates >= 1) {
-          await select_assi(); // :79-80 CALL SELECT_ASSI（存根：恒 0，无助手）
+          // :79-80 CALL SELECT_ASSI（真身见 page-select-target.js，#395）
+          const assi_result = await select_assi();
+          // :81-82 SIF RESULT == 2 → RETURN 0（「我先想想」，取消整次调教）
+          if (assi_result === 2) {
+            return;
+          }
         }
-        // :81-82 SIF RESULT == 2 → RETURN 0（存根恒 0，不触发）
-        // :83-84 SIF ASSI == 0 → ASSI = -1
+        // :83-84 SIF ASSI == 0 → ASSI = -1（select_assi 的两个真实分支恒把
+        // ASSI 置为 -1 或有效 ID，此处是原作留的防御性兜底，1:1 保留）
         if (era_flag.assi === 0) {
           era_flag.assi = -1;
         }
+        // 测试覆盖备注：这里的 TARGET === ASSI 在当前过滤链下结构性不可达——
+        // assi_candidates 的筛选式与 IS_ASSISTABLE（page-select-target.js）
+        // 都显式排除 cid === TARGET，真实 select_assi() 选中结果不可能等于
+        // TARGET；未调用时（0 个候选）ASSI 维持在进块前的 <= 0，TARGET 此时恒
+        // >= 1，也不相等。与下方 :91-92 循环尾检查同样的判据不同：循环尾
+        // 可在 ASSI 预先已为有效值且恰好等于 TARGET 时命中（跳过本块直接进这），
+        // 这一处则不行——保留为原作 1:1 的防御性代码，不补测试（改坐它不可观测）。
         if (era_flag.target === era_flag.assi) {
           // :85-88 目标与助手同人 → 助手作废，GOTO SELECT_ASSI_LOOP
           era_flag.assi = -1;
@@ -252,9 +274,9 @@ async function usershop(result) {
     // 贩卖奴隶（:117，#339 真身）
     await chara_sale();
   } else if (result === 107) {
-    // 购物（:119-120 BOUGHT = 1，下一轮 @SHOW_SHOP 跳 ITEM_SHOP）：BOUGHT
-    // 无落点（恒 -1），整支随商店票——占位名沿用函数表的 ITEM_SHOP 行
-    await stub_line_wait('ITEM_SHOP', '购物（道具商店）', '随商店票');
+    // 购物（:119-120，#395 起真身）：BOUGHT = 1，下一轮 @SHOW_SHOP 据此
+    // 跳道具商店存根占位（show_shop 尾注）——商店本体随 #399。
+    era_flag.bought = 1;
   } else if (result === 108) {
     // 换装（:121-122 CALL TAILOR_MAIN; TARGET = FLAG:1，FLAG:1 = 前回
     // 调教目标）
@@ -279,10 +301,13 @@ async function usershop(result) {
     // DRAW_DUNGEON_OVERVIEW 的统计同源）
     await infrastructure(selectable_count);
   } else if (result === 199) {
-    // 休息（:134-138）：内联文本 + FLAG:9 += 5（税金）+ BEGIN TURNEND
-    // （出口之一）。半移植会落进「税金加了、回合没结」的错态，整支随
-    // 回合结算票
-    await stub_line_wait('BEGIN TURNEND', '休息（回合结束）', '随回合结算票');
+    // 休息（:134-139，#395 起真身）：内联文本 + FLAG:9 += 5（税金）+
+    // BEGIN TURNEND（出口之一——本票的到站标记：引擎里第一次能把回合
+    // 推过去）。BEGIN 立即上抛，原作 RETURN 1 到不了（同 [109] 的
+    // BEGIN 之后不留代码的处理）。
+    era.print('你专心于内政，稍作了休息……（税金+5%）');
+    game.stronghold.税金修正 += 5;
+    begin(STATE.TURNEND);
   } else if (result === 200) {
     // 保存（:140）：CALL SYSTEM_SAVEGAME（真身见 page/page-save-load.js，
     // #136；返回后回循环重绘主菜单——读档界面若换过数据，重绘即新状态）
@@ -398,8 +423,10 @@ async function run_shop({ skip_eventshop = false } = {}) {
   }
 }
 
-// usershop 一并导出（#130）：引擎的 input() 只送达已打印按钮的快捷键，
-// 未实现分支（101-777、498/499、52x、999）按政策不印按钮（按钮与真身同票
-// 落地，见 page-main-menu 的普查注释）——这些分支的分发行为只能经直接
-// 调用测试，不经输入通道
+// usershop 一并导出（#130）：引擎的 input() 只送达已打印按钮的快捷键。
+// #395 起 [101]-[888] 大部分分支已配上按钮（page-main-menu.js 的指令面板
+// 段，渲染真身、分发仍存根，见该文件文件头）；仍无按钮的是 498/499
+// （名字按钮随角色数据票）、52x（阶层信息，DRAW_DUNGEON_OVERVIEW 的
+// [520]-[530] 已打，登记与本文件无关）与 999/7788（隐藏调试入口，原作
+// 本就无 PRINTLC）——这些分支的分发行为只能经直接调用测试，不经输入通道。
 module.exports = { run_shop, usershop, STUBBED_CALLS };
