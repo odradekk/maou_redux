@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 93;
+export const COUNT = 107;
 
 export default [
   {
@@ -887,5 +887,118 @@ export default [
     game.event.装饰品数 += 0;`,
     tests: ['event-museum'],
     must_mention: '金属像分支增加装饰品总数',
+  },
+  {
+    desc: 'M7928 SABBATH：CFLAG:1（调教状态）守卫判据改成恒假，非调教态角色也能触发',
+    file: 'ere/event/event-sabbath.js',
+    find: '  if (cflag(cid, 1) !== 0) {',
+    replace: '  if (cflag(cid, 1) === 999) {',
+    tests: ['event-sabbath'],
+    must_mention: '非调教状态',
+  },
+  {
+    desc: 'M7929 SABBATH：满月日期窗口右端多放一天（16 日也算满月）',
+    file: 'ere/event/event-sabbath.js',
+    find: '  if (era_flag.date <= 14 || era_flag.date >= 16) {',
+    replace: '  if (era_flag.date <= 14 || era_flag.date >= 17) {',
+    tests: ['event-sabbath'],
+    must_mention: '非满月',
+  },
+  {
+    desc: 'M7930 SABBATH_DAY：信仰值门槛 40 误写成 4',
+    file: 'ere/event/event-sabbath.js',
+    find: '  if (cflag(cid, 152) < 40) {',
+    replace: '  if (cflag(cid, 152) < 4) {',
+    tests: ['event-sabbath'],
+    must_mention: '信仰值不足 40',
+  },
+  {
+    desc: 'M7931 EVENT_CHARA_LEAVE：清空上次调教对象引用的判据被拆（FLAG:1 恒不清）',
+    file: 'ere/event/event-chara-leave.js',
+    find: "  if (get('flag:1') === cid) {",
+    replace: "  if (get('flag:1') === -cid) {",
+    tests: ['event-chara-leave'],
+    must_mention: '清空上次调教对象',
+  },
+  {
+    desc: 'M7932 EVENT_CHARA_RETURN：ST_UP 补级次数少算一级',
+    file: 'ere/event/event-chara-leave.js',
+    find: '    const times = setlv - level;',
+    replace: '    const times = setlv - level - 1;',
+    tests: ['event-chara-leave'],
+    must_mention: '差 3 级，ST_UP 补足 3 次',
+  },
+  {
+    desc: 'M7933 EVENT_CHARA_RETURN：身体数据生成存根守卫判据取反',
+    file: 'ere/event/event-chara-leave.js',
+    find: '  if (get(`cflag:${cid}:451`) === 0) {',
+    replace: '  if (get(`cflag:${cid}:451`) === 1) {',
+    tests: ['event-chara-leave'],
+    must_mention: '未生成身体数据时应留存根痕迹',
+  },
+  {
+    desc: 'M7934 APHRODISIAC_ADDICT：7 日一次的残留度衰减改成 8 日一次',
+    file: 'ere/event/event-addict.js',
+    find: '  if ((era_flag.day_count + 1) % 7 === 0) {',
+    replace: '  if ((era_flag.day_count + 1) % 8 === 0) {',
+    tests: ['event-addict'],
+    must_mention: '第 7 日残留度 -1',
+  },
+  {
+    desc: 'M7935 APHRODISIAC_ADDICT：媚药中毒取得普通门槛 12 误写成 13',
+    file: 'ere/event/event-addict.js',
+    find: `    ((talent(cid, 86) === 0 && cflag(cid, 31) >= 12) ||\n      (talent(cid, 72) && cflag(cid, 31) >= 9)) &&`,
+    replace: `    ((talent(cid, 86) === 0 && cflag(cid, 31) >= 13) ||\n      (talent(cid, 72) && cflag(cid, 31) >= 9)) &&`,
+    tests: ['event-addict'],
+    must_mention: '取得媚药中毒——普通门槛 12',
+  },
+  {
+    desc: 'M7936 PRECIPITATE_WITHDRAWAL：侵攻中无媚药退出分支判据改判 CFLAG:1 == 3',
+    file: 'ere/event/event-addict.js',
+    find: '  // :115-122 侵攻中角色：无媚药可用，独自捱过症状后退出本轮\n  if (cflag(cid, 1) === 2) {',
+    replace:
+      '  // :115-122 侵攻中角色：无媚药可用，独自捱过症状后退出本轮\n  if (cflag(cid, 1) === 3) {',
+    tests: ['event-addict'],
+    must_mention: '侵攻中角色（无媚药）独自捱过',
+  },
+  {
+    desc: 'M7937 CHECK_SPECIALSKIL：cid 在场判据取反（不在场的反而放行）',
+    file: 'ere/event/get-specialtalent.js',
+    find: '  if (!era.getAddedCharacters().includes(cid)) {',
+    replace: '  if (era.getAddedCharacters().includes(cid)) {',
+    tests: ['event-get-specialtalent'],
+    must_mention: 'cid 不在已加入角色列表时直接跳过',
+  },
+  {
+    desc: 'M7938 CHECK_SPECIALSKIL：TALENT:9（崩坏）守卫判据被拆（崩坏角色也跑 STEP1/STEP2）',
+    file: 'ere/event/get-specialtalent.js',
+    find: '  if (talent(cid, 9)) {',
+    replace: '  if (false && talent(cid, 9)) {',
+    tests: ['event-get-specialtalent'],
+    must_mention: 'TALENT:9（崩坏）时只跑体变检查',
+  },
+  {
+    desc: 'M7939 step1：顺从 Lv5 达成门槛 CFLAG:2>=2000 误写成 2001',
+    file: 'ere/event/get-specialtalent.js',
+    find: '    cflag(cid, 2) >= 2000 &&\n    cflag(cid, 0) < 2 &&',
+    replace: '    cflag(cid, 2) >= 2001 &&\n    cflag(cid, 0) < 2 &&',
+    tests: ['event-get-specialtalent'],
+    must_mention: '且未助手化时顺从达 Lv5',
+  },
+  {
+    desc: 'M7940 semen_liking：已持有喜欢精液的早退守卫判据被拆（重复触发）',
+    file: 'ere/event/get-specialtalent.js',
+    find: '  if (talent(cid, 47) !== 0) {',
+    replace: '  if (talent(cid, 47) === 0) {',
+    tests: ['event-get-specialtalent'],
+    must_mention: '已持有喜欢精液时不重复触发',
+  },
+  {
+    desc: 'M7941 forced_semen_liking：TFLAG:110/seiin 双门判据被拆成恒真',
+    file: 'ere/event/get-specialtalent.js',
+    find: '  if (!(game.event.精爱味觉 && talent(cid, 47) === 0 && seiin)) {',
+    replace: '  if (false) {',
+    tests: ['event-get-specialtalent'],
+    must_mention: 'TFLAG:110 为假时跳过',
   },
 ];
