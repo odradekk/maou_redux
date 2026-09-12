@@ -214,6 +214,13 @@ async function usershop(result) {
         if (era_flag.assi === 0) {
           era_flag.assi = -1;
         }
+        // 测试覆盖备注：这里的 TARGET === ASSI 在当前过滤链下结构性不可达——
+        // assi_candidates 的筛选式与 IS_ASSISTABLE（page-select-target.js）
+        // 都显式排除 cid === TARGET，真实 select_assi() 选中结果不可能等于
+        // TARGET；未调用时（0 个候选）ASSI 维持在进块前的 <= 0，TARGET 此时恒
+        // >= 1，也不相等。与下方 :91-92 循环尾检查同样的判据不同：循环尾
+        // 可在 ASSI 预先已为有效值且恰好等于 TARGET 时命中（跳过本块直接进这），
+        // 这一处则不行——保留为原作 1:1 的防御性代码，不补测试（改坐它不可观测）。
         if (era_flag.target === era_flag.assi) {
           // :85-88 目标与助手同人 → 助手作废，GOTO SELECT_ASSI_LOOP
           era_flag.assi = -1;

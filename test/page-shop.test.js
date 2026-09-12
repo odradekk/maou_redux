@@ -201,6 +201,117 @@ test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转
   );
 });
 
+test('100 分支 SELECT_ASSI_LOOP：assi_candidates 恰好 1 个候选时调用 SELECT_ASSI（>= 1 下界为真）', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31); // 调教目标
+  join_selectable_slave(fixture, 32); // 唯一助手候选
+  fixture.store.set('cflag:32:0', 2); // 助手役，未占用，且不是 target——恰 1 个候选
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31; // 已有目标：直入助手循环段
+  const { usershop } = fixture.load_module('page/page-shop');
+  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
+  fixture.set_inputs(32); // SELECT_ASSI 的候选按钮（accelerator = 角色 ID）
+
+  await assert.rejects(
+    () => usershop(100),
+    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
+    '恰 1 个候选时应经 SELECT_ASSI 选中后正常进调教',
+  );
+  assert(
+    history_texts(fixture).includes('请魔王大人选择在调教过程当中的助手人选'),
+    'assi_candidates >= 1 必须真的调用 SELECT_ASSI（而非跳过）',
+  );
+  assert.equal(era_flag.assi, 32);
+});
+
+test('100 分支 SELECT_ASSI_LOOP：候选恰好 0 个（另一角色不是助手役）时跳过 SELECT_ASSI（>= 1 下界为假）', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31); // 调教目标
+  join_selectable_slave(fixture, 33); // 在场但不是助手役——不计入候选
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  const { usershop } = fixture.load_module('page/page-shop');
+  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
+
+  await assert.rejects(
+    () => usershop(100),
+    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
+    '0 个候选时应跳过 SELECT_ASSI 直接进调教',
+  );
+  assert(
+    !history_texts(fixture).includes('请魔王大人选择在调教过程当中的助手人选'),
+    'assi_candidates 恰为 0 时不得调用 SELECT_ASSI（33 不是助手役，不计入候选）',
+  );
+  assert.equal(
+    era_flag.assi,
+    -1,
+    '0 个候选时 ASSI == 0 的防御性归一仍要跑到 -1',
+  );
+});
+
+test('100 分支：ASSI 已有合法人选（> 0）时跳过候选计算与 SELECT_ASSI（era_flag.assi <= 0 守卫为假）', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31); // 调教目标
+  join_selectable_slave(fixture, 32); // 本该是候选，但守卫为假时不会被算到
+  fixture.store.set('cflag:32:0', 2);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  era_flag.assi = 32; // 已选定助手（> 0），且与 target 不同——守卫应直接跳过整块
+  const { usershop } = fixture.load_module('page/page-shop');
+  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
+
+  await assert.rejects(
+    () => usershop(100),
+    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
+  );
+  assert(
+    !history_texts(fixture).includes('请魔王大人选择在调教过程当中的助手人选'),
+    'ASSI 已是合法人选时不得重新进入 SELECT_ASSI',
+  );
+  assert.equal(era_flag.assi, 32, '既有人选不因守卫跳过而被改动');
+});
+
+test('100 分支：SELECT_ASSI 返回 2（我先想想）直接 RETURN，不进 BEGIN TRAIN（assi_result === 2 为真）', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 31); // 调教目标
+  join_selectable_slave(fixture, 32); // 唯一助手候选
+  fixture.store.set('cflag:32:0', 2);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  const { usershop } = fixture.load_module('page/page-shop');
+  fixture.set_inputs(999); // SELECT_ASSI 的「我先想想」取消按钮
+
+  await usershop(100); // assi_result === 2 → RETURN 0：不得抛 BeginSignal
+  assert(
+    !history_texts(fixture).some((line) => line.includes('@BEGIN TRAIN')),
+    'assi_result === 2 时不得进入调教',
+  );
+});
+
+test('100 分支循环尾检查：ASSI 预先等于 TARGET 时复位为 -1，随后仍正常进调教（era_flag.target === era_flag.assi 外层判据为真）', async () => {
+  const fixture = create_era_fixture();
+  join_selectable_slave(fixture, 1); // id 恰为 1：卡在 era_flag.assi >= 1 的下界
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 1;
+  era_flag.assi = 1; // 陈旧同人号（恰为边界值 1）：> 0 直接跳过候选计算块，只有 :91-92 循环尾检查能拦下它
+  const { usershop } = fixture.load_module('page/page-shop');
+  const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
+
+  await assert.rejects(
+    () => usershop(100),
+    (e) => e instanceof BeginSignal && e.state === 'TRAIN',
+  );
+  assert(
+    !history_texts(fixture).includes('请魔王大人选择在调教过程当中的助手人选'),
+    'ASSI > 0 时候选计算块本就该被跳过（本用例专测循环尾检查，非候选块）',
+  );
+  assert.equal(
+    era_flag.assi,
+    -1,
+    '循环尾检查发现 TARGET === ASSI 时必须复位为 -1',
+  );
+});
+
 test('守卫 A == 0：496/497 与无效输入同路——无反馈、只重绘；100 分支不可达（原作行为，#130）', async () => {
   // 不加任何可选奴隶（A 只数 x != 0 的未占用角色）：A 恒 0
   const fixture = await run_shop_with(496, 497);
