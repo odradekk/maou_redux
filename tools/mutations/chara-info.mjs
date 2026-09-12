@@ -185,8 +185,7 @@ export default [
     find: `  if (category === 0 || category === 2) return '无';`,
     replace: `  if (category === 2) return '无';`,
     tests: ['page-chara-info'],
-    must_mention:
-      'CHARA_MARRIGE_BEFORE：家族码分档——%10==0 为无，category 0/2 为无，1/3/4 按 kind 三分支',
+    must_mention: 'CHARA_MARRIGE_BEFORE：%10==0 早退、category 0/2/6 分档',
   },
   {
     desc: 'M7866 MARRIAGE_BRACKET_TEXT 野狗守卫改 901（配偶 900 落到道具名回落）',
@@ -195,7 +194,7 @@ export default [
     replace: `  if (spouse === 901) return '野狗';`,
     tests: ['page-chara-info'],
     must_mention:
-      'SHOW_CHARA_ACT_LIST：MARRIAGE_BRACKET_TEXT 配偶 900 渲染「野狗」（婚姻括号列）',
+      'MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 + ELSE 内四条支线',
   },
   {
     desc: 'M7867 BUILD_ACT_SORT_ORDER 双出击对不再按敌方序（enemy_compare 退回通用比较）',

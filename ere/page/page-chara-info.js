@@ -810,6 +810,7 @@ module.exports = {
   show_chara_act,
   compare_chara_act,
   chara_marriage_before,
+  marriage_bracket_text,
   show_chara_info_list,
   show_chara_act_list,
   show_chara_money_list,

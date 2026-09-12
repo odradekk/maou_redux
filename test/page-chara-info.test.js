@@ -32,38 +32,29 @@ function buttons_with(fixture, accelerator) {
 
 // —— SHOW_CHARA_ACT ——
 
-test('SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射，未登记状态回落残留字面量', () => {
+test('SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射，未登记状态回落残留字面量——表驱动走完 state 整个维度', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   const { show_chara_act } = fixture.load_module('page/page-chara-info');
 
-  fixture.store.set('cflag:1:1', 2);
+  // state → {content, color}：每个已登记状态各一行，外加一行未登记状态
+  // 的回落。floor 固定取 3，只在 state 2/3 的文案里体现（其余状态忽略它）
+  const ACT_TABLE = [
+    [2, '3F侵攻中', '#ff6464'],
+    [3, '3F迎击中', '#64ffff'],
+    [0, '[可调教]', '#6464ff'],
+    [7, '[ 苗床 ]', '#64ff64'],
+    [8, '[拘束台]', '#64ff64'],
+    [9, '[ NTR中]', '#ff0000'],
+    [10, '[育儿室]', '#64ff64'],
+    [99, '-F\u3000\u2015\u3000', undefined], // 未登记状态：原作残留字面量
+  ];
   fixture.store.set('cflag:1:501', 3);
-  assert.deepEqual(show_chara_act(1), {
-    content: '3F侵攻中',
-    color: '#ff6464',
-  });
-
-  fixture.store.set('cflag:1:1', 3);
-  assert.deepEqual(show_chara_act(1), {
-    content: '3F迎击中',
-    color: '#64ffff',
-  });
-
-  fixture.store.set('cflag:1:1', 0);
-  assert.deepEqual(show_chara_act(1), {
-    content: '[可调教]',
-    color: '#6464ff',
-  });
-
-  fixture.store.set('cflag:1:1', 7);
-  assert.deepEqual(show_chara_act(1), {
-    content: '[ 苗床 ]',
-    color: '#64ff64',
-  });
-
-  fixture.store.set('cflag:1:1', 99); // 未登记状态
-  assert.deepEqual(show_chara_act(1), { content: '-F\u3000\u2015\u3000' });
+  for (const [state, content, color] of ACT_TABLE) {
+    fixture.store.set('cflag:1:1', state);
+    const expected = color === undefined ? { content } : { content, color };
+    assert.deepEqual(show_chara_act(1), expected, `state=${state}`);
+  }
 });
 
 // —— COMPARE_CHARA_ACT ——
@@ -107,7 +98,7 @@ test('COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/
 
 // —— CHARA_MARRIGE_BEFORE ——
 
-test('CHARA_MARRIGE_BEFORE：家族码分档——%10==0 为无，category 0/2 为无，1/3/4 按 kind 三分支', () => {
+test('CHARA_MARRIGE_BEFORE：%10==0 早退、category 0/2/6 分档', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
   const { chara_marriage_before } = fixture.load_module('page/page-chara-info');
@@ -125,6 +116,7 @@ test('CHARA_MARRIGE_BEFORE：家族码分档——%10==0 为无，category 0/2 �
     '无',
     '%10==0 早退（非 %100==0）：10010',
   );
+
   // category = trunc((code%100000)/10000)，构造 category=0：code=5（远小于
   // 10000，local1=code%100000=5，末位非零躲开 %10==0 早退）
   fixture.store.set('talent:1:320', 5);
@@ -133,39 +125,38 @@ test('CHARA_MARRIGE_BEFORE：家族码分档——%10==0 为无，category 0/2 �
   fixture.store.set('talent:1:320', 20005); // local1=20005 → category=2
   assert.equal(chara_marriage_before(1), '无', 'category 2');
 
-  // category=1，kind = trunc((code%10^10)/10^9)：code=1*10^9+10005，
-  // 低 5 位 10005 → local1=10005 → category=1；kind=trunc(code/10^9)=1
-  fixture.store.set('talent:1:320', 1000010005); // kind=1 → 扶她
-  assert.equal(chara_marriage_before(1), '故乡扶她');
-
-  // kind 分组逐个成员都要能单独删掉才被拖住（仅测 kind=0/1/2 分不出删掉
-  // 4/5/7/8 其中一个的改动），因此补齐剩下四个成员
-  fixture.store.set('talent:1:320', 4000010005); // kind=4 → 丈夫
-  assert.equal(chara_marriage_before(1), '故乡丈夫', 'kind=4');
-
-  fixture.store.set('talent:1:320', 5000010005); // kind=5 → 扶她
-  assert.equal(chara_marriage_before(1), '故乡扶她', 'kind=5');
-
-  fixture.store.set('talent:1:320', 7000010005); // kind=7 → 扶她
-  assert.equal(chara_marriage_before(1), '故乡扶她', 'kind=7');
-
-  fixture.store.set('talent:1:320', 8000010005); // kind=8 → 丈夫
-  assert.equal(chara_marriage_before(1), '故乡丈夫', 'kind=8');
-
-  fixture.store.set('talent:1:320', 30005); // local1=30005→category=3，kind=0（数值本身小于10^9）→ 丈夫
-  assert.equal(chara_marriage_before(1), '故乡丈夫');
-
-  // category=4：code=2*10^9+40005，local1=40005→category=4；kind=2（不在
-  // 0/4/8 或 1/5/7）→ 妻子
-  fixture.store.set('talent:1:320', 2000040005);
-  assert.equal(chara_marriage_before(1), '故乡妻子');
-
   fixture.store.set('talent:1:320', 60005); // local1=60005 → category=6：CASEELSE 死代码
   assert.equal(
     chara_marriage_before(1),
     '',
     'category 5/CASEELSE：原作死代码，无输出',
   );
+});
+
+test('CHARA_MARRIGE_BEFORE：kind [0,4,8]/[1,5,7]/其余 三分组——表驱动走完 kind=0..9 整个维度', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1);
+  const { chara_marriage_before } = fixture.load_module('page/page-chara-info');
+
+  // category 固定取 1（code = kind*10^9 + 10005，低 5 位 10005 → category=1，
+  // 末位非零躲开 %10==0 早退），只让 kind 变化——逐个成员单独测，删掉/挪动
+  // [0,4,8] 或 [1,5,7] 里任意一个都会被某一行拖住，不是只测三个代表值
+  const KIND_TABLE = [
+    [0, '故乡丈夫'],
+    [4, '故乡丈夫'],
+    [8, '故乡丈夫'],
+    [1, '故乡扶她'],
+    [5, '故乡扶她'],
+    [7, '故乡扶她'],
+    [2, '故乡妻子'],
+    [3, '故乡妻子'],
+    [6, '故乡妻子'],
+    [9, '故乡妻子'],
+  ];
+  for (const [kind, expected] of KIND_TABLE) {
+    fixture.store.set('talent:1:320', kind * 1_000_000_000 + 10005);
+    assert.equal(chara_marriage_before(1), expected, `kind=${kind}`);
+  }
 });
 
 // —— 四个列表函数：排序契约 + 表头/行渲染基本形状 ——
@@ -221,16 +212,96 @@ test('SHOW_CHARA_ACT_LIST：双方都在侵攻/迎击时改走 ENEMY_COMPARE（�
   assert.deepEqual(order, [2, 1]);
 });
 
-test('SHOW_CHARA_ACT_LIST：MARRIAGE_BRACKET_TEXT 配偶 900 渲染「野狗」（婚姻括号列）', () => {
-  const fixture = create_era_fixture();
-  add_chara(fixture, 0, '你');
-  add_chara(fixture, 1, '甲');
-  fixture.store.set('cflag:1:601', 900); // 配偶=野狗
-  const { show_chara_act_list } = fixture.load_module('page/page-chara-info');
+test('MARRIAGE_BRACKET_TEXT：spouse 分支串——表驱动走完外层四路 + ELSE 内四条支线', () => {
+  // 每行独立起一个 fixture（分支所需的辅助状态互不相同，混用会串味）；
+  // add_chara(0) 固定名字「你」，与外层 901/ELSE-同魔王婚姻分支的期望值对齐
+  const CASES = [
+    ['spouse=900 → 野狗', (f) => f.store.set('cflag:1:601', 900), '野狗'],
+    [
+      'spouse=901 → 魔王本人',
+      (f) => {
+        f.store.set('cflag:1:601', 901);
+        // 避免退到 ELSE 分支 2 时因 cflag:0:601/cflag:1:6 都缺省为 0 而
+        // 意外撞对同一个「你」，把 901 分支本身的必要性掩盖掉
+        f.store.set('cflag:0:601', 1);
+        f.store.set('cflag:1:6', 2);
+      },
+      '你',
+    ],
+    [
+      'spouse=0 → 委托 CHARA_MARRIGE_BEFORE（code=0 早退为无）',
+      (f) => {
+        f.store.set('cflag:1:601', 0);
+        f.store.set('talent:1:320', 0);
+      },
+      '无',
+    ],
+    [
+      'spouse=902 → LOVER_NAMES 登记表（CFLAG:606）',
+      (f) => {
+        f.store.set('cflag:1:601', 902);
+        f.store.set('cflag:1:606', 1);
+      },
+      '温柔的青年',
+    ],
+    [
+      'ELSE 分支 1：EX_TALENT:2 非零且 SEARCH_FAMILY 未命中 → 无',
+      (f) => {
+        f.store.set('cflag:1:601', 903);
+        f.store.set('cflag:0:601', 1); // 避免与 cflag:1:6 缺省值 0 撞上分支 2
+        f.store.set('ex_talent:1:2', 1);
+      },
+      '无',
+    ],
+    [
+      'ELSE 分支 2：CFLAG:0:601 与 CFLAG:cid:6 同值 → 魔王本人',
+      (f) => {
+        f.store.set('cflag:1:601', 903);
+        f.store.set('cflag:0:601', 55);
+        f.store.set('cflag:1:6', 55);
+      },
+      '你',
+    ],
+    [
+      'ELSE 分支 3：spouse%10===9 且 SEARCH_FAMILY 命中 → 对方名字',
+      (f) => {
+        f.store.set('cflag:1:601', 909);
+        f.store.set('cflag:0:601', 1);
+        f.store.set('talent:1:165', 1);
+        f.store.set('talent:2:171', 1);
+      },
+      '乙',
+    ],
+    [
+      'ELSE 分支 3：spouse%10===9 但 SEARCH_FAMILY 未命中 → 无',
+      (f) => {
+        f.store.set('cflag:1:601', 909);
+        f.store.set('cflag:0:601', 1);
+      },
+      '无',
+    ],
+    [
+      'ELSE 默认：查 ITEMNAME 表',
+      (f) => {
+        f.store.set('cflag:1:601', 903);
+        f.store.set('cflag:0:601', 1);
+        f.store.set('itemname:903', '某道具');
+      },
+      '某道具',
+    ],
+  ];
 
-  show_chara_act_list(0, 0);
-
-  assert.equal(printed_includes(fixture, '[婚:野狗]'), true);
+  for (const [label, setup, expected] of CASES) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    add_chara(fixture, 2, '乙');
+    setup(fixture);
+    const { marriage_bracket_text } = fixture.load_module(
+      'page/page-chara-info',
+    );
+    assert.equal(marriage_bracket_text(1), expected, label);
+  }
 });
 
 test('SHOW_CHARA_MONEY_LIST：按 CFLAG:580 降序，取值相同按迭代顺序（稳定排序）', () => {
