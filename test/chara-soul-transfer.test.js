@@ -219,6 +219,38 @@ test('TRANSFER_SOUL：确认后返回 0，双重 SWAP 抵消令等级/攻防/婚
   assert.equal(fixture.store.get('ex_talent:0:0'), 0, '魔王侧清零');
 });
 
+test('TRANSFER_SOUL：婚姻区间 [900,902] 闭区间两端都走直接互换分支（与 903/899 进 SEARCH_FAMILY 分支不同）', async () => {
+  // 只测区间边界本身：现有用例只用 marriage=0（也命中直接分支）与
+  // marriage=903（命中 SEARCH_FAMILY 分支），拖不住区间边界——把 900/902
+  // 改成 901/901 仍满足与 marriage===0 无关的其他条件，现有用例一概不
+  // 发现。直接分支会先 swap_var 换一次 601/609，紧接着 swap_chara() 整表
+  // 互换又换一次，两次抵消；若边界改坏导致 900/902 跑进 SEARCH_FAMILY
+  // 分支，那里没有先行的 swap_var，swap_chara() 只换一次，601 会真正
+  // 交换而非维持原值——两侧行为在此处可观测地不同
+  for (const marriage of [900, 902]) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '魔王');
+    add_chara(fixture, 1, '奴隶甲');
+    fixture.store.set('cflag:0:601', 777);
+    fixture.store.set('cflag:1:601', marriage);
+    fixture.set_inputs(0); // 是
+    const { transfer_soul } = fixture.load_module('chara/chara-soul-transfer');
+
+    await transfer_soul(1, 0, seq([2]));
+
+    assert.equal(
+      fixture.store.get('cflag:0:601'),
+      777,
+      `marriage=${marriage}：二次 SWAP 抵消，魔王婚姻状态不变`,
+    );
+    assert.equal(
+      fixture.store.get('cflag:1:601'),
+      marriage,
+      `marriage=${marriage}：二次 SWAP 抵消，cid 婚姻状态不变`,
+    );
+  }
+});
+
 test('TRANSFER_SOUL：婚姻状态为其他值时改走 SEARCH_FAMILY，命中配偶联动更新其记录', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');

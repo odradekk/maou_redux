@@ -409,6 +409,23 @@ test('GET_LOOK_INFO：性格优先 TALENT[160,179)，找不到再退 [10,19)，�
   );
 });
 
+test('GET_LOOK_INFO：性格主区间左闭右开（命中 178 不含 179）', () => {
+  // 178 是 [160,179) 的最后一个有效下标，179 是紧接着被排除的下一个——现有用例只用
+  // 165（中间值）命中主区间，拖不住上界本身的开闭形状
+  const { fixture, mod } = setup_log();
+  fixture.store.set('talent:31:178', 1);
+  fixture.store.set('talentname:178', '冒失');
+  assert.equal(mod.get_look_info(31, '性格'), '冒失', '178 属于区间，命中');
+
+  const { fixture: fixture2, mod: mod2 } = setup_log();
+  fixture2.store.set('talent:31:179', 1);
+  assert.equal(
+    mod2.get_look_info(31, '性格'),
+    '不明',
+    '179 不属于区间（也不在 [10,19) 回退范围内），不命中',
+  );
+});
+
 test('GET_LOOK_INFO：婚史按 TALENT:320 压缩家族码解码各分支', () => {
   const { fixture, mod } = setup_log();
   assert.equal(mod.get_look_info(31, '婚史'), '无', '全零：无');

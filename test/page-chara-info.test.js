@@ -114,6 +114,17 @@ test('CHARA_MARRIGE_BEFORE：家族码分档——%10==0 为无，category 0/2 �
 
   assert.equal(chara_marriage_before(1), '无', '缺省 0：无');
 
+  // 早退判据是 `code % 10 === 0`，不是 `code % 100 === 0`——0 与 00 结尾在
+  // 两种判据下都会早退，分不出改坏。10010 是 %10==0 但 %100!=0 的例子：
+  // 早退判据命中即返回「无」；若误改成 %100，会漏判早退、继续往下算出
+  // category=trunc(10010/10000)=1、kind=trunc(10010/10^9)=0，落进「0/4/8
+  // → 故乡丈夫」，与早退的「无」不同，两侧才分得出来
+  fixture.store.set('talent:1:320', 10010);
+  assert.equal(
+    chara_marriage_before(1),
+    '无',
+    '%10==0 早退（非 %100==0）：10010',
+  );
   // category = trunc((code%100000)/10000)，构造 category=0：code=5（远小于
   // 10000，local1=code%100000=5，末位非零躲开 %10==0 早退）
   fixture.store.set('talent:1:320', 5);
@@ -126,6 +137,20 @@ test('CHARA_MARRIGE_BEFORE：家族码分档——%10==0 为无，category 0/2 �
   // 低 5 位 10005 → local1=10005 → category=1；kind=trunc(code/10^9)=1
   fixture.store.set('talent:1:320', 1000010005); // kind=1 → 扶她
   assert.equal(chara_marriage_before(1), '故乡扶她');
+
+  // kind 分组逐个成员都要能单独删掉才被拖住（仅测 kind=0/1/2 分不出删掉
+  // 4/5/7/8 其中一个的改动），因此补齐剩下四个成员
+  fixture.store.set('talent:1:320', 4000010005); // kind=4 → 丈夫
+  assert.equal(chara_marriage_before(1), '故乡丈夫', 'kind=4');
+
+  fixture.store.set('talent:1:320', 5000010005); // kind=5 → 扶她
+  assert.equal(chara_marriage_before(1), '故乡扶她', 'kind=5');
+
+  fixture.store.set('talent:1:320', 7000010005); // kind=7 → 扶她
+  assert.equal(chara_marriage_before(1), '故乡扶她', 'kind=7');
+
+  fixture.store.set('talent:1:320', 8000010005); // kind=8 → 丈夫
+  assert.equal(chara_marriage_before(1), '故乡丈夫', 'kind=8');
 
   fixture.store.set('talent:1:320', 30005); // local1=30005→category=3，kind=0（数值本身小于10^9）→ 丈夫
   assert.equal(chara_marriage_before(1), '故乡丈夫');
