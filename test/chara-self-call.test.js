@@ -15,6 +15,22 @@ function seq(values) {
   };
 }
 
+/**
+ * 记录每次调用传入的上界 n（返回值仍按 index 顺序取），专用于钉住"随机上界"这类字面量数值：
+ * 变异将 rand(4) 改成 rand(6) 时，若只断返回值的分支结果（seq 的做法）不会发现，
+ * 因为同一个固定返回值对任何 n 的分支结果都一样。只有直接断实际传入的 n 才能钉住它。
+ */
+function seq_capture(values) {
+  const bounds = [];
+  let index = 0;
+  const rand = (n) => {
+    bounds.push(n);
+    return values[index++] ?? 0;
+  };
+  rand.bounds = bounds;
+  return rand;
+}
+
 function add_chara(fixture, cid, name = '某角色') {
   fixture.seed_chara(cid, { id: cid, name, callname: name });
   assert.equal(fixture.era.addCharacter(cid), true);
@@ -126,6 +142,21 @@ test('calc_selfcall_factor：素质加成逐项独立生效（163/172/162/166/17
   }
 });
 
+test('calc_selfcall_factor：恶女/贵公子分支的掷骰上界被钉住（rand(4)/rand(3)，不能改成其它上界）', () => {
+  const fixture1 = create_era_fixture();
+  add_chara(fixture1, 1);
+  set_talents(fixture1, 1, { 166: 1 });
+  const rand1 = seq_capture([1]);
+  load(fixture1).calc_selfcall_factor(1, rand1);
+  assert.deepEqual(rand1.bounds, [4], '166 恶女只掷骰一次，上界是 4');
+
+  const fixture2 = create_era_fixture();
+  add_chara(fixture2, 1);
+  set_talents(fixture2, 1, { 174: 1 });
+  const rand2 = seq_capture([1, 1]);
+  load(fixture2).calc_selfcall_factor(1, rand2);
+  assert.deepEqual(rand2.bounds, [4, 3], '174 贵公子掷骰两次，上界依次是 4/3');
+});
 test('calc_selfcall_factor：24/15/17 为绝对赋值，按素质检查顺序覆盖之前的加成', () => {
   const fixture1 = create_era_fixture();
   add_chara(fixture1, 1);
@@ -201,6 +232,29 @@ test('set_suit_selfcall：CASE 0（开放<-2 且教育>0）全部子分支', () 
   }
 });
 
+test('set_suit_selfcall：CASE 0 的 && 不能换成 ||（两侧各有用例）', () => {
+  // 开放<-2 但教育<=0：&& 时不该进 CASE 0，四档全部落空
+  const fixture1 = create_era_fixture();
+  add_chara(fixture1, 1);
+  set_talents(fixture1, 1, { 24: 1 }); // 保守的 openness=-10（绝对值），edu=0
+  assert.equal(
+    load(fixture1).set_suit_selfcall(1, -1, seq([])),
+    -1,
+    '开放<-2 但教育<=0 不该进 CASE 0',
+  );
+  assert.equal(fixture1.store.get('cstr:1:60'), undefined);
+
+  // 开放>=-2 但教育>0：&& 时不该进 CASE 0，应落到 CASE 3
+  const fixture2 = create_era_fixture();
+  add_chara(fixture2, 1);
+  set_talents(fixture2, 1, { 163: 1 }); // 高贵：edu=2,attitude=2,openness=0
+  assert.equal(
+    load(fixture2).set_suit_selfcall(1, -1, seq([])),
+    3,
+    '开放>=-2 但教育>0 不该进 CASE 0，应落到 CASE 3',
+  );
+  assert.equal(fixture2.store.get('cstr:1:60'), '人家');
+});
 test('set_suit_selfcall：CASE 1（教育<-2）姿态两态', () => {
   const cases = [
     ['姿态<5→俺', { 314: 11, 315: 6 }, '俺'], // 矮人(edu-2)+小偷(edu-2)=-4；attitude=1
@@ -215,6 +269,15 @@ test('set_suit_selfcall：CASE 1（教育<-2）姿态两态', () => {
     assert.equal(local, 1, label);
     assert.equal(fixture.store.get('cstr:1:60'), expected, label);
   }
+});
+
+test('set_suit_selfcall：CASE 1 教育<-2 是严格边界，教育=-3 才进入（-2 本身不该进）', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1);
+  set_talents(fixture, 1, { 314: 11, 315: 6, 166: 1 }); // 矮人(edu-2)+小偷(edu-2)+恶女(edu+1)=-3
+  const local = load(fixture).set_suit_selfcall(1, 0, seq([1])); // 恶女掷骰不命中额外加成
+  assert.equal(local, 1, '教育=-3 严格小于 -2，必须进入 CASE 1');
+  assert.equal(fixture.store.get('cstr:1:60'), '俺');
 });
 
 test('set_suit_selfcall：CASE 2（教育>2）姿态四态与落空回退', () => {
@@ -243,6 +306,15 @@ test('set_suit_selfcall：CASE 2（教育>2）姿态四态与落空回退', () =
   assert.equal(fixture.store.get('cstr:1:60'), undefined);
 });
 
+test('set_suit_selfcall：CASE 2 姿态>2 是严格边界，姿态=3 才走本少爷/本小姐', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1);
+  set_talents(fixture, 1, { 314: 3, 163: 1 }); // 吸血鬼(edu+2,attitude+1)+高贵(edu+2,attitude+2)=edu4,attitude3
+  const local = load(fixture).set_suit_selfcall(1, 1, seq([]));
+  assert.equal(local, 2, '姿态=3 严格大于 2，必须进入本少爷/本小姐分支');
+  assert.equal(fixture.store.get('cstr:1:60'), '本小姐');
+});
+
 test('set_suit_selfcall：CASE 3（三维均在 [-2,2]）与全档落空', () => {
   const cases = [
     ['非男性→人家', {}, '人家'],
@@ -263,6 +335,16 @@ test('set_suit_selfcall：CASE 3（三维均在 [-2,2]）与全档落空', () =>
   set_talents(fixture, 1, { 15: 1 });
   assert.equal(load(fixture).set_suit_selfcall(1, -1, seq([])), -1);
   assert.equal(fixture.store.get('cstr:1:60'), undefined);
+
+  // 开放单独超出 [-2,2]（教育/姿态均在范围内）也必须落空，验证六项 && 不是只管前五项
+  const fixture_openness = create_era_fixture();
+  add_chara(fixture_openness, 1);
+  set_talents(fixture_openness, 1, { 23: 1 }); // 好奇的：openness+=5，edu/attitude 不动
+  assert.equal(
+    load(fixture_openness).set_suit_selfcall(1, 2, seq([])),
+    -1,
+    '开放单独超出 [-2,2]，其余两维在范围内也不该命中 CASE 3',
+  );
 });
 
 // ---- set_nick_selfcall ----
@@ -363,6 +445,21 @@ test('set_nick_selfcall：和名六档（NID 落 [200,1000)）', () => {
   assert.equal(nick.set_nick_selfcall(1, 5, seq([])), -1);
 });
 
+test('set_nick_selfcall：和名 CASE1 去尾“子”发生在重算长度之前，随机上界跟着变短', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1, '美惠子');
+  fixture.store.set('cflag:1:6', 200);
+  const rand = seq_capture([0]);
+  const local = load(fixture).set_nick_selfcall(1, 0, rand);
+  assert.equal(local, 1);
+  assert.deepEqual(
+    rand.bounds,
+    [1],
+    '去尾“子”后按 2 字取随机，上界必须是 rand(1)（若未去尾则为 rand(2)）',
+  );
+  assert.equal(fixture.store.get('cstr:1:60'), '美惠');
+});
+
 test('set_nick_selfcall：洋名五档（NID 落 [0,200)）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1);
@@ -421,6 +518,15 @@ test('set_nick_selfcall：洋名五档（NID 落 [0,200)）', () => {
   // CASEELSE：档位越过 4 直接落空
   fixture.store.set('callname:1:-1', '艾提卡');
   assert.equal(nick.set_nick_selfcall(1, 4, seq([])), -1);
+});
+
+test('set_nick_selfcall：洋名 CASE1 字数<=2 是严格边界，字数=2 仍应落空继续到 CASE2', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1, '艾莉');
+  fixture.store.set('cflag:1:6', 0);
+  const local = load(fixture).set_nick_selfcall(1, 0, seq([0]));
+  assert.equal(local, 2, '2 字必须在 CASE1 落空，继续到 CASE2');
+  assert.equal(fixture.store.get('cstr:1:60'), '小艾');
 });
 
 // ---- random_self_call ----
