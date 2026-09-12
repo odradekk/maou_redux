@@ -267,6 +267,52 @@ test('爱慕觉醒：非傲娇的反抗直接消失', async () => {
   assert(fixture.text_lines().includes('琼失去了【反抗】。'));
 });
 
+test('爱慕觉醒：只持有【克制】时单独消失', async () => {
+  const fixture = seed_world();
+  const { check_specialskil } = fixture.load_module('event/get-specialtalent');
+  set_talentname(fixture, 20, '克制');
+  fixture.store.set('cflag:31:2', 1500);
+  fixture.store.set('abl:31:10', 3);
+  fixture.store.set('exp:31:21', 200);
+  fixture.store.set('mark:31:2', 3);
+  fixture.store.set('abl:31:16', 3);
+  fixture.store.set('talent:31:20', 1);
+
+  await check_specialskil(31);
+
+  assert.equal(fixture.store.get('talent:31:20'), 0);
+  assert.equal(
+    fixture.store.get('talent:31:21'),
+    undefined,
+    '未持有的 21 不受影响',
+  );
+  assert(fixture.text_lines().includes('琼的【克制】失去了。'));
+  assert(fixture.text_lines().includes('否定点数减半。'));
+});
+
+test('爱慕觉醒：只持有【冷漠】时单独消失', async () => {
+  const fixture = seed_world();
+  const { check_specialskil } = fixture.load_module('event/get-specialtalent');
+  set_talentname(fixture, 21, '冷漠');
+  fixture.store.set('cflag:31:2', 1500);
+  fixture.store.set('abl:31:10', 3);
+  fixture.store.set('exp:31:21', 200);
+  fixture.store.set('mark:31:2', 3);
+  fixture.store.set('abl:31:16', 3);
+  fixture.store.set('talent:31:21', 1);
+
+  await check_specialskil(31);
+
+  assert.equal(fixture.store.get('talent:31:21'), 0);
+  assert.equal(
+    fixture.store.get('talent:31:20'),
+    undefined,
+    '未持有的 20 不受影响',
+  );
+  assert(fixture.text_lines().includes('琼的【冷漠】失去了。'));
+  assert(fixture.text_lines().includes('否定点数减半。'));
+});
+
 test('爱慕觉醒：持有寿命且＞0 时提示剩余天数为 BASE:10 的一半', async () => {
   const fixture = seed_world();
   const { check_specialskil } = fixture.load_module('event/get-specialtalent');
@@ -401,6 +447,62 @@ test('淫乱觉醒：持有【魂缚】时跳过种族堕落判定', async () =>
   await check_specialskil(31);
 
   assert.equal(fixture.store.get('talent:31:314'), 1, '未被改成 7');
+});
+
+test('淫乱觉醒：只持有【压抑】时单独消失', async () => {
+  const fixture = seed_world();
+  const { check_specialskil } = fixture.load_module('event/get-specialtalent');
+  set_talentname(fixture, 32, '压抑');
+  fixture.store.set('cflag:31:2', 1500);
+  fixture.store.set('abl:31:11', 3);
+  fixture.store.set('abl:31:0', 10);
+  fixture.store.set('exp:31:50', 3);
+  fixture.store.set('mark:31:1', 3);
+  fixture.store.set('mark:31:2', 3);
+  fixture.store.set('talent:31:32', 1);
+
+  await check_specialskil(31);
+
+  assert.equal(fixture.store.get('talent:31:32'), 0);
+  assert.equal(
+    fixture.store.get('talent:31:34'),
+    undefined,
+    '未持有的 34 不受影响',
+  );
+  assert.equal(
+    fixture.store.get('talent:31:84'),
+    undefined,
+    '未持有的 84 不受影响',
+  );
+  assert(fixture.text_lines().includes('琼的【压抑】失去了。'));
+});
+
+test('淫乱觉醒：只持有【抵抗】时单独消失', async () => {
+  const fixture = seed_world();
+  const { check_specialskil } = fixture.load_module('event/get-specialtalent');
+  set_talentname(fixture, 34, '抵抗');
+  fixture.store.set('cflag:31:2', 1500);
+  fixture.store.set('abl:31:11', 3);
+  fixture.store.set('abl:31:0', 10);
+  fixture.store.set('exp:31:50', 3);
+  fixture.store.set('mark:31:1', 3);
+  fixture.store.set('mark:31:2', 3);
+  fixture.store.set('talent:31:34', 1);
+
+  await check_specialskil(31);
+
+  assert.equal(fixture.store.get('talent:31:34'), 0);
+  assert.equal(
+    fixture.store.get('talent:31:32'),
+    undefined,
+    '未持有的 32 不受影响',
+  );
+  assert.equal(
+    fixture.store.get('talent:31:84'),
+    undefined,
+    '未持有的 84 不受影响',
+  );
+  assert(fixture.text_lines().includes('琼的【抵抗】失去了。'));
 });
 
 test('淫乱觉醒：【压抑】【抵抗】【嫉妒】组合消失——84 号打印的是 32 号的名字（原作 bug）', async () => {
