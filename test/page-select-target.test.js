@@ -242,20 +242,57 @@ test('SELECT_ASSI 选中：输入角色 ID → 置 ASSI 与 FLAG:2，返回 1', 
   );
 });
 
-test('GET_JOB_NAME 与沦陷标签用真实 TALENT 值渲染（非默认空白）', async () => {
+test('GET_JOB_NAME：职业维度表驱动（TALENT 200-212 逐支断言，含 206 的巫者/巫女二级判据）', async () => {
+  // [素质编号, 附加素质, 期望职业名]——206 的两条分支合表：附加 talent:122
+  // 决定巫者/巫女，其余职业无第二判据（附加为空对象）
+  const JOB_TABLE = [
+    [200, {}, '战士'],
+    [201, {}, '魔法师'],
+    [202, {}, '神官'],
+    [203, {}, '盗贼'],
+    [204, {}, '肉便器'],
+    [205, {}, '骑士'],
+    [206, { 122: 1 }, '巫者'],
+    [206, { 122: 0 }, '巫女'],
+    [207, {}, '忍者'],
+    [208, {}, '弓手'],
+    [209, {}, '苗床'],
+    [210, {}, '魔界将军'],
+    [211, {}, '魔导神官'],
+    [212, {}, '魔物使'],
+  ];
+  for (const [job_talent, extra_talents, expected_label] of JOB_TABLE) {
+    const fixture = create_era_fixture();
+    join_slave_chara(fixture, 31, '无业');
+    fixture.store.set(`talent:31:${job_talent}`, 1);
+    for (const [extra_id, value] of Object.entries(extra_talents)) {
+      fixture.store.set(`talent:31:${extra_id}`, value);
+    }
+    const { select_target } = load_page(fixture);
+    fixture.set_inputs(999);
+
+    await select_target();
+    const texts = rendered_lines(fixture);
+    assert(
+      texts.some((l) => l.includes(expected_label)),
+      `TALENT:${job_talent}${
+        Object.keys(extra_talents).length
+          ? `（附加 ${JSON.stringify(extra_talents)}）`
+          : ''
+      } 必须映射为职业标签「${expected_label}」`,
+    );
+  }
+});
+
+test('love_status_tag：沦陷标签用真实 TALENT 值渲染（非默认空白）', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 31, '幽狼');
-  fixture.store.set('talent:31:200', 1); // 戦士（GET_JOB_NAME 第一支）
   fixture.store.set('talent:31:85', 1); // 爱慕（love_status_tag）
   const { select_target } = load_page(fixture);
   fixture.set_inputs(999);
 
   await assert.equal(await select_target(), 0);
   const texts = rendered_lines(fixture);
-  assert(
-    texts.some((l) => l.includes('战士')),
-    'TALENT:200 必须映射为职业标签「战士」',
-  );
   assert(
     texts.some((l) => l.includes('<爱慕>')),
     'TALENT:85 必须映射为沦陷标签「<爱慕>」',

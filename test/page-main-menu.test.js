@@ -256,6 +256,64 @@ test('防御性修正：所指角色被占用（CFLAG:x:1 != 0）时重置', () 
   assert.equal(era_flag.assi, 1, '未占用的助手保留');
 });
 
+test('边界：TARGET == 1 时 :31-34 守卫成立，占用即重置（>= 1 下界为真）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 1);
+    era_flag.target = 1; // 恰为边界值 1
+    era_flag.assi = -1; // 避开 :27-29 的 ASSI === TARGET 重置干扰
+    fixture.store.set('cflag:1:1', 2); // 目标被占用
+  });
+  assert.equal(
+    era_flag.target,
+    -1,
+    'TARGET == 1 且被占用时必须重置（>= 1 下界包含 1）',
+  );
+});
+
+test('边界：TARGET == 0（魔王）时 :31-34 守卫不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    era_flag.target = 0; // 恰在边界下方：0 不满足 >= 1
+    era_flag.assi = -1;
+    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但守卫不应读到这里
+  });
+  assert.equal(
+    era_flag.target,
+    0,
+    'TARGET == 0 时即使 CFLAG:0:1 非零也不得重置（>= 1 下界不含 0）',
+  );
+});
+
+test('边界：ASSI == 1 时 :36-39 守卫成立，占用即重置（>= 1 下界为真）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    join_chara(fixture, 1);
+    era_flag.target = -1; // 避开 ASSI === TARGET 重置干扰
+    era_flag.assi = 1; // 恰为边界值 1
+    fixture.store.set('cflag:1:1', 2); // 助手被占用
+  });
+  assert.equal(
+    era_flag.assi,
+    -1,
+    'ASSI == 1 且被占用时必须重置（>= 1 下界包含 1）',
+  );
+});
+
+test('边界：ASSI == 0（魔王）时 :36-39 守卫不成立，即使标记占用也不重置（>= 1 下界为假）', () => {
+  const { era_flag } = draw_menu_with((fixture, era_flag) => {
+    join_chara(fixture, 0);
+    era_flag.target = -1;
+    era_flag.assi = 0; // 恰在边界下方：0 不满足 >= 1
+    fixture.store.set('cflag:0:1', 2); // 故意标记成占用态，但守卫不应读到这里
+  });
+  assert.equal(
+    era_flag.assi,
+    0,
+    'ASSI == 0 时即使 CFLAG:0:1 非零也不得重置（>= 1 下界不含 0）',
+  );
+});
+
 test('四个子面板：按 FLAG:36 分发——四支全部真身（#180/#395）', () => {
   // 面板 0（DRAW_HAVEITEMS）：技巧 Lv 头行恒出现；ELSE 分支（:197-198）
   // 未知值回落同一面板
