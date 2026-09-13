@@ -76,12 +76,13 @@ function palamname(idx) {
 }
 
 /**
- * %GET_LOOK_INFO(cid, kind)% 的子集实现（LOOK.ERB:2885 的一部分，仅本文件
- * 用到的 7 个 kind；完整函数随「角色信息」票）。
+ * %GET_LOOK_INFO(cid, kind)% 的子集实现（LOOK.ERB:2885 的一部分，本文件
+ * 起用到的 7 个 kind；issue #383 补充第 8 个 kind「种族2」供
+ * chara-self-call.js 的 CALC_SELFCALL_FACTOR 消费；完整函数随「角色信息」票）。
  *
  * 源: target/ERB/キャラ関数/LOOK.ERB @GET_LOOK_INFO（:2885）——"头发颜色"
  *     （:2922）"目"（:3020）"阴毛状态"（:3095）"魅力点"（:3114）"癖"
- *     （:3180）"种族"（:3253）"成为勇者前的生活"（:3315）
+ *     （:3180）"种族"（:3253）"种族2"（:3285）"成为勇者前的生活"（:3315）
  *
  * @param {number} cid 角色 ID
  * @param {string} kind 子集名
@@ -232,6 +233,28 @@ function get_look_info(cid, kind) {
         11: '矮人',
       };
       return map[t(314)] ?? 'ERROR';
+    }
+    case '种族2': {
+      // LOOK.ERB:3285-3308（issue #383 补充：SELF_CALL.ERB @CALC_SELFCALL_FACTOR
+      // 需要这个分支判定「魔族」的种族2 细分；CASEELSE 的原作格式串
+      // TOSTR(TALENT:ARG:种族2, "$${0}") 未被任何消费者读取，本函数不复原
+      // 该格式，按十进制回落）
+      const map = {
+        1: '兽人',
+        2: '史莱姆',
+        3: '昆虫',
+        4: '植物',
+        5: '触手',
+        6: '妖精',
+        7: '巨人',
+        8: '魔族',
+        9: '魔族',
+        10: '魔兽',
+        11: '触手',
+        12: '魔兽',
+      };
+      const v = t(319);
+      return map[v] ?? String(v);
     }
     case '成为勇者前的生活': {
       // LOOK.ERB:3315-3389

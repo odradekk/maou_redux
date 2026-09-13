@@ -3,8 +3,9 @@
 
 export const FILES = [
   {
-    // #118：@CHAR_INIT 窄路径与 @RANDOM_SELF_CALL 窄路径（ENDING_1 的
-    // ADDCHARA 链第三环）
+    // #118：@CHAR_INIT 窄路径（ENDING_1 的 ADDCHARA 链第三环）。
+    // @RANDOM_SELF_CALL 的完整实现自 #383 起在 chara-self-call.js，
+    // 本文件只留调用点引用（ref '27'）
     js: 'ere/chara/chara-init.js',
     refs: [
       // CHAR_MAKE.ERB 的 JUMP 壳
@@ -93,62 +94,6 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/CHARA_MAKE_INIT.ERB',
         ref: '54',
         any: [/^RETURN L_A$/m],
-      },
-      // SELF_CALL.ERB 的一人称
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '2-65',
-        any: [/^@RANDOM_SELF_CALL, ARG, MODE = 0$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '6',
-        any: [/^LOCAL = CFLAG:ARG:450$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '7-8',
-        any: [/^SIF MODE == 0$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '25-26',
-        any: [/^SIF LOCAL >= 200$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '28-36',
-        any: [/^IF LOCAL < 0$/m, /LOCALS = %CSVCSTR/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '29',
-        any: [/LOCALS = %CSVCSTR/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '38-42',
-        any: [/^IF LOCAL < 9$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '39-40',
-        any: [/^\s*CSTR:ARG:60 = 我$/m, /^\s*CFLAG:ARG:450 = 9$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '44-52',
-        any: [/^IF LOCAL < 100$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '46',
-        any: [/^\s*CALL SET_SUIT_SELFCALL, ARG, LOCAL$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
-        ref: '54-62',
-        any: [/^IF LOCAL < 200$/m],
       },
     ],
   },

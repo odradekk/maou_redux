@@ -152,7 +152,9 @@ export const PENDING_BASELINE = 74; // rebase 合并 #405（79→75）+ #388（�
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 13; // #350：GET_TATOO 清单行补回准确源文件。
+export const UNATTRIBUTED_BASELINE = 12; // #350：GET_TATOO 清单行补回准确源文件；
+// #383：CSVCSTR 行（源写「Emuera 内建函数」，三路归因规则都够不着）从
+// 存根改判已实现后不再进入归因扫描，13 → 12（显式改小，非顺手改数字）。
 
 /** 文件级「已判定不实现」显式表：推翻裁定 = 改这里（每条注明出处）。 */
 export const RULINGS = [

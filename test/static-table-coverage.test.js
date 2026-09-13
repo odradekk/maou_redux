@@ -53,7 +53,10 @@ const ALIASED = new Map([
 ]);
 // 二段寻址或另有落点，不吃 staticData[表]：flag/global 走各自 case；
 // callname/relation/no 是受保护内置；itemsales 走 item 分支；
-// *name 是「取名字」的读法，查的是被去掉后缀的那张表
+// *name 是「取名字」的读法，查的是被去掉后缀的那张表；chara 是 case 2
+// 的内置只读预设对象（era.get(`chara:${id}`) → this.staticData.chara[id]，
+// #383 CSVCSTR 等价物的读法），三段 chara:x:y 在引擎里没有对应分支、
+// 不会走本锁盯的那条 staticData[表] 缺表崩溃路径
 const NOT_THREE_PART = new Set([
   'flag',
   'global',
@@ -61,6 +64,7 @@ const NOT_THREE_PART = new Set([
   'relation',
   'itemsales',
   'no',
+  'chara',
 ]);
 
 /** 递归收集 ere/ 下的 .js */

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2229;
+export const COUNT = 2230; // #383 起 +1（M7826，kojo-dungeon-bitch-log.js 的种族2 映射）
 
 export default [
   {
@@ -20652,5 +20652,13 @@ on('EVENTEND', eventend_kojo_903);`,
     replace: '// 变异：删除 K904 口上装载',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
+  },
+  {
+    desc: 'M7826 GET_LOOK_INFO 种族2「植物」映射改错（LOOK.ERB:3285，#383）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find: "        4: '植物',",
+    replace: "        4: '植物不存在',",
+    tests: ['chara-self-call'],
+    must_mention: '魔族 + 种族2=植物',
   },
 ];

@@ -43,9 +43,9 @@
 
 const era = require('#/era-electron');
 const { family_register, search_family } = require('#/chara/chara-family');
-const { random_self_call } = require('#/chara/chara-init');
 const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
 const { chara_name_random_define } = require('#/chara/chara-name');
+const { random_self_call } = require('#/chara/chara-self-call'); // #383 起真身
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
@@ -165,8 +165,8 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   // :109 コスチューム
   await cm_cloth(cid, rand_n);
 
-  // :112 一人称の設定（ere/chara/chara-init.js 的 #118 实现复用）
-  await random_self_call(cid);
+  // :112 一人称の設定（ere/chara/chara-self-call.js 的 #383 实现复用）
+  random_self_call(cid);
 
   // :114-117 年齢/身長表示设定（FLAG:5 位 12/15）时生成身体数据
   const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图

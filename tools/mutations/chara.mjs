@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 26;
+export const COUNT = 44; // #383 起 +18（M7808-M7825，chara-self-call.js）
 
 export default [
   {
@@ -213,5 +213,219 @@ export default [
     replace: '  return chara_make_inherit(child, parent);',
     tests: ['chara-stubs'],
     must_mention: 'CHAR_INHERIT 转发层',
+  },
+  {
+    desc: 'M7808 CALC_SELFCALL_FACTOR 精灵/暗精灵种族加成删除（SELF_CALL.ERB:288-290，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `    case '精灵':
+    case '暗精灵':
+      edu += 2;
+      attitude += 2;
+      openness += 2;
+      break;`,
+    replace: `    case '精灵':
+    case '暗精灵':
+      break;`,
+    tests: ['chara-self-call'],
+    must_mention: '精灵',
+  },
+  {
+    desc: 'M7809 CALC_SELFCALL_FACTOR 龙族开放度符号反转（SELF_CALL.ERB:296-299，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `    case '龙族':
+      edu += 2;
+      attitude += 1;
+      openness -= 2;
+      break;`,
+    replace: `    case '龙族':
+      edu += 2;
+      attitude += 1;
+      openness += 2;
+      break;`,
+    tests: ['chara-self-call'],
+    must_mention: '龙族',
+  },
+  {
+    desc: 'M7810 CALC_SELFCALL_FACTOR 魔族+妖精/史莱姆的教育加成删除（SELF_CALL.ERB:296-298 GOTO CASE_魔族 展开，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `        case '妖精':
+        case '史莱姆':
+          edu += 1;
+          break;`,
+    replace: `        case '妖精':
+        case '史莱姆':
+          break;`,
+    tests: ['chara-self-call'],
+    must_mention: '魔族 + 种族2=妖精',
+  },
+  {
+    desc: 'M7811 CALC_SELFCALL_FACTOR “修女”词条判定被砍（GET_LOOK_INFO 同一素质值性别分档，SELF_CALL.ERB:328-331，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `    case '修女':
+      edu += 1;
+      attitude -= 1;
+      break;`,
+    replace: `    case '修女不存在':
+      edu += 1;
+      attitude -= 1;
+      break;`,
+    tests: ['chara-self-call'],
+    must_mention: '修女（女性，命中"修女"词条）',
+  },
+  {
+    desc: 'M7812 CALC_SELFCALL_FACTOR 商人姿态惩罚数值改错（SELF_CALL.ERB:337-339，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `    case '商人':
+      edu += 1;
+      attitude -= 2;
+      break;`,
+    replace: `    case '商人':
+      edu += 1;
+      attitude -= 1;
+      break;`,
+    tests: ['chara-self-call'],
+    must_mention: '商人',
+  },
+  {
+    desc: 'M7813 CALC_SELFCALL_FACTOR 恶女掷骨判定条件改错（SELF_CALL.ERB:359-364，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `    // 恶女
+    edu += 1;
+    attitude += 2;
+    if (rand(4) === 0) {`,
+    replace: `    // 恶女
+    edu += 1;
+    attitude += 2;
+    if (rand(4) === 1) {`,
+    tests: ['chara-self-call'],
+    must_mention: '166 恶女，掷骰未命中加成',
+  },
+  {
+    desc: 'M7814 CALC_SELFCALL_FACTOR 高姿态的绝对赋值被拆掉（SELF_CALL.ERB:389-391，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `  if (talent(15)) {
+    // 高姿态
+    attitude = 10;
+  }`,
+    replace: `  if (false) {
+    // 高姿态（变异：删掉）
+    attitude = 10;
+  }`,
+    tests: ['chara-self-call'],
+    must_mention: '嚣张先加attitude后被高姿态绝对赋值覆盖',
+  },
+  {
+    desc: 'M7815 CALC_SELFCALL_FACTOR 低姿态的绝对赋值被拆掉（SELF_CALL.ERB:392-394，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `  if (talent(17)) {
+    // 低姿态
+    attitude = -10;
+  }`,
+    replace: `  if (false) {
+    // 低姿态（变异：删掉）
+    attitude = -10;
+  }`,
+    tests: ['chara-self-call'],
+    must_mention: '高姿态先设attitude=10后被低姿态绝对赋值覆盖为-10',
+  },
+  {
+    desc: 'M7816 SET_SUIT_SELFCALL CASE0 开放<=-5 边界改错（SELF_CALL.ERB:71，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '          if (openness <= -5) {',
+    replace: '          if (openness >= -5) {',
+    tests: ['chara-self-call'],
+    must_mention: '开放<=-5，掷骰命中→吾辈',
+  },
+  {
+    desc: 'M7817 SET_SUIT_SELFCALL CASE1 姿态>=5 边界改错（SELF_CALL.ERB:76，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `          if (attitude >= 5) {
+            word = male ? '老子' : '老娘';
+          }`,
+    replace: `          if (attitude >= 7) {
+            word = male ? '老子' : '老娘';
+          }`,
+    tests: ['chara-self-call'],
+    must_mention: '姿态>=5，非男性→老娘',
+  },
+  {
+    desc: 'M7818 SET_SUIT_SELFCALL CASE2 本宫分支条件改错（SELF_CALL.ERB:83，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `          if (attitude >= 5) {
+            word = '本宫';`,
+    replace: `          if (attitude >= 7) {
+            word = '本宫';`,
+    tests: ['chara-self-call'],
+    must_mention: '姿态>=5→本宫',
+  },
+  {
+    desc: 'M7819 SET_SUIT_SELFCALL CASE3 输出词两性倒接（SELF_CALL.ERB:159，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: "          era.set(`cstr:${cid}:60`, male ? '鄙人' : '人家');",
+    replace: "          era.set(`cstr:${cid}:60`, male ? '人家' : '鄙人');",
+    tests: ['chara-self-call'],
+    must_mention: '非男性→人家',
+  },
+  {
+    desc: 'M7820 SET_NICK_SELFCALL 半角字符检测被拆掉（SELF_CALL.ERB:171，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '    if (!is_all_fullwidth(name)) {',
+    replace: '    if (false) {',
+    tests: ['chara-self-call'],
+    must_mention: '半角字符名回落姓名本体',
+  },
+  {
+    desc: 'M7821 NID_GET_TYPE 和名下界改错（CHARA_NAME.ERB:257，#383 起真身落在 chara-family.js，#349）',
+    file: 'ere/chara/chara-family.js',
+    find: '  if (value < 200 || value >= 2000) return 1;',
+    replace: '  if (value < 201 || value >= 2000) return 1;',
+    tests: ['chara-self-call'],
+    must_mention: 'NID 落 [200,1000) → 和名（CASE1 挑字）',
+  },
+  {
+    desc: 'M7822 SET_NICK_SELFCALL 和名 CASE0 长度阈值改错（SELF_CALL.ERB:182，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `          // 皐月 -> 皐月
+          if (char_count > 2) {`,
+    replace: `          // 皐月 -> 皐月
+          if (char_count > 1) {`,
+    tests: ['chara-self-call'],
+    must_mention: '和名CASE0字数<=2原样照抄',
+  },
+  {
+    desc: 'M7823 SET_NICK_SELFCALL 洋名 CASE3 白名单判断被砍（SELF_CALL.ERB:251，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `          if (!WEST_NICK_FIRST_CHARS.has(first)) {
+            continue;
+          }
+          era.set(\`cstr:\${cid}:60\`, \`\${first}儿\`);`,
+    replace: `          if (false) {
+            continue;
+          }
+          era.set(\`cstr:\${cid}:60\`, \`\${first}儿\`);`,
+    tests: ['chara-self-call'],
+    must_mention: '洋名CASE3白名单不含张三丰的张',
+  },
+  {
+    desc: 'M7824 RANDOM_SELF_CALL 合适一人称表命中后的 CFLAG 偏移改错（SELF_CALL.ERB:48-49，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: `    if (result >= 0) {
+      era.set(\`cflag:\${cid}:450\`, result + 10);
+      return result + 10;
+    }`,
+    replace: `    if (result >= 0) {
+      era.set(\`cflag:\${cid}:450\`, result + 11);
+      return result + 11;
+    }`,
+    tests: ['chara-self-call'],
+    must_mention: '命中档+10委派合适一人称表',
+  },
+  {
+    desc: 'M7825 RANDOM_SELF_CALL CSV 预设回落判断反转（SELF_CALL.ERB:31，#383）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '    if (preset) {',
+    replace: '    if (!preset) {',
+    tests: ['chara-self-call'],
+    must_mention: '档位 >=200',
   },
 ];
