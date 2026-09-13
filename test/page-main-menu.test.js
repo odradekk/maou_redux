@@ -785,16 +785,17 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
 
 test('分发期输出玩家先看到再被重绘清掉：点未移植入口不留残行', async () => {
   // 102（地下城存根）不印按钮（按钮与真身同票落地的政策），引擎不会送达
-  // （#130）；已打印的存根分发入口是 [101] 能力显示（CHARANUM >= 1 才进
-  // @CHARA_INFO 存根），用它驱动同一形态
+  // （#130）；101 自 #391 起为真身（page-chara-info.js 的 chara_info），
+  // 已打印的存根分发入口改用 [777] 设定（CONFIG，无条件渲染），用它驱动
+  // 同一形态
   const stub_round = create_era_fixture();
   stub_round.era.print('上方一');
   stub_round.era.print('上方二');
-  join_chara(stub_round, 31); // CHARANUM >= 1：101 直达存根分支
+  join_chara(stub_round, 31); // 与对照轮同世界（777 本身无 CHARANUM 依赖）
   const { run_shop: run_stub } = stub_round.load_module('page/page-shop');
-  stub_round.set_inputs(101, 500);
+  stub_round.set_inputs(777, 500);
   await assert.rejects(() => run_stub(), /预置输入已耗尽/);
-  // 对照轮带同一世界（CHARANUM >= 1）：差异只剩「分发是否打存根」这一个变量
+  // 对照轮带同一世界：差异只剩「分发是否打存根」这一个变量
   const plain = create_era_fixture();
   plain.era.print('上方一');
   plain.era.print('上方二');
@@ -807,16 +808,16 @@ test('分发期输出玩家先看到再被重绘清掉：点未移植入口不�
   // 下一轮重绘才清掉。waits.rows_at_wait 是调用瞬间的行数，直接钉住
   // 「看到」发生在「消失」之前（#73 发回的验收项）。
   const waited = stub_round.waits.filter((w) => w.waited);
-  assert.equal(waited.length, 1, '101 分支必须等一次键');
+  assert.equal(waited.length, 1, '777 分支必须等一次键');
   const at_wait = stub_round.lines_history.filter(
     (l) => l.row !== undefined && l.row < waited[0].rows_at_wait,
   );
   assert(
-    at_wait.some((l) => l.text?.includes('CHARA_INFO')),
+    at_wait.some((l) => l.text?.includes('CONFIG')),
     '等键时存根行必须已在屏幕上',
   );
   // 重绘之后才消失：终态与无存根轮逐行同高、屏幕上看不见存根
-  assert(!stub_round.text_lines().some((l) => l.includes('CHARA_INFO')));
+  assert(!stub_round.text_lines().some((l) => l.includes('CONFIG')));
   assert.equal(stub_round.era.getLineCount(), plain.era.getLineCount());
 });
 

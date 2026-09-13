@@ -462,9 +462,13 @@ test('临月处理覆盖狂王早退、迎击召回随机两侧与设定位两�
     assert.equal(fixture.store.get('flag:2'), -1);
     assert.equal(view.invasion.状态, setting ? 3 : 10);
     assert.equal(view.invasion.回城标志, callback ? 7 : 0);
+    // CHARA_INFO_CALLBACK 真身已随 #391 接入：本用例两侧都未设等级
+    // （CFLAG:9 恒 0），传送召回一进函数就撞上「等级不够」守卫（:90-93）
+    // 提前 RETURN——只需确认「有没有被调用」，chara_info_callback 自身的
+    // 等级/气力判定与确认流程见 test/chara-info-actions.test.js
     assert.equal(
       fixture.lines_history.some((line) =>
-        line.text?.includes('角色 1 的传送召回'),
+        line.text?.includes('无法对LV0的母亲发动传送魔法'),
       ),
       callback,
     );

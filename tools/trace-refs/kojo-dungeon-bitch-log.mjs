@@ -2583,6 +2583,26 @@ export const FILES = [
         ref: '3315',
         any: [/^\s*ELSEIF\ ARGS\ ==\ "成为勇者前的生活"/m],
       },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '3285',
+        any: [/^\s*ELSEIF\ ARGS\ ==\ "种族2"/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '3309',
+        any: [/^\s*ELSEIF\ ARGS\ ==\ "种族12"/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '3473',
+        any: [/^\s*ELSEIF\ ARGS\ ==\ "性格"/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '3490',
+        any: [/^\s*ELSEIF\ ARGS\ ==\ "婚史"/m],
+      },
     ],
   },
 ];

@@ -418,11 +418,12 @@ async function dispatch(...results) {
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
   // 四次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
-  // 200 自 #136 起是真身存档界面（下方独立用例），199 自 #395 起是真身
-  // BEGIN TURNEND 转场（专属用例见下），均不再走占位
-  const fixture = await dispatch(101, 777, 103, 525);
+  // 200 自 #136 起是真身存档界面，199 自 #395 起是真身 BEGIN TURNEND
+  // 转场（专属用例见下），101 自 #391 起是真身角色信息画面
+  // （test/page-chara-info.test.js 独立覆盖），均不再走占位
+  const fixture = await dispatch(777, 103, 525);
   const texts = history_texts(fixture);
-  for (const name of ['@CHARA_INFO', '@CONFIG', '@批量处刑', '@SHOW_FLOOR']) {
+  for (const name of ['@CONFIG', '@批量处刑', '@SHOW_FLOOR']) {
     assert(
       texts.some((line) => line.includes(name)),
       `指令壳应占位 ${name}`,
@@ -699,13 +700,19 @@ test('7788 接通 RELATION_DEBUGPRINT：输出关系矩阵并等待按键', asyn
 });
 
 test('498/499 无守卫：指针未选也照原作进分支', async () => {
-  const fixture = await dispatch(498, 499);
+  // #391 起 CHARA_INFO_INDIVIDUAL_WAPPED 是真身，不再打占位行；这里只验
+  // 证「无守卫，target/assi 未选（-1）也照样进个别信息页」，个别信息页
+  // 自身的渲染/按钮/分发见 test/page-chara-info.test.js
+  const fixture = create_era_fixture();
+  const { usershop } = fixture.load_module('page/page-shop');
+  fixture.set_inputs(100, 100); // 每次进页后立即按「返回」
+  await usershop(498);
+  await usershop(499);
   assert.equal(
-    history_texts(fixture).filter((line) =>
-      line.includes('@CHARA_INFO_INDIVIDUAL_WAPPED'),
-    ).length,
+    history_texts(fixture).filter((line) => line.includes('SHOW_CHARA_INFO'))
+      .length,
     2,
-    '498/499 各占位一次（原作 :156-159 无 A 守卫）',
+    '498/499 各进入一次个别信息页（原作 :156-159 无 A 守卫）',
   );
 });
 
@@ -725,10 +732,11 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // 109 分支的 BEGIN TURNEND 自 #117、199 分支的 BEGIN TURNEND 自 #395 起
   // 为真身/真转场，SYSTEM_SAVEGAME / SYSTEM_LOADGAME 自 #136 起为真身
   // （200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
-  // page-dungeon-info2.js），已移出。ITEM_SHOP_TRAP 是 BOUGHT 落表后
-  // show_shop 的新运行时占位（#395），非 usershop 分支
+  // page-dungeon-info2.js），CHARA_INFO / CHARA_INFO_INDIVIDUAL_WAPPED
+  // 自 #391 起为真身（101/498/499 分支，page-chara-info.js），均已移出。
+  // ITEM_SHOP_TRAP 是 BOUGHT 落表后 show_shop 的新运行时占位（#395），
+  // 非 usershop 分支
   assert.deepEqual(STUBBED_CALLS, [
-    'CHARA_INFO',
     '批量处刑',
     'INTERCEPT',
     'ABILITY_UP',
@@ -738,7 +746,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'SECRET_LABO',
     'CONFIG',
     'LABO',
-    'CHARA_INFO_INDIVIDUAL_WAPPED',
     'SHOW_FLOOR',
     'MONSTER_SHOP',
     'DEBUG_MENU_U',

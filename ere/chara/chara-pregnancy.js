@@ -27,6 +27,7 @@ const {
   nid_get_type,
   nid_r,
 } = require('#/chara/chara-family');
+const { chara_info_callback } = require('#/chara/chara-info-actions');
 const { chara_make } = require('#/chara/chara-make');
 const { chara_make_inherit } = require('#/chara/chara-make-inherit');
 const { chara_name_random_define } = require('#/chara/chara-name');
@@ -38,12 +39,11 @@ const { chara } = require('#/facade/chara');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { ntr_child_birth } = require('#/system/ntr');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
 
 const MAX_CHARANUM = 90;
 const FIRST_CHILD_ID = 1000;
 const CHILD_ID_BLOCK_SIZE = 100;
-const STUBBED_CALLS = ['CHARA_INFO_CALLBACK'];
+const STUBBED_CALLS = [];
 
 function default_rand(n) {
   return Math.floor(Math.random() * n);
@@ -427,7 +427,7 @@ async function ninsin_reach_term(cid, rand = default_rand) {
     await era.printAndWait(`为了准备生产，迎击中的${name_of(cid)}开始了返回。`);
     if (rand(9) > 0) {
       await era.printAndWait(`${name_of(cid)}希望被传送召回`);
-      stub_line('CHARA_INFO_CALLBACK', `角色 ${cid} 的传送召回`);
+      await chara_info_callback(cid);
     } else {
       chara(cid).invasion.回城标志 = 0;
     }

@@ -38,6 +38,10 @@ const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { infrastructure } = require('#/page/page-infrastructure');
 const { save_game, load_game } = require('#/page/page-save-load');
+const {
+  chara_info,
+  chara_info_individual_wrapped,
+} = require('#/page/page-chara-info');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
@@ -50,11 +54,12 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * BEGIN TURNEND 随之真转场），199 休息自 #395 起为真身（回合结算的
  * BEGIN TURNEND 出口），SYSTEM_SAVEGAME / SYSTEM_LOADGAME 自 #136 起为
  * 真身（200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
- * page-dungeon-info2.js），均移出本名单。ITEM_SHOP/ITEM_SHOP_TRAP 是
+ * page-dungeon-info2.js），CHARA_INFO /
+ * CHARA_INFO_INDIVIDUAL_WAPPED 自 #391 起为真身（101/498/499 分支，
+ * page-chara-info.js），均移出本名单。ITEM_SHOP/ITEM_SHOP_TRAP 是
  * BOUGHT 落表后的运行时占位（show_shop），非 usershop 分发分支的壳。
  */
 const STUBBED_CALLS = [
-  'CHARA_INFO',
   '批量处刑',
   'INTERCEPT',
   'ABILITY_UP',
@@ -64,7 +69,6 @@ const STUBBED_CALLS = [
   'SECRET_LABO',
   'CONFIG',
   'LABO',
-  'CHARA_INFO_INDIVIDUAL_WAPPED',
   'SHOW_FLOOR',
   'MONSTER_SHOP',
   'DEBUG_MENU_U',
@@ -248,12 +252,10 @@ async function usershop(result) {
     // 到不了这里；守卫不成立时（理论上不可达）落到链尾 RETURN 0
   } else if (result === 101) {
     // 能力显示（:102-106）：CALL CHARA_INFO，返回 1 才 BEGIN TURNEND
-    // （:105，出口之一）
-    await stub_line_wait(
-      'CHARA_INFO',
-      '能力显示（角色信息画面）',
-      '随角色信息票',
-    );
+    // （:105，出口之一，#391 起真身）
+    if ((await chara_info()) === 1) {
+      begin(STATE.TURNEND);
+    }
   } else if (result === 102) {
     // 地下城 / 场子（:108-109）：CALL DUNGEON_INFO2（#180 起真身：ere/page/
     // page-dungeon-info2.js 的三标签页情报界面；按钮文案依 FLAG:502——渲染
@@ -335,19 +337,11 @@ async function usershop(result) {
   } else if (result === 498) {
     // 目标名按钮（:156-157）：CALL CHARA_INFO_INDIVIDUAL_WAPPED, TARGET
     // （按钮本体随角色数据票，DRAW_MAINMENU.ERB:100-145）。原作无守卫，
-    // 指针未选也一样进分支——1:1
-    await stub_line_wait(
-      'CHARA_INFO_INDIVIDUAL_WAPPED',
-      '角色信息画面',
-      '随角色信息票',
-    );
+    // 指针未选也一样进分支——1:1（#391 起真身）
+    await chara_info_individual_wrapped(era_flag.target);
   } else if (result === 499) {
     // 助手名按钮（:158-159）：同上，实参 ASSI
-    await stub_line_wait(
-      'CHARA_INFO_INDIVIDUAL_WAPPED',
-      '角色信息画面',
-      '随角色信息票',
-    );
+    await chara_info_individual_wrapped(era_flag.assi);
   } else if (result === 500) {
     // 面板切换（:160-161）：置 FLAG:36（信息面板选择）后什么都不做，回
     // 循环重绘——重绘即反馈（对应面板的占位换掉），**不叠占位文本**（#24

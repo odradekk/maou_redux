@@ -193,6 +193,21 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:602`, v);
   }
 
+  /**
+   * 收藏（cflag:cid:700 ↔ CFLAG:700）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行489 CFLAG:700 = お気に入りフラグ
+   * @returns {number}
+   */
+  get 收藏() {
+    return era.get(`cflag:${this.cid}:700`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 收藏(v) {
+    era.set(`cflag:${this.cid}:700`, v);
+  }
+
   // —— cstr ——
   /**
    * 加入时名字（cstr:cid:1 ↔ CSTR:1）

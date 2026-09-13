@@ -406,7 +406,6 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'EVENT_YOUJI',
     'EVENT_MAZOKU',
     'APHRODISIAC_ADDICT',
-    'SOUL_DISLOCATION',
     'OFFERVIRGIN_CHECK',
     'NIGHT_STALKING_CHECK',
     // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）；

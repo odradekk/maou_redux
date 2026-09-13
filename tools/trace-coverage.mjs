@@ -124,13 +124,35 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 74; // rebase 合并 #405（79→75）+ #388（再 -1），--coverage 实测核对通过。
+export const PENDING_BASELINE = 70; // rebase 到含 #388 的 master 后实测，理由见下。
 // #405 抬低说明（79 → 75）：GET_SPECIALTALENT.ERB／EVENT_ADDICT.ERB／
 // EVENT_SABBATH.ERB／EVENT_CHARA_LEAVE.ERB 四个文件落地真身（
 // check_specialskil/check_specialskil_bodyshift、aphrodisiac_addict/
 // precipitate_withdrawal/suffer_from_withdrawal、sabbath/sabbath_day、
 // event_chara_leave/event_chara_return），四份文件退出「待移植」：-4。
 // #388 抬低说明（在 #405 基础上再 -1）：CHARA_NAME_INIT.ERB 落表转已移植，75 → 74。
+// #391 抬低说明（本票独立测得 79 → 75，与 #405/#388 叠加后的真值见下方
+// rebase 说明）：本票把 `キャラ関数/
+// CHARA_INFO ver1.0.1.ERB`、`CHARA_INFO_FUNC.ERB`、`CHARA_INFO_FUNC2.ERB`
+// 三个文件摆进 ere/（角色信息主屏与个别信息页、能力提升/回复体力/灵魂
+// 转移等动作、种族/婚史查询两个 get_look_info 分支接入），直接把这三个
+// 文件从「待移植」移到「已移植」（未落地的详情正文 SHOW_CHARA_INFO 属
+// 另票、转职/魔的诱惑/结婚/育儿室等十多项按钮登记 STUBBED_CALLS）。另有
+// 一处需排除：MOD/一键升级/CHARA_INFO_FUNC.ERB 的 CHARA_INFO_CALLBACK
+// 起始行号（:119）在文件头「硬约束七」逐字节比对说明里被引用，若不标记
+// 会被三路证据误判成该 MOD 文件已移植——它的 CHARA_INFO_UP_LEVEL 批量
+// 购买变体明确不在本票实现（阶段 6 裁定）。该条引用已加 `cite: true`
+// （同 #382 对 SHOP_TAILOR.ERB 的处理手法）排除在证据外，MOD 文件正确
+// 留在待移植。
+// rebase 说明（#391 跟上 master 的 #405/#408/#409/#410）：#405 与 #391 各自
+// 独立测得同一个 79→75（各自 -4），是巧合式的同值、不是同一件事——两者
+// 涉及的文件完全不重叠（#405 是 GET_SPECIALTALENT/EVENT_ADDICT/
+// EVENT_SABBATH/EVENT_CHARA_LEAVE，本票是三个 CHARA_INFO* 文件）。两边数字
+// 碰巧相同正是最危险的形态：git 会静默自动合并、连冲突都不报，而「只减不增」
+// 只拦比基线大的，取任一边都会把对方的成果白送回去。**这个数只能重跑工具取，
+// 不能取任一边、也不能手工相加。** 本票最终值 70 是分三次实测出来的：#405
+// 合并后 master 是 75，#410（CHARA_NAME_INIT 落表）再 -1 得 74，本票在此之上
+// 再 -4（三个 CHARA_INFO* 文件 ＋ 排除 MOD 重名文件后正判回待移植的那一个）。
 // #382 抬高说明（77 → 79，非顺手改数字）：SHOP_TAILOR.ERB／SHOP_2.ERB 曾被
 // 三路证据里的锚表 src 误判成「已移植」——锚只是核对调用点回显 / 习语出处，
 // 不是这两个文件本身有产物（见 tools/trace-refs/cloth-lookup.mjs、

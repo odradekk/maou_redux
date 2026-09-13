@@ -560,6 +560,11 @@ const cflag = {
       'CFLAG:111 = 父親のキャラ番号（-1なら娼館の客, -2ならノラ犬, -3ならモンスターの子供, -4なら狂王）',
     ),
   ),
+  // #391：角色信息页收藏切换（page-chara-info.js CASE 9）跨域读写属主为
+  //   chara 的收藏位；拘束台解放（CASE 12）跨域清属主为 patch 的待处刑位
+  //   （ownership/cflag-ownership.yml "700"/"777"）
+  700: named_tail('收藏', src(SRC_FLAG, ':489 CFLAG:700 = お気に入りフラグ')),
+  777: named_tail('待处刑标签', src(SRC_FLAG, ':490 CFLAG:777 = 待處刑標籤')),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

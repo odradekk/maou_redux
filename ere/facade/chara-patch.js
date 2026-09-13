@@ -43,6 +43,21 @@ class PatchFacade {
     era.set(`cflag:${this.cid}:582`, v);
   }
 
+  /**
+   * 待处刑标签（cflag:cid:777 ↔ CFLAG:777）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行490 CFLAG:777 = 待處刑標籤
+   * @returns {number}
+   */
+  get 待处刑标签() {
+    return era.get(`cflag:${this.cid}:777`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 待处刑标签(v) {
+    era.set(`cflag:${this.cid}:777`, v);
+  }
+
   // —— talent ——
   /**
    * 不怕脏（talent:cid:64 ↔ TALENT:64）
