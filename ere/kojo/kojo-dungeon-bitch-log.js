@@ -237,28 +237,6 @@ function get_look_info(cid, kind) {
       };
       return map[t(314)] ?? 'ERROR';
     }
-    case '种族2': {
-      // LOOK.ERB:3285-3308（issue #383 补充：SELF_CALL.ERB @CALC_SELFCALL_FACTOR
-      // 需要这个分支判定「魔族」的种族2 细分；CASEELSE 的原作格式串
-      // TOSTR(TALENT:ARG:种族2, "$${0}") 未被任何消费者读取，本函数不复原
-      // 该格式，按十进制回落）
-      const map = {
-        1: '兽人',
-        2: '史莱姆',
-        3: '昆虫',
-        4: '植物',
-        5: '触手',
-        6: '妖精',
-        7: '巨人',
-        8: '魔族',
-        9: '魔族',
-        10: '魔兽',
-        11: '触手',
-        12: '魔兽',
-      };
-      const v = t(319);
-      return map[v] ?? String(v);
-    }
     case '成为勇者前的生活': {
       // LOOK.ERB:3315-3389
       const v = t(315);
