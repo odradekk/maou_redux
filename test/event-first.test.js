@@ -164,9 +164,13 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   assert(texts.includes('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。'));
   // 囚禁播报读 callname:17:-1（引擎 addCharacter 写入的预设名）
   assert(texts.includes('村娘玛奥被囚禁在了地牢里'));
+  // :78 CALL CHARA_NAME_INIT 真的被调用（#388，只有读取 charanamelistkeys 才能证明，因为它无其它可观察副作用）
+  assert(
+    fixture.var_reads.some((r) => r.name === 'charanamelistkeys'),
+    'EVENTFIRST 链必须真的调用了 chara_name_init',
+  );
   for (const name of [
     'FIRST_SETTING', // 其余各问的占位（first-setting.js 打印）
-    'CHARA_NAME_INIT',
     'CHARA_NAME_DEFINE', // 村娘分支内，#50 起可达
     'CHAR_BODY_GENERATE_WAPPED', // 同上
   ]) {
@@ -179,6 +183,11 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   assert(
     !texts.some((line) => line.includes('@RAND_CHARA_MAKE')),
     '村娘路径不得触发随机角色生成的占位（原作 BEGIN 即跳出随机路径）',
+  );
+  // 反向钉（同 test/page-save-load.test.js 的同款写法）：CHARA_NAME_INIT 已落真身（#388），不得再出现存根占位行
+  assert(
+    !texts.some((line) => line.includes('@CHARA_NAME_INIT')),
+    '角色名初始化已落真身，不得出现存根占位行',
   );
 
   // 初始化后的开局值（验收项：日期与金钱取原作开局值）。
@@ -268,7 +277,6 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
   // 存根清单核对用的导出（FIRST_SETTING 移交 first-setting.js 的
   // 部分实现，村娘分支的两个存根自 #50 起在可达路径上）
   assert.deepEqual(STUBBED_CALLS, [
-    'CHARA_NAME_INIT',
     'RAND_CHARA_MAKE',
     'CHARA_NAME_DEFINE',
     'CHAR_BODY_GENERATE_WAPPED',

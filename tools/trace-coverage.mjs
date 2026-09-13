@@ -124,12 +124,13 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 75; // #405：显式抬低，理由见下（#382 说明段保留在下方存档）。
+export const PENDING_BASELINE = 74; // rebase 合并 #405（79→75）+ #388（再 -1），--coverage 实测核对通过。
 // #405 抬低说明（79 → 75）：GET_SPECIALTALENT.ERB／EVENT_ADDICT.ERB／
 // EVENT_SABBATH.ERB／EVENT_CHARA_LEAVE.ERB 四个文件落地真身（
 // check_specialskil/check_specialskil_bodyshift、aphrodisiac_addict/
 // precipitate_withdrawal/suffer_from_withdrawal、sabbath/sabbath_day、
 // event_chara_leave/event_chara_return），四份文件退出「待移植」：-4。
+// #388 抬低说明（在 #405 基础上再 -1）：CHARA_NAME_INIT.ERB 落表转已移植，75 → 74。
 // #382 抬高说明（77 → 79，非顺手改数字）：SHOP_TAILOR.ERB／SHOP_2.ERB 曾被
 // 三路证据里的锚表 src 误判成「已移植」——锚只是核对调用点回显 / 习语出处，
 // 不是这两个文件本身有产物（见 tools/trace-refs/cloth-lookup.mjs、

@@ -14,8 +14,8 @@
  * 原作 :760-778 逐行处置（复核于 #137，别照抄旧清单）：
  *   - :761 LOADGLOBAL——ere 引擎行为（global 表在内存、读档不动它），
  *     不镜像（page-title.js 同款结论）；
- *   - :764 CALL CHARA_NAME_INIT——**存根**（#105 决议：三个角色生成存根
- *     不进阶段 2，本票只交空钩子与「钩子被调用」的用例）；
+ *   - :764 CALL CHARA_NAME_INIT——真身在 chara-name-list.js（#388）：数据已在
+ *     yml/CharaNameList.yml，读档后调用是空操作，仅保留调用点可检索；
  *   - :766 CALL EX_TALENTNAME_INIT——非存档的 EX 素质名表初始化，真身在
  *     chara-ex.js；读档后重放，重复调用按原作守卫早退；
  *   - :768-772 LASTLOAD_NO == 999 → CALL MAOUNET + BEGIN SHOP、
@@ -50,14 +50,14 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, TIER } = require('#/system/event/registry');
 const maounet_mod = require('#/system/cross-save-sharing');
 const { ex_talentname_init } = require('#/chara/chara-ex');
-const { stub_line } = require('#/utils/stub-line');
+const { chara_name_init } = require('#/chara/chara-name-list');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（名单
  * 变动必须同步清单）。
  */
-const STUBBED_CALLS = ['CHARA_NAME_INIT'];
+const STUBBED_CALLS = [];
 
 /**
  * @EVENTLOAD（SYSTEM ver1.0.3.ERB:760-778）：读档成功后的固定钩子。
@@ -67,8 +67,8 @@ const STUBBED_CALLS = ['CHARA_NAME_INIT'];
 on(
   'EVENTLOAD',
   async () => {
-    // :764 角色名初始化（存根，#105——随角色名初始化票落地）
-    stub_line('CHARA_NAME_INIT', '角色名初始化');
+    // :764 角色名初始化，真身见 chara-name-list.js（#388）
+    chara_name_init();
     // :766 EX素质名初始化（非存档表，读档后重放；重复调用按原作早退）
     ex_talentname_init();
 

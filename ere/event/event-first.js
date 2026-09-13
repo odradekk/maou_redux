@@ -34,6 +34,7 @@ const {
   ask_dungeon_mode,
 } = require('#/event/first-setting');
 const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
+const { chara_name_init } = require('#/chara/chara-name-list');
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -46,7 +47,6 @@ const { set_vil } = require('#/dungeon/labo-map');
  * 核对固定）——后续票据此认领工作；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'CHARA_NAME_INIT',
   'RAND_CHARA_MAKE',
   'CHARA_NAME_DEFINE',
   'CHAR_BODY_GENERATE_WAPPED',
@@ -170,8 +170,8 @@ on('EVENTFIRST', async () => {
     }
   }
 
-  // :78 CALL CHARA_NAME_INIT —— 角色名初始化（存根）
-  stub_line('CHARA_NAME_INIT', '角色名初始化');
+  // :78 CALL CHARA_NAME_INIT —— 角色名初始化，真身见 chara-name-list.js（#388）
+  chara_name_init();
   // :80 CALL EX_TALENTNAME_INIT —— 非存档的 EX 素质名表。
   ex_talentname_init();
 

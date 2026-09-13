@@ -654,7 +654,7 @@ test('钩子副作用：DATA_FIX 三行对新档有语义的行在读档后被�
   assert.equal(fixture.store.get('maxbase:17:1'), 100, '恰等于下限不动');
 });
 
-test('读档钩子：CHARA_NAME_INIT 仍打占位，EX_TALENTNAME_INIT 已落真身', async () => {
+test('读档钩子：CHARA_NAME_INIT 已落真身（#388，不再打占位），EX_TALENTNAME_INIT 同样已落真身', async () => {
   const fixture = create_era_fixture();
   seed_save(fixture, 3, '三号档');
   const { load_game } = load_page(fixture);
@@ -664,8 +664,8 @@ test('读档钩子：CHARA_NAME_INIT 仍打占位，EX_TALENTNAME_INIT 已落真
   await assert.rejects(() => load_game(), /BEGIN/);
   const texts = history_texts(fixture);
   assert(
-    texts.some((t) => t.includes('CHARA_NAME_INIT')),
-    '角色名初始化的存根占位行必须在读档路径出现',
+    !texts.some((t) => t.includes('CHARA_NAME_INIT')),
+    '角色名初始化已落真身（读表见 chara-name-list.js），读档路径不应再出现存根占位行',
   );
   assert(!texts.some((t) => t.includes('EX_TALENTNAME_INIT')));
 });

@@ -24,7 +24,7 @@ test('存根清单核对：STUBBED_CALLS 固定且全部收录进 docs/stub-regi
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('event/event-load');
   // 名单本身固定（增删存根必须同步本测试与清单）
-  assert.deepEqual(STUBBED_CALLS, ['CHARA_NAME_INIT']);
+  assert.deepEqual(STUBBED_CALLS, []);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
