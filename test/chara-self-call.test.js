@@ -315,7 +315,7 @@ test('set_suit_selfcall：CASE 2 姿态>2 是严格边界，姿态=3 才走本�
   assert.equal(fixture.store.get('cstr:1:60'), '本小姐');
 });
 
-test('set_suit_selfcall：CASE 3（三维均在 [-2,2]）与全档落空', () => {
+test('set_suit_selfcall：CASE 3 命中时的男女用词与全档落空', () => {
   const cases = [
     ['非男性→人家', {}, '人家'],
     ['男性→鄙人', { 122: 1 }, '鄙人'],
@@ -335,16 +335,93 @@ test('set_suit_selfcall：CASE 3（三维均在 [-2,2]）与全档落空', () =>
   set_talents(fixture, 1, { 15: 1 });
   assert.equal(load(fixture).set_suit_selfcall(1, -1, seq([])), -1);
   assert.equal(fixture.store.get('cstr:1:60'), undefined);
+});
 
-  // 开放单独超出 [-2,2]（教育/姿态均在范围内）也必须落空，验证六项 && 不是只管前五项
-  const fixture_openness = create_era_fixture();
-  add_chara(fixture_openness, 1);
-  set_talents(fixture_openness, 1, { 23: 1 }); // 好奇的：openness+=5，edu/attitude 不动
-  assert.equal(
-    load(fixture_openness).set_suit_selfcall(1, 2, seq([])),
-    -1,
-    '开放单独超出 [-2,2]，其余两维在范围内也不该命中 CASE 3',
-  );
+test('set_suit_selfcall：CASE 3 六个边界逐条表驱动（教育/姿态/开放各自的下界与上界，每界一行「正好在界」+一行「刚出界」，另加一行三维居中的正例）', () => {
+  // 三维评分不能直接传参，只能靠素质组合反推；每行先用 calc_selfcall_factor
+  // 自证组合确实产出目标三元组，再看 set_suit_selfcall 是否按此三元组命中/
+  // 落空——避免"选错组合、恰好凑出预期返回值"的假阳性。
+  // 开放上界的"刚出界"取不到恰好 +3：openness 只有 ±2（种族）/-2（巫女系）/
+  // +5（好奇的）三档，没有 +1 单位来源，龙族(-2)+好奇的(+5) 已是能凑到的
+  // 最接近值（=3，教育/姿态两维仍分别钉在各自范围内，隔离不受影响）。
+  const cases = [
+    // [label, talents, [教育,姿态,开放], 是否应命中 CASE 3]
+    ['三维居中（正例）', {}, [0, 0, 0], true],
+    ['教育下界：正好在界（教育=-2，矮人单挑）', { 314: 11 }, [-2, 1, -1], true],
+    [
+      '教育下界：刚出界（教育=-3，矮人+小偷+恶女+懦弱抵消姿态）',
+      { 314: 11, 315: 6, 166: 1, 162: 1 },
+      [-3, 1, -1],
+      false,
+    ],
+    ['教育上界：正好在界（教育=2，吸血鬼单挑）', { 314: 3 }, [2, 1, 0], true],
+    [
+      '教育上界：刚出界（教育=3，吸血鬼+学生）',
+      { 314: 3, 315: 1 },
+      [3, 1, 0],
+      false,
+    ],
+    ['姿态下界：正好在界（姿态=-2，懦弱单挑）', { 162: 1 }, [0, -2, 0], true],
+    [
+      '姿态下界：刚出界（姿态=-3，军人+智慧）',
+      { 315: 19, 172: 1 },
+      [2, -3, 0],
+      false,
+    ],
+    ['姿态上界：正好在界（姿态=2，贵族单挑）', { 315: 8 }, [0, 2, 0], true],
+    [
+      '姿态上界：刚出界（姿态=3，贵族+吸血鬼）',
+      { 315: 8, 314: 3 },
+      [2, 3, 0],
+      false,
+    ],
+    [
+      '开放下界：正好在界（开放=-2，巫女单挑）',
+      { 315: 11, 122: 0 },
+      [1, 0, -2],
+      true,
+    ],
+    [
+      '开放下界：刚出界（开放=-3，矮人+巫女）',
+      { 314: 11, 315: 11, 122: 0 },
+      [-1, 1, -3],
+      false,
+    ],
+    ['开放上界：正好在界（开放=2，天使单挑）', { 314: 6 }, [0, 0, 2], true],
+    [
+      '开放上界：刚出界（开放=3，龙族+好奇的）',
+      { 314: 5, 23: 1 },
+      [2, 1, 3],
+      false,
+    ],
+  ];
+  for (const [label, talents, expected_factor, should_match] of cases) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 1);
+    set_talents(fixture, 1, talents);
+    const msg = `${label}：[教育,姿态,开放]=[${expected_factor.join(',')}]`;
+    assert.deepEqual(
+      load(fixture).calc_selfcall_factor(1, seq([1])),
+      expected_factor,
+      msg,
+    );
+    const local = load(fixture).set_suit_selfcall(1, 2, seq([1]));
+    if (should_match) {
+      assert.equal(local, 3, `${msg}，应命中 CASE 3`);
+      assert.equal(
+        fixture.store.get('cstr:1:60'),
+        '人家',
+        `${msg}，应命中 CASE 3`,
+      );
+    } else {
+      assert.equal(local, -1, `${msg}，不应命中 CASE 3，落到 default`);
+      assert.equal(
+        fixture.store.get('cstr:1:60'),
+        undefined,
+        `${msg}，不应命中 CASE 3，不写 cstr`,
+      );
+    }
+  }
 });
 
 // ---- set_nick_selfcall ----
