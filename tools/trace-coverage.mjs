@@ -131,8 +131,8 @@ export const PENDING_BASELINE = 74; // 占位，本次 rebase 末尾统一重测
 // precipitate_withdrawal/suffer_from_withdrawal、sabbath/sabbath_day、
 // event_chara_leave/event_chara_return），四份文件退出「待移植」：-4。
 // #388 抬低说明（在 #405 基础上再 -1）：CHARA_NAME_INIT.ERB 落表转已移植，75 → 74。
-// #391 抬低说明（79 → 75，与 #405 各自独立测得，rebase 后需要重新实测
-// 两者叠加的真值——见下方 rebase 说明）：本票把 `キャラ関数/
+// #391 抬低说明（本票独立测得 79 → 75，与 #405/#388 叠加后的真值见下方
+// rebase 说明）：本票把 `キャラ関数/
 // CHARA_INFO ver1.0.1.ERB`、`CHARA_INFO_FUNC.ERB`、`CHARA_INFO_FUNC2.ERB`
 // 三个文件摆进 ere/（角色信息主屏与个别信息页、能力提升/回复体力/灵魂
 // 转移等动作、种族/婚史查询两个 get_look_info 分支接入），直接把这三个
@@ -144,9 +144,13 @@ export const PENDING_BASELINE = 74; // 占位，本次 rebase 末尾统一重测
 // 购买变体明确不在本票实现（阶段 6 裁定）。该条引用已加 `cite: true`
 // （同 #382 对 SHOP_TAILOR.ERB 的处理手法）排除在证据外，MOD 文件正确
 // 留在待移植。
-// rebase 说明（#391 跟上 master 的 #405/#408/#409）：两票各自测得 79→75
-// 是巧合式的同值（各自 -4），不是同一件事——合并后必须以实测「待移植 N」
-// 重新定值，不能沿用任一票单独测过的 75。
+// rebase 说明（#391 跟上 master 的 #405/#408/#409）：#405 与 #391 各自
+// 独立测得同一个 79→75（各自 -4），是巧合式的同值、不是同一件事——两者
+// 涉及的文件完全不重叠（#405 是 GET_SPECIALTALENT/EVENT_ADDICT/
+// EVENT_SABBATH/EVENT_CHARA_LEAVE，本票是三个 CHARA_INFO* 文件）。rebase
+// 后重跑 `node tools/trace-check.mjs --coverage` 实测两者叠加的真值是
+// 79 → 71（-8，两边的 -4 直接相加、无重叠打折），不是沿用任一票单独测过
+// 的 75。
 // #382 抬高说明（77 → 79，非顺手改数字）：SHOP_TAILOR.ERB／SHOP_2.ERB 曾被
 // 三路证据里的锚表 src 误判成「已移植」——锚只是核对调用点回显 / 习语出处，
 // 不是这两个文件本身有产物（见 tools/trace-refs/cloth-lookup.mjs、
