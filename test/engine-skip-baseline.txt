@@ -100,4 +100,16 @@
 #（train-name/page-train 槽条段/p_c/compare-normalize 扩展）全走 era-fixture
 # 或纯解析路径，无 engine-bundle 门控。
 # #349（L18 家族关系）：chara-family 的扩展角色表建桶、寻址与存档往返 +1。
-73
+# #388（N4 CHARA_NAME_INIT 落表，合并为 PR #410）：+4，现为 77
+#（4583 = 4506 过 + 77 跳过 + 0 挂，ERE_ENGINE_ASAR=none 本机实测，与 CI 的
+# engineless job 逐字一致）。算式：73（既有）+ 4（test/chara-name-list.test.js
+# 的四条 engine_test——「装载零告警零重号」「三种范围各取一例读出正确名字」
+# 「未注册 id 裸三段寻址直接崩溃」「charanamelistkeys 与 valid_ids() 同一份
+# 集合」）= 77；本票其余新用例（夹具层守卫/缓存、产物-源码逐条重推导比对）
+# 全走 era-fixture 或纯解析路径，无 engine-bundle 门控。
+#
+# 补记：这一档本该随 #410 一起改，漏了，master 因此连红三次（#410/#411/#412
+# 的 push run）。PR 档不跑这道守护（它对着全量套件的基线核对，跑子集必然对不
+# 上、会变成假红），所以三张 PR 全绿也照样漏网——这正是 AGENTS.md「PR 绿不
+# 再等于全库绿」那条说的兜底场景，兜底生效了，只是没人当场看。
+77
