@@ -165,7 +165,15 @@ function chara_name_random_define(cid, type = -1, rand = default_rand) {
       }
     }
 
-    // :122-123 重复检查：先清自身 NID，再找同 NID 的其他角色
+    // :122-123 重复检查：先清自身 NID，再找同 NID 的其他角色。
+    //
+    // 两个排除项都**不可观察**，因此不设变异条目（#384 返工记录）：
+    //   - `other === cid` 与前一行 CFLAG:L_A:6 = -1 同效（自身这时读到 -1，
+    //     而 L_NID 恒 >= 200，撞不上）；
+    //   - MASTER 的 NID 恒 10000（:159 写死），而随机名编号的上限是
+    //     4500 + CHINESE_NAME_COUNT - 1 = 5288（五条掷法里的最大值），
+    //     够不着——原作的 `IF LOCAL > 0`（首个命中是 MASTER 时不重掷）
+    //     在可达状态里同效。
     era.set(`cflag:${cid}:6`, -1);
     const duplicate = era.getAddedCharacters().some((other) => {
       if (other === 0 || other === cid) {
@@ -252,6 +260,9 @@ function chara_name_define(cid, nid = -1) {
       // :190-193 无效的 NID
       era.set(`callname:${cid}:-1`, '佳奈美');
       era.set(`callname:${cid}:-2`, '佳奈美');
+      // :193 的钳位照抄，但它是**死写**：L_NID 在此之后不再被读，函数随即
+      // 结束（原作同样如此）——值写不进 cflag、也影响不了任何输出。因此
+      // 这一行的变异不可观察，不设变异条目（#384 返工记录）。
       name_id = LIST_CHARA_NAME_SIZE; // :193 L_NID = VARSIZE("LIST_CHARA_NAME")
     }
   } else {

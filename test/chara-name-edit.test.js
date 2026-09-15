@@ -35,6 +35,19 @@ function texts(fixture) {
     .map((line) => line.text);
 }
 
+/**
+ * 染灰断言只能落在 setColor 调用序列上。夹具记录这条调用，但**不把颜色
+ * 带进按钮**（data/research/fixture-engine-gap.md 的观察面限制）；
+ * `button.color` 只反映显式传的 `config.color`，本模块从不传，于是
+ * `assert.equal(button.color, undefined)` 对任何输入都成立——那是一句
+ * 验不出东西的断言（#384 返工整改）。
+ */
+function color_calls(fixture) {
+  return fixture.calls
+    .filter((call) => call.api === 'setColor')
+    .map((call) => call.args[0]);
+}
+
 // —— @CHECK_ABLE_TO_NAME_EDIT（:32-50）——
 
 test('check_able_to_name_edit：五档返回值的完整分支表', () => {
@@ -70,7 +83,11 @@ test('show_button_name_edit：可改名时渲染「改名」按钮，正文不�
   assert.equal(button.accelerator, 0, 'NUM 作加速键');
   // 引擎渲染层拼 `[0] ` 并把全角空格折成半角；正文里我们自己没写前缀
   assert.equal(button.rendered, '[0] 改名 ');
-  assert.equal(button.color, undefined, '可改名时不设灰色');
+  assert.deepEqual(
+    color_calls(fixture),
+    [''],
+    '可改名时不染灰（只有 :29 RESETCOLOR 的那一次空参）',
+  );
 });
 
 test('show_button_name_edit：reset 非零渲染「还原名字」', () => {
@@ -104,12 +121,10 @@ test('show_button_name_edit：奴隷不可改名时染灰并在按钮后复原�
     );
     // :21 SETCOLOR 0x646464 → era.setColor('#646464')、:29 RESETCOLOR →
     // 空参（SDK「Set default text color」）。**染色本身在夹具里不可见**：
-    // 夹具只记录 setColor 调用、不模拟「后续输出被染」的状态（data/research/
-    // fixture-engine-gap.md 登记的观察面限制），故断言的是这对调用的次序。
+    // 夹具只记录 setColor 调用、不模拟「后续输出被染」的状态（见 color_calls
+    // 的注释），故断言的是这对调用的次序。
     assert.deepEqual(
-      fixture.calls
-        .filter((call) => call.api === 'setColor')
-        .map((call) => call.args[0]),
+      color_calls(fixture),
       ['#646464', ''],
       `状态 ${state} 的先染后复原`,
     );
@@ -121,13 +136,35 @@ test('show_button_name_edit：魔王档（返回值 1）不染灰', () => {
   const { show_button_name_edit } = load(fixture);
   show_button_name_edit(0, 0);
   assert.equal(
-    buttons(fixture)[0].color,
-    undefined,
-    ':16-18 魔王走 ELSEIF LOCAL == 1',
+    buttons(fixture)[0].rendered,
+    '[0] 改名 ',
+    ':16-18 魔王走 ELSEIF LOCAL == 1（按钮照渲染）',
+  );
+  assert.deepEqual(
+    color_calls(fixture),
+    [''],
+    ':16-18 的魔王档不进 :19-22 的染灰支——拆掉 `able !== KING` 这一半会红',
   );
 });
 
 // —— @CHARA_INFO_NAME_EDIT（:53-109）——
+
+test('chara_info_name_edit：魔王档（返回值 1）不走不可改名支，照常进改名循环', async () => {
+  // :61 的判据是 `LOCAL != 0 && LOCAL != 1`——魔王是**例外**，改名照做
+  // （按钮那侧 :16-18 只是不染灰）。拆掉 `&& able !== NAME_EDIT_KING`
+  // 这一半时，魔王会被当成不可改名：既没有「的新名字是？」也没有落名。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '魔王');
+  fixture.set_inputs('新魔王名');
+  const { chara_info_name_edit } = load(fixture);
+
+  assert.equal(await chara_info_name_edit(0), 0);
+  assert(
+    texts(fixture).includes('魔王的新名字是？'),
+    ':89 的输入循环入口（魔王档不该被 :61 挡下）',
+  );
+  assert.equal(fixture.store.get('callname:0:-2'), '新魔王名', ':99 落名');
+});
 
 test('chara_info_name_edit：不可改名的三档各自反馈，返回值区分 2 与 0', async () => {
   const cases = [
@@ -198,6 +235,28 @@ test('chara_info_name_edit：引擎归一后的零截输入按原文落名（:10
   const { chara_info_name_edit } = load(fixture);
   assert.equal(await chara_info_name_edit(3), 0);
   assert.equal(fixture.store.get('callname:3:-2'), '0', '零截输入按原文落名');
+});
+
+test('chara_info_name_edit：零长输入落「名字没有变更」支（:100-101，不写任何键）', async () => {
+  // :92 SELECTCASE STRLENS(LOCALS) 的 CASEELSE。引擎把回传值先过 getNumber
+  // 归一（夹具逐字镜像）：空串与 null 都成 0、非数字串原样——所以正常的
+  // 空输入到手是 `'0'`（长度 1，走落地支，见上一条）。真正落进零长支的只有
+  // 「压根没有回传值」的形态（`Number(undefined)` = NaN → 原样回传），移植侧
+  // 以 `undefined/null → ''` 承接。没有这条用例时，`strlens(input) > 0`
+  // 这半个判据（落地 vs 不动）无人守。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 3, '旧名');
+  fixture.store.set('cflag:3:1', 0);
+  fixture.set_inputs(undefined);
+  const { chara_info_name_edit } = load(fixture);
+
+  assert.equal(await chara_info_name_edit(3), 0);
+  assert(
+    texts(fixture).includes('旧名的名字没有变更。'),
+    ':101 的播报（走 ELSE 支而非落地支）',
+  );
+  assert.equal(fixture.store.get('callname:3:-1'), '旧名', '姓名键不动');
+  assert.equal(fixture.store.get('callname:3:-2'), '旧名', '称呼键不动');
 });
 
 test('chara_info_name_edit：超长名字打回重问（重新进入 :88 的输入循环）', async () => {

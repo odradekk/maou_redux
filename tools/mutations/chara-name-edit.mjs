@@ -6,7 +6,7 @@
 // M7821 原在 chara.mjs（靶是 chara-family.js 里的 nid_get_type），#384 把该函数
 // 收拢到 chara-name.js，条目随真身搬入本分片。
 
-export const COUNT = 60; // #384 起建表（M7976-M8035；M7979/M8009 因目标不可观察而删除）
+export const COUNT = 71; // #384 建表 60 条（M7976-M8035）；#419 返工 +11 条（M8276-M8286，守卫型用例与 PAIRS 表的补钉）
 
 export default [
   {
@@ -503,5 +503,106 @@ export default [
     replace: '  if (nid < 201 || nid >= 2000) {\n    return 1; // :261 洋名',
     tests: ['chara-name'],
     must_mention: '三档分界',
+  },
+  // —— #384 返工（#419）：守卫型用例与 PAIRS 表的补钉 ——
+  // 前七条钉的是「拆掉守卫也不会红」的那一类：用例原先只断「整段跳过」，
+  // 而反例路径在夹具里本来无副作用，断言恒真。整改后夹具摆好了反例路径会
+  // 产生副作用的前置条件（chara-make-inherit.test.js 的母性、chara-name-edit
+  // 的魔王档与零长输入）。
+  {
+    desc: 'M8276 讨厌男人守卫的素质号 82 改 83（守卫失效，情结段照跑）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: 'if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {',
+    replace:
+      'if (era.get(`talent:${parent}:83`) && (child_male || child_futa)) {',
+    tests: ['chara-make-inherit'],
+    must_mention: '跳过',
+  },
+  {
+    desc: 'M8277 男人婆守卫的素质号 79 改 78（同上，第二支）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: '} else if (era.get(`talent:${parent}:79`) && !child_male && !child_futa) {',
+    replace:
+      '} else if (era.get(`talent:${parent}:78`) && !child_male && !child_futa) {',
+    tests: ['chara-make-inherit'],
+    must_mention: '跳过',
+  },
+  {
+    desc: 'M8278 讨厌男人守卫的「孩子是男」判据倒置（整支改成反例才跳过）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: 'if (era.get(`talent:${parent}:82`) && (child_male || child_futa)) {',
+    replace:
+      'if (era.get(`talent:${parent}:82`) && !(child_male || child_futa)) {',
+    tests: ['chara-make-inherit'],
+    must_mention: '跳过',
+  },
+  {
+    desc: 'M8279 第二亲本的守卫 >= 0 改成 > 0（魔王当第二亲本时整段漏掉）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: '  if (parent_b >= 0) {',
+    replace: '  if (parent_b > 0) {',
+    tests: ['chara-make-inherit'],
+    must_mention: '第二亲本',
+  },
+  {
+    desc: 'M8280 chara_info_name_edit 的魔王档例外被拆（魔王被当成不可改名）',
+    file: 'ere/chara/chara-name-edit.js',
+    find: '  const able = check_able_to_name_edit(arg); // :60 LOCAL\n  if (able !== 0 && able !== NAME_EDIT_KING) {',
+    replace:
+      '  const able = check_able_to_name_edit(arg); // :60 LOCAL\n  if (able !== 0) {',
+    tests: ['chara-name-edit'],
+    must_mention: '魔王',
+  },
+  {
+    desc: 'M8281 show_button 的魔王档例外被拆（魔王按钮被染灰）',
+    file: 'ere/chara/chara-name-edit.js',
+    find: '  if (able !== 0 && able !== NAME_EDIT_KING) {\n    // :19-22 奴隷で実行不可なら灰色にする',
+    replace: '  if (able !== 0) {\n    // :19-22 奴隷で実行不可なら灰色にする',
+    tests: ['chara-name-edit'],
+    must_mention: '魔王',
+  },
+  {
+    desc: 'M8282 零长输入的判据 strlens(input) > 0 改成恒真（空输入也落名）',
+    file: 'ere/chara/chara-name-edit.js',
+    find: '    if (strlens(input) > 0) {',
+    replace: '    if (strlens(input) >= 0) {',
+    tests: ['chara-name-edit'],
+    must_mention: '没有变更',
+  },
+  // 后四条钉 PAIRS 的表内容：整改前只有表头被抽查守住，表尾改一个字、
+  // 多一对、少一对都不红。现在 chara-make-inherit.test.js 逐组走完全表
+  // 并穷举下标域，表内容任意一处改动都会红。
+  {
+    desc: 'M8283 PAIRS 表头首对改错（10,12,11,13 → 11,14）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: 'const PAIRS = [\n  10, 12, 11, 13, 14, 16, 15, 17,',
+    replace: 'const PAIRS = [\n  11, 14, 11, 13, 14, 16, 15, 17,',
+    tests: ['chara-make-inherit'],
+    must_mention: 'PAIRS',
+  },
+  {
+    desc: 'M8284 PAIRS 表尾一对改错（122, 109 → 122, 111）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: '  114, 119, 110, 122, 109, 122, 110, 122, 114, 122, 116, 122, 119, 110, 114,',
+    replace:
+      '  114, 119, 110, 122, 111, 122, 110, 122, 114, 122, 116, 122, 119, 110, 114,',
+    tests: ['chara-make-inherit'],
+    must_mention: 'PAIRS',
+  },
+  {
+    desc: 'M8285 PAIRS 表内多塞一对（表尾追加 122,143）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: ' 155, 122, 157, 122, 60, 150, 82, 143,\n];',
+    replace: ' 155, 122, 157, 122, 60, 150, 82, 143, 122, 143,\n];',
+    tests: ['chara-make-inherit'],
+    must_mention: 'PAIRS',
+  },
+  {
+    desc: 'M8286 PAIRS 表内删掉一对（60,150 整对拿掉）',
+    file: 'ere/chara/chara-make-inherit.js',
+    find: ' 155, 122, 157, 122, 60, 150, 82, 143,\n];',
+    replace: ' 155, 122, 157, 122, 82, 143,\n];',
+    tests: ['chara-make-inherit'],
+    must_mention: 'PAIRS',
   },
 ];

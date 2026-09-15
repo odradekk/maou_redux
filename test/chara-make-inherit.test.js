@@ -146,8 +146,12 @@ test('cmi_mom_complex：母亲讨厌男人而孩子是男性/扶她 → 整段�
     const fixture = create_era_fixture();
     fixture.store.set('talent:3:82', 1); // 亲本「讨厌男人」
     fixture.store.set(`talent:8:${child_male}`, 1);
+    // **反例路径的前置条件**（#384 返工）：守卫一旦失效就落进 ELSE 支，
+    // 母性（155）在那里掷 RAND:2 并写下恋母情结。不摆这一项时，两种世界里
+    // 「不掷任何骰」都成立——断言恒真、拆掉守卫也不红。
+    fixture.store.set('talent:3:155', 1); // 亲本「母性」
     const { cmi_mom_complex } = load(fixture);
-    const cap = seq_capture([]);
+    const cap = seq_capture([1]); // 万一掷到，必须写 140（让反例也可见）
     cmi_mom_complex(8, 3, cap);
     assert.deepEqual(cap.bounds, [], '第一支直接跳过');
     assert.equal(fixture.store.get('talent:8:140'), undefined);
@@ -158,10 +162,13 @@ test('cmi_mom_complex：母亲男人婆而孩子是女性 → 整段跳过', () 
   const fixture = create_era_fixture();
   fixture.store.set('talent:3:79', 1); // 亲本「男人婆」
   // 孩子既非男性也非扶她
+  // 反例路径的前置条件同上一例（守卫失效 → ELSE 支的母性掷骰并写 140）
+  fixture.store.set('talent:3:155', 1);
   const { cmi_mom_complex } = load(fixture);
-  const cap = seq_capture([]);
+  const cap = seq_capture([1]);
   cmi_mom_complex(8, 3, cap);
   assert.deepEqual(cap.bounds, [], '第二支直接跳过');
+  assert.equal(fixture.store.get('talent:8:140'), undefined);
 });
 
 test('cmi_mom_complex：母性 → 恋母情结（掷 RAND:2）', () => {
@@ -311,31 +318,121 @@ test('cmi_conflict_check：PAIRS 表逐对标量抽查（多对同时命中时�
   );
 });
 
-test('cmi_conflict_check：PAIRS 表的收尾对（60/150 与 82/143）也在表内', () => {
+// PAIRS 的期望表（独立照抄原作 CHARA_MAKE_INHERIT.ERB:133-150 的
+// `#DIM CONST PAIRS`，64 组 / 128 个数）。**必须独立照抄、不从实现里读**：
+// 这张表是维度型结构，只抽查表头时表尾改了不红（#384 返工实测：
+// `122, 109, 122, 110` → `122, 111` 无人拦）。
+const EXPECTED_PAIRS = [
+  10, 12, 11, 13, 14, 16, 15, 17, 17, 18, 20, 23, 21, 23, 22, 23, 20, 63, 21,
+  63, 22, 63, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 35, 36, 40, 41, 42, 43,
+  44, 45, 50, 51, 61, 62, 62, 64, 70, 71, 79, 80, 79, 81, 79, 82, 79, 122, 80,
+  81, 80, 82, 81, 82, 99, 100, 101, 102, 103, 104, 105, 106, 103, 122, 104, 122,
+  107, 108, 111, 112, 109, 110, 109, 114, 109, 116, 119, 109, 119, 116, 119,
+  114, 119, 110, 122, 109, 122, 110, 122, 114, 122, 116, 122, 119, 110, 114,
+  110, 116, 114, 116, 121, 122, 153, 154, 99, 263, 153, 122, 154, 122, 130, 122,
+  155, 122, 157, 122, 60, 150, 82, 143,
+];
+/** 期望表展平成 `[左, 右]` 二元组 */
+function expected_pairs() {
+  const out = [];
+  for (let i = 0; i < EXPECTED_PAIRS.length; i += 2) {
+    out.push([EXPECTED_PAIRS[i], EXPECTED_PAIRS[i + 1]]);
+  }
+  return out;
+}
+
+test('cmi_conflict_check：PAIRS 全表逐组——两侧置位时恰好消掉约定的一侧', () => {
+  const pairs = expected_pairs();
+  assert.equal(pairs.length, 64, '原作 CONST PAIRS 是 64 组');
+  assert.equal(
+    new Set(pairs.map(([a, b]) => `${a},${b}`)).size,
+    pairs.length,
+    '期望表自身不含重复对（含反向重复）',
+  );
+
+  // 共用一个夹具（128 组断言造 128 个夹具太慢），每组做完清干净；下一组的
+  // `bounds` 恰好等于 [2] 本身就是「没有残留冲突」的自证——留了尾巴就会是
+  // [2, 2]。
   const fixture = create_era_fixture();
-  fixture.store.set('talent:8:60', 1);
-  fixture.store.set('talent:8:150', 1);
-  fixture.store.set('talent:8:82', 1);
-  fixture.store.set('talent:8:143', 1);
   const { cmi_conflict_check } = load(fixture);
-  const cap = seq_capture([1, 1]);
-  cmi_conflict_check(8, cap);
-  assert.deepEqual(cap.bounds, [2, 2], '收尾两对各一掷');
-  assert.equal(fixture.store.get('talent:8:60'), 0);
-  assert.equal(fixture.store.get('talent:8:82'), 0);
+  for (const [left, right] of pairs) {
+    for (const [roll, cleared, kept] of [
+      [1, left, right], // :158-159 RAND:2 真值支清 L_I（本对前一项）
+      [0, right, left], // :160-161 假值支清 L_J（后一项）
+    ]) {
+      fixture.store.set(`talent:8:${left}`, 1);
+      fixture.store.set(`talent:8:${right}`, 1);
+      const cap = seq_capture([roll]);
+      cmi_conflict_check(8, cap);
+      assert.deepEqual(cap.bounds, [2], `(${left},${right}) 恰好一掷`);
+      assert.equal(
+        fixture.store.get(`talent:8:${cleared}`),
+        0,
+        `(${left},${right}) RAND:2 = ${roll} 消 ${cleared}`,
+      );
+      assert.equal(
+        fixture.store.get(`talent:8:${kept}`),
+        1,
+        `(${left},${right}) RAND:2 = ${roll} 留 ${kept}`,
+      );
+      fixture.store.set(`talent:8:${left}`, 0);
+      fixture.store.set(`talent:8:${right}`, 0);
+    }
+  }
 });
 
-test('cmi_conflict_check：PAIRS 表的一对一上下界（首对 10/12、末对 82/143）', () => {
-  // 表外下标同时有值 → 不掷（证明查的是表而不是「任意两个素质」）
+test('cmi_conflict_check：穷举全表下标域——只有表内的组合会掷骰', () => {
+  // 表驱动 + 穷举：把期望表里出现过的下标两两配齐（含表内、表外两类），
+  // 逐组断言「掷骰 ⇔ 该组在表内」。任何一处数字写错、漏一对、多一对，
+  // 都会在对应的那一格上红——表内容自此完整被守，而不是只守表头。
+  const pairs = expected_pairs();
+  // 键一律取排序后的形态：表内有两对是「大下标在前」写的（119,109 与
+  // 122,109 一族），而判定只看两侧是否置位、与书写次序无关（清哪一侧才看
+  // 次序，那由上面那条逐组用例钉）。
+  const key_of = ([a, b]) => (a < b ? `${a},${b}` : `${b},${a}`);
+  const in_table = new Set(pairs.map(key_of));
+  const universe = [...new Set(EXPECTED_PAIRS)].sort((a, b) => a - b);
+
   const fixture = create_era_fixture();
-  for (const index of [1, 2, 3, 9]) {
-    fixture.store.set(`talent:8:${index}`, 1);
+  const { cmi_conflict_check } = load(fixture);
+  let fired = 0;
+  for (let i = 0; i < universe.length; i += 1) {
+    for (let j = i + 1; j < universe.length; j += 1) {
+      const left = universe[i];
+      const right = universe[j];
+      fixture.store.set(`talent:8:${left}`, 1);
+      fixture.store.set(`talent:8:${right}`, 1);
+      const cap = seq_capture([]);
+      cmi_conflict_check(8, cap);
+      const key = key_of([left, right]);
+      assert.deepEqual(
+        cap.bounds,
+        in_table.has(key) ? [2] : [],
+        `(${left},${right}) 掷骰次数（表内组合才该掷）`,
+      );
+      fixture.store.set(`talent:8:${left}`, 0);
+      fixture.store.set(`talent:8:${right}`, 0);
+      if (cap.bounds.length > 0) fired += 1;
+    }
+  }
+  assert.equal(fired, pairs.length, '整域里的命中数恰等于表长');
+});
+
+test('cmi_conflict_check：表外下标一起置位不构成任何冲突', () => {
+  // 上一条穷举只覆盖期望表的下标域；这里把域外的下标**整片**置位（0-500
+  // 里凡不在表内的全给 1），若实现在表外多出一对，这一条会红。
+  const in_table_universe = new Set(EXPECTED_PAIRS);
+  const fixture = create_era_fixture();
+  for (let index = 0; index <= 500; index += 1) {
+    if (!in_table_universe.has(index)) {
+      fixture.store.set(`talent:8:${index}`, 1);
+    }
   }
   const { cmi_conflict_check } = load(fixture);
   const cap = seq_capture([]);
   cmi_conflict_check(8, cap);
-  assert.deepEqual(cap.bounds, [], '表外下标不构成冲突');
-  assert.equal(fixture.store.get('talent:8:1'), 1);
+  assert.deepEqual(cap.bounds, [], '表外下标一律不掷');
+  assert.equal(fixture.store.get('talent:8:1'), 1, '也不消任何一侧');
 });
 
 // —— @CHARA_MAKE_INHERIT 的调度（:4-67）——
@@ -422,6 +519,18 @@ test('chara_make_inherit：恋母情结段随第二亲本存在与否决定调�
     one.store.get('talent:8:140'),
     undefined,
     'L_C < 0 时 :29 的守卫挡住第二次调用',
+  );
+
+  // 守卫的边界在 0 那一侧（判据是 `L_C >= 0`，不是 `> 0`）：魔王当第二亲本
+  // （L_C = 0）仍算「有第二亲本」。亲本 A 不带母性，140 只可能来自第二次调用
+  const king = create_era_fixture();
+  king.store.set('talent:0:155', 1); // 魔王（0）母性
+  const { chara_make_inherit: run_king } = load(king);
+  run_king(8, 2, 0, () => 1);
+  assert.equal(
+    king.store.get('talent:8:140'),
+    1,
+    'L_C = 0 仍算双亲，第二次调用照走',
   );
 });
 

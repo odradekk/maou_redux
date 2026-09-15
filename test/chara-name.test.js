@@ -159,10 +159,12 @@ test('chara_name_define：固定名列表空串（有产物但该编号没记名
   });
 });
 
-test('chara_name_define：无效 NID（列表外）回落佳奈美并把 NID 钳到列表尺寸', () => {
+test('chara_name_define：无效 NID（列表外）回落佳奈美', () => {
   // 5500 是 VARSIZE("LIST_CHARA_NAME") 的等价常量（CHARA_NAME.ERH:7）；
   // 5499（声明界内）与 5500（界外）都走「无效的NID」分支——:175 判的是
   // 声明尺寸而非注册表，两个边界都必须回落到佳奈美。
+  // （:193 的 L_NID 钳位是死写、不可观察，故本用例只断名字；见
+  // chara-name.js 该行的注释。）
   for (const nid of [5499, 5500]) {
     const fixture = create_era_fixture();
     fixture.store.set('charanamelistkeys', [205]);

@@ -2373,9 +2373,11 @@ export const FILES = [
         any: [/^\t\tELSEIF RESULT == 100\r?$/m],
       },
       {
+        // 单行取不到唯一片段（`^\t\tELSE$` 全文件 2 处、`GOTO INPUT_LOOP_12`
+        // 2 处），改用相邻两行的组合——该对全文件唯一，正是 :123-124 这一处。
         src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
         ref: '123-124',
-        any: [/^\t\tELSE\r?$/m],
+        any: [/\t\tELSE\r?\n\t\t\tGOTO INPUT_LOOP_12\r?/],
       },
     ],
   },
