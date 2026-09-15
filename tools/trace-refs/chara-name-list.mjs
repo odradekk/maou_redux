@@ -20,6 +20,13 @@ export const FILES = [
         ref: '10-14',
         any: [/^CHINA_NAME_COUNT = 789$/m],
       },
+      // #384：CHARA_NAME_DEFINE 的判据（定义在 CHARA_NAME.ERB，本文件的
+      // 注释以 `:175` 引它的原文）
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '175',
+        any: [/^\tIF L_NID < VARSIZE\("LIST_CHARA_NAME"\)\r?$/m],
+      },
     ],
   },
 ];

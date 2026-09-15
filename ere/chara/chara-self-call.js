@@ -73,7 +73,7 @@
 
 const era = require('#/era-electron');
 
-const { nid_get_type } = require('#/chara/chara-family');
+const { nid_get_type } = require('#/chara/chara-name');
 const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
 const { chara_callname } = require('#/utils/callname-utils');
 

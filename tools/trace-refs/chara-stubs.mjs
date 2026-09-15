@@ -342,67 +342,685 @@ export const FILES = [
     ],
   },
   {
+    // #384（N2）：CHARA_MAKE_INHERIT.ERB 三处遗留存根换真身后的全量锚表
     js: 'ere/chara/chara-make-inherit.js',
     refs: [
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
-        ref: '4-71',
-        any: [/@CHARA_MAKE_INHERIT\(L_A, L_B, L_C = -1\)/],
+        ref: '2-3',
+        any: [/不继承：崩坏，口上，调教素质，种族，职业，经历/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '4-67',
+        any: [/^@CHARA_MAKE_INHERIT\(L_A, L_B, L_C = -1\)\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
         ref: '11-12',
-        any: [/SIF L_B < 0/, /RETURN L_A/],
+        any: [/^SIF L_B < 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '16-21',
+        any: [/^FOR L_I, 10, 153\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
         ref: '17-18',
-        any: [/SIF INRANGE\(L_I,74,78\)/],
+        any: [/^\t;特殊性癖,扶她-疯狂,母乳体质-正太控,爱慕\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
-        ref: '24',
-        any: [/SIF TALENT:L_A:扶她/],
+        ref: '18',
+        any: [/^\tSIF INRANGE\(L_I,74,78\) \|\| INRANGE\(L_I,121,123\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '24-25',
+        any: [
+          /^SIF TALENT:L_A:扶她 \|\| TALENT:L_A:男人 \|\| !TALENT:L_A:处女\r?$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '25',
+        any: [/^\tTALENT:私处封印 = 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '27-30',
+        any: [/^;恋母情结等\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '32-38',
+        any: [/^FOR L_I, 240,264\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '35',
+        any: [/^\tSIF INRANGE\(L_I, 244,247\) \|\| L_I == 254\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '40-43',
+        any: [/^FOR L_I, 275,280\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '45-48',
+        any: [/^FOR L_I, 300,314\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '50-62',
+        any: [/^IF TALENT:L_B:精英\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '65',
+        any: [/^CALL CMI_CONFLICT_CHECK\(L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '67',
+        any: [/^RETURN L_A\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '73-91',
+        any: [/^@CMI_SETTALENT\(L_I, L_A, L_B, L_C = -1\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '79-82',
+        any: [/^IF L_C <= 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '83-86',
+        any: [/^ELSEIF \tL_B == 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '88-90',
+        any: [/^\tSIF RAND:16\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '90',
+        any: [
+          /^\t\tTALENT:L_A:L_I = RAND:2 \? TALENT:L_B:L_I # TALENT:L_C:L_I\r?$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '97-121',
+        any: [/^@CMI_MOM_COMPLEX\(L_A, L_B\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '101-102',
+        any: [
+          /^IF TALENT:L_B:讨厌男人 && \(TALENT:L_A:男人 \|\| TALENT:L_A:扶她\)\r?$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '103-104',
+        any: [
+          /^ELSEIF TALENT:L_B:男人婆 && \(!TALENT:L_A:男人 && !TALENT:L_A:扶她\)\r?$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '106-107',
+        any: [/^\tSIF TALENT:L_B:母性 && RAND:2\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '108-109',
+        any: [/^\tSIF TALENT:L_B:人妻 && RAND:3 == 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '110-111',
+        any: [/^\tSIF TALENT:L_B:父性 && RAND:2\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '112-120',
+        any: [
+          /^\tIF \(TALENT:L_B:未熟 \|\| TALENT:L_B:娇小\) && RAND:3 == 1\r?$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '127-166',
+        any: [/^@CMI_CONFLICT_CHECK\(L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '133-151',
+        any: [/^#DIM CONST PAIRS = $/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '166',
+        any: [/^RETURN L_A\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INHERIT.ERB',
+        ref: '157-162',
+        any: [/^\t\t\tTALENT:L_A:L_I = 0\r?$/m],
       },
     ],
   },
   {
+    // #384（N2）：CHARA_NAME.ERB 全十函数落地后的全量锚表
     js: 'ere/chara/chara-name.js',
     refs: [
       {
         src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
-        ref: '14-146',
-        any: [/@CHARA_NAME_RANDOM_DEFINE\(L_A, L_TYPE = -1\)/],
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '14-141',
+        any: [/^@CHARA_NAME_RANDOM_DEFINE\(L_A, L_TYPE = -1\)\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
-        ref: '44-52',
-        any: [/職業によって名前の種類に偏りを持たせる/],
+        ref: '45-51',
+        any: [/^\tIF TALENT:L_A:骑士 && RAND:10 != 0\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
-        ref: '56-88',
-        any: [/IF CFLAG:L_A:314 == 0/, /ELSEIF CFLAG:L_A:314 == 11/],
-      },
-      {
         src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
         ref: '95-96',
-        any: [/L_TYPE = RAND:5 % 2/],
+        any: [/^SIF L_TYPE == 0\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
-        ref: '122',
-        any: [/CFLAG:L_A:6 = -1/],
+        ref: '122-123',
+        any: [/^CFLAG:L_A:6 = -1\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
-        ref: '141',
-        any: [/JUMP CHARA_NAME_DEFINE\(L_A,L_NID\)/],
+        ref: '126-136',
+        any: [/^\tIF L_TYPE == 0 && CHARANUM\*4\/10 > JAPEN_NAME_COUNT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '147-202',
+        any: [/^@CHARA_NAME_DEFINE\(L_A, L_NID = -1\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '153-162',
+        any: [/^IF INRANGE\(NO:L_A, 17,40\) \|\| NO:L_A == 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '154',
+        any: [/^\tNAME:L_A '= CSVNAME\(NO:L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '155',
+        any: [/^\tCALLNAME:L_A '= CSVCALLNAME\(NO:L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '159',
+        any: [/^\tCFLAG:L_A:6 = 10000 \+ NO:L_A\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '160',
+        any: [/^\tCALL RELATION_RENAME_REBUILD\(L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '161',
+        any: [/^\tRETURN 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '165-170',
+        any: [/^IF L_NID < 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '166',
+        any: [/^\tL_NID = CFLAG:L_A:6\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '168',
+        any: [/^\tCFLAG:L_A:6 = L_NID\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '169',
+        any: [/^\tCALL RELATION_RENAME_REBUILD\(L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '173-202',
+        any: [/^IF L_NID < 1000000000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '175',
+        any: [/^\tIF L_NID < VARSIZE\("LIST_CHARA_NAME"\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '176',
+        any: [/^\t\tLOCALS '= LIST_CHARA_NAME:L_NID\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '179-181',
+        any: [/^\t\t\tSAVESTR:L_A '= LOCALS\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '179',
+        any: [/^\t\t\tNAME:L_A '= LOCALS\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '180',
+        any: [/^\t\t\tCALLNAME:L_A '= LOCALS\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '184-186',
+        any: [/^\t\t\tSAVESTR:L_A = 佳奈美\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '190-193',
+        any: [/^\t\tCALLNAME:L_A = 佳奈美\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '193',
+        any: [/^\t\tL_NID = VARSIZE\("LIST_CHARA_NAME"\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '197-201',
+        any: [/^\tCALL CN_SPAN_COMBINE_NAME, L_NID\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '199',
+        any: [/^\tNAME:L_A '= RESULTS\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '200',
+        any: [/^\tCALLNAME:L_A '= RESULTS\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '209-218',
+        any: [/^@CHARA_NAME_RESET\(L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '212',
+        any: [/^IF INRANGE\(NO:L_A, 17,40\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '213',
+        any: [/^\tCALLNAME:L_A '= CSVCALLNAME\(NO:L_A\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '215',
+        any: [/^\tCALLNAME:L_A '= NAME:L_A\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '218',
+        any: [/^SAVESTR:L_A '= CALLNAME:L_A\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
         ref: '225-230',
-        any: [/@CN_REBUILD/, /SAVESTR:LOCAL '= CALLNAME:LOCAL/],
+        any: [/^@CN_REBUILD\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '227-228',
+        any: [/^\tSIF LOCAL == 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '229',
+        any: [/^\tSAVESTR:LOCAL '= CALLNAME:LOCAL\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '236-250',
+        any: [/^@NID_FINDCHARAS\(L_NID\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '241',
+        any: [/^VARSET RESULT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '244-245',
+        any: [/^\t\tRESULT:L_I = LOCAL\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '249',
+        any: [/^RESULT:L_I = -1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '250',
+        any: [/^RETURN RESULT:0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '255-265',
+        any: [/^@NID_GET_TYPE\(L_NID\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '259',
+        any: [/^\tRETURNF 2\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '261',
+        any: [/^\tRETURNF 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '263',
+        any: [/^\tRETURNF 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '265',
+        any: [/^RETURNF 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '270-276',
+        any: [/^@NID\(ARG\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '278-285',
+        any: [/^@NID_R\(ARG\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '291-333',
+        any: [/^@CN_SPAN_COMBINE_NAME_NUM\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '298',
+        any: [/^L_RET = 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '299',
+        any: [/^L_L = 3 - RAND:2 - RAND:3 % 2\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '301',
+        any: [/^L_RET = 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '303',
+        any: [/^\tL_RET \*= 1000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '305-310',
+        any: [/^\tIF L_I == 0 && L_L > 1 && RAND:5 != 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '313-318',
+        any: [
+          /^\t\tIF \(RAND:3 == 0 && L_L != 1\) \|\| \(RAND:2 == 0 && L_L == 3\)\r?$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '315',
+        any: [/^\t\t\tL_N = RAND:9 \+ 300\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '317',
+        any: [/^\t\t\tL_N = RAND:30 \+ 200\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '320-321',
+        any: [/^\t\tIF RAND:8 == 0 && L_L != 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '321',
+        any: [/^\t\t\tL_N = RAND:2 \+ 500\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '323',
+        any: [/^\t\t\tL_N = RAND:27 \+ 400\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '326',
+        any: [/^\tL_RET \+= L_N\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '327-328',
+        any: [/^\tSIF L_I < 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '329-330',
+        any: [/^\tSIF L_L == 1 && \(L_N == 200/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '329',
+        any: [/^\tSIF L_L == 1 && \(L_N == 200/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '332',
+        any: [/^L_RET \+= 2000000000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '339-604',
+        any: [/^@CN_SPAN_COMBINE_NAME, ARG\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '340',
+        any: [/^LOCALS:9 =\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '342',
+        any: [/^N = ARG % 1000000000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '344',
+        any: [/^IF ARG > 2000000000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '348-496',
+        any: [/^\t\tELSEIF N:1 == 201\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '409-426',
+        any: [/^\t\tELSEIF N:1 == 300\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '428-481',
+        any: [/^\t\t\tLOCALS = ヴィア\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '429',
+        any: [/^\t\t\tLOCALS = ヴィア\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '430',
+        any: [/^\t\tELSEIF N:1 == 400\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '483-486',
+        any: [/^\t\tELSEIF N:1 == 501\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '488-495',
+        any: [/^\t\t\tLOCALS = サン\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '498-503',
+        any: [/^\t\tSTRLENS LOCALS\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '500',
+        any: [/^\t\tIF LOCALS:1 == RESULTS/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '504-508',
+        any: [/^\t\tIF RESULTS == "ッ" && LOCALS:1 == "ー"\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '511',
+        any: [/^\t\tLOCALS:9 \+= LOCALS\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '512',
+        any: [/^\t\tN \/= 1000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '515',
+        any: [/^ELSEIF B > 1000000000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '518-598',
+        any: [/^\t\tELSEIF N:1 == 101\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '599',
+        any: [/^\t\tN \/= 1000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERH',
+        ref: '7-22',
+        any: [/^#DIM CHINA_NAME_COUNT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '55-93',
+        any: [/^\tIF CFLAG:L_A:314 == 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '98',
+        any: [/^\$SPAN_NAME_NUM\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '141',
+        any: [
+          /^\tCHAR_MAKE_DEFINE\(L_A,L_NID\)\r?$|JUMP CHARA_NAME_DEFINE\(L_A,L_NID\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '236',
+        any: [/^@NID_FINDCHARAS\(L_NID\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '255',
+        any: [/^@NID_GET_TYPE\(L_NID\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '320',
+        any: [/^\t\tIF RAND:8 == 0 && L_L != 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '519-598',
+        any: [/^\t\t\tLOCALS:9 = %LOCALS:9%アム\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '603',
+        any: [/^RESULTS '= LOCALS:9\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '130-131',
+        any: [/^\tELSEIF L_TYPE == 0 && TALENT:L_A:122/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '132-133',
+        any: [/^\tELSEIF L_TYPE == 1 && TALENT:L_A:122/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '346-497',
+        any: [/^\t\tN:1 = N % 1000\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '504',
+        any: [/^\t\tIF RESULTS == "ッ" && LOCALS:1 == "ー"\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '481',
+        any: [/^\t\t\tLOCALS = ッラ\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '428-431',
+        any: [/^\t\tELSEIF N:1 == 400\r?$/m],
       },
     ],
   },

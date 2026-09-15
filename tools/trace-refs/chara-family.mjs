@@ -27,6 +27,11 @@ export const FILES = [
         ref: '113',
         any: [/L_EXP_AGE2 = CHAR_AGE_EXPECT\(L_B\)/],
       },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_NAME.ERB',
+        ref: '169',
+        any: [/^\tCALL RELATION_RENAME_REBUILD\(L_A\)\r?$/m],
+      },
     ],
   },
 ];

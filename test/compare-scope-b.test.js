@@ -79,7 +79,14 @@ const BASELINE = {
   'daycycle-natural': { matched: 71, version: 2, stub: 190, unexplained: 0 },
   'daycycle-max': { matched: 71, version: 2, stub: 230, unexplained: 0 },
   // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
-  'sale-natural': { matched: 123, version: 2, stub: 160, unexplained: 0 },
+  // #384 推进（rebase 到 #419 之后重测）：CN_REBUILD 从存根落真身
+  // （ere/chara/chara-name.js；改名后按姓名重建称呼，**无输出**），出售段
+  // 回放里那条 `（名字重建尚未移植…）` 占位行随之消失——ere 事件流少一条，
+  // 与它对上的那条 stub 归因条目一并消失：stub 160 → 159，matched 不变
+  // （该占位行此前是 stub 对的一侧，不产生 matched）、unexplained 仍 0。
+  // 同票的 CHARA_NAME_DEFINE 等真身不出现在本样本的回放窗口里（实测：
+  // 只把 chara-name.js 换回 master 版即复现 160）。
+  'sale-natural': { matched: 123, version: 2, stub: 159, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {

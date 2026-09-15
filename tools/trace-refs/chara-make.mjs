@@ -30,7 +30,7 @@ export const FILES = [
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
         ref: '18-20',
-        any: [/SIF !EX_TALENT:A:2	;后代：命名->设置家族关系->CHARA_MAKE/],
+        any: [/SIF !EX_TALENT:A:2\t;后代：命名->设置家族关系->CHARA_MAKE/],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
@@ -160,7 +160,7 @@ export const FILES = [
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
         ref: '109',
-        any: [/CALL CM_CLOTH	;SET_CHAR_CLOTH/],
+        any: [/CALL CM_CLOTH\t;SET_CHAR_CLOTH/],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
@@ -2075,6 +2075,310 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
         ref: '1380',
         any: [/RETURN 0/],
+      },
+      // —— #384（N2）：@RAND_CHARA_MAKE（:42-194）落真身后的锚 ——
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '42-194',
+        any: [/^@RAND_CHARA_MAKE\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '50',
+        any: [/^\$INPUT_LOOP_11\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '52',
+        any: [/^CHARA = RAND\(1, 17\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '55',
+        any: [/^IF GETCHARA\(CHARA, 0\) == -1 \|\| 赤森奴隶\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '56-58',
+        any: [/異国の勇者の判定をする/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '60',
+        any: [/^\t\tLOCAL:0 = 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '60-64',
+        any: [/^\t\tADDCHARA CHARA\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '61',
+        any: [/^\t\tADDCHARA CHARA\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '62',
+        any: [/^\t\tCALL ADDCHARA_EX, CHARANUM - 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '63-64',
+        any: [/^\t\tID_OF_NEWCHARA = CHARANUM - 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '76',
+        any: [/^\t\tIF 赤森奴隶\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '83-100',
+        any: [/^\t\tIF RESULT == -1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '83',
+        any: [/^\t\tCALL SHOW_CHARASTERISTIC\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '85',
+        any: [/^\t\t\tCALL SET_RANDOM_CHARASTERISTIC\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '90',
+        any: [/^\t\tXINGGE = ID_OF_GENERAL_CHARASTERISTICS:CHARACTER\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '95',
+        any: [/^\t\tCALL SHOW_HAIRCOLOR\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '97',
+        any: [/^\t\t\tCALL SET_RANDOM_HAIRCOLOR\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '98',
+        any: [/^\t\t\tCALL SHOW_HAIRCOLOR\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '118',
+        any: [/^\t\t\tCALL CHOOSE_HAIRCOLOR\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '126-135',
+        any: [/前回の助手・調教対象だった場合はフラグを空に/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '136-137',
+        any: [/^\tASSI = FLAG:2\t\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '143-147',
+        any: [/^\t\tID_OF_NEWCHARA = CHARANUM - 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '146',
+        any: [/^\t\tID_OF_NEWCHARA = CHARANUM - 1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '151-157',
+        any: [/这位挑选出来的奴隶，您还满意吗？/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '158',
+        any: [/^\tINPUT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '159-163',
+        any: [/^\t\tGOTO INPUT_LOOP_11\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '164',
+        any: [/^\tELSEIF RESULT == 3 &&  赤森奴隶\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '165-171',
+        any: [/^\t\tRETURN 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '172-187',
+        any: [/^\tPRINTL \*{41}\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '174-175',
+        any: [/^\tSIF LOCAL:0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '180',
+        any: [/^\tCFLAG:\(CHARANUM - 1\):1 = 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '182',
+        any: [/^\tFLAG:402 = 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '184',
+        any: [/^\tTARGET = FLAG:1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '185',
+        any: [/^\tASSI = FLAG:2\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '186',
+        any: [/^\tWAIT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '188-191',
+        any: [/由于对魔王的恐惧，勇者没有出现/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '190',
+        any: [/^\tWAIT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '47-48',
+        any: [/^#DIM HAIRCOLOR\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '49',
+        any: [/^#DIM XINGGE\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '66-125',
+        any: [/^\t\tCALL SHOW_CHARASTERISTIC\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '66-72',
+        any: [/^\t\tIF CHARACTER != -1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '66',
+        any: [/^\t\tIF CHARACTER != -1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '70',
+        any: [/^\t\tIF HAIRCOLOR > 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '75-125',
+        any: [/^\t\t\$INPUT_LOOP_12\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '75',
+        any: [/^\t\t\$INPUT_LOOP_12\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '76-80',
+        any: [/^\t\tIF 赤森奴隶\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '81',
+        any: [/^\t\tPRINT \[0\] 印象 ： $/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '83-90',
+        any: [/^\t\tCALL SHOW_CHARASTERISTIC\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '84-87',
+        any: [/^\t\tIF RESULT == -1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '88',
+        any: [/^\t\tCHARACTER = RESULT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '91',
+        any: [/^\t\tPRINTL\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '93-100',
+        any: [/^\t\tPRINT \[1\] 发色 ： $/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '100',
+        any: [/^\t\tHAIRCOLOR = RESULT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '101',
+        any: [/^\t\tPRINTL\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '103-104',
+        any: [/^\t\tDRAWLINE\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '107',
+        any: [/^\t\tINPUT\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '110-113',
+        any: [/^\t\t\tCALL CHOOSE_CHARASTERISTIC\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '116-119',
+        any: [/^\t\t\tCALL CHOOSE_HAIRCOLOR\(ID_OF_NEWCHARA\)\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '121-122',
+        any: [/^\t\tELSEIF RESULT == 100\r?$/m],
+      },
+      {
+        // 单行取不到唯一片段（`^\t\tELSE$` 全文件 2 处、`GOTO INPUT_LOOP_12`
+        // 3 处），改用相邻两行的组合，并按本表惯例整行锚定（^…$ + m）——该对
+        // 全文件唯一，正是 :123-124 这一处。
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '123-124',
+        any: [/^\t\tELSE\r?\n\t\t\tGOTO INPUT_LOOP_12\r?$/m],
       },
     ],
   },

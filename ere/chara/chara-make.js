@@ -42,26 +42,45 @@
  */
 
 const era = require('#/era-electron');
+const { add_chara_ex } = require('#/chara/chara-ex');
 const { family_register, search_family } = require('#/chara/chara-family');
 const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
-const { chara_name_random_define } = require('#/chara/chara-name');
+const { chara_name_random_define, cn_rebuild } = require('#/chara/chara-name');
 const { random_self_call } = require('#/chara/chara-self-call'); // #383 起真身
 const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
+const { party_char_del } = require('#/dungeon/dungeon-party');
+const { chara_callname } = require('#/utils/callname-utils');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
+const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
+ *
+ * #384 变更：@RAND_CHARA_MAKE 落真身，它依赖的 FUNC_CHARA_AND_HAIR 八函数
+ * （源 キャラ関数/FUNC_CHARA_AND_HAIR.ERB，属 N8/#392）与 SHOW_CHARA_INFO 成为
+ * 本文件的存根；同时 **CMI_CONFLICT_CHECK 换真身**（cm_skill 尾段改调
+ * ere/chara/chara-make-inherit.js 的实现），移出名单。本文件是那八个函数
+ * 全库唯一的调用方（见 rand_chara_make 的文件注释）。
  */
 const STUBBED_CALLS = [
   'LOOK_SET',
   'CHARA_FIRST_EXP',
-  'CMI_CONFLICT_CHECK',
   'ST_UP',
+  'SHOW_CHARA_INFO',
+  // @RAND_CHARA_MAKE 的形象确认段（:66-125）依赖的八处 FUNC_CHARA_AND_HAIR
+  'SET_CHARASTERISTIC',
+  'SET_HAIRCOLOR',
+  'SHOW_CHARASTERISTIC',
+  'SET_RANDOM_CHARASTERISTIC',
+  'SHOW_HAIRCOLOR',
+  'SET_RANDOM_HAIRCOLOR',
+  'CHOOSE_CHARASTERISTIC',
+  'CHOOSE_HAIRCOLOR',
 ];
 
 /**
@@ -1016,7 +1035,7 @@ async function cm_skill(cid, rand_n) {
   }
 
   // :858 （stick 增加）冲突检查
-  cmi_conflict_check(cid);
+  cmi_conflict_check(cid, rand_n);
 }
 
 /**
@@ -1590,9 +1609,213 @@ async function cm_cloth(cid, rand_n) {
   return 0;
 }
 
+/**
+ * @RAND_CHARA_MAKE（CHAR_MAKE.ERB:42-194）：随机挑一名勇者加入队伍，并走一遍
+ * 人工确认（换一个 / 改性格 / 改发色 / 收下）。
+ *
+ * 原作由 EVENTFIRST:203 在开局调一次（初始奴隶的随机路径）。移植边界：
+ *
+ *   - **八处 FUNC_CHARA_AND_HAIR 依赖未落地**（性格与发色的显示 / 设置 / 选择，
+ *     定义在 キャラ関数/FUNC_CHARA_AND_HAIR.ERB:7-219，该文件属 N8/#392）。
+ *     本文件是它们**唯一**的调用方（全库 grep 实测，除定义处外只有
+ *     CHAR_MAKE.ERB:67/:71/:83/:85/:86/:95/:97/:98/:112/:118），故以
+ *     `stub_line_wait` 占位并登记清单，N8 落地后按行号注释接入。
+ *
+ *   - **赤森奴隶**（魔改使用.ERH:12，普通变量非 SAVEDATA）只被
+ *     CAMPAIGN_EVENT.ERB:55/:57 写入（阶段 5 战役线未移植），恒 0：
+ *     :55 的 `GETCHARA(CHARA, 0) == -1 || 赤森奴隶` 化简为纯存在性判定，
+ *     :76 / :151 / :164 三处分支恒走另一侧（与 chara-make.js 文件头同款处置）。
+ *
+ *   - **`GETCHARA(CHARA, 0) == -1` 的 ere 等价物是 `getAddedCharacters()`**：
+ *     #21 把原作「已定义但未加入」那一档扁平化掉了，`chara:${id}` 读到对象
+ *     只说明静态表里有这个预设、不代表在场，故用出场名单判定。
+ *
+ *   - 原作经全局 A / TARGET / ASSI / CHARANUM 传值，ere 一律显式传参，
+ *     角色数用 `getAddedCharacters().length`（#5 决议第六条）。
+ *
+ *   - `CHAR_MAKE(XINGGE,)`（:141）只给第二个实参（ARG:0 性格设定），
+ *     种族设定 ARG:1 缺省 0；性格值从 `ID_OF_GENERAL_CHARASTERISTICS`
+ *     取（:90）——该表未落 yml，属「性格」子系统，此处按 -1（无指定）
+ *     落地：原作的 `CHARACTER` 也只在 FUNC_CHARA_AND_HAIR 段里被写过。
+ *
+ *   - **`:57` 的 `CALL CHAR_MAKE_INPORT` 经参数注入**：它的真身在转发层
+ *     ere/chara/char-make.js（它自己 require 本文件），本文件反向 require 会
+ *     成环；而转发层不许折叠（#170 验收第 2 条）。`char_make_inport` 因此
+ *     是本函数的形参，调用方从转发层取——与 `rand` 同样处理。
+ *
+ * @param {(n: number) => number} [rand] 原作 RAND:N（[0,n) 整数）的随机源
+ * @param {() => Promise<number>} [char_make_inport] :57 的异国勇者判定
+ *   （转发层 ere/chara/char-make.js 的实现）；缺省视为判定不通过（返回 0）
+ * @returns {Promise<number>} 末尾 RETURN CHARANUM-1；16 位占满的 :191 分支给 0
+ */
+async function rand_chara_make(rand, char_make_inport) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const inport_check = char_make_inport ?? (() => Promise.resolve(0));
+  const count = () => era.getAddedCharacters().length;
+
+  // :47-48 LOCALS：HAIRCOLOR / CHARACTER——Emuera 整型局部量初值 0，
+  // 且是**跨 :50 / :75 两层循环携带**的（:88 把 SHOW_CHARASTERISTIC 的回值
+  // 写回 CHARACTER，:100 同款写回 HAIRCOLOR）。
+  let haircolor = 0;
+  let character = 0;
+  let xingge = 0; // :49 XINGGE——:90 写入，:141 传给 CHAR_MAKE
+
+  // :50 $INPUT_LOOP_11 —— 换人重挑的循环入口
+  for (;;) {
+    // 名字用 chara_id 而非 chara：后者是本文件顶部 import 的 chara 门面
+    const chara_id = rand_n(16) + 1; // :52 CHARA = RAND(1, 17)（勇者位 1-16）
+
+    if (!era.getAddedCharacters().includes(chara_id)) {
+      // :56-58 异国勇者判定：非异国时返回 0
+      let newchara;
+      if ((await inport_check()) === 0) {
+        // :60-64 不是异国勇者：新建一位
+        era.addCharacter(chara_id); // :61 ADDCHARA CHARA
+        await add_chara_ex(count() - 1); // :62 CALL ADDCHARA_EX, CHARANUM-1
+        newchara = count() - 1; // :63-64 A / ID_OF_NEWCHARA
+      } else {
+        // :143-147 是异国勇者：CHAR_MAKE_INPORT 内已 ADDCHARA，直接用最后一位
+        newchara = count() - 1; // :146 ID_OF_NEWCHARA = CHARANUM-1
+      }
+      // :145 LOCAL:0 = 1（异国）／:60 LOCAL:0 = 0 —— 只用于 :174-175 的
+      // 「异国的」前缀，那一段在收下分支里（下方）。
+
+      // :66-72 性格与发色的**预设落地**（两个守卫是原作写法，见下方注释）
+      // :66 IF CHARACTER != -1 —— CHARACTER 初值 0，故首轮恒进；第二轮起
+      //     它可能是 :88 回写的 -1（未定义），那一轮就跳过
+      if (character !== -1) {
+        stub_line('SET_CHARASTERISTIC', '性格设定', '随角色定制票');
+      }
+      // :70 IF HAIRCOLOR > 0 —— 初值 0 不 > 0，首轮不进；第二轮起可能进
+      if (haircolor > 0) {
+        stub_line('SET_HAIRCOLOR', '发色设定', '随角色定制票');
+      }
+
+      // :75-125 $INPUT_LOOP_12 —— 形象确认（改性格 / 改发色 / 继续）
+      // 其中 :83-100 是性格与发色的显示段（两段同构）
+      for (;;) {
+        // :76-80 赤森奴隶恒 0 → 恒走 ELSE 侧
+        era.print('呃……面前的勇者，是这个形象的……');
+        era.print('[0] 印象 ： '); // :81
+
+        // :83-90 性格：显示 →（未定义则随机补设 → 再显示）→ 回写 CHARACTER，
+        // 并由 CHARACTER 查 ID_OF_GENERAL_CHARASTERISTICS 得 XINGGE
+        stub_line('SHOW_CHARASTERISTIC', '性格显示', '随角色定制票');
+        let shown = -1; // 占位实现恒回「未定义」，走 :84-87 的随机补设支
+        if (shown === -1) {
+          stub_line('SET_RANDOM_CHARASTERISTIC', '随机性格', '随角色定制票');
+          stub_line('SHOW_CHARASTERISTIC', '性格显示', '随角色定制票');
+          shown = -1;
+        }
+        character = shown; // :88
+        // :90 XINGGE = ID_OF_GENERAL_CHARASTERISTICS:CHARACTER —— 该表未落
+        // yml（属「性格」子系统），此处按 -1（无指定）落地
+        xingge = -1;
+        era.print(''); // :91 PRINTL
+
+        // :93-100 发色：与性格同构
+        era.print('[1] 发色 ： ');
+        stub_line('SHOW_HAIRCOLOR', '发色显示', '随角色定制票');
+        let shown_color = 0;
+        if (shown_color === 0) {
+          stub_line('SET_RANDOM_HAIRCOLOR', '随机发色', '随角色定制票');
+          stub_line('SHOW_HAIRCOLOR', '发色显示', '随角色定制票');
+          shown_color = 0;
+        }
+        haircolor = shown_color; // :100
+        era.print(''); // :101 PRINTL
+
+        // :103-104 分隔线 + 魔王真眼
+        era.drawLine();
+        era.print('你发动了魔王真眼，深入探究更进一步的详细素质……');
+
+        const choice = await era.input(); // :107 INPUT
+        if (choice === 0) {
+          // :110-113 改性格 → 回到 $INPUT_LOOP_12
+          era.print('什么样的态度呢……');
+          await stub_line_wait(
+            'CHOOSE_CHARASTERISTIC',
+            '性格选择',
+            '随角色定制票',
+          );
+          continue;
+        }
+        if (choice === 1) {
+          // :116-119 改发色 → 回到 $INPUT_LOOP_12
+          era.print('什么样的发色呢…');
+          await stub_line_wait('CHOOSE_HAIRCOLOR', '发色选择', '随角色定制票');
+          continue;
+        }
+        if (choice === 100) {
+          break; // :121-122 進む
+        }
+        // :123-124 其余输入 → 回到 $INPUT_LOOP_12
+      }
+
+      // :126-135 上一次的助手 / 调教对象就是这位 → 清空；排在这位之后的
+      // 编号一律前移一格。**动的是 FLAG:1 / FLAG:2**（「上一次的调教对象」，
+      // event-end.js:68-69 的同款槽位），不是 era_flag.target（那是引擎
+      // flag:10005、TARGET 全局指针本身）——:136-137 才是把前者赋给后者。
+      // 跨域写走 game 域门面（#71；属主域是 event）。
+      if (game.event.上次调教对象 === newchara) game.event.上次调教对象 = -1;
+      if (game.event.上次助手 === newchara) game.event.上次助手 = -1;
+      if (game.event.上次调教对象 > newchara) {
+        game.event.上次调教对象 -= 1;
+      }
+      if (game.event.上次助手 > newchara) {
+        game.event.上次助手 -= 1;
+      }
+      era_flag.target = game.event.上次调教对象; // :136 TARGET = FLAG:1
+      era_flag.assi = game.event.上次助手; // :137 ASSI = FLAG:2
+
+      era.set('flag:402', 1); // :139 派遣奴隶标志（等级 1 生成）
+      // :141 CALL CHAR_MAKE(XINGGE,) —— 只给第二个实参（ARG:0 性格设定），
+      // 种族设定 ARG:1 缺省 0；XINGGE 来自 :90 的表格查询（见上）
+      await chara_make(newchara, xingge, 0, rand_n, newchara);
+
+      await stub_line_wait('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票');
+
+      // :151-157 确认提示（赤森奴隶恒 0 → 恒走 ELSE 侧）
+      era.print('解开你封印的，真的是这样的对象吗…？');
+      era.print('[1] 不不不不…我看错了！  [2] 是她！是她！就是她！抓起来！…');
+
+      const answer = await era.input(); // :158 INPUT
+      if (answer === 1) {
+        // :159-163 换一个：删掉重挑
+        party_char_del(count() - 1); // :160 CALL PARTY_CHAR_DEL
+        era.removeCharacter(count() - 1); // :161 DELCHARA
+        cn_rebuild(); // :162 CALL NAME_RESET
+        continue; // :163 GOTO INPUT_LOOP_11
+      }
+      if (answer === 3) {
+        // :164 `RESULT == 3 && 赤森奴隶` —— 赤森奴隶恒 0，本支不可达；
+        // 1:1 留档（结构上与 :159 的换人支并列，:165-171 的删除序列相同）
+        return 0;
+      }
+
+      // :172-187 收下
+      era.print('*****************************************');
+      era.print(`冒险者${chara_callname(count() - 1)}被囚禁在了地牢里！`);
+      era.print('*****************************************');
+      chara(count() - 1).invasion.状态 = 0; // :180 CFLAG:1 初始位置
+      era.set('flag:402', 0); // :182 用过的标志归位
+      era_flag.target = game.event.上次调教对象; // :184 TARGET = FLAG:1
+      era_flag.assi = game.event.上次助手; // :185 ASSI = FLAG:2
+      await era.waitAnyKey(); // :186 WAIT
+      return count() - 1; // :194 RETURN (CHARANUM - 1)
+    }
+
+    // :188-191 16 个勇者位都占着
+    era.print('由于对魔王的恐惧，勇者没有出现。（奴隶数已达上限，请处决几个）');
+    await era.waitAnyKey(); // :190 WAIT
+    return 0; // :191
+  }
+}
+
 module.exports = {
   STUBBED_CALLS,
   chara_make,
+  rand_chara_make,
   cm_stp,
   cm_base,
   cm_kj,

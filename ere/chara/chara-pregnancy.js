@@ -24,13 +24,15 @@ const {
   family_birth_to_dad,
   family_birth_to_mom,
   nid,
-  nid_get_type,
   nid_r,
 } = require('#/chara/chara-family');
+const {
+  nid_get_type,
+  chara_name_random_define,
+} = require('#/chara/chara-name');
 const { chara_info_callback } = require('#/chara/chara-info-actions');
 const { chara_make } = require('#/chara/chara-make');
 const { chara_make_inherit } = require('#/chara/chara-make-inherit');
-const { chara_name_random_define } = require('#/chara/chara-name');
 const { st_up } = require('#/dungeon/dungeon-lvup');
 const { item_name } = require('#/dungeon/monster-data');
 const summon_mod = require('#/dungeon/monster-summon');

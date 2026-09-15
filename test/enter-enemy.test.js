@@ -93,9 +93,12 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
   );
   // 演出行（PRINT/PRINTS 归并，见 enter-enemy.js 文件头）
   const texts = text_lines(fixture);
+  // 名字：#384 起 CHARA_NAME_DEFINE 是真身，随机勇者（NO 1-16）的名字由
+  // 命名链**覆盖**预设名（原作同：预设名只服务特殊角色 0/17-40）。夹具里
+  // 没有固定名表（charanamelistkeys 为空），故落到兜底名「佳奈美」。
   assert(
-    texts.includes('勇者阿尔开始了地下城的攻略！'),
-    '演出行：勇者 + 名字（callname:-1 承载）+ 开始攻略',
+    texts.includes('勇者佳奈美开始了地下城的攻略！'),
+    '演出行：勇者 + 名字（callname:-1 承载，已由命名链改写）+ 开始攻略',
   );
   assert(
     texts.includes('*****************************************'),
@@ -116,12 +119,17 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
 
 test('冒险者前缀：TALENT:122（男人位）非 0 时演出写「冒险者」', async () => {
   const fixture = setup_world();
-  fixture.store.set('talent:1:122', 1); // CM_GENDER 的 CASE 0 臂只写 121，预置存活
+  fixture.store.set('talent:1:122', 1);
   const { enter_enemy } = load(fixture);
-  await enter_enemy(0, zero);
+  // **随机源不能全 0**：CM_GENDER 的 CASE 0 臂在 RAND:50 == 0 时写 TALENT:121
+  // （扶她），而 CMI_CONFLICT_CHECK 的互斥对 (121,122) 会把预置的 122 清掉
+  // （#384 起那道检查是真身；RAND:2 = 0 时清右侧 122）。这里让 RAND:50 掷出 1
+  // 避开扶她，122 得以存活——正是 :78-82 那一支的成立条件。
+  await enter_enemy(0, (n) => (n === 50 ? 1 : 0));
+  assert.equal(fixture.store.get('talent:1:122'), 1, '预置的男人位存活');
   assert(
-    text_lines(fixture).includes('冒险者阿尔开始了地下城的攻略！'),
-    'TALENT:RESULT:122 非 0 → 冒险者（:78-82）',
+    text_lines(fixture).includes('冒险者佳奈美开始了地下城的攻略！'),
+    'TALENT:RESULT:122 非 0 → 冒险者（:78-82）；名字同前一条用例',
   );
 });
 
@@ -611,8 +619,8 @@ test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、
   assert.equal(fixture.store.get('cflag:1:501'), 1, 'CFLAG:A:501 = 1');
   assert.equal(fixture.store.get('cflag:1:508'), 3, 'CFLAG:A:508 = 3');
   assert(
-    text_lines(fixture).includes('勇者阿尔被俘虏了！'),
-    '俘虏演出行（:370-371）',
+    text_lines(fixture).includes('勇者佳奈美被俘虏了！'),
+    '俘虏演出行（:370-371）；名字同「通常来袭」用例（命名链已改写预设名）',
   );
   // 异国判定掷 RAND(10)：zero → 判定通过、存根 RETURN 0 → 走生成
   assert(

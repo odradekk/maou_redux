@@ -124,7 +124,8 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 68; // rebase 到含 #388 的 master 后实测 70，
+export const PENDING_BASELINE = 67; // #384（N2）rebase 到含 #385/#396/#402 的
+// master 后实测：master 68 − 本票 1 = 67，两边的说明都留在下面。
 // #396 抬低说明（70 → 68）：SHOP/TAX.ERB与
 // SHOP/SHOP_TRAP.ERB 两个文件落地真身（tax_get；item_shop_trap /
 // saleitem_check_trap，ere/system/stronghold/tax.js 与
@@ -136,6 +137,19 @@ export const PENDING_BASELINE = 68; // rebase 到含 #388 的 master 后实测 7
 // 本就不在待移植的分子里——落地后实测待移植不变（已移植 +3、部分移植 -3）。
 // 工单正文写的「现 79」是排期时的旧值。rebase 到含 #396 的 master 后由派单人
 // 重测确认为 68：#404 与 #396 的改动面完全不重叠，两边各自的 -0 与 -2 叠加即 68。
+// #384 抬低说明（68 → 67，本票独立测得的是 70 → 69 这一格，rebase 后落在
+// master 的 68 上）：本票（N2，角色生成链六文件）把
+// `キャラ関数/CHARA_NAME_EDIT.ERB`（三个函数：SHOW_BUTTON_NAME_EDIT /
+// CHECK_ABLE_TO_NAME_EDIT / CHARA_INFO_NAME_EDIT）整份摆进 ere/，该文件从
+// 「待移植」转「已移植」：-1。
+// 同票的另外四份**仍是部分移植**（不参与本基线：基线只冻结「待移植」一格）：
+//   - `CHARA_NAME.ERB` 已转「已移植」（十个函数全落真身）；
+//   - `CHAR_MAKE.ERB` 与 `CHARA_MAKE_INIT.ERB` 仍挂在存根清单的同一行
+//     `CHAR_INIT` 上（状态「部分实现（#118）」）——@CHAR_INIT 已接的调用链
+//     还依赖 CHAR_BODY_GENERATE_WAPPED 的占位行，那张票是 N3/#385；
+//   - `CHARA_MAKE_INHERIT.ERB` 的三处遗留存根（CMI_SETTALENT 等）已落真身，
+//     但清单里仍有一行归因在案（同 #118 的 CHAR_INIT）。
+// 两处数字都只能重跑工具取：`node tools/trace-check.mjs --coverage`。
 // #405 抬低说明（79 → 75）：GET_SPECIALTALENT.ERB／EVENT_ADDICT.ERB／
 // EVENT_SABBATH.ERB／EVENT_CHARA_LEAVE.ERB 四个文件落地真身（
 // check_specialskil/check_specialskil_bodyshift、aphrodisiac_addict/

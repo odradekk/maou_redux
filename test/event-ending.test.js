@@ -432,8 +432,14 @@ test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色�
     texts.includes('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　'),
     ':220 性格菜单',
   );
+  // :275 取的是 `%SAVESTR:A%`——角色的称呼，而 A 刚经 CHAR_MAKE 生成
+  // （:264-266）。生成链里的命名段（CHARA_MAKE.ERB:18-20 →
+  // @CHARA_NAME_RANDOM_DEFINE，**#384 起为真身**）会把 ADDCHARA 从预设拷来的
+  // 名字覆盖成随机名：夹具没种名字表（charanamelistkeys 为空），固定名分支
+  // 回落到默认名「佳奈美」。故这里断的是**生成后**的称呼——「路人五」只是
+  // ADDCHARA 那一刻的初值，不是这条输出里的值。
   assert(
-    texts.includes('精灵族挑选少女路人五作为贡品………'),
+    texts.includes('精灵族挑选少女佳奈美作为贡品………'),
     ':275（ARG 1 的 LOCALS:40）',
   );
   assert(texts.includes('[0] 就是她了  [1] 再换一个  [2] 去要圣女'), ':280');

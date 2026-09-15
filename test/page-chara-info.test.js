@@ -578,7 +578,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：以全部已加入角色 ID 为顺位表打
 
 // —— 未落地调用一律走存根，登记与实现同步 ——
 
-test('STUBBED_CALLS：改名/转职/魔诱/结婚/育儿/装备/兼职/调试/立绘/统一积极性/换号均在列', async () => {
+test('STUBBED_CALLS：转职/魔诱/结婚/育儿/装备/兼职/调试/立绘/统一积极性/换号均在列', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -586,16 +586,16 @@ test('STUBBED_CALLS：改名/转职/魔诱/结婚/育儿/装备/兼职/调试/�
     'page/page-chara-info',
   );
 
+  // SHOW_BUTTON_NAME_EDIT / CHARA_INFO_NAME_EDIT 自 #384 起是真身
+  // （ere/chara/chara-name-edit.js），不再是本文件的存根
   for (const name of [
     'SHOW_CHARA_INFO',
-    'SHOW_BUTTON_NAME_EDIT',
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
     'SHOW_BUTTON_MARRIAGE',
     'SHOW_BUTTON_CHILD_CARE',
     'SHOW_BUTTON_EQUIP',
     'PTJ_BUTTON',
-    'CHARA_INFO_NAME_EDIT',
     'CHARA_INFO_JOB_CHANGE',
     'TEMPTATION',
     'MARRIAGE',
@@ -610,16 +610,24 @@ test('STUBBED_CALLS：改名/转职/魔诱/结婚/育儿/装备/兼职/调试/�
     assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
   }
 
-  // 改名/转职/魔诱/结婚/育儿(sub_page 0)与装备/兼职(sub_page 1/2)的按钮存根
+  // 转职/魔诱/结婚/育儿(sub_page 0)与装备/兼职(sub_page 1/2)的按钮存根
   // 都在「绘制期」用 stub_line 打占位文本（不是可点击按钮，CASE 0-5/8/16/99
   // 因此目前无法通过 era.input() 驱动到——它们等各自的按钮票落地后才可达，
   // 见文件头「运行时可用只有已渲染按钮的快捷键」）。这里只验证绘制期占位
   // 文本确实出现，不去点它们背后尚不可达的分发分支。
+  // 改名按钮自 #384 起由 show_button_name_edit 渲染成真按钮（不再是占位
+  // 文本），下面单独断言它出现在按钮行里。
   fixture.set_inputs(100);
   const result = await chara_info_individual(1, [1]);
   assert.equal(result, 0);
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((b) => b.rendered);
+  assert.ok(
+    rendered.includes('[0] 改名 ') && rendered.includes('[1] 还原名字 '),
+    '改名 / 还原名字按钮已渲染（#384 真身）',
+  );
   for (const stub_name of [
-    'SHOW_BUTTON_NAME_EDIT',
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
     'SHOW_BUTTON_MARRIAGE',

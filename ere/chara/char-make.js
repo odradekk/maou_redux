@@ -6,7 +6,9 @@
  *       @NAMING（:7-9）、@NAME_RESET（:12-14）、@SET_CHAR_CLOTH（:17-19）、
  *       @CHAR_MAKE_INPORT（:27-34）、@CHAR_INHERIT（:37-39）。@CHAR_INIT
  *       （:22-25）的 ere 形态是 ere/chara/chara-init.js（#118，其文件头已
- *       声明本壳）；@RAND_CHARA_MAKE 不在本票范围。
+ *       声明本壳）；@RAND_CHARA_MAKE（:42-194）的真身在同目录
+ *       ere/chara/chara-make.js 的 rand_chara_make——它需要本层的
+ *       @CHAR_MAKE_INPORT 作参数注入（反向 require 会成环），调用方从本层取。
  *
  * 转发不折叠（工单验收第 2 条）：调用点的名字稳定在转发层上，真身可随
  * 后续票替换。JUMP 的指针语义（A / TARGET 隐式传递）由 ere 侧显式传参
@@ -22,8 +24,11 @@ const { stub_line } = require('#/utils/stub-line');
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
+ *
+ * #384 起 @NAMING 与 @NAME_RESET 的 JUMP 目标（CHARA_NAME_DEFINE / CN_REBUILD）
+ * 都是真身（ere/chara/chara-name.js），两项移出名单。
  */
-const STUBBED_CALLS = ['CHARA_NAME_DEFINE', 'CN_REBUILD', 'CHARA_MAKE_INPORT'];
+const STUBBED_CALLS = ['CHARA_MAKE_INPORT'];
 
 /**
  * @CHAR_MAKE（:2-4）：角色生成入口——JUMP CHARA_MAKE(A, ARG:0, ARG:1)。
@@ -42,22 +47,23 @@ async function char_make(cid, arg0 = 0, arg1 = 0, rand) {
 }
 
 /**
- * @NAMING（:7-9）：JUMP CHARA_NAME_DEFINE(A)——角色称呼定义（存根，
- * EVENTFIRST:111 的同款占位；随开局设置票）。
+ * @NAMING（:7-9）：JUMP CHARA_NAME_DEFINE(A)——角色称呼定义。
  *
  * @param {number} cid 角色 ID（原作全局 A）
+ * @returns {void} JUMP 不向调用点返回结果
  */
-async function naming(cid) {
-  // :9 JUMP CHARA_NAME_DEFINE(A)（真身落地前无副作用，占位行携带角色号）
+function naming(cid) {
+  // :9 JUMP CHARA_NAME_DEFINE(A)（#384 起真身）
   chara_name_define(cid);
 }
 
 /**
- * @NAME_RESET（:12-14）：JUMP CN_REBUILD（范围外存根）。
+ * @NAME_RESET（:12-14）：JUMP CN_REBUILD——把全体角色的存档字串按称呼重建。
+ * @returns {void} JUMP 不向调用点返回结果
  */
-async function name_reset() {
-  // :14 JUMP CN_REBUILD
-  return cn_rebuild();
+function name_reset() {
+  // :14 JUMP CN_REBUILD（#384 起真身）
+  cn_rebuild();
 }
 
 /**
