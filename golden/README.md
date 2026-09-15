@@ -210,10 +210,10 @@ EX_FLAG:4444 + 8766` 触发「哥布林炸宝库」剧情并清零资金，会�
 - 桌面 `golden-dump` 整个文件夹（六个 `.log`）；
 - 每段一句话判定结果（全中 / 哪条没中、当时画面是什么）。
 
-清场（在录制所在的那个仓库检出里执行；示例按 `D:\Code\era`）：
+清场（在录制所在的那个仓库检出里执行）：
 
 ```
-del   target\Sav\save05.sav            # saveload 段写的槽 5（对照录制前的清单，多出来的都删）
+rm    target/Sav/save05.sav            # saveload 段写的槽 5（对照录制前的清单，多出来的都删）
 git checkout -- target/Sav/global.sav  # 游戏会自动改写全局档，还原它
 git status                             # 确认只剩 emuera.config 改动
 ```

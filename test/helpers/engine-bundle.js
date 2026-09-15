@@ -35,21 +35,17 @@ const REPO_ROOT = path.resolve(__dirname, '..', '..');
  * （本文件、tools/mutation-check.mjs、tools/engine-contract-check.mjs），
  * 漂移由 test/asar-candidates.test.js 判红。
  *
- * 后三条是为「worktree 里没有引擎」准备的：`ere-4.8.0-win-x64/` 不进 git
- * （.gitignore:15），所以 worktree 与 mutation-check 的并行副本都够不着仓库
- * 内那条，只剩绝对路径可回落。#113 验收踩过这个坑——几十个用例静默 skip
- * 而测试仍报绿。
- *   ~/.era-engine/app.asar  跨机器的约定位置，放本地盘（WSL 下 9p 慢 1.5 倍）
- *   /mnt/d/…                主 checkout 的 WSL 形式；下一条的 Windows 形式在
- *                           WSL 里解析不了，两条都留着才是「两个平台各有一条」
+ * 最后一条 `~/.era-engine/app.asar` 是为「worktree 里没有引擎」准备的：
+ * `ere-4.8.0-win-x64/` 不进 git（.gitignore:15），所以 worktree 与
+ * mutation-check 的并行副本都够不着仓库内那条，只剩它可回落。#113 验收踩过
+ * 这个坑——几十个用例静默 skip 而测试仍报绿。它是跨机器的约定位置，asar 与
+ * 平台无关，换机器只需把文件放到这个路径上。
  */
 const ASAR_CANDIDATES = () =>
   [
     process.env.ERE_ENGINE_ASAR,
     path.join(REPO_ROOT, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
     path.join(os.homedir(), '.era-engine', 'app.asar'),
-    '/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar',
-    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
   ].filter(Boolean);
 
 function locate_asar() {

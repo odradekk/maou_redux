@@ -421,16 +421,14 @@ function run_gates(shards, entries, args) {
 /** 候选位置与 test/helpers/engine-bundle.js 同款，逐条理由见那里的注释；
  *  漂移由 test/asar-candidates.test.js 判红。
  *
- *  **并行模式尤其依赖后三条绝对路径**：COPY_DENY 把 ere-4.8.0-win-x64 排除在
- *  副本外（见那里的注释），子进程在副本里跑，仓库内那条必然落空。少了它们，
- *  有引擎的机器上 --jobs 会得到「引擎在场却有 N 条按跳过处理」而整体判红。 */
+ *  **并行模式尤其依赖 ~/.era-engine 那条**：COPY_DENY 把 ere-4.8.0-win-x64
+ *  排除在副本外（见那里的注释），子进程在副本里跑，仓库内那条必然落空。少了
+ *  它，有引擎的机器上 --jobs 会得到「引擎在场却有 N 条按跳过处理」而整体判红。 */
 const ASAR_CANDIDATES = (root) =>
   [
     process.env.ERE_ENGINE_ASAR,
     path.join(root, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
     path.join(os.homedir(), '.era-engine', 'app.asar'),
-    '/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar',
-    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
   ].filter(Boolean);
 
 function locate_asar(root, explicit) {

@@ -10,29 +10,27 @@
 
 先读这几条，否则后面每一步都会踩。
 
-- Windows 上 CLI 就是 `orca`；Linux 下用 `orca-ide`（裸 `orca` 是 GNOME 屏幕阅读器）。动手前 `orca status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
-- **WSL 会话是个例外**：环境变量 `ORCA_CLI_COMMAND` 写着 `orca-ide`，但这台机器上没有这个可执行文件。可用的是 Windows 端的 `orca.exe`（在 PATH 上，`…/AppData/Local/Programs/orca/resources/bin`），它与 app 是同一份安装。
+- **本机（Fedora）用 `orca-ide`**，可执行文件在 `/opt/Orca/resources/bin/orca-ide`。PATH 上的裸 `orca` 是 Orca 自己装的转发脚本（`~/.config/orca/linux-orca-cli-shim/orca`，`exec` 到同一个文件），两个名字等效——但**文档里一律写 `orca-ide`**，因为裸 `orca` 在没装这个脚本的 Linux 机器上是 GNOME 屏幕阅读器。动手前 `orca-ide status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
 - **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 17 次派发里出现 16 次，每次 worktree 都已在服务端建成**；阶段 3 后期连续四张票全是假失败）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，等 50 秒足够它出现；否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
   - **`terminal list` 里通常有不止一个 handle**：setup 钩子跑 `npm install` 的那个也在。**别挑错**——setup 那个的 `terminal read` 里是 `setup-runner.sh` 与 `npm audit` 的收尾输出。§3 的派法自己建终端并拿到 handle，不用猜。
 - **worktree 选择器一律用 `issue:<票号>`。** 派单场景下票号本来就有，不必先查 list，也绕开下面两个坑：
   - **`name:` 认的是 `displayName`，而它未必等于你传的 `--name`**：`--name t119-s7-kyoten` 实际落成 `odradekk/t119-s7-kyoten`，于是 `name:t119-s7-kyoten` 报错、`name:odradekk/t119-s7-kyoten` 才对。
-  - **`path:` 只认 `worktree list` 返回的那个串本身，而 WSL 上它是 UNC 形式**：`\\wsl.localhost\Debian\home\bam00n\orca\workspaces\era\<name>`。手写 POSIX 路径 `/home/bam00n/orca/workspaces/era/<name>` **必然报 `selector_not_found`**（#382 派单实测）。
-  - 同一棵树上 `issue:`、`branch:`、`path:`（UNC 形式）三种实测都通；`worktree list --json` 的条目**没有 `name` 字段**，照它写解析脚本会取到空。
+  - **`path:` 只认 `worktree list` 返回的那个串本身。** 本机上它是普通 POSIX 路径（`worktree list --json` 的 `path` 字段直接可用），照抄即可——WSL 时代的 UNC 形式（`\\wsl.localhost\…`）已随迁移消失，别再照旧文档避坑。
+  - 同一棵树上 `issue:`、`branch:`、`path:` 三种实测都通；`worktree list --json` 的条目**没有 `name` 字段**，照它写解析脚本会取到空。
 - **`--issue <N>` 不保证写上关联**：实测建出来的 worktree `linkedIssue` 仍是 `null`。卡片上看不到关联不代表 worktree 建错了，别据此重建。
-- **仓库里的 `orca.yaml` 钩子不会执行**（`commandSourcePolicy` 是 `local-only`，实测带 `--run-hooks` 删 worktree 时仓库脚本一行没跑）。所以钩子配在 Orca 的 **Settings → Repository → Hooks**，CLI 无法写这个字段。**WSL 基座的 `npm install` 钩子已配好**，新 worktree 建成即可直接 `npx eslint` / `npx prettier`，无须 `npm ci`。两个仓库 `displayName` 都是 `era`，GUI 里配错过一次——用 `orca repo list --json` 核对 `hookSettings.scripts.setup` 落在哪个 id 上。
+- **仓库里的 `orca.yaml` 钩子不会执行**（`commandSourcePolicy` 是 `local-only`，实测带 `--run-hooks` 删 worktree 时仓库脚本一行没跑）。所以钩子配在 Orca 的 **Settings → Repository → Hooks**，CLI 无法写这个字段。**本机的 `npm install` 钩子已配好**，新 worktree 建成即可直接 `npx eslint` / `npx prettier`，无须 `npm ci`。配没配上用 `orca-ide repo list --json` 核对 `hookSettings.scripts.setup`。
 - 由此可知：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了，要留下的东西，删之前必须已经推走。
-- `.worktreeinclude` 会把主 checkout 的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**主 checkout 那份必须是 `"static": "yml"`**，否则每个新 worktree 一开就是坏的。
+- `.worktreeinclude` 会把基座的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**基座那份必须是 `"static": "yml"`**（或干脆不存在，引擎会按默认重建），否则每个新 worktree 一开就是坏的。
 
-### 两个 checkout，各管一头
+### 只有一个 checkout
 
-|                 | 路径                              | 用途                                                                                         | Orca 仓库 id                           |
-| --------------- | --------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------- |
-| **主 checkout** | `D:\Code\era` = `/mnt/d/Code/era` | **只做引擎手工验收**：GUI 引擎是 Windows 程序，必须留在 Windows 盘上。合并后 `git pull` 同步 | `f7e86ea9-1881-436f-9e29-d71dcbaae393` |
-| **WSL 基座**    | `/home/bam00n/era`                | **所有 agent worktree 从它建**，落点 `~/orca/workspaces/era/<name>`                          | `71b28045-8ed3-4485-a036-2db90ae7758b` |
+|          | 路径                                | Orca 仓库 id                           |
+| -------- | ----------------------------------- | -------------------------------------- |
+| **基座** | `/home/odradek/Projects/maou_redux` | `b4d96f17-9de0-431d-b167-1c7e08b08c3a` |
 
-**派单一律用 WSL 那个 id。** `/mnt/d` 是 9p 文件系统（WSL 访问 Windows 盘的协议），同一套自检在上面慢 1.5 倍且方差大得多——实测 `npm test` 中位 27s（26–32），ext4 上 18s（16–18）。两个仓库在 Orca 里 `displayName` 都是 `era`，**按名字选会撞**，所以选择器用 `id:`，别用 `name:`。
+**所有 agent worktree 从它建，引擎手工验收也在它上面做。** WSL 时代的「Windows 盘一份、WSL 一份」分裂已随迁移取消——引擎在 Linux 上直接跑得起来（见 AGENTS.md「运行与调试」），没有再留第二份的理由。
 
-两边都以 GitHub 为准同步（`git pull --ff-only origin master`），互不引用。
+`displayName` 是 `maou_redux`，本机唯一，但**派发仍写 `--repo id:`**：名字将来撞了不会报错，只会建错地方。
 
 ## 1. 选票与认领
 
@@ -58,9 +56,9 @@ gh api repos/odradekk/maou_redux/actions/runs/<id>/jobs \
 
 **零步骤 + `runner_name` 为空 + 秒级失败 = 基础设施**（权限、被 `concurrency` 取消、runner 排队），与代码无关；有 runner 有步骤才去查代码。**配额已不是原因**——仓库自 #302 起公开，标准 runner 分钟数免费不限量；**取消才是**：`concurrency` 只对 PR 开 `cancel-in-progress`，连着合 PR 时旧的 master push 运行会被掐掉并记成 failure（#302 实测 40 次 push 事件里 11 cancelled、8 failure、0 成功，failure 的 job 都只跑了 3–4 秒）。两次连红都是有人为别的事顺手 `gh run list` 才撞见的（18 次 4 天：`ENGINE_SKIP_BASELINE` 差 1，真 bug；15 次 2 天：零 runner）。第二次照第一次的形态白查了一轮 eslint/prettier/裸克隆，**先看 runner 能省这一轮**。
 
-CI 红期间 master 的绿红没有信息量，这比红本身危险：真回归也看不出来。**本地补信号要补到 §5.6 的阶段闸那一档**（不是每票的 T3）——CI 平时替我们跑的是无引擎那半边，它一停就没有别的执行点了（全量变异本来就在阶段闸上，见下表 T4）。engineless 那半边要在 `/tmp` 裸克隆里跑并显式 `ERE_ENGINE_ASAR=none`（回落会摸到主 checkout 的引擎）。
+CI 红期间 master 的绿红没有信息量，这比红本身危险：真回归也看不出来。**本地补信号要补到 §5.6 的阶段闸那一档**（不是每票的 T3）——CI 平时替我们跑的是无引擎那半边，它一停就没有别的执行点了（全量变异本来就在阶段闸上，见下表 T4）。engineless 那半边要在裸克隆里跑并显式 `ERE_ENGINE_ASAR=none`（回落会摸到 `~/.era-engine/` 的引擎）。
 
-同时最多 5 个工单。派新单前先数一遍在跑的（不含主 checkout `master`）：
+同时最多 5 个工单。派新单前先数一遍在跑的（不含基座的 `master`）：
 
 ```
 orca worktree ps --json
@@ -90,10 +88,10 @@ orca worktree ps --json
 
 ```
 # 1. 建 worktree——不带 --agent（理由见下）
-#    失败返回先当假失败处理，见 §0；--repo 必须显式给 WSL 基座的 id
-orca worktree create --name t<N>-<slug> --no-parent --issue <N> \
-  --repo id:71b28045-8ed3-4485-a036-2db90ae7758b --json
-orca worktree list --json          # 无论上一步返回什么，都来这一下确认建成了（不必取 path，下面用 issue:）
+#    失败返回先当假失败处理，见 §0；--repo 必须显式给基座的 id
+orca-ide worktree create --name t<N>-<slug> --no-parent --issue <N> \
+  --repo id:b4d96f17-9de0-431d-b167-1c7e08b08c3a --json
+orca-ide worktree list --json          # 无论上一步返回什么，都来这一下确认建成了（不必取 path，下面用 issue:）
 
 # 2. 起 agent：自己建终端，命令行里带模型与思考强度
 orca terminal create --worktree "issue:<N>" --title AGENT \
@@ -112,7 +110,7 @@ orca worktree set --worktree "issue:<N>" --comment "<一句话>" --workspace-sta
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
 - `--no-parent`：工单彼此独立。基线省略 `--base-branch`，用仓库默认 base（`origin/master`）。
-- **`--repo` 不能省。** 省略时 Orca 从当前目录推断，而派单会话通常就在主 checkout 里——那会把 worktree 建到 9p 上，白丢 1.5 倍速度。两个仓库同名，只能用 `id:`（见 §0 的表）。
+- **`--repo` 不能省。** 省略时 Orca 从当前目录推断，而派单会话未必在基座目录里；显式给 `id:` 是唯一不依赖当前目录的写法（id 见 §0 的表）。
 
 **为什么不用 `--agent pi`：它只接一个固定的 TUI id，带不了参数**，于是模型只能落到 `~/.pi/agent/settings.json` 的默认值（当前是 `cpa/deepseek-v4-flash`——一个 flash 模型去啃两千行的移植票）。`terminal create --command` 收任意命令行，这是**唯一能指定模型的派法**，Orca 自己的注解也推荐它（「for a fresh agent in the current checkout」）。
 
@@ -254,7 +252,7 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 
 **分支落后 master 时，先按 §5.5 rebase 再验收**——否则要验两遍。
 
-**不必再 `export ERE_ENGINE_ASAR`。** asar 按 `ASAR_CANDIDATES` 逐条回落（含 `~/.era-engine/` 与 `/mnt/d/Code/era` 两条绝对路径），worktree 里没有 `ere-4.8.0-win-x64/` 也能命中；三处定位的同步由 `test/asar-candidates.test.js` 判红。**代价是「无引擎」不再能靠不设变量制造**（`env -u` 照样命中回落），要造得用显式开关 `ERE_ENGINE_ASAR=none`，见 §5.6。
+**不必 `export ERE_ENGINE_ASAR`。** asar 按 `ASAR_CANDIDATES` 逐条回落到 `~/.era-engine/app.asar`，worktree 里没有仓库内那份也能命中；三处定位的同步由 `test/asar-candidates.test.js` 判红。**代价是「无引擎」不再能靠不设变量制造**（`env -u` 照样命中回落），要造得用显式开关 `ERE_ENGINE_ASAR=none`，见 §5.6。
 
 ### 分层：agent 跑 T1/T2，CI 跑 T3，派单人只做机器做不了的
 
@@ -478,7 +476,7 @@ git show <本票 sha>:<path>              # 从这里抽出本票新增的条目
 触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。三项：
 
 1. **全量变异（带引擎）**：`node tools/mutation-check.mjs --jobs 4`。**严格标准是「全部拦下、零跳过、零红」。** 本机满速跑一次比在 4 核 runner 上挂 100 分钟划算，所以它自阶段 4 收尾起不再挂 CI 的自动触发（`workflow_dispatch` 留着，不守着本机时可以点一轮）。
-2. **引擎手工验收**：在主 checkout（`D:\Code\era`）里启动引擎跑一遍本阶段的贯通路径。CI 没有 GUI，这件事机器做不了。
+2. **引擎手工验收**：启动引擎跑一遍本阶段的贯通路径（启动命令见 AGENTS.md「运行与调试」，【打开游戏】选基座目录）。CI 没有 GUI，这件事机器做不了。
 3. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
 
 **全量唯一能抓、按面跑抓不到的那类，长这样。** 阶段 5a 收口报出红 5，两轮全量逐条相同、串行单跑也稳定复现。一条是真缺口：`test/dungeon-trap.test.js` 那条 `run_dungeon` 集成用例断言 `CFLAG:502 = 1`，而 MAGIC 从存根换成真身之后，战斗臂里 `dungeon.js:678` 的 `walk20 = move_ctx.d20` 同样会写出 1（TELEPORT_MAGIC 与陷阱 TELEPORT 落同一个值），两条路合流——**删掉陷阱那条收线，用例照样绿**。**A 子系统落真身，让 B 子系统的用例失去了区分能力**，而票只跑自己新加的 `--ids`、没人会重跑别人的旧条目，所以这一类只有全量看得见。
@@ -500,11 +498,10 @@ ERE_ENGINE_ASAR=none bash tools/capped.sh node tools/mutation-check.mjs --asar n
 ```
 gh pr create --repo odradekk/maou_redux --base master --head <branch> --title "<conventional commit>" --body-file -
 gh pr merge <pr> --repo odradekk/maou_redux --merge --delete-branch
-git -C /home/bam00n/era pull --prune --ff-only origin master   # WSL 基座：下一张票的建树基线
-git -C /mnt/d/Code/era  pull --prune --ff-only origin master   # 主 checkout：引擎手工验收用
-git -C /home/bam00n/era branch -d <branch>                     # 本地分支，-d 会拒绝未合并的
-orca.exe worktree rm --worktree "issue:<N>" --force --json
-orca.exe terminal close --terminal <handle> --json              # worktree 删了终端不会自己走
+git -C ~/Projects/maou_redux pull --prune --ff-only origin master   # 基座：下一张票的建树基线，也是引擎手工验收用的那份
+git -C ~/Projects/maou_redux branch -d <branch>                     # 本地分支，-d 会拒绝未合并的
+orca-ide worktree rm --worktree "issue:<N>" --force --json
+orca-ide terminal close --terminal <handle> --json                  # worktree 删了终端不会自己走
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
 
@@ -519,7 +516,7 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
   阶段 5a 为此付过账：`test:related` 按改动面选不中 `test/compare-scope-b.test.js`，六条对拍基线锁从 #348 合并起**连红四次无人看**，四张票都是「`gh pr checks` 显示 pass 就合并」。同一形态在本阶段发生了两次（首次 #339，master 连红三次），第一次是主动翻 CI 列表才发现的。**「PR 绿」是必要条件，「master push 绿」才是这张票真的过了。**
 
 - **改到 `.github/workflows/` 的分支要用 `env -u GITHUB_TOKEN` 推**：环境变量里那个 PAT 缺 `workflow` scope，remote 会直接拒收（`refusing to allow a Personal Access Token to create or update workflow`）；`~/.config/gh/hosts.yml` 里的细粒度 token 有。`gh pr create` / `gh pr merge` 同理。
-- **两个 checkout 都要 pull**（见 §0 的表）。漏掉 WSL 基座那条，下一张票就会从旧 master 建树，撞上 §5.5 表里那几处冲突。
+- **基座要 pull**（见 §0 的表）。漏掉它，下一张票就会从旧 master 建树，撞上 §5.5 表里那几处冲突。
 - **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
 - **一张票要清六处，少一处就「看着还开着」。** 本仓库 `deleteBranchOnMerge` 是 false，所以远端分支要靠 `--delete-branch` 删；删掉之后两个 checkout 的跟踪引用**不会自己消失**，得 `--prune`。worktree 用 `git worktree remove` 删也行，但 orca 的**终端会话不跟着走**——#344 就是这么留下一个指向已删目录的终端，看起来像票没关完。合并后跑一遍复核：
 
@@ -529,13 +526,13 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
   gh issue view <n> --repo odradekk/maou_redux --json state -q .state   # CLOSED
   gh pr view <pr>  --repo odradekk/maou_redux --json state -q .state    # MERGED
   git ls-remote --heads origin "odradekk/t<n>*"                          # 空
-  git -C /home/bam00n/era branch -a --list "*t<n>*"                      # 空
-  git -C /home/bam00n/era worktree list                                  # 无本票
-  orca.exe terminal list --json                                          # 无本票标题
+  git -C ~/Projects/maou_redux branch -a --list "*t<n>*"                 # 空
+  git -C ~/Projects/maou_redux worktree list                             # 无本票
+  orca-ide terminal list --json                                          # 无本票标题
   ```
 
-- **`orca` 在 WSL 里不是裸名字。** `ORCA_CLI_COMMAND` 报的是 `orca-ide`，但本机没装；PATH 上有 `/mnt/c/Users/s1n19/AppData/Local/Programs/orca/resources/bin`，里面只有 `orca.cmd` 与 `orca.exe`，所以**要写 `orca.exe`**，裸 `orca` 报 command not found。版本匹配的完整用法用 `orca.exe skills get orca-cli` 取，别凭记忆写子命令。
-- **需要启动引擎的手工验收，在合并之后、在主 checkout `D:\Code\era` 上做**：引擎【打开游戏】指向的是主 checkout，worktree 的存档也不会保留。这一步只有人能做，agent 的职责是交出**可复现的置位步骤**（改哪几行、从哪个画面进、看哪几个点），做完回票补一条确认评论。
+- **CLI 写 `orca-ide`**（理由见 §0）。版本匹配的完整用法用 `orca-ide skills get orca-cli` 取，别凭记忆写子命令——命令面随 Orca 版本变，本文档里的写法只保证写下时可用。
+- **需要启动引擎的手工验收，在合并之后、在基座上做**：引擎【打开游戏】指向的是基座目录，worktree 的存档也不会保留。这一步只有人能做，agent 的职责是交出**可复现的置位步骤**（改哪几行、从哪个画面进、看哪几个点），做完回票补一条确认评论。
 
   临时置位那几行**绝不能提交**：验完 `git checkout -- <文件>` 撤回，`git status` 确认干净。置位常常会让某条「全量写入」类用例变红（`test/event-first.test.js` 的 `expected_init_writes` 就是），**那是预期的，不要去改测试**。
 

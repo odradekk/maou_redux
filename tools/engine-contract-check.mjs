@@ -62,8 +62,6 @@ const ASAR_CANDIDATES = () =>
     process.env.ERE_ENGINE_ASAR,
     path.join(REPO, 'ere-4.8.0-win-x64', 'resources', 'app.asar'),
     path.join(os.homedir(), '.era-engine', 'app.asar'),
-    '/mnt/d/Code/era/ere-4.8.0-win-x64/resources/app.asar',
-    'D:\\Code\\era\\ere-4.8.0-win-x64\\resources\\app.asar',
   ].filter(Boolean);
 
 function locate_asar(explicit) {
@@ -336,7 +334,7 @@ function run() {
   const asar_path = locate_asar(explicit_asar);
   if (!asar_path) {
     console.warn(
-      '⚠ [engine-contract-check] 未找到 app.asar（--asar / ERE_ENGINE_ASAR / 仓库内 / D:\\Code\\era 四处都没命中）——锚点校核跳过（引擎比对是加强项，与 test 侧 skip 同一标准）；调用点规则与条目表两项检查照跑',
+      '⚠ [engine-contract-check] 未找到 app.asar（--asar / ERE_ENGINE_ASAR / 仓库内 / ~/.era-engine 四处都没命中）——锚点校核跳过（引擎比对是加强项，与 test 侧 skip 同一标准）；调用点规则与条目表两项检查照跑',
     );
   } else {
     const result = check_anchors(asar_path);

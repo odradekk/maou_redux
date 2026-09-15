@@ -77,7 +77,7 @@ test('三处 asar 候选列表逐条同序相等', () => {
   }
 });
 
-test('候选列表覆盖 worktree 场景：仓库内那条之外必须有绝对路径回落', () => {
+test('候选列表覆盖 worktree 场景：仓库内那条之外必须有 ~/.era-engine 回落', () => {
   const items = extract_candidates(
     fs.readFileSync(path.join(REPO_ROOT, SOURCES[0]), 'utf8'),
     SOURCES[0],
@@ -88,13 +88,16 @@ test('候选列表覆盖 worktree 场景：仓库内那条之外必须有绝对�
   const repo_local = items.filter((i) => i.includes('<ROOT>'));
   assert.equal(repo_local.length, 1, '仓库内候选应恰有一条');
 
-  const absolute = items.filter(
-    (i) => !i.includes('<ROOT>') && !i.includes('process.env'),
+  // 与仓库位置无关的那条回落：asar 本身跨平台，放在 home 下对 worktree、
+  // 变异并行副本、以及任何一台新机器都有效
+  const homedir_fallback = items.filter(
+    (i) => i.includes('os.homedir()') && i.includes('.era-engine'),
   );
-  assert.ok(
-    absolute.length >= 1,
+  assert.equal(
+    homedir_fallback.length,
+    1,
     'ere-4.8.0-win-x64/ 不进 git，worktree 与并行副本够不着仓库内那条，' +
-      '必须至少留一条绝对路径回落，否则引擎用例会整片静默 skip',
+      '必须留 ~/.era-engine 这条回落，否则引擎用例会整片静默 skip',
   );
 
   assert.ok(
@@ -104,9 +107,9 @@ test('候选列表覆盖 worktree 场景：仓库内那条之外必须有绝对�
 });
 
 test('三处都认 ERE_ENGINE_ASAR=none（SOP 跳过基线核对的唯一开关）', () => {
-  // 候选列表里有绝对路径回落之后，`env -u ERE_ENGINE_ASAR` 不再等于无引擎
-  // ——它照样命中 ~/.era-engine 或 /mnt/d 那条。SOP 第 2 步「跳过基线核对
-  // （不带引擎）」于是完全依赖这个显式开关，三处缺一它就名存实亡。
+  // 候选列表里有 ~/.era-engine 回落之后，`env -u ERE_ENGINE_ASAR` 不再等于
+  // 无引擎——它照样命中那条。SOP 第 2 步「跳过基线核对（不带引擎）」于是
+  // 完全依赖这个显式开关，三处缺一它就名存实亡。
   for (const rel of SOURCES) {
     const text = fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
     assert.match(
@@ -157,13 +160,13 @@ test('自证：候选顺序被打乱时本锁必须报出来', () => {
   [
     process.env.ERE_ENGINE_ASAR,
     path.join(REPO_ROOT, 'a', 'app.asar'),
-    '/mnt/d/x/app.asar',
+    '/opt/x/app.asar',
   ].filter(Boolean);`;
   // 只交换后两条的次序，条目集合完全相同——「都含某几条」式的写法会漏掉它
   const swapped = `const ASAR_CANDIDATES = () =>
   [
     process.env.ERE_ENGINE_ASAR,
-    '/mnt/d/x/app.asar',
+    '/opt/x/app.asar',
     path.join(REPO, 'a', 'app.asar'),
   ].filter(Boolean);`;
 
