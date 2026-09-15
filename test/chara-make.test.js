@@ -118,11 +118,7 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
       `${name} 的占位行可见（登记项）`,
     );
   }
-  for (const name of [
-    'FAMILY_REGISTER',
-    'CHAR_BODY_GENERATE_WAPPED',
-    'ST_UP',
-  ]) {
+  for (const name of ['FAMILY_REGISTER', 'ST_UP']) {
     assert(
       !texts.some((line) => line.includes(`@${name}`)),
       `${name} 不触发（条件不达）`,
@@ -221,16 +217,26 @@ test('新手烙印：DAY > 60 不盖', async () => {
 
 // —— 身体数据段（:114-117）与家族登记（:100-102）——
 
-test('FLAG:5 位 12 开：CHAR_BODY_GENERATE_WAPPED 占位可见', async () => {
+test('FLAG:5 位 12 开：CHAR_BODY_GENERATE_WAPPED 真身落盘', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:5', 4096); // GETBIT(FLAG:5,12)
   const { chara_make } = load(fixture);
   await chara_make(1, 0, 0, never);
-  assert(
+  // #385 起为真身（ere/chara/chara-body.js）：CFLAG:451-457 是判据，
+  // 占位行不再出现。年龄受 LIMIT(12,35) 约束，身高/体重为正数。
+  const age = fixture.store.get('cflag:1:451');
+  assert.ok(
+    Number.isInteger(age) && age >= 12 && age <= 35,
+    `年龄落在 LIMIT(12,35) 内（实际 ${age}）`,
+  );
+  assert.ok(fixture.store.get('cflag:1:453') > 100, '身高（厘米）已落盘');
+  assert.ok(fixture.store.get('cflag:1:454') > 10, '体重（公斤）已落盘');
+  assert.equal(
     stub_texts(fixture).some((line) =>
       line.includes('@CHAR_BODY_GENERATE_WAPPED'),
     ),
-    '身体数据生成的占位行可见（登记项）',
+    false,
+    '已落真身，不得再出现存根占位行',
   );
 });
 

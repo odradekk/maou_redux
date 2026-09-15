@@ -46,6 +46,7 @@ const { family_register, search_family } = require('#/chara/chara-family');
 const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
 const { chara_name_random_define } = require('#/chara/chara-name');
 const { random_self_call } = require('#/chara/chara-self-call'); // #383 起真身
+const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
@@ -57,7 +58,6 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'CHAR_BODY_GENERATE_WAPPED',
   'LOOK_SET',
   'CHARA_FIRST_EXP',
   'CMI_CONFLICT_CHECK',
@@ -168,14 +168,12 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   // :112 一人称の設定（ere/chara/chara-self-call.js 的 #383 实现复用）
   random_self_call(cid);
 
-  // :114-117 年齢/身長表示设定（FLAG:5 位 12/15）时生成身体数据
+  // :114-117 年齢/身長表示设定（FLAG:5 位 12/15）时生成身体数据（真身自
+  // #385 起在 ere/chara/chara-body.js；此处照原作只判 FLAG:5，不判 CFLAG
+  // 是否已有——函数内部的守卫与 :114 的判据同源）
   const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
   if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
-    await stub_line_wait(
-      'CHAR_BODY_GENERATE_WAPPED',
-      '角色身体数据生成',
-      '随角色身体票',
-    );
+    char_body_generate_wapped(cid, rand_n); // :116 CALL CHAR_BODY_GENERATE_WAPPED
   }
 
   // :119-120 SWAP A, ARG / RETURN ARG —— 传参消解

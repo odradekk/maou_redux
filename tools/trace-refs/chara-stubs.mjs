@@ -95,6 +95,250 @@ export const FILES = [
         ref: '388-412',
         any: [/@STATISTICS_MAN\(ARG = 18\)/],
       },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '16-36',
+        any: [/@CHAR_BODY_GENERATE_WAPPED, ARG/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '18-19',
+        any: [/SIF !GETBIT\(FLAG:5,12\) && !GETBIT\(FLAG:5,15\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '22-25',
+        any: [/IF TALENT:ARG:165[\s\S]*ELSEIF TALENT:ARG:171/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '23',
+        any: [/RAND:2 \+ 12/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '25',
+        any: [/RAND:2 \+ 17/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '27',
+        any: [/^\tCALL CHAR_SIZE_GENERATE, ARG$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '30-36',
+        any: [/CFLAG:ARG:451 = RESULT:0/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '148-242',
+        any: [/@CHAR_AGE_GENERATE, ARG/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '171-174',
+        any: [/EXP_AGE = CHAR_AGE_EXPECT\(TARGET\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '176',
+        any: [/^LOCAL = EXP_AGE$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '178',
+        any: [/EXP_AGE = LIMIT\(EXP_AGE,12,35\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '180-181',
+        any: [/CALL NORMAL_POINT_PICKUP\(EXP_AGE\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '212-225',
+        any: [/CALL RF_ALL\(TARGET, -1, L_DATA, 1\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '215',
+        any: [/L_B_TYPE = L_DATA:\(L_I \*2\+1\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '216-223',
+        any: [/ELSEIF \(L_B == 5 \|\| L_B == 6\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '228-229',
+        any: [/SIF EX_TALENT:ARG:2/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '231',
+        any: [/PRINTFORML %SAVESTR:TARGET,10,LEFT%年龄期望/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '234-235',
+        any: [/CALL RACE_AGE_GENERATE, CHAR_AGE, TALENT:314/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '240-241',
+        any: [/SIF CHAR_AGE <= 14/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '245-337',
+        any: [/@RACE_AGE_GENERATE, ARG:0, ARG:1/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '267-276',
+        any: [/IF ARG:1 >= 7 && ARG:1 < 10[\s\S]*RETURN ARG:0/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '280-282',
+        any: [/RACE_ID = ARG:1 - 1/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '285-292',
+        any: [/FLAG:27 \/ POWER\(1000, \(RACE_ID - 6\)\) % 1000/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '285-296',
+        any: [/コンフィグで設定された种族ごとの設定値を取得/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '382-393',
+        any: [/コンフィグで設定された种族ごとの設定値を取得/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '289',
+        any: [/RACE_CLA = FLAG:27 \/ POWER\(1000, \(RACE_ID - 6\)\) % 1000/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '291',
+        any: [/RACE_CLA = FLAG:26 \/ POWER\(1000, \(RACE_ID\)\) % 1000/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '294-296',
+        any: [/RACE_DEG = RACE_CLA \/ 10 % 10/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '299-300',
+        any: [/RACE_AGE = ARG:0 \* RACE_NUM \* POWER\(10, RACE_DEG\) \+ RAND:/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '299-335',
+        any: [/ELSEIF RACE_CLA == 4/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '302-303',
+        any: [/RACE_AGE = ARG:0 \* \(RACE_DEG \* 10 \+ RACE_NUM\) \/ 10/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '305-312',
+        any: [/CAL_VAR:1 = POWER\(10, RAND:\(RESULT \+ 1\)\) \* 10/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY2.ERB',
+        ref: '306-323',
+        any: [/@NORMAL_POINT_PICKUP\(ARG\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '309',
+        any: [/POWER\(10, RAND:\(RESULT \+ 1\)\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '314-315',
+        any: [/RACE_AGE = RAND:\(RACE_NUM \* POWER\(10, RACE_DEG\) \/ 2\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '317-335',
+        any: [
+          /ELSEIF RACE_CLA == 4[\s\S]*RACE_AGE = RAND:\(RACE_AGE - ARG:0\) \+ ARG:0/,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '337',
+        any: [/^RETURN RACE_AGE$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '340-406',
+        any: [/@HUMAN_AGE_GENERATE, ARG:0, ARG:1/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '361',
+        any: [/RACE_NO = TALENT:\(ARG:1\):314/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '364-373',
+        any: [/IF RACE_NO >= 7 && RACE_NO < 10[\s\S]*RETURN ARG:0/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '377-379',
+        any: [/RACE_ID = RACE_NO - 1/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '391-393',
+        any: [/RACE_DEG = RACE_CLA \/ 10 % 10/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '396-397',
+        any: [/HUMAN_AGE = ARG:0 \/\(RACE_NUM \* POWER\(10, RACE_DEG\)\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '399-400',
+        any: [
+          /HUMAN_AGE = \(ARG:0 \* 10 \+ 5\) \/\(RACE_DEG \* 10 \+ RACE_NUM\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '402-404',
+        any: [/HUMAN_AGE = CFLAG:\(ARG:1\):452/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '781-850',
+        any: [/@CUP_SIZE, ARG/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '853-929',
+        any: [/@CONFIG_AGE_SETTING/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '931-1333',
+        any: [/@RACE_CONFIG/],
+      },
     ],
   },
   {

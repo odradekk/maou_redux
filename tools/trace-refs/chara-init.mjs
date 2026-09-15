@@ -92,6 +92,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE_INIT.ERB',
+        ref: '32',
+        any: [/CALL CHAR_BODY_GENERATE_WAPPED, L_A/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE_INIT.ERB',
         ref: '54',
         any: [/^RETURN L_A$/m],
       },

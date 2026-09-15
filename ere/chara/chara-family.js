@@ -552,6 +552,18 @@ function family_birth_to_dad(child, father, rand = default_rand) {
   return rf_join_to(child, father, 5, 0, rand);
 }
 
+/**
+ * @CHAR_AGE_EXPECT（CHARA_BODY.ERB:39-144，式中函数）：根据素质与经历推算
+ * 相对年龄（返回值域约 (-16, +30)）。
+ *
+ * 真身落在本文件（#349 先落地，供 RELATION_FAMILY.ERB:81/:113 与
+ * FAMILY_REGISTER_SLAVE 使用），#385 起由 ere/chara/chara-body.js 的
+ * @CHAR_AGE_GENERATE 复用——同一函数不复制第二份。原作写法是 SWAP TARGET
+ * 后读裸 TALENT/EXP，ere 侧按 cid 显式寻址，无 TARGET 换手。
+ *
+ * @param {number} cid 角色 ID
+ * @returns {number} 相对年龄修正值
+ */
 function char_age_expect(cid) {
   let age = 0;
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
@@ -792,6 +804,7 @@ module.exports = {
   family_birth_to_dad,
   family_print_info,
   family_info,
+  char_age_expect,
   rf_count,
   rf_first,
   rf_all,

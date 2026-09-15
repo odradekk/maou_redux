@@ -25,18 +25,19 @@
  */
 
 const era = require('#/era-electron');
-const { stub_line_wait } = require('#/utils/stub-line');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { random_self_call } = require('#/chara/chara-self-call'); // #383 起真身
+const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
 const { chara } = require('#/facade/chara');
 const { st_up } = require('#/dungeon/dungeon-lvup');
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
  * ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js）、
  * SET_SUIT_SELFCALL/SET_NICK_SELFCALL/CSVCSTR 自 #383 起为真身
- * （ere/chara/chara-self-call.js），均移出名单。 */
-const STUBBED_CALLS = ['CHAR_BODY_GENERATE_WAPPED'];
+ * （ere/chara/chara-self-call.js）、CHAR_BODY_GENERATE_WAPPED 自 #385 起
+ * 为真身（ere/chara/chara-body.js），均移出名单。 */
+const STUBBED_CALLS = [];
 /**
  * @CHARA_INIT（CHAR_MAKE.ERB:22 JUMP 壳 → CHARA_MAKE_INIT.ERB:2 @CHARA_INIT）：
  * 初始化从预设加入的角色。
@@ -82,19 +83,15 @@ async function char_init(cid, rand) {
   random_self_call(cid);
 
   // :29-33 年齢/身長显示设定（FLAG:5 位 12/15，:30）且身体数据缺失（CFLAG:451
-  // == 0 || CFLAG:453 == 0）时生成。FLAG:5 是开局设置位图，窄路径恒 0；
-  // 身体数据生成本体已有登记（村娘线的调用点，EVENTFIRST:121）
+  // == 0 || CFLAG:453 == 0）时生成。FLAG:5 是开局设置位图，窄路径恒 0；真身
+  // 自 #385 起在 ere/chara/chara-body.js
   const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
   if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
     if (
       (era.get(`cflag:${cid}:451`) || 0) === 0 ||
       (era.get(`cflag:${cid}:453`) || 0) === 0
     ) {
-      await stub_line_wait(
-        'CHAR_BODY_GENERATE_WAPPED',
-        '角色身体数据生成',
-        '随角色身体票',
-      );
+      char_body_generate_wapped(cid, rand_n); // :32 CALL CHAR_BODY_GENERATE_WAPPED
     }
   }
 

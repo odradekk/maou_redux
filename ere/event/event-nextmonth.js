@@ -19,33 +19,21 @@
  *     CHARANUM——魔王不涨年龄；@EVENTFIRST 给魔王的 CFLAG:0:451 = 21
  *     因此恒定）。ere 侧按 #114 先例以 cid === 0 等价跳过。
  *   - HUMAN_AGE_GENERATE（キャラ関数/CHARA_BODY.ERB:340，种族年龄→人类
- *     年龄的换算，读 TALENT:314 种族与 FLAG:26/27 开局配置）存根：打占位行
- *     并返回 0——CFLAG:451 随之落 0。451 在侵略线窄路径上无消费者（结局
- *     演出/身体生成/调教研究域），无行为差异；真身随角色身体票落地。
+ *     年龄的换算，读 TALENT:314 种族与 FLAG:26/27 开局配置）自 #385 起为
+ *     真身（ere/chara/chara-body.js）——CFLAG:451 从此落真实换算值，不再
+ *     恒 0。
  *   - 原作循环里的 RESULT = 0（:34）是调用方清返回值的习语，ere 侧函数
  *     直接调用、无 RESULT 机制，不落。
  */
 
 const era = require('#/era-electron');
+const { human_age_generate } = require('#/chara/chara-body'); // #385 起真身
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = ['HUMAN_AGE_GENERATE'];
-
-/**
- * HUMAN_AGE_GENERATE 的存根：打一行占位并返回 RESULT = 0（换算未移植——
- * 角色身体票落地后换真身，见文件头移植说明）。
- * @returns {number} 存根 RESULT：恒 0
- */
-function stub_human_age_generate() {
-  stub_line('HUMAN_AGE_GENERATE', '种族年龄换算');
-  return 0;
-}
+/** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
+ * HUMAN_AGE_GENERATE 自 #385 起为真身（ere/chara/chara-body.js），移出名单。 */
+const STUBBED_CALLS = [];
 
 /**
  * 月替处理：各月末日则换月（原作 @EVENT_NEXTMONTH，被 #PRI 档在
@@ -80,7 +68,11 @@ async function run_event_nextmonth() {
         continue; // FOR AGE_COUNT, 1, CHARANUM 跳过 0 号位（魔王不涨年龄）
       }
       chara(cid).chara.种族年龄 += 1; // CFLAG:452 += 1（:31）
-      chara(cid).chara.年龄 = stub_human_age_generate(); // CFLAG:451 = RESULT（:32-33）
+      // :32-33 CALL HUMAN_AGE_GENERATE, CFLAG:452, AGE_COUNT → CFLAG:451
+      chara(cid).chara.年龄 = human_age_generate(
+        chara(cid).chara.种族年龄,
+        cid,
+      );
     }
   }
 }

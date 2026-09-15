@@ -9,8 +9,9 @@
  *
  * 窄路径的既定事实（chara-init.js 文件头）：菲娅 CFLAG:35:9 = 1（等级段
  * 不进）、CFLAG:35:450 无预设（一人称走 <9 直设）、FLAG:5 恒 0（身体数据
- * 段不进）。本文件另用注入态覆盖条件段的两个入口（等级段、身体数据段），
- * 守住条件结构 1:1。
+ * 段不进——真身自 #385 起在 ere/chara/chara-body.js，判据由占位行改为
+ * CFLAG:451 的写入）。本文件另用注入态覆盖条件段的两个入口（等级段、
+ * 身体数据段），守住条件结构 1:1。
  */
 
 const assert = require('node:assert/strict');
@@ -43,9 +44,10 @@ test('char_init 窄路径（菲娅形态）：一人称直设 + 无服装静默 
     !texts.some((line) => line.includes('@ST_UP')),
     'CFLAG:9 = 1 不 > 1：等级段不进（菲娅既定事实）',
   );
-  assert(
-    !texts.some((line) => line.includes('@CHAR_BODY_GENERATE_WAPPED')),
-    'FLAG:5 恒 0：身体数据段不进',
+  assert.equal(
+    fixture.store.get('cflag:35:451'),
+    undefined,
+    'FLAG:5 恒 0：身体数据段不进（#385 起真身，判据看写入而不是占位行）',
   );
 });
 
@@ -113,11 +115,20 @@ test('身体数据段条件 1:1：FLAG:5 位 12/15 开且 451/453 缺失才进',
   fixture.store.set('flag:5', 4096);
   const { char_init } = load(fixture);
   await char_init(35, () => 1);
+  // #385 起身体数据生成为真身（ere/chara/chara-body.js）：无素质的默认支
+  // 推算年龄 = 17 + 处女修正 1 = 18，取点 RAND:17 掷 1（-1）→ 17；未设种族
+  // 走 1 倍档，故 CFLAG:451 与 CFLAG:452 同为 17
+  assert.equal(
+    fixture.store.get('cflag:35:451'),
+    17,
+    '位 12 开 + CFLAG:451/453 缺失：身体数据真身落盘',
+  );
+  assert.equal(fixture.store.get('cflag:35:452'), 17, '种族年龄一并落盘');
   assert(
-    history_texts(fixture).some((line) =>
+    !history_texts(fixture).some((line) =>
       line.includes('@CHAR_BODY_GENERATE_WAPPED'),
     ),
-    '位 12 开 + CFLAG:451/453 缺失：身体数据生成占位可见（登记项）',
+    '已落真身，不得再出现存根占位行',
   );
 
   // 预设已带身体数据（CFLAG:451 = 10、CFLAG:453 = 1270 的菲娅形态）：
@@ -128,10 +139,10 @@ test('身体数据段条件 1:1：FLAG:5 位 12/15 开且 451/453 缺失才进',
   guard.store.set('cflag:35:453', 1270);
   const { char_init: init_guard } = load(guard);
   await init_guard(35, () => 1);
-  assert(
-    !history_texts(guard).some((line) =>
-      line.includes('@CHAR_BODY_GENERATE_WAPPED'),
-    ),
+  assert.equal(
+    guard.store.get('cflag:35:451'),
+    10,
     'CFLAG:451/453 均非 0：不生成',
   );
+  assert.equal(guard.store.get('cflag:35:452'), undefined, '种族年龄不被覆盖');
 });

@@ -89,6 +89,24 @@ function expected_init_writes(initial_slave) {
       { name: 'cflag:17:14', value: 15 },
       { name: 'cflag:17:16', value: -1 }, // :118 未定状态位
       { name: 'cflag:17:450', value: 31 }, // :119 一人称（自称）编号
+      // :121 CALL CHAR_BODY_GENERATE_WAPPED, 1（#385 起真身）：FLAG:5 的位
+      // 12/15 在 :31 已开（17179934119），故身体数据真的生成。写入顺序是
+      // CHAR_SIZE_GENERATE 先落胸围分量（CFLAG:458/459），再由
+      // CHAR_BODY_GENERATE_WAPPED 落七元组（451-457）。这九个值由
+      // Math.random ≡ 0 的确定随机源算出（本用例显式注入，见下）：
+      // 年龄 = 17 + 处女修正 1 = 18，取点 RAND:17 掷 0（-2）→ 16，未设
+      // 种族走 1 倍档 → CFLAG:452 = 16；身高 1549 / 体重 445 / 胸围 792 /
+      // 腰围 573 / 臀围 821 / 胸围差 125 / 下胸围 667（100 倍定点值的
+      // 百分之一，逐位算式见 CHARA_BODY.ERB:408-761 与 CHARA_BODY2.ERB）
+      { name: 'cflag:17:458', value: 125 },
+      { name: 'cflag:17:459', value: 667 },
+      { name: 'cflag:17:451', value: 16 },
+      { name: 'cflag:17:452', value: 16 },
+      { name: 'cflag:17:453', value: 1549 },
+      { name: 'cflag:17:454', value: 445 },
+      { name: 'cflag:17:455', value: 792 },
+      { name: 'cflag:17:456', value: 573 },
+      { name: 'cflag:17:457', value: 821 },
     );
   }
   return writes;
@@ -172,13 +190,23 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   for (const name of [
     'FIRST_SETTING', // 其余各问的占位（first-setting.js 打印）
     'CHARA_NAME_DEFINE', // 村娘分支内，#50 起可达
-    'CHAR_BODY_GENERATE_WAPPED', // 同上
   ]) {
     assert(
       texts.some((line) => line.includes(`@${name}`)),
       `存根 ${name} 必须打印含函数名的占位行`,
     );
   }
+  // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/chara/chara-body.js）：
+  // 判据从占位行改为 CFLAG:17:451-457 的落盘（本用例不注入随机源，只断言
+  // 写入发生；逐值与全量写入断言在下方两条「初始化写入」用例里）
+  assert(
+    fixture.var_writes.some((w) => w.name === 'cflag:17:451'),
+    '村娘的身体数据必须经真身落盘（FLAG:5 已开位 12/15）',
+  );
+  assert(
+    !texts.some((line) => line.includes('@CHAR_BODY_GENERATE_WAPPED')),
+    '身体数据已落真身，不得再出现占位行',
+  );
   // 随机路径被村娘出口（:187 BEGIN SHOP 即结束函数）跳过，其存根不得出现
   assert(
     !texts.some((line) => line.includes('@RAND_CHARA_MAKE')),
@@ -276,11 +304,7 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
   assert.deepEqual(fixture.var_writes, expected_init_writes(0));
   // 存根清单核对用的导出（FIRST_SETTING 移交 first-setting.js 的
   // 部分实现，村娘分支的两个存根自 #50 起在可达路径上）
-  assert.deepEqual(STUBBED_CALLS, [
-    'RAND_CHARA_MAKE',
-    'CHARA_NAME_DEFINE',
-    'CHAR_BODY_GENERATE_WAPPED',
-  ]);
+  assert.deepEqual(STUBBED_CALLS, ['RAND_CHARA_MAKE', 'CHARA_NAME_DEFINE']);
 });
 
 test('初始化写入（村娘）：CFLAG 一组 1:1 落在角色 ID 17 上（全量断言）', async () => {
@@ -289,14 +313,21 @@ test('初始化写入（村娘）：CFLAG 一组 1:1 落在角色 ID 17 上（�
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  // 三次输入：问答「村娘」、地下城模式「普通」（#181 的第二问）、搬运「抱起来」
-  fixture.set_inputs(1, 0, 1);
-  const pending = await emit('EVENTFIRST');
+  // #385 起身体数据生成为真身，会消耗随机数：注入 Math.random ≡ 0（RAND:N
+  // 恒 0）把九个身体数据写入钉成定值（算式见 expected_init_writes 的注释）
+  fixture.override_math_random(() => 0);
+  try {
+    // 三次输入：问答「村娘」、地下城模式「普通」（#181 的第二问）、搬运「抱起来」
+    fixture.set_inputs(1, 0, 1);
+    const pending = await emit('EVENTFIRST');
 
-  // 出口：村娘分支自己的 :187 BEGIN SHOP
-  assert.equal(pending, STATE.SHOP);
-  // 全量断言：任何多写、少写、写错地址（如 cflag:1:*）、写错值都当场红
-  assert.deepEqual(fixture.var_writes, expected_init_writes(1));
+    // 出口：村娘分支自己的 :187 BEGIN SHOP
+    assert.equal(pending, STATE.SHOP);
+    // 全量断言：任何多写、少写、写错地址（如 cflag:1:*）、写错值都当场红
+    assert.deepEqual(fixture.var_writes, expected_init_writes(1));
+  } finally {
+    fixture.restore_math_random();
+  }
 });
 
 test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序号 1', async () => {

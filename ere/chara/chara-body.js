@@ -1,19 +1,31 @@
 /**
- * @file 角色身高、体重与三围生成（issue #332）。
+ * @file 角色身高、体重、三围、年龄与种族年龄的生成（issue #332、#385）。
  *
- * 源: target/ERB/キャラ関数/CHARA_BODY.ERB  @CHAR_SIZE_GENERATE（:408-761）、
- *       @UNDER_BUST（:763-779）
+ * 源: target/ERB/キャラ関数/CHARA_BODY.ERB  @CHAR_BODY_GENERATE_WAPPED（:16-36）、
+ *       @CHAR_AGE_GENERATE（:148-242）、@RACE_AGE_GENERATE（:245-337）、
+ *       @HUMAN_AGE_GENERATE（:340-406）、
+ *       @CHAR_SIZE_GENERATE（:408-761）、@UNDER_BUST（:763-779）
  *     target/ERB/キャラ関数/CHARA_BODY2.ERB  @CHAR_HWEIGHT_GENERATE（:17-120）、
- *       @CHAR_BUST_GENERATE（:123-323）、@NORMAL_RANGE_PICKUP（:326-358）、
- *       @STATISTICS_WOMAN（:361-385）、@STATISTICS_MAN（:388-412）
+ *       @CHAR_BUST_GENERATE（:123-323）、@NORMAL_POINT_PICKUP（:306-323）、
+ *       @NORMAL_RANGE_PICKUP（:326-358）、@STATISTICS_WOMAN（:361-385）、
+ *       @STATISTICS_MAN（:388-412）
  *
- * BODY2 的四段只作为 CHAR_SIZE_GENERATE 的私有计算步骤，不扩大公开 API。
+ * BODY2 的五段只作为本文件的计算步骤（三围生成 / 年龄取点），不扩大公开 API。
+ * @NORMAL_POINT_PICKUP 由 #385 随 @CHAR_AGE_GENERATE 落地——它是后者的取点
+ * 步骤，不是独立入口；BODY2 其余未落地段落（@CHAR_BUST_REGENERATE_WAPPED）
+ * 不在本票范围。
+ *
+ * 未移植的残留（#385 登记，见 docs/stub-registry.md）：@CUP_SIZE（:781-850）、
+ * @CONFIG_AGE_SETTING（:853-929）与它调用的 @RACE_CONFIG（:931-1333）——
+ * 三段都是显示/配置界面，调用方分别属 #390 与 SYSTEM/CONFIG.ERB 票。
  */
 
 const era = require('#/era-electron');
-const { stub_line } = require('#/utils/stub-line');
+const { char_age_expect, rf_all } = require('#/chara/chara-family');
+const { game } = require('#/facade/game');
+const { chara } = require('#/facade/chara');
 
-const STUBBED_CALLS = ['CHAR_AGE_GENERATE'];
+const STUBBED_CALLS = [];
 const default_rand = (n) => Math.floor(Math.random() * n);
 const int = Math.trunc;
 
@@ -242,10 +254,260 @@ function char_bust_generate(cid, source_age, height, rand) {
   return [bust_under + difference, bust_under, difference];
 }
 
-/** @CHAR_AGE_GENERATE 的范围外存根。 */
-function char_age_generate(cid) {
-  stub_line('CHAR_AGE_GENERATE', `角色 ${cid}`, '随角色身体票');
-  return [0, 0];
+/**
+ * 种族年龄表的取槽（FLAG:26/27 的 base-1000 打包整数；#105 决议四改为数组
+ * 承载：槽 0-5 落 种族年龄设定_0、槽 6-7 落 种族年龄设定_1，低位在前）。
+ *
+ * 原作 :289/:291 的取槽式是 `FLAG:26 / POWER(1000, RACE_ID) % 1000`（槽 6-7
+ * 换成 FLAG:27 与 RACE_ID-6）。槽 8 及以后取到的是打包整数的高位——那些位
+ * 恒 0，故越界槽返回 0（RACE_ID = 8 只在种族编号 12 上出现）。
+ *
+ * @param {number} slot 槽号（= RACE_ID）
+ * @returns {number} 该槽的三位设定值（百位算法档 / 十位数量级 / 个位倍数）
+ */
+function race_config_value(slot) {
+  if (slot >= 0 && slot <= 5) return game.chara.种族年龄设定_0[slot] ?? 0;
+  if (slot === 6 || slot === 7) return game.chara.种族年龄设定_1[slot - 6] ?? 0;
+  return 0;
+}
+
+/**
+ * 种族编号（TALENT:314）→ 种族年龄表的槽号（原作 :280-282 与 :377-379 的
+ * ELSE 支）。
+ *
+ * **编号 7-9（暗精灵 / 堕天使 / 魔族）不经过本函数**：调用点已在 :267-276
+ * 与 :364-373 原样返回人类年龄。那两处的写法是「`SIF ARG:1 == 7` +
+ * `RACE_ID = 0`、`SIF ARG:1 == 8` + `RACE_ID = 5`、然后 `RETURN ARG:0`」
+ * ——SIF 只约束紧接的那一行，`RETURN ARG:0` 在 IF 体内不受它约束，于是
+ * 三个堕落种族编号一律直接返回，两条 `RACE_ID` 赋值是**死代码**。这是原作
+ * 缺陷，1:1 保留、不落那两行（同款 SIF 缺陷的既有先例见
+ * ere/dungeon/dungeon-room.js 的「原作缺陷 1:1 保留」段，登记 #14）。
+ *
+ * 霍比特人（10）与矮人（11）的名称编号跳过了 7-9，故减 3 回到槽 6-7。
+ *
+ * @param {number} race_no TALENT:314（只可能是 0-6 与 10 以上）
+ * @returns {number} 槽号（-1 = 未设定种族）
+ */
+function race_id_of(race_no) {
+  const race_id = race_no - 1;
+  return race_id > 8 ? race_id - 3 : race_id;
+}
+
+/**
+ * 三位设定值的解包（原作 :294-296 与 :391-393 两处同款）。
+ * @param {number} raw 表值（百位算法档 / 十位数量级 / 个位倍数）
+ * @returns {{cla: number, deg: number, num: number}} 档位、数量级、倍数
+ */
+function unpack_race_config(raw) {
+  return {
+    deg: int(raw / 10) % 10,
+    num: raw % 10,
+    cla: int(raw / 100),
+  };
+}
+
+/**
+ * 种族编号（TALENT:314）→ 解包后的档位三元组（原作 :285-296 与 :382-393
+ * 两处同款：先取槽，未设定种族（槽号 -1）时按档位 1 处理，再拆三位）。
+ * @param {number} race_no TALENT:314
+ * @returns {{cla: number, deg: number, num: number}} 档位、数量级、倍数
+ */
+function race_config_of(race_no) {
+  const slot = race_id_of(race_no);
+  return unpack_race_config(slot < 0 ? 1 : race_config_value(slot));
+}
+
+/** 与 Emuera 的 STRLENFORM（数值的十进制位数，正数下即 STRLEN）等价 */
+function digit_count(value) {
+  return String(value).length;
+}
+
+/**
+ * @NORMAL_POINT_PICKUP（CHARA_BODY2.ERB:306-323）：从中值附近的 5 个点按
+ * 1,3,9,3,1 的权重取点（模拟正态分布）。
+ *
+ * 原作的 CASEELSE 不可达——RAND:17 + 1 落在 [1,17]，五支已穷尽，故不落分支
+ * （不在本函数里造一个永远不会走的 else）。
+ *
+ * @param {number} middle 中值
+ * @param {(n: number) => number} rand RAND:N 随机源
+ * @returns {number} 中值 ±0..2
+ */
+function normal_point_pickup(middle, rand) {
+  const roll = rand(17) + 1;
+  if (roll === 1) return middle - 2;
+  if (roll <= 4) return middle - 1;
+  if (roll <= 13) return middle;
+  if (roll <= 16) return middle + 1;
+  return middle + 2;
+}
+
+/**
+ * @RACE_AGE_GENERATE（:245-337）：由人类换算年龄与种族编号算种族年龄。
+ *
+ * 表值三位 ABC 的语义（各档的算式见下方分支）：
+ *   A 算法档：0 整数倍 / 1 小数倍 / 2 0～上限 / 3 上限/2～上限 / 4 年龄～上限；
+ *   B 数量级：上限 = C × 10^B；C 倍数。
+ * 档位 5 起原作没有分支（:299-335 五支全不命中），RACE_AGE 保持初值 0，
+ * :337 照样返回它——不要顺手补一支。
+ *
+ * @param {number} human_age 人类换算年龄（ARG:0）
+ * @param {number} race_no TALENT:314（ARG:1）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @returns {number} 种族年龄
+ */
+function race_age_generate(human_age, race_no, rand = default_rand) {
+  // :267-276 堕落种族（暗精灵 7 / 堕天使 8 / 魔族 9）：一条无条件的
+  // RETURN ARG:0 盖住整个 IF 体（见 race_id_of 头注），三个编号都原样返回
+  if (race_no >= 7 && race_no < 10) return human_age;
+
+  // :285-292 コンフィグで設定された种族ごとの設定値を取得
+  const { cla, deg, num } = race_config_of(race_no);
+  // 档位上限 = 倍数 × 10^数量级（cla 0/2/3/4 四支都从它派生，见下方各支）
+  const cap = num * 10 ** deg;
+
+  if (cla === 0) {
+    // :299-300 年齢の整数倍
+    return human_age * cap + rand(cap);
+  }
+  if (cla === 1) {
+    // :302-303 年齢の小数倍（整数除算で切り捨て）
+    return int((human_age * (deg * 10 + num)) / 10);
+  }
+  if (cla === 2) {
+    // :305-312 0～上限：桁の出方を偏らせてみる
+    const ceiling = 10 ** rand(digit_count(cap) + 1) * 10; // :309 RAND:(RESULT + 1)
+    return rand(Math.min(cap, ceiling));
+  }
+  if (cla === 3) {
+    // :314-315 上限/2 ～ 上限
+    const half = int(cap / 2);
+    return rand(half) + half;
+  }
+  if (cla === 4) {
+    // :317-335 年齢～上限：桁の出方を偏らせてみる
+    const limit = cap;
+    let age = 10;
+    for (let i = 0; i <= digit_count(limit); i += 1) {
+      if (rand(5) < 2) break;
+      age *= 10;
+    }
+    if (age > limit) age = limit;
+    if (human_age >= age) age = human_age + 1;
+    return rand(age - human_age) + human_age;
+  }
+  return 0;
+}
+
+/**
+ * @HUMAN_AGE_GENERATE（:340-406）：种族年龄 → 人类换算年龄（种族年龄表的
+ * 反向换算，月替时随种族年龄 +1 重算 CFLAG:451）。
+ *
+ * 小数倍档的 `(ARG:0 * 10 + 5) / …` 是原作写死的四舍五入式（先放大十倍加
+ * 5 再整除），不是笔误；档位 2 起的三个随机档没有唯一解，原作直接取
+ * CFLAG:452——那是**种族年龄**（CFLAG:451 的人类年龄就在调用点，原作没取
+ * 它），1:1 保留，不顺手改成 451。
+ *
+ * @param {number} race_age 种族年龄（ARG:0，调用点传 CFLAG:452）
+ * @param {number} cid 角色 ID（ARG:1）
+ * @returns {number} 人类换算年龄
+ */
+function human_age_generate(race_age, cid) {
+  const race_no = era.get(`talent:${cid}:314`) || 0; // :361 TALENT:314
+  // :364-373 堕落种族（暗精灵 7 / 堕天使 8 / 魔族 9）：同 race_age_generate，
+  // 无条件的 RETURN ARG:0 盖住整个 IF 体，三个编号都原样返回
+  if (race_no >= 7 && race_no < 10) return race_age;
+
+  const { cla, deg, num } = race_config_of(race_no);
+
+  if (cla === 0) {
+    // :396-397 年齢の整数倍（割り戻し）
+    return int(race_age / (num * 10 ** deg));
+  }
+  if (cla === 1) {
+    // :399-400 年齢の小数倍
+    return int((race_age * 10 + 5) / (deg * 10 + num));
+  }
+  // :402-404 0～上限 / 上限/2～上限 / 年齢～上限 三档：CFLAG:452（种族年龄）
+  return era.get(`cflag:${cid}:452`) || 0;
+}
+
+/**
+ * @CHAR_AGE_GENERATE（:148-242）：按经历推算并生成人类年龄与种族年龄。
+ *
+ * 顺序是三条互相覆盖的约束：经历推算值（CHAR_AGE_EXPECT + 17，LIMIT 到
+ * [12,35]）→ 近正态取点（±2）→ 家族成员的年龄（见下方分支）→ 后代固定
+ * 10 岁。人类年龄 ≤ 14 时补盖未熟（TALENT:135，train 域，经门面写）。
+ *
+ * **原作 :216-223 的分支比较的是 L_B（成员的角色号）而不是 L_B_TYPE
+ * （关系码）**——:215 把关系码取进 L_B_TYPE 后一次也没用。成员角色号恰好
+ * 落在 1-8 时才命中约束，这是原作缺陷，1:1 保留（对照 RELATION_FAMILY.ERB
+ * 的关系码定义：1 兄 / 2 姊 / 3 弟 / 4 妹 / 5 父 / 6 母 / 7 儿 / 8 娘）。
+ *
+ * @param {number} cid 角色 ID（ARG）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @returns {number[]} [人类换算年龄, 种族年龄]
+ */
+function char_age_generate(cid, rand = default_rand) {
+  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+
+  // :171-174 根据经历推测年龄（原作注释：+18(31) -15）
+  let age = 17 + char_age_expect(cid); // CHAR_AGE_EXPECT（CHARA_BODY.ERB:39-144）
+  // :176 LOCAL = EXP_AGE —— 只被注释掉的调试行（:231）读取，不落
+  age = Math.max(12, Math.min(35, age)); // :178 LIMIT(EXP_AGE,12,35)
+  age = normal_point_pickup(age, rand); // :180-181
+
+  // :212-225 家族成员的年龄（分支判据是 L_B，见函数头注）。rf_all 的第三实参
+  // 对应原作 CALL 的 RETURN_TYPE = 1：成对返回 [成员角色号, 关系码]（L_DATA 同形），
+  // 本循环只取成员号——关系码那一列原作取进 L_B_TYPE 后从未使用
+  for (const [member] of rf_all(cid, -1, true)) {
+    const member_age = era.get(`cflag:${member}:451`) || 0; // CFLAG:451 年齢
+    if (member === 1 || member === 2) age = Math.min(age, member_age);
+    else if (member === 3 || member === 4) age = Math.max(age, member_age);
+    else if (member === 5 || member === 6)
+      age = Math.max(10, Math.min(age, member_age - 6));
+    else if (member === 7 || member === 8) age = Math.max(age, member_age + 6);
+  }
+
+  // :228-229 （stick增加）后代年龄按相当于人类 10 岁设定
+  if (era.get(`ex_talent:${cid}:2`)) age = 10;
+
+  const race_age = race_age_generate(age, t(314), rand); // :234-235
+
+  // :240-241 人类年龄低于 14 即为未熟（TALENT:135，train 域属性，走门面）
+  if (age <= 14) chara(cid).train.未熟 = 1;
+  return [age, race_age];
+}
+
+/**
+ * @CHAR_BODY_GENERATE_WAPPED（:16-36）：生成角色身体数据并落进 CFLAG:451-457。
+ *
+ * 开局设置（FLAG:5）位 12（显示年龄）与位 15（显示三围）都没开时整体不动
+ * ——调用点（EVENTFIRST / CHARA_MAKE / ENTER_ENEMY 等）无条件调用，闸门
+ * 在这两行里（:18-19）。
+ *
+ * 默认年龄由 CHAR_SIZE_GENERATE → CHAR_AGE_GENERATE 生成；村娘 A（165）与
+ * 村娘 B（171）另有固定年龄区间（:22-25）。
+ *
+ * @param {number} cid 角色 ID（ARG）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
+ */
+function char_body_generate_wapped(cid, rand = default_rand) {
+  const settings = era.get('flag:5') || 0; // FLAG:5 开局设置位图
+  // :18-19 SIF !GETBIT(FLAG:5,12) && !GETBIT(FLAG:5,15) RETURN
+  if (((settings >> 12) & 1) === 0 && ((settings >> 15) & 1) === 0) return;
+
+  const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
+  let age = 0;
+  if (t(165))
+    age = rand(2) + 12; // :23 村娘Ａ
+  else if (t(171)) age = rand(2) + 17; // :25 村娘Ｂ
+  const body = char_size_generate(cid, age, 0, rand); // :27 缺省年龄交回年龄生成
+
+  // :30-36 CFLAG:451-457 = RESULT:0-6
+  for (let offset = 0; offset < 7; offset += 1) {
+    era.set(`cflag:${cid}:${451 + offset}`, body[offset]);
+  }
 }
 
 /**
@@ -271,7 +533,7 @@ function char_size_generate(
   let hip = 0;
   let previous_under = 0;
   let previous_difference = 0;
-  if (age <= 0) [age, race_age] = char_age_generate(cid);
+  if (age <= 0) [age, race_age] = char_age_generate(cid, rand);
 
   if (mode === 1) {
     height = (era.get(`cflag:${cid}:453`) || 0) * 100; // CFLAG:453 身高
@@ -340,4 +602,11 @@ function char_size_generate(
   ];
 }
 
-module.exports = { STUBBED_CALLS, char_age_generate, char_size_generate };
+module.exports = {
+  STUBBED_CALLS,
+  char_age_generate,
+  char_body_generate_wapped,
+  char_size_generate,
+  human_age_generate,
+  race_age_generate,
+};

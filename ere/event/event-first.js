@@ -35,6 +35,7 @@ const {
 } = require('#/event/first-setting');
 const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
 const { chara_name_init } = require('#/chara/chara-name-list');
+const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -46,11 +47,7 @@ const { set_vil } = require('#/dungeon/labo-map');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）——后续票据此认领工作；名单变动必须同步清单。
  */
-const STUBBED_CALLS = [
-  'RAND_CHARA_MAKE',
-  'CHARA_NAME_DEFINE',
-  'CHAR_BODY_GENERATE_WAPPED',
-];
+const STUBBED_CALLS = ['RAND_CHARA_MAKE', 'CHARA_NAME_DEFINE'];
 
 // 注册在模块顶层（往注册表塞函数，不碰 era.*——引擎允许；era.* 只在处理器
 // 函数体内调用，#6 的两条硬规则之二）。普通档：原作 @EVENTFIRST 的其他
@@ -254,9 +251,9 @@ on('EVENTFIRST', async () => {
     era.set('cflag:17:16', -1);
     era.set('cflag:17:450', 31);
 
-    // :121 CALL CHAR_BODY_GENERATE_WAPPED, 1 —— 角色身体生成（存根；
-    // FLAG:26/27 种族年龄表的唯一消费者，随角色身体票）
-    stub_line('CHAR_BODY_GENERATE_WAPPED', '角色身体生成');
+    // :121 CALL CHAR_BODY_GENERATE_WAPPED, 1 —— 角色身体生成（#385 起真身；
+    // FLAG:26/27 种族年龄表的消费者，闸门在函数的 FLAG:5 位 12/15 守卫里）
+    char_body_generate_wapped(17); // A = 1（序号）→ 角色 ID 17
 
     // :126-129 四行角色描写（PRINTFORMW，各带读键）
     era.print('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。');
