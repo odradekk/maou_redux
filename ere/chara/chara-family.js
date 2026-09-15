@@ -629,15 +629,15 @@ function f_is_close_experience(a, b) {
   return false;
 }
 
-function nid_get_type(value) {
-  if (value > 1_000_000_000) return 2;
-  if (value < 200 || value >= 2000) return 1;
-  if (value < 1000 || value >= 3000) return 0;
-  return 1;
-}
-
 function f_check_relevant(a, b) {
   if (!f_is_same_race(a, b)) return 0;
+  // @NID_GET_TYPE 的真身自 #384（N2）起在 ere/chara/chara-name.js（它的原作出处
+  // CHARA_NAME.ERB:255）；本文件只在 f_check_relevant 里用它，故在调用点惰性取。
+  // **不能写成顶层 require**：chara-name 顶层 require 本文件的
+  // relation_rename_rebuild（CHARA_NAME.ERB:160/:169 的名字重建），两边静态
+  // 引用即环——谁先装载，另一边的解构就是 undefined。惰性取在这里是安全的：
+  // 两个模块必已装载完。同款处置见 ere/kojo/kojo-k12-intellectual.js:7966。
+  const { nid_get_type } = require('#/chara/chara-name');
   if (
     Math.min(1, Math.max(0, nid_get_type(nid(a)))) !==
     Math.min(1, Math.max(0, nid_get_type(nid(b))))
@@ -819,7 +819,6 @@ module.exports = {
   f_is_same_race,
   nid,
   nid_r,
-  nid_get_type,
   dec_get_bit,
   dec_set_bit,
   dec_bit_add,

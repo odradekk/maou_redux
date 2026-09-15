@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 44; // #383 起 +18（M7808-M7825，chara-self-call.js）
+export const COUNT = 42; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）
 
 export default [
   {
@@ -157,14 +157,6 @@ export default [
     replace: '  void nid;',
     tests: ['chara-stubs'],
     must_mention: 'JUMP 目标结束',
-  },
-  {
-    desc: 'M6538 NAME_RESET 不再转发 CN_REBUILD',
-    file: 'ere/chara/char-make.js',
-    find: '  return cn_rebuild();',
-    replace: '  return undefined;',
-    tests: ['chara-stubs'],
-    must_mention: '转发到 CN_REBUILD',
   },
   {
     desc: 'M6539 自动调教肛门绝顶的 KARMA -2 改 -1',
@@ -373,14 +365,6 @@ export default [
     replace: '    if (false) {',
     tests: ['chara-self-call'],
     must_mention: '半角字符名回落姓名本体',
-  },
-  {
-    desc: 'M7821 NID_GET_TYPE 和名下界改错（CHARA_NAME.ERB:257，#383 起真身落在 chara-family.js，#349）',
-    file: 'ere/chara/chara-family.js',
-    find: '  if (value < 200 || value >= 2000) return 1;',
-    replace: '  if (value < 201 || value >= 2000) return 1;',
-    tests: ['chara-self-call'],
-    must_mention: 'NID 落 [200,1000) → 和名（CASE1 挑字）',
   },
   {
     desc: 'M7822 SET_NICK_SELFCALL 和名 CASE0 长度阈值改错（SELF_CALL.ERB:182，#383）',

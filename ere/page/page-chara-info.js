@@ -57,6 +57,10 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { search_family } = require('#/chara/chara-family');
+const {
+  chara_info_name_edit,
+  show_button_name_edit,
+} = require('#/chara/chara-name-edit');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
 const { enemy_compare } = require('#/page/page-dungeon-info2');
@@ -81,14 +85,12 @@ const NUM_PAGE = 24;
  */
 const STUBBED_CALLS = [
   'SHOW_CHARA_INFO',
-  'SHOW_BUTTON_NAME_EDIT',
   'SHOW_BUTTON_JOB_CHANGE',
   'SHOW_BUTTON_TEMPTATION',
   'SHOW_BUTTON_MARRIAGE',
   'SHOW_BUTTON_CHILD_CARE',
   'SHOW_BUTTON_EQUIP',
   'PTJ_BUTTON',
-  'CHARA_INFO_NAME_EDIT',
   'CHARA_INFO_JOB_CHANGE',
   'TEMPTATION',
   'MARRIAGE',
@@ -619,8 +621,9 @@ async function chara_info_individual(arg, chara_sort) {
     const max_mp = era.get(`maxbase:${current}:1`) || 0;
 
     if (sub_page === 0) {
-      await stub_line('SHOW_BUTTON_NAME_EDIT', '「改名」按钮', '随改名票');
-      await stub_line('SHOW_BUTTON_NAME_EDIT', '「恢复原名」按钮', '随改名票');
+      // :858-859 两个改名按钮（#384 落真身：ere/chara/chara-name-edit.js）
+      show_button_name_edit(0, current);
+      show_button_name_edit(1, current, 1);
       await stub_line('SHOW_BUTTON_JOB_CHANGE', '「转职」按钮', '随转职票');
       await stub_line('SHOW_BUTTON_TEMPTATION', '「魔的诱惑」按钮', '随堕落票');
       await stub_line('SHOW_BUTTON_MARRIAGE', '「结婚」按钮', '随结婚票');
@@ -749,10 +752,12 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 0:
-        await stub_line_wait('CHARA_INFO_NAME_EDIT', '改名', '随改名票');
+        // :1045 改名（#384 落真身）
+        await chara_info_name_edit(current);
         continue;
       case 1:
-        await stub_line_wait('CHARA_INFO_NAME_EDIT', '恢复原名', '随改名票');
+        // :1048 恢复原名（#384 落真身）
+        await chara_info_name_edit(current, 1);
         continue;
       case 2:
         await stub_line_wait('CHARA_INFO_JOB_CHANGE', '转职', '随转职票');

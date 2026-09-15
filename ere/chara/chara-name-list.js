@@ -26,6 +26,16 @@
 const era = require('#/era-electron');
 
 /**
+ * @CHARA_NAME_INIT 的守卫生效时，原作 LIST_CHARA_NAME 的声明尺寸
+ * （CHARA_NAME.ERH:7 `#DIMS LIST_CHARA_NAME,5500`）。@CHARA_NAME_DEFINE 的
+ * `:175`（IF L_NID < VARSIZE("LIST_CHARA_NAME")）判的是它而不是注册表尺寸
+ * ——3,264 个已注册编号之外，声明域内还有大量空隙走「名字没有被记录」
+ * 分支，两者不可互相代入。常量放在本模块：它是唯一持有该表产物的文件，
+ * chara-name.js 从这里的导出消费，不另立第二个来源。
+ */
+const LIST_CHARA_NAME_SIZE = 5500;
+
+/**
  * 已注册 id 的缓存（Set，值为数字）。引擎的 `${表}name:${id}` 读法对未注册
  * 的 id 直接崩溃——app.asar 的 set_var 在这条分支只判「表在不在」
  * （`if (this.fieldNames[a]) return this.fieldNames[a][u].n`），不判「这个
@@ -38,6 +48,7 @@ const era = require('#/era-electron');
  * @returns {Set<number>}
  */
 let valid_ids_cache;
+
 function valid_ids() {
   valid_ids_cache ??= new Set(era.get('charanamelistkeys'));
   return valid_ids_cache;
@@ -70,4 +81,8 @@ function get_fixed_chara_name(nid) {
   return era.get(`charanamelistname:${nid}`) ?? '';
 }
 
-module.exports = { chara_name_init, get_fixed_chara_name };
+module.exports = {
+  chara_name_init,
+  get_fixed_chara_name,
+  LIST_CHARA_NAME_SIZE,
+};

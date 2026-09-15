@@ -71,6 +71,22 @@ export const FILES = [
       { src: INFO, ref: '91-94', any: [/^CASE\ 0\ TO\ CHARANUM\ -1$/m] },
       { src: INFO, ref: '920', any: [/^IF\ L_INDX\ >=\ CHARANUM\ -\ 2$/m] },
       { src: INFO, ref: '1012-1017', any: [/^CASE\ 12\ ;拘束台解放$/m] },
+      // —— #384（N2）：改名按钮与两条改名交互分支的调用点 ——
+      {
+        src: INFO,
+        ref: '858-859',
+        any: [/^CALL SHOW_BUTTON_NAME_EDIT\(0,ARG,0\) ;名前を変える$/m],
+      },
+      {
+        src: INFO,
+        ref: '1045',
+        any: [/^\tCALL CHARA_INFO_NAME_EDIT\(ARG,0\)$/m],
+      },
+      {
+        src: INFO,
+        ref: '1048',
+        any: [/^\tCALL CHARA_INFO_NAME_EDIT\(ARG,1\)$/m],
+      },
     ],
   },
 ];

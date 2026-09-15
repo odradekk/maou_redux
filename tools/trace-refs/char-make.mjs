@@ -70,6 +70,12 @@ export const FILES = [
         ref: '37-39',
         any: [/@CHAR_INHERIT/, /JUMP CHARA_MAKE_INHERIT\(A, B\)/],
       },
+      // —— #384（N2）：@RAND_CHARA_MAKE 的真身在本层（转发层为其参数） ——
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '42-194',
+        any: [/^@RAND_CHARA_MAKE\r?$/m],
+      },
     ],
   },
 ];

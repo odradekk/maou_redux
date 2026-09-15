@@ -104,20 +104,28 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
   // 一人称（RANDOM_SELF_CALL 的 <9 直设）
   assert.equal(fixture.store.get('cstr:1:60'), '我', 'CSTR:60 一人称');
   assert.equal(fixture.store.get('cflag:1:450'), 9, 'CFLAG:450 一人称档位');
-  // 随机命名已是真身，末端 JUMP 到 CHARA_NAME_DEFINE 范围外存根；其余
-  // 四处跨文件/跨段存根仍可见。
+  // 随机命名与 CHARA_NAME_DEFINE 自 #384 起都是真身（名字真的落了地），
+  // 冲突检查也一并落地；只剩 LOOK_SET 与 CHARA_FIRST_EXP 两处跨段存根。
+  assert.equal(
+    fixture.store.get('callname:1:-1'),
+    '佳奈美',
+    'CHARA_NAME_DEFINE 真身：没有可查的固定名时回落到默认名',
+  );
   const texts = stub_texts(fixture);
-  for (const name of [
-    'CHARA_NAME_DEFINE',
-    'CMI_CONFLICT_CHECK',
-    'LOOK_SET',
-    'CHARA_FIRST_EXP',
-  ]) {
+  for (const name of ['LOOK_SET', 'CHARA_FIRST_EXP']) {
     assert(
       texts.some((line) => line.includes(`@${name}`)),
       `${name} 的占位行可见（登记项）`,
     );
   }
+  for (const name of ['CHARA_NAME_DEFINE', 'CMI_CONFLICT_CHECK']) {
+    assert(
+      !texts.some((line) => line.includes(`@${name}`)),
+      `${name} 已落真身，不应再有占位行`,
+    );
+  }
+  // CHAR_BODY_GENERATE_WAPPED 自 #385 起也是真身，不在这张「不触发」表里——
+  // 它不再打占位行，留在表里的断言对任何输入都成立、验不出东西。
   for (const name of ['FAMILY_REGISTER', 'ST_UP']) {
     assert(
       !texts.some((line) => line.includes(`@${name}`)),
@@ -857,19 +865,40 @@ test('转发层 @CHAR_MAKE_INPORT：RAND(ARG:0) != 0 即 RETURN 0（:31-32）', 
   );
 });
 
-test('转发层 @NAMING / @NAME_RESET：JUMP 目标的存根占位（:9/:14）', async () => {
+test('转发层 @NAMING / @NAME_RESET：JUMP 目标自 #384 起是真身', async () => {
   const fixture = create_era_fixture();
+  fixture.seed_chara(3, { id: 3, name: '预设名', callname: '预称呼' });
   const forward = load_forward(fixture);
+  // @NAMING → CHARA_NAME_DEFINE：NO 3 不在特殊角色区间，走固定名分支
+  fixture.store.set('cflag:3:6', 205);
   await forward.naming(3);
-  await forward.name_reset();
-  const texts = stub_texts(fixture);
+  assert.equal(fixture.store.get('cflag:3:6'), 205, 'NID 缺省沿用 CFLAG:6');
   assert(
-    texts.some((line) => line.includes('@CHARA_NAME_DEFINE')),
-    'NAMING → CHARA_NAME_DEFINE 占位',
+    fixture.store.get('callname:3:-1') === '佳奈美',
+    'CHARA_NAME_DEFINE 真身（205 无注册名 → 默认名）',
+  );
+
+  // @NAME_RESET → CN_REBUILD：称呼按姓名重建（MASTER 之外的每个角色）
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  assert.equal(fixture.era.addCharacter(3), true, '预设角色 3 已入库');
+  fixture.store.set('callname:3:-1', '改名后');
+  fixture.store.set('callname:3:-2', '旧称呼');
+  fixture.store.set('callname:0:-2', '魔王的旧称呼');
+  await forward.name_reset();
+  assert.equal(
+    fixture.store.get('callname:3:-2'),
+    '改名后',
+    '非 MASTER 被重建',
+  );
+  assert.equal(
+    fixture.store.get('callname:0:-2'),
+    '魔王的旧称呼',
+    'MASTER 被 CONTINUE 跳过',
   );
   assert(
-    texts.some((line) => line.includes('@CN_REBUILD')),
-    'NAME_RESET → CN_REBUILD 占位',
+    !stub_texts(fixture).some((line) => line.includes('@CN_REBUILD')),
+    'CN_REBUILD 已落真身',
   );
 });
 
