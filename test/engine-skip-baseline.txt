@@ -100,4 +100,9 @@
 #（train-name/page-train 槽条段/p_c/compare-normalize 扩展）全走 era-fixture
 # 或纯解析路径，无 engine-bundle 门控。
 # #349（L18 家族关系）：chara-family 的扩展角色表建桶、寻址与存档往返 +1。
-73
+# #388（N4 名字表）：chara-name-list.test.js 的四个引擎门控用例（
+# CharaNameList.yml 装载零告警零重号、三种范围各取一例读名字、未注册 id
+# 裸三段寻址崩溃、charanamelistkeys 与 valid_ids() 同源）——PR #410 合并时
+# 漏抬基线，master 的 engineless job 自 #410 起连红三次；本次迁移核对时按
+# 实测补上。算式：73（既有）+ 4（chara-name-list 的 engine_test）= 77。
+77
