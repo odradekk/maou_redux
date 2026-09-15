@@ -86,15 +86,21 @@ test('接入点·探索臂：CFLAG:1 == 2 的勇者让 run_dungeon 真跑（侵�
   // 日推进再生成新的）
   fixture.disable_enter_enemy();
 
-  era_flag.time = 1;
-  await emit_turnend(fixture);
-  // 随机源不可注入 emit 链（run_dungeon 缺省 Math.random）——改断言
-  // 「侵攻度被写过」：WALK ∈ [0, 73]，踏破判定 D:20 >= 100 单次不达，
-  // 502 应等于 WALK（0..73）
-  const degree = fixture.store.get('cflag:1:502');
-  assert(
-    typeof degree === 'number' && degree >= 0 && degree <= 73,
-    `侵攻度应被 run_dungeon 写为 WALK（实测 ${degree}）`,
+  // 随机源走夹具的进程级替换（#120）：run_dungeon 由 emit 链驱动、没有
+  // 参数通道，Math.random 是唯一不动游戏代码的注入点。常数 0.5 下
+  // WALK = RAND:20 + 6 × RAND:10 = 10 + 6 × 5 = 40，且 turn 循环只跑一轮
+  // （侵攻度 40 < 100，踏破判定不进）
+  fixture.override_math_random(() => 0.5);
+  try {
+    era_flag.time = 1;
+    await emit_turnend(fixture);
+  } finally {
+    fixture.restore_math_random();
+  }
+  assert.equal(
+    fixture.store.get('cflag:1:502'),
+    40,
+    '侵攻度应被 run_dungeon 写为 WALK = 40',
   );
 });
 
