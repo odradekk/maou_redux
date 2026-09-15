@@ -255,7 +255,7 @@ export const RULINGS = [
   {
     path: 'target/ERB/キャラ関数/FULLMOON.ERB',
     reason:
-      '#394：@FULLMOON_EFFECT 全库零调用者（只命中它自己的定义行），且已被 CHAR_ST.ERB:62-66 的活代码取代——后者的狼人三条 `CFLAG:11/12 *= 10` 与它 `$LABEL_种族` 的 CASE 2 逐字相同，另加了真正的满月窗口 `DAY:2 ∈ [14,16]`；文件头 `; CALLBY @WEAPON_RESTORE` 是搬迁前调用点的化石',
+      '#394：@FULLMOON_EFFECT 全库零调用者（只命中它自己的定义行），判据就是这一条。文件头 `; CALLBY @WEAPON_RESTORE` 是搬迁前调用点的化石，而 CHAR_ST.ERB:62-66 的活代码只接手了它的一部分：狼人那档的 `CFLAG:11/12 *= 10` 两条照搬并加上了真正的满月窗口 `DAY:2 ∈ [14,16]`，但 CASE 2 里的 `BASE:0/1 = MAXBASE:0/1`（体力气力回满）没有跟过去，`$LABEL_种族` 的其余分支与整个 `$LABEL_种族2` 在活代码里也没有对应物。所以它是被弃用的旧实现，不是被逐字取代',
   },
 ];
 
