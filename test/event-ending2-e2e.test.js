@@ -84,6 +84,38 @@ const HEROES = {
   16: ['弓手', 2000, 2000],
 };
 
+/**
+ * 固定名表（LIST_CHARA_NAME）的**种子编号域**——本用例自己种的，
+ * **不是原作数据**（名字一律 `勇<nid>`，与勇者池的职业名不重样）。
+ *
+ * 为什么要种：勇者的称呼由命名链掷一个编号再查这张表写下
+ * （CHARA_MAKE.ERB:18-20 → @CHARA_NAME_RANDOM_DEFINE → @CHARA_NAME_DEFINE，
+ * #384 起都是真身）。编号是**掷出来的、与勇者号无关**（实测本种子下 11 名
+ * 勇者的编号是 88/123/129/154/177/1248/1270/1274/1281/1500/1543）；夹具不
+ * 种表时全部落兜底名「佳奈美」，名字就再也当不了身份用——「被封印的」与
+ * 「打到第 9 层的」之间的绑定会失去抓手。
+ *
+ * 区间按真身的掷法推（命名发生在 CHARA_MAKE.ERB:18-20，**早于**同一函数里
+ * 设职业与种族的段（:32 起），故掷骰时 TALENT:骑士/巫女/忍者（:45-51）与
+ * CFLAG:314（:55-93）都还没设 → 名字类型恒落「洋名」支（:110-119））：
+ *   - nid = RAND:WEST_NAME_COUNT = [0, 585)
+ *   - nid >= 200 时再 +1000 → [1200, 1585)
+ *   - 男性勇者另走 RAND:WEST_MALE_NAME_COUNT + 2000 = [2000, 2453)
+ *     （TALENT:122 由 :14-16 的 CM_GENDER 先设好；本种子下没有男性勇者，
+ *     换个随机序列就会有，故一并种上）
+ * 种满可达域而不是只种实测到的那几个：本文件明确容忍 PRNG 序列随后续票
+ * 漂移（文件头「断言区间…余量」条），种窄了就会以「名字不在表里」这种
+ * 看不懂的方式红。每个编号一个互不相同的名字，掷到哪个都查得到。
+ */
+const NAME_NIDS = [
+  ...Array.from({ length: 585 }, (_, nid) => nid), // [0, 584] 洋名
+  ...Array.from({ length: 385 }, (_, i) => 1200 + i), // [1200, 1584] 洋名 +1000
+  ...Array.from({ length: 453 }, (_, i) => 2000 + i), // [2000, 2452] 男性洋名
+];
+/** 种下的名字（下标即 nid） */
+const seeded_name = (nid) => `勇${nid}`;
+const SEEDED_NAMES = new Set(NAME_NIDS.map(seeded_name));
+
 /** 接住 BeginSignal 并断言目标状态（run_shop/run_title_page 的出口协议） */
 async function expect_signal(promise, state, BeginSignal, what) {
   try {
@@ -112,6 +144,12 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     fixture.store.set(`maxbase:${id}:0`, hp);
     fixture.store.set(`base:${id}:1`, wp);
     fixture.store.set(`maxbase:${id}:1`, wp);
+  }
+  // 固定名表（区间与依据见 NAME_NIDS 的注释）：命名链读的就是这张表，
+  // 必须在任何角色生成之前种好，种晚了仍会落兜底名
+  fixture.store.set('charanamelistkeys', NAME_NIDS);
+  for (const nid of NAME_NIDS) {
+    fixture.store.set(`charanamelistname:${nid}`, seeded_name(nid));
   }
   // 魔王与村娘的 base/maxbase（阶段 1 e2e 同款：出兵耗气力、结算循环的
   // 回复段读上限）
@@ -251,14 +289,10 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       ),
       'ENDING_2 横幅末行（:49）',
     );
-    // 封印播报的名字来自 %SAVESTR:TARGET%（→ callname:TARGET:-1）：提取
-    // 播报里的名字，断言它是命名链**真的写下过**的那个名字（不是空串、
-    // 不是写死值）。**不能再用勇者池的模板名反查**：#384 起
-    // @CHARA_NAME_DEFINE 是真身，@CHARA_MAKE 的命名段（CHARA_MAKE.ERB:18-20
-    // `SIF !EX_TALENT:A:2 → CALL CHARA_NAME_RANDOM_DEFINE`）会把 ADDCHARA
-    // 从预设拷来的名字覆盖掉——原作同（预设名只服务特殊角色 NO 0/17-40，
-    // 勇者池 1-16 走固定名表）。夹具没种固定名表（charanamelistkeys 为空），
-    // 固定名分支落到兜底名「佳奈美」。
+    // 封印播报的名字来自 %SAVESTR:TARGET%（→ callname:TARGET:-1，#5 决议：
+    // NAME / SAVESTR 同源）。它必须是命名链**从上面种下的表里取到**的名字：
+    // 勇者的称呼在生成时被 CHARA_NAME_RANDOM_DEFINE 掷号覆写（CHARA_MAKE.ERB
+    // :18-20），模板名（战士/骑士…）只活在 ADDCHARA 那一刻。
     const report = texts.find((line) =>
       line.includes('封印了魔王，被后人歌颂为传说中的勇者'),
     );
@@ -266,19 +300,23 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     const sealed_name = report
       .replace(/^\*勇者/, '')
       .replace(/封印了魔王.*$/, '');
-    assert.equal(
-      sealed_name,
-      '佳奈美',
-      `封印播报的名字是命名链写下的那个（实测「${sealed_name}」，%SAVESTR:TARGET% 的承载）`,
-    );
-    // 触发勇者确实在第 9 层（FLOOR >= 9 的判据留证）。名字与模板号已经脱钩
-    // （见上），改按「在场 + CFLAG:501 == 9」定位那名勇者
-    const floor9 = fixture.chara_no.filter(
-      (cid) => fixture.store.get(`cflag:${cid}:501`) === 9,
-    );
     assert(
-      floor9.length > 0,
-      `触发勇者（${sealed_name}）到达第 9 层（CFLAG:501 = 9）`,
+      SEEDED_NAMES.has(sealed_name),
+      `封印播报的名字取自种下的固定名表（实测「${sealed_name}」；不在表里 = 掷到的编号掉出 NAME_NIDS 的区间）`,
+    );
+    // **绑定**：被封印的必须就是打到第 9 层的那名勇者——同名＋在场＋
+    // CFLAG:501 == 9。名字是种出来的（每个编号一个名字），所以它能重新
+    // 当身份用：池里同名的勇者不止一个时，至少有一个真的在第 9 层。
+    const sealed_ids = Object.keys(HEROES)
+      .map(Number)
+      .filter(
+        (id) =>
+          fixture.chara_no.includes(id) &&
+          fixture.store.get(`callname:${id}:-1`) === sealed_name,
+      );
+    assert(
+      sealed_ids.some((id) => fixture.store.get(`cflag:${id}:501`) === 9),
+      `被封印的勇者（${sealed_name}）就是打到第 9 层的那一个（CFLAG:501 = 9）`,
     );
     assert(
       texts.includes(
