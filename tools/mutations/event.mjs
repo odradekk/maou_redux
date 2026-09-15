@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 147; // #404 起 +40（M8196-M8238 段内实收 40 条：三条死代码/等价改写被删）
+export const COUNT = 176; // #404 起 +69（首轮 40 条 M8196-M8238 + 返工 29 条 M8239-M8267）
 
 export default [
   {
@@ -1361,5 +1361,299 @@ export default [
         ['exflag', 2814, 2],`,
     tests: ['event-ending'],
     must_mention: '效果表驱动：每段收尾',
+  },
+
+  // —— #404 返工：四条 ENDCHECK 阶梯的**档位区间边界** ——
+  {
+    desc: 'M8239 ENDCHECKSQUARE 起步门区间：stage < 10 误写成 < 11（10 档被起步门抢走）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (love && cflag(2) >= 2000 && stage < 10) {
+    era_exflag.route_22 = 10; // :158 起步`,
+    replace: `  if (love && cflag(2) >= 2000 && stage < 11) {
+    era_exflag.route_22 = 10; // :158 起步`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSQUARE 档位区间',
+  },
+  {
+    desc: 'M8240 ENDCHECKSQUARE 10-20 档下界：stage >= 10 误写成 >= 11（10 落空）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 10 && stage < 20) {
+    if (love && cflag(2) >= 5000) {
+      era_exflag.route_22 = 20;`,
+    replace: `  } else if (stage >= 11 && stage < 20) {
+    if (love && cflag(2) >= 5000) {
+      era_exflag.route_22 = 20;`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSQUARE 档位区间',
+  },
+  {
+    desc: 'M8241 ENDCHECKSQUARE 20-30 档上界：stage < 30 误写成 < 31（30 被上一档抢走）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 20 && stage < 30) {
+    if (love && cflag(2) >= 10000) {
+      era_exflag.route_22 = 30;`,
+    replace: `  } else if (stage >= 20 && stage < 31) {
+    if (love && cflag(2) >= 10000) {
+      era_exflag.route_22 = 30;`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSQUARE 档位区间',
+  },
+  {
+    desc: 'M8242 ENDCHECKSQUARE 30-40 档下界：stage >= 30 误写成 >= 31（30 落空、计数器不清零）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 30 && stage < 40) {
+    // :166-168`,
+    replace: `  } else if (stage >= 31 && stage < 40) {
+    // :166-168`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSQUARE 档位区间',
+  },
+  {
+    desc: 'M8243 ENDCHECKSQUARE 80-90 档上界：stage < 90 误写成 < 91（90 被上一档抢走）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 80 && stage < 90) {
+    if (love && cflag(515) >= 150) {
+      era_exflag.route_22 = 90;`,
+    replace: `  } else if (stage >= 80 && stage < 91) {
+    if (love && cflag(515) >= 150) {
+      era_exflag.route_22 = 90;`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSQUARE 档位区间',
+  },
+  {
+    desc: 'M8244 ENDCHECKSQUARE 300 档：stage === 300 误写成 === 301（299 与 300 都不动）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage === 300) {
+    // :199-206`,
+    replace: `  } else if (stage === 301) {
+    // :199-206`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSQUARE 档位区间',
+  },
+  {
+    desc: 'M8245 ENDCHECKSPADE 恋慕起步门：stage < 10 误写成 < 11',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (love && cflag(2) >= 2000 && stage < 10) {
+    era_exflag.route_21 = 10; // :254 起步`,
+    replace: `  if (love && cflag(2) >= 2000 && stage < 11) {
+    era_exflag.route_21 = 10; // :254 起步`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSPADE 档位区间',
+  },
+  {
+    desc: 'M8246 ENDCHECKSPADE 恋慕 40-50 档下界：stage >= 40 误写成 >= 41',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 40 && stage < 50) {
+    if (love && cflag(515) >= 10) {
+      era_exflag.route_21 = 50;`,
+    replace: `  } else if (stage >= 41 && stage < 50) {
+    if (love && cflag(515) >= 10) {
+      era_exflag.route_21 = 50;`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSPADE 档位区间',
+  },
+  {
+    desc: 'M8247 ENDCHECKSPADE 恋慕 80-90 档上界：stage < 90 误写成 < 91',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 80 && stage < 90) {
+    if (love && cflag(515) >= 150) {
+      era_exflag.route_21 = 90;`,
+    replace: `  } else if (stage >= 80 && stage < 91) {
+    if (love && cflag(515) >= 150) {
+      era_exflag.route_21 = 90;`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSPADE 档位区间',
+  },
+  {
+    desc: 'M8248 ENDCHECKSPADE 淫乱起步门：lust_stage < 10 误写成 < 11',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (lust && cflag(2) >= 2000 && lust_stage < 10) {
+    era_exflag.route_21 = 110; // :304-305 起步 11`,
+    replace: `  if (lust && cflag(2) >= 2000 && lust_stage < 11) {
+    era_exflag.route_21 = 110; // :304-305 起步 11`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSPADE 档位区间',
+  },
+  {
+    desc: 'M8249 ENDCHECKSPADE 淫乱 110-120 档下界：>= 110 误写成 >= 111（110 落空）',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (lust_stage >= 110 && lust_stage < 120) {
+    if (lust && cflag(2) >= 5000) {`,
+    replace: `  } else if (lust_stage >= 111 && lust_stage < 120) {
+    if (lust && cflag(2) >= 5000) {`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSPADE 档位区间',
+  },
+  {
+    desc: 'M8250 ENDCHECKSPADE 淫乱 120-130 档上界：< 130 误写成 < 131（130 被上一档抢走）',
+    file: 'ere/event/event-endcheck.js',
+    find: '  } else if (lust_stage >= 120 && lust_stage < 130) {',
+    replace: '  } else if (lust_stage >= 120 && lust_stage < 131) {',
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSPADE 档位区间',
+  },
+  {
+    desc: 'M8251 ENDCHECKSPADE 淫乱 190-200 档下界：>= 190 误写成 >= 191',
+    file: 'ere/event/event-endcheck.js',
+    find: '  } else if (lust_stage >= 190 && lust_stage < 200) {',
+    replace: '  } else if (lust_stage >= 191 && lust_stage < 200) {',
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKSPADE 档位区间',
+  },
+  {
+    desc: 'M8252 ENDCHECKPRINCESS 初会门：route_35 === 0 误写成 === 1',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (get_chara(35) > 0 && era_exflag.route_35 === 0) {
+    era_exflag.route_35 = 10;`,
+    replace: `  if (get_chara(35) > 0 && era_exflag.route_35 === 1) {
+    era_exflag.route_35 = 10;`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8253 ENDCHECKPRINCESS 恋慕重置下界：route >= 130 误写成 >= 131',
+    file: 'ere/event/event-endcheck.js',
+    find: '  if (talent(85) === 1 && era_exflag.route_35 >= 130) {',
+    replace: '  if (talent(85) === 1 && era_exflag.route_35 >= 131) {',
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8254 ENDCHECKPRINCESS 淫乱重置上界：<= 130 误写成 <= 131',
+    file: 'ere/event/event-endcheck.js',
+    find: `    era_exflag.route_35 >= 30 &&
+    era_exflag.route_35 <= 130`,
+    replace: `    era_exflag.route_35 >= 30 &&
+    era_exflag.route_35 <= 131`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8255 ENDCHECKPRINCESS 10-20 档下界：stage >= 10 误写成 >= 11',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (stage >= 10 && stage < 20) {
+    // :372-376`,
+    replace: `  if (stage >= 11 && stage < 20) {
+    // :372-376`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8256 ENDCHECKPRINCESS 130-140 档下界：stage >= 130 误写成 >= 131',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 130 && stage < 140) {
+    if (cflag(2) >= 2000) {`,
+    replace: `  } else if (stage >= 131 && stage < 140) {
+    if (cflag(2) >= 2000) {`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8257 ENDCHECKPRINCESS 80-90 档上界：stage < 90 误写成 < 91',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 80 && stage < 90) {
+    if (cflag(515) < 30) {`,
+    replace: `  } else if (stage >= 80 && stage < 91) {
+    if (cflag(515) < 30) {`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8258 ENDCHECKPRINCESS 110-120 档上界：stage < 120 误写成 < 121',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 110 && stage < 120) {
+    if (cflag(515) < 150) {`,
+    replace: `  } else if (stage >= 110 && stage < 121) {
+    if (cflag(515) < 150) {`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8259 ENDCHECKPRINCESS 180-190 档下界：stage >= 180 误写成 >= 181',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 180 && stage < 190) {
+    if (cflag(515) < 30) {`,
+    replace: `  } else if (stage >= 181 && stage < 190) {
+    if (cflag(515) < 30) {`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8260 ENDCHECKPRINCESS 210-220 档上界：stage < 220 误写成 < 221',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 210 && stage < 220) {
+    if (cflag(515) < 150) {`,
+    replace: `  } else if (stage >= 210 && stage < 221) {
+    if (cflag(515) < 150) {`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKPRINCESS 档位区间',
+  },
+  {
+    desc: 'M8261 ENDCHECKGODNESS 起步门：stage < 10 误写成 < 11',
+    file: 'ere/event/event-endcheck.js',
+    find: `  if (lust && cflag(2) >= 2000 && stage < 10) {
+    era_exflag.route_33 = 110; // :87-89 起步 11`,
+    replace: `  if (lust && cflag(2) >= 2000 && stage < 11) {
+    era_exflag.route_33 = 110; // :87-89 起步 11`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKGODNESS 档位区间',
+  },
+  {
+    desc: 'M8262 ENDCHECKGODNESS 110-120 档下界：stage >= 110 误写成 >= 111',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 110 && stage < 120) {
+    // :90-93`,
+    replace: `  } else if (stage >= 111 && stage < 120) {
+    // :90-93`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKGODNESS 档位区间',
+  },
+  {
+    desc: 'M8263 ENDCHECKGODNESS 120-130 档上界：stage < 130 误写成 < 131',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 110 && stage < 130) {
+    // :94-97`,
+    replace: `  } else if (stage >= 110 && stage < 131) {
+    // :94-97`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKGODNESS 档位区间',
+  },
+  {
+    desc: 'M8264 ENDCHECKGODNESS 170-180 档下界：stage >= 170 误写成 >= 171',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 170 && stage < 180) {
+    // :124-130`,
+    replace: `  } else if (stage >= 171 && stage < 180) {
+    // :124-130`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKGODNESS 档位区间',
+  },
+  {
+    desc: 'M8265 ENDCHECKGODNESS 180-190 档上界：stage < 190 误写成 < 191',
+    file: 'ere/event/event-endcheck.js',
+    find: `  } else if (stage >= 180 && stage < 190) {
+    // :131-137`,
+    replace: `  } else if (stage >= 180 && stage < 191) {
+    // :131-137`,
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKGODNESS 档位区间',
+  },
+  {
+    desc: 'M8266 ENDCHECKGODNESS 淫乱重置 [30,100] 下界：>= 30 误写成 >= 31',
+    file: 'ere/event/event-endcheck.js',
+    find: '    ((era_exflag.route_33 >= 30 && era_exflag.route_33 <= 100) ||',
+    replace:
+      '    ((era_exflag.route_33 >= 31 && era_exflag.route_33 <= 100) ||',
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKGODNESS 档位区间',
+  },
+  {
+    desc: 'M8267 ENDCHECKGODNESS 淫乱重置 [300,310] 上界：<= 310 误写成 <= 311',
+    file: 'ere/event/event-endcheck.js',
+    find: '      (era_exflag.route_33 >= 300 && era_exflag.route_33 <= 310))',
+    replace:
+      '      (era_exflag.route_33 >= 300 && era_exflag.route_33 <= 311))',
+    tests: ['event-ending'],
+    must_mention: 'ENDCHECKGODNESS 档位区间',
   },
 ];
