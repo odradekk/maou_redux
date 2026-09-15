@@ -1105,7 +1105,11 @@ test('A40-42：装着灌肠塞时的排泄段（分支体内，:1253-1272）', a
   );
 });
 
-test('A43-49：无 A 分支 → 存根占位行（既有行为，#45 起）', async () => {
+test('A43-49：源侧无 A 分支 → 显式无操作，不出占位行（#402 收口）', async () => {
+  // #45 起 A43-49 落的是「族票未落地」占位行；#402 查实源侧 :1208-1276 从
+  // 42 直跳 72、43-49 从来没有 A 支，故在 train-message.js 注册显式空
+  // handler（同款先例 com-tentacle.js 的 A 100-109/208）——占位行从此只
+  // 表示「族票未落地」，而这几个号永远不该出现它。
   const world = seed_world();
   world.era_flag.selectcom = 45;
   const { train_message_a } = world.fixture.load_module(
@@ -1113,8 +1117,8 @@ test('A43-49：无 A 分支 → 存根占位行（既有行为，#45 起）', as
   );
   await train_message_a();
   assert.ok(
-    world.fixture.text_lines().some((l) => l.includes('指令 45 的参数反应')),
-    '缺失分支的占位行',
+    !world.fixture.text_lines().some((l) => l.includes('指令 45 的参数反应')),
+    '源侧无分支的号不得出占位行',
   );
 });
 

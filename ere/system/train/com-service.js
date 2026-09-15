@@ -1758,114 +1758,15 @@ async function train_message_b_38() {
 }
 
 /** EVENT_TRAIN_MESSAGE_A :30-108：COM33 的公共股间性交射精分支。 */
-function train_message_a_crotch_ejaculation() {
-  if (era_flag.selectcom !== 33) return;
-
-  const target = target_name();
-  const player = player_name();
-  const skin = (id) =>
-    value('talent', id, 244)
-      ? '蓝色'
-      : value('talent', id, 253)
-        ? '褐色'
-        : value('talent', id, 255)
-          ? '白皙'
-          : '';
-  const player_ejac = era.get('tflag:9') || 0;
-
-  if (player_ejac === 0) {
-    const target_ejac = era.get('tflag:10') || 0;
-    if (target_ejac > 0 && skin(era_flag.player)) {
-      era.print(
-        `${target}射出的${target_ejac >= 2 ? '大量' : ''}精液、把${player}的${skin(era_flag.player)}肌肤弄脏了…`,
-      );
-    }
-  } else if (player_ejac === 1) {
-    era.print(`射出的精液、把${target}的${skin(era_flag.target)}肌肤弄脏了…`);
-  } else if (player_ejac === 2) {
-    era.print(`${target}的${skin(era_flag.target)}肌肤被射出的大量精液沾满了…`);
-  }
+// A 30-38 的射精文本属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
+// train-message.js）：股间射精、狗灌精、口/手/足射精链都在那里，本族不再
+// 另留一份拷贝（两份同时跑会把同一行打两遍）。源侧 A 文件对 30-33/35/37/38
+// 没有专属分支，故这些号显式无操作；34/36 保留骑乘反应。
+async function no_message_a() {
+  return 0;
 }
 
 // A 文只有 TFLAG 链；按真实旗标注册在本族可达的 SELECTCOM，避免把九条写成错误的孤立指令分支。
-async function train_message_a_service() {
-  train_message_a_crotch_ejaculation();
-  const target = target_name();
-  const semen_poison = target_abl(32);
-  const fainted = (era.get('tflag:899') || 0) > 1;
-  if (game.event.犬射精或处刑口上 > 0) {
-    const site = { 30: '手上', 31: '嘴里', 34: '私处里' }[era_flag.selectcom];
-    if (site) era.print(`${target}的${site}、被狗灌入了那又臭又热的精液…`);
-  } else if (era.get('tflag:0') === 1) {
-    if (era_flag.selectcom === 31) {
-      era.print(
-        semen_poison >= 3
-          ? `${target}带着恍惚的表情、把注入口中的精液喝光了…`
-          : target_abl(16) >= 3
-            ? `${target}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`
-            : `精液注入到${target}的嘴里了…`,
-      );
-    } else if (era_flag.selectcom === 32) {
-      const skin = target_talent(244)
-        ? '蓝色的'
-        : target_talent(253)
-          ? '褐色的'
-          : target_talent(255)
-            ? '白皙的'
-            : '';
-      era.print(
-        target_talent(110) || target_talent(114)
-          ? `${target}${skin}圆润挺拔的诱惑豪乳之间、积存着精液…`
-          : `${target}${skin}胸口到脸之间、精液四处飞散着…`,
-      );
-    }
-  } else if (era.get('tflag:0') === 2) {
-    if (era_flag.selectcom === 31) {
-      era.print(
-        semen_poison >= 3
-          ? `${target}带着恍惚的表情、把口中的精液喝光了…`
-          : target_abl(16) >= 3
-            ? `没喝完的精液、从${target}的嘴里溢出来了…`
-            : `满满的精液、把${target}的喉咙叩开了…`,
-      );
-    } else if (era_flag.selectcom === 32) {
-      const skin = target_talent(244)
-        ? '蓝色的'
-        : target_talent(253)
-          ? '褐色的'
-          : target_talent(255)
-            ? '白皙的'
-            : '';
-      era.print(
-        `大量的精液飞散而出、${target}${skin}胸部和脸之间、全被射满了…`,
-      );
-    }
-  } else if (game.train.手中射精 === 1) {
-    const prefix =
-      !fainted && target_exp(20) === 0
-        ? '带着惊讶的神情、'
-        : !fainted && semen_poison > 2
-          ? '带着恍惚的表情、'
-          : '';
-    era.print(`${prefix}精液射到${target}的身上了…`);
-  } else if (game.train.手中射精 === 2) {
-    const prefix =
-      !fainted && target_exp(20) === 0
-        ? '带着惊讶的神情、'
-        : !fainted && semen_poison > 2
-          ? '带着恍惚的表情、'
-          : '';
-    era.print(`${prefix}${target}的脸上、手上、沾满了大量的精液…`);
-  } else if (game.dungeon.足交射精或处遇口上 === 1) {
-    era.print(
-      `${target}${(target_talent(83) || target_abl(20) > 2) && !target_talent(85) ? '带着轻蔑的眼神、' : ''}看着你将热乎乎的精液射到她的脚上了…`,
-    );
-  } else if (game.dungeon.足交射精或处遇口上 === 2) {
-    era.print(
-      `${target}${(target_talent(83) || target_abl(20) > 2) && !target_talent(85) ? '带着轻蔑的眼神、' : ''}看着你将大量热乎乎的精液射到她的脚上了…`,
-    );
-  }
-}
 
 /** EVENT_TRAIN_MESSAGE_A :1175-1203：骑乘位的肛门快感增量反应。 */
 function train_message_a_riding_reaction() {
@@ -1905,12 +1806,9 @@ function train_message_a_riding_reaction() {
 }
 
 async function train_message_a_riding() {
-  await train_message_a_service();
-  // 延迟读取：主启动图的 COM20–29 注册仍仅由 com-sex 自己负责；本族只在
-  // 实际渲染骑乘 A 文时复用其无注册 helper。
-  const { train_message_a_sex_common } = require('#/system/train/com-sex');
-  await train_message_a_sex_common();
-  // 原作同一 IF / ELSEIF 链：玩家性交射精时已走 TFLAG:2 段，不能再叠骑乘反应。
+  // 公共段（#402 合流到 train-message.js）在分发之前已跑完：这里只剩骑乘位
+  // 自己的参数反应。原作同一 IF / ELSEIF 链：玩家性交射精时已走 TFLAG:2 段，
+  // 不能再叠骑乘反应。
   if ((era.get('tflag:2') || 0) === 0) train_message_a_riding_reaction();
 }
 
@@ -2018,7 +1916,7 @@ for (const [id, fn] of [
   train_message_b_family.register(id, fn);
 
 for (const id of [30, 31, 32, 33, 35, 37, 38])
-  train_message_a_family.register(id, train_message_a_service);
+  train_message_a_family.register(id, no_message_a);
 for (const id of [34, 36])
   train_message_a_family.register(id, train_message_a_riding);
 

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 446;
+export const COUNT = 511;
 
 export default [
   {
@@ -3671,12 +3671,11 @@ export default [
     must_mention: '主启动图注册特殊系',
   },
   {
-    desc: 'M1211 TRAIN_MESSAGE_A55 欲情输出阈值反转',
-    file: 'ere/system/train/com-special.js',
-    find: "  if ((era.get('tflag:899') || 0) > 1 || palam(cid, 5) < PALAMLV[3]) return;",
-    replace:
-      "  if ((era.get('tflag:899') || 0) > 1 || palam(cid, 5) >= PALAMLV[3]) return;",
-    tests: ['com-special'],
+    desc: 'M1211 TRAIN_MESSAGE_A55 欲情输出阈值反转（#402 起靶 train-message.js 的链末支）',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (palam(target, 5) < PALAMLV[3]) {\n    return;\n  }',
+    replace: '  if (palam(target, 5) >= PALAMLV[3]) {\n    return;\n  }',
+    tests: ['com-special', 'train-message'],
     must_mention: 'SOURCE_CHECK 调用时输出原作反应',
   },
   {
@@ -3746,17 +3745,11 @@ export default [
     must_mention: 'COM_ABLE30-38',
   },
   {
-    desc: 'M1111 COM34/36 A 文不复用性交公共尾段（#222）',
+    desc: 'M1111 COM34/36 骑乘反应去掉「未射精才追加」的门（#222；#402 起靶位挪到 riding 尾段）',
     file: 'ere/system/train/com-service.js',
-    find: `async function train_message_a_riding() {
-  await train_message_a_service();
-  // 延迟读取：主启动图的 COM20–29 注册仍仅由 com-sex 自己负责；本族只在
-  // 实际渲染骑乘 A 文时复用其无注册 helper。
-  const { train_message_a_sex_common } = require('#/system/train/com-sex');
-  await train_message_a_sex_common();`,
-    replace: `async function train_message_a_riding() {
-  await train_message_a_service();
-  // 变异：漏掉性交公共尾段`,
+    find: "  if ((era.get('tflag:2') || 0) === 0) train_message_a_riding_reaction();",
+    replace:
+      '  train_message_a_riding_reaction(); // 变异：射精时也追加 UP:2 反应',
     tests: ['com-service'],
     must_mention: 'COM34/36 复用性交尾段',
   },
@@ -3946,14 +3939,6 @@ export default [
     replace: "    era.printButton('[1] 自然', 1); // 变异：手写编号前缀",
     tests: ['com-assistant'],
     must_mention: '按钮无手写编号前缀',
-  },
-  {
-    desc: 'M1417 A62 射精旗打开也不打反应文（#225）',
-    file: 'ere/system/train/com-assistant.js',
-    find: "  const flag = era.get('tflag:7') || 0;\n  if (!flag) return 0;",
-    replace: '  const flag = 0; // 变异：射精旗打开也不打 A62',
-    tests: ['com-assistant'],
-    must_mention: '射精旗打开后走源侧反应文',
   },
   {
     desc: 'M1418 COM69 亲族路径不调 INCEST 真身（#225）',
@@ -4243,23 +4228,16 @@ export default [
   {
     desc: 'M1073 TRAIN_MESSAGE_A 公共绝顶段挪到专属分支之后（#220）',
     file: 'ere/system/train/train-message.js',
-    find: `    era.print(line);
-  }
-
-  const branch = await train_message_a_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
-    args: [rand_source()],
-  });`,
-    replace: `    era.set('str:0', line); // 变异：公共段延后到专属分支后
-  }
-
-  const branch = await train_message_a_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
-    args: [rand_source()],
-  });
-  if (orgasms > 0 && faint <= 1) {
-    era.print(era.get('str:0'));
-  }`,
+    find: `    line +=
+      orgasms < 12
+        ? '全身哆嗦着、颤动到了极点。'
+        : '露出快乐又淫媚的神色、绝顶高潮了……';
+    era.print(line);`,
+    replace: `    line +=
+      orgasms < 12
+        ? '全身哆嗦着、颤动到了极点。'
+        : '露出快乐又淫媚的神色、绝顶高潮了……';
+    era.set('str:0', line); // 变异：公共绝顶段不落行（#220 的判据是它在专属分支之前）`,
     tests: ['train-message'],
     must_mention: 'A 公共绝顶：TFLAG:29 在 COM12 专属反应之前输出同一行',
   },
@@ -4649,5 +4627,570 @@ export default [
     replace: '  leftover_s = 0; // 变异：不写入回数',
     tests: ['event-aftertrain', 'kojo-k6-wicked'],
     must_mention: 'leftover_s',
+  },
+  // —— #402（N18 调教消息 A/B）：A 的公共段（train-message.js）——
+  {
+    desc: 'M8116 A 股间射精 0 臂：TFLAG:10 ≥ 1 守卫删（对象没射也说话）',
+    file: 'ere/system/train/train-message.js',
+    find: `    if (tflag10 < 1) {
+      return;
+    }
+    const head = \`\${target_name}射精出的`,
+    replace: `    const head = \`\${target_name}射精出的`,
+    tests: ['train-message'],
+    must_mention: 'TFLAG:10 == 0 → 整段静默',
+  },
+  {
+    desc: 'M8117 A 股间射精 0 臂：「大量」的档界 2 抬到 3',
+    file: 'ere/system/train/train-message.js',
+    find: `\${tflag10 >= 2 ? '大量' : ''}`,
+    replace: `\${tflag10 >= 3 ? '大量' : ''}`,
+    tests: ['train-message'],
+    must_mention: '对象大量射精',
+  },
+  {
+    desc: 'M8118 A 股间射精 0 臂：122 支改判 121（阴茎互捅支失守）',
+    file: 'ere/system/train/train-message.js',
+    find: `    if (selectcom === 122) {
+      era.print(
+        \`\${head}精液、将\${chara_callname(player)}的阴茎用精液一吐为快了…\`,
+      ); // :39`,
+    replace: `    if (selectcom === 121) {
+      era.print(
+        \`\${head}精液、将\${chara_callname(player)}的阴茎用精液一吐为快了…\`,
+      ); // :39`,
+    tests: ['train-message'],
+    must_mention: '0 臂 · 122 · 对象普通射精',
+  },
+  {
+    desc: 'M8119 A 股间射精 0 臂：33 支丢「精液、把〈主人〉的」前缀（与 62 支合流）',
+    file: 'ere/system/train/train-message.js',
+    find: '      const line =\n        selectcom === 33\n          ? `${head}精液、把${chara_callname(player)}的` // :43\n          : head;',
+    replace: '      const line = head; // 变异：33 支的前缀删',
+    tests: ['train-message'],
+    must_mention: '0 臂 · 33 · 恶魔肌肤',
+  },
+  {
+    desc: 'M8120 A 公共段肌肤色：恶魔肌肤的色名 蓝色 → 青色',
+    file: 'ere/system/train/train-message.js',
+    find: `  if (tal(cid, 244)) {
+    return '蓝色';
+  }`,
+    replace: `  if (tal(cid, 244)) {
+    return '青色';
+  }`,
+    tests: ['train-message'],
+    must_mention: '0 臂 · 33 · 恶魔肌肤',
+  },
+  {
+    desc: 'M8121 A 股间射精 0 臂：色名链无 ELSE 的断句残留被补字',
+    file: 'ere/system/train/train-message.js',
+    find: `      if (color === undefined) {
+        era.print(line); // 断句残留：源侧色名链无 ELSE`,
+    replace: `      if (color === undefined) {
+        era.print(\`\${line}肌肤弄脏了…\`); // 变异：补字`,
+    tests: ['train-message'],
+    must_mention: '0 臂 · 33 · 无肌肤素质',
+  },
+  {
+    desc: 'M8122 A 股间射精 1/2 臂：「双方同时射精」丢掉 TFLAG:10 ≥ 1 条件',
+    file: 'ere/system/train/train-message.js',
+    find: '    const both = tflag10 >= 1 && (tal(player, 122) || tal(player, 121));',
+    replace:
+      '    const both = (tal(player, 122) || tal(player, 121)) > 0; // 变异：丢掉 TFLAG:10 条件',
+    tests: ['train-message'],
+    must_mention: '1 臂 · 122 · TFLAG:10 == 0',
+  },
+  {
+    desc: 'M8123 A 股间射精 2 臂：同时射精文案的「大量」删',
+    file: 'ere/system/train/train-message.js',
+    find: `          ? '两人同时射精、对彼此的阴茎用大量的精液一吐为快…' // :90`,
+    replace: `          ? '两人同时射精、对彼此的阴茎用精液一吐为快…' // :90`,
+    tests: ['train-message'],
+    must_mention: '2 臂 · 122 · 主人是扶她',
+  },
+  {
+    desc: 'M8124 A 股间射精 1/2 臂：33 支缺色名时补「黑色」（改变无素质语义）',
+    file: 'ere/system/train/train-message.js',
+    find: "    const color = skin_color(target) ?? ''; // 色名链无 ELSE，缺色即空串",
+    replace:
+      "    const color = skin_color(target) ?? '黑色'; // 变异：缺色补字",
+    tests: ['train-message'],
+    must_mention: '1 臂 · 33 · 无肌肤素质',
+  },
+  {
+    desc: 'M8125 A 股间射精 2 臂：62 支文案的「射出的大量精液」改序',
+    file: 'ere/system/train/train-message.js',
+    find: `        ? '两人的身体被射出的大量精液沾满了…' // :108`,
+    replace: `        ? '两人的身体被射出的大量精液沾满…' // :108`,
+    tests: ['train-message'],
+    must_mention: '2 臂 · 62 · 双人股间',
+  },
+  {
+    desc: 'M8126 A 狗射精：34（骑乘位）支删，只留 21',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (selectcom === 21 || selectcom === 34) {',
+    replace: '  if (selectcom === 21) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:16 狗射精：SELECTCOM 34',
+  },
+  {
+    desc: 'M8127 A 狗射精：直肠支的判据 27 改 28（直肠行失守）',
+    file: 'ere/system/train/train-message.js',
+    find: '  } else if (selectcom === 27) {',
+    replace: '  } else if (selectcom === 28) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:16 狗射精：SELECTCOM 27',
+  },
+  {
+    desc: 'M8128 A 狗射精：嘴部行文案改字（嘴里 → 喉咙里）',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`${target_name}的嘴里、被狗灌入了那又臭又热的精液…`); // :157',
+    replace:
+      '    era.print(`${target_name}的喉咙里、被狗灌入了那又臭又热的精液…`); // :157',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:16 狗射精：SELECTCOM 31',
+  },
+  {
+    desc: 'M8129 A 狗射精：手部支的收尾句换成其余三支的句式',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`${target_name}的手上、沾满了狗那又臭又热的精液…`); // :159',
+    replace:
+      '    era.print(`${target_name}的手上、被狗灌入了那又臭又热的精液…`); // :159',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:16 狗射精：SELECTCOM 30',
+  },
+  {
+    desc: 'M8130 A 狗射精：TFLAG:16 的门 < 0，旗标 0 也说话',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (tflag(16) <= 0) {',
+    replace: '  if (tflag(16) < 0) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:16：旗标为 0 时整段静默',
+  },
+  {
+    desc: 'M8131 A 助手射精：羡慕句的 ABL 两项从「或」改「且」',
+    file: 'ere/system/train/train-message.js',
+    find: '    (abl(era_flag.target, 11) > 3 || abl(era_flag.target, 32) > 2) &&',
+    replace:
+      '    (abl(era_flag.target, 11) > 3 && abl(era_flag.target, 32) > 2) &&',
+    tests: ['train-message'],
+    must_mention: '羡慕句的门',
+  },
+  {
+    desc: 'M8132 A 助手射精：TFLAG:7 的门 < 0，旗标 0 也落羡慕句',
+    file: 'ere/system/train/train-message.js',
+    find: '  const flag = tflag(7);\n  if (flag <= 0) {',
+    replace: '  const flag = tflag(7);\n  if (flag < 0) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:7 == 0 → 整段静默',
+  },
+  {
+    desc: 'M8133 A 助手射精：1 支文案的「精液」加成「大量精液」',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`当着${target_name}的面、在${assi_name}的体内深处射出了精液…`); // :167',
+    replace:
+      '    era.print(`当着${target_name}的面、在${assi_name}的体内深处射出了大量精液…`); // :167',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:7 助手射精：两支文案',
+  },
+  {
+    desc: 'M8134 A 射精链口臂：125（自慰口交）支删，只留 31',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (selectcom === 31 || selectcom === 125) {',
+    replace: '  if (selectcom === 31) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:0-1 · 指令 125 的公共段输出',
+  },
+  {
+    desc: 'M8135 A 射精链口臂：精液中毒门 ABL:32 ≥ 3 抬到 ≥ 4',
+    file: 'ere/system/train/train-message.js',
+    find: '  const addicted = abl(target, 32) >= 3; // 精液中毒',
+    replace: '  const addicted = abl(target, 32) >= 4; // 精液中毒',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:0-1 · 指令 31 的公共段输出',
+  },
+  {
+    desc: 'M8136 A 射精链口臂：乳交的豪乳判据 110 改 111',
+    file: 'ere/system/train/train-message.js',
+    find: '    } else if (tal(target, 110) || tal(target, 114)) {',
+    replace: '    } else if (tal(target, 111) || tal(target, 114)) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:0-1 · 指令 32 的公共段输出',
+  },
+  {
+    desc: 'M8137 A 射精链口臂：豪乳积存文案改字',
+    file: 'ere/system/train/train-message.js',
+    find: '      era.print(`${name}${tint}圆润挺拔的诱惑豪乳之间、积存着精液…`); // :190-198',
+    replace:
+      '      era.print(`${name}${tint}圆润挺拔的诱惑双峰之间、积存着精液…`); // :190-198',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:0-1 · 指令 32 的公共段输出',
+  },
+  {
+    desc: 'M8138 A 射精链口臂：强制口交的失神门 ≥ 2 抬到 ≥ 3',
+    file: 'ere/system/train/train-message.js',
+    find: '    if (tflag(899) >= 2) {',
+    replace: '    if (tflag(899) >= 3) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:0-2 · 指令 80 的公共段输出',
+  },
+  {
+    desc: 'M8139 A 射精链口臂（大量）：123 支的第二行删',
+    file: 'ere/system/train/train-message.js',
+    find: "    if (heavy) {\n      era.print('从嘴里溢出来的精液、把阴茎和胸部都染成白色了…'); // :303\n    }",
+    replace: '    // 变异：123 支的第二行删',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:0-2 · 指令 123 的公共段输出',
+  },
+  {
+    desc: 'M8140 A 射精链口臂：126 支主人扶她句的素质 122 改 121',
+    file: 'ere/system/train/train-message.js',
+    find: '    if (addicted && tal(era_flag.player, 122)) {',
+    replace: '    if (addicted && !tal(era_flag.player, 122)) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:0-1 · 指令 126 的公共段输出',
+  },
+  {
+    desc: 'M8141 A 射精链手臂：初次精液经验门 EXP:20 == 0 改 == 1',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (exp(target, 20) === 0 && tflag(899) <= 1) {',
+    replace: '  if (exp(target, 20) === 1 && tflag(899) <= 1) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
+  },
+  {
+    desc: 'M8142 A 射精链足臂：轻蔑门的爱与施虐两项从「且」改「或」',
+    file: 'ere/system/train/train-message.js',
+    find: '  if ((tal(target, 83) || abl(target, 20) > 2) && tal(target, 85) === 0) {',
+    replace:
+      '  if (tal(target, 83) || abl(target, 20) > 2 || tal(target, 85) === 0) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:18-1 · 指令 0 的公共段输出',
+  },
+  {
+    desc: 'M8143 A 射精链足臂（大量）：文案的「大量」删',
+    file: 'ere/system/train/train-message.js',
+    find: "    ? '看着你将大量热乎乎的精液射到她的脚上了…' // :358",
+    replace: "    ? '看着你将热乎乎的精液射到她的脚上了…' // :358",
+    tests: ['train-message'],
+    must_mention: 'TFLAG:18-2 · 指令 0 的公共段输出',
+  },
+  {
+    desc: 'M8144 A 放置 PLAY：目光档的 PALAMLV[5] 门降到 [4]',
+    file: 'ere/system/train/train-message.js',
+    find: "  if (palam(target, 5) >= PALAMLV[5]) {\n    line += '、用炽热地目光看向你'; // :366",
+    replace:
+      "  if (palam(target, 5) >= PALAMLV[4]) {\n    line += '、用炽热地目光看向你'; // :366",
+    tests: ['train-message'],
+    must_mention: '放置 PLAY（指令 55）：欲情四档逐档取件',
+  },
+  {
+    desc: 'M8145 A 放置 PLAY：收尾的省略号删（行尾「……」）',
+    file: 'ere/system/train/train-message.js',
+    find: '  era.print(`${line}……`); // :371',
+    replace: '  era.print(line); // :371',
+    tests: ['train-message'],
+    must_mention: '放置 PLAY（指令 55）：欲情四档逐档取件',
+  },
+  {
+    desc: 'M8146 A 放置 PLAY：TEQUIP:21 门删（未插道具也追加颤抖句）',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (palam(target, 5) >= PALAMLV[3] && tq(target, 21)) {',
+    replace: '  if (palam(target, 5) >= PALAMLV[3]) {',
+    tests: ['train-message'],
+    must_mention: '放置 PLAY（指令 55）：欲情四档逐档取件',
+  },
+  {
+    desc: 'M8147 B 源侧无分支的 55/110/111 空注册删（占位行回来了）',
+    file: 'ere/system/train/train-message.js',
+    find: 'for (const id of [55, 110, 111]) {\n  train_message_b_family.register(id, async () => {});\n}',
+    replace:
+      'for (const id of []) {\n  train_message_b_family.register(id, async () => {});\n}',
+    tests: ['train-message'],
+    must_mention: 'B 指令 55：源侧无分支',
+  },
+  {
+    desc: 'M8148 A 源侧无分支的 43-49/110/111 空注册删（占位行回来了）',
+    file: 'ere/system/train/train-message.js',
+    find: 'for (const id of [43, 44, 45, 46, 47, 48, 49, 110, 111]) {\n  train_message_a_family.register(id, async () => {});\n}',
+    replace:
+      'for (const id of [43, 44, 45, 46, 47, 48, 49]) {\n  train_message_a_family.register(id, async () => {});\n}',
+    tests: ['train-message', 'com-sm'],
+    must_mention: 'A 指令 110：源侧无分支',
+  },
+  {
+    desc: 'M8149 A 性交射精链：抽出/插着分界的 PALAMLV[4] 抬到 [5]',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (palam(target, 5) < PALAMLV[4] || blood) {',
+    replace: '  if (palam(target, 5) < PALAMLV[5] || blood) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:2 == 1 · 插着 · 指令 0',
+  },
+  {
+    desc: 'M8150 A 性交射精链：抽出臂的落红改写句改字',
+    file: 'ere/system/train/train-message.js',
+    find: '      blood ? `${text}渗出了处女的落红、混合着` : text;',
+    replace: '      blood ? `${text}渗出了处女的落红、混杂着` : text;',
+    tests: ['train-message'],
+    must_mention: '抽出臂的落红改写',
+  },
+  {
+    desc: 'M8151 A 性交射精链：乳内 1 臂的 SELECTCOM == 90 门删',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (level === 1 && milk_inside && selectcom === 90) {',
+    replace: '  if (level === 1 && milk_inside) {',
+    tests: ['train-message'],
+    must_mention: '1 臂还要求指令 90',
+  },
+  {
+    desc: 'M8152 A 性交射精链：乳内 2 臂的档位判据 2 改 3（大量乳内失守）',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (level === 2 && milk_inside) {',
+    replace: '  if (level === 3 && milk_inside) {',
+    tests: ['train-message'],
+    must_mention: '乳内射精（CFLAG:113）两支',
+  },
+  {
+    desc: 'M8153 A 性交射精链：背后位支的收尾句「精液滴出来了」改成渗出',
+    file: 'ere/system/train/train-message.js',
+    find: "          : `${with_blood('阴茎拔出后、阴部处')}精液滴出来了…`, // :469-472",
+    replace:
+      "          : `${with_blood('阴茎拔出后、阴部处')}精液渗出来了…`, // :469-472",
+    tests: ['train-message'],
+    must_mention: 'TFLAG:2 == 1 · 抽出 · 指令 21',
+  },
+  {
+    desc: 'M8157 A 性交射精链：余韵 3 档的文案改字（气息慌乱）',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`${name}气息慌乱、沉浸在绝顶高潮的余韵之中…`); // :603',
+    replace:
+      '    era.print(`${name}气息紊乱、沉浸在绝顶高潮的余韵之中…`); // :603',
+    tests: ['train-message'],
+    must_mention: 'ELSE 支：绝顶余韵的五档',
+  },
+  {
+    desc: 'M8156 A 性交射精链：余韵「滴液」支丢掉未穿衣门（CFLAG:40 位判）',
+    file: 'ere/system/train/train-message.js',
+    find: '  const dripping = tflag(19) && (tq(target, 11) || tflag(60)) && uncovered; // :594/:596',
+    replace:
+      '  const dripping = tflag(19) && (tq(target, 11) || tflag(60)); // :594/:596',
+    tests: ['train-message'],
+    must_mention: 'ELSE 支：绝顶余韵的五档',
+  },
+  {
+    desc: 'M8159 A 性交射精链：抽出臂的 TFLAG:31 归零删',
+    file: 'ere/system/train/train-message.js',
+    find: '    game.event.本次调教处女丧失 = 0;\n    game.event.插着不拔 = 0;',
+    replace: '    game.event.插着不拔 = 0; // 变异：TFLAG:31 不归零',
+    tests: ['train-message'],
+    must_mention: '抽出臂的落红改写',
+  },
+  {
+    desc: 'M8160 A 性交射精链：大量抽出臂的 121 支文案丢「大量」',
+    file: 'ere/system/train/train-message.js',
+    find: '          ? `直接对${name}的子宫、注入了大量热乎乎的精液…` // :559',
+    replace: '          ? `直接对${name}的子宫、注入了热乎乎的精液…` // :559',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:2 == 2 · 抽出 · 指令 121',
+  },
+  {
+    desc: 'M8161 A 失禁段：失神放尿的 TFLAG:29 ≥ 3 抬到 ≥ 4',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (tflag(899) >= 2 && orgasms >= 3 && urine) {',
+    replace: '  if (tflag(899) >= 2 && orgasms >= 4 && urine) {',
+    tests: ['train-message'],
+    must_mention: '失神放尿（899 ≥ 2 · 29 ≥ 3 · 利尿剂）',
+  },
+  {
+    desc: 'M8162 A 失禁段：失神失禁的 TFLAG:29 ≥ 1 抬到 ≥ 2',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (tflag(899) >= 2 && orgasms >= 1 && urine) {',
+    replace: '  if (tflag(899) >= 2 && orgasms >= 2 && urine) {',
+    tests: ['train-message'],
+    must_mention: '失神失禁（899 ≥ 2 · 29 ≥ 1 · 漏尿癖）',
+  },
+  {
+    desc: 'M8163 A 失禁段：尿布形态的 CFLAG:42 判据 69 改 68',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (cflag42 === 69 && doll_bit && burst) {',
+    replace: '  if (cflag42 === 68 && doll_bit && burst) {',
+    tests: ['train-message'],
+    must_mention: '尿布放尿（42 == 69',
+  },
+  {
+    desc: 'M8164 A 失禁段：着ぐるみ形态的 CFLAG:42 判据 11 改 12',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (cflag42 === 11 && doll_bit && leak) {',
+    replace: '  if (cflag42 === 12 && doll_bit && leak) {',
+    tests: ['train-message'],
+    must_mention: '着ぐるみ失禁',
+  },
+  {
+    desc: 'M8165 A 失禁段：着ぐるみ放尿的第二句改字',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`看来是太过兴奋、尿到${clothtype_special_text(target)}里去了…`); // :630-632',
+    replace:
+      '    era.print(`看来是太过兴奋、尿在${clothtype_special_text(target)}里了…`); // :630-632',
+    tests: ['train-message'],
+    must_mention: '着ぐるみ放尿',
+  },
+  {
+    desc: 'M8166 A 失禁段：服形态的位门 CFLAG:40 & 16 改 & 32',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (cflag40 & 16 && burst) {',
+    replace: '  if (cflag40 & 32 && burst) {',
+    tests: ['train-message'],
+    must_mention: '服放尿（40 & 16',
+  },
+  {
+    desc: 'M8167 A 失禁段：内裤失禁的收尾句改字（水迹 → 尿迹）',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`${name}的内裤冒起了热气、有黄色水迹在扩散………`); // :653',
+    replace:
+      '    era.print(`${name}的内裤冒起了热气、有黄色尿迹在扩散………`); // :653',
+    tests: ['train-message'],
+    must_mention: '内裤失禁',
+  },
+  {
+    desc: 'M8168 A 失禁段：裸身 29 ≥ 7 · 痉挛改成抽搐（三态各一支）',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`痉挛中的${name}喷泉一样喷尿出来了…`); // :658',
+    replace: '    era.print(`抽搐中的${name}喷泉一样喷尿出来了…`); // :658',
+    tests: ['train-message'],
+    must_mention: '裸身 29 ≥ 7 · 只利尿剂',
+  },
+  {
+    desc: 'M8169 A 失禁段：裸身 29 ≥ 3 · 只利尿剂支的「震颤抖中」改字',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`震颤抖中的${name}不断滴尿、形成了个小水坑…`); // :670',
+    replace:
+      '    era.print(`颤抖中的${name}不断滴尿、形成了个小水坑…`); // :670',
+    tests: ['train-message'],
+    must_mention: '裸身 29 ≥ 3 · 只利尿剂',
+  },
+  {
+    desc: 'M8170 A 失禁段：裸身 29 ≥ 5 · 只漏尿癖支的水坑句改字',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`筋疲力尽的${name}不断滴尿、形成了个小水坑…`); // :666',
+    replace:
+      '    era.print(`筋疲力尽的${name}不断滴尿、积成了个小水坑…`); // :666',
+    tests: ['train-message'],
+    must_mention: '裸身 29 ≥ 5 · 只漏尿癖',
+  },
+  {
+    desc: 'M8171 A 处女丧失段：触手夺处的旗标值 1 改 2',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (tflag(15) === 1 && virgin) {',
+    replace: '  if (tflag(15) === 2 && virgin) {',
+    tests: ['train-message'],
+    must_mention: '触手夺处（TFLAG:15 == 1）',
+  },
+  {
+    desc: 'M8172 A 处女丧失段：无射精夺处丢掉「触手未登场」条件',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (tflag(2) === 0 && tflag(15) === 0 && virgin) {',
+    replace: '  if (tflag(2) === 0 && virgin) {',
+    tests: ['train-message'],
+    must_mention: '触手夺处（TFLAG:15 == 1）',
+  },
+  {
+    desc: 'M8173 A 处女丧失段：近亲称谓的主人性别两项对调',
+    file: 'ere/system/train/train-message.js',
+    find: '    const kin = tal(era_flag.player, 122) ? titles[0] : titles[1];',
+    replace:
+      '    const kin = tal(era_flag.player, 122) ? titles[1] : titles[0];',
+    tests: ['train-message'],
+    must_mention: '近亲夺处十支',
+  },
+  {
+    desc: 'M8174 A 处女丧失段：近亲表的表亲档 6 改 5',
+    file: 'ere/system/train/train-message.js',
+    find: "  6: ['表弟', '表妹'],",
+    replace: "  5: ['表弟', '表妹'],",
+    tests: ['train-message'],
+    must_mention: '近亲夺处十支',
+  },
+  {
+    desc: 'M8175 A 处女丧失段：近亲链丢掉「野狗未登场」门',
+    file: 'ere/system/train/train-message.js',
+    find: '    tq(target, 89) === 0 &&\n    tq(target, 90) === 0 &&',
+    replace: '    tq(target, 90) === 0 &&',
+    tests: ['train-message'],
+    must_mention: '近亲链的四道门',
+  },
+  {
+    desc: 'M8176 A 处女丧失段：野狗句的收尾改字',
+    file: 'ere/system/train/train-message.js',
+    find: '    era.print(`${name}把处女奉献给野狗了。`); // :722',
+    replace: '    era.print(`${name}把处女献给野狗了。`); // :722',
+    tests: ['train-message'],
+    must_mention: '野狗夺处',
+  },
+  {
+    desc: 'M8177 A 口交清洁段：双人口交支的助手射精旗标 6 改 5',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (tflag(0) && tflag(6)) {',
+    replace: '  if (tflag(0) && tflag(5)) {',
+    tests: ['train-message'],
+    must_mention: '双人口交支与普通支的四档拼法',
+  },
+  {
+    desc: 'M8178 A 口交清洁段：顺从门槛 ABL:10 ≥ 3 抬到 ≥ 4',
+    file: 'ere/system/train/train-message.js',
+    find: '    if (abl(target, 10) >= 3) {',
+    replace: '    if (abl(target, 10) >= 4) {',
+    tests: ['train-message'],
+    must_mention: '双人口交支与普通支的四档拼法',
+  },
+  {
+    desc: 'M8179 A 口交清洁段：「助手和」的档界 ≥ 2 抬到 ≥ 3',
+    file: 'ere/system/train/train-message.js',
+    find: '    if (fellatio >= 2) {',
+    replace: '    if (fellatio >= 3) {',
+    tests: ['train-message'],
+    must_mention: '双人口交支与普通支的四档拼法',
+  },
+  {
+    desc: 'M8180 A 口交清洁段：收尾句的旗标 3 改 2',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (fellatio === 3) {',
+    replace: '  if (fellatio === 2) {',
+    tests: ['train-message'],
+    must_mention: '双人口交支与普通支的四档拼法',
+  },
+  {
+    desc: 'M8181 A 绝顶子链：逆肛交大量支的「大量」删',
+    file: 'ere/system/train/train-message.js',
+    find: "            ? '阴茎从肛门里拔出后、大量漏出来的精液沿着股沟向下流…' // :446",
+    replace:
+      "            ? '阴茎从肛门里拔出后、漏出来的精液沿着股沟向下流…' // :446",
+    tests: ['train-message'],
+    must_mention: '逆强奸/逆肛交/口交',
+  },
+  {
+    desc: 'M8182 A 绝顶子链：24 支的落红前缀删',
+    file: 'ere/system/train/train-message.js',
+    find: "`阴茎拔出后、阴部处${blood ? '渗出了处女的落红、混合着' : ''}${ejaculates === 2 ? '大量的' : ''}精液渗出来了…`",
+    replace:
+      "`阴茎拔出后、阴部处${ejaculates === 2 ? '大量的' : ''}精液渗出来了…`",
+    tests: ['train-message'],
+    must_mention: '逆强奸/逆肛交/口交',
+  },
+  {
+    desc: 'M8183 A 绝顶子链：整支的 TFLAG:10 ≥ 1 门抬到 ≥ 2',
+    file: 'ere/system/train/train-message.js',
+    find: '    if (ejaculates >= 1) {',
+    replace: '    if (ejaculates >= 2) {',
+    tests: ['train-message'],
+    must_mention: '逆强奸/逆肛交/口交',
+  },
+  {
+    desc: 'M8184 A 射精链手臂：初次精液经验的失神门 <= 1 收窄成 < 1',
+    file: 'ere/system/train/train-message.js',
+    find: '  if (exp(target, 20) === 0 && tflag(899) <= 1) {',
+    replace: '  if (exp(target, 20) === 0 && tflag(899) < 1) {',
+    tests: ['train-message'],
+    must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
   },
 ];

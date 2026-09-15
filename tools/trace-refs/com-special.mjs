@@ -221,6 +221,13 @@ export const FILES = [
         ref: '15',
         any: [/TEQUIP:58 = 0/],
       },
+      // #402：A55 的正文挪进 train-message.js 的公共射精链末支，本文件只剩
+      // 显式无操作注册；注释里引的 :377 是那段正文在源侧的邻居（绝顶段起点）
+      {
+        src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
+        ref: '377',
+        any: [/IF TFLAG:29 > 0 && TFLAG:899 <= 1/],
+      },
     ],
   },
 ];
