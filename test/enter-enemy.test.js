@@ -318,15 +318,23 @@ test('调试位 GETBIT(FLAG:5,32)：位 32 开启时无视在场照常生成', a
 
 /**
  * 生成勇者 1 号（等级恒 1，CHAR_MAKE :22-24 置）并返回其 CFLAG:580 终值。
- * talent:126/315/316 不在 @CHARA_MAKE 的写入集（target 实测），预置存活。
+ *
+ * #389 勘误：本助手原来「预置 talent:1:315/316 存活」的前提**不成立**了——
+ * @CM_LOOK 接上 LOOK_SET 真身后，它会重掷并**无条件覆盖** TALENT:315/316
+ * （源 LOOK.ERB:583/:607），预置值一律被冲掉。原来成立只是因为当时 LOOK_SET
+ * 是个占位（不掷骰）。改法：按上界投喂掷骰——RAND:21 → 想要的 315、RAND:20
+ * → 想要的 316（两个 Q 都是「掷值 + 1」）。
  */
 async function raised_money(preset_talent) {
   const fixture = setup_world();
+  const rolls = new Map();
   for (const [key, value] of Object.entries(preset_talent ?? {})) {
-    fixture.store.set(`talent:1:${key}`, value);
+    if (key === '315') rolls.set(21, value - 1);
+    else if (key === '316') rolls.set(20, value - 1);
+    else fixture.store.set(`talent:1:${key}`, value);
   }
   const { enter_enemy } = load(fixture);
-  await enter_enemy(0, zero);
+  await enter_enemy(0, (n) => rolls.get(n) ?? 0);
   return fixture.store.get('cflag:1:580');
 }
 

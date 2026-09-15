@@ -26,8 +26,16 @@ function load_forward(fixture) {
   return fixture.load_module('chara/char-make');
 }
 
-/** RAND:N == 1（恒不中 == 0 判定；对 truthy 判定恒真） */
-const never = () => 1;
+/**
+ * RAND:N == 1（恒不中 == 0 判定；对 truthy 判定恒真）。
+ *
+ * **例外：上界 21**。#389 起 @CM_LOOK 接的是 LOOK_SET 真身，它的「成为勇者
+ * 之前的生活」段有源 :514 的重掷环 `Q == 2 && 法术 == 0 → GOTO BORN`——
+ * 恒 1 时 Q 恒为 2、环退不出来（该票首次跑本文件时整份 OOM）。原作的环只对
+ * 真随机收敛（chara-name.js:50 先例：空转环 1:1 保留、由测试侧调整随机源），
+ * 故这里让 21 返回 0（Q = 1 学生档，不进重掷）。
+ */
+const never = (n) => (n === 21 ? 0 : 1);
 /** RAND:N == 0（恒中） */
 const always = () => 0;
 
@@ -105,20 +113,23 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
   assert.equal(fixture.store.get('cstr:1:60'), '我', 'CSTR:60 一人称');
   assert.equal(fixture.store.get('cflag:1:450'), 9, 'CFLAG:450 一人称档位');
   // 随机命名与 CHARA_NAME_DEFINE 自 #384 起都是真身（名字真的落了地），
-  // 冲突检查也一并落地；只剩 LOOK_SET 与 CHARA_FIRST_EXP 两处跨段存根。
+  // 冲突检查也一并落地；#389 起 LOOK_SET 也落真身，跨段存根只剩 CHARA_FIRST_EXP。
   assert.equal(
     fixture.store.get('callname:1:-1'),
     '佳奈美',
     'CHARA_NAME_DEFINE 真身：没有可查的固定名时回落到默认名',
   );
+  // LOOK_SET 自 #389 起是真身：外貌素质真的落了地（占位行反过来不该再出现）
+  assert.ok(
+    (fixture.store.get('talent:1:300') || 0) > 0,
+    'LOOK_SET 真身：发色（TALENT:300）已落盘',
+  );
   const texts = stub_texts(fixture);
-  for (const name of ['LOOK_SET', 'CHARA_FIRST_EXP']) {
-    assert(
-      texts.some((line) => line.includes(`@${name}`)),
-      `${name} 的占位行可见（登记项）`,
-    );
-  }
-  for (const name of ['CHARA_NAME_DEFINE', 'CMI_CONFLICT_CHECK']) {
+  assert(
+    texts.some((line) => line.includes('@CHARA_FIRST_EXP')),
+    'CHARA_FIRST_EXP 的占位行可见（登记项）',
+  );
+  for (const name of ['LOOK_SET', 'CHARA_NAME_DEFINE', 'CMI_CONFLICT_CHECK']) {
     assert(
       !texts.some((line) => line.includes(`@${name}`)),
       `${name} 已落真身，不应再有占位行`,
@@ -233,9 +244,12 @@ test('FLAG:5 位 12 开：CHAR_BODY_GENERATE_WAPPED 真身落盘', async () => {
   // #385 起为真身（ere/chara/chara-body.js）：CFLAG:451-457 是判据，
   // 占位行不再出现。年龄受 LIMIT(12,35) 约束，身高/体重为正数。
   const age = fixture.store.get('cflag:1:451');
+  // #389 勘误：#385 当时写的 [12,35] 只是那一条随机序的巧合——char_age_generate
+  // 先 LIMIT(EXP_AGE,12,35)（chara-body.js:457）再走 normal_point_pickup 的
+  // ±2（:180-181），下界因此是 10、上界 37。这里按真实契约钉。
   assert.ok(
-    Number.isInteger(age) && age >= 12 && age <= 35,
-    `年龄落在 LIMIT(12,35) 内（实际 ${age}）`,
+    Number.isInteger(age) && age >= 10 && age <= 37,
+    `年龄落在 LIMIT±2 内（实际 ${age}）`,
   );
   assert.ok(fixture.store.get('cflag:1:453') > 100, '身高（厘米）已落盘');
   assert.ok(fixture.store.get('cflag:1:454') > 10, '体重（公斤）已落盘');
@@ -596,13 +610,24 @@ test('cm_skill：额头天眼的暗之能力者第二机会（:855-856）', asyn
 
 // —— @CM_LOOK（:860-872）——
 
-test('cm_look：LOOK_SET 占位 + 白虎 5%（:868-872）', async () => {
+test('cm_look：LOOK_SET 真身落盘 + 白虎 5%（:860-872）', async () => {
   const fixture = create_era_fixture();
   const { cm_look } = load(fixture);
   await cm_look(3, 0, never);
-  assert(
+  // #389 起 @CM_LOOK 接的是 LOOK_SET 真身（ere/chara/look.js）：外貌素质
+  // 由它掷出，占位行不再出现
+  assert.equal(
     stub_texts(fixture).some((line) => line.includes('@LOOK_SET')),
-    '外貌设定占位可见（登记项）',
+    false,
+    '已落真身，不得再出现占位行',
+  );
+  assert.ok(
+    (fixture.store.get('talent:3:300') || 0) > 0,
+    '发色（TALENT:300）已掷出',
+  );
+  assert.ok(
+    (fixture.store.get('talent:3:313') || 0) > 0,
+    '癖（TALENT:313）已掷出',
   );
   assert.equal(fixture.store.get('talent:3:125'), undefined, '白虎未掷中');
 

@@ -56,7 +56,7 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 const { heart, self_call, self_call_first } = require('#/kojo/kojo-text');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { piercing_state } = require('#/system/train/piercing-state');

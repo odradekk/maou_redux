@@ -74,7 +74,7 @@
 const era = require('#/era-electron');
 
 const { nid_get_type } = require('#/chara/chara-name');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序固定分支 */

@@ -21,7 +21,7 @@ const { karma, chara_id_output } = require('#/chara/chara-stats');
 const { search_family } = require('#/chara/chara-family');
 const { nakadashi_check } = require('#/event/event-pregnancy');
 const { select_yes_no } = require('#/page/page-life-list');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
 const name_of = (cid) => chara_callname(cid);

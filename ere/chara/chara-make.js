@@ -48,6 +48,7 @@ const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
 const { chara_name_random_define, cn_rebuild } = require('#/chara/chara-name');
 const { random_self_call } = require('#/chara/chara-self-call'); // #383 起真身
 const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
+const { look_set } = require('#/chara/look'); // #389 起真身（源 キャラ関数/LOOK.ERB:4）
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara_callname } = require('#/utils/callname-utils');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
@@ -68,7 +69,6 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * 全库唯一的调用方（见 rand_chara_make 的文件注释）。
  */
 const STUBBED_CALLS = [
-  'LOOK_SET',
   'CHARA_FIRST_EXP',
   'ST_UP',
   'SHOW_CHARA_INFO',
@@ -1047,8 +1047,9 @@ async function cm_skill(cid, rand_n) {
  */
 async function cm_look(cid, arg, rand_n) {
   // :862-865 X = TARGET; TARGET = A; CALL LOOK_SET, ARG; TARGET = X ——
-  // 指针换手显式传参消解（#5 决议第六条）
-  stub_line('LOOK_SET', '外貌设定', '随外貌票');
+  // 指针换手显式传参消解（#5 决议第六条）。LOOK_SET 自 #389 起为真身
+  // （ere/chara/look.js），LOK 不再占位。
+  look_set(cid, arg, rand_n);
 
   // :868-872 白虎（125）连同阴毛状态（310）/ 阴毛生长极限（311）
   if (rand_n(20) === 0) {
