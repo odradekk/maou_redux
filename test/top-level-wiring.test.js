@@ -494,11 +494,14 @@ function protected_modules() {
 test('扫描器：正确区分顶层与函数体内 require（现存阳性对照）', () => {
   // 四处正确形态的延迟 require 必须判「函数内」（不拦）。前两处是 #233/
   // #234 的既有先例（K2/K3 函数内 require com-hardcore），第三处是
-  // com-service 的 train_message_a_riding，第四处是本票修的现存违规
-  // （com-tentacle 的 com208 函数内 require com-colosseum，原来是顶层，
-  // #288 守卫上线即红，挪进函数体后恢复绿）
+  // kojo-k12 的函数内 require，第四处是本票修的现存违规（com-tentacle 的
+  // com208 函数内 require com-colosseum，原来是顶层，#288 守卫上线即红，
+  // 挪进函数体后恢复绿）。
+  // **#402 换过一处**：com-service:1911 的延迟 require（riding 里复用 com-sex
+  // 的性交尾段）随公共段合流一并删除——那份尾段已归 train-message.js 的公共
+  // 段，本模块不再需要它，故这一格改用 dungeon-trap 的同类形态。
   const cases = [
-    ['ere/system/train/com-service.js', 1911, false],
+    ['ere/dungeon/dungeon-trap.js', 1991, false],
     ['ere/kojo/kojo-k2-timid.js', 1291, false],
     ['ere/kojo/kojo-k3-noble.js', 8543, false],
     ['ere/system/train/com-tentacle.js', 394, false],

@@ -1031,17 +1031,14 @@ train_message_b_family.register(59, async () => {
 });
 
 // —— TRAIN_MESSAGE_A：原作仅 COM55 有分支；其余显式 no-op。 ——
+//
+// A55 分支的实现**不在这里**：#402 把放置 PLAY 的正文按源侧位置挪进了
+// train-message.js 的公共射精链末支（源 :362-373 是 TFLAG:0/1/18 那条
+// IF/ELSEIF 链的最后一支，排在绝顶段 :377 之前；族分发在绝顶段之后跑，
+// 同回合既落「放置 PLAY」又落绝顶时两处行序会颠倒）。注册保留为空实现，
+// 让「缺失 = 族票未落地 → 占位行」的语义对 55 保持精确。
 
-train_message_a_family.register(55, async () => {
-  const cid = target_id();
-  if ((era.get('tflag:899') || 0) > 1 || palam(cid, 5) < PALAMLV[3]) return;
-  let line = `${target_name()}急促的呼吸着`;
-  if (palam(cid, 5) >= PALAMLV[5]) line += '、用炽热地目光看向你';
-  if (tq(cid, 21)) line += '、身体不断地颤抖着';
-  if (palam(cid, 5) >= PALAMLV[4])
-    line += '、紧蹙摩擦的双腿已经捂不住流淌出的粘液了';
-  era.print(`${line}……`);
-});
+train_message_a_family.register(55, async () => {});
 
 for (const id of [50, 51, 52, 53, 54, 56, 57, 58, 59]) {
   train_message_a_family.register(id, async () => {});

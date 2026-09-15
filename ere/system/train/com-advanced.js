@@ -88,13 +88,12 @@ const has_mat = () =>
   (era.get('item:13') || 0) !== 0 || (era.get('noitem:0') || 0) !== 0;
 
 const clothing_guard = (cid) => (worn(cid) & 17) !== 0 && clothes_on();
-async function train_message_a_sex_common() {
-  // 延迟读取：主启动图的 COM20–29 注册仍仅由 com-sex 自己负责；本族只在
-  // 实际渲染 128–134 A 文时复用其无注册 helper。
-  const {
-    train_message_a_sex_common: shared,
-  } = require('#/system/train/com-sex');
-  await shared();
+// A 120-135 的射精文本都属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
+// train-message.js：绝顶行/性交射精两臂/绝顶余韵/股间与口交支），本族不再
+// 另留一份拷贝——两份同时跑会把同一行打两遍。源侧 A 文件也没有 120-135 的
+// 专属分支（尾链止于 42 / 72 / 150），故本组全部显式无操作。
+async function no_message_a() {
+  return 0;
 }
 const bra_guard = (cid) => (worn(cid) & 6) !== 0 && clothes_on();
 const diaper_guard = (cid) =>
@@ -657,17 +656,7 @@ async function message_b120() {
   }
 }
 
-async function message_a120() {
-  const amount = era.get('tflag:2') || 0;
-  if (amount !== 1 && amount !== 2) return;
-  era.print(
-    `对准${target_name()}私处内那最敏感的那一点、${player_name()}射出了${amount === 2 ? '大量的' : ''}精液…`,
-  );
-  if (palam(era_flag.target, 5) < PALAMLV[4] || era.get('tflag:31')) {
-    game.event.本次调教处女丧失 = 0;
-    game.event.插着不拔 = 0;
-  }
-}
+// message_a120：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM120（COMF120_挿入Ｇスポ責め.ERB）插入Ｇ点蹂躏。高级 COM。 */
 async function com120() {
@@ -985,25 +974,7 @@ async function message_b121() {
   }
 }
 
-async function message_a121() {
-  const amount = era.get('tflag:2') || 0;
-  if (amount !== 1 && amount !== 2) return;
-  const cid = era_flag.target;
-  const removable = palam(cid, 5) < PALAMLV[4] || era.get('tflag:31');
-  if (amount === 1) {
-    era.print(`直接对${target_name()}的子宫、注入了热乎乎的精液…`);
-  } else if (removable) {
-    era.print(`直接对${target_name()}的子宫、注入了大量热乎乎的精液…`);
-  } else {
-    era.print(
-      `直接对${target_name()}快乐到生疼的子宫、注入了大量热乎乎的精液……`,
-    );
-  }
-  if (removable) {
-    game.event.本次调教处女丧失 = 0;
-    game.event.插着不拔 = 0;
-  }
-}
+// message_a121：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM121（COMF121_挿入子宮口責め.ERB）插入子宫口蹂躏。高级 COM。 */
 async function com121() {
@@ -1243,38 +1214,7 @@ async function message_b122() {
   }
 }
 
-async function message_a122() {
-  const amount = era.get('tflag:9') || 0;
-  const target_ejac = era.get('tflag:10') || 0;
-  if (amount === 0) {
-    if (target_ejac >= 1) {
-      era.print(
-        `${target_name()}射精出的${target_ejac >= 2 ? '大量' : ''}精液、将${player_name()}的阴茎用精液一吐为快了…`,
-      );
-    }
-    return;
-  }
-  const both =
-    target_ejac >= 1 &&
-    (tal(era_flag.player, 122) || tal(era_flag.player, 121));
-  if (amount === 1) {
-    if (both) {
-      era.print('两人同时射精、对彼此的阴茎用精液一吐为快了…');
-    } else {
-      era.print(`射出的精液、把${target_name()}的阴茎弄脏了…`);
-    }
-    return;
-  }
-  if (amount === 2) {
-    if (both) {
-      era.print('两人同时射精、对彼此的阴茎用大量的精液一吐为快…');
-    } else {
-      era.print(
-        `${player_name()}射出大量的精液、把${target_name()}的阴茎搞得黏黏糊糊…`,
-      );
-    }
-  }
-}
+// message_a122：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM122（COMF122_兜あわせ.ERB）阴茎互捅。可直选。 */
 async function com122() {
@@ -1526,25 +1466,7 @@ async function message_b123() {
   era.print(line);
 }
 
-async function message_a123() {
-  const amount = era.get('tflag:0') || 0;
-  if (amount !== 1 && amount !== 2) return;
-  const small = tal(era_flag.target, 109);
-  if (amount === 1) {
-    era.print(
-      small
-        ? `${player_name()}的阴茎、一边享受胸部的按摩、一边在${target_name()}的嘴里倾泻精液…`
-        : `${player_name()}的阴茎、一边被胸部紧紧夹住、一边在${target_name()}的嘴里倾泻精液…`,
-    );
-  } else {
-    era.print(
-      small
-        ? `${player_name()}的阴茎、一边享受胸部的按摩、一边在${target_name()}的嘴里倾泻了大量精液…`
-        : `${player_name()}的阴茎、一边被胸部紧紧夹住、一边在${target_name()}的嘴里倾泻了大量精液…`,
-    );
-    era.print('从嘴里溢出来的精液、把阴茎和胸部都染成白色了…');
-  }
-}
+// message_a123：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM123（COMF123_パイズリフェラ.ERB）乳夹口交。高级 COM。 */
 async function com123() {
@@ -1787,35 +1709,7 @@ async function message_b124() {
   era.print(line);
 }
 
-async function message_a124() {
-  const amount = era.get('tflag:0') || 0;
-  if (amount !== 1 && amount !== 2) return;
-  const cid = era_flag.target;
-  const fainted = (era.get('tflag:899') || 0) >= 2;
-  if (amount === 1) {
-    if (fainted) {
-      era.print(`紧紧抓住${target_name()}的头、在她喉咙深处射出…`);
-    } else if (abl(cid, 32) >= 3) {
-      era.print(`${target_name()}带着恍惚的表情、把强行灌入喉咙的精液喝光了…`);
-    } else if (abl(cid, 16) >= 3) {
-      era.print(`${target_name()}喝掉了直接叩开喉咙强行灌进来的精液…`);
-    } else {
-      era.print(`紧紧抓住${target_name()}的头、在她喉咙深处射出…`);
-    }
-    return;
-  }
-  if (fainted) {
-    era.print(`紧紧抓住${target_name()}的头、在她喉咙深处放开精关…`);
-  } else if (abl(cid, 32) >= 3) {
-    era.print(`${target_name()}带着恍惚的表情、把直接灌入喉咙的精液喝光了…`);
-  } else if (abl(cid, 16) >= 3) {
-    era.print(
-      `${target_name()}被呛到、一边忍住不把喉咙里的精液咳出来、一边把它喝光了…`,
-    );
-  } else {
-    era.print(`在${target_name()}喉咙深处射出的精液、从口中溢出来了…`);
-  }
-}
+// message_a124：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM124（COMF124_ディープスロート.ERB）深喉。高级 COM。 */
 async function com124() {
@@ -2271,30 +2165,7 @@ async function message_b125() {
   era.print(line);
 }
 
-async function message_a125() {
-  const amount = era.get('tflag:0') || 0;
-  if (amount !== 1 && amount !== 2) return;
-  const cid = era_flag.target;
-  if (amount === 1) {
-    if (abl(cid, 32) >= 3) {
-      era.print(`${target_name()}带着恍惚的表情、把注入口中的精液喝光了…`);
-    } else if (abl(cid, 16) >= 3) {
-      era.print(
-        `${target_name()}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`,
-      );
-    } else {
-      era.print(`精液注入到${target_name()}的嘴里了…`);
-    }
-    return;
-  }
-  if (abl(cid, 32) >= 3) {
-    era.print(`${target_name()}带着恍惚的表情、把口中的精液喝光了…`);
-  } else if (abl(cid, 16) >= 3) {
-    era.print(`没喝完的精液、从${target_name()}的嘴里溢出来了…`);
-  } else {
-    era.print(`满满的精液、把${target_name()}的喉咙叩开了…`);
-  }
-}
+// message_a125：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM125（COMF125_フェラ自慰.ERB）口交时自慰。高级 COM。 */
 async function com125() {
@@ -2407,45 +2278,7 @@ async function message_b126() {
   era.print(line);
 }
 
-async function message_a126() {
-  const amount = era.get('tflag:0') || 0;
-  if (amount !== 1 && amount !== 2) return;
-  const cid = era_flag.target;
-  const player = era_flag.player;
-  if (amount === 1) {
-    era.print(
-      abl(cid, 16) >= 3
-        ? `${target_name()}喉咙发出模糊不清的声音、把注入口中的精液喝光了…`
-        : `精液注入到${target_name()}的口中了…`,
-    );
-    if (abl(cid, 32) >= 3 && tal(player, 122)) {
-      era.print(
-        `${target_name()}揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
-      );
-    }
-    if (abl(cid, 32) >= 3 && tal(player, 121)) {
-      era.print(
-        `${target_name()}撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
-      );
-    }
-    return;
-  }
-  era.print(
-    abl(cid, 16) >= 3
-      ? `没喝完的精液、从${target_name()}的嘴里溢出了…`
-      : `满满的精液、把${target_name()}的喉咙叩开了…`,
-  );
-  if (abl(cid, 32) >= 3 && tal(player, 122)) {
-    era.print(
-      `满溢的精液、将${target_name()}的嘴边搞得一塌糊涂。揉着阴囊、撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
-    );
-  }
-  if (abl(cid, 32) >= 3 && tal(player, 121)) {
-    era.print(
-      `满溢的精液、将${target_name()}的嘴边搞得一塌糊涂。撸着棒身、嘴唇轻轻地含着龟头、在马眼处吸吮着精液。`,
-    );
-  }
-}
+// message_a126：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM126（COMF126_手コキフェラ.ERB）手搓口交。高级 COM。 */
 async function com126() {
@@ -2474,32 +2307,7 @@ async function message_b127() {
   era.print(line);
 }
 
-async function message_a127() {
-  const amount = era.get('tflag:0') || 0;
-  if (amount !== 1 && amount !== 2) return;
-  const cid = era_flag.target;
-  if (amount === 1) {
-    era.print(
-      abl(cid, 16) >= 3
-        ? `${target_name()}淫秽地吸啜着阴茎、在她口中开射出…`
-        : `${target_name()}吸啜着阴茎、在她口中开放了精关…`,
-    );
-    if (abl(cid, 32) >= 3) {
-      era.print(`${target_name()}带着恍惚的表情、把阴茎上的精液吸吮干净了。`);
-    }
-    return;
-  }
-  era.print(
-    abl(cid, 16) >= 3
-      ? `${target_name()}淫秽地吸啜着阴茎、在她嘴里、大量的精液喷涌而出…`
-      : `${target_name()}吸啜着阴茎、在她嘴里、大量的精液喷涌而出…`,
-  );
-  if (abl(cid, 32) >= 3) {
-    era.print(
-      `精液从嘴里溢出、${target_name()}带着恍惚的表情、把阴茎上的精液吸吮干净…`,
-    );
-  }
-}
+// message_a127：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM127（COMF127_バキュームフェラ.ERB）真空口交。高级 COM。 */
 async function com127() {
@@ -2646,9 +2454,7 @@ async function message_b128() {
   );
 }
 
-async function message_a128() {
-  await train_message_a_sex_common();
-}
+// message_a128：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM128（COMF128_正常位・キス.ERB）正常位・接吻。高级 COM。 */
 async function com128() {
@@ -2792,9 +2598,7 @@ async function message_b129() {
   era.print(line);
 }
 
-async function message_a129() {
-  await train_message_a_sex_common();
-}
+// message_a129：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM129（COMF129_正常位・胸愛撫.ERB）正常位・胸爱抚。高级 COM。 */
 async function com129() {
@@ -2996,9 +2800,7 @@ async function message_b130() {
   }
 }
 
-async function message_a130() {
-  await train_message_a_sex_common();
-}
+// message_a130：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM130（COMF130_正常位ＳＰ.ERB）正常位ＳＰ。高级 COM。 */
 async function com130() {
@@ -3145,9 +2947,7 @@ async function message_b131() {
   era.print(line);
 }
 
-async function message_a131() {
-  await train_message_a_sex_common();
-}
+// message_a131：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM131（COMF131_後背位・胸愛撫.ERB）背后位・胸爱抚。高级 COM。 */
 async function com131() {
@@ -3314,9 +3114,7 @@ async function message_b132() {
   }
 }
 
-async function message_a132() {
-  await train_message_a_sex_common();
-}
+// message_a132：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM132（COMF132_後背位・スパンキング.ERB）背后位・打屁股。高级 COM。 */
 async function com132() {
@@ -3498,9 +3296,7 @@ async function message_b133() {
   era.print(second);
 }
 
-async function message_a133() {
-  await train_message_a_sex_common();
-}
+// message_a133：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM133（COMF133_立ちバック.ERB）站立背后位。高级 COM。 */
 async function com133() {
@@ -3720,9 +3516,7 @@ async function message_b134() {
   }
 }
 
-async function message_a134() {
-  await train_message_a_sex_common();
-}
+// message_a134：源侧无 A 支——射精文本由公共段出（见上）
 
 /** @COM134（COMF134_後背位ＳＰ.ERB）背后位ＳＰ。高级 COM。 */
 async function com134() {
@@ -3949,37 +3743,37 @@ adv_com_family.register(135, async () => {
 });
 
 train_message_b_family.register(120, message_b120);
-train_message_a_family.register(120, message_a120);
+train_message_a_family.register(120, no_message_a);
 train_message_b_family.register(121, message_b121);
-train_message_a_family.register(121, message_a121);
+train_message_a_family.register(121, no_message_a);
 train_message_b_family.register(122, message_b122);
-train_message_a_family.register(122, message_a122);
+train_message_a_family.register(122, no_message_a);
 train_message_b_family.register(123, message_b123);
-train_message_a_family.register(123, message_a123);
+train_message_a_family.register(123, no_message_a);
 train_message_b_family.register(124, message_b124);
-train_message_a_family.register(124, message_a124);
+train_message_a_family.register(124, no_message_a);
 train_message_b_family.register(125, message_b125);
-train_message_a_family.register(125, message_a125);
+train_message_a_family.register(125, no_message_a);
 train_message_b_family.register(126, message_b126);
-train_message_a_family.register(126, message_a126);
+train_message_a_family.register(126, no_message_a);
 train_message_b_family.register(127, message_b127);
-train_message_a_family.register(127, message_a127);
+train_message_a_family.register(127, no_message_a);
 train_message_b_family.register(128, message_b128);
-train_message_a_family.register(128, message_a128);
+train_message_a_family.register(128, no_message_a);
 train_message_b_family.register(129, message_b129);
-train_message_a_family.register(129, message_a129);
+train_message_a_family.register(129, no_message_a);
 train_message_b_family.register(130, message_b130);
-train_message_a_family.register(130, message_a130);
+train_message_a_family.register(130, no_message_a);
 train_message_b_family.register(131, message_b131);
-train_message_a_family.register(131, message_a131);
+train_message_a_family.register(131, no_message_a);
 train_message_b_family.register(132, message_b132);
-train_message_a_family.register(132, message_a132);
+train_message_a_family.register(132, no_message_a);
 train_message_b_family.register(133, message_b133);
-train_message_a_family.register(133, message_a133);
+train_message_a_family.register(133, no_message_a);
 train_message_b_family.register(134, message_b134);
-train_message_a_family.register(134, message_a134);
+train_message_a_family.register(134, no_message_a);
 train_message_b_family.register(135, message_b135);
-train_message_a_family.register(135, async () => 0);
+train_message_a_family.register(135, no_message_a);
 
 com_able_family.register(120, able120);
 com_able_family.register(121, able121);

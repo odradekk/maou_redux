@@ -407,13 +407,5 @@ export const ERB_EXEMPT = {
     '740',
   ],
   'ere/system/train/train-loop.js': ['545'],
-  'ere/system/train/train-message.js': [
-    '10',
-    '12-3049',
-    '12',
-    '15-1351',
-    '15',
-    '22-26',
-    '30-120',
-  ],
+  'ere/system/train/train-message.js': ['10'],
 };

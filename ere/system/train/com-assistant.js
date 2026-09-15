@@ -2624,44 +2624,21 @@ for (const id of [60, 61, 63, 64, 65, 66, 67, 70, 71, 73]) {
   train_message_a_family.register(id, async () => 0);
 }
 
-train_message_a_family.register(62, async () => {
-  const flag = era.get('tflag:7') || 0;
-  if (!flag) return 0;
-  const target = chara_callname(era_flag.target);
-  const assi = chara_callname(era_flag.assi);
-  if (flag === 1) {
-    era.print(`当着${target}的面、在${assi}的体内深处射出了精液…`);
-  } else if (flag === 2) {
-    era.print(`当着${target}的面、在${assi}的体内深处射满了精液、溢出来了……`);
-  }
-  if (
-    (abl(era_flag.target, 11) > 3 || abl(era_flag.target, 32) > 2) &&
-    (era.get('tflag:899') || 0) <= 1
-  ) {
-    era.print(`${target}用羡慕的眼光凝视着${assi}被内射的样子…`);
-  }
+// A 的射精文本属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
+// train-message.js）：本族不再另留一份拷贝——两份同时跑会把同一行打两遍。
+// 源侧 A 文件对这些号没有专属分支，故显式无操作。
+async function no_message_a() {
   return 0;
-});
+}
 
-train_message_a_family.register(68, async () => {
-  const flag = era.get('tflag:0') || 0;
-  const target = chara_callname(era_flag.target);
-  const assi = chara_callname(era_flag.assi);
-  if (flag === 1) era.print(`${target}和${assi}用嘴接住精液…`);
-  else if (flag === 2) era.print(`大量的精液倾泻在${target}和${assi}的脸上…`);
-  return 0;
-});
+// A 射精文本由公共段出（#402）
+train_message_a_family.register(62, no_message_a);
 
-train_message_a_family.register(69, async () => {
-  const flag = era.get('tflag:0') || 0;
-  const target = chara_callname(era_flag.target);
-  if (flag === 1) {
-    era.print(`${target}身体颤抖着、承受来自阴部的刺激、同时把精液咽下…`);
-  } else if (flag === 2) {
-    era.print(`${target}因阴部的刺激全身颤抖着、然后把精液喝下去了…`);
-  }
-  return 0;
-});
+// A 射精文本由公共段出（#402）
+train_message_a_family.register(68, no_message_a);
+
+// A 射精文本由公共段出（#402）
+train_message_a_family.register(69, no_message_a);
 
 train_message_a_family.register(72, async () => {
   if ((era.get('tflag:899') || 0) > 1) return 0;

@@ -2469,61 +2469,18 @@ train_message_b_family.register(90, async () => 0);
 // @TRAIN_MESSAGE_A（80 的口内射精文案；90 的乳内射精文案；其余源侧无分支）
 // ============================================================
 
-train_message_a_family.register(80, async () => {
-  const target = era_flag.target;
-  const player = era_flag.player;
-  const t0 = era.get('tflag:0') || 0;
-  const t899 = era.get('tflag:899') || 0;
-  if (t0 === 1) {
-    if (t899 >= 2) {
-      era.print(`紧紧抓住${chara_callname(target)}的头、在她喉咙深处射出…`);
-    } else if (abl(target, 32) >= 3) {
-      era.print(
-        `${chara_callname(target)}带着恍惚的表情、把强行灌入喉咙的精液喝光了…`,
-      );
-    } else if (abl(target, 16) >= 3) {
-      era.print(`${chara_callname(target)}喝掉了直接叩开喉咙强行灌进来的精液…`);
-    } else {
-      era.print(`紧紧抓住${chara_callname(target)}的头、在她喉咙深处射出…`);
-    }
-  } else if (t0 === 2) {
-    if (t899 >= 2) {
-      era.print(`紧紧抓住${chara_callname(target)}的头、在她喉咙深处放开精关…`);
-    } else if (abl(target, 32) >= 3) {
-      era.print(
-        `${chara_callname(target)}带着恍惚的表情、把直接灌入喉咙的精液喝光了…`,
-      );
-    } else if (abl(target, 16) >= 3) {
-      era.print(
-        `${chara_callname(target)}被呛到、一边忍住不把喉咙里的精液咳出来、一边把它喝光了…`,
-      );
-    } else {
-      era.print(
-        `在${chara_callname(target)}喉咙深处射出的精液、从口中溢出来了…`,
-      );
-    }
-  }
-  // 未使用 player：文案不涉及调教者称呼，保留局部变量以贴合来源上下文
-  void player;
+// A 的射精文本属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
+// train-message.js）：本族不再另留一份拷贝——两份同时跑会把同一行打两遍。
+// 源侧 A 文件对这些号没有专属分支，故显式无操作。
+async function no_message_a() {
   return 0;
-});
+}
 
-train_message_a_family.register(90, async () => {
-  const target = era_flag.target;
-  const player = era_flag.player;
-  const cflag113 = era.get(`cflag:${target}:113`) || 0;
-  const t2 = era.get('tflag:2') || 0;
-  if (cflag113 === 1 && t2 === 1) {
-    era.print(
-      `${chara_callname(player)}的肉棒在${chara_callname(target)}的乳房里激烈的颤抖着、在乳头肉穴的深处释放了精液…`,
-    );
-  } else if (cflag113 === 1 && t2 === 2) {
-    era.print(
-      '肉棒在乳房里射入了大量的精液、从乳头仅存的缝隙间、精液和母乳一齐喷了出来…',
-    );
-  }
-  return 0;
-});
+// A 射精文本由公共段出（#402）
+train_message_a_family.register(80, no_message_a);
+
+// A 射精文本由公共段出（#402）
+train_message_a_family.register(90, no_message_a);
 
 for (const id of [81, 82, 83, 84, 85, 87, 88, 89]) {
   train_message_a_family.register(id, async () => 0); // 源侧无专属分支

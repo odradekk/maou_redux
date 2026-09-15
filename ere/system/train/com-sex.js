@@ -1914,227 +1914,15 @@ async function message_b29() {
     );
 }
 
-// —— TRAIN_MESSAGE_A：性交射精结果与姿势反应（原文 A 文件对应分支） ——
-
-function target_ejac_prefix(cid, amount) {
-  if (amount === 1) {
-    const shape =
-      { 1: '手臂般粗的', 2: '悲催的短小的', 3: '包着皮的', 4: '马一样的' }[
-        tal(cid, 318)
-      ] ?? '';
-    return `${shape}阴茎喷出了精液。`;
-  }
-  const shape =
-    {
-      1: '怒张着、手臂般粗的',
-      2: '颤抖着、可怜的短小的',
-      3: '裸露龟头的',
-      4: '跳动着、马一样的',
-    }[tal(cid, 318)] ?? '跳动着的';
-  return `${shape}阴茎中大量的精液飞散而出。`;
-}
-
-function message_a_orgasm() {
-  const cid = era_flag.target;
-  const orgasm = get('tflag:29');
-  const target_ejac = get('tflag:10');
-  const milk = get('tflag:11');
-  if (orgasm <= 0 || get('tflag:899') > 1) return;
-  let line = target_name();
-  const female = !tal(cid, 121) && !tal(cid, 122);
-  const has_other =
-    (orgasm >= 5 && orgasm <= 8 && female) ||
-    (orgasm >= 9 && female) ||
-    target_ejac === 1 ||
-    target_ejac === 2;
-  if (milk === 1) line += `从胸前滴落母乳${has_other ? '、' : ''}`;
-  if (milk === 2) line += `从胸前喷出大量香喷喷的母乳${has_other ? '、' : ''}`;
-  if (orgasm >= 5 && orgasm <= 8 && female) line += '阴唇里喷出透明的爱液、';
-  if (orgasm >= 9 && female) line += '阴唇里喷出混合着白浊的爱液、';
-  if (target_ejac) line += target_ejac_prefix(cid, target_ejac);
-  if (
-    (orgasm < 5 || tal(cid, 121) || tal(cid, 122)) &&
-    target_ejac === 0 &&
-    milk === 0
-  )
-    line += '背脊夸张地向后仰、';
-  line +=
-    orgasm < 12
-      ? '全身哆嗦着、颤动到了极点。'
-      : '露出快乐又淫媚的神色、绝顶高潮了……';
-  era.print(line);
-  const com = era_flag.selectcom;
-  if (com === 24 && target_ejac === 1) {
-    era.print(
-      `阴茎拔出后、阴部处${get('tflag:31') ? '渗出了处女的落红、混合着' : ''}精液渗出来了…`,
-    );
-  } else if (com === 25 && target_ejac === 1) {
-    era.print('阴茎从肛门里拔出后、漏出来的精液沿着股沟向下流…');
-  } else if (com === 24 && target_ejac === 2) {
-    era.print(
-      `阴茎拔出后、阴部处${get('tflag:31') ? '渗出了处女的落红、混合着' : ''}大量的精液渗出来了…`,
-    );
-  } else if (com === 25 && target_ejac === 2) {
-    era.print('阴茎从肛门里拔出后、大量漏出来的精液沿着股沟向下流…');
-  }
-}
-
-function message_a_ejaculation() {
-  const cid = era_flag.target;
-  const com = era_flag.selectcom;
-  const amount = get('tflag:2');
-  if (amount !== 1 && amount !== 2) return;
-
-  const large = amount === 2;
-  const blood = get('tflag:31')
-    ? large
-      ? '处女的落红混合着'
-      : '渗出了处女的落红、混合着'
-    : '';
-  const removable = below(cid, 5, 4) || get('tflag:31');
-  if (removable) {
-    if ([20, 22].includes(com)) {
-      era.print(
-        `阴茎拔出后、阴部处${large ? '、' : ''}${blood}${large ? '大量的精液渗出来了…' : '精液渗出来了…'}`,
-      );
-    } else if ([21, 23].includes(com)) {
-      era.print(
-        `阴茎拔出后、阴部处${large ? '、' : ''}${blood}${large ? '大量的精液滴出来了…' : '精液滴出来了…'}`,
-      );
-    } else if ([26, 27, 28, 29, 36].includes(com)) {
-      era.print(
-        large
-          ? '从肛门里漏出大量的精液沿着股沟向下流………'
-          : '从肛门里漏出来的精液沿着股沟向下流……',
-      );
-    } else if (com === 34) {
-      era.print(
-        large
-          ? `阴茎拔出后、阴部处、${blood}大量的精液渗出来了…`
-          : `阴茎拔出后、阴部处${blood}精液渗出来了…`,
-      );
-    } else if (com === 25) {
-      era.print(
-        `${player_name()}射出的精液、把两人的身体都${large ? '弄得粘稠不堪' : '弄脏'}了…`,
-      );
-    } else if (com === 24) {
-      if (large) {
-        era.print(
-          `阴茎拔出后、${get('tflag:31') ? '渗出了处女的落红、混合着' : ''}大量的精液渗出来了…`,
-        );
-        era.print(`${player_name()}射出的精液、把两人的身体都弄得粘稠不堪…`);
-      } else {
-        era.print(`${player_name()}射出的精液、把两人的身体都弄脏了…`);
-      }
-    }
-    set('tflag:31', 0);
-    set('tflag:60', 0);
-    return;
-  }
-
-  if (com === 27 && tq(cid, 55)) {
-    era.print(
-      large
-        ? '直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把插入的阴茎紧紧夹住了…'
-        : '精液溢出的直肠、细微地颤抖着、把插入的阴茎紧紧夹住了…',
-    );
-  } else if ((large ? [26, 27, 28, 29, 36] : [27, 28, 29, 36]).includes(com)) {
-    era.print(
-      large
-        ? `直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把${player_name()}的阴茎紧紧夹住了…`
-        : `精液溢出的直肠、细微地颤抖着、把${player_name()}的阴茎紧紧夹住了…`,
-    );
-  } else if (com === 25) {
-    era.print(
-      large
-        ? `直肠将溢出的大量精液一饮而尽、妖媚而淫荡地蠕动着、把${target_name()}的阴茎紧紧夹住了…`
-        : `精液溢出的直肠、细微地颤抖着、把${target_name()}的阴茎紧紧夹住了…`,
-    );
-  } else if (com === 24) {
-    era.print(
-      large
-        ? `${player_name()}的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把${target_name()}的阴茎紧紧夹住了…`
-        : `${player_name()}被精液灌满的私处、轻轻蠕动着、把${target_name()}的阴茎紧紧缠住了…`,
-    );
-  } else {
-    era.print(
-      large
-        ? `${target_name()}的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把${player_name()}的阴茎紧紧夹住了…`
-        : `${target_name()}被精液灌满的私处、轻轻蠕动着、把${player_name()}的阴茎紧紧缠住了…`,
-    );
-  }
-}
-function message_a_orgasm_afterglow() {
-  const cid = era_flag.target;
-  const orgasm = get('tflag:29');
-  if (get('tflag:2') !== 0 || get('tflag:899') > 1) return;
-
-  if (
-    orgasm >= 9 &&
-    get('tflag:19') &&
-    (tq(cid, 11) || get('tflag:60')) &&
-    (get(`cflag:${cid}:40`) & 16) === 0 &&
-    (get(`cflag:${cid}:40`) & 1) === 0
-  ) {
-    era.print(
-      `${target_name()}的私处滴出了粘稠的液体、阴户一开一合不停持续着…`,
-    );
-  } else if (
-    orgasm >= 5 &&
-    get('tflag:19') &&
-    (tq(cid, 11) || get('tflag:60')) &&
-    (get(`cflag:${cid}:40`) & 16) === 0 &&
-    (get(`cflag:${cid}:40`) & 1) === 0
-  ) {
-    era.print(`${target_name()}的私处滴出了粘稠的液体、剧烈地不停喘息着…`);
-  } else if (orgasm >= 9) {
-    era.print(`${target_name()}断断续续地不停高潮、身体不断抽搐、反复扭动着…`);
-  } else if (orgasm >= 5) {
-    era.print(`${target_name()}断断续续地不停高潮、四肢无力、筋疲力尽了…`);
-  } else if (orgasm >= 3) {
-    era.print(`${target_name()}气息慌乱、沉浸在绝顶高潮的余韵之中…`);
-  }
-}
-
-function message_a_virgin_tail() {
-  const cid = era_flag.target;
-  const target_virgin = get('tflag:3');
-  const target_ejac = get('tflag:15');
-  const player_ejac = get('tflag:2');
-  if (target_ejac === 1 && target_virgin) {
-    era.print(
-      `${target_name()}的阴部上、处女落红和污液沿着丑陋的触手滴下来了…`,
-    );
-  }
-  if (player_ejac === 0 && target_ejac === 0 && target_virgin) {
-    era.print(`${target_name()}的阴部上、滴出了处女才有的落红…`);
-  }
-  if (
-    target_virgin &&
-    get('tflag:14') > 0 &&
-    target_ejac === 0 &&
-    !tq(cid, 89) &&
-    !tq(cid, 90) &&
-    get('tflag:899') <= 1
-  ) {
-    const relative = get('tflag:14');
-    const relation_name = {
-      1: tal(era_flag.player, 122) ? '父亲' : '母亲',
-      2: tal(era_flag.player, 122) ? '儿子' : '女儿',
-      3: tal(era_flag.player, 122) ? '哥哥' : '姐姐',
-      4: tal(era_flag.player, 122) ? '弟弟' : '妹妹',
-      6: tal(era_flag.player, 122) ? '表弟' : '表妹',
-    }[relative];
-    if (relation_name) {
-      era.print(
-        `${target_name()}被${relation_name}${player_name()}夺取了她的处女。`,
-      );
-    }
-  }
-  if (target_virgin && tq(cid, 89) && get('tflag:899') <= 1) {
-    era.print(`${target_name()}把处女奉献给野狗了。`);
-  }
-}
+// —— TRAIN_MESSAGE_A：姿势反应（原文 A 文件 :1154-1170 的三支） ——
+//
+// **公共段不在这里**（#402 合流）：绝顶行与射精附文、性交射精两臂、绝顶余韵、
+// 处女尾段都已落在 train-message.js 的公共段（源 :377-741，在 SELECTCOM 分发
+// 之前无条件跑）。本模块此前另有一份公共段拷贝（message_a_orgasm /
+// message_a_ejaculation / message_a_orgasm_afterglow / message_a_virgin_tail
+// 与共享壳 train_message_a_sex_common，其中后者还导出给 com-service 的 34/36
+// 与 com-advanced 的 120-135 复用）——两边同时输出会把同一行打两遍，故整份
+// 删除；本模块的 A 注册只留「按指令分派」的姿势反应。
 
 function message_a_position() {
   const cid = era_flag.target;
@@ -2164,22 +1952,7 @@ function message_a_position() {
   else era.print(`${target_name()}的背脊后仰、坐到${player_name()}的怀里…`);
 }
 
-/**
- * 性交 A 文的共享尾段。服务族的 COM34/36 复用它，但各自仍由服务模块注册，
- * 因为骑乘位还要追加自己的 UP:2 反应。
- */
-async function train_message_a_sex_common() {
-  // EVENT_TRAIN_MESSAGE_A 的公共性交尾段按原 IF / ELSEIF / ELSE 顺序：
-  // 先高潮总述（其中含目标射精附文），再玩家射精或无射精余韵，最后独立的
-  // 处女相关文本。
-  message_a_orgasm();
-  if (get('tflag:2')) message_a_ejaculation();
-  else message_a_orgasm_afterglow();
-  message_a_virgin_tail();
-}
-
 async function message_a_sex() {
-  await train_message_a_sex_common();
   message_a_position();
 }
 
@@ -2248,5 +2021,4 @@ module.exports = {
   source27,
   source28,
   source29,
-  train_message_a_sex_common,
 };
