@@ -189,3 +189,115 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
 });
+
+// —— #401：@EVENTTRAIN 的无属性档（EVETRAIN.ERB） ——
+
+/**
+ * 同时装载两份 @EVENTTRAIN 定义（#PRI 的 event-train 与无属性的
+ * event-train-normal），模拟 main-loop.js 的装载序。
+ */
+function seed_world_both_tiers(fixture) {
+  const era_flag = seed_world(fixture); // 魔王 + 奴隶 31 + beginTrain
+  fixture.load_module('event/event-train-normal');
+  fixture.load_module('event/event-train');
+  return era_flag;
+}
+
+test('#401 无属性档：与 #PRI 档在同一 emit 上都执行（多定义不是重命名冲突）', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = seed_world_both_tiers(fixture);
+  // 先清一遍 TFLAG 的两个边界下标，再看谁把它们写回去
+  fixture.store.set('tflag:199', 7);
+  fixture.store.set('tflag:200', 7);
+  const { emit } = fixture.load_module('system/event/registry');
+
+  await emit('EVENTTRAIN');
+
+  const writes_named = (name) =>
+    fixture.var_writes.filter((w) => w.name === name);
+  assert.equal(
+    writes_named('tflag:200').length,
+    1,
+    'TFLAG:200 只被无属性档清（#PRI 档的 REPEAT 200 只到 199）——它的写入是' +
+      '「无属性档真的跑了」的判据',
+  );
+  assert.equal(
+    writes_named('tflag:199').length,
+    2,
+    'TFLAG:199 两份定义都清（#PRI 的 REPEAT 200 与无属性档的 VARSET 都覆盖它）',
+  );
+  assert.equal(
+    writes_named('base:31:2').length,
+    2,
+    '射精槽清零两份定义各写一次（同一 emit 内两份都执行）',
+  );
+  assert.equal(
+    writes_named('flag:10008').length,
+    2,
+    'PLAYER 的选择两份定义各写一次',
+  );
+  assert.equal(era_flag.target, 31);
+});
+
+test('#401 无属性档：VARSET TFLAG, 0, 0, 201 的 201 个下标一个不少、全清 0', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = seed_world(fixture); // 只装无属性档（下一行才 require）
+  fixture.load_module('event/event-train-normal');
+  const { emit } = fixture.load_module('system/event/registry');
+  fixture.override_math_random(() => 0);
+  try {
+    await emit('EVENTTRAIN');
+  } finally {
+    fixture.restore_math_random();
+  }
+
+  const tflag_writes = fixture.var_writes.filter((w) =>
+    w.name.startsWith('tflag:'),
+  );
+  const indices = tflag_writes.map((w) =>
+    Number(w.name.slice('tflag:'.length)),
+  );
+  assert.deepEqual(
+    [...indices].sort((a, b) => a - b),
+    Array.from({ length: 201 }, (_, i) => i),
+    'VARSET 的结束索引 201 是不含的：写满 0..200 共 201 个下标，不多不少',
+  );
+  assert.ok(
+    tflag_writes.every((w) => w.value === 0),
+    '全部清 0',
+  );
+  // 分域落法（文件头）：跨域 47 条走门面、同域 154 条走显式下标表——两组
+  // 写的是同一张表的不同下标，合起来正好是 0..200 的划分
+  assert.equal(new Set(indices).size, 201, '没有下标被写两次（两组不重叠）');
+  assert.equal(era_flag.target, 31, '目标指针由调用方预置，本函数不碰');
+});
+
+test('#401 无属性档：调教者选择的两个分支（ASSIPLAY 是调教域槽位）', async () => {
+  // ASSIPLAY == 0 → PLAYER = MASTER（角色 0）
+  const solo = create_era_fixture();
+  const solo_flag = seed_world(solo); // assi = -1
+  solo.load_module('event/event-train-normal');
+  const { emit: emit_solo } = solo.load_module('system/event/registry');
+  await emit_solo('EVENTTRAIN');
+  assert.equal(solo_flag.player, 0, 'ASSIPLAY == 0 → PLAYER = MASTER = 0');
+
+  // ASSIPLAY != 0 → PLAYER = ASSI（seed_world 只入列 31，助手局面手工搭）
+  const duo = create_era_fixture();
+  join_slave_chara(duo, 31, '温妮');
+  join_slave_chara(duo, 32, '助手桑');
+  const duo_flag = duo.load_module('era-utils/era-flag');
+  duo_flag.target = 31;
+  duo_flag.assi = 32;
+  duo.era.beginTrain(0, 31, 32);
+  duo_flag.assiplay = 1;
+  duo.load_module('event/event-train-normal');
+  const { emit: emit_duo } = duo.load_module('system/event/registry');
+  await emit_duo('EVENTTRAIN');
+  assert.equal(duo_flag.player, 32, 'ASSIPLAY != 0 → PLAYER = ASSI');
+});
+
+test('#401 无属性档：存根名单为空（EVETRAIN.ERB 整份落真身）', () => {
+  const fixture = create_era_fixture();
+  const { STUBBED_CALLS } = fixture.load_module('event/event-train-normal');
+  assert.deepEqual(STUBBED_CALLS, []);
+});

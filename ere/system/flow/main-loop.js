@@ -33,8 +33,14 @@ const { run_train, run_aftertrain } = require('#/system/train/train-loop');
 // SHOW_USERCOM / USERCOM。
 require('#/event/event-first');
 require('#/event/event-train');
+// @EVENTTRAIN 的**无属性档**（EVENT/EVETRAIN.ERB，#401）：与上一个（#PRI 档）
+// 是同一事件的另一份定义，引擎事件函数按 #PRI → 无属性 → #LATER 全部执行，
+// 故两份都要注册；同档内次序 = 这里的装载序
+require('#/event/event-train-normal');
 require('#/event/event-com');
 require('#/event/event-comend');
+// @EVENTCOMEND 的无属性档（EVENT/EVENT1.ERB，#401），同上
+require('#/event/event-comend-normal');
 require('#/event/event-end');
 require('#/event/event-turnend');
 require('#/event/event-turnend-later');

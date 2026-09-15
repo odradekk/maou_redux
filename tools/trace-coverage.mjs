@@ -124,13 +124,21 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 67; // #384（N2）rebase 到含 #385/#396/#402 的
-// master 后实测：master 68 − 本票 1 = 67，两边的说明都留在下面。
-// #396 抬低说明（70 → 68）：SHOP/TAX.ERB与
-// SHOP/SHOP_TRAP.ERB 两个文件落地真身（tax_get；item_shop_trap /
-// saleitem_check_trap，ere/system/stronghold/tax.js 与
-// ere/page/page-shop-trap.js，文件头各带「源:」整路径追溯 + 锚表分片
-// tools/trace-refs/tax.mjs、page-shop-trap.mjs），两份文件退出「待移植」：-2。
+export const PENDING_BASELINE = 65; // #401（N17）本票独立测得的 67 → 65：
+// EVENT/EVETRAIN.ERB（19 行，@EVENTTRAIN 的无属性档，
+// ere/event/event-train-normal.js）与 EVENT/EVENT1.ERB（9 行，
+// @EVENTCOMEND 的无属性档，ere/event/event-comend-normal.js）两份此前
+// 三路证据并集为空，落地后转「已移植」：-2。同票另外两份
+// （EVENT_TURNEND.ERB / EVENT_PREGNANCY.ERB）此前已是**部分移植**（有产物、
+// 清单里还挂着未了结存根），本就不在待移植的分子里——落地后实测待移植
+// 不变（已移植 +4、部分移植 -2，其中 +2 是上面那两份）。
+// 工单正文写的「现 79」是排期时的旧值，rebase 后由派单人重测确认为 67。
+// 下面的历史说明保留原样，不改写。
+// #384 抬低说明（68 → 67，本票独立测得的是 70 → 69 这一格，rebase 后落在
+// master 的 68 上）：本票（N2，角色生成链六文件）把
+// `キャラ関数/CHARA_NAME_EDIT.ERB`（三个函数：SHOW_BUTTON_NAME_EDIT /
+// CHECK_ABLE_TO_NAME_EDIT / CHARA_INFO_NAME_EDIT）整份摆进 ere/，该文件从
+// 「待移植」转「已移植」：-1。
 // #404 不动本数的说明：本票把 `EVENT/ENDING ver 1.0.1.ERB` /
 // `EVENT/ENDINGDATA.ERB` / `EVENT/ENDINGDATA_ADDON1.ERB` 三个文件推成
 // 「已移植」，但三者此前是**部分移植**（有产物、清单里还挂着未了结存根），

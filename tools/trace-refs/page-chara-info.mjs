@@ -87,6 +87,16 @@ export const FILES = [
         ref: '1048',
         any: [/^\tCALL CHARA_INFO_NAME_EDIT\(ARG,1\)$/m],
       },
+      {
+        src: INFO,
+        ref: '863',
+        any: [/^CALL SHOW_BUTTON_CHILD_CARE\(5,ARG\) ;育児室の訪問$/m],
+      },
+      {
+        src: INFO,
+        ref: '1060',
+        any: [/^\tCALL CHILD_CARE_CHARA\(ARG\)$/m],
+      },
     ],
   },
 ];

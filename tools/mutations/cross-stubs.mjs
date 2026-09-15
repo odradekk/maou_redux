@@ -194,9 +194,8 @@ export default [
   {
     desc: 'M6585 NAKADASHI_CHECK 娇小素质倍率 2 改错',
     file: 'ere/event/event-pregnancy.js',
-    find: '  const upper = (base + (era.get(`talent:${cid}:100`) || 0) * 2) * ovulation;',
-    replace:
-      '  const upper = (base + (era.get(`talent:${cid}:100`) || 0)) * ovulation;',
+    find: '  const upper = (base + view.chara.娇小 * 2) * ovulation;',
+    replace: '  const upper = (base + view.chara.娇小) * ovulation;',
     tests: ['cross-stubs'],
     must_mention: '剂量、体型和排卵药共同决定掷骰上界',
   },

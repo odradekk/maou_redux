@@ -31,6 +31,13 @@ function setup_nextday() {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
+  // 金钱不变量（#401）：@DEBUG_CHECK 是回合链的一环，按
+  // `MONEY == EX_FLAG:4444 + 8766` 判「钱被改过」，不成立就炸宝库、清零
+  // 资金、随机删一个角色（合法开局由 @EVENTFIRST 播种 10000 / 1234；本
+  // 函数不跑 EVENTFIRST）。不补的话撤走的角色是随机的、本文件多处以
+  // 角色仍在场为前提（工单：不许把断言放宽成区间绕过去）
+  fixture.store.set('flag:10004', 10000); // MONEY
+  fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
   fixture.load_module('event/event-turnend');
   fixture.load_module('system/turnend-settle');
   fixture.load_module('event/event-turnend-later');

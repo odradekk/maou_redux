@@ -156,3 +156,88 @@ test('健在路径：体力充足、无助手 → 无消息无转场，DRAWLINE 
   assert.deepEqual(fixture.lines, []);
   assert.deepEqual(fixture.inputs_consumed, []);
 });
+
+// —— #401：@EVENTCOMEND 的无属性档（EVENT1.ERB） ——
+
+/** 无属性档靶场：健在的目标 31 + 两份 @EVENTCOMEND 定义（#PRI 与无属性档） */
+function seed_world_comend_normal(fixture) {
+  const era_flag = seed_world(fixture);
+  fixture.store.set('base:31:0', 2000); // 目标健在（否则 #PRI 档会转场 AFTERTRAIN）
+  fixture.load_module('event/event-comend-normal');
+  return era_flag;
+}
+
+const ACCEPT_TEXT = '（能守住贞操的话，稍微被进攻一下后面，也不是不能接受）';
+
+test('#401 无属性档：无膣经验 + 有肛经验 + 看重贞操 → 一次性让步位 + 播报', async () => {
+  const fixture = create_era_fixture();
+  seed_world_comend_normal(fixture);
+  fixture.store.set('exp:31:0', 0); // 私处经验（没有膣经验）
+  fixture.store.set('exp:31:1', 3); // 肛门经验
+  fixture.store.set('talent:31:30', 1); // 看重贞操
+
+  assert.equal(await run_comend(fixture), undefined, '不转场');
+  assert.equal(fixture.store.get('cflag:31:100'), 1, ':7 CFLAG:TARGET:100 = 1');
+  assert(fixture.text_lines().includes(ACCEPT_TEXT), ':8 PRINTW 的播报');
+
+  // :3-4 SIF CFLAG:TARGET:100 → RETURN 0：已经认定过就不再认定
+  const again = create_era_fixture();
+  seed_world_comend_normal(again);
+  again.store.set('cflag:31:100', 1);
+  again.store.set('exp:31:0', 0);
+  again.store.set('exp:31:1', 3);
+  again.store.set('talent:31:30', 1);
+  await run_comend(again);
+  assert(!again.text_lines().includes(ACCEPT_TEXT), '一次性位已置起时不再播报');
+  assert.equal(
+    again.var_writes.some((w) => w.name === 'cflag:31:100'),
+    false,
+    '也不再写（RETURN 0 早于写入）',
+  );
+});
+
+test('#401 无属性档：三个条件的否定侧各自不动作（膣经验 / 肛经验 / 贞操观）', async () => {
+  const CASES = [
+    ['有膣经验（EXP:0 != 0）', { exp0: 1, exp1: 3, chastity: 1 }],
+    ['无肛经验（EXP:1 == 0）', { exp0: 0, exp1: 0, chastity: 1 }],
+    ['不看重贞操（TALENT:30 == 0）', { exp0: 0, exp1: 3, chastity: 0 }],
+  ];
+  for (const [label, { exp0, exp1, chastity }] of CASES) {
+    const fixture = create_era_fixture();
+    seed_world_comend_normal(fixture);
+    fixture.store.set('exp:31:0', exp0);
+    fixture.store.set('exp:31:1', exp1);
+    fixture.store.set('talent:31:30', chastity);
+
+    await run_comend(fixture);
+    assert.equal(
+      fixture.store.get('cflag:31:100') ?? 0,
+      0,
+      `${label} 时不得置一次性位`,
+    );
+    assert(!fixture.text_lines().includes(ACCEPT_TEXT), `${label} 时不得播报`);
+  }
+});
+
+test('#401 无属性档：与 #PRI 档在同一 emit 上都执行（多定义不是重命名冲突）', async () => {
+  const fixture = create_era_fixture();
+  seed_world_comend_normal(fixture);
+  fixture.load_module('event/event-comend'); // #PRI 档
+  fixture.store.set('exp:31:0', 0);
+  fixture.store.set('exp:31:1', 3);
+  fixture.store.set('talent:31:30', 1);
+
+  await run_comend(fixture);
+  assert.equal(
+    fixture.store.get('cflag:31:100'),
+    1,
+    '无属性档照常执行（#PRI 档在健在时零写入，不影响本判据）',
+  );
+  assert(fixture.text_lines().includes(ACCEPT_TEXT));
+});
+
+test('#401 无属性档：存根名单为空（EVENT1.ERB 整份落真身）', () => {
+  const fixture = create_era_fixture();
+  const { STUBBED_CALLS } = fixture.load_module('event/event-comend-normal');
+  assert.deepEqual(STUBBED_CALLS, []);
+});
