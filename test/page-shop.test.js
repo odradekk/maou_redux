@@ -20,7 +20,12 @@
  *   4. 连续多轮混合操作后状态一致；
  *   5. 作用域外指令分支的壳：占位带原作调用名（派单核实事实 #7——不静默
  *      丢掉），含 110/111 守卫与 520-530 区间的 1:1；
- *   6. 存根清单核对（docs/stub-registry.md）。
+ *   6. 存根清单核对（docs/stub-registry.md）；
+ *   7. BOUGHT 的两个跳转（#396）：0-53 打道具商店占位并复位（#395 有意偏离，
+ *      随 #399 收敛回 JUMP）、>= 54 画陷阱商店真身且主菜单一行不画（原作
+ *      :29 的 JUMP 在 DRAW_MENU 之前）。店内的 997/998/999 三键与「购物态
+ *      下其余输入 RETURN 0」在 test/shop-trap.test.js（同一张票的
+ *      USERSHOP:50 一侧）。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：作用域外的每个指令壳只抽查代表
  * （101/777/200/199/525 + 498/499 + 999 未逐个断言）——壳的
@@ -36,10 +41,26 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
+/**
+ * 商店轮测试的夹具：预置商店轮的入口状态 BOUGHT = -1（@EVENTFIRST:27 →
+ * ere/event/event-first.js:109；每轮进店 @EVENTSHOP:20 再置一次）。
+ *
+ * 夹具的变量存储默认空 → `era_flag.bought` 读回 0，而 0 在店内购物段的
+ * 判据（原作 :44-57）里意味着「刚买了 0 号商品」——#396 接通那一段之后，
+ * 这个非现实状态会吞掉全部输入（`:55-57 ELSEIF BOUGHT >= 0 → RETURN 0`）。
+ * 走 run_shop 的用例本可不管（@EVENTSHOP 会置），统一经本助手是为了让
+ * 直调 usershop 的用例也站在真实入口状态上。
+ */
+function create_shop_fixture() {
+  const fixture = create_era_fixture();
+  fixture.load_module('era-utils/era-flag').bought = -1;
+  return fixture;
+}
+
 // 跑一遍商店轮：预置 inputs，活到输入耗尽（夹具既定的终止方式），返回夹具。
 // 终止方式本身即证据之一：分发若抛错，reject 的会是别的消息。
 async function run_shop_with(...inputs) {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   fixture.set_inputs(...inputs);
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
@@ -69,7 +90,7 @@ function join_selectable_slave(fixture, id) {
 }
 
 test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（各面板真身内容）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   fixture.store.set('item:60', 1); // 落穴：给 DRAW_HAVETRAPS 一个可见标记
   fixture.store.set('itemname:60', '落穴'); // 夹具不读 yml/，名字表须显式播种
   fixture.set_inputs(501, 504, 505, 500);
@@ -114,7 +135,7 @@ test('面板入口 500/501/504/505：切换 FLAG:36，重绘即反馈（各面�
 });
 
 test('496/497（A > 0）：SELECT_TARGET/SELECT_ASSI 均为真身，可取消回主菜单', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31);
   fixture.store.set('cflag:31:0', 2); // 31 同时挂助手役，497 才有候选可选
   fixture.set_inputs(496, 999, 497, 999);
@@ -141,7 +162,7 @@ test('496/497（A > 0）：SELECT_TARGET/SELECT_ASSI 均为真身，可取消回
 });
 
 test('100（A > 0）无目标：SELECT_TARGET 取消（返回 0）后回循环，不进调教', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31);
   fixture.set_inputs(100, 999);
   const { run_shop } = fixture.load_module('page/page-shop');
@@ -161,7 +182,7 @@ test('100（A > 0）无目标：SELECT_TARGET 取消（返回 0）后回循环�
 });
 
 test('100（A > 0）已有目标：begin(TRAIN) 信号上抛（#44 接通，主循环接站）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
@@ -182,7 +203,7 @@ test('100（A > 0）已有目标：begin(TRAIN) 信号上抛（#44 接通，主�
 });
 
 test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转场', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31; // 已有目标：直入助手循环段
@@ -202,7 +223,7 @@ test('100 的育儿室守卫：CFLAG:MASTER:1 == 10 → 报文 RETURN 0，不转
 });
 
 test('100 分支 SELECT_ASSI_LOOP：assi_candidates 恰好 1 个候选时调用 SELECT_ASSI（>= 1 下界为真）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31); // 调教目标
   join_selectable_slave(fixture, 32); // 唯一助手候选
   fixture.store.set('cflag:32:0', 2); // 助手役，未占用，且不是 target——恰 1 个候选
@@ -225,7 +246,7 @@ test('100 分支 SELECT_ASSI_LOOP：assi_candidates 恰好 1 个候选时调用 
 });
 
 test('100 分支 SELECT_ASSI_LOOP：候选恰好 0 个（另一角色不是助手役）时跳过 SELECT_ASSI（>= 1 下界为假）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31); // 调教目标
   join_selectable_slave(fixture, 33); // 在场但不是助手役——不计入候选
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -250,7 +271,7 @@ test('100 分支 SELECT_ASSI_LOOP：候选恰好 0 个（另一角色不是助�
 });
 
 test('100 分支：ASSI 已有合法人选（> 0）时跳过候选计算与 SELECT_ASSI（era_flag.assi <= 0 守卫为假）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31); // 调教目标
   join_selectable_slave(fixture, 32); // 本该是候选，但守卫为假时不会被算到
   fixture.store.set('cflag:32:0', 2);
@@ -272,7 +293,7 @@ test('100 分支：ASSI 已有合法人选（> 0）时跳过候选计算与 SELE
 });
 
 test('100 分支：SELECT_ASSI 返回 2（我先想想）直接 RETURN，不进 BEGIN TRAIN（assi_result === 2 为真）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31); // 调教目标
   join_selectable_slave(fixture, 32); // 唯一助手候选
   fixture.store.set('cflag:32:0', 2);
@@ -289,7 +310,7 @@ test('100 分支：SELECT_ASSI 返回 2（我先想想）直接 RETURN，不进 
 });
 
 test('100 分支循环尾检查：ASSI 预先等于 TARGET 时复位为 -1，随后仍正常进调教（era_flag.target === era_flag.assi 外层判据为真）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 1); // id 恰为 1：卡在 era_flag.assi >= 1 的下界
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 1;
@@ -333,7 +354,7 @@ test('守卫 A == 0：496/497 与无效输入同路——无反馈、只重绘�
   // [100] 的守卫走直接分发验证：A == 0 时 [100] 不渲染（[---] 文本占位），
   // 引擎的 input() 不会送达 100（#130）——进不了调教分支只能经 usershop
   // 直调证明，且不得发出 BEGIN TRAIN 信号、不得打出 @BEGIN TRAIN 占位
-  const bare = create_era_fixture();
+  const bare = create_shop_fixture();
   const { usershop } = bare.load_module('page/page-shop');
   await usershop(100); // 不得抛 BeginSignal（A == 0 拦下）
   assert(
@@ -347,7 +368,7 @@ test('未打印按钮的值引擎不送达：拒收且只画首轮（原作无 E
   // INPUT 收任意键入数字，这套行为在原作成立；EraElectron 的引擎只把已
   // 打印按钮的快捷键回传，这些值在渲染层就被弹回，@USERSHOP 的链尾是
   // 引擎死路径。新形态＝#130 的防线本身：拒收发生在 input、画面不再推进
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   fixture.set_inputs(42, 531, 9999, -7);
   const { run_shop } = fixture.load_module('page/page-shop');
   await assert.rejects(() => run_shop(), /输入不合法！请输入以下值之一：/);
@@ -364,7 +385,7 @@ test('未打印按钮的值引擎不送达：拒收且只画首轮（原作无 E
 });
 
 test('连续多轮混合操作后状态一致', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   // 加入可选奴隶 31（A = 1）：496 会真进分支（真身选择画面，不选人）；
   // 更重要的是指针若被某个分支污染成 31，能活过绘制侧的越界守卫（31 在
@@ -408,7 +429,7 @@ test('连续多轮混合操作后状态一致', async () => {
 // 的分发本体、498/499、52x、999/7788）引擎的 input() 不会送达它们的编号
 // （无按钮或隐藏调试入口）——这些分支的分发行为只能经直调测试
 async function dispatch(...results) {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   const { usershop } = fixture.load_module('page/page-shop');
   for (const result of results) {
     await usershop(result); // 守卫拦下的直调不得抛信号（抛了会在用例里炸出）
@@ -432,7 +453,7 @@ test('作用域外的指令分支：壳占位带原作调用名（代表抽查�
 });
 
 test('199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真能推进）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   fixture.store.set('flag:9', 10);
   const { usershop } = fixture.load_module('page/page-shop');
   const { BeginSignal, STATE } = fixture.load_module(
@@ -452,7 +473,7 @@ test('199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真
 });
 
 test('107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位（#395 给 BOUGHT 落点）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   fixture.set_inputs(107, 500); // 107 后主菜单仍正常重绘，需再按一个真实按钮才能继续
   const { run_shop } = fixture.load_module('page/page-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -474,8 +495,8 @@ test('107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立
   );
 });
 
-test('107 购物：BOUGHT >= 54 跳陷阱商店存根（ITEM_SHOP_TRAP）', async () => {
-  const fixture = create_era_fixture();
+test('107 购物：BOUGHT >= 54 跳陷阱商店真身，主菜单一行不画（原作 :29，#396 接通）', async () => {
+  const fixture = create_shop_fixture();
   const { run_shop } = fixture.load_module('page/page-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
   // 真实路径只能置 1（[107] 分支），此处直接造世界验证 show_shop 自身对
@@ -490,14 +511,24 @@ test('107 购物：BOUGHT >= 54 跳陷阱商店存根（ITEM_SHOP_TRAP）', asyn
   );
   const texts = history_texts(fixture);
   assert(
-    texts.some((line) => line.includes('@ITEM_SHOP_TRAP')),
-    'BOUGHT >= 54 应打陷阱商店存根',
+    texts.includes('《可以购买在地下城里布置的陷阱》'),
+    'BOUGHT >= 54 应画陷阱商店（page/page-shop-trap.js）',
   );
-  assert.equal(era_flag.bought, -1);
+  // 原作 :29 的 JUMP 在 :38 CALL DRAW_MAINMENU 之前——整个接管本轮
+  assert.equal(
+    fixture.lines_history.filter((line) => line.type === 'button').length,
+    0,
+    '陷阱商店不画主菜单（一枚按钮都不该有）',
+  );
+  assert.equal(
+    era_flag.bought,
+    54,
+    '购物态不复位：退出商店是 [999]（usershop :44-46）的职责，不是每轮复位',
+  );
 });
 
 test('show_shop：BOUGHT == 0 边界仍在 >= 0 之内，打道具商店存根（非 > 0）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   const { run_shop } = fixture.load_module('page/page-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
   // 原作 :25 IF BOUGHT >= 0（闭区间下界），0 与 1 同属「已购物」——只探
@@ -522,7 +553,7 @@ test('show_shop：BOUGHT == 0 边界仍在 >= 0 之内，打道具商店存根�
 
 test('200/300：真身存读档界面（#136 接通，占位移除）', async () => {
   {
-    const fixture = create_era_fixture();
+    const fixture = create_shop_fixture();
     const { usershop } = fixture.load_module('page/page-shop');
     fixture.set_inputs(100); // 进存档界面后直接返回
     await usershop(200);
@@ -534,7 +565,7 @@ test('200/300：真身存读档界面（#136 接通，占位移除）', async ()
     );
   }
   {
-    const fixture = create_era_fixture();
+    const fixture = create_shop_fixture();
     const { usershop } = fixture.load_module('page/page-shop');
     fixture.set_inputs(100);
     await usershop(300);
@@ -548,7 +579,7 @@ test('200/300：真身存读档界面（#136 接通，占位移除）', async ()
 // —— #137：读档转场与 @EVENTSHOP 的跳过 ——
 
 test('300 读档成功：BeginSignal 从 usershop 上抛（run_shop 循环被打断，主循环接站）', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   fixture.store.set('global:saves:3', '三号档');
   const { usershop } = fixture.load_module('page/page-shop');
   fixture.era.loadData = async () => true;
@@ -572,7 +603,7 @@ test('SHOP_AFTER_LOAD：读档后的进入路径不执行 @EVENTSHOP（system-fl
   // 探针挂在链上（page-shop 自己的普通档与 kojo 的 #PRI 档之外再加一个
   // 只计数的），分别驱动两条进入路径
   const probe_and_run = async (options) => {
-    const fixture = create_era_fixture();
+    const fixture = create_shop_fixture();
     // 装配 kojo 的 #PRI 档（真实链形状：多档注册），计数探针挂 NORMAL 档
     fixture.load_module('kojo/kojo-system');
     const { on } = fixture.load_module('system/event/registry');
@@ -606,7 +637,7 @@ test('SHOP_AFTER_LOAD：读档后的进入路径不执行 @EVENTSHOP（system-fl
 });
 
 test('状态机映射：enter_state(SHOP_AFTER_LOAD) 走 run_shop 的跳过变体', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   // main-loop 装配全部事件模块（require 清单），enter_state 是主循环真正
   // 调用的入口——直接钉「映射没有指回 run_shop 原样」
   const main_loop = fixture.load_module('system/flow/main-loop');
@@ -644,7 +675,7 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
 
   // 守卫成立：原作 PRINTLCD [110]/[111]（DRAW_MAINMENU.ERB:286/:292），
   // 按钮本体随实验室/设施票落地（存根不印按钮的政策），分发直调验证
-  const on = create_era_fixture();
+  const on = create_shop_fixture();
   on.store.set('talent:0:325', 1); // 魔王的魔界知识
   on.store.set('flag:83', 3); // 肉便器数 > 0
   const { usershop } = on.load_module('page/page-shop');
@@ -671,9 +702,11 @@ test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 5
   );
 });
 
-test('999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达）', async () => {
+test('999 落到调试菜单（非购物态；店内的 999 是退出商店，同落这里）', async () => {
   // 原作主菜单不印 [999]（DRAW_MAINMENU 的编号表 100-888 无它）——键入式
-  // 后门在引擎侧不可达（#130），调试分支经 usershop 直调验证
+  // 后门在引擎侧不可达（#130），调试分支经 usershop 直调验证。店内键入 999
+  // 的两条路径（:44-46 清 BOUGHT 与 :222 调试菜单）见 usershop 注释与
+  // test/shop-trap.test.js 的 USERSHOP 999 用例
   const fixture = await dispatch(999);
   assert(
     history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
@@ -682,7 +715,7 @@ test('999 落到调试菜单（店内 999 因 BOUGHT 无落点不可达）', asy
 });
 
 test('7788 接通 RELATION_DEBUGPRINT：输出关系矩阵并等待按键', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(1);
   fixture.store.set('cflag:1:6', 1001); // CFLAG:A:6 名字编号（NID）
@@ -703,7 +736,7 @@ test('498/499 无守卫：指针未选也照原作进分支', async () => {
   // #391 起 CHARA_INFO_INDIVIDUAL_WAPPED 是真身，不再打占位行；这里只验
   // 证「无守卫，target/assi 未选（-1）也照样进个别信息页」，个别信息页
   // 自身的渲染/按钮/分发见 test/page-chara-info.test.js
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   const { usershop } = fixture.load_module('page/page-shop');
   fixture.set_inputs(100, 100); // 每次进页后立即按「返回」
   await usershop(498);
@@ -717,7 +750,7 @@ test('498/499 无守卫：指针未选也照原作进分支', async () => {
 });
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-shop');
   const registry_path = path.resolve(
     __dirname,
@@ -733,15 +766,14 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // 为真身/真转场，SYSTEM_SAVEGAME / SYSTEM_LOADGAME 自 #136 起为真身
   // （200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
   // page-dungeon-info2.js），CHARA_INFO / CHARA_INFO_INDIVIDUAL_WAPPED
-  // 自 #391 起为真身（101/498/499 分支，page-chara-info.js），均已移出。
-  // ITEM_SHOP_TRAP 是 BOUGHT 落表后 show_shop 的新运行时占位（#395），
-  // 非 usershop 分支
+  // 自 #391 起为真身（101/498/499 分支，page-chara-info.js），
+  // ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 分支 → show_shop 调用
+  // page/page-shop-trap.js；#395 的运行时占位随之撤除），均已移出。
   assert.deepEqual(STUBBED_CALLS, [
     '批量处刑',
     'INTERCEPT',
     'ABILITY_UP',
     'ITEM_SHOP',
-    'ITEM_SHOP_TRAP',
     'TAILOR_MAIN',
     'SECRET_LABO',
     'CONFIG',
@@ -760,7 +792,7 @@ test('A 的判据两半都算数：被占用的奴隶（CFLAG:x:1 != 0）不计�
   // 验收变异实测：把 count_selectable_slaves 的 `CFLAG:x:1 == 0` 条件删掉，
   // 143 条测试全绿——因为在场用例里「已加入的奴隶」与「可选的奴隶」恰好
   // 总是同一批，判据的这一半从未被观察到。本用例造出两者不同的局面。
-  const fixture = create_era_fixture();
+  const fixture = create_shop_fixture();
   join_selectable_slave(fixture, 31);
   // 原作 DRAW_MAINMENU.ERB:215 的 SIF CFLAG:COUNT:1 == 0 —— 非 0 = 该奴隶
   // 当前不可选（占用中），A 不计它
@@ -778,7 +810,7 @@ test('A 的判据两半都算数：被占用的奴隶（CFLAG:x:1 != 0）不计�
 
   // 对照：同样一个奴隶、未被占用时 496 确实进得去（真身选择画面），
   // 排除「因为别的原因没进」——选择画面被就地重绘消费，取证在行史
-  const control = create_era_fixture();
+  const control = create_shop_fixture();
   join_selectable_slave(control, 31);
   control.set_inputs(496, 999);
   const { run_shop: run_control } = control.load_module('page/page-shop');

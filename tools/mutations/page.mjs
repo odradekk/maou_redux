@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 113;
+export const COUNT = 125; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）
 
 export default [
   {
@@ -950,8 +950,7 @@ export default [
     replace: `    era.print('你专心于内政，稍作了休息……（税金+5%）');
     game.stronghold.税金修正 += 4; // 变异：税金少算 1`,
     tests: ['page-shop'],
-    must_mention:
-      '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真能推进）',
+    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND',
   },
   {
     desc: 'M7889 199 休息：BEGIN TURNEND 删（回合推不动，本票到站标记失守）',
@@ -961,25 +960,26 @@ export default [
     replace: `    game.stronghold.税金修正 += 5;
     // 变异：BEGIN TURNEND 删`,
     tests: ['page-shop'],
-    must_mention:
-      '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真能推进）',
+    must_mention: '199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND',
   },
   {
     desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转判据永不成立）',
     file: 'ere/page/page-shop.js',
-    find: '    era_flag.bought = 1;',
-    replace: '    era_flag.bought = -1; // 变异：不再触发商店跳转',
+    find: `    // 跳道具商店（show_shop 的 0-53 支）——本体仍是存根，随 #399。
+    era_flag.bought = 1;`,
+    replace: `    // 跳道具商店（show_shop 的 0-53 支）——本体仍是存根，随 #399。
+    era_flag.bought = -1; // 变异：不再触发商店跳转`,
     tests: ['page-shop'],
     must_mention:
-      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位（#395 给 BOUGHT 落点）',
+      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位',
   },
   {
-    desc: 'M7891 show_shop：BOUGHT 54 边界错一格（< 改 <=）',
+    desc: 'M7891 show_shop：BOUGHT 54 边界错一格（>= 改 >，#396 重构后重钉）',
     file: 'ere/page/page-shop.js',
-    find: '    if (era_flag.bought < 54) {',
-    replace: '    if (era_flag.bought <= 54) {',
+    find: '  if (era_flag.bought >= 54) {',
+    replace: '  if (era_flag.bought > 54) { // 变异：54 边界漏判',
     tests: ['page-shop'],
-    must_mention: '107 购物：BOUGHT >= 54 跳陷阱商店存根（ITEM_SHOP_TRAP）',
+    must_mention: 'BOUGHT >= 54 跳陷阱商店真身',
   },
   {
     desc: 'M7892 show_shop：BOUGHT 复位删（存根显示后不退出购物态）',
@@ -993,7 +993,7 @@ export default [
   return row_count; // 变异：BOUGHT 复位删`,
     tests: ['page-shop'],
     must_mention:
-      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位（#395 给 BOUGHT 落点）',
+      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位',
   },
   {
     desc: 'M7893 SELECT_ASSI [1002]：ASSI 复位删（旧指针残留）',
@@ -1179,5 +1179,104 @@ export default [
     tests: ['page-main-menu'],
     must_mention:
       'DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的戒指特例',
+  },
+  {
+    desc: 'M8104 ITEM_SHOP_TRAP 陷阱网格上界改错（end 92 → 91，漏掉 91 号）',
+    file: 'ere/page/page-shop-trap.js',
+    find: 'const TRAP_IDS = { start: 60, end: 92 };',
+    replace: 'const TRAP_IDS = { start: 60, end: 91 };',
+    tests: ['shop-trap'],
+    must_mention: '陷阱网格 60-91、戒指网格 300-320',
+  },
+  {
+    desc: 'M8105 ITEM_SHOP_TRAP 戒指网格下界错一格（start 300 → 299）',
+    file: 'ere/page/page-shop-trap.js',
+    find: 'const RING_IDS = { start: 300, end: 321 };',
+    replace: 'const RING_IDS = { start: 299, end: 321 };',
+    tests: ['shop-trap'],
+    must_mention: '陷阱网格 60-91、戒指网格 300-320',
+  },
+  {
+    desc: 'M8106 ITEM_SHOP_TRAP 网格列数改错（5 → 4）',
+    file: 'ere/page/page-shop-trap.js',
+    find: 'const COLUMNS = 5;',
+    replace: 'const COLUMNS = 4;',
+    tests: ['shop-trap'],
+    must_mention: '陷阱网格 60-91、戒指网格 300-320',
+  },
+  {
+    desc: 'M8107 ITEM_SHOP_TRAP 格子宽度改错（16 → 15）',
+    file: 'ere/page/page-shop-trap.js',
+    find: 'const CELL_WIDTH = 16;',
+    replace: 'const CELL_WIDTH = 15;',
+    tests: ['shop-trap'],
+    must_mention: '陷阱网格 60-91、戒指网格 300-320',
+  },
+  {
+    desc: 'M8108 SALEITEM_CHECK_TRAP 基础在售段漏掉 87 号',
+    file: 'ere/page/page-shop-trap.js',
+    find: '  60, 61, 62, 63, 69, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85, 87,',
+    replace:
+      '  60, 61, 62, 63, 69, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85,',
+    tests: ['shop-trap'],
+    must_mention: '三个判据的八种组合整表驱动',
+  },
+  {
+    desc: 'M8109 SALEITEM_CHECK_TRAP 淫魔知识位改错（54 → 53）',
+    file: 'ere/page/page-shop-trap.js',
+    find: 'const SALES_SUCCUBUS_KNOWLEDGE = [54]; // 淫魔知识',
+    replace: 'const SALES_SUCCUBUS_KNOWLEDGE = [53]; // 变异：淫魔知识位',
+    tests: ['shop-trap'],
+    must_mention: '三个判据的八种组合整表驱动',
+  },
+  {
+    desc: 'M8110 SALEITEM_CHECK_TRAP 魔虫知识分支反转（== 0 改 == 1）',
+    file: 'ere/page/page-shop-trap.js',
+    find: "  if ((era.get('talent:0:328') || 0) === 0) {",
+    replace: "  if ((era.get('talent:0:328') || 0) === 1) {",
+    tests: ['shop-trap'],
+    must_mention: '三个判据的八种组合整表驱动',
+  },
+  {
+    desc: 'M8111 SALEITEM_CHECK_TRAP 陷阱等级判据错一格（< 改 <=）',
+    file: 'ere/page/page-shop-trap.js',
+    find: "  if (game.stronghold.陷阱等级 < (era.get('cflag:0:9') || 0)) {",
+    replace: "  if (game.stronghold.陷阱等级 <= (era.get('cflag:0:9') || 0)) {",
+    tests: ['shop-trap'],
+    must_mention: '陷阱等级判据是严格小于',
+  },
+  {
+    desc: 'M8112 ITEM_SHOP_TRAP 日期行的午前午后互换',
+    file: 'ere/page/page-shop-trap.js',
+    find: "' 午前' : ' 午后'",
+    replace: "' 午后' : ' 午前'",
+    tests: ['shop-trap'],
+    must_mention: '日期行两态',
+  },
+  {
+    desc: 'M8113 USERSHOP 998：切了陷阱商店却不重画（JUMP 的目标删）',
+    file: 'ere/page/page-shop.js',
+    find: '    await item_shop_trap(); // :50 JUMP ITEM_SHOP_TRAP（切陷阱商店并立即重画）',
+    replace: '    // 变异：切了不画',
+    tests: ['shop-trap'],
+    must_mention: '切陷阱商店并立即重画',
+  },
+  {
+    desc: 'M8114 USERSHOP 999：购物态下不清 BOUGHT（退出商店失效）',
+    file: 'ere/page/page-shop.js',
+    find: '    era_flag.bought = -1; // :46（CLEAR_SHOP 随 #399，见上）',
+    replace: '    // 变异：不退出购物态',
+    tests: ['shop-trap'],
+    must_mention: '清购物标志并落到调试菜单',
+  },
+  {
+    desc: 'M8115 USERSHOP 购物态守卫失效（其它输入落到主菜单分发）',
+    file: 'ere/page/page-shop.js',
+    find: `  } else if (era_flag.bought >= 0) {
+    return; // :55-57 的 RETURN 0`,
+    replace: `  } else if (era_flag.bought >= 100000) {
+    return; // 变异：购物态守卫失效`,
+    tests: ['shop-trap'],
+    must_mention: '购物态下的其它输入一律 RETURN 0',
   },
 ];
