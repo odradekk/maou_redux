@@ -323,7 +323,7 @@ function unique_nonblank_in_slice(lines, a, b) {
   return out;
 }
 
-const ANCHOR_QUALITY_BASELINE = 5159; // #298 冻结：弱锚只减不增；#239 K8 并入 +500；#231 K0 并入 +364
+const ANCHOR_QUALITY_BASELINE = 5155; // #298 冻结：弱锚只减不增；#239 K8 并入 +500；#231 K0 并入 +364；#417 train-message 消化 -4
 const ANCHOR_QUALITY_BY_FILE = {
   'ere/chara/chara-make.js': 35,
   'ere/data/equip-database.js': 2,
@@ -395,7 +395,6 @@ const ANCHOR_QUALITY_BY_FILE = {
   'ere/system/train/juel-check.js': 1,
   'ere/system/train/passout.js': 17,
   'ere/system/train/seiin.js': 2,
-  'ere/system/train/train-message.js': 4,
   'ere/system/train/v-able.js': 1,
   'ere/system/turnend-settle.js': 3,
 };

@@ -6,6 +6,16 @@
 // 在行的中文片段 ↔ 源切片」机械核对生成：片段命中的那份源文件即目标，
 // 锚取命中片段里在源文件全文唯一的最长者；取不到片段时按既有约定回落
 // 到「区间内首个非注释行的整行字面」。
+//
+// #417 补锚：锚必须落在自己的 ref 切片内。ref 是单行而那一行连同缩进在
+// 源文件里逐字重复时（A.ERB 的「射出的精液、把两人的身体都弄脏了…」在
+// :477/:486 两处逐字相同，另有 :52/:79 两处只差缩进），「上一行控制语句
+// ＋ 文本行」的两行组合锚会溢出切片、在自己的声明上命中不到；而 ref 是
+// js 侧写死的（trace-check 第 1 步要求 ref 逐字出现在 js 里），放宽 ref
+// 等于改 ere/ 生产代码。这类条目一律改取切片内的整行/整段字面作锚，命中
+// N 处但窗口逐字相同（平行复现，判据见 trace-check.mjs 头注 #298）即放行。
+// 同一判决顺带消化了 :52/:79/:583/:585 四条存量弱锚（#417，基线
+// 5159 → 5155，该文件随之从 ANCHOR_QUALITY_BY_FILE 移出）。
 
 export const FILES = [
   {
@@ -109,7 +119,7 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '52',
-        any: [/射出的精液、把两人的身体都弄脏了/],
+        any: [/PRINTL 射出的精液、把两人的身体都弄脏了…/],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -169,7 +179,7 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '79',
-        any: [/射出的精液、把两人的身体都弄脏了/],
+        any: [/PRINTL 射出的精液、把两人的身体都弄脏了…/],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -472,12 +482,12 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '332',
-        any: [/PRINT 带着恍惚的表情、\s*\n\s*PRINTFORML 精液射到%SAVESTR:TARGET%的身上了…/],
+        any: [/PRINT 带着恍惚的表情、/],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '341',
-        any: [/PRINT 带着恍惚的表情、\s*\n\s*PRINTFORML %SAVESTR:TARGET%的脸上、手上、沾满了大量的精液…/],
+        any: [/PRINT 带着恍惚的表情、/],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -502,7 +512,7 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '347',
-        any: [/ELSEIF TFLAG:18 == 1\s*\n\s*PRINTFORM %SAVESTR:TARGET%/],
+        any: [/^\tPRINTFORM %SAVESTR:TARGET%\s*$/m],
       },
       // —— target/ERB/EVENT/EVENT_TRAIN_MESSAGE_B.ERB ——
       {
@@ -620,7 +630,9 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '463-466',
-        any: [/PRINTL 精液渗出来了…\s*\n\s*;背后位、背面座位/],
+        any: [
+          /PRINT 阴茎拔出后、阴部处\s*\n\s*SIF TFLAG:31\s*\n\s*PRINT 渗出了处女的落红、混合着\s*\n\s*PRINTL 精液渗出来了…/,
+        ],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -650,7 +662,7 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '477',
-        any: [/ELSEIF SELECTCOM == 25\s*\n\s*PRINTFORML %SAVESTR:PLAYER%射出的精液、把两人的身体都弄脏了…/],
+        any: [/PRINTFORML %SAVESTR:PLAYER%射出的精液、把两人的身体都弄脏了…/],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -660,7 +672,9 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '480-483',
-        any: [/ELSEIF SELECTCOM == 34\s*\n\s*PRINT 阴茎拔出后、阴部处/],
+        any: [
+          /PRINT 阴茎拔出后、阴部处\s*\n\s*SIF TFLAG:31\s*\n\s*PRINT 渗出了处女的落红、混合着\s*\n\s*PRINTL 精液渗出来了…/,
+        ],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -670,7 +684,7 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '486',
-        any: [/ELSEIF SELECTCOM == 24\s*\n\s*PRINTFORML %SAVESTR:PLAYER%射出的精液、把两人的身体都弄脏了…/],
+        any: [/PRINTFORML %SAVESTR:PLAYER%射出的精液、把两人的身体都弄脏了…/],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -690,12 +704,16 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '562',
-        any: [/PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了大量的精液…\s*\n\s*ENDIF/],
+        any: [
+          /PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了大量的精液…/,
+        ],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '492',
-        any: [/PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了精液…\s*\n\s*ENDIF/],
+        any: [
+          /PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了精液…/,
+        ],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
@@ -763,18 +781,22 @@ export const FILES = [
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '580',
-        any: [/PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了大量的精液…\s*\n\s*;逆レイプ/],
+        any: [
+          /PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了大量的精液…/,
+        ],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '510',
-        any: [/PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了精液…\s*\n\s*;逆レイプ/],
+        any: [
+          /PRINTFORML 对准%SAVESTR:TARGET%私处内那最敏感的那一点、%SAVESTR:PLAYER%射出了精液…/,
+        ],
       },
       {
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '583',
         any: [
-          /的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把/,
+          /%SAVESTR:PLAYER%的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把/,
         ],
       },
       {
@@ -786,7 +808,7 @@ export const FILES = [
         src: 'target/ERB/EVENT/EVENT_TRAIN_MESSAGE_A.ERB',
         ref: '585',
         any: [
-          /的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把/,
+          /%SAVESTR:TARGET%的子宫贪婪地吸啜着灌满膣内的大量精液、私处妖媚而淫荡地蠕动着、把/,
         ],
       },
       {
