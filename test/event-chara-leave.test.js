@@ -71,7 +71,7 @@ test('EVENT_CHARA_LEAVE → EVENT_CHARA_RETURN：九张表原地往返，下标�
   fixture.store.set('talent:31:85', 1);
   fixture.store.set('mark:31:2', 3);
   fixture.store.set('cstr:31:0', '备注文本');
-  fixture.store.set('cflag:31:451', 1); // 已生成过身体数据，跳过存根提示
+  fixture.store.set('cflag:31:451', 1); // 已生成过身体数据，跳过身体生成
 
   const descriptor = event_chara_leave(85, 31);
   const new_cid = event_chara_return(descriptor);
@@ -151,22 +151,44 @@ test('EVENT_CHARA_RETURN：不低于 setlv 时不触发 ST_UP', () => {
   );
 });
 
-test('EVENT_CHARA_RETURN：身体数据未生成（CFLAG:451==0）时打存根占位', () => {
+test('EVENT_CHARA_RETURN：身体数据未生成（CFLAG:451==0）时调真身生成（#385）', () => {
   const fixture = seed_world();
   const { event_chara_leave, event_chara_return } = fixture.load_module(
     'event/event-chara-leave',
   );
+  fixture.store.set('flag:5', 1 << 12); // 位 12 开：函数内的闸门放行
   // 未设置 cflag:31:451，默认 0
 
   const descriptor = event_chara_leave(85, 31);
-  event_chara_return(descriptor);
+  event_chara_return(descriptor, 0, () => 0); // 确定随机源（年龄取点）
 
-  assert(
+  const age = fixture.store.get('cflag:31:451');
+  assert.ok(
+    Number.isInteger(age) && age >= 12 && age <= 35,
+    `真身落盘：年龄落在 LIMIT(12,35) 内（实际 ${age}）`,
+  );
+  assert.ok(fixture.store.get('cflag:31:453') > 100, '身高（厘米）已落盘');
+  assert.equal(
     fixture
       .text_lines()
       .some((line) => line.includes('CHAR_BODY_GENERATE_WAPPED')),
-    '未生成身体数据时应留存根痕迹',
+    false,
+    '真身不再打存根占位行',
   );
+});
+
+test('EVENT_CHARA_RETURN：身体数据未生成但 FLAG:5 位 12/15 关 → 闸门挡住', () => {
+  const fixture = seed_world();
+  const { event_chara_leave, event_chara_return } = fixture.load_module(
+    'event/event-chara-leave',
+  );
+  // FLAG:5 未开（默认 0）：原作 CHAR_BODY_GENERATE_WAPPED 的守卫在此返回
+
+  const descriptor = event_chara_leave(85, 31);
+  event_chara_return(descriptor, 0, () => 0);
+
+  assert.equal(fixture.store.get('cflag:31:451'), undefined, '不生成身体数据');
+  assert.equal(fixture.store.get('cflag:31:453'), undefined);
 });
 
 test('EVENT_CHARA_RETURN：身体数据已生成（CFLAG:451!=0）时不打存根占位', () => {

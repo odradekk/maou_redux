@@ -59,11 +59,11 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { st_up } = require('#/dungeon/dungeon-lvup');
-const { stub_line } = require('#/utils/stub-line');
 
 function get(name) {
   return era.get(name) || 0;
@@ -228,10 +228,10 @@ function event_chara_return(descriptor, setlv = 0, rand) {
   chara(cid).dungeon.体力 = get(`maxbase:${cid}:0`);
   chara(cid).dungeon.气力 = get(`maxbase:${cid}:1`);
 
-  // :157-158 身体データ未生成なら生成（CHAR_BODY_GENERATE_WAPPED 全库仍是
-  // 存根，接线随点亮该位的族票，见 docs/stub-registry.md）
+  // :157-158 身体データ未生成なら生成（#385 起真身；此处照原作只判年龄，
+  // FLAG:5 位 12/15 的闸门在函数内部）
   if (get(`cflag:${cid}:451`) === 0) {
-    stub_line('CHAR_BODY_GENERATE_WAPPED', '角色身体数据生成');
+    char_body_generate_wapped(cid, rand);
   }
 
   return cid;

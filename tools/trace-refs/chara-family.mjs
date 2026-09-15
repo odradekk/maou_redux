@@ -22,6 +22,11 @@ export const FILES = [
         ref: '8-301',
         any: [/@RELATION_GET\(L_A, L_B\)/, /@RELATION_DEBUGPRINT/],
       },
+      {
+        src: 'target/ERB/關係設置/RELATION_FAMILY.ERB',
+        ref: '113',
+        any: [/L_EXP_AGE2 = CHAR_AGE_EXPECT\(L_B\)/],
+      },
     ],
   },
 ];

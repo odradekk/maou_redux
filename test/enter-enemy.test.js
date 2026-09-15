@@ -426,6 +426,44 @@ test('K_11_LILY 出场：CFLAG:1 = 2、FLAG:223、初期装备、再起点不写
   assert.equal(era_flag.target, 0, 'TARGET 还原到 MASTER（FLAG:1 = 0）');
 });
 
+test('K_11 出场：身体数据生成接线（#385）：FLAG:5 位 12 开时落 CFLAG:451-457', async () => {
+  const { fixture } = setup_lily();
+  fixture.store.set('flag:5', 1 << 12); // 位 12 开：函数内闸门放行
+  const { k_11_lily } = load(fixture);
+  await k_11_lily(() => 0); // 确定随机源：莉莉是村娘Ｂ → 年龄 RAND:2 + 17 = 17
+
+  assert.equal(
+    fixture.store.get('cflag:24:451'),
+    17,
+    '身体数据真身落盘（村娘Ｂ固定年龄 17）',
+  );
+  assert.ok(fixture.store.get('cflag:24:453') > 100, '身高（厘米）已落盘');
+
+  // 闸门对照：FLAG:5 不设时函数整体早退，一个字节都不写
+  const off = setup_lily();
+  const { k_11_lily: lily_off } = load(off.fixture);
+  await lily_off(() => 0);
+  assert.equal(
+    off.fixture.store.get('cflag:24:451'),
+    undefined,
+    'FLAG:5 位 12/15 关 → 不生成',
+  );
+});
+
+test('K_34 出场：身体数据生成接线（#385）：FLAG:5 位 12 开时落 CFLAG:451-457', async () => {
+  const { fixture } = setup_crazylord();
+  fixture.store.set('flag:5', 1 << 12);
+  const { k_34_crazylord } = load(fixture);
+  await k_34_crazylord(() => 0); // 确定随机源
+
+  const age = fixture.store.get('cflag:34:451');
+  assert.ok(
+    Number.isInteger(age) && age >= 12 && age <= 35,
+    `狂王替身的身体数据真身落盘（年龄 ${age}）`,
+  );
+  assert.ok(fixture.store.get('cflag:34:453') > 100, '身高（厘米）已落盘');
+});
+
 test('K_11_LILY 早退四条：标志已立 / 未满 200 日 / 玛奥无爱无淫乱 / 玛奥非待机', async () => {
   // ① FLAG:223 已立
   {

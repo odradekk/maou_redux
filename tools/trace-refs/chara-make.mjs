@@ -2063,6 +2063,16 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
+        ref: '114',
+        any: [/年齢or身長などを表示する設定の場合は身体データを設定/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
+        ref: '116',
+        any: [/CALL CHAR_BODY_GENERATE_WAPPED, A/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
         ref: '1380',
         any: [/RETURN 0/],
       },

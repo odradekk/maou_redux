@@ -59,18 +59,15 @@ const { chara } = require('#/facade/chara');
 const { char_make, char_make_inport } = require('#/chara/char-make');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { family_register } = require('#/chara/chara-family');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
+const { stub_line } = require('#/utils/stub-line');
 const { enterenemy_koujo } = require('#/kojo/kojo-system');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = [
-  'ENTERENEMY_KOUJO',
-  'SHOW_CHARA_INFO',
-  'CHAR_BODY_GENERATE_WAPPED',
-];
+const STUBBED_CALLS = ['ENTERENEMY_KOUJO', 'SHOW_CHARA_INFO'];
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
 const MAX_CHARANUM = 90;
@@ -358,11 +355,7 @@ async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
   chara(a).chara.武装 = 40; // :200 初期装備：剑（CFLAG:A:550）
   era_flag.target = a; // :202 着替え装着
   wearing_cloth_able(a); // :203 —— #215（J5）真身
-  await stub_line_wait(
-    'CHAR_BODY_GENERATE_WAPPED',
-    '角色身体数据生成',
-    '随角色身体票',
-  ); // :204
+  char_body_generate_wapped(a, rand_n); // :204 —— #385 起真身
   family_register(a, rand_n); // :205
   era_flag.target = 0; // :206 TARGET = FLAG:1（MASTER 恒角色 0，CONTEXT.md）
   chara(a).dungeon.侵攻阶层 = 1; // :207 CFLAG:A:501
@@ -449,11 +442,7 @@ async function k_34_crazylord(rand_n) {
 
   era_flag.target = a; // :270 着替え装着
   wearing_cloth_able(a); // :271 —— #215（J5）真身
-  await stub_line_wait(
-    'CHAR_BODY_GENERATE_WAPPED',
-    '角色身体数据生成',
-    '随角色身体票',
-  ); // :272
+  char_body_generate_wapped(a, rand_n); // :272 —— #385 起真身
   era_flag.target = 0; // :273 TARGET = FLAG:1（MASTER 恒角色 0）
 
   era.println(); // :275

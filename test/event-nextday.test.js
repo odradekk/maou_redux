@@ -134,7 +134,7 @@ test('连续推进 400 天：月始终 1–12、日始终合法，大小月与 2
   assert.deepEqual(milestones[366], [1, 1], '第 366 天应跨年回到 1 月 1 日');
 });
 
-test('跨年的年龄增长：奴隶 452 +1、451 落 0（换算存根），魔王不涨', async () => {
+test('跨年的年龄增长：奴隶 452 +1、451 落换算真身，魔王不涨', async () => {
   const world = setup_nextday();
   join_slave_chara(world.fixture, 31, '温妮');
   world.era_flag.month = 12;
@@ -150,15 +150,17 @@ test('跨年的年龄增长：奴隶 452 +1、451 落 0（换算存根），魔�
     1,
     '奴隶的种族年龄应 +1（CFLAG:452）',
   );
+  // #385 起 HUMAN_AGE_GENERATE 为真身：未设种族（TALENT:314 = 0）走 1 倍档，
+  // 人类年龄 = 种族年龄
   assert.equal(
     world.fixture.store.get('cflag:31:451'),
-    0,
-    '奴隶的年龄应写入换算结果（存根 RESULT 0）',
+    1,
+    '奴隶的年龄应写入换算结果（1 倍档：与种族年龄同值）',
   );
   assert.equal(
     stub_count(world.fixture.text_lines(), 'HUMAN_AGE_GENERATE'),
-    1,
-    '换算存根恰好占位一次',
+    0,
+    '已落真身，不得再有换算占位行',
   );
   assert(
     !world.fixture.var_writes.some((w) => w.name === 'cflag:0:452'),
@@ -420,7 +422,9 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'ONESHO',
     'DOG_WALK',
   ]);
-  assert.deepEqual(nextmonth_stubs, ['HUMAN_AGE_GENERATE']);
+  // HUMAN_AGE_GENERATE 自 #385 起为真身（ere/chara/chara-body.js），本模块
+  // 的存根名单已清空
+  assert.deepEqual(nextmonth_stubs, []);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
