@@ -347,9 +347,11 @@ test('录像日收益接线：EVENT_NEXTDAY 在每角色循环调用 EVENT_VIDEO
 test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、ENDCHECK 在普通档尾部', async () => {
   const world = setup_nextday();
   join_slave_chara(world.fixture, 31, '温妮');
-  // 银黑桃 21 在场：ENDCHECK（#116 真调用）进入 ENDCHECKCHARA 时会打
-  // ENDCHECKSPADE 存根行——它就是 ENDCHECK 执行的直接可见证据
+  // 银黑桃 21 在场且线值 >= 151：ENDCHECK（#116 真调用）进入 ENDCHECKCHARA
+  // 时会跑真身状态机、打一行乳业收入播报——它就是 ENDCHECK 执行的直接
+  // 可见证据（#404 起该链的存根行已换成真身）
   join_slave_chara(world.fixture, 21, '银黑桃');
+  world.fixture.store.set('exflag:2814', 151);
   world.era_flag.month = 2;
   world.era_flag.date = 28;
   world.era_flag.time = 1;
@@ -360,8 +362,8 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   const tax = texts.findIndex((line) => line.includes('@TAX_GET')); // NEXTDAY 尾部
   const month_roll = texts.findIndex((line) => line.includes('明天就是3月了')); // NEXTMONTH（在 :84，DAY 推进之后）
   const endcheck = texts.findIndex((line) =>
-    line.includes('原作 @ENDCHECKSPADE，'),
-  ); // ENDCHECK 内部（@EVENT_NEWDAY :241 之后）
+    line.includes('银黑桃乳业获得的收入desu'),
+  ); // ENDCHECK 内部（@EVENT_NEWDAY :241 之后，ENDCHECKSPADE 的 151 档播报）
   const campaign = texts.findIndex((line) =>
     line.includes('@CAMPAIGN_GAMEOVER'),
   ); // 普通档尾部
