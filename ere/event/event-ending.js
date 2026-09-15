@@ -47,6 +47,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { race_age_generate } = require('#/chara/chara-body');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { char_init } = require('#/chara/chara-init');
 const { chara } = require('#/facade/chara');
@@ -58,12 +59,12 @@ const { stub_line } = require('#/utils/stub-line');
 /**
  * 本文件仍以占位行代替的原作调用名（docs/stub-registry.md 核对固定）。
  * #173（H4）起 ENDING_2 接真身、#404（N20）起 ENDING_3/4/5、CHAR_GIFT、
- * END10_55、ENDING_N、ENDINGINPUT、ENDINCONSQSELECT 全部接真身；剩下两个
- * 是 CHAR_GIFT 的两处体外依赖，归各自源文件的登记行（SHOW_CHARA_INFO 属
- * 調教相關/USERCOM.ERB 的角色信息详情页、RACE_AGE_GENERATE 属
- * キャラ関数/CHARA_BODY.ERB 的种族年龄生成）。
+ * END10_55、ENDING_N、ENDINGINPUT、ENDINCONSQSELECT 全部接真身；
+ * RACE_AGE_GENERATE 自 #404 rebase（#385 合并后）起也接真身
+ * （ere/chara/chara-body.js 的 race_age_generate）。只剩 CHAR_GIFT 的一处
+ * 体外依赖：SHOW_CHARA_INFO 属 調教相關/USERCOM.ERB 的角色信息详情页。
  */
-const STUBBED_CALLS = ['RACE_AGE_GENERATE', 'SHOW_CHARA_INFO'];
+const STUBBED_CALLS = ['SHOW_CHARA_INFO'];
 
 /**
  * @ENDING_1（ENDING ver 1.0.1.ERB:6-40）：人间界征服的中场结局（GOOD END）。
@@ -380,15 +381,19 @@ async function char_gift(arg, rand = default_rand) {
     const made = await char_make(a, personal, arg, rand);
     a = made;
     chara(a).invasion.状态 = 0;
-    // :269-272 種族年齢再設定（FLAG:5 位 12/13 时；RACE_AGE_GENERATE 在
-    // キャラ関数/CHARA_BODY.ERB，随角色身体票）
+    // :269-272 種族年齢再設定（FLAG:5 位 12/13 时；RACE_AGE_GENERATE 的真身
+    // 属 キャラ関数/CHARA_BODY.ERB，由 #385 落在 ere/chara/chara-body.js）
     const settings = era.get('flag:5') || 0;
     if (((settings >> 12) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {
-      // 原作是 `CALL RACE_AGE_GENERATE, …` → `CFLAG:A:452 = RESULT`：落进
-      // CFLAG:452 的是**函数返回值**（种族年龄），不是入参 CFLAG:451
-      // （人类年龄）。真身未落地时无返回值可写，故只留占位行、不写错值
-      // ——CFLAG:452 由该票的 `由 RESULT 落值` 一并接上
-      stub_line('RACE_AGE_GENERATE', '种族年龄再设定', '随角色身体票');
+      // :269-271 種族年齢再設定：CALL RACE_AGE_GENERATE, CFLAG:A:451, TALENT:A:314
+      // → CFLAG:A:452 = RESULT。落进 CFLAG:452 的是**函数返回值**（种族年龄），
+      // 不是入参 CFLAG:451（人类换算年龄）；随机源按仓库约定透传（#385 的真身
+      // 在 ere/chara/chara-body.js）
+      chara(a).chara.种族年龄 = race_age_generate(
+        era.get(`cflag:${a}:451`) || 0,
+        era.get(`talent:${a}:314`) || 0,
+        rand,
+      );
     }
     // :274-277 定人选播报
     era.print('*****************************************');

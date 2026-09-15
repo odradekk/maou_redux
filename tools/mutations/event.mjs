@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 176; // #404 起 +69（首轮 40 条 M8196-M8238 + 返工 29 条 M8239-M8267）
+export const COUNT = 182; // #404 起 +75（首轮 40 条 M8196-M8238 + 边界返工 29 条 M8239-M8267 + rebase 返工 6 条 M8268-M8273）
 
 export default [
   {
@@ -1655,5 +1655,64 @@ export default [
       '      (era_exflag.route_33 >= 300 && era_exflag.route_33 <= 311))',
     tests: ['event-ending'],
     must_mention: 'ENDCHECKGODNESS 档位区间',
+  },
+
+  // —— #404 返工（rebase 后）：CHAR_GIFT 的种族年龄支接 RACE_AGE_GENERATE 真身 ——
+  {
+    desc: 'M8268 CHAR_GIFT 种族年龄：落值槽位改成入参槽（CFLAG:452 → 451）',
+    file: 'ere/event/event-ending.js',
+    find: `      chara(a).chara.种族年龄 = race_age_generate(`,
+    replace: `      chara(a).chara.年龄 = race_age_generate(`,
+    tests: ['event-ending'],
+    must_mention: '种族年龄支',
+  },
+  {
+    desc: 'M8269 CHAR_GIFT 种族年龄：入参取错槽（CFLAG:A:451 → 452）',
+    file: 'ere/event/event-ending.js',
+    find: `      chara(a).chara.种族年龄 = race_age_generate(
+        era.get(\`cflag:\${a}:451\`) || 0,`,
+    replace: `      chara(a).chara.种族年龄 = race_age_generate(
+        era.get(\`cflag:\${a}:452\`) || 0,`,
+    tests: ['event-ending'],
+    must_mention: '种族年龄支',
+  },
+  {
+    desc: 'M8270 CHAR_GIFT 种族年龄：种族编号写死成 1（不读 TALENT:314）',
+    file: 'ere/event/event-ending.js',
+    find: `        era.get(\`talent:\${a}:314\`) || 0,`,
+    replace: `        1,`,
+    tests: ['event-ending'],
+    must_mention: '种族年龄支',
+  },
+  {
+    desc: 'M8271 CHAR_GIFT 种族年龄：FLAG:5 的守卫位 12 误写成位 14（位 12 不再触发）',
+    file: 'ere/event/event-ending.js',
+    find: `    if (((settings >> 12) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {`,
+    replace: `    if (((settings >> 14) & 1) !== 0 || ((settings >> 13) & 1) !== 0) {`,
+    tests: ['event-ending'],
+    must_mention: '种族年龄支',
+  },
+  {
+    desc: 'M8272 CHAR_GIFT 种族年龄：丢掉随机源透传（race_age_generate 落到真随机）',
+    file: 'ere/event/event-ending.js',
+    find: `        era.get(\`talent:\${a}:314\`) || 0,
+        rand,
+      );`,
+    replace: `        era.get(\`talent:\${a}:314\`) || 0,
+      );`,
+    tests: ['event-ending'],
+    must_mention: '走的是注入的随机源',
+  },
+  {
+    desc: 'M8273 CHAR_GIFT 种族年龄：实参顺序颠倒（人类年龄 ↔ 种族编号）',
+    file: 'ere/event/event-ending.js',
+    find: `      chara(a).chara.种族年龄 = race_age_generate(
+        era.get(\`cflag:\${a}:451\`) || 0,
+        era.get(\`talent:\${a}:314\`) || 0,`,
+    replace: `      chara(a).chara.种族年龄 = race_age_generate(
+        era.get(\`talent:\${a}:314\`) || 0,
+        era.get(\`cflag:\${a}:451\`) || 0,`,
+    tests: ['event-ending'],
+    must_mention: '种族年龄支',
   },
 ];

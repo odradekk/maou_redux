@@ -561,32 +561,82 @@ test('CHAR_GIFT 终局 [2]「去要圣女」：退掉随机角色、回到预设
   );
 });
 
-test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时打 RACE_AGE_GENERATE 占位行', async () => {
-  for (const bit of [12, 13]) {
-    const fixture = create_era_fixture();
+test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_generate 的返回值写进 CFLAG:452', async () => {
+  // 种族年龄表（FLAG:26/27）按 #385 的种子；两档都在下面独立算出期望值
+  const RACE_TABLE_0 = [11, 115, 431, 325, 15, 232];
+  const RACE_TABLE_1 = [1, 1];
+  const seed = (fixture, bits) => {
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
     fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-    fixture.store.set('flag:5', 1 << bit);
+    fixture.store.set('flag:5', bits);
+    fixture.store.set('flag:26', [...RACE_TABLE_0]);
+    fixture.store.set('flag:27', [...RACE_TABLE_1]);
+    fixture.store.set('cflag:5:451', 17); // 人类换算年龄的初值（角色生成会重算它）
+  };
+
+  for (const bit of [12, 13]) {
+    // 人狼（槽 1 = 115）：小数倍档 int(年龄 × (10 + 5) / 10)，档内不掷骰
+    const fixture = create_era_fixture();
+    seed(fixture, 1 << bit);
+    fixture.store.set('talent:5:314', 2);
     const { char_gift } = fixture.load_module('event/event-ending');
     fixture.set_inputs(1, 100, 0);
-    await char_gift(1, seq([4]));
-    assert(
-      history_texts(fixture).some((t) => t.includes('@RACE_AGE_GENERATE')),
-      `位 ${bit} 为真时走种族年龄支（占位行可见）`,
+    await char_gift(1, seq([4])); // RAND(1, 17) → 4 → 随机角色 5
+    const human = fixture.store.get('cflag:5:451');
+    assert.ok(human > 0, `位 ${bit}：前置——角色生成给出了人类换算年龄`);
+    const expected = Math.trunc((human * 15) / 10); // 人狼档的换算（独立写死算式）
+    assert.equal(
+      fixture.store.get('cflag:5:452'),
+      expected,
+      `位 ${bit} 为真：人狼的返回值 ${expected} 落进 CFLAG:452`,
+    );
+    assert.notEqual(
+      fixture.store.get('cflag:5:452'),
+      human,
+      `位 ${bit} 为真：落的是**返回值**，不是入参 CFLAG:451（${human}）`,
     );
   }
+
   {
-    // 两位都为假：不走该支
+    // 龙族（槽 4 = 015）：整数倍档，返回值 = 年龄 × 50 + RAND:50；
+    // 注入的随机源在 [16] 上返回 4（选角色 5）、其余返回 3——档内的 RAND:50
+    // 必须是**这个**源（记录到的上界里最后一条就是它）
     const fixture = create_era_fixture();
-    fixture.seed_chara(31, { name: '琼', callname: '琼' });
-    fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
-    fixture.store.set('flag:5', 0);
+    seed(fixture, 1 << 12);
+    fixture.store.set('talent:5:314', 5);
+    const { char_gift } = fixture.load_module('event/event-ending');
+    const bounds = [];
+    const source = (n) => {
+      bounds.push(n);
+      return n === 16 ? 4 : 3;
+    };
+    fixture.set_inputs(1, 100, 0);
+    await char_gift(1, source);
+    const human = fixture.store.get('cflag:5:451');
+    assert.equal(
+      bounds.at(-1),
+      50,
+      '龙族档的 RAND:50 走的是注入的随机源（透传 rand，没落到真随机）',
+    );
+    assert.equal(
+      fixture.store.get('cflag:5:452'),
+      human * 50 + 3,
+      '龙族：年龄 × 50 + RAND:50（注入源恒返回 3）',
+    );
+  }
+
+  {
+    // 两位都为假：整支不走，CFLAG:452 保持 0
+    const fixture = create_era_fixture();
+    seed(fixture, 0);
+    fixture.store.set('talent:5:314', 2);
     const { char_gift } = fixture.load_module('event/event-ending');
     fixture.set_inputs(1, 100, 0);
     await char_gift(1, seq([4]));
-    assert(
-      !history_texts(fixture).some((t) => t.includes('@RACE_AGE_GENERATE')),
-      '两位都为假时不走该支',
+    assert.equal(
+      fixture.store.get('cflag:5:452') || 0,
+      0,
+      '位 12/13 都为假时不写 CFLAG:452',
     );
   }
 });
@@ -2869,9 +2919,10 @@ test('存根清单核对：event-ending 与 chara-init 的 STUBBED_CALLS 全部�
   const { STUBBED_CALLS: ENDING_STUBS } =
     fixture.load_module('event/event-ending');
   const { STUBBED_CALLS: INIT_STUBS } = fixture.load_module('chara/chara-init');
-  // #404（N20）起 ENDING_3/4/5、CHAR_GIFT、END10_55、ENDING_N 全接真身，
-  // 只剩 CHAR_GIFT 的两处体外依赖（见 event-ending.js 的名单注释）
-  assert.deepEqual(ENDING_STUBS, ['RACE_AGE_GENERATE', 'SHOW_CHARA_INFO']);
+  // #404（N20）起 ENDING_3/4/5、CHAR_GIFT、END10_55、ENDING_N 全接真身；
+  // RACE_AGE_GENERATE 随 #385 合并接上真身（rebase 后清出名单），
+  // 只剩 CHAR_GIFT 的一处体外依赖（见 event-ending.js 的名单注释）
+  assert.deepEqual(ENDING_STUBS, ['SHOW_CHARA_INFO']);
   // ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js）、
   // SET_SUIT_SELFCALL/SET_NICK_SELFCALL/CSVCSTR 自 #383 起为真身
   // （ere/chara/chara-self-call.js）、CHAR_BODY_GENERATE_WAPPED 自 #385 起

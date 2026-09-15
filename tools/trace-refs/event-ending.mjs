@@ -779,6 +779,13 @@ export const FILES = [
           /DRAWLINE\nPRINTFORMW\t当你突破层层包围、攻入天界宫广场时、首先看到的却是嘉德被六个人包围在其中的身影\nPRINTFORMW\t你大手一挥、大量魔物一拥而上、与广场中的天界十字军战到了一起。\nPRINTFORMW\t而你则突入了六个审判者的包围圈\nPRINTFORMW\t当你靠近了嘉德、你才发现、嘉德早已遍体鳞伤。身上不知道散布着多少伤口、丝丝鲜血早已染红了嘉德破碎的衣服、\nPRINTFORMW\t「呵。。呵呵。。本。。本宫居然。。居然被同胞刀剑相向。。然。。然后被魔王所救什么的。。真。。真是狼狈啊。。」\nPRINTFORMW\t嘉德不停地喘息着。鲜血随着嘉德垂着的指尖滴落。\nPRINTFORMW\t而且则是轻哼一声、从腰间拔出魔剑指向周围仅剩的六个审判者\nPRINTFORMW\t战斗、一触即发。/,
         ],
       },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '269-271',
+        any: [
+          /\tCALL RACE_AGE_GENERATE, CFLAG:A:451, TALENT:A:314\n\tCFLAG:A:452 = RESULT/,
+        ],
+      },
     ],
   },
 ];
