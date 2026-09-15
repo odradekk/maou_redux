@@ -14,8 +14,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -42,6 +40,9 @@ test('ENDCHECKMAIN 2801：DAY==500 且主线空闲（==0 或 >=90）→ 置 99�
     // 主线未起步（0）
     const { fixture, mod } = setup_endcheck();
     fixture.store.set('flag:10000', 500); // DAY:0
+    // #404 起置 99 会在同一轮尾部真调 @ENDING_N（演出 + ENDINGINPUT）：
+    // 喂 [2]「继续游戏」让它正常返回（[1] 是 QUIT，走 throw 型控制流）
+    fixture.set_inputs(2);
     await mod.run_endcheck();
     assert.equal(
       fixture.store.get('exflag:2801'),
@@ -54,6 +55,7 @@ test('ENDCHECKMAIN 2801：DAY==500 且主线空闲（==0 或 >=90）→ 置 99�
     const { fixture, mod } = setup_endcheck();
     fixture.store.set('flag:10000', 500);
     fixture.store.set('exflag:2801', 90);
+    fixture.set_inputs(2);
     await mod.run_endcheck();
     assert.equal(fixture.store.get('exflag:2801'), 99, '2801>=90 同样置 99');
   }
@@ -293,78 +295,105 @@ test('素质定线：恋慕（TALENT:85）置 10、淫乱（TALENT:76）置 20�
   }
 });
 
-test('四个角色线推进判定：调用守卫 1:1，命中时打存根行', async () => {
+test('四条角色线推进判定：调用守卫 1:1（#404 起为真身，按状态机效果观测）', async () => {
+  // 每个分支都预置 EX_FLAG:2801 = 99 短路分派循环（原作 :344 的守卫）——
+  // 否则 END 族的数据段会在同一次 run_endcheck 里再推一次线值，把「守卫
+  // 有没有调用状态机」这件事淹没在两次推进的合成结果里
+  const no_dispatch = (fixture) => fixture.store.set('exflag:2801', 99);
   {
-    // 银黑桃：< 300 段才判定
+    // 银黑桃：< 300 段才判定——预置 119 档（淫乱线 110-120 的跳档门槛）
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 21, '银黑桃');
+    no_dispatch(fixture);
+    fixture.store.set('talent:21:76', 1);
+    fixture.store.set('cflag:21:2', 5000);
+    fixture.store.set('exflag:2814', 119);
     await mod.run_endcheck();
-    assert.ok(
-      fixture
-        .text_lines()
-        .some((line) => line.includes(`原作 @ENDCHECKSPADE，`)),
-      '银黑桃在场且段位 < 300 必须调用推进判定',
+    assert.equal(
+      fixture.store.get('exflag:2814'),
+      120,
+      '银黑桃在场且段位 < 300 必须调用推进判定（119 → 120）',
     );
   }
   {
+    // 300 段（放走/死亡段）由调用方挡住：机械本身会把 300 档推到 310
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 21, '银黑桃');
+    no_dispatch(fixture);
+    fixture.store.set('talent:21:85', 1);
+    fixture.store.set('cflag:21:515', 10);
     fixture.store.set('exflag:2814', 300);
     await mod.run_endcheck();
-    assert.ok(
-      !fixture
-        .text_lines()
-        .some((line) => line.includes(`原作 @ENDCHECKSPADE，`)),
-      '银黑桃 >= 300（死亡段）不得调用推进判定',
+    assert.equal(
+      fixture.store.get('exflag:2814'),
+      300,
+      '银黑桃 >= 300 不得调用推进判定（否则 300 档会掷到 310）',
     );
   }
   {
-    // 黑方片：在场即判定
+    // 黑方片：在场即判定（无段位守卫）——9 档起步
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 22, '黑方片');
+    no_dispatch(fixture);
+    fixture.store.set('talent:22:85', 1);
+    fixture.store.set('cflag:22:2', 2000);
     await mod.run_endcheck();
-    assert.ok(
-      fixture
-        .text_lines()
-        .some((line) => line.includes(`原作 @ENDCHECKSQUARE，`)),
-      '黑方片在场必须调用推进判定',
+    assert.equal(
+      fixture.store.get('exflag:2811'),
+      10,
+      '黑方片在场必须调用推进判定（0 档起步到 1）',
     );
   }
   {
-    // 嘉德：在场走本体；离队后段位 >= 500 走天神宫线。注意 1:1 行为链：
-    // ENDRESET 的嘉德清场守卫读的是 2814（原作笔误），嘉德离队时 2810
-    // 每天被归零——天神宫分支实际只有 2814 >= 500（守卫免清）才可达，
-    // 两条预置一起给才能命中（原作缺陷链 1:1 保留，详见 issue #116 评论）
+    // 嘉德：在场走本体（淫乱起步）；离队走天神宫线（:122-129 的两臂）
     const a = setup_endcheck();
     join_chara(a.fixture, 33, '嘉德');
+    no_dispatch(a.fixture);
+    a.fixture.store.set('talent:33:76', 1);
+    a.fixture.store.set('cflag:33:2', 2000);
     await a.mod.run_endcheck();
-    assert.ok(
-      a.fixture
-        .text_lines()
-        .some((line) => line.includes(`原作 @ENDCHECKGODNESS，`)),
-      '嘉德在场必须调用推进判定',
+    assert.equal(
+      a.fixture.store.get('exflag:2810'),
+      110,
+      '嘉德在场必须调用推进判定（本体：淫乱起步 11）',
     );
+    // 嘉德离队（不在场）且 2810 = 300：两臂的 gate 都不成立（第一臂缺在场、
+    // 第二臂要求 >= 500）→ 本体不跑。ENDRESET 的嘉德清场守卫读 2814
+    // （原作笔误），预置 500 让它免清，才能看见 2810 原样不动
     const b = setup_endcheck();
-    b.fixture.store.set('exflag:2814', 500); // 守卫免清（字面读 2814）
-    b.fixture.store.set('exflag:2810', 500); // 嘉德离队后天神宫段
+    no_dispatch(b.fixture);
+    b.fixture.store.set('exflag:2814', 500);
+    b.fixture.store.set('exflag:2810', 300);
+    b.fixture.store.set('talent:33:76', 1);
+    b.fixture.store.set('cflag:33:515', 5);
     await b.mod.run_endcheck();
-    assert.ok(
-      b.fixture
-        .text_lines()
-        .some((line) => line.includes(`原作 @ENDCHECKGODNESS_SKY_TEMPLE，`)),
-      '嘉德离队且 2810 >= 500（守卫 2814 >= 500 免清）必须调用天神宫线判定',
+    assert.equal(
+      b.fixture.store.get('exflag:2810'),
+      300,
+      '嘉德离队且线值 < 500：本体不跑（否则 300 档会 +1 计数器）',
     );
+    assert.equal(b.fixture.store.get('cflag:33:515'), 5, '计数器未被动过');
+    // 嘉德离队且 2810 >= 500：走天神宫线。该线在可达区间的四个档位都是
+    // 空分支、540 档的 560 转移又被 GETCHARA(33) == 0 的死守卫挡住
+    // （见 event-ending.test.js 的同名用例），故此处可观测的只有「不抛错、
+    // 不动 2810」——调用本身由 endcheck_godness_sky_temple 的单元用例覆盖
+    const c = setup_endcheck();
+    no_dispatch(c.fixture);
+    c.fixture.store.set('exflag:2814', 500);
+    c.fixture.store.set('exflag:2810', 545);
+    await c.mod.run_endcheck();
+    assert.equal(c.fixture.store.get('exflag:2810'), 545, '天神宫线空转');
   }
   {
-    // 菲娅：在场即判定
+    // 菲娅：在场即判定（初次会面 0 → 10）
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 35, '菲娅');
+    no_dispatch(fixture);
     await mod.run_endcheck();
-    assert.ok(
-      fixture
-        .text_lines()
-        .some((line) => line.includes(`原作 @ENDCHECKPRINCESS，`)),
-      '菲娅在场必须调用推进判定',
+    assert.equal(
+      fixture.store.get('exflag:2807'),
+      10,
+      '菲娅在场必须调用推进判定（初次会面置 10）',
     );
   }
 });
@@ -452,22 +481,36 @@ test('END 族声明空间：族号 2..15 内缺失合法（返回调用点缺省
 
 // —— ENDING_N 与 END31 ——
 
-test('ENDING_N：2801 == 99 且 DAY == 500 才调用（存根占位），否则不出现', async () => {
+test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身），否则不出现', async () => {
   {
     const { fixture, mod } = setup_endcheck();
     fixture.store.set('flag:10000', 500);
-    // 跑判定前置 99（DAY==500 主线空闲 → ENDCHECKMAIN 置 99 → 尾部触发）
+    // 跑判定前置 99（DAY==500 主线空闲 → ENDCHECKMAIN 置 99 → 尾部触发）；
+    // 演出问 [1] 结束 / [2] 继续，喂 2 让它正常返回
+    fixture.set_inputs(2);
     await mod.run_endcheck();
+    const texts = fixture.text_lines();
     assert.ok(
-      fixture.text_lines().some((line) => line.includes(`原作 @ENDING_N，`)),
-      '2801 == 99 && DAY == 500 必须调用 ENDING_N（存根行可见）',
+      texts.some((line) =>
+        line.includes('自从魔王被解开封印已经过了整整500天。'),
+      ),
+      '2801 == 99 && DAY == 500 必须调用 ENDING_N（横幅首行可见）',
+    );
+    assert.ok(
+      texts.some((line) => line.includes('达成了【Normal End】。')),
+      'ENDING_N 的收尾行可见',
+    );
+    assert.ok(
+      texts.some((line) => line.includes('魔王的传说，还将继续......')),
+      'ENDINGINPUT 的 [2] 继续分支可见（真身，非存根）',
     );
   }
   {
     const { fixture, mod } = setup_endcheck();
     fixture.store.set('flag:10000', 500);
     fixture.store.set('exflag:2801', 99);
-    fixture.store.set('exflag:2803', 31); // 死引用守卫命中态：不得有任何输出
+    fixture.store.set('exflag:2803', 31); // 死引用守卫命中态：不得有 END31 输出
+    fixture.set_inputs(2); // ENDING_N 的 [2] 继续
     await mod.run_endcheck();
     assert.ok(
       !fixture.text_lines().some((line) => line.includes('END31')),
@@ -480,34 +523,30 @@ test('ENDING_N：2801 == 99 且 DAY == 500 才调用（存根占位），否则�
     fixture.store.set('exflag:2801', 99);
     await mod.run_endcheck();
     assert.ok(
-      !fixture.text_lines().some((line) => line.includes(`原作 @ENDING_N，`)),
+      !fixture
+        .text_lines()
+        .some((line) => line.includes('自从魔王被解开封印已经过了整整500天。')),
       'DAY != 500 时不得调用 ENDING_N',
     );
   }
 });
 
-// —— 存根清单核对 ——
+// —— 存根清单核对（#404 起六个函数全为真身，本文件的 STUBBED_CALLS 随之撤销）——
 
-test('存根清单核对：STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
+test('五条角色线判定全部为真身：模块导出状态机，且不再有 STUBBED_CALLS', async () => {
   const { fixture, mod } = setup_endcheck();
-  // 名单本身固定（增删存根必须同步本测试与清单）
-  assert.deepEqual(mod.STUBBED_CALLS, [
-    'ENDCHECKSPADE',
-    'ENDCHECKSQUARE',
-    'ENDCHECKGODNESS',
-    'ENDCHECKGODNESS_SKY_TEMPLE',
-    'ENDCHECKPRINCESS',
-    'ENDING_N',
-  ]);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of mod.STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(`\`${name}\``),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
+  // #404（N20）把 ENDCHECKSPADE / ENDCHECKSQUARE / ENDCHECKGODNESS /
+  // ENDCHECKGODNESS_SKY_TEMPLE / ENDCHECKPRINCESS / ENDING_N 六个存根换成
+  // 真身，本文件的 STUBBED_CALLS 名单随之消失（存根清单里的六行转「已实现」）
+  assert.equal(mod.STUBBED_CALLS, undefined, '不再有存根名单');
+  for (const name of [
+    'endcheck_spade',
+    'endcheck_square',
+    'endcheck_godness',
+    'endcheck_godness_sky_temple',
+    'endcheck_princess',
+  ]) {
+    assert.equal(typeof mod[name], 'function', `${name} 必须导出（真身）`);
   }
   // 夹具引用仅为显式持有
   assert.ok(fixture);

@@ -130,6 +130,12 @@ export const PENDING_BASELINE = 68; // rebase 到含 #388 的 master 后实测 7
 // saleitem_check_trap，ere/system/stronghold/tax.js 与
 // ere/page/page-shop-trap.js，文件头各带「源:」整路径追溯 + 锚表分片
 // tools/trace-refs/tax.mjs、page-shop-trap.mjs），两份文件退出「待移植」：-2。
+// #404 不动本数的说明：本票把 `EVENT/ENDING ver 1.0.1.ERB` /
+// `EVENT/ENDINGDATA.ERB` / `EVENT/ENDINGDATA_ADDON1.ERB` 三个文件推成
+// 「已移植」，但三者此前是**部分移植**（有产物、清单里还挂着未了结存根），
+// 本就不在待移植的分子里——落地后实测待移植不变（已移植 +3、部分移植 -3）。
+// 工单正文写的「现 79」是排期时的旧值。rebase 到含 #396 的 master 后由派单人
+// 重测确认为 68：#404 与 #396 的改动面完全不重叠，两边各自的 -0 与 -2 叠加即 68。
 // #405 抬低说明（79 → 75）：GET_SPECIALTALENT.ERB／EVENT_ADDICT.ERB／
 // EVENT_SABBATH.ERB／EVENT_CHARA_LEAVE.ERB 四个文件落地真身（
 // check_specialskil/check_specialskil_bodyshift、aphrodisiac_addict/
