@@ -4,22 +4,23 @@
  * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @EVENTSHOP（:4-20，BEGIN SHOP 后
  *     最先执行一次）/@SHOW_SHOP（:22-38，绘制）/@USERSHOP（:40-229，输入
  *     分发，#24 落地；100 分支的助手循环与 BEGIN TRAIN 随 #44 补全；199
- *     休息随 #395 真身，回合真正能推进）
+ *     休息随 #395 真身，回合真正能推进；997-999 店内购物段随 #396 接通）
  *
  * Emuera 语义（引擎行为，非 ERB 函数）：BEGIN SHOP 后引擎先调 @EVENTSHOP
  * 一次，随后循环「@SHOW_SHOP 绘制 → 等输入 → @USERSHOP 分发」。ere 侧把
  * 这一轮收进本模块导出的处理器，由 main-loop.js 的 STATE_HANDLERS 接驳。
  *
  * BOUGHT（购入品指针，#395 起落表：yml/Flag.yml「购入品指针」/
- * ere-utils/era-flag.js 的 bought）：@SHOW_SHOP 的 :25-30 原作用 JUMP
- * 整个接管本轮（不再画主菜单，改跑 ITEM_SHOP/ITEM_SHOP_TRAP 各自的完整
- * 交互循环）。商店本体落地前（#399）ere 侧不能真的把玩家困在存根里——
- * show_shop 因此只在正常重绘之后追加一行存根占位、立即把 bought 复位到
- * -1，代价是玩家要多看一行提示而非被整段接管，换来的是回合无论如何都能
- * 继续推进（不引入新的卡死点）。@USERSHOP 的 :44-57 店内购物段（997-999
- * 且 BOUGHT >= 0）与 CLEAR_SHOP 因此仍保持「四个条件全部不成立、整段不
- * 可达」——show_shop 在 usershop 跑到之前已经把 bought 清回 -1（见
- * show_shop 尾注），这段不搬，商店票落地时恢复。
+ * ere-utils/era-flag.js 的 bought）：@SHOW_SHOP 的 :25-30 原作用 JUMP 整个
+ * 接管本轮（≥ 54 跑 ITEM_SHOP_TRAP、0-53 跑 ITEM_SHOP，都不再画主菜单）。
+ * #396 起 ≥ 54 一侧是真身（page/page-shop-trap.js），@USERSHOP 的 :44-57
+ * 店内购物段（997-999 且 BOUGHT >= 0）随之恢复可达——退出商店的出口与
+ * 进入商店的入口必须同一张票落地，否则玩家会被困在商店界面里。
+ * 0-53 一侧（道具商店，SHOP_ITEM.ERB）仍是 #399 的靶：落地前 ere 侧不能
+ * 真的把玩家困在存根里，show_shop 因此在正常重绘之后追加一行存根占位、
+ * 立即把 bought 复位到 -1，代价是玩家要多看一行提示而非被整段接管，换来
+ * 的是回合无论如何都能继续推进（不引入新的卡死点）。CLEAR_SHOP
+ * （SHOP_ITEM.ERB:781）与引擎命令 PRINT_SHOPITEM 同随 #399，登记在案。
  */
 
 const era = require('#/era-electron');
@@ -37,6 +38,7 @@ const { select_target, select_assi } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { infrastructure } = require('#/page/page-infrastructure');
+const { item_shop_trap } = require('#/page/page-shop-trap');
 const { save_game, load_game } = require('#/page/page-save-load');
 const {
   chara_info,
@@ -56,15 +58,14 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * 真身（200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
  * page-dungeon-info2.js），CHARA_INFO /
  * CHARA_INFO_INDIVIDUAL_WAPPED 自 #391 起为真身（101/498/499 分支，
- * page-chara-info.js），均移出本名单。ITEM_SHOP/ITEM_SHOP_TRAP 是
- * BOUGHT 落表后的运行时占位（show_shop），非 usershop 分发分支的壳。
+ * page-chara-info.js），ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 的
+ * 陷阱商店，page/page-shop-trap.js；#395 的运行时占位随之撤），均移出本名单。
  */
 const STUBBED_CALLS = [
   '批量处刑',
   'INTERCEPT',
   'ABILITY_UP',
   'ITEM_SHOP',
-  'ITEM_SHOP_TRAP',
   'TAILOR_MAIN',
   'SECRET_LABO',
   'CONFIG',
@@ -115,6 +116,21 @@ async function show_shop(main_menu) {
   // （#5 已决由内置 callname 承载，接入随彼票）。CLEAR_SHOP（:25-30）仍是
   // 登记型待办（无运行时占位，见文件头 BOUGHT 段），不在本轮实现。
 
+  // :25-30 BOUGHT 跳转（#395 起落表）：原作的两支 JUMP 都在 :25-30、
+  // 在 :33-36 的日期修正与 :38 的 DRAW_MAINMENU **之前**——判据成立时整个
+  // 接管本轮，日期修正与主菜单都不执行（1:1，故本分支排在最前）。
+  //
+  // ≥ 54 是陷阱商店（:29 JUMP ITEM_SHOP_TRAP），自 #396 起为真身
+  // （page/page-shop-trap.js）：陷阱商店的界面连同提示行占满本轮。主菜单
+  // 组件的锚点不动，玩家 [999] 退出后（bought → -1）的下一次重绘，其清除
+  // 跨度天然覆盖商店那段（ScreenBlock.redraw 的锚点语义），商店界面随之
+  // 消失；反之若在商店界面下不来（BOUGHT 不复位且无出口）就会卡死，故
+  // usershop 的 :44-57 段与本分支是同一张票的（#396）。
+  if (era_flag.bought >= 54) {
+    await item_shop_trap();
+    return undefined; // 本轮没画主菜单，无行数可报（调用方 run_shop 不取返回值）
+  }
+
   // :33-36 防御性日期修正：月/日小于 1 时钳成 1。@EVENTFIRST 只初始化
   // DAY:1 = 1、DAY 与 DAY:2 留 0（#22 的 1:1 决定），玩家看到的开局因此是
   // 「第 0 年 1 月 1 日（第 1 日）」——修正只发生在 SHOP 侧，勿挪去初始
@@ -134,17 +150,13 @@ async function show_shop(main_menu) {
   // 本函数只在 run_shop 的循环里被调，输入先行（ADR-0003 的约定落点）。
   const row_count = await main_menu.redraw();
 
-  // :25-30 BOUGHT 跳转（#395 起落表，见文件头 BOUGHT 段）：原作 JUMP 在
-  // DRAW_MAINMENU 之前整个接管本轮；ere 侧改为主菜单照常画完后追加一行
-  // 存根占位（stub_line——绘制期，不额外等键，utils/stub-line.js 文件头
-  // 的语义区分），随后立即复位——玩家下一轮重绘时占位随锚点一起清掉，
-  // 不会卡住。0-53 = 道具商店、>= 54 = 陷阱商店（原作判据 1:1）。
+  // 0-53 = 道具商店（:27 JUMP ITEM_SHOP），本体随 #399：落地前 ere 侧不能真
+  // 把玩家困在存根里——主菜单照常画完后追加一行存根占位（stub_line——绘制
+  // 期，不额外等键，utils/stub-line.js 文件头的语义区分）再立即复位到 -1，
+  // 代价是玩家要多看一行提示而非被整段接管，换来的是回合无论如何都能继续
+  // 推进（不引入卡死点）。这一支是 #395 的有意偏离，随 #399 收敛回 JUMP。
   if (era_flag.bought >= 0) {
-    if (era_flag.bought < 54) {
-      stub_line('ITEM_SHOP', '购物（道具商店）', '随商店票 #399');
-    } else {
-      stub_line('ITEM_SHOP_TRAP', '购物（陷阱商店）', '随商店票 #399');
-    }
+    stub_line('ITEM_SHOP', '购物（道具商店）', '随商店票 #399');
     era_flag.bought = -1;
   }
 
@@ -167,10 +179,32 @@ async function show_shop(main_menu) {
  * @param {number} result 玩家输入（原作 RESULT，即 era.input() 的返回值）
  */
 async function usershop(result) {
-  // :44-57 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 跳
-  // 商店）：BOUGHT 已随 #395 落表，但 show_shop 在本函数跑到之前已把它
-  // 复位为 -1（见 show_shop 尾注），四个条件全部不成立，整段仍不可达。
-  //
+  // :44-57 店内购物段（RESULT 997-999 && BOUGHT >= 0 → 清购物标志 / 切商店）。
+  // #395 给 BOUGHT 落了表、#396 接上陷阱商店，整段自此可达——判据与出口
+  // 1:1，四支的 **return 形态各不相同**，照原作逐支还原：
+  //   - 999（:44-46）没有 RETURN：清标志后落到 :222-223 的 999 分支
+  //     →DEBUG_MENU_U（原作如此，玩家退出商店的同时打开调试菜单）；
+  //   - 998/997（:47-54）是 JUMP：跳过去就不再回本函数，故切完即 return；
+  //   - BOUGHT >= 0 的其它输入（:55-57）RETURN 0：购物态下主菜单指令全部
+  //     失效，只有 997/998/999 三个键有反应。
+  // 三处 CALL CLEAR_SHOP（清 ITEMSALES:0-299）随 #399：@EVENTSHOP 每轮进店已
+  // 清 0-99（本文件 @EVENTSHOP 的 REPEAT 100），商店本体落地前无可观察差异，
+  // 登记在案。
+  if (result === 999 && era_flag.bought >= 0) {
+    era_flag.bought = -1; // :46（CLEAR_SHOP 随 #399，见上）
+  } else if (result === 998 && era_flag.bought >= 0) {
+    era_flag.bought = 200; // :48
+    await item_shop_trap(); // :50 JUMP ITEM_SHOP_TRAP（切陷阱商店并立即重画）
+    return;
+  } else if (result === 997 && era_flag.bought >= 0) {
+    era_flag.bought = 1; // :52
+    // :54 JUMP ITEM_SHOP：道具商店本体随 #399，此处只置标志——下一轮
+    // show_shop 的 0-53 占位支会打一行提示并复位，等价于「切过去看一眼」。
+    return;
+  } else if (era_flag.bought >= 0) {
+    return; // :55-57 的 RETURN 0
+  }
+
   // A（可选奴隶数）：原作在 @DRAW_MAINMENU :208-216 算出，:59/:152/:154
   // 的守卫读它；渲染与分发两次求值之间无写入路径，分发时重算等价。实机
   // 当前只有角色 0（魔王不计入），A 恒 0——100/496/497 进不去，这是原作
@@ -277,7 +311,7 @@ async function usershop(result) {
     await chara_sale();
   } else if (result === 107) {
     // 购物（:119-120，#395 起真身）：BOUGHT = 1，下一轮 @SHOW_SHOP 据此
-    // 跳道具商店存根占位（show_shop 尾注）——商店本体随 #399。
+    // 跳道具商店（show_shop 的 0-53 支）——本体仍是存根，随 #399。
     era_flag.bought = 1;
   } else if (result === 108) {
     // 换装（:121-122 CALL TAILOR_MAIN; TARGET = FLAG:1，FLAG:1 = 前回
@@ -366,8 +400,9 @@ async function usershop(result) {
     // CALL MONSTER_SHOP、满员打印「奴隶太多了！」。整支随召唤/怪物票
     await stub_line_wait('MONSTER_SHOP', '召唤（怪物商店）', '随怪物票');
   } else if (result === 999) {
-    // 调试菜单（:222-223）。店内的 999（:44 清购物标志）因 BOUGHT 无落点
-    // 不可达，键入 999 一律到这里——与原作在 BOUGHT == -1 时同路径
+    // 调试菜单（:222-223）。店内键入 999 时 usershop 开头的购物段（:44）
+    // 已经把 BOUGHT 清回 -1 并落到这里（原作同样没有 RETURN）——两条路径
+    // 汇到同一个出口，故不区分。
     await stub_line_wait('DEBUG_MENU_U', '调试菜单', '随调试票');
   }
 

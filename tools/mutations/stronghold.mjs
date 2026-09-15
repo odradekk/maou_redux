@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 118;
+export const COUNT = 136; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）
 
 export default [
   {
@@ -973,5 +973,154 @@ export default [
     replace: '    era.print(`所持金：${era_flag.money}点`);',
     tests: ['sale-chara'],
     must_mention: '所持金保留原作格式串中的字面量 $',
+  },
+  {
+    desc: 'M8086 TAX_GET 税日字面量改错（10/20/30 → 10/20/31）',
+    file: 'ere/system/stronghold/tax.js',
+    find: 'const TAX_DAYS = [10, 20, 30];',
+    replace: 'const TAX_DAYS = [10, 20, 31]; // 变异：31 日不再收税、30 日漏收',
+    tests: ['shop-tax'],
+    must_mention: '只有 10/20/30 三天产出',
+  },
+  {
+    desc: 'M8087 TAX_GET 威望第 2 档单价改错（30 → 31）',
+    file: 'ere/system/stronghold/tax.js',
+    find: "{ max: 40, rate: 30, cap: 5000, label: '威望值是【动荡不安】' },",
+    replace: "{ max: 40, rate: 31, cap: 5000, label: '威望值是【动荡不安】' },",
+    tests: ['shop-tax'],
+    must_mention: '五处边界与范围外',
+  },
+  {
+    desc: 'M8088 TAX_GET 威望第 3 档封顶改错（10000 → 10001）',
+    file: 'ere/system/stronghold/tax.js',
+    find: "{ max: 60, rate: 50, cap: 10000, label: '威望值是【略受质疑】' },",
+    replace:
+      "{ max: 60, rate: 50, cap: 10001, label: '威望值是【略受质疑】' },",
+    tests: ['shop-tax'],
+    must_mention: '四档封顶各自生效',
+  },
+  {
+    desc: 'M8089 TAX_GET 威望第 5 档单价改错（100 → 99）',
+    file: 'ere/system/stronghold/tax.js',
+    find: "{ max: 100, rate: 100, cap: 50000, label: '威望值是【广受爱戴】' },",
+    replace:
+      "{ max: 100, rate: 99, cap: 50000, label: '威望值是【广受爱戴】' },",
+    tests: ['shop-tax'],
+    must_mention: '五处边界与范围外',
+  },
+  {
+    desc: 'M8090 TAX_GET 威望档位下界错一格（> prev_max → >= prev_max）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '    if (prestige <= max && prestige > prev_max) {',
+    replace: '    if (prestige <= max && prestige >= prev_max) {',
+    tests: ['shop-tax'],
+    must_mention: '五处边界与范围外',
+  },
+  {
+    desc: 'M8091 TAX_GET 殖民地阈值错一格（> 10 → >= 10）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '    if (invasion_value > 10) {',
+    replace: '    if (invasion_value >= 10) {',
+    tests: ['shop-tax'],
+    must_mention: '五块领土 × 三态',
+  },
+  {
+    desc: 'M8092 TAX_GET 殖民地除数改错（/ 10 → / 11）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '      const colonies = Math.trunc(invasion_value / 10);',
+    replace: '      const colonies = Math.trunc(invasion_value / 11);',
+    tests: ['shop-tax'],
+    must_mention: '五块领土 × 三态',
+  },
+  {
+    desc: 'M8093 TAX_GET 卖春堡垒判据改错（FLAG:92 == 15 → == 14）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '    conquered: 15,',
+    replace: '    conquered: 14,',
+    tests: ['shop-tax'],
+    must_mention: '五块领土 × 三态',
+  },
+  {
+    // 档界错一格在这一族里**不可观测**：相邻两档在界上取值相同
+    // （20×50+100 = 20×40+300、300×10+3000 = 300×5+4500……六处全等），
+    // 故不拿「上限 ±1」当条目——改钉档内单价。
+    desc: 'M8094 TAX_GET 地下城第 4 档单价改错（20 → 21）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '  [150, 20, 1500],',
+    replace: '  [150, 21, 1500],',
+    tests: ['shop-tax'],
+    must_mention: '地下城六档按',
+  },
+  {
+    desc: 'M8095 TAX_GET 地下城 ELSE 档基数改错（4500 → 4501）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '  [Infinity, 5, 4500],',
+    replace: '  [Infinity, 5, 4501],',
+    tests: ['shop-tax'],
+    must_mention: '地下城六档按',
+  },
+  {
+    desc: 'M8096 TAX_GET 展品观赏税门槛错一格（> 0 → >= 0）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '  if (exhibits > 0) {',
+    replace: '  if (exhibits >= 0) {',
+    tests: ['shop-tax'],
+    must_mention: '两处门槛',
+  },
+  {
+    desc: 'M8097 TAX_GET 肉便器使用税门槛错一格（> 0 → >= 0）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '  if (toilets > 0) {',
+    replace: '  if (toilets >= 0) {',
+    tests: ['shop-tax'],
+    must_mention: '两处门槛',
+  },
+  {
+    desc: 'M8098 TAX_GET 淫魔卖春税固定项改错（+ 20 → + 21）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '    20;',
+    replace: '    21; // 变异：固定项',
+    tests: ['shop-tax'],
+    must_mention: '三件道具字面量',
+  },
+  {
+    desc: 'M8099 TAX_GET 娼馆倍率改错（1.1 → 1.2）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '      toilet_tax = Math.trunc(toilet_tax * 1.1);',
+    replace: '      toilet_tax = Math.trunc(toilet_tax * 1.2);',
+    tests: ['shop-tax'],
+    must_mention: 'FLAG:350-358 等于 507',
+  },
+  {
+    desc: 'M8100 TAX_GET 娼馆判据值改错（507 → 508）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '=== 507) {',
+    replace: '=== 508) {',
+    tests: ['shop-tax'],
+    must_mention: 'FLAG:350-358 等于 507',
+  },
+  {
+    desc: 'M8101 TAX_GET 特别税基数改错（FLAG:9 + 100 → + 101）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '    (total * (game.stronghold.税金修正 + 100)) / 100,',
+    replace: '    (total * (game.stronghold.税金修正 + 101)) / 100,',
+    tests: ['shop-tax'],
+    must_mention: '按 FLAG:9 加成',
+  },
+  {
+    desc: 'M8102 TAX_GET 黑方片下界错一格（>= 51 → >= 50）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '  if (route_22 >= 51 && route_22 < 100) {',
+    replace: '  if (route_22 >= 50 && route_22 < 100) {',
+    tests: ['shop-tax'],
+    must_mention: '黑方片加成',
+  },
+  {
+    desc: 'M8103 TAX_GET 非作弊资金不入账（EX_FLAG:4444 += TAX:0 删）',
+    file: 'ere/system/stronghold/tax.js',
+    find: '  era_exflag.legit_money += total; // :229 EX_FLAG:4444 += TAX:0',
+    replace: '  // 变异：EX_FLAG:4444 不入账',
+    tests: ['shop-tax'],
+    must_mention: '入账：MONEY 与 EX_FLAG:4444',
   },
 ];

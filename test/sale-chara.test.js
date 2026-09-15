@@ -19,6 +19,11 @@ function seed_world(fixture) {
   era_flag.target = 31;
   era_flag.assi = -1;
   era_flag.money = 100;
+  // 商店轮的入口状态（@EVENTFIRST:27 → event-first.js:109，进店时 @EVENTSHOP
+  // 再置一次）：直调 usershop 的用例必须站在真实入口状态上——夹具存储默认空
+  // 时 era_flag.bought 读回 0，而 0 在店内购物段的判据里是「刚买了 0 号商品」，
+  // #396 接通该段后会吞掉全部输入。
+  era_flag.bought = -1;
   fixture.era.beginTrain(...fixture.era.getAddedCharacters());
   return era_flag;
 }

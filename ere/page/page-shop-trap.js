@@ -1,0 +1,258 @@
+/**
+ * @file 陷阱商店：@ITEM_SHOP_TRAP 与 @SALEITEM_CHECK_TRAP。
+ *
+ * 源: target/ERB/SHOP/SHOP_TRAP.ERB  @ITEM_SHOP_TRAP（:7-70，绘制）
+ *     @SALEITEM_CHECK_TRAP（:75-128，在售标志）
+ *
+ * 半程移植，原因在引擎不在本票：原作 @ITEM_SHOP_TRAP 的第 :63 行是引擎
+ * 命令 `PRINT_SHOPITEM`——「把 ITEMSALES 不为 0 的商品连同价格列出来、点
+ * 击即买（买完引擎置 BOUGHT、回调 @EVENTBUY）」。EraElectron 没有这条命令，
+ * 也没有引擎侧购买流程，得在 JS 里自建（列货、比价、扣款、回填
+ * SHOP_ITEM.ERB 的 @EVENTBUY 逻辑）——那是道具商店票 #399（N15「三个商店」）
+ * 的靶，两个商店共用一套购买流程，SHOP_ITEM.ERB:73 是同一处缺口。
+ * 本文件因此只落「绘制持有陷阱/戒指 + 点亮在售 + 提示行」这一段，
+ * :59 的 TFLAG:15 一并欠着（理由见下），两笔都在 docs/stub-registry.md
+ * 登记（PRINT_SHOPITEM 在函数级表的 SHOP_ITEM.ERB 行；TFLAG:15 在变量级表）。
+ *
+ * **玩家今天还进不到这个画面**（不是缺陷，是票序）：原作进陷阱商店只有两条
+ * 路——@SHOW_SHOP :25-30 的 BOUGHT ≥ 54 跳转，与道具商店里的 [998] 键
+ * （@USERSHOP :47-50）。前者要有人先把 BOUGHT 置到 ≥ 54（引擎在购买回调里置，
+ * 见 SHOP_ITEM.ERB 的 @EVENTBUY），后者的宿主商店本体归 #399。两处调用点
+ * 都按原作接好了，但 #399 落地前买不到任何东西、也就点不出 BOUGHT ≥ 54；
+ * 本文件因此只在「直接造 BOUGHT ≥ 54」的用例里可达（test/shop-trap.test.js）。
+ *
+ * **:59 `TFLAG:15 = MONEY`（所持点を一時保存）不能 1:1 落。** Emuera 在
+ * 据点期也能写 TFLAG；EraElectron 的 tflag 表只在调教期存在（beginTrain 建、
+ * endTrain 删；测试夹具逐字镜像引擎守卫，test/helpers/era-fixture.js 的
+ * TRAIN_ONLY_TABLES），据点期写二段 tflag 直接抛
+ * `key error in getter/setter`。它是「取消购买时把暂存的钱还回去」的唯一
+ * 消费者（SHOP_ITEM.ERB 的 @EVENTBUY），而那条流程还没落地，故不另造平行
+ * 承载（#399 决定落点时两边一起改）。仓库先例：stronghold/sale.js:463-467
+ * 为同一张表改道。
+ *
+ * 布局映射（原作 → ere）：
+ *   - :10 `CUSTOMDRAWLINE =` 的 `=` 线以 era.drawLine({isSolid: true})
+ *     近似（page-select-target.js:271 / page-save-load.js:345 先例）；
+ *   - :68-69 `PRINTLC`（居中 + 换行）以 setAlign('center') 包一次 era.print
+ *     近似，随后还原 'left'（page-main-menu.js:149-174 的 ALIGNMENT 先例）；
+ *   - :23-26/:39-41 的 SETCOLORBYNAME LightSalmon … RESETCOLOR 以片段自带
+ *     color 承载（equip-print.js:32 先例，CSS 色名直通渲染层）；
+ *   - 引擎每次 print 调用即一行：原作不换行的 PRINT/PRINTV/PRINTFORM 串
+ *     一律合成一次 era.print（:13-19 的日期行、:31/:46 的网格格子）。
+ *
+ * 出口（$INPUT_LOOP / :63 之后的提示行）分属两处：本函数是「绘制半」，
+ * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 的跳转）与 usershop（998 分支的
+ * JUMP）经 era 的商店轮循环驱动；购买本身的循环（原作 :61 的 $INPUT_LOOP
+ * 标签、:63 的 PRINT_SHOPITEM 之后接 @EVENTBUY）随 #399 的购买流程落地。
+ */
+
+'use strict';
+
+const era = require('#/era-electron');
+const { game } = require('#/facade/game');
+const era_flag = require('#/era-utils/era-flag');
+
+/** SETCOLORBYNAME LightSalmon 的 ere 等价物（:23/:39） */
+const LIGHT_SALMON = 'LightSalmon';
+
+/** 陷阱商品段（:28 `FOR ICOUNT_A,60,92`——上界开区间，即 60..91） */
+const TRAP_IDS = { start: 60, end: 92 };
+
+/** 戒指商品段（:43 `FOR ICOUNT_A,300,321`——即 300..320） */
+const RING_IDS = { start: 300, end: 321 };
+
+/** 每行几格（:33/:48 `IF ICOUNT_B % 5 == 0`） */
+const COLUMNS = 5;
+
+/** 每格的显示宽度（:31/:46 `%…,16,LEFT%`） */
+const CELL_WIDTH = 16;
+
+/**
+ * 基础在售段（:77-94）：无守卫，逐行照搬。
+ * :96-109 淫魔知识（TALENT:0:327 == 1）二选一，
+ * :112-113 魔虫知识（TALENT:MASTER:328 == 0）单独点亮 56，
+ * :116-120 `== 1` 时追加 65/79/80，:123 戒指恒亮，
+ * :125-126 陷阱等级（FLAG:85 < CFLAG:0:9）追加 55。
+ */
+const SALES_ALWAYS = [
+  60, 61, 62, 63, 69, 72, 73, 74, 75, 76, 77, 78, 81, 82, 83, 84, 85, 87,
+];
+const SALES_EROTIC = [64, 65, 66, 67, 68, 70, 71, 79]; // えっちな陷阱
+const SALES_SUCCUBUS_KNOWLEDGE = [54]; // 淫魔知识
+const SALES_WORM_BASE = [56]; // SIF TALENT:MASTER:328 == 0
+const SALES_WORM_EXTRA = [65, 79, 80]; // TALENT:MASTER:328 == 1
+const SALES_RING = [91];
+const SALES_LEVEL_TRAP = [55];
+
+/**
+ * 显示宽度（全角 2 / 半角 1），原作 %…,16,LEFT% 的填充判定标准。
+ * 与 page-main-menu.js / page-save-load.js / page-info-exp.js 的同名助手
+ * 同形——本仓库这块按文件各留一份（`ere/utils/` 只收跨域工具），不抽公共
+ * 模块。
+ */
+function display_width(s) {
+  return [...s].reduce(
+    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
+    0,
+  );
+}
+
+/** 左对齐补空格到指定显示宽度（%str,width,LEFT% 的形态） */
+function pad_display_left(s, width) {
+  const pad = width - display_width(s);
+  return pad > 0 ? s + ' '.repeat(pad) : s;
+}
+
+/** %ITEMNAME:id%（Item.yml 登记名） */
+function item_name(id) {
+  return era.get(`itemname:${id}`) ?? '';
+}
+
+/**
+ * @SALEITEM_CHECK_TRAP（:75-128）：点亮本商店的在售位。只写 1——清零是
+ * 商店轮 @EVENTSHOP 的 REPEAT 100（page-shop.js:95-97）与 CLEAR_SHOP 的
+ * 职责（后者随 #399）。
+ *
+ * @returns {number} 原作 RETURN 0
+ */
+function saleitem_check_trap() {
+  for (const id of SALES_ALWAYS) {
+    era.set(`itemsales:${id}`, 1);
+  }
+
+  if ((era.get('talent:0:327') || 0) === 1) {
+    // :96-105 えっちな陷阱（魔王的淫魔知识）
+    for (const id of SALES_EROTIC) {
+      era.set(`itemsales:${id}`, 1);
+    }
+  } else {
+    // :106-109 淫魔知识
+    for (const id of SALES_SUCCUBUS_KNOWLEDGE) {
+      era.set(`itemsales:${id}`, 1);
+    }
+  }
+
+  // :112-113 魔虫知识**不在**时点亮 56（SIF，单一语句的 IF）
+  if ((era.get('talent:0:328') || 0) === 0) {
+    for (const id of SALES_WORM_BASE) {
+      era.set(`itemsales:${id}`, 1);
+    }
+  }
+
+  // :116-120 魔蟲知識でも手に入る罠
+  if ((era.get('talent:0:328') || 0) === 1) {
+    for (const id of SALES_WORM_EXTRA) {
+      era.set(`itemsales:${id}`, 1);
+    }
+  }
+
+  // :123 指輪
+  for (const id of SALES_RING) {
+    era.set(`itemsales:${id}`, 1);
+  }
+
+  // :125-126 陷阱Lv（严格小于：相等不点亮 55）
+  if (game.stronghold.陷阱等级 < (era.get('cflag:0:9') || 0)) {
+    for (const id of SALES_LEVEL_TRAP) {
+      era.set(`itemsales:${id}`, 1);
+    }
+  }
+
+  return 0; // 原作尾的 RETURN 0（:75-128 的收尾）
+}
+
+/**
+ * 一段持有商品网格（:27-38 陷阱 / :42-53 戒指，两段同构）。
+ *
+ * 原作排布：`SIF ITEM:ICOUNT_A == 0 → CONTINUE`（持有 0 个不占格），
+ * 否则打 `[%ITEMNAME:ICOUNT_A + @"(x{ITEM:ICOUNT_A})",16,LEFT%]`——每格
+ * 由字面方括号包住一个补到 16 显示宽度的「名字(xN)」，每满 5 格换一行；
+ * 段尾若未满整行再补一次换行（`SIF ICOUNT_B % 5 > 0 → PRINTL`），
+ * 一段一个格子都没有时不补（0 % 5 == 0）。
+ *
+ * @param {{ start: number, end: number }} range 商品 id 段（上界开区间）
+ * @returns {string[]} 逐行文本（引擎每次 print 即一行的等价物）
+ */
+function item_grid_rows({ start, end }) {
+  const rows = [];
+  let row = '';
+  let column = 0;
+  for (let id = start; id < end; id += 1) {
+    const count = era.get(`item:${id}`) || 0;
+    if (count === 0) {
+      continue;
+    }
+    row += `[${pad_display_left(`${item_name(id)}(x${count})`, CELL_WIDTH)}]`;
+    column += 1;
+    if (column % COLUMNS === 0) {
+      rows.push(row);
+      row = '';
+    }
+  }
+  if (column % COLUMNS > 0) {
+    rows.push(row);
+  }
+  return rows;
+}
+
+/**
+ * @ITEM_SHOP_TRAP（:7-70）：陷阱商店的绘制半。
+ *
+ * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 → 原作 :29 的 JUMP）与 usershop
+ * （998 分支 → 原作里的 JUMP ITEM_SHOP_TRAP）调用，等价于原作把商店界面
+ * 整个接管本轮。
+ *
+ * @returns {Promise<number>} 原作落进 @SALEITEM_CHECK_TRAP 之后无 RETURN，
+ *   隐式返回 0（函数体在末尾的 PRINTL 之后结束）
+ */
+async function item_shop_trap() {
+  // :11 标题（:10-12 的 CUSTOMDRAWLINE = 与 DRAWLINE 一并见文件头布局映射）
+  era.print('《可以购买在地下城里布置的陷阱》');
+  era.drawLine({ isSolid: true });
+  // :13-19 PRINTV DAY+1 / PRINT 日 / PRINTL  午前|午后（PRINT 后的第一个
+  // 空格是语法分隔符，字面量余一个前导空格——同 DRAW_MAINMENU:64-71）
+  era.print(
+    `${era_flag.day_count + 1}日${era_flag.time === 0 ? ' 午前' : ' 午后'}`,
+  );
+  // :21
+  era.print(`[所持金:${era_flag.money}点]`);
+
+  // :23-26 SETCOLORBYNAME LightSalmon → RESETCOLOR
+  era.print([
+    { content: `[陷阱Lv:${game.stronghold.陷阱等级}]`, color: LIGHT_SALMON },
+  ]);
+  era.print([{ content: '[陷阱]', color: LIGHT_SALMON }]);
+  // :27-38
+  for (const row of item_grid_rows(TRAP_IDS)) {
+    era.print(row);
+  }
+
+  // :39-41 SETCOLORBYNAME LightSalmon → RESETCOLOR
+  era.print([{ content: '[戒指]', color: LIGHT_SALMON }]);
+  // :42-53
+  for (const row of item_grid_rows(RING_IDS)) {
+    era.print(row);
+  }
+
+  era.drawLine({ isSolid: true }); // :55-57 DRAWLINE + CALL SALEITEM_CHECK_TRAP
+  saleitem_check_trap(); // :57 CALL SALEITEM_CHECK_TRAP
+  // :59 TFLAG:15 = MONEY（所持点を一時保存）——据点期无 tflag 表，登记待
+  // #399；理由见文件头，此处不写（写了在引擎里直接抛 key error）。
+
+  // :61 $INPUT_LOOP：购买循环的重新进入点，原作的循环本体是 :63 的
+  // PRINT_SHOPITEM + 引擎侧购买。era 侧的重绘由 page-shop.js 的商店轮
+  // 循环承担（998 分支再调一次本函数），故此处不设标签。
+
+  // :65-70 提示行
+  era.print('《请输入要购买陷阱的编号》');
+  era.drawLine({ isSolid: true }); // :65-70 段的 DRAWLINE
+  era.setAlign('center'); // :68-69 PRINTLC（居中 + 换行）
+  era.print('[997] - 普通物品\u3000');
+  era.print('[999] - 返回');
+  era.setAlign('left');
+  era.print(''); // 尾行（:65-70 的最后一个 PRINTL）
+
+  return 0;
+}
+
+module.exports = { item_shop_trap, saleitem_check_trap };

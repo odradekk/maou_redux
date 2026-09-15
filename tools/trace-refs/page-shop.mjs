@@ -43,6 +43,54 @@ export const FILES = [
         ref: '134-139',
         any: [/^\tFLAG:9 \+= 5\n\tBEGIN TURNEND\n\tRETURN 1$/m],
       },
+      // #396：陷阱商店的入口（@SHOW_SHOP :29 的 JUMP ITEM_SHOP_TRAP）与
+      // @USERSHOP 的店内购物段 :44-57（#395 前不可达，随 BOUGHT 落表 +
+      // 陷阱商店真身一并接通；四支的 return 形态见 usershop 注释）
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '29',
+        any: [/^\tJUMP ITEM_SHOP_TRAP$/m], // 与 :50 同文，平行复现
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '44-46',
+        any: [/^IF RESULT == 999 && BOUGHT >= 0$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '46',
+        any: [/^\tBOUGHT = -1$/m], // 与 :20 同文，平行复现
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '47-54',
+        any: [/^ELSEIF RESULT == 998 && BOUGHT >= 0$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '48',
+        any: [/^\tBOUGHT = 200$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '50',
+        any: [/^\tJUMP ITEM_SHOP_TRAP$/m], // 与 :29 同文，平行复现
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '52',
+        any: [/^\tBOUGHT = 1$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '54',
+        any: [/^\tJUMP ITEM_SHOP$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '55-57',
+        any: [/^ELSEIF BOUGHT >= 0$/m],
+      },
     ],
   },
 ];

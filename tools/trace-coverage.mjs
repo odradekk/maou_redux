@@ -124,7 +124,12 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 70; // rebase 到含 #388 的 master 后实测，理由见下。
+export const PENDING_BASELINE = 68; // rebase 到含 #388 的 master 后实测 70，
+// #396 抬低说明（70 → 68）：SHOP/TAX.ERB与
+// SHOP/SHOP_TRAP.ERB 两个文件落地真身（tax_get；item_shop_trap /
+// saleitem_check_trap，ere/system/stronghold/tax.js 与
+// ere/page/page-shop-trap.js，文件头各带「源:」整路径追溯 + 锚表分片
+// tools/trace-refs/tax.mjs、page-shop-trap.mjs），两份文件退出「待移植」：-2。
 // #405 抬低说明（79 → 75）：GET_SPECIALTALENT.ERB／EVENT_ADDICT.ERB／
 // EVENT_SABBATH.ERB／EVENT_CHARA_LEAVE.ERB 四个文件落地真身（
 // check_specialskil/check_specialskil_bodyshift、aphrodisiac_addict/
