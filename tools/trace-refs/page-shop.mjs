@@ -6,6 +6,13 @@ export const FILES = [
   {
     js: 'ere/page/page-shop.js',
     refs: [
+      // #397（N13）[108] 分支：TAILOR_CORE 退出时把 TARGET 置 -1（:249），
+      // 故 usershop 返回后按原作还原 TARGET = FLAG:1
+      {
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '249',
+        any: [/^\s*TARGET\ =\ -\ 1\s*$/m],
+      },
       // @EVENTSHOP 自身（#46 起挂事件链，普通档；EVENT_K.ERB 的 #PRI 档在
       // kojo-system.js——见下一条目）
       {

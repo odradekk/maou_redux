@@ -124,7 +124,13 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 67; // #384（N2）rebase 到含 #385/#396/#402 的
+export const PENDING_BASELINE = 65; // #397（N13）抬低说明：SHOP/SHOP_TAILOR.ERB、
+// SHOP/SHOP_2.ERB 两个文件落地真身（ere/page/page-tailor.js 十二函数、
+// page-ability-up.js + page-intercept.js + system/stronghold/gohoubi-request.js），
+// LIFE_LIST.ERB 的 7 个「登记（未接入）」函数落真身（ere/page/page-life-list.js）
+// 使其由部分移植转已移植。算式：67（#384 实测）+ 0（证据面变动）
+// − 2（两个待移植文件）= 65。
+// #384（N2）rebase 到含 #385/#396/#402 的
 // master 后实测：master 68 − 本票 1 = 67，两边的说明都留在下面。
 // #396 抬低说明（70 → 68）：SHOP/TAX.ERB与
 // SHOP/SHOP_TRAP.ERB 两个文件落地真身（tax_get；item_shop_trap /
