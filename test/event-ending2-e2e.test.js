@@ -252,7 +252,13 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       'ENDING_2 横幅末行（:49）',
     );
     // 封印播报的名字来自 %SAVESTR:TARGET%（→ callname:TARGET:-1）：提取
-    // 播报里的名字，断言它是真实生成的勇者（不是空串、不是写死值）
+    // 播报里的名字，断言它是命名链**真的写下过**的那个名字（不是空串、
+    // 不是写死值）。**不能再用勇者池的模板名反查**：#384 起
+    // @CHARA_NAME_DEFINE 是真身，@CHARA_MAKE 的命名段（CHARA_MAKE.ERB:18-20
+    // `SIF !EX_TALENT:A:2 → CALL CHARA_NAME_RANDOM_DEFINE`）会把 ADDCHARA
+    // 从预设拷来的名字覆盖掉——原作同（预设名只服务特殊角色 NO 0/17-40，
+    // 勇者池 1-16 走固定名表）。夹具没种固定名表（charanamelistkeys 为空），
+    // 固定名分支落到兜底名「佳奈美」。
     const report = texts.find((line) =>
       line.includes('封印了魔王，被后人歌颂为传说中的勇者'),
     );
@@ -260,30 +266,25 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
     const sealed_name = report
       .replace(/^\*勇者/, '')
       .replace(/封印了魔王.*$/, '');
-    const hero_names = Object.values(HEROES).map(([name]) => name);
+    assert.equal(
+      sealed_name,
+      '佳奈美',
+      `封印播报的名字是命名链写下的那个（实测「${sealed_name}」，%SAVESTR:TARGET% 的承载）`,
+    );
+    // 触发勇者确实在第 9 层（FLOOR >= 9 的判据留证）。名字与模板号已经脱钩
+    // （见上），改按「在场 + CFLAG:501 == 9」定位那名勇者
+    const floor9 = fixture.chara_no.filter(
+      (cid) => fixture.store.get(`cflag:${cid}:501`) === 9,
+    );
     assert(
-      hero_names.includes(sealed_name),
-      `封印播报的名字是生成的勇者（实测「${sealed_name}」，%SAVESTR:TARGET% 的承载）`,
+      floor9.length > 0,
+      `触发勇者（${sealed_name}）到达第 9 层（CFLAG:501 = 9）`,
     );
     assert(
       texts.includes(
         '-------------------------------GAMEOVER---------------------------------',
       ),
       'GAMEOVER 分隔行（:54）',
-    );
-    // 触发勇者确实在第 9 层（FLOOR >= 9 的判据留证）。勇者池有重名
-    // （女骑士 ×2、巫女 ×3、忍者 ×3、弓手 ×3——名前即职业名），反查取
-    // 「同名且已在场且 501 == 9」的那一个
-    const sealed_candidates = Object.entries(HEROES).filter(
-      ([, [name]]) => name === sealed_name,
-    );
-    assert(
-      sealed_candidates.some(
-        ([id]) =>
-          fixture.chara_no.includes(Number(id)) &&
-          fixture.store.get(`cflag:${id}:501`) === 9,
-      ),
-      `触发勇者（${sealed_name}）到达第 9 层（CFLAG:501 = 9）`,
     );
 
     // —— 压住侵攻度（票面：确保先到 ENDING_2 而非 ENDING_1）——
