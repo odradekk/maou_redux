@@ -47,6 +47,10 @@ function setup_turnend() {
 
 test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次回到同时段且 DAY:0 += 1', async () => {
   const { fixture, emit, STATE, era_flag } = setup_turnend();
+  // EVENT_NEXTDAY 的无条件可见副作用：FLAG:61（熏香使用次数）清零。
+  // #400（N16）起该函数走全路径，原先借用的 @TAX_GET 占位行已随真身撤下，
+  // 改用这个不需要任何角色预置的写点当锚
+  fixture.store.set('flag:61', 3);
 
   assert.equal(era_flag.time, 0, '开局应为午前');
   // 第一回合：午前 → 午后，不进日（TIME != 1 走 ELSE）
@@ -55,8 +59,9 @@ test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次�
   assert.equal(era_flag.time, 1);
   assert.equal(era_flag.day_count, 0, '午后回合不得进日');
   assert.equal(era_flag.date, 0);
-  assert(
-    !fixture.text_lines().some((line) => line.includes('@TAX_GET')),
+  assert.equal(
+    fixture.store.get('flag:61'),
+    3,
     '未进日不得触发日程推进（EVENT_NEXTDAY 只在日推进回合执行）',
   );
 
@@ -67,9 +72,10 @@ test('时段与日期推进：一次调用 TIME 0→1 不进日；连续两次�
   assert.equal(era_flag.day_count, 1, 'DAY:0 += 1');
   assert.equal(era_flag.date, 1, 'DAY:2 += 1');
   assert.equal(era_flag.weekday, 1, 'DAY:3 += 1');
-  assert(
-    fixture.text_lines().some((line) => line.includes('@TAX_GET')),
-    '日推进回合必须执行日程推进（EVENT_NEXTDAY 真身的税収占位行）',
+  assert.equal(
+    fixture.store.get('flag:61'),
+    0,
+    '日推进回合必须执行日程推进（EVENT_NEXTDAY 的熏香清零）',
   );
   assert(
     !fixture

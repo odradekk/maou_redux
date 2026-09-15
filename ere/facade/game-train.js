@@ -1350,4 +1350,36 @@ facade.with_self_kojo_event = async (event, callback) => {
   }
 };
 
+// 同一处困境的第二例：@INCEST（system/train/incest.js）用 TFLAG:14 承载
+// 从当前目标看 PLAYER 的亲族关系，而它的新调用点 @OFFERVIRGIN_CHECK
+// （EVENT_NEXTDAY.ERB:1020 的处女献上）跑在**日循环**里——调教外。EraElectron
+// 的 tflag 表只在 beginTrain/endTrain 之间存在，二段寻址在表缺失时由引擎
+// 兜底分支报 key error。处理同 初吻与自我口上：调用链内的临时值承载调教外
+// 语义，进链前由 with_relation_event 置好，链内读写都落到闭包。
+let relation_event;
+Object.defineProperty(facade, '近亲与自我口上', {
+  get() {
+    return relation_event ?? era.get('tflag:14') ?? 0;
+  },
+  set(v) {
+    if (relation_event === undefined) era.set('tflag:14', v);
+    else relation_event = v;
+  },
+});
+
+/**
+ * 在调教外跑需要 TFLAG:14 的调用链（@INCEST 的返回值载体）。
+ * @param {() => unknown} callback 调用链
+ * @returns {Promise<unknown>} callback 的返回值
+ */
+facade.with_relation_event = async (callback) => {
+  const previous = relation_event;
+  relation_event = 0;
+  try {
+    return await callback();
+  } finally {
+    relation_event = previous;
+  }
+};
+
 module.exports = facade;

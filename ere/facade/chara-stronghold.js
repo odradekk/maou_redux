@@ -74,6 +74,21 @@ class StrongholdFacade {
   }
 
   /**
+   * 贞操带钥匙丢弃（cflag:cid:49 ↔ CFLAG:49）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行302 CFLAG:49 = 貞操帯のカギを捨てた
+   * @returns {number}
+   */
+  get 贞操带钥匙丢弃() {
+    return era.get(`cflag:${this.cid}:49`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 贞操带钥匙丢弃(v) {
+    era.set(`cflag:${this.cid}:49`, v);
+  }
+
+  /**
    * 已性转（cflag:cid:70 ↔ CFLAG:70）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行309 CFLAG:70 = 性転換済（0:NO 1:YES)
    * @returns {number}

@@ -565,6 +565,14 @@ const cflag = {
   //   （ownership/cflag-ownership.yml "700"/"777"）
   700: named_tail('收藏', src(SRC_FLAG, ':489 CFLAG:700 = お気に入りフラグ')),
   777: named_tail('待处刑标签', src(SRC_FLAG, ':490 CFLAG:777 = 待處刑標籤')),
+  // #400（N16 @EVENT_NEXTDAY 的处女献上）：貞操帯の鍵を捨てたかのビット
+  //   （属主 stronghold，ownership/cflag-ownership.yml "49"；原作
+  //   EVENT_NEXTDAY.ERB:955/:1078 的 `CFLAG:49 = 0` / :933 的读取都在
+  //   event 域侧，属跨域写——经 chara(cid).stronghold 门面，#71）
+  49: named_tail(
+    '贞操带钥匙丢弃',
+    src(SRC_FLAG, ':302 CFLAG:49 = 貞操帯のカギを捨てた'),
+  ),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——
