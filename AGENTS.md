@@ -99,12 +99,12 @@ npx prettier --check .   # 仅格式，--write 可自动改
 **测试命令一律带 `timeout`，放后台跑更是必须带**：
 
 ```
-timeout -k 60 5400 bash tools/capped.sh node tools/mutation-check.mjs --jobs 4 > ~/mutation-full.log 2>&1
+mkdir -p logs && timeout -k 60 5400 bash tools/capped.sh node tools/mutation-check.mjs --jobs 4 > logs/mutation-full.log 2>&1
 ```
 
 上限就是给「卡住了」一个能被发现的形态。参考值：全量测试约 3 分钟，全量变异 `--jobs 4` 约 55 分钟，取两倍留余量。没有上限的后台任务只会一直占着机器，而占着的时候看不出它是在算还是已经废了。
 
-**等长任务跑完就等它本身，别另写轮询。** `pgrep -f '<模式>'` 匹配的是完整命令行，**轮询进程自己的命令行里也含那个模式**，于是 `while pgrep -f "tools/mutation-check.mjs --jobs"; do sleep 30; done` 匹配到自己、永远退不出——本项目栽过一次，把一轮 55 分钟的全量变异拖成了五个小时。**日志也别落 `/tmp`**：那是 tmpfs，重启即清，等回过神来结果和证据一起没了（同一次事故里就是这么丢的）。
+**等长任务跑完就等它本身，别另写轮询。** `pgrep -f '<模式>'` 匹配的是完整命令行，**轮询进程自己的命令行里也含那个模式**，于是 `while pgrep -f "tools/mutation-check.mjs --jobs"; do sleep 30; done` 匹配到自己、永远退不出——本项目栽过一次，把一轮 55 分钟的全量变异拖成了五个小时。**日志落仓库根的 `logs/`**（已 gitignore），按票分子目录：`logs/<票号>/<用途>.log`。两条理由：`/tmp` 是 tmpfs，重启即清——本项目在同一次事故里就是这么把结果和证据一起丢了；而 `~/` 是**所有并发 agent 共用**的，五个 agent 各写一个 `~/related.log` 会互相覆盖，且覆盖了看不出来（读到别人的结果误判过一次）。`logs/` 在每个 worktree 里各有一份，天然隔离。代价是 worktree 删除时日志一并消失——要留的证据在删之前贴进 issue 评论。
 
 三个容易踩的点：
 

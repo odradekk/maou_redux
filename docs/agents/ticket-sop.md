@@ -152,6 +152,8 @@ orca worktree set --worktree "issue:<N>" --comment "<一句话>" --workspace-sta
 
 worktree 若缺 node_modules 先 npm ci。跑测试一律用 bash tools/capped.sh 包一层
 （并发时不把机器压死）。引擎 asar 会自动回落命中，不必设 ERE_ENGINE_ASAR。
+长任务日志落 logs/<本票号>/（仓库内，已 gitignore），别落 ~/ 也别落 /tmp：
+~/ 是所有并发 agent 共用的，同名日志会互相覆盖且看不出来；/tmp 重启即清。
 
 **内环只跑本票那一个测试文件**：node --test test/<本票>.test.js（口上票约 6s）
 ＋ **node tools/mutation-check.mjs --ids <你这一轮新加的编号>**（如 --ids M4246-M4273，
