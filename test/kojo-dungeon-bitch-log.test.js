@@ -88,8 +88,9 @@ test('FS_BITCH：LOOKS 本人描写（头发颜色默认 + 随机覆盖 + 种族
     31,
     seq_rand(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   );
-  assert.ok(look.includes('的人类'), '种族收尾');
-  assert.ok(look.includes('温妮'), '名字收尾');
+  // 随机源已钉死（全 0）→ 整串确定：发色取 GET_LOOK_INFO、随机覆盖逐次命中、
+  // 末尾种族 + 名字拼接（#389 起 GET_LOOK_INFO 的真身在 ere/chara/look-info.js）
+  assert.equal(look, '金发的人类的温妮', '发色 + 种族 + 名字的整串');
 });
 
 // —— FS_LOG_BITCH 拼接 ——
@@ -153,16 +154,22 @@ test('LOG_TRY_BITCH 与 FI_TRY_BITCH 互不混同：LOG 只输出不改状态、
     f.store.set('cflag:31:581', 0);
     f.store.set('cflag:31:582', 0);
   });
-  // LOG_TRY_BITCH：有输出文本
+  // LOG_TRY_BITCH：三行文本逐字钉死（随机源已钉死，取值是确定的；原来只查
+  // 「有输出」，把整段文本放掉了）。首行是 FS_BITCH 的 LOOKS 分档——
+  // #389 起它的 GET_LOOK_INFO 真身在 ere/chara/look-info.js
   await mod.log_try_bitch(31, 'DUNGEON');
-  assert.ok(fixture.text_lines().length > 0, 'LOG_TRY_BITCH 输出文本');
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['黑发的人类的温妮', '无法压抑自己的性欲，', '考虑着出卖肉体的事。'],
+    'LOG_TRY_BITCH 的整段输出',
+  );
 
-  // FI_TRY_BITCH（kojo-dungeon-bitch.js 的玩法抽选）：返回玩法号、不输出
+  // FI_TRY_BITCH（kojo-dungeon-bitch.js 的玩法抽选）：返回玩法号、不输出。
+  // seq_rand(0) 下玩法号是确定值，钉精确值而不是 0-6 的区间
   const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
   const before = fixture.text_lines().length;
   const play = bitch.fi_try_bitch(31, 'DUNGEON', seq_rand(0));
-  assert.equal(typeof play, 'number', 'FI_TRY_BITCH 返回玩法号');
-  assert.ok(play >= 0 && play <= 6, '玩法号在 0-6');
+  assert.equal(play, 1, 'FI_TRY_BITCH 返回玩法号（seq_rand(0) → 1）');
   assert.equal(fixture.text_lines().length, before, 'FI_TRY_BITCH 不输出');
 });
 

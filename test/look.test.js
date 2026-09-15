@@ -934,11 +934,22 @@ function steer(map, fallback = 0) {
  */
 function steer_at(map, fallback = 0) {
   const counts = new Map();
+  const queues = new Map();
+  // 值与 steer 同款：数组当队列按序消费、用尽后重复最后一个。**不做这一步
+  // 会把整个数组当返回值发出去**——`rand_n(2) === 0` 于是恒假，分支全走偏
+  // （#389 返工时在「未婚の母」用例上踩到过：断言看着绿，走的是别的支）
+  const pick = (key) => {
+    const value = map[key];
+    if (!Array.isArray(value)) return value;
+    const queue = queues.get(key) ?? [...value];
+    queues.set(key, queue);
+    return queue.length > 1 ? queue.shift() : queue[0];
+  };
   return (n) => {
     const at = counts.get(n) ?? 0;
     counts.set(n, at + 1);
-    if (Object.hasOwn(map, `${n}#${at}`)) return map[`${n}#${at}`];
-    if (Object.hasOwn(map, `${n}`)) return map[`${n}`];
+    if (Object.hasOwn(map, `${n}#${at}`)) return pick(`${n}#${at}`);
+    if (Object.hasOwn(map, `${n}`)) return pick(`${n}`);
     return fallback;
   };
 }
@@ -1500,22 +1511,49 @@ test('LOOK_SET：不会法术时修道女（Q=2）重掷', () => {
   assert.equal(has_magic.talent(cid2, 315), 2, '会法术则保留修道女');
 });
 
+test('LOOK_SET：男人两支的经验上界（童貞オトコ RAND:20 / オトコ RAND:40）', () => {
+  // :518-530 两支的上界不同（20 / 40），必须分开钉——RAND:20 与 RAND:40 各
+  // 投不同的值，两支才区分得开：20 → 5（local = 6）、40 → 1（local = 2）
+  const cases = [
+    // [素质前置, 期望经验值, 依据]
+    [{ 122: 1, 1: 1 }, 6, '童貞オトコ：RAND:20 + 1 = 6'],
+    [{ 122: 1 }, 2, 'オトコ：RAND:40 + 1 = 2'],
+  ];
+  for (const [talents, expected, note] of cases) {
+    const w = look_world();
+    const cid = w.reserve();
+    for (const [idx, value] of Object.entries(talents)) {
+      w.set_talent(cid, Number(idx), value);
+    }
+    w.run_again(cid, 0, steer({ 21: 4, 5: 1, 15: 1, 20: 5, 40: 1 }));
+    assert.equal(w.talent(cid, 315), 5, '前职业 = 娼妓（进入经验支）');
+    assert.equal(w.exp(cid, 1), expected, `肛门经验（${note}）`);
+    assert.equal(w.exp(cid, 5), expected, `性交经验（${note}）`);
+    assert.equal(w.exp(cid, 74), expected, `卖淫经验（${note}）`);
+  }
+});
+
 test('LOOK_SET：妓女/乞丐/奴隶的经验与善恶值', () => {
-  for (const [roll, expected_q] of [
-    [4, 5],
-    [6, 7],
-    [19, 20],
+  // RAND:40 钉在 1 → 处女支的 `LOCAL = RAND:40 + 1` 恒为 2，三个 EXP 都是
+  // 确定值：肛门 2 / 性交 2 / 卖淫 2（Q == 20 的奴隶档不吃卖淫经验 → 0）
+  for (const [roll, expected_q, expected_sex_work] of [
+    [4, 5, 2],
+    [6, 7, 2],
+    [19, 20, 0],
   ]) {
     const w = look_world();
     const cid = w.run(0, always);
     w.set_talent(cid, 0, 1); // 处女 → 走 `TALENT:0 == 1` 支
     w.run_again(cid, 0, steer({ 21: roll, 5: 1, 15: 1, 40: 1, 20: 1 }));
     assert.equal(w.talent(cid, 315), expected_q);
-    const sex_exp = w.exp(cid, 5);
-    assert.ok(
-      sex_exp >= 1 && sex_exp <= 40,
-      `性交经验落在 1-40（实得 ${sex_exp}）`,
+    assert.equal(w.exp(cid, 1), 2, '肛门经验 = RAND:40 + 1 = 2');
+    assert.equal(w.exp(cid, 5), 2, '性交经验 = RAND:40 + 1 = 2');
+    assert.equal(
+      w.exp(cid, 74),
+      expected_sex_work,
+      `卖淫经验（Q=${expected_q} 的 \`Q != 20\` 判据）`,
     );
+    assert.equal(w.exp(cid, 60), 0, 'RAND:15 = 1 → 不中生育经验');
     assert.equal(w.cflag(cid, 151), -30, '善恶值 -30');
   }
 });
@@ -1529,33 +1567,71 @@ test('LOOK_SET：非处女且肛交使用支 / 仅私处支（RAND:5 与 RAND:40
     0,
     steer({ 21: 4, 5: [0], 40: [5], 15: 1, 20: 1, 150: 0 }),
   );
-  assert.equal(anal.exp(cid_a, 0) >= 1, true, '私处经验已加');
-  assert.equal(anal.exp(cid_a, 1) >= 1, true, '肛门经验已加');
+  // RAND:40 钉在 5 → 两掷都取 5+1 = 6：私处 6、肛门 6、性交 = 两者之和 12
+  assert.equal(anal.exp(cid_a, 0), 6, '私处经验 = RAND:40 + 1 = 6');
+  assert.equal(anal.exp(cid_a, 1), 6, '肛门经验 = 6');
+  assert.equal(anal.exp(cid_a, 5), 12, '性交经验 = 私处 + 肛门 = 12');
+  assert.equal(anal.exp(cid_a, 74), 12, '卖淫经验同额（Q != 20）');
 
   // :547-551 非处女 V 支（RAND:5 != 0）：只掷一次 40
   const v_only = look_world();
   const cid_v = v_only.run(0, always);
   v_only.run_again(cid_v, 0, steer({ 21: 4, 5: [1], 40: [5], 15: 1, 20: 1 }));
-  assert.equal(v_only.exp(cid_v, 0) >= 1, true, '私处经验已加');
-  assert.equal(v_only.exp(cid_v, 1), 0, '肛门经验未加');
+  assert.equal(v_only.exp(cid_v, 0), 6, '私处经验 = 6');
+  assert.equal(v_only.exp(cid_v, 1), 0, '肛门经验未加（本支只掷一次 RAND:40）');
+  assert.equal(v_only.exp(cid_v, 5), 6, '性交经验 = 私处 = 6');
+  assert.equal(v_only.exp(cid_v, 74), 6, '卖淫经验 = 6');
 });
 
-test('LOOK_SET：刺青（CSTR）与生育经验的两处掷骰', () => {
+test('LOOK_SET：刺青名表（CSTR:LOCAL，RAND:8 + 10 → 8 项全走）', () => {
+  // :556 `LOCALS:10 '= "淫乱","母猪",…` 十项，:557 `CSTR:LOCAL = %LOCALS:LOCAL%`；
+  // LOCAL = RAND:8 + 10 只取到前 8 项——逐项表驱动走完
+  const names = [
+    '淫乱',
+    '母猪',
+    '蛇',
+    '蜘蛛女郎',
+    '蔷薇',
+    '肉便器',
+    '便女',
+    '阴茎图画',
+  ];
+  for (const [roll, expected] of names.entries()) {
+    const w = look_world();
+    const cid = w.run(0, always);
+    w.run_again(
+      cid,
+      0,
+      steer({ 21: 4, 5: 1, 15: [0, 1], 8: roll, 40: 1, 20: 1 }),
+    );
+    assert.equal(w.talent(cid, 315), 5, '前职业 = 娼妓（Q=5 才有刺青）');
+    assert.equal(
+      w.cstr(cid, 10 + roll),
+      expected,
+      `RAND:8 = ${roll} → CSTR:${10 + roll} = 第 ${roll + 1} 项`,
+    );
+  }
+});
+
+test('LOOK_SET：刺青与生育经验的两处 RAND:15 掷骰', () => {
+  // RAND:15 在 :554（刺青）与 :562（生育经验）各一次：第一次 0 → 进刺青、
+  // 第二次 0 → 进生育经验；RAND:3 = 2 → 生育经验 +2
   const w = look_world();
   const cid = w.run(0, always);
-  w.run_again(cid, 0, steer({ 21: 4, 5: 1, 15: [0, 1], 8: 0, 40: 1, 20: 1 }));
-  assert.equal(w.talent(cid, 315), 5);
-  assert.equal(w.cstr(cid, 10), '淫乱', 'RAND:8 = 0 → 刺青第 1 项');
-
-  const w2 = look_world();
-  const cid2 = w2.run(0, always);
-  w2.run_again(
-    cid2,
+  w.run_again(
+    cid,
     0,
     steer({ 21: 4, 5: 1, 15: [0, 0], 8: 7, 3: 2, 40: 1, 20: 1 }),
   );
-  assert.equal(w2.cstr(cid2, 17), '阴茎图画', 'RAND:8 = 7 → 刺青第 8 项');
-  assert.equal(w2.exp(cid2, 60), 2, 'RAND:3 = 2 → 生育经验 +2');
+  assert.equal(w.talent(cid, 315), 5, '前职业 = 娼妓');
+  assert.equal(w.cstr(cid, 17), '阴茎图画', 'RAND:8 = 7 → 刺青第 8 项');
+  assert.equal(w.exp(cid, 60), 2, 'RAND:3 = 2 → 生育经验 +2');
+
+  const w2 = look_world();
+  const cid2 = w2.run(0, always);
+  w2.run_again(cid2, 0, steer({ 21: 4, 5: 1, 15: [0, 1], 8: 0, 40: 1, 20: 1 }));
+  assert.equal(w2.cstr(cid2, 10), '淫乱', '第一次 0 → 刺青');
+  assert.equal(w2.exp(cid2, 60), 0, '第二次 1 → 不中生育经验');
 });
 
 test('LOOK_SET：乞丐（Q=7）不刺青', () => {
@@ -1722,43 +1798,95 @@ test('LOOK_SET 素质 320：后代（EX_TALENT:2）不进入离婚支', () => {
       4: 0,
     }),
   );
-  const ten = Math.trunc(w.talent(cid, 320) / 10000) % 10;
-  assert.ok(ten !== 2 && ten !== 5, `后代不进离婚支（万位实得 ${ten}）`);
+  // 精确值：后代（EX_TALENT:2）把「離婚/未亡人」支整支关掉 → LOCAL = 0，
+  // 家族码只剩非精英预置的个位 1（万位 0 = 未婚）
+  assert.equal(
+    w.talent(cid, 320),
+    1,
+    '后代不进离婚支：家族码停在「設定あり」的 1',
+  );
 });
 
-test('LOOK_SET 素质 320：主婦与结婚经历两条子供段（循环退出位置不同）', () => {
-  // :669-679 主婦段：先加后判 break（一人确定）；:680-694 结婚经历段：先判后加
-  const housewife = look_world();
-  const cid_h = housewife.run(0, always);
-  housewife.set_talent(cid_h, 315, 21);
-  housewife.set_talent(cid_h, 0, 0);
-  housewife.run_again(cid_h, 0, steer({ 2: [1, 0] }));
-  assert.ok(housewife.talent(cid_h, 320) > 0);
-
-  const married = look_world();
-  const cid_m = married.run(0, always);
-  married.set_talent(cid_m, 0, 0);
-  married.run_again(cid_m, 0, steer({ 20: [0, 9], 10: 9, 2: [0, 1] }));
-  assert.ok(married.talent(cid_m, 320) > 0);
+test('LOOK_SET 素质 320：主婦子供段（先加后判 break，「一人确定」）', () => {
+  // :669-679 主婦段：先加后判 break——掷到 break 也已经加过一个孩子，
+  // 故「主婦必有一名子女」。精确值 2000050021 解：个位 1（設定あり）、
+  // 十亿位 2（女女カップル）、百万位 5（子女 5 人，主婦段不动 break 走满）
+  const w = look_world();
+  const cid = w.run(0, always);
+  w.set_talent(cid, 0, 0);
+  // 前职业必须**掷**出来（315 由 LOOK_SET 自己写，预置会被覆盖）：RAND:21 → 20
+  w.run_again(cid, 0, steer({ 2: [1, 0], 21: 20 }));
+  assert.equal(w.talent(cid, 315), 21, '前职业 = 主婦（掷值 20）');
+  // 绝对值 2000011031 解：个位 1（設定あり）、十位 3（主婦档自带人妻 →
+  // 婚姻歴 +30）、千位 1（儿子 1 人：先加后判 break，第一次就加到了）、
+  // 万位 1（結婚）、十亿位 2（女女カップル）
+  assert.equal(
+    w.talent(cid, 320),
+    2000011031,
+    '主婦子供段：先加后判 break 的绝对值',
+  );
 });
 
-test('LOOK_SET 素质 320：未婚の母（娼婦は最大 4 人）', () => {
-  // :695-735 第三支：RAND:20 == 0 且非处女；娼婦（315 == 5）上限 +2
-  for (const [occupation, loops] of [
-    [1, 4],
-    [5, 8],
+test('LOOK_SET 素质 320：结婚经历子供段（先判后加 break）', () => {
+  // :680-694 第二支：`local >= 10 && 处女 == 0`——人妻档给 +10 + 10000
+  // （万位 = 結婚），子供段的 break 判据在加孩子之前
+  const w = look_world();
+  const cid = w.run(0, always);
+  w.set_talent(cid, 157, 1); // 人妻 → 结婚档
+  w.set_talent(cid, 0, 0);
+  w.run_again(cid, 0, steer_at({ '20#2': 1, 10: 1, 2: [1, 0] }));
+  // 绝对值 2000010111 解：个位 1、十位 1（初婚 +10）、百位 1（女儿 1 人：
+  // 先判后加 break，掷到 break 前已加过一个）、万位 1（結婚）、十亿位 2
+  assert.equal(
+    w.talent(cid, 320),
+    2000010111,
+    '结婚经历子供段：先判后加 break 的绝对值',
+  );
+});
+
+test('LOOK_SET 素质 320：未婚の母（娼婦上限 +2：2 → 4 人）', () => {
+  // :695-735 第三支：`RAND:20 == 0 && 处女 == 0`，且不能落进前两支。
+  // 前职业必须**掷**出来（315 是 LOOK_SET 自己写的，预置会被覆盖）：
+  // RAND:21 → 4 得娼婦（q=5），RAND:21 → 0 得学生。
+  // 家族码的百位 = 女儿数，正是本支的上限差
+  for (const [roll, expected] of [
+    [0, 100201], // 学生：上限 2 → 百位 2
+    [4, 100401], // 娼婦：上限 2 + 2 → 百位 4
   ]) {
     const w = look_world();
     const cid = w.run(0, always);
-    // 只数「娘/儿」位是否被写过：用记账面数循环次数不方便，改为看结果 > 0
     w.set_talent(cid, 0, 0);
-    w.run_again(
+    const dbg = [];
+    const st = steer_at({
+      '20#2': 9, // 家族婚姻档不进（local 保持 0，前两支都跳过）
+      '20#3': 0, // 第三支的开门掷
+      2: [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+      21: roll,
+    });
+    w.run_again(cid, 0, (n) => {
+      const v = st(n);
+      dbg.push(`${n}=${v}`);
+      return v;
+    });
+    console.log(
+      'DBG cid',
       cid,
-      0,
-      steer({ 20: [9, 0], 10: 9, 2: [1, 0, 1, 0, 1, 0, 1, 0], 4: 1 }),
+      'roll',
+      roll,
+      '2:',
+      dbg.filter((s) => s.startsWith('2=')).join(' '),
+      '20:',
+      dbg.filter((s) => s.startsWith('20=')).join(' '),
+      '315=',
+      w.talent(cid, 315),
     );
-    const code = w.talent(cid, 320);
-    assert.ok(code > 0, `职业 ${occupation}（循环上限 ${loops}）`);
+    assert.equal(
+      w.talent(cid, 320),
+      expected,
+      `RAND:21 = ${roll} → 前职业 ${roll === 0 ? 1 : 5}、家族码百位 ${
+        Math.trunc(expected / 100) % 10
+      }`,
+    );
   }
 });
 
@@ -2355,6 +2483,120 @@ test('LOOK_INFO：常识改变四态（战斗/日常/两者/都无）', async ()
   assert.ok(
     !(await w4.info(none)).some((l) => l.startsWith('[常识改变：')),
     '都无 → 不出',
+  );
+});
+
+/**
+ * 把 kojo-system 的 `gobi_koujo` 就地换成一个只记录实参的函数（与夹具的
+ * `disable_enter_enemy` 同一手法）：ere/chara/look.js 里是
+ * `require('#/kojo/kojo-system').gobi_koujo(...)` 的**属性查找**，替换导出即
+ * 短路，不必碰游戏代码。返回记录数组与还原函数。
+ * @param {object} fixture 夹具
+ * @returns {{calls: number[], restore: () => void}}
+ */
+function capture_gobi(fixture) {
+  const kojo = fixture.load_module('kojo/kojo-system');
+  const real = kojo.gobi_koujo;
+  const calls = [];
+  kojo.gobi_koujo = async (arg0) => {
+    calls.push(arg0);
+  };
+  return {
+    calls,
+    restore() {
+      kojo.gobi_koujo = real;
+    },
+  };
+}
+
+/**
+ * 造一个「只剩两处语尾档位还会开口」的角色：外观各块因素质缺席整块跳过、
+ * 信仰/妊娠/常识全关。kojo 视角下 GOBI_KOUJO 的调用序因此固定为
+ * `[首行(4), 前职业档, 契机档, 所持金档(0), 喜好收尾(1)]`——两张档位表
+ * 各据一位，不必管中间的其它调用。
+ * @param {object} fixture 夹具
+ * @param {number} roll21 RAND:21 的掷值（→ 前职业 = 掷值 + 1）
+ * @param {number} roll20 RAND:20 的掷值（→ 契机 = 掷值 + 1）
+ * @returns {Promise<number[]>} 捕获到的 GOBI_KUJO 实参序列
+ */
+async function gobi_sequence(fixture, roll21, roll20) {
+  const mod = fixture.load_module('chara/look');
+  const cid = 800;
+  // 一次掷到位：315/316 分别由 RAND:21 / RAND:20 决定（掷值 + 1）
+  mod.look_set(cid, 0, steer({ 21: roll21, 20: roll20 }));
+  // LOOK_SET 会把外观素质一起掷出来，**掷完再清零**让外观各块整块跳过
+  // （顺序反了会被第二次 look_set 重新掷上，块又活了）
+  for (const idx of [
+    300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 312, 313, 314,
+  ]) {
+    fixture.store.set(`talent:${cid}:${idx}`, 0);
+  }
+  fixture.store.set(`talent:${cid}:158`, 0);
+  fixture.store.set(`talent:${cid}:281`, 0);
+  fixture.store.set(`talent:${cid}:283`, 0);
+  fixture.store.set(`talent:${cid}:220`, 0);
+  fixture.store.set(`cflag:${cid}:580`, 100); // 所持金 > 0 → 该处档位 0
+  fixture.store.set('flag:5', 2048); // 口上视角
+  const { calls, restore } = capture_gobi(fixture);
+  await mod.look_info(cid);
+  restore();
+  return calls;
+}
+
+test('LOOK_INFO 的语尾档位：前职业 5 档（源 :1348-1365，表驱动走完）', async () => {
+  const cases = [
+    // [RAND:21 掷值, TALENT:315, 期望档位, 依据]
+    [7, 8, 1, '貴族は誇らしい'],
+    [11, 12, 1, '聖女は誇らしい'],
+    [18, 19, 1, '軍人は誇らしい'],
+    [4, 5, 4, '妓女は恥ずかしい'],
+    [19, 20, 4, '奴隷は恥ずかしい'],
+    [5, 6, 2, '盗人は逆切れ'],
+    [6, 7, 5, '物乞いは情けない'],
+    [8, 9, 5, '貧民は情けない'],
+    [0, 1, 0, '学生はデフォルト'],
+    [20, 21, 0, '主婦はデフォルト'],
+  ];
+  for (const [roll, job, expected] of cases) {
+    const fixture = create_era_fixture();
+    const calls = await gobi_sequence(fixture, roll, 0);
+    assert.equal(
+      calls[1],
+      expected,
+      `TALENT:315 = ${job}（${cases.find((c) => c[1] === job)[3]}）`,
+    );
+  }
+});
+
+test('LOOK_INFO 的语尾档位：成为勇者的契机 5 档（源 :1407-1428，表驱动走完）', async () => {
+  const cases = [
+    // [RAND:20 掷值, TALENT:316, 期望档位, 依据]
+    [2, 3, 1, '啓示は誇らしい'],
+    [6, 7, 1, '故郷は誇らしい'],
+    [15, 16, 1, '平和は誇らしい'],
+    [16, 17, 1, '正義は誇らしい'],
+    [9, 10, 4, '罪は恥ずかしい'],
+    [13, 14, 4, '仕方なくは恥ずかしい'],
+    [7, 8, 2, '復讐は逆切れ'],
+    [1, 2, 5, '金のためは情けない'],
+    [12, 13, 5, '命令は情けない'],
+    [0, 1, 0, '運命はデフォルト'],
+    [19, 20, 0, '旅の結果はデフォルト'],
+  ];
+  for (const [roll, reason, expected] of cases) {
+    const fixture = create_era_fixture();
+    const calls = await gobi_sequence(fixture, 0, roll);
+    assert.equal(calls[2], expected, `TALENT:316 = ${reason}`);
+  }
+});
+
+test('LOOK_INFO 的语尾档位：序列本身（首行/所持金/喜好收尾）也钉住', async () => {
+  const fixture = create_era_fixture();
+  const calls = await gobi_sequence(fixture, 0, 0);
+  assert.deepEqual(
+    calls,
+    [4, 0, 0, 0, 1],
+    '首行档（屈服刻印 < 3 → 4）、前职业（学生 → 0）、契机（运命 → 0）、所持金（100 → 0）、喜好收尾（1）',
   );
 });
 
@@ -2984,7 +3226,6 @@ test('love_score 相互作用：コンプレックスがこじれる（四支）
     w.set_talent(talent_idx, 1); // 对应项 +10
     w.set_talent(23, 1); // 好奇心 → 50 +1
     const score = w.score();
-    assert.ok(score[idx] > 0, `LOVE:${idx} 有值`);
     // 素质分 10 + 池子里的 コンプレックス 分。50 的净值是 0：源 :1959-1961
     // 的 ELSE 支给 -1、好奇心给 +1——池子因此加 0，只留素质分
     assert.equal(
@@ -3174,6 +3415,40 @@ test('look_info_love：显示行的排序、心形数与「共 N 个」计数', 
     lines.some((l) => /^\[共\d+个喜欢的东西\]$/.test(l)),
     '收尾计数行',
   );
+});
+
+test('look_info_love：满桌角色的整屏输出（排序 × 心形 × 每行 6 个 × 计数）', async () => {
+  // 把能越过 3 分门槛的素质/能力全点亮，让显示面一次走满：本用例同时钉住
+  // ① 降序排序（同值按添字序）② 心形数 = 分值/5-1 ③ 每行 6 个（LOVE_PER_ROW）
+  // ④ 收尾计数。任何一处改动（换行位置、排序、心形、名字）都会红。
+  //
+  // 已知盲区：LOVE_SORT_MAX（30）改小到 29 测不出来——显示面最多只有 28 项
+  // （名字表里能出词的档位就这些），29 与 30 对输出等价。
+  const w = love_world();
+  for (const idx of [
+    0, 1, 9, 23, 24, 30, 31, 35, 36, 40, 47, 57, 60, 74, 75, 76, 77, 78, 80, 83,
+    85, 88, 89, 101, 102, 103, 104, 105, 106, 107, 108, 121, 122, 124, 130, 133,
+    140, 141, 142, 143, 150, 151, 157, 180, 181, 204, 230, 231, 232, 233, 273,
+    280, 317,
+  ]) {
+    w.set_talent(idx, 1);
+  }
+  for (const idx of [
+    0, 1, 2, 3, 10, 11, 12, 13, 14, 16, 17, 20, 21, 22, 23, 30, 31, 32, 33, 37,
+    39,
+  ]) {
+    w.set_abl(idx, 5);
+  }
+  await w.mod.look_info_love(w.cid);
+  assert.deepEqual(w.fixture.text_lines(), [
+    '[喜欢的东西]',
+    '　做爱♡♡♡♡♡　人妻♡♡♡♡♡　中年大叔♡♡♡♡♡　萝莉的小穴♡♡♡♡♡　正太的阴茎♡♡♡♡♡　狂王大人♡♡♡♡♡　',
+    '　精液♡♡♡♡　断背行为♡♡♡♡　卖淫♡♡♡　和野兽交配♡♡♡　露出身体♡♡♡　被人虐待♡♡　',
+    '　虐待别人♡♡　甜食♡♡　野狗大人♡♡　被弄乳房♡　被玩弄阴茎♡　被弄菊穴♡　',
+    '　伴侣　',
+    ' ',
+    '[共19个喜欢的东西]',
+  ]);
 });
 
 test('look_info_love：分值 <= 3 与未登记的喜好都不显示，计数据此计数', async () => {

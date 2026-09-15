@@ -119,10 +119,12 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
     '佳奈美',
     'CHARA_NAME_DEFINE 真身：没有可查的固定名时回落到默认名',
   );
-  // LOOK_SET 自 #389 起是真身：外貌素质真的落了地（占位行反过来不该再出现）
-  assert.ok(
-    (fixture.store.get('talent:1:300') || 0) > 0,
-    'LOOK_SET 真身：发色（TALENT:300）已落盘',
+  // LOOK_SET 自 #389 起是真身：外貌素质真的落了地（占位行反过来不该再出现）。
+  // 精确值：never（RAND:N 恒 1）下发色掷到 11（粉髪）、癖掷到 2（往后看）
+  assert.equal(
+    fixture.store.get('talent:1:300'),
+    11,
+    'LOOK_SET 真身：发色（TALENT:300）= 11 粉髪',
   );
   const texts = stub_texts(fixture);
   assert(
@@ -243,16 +245,14 @@ test('FLAG:5 位 12 开：CHAR_BODY_GENERATE_WAPPED 真身落盘', async () => {
   await chara_make(1, 0, 0, never);
   // #385 起为真身（ere/chara/chara-body.js）：CFLAG:451-457 是判据，
   // 占位行不再出现。年龄受 LIMIT(12,35) 约束，身高/体重为正数。
-  const age = fixture.store.get('cflag:1:451');
+  // 随机源钉死（never）→ 四个落点都是确定值，钉精确值而不是区间。
   // #389 勘误：#385 当时写的 [12,35] 只是那一条随机序的巧合——char_age_generate
   // 先 LIMIT(EXP_AGE,12,35)（chara-body.js:457）再走 normal_point_pickup 的
-  // ±2（:180-181），下界因此是 10、上界 37。这里按真实契约钉。
-  assert.ok(
-    Number.isInteger(age) && age >= 10 && age <= 37,
-    `年龄落在 LIMIT±2 内（实际 ${age}）`,
-  );
-  assert.ok(fixture.store.get('cflag:1:453') > 100, '身高（厘米）已落盘');
-  assert.ok(fixture.store.get('cflag:1:454') > 10, '体重（公斤）已落盘');
+  // ±2（:180-181），下界因此是 10、上界 37；本用例这一条序落在 11
+  assert.equal(fixture.store.get('cflag:1:451'), 11, '人类换算年龄 = 11');
+  assert.equal(fixture.store.get('cflag:1:452'), 11, '种族年龄（人类同档）');
+  assert.equal(fixture.store.get('cflag:1:453'), 1281, '身高（厘米）');
+  assert.equal(fixture.store.get('cflag:1:454'), 191, '体重（公斤）');
   assert.equal(
     stub_texts(fixture).some((line) =>
       line.includes('@CHAR_BODY_GENERATE_WAPPED'),
@@ -621,14 +621,8 @@ test('cm_look：LOOK_SET 真身落盘 + 白虎 5%（:860-872）', async () => {
     false,
     '已落真身，不得再出现占位行',
   );
-  assert.ok(
-    (fixture.store.get('talent:3:300') || 0) > 0,
-    '发色（TALENT:300）已掷出',
-  );
-  assert.ok(
-    (fixture.store.get('talent:3:313') || 0) > 0,
-    '癖（TALENT:313）已掷出',
-  );
+  assert.equal(fixture.store.get('talent:3:300'), 11, '发色 = 11 粉髪');
+  assert.equal(fixture.store.get('talent:3:313'), 2, '癖 = 2 往后看');
   assert.equal(fixture.store.get('talent:3:125'), undefined, '白虎未掷中');
 
   const fixture2 = create_era_fixture();
