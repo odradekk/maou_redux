@@ -995,21 +995,24 @@ test('死斗场中的 SHOW_STATUS：装备行出 [死斗场决斗中]（粉色�
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('SHOW_STATUS');
-  const equip_line = fixture.lines.find(
-    (l) => l.type === 'text' && l.text.includes('装备显示'),
+  // #390 起 SHOW_EQUIP_2 是真身：无任何位时只打一个空格，不再有占位文案
+  assert.ok(
+    !fixture.text_lines().some((l) => l.includes('@SHOW_EQUIP_2')),
+    '未在死斗场时不再落占位行（真身：空行）',
   );
-  assert.ok(equip_line, '未在死斗场时 SHOW_EQUIP_2 仍占位');
 
   fixture.store.set('tequip:31:55', 1);
   await emit('SHOW_STATUS');
+  // 真身逐位前有一个前导空格（源 :1588 `PRINT  [死斗场决斗中] `，命令后的
+  // 第一个空格是分隔符，见 chara-info-abl-mark.js 文件头）
   const arena = fixture.lines
     .filter((l) => l.type === 'text')
-    .find((l) => l.text === '[死斗场决斗中]');
+    .find((l) => l.text === ' [死斗场决斗中] ');
   assert.ok(arena, '死斗场中的装备行必须是 [死斗场决斗中]');
   assert.equal(
     arena.content[0].color,
-    '#FF1493',
-    ':1566 SETCOLOR 0xff1493（DeepPink）',
+    '#ff1493',
+    ':1565 SETCOLOR 0xff1493（DeepPink）',
   );
 });
 

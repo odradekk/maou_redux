@@ -2931,9 +2931,9 @@ test('存根清单核对：event-ending 与 chara-init 的 STUBBED_CALLS 全部�
     fixture.load_module('event/event-ending');
   const { STUBBED_CALLS: INIT_STUBS } = fixture.load_module('chara/chara-init');
   // #404（N20）起 ENDING_3/4/5、CHAR_GIFT、END10_55、ENDING_N 全接真身；
-  // RACE_AGE_GENERATE 随 #385 合并接上真身（rebase 后清出名单），
-  // 只剩 CHAR_GIFT 的一处体外依赖（见 event-ending.js 的名单注释）
-  assert.deepEqual(ENDING_STUBS, ['SHOW_CHARA_INFO']);
+  // RACE_AGE_GENERATE 随 #385 合并接上真身（rebase 后清出名单）；
+  // SHOW_CHARA_INFO 随 #390 接上真身（本文件的两处贡品详情页），名单清空
+  assert.deepEqual(ENDING_STUBS, []);
   // ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js）、
   // SET_SUIT_SELFCALL/SET_NICK_SELFCALL/CSVCSTR 自 #383 起为真身
   // （ere/chara/chara-self-call.js）、CHAR_BODY_GENERATE_WAPPED 自 #385 起

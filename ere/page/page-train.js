@@ -10,7 +10,7 @@
  *     重绘的原作习语（@SHOW_STATUS 尾部记锚点、清回锚点重画），ere 侧由
  *     ScreenBlock（page/components/screen-block.js，#73）承载
  *
- * 骨架范围：@SHOW_STATUS 的子调用中 SHOW_EQUIP_1/2 与 PRINT_CLOTHTYPE 存根
+ * 骨架范围：@SHOW_STATUS 的子调用里 SHOW_EQUIP_1/2（#390 落地）与 PRINT_CLOTHTYPE（#215 落地）都已换真身
  * 化（J5 #215 服装与 TEQUIP 建模）；LIFE_BAR/VITAL_BAR（#212，组件在
  * ere/page/components/chara-bars.js）与射精/母乳/触手槽条段（:144-252，
  * #212 就地实现）已写真身。其余直线代码（日期行、目标行、绝顶计数、
@@ -33,7 +33,10 @@ const {
   vital_bar,
 } = require('#/page/components/chara-bars');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
+const {
+  show_equip_1,
+  show_equip_2,
+} = require('#/page/components/chara-equip-status');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 // PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/page/page-clothtype.js 的
 // 串构造：SHOW_STATUS 的【…】包裹段消费）
@@ -49,7 +52,7 @@ const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
  * PRINT_CLOTHTYPE（#215 落地，ere/page/page-clothtype.js）与
  * 射精/母乳/触手槽条段（:144-252，就地实现）不在名单里。
  */
-const STUBBED_CALLS = ['SHOW_EQUIP_2', 'SHOW_EQUIP_1'];
+const STUBBED_CALLS = [];
 
 // 参数条的引擎原生渲染参数（#74 起手绘 10 格字符条退役）：
 //   - 条内文字（inContent）＝参数名；条后文字（outContent）＝右对齐宽 5 的
@@ -215,31 +218,9 @@ async function draw_status_screen(target) {
   header.push({ content: '   ' }); // :82 PRINT（行尾三空格）
   era.print(header);
 
-  // :84 CALL SHOW_EQUIP_2 —— 调教装备显示（CHARA_INFO_SHOW ver1.1.2.ERB
-  // :1564-1596，粉色一行的逐位追加）。#224（J14）点亮 53/54/57/58/59，
-  // #230（J20）点亮 55；其余装备位尚无所属族落地时才保留运行时占位。
-  // :1566-1577 / :1587-1588
-  const special_equip = [];
-  if (era.get(`tequip:${target}:53`)) {
-    // :1566-1577 的摄影段：LOCAL = 10 + 4 * CFLAG:499 - CFLAG:491 + 1
-    const remaining =
-      10 +
-      4 * (era.get(`cflag:${target}:499`) || 0) -
-      (era.get(`cflag:${target}:491`) || 0) +
-      1;
-    special_equip.push(`[摄影中(剩${remaining}次)]`);
-  }
-  if (era.get(`tequip:${target}:54`)) special_equip.push('[野外PLAY中]');
-  if (era.get(`tequip:${target}:57`))
-    special_equip.push('[羞耻（大镜子）PLAY中]');
-  if (era.get(`tequip:${target}:58`)) special_equip.push('[浴室PLAY中]');
-  if (era.get(`tequip:${target}:59`)) special_equip.push('[新妻PLAY中]');
-  if (era.get(`tequip:${target}:55`)) special_equip.push('[死斗场决斗中]');
-  if (special_equip.length > 0) {
-    era.print([{ content: special_equip.join(''), color: '#FF1493' }]);
-  } else {
-    stub_line('SHOW_EQUIP_2', '装备显示', '随调教指令族票');
-  }
+  // :84 CALL SHOW_EQUIP_2 —— 调教装备显示（#390 真身：九个位一次铺完，
+  // 原先逐族点亮的临时实现随之作废；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1564）
+  show_equip_2(target);
   // :85-86 CALL LIFE_BAR / VITAL_BAR（#212 真身，ere/page/components/
   // chara-bars.js；源住在 CHARA_INFO_SHOW ver1.1.2.ERB:1129/:1175）
   life_bar(target);
@@ -402,8 +383,8 @@ async function draw_status_screen(target) {
     );
   }
 
-  // :253 CALL SHOW_EQUIP_1 —— 存根
-  stub_line('SHOW_EQUIP_1', '装备一览', '随装备票');
+  // :253 CALL SHOW_EQUIP_1 —— 使用中道具一览（#390 真身；源 :1598）
+  show_equip_1(target);
 
   // :255-256 CALL SET_CLEAR_POINT：TFLAG:999 = LINECOUNT（设置清除点；这张票
   // 移植——引擎 LINECOUNT 的等价物 getLineCount 直通）

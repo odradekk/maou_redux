@@ -29,7 +29,7 @@ export const SAMPLE_LOG_REFS = {
       ],
     },
     {
-      js: 'ere/page/page-info-exp.js',
+      js: 'ere/utils/display-width.js',
       refs: [
         {
           ref: '124',

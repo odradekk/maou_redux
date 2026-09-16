@@ -1,0 +1,384 @@
+// 变异条目表切片：角色信息显示链（#390，CHARA_INFO_SHOW ＋ CHARA_INFO_SHOW_TALENT）。
+// 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
+// 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
+/** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
+export const COUNT = 40;
+
+const SHOW = 'ere/page/components/chara-info-title.js';
+const TALENTS = 'ere/page/components/chara-talents.js';
+const ABLMARK = 'ere/page/components/chara-info-abl-mark.js';
+const APPEAR = 'ere/page/components/chara-appearance.js';
+const STAIN = 'ere/page/components/stain-info.js';
+const EQUIP = 'ere/page/components/chara-equip-status.js';
+const DATA = 'ere/page/components/chara-data.js';
+const COND = 'ere/page/page-chara-talent-condition.js';
+const MAIN = 'ere/page/page-chara-info-show.js';
+const BODY = 'ere/chara/chara-body.js';
+const WIDTH = 'ere/utils/display-width.js';
+const TRAIN = 'ere/page/page-train.js';
+const USERCOM = 'ere/page/page-usercom.js';
+
+/**
+ * 每条 = 一次「改坏一处、本票测试必须红」。
+ * @param {number} id 编号
+ * @param {string} desc 说明
+ * @param {string} file 靶文件
+ * @param {string} find 命中串（靶文件里恰一次）
+ * @param {string} replace 变异后的串
+ * @param {string} must_mention 失败输出里必须出现的片段
+ * @param {string[]} [tests] 守它的测试文件（缺省本票的 chara-info-show；
+ *   cup_size 的一组住在 test/chara-body.test.js）
+ */
+const make = (id, desc, file, find, replace, must_mention, tests) => ({
+  desc: `M${id} ${desc}`,
+  file,
+  find,
+  replace,
+  tests: tests ?? ['chara-info-show'],
+  must_mention,
+});
+
+export default [
+  make(
+    8701,
+    'CUP_SIZE：CAL_VAR ≤ 1 的档位由 1 放宽到 2',
+    BODY,
+    `  if (cal_var <= 1) return '-'; // :791-792`,
+    `  if (cal_var <= 2) return '-'; // :791-792`,
+    'CUP_SIZE',
+    ['chara-body'],
+  ),
+  make(
+    8702,
+    'CUP_SIZE：除数 25 改成 20',
+    BODY,
+    `  const cal_var = int((bust10 - under_bust(cid, height10)) / 25); // :790`,
+    `  const cal_var = int((bust10 - under_bust(cid, height10)) / 20); // :790`,
+    'CUP_SIZE',
+    ['chara-body'],
+  ),
+  make(
+    8703,
+    'CUP_SIZE：字母表少一格（AAA 被吃掉）',
+    BODY,
+    `const CUP_LETTERS = [
+  'AAA',
+  'AA',`,
+    `const CUP_LETTERS = [
+  'AA',
+  'A',`,
+    'CUP_SIZE',
+    ['chara-body'],
+  ),
+  make(
+    8704,
+    'SHOW_INFO_TITLE：编号列宽 3 改成 4',
+    SHOW,
+    'const title = [{ content: `NO.${pad_display(String(cid), 3)} ` }]; // :333',
+    'const title = [{ content: `NO.${pad_display(String(cid), 4)} ` }]; // :333',
+    'SHOW_INFO_TITLE',
+  ),
+  make(
+    8705,
+    'SHOW_INFO_TITLE：名字列宽 12 改成 10',
+    SHOW,
+    '  title.push({ content: pad_display(name, 12) }); // :336',
+    '  title.push({ content: pad_display(name, 10) }); // :336',
+    'SHOW_INFO_TITLE',
+  ),
+  make(
+    8706,
+    'SHOW_INFO_TITLE：爱慕与淫乱的优先级对调',
+    SHOW,
+    `  if (talent(cid, TALENT_AIBA) !== 0) {
+    title.push({ content: '　<爱慕>　', color: ENAMORED_COLOR });
+  } else if (talent(cid, TALENT_INRAN) !== 0) {`,
+    `  if (talent(cid, TALENT_INRAN) !== 0) {
+    title.push({ content: '　<淫乱>　', color: ENAMORED_COLOR });
+  } else if (talent(cid, TALENT_AIBA) !== 0) {`,
+    'SHOW_INFO_TITLE',
+  ),
+  make(
+    8707,
+    'SHOW_INFO_TITLE：年龄的右对齐宽度 48 改成 36',
+    SHOW,
+    '  title.push({ content: pad_left(age_str, 48) });',
+    '  title.push({ content: pad_left(age_str, 36) });',
+    'SHOW_INFO_TITLE',
+  ),
+  make(
+    8708,
+    'SHOW_INFO_TITLE：年龄的开启位由 12 改成 13',
+    SHOW,
+    'const BIT_AGE = 12; // 显示角色的年龄',
+    'const BIT_AGE = 13; // 显示角色的年龄',
+    'SHOW_INFO_TITLE',
+  ),
+  make(
+    8709,
+    'SHOW_INFO_TITLE：魔王之影的寿命倒计时整段删掉',
+    SHOW,
+    `    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {
+      // :364 寿命倒计时（{CFLAG:820, 3} 同样右对齐宽 3）
+      age_str += \` [寿命还有\${pad_left(String(era.get(\`cflag:\${cid}:820\`) || 0), 3)} 天]\`;
+    }`,
+    `    if (talent(cid, TALENT_MAOU_SHADOW) !== 0) {
+      // :364 寿命倒计时（变异：整段删掉）
+    }`,
+    'SHOW_INFO_TITLE',
+  ),
+  make(
+    8710,
+    'SHOW_BLOCK：三围行的守卫位由 15 改成 12',
+    SHOW,
+    '  const show_size = getbit(BIT_SIZE) && is_not_master;',
+    '  const show_size = getbit(BIT_AGE) && is_not_master;',
+    'SHOW_BLOCK',
+  ),
+  make(
+    8711,
+    'SHOW_BLOCK：罩杯括号的补位宽度 7 改成 8',
+    SHOW,
+    '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 7) }); // :379/:382',
+    '      bust.push({ content: pad_display(`(${cup_size(cid)})`, 8) }); // :379/:382',
+    'SHOW_BLOCK',
+  ),
+  make(
+    8712,
+    'SHOW_BLOCK：受注任务守卫的 CFLAG:534 判据由 1 改成 0',
+    SHOW,
+    '    (era.get(`cflag:${cid}:534`) || 0) === 1 &&',
+    '    (era.get(`cflag:${cid}:534`) || 0) === 0 &&',
+    'SHOW_BLOCK',
+  ),
+  make(
+    8713,
+    'SHOW_TALENT：每行的素质数由 8 改成 6',
+    TALENTS,
+    'const PER_ROW = 8;',
+    'const PER_ROW = 6;',
+    'SHOW_TALENT',
+  ),
+  make(
+    8714,
+    'SHOW_TALENT：续行缩进由 4 个全角空格改成 2 个',
+    TALENTS,
+    "const ROW_INDENT = '　　　　';",
+    "const ROW_INDENT = '　　';",
+    'SHOW_TALENT',
+  ),
+  make(
+    8715,
+    'SHOW_TALENT：简单臂的起始计数 U 由 6 改成 0',
+    TALENTS,
+    'const PLAIN_START_U = 6;',
+    'const PLAIN_START_U = 0;',
+    '简单臂',
+  ),
+  make(
+    8716,
+    'SHOW_TALENT：简单臂的跳过区间上界由 325 改成 324（325 被误跳）',
+    TALENTS,
+    'const PLAIN_SKIP_TO = 325;',
+    'const PLAIN_SKIP_TO = 324;',
+    '简单臂跳过',
+  ),
+  make(
+    8717,
+    'SHOW_TALENT：自慰狂那一档的分组色改错',
+    TALENTS,
+    "  { ids: [101, 102, 230, 74], color: 'DarkSeaGreen' },",
+    "  { ids: [101, 102, 230, 74], color: 'LightSalmon' },",
+    '分组色',
+  ),
+  make(
+    8718,
+    'SHOW_TALENT：EX 性格档的色串改错',
+    TALENTS,
+    "const EX_COLOR_SELF = '#ffd700';",
+    "const EX_COLOR_SELF = '#ffcc00';",
+    'EX 素质的第二组配色',
+  ),
+  make(
+    8719,
+    'SHOW_TALENT：328 的守卫由原作笔误的 327 改成 328（「修正」了原作缺陷）',
+    TALENTS,
+    '      { id: 328, guard: (t) => t(327) !== 0 }, // :606-607 原作笔误，1:1 保留',
+    '      { id: 328, guard: (t) => t(328) !== 0 }, // :606-607 原作笔误，1:1 保留',
+    '原作笔误',
+  ),
+  make(
+    8720,
+    'SHOW_TALENT：男体的淫核改名判据由 230 改成 231',
+    TALENTS,
+    "    else if (id === 230) label = '绝伦';",
+    "    else if (id === 231) label = '绝伦';",
+    '男体',
+  ),
+  make(
+    8721,
+    'SHOW_INFO_ABL：扫描上界由 41 改成 40（40 号能力被漏掉）',
+    ABLMARK,
+    '  for (let abl = 0; abl < 41; abl += 1) {',
+    '  for (let abl = 0; abl < 40; abl += 1) {',
+    'SHOW_INFO_ABL',
+  ),
+  make(
+    8722,
+    'SHOW_INFO_ABL：空洞跳过的第一段由 5-9 改成 6-9',
+    ABLMARK,
+    '      (abl >= 5 && abl <= 9) ||',
+    '      (abl >= 6 && abl <= 9) ||',
+    '空洞',
+  ),
+  make(
+    8723,
+    'SHOW_INFO_ABL：能力名列宽由 8 改成 6',
+    ABLMARK,
+    '    row += `  ${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;',
+    '    row += `  ${pad_display(name, 6)} - LV${pad_display(String(level), 2)}`;',
+    'SHOW_INFO_ABL',
+  ),
+  make(
+    8724,
+    'SHOW_INFO_ABL：可提升标记位由 2 空格改成不加',
+    ABLMARK,
+    "    row += '  ';",
+    "    row += '';",
+    'SHOW_INFO_ABL',
+  ),
+  make(
+    8725,
+    'BAR_TEXT：填充字符由 * 改成 #',
+    ABLMARK,
+    "  return `[${'*'.repeat(filled)}${'.'.repeat(len - filled)}]`;",
+    "  return `[${'#'.repeat(filled)}${'.'.repeat(len - filled)}]`;",
+    'BAR_TEXT',
+  ),
+  make(
+    8726,
+    'SHOW_INFO_MARK：刻印条的满级由 3 改成 4',
+    ABLMARK,
+    'const MARK_BAR_MAX = 3;',
+    'const MARK_BAR_MAX = 4;',
+    'SHOW_INFO_MARK',
+  ),
+  make(
+    8727,
+    'SHOW_APPEARACE：阴毛档的上沿 20 改成 30',
+    APPEAR,
+    "  { max: 20, text: '的阴部覆盖着刚刚长出的阴毛。' },",
+    "  { max: 30, text: '的阴部覆盖着刚刚长出的阴毛。' },",
+    '阴毛七档',
+  ),
+  make(
+    8728,
+    'SHOW_APPEARACE：上身的位由 6 改成 4（胸部刺青的守卫判错）',
+    APPEAR,
+    'const BIT_TOPS_OFF = 6; // 上半身赤裸（位 1 + 位 2）',
+    'const BIT_TOPS_OFF = 4; // 上半身赤裸（位 1 + 位 2）',
+    'SHOW_APPEARACE',
+  ),
+  make(
+    8729,
+    'SHOW_APPEARACE：穿环的位序对调（鼻子与嘴唇）',
+    APPEAR,
+    `  { bit: 64, name: '鼻子' }, // :1310-1318
+  { bit: 32, name: '嘴唇' }, // :1319-1327`,
+    `  { bit: 32, name: '鼻子' }, // :1310-1318
+  { bit: 64, name: '嘴唇' }, // :1319-1327`,
+    '位序',
+  ),
+  make(
+    8730,
+    'STAIN_INFO：污渍两个标记对调（乳汁与尿液）',
+    STAIN,
+    `  { bit: 16, text: '<乳汁>' },
+  { bit: 32, text: '<尿液>' },`,
+    `  { bit: 16, text: '<尿液>' },
+  { bit: 32, text: '<乳汁>' },`,
+    '污渍位逐条',
+  ),
+  make(
+    8731,
+    'STAIN_INFO：男人跳过乳房位的判据被删',
+    STAIN,
+    '    if (count === PART_BREAST && t(TALENT_MAN) !== 0) continue;',
+    '    if (false && count === PART_BREAST && t(TALENT_MAN) !== 0) continue;',
+    '部位名六档',
+  ),
+  make(
+    8732,
+    'SHOW_EQUIP_2：摄影剩余次数的公式常数改错（10 改成 20）',
+    EQUIP,
+    `    const remaining =
+      10 +`,
+    `    const remaining =
+      20 +`,
+    'SHOW_EQUIP_2',
+  ),
+  make(
+    8733,
+    'SHOW_EQUIP_1：触手形态的优先判据由 90 改成 89',
+    EQUIP,
+    '    if (t(bit) && t(90)) push(` ${tentacle}`);',
+    '    if (t(bit) && t(89)) push(` ${tentacle}`);',
+    '触手形态',
+  ),
+  make(
+    8734,
+    'SHOW_DATA：善恶值第一档阈值 150 改成 100',
+    DATA,
+    "  { over: 150, text: '纯洁' },",
+    "  { over: 100, text: '纯洁' },",
+    '善恶值七档',
+  ),
+  make(
+    8735,
+    'STC_PRINTC：缺省列宽 15 改成 16',
+    COND,
+    'const STC_PRINT_WIDTH = 15;',
+    'const STC_PRINT_WIDTH = 16;',
+    'STC_PRINTC',
+  ),
+  make(
+    8736,
+    'STC_SEIIN_CHECK：基准值 50 改成 60',
+    COND,
+    'const SEIIN_BASE = 50;',
+    'const SEIIN_BASE = 60;',
+    'STC_SEIIN_CHECK',
+  ),
+  make(
+    8737,
+    'HEXtoDEC：三段合成由原作的 ×15 改成 ×16（「修正」了源里的进制笔误）',
+    MAIN,
+    '  dec[0] = digits[0] * 15 + digits[1];',
+    '  dec[0] = digits[0] * 16 + digits[1];',
+    'HEXtoDEC',
+  ),
+  make(
+    8738,
+    'ColorJudgmentWorB：白/黑字的判据由 <= 128 改成 <= 100',
+    MAIN,
+    '  const value = average <= 128 ? 255 : 0; // :1827-1831',
+    '  const value = average <= 100 ? 255 : 0; // :1827-1831',
+    'ColorJudgmentWorB',
+  ),
+  make(
+    8739,
+    'SHOW_CHARA_INFO：献祭满足的判据由 30 改成 20',
+    MAIN,
+    'const SACRIFICE_FULL = 30;',
+    'const SACRIFICE_FULL = 20;',
+    '献祭',
+  ),
+  make(
+    8740,
+    'SHOW_CHARA_INFO：页码 3 的第三个素质名由 75 换成 76（编号错位）',
+    MAIN,
+    "era.get('talentname:75')",
+    "era.get('talentname:76')",
+    '页码 3 的四个素质名',
+  ),
+];

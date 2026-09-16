@@ -381,9 +381,9 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
   const golden_dir = path.join(root, 'golden');
   // 探针样本名挑 SAMPLE_LOG_REFS 里**没有既有登记**的一个（#161 样本入库
   // 后 golden/ 全是真实样本：伪造内容会覆盖副本里的真文件，撞上其它文件
-  // 对该样本的已登记引用——mainmenu-natural/saveload-natural 已被
-  // replay-b.js / page-save-load.js 引用，探针改用 daycycle-max）
-  const probe_sample = 'daycycle-max';
+  // 对该样本的已登记引用）。#390 起 daycycle-max / train-upgrade 也被登记了
+  // （角色信息显示链的黄金样本锚），探针改用仍无登记的 daycycle-natural。
+  const probe_sample = 'daycycle-natural';
   const sample_path = path.join(golden_dir, `${probe_sample}.log`);
   const probe_path = path.join(root, 'ere', '__sample_ref_probe__.js');
   // #290：登记走新分片，不改既有文件——加载器按目录扫描即入账。

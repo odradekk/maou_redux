@@ -67,14 +67,14 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * （ere/chara/chara-first-exp.js），CHARA_FIRST_EXP 移出名单。
  *
  * #384 变更：@RAND_CHARA_MAKE 落真身，它依赖的 FUNC_CHARA_AND_HAIR 八函数
- * （源 キャラ関数/FUNC_CHARA_AND_HAIR.ERB，属 N8/#392）与 SHOW_CHARA_INFO 成为
- * 本文件的存根；同时 **CMI_CONFLICT_CHECK 换真身**（cm_skill 尾段改调
- * ere/chara/chara-make-inherit.js 的实现），移出名单。本文件是那八个函数
- * 全库唯一的调用方（见 rand_chara_make 的文件注释）。
+ * （源 キャラ関数/FUNC_CHARA_AND_HAIR.ERB，属 N8/#392）成为本文件的存根；
+ * 同时 **CMI_CONFLICT_CHECK 换真身**（cm_skill 尾段改调
+ * ere/chara/chara-make-inherit.js 的实现）、**SHOW_CHARA_INFO 随 #390 换真身**
+ * （rand_chara_make 的形象确认段），两者移出名单。本文件是那八个函数全库
+ * 唯一的调用方（见 rand_chara_make 的文件注释）。
  */
 const STUBBED_CALLS = [
   'ST_UP',
-  'SHOW_CHARA_INFO',
   // @RAND_CHARA_MAKE 的形象确认段（:66-125）依赖的八处 FUNC_CHARA_AND_HAIR
   'SET_CHARASTERISTIC',
   'SET_HAIRCOLOR',
@@ -1778,7 +1778,15 @@ async function rand_chara_make(rand, char_make_inport) {
       // 种族设定 ARG:1 缺省 0；XINGGE 来自 :90 的表格查询（见上）
       await chara_make(newchara, xingge, 0, rand_n, newchara);
 
-      await stub_line_wait('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票');
+      // :150 CALL SHOW_CHARA_INFO（#390 真身）。**惰性 require**：本文件顶层
+      // 引入会把 page-chara-info-show 及其整条链（含 dungeon-quest ↔
+      // dungeon-battle 的既有环）提前拉起来，dungeon-quest 会变成半成品；
+      // 只有这一条形象确认支路用得到，就在用到处取。
+      await require('#/page/page-chara-info-show').show_chara_info(
+        newchara,
+        -1,
+        rand_n,
+      );
 
       // :151-157 确认提示（赤森奴隶恒 0 → 恒走 ELSE 侧）
       era.print('解开你封印的，真的是这样的对象吗…？');

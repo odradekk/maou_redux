@@ -208,6 +208,21 @@ class CharaFacade {
     era.set(`cflag:${this.cid}:700`, v);
   }
 
+  /**
+   * 寿命（cflag:cid:820 ↔ CFLAG:820）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行499 CFLAG:820 = 影の寿命
+   * @returns {number}
+   */
+  get 寿命() {
+    return era.get(`cflag:${this.cid}:820`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 寿命(v) {
+    era.set(`cflag:${this.cid}:820`, v);
+  }
+
   // —— cstr ——
   /**
    * 加入时名字（cstr:cid:1 ↔ CSTR:1）

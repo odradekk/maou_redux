@@ -590,7 +590,6 @@ test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积
   // （ere/chara/chara-name-edit.js），SHOW_BUTTON_CHILD_CARE / CHILD_CARE_CHARA
   // 自 #401 起是真身（ere/event/event-pregnancy.js），均不再是本文件的存根
   for (const name of [
-    'SHOW_CHARA_INFO',
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
     'SHOW_BUTTON_MARRIAGE',
@@ -608,7 +607,12 @@ test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积
   ]) {
     assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
   }
-  for (const name of ['SHOW_BUTTON_CHILD_CARE', 'CHILD_CARE_CHARA']) {
+  // SHOW_CHARA_INFO 自 #390 起是真身（ere/page/page-chara-info-show.js）
+  for (const name of [
+    'SHOW_BUTTON_CHILD_CARE',
+    'CHILD_CARE_CHARA',
+    'SHOW_CHARA_INFO',
+  ]) {
     assert.ok(
       !STUBBED_CALLS.includes(name),
       `${name} 已有真身，不应再留在本文件的存根名单里`,

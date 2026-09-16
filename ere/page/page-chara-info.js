@@ -1,7 +1,7 @@
 /**
  * @file 角色信息主屏：角色名册（四种排序视图）+ 个别角色详情页的骨架与
  * 导航（列表内容渲染真身；SHOW_CHARA_INFO 详情正文属 CHARA_INFO_SHOW
- * ver1.1.2.ERB，另票范围，本文件只存根占位）。
+ * ver1.1.2.ERB，已随 #390 落地，本文件只调用）。
  *
  * 源: target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB 全 9 函数——
  *     @CHARA_INFO（:4-113，主循环）/@SHOW_CHARA_INFO_LIST（:114-217）/
@@ -82,6 +82,7 @@ const {
 } = require('#/event/event-pregnancy');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
+const { show_chara_info } = require('#/page/page-chara-info-show');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
 const NUM_PAGE = 24;
@@ -92,7 +93,6 @@ const NUM_PAGE = 24;
  * show_button_child_care / child_care_chara），两条从名单移除。
  */
 const STUBBED_CALLS = [
-  'SHOW_CHARA_INFO',
   'SHOW_BUTTON_JOB_CHANGE',
   'SHOW_BUTTON_TEMPTATION',
   'SHOW_BUTTON_MARRIAGE',
@@ -614,11 +614,8 @@ async function chara_info_individual(arg, chara_sort) {
   for (;;) {
     const l_indx = current !== 0 ? chara_sort.indexOf(current) : -1;
 
-    await stub_line(
-      'SHOW_CHARA_INFO',
-      '角色详情正文',
-      'CHARA_INFO_SHOW ver1.1.2.ERB 另票',
-    );
+    // #390 起正文换真身（CASE 0-4 五页；原作的 TARGET 换手由显式 cid 承载）
+    await show_chara_info(current, sub_page);
 
     const state = era.get(`cflag:${current}:1`) || 0;
     const hp = era.get(`base:${current}:0`) || 0;

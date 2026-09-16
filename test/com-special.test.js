@@ -683,10 +683,10 @@ test('@SHOW_STATUS：COM53 启动并推进后显示剩余录像次数和特殊�
   const equip = fixture.lines.find(
     (line) =>
       line.type === 'text' &&
-      line.text.includes('[摄影中(剩10次)][野外PLAY中]'),
+      line.text.includes('[摄影中(剩10次)] [野外PLAY中]'),
   );
   assert.ok(equip, '状态页必须在同一装备行显示本族持续状态');
-  assert.equal(equip.content[0].color, '#FF1493');
+  assert.equal(equip.content[0].color, '#ff1493');
   assert.ok(equip.text.includes('[羞耻（大镜子）PLAY中]'));
   assert.ok(equip.text.includes('[浴室PLAY中]'));
   assert.ok(equip.text.includes('[新妻PLAY中]'));
