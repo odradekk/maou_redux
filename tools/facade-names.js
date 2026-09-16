@@ -109,6 +109,9 @@ const cflag = {
     '内裤穿着期间',
     src(SRC_FLAG, 'CFLAG:48 現在のパンツを穿き続けている期間'),
   ),
+  // 读写点跨两个域：#397 的 ere/page/page-tailor.js:923 写 1，#400 的
+  // EVENT_NEXTDAY.ERB:955/:1078 写 0、:933 读——后者在 event 域侧，属跨域写，
+  // 一律经 chara(cid).stronghold 门面（#71）
   49: named_tail(
     '贞操带钥匙已丢弃',
     src(SRC_FLAG, 'CFLAG:49 貞操帯のカギを捨てた'),

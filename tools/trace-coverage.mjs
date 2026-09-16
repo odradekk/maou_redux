@@ -124,7 +124,10 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 60; // 合并态实测（#401 并上含 #389/#397 的
+export const PENDING_BASELINE = 60; // 合并态实测（并上含 #400 的 master）：
+// 62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60。#400 不动这个数
+// （EVENT_NEXTDAY.ERB 原本就是部分移植），所以两次合并只扣本票这两份。
+// 各票自己的说明留在下面。
 // master）：62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60，与重测
 // 一致。各票自己的说明留在下面。
 // 两票各自扣的文件不相交，64（master，#394 后）− 2（本票 EVETRAIN.ERB 与
@@ -143,6 +146,10 @@ export const PENDING_BASELINE = 60; // 合并态实测（#401 并上含 #389/#39
 // `キャラ関数/CHARA_NAME_EDIT.ERB`（三个函数：SHOW_BUTTON_NAME_EDIT /
 // CHECK_ABLE_TO_NAME_EDIT / CHARA_INFO_NAME_EDIT）整份摆进 ere/，该文件从
 // 「待移植」转「已移植」：-1。
+// 清单里还挂着 15 行未了结存根），本就不在待移植的分子里——本票把 26 个占位点
+// 落成真身、清空这些登记行之后，实测待移植仍是 67（已移植 227、部分移植 34）。
+// 工单正文写的「显式抬低 PENDING_BASELINE（现 79）」是排期时的旧值与旧口径。
+// 合并态实测（#397 并上含 #394 的 master）：
 // 两票各自扣的文件不相交，64（master，#394 后）− 2（本票两个待移植文件）= 62，
 // 与重测值一致。两票各自的说明留在下面。
 // SHOP/SHOP_2.ERB 两个文件落地真身（ere/page/page-tailor.js 十二函数、

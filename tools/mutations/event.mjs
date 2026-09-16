@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 182; // #404 起 +75（首轮 40 条 M8196-M8238 + 边界返工 29 条 M8239-M8267 + rebase 返工 6 条 M8268-M8273）
+export const COUNT = 330; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）
 
 export default [
   {
@@ -1714,5 +1714,1318 @@ export default [
         era.get(\`cflag:\${a}:451\`) || 0,`,
     tests: ['event-ending'],
     must_mention: '种族年龄支',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：素质变化三事件 ——
+  {
+    desc: 'M8441 FUTA_F 接受支：不清【肉芽诅咒】（TALENT:326 该清而不清）',
+    file: 'ere/event/event-nextday.js',
+    find: '      chara(cid).stronghold.肉芽诅咒 = 0;\n      chara(cid).chara.扶她 = 1;',
+    replace: '      chara(cid).chara.扶她 = 1;',
+    tests: ['event-nextday'],
+    must_mention: '【肉芽诅咒】清零',
+  },
+  {
+    desc: 'M8442 FUTA_F 接受支：不给【扶她】（TALENT:121 该给而不给）',
+    file: 'ere/event/event-nextday.js',
+    find: '      chara(cid).chara.扶她 = 1;\n      chara(cid).train.童贞 = 1;',
+    replace: '      chara(cid).train.童贞 = 1;',
+    tests: ['event-nextday'],
+    must_mention: '获得【扶她】',
+  },
+  {
+    desc: 'M8443 FUTA_F 拒绝支：不清【肉芽诅咒】（选 [1] 后 326 该清而不清）',
+    file: 'ere/event/event-nextday.js',
+    find: '      era.print(`${name}失去了【${talent_name(326)}】。`);\n      chara(cid).stronghold.肉芽诅咒 = 0;',
+    replace: '      era.print(`${name}失去了【${talent_name(326)}】。`);',
+    tests: ['event-nextday'],
+    must_mention: '【肉芽诅咒】清零',
+  },
+  {
+    desc: 'M8444 FUTA_F 非法输入：不再回到 INPUT 循环（首轮即结束）',
+    file: 'ere/event/event-nextday.js',
+    find: `    // :382-383 ELSE → GOTO INPUT_LOOP（重印询问行，不消耗其它状态）
+  }
+  await era.waitAnyKey(); // :386`,
+    replace: `    // 变异：非法输入直接退出，不重问
+    break;
+  }
+  await era.waitAnyKey(); // :386`,
+    tests: ['event-nextday'],
+    must_mention: '回到 INPUT 循环重问',
+  },
+  {
+    desc: 'M8445 MORASI：【漏尿癖】写成 0（该给 1）',
+    file: 'ere/event/event-nextday.js',
+    find: `  era.set(\`talent:\${cid}:57\`, 1); // :393`,
+    replace: `  era.set(\`talent:\${cid}:57\`, 0); // :393`,
+    tests: ['event-nextday'],
+    must_mention: '尿床',
+  },
+  {
+    desc: 'M8446 YOUJI：【幼儿退行】写成 0（该给 1）',
+    file: 'ere/event/event-nextday.js',
+    find: `  era.set(\`talent:\${cid}:131\`, 1); // :403`,
+    replace: `  era.set(\`talent:\${cid}:131\`, 0); // :403`,
+    tests: ['event-nextday'],
+    must_mention: '获得【幼儿退行】',
+  },
+  {
+    desc: 'M8447 YOUJI 清理表：漏掉【调合知识】（55）一项',
+    file: 'ere/event/event-nextday.js',
+    find: `const YOUJI_CLEARED_TALENTS = [
+  20, 21, 22, 24, 26, 27, 30, 32, 34, 35, 37, 55, 93,
+];`,
+    replace: `const YOUJI_CLEARED_TALENTS = [
+  20, 21, 22, 24, 26, 27, 30, 32, 34, 35, 37, 93,
+];`,
+    tests: ['event-nextday'],
+    must_mention: '素质 55 应被清零',
+  },
+  {
+    desc: 'M8448 YOUJI 清理表：把 13 项之外的【接受快感】（70）也清了（表多一项）',
+    file: 'ere/event/event-nextday.js',
+    find: `const YOUJI_CLEARED_TALENTS = [
+  20, 21, 22, 24, 26, 27, 30, 32, 34, 35, 37, 55, 93,
+];`,
+    replace: `const YOUJI_CLEARED_TALENTS = [
+  20, 21, 22, 24, 26, 27, 30, 32, 34, 35, 37, 55, 70, 93,
+];`,
+    tests: ['event-nextday'],
+    must_mention: '表外素质不得被清',
+  },
+  {
+    desc: 'M8449 YOUJI：【漏尿癖】的守卫取反（已持有也重写并播报）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (!(era.get(\`talent:\${cid}:57\`) || 0)) {
+    era.set(\`talent:\${cid}:57\`, 1); // :458`,
+    replace: `  if (era.get(\`talent:\${cid}:57\`) || 0) {
+    era.set(\`talent:\${cid}:57\`, 1); // :458`,
+    tests: ['event-nextday'],
+    must_mention: '已持有【漏尿癖】时不重复给也不播报',
+  },
+  {
+    desc: 'M8450 YOUJI：【反抗刻印】清零写成 1（MARK:3 = 0 的靶）',
+    file: 'ere/event/event-nextday.js',
+    find: '  chara(cid).system.反抗刻印 = 0; // :462',
+    replace: '  chara(cid).system.反抗刻印 = 1; // :462',
+    tests: ['event-nextday'],
+    must_mention: '【反抗刻印】清零',
+  },
+  {
+    desc: 'M8451 NEXTDAY 接线：放尿经验门槛 15 抬到 16（幼稚支不再触发）',
+    file: 'ere/event/event-nextday.js',
+    find: `        era.get(\`talent:\${cid}:132\`) &&
+        (era.get(\`exp:\${cid}:31\`) || 0) >= 15`,
+    replace: `        era.get(\`talent:\${cid}:132\`) &&
+        (era.get(\`exp:\${cid}:31\`) || 0) >= 16`,
+    tests: ['event-nextday'],
+    must_mention: '素质变化三事件接线',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：魔族化 ——
+  {
+    desc: 'M8452 MAZOKU：【魂缚】的早退守卫去掉（被缚者也改造）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:274\`)) {
+    return; // :471-472 SIF TALENT:魂缚 / RETURN
+  }`,
+    replace: `  // 变异：去掉魂缚守卫`,
+    tests: ['event-nextday'],
+    must_mention: '持有【魂缚】时不改造也不播报',
+  },
+  {
+    desc: 'M8453 MAZOKU：原种族写成了改造后的种族（321 该取改造前的 314）',
+    file: 'ere/event/event-nextday.js',
+    find: '  chara(cid).chara.原种族 = era.get(`talent:${cid}:314`) || 0; // :474',
+    replace: '  chara(cid).chara.原种族 = 9; // :474',
+    tests: ['event-nextday'],
+    must_mention: '原种族 = 改造前的种族',
+  },
+  {
+    desc: 'M8454 MAZOKU：欲望门槛 3 抬到 4（3 档误落小恶魔支）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if ((era.get(\`abl:\${cid}:11\`) || 0) >= 3) {`,
+    replace: `  if ((era.get(\`abl:\${cid}:11\`) || 0) >= 4) {`,
+    tests: ['event-nextday'],
+    must_mention: '的现种族',
+  },
+  {
+    desc: 'M8455 MAZOKU：【淫乱】的选择取反（魅魔 ↔ 小恶魔）',
+    file: 'ere/event/event-nextday.js',
+    find: `    const race = era.get(\`talent:\${cid}:76\`) ? 152 : 132;`,
+    replace: `    const race = era.get(\`talent:\${cid}:76\`) ? 132 : 152;`,
+    tests: ['event-nextday'],
+    must_mention: '的现种族',
+  },
+  {
+    desc: 'M8456 MAZOKU：低欲望支的现种族 140 改成 141（表外种族）',
+    file: 'ere/event/event-nextday.js',
+    find: '    chara(cid).chara.现种族 = 140; // :488 インプ',
+    replace: '    chara(cid).chara.现种族 = 141; // :488 インプ',
+    tests: ['event-nextday'],
+    must_mention: '的现种族',
+  },
+  {
+    desc: 'M8457 MAZOKU：高欲望支的【诱惑】（481）写成了【混乱】（482）',
+    file: 'ere/event/event-nextday.js',
+    find: '    chara(cid).chara.诱惑 = 1; // :479',
+    replace: '    era.set(`talent:${cid}:482`, 1); // :479',
+    tests: ['event-nextday'],
+    must_mention: '诱惑',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：维持费 / 偶尔归来 ——
+  {
+    desc: 'M8458 RUNNING_COST：天数档 >31 抬成 >30（第 31 日提前加算）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era_flag.day_count > 31) cost += 1000; // :252-253`,
+    replace: `  if (era_flag.day_count > 30) cost += 1000; // :252-253`,
+    tests: ['event-nextday'],
+    must_mention: '天数三档边界',
+  },
+  {
+    desc: 'M8459 RUNNING_COST：天数档 >51 抬成 >50（第 51 日提前加算）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era_flag.day_count > 51) cost += 2000; // :254-256`,
+    replace: `  if (era_flag.day_count > 50) cost += 2000; // :254-256`,
+    tests: ['event-nextday'],
+    must_mention: '天数三档边界',
+  },
+  {
+    desc: 'M8460 RUNNING_COST 设施表：浴室的 500 改成 300',
+    file: 'ere/event/event-nextday.js',
+    find: `  [32, 500], // 浴室を拡張`,
+    replace: `  [32, 300], // 浴室を拡張`,
+    tests: ['event-nextday'],
+    must_mention: '六位设施额',
+  },
+  {
+    desc: 'M8461 RUNNING_COST：警备员的位 64 写成 32（与浴室位相撞）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (facilities & 64) cost += (era.get('flag:40') || 0) * 500; // :276-278`,
+    replace: `  if (facilities & 32) cost += (era.get('flag:40') || 0) * 500; // :276-278`,
+    tests: ['event-nextday'],
+    must_mention: '六位设施额',
+  },
+  {
+    desc: 'M8462 RUNNING_COST：人气门槛 50 抬到 70（50 档不再加算）',
+    file: 'ere/event/event-nextday.js',
+    find: '  if (popularity >= 50)',
+    replace: '  if (popularity >= 70)',
+    tests: ['event-nextday'],
+    must_mention: '两把梯子',
+  },
+  {
+    desc: 'M8463 RUNNING_COST 贡献度梯子：1200 档的 0.5 改成 0.6',
+    file: 'ere/event/event-nextday.js',
+    find: `    [1200, 0.5],`,
+    replace: `    [1200, 0.6],`,
+    tests: ['event-nextday'],
+    must_mention: '两把梯子',
+  },
+  {
+    desc: 'M8464 RUNNING_COST 生活费：EXTRA 档（FLAG:5==4）按 200 算（档位串了）',
+    file: 'ere/event/event-nextday.js',
+    find: '  else if (difficulty === 4)',
+    replace: '  else if (difficulty === 3)',
+    tests: ['event-nextday'],
+    must_mention: '难度档 × 天数的表驱动',
+  },
+  {
+    desc: 'M8465 RUNNING_COST：MASTER 折扣卷 -100 改成 -200',
+    file: 'ere/event/event-nextday.js',
+    find: `  cost -= 100; // :318 MASTER の分は無料or割引`,
+    replace: `  cost -= 200; // :318 MASTER の分は無料or割引`,
+    tests: ['event-nextday'],
+    must_mention: '难度档 × 天数的表驱动',
+  },
+  {
+    desc: 'M8466 RUNNING_COST：EASY 倍率 0.80 改成 0.90',
+    file: 'ere/event/event-nextday.js',
+    find: `    cost = times(cost, 0.8); // :321-322`,
+    replace: `    cost = times(cost, 0.9); // :321-322`,
+    tests: ['event-nextday'],
+    must_mention: '难度档 × 天数的表驱动',
+  },
+  {
+    desc: 'M8467 RUNNING_COST：HARD 的 41–60 日档 2.00 改成 3.00',
+    file: 'ere/event/event-nextday.js',
+    find: `    else if (era_flag.day_count <= 60) cost = times(cost, 2.0);`,
+    replace: `    else if (era_flag.day_count <= 60) cost = times(cost, 3.0);`,
+    tests: ['event-nextday'],
+    must_mention: '难度档 × 天数的表驱动',
+  },
+  {
+    desc: 'M8468 RUNNING_COST 发生门槛：NORMAL 以上从第 11 日起（抬一天）',
+    file: 'ere/event/event-nextday.js',
+    find: `      (difficulty >= 2 && era_flag.day_count >= 10);`,
+    replace: `      (difficulty >= 2 && era_flag.day_count >= 11);`,
+    tests: ['event-nextday'],
+    must_mention: '天数三档边界',
+  },
+  {
+    desc: 'M8469 RUNNING_COST 发生门槛：EASY 从第 21 日起（抬一天）',
+    file: 'ere/event/event-nextday.js',
+    find: `      (difficulty === 1 && era_flag.day_count >= 20) ||`,
+    replace: `      (difficulty === 1 && era_flag.day_count >= 21) ||`,
+    tests: ['event-nextday'],
+    must_mention: '天数三档边界',
+  },
+  {
+    desc: 'M8470 RUNNING_COST：TIMES 的截断改成四舍五入（Math.floor → Math.round）',
+    file: 'ere/event/event-nextday.js',
+    find: `function times(v, m) {
+  return Math.floor(v * m);
+}`,
+    replace: `function times(v, m) {
+  return Math.round(v * m);
+}`,
+    tests: ['event-nextday'],
+    must_mention: '两把梯子',
+  },
+  {
+    desc: 'M8471 RUNNING_COST：最高难度档（FLAG:5 == 9）也参与扣款',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (difficulty !== 9) {
+    const due =`,
+    replace: `  {
+    const due =`,
+    tests: ['event-nextday'],
+    must_mention: '最高难度档',
+  },
+  {
+    desc: 'M8472 偶尔归来：体力复位写成 MAXBASE:0 / 5（十分之一改成五分之一）',
+    file: 'ere/event/event-nextday.js',
+    find: `      chara(cid).dungeon.体力 = Math.floor(
+        (era.get(\`maxbase:\${cid}:0\`) || 0) / 10,
+      );`,
+    replace: `      chara(cid).dungeon.体力 = Math.floor(
+        (era.get(\`maxbase:\${cid}:0\`) || 0) / 5,
+      );`,
+    tests: ['event-nextday'],
+    must_mention: '体力 = MAXBASE:0 / 10',
+  },
+  {
+    desc: 'M8473 偶尔归来：气力错取 MAXBASE:0（该取 MAXBASE:1）',
+    file: 'ere/event/event-nextday.js',
+    find: `      chara(cid).dungeon.气力 = era.get(\`maxbase:\${cid}:1\`) || 0;`,
+    replace: `      chara(cid).dungeon.气力 = era.get(\`maxbase:\${cid}:0\`) || 0;`,
+    tests: ['event-nextday'],
+    must_mention: '气力 = MAXBASE:1',
+  },
+  {
+    desc: 'M8474 偶尔归来：0 号位（魔王）不再跳过',
+    file: 'ere/event/event-nextday.js',
+    find: `    if (cid === 0) {
+      continue; // :505-506 主人公は判定から省く
+    }`,
+    replace: `    // 变异：魔王也参与判定`,
+    tests: ['event-nextday'],
+    must_mention: '魔王不参与判定',
+  },
+  {
+    desc: 'M8475 偶尔归来：多人死亡时全部复位（丢掉「一度に一人ずつ」）',
+    file: 'ere/event/event-nextday.js',
+    find: `      await era.waitAnyKey(); // :519 WAIT
+      return 1; // :521-522 一度に帰ってくるのは一人ずつ`,
+    replace: `      await era.waitAnyKey(); // :519 WAIT
+      // 变异：不早退，继续扫下一个`,
+    tests: ['event-nextday'],
+    must_mention: '一次只回一人',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：魔王候补确定与魔王替换 ——
+  {
+    desc: 'M8477 MAOU_KOUHO：第一个候补即收手（判据改成先到先得）',
+    file: 'ere/event/event-nextday.js',
+    find: `    if (era.get(\`ex_talent:\${cid}:3\`)) {
+      temp = cid; // :2435-2436
+    }`,
+    replace: `    if (era.get(\`ex_talent:\${cid}:3\`)) {
+      temp = cid; // :2435-2436
+      break; // 变异：先到先得
+    }`,
+    tests: ['event-nextday'],
+    must_mention: '最后一名持有 EX_TALENT:3',
+  },
+  {
+    desc: 'M8478 MAOU_TENSHIN 直接继位支：潜力转移 1/3 改成 1/2',
+    file: 'ere/event/event-nextday.js',
+    find: '      `maxbase:${candidate}:0`,',
+    replace: '      `maxbase:${candidate}:1`,',
+    tests: ['event-nextday'],
+    must_mention: '90 + 300/3',
+  },
+  {
+    desc: 'M8479 MAOU_TENSHIN 直接继位支：威望 -30 写成 -15',
+    file: 'ere/event/event-nextday.js',
+    find: `    era_exflag.prestige -= 30; // :2464`,
+    replace: `    era_exflag.prestige -= 15; // :2464`,
+    tests: ['event-nextday'],
+    must_mention: '威望 -30',
+  },
+  {
+    desc: 'M8480 MAOU_TENSHIN 直接继位支：魔王标记写到候补标记位（200 → 3）',
+    file: 'ere/event/event-nextday.js',
+    find: `    era.set('ex_talent:0:200', 1); // :2465 新魔王的【魔王】标记`,
+    replace: `    era.set('ex_talent:0:3', 1); // :2465 新魔王的【魔王】标记`,
+    tests: ['event-nextday'],
+    must_mention: '新魔王带【魔王】标记',
+  },
+  {
+    desc: 'M8481 MAOU_TENSHIN 直接继位支：丢掉身份互换（不 swap_chara）',
+    file: 'ere/event/event-nextday.js',
+    find: `    swap_chara(0, candidate); // :2463 MASTER = GETCHARA(17)`,
+    replace: `    // 变异：不互换身份`,
+    tests: ['event-nextday'],
+    must_mention: '90 + 300/3',
+  },
+  {
+    desc: 'M8482 MAOU_TENSHIN 直接继位支：【上届魔王】写回原作字面的 0（剔错人）',
+    file: 'ere/event/event-nextday.js',
+    find: `    era_exflag.prev_maou = candidate; // :2459（见文件头）`,
+    replace: `    era_exflag.prev_maou = 0; // :2459（见文件头）`,
+    tests: ['event-nextday'],
+    must_mention: '上届魔王指向旧魔王身体',
+  },
+  {
+    desc: 'M8483 MAOU_TENSHIN 灵魂转移支：威望 -15 写成 -30',
+    file: 'ere/event/event-nextday.js',
+    find: `    era_exflag.prestige -= 15; // :2477`,
+    replace: `    era_exflag.prestige -= 30; // :2477`,
+    tests: ['event-nextday'],
+    must_mention: '威望 -15（比直接继位少）',
+  },
+  {
+    desc: 'M8484 MAOU_TENSHIN 灵魂转移支：丢掉 MODE=1（退回「先问一次确认」）',
+    file: 'ere/event/event-nextday.js',
+    find: `    await transfer_soul(candidate, 1, rand); // :2476 CALL TRANSFER_SOUL, EX_FLAG:3, 1`,
+    replace: `    await transfer_soul(candidate, 0, rand); // :2476 CALL TRANSFER_SOUL, EX_FLAG:3, 1`,
+    tests: ['event-nextday'],
+    must_mention: '灵魂转移支',
+  },
+  {
+    desc: 'M8485 MAOU_TENSHIN 直接继位支：【爱慕】的清理守卫取反（只清没有的人）',
+    file: 'ere/event/event-nextday.js',
+    find: `      if (era.get(\`talent:\${cid}:85\`)) {
+        chara(cid).stronghold.爱慕 = 0;
+      }`,
+    replace: `      if (!era.get(\`talent:\${cid}:85\`)) {
+        chara(cid).stronghold.爱慕 = 0;
+      }`,
+    tests: ['event-nextday'],
+    must_mention: '【爱慕】清零',
+  },
+  // —— #400（N16）四张跨边接线 ——
+  {
+    desc: 'M8486 接线：TAX_GET 真身不再调用（退回空转）',
+    file: 'ere/event/event-nextday.js',
+    find: `  await tax_get(); // #396 真身（system/stronghold/tax.js），#400 接线`,
+    replace: `  // 变异：不调 tax_get`,
+    tests: ['event-nextday'],
+    must_mention: '收税日必须打真身的开场行',
+  },
+  {
+    desc: 'M8487 接线：APHRODISIAC_ADDICT 真身不再调用',
+    file: 'ere/event/event-nextday.js',
+    find: `    await aphrodisiac_addict(cid);
+    soul_dislocation(cid);`,
+    replace: `    soul_dislocation(cid);`,
+    tests: ['event-nextday'],
+    must_mention: '残留度 -1',
+  },
+  {
+    desc: 'M8488 接线：APHRODISIAC_ADDICT 传错角色（恒传 0 号位）',
+    file: 'ere/event/event-nextday.js',
+    find: `    await aphrodisiac_addict(cid);`,
+    replace: `    await aphrodisiac_addict(0);`,
+    tests: ['event-nextday'],
+    must_mention: '残留度 -1',
+  },
+  {
+    desc: 'M8489 接线：SABBATH 真身不再调用',
+    file: 'ere/event/event-nextday.js',
+    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线
+    await sabbath_day(cid);`,
+    replace: `    await sabbath_day(cid);`,
+    tests: ['event-nextday'],
+    must_mention: 'SABBATH 真身输出必须出现',
+  },
+  {
+    desc: 'M8490 接线：SABBATH_DAY 真身不再调用',
+    file: 'ere/event/event-nextday.js',
+    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线
+    await sabbath_day(cid);`,
+    replace: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线`,
+    tests: ['event-nextday'],
+    must_mention: 'SABBATH_DAY 真身输出必须出现',
+  },
+  {
+    desc: 'M8491 接线：SABBATH 传错角色（恒传 0 号位）',
+    file: 'ere/event/event-nextday.js',
+    find: `    await sabbath(cid); // #405 真身（event-sabbath.js），#400 接线`,
+    replace: `    await sabbath(0); // #405 真身（event-sabbath.js），#400 接线`,
+    tests: ['event-nextday'],
+    must_mention: 'SABBATH 真身输出必须出现',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：おねしょ ——
+  {
+    desc: 'M8492 ONESHO 准入掷：`RAND:12 <= 门槛` 改成 `<`（压线不再触发）',
+    file: 'ere/event/event-nextday.js',
+    find: `      rand(12) >
+        Math.floor((era.get(\`exp:\${cid}:31\`) || 0) / 10) +`,
+    replace: `      rand(12) >=
+        Math.floor((era.get(\`exp:\${cid}:31\`) || 0) / 10) +`,
+    tests: ['event-nextday'],
+    must_mention: '刚好压线（3 <= 3）',
+  },
+  {
+    desc: 'M8493 ONESHO 准入掷：【幼稚】的倍率 2 改成 1',
+    file: 'ere/event/event-nextday.js',
+    find: `          (era.get(\`talent:\${cid}:132\`) || 0) * 2
+    ) {`,
+    replace: `          (era.get(\`talent:\${cid}:132\`) || 0) * 1
+    ) {`,
+    tests: ['event-nextday'],
+    must_mention: '幼稚×2 抬到 5',
+  },
+  {
+    desc: 'M8494 ONESHO 准入掷：放尿经验除以 10 改成除以 5',
+    file: 'ere/event/event-nextday.js',
+    find: `        Math.floor((era.get(\`exp:\${cid}:31\`) || 0) / 10) +`,
+    replace: `        Math.floor((era.get(\`exp:\${cid}:31\`) || 0) / 5) +`,
+    tests: ['event-nextday'],
+    must_mention: '超一线（4 > 3）',
+  },
+  {
+    desc: 'M8495 ONESHO：死者的守卫去掉（体力 0 也走尿床）',
+    file: 'ere/event/event-nextday.js',
+    find: `    if ((era.get(\`base:\${cid}:0\`) || 0) <= 0) {
+      continue; // :707-708 死んでたらダメ
+    }`,
+    replace: `    // 变异：死者也参与`,
+    tests: ['event-nextday'],
+    must_mention: '已死者不参与',
+  },
+  {
+    desc: 'M8496 ONESHO 导管判定：服装 98 不再认（只剩 99）',
+    file: 'ere/event/event-nextday.js',
+    find: `      (special === 99 || special === 98) &&`,
+    replace: `      special === 99 &&`,
+    tests: ['event-nextday'],
+    must_mention: '服装 98 同样认',
+  },
+  {
+    desc: 'M8497 ONESHO 导管判定：CFLAG:40 的位 64 改成位 32',
+    file: 'ere/event/event-nextday.js',
+    find: '      (special === 99 || special === 98) &&\n      ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0 &&',
+    replace:
+      '      (special === 99 || special === 98) &&\n      ((era.get(`cflag:${cid}:40`) || 0) & 32) !== 0 &&',
+    tests: ['event-nextday'],
+    must_mention: '服装 99 + 位 64 + 着衣开',
+  },
+  {
+    desc: 'M8498 ONESHO 导管判定：角色状态门槛 < 2 抬成 < 3',
+    file: 'ere/event/event-nextday.js',
+    find: `      (era.get(\`cflag:\${cid}:1\`) || 0) < 2; // :712-715`,
+    replace: `      (era.get(\`cflag:\${cid}:1\`) || 0) < 3; // :712-715`,
+    tests: ['event-nextday'],
+    must_mention: '角色状态 ≥ 2',
+  },
+  {
+    desc: 'M8499 ONESHO 一档：顺从门槛 < 3 抬成 < 4',
+    file: 'ere/event/event-nextday.js',
+    find: `      if (loyalty < 3) {`,
+    replace: `      if (loyalty < 4) {`,
+    tests: ['event-nextday'],
+    must_mention: '导管二档',
+  },
+  {
+    desc: 'M8500 ONESHO 二档：顺从门槛 < 6 抬成 < 7',
+    file: 'ere/event/event-nextday.js',
+    find: `      } else if (loyalty < 6) {`,
+    replace: `      } else if (loyalty < 7) {`,
+    tests: ['event-nextday'],
+    must_mention: '顺从 ≥ 6 才走三档开场',
+  },
+  {
+    desc: 'M8601 ONESHO 一档 RAND:4：第 1 档的珠值 20 写成 10（与第 0 档同值）',
+    file: 'ere/event/event-nextday.js',
+    find: `          case 1: // :726-728
+            era.print(\`\${palam(8)}点数＋20\`);
+            era.add('juel:0:8', 20);`,
+    replace: `          case 1: // :726-728
+            era.print(\`\${palam(8)}点数＋20\`);
+            era.add('juel:0:8', 10);`,
+    tests: ['event-nextday'],
+    must_mention: 'RAND:4 = 1',
+  },
+  {
+    desc: 'M8602 ONESHO 一档 RAND:4：第 2 档写成苦痛 20（与第 3 档同值）',
+    file: 'ere/event/event-nextday.js',
+    find: `            era.add('juel:0:9', 10);
+            break;`,
+    replace: `            era.add('juel:0:9', 20);
+            break;`,
+    tests: ['event-nextday'],
+    must_mention: 'RAND:4 = 2',
+  },
+  {
+    desc: 'M8603 ONESHO 三档追加素质表：漏掉【露出狂】（89）',
+    file: 'ere/event/event-nextday.js',
+    find: `          (era.get(\`talent:\${cid}:88\`) || 0) === 1 ||
+          (era.get(\`talent:\${cid}:89\`) || 0) === 1`,
+    replace: `          (era.get(\`talent:\${cid}:88\`) || 0) === 1`,
+    tests: ['event-nextday'],
+    must_mention: '追加素质取【露出狂】',
+  },
+  {
+    desc: 'M8604 ONESHO 三档：【容易自慰】的判定 60 写成 61',
+    file: 'ere/event/event-nextday.js',
+    find: `          if ((era.get(\`talent:\${cid}:60\`) || 0) === 1) {`,
+    replace: `          if ((era.get(\`talent:\${cid}:61\`) || 0) === 1) {`,
+    tests: ['event-nextday'],
+    must_mention: '追加素质 + 【容易自慰】',
+  },
+  {
+    desc: 'M8605 ONESHO 三档：自慰经验的珠值 800 写成 80',
+    file: 'ere/event/event-nextday.js',
+    find: `            era.add(\`juel:\${cid}:5\`, 800); // :754`,
+    replace: `            era.add(\`juel:\${cid}:5\`, 80); // :754`,
+    tests: ['event-nextday'],
+    must_mention: '追加素质 + 【容易自慰】',
+  },
+  {
+    desc: 'M8606 ONESHO 三档 RAND:3：第 1 档 20 写成 10',
+    file: 'ere/event/event-nextday.js',
+    find: `          case 1: // :766-768
+            era.print(\`\${palam(4)}点数＋20\`);
+            era.add('juel:0:4', 20);`,
+    replace: `          case 1: // :766-768
+            era.print(\`\${palam(4)}点数＋20\`);
+            era.add('juel:0:4', 10);`,
+    tests: ['event-nextday'],
+    must_mention: 'RAND:3 = 1',
+  },
+  {
+    desc: 'M8607 ONESHO 三档 RAND:3：第 2 档 30 写成 20',
+    file: 'ere/event/event-nextday.js',
+    find: `            era.add('juel:0:4', 30);`,
+    replace: `            era.add('juel:0:4', 20);`,
+    tests: ['event-nextday'],
+    must_mention: 'RAND:3 = 2',
+  },
+  {
+    desc: 'M8608 ONESHO 无导管支：放尿经验 +1 改成 +2',
+    file: 'ere/event/event-nextday.js',
+    find: `      chara(cid).system.放尿经验 += 1; // :782 EXP:COUNT:31 += 1`,
+    replace: `      chara(cid).system.放尿经验 += 2; // :782 EXP:COUNT:31 += 1`,
+    tests: ['event-nextday'],
+    must_mention: 'EXP:31 += 1',
+  },
+  {
+    desc: 'M8609 ONESHO 无导管支：报告门槛「露 + 抖M ≥ 8」抬成 ≥ 9',
+    file: 'ere/event/event-nextday.js',
+    find: `        (era.get(\`abl:\${cid}:17\`) || 0) + (era.get(\`abl:\${cid}:21\`) || 0) >=
+        8 // :792 露出 + 抖M气质`,
+    replace: `        (era.get(\`abl:\${cid}:17\`) || 0) + (era.get(\`abl:\${cid}:21\`) || 0) >=
+        9 // :792 露出 + 抖M气质`,
+    tests: ['event-nextday'],
+    must_mention: '露+抖M = 8',
+  },
+  {
+    desc: 'M8610 ONESHO 无导管支：报告的人数门槛 ≥ 3 抬成 ≥ 4',
+    file: 'ere/event/event-nextday.js',
+    find: `        if (era.getAddedCharacters().length >= 3) {`,
+    replace: `        if (era.getAddedCharacters().length >= 4) {`,
+    tests: ['event-nextday'],
+    must_mention: 'CHARANUM ≥ 3 的文案',
+  },
+  {
+    desc: 'M8611 ONESHO 无导管支：报告的珠值 1000 写成 100',
+    file: 'ere/event/event-nextday.js',
+    find: `        era.add(\`juel:\${cid}:8\`, 1000); // :800`,
+    replace: `        era.add(\`juel:\${cid}:8\`, 100); // :800`,
+    tests: ['event-nextday'],
+    must_mention: '时的 JUEL:8',
+  },
+  {
+    desc: 'M8612 ONESHO 无导管支：不在魔王房间的 continue 去掉',
+    file: 'ere/event/event-nextday.js',
+    find: `      if ((era.get(\`cflag:\${cid}:1\`) || 0) !== 0) {
+        continue; // :789-790 魔王部屋にいないとダメ
+      }`,
+    replace: `      // 变异：不检查是否在魔王房间`,
+    tests: ['event-nextday'],
+    must_mention: '不在魔王房间时不得出现报告支',
+  },
+  {
+    desc: 'M8613 ONESHO：返回值 1 改成 0（原作恒 RETURN 1）',
+    file: 'ere/event/event-nextday.js',
+    find: '  return 1; // :804-806',
+    replace: '  return 0; // :804-806',
+    tests: ['event-nextday'],
+    must_mention: '恒返回 1',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：犬の散歩 ——
+  {
+    desc: 'M8614 DOG_WALK：道具持有检查去掉（没狗也遛）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (!has_item(22)) {
+    return 0; // :1335-1336 いぬを持ってないとダメ
+  }`,
+    replace: `  // 变异：不检查道具`,
+    tests: ['event-nextday'],
+    must_mention: '无道具返回 0',
+  },
+  {
+    desc: 'M8615 DOG_WALK：持有检查丢掉 NOITEM 支（只认 ITEM:22）',
+    file: 'ere/event/event-nextday.js',
+    find: `  return (era.get(\`item:\${i}\`) || 0) > 0 || (era.get('noitem:0') || 0) !== 0;`,
+    replace: `  return (era.get(\`item:\${i}\`) || 0) > 0;`,
+    tests: ['event-nextday'],
+    must_mention: 'NOITEM 非 0 时不再早退',
+  },
+  {
+    desc: 'M8616 DOG_WALK：当番上界写成 CHARANUM（最后一个角色也掷得到）',
+    file: 'ere/event/event-nextday.js',
+    find: `  let walking = list.length - 1; // :1341 DOG_WALKING = CHARANUM - 1（下标）`,
+    replace: `  let walking = list.length; // :1341 DOG_WALKING = CHARANUM - 1（下标）`,
+    tests: ['event-nextday'],
+    must_mention: 'CHARANUM - 1 == 0 → 返回 0',
+  },
+  {
+    desc: 'M8617 DOG_WALK：调整守卫的并集改成交集（未陷落不再退回魔王）',
+    file: 'ere/event/event-nextday.js',
+    find: `    ((era.get(\`cflag:\${picked()}:1\`) || 0) !== 0 ||
+      (era.get(\`cflag:\${picked()}:0\`) || 0) === 0)`,
+    replace: `    ((era.get(\`cflag:\${picked()}:1\`) || 0) !== 0 &&
+      (era.get(\`cflag:\${picked()}:0\`) || 0) === 0)`,
+    tests: ['event-nextday'],
+    must_mention: '未陷落（CFLAG:0 = 0）退回魔王',
+  },
+  {
+    desc: 'M8618 DOG_WALK：牝犬的兴奋加成 2 改成 1',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:136\`)) play += 2; // :1374-1375 牝犬`,
+    replace: `  if (era.get(\`talent:\${cid}:136\`)) play += 1; // :1374-1375 牝犬`,
+    tests: ['event-nextday'],
+    must_mention: 'JUEL:0 += 5*PLAY',
+  },
+  {
+    desc: 'M8619 DOG_WALK：动物耳的 PLAY > 0 前置守卫去掉',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:124\`) && play > 0) play += 1; // :1388-1389 動物耳`,
+    replace: `  if (era.get(\`talent:\${cid}:124\`)) play += 1; // :1388-1389 動物耳`,
+    tests: ['event-nextday'],
+    must_mention: '只持动物耳',
+  },
+  {
+    desc: 'M8620 DOG_WALK：【喜欢的东西】的判定 12 改成 13',
+    file: 'ere/event/event-nextday.js',
+    find: `  if ((era.get(\`talent:\${cid}:317\`) || 0) === 12 && play > 0) play += 1; // :1391-1392`,
+    replace: `  if ((era.get(\`talent:\${cid}:317\`) || 0) === 13 && play > 0) play += 1; // :1391-1392`,
+    tests: ['event-nextday'],
+    must_mention: 'JUEL:0 += 5*PLAY',
+  },
+  {
+    desc: 'M8621 DOG_WALK：露出基准值 -2 改成 0（无露出癖也会走耻情支）',
+    file: 'ere/event/event-nextday.js',
+    find: `  let open = -2; // :1367 露出要素（若干の抵抗あり）`,
+    replace: `  let open = 0; // :1367 露出要素（若干の抵抗あり）`,
+    tests: ['event-nextday'],
+    must_mention: '是否写耻情珠',
+  },
+  {
+    desc: 'M8622 DOG_WALK：露出狂的判定 89 改成 88',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:89\`)) open += 1; // :1380-1381 露出狂`,
+    replace: `  if (era.get(\`talent:\${cid}:88\`)) open += 1; // :1380-1381 露出狂`,
+    tests: ['event-nextday'],
+    must_mention: '露出癖 2 + 露出狂',
+  },
+  {
+    desc: 'M8623 DOG_WALK：目立ちたがり的判定 28 改成 27',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:28\`)) open += 1; // :1383-1384 目立ちたがり`,
+    replace: `  if (era.get(\`talent:\${cid}:27\`)) open += 1; // :1383-1384 目立ちたがり`,
+    tests: ['event-nextday'],
+    must_mention: '露出癖 2 + 爱表现',
+  },
+  {
+    desc: 'M8624 DOG_WALK：NO_SEX 的处女判定取成【童贞】（0 改成 1）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:0\`)) {
+    no_sex = 1; // :1394-1396 処女
+  }`,
+    replace: `  if (era.get(\`talent:\${cid}:1\`)) {
+    no_sex = 1; // :1394-1396 処女
+  }`,
+    tests: ['event-nextday'],
+    must_mention: '处女：口交经验 +1',
+  },
+  {
+    desc: 'M8625 DOG_WALK：貞操帯的服装编号 79 改成 78',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`cflag:\${cid}:42\`) || 0) === 79 &&
+    ((era.get(\`cflag:\${cid}:40\`) || 0) & 64) !== 0 &&
+    era.get('flag:37')`,
+    replace: `    (era.get(\`cflag:\${cid}:42\`) || 0) === 78 &&
+    ((era.get(\`cflag:\${cid}:40\`) || 0) & 64) !== 0 &&
+    era.get('flag:37')`,
+    tests: ['event-nextday'],
+    must_mention: '贞操带（42 == 79 且位 64 且着衣开）',
+  },
+  {
+    desc: 'M8626 DOG_WALK 交尾支：私处珠的 4*PLAY 改成 5*PLAY',
+    file: 'ere/event/event-nextday.js',
+    find: `    era.add(\`juel:\${cid}:1\`, 4 * play); // :1430`,
+    replace: `    era.add(\`juel:\${cid}:1\`, 5 * play); // :1430`,
+    tests: ['event-nextday'],
+    must_mention: 'JUEL:1 += 4*PLAY',
+  },
+  {
+    desc: 'M8627 DOG_WALK 口交支：侍奉快乐的 5*PLAY 改成 4*PLAY',
+    file: 'ere/event/event-nextday.js',
+    find: `    era.add(\`juel:\${cid}:5\`, 5 * play); // :1442`,
+    replace: `    era.add(\`juel:\${cid}:5\`, 4 * play); // :1442`,
+    tests: ['event-nextday'],
+    must_mention: '：JUEL:5 += 5*PLAY',
+  },
+  {
+    desc: 'M8628 DOG_WALK：散步行丢掉服装串（PRINT_CLOTHTYPE 不再调用）',
+    file: 'ere/event/event-nextday.js',
+    find: `    era.print(\`\${clothtype_text(cid)}的\${name}\${collar}和野狗一起散了散步。\`);`,
+    replace: `    era.print(\`\${name}\${collar}和野狗一起散了散步。\`);`,
+    tests: ['event-nextday'],
+    must_mention: '完整散步行',
+  },
+  {
+    desc: 'M8629 DOG_WALK：TARGET 不还原（污染调用方指针）',
+    file: 'ere/event/event-nextday.js',
+    find: `  era_flag.target = save_target; // :1460 TARGET = SAVE_TARGET`,
+    replace: `  // 变异：不还原 TARGET`,
+    tests: ['event-nextday'],
+    must_mention: 'TARGET 还原为 SAVE_TARGET',
+  },
+  {
+    desc: 'M8630 DOG_WALK：只有魔王时的散步行返回值 0 改成 1',
+    file: 'ere/event/event-nextday.js',
+    find: `    await era.printAndWait('你带了野狗去散步。'); // %SAVESTR:0% = 魔王
+    return 0;`,
+    replace: `    await era.printAndWait('你带了野狗去散步。'); // %SAVESTR:0% = 魔王
+    return 1;`,
+    tests: ['event-nextday'],
+    must_mention: 'CHARANUM - 1 == 0 → 返回 0',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：处女献上 ——
+  {
+    desc: 'M8631 处女献上准入：禁止判定 `FLAG:38 <= -1` 抬成 `<= 0`',
+    file: 'ere/event/event-nextday.js',
+    find: `  if ((era.get('flag:38') || 0) <= -1) return true; // :816-817 処女献上禁止`,
+    replace: `  if ((era.get('flag:38') || 0) <= 0) return true; // :816-817 処女献上禁止`,
+    tests: ['event-nextday'],
+    must_mention: '顺+欲+侍奉的门槛',
+  },
+  {
+    desc: 'M8632 处女献上准入：非处女判定取反（`=== 0` 改成 `=== 1`）',
+    file: 'ere/event/event-nextday.js',
+    find: 'if ((era.get(`talent:${cid}:0`) || 0) === 0 || era.get(`talent:${cid}:122`)) {',
+    replace:
+      'if ((era.get(`talent:${cid}:0`) || 0) === 1 || era.get(`talent:${cid}:122`)) {',
+    tests: ['event-nextday'],
+    must_mention: '十条准入守卫逐条挡住',
+  },
+  {
+    desc: 'M8633 处女献上准入：顺+欲+侍奉的门槛 10 抬成 11',
+    file: 'ere/event/event-nextday.js',
+    find: `      (era.get(\`abl:\${cid}:16\`) || 0) <=
+    10`,
+    replace: `      (era.get(\`abl:\${cid}:16\`) || 0) <=
+    11`,
+    tests: ['event-nextday'],
+    must_mention: '顺+欲+侍奉的门槛',
+  },
+  {
+    desc: 'M8634 处女献上准入：贞操带的服装编号 79 改成 78',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`cflag:\${cid}:42\`) || 0) === 79 &&
+    ((era.get(\`cflag:\${cid}:49\`) || 0) === 0 ||`,
+    replace: `    (era.get(\`cflag:\${cid}:42\`) || 0) === 78 &&
+    ((era.get(\`cflag:\${cid}:49\`) || 0) === 0 ||`,
+    tests: ['event-nextday'],
+    must_mention: '十条准入守卫逐条挡住',
+  },
+  {
+    desc: 'M8635 处女献上准入：魔王部屋的状态白名单 {0,1} 改成 {0,2}',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (status !== 0 && status !== 1) return true;`,
+    replace: `  if (status !== 0 && status !== 2) return true;`,
+    tests: ['event-nextday'],
+    must_mention: '十条准入守卫逐条挡住',
+  },
+  {
+    desc: 'M8636 判定变量 S：起手 `-RAND:3` 丢掉负号',
+    file: 'ere/event/event-nextday.js',
+    find: `  let s = -rand(3); // :868 S = (RAND:3 * -1)`,
+    replace: `  let s = rand(3); // :868 S = (RAND:3 * -1)`,
+    tests: ['event-nextday'],
+    must_mention: '判定变量 S 的叠加',
+  },
+  {
+    desc: 'M8637 判定变量 S：爱行 6 档的 +3 改成 +2',
+    file: 'ere/event/event-nextday.js',
+    find: `    if (loyalty === 4) s += 1;
+    else if (loyalty === 5) s += 2;
+    else if (loyalty >= 6) s += 3;`,
+    replace: `    if (loyalty === 4) s += 1;
+    else if (loyalty === 5) s += 2;
+    else if (loyalty >= 6) s += 2;`,
+    tests: ['event-nextday'],
+    must_mention: '快感/贞操/好奇/戒备的四项加减',
+  },
+  {
+    desc: 'M8638 判定变量 S：淫乱行 5 档的 +2 改成 +3',
+    file: 'ere/event/event-nextday.js',
+    find: `    if (desire === 4) s += 1;
+    else if (desire === 5) s += 2;
+    else if (desire >= 6) s += 3;`,
+    replace: `    if (desire === 4) s += 1;
+    else if (desire === 5) s += 3;
+    else if (desire >= 6) s += 3;`,
+    tests: ['event-nextday'],
+    must_mention: '与 -2 相抵',
+  },
+  {
+    desc: 'M8639 判定变量 S：否定快感 -2 改成 -1',
+    file: 'ere/event/event-nextday.js',
+    find: `  else if (era.get(\`talent:\${cid}:71\`)) s -= 2; // :903-904 否定快感`,
+    replace: `  else if (era.get(\`talent:\${cid}:71\`)) s -= 1; // :903-904 否定快感`,
+    tests: ['event-nextday'],
+    must_mention: '否定快感 -2 → S = 0 早退',
+  },
+  {
+    desc: 'M8640 判定变量 S：看重贞操 -2 改成 -1',
+    file: 'ere/event/event-nextday.js',
+    find: '  if (era.get(`talent:${cid}:30`))',
+    replace: '  if (!era.get(`talent:${cid}:30`))',
+    tests: ['event-nextday'],
+    must_mention: '看重贞操 -2 → S = 0 早退',
+  },
+  {
+    desc: 'M8641 拒绝支：顺从扣减 -2 改成 -1',
+    file: 'ere/event/event-nextday.js',
+    find: `    chara(cid).system.顺从 -= 2; // :949 ABL:10 -= 2`,
+    replace: `    chara(cid).system.顺从 -= 1; // :949 ABL:10 -= 2`,
+    tests: ['event-nextday'],
+    must_mention: '常规扣 2',
+  },
+  {
+    desc: 'M8642 拒绝支：一次限定的发生済标记写成 0（下次还能再来）',
+    file: 'ere/event/event-nextday.js',
+    find: `      era.set(\`cflag:\${cid}:62\`, 1); // :961 発生済フラグ`,
+    replace: `      era.set(\`cflag:\${cid}:62\`, 0); // :961 発生済フラグ`,
+    tests: ['event-nextday'],
+    must_mention: '一次性标记',
+  },
+  {
+    desc: 'M8643 安全套二问：道具编号 24 改成 25（问错道具）',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`item:24\`)) {
+    // :966-978 安全套二问`,
+    replace: `  if (era.get(\`item:25\`)) {
+    // :966-978 安全套二问`,
+    tests: ['event-nextday'],
+    must_mention: '持有道具才问',
+  },
+  {
+    desc: 'M8644 破处支：私处经验 +2 改成 +1',
+    file: 'ere/event/event-nextday.js',
+    find: `  chara(cid).dungeon.私处经验 += 2; // :999`,
+    replace: `  chara(cid).dungeon.私处经验 += 1; // :999`,
+    tests: ['event-nextday'],
+    must_mention: 'EXP:0 += 2',
+  },
+  {
+    desc: 'M8645 破处支：JUEL:1 的 S*400 改成 S*500',
+    file: 'ere/event/event-nextday.js',
+    find: `  era.add(\`juel:\${cid}:1\`, s * 400); // :1002`,
+    replace: `  era.add(\`juel:\${cid}:1\`, s * 500); // :1002`,
+    tests: ['event-nextday'],
+    must_mention: 'JUEL:1 += S*400',
+  },
+  {
+    desc: 'M8646 初体验编码表（目标侧）：关系 4 的男人支 306 写成 304',
+    file: 'ere/event/event-nextday.js',
+    find: `        [4, true, 306],`,
+    replace: `        [4, true, 304],`,
+    tests: ['event-nextday'],
+    must_mention: '亲族关系 4 / 魔王是男人 1',
+  },
+  {
+    desc: 'M8647 初体验编码表（魔王侧）：关系 3 的男人支 306 写成 307',
+    file: 'ere/event/event-nextday.js',
+    find: `        [3, false, 307],`,
+    replace: `        [3, false, 306],`,
+    tests: ['event-nextday'],
+    must_mention: '魔王童贞丧失',
+  },
+  {
+    desc: 'M8648 破处支：膣内射精的 CFLAG:101 写成 20（该 30）',
+    file: 'ere/event/event-nextday.js',
+    find: `    chara(cid).system.主人膣内射精 = 30; // :1011 CFLAG:101 = 30`,
+    replace: `    chara(cid).system.主人膣内射精 = 20; // :1011 CFLAG:101 = 30`,
+    tests: ['event-nextday'],
+    must_mention: 'CFLAG:101 = 30',
+  },
+  {
+    desc: 'M8649 破处支尾部：着衣状态的位 64 扣减写成位 32',
+    file: 'ere/event/event-nextday.js',
+    find: `    chara(cid).train.着衣状态 -= 64; // :1079 CFLAG:40 -= 64`,
+    replace: `    chara(cid).train.着衣状态 -= 32; // :1079 CFLAG:40 -= 64`,
+    tests: ['event-nextday'],
+    must_mention: '尾部清掉贞操带的位 64',
+  },
+  {
+    desc: 'M8650 处女献上：破处支的返回值 1 改成 0',
+    file: 'ere/event/event-nextday.js',
+    find: '  return 1; // :1088-1089',
+    replace: '  return 0; // :1088-1089',
+    tests: ['event-nextday'],
+    must_mention: '破处支返回 1',
+  },
+  // —— #400（N16）EVENT_NEXTDAY.ERB 全路径：夜这い ——
+  {
+    desc: 'M8651 夜这い准入：欲望门槛 4 抬成 5',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`abl:\${cid}:11\`) || 0) < 4 || // 欲望
+    (era.get(\`abl:\${cid}:30\`) || 0) < 1 // 性交中毒`,
+    replace: `    (era.get(\`abl:\${cid}:11\`) || 0) < 5 || // 欲望
+    (era.get(\`abl:\${cid}:30\`) || 0) < 1 // 性交中毒`,
+    tests: ['event-nextday'],
+    must_mention: '十条排除守卫逐条挡住',
+  },
+  {
+    desc: 'M8652 夜这い准入：男人支的门槛 12 抬成 13',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:122\`) && sum(3) <= 12) return null;`,
+    replace: `  if (era.get(\`talent:\${cid}:122\`) && sum(3) <= 13) return null;`,
+    tests: ['event-nextday'],
+    must_mention: '男人：顺+欲+肛感 13 过线',
+  },
+  {
+    desc: 'M8653 夜这い准入：处女支的门槛 14 抬成 15',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:0\`) && sum(3) <= 14) return null;`,
+    replace: `  if (era.get(\`talent:\${cid}:0\`) && sum(3) <= 15) return null;`,
+    tests: ['event-nextday'],
+    must_mention: '处女：顺+欲+肛感 15 过线',
+  },
+  {
+    desc: 'M8654 夜这い准入：非男人支的 V 感门槛 12 抬成 13',
+    file: 'ere/event/event-nextday.js',
+    find: '    sum(2) <= 12 &&',
+    replace: '    sum(2) <= 13 &&',
+    tests: ['event-nextday'],
+    must_mention: '双双压线',
+  },
+  {
+    desc: 'M8655 夜这い准入：贞操带支的门槛 14 抬成 15',
+    file: 'ere/event/event-nextday.js',
+    find: `    ((era.get(\`cflag:\${cid}:40\`) || 0) & 64) !== 0 &&
+    sum(3) <= 14`,
+    replace: `    ((era.get(\`cflag:\${cid}:40\`) || 0) & 64) !== 0 &&
+    sum(3) <= 15`,
+    tests: ['event-nextday'],
+    must_mention: '15 过线',
+  },
+  {
+    desc: 'M8656 OK_FLAG：克制 −2 改成 −1',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:20\`)) ok -= 2; // :1148-1149 克制`,
+    replace: `  if (era.get(\`talent:\${cid}:20\`)) ok -= 1; // :1148-1149 克制`,
+    tests: ['event-nextday'],
+    must_mention: '开放 +1 与克制 −2',
+  },
+  {
+    desc: 'M8657 OK_FLAG：开放 +1 漏掉',
+    file: 'ere/event/event-nextday.js',
+    find: `  if (era.get(\`talent:\${cid}:33\`)) ok += 1; // :1145-1146 开放`,
+    replace: `  // 变异：开放不加值`,
+    tests: ['event-nextday'],
+    must_mention: '抵掉克制',
+  },
+  {
+    desc: 'M8658 OK_FLAG：【性爱狂】的处女守卫反了（处女才加）',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`talent:\${cid}:0\`) || 0) === 0 &&
+    (era.get(\`abl:\${cid}:2\`) || 0) >= (era.get(\`abl:\${cid}:3\`) || 0)`,
+    replace: `    (era.get(\`talent:\${cid}:0\`) || 0) === 1 &&
+    (era.get(\`abl:\${cid}:2\`) || 0) >= (era.get(\`abl:\${cid}:3\`) || 0)`,
+    tests: ['event-nextday'],
+    must_mention: '性爱狂 +1 把 0 抬过线',
+  },
+  {
+    desc: 'M8659 OK_FLAG：尻穴狂的条件丢掉「A > V」一支',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`talent:\${cid}:0\`) ||
+      (era.get(\`abl:\${cid}:3\`) || 0) > (era.get(\`abl:\${cid}:2\`) || 0))`,
+    replace: `    era.get(\`talent:\${cid}:0\`)`,
+    tests: ['event-nextday'],
+    must_mention: '尻穴狂 +1 把 0 抬过线',
+  },
+  {
+    desc: 'M8660 夜这い：V 使用标志的贞操带支漏判',
+    file: 'ere/event/event-nextday.js',
+    find: `    (era.get(\`cflag:\${target}:42\`) || 0) === 79 &&
+    ((era.get(\`cflag:\${target}:40\`) || 0) & 64) !== 0
+  ) {
+    use_v = 0;
+  }`,
+    replace: `    (era.get(\`cflag:\${target}:42\`) || 0) === 79 &&
+    ((era.get(\`cflag:\${target}:40\`) || 0) & 64) !== 0
+  ) {
+    use_v = 1;
+  }`,
+    tests: ['event-nextday'],
+    must_mention: '贞操带：肛门经验 += PLAY',
+  },
+  {
+    desc: 'M8661 夜这い：PLAY 的感覚高档 ≥6 的 +4 改成 +3',
+    file: 'ere/event/event-nextday.js',
+    find: `  else if (sense_value >= 6) play += 4;`,
+    replace: `  else if (sense_value >= 6) play += 3;`,
+    tests: ['event-nextday'],
+    must_mention: 'PLAY = 3 + 4',
+  },
+  {
+    desc: 'M8662 夜这い：PLAY 的感覚中档 ==5 的 +2 改成 +1',
+    file: 'ere/event/event-nextday.js',
+    find: `  else if (sense_value === 5) play += 2;`,
+    replace: `  else if (sense_value === 5) play += 1;`,
+    tests: ['event-nextday'],
+    must_mention: 'PLAY 的感覚三档',
+  },
+  {
+    desc: 'M8663 夜这い V 支：PALAM:1 的 PLAY*400 改成 PLAY*300',
+    file: 'ere/event/event-nextday.js',
+    find: `    era.add(\`juel:\${target}:1\`, play * 400); // :1291`,
+    replace: `    era.add(\`juel:\${target}:1\`, play * 300); // :1291`,
+    tests: ['event-nextday'],
+    must_mention: 'JUEL:1 += PLAY*400',
+  },
+  {
+    desc: 'M8664 夜这い 肛门支：JUEL:2 的 PLAY*400 改成 PLAY*250',
+    file: 'ere/event/event-nextday.js',
+    find: `    era.add(\`juel:\${target}:2\`, play * 400); // :1314`,
+    replace: `    era.add(\`juel:\${target}:2\`, play * 250); // :1314`,
+    tests: ['event-nextday'],
+    must_mention: 'JUEL:2 += PLAY*400',
+  },
+  {
+    desc: 'M8665 夜这い：MODE 的事件码 5 写成 4',
+    file: 'ere/event/event-nextday.js',
+    find: `  await game.train.with_self_kojo_event(5, () =>
+    self_kojo(rand, undefined, true),
+  ); // :1250-1251 TFLAG:13 = 5 / CALL SELF_KOJO`,
+    replace: `  await game.train.with_self_kojo_event(4, () =>
+    self_kojo(rand, undefined, true),
+  ); // :1250-1251 TFLAG:13 = 5 / CALL SELF_KOJO`,
+    tests: ['event-nextday'],
+    must_mention: 'TFLAG:13 = 5',
+  },
+  // —— #400（N16）@PILLORY（ere/event/event-nextday-pillory.js）——
+  {
+    desc: 'M8666 示众台：状态门 8 改成 7（非示众台也走）',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '  if ((era.get(`cflag:${cid}:1`) || 0) !== 8) {',
+    replace: '  if ((era.get(`cflag:${cid}:1`) || 0) !== 7) {',
+    tests: ['event-nextday'],
+    must_mention: '非示众台状态整场早退',
+  },
+  {
+    desc: 'M8667 示众台：出产当日的判据改成「前一天」',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'if (cflag(110) === era_flag.day_count)',
+    replace: 'if (cflag(110) - 1 === era_flag.day_count)',
+    tests: ['event-nextday'],
+    must_mention: '出产当日',
+  },
+  {
+    desc: 'M8668 示众台：围观姿态的第 2 档门槛 20 抬成 21',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '        : cflag(661) + cflag(662) < 20',
+    replace: '        : cflag(661) + cflag(662) < 21',
+    tests: ['event-nextday'],
+    must_mention: '围观姿态按 CFLAG:661+662 的五档',
+  },
+  {
+    desc: 'M8669 示众台：普通涂鸦的 RAND:6 改成 RAND:5',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '    const rolled = rand(6);',
+    replace: '    const rolled = rand(5);',
+    tests: ['event-nextday'],
+    must_mention: '涂鸦的三支表',
+  },
+  {
+    desc: 'M8670 示众台：处女支的 COUNT_A 上界 RAND:20+1 改成 RAND:20',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '    count_a += rand(20) + 1;\n    count_f += rand(10) + 1;\n    count_s += count_a + count_f + rand(10);\n  } else if (talent(273)) {',
+    replace:
+      '    count_a += rand(20);\n    count_f += rand(10) + 1;\n    count_s += count_a + count_f + rand(10);\n  } else if (talent(273)) {',
+    tests: ['event-nextday'],
+    must_mention: 'EXP:1 += COUNT_A',
+  },
+  {
+    desc: 'M8671 示众台：兽奸支的 COUNT_Z 错写成累加 COUNT_A',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '    count_z += count_s;',
+    replace: '    count_z += count_a;',
+    tests: ['event-nextday'],
+    must_mention: 'EXP:56 += COUNT_Z',
+  },
+  {
+    desc: 'M8672 示众台：职业槽起点 200 改成 201（错位一格）',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '    const slot = i + 200;',
+    replace: '    const slot = i + 201;',
+    tests: ['event-nextday'],
+    must_mention: '有项才掷、掷即打印',
+  },
+  {
+    desc: 'M8673 示众台：CFLAG:665 的算式漏掉 COUNT_V',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '  era.add(`cflag:${cid}:665`, count_s - count_v - count_a - count_f - count_b);',
+    replace:
+      '  era.add(`cflag:${cid}:665`, count_s - count_a - count_f - count_b);',
+    tests: ['event-nextday'],
+    must_mention: '使用次数掷的五支与结算数值',
+  },
+  {
+    desc: 'M8674 示众台：正字的除数 5 改成 4',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'Math.floor(value / 5)',
+    replace: 'Math.floor(value / 4)',
+    tests: ['event-nextday'],
+    must_mention: '正字除数 5',
+  },
+  {
+    desc: 'M8675 示众台：正字里程碑的第 1 档 >9 改成 >8',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: "if (cflag(661) > 9) era.print('『真的一个打十个！』');",
+    replace: "if (cflag(661) > 8) era.print('『真的一个打十个！』');",
+    tests: ['event-nextday'],
+    must_mention: '9 压线不出第一档里程碑',
+  },
+  {
+    desc: 'M8676 示众台：解放阈值 120 改成 130',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '> 120 + cflag(9) * 40',
+    replace: '> 130 + cflag(9) * 40',
+    tests: ['event-nextday'],
+    must_mention: '解放播报',
+  },
+  {
+    desc: 'M8677 示众台：解放后的状态写回 8（没真正解放）',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '    chara(cid).invasion.状态 = 0; // :2403 CFLAG:1 = 0',
+    replace: '    chara(cid).invasion.状态 = 8; // :2403 CFLAG:1 = 0',
+    tests: ['event-nextday'],
+    must_mention: '状态归 0',
+  },
+  {
+    desc: 'M8679 示众台：肛门珠写成私处珠（JUEL:2 → JUEL:1）',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'era.add(`juel:${cid}:2`, count_a);',
+    replace: 'era.add(`juel:${cid}:1`, count_a);',
+    tests: ['event-nextday'],
+    must_mention: 'JUEL:2 += COUNT_A',
+  },
+  // —— #400（N16）二轮返工：随机上界（RAND:N 的 N）逐处钉住 ——
+  {
+    desc: 'M8680 处女献上：S 的 RAND:3 改成 RAND:4（上界不参与命中，只能靠探针守）',
+    file: 'ere/event/event-nextday.js',
+    find: 'let s = -rand(3);',
+    replace: 'let s = rand(4);',
+    tests: ['event-nextday'],
+    must_mention: '处女献上：S = -RAND:3',
+  },
+  {
+    desc: 'M8681 尿床准入：RAND:12 改成 RAND:11',
+    file: 'ere/event/event-nextday.js',
+    find: 'rand(12) >',
+    replace: 'rand(11) >',
+    tests: ['event-nextday'],
+    must_mention: '尿床：准入 RAND:12',
+  },
+  {
+    desc: 'M8682 尿床一档：RAND:4 改成 RAND:5',
+    file: 'ere/event/event-nextday.js',
+    find: 'switch (rand(4)) {',
+    replace: 'switch (rand(5)) {',
+    tests: ['event-nextday'],
+    must_mention: '导管一档 RAND:4',
+  },
+  {
+    desc: 'M8683 尿床三档：RAND:3 改成 RAND:4',
+    file: 'ere/event/event-nextday.js',
+    find: 'switch (rand(3)) {',
+    replace: 'switch (rand(4)) {',
+    tests: ['event-nextday'],
+    must_mention: '导管三档 RAND:3',
+  },
+  {
+    desc: 'M8684 夜这い：上界算错（rand(pool.length) 改小 1）',
+    file: 'ere/event/event-nextday.js',
+    find: 'let index = rand(pool.length);',
+    replace: 'let index = rand(pool.length - 1);',
+    tests: ['event-nextday'],
+    must_mention: '夜这い：RAND:(合格人数 2)',
+  },
+  {
+    desc: 'M8685 遛狗：上界算错（rand(walking) 改小 1）',
+    file: 'ere/event/event-nextday.js',
+    find: 'walking = rand(walking);',
+    replace: 'walking = rand(walking - 1);',
+    tests: ['event-nextday'],
+    must_mention: '遛狗：RAND:(CHARANUM-1)',
+  },
+  {
+    desc: 'M8686 朝フェラ：上界算错（rand(candidates.length) 改小 1）',
+    file: 'ere/event/event-nextday.js',
+    find: 'let e = rand(candidates.length);',
+    replace: 'let e = rand(candidates.length - 1);',
+    tests: ['event-nextday'],
+    must_mention: '朝フェラ：E = RAND:F',
+  },
+  {
+    desc: 'M8687 示众台：侵犯者 RAND:5 改成 RAND:4',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'let user = rand(5) + 1;',
+    replace: 'let user = rand(4) + 1;',
+    tests: ['event-nextday'],
+    must_mention: 'RAND:5（侵犯者）',
+  },
+  {
+    desc: 'M8688 示众台：通配涂鸦 RAND:6 改成 RAND:5',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'const rolled = rand(6);',
+    replace: 'const rolled = rand(5);',
+    tests: ['event-nextday'],
+    must_mention: 'RAND:6（涂鸦）',
+  },
+  {
+    desc: 'M8689 示众台：通用十四句 RAND:14 改成 RAND:13',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'const rolled = rand(14);',
+    replace: 'const rolled = rand(13);',
+    tests: ['event-nextday'],
+    must_mention: 'RAND:14（通用涂鸦）',
+  },
+  {
+    desc: 'M8690 示众台：处女支的 RAND:20 改成 RAND:19',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: "    era.print('『处女』'); // :1616\n    count_a += rand(20) + 1;",
+    replace:
+      "    era.print('『处女』'); // :1616\n    count_a += rand(19) + 1;",
+    tests: ['event-nextday'],
+    must_mention: 'RAND:20/10/10（次数）',
   },
 ];
