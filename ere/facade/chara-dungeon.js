@@ -949,6 +949,20 @@ class DungeonFacade {
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
+/**
+ * 气力上限（maxbase:cid:1 ↔ MAXBASE:1）。
+ * 生成器暂不生成 maxbase 门面（同 体力上限 的注），#392 的 CHAR_CUSTOM.CASE 20-23
+ * 需要它（`BASE:A:1 = MAXBASE:A:1`）——跨域写走门面（#71），故在此补一条。
+ */
+Object.defineProperty(DungeonFacade.prototype, '气力上限', {
+  get() {
+    return era.get(`maxbase:${this.cid}:1`) || 0;
+  },
+  set(v) {
+    era.set(`maxbase:${this.cid}:1`, v);
+  },
+});
+
 Object.defineProperty(DungeonFacade.prototype, '体力上限', {
   /** MAXBASE:0 与 BASE:0 同属 dungeon 域；生成器暂不生成 maxbase 门面。 */
   get() {

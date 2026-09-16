@@ -124,7 +124,14 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 60; // 合并态实测（并上含 #400 的 master）：
+export const PENDING_BASELINE = 56; // #392（N8 段 2）：本票把 4 个「待移植」整份摆进
+// ere/ —— キャラ関数/CHARA_CUSTOM ver1.0.1.ERB、CHARA_CUSTOM2 ver1.0.1.ERB、
+// CHARA_CUSTOM3.ERB、FUNC_CHARA_AND_HAIR.ERB：60 − 4 = 56，与重测一致。
+// （同一票把 CHARA_BODY2.ERB 从「已移植」纠正为「部分移植」——它自报的
+// @CHAR_BUST_REGENERATE_WAPPED 尚无票，新挂的存根行让本表的分类回到诚实的
+// 那一档；该纠正不动待移植分子，故 PENDING 只扣 4。）
+// 下面是各票的抬低记录（历史，按票号近远排列）。
+// #401 的说明：60 = 合并态实测（并上含 #400 的 master）：
 // 62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60。#400 不动这个数
 // （EVENT_NEXTDAY.ERB 原本就是部分移植），所以两次合并只扣本票这两份。
 // 各票自己的说明留在下面。
