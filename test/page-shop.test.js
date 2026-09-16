@@ -849,3 +849,40 @@ test('120 召唤：满员（CHARANUM >= MAX_CHARANUM = 90）时只提示「奴�
   assert(texts.includes('奴隶太多了！'));
   assert(!texts.includes('[1]召唤魔物从者'), '满员不得进商店');
 });
+
+test('店内输入的购买分派端点：99 进购买流程（販売アイテム数 = 100 的最后一个），100 不进', async () => {
+  // 99/100 是引擎规则「店内输入 0-99 一律进购买流程」的两个端点。本作能上架的
+  // 编号里，道具店到 56、陷阱店到 91，再往上就是怪物商店的 201+（那条链不走
+  // 本分派），故 99 在真实流程里点不亮——两条都用直调分派 + 手工点亮的方式把
+  // 规则端点钉住：常量改成 99 或 101 时，这一条必红（幅度类条目 M8887 的
+  // 100→10 拦得住，但拦不住端点）
+  {
+    const fixture = create_shop_fixture();
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.bought = 0; // 在道具商店里
+    era_flag.money = 1000;
+    fixture.store.set('itemsales:99', 1); // 手工点亮端点（真实在售表到 91）
+    fixture.store.set('itemname:99', '末号道具');
+    fixture.store.set('itemprice:99', 100);
+    fixture.set_inputs(1); // 复数支的数量选择（99 >= 60 且 != 90）
+    const { usershop } = fixture.load_module('page/page-shop');
+    await usershop(99);
+    assert.equal(fixture.store.get('item:99'), 1, '99 进购买流程：先给货');
+    assert.equal(era_flag.money, 900, '99 进购买流程：先扣钱');
+    assert.equal(era_flag.bought, 99, 'BOUGHT = 选中编号');
+  }
+  {
+    const fixture = create_shop_fixture();
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.bought = 0;
+    era_flag.money = 1000;
+    fixture.store.set('itemsales:100', 1); // 即便点亮也不该被买走
+    fixture.store.set('itemname:100', '规则外道具');
+    fixture.store.set('itemprice:100', 100);
+    const { usershop } = fixture.load_module('page/page-shop');
+    await usershop(100);
+    assert.equal(fixture.store.get('item:100') ?? 0, 0, '100 不进购买流程');
+    assert.equal(era_flag.money, 1000, '钱不动');
+    assert.equal(era_flag.bought, 0, 'BOUGHT 不动');
+  }
+});

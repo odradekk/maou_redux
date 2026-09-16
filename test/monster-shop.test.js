@@ -846,3 +846,90 @@ test('BUY_MONSTER：确认处只认 0/1——其余值落回祭品选择，不�
     '5 之后回到祭品选择的画面（重画一轮）',
   );
 });
+
+test('SELECT_MONSTER：名录的编号段端点——201（首个在册）与 210（末个在册）都出场', async () => {
+  // 扫描面是 201-280（:232 的 FOR），但在册商品只有 201-210（Item.yml 的
+  // 2xx 段）：两端各站一条。211+ 没名字没价位，改 `end` 到 211/279 的输出
+  // 相同（等价变异，见条目注释）
+  {
+    const { fixture } = await run_select(
+      2, // 史莱姆档 [2, 2]：201 的 CSVTALENT 319 = 2（与 yml 同值）
+      {
+        'chara:201': { talent: { 319: 2 } },
+        'itemprice:201': 15,
+        'itemname:201': '精英史莱姆',
+      },
+      999,
+    );
+    assert_has_line(
+      history_texts(fixture),
+      goods_cell(201, '精英史莱姆', 15),
+      '首个在册编号 201 必须在列',
+    );
+  }
+  {
+    const { fixture } = await run_select(
+      9, // 魔兽档 [10, 12]：210 的 319 = 10（与 yml 同值）
+      {
+        'chara:210': { talent: { 319: 10 } },
+        'itemprice:210': 15,
+        'itemname:210': '猎犬首领',
+      },
+      999,
+    );
+    assert_has_line(
+      history_texts(fixture),
+      goods_cell(210, '猎犬首领', 15),
+      '末个在册编号 210 必须在列（把 end 砍到 ≤ 210 即红）',
+    );
+  }
+});
+
+test('MONSTER_SHOP：种族选择收下 9（RACE_MAX 的最后一个）并进魔兽档', async () => {
+  // 九档的最后一档：走菜单路径（不是直调 SELECT_MONSTER），把 RACE_MAX = 9
+  // 的端点站住——改成 8 时 9 会打回重问，这一条红
+  const fixture = await run_monster_shop(
+    {
+      'chara:210': { talent: { 319: 10 } },
+      'itemprice:210': 15,
+      'itemname:210': '猎犬首领',
+    },
+    1, // 入口：召唤
+    1, // 性别：男性
+    9, // 种族：魔兽（映射 [10, 12]）
+    999, // 退出
+  );
+  const texts = history_texts(fixture);
+  assert_has_line(
+    texts,
+    goods_cell(210, '猎犬首领', 15),
+    '键入 9 应进魔兽档并列出 210（打回重问就看不到这一行）',
+  );
+});
+
+test('BUY_MONSTER：祭品扫描的编号段端点——193（100-199 段末个在册）能当祭品', async () => {
+  // 扫描面是 100-199（:301 的 FOR），在怪物数据表里到 193 为止（混沌龙，
+  // 凌辱类型 10 = 魔兽档、等级 30 + 4）；194-199 没有数据 → 上界改到 199 与
+  // 200 的输出相同（等价，见条目注释），砍到 ≤ 193 才是红
+  const fixture = monster_world({
+    'chara:210': { talent: { 319: 10 } },
+    'itemprice:210': 15,
+    'itemname:210': '猎犬首领',
+    'item:193': 1,
+    'itemname:193': '混沌龙',
+  });
+  fixture.set_inputs(210, 193, 0); // 选中 210 → 挑 193 当祭品 → 确认成交
+  const { select_monster } = fixture.load_module('page/page-monster-shop');
+  const result = await select_monster(9, rand0); // 魔兽档 [10, 12]
+  assert.equal(result, 1, '一只 34 级的祭品就够');
+  assert_has_line(
+    history_texts(fixture),
+    pick_cell(193, '混沌龙', 34, 1, 0),
+    '末个在册祭品编号 193 必须进可选表',
+  );
+  assert_has_line(
+    history_texts(fixture),
+    sacrifice_cell('混沌龙', 34, 1),
+    '193 选中后的祭品行',
+  );
+});

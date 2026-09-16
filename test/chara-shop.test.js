@@ -267,8 +267,9 @@ test('CHAR_IKAI_CREATE：一览只列「有预设且不在场」的编号，999 
   assert(texts.includes('[999] 返回'));
 });
 
-test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格）', async () => {
-  // 六个可召唤的编号：前五个占满一行，第六个另起一行
+test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格，首号 10000）', async () => {
+  // 六个可召唤的编号（10000 = 段首，正好站在 IKAI_IDS.start 上）：前五个
+  // 占满一行，第六个另起一行
   const fixture = chara_world();
   const names = [
     '异界人甲',
@@ -279,7 +280,7 @@ test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格�
     '异界人己',
   ];
   names.forEach((name, index) => {
-    const id = 10001 + index;
+    const id = 10000 + index;
     fixture.seed_chara(id, { id, name });
     fixture.store.set(`chara:${id}`, { name });
   });
@@ -289,10 +290,10 @@ test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格�
   // 一览的每一行就是一次 era.print（原作 SIF LOCAL % 5 == 0 → PRINTL）
   const rows = history_texts(fixture).filter((line) => line.includes('勋章&'));
   assert.deepEqual(rows, [
-    [10001, 10002, 10003, 10004, 10005]
+    [10000, 10001, 10002, 10003, 10004]
       .map((id, index) => ikai_cell(id, names[index], 3, 6000))
       .join(''),
-    ikai_cell(10006, names[5], 3, 6000),
+    ikai_cell(10005, names[5], 3, 6000),
   ]);
 });
 

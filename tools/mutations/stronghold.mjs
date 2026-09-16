@@ -1,12 +1,15 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 200; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+export const COUNT = 215; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
-// #399 起 +60（M8881-M8918 与 M8919-M8940，page-item-shop 27 /
-// page-monster-shop 18 / page-chara-shop 10 / page-shop 3 / page-shop-trap 2。
-// 其中验收返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
-// 1:1 文本修正、M8940 是菜单行的全角空格；M8915 上一轮按「与 page.mjs 的
-// M8114 同款」跳过，现挂排版条目，那条「回放播种」变异仍未收录）
+// #399 起 +75（M8881-M8918、M8919-M8940 与 M9101-M9115）：page-item-shop 33 /
+// page-monster-shop 24 / page-chara-shop 13 / page-shop 3（另有 1 条 #395 的
+// page-shop 旧条目） / page-shop-trap 2。
+// 第二轮返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
+// 1:1 文本修正、M8940 是菜单行的全角空格；第三轮返工 +15：M9101 起是范围
+// 端点（件数/上下界/槽位），等价的一端不建条目、理由写在相邻条目注释里。
+// M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
+// 「回放播种」变异仍未收录）
 
 export default [
   {
@@ -1657,5 +1660,138 @@ export default [
     replace: "'[1]男性\\u3000\\u3000\\u3000[2]女性",
     tests: ['chara-shop'],
     must_mention: '性别选择',
+  },
+  // —— #399 验收返工（第三轮）：范围端点 ——
+  // 「幅度和边界是两回事」：这一组每条只把端点挪一到两格。挪一格但数据里没有
+  // 商品/角色落在那一格的，是等价变异（不建条目），理由写进相邻条目的注释；
+  // 端点测试落在「最后一个在册/可达值」上（见三个测试文件的端点用例）。
+  {
+    desc: 'M9101 店内购买分派的上界少一格（SHOP_ITEM_COUNT 100 → 99）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const SHOP_ITEM_COUNT = 100;',
+    replace: 'const SHOP_ITEM_COUNT = 99;',
+    tests: ['page-shop'],
+    must_mention: '购买分派端点',
+  },
+  {
+    desc: 'M9102 店内购买分派的上界宽一格（SHOP_ITEM_COUNT 100 → 101：连主菜单 100 也被吞）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const SHOP_ITEM_COUNT = 100;',
+    replace: 'const SHOP_ITEM_COUNT = 101;',
+    tests: ['page-shop'],
+    must_mention: '购买分派端点',
+  },
+  {
+    desc: 'M9103 消耗品持有上限的槽位错一格（STOCK_LIMIT 99 → 100）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const STOCK_LIMIT = 99;',
+    replace: 'const STOCK_LIMIT = 100;',
+    tests: ['item-shop'],
+    must_mention: '99 上限',
+  },
+  {
+    desc: 'M9104 在售位数组的槽位数少一个（SALES_COUNT 300 → 299）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const SALES_COUNT = 300;',
+    replace: 'const SALES_COUNT = 299;',
+    tests: ['item-shop'],
+    must_mention: '清 ITEMSALES:0-299',
+  },
+  {
+    // 60 → 59 是等价变异：Item.yml 里 57-59 没有商品，ITEMSALES 点不亮它们，
+    // 购买分派到不了那三个编号。本条取 60 → 61 这一侧：60 在册（落穴），把它
+    // 挪出复数支会让「复数购买支的名单」用例红；反方向的另一侧（把末个在册的
+    // 非复数商品 56 拉进复数支）由「确认支：素质道具四件」用例守
+    desc: 'M9105 复数购买的下界错一格（PLURAL_RANGE_START 60 → 61）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const PLURAL_RANGE_START = 60;',
+    replace: 'const PLURAL_RANGE_START = 61;',
+    tests: ['item-shop'],
+    must_mention: '复数购买支的名单',
+  },
+  {
+    desc: 'M9106 复数购买的排除项错一格（PLURAL_EXCLUDE 90 → 89）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const PLURAL_EXCLUDE = 90;',
+    replace: 'const PLURAL_EXCLUDE = 89;',
+    tests: ['item-shop'],
+    must_mention: '复数购买支的名单',
+  },
+  {
+    desc: 'M9107 名录的首号错一格（MONSTER_IDS.start 201 → 202）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const MONSTER_IDS = { start: 201, end: 280 };',
+    replace: 'const MONSTER_IDS = { start: 202, end: 280 };',
+    tests: ['monster-shop'],
+    must_mention: '名录的编号段端点',
+  },
+  {
+    // end → 279/281 都是等价变异（Item.yml 的 2xx 段到 210 为止，211-280 没有
+    // 名字与价位，扫描多走或少走一格输出相同）；可观察的一侧是砍掉末个在册的
+    // 210（end → 210 即 `< 210`）
+    desc: 'M9108 名录的末号砍到末个在册商品（MONSTER_IDS.end 280 → 210）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const MONSTER_IDS = { start: 201, end: 280 };',
+    replace: 'const MONSTER_IDS = { start: 201, end: 210 };',
+    tests: ['monster-shop'],
+    must_mention: '名录的编号段端点',
+  },
+  {
+    // 挪到 199 是等价变异（怪物数据表 100-199 段到 193 为止）；可观察的一侧
+    // 是砍掉末个在册的 193
+    desc: 'M9109 祭品扫描的末号砍到末个在册怪物（100-199 → 100-193）',
+    file: 'ere/page/page-monster-shop.js',
+    find: '  for (let id = 100; id < 200; id += 1) {',
+    replace: '  for (let id = 100; id < 193; id += 1) {',
+    tests: ['monster-shop'],
+    must_mention: '祭品扫描的编号段端点',
+  },
+  {
+    desc: 'M9110 祭品守卫的下界宽一格（result < 100 → <= 100：把 100 也拒了）',
+    file: 'ere/page/page-monster-shop.js',
+    find: '    if (result < 100 || result >= 200) {',
+    replace: '    if (result <= 100 || result >= 200) {',
+    tests: ['monster-shop'],
+    must_mention: '逐只挑',
+  },
+  {
+    desc: 'M9111 种族选择的上限少一档（RACE_MAX 9 → 8）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const RACE_MAX = 9;',
+    replace: 'const RACE_MAX = 8;',
+    tests: ['monster-shop'],
+    must_mention: 'RACE_MAX 的最后一个',
+  },
+  {
+    desc: 'M9112 怪物商店性别选择的上限少一档（SEX_MAX 3 → 2）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const SEX_MAX = 3;',
+    replace: 'const SEX_MAX = 2;',
+    tests: ['monster-shop'],
+    must_mention: '扶她档',
+  },
+  {
+    desc: 'M9113 异界名录的首号错一格（IKAI_IDS.start 10000 → 10001）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'const IKAI_IDS = { start: 10000, end: 100000 };',
+    replace: 'const IKAI_IDS = { start: 10001, end: 100000 };',
+    tests: ['chara-shop'],
+    must_mention: '一览的排版字面量',
+  },
+  {
+    desc: 'M9114 异界名录的上界错一格（IKAI_IDS.end 100000 → 99999）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'const IKAI_IDS = { start: 10000, end: 100000 };',
+    replace: 'const IKAI_IDS = { start: 10000, end: 99999 };',
+    tests: ['chara-shop'],
+    must_mention: 'INRANGE 的上界',
+  },
+  {
+    desc: 'M9115 异界召唤性别选择的上限少一档（SEX_MAX 3 → 2）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'const SEX_MAX = 3;',
+    replace: 'const SEX_MAX = 2;',
+    tests: ['chara-shop'],
+    must_mention: '扶她档',
   },
 ];
