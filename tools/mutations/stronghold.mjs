@@ -1,13 +1,14 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 215; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+export const COUNT = 218; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
-// #399 起 +75（M8881-M8918、M8919-M8940 与 M9101-M9115）：page-item-shop 33 /
+// #399 起 +78（M8881-M8918、M8919-M8940 与 M9101-M9118）：page-item-shop 36 /
 // page-monster-shop 24 / page-chara-shop 13 / page-shop 3（另有 1 条 #395 的
 // page-shop 旧条目） / page-shop-trap 2。
 // 第二轮返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
 // 1:1 文本修正、M8940 是菜单行的全角空格；第三轮返工 +15：M9101 起是范围
-// 端点（件数/上下界/槽位），等价的一端不建条目、理由写在相邻条目注释里。
+// 端点（件数/上下界/槽位），等价的一端不建条目、理由写在相邻条目注释里；
+// M9116-M9118 是第三轮评审补的两个内联端点（戒指槽位、两处页高）。
 // M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
 // 「回放播种」变异仍未收录）
 
@@ -1738,7 +1739,10 @@ export default [
   },
   {
     // 挪到 199 是等价变异（怪物数据表 100-199 段到 193 为止）；可观察的一侧
-    // 是砍掉末个在册的 193
+    // 是砍掉末个在册的 193。附带一条保留：扫描上界还决定 RAND:10 的消耗次数
+    // （read_monster 对每个编号都调一次 MONSTER_DATA），严格说 194-199 那几次
+    // 消耗在真实随机源下会顺移后续掷点——测试注入的随机源是纯函数（`() => 0`），
+    // 判不出这一点，故仍按等价处理
     desc: 'M9109 祭品扫描的末号砍到末个在册怪物（100-199 → 100-193）',
     file: 'ere/page/page-monster-shop.js',
     find: '  for (let id = 100; id < 200; id += 1) {',
@@ -1793,5 +1797,32 @@ export default [
     replace: 'const SEX_MAX = 2;',
     tests: ['chara-shop'],
     must_mention: '扶她档',
+  },
+  // 第三轮评审点名的两个内联端点（不是命名常量，判据直接写在行里）
+  {
+    desc: 'M9116 戒指槽位的上限宽一格（ITEM:300 > 99 → > 100）',
+    file: 'ere/page/page-item-shop.js',
+    find: "    if ((era.get('item:300') || 0) > 99) {",
+    replace: "    if ((era.get('item:300') || 0) > 100) {",
+    tests: ['item-shop'],
+    must_mention: '上限正好卡在',
+  },
+  {
+    desc: 'M9117 53 号选择面的页高错一格（(NO_PAGE + 1) * 20 → * 21）',
+    file: 'ere/page/page-item-shop.js',
+    find: '      // :526-531 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {',
+    replace:
+      '      // :526-531 下一页\n      if ((no_page + 1) * 21 <= era.getAddedCharacters().length) {',
+    tests: ['item-shop'],
+    must_mention: '53 号选择面的翻页',
+  },
+  {
+    desc: 'M9118 30 号选择面的页高错一格（@USE_ITEM 的同款判据 * 20 → * 21）',
+    file: 'ere/page/page-item-shop.js',
+    find: '      // :649-654 下一页\n      if ((no_page + 1) * 20 <= era.getAddedCharacters().length) {',
+    replace:
+      '      // :649-654 下一页\n      if ((no_page + 1) * 21 <= era.getAddedCharacters().length) {',
+    tests: ['item-shop'],
+    must_mention: '30 号选择面的翻页',
   },
 ];

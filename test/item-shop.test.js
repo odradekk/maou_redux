@@ -1379,3 +1379,61 @@ test('复数购买：买 n 件时只等一次键（源 :492/:495 各一支一个
   assert.equal(one.fixture.waits.length, 1, '买 1 件：一个 WAIT');
   assert.equal(three.fixture.waits.length, 1, '买 3 件：也是一个 WAIT');
 });
+
+// —— 剩下的两个内联端点（第三轮评审点名：页高与戒指槽位） ——
+
+/** 铺 20 个可选奴隶（页高 20 的端点：第 21 人不存在） */
+function join_20_slaves(fixture) {
+  for (let cid = 1; cid <= 20; cid += 1) {
+    fixture.seed_chara(cid, { id: cid, name: `奴隶${cid}` });
+    fixture.era.addCharacter(cid);
+  }
+}
+
+/** 全量行史里角色行的按钮数（accelerator 1-20 = 当时那一页列出的角色） */
+function char_buttons(fixture) {
+  return fixture.lines_history.filter(
+    (line) =>
+      line.type === 'button' && line.accelerator >= 1 && line.accelerator <= 20,
+  ).length;
+}
+
+test('复数购买：53 号选择面的翻页吃页高 20（正好 20 人时下一页翻到空页）', async () => {
+  // (NO_PAGE + 1) * 20 <= CHARANUM：正好 20 人时成立 → 翻到第 2 页（空页）。
+  // 页高挪到 21 时这一格不成立、第二屏仍是 20 人——char_buttons 从 20 变 40
+  const fixture = buy_world({ 'item:53': 0, 'flag:10004': 100000 });
+  join_20_slaves(fixture);
+  fixture.set_inputs(1, 1001); // 买一件 → 点「下一页」→ 之后输入耗尽
+  const { purchase } = fixture.load_module('page/page-item-shop');
+  await assert.rejects(() => purchase(53), /预置输入已耗尽/);
+  assert.equal(char_buttons(fixture), 20, '页 0 列 20 人，翻到页 1 是空页');
+});
+
+test('当场使用支：30 号选择面的翻页吃页高 20（同一判据的另一处）', async () => {
+  // 与 53 号那条同形，但判据在 @USE_ITEM 的 :649-654（两处字面量各一份）
+  const fixture = buy_world({
+    'itemsales:30': 1,
+    'itemname:30': '体力恢复药',
+    'itemprice:30': 100,
+    'flag:10004': 100000,
+  });
+  join_20_slaves(fixture);
+  fixture.set_inputs(1001); // 目标菜单直接点「下一页」→ 之后输入耗尽
+  const { purchase } = fixture.load_module('page/page-item-shop');
+  await assert.rejects(() => purchase(30), /预置输入已耗尽/);
+  assert.equal(char_buttons(fixture), 20, '页 0 列 20 人，翻到页 1 是空页');
+});
+
+test('复数购买：91 号戒指的上限正好卡在 99/100（持 99 再买 1 枚退回）', async () => {
+  // :568-580 的 `ITEM:300 > 99`：持 99 再买一枚正好摸到 100 → 退 1 枚的钱并
+  // 夹回 99。判据挪到 `> 100` 时这一枚不再退（金额差 100）
+  const { fixture } = await run_purchase(
+    91,
+    { 'item:300': 99, 'flag:10004': 10000, 'item:91': 0 },
+    [1],
+  );
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(fixture.store.get('item:300'), 99, '夹回上限 99');
+  assert.equal(era_flag.money, 10000, '买 −100、退 +100，正好抵平');
+  assert(history_texts(fixture).includes('退还了多余的戒指'));
+});
