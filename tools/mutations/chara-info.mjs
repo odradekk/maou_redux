@@ -212,7 +212,7 @@ export default [
   // 见 test/page-chara-info.test.js 该用例的头注），`!== 2 → === 2`（0/1
   // 被当成 2 落回重画）由三条 0 侧用例守。
   {
-    desc: 'M9001 转职按钮快捷键 2 → 3（与诱惑撞号）',
+    desc: 'M9101 转职按钮快捷键 2 → 3（与诱惑撞号）',
     file: 'ere/page/page-chara-info.js',
     find: `      show_button_job_change(2, current);`,
     replace: `      show_button_job_change(3, current);`,
@@ -220,7 +220,7 @@ export default [
     must_mention: '状态 0 + 等级 50：转职与结婚都亮着',
   },
   {
-    desc: 'M9002 诱惑按钮快捷键 3 → 4（与结婚撞号）',
+    desc: 'M9102 诱惑按钮快捷键 3 → 4（与结婚撞号）',
     file: 'ere/page/page-chara-info.js',
     find: `      show_button_temptation(3, current);`,
     replace: `      show_button_temptation(4, current);`,
@@ -228,7 +228,7 @@ export default [
     must_mention: '状态 2 侵攻中的勇者：转职不渲染，诱惑与恋人设定各一个',
   },
   {
-    desc: 'M9003 结婚按钮快捷键 4 → 5（与育儿室撞号）',
+    desc: 'M9103 结婚按钮快捷键 4 → 5（与育儿室撞号）',
     file: 'ere/page/page-chara-info.js',
     find: `      show_button_marriage(4, current);`,
     replace: `      show_button_marriage(5, current);`,
@@ -236,7 +236,7 @@ export default [
     must_mention: '状态 0 + 等级 50：转职与结婚都亮着',
   },
   {
-    desc: 'M9004 转职按钮的实参改 0（染灰档位判定拿到的是魔王号）',
+    desc: 'M9104 转职按钮的实参改 0（染灰档位判定拿到的是魔王号）',
     file: 'ere/page/page-chara-info.js',
     find: `      show_button_job_change(2, current);`,
     replace: `      show_button_job_change(2, 0);`,
@@ -244,7 +244,7 @@ export default [
     must_mention: '灰值 setColor 次数',
   },
   {
-    desc: 'M9005 转职接线把 2 也上浮（!== 2 → !== 3）',
+    desc: 'M9105 转职接线把 2 也上浮（!== 2 → !== 3）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (job_result !== 2) return job_result; // :1094-1097 的收尾`,
     replace: `        if (job_result !== 3) return job_result; // :1094-1097 的收尾`,
@@ -252,7 +252,7 @@ export default [
     must_mention: '被调方返回 2（防御支）时不上浮',
   },
   {
-    desc: 'M9006 诱惑接线把 2 也上浮（!== 2 → !== 3）',
+    desc: 'M9106 诱惑接线把 2 也上浮（!== 2 → !== 3）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (temptation_result !== 2) return temptation_result;`,
     replace: `        if (temptation_result !== 3) return temptation_result;`,
@@ -260,7 +260,7 @@ export default [
     must_mention: '被调方返回 2（防御支）时不上浮',
   },
   {
-    desc: 'M9007 结婚接线把 2 也上浮（!== 2 → !== 3）',
+    desc: 'M9107 结婚接线把 2 也上浮（!== 2 → !== 3）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (marriage_result !== 2) return marriage_result;`,
     replace: `        if (marriage_result !== 3) return marriage_result;`,
@@ -268,7 +268,7 @@ export default [
     must_mention: '被调方返回 2（防御支）时不上浮',
   },
   {
-    desc: 'M9008 转职接线把 0 当 2 落回重画（!== 2 → === 2）',
+    desc: 'M9108 转职接线把 0 当 2 落回重画（!== 2 → === 2）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (job_result !== 2) return job_result; // :1094-1097 的收尾`,
     replace: `        if (job_result === 2) return job_result; // :1094-1097 的收尾`,
@@ -276,7 +276,7 @@ export default [
     must_mention: '转职返回 0 时上浮回名册',
   },
   {
-    desc: 'M9009 诱惑接线把 0 当 2 落回重画（!== 2 → === 2）',
+    desc: 'M9109 诱惑接线把 0 当 2 落回重画（!== 2 → === 2）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (temptation_result !== 2) return temptation_result;`,
     replace: `        if (temptation_result === 2) return temptation_result;`,
@@ -284,7 +284,7 @@ export default [
     must_mention: '诱惑返回 0 时上浮回名册',
   },
   {
-    desc: 'M9010 结婚接线把 0 当 2 落回重画（!== 2 → === 2）',
+    desc: 'M9110 结婚接线把 0 当 2 落回重画（!== 2 → === 2）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (marriage_result !== 2) return marriage_result;`,
     replace: `        if (marriage_result === 2) return marriage_result;`,
@@ -292,7 +292,7 @@ export default [
     must_mention: '结婚返回 0 时也上浮回名册',
   },
   {
-    desc: 'M9057 故乡丈夫的 kind 表 [0,4,8] → [0,4]',
+    desc: 'M9113 故乡丈夫的 kind 表 [0,4,8] → [0,4]',
     file: 'ere/page/page-chara-info.js',
     find: "    if ([0, 4, 8].includes(kind)) return '故乡丈夫';",
     replace: "    if ([0, 4].includes(kind)) return '故乡丈夫';",
@@ -300,7 +300,7 @@ export default [
     must_mention: '故乡丈夫',
   },
   {
-    desc: 'M9058 故乡扶她的 kind 表 [1,5,7] → [1,5]',
+    desc: 'M9114 故乡扶她的 kind 表 [1,5,7] → [1,5]',
     file: 'ere/page/page-chara-info.js',
     find: "    if ([1, 5, 7].includes(kind)) return '故乡扶她';",
     replace: "    if ([1, 5].includes(kind)) return '故乡扶她';",
@@ -308,7 +308,7 @@ export default [
     must_mention: '故乡扶她',
   },
   {
-    desc: 'M9043 名册每页行数由 24 改成 23（第 24 人掉到第 2 页）',
+    desc: 'M9112 名册每页行数由 24 改成 23（第 24 人掉到第 2 页）',
     file: 'ere/page/page-chara-info.js',
     find: 'const NUM_PAGE = 24;',
     replace: 'const NUM_PAGE = 23;',
@@ -316,7 +316,7 @@ export default [
     must_mention: '名册每页 24 行',
   },
   {
-    desc: 'M9011 结婚接线丢掉上浮值（return marriage_result → return 0）',
+    desc: 'M9111 结婚接线丢掉上浮值（return marriage_result → return 0）',
     file: 'ere/page/page-chara-info.js',
     find: `        if (marriage_result !== 2) return marriage_result;`,
     replace: `        if (marriage_result !== 2) return 0;`,

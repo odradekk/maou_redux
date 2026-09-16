@@ -124,18 +124,22 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 57; // 合并态实测（#393 本票独立测得 60 → 57）：
-// 本票把 `キャラ関数/CHARA_JOB_CHANGE.ERB`、`CHARA_TEMPTATION.ERB`、
-// `CHARA_MARRIAGE.ERB` 三个文件整份摆进 ere/（转职 / 魔的诱惑 / 结婚三对
-// 按钮与流程，ere/chara/chara-job-change.js、chara-temptation.js、
-// chara-marriage.js），三份文件从「待移植」直接转「已移植」：-3。
-// 三路证据齐：文件头整路径 `源:`（证据 b）＋ 锚表分片
-// tools/trace-refs/chara-job-change.mjs / chara-temptation.mjs /
-// chara-marriage.mjs（证据 a，薄锚一条不差）＋ 存根清单六行
-// （SHOW_BUTTON_* 三行与 CHARA_INFO_* / TEMPTATION / MARRIAGE 三行）转
-// 已实现、未了结项清零。算式 60（#401 并上含 #400 的 master）− 3 = 57，
-// 与重跑 `node tools/trace-check.mjs --coverage` 的实测一致。
-// 各票自己的说明留在下面。
+export const PENDING_BASELINE = 53; // 合并态实测（#393 并上含 #392 的 master）：
+// 两票摆进 ere/ 的整份文件不相交，60 − 4（#392）− 3（#393）= 53，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加，
+// 计数型基线不许靠算（docs/agents/merge-conflicts.md）。
+//
+// #393 单独实测 60 → 57：本票把 キャラ関数/CHARA_JOB_CHANGE.ERB、
+// CHARA_TEMPTATION.ERB、CHARA_MARRIAGE.ERB 三个文件整份摆进 ere/（转职 /
+// 魔的诱惑 / 结婚三对按钮与流程），三份从「待移植」直接转「已移植」：-3。
+// #392（N8 段 2）把 4 个「待移植」整份摆进
+// ere/ —— キャラ関数/CHARA_CUSTOM ver1.0.1.ERB、CHARA_CUSTOM2 ver1.0.1.ERB、
+// CHARA_CUSTOM3.ERB、FUNC_CHARA_AND_HAIR.ERB：60 − 4 = 56，与重测一致。
+// （同一票把 CHARA_BODY2.ERB 从「已移植」纠正为「部分移植」——它自报的
+// @CHAR_BUST_REGENERATE_WAPPED 尚无票，新挂的存根行让本表的分类回到诚实的
+// 那一档；该纠正不动待移植分子，故 PENDING 只扣 4。）
+// 下面是各票的抬低记录（历史，按票号近远排列）。
+// #401 的说明：60 = 合并态实测（并上含 #400 的 master）：
 // 62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60。#400 不动这个数
 // （EVENT_NEXTDAY.ERB 原本就是部分移植），所以两次合并只扣本票这两份。
 // 各票自己的说明留在下面。
