@@ -402,6 +402,7 @@ async function select_assi() {
 
 module.exports = {
   STUBBED_CALLS,
+  get_job_name,
   is_assistable,
   is_trainable,
   select_target,

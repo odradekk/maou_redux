@@ -63,8 +63,10 @@ const {
 } = require('#/chara/chara-name-edit');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
+const { ability_up_core } = require('#/page/page-ability-up');
+const { tailor_core } = require('#/page/page-tailor');
 const { enemy_compare } = require('#/page/page-dungeon-info2');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info');
 const { set_bich_level } = require('#/kojo/kojo-dungeon-bitch');
 const {
   is_able_to_ability_up,
@@ -707,17 +709,15 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 10:
+        // :1003 CALL ABILITY_UP_CORE（#397 真身：page/page-ability-up.js）
         if (is_able_to_ability_up(current)) {
-          await stub_line_wait(
-            'ABILITY_UP_CORE',
-            '能力提升核心流程',
-            '随能力票',
-          );
+          await ability_up_core(current);
         }
         continue;
       case 11:
+        // :1009 CALL TAILOR_CORE（#397 真身：page/page-tailor.js）
         if (is_able_to_cloth(current)) {
-          await stub_line_wait('TAILOR_CORE', '换装核心流程', '随换装票');
+          await tailor_core(current);
         }
         continue;
       case 12:

@@ -5,7 +5,9 @@
  * 缝 = test/helpers/era-fixture.js。世界底座与 kojo-dungeon-bitch.test.js
  * 同款（魔王 0 + 温妮 31）。覆盖（逐条对应验收清单）：
  *   - FS_BITCH 文字列函数（PLAY/PLAYNAME/TOWN_MAN/TOWN_GIRL/DUNGEON_MAN/
- *     DUNGEON_GIRL/LOOKS 分档；非法参数抛错）；
+ *     DUNGEON_GIRL/LOOKS 分档；非法参数抛错）——LOOKS 的 41 行随机覆盖表
+ *     表驱动逐行走完（含边界外取值，见该用例头注）；
+
  *   - FS_LOG_BITCH 客数/次数拼接（逗号分隔、0 跳过）；
  *   - LOG_TRY_BITCH 卖春前日志（DUNGEON/TOWN 分支、勇者/奴隶分档）——
  *     与 H15 的 FI_TRY_BITCH（玩法抽选，返回玩法号）**不同函数**：
@@ -88,8 +90,100 @@ test('FS_BITCH：LOOKS 本人描写（头发颜色默认 + 随机覆盖 + 种族
     31,
     seq_rand(0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
   );
-  assert.ok(look.includes('的人类'), '种族收尾');
-  assert.ok(look.includes('温妮'), '名字收尾');
+  // 随机源已钉死（全 0）→ 整串确定：发色取 GET_LOOK_INFO、随机覆盖逐次命中、
+  // 末尾种族 + 名字拼接（#389 起 GET_LOOK_INFO 的真身在 ere/chara/look-info.js）
+  assert.equal(look, '金发的人类的温妮', '发色 + 种族 + 名字的整串');
+});
+
+test('FS_BITCH「LOOKS」：41 行 overwrite 表逐行走完（判据取值 × 产出词）', () => {
+  // 表驱动：每条数据 = 「只让本行判据为真的预置」＋「该行产出词」＋「源行」。
+  // DICE = 2 且注入的随机源恒 0 → 每行的 `RAND:DICE == 0` 恒真，于是只要本行
+  // 判据为真、其余为假，locals 就是本行的词（末尾恒拼上「种族的名字」）。
+  //
+  // 判据用到的 24 个 talent / 1 个 cflag / 6 个 abl 下标全部在 yml 里有名字，
+  // 且**每一行的取值在游戏里都造得出来**：素质侧的取值域由 ere/chara/look.js
+  // 的分档表写死（310 ∈ {1,20,50,100,150,201}、313 ∈ 1-34、312 ∈ 1-28、
+  // 315 ∈ 1-21∪90-93、305 ∈ 1-8，253/255/244/99/100/256/204/35/15/16/17/12/
+  // 10/26/23/25/73/21/22 是 0/1 开关），ABL 侧是能力等级（37 的 1-3 与 10、
+  // 30-33 的 10），CFLAG:509 由 ere/dungeon/dungeon-room.js:1060 写（迷惑状態）。
+  // 没有「造不出来的行」——这一点是把 41 行逐条对着源 :174-:261 核过的。
+  //
+  // 边界外的三格单列：它们必须**不**命中，用来钉住比较方向与 INRANGE 的上下界
+  // （只钉命中值会让 `> 150` 改成 `> 140`、`INRANGE(1,3)` 改成 `(1,4)` 全绿）。
+  const cases = [
+    // [预置, 期望的 LOCALS 词（不含末尾「种族的名字」）, 源行]
+    [{ talent: { 253: 1 } }, '小麦色的', ':174'],
+    [{ talent: { 255: 1 } }, '白皙的', ':176'],
+    [{ talent: { 244: 1 } }, '青色的', ':178'],
+    [{ talent: { 310: 1 } }, '白虎的', ':181'],
+    [{ talent: { 310: 201 } }, '阴毛浓密的', ':183'],
+    [
+      { talent: { 310: 150 } },
+      '黑发的',
+      ':183 边界外（> 150 不成立，落回发色）',
+    ],
+    [{ talent: { 313: 7 } }, '毛躁的', ':186'],
+    [{ talent: { 313: 9 } }, '翻白眼', ':188'],
+    [{ talent: { 313: 10 } }, '歪头', ':190'],
+    [{ talent: { 313: 11 } }, '忧郁的样子', ':192'],
+    [{ talent: { 313: 14 } }, '鼓腮的', ':194'],
+    [{ talent: { 313: 18 } }, '慵懒的', ':196'],
+    [{ talent: { 313: 19 } }, '不高兴的', ':198'],
+    [{ talent: { 305: 7 } }, '严厉的眼神', ':201'],
+    [{ talent: { 312: 10 } }, '手指漂亮的', ':204'],
+    [{ talent: { 312: 13 } }, '腰身纤细的', ':206'],
+    [{ talent: { 312: 14 } }, '臀部美形的', ':208'],
+    [{ talent: { 312: 15 } }, '双腿修长的', ':210'],
+    [{ talent: { 312: 22 } }, '艳丽头发的', ':212'],
+    [{ talent: { 312: 23 } }, '臀部丰满的', ':214'],
+    [{ talent: { 312: 25 } }, '虎牙可爱的', ':216'],
+    [{ talent: { 315: 8 } }, '元贵族', ':219'],
+    [{ talent: { 315: 12 } }, '元圣女', ':221'],
+    [{ talent: { 204: 1 } }, '肉便器', ':223'],
+    [{ talent: { 99: 1 } }, '高大的', ':225'],
+    [{ talent: { 100: 1 } }, '矮小的', ':227'],
+    [{ talent: { 256: 1 } }, '脸色不好的', ':229'],
+    [{ talent: { 21: 1 } }, '假正经的', ':231（或的左半）'],
+    [{ talent: { 22: 1 } }, '假正经的', ':231（或的右半）'],
+    [{ talent: { 35: 1 } }, '害羞的', ':233'],
+    [{ talent: { 15: 1 } }, '任性的', ':235（或的左半）'],
+    [{ talent: { 16: 1 } }, '任性的', ':235（或的右半）'],
+    [{ talent: { 17: 1 } }, '笑容卑屈的', ':237'],
+    [{ talent: { 12: 1 } }, '笑容灿烂的', ':239'],
+    [{ talent: { 10: 1 } }, '要哭了似的', ':241（或的左半）'],
+    [{ talent: { 26: 1 } }, '要哭了似的', ':241（或的右半）'],
+    [{ talent: { 23: 1 } }, '开朗的', ':243（或的左半）'],
+    [{ talent: { 25: 1 } }, '开朗的', ':243（或的右半）'],
+    [{ talent: { 73: 1 } }, '水性杨花的', ':245'],
+    [{ cflag: { 509: 1 } }, '迷路的', ':247（CFLAG 不是 TALENT）'],
+    [{ cflag: { 509: 2 } }, '黑发的', ':247 边界外（== 1 不成立）'],
+    [{ abl: { 37: 1 } }, '卖身寻欢的', ':249（INRANGE 下界）'],
+    [{ abl: { 37: 3 } }, '卖身寻欢的', ':249（INRANGE 上界）'],
+    [{ abl: { 37: 4 } }, '黑发的', ':249 边界外（出 INRANGE）'],
+    [{ abl: { 30: 10 } }, '无法想象没有肉棒的生活的', ':253'],
+    [{ abl: { 31: 10 } }, '一有空就不自觉地自慰的', ':255'],
+    [{ abl: { 32: 10 } }, '变得非常喜欢腥臭精液的', ':257'],
+    [{ abl: { 33: 10 } }, '渴望侵犯女性的', ':259'],
+    [{ abl: { 37: 10 } }, '随时随地的渴望着Sexy，变成了欲望的俘虏', ':261'],
+    // :264-267 陥落済み（append 型，不是覆盖；发色的初始串还在前面）
+    [{ talent: { 76: 1 } }, '黑发的好色的', ':264 淫乱'],
+    [{ talent: { 85: 1 } }, '黑发的背叛的', ':266 爱慕'],
+    [{}, '黑发的', '一次都没覆盖 → 保留发色串'],
+  ];
+  for (const [setup, word, ref] of cases) {
+    const { mod } = setup_log((f) => {
+      for (const [table, entries] of Object.entries(setup)) {
+        for (const [idx, value] of Object.entries(entries)) {
+          f.store.set(`${table}:31:${idx}`, value);
+        }
+      }
+    });
+    assert.equal(
+      mod.fs_bitch('LOOKS', 31, seq_rand(0)),
+      `${word}人类的温妮`,
+      `${ref} → ${word}`,
+    );
+  }
 });
 
 // —— FS_LOG_BITCH 拼接 ——
@@ -153,16 +247,22 @@ test('LOG_TRY_BITCH 与 FI_TRY_BITCH 互不混同：LOG 只输出不改状态、
     f.store.set('cflag:31:581', 0);
     f.store.set('cflag:31:582', 0);
   });
-  // LOG_TRY_BITCH：有输出文本
+  // LOG_TRY_BITCH：三行文本逐字钉死（随机源已钉死，取值是确定的；原来只查
+  // 「有输出」，把整段文本放掉了）。首行是 FS_BITCH 的 LOOKS 分档——
+  // #389 起它的 GET_LOOK_INFO 真身在 ere/chara/look-info.js
   await mod.log_try_bitch(31, 'DUNGEON');
-  assert.ok(fixture.text_lines().length > 0, 'LOG_TRY_BITCH 输出文本');
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['黑发的人类的温妮', '无法压抑自己的性欲，', '考虑着出卖肉体的事。'],
+    'LOG_TRY_BITCH 的整段输出',
+  );
 
-  // FI_TRY_BITCH（kojo-dungeon-bitch.js 的玩法抽选）：返回玩法号、不输出
+  // FI_TRY_BITCH（kojo-dungeon-bitch.js 的玩法抽选）：返回玩法号、不输出。
+  // seq_rand(0) 下玩法号是确定值，钉精确值而不是 0-6 的区间
   const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
   const before = fixture.text_lines().length;
   const play = bitch.fi_try_bitch(31, 'DUNGEON', seq_rand(0));
-  assert.equal(typeof play, 'number', 'FI_TRY_BITCH 返回玩法号');
-  assert.ok(play >= 0 && play <= 6, '玩法号在 0-6');
+  assert.equal(play, 1, 'FI_TRY_BITCH 返回玩法号（seq_rand(0) → 1）');
   assert.equal(fixture.text_lines().length, before, 'FI_TRY_BITCH 不输出');
 });
 
@@ -375,69 +475,9 @@ test('DUNGEON_ANAL_LOG：魔族少年（ARG:0 == 2）按 TALENT:TARGET:122 分�
   );
 });
 
-// —— #391 补：种族2/种族12/性格/婚史（LOOK.ERB:3285/3309/3473/3490） ——
-
-test('GET_LOOK_INFO：种族2 按 TALENT:319 映射，未登记代号回落 $N（字面量 $，AGENTS.md 约定）', () => {
-  const { fixture, mod } = setup_log();
-  fixture.store.set('talent:31:319', 6); // 妖精
-  assert.equal(mod.get_look_info(31, '种族2'), '妖精');
-  fixture.store.set('talent:31:319', 47); // 未登记代号
-  assert.equal(mod.get_look_info(31, '种族2'), '$47');
-});
-
-test('GET_LOOK_INFO：种族12 按 TALENT:220（精英）在 种族/种族2 间切换', () => {
-  const { fixture, mod } = setup_log();
-  fixture.store.set('talent:31:314', 2); // 种族=狼人
-  fixture.store.set('talent:31:319', 6); // 种族2=妖精
-  assert.equal(mod.get_look_info(31, '种族12'), '狼人', '非精英走 种族');
-  fixture.store.set('talent:31:220', 1);
-  assert.equal(mod.get_look_info(31, '种族12'), '妖精', '精英走 种族2');
-});
-
-test('GET_LOOK_INFO：性格优先 TALENT[160,179)，找不到再退 [10,19)，都没有则不明', () => {
-  const { fixture, mod } = setup_log();
-  assert.equal(mod.get_look_info(31, '性格'), '不明');
-  fixture.store.set('talent:31:15', 1);
-  fixture.store.set('talentname:15', '爽朗');
-  assert.equal(mod.get_look_info(31, '性格'), '爽朗', '仅 [10,19) 命中时用它');
-  fixture.store.set('talent:31:165', 1);
-  fixture.store.set('talentname:165', '内向');
-  assert.equal(
-    mod.get_look_info(31, '性格'),
-    '内向',
-    '[160,179) 命中时优先于 [10,19)',
-  );
-});
-
-test('GET_LOOK_INFO：性格主区间左闭右开（命中 178 不含 179）', () => {
-  // 178 是 [160,179) 的最后一个有效下标，179 是紧接着被排除的下一个——现有用例只用
-  // 165（中间值）命中主区间，拖不住上界本身的开闭形状
-  const { fixture, mod } = setup_log();
-  fixture.store.set('talent:31:178', 1);
-  fixture.store.set('talentname:178', '冒失');
-  assert.equal(mod.get_look_info(31, '性格'), '冒失', '178 属于区间，命中');
-
-  const { fixture: fixture2, mod: mod2 } = setup_log();
-  fixture2.store.set('talent:31:179', 1);
-  assert.equal(
-    mod2.get_look_info(31, '性格'),
-    '不明',
-    '179 不属于区间（也不在 [10,19) 回退范围内），不命中',
-  );
-});
-
-test('GET_LOOK_INFO：婚史按 TALENT:320 压缩家族码解码各分支', () => {
-  const { fixture, mod } = setup_log();
-  assert.equal(mod.get_look_info(31, '婚史'), '无', '全零：无');
-  fixture.store.set('talent:31:320', 10); // %10==0 且非 0 → 保密
-  assert.equal(mod.get_look_info(31, '婚史'), '婚史保密');
-  fixture.store.set('talent:31:320', 10001); // /10000%... category 1，kind 0 → 丈夫
-  assert.equal(mod.get_look_info(31, '婚史'), '已与丈夫结婚');
-  fixture.store.set('cflag:31:601', 900); // category 0 分支的「原」前缀判据
-  fixture.store.set('talent:31:320', 1); // category 0 → 未婚（前缀原）
-  assert.equal(mod.get_look_info(31, '婚史'), '原未婚');
-  fixture.store.set('talent:31:320', 50001); // category 5 → 未亡人
-  assert.equal(mod.get_look_info(31, '婚史'), '未亡人');
-  fixture.store.set('talent:31:320', 60001); // category 6（CASEELSE）→ 秘密
-  assert.equal(mod.get_look_info(31, '婚史'), '秘密');
-});
+// —— GET_LOOK_INFO 的用例已随实现搬到 test/look.test.js（#389） ——
+//
+// 本文件此前内联了该函数的 11 个子集 kind 实现，并以 mod.get_look_info 断言；
+// #389 把整函数搬进 ere/chara/look-info.js，断言随之搬家，这里的 5 条回归
+// 用例（种族2 映射与 $N 回落、种族12 精英切换、性格两段优先与 [160,179) 开闭、
+// 婚史压缩码各分支）在 test/look.test.js 的表驱动用例里逐条有对应。

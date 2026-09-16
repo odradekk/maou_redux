@@ -581,20 +581,24 @@ test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
   };
 
   for (const bit of [12, 13]) {
-    // 人狼（槽 1 = 115）：小数倍档 int(年龄 × (10 + 5) / 10)，档内不掷骰
+    // #389 勘误：种族不再能靠预置 TALENT:314 指定——@CM_LOOK 接上 LOOK_SET
+    // 真身后它会重掷 RAND:200 并覆盖（源 :330），且 @CHAR_GIFT 调用本流程时
+    // 把**自己的 ARG 当种族设定传下去**（源 ENDING :264 `CALL CHAR_MAKE,
+    // PERSONAL, ARG` → CM_LOOK 的 ARG:2），于是礼物档位决定种族：ARG=1 精灵。
+    // 精灵是槽 0 = 011（整数倍档）：返回值 = 年龄 × 10 + RAND:10
     const fixture = create_era_fixture();
     seed(fixture, 1 << bit);
-    fixture.store.set('talent:5:314', 2);
     const { char_gift } = fixture.load_module('event/event-ending');
     fixture.set_inputs(1, 100, 0);
-    await char_gift(1, seq([4])); // RAND(1, 17) → 4 → 随机角色 5
+    await char_gift(1, (n) => (n === 16 ? 4 : 0)); // 16 → 4 → 随机角色 5
+    assert.equal(fixture.store.get('talent:5:314'), 1, `位 ${bit}：精灵`);
     const human = fixture.store.get('cflag:5:451');
     assert.ok(human > 0, `位 ${bit}：前置——角色生成给出了人类换算年龄`);
-    const expected = Math.trunc((human * 15) / 10); // 人狼档的换算（独立写死算式）
+    const expected = human * 10; // 精灵档的换算（独立写死算式）
     assert.equal(
       fixture.store.get('cflag:5:452'),
       expected,
-      `位 ${bit} 为真：人狼的返回值 ${expected} 落进 CFLAG:452`,
+      `位 ${bit} 为真：精灵的返回值 ${expected} 落进 CFLAG:452`,
     );
     assert.notEqual(
       fixture.store.get('cflag:5:452'),
@@ -609,15 +613,17 @@ test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     // 必须是**这个**源（记录到的上界里最后一条就是它）
     const fixture = create_era_fixture();
     seed(fixture, 1 << 12);
-    fixture.store.set('talent:5:314', 5);
+    fixture.seed_chara(32, { name: '龙族公主', callname: '龙族公主' });
     const { char_gift } = fixture.load_module('event/event-ending');
     const bounds = [];
+    // 换一个礼物档位换种族：ARG=5 龙族公主 → 种族设定 5 → LOOK_SET 的
+    // `ELSEIF … || ARG == 5` → 种族 5（槽 4 = 015，整数倍档 ×50）
     const source = (n) => {
       bounds.push(n);
       return n === 16 ? 4 : 3;
     };
     fixture.set_inputs(1, 100, 0);
-    await char_gift(1, source);
+    await char_gift(5, source);
     const human = fixture.store.get('cflag:5:451');
     assert.equal(
       bounds.at(-1),
@@ -635,10 +641,9 @@ test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     // 两位都为假：整支不走，CFLAG:452 保持 0
     const fixture = create_era_fixture();
     seed(fixture, 0);
-    fixture.store.set('talent:5:314', 2);
     const { char_gift } = fixture.load_module('event/event-ending');
     fixture.set_inputs(1, 100, 0);
-    await char_gift(1, seq([4]));
+    await char_gift(1, (n) => (n === 16 ? 4 : 0));
     assert.equal(
       fixture.store.get('cflag:5:452') || 0,
       0,

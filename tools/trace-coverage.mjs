@@ -128,7 +128,14 @@ export const DENOMINATOR = 346;
 // 清单里还挂着 15 行未了结存根），本就不在待移植的分子里——本票把 26 个占位点
 // 落成真身、清空这些登记行之后，实测待移植仍是 67（已移植 227、部分移植 34）。
 // 工单正文写的「显式抬低 PENDING_BASELINE（现 79）」是排期时的旧值与旧口径。
-export const PENDING_BASELINE = 64; // #394（N10）在本分支基线 67 上 −3；下面是
+export const PENDING_BASELINE = 62; // 合并态实测（#397 并上含 #394 的 master）：
+// 两票各自扣的文件不相交，64（master，#394 后）− 2（本票两个待移植文件）= 62，
+// 与重测值一致。两票各自的说明留在下面。
+// SHOP/SHOP_2.ERB 两个文件落地真身（ere/page/page-tailor.js 十二函数、
+// page-ability-up.js + page-intercept.js + system/stronghold/gohoubi-request.js），
+// LIFE_LIST.ERB 的 7 个「登记（未接入）」函数落真身（ere/page/page-life-list.js）
+// 使其由部分移植转已移植。算式：67（#384 实测）+ 0（证据面变动）
+// − 2（两个待移植文件）= 65。
 // 历次说明。**本票独立测得的是 67 → 64 这一格**，rebase 后真值由派单人重跑。
 // #394 抬低说明（67 → 64，本票三个文件）：`キャラ関数/CHARA_FIRST_EXP.ERB` 与
 // `キャラ関数/CHARA_MAKE_INPORT.ERB` 落真身（chara_first_exp、

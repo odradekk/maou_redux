@@ -149,6 +149,21 @@ class TrainFacade {
   }
 
   /**
+   * 内裤状态（cflag:cid:43 ↔ CFLAG:43）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:43 パンツの状態（-3:破り取られている -2:汚物まみれ -1:没収 0:通常 1以上:洗濯中）
+   * @returns {number}
+   */
+  get 内裤状态() {
+    return era.get(`cflag:${this.cid}:43`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 内裤状态(v) {
+    era.set(`cflag:${this.cid}:43`, v);
+  }
+
+  /**
    * 上衣上状态（cflag:cid:45 ↔ CFLAG:45）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行299 CFLAG:45 上着上の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
    * @returns {number}
@@ -176,6 +191,36 @@ class TrainFacade {
    */
   set 上衣下状态(v) {
     era.set(`cflag:${this.cid}:46`, v);
+  }
+
+  /**
+   * 特别服装状态（cflag:cid:47 ↔ CFLAG:47）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:47 特別コスチュームの状態（同上の符号约定）
+   * @returns {number}
+   */
+  get 特别服装状态() {
+    return era.get(`cflag:${this.cid}:47`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 特别服装状态(v) {
+    era.set(`cflag:${this.cid}:47`, v);
+  }
+
+  /**
+   * 内裤穿着期间（cflag:cid:48 ↔ CFLAG:48）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:48 現在のパンツを穿き続けている期間
+   * @returns {number}
+   */
+  get 内裤穿着期间() {
+    return era.get(`cflag:${this.cid}:48`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 内裤穿着期间(v) {
+    era.set(`cflag:${this.cid}:48`, v);
   }
 
   /**

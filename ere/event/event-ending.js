@@ -52,7 +52,7 @@ const { add_chara_ex } = require('#/chara/chara-ex');
 const { char_init } = require('#/chara/chara-init');
 const { chara } = require('#/facade/chara');
 const { char_make, name_reset } = require('#/chara/char-make');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { stub_line } = require('#/utils/stub-line');
 
