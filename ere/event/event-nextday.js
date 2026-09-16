@@ -257,7 +257,7 @@ async function running_cost() {
     if (due) {
       // :358 原作 `…花了${A}……`——紧挨取值的 `$` 是字面量，JS 模板串要写 $$
       era.print(`调教中心的维持费和奴隶们的生活费花了$${cost}……`);
-      era.drawLine(); // :359
+      era.drawLine(); // :359-360
       era_flag.money -= cost; // :360 MONEY -= A
       era_exflag.legit_money -= cost; // :361 EX_FLAG:4444 -= A
     }
@@ -290,7 +290,7 @@ async function sometimes_she_comes_back() {
       );
       chara(cid).dungeon.气力 = era.get(`maxbase:${cid}:1`) || 0;
       const name = chara_callname(cid);
-      era.drawLine(); // :511
+      era.drawLine(); // :511-512
       era.print(
         `早上，${master_name}睁开双眼，发现确实已经死掉了的${name}就站在面前。`,
       ); // :512
@@ -299,12 +299,12 @@ async function sometimes_she_comes_back() {
       era.print(''); // :515 PRINTL（空行）
       await era.waitAnyKey(); // :516 WAIT
       era.print(`${name}回归了……`); // :517
-      era.drawLine(); // :518
+      era.drawLine(); // :518-519
       await era.waitAnyKey(); // :519 WAIT
       return 1; // :521-522 一度に帰ってくるのは一人ずつ
     }
   }
-  return 0; // :526
+  return 0; // :526-527
 }
 
 /** 原作 GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
@@ -587,7 +587,7 @@ async function offervirgin_check(rand = default_rand) {
     if ((era.get('flag:38') || 0) === 0) {
       era.set(`cflag:${cid}:62`, 1); // :961 発生済フラグ
     }
-    return 0; // :962
+    return 0; // :962-963
   }
 
   if (era.get(`item:24`)) {
@@ -690,8 +690,8 @@ async function offervirgin_check(rand = default_rand) {
     chara(cid).chara.特别服装类型 = 0; // :1083
   }
 
-  era.drawLine(); // :1086
-  return 1; // :1088
+  era.drawLine(); // :1086-1088
+  return 1; // :1088-1089
 }
 
 /**
@@ -881,8 +881,8 @@ async function night_stalking_check(rand = default_rand) {
     era.add(`juel:${target}:5`, play * 250); // :1316
   }
 
-  era.drawLine(); // :1319
-  return 1; // :1321
+  era.drawLine(); // :1319-1321
+  return 1; // :1319-1321
 }
 
 /**
@@ -1011,7 +1011,7 @@ async function dog_walk(rand = default_rand) {
   }
 
   era_flag.target = save_target; // :1460 TARGET = SAVE_TARGET
-  return 1; // :1462
+  return 1; // :1462-1464
 }
 
 /**
@@ -1031,7 +1031,7 @@ async function dog_walk(rand = default_rand) {
  * （即 0 号位，魔王），不复刻残留，也不擅自改成 COUNT（那是替原作改行为）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 恒 1（原作 :806）
+ * @returns {Promise<number>} 恒 1（原作 :804-806）
  */
 async function onesho(rand = default_rand) {
   for (const cid of era.getAddedCharacters()) {
@@ -1046,7 +1046,7 @@ async function onesho(rand = default_rand) {
     if ((era.get(`base:${cid}:0`) || 0) <= 0) {
       continue; // :707-708 死んでたらダメ
     }
-    era.drawLine(); // :709
+    era.drawLine(); // :708-709
 
     const name = chara_callname(cid);
     const palam = (n) => era.get(`palamname:${n}`) ?? '';
@@ -1162,7 +1162,7 @@ async function onesho(rand = default_rand) {
       }
     }
   }
-  return 1; // :806
+  return 1; // :804-806
 }
 
 /**
@@ -1216,7 +1216,7 @@ async function morning_fellatio(rand = default_rand) {
 
   const { cid: l, aptitude: a } = chosen;
   const name = chara_callname(l);
-  era.drawLine(); // :679
+  era.drawLine(); // :679-680
   await era.printAndWait(`早上，在${name}的口交中醒来。`); // :680
   chara(l).dungeon.口交经验 += a; // :681 EXP:L:22 += A
   era.print(`${era.get('expname:22') ?? ''}＋${a}`); // :682
@@ -1235,7 +1235,7 @@ async function morning_fellatio(rand = default_rand) {
     self_kojo(rand, undefined, true),
   ); // :695-696 TFLAG:13 = 3 / CALL SELF_KOJO
 
-  return 1; // :698
+  return 1; // :698-699
 }
 
 /**
@@ -1358,7 +1358,7 @@ async function event_mazoku(cid) {
     await era.printAndWait(
       `${name}学会了如何用自己的肉体作为武器。获得了【${talent_name(481)}】。`,
     ); // :484
-    era.print(''); // :485 PRINTFORML（空行）
+    era.print(''); // :484-485 PRINTFORML（空行）
   } else {
     chara(cid).chara.现种族 = 140; // :488 インプ
     chara(cid).chara.种族 = 9; // :489
@@ -1371,7 +1371,7 @@ async function event_mazoku(cid) {
     await era.printAndWait(
       `${name}学会了如何破坏敌人防护。获得了【${talent_name(482)}】。`,
     ); // :494
-    era.print(''); // :495 PRINTFORML（空行）
+    era.print(''); // :494-495 PRINTFORML（空行）
   }
 
   await era.waitAnyKey(); // :498
@@ -1636,7 +1636,7 @@ async function run_event_nextday() {
   stub_line('SENGEN_VIDEO_DE', '水晶球投放结算');
   maou_kouho();
 
-  // :189 RETURN 1
+  // :189-190 RETURN 1
 }
 
 /**
@@ -1673,7 +1673,7 @@ async function run_event_newday() {
   // ere/event/event-endcheck.js（#116）
   await run_endcheck();
 
-  // :243 RETURN 1
+  // :243-244 RETURN 1
 }
 
 module.exports = {
