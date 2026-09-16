@@ -492,7 +492,10 @@ test('SHOW_TALENT：分组色按源 SELECTCASE 逐条落地（表驱动）', () 
     [130, '#64ff64', '母乳体质'],
     [76, 'Salmon', '淫乱（SETCOLORBYNAME Salmon）'],
     [85, 'Salmon', '爱慕'],
+    [200, '#64ff64', '职业档下沿'],
     [208, '#64ff64', '职业档 200-212'],
+    [212, '#64ff64', '职业档上沿（含）'],
+    [213, undefined, '213 越出职业档'],
     [T.魅力, undefined, '未命中任何一档 → 默认色'],
   ];
   for (const [id, color, label] of cases) {
@@ -1806,14 +1809,14 @@ test('SHOW_TALENT_CONDITION：助手条件行只在有 爱慕 或 淫乱 时出�
 });
 
 test('SHOW_TALENT_CONDITION：性感素质的四档需求随已得数上浮（表驱动）', () => {
-  // [已得数, 自慰狂档的调教自慰需求, 说明]
+  // [已得数, 自慰狂档的「调教自慰」需求（sexskill_1）, 「绝顶经验」需求（sexskill_2）, 说明]
   const cases = [
-    [0, 100, '一枚都没有：基础档'],
-    [1, 150, '100 + 50 * 1'],
-    [2, 200, '100 + 50 * 2'],
-    [3, 250, '100 + 50 * 3'],
+    [0, 100, 100, '一枚都没有：基础档'],
+    [1, 150, 110, '100 + 50 * 1 / 100 + 10 * 1'],
+    [2, 200, 120, '100 + 50 * 2 / 100 + 10 * 2'],
+    [3, 250, 130, '100 + 50 * 3 / 100 + 10 * 3'],
   ];
-  for (const [count, need, label] of cases) {
+  for (const [count, need, need2, label] of cases) {
     const talents = {};
     // 只点 75/77/78 三枚：自慰狂（74）自身保持未得，走条件臂而不是封面图臂
     const ids = [75, 77, 78];
@@ -1824,7 +1827,11 @@ test('SHOW_TALENT_CONDITION：性感素质的四档需求随已得数上浮（�
     const line = fixture.text_lines().find((t) => t.startsWith('自慰狂'));
     assert(
       line.includes(`[调教自慰${String(need).padStart(4)}]`),
-      `${label}（实际：${line}）`,
+      `${label} 第一档（实际：${line}）`,
+    );
+    assert(
+      line.includes(`[绝顶经验${String(need2).padStart(4)}]`),
+      `${label} 第二档（实际：${line}）`,
     );
   }
 });

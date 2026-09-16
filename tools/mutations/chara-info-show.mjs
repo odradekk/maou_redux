@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 40;
+export const COUNT = 42;
 
 const SHOW = 'ere/page/components/chara-info-title.js';
 const TALENTS = 'ere/page/components/chara-talents.js';
@@ -380,5 +380,21 @@ export default [
     "era.get('talentname:75')",
     "era.get('talentname:76')",
     '页码 3 的四个素质名',
+  ),
+  make(
+    8741,
+    'SHOW_TALENT：职业档的分组色上界由 212 改成 211',
+    TALENTS,
+    "  { from: 200, to: 212, color: '#64ff64' },",
+    "  { from: 200, to: 211, color: '#64ff64' },",
+    '分组色',
+  ),
+  make(
+    8742,
+    'SHOW_TALENT_CONDITION：sexskill_2 的系数由 10 改成 20',
+    COND,
+    '  const sexskill_2 = 100 + 10 * sexskill_count; // :160',
+    '  const sexskill_2 = 100 + 20 * sexskill_count; // :160',
+    '四档需求',
   ),
 ];
