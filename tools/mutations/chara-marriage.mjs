@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用锚点，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 20;
+export const COUNT = 33; // #393 返工 +13（M9012/M9013 清旧账两侧；M9025 已婚守卫；M9030-M9032 家族册配偶；M9034-M9038 对方侧与异种婚姻/编档；M9040/M9041 分页与处女守卫）
 
 export default [
   {
@@ -180,5 +180,137 @@ export default [
       '  if (state === MARRIAGE_STATE_MARRIED || state === MARRIAGE_STATE_DIVORCED) {',
     tests: ['chara-marriage'],
     must_mention: 'DIVORCE：重婚（位 3）与再婚（位 4）各回落 20000',
+  },
+  // —— #393 返工：清旧账段（:266-273）的两侧 ——
+  {
+    desc: 'M9012 清旧账的门槛由 > 0 改成 > 1（配偶名槽 = 1 时整段不跑）',
+    file: 'ere/chara/chara-marriage.js',
+    find: '  if ((era.get(`cflag:${arg}:${SPOUSE_NAME_SLOT}`) || 0) > 0) {',
+    replace: '  if ((era.get(`cflag:${arg}:${SPOUSE_NAME_SLOT}`) || 0) > 1) {',
+    tests: ['chara-marriage'],
+    must_mention: '婚前清旧账的两侧',
+  },
+  {
+    desc: 'M9013 清旧账的内层判据整支短路（家族册上找得到人也不离）',
+    file: 'ere/chara/chara-marriage.js',
+    find: `    if (!(era.get(\`ex_talent:\${arg}:2\`) && found < 0)) {
+      divorce(found); // :271
+    }`,
+    replace: `    if (false) {
+      divorce(found); // :271
+    }`,
+    tests: ['chara-marriage'],
+    must_mention: '婚前清旧账的两侧',
+  },
+  {
+    desc: 'M9025 已婚守卫由 CFLAG:601 > 0 改成 > 1（登记值 1 时照办婚礼）',
+    file: 'ere/chara/chara-marriage.js',
+    find: '    } else if ((era.get(`cflag:${arg}:601`) || 0) > 0) {',
+    replace: '    } else if ((era.get(`cflag:${arg}:601`) || 0) > 1) {',
+    tests: ['chara-marriage'],
+    must_mention: '已婚后选别的对象报',
+  },
+  {
+    desc: 'M9030 家族册配偶的判定由一位 9 改成一位 8（登记 9 落到 ITEMNAME）',
+    file: 'ere/chara/chara-marriage.js',
+    find: '  if (spouse % 10 === 9) {',
+    replace: '  if (spouse % 10 === 8) {',
+    tests: ['chara-marriage'],
+    must_mention: '取家族册上的名字',
+  },
+  {
+    desc: 'M9031 家族册配偶的名字不再查家族册（恒读「无」）',
+    file: 'ere/chara/chara-marriage.js',
+    find: `    const partner = search_family(cid, 'MARRIAGE');
+    return partner > 0 ? name_of(partner) : '无';`,
+    replace: `    return '无';`,
+    tests: ['chara-marriage'],
+    must_mention: '取家族册上的名字',
+  },
+  {
+    desc: 'M9032 魔王配偶的判据由相等改成不等（普通婚礼显示成「你」）',
+    file: 'ere/chara/chara-marriage.js',
+    find: `  if ((era.get('cflag:0:601') || 0) === (era.get(\`cflag:\${cid}:6\`) || 0)) {`,
+    replace: `  if ((era.get('cflag:0:601') || 0) !== (era.get(\`cflag:\${cid}:6\`) || 0)) {`,
+    tests: ['chara-marriage'],
+    must_mention: '取家族册上的名字',
+  },
+  {
+    desc: 'M9034 DIVORCE 的对方侧清除由 found > 0 改成 >= 0（连魔王那侧一起清）',
+    file: 'ere/chara/chara-marriage.js',
+    find: '  if (found > 0 && added_ids().includes(found)) {',
+    replace: '  if (found >= 0 && added_ids().includes(found)) {',
+    tests: ['chara-marriage'],
+    must_mention: '只清「真角色」',
+  },
+  {
+    desc: 'M9035 恋人 = 实人的判定码由 200 改成 201',
+    file: 'ere/chara/chara-marriage.js',
+    find: '    if ((era.get(`cflag:${arg}:606`) || 0) === LOVER_IS_REAL_PERSON) {',
+    replace:
+      '    if ((era.get(`cflag:${arg}:606`) || 0) === LOVER_IS_REAL_PERSON + 1) {',
+    tests: ['chara-marriage'],
+    must_mention: '恋人就是家族册上的实人',
+  },
+  {
+    desc: 'M9036 异种婚姻的欲望门由 < 5 改成 < 6（欲望 LV 5 不再成婚）',
+    file: 'ere/chara/chara-marriage.js',
+    find: '  if ((era.get(`abl:${arg}:11`) || 0) < 5) return;',
+    replace: '  if ((era.get(`abl:${arg}:11`) || 0) < 6) return;',
+    tests: ['chara-marriage'],
+    must_mention: '异种婚姻',
+  },
+  {
+    desc: 'M9037 婚姻编码进位的档位由 已婚/离婚 改成 重婚/再婚',
+    file: 'ere/chara/chara-marriage.js',
+    find: `    const married_state = marriage_state(arg);
+    if (
+      married_state === MARRIAGE_STATE_MARRIED ||
+      married_state === MARRIAGE_STATE_DIVORCED
+    ) {`,
+    replace: `    const married_state = marriage_state(arg);
+    if (
+      married_state === MARRIAGE_STATE_BIGAMY ||
+      married_state === MARRIAGE_STATE_REMARRIED
+    ) {`,
+    tests: ['chara-marriage'],
+    must_mention: '婚姻编码的进位',
+  },
+  {
+    desc: 'M9038 恋人=实人时对方那侧的编档进位被短路（档位换成重婚/再婚）',
+    file: 'ere/chara/chara-marriage.js',
+    find: `        const state = marriage_state(found);
+        if (
+          state === MARRIAGE_STATE_MARRIED ||
+          state === MARRIAGE_STATE_DIVORCED
+        ) {
+          shift_marriage_state(found, REMARRIAGE_DELTA);
+        }`,
+    replace: `        const state = marriage_state(found);
+        if (
+          state === MARRIAGE_STATE_BIGAMY ||
+          state === MARRIAGE_STATE_REMARRIED
+        ) {
+          shift_marriage_state(found, REMARRIAGE_DELTA);
+        }`,
+    tests: ['chara-marriage'],
+    must_mention: '恋人就是家族册上的实人',
+  },
+  {
+    desc: 'M9040 奴隶分页的「还有下一页」由 <= 改成 <（边界那一页翻不过去）',
+    file: 'ere/chara/chara-marriage.js',
+    find: '      if ((page + 1) * SLAVE_PAGE_SIZE <= added_ids().length) page += 1;',
+    replace:
+      '      if ((page + 1) * SLAVE_PAGE_SIZE < added_ids().length) page += 1;',
+    tests: ['chara-marriage'],
+    must_mention: '翻页边界',
+  },
+  {
+    desc: 'M9041 处女丧失的素质 273 守卫由「非零」改成「等于 1」',
+    file: 'ere/chara/chara-marriage.js',
+    find: '    talent(arg, 273) !== 0 ||',
+    replace: '    talent(arg, 273) !== 1 ||',
+    tests: ['chara-marriage'],
+    must_mention: '处女丧失的四道守卫',
   },
 ];

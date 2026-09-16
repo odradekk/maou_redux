@@ -483,6 +483,47 @@ test('MARRIAGE：菜单尾部画出「目前结婚对象」的一行', async () 
   }
 });
 
+test('MARRIAGE：登记一位是 9（家族册上的人）时名字从家族册上取，找不到人显示「无」', async () => {
+  // 奴隶婚登记的是 `CHARA_ID_OUTPUT + 9`（:306-307 的 CFLAG:609 交换），所以
+  // `CFLAG:601 % 10 == 9` 这一支是「配偶在家族册上」的正常形态：SEARCH_FAMILY
+  // 找到人显示对方名字，找不到（档案不匹配）显示「无」——两侧各一个用例。
+  {
+    const fixture = seed();
+    add_chara(fixture, 2, '乙');
+    fixture.store.set('cflag:1:6', 42); // 名字编号（对方的名字槽要与它相等）
+    fixture.store.set('cflag:1:601', 9); // 一位 9
+    fixture.store.set('cflag:2:601', 1); // 对方压缩数据非零
+    fixture.store.set('cflag:2:609', 42);
+    fixture.store.set('talent:2:160', 1); // 压缩数据 0 解析出的性格档 160
+    fixture.store.set(`itemname:${MONSTER}`, '怪物');
+    fixture.set_inputs(999);
+
+    await load(fixture).marriage(1, () => 0);
+
+    assert.ok(
+      texts(fixture).includes(`[角色1目前结婚对象:乙]`),
+      '取家族册上的名字',
+    );
+  }
+  {
+    const fixture = seed();
+    add_chara(fixture, 2, '乙');
+    fixture.store.set('cflag:1:6', 42);
+    fixture.store.set('cflag:1:601', 9);
+    fixture.store.set('cflag:2:601', 1);
+    fixture.store.set('cflag:2:609', 42); // 名字槽对得上但性格档不匹配 → 找不到人
+    fixture.store.set(`itemname:${MONSTER}`, '怪物');
+    fixture.set_inputs(999);
+
+    await load(fixture).marriage(1, () => 0);
+
+    assert.ok(
+      texts(fixture).includes('[角色1目前结婚对象:无]'),
+      '找不到人即「无」',
+    );
+  }
+});
+
 test('MARRIAGE：选怪物 → MONSTER_DATA 取陵辱类型 → 对应种族典礼——表驱动走完十二族', async () => {
   for (const [id, ritual, marker] of RITUAL_BY_MONSTER) {
     const fixture = seed();
@@ -534,16 +575,22 @@ test('MARRIAGE：与恋人结婚分两路——恋人就是家族册上的实人
     assert.ok(texts(fixture).includes('角色1被允许与信赖的恋人结婚了'));
   }
   {
-    // 恋人 == 200（实人）：SEARCH_FAMILY 的 LOVE 找得到就登记对方
+    // 恋人 == 200（实人）：SEARCH_FAMILY 的 LOVE 找得到就登记对方；对方那侧
+    // 若是已婚/离婚位，编档也要进位（:292-297）
     const fixture = seed();
     add_chara(fixture, 2, '乙');
     seed_pair_relation(fixture, 'LOVE');
     fixture.store.set('cflag:1:606', 200);
+    // 编档高位是家族构成（`trunc(320/100000)` 要与源侧 `trunc(610/100000)`
+    // 相等），万位才是婚姻档：10076 = 已婚位(1) × 10000 + 家族 76
+    fixture.store.set('cflag:1:610', 1007605040);
+    fixture.store.set('talent:2:320', 10076);
     fixture.set_inputs(902);
     assert.equal(await load(fixture).marriage(1, () => 0), 1);
     assert.ok(texts(fixture).includes('*角色1和乙举行了结婚典礼*'));
     assert.equal(fixture.store.get('cflag:2:601'), 902, '对方登记为恋人');
     assert.equal(fixture.store.get('cflag:2:602') || 0, 0, '对方爱情度归零');
+    assert.equal(fixture.store.get('talent:2:320'), 30076, '对方编档 +20000');
   }
 });
 
@@ -643,6 +690,18 @@ test('MARRIAGE：已婚后选别的对象报「已婚了」，选当前对象报
     fixture.set_inputs(MONSTER);
     assert.equal(await load(fixture).marriage(1, () => 0), 0);
     assert.ok(texts(fixture).includes('对象已婚了。'));
+  }
+  {
+    // 守卫的门槛是「非零」本身（:261）：压缩数据取最小非零值 1 也算已婚。
+    // 判据写成 `> 1` 会让登记值 1 一路走到婚礼，所以这里测边界。
+    const fixture = seed();
+    fixture.store.set('cflag:1:601', 1);
+    fixture.store.set(`item:${MONSTER}`, 1);
+    fixture.store.set(`itemname:${MONSTER}`, '怪物');
+    fixture.set_inputs(MONSTER);
+    assert.equal(await load(fixture).marriage(1, () => 0), 0);
+    assert.ok(texts(fixture).includes('角色1已婚了。'));
+    assert.equal(fixture.store.get('cflag:1:601'), 1, '登记没变');
   }
 });
 
@@ -1090,4 +1149,66 @@ test('MARRIAGE：奴隶子菜单的翻页边界——19 名奴隶（总数 20，
     .slice(nexts[0] + 1, nexts[1])
     .filter((line) => line.type === 'button' && /^\d+$/.test(line.text));
   assert.deepEqual(rows_in_second_render, [], '第 2 页是空的');
+});
+
+test('MARRIAGE：婚前清旧账的两侧——家族册上找得到人时先解掉那一侧的登记（门槛是 CFLAG:609 > 0，名槽正好是 1 也照清）', async () => {
+  // 清旧账段的门槛 `CFLAG:ARG:609 > 0`（:267）测在边界上：CFLAG:609 是
+  // SAVESTR 名字槽号（:6「結婚相手の名前」），**1 是合法的正值**——判据写成
+  // `> 1` 会把「配偶名槽 = 1」这一整类漏掉，所以这里刻意取 1 而不是 42。
+  //
+  // 走到清旧账段的形态仍是 CFLAG:601 == 0（否则 :261 的「已婚」守卫先返回），
+  // 于是 SEARCH_FAMILY 以「压缩数据 0」的档案去找：对方的名字槽必须等于
+  // 发起方的 CFLAG:6，前身（315）与性格档（160 = 0/1000 + 160）按数据 0
+  // 解析，家族构成（320）同为 0——这正是「登记丢了、名槽还在」的语义。
+  const fixture = seed();
+  add_chara(fixture, 2, '乙');
+  fixture.store.set(`item:${MONSTER}`, 1);
+  fixture.store.set(`itemname:${MONSTER}`, '怪物');
+  fixture.store.set('cflag:1:6', 42); // 名字编号
+  fixture.store.set('cflag:1:601', 0); // 压缩数据 0 = 走清旧账
+  fixture.store.set('cflag:1:609', 1); // 名槽：边界值本身
+  fixture.store.set('cflag:2:609', 42); // 对方名槽 == 发起方的 CFLAG:6
+  fixture.store.set('cflag:2:601', 1); // 对方压缩数据非零（否则搜索跳过）
+  fixture.store.set('talent:2:160', 1); // 性格档 160
+  fixture.set_inputs(MONSTER);
+
+  assert.equal(await load(fixture).marriage(1, () => 0), 1);
+
+  assert.ok(texts(fixture).includes('乙离婚了。'), '旧账清了一趟');
+  assert.equal(fixture.store.get('cflag:2:601') || 0, 0, '对方登记解除');
+  assert.equal(fixture.store.get('cflag:2:609') || 0, 0, '对方名槽解除');
+
+  // 对照：名槽是 0 时整段不跑（另一侧）
+  {
+    const bare = seed();
+    bare.store.set(`item:${MONSTER}`, 1);
+    bare.store.set(`itemname:${MONSTER}`, '怪物');
+    bare.store.set('cflag:1:609', 0);
+    bare.set_inputs(MONSTER);
+
+    assert.equal(await load(bare).marriage(1, () => 0), 1);
+    assert.equal(texts(bare).includes('离婚了。'), false, '名槽 0 不动旧账');
+  }
+});
+
+test('DIVORCE：对方侧只清「真角色」——SEARCH_FAMILY 回 0（魔王）时不动他那侧', () => {
+  // 原作 :885 的 `RESULT > 0 && RESULT < CHARANUM` 按 #21 的 ID 世界改写为
+  // 「是不是已加入角色」，`> 0` 原样保留：0 号是魔王，在册但不是「对方」。
+  // 造法：发起方名字槽 0（魔王的判据要求如此）+ 压缩数据 1（家族册那条），
+  // 魔王那侧数据非零、名字槽等于发起方的 CFLAG:6——SEARCH_FAMILY 于是回 0。
+  const fixture = seed();
+  fixture.store.set('cflag:1:6', 42); // 名字编号
+  fixture.store.set('cflag:1:601', 1); // 压缩数据（一位不是 9）
+  fixture.store.set('cflag:1:609', 0); // 名字槽 0
+  fixture.store.set('cflag:0:601', 1); // 魔王那侧压缩数据非零
+  fixture.store.set('cflag:0:609', 42);
+  const { search_family } = fixture.load_module('chara/chara-family');
+  assert.equal(search_family(1, 'MARRIAGE'), 0, '家族册搜索回的是 0 号');
+
+  load(fixture).divorce(1);
+
+  assert.equal(fixture.store.get('cflag:0:601'), 1, '魔王那侧的登记不动');
+  assert.equal(fixture.store.get('cflag:0:609'), 42, '魔王那侧的名字槽不动');
+  assert.equal(fixture.store.get('cflag:1:601') || 0, 0, '发起方自己清干净');
+  assert.equal(fixture.store.get('cflag:1:609') || 0, 0);
 });

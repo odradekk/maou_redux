@@ -236,6 +236,9 @@ export const FILES = [
         ref: '146-147',
         any: [/^\s*ELSEIF CFLAG:MASTER:601 == CFLAG:ARG:6\s*$/m],
       },
+      // #393 返工：下面两条原是 CURRENT_SPOUSE_TEXT 的 :148-151 两支，因在
+      // :133-139 的 `== 0` 早退之后恒假、js 侧已删（文件头有说明），锚保留
+      // 下来只作「出处仍在」的凭据——js 的删除说明里引用了这两个行号。
       {
         src: 'target/ERB/キャラ関数/CHARA_MARRIAGE.ERB',
         ref: '148-149',

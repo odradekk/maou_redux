@@ -661,6 +661,65 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
   }
 });
 
+test('三动作按钮（#393）：[2] 转职 / [3] 魔的诱惑 / [4] 结婚×恋人设定 的渲染随状态变——表驱动', async () => {
+  // 三个 SHOW_BUTTON_* 的实参（快捷键 2/3/4 与真角色号）都在这一行接线里：
+  // 换号、换实参、染色与否都在这里露馅。
+  // [标签, 状态, 等级, 期望的三支按钮正文（按渲染顺序）, 期望的 #646464 次数]
+  const table = [
+    [
+      '状态 0 + 等级 50：转职与结婚都亮着',
+      0,
+      50,
+      ['[2] 转职 ', '[4] 结婚 '],
+      0,
+    ],
+    ['状态 0 + 等级 49：转职染灰', 0, 49, ['[2] 转职 ', '[4] 结婚 '], 1],
+    [
+      '状态 2 侵攻中的勇者：转职不渲染，诱惑与恋人设定各一个',
+      2,
+      50,
+      ['[3] 魔的诱惑 ', '[4] 恋人设定 '],
+      0,
+    ],
+    [
+      '状态 1 待机：只留灰着的转职（另两处灰来自 #384 的改名/还原名字）',
+      1,
+      50,
+      ['[2] 转职 '],
+      3,
+    ],
+  ];
+  for (const [label, state, level, expected, gray] of table) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.store.set('cflag:1:1', state);
+    fixture.store.set('cflag:1:9', level);
+    fixture.set_inputs(100);
+
+    assert.equal(
+      await fixture
+        .load_module('page/page-chara-info')
+        .chara_info_individual(1, [1]),
+      0,
+      label,
+    );
+
+    const rendered = fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered)
+      .filter((text) => /^\[[234]\]/.test(text));
+    assert.deepEqual(rendered, expected, label);
+    assert.equal(
+      fixture.calls.filter(
+        (call) => call.api === 'setColor' && call.args[0] === '#646464',
+      ).length,
+      gray,
+      `${label}：灰值 setColor 次数（转职按钮的档位判定拿到的是真角色号）`,
+    );
+  }
+});
+
 test('三动作接线（#393）：[2]/[3]/[4] 分别进转职 / 魔的诱惑 / 结婚三支真身', async () => {
   {
     const fixture = create_era_fixture();
@@ -735,6 +794,77 @@ test('三动作接线（#393）：[2]/[3]/[4] 分别进转职 / 魔的诱惑 / �
       '结婚返回 0 时也上浮回名册',
     );
   }
+});
+
+test('三动作接线（#393）：被调方返回 2（防御支）时不上浮，落回 INPUT_LOOP 重画', async () => {
+  // 三个动作的返回 2 都是「按钮本不该显示」的防御支（chara-job-change.js:279
+  // 的侵攻中勇者 / chara-temptation.js:156 的非侵攻中 / chara-marriage.js:1095
+  // 的不可结婚状态）——原作 :1094-1099 的返り値による処理写的是「2なら再入力」。
+  // EraElectron 的渲染层只回传本轮已打印按钮的快捷键（夹具同款白名单），
+  // 「未渲染按钮的编号」到不了游戏逻辑，所以这里按夹具头注的既有手法
+  // （「SDK 是普通可变对象、可在 require 之后就地替换函数」）直接替换
+  // era.input 把 2 喂进去——测的是接线本身：谁把 2 当结果时会被上浮。
+  const cases = [
+    ['chara_info_job_change：侵攻中的勇者（状态 2）', 2, 2],
+    ['temptation：非侵攻中（状态 0）', 0, 3],
+    ['marriage：不可结婚状态（状态 1）', 1, 4],
+  ];
+  for (const [label, state, accel] of cases) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.store.set('cflag:1:1', state);
+    const answers = [accel, 100];
+    fixture.era.input = async () => answers.shift();
+
+    const result = await fixture
+      .load_module('page/page-chara-info')
+      .chara_info_individual(1, [1]);
+
+    assert.equal(result, 0, `${label}：2 不上浮，页重画后由 [100] 收尾`);
+    assert.deepEqual(
+      answers,
+      [],
+      `${label}：两次输入都被消费（真返回 2 会提前退出）`,
+    );
+    assert.equal(
+      buttons_with(fixture, 100).length,
+      2,
+      `${label}：页重画了一次`,
+    );
+  }
+});
+
+test('三动作接线（#393）：诱惑真身不传随机源时走默认源（Math.random）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:1', 2); // 侵攻中 → 诱惑按钮渲染
+  fixture.store.set('maxbase:0:1', 2000);
+  fixture.store.set('base:0:1', 2000); // 气力刚好够一场
+  fixture.store.set('talent:1:73', 1); // 即落ち：判定恒成功
+  fixture.set_inputs(3);
+  // 页面调 `temptation(current)` 不传随机源（生产路径），默认源是
+  // Math.random（chara-temptation.js 的 default_rand）——钉住它可跑通：
+  // 固定到 0 后六轮各走 CASE 0，扣满 2000 气力、好感度 +60、不投诚
+  fixture.override_math_random(() => 0);
+  let result;
+  try {
+    result = await fixture
+      .load_module('page/page-chara-info')
+      .chara_info_individual(1, [1]);
+  } finally {
+    fixture.restore_math_random();
+  }
+
+  assert.equal(result, 0);
+  assert.equal(
+    fixture.store.get('base:0:1'),
+    0,
+    '气力按 TEMPTATION_MP_COST 扣完',
+  );
+  assert.equal(fixture.store.get('cflag:1:2'), 60, '六轮 CASE 0 各 +10');
+  assert.equal(fixture.store.get('cflag:1:1'), 2, '好感度未满 1000：不投诚');
 });
 
 test('育儿室接线（#401）：在育儿室的角色渲染 [5] 按钮，按下后进 CHILD_CARE_CHARA 真身', async () => {

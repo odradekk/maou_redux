@@ -184,6 +184,22 @@ test('TEMPTATION：扣 2000 气力、跑完六轮判定；好感度满 1000 时�
   assert.equal(fixture.store.get('cflag:1:151'), -6, '六轮成功各扣 1 善恶值');
 });
 
+test('TEMPTATION：投诚的门槛是「满」1000——正好 1000 就投诚（判据是 >= 不是 >）', async () => {
+  const fixture = create_era_fixture();
+  seed_hero(fixture);
+  fixture.store.set('cflag:1:2', 1000 - 40 * 6); // 六轮 CASE 3 各 +40 → 正好落在 1000
+  fixture.store.set('talent:1:73', 1); // 即落ち：FI_TEMPTATION 恒成功
+  const rand = seq([3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 1, 1, 1]);
+
+  assert.equal(await load(fixture).temptation(1, rand), 0);
+
+  assert.equal(fixture.store.get('cflag:1:2'), 1000, '好感度正好满');
+  assert.ok(
+    texts(fixture).includes('*勇者被你诱惑，投诚了！*'),
+    '正好 1000 也投诚（>= 不是 >）',
+  );
+});
+
 test('TEMPTATION：好感度未满 1000 不触发投诚，两条进度格照出', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture);
@@ -379,9 +395,18 @@ test('TEMPTATION_TRY：六轮 SELECTCASE 的档 0-4——表驱动走完 rand(9)
     for (const [key, value] of Object.entries(preset)) {
       fixture.store.set(key, value);
     }
-    const rand = seq(repeat(6, [slot, 0]).concat(NO_SPONSOR));
+    const bounds = [];
+    const rand = seq_probe(repeat(6, [slot, 0]).concat(NO_SPONSOR), bounds);
 
     await load(fixture).temptation_try(1, rand);
+
+    // 上界逐枚钉住：六轮各「SELECTCASE 的 RAND:9 ＋ karma 的 RAND:3」，
+    // 末尾三次赞助骰 RAND:20 / RAND:20 / RAND:10
+    assert.deepEqual(
+      bounds,
+      repeat(6, [9, 3]).concat([20, 20, 10]),
+      `档 ${slot}：掷骰上界`,
+    );
 
     assert.equal(
       fixture.store.get('juel:1:5') || 0,
@@ -436,10 +461,16 @@ test('TEMPTATION_TRY：档 5/6 的治愈按残量给好感度，加值后按上�
     const index = slot === 5 ? 0 : 1;
     fixture.store.set(`maxbase:1:${index}`, max);
     fixture.store.set(`base:1:${index}`, base);
-    const rand = seq(repeat(6, [slot, 0]).concat(NO_SPONSOR));
+    const bounds = [];
+    const rand = seq_probe(repeat(6, [slot, 0]).concat(NO_SPONSOR), bounds);
 
     await load(fixture).temptation_try(1, rand);
 
+    assert.deepEqual(
+      bounds,
+      repeat(6, [9, 3]).concat([20, 20, 10]),
+      `${label}：掷骰上界`,
+    );
     assert.equal(
       fixture.store.get(`base:1:${index}`),
       expected_base,

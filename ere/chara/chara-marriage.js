@@ -66,9 +66,19 @@
  *
  *   - **`CFLAG:ARG:601 > 0` 的「已婚」守卫（:261-263）在清旧账段
  *     （:266-273）之前**：所以能走到清旧账的唯一形态是「`CFLAG:609` 有值而
- *     `CFLAG:601` == 0」，而那时 `SEARCH_FAMILY` 因源侧压缩数据为 0 必返回
- *     -1，于是 `DIVORCE(-1)` 被调用（上一段那个例外的实际来源）。这不是
- *     移植引入的，是原作两条判据的先后如此。
+ *     `CFLAG:601` == 0」。而此时 `SEARCH_FAMILY` 以「源侧压缩数据 0」的
+ *     档案去找，两条出口都真实存在（两侧都有用例）：找不到人时返回 -1，
+ *     于是 `DIVORCE(-1)` 被调用（上一段那个例外的实际来源）；若家族册上
+ *     恰有角色与该零档案匹配（名字槽等于发起方的 `CFLAG:6`、前身 0、
+ *     性格 160、家族构成 0），则 RESULT 是对方，`DIVORCE(对方)` 先把那一侧
+ *     的登记解掉。这不是移植引入的，是原作两条判据的先后如此。
+ *
+ *   - **`CURRENT_SPOUSE_TEXT` 里原作的 :148-149 / :150-151 两支恒假**：
+ *     两支都以 `CFLAG:ARG:601 == 0` 开头，而 :133-139 已经把 `== 0` 整个
+ *     分档走完（`IF TALENT:315 == 21 || TALENT:157` 两出口）——ELSE 段里再
+ *     判一次 `== 0` 永远不成立。1:1 精简为可达分支，不逐字保留死支
+ *     （page-chara-info.js 的 `MASTER` 恒假两支同款处置），移除后该函数
+ *     只剩「`spouse % 10 == 9` 走家族册、其余查 ITEMNAME」两出口。
  *
  *   - **跨域写一律经属主域门面**（ownership/*-cross-domain-writes.yml 逐条
  *     核对）：婚姻状况 CFLAG:601/602/606/609 走 `chara().chara.结婚对象/
@@ -84,7 +94,6 @@ const era = require('#/era-electron');
 const { life_list } = require('#/page/page-life-list');
 const { search_family } = require('#/chara/chara-family');
 const { chara_id_output } = require('#/chara/chara-stats');
-const { KIND, get_look_info } = require('#/chara/look-info');
 const { enter_lover, LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { e_get, monster_data } = require('#/dungeon/monster-data');
 const { monsterplay_list } = require('#/dungeon/monster-play');
@@ -747,10 +756,9 @@ function current_spouse_text(cid) {
   if ((era.get('cflag:0:601') || 0) === (era.get(`cflag:${cid}:6`) || 0)) {
     return name_of(0); // :146-147
   }
-  if (spouse === 0 && !(era.get(`ex_talent:${cid}:2`) || 0)) {
-    return get_look_info(cid, KIND.MARRIAGE_HISTORY); // :148-149
-  }
-  if (spouse === 0 && era.get(`ex_talent:${cid}:2`)) return '无'; // :150-151
+  // 原作 ELSE 里的 :148-149 / :150-151 两支（`CFLAG:ARG:601 == 0` 的两种
+  // 分档）在 :133-139 的 `== 0` 早退之后恒假——这里 1:1 精简为可达分支，
+  // 不逐字保留死支（page-chara-info.js 的 MASTER 恒假两支同款处置）。
   if (spouse % 10 === 9) {
     // :152-164 一の位が 9：家族册上的人
     const partner = search_family(cid, 'MARRIAGE');

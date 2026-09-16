@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用锚点，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 20;
+export const COUNT = 24; // #393 返工 +4（M9026-M9029：等级门/勋章门槛/素质编号的边界）
 
 export default [
   {
@@ -168,5 +168,39 @@ export default [
       '      era.set(`cflag:${arg}:152`, HIGH_FAITH + 1); // :215 高い信仰値を持つ',
     tests: ['chara-job-change'],
     must_mention: '转职落地——职业表先清后设',
+  },
+  // —— #393 返工：阈值与素质编号的边界值（全在 print_job_menu / 转职落地 上） ——
+  {
+    desc: 'M9026 转职等级门由 < 50 改成 < 51（50 级不再够格）',
+    file: 'ere/chara/chara-job-change.js',
+    find: '  if ((era.get(`cflag:${arg}:9`) || 0) < 50) return JOB_CHANGE_LOW_LEVEL; // :35-37',
+    replace:
+      '  if ((era.get(`cflag:${arg}:9`) || 0) < 51) return JOB_CHANGE_LOW_LEVEL; // :35-37',
+    tests: ['chara-job-change'],
+    must_mention: '五档判定的先后与边界',
+  },
+  {
+    desc: 'M9027 上位职的勋章门槛由 10 改成 11（十枚勋章不再出现两项上位职）',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const MEDAL_REQUIRED = 10;',
+    replace: 'const MEDAL_REQUIRED = 11;',
+    tests: ['chara-job-change'],
+    must_mention: '菜单恒有',
+  },
+  {
+    desc: 'M9028 职业素质基址由 200 改成 201（十三格整体错位）',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const JOB_TALENT_BASE = 200;',
+    replace: 'const JOB_TALENT_BASE = 201;',
+    tests: ['chara-job-change'],
+    must_mention: '转职落地',
+  },
+  {
+    desc: 'M9029 体力/气力上限基数由 2000 改成 2001',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const JOB_MAX_BASE = 2000;',
+    replace: 'const JOB_MAX_BASE = 2001;',
+    tests: ['chara-job-change'],
+    must_mention: '转职落地',
   },
 ];

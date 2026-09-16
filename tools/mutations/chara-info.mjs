@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 20; // #389 起 -4（M7868-M7871 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）
+export const COUNT = 31; // #389 起 -4（M7868-M7871 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#393 返工 +11（M9001-M9011 三动作接线）
 
 export default [
   {
@@ -204,5 +204,99 @@ export default [
     tests: ['page-chara-info'],
     must_mention:
       'SHOW_CHARA_ACT_LIST：双方都在侵攻/迎击时改走 ENEMY_COMPARE（按楼层，不是按状态排名）',
+  },
+  // —— #393 三动作接线（page-chara-info.js 的 37 行：三个按钮 ＋ 三条返回值分流）——
+  // 按钮条目杀「快捷键/实参写错」，分流条目杀「0/1 与 2 的分档写错」。
+  // 分流的三条各有两个方向：`!== 2 → !== 3`（2 被误当结果上浮）由防御支
+  // 用例守（era.input 就地替换喂 2——未渲染按钮的编号进不了引擎渲染层，
+  // 见 test/page-chara-info.test.js 该用例的头注），`!== 2 → === 2`（0/1
+  // 被当成 2 落回重画）由三条 0 侧用例守。
+  {
+    desc: 'M9001 转职按钮快捷键 2 → 3（与诱惑撞号）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      show_button_job_change(2, current);`,
+    replace: `      show_button_job_change(3, current);`,
+    tests: ['page-chara-info'],
+    must_mention: '状态 0 + 等级 50：转职与结婚都亮着',
+  },
+  {
+    desc: 'M9002 诱惑按钮快捷键 3 → 4（与结婚撞号）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      show_button_temptation(3, current);`,
+    replace: `      show_button_temptation(4, current);`,
+    tests: ['page-chara-info'],
+    must_mention: '状态 2 侵攻中的勇者：转职不渲染，诱惑与恋人设定各一个',
+  },
+  {
+    desc: 'M9003 结婚按钮快捷键 4 → 5（与育儿室撞号）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      show_button_marriage(4, current);`,
+    replace: `      show_button_marriage(5, current);`,
+    tests: ['page-chara-info'],
+    must_mention: '状态 0 + 等级 50：转职与结婚都亮着',
+  },
+  {
+    desc: 'M9004 转职按钮的实参改 0（染灰档位判定拿到的是魔王号）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      show_button_job_change(2, current);`,
+    replace: `      show_button_job_change(2, 0);`,
+    tests: ['page-chara-info'],
+    must_mention: '灰值 setColor 次数',
+  },
+  {
+    desc: 'M9005 转职接线把 2 也上浮（!== 2 → !== 3）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (job_result !== 2) return job_result; // :1094-1097 的收尾`,
+    replace: `        if (job_result !== 3) return job_result; // :1094-1097 的收尾`,
+    tests: ['page-chara-info'],
+    must_mention: '被调方返回 2（防御支）时不上浮',
+  },
+  {
+    desc: 'M9006 诱惑接线把 2 也上浮（!== 2 → !== 3）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (temptation_result !== 2) return temptation_result;`,
+    replace: `        if (temptation_result !== 3) return temptation_result;`,
+    tests: ['page-chara-info'],
+    must_mention: '被调方返回 2（防御支）时不上浮',
+  },
+  {
+    desc: 'M9007 结婚接线把 2 也上浮（!== 2 → !== 3）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (marriage_result !== 2) return marriage_result;`,
+    replace: `        if (marriage_result !== 3) return marriage_result;`,
+    tests: ['page-chara-info'],
+    must_mention: '被调方返回 2（防御支）时不上浮',
+  },
+  {
+    desc: 'M9008 转职接线把 0 当 2 落回重画（!== 2 → === 2）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (job_result !== 2) return job_result; // :1094-1097 的收尾`,
+    replace: `        if (job_result === 2) return job_result; // :1094-1097 的收尾`,
+    tests: ['page-chara-info'],
+    must_mention: '转职返回 0 时上浮回名册',
+  },
+  {
+    desc: 'M9009 诱惑接线把 0 当 2 落回重画（!== 2 → === 2）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (temptation_result !== 2) return temptation_result;`,
+    replace: `        if (temptation_result === 2) return temptation_result;`,
+    tests: ['page-chara-info'],
+    must_mention: '诱惑返回 0 时上浮回名册',
+  },
+  {
+    desc: 'M9010 结婚接线把 0 当 2 落回重画（!== 2 → === 2）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (marriage_result !== 2) return marriage_result;`,
+    replace: `        if (marriage_result === 2) return marriage_result;`,
+    tests: ['page-chara-info'],
+    must_mention: '结婚返回 0 时也上浮回名册',
+  },
+  {
+    desc: 'M9011 结婚接线丢掉上浮值（return marriage_result → return 0）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (marriage_result !== 2) return marriage_result;`,
+    replace: `        if (marriage_result !== 2) return 0;`,
+    tests: ['page-chara-info'],
+    must_mention: '个别信息页把 1 上浮给 CHARA_INFO（回合结束）',
   },
 ];

@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用锚点，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 20;
+export const COUNT = 33; // #393 返工 +13（M9014-M9024 边界值；M9033 默认随机源；M9039 代还借款门槛）
 
 export default [
   {
@@ -168,5 +168,115 @@ export default [
     replace: '      chara(arg).stronghold.肉芽诅咒 = 0;',
     tests: ['chara-temptation'],
     must_mention: '赞助机会三支各按自己的判据命中',
+  },
+  // —— #393 返工：阈值/倍率/随机上界的边界值（全部取等号那一侧） ——
+  {
+    desc: 'M9014 投诚阈值由 >= 1000 改成 > 1000（正好满不投诚）',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if ((era.get(`cflag:${arg}:2`) || 0) >= TEMPTATION_FALL) {',
+    replace: '  if ((era.get(`cflag:${arg}:2`) || 0) > TEMPTATION_FALL) {',
+    tests: ['chara-temptation'],
+    must_mention: '正好 1000 就投诚',
+  },
+  {
+    desc: 'M9015 体力残量倍率的上档由 >= 75 改成 >= 76',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (ratio >= 75) return 1; // CASE IS >= 75：不加倍',
+    replace: '  if (ratio >= 76) return 1; // CASE IS >= 75：不加倍',
+    tests: ['chara-temptation'],
+    must_mention: '体力 75% 不加倍',
+  },
+  {
+    desc: 'M9016 体力残量倍率的 50 档由 >= 50 改成 >= 51',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (ratio >= 50) return 1.5;',
+    replace: '  if (ratio >= 51) return 1.5;',
+    tests: ['chara-temptation'],
+    must_mention: '体力 50% = 1.5 倍',
+  },
+  {
+    desc: 'M9017 体力残量倍率的 25 档由 >= 25 改成 >= 26',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (ratio >= 25) return 3;',
+    replace: '  if (ratio >= 26) return 3;',
+    tests: ['chara-temptation'],
+    must_mention: '体力 25% = 3 倍',
+  },
+  {
+    desc: 'M9018 治愈档的 50 档由 >= 50 改成 >= 51',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (ratio >= 50) return 25;',
+    replace: '  if (ratio >= 51) return 25;',
+    tests: ['chara-temptation'],
+    must_mention: '档 5/6 的治愈',
+  },
+  {
+    desc: 'M9019 治愈档的 25 档由 >= 25 改成 >= 26',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (ratio >= 25) return 50;',
+    replace: '  if (ratio >= 26) return 50;',
+    tests: ['chara-temptation'],
+    must_mention: '档 5/6 的治愈',
+  },
+  {
+    desc: 'M9020 治愈档的 10 档由 >= 10 改成 >= 11',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (ratio >= 10) return 75;',
+    replace: '  if (ratio >= 11) return 75;',
+    tests: ['chara-temptation'],
+    must_mention: '档 5/6 的治愈',
+  },
+  {
+    desc: 'M9021 SELECTCASE 的随机上界由 rand(9) 改成 rand(10)',
+    file: 'ere/chara/chara-temptation.js',
+    find: '      switch (rand(9)) {',
+    replace: '      switch (rand(10)) {',
+    tests: ['chara-temptation'],
+    must_mention: '掷骰上界',
+  },
+  {
+    desc: 'M9022 六轮判定的轮数由 6 改成 5',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  for (let num = 0; num < 6; num += 1) {',
+    replace: '  for (let num = 0; num < 5; num += 1) {',
+    tests: ['chara-temptation'],
+    must_mention: '六轮',
+  },
+  {
+    desc: 'M9023 结界指轮的概率边界由 rand(10) < 5 改成 < 6',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (rand(10) < 5 && (ring1 === 18 || ring2 === 18)) return 0;',
+    replace: '  if (rand(10) < 6 && (ring1 === 18 || ring2 === 18)) return 0;',
+    tests: ['chara-temptation'],
+    must_mention: '指轮的两条强制判据',
+  },
+  {
+    desc: 'M9024 不幸指轮的判定条件由 ring === 20 改成 19',
+    file: 'ere/chara/chara-temptation.js',
+    find: '  if (rand(20) < 5 && (ring1 === 20 || ring2 === 20)) return 1;',
+    replace: '  if (rand(20) < 5 && (ring1 === 19 || ring2 === 20)) return 1;',
+    tests: ['chara-temptation'],
+    must_mention: '指轮的两条强制判据',
+  },
+  {
+    desc: 'M9039 代还借款的负债门槛偏移一位（582 < -10000 改成 < -10001）',
+    file: 'ere/chara/chara-temptation.js',
+    find: '    (era.get(`cflag:${arg}:582`) || 0) < SPONSOR_AMOUNT * -1 &&',
+    replace:
+      '    (era.get(`cflag:${arg}:582`) || 0) < SPONSOR_AMOUNT * -1 - 1 &&',
+    tests: ['chara-temptation'],
+    must_mention: '赞助机会三支各按自己的判据命中',
+  },
+  {
+    desc: 'M9033 默认随机源偏移一位（default_rand 的 Math.floor 结果 +1）',
+    file: 'ere/chara/chara-temptation.js',
+    find: `function default_rand(n) {
+  return Math.floor(Math.random() * n);
+}`,
+    replace: `function default_rand(n) {
+  return Math.floor(Math.random() * n) + 1;
+}`,
+    tests: ['page-chara-info'],
+    must_mention: '诱惑真身不传随机源时走默认源',
   },
 ];
