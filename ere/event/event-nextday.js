@@ -581,7 +581,7 @@ async function offervirgin_check(rand = default_rand) {
     if (era.get(`cflag:${cid}:49`)) {
       // :953-958
       await era.printAndWait(`${name}的贞操带的钥匙拿回来了。`);
-      chara(cid).stronghold.贞操带钥匙丢弃 = 0; // :955 CFLAG:49 = 0
+      chara(cid).stronghold.贞操带钥匙已丢弃 = 0; // :955 CFLAG:49 = 0
       era.set(`cflag:${cid}:50`, 0); // :957（原作注释：不清会飞回奴隶手里）
     }
     if ((era.get('flag:38') || 0) === 0) {
@@ -684,7 +684,7 @@ async function offervirgin_check(rand = default_rand) {
   if (era.get(`cflag:${cid}:49`)) {
     // :1076-1084
     await era.printAndWait(`${name}的贞操带的钥匙拿回来了。`);
-    chara(cid).stronghold.贞操带钥匙丢弃 = 0; // :1078 CFLAG:49 = 0
+    chara(cid).stronghold.贞操带钥匙已丢弃 = 0; // :1078 CFLAG:49 = 0
     chara(cid).train.着衣状态 -= 64; // :1079 CFLAG:40 -= 64
     era.set(`cflag:${cid}:50`, 0); // :1082
     chara(cid).chara.特别服装类型 = 0; // :1083
