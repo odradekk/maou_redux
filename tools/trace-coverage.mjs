@@ -124,7 +124,15 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 56; // #392（N8 段 2）：本票把 4 个「待移植」整份摆进
+export const PENDING_BASELINE = 53; // 合并态实测（#393 并上含 #392 的 master）：
+// 两票摆进 ere/ 的整份文件不相交，60 − 4（#392）− 3（#393）= 53，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加，
+// 计数型基线不许靠算（docs/agents/merge-conflicts.md）。
+//
+// #393 单独实测 60 → 57：本票把 キャラ関数/CHARA_JOB_CHANGE.ERB、
+// CHARA_TEMPTATION.ERB、CHARA_MARRIAGE.ERB 三个文件整份摆进 ere/（转职 /
+// 魔的诱惑 / 结婚三对按钮与流程），三份从「待移植」直接转「已移植」：-3。
+// #392（N8 段 2）把 4 个「待移植」整份摆进
 // ere/ —— キャラ関数/CHARA_CUSTOM ver1.0.1.ERB、CHARA_CUSTOM2 ver1.0.1.ERB、
 // CHARA_CUSTOM3.ERB、FUNC_CHARA_AND_HAIR.ERB：60 − 4 = 56，与重测一致。
 // （同一票把 CHARA_BODY2.ERB 从「已移植」纠正为「部分移植」——它自报的
