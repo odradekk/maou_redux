@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2273; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +44（M8941-M8991）
+export const COUNT = 2282; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）
 
 export default [
   {
@@ -20659,7 +20659,7 @@ on('EVENTEND', eventend_kojo_903);`,
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
   },
-  // —— #403（N19）EVENT_K.ERB 分发表：条目 M8941-M8991 ——
+  // —— #403（N19）EVENT_K.ERB 分发表：条目 M8941-M9000 ——
   {
     desc: 'M8941 分发窗口丢 EX 臂（LOCAL > 1000 不再分发，EX 性格全族静默）',
     file: 'ere/kojo/kojo-system.js',
@@ -21178,5 +21178,105 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     await osioski_koujo_family.call(local - 100, {`,
     tests: ['dungeon-after'],
     must_mention: '窗口拒绝，不拼键',
+  },
+  {
+    desc: 'M8992 GET_KOJO_NUM 哨兵收成 <= 0（合法角色号 0 被当缺省，读成 TARGET 的口上）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  const cid = arg < 0 ? era_flag.target : arg; // :89-91',
+    replace:
+      '  const cid = arg <= 0 ? era_flag.target : arg; // :89-91（变异）',
+    tests: ['kojo-system'],
+    must_mention: '不是 TARGET 的 103',
+  },
+  {
+    desc: 'M8993 kojo_handler_id 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
+    file: 'ere/kojo/kojo-system.js',
+    find: 'function kojo_handler_id(arg = -1) {',
+    replace: 'function kojo_handler_id(arg = 0) { // 变异：缺省哨兵改 0',
+    tests: ['kojo-system'],
+    must_mention: '缺省 → 当前 TARGET',
+  },
+  {
+    desc: 'M8994 try_kojo_or_stub 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
+    file: 'ere/kojo/kojo-system.js',
+    find: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
+ * @param {any[]} [extra_args=[]] 透传给 handler 的实参
+ * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
+ * @returns {Promise<any>} handler 的返回值，或存根分支的 0
+ */
+async function try_kojo_or_stub(
+  family,
+  stub_name,
+  stub_desc,
+  stub_ticket,
+  arg = -1,`,
+    replace: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
+ * @param {any[]} [extra_args=[]] 透传给 handler 的实参
+ * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
+ * @returns {Promise<any>} handler 的返回值，或存根分支的 0
+ */
+async function try_kojo_or_stub(
+  family,
+  stub_name,
+  stub_desc,
+  stub_ticket,
+  arg = 0, // 变异：缺省哨兵改 0`,
+    tests: ['kojo-system'],
+    must_mention: '缺省与 -1 都吃 TARGET',
+  },
+  {
+    desc: 'M8995 落空值写错：try_kojo_or_stub 的 whenMissing 0 改 1',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    return family.call(id, { whenMissing: 0, args: extra_args });',
+    replace:
+      '    return family.call(id, { whenMissing: 1, args: extra_args });',
+    tests: ['event-k-dispatch'],
+    must_mention: '落空值声明 0',
+  },
+  {
+    desc: 'M8996 落空值写错：dispatch_execution_koujo 的 whenMissing 0 改 1',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    await family.call(id, { whenMissing: 0, args: [arg] });',
+    replace: '    await family.call(id, { whenMissing: 1, args: [arg] });',
+    tests: ['event-k-dispatch'],
+    must_mention: '落空值声明 0',
+  },
+  {
+    desc: 'M8997 落空值写错：KOJO_MESSAGE_COM 入口的 whenMissing 0 改 1',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    await kojo_message_com_family.call(local - 100, {
+      whenMissing: 0,
+      args: [rand],`,
+    replace: `    await kojo_message_com_family.call(local - 100, {
+      whenMissing: 1,
+      args: [rand],`,
+    tests: ['event-k-dispatch'],
+    must_mention: '落空值声明 0',
+  },
+  {
+    desc: 'M8998 声明空间普通臂少一格（length 40 改 39，键 39 掉出空间）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  ...Array.from({ length: 40 }, (_, i) => i),',
+    replace: '  ...Array.from({ length: 39 }, (_, i) => i), // 变异',
+    tests: ['kojo-system'],
+    must_mention: '键 39 必须在声明空间内',
+  },
+  {
+    desc: 'M8999 声明空间 EX 臂起点漂一格（i + 901 改 902，键 901 掉出空间）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  ...Array.from({ length: 700 }, (_, i) => i + 901),',
+    replace: '  ...Array.from({ length: 700 }, (_, i) => i + 902), // 变异',
+    tests: ['kojo-system'],
+    must_mention: '键 901 必须在声明空间内',
+  },
+  {
+    desc: 'M9000 ATTACK_KOUJO_B 的 cid 守卫收成 > 0（合法角色号 0 被当缺省）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid; // TARGET = B（:325-337 段）`,
+    replace: `  if (cid !== undefined && cid > 0) {
+    era_flag.target = cid; // 变异：0 被当缺省（TARGET = B）`,
+    tests: ['event-k-dispatch'],
+    must_mention: '分发期间 TARGET = 0',
   },
 ];

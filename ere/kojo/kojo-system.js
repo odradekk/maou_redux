@@ -499,7 +499,10 @@ function in_kojo_window(local) {
   return (local >= 100 && local < 140) || local > 1000;
 }
 
-/** 分发守卫能拼出的性格编号；空间外（含无性格 → 0）返回 -1 */
+/**
+ * 分发守卫能拼出的性格编号（键）。arg 的哨兵语义由 get_kojo_num 定：缺省/负
+ * 取当前 TARGET，**0 是合法角色号**。空间外（含无性格 → 0）返回 -1。
+ */
 function kojo_handler_id(arg = -1) {
   const local = get_kojo_num(arg);
   if (in_kojo_window(local)) {
@@ -515,7 +518,9 @@ function kojo_handler_id(arg = -1) {
  * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 素质
  * 101-800 先映射为 1001-1700，后命中的普通性格素质会覆盖它。
  *
- * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）
+ * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）。
+ *   **哨兵只认负数——0 是合法角色号（魔王），读它自己的素质**（#403 二轮
+ *   验收实测：`arg <= 0` 会把 0 号的口上静默换成当前 TARGET 的口上）
  * @returns {number} 口上编号（普通 100-119；EX 1001-1700；无命中时 0）
  */
 function get_kojo_num(arg = -1) {

@@ -599,6 +599,49 @@ test('22 行逐条驱动（EX 臂）：EX_TALENT:102 → LOCAL 1002 → 键 902 
   }
 });
 
+test('族 call 的落空值契约：22 行都在 options 里声明 whenMissing = 0，实参同表', async () => {
+  // whenMissing 是**契约注记**：这些入口一律 return 0（TRYCALLFORM 的 RESULT
+  // 不读），所以 0 从返回值上与合法值分不开——只能在分发缝上钉住它（#403
+  // 二轮验收点名「whenMissing 的 0」与「家族 call 的键」这一类哨兵值）。
+  // 包一层族对象的 call 记录 options：命中 handler 的那些行照样走 call。
+  for (const row of table_rows()) {
+    const cid = 17;
+    const rand = always;
+    const fixture = create_era_fixture();
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.target = cid;
+    fixture.store.set('flag:7', 2);
+    seed_noble(fixture, cid); // LOCAL 103 → 键 3
+    fixture.era.beginTrain(0, cid); // @SELF_KOJO 的守卫会写 TFLAG:15
+    const mod = fixture.load_module(row.module);
+    const family = mod[row.family];
+    const recorded = [];
+    const real_call = family.call.bind(family);
+    family.call = async (id, options) => {
+      recorded.push([id, options]);
+      return real_call(id, options);
+    };
+    family.register(3, async () => 0);
+
+    fixture.set_inputs(...Array(4).fill(0)); // 占位行的等键备料
+    const ctx = { cid, rand };
+    await mod[row.entry](...row.call.map((name) => arg_value(name, ctx)));
+
+    assert.equal(recorded.length, 1, `${row.entry}：命中 handler 时经族 call`);
+    assert.equal(recorded[0][0], 3, `${row.entry}：键 = LOCAL - 100`);
+    assert.equal(
+      recorded[0][1].whenMissing,
+      0,
+      `${row.entry}：落空值声明 0（TRYCALL 落空的 RESULT）`,
+    );
+    assert.deepEqual(
+      recorded[0][1].args,
+      row.handler.map((name) => arg_value(name, ctx)),
+      `${row.entry}：实参透传与表一致`,
+    );
+  }
+});
+
 test('FLAG:7 = 0（口上总开关关）：flag_guard 行不派发，其余行照常派发', async () => {
   for (const row of table_rows()) {
     const { seen, fixture } = await drive_row(row, {
@@ -776,9 +819,10 @@ test('TARGET 暂存/还原：七处置/还原成对（分发期间 = 传入对�
   }
 });
 
-test('TARGET 置位守卫的另一侧：cid 缺省（undefined / 负数）时按当前 TARGET 分发、不覆盖它', async () => {
-  // 三个入口的 `if (cid !== undefined && cid >= 0)` 只置不置是两条路：
-  // 缺省侧吃当前 TARGET（GET_KOJO_NUM 的参缺省语义），指针不留残留
+test('TARGET 置位守卫的两侧：cid 缺省（undefined / 负数）吃当前 TARGET，合法 0 按它自己', async () => {
+  // 三个入口的 `if (cid !== undefined && cid >= 0)` 是哨兵与合法值的边界：
+  // 缺省侧吃当前 TARGET（GET_KOJO_NUM 的参缺省语义），0 侧是合法角色号，
+  // 指针都不留残留
   for (const [entry_name, family_name] of [
     ['victory_koujo', 'dungeon_victory_family'],
     ['attack_koujo', 'dungeon_attack_family'],
@@ -817,6 +861,43 @@ test('TARGET 置位守卫的另一侧：cid 缺省（undefined / 负数）时按
         `${entry_name}(cid=${cid_arg})：返回后 TARGET 仍是它`,
       );
     }
+  }
+
+  // 合法侧的另一端：cid = 0（魔王）是合法角色号，必须按它自己的编号分发
+  // ——`cid >= 0` 收成 `cid > 0` 就会把它当缺省、静默换成 TARGET 的口上
+  for (const [entry_name, family_name] of [
+    ['victory_koujo', 'dungeon_victory_family'],
+    ['attack_koujo', 'dungeon_attack_family'],
+    ['attack_koujo_b', 'dungeon_attack_family'],
+  ]) {
+    const fixture = setup_kojo();
+    seed_noble(fixture); // TARGET 17 的性格 → 键 3
+    fixture.store.set('talent:0:160', 1); // 0 号自己的性格（慈愛）→ 键 0
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    const kojo = fixture.load_module('kojo/kojo-system');
+    const seen = [];
+    let target_during = null;
+    kojo[family_name].register(0, async (...args) => {
+      seen.push(args);
+      target_during = era_flag.target;
+      return 0;
+    });
+    era_flag.target = 17; // 调用前的 TARGET（验置/还原成 0）
+    const rand = always;
+
+    await kojo[entry_name](0, rand);
+
+    assert.deepEqual(
+      seen,
+      [[rand]],
+      `${entry_name}(cid=0)：按 0 号自己的编号分发`,
+    );
+    assert.equal(target_during, 0, `${entry_name}(cid=0)：分发期间 TARGET = 0`);
+    assert.equal(
+      era_flag.target,
+      17,
+      `${entry_name}(cid=0)：返回后 TARGET 还原成调用前的 17`,
+    );
   }
 });
 
