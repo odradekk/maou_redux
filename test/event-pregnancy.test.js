@@ -874,7 +874,7 @@ test('IN_VAGINA：兽奸（kind 5）在非兽耳主体上早退且不清池', ()
   assert.equal(fixture.store.get(`cflag:${SLAVE}:106`), 1, '该早退同样不清池');
 });
 
-test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决定掷骰上界', () => {
+test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决定掷骰上界与成功阈值', () => {
   // 上界只以 rand 的实参形式暴露：捕获 n 即 `(系数 + 娇小*2) * HAIRANZAI`
   const probe = (setup, pool) => {
     const { fixture, pregnancy } = pair_world(PAIRS[0]);
@@ -889,28 +889,55 @@ test('IN_VAGINA：中出量六档、排卵诱发剂、娇小与满月各自决�
     assert.ok(upper !== null, '必须掷过一次');
     return upper;
   };
+  // 命中侧的读数：rand 返回指定值，读回 CFLAG:102（妊娠相手）
+  const hit_probe = (pool, roll) => {
+    const { fixture, pregnancy } = pair_world(PAIRS[0]);
+    fixture.store.set(`cflag:${SLAVE}:101`, pool);
+    pregnancy.in_vagina_m_to_t(() => roll);
+    return fixture.store.get(`cflag:${SLAVE}:102`) ?? 0;
+  };
   const none = () => {};
 
-  // :253-271 六档：系数 6/5/4/3/2/1（池 1/5/10/15/20/25），HAIRANZAI = 3
+  // :253-271 六档：系数 6/5/4/3/2/1（池 1/5/10/15/20/25），HAIRANZAI = 3；
+  // 第三列是成功阈值（:256 的 `rand(upper) <= success`）
   const LADDER = [
-    [1, 18],
-    [4, 18], // 池 < 5 仍在最低档（边界另一侧）
-    [5, 15],
-    [9, 15],
-    [10, 12],
-    [14, 12],
-    [15, 9],
-    [19, 9],
-    [20, 6],
-    [24, 6],
-    [25, 3],
-    [40, 3],
+    [1, 18, 2],
+    [4, 18, 2], // 池 < 5 仍在最低档（边界另一侧）
+    [5, 15, 2],
+    [9, 15, 2],
+    [10, 12, 2],
+    [14, 12, 2],
+    [15, 9, 2],
+    [19, 9, 2],
+    [20, 6, 2],
+    [24, 6, 2],
+    [25, 3, 3],
+    [40, 3, 3],
   ];
   for (const [pool, upper] of LADDER) {
     assert.equal(
       probe(none, pool),
       upper,
       `池 ${pool} → 上界 ${upper}（六档分界 5/10/15/20/25）`,
+    );
+  }
+
+  // 同一张 LADDER 再走一遍量成功阈值那一列。上面那一趟的 rand 恒回实参 n，
+  // `n <= success` 在 n <= 1 的档位恒真、在 n >= 3 的档位恒假——比较从不
+  // 依赖 success 的取值，六档的阈值改一个都不红（#401 验收探针：:295 的
+  // `[3, 2]` 改成 `[3, 3]` 全绿）。这里取值恰等于阈值 / 阈值 + 1 各一次：
+  // 命中侧把 success 钉在 `>= 取值`、未命中侧钉在 `< 取值 + 1`，两合起来
+  // success 只等于表里那个数。
+  for (const [pool, , success] of LADDER) {
+    assert.equal(
+      hit_probe(pool, success),
+      1,
+      `池 ${pool}：取值 = 成功阈值 ${success} 时必须受胎（:256 的 <=）`,
+    );
+    assert.equal(
+      hit_probe(pool, success + 1),
+      0,
+      `池 ${pool}：取值 = 阈值 + 1（${success + 1}）时不得受胎`,
     );
   }
 

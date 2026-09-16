@@ -323,7 +323,7 @@ function unique_nonblank_in_slice(lines, a, b) {
   return out;
 }
 
-const ANCHOR_QUALITY_BASELINE = 5155; // #298 冻结：弱锚只减不增；#239 K8 并入 +500；#231 K0 并入 +364；#417 train-message 消化 -4
+const ANCHOR_QUALITY_BASELINE = 5153; // #298 冻结：弱锚只减不增；#239 K8 并入 +500；#231 K0 并入 +364；#417 train-message 消化 -4；#401 event-turnend 消化 -2
 const ANCHOR_QUALITY_BY_FILE = {
   'ere/chara/chara-make.js': 35,
   'ere/data/equip-database.js': 2,
@@ -348,7 +348,6 @@ const ANCHOR_QUALITY_BY_FILE = {
   'ere/event/event-endcheck.js': 5,
   'ere/event/event-ending.js': 2,
   'ere/event/event-nextday.js': 9,
-  'ere/event/event-turnend.js': 2,
   'ere/event/first-setting.js': 1,
   'ere/event/source-check.js': 23,
   'ere/kojo/kojo-dungeon-bitch-log.js': 15,
