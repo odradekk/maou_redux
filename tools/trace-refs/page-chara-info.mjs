@@ -108,6 +108,56 @@ export const FILES = [
         ref: '1060',
         any: [/^\tCALL CHILD_CARE_CHARA\(ARG\)$/m],
       },
+      // #393 接线：三个动作按钮与三个动作分支的调用点回显
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '860-862',
+        any: [
+          /^\s*CALL SHOW_BUTTON_JOB_CHANGE\(2,ARG\).*$\n^\s*CALL SHOW_BUTTON_TEMPTATION\(3,ARG\).*$\n^\s*CALL SHOW_BUTTON_MARRIAGE\(4,ARG\).*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1051',
+        any: [/^\s*CALL CHARA_INFO_JOB_CHANGE\(ARG\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1054',
+        any: [/^\s*CALL TEMPTATION\(ARG\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1057',
+        any: [/^\s*CALL MARRIAGE\(ARG\)\s*$/m],
+      },
+      // #393 接线：三个动作按钮与三个动作分支的调用点回显
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1051',
+        any: [/^\s*CALL CHARA_INFO_JOB_CHANGE\(ARG\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1054',
+        any: [/^\s*CALL TEMPTATION\(ARG\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1057',
+        any: [/^\s*CALL MARRIAGE\(ARG\)\s*$/m],
+      },
+      // #393 接线：个别信息页的收尾（被调方 RESULT 0/1 上浮、其余重画）
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1094-1097',
+        any: [/^\s*IF RESULT == 0 \|\| RESULT == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1094-1099',
+        any: [/^\s*IF RESULT == 0 \|\| RESULT == 1\s*$/m],
+      },
     ],
   },
 ];

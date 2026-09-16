@@ -232,14 +232,17 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
   );
   // :95-124 绝顶计数：EX 全零 → 整段静默
   assert(!texts.some((line) => line.includes('绝顶')));
-  // 存根各占位一行（可检索；LIFE_BAR/VITAL_BAR 已随 #212 换真身——
-  // maxbase 未播种时静默，见下方两条反向断言）
-  for (const name of ['SHOW_EQUIP_2', 'SHOW_EQUIP_1']) {
-    assert(
-      texts.some((line) => line.includes(`@${name}`)),
-      `存根 ${name} 必须打印占位行`,
-    );
-  }
+  // SHOW_EQUIP_1/2 自 #390 起是真身（ere/page/components/chara-equip-status.js）：
+  // 本世界没有任何 TEQUIP/TFLAG 位 → SHOW_EQUIP_2 只打一个空格、SHOW_EQUIP_1
+  // 整段静默（:1600 的守卫不成立）；两段都不再出现占位文案
+  assert(
+    !texts.some((line) => line.includes('@SHOW_EQUIP')),
+    'SHOW_EQUIP_1/2 已换真身，不该再有占位行',
+  );
+  assert(
+    !texts.some((line) => line.startsWith('使用中(')),
+    '无装备位时 SHOW_EQUIP_1 整段不出（含头行）',
+  );
   // PRINT_CLOTHTYPE 自 #215（J5）起为真身：本世界未播种服装 → 【全裸】
   //（FLAG:37 缺省 0 时 clothtype_text 的 :37 早退路径）
   assert(
@@ -456,7 +459,8 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'utf8',
   );
 
-  assert.deepEqual(STUBBED_CALLS, ['SHOW_EQUIP_2', 'SHOW_EQUIP_1']);
+  // SHOW_EQUIP_1/2 随 #390 换真身，本文件已无存根
+  assert.deepEqual(STUBBED_CALLS, []);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

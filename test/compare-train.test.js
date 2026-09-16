@@ -120,9 +120,16 @@ const REPO = path.resolve(__dirname, '..');
 // 【#335 与 #336 合并态重测】两票各自删掉一批存根归因（#336 单独 482/235、
 // #335 单独 481/234），合并后 480/233——既不是任一单票的数也不是相加，
 // 按 SOP §5.5 实跑 cli --sample 取准。matched 与 unexplained 不变。
+// 【#390（N6）角色信息显示链落地后重测】两处变化：
+//   ① natural：SHOW_EQUIP_1/2 的占位行消失（原先每次 SHOW_STATUS 各一条），
+//      stub −35；真身带回的「使用中(…)」头行与一位玩家可见文本换了 matched +1。
+//   ② upgrade：魔王的能力画面（SHOW_CHARA_INFO CASE 0）整屏换成真身
+//      （素质行/能力行/刻印行），stub −10、matched 不变（那十行原本就是
+//      「有输出但对不上」的存根行，换真身后逐字对上黄金样本）。
+// 未解释恒 0；数字为合并态重测值。
 const BASELINE = {
-  'train-natural': { matched: 1114, version: 0, stub: 479, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 232, unexplained: 0 },
+  'train-natural': { matched: 1115, version: 0, stub: 444, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 222, unexplained: 0 },
 };
 
 async function build_report(sample) {

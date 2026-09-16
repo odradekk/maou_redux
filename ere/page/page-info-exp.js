@@ -18,51 +18,7 @@
 
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
-
-/**
- * 显示宽度（Emuera 的 %,N,LEFT/RIGHT% 补位基准）：全角 = 2、半角 = 1。
- * @param {string} text
- * @returns {number}
- */
-function display_width(text) {
-  let width = 0;
-  for (const ch of text) {
-    width += ch.charCodeAt(0) > 0xff ? 2 : 1;
-  }
-  return width;
-}
-
-/**
- * %,N,LEFT%：按显示宽度右补空格。
- * @param {string} text
- * @param {number} width
- * @returns {string}
- */
-function pad_display(text, width) {
-  return text + ' '.repeat(Math.max(0, width - display_width(text)));
-}
-
-/**
- * 按显示宽度截断（`%SUBSTRING(name,0,N)%` 的等价物）。Emuera 的 SUBSTRING
- * 按 **Shift-JIS 字节数**截，全角 2 字节、半角 1 字节——与 display_width
- * 同一把尺子。证据：sale-natural-log:124 的 `调教自慰:     3` 出自
- * EXPNAME=「调教自慰经验」（6 字、12 字节），截 8 字节得 4 字「调教自慰」；
- * 按字符截会得到 6 字全名（#397 返工的 sale-natural 对拍实测）。
- * @param {string} text
- * @param {number} width 字节数上限
- * @returns {string}
- */
-function slice_display(text, width) {
-  let out = '';
-  let used = 0;
-  for (const ch of text) {
-    const w = display_width(ch);
-    if (used + w > width) break;
-    out += ch;
-    used += w;
-  }
-  return out;
-}
+const { pad_display, slice_display } = require('#/utils/display-width');
 
 /**
  * 初吻括号（:1058-1090）：CFLAG:16 的值域分支。返回空串 = 无此行。

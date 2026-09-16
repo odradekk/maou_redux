@@ -2766,11 +2766,10 @@ export default [
     must_mention: '作废回合不得进 @SOURCE_CHECK',
   },
   {
-    desc: 'M1043 SHOW_EQUIP_2 已点亮状态改回占位行',
+    desc: 'M1043 SHOW_EQUIP_2 整段调用删（#390 起真身在 chara-equip-status.js）',
     file: 'ere/page/page-train.js',
-    find: "  if (special_equip.length > 0) {\n    era.print([{ content: special_equip.join(''), color: '#FF1493' }]);",
-    replace:
-      "  if (false) {\n    era.print([{ content: special_equip.join(''), color: '#FF1493' }]);",
+    find: '  show_equip_2(target);',
+    replace: '  // 变异：装备显示整段删',
     tests: ['com-colosseum', 'com-special'],
     must_mention: '[死斗场决斗中]',
   },

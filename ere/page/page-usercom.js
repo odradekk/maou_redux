@@ -44,8 +44,8 @@
  * @P_C（#212 真身，本文件 p_c）：TSTR:90 承载上次的指令名，TRAIN_NAME
  * 定制名（trainalias）优先级高于静态名表——见 p_c 的三级回落。
  *
- * 本文件仍存根化的原作调用（docs/stub-registry.md）：SHOW_CHARA_INFO
- * （USERCOM:105，随角色信息票）、STAIN_INFO（:108，随污渍票）。@USERCOM 各分支的 RETURN 1/0 被 Emuera 引擎忽略
+ * 本文件已无存根化的原作调用（docs/stub-registry.md）：SHOW_CHARA_INFO
+ * （USERCOM:105）与 STAIN_INFO（:108）随 #390 落地真身。@USERCOM 各分支的 RETURN 1/0 被 Emuera 引擎忽略
  * （重绘回合画面是唯一效果），ere 侧 emit 同构（返回值无消费者）。
  * SETCOLOR 0xDDA0DD 的「上次的调教指令」淡紫色不镜像（记名差异）。
  */
@@ -67,16 +67,19 @@ const {
   comseq_show,
   comseq_train,
 } = require('#/system/train/com-register');
-const { stub_line_wait } = require('#/utils/stub-line');
+const { show_chara_info } = require('#/page/page-chara-info-show');
+const { stain_info } = require('#/page/components/stain-info');
 const { condom_settings } = require('#/system/train/com-condom');
 
 /**
  * 本文件存根化的原作调用名（@USERCOM 分发到的存根处理器）。
  * docs/stub-registry.md 必须收录每一个；名单变动必须同步清单。
  * @P_C 已随 #212 落地真身；SHOW_COMMENU 与 COMSEQ_* 已随 #214 落地真身
- * （本文件 show_commenu 与 system/train/com-register.js），不在名单。
+ * （本文件 show_commenu 与 system/train/com-register.js）；SHOW_CHARA_INFO 与
+ * STAIN_INFO 已随 #390 落地真身（page/page-chara-info-show.js 与
+ * page/components/stain-info.js），四条都不在名单。
  */
-const STUBBED_CALLS = ['SHOW_CHARA_INFO', 'STAIN_INFO'];
+const STUBBED_CALLS = [];
 
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
@@ -271,13 +274,13 @@ on('USERCOM', async (result) => {
   // :103 REDRAW 1 —— 不镜像；RETURN 1/0 引擎均忽略（见文件头）
   const guards = handover_guard_ok();
   if (result === 100) {
-    // :104-106 能力表示（SHOW_CHARA_INFO 本体随角色信息票）
-    await stub_line_wait('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票');
+    // :104-106 能力表示（#390 真身：ARG:1 缺省 -1，即调教时的信息）
+    await show_chara_info(era_flag.target);
     return;
   }
   if (result === 101) {
-    // :107-109 污秽表示
-    await stub_line_wait('STAIN_INFO', '污渍信息画面', '随污渍票');
+    // :107-109 污秽表示（#390 真身）
+    await stain_info();
     return;
   }
   if (result === 102 && guards.can_handover) {
