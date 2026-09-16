@@ -113,6 +113,13 @@ export const FILES = [
         any: [/;初心者の烙印/],
       },
       {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '67',
+        any: [
+          /^[ \t]*CALL SET_CHARASTERISTIC\(ID_OF_NEWCHARA, CHARACTER\)[ \t]*$/m,
+        ],
+      },
+      {
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
         ref: '68',
         any: [/CALL CM_VIRGIN/],
@@ -146,6 +153,11 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',
         ref: '89-90',
         any: [/SIF !EX_TALENT:A:2/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '96-99',
+        any: [/^[ \t]*CALL SET_RANDOM_HAIRCOLOR\(ID_OF_NEWCHARA\)[ \t]*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_MAKE.ERB',

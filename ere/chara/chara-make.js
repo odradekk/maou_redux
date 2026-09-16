@@ -50,6 +50,17 @@ const { random_self_call } = require('#/chara/chara-self-call'); // #383 起真�
 const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
 const { look_set } = require('#/chara/look'); // #389 起真身（源 キャラ関数/LOOK.ERB:4）
 const { chara_first_exp } = require('#/chara/chara-first-exp'); // #394 起真身
+const {
+  GENERAL_CHARASTERISTICS,
+  show_charasteristic,
+  set_random_charasteristic,
+  set_charasteristic,
+  show_haircolor,
+  set_random_haircolor,
+  set_haircolor,
+  choose_charasteristic,
+  choose_haircolor,
+} = require('#/chara/chara-and-hair'); // #392 起真身（源 キャラ関数/FUNC_CHARA_AND_HAIR.ERB）
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara_callname } = require('#/utils/callname-utils');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
@@ -57,7 +68,7 @@ const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { stub_line_wait } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -66,25 +77,18 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * #394 变更：@CM_NS_EXP 的 CALL CHARA_FIRST_EXP（:1103）换真身
  * （ere/chara/chara-first-exp.js），CHARA_FIRST_EXP 移出名单。
  *
- * #384 变更：@RAND_CHARA_MAKE 落真身，它依赖的 FUNC_CHARA_AND_HAIR 八函数
- * （源 キャラ関数/FUNC_CHARA_AND_HAIR.ERB，属 N8/#392）成为本文件的存根；
- * 同时 **CMI_CONFLICT_CHECK 换真身**（cm_skill 尾段改调
- * ere/chara/chara-make-inherit.js 的实现）、**SHOW_CHARA_INFO 随 #390 换真身**
- * （rand_chara_make 的形象确认段），两者移出名单。本文件是那八个函数全库
- * 唯一的调用方（见 rand_chara_make 的文件注释）。
+ * #384 变更：@RAND_CHARA_MAKE 落真身；同时 **CMI_CONFLICT_CHECK 换真身**
+ * （cm_skill 尾段改调 ere/chara/chara-make-inherit.js 的实现），移出名单。
+ *
+ * #392 变更：@RAND_CHARA_MAKE 依赖的 FUNC_CHARA_AND_HAIR 八函数换真身
+ * （ere/chara/chara-and-hair.js）——本文件是它们全库唯一的调用方，八条从
+ * 名单移除。
+ *
+ * #390 变更：SHOW_CHARA_INFO 换真身（rand_chara_make 的形象确认段改调
+ * ere/page/page-chara-info-show.js），也从名单移除。两票各删一批，合并后
+ * 名单只剩 ST_UP。
  */
-const STUBBED_CALLS = [
-  'ST_UP',
-  // @RAND_CHARA_MAKE 的形象确认段（:66-125）依赖的八处 FUNC_CHARA_AND_HAIR
-  'SET_CHARASTERISTIC',
-  'SET_HAIRCOLOR',
-  'SHOW_CHARASTERISTIC',
-  'SET_RANDOM_CHARASTERISTIC',
-  'SHOW_HAIRCOLOR',
-  'SET_RANDOM_HAIRCOLOR',
-  'CHOOSE_CHARASTERISTIC',
-  'CHOOSE_HAIRCOLOR',
-];
+const STUBBED_CALLS = ['ST_UP'];
 
 /**
  * @CHARA_MAKE（:2-120）：随机生成一名完整角色。
@@ -1624,7 +1628,7 @@ async function cm_cloth(cid, rand_n) {
  *     定义在 キャラ関数/FUNC_CHARA_AND_HAIR.ERB:7-219，该文件属 N8/#392）。
  *     本文件是它们**唯一**的调用方（全库 grep 实测，除定义处外只有
  *     CHAR_MAKE.ERB:67/:71/:83/:85/:86/:95/:97/:98/:112/:118），故以
- *     `stub_line_wait` 占位并登记清单，N8 落地后按行号注释接入。
+ *     真身在 ere/chara/chara-and-hair.js（#392 起接入，见 rand_chara_make）。
  *
  *   - **赤森奴隶**（魔改使用.ERH:12，普通变量非 SAVEDATA）只被
  *     CAMPAIGN_EVENT.ERB:55/:57 写入（阶段 5 战役线未移植），恒 0：
@@ -1689,13 +1693,15 @@ async function rand_chara_make(rand, char_make_inport) {
       // :66 IF CHARACTER != -1 —— CHARACTER 初值 0，故首轮恒进；第二轮起
       //     它可能是 :88 回写的 -1（未定义），那一轮就跳过
       if (character !== -1) {
-        stub_line('SET_CHARASTERISTIC', '性格设定', '随角色定制票');
+        set_charasteristic(newchara, character); // :67 CALL SET_CHARASTERISTIC
       }
       // :70 IF HAIRCOLOR > 0 —— 初值 0 不 > 0，首轮不进；第二轮起可能进
       if (haircolor > 0) {
-        stub_line('SET_HAIRCOLOR', '发色设定', '随角色定制票');
+        set_haircolor(newchara, haircolor); // :71 CALL SET_HAIRCOLOR
       }
 
+      // :66-125 性格与发色的预设落地 + 形象确认循环（八处 FUNC_CHARA_AND_HAIR
+      // 自 #392 起是真身）
       // :75-125 $INPUT_LOOP_12 —— 形象确认（改性格 / 改发色 / 继续）
       // 其中 :83-100 是性格与发色的显示段（两段同构）
       for (;;) {
@@ -1705,27 +1711,27 @@ async function rand_chara_make(rand, char_make_inport) {
 
         // :83-90 性格：显示 →（未定义则随机补设 → 再显示）→ 回写 CHARACTER，
         // 并由 CHARACTER 查 ID_OF_GENERAL_CHARASTERISTICS 得 XINGGE
-        stub_line('SHOW_CHARASTERISTIC', '性格显示', '随角色定制票');
-        let shown = -1; // 占位实现恒回「未定义」，走 :84-87 的随机补设支
+        let shown = show_charasteristic(newchara); // :83 CALL SHOW_CHARASTERISTIC
         if (shown === -1) {
-          stub_line('SET_RANDOM_CHARASTERISTIC', '随机性格', '随角色定制票');
-          stub_line('SHOW_CHARASTERISTIC', '性格显示', '随角色定制票');
-          shown = -1;
+          // :84-87 未定义则随机补设再显示
+          set_random_charasteristic(newchara, rand_n); // :85
+          shown = show_charasteristic(newchara); // :86
         }
         character = shown; // :88
-        // :90 XINGGE = ID_OF_GENERAL_CHARASTERISTICS:CHARACTER —— 该表未落
-        // yml（属「性格」子系统），此处按 -1（无指定）落地
-        xingge = -1;
+        // :90 XINGGE = ID_OF_GENERAL_CHARASTERISTICS:CHARACTER —— 表在
+        // ere/chara/chara-and-hair.js（VARIABLES.ERH:6）；CHARACTER 为 -1
+        // （表外）时按「无指定」落地
+        xingge =
+          character >= 0 ? (GENERAL_CHARASTERISTICS[character] ?? -1) : -1;
         era.print(''); // :91 PRINTL
 
         // :93-100 发色：与性格同构
         era.print('[1] 发色 ： ');
-        stub_line('SHOW_HAIRCOLOR', '发色显示', '随角色定制票');
-        let shown_color = 0;
+        let shown_color = show_haircolor(newchara); // :95 CALL SHOW_HAIRCOLOR
         if (shown_color === 0) {
-          stub_line('SET_RANDOM_HAIRCOLOR', '随机发色', '随角色定制票');
-          stub_line('SHOW_HAIRCOLOR', '发色显示', '随角色定制票');
-          shown_color = 0;
+          // :96-99 未定义则随机补设再显示
+          set_random_haircolor(newchara, rand_n); // :97
+          shown_color = show_haircolor(newchara); // :98
         }
         haircolor = shown_color; // :100
         era.print(''); // :101 PRINTL
@@ -1738,17 +1744,13 @@ async function rand_chara_make(rand, char_make_inport) {
         if (choice === 0) {
           // :110-113 改性格 → 回到 $INPUT_LOOP_12
           era.print('什么样的态度呢……');
-          await stub_line_wait(
-            'CHOOSE_CHARASTERISTIC',
-            '性格选择',
-            '随角色定制票',
-          );
+          await choose_charasteristic(newchara); // :112 CALL CHOOSE_CHARASTERISTIC
           continue;
         }
         if (choice === 1) {
           // :116-119 改发色 → 回到 $INPUT_LOOP_12
           era.print('什么样的发色呢…');
-          await stub_line_wait('CHOOSE_HAIRCOLOR', '发色选择', '随角色定制票');
+          await choose_haircolor(newchara); // :118 CALL CHOOSE_HAIRCOLOR
           continue;
         }
         if (choice === 100) {

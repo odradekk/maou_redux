@@ -956,6 +956,7 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
       accelerator: 7,
       rendered: '[7] 裸数组形态',
       color: undefined,
+      grid_width: 24,
       row: 0,
     },
   ]);
