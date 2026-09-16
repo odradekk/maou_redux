@@ -9,10 +9,7 @@
 
 const era = require('#/era-electron');
 const { search_family } = require('#/chara/chara-family');
-const {
-  exucution_koujo_family,
-  kojo_handler_id,
-} = require('#/kojo/kojo-system');
+const { exucution_koujo } = require('#/kojo/kojo-system');
 const {
   video_maturo,
   video_maturo2,
@@ -124,14 +121,8 @@ function print_methods(cid) {
 
 async function call_execution_kojo(cid, result, rand_n) {
   game.event.犬射精或处刑口上 = result;
-  const kojo_id = kojo_handler_id(cid);
-  if (kojo_id >= 0) {
-    const kojo_arg = kojo_id === 0 ? result : rand_n;
-    await exucution_koujo_family.call(kojo_id, {
-      whenMissing: 0,
-      args: [kojo_arg],
-    });
-  }
+  // EVENT_K.ERB:357-367 的 @EXUCUTION_KOUJO（#403 收口到分发入口）
+  await exucution_koujo(cid, result, rand_n);
 }
 
 async function keep_as_soldier(cid) {

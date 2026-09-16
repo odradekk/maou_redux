@@ -1,5 +1,10 @@
 /**
  * @file 处刑、设施与苗床业务行为测试（issue #348，阶段 5a L17）。
+ *
+ * #403 把五个处刑入口的内联分发收口成单一入口后，调用点的实参顺序
+ * （cid / 处分编号 / 随机源）由本文件的「入口实参位置锁」用例守着——
+ * 入口族内部收对参数，调用点传错一样是玩家侧失声（#403 验收反馈实测
+ * execution 与 public-execution 两处的第二三实参对调未被拦住）。
  */
 
 'use strict';
@@ -928,6 +933,130 @@ test('EXECUTION：肉便器支完整结算，录像开关关闭时不额外写�
       .text_lines()
       .includes('作为魅力点的美乳，现在变成一堆丑陋膨胀的肉块了。'),
   );
+});
+
+// —— 五个处刑调用点的实参位置锁（#403 收口；验收反馈实测 execution 与
+//    public-execution 两处「第二三实参对调」全绿——入口族内部收对参数，
+//    调用点传错一样是玩家侧失声，两只手都要有钉子）——
+
+/** 探针：记录每次调用的实参表。 */
+function register_probe(family, key) {
+  const seen = [];
+  family.register(key, async (...args) => {
+    seen.push(args);
+    return 0;
+  });
+  return seen;
+}
+
+test('EXECUTION：处刑口上处理器收到注入随机源（入口实参位置锁）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:163', 1); // 高贵 → K3
+  fixture.set_inputs(0, 6); // 第 1 候选（31）、方式 6 = 固定示众
+  const { execution } = fixture.load_module('event/event-execution');
+  const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const rand_n = seq([0]);
+  const seen = register_probe(exucution_koujo_family, 3);
+
+  await execution(rand_n);
+
+  assert.equal(
+    seen.length,
+    1,
+    '入口实参位置：目标角色 31 的 K3 处理器必须被调用一次（cid 不许错位）',
+  );
+  assert.equal(
+    seen[0][0],
+    rand_n,
+    '入口实参位置：第 3 参（随机源）不许与第 2 参（处刑方式）对调',
+  );
+});
+
+test('EXECUTION：K0 处刑口上处理器收到处刑方式编号（入口实参位置锁）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:160', 1); // 慈爱 → K0（旧签名收事件编号）
+  fixture.set_inputs(0, 6);
+  const { execution } = fixture.load_module('event/event-execution');
+  const { exucution_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const rand_n = seq([0]);
+  let observed;
+  exucution_koujo_family.register(0, async (arg) => {
+    observed = arg;
+    return 0;
+  });
+
+  await execution(rand_n);
+
+  assert.equal(
+    observed,
+    6,
+    '入口实参位置：K0 收处刑方式编号（不是随机源，也不是 cid）',
+  );
+});
+
+test('PUBLIC_EXECUTION：公开处刑口上处理器收到注入随机源（入口实参位置锁）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:163', 1); // 高贵 → K3
+  fixture.set_inputs(0); // 凌辱刑
+  const { public_execution } = fixture.load_module(
+    'event/event-public-execution',
+  );
+  const { public_exucution_koujo_family } =
+    fixture.load_module('kojo/kojo-system');
+  const rand_n = seq([0]);
+  const seen = register_probe(public_exucution_koujo_family, 3);
+
+  await public_execution(31, rand_n);
+
+  assert.equal(
+    seen.length,
+    1,
+    '入口实参位置：目标角色 31 的 K3 处理器必须被调用一次（cid 不许错位）',
+  );
+  assert.equal(
+    seen[0][0],
+    rand_n,
+    '入口实参位置：第 3 参（随机源）不许与第 2 参（处分方式）对调',
+  );
+});
+
+test('PUBLIC_EXECUTION：K0 公开处刑口上处理器收到处分方式编号（入口实参位置锁）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:160', 1); // 慈爱 → K0
+  fixture.set_inputs(1); // 绞刑
+  const { public_execution } = fixture.load_module(
+    'event/event-public-execution',
+  );
+  const { public_exucution_koujo_family } =
+    fixture.load_module('kojo/kojo-system');
+  const rand_n = seq([0]);
+  let observed;
+  public_exucution_koujo_family.register(0, async (arg) => {
+    observed = arg;
+    return 0;
+  });
+
+  await public_execution(31, rand_n);
+
+  assert.equal(observed, 1, '入口实参位置：K0 收处分方式编号（不是随机源）');
+});
+
+test('GROTESQUE：K0 猎奇处刑口上处理器收到处刑方式编号（入口实参位置锁）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('talent:31:160', 1); // 慈爱 → K0
+  fixture.set_inputs(3); // 火烧刑
+  const { grotesque } = fixture.load_module('event/event-grotesque');
+  const { grotesque_koujo_family } = fixture.load_module('kojo/kojo-system');
+  const rand_n = seq([0]);
+  let observed;
+  grotesque_koujo_family.register(0, async (arg) => {
+    observed = arg;
+    return 0;
+  });
+
+  await grotesque(31, rand_n);
+
+  assert.equal(observed, 3, '入口实参位置：K0 收处刑方式编号（不是随机源）');
 });
 
 test('INFRASTRUCTURE：无奴隶时提前返回；展品统计按对应计数输出', async () => {

@@ -337,7 +337,7 @@ test('INTERCEPT：出击决定写入状态与扣款，并调 @GOHOUBI_REQUEST', 
   assert.equal(fixture.store.get('cflag:1:504'), 7, 'CFLAG:504 = WISH');
   assert.ok(
     texts(added).some((t) => t.includes('@GOHOUBI_REQUEST_KOUJO')),
-    '口上侧存根（#397 冻死的调用面，体随 #403）',
+    '口上侧占位行（#403 起函数体是真分发；角色 1 无性格素质 → 键 -1 → 存根）',
   );
 });
 
@@ -655,16 +655,27 @@ test('GOHOUBI_REQUEST：魔王同时是男与扶她时 6 也降级（判据是�
   assert.equal(fixture.store.get('cflag:1:504'), 6, '魔王是男 → 保留 6');
 });
 
-test('GOHOUBI_REQUEST_KOUJO：调用面（签名）由本票冻结、体是占位', async () => {
+test('GOHOUBI_REQUEST_KOUJO：调用面（签名）由 #397 冻结，函数体随 #403 换成真分发', async () => {
   const fixture = create_era_fixture();
-  const { gohoubi_request_koujo } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
+  const { gohoubi_request_koujo, gohoubi_request_koujo_family } =
+    fixture.load_module('kojo/kojo-dungeon-after');
   assert.equal(typeof gohoubi_request_koujo, 'function');
   assert.equal(gohoubi_request_koujo.length, 1, '只有一个形参 cid');
+
+  // 缺目标（无性格素质 → 键 -1）：缺席语义仍是占位行（名册未全落地前债可见）
   assert.equal(await gohoubi_request_koujo(3), 0);
   assert.ok(
     fixture.text_lines().some((t) => t.includes('@GOHOUBI_REQUEST_KOUJO')),
-    '存根行带原作函数名（#403 接线前可见）',
+    '存根行带原作函数名',
   );
+
+  // 有目标且已注册：真分发，K 侧收 cid（#403 落的体）
+  fixture.store.set('talent:3:163', 1); // 高貴 163 → LOCAL 103 → 键 3
+  const seen = [];
+  gohoubi_request_koujo_family.register(3, async (cid) => {
+    seen.push(cid);
+    return 0;
+  });
+  assert.equal(await gohoubi_request_koujo(3), 0);
+  assert.deepEqual(seen, [3], 'handler 收到 cid（K7 直接用 cid 读 CFLAG:504）');
 });

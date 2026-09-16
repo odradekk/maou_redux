@@ -8,6 +8,8 @@
  *   - @GET_KOJO_NUM 的素质扫描（163 高貴 → 103、165 村娘A → 105、
  *     多素质后格覆盖、无素质 → 0、显式角色号）；
  *   - 分发：编号命中唯一实现、空间内缺失（K4 未移植）静默；
+ *   - 分发窗口（#403 收口成 in_kojo_window）：99/100、139/140、1000/1001
+ *     两侧逐点，并核对声明编号空间恰是窗口的像；
  *   - 事件链挂接：@EVENTSHOP #PRI 总开关默认开（只补 0）、
  *     @EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0；
  *   - 实机路径端到端：run_shop（BEGIN SHOP → @EVENTSHOP 链置开关）→
@@ -150,6 +152,131 @@ test('分发：性格命中唯一实现；空间内缺失（K4 冷徹未移植�
   const { kojo_message_com: speak4 } = k4.load_module('kojo/kojo-system');
   await speak4();
   assert.deepEqual(k4.text_lines(), []);
+});
+
+// —— 分发窗口（#403：七处内联守卫收口成 in_kojo_window 的唯一定义） ——
+
+test('分发窗口边界：99/100、139/140、1000/1001 两侧逐点，且恰是声明编号空间的像', () => {
+  const fixture = create_era_fixture();
+  const { in_kojo_window, kojo_message_com_family } =
+    fixture.load_module('kojo/kojo-system');
+
+  // 验收反馈实测的缺口：LOCAL 120-139 没有产出源头（GET_KOJO_NUM 只到
+  // 119），边界改动从行为层看不见——所以对着窗口本身逐点钉（两侧都站人）
+  for (const [local, expected, label] of [
+    [99, false, '下界外侧（键 -1）'],
+    [100, true, '下界（慈愛 K0 的 LOCAL）'],
+    [139, true, '上界内侧（声明空间最大键 39）'],
+    [140, false, '上界外侧（键 40 不在声明空间）'],
+    [1000, false, 'EX 下界外侧（键 900 不在声明空间）'],
+    [1001, true, 'EX 下界（EX_TALENT:101 → K901）'],
+  ]) {
+    assert.equal(in_kojo_window(local), expected, `LOCAL ${local}：${label}`);
+  }
+
+  // 窗口与声明空间是同一范围的两侧写法：声明的每个键（LOCAL = 键 + 100）
+  // 都放行，紧邻两侧（-1 / 40 / 900）都拒绝——上界 140 的来历就是「40 格」
+  for (const id of kojo_message_com_family.declared) {
+    assert.equal(in_kojo_window(id + 100), true, `声明键 ${id} 必须在窗口内`);
+  }
+  for (const id of [-1, 40, 900]) {
+    assert.equal(
+      in_kojo_window(id + 100),
+      false,
+      `非声明键 ${id} 必须在窗口外`,
+    );
+  }
+
+  // 声明空间自己的两端逐点：普通臂 0-39、EX 臂 901-1600。上面的循环只保证
+  // 「空间内的键都能放行」，空间被改小（39 或 1600 掉出去）它看不出来——
+  // 这两个字面量（40 格 / 700 格 / 起点 901）要有自己的钉子
+  for (const id of [0, 39, 901, 1600]) {
+    assert.equal(
+      kojo_message_com_family.declared.has(id),
+      true,
+      `键 ${id} 必须在声明空间内`,
+    );
+  }
+  for (const id of [-1, 40, 900, 1601]) {
+    assert.equal(
+      kojo_message_com_family.declared.has(id),
+      false,
+      `键 ${id} 不能在声明空间内`,
+    );
+  }
+});
+
+// —— 哨兵值与合法值的边界（#403 二轮验收：`arg <= 0` 把合法角色号 0 当成
+//    缺省哨兵，静默改读当前 TARGET 的编号——两者不同时就是另一个人的口上）——
+
+test('GET_KOJO_NUM：0 是合法角色号（魔王），不许并进缺省哨兵侧', () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 17;
+  fixture.store.set('talent:17:163', 1); // TARGET 17（高貴）→ LOCAL 103
+  const { get_kojo_num } = fixture.load_module('kojo/kojo-system');
+
+  assert.equal(get_kojo_num(17), 103, '显式角色号走自己的素质');
+  assert.equal(
+    get_kojo_num(0),
+    0,
+    '显式 0（魔王无素质）→ 读它自己（0），不是 TARGET 的 103（源文 :89-91 的哨兵只认负数）',
+  );
+  assert.equal(get_kojo_num(-1), 103, '负数才是哨兵 → 当前 TARGET');
+  assert.equal(get_kojo_num(), 103, '不传参 → 当前 TARGET');
+});
+
+test('kojo_handler_id：-1 哨兵与合法 0 各站一侧，空间外一律 -1', () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 17;
+  fixture.store.set('talent:17:163', 1); // TARGET → 103 → 键 3
+  fixture.store.set('talent:0:160', 1); // 0 号（魔王）→ 100 → 键 0（合法角色号）
+  const { kojo_handler_id } = fixture.load_module('kojo/kojo-system');
+
+  assert.equal(kojo_handler_id(0), 0, '显式 0 → 读它自己（键 0 是合法值）');
+  assert.equal(kojo_handler_id(17), 3, '显式角色号 → 键 = LOCAL - 100');
+  assert.equal(kojo_handler_id(), 3, '缺省 → 当前 TARGET');
+  assert.equal(kojo_handler_id(-1), 3, '哨兵 -1 → 当前 TARGET');
+  assert.equal(kojo_handler_id(-2), 3, '其它负数也走哨兵侧');
+  assert.equal(kojo_handler_id(99), -1, '无素质的合法角色号 → 空间外哨兵 -1');
+});
+
+test('try_kojo_or_stub：arg 缺省 -1 吃当前 TARGET，显式 0 读它自己', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 17;
+  fixture.store.set('talent:17:163', 1); // TARGET → 键 3
+  fixture.store.set('talent:0:160', 1); // 0 号 → 键 0
+  const { try_kojo_or_stub, benki_koujo_family } =
+    fixture.load_module('kojo/kojo-system');
+  const seen = [];
+  benki_koujo_family.register(0, async () => {
+    seen.push('k0');
+    return 0;
+  });
+  benki_koujo_family.register(3, async () => {
+    seen.push('k3');
+    return 0;
+  });
+
+  assert.equal(
+    await try_kojo_or_stub(benki_koujo_family, 'X', '说明', '票'),
+    0,
+  );
+  assert.equal(
+    await try_kojo_or_stub(benki_koujo_family, 'X', '说明', '票', -1),
+    0,
+  );
+  assert.equal(
+    await try_kojo_or_stub(benki_koujo_family, 'X', '说明', '票', 0),
+    0,
+  );
+  assert.deepEqual(
+    seen,
+    ['k3', 'k3', 'k0'],
+    '缺省与 -1 都吃 TARGET（键 3）；显式 0 读它自己（键 0）',
+  );
 });
 
 // —— 事件链挂接（#PRI / #LATER 语义） ——

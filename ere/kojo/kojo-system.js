@@ -22,7 +22,8 @@
  * == 分发（决议 #7 的机制） ==
  *
  * TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100} 改走分发族。编号空间 =
- * 分发守卫（:160 LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000）能拼出的
+ * 分发守卫（:160 LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000；ere 侧收口成
+ * in_kojo_window，只此一处定义）能拼出的
  * 全部函数名：普通口上 0-39（性格素质 160-179 → LOCAL 100-119）、
  * EX 口上 901-1600（EX_TALENT 101-800 → LOCAL 1001-1700）。空间内缺失
  * 合法（未移植的性格不发一言）；重复注册启动即炸（#14：原作 23 个口上
@@ -154,19 +155,357 @@ const enterenemy_koujo_family = new DispatchFamily(
   'ENTERENEMY_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
-const gohoubi_request_koujo_family = new DispatchFamily(
-  'GOHOUBI_REQUEST_KOUJO',
-  DECLARED_KOJO_COM_IDS,
-);
 const gobi_koujo_family = new DispatchFamily(
   'GOBI_KOUJO',
   DECLARED_KOJO_COM_IDS,
 );
 
-/** 分发守卫能拼出的性格编号；空间外（含无性格 → 0）返回 -1 */
+/**
+ * EVENT_K.ERB 的 22 条 TRYCALLFORM 分发表（#403 的交付面；每行的 line 字段
+ * 就是原作行号）。
+ *
+ * 原件 522 行里有 27 个函数、22 处活的分发点；剩下的 5 个是 @EVENTSHOP
+ * （:12-15，本文件的 on('EVENTSHOP', …)）、@GET_KOJO_NUM（:86-144，本文件
+ * 的 get_kojo_num）与三个 **eraWiz 未使用**的入口（@KOJO_MESSAGE_COM_MASTER
+ * :24 / _ASSI :44 / @KOJO_MESSAGE_PLAYERCHANGE :68——它们的 TRYCALLFORM 在
+ * 原作就是注释态，不派发，故不进表）。
+ *
+ * 字段：
+ *   - line     原作 TRYCALLFORM 所在行号（源对照用例按它逐条核，表长草即红）
+ *   - dispatch TRYCALLFORM 拼出的函数名前缀（编号 = LOCAL - 100）
+ *   - entry    ere 侧入口函数名；module 是它所在的模块（load_module 可加载名）
+ *   - erb     原作函数名。**与 entry 不是大小写互转**：dispatch 前缀带 DUNGEON_
+ *             的三处（VICTORY_KOUJO / ATTACK_KOUJO / ATTACK_KOUJO_B 的实际函数名
+ *             是去掉 DUNGEON_ 的），OSIOKI_KOUJO 在 ere 侧沿史拼作 osioski-
+ *             （各口上文件的既有拼写，不改）。源对照用例按 erb 找原件定义
+ *   - family   入口分发用的族（DispatchFamily 的导出名）
+ *   - flag_guard 该入口有无 FLAG:7 总开关守卫（true = 关掉口上时不派发）。
+ *              由测试对着原件各函数体段现场核对（不是抄来的声明）
+ *   - missing  缺席语义：'silent' = TRYCALL 落空静默（多数族）；
+ *              'stub' = 打占位行（存根可见，登记在 docs/stub-registry.md）
+ *   - stub_wait 只有 stub 行有意义：true = 占位行后等键（stub_line_wait，
+ *              分发期输出不被重绘清掉的 #73 约定），缺省 false
+ *   - call     调用入口时的实参名（驱动方按名取值）
+ *   - handler  handler 应收到的实参名（逐条对照实现，是实参契约的锁）
+ *
+ * 实参名 → 驱动方取值：cid = 目标角色号；event_no = 事件编号（K0 旧签名
+ * 收它）；choice = 奖赏/惩罚选择序号；arg0 = @GOBI_KOUJO 的情绪编号；
+ * q = @SELF_KOJO 的自慰妄想对象；rand = 注入的确定性随机源。
+ *
+ * 表内的行为分支（守卫、TARGET 语义、两态缺席）在
+ * test/event-k-dispatch.test.js 里逐条钉住——本表只管「谁在哪一行派发到
+ * 哪个族」这一件事。
+ */
+const EVENT_K_DISPATCH_TABLE = [
+  {
+    line: 161,
+    dispatch: 'KOJO_MESSAGE_COM_',
+    entry: 'kojo_message_com',
+    erb: 'KOJO_MESSAGE_COM',
+    module: 'kojo/kojo-system',
+    family: 'kojo_message_com_family',
+    flag_guard: true,
+    missing: 'silent',
+    call: ['rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 180,
+    dispatch: 'KOJO_MESSAGE_PALAMCNG_',
+    entry: 'kojo_message_palamcng',
+    erb: 'KOJO_MESSAGE_PALAMCNG',
+    module: 'kojo/kojo-system',
+    family: 'kojo_message_palamcng_family',
+    flag_guard: true,
+    missing: 'stub',
+    call: ['rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 200,
+    dispatch: 'KOJO_MESSAGE_MARKCNG_',
+    entry: 'kojo_message_markcng',
+    erb: 'KOJO_MESSAGE_MARKCNG',
+    module: 'kojo/kojo-system',
+    family: 'kojo_message_markcng_family',
+    flag_guard: true,
+    missing: 'stub',
+    call: ['rand'],
+    handler: ['rand'],
+  },
+  {
+    // 恒空转（#14：目标全库 0 个定义；本入口也没有调用点）——照原样移植
+    line: 218,
+    dispatch: 'KOJO_EVENT_COM_',
+    entry: 'kojo_event_com',
+    erb: 'KOJO_EVENT_COM',
+    module: 'kojo/kojo-system',
+    family: 'kojo_event_com_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: [],
+    handler: [],
+  },
+  {
+    line: 239,
+    dispatch: 'SELF_KOJO_K',
+    entry: 'self_kojo',
+    erb: 'SELF_KOJO',
+    module: 'kojo/kojo-system',
+    family: 'self_kojo_family',
+    flag_guard: true,
+    missing: 'silent',
+    call: ['rand', 'q'],
+    handler: ['rand', 'q'],
+  },
+  {
+    line: 257,
+    dispatch: 'DUNGEON_RYOUZYOKU_K',
+    entry: 'dungeon_ryouzyoku',
+    erb: 'DUNGEON_RYOUZYOKU',
+    module: 'kojo/kojo-dungeon-ravish',
+    family: 'ryouzyoku_kojo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: [],
+    handler: [],
+  },
+  {
+    line: 271,
+    dispatch: 'DUNGEON_RYOUZYOKU_AFTER_K',
+    entry: 'dungeon_ryouzyoku_after',
+    erb: 'DUNGEON_RYOUZYOKU_AFTER',
+    module: 'kojo/kojo-dungeon-ravish',
+    family: 'ryouzyoku_after_kojo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: [],
+    handler: [],
+  },
+  {
+    line: 288,
+    dispatch: 'BENKI_KOUJO_K',
+    entry: 'benki_koujo',
+    erb: 'BENKI_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'benki_koujo_family',
+    flag_guard: false,
+    missing: 'stub',
+    call: ['rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 305,
+    dispatch: 'DUNGEON_VICTORY_K',
+    entry: 'victory_koujo',
+    erb: 'VICTORY_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'dungeon_victory_family',
+    flag_guard: false,
+    stub_wait: true,
+    missing: 'stub',
+    call: ['cid', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 322,
+    dispatch: 'DUNGEON_ATTACK_K',
+    entry: 'attack_koujo',
+    erb: 'ATTACK_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'dungeon_attack_family',
+    flag_guard: false,
+    stub_wait: true,
+    missing: 'stub',
+    call: ['cid', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    // @ATTACK_KOUJO_B（:325-337）：与 @ATTACK_KOUJO（:311-323）同族同目标，
+    // 差别只在 TARGET = B；
+    // 调用方侵略/ARCANA_BATTLE.ERB:208 未移植，入口先行落地
+    line: 336,
+    dispatch: 'DUNGEON_ATTACK_K',
+    entry: 'attack_koujo_b',
+    erb: 'ATTACK_KOUJO_B',
+    module: 'kojo/kojo-system',
+    family: 'dungeon_attack_family',
+    flag_guard: false,
+    stub_wait: true,
+    missing: 'stub',
+    call: ['cid', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 351,
+    dispatch: 'NTR_KOUJO_K',
+    entry: 'ntr_koujo',
+    erb: 'NTR_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'ntr_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['choice', 'rand'],
+    handler: ['rand', 'choice'],
+  },
+  {
+    line: 366,
+    dispatch: 'EXUCUTION_KOUJO_K',
+    entry: 'exucution_koujo',
+    erb: 'EXUCUTION_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'exucution_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['cid', 'event_no', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 381,
+    dispatch: 'MUSEUM_KOUJO_K',
+    entry: 'museum_koujo',
+    erb: 'MUSEUM_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'museum_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['cid', 'event_no', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 396,
+    dispatch: 'BANISHMENT_KOUJO_K',
+    entry: 'banishment_koujo',
+    erb: 'BANISHMENT_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'banishment_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['cid', 'event_no', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 411,
+    dispatch: 'PUBLIC_EXUCUTION_KOUJO_K',
+    entry: 'public_exucution_koujo',
+    erb: 'PUBLIC_EXUCUTION_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'public_exucution_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['cid', 'event_no', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 426,
+    dispatch: 'GROTESQUE_KOUJO_K',
+    entry: 'grotesque_koujo',
+    erb: 'GROTESQUE_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'grotesque_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['cid', 'event_no', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 443,
+    dispatch: 'ENTERENEMY_KOUJO_K',
+    entry: 'enterenemy_koujo',
+    erb: 'ENTERENEMY_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'enterenemy_koujo_family',
+    flag_guard: false,
+    missing: 'stub',
+    call: ['cid', 'rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 461,
+    dispatch: 'GOHOUBI_REQUEST_KOUJO_K',
+    entry: 'gohoubi_request_koujo',
+    erb: 'GOHOUBI_REQUEST_KOUJO',
+    module: 'kojo/kojo-dungeon-after',
+    family: 'gohoubi_request_koujo_family',
+    flag_guard: false,
+    missing: 'stub',
+    call: ['cid'],
+    handler: ['cid'],
+  },
+  {
+    line: 479,
+    dispatch: 'GOHOUBI_AFTER_KOUJO_K',
+    entry: 'gohoubi_after_koujo',
+    erb: 'GOHOUBI_AFTER_KOUJO',
+    module: 'kojo/kojo-dungeon-after',
+    family: 'gohoubi_after_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['cid', 'choice'],
+    handler: ['cid', 'choice'],
+  },
+  {
+    line: 497,
+    dispatch: 'OSIOKI_KOUJO_K',
+    entry: 'osioski_koujo',
+    erb: 'OSIOKI_KOUJO',
+    module: 'kojo/kojo-dungeon-after',
+    family: 'osioski_koujo_family',
+    flag_guard: false,
+    missing: 'silent',
+    call: ['cid', 'choice'],
+    handler: ['cid', 'choice'],
+  },
+  {
+    line: 520,
+    dispatch: 'GOBI_KOUJO_K',
+    entry: 'gobi_koujo',
+    erb: 'GOBI_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'gobi_koujo_family',
+    flag_guard: false,
+    missing: 'stub',
+    call: ['arg0', 'rand'],
+    handler: ['arg0', 'rand'],
+  },
+];
+
+// GOHOUBI_REQUEST_KOUJO 族不在本文件：#403 起只此一个实例，住在
+// kojo-dungeon-after.js（该族的分发入口与另外两族同处，调用方在商店侧）。
+// 本文件曾有的第二份同名族是实测缺陷——同一族名两个实例会让其中一边的
+// 注册永远分不到，见 kojo-dungeon-after.js 的文件头与 test/event-k-dispatch
+// .test.js 的族名唯一锁。
+
+/**
+ * 分发窗口：LOCAL 落在 [100, 140) 或 (1000, ∞) 时才拼名分发——原作各段
+ * 逐字同构的那条守卫（@KOJO_MESSAGE_COM / @SELF_KOJO / @KOJO_EVENT_COM /
+ * @DUNGEON_RYOUZYOKU 的凌辱前与凌辱后两处 / @GOHOUBI_AFTER_KOUJO /
+ * @OSIOKI_KOUJO 各段都有它的复写）。
+ * 键 = LOCAL - 100，窗口两端因此正好是声明编号空间的两端：普通口上 0-39
+ * （LOCAL 100-139）、EX 口上 901-1600（LOCAL 1001-1700）。LOCAL 120-139
+ * 现在没有产出源头（GET_KOJO_NUM 只到 119），但窗口照原作收着它们——
+ * 上界 140 是**声明空间 40 格的写法**，不是可达值域。
+ *
+ * **只此一处定义**：全库曾有七份内联复写（本文件四处、kojo-dungeon-after
+ * 两处、kojo-dungeon-ravish 一处），边界值改动没有任何用例能看见（#403
+ * 验收反馈实测 `local < 140` → `< 139` 全绿）。现在由
+ * test/kojo-system.test.js 在 99/100、139/140、1000/1001 两侧逐点钉住，
+ * 并核对声明空间恰是窗口的像。
+ *
+ * @param {number} local GET_KOJO_NUM() 的口上编号
+ * @returns {boolean} true = 进分发（键 = local - 100）
+ */
+function in_kojo_window(local) {
+  return (local >= 100 && local < 140) || local > 1000;
+}
+
+/**
+ * 分发守卫能拼出的性格编号（键）。arg 的哨兵语义由 get_kojo_num 定：缺省/负
+ * 取当前 TARGET，**0 是合法角色号**。空间外（含无性格 → 0）返回 -1。
+ */
 function kojo_handler_id(arg = -1) {
   const local = get_kojo_num(arg);
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     return local - 100;
   }
   return -1;
@@ -179,7 +518,9 @@ function kojo_handler_id(arg = -1) {
  * 编号 = COUNT - 60（163 高貴 → 103、165 村娘A/マオ → 105）。EX 素质
  * 101-800 先映射为 1001-1700，后命中的普通性格素质会覆盖它。
  *
- * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）
+ * @param {number} [arg] 角色 ID；缺省（或负）取当前调教目标（:90-91）。
+ *   **哨兵只认负数——0 是合法角色号（魔王），读它自己的素质**（#403 二轮
+ *   验收实测：`arg <= 0` 会把 0 号的口上静默换成当前 TARGET 的口上）
  * @returns {number} 口上编号（普通 100-119；EX 1001-1700；无命中时 0）
  */
 function get_kojo_num(arg = -1) {
@@ -220,7 +561,7 @@ async function kojo_message_com(rand) {
   }
 
   // :160-161 キャラ別：TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100}
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await kojo_message_com_family.call(local - 100, {
       whenMissing: 0,
       args: [rand],
@@ -253,7 +594,7 @@ async function self_kojo(rand, q, outside_train = false) {
   const local = get_kojo_num();
 
   // キャラ別：TRYCALLFORM SELF_KOJO_K{LOCAL - 100}
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await self_kojo_family.call(local - 100, {
       whenMissing: 0,
       args: [rand, q],
@@ -265,7 +606,18 @@ async function self_kojo(rand, q, outside_train = false) {
 /**
  * 已注册则走真身，否则打存根。未落地性格的占位行因此可见；对应口上
  * 模块 register 后自动换真身。原作 TRYCALLFORM 落空静默，全性格落地
- * 后再收占位。
+ * 后再收占位。族与存根名由调用点给——kojo-dungeon-after.js 的
+ * gohoubi_request_koujo 也用它（同一条缺席策略只实现一次）。
+ *
+ * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
+ *   目标分发族
+ * @param {string} stub_name 原作函数名（占位行文案用）
+ * @param {string} stub_desc 未移植内容的中文说明
+ * @param {string} stub_ticket 归属说明
+ * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
+ * @param {any[]} [extra_args=[]] 透传给 handler 的实参
+ * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
+ * @returns {Promise<any>} handler 的返回值，或存根分支的 0
  */
 async function try_kojo_or_stub(
   family,
@@ -293,7 +645,13 @@ async function kojo_message_palamcng(rand) {
     return 0;
   }
   const local = get_kojo_num();
-  if ((era.get(`flag:${local}`) || 0) === 0) {
+  // :169-181 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
+  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL
+  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）
+  if (
+    (era.get(`flag:${local}`) || 0) === 0 &&
+    era_exflag.get(local - 900) === 0
+  ) {
     return 0;
   }
   return try_kojo_or_stub(
@@ -318,6 +676,34 @@ async function kojo_message_markcng(rand) {
     -1,
     [rand],
   );
+}
+
+/**
+ * @KOJO_EVENT_COM（:209-219）：指令处理结束时的事件口上入口。
+ *
+ * **恒空转的死分发（#403 照原样移植，登记在 #14）**：`KOJO_EVENT_COM_{N}`
+ * 在**全库 0 个定义**（含 target/ERB/口上/ 全部 22 个口上文件），原作的
+ * `TRYCALLFORM` 因此永远打空；函数自身也没有任何调用点（全库 0 处
+ * `CALL KOJO_EVENT_COM`）。本入口按 1:1 保留这条派发路径而不是删掉——
+ * TRYCALLFORM 的语义是「有就调、没有就跳过」，删掉会改变行为记录
+ * （EVENT_K.ERB:203-208 的注释也明写「口上をOFFにしても実行する」）。
+ *
+ * 守卫集照原作：**无 FLAG:7 总开关守卫**（:209-219 没有 SIF FLAG:7）、
+ * **无存在判定**（同段内的 `SIF FLAG:LOCAL == 0 → RETURN 0` 在原作是
+ * 注释态）——两者都是 1:1 保留，不是遗漏。缺席语义 = 静默（TRYCALL
+ * 落空；目标在原作就不存在，不打占位行）。
+ *
+ * @returns {Promise<number>} 0（调用方不读）
+ */
+async function kojo_event_com() {
+  // :209-219 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）
+  const local = get_kojo_num();
+
+  // :218 的守卫（:209-219 段）→ TRYCALLFORM KOJO_EVENT_COM_{LOCAL - 100}
+  if (in_kojo_window(local)) {
+    await kojo_event_com_family.call(local - 100, { whenMissing: 0, args: [] });
+  }
+  return 0;
 }
 
 async function benki_koujo(rand) {
@@ -368,6 +754,107 @@ async function attack_koujo(cid, rand) {
 }
 
 /**
+ * @ATTACK_KOUJO_B（:325-337）：战斗攻击口上的 B 侧变体。
+ *
+ * 与 @ATTACK_KOUJO 同族同目标（TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}），
+ * 差别只在指针来源：@ATTACK_KOUJO（:311-323）是 `TARGET = ARG:0` 带参，
+ * @ATTACK_KOUJO_B（:325-337）零参、吃全局 B（`TARGET = B`）。B 是侵略战斗
+ * 的「被攻击方」暂存（ARCANA_BATTLE.ERB:199-200 的 `A = ARG:0` /
+ * `B = ARG:2`），ere 侧无单字母全局通道，按 #5 决议第六条以形参显式传入。
+ *
+ * **调用方尚未移植**：`CALL ATTACK_KOUJO_B` 全库唯一一处，在
+ * `侵略/ARCANA_BATTLE.ERB:208`（FLAG:5 & 32 的セリフ守卫内），该文件属侵略
+ * 域、随侵略票落真身。本入口照 22 条分发表先行落地（表是 #403 的交付面），
+ * 接入时调用方传 `B` 的取值即可，不改本签名。
+ *
+ * 守卫集照原作（:325-337 无守卫）；缺席语义取占位行——与同族 @ATTACK_KOUJO
+ * 一致（存根可见，登记在 docs/stub-registry.md）。TARGET 暂存/还原按同族
+ * 既有约定（原作不还原，ere 侧不留跨调用指针残留）。
+ *
+ * @param {number} cid B 侧角色号（原作全局 B）
+ * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @returns {Promise<number>} TRYCALL 落空时的 RESULT 0（调用方不读）
+ */
+async function attack_koujo_b(cid, rand) {
+  const target_pool = era_flag.target;
+  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid; // TARGET = B（:325-337 段）
+  }
+  const result = await try_kojo_or_stub(
+    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
+    'ATTACK_KOUJO_B',
+    '攻击口上（B 侧）',
+    '随口上票',
+    cid ?? -1,
+    [rand],
+    true,
+  );
+  era_flag.target = target_pool;
+  return result;
+}
+
+/**
+ * 处刑首五族（EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION /
+ * GROTESQUE，五族各占一段：EXUCUTION :357-367 / MUSEUM :372-382 /
+ * BANISHMENT :387-397 / PUBLIC_EXUCUTION :402-412 / GROTESQUE :417-427）的
+ * 共同分发体——五处原作逐字同构：
+ * `LOCAL = GET_KOJO_NUM()`（存在判定注释态）→ 守卫 → `TRYCALLFORM
+ * <族>_K{LOCAL - 100}`。五族都不设 TARGET（与原作一致：调用方自己管
+ * TARGET，如 EXECUTION.ERB:123 的 `TARGET = A`），所以本分发体不碰它。
+ *
+ * 族内实参一个：键 0（K0 慈愛）是早期落地的旧签名，收事件编号
+ * （展品号/处刑号，:366 一族的 K 侧从 TARGET 之外显式收它）；其余键收
+ * 随机源——这条分档原先写在五个调用点里（各处同款三元式），#403 收口
+ * 到分发体，行为不变。
+ *
+ * 缺席语义 = 静默（TRYCALL 落空；与 @KOJO_MESSAGE_COM 同款）。
+ *
+ * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family 目标族
+ * @param {number} cid 对象角色号（调用方已把 TARGET 置成它）
+ * @param {number} event_no 事件编号（K0 旧签名收它）
+ * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @returns {Promise<number>} 0（调用方不读）
+ */
+async function dispatch_execution_koujo(family, cid, event_no, rand) {
+  const id = kojo_handler_id(cid); // LOCAL = GET_KOJO_NUM()
+  if (id >= 0) {
+    const arg = id === 0 ? event_no : rand;
+    await family.call(id, { whenMissing: 0, args: [arg] });
+  }
+  return 0;
+}
+
+/** @EXUCUTION_KOUJO（:357-367）：处刑口上；调用方 ere/event/event-execution.js */
+async function exucution_koujo(cid, event_no, rand) {
+  return dispatch_execution_koujo(exucution_koujo_family, cid, event_no, rand);
+}
+
+/** @MUSEUM_KOUJO（:372-382）：博物馆（雕像）口上；调用方 ere/event/event-museum.js */
+async function museum_koujo(cid, event_no, rand) {
+  return dispatch_execution_koujo(museum_koujo_family, cid, event_no, rand);
+}
+
+/** @BANISHMENT_KOUJO（:387-397）：流放处刑口上；调用方 ere/event/event-banishment.js */
+async function banishment_koujo(cid, event_no, rand) {
+  return dispatch_execution_koujo(banishment_koujo_family, cid, event_no, rand);
+}
+
+/** @PUBLIC_EXUCUTION_KOUJO（:402-412）：公开处刑口上；调用方 ere/event/event-public-execution.js */
+async function public_exucution_koujo(cid, event_no, rand) {
+  return dispatch_execution_koujo(
+    public_exucution_koujo_family,
+    cid,
+    event_no,
+    rand,
+  );
+}
+
+/** @GROTESQUE_KOUJO（:417-427）：猎奇处刑口上；调用方 ere/event/event-grotesque.js */
+async function grotesque_koujo(cid, event_no, rand) {
+  return dispatch_execution_koujo(grotesque_koujo_family, cid, event_no, rand);
+}
+
+/**
  * @NTR_KOUJO（EVENT_K.ERB:342-354）：按当前目标的性格编号分发 NTR 口上。
  * 族的统一参数顺序是 [rand, P]；少数旧 handler 的单参数注册在各自模块处
  * 适配，避免把随机源误当成原作全局 P。
@@ -399,21 +886,6 @@ async function enterenemy_koujo(cid, rand) {
   return result;
 }
 
-async function gohoubi_request_koujo(cid, rand) {
-  const target_pool = era_flag.target;
-  era_flag.target = cid;
-  const result = await try_kojo_or_stub(
-    gohoubi_request_koujo_family,
-    'GOHOUBI_REQUEST_KOUJO',
-    '奖赏请求口上',
-    '随口上票',
-    cid,
-    [cid, rand],
-  );
-  era_flag.target = target_pool;
-  return result;
-}
-
 async function gobi_koujo(arg0, rand) {
   return try_kojo_or_stub(
     gobi_koujo_family,
@@ -426,7 +898,9 @@ async function gobi_koujo(arg0, rand) {
 }
 
 module.exports = {
+  EVENT_K_DISPATCH_TABLE,
   get_kojo_num,
+  in_kojo_window,
   kojo_handler_id,
   kojo_message_com,
   kojo_message_com_family,
@@ -435,6 +909,7 @@ module.exports = {
   kojo_message_palamcng_family,
   kojo_message_markcng,
   kojo_message_markcng_family,
+  kojo_event_com,
   self_kojo,
   self_kojo_family,
   dog_kojo_family,
@@ -444,19 +919,24 @@ module.exports = {
   victory_koujo,
   dungeon_victory_family,
   attack_koujo,
+  attack_koujo_b,
   dungeon_attack_family,
   adapt_legacy_ntr_koujo,
   ntr_koujo,
   ntr_koujo_family,
+  exucution_koujo,
   exucution_koujo_family,
+  museum_koujo,
   museum_koujo_family,
+  banishment_koujo,
   banishment_koujo_family,
+  public_exucution_koujo,
   public_exucution_koujo_family,
+  grotesque_koujo,
   grotesque_koujo_family,
   enterenemy_koujo,
   enterenemy_koujo_family,
-  gohoubi_request_koujo,
-  gohoubi_request_koujo_family,
+  try_kojo_or_stub,
   gobi_koujo,
   gobi_koujo_family,
 };

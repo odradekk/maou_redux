@@ -48,7 +48,6 @@ const {
   public_exucution_koujo_family,
   grotesque_koujo_family,
   enterenemy_koujo_family,
-  gohoubi_request_koujo_family,
   gobi_koujo_family,
 } = require('#/kojo/kojo-system');
 const {
@@ -58,6 +57,7 @@ const {
 const {
   gohoubi_after_koujo_family,
   osioski_koujo_family,
+  gohoubi_request_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
