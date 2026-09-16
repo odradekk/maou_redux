@@ -286,7 +286,13 @@ function create_era_fixture() {
   //    #68 命中「替换系、进度条」查明即录。
   const make_grid_entry = (obj) => {
     if (obj?.type === 'button') {
-      return make_button_entry(obj.content, obj.accelerator, obj.config);
+      const entry = make_button_entry(obj.content, obj.accelerator, obj.config);
+      // 与下面的文本格同款：按钮格的 config.width 也是渲染结构的一部分
+      // （引擎 getButtonObject 收尾 `width: getValidWidth(data.config.width)`，
+      // 值域 1-24、缺省取设置里的 colWidth）——不记它，「每格多宽」就没有
+      // 观测通道（#392 二轮验收实测：GRID_COLUMNS 改坏无人能发现）
+      entry.grid_width = obj.config?.width ?? 24;
+      return entry;
     }
     if (obj?.type === 'text') {
       const entry = make_text_entry(obj.content);
