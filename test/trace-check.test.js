@@ -2,7 +2,9 @@
  * @file trace-check 的行为锁（issue #63）：工具不只「表内一致」，还要
  * 「表外即红」——五条行为在此固定；#290 起锚表按 js 文件分片，再加两条；
  * #298 起再加鉴别力：ENDIF 一类弱锚必须红、平行复现与空 PRINTFORM 整行
- * 锚放行、基线只减不增、默认路径只量未冻结文件、`--anchor-quality` 打印分布（`--all` 才全文量）。
+ * 锚放行、基线只减不增、默认路径只量未冻结文件、`--anchor-quality` 打印分布（`--all` 才全文量）；
+ * #431 起报告行里的两个引用数改锁量级（比大小会被正常增长顶翻，口径见
+ * ref_counts_consistent 的注释）。
  *
  *   1. 全绿运行：tools/trace-check.mjs 退出码 0（锚校验 + 两侧扫描完整性
  *      + 豁免核对全过）。本用例把工具并入 npm test——锚表烂掉、完整性
@@ -143,6 +145,43 @@ function run_tool_in(root, extra_args = []) {
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
+/**
+ * 两侧引用数是否同量级（#431）。
+ *
+ * 两个数的产地都在工具的全绿报告行（tools/trace-check.mjs:1298），口径不同：
+ *   inline = 工具里的 `checked`，**锚表行数** —— FILES 行 + LOG_REFS 行 +
+ *            SAMPLE_LOG_REFS 行；同一对 (js, :N) 按不同 src 登记多次就计多行
+ *            （重复登记共 66 行，com-sm.js 一个文件占 37），指向黄金样本日志
+ *            的 91 条也计在内（那 91 条不是 ERB 引用）；
+ *   erb    = 工具里的 `erb_found_total`，**按文件去重**扫出的 :N/:N-M 数 ——
+ *            ere/ 每个 js 跑一遍 scan_erb_refs(...).size 再求和（工具 :1166
+ *            起），日志锚不在此列。
+ * 两数由同一批移植票同步增长，但**差额**由几笔互不相干的小量构成（master
+ * 实测，以 erb 侧独有的为正、inline 侧独有的为负）：
+ *   erb − inline = 豁免等未在锚表登记的 267
+ *                  −（重复登记 66 + 日志锚 91 + 登记了却扫描看不见的 63）
+ *                = 267 − 220 = +47
+ * 比大小等于让这几笔决定判据：#399 加 838 行锚就把 `erb >= inline` 顶翻
+ * （实测 100692 / 100688，差 −4，而引用一条没失守）。所以判据是量级而不是
+ * 大小：**差额不得超过较大者的 1%**。余量取 1% 的依据是两头实测——
+ *   上界：净差 47 只占 0.047%。那几笔里 267 是**按 #63 只减不增**的冻结豁免
+ *     表（消化完就不再贡献），另三笔是 `X.ERB:N` 头注、`src: ':N-M'`、变量
+ *     寻址一类偶发登记，都不随内容成比例涨；全反向（豁免全消化掉）时净差
+ *     ≈ −220（0.2%），内容继续长还会摊得更薄。工单候选 1「锚表去重 ≤ 扫出
+ *     去重」的余量正是这两侧之差（267 − 63 = 204），一减一涨，所以它只是把
+ *     同一个错误换根更长的引信。
+ *   下界：丢掉一类引用形态就该红 —— 块注释里的 `:N` 实测占 2.29%（扫描器
+ *     少认一种写法就整类丢）、区间形态占 23.15%、`ere/kojo` 占 90.28%、
+ *     任一成规模的子目录 ≥ 1.60%（`ere/event`），都在 1% 之外。
+ * **靶心只画到「整块塌掉」，更细的不承诺**：计数器逐文件差一那一类（≈0.5%）
+ * 不在红线内——它改的是报告里的数，不改任何逐条校验的结果，不是这道锁的靶子。
+ * 边界由下面的表驱动用例逐条钉住。
+ */
+function ref_counts_consistent(inline, erb) {
+  if (inline <= 0 || erb <= 0) return false;
+  return Math.abs(inline - erb) * 100 <= Math.max(inline, erb);
+}
+
 test('trace-check 全绿（锚校验 + 两侧扫描完整性 + 豁免核对，退出码 0）', () => {
   const { status, output } = run_tool();
   assert.equal(
@@ -153,18 +192,65 @@ test('trace-check 全绿（锚校验 + 两侧扫描完整性 + 豁免核对，�
   // #290 拆分时锁死过 24162/24303/432 三个数以证等价，但这三个数**每张新
   // 移植票都会长**（引用变多）、豁免数则按 #63 只减不增——写死等于卡住后面
   // 每一张票（#236 验收当场撞上）。等价性是一次性迁移的判据，已由 #290 的
-  // 多重集逐条比对完成，不该留成永久断言。这里改锁结构性质：
+  // 多重集逐条比对完成，不该留成永久断言。
+  //
+  // #431：接着改锁「结构性质」也栽了——`erb >= inline` 不是结构性质，是两个
+  // **不同口径**的计数之间的大小巧合（逐笔口径见 ref_counts_consistent 的
+  // 注释）。改成量级判据：本用例锁「两侧都还在量级上」，判据与边界在
+  // ref_counts_consistent 上，边界表在紧随其后的用例里。
   const m = output.match(
     /✓ (\d+) 条内联行号引用全部与源文件一致；ERB 完整性：ere\/ (\d+) 条引用全数登记或豁免（豁免 (\d+)\/(\d+) 条/,
   );
   assert.ok(m, `trace-check 输出形状变了：\n${output}`);
   const [, inline, erb, exempt, exempt_total] = m.map(Number);
-  assert.ok(inline > 0 && erb >= inline, `引用数不合理：${inline} / ${erb}`);
+  assert.ok(
+    ref_counts_consistent(inline, erb),
+    `两侧引用数不同量级（锚表行数 ${inline} / 扫出去重 ${erb}）——扫描面或锚表遍历塌了？`,
+  );
   // 豁免清单是 #63 冻结的，只减不增——涨了说明有人往里塞新条目
   assert.ok(
     exempt <= 432,
     `豁免数只减不增（#63 冻结基线 432），实际 ${exempt}/${exempt_total}`,
   );
+});
+
+test('引用数判据（#431）：#399 实测的那一对必须放行，整块塌陷必须红', () => {
+  // 表驱动（判据本体在 ref_counts_consistent）：前两行是两个实测现场——master
+  // 的现状与 #399 那一对（旧判据 `erb >= inline` 就是被它顶翻的）；其后是 1%
+  // 余量的两侧边界（恰好 1% / 差一条）、零值守护、反向差额（abs 的方向）、
+  // 实测的敏感度下界（块注释形态 2.29%、最小的成规模子目录 1.60%）与三类
+  // 塌陷形态。改判据里的 100、抹掉余量、漏掉 abs 或零值守护，这里必红。
+  const cases = [
+    [100694, 100741, true, 'master 实测：锚表行数 100694 / 扫出去重 100741'],
+    [100692, 100688, true, '#399 实测：838 行锚顶翻旧判据的那一对（差 −4）'],
+    [100000, 99000, true, '差额恰好 1%：放行'],
+    [100000, 98999, false, '差额比 1% 多一条：红'],
+    [100000, 103000, false, '反向差额 3%（erb 大于 inline）：红'],
+    [0, 0, false, '两侧都归零：红（零值守护）'],
+    [100692, 0, false, '扫描面归零（扫描器瞎了）：红'],
+    [0, 100741, false, '锚侧计数归零（FILES 遍历断了，inline 只剩日志锚）：红'],
+    [100692, 10069, false, '扫描面塌到一成：红'],
+    [100741, 98429, false, '丢掉块注释形态（实测 2312 条 = 2.29%）：红'],
+    [
+      100741,
+      99127,
+      false,
+      '丢掉最小的成规模子目录 ere/event（实测 1614 条 = 1.60%）：红',
+    ],
+    [
+      201388,
+      201482,
+      true,
+      '两侧同步翻倍（净差那几笔不随内容涨）：正常增长改不动它',
+    ],
+  ];
+  for (const [inline, erb, want, why] of cases) {
+    assert.equal(
+      ref_counts_consistent(inline, erb),
+      want,
+      `引用数判据边界失守：${why}（inline=${inline} / erb=${erb}）`,
+    );
+  }
 });
 
 test('K19 错锚证伪：登记号随引用漂移，静态正文锚仍须判红', () => {
@@ -256,6 +342,14 @@ test('探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且�
       output.includes(':999988-999990'),
       `区间引用未被报出：\n${output}`,
     );
+    // #431 自检探针补：范围**外**的未登记引用不该被报出——`--only` 的过滤对
+    // 完整性扫描同样要生效（限定到别的文件时，探针文件不进扫描面，照样全绿）。
+    const outside = run_tool_in(root, ['--only', 'ere/kojo/kojo-k19-fia.js']);
+    assert.equal(
+      outside.status,
+      0,
+      `范围外的未登记引用不该被报出（完整性扫描没按 --only 过滤）：\n${outside.output}`,
+    );
   } finally {
     cleanup();
   }
@@ -311,6 +405,50 @@ test('豁免清单只能变短：塞基线外条目进条目表，工具必须�
     restored.status,
     0,
     `条目表还原后还红——副本或工具有一边不对：\n${restored.output}`,
+  );
+});
+
+// #431 自检探针补：豁免规则的另一半（「不许过期失效」）此前没有用例站在它两侧
+// ——把豁免条目对应的 js 引用删掉，工具必须红并点名该条目。
+test('豁免条目不许过期失效：对应的 js 引用被删，工具必须红且点名', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', 'event', 'event-first.js');
+  const original = fs.readFileSync(js_path, 'utf8');
+  // 挑一条**只靠豁免**的引用（不在 FILES 里登记）且在 js 里恰好出现一次：
+  // 删掉它只会触发过期失效检查，不会先撞上锚校验或完整性检查。
+  const anchor = '// :8-9 HAIRCOLOR/CHARACTER';
+  if (original.split(anchor).length - 1 !== 1) {
+    throw new Error(
+      '探针锚行不在 event-first.js 里（或不再唯一）——文件被改过？',
+    );
+  }
+  try {
+    fs.writeFileSync(
+      js_path,
+      original.replace(anchor, '// HAIRCOLOR/CHARACTER'),
+      'utf8',
+    );
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/event/event-first.js',
+    ]);
+    assert.notEqual(
+      status,
+      0,
+      '豁免条目对应的引用没了，工具必须非 0——「不许过期失效」不在退出码语义里',
+    );
+    assert.ok(
+      output.includes(':8-9') && output.includes('已不存在'),
+      `必须点名那条豁免条目：\n${output}`,
+    );
+  } finally {
+    fs.writeFileSync(js_path, original, 'utf8'); // 单文件还原，省一次整目录回拷
+  }
+  const restored = run_tool_in(root, ['--only', 'ere/event/event-first.js']);
+  assert.equal(
+    restored.status,
+    0,
+    `引用还原后必须复绿——副本或工具有一边不对：\n${restored.output}`,
   );
 });
 
@@ -470,6 +608,108 @@ test('样本前缀引用：登记后全绿，样本内容漂移必须红（登�
     restored.status,
     0,
     `还原后还红——副本或工具有一边不对：\n${restored.output}`,
+  );
+});
+
+// #431 自检探针补：样本锚表的两道守卫（样本名不在 SAMPLES / 样本文件不在库）
+// 此前没有用例站在它两侧——它们只在前一个样本名就失效时开火，前缀引用那两条
+// 用例走的是**扫描侧**的同名判定，锚表侧的两道一直是空的。
+test('样本锚表的守卫：样本名不在 SAMPLES / 样本文件不在库，都必须红并点名', () => {
+  const root = probe_repo();
+  const shard_path = path.join(
+    root,
+    'tools',
+    'trace-refs',
+    '__sample_guard_probe__.mjs',
+  );
+  const js_path = path.join(root, 'ere', '__sample_guard_probe__.js');
+  const samples_path = path.join(root, 'tools', 'compare', 'samples.js');
+  const samples_original = fs.readFileSync(samples_path, 'utf8');
+  // 样本名拼接构造（本测试文件自身也在完整性扫描范围内，字面量形态会让真树
+  // 的工具先红——#156 阶段一的既有写法）
+  const unknown = '__sample-guard' + '-unknown__';
+  const missing = 'sample-guard' + '-missing';
+  const cleanup = () => {
+    for (const p of [shard_path, js_path]) {
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    }
+  };
+  cleanup(); // 上一次异常退出留下的残骸先清
+  /** 把探针锚表写成「某个样本名下挂一条引用锚」的形态 */
+  const write_shard = (sample_name) => {
+    fs.mkdirSync(path.dirname(shard_path), { recursive: true });
+    fs.writeFileSync(
+      shard_path,
+      [
+        'export const FILES = [];',
+        'export const LOG_REFS = [];',
+        'export const SAMPLE_LOG_REFS = {',
+        `  '${sample_name}': [`,
+        "    { js: 'ere/__sample_guard_probe__.js', refs: [{ ref: '1', any: [/./] }] },",
+        '  ],',
+        '};',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+  };
+  try {
+    fs.writeFileSync(
+      js_path,
+      '// 探针模块（test/trace-check.test.js 写入，跑完即删）\nmodule.exports = {};\n',
+      'utf8',
+    );
+    // 1) 锚表给未登记的样本名配引用锚
+    write_shard(unknown);
+    const r1 = run_tool_in(root, ['--only', 'ere/__sample_guard_probe__.js']);
+    assert.notEqual(
+      r1.status,
+      0,
+      '锚表引用未登记样本名，工具必须非 0——锚到不存在的样本等于没锚',
+    );
+    assert.ok(
+      r1.output.includes('样本名不在 SAMPLES'),
+      `必须点名样本名不在 SAMPLES：\n${r1.output}`,
+    );
+    // 2) 样本名在 SAMPLES、但样本文件不在库：往**副本**的样本表里加一条指向
+    //    不存在文件的登记（真树不碰；finally 里显式回写一次，refresh 再兜一遍）
+    const anchor = "  'sale-natural': 'golden/sale-natural.log',";
+    if (!samples_original.includes(anchor)) {
+      throw new Error('探针锚行不在 samples.js 里——样本表结构变了？');
+    }
+    fs.writeFileSync(
+      samples_path,
+      samples_original.replace(
+        anchor,
+        `${anchor}\n  '${missing}': 'golden/${missing}.log',`,
+      ),
+      'utf8',
+    );
+    write_shard(missing);
+    const r2 = run_tool_in(root, ['--only', 'ere/__sample_guard_probe__.js']);
+    assert.notEqual(
+      r2.status,
+      0,
+      '样本文件不在库，工具必须非 0——#156 阶段二回收后才允许登记引用锚',
+    );
+    assert.ok(
+      r2.output.includes('不在库'),
+      `必须点名样本文件不在库：\n${r2.output}`,
+    );
+  } finally {
+    cleanup();
+    fs.writeFileSync(samples_path, samples_original, 'utf8'); // 显式回写，refresh 再兜一遍
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+  // 还原之后复绿（也证明探针真的进过锚表）
+  const restored = run_tool_in(root, [
+    '--only',
+    'ere/__sample_guard_probe__.js',
+  ]);
+  assert.equal(
+    restored.status,
+    0,
+    `探针删净后必须复绿——副本或工具有一边不对：\n${restored.output}`,
   );
 });
 
