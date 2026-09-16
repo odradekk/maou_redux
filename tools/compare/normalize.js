@@ -53,6 +53,8 @@ const { is_exempted, to_simplified } = require('../lang-normalize');
 const BAR_CHARS = /[=\-*>‥.·\s]/;
 // 分割线字符（DRAWLINE 的 ─ 与本作 CUSTOMDRAWLINE 的长划线；≥8 个才算线）
 const DIVIDER_CHARS = /^[=\-―─＿═·\s]+$/;
+// 线绘字符（框线/长横线）：整行只有它们时按折行残段丢弃，见 classify_line
+const LINE_DRAWING_CHARS = /^[─―═]+$/;
 // 省略号装饰（‥ 点线是本作 CUSTOMDRAWLINE 的变体；≥4 个非空白符才算）
 const ELLIPSIS_CHARS = /^[‥。．.…·\s]+$/;
 // 槽位备注的时间戳前缀（@SYSTEM_SAVEGAME 的 GETTIMES() 拼进备注开头，宽 19）
@@ -98,6 +100,13 @@ function classify_line(raw_line, line_no = 0) {
     return { kind: 'discard', why: 'blank', line: line_no };
   }
   if (trimmed.length >= 8 && DIVIDER_CHARS.test(trimmed)) {
+    return { kind: 'discard', why: 'divider', line: line_no };
+  }
+  // 折行残段：黄金样本的录制按固定列宽折行，满宽分割线会留下一个字符的
+  // 残段（sale-natural-log:178 的 `═` 是 176-177 两条满宽分割线的尾巴）。
+  // **只认线绘字符**（═/─/―）——`----` 是存档界面空槽的占位正文（有专门
+  // 归因规则）、`=`/`·` 也可能是正文，短于 8 一律不放行。
+  if (LINE_DRAWING_CHARS.test(trimmed)) {
     return { kind: 'discard', why: 'divider', line: line_no };
   }
   const ellipsis_body = trimmed.replace(/[\s]/g, '');

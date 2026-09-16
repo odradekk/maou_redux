@@ -246,9 +246,12 @@ function diff_streams(golden, ere, context = {}) {
   }
 
   // —— 归因 ——
+  // 两侧序列一并交给 rules：形态差规则要能确认「对侧真的渲染了对应条目」
+  // （#397 返工——只按形态匹配会把内容没渲染/渲染错了也一起放行）。
+  const rule_context = { ...context, golden, ere };
   const summary = { matched, version: 0, stub: 0, unexplained: 0 };
   diffs.forEach((d) => {
-    const hit = attribute(d.entry, d.side, d.counterpart, context);
+    const hit = attribute(d.entry, d.side, d.counterpart, rule_context);
     if (hit) {
       d.category = hit.category;
       d.reason = hit.reason;

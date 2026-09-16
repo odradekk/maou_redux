@@ -86,7 +86,18 @@ const BASELINE = {
   // （该占位行此前是 stub 对的一侧，不产生 matched）、unexplained 仍 0。
   // 同票的 CHARA_NAME_DEFINE 等真身不出现在本样本的回放窗口里（实测：
   // 只把 chara-name.js 换回 master 版即复现 160）。
-  'sale-natural': { matched: 123, version: 2, stub: 159, unexplained: 0 },
+  // #397 返工：@ABILITY_UP / @LIFE_LIST 族落地后 105 不再按一下就返回（真身
+  // 是「选人列表 + CORE」两层、都要吃输入），回放计划按黄金样本的回显序列
+  // 补齐三层（tools/compare/replay-b.js 的 sale 计划与注释），ere 侧自此真的
+  // 走进能力提升画面——matched 123 → 163、stub 159 → 131、unexplained 仍 0。
+  // 同票的另三处配套（都在本文件外的注释里写明）：① 播种补上静态名表
+  // （ablname/palamname/expname/expkeys/markname，取 yml 产物）与样本行给出
+  // 的取值（LV/调教回数/职业/性格、juel 点数、经验、初吻对象）；② 归因把
+  // 已作废的「89-178 行一律算能力提升画面未移植」换成四条真实成因（可提升
+  // 标记 * 未接入、切换按钮与角色行的 PR #53 按钮化形态差，两侧各一条）；
+  // ③ 归一层认「整行只有线绘字符」的折行残段（sale-natural-log:178 的 `═`）。
+  // 另六个样本的四数与基线逐字相同（返工实测），未改。
+  'sale-natural': { matched: 163, version: 2, stub: 131, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {
@@ -141,6 +152,67 @@ test('出售资格提示属于已实现输出，缺失时必须进入未解释�
     ),
   );
   assert.equal(report.summary.unexplained, 1);
+});
+
+// —— #397 返工：形态差规则的配对前提，两条锁定 ——
+//
+// 能力提升画面的切屏按钮与角色列表行，两侧的**排版**不同（Emuera 的
+// PRINTBUTTON/定宽文本与文本同行，ere 的 printButton/编号按钮格独占行，
+// PR #53 通则），归因规则按形态差解释。形态差**只解释排版、不豁免内容**：
+// tools/compare/rules.js 的那几条规则都带「对侧真有对应条目」的配对前提，
+// 下面两条把这一点锁住——把 ere 侧的对应输出拿掉，golden 半边必须落进
+// 未解释差异（与上一条 #338 先例同款）。少了它们，「按钮整个没渲染」「行
+// 里的值算错」都会被形态差规则静默放行（#397 第二轮验收实测）。
+test('能力提升画面的切屏按钮属于已实现输出，缺失时必须进入未解释差异', async () => {
+  const { stream_source } = await replay_scope_b('sale', 'natural');
+  const golden = golden_stream(
+    fs.readFileSync(path.join(REPO, 'golden', 'sale-natural.log'), 'utf8'),
+  ).filter((e) => e.kind !== 'discard' && e.kind !== 'group');
+  const ere = fixture_stream(stream_source).filter(
+    (e) =>
+      e.kind !== 'discard' &&
+      e.kind !== 'group' &&
+      !(e.kind === 'menu' && e.key === '▌奴隶一览'),
+  );
+  const report = diff_streams(golden, ere, { scope: 'B', segment: 'sale' });
+
+  assert.ok(
+    report.diffs.some(
+      (diff) =>
+        diff.side === 'golden' &&
+        diff.entry.text === '▌奴隶一览 ▌勇者一览' &&
+        diff.category === 'unexplained',
+    ),
+    '表头按钮缺失时，golden 那行不能还被形态差规则吞掉',
+  );
+  // 窗口里该屏绘制两次（首绘 + CORE 结束后的 RESTART 重绘）
+  assert.equal(report.summary.unexplained, 2);
+});
+
+test('能力提升画面的角色行属于已实现输出，缺失/值错时必须进入未解释差异', async () => {
+  const { stream_source } = await replay_scope_b('sale', 'natural');
+  const golden = golden_stream(
+    fs.readFileSync(path.join(REPO, 'golden', 'sale-natural.log'), 'utf8'),
+  ).filter((e) => e.kind !== 'discard' && e.kind !== 'group');
+  // 魔王行的详情文本格（编号在 ere 由独占按钮格承载，见 rules 的 ④ 族）
+  const ere = fixture_stream(stream_source).filter(
+    (e) =>
+      e.kind !== 'discard' &&
+      e.kind !== 'group' &&
+      !(e.kind === 'text' && e.text === '你 LV 0'),
+  );
+  const report = diff_streams(golden, ere, { scope: 'B', segment: 'sale' });
+
+  assert.ok(
+    report.diffs.some(
+      (diff) =>
+        diff.side === 'golden' &&
+        diff.entry.key === '你 LV 0' &&
+        diff.category === 'unexplained',
+    ),
+    '行详情格缺失（值算错时同样是「对不上」）时，golden 那行不能被吞掉',
+  );
+  assert.equal(report.summary.unexplained, 2);
 });
 
 // —— 2. 回放器裁定行为 ——

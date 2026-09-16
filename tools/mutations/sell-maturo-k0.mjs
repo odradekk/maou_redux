@@ -465,10 +465,14 @@ export default [
     matrix,
   ),
   {
-    desc: 'M7665 出售资格提示被能力提升存根规则吞掉',
+    desc: 'M7665 出售资格提示被「按行号兜底」的能力提升规则吞掉',
     file: 'tools/compare/rules.js',
-    find: '        candidate.line !== 143;',
-    replace: '        candidate.line !== 144;',
+    // #397 返工：sale 段原先有一条「89-178 行一律算能力提升画面未移植」的
+    // 行号兜底规则（105 真身化后已删）。本条变异把新规则的首条换成那条
+    // 兜底——它会把 :143「温妮可以卖掉了」也吞成 stub，守护用例必须红。
+    find: "      if (\n        side === 'golden' &&\n        entry.kind === 'menu' &&\n        / \\*$/.test(entry.key)\n      ) {",
+    replace:
+      "      if (\n        side === 'golden' &&\n        Number.isInteger(entry.line) &&\n        entry.line >= 89 &&\n        entry.line <= 178\n      ) {",
     tests: ['compare-scope-b'],
     must_mention: '出售资格提示属于已实现输出',
   },

@@ -171,7 +171,7 @@ function draw_list(select_menu, no_page) {
   }
   era.drawLine(); // :91-93（DRAWLINE + 三个 PRINTLC 页脚键）
   era.printButton('- 上一页', 1000); // :92 PRINTLC
-  era.printButton('返  回', 999); // :93
+  era.printButton('- 返  回', 999); // :93（原作的 `-` 是正文的一部分）
   era.printButton('- 下一页', 1001); // :94
   era.print(''); // :96 PRINTL
   return { menu, page_size, max_page };
