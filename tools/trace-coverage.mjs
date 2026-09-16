@@ -124,14 +124,21 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 54; // 合并态实测（#399 并上含 #392 的 master）：
-// 两票摆进 ere/ 的整份文件不相交，60 − 4（#392）− 2（#399）= 54，与
+export const PENDING_BASELINE = 51; // 合并态实测（#399 并上含 #392/#393 的 master）：
+// 三票摆进 ere/ 的整份文件互不相交，53（master）− 2（#399 的 SHOP/SHOP_ITEM.ERB
+// 与 SHOP/SHOP_MONSTER.ERB）= 51，与 `node tools/trace-check.mjs --coverage`
+// 的重测一致。数字取自重测而非相加。
+//
+// #399（N15）单独的说明：SHOP_CHARA.ERB 此前已是部分移植、本就不在待移植的
+// 分子里，本票把它补完后转已移植而不减待移植数——三个商店只减 2，不是 3。
+// export const PENDING_BASELINE = 53; // 合并态实测（#393 并上含 #392 的 master）：
+// 两票摆进 ere/ 的整份文件不相交，60 − 4（#392）− 3（#393）= 53，与
 // `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加，
 // 计数型基线不许靠算（docs/agents/merge-conflicts.md）。
 //
-// #399 单独实测 60 → 58：本票把 SHOP/SHOP_ITEM.ERB 与 SHOP/SHOP_MONSTER.ERB
-// 两份整份摆进 ere/（道具商店与怪物商店）。SHOP_CHARA.ERB 此前已是部分移植，
-// 本就不在待移植的分子里，本票把它补完后转已移植，不减待移植数。
+// #393 单独实测 60 → 57：本票把 キャラ関数/CHARA_JOB_CHANGE.ERB、
+// CHARA_TEMPTATION.ERB、CHARA_MARRIAGE.ERB 三个文件整份摆进 ere/（转职 /
+// 魔的诱惑 / 结婚三对按钮与流程），三份从「待移植」直接转「已移植」：-3。
 // #392（N8 段 2）把 4 个「待移植」整份摆进
 // ere/ —— キャラ関数/CHARA_CUSTOM ver1.0.1.ERB、CHARA_CUSTOM2 ver1.0.1.ERB、
 // CHARA_CUSTOM3.ERB、FUNC_CHARA_AND_HAIR.ERB：60 − 4 = 56，与重测一致。
