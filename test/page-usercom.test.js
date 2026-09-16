@@ -176,25 +176,40 @@ test('@USERCOM：103 避孕套设定分发到真身（#216 J6，com-condom.js）
   );
 });
 
-test('@USERCOM：100/101 落存根占位行（本体随各自领域票）', async () => {
-  for (const [acc, name] of [
-    [100, 'SHOW_CHARA_INFO'],
-    [101, 'STAIN_INFO'],
-  ]) {
+test('@USERCOM：100/101 分销到真身（#390 起角色信息与污渍画面）', async () => {
+  // 100 → SHOW_CHARA_INFO（ARG:1 缺省 -1 = 调教时形态）：标题行 + 两次 WAIT
+  {
     const fixture = create_era_fixture();
+    fixture.store.set('callname:0:-1', '魔王');
     const { emit } = load_page(fixture);
 
-    await emit('USERCOM', acc);
+    await emit('USERCOM', 100);
 
     assert.ok(
-      fixture.text_lines().some((t) => t.includes(`@${name}`)),
-      `${acc} 必须打到含原作函数名的占位行`,
+      fixture.text_lines().some((t) => t.startsWith('NO.0  ')),
+      '100 打出角色信息标题行（:104-106 的真身）',
     );
-    assert.equal(
-      fixture.waits.at(-1)?.waited,
-      true,
-      `${acc} 的占位行必须等键（分发期输出不被重绘清掉）`,
+    assert.ok(
+      fixture.text_lines().some((t) => t.startsWith(' 苦痛:LV')),
+      '调教时形态含刻印行（SHOW_INFO_MARK）',
     );
+    assert.equal(fixture.waits.length, 2, ':247 与 :250 两次 WAIT');
+    assert(fixture.waits.every((w) => w.waited === true));
+  }
+  // 101 → STAIN_INFO：三方污渍行 + 末尾一次 WAIT
+  {
+    const fixture = create_era_fixture();
+    fixture.store.set('callname:0:-1', '魔王');
+    const { emit } = load_page(fixture);
+
+    await emit('USERCOM', 101);
+
+    assert.ok(
+      fixture.text_lines().some((t) => t.endsWith('的嘴巴：')),
+      '101 打出污渍行（:107-109 的真身）',
+    );
+    assert.equal(fixture.waits.length, 1, 'STAIN_INFO 末尾 WAIT 一次');
+    assert.equal(fixture.waits[0].waited, true);
   }
 });
 
@@ -361,7 +376,8 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'utf8',
   );
 
-  assert.deepEqual(STUBBED_CALLS, ['SHOW_CHARA_INFO', 'STAIN_INFO']);
+  // SHOW_CHARA_INFO / STAIN_INFO 随 #390 换真身，本文件已无存根
+  assert.deepEqual(STUBBED_CALLS, []);
   for (const name of STUBBED_CALLS) {
     assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
   }

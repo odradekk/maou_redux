@@ -5,42 +5,21 @@ export const FILES = [
   {
     js: 'ere/page/page-train.js',
     refs: [
-      // #224（J14）与 #230（J20）：SHOW_EQUIP_2 的已点亮状态臂
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
-        ref: '1564-1596',
-        any: [/一度使用したら解除するまで止まらない道具や調教を/m],
+        ref: '1598',
+        any: [/@SHOW_EQUIP_1/],
       },
-      // #224（J14）：特殊族点亮的 53/54/57/58/59 状态臂；与死斗场同一粉色行。
-      {
-        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
-        ref: '1566-1577',
-        any: [
-          /摄影中/m,
-          /野外PLAY中/m,
-          /羞耻（大镜子）PLAY中/m,
-          /浴室PLAY中/m,
-          /新妻PLAY中/m,
-        ],
-      },
-      {
-        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
-        ref: '1587-1588',
-        any: [/死斗场决斗中/m],
-      },
-      // #215（J5）：clothtype_text 内部 :37 的着衣模式守卫
       {
         src: 'target/ERB/其他/FUNC_CLOTH.ERB',
         ref: '37',
         any: [/^\s*IF FLAG:37 == 0 \|\| CFLAG:41 == 0$/m],
       },
-      // @SHOW_STATUS 整函数（#74 组件化后的 draw_status_screen 全量）
       {
         src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
         ref: '60-256',
         any: [/^@SHOW_STATUS$/m],
       },
-      // 锚点跨度重绘的原作习语（#74：ScreenBlock 承载的 ere 侧等价物）
       {
         src: 'target/ERB/調教相關/USERCOM.ERB',
         ref: '179-186',
@@ -76,7 +55,6 @@ export const FILES = [
         ref: '85-86',
         any: [/^CALL LIFE_BAR$/m, /^CALL VITAL_BAR$/m],
       },
-      // #212：基础条组件的源（LIFE_BAR/VITAL_BAR 住 CHARA_INFO_SHOW）
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
         ref: '1175',
@@ -147,19 +125,10 @@ export const FILES = [
         ref: '144-252',
         any: [/射精（/, /^CALL SHOW_EQUIP_1$/m],
       },
-      // —— #212：射精/母乳/触手槽条段的逐段锚 ——
       {
         src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
         ref: '144',
         any: [/^IF \(TALENT:MASTER:121/m],
-      },
-      {
-        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
-        ref: '144-158',
-        any: [
-          /^\tPRINT 射精（$/m,
-          /^\tBAR BASE:MASTER:2,MAXBASE:MASTER:2,32$/m,
-        ],
       },
       {
         src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
@@ -220,6 +189,20 @@ export const FILES = [
         src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
         ref: '255-256',
         any: [/设置清除点/, /^CALL SET_CLEAR_POINT$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
+        ref: '60-259',
+        any: [
+          /		SETCOLOR RESULT:1,RESULT:2,RESULT:3\n		FONTSTYLE 1\n		ALIGNMENT CENTER\n		PRINTS "-"\*16/,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
+        ref: '144-158',
+        any: [
+          /					PRINTS "\\n"\n					PRINTFORM 确定要将 %SAVESTR:RESULT% 献祭？（\*将永远失去这个奴隶）\n					PRINTS "\\n"\*2 \+ " \[1\] 献祭 "\n					PRINTS "\\n"\*2 \+ " \[0\] 终止 "/,
+        ],
       },
     ],
   },

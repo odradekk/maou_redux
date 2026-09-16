@@ -124,7 +124,16 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 53; // 合并态实测（#393 并上含 #392 的 master）：
+export const PENDING_BASELINE = 52; // 合并态实测（#390 并上含 #392/#393 的 master）：
+// 三票摆进 ere/ 的整份文件互不相交，53（master）− 1（#390 的
+// キャラ関数/CHARA_INFO_SHOW_TALENT.ERB）= 52，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+//
+// #390（N6）单独的说明：CHARA_INFO_SHOW ver1.1.2.ERB 此前已是**部分移植**，
+// 本就不在待移植的分子里——本票把 SHOW_CHARA_INFO / SHOW_EQUIP_1 /
+// SHOW_EQUIP_2 / SHOW_DATA / STAIN_INFO 五条登记行清掉之后它转已移植，
+// 实测待移植只减 TALENT 那一份。
+// export const PENDING_BASELINE = 53; // 合并态实测（#393 并上含 #392 的 master）：
 // 两票摆进 ere/ 的整份文件不相交，60 − 4（#392）− 3（#393）= 53，与
 // `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加，
 // 计数型基线不许靠算（docs/agents/merge-conflicts.md）。

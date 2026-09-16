@@ -98,8 +98,8 @@
  *     .js:34 同款）；`立绘` 是 SAVEDATA 开关（魔改使用.ERH:6，未入 yml），
  *     CHA_IMG2 无引擎通道。`IF 立绘` 分支保留结构注释、不移植调用。
  *   - **`CALL SHOW_DATA(ARG)`（:18）**：角色状态显示（キャラ関数/
- *     CHARA_INFO_SHOW ver1.1.2.ERB @SHOW_DATA，未移植——随角色信息票），
- *     存根占位（stub-registry 登记）。
+ *     CHARA_INFO_SHOW ver1.1.2.ERB @SHOW_DATA）已随 #390 落地，真身在
+ *     ere/page/components/chara-data.js。
  *   - **`CALL EQUIP_DATABASE`（:2379）与 W:0/W:1 装备记录**：@PC_RYOU 的
  *     武器检查（W:0 = CFLAG:550 存储编号，素手时装剑 40；CALL
  *     EQUIP_DATABASE 填 W:1 识别号）。ERE 侧用 #174 真身
@@ -140,7 +140,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
+const { show_data } = require('#/page/components/chara-data'); // #390 起真身
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { get_kojo_num } = require('#/kojo/kojo-system');
 const { e_get, e_set } = require('#/dungeon/monster-data');
@@ -154,7 +154,7 @@ const { equip_database } = require('#/system/equip/equip-lookup');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['CHA_IMG2', 'SHOW_DATA'];
+const STUBBED_CALLS = ['CHA_IMG2'];
 
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
@@ -222,8 +222,8 @@ async function ryouzyoku(arg, rand) {
   era.drawLine(); // :13
 
   // :14-17 立绘（CALL CHA_IMG2(ARG)，未移植——见文件头）
-  // :18 CALL SHOW_DATA(ARG)（角色状态显示，未移植——存根）
-  stub_line('SHOW_DATA', '角色状态显示', '随角色信息票');
+  // :18 CALL SHOW_DATA(ARG)（#390 真身）
+  show_data(arg); // :18（#390 真身）
   await era.print(''); // :19 PRINTL
 
   // :21-29 选择循环：旁观凌辱 / 不要凌辱
