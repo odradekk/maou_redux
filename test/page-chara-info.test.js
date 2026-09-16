@@ -578,7 +578,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：以全部已加入角色 ID 为顺位表打
 
 // —— 未落地调用一律走存根，登记与实现同步 ——
 
-test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积极性/换号均在列', async () => {
+test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在列，三对动作已移出', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -588,17 +588,13 @@ test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积
 
   // SHOW_BUTTON_NAME_EDIT / CHARA_INFO_NAME_EDIT 自 #384 起是真身
   // （ere/chara/chara-name-edit.js），SHOW_BUTTON_CHILD_CARE / CHILD_CARE_CHARA
-  // 自 #401 起是真身（ere/event/event-pregnancy.js），均不再是本文件的存根
+  // 自 #401 起是真身（ere/event/event-pregnancy.js），转职 / 魔的诱惑 / 结婚
+  // 三对自 #393 起是真身（ere/chara/chara-job-change.js、chara-temptation.js、
+  // chara-marriage.js），九条均不再是本文件的存根
   for (const name of [
     'SHOW_CHARA_INFO',
-    'SHOW_BUTTON_JOB_CHANGE',
-    'SHOW_BUTTON_TEMPTATION',
-    'SHOW_BUTTON_MARRIAGE',
     'SHOW_BUTTON_EQUIP',
     'PTJ_BUTTON',
-    'CHARA_INFO_JOB_CHANGE',
-    'TEMPTATION',
-    'MARRIAGE',
     'EQUIP_ST_SHOW',
     'CHAR_DEBUG',
     'RANDOM_SELF_CALL',
@@ -608,21 +604,24 @@ test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积
   ]) {
     assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
   }
-  for (const name of ['SHOW_BUTTON_CHILD_CARE', 'CHILD_CARE_CHARA']) {
+  for (const name of [
+    'SHOW_BUTTON_CHILD_CARE',
+    'CHILD_CARE_CHARA',
+    'SHOW_BUTTON_JOB_CHANGE',
+    'SHOW_BUTTON_TEMPTATION',
+    'SHOW_BUTTON_MARRIAGE',
+    'CHARA_INFO_JOB_CHANGE',
+    'TEMPTATION',
+    'MARRIAGE',
+  ]) {
     assert.ok(
       !STUBBED_CALLS.includes(name),
       `${name} 已有真身，不应再留在本文件的存根名单里`,
     );
   }
 
-  // 转职/魔诱/结婚(sub_page 0)与装备/兼职(sub_page 1/2)的按钮存根
-  // 都在「绘制期」用 stub_line 打占位文本（不是可点击按钮，CASE 2-4/8/16/99
-  // 因此目前无法通过 era.input() 驱动到——它们等各自的按钮票落地后才可达，
-  // 见文件头「运行时可用只有已渲染按钮的快捷键」）。这里只验证绘制期占位
-  // 文本确实出现，不去点它们背后尚不可达的分发分支。
-  // 改名按钮自 #384 起由 show_button_name_edit 渲染成真按钮、
-  // 育儿室按钮自 #401 起由 show_button_child_care 渲染成真按钮（都在
-  // 判定放行时才渲染），下面分别断言。
+  // 绘制期：改名自 #384、三对动作按钮自 #393、育儿室自 #401 起都是真按钮
+  // （都在判定放行时才渲染）；装备/兼职(sub_page 1/2)仍是 stub_line 占位。
   fixture.set_inputs(100);
   const result = await chara_info_individual(1, [1]);
   assert.equal(result, 0);
@@ -633,6 +632,15 @@ test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积
     rendered.includes('[0] 改名 ') && rendered.includes('[1] 还原名字 '),
     '改名 / 还原名字按钮已渲染（#384 真身）',
   );
+  // 角色 1：状态 0（可转职 / 可结婚）、等级 0（转职按钮照渲染，只是染灰）、
+  // 非侵攻中（诱惑按钮不渲染）
+  assert.ok(rendered.includes('[2] 转职 '), '转职按钮已渲染（#393 真身）');
+  assert.equal(
+    rendered.some((text) => text.includes('魔的诱惑')),
+    false,
+    '非侵攻中 → 诱惑按钮不渲染（:29-31）',
+  );
+  assert.ok(rendered.includes('[4] 结婚 '), '结婚按钮已渲染（#393 真身）');
   assert.ok(
     !rendered.includes('[5] 前往育儿室'),
     '角色 1 不在育儿室（CFLAG:1:1 = 0）→ 育儿室按钮不渲染（#401 真身，:459-467）',
@@ -641,11 +649,90 @@ test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
     'SHOW_BUTTON_MARRIAGE',
+    'CHARA_INFO_JOB_CHANGE',
+    'TEMPTATION',
+    'MARRIAGE',
   ]) {
     assert.equal(
       printed_includes(fixture, `@${stub_name}`),
-      true,
-      `${stub_name} 绘制期占位应出现`,
+      false,
+      `${stub_name} 的占位行不该再出现`,
+    );
+  }
+});
+
+test('三动作接线（#393）：[2]/[3]/[4] 分别进转职 / 魔的诱惑 / 结婚三支真身', async () => {
+  {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.store.set('cflag:1:9', 50); // 等级门放行
+    fixture.set_inputs(2, 999, 100); // 转职菜单 → [999] 返回 → 退出
+    assert.equal(
+      await fixture
+        .load_module('page/page-chara-info')
+        .chara_info_individual(1, [1]),
+      0,
+    );
+    assert.ok(
+      printed_includes(fixture, '请选择想要契约的魔兽') === false,
+      '转职真身的菜单里没有契约魔兽那一问（那是选完魔物使之后）',
+    );
+    assert.ok(
+      buttons_with(fixture, 12).length > 0,
+      '按下 [2] 后画出了转职真身的 [12] 魔物使（未选职业所以没有播报）',
+    );
+    assert.equal(printed_includes(fixture, '@CHARA_INFO_JOB_CHANGE'), false);
+    assert.equal(
+      buttons_with(fixture, 100).length,
+      1,
+      '转职返回 0 时上浮回名册（页不再重画一次）',
+    );
+  }
+  {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.store.set('cflag:1:1', 2); // 侵攻中 → 诱惑按钮渲染
+    fixture.store.set('base:0:1', 0); // 魔王魔力耗尽 → 真身当场返回
+    fixture.set_inputs(3, 100);
+    assert.equal(
+      await fixture
+        .load_module('page/page-chara-info')
+        .chara_info_individual(1, [1]),
+      0,
+    );
+    assert.ok(
+      printed_includes(fixture, '*你的魔力耗尽了*'),
+      '按下 [3] 后进了诱惑真身',
+    );
+    assert.equal(printed_includes(fixture, '@TEMPTATION'), false);
+    assert.equal(
+      buttons_with(fixture, 100).length,
+      1,
+      '诱惑返回 0 时上浮回名册（页不再重画一次）',
+    );
+  }
+  {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.set_inputs(4, 999, 100); // 结婚菜单 → [999] 返回 → 退出
+    assert.equal(
+      await fixture
+        .load_module('page/page-chara-info')
+        .chara_info_individual(1, [1]),
+      0,
+    );
+    assert.ok(
+      printed_includes(fixture, '[甲目前结婚对象:无]'),
+      '按下 [4] 后进了结婚真身的菜单',
+    );
+    assert.equal(printed_includes(fixture, '@MARRIAGE'), false);
+    assert.equal(
+      buttons_with(fixture, 100).length,
+      1,
+      '结婚返回 0 时也上浮回名册',
     );
   }
 });
@@ -679,4 +766,20 @@ test('育儿室接线（#401）：在育儿室的角色渲染 [5] 按钮，按�
     false,
     '不再打 CHILD_CARE_CHARA 的占位行',
   );
+});
+
+test('三动作接线（#393）：结婚成功后 MARRIAGE 的返回 1 上浮为「回合结束」', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('item:100', 1);
+  fixture.store.set('itemname:100', '怪物');
+  // [4] → 结婚菜单 → 选 100 号怪物 → 婚礼跑完（MARRIAGE 返回 1）→ 上浮
+  fixture.set_inputs(4, 100, 100); // 末尾的 100 只在返回值没上浮时才会被消费
+  const result = await fixture
+    .load_module('page/page-chara-info')
+    .chara_info_individual(1, [1]);
+
+  assert.equal(result, 1, '个别信息页把 1 上浮给 CHARA_INFO（回合结束）');
+  assert.ok(printed_includes(fixture, '举行了结婚典礼'));
 });

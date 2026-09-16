@@ -124,7 +124,18 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 60; // 合并态实测（并上含 #400 的 master）：
+export const PENDING_BASELINE = 57; // 合并态实测（#393 本票独立测得 60 → 57）：
+// 本票把 `キャラ関数/CHARA_JOB_CHANGE.ERB`、`CHARA_TEMPTATION.ERB`、
+// `CHARA_MARRIAGE.ERB` 三个文件整份摆进 ere/（转职 / 魔的诱惑 / 结婚三对
+// 按钮与流程，ere/chara/chara-job-change.js、chara-temptation.js、
+// chara-marriage.js），三份文件从「待移植」直接转「已移植」：-3。
+// 三路证据齐：文件头整路径 `源:`（证据 b）＋ 锚表分片
+// tools/trace-refs/chara-job-change.mjs / chara-temptation.mjs /
+// chara-marriage.mjs（证据 a，薄锚一条不差）＋ 存根清单六行
+// （SHOW_BUTTON_* 三行与 CHARA_INFO_* / TEMPTATION / MARRIAGE 三行）转
+// 已实现、未了结项清零。算式 60（#401 并上含 #400 的 master）− 3 = 57，
+// 与重跑 `node tools/trace-check.mjs --coverage` 的实测一致。
+// 各票自己的说明留在下面。
 // 62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60。#400 不动这个数
 // （EVENT_NEXTDAY.ERB 原本就是部分移植），所以两次合并只扣本票这两份。
 // 各票自己的说明留在下面。

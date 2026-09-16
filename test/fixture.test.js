@@ -956,9 +956,30 @@ test('printInColRows：ColumnObject 与裸 GridObject 数组两种实参都记�
       accelerator: 7,
       rendered: '[7] 裸数组形态',
       color: undefined,
+      disabled: false,
       row: 0,
     },
   ]);
+});
+
+test('按钮的 disabled：原样记录、渲染不变，且不进合法输入集（引擎 getButtonObject 的两件事）', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.printButton('不可选', 666, { disabled: true });
+  fixture.era.printButton('可选', 3);
+
+  assert.equal(fixture.lines[0].disabled, true);
+  assert.equal(
+    fixture.lines[0].rendered,
+    '[666] 不可选',
+    '渲染公式不看 disabled',
+  );
+  assert.equal(fixture.lines[1].disabled, false);
+
+  // 非法输入当场红（夹具镜像引擎的按钮白名单校验）：666 没进合法集
+  fixture.set_inputs(666);
+  await assert.rejects(() => fixture.era.input(), /输入不合法/);
+  fixture.set_inputs(3);
+  assert.equal(await fixture.era.input(), 3, '可选按钮照常回传');
 });
 
 test('printImage：记 image 条目（无文本，比对只记录）', () => {
