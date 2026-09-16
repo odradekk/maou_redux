@@ -48,6 +48,7 @@ const { cmi_conflict_check } = require('#/chara/chara-make-inherit');
 const { chara_name_random_define, cn_rebuild } = require('#/chara/chara-name');
 const { random_self_call } = require('#/chara/chara-self-call'); // #383 起真身
 const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
+const { chara_first_exp } = require('#/chara/chara-first-exp'); // #394 起真身
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara_callname } = require('#/utils/callname-utils');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
@@ -61,6 +62,9 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  *
+ * #394 变更：@CM_NS_EXP 的 CALL CHARA_FIRST_EXP（:1103）换真身
+ * （ere/chara/chara-first-exp.js），CHARA_FIRST_EXP 移出名单。
+ *
  * #384 变更：@RAND_CHARA_MAKE 落真身，它依赖的 FUNC_CHARA_AND_HAIR 八函数
  * （源 キャラ関数/FUNC_CHARA_AND_HAIR.ERB，属 N8/#392）与 SHOW_CHARA_INFO 成为
  * 本文件的存根；同时 **CMI_CONFLICT_CHECK 换真身**（cm_skill 尾段改调
@@ -69,7 +73,6 @@ const { stub_line, stub_line_wait } = require('#/utils/stub-line');
  */
 const STUBBED_CALLS = [
   'LOOK_SET',
-  'CHARA_FIRST_EXP',
   'ST_UP',
   'SHOW_CHARA_INFO',
   // @RAND_CHARA_MAKE 的形象确认段（:66-125）依赖的八处 FUNC_CHARA_AND_HAIR
@@ -1346,8 +1349,9 @@ async function cm_ns_exp(cid, rand_n) {
     chara(cid).dungeon.私处经验 = 0;
   }
 
-  // :1103 初体验
-  stub_line('CHARA_FIRST_EXP', '初体验经验设定', '随初体验票');
+  // :1103 初体验（#394 起真身，ere/chara/chara-first-exp.js）。
+  // 原作同名函数，签名 (ARG) —— ere 侧显式传 cid 与随机源。
+  chara_first_exp(cid, rand_n);
 
   // :1106-1118 使役技能（talent:265）持有且无从属怪物（CFLAG:570）时
   // 随机取得（FOR 循环的 BREAK 位置决定阶层段，极稀有超强使役）

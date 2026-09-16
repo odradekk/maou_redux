@@ -47,8 +47,10 @@
  *   - 原作 PRINT/PRINTS 不换行、PRINTL 换行，同一显示行的拼接在 ere 侧
  *     归并为一次 era.print（引擎 print 每调用一行，dev-guides/06）；
  *   - CHAR_MAKE_INPORT 判定（RAND(ARG:0)）缺省 ARG:0 = 1 → RAND(1) 恒 0，
- *     恒进异国判定、存根恒 RETURN 0（ere/chara/char-make.js，#170）——
- *     即「异国的勇者」前缀当前不可达，结构 1:1 保留、随异国勇者票。
+ *     恒进异国判定。#394 起判定通过后进的是真身（ere/chara/chara-
+ *     make-inport.js），它只在 `FLAG:76 > 0` 且有可用通信记录时才建角色；
+ *     默认档（FLAG:76 = 0，MAOUNET 菜单设定）下恒早退 0，「异国的勇者」
+ *     前缀仍不可达——与 #170 时的可观察行为相同，但成因换成了真身的判据。
  */
 
 const era = require('#/era-electron');
@@ -514,7 +516,7 @@ async function get_enemy(rand) {
   const chara_id = 1 + rand_n(16);
 
   // :349-359 異国の勇者の判定をする（RAND(10) 十分之一概率为 0 → 判定
-  // 通过、存根恒 RETURN 0 → 恒走生成分支）
+  // 通过；#394 起真身在 FLAG:76 = 0 时恒早退 0 → 默认档仍走生成分支）
   const inport = await char_make_inport(10, rand_n); // :350
   let result;
   if (inport === 0) {
