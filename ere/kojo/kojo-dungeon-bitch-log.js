@@ -230,7 +230,11 @@ function fs_bitch(type, arg, rand = default_rand) {
       overwrite(t(arg, 10) || t(arg, 26), '要哭了似的'); // :241
       overwrite(t(arg, 23) || t(arg, 25), '开朗的'); // :243
       overwrite(t(arg, 73), '水性杨花的'); // :245
-      overwrite(t(arg, 509) === 1, '迷路的'); // :248
+      // :247 `SIF CFLAG:ARG:509 == 1`——**CFLAG 不是 TALENT**。#389 返工勘误：
+      // 这里原先读 `t(arg, 509)`（talent），而 509 在 yml/Talent.yml 里不存在、
+      // 全库无人写，这一行因此永不触发；真身是 dungeon-room.js:1060 写入的
+      // 「迷惑状態」（下轮 WALK 归零）
+      overwrite((era.get(`cflag:${arg}:509`) || 0) === 1, '迷路的');
       // :250 INRANGE(ABL:ARG:37, 1, 3)
       overwrite(
         (era.get(`abl:${arg}:37`) || 0) >= 1 &&

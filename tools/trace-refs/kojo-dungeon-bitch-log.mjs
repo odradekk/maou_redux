@@ -316,9 +316,11 @@ export const FILES = [
         any: [/^\s*LOCALS\ =\ 水性杨花的/m],
       },
       {
+        // #389 返工：这一行的判据是 CFLAG:ARG:509（原实现误读 TALENT），
+        // 引用随注释改指 :247 的 SIF 行
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '248',
-        any: [/^\s*LOCALS\ =\ 迷路的/m],
+        ref: '247',
+        any: [/^\s*SIF CFLAG:ARG:509 == 1 && RAND:DICE == 0$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
