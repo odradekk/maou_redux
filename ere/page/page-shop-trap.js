@@ -4,31 +4,16 @@
  * 源: target/ERB/SHOP/SHOP_TRAP.ERB  @ITEM_SHOP_TRAP（:7-70，绘制）
  *     @SALEITEM_CHECK_TRAP（:75-128，在售标志）
  *
- * 半程移植，原因在引擎不在本票：原作 @ITEM_SHOP_TRAP 的第 :63 行是引擎
- * 命令 `PRINT_SHOPITEM`——「把 ITEMSALES 不为 0 的商品连同价格列出来、点
- * 击即买（买完引擎置 BOUGHT、回调 @EVENTBUY）」。EraElectron 没有这条命令，
- * 也没有引擎侧购买流程，得在 JS 里自建（列货、比价、扣款、回填
- * SHOP_ITEM.ERB 的 @EVENTBUY 逻辑）——那是道具商店票 #399（N15「三个商店」）
- * 的靶，两个商店共用一套购买流程，SHOP_ITEM.ERB:73 是同一处缺口。
- * 本文件因此只落「绘制持有陷阱/戒指 + 点亮在售 + 提示行」这一段，
- * :59 的 TFLAG:15 一并欠着（理由见下），两笔都在 docs/stub-registry.md
- * 登记（PRINT_SHOPITEM 在函数级表的 SHOP_ITEM.ERB 行；TFLAG:15 在变量级表）。
+ * **#399 补齐的两笔**：原作 :63 的引擎命令 `PRINT_SHOPITEM`（把 ITEMSALES
+ * 不为 0 的商品连同价格列出来、点击即买）与 :59 的 `TFLAG:15 = MONEY`
+ * 都已落地——列货与购买流程是**两个商店共用的一套**，真身在
+ * page/page-item-shop.js（`print_shopitem` / `purchase` / `snapshot_money`）；
+ * 玩家点中的编号由 page-shop.js 的输入分发（販売アイテム数 = 100 的判据）
+ * 交给 purchase，@EVENTBUY 的三支分派与账目也都在那边。
  *
- * **玩家今天还进不到这个画面**（不是缺陷，是票序）：原作进陷阱商店只有两条
- * 路——@SHOW_SHOP :25-30 的 BOUGHT ≥ 54 跳转，与道具商店里的 [998] 键
- * （@USERSHOP :47-50）。前者要有人先把 BOUGHT 置到 ≥ 54（引擎在购买回调里置，
- * 见 SHOP_ITEM.ERB 的 @EVENTBUY），后者的宿主商店本体归 #399。两处调用点
- * 都按原作接好了，但 #399 落地前买不到任何东西、也就点不出 BOUGHT ≥ 54；
- * 本文件因此只在「直接造 BOUGHT ≥ 54」的用例里可达（test/shop-trap.test.js）。
- *
- * **:59 `TFLAG:15 = MONEY`（所持点を一時保存）不能 1:1 落。** Emuera 在
- * 据点期也能写 TFLAG；EraElectron 的 tflag 表只在调教期存在（beginTrain 建、
- * endTrain 删；测试夹具逐字镜像引擎守卫，test/helpers/era-fixture.js 的
- * TRAIN_ONLY_TABLES），据点期写二段 tflag 直接抛
- * `key error in getter/setter`。它是「取消购买时把暂存的钱还回去」的唯一
- * 消费者（SHOP_ITEM.ERB 的 @EVENTBUY），而那条流程还没落地，故不另造平行
- * 承载（#399 决定落点时两边一起改）。仓库先例：stronghold/sale.js:463-467
- * 为同一张表改道。
+ * **进店路径**（原作两条，两条都通了）：@SHOW_SHOP :25-30 的 BOUGHT ≥ 54
+ * 跳转（买下 54 号【淫魔知识】后 BOUGHT 停在 54，见 page-item-shop.js 的
+ * @EVENTBUY），与道具商店里的 [998] 键（@USERSHOP :47-50）。
  *
  * 布局映射（原作 → ere）：
  *   - :10 `CUSTOMDRAWLINE =` 的 `=` 线以 era.drawLine({isSolid: true})
@@ -43,7 +28,8 @@
  * 出口（$INPUT_LOOP / :63 之后的提示行）分属两处：本函数是「绘制半」，
  * 由 page-shop.js 的 show_shop（BOUGHT ≥ 54 的跳转）与 usershop（998 分支的
  * JUMP）经 era 的商店轮循环驱动；购买本身的循环（原作 :61 的 $INPUT_LOOP
- * 标签、:63 的 PRINT_SHOPITEM 之后接 @EVENTBUY）随 #399 的购买流程落地。
+ * 标签、:63 的 PRINT_SHOPITEM 之后接 @EVENTBUY）落在 page/page-item-shop.js
+ * 的 purchase 与 @EVENTBUY 族——#399 起两个商店共用一套。
  */
 
 'use strict';
@@ -51,6 +37,7 @@
 const era = require('#/era-electron');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const { print_shopitem, snapshot_money } = require('#/page/page-item-shop');
 
 /** SETCOLORBYNAME LightSalmon 的 ere 等价物（:23/:39） */
 const LIGHT_SALMON = 'LightSalmon';
@@ -111,7 +98,7 @@ function item_name(id) {
 /**
  * @SALEITEM_CHECK_TRAP（:75-128）：点亮本商店的在售位。只写 1——清零是
  * 商店轮 @EVENTSHOP 的 REPEAT 100（page-shop.js:95-97）与 CLEAR_SHOP 的
- * 职责（后者随 #399）。
+ * 职责（后者 #399 起在 page/page-item-shop.js）。
  *
  * @returns {number} 原作 RETURN 0
  */
@@ -236,19 +223,23 @@ async function item_shop_trap() {
 
   era.drawLine({ isSolid: true }); // :55-57 DRAWLINE + CALL SALEITEM_CHECK_TRAP
   saleitem_check_trap(); // :57 CALL SALEITEM_CHECK_TRAP
-  // :59 TFLAG:15 = MONEY（所持点を一時保存）——据点期无 tflag 表，登记待
-  // #399；理由见文件头，此处不写（写了在引擎里直接抛 key error）。
+  snapshot_money(); // :59 TFLAG:15 = MONEY（所持点を一時保存；#399 起落表）
 
   // :61 $INPUT_LOOP：购买循环的重新进入点，原作的循环本体是 :63 的
   // PRINT_SHOPITEM + 引擎侧购买。era 侧的重绘由 page-shop.js 的商店轮
-  // 循环承担（998 分支再调一次本函数），故此处不设标签。
+  // 循环承担（998 分支再调一次本函数），购买本身由该轮的分发交给
+  // page-item-shop.js 的 purchase，故此处不设标签。
 
-  // :65-70 提示行
+  // :63 PRINT_SHOPITEM（#399 起真身，两个商店共用）
+  print_shopitem();
+
+  // :65-70 提示行（两个键印成按钮：本屏已有商品按钮，rule 会收紧到那批
+  // 编号，纯文本的 997/999 就再也键入不进了——#130 的输入通道语义）
   era.print('《请输入要购买陷阱的编号》');
   era.drawLine({ isSolid: true }); // :65-70 段的 DRAWLINE
   era.setAlign('center'); // :68-69 PRINTLC（居中 + 换行）
-  era.print('[997] - 普通物品\u3000');
-  era.print('[999] - 返回');
+  era.printButton('- 普通物品', 997);
+  era.printButton('- 返回', 999);
   era.setAlign('left');
   era.print(''); // 尾行（:65-70 的最后一个 PRINTL）
 

@@ -124,10 +124,14 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 60; // 合并态实测（并上含 #400 的 master）：
-// 62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60。#400 不动这个数
-// （EVENT_NEXTDAY.ERB 原本就是部分移植），所以两次合并只扣本票这两份。
-// 各票自己的说明留在下面。
+export const PENDING_BASELINE = 58; // 本票（#399）独立测得与说明：
+// SHOP/SHOP_CHARA.ERB 与 SHOP/SHOP_MONSTER.ERB 两份文件落地真身
+// （ere/page/page-chara-shop.js、page-monster-shop.js，文件头各带「源:」
+// 整路径追溯），从「待移植」转「已移植」：60 − 2 = 58。同票的
+// SHOP/SHOP_ITEM.ERB 此前是**部分移植**（有产物、清单里还挂着未了结存根），
+// 本就不在待移植的分子里——落地后实测待移植不变（已移植 239 → 240、
+// 部分移植 30 → 29）。上面 60 那一行是派单时的合并态实测（并上含 #400 的
+// master）；各票自己的说明留在下面。
 // master）：62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60，与重测
 // 一致。各票自己的说明留在下面。
 // 两票各自扣的文件不相交，64（master，#394 后）− 2（本票 EVETRAIN.ERB 与

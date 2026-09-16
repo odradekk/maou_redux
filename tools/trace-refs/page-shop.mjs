@@ -55,7 +55,7 @@ export const FILES = [
       // 陷阱商店真身一并接通；四支的 return 形态见 usershop 注释）
       {
         src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
-        ref: '29',
+        ref: '28-29',
         any: [/^\tJUMP ITEM_SHOP_TRAP$/m], // 与 :50 同文，平行复现
       },
       {
@@ -97,6 +97,358 @@ export const FILES = [
         src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
         ref: '55-57',
         any: [/^ELSEIF BOUGHT >= 0$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
+        ref: '20',
+        any: [new RegExp('^\\s*CUSTOMDRAWLINE =\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '22-38',
+        any: [new RegExp('^\\s*@SHOW_SHOP\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '24',
+        any: [new RegExp('^\\s*SAVESTR:0 = 你\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '25-30',
+        any: [new RegExp('^\\s*IF BOUGHT >= 0 && BOUGHT < 54\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
+        ref: '25',
+        any: [new RegExp('^\\s*PRINT 日\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '26-27',
+        any: [new RegExp('^\\s*IF BOUGHT >= 0 && BOUGHT < 54\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '28-29',
+        any: [new RegExp('^\\s*ELSEIF BOUGHT >= 54\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '33-36',
+        any: [new RegExp('^\\s*SIF DAY:1 < 1\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '35',
+        any: [new RegExp('^\\s*SIF DAY:2 < 1\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '38',
+        any: [
+          new RegExp(
+            '^\\s*CALL DRAW_MAINMENU;メインメニュー描画処理はこっちの関数に丸投げ、本体は_DRAW_MAINMENU\\.ERB内\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '40-229',
+        any: [new RegExp('^\\s*@USERSHOP\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '44-57',
+        any: [new RegExp('^\\s*IF RESULT == 999 && BOUGHT >= 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '44',
+        any: [new RegExp('^\\s*IF RESULT == 999 && BOUGHT >= 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '45',
+        any: [new RegExp('^\\s*CALL CLEAR_SHOP\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '49',
+        any: [new RegExp('^\\s*CALL CLEAR_SHOP\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
+        ref: '53',
+        any: [new RegExp('^\\s*FOR ICOUNT_A,24,36\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '59',
+        any: [new RegExp('^\\s*IF RESULT == 100 && A > 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '59-101',
+        any: [new RegExp('^\\s*IF RESULT == 100 && A > 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '65-68',
+        any: [new RegExp('^\\s*IF TARGET <= 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '67-68',
+        any: [new RegExp('^\\s*SIF RESULT == 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
+        ref: '68',
+        any: [new RegExp('^\\s*;所持点を一時保存\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '71-97',
+        any: [new RegExp('^\\s*\\$SELECT_ASSI_LOOP\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '73',
+        any: [new RegExp('^\\s*TEMP:3 = 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '79-80',
+        any: [new RegExp('^\\s*SIF TEMP:3 >= 1\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '81-82',
+        any: [new RegExp('^\\s*SIF RESULT == 2\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '83-84',
+        any: [new RegExp('^\\s*SIF ASSI == 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '85-88',
+        any: [new RegExp('^\\s*IF TARGET == ASSI\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '91-92',
+        any: [new RegExp('^\\s*SIF ASSI >= 1 && TARGET == ASSI\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '94-97',
+        any: [new RegExp('^\\s*IF CFLAG:MASTER:1 == 10\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_TRAP.ERB',
+        ref: '96',
+        any: [new RegExp('^\\s*IF TALENT:0:327 == 1\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '98-99',
+        any: [new RegExp('^\\s*SIF TARGET >= 1 && TARGET != ASSI\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '99',
+        any: [new RegExp('^\\s*BEGIN TRAIN\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
+        ref: '101',
+        any: [new RegExp('^\\s*PRINTL \\[0\\] - 好的\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '102-106',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 101\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '105',
+        any: [new RegExp('^\\s*BEGIN TURNEND\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '110',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 103\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '113',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 104\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '115',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 105\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '117',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 106\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '119-120',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 107\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '121-122',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 108\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '124-128',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 109\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '127',
+        any: [new RegExp('^\\s*BEGIN TURNEND\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '130-131',
+        any: [
+          new RegExp(
+            '^\\s*ELSEIF RESULT == 110 && TALENT:0:325 == 1\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '132-133',
+        any: [
+          new RegExp(
+            '^\\s*ELSEIF RESULT == 111 && \\(FLAG:83 \\|\\| FLAG:84\\)\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '140',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 200\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '142',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 300\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '144',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 777\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '146',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 888\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '148',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 400\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '152',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 496 && A > 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '152-153',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 496 && A > 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '154',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 497 && A > 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '154-155',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 497 && A > 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '156-157',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 498\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '158-159',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 499\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '160-161',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 500\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '162-163',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 501\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '164-165',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 504\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '166-167',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 505\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '168-170',
+        any: [
+          new RegExp('^\\s*ELSEIF RESULT > 520 && RESULT <= 530\\s*$', 'm'),
+        ],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '172-221',
+        any: [new RegExp('^\\s*ELSEIF RESULT == 120\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '208-216',
+        any: [new RegExp('^\\s*TARGET = X\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '220',
+        any: [new RegExp('^\\s*PRINTW 奴隶太多了！\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '222-223',
+        any: [new RegExp('^\\s*CALL DEBUG_MENU_U\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '226-227',
+        any: [new RegExp('^\\s*SIF RESULT == 7788\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '226-229',
+        any: [new RegExp('^\\s*SIF RESULT == 7788\\s*$', 'm')],
       },
     ],
   },

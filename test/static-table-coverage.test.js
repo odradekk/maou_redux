@@ -41,6 +41,11 @@ const CHARA_PRODUCT = /^Chara\d+\.yml$/;
 //   palam/param/gotjuel/delta → staticData.juel；nowex → staticData.ex；
 //   base/maxbase/deltabase → staticData.base；item* → staticData.item
 const ALIASED = new Map([
+  // #399：itemprice/itemname/itemsales 都走引擎的 item* 分支（静态表是
+  // staticData.item.{name,price}）；itemname 另由「去 name 后缀」那条规则
+  // 命中（base = item），itemsales 在 NOT_THREE_PART，itemprice 需要显式
+  // 别名——它既无 name 后缀也不在豁免集里
+  ['itemprice', 'item'],
   ['palam', 'juel'],
   ['param', 'juel'],
   ['gotjuel', 'juel'],

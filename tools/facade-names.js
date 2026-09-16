@@ -590,6 +590,12 @@ const cflag = {
   //   （ownership/cflag-ownership.yml "700"/"777"）
   700: named_tail('收藏', src(SRC_FLAG, ':489 CFLAG:700 = お気に入りフラグ')),
   777: named_tail('待处刑标签', src(SRC_FLAG, ':490 CFLAG:777 = 待處刑標籤')),
+  // #399：异界勇者召唤的成交标记（@CHARA_SIM_SHOP :123-124 的唯一一次写，
+  //   属主 stronghold——ownership/cflag-ownership.yml "999"；全库无读者）
+  999: named(
+    '异界召唤标记',
+    src(SRC_ERB, '/SHOP/SHOP_CHARA.ERB:123-124 成交后置 1，仅此一处写'),
+  ),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

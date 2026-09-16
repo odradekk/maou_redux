@@ -305,11 +305,12 @@ function draw_main_menu() {
     era.print([{ content: '[---]', color: MENU_BUTTON_DIM_COLOR }]);
   }
 
-  // :272-273 [107] 购物 —— #395 起真身：BOUGHT = 1（分发在 usershop 的
-  // 107 分支），下一轮 @SHOW_SHOP 据此跳过主菜单、改打 ITEM_SHOP/
-  // ITEM_SHOP_TRAP 存根占位（商店本体随 #399）。原作无条件渲染，照搬——
-  // 没有这枚按钮，#399 交付的道具商店在实机上仍进不去（同 [200]/[300] 的
-  // #137 教训）。
+  // :272-273 [107] 购物 —— #395 置位、#399 起本体也是真身：BOUGHT = 1
+  // （分发在 usershop 的 107 分支），下一轮 @SHOW_SHOP 据此跳过主菜单、
+  // 整屏画 ITEM_SHOP（BOUGHT ≥ 54 时画 ITEM_SHOP_TRAP，两个本体分别在
+  // page/page-item-shop.js 与 page-shop-trap.js）。原作无条件渲染，照搬
+  // ——没有这枚按钮，道具商店在实机上进不去（同 [200]/[300] 的 #137
+  // 教训）。
   era.printButton('购物', 107);
 
   // :275-281 [108] 换装 —— CALL TAILOR_MAIN（存根，随换装票）；守卫

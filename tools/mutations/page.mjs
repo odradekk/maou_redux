@@ -966,13 +966,12 @@ export default [
   {
     desc: 'M7890 107 购物：BOUGHT 写成 -1（跳转判据永不成立）',
     file: 'ere/page/page-shop.js',
-    find: `    // 跳道具商店（show_shop 的 0-53 支）——本体仍是存根，随 #399。
+    find: `    // （show_shop 的 0-53 支，#399 起本体是真身 page/page-item-shop.js）
     era_flag.bought = 1;`,
-    replace: `    // 跳道具商店（show_shop 的 0-53 支）——本体仍是存根，随 #399。
+    replace: `    // （show_shop 的 0-53 支，#399 起本体是真身 page/page-item-shop.js）
     era_flag.bought = -1; // 变异：不再触发商店跳转`,
     tests: ['page-shop'],
-    must_mention:
-      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位',
+    must_mention: '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 画真身道具商店',
   },
   {
     desc: 'M7891 show_shop：BOUGHT 54 边界错一格（>= 改 >，#396 重构后重钉）',
@@ -983,18 +982,13 @@ export default [
     must_mention: 'BOUGHT >= 54 跳陷阱商店真身',
   },
   {
-    desc: 'M7892 show_shop：BOUGHT 复位删（存根显示后不退出购物态）',
+    desc: 'M7892 show_shop：BOUGHT 0-53 支整段不再画商店（#399 重构后重钉）',
     file: 'ere/page/page-shop.js',
-    find: `    era_flag.bought = -1;
-  }
-
-  return row_count;`,
-    replace: `  }
-
-  return row_count; // 变异：BOUGHT 复位删`,
+    find: '  if (era_flag.bought >= 0 && era_flag.bought < 54) {',
+    replace:
+      '  if (era_flag.bought >= 54 && era_flag.bought < 54) { // 变异：支不可达',
     tests: ['page-shop'],
-    must_mention:
-      '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位',
+    must_mention: '107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 画真身道具商店',
   },
   {
     desc: 'M7893 SELECT_ASSI [1002]：ASSI 复位删（旧指针残留）',
@@ -1265,7 +1259,7 @@ export default [
   {
     desc: 'M8114 USERSHOP 999：购物态下不清 BOUGHT（退出商店失效）',
     file: 'ere/page/page-shop.js',
-    find: '    era_flag.bought = -1; // :46（CLEAR_SHOP 随 #399，见上）',
+    find: '    era_flag.bought = -1; // :46',
     replace: '    // 变异：不退出购物态',
     tests: ['shop-trap'],
     must_mention: '清购物标志并落到调试菜单',

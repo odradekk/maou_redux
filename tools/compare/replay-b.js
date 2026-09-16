@@ -186,6 +186,13 @@ async function seed_scope_b(fixture, { sale = false } = {}) {
   era_flag.money = 800; // (所持金：800 pts.)
   era_flag.target = target; // 调教目标温妮（备注「正在调教:温妮」）
   era_flag.assi = -1; // 无助手（主菜单助手钮灰，样本 :69 同形态归因）
+  // BOUGHT = -1（样本的世界停在据点主菜单、不在店内）。**#399 起这是必需的
+  // 播种**：@EVENTSHOP:20 每轮进店都会置 -1，所以真实存档里这个槽恒有值
+  // （FLAG:10029 ↔ era-flag.js 的 bought）；不给时 era.get 读回 undefined
+  // → `|| 0` → 0，而 0 在 @SHOW_SHOP:26 的判据（BOUGHT >= 0 && BOUGHT < 54）
+  // 里意味着「正在道具商店里」——#399 前那一支是占位行（打一行就复位），
+  // 这个播种缺口被它盖住了；真身落地后它会把整屏画成道具商店。
+  era_flag.bought = -1;
   // @SAVEINFO 的指针改写副作用读 FLAG:1/FLAG:2（前回调教目标/助手，
   // page-save-load.js 的 build_save_info）——保存 5 号槽时消费
   fixture.store.set('flag:1', target);
