@@ -259,6 +259,43 @@ test('ABILITY_UP：翻页（1000/1001）按档走，页首/页尾不越界', asy
   }
 });
 
+test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）', async () => {
+  // 998 档：魔王行（1）+ 奴隶行（n）算进 L_LCOUNT，补到 NUM_PAGE + 1 = 24 行
+  const two = four_chara();
+  const draw = split_draws((await run(two, [999])).added)[0];
+  // 空行 = 表头 PRINTL + 补行 + 页脚 PRINTL；补行数由 L_LCOUNT 与
+  // NUM_PAGE(+1) 算出——改动补行上下界这里立刻变数
+  assert.equal(
+    draw.filter((l) => l.type === 'text' && l.text === '').length,
+    22,
+    '2 名奴隶（1 + 2 = 3 行）时的空行数',
+  );
+  // 997 档：每页 24 行，1 名敌人 → 补 23 行
+  const enemy = four_chara();
+  const draw2 = split_draws((await run(enemy, [997, 999])).added)[1];
+  assert.equal(
+    draw2.filter((l) => l.type === 'text' && l.text === '').length,
+    25,
+    '1 名敌人（1 行）时的空行数',
+  );
+  // 边界的**两侧**：998 档 l_lcount 恰好等于 NUM_PAGE（23）时仍要补 1 行
+  // （判据是 `< NUM_PAGE + 1`）——收成 `< NUM_PAGE` 时这一行会消失
+  const full_page = create_era_fixture();
+  add_chara(full_page, 0, '你');
+  full_page.store.set('cflag:0:9', 25);
+  for (let cid = 1; cid <= 22; cid += 1) {
+    add_chara(full_page, cid, `奴隶${cid}`);
+    full_page.store.set(`base:${cid}:0`, 1);
+    full_page.store.set(`cflag:${cid}:1`, 0);
+  }
+  const draw3 = split_draws((await run(full_page, [999])).added)[0];
+  assert.equal(
+    draw3.filter((l) => l.type === 'text' && l.text === '').length,
+    2,
+    '1 + 22 = 23 行（= NUM_PAGE）时仍补 1 行，加表头 PRINTL 共 2 空行',
+  );
+});
+
 test('ABILITY_UP：勇者一览按 24 行分页（25 名敌人 → 第 2 页 1 行）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');

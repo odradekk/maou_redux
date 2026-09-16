@@ -199,6 +199,112 @@ test('INTERCEPT：金钱不足（可被卖状态但要付费）拦下派遣', as
 
 // —— 迎击设定三层（$INPUT_LOOP_MAIN / _4 / _3）——
 
+test('INTERCEPT：派遣费的门槛两侧（5999 拦、6000 放行）', async () => {
+  for (const [money, blocked] of [
+    [5999, true],
+    [6000, false],
+  ]) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    // 付费派遣：CFLAG:0 == 0（未驯服）且 TALENT:254 == 1（可被卖）
+    add_chara(fixture, 1, '玛奥');
+    fixture.store.set('base:1:0', 1);
+    fixture.store.set('talent:1:254', 1);
+    fixture.store.set('flag:10004', money);
+    // 拦下时停在列表（[999] 退出）；放行时进迎击设定，用 [998] 出击
+    const { added } = await run_intercept(
+      fixture,
+      blocked ? [1, 999] : [1, 998],
+    );
+    assert.equal(
+      texts(added).includes('金钱不足，玛奥无视了你的命令'),
+      blocked,
+      `MONEY ${money} 的派遣门`,
+    );
+    if (!blocked) {
+      assert.equal(fixture.store.get('flag:10004'), 0, '正好 6000 能派出');
+    }
+  }
+});
+
+test('INTERCEPT：补给费与合计门槛的两侧（2000 / 6000+2000）', async () => {
+  // 单纯不够：1999 拦、2000 放行
+  for (const [money, blocked] of [
+    [1999, true],
+    [2000, false],
+  ]) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_dispatchable(fixture, 1, '玛奥');
+    fixture.store.set('flag:10004', money);
+    const { added } = await run_intercept(fixture, [1, 2, 999, 999]);
+    assert.equal(
+      texts(added).includes('* 魔王大人，你怎么这么穷 *'),
+      blocked,
+      `MONEY ${money} 的补给门`,
+    );
+  }
+  // 付费派遣时还要多留 COST：7999 拦、8000 放行
+  for (const [money, blocked] of [
+    [7999, true],
+    [8000, false],
+  ]) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '玛奥');
+    fixture.store.set('base:1:0', 1);
+    fixture.store.set('talent:1:254', 1); // 未驯服 + 可被卖 = 要付 COST
+    fixture.store.set('flag:10004', money);
+    const { added } = await run_intercept(fixture, [1, 2, 999, 999]);
+    assert.equal(
+      texts(added).includes('* 魔王大人，你怎么这么穷 *'),
+      blocked,
+      `MONEY ${money} 的合计门（COST + 2000）`,
+    );
+  }
+});
+
+test('INTERCEPT：补给可取消（[2] 再按一次回到裸奔）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_dispatchable(fixture, 1, '玛奥');
+  fixture.store.set('flag:10004', 100000);
+  const { added } = await run_intercept(fixture, [1, 2, 2, 998]);
+  const supply_buttons = added.filter(
+    (l) => l.type === 'button' && l.accelerator === 2,
+  );
+  assert.ok(
+    supply_buttons.some((l) => l.text.includes('全副整装')),
+    '先置上补给',
+  );
+  assert.ok(
+    supply_buttons.some((l) => l.text.includes('裸奔吧')),
+    ':468-470 再按一次取消补给',
+  );
+  assert.equal(fixture.store.get('flag:10004'), 100000, '取消后不扣补给费');
+});
+
+test('INTERCEPT：行动 3（扩张设施）在出击时另扣 2000', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_dispatchable(fixture, 1, '玛奥'); // 已驯服 → 免 COST
+  fixture.store.set('cflag:0:9', 30);
+  fixture.store.set('flag:352', 60); // 3 层有设施
+  fixture.store.set('itemname:60', '陷阱屋');
+  fixture.store.set('flag:362', 0); // 还可扩张
+  fixture.store.set('flag:10004', 100000);
+  fixture.store.set('exflag:4444', 100000);
+  // [1] 选人 → [0] 出发阶层 → [3] 层 → [1] 行动 → [3] 扩张 → [998] 出击
+  await run_intercept(fixture, [1, 0, 3, 1, 3, 998]);
+  assert.equal(
+    fixture.store.get('flag:10004'),
+    100000 - 2000,
+    ':449 的扩张费在出击时扣',
+  );
+  assert.equal(fixture.store.get('exflag:4444'), 100000 - 2000);
+  assert.equal(fixture.store.get('cflag:1:500'), 3, 'WORK = 3 写回');
+});
+
 test('INTERCEPT：出击决定写入状态与扣款，并调 @GOHOUBI_REQUEST', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -264,6 +370,43 @@ test('INTERCEPT：出发阶层设定（1-9）写回 CFLAG:501', async () => {
   const { added: one } = await run_intercept(low, [1, 0, 9, 0, 1, 998]);
   assert.equal(low.store.get('cflag:1:501'), 1, '下限 1 可选中（FLOOR_MIN）');
   assert.ok(texts(one).includes('出发层设定'));
+});
+
+test('INTERCEPT：行动设定的六个等级门逐档两侧（WORK_GATES 的五档阈值）', async () => {
+  // 阈值 10/20/30/40/50：每一档取「恰好够」与「差 1」两个等级，断言可点集合
+  const LABELS = [
+    '内职',
+    '卖淫',
+    '补充陷阱',
+    '扩张设施(要2000G)',
+    '潜入工作',
+    '训练',
+  ];
+  const CASES = [
+    [9, LABELS.slice(0, 1)],
+    [10, LABELS.slice(0, 2)],
+    [19, LABELS.slice(0, 2)],
+    [20, LABELS.slice(0, 3)],
+    [29, LABELS.slice(0, 3)],
+    [30, LABELS.slice(0, 4)],
+    [39, LABELS.slice(0, 4)],
+    [40, LABELS.slice(0, 5)],
+    [49, LABELS.slice(0, 5)],
+    [50, LABELS.slice(0, 6)],
+  ];
+  for (const [level, expected] of CASES) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_dispatchable(fixture, 1, '玛奥');
+    fixture.store.set('cflag:0:9', level);
+    // 进迎击设定 → 行动设定；选「内职」（0）退回来，再退出
+    const { added } = await run_intercept(fixture, [1, 1, 0, 999, 999]);
+    const labels = added
+      .filter((l) => l.type === 'button')
+      .map((l) => l.text)
+      .filter((t) => LABELS.includes(t));
+    assert.deepEqual([...new Set(labels)], expected, `${level} 级可点的行动档`);
+  }
 });
 
 test('INTERCEPT：行动设定的等级门渲染（19 级看不到卖淫、55 级全可见）', async () => {

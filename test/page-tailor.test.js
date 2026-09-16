@@ -165,6 +165,11 @@ test('TAILOR_CASUAL：两件整表驱动（含男性 S = 3 的门槛）', async 
       `日常服饰 ${item.label} → CFLAG:41 = ${item.r}`,
     );
     assert.equal(fixture.store.get('flag:10004'), 10000000 - 100, '扣 100 点');
+    assert.equal(
+      fixture.store.get('exflag:4444'),
+      10000000 - 100,
+      ':1185 的跨域消费同步扣',
+    );
   }
   // 裙子（1）对男性角色要求 S = 3：顺从 2 时被拒
   const male = tailor_fixture({ 'talent:1:122': 1, 'abl:1:10': 2 });
@@ -304,6 +309,40 @@ test('TAILOR_ACCESSORY：43 件整表驱动（价格随件、CFLAG:42 = R）', a
   }
 });
 
+test('TAILOR_ACCESSORY：翻页取模的两侧（末页再下一页回首页 / 首页上一页到末页）', async () => {
+  // 5 页：从第 1 页按 5 次「下一页」应回到第 1 页（:634-639 的取模）
+  const fixture = tailor_fixture();
+  const draw = await run_core(fixture, [2, ...Array(5).fill(997), 999, 999]);
+  const titles = draw
+    .filter((l) => l.type === 'text' && l.text.includes('□装备品'))
+    .map((l) => l.text);
+  assert.equal(titles.length, 6, '首页 + 5 次翻页各画一次');
+  assert.equal(titles[0], titles[5], '翻满一圈回到第 1 页');
+  assert.ok(titles[4].includes('5页'), '第 5 次翻页到最后一页');
+  // 首页按「上一页」应直接到末页（:640-645）
+  const back = tailor_fixture();
+  await run_core(back, [2, 998, 999, 999]);
+  const titles_back = texts(back.lines).filter((t) => t.includes('□装备品'));
+  assert.ok(titles_back[1].includes('5页'), '首页按上一页到第 5 页');
+});
+
+test('TAILOR_ACCESSORY：r = 98/99（尿道导管 / 贞操带）的额外演出（:226-227）', async () => {
+  // 43 号（神秘的尿道导管，r = 98）在第 5 页
+  const fixture = tailor_fixture();
+  const body = texts(
+    await run_core(fixture, [2, ...Array(4).fill(997), 43]),
+  ).join('\n');
+  assert.equal(fixture.store.get('cflag:1:42'), 98);
+  assert.ok(body.includes('尚未习惯的尿道导管的插入'), ':226 的演出行');
+  assert.ok(body.includes('泛起了红潮'), ':227 的演出行');
+  // 39 号（贞操带，r = 79）不触发该演出——判据是 r === 98/99
+  const plain = tailor_fixture();
+  const body2 = texts(
+    await run_core(plain, [2, ...Array(3).fill(997), 39]),
+  ).join('\n');
+  assert.ok(!body2.includes('尿道导管'), '别的装备不触发');
+});
+
 test('TAILOR_ACCESSORY：顺从档的动态判据整表驱动（欲望/素质档）', async () => {
   // [件号, 预置, 期望 S]——S 由表里的函数算出，这里钉住每条分支
   const CASES = [
@@ -391,6 +430,7 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
   for (const [seed, gain] of CASES) {
     const fixture = tailor_fixture({
       'cflag:1:43': 1,
+      'cflag:1:44': 3, // 胸罩也是「穿着中」，验证 :204 的清扫真的发生
       'cflag:1:48': 6,
       ...seed,
     });
@@ -401,6 +441,11 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
       before - 5 + gain,
       `卖掉旧内衣得 ${gain} 点（50 × 6 的倍率链）`,
     );
+    assert.equal(
+      fixture.store.get('exflag:4444'),
+      before - 5 + gain,
+      ':1132 的变卖收入同步进账（跨域）',
+    );
     assert.ok(
       texts(fixture.lines).some((t) => t.includes(`挣了${gain}点钱`)),
       '变卖提示',
@@ -409,11 +454,28 @@ test('TAILOR_CORE：内衣的旧内衣变卖（倍率表驱动：自慰狂 / 谜
     assert.equal(fixture.store.get('cflag:1:40'), 3);
     assert.equal(fixture.store.get('cflag:1:43'), 0);
     assert.equal(fixture.store.get('cflag:1:48'), 0);
+    assert.equal(fixture.store.get('cflag:1:44'), 0, ':204 胸罩状态清 0');
+    assert.equal(fixture.store.get('flag:10005'), -1, ':249 TARGET = -1');
   }
   // CFLAG:48 < 6 时不进变卖支
   const few = tailor_fixture({ 'cflag:1:43': 1, 'cflag:1:48': 5 });
   await run_core(few, [3]);
   assert.ok(!texts(few.lines).some((t) => t.includes('挣了')), '不足 6 条不卖');
+  // CFLAG:43 的判据是 >= 0（0 = 正常内裤同样变卖）——收紧成 > 0 会被这条抓住
+  const normal_pants = tailor_fixture({ 'cflag:1:43': 0, 'cflag:1:48': 6 });
+  const before = normal_pants.store.get('flag:10004');
+  await run_core(normal_pants, [3]);
+  assert.ok(
+    texts(normal_pants.lines).some((t) => t.includes('挣了300点钱')),
+    'CFLAG:43 == 0（正常内裤）同样变卖',
+  );
+  assert.equal(normal_pants.store.get('flag:10004'), before - 5 + 300);
+  // CFLAG:41 == 0 时先替她穿上上衣（:196-200 的三连写）
+  const bare = tailor_fixture({ 'cflag:1:41': 0, 'cflag:1:43': 0 });
+  await run_core(bare, [3]);
+  assert.equal(bare.store.get('cflag:1:41'), 1, ':196-200 自动穿上衣');
+  assert.equal(bare.store.get('cflag:1:45'), -3, ':198');
+  assert.equal(bare.store.get('cflag:1:46'), -3, ':199');
 });
 
 test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', async () => {
@@ -425,12 +487,29 @@ test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', asyn
     'cflag:1:49': 0,
     'talent:1:0': 1,
   };
-  // 反例：不是处女（TALENT:0 == 0）时 [5] 不出现
-  const not_virgin = tailor_fixture({ ...KEY_GATE, 'talent:1:0': 0 });
-  await run_core(not_virgin, [999]);
+  // 反例三支：非处女 / 已丢弃（CFLAG:49 == 1）/ CFGLA:40 无位 64 —— 都不给 [5]
+  for (const [label, seed] of [
+    ['TALENT:0 == 0（非处女）', { 'talent:1:0': 0 }],
+    ['CFLAG:49 == 1（钥匙已丢）', { 'cflag:1:49': 1 }],
+    ['CFLAG:40 无位 64', { 'cflag:1:40': 0 }],
+  ]) {
+    const fixture = tailor_fixture({ ...KEY_GATE, ...seed });
+    await run_core(fixture, [999]);
+    assert.ok(!accs(fixture.lines).includes(5), `${label} 时不给 [5]`);
+  }
+  // CFLAG:71 的两侧：显示门（:84-85）不含它，输入门（:104）含——按钮在，
+  // 但按下去什么都不发生（原作这两处判据本就不同，1:1 保留）
+  const flagged = tailor_fixture({ ...KEY_GATE, 'cflag:1:71': 1 });
+  await run_core(flagged, [5, 999]);
+  assert.ok(accs(flagged.lines).includes(5), ':84 的显示门不看 CFLAG:71');
+  assert.equal(
+    flagged.store.get('cflag:1:49') ?? 0,
+    0,
+    ':104 的输入门拦下了丢弃',
+  );
   assert.ok(
-    !accs(not_virgin.lines).includes(5),
-    'TALENT:0 == 0（非处女）不给 [5]',
+    !texts(flagged.lines).some((t) => t.includes('再也没人知道了')),
+    '没有丢弃的演出',
   );
   const drop = tailor_fixture(KEY_GATE);
   await run_core(drop, [5, 0, 999]);
@@ -452,12 +531,43 @@ test('TAILOR_CORE：换装的应用行带动词实参（脱下 / 换上 / 身穿
   });
   const added = await run_core(fixture, [0, 2]);
   const body = texts(added).join('\n');
-  assert.ok(body.includes('日常服装'), '应用行带服装名');
   assert.ok(
-    body.includes('脱下') || body.includes('换上'),
-    ':168/:176 的 GET_CLOTHTYPE_MAIN2 动词实参（脱下 / 换上）',
+    body.includes('日常服装脱下'),
+    ':167-169 的「旧衣名 + 脱下」（渲染序：名字 → 动词）',
   );
+  assert.ok(body.includes('日常服装换上了。'), ':176 的「新衣名 + 换上」');
   assert.ok(body.includes('身穿'), ':73 的「现在…身穿…」行');
+});
+
+test('TAILOR_CORE：40/45/46 的三种形态下略（脱下行打不打）', async () => {
+  // 判据是 `CFLAG:41 && (CFLAG:45 == 0 || CFLAG:46 == 0)`：任一半完好就打
+  const CASES = [
+    [{ 'cflag:1:45': 0, 'cflag:1:46': 0 }, true],
+    [{ 'cflag:1:45': -1, 'cflag:1:46': 0 }, true], // 上半破、下半完好
+    [{ 'cflag:1:45': 0, 'cflag:1:46': -1 }, true], // 上半完好、下半破
+    [{ 'cflag:1:45': -1, 'cflag:1:46': -1 }, false],
+  ];
+  for (const [seed, expected] of CASES) {
+    const fixture = tailor_fixture({ 'cflag:1:41': 1, ...seed });
+    const body = texts(await run_core(fixture, [0, 2])).join('\n');
+    assert.equal(
+      body.includes('日常服装脱下'),
+      expected,
+      `${JSON.stringify(seed)} 时${expected ? '要' : '不'}打脱下行`,
+    );
+  }
+});
+
+test('TAILOR_CORE：旧衣状态为「穿着中」时不打脱下行（:167 的判据两侧）', async () => {
+  // 45/46 都为负（已破/被没收）→ 不打脱下行，直接换上
+  const fixture = tailor_fixture({
+    'cflag:1:41': 1,
+    'cflag:1:45': -1,
+    'cflag:1:46': -1,
+  });
+  const body = texts(await run_core(fixture, [0, 2])).join('\n');
+  assert.ok(!body.includes('脱下'), ':167 判据为假时不打脱下行');
+  assert.ok(body.includes('日常服装换上了。'), '换上照样打');
 });
 
 test('TAILOR_CORE：尿布（A = 11）清 CFLAG:47；装备品（A = 20）换 CFLAG:42', async () => {
@@ -506,7 +616,8 @@ test('EQUIP_MAGIC_ITEM：装备戒指与强化（千位强度、超限回退、�
   await run_core(fixture, [7, 1, 997, 4, 999, 999, 999]);
   assert.equal(fixture.store.get('cflag:1:551'), 6000);
   // 再强化 6：6 + 6 = 12 > 10 → 回退到 10（只付 4 档）
-  const money = fixture.store.get('flag:10004');
+  let money = fixture.store.get('flag:10004');
+  let ex_money = fixture.store.get('exflag:4444');
   await run_core(fixture, [7, 1, 997, 6, 999, 999, 999]);
   assert.equal(fixture.store.get('cflag:1:551'), 10000, '强度封顶 10');
   assert.equal(
@@ -514,6 +625,90 @@ test('EQUIP_MAGIC_ITEM：装备戒指与强化（千位强度、超限回退、�
     money - 4 * 10000,
     '超限回退：只付 10 - 6 = 4 档',
   );
+
+  // 边界的**两侧各站一条**：可达的 strength 是 10 + 1 = 11 与 10 + 2 = 12。
+  // 11 恰好只超一格——`> ENHANCE_MAX` 应当回退（付 0 档、编号不动），
+  // 写成 `>=` 或 `> ENHANCE_MAX + 1` 就会被这两条抓住。
+  money = fixture.store.get('flag:10004');
+  ex_money = fixture.store.get('exflag:4444');
+  await run_core(fixture, [7, 1, 997, 1, 999, 999, 999]); // 10 + 1 = 11
+  assert.equal(fixture.store.get('cflag:1:551'), 10000, '11 也封顶在 10');
+  assert.equal(fixture.store.get('flag:10004'), money, '恰好超一格：付 0 档');
+  assert.equal(fixture.store.get('exflag:4444'), ex_money, '两处钱一起不动');
+
+  await run_core(fixture, [7, 1, 997, 2, 999, 999, 999]); // 10 + 2 = 12
+  assert.equal(fixture.store.get('cflag:1:551'), 10000, '12 也封顶在 10');
+  assert.equal(fixture.store.get('flag:10004'), money, '超两格：同样付 0 档');
+});
+
+test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有品过滤（item > 0）', async () => {
+  // 空槽（-1）+ 持有 0 件：既没有「装备强化 / 取下」，也没有 300 号那一行
+  const empty = tailor_fixture({ 'cflag:0:9': 30, 'cflag:1:551': -1 });
+  const draw = await run_core(empty, [7, 1, 999, 999, 999]); // 进装饰A 的选件页
+  const ids = accs(draw);
+  assert.ok(!ids.includes(997), '空槽不给「装备强化」');
+  assert.ok(!ids.includes(998), '空槽不给「取下」');
+  assert.ok(!ids.includes(300), 'item:300 == 0 → 不列该行');
+  // 槽里已有装备 + 持有 1 件：两者都在
+  const full = tailor_fixture({
+    'cflag:0:9': 30,
+    'cflag:1:551': 2000,
+    'item:300': 1,
+  });
+  const draw2 = await run_core(full, [7, 1, 999, 999, 999]);
+  const ids2 = accs(draw2);
+  assert.ok(ids2.includes(997) && ids2.includes(998), '有装备才给两键');
+  assert.ok(ids2.includes(300), 'item:300 > 0 → 列出该行');
+});
+
+test('EQUIP_MAGIC_ITEM：强化的两笔支出（所持金与跨域消费）一起动', async () => {
+  // :836 的 install 与 :957 的强化各写一次 exflag:4444（累计消费），
+  // 只断言所持金会漏掉这两句——两条路径各来一次
+  const fixture = tailor_fixture({
+    'item:300': 3,
+    'cflag:0:9': 30,
+    'cflag:1:551': -1,
+  });
+  const before_money = fixture.store.get('flag:10004');
+  const before_ex = fixture.store.get('exflag:4444');
+  await run_core(fixture, [7, 1, 300, 2, 999, 999, 999]); // 装备（install 路径）
+  assert.equal(
+    fixture.store.get('flag:10004'),
+    before_money - 2 * 10000,
+    '装备按档位扣钱',
+  );
+  assert.equal(
+    fixture.store.get('exflag:4444'),
+    before_ex - 2 * 10000,
+    ':836 的跨域消费同步扣',
+  );
+  await run_core(fixture, [7, 1, 997, 4, 999, 999, 999]); // 强化（pay 路径）
+  assert.equal(
+    fixture.store.get('flag:10004'),
+    before_money - 6 * 10000,
+    '强化再扣 4 档',
+  );
+  assert.equal(
+    fixture.store.get('exflag:4444'),
+    before_ex - 6 * 10000,
+    ':957 的跨域消费同步扣',
+  );
+});
+
+test('EQUIP_MAGIC_WEAPON：强化的跨域消费（:1049）与装备路径', async () => {
+  const fixture = tailor_fixture({
+    'item:341': 1,
+    'cflag:0:9': 30,
+    'cflag:1:550': -1,
+  });
+  const before_money = fixture.store.get('flag:10004');
+  const before_ex = fixture.store.get('exflag:4444');
+  await run_core(fixture, [8, 341, 1, 0, 999, 999]); // 装备（install :836）
+  assert.equal(fixture.store.get('flag:10004'), before_money - 10000);
+  assert.equal(fixture.store.get('exflag:4444'), before_ex - 10000);
+  await run_core(fixture, [8, 997, 2, 999, 999]); // 强化 +2（:1049）
+  assert.equal(fixture.store.get('flag:10004'), before_money - 3 * 10000);
+  assert.equal(fixture.store.get('exflag:4444'), before_ex - 3 * 10000);
 });
 
 test('EQUIP_MAGIC_WEAPON：装备武器带前缀档（十万位）与武器化触手', async () => {
@@ -543,8 +738,20 @@ test('EQUIP_MAGIC_WEAPON：装备武器带前缀档（十万位）与武器化�
   );
 });
 
+test('EQUIP_MAGIC_WEAPON：空手时不给强化/取下（w:0 <= -1）', async () => {
+  const fixture = tailor_fixture({ 'cflag:0:9': 30, 'cflag:1:550': -1 });
+  const added = await run_core(fixture, [8, 999, 999]);
+  assert.ok(!accs(added).includes(997), '空手不给「装备强化」');
+  assert.ok(!accs(added).includes(998), '空手不给「取下」');
+  assert.ok(
+    texts(added).some((t) => t.includes('空手')),
+    '显示「武器　: 空手」',
+  );
+});
+
 test('EQUIP_MAGIC_WEAPON：武器段只列 341-359（360 不在段内）', async () => {
   const fixture = tailor_fixture({
+    'item:349': 1, // 武器化触手在段内但被过滤掉，只走 [990]
     'item:359': 1,
     'item:360': 1,
     'cflag:0:9': 30,
@@ -557,6 +764,10 @@ test('EQUIP_MAGIC_WEAPON：武器段只列 341-359（360 不在段内）', async
   assert.ok(items.includes(359), '段尾 359 列出');
   assert.ok(!items.includes(360), '360 在段外（REPEAT 19）');
   assert.ok(items.includes(340), '[340] 剑恒在');
+  assert.ok(
+    !items.includes(349),
+    '349（武器化触手）走 [990]，不在 341-359 的循环里',
+  );
 });
 
 test('EQUIP_MAGIC_WEAPON：等级门的灰显与「取下」', async () => {

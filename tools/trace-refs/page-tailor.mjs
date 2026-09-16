@@ -7,6 +7,18 @@ export const FILES = [
   {
     js: 'ere/page/page-tailor.js',
     refs: [
+      // #397 返工：强化档的「钱不够」守卫两处（:1068-1071 / :1206-1209 的
+      // `X = MONEY / 10000` + `SIF X > 10`）——文件头 5b 登记为结构性不可达
+      {
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '1068-1071',
+        any: [/^\s*SIF X > 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '1206-1209',
+        any: [/^\s*SIF X > 10\s*$/m],
+      },
       {
         src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
         ref: '6-59',
