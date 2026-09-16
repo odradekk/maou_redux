@@ -224,6 +224,11 @@ function create_era_fixture() {
       // config.color 直通 el-button 的 --el-button-text-color（app.asar 实证，
       // 按钮明暗一类断言看这里；未给 color 时为 undefined）
       color: config?.color,
+      // 禁用态（#393 补记录）：引擎 app.vue 的 getButtonObject 里 `disabled`
+      // 只做两件事——不进合法输入集（上方已镜像）、原样带进行对象；**渲染
+      // 公式不看它**，所以禁用按钮照常显示 `[编号] 正文`，只是点不动、
+      // 编号也不被 input() 回传（原作 `[666]` 灰字项正是这个语义）。
+      disabled: config?.disabled === true,
     };
   };
 

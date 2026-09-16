@@ -77,6 +77,15 @@ const {
 } = require('#/chara/chara-info-actions');
 const { transfer_soul } = require('#/chara/chara-soul-transfer');
 const {
+  show_button_job_change,
+  chara_info_job_change,
+} = require('#/chara/chara-job-change');
+const {
+  show_button_temptation,
+  temptation,
+} = require('#/chara/chara-temptation');
+const { show_button_marriage, marriage } = require('#/chara/chara-marriage');
+const {
   child_care_chara,
   show_button_child_care,
 } = require('#/event/event-pregnancy');
@@ -90,17 +99,15 @@ const NUM_PAGE = 24;
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
  * #401 起「育儿室」按钮与流程换真身（ere/event/event-pregnancy.js 的
- * show_button_child_care / child_care_chara），两条从名单移除。
+ * show_button_child_care / child_care_chara）；#393 起转职 / 魔的诱惑 /
+ * 结婚三对按钮与流程换真身（ere/chara/chara-job-change.js、
+ * chara-temptation.js、chara-marriage.js），九条从名单移除；#390 起
+ * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除。
+ * 两票各删一批，合并后四条一并不在。
  */
 const STUBBED_CALLS = [
-  'SHOW_BUTTON_JOB_CHANGE',
-  'SHOW_BUTTON_TEMPTATION',
-  'SHOW_BUTTON_MARRIAGE',
   'SHOW_BUTTON_EQUIP',
   'PTJ_BUTTON',
-  'CHARA_INFO_JOB_CHANGE',
-  'TEMPTATION',
-  'MARRIAGE',
   'EQUIP_ST_SHOW',
   'CHAR_DEBUG',
   'RANDOM_SELF_CALL',
@@ -627,9 +634,10 @@ async function chara_info_individual(arg, chara_sort) {
       // :858-859 两个改名按钮（#384 落真身：ere/chara/chara-name-edit.js）
       show_button_name_edit(0, current);
       show_button_name_edit(1, current, 1);
-      await stub_line('SHOW_BUTTON_JOB_CHANGE', '「转职」按钮', '随转职票');
-      await stub_line('SHOW_BUTTON_TEMPTATION', '「魔的诱惑」按钮', '随堕落票');
-      await stub_line('SHOW_BUTTON_MARRIAGE', '「结婚」按钮', '随结婚票');
+      // :860-862 三个动作按钮（#393 落真身，三个同构模块各一对）
+      show_button_job_change(2, current);
+      show_button_temptation(3, current);
+      show_button_marriage(4, current);
       // :863 CALL SHOW_BUTTON_CHILD_CARE(5,ARG)（#401 真身，ere/event/event-pregnancy.js）
       show_button_child_care(5, current);
       if (is_able_to_ability_up(current)) era.printButton('提升能力', 10);
@@ -761,15 +769,30 @@ async function chara_info_individual(arg, chara_sort) {
         // :1048 恢复原名（#384 落真身）
         await chara_info_name_edit(current, 1);
         continue;
-      case 2:
-        await stub_line_wait('CHARA_INFO_JOB_CHANGE', '转职', '随转职票');
+      case 2: {
+        // :1051 CALL CHARA_INFO_JOB_CHANGE(ARG)（#393 真身）
+        const job_result = await chara_info_job_change(current);
+        if (job_result !== 2) return job_result; // :1094-1097 的收尾
         continue;
-      case 3:
-        await stub_line_wait('TEMPTATION', '魔的诱惑', '随堕落票');
+      }
+      case 3: {
+        // :1054 CALL TEMPTATION(ARG)（#393 真身）。原作 :1094-1099 的收尾
+        // 按被调方的 RESULT 分流：0/1 上浮给 CHARA_INFO（0 = 回名册、
+        // 1 = 回合结束），其余落回 INPUT_LOOP 重画——三支「动作」都照此接
+        // （CASE 0/1/5 等其它 case 的「留在页内」是各自票据的既有处置，
+        // 不在本票改动面内）
+        const temptation_result = await temptation(current);
+        if (temptation_result !== 2) return temptation_result;
         continue;
-      case 4:
-        await stub_line_wait('MARRIAGE', '结婚', '随结婚票');
+      }
+      case 4: {
+        // :1057 CALL MARRIAGE(ARG)（#393 真身；1 = 回合结束，上浮给
+        // CHARA_INFO——原作 MARRIAGE 的「結婚するとターンエンド」是最初
+        // 就写明的出口）
+        const marriage_result = await marriage(current);
+        if (marriage_result !== 2) return marriage_result;
         continue;
+      }
       case 5:
         // :1060 CALL CHILD_CARE_CHARA(ARG)（#401 真身；返回 2 是「侵攻中的
         // 勇者」防御支，此处与其它 case 同款忽略返回值，留在页内继续导航）
