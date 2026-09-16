@@ -16,19 +16,21 @@
  */
 
 const { chara_make, cm_cloth } = require('#/chara/chara-make');
+const { chara_make_inport } = require('#/chara/chara-make-inport');
 const { char_init } = require('#/chara/chara-init');
 const { chara_make_inherit } = require('#/chara/chara-make-inherit');
 const { chara_name_define, cn_rebuild } = require('#/chara/chara-name');
-const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  *
  * #384 起 @NAMING 与 @NAME_RESET 的 JUMP 目标（CHARA_NAME_DEFINE / CN_REBUILD）
- * 都是真身（ere/chara/chara-name.js），两项移出名单。
+ * 都是真身（ere/chara/chara-name.js），两项移出名单；#394 起
+ * @CHAR_MAKE_INPORT 的 JUMP 目标同样落真身（ere/chara/chara-make-inport.js），
+ * 最后一项也移出——本层的存根名单自此为空。
  */
-const STUBBED_CALLS = ['CHARA_MAKE_INPORT'];
+const STUBBED_CALLS = [];
 
 /**
  * @CHAR_MAKE（:2-4）：角色生成入口——JUMP CHARA_MAKE(A, ARG:0, ARG:1)。
@@ -81,11 +83,13 @@ async function set_char_cloth(cid, rand) {
 
 /**
  * @CHAR_MAKE_INPORT（:27-34）：异国勇者判定——RAND(ARG:0) != 0 时
- * RETURN 0（非异国），否则 JUMP CHARA_MAKE_INPORT（存根，随异国勇者票）。
+ * RETURN 0（非异国），否则 JUMP CHARA_MAKE_INPORT（#394 起真身，
+ * ere/chara/chara-make-inport.js）。
  *
  * @param {number} [arg0] 判定分母（缺省 1 = RAND(1) = 0 恒成功）
- * @param {(n: number) => number} [rand] RAND:N 随机源（透传）
- * @returns {Promise<number>} 0 = 非异国勇者（原作 RETURN 0）
+ * @param {(n: number) => number} [rand] RAND:N 随机源（透传，判定式与真身共用）
+ * @returns {Promise<number>} 0 = 非异国勇者（原作 RETURN 0）；> 0 = 新建的
+ *   异国勇者角色号（原作真身 RETURN CHARA，经 JUMP 直接交回调用点）
  */
 async function char_make_inport(arg0 = 1, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -94,8 +98,7 @@ async function char_make_inport(arg0 = 1, rand) {
     return 0;
   }
   // :34 JUMP CHARA_MAKE_INPORT
-  stub_line('CHARA_MAKE_INPORT', '异国勇者生成');
-  return 0;
+  return chara_make_inport(rand_n);
 }
 
 /**

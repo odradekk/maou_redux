@@ -128,7 +128,17 @@ export const DENOMINATOR = 346;
 // 清单里还挂着 15 行未了结存根），本就不在待移植的分子里——本票把 26 个占位点
 // 落成真身、清空这些登记行之后，实测待移植仍是 67（已移植 227、部分移植 34）。
 // 工单正文写的「显式抬低 PENDING_BASELINE（现 79）」是排期时的旧值与旧口径。
-export const PENDING_BASELINE = 67; // #384（N2）rebase 到含 #385/#396/#402 的
+export const PENDING_BASELINE = 64; // #394（N10）在本分支基线 67 上 −3；下面是
+// 历次说明。**本票独立测得的是 67 → 64 这一格**，rebase 后真值由派单人重跑。
+// #394 抬低说明（67 → 64，本票三个文件）：`キャラ関数/CHARA_FIRST_EXP.ERB` 与
+// `キャラ関数/CHARA_MAKE_INPORT.ERB` 落真身（chara_first_exp、
+// chara_make_inport，两个文件头各带「源:」整路径追溯 + 锚表分片
+// tools/trace-refs/chara-first-exp.mjs、chara-make-inport.mjs），两份文件
+// 退出「待移植」：-2；`キャラ関数/FULLMOON.ERB` 按 #14 判不实现进 RULINGS
+// 表（理由见该表条目），它从「待移植」直接进「已判定不实现」，同样
+// 退出待移植分子：-1。三处都是正判据变化（证据面新增 / 裁定表新增），
+// 不是顺手改数字。
+// #384（N2）rebase 到含 #385/#396/#402 的
 // master 后实测：master 68 − 本票 1 = 67，两边的说明都留在下面。
 // #396 抬低说明（70 → 68）：SHOP/TAX.ERB与
 // SHOP/SHOP_TRAP.ERB 两个文件落地真身（tax_get；item_shop_trap /
@@ -245,6 +255,11 @@ export const RULINGS = [
     path: 'target/ERB/其他/TEST.ERB',
     reason:
       '#14：ENDCHECKDRAGONSIS 与两个旗标换算函数全库无调用者，是开发残留死代码',
+  },
+  {
+    path: 'target/ERB/キャラ関数/FULLMOON.ERB',
+    reason:
+      '#394：@FULLMOON_EFFECT 全库零调用者（只命中它自己的定义行），判据就是这一条。文件头 `; CALLBY @WEAPON_RESTORE` 是搬迁前调用点的化石，而 CHAR_ST.ERB:62-66 的活代码只接手了它的一部分：狼人那档的 `CFLAG:11/12 *= 10` 两条照搬并加上了真正的满月窗口 `DAY:2 ∈ [14,16]`，但 CASE 2 里的 `BASE:0/1 = MAXBASE:0/1`（体力气力回满）没有跟过去，`$LABEL_种族` 的其余分支与整个 `$LABEL_种族2` 在活代码里也没有对应物。所以它是被弃用的旧实现，不是被逐字取代',
   },
 ];
 
