@@ -766,6 +766,16 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SHOP/SHOP_MONSTER.ERB',
+        ref: '381-382',
+        any: [
+          new RegExp(
+            '^\\s*PRINTFORM - %TOSTR\\(MONS:LCOUNT:2\\)% 只\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_MONSTER.ERB',
         ref: '387-388',
         any: [new RegExp('^\\s*SIF !LINEISEMPTY\\(\\)\\s*$', 'm')],
       },

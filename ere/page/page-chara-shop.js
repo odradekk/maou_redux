@@ -229,8 +229,12 @@ async function char_ikai_create(rand) {
         continue; // :375-377 SIF A > 0 → CONTINUE
       }
       const [coins, money] = chara_ikai_cost(l_i);
+      // :378 `PRINTFORM  [{L_I,2}] …` 命令名后是两个空格：Emuera 只吃掉一个
+      // 作命令分隔，第二个是实参的首字符（黄金样本里主菜单 `PRINT  上午`
+      // 的行首空格、`PRINTL  ` 的单空格行都是同一条规则的旁证），故格首有一个
+      // 半角空格
       row +=
-        `[${pad_display_right(String(l_i), NUM_WIDTH)}] ` +
+        ` [${pad_display_right(String(l_i), NUM_WIDTH)}] ` +
         `${pad_display_left(csv_name(l_i), NAME_WIDTH)}` +
         `(${coins}勋章&${money}金)`;
       columns += 1;

@@ -25,6 +25,25 @@ function history_texts(fixture) {
 }
 
 /**
+ * 一览的一格（:378 的编号与名字 + :380 的价钱）：` [编号] ` + 名字补到 14
+ * 显示宽 + 价钱（格首的空格是 `PRINTFORM  ` 的第二个空格——Emuera 只吃一个
+ * 作分隔，见实现的注释）。原作的三个排版字面量在这里各写一份：编号宽 2
+ * （段内编号恒 5 位，此宽度到不了）、名字宽 14、价钱 = @CHARA_IKAI_COST 的
+ * 两项；「每行 5 格」由用例按整行钉住。
+ */
+function ikai_cell(id, name, coins, money) {
+  const shown = [...name].reduce(
+    (sum, ch) => sum + (ch.charCodeAt(0) > 0xff ? 2 : 1),
+    0,
+  );
+  return (
+    ` [${String(id).padStart(2)}] ` +
+    `${name}${' '.repeat(Math.max(0, 14 - shown))}` +
+    `(${coins}勋章&${money}金)`
+  );
+}
+
+/**
  * 铺一个可召唤的世界：异界勇者的预设 211（yml/Chara211.yml 的编号）、
  * 钱与勋章各一档（:122 成交要 1500 与 1 枚勋章）。
  */
@@ -85,6 +104,13 @@ test('CHARA_SIM_SHOP：性别选择 —— 999 清在售位退出；4 与 0 打�
     texts.filter((line) => line === '请选择要召唤的勇者的性别').length,
     3,
     '两次无效输入各重开一轮（共三轮）',
+  );
+  // :30 的菜单行按整行钉住（两处全角空格各 4 个）
+  assert(
+    texts.includes(
+      '[1]男性\u3000\u3000\u3000\u3000[2]女性\u3000\u3000\u3000\u3000[3]扶她',
+    ),
+    ':30 的性别菜单行',
   );
   assert.equal(fixture.store.get('itemsales:202'), 0, ':41 CALL CLEAR_SHOP');
   assert(
@@ -239,6 +265,35 @@ test('CHAR_IKAI_CREATE：一览只列「有预设且不在场」的编号，999 
     '在场的 10002 不列出',
   );
   assert(texts.includes('[999] 返回'));
+});
+
+test('CHAR_IKAI_CREATE：一览的排版字面量（名字补 14、每行 5 格）', async () => {
+  // 六个可召唤的编号：前五个占满一行，第六个另起一行
+  const fixture = chara_world();
+  const names = [
+    '异界人甲',
+    '异界人乙',
+    '异界人丙',
+    '异界人丁',
+    '异界人戊',
+    '异界人己',
+  ];
+  names.forEach((name, index) => {
+    const id = 10001 + index;
+    fixture.seed_chara(id, { id, name });
+    fixture.store.set(`chara:${id}`, { name });
+  });
+  fixture.set_inputs(999);
+  const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
+  await char_ikai_create(rand0);
+  // 一览的每一行就是一次 era.print（原作 SIF LOCAL % 5 == 0 → PRINTL）
+  const rows = history_texts(fixture).filter((line) => line.includes('勋章&'));
+  assert.deepEqual(rows, [
+    [10001, 10002, 10003, 10004, 10005]
+      .map((id, index) => ikai_cell(id, names[index], 3, 6000))
+      .join(''),
+    ikai_cell(10006, names[5], 3, 6000),
+  ]);
 });
 
 test('CHAR_IKAI_CREATE：金钱/勋章两道闸与成交的账', async () => {

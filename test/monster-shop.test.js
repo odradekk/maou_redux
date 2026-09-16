@@ -25,6 +25,80 @@ function history_texts(fixture) {
     .map((line) => line.text);
 }
 
+// —— 排版助手（原作 %…,N,LEFT/RIGHT% 的显示宽度填充）——
+// 本屏的三个排版字面量（名字宽、等级/数量字段宽、每行几格）在下面每一格里
+// 各写一份：它们改了玩家那边就不对，用例按整格字符串钉住。
+
+/** 显示宽度（全角 2 / 半角 1） */
+function display_width(text) {
+  return [...text].reduce(
+    (sum, ch) => sum + (ch.charCodeAt(0) > 0xff ? 2 : 1),
+    0,
+  );
+}
+
+/** 左对齐补到 width 显示宽（`%str,N,LEFT%` 的形态） */
+function pad_left(text, width) {
+  const pad = width - display_width(text);
+  return pad > 0 ? text + ' '.repeat(pad) : text;
+}
+
+/** 右对齐补到 width 显示宽（`%n,N,RIGHT%` 的形态） */
+function pad_right(text, width) {
+  const pad = width - display_width(text);
+  return pad > 0 ? ' '.repeat(pad) + text : text;
+}
+
+/**
+ * 商品一览的一格（:238）：`[编号] ` + 名字补 22 + 半角空格 + `最低等级：`
+ * + 价格右对齐 5 + 两个全角空格。
+ * 编号字段原作是 `TOSTR(LCOUNT,"000")`（零填充 3 位），段内编号恒 3 位，
+ * 与 `pad_left(id, 3)` 同值。
+ */
+function goods_cell(id, name, price) {
+  return (
+    `[${pad_left(String(id), 3)}] ` +
+    `${pad_left(name, 22)} ` +
+    `最低等级：${pad_right(String(price), 5)}\u3000\u3000`
+  );
+}
+
+/**
+ * 祭品行（:334/:368）：名字补 22 + ` LV:` + 等级 + ` ` + 已选数右对齐 7
+ * + `只` + 两个 U+3000。
+ */
+function sacrifice_cell(name, level, picked) {
+  return (
+    `${pad_left(name, 22)} ` +
+    `LV:${level} ${pad_right(String(picked), 7)}只\u3000\u3000`
+  );
+}
+
+/**
+ * 可选祭品行（:381-382）：`[编号] ` + 名字补 20 + ` LV:` + 等级 + ` `
+ * + 持有数右对齐 5 + ` - ` + 已选数 + ` 只` + 制表符（格尾是实参里的 \t）。
+ */
+function pick_cell(id, name, level, stock, picked) {
+  return (
+    `[${pad_left(String(id), 3)}] ` +
+    `${pad_left(name, 20)} ` +
+    `LV:${level} ${pad_right(String(stock), 5)} ` +
+    `- ${picked} 只\t`
+  );
+}
+
+/**
+ * 「某一行恰好等于 expected」。**不能用 `includes`**：`c1 + c2` 是
+ * `c1 + c2 + c3` 的子串，子串判定下「每行 3 格」也照样绿（#399 验收返工
+ * 的评审实测）。
+ */
+function assert_has_line(texts, expected, message) {
+  assert(
+    texts.some((line) => line === expected),
+    message,
+  );
+}
+
 /**
  * 铺一个可召唤的世界。
  *
@@ -158,6 +232,13 @@ test('MONSTER_SHOP：性别选择的无效输入打回（> 3 与 0）', async ()
     3,
     '两次无效输入各重开一轮（共三轮）',
   );
+  // :71 的菜单行按整行钉住（三处全角空格的个数 4/3/[3] 前无空格）
+  assert(
+    texts.includes(
+      '[1]男性\u3000\u3000\u3000\u3000[2]女性\u3000\u3000\u3000[3]扶她',
+    ),
+    ':71 的性别菜单行',
+  );
 });
 
 test('MONSTER_SHOP：种族选择的无效输入打回（> 9 与选择失败）', async () => {
@@ -173,6 +254,14 @@ test('MONSTER_SHOP：种族选择的无效输入打回（> 9 与选择失败）'
     3,
     '两次打回 + 第三次（999 前那一轮）',
   );
+  // :97-99 的九宫格按整行钉住（全角空格 4/3/4 各不相同）
+  for (const line of [
+    '[1]兽人类\u3000\u3000\u3000\u3000[2]史莱姆类\u3000\u3000\u3000[3]昆虫类',
+    '[4]植物类\u3000\u3000\u3000\u3000[5]触手类\u3000\u3000\u3000\u3000[6]妖精类',
+    '[7]巨人类\u3000\u3000\u3000\u3000[8]魔人类\u3000\u3000\u3000\u3000[9]魔兽类',
+  ]) {
+    assert(texts.includes(line), `:97-99 的种族菜单行：${line.slice(0, 8)}…`);
+  }
 });
 
 test('MONSTER_SHOP：种族选择里 999 清在售位并退出', async () => {
@@ -427,6 +516,31 @@ test('SELECT_MONSTER：商品一览的四个判据——价格非 0、两个种�
   assert.equal(fixture.store.get('itemsales:201') ?? 0, 0, '档外不点亮');
 });
 
+test('SELECT_MONSTER：商品一览的排版字面量（名字补 22、等级右对齐 5、每行 2 格）', async () => {
+  // 三件在售（202/203/205 同属亚人档）：两格一行 → 第二行只剩第三件。
+  // 整格比对同时钉住名字字段宽、等级字段宽与「每行 2 格」——任何一处改动
+  // 都会让这一行的字符串对不上
+  const { fixture } = await run_select(
+    1,
+    {
+      'chara:203': { talent: { 319: 1 } },
+      'itemprice:203': 7,
+      'itemname:203': '精英蚁怪',
+      'chara:205': { talent: { 319: 1 } },
+      'itemprice:205': 120,
+      'itemname:205': '精英巨魔',
+    },
+    999,
+  );
+  const rows = history_texts(fixture).filter((line) =>
+    line.includes('最低等级：'),
+  );
+  assert.deepEqual(rows, [
+    goods_cell(202, '精英狗头人', 15) + goods_cell(203, '精英蚁怪', 7),
+    goods_cell(205, '精英巨魔', 120),
+  ]);
+});
+
 test('SELECT_MONSTER：空表与提示行（没有能召唤的魔物从者 / 请选择…）', async () => {
   {
     // 档内一件都没有：把 202 的 319 抹掉（其余世界不动）
@@ -676,6 +790,46 @@ test('BUY_MONSTER：多只同种祭品按已选数递增（:408-409 的两行）
     texts.some((line) => line.includes('LV:5')),
     '等级来自 @MONSTER_DATA 的 E:501',
   );
+});
+
+test('BUY_MONSTER：祭品行与可选行的排版字面量（名补 22/20、数右对齐 7/5、每行 2 格）', async () => {
+  // 三件同档祭品（100/101/110，等级 5/5/6，各持一件）挑满 → 16 >= 15 进确认屏，
+  // 于是挑选取与确认屏的祭品行都留下整行证据。名字用 yml/Item.yml 的登记名
+  const { fixture, result } = await run_buy(
+    {
+      'item:100': 1,
+      'itemname:100': '狗头人',
+      'item:101': 1,
+      'itemname:101': '哥布林',
+      'item:110': 1,
+      'itemname:110': '兽人',
+    },
+    100,
+    101,
+    110,
+    0,
+  );
+  assert.equal(result, 1, '三只凑够 16 级成交');
+  const texts = history_texts(fixture);
+  // 可选行（:381-382）：两格一行，第三件另起一行；格尾是制表符
+  assert_has_line(
+    texts,
+    pick_cell(100, '狗头人', 5, 1, 0) + pick_cell(101, '哥布林', 5, 1, 0),
+    '可选行的整格字符串（名字宽 20 / 持有数宽 5 / 每行 2 格）',
+  );
+  assert_has_line(texts, pick_cell(110, '兽人', 6, 1, 0), '第三件另起一行');
+  assert_has_line(
+    texts,
+    pick_cell(100, '狗头人', 5, 1, 1) + pick_cell(101, '哥布林', 5, 1, 1),
+    '已选数进格（- 1 只）',
+  );
+  // 祭品行（:334/:368）：两格一行，第三件另起一行
+  assert_has_line(
+    texts,
+    sacrifice_cell('狗头人', 5, 1) + sacrifice_cell('哥布林', 5, 1),
+    '祭品行的整格字符串（名字宽 22 / 已选数宽 7 / 每行 2 格）',
+  );
+  assert_has_line(texts, sacrifice_cell('兽人', 6, 1), '第三件另起一行');
 });
 
 test('BUY_MONSTER：确认处只认 0/1——其余值落回祭品选择，不扣钱不扣货', async () => {

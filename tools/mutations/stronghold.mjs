@@ -1,10 +1,12 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 177; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+export const COUNT = 200; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
-// #399 起 +37（M8881-M8918，page-item-shop 20 / page-monster-shop 7 /
-// page-chara-shop 5 / page-shop 3 / page-shop-trap 2；M8915 与 page.mjs 的
-// M8114 同款，未收录）
+// #399 起 +60（M8881-M8918 与 M8919-M8940，page-item-shop 27 /
+// page-monster-shop 18 / page-chara-shop 10 / page-shop 3 / page-shop-trap 2。
+// 其中验收返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
+// 1:1 文本修正、M8940 是菜单行的全角空格；M8915 上一轮按「与 page.mjs 的
+// M8114 同款」跳过，现挂排版条目，那条「回放播种」变异仍未收录）
 
 export default [
   {
@@ -1437,6 +1439,15 @@ export default [
     must_mention: '切回道具商店',
   },
   {
+    desc: 'M8915 商品一览的编号字段宽错一位（3 → 5）',
+    file: 'ere/page/page-monster-shop.js',
+    find: '        `[${pad_display_left(String(id), 3)}] ` +\n        `${pad_display_left(item_name(id), NAME_WIDTH)} ` +',
+    replace:
+      '        `[${pad_display_left(String(id), 5)}] ` +\n        `${pad_display_left(item_name(id), NAME_WIDTH)} ` +',
+    tests: ['monster-shop'],
+    must_mention: '商品一览的排版字面量',
+  },
+  {
     desc: 'M8916 120 分支的满员判据宽一位（< MAX_CHARANUM → <=）',
     file: 'ere/page/page-shop.js',
     find: 'if (era.getAddedCharacters().length < MAX_CHARANUM) {',
@@ -1459,5 +1470,192 @@ export default [
     replace: '',
     tests: ['shop-trap'],
     must_mention: '陷阱商店里的购买',
+  },
+  // —— #399 验收返工：三个商店的排版字面量（列数、字段宽） ——
+  // 每个字面量各一条，value 只错一格；「每行几格」类条目要让整格字符串对不上，
+  // 故测试侧必须列出 ≥ COLUMNS + 1 件（见三个测试文件的“排版字面量”用例）。
+  {
+    desc: 'M8919 道具商店网格的每行格数错一格（GRID_COLUMNS 5 → 4）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const GRID_COLUMNS = 5;',
+    replace: 'const GRID_COLUMNS = 4;',
+    tests: ['item-shop'],
+    must_mention: '两段一览的网格',
+  },
+  {
+    desc: 'M8920 道具商店第一段的名字字段宽错一格（FIRST_GRID_WIDTH 10 → 11）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const FIRST_GRID_WIDTH = 10;',
+    replace: 'const FIRST_GRID_WIDTH = 11;',
+    tests: ['item-shop'],
+    must_mention: '两段一览的网格',
+  },
+  {
+    desc: 'M8921 道具商店第二段的名字字段宽错一格（SECOND_GRID_WIDTH 20 → 19）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const SECOND_GRID_WIDTH = 20;',
+    replace: 'const SECOND_GRID_WIDTH = 19;',
+    tests: ['item-shop'],
+    must_mention: '两段一览的网格',
+  },
+  {
+    desc: 'M8922 道具商店第一段的段尾错一格（FIRST_GRID_END 24 → 23）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const FIRST_GRID_END = 24;',
+    replace: 'const FIRST_GRID_END = 23;',
+    tests: ['item-shop'],
+    must_mention: '两段一览的网格',
+  },
+  {
+    desc: 'M8923 道具商店第二段的段首错一格（SECOND_GRID_START 24 → 25）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const SECOND_GRID_START = 24;',
+    replace: 'const SECOND_GRID_START = 25;',
+    tests: ['item-shop'],
+    must_mention: '两段一览的网格',
+  },
+  {
+    desc: 'M8924 道具商店第二段的段尾错一格（SECOND_GRID_END 36 → 35）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const SECOND_GRID_END = 36;',
+    replace: 'const SECOND_GRID_END = 35;',
+    tests: ['item-shop'],
+    must_mention: '两段一览的网格',
+  },
+  {
+    desc: 'M8925 道具商店第二段的跳过段少一件（[29,30,31] → [29,31]）',
+    file: 'ere/page/page-item-shop.js',
+    find: 'const SECOND_GRID_SKIP = [29, 30, 31];',
+    replace: 'const SECOND_GRID_SKIP = [29, 31];',
+    tests: ['item-shop'],
+    must_mention: '两段一览的网格',
+  },
+  {
+    desc: 'M8926 怪物商店商品一览的每行格数错一格（COLUMNS 2 → 3）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const COLUMNS = 2;',
+    replace: 'const COLUMNS = 3;',
+    tests: ['monster-shop'],
+    must_mention: '商品一览的排版字面量',
+  },
+  {
+    desc: 'M8927 怪物商店商品一览的名字字段宽错一格（NAME_WIDTH 22 → 21）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const NAME_WIDTH = 22;',
+    replace: 'const NAME_WIDTH = 21;',
+    tests: ['monster-shop'],
+    must_mention: '商品一览的排版字面量',
+  },
+  {
+    desc: 'M8928 怪物商店商品一览的等级字段宽错一格（LEVEL_WIDTH 5 → 6）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const LEVEL_WIDTH = 5;',
+    replace: 'const LEVEL_WIDTH = 6;',
+    tests: ['monster-shop'],
+    must_mention: '商品一览的四个判据',
+  },
+  {
+    desc: 'M8929 怪物商店祭品行的名字字段宽错一格（SACRIFICE_NAME_WIDTH 22 → 21）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const SACRIFICE_NAME_WIDTH = 22;',
+    replace: 'const SACRIFICE_NAME_WIDTH = 21;',
+    tests: ['monster-shop'],
+    must_mention: '祭品行与可选行的排版字面量',
+  },
+  {
+    desc: 'M8930 怪物商店祭品行的数量字段宽错一格（SACRIFICE_COUNT_WIDTH 7 → 6）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const SACRIFICE_COUNT_WIDTH = 7;',
+    replace: 'const SACRIFICE_COUNT_WIDTH = 6;',
+    tests: ['monster-shop'],
+    must_mention: '祭品行与可选行的排版字面量',
+  },
+  {
+    desc: 'M8931 怪物商店可选祭品行的名字字段宽错一格（PICK_NAME_WIDTH 20 → 21）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const PICK_NAME_WIDTH = 20;',
+    replace: 'const PICK_NAME_WIDTH = 21;',
+    tests: ['monster-shop'],
+    must_mention: '祭品行与可选行的排版字面量',
+  },
+  {
+    desc: 'M8932 怪物商店可选祭品行的持有数字段宽错一格（PICK_COUNT_WIDTH 5 → 4）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const PICK_COUNT_WIDTH = 5;',
+    replace: 'const PICK_COUNT_WIDTH = 4;',
+    tests: ['monster-shop'],
+    must_mention: '祭品行与可选行的排版字面量',
+  },
+  {
+    desc: 'M8933 怪物商店可选行的编号字段宽错一位（3 → 5）',
+    file: 'ere/page/page-monster-shop.js',
+    find: '        `[${pad_display_left(String(id), 3)}] ` +\n        `${pad_display_left(item_name(id), PICK_NAME_WIDTH)} ` +',
+    replace:
+      '        `[${pad_display_left(String(id), 5)}] ` +\n        `${pad_display_left(item_name(id), PICK_NAME_WIDTH)} ` +',
+    tests: ['monster-shop'],
+    must_mention: '祭品行与可选行的排版字面量',
+  },
+  {
+    desc: 'M8934 异界一览的每行格数错一格（COLUMNS 5 → 4）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'const COLUMNS = 5;',
+    replace: 'const COLUMNS = 4;',
+    tests: ['chara-shop'],
+    must_mention: '一览的排版字面量',
+  },
+  {
+    desc: 'M8935 异界一览的名字字段宽错一格（NAME_WIDTH 14 → 13）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'const NAME_WIDTH = 14;',
+    replace: 'const NAME_WIDTH = 13;',
+    tests: ['chara-shop'],
+    must_mention: '一览的排版字面量',
+  },
+  {
+    // NUM_WIDTH = 2 是原字样面量，而段内编号恒 5 位——2 → 1 不改变任何输出，
+    // 是等价变异（收进来只会造一条永远拦不下的条目）。条目取可观察的那一侧：
+    // 顶宽到 10，`[     10001]` 的填充立刻显现
+    desc: 'M8936 异界一览的编号字段宽顶宽（NUM_WIDTH 2 → 10）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'const NUM_WIDTH = 2;',
+    replace: 'const NUM_WIDTH = 10;',
+    tests: ['chara-shop'],
+    must_mention: '一览只列',
+  },
+  // 下面三条是同一轮顺手修回的三处 1:1（各由本轮的整格断言守）
+  {
+    desc: 'M8937 异界一览的格首少一个前导空格（PRINTFORM 的第二个空格）',
+    file: 'ere/page/page-chara-shop.js',
+    find: '        ` [${pad_display_right(String(l_i), NUM_WIDTH)}] ` +',
+    replace: '        `[${pad_display_right(String(l_i), NUM_WIDTH)}] ` +',
+    tests: ['chara-shop'],
+    must_mention: '一览的排版字面量',
+  },
+  {
+    desc: 'M8938 商品一览的名字字段后少一个半角空格（回到旧写法）',
+    file: 'ere/page/page-monster-shop.js',
+    find: '`${pad_display_left(item_name(id), NAME_WIDTH)} ` +',
+    replace: '`${pad_display_left(item_name(id), NAME_WIDTH)}` +',
+    tests: ['monster-shop'],
+    must_mention: '商品一览的排版字面量',
+  },
+  {
+    desc: 'M8939 可选祭品行格尾的制表符退回全角空格（回到旧写法）',
+    file: 'ere/page/page-monster-shop.js',
+    find: '`- ${info.picked} 只\\t`;',
+    replace: '`- ${info.picked} 只\\u3000`;',
+    tests: ['monster-shop'],
+    must_mention: '祭品行与可选行的排版字面量',
+  },
+  {
+    // 菜单行的全角空格（:30）也算「改了玩家那边就不对」的字面量：本条取
+    // 异界召唤的性别行做代表，怪物商店的 :71 与 :97-99 四行由各自的整行断言
+    // 守（test/monster-shop.test.js），号段 M8940 是本票最后一号
+    desc: 'M8940 异界召唤的性别菜单行少一个全角空格（:30 的四格 → 三格）',
+    file: 'ere/page/page-chara-shop.js',
+    find: "'[1]男性\\u3000\\u3000\\u3000\\u3000[2]女性",
+    replace: "'[1]男性\\u3000\\u3000\\u3000[2]女性",
+    tests: ['chara-shop'],
+    must_mention: '性别选择',
   },
 ];

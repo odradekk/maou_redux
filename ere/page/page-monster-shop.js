@@ -364,9 +364,11 @@ async function select_follower({ arg0, show, guard, rand }) {
       if (race2 !== shop_state.race && race2 !== shop_state.race2) {
         continue;
       }
+      // :238 名字字段与「最低等级：」之间有一个半角空格（在 %…,22,LEFT% 之后，
+      // 是实参里的字面量，不是命令分隔符）
       row +=
         `[${pad_display_left(String(id), 3)}] ` +
-        `${pad_display_left(item_name(id), NAME_WIDTH)}` +
+        `${pad_display_left(item_name(id), NAME_WIDTH)} ` +
         `最低等级：${pad_display_right(String(item_price(id)), LEVEL_WIDTH)}\u3000\u3000`;
       era.set(`itemsales:${id}`, 1); // :240 購入可能フラグ
       shown += 1;
@@ -534,11 +536,13 @@ async function buy_follower({ show, rand }) {
       if (info.level === 0) {
         continue;
       }
+      // :381-382 两行 PRINTFORM 拼一格；格尾是实参里的制表符（不是全角空格，
+      // 与祭品行的 `只` + 两个 U+3000 不同源），照抄成 \t
       row +=
         `[${pad_display_left(String(id), 3)}] ` +
         `${pad_display_left(item_name(id), PICK_NAME_WIDTH)} ` +
         `LV:${info.level} ${pad_display_right(String(info.stock), PICK_COUNT_WIDTH)} ` +
-        `- ${info.picked} 只\u3000`;
+        `- ${info.picked} 只\t`;
       columns += 1;
       if (columns % COLUMNS === 0) {
         era.print(row);
