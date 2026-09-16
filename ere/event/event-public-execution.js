@@ -8,10 +8,7 @@
 
 const era = require('#/era-electron');
 const { search_family } = require('#/chara/chara-family');
-const {
-  kojo_handler_id,
-  public_exucution_koujo_family,
-} = require('#/kojo/kojo-system');
+const { public_exucution_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -50,14 +47,8 @@ async function public_execution(cid, rand_n = default_rand) {
   era_flag.target = cid;
   apply_prestige(cid);
   game.event.公开处刑口上 = result;
-  const kojo_id = kojo_handler_id(cid);
-  if (kojo_id >= 0) {
-    const kojo_arg = kojo_id === 0 ? result : rand_n;
-    await public_exucution_koujo_family.call(kojo_id, {
-      whenMissing: 0,
-      args: [kojo_arg],
-    });
-  }
+  // EVENT_K.ERB:402-412 的 @PUBLIC_EXUCUTION_KOUJO（#403 收口到分发入口）
+  await public_exucution_koujo(cid, result, rand_n);
   // PUBLIC_EXECUTION_KOUJO 可改写 TFLAG:520；原作在 CALL 后读取。
   result = game.event.公开处刑口上;
 

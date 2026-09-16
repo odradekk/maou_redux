@@ -91,6 +91,82 @@ export const FILES = [
         ref: '657-665',
         any: [/^	Q = 1$/m, /^	Q = 2$/m, /^	Q = 0$/m],
       },
+      // —— #403（N19）EVENT_K.ERB 分发表：22 条 TRYCALLFORM 的入口 ——
+      {
+        // 三个 eraWiz 未使用的入口（TRYCALLFORM 在原作是注释态，不派发）
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '24',
+        any: [/^@KOJO_MESSAGE_COM_MASTER$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '44',
+        any: [/^@KOJO_MESSAGE_COM_ASSI$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '68',
+        any: [/^@KOJO_MESSAGE_PLAYERCHANGE$/m],
+      },
+      {
+        // PALAMCNG 的两道守卫与 COM 同款（含 EX_FLAG 臂，#403 补齐）
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '169-181',
+        any: [/^@KOJO_MESSAGE_PALAMCNG$/m],
+      },
+      {
+        // KOJO_EVENT_COM：恒空转的死分发（#14：目标全库 0 个定义）
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '209-219',
+        any: [/^@KOJO_EVENT_COM$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '218',
+        any: [/^\tTRYCALLFORM KOJO_EVENT_COM_\{LOCAL - 100\}$/m],
+      },
+      {
+        // ATTACK_KOUJO 带参（TARGET = ARG:0）；ATTACK_KOUJO_B 吃全局 B
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '311-323',
+        any: [/^@ATTACK_KOUJO,/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '325-337',
+        any: [/^@ATTACK_KOUJO_B$/m],
+      },
+      {
+        // 处刑首五族（#403 从五个事件模块的内联块收口到 kojo-system 入口）
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '357-367',
+        any: [/^@EXUCUTION_KOUJO$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '366',
+        any: [/^\tTRYCALLFORM EXUCUTION_KOUJO_K\{LOCAL - 100\}$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '372-382',
+        any: [/^@MUSEUM_KOUJO$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '387-397',
+        any: [/^@BANISHMENT_KOUJO$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '402-412',
+        any: [/^@PUBLIC_EXUCUTION_KOUJO$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '417-427',
+        any: [/^@GROTESQUE_KOUJO$/m],
+      },
     ],
   },
 ];

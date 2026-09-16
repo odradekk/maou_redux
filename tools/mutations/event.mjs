@@ -769,8 +769,8 @@ export default [
   {
     desc: 'M6951 MUSEUM 口上分发：把性格处理器编号误写成角色 ID',
     file: 'ere/event/event-museum.js',
-    find: '    await museum_koujo_family.call(kojo_id, {',
-    replace: '    await museum_koujo_family.call(a, {',
+    find: '  await museum_koujo(a, result, rand_n);',
+    replace: '  await museum_koujo(result, result, rand_n);',
     tests: ['event-museum'],
     must_mention: '按角色性格分发口上',
   },
