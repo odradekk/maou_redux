@@ -86,7 +86,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info'); // #389 起的全量真身
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** SETCOLOR 255,100,100（:48/:52）——爱慕/淫乱标签 */
@@ -410,8 +410,8 @@ function life_list_item_e(arg) {
     : talent(arg, 121)
       ? { content: '<扶她>' }
       : { content: '  <女>' };
-  // :219 种族・性格（GET_LOOK_INFO 的式中函数，#389 的 LOOK.ERB 全量前的
-  // 子集实现，见 ere/kojo/kojo-dungeon-bitch-log.js 的 get_look_info）
+  // :219 种族・性格（GET_LOOK_INFO 的式中函数，真身在 ere/chara/look-info.js；
+  // #389 落地前它是 kojo-dungeon-bitch-log.js 里的子集，那份已随 #389 并入）
   const look = `[${get_look_info(arg, '种族')} - ${get_look_info(arg, '性格')}]`;
   print_row(
     arg,
