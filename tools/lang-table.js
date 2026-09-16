@@ -884,6 +884,12 @@ const EXEMPT_STRINGS = [
     why: 'EVENT_K10_クラブ.ERB:6412 的育儿室台词，・ 是原作刻意用的停顿分隔样式（「亲・爱・的」的逐字顿挫），非日文假名——与 DUNGEON_RYOUZYOKU.ERB:1895「好好感・受・吧」同款样式。整串豁免，改写时失配变红。#241 收录。',
   },
   {
+    value:
+      '请找出 种族・性格・理由・成为勇者前的生活・发色・瞳色 其中一项有与之共通的奴隶做成肉便器',
+    where: 'ere/page/page-shop-labo.js',
+    why: 'SHOP_LABO ver1.0.2.ERB:4310 的召唤提示，・ 是原作列举六项特征的**分隔样式**（与 SHOP_TAILOR 的「日常着装・裙子」同款处置，#397 先例），非日文假名。整串豁免，改写时失配变红。#398 收录。',
+  },
+  {
     value: '个中滋味 好好感・受・吧』',
     where: 'ere/kojo/kojo-dungeon-ravish.js',
     why: 'DUNGEON_RYOUZYOKU.ERB:1895 的 GIRL_RYOU 处女封印台词，・ 是原作刻意用的停顿分隔样式（「好好感・受・吧」的逐字顿挫），非日文假名。lang-normalize 头注明言「・ 用作分隔样式时会有意红一次」——此处是那个「有意」：整串豁免，改写时失配变红。#182 收录。',
