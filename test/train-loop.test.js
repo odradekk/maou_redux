@@ -454,9 +454,14 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     ),
     '@JUEL_CHECK 的退出键必须是按钮（PR #53）',
   );
-  // 回合结算三档链已落地（#114）：#PRI 存根在场；PARTY_UNITE 自 #172 起
-  // 真身（ere/dungeon/），占位行退场、效果是行动完了复位（上方预置 1）
-  assert(texts.some((line) => line.includes('原作 @AUTO_BUYING，')));
+  // 回合结算三档链已落地（#114）：#PRI 档自 #401 起**零存根**（十个体外
+  // 调用全落真身；本世界 FLAG:34 = 0、金钱不变量成立 → AUTO_BUYING 与
+  // DEBUG_CHECK 都零输出）；「#PRI 档确实跑过」由下方 era_flag.time 的
+  // 0→1 断言作证
+  assert(
+    !texts.some((line) => line.includes('原作 @AUTO_BUYING，')),
+    'AUTO_BUYING 已是真身（#401），不应再打占位行',
+  );
   assert(
     !texts.some((line) => line.includes('原作 @PARTY_UNITE，')),
     'PARTY_UNITE 已是真身（#172），不应再打占位行',

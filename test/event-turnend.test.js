@@ -31,6 +31,14 @@ function setup_turnend() {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
+  // 金钱不变量（#401）：@DEBUG_CHECK 是回合链的一环，按
+  // `MONEY == EX_FLAG:4444 + 8766` 判「钱被改过」，不成立就炸宝库、清零
+  // 资金、随机删一个角色（原作的合法开局满足它：SYSTEM ver1.0.3.ERB:55-56
+  // 的 10000 / 1234，由 @EVENTFIRST 播种；本函数不跑 EVENTFIRST，故在此
+  // 补齐）。缺了它不是「断言太严」，是这个夹具世界不合法——爆炸事件会
+  // 污染整条链的输出与写入清单，还会多掷几次随机数。
+  fixture.store.set('flag:10004', 10000); // MONEY
+  fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
   fixture.load_module('event/event-turnend');
   fixture.load_module('system/turnend-settle');
   fixture.load_module('event/event-turnend-later');
@@ -515,6 +523,19 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
 
   await emit('EVENTTURNEND');
   assert.deepEqual(fixture.var_writes, [
+    // :14 FOR TARGET,0,CHARANUM 写全局 TARGET（#401 起循环体内显式写回，
+    // 否则妊娠判定会读到上个角色的残留）
+    { name: 'flag:10005', value: 0 },
+    // :23 IN_VAGINA_ALL 的九连调：TARGET = 0 落在主人位上，六组带守卫的
+    // 各自早退，三组无守卫的（T_TO_M/KYOUOU_TO_M/SYOKU_TO_M）进
+    // NAKADASHI_CHECK——本世界 FLAG:5 未开妊娠功能，走「清池后返回」支
+    // （:204-210），故是三笔清池（kind 3 → CFLAG:104、kind 6 → 107、
+    // kind 7 → 108；M_TO_T/M_TO_A 被 `TARGET >= 1` 挡在调用之外）
+    { name: 'cflag:0:104', value: 0 },
+    { name: 'cflag:0:107', value: 0 },
+    { name: 'cflag:0:108', value: 0 },
+    // :26 CONCEPTION_CHECK_ALL：无妊娠相手可落定，零写入
+    { name: 'flag:10005', value: 0 }, // :29 TARGET = LOCAL（原值 0）
     { name: 'flag:0', value: 0 }, // :54 休憩标志复位
     { name: 'flag:10003', value: 1 }, // TIME 0→1
     { name: 'flag:10005', value: -1 }, // #PRI 尾部 TARGET = -1
@@ -616,17 +637,27 @@ test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', asyn
   const { fixture, emit, STATE } = setup_turnend();
   await emit('EVENTTURNEND');
   const texts = fixture.text_lines();
-  const pri_tail = texts.findIndex((line) => line.includes('@AUTO_BUYING'));
   const settle_head = texts.findIndex((line) =>
     line.includes('@FORMAT_AUTOTRAIN'),
   );
   const settle_tail = texts.findIndex((line) =>
     line.includes('@CAMPAIGN_GAMEOVER'),
   );
-  assert.ok(pri_tail >= 0 && settle_head >= 0 && settle_tail >= 0);
+  assert.ok(settle_head >= 0 && settle_tail >= 0);
+  assert.ok(settle_head < settle_tail, '普通档内部的两条占位行先后有序');
+  // #PRI 档的尾观测点在 #401 之后不再有存根文本（AUTO_BUYING/DEBUG_CHECK
+  // 已落真身、两者在本世界都零写入），改用写入序作序证人：:135 的
+  // `ASSI = -1` 是该档最后两笔写之一、普通档开头的 `PLAYER = 0` 记其后
+  const pri_tail = fixture.var_writes.findIndex(
+    (w) => w.name === 'flag:10006' && w.value === -1,
+  );
+  const settle_play = fixture.var_writes.findIndex(
+    (w) => w.name === 'flag:10008',
+  );
+  assert.ok(pri_tail >= 0 && settle_play >= 0);
   assert.ok(
-    pri_tail < settle_head && settle_head < settle_tail,
-    '#PRI 档的尾部存根必须先于普通档的头部存根（#6：BEGIN 不中止链）',
+    pri_tail < settle_play,
+    '#PRI 档的尾部写入必须先于普通档的头部写入（#6：BEGIN 不中止链）',
   );
   assert.equal(STATE.SHOP, 'SHOP');
 });
@@ -641,20 +672,11 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   );
   // 名单本身固定（增删存根必须同步本测试与清单）。#115 起 EVENT_NEXTDAY/
   // EVENT_NEXTMONTH 换成真身（ere/event/event-nextday.js、event-nextmonth.js），
-  // 不再占位；#171 起 ENTER_ENEMY 换真身（ere/event/enter-enemy.js）
-  assert.deepEqual(pri_stubs, [
-    'CHECK_SPECIALSKIL',
-    'IN_VAGINA_ALL',
-    'CONCEPTION_CHECK_ALL',
-    'IN_VAGINA_EXTRA',
-    'CONCEPTION_CHECK_EXTRA',
-    'IN_VAGINA_KYOUOU_TO_T',
-    'CONCEPTION_CHECK_KYOUOU_TO_T',
-    'IN_VAGINA_NTRD_TO_T',
-    'CONCEPTION_CHECK_NTRD_TO_T',
-    'AUTO_BUYING',
-    'DEBUG_CHECK',
-  ]);
+  // 不再占位；#171 起 ENTER_ENEMY 换真身（ere/event/enter-enemy.js）；
+  // **#401 起十个体外调用全落真身**（CHECK_SPECIALSKIL 接 #405 的
+  // get-specialtalent.js；八个妊娠调用与 AUTO_BUYING/DEBUG_CHECK 在本文件
+  // 或 ere/event/event-pregnancy.js），#PRI 档名单因此清空
+  assert.deepEqual(pri_stubs, []);
   // #174 起 WEAPON_RESTORE/EQUIP_CHECK 换真身（ere/system/equip/），不再占位；
   // #172 起 PARTY_UNITE/DUNGEON/PARTY_JOIN/PARTY_DEL 换真身（ere/dungeon/）；
   // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（labo-dungeon-map.js 与
@@ -796,4 +818,456 @@ test('战果结算分派（:302 CALL DUNGEON_AFTER）：凯旋（5）与败北�
   );
   assert.equal(fixture.store.get('cflag:1:1'), 0, '凯旋结算后状态清 0');
   assert.equal(fixture.store.get('cflag:2:1'), 0, '败北结算后状态清 0');
+});
+
+// —— #401：十个体外调用换真身 ——
+
+/** 固定随机序（越界即断言失败；#16 惯例的收紧版） */
+function seq(values) {
+  let index = 0;
+  return (n) => {
+    assert.ok(
+      index < values.length,
+      `随机序列已耗尽（第 ${index + 1} 次抽取，只预置了 ${values.length} 个）`,
+    );
+    const value = values[index++];
+    assert.ok(value >= 0 && value < n, `随机值 ${value} 必须在 [0, ${n}) 内`);
+    return value;
+  };
+}
+
+/** 妊娠链靶场：主人 0 与奴隶 31/32，妊娠功能开启、金钱不变量成立 */
+function setup_pregnancy({ time = 0 } = {}) {
+  const fixture = create_era_fixture();
+  for (const cid of [0, 31, 32]) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  fixture.store.set('flag:5', 4); // 妊娠出产功能 ON
+  fixture.store.set('flag:10004', 10000);
+  fixture.store.set('exflag:4444', 1234);
+  fixture.load_module('event/event-turnend');
+  fixture.load_module('system/turnend-settle');
+  fixture.load_module('event/event-turnend-later');
+  const { emit } = fixture.load_module('system/event/registry');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  fixture.disable_enter_enemy();
+  // 指针用 store 预置（不经 era_flag 门面）：门面写会被 var_writes 收录、
+  // 混进后面「循环写回 TARGET」的序列断言
+  fixture.store.set('flag:10005', -1); // TARGET
+  fixture.store.set('flag:10003', time); // TIME
+  return { fixture, emit, era_flag };
+}
+
+test('#401 妊娠判定接入：IN_VAGINA_ALL/CONCEPTION_CHECK_ALL 逐角色跑（TARGET 写回）', async () => {
+  const { fixture, emit } = setup_pregnancy();
+  // 角色 31 挂着主人的精液（CFLAG:101 = 1），其余角色池为空
+  fixture.store.set('cflag:31:101', 1);
+
+  // 全链的随机源取常数 0：妊娠掷骰上界 18（池 1 → 分档 [6,2]）取 0 必命中
+  fixture.override_math_random(() => 0);
+  try {
+    await emit('EVENTTURNEND');
+  } finally {
+    fixture.restore_math_random();
+  }
+
+  assert.equal(
+    fixture.store.get('cflag:31:102'),
+    1,
+    'IN_VAGINA_M_TO_T 命中：妊娠相手 = 1（主人）',
+  );
+  assert.equal(fixture.store.get('cflag:31:101'), 0, '精液池被消费');
+  assert.equal(
+    fixture.store.get('cflag:31:110'),
+    10,
+    'CONCEPTION_CHECK_ALL 落定预产日 = DAY(0) + 10 + rand(6)(0)',
+  );
+  assert.equal(fixture.store.get('cflag:0:102') ?? 0, 0, '角色 0 未被波及');
+  // 循环内逐角色写回 TARGET（原作 FOR TARGET 就是写全局），循环后 :29 还原；
+  // :134 再清成 -1。这条序列同时钉住「没有写回」的退化（只消一次写）
+  assert.deepEqual(
+    fixture.var_writes
+      .filter((w) => w.name === 'flag:10005')
+      .map((w) => w.value)
+      .slice(0, 5),
+    [0, 31, 32, -1, -1],
+    ':14 逐角色写回 → :29 还原 → :134 清空（之后的普通档还会改 TARGET，故此处只钉前五笔）',
+  );
+});
+
+test('#401 妊娠判定接入：第二组（卖春/狂王兽奸/NTR）只在日推进回合跑', async () => {
+  // 用「客」精液池（kind 4 → CFLAG:105）：它是第二组的 IN_VAGINA_EXTRA
+  // 独占的下标——第一组的九连调不碰 105，故池的去留只反映第二组跑没跑
+  const noon = setup_pregnancy({ time: 0 });
+  noon.fixture.store.set('cflag:31:105', 1);
+  noon.fixture.override_math_random(() => 0);
+  try {
+    await noon.emit('EVENTTURNEND');
+  } finally {
+    noon.fixture.restore_math_random();
+  }
+  assert.equal(
+    noon.fixture.store.get('cflag:31:105'),
+    1,
+    '午前回合不得跑第二组（:57 的 TIME == 1 分支才含 :61-74）',
+  );
+  assert.equal(noon.fixture.store.get('cflag:31:102') ?? 0, 0);
+
+  // TIME = 1 → 第二组照跑，REPEAT CHARANUM 自角色 0 起；六件按 :64-71 的
+  // 顺序执行，落定的预产日用第二组跑时的 DAY:0（日推进在 :79 才发生）
+  const afternoon = setup_pregnancy({ time: 1 });
+  afternoon.fixture.store.set('cflag:31:105', 1);
+  afternoon.fixture.override_math_random(() => 0);
+  try {
+    await afternoon.emit('EVENTTURNEND');
+  } finally {
+    afternoon.fixture.restore_math_random();
+  }
+  // 断言看写入序列而非终态：紧随其后的 :77 EVENT_NEXTDAY 会把刚落定的
+  // 妊娠推进成「妊娠中」（ninsin_main 消费 CFLAG:102/110 并置 TALENT:153，
+  // 那是 #115 的职责），终态已不是第二组留下的样子
+  assert.deepEqual(
+    afternoon.fixture.var_writes
+      .filter((w) => w.name.startsWith('cflag:31:'))
+      .slice(0, 4)
+      .map((w) => [w.name, w.value]),
+    [
+      ['cflag:31:102', 4], // :64 IN_VAGINA_EXTRA 命中（妊娠相手 = 4 客）
+      ['cflag:31:105', 0], // :274 清池
+      ['cflag:31:110', 10], // :65 CONCEPTION_CHECK_EXTRA：DAY(0) + 10 + 0
+      ['cflag:31:111', -1], // :385 卖春来源的孩子父亲码 -1
+    ],
+    '第二组的六件按 :64-71 的顺序执行',
+  );
+});
+
+test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async () => {
+  const fixture = create_era_fixture();
+  const { auto_buying } = fixture.load_module('event/event-turnend');
+  const money = () => fixture.store.get('flag:10004');
+  const legit = () => fixture.store.get('exflag:4444');
+
+  // 开关全关：一毛不拔
+  fixture.store.set('flag:10004', 1000);
+  fixture.store.set('exflag:4444', 1234);
+  await auto_buying();
+  assert.equal(money(), 1000, 'FLAG:34 == 0 时零动作');
+  assert.equal(fixture.store.get('item:25') ?? 0, 0);
+
+  // 位 1：润滑液（200 点，已有则不买）
+  fixture.store.set('flag:34', 1);
+  await auto_buying();
+  assert.equal(fixture.store.get('item:25'), 1);
+  assert.equal(money(), 800, '扣 200');
+  assert.equal(legit(), 1034, 'EX_FLAG:4444 同步扣 200');
+  await auto_buying();
+  assert.equal(money(), 800, 'ITEM:25 != 0 时不再买（守卫 ITEM:25 == 0）');
+
+  // 位 1 的边界：恰好 200 买得起、199 买不起（`>= 200` 的等号那一侧）
+  const exact = create_era_fixture();
+  const { auto_buying: buy_exact } = exact.load_module('event/event-turnend');
+  exact.store.set('flag:34', 1);
+  exact.store.set('flag:10004', 200);
+  await buy_exact();
+  assert.equal(exact.store.get('item:25'), 1, '恰好 200 点买得起');
+  assert.equal(exact.store.get('flag:10004'), 0);
+
+  const poor = create_era_fixture();
+  const { auto_buying: buy_poor } = poor.load_module('event/event-turnend');
+  poor.store.set('flag:34', 1);
+  poor.store.set('flag:10004', 199);
+  await buy_poor();
+  assert.equal(
+    poor.store.get('item:25') ?? 0,
+    0,
+    '199 点买不起 200 点的润滑液',
+  );
+
+  // 位 2：水晶球魔力源（500 点）——前置是已持有水晶球（ITEM:6）
+  const tape = create_era_fixture();
+  const { auto_buying: buy_tape } = tape.load_module('event/event-turnend');
+  tape.store.set('flag:34', 2);
+  tape.store.set('flag:10004', 1000);
+  tape.store.set('exflag:4444', 1234);
+  await buy_tape();
+  assert.equal(
+    tape.store.get('item:28') ?? 0,
+    0,
+    '没有水晶球（ITEM:6 == 0）不买',
+  );
+  tape.store.set('item:6', 1);
+  await buy_tape();
+  assert.equal(tape.store.get('item:28'), 1);
+  assert.equal(tape.store.get('flag:10004'), 500);
+
+  // 位 8：安全套（100 点，REPEAT 10 逐个买，钱不够或到上限 10 即停）
+  const broke = create_era_fixture();
+  const { auto_buying: buy_broke } = broke.load_module('event/event-turnend');
+  broke.store.set('flag:34', 8);
+  broke.store.set('flag:10004', 950); // 只够 9 个
+  await buy_broke();
+  assert.equal(broke.store.get('item:24'), 9, '钱限：950 点只买到 9 个');
+  assert.equal(broke.store.get('flag:10004'), 50, '剩下的 50 点不够再买');
+
+  // 钱管够时一次买满 10 个（REPEAT 的次数与 ITEM:24 < 10 的上限各钉一处：
+  // 次数少一次或上限小一个都只买得到 9 个）
+  const capped = create_era_fixture();
+  const { auto_buying: buy_capped } = capped.load_module('event/event-turnend');
+  capped.store.set('flag:34', 8);
+  capped.store.set('flag:10004', 5000);
+  await buy_capped();
+  assert.equal(capped.store.get('item:24'), 10, '上限 10 且循环 10 次：买满');
+  assert.equal(capped.store.get('flag:10004'), 4000, '实扣 10 × 100');
+
+  const nearly = create_era_fixture();
+  const { auto_buying: buy_nearly } = nearly.load_module('event/event-turnend');
+  nearly.store.set('flag:34', 8);
+  nearly.store.set('flag:10004', 5000);
+  nearly.store.set('item:24', 9); // 已有 9 个 → 本轮最多再买 1 个
+  await buy_nearly();
+  assert.equal(nearly.store.get('item:24'), 10, '已有 9 个时只再买 1 个');
+  assert.equal(nearly.store.get('flag:10004'), 4900, '实扣 1 × 100');
+});
+
+/** DEBUG_CHECK 靶场：主人 0 + 两名奴隶，金钱不变量成立（不触发任何事件） */
+function setup_debug() {
+  const fixture = create_era_fixture();
+  for (const cid of [0, 31, 32]) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  fixture.store.set('flag:10004', 10000); // MONEY
+  fixture.store.set('exflag:4444', 1234); // 非作弊资金（不变量成立）
+  const { debug_check } = fixture.load_module('event/event-turnend');
+  return { fixture, debug_check };
+}
+
+test('#401 DEBUG_CHECK：不变量成立时整支空转（不写一个字节、不打印一行）', async () => {
+  const { fixture, debug_check } = setup_debug();
+  assert.equal(await debug_check(seq([])), 0);
+  assert.deepEqual(fixture.var_writes, []);
+  assert.deepEqual(fixture.text_lines(), []);
+  assert.equal(fixture.store.get('exflag:2802') ?? 0, 0);
+});
+
+test('#401 DEBUG_CHECK 第一段：钱被改过 → 宝库爆炸、资金清零、随机炸死一名奴隶', async () => {
+  const { fixture, debug_check } = setup_debug();
+  fixture.store.set('flag:10004', 5000); // 改钱：5000 ≠ 1234 + 8766
+  fixture.store.set('flag:1', 31); // 上次调教对象 = 将要被炸死的角色
+  fixture.store.set('flag:2', 32); // 上次助手（不是受害者，不该被清）
+
+  // 随机源：added = [0, 31, 32]，rand(3) = 1 → 抽中角色 31；后续掷骰给 0
+  assert.equal(await debug_check(seq([1, 0, 0])), 0);
+
+  assert.equal(
+    fixture.store.get('flag:10004'),
+    0,
+    ':198 MONEY = 0（宝库的财富被炸光）',
+  );
+  assert.equal(
+    fixture.store.get('exflag:4444'),
+    -8766,
+    ':199 EX_FLAG:4444 = MONEY - 8766（重建不变量）',
+  );
+  assert.equal(fixture.store.get('exflag:2802'), 0, ':234 触发位复位');
+  assert(!fixture.chara_no.includes(31), ':226 DELCHARA——角色 31 被炸死');
+  assert.equal(fixture.store.get('flag:1'), -1, ':210-211 上次调教对象被清');
+  assert.equal(fixture.store.get('flag:2'), 32, ':212-213 上次助手不受影响');
+  const texts = fixture.text_lines();
+  assert(
+    texts.some((line) => line.includes('一些贪婪的魔物')),
+    '开场白',
+  );
+  assert(
+    texts.some((line) => line.includes('资金清零了。')),
+    '资金清零播报',
+  );
+  assert(
+    texts.some((line) => line.includes('角色31被炸死了。')),
+    '受害者的死亡播报（SAVESTR 读 callname）',
+  );
+});
+
+test('#401 DEBUG_CHECK：一周目主线进了结局档（EX_FLAG:2801 % 100 >= 10）三段全不跑', async () => {
+  const { fixture, debug_check } = setup_debug();
+  fixture.store.set('flag:10004', 5000); // 改钱
+  fixture.store.set('exflag:2801', 10); // 档位 10 恰好卡在边界（< 10 才算未进结局）
+
+  await debug_check(seq([]));
+  assert.equal(fixture.store.get('flag:10004'), 5000, '结局档内不炸宝库');
+  assert.equal(fixture.store.get('exflag:2802'), 1, '检测位仍然被置起');
+  assert.deepEqual(fixture.text_lines(), []);
+
+  // 第二段/第三段共用这道守卫（:237/:310），三处各走一次：只测第一段时，
+  // 后两段的 `&& not_in_ending` 被删同样看不出
+  const second = setup_debug();
+  second.fixture.store.set('exflag:2801', 10); // 结局档
+  second.fixture.store.set('cflag:31:9', 5000); // 失控奴隶 → 2803 = 31
+  second.fixture.store.set('exflag:2803', 31);
+  await second.debug_check(seq([]));
+  assert.ok(
+    second.fixture.chara_no.includes(31),
+    '结局档内第二段不跑：失控的奴隶不该被除名',
+  );
+  assert.equal(second.fixture.store.get('exflag:2803'), 31, '触发位也不复位');
+
+  const third = setup_debug();
+  third.fixture.store.set('exflag:2801', 10); // 结局档
+  third.fixture.store.set('cflag:0:9', 5000); // 魔王失控
+  third.fixture.set_inputs(0);
+  assert.equal(
+    await third.debug_check(seq([])),
+    0,
+    '结局档内第三段不跑（不 QUIT）',
+  );
+  assert.equal(third.fixture.store.get('exflag:2804'), 1, '触发位留着');
+  assert(
+    !third.fixture.text_lines().some((line) => line.includes('大冲击')),
+    '结局档内不打大冲击终幕',
+  );
+});
+
+test('#401 DEBUG_CHECK 第二段：等级超 5000 的奴隶暴走，自身与近邻一起被炸死', async () => {
+  const { fixture, debug_check } = setup_debug();
+  fixture.store.set('cflag:31:9', 5000); // 等级 5000、状态位 0
+  // 第一段不跑（钱没改），第二段的两次抽样都在 added = [0, 31, 32] 上：
+  // 第一次 rand(3) = 1 → 角色 31（受害者）、第二次 rand(3) = 2 → 角色 32（近邻）
+  assert.equal(await debug_check(seq([1, 2])), 0);
+
+  assert.equal(fixture.store.get('exflag:2803'), 0, ':307 触发位复位');
+  assert(!fixture.chara_no.includes(31), '暴走的奴隶被除名');
+  assert(!fixture.chara_no.includes(32), '近邻陪葬');
+  assert(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('角色31被自己暴走的魔力炸得粉碎！')),
+    ':251 暴走播报',
+  );
+  assert(
+    fixture
+      .text_lines()
+      .some((line) => line.includes('角色32因为房间就在角色31的旁边')),
+    ':278 近邻播报',
+  );
+});
+
+test(
+  '#401 DEBUG_CHECK 第二段：抽不到可炸角色时按 5000 次上限退出（原作此处是死循环）',
+  {
+    timeout: 10000,
+  },
+  async () => {
+    // 只有一个角色（主人 0）时，`RAND:CHARANUM` 永远抽到 0、`LOCAL:1 > 0`
+    // 恒假——原作的 ELSEIF 空体不置 -1，DO 循环因此永不终止。本移植按意图
+    // 补齐退出（文件头偏离二）：本用例在 5000 次抽样后正常返回，改回原样
+    // 则由下方自守抛出（同步死循环挂不住 timeout，见第一段的说明）
+    const { fixture, debug_check } = setup_debug();
+    fixture.store.set('cflag:31:9', 5000); // 2803 = 31
+    fixture.store.set('exflag:2803', 31);
+    // 受害者 31 不在在场名单里也可达：把 31 移出名单后再跑第二段
+    fixture.era.removeCharacter(31);
+    fixture.era.removeCharacter(32);
+    // 抽取自守（缘由同第一段：同步死循环不会被 timeout 打断）
+    let draws = 0;
+    const rand = () => {
+      draws += 1;
+      assert.ok(
+        draws <= 5000,
+        '抽取次数超过 5000（放弃支被删或被改；原作此处会死循环）',
+      );
+      return 0;
+    };
+    assert.equal(await debug_check(rand), 0);
+    assert.equal(draws, 5000, '恰好抽 5000 次后放弃（LOCAL:5 < 5000 的守卫）');
+    assert.equal(fixture.store.get('exflag:2803'), 0);
+  },
+);
+
+test(
+  '#401 DEBUG_CHECK 第一段：抽不到可炸角色时按 5000 次上限退出（原作此处是死循环）',
+  {
+    timeout: 10000,
+  },
+  async () => {
+    // 第一段的同款出口（:230-231 有 LOCAL:1 = -1，与第二段不同、原作在此是
+    // 正确的）：全场只剩主人一个时 RAND 恒抽到 0、`LOCAL:1 > 0` 恒假
+    const { fixture, debug_check } = setup_debug();
+    fixture.era.removeCharacter(31);
+    fixture.era.removeCharacter(32);
+    fixture.store.set('flag:10004', 5000); // 改钱 → 第一段点火
+    // 抽取自守：把「放弃」那一支删掉时循环不再终止，而**同步死循环不会
+    // 被 node:test 的 timeout 打断**（事件循环整个被占住）——让它超界抛出，
+    // 红得起来才叫守住了
+    let draws = 0;
+    const rand = () => {
+      draws += 1;
+      assert.ok(
+        draws <= 5000,
+        '抽取次数超过 5000（放弃支被删或被改；原作此处会死循环）',
+      );
+      return 0;
+    };
+    assert.equal(await debug_check(rand), 0);
+    assert.equal(draws, 5000, '恰好抽 5000 次后放弃（LOCAL:5 < 5000 的守卫）');
+    assert.equal(fixture.store.get('exflag:2802'), 0, '触发位仍要复位');
+  },
+);
+
+test(
+  '#401 DEBUG_CHECK：两段搜索共用同一个预算（LOCAL:5 是同一个局部量）',
+  {
+    timeout: 10000,
+  },
+  async () => {
+    // 原作两段 DO 都在自增 LOCAL:5（:204 / :276），第二段的 5000 次预算接着
+    // 第一段算。两支拆成独立计数器时本题会掷 10000 次，这里只允许 5001：
+    // 第二段是 DO 循环，先抽一次再看预算，故多一掷
+    const { fixture, debug_check } = setup_debug();
+    fixture.era.removeCharacter(31);
+    fixture.era.removeCharacter(32);
+    fixture.store.set('flag:10004', 5000); // 改钱 → 第一段点火
+    fixture.store.set('exflag:2803', 31); // 第二段也点火（该角色已不在场）
+    let draws = 0;
+    assert.equal(
+      await debug_check(() => {
+        draws += 1;
+        return 0;
+      }),
+      0,
+    );
+    assert.equal(
+      draws,
+      5001,
+      '第一段用光预算后第二段立刻放弃——各自 5000 会到 10000',
+    );
+  },
+);
+
+test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAMEOVER', async () => {
+  const { fixture, debug_check } = setup_debug();
+  fixture.store.set('cflag:0:9', 5000);
+  fixture.set_inputs(0); // :330 INPUT
+
+  await assert.rejects(() => debug_check(seq([])), /quit/, ':331 QUIT');
+  assert.equal(fixture.store.get('exflag:2804'), 0, ':323 触发位复位');
+  const texts = fixture.text_lines();
+  assert(
+    texts.some((line) => line.includes('你的魔力失控！发生大爆炸！')),
+    ':324 播报',
+  );
+  assert(
+    texts.some((line) =>
+      line.includes('-------------------------------GAMEOVER-------'),
+    ),
+    ':329 GAMEOVER 横幅',
+  );
 });

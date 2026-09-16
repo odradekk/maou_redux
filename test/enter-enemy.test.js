@@ -138,6 +138,10 @@ test('链路：生成勇者后 turnend-settle 的 DUNGEON 守卫第一次为真�
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.era.addCharacter(0);
+  // 金钱不变量（#401）：@DEBUG_CHECK 按 `MONEY == EX_FLAG:4444 + 8766` 判
+  // 「钱被改过」，不成立就随机删一个角色（本用例断言角色 1 仍在场）
+  fixture.store.set('flag:10004', 10000); // MONEY
+  fixture.store.set('exflag:4444', 1234); // EX_FLAG:4444（非作弊资金）
   // 三档链同 test/event-nextday.test.js 的 setup
   fixture.load_module('event/event-turnend');
   fixture.load_module('system/turnend-settle');

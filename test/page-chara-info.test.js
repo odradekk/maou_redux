@@ -578,7 +578,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：以全部已加入角色 ID 为顺位表打
 
 // —— 未落地调用一律走存根，登记与实现同步 ——
 
-test('STUBBED_CALLS：转职/魔诱/结婚/育儿/装备/兼职/调试/立绘/统一积极性/换号均在列', async () => {
+test('STUBBED_CALLS：转职/魔诱/结婚/装备/兼职/调试/立绘/统一积极性/换号均在列', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -587,19 +587,18 @@ test('STUBBED_CALLS：转职/魔诱/结婚/育儿/装备/兼职/调试/立绘/�
   );
 
   // SHOW_BUTTON_NAME_EDIT / CHARA_INFO_NAME_EDIT 自 #384 起是真身
-  // （ere/chara/chara-name-edit.js），不再是本文件的存根
+  // （ere/chara/chara-name-edit.js），SHOW_BUTTON_CHILD_CARE / CHILD_CARE_CHARA
+  // 自 #401 起是真身（ere/event/event-pregnancy.js），均不再是本文件的存根
   for (const name of [
     'SHOW_CHARA_INFO',
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
     'SHOW_BUTTON_MARRIAGE',
-    'SHOW_BUTTON_CHILD_CARE',
     'SHOW_BUTTON_EQUIP',
     'PTJ_BUTTON',
     'CHARA_INFO_JOB_CHANGE',
     'TEMPTATION',
     'MARRIAGE',
-    'CHILD_CARE_CHARA',
     'EQUIP_ST_SHOW',
     'CHAR_DEBUG',
     'RANDOM_SELF_CALL',
@@ -609,14 +608,21 @@ test('STUBBED_CALLS：转职/魔诱/结婚/育儿/装备/兼职/调试/立绘/�
   ]) {
     assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
   }
+  for (const name of ['SHOW_BUTTON_CHILD_CARE', 'CHILD_CARE_CHARA']) {
+    assert.ok(
+      !STUBBED_CALLS.includes(name),
+      `${name} 已有真身，不应再留在本文件的存根名单里`,
+    );
+  }
 
-  // 转职/魔诱/结婚/育儿(sub_page 0)与装备/兼职(sub_page 1/2)的按钮存根
-  // 都在「绘制期」用 stub_line 打占位文本（不是可点击按钮，CASE 0-5/8/16/99
+  // 转职/魔诱/结婚(sub_page 0)与装备/兼职(sub_page 1/2)的按钮存根
+  // 都在「绘制期」用 stub_line 打占位文本（不是可点击按钮，CASE 2-4/8/16/99
   // 因此目前无法通过 era.input() 驱动到——它们等各自的按钮票落地后才可达，
   // 见文件头「运行时可用只有已渲染按钮的快捷键」）。这里只验证绘制期占位
   // 文本确实出现，不去点它们背后尚不可达的分发分支。
-  // 改名按钮自 #384 起由 show_button_name_edit 渲染成真按钮（不再是占位
-  // 文本），下面单独断言它出现在按钮行里。
+  // 改名按钮自 #384 起由 show_button_name_edit 渲染成真按钮、
+  // 育儿室按钮自 #401 起由 show_button_child_care 渲染成真按钮（都在
+  // 判定放行时才渲染），下面分别断言。
   fixture.set_inputs(100);
   const result = await chara_info_individual(1, [1]);
   assert.equal(result, 0);
@@ -627,11 +633,14 @@ test('STUBBED_CALLS：转职/魔诱/结婚/育儿/装备/兼职/调试/立绘/�
     rendered.includes('[0] 改名 ') && rendered.includes('[1] 还原名字 '),
     '改名 / 还原名字按钮已渲染（#384 真身）',
   );
+  assert.ok(
+    !rendered.includes('[5] 前往育儿室'),
+    '角色 1 不在育儿室（CFLAG:1:1 = 0）→ 育儿室按钮不渲染（#401 真身，:459-467）',
+  );
   for (const stub_name of [
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
     'SHOW_BUTTON_MARRIAGE',
-    'SHOW_BUTTON_CHILD_CARE',
   ]) {
     assert.equal(
       printed_includes(fixture, `@${stub_name}`),
@@ -639,4 +648,35 @@ test('STUBBED_CALLS：转职/魔诱/结婚/育儿/装备/兼职/调试/立绘/�
       `${stub_name} 绘制期占位应出现`,
     );
   }
+});
+
+test('育儿室接线（#401）：在育儿室的角色渲染 [5] 按钮，按下后进 CHILD_CARE_CHARA 真身', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:1', 10); // 状态位 10 = 育儿室
+  const { chara_info_individual } = fixture.load_module('page/page-chara-info');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+
+  // 输入 5（育儿室）→ 真身跑完回到页内继续重绘 → 100 退出
+  fixture.set_inputs(5, 100);
+  assert.equal(await chara_info_individual(1, [1]), 0);
+
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((b) => b.rendered);
+  assert.ok(
+    rendered.includes('[5] 前往育儿室'),
+    '育儿室里的角色应渲染按钮（CHECK_ABLE_TO_CHILD_CARE == 0）',
+  );
+  assert(
+    fixture.lines_history.some((line) => line.text === '你去了甲的育儿室。'),
+    '按下 [5] 后走真身的到访播报',
+  );
+  assert.equal(era_flag.target, 1, 'CHILD_CARE_CHARA 的 TARGET = ARG');
+  assert.equal(
+    printed_includes(fixture, '@CHILD_CARE_CHARA'),
+    false,
+    '不再打 CHILD_CARE_CHARA 的占位行',
+  );
 });

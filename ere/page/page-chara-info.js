@@ -76,6 +76,10 @@ const {
   chara_info_callback,
 } = require('#/chara/chara-info-actions');
 const { transfer_soul } = require('#/chara/chara-soul-transfer');
+const {
+  child_care_chara,
+  show_button_child_care,
+} = require('#/event/event-pregnancy');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
@@ -84,19 +88,19 @@ const NUM_PAGE = 24;
 
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
+ * #401 起「育儿室」按钮与流程换真身（ere/event/event-pregnancy.js 的
+ * show_button_child_care / child_care_chara），两条从名单移除。
  */
 const STUBBED_CALLS = [
   'SHOW_CHARA_INFO',
   'SHOW_BUTTON_JOB_CHANGE',
   'SHOW_BUTTON_TEMPTATION',
   'SHOW_BUTTON_MARRIAGE',
-  'SHOW_BUTTON_CHILD_CARE',
   'SHOW_BUTTON_EQUIP',
   'PTJ_BUTTON',
   'CHARA_INFO_JOB_CHANGE',
   'TEMPTATION',
   'MARRIAGE',
-  'CHILD_CARE_CHARA',
   'EQUIP_ST_SHOW',
   'CHAR_DEBUG',
   'RANDOM_SELF_CALL',
@@ -629,7 +633,8 @@ async function chara_info_individual(arg, chara_sort) {
       await stub_line('SHOW_BUTTON_JOB_CHANGE', '「转职」按钮', '随转职票');
       await stub_line('SHOW_BUTTON_TEMPTATION', '「魔的诱惑」按钮', '随堕落票');
       await stub_line('SHOW_BUTTON_MARRIAGE', '「结婚」按钮', '随结婚票');
-      await stub_line('SHOW_BUTTON_CHILD_CARE', '「育儿室」按钮', '随育儿票');
+      // :863 CALL SHOW_BUTTON_CHILD_CARE(5,ARG)（#401 真身，ere/event/event-pregnancy.js）
+      show_button_child_care(5, current);
       if (is_able_to_ability_up(current)) era.printButton('提升能力', 10);
       if (current !== 0) {
         era.printButton(
@@ -769,7 +774,9 @@ async function chara_info_individual(arg, chara_sort) {
         await stub_line_wait('MARRIAGE', '结婚', '随结婚票');
         continue;
       case 5:
-        await stub_line_wait('CHILD_CARE_CHARA', '育儿室', '随育儿票');
+        // :1060 CALL CHILD_CARE_CHARA(ARG)（#401 真身；返回 2 是「侵攻中的
+        // 勇者」防御支，此处与其它 case 同款忽略返回值，留在页内继续导航）
+        await child_care_chara(current);
         continue;
       case 8:
         // RANDOM_SELF_CALL(ARG,1)：MODE 1 是自定义输入改名分支，已落地的

@@ -69,6 +69,9 @@ function expected_init_writes(initial_slave) {
     { name: 'flag:37', value: 1 }, // :47 着衣系统：开
     { name: 'flag:8', value: 7 }, // :50-52 新档翻位 0b111
     { name: 'flag:10004', value: 10000 }, // :55 MONEY = 10000
+    { name: 'exflag:4444', value: 1234 }, // :56 EX_FLAG:4444 = 1234（#401 起播种：
+    // @DEBUG_CHECK 按 MONEY == EX_FLAG:4444 + 8766 判「钱被改过」，这份不变量
+    // 是它不误伤正常开局的全部依据）
     { name: 'cflag:0:451', value: 21 }, // :60 魔王相当于人类年龄
     { name: 'exflag:99', value: 70 }, // :62 EX_FLAG:99 = 70（初始威望，#117
     // 接入：ExFlag.yml 已随 #113 落地，播种是侵略线窄路径的前置——威望 0

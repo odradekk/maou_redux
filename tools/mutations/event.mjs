@@ -1001,7 +1001,7 @@ export default [
   {
     desc: 'M7941 forced_semen_liking：TFLAG:110/seiin 双门判据被拆成恒真',
     file: 'ere/event/get-specialtalent.js',
-    find: '  if (!(game.event.精爱味觉 && talent(cid, 47) === 0 && seiin)) {',
+    find: '  if (!seiin || !game.event.精爱味觉 || talent(cid, 47) !== 0) {',
     replace: '  if (false) {',
     tests: ['event-get-specialtalent'],
     must_mention: 'TFLAG:110 为假时跳过',

@@ -772,7 +772,14 @@ async function constant_arousal(cid) {
 
 /** :607-624 喜欢精液の习得（TFLAG:110 强制精饮绝顶触发 + seiin 参数） */
 async function forced_semen_liking(cid, seiin) {
-  if (!(game.event.精爱味觉 && talent(cid, 47) === 0 && seiin)) {
+  // :607 逐字是 `IF TFLAG:110 && TALENT:47 == 0 && SEIIN`。**ERE 侧有意调整
+  // 了三个操作数的次序**：EraElectron 的 tflag 桶随 endTrain 销毁（Emuera
+  // 里它始终在场），而 `@EVENTTURNEND`（EVENT_TURNEND.ERB:20）正是调教外
+  // 的调用点、SEIIN 取默认 0——照原序先读 TFLAG:110 会直接抛 key error。
+  // `&&` 的结论与次序无关，先判 SEIIN 的短路结果与原序逐字等价（SEIIN 为 0
+  // 时两支都是「不习得」），顺带把「调教外不读 tflag」这条引擎约束显式化。
+  // 另一处调用点 TRAIN_MAIN.ERB:544 传 SEIIN = 1，在调教期内、tflag 在场。
+  if (!seiin || !game.event.精爱味觉 || talent(cid, 47) !== 0) {
     return;
   }
   const name = chara_callname(cid);
