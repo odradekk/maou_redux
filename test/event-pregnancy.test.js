@@ -430,11 +430,19 @@ test('CONCEPTION_CHECK 十二组：妊娠相手为本组码且无预产日时落
     fixture.store.set(`cflag:${cid}:102`, pair.kind); // 妊娠相手 = 本组
     fixture.store.set('flag:10000', 7); // DAY:0
 
+    // 随机跨度只在 rand 的实参上：只断言「落定到 7 + 10 + 5」的话，
+    // `rand(6)` 改成 `rand(7)` 全绿——注入的随机源不看实参 n（#401 验收
+    // 探针）。捕获 n 即 RAND:6，与落定的天数分开各钉一条。
+    let span = null;
     assert.equal(
-      pregnancy[`conception_check_${pair.name}`](seq([5])),
+      pregnancy[`conception_check_${pair.name}`]((n) => {
+        span = n;
+        return 5;
+      }),
       0,
       `${pair.name}：原作函数一律 RETURN 0`,
     );
+    assert.equal(span, 6, `${pair.name}：预产日的随机跨度是 RAND:6（:365）`);
     assert.equal(
       fixture.store.get(`cflag:${cid}:110`),
       7 + 10 + 5,
