@@ -9,8 +9,9 @@
  * 其后的善恶值/时常发情/气力回复/JUEL_CHECK/指针还原按原作一并跳过。
  *
  * 存根（docs/stub-registry.md 函数表）：CHARADEAD_CHECK / SELF_CHECK /
- * AFTERTRAIN_CLOTH / RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET /
- * MAOU_TENSHIN / KARMA。
+ * AFTERTRAIN_CLOTH / RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET / KARMA。
+ * MAOU_TENSHIN 自 #400（N16）起为真身（ere/event/event-nextday.js 的
+ * event_maou_tenshin，本体源 EVENT_NEXTDAY.ERB:2455-2479）。
  * @JUEL_CHECK（:421 的一次性珠结算）已随 #47 实现
  * （system/train/juel-check.js，含与 era.endTrain 的职责划分定案）。
  */
@@ -20,6 +21,7 @@ const { karma } = require('#/chara/chara-stats');
 const { name_reset } = require('#/chara/char-make');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
+const { event_maou_tenshin } = require('#/event/event-nextday');
 const { run_juel_check } = require('#/system/train/juel-check');
 const { sell_video } = require('#/system/stronghold/sell-video');
 const era_flag = require('#/era-utils/era-flag');
@@ -36,7 +38,7 @@ const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
  */
 const { self_check } = require('#/event/event-aftertrain');
 
-const STUBBED_CALLS = ['CHARADEAD_CHECK', 'PARTY_CHAR_DEL', 'MAOU_TENSHIN'];
+const STUBBED_CALLS = ['CHARADEAD_CHECK', 'PARTY_CHAR_DEL'];
 
 on(
   'EVENTEND',
@@ -114,8 +116,10 @@ on(
       await name_reset();
       begin(STATE.TURNEND); // :375 —— 结束本函数，其后结算整段跳过
     } else if ((target_stamina < 1 || target_willpower < 1) && target === 0) {
-      // :376-378 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）
-      stub_line('MAOU_TENSHIN', '魔王换人');
+      // :376-378 魔王换人的处理（调教目标 == 魔王且倒下：濒死/气力尽）——
+      // 本体在 ere/event/event-nextday.js（@MAOU_TENSHIN 的源文件即
+      // EVENT_NEXTDAY.ERB），#400（N16）接线
+      await event_maou_tenshin();
     }
 
     // :381-390 善恶值増減（EX:1 私处绝顶 / EX:2 肛门绝顶，零指令下恒 0）

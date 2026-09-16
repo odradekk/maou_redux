@@ -226,11 +226,9 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'utf8',
   );
 
-  assert.deepEqual(STUBBED_CALLS, [
-    'CHARADEAD_CHECK',
-    'PARTY_CHAR_DEL',
-    'MAOU_TENSHIN',
-  ]);
+  // MAOU_TENSHIN 自 #400（N16）起为真身（ere/event/event-nextday.js），
+  // 本模块的存根名单随之少一项
+  assert.deepEqual(STUBBED_CALLS, ['CHARADEAD_CHECK', 'PARTY_CHAR_DEL']);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
