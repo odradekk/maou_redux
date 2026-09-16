@@ -92,6 +92,28 @@ const cflag = {
     '媚药禁断症状',
     src(SRC_FLAG, 'CFLAG:32 媚薬中毒の禁断症状判定'),
   ),
+  // —— 着衣/服装状态与出击相关（#397 逐条补名：这些下标的属主域门面此前
+  // 没有访问器，跨域写只能裸寻址；本票按 domain-check 的指引补名后改用门面）——
+  43: named_tail(
+    '内裤状态',
+    src(
+      SRC_FLAG,
+      'CFLAG:43 パンツの状態（-3:破り取られている -2:汚物まみれ -1:没収 0:通常 1以上:洗濯中）',
+    ),
+  ),
+  47: named_tail(
+    '特别服装状态',
+    src(SRC_FLAG, 'CFLAG:47 特別コスチュームの状態（同上の符号约定）'),
+  ),
+  48: named_tail(
+    '内裤穿着期间',
+    src(SRC_FLAG, 'CFLAG:48 現在のパンツを穿き続けている期間'),
+  ),
+  49: named_tail(
+    '贞操带钥匙已丢弃',
+    src(SRC_FLAG, 'CFLAG:49 貞操帯のカギを捨てた'),
+  ),
+  505: named_tail('勇者击破数', src(SRC_FLAG, 'CFLAG:505 勇者撃破数')),
   491: named_tail('录像时间', src(SRC_FLAG, 'CFLAG:491 撮影時間')),
   493: named_tail('录像价值', src(SRC_FLAG, 'CFLAG:493 評価')),
   495: named_tail('录像浏览数', src(SRC_FLAG, 'CFLAG:495 閲覧者数')),

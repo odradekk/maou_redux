@@ -1,6 +1,7 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 136; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）
+export const COUNT = 140; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+// #397 起 +4（M8437-M8440，stronghold/gohoubi-request）
 
 export default [
   {
@@ -952,9 +953,9 @@ export default [
   },
   {
     desc: 'M6839 ABILITY_UP 出口断开出售资格复核',
-    file: 'ere/page/page-shop.js',
-    find: '    await check_sellassiable(era_flag.target);',
-    replace: '    // 变异：漏掉能力提升出口的出售资格复核',
+    file: 'ere/page/page-ability-up.js',
+    find: '      await check_sellassiable(era_flag.target); // :248（CALL CHECK_SELLASSIABLE 无参）',
+    replace: '      // 变异：漏掉能力提升出口的出售资格复核',
     tests: ['sale-chara'],
     must_mention: '能力提升出口都调用真身',
   },
@@ -1122,5 +1123,38 @@ export default [
     replace: '  // 变异：EX_FLAG:4444 不入账',
     tests: ['shop-tax'],
     must_mention: '入账：MONEY 与 EX_FLAG:4444',
+  },
+  {
+    desc: 'M8437 GOHOUBI_REQUEST 女装档偏移（+1 → +2）',
+    file: 'ere/system/stronghold/gohoubi-request.js',
+    find: '    wish = rand(3) + 1; // :670-671 女装',
+    replace: '    wish = rand(3) + 2; // 变异：女装档偏移',
+    tests: ['page-intercept'],
+    must_mention: 'WISH 三档判据整表驱动',
+  },
+  {
+    desc: 'M8438 GOHOUBI_REQUEST 爱慕档偏移（+4 → +5）',
+    file: 'ere/system/stronghold/gohoubi-request.js',
+    find: '    wish = rand(3) + 4; // :672-673 爱慕',
+    replace: '    wish = rand(3) + 5; // 变异：爱慕档偏移',
+    tests: ['page-intercept'],
+    must_mention: 'WISH 三档判据整表驱动',
+  },
+  {
+    desc: 'M8439 GOHOUBI_REQUEST 淫乱档偏移（+7 → +8）',
+    file: 'ere/system/stronghold/gohoubi-request.js',
+    find: '    wish = rand(3) + 7; // :677-678 淫乱',
+    replace: '    wish = rand(3) + 8; // 变异：淫乱档偏移',
+    tests: ['page-intercept'],
+    must_mention: 'WISH 三档判据整表驱动',
+  },
+  {
+    desc: 'M8440 GOHOUBI_REQUEST 6→4 降级判据错位（121 → 120）',
+    file: 'ere/system/stronghold/gohoubi-request.js',
+    find: '    if (wish === 6 && talent(0, 121) === 0 && talent(0, 122) === 0) {',
+    replace:
+      '    if (wish === 6 && talent(0, 120) === 0 && talent(0, 122) === 0) {',
+    tests: ['page-intercept'],
+    must_mention: 'WISH 三档判据整表驱动',
   },
 ];

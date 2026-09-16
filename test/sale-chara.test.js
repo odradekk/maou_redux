@@ -416,12 +416,16 @@ test('CHECK_SELLASSIABLE：回合结束与珠结算两个入口，以及能力�
     !juel.text_lines().some((line) => line.includes('@CHECK_SELLASSIABLE')),
   );
 
+  // 能力提升的出口：@ABILITY_UP_CORE 的 [999] 支（#397 起真身落地——
+  // usershop(105) 改开能力提升菜单，出售资格复核在 CORE 退出时发生，
+  // 原作 SHOP_2.ERB:248 就在那儿）
   const ability = create_era_fixture();
   seed_world(ability);
   for (const id of [0, 10, 11, 12, 22]) {
     ability.store.set(`abl:31:${id}`, id === 22 ? 3 : id === 11 ? 4 : 5);
   }
-  await ability.load_module('page/page-shop').usershop(105);
+  ability.set_inputs(999);
+  await ability.load_module('page/page-ability-up').ability_up_core(31);
   assert.equal(ability.store.get('cflag:31:0'), 2);
   assert(
     !ability.text_lines().some((line) => line.includes('@CHECK_SELLASSIABLE')),
