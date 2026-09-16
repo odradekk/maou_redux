@@ -179,6 +179,21 @@ class DungeonFacade {
   }
 
   /**
+   * 勇者击破数（cflag:cid:505 ↔ CFLAG:505）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:505 勇者撃破数
+   * @returns {number}
+   */
+  get 勇者击破数() {
+    return era.get(`cflag:${this.cid}:505`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 勇者击破数(v) {
+    era.set(`cflag:${this.cid}:505`, v);
+  }
+
+  /**
    * 再起点（cflag:cid:508 ↔ CFLAG:508）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行409 CFLAG:508 再起ポイント（ダンジョン外で全回復するために必要。階層突破で増加）
    * @returns {number}

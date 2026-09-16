@@ -30,13 +30,13 @@
  * 汉化本身繁简混用）。保真锁（test/kojo-text-fidelity.test.js 锁 D）对
  * ERB 侧应用同一张表归一后比对。
  *
- * == GET_LOOK_INFO 子集 ==
+ * == GET_LOOK_INFO ==
  *
- * `%GET_LOOK_INFO(ARG, "头发颜色")%` 是 LOOK.ERB:2885 的式中函数，本文件
- * 的 @FS_BITCH "LOOKS" 用到其中 7 个子集（头发颜色/目/阴毛状态/魅力点/
- * 癖/种族/成为勇者前的生活）。LOOK.ERB 的完整函数仍属「角色信息」票
- * （docs/stub-registry.md 的 GET_LOOK_INFO 行），本文件实现的是该函数
- * 的**被本文件使用的子集**（逐字对照 LOOK.ERB 对应段，出处标注在原处）。
+ * `%GET_LOOK_INFO(ARG, "头发颜色")%` 是 LOOK.ERB:2885 的式中函数。本文件
+ * 的 @FS_BITCH "LOOKS" 用到其中 7 个 kind。**#389 起该函数的真身在
+ * ere/chara/look-info.js（整函数落地），本文件改为 require**——#185 时期
+ * 那份 11 个 kind 的子集实现已随 #389 搬走，全项目只剩一份（调用面不留
+ * 两份，见该文件头）。
  *
  * == 随机源 ==
  *
@@ -46,6 +46,7 @@
  */
 
 const era = require('#/era-electron');
+const { get_look_info } = require('#/chara/look-info'); // #389 起真身（本文件曾是它的子集实现）
 const { chara_callname } = require('#/utils/callname-utils');
 const era_flag = require('#/era-utils/era-flag');
 
@@ -73,274 +74,6 @@ function expname(idx) {
  */
 function palamname(idx) {
   return era.get(`palamname:${idx}`) ?? '';
-}
-
-/**
- * %GET_LOOK_INFO(cid, kind)% 的子集实现（LOOK.ERB:2885 的一部分，仅本项目
- * 各调用点用到的 11 个 kind；完整函数——含头发状态/长度/发型/瞳色/唇/
- * 体型/乳头/职业/成为勇者的契机/阴茎的状态等——不在任何票的范围内，
- * 有新调用点用到再补，不预先移植未使用的分支）。
- *
- * 源: target/ERB/キャラ関数/LOOK.ERB @GET_LOOK_INFO（:2885）——"头发颜色"
- *     （:2922）"目"（:3020）"阴毛状态"（:3095）"魅力点"（:3114）"癖"
- *     （:3180）"种族"（:3253）"种族2"（:3285，#383 补、供 chara-self-call.js
- *     的 calc_selfcall_factor 消费，#391 同样消费）"种族12"（:3309，#391 补）
- *     "成为勇者前的生活"（:3315）"性格"（:3473，#391 补）"婚史"（:3490，#391 补）
- *
- * @param {number} cid 角色 ID
- * @param {string} kind 子集名
- * @returns {string}
- */
-function get_look_info(cid, kind) {
-  const t = (idx) => era.get(`talent:${cid}:${idx}`) || 0;
-  switch (kind) {
-    case '头发颜色': {
-      // LOOK.ERB:2922-2948
-      const map = {
-        1: '金发',
-        2: '栗发',
-        3: '黑发',
-        4: '红发',
-        5: '银发',
-        6: '蓝发',
-        7: '绿发',
-        8: '紫发',
-        9: '白发',
-        10: '暗金发',
-        11: '粉发',
-      };
-      return map[t(300)] ?? '黑发'; // CASEELSE = 黑发
-    }
-    case '目': {
-      // LOOK.ERB:3020-3039
-      const map = {
-        1: '细长眼',
-        2: '大眼',
-        3: '深邃眼',
-        4: '吊眼',
-        5: '水汪汪眼',
-        6: '标准眼',
-        7: '三白眼',
-        8: '下垂眼',
-      };
-      return map[t(305)] ?? 'ERROR';
-    }
-    case '阴毛状态': {
-      // LOOK.ERB:3095-3112（CASE 2 TO 20 等区间）
-      const v = t(310);
-      if (v === 1) return '白虎';
-      if (v >= 2 && v <= 20) return '胎毛';
-      if (v > 20 && v <= 50) return '新长的';
-      if (v > 50 && v <= 100) return '稀薄';
-      if (v > 100 && v <= 150) return '标准';
-      if (v > 150 && v <= 200) return '浓密';
-      if (v > 200 && v <= 500) return '硬毛';
-      return 'ERROR';
-    }
-    case '魅力点': {
-      // LOOK.ERB:3114-3180
-      const map = {
-        1: '皮肤',
-        2: '眼角',
-        3: '鼻梁',
-        4: '嘴角',
-        5: '泪痣',
-        6: '锁骨',
-        7: '小臂',
-        8: '手腕',
-        9: '手',
-        10: '手指',
-        11: '肚脐',
-        12: '美乳',
-        13: '腰线',
-        14: '臀部线条',
-        15: '腿部线条',
-        16: '膝盖',
-        17: '脚踝',
-        18: '脚跟',
-        19: '背脊',
-        20: '耳朵',
-        21: '性器',
-        22: '头发的光泽',
-        23: '丰满的屁股',
-        24: '长睫毛',
-        25: '虎牙',
-        26: '眉毛',
-        27: '指甲',
-        28: '寝癖',
-      };
-      const v = t(312);
-      if (v === 29) {
-        // LOOK.ERB:3162-3166 CASE 29：SIF 男人/扶她 PRINT 自己的鸡鸡，否则 PRINT 私处
-        if (t(121) === 1 || t(122) === 1) {
-          return '自己的鸡鸡';
-        }
-        return '私处';
-      }
-      return map[v] ?? 'ERROR';
-    }
-    case '癖': {
-      // LOOK.ERB:3180-3251
-      const map = {
-        1: '舔嘴唇',
-        2: '往后看',
-        3: '摸头发',
-        4: '用腿夹住手',
-        5: '抱手臂',
-        6: '手指交握',
-        7: '抖腿',
-        8: '打拍子',
-        9: '仰视对方',
-        10: '歪脖子',
-        11: '叹气',
-        12: '动作夸张',
-        13: '频繁眨眼',
-        14: '鼓腮',
-        15: '咬紧牙关',
-        16: '遮住嘴',
-        17: '摸耳朵',
-        18: '懒散',
-        19: '咂嘴',
-        20: '咬指甲',
-        21: '挠鼻子',
-        22: '扶额',
-        23: '握拳',
-        24: '用手指人',
-        25: '说口头禅',
-        26: '扭腰',
-        27: '闭上一只眼',
-        28: '眯眼',
-        29: '歪嘴',
-        30: '碎碎念',
-        31: '总往角落躲',
-        32: '估算物体长度',
-        33: '说话越说越近',
-        34: '舔手背',
-      };
-      return map[t(313)] ?? 'ERROR';
-    }
-    case '种族': {
-      // LOOK.ERB:3253-3282
-      const map = {
-        0: '人类',
-        1: '精灵',
-        2: '狼人',
-        3: '吸血鬼',
-        4: '无头骑士',
-        5: '龙族',
-        6: '天使',
-        7: '暗精灵',
-        8: '堕天使',
-        9: '魔族',
-        10: '霍比特人',
-        11: '矮人',
-      };
-      return map[t(314)] ?? 'ERROR';
-    }
-    case '成为勇者前的生活': {
-      // LOOK.ERB:3315-3389
-      const v = t(315);
-      const is_male = t(122) === 1;
-      const map = {
-        0: '不明',
-        1: '学生',
-        2: is_male ? '修士' : '修女',
-        3: '农民',
-        4: '渔民',
-        5: '娼妓',
-        6: '小偷',
-        7: '乞丐',
-        8: '贵族',
-        9: '贫民',
-        10: '守墓人',
-        11: is_male ? '巫者' : '巫女',
-        12: is_male ? '圣者' : '圣女',
-        13: '预言家',
-        14: '占卜师',
-        15: '商人',
-        16: '采药人',
-        17: '隐士',
-        18: '面包师',
-        19: '军人',
-        20: '奴隶',
-        21: is_male ? '主夫' : '主妇',
-        90: '淫乱的产物',
-        91: '堕落的结果',
-        92: '爱的结晶',
-        93: '交欢的副产品',
-        94: '魔族的孽种',
-      };
-      return map[v] ?? 'ERROR';
-    }
-    case '种族2': {
-      // LOOK.ERB:3285-3307
-      const map = {
-        1: '兽人',
-        2: '史莱姆',
-        3: '昆虫',
-        4: '植物',
-        5: '触手',
-        6: '妖精',
-        7: '巨人',
-        8: '魔族',
-        9: '魔族',
-        10: '魔兽',
-        11: '触手',
-        12: '魔兽',
-      };
-      const v = t(319);
-      return map[v] ?? `$${v}`; // CASEELSE = TOSTR(v, "$${0}")，字面量 $ 描述未登记的代号（AGENTS.md 的 $$ 转义约定）
-    }
-    case '种族12':
-      // LOOK.ERB:3309-3314 GOTO INFO_种族 / INFO_种族2：精英（TALENT:220）走 种族2，否则走 种族
-      return get_look_info(cid, t(220) ? '种族2' : '种族');
-    case '性格': {
-      // LOOK.ERB:3473-3489：先找 TALENT[160,179) 首个真值，找不到再找 [10,19)，都没有则不明
-      let idx = -1;
-      for (let tc = 160; tc < 179; tc += 1) {
-        if (t(tc)) idx = tc;
-      }
-      if (idx < 0) {
-        for (let tc = 10; tc < 19; tc += 1) {
-          if (t(tc)) idx = tc;
-        }
-      }
-      return idx >= 0 ? (era.get(`talentname:${idx}`) ?? 'ERROR') : '不明';
-    }
-    case '婚史': {
-      // LOOK.ERB:3490-3560：TALENT:320 压缩家族码解码（与 CHARA_MARRIGE_BEFORE 同源不同式，本函数永返回字符串，无 CHARA_MARRIGE_BEFORE 那类“只赋值不打印”的死代码)
-      const family = t(320);
-      const has_family = family % 10;
-      if (has_family === 0 && family !== 0) return '婚史保密';
-      if (family === 0) return '无';
-      const local1 = family % 100000;
-      const local2 = family % 10000000000;
-      const husband_kind = () => {
-        const kind = Math.trunc(local2 / 1000000000);
-        if ([0, 4, 8].includes(kind)) return '丈夫';
-        if ([1, 5, 7].includes(kind)) return '扶她妻子';
-        return '妻子';
-      };
-      switch (Math.trunc(local1 / 10000)) {
-        case 0:
-          return `${(era.get(`cflag:${cid}:601`) || 0) !== 0 ? '原' : ''}未婚`;
-        case 1:
-          return `已与${husband_kind()}结婚`;
-        case 2:
-          return `已与原${husband_kind()}离婚`;
-        case 3:
-          return `已与原${husband_kind()}复婚`;
-        case 4:
-          return `已与原${husband_kind()}离婚后重新结婚`;
-        case 5:
-          return '未亡人';
-        default:
-          return '秘密';
-      }
-    }
-    default:
-      return 'ERROR';
-  }
 }
 
 /**
@@ -497,7 +230,11 @@ function fs_bitch(type, arg, rand = default_rand) {
       overwrite(t(arg, 10) || t(arg, 26), '要哭了似的'); // :241
       overwrite(t(arg, 23) || t(arg, 25), '开朗的'); // :243
       overwrite(t(arg, 73), '水性杨花的'); // :245
-      overwrite(t(arg, 509) === 1, '迷路的'); // :248
+      // :247 `SIF CFLAG:ARG:509 == 1`——**CFLAG 不是 TALENT**。#389 返工勘误：
+      // 这里原先读 `t(arg, 509)`（talent），而 509 在 yml/Talent.yml 里不存在、
+      // 全库无人写，这一行因此永不触发；真身是 dungeon-room.js:1060 写入的
+      // 「迷惑状態」（下轮 WALK 归零）
+      overwrite((era.get(`cflag:${arg}:509`) || 0) === 1, '迷路的');
       // :250 INRANGE(ABL:ARG:37, 1, 3)
       overwrite(
         (era.get(`abl:${arg}:37`) || 0) >= 1 &&
@@ -2393,7 +2130,6 @@ async function dungeon_les_log(arg0, rand = default_rand) {
 module.exports = {
   expname,
   palamname,
-  get_look_info,
   fs_bitch,
   fs_log_bitch,
   getbit,

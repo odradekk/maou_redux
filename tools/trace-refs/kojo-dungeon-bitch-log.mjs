@@ -316,9 +316,11 @@ export const FILES = [
         any: [/^\s*LOCALS\ =\ 水性杨花的/m],
       },
       {
+        // #389 返工：这一行的判据是 CFLAG:ARG:509（原实现误读 TALENT），
+        // 引用随注释改指 :247 的 SIF 行
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '248',
-        any: [/^\s*LOCALS\ =\ 迷路的/m],
+        ref: '247',
+        any: [/^\s*SIF CFLAG:ARG:509 == 1 && RAND:DICE == 0$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
@@ -2534,74 +2536,9 @@ export const FILES = [
         any: [/^\s*RETURN\ 0/m],
       },
       {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2885',
-        any: [/^\s*@GET_LOOK_INFO\(ARG,\ ARGS\)/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2922',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "头发颜色"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3020',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "目"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3095',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "阴毛状态"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3114',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "魅力点"/m],
-      },
-      {
         src: 'target/ERB/迷宮/DUNGEON_BITCH.ERB',
         ref: '3132',
         any: [/^\s*\[SKIPEND\]/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3180',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "癖"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3253',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "种族"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3285',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "种族2"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3315',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "成为勇者前的生活"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3285',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "种族2"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3309',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "种族12"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3473',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "性格"/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '3490',
-        any: [/^\s*ELSEIF\ ARGS\ ==\ "婚史"/m],
       },
     ],
   },

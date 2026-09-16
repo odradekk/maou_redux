@@ -31,6 +31,26 @@ export const FILES = [
         ref: '491',
         any: [/^\s*LOCAL\ =\ GET_KOJO_NUM\(\)$/m],
       },
+      // #397（N13）冻结 @GOHOUBI_REQUEST_KOUJO 的调用面：包装层是占位，
+      // 但签名与参数形状照它定死（本票交付物，见该文件头）
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '450-466',
+        any: [/^@GOHOUBI_REQUEST_KOUJO$/m],
+      },
+      {
+        // 685/689 是**商店侧** @GOHOUBI_REQUEST 的全局 A 暂存（跨文件引用）
+        src: 'target/ERB/SHOP/SHOP_2.ERB',
+        cite: true,
+        ref: '685',
+        any: [/^\s*A = SELECT\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_2.ERB',
+        cite: true,
+        ref: '689',
+        any: [/^\s*A = 0\s*$/m],
+      },
     ],
   },
 ];

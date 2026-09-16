@@ -50,7 +50,7 @@ const {
   gobi_koujo_family,
 } = require('#/kojo/kojo-system');
 const { heart, self_call } = require('#/kojo/kojo-text');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');

@@ -7,6 +7,17 @@ export const FILES = [
   {
     js: 'ere/page/page-chara-info.js',
     refs: [
+      // #397（N13）接线：CASE 10/11 的调用点回显
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1003',
+        any: [/^\s*CALL ABILITY_UP_CORE\(ARG\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '1009',
+        any: [/^\s*CALL TAILOR_CORE\(ARG\)\s*$/m],
+      },
       { src: INFO, ref: '4-113', any: [/^@CHARA_INFO\s*$/m] },
       {
         src: INFO,

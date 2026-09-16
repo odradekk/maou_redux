@@ -28,7 +28,7 @@ const { relation_debugprint } = require('#/chara/chara-family');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { on, emit, TIER } = require('#/system/event/registry');
 const { maounet } = require('#/system/cross-save-sharing');
-const { chara_sale, check_sellassiable } = require('#/system/stronghold/sale');
+const { chara_sale } = require('#/system/stronghold/sale');
 const {
   create_main_menu,
   reset_out_of_range_pointers,
@@ -39,6 +39,9 @@ const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2 } = require('#/page/page-dungeon-info2');
 const { infrastructure } = require('#/page/page-infrastructure');
 const { item_shop_trap } = require('#/page/page-shop-trap');
+const { ability_up } = require('#/page/page-ability-up');
+const { intercept } = require('#/page/page-intercept');
+const { tailor_main } = require('#/page/page-tailor');
 const { save_game, load_game } = require('#/page/page-save-load');
 const {
   chara_info,
@@ -299,13 +302,15 @@ async function usershop(result) {
     // 处刑（:110；原作 EXECUTION 的调用已注释，现行调批量处刑）
     await stub_line_wait('批量处刑', '处刑（批量处刑）', '随处刑票');
   } else if (result === 104) {
-    // 迎击（:113）
-    await stub_line_wait('INTERCEPT', '迎击', '随迎击票');
+    // 迎击（:113 CALL INTERCEPT）：#397 起真身（page/page-intercept.js），
+    // 返回前自己完成出击决定与 GOHOUBI_REQUEST，回到这里只需重绘
+    await intercept();
   } else if (result === 105) {
-    // 能力值提升（:115）本体仍是存根；原作 SHOP_2.ERB:248 在其返回后
-    // 复核当前目标的出售资格，因此先把这条已知尾接缝落在原位。
-    await stub_line_wait('ABILITY_UP', '能力值提升', '随能力票');
-    await check_sellassiable(era_flag.target);
+    // 能力值提升（:115 CALL ABILITY_UP）：#397 起真身（page/page-ability-up.js）。
+    // 原作 SHOP_2.ERB:248 的出售资格复核在 @ABILITY_UP_CORE 的 [999] 支内部
+    // （读的是 CORE 期间的 TARGET），这里不再重复调用 check_sellassiable
+    // （#395 时代先落的那句已知尾接缝随真身落地撤掉）
+    await ability_up();
   } else if (result === 106) {
     // 贩卖奴隶（:117，#339 真身）
     await chara_sale();
@@ -314,9 +319,11 @@ async function usershop(result) {
     // 跳道具商店（show_shop 的 0-53 支）——本体仍是存根，随 #399。
     era_flag.bought = 1;
   } else if (result === 108) {
-    // 换装（:121-122 CALL TAILOR_MAIN; TARGET = FLAG:1，FLAG:1 = 前回
-    // 调教目标）
-    await stub_line_wait('TAILOR_MAIN', '换装', '随换装票');
+    // 换装（:121-122 CALL TAILOR_MAIN; TARGET = FLAG:1）：#397 起真身
+    // （page/page-tailor.js）。买成后 TAILOR_CORE 把 TARGET 置 -1
+    // （:249），故返回后按原作把 TARGET 还原为「前回调教目标」
+    await tailor_main();
+    era_flag.target = era.get('flag:1') || 0;
   } else if (result === 109) {
     // 侵略（:124-128）：CALL INVASION（#117 起真身：魔力出兵窄路径，
     // ere/page/page-invasion.js），返回 1 才 BEGIN TURNEND（:127，出口

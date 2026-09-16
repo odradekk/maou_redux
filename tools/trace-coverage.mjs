@@ -124,7 +124,9 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 62; // 合并态实测（#401 并上含 #394 的 master）：
+export const PENDING_BASELINE = 60; // 合并态实测（#401 并上含 #389/#397 的
+// master）：62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60，与重测
+// 一致。各票自己的说明留在下面。
 // 两票各自扣的文件不相交，64（master，#394 后）− 2（本票 EVETRAIN.ERB 与
 // EVENT1.ERB 两个待移植文件）= 62，与重测值一致。两票的说明都留在下面。
 // EVENT/EVETRAIN.ERB（19 行，@EVENTTRAIN 的无属性档，
@@ -141,6 +143,13 @@ export const PENDING_BASELINE = 62; // 合并态实测（#401 并上含 #394 的
 // `キャラ関数/CHARA_NAME_EDIT.ERB`（三个函数：SHOW_BUTTON_NAME_EDIT /
 // CHECK_ABLE_TO_NAME_EDIT / CHARA_INFO_NAME_EDIT）整份摆进 ere/，该文件从
 // 「待移植」转「已移植」：-1。
+// 两票各自扣的文件不相交，64（master，#394 后）− 2（本票两个待移植文件）= 62，
+// 与重测值一致。两票各自的说明留在下面。
+// SHOP/SHOP_2.ERB 两个文件落地真身（ere/page/page-tailor.js 十二函数、
+// page-ability-up.js + page-intercept.js + system/stronghold/gohoubi-request.js），
+// LIFE_LIST.ERB 的 7 个「登记（未接入）」函数落真身（ere/page/page-life-list.js）
+// 使其由部分移植转已移植。算式：67（#384 实测）+ 0（证据面变动）
+// − 2（两个待移植文件）= 65。
 // 历次说明。**本票独立测得的是 67 → 64 这一格**，rebase 后真值由派单人重跑。
 // #394 抬低说明（67 → 64，本票三个文件）：`キャラ関数/CHARA_FIRST_EXP.ERB` 与
 // `キャラ関数/CHARA_MAKE_INPORT.ERB` 落真身（chara_first_exp、
