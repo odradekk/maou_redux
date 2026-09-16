@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 24;
+export const COUNT = 20; // #389 起 -4（M7868-M7871 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）
 
 export default [
   {
@@ -204,37 +204,5 @@ export default [
     tests: ['page-chara-info'],
     must_mention:
       'SHOW_CHARA_ACT_LIST：双方都在侵攻/迎击时改走 ENEMY_COMPARE（按楼层，不是按状态排名）',
-  },
-  {
-    desc: 'M7868 GET_LOOK_INFO 种族2 未登记代号不再回落 $N（改 ERROR）',
-    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
-    find: 'return map[v] ?? `$${v}`;',
-    replace: "return map[v] ?? 'ERROR';",
-    tests: ['kojo-dungeon-bitch-log'],
-    must_mention: '种族2 按 TALENT:319 映射',
-  },
-  {
-    desc: 'M7869 GET_LOOK_INFO 种族12 精英（TALENT:220）不再切到种族2',
-    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
-    find: `  return get_look_info(cid, t(220) ? '种族2' : '种族');`,
-    replace: `  return get_look_info(cid, '种族');`,
-    tests: ['kojo-dungeon-bitch-log'],
-    must_mention: '在 种族/种族2 间切换',
-  },
-  {
-    desc: 'M7870 GET_LOOK_INFO 性格的 [10,19) 回退循环被清空（只认 [160,179)）',
-    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
-    find: `        for (let tc = 10; tc < 19; tc += 1) {`,
-    replace: `        for (let tc = 10; tc < 10; tc += 1) {`,
-    tests: ['kojo-dungeon-bitch-log'],
-    must_mention: '性格优先 TALENT[160,179)',
-  },
-  {
-    desc: 'M7871 GET_LOOK_INFO 婚史保密分支被短路（has_family==0 且非零码落到家族码解码）',
-    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
-    find: `      if (has_family === 0 && family !== 0) return '婚史保密';`,
-    replace: `      if (false) return '婚史保密';`,
-    tests: ['kojo-dungeon-bitch-log'],
-    must_mention: '婚史按 TALENT:320 压缩家族码解码各分支',
   },
 ];

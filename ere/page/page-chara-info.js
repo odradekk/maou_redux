@@ -64,7 +64,7 @@ const {
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
 const { enemy_compare } = require('#/page/page-dungeon-info2');
-const { get_look_info } = require('#/kojo/kojo-dungeon-bitch-log');
+const { get_look_info } = require('#/chara/look-info');
 const { set_bich_level } = require('#/kojo/kojo-dungeon-bitch');
 const {
   is_able_to_ability_up,
