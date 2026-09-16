@@ -39,6 +39,7 @@ function buttons(fixture, history = false) {
       text: line.text,
       rendered: line.rendered,
       color: line.color,
+      grid_width: line.grid_width,
       row: line.row,
     }));
 }
@@ -63,6 +64,22 @@ function button_rows(fixture) {
     grouped.get(button.row).push(button.acc);
   }
   return [...grouped.values()];
+}
+
+/**
+ * 按 Row 分组后的 [格数, 每格宽度]（`grid_width` 由夹具记录，与引擎
+ * `getButtonObject` 的 `width: getValidWidth(data.config.width)` 同源）
+ */
+function width_rows(fixture) {
+  const grouped = new Map();
+  for (const button of buttons(fixture)) {
+    if (!grouped.has(button.row)) grouped.set(button.row, []);
+    grouped.get(button.row).push(button);
+  }
+  return [...grouped.values()].map((cells) => [
+    cells.length,
+    cells[0].grid_width,
+  ]);
 }
 
 /** 取整序列 [start..end]（含端） */
@@ -116,6 +133,42 @@ test('PRINT_ARR_GROUP：宽度按显示宽度累加 +2，达到 80 就换行', (
     [7, 7, 2],
     '每项宽 8 时每行 7 项：阈值 80（:212-218）',
   );
+  // 每格宽度 = floor(24 / 本行格数)——换行冲出的行也必须算，占位 0 会被
+  // 引擎按缺省列宽渲染（getValidWidth(0) 落到设置里的 colWidth）
+  assert.deepEqual(
+    width_rows(fixture),
+    [
+      [7, 3],
+      [7, 3],
+      [2, 12],
+    ],
+    '每格宽度按本行格数均分 24 列',
+  );
+});
+
+test('PRINT_ARR_GROUP：每格宽度 = floor(24 / 本行格数)（表驱动，含整行一格的端）', () => {
+  const fixture = setup();
+  const { print_arr_group } = load(fixture);
+  // [项目数, 期望格数, 期望宽度]——每项宽 2 时 40 项/行，故这些行都不换行；
+  // 栅格常量两个方向都钉住：24 → 23 会让 3 格变 7、1 格变 23，
+  // 24 → 25 会让 5 格变 5
+  const table = [
+    [1, 1, 24],
+    [2, 2, 12],
+    [3, 3, 8],
+    [5, 5, 4],
+    [6, 6, 4],
+  ];
+  for (const [count, cells, width] of table) {
+    fixture.lines.length = 0;
+    fixture.lines_history.length = 0;
+    print_arr_group(['', ...Array.from({ length: count }, () => 'ab')], 0, 8);
+    assert.deepEqual(
+      width_rows(fixture),
+      [[cells, width]],
+      `${count} 项的宽度`,
+    );
+  }
 });
 
 test('PRINT_ARR_GROUP：换行后 L_LEN 从本项宽度重新起算', () => {
@@ -185,6 +238,26 @@ test('LOOK_PAGE 0：十一组的编码逐组核对（组号 × 100 + 序号，�
     '■=== 阴毛状态 ===■',
     '■=== 乳头 ===■',
   ]);
+  // [本行格数, 每格宽度]：宽度 = floor(24 / 行内格数)。除发型组外每组各占一行
+  // （发型 12 项、含 6 宽的名字，累到第 11 项即 82 ≥ 80 而换行 → 10 + 2）
+  assert.deepEqual(
+    width_rows(fixture),
+    [
+      [11, 2], // 发色
+      [10, 2], // 发型（第 11 项越 80 换行）
+      [2, 12], // 发型残行
+      [3, 8], // 头发长度
+      [6, 4], // 状态
+      [4, 6], // 修剪
+      [8, 3], // 眼型
+      [6, 4], // 瞳色
+      [4, 6], // 唇型
+      [3, 8], // 体型
+      [7, 3], // 阴毛状态
+      [4, 6], // 乳头
+    ],
+    '每行的格数与每格宽度（栅格 24 列均分）',
+  );
 });
 
 test('LOOK_PAGE 0：选中项按各表自己的换算（头发长度/体型 ÷100、阴毛状态分档）', () => {

@@ -459,6 +459,9 @@ let talent_cursor = 0;
 /** 冲掉未满一行的素质格（源 :455-483 的两次 `LOCAL % 6 == 0` 之间） */
 function flush_talent_row() {
   if (pending_talents.length > 0) {
+    // 每格宽度按本行格数均分（栅格 24 列）。下限 3 是排版保底，实际用不到
+    // ——缓冲满 6 格即冲行，故本行至多 6 格，floor(24/6) = 4 恒 ≥ 3
+    // （把 3 改大是等价变异，不是缺口）
     const width = Math.max(
       3,
       Math.floor(GRID_COLUMNS / pending_talents.length),

@@ -10,12 +10,18 @@
 // M8805-M8820 是首轮验收返工的补表：M8761-M8804 全压在 and-hair/custom2/
 // custom3 三个文件上，chara-custom.js（@CHAR_CREATE / @CHAR_APPEND）一条没有
 // ——而它是留给 #398 的接口边。补表按「区间上界」这一种形状统一处理四个文件
-// （验收用 `index <= 40` / `arg <= 210` 两处上界改坏时全绿），四文件的条目数
-// 变为 13/8/28/11（and-hair / custom / custom2 / custom3），共 60 条。
+// （验收用 `index <= 40` / `arg <= 210` 两处上界改坏时全绿）。
+// M9001-M9009 是二轮验收返工的补表：把「排版与宽度常量」这一类补齐——栅格宽
+// （GRID_COLUMNS 两处）、每行格数（HERO/ELITE_COLUMNS）、字段宽（补位 14/7）、
+// 补位宽（编号右对齐 2）、以及「宽度必须按本行格数算」这条不变量（两处）。
+// 这一类的观测通道是夹具按钮格的 `grid_width`（二轮验收实测：按钮格原先不记
+// 宽度，栅格常量改了没有任何用例能发现；顺带查出 custom3 的冲行宽度是占位 0）。
+// 四文件的条目数变为 14/13/30/12，共 69 条。
 // 注意表只钉样本：同一形状的字面量还有不少靠用例本身守（如 custom2 的
-// JOB_FIRST 职业下界、cost 扫描区间两端），改动它们同样会有用例变红。
+// JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
+// 改动它们同样会有用例变红。
 
-export const COUNT = 60; // #392 建表（M8761-M8804）＋ 首轮验收返工补表（M8805-M8820）
+export const COUNT = 69; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -522,5 +528,82 @@ export default [
     replace: '  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 1; // :62',
     tests: ['chara-and-hair'],
     must_mention: '序号在表外',
+  },
+
+  // —— 二轮验收返工补表：排版与宽度常量（M9001-M9009） ——
+
+  {
+    desc: 'M9001 素质格的栅格宽 24 改 23（6 格行的每格宽度 4 → 3）',
+    file: 'ere/chara/chara-custom2.js',
+    find: 'const GRID_COLUMNS = 24;',
+    replace: 'const GRID_COLUMNS = 23;',
+    tests: ['chara-custom2'],
+    must_mention: '每行格数与每格宽度',
+  },
+  {
+    desc: 'M9002 外观组的栅格宽 24 改 23（12 格行的每格宽度 2 → 1）',
+    file: 'ere/chara/chara-custom3.js',
+    find: 'const GRID_COLUMNS = 24;',
+    replace: 'const GRID_COLUMNS = 23;',
+    tests: ['chara-custom3'],
+    must_mention: '每格宽度',
+  },
+  {
+    desc: 'M9003 外观组的每格宽度改回占位的 0（冲行那一刻不再算）',
+    file: 'ere/chara/chara-custom3.js',
+    find: '    const width = Math.floor(GRID_COLUMNS / row.length);',
+    replace: '    const width = 0;',
+    tests: ['chara-custom3'],
+    must_mention: '每格宽度',
+  },
+  {
+    desc: 'M9004 素质格宽度按固定 6 格算（残行的宽度全错）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '      Math.floor(GRID_COLUMNS / pending_talents.length),',
+    replace: '      Math.floor(GRID_COLUMNS / TALENT_COLUMNS),',
+    tests: ['chara-custom2'],
+    must_mention: '每格宽度',
+  },
+  {
+    desc: 'M9005 勇者段每行格数 4 改 3',
+    file: 'ere/chara/chara-custom.js',
+    find: 'const HERO_COLUMNS = 4;',
+    replace: 'const HERO_COLUMNS = 3;',
+    tests: ['chara-custom'],
+    must_mention: '勇者段每行 4 格',
+  },
+  {
+    desc: 'M9006 精英段每行格数 5 改 4',
+    file: 'ere/chara/chara-custom.js',
+    find: 'const ELITE_COLUMNS = 5;',
+    replace: 'const ELITE_COLUMNS = 4;',
+    tests: ['chara-custom'],
+    must_mention: '勇者段每行 4 格',
+  },
+  {
+    desc: 'M9007 预设名字的字段宽 14 改 15（列表整行错位）',
+    file: 'ere/chara/chara-custom.js',
+    find: '${pad_right(csv_name(preset), 14)}`;',
+    replace: '${pad_right(csv_name(preset), 15)}`;',
+    tests: ['chara-custom'],
+    must_mention: '勇者段每行 4 格',
+  },
+  {
+    desc: 'M9008 显示编号的补位宽 2 改 3（`[ 1]` 变 `[  1]`）',
+    file: 'ere/chara/chara-custom.js',
+    find: '    current += `[${pad_left(String(label), 2)}] ${pad_right(csv_name(preset), 14)}`;',
+    replace:
+      '    current += `[${pad_left(String(label), 3)}] ${pad_right(csv_name(preset), 14)}`;',
+    tests: ['chara-custom'],
+    must_mention: '勇者段每行 4 格',
+  },
+  {
+    desc: 'M9009 发色名的字段宽 7 改 8（列表整行错位）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: "    row += `[${pad_left(String(color_id), 2)}] ${pad_right(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;",
+    replace:
+      "    row += `[${pad_left(String(color_id), 2)}] ${pad_right(ARR_HAIRCOLOR[color_id] ?? '', 8)}`;",
+    tests: ['chara-and-hair'],
+    must_mention: '每 6 项换行',
   },
 ];

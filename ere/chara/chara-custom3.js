@@ -27,9 +27,8 @@
  *     对应 EraElectron 的一行；按钮在 `printMultiColumns` 里以 GridObject
  *     承载（page-save-load.js 的 PRINTFORMLC 先例），每格宽度按本行格数均分
  *     24 列（栅格满行 24 列，`?? 24` 是引擎缺省，见夹具 make_grid_entry）。
- *     **每格宽度是纯排版参数**：夹具对按钮格只记录 content/accelerator/
- *     color，宽度没有观测通道，故它不出现在断言里——可观测的是「本行几格」
- *     （Row 分组）与「何时换行」（80 宽阈值）。
+ *     三个量都可断言：本行几格（Row 分组）、何时换行（80 宽阈值）、每格宽度
+ *     （夹具按钮格的 `grid_width`，引擎 getValidWidth 的实测同源）。
  *   - **选中态用 `config.color`**：源 :220-226 的 `RESETCOLOR` /
  *     `SETCOLORBYNAME GRAY` 是 Emuera 的字符色，EraElectron 按钮色的等价物
  *     是 el-button 的 --el-button-text-color（page-ablup.js 的 GRAY 同值
@@ -383,19 +382,23 @@ function print_arr_group(arr, val, idx) {
   let blanks = 0;
   let line_len = 0;
   let row = [];
-  const row_width = () => Math.floor(GRID_COLUMNS / row.length);
 
   const flush = () => {
     if (row.length === 0) {
       return;
     }
+    // 每格宽度按**本行**的格数均分（栅格满行 24 列，引擎 getValidWidth 的
+    // 缺省与上限都是 24）。宽度必须在冲行这一刻才算：本行在循环里还会再长，
+    // 早算或先占位（0）都会被引擎按缺省列宽渲染——换行冲出的那些行曾整行
+    // 拿到 width: 0（#392 二轮验收实测）
+    const width = Math.floor(GRID_COLUMNS / row.length);
     era.printMultiColumns(
       row.map((cell) => ({
         type: 'button',
         accelerator: cell.accelerator,
         content: cell.content,
         config: {
-          width: cell.width,
+          width,
           ...(cell.color ? { color: cell.color } : {}),
         },
       })),
@@ -422,13 +425,7 @@ function print_arr_group(arr, val, idx) {
       accelerator: idx * 100 + i, // :223
       content: name,
       color: i === val ? undefined : GRAY, // :220-226（选中项 RESETCOLOR）
-      width: 0, // 占位，下列 flush 前统一算
     });
-    // 每格宽度按本行的格数均分（栅格满行 24 列）——本行还会再长，故延后到
-    // flush 时计算，这里只记占位。
-  }
-  for (const cell of row) {
-    cell.width = row_width();
   }
   flush();
   era.setColor(''); // :184-231 RESETCOLOR（原作的字符色复位）

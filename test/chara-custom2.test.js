@@ -60,6 +60,23 @@ function button_rows(fixture) {
   return [...grouped.values()];
 }
 
+/**
+ * 按 Row 分组的 [格数, 每格宽度]。`grid_width` 由夹具记录（与引擎
+ * `getButtonObject` 的 `width: getValidWidth(data.config.width)` 同源）。
+ */
+function width_rows(fixture) {
+  const grouped = new Map();
+  for (const line of fixture.lines) {
+    if (line.type !== 'button') continue;
+    if (!grouped.has(line.row)) grouped.set(line.row, []);
+    grouped.get(line.row).push(line);
+  }
+  return [...grouped.values()].map((cells) => [
+    cells.length,
+    cells[0].grid_width,
+  ]);
+}
+
 const range = (start, end) =>
   Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
@@ -499,6 +516,29 @@ test('TALENT_PAGE 0：九组的分组边界与每行 6 格', () => {
     [6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 6, 4, 5, 5, 5],
     '每组末尾冲行（残行不满 6）',
   );
+  // 每格宽度 = floor(24 / 行内格数)：6 格 → 4、4 格 → 6、5 格 → 4。
+  // 栅格常量两个方向都钉住：24 → 23 时 6 格变 3，24 → 25 时 5 格变 5
+  assert.deepEqual(
+    width_rows(fixture),
+    [
+      [6, 4],
+      [4, 6],
+      [6, 4],
+      [4, 6],
+      [6, 4],
+      [4, 6],
+      [6, 4],
+      [4, 6],
+      [6, 4],
+      [4, 6],
+      [6, 4],
+      [4, 6],
+      [5, 4],
+      [5, 4],
+      [5, 4],
+    ],
+    '每行格数与每格宽度（栅格 24 列均分）',
+  );
   assert.deepEqual(rows.flat(), [
     ...range(0, 9),
     ...range(10, 19),
@@ -603,6 +643,11 @@ test('PRINT_SINGLE_TALENT：无名素质不占格（STRLENS < 1 早退）', () =
     [0, 2],
     '无名的 1 号被跳过，0 与 2 在同一行',
   );
+  assert.deepEqual(
+    width_rows(fixture),
+    [[2, 12]],
+    '整数行的宽度也是 floor(24 / 本行格数)',
+  );
 });
 
 test('PRINT_SINGLE_TALENT：返回累计格数，哨兵分支归零', () => {
@@ -615,6 +660,15 @@ test('PRINT_SINGLE_TALENT：返回累计格数，哨兵分支归零', () => {
   assert.equal(print_single_talent(1, 1), 2);
   assert.equal(print_single_talent(-1, 1), 0);
   assert.equal(print_single_talent(2, 1), 1, '归零后从 1 重新数');
+  print_single_talent(-1, 1);
+  assert.deepEqual(
+    width_rows(fixture),
+    [
+      [2, 12],
+      [1, 24], // 一格独占整行（宽度下限 Math.max(3, …) 在此不生效）
+    ],
+    '每格宽度 = floor(24 / 行内格数)',
+  );
 });
 
 test('PRINT_SINGLE_TALENT：空缓冲的冲行不产出 Row（flush 的 length 守卫）', () => {
