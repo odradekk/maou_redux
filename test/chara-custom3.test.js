@@ -89,6 +89,21 @@ test('PRINT_ARR_GROUP：按钮编码 = 组号 × 100 + 表内序号，未选中�
   );
 });
 
+test('PRINT_ARR_GROUP：超宽首项先冲空行——row.length 为 0 的 flush 不产出 Row', () => {
+  const fixture = setup();
+  const { print_arr_group } = load(fixture);
+  // 单项显示宽 100 ≥ 80：进换行判定时行还是空的，flush 必须直接返回；
+  // 少了这道守卫会多出一个空的 printMultiColumns Row（行数 +1）
+  print_arr_group(['甲'.repeat(50)], 0, 7);
+
+  assert.deepEqual(accelerators(fixture), [700], '按钮恰好一枚');
+  assert.equal(
+    fixture.era.getLineCount(),
+    2,
+    '按钮行 + 末尾 PRINTL，没有多余的空行',
+  );
+});
+
 test('PRINT_ARR_GROUP：宽度按显示宽度累加 +2，达到 80 就换行', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);

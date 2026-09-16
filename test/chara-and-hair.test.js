@@ -198,6 +198,22 @@ test('SET_CHARASTERISTIC：按序号设定单条性格（越界不检查，1:1�
   assert.equal(fixture.store.get('talent:1:160'), 0, '事前初始化清掉了旧值');
 });
 
+test('SET_CHARASTERISTIC：序号在表外（等于或超过表长）时写素质 0（1:1）', () => {
+  const fixture = setup();
+  const { set_charasteristic } = load(fixture);
+  // 源 :62 的 `ID_OF_GENERAL_CHARASTERISTICS:(ARG:1)` 读到表外给 0，
+  // 于是写的是素质 0（処女）——文件头的「?? 0」这一端单独钉住
+  for (const index of [10, 99]) {
+    fixture.store.delete('talent:1:0');
+    set_charasteristic(1, index);
+    assert.equal(
+      fixture.store.get('talent:1:0'),
+      1,
+      `序号 ${index} 落到素质 0`,
+    );
+  }
+});
+
 // —— @CLEAR_CHARASTERISTIC（:68-78）——
 
 test('CLEAR_CHARASTERISTIC：表内 10 项全部清零', () => {
@@ -286,6 +302,19 @@ test('SHOW_HAIRCOLOR：打印发色名并返回编号；未设（0）时打印�
   fixture.store.set('talent:1:300', 3);
   assert.equal(show_haircolor(1), 3);
   assert.deepEqual(texts(fixture), ['', '黑发']);
+});
+
+test('SHOW_HAIRCOLOR：编号超表（12，CHOOSE_HAIRCOLOR 允许的端）时打印空串', () => {
+  const fixture = setup();
+  fixture.store.set('talent:1:300', 12); // 12 号没有名字（ARR_HAIRCOLOR 到 11 止）
+  const { show_haircolor } = load(fixture);
+
+  assert.equal(show_haircolor(1), 12, '编号原样回传');
+  assert.deepEqual(
+    texts(fixture),
+    [''],
+    "表外读回 undefined，落成空串（?? ''）",
+  );
 });
 
 test('SET_HAIRCOLOR：写入并回传编号（越界不检查，1:1）', () => {

@@ -305,6 +305,20 @@ test('TALENT_DEAL：越界返回 -1 且不动任何素质', () => {
   );
 });
 
+test('TALENT_DEAL：区间两端（0 与 500）都放行', () => {
+  const fixture = setup();
+  const { char_custom_talent_deal } = load(fixture);
+  // 判据是 `l_tal >= 0 && l_tal <= 500`（源 :158-160）：两端各取一次，
+  // 收敛任一端（<= 499 / >= 1）本用例即红
+  assert.equal(char_custom_talent_deal(0, 1), 0, '下界 0 放行');
+  assert.equal(char_custom_talent_deal(500, 1), 0, '上界 500 放行');
+  assert.deepEqual(
+    [fixture.store.get('talent:1:0'), fixture.store.get('talent:1:500')],
+    [1, 1],
+    '两端都被取反设上',
+  );
+});
+
 test('TALENT_DEAL：取反——已设的取消、未设的设上', () => {
   const fixture = setup();
   fixture.store.set('talent:1:10', 1);
@@ -317,7 +331,14 @@ test('TALENT_DEAL：取反——已设的取消、未设的设上', () => {
 
 test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1）', () => {
   const fixture = setup();
-  fixture.store.set('talent:1:110', 1);
+  // 四档非选中项都先设上：只把选中项设为 1 的话，「漏清某一档」的改动看不见
+  // ——没设过的档本来就是 0，断言恒真
+  // （注：五档在 CONFLICT_PAIRS 里两两互斥，组内清空与互斥检查重叠，
+  //  119 这一档由互斥对 [119,114] 兜住；组内循环本身钉 :173 的还原行）
+  for (const index of [109, 110, 116, 119]) {
+    fixture.store.set(`talent:1:${index}`, 1);
+  }
+  fixture.store.set('talent:1:117', 1); // 组外哨兵（治愈），不该被动
   const { char_custom_talent_deal } = load(fixture);
   char_custom_talent_deal(114, 1);
 
@@ -329,6 +350,7 @@ test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1）', () => {
       `第 ${index} 档被清`,
     );
   }
+  assert.equal(fixture.store.get('talent:1:117'), 1, '胸围组外的 117 不动');
   assert.ok(
     texts(fixture).some((t) => t.includes('CHAR_BUST_REGENERATE_WAPPED')),
     '胸围重掷打占位行（TRYCALL 的真身未移植）',
@@ -369,12 +391,17 @@ test('TALENT_DEAL：口上组唯一，且 174（贵公子）置男人、166 清�
 
 test('TALENT_DEAL：职业唯一（200-220 只留一个）', () => {
   const fixture = setup();
-  fixture.store.set('talent:1:205', 1);
+  // 整段 200-220 都先设上：区间的两端（200 与 220）只有「本来设过」才验得出
+  // ——只设 205 的话，收窄到 201-220 或 200-219 都看不出来
+  for (let index = 200; index <= 220; index += 1) {
+    fixture.store.set(`talent:1:${index}`, 1);
+  }
+  fixture.store.set('talent:1:199', 1); // 区间外的邻值（其下）
+  fixture.store.set('talent:1:221', 1); // 区间外的邻值（其上）
   const { char_custom_talent_deal } = load(fixture);
   char_custom_talent_deal(210, 1);
 
   assert.equal(fixture.store.get('talent:1:210'), 1);
-  assert.equal(fixture.store.get('talent:1:205') || 0, 0);
   for (let index = 200; index <= 220; index += 1) {
     if (index === 210) continue;
     assert.equal(
@@ -383,9 +410,8 @@ test('TALENT_DEAL：职业唯一（200-220 只留一个）', () => {
       `第 ${index} 位被清`,
     );
   }
-  // 上界之外（221）不算职业：点它不该清掉职业位
-  char_custom_talent_deal(221, 1);
-  assert.equal(fixture.store.get('talent:1:210'), 1, '221 不在职业唯一区间内');
+  assert.equal(fixture.store.get('talent:1:199'), 1, '199 不在职业唯一区间内');
+  assert.equal(fixture.store.get('talent:1:221'), 1, '221 不在职业唯一区间内');
 });
 
 test('TALENT_DEAL：职业组外的素质不动职业位', () => {
@@ -591,6 +617,19 @@ test('PRINT_SINGLE_TALENT：返回累计格数，哨兵分支归零', () => {
   assert.equal(print_single_talent(2, 1), 1, '归零后从 1 重新数');
 });
 
+test('PRINT_SINGLE_TALENT：空缓冲的冲行不产出 Row（flush 的 length 守卫）', () => {
+  const fixture = setup();
+  const { print_single_talent } = load(fixture);
+  const before = fixture.era.getLineCount();
+
+  assert.equal(print_single_talent(-1, 1), 0);
+  assert.equal(
+    fixture.era.getLineCount(),
+    before,
+    '缓冲为空时 flush 直接返回，不调 printMultiColumns',
+  );
+});
+
 test('PRINT_SINGLE_TALENT：已设素质不灰、未设为灰', () => {
   const fixture = setup();
   fixture.store.set('talentname:0', '甲');
@@ -628,6 +667,17 @@ test('TALENT_EMPTY_CHECK：完备时返回 0，给出「人物设定完成」并
 
   assert.equal(await talent_empty_check(1), 0);
   assert.ok(texts(fixture).includes('人物设定完成'));
+  assert.ok(
+    texts(fixture).includes('设定初体验'),
+    ':534 的 CHARA_FIRST_XP 真的跑了',
+  );
+  assert.deepEqual(
+    fixture.inputs_consumed
+      .filter((i) => i.api === 'input')
+      .map((i) => i.value),
+    [998, 998, 0],
+    '问卷的三次输入被消费',
+  );
   assert.ok(fixture.waits.length > 0, 'PRINTW 的等键');
 });
 
@@ -708,6 +758,44 @@ test('TALENT_EMPTY_CHECK：非精英不看 319', async () => {
   fixture.set_inputs(998, 998, 0);
   const { talent_empty_check } = load(fixture);
   assert.equal(await talent_empty_check(1), 0);
+});
+
+test('TALENT_EMPTY_CHECK：性格与职业区间的四端（含区间外的邻值）', async () => {
+  // [动哪一组, 设上的素质, 期望返回值]——两组各钉住区间的两端与两端外的邻值
+  // （源 :487-500 的 `INRANGE(L_I,160,175)` 与 `INRANGE(L_I,200,220)`）
+  const table = [
+    ['性格', 160, 0], // 下界：算性格
+    ['性格', 175, 0], // 上界：算性格
+    ['性格', 159, 1], // 区间外（其下）
+    ['性格', 176, 1], // 区间外（其上）
+    ['职业', 200, 0], // 下界
+    ['职业', 220, 0], // 上界
+    ['职业', 199, 1], // 区间外（其下）
+    ['职业', 221, 1], // 区间外（其上）
+  ];
+  for (const [kind, index, expected] of table) {
+    const fixture = setup();
+    complete_chara(fixture);
+    if (kind === '性格') {
+      fixture.store.delete('talent:1:160');
+    } else {
+      fixture.store.delete('talent:1:205');
+    }
+    fixture.store.set(`talent:1:${index}`, 1);
+    if (index === 220) {
+      fixture.store.set('talent:1:319', 1); // 精英另需精英种族
+    }
+    fixture.set_inputs(998, 998, 0);
+    const { talent_empty_check } = load(fixture);
+    assert.equal(await talent_empty_check(1), expected, `设了 ${index}`);
+    if (expected === 1) {
+      const message =
+        kind === '性格'
+          ? '需要设定性格（口上）'
+          : '需要有【近卫】及【后代】之外的职业设定';
+      assert.ok(texts(fixture).includes(message), `设了 ${index} 的提示`);
+    }
+  }
 });
 
 // —— @CHARA_FIRST_XP（:596-794）——
@@ -1140,30 +1228,38 @@ test('CHAR_CUSTOM：种族 9（魔族）随机补现种族，RAND:3 上界被测
   assert.equal(fixture.store.get('talent:1:322'), 194, '191 + RAND:3');
 });
 
-test('CHAR_CUSTOM：妊娠素质成立时补预产日（DAY + 10 + RAND:6）', async () => {
-  const fixture = setup();
-  fixture.store.set('talent:1:160', 1);
-  fixture.store.set('talent:1:205', 1);
-  fixture.store.set('talent:1:153', 1); // 妊娠素质之一
-  for (const index of [
-    300, 301, 303, 304, 305, 306, 307, 309, 310, 312, 313, 317,
-  ]) {
-    fixture.store.set(`talent:1:${index}`, 1);
-  }
-  fixture.store.set('flag:10004', 10000000); // MONEY
-  fixture.store.set('flag:10000', 30); // DAY
-  const { char_custom } = load(fixture);
-  const upper = [];
-  const rand = (n) => {
-    upper.push(n);
-    return 5;
-  };
-  fixture.set_inputs(999, 998, 998, 0, 1);
+test('CHAR_CUSTOM：五种妊娠素质各自触发预产日（DAY + 10 + RAND:6）', async () => {
+  // 源 :78-80 的判据是五个素质的析取（153/341/342/343/344）：逐个单设，
+  // 漏掉任何一项本用例即红
+  for (const talent_index of [153, 341, 342, 343, 344]) {
+    const fixture = setup();
+    fixture.store.set('talent:1:160', 1);
+    fixture.store.set('talent:1:205', 1);
+    fixture.store.set(`talent:1:${talent_index}`, 1);
+    for (const index of [
+      300, 301, 303, 304, 305, 306, 307, 309, 310, 312, 313, 317,
+    ]) {
+      fixture.store.set(`talent:1:${index}`, 1);
+    }
+    fixture.store.set('flag:10004', 10000000); // MONEY
+    fixture.store.set('flag:10000', 30); // DAY
+    const { char_custom } = load(fixture);
+    const upper = [];
+    const rand = (n) => {
+      upper.push(n);
+      return 5;
+    };
+    fixture.set_inputs(999, 998, 998, 0, 1);
 
-  await char_custom(1, 0, rand);
-  assert.equal(fixture.store.get('cflag:1:110'), 30 + 10 + 5);
-  assert.equal(fixture.store.get('cflag:1:111'), 0);
-  assert.ok(upper.includes(6), 'RAND:6 的上界');
+    await char_custom(1, 0, rand);
+    assert.equal(
+      fixture.store.get('cflag:1:110'),
+      30 + 10 + 5,
+      `妊娠素质 ${talent_index} 触发预产日`,
+    );
+    assert.equal(fixture.store.get('cflag:1:111'), 0);
+    assert.ok(upper.includes(6), 'RAND:6 的上界');
+  }
 });
 
 test('CHAR_CUSTOM：不成立妊娠素质时不写预产日', async () => {
@@ -1212,4 +1308,60 @@ test('CHAR_CUSTOM：外观页点选走 LOOK_DEAL（编码回传）', async () =>
 
   await char_custom(1, 0);
   assert.equal(fixture.store.get('talent:1:300'), 1);
+});
+
+test('CHAR_CUSTOM：外观页点选后按体型清肥胖位（两头）', async () => {
+  const fixture = setup();
+  const { char_custom } = load(fixture);
+  // 第 4 页（页号 3）是外观页：点 1101（发色）落到 LOOK_DEAL，随后按
+  // TALENT:308 决定要不要清 115（源 :1-153 的纤细体型不肥胖）
+  const look_deal_round = async (body_size) => {
+    fixture.store.set('talent:1:308', body_size);
+    fixture.reset_inputs(998, 998, 998, 1101, 996); // 翻到第 4 页、点 1101、取消
+    await char_custom(1, 0);
+  };
+
+  fixture.store.set('talent:1:115', 1);
+  await look_deal_round(100); // 纤细档的上界
+  assert.equal(
+    fixture.store.get('talent:1:115') || 0,
+    0,
+    '308 = 100 清掉肥胖位',
+  );
+
+  fixture.store.set('talent:1:115', 1);
+  await look_deal_round(101); // 标准档
+  assert.equal(fixture.store.get('talent:1:115'), 1, '308 = 101 不动肥胖位');
+});
+
+test('CHAR_CUSTOM：FLAG:5 位 12/15 打开时才调用身体生成（分支两侧）', async () => {
+  // 真身 char_body_generate_wapped 自己带同一道 FLAG:5 守卫（chara-body.js:498），
+  // 只看 CFLAG:451-457 写没写分不出「分支没进」与「进了但被真身早退」——
+  // 故把模块导出换成记录桩，让分支的两侧都能断言
+  // （夹具 disable_enter_enemy 的同款手法：替换模块导出、游戏代码零修改）
+  for (const [flag5, expected] of [
+    [0, 0], // 两位都没开：不调用
+    [1 << 12, 1], // 位 12（年龄身高显示）
+    [1 << 15, 1], // 位 15
+  ]) {
+    const fixture = setup();
+    const body = require('#/chara/chara-body');
+    const real = body.char_body_generate_wapped;
+    const called = [];
+    body.char_body_generate_wapped = (cid) => called.push(cid);
+    try {
+      complete_chara(fixture);
+      fixture.store.set('talent:1:160', 1);
+      fixture.store.set('talent:1:205', 1);
+      fixture.store.set('flag:10004', 10000000); // MONEY
+      fixture.store.set('flag:5', flag5);
+      const { char_custom } = load(fixture);
+      fixture.set_inputs(999, 998, 998, 0, 1);
+
+      await char_custom(1, 0, () => 5);
+      assert.equal(called.length, expected, `FLAG:5 = ${flag5}`);
+    } finally {
+      body.char_body_generate_wapped = real;
+    }
+  }
 });

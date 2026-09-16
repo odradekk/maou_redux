@@ -35,7 +35,8 @@
  *   - **`TALENT:CHARA_ID:0`（输入越界一项）**：源 :117 的判据是
  *     `RESULT < 0 || RESULT > SIZE`，`RESULT == SIZE` 放行；此时
  *     `ID_OF_GENERAL_CHARASTERISTICS:(RESULT)` 读到表外，Emuera 给 0，
- *     于是写的是素质 0（処女）。1:1 保留这个端（`?? 0`）。
+ *     于是写的是素质 0（処女）。1:1 保留这个端（`?? 0`）。同一条也管
+ *     @SET_CHARASTERISTIC（:62 无范围检查，表外序号同样落素质 0）。
  */
 
 'use strict';
@@ -179,7 +180,10 @@ function set_random_charasteristic(cid = -1, rand = default_rand) {
 function set_charasteristic(cid = -1, index) {
   const chara_id = cid < 0 ? target_cid() : cid;
   clear_charasteristic(chara_id); // :52-67
-  const talent_id = GENERAL_CHARASTERISTICS[index]; // :62
+  // 表外序号与 @CHOOSE_CHARASTERISTIC 同款：源 :62 的
+  // `ID_OF_GENERAL_CHARASTERISTICS:(ARG:1)` 越界时 Emuera 给 0，
+  // 于是写的是素质 0（処女）。少了这个兜底会写出不存在的下标
+  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 0; // :62
   set_talent(chara_id, talent_id, 1); // :52-67
 }
 

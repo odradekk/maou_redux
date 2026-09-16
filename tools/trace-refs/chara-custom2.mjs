@@ -886,6 +886,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB',
+        ref: '733-734',
+        any: [/^[ \t]*PRINTFORM \[初吻对象：%CSTR:4%\][ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB',
         ref: '734',
         any: [/^[ \t]*PRINTFORM \[初吻对象：%CSTR:4%\][ \t]*$/m],
       },

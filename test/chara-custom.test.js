@@ -63,6 +63,7 @@ const ALL_PRESETS = [
   33,
   34,
   35,
+  39,
   40,
 ];
 
@@ -99,6 +100,33 @@ test('CHAR_CREATE：调试路径（ARG 1）多列特殊段，且 18/19 被排除
   assert.ok(!special.some((t) => t.includes('预设19')));
 });
 
+test('CHAR_CREATE：特殊段列 17-39（含上界 39、不含 40），显示编号 = 预设号 + 20', async () => {
+  const fixture = setup();
+  seed_presets(fixture, ALL_PRESETS); // 含 39 与 40——40 在库但不在特殊段
+  const { char_create } = load(fixture);
+  fixture.set_inputs(999);
+
+  await char_create(1);
+  // 数据实况：yml/Chara*.yml 在 17-40 这段里只有 17/20-24/31-35（18/19 排除），
+  // 39 与 40 是**合成**种——两个端点按源码边界钉住（改了会让本用例红），
+  // 在成品数据里则落不到（EXISTCSV 拦下）
+  const rows = texts(fixture, true).filter((t) => t.includes('预设'));
+  assert.ok(
+    rows.some((t) => t.includes('预设39')),
+    '上界 39 在列表里',
+  );
+  assert.ok(
+    !rows.some((t) => t.includes('预设40')),
+    '40 越出 FOR 的右端（:49 `FOR L_I, 17, 40`），即使它在库',
+  );
+  // :52 `[{L_I+20,2}]`：17 号显示为 [37]
+  const row_17 = rows.find((t) => t.includes('预设17'));
+  assert.ok(
+    row_17.includes('[37] 预设17'),
+    `显示编号是预设号 + 20：${JSON.stringify(row_17)}`,
+  );
+});
+
 test('CHAR_CREATE：勇者段每行 4 格、精英段每行 5 格（补位宽度 14）', async () => {
   const fixture = setup();
   seed_presets(fixture, ALL_PRESETS);
@@ -131,11 +159,11 @@ test('CHAR_CREATE：编号映射三分支 + 兜底臂（表驱动）', async () 
   const { char_create } = load(fixture);
   // [输入, 期望加进来的预设号]；999 只用来收尾
   const table = [
-    [1, 1], // 1-16 → 原样
-    [16, 16],
-    [21, 201], // 21-30 → -20 +200
+    [1, 1], // 1-16 → 原样（下界）
+    [16, 16], // 1-16 的上界
+    [21, 201], // 21-30 → -20 +200（下界）
     [30, 210],
-    [37, 17], // 37-60 → -20
+    [37, 17], // 37-60 → -20（下界）
     [51, 31],
     [35, 35], // 兜底臂：不在任何区间 → 原样（预设 35 在库）
   ];
@@ -171,20 +199,52 @@ test('CHAR_CREATE：预设不在库时重问（EXISTCSV 守卫）', async () => 
 
 test('CHAR_CREATE：特殊位（17-40）已在场则复用（FINDCHARA），不新建', async () => {
   const fixture = setup();
-  seed_presets(fixture, [17]);
+  seed_presets(fixture, [17, 35]);
   fixture.era.addCharacter(17); // 预设 17 已在场
+  fixture.era.addCharacter(35); // 预设 35 已在场（在库数据在这条区间里的末端）
   const { char_create } = load(fixture);
-  fixture.set_inputs(17, 999);
+  // [输入, 映射出的预设号]：17 走兜底臂原样、55 走 CASE 37 TO 60 的 -20
+  for (const [input, preset] of [
+    [17, 17],
+    [55, 35],
+  ]) {
+    fixture.reset_inputs(input, 999);
+    await char_create(1);
+    assert.equal(
+      fixture.era.getAddedCharacters().filter((id) => id === preset).length,
+      1,
+      `预设 ${preset} 没有重复加入`,
+    );
+    assert.ok(
+      !texts(fixture, true).some((t) => t.includes('你召唤出了')),
+      `预设 ${preset} 复用时不播报`,
+    );
+  }
+});
+
+test('CHAR_CREATE：特殊位区间上界 40——已在场同样复用（INRANGE 的右端）', async () => {
+  const fixture = setup();
+  // 40 号不在 yml/Chara*.yml 里（合成种），故本用例是**源码边界的保真锁**：
+  // :85 的 `INRANGE(L_I,17,40)` 收敛成 `<= 39` 会让 40 号改走 CHAR_APPEND。
+  // 在库数据里这条端不可达（EXISTCSV(40) 为假、先把输入退回重问）
+  seed_presets(fixture, [40]);
+  fixture.era.addCharacter(40); // 预设 40 已在场
+  const { char_create } = load(fixture);
+  fixture.set_inputs(60, 999); // 60 → L_I = 40（CASE 37 TO 60 的右端）
 
   await char_create(1);
-  assert.equal(
-    fixture.era.getAddedCharacters().filter((id) => id === 17).length,
-    1,
-    '没有重复加入',
+  assert.deepEqual(
+    fixture.calls.filter((c) => c.api === 'addCharacter').map((c) => c.args[0]),
+    [0, 40], // 0 = setup 的魔王；40 = 测试自己加的。CHAR_APPEND 没有再调
+    '已在场的 40 号不再 ADDCHARA',
   );
   assert.ok(
     !texts(fixture, true).some((t) => t.includes('你召唤出了')),
     '复用时不播报',
+  );
+  assert.ok(
+    texts(fixture, true).some((t) => t.includes('修改角色属性（预设40）')),
+    'CHAR_CUSTOM 收到的是 40 号（称呼由夹具的 ADDCHARA 写入）',
   );
 });
 
@@ -437,41 +497,54 @@ test('CHAR_APPEND：CASE 34 葵希罗——FLAG:224 与着装', async () => {
   assert.equal(fixture.store.get('flag:224'), 1);
 });
 
-test('CHAR_APPEND：CASE 31-33 与 35 走 CHAR_INIT', async () => {
+test('CHAR_APPEND：CASE 31-33 与 35 走 CHAR_INIT（区间两端，判据是能力者掷骰）', async () => {
   const fixture = setup();
   seed_presets(fixture, [31, 32, 33, 35]);
   const { char_append } = load(fixture);
   for (const preset of [31, 32, 33, 35]) {
     fixture.reset_inputs(996);
-    await char_append(preset, 1);
-    assert.equal(
-      fixture.store.get(`callname:${preset}:-1`) ?? '',
-      `预设${preset}`,
-      `预设 ${preset} 的称呼（CHAR_INIT 的 SAVESTR 一行由 callname 承载）`,
+    // CHAR_INIT 的五连掷（RAND:40）全中时五系能力者素质被写上——它跑过的证据。
+    // 不拿称呼当判据：ADDCHARA 自己就会写 callname:id:-1/-2（夹具 addCharacter
+    // 镜像引擎的同一动作），那种断言在 CHAR_INIT 缺席时照样绿
+    await char_append(preset, 1, () => 0);
+    assert.deepEqual(
+      [275, 276, 277, 278, 279].map((t) =>
+        fixture.store.get(`talent:${preset}:${t}`),
+      ),
+      [1, 1, 1, 1, 1],
+      `预设 ${preset} 走了 CHAR_INIT`,
     );
   }
 });
 
-test('CHAR_APPEND：勇者（1-16）在模式 1 走 CHAR_MAKE 随机成型', async () => {
+test('CHAR_APPEND：勇者（1-16）在模式 1 走 CHAR_MAKE 随机成型（区间两端）', async () => {
   const fixture = setup();
-  seed_presets(fixture, [5]);
   const { char_append } = load(fixture);
-  fixture.set_inputs(996);
-
-  await char_append(5, 1);
-  // CHAR_MAKE 的可见落点：CFLAG:1（CM_STP 的侵攻中）被写过
-  assert.ok(
-    fixture.var_writes.some((w) => w.name === 'cflag:5:1'),
-    'CM_STP 写过 CFLAG:A:1',
-  );
+  for (const preset of [1, 16]) {
+    seed_presets(fixture, [preset]);
+    fixture.reset_inputs(996);
+    await char_append(preset, 1);
+    // 判据用 CHAR_MAKE 必写的 CFLAG:120（卖春积极性，chara-make.js:130）。
+    // 不用 CFLAG:1：本函数末尾的 `CFLAG:A:1 = 0` 也写它，证不了 CHAR_MAKE 跑过
+    assert.equal(
+      fixture.store.get(`cflag:${preset}:120`),
+      1,
+      `预设 ${preset} 走了 CHAR_MAKE`,
+    );
+  }
 });
 
-test('CHAR_APPEND：精英（201-210）在模式 1 同样走 CHAR_MAKE', async () => {
+test('CHAR_APPEND：精英（201-210）在模式 1 同样走 CHAR_MAKE（区间两端）', async () => {
   const fixture = setup();
-  seed_presets(fixture, [203]);
   const { char_append } = load(fixture);
-  fixture.set_inputs(996);
-
-  await char_append(203, 1);
-  assert.ok(fixture.var_writes.some((w) => w.name === 'cflag:203:1'));
+  for (const preset of [201, 210]) {
+    seed_presets(fixture, [preset]);
+    fixture.reset_inputs(996);
+    await char_append(preset, 1);
+    assert.equal(
+      fixture.store.get(`cflag:${preset}:120`),
+      1,
+      `预设 ${preset} 走了 CHAR_MAKE`,
+    );
+  }
 });

@@ -6,8 +6,16 @@
 // 守护测试：test/chara-and-hair.test.js、test/chara-custom.test.js、
 //           test/chara-custom2.test.js、test/chara-custom3.test.js。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。
+//
+// M8805-M8820 是首轮验收返工的补表：M8761-M8804 全压在 and-hair/custom2/
+// custom3 三个文件上，chara-custom.js（@CHAR_CREATE / @CHAR_APPEND）一条没有
+// ——而它是留给 #398 的接口边。补表按「区间上界」这一种形状统一处理四个文件
+// （验收用 `index <= 40` / `arg <= 210` 两处上界改坏时全绿），四文件的条目数
+// 变为 13/8/28/11（and-hair / custom / custom2 / custom3），共 60 条。
+// 注意表只钉样本：同一形状的字面量还有不少靠用例本身守（如 custom2 的
+// JOB_FIRST 职业下界、cost 扫描区间两端），改动它们同样会有用例变红。
 
-export const COUNT = 44; // #392 建表（M8761-M8804，本票号段 M8761-M8820）
+export const COUNT = 60; // #392 建表（M8761-M8804）＋ 首轮验收返工补表（M8805-M8820）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -378,5 +386,141 @@ export default [
       '              era_exflag.legit_money += 0; // :97 EX_FLAG:4444 -= PRICE',
     tests: ['chara-custom2'],
     must_mention: 'EX_FLAG',
+  },
+
+  // —— 首轮验收返工补表：区间上界与 chara-custom.js 的分布 ——
+
+  {
+    desc: 'M8805 CHAR_CREATE 的「已在场复用」区间上界 40 改 39（首轮验收漏网的那一处）',
+    file: 'ere/chara/chara-custom.js',
+    find: '    if (index >= 17 && index <= 40) {',
+    replace: '    if (index >= 17 && index <= 39) {',
+    tests: ['chara-custom'],
+    must_mention: '特殊位区间上界 40',
+  },
+  {
+    desc: 'M8806 CHAR_APPEND 精英段的区间上界 210 改 209（首轮验收漏网的那一处）',
+    file: 'ere/chara/chara-custom.js',
+    find: '  } else if (arg >= 201 && arg <= 210) {',
+    replace: '  } else if (arg >= 201 && arg <= 209) {',
+    tests: ['chara-custom'],
+    must_mention: '精英（201-210）在模式 1 同样走 CHAR_MAKE',
+  },
+  {
+    desc: 'M8807 CHAR_CREATE 输入映射的区间上界 60 改 59（60 落进兜底臂）',
+    file: 'ere/chara/chara-custom.js',
+    find: '    } else if (result >= 37 && result <= 60) {',
+    replace: '    } else if (result >= 37 && result <= 59) {',
+    tests: ['chara-custom'],
+    must_mention: '特殊位区间上界 40',
+  },
+  {
+    desc: 'M8808 CHAR_APPEND 勇者段的区间上界 16 改 15（16 号不再随机成型）',
+    file: 'ere/chara/chara-custom.js',
+    find: '  if (arg >= 1 && arg <= 16) {',
+    replace: '  if (arg >= 1 && arg <= 15) {',
+    tests: ['chara-custom'],
+    must_mention: '勇者（1-16）在模式 1 走 CHAR_MAKE',
+  },
+  {
+    desc: 'M8809 CHAR_APPEND 精英段的区间下界 201 改 202（201 号不再随机成型）',
+    file: 'ere/chara/chara-custom.js',
+    find: '  } else if (arg >= 201 && arg <= 210) {',
+    replace: '  } else if (arg >= 202 && arg <= 210) {',
+    tests: ['chara-custom'],
+    must_mention: '精英（201-210）在模式 1 同样走 CHAR_MAKE',
+  },
+  {
+    desc: 'M8810 特殊段的 FOR 上界 40 改 39（39 号不再列出）',
+    file: 'ere/chara/chara-custom.js',
+    find: '    for (let i = 17; i < 40; i += 1) {',
+    replace: '    for (let i = 17; i < 39; i += 1) {',
+    tests: ['chara-custom'],
+    must_mention: '特殊段列 17-39',
+  },
+  {
+    desc: 'M8811 CASE 35, 31 TO 33 的区间上界 33 改 32（33 号不再走 CHAR_INIT）',
+    file: 'ere/chara/chara-custom.js',
+    find: '  } else if ((arg >= 31 && arg <= 33) || arg === 35) {',
+    replace: '  } else if ((arg >= 31 && arg <= 32) || arg === 35) {',
+    tests: ['chara-custom'],
+    must_mention: 'CASE 31-33 与 35 走 CHAR_INIT',
+  },
+  {
+    desc: 'M8812 名字长度上界 16 改 15（16 字的名字被拒）',
+    file: 'ere/chara/chara-custom.js',
+    find: 'const NAME_MAX_LENGTH = 16;',
+    replace: 'const NAME_MAX_LENGTH = 15;',
+    tests: ['chara-custom'],
+    must_mention: '名字长度上界 16',
+  },
+  {
+    desc: 'M8813 妊娠素质的析取链换掉 153（该素质不再触发预产日）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '          const pregnant =\n            talent(cid, 153) ||',
+    replace: '          const pregnant =\n            talent(cid, 154) ||',
+    tests: ['chara-custom2'],
+    must_mention: '五种妊娠素质各自触发预产日',
+  },
+  {
+    // 注：BUST_TALENTS 里删掉某一档是**等价变异**——五档在 CONFLICT_PAIRS 里
+    // 构成为两两互斥的完全图（109/110/114/116/119 十条对全在表内），组内
+    // 清空循环与互斥检查重叠，任一侧单独生效都看不出差别。故这里改钉 :173
+    // 的还原行：`bust` 是取反后的值，替换成常量会让选中项落回 0
+    desc: 'M8814 胸围组选中项的还原值改成常量 0（选中项被清空）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '    set_talent(cid, l_tal, bust); // :173',
+    replace: '    set_talent(cid, l_tal, 0); // :173',
+    tests: ['chara-custom2'],
+    must_mention: '胸围五档互斥',
+  },
+  {
+    desc: 'M8815 TALENT_DEAL 的区间上界 500 改 499（500 号被拒）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '  if (!(l_tal >= 0 && l_tal <= 500)) {',
+    replace: '  if (!(l_tal >= 0 && l_tal <= 499)) {',
+    tests: ['chara-custom2'],
+    must_mention: '区间两端（0 与 500）都放行',
+  },
+  {
+    desc: 'M8816 外观页点选后的纤细体型阈值 100 改 101（标准体型被误清）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '        if (talent(cid, T_体型) <= 100) {\n          set_talent(cid, 115, 0); // :1-153 纤细体型不肥胖',
+    replace:
+      '        if (talent(cid, T_体型) <= 101) {\n          set_talent(cid, 115, 0); // :1-153 纤细体型不肥胖',
+    tests: ['chara-custom2'],
+    must_mention: '外观页点选后按体型清肥胖位',
+  },
+  {
+    desc: 'M8817 设定完备后不再进入初体验问卷（:534 的调用删掉）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '    await chara_first_xp(cid); // :534',
+    replace: '    await Promise.resolve(); // :534',
+    tests: ['chara-custom2'],
+    must_mention: 'TALENT_EMPTY_CHECK：完备时返回 0',
+  },
+  {
+    desc: 'M8818 EMPTY_CHECK 职业区间的上界 220 改 221（221 号也算职业）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '    } else if (index >= 200 && index <= 220) {',
+    replace: '    } else if (index >= 200 && index <= 221) {',
+    tests: ['chara-custom2'],
+    must_mention: '性格与职业区间的四端',
+  },
+  {
+    desc: 'M8819 阴毛状态分档的上界 500 改 499（500 落进 CASEELSE）',
+    file: 'ere/chara/chara-custom3.js',
+    find: '  if (value >= 201 && value <= 500) return 6; // :55-56',
+    replace: '  if (value >= 201 && value <= 499) return 6; // :55-56',
+    tests: ['chara-custom3'],
+    must_mention: '阴毛状态七个档位的上下界',
+  },
+  {
+    desc: 'M8820 SET_CHARASTERISTIC 的表外兜底从素质 0 改成 1（写错下标）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 0; // :62',
+    replace: '  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 1; // :62',
+    tests: ['chara-and-hair'],
+    must_mention: '序号在表外',
   },
 ];

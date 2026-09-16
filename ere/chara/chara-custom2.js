@@ -887,6 +887,8 @@ async function chara_first_xp(cid, rand = default_rand) {
       if (chara(cid).train.初吻对象 === 0) {
         era.print('[初吻对象：不明]'); // :732
       } else if (chara(cid).train.初吻对象 === 992) {
+        // 992 在本问卷里取不到（:612/:620-623/:661 的选项里没有它，各支写下的
+        // 编码也到不了 992）——按源码 :733-734 1:1 留档，无对应测试
         era.print(`[初吻对象：${chara(cid).train.初吻对象名}]`); // :734
       } else if (chara(cid).train.初吻对象 === 993) {
         era.print('[初吻对象：狂王]'); // :736
