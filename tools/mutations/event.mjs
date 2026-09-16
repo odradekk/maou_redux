@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 319; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（M8666-M8677/M8679 示众台）
+export const COUNT = 330; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）
 
 export default [
   {
@@ -2937,5 +2937,95 @@ export default [
     replace: 'era.add(`juel:${cid}:1`, count_a);',
     tests: ['event-nextday'],
     must_mention: 'JUEL:2 += COUNT_A',
+  },
+  // —— #400（N16）二轮返工：随机上界（RAND:N 的 N）逐处钉住 ——
+  {
+    desc: 'M8680 处女献上：S 的 RAND:3 改成 RAND:4（上界不参与命中，只能靠探针守）',
+    file: 'ere/event/event-nextday.js',
+    find: 'let s = -rand(3);',
+    replace: 'let s = rand(4);',
+    tests: ['event-nextday'],
+    must_mention: '处女献上：S = -RAND:3',
+  },
+  {
+    desc: 'M8681 尿床准入：RAND:12 改成 RAND:11',
+    file: 'ere/event/event-nextday.js',
+    find: 'rand(12) >',
+    replace: 'rand(11) >',
+    tests: ['event-nextday'],
+    must_mention: '尿床：准入 RAND:12',
+  },
+  {
+    desc: 'M8682 尿床一档：RAND:4 改成 RAND:5',
+    file: 'ere/event/event-nextday.js',
+    find: 'switch (rand(4)) {',
+    replace: 'switch (rand(5)) {',
+    tests: ['event-nextday'],
+    must_mention: '导管一档 RAND:4',
+  },
+  {
+    desc: 'M8683 尿床三档：RAND:3 改成 RAND:4',
+    file: 'ere/event/event-nextday.js',
+    find: 'switch (rand(3)) {',
+    replace: 'switch (rand(4)) {',
+    tests: ['event-nextday'],
+    must_mention: '导管三档 RAND:3',
+  },
+  {
+    desc: 'M8684 夜这い：上界算错（rand(pool.length) 改小 1）',
+    file: 'ere/event/event-nextday.js',
+    find: 'let index = rand(pool.length);',
+    replace: 'let index = rand(pool.length - 1);',
+    tests: ['event-nextday'],
+    must_mention: '夜这い：RAND:(合格人数 2)',
+  },
+  {
+    desc: 'M8685 遛狗：上界算错（rand(walking) 改小 1）',
+    file: 'ere/event/event-nextday.js',
+    find: 'walking = rand(walking);',
+    replace: 'walking = rand(walking - 1);',
+    tests: ['event-nextday'],
+    must_mention: '遛狗：RAND:(CHARANUM-1)',
+  },
+  {
+    desc: 'M8686 朝フェラ：上界算错（rand(candidates.length) 改小 1）',
+    file: 'ere/event/event-nextday.js',
+    find: 'let e = rand(candidates.length);',
+    replace: 'let e = rand(candidates.length - 1);',
+    tests: ['event-nextday'],
+    must_mention: '朝フェラ：E = RAND:F',
+  },
+  {
+    desc: 'M8687 示众台：侵犯者 RAND:5 改成 RAND:4',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'let user = rand(5) + 1;',
+    replace: 'let user = rand(4) + 1;',
+    tests: ['event-nextday'],
+    must_mention: 'RAND:5（侵犯者）',
+  },
+  {
+    desc: 'M8688 示众台：通配涂鸦 RAND:6 改成 RAND:5',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'const rolled = rand(6);',
+    replace: 'const rolled = rand(5);',
+    tests: ['event-nextday'],
+    must_mention: 'RAND:6（涂鸦）',
+  },
+  {
+    desc: 'M8689 示众台：通用十四句 RAND:14 改成 RAND:13',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: 'const rolled = rand(14);',
+    replace: 'const rolled = rand(13);',
+    tests: ['event-nextday'],
+    must_mention: 'RAND:14（通用涂鸦）',
+  },
+  {
+    desc: 'M8690 示众台：处女支的 RAND:20 改成 RAND:19',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: "    era.print('『处女』'); // :1616\n    count_a += rand(20) + 1;",
+    replace:
+      "    era.print('『处女』'); // :1616\n    count_a += rand(19) + 1;",
+    tests: ['event-nextday'],
+    must_mention: 'RAND:20/10/10（次数）',
   },
 ];

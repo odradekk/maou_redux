@@ -3045,6 +3045,183 @@ test('素质变化三事件接线：EVENT_NEXTDAY 命中触发条件时不再打
   );
 });
 
+// —— 随机上界（#298 覆盖面：RAND:N 的 N 是字面量，改错等于改概率分布）——
+
+/** 记录每次 RAND:N 收到的上界并恒返回 0 的探针（只要上界、不要命中） */
+function bound_probe(bounds) {
+  return (n) => {
+    bounds.push(n);
+    return 0;
+  };
+}
+
+test('随机上界：事件侧每个 RAND:N 的 n 逐个钉住（表驱动）', async () => {
+  // 序列按「代码里遇到 rand(n) 的先后」排列，注释逐位对上调用点
+  const cases = [
+    {
+      label: '处女献上：S = -RAND:3（唯一一次掷）',
+      setup: (fixture) => {
+        join_slave_chara(fixture, 31, '温妮');
+        fixture.store.set('talent:0:122', 1);
+        fixture.store.set('flag:10005', 31);
+        fixture.store.set('talent:31:0', 1);
+        fixture.store.set('talent:31:85', 1);
+        fixture.store.set('abl:31:10', 6);
+        fixture.store.set('abl:31:11', 5);
+        fixture.store.set('abl:31:16', 5);
+        fixture.store.set('base:31:0', 1000);
+        fixture.set_inputs(0);
+      },
+      drive: (fixture, rand) =>
+        fixture.load_module('event/event-nextday').offervirgin_check(rand),
+      expected: [3],
+    },
+    {
+      label: '朝フェラ：E = RAND:F（F = 合格人数 2）',
+      setup: (fixture) => {
+        fixture.store.set('talent:0:122', 1);
+        for (const cid of [31, 32]) {
+          join_slave_chara(fixture, cid, `奴隶${cid}`);
+          fixture.store.set(`abl:${cid}:11`, 4);
+          fixture.store.set(`abl:${cid}:16`, 4);
+          fixture.store.set(`abl:${cid}:32`, 1);
+          fixture.store.set(`base:${cid}:0`, 1000);
+        }
+      },
+      drive: (fixture, rand) =>
+        fixture.load_module('event/event-nextday').morning_fellatio(rand),
+      expected: [2],
+    },
+    {
+      label: '尿床：准入 RAND:12 + 导管一档 RAND:4',
+      setup: (fixture) => {
+        join_slave_chara(fixture, 31, '温妮');
+        fixture.store.set('talent:31:57', 1);
+        fixture.store.set('exp:31:31', 30);
+        fixture.store.set('base:31:0', 1000);
+        fixture.store.set('cflag:31:42', 99);
+        fixture.store.set('cflag:31:40', 64);
+        fixture.store.set('flag:37', 1);
+        fixture.store.set('abl:31:10', 1);
+      },
+      drive: (fixture, rand) =>
+        fixture.load_module('event/event-nextday').onesho(rand),
+      expected: [12, 4],
+    },
+    {
+      label: '尿床：准入 RAND:12 + 导管三档 RAND:3',
+      setup: (fixture) => {
+        join_slave_chara(fixture, 31, '温妮');
+        fixture.store.set('talent:31:57', 1);
+        fixture.store.set('exp:31:31', 30);
+        fixture.store.set('base:31:0', 1000);
+        fixture.store.set('cflag:31:42', 98);
+        fixture.store.set('cflag:31:40', 64);
+        fixture.store.set('flag:37', 1);
+        fixture.store.set('abl:31:10', 6);
+      },
+      drive: (fixture, rand) =>
+        fixture.load_module('event/event-nextday').onesho(rand),
+      expected: [12, 3],
+    },
+    {
+      label: '夜这い：RAND:(合格人数 2)',
+      setup: (fixture) => {
+        fixture.store.set('talent:0:122', 1);
+        for (const cid of [31, 32]) {
+          join_slave_chara(fixture, cid, `奴隶${cid}`);
+          fixture.store.set(`abl:${cid}:10`, 5);
+          fixture.store.set(`abl:${cid}:11`, 4);
+          fixture.store.set(`abl:${cid}:30`, 1);
+          fixture.store.set(`abl:${cid}:2`, 6);
+          fixture.store.set(`abl:${cid}:3`, 5);
+          fixture.store.set(`base:${cid}:0`, 1000);
+          fixture.store.set(`cflag:${cid}:0`, 1);
+        }
+      },
+      drive: (fixture, rand) =>
+        fixture.load_module('event/event-nextday').night_stalking_check(rand),
+      expected: [2],
+    },
+    {
+      label: '遛狗：RAND:(CHARANUM-1) = RAND:2（三位角色）',
+      setup: (fixture) => {
+        fixture.store.set('item:22', 1);
+        for (const cid of [31, 32]) {
+          join_slave_chara(fixture, cid, `奴隶${cid}`);
+          fixture.store.set(`cflag:${cid}:0`, 1);
+          fixture.store.set(`cflag:${cid}:1`, 0);
+          fixture.store.set(`base:${cid}:0`, 1000);
+          fixture.store.set(`abl:${cid}:39`, 1);
+          fixture.store.set(`abl:${cid}:17`, 3);
+        }
+        fixture.store.set('flag:10005', -1);
+      },
+      drive: (fixture, rand) =>
+        fixture.load_module('event/event-nextday').dog_walk(rand),
+      expected: [2],
+    },
+  ];
+
+  for (const { label, setup, drive, expected } of cases) {
+    const fixture = create_era_fixture();
+    fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+    fixture.era.addCharacter(0);
+    setup(fixture);
+    const bounds = [];
+    await drive(fixture, bound_probe(bounds));
+    assert.deepEqual(bounds, expected, label);
+  }
+});
+
+test('随机上界：示众台每个 RAND:N 的 n 逐个钉住（表驱动）', async () => {
+  const cases = [
+    {
+      label:
+        '处女支：RAND:5（侵犯者）→ RAND:6（涂鸦）→ RAND:20/10/10（次数）→ ' +
+        'RAND:14（通用涂鸦）→ RAND:4/RAND:3（正字两槽）→ RAND:3（叙述）',
+      setup: (fixture) => {
+        join_slave_chara(fixture, 31, '温妮');
+        fixture.store.set('cflag:31:1', 8);
+        fixture.store.set('flag:10005', 31);
+        fixture.store.set('talent:31:0', 1);
+      },
+      expected: [5, 6, 20, 10, 10, 14, 4, 3, 3],
+    },
+    {
+      label:
+        '兽奸支 + 全素质：RAND:5 → 姿态 3 → 涂鸦 3 → 职业 3 → 兽奸判定 2 → ' +
+        '兽奸标签 3 → 次数 10×4 → 各素质 3/5/3/3/3 → 通用 14 → 追加涂鸦 10 → ' +
+        '正字 5/4/3 → 叙述 3',
+      setup: (fixture) => {
+        join_slave_chara(fixture, 31, '温妮');
+        fixture.store.set('cflag:31:1', 8);
+        fixture.store.set('flag:10005', 31);
+        fixture.store.set('abl:31:39', 1);
+        for (const n of [200, 15, 61, 100, 121, 140, 153]) {
+          fixture.store.set(`talent:31:${n}`, 1);
+        }
+        fixture.store.set('cflag:31:661', 40);
+      },
+      expected: [
+        5, 3, 3, 3, 2, 3, 10, 10, 10, 10, 3, 5, 3, 3, 3, 14, 10, 5, 4, 3, 3,
+      ],
+    },
+  ];
+
+  for (const { label, setup, expected } of cases) {
+    const fixture = create_era_fixture();
+    fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+    fixture.era.addCharacter(0);
+    setup(fixture);
+    const bounds = [];
+    await fixture
+      .load_module('event/event-nextday-pillory')
+      .pillory(bound_probe(bounds));
+    assert.deepEqual(bounds, expected, label);
+  }
+});
+
 test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS: nextday_stubs } = fixture.load_module(
