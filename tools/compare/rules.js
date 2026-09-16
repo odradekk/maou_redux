@@ -794,12 +794,39 @@ function classify_scope_b(entry, side, context) {
       // #397 返工：@ABILITY_UP 与 @LIFE_LIST 族落地后 105 不再按一下就
       // 返回（真身是会吃输入的两层画面），本样本的 89-178 行两侧都真的
       // 渲染起来了。原先「89-178 一律算能力提升画面未移植」的行号规则
-      // 随之作废——它会把已实现的画面报成待办。以下四条按差异各自的
-      // 真实成因分派；:143「温妮可以卖掉了」来自已实现的资格复核，
-      // 仍是真差异出口（不设任何按行号的兜底）。
+      // 随之作废——它会把已实现的画面报成待办。以下按差异各自的真实成因
+      // 分派；:143「温妮可以卖掉了」来自已实现的资格复核，仍是真差异出口
+      //（不设任何按行号的兜底）。
+      //
+      // **形态差只解释排版，不豁免内容**：golden 半边的规则一律先确认 ere
+      // 侧真的渲染了对应条目（配对成立才解释），否则「按钮整个没渲染」
+      // 「行里的值算错」都会被静默放行——验收实测过这两处（删 menu_button
+      // 与改魔王行等级都曾全绿）。两侧序列由 diff.js 放进 context。
+      const ere_entries = context.ere ?? [];
+      const golden_entries = context.golden ?? [];
+      const has_ere = (pred) => ere_entries.some(pred);
+      const has_golden = (pred) => golden_entries.some(pred);
+      // 能力提升画面的角色列表行：golden 侧是「编号 + 详情」的一行
+      //（menu 的编号在 val、文本形态的编号在行首），ere 侧拆成
+      //「编号按钮格 + 详情文本格」。
+      const row_shaped = (e) =>
+        (e.kind === 'menu' && / LV \d+$/.test(e.key)) ||
+        (e.kind === 'text' && /^\[ ?\d+\] .* LV \d+/.test(e.text));
+      const row_number = (e) =>
+        e.kind === 'menu'
+          ? e.val
+          : Number((String(e.text).match(/^\[ ?(\d+)\]/) ?? [])[1]);
+      const row_body = (e) =>
+        e.kind === 'menu' ? e.key : String(e.text).replace(/^\[ ?\d+\] /, '');
+      const HEADER_LABELS = ['▌奴隶一览', '▌勇者一览'];
+      const header_line_shaped = (e) =>
+        e.kind === 'text' && /^▌奴隶一览 ▌勇者一览$/.test(e.text);
       //
       // ① 能力值列表的可提升标记 `*`（golden 独有）：@DECIDE_ABLUP 族
       //    未接入（page-ablup.js 文件头待办，docs/stub-registry.md）。
+      //    **它只锁「标记不出」这一件事**：能力名/等级写错时，ere 侧那条
+      //    走 ② 的配对判据（golden 里找不到同名的带标记条目）→ 留在
+      //    unexplained，不会被本条吞掉。
       if (
         side === 'golden' &&
         entry.kind === 'menu' &&
@@ -813,10 +840,17 @@ function classify_scope_b(entry, side, context) {
       }
       // ② ere 侧同一能力条目（无 * 标记）：与 golden 的带标记条目按编号
       //    集合配对时错开，落成与别屏（主菜单 [---] 槽位）的错配半边。
+      //    **配对前提**：golden 侧真有同名的能力条目（带不带标记都算）；
+      //    名字或等级写错时对不上，本条不生效、该条目留在 unexplained。
       if (
         side === 'ere' &&
         entry.kind === 'menu' &&
-        / - LV \d+$/.test(entry.key)
+        / - LV \d+$/.test(entry.key) &&
+        has_golden(
+          (e) =>
+            e.kind === 'menu' &&
+            (e.key === entry.key || e.key === `${entry.key} *`),
+        )
       ) {
         return {
           category: 'stub',
@@ -826,10 +860,13 @@ function classify_scope_b(entry, side, context) {
       }
       // ③ 表头两个切换按钮：Emuera 的 PRINTBUTTON 与文本同行且不印编号，
       //    ere 的 printButton 独占一行并带 [编号]（PR #53 通则）。
+      //    **配对前提**：两侧都要在（ere 两个按钮 + golden 那一行文本），
+      //    按钮没渲染出来时两侧一起留在 unexplained。
       if (
         side === 'ere' &&
         entry.kind === 'menu' &&
-        ['▌奴隶一览', '▌勇者一览'].includes(entry.key)
+        HEADER_LABELS.includes(entry.key) &&
+        has_golden(header_line_shaped)
       ) {
         return {
           category: 'stub',
@@ -838,11 +875,15 @@ function classify_scope_b(entry, side, context) {
         };
       }
       // ③b 同一表头行的 golden 半边（Emuera 两个 PRINTBUTTON 与后续文本
-      //     同行，ere 侧拆成两条独占行按钮 → 本行无 ere 对应条目）。
+      //     同行，ere 侧拆成两条独占行按钮 → 本行没有同形的对侧条目）。
+      //     **配对前提**：ere 侧两个按钮都在（内容也不豁免——标签写错时
+      //    上面那条 ere 规则同样不生效，两侧一起留在 unexplained）。
       if (
         side === 'golden' &&
-        entry.kind === 'text' &&
-        /^▌奴隶一览 ▌勇者一览$/.test(entry.text)
+        header_line_shaped(entry) &&
+        HEADER_LABELS.every((label) =>
+          has_ere((e) => e.kind === 'menu' && e.key === label),
+        )
       ) {
         return {
           category: 'stub',
@@ -850,11 +891,15 @@ function classify_scope_b(entry, side, context) {
             '能力提升画面的两个切换按钮（golden 半边）：Emuera 的 PRINTBUTTON 与文本同行，ere 的 printButton 独占一行（PR #53 通则，引擎交互形态差）',
         };
       }
-      // ④ 角色列表行的两半：Emuera 把编号与详情拼成一行定宽文本
-      //    （`[ 1] 温妮 弓手 LV 1 调教回数:12 …`），ere 用「编号按钮格 +
-      //    详情文本格」（page-life-list.js 的 print_row，PR #53 通则）。
-      //    编号格的集合配对还会与主菜单 [---] 槽位/出售确认键错配半边。
-      if (side === 'ere' && entry.kind === 'menu' && /^\d+$/.test(entry.key)) {
+      // ④ 角色列表行的 ere 两半：编号按钮格与详情文本格。**配对前提**是
+      //    golden 侧真有同一行（编号对得上、详情逐字相同）——详情里的值
+      //    算错时对不上，两侧一起留在 unexplained。
+      if (
+        side === 'ere' &&
+        entry.kind === 'menu' &&
+        /^\d+$/.test(entry.key) &&
+        has_golden((e) => row_shaped(e) && row_number(e) === Number(entry.key))
+      ) {
         return {
           category: 'stub',
           reason:
@@ -865,7 +910,8 @@ function classify_scope_b(entry, side, context) {
         side === 'ere' &&
         entry.kind === 'text' &&
         (/ LV \d+$/.test(entry.text) ||
-          / LV \d+ 调教回数:\d+ /.test(entry.text))
+          / LV \d+ 调教回数:\d+ /.test(entry.text)) &&
+        has_golden((e) => row_shaped(e) && row_body(e) === entry.text)
       ) {
         return {
           category: 'stub',
@@ -874,11 +920,12 @@ function classify_scope_b(entry, side, context) {
         };
       }
       // ④b 同一行的 golden 半边：`[ 0] 你 … LV 0`（魔王行）与整行文本形态
-      //     的角色行——ere 侧把编号拆进按钮格，本行无同形条目可配。
+      //     的角色行——ere 侧把编号拆进按钮格，本行没有同形条目可配。
+      //     **配对前提**：ere 侧真有内容逐字相同的详情文本格。
       if (
         side === 'golden' &&
-        ((entry.kind === 'menu' && / LV \d+$/.test(entry.key)) ||
-          (entry.kind === 'text' && /^\[ ?\d+\] .* LV \d+/.test(entry.text)))
+        row_shaped(entry) &&
+        has_ere((e) => e.kind === 'text' && e.text === row_body(entry))
       ) {
         return {
           category: 'stub',
@@ -886,8 +933,37 @@ function classify_scope_b(entry, side, context) {
             '能力提升画面的角色列表行（golden 半边）：Emuera 把编号与角色详情拼成一行定宽文本，ere 用编号按钮格 + 详情文本格（PR #53 通则，引擎交互形态差）',
         };
       }
+      // ④c ere 侧多出的角色行（golden 半边缺席）：本样本第二次绘制角色
+      //     列表时，原作按 LIST_POS 缓存（此时已推进到 2 号）起扫、把 1 号
+      //     温妮整个跳过（page-life-list.js 文件头第 7 条登记的原作翻页
+      //     缺陷）；本移植按命中序号开窗，行照常渲染——有意偏离。
+      //     **配对前提**：本行的**正文前缀**（名字/职业/等级/调教回数/
+      //     种族性格段，`<` 之前的部分）与 golden 的某条列表行相同；值
+      //     算错时对不上，留在 unexplained。**这一条锁不住标签段**（`<`
+      //     之后的沦陷标签与新解锁的 [可被卖]）——golden 的第二次绘制里
+      //     没有这一行可配（原作跳过了它），标签的正确性由第一段绘制
+      //     （走 ④ 的全正文配对）与出售链自己的用例兜住。
+      if (
+        side === 'ere' &&
+        entry.kind === 'text' &&
+        / LV \d+ 调教回数:\d+ /.test(entry.text) &&
+        has_golden(
+          (e) =>
+            row_shaped(e) &&
+            row_body(e).split('<')[0].trim() ===
+              entry.text.split('<')[0].trim(),
+        )
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '角色列表行的第二次绘制：原作从 LIST_POS 缓存起扫、跳过了 1 号角色（page-life-list.js 文件头第 7 条登记的原作翻页缺陷），本移植按命中序号开窗、行照常渲染（有意偏离）',
+        };
+      }
       // ⑤ [100] 异界综合征行：golden 有、ere 无——原作的 [IF_DEBUG]
-      //    调试块（page-ablup.js 文件头：调试编译块不移植）。
+      //    调试块（page-ablup.js 文件头：调试编译块不移植）。**这一条没有
+      //    ere 侧可配的对象**（该行只存在于 golden），故它锁不住「我们这边
+      //    别的行渲染错了」——那种错由 ②/④ 的配对前提兜住。
       if (
         side === 'golden' &&
         entry.kind === 'menu' &&
@@ -899,7 +975,6 @@ function classify_scope_b(entry, side, context) {
             '能力值列表的 [100] 异界综合征行来自原作的 [IF_DEBUG] 调试块（page-ablup.js 文件头：调试编译块不移植），ere 侧不渲染',
         };
       }
-
       if (
         entry.kind === 'menu' &&
         ['好的', '不要', '- 好的', '- 不要'].includes(entry.key)

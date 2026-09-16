@@ -154,6 +154,67 @@ test('出售资格提示属于已实现输出，缺失时必须进入未解释�
   assert.equal(report.summary.unexplained, 1);
 });
 
+// —— #397 返工：形态差规则的配对前提，两条锁定 ——
+//
+// 能力提升画面的切屏按钮与角色列表行，两侧的**排版**不同（Emuera 的
+// PRINTBUTTON/定宽文本与文本同行，ere 的 printButton/编号按钮格独占行，
+// PR #53 通则），归因规则按形态差解释。形态差**只解释排版、不豁免内容**：
+// tools/compare/rules.js 的那几条规则都带「对侧真有对应条目」的配对前提，
+// 下面两条把这一点锁住——把 ere 侧的对应输出拿掉，golden 半边必须落进
+// 未解释差异（与上一条 #338 先例同款）。少了它们，「按钮整个没渲染」「行
+// 里的值算错」都会被形态差规则静默放行（#397 第二轮验收实测）。
+test('能力提升画面的切屏按钮属于已实现输出，缺失时必须进入未解释差异', async () => {
+  const { stream_source } = await replay_scope_b('sale', 'natural');
+  const golden = golden_stream(
+    fs.readFileSync(path.join(REPO, 'golden', 'sale-natural.log'), 'utf8'),
+  ).filter((e) => e.kind !== 'discard' && e.kind !== 'group');
+  const ere = fixture_stream(stream_source).filter(
+    (e) =>
+      e.kind !== 'discard' &&
+      e.kind !== 'group' &&
+      !(e.kind === 'menu' && e.key === '▌奴隶一览'),
+  );
+  const report = diff_streams(golden, ere, { scope: 'B', segment: 'sale' });
+
+  assert.ok(
+    report.diffs.some(
+      (diff) =>
+        diff.side === 'golden' &&
+        diff.entry.text === '▌奴隶一览 ▌勇者一览' &&
+        diff.category === 'unexplained',
+    ),
+    '表头按钮缺失时，golden 那行不能还被形态差规则吞掉',
+  );
+  // 窗口里该屏绘制两次（首绘 + CORE 结束后的 RESTART 重绘）
+  assert.equal(report.summary.unexplained, 2);
+});
+
+test('能力提升画面的角色行属于已实现输出，缺失/值错时必须进入未解释差异', async () => {
+  const { stream_source } = await replay_scope_b('sale', 'natural');
+  const golden = golden_stream(
+    fs.readFileSync(path.join(REPO, 'golden', 'sale-natural.log'), 'utf8'),
+  ).filter((e) => e.kind !== 'discard' && e.kind !== 'group');
+  // 魔王行的详情文本格（编号在 ere 由独占按钮格承载，见 rules 的 ④ 族）
+  const ere = fixture_stream(stream_source).filter(
+    (e) =>
+      e.kind !== 'discard' &&
+      e.kind !== 'group' &&
+      !(e.kind === 'text' && e.text === '你 LV 0'),
+  );
+  const report = diff_streams(golden, ere, { scope: 'B', segment: 'sale' });
+
+  assert.ok(
+    report.diffs.some(
+      (diff) =>
+        diff.side === 'golden' &&
+        diff.entry.key === '你 LV 0' &&
+        diff.category === 'unexplained',
+    ),
+    '行详情格缺失（值算错时同样是「对不上」）时，golden 那行不能被吞掉',
+  );
+  assert.equal(report.summary.unexplained, 2);
+});
+
 // —— 2. 回放器裁定行为 ——
 
 test('输入标记带 Row 进流：数字回显是 input、原作 CLEARLINE 的对应行为可归因', async () => {
