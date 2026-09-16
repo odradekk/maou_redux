@@ -791,25 +791,112 @@ function load_traincommand_names() {
 function classify_scope_b(entry, side, context) {
   {
     if (context.segment === 'sale') {
-      // sale-natural-log:89-142 与 sale-natural-log:144-178 是原作
-      // ABILITY_UP 的角色选择与两页能力画面；:143「温妮可以卖掉了」来自
-      // 已经实现的资格复核，必须
-      // 留作真差异出口。ere/page/page-shop.js:246 当前只有带记录的
-      // ABILITY_UP 存根。行号只锚这份固定黄金样本，避免把后续出售链上
-      // 同号的 0/1/999 菜单误归到能力系统。
-      const golden_ability_up = (candidate) =>
-        Number.isInteger(candidate?.line) &&
-        candidate.line >= 89 &&
-        candidate.line <= 178 &&
-        candidate.line !== 143;
+      // #397 返工：@ABILITY_UP 与 @LIFE_LIST 族落地后 105 不再按一下就
+      // 返回（真身是会吃输入的两层画面），本样本的 89-178 行两侧都真的
+      // 渲染起来了。原先「89-178 一律算能力提升画面未移植」的行号规则
+      // 随之作废——它会把已实现的画面报成待办。以下四条按差异各自的
+      // 真实成因分派；:143「温妮可以卖掉了」来自已实现的资格复核，
+      // 仍是真差异出口（不设任何按行号的兜底）。
+      //
+      // ① 能力值列表的可提升标记 `*`（golden 独有）：@DECIDE_ABLUP 族
+      //    未接入（page-ablup.js 文件头待办，docs/stub-registry.md）。
       if (
-        (side === 'golden' && golden_ability_up(entry)) ||
-        (side === 'ere' && golden_ability_up(context.counterpart))
+        side === 'golden' &&
+        entry.kind === 'menu' &&
+        / \*$/.test(entry.key)
       ) {
         return {
           category: 'stub',
           reason:
-            '能力值提升画面未移植（sale-natural 的 89-142 与 144-178 行；page-shop.js 的 ABILITY_UP 存根，docs/stub-registry.md）',
+            '能力值列表的可提升标记 *（@DECIDE_ABLUP 族未接入——page-ablup.js 文件头待办，docs/stub-registry.md）',
+        };
+      }
+      // ② ere 侧同一能力条目（无 * 标记）：与 golden 的带标记条目按编号
+      //    集合配对时错开，落成与别屏（主菜单 [---] 槽位）的错配半边。
+      if (
+        side === 'ere' &&
+        entry.kind === 'menu' &&
+        / - LV \d+$/.test(entry.key)
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '能力值列表条目（ere 按钮化 PR #53 通则）：同编号条目在 golden 侧带可提升标记 * 而错开配对，落成与主菜单 [---] 槽位的错配半边',
+        };
+      }
+      // ③ 表头两个切换按钮：Emuera 的 PRINTBUTTON 与文本同行且不印编号，
+      //    ere 的 printButton 独占一行并带 [编号]（PR #53 通则）。
+      if (
+        side === 'ere' &&
+        entry.kind === 'menu' &&
+        ['▌奴隶一览', '▌勇者一览'].includes(entry.key)
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '能力提升画面的两个切换按钮（▌奴隶一览/▌勇者一览）：Emuera 的 PRINTBUTTON 与文本同行且不印编号，ere 的 printButton 独占一行并带 [编号]（PR #53 通则，引擎交互形态差）',
+        };
+      }
+      // ③b 同一表头行的 golden 半边（Emuera 两个 PRINTBUTTON 与后续文本
+      //     同行，ere 侧拆成两条独占行按钮 → 本行无 ere 对应条目）。
+      if (
+        side === 'golden' &&
+        entry.kind === 'text' &&
+        /^▌奴隶一览 ▌勇者一览$/.test(entry.text)
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '能力提升画面的两个切换按钮（golden 半边）：Emuera 的 PRINTBUTTON 与文本同行，ere 的 printButton 独占一行（PR #53 通则，引擎交互形态差）',
+        };
+      }
+      // ④ 角色列表行的两半：Emuera 把编号与详情拼成一行定宽文本
+      //    （`[ 1] 温妮 弓手 LV 1 调教回数:12 …`），ere 用「编号按钮格 +
+      //    详情文本格」（page-life-list.js 的 print_row，PR #53 通则）。
+      //    编号格的集合配对还会与主菜单 [---] 槽位/出售确认键错配半边。
+      if (side === 'ere' && entry.kind === 'menu' && /^\d+$/.test(entry.key)) {
+        return {
+          category: 'stub',
+          reason:
+            '能力提升画面的角色列表行编号格：Emuera 把编号与详情拼成一行定宽文本，ere 用编号按钮格承载同一入口（PR #53 通则；按编号的集合配对与该屏之外的条目错配半边）',
+        };
+      }
+      if (
+        side === 'ere' &&
+        entry.kind === 'text' &&
+        (/ LV \d+$/.test(entry.text) ||
+          / LV \d+ 调教回数:\d+ /.test(entry.text))
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '能力提升画面的角色列表行详情格：同一行的编号在 ere 由独占按钮格承载（PR #53 通则），详情文本因此单独成条目',
+        };
+      }
+      // ④b 同一行的 golden 半边：`[ 0] 你 … LV 0`（魔王行）与整行文本形态
+      //     的角色行——ere 侧把编号拆进按钮格，本行无同形条目可配。
+      if (
+        side === 'golden' &&
+        ((entry.kind === 'menu' && / LV \d+$/.test(entry.key)) ||
+          (entry.kind === 'text' && /^\[ ?\d+\] .* LV \d+/.test(entry.text)))
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '能力提升画面的角色列表行（golden 半边）：Emuera 把编号与角色详情拼成一行定宽文本，ere 用编号按钮格 + 详情文本格（PR #53 通则，引擎交互形态差）',
+        };
+      }
+      // ⑤ [100] 异界综合征行：golden 有、ere 无——原作的 [IF_DEBUG]
+      //    调试块（page-ablup.js 文件头：调试编译块不移植）。
+      if (
+        side === 'golden' &&
+        entry.kind === 'menu' &&
+        entry.key.startsWith('异界综合征')
+      ) {
+        return {
+          category: 'stub',
+          reason:
+            '能力值列表的 [100] 异界综合征行来自原作的 [IF_DEBUG] 调试块（page-ablup.js 文件头：调试编译块不移植），ere 侧不渲染',
         };
       }
 

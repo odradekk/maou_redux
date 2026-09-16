@@ -47,6 +47,7 @@
 'use strict';
 
 const { create_era_fixture } = require('../../test/helpers/era-fixture');
+const { parse_name_ids } = require('./assertions');
 
 // —— 播种常量（全部带样本证据；行号 = golden/<名>.log）——
 
@@ -108,9 +109,26 @@ const PLANS = {
   // 与调教段 TRAIN_RAND_SEQ 同款重建暂未做——留给随机数确定性专项票，
   // 这里只验证「回合真能推进」这一步（#395 范围），不追第二天之后。
   daycycle: ['0', '99', '199', undefined],
-  // #338 出售段：能力提升存根返回后复核资格 → 出售温妮 → 选择黑市 →
-  // 回出售列表 → 主菜单。PRINTFORMW 的等待不经过 INPUT 计划。
-  sale: ['0', '99', '105', '106', '1', '0', '0', '999', undefined],
+  // #338 出售段：#397 起 105 是能力提升的真身（选人列表 + CORE 两层，都要
+  // 吃输入），故按黄金样本的回显序列补齐三层输入——105 进选人列表 → 1 选
+  // 温妮（进 CORE）→ 999 结束 CORE（这一支里复核出售资格，样本 143 行的
+  // 「温妮可以卖掉了」）→ 999 从列表返回主菜单 → 106 出售温妮 → 1 选她 →
+  // 0 确认 → 0 选「魔界的黑市」→ 999 回出售列表 → 主菜单。PRINTFORMW 的
+  // 等待不经过 INPUT 计划。
+  sale: [
+    '0',
+    '99',
+    '105',
+    '1',
+    '999',
+    '999',
+    '106',
+    '1',
+    '0',
+    '0',
+    '999',
+    undefined,
+  ],
 };
 
 /** 输入计划（按段与态展开；max 态在尾部多一次 9999 重画触发） */
@@ -174,10 +192,38 @@ async function seed_scope_b(fixture, { sale = false } = {}) {
   fixture.store.set('flag:2', -1);
   // 魔王等级 LV0（备注「LV   0」＝ cflag:0:9 未声明读 0，不播即证据）
 
+  // —— 静态名表：实机由引擎装载 yml/ 时注入，夹具不读 yml/（静态表正确性
+  //    另有 chara-yml / variable-yml 比对），回放按同一产物补进 store
+  //    （replay.js:168 同款先例）。消费点：@SHOW_ABLUP_SELECT 的能力名
+  //    （ablname，sale 段 105 起的能力画面）、@SHOW_JUEL 的点数名
+  //    （palamname，同屏的「阴核点数：…」三行）。#397 前 105 是存根、
+  //    这两张表不进窗口，故只按估价明细手播了五条——返工时改为整表注入。
+  const palam = parse_name_ids('yml/Palam.yml');
+  fixture.store.set(
+    'palamkeys',
+    [...palam.values()].sort((a, b) => a - b),
+  );
+  palam.forEach((id, name) => fixture.store.set(`palamname:${id}`, name));
+  parse_name_ids('yml/Abl.yml').forEach((id, name) =>
+    fixture.store.set(`ablname:${id}`, name),
+  );
+  parse_name_ids('yml/Mark.yml').forEach((id, name) =>
+    fixture.store.set(`markname:${id}`, name),
+  );
+  const exp = parse_name_ids('yml/Exp.yml');
+  fixture.store.set(
+    'expkeys',
+    [...exp.values()].sort((a, b) => a - b),
+  );
+  exp.forEach((id, name) => fixture.store.set(`expname:${id}`, name));
+
   if (sale) {
     // sale-natural-log:177-219：资格与估价明细的播种；组合精确得到 14,430。
     fixture.store.set(`base:${target}:0`, 1198);
     fixture.store.set(`abl:${target}:0`, 3);
+    fixture.store.set(`abl:${target}:1`, 1); // 乳房感觉 LV 1（:133）
+    fixture.store.set(`abl:${target}:17`, 1); // 露出癖 LV 1（:135）
+    fixture.store.set(`abl:${target}:99`, 1); // 反抗刻印 LV 1（:139，下方另有 mark:3）
     fixture.store.set(`abl:${target}:10`, 4);
     fixture.store.set(`abl:${target}:11`, 5);
     fixture.store.set(`abl:${target}:12`, 1);
@@ -196,6 +242,34 @@ async function seed_scope_b(fixture, { sale = false } = {}) {
     fixture.store.set(`talent:${target}:110`, 1);
     fixture.store.set(`talent:${target}:163`, 1); // 高贵 → SELF_KOJO_K3
     fixture.store.set(`talent:${target}:314`, 0); // 人类
+    // #397 返工：105 真身化后能力画面（选人列表 + CORE）进入比对窗口，
+    // 这几条按样本自己的行补——sale-natural-log:95 的角色行
+    // `[ 1] 温妮 弓手 LV 1 调教回数:12 [人类 - 高贵]` 与 :125 的
+    // `温妮当前是Lv1，战斗经验值总计0点，本级经验：0/20`：
+    fixture.store.set(`cflag:${target}:9`, 1); // LV 1（:95/:125）
+    fixture.store.set(`cflag:${target}:10`, 12); // 调教回数 12（:95）
+    fixture.store.set(`talent:${target}:208`, 1); // 弓手（:95，get_job_name）
+    fixture.store.set('talentname:163', '高贵'); // 性格名（:95 的「高贵」）
+    // 同屏的 @SHOW_JUEL、@SHOW_INFO_EXP 与初吻括号行（:124-130）：数值
+    // 全部照抄样本行，点数名经 yml/Palam.yml（parse_name_ids）取序号。
+    for (const [name, value] of [
+      ['阴核', 4759], // :128
+      ['乳房', 1],
+      ['欲情', 18], // :129
+      ['屈服', 677],
+      ['习得', 30],
+      ['耻情', 120], // :130
+      ['苦痛', 12],
+      ['恐怖', 11],
+    ]) {
+      fixture.store.set(`juel:${target}:${palam.get(name)}`, value);
+    }
+    fixture.store.set(`exp:${target}:${exp.get('绝顶经验')}`, 12); // :124
+    fixture.store.set(`exp:${target}:${exp.get('自慰经验')}`, 3);
+    fixture.store.set(`exp:${target}:${exp.get('调教自慰经验')}`, 3);
+    fixture.store.set(`exp:${target}:${exp.get('口交经验')}`, 16);
+    fixture.store.set(`cflag:${target}:16`, 992); // :126 初吻对象＝人
+    fixture.store.set(`cstr:${target}:4`, '你的唇'); // :126 的名字
     fixture.store.set(`mark:${target}:3`, 1); // 反抗刻印 LV1，避开随机支
     fixture.store.set('talentname:0', '处女');
     fixture.store.set('talentname:110', '巨乳');

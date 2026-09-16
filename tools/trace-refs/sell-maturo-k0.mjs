@@ -16,16 +16,42 @@ export const FILES = [
 export const LOG_REFS = [];
 export const SAMPLE_LOG_REFS = {
   'sale-natural': [
+    // #397 返工：rules.js 的 sale 段规则不再按行号兜底「能力提升画面未移植」
+    //（105 已真身化），故这里的 89-142 / 144-178 两条锚一并撤掉；下面这四条
+    // 是新引入的样本行引用（播种与归因的证据出处）。
     {
-      js: 'tools/compare/rules.js',
+      js: 'tools/compare/replay-b.js',
       refs: [
         {
-          ref: '89-142',
-          any: [/要提高谁的能力值？/],
+          ref: '95',
+          any: [/弓手\s+LV\s+1/],
         },
+      ],
+    },
+    {
+      js: 'ere/page/page-info-exp.js',
+      refs: [
         {
-          ref: '144-178',
-          any: [/要提高谁的能力值？/],
+          ref: '124',
+          any: [/调教自慰:/],
+        },
+      ],
+    },
+    {
+      js: 'tools/compare/normalize.js',
+      refs: [
+        {
+          ref: '178',
+          any: [/^═$/m],
+        },
+      ],
+    },
+    {
+      js: 'test/compare-scope-b.test.js',
+      refs: [
+        {
+          ref: '178',
+          any: [/^═$/m],
         },
       ],
     },

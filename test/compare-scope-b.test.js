@@ -86,7 +86,18 @@ const BASELINE = {
   // （该占位行此前是 stub 对的一侧，不产生 matched）、unexplained 仍 0。
   // 同票的 CHARA_NAME_DEFINE 等真身不出现在本样本的回放窗口里（实测：
   // 只把 chara-name.js 换回 master 版即复现 160）。
-  'sale-natural': { matched: 123, version: 2, stub: 159, unexplained: 0 },
+  // #397 返工：@ABILITY_UP / @LIFE_LIST 族落地后 105 不再按一下就返回（真身
+  // 是「选人列表 + CORE」两层、都要吃输入），回放计划按黄金样本的回显序列
+  // 补齐三层（tools/compare/replay-b.js 的 sale 计划与注释），ere 侧自此真的
+  // 走进能力提升画面——matched 123 → 163、stub 159 → 131、unexplained 仍 0。
+  // 同票的另三处配套（都在本文件外的注释里写明）：① 播种补上静态名表
+  // （ablname/palamname/expname/expkeys/markname，取 yml 产物）与样本行给出
+  // 的取值（LV/调教回数/职业/性格、juel 点数、经验、初吻对象）；② 归因把
+  // 已作废的「89-178 行一律算能力提升画面未移植」换成四条真实成因（可提升
+  // 标记 * 未接入、切换按钮与角色行的 PR #53 按钮化形态差，两侧各一条）；
+  // ③ 归一层认「整行只有线绘字符」的折行残段（sale-natural-log:178 的 `═`）。
+  // 另六个样本的四数与基线逐字相同（返工实测），未改。
+  'sale-natural': { matched: 163, version: 2, stub: 131, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {
