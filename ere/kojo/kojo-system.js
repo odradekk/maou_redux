@@ -22,7 +22,8 @@
  * == 分发（决议 #7 的机制） ==
  *
  * TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100} 改走分发族。编号空间 =
- * 分发守卫（:160 LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000）能拼出的
+ * 分发守卫（:160 LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000；ere 侧收口成
+ * in_kojo_window，只此一处定义）能拼出的
  * 全部函数名：普通口上 0-39（性格素质 160-179 → LOCAL 100-119）、
  * EX 口上 901-1600（EX_TALENT 101-800 → LOCAL 1001-1700）。空间内缺失
  * 合法（未移植的性格不发一言）；重复注册启动即炸（#14：原作 23 个口上
@@ -475,10 +476,33 @@ const EVENT_K_DISPATCH_TABLE = [
 // 注册永远分不到，见 kojo-dungeon-after.js 的文件头与 test/event-k-dispatch
 // .test.js 的族名唯一锁。
 
+/**
+ * 分发窗口：LOCAL 落在 [100, 140) 或 (1000, ∞) 时才拼名分发——原作各段
+ * 逐字同构的那条守卫（@KOJO_MESSAGE_COM / @SELF_KOJO / @KOJO_EVENT_COM /
+ * @DUNGEON_RYOUZYOKU 的凌辱前与凌辱后两处 / @GOHOUBI_AFTER_KOUJO /
+ * @OSIOKI_KOUJO 各段都有它的复写）。
+ * 键 = LOCAL - 100，窗口两端因此正好是声明编号空间的两端：普通口上 0-39
+ * （LOCAL 100-139）、EX 口上 901-1600（LOCAL 1001-1700）。LOCAL 120-139
+ * 现在没有产出源头（GET_KOJO_NUM 只到 119），但窗口照原作收着它们——
+ * 上界 140 是**声明空间 40 格的写法**，不是可达值域。
+ *
+ * **只此一处定义**：全库曾有七份内联复写（本文件四处、kojo-dungeon-after
+ * 两处、kojo-dungeon-ravish 一处），边界值改动没有任何用例能看见（#403
+ * 验收反馈实测 `local < 140` → `< 139` 全绿）。现在由
+ * test/kojo-system.test.js 在 99/100、139/140、1000/1001 两侧逐点钉住，
+ * 并核对声明空间恰是窗口的像。
+ *
+ * @param {number} local GET_KOJO_NUM() 的口上编号
+ * @returns {boolean} true = 进分发（键 = local - 100）
+ */
+function in_kojo_window(local) {
+  return (local >= 100 && local < 140) || local > 1000;
+}
+
 /** 分发守卫能拼出的性格编号；空间外（含无性格 → 0）返回 -1 */
 function kojo_handler_id(arg = -1) {
   const local = get_kojo_num(arg);
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     return local - 100;
   }
   return -1;
@@ -532,7 +556,7 @@ async function kojo_message_com(rand) {
   }
 
   // :160-161 キャラ別：TRYCALLFORM KOJO_MESSAGE_COM_{LOCAL - 100}
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await kojo_message_com_family.call(local - 100, {
       whenMissing: 0,
       args: [rand],
@@ -565,7 +589,7 @@ async function self_kojo(rand, q, outside_train = false) {
   const local = get_kojo_num();
 
   // キャラ別：TRYCALLFORM SELF_KOJO_K{LOCAL - 100}
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await self_kojo_family.call(local - 100, {
       whenMissing: 0,
       args: [rand, q],
@@ -671,7 +695,7 @@ async function kojo_event_com() {
   const local = get_kojo_num();
 
   // :218 的守卫（:209-219 段）→ TRYCALLFORM KOJO_EVENT_COM_{LOCAL - 100}
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await kojo_event_com_family.call(local - 100, { whenMissing: 0, args: [] });
   }
   return 0;
@@ -871,6 +895,7 @@ async function gobi_koujo(arg0, rand) {
 module.exports = {
   EVENT_K_DISPATCH_TABLE,
   get_kojo_num,
+  in_kojo_window,
   kojo_handler_id,
   kojo_message_com,
   kojo_message_com_family,

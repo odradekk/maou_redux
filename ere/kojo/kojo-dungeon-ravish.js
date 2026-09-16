@@ -142,7 +142,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { stub_line } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { get_kojo_num } = require('#/kojo/kojo-system');
+const { get_kojo_num, in_kojo_window } = require('#/kojo/kojo-system');
 const { e_get, e_set } = require('#/dungeon/monster-data');
 const { monstername } = require('#/dungeon/monster-data');
 const { equip_database } = require('#/system/equip/equip-lookup');
@@ -203,9 +203,10 @@ const ryouzyoku_after_kojo_family = new DispatchFamily(
  * 迷宫凌辱两钩子的共同分发体（原件 :249-258 与 :263-272 逐字同构）：
  * `LOCAL = GET_KOJO_NUM()`（缺省读当前 TARGET——@RYOUZYOKU :57 的
  * `TARGET = ARG` 已在调用前置好，本分发体不碰 TARGET）→ 守卫
- * `LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000` → `TRYCALLFORM
- * DUNGEON_RYOUZYOKU[_AFTER]_K{LOCAL - 100}`（:257/:271）。存在判定在原作
- * 是注释态，不判。缺席语义 = 静默（TRYCALL 落空）。
+ * `in_kojo_window(LOCAL)`（`LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`
+ * 的收口，全库只此一处定义，边界用例在 test/kojo-system.test.js）→
+ * `TRYCALLFORM DUNGEON_RYOUZYOKU[_AFTER]_K{LOCAL - 100}`（:257/:271）。
+ * 存在判定在原作是注释态，不判。缺席语义 = 静默（TRYCALL 落空）。
  *
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
  *   目标族（前 = ryouzyoku_kojo_family / 后 = ryouzyoku_after_kojo_family）
@@ -213,7 +214,7 @@ const ryouzyoku_after_kojo_family = new DispatchFamily(
  */
 async function dispatch_ryouzyoku_kojo(family) {
   const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await family.call(local - 100, { whenMissing: 0, args: [] });
   }
   return 0;

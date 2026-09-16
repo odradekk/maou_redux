@@ -51,11 +51,16 @@
 'use strict';
 
 const era_flag = require('#/era-utils/era-flag');
-const { get_kojo_num, try_kojo_or_stub } = require('#/kojo/kojo-system');
+const {
+  get_kojo_num,
+  in_kojo_window,
+  try_kojo_or_stub,
+} = require('#/kojo/kojo-system');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 
 // 声明的编号空间：分发守卫（:473/:491 的 LOCAL >= 100 && LOCAL < 140 ||
-// LOCAL > 1000）能拼出的全部 GOHOUBI_AFTER_KOUJO_K{N} / OSIOKI_KOUJO_K{N}
+// LOCAL > 1000；ere 侧 = in_kojo_window）能拼出的全部
+// GOHOUBI_AFTER_KOUJO_K{N} / OSIOKI_KOUJO_K{N}
 // 名（kojo-system.js 的 DECLARED_KOJO_COM_IDS 同款）
 const DECLARED_KOJO_IDS = [
   ...Array.from({ length: 40 }, (_, i) => i),
@@ -91,7 +96,7 @@ async function gohoubi_after_koujo(cid, choice) {
   era_flag.target = cid; // TARGET = A
   const local = get_kojo_num(cid); // GET_KOJO_NUM()（此刻 TARGET = A）
   // 存在判定被原作注释（:471-472），不判；キャラ別
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await gohoubi_after_koujo_family.call(local - 100, {
       whenMissing: 0,
       args: [cid, choice],
@@ -155,7 +160,7 @@ async function osioski_koujo(cid, choice) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
   const local = get_kojo_num(cid);
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await osioski_koujo_family.call(local - 100, {
       whenMissing: 0,
       args: [cid, choice],

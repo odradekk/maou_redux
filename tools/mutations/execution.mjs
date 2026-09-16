@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 72;
+export const COUNT = 79;
 
 export default [
   {
@@ -614,5 +614,65 @@ export default [
     replace: '  if (false) {',
     tests: ['event-execution'],
     must_mention: '录像架零影像早退，有影像时进入列表',
+  },
+  // —— #403（N19）五个处刑入口的调用点实参位置（M8977-M8983，验收返工）——
+  // 验收反馈实测：入口族内部收对参数，调用点把第二三实参对调一样是玩家侧
+  // 失声（execution / public-execution 两处当时全绿）。每条都对着入口的
+  // 实参契约 (cid, 处分编号, 随机源) 打一枪。
+  {
+    desc: 'M8977 处刑口上入口实参对调（第 2 参处分编号 ↔ 第 3 参随机源）',
+    file: 'ere/event/event-execution.js',
+    find: '  await exucution_koujo(cid, result, rand_n);',
+    replace: '  await exucution_koujo(cid, rand_n, result);',
+    tests: ['event-execution'],
+    must_mention: '入口实参位置',
+  },
+  {
+    desc: 'M8978 处刑口上入口实参错位（cid ↔ 处分编号，键从编号上取）',
+    file: 'ere/event/event-execution.js',
+    find: '  await exucution_koujo(cid, result, rand_n);',
+    replace: '  await exucution_koujo(result, cid, rand_n);',
+    tests: ['event-execution'],
+    must_mention: '入口实参位置',
+  },
+  {
+    desc: 'M8979 公开处刑口上入口实参对调（第 2 参处分编号 ↔ 第 3 参随机源）',
+    file: 'ere/event/event-public-execution.js',
+    find: '  await public_exucution_koujo(cid, result, rand_n);',
+    replace: '  await public_exucution_koujo(cid, rand_n, result);',
+    tests: ['event-execution'],
+    must_mention: '入口实参位置',
+  },
+  {
+    desc: 'M8980 公开处刑口上入口实参错位（cid ↔ 处分编号，键从编号上取）',
+    file: 'ere/event/event-public-execution.js',
+    find: '  await public_exucution_koujo(cid, result, rand_n);',
+    replace: '  await public_exucution_koujo(result, cid, rand_n);',
+    tests: ['event-execution'],
+    must_mention: '入口实参位置',
+  },
+  {
+    desc: 'M8981 博物馆口上入口实参对调（第 2 参展品编号 ↔ 第 3 参随机源）',
+    file: 'ere/event/event-museum.js',
+    find: '  await museum_koujo(a, result, rand_n);',
+    replace: '  await museum_koujo(a, rand_n, result);',
+    tests: ['event-museum'],
+    must_mention: '按角色性格分发口上并透传确定性随机源',
+  },
+  {
+    desc: 'M8982 流放口上入口实参对调（第 2 参处分编号 ↔ 第 3 参随机源）',
+    file: 'ere/event/event-banishment.js',
+    find: '  await banishment_koujo(cid, result, rand_n);',
+    replace: '  await banishment_koujo(cid, rand_n, result);',
+    tests: ['event-execution'],
+    must_mention: 'K1 以上口上处理器接收随机源',
+  },
+  {
+    desc: 'M8983 猎奇口上入口实参对调（第 2 参处分编号 ↔ 第 3 参随机源）',
+    file: 'ere/event/event-grotesque.js',
+    find: '  await grotesque_koujo(cid, result, rand_n);',
+    replace: '  await grotesque_koujo(cid, rand_n, result);',
+    tests: ['event-execution'],
+    must_mention: '按性格处理器分发口上并归档选择的末路',
   },
 ];

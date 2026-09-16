@@ -17,6 +17,9 @@
  *   - :218 的 KOJO_EVENT_COM 恒空转（全库 0 个 @KOJO_EVENT_COM_* 定义，
  *     #14 登记）与 :325 的 ATTACK_KOUJO_B（调用方侵略/ARCANA_BATTLE.ERB
  *     未移植）；
+ *   - TARGET 置位守卫的两侧：置成传入对象 / cid 缺省时吃当前 TARGET；
+ *   - 分发窗口（in_kojo_window）与键偏移：本地可达格在这里、边界格与窗口
+ *     谓词本身在 test/kojo-system.test.js、ravish 站点另有逐点扫描；
  *   - DispatchFamily 族名全库唯一（#403 实测的缺陷形态：同名两实例，
  *     一边注册一边分发，玩家侧静默失声）。
  */
@@ -770,6 +773,50 @@ test('TARGET 暂存/还原：七处置/还原成对（分发期间 = 传入对�
       5,
       `${entry_name}：返回后 TARGET 还原（不留跨调用残留）`,
     );
+  }
+});
+
+test('TARGET 置位守卫的另一侧：cid 缺省（undefined / 负数）时按当前 TARGET 分发、不覆盖它', async () => {
+  // 三个入口的 `if (cid !== undefined && cid >= 0)` 只置不置是两条路：
+  // 缺省侧吃当前 TARGET（GET_KOJO_NUM 的参缺省语义），指针不留残留
+  for (const [entry_name, family_name] of [
+    ['victory_koujo', 'dungeon_victory_family'],
+    ['attack_koujo', 'dungeon_attack_family'],
+    ['attack_koujo_b', 'dungeon_attack_family'],
+  ]) {
+    for (const cid_arg of [undefined, -1]) {
+      const fixture = setup_kojo();
+      seed_noble(fixture); // 当前 TARGET 17 的性格 → 键 3
+      const era_flag = fixture.load_module('era-utils/era-flag');
+      const kojo = fixture.load_module('kojo/kojo-system');
+      const seen = [];
+      let target_during = null;
+      kojo[family_name].register(3, async (...args) => {
+        seen.push(args);
+        target_during = era_flag.target;
+        return 0;
+      });
+      era_flag.target = 17;
+      const rand = always;
+
+      await kojo[entry_name](cid_arg, rand);
+
+      assert.deepEqual(
+        seen,
+        [[rand]],
+        `${entry_name}(cid=${cid_arg})：按当前 TARGET 分发、随机源透传`,
+      );
+      assert.equal(
+        target_during,
+        17,
+        `${entry_name}(cid=${cid_arg})：分发期间 TARGET 未被覆盖`,
+      );
+      assert.equal(
+        era_flag.target,
+        17,
+        `${entry_name}(cid=${cid_arg})：返回后 TARGET 仍是它`,
+      );
+    }
   }
 });
 

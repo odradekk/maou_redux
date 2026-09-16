@@ -8,6 +8,8 @@
  *   - @GET_KOJO_NUM 的素质扫描（163 高貴 → 103、165 村娘A → 105、
  *     多素质后格覆盖、无素质 → 0、显式角色号）；
  *   - 分发：编号命中唯一实现、空间内缺失（K4 未移植）静默；
+ *   - 分发窗口（#403 收口成 in_kojo_window）：99/100、139/140、1000/1001
+ *     两侧逐点，并核对声明编号空间恰是窗口的像；
  *   - 事件链挂接：@EVENTSHOP #PRI 总开关默认开（只补 0）、
  *     @EVENTTRAIN #PRI 置存在标志、@EVENTEND #LATER 清 0；
  *   - 实机路径端到端：run_shop（BEGIN SHOP → @EVENTSHOP 链置开关）→
@@ -150,6 +152,40 @@ test('分发：性格命中唯一实现；空间内缺失（K4 冷徹未移植�
   const { kojo_message_com: speak4 } = k4.load_module('kojo/kojo-system');
   await speak4();
   assert.deepEqual(k4.text_lines(), []);
+});
+
+// —— 分发窗口（#403：七处内联守卫收口成 in_kojo_window 的唯一定义） ——
+
+test('分发窗口边界：99/100、139/140、1000/1001 两侧逐点，且恰是声明编号空间的像', () => {
+  const fixture = create_era_fixture();
+  const { in_kojo_window, kojo_message_com_family } =
+    fixture.load_module('kojo/kojo-system');
+
+  // 验收反馈实测的缺口：LOCAL 120-139 没有产出源头（GET_KOJO_NUM 只到
+  // 119），边界改动从行为层看不见——所以对着窗口本身逐点钉（两侧都站人）
+  for (const [local, expected, label] of [
+    [99, false, '下界外侧（键 -1）'],
+    [100, true, '下界（慈愛 K0 的 LOCAL）'],
+    [139, true, '上界内侧（声明空间最大键 39）'],
+    [140, false, '上界外侧（键 40 不在声明空间）'],
+    [1000, false, 'EX 下界外侧（键 900 不在声明空间）'],
+    [1001, true, 'EX 下界（EX_TALENT:101 → K901）'],
+  ]) {
+    assert.equal(in_kojo_window(local), expected, `LOCAL ${local}：${label}`);
+  }
+
+  // 窗口与声明空间是同一范围的两侧写法：声明的每个键（LOCAL = 键 + 100）
+  // 都放行，紧邻两侧（-1 / 40 / 900）都拒绝——上界 140 的来历就是「40 格」
+  for (const id of kojo_message_com_family.declared) {
+    assert.equal(in_kojo_window(id + 100), true, `声明键 ${id} 必须在窗口内`);
+  }
+  for (const id of [-1, 40, 900]) {
+    assert.equal(
+      in_kojo_window(id + 100),
+      false,
+      `非声明键 ${id} 必须在窗口外`,
+    );
+  }
 });
 
 // —— 事件链挂接（#PRI / #LATER 语义） ——

@@ -359,6 +359,19 @@ test('口上族：无性格素质（GET_KOJO_NUM = 0）不进分派守卫，静�
   );
 });
 
+test('口上族：GOHOUBI_AFTER / OSIOKI 无性格编号（GET_KOJO_NUM = 0）时窗口拒绝，不拼键', async () => {
+  // 窗口（in_kojo_window）在 0 上必须拦住：键 = LOCAL - 100 = -100 落在声明
+  // 空间外，漏掉窗口会当场报错——两个入口各站一次（#403 收口）
+  const fixture = setup_world(); // 阿尔无性格素质 → LOCAL 0
+  const { gohoubi_after_koujo, osioski_koujo } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+
+  assert.equal(await gohoubi_after_koujo(1, 0), 0);
+  assert.equal(await osioski_koujo(1, 1), 0);
+  assert.deepEqual(text_lines(fixture), [], '窗口拒绝即无输出（占位行也不打）');
+});
+
 test('口上族：命中已注册 → 实现收 (cid, choice)、TARGET 暂存还原；未注册落空', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:163', 1); // 高貴 → GET_KOJO_NUM = 103

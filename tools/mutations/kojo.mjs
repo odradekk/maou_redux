@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2265; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +36（M8941-M8976）
+export const COUNT = 2273; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +44（M8941-M8991）
 
 export default [
   {
@@ -1436,7 +1436,7 @@ export default [
     desc: 'M1543 凌辱口上分发回退成写死 call(0)（#233）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
     find: `  const local = get_kojo_num();
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await family.call(local - 100, { whenMissing: 0, args: [] });`,
     replace: `  const local = 0;
   if (true) {
@@ -20659,14 +20659,12 @@ on('EVENTEND', eventend_kojo_903);`,
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
   },
-  // —— #403（N19）EVENT_K.ERB 分发表：条目 M8941-M8976 ——
+  // —— #403（N19）EVENT_K.ERB 分发表：条目 M8941-M8991 ——
   {
-    desc: 'M8941 KOJO_EVENT_COM 守卫丢 EX 臂（LOCAL > 1000 不再分发，EX 性格静默）',
+    desc: 'M8941 分发窗口丢 EX 臂（LOCAL > 1000 不再分发，EX 性格全族静默）',
     file: 'ere/kojo/kojo-system.js',
-    find: `  // :218 的守卫（:209-219 段）→ TRYCALLFORM KOJO_EVENT_COM_{LOCAL - 100}
-  if ((local >= 100 && local < 140) || local > 1000) {`,
-    replace: `  // :218 的守卫（:209-219 段）→ TRYCALLFORM KOJO_EVENT_COM_{LOCAL - 100}
-  if (local >= 100 && local < 140) {`,
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return local >= 100 && local < 140;',
     tests: ['event-k-dispatch'],
     must_mention: '守卫的 LOCAL > 1000 臂可达',
   },
@@ -20956,9 +20954,9 @@ on('EVENTEND', eventend_kojo_903);`,
   {
     desc: 'M8965 迷宫凌辱前钩子读死角色 0（get_kojo_num() 改 get_kojo_num(0)）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: '  const local = get_kojo_num();\n  if ((local >= 100 && local < 140) || local > 1000) {\n    await family.call(local - 100, { whenMissing: 0, args: [] });',
+    find: '  const local = get_kojo_num();\n  if (in_kojo_window(local)) {\n    await family.call(local - 100, { whenMissing: 0, args: [] });',
     replace:
-      '  const local = get_kojo_num(0); // 变异：读死角色 0\n  if ((local >= 100 && local < 140) || local > 1000) {\n    await family.call(local - 100, { whenMissing: 0, args: [] });',
+      '  const local = get_kojo_num(0); // 变异：读死角色 0\n  if (in_kojo_window(local)) {\n    await family.call(local - 100, { whenMissing: 0, args: [] });',
     tests: ['event-k-dispatch'],
     must_mention: 'GET_KOJO_NUM() 走当前 TARGET',
   },
@@ -21105,5 +21103,80 @@ const gohoubi_request_koujo_family = new DispatchFamily(
 );`,
     tests: ['event-k-dispatch'],
     must_mention: '同一个族名出现两份',
+  },
+  {
+    desc: 'M8984 分发窗口上界飘一格（local < 140 改 < 139，最大键 39 分不到）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local >= 100 && local < 139) || local > 1000;',
+    tests: ['kojo-system'],
+    must_mention: '上界内侧（声明空间最大键 39）',
+  },
+  {
+    desc: 'M8985 分发窗口下界飘一格（>= 100 改 > 100，K0 慈愛分不到）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local > 100 && local < 140) || local > 1000;',
+    tests: ['kojo-system'],
+    must_mention: '下界（慈愛 K0 的 LOCAL）',
+  },
+  {
+    desc: 'M8986 分发窗口 EX 下界飘一格（> 1000 改 > 1001，K901 分不到）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local >= 100 && local < 140) || local > 1001;',
+    tests: ['kojo-system'],
+    must_mention: 'EX 下界（EX_TALENT:101 → K901）',
+  },
+  {
+    desc: 'M8987 分发窗口两臂并成 &&（普通口上一律静默）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local >= 100 && local < 140) && local > 1000;',
+    tests: ['kojo-system'],
+    must_mention: '下界（慈愛 K0 的 LOCAL）',
+  },
+  {
+    desc: 'M8988 迷宫凌辱钩子绕开窗口（if (true)，LOCAL 0 也拼键）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: `  const local = get_kojo_num();
+  if (in_kojo_window(local)) {`,
+    replace: `  const local = get_kojo_num();
+  if (true) { // 变异：绕开窗口`,
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '无性格编号（LOCAL 0）',
+  },
+  {
+    desc: 'M8989 迷宫凌辱钩子键偏移飘一格（local - 100 改 - 101）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '    await family.call(local - 100, { whenMissing: 0, args: [] });',
+    replace:
+      '    await family.call(local - 101, { whenMissing: 0, args: [] });',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '前钩子：键 = LOCAL - 100 = 3',
+  },
+  {
+    desc: 'M8990 ATTACK_KOUJO_B 无条件覆盖 TARGET（cid 缺省侧失去语义）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  const target_pool = era_flag.target;
+  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid; // TARGET = B（:325-337 段）
+  }`,
+    replace: `  const target_pool = era_flag.target;
+  era_flag.target = cid; // 变异：无条件覆盖（缺省时把 TARGET 清成 undefined）`,
+    tests: ['event-k-dispatch'],
+    must_mention: '按当前 TARGET 分发、随机源透传',
+  },
+  {
+    desc: 'M8991 OSIOKI 钩子绕开窗口（if (true)，LOCAL 0 也拼键）',
+    file: 'ere/kojo/kojo-dungeon-after.js',
+    find: `  const local = get_kojo_num(cid);
+  if (in_kojo_window(local)) {
+    await osioski_koujo_family.call(local - 100, {`,
+    replace: `  const local = get_kojo_num(cid);
+  if (true) { // 变异：绕开窗口
+    await osioski_koujo_family.call(local - 100, {`,
+    tests: ['dungeon-after'],
+    must_mention: '窗口拒绝，不拼键',
   },
 ];
