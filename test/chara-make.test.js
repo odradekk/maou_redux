@@ -105,20 +105,24 @@ test('三分叉·普通勇者主流程：初值四项与可见占位', async () 
   assert.equal(fixture.store.get('cstr:1:60'), '我', 'CSTR:60 一人称');
   assert.equal(fixture.store.get('cflag:1:450'), 9, 'CFLAG:450 一人称档位');
   // 随机命名与 CHARA_NAME_DEFINE 自 #384 起都是真身（名字真的落了地），
-  // 冲突检查也一并落地；只剩 LOOK_SET 与 CHARA_FIRST_EXP 两处跨段存根。
+  // 冲突检查也一并落地；#394 起 CHARA_FIRST_EXP 同样是真身（同一批断言）
   assert.equal(
     fixture.store.get('callname:1:-1'),
     '佳奈美',
     'CHARA_NAME_DEFINE 真身：没有可查的固定名时回落到默认名',
   );
   const texts = stub_texts(fixture);
-  for (const name of ['LOOK_SET', 'CHARA_FIRST_EXP']) {
+  for (const name of ['LOOK_SET']) {
     assert(
       texts.some((line) => line.includes(`@${name}`)),
       `${name} 的占位行可见（登记项）`,
     );
   }
-  for (const name of ['CHARA_NAME_DEFINE', 'CMI_CONFLICT_CHECK']) {
+  for (const name of [
+    'CHARA_NAME_DEFINE',
+    'CMI_CONFLICT_CHECK',
+    'CHARA_FIRST_EXP',
+  ]) {
     assert(
       !texts.some((line) => line.includes(`@${name}`)),
       `${name} 已落真身，不应再有占位行`,
@@ -849,19 +853,19 @@ test('转发层 @CHAR_MAKE_INPORT：RAND(ARG:0) != 0 即 RETURN 0（:31-32）', 
   const fixture = create_era_fixture();
   const forward = load_forward(fixture);
   assert.equal(await forward.char_make_inport(5, never), 0, '掷不中：非异国');
-  assert.equal(
-    (await forward.char_make_inport(5, always)) === 0 &&
-      stub_texts(fixture).some((line) => line.includes('@CHARA_MAKE_INPORT')),
-    true,
-    '掷中：进 JUMP（存根占位可见）',
+  // 掷中即进 JUMP 目标——#394 起真身（ere/chara/chara-make-inport.js），
+  // 占位行随存根一起消失；真身的行为面在 test/chara-make-inport.test.js。
+  assert(
+    !stub_texts(fixture).some((line) => line.includes('@CHARA_MAKE_INPORT')),
+    '掷中后不再有占位行（真身已落地）',
   );
   // 缺省 ARG:0 = 1：RAND(1) 恒 0 必成功
   const fixture2 = create_era_fixture();
   const forward2 = load_forward(fixture2);
   await forward2.char_make_inport(undefined, always);
   assert(
-    stub_texts(fixture2).some((line) => line.includes('@CHARA_MAKE_INPORT')),
-    '缺省 1 必进',
+    !stub_texts(fixture2).some((line) => line.includes('@CHARA_MAKE_INPORT')),
+    '缺省 1 必进真身（同样无占位行）',
   );
 });
 

@@ -626,10 +626,19 @@ test('GET_ENEMY 主路径：俘虏入库 CFLAG:1 = 0（不侵攻）、501/508、
     text_lines(fixture).includes('勇者佳奈美被俘虏了！'),
     '俘虏演出行（:370-371）；名字同「通常来袭」用例（命名链已改写预设名）',
   );
-  // 异国判定掷 RAND(10)：zero → 判定通过、存根 RETURN 0 → 走生成
-  assert(
-    stub_count(fixture, 'CHARA_MAKE_INPORT') >= 1,
-    'CHAR_MAKE_INPORT 判定占位行可见（RAND(10) == 0 分支）',
+  // 异国判定掷 RAND(10)：zero → 判定通过 → 进 @CHAR_MAKE_INPORT 真身
+  // （#394 起，ere/chara/chara-make-inport.js）。FLAG:76 未设时它早退 0
+  // （无候选），于是**恰好只有生成分支建出的那一名**角色在场；真身的行为面
+  // 在 test/chara-make-inport.test.js，这里只钉「判定通过后没有被真身另建一名」。
+  assert.deepEqual(
+    fixture.chara_no,
+    [0, 1],
+    '判定通过但真身无候选 → 除开局的魔王 0 外只有生成分支建出的角色 1',
+  );
+  assert.equal(
+    stub_count(fixture, 'CHARA_MAKE_INPORT'),
+    0,
+    'CHAR_MAKE_INPORT 已无占位行（#394 换真身）',
   );
 });
 

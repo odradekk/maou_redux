@@ -124,7 +124,9 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 65; // #401（N17）本票独立测得的 67 → 65：
+export const PENDING_BASELINE = 62; // 合并态实测（#401 并上含 #394 的 master）：
+// 两票各自扣的文件不相交，64（master，#394 后）− 2（本票 EVETRAIN.ERB 与
+// EVENT1.ERB 两个待移植文件）= 62，与重测值一致。两票的说明都留在下面。
 // EVENT/EVETRAIN.ERB（19 行，@EVENTTRAIN 的无属性档，
 // ere/event/event-train-normal.js）与 EVENT/EVENT1.ERB（9 行，
 // @EVENTCOMEND 的无属性档，ere/event/event-comend-normal.js）两份此前
@@ -139,6 +141,22 @@ export const PENDING_BASELINE = 65; // #401（N17）本票独立测得的 67 →
 // `キャラ関数/CHARA_NAME_EDIT.ERB`（三个函数：SHOW_BUTTON_NAME_EDIT /
 // CHECK_ABLE_TO_NAME_EDIT / CHARA_INFO_NAME_EDIT）整份摆进 ere/，该文件从
 // 「待移植」转「已移植」：-1。
+// 历次说明。**本票独立测得的是 67 → 64 这一格**，rebase 后真值由派单人重跑。
+// #394 抬低说明（67 → 64，本票三个文件）：`キャラ関数/CHARA_FIRST_EXP.ERB` 与
+// `キャラ関数/CHARA_MAKE_INPORT.ERB` 落真身（chara_first_exp、
+// chara_make_inport，两个文件头各带「源:」整路径追溯 + 锚表分片
+// tools/trace-refs/chara-first-exp.mjs、chara-make-inport.mjs），两份文件
+// 退出「待移植」：-2；`キャラ関数/FULLMOON.ERB` 按 #14 判不实现进 RULINGS
+// 表（理由见该表条目），它从「待移植」直接进「已判定不实现」，同样
+// 退出待移植分子：-1。三处都是正判据变化（证据面新增 / 裁定表新增），
+// 不是顺手改数字。
+// #384（N2）rebase 到含 #385/#396/#402 的
+// master 后实测：master 68 − 本票 1 = 67，两边的说明都留在下面。
+// #396 抬低说明（70 → 68）：SHOP/TAX.ERB与
+// SHOP/SHOP_TRAP.ERB 两个文件落地真身（tax_get；item_shop_trap /
+// saleitem_check_trap，ere/system/stronghold/tax.js 与
+// ere/page/page-shop-trap.js，文件头各带「源:」整路径追溯 + 锚表分片
+// tools/trace-refs/tax.mjs、page-shop-trap.mjs），两份文件退出「待移植」：-2。
 // #404 不动本数的说明：本票把 `EVENT/ENDING ver 1.0.1.ERB` /
 // `EVENT/ENDINGDATA.ERB` / `EVENT/ENDINGDATA_ADDON1.ERB` 三个文件推成
 // 「已移植」，但三者此前是**部分移植**（有产物、清单里还挂着未了结存根），
@@ -249,6 +267,11 @@ export const RULINGS = [
     path: 'target/ERB/其他/TEST.ERB',
     reason:
       '#14：ENDCHECKDRAGONSIS 与两个旗标换算函数全库无调用者，是开发残留死代码',
+  },
+  {
+    path: 'target/ERB/キャラ関数/FULLMOON.ERB',
+    reason:
+      '#394：@FULLMOON_EFFECT 全库零调用者（只命中它自己的定义行），判据就是这一条。文件头 `; CALLBY @WEAPON_RESTORE` 是搬迁前调用点的化石，而 CHAR_ST.ERB:62-66 的活代码只接手了它的一部分：狼人那档的 `CFLAG:11/12 *= 10` 两条照搬并加上了真正的满月窗口 `DAY:2 ∈ [14,16]`，但 CASE 2 里的 `BASE:0/1 = MAXBASE:0/1`（体力气力回满）没有跟过去，`$LABEL_种族` 的其余分支与整个 `$LABEL_种族2` 在活代码里也没有对应物。所以它是被弃用的旧实现，不是被逐字取代',
   },
 ];
 
