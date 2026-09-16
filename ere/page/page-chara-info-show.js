@@ -248,15 +248,14 @@ async function sacrifice_flow(cid, background) {
       ) {
         continue; // :98
       }
+      // 名单行做成真按钮（PR #53 通则：`[N] 文字` + INPUT 惯用法升级为
+      // era.printButton）——引擎的 input 只接受本轮打印过的按钮快捷键，
+      // 纯文本行玩家敲不进编号，这一支就成了死路（源 :110 是 PRINTFORM）。
       const state = cflag(id, 1);
       const color = cflag(id, 700) ? SACRIFICED_COLOR : LIST_COLORS.get(state);
-      era.print([
-        {
-          content: `[${pad_left(String(id), 3)}] ${pad_display(chara_callname(id), 12)} （${get_look_info(id, SACRIFICE_KINDS[page])}） ${pad_display(get_job_name(id), 6)} LV${pad_left(String(cflag(id, 9)), 3)} `,
-          color,
-        },
-        ...(cflag(id, 700) ? [{ content: '[☆]' }] : []),
-      ]);
+      const label = `${pad_display(chara_callname(id), 12)} （${get_look_info(id, SACRIFICE_KINDS[page])}） ${pad_display(get_job_name(id), 6)} LV${pad_left(String(cflag(id, 9)), 3)} ${cflag(id, 700) ? '[☆]' : ''}`;
+      // 编号前缀由引擎按 showAcc 自动拼（正文不写 `[N]`，AGENTS.md 那条硬约束）
+      era.printButton(label, id, color === undefined ? undefined : { color });
     }
     // :119 `PRINTS "\n"*2 + "切换条件类型：" + "\n"*2`
     era.println();

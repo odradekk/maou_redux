@@ -316,6 +316,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
+        ref: '110',
+        any: [
+          /				PRINTFORM \[\{temp,3,RIGHT\}\] %SAVESTR:temp,12,LEFT% （%GET_LOOK_INFO\(temp, typeNeed:page\)%） %GET_JOB_NAME\(temp\),6,LEFT% LV\{CFLAG:temp:9,3,RIGHT\} /,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
         ref: '119',
         any: [/		PRINTS "\\n"\*2 \+ "切换条件类型：" \+ "\\n"\*2/],
       },

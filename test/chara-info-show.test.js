@@ -1704,7 +1704,14 @@ test('SHOW_DATA：整行以「]　」（全角空格）收尾', () => {
 
 // —— SHOW_TALENT_CONDITION 族（CHARA_INFO_SHOW_TALENT.ERB） ——
 
-function condition_fixture({ cflags = {}, talents = {}, flags = {} } = {}) {
+function condition_fixture({
+  cflags = {},
+  talents = {},
+  flags = {},
+  abls = {},
+  exps = {},
+  marks = {},
+} = {}) {
   const fixture = create_era_fixture();
   for (const [table, file] of [
     ['talent', 'Talent.yml'],
@@ -1724,6 +1731,15 @@ function condition_fixture({ cflags = {}, talents = {}, flags = {} } = {}) {
   }
   for (const [index, value] of Object.entries(flags)) {
     fixture.store.set(`flag:${index}`, value);
+  }
+  for (const [index, value] of Object.entries(abls)) {
+    fixture.store.set(`abl:7:${index}`, value);
+  }
+  for (const [index, value] of Object.entries(exps)) {
+    fixture.store.set(`exp:7:${index}`, value);
+  }
+  for (const [index, value] of Object.entries(marks)) {
+    fixture.store.set(`mark:7:${index}`, value);
   }
   return {
     fixture,
@@ -2166,4 +2182,560 @@ test('ColorJudgmentWorB：背景均值 ≤ 128 落白字，否则落黑字', () 
     );
     assert.equal(dec[0], input[0], 'dec[0] 不被改写（读写错开一位是原作自身）');
   }
+});
+
+// —— 标签与配色的逐条断言（#390 返工：只体现在输出上的颜色/标签也算行为） ——
+
+/** 直接驱动 STC_* 助手，取回它压进行缓冲的片段 */
+function stc_run(stc, cid, args) {
+  const row = { fragments: [] };
+  stc(row, cid, ...args);
+  return row.fragments;
+}
+
+test('STC_LAB_TAL：三档配色 + 「条件」补字的判据（表驱动）', () => {
+  // [已设素质, 取用编号, 期望 color, 期望行首标签, 说明]
+  const cases = [
+    [
+      {},
+      85,
+      undefined,
+      '爱慕条件： ',
+      '未获得且未崩坏：默认色（TALENTNAME=爱慕，4 字节 → 补「条件」）',
+    ],
+    [
+      { 85: 1 },
+      85,
+      '#66b3ff',
+      '爱慕条件： ',
+      '已获得：达成色（SETCOLOR 102,179,255）',
+    ],
+    [
+      { 85: 1, 9: 1 },
+      85,
+      'DarkRed',
+      '爱慕条件： ',
+      '崩坏（TALENT:9）：不可用色，压过达成色',
+    ],
+    [
+      { 52: 1 },
+      52,
+      '#66b3ff',
+      '擅用舌头： ',
+      '名字 8 字节 > 4：不补「条件」二字',
+    ],
+  ];
+  for (const [talents, id, color, label, note] of cases) {
+    const { fixture, stc_lab_tal } = condition_fixture({ talents });
+    const fragments = stc_run(stc_lab_tal, 7, [id]);
+    assert.equal(fragments[0].color, color, `${note}（色）`);
+    assert.equal(
+      fragments[0].content,
+      label,
+      `${note}（标签；实际 ${JSON.stringify(fragments[0].content)}）`,
+    );
+    assert.equal(fixture.store.get('talent:7:85') ?? 0, talents[85] ?? 0);
+  }
+  // 崩坏对**每一条**条件行都生效（不只爱慕那一条）
+  const broken = condition_fixture({ talents: { 9: 1 } });
+  for (const id of [52, 83, 88, 89, 136]) {
+    const fragments = stc_run(broken.stc_lab_tal, 7, [id]);
+    assert.equal(
+      fragments[0].color,
+      'DarkRed',
+      `崩坏时 TALENT:${id} 的行首也是不可用色`,
+    );
+  }
+});
+
+test('STC_LAB_TAL：「条件」二字的补字阈值是 4 字节（表驱动边界）', () => {
+  // [素质编号, 期望标签, 说明]——名字字节数刚好卡在 4 的两侧
+  const cases = [
+    [85, '爱慕条件： ', '爱慕 = 4 字节（含上沿）→ 补'],
+    [76, '淫乱条件： ', '淫乱 = 4 字节（含上沿）→ 补'],
+    [52, '擅用舌头： ', '擅用舌头 = 8 字节 → 不补'],
+    [83, '施虐狂  ： ', '施虐狂 = 6 字节 → 不补（名字列补到 8）'],
+  ];
+  for (const [id, label, note] of cases) {
+    const { stc_lab_tal } = condition_fixture();
+    assert.equal(stc_run(stc_lab_tal, 7, [id])[0].content, label, note);
+  }
+});
+
+test('STC_SAY_TAL：名字 4 字节以下补「素质」并补到 12 列', () => {
+  // [素质编号, 期望文本, 说明]
+  const cases = [
+    [85, '[爱慕素质]  ', '爱慕（4 字节）→ 补「素质」，再补到 12'],
+    [76, '[淫乱素质]  ', '淫乱（4 字节）→ 同上'],
+    [52, '[擅用舌头]  ', '擅用舌头（8 字节）→ 不补，补到 12'],
+  ];
+  for (const [id, expected, note] of cases) {
+    const { stc_say_tal } = condition_fixture();
+    const frag = stc_run(stc_say_tal, 7, [id])[0];
+    assert.equal(frag.content, expected, note);
+  }
+});
+
+test('STC_SAY_MARK：刻印名的宽度判据是 6（短名补位、长名原样）', () => {
+  // 四枚真实刻印名都是 8 字节（XX刻印），补位路径只有合成短名才碰得到
+  const { fixture, stc_say_mark } = condition_fixture();
+  fixture.store.set('markname:9', '苦痛'); // 4 字节 ≤ 6 → 右补到 6
+  assert.equal(
+    stc_run(stc_say_mark, 7, [9, 3])[0].content,
+    '[苦痛   Lv3]   ',
+    '短名按 6 列补位；整段再补到 15（源 :489 用的是 STC_PRINTC 缺省列宽）',
+  );
+  assert.equal(
+    stc_run(stc_say_mark, 7, [2, 3])[0].content,
+    '[屈服刻印 Lv3] ',
+    '8 字节的真名超宽不截（14 字节 → 补 1，yml/Mark.yml 的 2 号）',
+  );
+});
+
+test('STC_SAY_*：true / false 两档配色（表驱动，两侧都站）', () => {
+  // [构造, 取用方式, 期望 color, 说明]
+  const cases = [
+    [
+      { abls: { 10: 3 } },
+      (fx) => stc_run(fx.stc_say_abl, 7, [10, 3]),
+      'White',
+      'ABL 达标 → 白',
+    ],
+    [
+      { abls: { 10: 2 } },
+      (fx) => stc_run(fx.stc_say_abl, 7, [10, 3]),
+      'Gray',
+      'ABL 差一级 → 灰',
+    ],
+    [
+      { exps: { 21: 200 } },
+      (fx) => stc_run(fx.stc_say_exp, 7, [21, 200]),
+      'White',
+      'EXP 达标 → 白',
+    ],
+    [
+      { exps: { 21: 199 } },
+      (fx) => stc_run(fx.stc_say_exp, 7, [21, 200]),
+      'Gray',
+      'EXP 差一点 → 灰',
+    ],
+    [
+      { marks: { 2: 3 } },
+      (fx) => stc_run(fx.stc_say_mark, 7, [2, 3]),
+      'White',
+      'MARK 达标 → 白',
+    ],
+    [
+      { marks: { 2: 2 } },
+      (fx) => stc_run(fx.stc_say_mark, 7, [2, 3]),
+      'Gray',
+      'MARK 差一级 → 灰',
+    ],
+    [
+      { talents: { 85: 1 } },
+      (fx) => stc_run(fx.stc_say_tal, 7, [85]),
+      'White',
+      'TALENT 已得 → 白',
+    ],
+    [{}, (fx) => stc_run(fx.stc_say_tal, 7, [85]), 'Gray', 'TALENT 未得 → 灰'],
+  ];
+  for (const [setup, run, color, note] of cases) {
+    assert.equal(run(condition_fixture(setup))[0].color, color, note);
+  }
+});
+
+test('STC_SAYNO_*：right / alert 两档配色（表驱动，两侧都站）', () => {
+  // [已设刻印/素质, 期望 color, 说明]
+  const cases = [
+    [{ marks: { 3: 0 } }, 'DarkSeaGreen', 'MARK:3 = 0 ≤ 0 → 达标色'],
+    [{ marks: { 3: 1 } }, 'LightSalmon', 'MARK:3 = 1 > 0 → 警示色'],
+    [{ talents: { 85: 0 } }, 'DarkSeaGreen', 'TALENT 未得 ≤ 0 → 达标色'],
+    [{ talents: { 85: 1 } }, 'LightSalmon', 'TALENT 已得 > 0 → 警示色'],
+  ];
+  for (const [setup, color, note] of cases) {
+    const fx = condition_fixture(setup);
+    const mark = setup.marks !== undefined;
+    const frag = mark
+      ? stc_run(fx.stc_sayno_mark, 7, [3])[0]
+      : stc_run(fx.stc_sayno_tal, 7, [85])[0];
+    assert.equal(frag.color, color, note);
+  }
+});
+
+test('STC_SAYSUM_EXP：三项之和的判据与标签拼接（两侧都站）', () => {
+  // [EXP 三项, 期望 color, 期望标签, 说明]
+  const cases = [
+    [
+      { 11: 100, 31: 60, 54: 40 },
+      'White',
+      '[调教自慰|放尿经验|喷奶经验 200]',
+      '和恰好 200 ≥ 200',
+    ],
+    [
+      { 11: 100, 31: 60, 54: 39 },
+      'Gray',
+      '[调教自慰|放尿经验|喷奶经验 200]',
+      '和 199 差一点',
+    ],
+    [
+      { 11: 201 },
+      'White',
+      '[调教自慰 200]',
+      '后两项为 0 时不入标签（也不入和）',
+    ],
+  ];
+  for (const [exps, color, label, note] of cases) {
+    const fx = condition_fixture({ exps });
+    const tail = label === '[调教自慰 200]' ? [0, 0] : [31, 54];
+    const frag = stc_run(fx.stc_saysum_exp, 7, [200, 11, ...tail])[0];
+    assert.equal(frag.color, color, `${note}（色）`);
+    assert.equal(frag.content, label, `${note}（标签）`);
+  }
+});
+
+test('STC_SAY_ABCV：四级感觉之和的判据（两侧都站）', () => {
+  const cases = [
+    [{ 0: 3, 1: 3, 2: 2, 3: 2 }, 'White', '和恰好 10 ≥ 10'],
+    [{ 0: 3, 1: 3, 2: 2, 3: 1 }, 'Gray', '和 9 差一点'],
+  ];
+  for (const [abls, color, note] of cases) {
+    const fx = condition_fixture({ abls });
+    const frag = stc_run(fx.stc_say_abcv, 7, [10])[0];
+    assert.equal(frag.color, color, note);
+    assert.equal(frag.content, '[四点感觉Lv10] ');
+  }
+});
+
+test('STC_SAYSUM_ABL：四项之和的判据与标签（本文件无调用点，直驱）', () => {
+  const cases = [
+    [{ 10: 2, 11: 1 }, 'White', '和恰好 3 ≥ 3'],
+    [{ 10: 2 }, 'Gray', '和 2 差一点'],
+  ];
+  for (const [abls, color, note] of cases) {
+    const fx = condition_fixture({ abls });
+    const frag = stc_run(fx.stc_saysum_abl, 7, [3, 10, 11])[0];
+    assert.equal(frag.color, color, note);
+    assert.equal(
+      frag.content,
+      `[${ABL_NAMES.get(10)}|${ABL_NAMES.get(11)} Lv3]`,
+    );
+  }
+});
+
+test('STC_SAY_EXP：经验名按 8 字节截断（全角 4 字），整段补到 15 的整数倍', () => {
+  // 调教自慰经验（6 字 = 12 字节）截成前 4 字；口交经验（4 字 = 8 字节）不截。
+  // 文本 + STC_PRINTC 的补位同落一个片段（源里 RESETCOLOR 在 STC_PRINTC 之后）。
+  const long = condition_fixture({ exps: { 11: 100 } });
+  assert.equal(
+    stc_run(long.stc_say_exp, 7, [11, 100])[0].content,
+    '[调教自慰 100] ',
+    '长名截到 8 字节（14 字节 → 补 1 空格）',
+  );
+  assert.equal(
+    stc_run(long.stc_say_exp, 7, [11, 1000])[0].content,
+    '[调教自慰1000] '.replace('[调教自慰1000]', '[调教自慰1000]'),
+    '需求值右对齐宽 4',
+  );
+  const short = condition_fixture({ exps: { 22: 1000 } });
+  assert.equal(
+    stc_run(short.stc_say_exp, 7, [22, 1000])[0].content,
+    '[口交经验1000] ',
+    '恰好 8 字节的名字不截',
+  );
+});
+
+// —— 跨文件：display-width（其余模块的公共底座） ——
+
+test('DISPLAY_WIDTH：全角 2 列 / 半角 1 列', () => {
+  const { display_width } = condition_fixture().fixture.load_module(
+    'utils/display-width',
+  );
+  const cases = [
+    ['', 0, '空串'],
+    ['abc', 3, '半角'],
+    ['技巧', 4, '全角'],
+    ['[顺从   Lv3]', 12, '混合（方括号是半角）'],
+    ['　', 2, '全角空格'],
+    ['\u00A0', 1, '不换行空格在 0xFF 以内 → 半角'],
+  ];
+  for (const [text, width, note] of cases) {
+    assert.equal(display_width(text), width, note);
+  }
+});
+
+test('PAD_DISPLAY / PAD_LEFT：按显示宽度补位，超宽不截断', () => {
+  const { pad_display, pad_left } = condition_fixture().fixture.load_module(
+    'utils/display-width',
+  );
+  assert.equal(
+    pad_display('技巧', 8),
+    '技巧    ',
+    '左对齐补到 8 列（4 + 4 空格）',
+  );
+  assert.equal(pad_display('技巧', 2), '技巧', '已超宽不截断');
+  assert.equal(pad_left('技巧', 8), '    技巧', '右对齐补到 8 列');
+  assert.equal(pad_left('7', 3), '  7', '数字右对齐');
+});
+
+test('SLICE_DISPLAY：按字节截断，不切半全角字', () => {
+  const { slice_display } = condition_fixture().fixture.load_module(
+    'utils/display-width',
+  );
+  const cases = [
+    ['调教自慰经验', 8, '调教自慰', '全角 4 字 = 8 字节'],
+    ['口交经验', 8, '口交经验', '恰好 8 字节不截'],
+    ['ab', 8, 'ab', '不足上限原样返回'],
+    ['调教自慰', 7, '调教自', '7 字节装不下第 4 个全角字'],
+  ];
+  for (const [text, width, expected, note] of cases) {
+    assert.equal(slice_display(text, width), expected, note);
+  }
+});
+
+/** 在全部输出条目里找含该文本的片段，取它的 color（颜色也算行为的断言口） */
+function color_of(fixture, text) {
+  for (const line of fixture.lines) {
+    if (!Array.isArray(line.content)) continue;
+    for (const frag of line.content) {
+      if (String(frag.content).includes(text)) return frag.color;
+    }
+  }
+  return undefined;
+}
+
+test('STC_LAB_TAL：「条件」补字的阈值在 4 与 5 之间（宽度 5 的名字不补）', () => {
+  // 真实名字里没有 5 列宽的（全角 2 字节成对），用合成名把边界钉死：
+  // 判据是 STRLENS ≤ 4，5 列的 'AAA级' 必须**不**补「条件」
+  const { fixture, stc_lab_tal } = condition_fixture();
+  fixture.store.set('talentname:900', 'AAA级'); // 宽 5（3 个半角 + 1 个全角）
+  assert.equal(
+    stc_run(stc_lab_tal, 7, [900])[0].content,
+    'AAA级   ： ',
+    '宽 5 > 4 → 不补「条件」',
+  );
+  fixture.store.set('talentname:901', 'AA级'); // 宽 4
+  assert.equal(
+    stc_run(stc_lab_tal, 7, [901])[0].content,
+    'AA级条件： ',
+    '宽 4 ≤ 4 → 补「条件」',
+  );
+});
+
+test('STC_LAB_TAL：男体下 230 那一行改称「绝伦」', () => {
+  const man = condition_fixture({ talents: { 122: 1 } });
+  assert.equal(
+    stc_run(man.stc_lab_tal, 7, [230])[0].content,
+    '绝伦条件： ',
+    'TALENT:122 时 TALENT:230 的行首是「绝伦条件」',
+  );
+  const woman = condition_fixture();
+  assert.equal(
+    stc_run(woman.stc_lab_tal, 7, [230])[0].content,
+    `${tname(230)}条件： `,
+    '非男体用名字表里的原名（淫核 = 4 字节 → 补「条件」）',
+  );
+  assert.equal(tname(230), '淫核');
+});
+
+test('SHOW_TALENT_CONDITION：助手条件行的行首配色三档（默认 / 达成 / 崩坏）', () => {
+  const base = { talents: { 85: 1 } };
+  const cases = [
+    [{ ...base, cflags: { 2: 0 } }, undefined, '好感度非 2 且未崩坏 → 默认色'],
+    [{ ...base, cflags: { 2: 2 } }, '#66b3ff', '好感度恰为 2 → 达成色'],
+    [
+      { ...base, cflags: { 2: 2 }, talents: { 85: 1, 9: 1 } },
+      'DarkRed',
+      '崩坏压过达成色',
+    ],
+  ];
+  for (const [setup, color, note] of cases) {
+    const { fixture, show_talent_condition } = condition_fixture(setup);
+    show_talent_condition(7);
+    assert.equal(color_of(fixture, '助手条件'), color, note);
+  }
+});
+
+test('SHOW_TALENT_CONDITION：[好感度 200%] 格的两侧配色与文案', () => {
+  const cases = [
+    [1999, 'Gray', '好感度 1999 < 2000 → 灰'],
+    [2000, 'White', '好感度 2000 ≥ 2000 → 白'],
+  ];
+  for (const [affection, color, note] of cases) {
+    const { fixture, show_talent_condition } = condition_fixture({
+      talents: { 85: 1 },
+      cflags: { 2: affection },
+    });
+    show_talent_condition(7);
+    assert.equal(color_of(fixture, '[好感度 200%]'), color, note);
+  }
+});
+
+test('SHOW_TALENT_CONDITION：时常发情行的两个阈值配色（700 / 2250）', () => {
+  // [CFLAG:81, CFLAG:82, 润滑色, 欲情色, 说明]
+  const cases = [
+    [699, 2249, 'Gray', 'Gray', '两个都差一点'],
+    [700, 2250, 'White', 'White', '两个都恰好达标'],
+    [700, 0, 'White', 'Gray', '润滑达标、欲情未达标（两侧独立）'],
+  ];
+  for (const [c81, c82, c1, c2, note] of cases) {
+    const { fixture, show_talent_condition } = condition_fixture({
+      cflags: { 81: c81, 82: c82 },
+    });
+    show_talent_condition(7);
+    assert.equal(color_of(fixture, '[润滑积蓄 700]'), c1, `${note}（润滑）`);
+    assert.equal(color_of(fixture, '[欲情积蓄2250]'), c2, `${note}（欲情）`);
+  }
+});
+
+test('SHOW_TALENT_CONDITION：性爱狂第二档的 sexskill_3（私处经验 300+50*N）', () => {
+  // 只点尻穴狂（77）：sexskill_count = 1，性爱狂（75）自身未得 → 走上浮档
+  const { fixture, show_talent_condition } = condition_fixture({
+    talents: { 77: 1 },
+  });
+  show_talent_condition(7);
+  const line = fixture.text_lines().find((t) => t.startsWith('性爱狂'));
+  assert(
+    line.includes('[私处感觉 Lv5]') && line.includes('[私处经验 350]'),
+    `sexskill_3 = 300 + 50 * 1（实际：${line}）`,
+  );
+  assert(line.includes('[绝顶经验 110]'), `sexskill_2 同档（实际：${line}）`);
+});
+
+test('SHOW_TALENT_CONDITION：尻穴狂第二档走 sexskill_3（两侧都站）', () => {
+  const cases = [
+    [{ talents: { 75: 1 } }, '[肛门快乐 350]', 'sexskill_count = 1 → 300 + 50'],
+    [
+      { talents: { 75: 1, 78: 1 } },
+      '[肛门快乐 400]',
+      'sexskill_count = 2 → 300 + 100',
+    ],
+  ];
+  for (const [setup, fragment, note] of cases) {
+    const { fixture, show_talent_condition } = condition_fixture(setup);
+    show_talent_condition(7);
+    const line = fixture.text_lines().find((t) => t.startsWith('尻穴狂'));
+    assert(line.includes(fragment), `${note}（实际：${line}）`);
+  }
+});
+
+// —— 覆盖面补齐（#390 返工第二轮：探针打出的四处盲区） ——
+
+test('SHOW_DATA：结婚对象末位 9 的取法是 %10（119 也走家族婚姻）', () => {
+  // 119 % 10 = 9 → 家族婚姻档；若写成 % 100 会得 19 → 落到 ITEMNAME 档
+  const { fixture, show_data } = data_fixture({
+    cflags: { 601: 119 },
+    items: { 119: '不该出现的物品名' },
+  });
+  show_data(7, () => 0);
+  const text = fixture.text_lines().at(-1);
+  assert(
+    text.includes('[结婚对象:无]'),
+    `119 的末位是 9 → 家族婚姻（实际：${text}）`,
+  );
+  assert(!text.includes('不该出现的物品名'), '不得落到 ITEMNAME 档');
+});
+
+test('SHOW_APPEARACE：内裤位（CFLAG:40 位 1）也算「私处不可见」提前收尾', () => {
+  // 判据是 CFLAG:40 & 17（位 1 + 位 16）；只穿内裤时同样看不到记录阴毛那一段
+  const { fixture, show_appearance } = appearance_fixture({
+    cflags: { 40: 1 }, // 只有内裤位，非裙装
+  });
+  assert.equal(show_appearance(7), 0);
+  assert.deepEqual(fixture.text_lines(), [], '位 1 命中：不落到阴毛/穿环段');
+
+  // 对照：同样的世界去掉内裤位（g = 0）时那一段照出
+  const control = appearance_fixture({ cflags: { 40: 0 } });
+  control.show_appearance(7);
+  assert(
+    control.fixture.text_lines().some((t) => t.includes('考狄利亚')),
+    '位 1 未命中时才走到阴毛段',
+  );
+});
+
+test('SHOW_CHARA_INFO：名单里点可献祭的角色（状态 0/7/8）走确认流程', async () => {
+  // 状态在 SACRIFICABLE_STATES 里 → 出「确定要将…献祭？」；不在 → 「该状态不可操作：N」
+  const cases = [
+    [8, true, '状态 8（拘束台）也算可献祭'],
+    [7, true, '状态 7（苗床）可献祭'],
+    [5, false, '状态 5 不可操作'],
+  ];
+  for (const [state, sacrificable, note] of cases) {
+    const { fixture, show_chara_info } = main_fixture({
+      cflags: { 1: 11, 800: 10 },
+    });
+    const victim = 9;
+    fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+    fixture.era.addCharacter(victim);
+    fixture.store.set(`cflag:${victim}:1`, state);
+    // 名单只列与献祭对象同条件的角色：把 victim 的「种族」做成与 cid 7 一致
+    fixture.store.set('callname:7:-1', '考狄利亚');
+    fixture.set_inputs(10, victim, 0); // 进名单 → 点 victim → 终止
+    await show_chara_info(7, -1, always, 0x000000).catch(() => {});
+    const texts = fixture.text_lines();
+    if (sacrificable) {
+      assert(
+        texts.some((t) => t.includes('确定要将 候补 献祭？')),
+        `${note}（实际尾部：${JSON.stringify(texts.slice(-6))}）`,
+      );
+    } else {
+      assert(
+        texts.some((t) => t.includes('该状态不可操作：5')),
+        `${note}（实际尾部：${JSON.stringify(texts.slice(-6))}）`,
+      );
+    }
+  }
+});
+
+test('SHOW_TALENT：性別行的阴茎状态标带 #a1d8e6 着色', () => {
+  const cases = [
+    [{ [T.男人]: 1 }, 0, '#a1d8e6', '男体 + TALENT:318 = 0 → 带色'],
+    [{ 121: 1 }, 4, '#a1d8e6', '扶她 + 马阴茎 → 带色'],
+    [{}, 0, undefined, '女体：整段不出，自然无该片段'],
+  ];
+  for (const [talents, penis, color, note] of cases) {
+    const { fixture, show_talent } = talent_fixture({
+      flag5: 1 << 8,
+      talents: { ...talents, ...(penis ? { 318: penis } : {}) },
+    });
+    show_talent(7);
+    const line = fixture.lines.find(
+      (l) =>
+        Array.isArray(l.content) &&
+        l.content.some((f) => String(f.content).includes('阴茎')),
+    );
+    const frag = line?.content.find((f) => f.content.includes('阴茎'));
+    assert.equal(frag?.color, color, note);
+  }
+});
+
+test('SHOW_APPEARACE：编号 1 的角色照样显名（NO 判据的两侧）', () => {
+  // 判据是 NO:x != 0——番号 1 的角色与番号 7 一样要出名字
+  const { fixture, show_appearance } = appearance_fixture({
+    cflags: { 40: 0 },
+    talents: { 310: 1 },
+  });
+  fixture.store.set('callname:1:-1', '阿尔');
+  show_appearance(1);
+  assert(
+    fixture.text_lines().some((t) => t.includes('阿尔')),
+    `番号 1 也要显名（实际：${JSON.stringify(fixture.text_lines())}）`,
+  );
+});
+
+test('SHOW_CHARA_INFO：献祭成功后对应的分项计数 +100', async () => {
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  const victim = 9;
+  fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+  fixture.era.addCharacter(victim);
+  fixture.store.set(`cflag:${victim}:1`, 8);
+  fixture.set_inputs(10, victim, 1); // 进名单 → 点 victim → [1] 献祭
+  await show_chara_info(7, -1, always, 0x000000).catch(() => {});
+  assert.equal(
+    fixture.store.get('cflag:7:800'),
+    110,
+    'CFLAG:800 += 100（源 :157）',
+  );
+  assert.equal(fixture.store.get(`cflag:${victim}:1`), 0, '被献祭者状态清零');
 });
