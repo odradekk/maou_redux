@@ -189,6 +189,12 @@ tools/mutation-check.mjs 的 ENGINE_SKIP_BASELINE，两处不一致 npm test 当
 维度型的分支（技能编号 × 房间类型、价格档 × 素质维度、状态机档位）用**表驱动**
 一个用例走完整个维度，别挑几个点各钉一条——阶段 5a 五张票的实测差别全在这里：
 表驱动那张首轮验收探针 6 中 6 拦，挑点钉的四张是 0/6、0/5、2/6、4/6。
+**随机上界（`RAND:N` 的 N）要单独钉。** 注入的随机源通常只喂返回值、不看实参，
+于是「掷出的值」钉住了而「掷骰的范围」没有——改 `rand(3)` 为 `rand(4)` 照样全绿，
+而上界错了的后果是玩家那边某件事从不发生。钉法是捕获实参：
+`const rand = (n) => { upper = n; return n; };`（只取上界不取命中），断言 upper。
+#400 四个上界全漏、#401 漏一个，都是这么补上的。
+
 交付前自己挑十个**没钉过**的分支或数值各改坏一次，确认都有用例红（避开新加
 条目所钉的位置——那是自证，不是覆盖面）。这一步能省两三轮往返。
 
@@ -238,7 +244,13 @@ orca terminal send --terminal <handle> --text "<追加指示>" --enter --json
 orca worktree set --worktree "issue:<N>" --comment "<一句话进展>" --workspace-status in-review --json
 ```
 
-发消息前先 `read`（`--for tui-idle` 对 pi 不可靠，见 §3，别拿它当发送时机）。handle 报 `terminal_handle_stale` 就用 `orca terminal list` 重取，只用最新那个。
+发消息前先 `read`（`--for tui-idle` 对 pi 不可靠，见 §3，别拿它当发送时机）。
+
+**句柄会悄悄失效，且不总是报错。** agent 改掉终端标题后句柄就换了一个，旧句柄
+`terminal read` 返回的是**空 tail（0 行）**，不是 `terminal_handle_stale`；此时
+`terminal send` 照样回 `ok: true`，消息落进虚空——本轮一条返工反馈就这么没送达，
+过了十几分钟才发现终端还停在上一轮。**`read` 回 0 行 = 句柄废了**，用
+`orca terminal list` 按 worktree 路径重取（标题已经不可靠），只用最新那个。
 
 **你给的判断也会错，冲突时以源文为准。** agent 拿着源文回来反驳你的时候，先去核源文，不要因为「简报是我写的」就压过去。实测两次都是 agent 对：#222 我要求断言 `PREVCOM === 8` 并给了理由，源文 `COMF84:8` 写的是 `SELECTCOM = 84`，且 19 个高级 COM 文件皆然；#251 我把 `EX_FLAG` 写 / `EX_TALENT` 读判成缺陷，实际是口上模板的标准双变量结构（K3 与 K903 同构）。**发反馈时把这条明说**——否则 agent 会按错的判断去改测试，而那比不改更坏。
 
@@ -256,7 +268,7 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 
 **分支落后 master 时，先按 §5.5 rebase 再验收**——否则要验两遍。
 
-**不必 `export ERE_ENGINE_ASAR`。** asar 按 `ASAR_CANDIDATES` 逐条回落到 `~/.era-engine/app.asar`，worktree 里没有仓库内那份也能命中；三处定位的同步由 `test/asar-candidates.test.js` 判红。**代价是「无引擎」不再能靠不设变量制造**（`env -u` 照样命中回落），要造得用显式开关 `ERE_ENGINE_ASAR=none`，见 §5.6。
+**不必 `export ERE_ENGINE_ASAR`**，回落会命中 `~/.era-engine/app.asar`（机制见 AGENTS.md「引擎 API 与硬约束」）。代价是「无引擎」不再能靠不设变量制造，造法见 §5.6。
 
 ### 分层：agent 跑 T1/T2，CI 跑 T3，派单人只做机器做不了的
 
@@ -278,8 +290,15 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 2. **开 PR，等 `pr` job 绿；合并后回看 master push 那一轮**（§6）。
 3. **证伪探针**：防线类交付亲手还原它声称能防的场景（判据 6）。
 4. **抽样探针**：验收方自己选点改坏，看有没有用例红（见下）。
-5. **逐条对照工单验收清单**（下面十二条判据），并抽查本票新增条目真被拦下——`--ids <本票号段>`。全量已退到阶段收口，`--ids` 是这些条目唯一被真正执行的地方，而 `--verify` 只查结构、不执行任何变异（#231 只跑了它就交付，全量一跑出来 7 条「红=false」）。
-6. **锚鉴别力全文量**：`node tools/trace-check.mjs --anchor-quality --all` 退出 0。**这一档只在 T3′ 跑**（T3 是默认档，只量未冻结文件），所以新落大批 `:N` 引用的票，验收时自己跑一次。#402 的 PR 绿、抽样探针 12 拦 0 漏，锚表却让 master 连红三天——探针量行为覆盖，量不到锚质量。基线只减不增：消化掉的弱锚要同步把 `ANCHOR_QUALITY_BASELINE` 改小（#417 由 5159 降到 5155），**改大它、或往 `ANCHOR_QUALITY_BY_FILE` 里添冻结项，都是把账推给下一个人**。
+5. **逐条对照工单验收清单**（下面十二条判据），并抽查本票新增条目真被拦下——`--ids <本票号段>`（不能用 `--verify` 代替，理由见 §3 简报模板）。
+6. **补跑 T3 量不到的那两道**（下面单列）。
+
+#### T3 量不到的两道：锚鉴别力全文量与对拍
+
+PR 档跑的是改动面，这两道都不在里面——**它们的红要到合并之后才出现，而那时票已经关了**。所以验收时由派单人在分支上各跑一次。
+
+- **锚鉴别力全文量**：`node tools/trace-check.mjs --anchor-quality --all` 退出 0。T3 是默认档、只量未冻结文件，新落大批 `:N` 引用的票必跑。#402 的 PR 绿、抽样探针 12 拦 0 漏，锚表却让 master 连红三天；#400 首版一次新增 31 条弱锚。基线只减不增：消化掉的弱锚要同步把 `ANCHOR_QUALITY_BASELINE` 改小（#417 由 5159 降到 5155），**改大它、或往 `ANCHOR_QUALITY_BY_FILE` 里添冻结项，都是把账推给下一个人**。
+- **对拍**：`node tools/compare/cli.js --sample <名>`。`test:related` 按改动面选不中 `test/compare-scope-b.test.js`，于是**改了主菜单分发上任何一个按钮的票，PR 全绿也可能把回放打散**：#397 把 `[105]` 从存根换成会吃输入的真身，`replay-b.js` 的出售段输入计划整条错位一格，matched 123 → 64、unexplained 从 0 涨到七十多条，是合并后的 master push 才报出来的。
 
 #### 抽样探针：这一步不能省，`--ids` 全拦替代不了它
 
@@ -296,7 +315,7 @@ agent 的自述是线索，不是证据。在 worktree 目录里逐条对照 iss
 
 **引擎在 CI 上的位置有讲究**：asar 要落到 `~/.era-engine/app.asar`（`locate_asar` 的第 3 号候选），**不能只设 `ERE_ENGINE_ASAR`**。#302 首版用环境变量，结果 `M374`（拆掉 `ERE_ENGINE_ASAR === 'none'` 那道开关）在 CI 上判红=false——测试子进程里的 `none` 覆盖掉环境变量，而其余候选在 CI 上一个都不存在，于是拆掉开关后**仍然**是无引擎、测试照过、变异漏网。本机能判红只因为第 3 号候选存在。**CI 与本机不同构的地方，就是守卫会静默失效的地方。**
 
-**每条本机命令都用 `bash tools/capped.sh` 包一层**（限 CPU 到 4 核）。并发验收时这是机器还能不能用的分界：三个 agent 同时跑，不限流的交互延迟是 698ms，限流后 106ms，总耗时只多 5%。
+**每条本机命令都用 `bash tools/capped.sh` 包一层**——并发验收时这是机器还能不能用的分界（实测见 AGENTS.md「运行与调试」）。
 
 #### 跑出怪结果时先看这三条
 
@@ -388,111 +407,19 @@ sed -i "1i Math.random = () => 0;" test/<文件>.test.js   # 诊断用，验完 
 
 worktree 建得早于前置票合并时（见 §2），验收前必须先并上 master。**先并再验收，别验两遍。**
 
-**长跑票的真正代价不是冲突，是设计漂移。** 冲突有工具帮忙；两边各自长出同一个东西没有。#231 的基线落后十来张票，期间 master 独立长出了 `kojo_message_palamcng_family` / `kojo_message_markcng_family` 与 `self_kojo(rand, q)`，与它自己的 `palamcng_family` / `markcng_family` / 自加 `q` 是同一个方案的两套命名，23 个 register 点要逐一改接。#239 更狠：它沿用旧的适配器注册写法，而 master 的同族已改成直接注册，**`P` 因此恒 0、整段 NTR 口上永远静默**——它自己的测试用旧约定调，两边自洽，一路全绿。
+**跑得久的票，合并交给 agent 自己做**——只有实现者分得清自己的注册点该接到哪。长跑票的真正代价不是冲突，是设计漂移：#231 的基线落后十来张票，期间 master 独立长出了同一个方案的另一套命名，23 个 register 点要逐一改接；#239 沿用旧的适配器注册写法而 master 的同族已改成直接注册，**`P` 因此恒 0、整段 NTR 口上永远静默**，两边各自自洽、一路全绿。派发时就把这条告诉它，并**中途主动让它合一次 master**。
 
-所以：**跑得久的票，合并交给 agent 自己做**（只有实现者分得清自己的注册点该接到哪），并在派发时就告诉它这条；**中途主动让它合一次 master**，别攒到最后。
+**分支提交数多时用 `git merge origin/master`，不要 rebase**——冲突面高度固定，rebase 等于把同一组冲突解 N 遍（#229 有 19 个提交，改用 merge 后只解了一遍）。
 
-**分支提交数多时用 `git merge origin/master`，不要 rebase。** rebase 要逐个提交解一遍同样的冲突面，而这些票的冲突面高度固定（见下表），等于把同一组冲突解 N 遍。#229 有 19 个提交，改用 merge 后只解了一遍。合并进 master 时照样是一个 PR，历史也不难看。
-
-**`git merge` 的输出整段读完，别 `tail`。** 冲突文件按字母序逐行报，`tail -3` 只看得到最后一个。阶段 5a 漏看过一次，随后 `git add -A` 把带标记的文件一并提交，靠 eslint 的 `Parsing error: Unexpected token ===` 才暴露（同时塌了一千八百多条用例）。取全量清单用 `git diff --name-only --diff-filter=U`，解完再扫一遍：
-
-```
-grep -rn "^<<<<<<<\|^>>>>>>>" --include=*.js --include=*.mjs --include=*.md . | grep -v node_modules
-```
-
-**条目表（`tools/mutations/*.mjs`）的冲突：解完先验可加载，再谈跑测试。**
-
-```
-node -e "import('./tools/mutations/kojo.mjs').then(m=>console.log('ok',m.default.length))"
-node tools/mutation-check.mjs --verify
-```
-
-同一类脚本切坏过**五次**，根因每次都一样：**冲突区两侧末尾的 `},` 常常落在冲突区之外的共享上下文里**，所以「给哪一侧补闭合括号」怎么猜都会错一次。别猜——拼法只有两种（直接相接／中间补一个 `},`），**两种都试、用能 `import` 的那种**。
-
-为什么先验加载而不是先跑测试：切坏了 `npm test` 会给你十个失败用例、没有一个指向根因，而 `import` 或 `prettier --check` 直接给你行号（实测 `SyntaxError: Unexpected token (600:3)`）。
-
-冲突面高度固定，就那六处：
-
-| 冲突处                                                                   | 解法                                                                                                                                                                                                                |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tools/mutations/*.mjs`                                                  | 两边条目全留，**同一分片的 `COUNT` 按「保留双方意图」相加**：master 值 + 本票增量，改完 `--verify` 自校验实际条数。**M 编号撞号时把后合并那批整体顺延**（编号是历史惯性标签，唯一性由 `desc` 全串保证，见工具头注） |
-| `test/engine-skip-baseline.txt`                                          | 同样相加；注释里的算式按 rebase 后实测更正                                                                                                                                                                          |
-| 计数型基线（对拍四数、`trace-coverage.mjs` 的 `PENDING`/`UNATTRIBUTED`） | **不能二选一，也不能相加——必须重测**（见下）                                                                                                                                                                        |
-| `docs/stub-registry.md`                                                  | **按行键取并集**（见下）：两边都被 prettier 重排过整张表，文本层根本合不了                                                                                                                                          |
-| `STUBBED_CALLS` 数组（两票各实现了同一文件里的不同存根）                 | **取两侧删除的并集**——两边各删一项，合并结果就是两项都删，删空了就是空表（见下）                                                                                                                                    |
-| 生成产物（`ere/facade/*.js`、`ere/era-utils/*.js`）                      | 先合好源表（`tools/facade-names.js` 等）再 `--force` 重生成；**产物里的手写区不受生成器管，要人工判**（见下）                                                                                                       |
-
-`stub-registry.md` 的行键并集——**先用 `-w` 看清本票到底改了哪几行**（重排噪声动辄四百行，真改动往往不到十行），再拿 master 整份逐行替换：
-
-```
-git diff -w <基线> <本票 sha> -- docs/stub-registry.md | grep -E '^[+-]\|'   # 真改动的行
-git show origin/master:docs/stub-registry.md > /tmp/sr.md
-# 以第一格（原作函数名）为键，把本票改过的那几行替换进 /tmp/sr.md
-cp /tmp/sr.md docs/stub-registry.md && npx prettier --write docs/stub-registry.md
-```
-
-行键 = 表格第一个单元格，全表唯一。替换完必须核一遍「命中的键」与「预期改的键」逐个对上——漏一个就是悄悄丢掉一条登记。
-
-**计数型基线是「解冲突解不出来、只能重跑」的那一类。** 两张票各自播种了回放世界的不同侧面（`tools/compare/replay.js`），合并后两组播种**同时生效**，结果既不是任一单票的数、也不是相加：
-
-| 样本          | #214 单独    | #215 单独    | 合并后实测       |
-| ------------- | ------------ | ------------ | ---------------- |
-| train-natural | 763/0/2434/0 | 621/0/2574/0 | **765/0/2430/0** |
-
-而 `replay.js` 本身**不冲突**（两组播种落在不同行区），所以 git 一声不响。解法只有一条：解完其余冲突后跑 `node tools/compare/cli.js --sample <名>` 逐样本读数写回，并核对 **unexplained 仍为 0**。两票的沿革注释都留着，另写一段说明合并态为何两者皆非。
-
-`trace-coverage.mjs` 的 `PENDING_BASELINE` 同理，而且**每张移植票都会撞**（阶段 5a 五张票，五次）。做法是先把冲突区换成一个明显偏大的占位（`= 999`），跑 `node tools/trace-check.mjs --coverage` 让它打印实测值，再写回：
-
-```
-待移植 82 / 基线 999（#331 只减不增，每张移植票交付时显式抬低）
-```
-
-**两边数字相同时尤其要重测。** 阶段 5a 撞到过两边都写 84 的一次——两个 84 是从不同起点算出来的，本票扣掉的两个文件在合并后仍要再扣一次，真值是 82。取任何一边都会把对方的成果白送回去，**而「只减不增」只拦比基线大的，不会红**；若连注释文字都一样，git 会静默自动合并，连冲突都不报。
-
-**`STUBBED_CALLS` 的并集是删除的并集，不是保留的并集。** 两票各实现了同一文件里的不同存根：本票删 `GET_TATTOO`、master 侧删 `SLAVE_MONSTER_SKILL`，合并结果是**两项都删**（那次正好删空成 `[]`）。取任一侧都会把对方实现掉的存根重新登记回去，而清单核对用例只看「登记名在不在 `docs/stub-registry.md` 里」，多登记一条不会红。删空之后还有两处连带：**失去消费者的 `stub_line` 导入**（eslint 报 `no-unused-vars`）与**锚在那一行上的跨票变异条目**（`--verify` 报 find 出现 0 次）——两个都会当场红，照红修即可。
-
-**冲突清单是空的，不代表合并结果对。** 两票在**互不冲突的位置**各加一份同样的东西，git 会静默合上两份：#391 两张票各给同一个 `switch` 添了 `case '种族2'`，JS 不报重复 case、第二个是死代码、不红任何测试（保留哪一份按忠实度判——那次两份映射表逐字相同，差别只在回落的 `$$` 写法，见 AGENTS.md 那条）。另一形态是**接了个已经被填上的洞**：#404 建树时 `RACE_AGE_GENERATE` 还没人实现，于是留了 `stub_line` 占位并登记了一行存根，而那张「角色身体票」#385 在它交付前就合了——rebase 一声不响，结果是对着真身还挂着存根。合并后主动扫两样：
-
-```
-# 同一函数名被登记两次（KARMA 两行是历史遗留、分属两张表；其余重复都是合错了）
-awk -F'|' 'NF>3{f=$2;gsub(/^[ `]+|[ `]+$/,"",f);if(f!=""&&f!="原作函数"&&f!~/^-+$/)c[f]++}END{for(k in c)if(c[k]>1)print k,c[k]}' docs/stub-registry.md
-# 本票还挂着的存根，逐个确认对应真身在 master 上仍未落地
-grep -n "STUBBED_CALLS\|stub_line(" <本票改过的 ere/ 文件>
-```
-
-**产物文件不等于整份都是产物。** `ere/facade/*.js` 有 `// GENERATED END` 之后的手写区，生成器不碰。所以解产物冲突是两步：源表合好后 `node tools/gen-facade.js --force` 重生成，**再看手写区还有没有标记**。手写区的冲突按语义判——阶段 5a 那次是一侧只有 getter、另一侧是 getter＋setter，取超集（调用方要写那个字段）。
-
-**数组元素之间的冲突，边界会落在两侧共享的分隔符上。** 两边各缺一半闭合——**冲突标记删得干干净净、肉眼看不出，去掉标记后却是语法错误**（`tools/mutations/event.mjs` 那次 `--verify` 报「303 ≠ 304」；`test/*.test.js` 追加区那次 `node --check` 报 `Unexpected end of input`）。
-
-**这是本项目最高频的一种冲突形态**，而且**并不随经验减少**：阶段 3 收口的六张票里六次（`tools/mutations/*.mjs` 四次 #179/#182/#185/#178、`tools/trace-check.mjs` 两次 #177/#178），阶段 4 收口又是五次（`train.mjs` 两次 #227/#225、`trace-check.mjs` 三次 #225/#227×2）。
-
-**用脚本批量删标记时尤其容易中招**：把 `=======` 一律换成 `  },` 只在 INC 侧以 `{` 开头时成立；INC 侧若直接从 `desc:` 或注释行起头，要补的是 `  },\n  {`（#270/#227 各踩一次）。缺的闭合符按嵌套深度不同：
-
-| 切在哪                               | HEAD 侧末行长相            | 要补                            |
-| ------------------------------------ | -------------------------- | ------------------------------- |
-| 条目表两个对象之间                   | `must_mention: '…',`       | `},\n  {`                       |
-| `trace-check.mjs` 的 `refs` 数组之间 | `{ src: X, ref: '…', … },` | `],\n  },\n` （INC 侧自带 `{`） |
-
-**判据不是数括号，是看「块后第一行」**：它是 `  },` 就说明 INC 侧的末对象等着被它闭合，你只需补 HEAD 侧那一半。**解完必须跑一次 `node -e "import('./<路径>').then(...)"` 或 `node tools/mutation-check.mjs --verify`**，肉眼与 `git diff` 都看不出这类断裂。
-
-**更稳的解法是不手工拼接**——取 master 整份文件，再从本票提交里把新增块抽出来追加到文件尾：
-
-```
-git checkout origin/master -- <path>   # 先要 master 整份，放弃合并区
-git show <本票 sha>:<path>              # 从这里抽出本票新增的条目/用例块，追加到文件尾
-```
-
-第二次用这个解法一次干净。无论怎么解，**`node tools/mutation-check.mjs --verify` 必须跑**，只看 diff 不够。
-
-`prettier --write` 对 Markdown 里**不在反引号内**的下划线标识符是有损的（`AGENT_1.ERB` → `AGENT*1.ERB`）。解完冲突跑一次体征检查：`grep -nE '[A-Za-z0-9]\*[A-Za-z0-9]' <文件>`，应为空。
+**怎么解见 `docs/agents/merge-conflicts.md`**：六处固定冲突面、计数型基线为什么只能重测、登记表按行键取并集、生成产物先合源表再重生成、数组分隔符处的隐形断裂，以及「git 不报冲突但合出来是错的」那四种形态与合并后的自扫命令。
 
 ## 5.6 T4 阶段闸（阶段收口时跑一次）
 
 触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。三项：
 
-1. **全量变异（带引擎）**：`node tools/mutation-check.mjs --jobs 4`。**严格标准是「全部拦下、零跳过、零红」。** 本机满速跑一次比在 4 核 runner 上挂 100 分钟划算，所以它自阶段 4 收尾起不再挂 CI 的自动触发（`workflow_dispatch` 留着，不守着本机时可以点一轮）。
+1. **全量变异（带引擎）**：`node tools/mutation-check.mjs --jobs 4`。**严格标准是「全部拦下、零跳过、零红」。** 它不挂 CI 自动触发，`workflow_dispatch` 留着（理由见 AGENTS.md「CI」）。
 2. **引擎手工验收**：启动引擎跑一遍本阶段的贯通路径（启动命令见 AGENTS.md「运行与调试」，【打开游戏】选基座目录）。CI 没有 GUI，这件事机器做不了。
-3. **对拍**：`node tools/compare/cli.js --sample <名>`，样本名见 `tools/compare/samples.js`。
+3. **对拍全样本**：`node tools/compare/cli.js --sample <名>` 逐个跑完，样本名见 `tools/compare/samples.js`。（**每票那一档只跑受影响的样本**，见 §5「T3 量不到的两道」。）
 
 **全量唯一能抓、按面跑抓不到的那类，长这样。** 阶段 5a 收口报出红 5，两轮全量逐条相同、串行单跑也稳定复现。一条是真缺口：`test/dungeon-trap.test.js` 那条 `run_dungeon` 集成用例断言 `CFLAG:502 = 1`，而 MAGIC 从存根换成真身之后，战斗臂里 `dungeon.js:678` 的 `walk20 = move_ctx.d20` 同样会写出 1（TELEPORT_MAGIC 与陷阱 TELEPORT 落同一个值），两条路合流——**删掉陷阱那条收线，用例照样绿**。**A 子系统落真身，让 B 子系统的用例失去了区分能力**，而票只跑自己新加的 `--ids`、没人会重跑别人的旧条目，所以这一类只有全量看得见。
 
@@ -528,10 +455,10 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
   gh run list --repo odradekk/maou_redux --branch master --limit 1 --json conclusion,headSha
   ```
 
-  阶段 5a 为此付过账：`test:related` 按改动面选不中 `test/compare-scope-b.test.js`，六条对拍基线锁从 #348 合并起**连红四次无人看**，四张票都是「`gh pr checks` 显示 pass 就合并」。同一形态在本阶段发生了两次（首次 #339，master 连红三次），第一次是主动翻 CI 列表才发现的。**「PR 绿」是必要条件，「master push 绿」才是这张票真的过了。**
+  同一形态付过三次账（#348 起连红四次无人看、#339 连红三次、#397 的回放错位），都是「`gh pr checks` 显示 pass 就合并」。**「PR 绿」是必要条件，「master push 绿」才是这张票真的过了**；哪两道 PR 量不到，见 §5。
 
 - **改到 `.github/workflows/` 的分支要用 `env -u GITHUB_TOKEN` 推**：环境变量里那个 PAT 缺 `workflow` scope，remote 会直接拒收（`refusing to allow a Personal Access Token to create or update workflow`）；`~/.config/gh/hosts.yml` 里的细粒度 token 有。`gh pr create` / `gh pr merge` 同理。
-- **基座要 pull**（见 §0 的表）。漏掉它，下一张票就会从旧 master 建树，撞上 §5.5 表里那几处冲突。
+- **基座要 pull**（见 §0 的表）。漏掉它，下一张票就会从旧 master 建树，撞上 `merge-conflicts.md` 里那几处固定冲突面。
 - **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
 - **一张票要清六处，少一处就「看着还开着」。** 本仓库 `deleteBranchOnMerge` 是 false，所以远端分支要靠 `--delete-branch` 删；删掉之后两个 checkout 的跟踪引用**不会自己消失**，得 `--prune`。worktree 用 `git worktree remove` 删也行，但 orca 的**终端会话不跟着走**——#344 就是这么留下一个指向已删目录的终端，看起来像票没关完。合并后跑一遍复核：
 
