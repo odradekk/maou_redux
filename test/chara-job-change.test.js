@@ -172,6 +172,28 @@ test('CHARA_INFO_JOB_CHANGE：菜单恒有 0-9/12/999，上位职两项按勋章
         .concat(expected_eleventh ? ['魔导神官'] : []),
       '职业名逐字',
     );
+    // 排版：每行 JOB_MENU_COLUMNS(3) 格——按 Row 分组逐行钉住。格数常量
+    // 少写一格时最后一行会散开（11 项 3 格一行 → 收尾是 [9,12] 两格一行），
+    // 这条断言就是那个边界的看门人（M9046）
+    const rows = [];
+    for (const b of buttons(fixture)) {
+      if (rows.length === 0 || rows.at(-1).row !== b.row) {
+        rows.push({ row: b.row, accels: [] });
+      }
+      rows.at(-1).accels.push(b.accelerator);
+    }
+    assert.deepEqual(
+      rows.map((r) => r.accels),
+      [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [9, 12],
+      ]
+        .concat(expected_tenth ? [[10, 11]] : [])
+        .concat([[999]]),
+      `勋章 ${medals} 的每行格数`,
+    );
   }
 });
 
@@ -236,7 +258,10 @@ test('CHARA_INFO_JOB_CHANGE：转职落地——职业表先清后设、等级�
     const fixture = create_era_fixture();
     seed_able(fixture);
     fixture.store.set('exp:1:81', 10); // 上位职的勋章
-    fixture.store.set('talent:1:200', 1); // 旧职业：验证「十三格全清后再设一格」
+    // 旧职业预置在**十三格的两端**（200 = 第一格、212 = 最后一格）：格数常量
+    // 少写一格时最后一格会静默留下旧职业，这里才拦得住（M9042）
+    fixture.store.set('talent:1:200', 1);
+    fixture.store.set('talent:1:212', 1);
     fixture.store.set('talent:1:281', 2); // 常识改变【战斗】也要清
     // 十三格职业名都播种，且刻意与菜单号错开一位——播报取错格（恒读 200
     // 之类的实现）会立刻露馅

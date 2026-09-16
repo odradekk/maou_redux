@@ -836,27 +836,44 @@ test('MARRIAGE：处女丧失的四道守卫——特殊服装 79 / 素质 273 /
   }
 });
 
-test('MARRIAGE：虫/史莱姆/植物婚的处女骰上界是 9，掷到 4 以上就不破处', async () => {
+test('MARRIAGE：虫/史莱姆/植物婚的处女骰上界是 9，掷 3 破处、掷 4 不破（阈值 >= 4）', async () => {
   for (const id of [102, 103, 112]) {
-    const fixture = seed();
-    fixture.store.set('talent:1:0', 1);
-    fixture.store.set(`item:${id}`, 1);
-    fixture.store.set(`itemname:${id}`, '怪物');
-    fixture.set_inputs(id);
-    const bounds = [];
-    const rand = (n) => {
-      bounds.push(n);
-      return n - 1; // 一律掷到上界减一
-    };
+    for (const [draw, broken] of [
+      [3, true],
+      [4, false],
+    ]) {
+      const fixture = seed();
+      fixture.store.set('talent:1:0', 1);
+      fixture.store.set(`item:${id}`, 1);
+      fixture.store.set(`itemname:${id}`, '怪物');
+      fixture.set_inputs(id);
+      const bounds = [];
+      const rand = (n) => {
+        bounds.push(n);
+        // 这条路上唯一的 rand(9) 就是处女骰（monster_data 掷的是别的上界），
+        // 把它按边界两侧各掷一次：3 破、4 起不破（VIRGIN_B_THRESHOLD = 4）
+        return n === 9 ? draw : n - 1;
+      };
 
-    await load(fixture).marriage(1, rand);
+      await load(fixture).marriage(1, rand);
 
-    assert.ok(bounds.includes(9), `怪物 ${id}：处女骰的上界是 9`);
-    assert.equal(
-      texts(fixture).includes('【处女丧失】'),
-      false,
-      `怪物 ${id}：掷到 8 不破处`,
-    );
+      assert.ok(bounds.includes(9), `怪物 ${id}：处女骰的上界是 9`);
+      assert.equal(
+        texts(fixture).includes('【处女丧失】'),
+        broken,
+        `怪物 ${id}：掷到 ${draw} 的播报`,
+      );
+      assert.equal(
+        fixture.store.get('talent:1:0'),
+        broken ? 0 : 1,
+        `怪物 ${id}：掷到 ${draw} 的素质`,
+      );
+      assert.equal(
+        fixture.store.get('cflag:1:15') || 0,
+        broken ? 104 : 0,
+        `怪物 ${id}：掷到 ${draw} 的记录码`,
+      );
+    }
   }
 });
 

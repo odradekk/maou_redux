@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用锚点，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 33; // #393 返工 +13（M9012/M9013 清旧账两侧；M9025 已婚守卫；M9030-M9032 家族册配偶；M9034-M9038 对方侧与异种婚姻/编档；M9040/M9041 分页与处女守卫）
+export const COUNT = 41; // #393 返工 +13；返工二 +2；返工三 +6（M9059-M9064 素质编号与记录码）
 
 export default [
   {
@@ -304,6 +304,70 @@ export default [
       '      if ((page + 1) * SLAVE_PAGE_SIZE < added_ids().length) page += 1;',
     tests: ['chara-marriage'],
     must_mention: '翻页边界',
+  },
+  {
+    desc: 'M9059 特殊服装判据由 79 改成 80',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const CLOTH_SEX_MARK = 79;',
+    replace: 'const CLOTH_SEX_MARK = 80;',
+    tests: ['chara-marriage'],
+    must_mention: '处女丧失的四道守卫',
+  },
+  {
+    desc: 'M9060 故乡妻子的素质由 157 改成 158',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const T_HOMETOWN_WIFE = 157;',
+    replace: 'const T_HOMETOWN_WIFE = 158;',
+    tests: ['chara-marriage'],
+    must_mention: '在故乡等待的伴侣',
+  },
+  {
+    desc: 'M9061 异种婚姻的素质由 159 改成 160',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const T_CROSS_MARRIAGE = 159;',
+    replace: 'const T_CROSS_MARRIAGE = 160;',
+    tests: ['chara-marriage'],
+    must_mention: '异种婚姻',
+  },
+  {
+    desc: 'M9062 处女丧失记录码（怪物）由 104 改成 105',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const FIRST_SEX_MONSTER = 104;',
+    replace: 'const FIRST_SEX_MONSTER = 105;',
+    tests: ['chara-marriage'],
+    must_mention: '记录码',
+  },
+  {
+    desc: 'M9063 初吻记录码（其它）由 994 改成 995',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const FIRST_KISS_OTHER = 994;',
+    replace: 'const FIRST_KISS_OTHER = 995;',
+    tests: ['chara-marriage'],
+    must_mention: '初吻的记录码',
+  },
+  {
+    desc: 'M9064 初吻记录码（你）由 1 改成 2',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const FIRST_KISS_YOU = 1;',
+    replace: 'const FIRST_KISS_YOU = 2;',
+    tests: ['chara-marriage'],
+    must_mention: '初吻的记录码',
+  },
+  {
+    desc: 'M9045 B 经验阈值由 4 改成 5（掷到 4 也破处）',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const VIRGIN_B_THRESHOLD = 4;',
+    replace: 'const VIRGIN_B_THRESHOLD = 5;',
+    tests: ['chara-marriage'],
+    must_mention: '处女骰上界是 9',
+  },
+  {
+    desc: 'M9051 配偶名槽下标由 609 改成 610',
+    file: 'ere/chara/chara-marriage.js',
+    find: 'const SPOUSE_NAME_SLOT = 609;',
+    replace: 'const SPOUSE_NAME_SLOT = 610;',
+    tests: ['chara-marriage'],
+    must_mention: '清旧账',
   },
   {
     desc: 'M9041 处女丧失的素质 273 守卫由「非零」改成「等于 1」',

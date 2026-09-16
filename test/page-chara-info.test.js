@@ -360,6 +360,55 @@ test('CHARA_INFO：翻页/换排序视图/统一积极性与换号存根/返回�
   );
 });
 
+test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 页，第 25 人只在第 2 页', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
+  const { chara_info } = fixture.load_module('page/page-chara-info');
+
+  fixture.set_inputs(998, 997, 999); // 下一页 → 上一页 → 返回主菜单
+  assert.equal(await chara_info(), 0);
+
+  // 每次绘制以 [998] 收尾，用它把三次绘制切片；行按钮的 text 是 `[编号]`
+  // （排序表头等按钮的 text 是中文标签，天然滤掉）
+  const draws = [];
+  let start = 0;
+  fixture.lines_history.forEach((line, idx) => {
+    if (line.type === 'button' && line.accelerator === 998) {
+      draws.push(fixture.lines_history.slice(start, idx + 1));
+      start = idx + 1;
+    }
+  });
+  assert.equal(draws.length, 3, '初始 ＋ 下一页 ＋ 上一页');
+  const rows_of = (draw) =>
+    draw
+      .filter((line) => line.type === 'button' && /^\[\d+\]$/.test(line.text))
+      .map((line) => line.text);
+
+  assert.equal(
+    rows_of(draws[0]).length,
+    24,
+    '第 1 页 24 行（魔王行是文本行，不计）',
+  );
+  assert.equal(rows_of(draws[0]).includes('[24]'), true, '第 24 人在第 1 页');
+  assert.equal(
+    rows_of(draws[0]).includes('[25]'),
+    false,
+    '第 25 人不在第 1 页',
+  );
+  assert.deepEqual(rows_of(draws[1]), ['[25]'], '第 2 页只剩第 25 人');
+  assert.deepEqual(
+    rows_of(draws[2]),
+    rows_of(draws[0]),
+    '翻回第 1 页又是 24 人',
+  );
+  assert.equal(
+    printed_includes(fixture, '(总计25人)'),
+    true,
+    '总数是魔王之外的 25 人',
+  );
+});
+
 test('CHARA_INFO：选中一个角色进入个别信息页，其返回值原样上浮', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');

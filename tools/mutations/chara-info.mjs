@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 31; // #389 起 -4（M7868-M7871 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#393 返工 +11（M9001-M9011 三动作接线）
+export const COUNT = 34; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）
 
 export default [
   {
@@ -290,6 +290,30 @@ export default [
     replace: `        if (marriage_result === 2) return marriage_result;`,
     tests: ['page-chara-info'],
     must_mention: '结婚返回 0 时也上浮回名册',
+  },
+  {
+    desc: 'M9057 故乡丈夫的 kind 表 [0,4,8] → [0,4]',
+    file: 'ere/page/page-chara-info.js',
+    find: "    if ([0, 4, 8].includes(kind)) return '故乡丈夫';",
+    replace: "    if ([0, 4].includes(kind)) return '故乡丈夫';",
+    tests: ['page-chara-info'],
+    must_mention: '故乡丈夫',
+  },
+  {
+    desc: 'M9058 故乡扶她的 kind 表 [1,5,7] → [1,5]',
+    file: 'ere/page/page-chara-info.js',
+    find: "    if ([1, 5, 7].includes(kind)) return '故乡扶她';",
+    replace: "    if ([1, 5].includes(kind)) return '故乡扶她';",
+    tests: ['page-chara-info'],
+    must_mention: '故乡扶她',
+  },
+  {
+    desc: 'M9043 名册每页行数由 24 改成 23（第 24 人掉到第 2 页）',
+    file: 'ere/page/page-chara-info.js',
+    find: 'const NUM_PAGE = 24;',
+    replace: 'const NUM_PAGE = 23;',
+    tests: ['page-chara-info'],
+    must_mention: '名册每页 24 行',
   },
   {
     desc: 'M9011 结婚接线丢掉上浮值（return marriage_result → return 0）',

@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用锚点，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 24; // #393 返工 +4（M9026-M9029：等级门/勋章门槛/素质编号的边界）
+export const COUNT = 31; // #393 返工二 +4；返工三 +3（M9065-M9067 常识档数与奉侍素质）
 
 export default [
   {
@@ -194,6 +194,62 @@ export default [
     replace: 'const JOB_TALENT_BASE = 201;',
     tests: ['chara-job-change'],
     must_mention: '转职落地',
+  },
+  {
+    desc: 'M9065 战斗常识的档数由 3 改成 4',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const COMMON_SENSE_BATTLE_MOD = 3;',
+    replace: 'const COMMON_SENSE_BATTLE_MOD = 4;',
+    tests: ['chara-job-change'],
+    must_mention: '战斗常识三档循环',
+  },
+  {
+    desc: 'M9066 日常常识的兽奸档由 5 改成 6',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const COMMON_SENSE_DAILY_BEAST = 5;',
+    replace: 'const COMMON_SENSE_DAILY_BEAST = 6;',
+    tests: ['chara-job-change'],
+    must_mention: '日常常识六档循环',
+  },
+  {
+    desc: 'M9067 奉侍素质由 204 改成 205',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const JOB_BENKI_TALENT = 204;',
+    replace: 'const JOB_BENKI_TALENT = 205;',
+    tests: ['chara-job-change'],
+    must_mention: '常识',
+  },
+  {
+    desc: 'M9042 职业素质格数由 13 改成 12（最后一格 212 不再清）',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const JOB_TALENT_COUNT = 13;',
+    replace: 'const JOB_TALENT_COUNT = 12;',
+    tests: ['chara-job-change'],
+    must_mention: '转职落地',
+  },
+  {
+    desc: 'M9046 菜单每行格数由 3 改成 2（最后一行散开）',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const JOB_MENU_COLUMNS = 3;',
+    replace: 'const JOB_MENU_COLUMNS = 2;',
+    tests: ['chara-job-change'],
+    must_mention: '菜单恒有',
+  },
+  {
+    desc: 'M9048 上位职的上限加成由 500 改成 501',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const JOB_ELITE_BONUS = 500;',
+    replace: 'const JOB_ELITE_BONUS = 501;',
+    tests: ['chara-job-change'],
+    must_mention: '转职落地',
+  },
+  {
+    desc: 'M9050 野狗物品号由 22 改成 23（常识改变的兽奸档判据跟着错）',
+    file: 'ere/chara/chara-job-change.js',
+    find: 'const DOG_ITEM = 22;',
+    replace: 'const DOG_ITEM = 23;',
+    tests: ['chara-job-change'],
+    must_mention: '常识',
   },
   {
     desc: 'M9029 体力/气力上限基数由 2000 改成 2001',

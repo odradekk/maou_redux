@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释；desc 里的 M 编号不人工
 // 分配、只作引用锚点，但全表必须唯一（#295）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 33; // #393 返工 +13（M9014-M9024 边界值；M9033 默认随机源；M9039 代还借款门槛）
+export const COUNT = 41; // #393 返工 +13；返工二 +5；返工三 +3（M9054-M9056 三条下标表）
 
 export default [
   {
@@ -257,6 +257,72 @@ export default [
     replace: '  if (rand(20) < 5 && (ring1 === 19 || ring2 === 20)) return 1;',
     tests: ['chara-temptation'],
     must_mention: '指轮的两条强制判据',
+  },
+  {
+    desc: 'M9054 高级素质两项的下标表 [10,11] → [10,12]',
+    file: 'ere/chara/chara-temptation.js',
+    find: '          add_affection(arg, 15 * (1 + abl_sum(arg, [10, 11])));',
+    replace: '          add_affection(arg, 15 * (1 + abl_sum(arg, [10, 12])));',
+    tests: ['chara-temptation'],
+    must_mention: '档 1',
+  },
+  {
+    desc: 'M9055 刻印三项求和的下标表 [0,1,2] → [0,1,4]',
+    file: 'ere/chara/chara-temptation.js',
+    find: '              (10 * (1 + mark_sum(arg, [0, 1, 2]))) / (1 + mark_of(arg, 3)),',
+    replace:
+      '              (10 * (1 + mark_sum(arg, [0, 1, 4]))) / (1 + mark_of(arg, 3)),',
+    tests: ['chara-temptation'],
+    must_mention: '档 2',
+  },
+  {
+    desc: 'M9056 刻印除数由 mark_of(3) 改成 mark_of(4)',
+    file: 'ere/chara/chara-temptation.js',
+    find: '              (10 * (1 + mark_sum(arg, [0, 1, 2]))) / (1 + mark_of(arg, 3)),',
+    replace:
+      '              (10 * (1 + mark_sum(arg, [0, 1, 2]))) / (1 + mark_of(arg, 4)),',
+    tests: ['chara-temptation'],
+    must_mention: '档 2',
+  },
+  {
+    desc: 'M9044 进度格宽度由 20 改成 21',
+    file: 'ere/chara/chara-temptation.js',
+    find: 'const TEMPTATION_BAR_WIDTH = 20;',
+    replace: 'const TEMPTATION_BAR_WIDTH = 21;',
+    tests: ['chara-temptation'],
+    must_mention: '两条进度格都用',
+  },
+  {
+    desc: 'M9047 经验七项求和里的 exp:20 改成 exp:21（下标表中间一项）',
+    file: 'ere/chara/chara-temptation.js',
+    find: '      (era.get(`exp:${arg}:20`) || 0) +',
+    replace: '      (era.get(`exp:${arg}:21`) || 0) +',
+    tests: ['chara-temptation'],
+    must_mention: '经验七项各 3',
+  },
+  {
+    desc: 'M9049 担保人素质下标由 290 改成 291',
+    file: 'ere/chara/chara-temptation.js',
+    find: 'const T_SPONSOR = 290;',
+    replace: 'const T_SPONSOR = 291;',
+    tests: ['chara-temptation'],
+    must_mention: '担保人',
+  },
+  {
+    desc: 'M9052 基础素质四维求和里的 abl:2 改成 abl:4',
+    file: 'ere/chara/chara-temptation.js',
+    find: '      (era.get(`abl:${arg}:2`) || 0) +',
+    replace: '      (era.get(`abl:${arg}:4`) || 0) +',
+    tests: ['chara-temptation'],
+    must_mention: '基础素质四维各 1',
+  },
+  {
+    desc: 'M9053 三个 FLAG 加成里的 flag:31 改成 flag:33',
+    file: 'ere/chara/chara-temptation.js',
+    find: "    (era.get('flag:31') || 0) +",
+    replace: "    (era.get('flag:33') || 0) +",
+    tests: ['chara-temptation'],
+    must_mention: '三个 FLAG 加成相加',
   },
   {
     desc: 'M9039 代还借款的负债门槛偏移一位（582 < -10000 改成 < -10001）',
