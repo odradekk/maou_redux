@@ -980,3 +980,62 @@ test('存根清单：STUBBED_CALLS 已空（SHOW_CHARA_INFO 已接真身）', ()
   const { STUBBED_CALLS } = fixture.load_module('page/page-monster-shop');
   assert.deepEqual(STUBBED_CALLS, []);
 });
+
+// —— 随机源透传（接线验收返工）：形参有缺省值时，实参被去掉会静静落回
+//    Math.random（#344 的形态：本机跑一次绿、CI 抽中才红） ——
+
+/**
+ * 把缺省随机源换成会抛的桩，再跑 fn。任何一环没把 `rand` 往下传、下游落回
+ * 自己的 default_rand（`Math.random`）时就当场炸；透传正常时整条流程一次都
+ * 不会碰它。
+ */
+async function without_default_rand(fn) {
+  const real = Math.random;
+  Math.random = () => {
+    throw new Error('落回缺省随机源（rand 实参没透传）');
+  };
+  try {
+    return await fn();
+  } finally {
+    Math.random = real;
+  }
+}
+
+test('随机源透传：召唤全链吃注入的源（MONSTER_DATA / CHAR_MAKE / 信息屏）', async () => {
+  // 一条链覆盖四处透传：select_monster → BUY_MONSTER 的 read_monster →
+  // MONSTER_DATA、CHAR_MAKE、召唤确认段的 SHOW_CHARA_INFO（后者的随机消耗靠
+  // 使役魔兽标记 CFLAG:570 触发，见 show_data）
+  const fixture = await without_default_rand(() =>
+    run_monster_shop(
+      { 'item:101': 3, 'cflag:202:570': 101 },
+      1, // 入口
+      1, // 性别
+      1, // 种族
+      202, // 商品
+      101,
+      101,
+      101, // 祭品
+      0, // 献祭确认
+      0, // 召唤确认
+    ),
+  );
+  assert(
+    history_texts(fixture).some((line) => line.includes('确定要召唤')),
+    '全链跑完（有任一处没透传就会在这里之前炸）',
+  );
+});
+
+test('随机源透传：BUY_MONSTER 的独立出口也吃注入的源', async () => {
+  const fixture = monster_world({ 'item:101': 3 });
+  fixture.set_inputs(101, 101, 101, 0);
+  const { buy_monster, shop_state } = fixture.load_module(
+    'page/page-monster-shop',
+  );
+  // TFLAG:100/101 的种族两档与 TFLAG:102 的选中项（独立出口绕开
+  // SELECT_MONSTER，这三格要手工立起来）
+  shop_state.race = 1;
+  shop_state.race2 = 1;
+  shop_state.chosen = 202;
+  await without_default_rand(() => buy_monster(rand0));
+  assert.equal(fixture.store.get('item:101'), 0, '三只祭品都献了（全链跑完）');
+});

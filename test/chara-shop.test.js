@@ -456,3 +456,79 @@ test('存根清单：STUBBED_CALLS 已空（SHOW_CHARA_INFO 已接真身）', ()
   const { STUBBED_CALLS } = fixture.load_module('page/page-chara-shop');
   assert.deepEqual(STUBBED_CALLS, []);
 });
+
+// —— 随机源透传（接线验收返工）：形参有缺省值时，实参被去掉会静静落回
+//    Math.random（#344 的形态：本机跑一次绿、CI 抽中才红） ——
+
+/**
+ * 把缺省随机源换成会抛的桩，再跑 fn。任何一环没把 `rand` 往下传、下游落回
+ * 自己的 default_rand（`Math.random`）时就当场炸；透传正常时整条流程一次都
+ * 不会碰它。
+ */
+async function without_default_rand(fn) {
+  const real = Math.random;
+  Math.random = () => {
+    throw new Error('落回缺省随机源（rand 实参没透传）');
+  };
+  try {
+    return await fn();
+  } finally {
+    Math.random = real;
+  }
+}
+
+test('随机源透传：异界召唤全链吃注入的源（CHAR_MAKE / 信息屏）', async () => {
+  const fixture = await without_default_rand(() => run_chara_shop({}, 1, 0));
+  assert(
+    history_texts(fixture).some((line) => line.includes('确定要召唤')),
+    '全链跑完（有任一处没透传就会在这里之前炸）',
+  );
+});
+
+test('随机源透传：强行召唤链吃注入的源（CHAR_IKAI_APPEND → CHAR_INIT）', async () => {
+  const fixture = chara_world({ 'exp:0:81': 20 });
+  fixture.seed_chara(10099, { id: 10099, name: '异界人丙' });
+  fixture.store.set('chara:10099', { name: '异界人丙' });
+  fixture.set_inputs(10099);
+  const { char_ikai_create } = fixture.load_module('page/page-chara-shop');
+  await without_default_rand(() => char_ikai_create(rand0));
+  assert(
+    fixture.era.getAddedCharacters().includes(10099),
+    '召唤落地（全链跑完）',
+  );
+});
+
+test('随机源透传：SELECT_CHARA / BUY_CHARA 两个同形出口也吃注入的源', async () => {
+  {
+    // SELECT_CHARA → SELECT_FOLLOWER → BUY_CHARA 的同款链
+    const fixture = chara_world({
+      'itemprice:279': 15,
+      'itemname:279': '精英魔兽',
+      'chara:279': { talent: { 319: 1 } },
+      'itemname:101': '狗头人',
+      'item:101': 3,
+    });
+    fixture.set_inputs(279, 101, 101, 101, 0);
+    const { select_chara } = fixture.load_module('page/page-chara-shop');
+    const result = await without_default_rand(() => select_chara(1, rand0));
+    assert.equal(result, 1, 'SELECT_CHARA 全链跑完');
+  }
+  {
+    // BUY_CHARA 的独立出口（绕开 SELECT_CHARA，三格状态手工立起来）
+    const fixture = chara_world({
+      'itemprice:202': 15,
+      'itemname:202': '精英狗头人',
+      'chara:202': { talent: { 319: 1 } },
+      'itemname:101': '狗头人',
+      'item:101': 3,
+    });
+    fixture.set_inputs(101, 101, 101, 0);
+    const { buy_chara } = fixture.load_module('page/page-chara-shop');
+    const shop_state = fixture.load_module('page/page-monster-shop').shop_state;
+    shop_state.race = 1;
+    shop_state.race2 = 1;
+    shop_state.chosen = 202;
+    const result = await without_default_rand(() => buy_chara(rand0));
+    assert.equal(result, 1, 'BUY_CHARA 全链跑完');
+  }
+});

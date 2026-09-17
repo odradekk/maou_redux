@@ -1,16 +1,17 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 224; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+export const COUNT = 238; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
-// #399 起 +84（M8881-M8918、M8919-M8940 与 M9101-M9124）：page-item-shop 36 /
-// page-monster-shop 27 / page-chara-shop 16 / page-shop 3（另有 1 条 #395 的
+// #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
+// page-monster-shop 35 / page-chara-shop 22 / page-shop 3（另有 1 条 #395 的
 // page-shop 旧条目） / page-shop-trap 2。
 // 第二轮返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
 // 1:1 文本修正、M8940 是菜单行的全角空格；第三轮返工 +15：M9101 起是范围
 // 端点（件数/上下界/槽位），等价的一端不建条目、理由写在相邻条目注释里；
 // M9116-M9118 是第三轮评审补的两个内联端点（戒指槽位、两处页高）；
 // M9119-M9124 是接线一轮：两处召唤确认段接 @SHOW_CHARA_INFO 真身（#390），
-// 每条各取「接没接」「传给谁」「哪一页」三面之一。
+// 每条各取「接没接」「传给谁」「哪一页」三面之一；M9125-M9138 是随机源
+// 透传面：每条「把 rand 往下传」的调用点各拿掉一次实参。
 // M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
 // 「回放播种」变异仍未收录）
 
@@ -1876,5 +1877,123 @@ export default [
     replace: 'await Promise.resolve(); // 变异：不调角色信息屏',
     tests: ['chara-shop'],
     must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+  },
+  // —— #399 接线返工（第二轮）：随机源透传 ——
+  // 形参带缺省值时，实参一去掉就静静落回 downstream 的 default_rand
+  // （Math.random，#344 的形态：本机跑一次绿、CI 抽中才红）。这一组把每条
+  // 「把 rand 往下传」的调用点各拿掉一次，由两个文件的「随机源透传」用例组
+  // （Math.random 换成会抛的桩）拦下；共享核那几处两个商店的用例都会红。
+  {
+    desc: 'M9125 怪物商店到 SELECT_MONSTER 不传随机源',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'await select_monster(result, rand)',
+    replace: 'await select_monster(result)',
+    tests: ['monster-shop'],
+    must_mention: '随机源透传：召唤全链',
+  },
+  {
+    desc: 'M9126 怪物商店的 CHAR_MAKE 不传随机源',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'await char_make(a, 0, 0, rand);',
+    replace: 'await char_make(a, 0, 0);',
+    tests: ['monster-shop'],
+    must_mention: '随机源透传：召唤全链',
+  },
+  {
+    desc: 'M9127 怪物商店的角色信息屏不传随机源（落回 default_rand）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await show_chara_info(a, -2);',
+    tests: ['monster-shop'],
+    must_mention: '随机源透传：召唤全链',
+  },
+  {
+    desc: 'M9128 SELECT_MONSTER 到 SELECT_FOLLOWER 不传随机源',
+    file: 'ere/page/page-monster-shop.js',
+    find: '    show: show_shop_monster,\n    guard: true,\n    rand,',
+    replace: '    show: show_shop_monster,\n    guard: true,',
+    tests: ['monster-shop'],
+    must_mention: '随机源透传：召唤全链',
+  },
+  {
+    desc: 'M9129 SELECT_FOLLOWER 到 BUY_FOLLOWER 不传随机源',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'await buy_follower({ show, rand })',
+    replace: 'await buy_follower({ show })',
+    tests: ['monster-shop', 'chara-shop'],
+    must_mention: '两个同形出口',
+  },
+  {
+    desc: 'M9130 BUY_MONSTER 到 READ_MONSTER 不传随机源',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'const data = read_monster(id, rand);',
+    replace: 'const data = read_monster(id);',
+    tests: ['monster-shop', 'chara-shop'],
+    must_mention: '两个同形出口',
+  },
+  {
+    desc: 'M9131 READ_MONSTER 到 MONSTER_DATA 不传随机源',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'monster_data(id, 5, -1, -1, -1, rand);',
+    replace: 'monster_data(id, 5, -1, -1, -1);',
+    tests: ['monster-shop', 'chara-shop'],
+    must_mention: '两个同形出口',
+  },
+  {
+    desc: 'M9132 BUY_MONSTER 的独立出口到 BUY_FOLLOWER 不传随机源',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'return buy_follower({ show: show_shop_monster, rand });',
+    replace: 'return buy_follower({ show: show_shop_monster });',
+    tests: ['monster-shop'],
+    must_mention: 'BUY_MONSTER 的独立出口',
+  },
+  {
+    desc: 'M9133 强行召唤的 CHAR_IKAI_APPEND 到 CHAR_INIT 不传随机源',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'await char_init(a, rand);',
+    replace: 'await char_init(a);',
+    tests: ['chara-shop'],
+    must_mention: '强行召唤链',
+  },
+  {
+    desc: 'M9134 CHAR_IKAI_CREATE 到 CHAR_IKAI_APPEND 不传随机源',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'a = await char_ikai_append(l_i, rand);',
+    replace: 'a = await char_ikai_append(l_i);',
+    tests: ['chara-shop'],
+    must_mention: '强行召唤链',
+  },
+  {
+    desc: 'M9135 异界召唤的 CHAR_MAKE 不传随机源',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'await char_make(a, 0, 0, rand);',
+    replace: 'await char_make(a, 0, 0);',
+    tests: ['chara-shop'],
+    must_mention: '随机源透传：异界召唤全链',
+  },
+  {
+    desc: 'M9136 异界召唤的角色信息屏不传随机源（落回 default_rand）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await show_chara_info(a, -2);',
+    tests: ['chara-shop'],
+    must_mention: '随机源透传：异界召唤全链',
+  },
+  {
+    desc: 'M9137 SELECT_CHARA 到 SELECT_FOLLOWER 不传随机源',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'return select_follower({ arg0, show: show_shop_chara, guard: false, rand });',
+    replace:
+      'return select_follower({ arg0, show: show_shop_chara, guard: false });',
+    tests: ['chara-shop'],
+    must_mention: '两个同形出口',
+  },
+  {
+    desc: 'M9138 BUY_CHARA 的独立出口到 BUY_FOLLOWER 不传随机源',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'return buy_follower({ show: show_shop_chara, rand });',
+    replace: 'return buy_follower({ show: show_shop_chara });',
+    tests: ['chara-shop'],
+    must_mention: '两个同形出口',
   },
 ];
