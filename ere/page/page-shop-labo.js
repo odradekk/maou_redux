@@ -140,7 +140,7 @@ const { wearing_cloth_able } = require('#/system/train/cloth');
 const { life_list } = require('#/page/page-life-list');
 const { char_size_generate } = require('#/chara/chara-body');
 const { char_create } = require('#/chara/chara-custom');
-const { add_chara_ex } = require('#/chara/chara-ex');
+const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/chara/chara-ex');
 const {
   MAX_CHARANUM,
   n_breast_grow,
@@ -1508,6 +1508,21 @@ async function bougt_tentacles() {
 }
 
 /**
+ * `CALL ADDCHARA_EX`（原作 `TRYCALLFORM CHARA_EX_{NO:ARG}` 的分发入口）：
+ * 对没有 `CHARA*.ERB` 的编号，原作是**静默落空**，而 `chara-ex.js` 的分发
+ * 家族把「声明空间外」判成拼写错误会抛。本文件两处调用点的编号来自玩家输入
+ * 或数据表（召唤 150-199、苏生 1-100），不是代码里的字面量，先问声明空间，
+ * 不在里面就按原作落空跳过。
+ * @param {number} cid 角色 ID
+ * @returns {Promise<void>}
+ */
+async function add_chara_ex_defined(cid) {
+  if (DECLARED_CHARA_IDS.includes(cid)) {
+    await add_chara_ex(cid);
+  }
+}
+
+/**
  * 调教外借 TFLAG:13 传口上事件码（game.train 的既有承载：
  * 据点期没有 tflag 表，with_self_kojo_event 用调用链内的临时值承载）。
  * @param {number} event 事件码
@@ -1660,7 +1675,7 @@ async function resulection() {
     const preset = result - 99; // :2601 D = RESULT - 99
     era.addCharacter(preset); // :2609 ADDCHARA D
     revived = preset; // :2613 C = CHARANUM - 1
-    await add_chara_ex(revived); // :2610 CALL ADDCHARA_EX, CHARANUM-1
+    await add_chara_ex_defined(revived); // :2610 CALL ADDCHARA_EX, CHARANUM-1
     era.set(`flag:${c}`, -1); // :2612 FLAG:C = -1（购买标记）
     era.print(`《${savestr(revived)}被从彼岸召唤回来了》`); // :2614
     era_flag.target = revived; // :2617 TARGET = C
@@ -2565,7 +2580,7 @@ async function summon_slave() {
     // :4280 LOCAL:1 = CHARANUM - 1：序号世界里新角色恒在末位；ere 侧角色 ID
     // 就是收录编号（文件头第 8 条）
     const new_cid = local;
-    await add_chara_ex(new_cid); // :4279 CALL ADDCHARA_EX, CHARANUM-1
+    await add_chara_ex_defined(new_cid); // :4279 CALL ADDCHARA_EX, CHARANUM-1
     chara(new_cid).chara.加入时名字 = chara_name(new_cid); // :4281-4282
     const prev_target = era_flag.target; // :4283 LOCAL:2 = TARGET
     era_flag.target = new_cid; // :4284 TARGET = LOCAL:1

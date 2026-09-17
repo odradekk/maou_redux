@@ -5,6 +5,10 @@
 // 取点原则（工单覆盖面标准）：价格/门槛/素质编号等字面量逐个钉、随机上界
 // 单独钉（DEIMMATURITY 的 RAND:2、DEMON_REBIRTH 的 RAND:3/7）、范围端点
 // （编号 150/199、页高 23、CHARANUM 60/80/90）。
+//
+// M9450 起补的是**等号侧**（#398 一轮验收的抽样探针打出）：字面量钉的是
+// 「那个数」，`>= N` 改 `> N` 数字一个没动却改变了恰好取等时的行为。每条
+// 改的都是比较运算符本身，靶是 test/page-shop-labo.test.js 第六节。
 const code = 'ere/page/page-shop-labo.js';
 const make = (id, desc, find, replace, must_mention) => ({
   desc: `M${id} ${desc}`,
@@ -16,7 +20,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 49;
+export const COUNT = 72;
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -366,5 +370,168 @@ export default [
     '      p += 3; // :185-187 前一页',
     '      p += 2; // :185-187 前一页',
     'P=0 →（998）P=1 →（997）P=0 →（997）P=3',
+  ),
+  // —— 等号侧（#398 一轮验收抽样探针打出的空白）：比较运算符的取等那一侧 ——
+  make(
+    9450,
+    'require_money 的 `money < price` 改 `<=`（钱刚好够就买不了）',
+    '  if (era_flag.money < price) {',
+    '  if (era_flag.money <= price) {',
+    'modify_bonyu：钱 == 价格时应成交（money < price 的等号侧）',
+  ),
+  make(
+    9451,
+    'BUSTUP 加价档的 `money < cost` 改 `<=`',
+    '    if (era_flag.money < cost) {',
+    '    if (era_flag.money <= cost) {',
+    '加价档钱刚好够也成交（money < cost 的等号侧）',
+  ),
+  make(
+    9452,
+    'BLOCK_FEELING 的 `money >= C` 改 `> C`（买完刚好剩单价时不回菜单）',
+    '      if (era_flag.money >= 20000) {',
+    '      if (era_flag.money > 20000) {',
+    'MONEY == C 时回到部位菜单（money >= C 的等号侧）',
+  ),
+  make(
+    9453,
+    '选人「上一页」的 `no_page > 0` 改 `>= 0`（第 1 页往前翻）',
+    '    if (no_page > 0) {',
+    '    if (no_page >= 0) {',
+    '两屏都画出奴隶 1：NO_PAGE == 0 时不能往前翻（no_page > 0 的等号侧）',
+  ),
+  make(
+    9454,
+    '选人「下一页」的 `(NO_PAGE+1)*NUM_PAGE <= CHARANUM` 改 `<`',
+    '      if ((no_page + 1) * NUM_PAGE <= charanum()) {',
+    '      if ((no_page + 1) * NUM_PAGE < charanum()) {',
+    '第 2 页是空的（恰好取等也允许翻页；`<` 会停在原位再画一遍）',
+  ),
+  make(
+    9455,
+    '死者苏生列表的 `FLAG <= -2` 改 `< -2`',
+    '      if ((era.get(`flag:${c}`) || 0) <= -2) {',
+    '      if ((era.get(`flag:${c}`) || 0) < -2) {',
+    '只有 FLAG <= -2 的槽进列表（-1 / 0 / 正数都不进）',
+  ),
+  make(
+    9456,
+    '死者苏生扫描的 `FLAG < 0` 改 `<= 0`（|| 0 兜底的 0 被算成亡者）',
+    '    if ((era.get(`flag:${count + 1000}`) || 0) < 0) {',
+    '    if ((era.get(`flag:${count + 1000}`) || 0) <= 0) {',
+    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 兜底 = 0，不算亡者）',
+  ),
+  make(
+    9457,
+    '死者苏生的 `charanum() > 30` 改 `>=`（恰好 30 人时拒绝）',
+    '  if (charanum() > 30) {',
+    '  if (charanum() >= 30) {',
+    '角色数 == 30 放行（charanum > 30 的等号侧）',
+  ),
+  make(
+    9458,
+    '死者苏生的 `charanum() > 10` 改 `>=`（恰好 10 人时拒绝）',
+    '  if (settings_bitmap() !== 9 && charanum() > 10) {',
+    '  if (settings_bitmap() !== 9 && charanum() >= 10) {',
+    '角色数 == 10 放行（charanum > 10 的等号侧）',
+  ),
+  make(
+    9459,
+    '生命摇篮的 `charanum() > 60` 改 `>=`（恰好 60 人时拦下）',
+    '      if (game.event.人间界征服完了 === 0 && charanum() > 60) {',
+    '      if (game.event.人间界征服完了 === 0 && charanum() >= 60) {',
+    '角色数 == 60 放行（charanum > 60 的等号侧）',
+  ),
+  make(
+    9460,
+    'ST_UP 强化次数的 `times > d` 改 `>= d`（次数取上限时被拒）',
+    '  if (times < 1 || times > d) {',
+    '  if (times < 1 || times >= d) {',
+    '次数 == D 成交',
+  ),
+  make(
+    9461,
+    '转生门槛的 `cflag(9) < 门槛` 改 `<=`（等级恰好够时被拒）',
+    '    if (cond[row] === 0 || cflag(t, 9) < Math.trunc(item_price(id) / 20)) {',
+    '    if (cond[row] === 0 || cflag(t, 9) <= Math.trunc(item_price(id) / 20)) {',
+    '等级 == 门槛 放行（`<` 的等号侧）',
+  ),
+  make(
+    9462,
+    '召唤编号下界的 `result < 150` 改 `<= 150`（150 被拒）',
+    '    if (result > 199 || result < 150) {',
+    '    if (result > 199 || result <= 150) {',
+    '编号 150（闭区间端点）可用',
+  ),
+  make(
+    9463,
+    '召唤编号上界的 `result > 199` 改 `>= 199`（199 被拒）',
+    '    if (result > 199 || result < 150) {',
+    '    if (result >= 199 || result < 150) {',
+    '编号 199（闭区间端点）可用',
+  ),
+  make(
+    9464,
+    '召唤的等级门 `cflag(0,9) < 30` 改 `<= 30`（等级恰好 30 时拒绝）',
+    '    if (cflag(MASTER, 9) < 30) {',
+    '    if (cflag(MASTER, 9) <= 30) {',
+    '编号 150（闭区间端点）可用',
+  ),
+  make(
+    9465,
+    '召唤的肉便器门 `< 30` 改 `<= 30`（恰好 30 个时拒绝）',
+    '    if (game.invasion.肉便器数 < 30) {',
+    '    if (game.invasion.肉便器数 <= 30) {',
+    '编号 150（闭区间端点）可用',
+  ),
+  make(
+    9466,
+    'ST_UP 上限判据的 `current >= limit` 改 `>`（取上限时放行）',
+    '    if (current >= limit) {',
+    '    if (current > limit) {',
+    '当前值 == 上限时拒绝（current >= limit 的等号侧）',
+  ),
+  make(
+    9467,
+    'CURE_INSANE 的 `EXP <= 30` 改 `< 30`（勋章恰好 30 时放行）',
+    '  if (exp_of(MASTER, 81) <= 30) {',
+    '  if (exp_of(MASTER, 81) < 30) {',
+    'EXP == 30 时仍被拒绝（判据是 <= 30）',
+  ),
+  make(
+    9468,
+    'GIVEN_HUMAN_LIFE 的 `EXP <= 0` 改 `< 0`（没勋章也放行）',
+    "  if (exp_of(MASTER, 81) <= 0) {\n    era.print('人的生命是金钱无法购买的……'); // PRINTW :2451",
+    "  if (exp_of(MASTER, 81) < 0) {\n    era.print('人的生命是金钱无法购买的……'); // PRINTW :2451",
+    'EXP:MASTER:81 <= 0 时的提示',
+  ),
+  make(
+    9469,
+    '感觉封锁的 `ABL > 0` 改 `>= 0`（LV0 也拒）',
+    '    if (abl(cid, PID_ABL[pid]) > 0) {',
+    '    if (abl(cid, PID_ABL[pid]) >= 0) {',
+    '部位 0 → TALENT:101 |= 2',
+  ),
+  make(
+    9470,
+    '洗脑助手资格的 `cflag(cid,0) < 2` 改 `<= 2`（恰好 2 也不可洗）',
+    '    if (cid !== MASTER && cflag(cid, 0) < 2) {',
+    '    if (cid !== MASTER && cflag(cid, 0) <= 2) {',
+    // 守卫触发后流程回到主循环，输入序列对不上（夹具报错）——按用例名判红
+    'BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫',
+  ),
+  make(
+    9471,
+    'DEIMMATURITY 的 `talent(318) > 1` 改 `>= 1`（318 == 1 也掷骰）',
+    '      if (talent(cid, 318) > 1) {',
+    '      if (talent(cid, 318) >= 1) {',
+    '318 == 1 保持（> 1 的等号侧）',
+  ),
+  make(
+    9472,
+    '选人濒死门的 `base < 1` 改 `<= 1`（BASE == 1 也被当成濒死）',
+    '    if (base(result, 0) < 1) {',
+    '    if (base(result, 0) <= 1) {',
+    'BASE == 1 的角色可选（< 1 的等号侧）；BASE == 0 的被跳过',
   ),
 ];

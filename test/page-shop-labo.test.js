@@ -20,7 +20,19 @@
  *   - 各确认菜单的 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`（输入只有 0/1）；
  *   - 选人处的 `RESULT < 0 || RESULT >= CHARANUM`（列表按钮即输入集）；
  *   - FUTANARI / 肉棒改造的形状菜单、TATOO 的部位表、DEMON_REBIRTH 的类型表
- *     的兜底支（`shape < 0 || shape > 4` 等）。
+ *     的兜底支（`shape < 0 || shape > 4`、`result < 0 || result > 6/2`、
+ *     `pid < 0 || pid > 3`、转生类型表的 `id <= 0`）。
+ *
+ * **取不了等号侧的判据**（第六节的例外，逐条给理由——不是漏掉）：
+ *   - 死者苏生选中检查的 `(FLAG || 0) >= 0`：列表只列 `FLAG <= -2` 的槽，
+ *     且画面恒有 [999]（输入集非空、自由输入进不来），所以 flag == 0（`|| 0`
+ *     兜底值）的槽选不中——该支在实机上不可达；能站等号侧的是列表判据
+ *     `<= -2` 与扫描判据 `< 0`（两条都有用例）。
+ *   - `talent(318) < 0`（原作「念のため」的钳制）：上一句 `> 1` 已挡掉，
+ *     掷骰后不可能为负，故取不了等号侧。
+ *   - `base(t, 10) > 0` 的 `>= 0`：改写发生在 BASE == 0 的分支里（同分支内
+ *     写 0 与不写不可区分），能站的是 `> 0` 那侧与 `BASE == 0` 的走法。
+ *   - `local < d`（可强化次数的取小）：取等时两条路都保留 d，行为相同。
  */
 
 'use strict';
@@ -1436,7 +1448,11 @@ test('GIVEN_HUMAN_LIFE：非人类支只提示不返回 + 勋章清零 + 口上�
 test('RESULECTION：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）与复活流程', async () => {
   // 无勋章
   const no_medal = make_fixture({ seed: {} });
-  assert.equal((await run(no_medal, 'resulection', [], {})).ret, 0);
+  assert.equal(
+    (await run(no_medal, 'resulection', [], {})).ret,
+    0,
+    'EXP:MASTER:81 == 0 时拒绝（<= 0 的等号侧）',
+  );
   // 人数 > 30
   const many = make_fixture({ slaves: 31, seed: { 'exp:0:81': 5 } });
   const first = await run(many, 'resulection', [], {});
@@ -1447,8 +1463,12 @@ test('RESULECTION：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   assert.equal((await run(eleven, 'resulection', [], {})).ret, 0);
   // 无亡者（FLAG:1000-1099 无 < 0）
   const no_dead = make_fixture({ seed: { 'exp:0:81': 5 } });
-  const second = await run(no_dead, 'resulection', [], {});
-  assert.ok(texts(second.added).includes('找不到想要唤醒的人'));
+  // 尾部补 1（确认处取消）：万一扫描把未设置位也算成亡者，流程能干净退出
+  const second = await run(no_dead, 'resulection', [1], {});
+  assert.ok(
+    texts(second.added).includes('找不到想要唤醒的人'),
+    '没有任何 FLAG:1000-1099 < 0 时拒绝（|| 0 兜底 = 0，不算亡者）',
+  );
   // 有亡者：确认 → 选 100 → 复活
   // 亡者位 1099 → 按钮 199 → 预设编号 100（原作 ADDCHARA D，D = RESULT - 99；
   // 显示名的 ITEM 编号 = COUNT + 100，即 RESULT）
@@ -1649,9 +1669,12 @@ test('ST_UP_LABO：四项整表（价格 5000 × 次数）与上限分支', asyn
   }
   // 上限已到 → 提示并返回 0
   const capped = make_fixture({ seed: { 'cflag:1:9': 10, 'cflag:1:13': 50 } });
-  const limit = await run(capped, 'st_up_labo', [1], { args: [5000, 2] });
+  const limit = await run(capped, 'st_up_labo', [1, 0], { args: [5000, 2] });
   assert.equal(limit.ret, 0);
-  assert.ok(all_text(limit.added).includes('*攻击值的成长到极限了*'));
+  assert.ok(
+    all_text(limit.added).includes('*攻击值的成长到极限了*'),
+    '当前值 == 上限时拒绝（current >= limit 的等号侧）',
+  );
   assert.ok(all_text(limit.added).includes('*请提高等级*'));
   // 次数 0 → 返回 0
   const zero = make_fixture({ seed: { 'cflag:1:9': 10 } });
@@ -1771,7 +1794,7 @@ test('SUMMON_SLAVE：四道前置与生成流程（等级 / 肉便器 / 编号�
   const ok = make_fixture({ seed: { 'flag:83': 30 } });
   ok.seed_chara(150, { id: 150, name: '影', callname: '影' });
   const fifth = await run(ok, 'summon_slave', [150], {});
-  assert.equal(fifth.ret, 1);
+  assert.equal(fifth.ret, 1, '等级 30 / 肉便器 30 恰好达标时放行');
   assert.equal(ok.store.get('cflag:0:9'), 0, 'CFLAG:0:9 -= 30');
   assert.equal(ok.store.get('flag:83'), 0, 'FLAG:83 -= 30');
   assert.equal(
@@ -1872,10 +1895,15 @@ test('DEIMMATURITY：阴茎状态降一档（RAND:2 上界捕获）与下限钳�
     seed: { 'talent:1:135': 1, 'talent:1:122': 1, 'talent:1:318': 1 },
   });
   const edge_bounds = [];
+  // rand 返回 1：若真掷了骰，318 会减到 0；不掷骰则保持 1（`> 1` 的等号侧）
   await run(edge, 'modify_deimmaturity', [1, 0], {
-    rand: seq_probe([0], edge_bounds),
+    rand: seq_probe([1], edge_bounds),
   });
-  assert.equal(edge.store.get('talent:1:318'), 1, '318 == 1 保持');
+  assert.equal(
+    edge.store.get('talent:1:318'),
+    1,
+    '318 == 1 保持（> 1 的等号侧）',
+  );
   assert.ok(
     edge_bounds.every((n) => n !== 2),
     '318 == 1 时不掷 RAND:2',
@@ -2092,4 +2120,230 @@ test('主分发：[68] 生命摇篮的六道勇者数量守卫与 CHAR_CREATE �
     texts(fifth.added).includes('勇者数量过多'),
     'FLAG:92 == 14（小于 15）且角色数 > 80 时拦下',
   );
+});
+
+// ————————————————————————————————————————————————
+// 六、等号侧：比较运算符的边界
+//
+// 字面量本身（价格、素质编号、随机上界、页高、范围端点）另有整表用例；本节
+// 专门钉「那个数与它两边的关系」——`>= N` 与 `> N`、`<= N` 与 `< N` 的差别
+// 只落在取值恰好等于 N 的那一侧，而 `|| 0` 兜底的读法里，兜底值 0 几乎总是
+// 落在等号这一侧（未设置的标记就是 0）。
+// ————————————————————————————————————————————————
+
+/** 把一次选人画面的输出按页切开（每页以「下一页」按钮收尾） */
+function split_pick_draws(lines) {
+  const draws = [];
+  let current = [];
+  for (const line of lines) {
+    current.push(line);
+    if (line.type === 'button' && line.accelerator === 1001) {
+      draws.push(current);
+      current = [];
+    }
+  }
+  return draws;
+}
+
+test('等号侧：濒死判据 BASE:0 < 1 的等号侧（BASE == 1 仍可选）', async () => {
+  const fixture = make_fixture({ seed: {} });
+  fixture.store.set('base:1:0', 1); // 恰好 1：不算濒死
+  fixture.store.set('base:2:0', 0); // 0：濒死，选不中
+  // 先点 2（BASE == 0，被跳过）再点 1（BASE == 1，可选）→ 确认处取消；
+  // 尾部的 1 与 999 是给「两个都被跳过」那条路留的出口（末位 999 退出选人）
+  const { added } = await run(fixture, 'modify_animal', [2, 1, 1, 999], {});
+  assert.equal(
+    texts(added).filter((t) => t.endsWith('动物耳朵吗？')).length,
+    1,
+    'BASE == 1 的角色可选（< 1 的等号侧）；BASE == 0 的被跳过',
+  );
+});
+
+test('等号侧：寿命判据 base(10) > 0 的两侧（人类有寿命才清零）', async () => {
+  // 人类且寿命 > 0：成交时把 BASE:10 清零
+  const human = make_fixture({
+    seed: { 'exp:0:81': 5, 'talent:1:85': 1, 'base:1:10': 100 },
+  });
+  const first = await run(human, 'given_human_life', [1, 0], {});
+  assert.equal(first.ret, 1);
+  assert.equal(human.store.get('base:1:10'), 0, '寿命 > 0 时清零');
+  // 非人类（BASE:10 == 0）且带动物耳朵：走「并非人类」提示支、不写寿命
+  const monster = make_fixture({
+    seed: {
+      'exp:0:81': 5,
+      'talent:1:85': 1,
+      'base:1:10': 0,
+      'talent:1:124': 1,
+    },
+  });
+  const second = await run(monster, 'given_human_life', [1, 0], {});
+  assert.equal(second.ret, 1);
+  assert.ok(
+    all_text(second.added).includes('已经无法再延长了'),
+    'BASE == 0 时只提示不写（base(10) > 0 的等号侧）',
+  );
+});
+
+test('等号侧：钱恰好等于价格也算够（MODIFY 族整表）', async () => {
+  for (const item of MODIFY_ITEMS) {
+    const fixture = make_fixture({ money: item.price, seed: item.seed });
+    const { ret } = await run(fixture, item.fn, [1, 0], {});
+    assert.equal(
+      ret,
+      1,
+      `${item.fn}：钱 == 价格时应成交（money < price 的等号侧）`,
+    );
+    assert.equal(fixture.store.get('flag:10004'), 0, `${item.fn}：余额扣光`);
+  }
+});
+
+test('等号侧：BUSTUP 加价档钱刚好 50000 放行', async () => {
+  const exact = make_fixture({ money: 50000, seed: { 'talent:1:110': 1 } });
+  // 输入串同时容下两条路：没被拦时 [1, 0]（选人 / 确认），被当成钱不够时
+  // 第二个 0 是重来那次选到魔王、第三个 1 在确认处取消，最后 999 退出
+  const { ret, added } = await run(exact, 'modify_bustup', [1, 0, 1, 999], {});
+  assert.equal(ret, 1, '加价档钱刚好够也成交（money < cost 的等号侧）');
+  assert.equal(exact.store.get('flag:10004'), 0, '余额扣光');
+  assert.ok(
+    texts(added).includes('这样还要继续么？'),
+    '钱刚好够 → 会打「这样还要继续么？」（SIF 之后那一行）',
+  );
+});
+
+test('等号侧：感觉封锁买完余额恰好等于单价时回部位菜单', async () => {
+  const fixture = make_fixture({ money: 40000, seed: {} });
+  const { ret, added } = await run(
+    fixture,
+    'block_feeling',
+    [1, 0, 0, 999],
+    {},
+  );
+  assert.equal(ret, 0);
+  assert.equal(fixture.store.get('flag:10004'), 20000, '扣完剩 20000');
+  assert.equal(
+    texts(added).filter((t) => t.endsWith('哪个部位？')).length,
+    2,
+    'MONEY == C 时回到部位菜单（money >= C 的等号侧）',
+  );
+});
+
+test('等号侧：第 1 页按「上一页」停在原位（no_page > 0）', async () => {
+  const fixture = make_fixture({ slaves: 2, seed: {} });
+  const { added } = await run(fixture, 'modify_animal', [1000, 999], {});
+  assert.equal(
+    texts(added).filter((t) => t.includes('奴隶1')).length,
+    2,
+    '两屏都画出奴隶 1：NO_PAGE == 0 时不能往前翻（no_page > 0 的等号侧）',
+  );
+});
+
+test('等号侧：(NO_PAGE+1)*NUM_PAGE == 角色数时允许翻页', async () => {
+  // 22 名奴隶 + 魔王 = charanum 23 = (0+1)*23 → 恰好取等
+  const fixture = make_fixture({ slaves: 22, seed: {} });
+  const { added } = await run(fixture, 'modify_animal', [1001, 999], {});
+  const draws = split_pick_draws(added);
+  assert.equal(draws.length, 2, '翻页后重画');
+  assert.ok(
+    texts(draws[0]).some((t) => t.includes('奴隶22')),
+    '第 1 页画到奴隶 22',
+  );
+  assert.ok(
+    !texts(draws[1]).some((t) => t.includes('奴隶22')),
+    '第 2 页是空的（恰好取等也允许翻页；`<` 会停在原位再画一遍）',
+  );
+});
+
+test('等号侧：死者苏生的列表判据（<= -2 列出；-1、0、正数都不列）', async () => {
+  const fixture = make_fixture({
+    seed: {
+      'exp:0:81': 5,
+      'flag:1000': -2, // 列出
+      'flag:1001': -1, // 已买回（不列）
+      'flag:1002': 0, // 未设置（`|| 0` 兜底那条路，不列）
+      'flag:1003': 5, // 正值（不列）
+      'flag:1004': -3, // 列出
+    },
+  });
+  const { added } = await run(fixture, 'resulection', [0, 999], {});
+  assert.deepEqual(
+    accs(added)
+      .filter((a) => a >= 100 && a <= 199)
+      .sort((a, b) => a - b),
+    [100, 104],
+    '只有 FLAG <= -2 的槽进列表（-1 / 0 / 正数都不进）',
+  );
+});
+
+test('等号侧：角色数恰好 30 与恰好 10 时死者苏生放行', async () => {
+  // charanum == 30（29 名奴隶）：> 30 不成立。FLAG:5 == 9 让第二道门也不成立
+  const thirty = make_fixture({
+    slaves: 29,
+    seed: { 'exp:0:81': 5, 'flag:5': 9, 'flag:1000': -2 },
+  });
+  const first = await run(thirty, 'resulection', [0, 999], {});
+  assert.ok(
+    !all_text(first.added).includes('亡者容身之所'),
+    '角色数 == 30 放行（charanum > 30 的等号侧）',
+  );
+  // charanum == 10（9 名奴隶）：> 10 不成立
+  const ten = make_fixture({
+    slaves: 9,
+    seed: { 'exp:0:81': 5, 'flag:1000': -2 },
+  });
+  const second = await run(ten, 'resulection', [0, 999], {});
+  assert.ok(
+    !all_text(second.added).includes('亡者容身之所'),
+    '角色数 == 10 放行（charanum > 10 的等号侧）',
+  );
+});
+
+test('等号侧：角色数恰好 60 时生命摇篮放行（> 60）', async () => {
+  // FLAG:82 留 0：第一道门（人间界未征服 && 角色数 > 60）才是这一条要钉的
+  const fixture = make_fixture({ slaves: 59, seed: { 'flag:92': 15 } });
+  const { added } = await run_labo(
+    fixture,
+    [...turns_to(68), 68, 999, 999],
+    {},
+  );
+  assert.ok(
+    texts(added).includes('使用神奇的生命摇篮，凭空创造出一体生物'),
+    '角色数 == 60 放行（charanum > 60 的等号侧）',
+  );
+});
+
+test('等号侧：强化次数恰好等于上限 D 时放行（times > d）', async () => {
+  // 等级 10 → 攻击上限 D = 10*5 - 0 = 50
+  const exact = make_fixture({ seed: { 'cflag:1:9': 10 } });
+  const { ret } = await run(exact, 'st_up_labo', [1, 50, 999], {
+    args: [5000, 2],
+  });
+  assert.equal(ret, 1, '次数 == D 成交');
+  assert.equal(exact.store.get('cflag:1:13'), 50, '攻击 +50');
+  // D + 1 → 「数值太大了。」
+  const over = make_fixture({ seed: { 'cflag:1:9': 10 } });
+  const second = await run(over, 'st_up_labo', [1, 51, 999], {
+    args: [5000, 2],
+  });
+  assert.equal(second.ret, 0);
+  assert.ok(all_text(second.added).includes('数值太大了。'));
+});
+
+test('等号侧：等级恰好等于转生门槛时放行（cflag:9 < 门槛）', async () => {
+  const fixture = make_fixture({ seed: { 'cflag:1:1': 0, 'cflag:1:9': 1 } });
+  fixture.store.set('itemprice:133', 20); // 门槛 = 20 / 20 = 1
+  // 输入串要同时容下两条路：没被拦时 [1, 0, 0]（选人 / 类型 / 确认），
+  // 被门槛拦下时多出来的 0 当类型再选一次、最后 999 原路退出
+  const { ret } = await run(fixture, 'demon_rebirth', [1, 0, 0, 999, 999], {
+    rand: () => 1,
+  });
+  assert.equal(ret, 1, '等级 == 门槛 放行（`<` 的等号侧）');
+});
+
+test('等号侧：召唤编号的两个端点 150 与 199 都可用', async () => {
+  for (const id of [150, 199]) {
+    const fixture = make_fixture({ seed: { 'flag:83': 30 } });
+    fixture.seed_chara(id, { id, name: `影${id}`, callname: `影${id}` });
+    const { ret } = await run(fixture, 'summon_slave', [id, 0], {});
+    assert.equal(ret, 1, `编号 ${id}（闭区间端点）可用`);
+  }
 });
