@@ -147,9 +147,9 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
   }
   // 固定名表（区间与依据见 NAME_NIDS 的注释）：命名链读的就是这张表，
   // 必须在任何角色生成之前种好，种晚了仍会落兜底名
-  fixture.store.set('charanamelistkeys', NAME_NIDS);
+  fixture.store.set('namelistkeys', NAME_NIDS);
   for (const nid of NAME_NIDS) {
-    fixture.store.set(`charanamelistname:${nid}`, seeded_name(nid));
+    fixture.store.set(`namelistname:${nid}`, seeded_name(nid));
   }
   // 魔王与村娘的 base/maxbase（阶段 1 e2e 同款：出兵耗气力、结算循环的
   // 回复段读上限）
