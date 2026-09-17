@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2229; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）
+export const COUNT = 2282; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）
 
 export default [
   {
@@ -1435,12 +1435,12 @@ export default [
   {
     desc: 'M1543 凌辱口上分发回退成写死 call(0)（#233）',
     file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: `  const ryou_local = get_kojo_num();
-  if ((ryou_local >= 100 && ryou_local < 140) || ryou_local > 1000) {
-    await ryouzyoku_kojo_family.call(ryou_local - 100, {`,
-    replace: `  const ryou_local = 0;
+    find: `  const local = get_kojo_num();
+  if (in_kojo_window(local)) {
+    await family.call(local - 100, { whenMissing: 0, args: [] });`,
+    replace: `  const local = 0;
   if (true) {
-    await ryouzyoku_kojo_family.call(0, {`,
+    await family.call(0, { whenMissing: 0, args: [] });`,
     tests: ['kojo-k2-timid'],
     must_mention: 'GET_KOJO_NUM',
   },
@@ -20576,8 +20576,14 @@ on('EVENTEND', eventend_kojo_903);`,
   {
     desc: 'M6209 KOJO_MESSAGE_COM 的 EX_FLAG 下标偏移（#248）',
     file: 'ere/kojo/kojo-system.js',
-    find: '    era_exflag.get(local - 900) === 0',
-    replace: '    era_exflag.get(local - 901) === 0',
+    find: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
+  if (
+    (era.get(\`flag:\${local}\`) || 0) === 0 &&
+    era_exflag.get(local - 900) === 0`,
+    replace: `  const local = get_kojo_num(); // :155 GET_KOJO_NUM()（参缺省 → TARGET）
+  if (
+    (era.get(\`flag:\${local}\`) || 0) === 0 &&
+    era_exflag.get(local - 901) === 0`,
     tests: ['kojo-system'],
     must_mention: 'K902 扩展口上',
   },
@@ -20652,5 +20658,625 @@ on('EVENTEND', eventend_kojo_903);`,
     replace: '// 变异：删除 K904 口上装载',
     tests: ['kojo-family-wiring'],
     must_mention: '主启动图加载 main-loop 后，口上分发族注册号等于口上模块并集',
+  },
+  // —— #403（N19）EVENT_K.ERB 分发表：条目 M8941-M9000 ——
+  {
+    desc: 'M8941 分发窗口丢 EX 臂（LOCAL > 1000 不再分发，EX 性格全族静默）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return local >= 100 && local < 140;',
+    tests: ['event-k-dispatch'],
+    must_mention: '守卫的 LOCAL > 1000 臂可达',
+  },
+  {
+    desc: 'M8942 KOJO_EVENT_COM 拼名偏移（local - 100 改 - 101）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    await kojo_event_com_family.call(local - 100, { whenMissing: 0, args: [] });',
+    replace:
+      '    await kojo_event_com_family.call(local - 101, { whenMissing: 0, args: [] });',
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8943 KOJO_EVENT_COM 多出一道 FLAG:7 守卫（原件同段没有，关掉口上就静默）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `async function kojo_event_com() {
+  // :209-219 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）`,
+    replace: `async function kojo_event_com() {
+  if ((era.get('flag:7') || 0) <= 0) {
+    return 0; // 变异：凭空加一道守卫
+  }
+  // :209-219 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）`,
+    tests: ['event-k-dispatch'],
+    must_mention: '无 FLAG:7 守卫（:209-219 没有 SIF FLAG:7）',
+  },
+  {
+    desc: 'M8944 ATTACK_KOUJO_B 不置 TARGET（B 侧对象不进分发上下文）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid; // TARGET = B（:325-337 段）
+  }`,
+    replace: `  if (cid !== undefined && cid >= 0) {
+    // 变异：不置 TARGET
+  }`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'TARGET 置为 B 侧对象',
+  },
+  {
+    desc: 'M8945 ATTACK_KOUJO_B 不还原 TARGET（指针跨调用残留）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    [rand],
+    true,
+  );
+  era_flag.target = target_pool;
+  return result;
+}
+
+/**
+ * 处刑首五族`,
+    replace: `    [rand],
+    true,
+  );
+  return result; // 变异：不还原 TARGET
+}
+
+/**
+ * 处刑首五族`,
+    tests: ['event-k-dispatch'],
+    must_mention: '返回后 TARGET 还原',
+  },
+  {
+    desc: 'M8946 ATTACK_KOUJO_B 占位行丢原作函数名（可检索性断）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
+    'ATTACK_KOUJO_B',
+    '攻击口上（B 侧）',`,
+    replace: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
+    'ATTACK_KOUJO',
+    '攻击口上（B 侧）',`,
+    tests: ['event-k-dispatch'],
+    must_mention: '占位行带 @原名',
+  },
+  {
+    desc: 'M8947 ATTACK_KOUJO_B 随机源错传 cid（handler 收 [cid]）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    'ATTACK_KOUJO_B',
+    '攻击口上（B 侧）',
+    '随口上票',
+    cid ?? -1,
+    [rand],`,
+    replace: `    'ATTACK_KOUJO_B',
+    '攻击口上（B 侧）',
+    '随口上票',
+    cid ?? -1,
+    [cid],`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8948 处刑首五族：K0 的旧签名分档反转（K0 收随机源、其余收事件编号）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    const arg = id === 0 ? event_no : rand;',
+    replace: '    const arg = id === 0 ? rand : event_no;',
+    tests: ['event-k-dispatch'],
+    must_mention: 'K0 收展品/处刑编号',
+  },
+  {
+    desc: 'M8949 处刑首五族：守卫 `id >= 0` 改 `id > 0`（K0 慈愛被拦掉）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  const id = kojo_handler_id(cid); // LOCAL = GET_KOJO_NUM()
+  if (id >= 0) {
+    const arg = id === 0 ? event_no : rand;`,
+    replace: `  const id = kojo_handler_id(cid); // LOCAL = GET_KOJO_NUM()
+  if (id > 0) {
+    const arg = id === 0 ? event_no : rand;`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'K0 收展品/处刑编号',
+  },
+  {
+    desc: 'M8950 EXUCUTION_KOUJO 入口族错接（挂到 MUSEUM 族）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return dispatch_execution_koujo(exucution_koujo_family, cid, event_no, rand);',
+    replace:
+      '  return dispatch_execution_koujo(museum_koujo_family, cid, event_no, rand);',
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8951 MUSEUM_KOUJO 入口族错接（挂到 BANISHMENT 族）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return dispatch_execution_koujo(museum_koujo_family, cid, event_no, rand);',
+    replace:
+      '  return dispatch_execution_koujo(banishment_koujo_family, cid, event_no, rand);',
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8952 BANISHMENT_KOUJO 入口族错接（挂到 GROTESQUE 族）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return dispatch_execution_koujo(banishment_koujo_family, cid, event_no, rand);',
+    replace:
+      '  return dispatch_execution_koujo(grotesque_koujo_family, cid, event_no, rand);',
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8953 PUBLIC_EXUCUTION_KOUJO 入口族错接（挂到 EXUCUTION 族）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  return dispatch_execution_koujo(
+    public_exucution_koujo_family,
+    cid,
+    event_no,
+    rand,
+  );`,
+    replace: `  return dispatch_execution_koujo(
+    exucution_koujo_family,
+    cid,
+    event_no,
+    rand,
+  );`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8954 GROTESQUE_KOUJO 入口族错接（挂到 PUBLIC_EXUCUTION 族）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return dispatch_execution_koujo(grotesque_koujo_family, cid, event_no, rand);',
+    replace:
+      '  return dispatch_execution_koujo(public_exucution_koujo_family, cid, event_no, rand);',
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8955 try_kojo_or_stub 丢弃实参（handler 收不到 rand/cid）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    return family.call(id, { whenMissing: 0, args: extra_args });',
+    replace: '    return family.call(id, { whenMissing: 0, args: [] });',
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8956 try_kojo_or_stub 缺 handler 时也当命中（占位行消失、静默吞债）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  const id = kojo_handler_id(arg);
+  if (id >= 0 && family.has(id)) {`,
+    replace: `  const id = kojo_handler_id(arg);
+  if (id >= 0) {`,
+    tests: ['event-k-dispatch'],
+    must_mention: '占位行带 @原名',
+  },
+  {
+    desc: 'M8957 GOHOUBI_REQUEST 族内实参丢 cid（K7 读不到 CFLAG:504）',
+    file: 'ere/kojo/kojo-dungeon-after.js',
+    find: `    '随口上票',
+    cid,
+    [cid],`,
+    replace: `    '随口上票',
+    cid,
+    [],`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'K 侧收 cid',
+  },
+  {
+    desc: 'M8958 GOHOUBI_REQUEST 不还原 TARGET（SWAP 少了回程）',
+    file: 'ere/kojo/kojo-dungeon-after.js',
+    find: `  era_flag.target = target_pool; // SWAP 还原（:450-463 段）
+  return 0;
+}`,
+    replace: `  return 0; // 变异：不还原 TARGET
+}`,
+    tests: ['event-k-dispatch'],
+    must_mention: '返回后 TARGET 还原',
+  },
+  {
+    desc: 'M8959 GOHOUBI_REQUEST 占位行丢原作函数名',
+    file: 'ere/kojo/kojo-dungeon-after.js',
+    find: `    gohoubi_request_koujo_family,
+    'GOHOUBI_REQUEST_KOUJO',
+    '奖赏请求口上',`,
+    replace: `    gohoubi_request_koujo_family,
+    'GOHOUBI_REQUEST',
+    '奖赏请求口上',`,
+    tests: ['event-k-dispatch'],
+    must_mention: '占位行带 @原名',
+  },
+  {
+    desc: 'M8960 PALAMCNG 存在判定丢 EX 臂（EX 性格的口上永久静默）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  // :169-181 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
+  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL
+  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）
+  if (
+    (era.get(\`flag:\${local}\`) || 0) === 0 &&
+    era_exflag.get(local - 900) === 0
+  ) {
+    return 0;
+  }`,
+    replace: `  if ((era.get(\`flag:\${local}\`) || 0) === 0) {
+    return 0;
+  }`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'EX_FLAG:102 == 1',
+  },
+  {
+    desc: 'M8961 PALAMCNG EX 臂下标偏移（local - 900 改 - 901）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  // :169-181 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
+  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL
+  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）
+  if (
+    (era.get(\`flag:\${local}\`) || 0) === 0 &&
+    era_exflag.get(local - 900) === 0`,
+    replace: `  // :169-181 的第二道守卫：SIF FLAG:LOCAL == 0 && EX_FLAG:(LOCAL - 900) == 0 → RETURN 0
+  // EX 口上（LOCAL > 1000）的存在标志是 EX_FLAG:(LOCAL - 900)，不是 FLAG:LOCAL
+  // ——只判 FLAG:LOCAL 会把 EX 性格的 PALAMCNG 口上永久静默（#403 实测补齐）
+  if (
+    (era.get(\`flag:\${local}\`) || 0) === 0 &&
+    era_exflag.get(local - 901) === 0`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'EX_FLAG:102 == 1',
+  },
+  {
+    desc: 'M8962 MARKCNG 凭空加一道存在判定（原件是注释态，FLAG:LOCAL == 0 就静默）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `async function kojo_message_markcng(rand) {
+  if ((era.get('flag:7') || 0) <= 0) {
+    return 0;
+  }
+  return try_kojo_or_stub(`,
+    replace: `async function kojo_message_markcng(rand) {
+  if ((era.get('flag:7') || 0) <= 0) {
+    return 0;
+  }
+  if ((era.get(\`flag:\${get_kojo_num()}\`) || 0) === 0) {
+    return 0; // 变异：凭空加一道存在判定
+  }
+  return try_kojo_or_stub(`,
+    tests: ['event-k-dispatch'],
+    must_mention: '没有存在判定这道闸',
+  },
+  {
+    desc: 'M8963 迷宫凌辱前钩子族错接（DUNGEON_RYOUZYOKU 进 _AFTER 族）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '  return dispatch_ryouzyoku_kojo(ryouzyoku_kojo_family);',
+    replace: '  return dispatch_ryouzyoku_kojo(ryouzyoku_after_kojo_family);',
+    tests: ['event-k-dispatch'],
+    must_mention: 'GET_KOJO_NUM() 走当前 TARGET',
+  },
+  {
+    desc: 'M8964 迷宫凌辱后钩子族错接（DUNGEON_RYOUZYOKU_AFTER 进 _K 族）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '  return dispatch_ryouzyoku_kojo(ryouzyoku_after_kojo_family);',
+    replace: '  return dispatch_ryouzyoku_kojo(ryouzyoku_kojo_family);',
+    tests: ['event-k-dispatch'],
+    must_mention: 'GET_KOJO_NUM() 走当前 TARGET',
+  },
+  {
+    desc: 'M8965 迷宫凌辱前钩子读死角色 0（get_kojo_num() 改 get_kojo_num(0)）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '  const local = get_kojo_num();\n  if (in_kojo_window(local)) {\n    await family.call(local - 100, { whenMissing: 0, args: [] });',
+    replace:
+      '  const local = get_kojo_num(0); // 变异：读死角色 0\n  if (in_kojo_window(local)) {\n    await family.call(local - 100, { whenMissing: 0, args: [] });',
+    tests: ['event-k-dispatch'],
+    must_mention: 'GET_KOJO_NUM() 走当前 TARGET',
+  },
+  {
+    desc: 'M8966 GOHOUBI_REQUEST 签名加参（#397 冻结的单参被破）',
+    file: 'ere/kojo/kojo-dungeon-after.js',
+    find: 'async function gohoubi_request_koujo(cid) {',
+    replace: 'async function gohoubi_request_koujo(cid, rand) {',
+    tests: ['event-k-dispatch'],
+    must_mention: '冻结的单参 cid',
+  },
+  {
+    desc: 'M8967 分发表：KOJO_MESSAGE_COM 行号漂一格（源对照失守）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    line: 161,
+    dispatch: 'KOJO_MESSAGE_COM_',`,
+    replace: `    line: 162,
+    dispatch: 'KOJO_MESSAGE_COM_',`,
+    tests: ['event-k-dispatch'],
+    must_mention: '行号 + 拼名前缀逐条一致',
+  },
+  {
+    desc: 'M8968 分发表：SELF_KOJO 拼名前缀写错（SELF_JOJO_K）',
+    file: 'ere/kojo/kojo-system.js',
+    find: "    dispatch: 'SELF_KOJO_K',",
+    replace: "    dispatch: 'SELF_JOJO_K',",
+    tests: ['event-k-dispatch'],
+    must_mention: '行号 + 拼名前缀逐条一致',
+  },
+  {
+    desc: 'M8969 分发表：DUNGEON_ATTACK 行族错填（victory 族）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    line: 322,
+    dispatch: 'DUNGEON_ATTACK_K',
+    entry: 'attack_koujo',
+    erb: 'ATTACK_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'dungeon_attack_family',`,
+    replace: `    line: 322,
+    dispatch: 'DUNGEON_ATTACK_K',
+    entry: 'attack_koujo',
+    erb: 'ATTACK_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'dungeon_victory_family',`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8970 分发表：COM 行 handler 实参多写一个（实参契约失守）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    call: ['rand'],
+    handler: ['rand'],
+  },
+  {
+    line: 180,`,
+    replace: `    call: ['rand'],
+    handler: ['rand', 'rand'],
+  },
+  {
+    line: 180,`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'handler 实参逐条对上',
+  },
+  {
+    desc: 'M8971 分发表：BENKI 行缺席语义写反（stub 改 silent，占位行不再期待）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    family: 'benki_koujo_family',
+    flag_guard: false,
+    missing: 'stub',`,
+    replace: `    family: 'benki_koujo_family',
+    flag_guard: false,
+    missing: 'silent',`,
+    tests: ['event-k-dispatch'],
+    must_mention: 'TRYCALL 落空静默',
+  },
+  {
+    desc: 'M8972 分发表：入口名错字（benki_koujo 改 benki_koujo_）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    entry: 'benki_koujo',
+    erb: 'BENKI_KOUJO',`,
+    replace: `    entry: 'benki_koujo_',
+    erb: 'BENKI_KOUJO',`,
+    tests: ['event-k-dispatch'],
+    must_mention: '在 kojo/kojo-system 导出',
+  },
+  {
+    desc: 'M8973 分发表：PALAMCNG 行的 flag_guard 写反（守卫集与源不符）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    entry: 'kojo_message_palamcng',
+    erb: 'KOJO_MESSAGE_PALAMCNG',
+    module: 'kojo/kojo-system',
+    family: 'kojo_message_palamcng_family',
+    flag_guard: true,`,
+    replace: `    entry: 'kojo_message_palamcng',
+    erb: 'KOJO_MESSAGE_PALAMCNG',
+    module: 'kojo/kojo-system',
+    family: 'kojo_message_palamcng_family',
+    flag_guard: false,`,
+    tests: ['event-k-dispatch'],
+    must_mention: '有 FLAG:7 守卫',
+  },
+  {
+    desc: 'M8974 分发表：OSIOKI 行的原作函数名错拼（OSIOSKI_KOUJO）',
+    file: 'ere/kojo/kojo-system.js',
+    find: "    erb: 'OSIOKI_KOUJO',",
+    replace: "    erb: 'OSIOSKI_KOUJO',",
+    tests: ['event-k-dispatch'],
+    must_mention: '原件有 @OSIOSKI_KOUJO 定义',
+  },
+  {
+    desc: 'M8975 分发表：行数与源不符（删掉 GOBI 一行）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  {
+    line: 520,
+    dispatch: 'GOBI_KOUJO_K',
+    entry: 'gobi_koujo',
+    erb: 'GOBI_KOUJO',
+    module: 'kojo/kojo-system',
+    family: 'gobi_koujo_family',
+    flag_guard: false,
+    missing: 'stub',
+    call: ['arg0', 'rand'],
+    handler: ['arg0', 'rand'],
+  },
+];`,
+    replace: `];`,
+    tests: ['event-k-dispatch'],
+    must_mention: '表的行数对上',
+  },
+  {
+    desc: 'M8976 kojo-system 重新引入第二份 GOHOUBI_REQUEST_KOUJO 族（同名两实例）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `const gobi_koujo_family = new DispatchFamily(
+  'GOBI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);`,
+    replace: `const gobi_koujo_family = new DispatchFamily(
+  'GOBI_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);
+const gohoubi_request_koujo_family = new DispatchFamily(
+  'GOHOUBI_REQUEST_KOUJO',
+  DECLARED_KOJO_COM_IDS,
+);`,
+    tests: ['event-k-dispatch'],
+    must_mention: '同一个族名出现两份',
+  },
+  {
+    desc: 'M8984 分发窗口上界飘一格（local < 140 改 < 139，最大键 39 分不到）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local >= 100 && local < 139) || local > 1000;',
+    tests: ['kojo-system'],
+    must_mention: '上界内侧（声明空间最大键 39）',
+  },
+  {
+    desc: 'M8985 分发窗口下界飘一格（>= 100 改 > 100，K0 慈愛分不到）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local > 100 && local < 140) || local > 1000;',
+    tests: ['kojo-system'],
+    must_mention: '下界（慈愛 K0 的 LOCAL）',
+  },
+  {
+    desc: 'M8986 分发窗口 EX 下界飘一格（> 1000 改 > 1001，K901 分不到）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local >= 100 && local < 140) || local > 1001;',
+    tests: ['kojo-system'],
+    must_mention: 'EX 下界（EX_TALENT:101 → K901）',
+  },
+  {
+    desc: 'M8987 分发窗口两臂并成 &&（普通口上一律静默）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  return (local >= 100 && local < 140) || local > 1000;',
+    replace: '  return (local >= 100 && local < 140) && local > 1000;',
+    tests: ['kojo-system'],
+    must_mention: '下界（慈愛 K0 的 LOCAL）',
+  },
+  {
+    desc: 'M8988 迷宫凌辱钩子绕开窗口（if (true)，LOCAL 0 也拼键）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: `  const local = get_kojo_num();
+  if (in_kojo_window(local)) {`,
+    replace: `  const local = get_kojo_num();
+  if (true) { // 变异：绕开窗口`,
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '无性格编号（LOCAL 0）',
+  },
+  {
+    desc: 'M8989 迷宫凌辱钩子键偏移飘一格（local - 100 改 - 101）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '    await family.call(local - 100, { whenMissing: 0, args: [] });',
+    replace:
+      '    await family.call(local - 101, { whenMissing: 0, args: [] });',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '前钩子：键 = LOCAL - 100 = 3',
+  },
+  {
+    desc: 'M8990 ATTACK_KOUJO_B 无条件覆盖 TARGET（cid 缺省侧失去语义）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  const target_pool = era_flag.target;
+  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid; // TARGET = B（:325-337 段）
+  }`,
+    replace: `  const target_pool = era_flag.target;
+  era_flag.target = cid; // 变异：无条件覆盖（缺省时把 TARGET 清成 undefined）`,
+    tests: ['event-k-dispatch'],
+    must_mention: '按当前 TARGET 分发、随机源透传',
+  },
+  {
+    desc: 'M8991 OSIOKI 钩子绕开窗口（if (true)，LOCAL 0 也拼键）',
+    file: 'ere/kojo/kojo-dungeon-after.js',
+    find: `  const local = get_kojo_num(cid);
+  if (in_kojo_window(local)) {
+    await osioski_koujo_family.call(local - 100, {`,
+    replace: `  const local = get_kojo_num(cid);
+  if (true) { // 变异：绕开窗口
+    await osioski_koujo_family.call(local - 100, {`,
+    tests: ['dungeon-after'],
+    must_mention: '窗口拒绝，不拼键',
+  },
+  {
+    desc: 'M8992 GET_KOJO_NUM 哨兵收成 <= 0（合法角色号 0 被当缺省，读成 TARGET 的口上）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  const cid = arg < 0 ? era_flag.target : arg; // :89-91',
+    replace:
+      '  const cid = arg <= 0 ? era_flag.target : arg; // :89-91（变异）',
+    tests: ['kojo-system'],
+    must_mention: '不是 TARGET 的 103',
+  },
+  {
+    desc: 'M8993 kojo_handler_id 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
+    file: 'ere/kojo/kojo-system.js',
+    find: 'function kojo_handler_id(arg = -1) {',
+    replace: 'function kojo_handler_id(arg = 0) { // 变异：缺省哨兵改 0',
+    tests: ['kojo-system'],
+    must_mention: '缺省 → 当前 TARGET',
+  },
+  {
+    desc: 'M8994 try_kojo_or_stub 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
+    file: 'ere/kojo/kojo-system.js',
+    find: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
+ * @param {any[]} [extra_args=[]] 透传给 handler 的实参
+ * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
+ * @returns {Promise<any>} handler 的返回值，或存根分支的 0
+ */
+async function try_kojo_or_stub(
+  family,
+  stub_name,
+  stub_desc,
+  stub_ticket,
+  arg = -1,`,
+    replace: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
+ * @param {any[]} [extra_args=[]] 透传给 handler 的实参
+ * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
+ * @returns {Promise<any>} handler 的返回值，或存根分支的 0
+ */
+async function try_kojo_or_stub(
+  family,
+  stub_name,
+  stub_desc,
+  stub_ticket,
+  arg = 0, // 变异：缺省哨兵改 0`,
+    tests: ['kojo-system'],
+    must_mention: '缺省与 -1 都吃 TARGET',
+  },
+  {
+    desc: 'M8995 落空值写错：try_kojo_or_stub 的 whenMissing 0 改 1',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    return family.call(id, { whenMissing: 0, args: extra_args });',
+    replace:
+      '    return family.call(id, { whenMissing: 1, args: extra_args });',
+    tests: ['event-k-dispatch'],
+    must_mention: '落空值声明 0',
+  },
+  {
+    desc: 'M8996 落空值写错：dispatch_execution_koujo 的 whenMissing 0 改 1',
+    file: 'ere/kojo/kojo-system.js',
+    find: '    await family.call(id, { whenMissing: 0, args: [arg] });',
+    replace: '    await family.call(id, { whenMissing: 1, args: [arg] });',
+    tests: ['event-k-dispatch'],
+    must_mention: '落空值声明 0',
+  },
+  {
+    desc: 'M8997 落空值写错：KOJO_MESSAGE_COM 入口的 whenMissing 0 改 1',
+    file: 'ere/kojo/kojo-system.js',
+    find: `    await kojo_message_com_family.call(local - 100, {
+      whenMissing: 0,
+      args: [rand],`,
+    replace: `    await kojo_message_com_family.call(local - 100, {
+      whenMissing: 1,
+      args: [rand],`,
+    tests: ['event-k-dispatch'],
+    must_mention: '落空值声明 0',
+  },
+  {
+    desc: 'M8998 声明空间普通臂少一格（length 40 改 39，键 39 掉出空间）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  ...Array.from({ length: 40 }, (_, i) => i),',
+    replace: '  ...Array.from({ length: 39 }, (_, i) => i), // 变异',
+    tests: ['kojo-system'],
+    must_mention: '键 39 必须在声明空间内',
+  },
+  {
+    desc: 'M8999 声明空间 EX 臂起点漂一格（i + 901 改 902，键 901 掉出空间）',
+    file: 'ere/kojo/kojo-system.js',
+    find: '  ...Array.from({ length: 700 }, (_, i) => i + 901),',
+    replace: '  ...Array.from({ length: 700 }, (_, i) => i + 902), // 变异',
+    tests: ['kojo-system'],
+    must_mention: '键 901 必须在声明空间内',
+  },
+  {
+    desc: 'M9000 ATTACK_KOUJO_B 的 cid 守卫收成 > 0（合法角色号 0 被当缺省）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  if (cid !== undefined && cid >= 0) {
+    era_flag.target = cid; // TARGET = B（:325-337 段）`,
+    replace: `  if (cid !== undefined && cid > 0) {
+    era_flag.target = cid; // 变异：0 被当缺省（TARGET = B）`,
+    tests: ['event-k-dispatch'],
+    must_mention: '分发期间 TARGET = 0',
   },
 ];

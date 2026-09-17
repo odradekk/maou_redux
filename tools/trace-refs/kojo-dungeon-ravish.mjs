@@ -6314,6 +6314,27 @@ export const FILES = [
         ref: '3014',
         any: [/CFLAG:ARG:1 = 2/],
       },
+      // —— #403（N19）EVENT_K.ERB 的迷宫凌辱两钩子（收口成入口函数） ——
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '249-258',
+        any: [/^@DUNGEON_RYOUZYOKU$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '257',
+        any: [/^\tTRYCALLFORM DUNGEON_RYOUZYOKU_K\{LOCAL - 100\}$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '263-272',
+        any: [/^@DUNGEON_RYOUZYOKU_AFTER$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '271',
+        any: [/^\tTRYCALLFORM DUNGEON_RYOUZYOKU_AFTER_K\{LOCAL - 100\}$/m],
+      },
     ],
   },
 ];

@@ -142,7 +142,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
 const { show_data } = require('#/page/components/chara-data'); // #390 起真身
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { get_kojo_num } = require('#/kojo/kojo-system');
+const { get_kojo_num, in_kojo_window } = require('#/kojo/kojo-system');
 const { e_get, e_set } = require('#/dungeon/monster-data');
 const { monstername } = require('#/dungeon/monster-data');
 const { equip_database } = require('#/system/equip/equip-lookup');
@@ -198,6 +198,49 @@ const ryouzyoku_after_kojo_family = new DispatchFamily(
   'DUNGEON_RYOUZYOKU_AFTER_K',
   DECLARED_KOJO_IDS,
 );
+
+/**
+ * 迷宫凌辱两钩子的共同分发体（原件 :249-258 与 :263-272 逐字同构）：
+ * `LOCAL = GET_KOJO_NUM()`（缺省读当前 TARGET——@RYOUZYOKU :57 的
+ * `TARGET = ARG` 已在调用前置好，本分发体不碰 TARGET）→ 守卫
+ * `in_kojo_window(LOCAL)`（`LOCAL >= 100 && LOCAL < 140 || LOCAL > 1000`
+ * 的收口，全库只此一处定义，边界用例在 test/kojo-system.test.js）→
+ * `TRYCALLFORM DUNGEON_RYOUZYOKU[_AFTER]_K{LOCAL - 100}`（:257/:271）。
+ * 存在判定在原作是注释态，不判。缺席语义 = 静默（TRYCALL 落空）。
+ *
+ * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
+ *   目标族（前 = ryouzyoku_kojo_family / 后 = ryouzyoku_after_kojo_family）
+ * @returns {Promise<number>} 0（调用方不读）
+ */
+async function dispatch_ryouzyoku_kojo(family) {
+  const local = get_kojo_num();
+  if (in_kojo_window(local)) {
+    await family.call(local - 100, { whenMissing: 0, args: [] });
+  }
+  return 0;
+}
+
+/**
+ * @DUNGEON_RYOUZYOKU（EVENT_K.ERB:249-258）：迷宫凌辱**前**的角色口上钩子。
+ *
+ * #403 把这段从 @RYOUZYOKU 的内联块收口成本入口（分发点归分发表，
+ * 行为不变），调用点仍是 :58。
+ *
+ * @returns {Promise<number>} 0（调用方不读）
+ */
+async function dungeon_ryouzyoku() {
+  return dispatch_ryouzyoku_kojo(ryouzyoku_kojo_family);
+}
+
+/**
+ * @DUNGEON_RYOUZYOKU_AFTER（EVENT_K.ERB:263-272）：迷宫凌辱**后**的角色口上
+ * 钩子；调用点是 @RYOUZYOKU 的 :168。
+ *
+ * @returns {Promise<number>} 0（调用方不读）
+ */
+async function dungeon_ryouzyoku_after() {
+  return dispatch_ryouzyoku_kojo(ryouzyoku_after_kojo_family);
+}
 
 /**
  * @RYOUZYOKU（:2-175）：败者的凌辱事件主框架。
@@ -266,14 +309,8 @@ async function ryouzyoku(arg, rand) {
   // :57 TARGET = ARG（口上钩子的 GET_KOJO_NUM 缺省读它）
   era_flag.target = arg;
 
-  // :58 CALL DUNGEON_RYOUZYOKU（EVENT_K.ERB:249-257：按 GET_KOJO_NUM 分派）
-  const ryou_local = get_kojo_num();
-  if ((ryou_local >= 100 && ryou_local < 140) || ryou_local > 1000) {
-    await ryouzyoku_kojo_family.call(ryou_local - 100, {
-      whenMissing: 0,
-      args: [],
-    });
-  }
+  // :58 CALL DUNGEON_RYOUZYOKU（EVENT_K.ERB:249-258：按 GET_KOJO_NUM 分派）
+  await dungeon_ryouzyoku();
   // —— 主循环（:60-160）：逐列处理怪物凌辱 ——
   mon_count = 0; // :60
   while (mon_count < 300) {
@@ -407,17 +444,8 @@ async function ryouzyoku(arg, rand) {
     chara(0).train.初体验对象 = 104; // :165 CFLAG:15 = 104（怪物）
   }
 
-  // :168 CALL DUNGEON_RYOUZYOKU_AFTER（EVENT_K.ERB:263-271：按 GET_KOJO_NUM 分派）
-  const ryou_after_local = get_kojo_num();
-  if (
-    (ryou_after_local >= 100 && ryou_after_local < 140) ||
-    ryou_after_local > 1000
-  ) {
-    await ryouzyoku_after_kojo_family.call(ryou_after_local - 100, {
-      whenMissing: 0,
-      args: [],
-    });
-  }
+  // :168 CALL DUNGEON_RYOUZYOKU_AFTER（EVENT_K.ERB:263-272：按 GET_KOJO_NUM 分派）
+  await dungeon_ryouzyoku_after();
   // :172 CALL DUNGEON_RYOUZYOKU_ESCAPE,ARG
   await dungeon_ryouzyoku_escape(arg, rand_n);
 
@@ -4033,6 +4061,8 @@ module.exports = {
   STUBBED_CALLS,
   ryouzyoku_kojo_family,
   ryouzyoku_after_kojo_family,
+  dungeon_ryouzyoku,
+  dungeon_ryouzyoku_after,
   ryouzyoku,
   orc_ryou,
   slime_ryou,
