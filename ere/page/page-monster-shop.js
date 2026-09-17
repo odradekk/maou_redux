@@ -45,12 +45,12 @@ const { chara } = require('#/facade/chara');
 const { char_make, name_reset } = require('#/chara/char-make');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { party_char_del } = require('#/dungeon/dungeon-party');
+const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） */
-const STUBBED_CALLS = ['SHOW_CHARA_INFO'];
+const STUBBED_CALLS = [];
 
 /** 魔物从者的上限（:55 `COUNT:1 >= 30`） */
 const FOLLOWER_LIMIT = 30;
@@ -285,8 +285,9 @@ async function monster_shop(rand) {
     era.print(`${chara_callname(a)}回应了你的召唤………`); // :141
     era.print('*****************************************'); // :142
     await era.waitAnyKey(); // :143 PRINTW
-    // :144 CALL SHOW_CHARA_INFO, A, -2（角色信息详情页属角色信息票）
-    await stub_line_wait('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票');
+    // :144 CALL SHOW_CHARA_INFO, A, -2（#390 起真身，见 docs/stub-registry.md；
+    // -2 = 贡品信息页。rand 一路透传：标题的身体数据生成吃随机）
+    await show_chara_info(a, -2, rand);
     era.print(`确定要召唤${chara_callname(a)}么？`); // :146
     era.print(''); // :147
     era.print(''); // :148

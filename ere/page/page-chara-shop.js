@@ -52,17 +52,17 @@ const { char_make, name_reset } = require('#/chara/char-make');
 const { add_chara_ex, DECLARED_CHARA_IDS } = require('#/chara/chara-ex');
 const { char_init } = require('#/chara/chara-init');
 const { party_char_del } = require('#/dungeon/dungeon-party');
+const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
 const {
   select_follower,
   buy_follower,
   shop_state,
 } = require('#/page/page-monster-shop');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） */
-const STUBBED_CALLS = ['SHOW_CHARA_INFO'];
+const STUBBED_CALLS = [];
 
 /** 异界勇者的预设编号（:63 `CHARA = 211`） */
 const IKA_SIM_ID = 211;
@@ -366,7 +366,9 @@ async function chara_sim_shop(rand) {
     era.print(`${chara_callname(a)}回应了你的召唤………`); // :82
     era.print('*****************************************'); // :83
     await era.waitAnyKey(); // :84 PRINTW
-    await stub_line_wait('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票'); // :85
+    // :85 CALL SHOW_CHARA_INFO, A, -2（#390 起真身，见 docs/stub-registry.md；
+    // -2 = 贡品信息页。rand 一路透传：标题的身体数据生成吃随机）
+    await show_chara_info(a, -2, rand);
     era.print(`确定要召唤${chara_callname(a)}么？`); // :87
     era.print(''); // :88
     era.print(''); // :89

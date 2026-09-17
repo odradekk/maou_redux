@@ -933,3 +933,50 @@ test('BUY_MONSTER：祭品扫描的编号段端点——193（100-199 段末个�
     '193 选中后的祭品行',
   );
 });
+
+// —— 存根接线：召唤确认段的 @SHOW_CHARA_INFO（#390 真身落地后换接） ——
+
+test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 召唤出的角色 A、页码 -2）', async () => {
+  const fixture = await run_monster_shop(
+    { 'item:101': 3 },
+    1, // 入口
+    1, // 性别
+    1, // 种族：亚人
+    202, // 商品
+    101,
+    101,
+    101, // 祭品
+    0, // 献祭确认
+    0, // 召唤确认
+  );
+  const texts = history_texts(fixture);
+  // 真身的三个判据（页码判据与 test/chara-info-show.test.js 的页码表同款）
+  assert(
+    texts.some((line) => line.startsWith('NO.202 ')),
+    '标题行 NO.<cid> 带的是被召唤的角色号 A',
+  );
+  // 页码 = -2 的判据取「经验段 ∧ 外貌段」：经验段在 -2/-1/1 三臂、外貌段在
+  // -2/2 两臂，交集只有 -2（EX: 0/1/3/4 两段都没有或只有一段）
+  assert(
+    texts.some((line) => line.includes('本级经验：')),
+    '-2 臂的经验段在（占位行只有一行，没有这一段）',
+  );
+  assert(
+    texts.some((line) => line.includes('[发色：')),
+    '-2 臂的外貌段在（页码传错时这一行不在）',
+  );
+  assert(
+    !texts.some((line) => line.startsWith('一人称：')),
+    '-2 臂无 SHOW_BLOCK 的人称行',
+  );
+  assert(
+    !texts.some((line) => line.includes('尚未移植')),
+    '不得再打存根占位行',
+  );
+});
+
+test('存根清单：STUBBED_CALLS 已空（SHOW_CHARA_INFO 已接真身）', () => {
+  const fixture = monster_world();
+  const { STUBBED_CALLS } = fixture.load_module('page/page-monster-shop');
+  assert.deepEqual(STUBBED_CALLS, []);
+});

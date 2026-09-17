@@ -422,3 +422,37 @@ test('CHAR_IKAI_CREATE：INRANGE 的上界是闭区间（100000 也查在场，�
     !history_texts(fixture).some((line) => line.includes('被你强行召唤了')),
   );
 });
+
+// —— 存根接线：召唤确认段的 @SHOW_CHARA_INFO（#390 真身落地后换接） ——
+
+test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 异界勇者 211、页码 -2）', async () => {
+  const fixture = await run_chara_shop({}, 1, 0);
+  const texts = history_texts(fixture);
+  assert(
+    texts.some((line) => line.startsWith('NO.211 ')),
+    '标题行 NO.<cid> 带的是召唤出的 211',
+  );
+  // 页码 = -2 的判据：经验段（-2/-1/1 三臂）∧ 外貌段（-2/2 两臂）的交集
+  assert(
+    texts.some((line) => line.includes('本级经验：')),
+    '-2 臂的经验段在（占位行只有一行）',
+  );
+  assert(
+    texts.some((line) => line.includes('[发色：')),
+    '-2 臂的外貌段在（页码传错时这一行不在）',
+  );
+  assert(
+    !texts.some((line) => line.startsWith('一人称：')),
+    '-2 臂无 SHOW_BLOCK 的人称行',
+  );
+  assert(
+    !texts.some((line) => line.includes('尚未移植')),
+    '不得再打存根占位行',
+  );
+});
+
+test('存根清单：STUBBED_CALLS 已空（SHOW_CHARA_INFO 已接真身）', () => {
+  const fixture = chara_world();
+  const { STUBBED_CALLS } = fixture.load_module('page/page-chara-shop');
+  assert.deepEqual(STUBBED_CALLS, []);
+});

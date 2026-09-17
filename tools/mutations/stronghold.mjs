@@ -1,14 +1,16 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 218; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+export const COUNT = 224; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
-// #399 起 +78（M8881-M8918、M8919-M8940 与 M9101-M9118）：page-item-shop 36 /
-// page-monster-shop 24 / page-chara-shop 13 / page-shop 3（另有 1 条 #395 的
+// #399 起 +84（M8881-M8918、M8919-M8940 与 M9101-M9124）：page-item-shop 36 /
+// page-monster-shop 27 / page-chara-shop 16 / page-shop 3（另有 1 条 #395 的
 // page-shop 旧条目） / page-shop-trap 2。
 // 第二轮返工 +23：M8915 与 M8919-M8936 是排版字面量、M8937-M8939 是三处
 // 1:1 文本修正、M8940 是菜单行的全角空格；第三轮返工 +15：M9101 起是范围
 // 端点（件数/上下界/槽位），等价的一端不建条目、理由写在相邻条目注释里；
-// M9116-M9118 是第三轮评审补的两个内联端点（戒指槽位、两处页高）。
+// M9116-M9118 是第三轮评审补的两个内联端点（戒指槽位、两处页高）；
+// M9119-M9124 是接线一轮：两处召唤确认段接 @SHOW_CHARA_INFO 真身（#390），
+// 每条各取「接没接」「传给谁」「哪一页」三面之一。
 // M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
 // 「回放播种」变异仍未收录）
 
@@ -1824,5 +1826,55 @@ export default [
       '      // :649-654 下一页\n      if ((no_page + 1) * 21 <= era.getAddedCharacters().length) {',
     tests: ['item-shop'],
     must_mention: '30 号选择面的翻页',
+  },
+  // —— #399 接线一轮：两处召唤确认段接 @SHOW_CHARA_INFO 真身（#390）——
+  // 每条各取「接没接」「传给谁」「哪一页」三面之一
+  {
+    desc: 'M9119 怪物商店召唤段的角色信息页码传错（-2 → -1）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await show_chara_info(a, -1, rand);',
+    tests: ['monster-shop'],
+    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+  },
+  {
+    desc: 'M9120 怪物商店召唤段的角色信息传错角色（A → 0）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await show_chara_info(0, -2, rand);',
+    tests: ['monster-shop'],
+    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+  },
+  {
+    desc: 'M9121 怪物商店召唤段不调角色信息屏（去掉调用）',
+    file: 'ere/page/page-monster-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await Promise.resolve(); // 变异：不调角色信息屏',
+    tests: ['monster-shop'],
+    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+  },
+  {
+    desc: 'M9122 异界召唤的角色信息页码传错（-2 → -1）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await show_chara_info(a, -1, rand);',
+    tests: ['chara-shop'],
+    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+  },
+  {
+    desc: 'M9123 异界召唤的角色信息传错角色（A → 0）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await show_chara_info(0, -2, rand);',
+    tests: ['chara-shop'],
+    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
+  },
+  {
+    desc: 'M9124 异界召唤不调角色信息屏（去掉调用）',
+    file: 'ere/page/page-chara-shop.js',
+    find: 'await show_chara_info(a, -2, rand);',
+    replace: 'await Promise.resolve(); // 变异：不调角色信息屏',
+    tests: ['chara-shop'],
+    must_mention: '召唤确认段接上 SHOW_CHARA_INFO 真身',
   },
 ];
