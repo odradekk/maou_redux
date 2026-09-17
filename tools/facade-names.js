@@ -590,6 +590,11 @@ const cflag = {
   //   （ownership/cflag-ownership.yml "700"/"777"）
   700: named_tail('收藏', src(SRC_FLAG, ':489 CFLAG:700 = お気に入りフラグ')),
   777: named_tail('待处刑标签', src(SRC_FLAG, ':490 CFLAG:777 = 待處刑標籤')),
+  // #390：献祭完成分支把魔王之影的寿命置满（CHARA_INFO_SHOW ver1.1.2.ERB:74
+  //   的 CFLAG:shadow:820 = 666666），属主 chara（ownership/cflag-ownership.yml
+  //   "820"：chara 1 / event 1）；同一分支的 CFLAG:1（invasion）与 FLAG:80
+  //   （event）也一并改走门面
+  820: named_tail('寿命', src(SRC_FLAG, ':499 CFLAG:820 = 影の寿命')),
   // #399：异界勇者召唤的成交标记（@CHARA_SIM_SHOP :123-124 的唯一一次写，
   //   属主 stronghold——ownership/cflag-ownership.yml "999"；全库无读者）
   999: named(

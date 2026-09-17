@@ -54,7 +54,7 @@ const { chara } = require('#/facade/chara');
 const { char_make, name_reset } = require('#/chara/char-make');
 const { get_look_info } = require('#/chara/look-info');
 const { party_char_del } = require('#/dungeon/dungeon-party');
-const { stub_line } = require('#/utils/stub-line');
+const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起真身
 
 /**
  * 本文件仍以占位行代替的原作调用名（docs/stub-registry.md 核对固定）。
@@ -62,9 +62,10 @@ const { stub_line } = require('#/utils/stub-line');
  * END10_55、ENDING_N、ENDINGINPUT、ENDINCONSQSELECT 全部接真身；
  * RACE_AGE_GENERATE 自 #404 rebase（#385 合并后）起也接真身
  * （ere/chara/chara-body.js 的 race_age_generate）。只剩 CHAR_GIFT 的一处
- * 体外依赖：SHOW_CHARA_INFO 属 調教相關/USERCOM.ERB 的角色信息详情页。
+ * 体外依赖：SHOW_CHARA_INFO 属 調教相關/USERCOM.ERB 的角色信息详情页，
+ * 已随 #390 换真身（ere/page/page-chara-info-show.js）。
  */
-const STUBBED_CALLS = ['SHOW_CHARA_INFO'];
+const STUBBED_CALLS = [];
 
 /**
  * @ENDING_1（ENDING ver 1.0.1.ERB:6-40）：人间界征服的中场结局（GOOD END）。
@@ -293,8 +294,8 @@ async function char_gift(arg, rand = default_rand) {
       // :177-180 贡品播报与 PRINTW（空行 + 读键）
       era.print('');
       await era.waitAnyKey();
-      // :181 CALL SHOW_CHARA_INFO, A, -2（角色信息详情页是 N6 的范围）
-      stub_line('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票');
+      // :181 CALL SHOW_CHARA_INFO, A, -2（#390 真身）
+      await show_chara_info(a, -2);
       // :183-185 询问
       era.print(ask);
       era.print('[0] 收下她吧  [1] 另外挑选');
@@ -401,8 +402,8 @@ async function char_gift(arg, rand = default_rand) {
     era.print('*****************************************');
     era.print(''); // PRINTW（见 :274-277 的定人选播报）
     await era.waitAnyKey();
-    // :278 CALL SHOW_CHARA_INFO, A, -2（同上，N6 的范围）
-    stub_line('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票');
+    // :278 CALL SHOW_CHARA_INFO, A, -2（同上，#390 真身）
+    await show_chara_info(a, -2);
     // :279-281 询问
     era.print('要收下这名少女作为贡品吗？');
     era.print(`[0] 就是她了  [1] 再换一个  [2] ${pick}`);

@@ -733,17 +733,17 @@ test('7788 接通 RELATION_DEBUGPRINT：输出关系矩阵并等待按键', asyn
 });
 
 test('498/499 无守卫：指针未选也照原作进分支', async () => {
-  // #391 起 CHARA_INFO_INDIVIDUAL_WAPPED 是真身，不再打占位行；这里只验
-  // 证「无守卫，target/assi 未选（-1）也照样进个别信息页」，个别信息页
-  // 自身的渲染/按钮/分发见 test/page-chara-info.test.js
+  // #391 起 CHARA_INFO_INDIVIDUAL_WAPPED 是真身；#390 起它的正文
+  // （SHOW_CHARA_INFO）也换真身，不再打占位行——这里改为按正文的标题行
+  // 计数（`NO.<id>` 那一行），个别信息页自身的渲染/按钮/分发见
+  // test/page-chara-info.test.js
   const fixture = create_shop_fixture();
   const { usershop } = fixture.load_module('page/page-shop');
   fixture.set_inputs(100, 100); // 每次进页后立即按「返回」
   await usershop(498);
   await usershop(499);
   assert.equal(
-    history_texts(fixture).filter((line) => line.includes('SHOW_CHARA_INFO'))
-      .length,
+    history_texts(fixture).filter((line) => /^NO\./.test(line)).length,
     2,
     '498/499 各进入一次个别信息页（原作 :156-159 无 A 守卫）',
   );

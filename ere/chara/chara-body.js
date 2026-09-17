@@ -15,9 +15,9 @@
  * 步骤，不是独立入口；BODY2 其余未落地段落（@CHAR_BUST_REGENERATE_WAPPED）
  * 不在本票范围。
  *
- * 未移植的残留（#385 登记，见 docs/stub-registry.md）：@CUP_SIZE（:781-850）、
- * @CONFIG_AGE_SETTING（:853-929）与它调用的 @RACE_CONFIG（:931-1333）——
- * 三段都是显示/配置界面，调用方分别属 #390 与 SYSTEM/CONFIG.ERB 票。
+ * 未移植的残留（#385 登记，见 docs/stub-registry.md）：@CONFIG_AGE_SETTING
+ * （:853-929）与它调用的 @RACE_CONFIG（:931-1333）——两段都是配置界面，
+ * 调用方属 SYSTEM/CONFIG.ERB 票。@CUP_SIZE 已随 #390 落地（见 cup_size）。
  */
 
 const era = require('#/era-electron');
@@ -602,11 +602,68 @@ function char_size_generate(
   ];
 }
 
+/**
+ * 罩杯字母表（源 @CUP_SIZE :791-848 的 28 条 SIF）：CAL_VAR == N 时取
+ * `CUP_LETTERS[N - 2]`。下标 0 是 AAA（CAL_VAR 2），末位 Z（CAL_VAR 29）。
+ */
+const CUP_LETTERS = [
+  'AAA',
+  'AA',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z',
+];
+
+/**
+ * @CUP_SIZE（:781-850）：罩杯字母。CFLAG:455（上胸围 ×10）减 UNDER_BUST
+ * 再整除 25 得 CAL_VAR；CAL_VAR ≤ 1 一律「-」（原作 :791-792 只写这一档），
+ * 2..29 查 28 档字母表。
+ *
+ * **有意偏离**：CAL_VAR ≥ 30 时原作不写 RESULTS:0（残留上一次取值），ere 侧
+ * 没有 RESULTS 残留通道，取空串——正常数据下该档不可达（生成上限正好落在
+ * Z = 29，见 CHAR_BUST_GENERATE 的各档加成上沿）。
+ *
+ * @param {number} cid 角色 ID（源 ARG）
+ * @returns {string} 罩杯字母；CAL_VAR ≤ 1 时 `'-'`
+ */
+function cup_size(cid) {
+  // :788 CALL UNDER_BUST, ARG, CFLAG:ARG:453（身高 ×10 直接传入）
+  const height10 = era.get(`cflag:${cid}:453`) || 0; // CFLAG:453 身高(×10)
+  const bust10 = era.get(`cflag:${cid}:455`) || 0; // CFLAG:455 上胸围(×10)
+  const cal_var = int((bust10 - under_bust(cid, height10)) / 25); // :790
+  if (cal_var <= 1) return '-'; // :791-792
+  return CUP_LETTERS[cal_var - 2] ?? '';
+}
+
 module.exports = {
   STUBBED_CALLS,
   char_age_generate,
   char_body_generate_wapped,
   char_size_generate,
+  cup_size,
   human_age_generate,
   race_age_generate,
 };

@@ -98,7 +98,10 @@ test('K904 分发：全部口上族注册键都是 904', async () => {
     kojo.public_exucution_koujo_family,
     kojo.grotesque_koujo_family,
     kojo.enterenemy_koujo_family,
-    kojo.gohoubi_request_koujo_family,
+    // GOHOUBI_REQUEST 族只此一个实例、住在 kojo-dungeon-after（#403 把
+    // kojo-system 里的同名第二份删掉：K904 当初注册进的是那一份，分发侧
+    // 看不见，本行因此从 kojo. 改读 after.）
+    after.gohoubi_request_koujo_family,
     after.gohoubi_after_koujo_family,
     after.osioski_koujo_family,
     kojo.gobi_koujo_family,

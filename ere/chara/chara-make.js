@@ -82,9 +82,13 @@ const { stub_line_wait } = require('#/utils/stub-line');
  *
  * #392 变更：@RAND_CHARA_MAKE 依赖的 FUNC_CHARA_AND_HAIR 八函数换真身
  * （ere/chara/chara-and-hair.js）——本文件是它们全库唯一的调用方，八条从
- * 名单移除。SHOW_CHARA_INFO 仍在名单里（随角色信息票）。
+ * 名单移除。
+ *
+ * #390 变更：SHOW_CHARA_INFO 换真身（rand_chara_make 的形象确认段改调
+ * ere/page/page-chara-info-show.js），也从名单移除。两票各删一批，合并后
+ * 名单只剩 ST_UP。
  */
-const STUBBED_CALLS = ['ST_UP', 'SHOW_CHARA_INFO'];
+const STUBBED_CALLS = ['ST_UP'];
 
 /**
  * @CHARA_MAKE（:2-120）：随机生成一名完整角色。
@@ -1776,7 +1780,15 @@ async function rand_chara_make(rand, char_make_inport) {
       // 种族设定 ARG:1 缺省 0；XINGGE 来自 :90 的表格查询（见上）
       await chara_make(newchara, xingge, 0, rand_n, newchara);
 
-      await stub_line_wait('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票');
+      // :150 CALL SHOW_CHARA_INFO（#390 真身）。**惰性 require**：本文件顶层
+      // 引入会把 page-chara-info-show 及其整条链（含 dungeon-quest ↔
+      // dungeon-battle 的既有环）提前拉起来，dungeon-quest 会变成半成品；
+      // 只有这一条形象确认支路用得到，就在用到处取。
+      await require('#/page/page-chara-info-show').show_chara_info(
+        newchara,
+        -1,
+        rand_n,
+      );
 
       // :151-157 确认提示（赤森奴隶恒 0 → 恒走 ELSE 侧）
       era.print('解开你封印的，真的是这样的对象吗…？');

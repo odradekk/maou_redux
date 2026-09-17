@@ -272,13 +272,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
-        ref: '317-335',
-        any: [
-          /ELSEIF RACE_CLA == 4[\s\S]*RACE_AGE = RAND:\(RACE_AGE - ARG:0\) \+ ARG:0/,
-        ],
-      },
-      {
-        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
         ref: '337',
         any: [/^RETURN RACE_AGE$/m],
       },
@@ -314,13 +307,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
-        ref: '399-400',
-        any: [
-          /HUMAN_AGE = \(ARG:0 \* 10 \+ 5\) \/\(RACE_DEG \* 10 \+ RACE_NUM\)/,
-        ],
-      },
-      {
-        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
         ref: '402-404',
         any: [/HUMAN_AGE = CFLAG:\(ARG:1\):452/],
       },
@@ -338,6 +324,42 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
         ref: '931-1333',
         any: [/@RACE_CONFIG/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '791-792',
+        any: [/SIF CAL_VAR <= 1\n	RESULTS:0 = -/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '788',
+        any: [/CALL UNDER_BUST, ARG, CFLAG:ARG:453/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '790',
+        any: [/CAL_VAR = \(CFLAG:ARG:455 - RESULT\) \/ 25/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '317-335',
+        any: [
+          /ELSEIF RACE_CLA == 4\n;桁の出方を偏らせてみる\n;	RACE_AGE = RAND:\(RACE_NUM \* POWER\(10, RACE_DEG\) - ARG:0\) \+ ARG:0\n	CAL_VAR:0 = \(RACE_NUM \* POWER\(10, RACE_DEG\)\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '399-400',
+        any: [
+          /ELSEIF RACE_CLA == 1\n	HUMAN_AGE = \(ARG:0 \* 10 \+ 5\) \/\(RACE_DEG \* 10 \+ RACE_NUM\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY.ERB',
+        ref: '791-848',
+        any: [
+          /SIF CAL_VAR <= 1\n	RESULTS:0 = -\nSIF CAL_VAR == 2\n	RESULTS:0 = AAA/,
+        ],
       },
     ],
   },

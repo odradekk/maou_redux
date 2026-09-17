@@ -633,3 +633,113 @@ test('CHAR_BODY_GENERATE_WAPPED：默认支走年龄生成（CFLAG:451 = 生成�
   );
   assert.equal(fixture.store.get('cflag:21:452'), 18, 'CFLAG:452 种族年龄');
 });
+
+// —— @CUP_SIZE（CHARA_BODY.ERB:781-850，#390 随角色信息显示落地） ——
+
+/** 罩杯字母表（CAL_VAR 2..29 共 28 档，源 :791-848） */
+const CUP_LETTERS = [
+  'AAA',
+  'AA',
+  'A',
+  'B',
+  'C',
+  'D',
+  'E',
+  'F',
+  'G',
+  'H',
+  'I',
+  'J',
+  'K',
+  'L',
+  'M',
+  'N',
+  'O',
+  'P',
+  'Q',
+  'R',
+  'S',
+  'T',
+  'U',
+  'V',
+  'W',
+  'X',
+  'Y',
+  'Z',
+];
+
+/** 身高 1600（160.0cm）、无素质时 UNDER_BUST = INT(1600 * 43100 / 100000) = 689 */
+const HEIGHT10 = 1600;
+const UNDER = 689;
+
+function cup_fixture() {
+  const fixture = create_era_fixture();
+  fixture.store.set('cflag:5:453', HEIGHT10); // CFLAG:453 身高(×10)
+  return {
+    fixture,
+    cup_size: fixture.load_module('chara/chara-body').cup_size,
+  };
+}
+
+test('CUP_SIZE：CAL_VAR 2..29 的 28 档字母表（表驱动全维度）', () => {
+  assert.equal(CUP_LETTERS.length, 28);
+  for (const [index, letter] of CUP_LETTERS.entries()) {
+    const { fixture, cup_size } = cup_fixture();
+    const cal_var = index + 2;
+    // CAL_VAR = INT((CFLAG:455 − UNDER_BUST) / 25)；取该档的下沿
+    fixture.store.set('cflag:5:455', UNDER + 25 * cal_var);
+    assert.equal(cup_size(5), letter, `CAL_VAR=${cal_var} → ${letter}`);
+    // 同档上沿（差 24 仍在同一档）
+    fixture.store.set('cflag:5:455', UNDER + 25 * cal_var + 24);
+    assert.equal(cup_size(5), letter, `CAL_VAR=${cal_var} 上沿 → ${letter}`);
+  }
+});
+
+test('CUP_SIZE：CAL_VAR ≤ 1 一律「-」（差 49 与负差都在此档）', () => {
+  const cases = [
+    [UNDER - 25, '负差 −25 → CAL_VAR −1'],
+    [UNDER - 100, '负差 −100'],
+    [UNDER, '差 0'],
+    [UNDER + 24, '差 24 → CAL_VAR 0'],
+    [UNDER + 49, '差 49 → CAL_VAR 1（上沿）'],
+  ];
+  for (const [bust, label] of cases) {
+    const { fixture, cup_size } = cup_fixture();
+    fixture.store.set('cflag:5:455', bust);
+    assert.equal(cup_size(5), '-', label);
+  }
+});
+
+test('CUP_SIZE：CAL_VAR ≥ 30 落在字母表之外（原作此处不写 RESULTS:0）', () => {
+  const { fixture, cup_size } = cup_fixture();
+  fixture.store.set('cflag:5:455', UNDER + 25 * 30); // CAL_VAR = 30
+  assert.equal(cup_size(5), '', '越出 28 档 → 空串（有意偏离，见实现注释）');
+});
+
+test('CUP_SIZE：肌肉型(248) ×105/100、虚弱(256) ×98/100 先改下胸围', () => {
+  // INT(689 * 105 / 100) = 723；差 100 → CAL_VAR 4 → 'A'
+  const muscle = cup_fixture();
+  muscle.fixture.store.set('talent:5:248', 1);
+  muscle.fixture.store.set('cflag:5:455', 723 + 100);
+  assert.equal(muscle.cup_size(5), 'A', '肌肉型下胸围 723');
+
+  // INT(689 * 98 / 100) = 675；差 100 → CAL_VAR 4 → 'A'
+  const weak = cup_fixture();
+  weak.fixture.store.set('talent:5:256', 1);
+  weak.fixture.store.set('cflag:5:455', 675 + 100);
+  assert.equal(weak.cup_size(5), 'A', '虚弱下胸围 675');
+
+  // 同一胸围下两者给出不同档：肌肉型 789 → 差 66 → CAL_VAR 2 → 'AAA'
+  const same = cup_fixture();
+  same.fixture.store.set('talent:5:248', 1);
+  same.fixture.store.set('cflag:5:455', 789);
+  assert.equal(same.cup_size(5), 'AAA');
+});
+
+test('CUP_SIZE：TALENT:308（下胸围修正）进 UNDER_BUST 的百分比', () => {
+  // INT(1600 * (43100 + 1000) / 100000) = 705；差 100 → CAL_VAR 4 → 'A'
+  const { fixture, cup_size } = cup_fixture();
+  fixture.store.set('talent:5:308', 1000);
+  fixture.store.set('cflag:5:455', 705 + 100);
+  assert.equal(cup_size(5), 'A');
+});

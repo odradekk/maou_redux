@@ -62,14 +62,14 @@ const { char_make, char_make_inport } = require('#/chara/char-make');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { family_register } = require('#/chara/chara-family');
 const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
-const { stub_line } = require('#/utils/stub-line');
+const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起真身
 const { enterenemy_koujo } = require('#/kojo/kojo-system');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['ENTERENEMY_KOUJO', 'SHOW_CHARA_INFO'];
+const STUBBED_CALLS = ['ENTERENEMY_KOUJO'];
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
 const MAX_CHARANUM = 90;
@@ -303,7 +303,7 @@ async function enter_enemy(arg0 = 0, rand) {
   const settings2 = era.get('flag:8') || 0;
   if (((settings2 >> 1) & 1) !== 0) {
     era.println();
-    stub_line('SHOW_CHARA_INFO', '角色信息画面', '随角色信息票'); // :160
+    await show_chara_info(arg0, -1, rand); // :160（#390 真身）
     era.println();
   }
 

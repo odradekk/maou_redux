@@ -124,13 +124,21 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 51; // 合并态实测（#399 并上含 #392/#393 的 master）：
-// 三票摆进 ere/ 的整份文件互不相交，53（master）− 2（#399 的 SHOP/SHOP_ITEM.ERB
-// 与 SHOP/SHOP_MONSTER.ERB）= 51，与 `node tools/trace-check.mjs --coverage`
-// 的重测一致。数字取自重测而非相加。
+export const PENDING_BASELINE = 50; // 合并态实测（#399 并上含 #390/#392/#393/#403 的 master）：
+// 52（master）− 2（本票的 SHOP/SHOP_ITEM.ERB 与 SHOP/SHOP_MONSTER.ERB）= 50，
+// 与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
 //
-// #399（N15）单独的说明：SHOP_CHARA.ERB 此前已是部分移植、本就不在待移植的
-// 分子里，本票把它补完后转已移植而不减待移植数——三个商店只减 2，不是 3。
+// #399（N15）单独的说明：SHOP_CHARA.ERB 此前已是部分移植、不在待移植的分子里，
+// 本票把它补完后转已移植而不减待移植数——三个商店只减 2，不是 3。
+// export const PENDING_BASELINE = 52; // 合并态实测（#390 并上含 #392/#393 的 master）：
+// 三票摆进 ere/ 的整份文件互不相交，53（master）− 1（#390 的
+// キャラ関数/CHARA_INFO_SHOW_TALENT.ERB）= 52，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+//
+// #390（N6）单独的说明：CHARA_INFO_SHOW ver1.1.2.ERB 此前已是**部分移植**，
+// 本就不在待移植的分子里——本票把 SHOW_CHARA_INFO / SHOW_EQUIP_1 /
+// SHOW_EQUIP_2 / SHOW_DATA / STAIN_INFO 五条登记行清掉之后它转已移植，
+// 实测待移植只减 TALENT 那一份。
 // export const PENDING_BASELINE = 53; // 合并态实测（#393 并上含 #392 的 master）：
 // 两票摆进 ere/ 的整份文件不相交，60 − 4（#392）− 3（#393）= 53，与
 // `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加，
@@ -150,6 +158,11 @@ export const PENDING_BASELINE = 51; // 合并态实测（#399 并上含 #392/#39
 // 62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60。#400 不动这个数
 // （EVENT_NEXTDAY.ERB 原本就是部分移植），所以两次合并只扣本票这两份。
 // 各票自己的说明留在下面。
+// #403（N19）不动本数的说明：EVENT_K.ERB（522 行）随本票由**部分移植**转
+// 「已移植」（合并态实测：已移植 238 / 部分移植 29 / 待移植 60）——它此前
+// 就不在待移植的分子里（有产物 + 清单挂着 9 条未了结存根），把那些行照实
+// 收口之后只挪动部分移植那一格，所以本数不变，与 #404 同款。工单正文写的
+// 「显式抬低（现 79）」是排期时的旧值。
 // master）：62（master）− 2（本票 EVETRAIN.ERB 与 EVENT1.ERB）= 60，与重测
 // 一致。各票自己的说明留在下面。
 // 两票各自扣的文件不相交，64（master，#394 后）− 2（本票 EVETRAIN.ERB 与

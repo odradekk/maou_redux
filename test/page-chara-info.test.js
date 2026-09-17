@@ -641,7 +641,6 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
   // 三对自 #393 起是真身（ere/chara/chara-job-change.js、chara-temptation.js、
   // chara-marriage.js），九条均不再是本文件的存根
   for (const name of [
-    'SHOW_CHARA_INFO',
     'SHOW_BUTTON_EQUIP',
     'PTJ_BUTTON',
     'EQUIP_ST_SHOW',
@@ -653,9 +652,12 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
   ]) {
     assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
   }
+  // SHOW_CHARA_INFO 自 #390 起是真身（ere/page/page-chara-info-show.js），
+  // 三对动作按钮与流程自 #393 起是真身——两票各加一批，这里取并集
   for (const name of [
     'SHOW_BUTTON_CHILD_CARE',
     'CHILD_CARE_CHARA',
+    'SHOW_CHARA_INFO',
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
     'SHOW_BUTTON_MARRIAGE',

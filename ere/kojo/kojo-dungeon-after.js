@@ -2,10 +2,23 @@
  * @file 战果口上的分发层（issue #179，阶段 3 H10）：奖赏口上与惩罚口上。
  *
  * 源: target/ERB/EVENT/EVENT_K.ERB  @GOHOUBI_AFTER_KOUJO（:468-476）、
- *     @GOHOUBI_REQUEST_KOUJO（:450-466，签名由 #397 定死、函数体随 #403）、
+ *     @GOHOUBI_REQUEST_KOUJO（:450-463，签名由 #397 定死、函数体由 #403 落）、
  *     @OSIOKI_KOUJO（:486-494）
  *
- * 调用点：ere/dungeon/dungeon-after.js 的 @GOHOUBI / @OSIOKI（本票接入）。
+ * 调用点：ere/dungeon/dungeon-after.js 的 @GOHOUBI / @OSIOKI（本票接入）；
+ * @GOHOUBI_REQUEST_KOUJO 的调用方是商店侧 ere/system/stronghold/
+ * gohoubi-request.js（#397）。
+ *
+ * == GOHOUBI_REQUEST 族只此一个实例（#403 实测的缺陷与整改） ==
+ *
+ * 本族的同名族曾在 kojo-system.js 里有**第二份 `new DispatchFamily`
+ * （同一族名两个实例）**：K1/K6/K12/K14/K19/K904 从 kojo-system 取族注册、
+ * 而分发侧（本文件与商店路径）用的是本文件的实例，于是那六个性格的
+ * @GOHOUBI_REQUEST_KOUJO 注册**永远不被分发到**（玩家侧表现为静默失声），
+ * 而 DispatchFamily 的重复注册守卫只挡同一实例内的重号，跨实例看不见。
+ * #403 把第二份删掉、六个模块改从本文件取族——族名的唯一性由
+ * test/event-k-dispatch.test.js 的族名唯一锁守着（全库扫 `new DispatchFamily`）。
+ *
  * 与 kojo-system.js（#46）同构：EVENT_K.ERB 的分发层在 ere 侧是两个
  * DispatchFamily（#7 决议），per-角色实现（@GOHOUBI_AFTER_KOUJO_K19 等，
  * ERB/口上/EVENT_K*.ERB）随各自的口上票 register——空间内缺失合法
@@ -38,12 +51,16 @@
 'use strict';
 
 const era_flag = require('#/era-utils/era-flag');
-const { get_kojo_num } = require('#/kojo/kojo-system');
+const {
+  get_kojo_num,
+  in_kojo_window,
+  try_kojo_or_stub,
+} = require('#/kojo/kojo-system');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { stub_line } = require('#/utils/stub-line');
 
 // 声明的编号空间：分发守卫（:473/:491 的 LOCAL >= 100 && LOCAL < 140 ||
-// LOCAL > 1000）能拼出的全部 GOHOUBI_AFTER_KOUJO_K{N} / OSIOKI_KOUJO_K{N}
+// LOCAL > 1000；ere 侧 = in_kojo_window）能拼出的全部
+// GOHOUBI_AFTER_KOUJO_K{N} / OSIOKI_KOUJO_K{N}
 // 名（kojo-system.js 的 DECLARED_KOJO_COM_IDS 同款）
 const DECLARED_KOJO_IDS = [
   ...Array.from({ length: 40 }, (_, i) => i),
@@ -79,7 +96,7 @@ async function gohoubi_after_koujo(cid, choice) {
   era_flag.target = cid; // TARGET = A
   const local = get_kojo_num(cid); // GET_KOJO_NUM()（此刻 TARGET = A）
   // 存在判定被原作注释（:471-472），不判；キャラ別
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await gohoubi_after_koujo_family.call(local - 100, {
       whenMissing: 0,
       args: [cid, choice],
@@ -90,11 +107,10 @@ async function gohoubi_after_koujo(cid, choice) {
 }
 
 /**
- * @GOHOUBI_REQUEST_KOUJO（EVENT_K.ERB:450-466）：商店奖赏请求口上的入口。
+ * @GOHOUBI_REQUEST_KOUJO（EVENT_K.ERB:450-463）：商店奖赏请求口上的入口。
  *
- * **签名与参数形状由 #397（N13）定死，函数体随 #403（N19）**：商店侧
- * `@GOHOUBI_REQUEST`（SHOP_2.ERB:687）先落地，口上侧的 EVENT_K.ERB 属
- * #403 的靶，本票只冻结调用面，**#403 接上时不该再改签名**：
+ * **签名与参数形状由 #397（N13）定死，函数体随 #403（N19）落地**——#403 只
+ * 换函数体，签名一字未动：
  *
  *   - 形参只有 `cid`（派遣对象，原作调用前的全局 A——@GOHOUBI_REQUEST
  *     在 :685 设 `A = SELECT`、:689 清回 0）。原作的定义是零参
@@ -103,17 +119,33 @@ async function gohoubi_after_koujo(cid, choice) {
  *   - 奖赏种类不入参：K 侧实现一律读 `CFLAG:cid:504`（0-9），调用方
  *     （ere/system/stronghold/gohoubi-request.js）写的就是它。
  *
- * 函数体是存根：口上未接入时打一行占位（同分发族的其余待办——缺席的
- * per-角色实现仍按 TRYCALL 落空静默，这里缺席的是**包装层**本身）。
+ * #403 落的体：SWAP/TARGET = A → GET_KOJO_NUM → 分发守卫
+ * → TRYCALLFORM GOHOUBI_REQUEST_KOUJO_K{LOCAL - 100}（:461）→ SWAP 还原。
+ *
+ * **族内实参 = `[cid]`**：K 侧签名逐条核过（#403）——K1/K5/K6/K7 的
+ * handler 直接取用 cid（K7 的 `chara_callname(cid)` 与 `CFLAG:cid:504`
+ * 没有回落），其余 `(rand)` 签名的实现一律 `void rand`、改读
+ * `era_flag.target`（本入口已置好），所以 cid 恒作首参安全。
+ *
+ * 缺席语义 = 占位行：无性格编号（键 -1）或该性格未注册 handler 时打存根，
+ * 与原分发层同款（存根可见，登记在 docs/stub-registry.md）——名册未全落地
+ * 时的债务由占位行显形，不静默吞掉。
  *
  * @param {number} cid 派遣对象（原作全局 A）
  * @returns {Promise<number>} 0（调用方不读）
  */
 async function gohoubi_request_koujo(cid) {
-  // 形参 cid 是冻结的调用面（#403 的实现要读 CFLAG:cid:504）——占位期不打它，
-  // 但保留形参名与位置，用 void 明确「有意未用」
-  void cid;
-  stub_line('GOHOUBI_REQUEST_KOUJO', '奖赏请求口上', '随口上票 #403');
+  const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
+  era_flag.target = cid; // TARGET = A
+  await try_kojo_or_stub(
+    gohoubi_request_koujo_family,
+    'GOHOUBI_REQUEST_KOUJO',
+    '奖赏请求口上',
+    '随口上票',
+    cid,
+    [cid],
+  );
+  era_flag.target = target_pool; // SWAP 还原（:450-463 段）
   return 0;
 }
 
@@ -128,7 +160,7 @@ async function osioski_koujo(cid, choice) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
   const local = get_kojo_num(cid);
-  if ((local >= 100 && local < 140) || local > 1000) {
+  if (in_kojo_window(local)) {
     await osioski_koujo_family.call(local - 100, {
       whenMissing: 0,
       args: [cid, choice],
