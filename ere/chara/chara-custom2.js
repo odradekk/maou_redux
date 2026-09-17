@@ -10,8 +10,8 @@
  * 调用面：本文件内部的 @CHAR_CUSTOM 由同票的 ere/chara/chara-custom.js
  * （@CHAR_CREATE 尾段 `CALL CHAR_CUSTOM, A, ARG`）调用；外观页与外观分发在
  * ere/chara/chara-custom3.js；@CHAR_CUSTOM_TALENT_DEAL 尾段的
- * `TRYCALL CHAR_BUST_REGENERATE_WAPPED` 打向 chara-body2（未移植，见下方
- * STUBBED_CALLS）。
+ * `TRYCALL CHAR_BUST_REGENERATE_WAPPED` 打向 chara-body2 的
+ * `char_bust_regenerate_wapped`（#406 落真身）。
  *
  * 移植说明（有意偏离，均注明依据）：
  *
@@ -46,9 +46,10 @@
  *     `RAND:3`、:80 的 `RAND:6`、:751 的 `RAND:2` 三处。
  *   - **`EX_FLAG:4444` 与 `MONEY`**：`era_exflag.legit_money`（非作弊资金）
  *     与 `era_flag.money`；两者同步扣款是原作写法（:96-97）。
- *   - **`CHAR_BUST_REGENERATE_WAPPED` 仍是存根**（源 :174 的 TRYCALL）：
- *     真身在 CHARA_BODY2.ERB（未被任何移植票认领，#385 只落 CHARA_BODY 的
- *     五个函数）。见 STUBBED_CALLS 与 docs/stub-registry.md。
+ *   - **`CHAR_BUST_REGENERATE_WAPPED` 落真身（#406）**：源 :174 的
+ *     `TRYCALL`，真身在 `ere/chara/chara-body.js` 的
+ *     `char_bust_regenerate_wapped`（对应 CHARA_BODY2.ERB:2-14），随
+ *     `rand` 形参一并从 `char_custom_talent_deal` 传入。
  */
 
 'use strict';
@@ -56,7 +57,10 @@
 const era = require('#/era-electron');
 const { cm_base, cm_kind, cm_cloth, cm_ns_exp } = require('#/chara/chara-make');
 const { random_self_call } = require('#/chara/chara-self-call');
-const { char_body_generate_wapped } = require('#/chara/chara-body');
+const {
+  char_body_generate_wapped,
+  char_bust_regenerate_wapped,
+} = require('#/chara/chara-body');
 const {
   char_custom_look_page,
   char_custom_look_deal,
@@ -68,18 +72,16 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  *
- * `CHAR_BUST_REGENERATE_WAPPED`（源 :174 的 TRYCALL）：真身在
- * キャラ関数/CHARA_BODY2.ERB:2，尚无移植票（#385 只落 CHARA_BODY 的另外
- * 五个函数）。TRYCALL 的语义是「函数不存在就什么也不做」（#7），故这里的
- * 占位行是**有意的行为等价物**，不是把待办项转嫁给别处——登记在清单里备查。
+ * 现在是空的：`CHAR_BUST_REGENERATE_WAPPED`（源 :174 的 TRYCALL）已在
+ * #406 落真身（`ere/chara/chara-body.js` 的 `char_bust_regenerate_wapped`），
+ * 不再需要占位。
  */
-const STUBBED_CALLS = ['CHAR_BUST_REGENERATE_WAPPED'];
+const STUBBED_CALLS = [];
 
 const default_rand = (n) => Math.floor(Math.random() * n);
 
@@ -378,9 +380,11 @@ function custom_conflict_check(arg, cid) {
  *
  * @param {number} l_tal 素质下标（源 L_TAL）
  * @param {number} cid 角色 ID（源里是 TARGET）
+ * @param {(n: number) => number} [rand] 源 :174 `CHAR_BUST_REGENERATE_WAPPED`
+ *   内部 `CHAR_BUST_GENERATE`/`CHAR_BODY_GENERATE_WAPPED` 用到的随机源
  * @returns {number} 0 = 已处理；-1 = 下标越界（源 :158-160）
  */
-function char_custom_talent_deal(l_tal, cid) {
+function char_custom_talent_deal(l_tal, cid, rand = default_rand) {
   if (!(l_tal >= 0 && l_tal <= 500)) {
     return -1; // :158-160
   }
@@ -395,7 +399,7 @@ function char_custom_talent_deal(l_tal, cid) {
       set_talent(cid, index, 0); // :168-172（顺序照源：109/110/114/119/116）
     }
     set_talent(cid, l_tal, bust); // :173
-    stub_line('CHAR_BUST_REGENERATE_WAPPED', '胸围重掷', '随身体票'); // :174 TRYCALL
+    char_bust_regenerate_wapped(cid, rand); // :174 TRYCALL，本票落真身
   }
 
   // :176-189 口上唯一：性格组内只留一个
@@ -1122,7 +1126,7 @@ async function char_custom(cid, mode, rand = default_rand) {
       // :128-142 分发：素质页走 DEAL + 重算价格，外观页走 LOOK_DEAL
       let dealt;
       if (page >= 0 && page <= TALENT_PAGE_LAST) {
-        dealt = char_custom_talent_deal(result, cid); // :129
+        dealt = char_custom_talent_deal(result, cid, rand); // :129
         price = chara_cost(cid); // :1-153 每次素质变更检查价格
       } else {
         dealt = char_custom_look_deal(result, cid); // :139

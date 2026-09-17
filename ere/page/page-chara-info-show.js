@@ -32,9 +32,12 @@
  *     cid，重新开始等价于原地重画）；
  *   - 序号世界改角色 ID 世界（项目通例）：名单循环遍历
  *     `era.getAddedCharacters()`，打印与接受的都是角色 ID；
- *   - `CALL SHOW_PERSONAL_INFO(ARG)`（:305，CASE 4）的真身在
- *     `キャラ関数/CHARA_INFO ver1.0.1.ERB`，属 #391 的范围、尚未落地——
- *     本文件只留一行登记在册的占位（docs/stub-registry.md）。
+ *   - `CALL SHOW_PERSONAL_INFO(ARG)`（:305，CASE 4）全库无定义——不是
+ *     「未移植」，是原作 `SELECTCASE ARG:1` 的这一支结构性不可达（全库没有
+ *     任何调用点传 `ARG:1 == 4`；`CHARA_INFO ver1.0.1.ERB:948-949` 的翻页
+ *     逻辑把 `NO_SUB_PAGE` 钳在 ≤3）。已按 #14 判死不实现，本文件保留这
+ *     一行占位是 1:1 追溯（`page-chara-info.js:690` 的 `case 102` 同样把
+ *     `sub_page` 钳在 <3，两处互相印证）。
  */
 
 const era = require('#/era-electron');
@@ -456,8 +459,13 @@ async function show_chara_info(
         era.print('※ 润滑与欲情每10000积蓄一点；【威压感】需要调教致死三人');
         break;
       case 4:
-        // :304-306 自我介绍页（@SHOW_PERSONAL_INFO 属 CHARA_INFO ver1.0.1.ERB）
-        stub_line('SHOW_PERSONAL_INFO', '自我介绍式的角色信息', '随 #391');
+        // :304-306 自我介绍页——@SHOW_PERSONAL_INFO 全库无定义，原作结构性
+        // 不可达（#14 判死，文件头有完整证据链），占位保留只为 1:1 追溯
+        stub_line(
+          'SHOW_PERSONAL_INFO',
+          '自我介绍式的角色信息',
+          '#14 判死不实现',
+        );
         era.drawLine();
         break;
       default:

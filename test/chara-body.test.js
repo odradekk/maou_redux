@@ -5,7 +5,8 @@
  *       @CHAR_AGE_GENERATE（:148-242）、@RACE_AGE_GENERATE（:245-337）、
  *       @HUMAN_AGE_GENERATE（:340-406）
  *     target/ERB/キャラ関数/CHARA_BODY2.ERB  @NORMAL_POINT_PICKUP（:306-323，
- *       CHAR_AGE_GENERATE 的取点步骤，随本票落地）
+ *       CHAR_AGE_GENERATE 的取点步骤，随本票落地）、
+ *       @CHAR_BUST_REGENERATE_WAPPED（:2-14，issue #406 落地）
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点），经模块公开导出
  * 直驱。随机源一律显式注入确定序列（#344：漏给会落到真随机，用例只在部分
@@ -742,4 +743,104 @@ test('CUP_SIZE：TALENT:308（下胸围修正）进 UNDER_BUST 的百分比', ()
   fixture.store.set('talent:5:308', 1000);
   fixture.store.set('cflag:5:455', 705 + 100);
   assert.equal(cup_size(5), 'A');
+});
+
+// —— @CHAR_BUST_REGENERATE_WAPPED（CHARA_BODY2.ERB:2-14，issue #406）——
+
+test('CHAR_BUST_REGENERATE_WAPPED：FLAG:5 位 15 关闭时整体不动', () => {
+  const fixture = create_era_fixture();
+  seed_race_table(fixture);
+  fixture.store.set('flag:5', 1 << 12); // 只开位 12（显示年龄），位 15 关
+  fixture.store.set('cflag:21:451', 22);
+  fixture.store.set('cflag:21:453', 160);
+  const { char_bust_regenerate_wapped } =
+    fixture.load_module('chara/chara-body');
+
+  char_bust_regenerate_wapped(21, always);
+
+  assert.equal(fixture.store.get('cflag:21:455'), undefined, ':4-5 直接返回');
+});
+
+test('CHAR_BUST_REGENERATE_WAPPED：缺年龄或身高时转发全身重生成（对照组核对接线）', () => {
+  const fixture = create_era_fixture();
+  seed_race_table(fixture);
+  fixture.store.set('flag:5', 1 << 15);
+  fixture.store.set('talent:21:314', 0);
+  // CFLAG:451/453 都未设 → 落 :7-8 的 !age||!height 分支
+  const { char_bust_regenerate_wapped } =
+    fixture.load_module('chara/chara-body');
+  char_bust_regenerate_wapped(21, seq([7]));
+
+  // 对照组：同一种子下直接调 char_size_generate（同 CHAR_BODY_GENERATE_
+  // WAPPED 那条测试的写法），此处只核对接线，不重算三围数值
+  const control = create_era_fixture();
+  seed_race_table(control);
+  control.store.set('talent:21:314', 0);
+  const expected = control
+    .load_module('chara/chara-body')
+    .char_size_generate(21, 0, 0, seq([7]));
+
+  assert.deepEqual(
+    body_cflags(fixture, 21),
+    expected,
+    ':7-8 缺年龄或身高转发全身重生成',
+  );
+});
+
+test('CHAR_BUST_REGENERATE_WAPPED：只缺身高（年龄仍在）也转发全身重生成', () => {
+  // 单独钉「任一缺失」而非「两者都缺」：char_body_generate_wapped 内部
+  // 自行按村娘素质/默认值 0 重算年龄，不读 CFLAG:451，所以即使这里先写了
+  // 年龄，落盘结果仍等于「年龄从 0 起算」的对照组——`!age || !height`
+  // 改成 `!age && !height` 时，年龄非零会让判据整体转假，落进另一条分支
+  // （只重算胸围），两条分支的落盘形状不同，能把这处判据的两侧分开
+  const fixture = create_era_fixture();
+  seed_race_table(fixture);
+  fixture.store.set('flag:5', 1 << 15);
+  fixture.store.set('talent:21:314', 0);
+  fixture.store.set('cflag:21:451', 22); // 年龄仍在，只缺身高（:453 未设）
+  const { char_bust_regenerate_wapped } =
+    fixture.load_module('chara/chara-body');
+  char_bust_regenerate_wapped(21, seq([7]));
+
+  const control = create_era_fixture();
+  seed_race_table(control);
+  control.store.set('talent:21:314', 0);
+  const expected = control
+    .load_module('chara/chara-body')
+    .char_size_generate(21, 0, 0, seq([7]));
+
+  assert.deepEqual(
+    body_cflags(fixture, 21),
+    expected,
+    ':7-8 只缺身高也要转发全身重生成',
+  );
+});
+
+test('CHAR_BUST_REGENERATE_WAPPED：年龄与身高都在时只重算胸围，不碰 458/459', () => {
+  const fixture = create_era_fixture();
+  seed_race_table(fixture);
+  fixture.store.set('flag:5', 1 << 15);
+  fixture.store.set('cflag:21:451', 22); // 年龄
+  fixture.store.set('cflag:21:453', 160); // 身高
+  fixture.store.set('cflag:21:458', 999); // 哨兵：胸围差不该被这条路径动
+  fixture.store.set('cflag:21:459', 888); // 哨兵：下胸围同上
+  const { char_bust_regenerate_wapped } =
+    fixture.load_module('chara/chara-body');
+
+  char_bust_regenerate_wapped(21, seq([7]));
+
+  // 对照组：同一种子下直接调 char_bust_generate（:10 CFLAG:451/453*100）
+  const control = create_era_fixture();
+  seed_race_table(control);
+  const [expected_bust] = control
+    .load_module('chara/chara-body')
+    .char_bust_generate(21, 22, 16000, seq([7]));
+
+  assert.equal(
+    fixture.store.get('cflag:21:455'),
+    Math.trunc(expected_bust / 100),
+    ':11 CFLAG:455 = RESULT:0/100',
+  );
+  assert.equal(fixture.store.get('cflag:21:458'), 999, '不写胸围差');
+  assert.equal(fixture.store.get('cflag:21:459'), 888, '不写下胸围');
 });

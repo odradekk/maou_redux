@@ -29,6 +29,16 @@ function setup(cid = 1) {
   return fixture;
 }
 
+/**
+ * 依次吐出给定值的确定随机源（序列耗尽后回落 0，同 chara-body.test.js）。
+ * @param {number[]} values
+ * @returns {(n: number) => number}
+ */
+function seq(values) {
+  const queue = [...values];
+  return () => (queue.length > 0 ? queue.shift() : 0);
+}
+
 /** 全部按钮（按出现顺序） */
 function buttons(fixture) {
   return fixture.lines
@@ -346,8 +356,11 @@ test('TALENT_DEAL：取反——已设的取消、未设的设上', () => {
   assert.equal(fixture.store.get('talent:1:10'), 1);
 });
 
-test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1）', () => {
+test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1），并重掷三围（#406）', () => {
   const fixture = setup();
+  fixture.store.set('flag:5', 1 << 15); // 显示三围开关，重掷才会真的落盘
+  fixture.store.set('cflag:1:451', 22); // 年龄
+  fixture.store.set('cflag:1:453', 160); // 身高
   // 四档非选中项都先设上：只把选中项设为 1 的话，「漏清某一档」的改动看不见
   // ——没设过的档本来就是 0，断言恒真
   // （注：五档在 CONFLICT_PAIRS 里两两互斥，组内清空与互斥检查重叠，
@@ -357,7 +370,7 @@ test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1）', () => {
   }
   fixture.store.set('talent:1:117', 1); // 组外哨兵（治愈），不该被动
   const { char_custom_talent_deal } = load(fixture);
-  char_custom_talent_deal(114, 1);
+  char_custom_talent_deal(114, 1, seq([7]));
 
   assert.equal(fixture.store.get('talent:1:114'), 1);
   for (const index of [109, 110, 116, 119]) {
@@ -368,19 +381,32 @@ test('TALENT_DEAL：胸围五档互斥，选中项保留原值（1）', () => {
     );
   }
   assert.equal(fixture.store.get('talent:1:117'), 1, '胸围组外的 117 不动');
-  assert.ok(
-    texts(fixture).some((t) => t.includes('CHAR_BUST_REGENERATE_WAPPED')),
-    '胸围重掷打占位行（TRYCALL 的真身未移植）',
+
+  // 对照组：同一种子、同一 talent 状态（重掷发生在互斥赋值之后，此时
+  // talent:1:114 已经是 1）下直接调 char_bust_generate 核对接线（#406）
+  const control = create_era_fixture();
+  control.store.set('talent:1:114', 1);
+  const [expected_bust] = control
+    .load_module('chara/chara-body')
+    .char_bust_generate(1, 22, 16000, seq([7]));
+  assert.equal(
+    fixture.store.get('cflag:1:455'),
+    Math.trunc(expected_bust / 100),
+    '胸围重掷落 CFLAG:455（#406 落真身，取代旧的占位断言）',
   );
 });
 
 test('TALENT_DEAL：胸围组外的素质不触发重掷', () => {
   const fixture = setup();
+  fixture.store.set('flag:5', 1 << 15);
+  fixture.store.set('cflag:1:451', 22);
+  fixture.store.set('cflag:1:453', 160);
   const { char_custom_talent_deal } = load(fixture);
   char_custom_talent_deal(50, 1);
-  assert.deepEqual(
-    texts(fixture).filter((t) => t.includes('CHAR_BUST_REGENERATE_WAPPED')),
-    [],
+  assert.equal(
+    fixture.store.get('cflag:1:455'),
+    undefined,
+    '非胸围组不触发重掷，CFLAG:455 不写',
   );
 });
 
