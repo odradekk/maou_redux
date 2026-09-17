@@ -7,10 +7,7 @@
 'use strict';
 
 const era = require('#/era-electron');
-const {
-  grotesque_koujo_family,
-  kojo_handler_id,
-} = require('#/kojo/kojo-system');
+const { grotesque_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -129,14 +126,8 @@ async function grotesque(cid, rand_n = default_rand) {
   era_flag.target = cid;
   apply_prestige(cid);
   game.event.猎奇处刑口上 = result;
-  const kojo_id = kojo_handler_id(cid);
-  if (kojo_id >= 0) {
-    const kojo_arg = kojo_id === 0 ? result : rand_n;
-    await grotesque_koujo_family.call(kojo_id, {
-      whenMissing: 0,
-      args: [kojo_arg],
-    });
-  }
+  // EVENT_K.ERB:417-427 的 @GROTESQUE_KOUJO（#403 收口到分发入口）
+  await grotesque_koujo(cid, result, rand_n);
   // GROTESQUE_KOUJO 可改写 TFLAG:530；原作在 CALL 后读取。
   result = game.event.猎奇处刑口上;
 

@@ -102,7 +102,7 @@ test('K902 失声：EX 编号分发到 902，21 个源分发点均无真身与�
     ['PUBLIC_EXUCUTION_KOUJO', kojo.public_exucution_koujo_family],
     ['GROTESQUE_KOUJO', kojo.grotesque_koujo_family],
     ['ENTERENEMY_KOUJO', kojo.enterenemy_koujo_family],
-    ['GOHOUBI_REQUEST_KOUJO', kojo.gohoubi_request_koujo_family],
+    ['GOHOUBI_REQUEST_KOUJO', after.gohoubi_request_koujo_family],
     ['GOHOUBI_AFTER_KOUJO', after.gohoubi_after_koujo_family],
     ['OSIOKI_KOUJO', after.osioski_koujo_family],
     ['GOBI_KOUJO', kojo.gobi_koujo_family],

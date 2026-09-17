@@ -19,10 +19,7 @@ const {
   she,
 } = require('#/event/event-execution-common');
 const { search_family } = require('#/chara/chara-family');
-const {
-  banishment_koujo_family,
-  kojo_handler_id,
-} = require('#/kojo/kojo-system');
+const { banishment_koujo } = require('#/kojo/kojo-system');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -633,14 +630,8 @@ async function banishment(cid, rand_n = default_rand) {
 
   apply_prestige(cid);
   game.event.流放口上 = result;
-  const kojo_id = kojo_handler_id(cid);
-  if (kojo_id >= 0) {
-    const kojo_arg = kojo_id === 0 ? result : rand_n;
-    await banishment_koujo_family.call(kojo_id, {
-      whenMissing: 0,
-      args: [kojo_arg],
-    });
-  }
+  // EVENT_K.ERB:387-397 的 @BANISHMENT_KOUJO（#403 收口到分发入口）
+  await banishment_koujo(cid, result, rand_n);
   // BANISHMENT_KOUJO 可改写 TFLAG:510；原作在 CALL 后才按该值分支。
   result = game.event.流放口上;
 

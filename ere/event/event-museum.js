@@ -9,7 +9,7 @@
 const era = require('#/era-electron');
 const { name_reset } = require('#/chara/char-make');
 const { search_family } = require('#/chara/chara-family');
-const { kojo_handler_id, museum_koujo_family } = require('#/kojo/kojo-system');
+const { museum_koujo } = require('#/kojo/kojo-system');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { equip_get } = require('#/system/equip/equip-lookup');
 const { video_maturo } = require('#/system/stronghold/sell-video');
@@ -91,15 +91,8 @@ async function museum(a, rand_n = default_rand) {
     era.print('威望值减少');
   }
   game.event.博物馆口上 = result;
-  const kojo_id = kojo_handler_id(a);
-  if (kojo_id >= 0) {
-    // K0 是早期落地的旧签名，直接收展品编号；其余处理器按现行契约收随机源。
-    const kojo_arg = kojo_id === 0 ? result : rand_n;
-    await museum_koujo_family.call(kojo_id, {
-      whenMissing: 0,
-      args: [kojo_arg],
-    });
-  }
+  // EVENT_K.ERB:372-382 的 @MUSEUM_KOUJO（#403 收口到分发入口）
+  await museum_koujo(a, result, rand_n);
 
   if (game.event.博物馆口上 === 0) {
     game.event.装饰品数 += 1;
