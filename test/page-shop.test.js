@@ -21,11 +21,12 @@
  *   5. 作用域外指令分支的壳：占位带原作调用名（派单核实事实 #7——不静默
  *      丢掉），含 110/111 守卫与 520-530 区间的 1:1；
  *   6. 存根清单核对（docs/stub-registry.md）；
- *   7. BOUGHT 的两个跳转（#396）：0-53 打道具商店占位并复位（#395 有意偏离，
- *      随 #399 收敛回 JUMP）、>= 54 画陷阱商店真身且主菜单一行不画（原作
- *      :29 的 JUMP 在 DRAW_MENU 之前）。店内的 997/998/999 三键与「购物态
- *      下其余输入 RETURN 0」在 test/shop-trap.test.js（同一张票的
- *      USERSHOP:50 一侧）。
+ *   7. BOUGHT 的两个跳转：#396 起 >= 54 画陷阱商店真身、#399 起 0-53 画
+ *      道具商店真身（page/page-item-shop.js），两支都整个接管本轮（原作
+ *      :27/:29 的 JUMP 在 DRAW_MENU 之前）。店内的 997/998/999 三键与
+ *      「购物态下其余输入 RETURN 0」在 test/shop-trap.test.js（同一张票的
+ *      USERSHOP:50 一侧）；购买流程（0-99 的输入分派）在同文件与
+ *      test/item-shop.test.js。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：作用域外的每个指令壳只抽查代表
  * （101/777/200/199/525 + 498/499 + 999 未逐个断言）——壳的
@@ -472,9 +473,9 @@ test('199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真
   assert.equal(fixture.store.get('flag:9'), 15, 'FLAG:9（税金）必须 += 5');
 });
 
-test('107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立即复位（#395 给 BOUGHT 落点）', async () => {
+test('107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 画真身道具商店并把状态留在店内（#399）', async () => {
   const fixture = create_shop_fixture();
-  fixture.set_inputs(107, 500); // 107 后主菜单仍正常重绘，需再按一个真实按钮才能继续
+  fixture.set_inputs(107, 999); // 107 进店；999 退出（回主菜单）
   const { run_shop } = fixture.load_module('page/page-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
 
@@ -482,16 +483,17 @@ test('107 购物：BOUGHT = 1，下一轮 @SHOW_SHOP 打道具商店存根后立
 
   const texts = history_texts(fixture);
   assert(
-    texts.some(
-      (line) =>
-        line.includes('@ITEM_SHOP') && !line.includes('@ITEM_SHOP_TRAP'),
-    ),
-    '107 后下一轮 @SHOW_SHOP 应打道具商店存根（BOUGHT < 54）',
+    texts.includes('黑市商人'),
+    '107 后下一轮 @SHOW_SHOP 应整屏画道具商店（page/page-item-shop.js）',
+  );
+  assert(
+    !texts.some((line) => line.includes('@ITEM_SHOP')),
+    '道具商店已是真身，不得再打存根占位',
   );
   assert.equal(
     era_flag.bought,
     -1,
-    '存根显示后必须立即复位，不留在购物态（否则下一轮会再打一次）',
+    '999 退出商店（usershop :44-46）；退出前状态留在店内、不每轮复位',
   );
 });
 
@@ -503,7 +505,7 @@ test('107 购物：BOUGHT >= 54 跳陷阱商店真身，主菜单一行不画（
   // BOUGHT >= 54 的分支判据（原作 :29 ELSEIF BOUGHT >= 54）。@EVENTSHOP
   // 会把 BOUGHT 重置为 -1（:20），所以要跳过它才能观测到这个分支
   era_flag.bought = 54;
-  fixture.set_inputs(500);
+  fixture.set_inputs(999); // 商店里的 [999] 退出（本屏只印 997/999 两枚按钮）
 
   await assert.rejects(
     () => run_shop({ skip_eventshop: true }),
@@ -514,41 +516,39 @@ test('107 购物：BOUGHT >= 54 跳陷阱商店真身，主菜单一行不画（
     texts.includes('《可以购买在地下城里布置的陷阱》'),
     'BOUGHT >= 54 应画陷阱商店（page/page-shop-trap.js）',
   );
-  // 原作 :29 的 JUMP 在 :38 CALL DRAW_MAINMENU 之前——整个接管本轮
+  // 原作 :29 的 JUMP 在 :38 CALL DRAW_MAINMENU 之前——整个接管本轮。
+  // 行史里的第一枚按钮是陷阱商店的 [997]（主菜单若在同轮画过，496 会排在
+  // 它前面），且主菜单整轮只重绘一次（999 退出之后那一次）
   assert.equal(
-    fixture.lines_history.filter((line) => line.type === 'button').length,
-    0,
-    '陷阱商店不画主菜单（一枚按钮都不该有）',
+    fixture.lines_history.find((line) => line.type === 'button').accelerator,
+    997,
+    '先画的是商店按钮（本轮不画主菜单）',
   );
+  assert.equal(rounds_drawn(fixture), 1, '主菜单只在退出后画一次');
   assert.equal(
     era_flag.bought,
-    54,
-    '购物态不复位：退出商店是 [999]（usershop :44-46）的职责，不是每轮复位',
+    -1,
+    '999 退出商店（usershop :44-46）——购物态不每轮复位',
   );
 });
 
-test('show_shop：BOUGHT == 0 边界仍在 >= 0 之内，打道具商店存根（非 > 0）', async () => {
+test('show_shop：BOUGHT == 0 边界仍在 >= 0 之内，画道具商店（非 > 0）', async () => {
   const fixture = create_shop_fixture();
   const { run_shop } = fixture.load_module('page/page-shop');
   const era_flag = fixture.load_module('era-utils/era-flag');
   // 原作 :25 IF BOUGHT >= 0（闭区间下界），0 与 1 同属「已购物」——只探
   // 0 这个边界点，>= 0 误写成 > 0 时它是唯一会漏判的输入
   era_flag.bought = 0;
-  fixture.set_inputs(500);
+  fixture.set_inputs(999);
 
   await assert.rejects(
     () => run_shop({ skip_eventshop: true }),
     /预置输入已耗尽/,
   );
-  const texts = history_texts(fixture);
   assert(
-    texts.some(
-      (line) =>
-        line.includes('@ITEM_SHOP') && !line.includes('@ITEM_SHOP_TRAP'),
-    ),
-    'BOUGHT == 0 应打道具商店存根（>= 0 下界含 0）',
+    history_texts(fixture).includes('黑市商人'),
+    'BOUGHT == 0 应画道具商店（>= 0 下界含 0）',
   );
-  assert.equal(era_flag.bought, -1);
 });
 
 test('200/300：真身存读档界面（#136 接通，占位移除）', async () => {
@@ -775,12 +775,10 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     '批量处刑',
     'INTERCEPT',
     'ABILITY_UP',
-    'ITEM_SHOP',
     'TAILOR_MAIN',
     'CONFIG',
     'LABO',
     'SHOW_FLOOR',
-    'MONSTER_SHOP',
     'DEBUG_MENU_U',
   ]);
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
@@ -822,4 +820,70 @@ test('A 的判据两半都算数：被占用的奴隶（CFLAG:x:1 != 0）不计�
     ),
     '未占用的奴隶应让 A > 0',
   );
+});
+
+test('120 召唤：CHARANUM < MAX_CHARANUM 时进真身怪物商店（#399 接通）', async () => {
+  const fixture = create_shop_fixture();
+  fixture.set_inputs(120, 999); // 进商店 → 入口菜单处退出
+  const { run_shop } = fixture.load_module('page/page-shop');
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+  const texts = history_texts(fixture);
+  assert(
+    texts.includes('[1]召唤魔物从者'),
+    '120 应进 page/page-monster-shop.js 的入口菜单',
+  );
+  assert(
+    !texts.some((line) => line.includes('@MONSTER_SHOP')),
+    '怪物商店已是真身，不得再打存根占位',
+  );
+});
+
+test('120 召唤：满员（CHARANUM >= MAX_CHARANUM = 90）时只提示「奴隶太多了！」', async () => {
+  const fixture = create_shop_fixture();
+  // 90 个角色（含魔王）：模拟满员。无预设的 addCharacter 不加人，故逐个 seed
+  for (let cid = 0; cid < 90; cid += 1) {
+    fixture.seed_chara(cid, { id: cid, name: `角色${cid}` });
+    fixture.era.addCharacter(cid);
+  }
+  await fixture.load_module('page/page-shop').usershop(120);
+  const texts = history_texts(fixture);
+  assert(texts.includes('奴隶太多了！'));
+  assert(!texts.includes('[1]召唤魔物从者'), '满员不得进商店');
+});
+
+test('店内输入的购买分派端点：99 进购买流程（販売アイテム数 = 100 的最后一个），100 不进', async () => {
+  // 99/100 是引擎规则「店内输入 0-99 一律进购买流程」的两个端点。本作能上架的
+  // 编号里，道具店到 56、陷阱店到 91，再往上就是怪物商店的 201+（那条链不走
+  // 本分派），故 99 在真实流程里点不亮——两条都用直调分派 + 手工点亮的方式把
+  // 规则端点钉住：常量改成 99 或 101 时，这一条必红（幅度类条目 M8887 的
+  // 100→10 拦得住，但拦不住端点）
+  {
+    const fixture = create_shop_fixture();
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.bought = 0; // 在道具商店里
+    era_flag.money = 1000;
+    fixture.store.set('itemsales:99', 1); // 手工点亮端点（真实在售表到 91）
+    fixture.store.set('itemname:99', '末号道具');
+    fixture.store.set('itemprice:99', 100);
+    fixture.set_inputs(1); // 复数支的数量选择（99 >= 60 且 != 90）
+    const { usershop } = fixture.load_module('page/page-shop');
+    await usershop(99);
+    assert.equal(fixture.store.get('item:99'), 1, '99 进购买流程：先给货');
+    assert.equal(era_flag.money, 900, '99 进购买流程：先扣钱');
+    assert.equal(era_flag.bought, 99, 'BOUGHT = 选中编号');
+  }
+  {
+    const fixture = create_shop_fixture();
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.bought = 0;
+    era_flag.money = 1000;
+    fixture.store.set('itemsales:100', 1); // 即便点亮也不该被买走
+    fixture.store.set('itemname:100', '规则外道具');
+    fixture.store.set('itemprice:100', 100);
+    const { usershop } = fixture.load_module('page/page-shop');
+    await usershop(100);
+    assert.equal(fixture.store.get('item:100') ?? 0, 0, '100 不进购买流程');
+    assert.equal(era_flag.money, 1000, '钱不动');
+    assert.equal(era_flag.bought, 0, 'BOUGHT 不动');
+  }
 });

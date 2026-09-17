@@ -65,25 +65,34 @@ const REPO = path.resolve(__dirname, '..');
 // saveload 两份共 -2）；matched 不变——该调用点本就没有可见输出可对齐，
 // 只是不再计入「待实现」。下面七组数字是 rebase 后 --sample 逐份重测的
 // 实测值。
+// #399 推进：道具商店与怪物商店落真身（ere/page/page-item-shop.js /
+// page-monster-shop.js / page-chara-shop.js），BOUGHT 0-53 支的占位行消失。
+// 同时**补上了回放播种的一个缺口**：seed_scope_b 此前不播 BOUGHT，era.get
+// 读回 undefined → 0，而 0 在 @SHOW_SHOP 的判据里是「正在道具商店里」——
+// #395 的占位支（画一行就复位）把这个缺口盖住了，真身落地后它会把整屏画成
+// 商店（本票实测 mainmenu-natural 匹配 48 → 28、未解释 13）。播种补
+// `era_flag.bought = -1`（真实存档里 @EVENTSHOP:20 每轮进店恒置 -1）后
+// 七份样本各 -1 存根（那句占位行不再出现，与之配对的 stub 归因条目一并
+// 消失），matched 与 unexplained 不动。下面七组是重测的实测值。
 const BASELINE = {
-  'mainmenu-natural': { matched: 48, version: 2, stub: 65, unexplained: 0 },
-  'mainmenu-max': { matched: 70, version: 2, stub: 78, unexplained: 0 },
+  'mainmenu-natural': { matched: 48, version: 2, stub: 64, unexplained: 0 },
+  'mainmenu-max': { matched: 70, version: 2, stub: 77, unexplained: 0 },
   // saveload 两份自 #228 起 150/213：diff.js 的 menu 集合比对改「相等
   // token 先配」（同号槽位条目在两侧次序受重绘影响，按下标配对会把同形
   // 条目错开成伪 change 对——存读档槽位组正撞此形，+4 匹配 / −8 存根）。
   // 补偿该假差异的 <TS> 备注错位归因规则随之无消费者，与配对修正一并
   // 拆除（rules.js 原位留注、M305 删——删前删后四数逐数不变、
   // unexplained 仍 0，验收反馈一）
-  'saveload-natural': { matched: 206, version: 2, stub: 150, unexplained: 0 },
-  'saveload-max': { matched: 209, version: 2, stub: 144, unexplained: 0 },
+  'saveload-natural': { matched: 206, version: 2, stub: 149, unexplained: 0 },
+  'saveload-max': { matched: 209, version: 2, stub: 143, unexplained: 0 },
   // #401（N17）推进：回合结束链的十个存根换真身后，日循环样本里
   // @IN_VAGINA_ALL / @CONCEPTION_CHECK_ALL（各 4 处）、@AUTO_BUYING 与
   // @DEBUG_CHECK（各 2 处）的占位行消失，真身自己又带回若干占位（它们调用的
   // 下游仍是存根），净减 7：natural 190 → 183、max 230 → 223。matched 不变
   // （这些占位行本就不产生 matched），unexplained 仍 0。数字为合并态实测
   // （并上含 #389/#397 的 master 之后），由派单人重测写回。
-  'daycycle-natural': { matched: 71, version: 2, stub: 183, unexplained: 0 },
-  'daycycle-max': { matched: 71, version: 2, stub: 223, unexplained: 0 },
+  'daycycle-natural': { matched: 71, version: 2, stub: 182, unexplained: 0 },
+  'daycycle-max': { matched: 71, version: 2, stub: 222, unexplained: 0 },
   // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
   // #384 推进（rebase 到 #419 之后重测）：CN_REBUILD 从存根落真身
   // （ere/chara/chara-name.js；改名后按姓名重建称呼，**无输出**），出售段
@@ -103,7 +112,7 @@ const BASELINE = {
   // 标记 * 未接入、切换按钮与角色行的 PR #53 按钮化形态差，两侧各一条）；
   // ③ 归一层认「整行只有线绘字符」的折行残段（sale-natural-log:178 的 `═`）。
   // 另六个样本的四数与基线逐字相同（返工实测），未改。
-  'sale-natural': { matched: 163, version: 2, stub: 131, unexplained: 0 },
+  'sale-natural': { matched: 163, version: 2, stub: 130, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {

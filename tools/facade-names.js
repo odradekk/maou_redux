@@ -615,6 +615,12 @@ const cflag = {
   //   属主 chara（ownership/cflag-ownership.yml "450-459"，与 451/452 同段）
   454: named_tail('体重', src(SRC_FLAG, ':364 CFLAG:454 = 体重')),
   455: named_tail('胸围', src(SRC_FLAG, ':365 CFLAG:455 = B')),
+  // #399：异界勇者召唤的成交标记（@CHARA_SIM_SHOP :123-124 的唯一一次写，
+  //   属主 stronghold——ownership/cflag-ownership.yml "999"；全库无读者）
+  999: named(
+    '异界召唤标记',
+    src(SRC_ERB, '/SHOP/SHOP_CHARA.ERB:123-124 成交后置 1，仅此一处写'),
+  ),
 };
 
 // —— FLAG：一维按域重切（ownership 82 个下标）——

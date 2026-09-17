@@ -338,7 +338,6 @@ export const ERB_EXEMPT = {
     '208-216',
     '222-223',
     '226-227',
-    '229',
   ],
   'ere/page/page-title.js': [
     '2',

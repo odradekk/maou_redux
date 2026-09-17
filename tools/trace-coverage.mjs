@@ -124,7 +124,13 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 51; // 合并态实测（#398 并上含 #390 的 master）：
+export const PENDING_BASELINE = 49; // 合并态实测（#399 并上含 #398 的 master）：
+// 51（master）− 2（本票的 SHOP/SHOP_ITEM.ERB 与 SHOP/SHOP_MONSTER.ERB）= 49，
+// 与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+//
+// #399（N15）单独的说明：SHOP_CHARA.ERB 此前已是部分移植、不在待移植的分子里，
+// 本票把它补完后转已移植而不减待移植数——三个商店只减 2，不是 3。
+// export const PENDING_BASELINE = 51; // 合并态实测（#398 并上含 #390 的 master）：
 // #398（N14）把 SHOP/SHOP_LABO ver1.0.2.ERB 整份摆进 ere/
 // （ere/page/page-shop-labo.js，52 函数），它从「待移植」直接转「已移植」：
 // 52（master）− 1 = 51，与 `node tools/trace-check.mjs --coverage` 的重测一致。
