@@ -95,7 +95,7 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
   const texts = text_lines(fixture);
   // 名字：#384 起 CHARA_NAME_DEFINE 是真身，随机勇者（NO 1-16）的名字由
   // 命名链**覆盖**预设名（原作同：预设名只服务特殊角色 0/17-40）。夹具里
-  // 没有固定名表（charanamelistkeys 为空），故落到兜底名「佳奈美」。
+  // 没有固定名表（namelistkeys 为空），故落到兜底名「佳奈美」。
   assert(
     texts.includes('勇者佳奈美开始了地下城的攻略！'),
     '演出行：勇者 + 名字（callname:-1 承载，已由命名链改写）+ 开始攻略',

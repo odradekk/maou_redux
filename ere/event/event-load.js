@@ -15,7 +15,7 @@
  *   - :761 LOADGLOBAL——ere 引擎行为（global 表在内存、读档不动它），
  *     不镜像（page-title.js 同款结论）；
  *   - :764 CALL CHARA_NAME_INIT——真身在 chara-name-list.js（#388）：数据已在
- *     yml/CharaNameList.yml，读档后调用是空操作，仅保留调用点可检索；
+ *     yml/NameList.yml，读档后调用是空操作，仅保留调用点可检索；
  *   - :766 CALL EX_TALENTNAME_INIT——非存档的 EX 素质名表初始化，真身在
  *     chara-ex.js；读档后重放，重复调用按原作守卫早退；
  *   - :768-772 LASTLOAD_NO == 999 → CALL MAOUNET + BEGIN SHOP、

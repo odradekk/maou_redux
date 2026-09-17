@@ -13,10 +13,21 @@
 # 再按下方两条规则处理，最终按 id 升序写出。
 #
 # 一维表，无 extendedCharaTables 登记（TrainCommand.yml 同款先例）。读法：
-# era.get(`charanamelistname:${nid}`)（表名取自文件名小写 charanamelist，
+# era.get(`namelistname:${nid}`)（表名取自文件名小写 namelist，
 # 引擎按「id ↔ 名字」双向映射一维表装载——`${表}name:${id}` 是取 name 字段的
 # 通用读法，见 yml/TrainCommand.yml 的 traincommandname 先例）；查表函数是
 # ere/chara/chara-name-list.js 的 get_fixed_chara_name(nid)。
+#
+# **文件名不许以 chara 开头（issue #435）。** 引擎 eraStart 用一条写死的
+# 正则 /chara[^/]+\.yml/（json/csv 同款）把「文件名 chara 开头 + 任意非斜杠
+# 字符 + 扩展名」的文件划进逐角色数据桶（不要求后面是数字 id），一个文件只走
+# 「逐角色」或「普通表」两条路径之一。本表逐行是 (id, 名字)，被划进逐角色桶
+# 后引擎拿「名字」当表名去查 staticData，查不到就 this.error('角色数据表不存在:
+# <名字>!')——3,336 行名字几乎全中，开一局刷几千条不消失的错误通知；同时
+# staticData.namelist 根本不会被建立，查表恒 undefined。本文件原名
+# CharaNameList.yml 正是这么撞上的（#388 建表，载荷合理、名字踩雷；改名由
+# #435 处理，表名与读取键一并改）。改名前先核对 test/chara-name-list.test.js
+# 的「文件名分类」用例——它拿引擎自己的 staticFormatRegex 逐文件过一遍。
 #
 # 原作数据问题（源文件本身有 2 处同一 id 被赋值两次、值不同；Emuera 逐行
 # 执行，后一次赋值生效，取源文件里最后一次赋值的值）：

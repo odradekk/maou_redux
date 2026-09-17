@@ -101,8 +101,14 @@
 # 或纯解析路径，无 engine-bundle 门控。
 # #349（L18 家族关系）：chara-family 的扩展角色表建桶、寻址与存档往返 +1。
 # #388（N4 名字表）：chara-name-list.test.js 的四个引擎门控用例（
-# CharaNameList.yml 装载零告警零重号、三种范围各取一例读名字、未注册 id
-# 裸三段寻址崩溃、charanamelistkeys 与 valid_ids() 同源）——PR #410 合并时
+# 名字表装载零告警零重号、三种范围各取一例读名字、未注册 id
+# 裸三段寻址崩溃、namelistkeys 与 valid_ids() 同源）——PR #410 合并时
 # 漏抬基线，master 的 engineless job 自 #410 起连红三次；本次迁移核对时按
 # 实测补上。算式：73（既有）+ 4（chara-name-list 的 engine_test）= 77。
-77
+# #435（名字表文件名被引擎误判为逐角色数据）：+2（chara-name-list 新增的两个
+# 引擎门控用例——引擎自己的 staticFormatRegex 逐文件分类、引擎真解析 + 真
+# setVar 驱动生产模块查表），现为 79（5904 = 5825 过 + 79 跳过 + 0 挂，
+# ERE_ENGINE_ASAR=none 实测）。表名/读取键随改名同步
+# （CharaNameList.yml → NameList.yml、charanamelist* → namelist*），上面
+# #388 那行里的旧名按现状改回现名。
+79

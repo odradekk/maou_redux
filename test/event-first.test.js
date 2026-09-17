@@ -185,9 +185,9 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   assert(texts.includes('因为破坏封印时魔力的涌流，村女的衣服全都剥落了。'));
   // 囚禁播报读 callname:17:-1（引擎 addCharacter 写入的预设名）
   assert(texts.includes('村娘玛奥被囚禁在了地牢里'));
-  // :78 CALL CHARA_NAME_INIT 真的被调用（#388，只有读取 charanamelistkeys 才能证明，因为它无其它可观察副作用）
+  // :78 CALL CHARA_NAME_INIT 真的被调用（#388，只有读取 namelistkeys 才能证明，因为它无其它可观察副作用）
   assert(
-    fixture.var_reads.some((r) => r.name === 'charanamelistkeys'),
+    fixture.var_reads.some((r) => r.name === 'namelistkeys'),
     'EVENTFIRST 链必须真的调用了 chara_name_init',
   );
   for (const name of [

@@ -142,6 +142,24 @@ function load_engine_bundle() {
     );
   }
 
+  // 静态表文件分类（模块 84）：eraStart 拿 `staticFormatRegex[priority.indexOf(档)]`
+  // 判定一个文件是不是逐角色数据——文件名以 chara 开头、后跟任意非斜杠字符即
+  // 命中（不要求后面是数字 id），命中的文件只走逐角色分支、普通表分支不走。
+  // #388 建的 CharaNameList.yml 正是栽在这条上（#435），守护用例见
+  // test/chara-name-list.test.js 的「文件分类层」。数组与 priority 同序，
+  // 取用一律经 indexOf——别写死下标。
+  const { staticFormatPriority, staticFormatRegex } = wp(84);
+  if (
+    !Array.isArray(staticFormatPriority) ||
+    !Array.isArray(staticFormatRegex) ||
+    staticFormatRegex.length !== staticFormatPriority.length ||
+    !staticFormatRegex.every((regex) => regex instanceof RegExp)
+  ) {
+    throw new Error(
+      '引擎变了：app.asar 的模块 84 不再是 staticFormatPriority/staticFormatRegex 的形状——重新核读 test/helpers/engine-bundle.js 的模块号映射',
+    );
+  }
+
   cached_bundle = {
     /** 引擎静态表解析器（模块 677）：parseDataFile(文本, 'csv'|'yml', 表名) → 行数组 */
     parse_data_file: wp(677),
@@ -153,6 +171,10 @@ function load_engine_bundle() {
     era_api,
     /** 引擎变量寻址（模块 648）：setVar.call(this, varName, val, isAdd)，get 同路 */
     set_var: wp(648),
+    /** 静态数据格式优先级（模块 84）：['yml','json','csv']，与下一条同序 */
+    static_format_priority: staticFormatPriority,
+    /** 静态数据分类正则（模块 84，已过形状守卫）：eraStart 用它分逐角色/普通表 */
+    static_format_regex: staticFormatRegex,
   };
   return cached_bundle;
 }
