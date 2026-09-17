@@ -76,6 +76,10 @@ const { tax_get } = require('#/system/stronghold/tax');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { clothtype_text } = require('#/page/page-clothtype');
 const { pillory } = require('#/event/event-nextday-pillory');
+const {
+  in_vagina_m_to_t,
+  conception_check_m_to_t,
+} = require('#/event/event-pregnancy');
 const { incest } = require('#/system/train/incest');
 const { aftertrain_cloth, soiling_cloth_no1 } = require('#/system/train/cloth');
 const { curse_equip_ring } = require('#/system/equip/equip-curse');
@@ -91,8 +95,6 @@ const room_day_mod = require('#/dungeon/dungeon-room');
  * 核对固定）；名单变动必须同步清单。
  */
 const STUBBED_CALLS = [
-  'IN_VAGINA_M_TO_T',
-  'CONCEPTION_CHECK_M_TO_T',
   // 调用点在 ere/event/event-nextday-pillory.js（@PILLORY 体内），源在侵略域
   'CAMPAIGN_EXP_PILLORY',
   'SENGEN_VIDEO_DE',
@@ -637,10 +639,14 @@ async function offervirgin_check(rand = default_rand) {
   era.add(`juel:${cid}:9`, s * 1000); // :1006
 
   if (condom === 0) {
-    // :1010-1014 膣内射精チェック（跨边：#401 交付前保留占位）
+    // :1010-1014 膣内射精チェック。IN_VAGINA_M_TO_T/CONCEPTION_CHECK_M_TO_T
+    // 的真身早已随 event-pregnancy.js 的 PAIRS 通用表落地（'m_to_t' 那一档，
+    // 供 in_vagina_all/conception_check_all 复用），只是这个调用点一直没接
+    // 上、留着占位——era_flag.target 此刻正是 cid（本函数开头 `const cid =
+    // era_flag.target`），两个函数按 TARGET 隐式取人，直接调用即可（#406）
     chara(cid).system.主人膣内射精 = 30; // :1011 CFLAG:101 = 30
-    stub_line('IN_VAGINA_M_TO_T', '主人对目标的膣内射精检查');
-    stub_line('CONCEPTION_CHECK_M_TO_T', '主人对目标的受胎检查');
+    in_vagina_m_to_t(rand);
+    conception_check_m_to_t(rand);
   }
   condom = 0; // :1015 TEQUIP:35 = 0
 

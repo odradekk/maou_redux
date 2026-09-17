@@ -361,6 +361,29 @@ export const FILES = [
           /SIF CAL_VAR <= 1\n	RESULTS:0 = -\nSIF CAL_VAR == 2\n	RESULTS:0 = AAA/,
         ],
       },
+      // —— @CHAR_BUST_REGENERATE_WAPPED（CHARA_BODY2.ERB:2-14，issue #406）——
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY2.ERB',
+        ref: '4-5',
+        any: [/SIF !GETBIT\(FLAG:5,15\)\n\tRETURN /],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY2.ERB',
+        ref: '7-8',
+        any: [
+          /IF !CFLAG:ARG:451 \|\| !CFLAG:ARG:453\n\tCALL CHAR_BODY_GENERATE_WAPPED,ARG/,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY2.ERB',
+        ref: '11',
+        any: [/CALL CHAR_BUST_GENERATE\(CFLAG:451, CFLAG:453 \*100\)/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_BODY2.ERB',
+        ref: '12',
+        any: [/CFLAG:455 = \(RESULT:0\)\/100/],
+      },
     ],
   },
   {

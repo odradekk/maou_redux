@@ -2236,9 +2236,12 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
   assert.equal(with_condom.store.get('item:24'), 1, '安全套 -1');
   const with_texts = with_condom.text_lines();
   assert(with_texts.includes('要使用安全套吗？'), '持有道具才问');
-  // 套上之后不走膣内射精链（原作 :1010 的 `IF TEQUIP:35 == 0`）
-  assert(
-    !with_texts.some((t) => t.includes('@IN_VAGINA_M_TO_T')),
+  // 套上之后不走膣内射精链（原作 :1010 的 `IF TEQUIP:35 == 0`）——
+  // 连 :1011 的 CFLAG:101 = 30 都在同一个 `if (condom === 0)` 分支里，
+  // 戴套时整段不执行，CFLAG:101 保持从未写过
+  assert.equal(
+    with_condom.store.get('cflag:31:101'),
+    undefined,
     '戴上安全套不得进入膣内射精链',
   );
 
@@ -2254,11 +2257,15 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
 
   const without_texts = without.text_lines();
   assert(!without_texts.includes('要使用安全套吗？'), '未持有安全套时不得询问');
-  assert(
-    without_texts.some((t) => t.includes('@IN_VAGINA_M_TO_T')),
-    '不戴套时要进膣内射精链（#401 交付前是占位行）',
+  // 不戴套时要进膣内射精链（真身随 #406 接线：event-pregnancy.js 的
+  // in_vagina_m_to_t/conception_check_m_to_t，'m_to_t' 那一档）——
+  // nakadashi_check 无论受孕系统开关与否，命中/未命中都会清池（除三处
+  // 提前返回，本例未触发），CFLAG:101 从 :1011 写入的 30 变回 0 即证据
+  assert.equal(
+    without.store.get('cflag:31:101'),
+    0,
+    '不戴套时膣内射精链真的跑了，清空了刚写入的精液池',
   );
-  assert.equal(without.store.get('cflag:31:101'), 30, 'CFLAG:101 = 30');
   assert.equal(without.store.get('cflag:31:40'), 0, '尾部清掉贞操带的位 64');
   assert.equal(without.store.get('cflag:31:49'), 0, '钥匙收回');
   assert.equal(without.store.get('cflag:31:42'), 0, '特别服装一并归零');
@@ -3239,9 +3246,6 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
   );
   // 名单本身固定（增删存根必须同步本测试与清单）
   assert.deepEqual(nextday_stubs, [
-    // #400（N16）落 #401（EVENT_PREGNANCY）的两张跨边：真身未交付，保留存根
-    'IN_VAGINA_M_TO_T',
-    'CONCEPTION_CHECK_M_TO_T',
     // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）；
     // #177 起 DUNGEON_ROOM_DAY 换真身（ere/dungeon/dungeon-room.js）；
     // #400（N16）起 APHRODISIAC_ADDICT / SABBATH / SABBATH_DAY / TAX_GET

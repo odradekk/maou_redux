@@ -193,6 +193,19 @@ function under_bust(cid, height) {
   return value;
 }
 
+/**
+ * 源: target/ERB/キャラ関数/CHARA_BODY2.ERB:123-301 @CHAR_BUST_GENERATE。
+ * 按年龄/胸系素质生成上胸围与胸围差（返回 [胸围, 下胸围, 胸围差]）。
+ * 导出理由：`char_size_generate` 与 `char_bust_regenerate_wapped` 都会
+ * 调用它，本身没有可观察副作用，导出后测试可用「对照组」核对接线
+ * （同 `char_body_generate_wapped` 的测试写法），不必手算三围数值。
+ *
+ * @param {number} cid 角色 ID
+ * @param {number} source_age 年龄（CHAR_AGE_GENERATE 或调用方直传）
+ * @param {number} height 身高（×100 精度）
+ * @param {(n: number) => number} rand RAND:N 随机源
+ * @returns {[number, number, number]} [胸围, 下胸围, 胸围差]（均 ×100 精度）
+ */
 function char_bust_generate(cid, source_age, height, rand) {
   const t = (index) => era.get(`talent:${cid}:${index}`) || 0;
   let age = source_age;
@@ -511,6 +524,35 @@ function char_body_generate_wapped(cid, rand = default_rand) {
 }
 
 /**
+ * 源: target/ERB/キャラ関数/CHARA_BODY2.ERB:2-14 @CHAR_BUST_REGENERATE_WAPPED
+ *
+ * 角色定制里切换胸围类素质（绝壁/贫乳/巨乳/爆乳/超乳）后重掷三围。
+ * FLAG:5 位 15（显示三围开关）关闭时整体不动（:4-5）；CFLAG:451（年龄）或
+ * CFLAG:453（身高）任一缺失时退化为全身重生成（:7-8）；否则只重算胸围、
+ * 只写 CFLAG:455，不碰 458/459（下方 :11/:12 两行）——**不要**改用 `char_size_generate`
+ * 的 mode=1 分支代替：那条分支额外做了四项素质加成（t(100)&&t(110)、
+ * t(99)、exp:60、t(130)&&t(119)，见 CHAR_SIZE_GENERATE:445-460），源码原
+ * 文里 `CHAR_BUST_REGENERATE_WAPPED` 没有这些，两者不等价。
+ *
+ * @param {number} cid 角色 ID（ARG）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
+ */
+function char_bust_regenerate_wapped(cid, rand = default_rand) {
+  const settings = era.get('flag:5') || 0;
+  if (((settings >> 15) & 1) === 0) return; // :4-5
+
+  const age = era.get(`cflag:${cid}:451`) || 0;
+  const height = era.get(`cflag:${cid}:453`) || 0;
+  if (!age || !height) {
+    char_body_generate_wapped(cid, rand); // :7-8
+    return;
+  }
+
+  const [bust] = char_bust_generate(cid, age, height * 100, rand); // :11
+  era.set(`cflag:${cid}:455`, int(bust / 100)); // :12
+}
+
+/**
  * @CHAR_SIZE_GENERATE：生成身高、体重、胸围、腰围与臀围。
  * @param {number} cid 角色 ID
  * @param {number} [source_age=0] 人类换算年龄；0 表示委托年龄生成
@@ -662,6 +704,8 @@ module.exports = {
   STUBBED_CALLS,
   char_age_generate,
   char_body_generate_wapped,
+  char_bust_generate,
+  char_bust_regenerate_wapped,
   char_size_generate,
   cup_size,
   human_age_generate,
