@@ -105,7 +105,7 @@ create_agent{
 # 返回 agentId、status（"running" 就是起来了）、currentModeId——不必再判 TUI 是否就绪
 
 # 3. 标记：Paseo 没有 issue 元数据的概念，GitHub 侧的认领在 §1 已做过
-rename_workspace{workspaceId: "<上一步的 workspaceId>", name: "T<N> <标题>"}   # 方便在 Paseo 里认出这个工作区
+rename_workspace{workspaceId: "<上一步的 workspaceId>", title: "T<N> <标题>"}   # 方便在 Paseo 里认出这个工作区
 ```
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
