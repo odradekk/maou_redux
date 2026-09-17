@@ -59,6 +59,7 @@ const {
 } = require('#/page/page-chara-info');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const { secret_labo } = require('#/page/page-shop-labo');
 const { stub_line_wait } = require('#/utils/stub-line');
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
@@ -75,17 +76,17 @@ const MAX_CHARANUM = 90;
  * page-dungeon-info2.js），CHARA_INFO /
  * CHARA_INFO_INDIVIDUAL_WAPPED 自 #391 起为真身（101/498/499 分支，
  * page-chara-info.js），ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 的
- * 陷阱商店，page/page-shop-trap.js；#395 的运行时占位随之撤），ITEM_SHOP
- * 自 #399 起为真身（BOUGHT 0-53 的道具商店，page/page-item-shop.js；
- * #395 的运行时占位随之撤），MONSTER_SHOP 自 #399 起为真身（120 分支的
- * 召唤商店，page/page-monster-shop.js），均移出本名单。
+ * 陷阱商店，page/page-shop-trap.js；#395 的运行时占位随之撤），SECRET_LABO
+ * 自 #398 起为真身（110 分支，page/page-shop-labo.js），ITEM_SHOP 自 #399
+ * 起为真身（BOUGHT 0-53 的道具商店，page/page-item-shop.js；#395 的运行时
+ * 占位随之撤），MONSTER_SHOP 自 #399 起为真身（120 分支的召唤商店，
+ * page/page-monster-shop.js），均移出本名单。
  */
 const STUBBED_CALLS = [
   '批量处刑',
   'INTERCEPT',
   'ABILITY_UP',
   'TAILOR_MAIN',
-  'SECRET_LABO',
   'CONFIG',
   'LABO',
   'SHOW_FLOOR',
@@ -362,7 +363,8 @@ async function usershop(result) {
     // 实验室（:130-131）：守卫 TALENT:0:325 == 1（魔王的魔界知识，
     // DRAW_HAVEITEMS 的判定同源）。talent 表未落 yml/ 时读值 undefined →
     // || 0 → 守卫不成立（#38 落表后随初始素质生效）
-    await stub_line_wait('SECRET_LABO', '实验室', '随实验室票');
+    // #398 起真身：SHOP_LABO ver1.0.2.ERB 全 52 函数（page/page-shop-labo.js）
+    await secret_labo();
   } else if (
     result === 111 &&
     ((era.get('flag:83') || 0) !== 0 || (era.get('flag:84') || 0) !== 0)

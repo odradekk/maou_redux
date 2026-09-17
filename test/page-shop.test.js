@@ -665,7 +665,7 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
   // usershop 直调验证
   const off = await dispatch(110, 111);
   assert(
-    !history_texts(off).some((line) => line.includes('@SECRET_LABO')),
+    !history_texts(off).some((line) => line.includes('魔界的大门')),
     '守卫不成立不得进 110',
   );
   assert(
@@ -679,11 +679,13 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
   on.store.set('talent:0:325', 1); // 魔王的魔界知识
   on.store.set('flag:83', 3); // 肉便器数 > 0
   const { usershop } = on.load_module('page/page-shop');
+  // #398 起 110 分支是真身（page/page-shop-labo.js）：预置 999 让它当场退出
+  on.set_inputs(999, 999);
   await usershop(110);
   await usershop(111);
   assert(
-    history_texts(on).some((line) => line.includes('@SECRET_LABO')),
-    '守卫成立应进 110',
+    history_texts(on).some((line) => line.includes('魔界的大门')),
+    '守卫成立应进 110（实验室真身的首行）',
   );
   assert(
     history_texts(on).some((line) => line.includes('没有待机中的奴隶')),
@@ -774,7 +776,6 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'INTERCEPT',
     'ABILITY_UP',
     'TAILOR_MAIN',
-    'SECRET_LABO',
     'CONFIG',
     'LABO',
     'SHOW_FLOOR',

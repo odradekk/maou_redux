@@ -164,6 +164,51 @@ class CharaFacade {
   }
 
   /**
+   * 命名检查（cflag:cid:420 ↔ CFLAG:420）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行357 CFLAG:420 = 命名チェック(フラグON時はユーザー設定ネーム)
+   * @returns {number}
+   */
+  get 命名检查() {
+    return era.get(`cflag:${this.cid}:420`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 命名检查(v) {
+    era.set(`cflag:${this.cid}:420`, v);
+  }
+
+  /**
+   * 体重（cflag:cid:454 ↔ CFLAG:454）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行364 CFLAG:454 = 体重
+   * @returns {number}
+   */
+  get 体重() {
+    return era.get(`cflag:${this.cid}:454`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 体重(v) {
+    era.set(`cflag:${this.cid}:454`, v);
+  }
+
+  /**
+   * 胸围（cflag:cid:455 ↔ CFLAG:455）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行365 CFLAG:455 = B
+   * @returns {number}
+   */
+  get 胸围() {
+    return era.get(`cflag:${this.cid}:455`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 胸围(v) {
+    era.set(`cflag:${this.cid}:455`, v);
+  }
+
+  /**
    * 结婚对象（cflag:cid:601 ↔ CFLAG:601）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行464 CFLAG:601 = 結婚相手
    * @returns {number}

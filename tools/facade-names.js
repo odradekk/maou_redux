@@ -595,6 +595,26 @@ const cflag = {
   //   "820"：chara 1 / event 1）；同一分支的 CFLAG:1（invasion）与 FLAG:80
   //   （event）也一并改走门面
   820: named_tail('寿命', src(SRC_FLAG, ':499 CFLAG:820 = 影の寿命')),
+  // #398（N14 SHOP_LABO）：处女膜再生済（SHOP_LABO ver1.0.2.ERB:1603 写
+  //   `CFLAG:T:71 += 1`；消费点 EVENT_NEXTDAY.ERB:844 与 SHOP_TAILOR.ERB:104
+  //   都按「再生过就不能再复原」，两处已走本访问器）——属主 stronghold
+  //   （ownership/cflag-ownership.yml "70-71"），落 chara-stronghold.js
+  71: named_tail('处女膜已再生', src(SRC_FLAG, ':310 CFLAG:71 = 処女膜再生済')),
+  // #398（N14 SHOP_LABO）：命名检查（SYSTEM ver1.0.3.ERB:110 与
+  //   CHARA_CUSTOM ver1.0.1.ERB:127 之外，本票 SUMMON_SLAVE:4298 也写它）——
+  //   属主 chara（ownership/cflag-ownership.yml "420"）
+  420: named_tail(
+    '命名检查',
+    src(
+      SRC_FLAG,
+      ':357 CFLAG:420 = 命名チェック(フラグON時はユーザー設定ネーム)',
+    ),
+  ),
+  // #398（N14 SHOP_LABO）：身体生成的体重与胸围（CHAR_BODY.ERB:33-34 同款，
+  //   本票 MODIFY_BUSTUP:387-388 等三处按 CHAR_SIZE_GENERATE 的返回值回写）——
+  //   属主 chara（ownership/cflag-ownership.yml "450-459"，与 451/452 同段）
+  454: named_tail('体重', src(SRC_FLAG, ':364 CFLAG:454 = 体重')),
+  455: named_tail('胸围', src(SRC_FLAG, ':365 CFLAG:455 = B')),
   // #399：异界勇者召唤的成交标记（@CHARA_SIM_SHOP :123-124 的唯一一次写，
   //   属主 stronghold——ownership/cflag-ownership.yml "999"；全库无读者）
   999: named(
@@ -856,6 +876,10 @@ const cstr = {
     '录像标题',
     erb('售卻相關/SELL_VIDEO.ERB', ':1072 CSTR:6 = %LOCALS%'),
   ),
+  // 自由局部调教的项目名（#398 SHOP_LABO ver1.0.2.ERB:4132 的
+  // `CSTR:LOCAL:7 = %RESULTS%`；调教侧按它显示自由指令）。属主 stronghold
+  // （ownership/cstr-ownership.yml "6-7"，与 6 同段）
+  7: named_tail('自由调教内容', src(SRC_FLAG, ':11 CSTR:7 = フリー調教箇所')),
 };
 
 // —— DELTA：UP/DOWN 的 ere 等价物（移植自建，#90）——
