@@ -52,7 +52,10 @@ const ALIASED = new Map([
   ['deltabase', 'base'],
 ]);
 // 二段寻址或另有落点，不吃 staticData[表]：flag/global 走各自 case；
-// callname/relation/no 是受保护内置；itemsales 走 item 分支；
+// callname/relation/no 是受保护内置；itemsales / itemprice 走 item 分支
+// （引擎寻址层 `a.startsWith("item")` 一支：`switch (safeUndefinedCheck(
+// staticData.item.name[u], u), a.substring(4))` 的 "price" 落 data.item.price
+// ——SHOP_LABO 的转生门槛读它，#398 实测 app.asar 模块 183 后登记）；
 // *name 是「取名字」的读法，查的是被去掉后缀的那张表；chara 是 case 2
 // 的内置只读预设对象（era.get(`chara:${id}`) → this.staticData.chara[id]，
 // #383 CSVCSTR 等价物的读法），三段 chara:x:y 在引擎里没有对应分支、
@@ -63,6 +66,7 @@ const NOT_THREE_PART = new Set([
   'callname',
   'relation',
   'itemsales',
+  'itemprice',
   'no',
   'chara',
 ]);

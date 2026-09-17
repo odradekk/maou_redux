@@ -104,6 +104,21 @@ class StrongholdFacade {
   }
 
   /**
+   * 处女膜已再生（cflag:cid:71 ↔ CFLAG:71）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行310 CFLAG:71 = 処女膜再生済
+   * @returns {number}
+   */
+  get 处女膜已再生() {
+    return era.get(`cflag:${this.cid}:71`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 处女膜已再生(v) {
+    era.set(`cflag:${this.cid}:71`, v);
+  }
+
+  /**
    * 录像价值（cflag:cid:493 ↔ CFLAG:493）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:493 評価
    * @returns {number}
@@ -207,6 +222,21 @@ class StrongholdFacade {
    */
   set 录像标题(v) {
     era.set(`cstr:${this.cid}:6`, v);
+  }
+
+  /**
+   * 自由调教内容（cstr:cid:7 ↔ CSTR:7）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行11 CSTR:7 = フリー調教箇所
+   * @returns {string}
+   */
+  get 自由调教内容() {
+    return era.get(`cstr:${this.cid}:7`) || '';
+  }
+  /**
+   * @param {string} v
+   */
+  set 自由调教内容(v) {
+    era.set(`cstr:${this.cid}:7`, v);
   }
 
   // —— base ——
