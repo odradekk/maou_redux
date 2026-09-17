@@ -1,6 +1,6 @@
 # 工单流程 SOP
 
-一张工单 = 一个 Orca worktree = 一个 `pi` 会话，全程用 `orca` CLI 驱动。
+一张工单 = 一个 Paseo worktree 工作区 = 一个 agent 会话，全程用 Paseo MCP 工具（或等价 CLI）驱动。
 
 工单在 GitHub Issues（`odradekk/maou_redux`），命令约定见 `issue-tracker.md`；移植决议的索引见地图 issue #1（只读）。
 
@@ -8,29 +8,26 @@
 
 ## 0. 环境前提
 
-先读这几条，否则后面每一步都会踩。
+先读这几条。
 
-- **本机（Fedora）用 `orca-ide`**，可执行文件在 `/opt/Orca/resources/bin/orca-ide`。PATH 上的裸 `orca` 是 Orca 自己装的转发脚本（`~/.config/orca/linux-orca-cli-shim/orca`，`exec` 到同一个文件），两个名字等效——但**文档里一律写 `orca-ide`**，因为裸 `orca` 在没装这个脚本的 Linux 机器上是 GNOME 屏幕阅读器。动手前 `orca-ide status --json` 确认 app 在跑，agent 驱动的调用一律带 `--json`。
-- **`worktree create` 的失败返回多半是假失败**——见过两种形态：`runtime_unavailable`，以及只有一个 `"ok": false` 不带错因（**本项目实测 17 次派发里出现 16 次，每次 worktree 都已在服务端建成**；阶段 3 后期连续四张票全是假失败）。连接断了而已。**重试前必须先 `orca worktree list --json` 看一眼**，等 50 秒足够它出现；否则会像实测那样一口气建出 `-2`、`-3` 三个重复 worktree，还得再删。
-  - **`terminal list` 里通常有不止一个 handle**：setup 钩子跑 `npm install` 的那个也在。**别挑错**——setup 那个的 `terminal read` 里是 `setup-runner.sh` 与 `npm audit` 的收尾输出。§3 的派法自己建终端并拿到 handle，不用猜。
-- **worktree 选择器一律用 `issue:<票号>`。** 派单场景下票号本来就有，不必先查 list，也绕开下面两个坑：
-  - **`name:` 认的是 `displayName`，而它未必等于你传的 `--name`**：`--name t119-s7-kyoten` 实际落成 `odradekk/t119-s7-kyoten`，于是 `name:t119-s7-kyoten` 报错、`name:odradekk/t119-s7-kyoten` 才对。
-  - **`path:` 只认 `worktree list` 返回的那个串本身。** 本机上它是普通 POSIX 路径（`worktree list --json` 的 `path` 字段直接可用），照抄即可——WSL 时代的 UNC 形式（`\\wsl.localhost\…`）已随迁移消失，别再照旧文档避坑。
-  - 同一棵树上 `issue:`、`branch:`、`path:` 三种实测都通；`worktree list --json` 的条目**没有 `name` 字段**，照它写解析脚本会取到空。
-- **`--issue <N>` 不保证写上关联**：实测建出来的 worktree `linkedIssue` 仍是 `null`。卡片上看不到关联不代表 worktree 建错了，别据此重建。
-- **仓库里的 `orca.yaml` 钩子不会执行**（`commandSourcePolicy` 是 `local-only`，实测带 `--run-hooks` 删 worktree 时仓库脚本一行没跑）。所以钩子配在 Orca 的 **Settings → Repository → Hooks**，CLI 无法写这个字段。**本机的 `npm install` 钩子已配好**，新 worktree 建成即可直接 `npx eslint` / `npx prettier`，无须 `npm ci`。配没配上用 `orca-ide repo list --json` 核对 `hookSettings.scripts.setup`。
-- 由此可知：**worktree 删除时没有任何自动归档**。worktree 里 gitignored 的本地产物（`sav/*.sav`、`ere.config.json`）删了就没了，要留下的东西，删之前必须已经推走。
-- `.worktreeinclude` 会把基座的 `ere.config.json` 复制进每个新 worktree（已实测生效）。**基座那份必须是 `"static": "yml"`**（或干脆不存在，引擎会按默认重建），否则每个新 worktree 一开就是坏的。
+- **daemon 是桌面版自管的**：`paseo daemon status --json` 确认在跑（本机 `desktopManaged: true`，监听 `127.0.0.1:6767`）。**派单会话本身就是 Paseo 注入 MCP 工具的 agent**，优先用 MCP 工具（`create_workspace` / `create_agent` / `list_agents` / `get_agent_status` / `archive_workspace` 等），不必走 CLI——返回结构化 JSON，不受 PATH、终端解析影响。
+- **CLI 不在 PATH 上**：可执行文件在 `/opt/Paseo/resources/bin/paseo`。只在 MCP 没有对应物时才用它——目前只有 `paseo wait <agent-id> --timeout <秒>`（阻塞等一个 agent 跑完，比自己写轮询稳）。子命令随版本变，`paseo --help` / `paseo <cmd> --help` 现查，别凭记忆写。
+- **worktree 归 Paseo 全权管理**，建与删各一步：
+  - 建：`create_workspace{isolation:"worktree", mode:"branch-off", branchName, baseBranch:"origin/master", worktreeSlug}`，返回 `workspaceId` 与 `cwd`（worktree 实际路径）。
+  - 删：`archive_workspace{workspaceId}`——**同时**跑 `paseo.json` 里的 `teardown`、删工作区目录、**归档这个工作区下的全部 agent**、清掉 git 层面的 worktree 注册（已实测 `git worktree list` 事后不再出现该条目）。「删 worktree 前先关终端，否则留下指向已删目录的终端」那类坑（#344）随之消失——不再是两步，是一步。
+- **`baseBranch` 写 `origin/master`，不写 `master`**：Paseo 后台异步 fetch 远端引用，`origin/master` 总是新的；本地 `master` 是你上次 pull 到的那份。「建树前先 pull 基座」这一步因此不再必需，但基座仍要定期 pull（见 §6）。
+- **`paseo.json` 放仓库根，进 git**（不再是 Orca Settings 里配的、CLI 写不了的钩子字段）。`worktree.setup` 现在是 `npm ci`。**Paseo 读的是目标分支已提交的版本，工作目录里的未提交改动不生效**——改 `paseo.json` 要先提交才有效。已实测：`create_workspace` 返回后 `node_modules` 已经就位。
+- **不再复制 `ere.config.json` 进新 worktree**（原来靠 Orca 的 `.worktreeinclude`，随迁移一并移除）。引擎缺这个文件时默认无 `system.static` 键，从 `yml/` 起步——这本来就是正确状态；旧文档记的那个坑（基座那份一旦写着 `"static": "csv"` 就会传染给每一棵新树）随复制机制一起消失。
+- **信任模式（mode）是 `create_agent` 的一等参数**，不必再固定带某个「批准」开关：实施票用免确认档（codebuddy 的 `fullAccess`、claude 系的 `bypassPermissions`、codex 的 `full-access`），研究与审查类只读票用带确认的默认档（`auto`/`default`）。各 provider 的档位名不同，`list_profiles` / `inspect_provider` 现查。
+- **权限弹框不再靠读终端猜**：`list_pending_permissions` 直接列出所有 agent 的待批权限请求，非空才需要人管；`respond_to_permission{agentId, requestId, response}` 放行或拒绝。本次迁移的模拟验证（Worker、Researcher 各跑一轮真实任务）全程为空，判据可信。
 
 ### 只有一个 checkout
 
-|          | 路径                                | Orca 仓库 id                           |
-| -------- | ----------------------------------- | -------------------------------------- |
-| **基座** | `/home/odradek/Projects/maou_redux` | `b4d96f17-9de0-431d-b167-1c7e08b08c3a` |
+|          | 路径                                | Paseo 项目 id          |
+| -------- | ----------------------------------- | ---------------------- |
+| **基座** | `/home/odradek/Projects/maou_redux` | `prj_f402eb2ec666bbdd` |
 
-**所有 agent worktree 从它建，引擎手工验收也在它上面做。** WSL 时代的「Windows 盘一份、WSL 一份」分裂已随迁移取消——引擎在 Linux 上直接跑得起来（见 AGENTS.md「运行与调试」），没有再留第二份的理由。
-
-`displayName` 是 `maou_redux`，本机唯一，但**派发仍写 `--repo id:`**：名字将来撞了不会报错，只会建错地方。
+**所有 agent worktree 从它建，引擎手工验收也在它上面做。** 派单会话本身运行在基座目录里，`create_workspace` 省略 `path` 时默认取当前目录，本来就是对的；跨目录派单才需要显式 `path`。项目 id 用于 `paseo project ls` 一类的交叉核对，不是 `create_workspace` 的必填参数。
 
 ## 1. 选票与认领
 
@@ -58,10 +55,10 @@ gh api repos/odradekk/maou_redux/actions/runs/<id>/jobs \
 
 CI 红期间 master 的绿红没有信息量，这比红本身危险：真回归也看不出来。**本地补信号要补到 §5.6 的阶段闸那一档**（不是每票的 T3）——CI 平时替我们跑的是无引擎那半边，它一停就没有别的执行点了（全量变异本来就在阶段闸上，见下表 T4）。engineless 那半边要在裸克隆里跑并显式 `ERE_ENGINE_ASAR=none`（回落会摸到 `~/.era-engine/` 的引擎）。
 
-同时最多 5 个工单。派新单前先数一遍在跑的（不含基座的 `master`）：
+同时最多 5 个工单。派新单前先数一遍在跑的（不含基座那个 local 工作区）：
 
 ```
-orca worktree ps --json
+list_agents{statuses: ["running", "idle"]}
 ```
 
 **建 worktree 的基线必须是当前 `master`，前置票没合并就别建。** 对无依赖的并行票同样成立：阶段 1 的 #115/#117/#118/#119 都提前建树，四张全部撞上 rebase，冲突面每次一样——就是 §5.5 表里那几处**全局计数字段与全局登记表**。顺序是「**验收 → 合并 → 再派下一张**」。
@@ -87,60 +84,50 @@ orca worktree ps --json
 ## 3. 建 worktree 并派 agent
 
 ```
-# 1. 建 worktree——不带 --agent（理由见下）
-#    失败返回先当假失败处理，见 §0；--repo 必须显式给基座的 id
-orca-ide worktree create --name t<N>-<slug> --no-parent --issue <N> \
-  --repo id:b4d96f17-9de0-431d-b167-1c7e08b08c3a --json
-orca-ide worktree list --json          # 无论上一步返回什么，都来这一下确认建成了（不必取 path，下面用 issue:）
+# 1. 建 worktree 工作区——用 origin/<默认分支> 而非本地分支名，理由见 §0
+create_workspace{
+  isolation: "worktree",
+  mode: "branch-off",
+  branchName: "t<N>-<slug>",
+  baseBranch: "origin/master",
+  worktreeSlug: "t<N>-<slug>"
+}
+# 返回 workspaceId、cwd。setup 钩子（npm ci）已跑完，node_modules 就位（§0 已实测）。
 
-# 2. 起 agent：自己建终端，命令行里带模型与思考强度
-orca terminal create --worktree "issue:<N>" --title AGENT \
-  --command "pi -a --model cpa/glm-5.3 --thinking max" --json
-#    handle 从这一步的 result.terminal.handle 直接拿，不用去 terminal list 里猜
+# 2. 起 agent：provider/model/mode 是一等参数，简报正文直接作为 initialPrompt
+create_agent{
+  title: "T<N> <标题>",
+  provider: "<按角色取 Agent profile，见下表>",
+  workspaceId: "<上一步的 workspaceId>",
+  settings: { modeId: "<信任模式，见 §0>", thinkingOptionId: "max" },
+  initialPrompt: "<简报正文，见下面的模板>"
+}
+# 返回 agentId、status（"running" 就是起来了）、currentModeId——不必再判 TUI 是否就绪
 
-# 3. 等就绪：terminal read 到 `✓ π² pi-square` 那行
-orca terminal read --terminal <handle> --json
-
-# 4. 送简报（单行指向文件，绝不多行）
-orca terminal send --terminal <handle> --text "请读 /tmp/brief-<N>.txt 这份工单简报，按其中要求执行。" --enter --json
-
-# 5. 标记（选择器一律 issue:，理由见 §0）
-orca worktree set --worktree "issue:<N>" --comment "<一句话>" --workspace-status in-progress --json
+# 3. 标记（GitHub 侧的状态仍手写，Paseo 不接管 issue 元数据）
+gh issue edit <N> --repo odradekk/maou_redux --add-label in-progress   # 按 issue-tracker.md 的约定
 ```
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
-- `--no-parent`：工单彼此独立。基线省略 `--base-branch`，用仓库默认 base（`origin/master`）。
-- **`--repo` 不能省。** 省略时 Orca 从当前目录推断，而派单会话未必在基座目录里；显式给 `id:` 是唯一不依赖当前目录的写法（id 见 §0 的表）。
+- `initialPrompt` 直接是简报正文本身，多行文本原样传入——不再需要 `/tmp/brief-<N>.txt` 中转文件。那套中转是绕 Orca「单行指令、换行会拉出命令菜单」的限制：`--prompt` 逐字符打进 TUI，每个换行都是一次回车，斜杠开头还会拉出命令菜单（实测二十多行的简报最后选中 `/exit`，agent 当场退出）。`create_agent` 的 `initialPrompt` 是一个 API 字段，不经过任何终端解析，这类风险不存在。
 
-**为什么不用 `--agent pi`：它只接一个固定的 TUI id，带不了参数**，于是模型只能落到 `~/.pi/agent/settings.json` 的默认值（当前是 `cpa/deepseek-v4-flash`——一个 flash 模型去啃两千行的移植票）。`terminal create --command` 收任意命令行，这是**唯一能指定模型的派法**，Orca 自己的注解也推荐它（「for a fresh agent in the current checkout」）。
+### provider / model 对照
 
-**模型与思考强度**：
+| 角色 | Agent profile | provider/model                       | mode（信任级别）    | 用途                                          |
+| ---- | ------------- | ------------------------------------ | ------------------- | --------------------------------------------- |
+| 实施 | Worker        | `codebuddy-code/deepseek-v4.1-flash` | `fullAccess`        | 按工单验收清单写代码与测试                    |
+| 审查 | Reviewer      | `pi/cpa/kimi-k3-256k`                | （pi 无 mode 概念） | 独立审查已有分支，只读                        |
+| 研究 | Researcher    | `codex/gpt-5.6-sol`                  | `auto`              | 读 `target/`/`dev-guides/` 回答设计问题，只读 |
 
-- `--model` 要写全 `provider/id`，**不吃通配**——`--model "*opus-5*"` 直接报 `Model not found`（glob 只在 `--models` 的 Ctrl+P 轮换列表里有效）。`--list-models` 看全集。
-- `--thinking` 七档：`off / minimal / low / medium / high / xhigh / max`。等价写法 `--model "cpa/glm-5.3:max"`。
-- 实施票默认 **`cpa/glm-5.3` + `max`**：J3/J4/J5 三张交付质量已验证过它。
-- `-a`（`--approve`）固定带上。信任是**按 worktree 路径逐个记**在 `~/.pi/agent/trust.json` 里的，新树首次起会问；弹出来而我们照常送简报，简报就落进那个对话框。
+派发前先 `list_profiles`，按角色取上表对应的 profile，把它的 `provider`/`model`/`modeId`/`thinkingOptionId` 原样填进 `create_agent`；没有合适 profile、或 profile 被人改过，才手写 provider 串（格式 `provider/model`，写全，不吃通配）。
 
-**技能来自 `~/.agents/skills/`**（`implement` / `tdd` / `code-review` / `research` 等三十来个），不是 `~/.pi/agent/skills/`——后者是空的，照它判会误以为 pi 没有 `/implement`。
+**Worker 现在的默认值还没有被真实工单验证过。** 冒烟测试（建 worktree → 改文件 → 跑 prettier → 提交）证明了交互链路稳——`fullAccess` 模式下全程没有卡确认框、提交信息标题正文俱全、`list_pending_permissions` 全程为空——但那是个几行改动的任务，没有测出 `deepseek-v4.1-flash` 处理两千行移植票的推理质量。**第一张在 Paseo 下真正派发的实施票，交付质量就是这条默认值的验收**；效果不够就把 Worker 换成 `pi/cpa/glm-5.3`（旧 Orca 流程下 J3/J4/J5 三张票验证过交付质量的组合，`--thinking max`）。
 
-**pi 起来了不等于能收简报。** `terminal wait --for tui-idle` 对 pi 会提前返回；实测三张票的简报都送空过——TUI 还在初始化，字节写进 PTY 但没人接。两条判据分开看：
-
-| 判什么     | 看什么                                |
-| ---------- | ------------------------------------- |
-| pi 起来了  | `terminal read` 里有 `✓ π² pi-square` |
-| 简报收到了 | 送完之后有 `Working...`               |
-
-`Packages:` **不能当就绪判据**——那行只在有包更新时才出现。没看到 `Working...` 就等 15 秒重发一次（重发无害，pi 不会把两条当两个任务）。
-
-**简报一律走「单行指令 + `/tmp/brief-<N>.txt`」**（worktree 终端是 WSL shell，`/tmp` 与派单会话共享）。一行 = 一次回车，没有菜单可选。`--prompt` 是逐字符打进 TUI 的，**每个换行都是一次回车**，斜杠开头还会拉出命令菜单——实测一份二十多行的简报最后选中 `/exit`，agent 当场退出，worktree 空跑一趟。
-
-**每一步都要 `terminal read` 验证，别信 `accepted: true`。** 那只证明字节写进了 PTY，不证明 agent 收到了、更不证明它还活着。
-
-**不要同时起两个。** 逐张派，前一张确认开工再派下一张。
+**技能来自 `~/.agents/skills/`**（`implement` / `tdd` / `code-review` / `research` 等三十来个），不是 `~/.pi/agent/skills/`——后者是空的。`initialPrompt` 首行写 `/implement` 加一个空格再接任务描述（research 票用 `/research`）能直接触发对应技能；写成「请用 /implement 技能……」只是在*请求*它调用，直接调用更稳。
 
 ### 简报模板
 
-简报写进 `/tmp/brief-<N>.txt`，**第一行是 `/implement` 加一个空格再接任务描述**（research 票用 `/research`）。斜杠命令后没有空格不会被识别为技能调用；写成「请用 /implement 技能……」只是在*请求*它调用，直接调用更稳。
+以下是 `initialPrompt` 正文的结构（首行 `/implement` 的约定见 §3）：
 
 ```
 /implement issue #<N>：<标题>
@@ -214,7 +201,7 @@ tools/mutation-check.mjs 的 ENGINE_SKIP_BASELINE，两处不一致 npm test 当
   合并与开 PR 由派单人做
 ```
 
-**派 codex 的票，判交付前先看提交，别看终端。** #332/#333 两张连续踩同三条：做完 50 分钟的活之后**停在「确认按此提交吗？」等输入**（此时分支零提交、工作区三十几个文件是脏的）；提交信息**只有标题一行**、无正文无票号；`test:related` **没跑或跑了没看**（#333 的 `test/dungeon-battle.test.js` 在选择面内，CI 一跑就红）。上面模板里那四条就是照这三次写的，别删。判据仍是 §4 那两条：`git log origin/master..HEAD` 有提交、`git status --short` 干净。
+**判交付前先看提交，别信 agent 自述完成。** 旧 Orca 流程下 #332/#333 两张连续踩过同三条：agent 做完活之后**停在「确认按此提交吗？」等输入**（此时分支零提交、工作区三十几个文件是脏的）；提交信息**只有标题一行**、无正文无票号；`test:related` **没跑或跑了没看**（#333 的 `test/dungeon-battle.test.js` 在选择面内，CI 一跑就红）。「卡在确认框」这类失败在 Paseo 的免确认档（`fullAccess`/`bypassPermissions`/`full-access`，见 §0）下已结构性消失——但提交信息潦草、自检没跑这两条是模型自身的执行纪律问题，跟编排层无关，上面模板里那四条就是照这三次写的，别删。判据仍是 §4 那两条：`git log origin/master..HEAD` 有提交、`git status --short` 干净。
 
 **简报里绝不要写 `gh issue view … --comments`。** 本机 `gh` 的 `issue view` 仍在 GraphQL 里请求已下线的 `repository.issue.projectCards`，**该命令必然失败**，只吐一行「Projects (classic) is being deprecated」——阶段 4 派头两张票时两个 agent 同时撞上，白烧一轮。模板里的 `--json` 形式是验证过的替代（正文与全部评论一次拿到）。`gh issue comment` / `edit` / `close` 不受影响。
 
@@ -239,24 +226,18 @@ grep -hoE "\bM[0-9]+\b" tools/mutations/*.mjs | sort -u -t M -k2 -n | tail -1
 ## 4. 监督
 
 ```
-orca terminal read --terminal <handle> --json
-orca terminal send --terminal <handle> --text "<追加指示>" --enter --json
-orca worktree set --worktree "issue:<N>" --comment "<一句话进展>" --workspace-status in-review --json
+get_agent_status{agentId}                              # status、currentModeId、待批权限一次看全
+get_agent_activity{agentId}                             # 最近做了什么，判断卡在哪一步
+send_agent_prompt{agentId, prompt: "<追加指示>", background: true}
 ```
 
-发消息前先 `read`（`--for tui-idle` 对 pi 不可靠，见 §3，别拿它当发送时机）。
-
-**句柄会悄悄失效，且不总是报错。** agent 改掉终端标题后句柄就换了一个，旧句柄
-`terminal read` 返回的是**空 tail（0 行）**，不是 `terminal_handle_stale`；此时
-`terminal send` 照样回 `ok: true`，消息落进虚空——本轮一条返工反馈就这么没送达，
-过了十几分钟才发现终端还停在上一轮。**`read` 回 0 行 = 句柄废了**，用
-`orca terminal list` 按 worktree 路径重取（标题已经不可靠），只用最新那个。
+发追加指示前先看一眼 `get_agent_activity`，别对着一个已经推进到下一步的 agent 重复下达。
 
 **你给的判断也会错，冲突时以源文为准。** agent 拿着源文回来反驳你的时候，先去核源文，不要因为「简报是我写的」就压过去。实测两次都是 agent 对：#222 我要求断言 `PREVCOM === 8` 并给了理由，源文 `COMF84:8` 写的是 `SELECTCOM = 84`，且 19 个高级 COM 文件皆然；#251 我把 `EX_FLAG` 写 / `EX_TALENT` 读判成缺陷，实际是口上模板的标准双变量结构（K3 与 K903 同构）。**发反馈时把这条明说**——否则 agent 会按错的判断去改测试，而那比不改更坏。
 
-**判交付看提交，不看终端。** 终端安静只说明 TUI 空闲了一瞬，agent 可能还在下一个工具调用里。判据是两条同时成立：`git -C <worktree> log origin/master..HEAD` 有提交，且 `git -C <worktree> status --short` 干净。实测有一次照终端状态判「完成」，那时分支上一个提交都还没有。**`status` 显示第二列干净、第一列是 `M ` 的，是「`git add` 了但没 `git commit`」**——阶段 5a 撞过两次，活都干完了、分支上什么都没有。
+**判交付看提交，不看 agent 状态。** `status: idle` 只说明它当前没有活跃工具调用，不代表工作完成——它可能还在等下一条指示。判据是两条同时成立：`git -C <worktree路径> log origin/master..HEAD` 有提交，且 `git -C <worktree路径> status --short` 干净。**`status` 显示第二列干净、第一列是 `M ` 的，是「`git add` 了但没 `git commit`」**——阶段 5a 撞过两次，活都干完了、分支上什么都没有。
 
-**两条判据都成立，也可能是在等输入。** codebuddy 的 `--dangerously-skip-permissions` 只免掉普通确认，HIGH/CRITICAL 仍每次弹框（`git checkout --`、`git worktree add` 一类都算）。弹框期间终端静止、上一轮的提交在、工作区干净——**两条判据同时成立，与交付完成长得一模一样**。#384 这么卡过两次，一次是顺手 `read` 才撞见，一次是被当成「完成」报上来的。分辨看 `terminal read` 的最后一行：末尾有 `esc to interrupt` 是在跑；出现 `1. Yes / 2. Yes, and don't ask again / 3. No` 的选项列表是在等人按键。答 `1` 放行；答 `3` 再送一条文字，说明改用别的做法。
+**两条判据都成立、但心里没底，查 `list_pending_permissions`。** 非空就是卡在权限弹框；`fullAccess`/`bypassPermissions`/`full-access` 三档全放行的模式下不会出现，只有用带确认的档（`default`/`auto`/`acceptEdits`）才会撞上。`respond_to_permission{agentId, requestId, response:{behavior:"allow"}}` 放行，或 `behavior:"deny"` 并附 `message` 改口。这条判据已实测：模拟验证两轮任务全程 `list_pending_permissions` 为空，且任务确实在推进——不再是旧 Orca 流程下「终端安静、有提交、工作区干净」三条都满足却仍可能是卡在 HIGH/CRITICAL 弹框（#384）的模糊地带。
 
 **返工反馈给标准，别给清单。** 点名「补这六处」，交付方就只补那六处，旁边同形状的地方原封不动：#346 首轮六个探针全漏，返工后那六处守得很好、同文件的另外三个函数仍零断言。点名单个文件同理会被理解成范围——#350 那轮我着重写了 `ntr.js`，它把 `ntr.js` 做到位（我另选两个从未点名的倍率，都拦下），其余四个文件没动。**给 §3 简报模板里那条覆盖面标准 ＋ 文件清单，不要强调其中任何一个**。
 
@@ -442,8 +423,7 @@ gh pr create --repo odradekk/maou_redux --base master --head <branch> --title "<
 gh pr merge <pr> --repo odradekk/maou_redux --merge --delete-branch
 git -C ~/Projects/maou_redux pull --prune --ff-only origin master   # 基座：下一张票的建树基线，也是引擎手工验收用的那份
 git -C ~/Projects/maou_redux branch -d <branch>                     # 本地分支，-d 会拒绝未合并的
-orca-ide worktree rm --worktree "issue:<N>" --force --json
-orca-ide terminal close --terminal <handle> --json                  # worktree 删了终端不会自己走
+archive_workspace{workspaceId: "<本票的 workspaceId>"}              # 一步删 worktree 目录、清 git 注册、归档该工作区下全部 agent
 gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、验证方式、有意的取舍、给后续票的提醒>"
 ```
 
@@ -459,8 +439,8 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
 
 - **改到 `.github/workflows/` 的分支要用 `env -u GITHUB_TOKEN` 推**：环境变量里那个 PAT 缺 `workflow` scope，remote 会直接拒收（`refusing to allow a Personal Access Token to create or update workflow`）；`~/.config/gh/hosts.yml` 里的细粒度 token 有。`gh pr create` / `gh pr merge` 同理。
 - **基座要 pull**（见 §0 的表）。漏掉它，下一张票就会从旧 master 建树，撞上 `merge-conflicts.md` 里那几处固定冲突面。
-- **删 worktree 前确认提交都已推送**：本机没有归档钩子，删了不可恢复。
-- **一张票要清六处，少一处就「看着还开着」。** 本仓库 `deleteBranchOnMerge` 是 false，所以远端分支要靠 `--delete-branch` 删；删掉之后两个 checkout 的跟踪引用**不会自己消失**，得 `--prune`。worktree 用 `git worktree remove` 删也行，但 orca 的**终端会话不跟着走**——#344 就是这么留下一个指向已删目录的终端，看起来像票没关完。合并后跑一遍复核：
+- **归档前确认提交都已推送**：`paseo.json` 目前没配 `teardown`，删了不可恢复。
+- **一张票要清五处，少一处就「看着还开着」。** 本仓库 `deleteBranchOnMerge` 是 false，所以远端分支要靠 `--delete-branch` 删；删掉之后两个 checkout 的跟踪引用**不会自己消失**，得 `--prune`。worktree 那一处现在是 `archive_workspace` 一步到位——旧 Orca 流程下「`git worktree remove` 删了，终端会话不跟着走」那个坑（#344）已经结构性消失（§0 已实测：归档同时清掉 git 层面的 worktree 注册与该工作区下的全部 agent）。合并后跑一遍复核：
 
   **prune 与远端删分支之间有竞态**：紧跟在 `gh pr merge --delete-branch` 后面的那次 `pull --prune` 常常抓不到（GitHub 还没删完），跟踪引用就留下了。所以复核放在最后，发现还在就再 `git fetch --prune origin` 一次。
 
@@ -470,10 +450,9 @@ gh issue comment <n> --repo odradekk/maou_redux --body "<决议：交付物、�
   git ls-remote --heads origin "odradekk/t<n>*"                          # 空
   git -C ~/Projects/maou_redux branch -a --list "*t<n>*"                 # 空
   git -C ~/Projects/maou_redux worktree list                             # 无本票
-  orca-ide terminal list --json                                          # 无本票标题
   ```
 
-- **CLI 写 `orca-ide`**（理由见 §0）。版本匹配的完整用法用 `orca-ide skills get orca-cli` 取，别凭记忆写子命令——命令面随 Orca 版本变，本文档里的写法只保证写下时可用。
+- **优先用 MCP 工具，CLI 可执行文件在 `/opt/Paseo/resources/bin/paseo`**（理由见 §0）。确实要用 CLI 时子命令用 `paseo --help` / `paseo <cmd> --help` 现查，别凭记忆写——命令面随 Paseo 版本变，本文档里的写法只保证写下时（0.8.0）可用。
 - **需要启动引擎的手工验收，在合并之后、在基座上做**：引擎【打开游戏】指向的是基座目录，worktree 的存档也不会保留。这一步只有人能做，agent 的职责是交出**可复现的置位步骤**（改哪几行、从哪个画面进、看哪几个点），做完回票补一条确认评论。
 
   临时置位那几行**绝不能提交**：验完 `git checkout -- <文件>` 撤回，`git status` 确认干净。置位常常会让某条「全量写入」类用例变红（`test/event-first.test.js` 的 `expected_init_writes` 就是），**那是预期的，不要去改测试**。

@@ -251,7 +251,7 @@ erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`�
 
 ### 工单流程
 
-派发、监督、验收、收尾一张工单的完整 SOP：orca CLI 命令、并发上限、派发简报模板。见 `docs/agents/ticket-sop.md`。
+派发、监督、验收、收尾一张工单的完整 SOP：Paseo MCP 工具与 CLI、并发上限、派发简报模板。见 `docs/agents/ticket-sop.md`。
 
 ### Issue 跟踪
 
