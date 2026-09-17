@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 95;
+export const COUNT = 101;
 
 export default [
   {
@@ -886,5 +886,67 @@ export default [
     test_name:
       '移植状态表：`cite` 标记的锚只验证正文，不构成移植证据（#382）——合成样本验证区分能力',
     must_mention: '只被 cite 标记引用的文件必须判待移植',
+  },
+  {
+    desc: 'M9301 扫描面塌掉一整块（ere/kojo/ 不再进完整性扫描——工具仍全绿，只有「两侧引用数同量级」判据拦得住，#431）',
+    file: 'tools/trace-check.mjs',
+    find: "for (const rel of list_js_files('ere')) {",
+    replace:
+      "for (const rel of list_js_files('ere').filter((r) => !r.includes('/kojo/'))) {",
+    tests: ['trace-check'],
+    test_name:
+      'trace-check 全绿（锚校验 + 两侧扫描完整性 + 豁免核对，退出码 0）',
+    must_mention: '两侧引用数不同量级',
+  },
+  {
+    desc: 'M9302 锚表行数不再累加（FILES 循环的 checked 恒不加——报告里的 inline 只剩日志锚，引用一条不少，#431）',
+    file: 'tools/trace-check.mjs',
+    find: '    checked += 1;\n    const label = `${js} :${ref} ↔ ${src}`;',
+    replace:
+      '    checked += 0; // 变异：锚表行数不再累加\n    const label = `${js} :${ref} ↔ ${src}`;',
+    tests: ['trace-check'],
+    test_name:
+      'trace-check 全绿（锚校验 + 两侧扫描完整性 + 豁免核对，退出码 0）',
+    must_mention: '两侧引用数不同量级',
+  },
+  {
+    desc: 'M9303 量级判据退回比大小（差额必须为 0——#399 那一对重新翻车，#431）',
+    file: 'test/trace-check.test.js',
+    find: 'Math.abs(inline - erb) * 100 <= Math.max(inline, erb)',
+    replace: 'inline === erb',
+    tests: ['trace-check'],
+    test_name: '引用数判据（#431）：#399 实测的那一对必须放行，整块塌陷必须红',
+    must_mention: '引用数判据边界失守',
+  },
+  {
+    desc: 'M9304 豁免过期失效检查焊死（引用被删的豁免条目不再报——#431 补的探针用例必须红）',
+    file: 'tools/trace-check.mjs',
+    find: '  for (const ref of exempt) {\n    if (!found.has(ref)) {',
+    replace:
+      '  for (const ref of exempt) {\n    if (false) { // 变异：过期失效检查焊死',
+    tests: ['trace-check'],
+    test_name: '豁免条目不许过期失效：对应的 js 引用被删，工具必须红且点名',
+    must_mention: '不许过期失效',
+  },
+  {
+    desc: 'M9305 样本锚表的守卫焊死（样本名不在 SAMPLES 不再报——#431 补的探针用例必须红）',
+    file: 'tools/trace-check.mjs',
+    find: '  if (sample_rel === undefined) {',
+    replace: '  if (false) { // 变异：样本名守卫焊死',
+    tests: ['trace-check'],
+    test_name:
+      '样本锚表的守卫：样本名不在 SAMPLES / 样本文件不在库，都必须红并点名',
+    must_mention: '必须点名样本名不在 SAMPLES',
+  },
+  {
+    desc: 'M9306 完整性扫描拆掉 --only 过滤（范围外的未登记引用也被报出——#431 补的探针用例必须红）',
+    file: 'tools/trace-check.mjs',
+    find: '  if (!in_scope(rel)) continue;\n  const found = scan_erb_refs(load_js_text(rel));',
+    replace:
+      '  // 变异：完整性扫描不再按 --only 过滤\n  const found = scan_erb_refs(load_js_text(rel));',
+    tests: ['trace-check'],
+    test_name:
+      '探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且报出位置（自动纳入后来者）',
+    must_mention: '范围外的未登记引用不该被报出',
   },
 ];
