@@ -391,28 +391,28 @@ export default [
   ),
   // —— @CHAR_BUST_REGENERATE_WAPPED（CHARA_BODY2.ERB:2-14，issue #406）——
   make(
-    9473,
+    9475,
     '三围显示闸门位 15 认成 14（位 15 开也不再重掷）',
     '  if (((settings >> 15) & 1) === 0) return; // :4-5',
     '  if (((settings >> 14) & 1) === 0) return; // :4-5',
     'FLAG:5 位 15 关闭时整体不动',
   ),
   make(
-    9474,
+    9476,
     '缺年龄或缺身高的判据从「任一」松成「两者都缺」',
     '  if (!age || !height) {',
     '  if (!age && !height) {',
     ':7-8 只缺身高也要转发全身重生成',
   ),
   make(
-    9475,
+    9477,
     '重掷分支被跳过（拆掉转发全身重生成的调用）',
     '    char_body_generate_wapped(cid, rand); // :7-8',
     '    void 0; // :7-8',
     ':7-8 缺年龄或身高转发全身重生成',
   ),
   make(
-    9476,
+    9478,
     '胸围回写漏除以 100（CFLAG:455 单位错一百倍）',
     '  era.set(`cflag:${cid}:455`, int(bust / 100)); // :12',
     '  era.set(`cflag:${cid}:455`, int(bust)); // :12',
