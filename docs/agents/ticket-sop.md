@@ -104,8 +104,8 @@ create_agent{
 }
 # 返回 agentId、status（"running" 就是起来了）、currentModeId——不必再判 TUI 是否就绪
 
-# 3. 标记（GitHub 侧的状态仍手写，Paseo 不接管 issue 元数据）
-gh issue edit <N> --repo odradekk/maou_redux --add-label in-progress   # 按 issue-tracker.md 的约定
+# 3. 标记：Paseo 没有 issue 元数据的概念，GitHub 侧的认领在 §1 已做过
+rename_workspace{workspaceId: "<上一步的 workspaceId>", name: "T<N> <标题>"}   # 方便在 Paseo 里认出这个工作区
 ```
 
 - 命名 `t<N>-<slug>`，`<N>` 取工单编号（有 T 编号的取 T 编号）。
