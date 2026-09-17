@@ -399,7 +399,7 @@ worktree 建得早于前置票合并时（见 §2），验收前必须先并上 
 触发点是**路线图 #101 的阶段决策票关闭前**，不是每张票。三项：
 
 1. **全量变异（带引擎）**：`node tools/mutation-check.mjs --jobs 4`。**严格标准是「全部拦下、零跳过、零红」。** 它不挂 CI 自动触发，`workflow_dispatch` 留着（理由见 AGENTS.md「CI」）。
-2. **引擎手工验收**：启动引擎跑一遍本阶段的贯通路径（启动命令见 AGENTS.md「运行与调试」，【打开游戏】选基座目录）。CI 没有 GUI，这件事机器做不了。
+2. **引擎手工验收**：启动引擎跑一遍本阶段的贯通路径（启动命令见 AGENTS.md「运行与调试」，【打开游戏】选基座目录）。CI 没有 GUI，这件事机器做不了，但「人工」不必是真人动手点——仓库根 `.mcp.json` 配了项目级 MCP `era-electron`（`tools/electron-mcp-server.mjs`），Claude Code 可以直接用 `launch_game`/`click`/`type`/`read_text`/`screenshot` 这几个工具跑通关键路径。目前只给 Claude Code 配了这一份，其余 provider（Codex、Paseo 里的 `codebuddy-code`/`pi`）要用时再各自补配置。
 3. **对拍全样本**：`node tools/compare/cli.js --sample <名>` 逐个跑完，样本名见 `tools/compare/samples.js`。（**每票那一档只跑受影响的样本**，见 §5「T3 量不到的两道」。）
 
 **全量唯一能抓、按面跑抓不到的那类，长这样。** 阶段 5a 收口报出红 5，两轮全量逐条相同、串行单跑也稳定复现。一条是真缺口：`test/dungeon-trap.test.js` 那条 `run_dungeon` 集成用例断言 `CFLAG:502 = 1`，而 MAGIC 从存根换成真身之后，战斗臂里 `dungeon.js:678` 的 `walk20 = move_ctx.d20` 同样会写出 1（TELEPORT_MAGIC 与陷阱 TELEPORT 落同一个值），两条路合流——**删掉陷阱那条收线，用例照样绿**。**A 子系统落真身，让 B 子系统的用例失去了区分能力**，而票只跑自己新加的 `--ids`、没人会重跑别人的旧条目，所以这一类只有全量看得见。
