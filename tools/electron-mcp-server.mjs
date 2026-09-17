@@ -17,16 +17,19 @@
  */
 
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { _electron } from 'playwright-core';
 import * as z from 'zod/v4';
 
-// .mcp.json 用 ${CLAUDE_PROJECT_DIR} 把仓库路径当启动参数传进来，不依赖子
-// 进程 cwd 的隐含约定。
-const repo_path = process.argv[2] || process.cwd();
+// 仓库路径从本文件自己的位置推出（本文件固定放在 <仓库根>/tools/ 下），不依赖
+// ${CLAUDE_PROJECT_DIR} 之类的占位符——实测过它在 Claude Code 当前这个版本里
+// 不生效（.mcp.json 里用它会报 "Missing environment variables"，MCP 服务器
+// 直接连不上），也不依赖子进程 cwd 的隐含约定。
+const repo_path = dirname(dirname(fileURLToPath(import.meta.url)));
 
 // 与 AGENTS.md「运行与调试」一节文档的启动命令一致：引擎运行时不在仓库里，
 // 装在 ~/.era-engine/。executablePath 必须是原生二进制，不是

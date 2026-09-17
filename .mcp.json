@@ -2,10 +2,7 @@
   "mcpServers": {
     "era-electron": {
       "command": "node",
-      "args": [
-        "${CLAUDE_PROJECT_DIR}/tools/electron-mcp-server.mjs",
-        "${CLAUDE_PROJECT_DIR}"
-      ]
+      "args": ["tools/electron-mcp-server.mjs"]
     }
   }
 }
