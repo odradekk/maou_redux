@@ -81,6 +81,10 @@ test('EXECUTION_MINI：回收装备、除名角色并结算处刑与勋章经验
   fixture.store.set('cflag:31:550', 1001);
   fixture.store.set('cflag:31:551', 1002);
   fixture.store.set('cflag:31:552', 1003);
+  // NAME_RESET 的真身 CN_REBUILD（#384）把在场角色的 callname:-2 同步成
+  // callname:-1，且不打印任何标记行——制造一个偏差，才能观察到「没被同
+  // 步」这一事实，而不是钉在早已作废的 @CN_REBUILD 占位输出上。
+  fixture.store.set('callname:47:-2', '旧称呼');
   const { execution_mini } = fixture.load_module('event/event-execution');
 
   assert.equal(await execution_mini(31), 0);
@@ -97,9 +101,10 @@ test('EXECUTION_MINI：回收装备、除名角色并结算处刑与勋章经验
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.equal(fixture.store.get('exp:0:81'), 1);
   assert.equal(fixture.store.get('exflag:99'), 2);
-  assert(
-    !fixture.text_lines().some((line) => line.includes('@CN_REBUILD')),
-    '迷你处刑源未调用 NAME_RESET',
+  assert.equal(
+    fixture.store.get('callname:47:-2'),
+    '旧称呼',
+    '迷你处刑不触发全员称呼重建（reset_names:false，NAME_RESET 未被调用）',
   );
 });
 
