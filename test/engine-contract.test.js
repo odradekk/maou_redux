@@ -444,3 +444,52 @@ test('模块号漂移 → 直接判失败报「引擎变了」（engine-bundle �
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+// —— 模块 183 的方法守卫必须独立生效，不能靠模块 84 守卫接力（#441）——
+//
+// 上一条探针对 183 与 84 用同一个空对象（{prototype:{}}），两条守卫谁先抛
+// 都能让断言通过——M178（把 183 守卫拆成 `false && …`）落地后，183 守卫
+// 被跳过，但 84 那条仍会因为同一个空对象而抛出同款「引擎变了」文案，测试
+// 照样全绿，真正被拆的那条守卫却没人验证过（mutation-check 实测：拦截 0 /
+// 红 1）。本条把 84 造成合法形状（该守卫应当放行），只让 183 的原型缺一个
+// 方法（addCharacter）——183 守卫被拆时 load_engine_bundle() 会一路跑到底
+// 不抛错、退出码变 0，探针即刻落空，与真守卫在场时的非 0 退出分道。
+test('模块 183 原型方法缺失 → 单独判失败（84 守卫合法放行，不许接力顶替）', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-contract-'));
+  const asar_path = path.join(dir, 'app.asar');
+  fs.writeFileSync(
+    asar_path,
+    build_asar({
+      'background.js':
+        'var r=function(n){' +
+        'if(n===183)return{prototype:{addTotalLines:function(){},setTotalLines:function(){},waitAnyKey:function(){},getLineCount:function(){},clear:function(){},print:function(){},input:function(){},playMusic:function(){},printProgress:function(){}}};' + // 缺 addCharacter
+        'if(n===84)return{staticFormatPriority:["yml","json","csv"],staticFormatRegex:[/a/,/b/,/c/]};' +
+        'return{};' +
+        '};function main(){r(r.s=311)}main();',
+    }),
+  );
+  try {
+    const probe = spawnSync(
+      process.execPath,
+      [
+        '-e',
+        `require(${JSON.stringify(
+          path.join(REPO_ROOT, 'test', 'helpers', 'engine-bundle.js'),
+        )}).load_engine_bundle()`,
+      ],
+      { encoding: 'utf8', env: { ...process.env, ERE_ENGINE_ASAR: asar_path } },
+    );
+    const combined = `${probe.stdout || ''}${probe.stderr || ''}`;
+    assert.notEqual(
+      probe.status,
+      0,
+      `模块 183 缺 addCharacter 时必须非 0 退出（84 守卫已合法放行，不能靠它接力）：\n${combined}`,
+    );
+    assert.ok(
+      combined.includes('引擎变了') && combined.includes('模块 183'),
+      `报错必须点名模块 183，不能是 84 守卫代打：\n${combined}`,
+    );
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+});
