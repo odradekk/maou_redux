@@ -6,135 +6,139 @@
 
 把 `target/` 里的 Emuera 游戏 《ERA魔王 年度版》（原作 eramaou，简体中文汉化版）移植到 EraElectron 4.8.0：eraBasic（`.ERB`/`.ERH` + Emuera CSV）重写为 JavaScript（`ere/*.js` + `yml/`）。
 
-**不是翻译，是重新实现。** Emuera 是解释执行的领域语言，EraElectron 是 Node/Electron 上的普通 JS 模块，两边的运行模型没有对应关系。
+移植需要重新实现游戏逻辑。Emuera 解释执行专用脚本，EraElectron 运行 Node/Electron 上的 JavaScript 模块；移植时必须按两种运行模型的差异处理控制流和状态。
 
 ## 当前状态
 
-**进度看路线图 issue #101**，它每阶段更新；本节只记不随阶段变的东西。
+**当前进度以路线图 issue #101 为准**，每个阶段结束后更新。以下记录已完成的基础功能。
 
-三条贯通路径已跑通：#15 标题画面到主菜单、#42 调教一回合、#112 侵略线到 `ENDING_1`。十二个移植决议全部拿到运行时证据。阶段 2 收口后存档系统可用、45 张角色表全量在库。**游戏已能从新档走到一个结局，且这条路是每次 `npm test` 都跑的回归测试**（`test/event-ending-e2e.test.js`）。
+已验证三条端到端流程：#15 标题画面到主菜单、#42 一回合调教、#112 侵略流程到 `ENDING_1`。十二项移植决策均已有运行时验证。阶段 2 完成后，存档系统可用，45 张角色表已纳入仓库。**从新游戏到结局的流程由 `test/event-ending-e2e.test.js` 持续验证**，该测试包含在 `npm test` 中。
 
-其余子系统的入口与绝大部分指令仍是带记录的存根，清单见 `docs/stub-registry.md`。
+尚未实现的子系统入口和指令以存根形式保留，具体状态见 `docs/stub-registry.md`。
 
-动手前读这四份：
+开始开发前阅读以下文档：
 
-- `docs/skeleton.md`：贯通验证证明了什么。分层、模块注册、变量读写、测试写法、追溯注释的做法，十二个决议的逐条结论，以及三类只有在引擎里实际运行才会暴露的缺陷。
-- `docs/output-diff.md`：与黄金样本逐字比对的工具与判定标准（issue #48）。`node tools/compare/cli.js --sample <名>` 重跑，样本名见 `tools/compare/samples.js`；覆盖面是调教一段加界面骨架三段（范围 B，#156/#161），边界写在文件头。
-- `CONTEXT.md`：术语对照。日文原作、简体汉化、引擎 API 三套词汇，命名时用「本项目用词」一列。文末的「写作约定」列出本项目不再使用的一批词。
-- `docs/stub-registry.md`：待办清单。后续票据此认领工作：找到一行，把壳换成实现，然后从清单里划掉。
+- `docs/skeleton.md`：模块分层、注册机制、变量访问、测试和追溯注释的约定，以及早期端到端验证的结论。
+- `docs/output-diff.md`：输出比对工具、样本范围和判定标准（issue #48）。使用 `node tools/compare/cli.js --sample <名>` 运行，样本名见 `tools/compare/samples.js`。具体覆盖范围见文档开头。
+- `CONTEXT.md`：日文原作、简体汉化和引擎 API 的术语对照。命名使用「本项目用词」一列；文档中的「写作约定」说明中文表达要求。
+- `docs/stub-registry.md`：尚未实现的功能清单。认领工单时确认对应条目，实现后更新状态或移除已完成条目。
 
-**移植决议的索引是地图 issue #1**，细节在各自的 ticket 里。地图只读：决议被推翻时回对应 ticket 补勘误，不改写历史（#3 被 #6 推翻、#13 被贯通验证细化，都是这么记录的）。
+**移植决策索引为 issue #1**，详细依据保存在对应工单中。索引保持只读；需要修正既有决策时，在原工单补充说明并引用新证据，保留历史记录。#3 被 #6 修正、#13 经端到端验证补充，均采用这种方式。
 
-**`sav/global.sav` 是引擎产物，不是仓库资产。** 它盖着游戏标识（当前 `931060`），与 `yml/GameBase.yml` 的【游戏标识】不一致时引擎**拒绝启动并报错**，而非静默重置（`dev-guides/11-saves.md:55`；下一行的「重置」只适用于版本号过低）。改动【游戏标识】后删掉它，引擎会重建。
+**`sav/global.sav` 由引擎生成，不纳入版本控制。** 其中保存的游戏标识（当前为 `931060`）必须与 `yml/GameBase.yml` 的【游戏标识】一致，否则引擎拒绝启动并报错。`dev-guides/11-saves.md:55` 说明了此行为；公共存档自动重置仅适用于版本号过低的情况。修改【游戏标识】后，需要删除旧的 `global.sav`，由引擎重新生成。
 
 ## 目录结构
 
 ```
-~/Projects/maou_redux/
+<仓库根>/（当前 Windows 主工作目录为 D:/Code/era）
 ├── ere/              # 游戏源码，入口 main.js；era-electron.js 是引擎 SDK，勿改名或移动
 ├── yml/              # 静态数据表（YAML），即引擎的静态数据目录
-├── products/         # 转译中转区：口上转译产物的待复核初稿（#107），复核后移入 ere/
-├── golden/           # 范围 B 黄金样本落点与录制备料（#156；样本名→文件登记表在 tools/compare/samples.js）
+├── products/         # 口上转译初稿，待复核后移入 ere/（#107）
+├── golden/           # 范围 B 的基准日志与录制资料（#156；登记表见 tools/compare/samples.js）
 ├── tools/            # 离线脚本，不受 ere/ 的依赖限制
 ├── test/             # node --test；helpers/era-fixture.js 是全项目唯一的注入点（issue #16）
 ├── res/              # 图片/音频（#69 起启用，resource: true；六图 + 三首 BGM）
 ├── sav/              # 存档，*.sav 已 gitignore
-├── dev-guides/       # 引擎官方手册，简体中文，权威参考
+├── dev-guides/       # 引擎手册的本地副本，已按引擎行为修正
 └── target/           # 移植源：Emuera 版《ERA魔王》，只读输入
 ```
 
-引擎运行时不在仓库里，装在 `~/.era-engine/`（不进 git）：
+引擎运行时不进 git。Windows 发布包放在仓库内的 `ere-4.8.0-win-x64/`；Linux 运行时沿用 `~/.era-engine/`。测试共用的引擎包放在用户目录：
 
 ```
 ~/.era-engine/
 ├── app.asar          # 引擎本体，与平台无关；测试的引擎比对直接解析它
-└── runtime/          # Linux 版 Electron 34（npm install electron@^34.5.8）
+└── runtime/          # 仅 Linux：Electron 34（npm install electron@^34.5.8）
 ```
 
-移植产物一律写进 `ere/`、`yml/`、`res/`。
+完成的移植代码和资源分别写入 `ere/`、`yml/`、`res/`。
 
-**`products/` 是例外，也是唯一的例外**：口上转译器（`tools/kojo-transpiler.js`，#107）的输出**不是最终产物**，是待 agent 逐字复核的初稿。它进版本库的理由只有一条——复核成果就地写在产物文件里（#107 的 Q3 裁定），产物不在库就没地方积累。产物边界照 #10「默认不覆盖 + `--force`」，复核完成后改名移入 `ere/kojo/`，此时才受简体锁与保真锁约束。初稿首行的 `eslint-disable` 是有意的：产物尚未补导入，`no-undef` 单文件近两万处。
+**`products/` 专门保存尚未复核的口上转译初稿**。`tools/kojo-transpiler.js` 的输出在这里纳入版本控制，复核结果直接记录在文件中（#107 的 Q3 决策）。生成器默认不覆盖已有文件，只有显式指定 `--force` 才重写（#10）。复核完成后，将文件改名并移入 `ere/kojo/`，此后接受简体文本检查和原文一致性检查。初稿首行的 `eslint-disable` 是有意保留的：初稿尚未补全导入，会产生大量 `no-undef` 报错。
 
 ## 运行与调试
 
-引擎是 GUI 程序。上游只发 Windows 与 macOS 构建，但 `app.asar` 是纯 JS、无原生模块，**在 Linux 上用同版本 Electron 直接跑即可**（实测 Fedora + Wayland 起得来，渲染进程与 `~/.config/era-electron/` 都正常）：
+**当前开发环境为 Windows / PowerShell，Node 至少 24.13.1。** 24.13.0 在 Windows 清理中文临时目录时会原生崩溃；版本依据、依赖安装、引擎配置、worktree 与 PowerShell 命令见 [Windows 开发指南](docs/windows-development.md)。新机器、引擎启动失败或跨平台验证失败时先读该指南。
 
 ```
-~/.era-engine/runtime/node_modules/.bin/electron ~/.era-engine/app.asar
+npm start
 ```
 
-1. 按上面那行启动引擎
-2. 【游戏】→【打开游戏】，选仓库根目录（选过的路径记在 `~/.config/era-electron/config.json` 的 `paths` 里，由引擎自己维护，别手改——它退出时会整份回写）
-3. 改完代码 `Ctrl+R` 热重载
+1. 运行 `npm start` 启动引擎。
+2. 在【游戏】→【打开游戏】中选择仓库根目录。路径由引擎维护；手工编辑全局配置会在引擎退出时被覆盖。
+3. 显示「加载成功」后按任意键进入标题；修改代码后按 `Ctrl+R` 重新加载。
 
-Electron 版本取自上游 4.8.0 的 `devDependencies`（`electron ^34.5.8`），换引擎版本时一并核对。
+`npm start` 与 Electron MCP 共用启动配置：Windows 启动发布包的 `.exe`，Linux 启动 `~/.era-engine/runtime/` 下的 Electron 与 `~/.era-engine/app.asar`。Electron 版本取自上游 4.8.0 的 `devDependencies`（`electron ^34.5.8`），换引擎版本时一并核对。
 
 启动顺序：读配置 → 读 `yml/*.yml`（**`GameBase.yml` 必需**）→ 读 `res/` → 以 `ere/main.js` 为入口加载脚本 → 注入 SDK → 读 `sav/` → 执行 `main.js` 导出的函数。
 
-**三项自检**，改完代码跑一遍：
+项目提供以下三项检查，按下表选择测试范围：
 
 ```
 npm test                 # node --test，零第三方依赖
-npx eslint . --max-warnings 0   # 格式 + 代码错误，零警告标准（与 CI 一致），--fix 可自动修
-npx prettier --check .   # 仅格式，--write 可自动改
+npm run lint             # ESLint，零警告标准
+npm run format:check     # Prettier，只检查格式
 ```
 
-**但别在红绿切片的内环里跑全量**（#256）：全量是 143 个文件 / 3890 个用例 / **139 秒**，一个内环跑几十次就是几十分钟的纯等待。分层跑：
+**开发过程优先运行当前改动相关的测试**（#256），避免每次修改都重复运行全量测试：
 
-| 何时               | 跑什么                                                          |
-| ------------------ | --------------------------------------------------------------- |
-| **内环**，每个切片 | 本票那一个测试文件 ＋ `mutation-check --ids <本轮新加的编号>`   |
-| **交付前**，一次   | `npm run test:related` ＋ eslint ＋ prettier                    |
-| **合并后**         | 全库三项自检，CI 在 master push 上跑                            |
-| **阶段收口**       | 全量变异 ＋ 引擎手工验收 ＋ 对拍，由派单人在本机跑，见 SOP §5.6 |
+| 何时             | 跑什么                                                             |
+| ---------------- | ------------------------------------------------------------------ |
+| 每次完成一项改动 | 对应测试文件 ＋ `mutation-check --ids <本轮新加的编号>`            |
+| 提交验收前       | `npm run test:related` ＋ `npm run lint` ＋ `npm run format:check` |
+| 合并后           | 由 master push 触发 CI，运行全库测试和静态检查                     |
+| 阶段验收         | 负责人在本机运行全量变异测试、引擎验收和输出比对，见工单流程 §5.6  |
 
-改动确实跨了多个文件时，内环才用 `npm run test:inner`（按改动面选，去全局锁）。
+一次修改涉及多个文件时，开发过程中可用 `npm run test:inner` 自动选择相关测试。该命令省略全局回归检查，提交验收前仍须运行 `npm run test:related`。
 
-`tools/select-tests.mjs` 由改动文件推出测试面，映射取自 `tools/mutations/*.mjs` 的条目表（每条的 `file:`→`tests:` 正是全量变异在实证的东西——「改这个文件，这些测试必须红」就是它的判据）。`npm run test:select` 只看选中哪些、不跑。
+`tools/select-tests.mjs` 根据改动文件选择测试，主要映射来自 `tools/mutations/*.mjs` 中的 `file:` 和 `tests:`。变异测试用于验证这些测试能否发现对应文件中的错误。`npm run test:select` 只列出所选测试，不执行。
 
-**这个工具不承担正确性，只承担速度**：任何它拿不准的改动都退回全量，所以最坏等于今天的行为。「选少了还不说」是它唯一不许有的行为，`test/select-tests.test.js` 锁的就是这条。
+**选择器无法确定测试范围时，必须运行全量测试**，不能静默遗漏相关测试。`test/select-tests.test.js` 验证这一要求。测试选择只用于缩短开发反馈时间，不能替代阶段验收。
 
-**多个 agent 并发时，用 `tools/capped.sh` 包一层**：`bash tools/capped.sh npm test`。测试套件默认按核数并发（16 核上起到 26 个进程），三个 agent 同时跑会把 load 顶到 20、**交互延迟从 32ms 涨到 698ms**——机器还在算，人已经没法用。限到每份 4 核后延迟回到 106ms，总耗时只多 5%（三并发实测）。脚本只限 CPU 不限内存（OOM kill 会变成假红），systemd 不可用时透传执行，退出码原样传出。
+**测试入口统一限制为 4 个测试文件并发**，包括 npm 测试、选择器与变异子进程。它限制进程并发数，不等于 CPU 配额；同时跑多个 agent 或变异副本时仍要控制任务数。Linux 可额外用 `bash tools/capped.sh npm test` 施加 systemd CPU 配额；Windows 直接用 npm 命令。
 
-**测试命令一律带 `timeout`，放后台跑更是必须带**：
+**测试命令必须有超时**。npm 测试、lint 与格式检查已由 `tools/run-node.mjs` 设置整条命令 600 秒上限；单文件测试与长任务也用它。Windows 的 `timeout.exe` 只是等待命令，不能替代 GNU `timeout`。PowerShell 示例：
 
 ```
-mkdir -p logs && timeout -k 60 5400 bash tools/capped.sh node tools/mutation-check.mjs --jobs 4 > logs/mutation-full.log 2>&1
+New-Item -ItemType Directory -Force logs/migration | Out-Null
+node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> logs/migration/mutation-full.log
 ```
 
-上限就是给「卡住了」一个能被发现的形态。参考值：全量测试约 3 分钟，全量变异 `--jobs 4` 约 55 分钟，取两倍留余量。没有上限的后台任务只会一直占着机器，而占着的时候看不出它是在算还是已经废了。
+超时返回 124；Windows 用 `taskkill /T /F` 终止本次命令的子进程树，POSIX 先中断、5 秒后强制终止。**Windows 长变异任务使用 `--jobs 2` 或更高的隔离副本模式**，强制终止无法保证在原目录修改文件的变异脚本执行 `finally`；短的串行 `--ids` 任务若被强制终止，要检查被修改文件的 diff。
 
-**等长任务跑完就等它本身，别另写轮询。** `pgrep -f '<模式>'` 匹配的是完整命令行，**轮询进程自己的命令行里也含那个模式**，于是 `while pgrep -f "tools/mutation-check.mjs --jobs"; do sleep 30; done` 匹配到自己、永远退不出——本项目栽过一次，把一轮 55 分钟的全量变异拖成了五个小时。**日志落仓库根的 `logs/`**（已 gitignore），按票分子目录：`logs/<票号>/<用途>.log`。两条理由：`/tmp` 是 tmpfs，重启即清——本项目在同一次事故里就是这么把结果和证据一起丢了；而 `~/` 是**所有并发 agent 共用**的，五个 agent 各写一个 `~/related.log` 会互相覆盖，且覆盖了看不出来（读到别人的结果误判过一次）。`logs/` 在每个 worktree 里各有一份，天然隔离。代价是 worktree 删除时日志一并消失——要留的证据在删之前贴进 issue 评论。
+**等待长任务时，使用任务本身提供的等待接口，并取得最终退出码。** 不要另写基于进程名的轮询：`pgrep -f` 可能匹配轮询命令自身，导致循环无法结束。
 
-三个容易踩的点：
+**日志保存到仓库内的 `logs/<工单号>/<用途>.log`**，该目录已被 Git 忽略。每个 worktree 使用自己的日志目录，避免多个 agent 覆盖同名文件；需要保留的验收记录，应在删除 worktree 前写入工单评论。系统临时目录可能被清理，不适合保存长期验收记录。
+
+格式工具的使用要求：
 
 - 格式选项在 `.prettierrc` 与 `.eslintrc.js` 的 `prettier/prettier` 规则里**各写了一份且取值相同**。改格式约定必须同时改这两处，否则两条命令会给出互相矛盾的结果。
 - `.prettierignore` 是必需品：prettier 默认扫描全仓库，没有它 `--write` 会重写只读的 `target/`（68MB，且在其中的 Shift-JIS 日文 HTML 上直接报错退出），也会把 `yml/` 产物的双引号键名改成单引号。
-- **没装 `node_modules` 时 `npx` 会去拉最新版，而 eslint 与 prettier 的失败形态相反——后者更危险。** eslint 拉到 v9 会因找不到 `eslint.config.js` **报错**，一眼看得出是环境问题；prettier 拉到比 `package-lock.json` 钉的版本更新的一支则**静默给出不同答案**：3.9.x 与本仓库钉的 3.8.3 在 markdown 表格对齐与 `for (…;…; )` 的尾空格上判定相反，于是 `--check .` 报出三个「失败」文件（全是假的），而 `--write` 会把真正干净的文件改坏。**先 `npm ci`**；来不及就显式钉版本：`npx prettier@3.8.3`（版本以 `package-lock.json` 为准，不是 `package.json` 的 `^` 范围）。
+- **先运行 `npm ci`，再使用仓库安装的 ESLint 和 Prettier。** 缺少本地依赖时，`npx` 可能下载其他版本：ESLint v9 不兼容当前配置格式；不同 Prettier 版本可能对 Markdown 表格对齐和循环尾部空格给出不同结果。工具版本以 `package-lock.json` 为准，不以 `package.json` 中的 `^` 范围为准。必须通过 `npx` 使用工具时，显式指定锁文件中的版本。
 
 ### CI
 
-`.github/workflows/ci.yml`（#92 起，#302 补引擎，阶段 4 收尾改分层）按触发方式分档：
+`.github/workflows/ci.yml` 根据触发方式运行以下检查（#92 引入 CI，#302 增加引擎检查，阶段 4 调整测试范围）：
 
-| 触发           | job                     | 内容                                                                     |
-| -------------- | ----------------------- | ------------------------------------------------------------------------ |
-| `pull_request` | `pr`                    | `npm run test:related` ＋ 锚鉴别力（默认档）＋ eslint ＋ prettier        |
-| push 到 master | `engineless` / `engine` | 全库 `npm run test:ci` ＋ 跳过数守护，无引擎那侧另加锚质量全文量与格式档 |
-| 手动触发       | `mutation`              | 全量变异，带引擎，隔离副本 `--jobs 4`                                    |
+| 触发                   | job                     | 内容                                                                                |
+| ---------------------- | ----------------------- | ----------------------------------------------------------------------------------- |
+| `pull_request`         | `pr`                    | Linux 相关测试、默认范围的锚点质量检查、ESLint、Prettier                            |
+| master push / 手动触发 | `engineless` / `engine` | Linux 全库 `npm run test:ci` 和跳过数检查；无引擎任务另跑全部锚点质量检查与格式检查 |
+| PR / master push       | `windows`               | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0                         |
+| 手动触发               | `mutation`              | 全量变异测试，带引擎，在隔离副本中运行，`--jobs 4`                                  |
 
-**分层的依据是一条实测**：一条变异条目的判定，只有在它的靶文件或守它的测试变了的时候才可能翻——做 K16 时重跑 K11 那 960 条，结论与上次逐字相同。全量唯一能抓、按面跑抓不到的，是「改了公共底座把别处的测试悄悄卸了武装」这类跨文件失效（#10 栽过），而那是慢积累的风险，不是每次提交的风险。
+相关测试用于缩短日常反馈时间；全量测试用于检查跨模块影响，尤其是公共测试辅助代码的改动。选择器无法确定影响范围时，会运行全量测试。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
 
-**代价说清楚：PR 绿不再等于全库绿。** 兜底是 master push——合并后几分钟内就在同一份内容上跑全库。选择器本身不承担正确性，拿不准就退回全量，最坏等于从前的行为。
+**Linux 的 `pr` 任务通过，只代表选中的测试通过。** Linux 全量测试在推送到 master 后运行；Windows 任务在 PR 和 master push 时均运行全量测试。
 
-**PR 档没有跳过数守护**：那道守护对着全量套件的基线核对，跑子集时数字必然对不上、会变成假红，所以只留在 master push 的两个 job 里。
+**跳过数检查只用于全量测试。** Linux 的 `pr` 任务只跑子集，不与全量基线比较；Linux 的两个全量任务和 Windows 任务均检查跳过数。
 
-**全量变异不再挂自动触发。** 阶段收口时在本机满速跑一次（16 核）比在 4 核 runner 上挂 100 分钟划算；`workflow_dispatch` 留着，是为了不守着本机也能点一轮。
+**全量变异测试不自动触发。** 阶段验收时在本机运行，也可通过 `workflow_dispatch` 手动启动 CI 任务。
 
-**引擎经 release 资产上 runner**（`.github/actions/setup-engine`，下载 `engine-4.8.0` 的 `app.asar` 并校验 SHA256，导出 `ERE_ENGINE_ASAR`）。它不进 git——42 MB 会永久留在历史里；也不用 `actions/cache`，7 天不命中就被驱逐、会把「有没有引擎」变成时红时绿。**引擎换版时新开 tag 并改 action 里的 SHA256 断言**，那处 diff 就是换版的公告。
+**CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-4.8.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 42 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
 
-**跳过数守护有两侧，两侧都要**：无引擎那侧对 `test/engine-skip-baseline.txt`（现 72），守的是「引擎缺席的代价必须是看得见的数字」——新增依赖引擎的用例必须同步改基线，让覆盖面的收缩是一次有意识的提交；有引擎那侧对 `test/engine-present-skip-baseline.txt`（只能是 0），守的是「引擎装上了却还有东西被跳过」——那意味着门控写错或 asar 没被 `locate_asar` 认出来。
+跳过数分别与两份基线比较：无引擎时使用 `test/engine-skip-baseline.txt`，新增依赖引擎的用例必须同步更新该文件；有引擎时使用 `test/engine-present-skip-baseline.txt`，预期为 0。引擎已安装却仍有测试跳过时，应检查跳过条件和 `locate_asar` 的查找结果。
 
-**concurrency 只取消 PR 的陈旧运行，不取消 master push**。但 `cancel-in-progress: false` 的语义是「排队中的 run 被后来者取代」，所以连着合并几张 PR 时，真正跑完的是**最终态**那一次，中间提交不会各跑一轮——对兜底来说够用，查红时要知道嫌疑范围是那一串合并而不是单个提交。
+**concurrency 会取消 PR 的旧运行，不取消正在执行的 master push 任务。** 但同组等待中的运行仍可能被后续运行替代。因此，连续合并多个 PR 后，中间提交不一定各有一次完整结果；最终提交的测试失败时，应检查自上次通过以来的全部合并。
 
 ### 静态数据目录
 
@@ -145,7 +149,7 @@ mkdir -p logs && timeout -k 60 5400 bash tools/capped.sh node tools/mutation-che
 
 配置优先级：`yml/_fixed.json` > `ere.config.json` > `yml/_config.json` > 引擎默认值。
 
-**但「优先级」不是逐键分层，是整份替换**（#69 实测引擎代码）：
+**默认配置不会逐键补齐用户配置。** 引擎会整体选择 `ere.config.json`、`yml/_config.json` 或内置默认值，再应用 `_fixed.json` 的固定设置（#69）：
 
 ```js
 try { this.defaultConfig = JSON.parse(…readFileSync(join(staticPath,"./_config.json"))) }
@@ -153,30 +157,30 @@ catch(e) { this.defaultConfig = getEmptyConfigForm() }
 if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))), …)
 ```
 
-- **`yml/_config.json` 是整份默认配置，不是补丁。** 它存在时 `defaultConfig` 整个就是它，引擎默认值只在文件缺失或解析失败时兜底，**没写的键不会回落默认，而是直接缺失**。缺键的后果也不中性：各消费点自行兜底，做法各不相同（`saveFiles` 有 `||10`、`window.*` 交给渲染层、`resource` 直接按 falsy 关掉）。所以这份文件必须写全 `getEmptyConfigForm()` 的形状，只标出有意偏离的那几个键。`test/resource-media.test.js` 有一道引擎比对锁：逐键 deepEqual 引擎默认形状，只许 `resource` 一处偏离。
-- **已有 `ere.config.json` 的机器读不到新默认值**：第二行的 `||` 短路了。`this.config` 已由 `ere.config.json` 填好，`_config.json` 整份不参与。改了默认值要在本机生效，得手工改该键，或删掉 `ere.config.json` 让引擎按新默认重建。
+- **`yml/_config.json` 必须提供完整的默认配置。** 文件存在且可解析时，`defaultConfig` 整体取自该文件，**缺少的键不会从引擎默认值补齐**。各使用位置对缺值的处理不同：`saveFiles` 使用 `||10`，`window.*` 交给渲染层，`resource` 按假值关闭。文件必须包含 `getEmptyConfigForm()` 的全部字段；`test/resource-media.test.js` 逐键与引擎默认配置比较，目前只允许 `resource` 的值不同。
+- **已有 `ere.config.json` 时，修改默认配置不会自动生效。** 代码中的 `||` 会直接使用已加载的 `this.config`，不读取 `_config.json` 的值。需要在本机应用新默认值时，修改 `ere.config.json` 中的对应键，或删除该文件后让引擎按新默认配置重建。
 - **哪个键放哪个文件**：结构性要求（如 `extendedCharaTables`，缺了会直接崩溃或静默降级）放 `_fixed.json`，它优先于用户配置；用户偏好（如 `resource`，引擎配置 UI 里有对应开关）放 `_config.json`，放进 `_fixed.json` 会让 UI 开关点了没反应。
-  - **`saveFiles` 是结构性要求，落 `_fixed.json`（#135 定，取 99）。** 原作有 99 个手动存档槽（0–98）加 99 号自动存档槽（ADR-0006），而引擎 `listSaveFiles` 的扫描是闭区间 `for (let t = 0; t <= saveFiles; ++t)`——`saveFiles` 取 99 恰好覆盖 0–99，且 `dev-guides/03-config.md:76` 限定该值为 10–99 的整数（**100 超规范**）。放 `_config.json` 不行：它会被本机已有的 `ere.config.json` 整份短路（上一条），于是装过旧版本的机器上仍是 10，槽位 11–98 的备注不被 `loadGlobal` 维护、界面上显示为空栏位，而**没有任何测试会红**。代价是配置 UI 里的「存档数量」点了不生效，已有意接受。
-  - 参考项目里 `saveFiles` 两处都不设（erauma、ere-kanon、ere-example 实测）：它们的游戏槽位数在引擎默认范围内，不需要抬。erauma 另有一条我们用不了的路——运行时 `era.get('gameconfig')?.system.saveFiles` 读生效配置，**`gameconfig` 这个键在 4.8.0 不存在**。
+  - **`saveFiles` 固定为 99，写在 `_fixed.json` 中（#135）。** 原作有 99 个手动存档槽（0–98）和 99 号自动存档槽（ADR-0006）。引擎 `listSaveFiles` 的扫描条件为 `for (let t = 0; t <= saveFiles; ++t)`，因此 99 能覆盖 0–99；`dev-guides/03-config.md:76` 规定取值为 10–99 的整数，不能设为 100。若只写在 `_config.json` 中，旧的本地配置仍可能使用 10，导致 `loadGlobal` 不维护槽位 11–98 的备注，界面显示为空；仅使用默认配置的测试无法发现这一问题。固定该值后，配置界面的「存档数量」设置不再生效，这是 #135 接受的限制。
+  - erauma、ere-kanon、ere-example 所需槽位数未超过引擎默认范围，因此未设置 `saveFiles`。erauma 还会通过 `era.get('gameconfig')?.system.saveFiles` 读取生效配置，但 **4.8.0 不提供 `gameconfig` 键**，本项目不能使用这一方法。
 
-`yml/` 的产物由 `tools/csv-to-yml.js` 生成，遵守**产物边界**（issue #10）：产物进 git、归人工维护，转换器重跑默认跳过已存在的产物，重写必须显式 `--force`。这条规则有测试固定住。产物名在**生成期**经归一表（`tools/lang-table.js`，issue #60）归一为简体（引擎列名键如 素質/名前 受保护，原样保留），所以 `--force` 重跑得到的产物与库内逐字节一致，不会退回源 CSV 的繁/日原名；同步守护因此只做直接比较，生成器漏归一即红。YAML 键名一律加引号，键含 `:` / `#` 或首尾空格时裸键名会产出无法解析的 YAML。`GameBase.yml` 的原始输入已随迁移删除，要重转先从 git 历史取回 `csv/GameBase.csv`。
+`yml/` 文件由 `tools/csv-to-yml.js` 生成后提交到 Git，再由人工维护（issue #10）。**转换器默认跳过已有文件，覆盖必须显式指定 `--force`**；测试会检查这一行为。生成时根据 `tools/lang-table.js`（issue #60）将名称转为简体，引擎列名键如 素質/名前 保持原样。同步检查直接比较生成结果与仓库文件；漏做简体转换会导致检查失败。YAML 键名一律加引号，避免含 `:`、`#` 或首尾空格的键产生解析问题。`GameBase.yml` 的原始输入已随迁移删除，重新转换前须从 Git 历史取回 `csv/GameBase.csv`。
 
 ## 引擎 API 与硬约束
 
 - 一切能力来自 `require('#/era-electron')`，权威清单 `dev-guides/A-api-docs.md`。分组：输出（`print` / `printAndWait` / `printMultiColumns` / `printInColRows` / `printButton` / `printImage`）、输入（`input` / `waitAnyKey`）、变量（`get` / `set` / `add`）、存档（`saveData` / `loadData` / `saveGlobal`）、角色（`getAllCharacters` / `addCharacter` / `beginTrain` / `endTrain`）、媒体（`playMusic`）、日志（`logger.*`）。
-- **手册 < 引擎代码**：`dev-guides/` 的陈述与 `app.asar` 的实测行为冲突时，一律以引擎代码为准。**`dev-guides/` 是经本项目按引擎代码修正过的副本，不是上游逐字原文**（#163 裁定：发现分歧直接改正文，单一真相源，不建勘误表、不加页内注记；上游原文只存在于 git 历史）。必须逐字不变的外部材料只有 `.agents/skills/emuera-basic-agent-guide/`——它有上游同步、改了将来会冲突，手册是一次性拷贝，两者待遇不同的理由就在这里。新钉住的分歧按 `tools/engine-contract-facts.mjs` 头注的分工设防：可执行的配 engine-bundle 用例，可字面锚定的进该表 anchors。
-- **运行时可用的只有 `era` API 与 `crypto`。** Node 内置模块和第三方库都被引擎拦下（`dev-guides/18-tools.md`）。`tools/` 里的离线脚本不受此限，这是「数据自动提取」路线成立的前提。
+- **手册与实测行为冲突时，以引擎代码为准。** `dev-guides/` 是本项目根据 `app.asar` 修正过的手册副本。发现差异后直接修正文段，不另建勘误表；上游原文可从 Git 历史查看（#163）。`.agents/skills/emuera-basic-agent-guide/` 仍需与外部上游同步，必须保持逐字不变。新确认的引擎行为按 `tools/engine-contract-facts.mjs` 文件头的说明增加检查：能直接执行的行为加入 engine-bundle 测试；只能通过源码片段定位的行为加入 `anchors` 表。
+- **游戏运行时仅可使用 `era` API 与 `crypto`。** 引擎禁止导入其他 Node 内置模块和第三方库（`dev-guides/18-tools.md`）；`tools/` 中的离线脚本不受此限制。
 - 异步 API 必须 `await`：`printAndWait`、`input`、`clear`、`waitAnyKey`、`delay`、存档系列。漏 `await` 造成的时序错乱极难排查。
-- 变量以字符串寻址：`era.get('base:0:0')`、``era.get(`staticcflag:${cid}:1`)``，也支持列名 ``era.get(`static:${cid}:name`)``。**读未声明的序号返回 `undefined` 而非 0**，且能静默写入并存进存档（issue #13）。拼错下标不会报错，只会凭空造出一个变量，所以包装层的 getter 一律 `|| 0` 兜底。
-- 文件编码用 UTF-8 或 UTF-8 BOM。`target/` 里有一个 Shift-JIS 编码的文件，而且是活代码（`ERB/調教相關/COMF90_ニプルファック.ERB`），批量读取的脚本必须按内容判定编码。
-- **写一个变量前，先确认它所属的静态表已经在 `yml/` 里。** 决定行为的不是「几段寻址」，而是名字表在不在与 data 桶在不在的组合（引擎 setVar，PR #57 逐族实测）：名字表在 + 桶在 → 通过（未声明下标回落成数字）；名字表在 + 桶不在 → 静默丢弃；**名字表不在 + 桶在 → 直接崩溃**，二段三段皆然（在引擎里遇到过两次：`item*` 见 PR #34，`stain`/`ex`/`cstr`/`tequip`/`tflag` 见 PR #57）。`test/static-table-coverage.test.js` 从源码扫出寻址族逐个探测，新族忘了配表会在那里红。但**别把它当免检**，它只覆盖 `era.get/set/add` 的字面量前缀。
-- **输出类 API 会二次加工你给的参数，第一次用之前先去引擎渲染层看一眼。** 手册只讲参数含义，不讲引擎拿到参数后画成什么样；夹具只记录调用，也不模拟渲染。两边都看不见的东西，只有在引擎里实际运行才能发现。已知一例：`printButton` 的 `showAcc` 默认为真，引擎自动拼出 `[快捷键] 正文`，并把正文里的连续空白折叠成一个空格。所以**按钮正文一律不写 `[编号]` 前缀**，写了会得到 `[0] [0] 旧的奴隶`（在引擎里遇到过，PR #30）。
-  查法：`~/.era-engine/app.asar` 是 webpack bundle，直接按 API 名或配置项名搜字符串就能读到渲染公式（bundle 里带未压缩的原始源码副本）。查到的变换补进 `test/helpers/era-fixture.js` 的对应记录字段，让它此后可断言。
-- **「引擎接受了」与「我们调用了」是两回事，验收时夹具证明不了前者。** 夹具的记录层只能证明调用发生过；引擎侧的短路（如 `addCharacter` 对无预设角色直接返回 false，#21/#22 就是这样误报通过的）只有引擎自己的代码能暴露。`test/helpers/engine-bundle.js` 把 app.asar 里的解析器、装载循环与 `EraApi` 方法（真方法 + 最小假 this）直接交给测试驱动，静态表产物与引擎行为的比对从此不必手抄镜像。asar 按 `ASAR_CANDIDATES` 逐条回落（环境变量 `ERE_ENGINE_ASAR` → 仓库内 → `~/.era-engine/`），缺引擎时相关用例 skip 并留一条警告。
+- 变量以字符串寻址：`era.get('base:0:0')`、``era.get(`staticcflag:${cid}:1`)``，也支持列名 ``era.get(`static:${cid}:name`)``。**读取未声明的序号返回 `undefined`，不是 0**（issue #13）；在名字表和数据容器存在时，写入未声明的下标不会报错，且会进入存档。因此必须检查下标是否正确，包装层的 getter 按项目约定使用 `|| 0` 处理缺值。
+- 文件编码用 UTF-8 或 UTF-8 BOM。`target/` 中的 `ERB/調教相關/COMF90_ニプルファック.ERB` 使用 Shift-JIS，仍参与游戏运行；批量读取脚本必须根据内容识别编码。
+- **写变量前，先确认它所属的静态表已存在于 `yml/`。** `setVar` 的行为由名字表和 `data` 容器是否存在共同决定，与地址是两段还是三段无关（PR #57）：两者都存在时写入成功，未声明下标按数字处理；只有名字表时静默丢弃写入；**只有数据容器时直接崩溃**。已出现过的问题包括 `item*`（PR #34）和 `stain`、`ex`、`cstr`、`tequip`、`tflag`（PR #57）。`test/static-table-coverage.test.js` 会提取源码中的变量类别并检查对应表，但只能识别 `era.get/set/add` 的字面量前缀；动态拼接的地址仍需人工检查。
+- **首次使用输出 API 前，检查引擎渲染层对参数的处理。** 手册未必描述最终显示效果，测试夹具也不完整模拟渲染。例如，`printButton` 的 `showAcc` 默认为真，引擎会添加 `[快捷键] `，并将正文中的连续空白合并为一个空格。**按钮正文不得自行添加 `[编号]` 前缀**，否则会显示为 `[0] [0] 旧的奴隶`（PR #30）。
+  在 `~/.era-engine/app.asar` 中按 API 名或配置项名搜索，可找到 bundle 附带的未压缩源码。确认渲染规则后，将需要验证的结果补充到 `test/helpers/era-fixture.js` 的记录字段，并增加断言。
+- **验收时必须确认引擎实际执行了调用。** 夹具只能记录 API 调用，无法证明引擎接受了参数；例如，`addCharacter` 遇到不存在的预设角色会直接返回 false（#21/#22）。`test/helpers/engine-bundle.js` 直接加载 app.asar 中的解析器、装载循环和 `EraApi` 方法，只为调用方法提供最小的模拟 `this`，避免在测试中重新实现引擎逻辑。`ASAR_CANDIDATES` 按环境变量 `ERE_ENGINE_ASAR` → 仓库内路径 → `~/.era-engine/` 的顺序查找文件；找不到时跳过相关测试并输出警告。
 
-  **这份列表在三处各写了一份**（`test/helpers/engine-bundle.js`、`tools/mutation-check.mjs`、`tools/engine-contract-check.mjs`，CJS/ESM 混用抽不成公共模块），同步由 `test/asar-candidates.test.js` 判红。`~/.era-engine/` 那条是给 **worktree 与变异并行副本**用的——`ere-4.8.0-win-x64/` 不进 git，它们都够不着仓库内那条，少了回落就是几十个用例静默 skip 而测试仍报绿（#113 验收踩过）。
-  - **不必手工 `export ERE_ENGINE_ASAR`**，回落会自己命中。新机器只要把 asar 放到 `~/.era-engine/app.asar`；文件从 release 取，校验方式与 CI 一致（`.github/actions/setup-engine/action.yml`）。
-  - **`ERE_ENGINE_ASAR=none` 是「视为无引擎」的开关**，三处同款语义。跳过基线核对必须用它：`~/.era-engine/` 那条回落进来之后，`env -u ERE_ENGINE_ASAR` 照样命中，已经造不出无引擎环境了。
+  **查找列表目前分别维护在三个文件中**：`test/helpers/engine-bundle.js`、`tools/mutation-check.mjs`、`tools/engine-contract-check.mjs`。`test/asar-candidates.test.js` 检查三处是否一致。`~/.era-engine/` 路径供 worktree 和并行变异测试副本共用：仓库内的 `ere-4.8.0-win-x64/` 不受 Git 跟踪，不会被复制到这些目录，缺少用户目录查找路径会导致引擎测试被跳过（#113）。
+  - **通常不必设置 `ERE_ENGINE_ASAR`。** 在新机器上，将 Release 中的文件放到 `~/.era-engine/app.asar`，并按 `.github/actions/setup-engine/action.yml` 校验哈希即可。
+  - **检查无引擎基线时，必须设置 `ERE_ENGINE_ASAR=none`。** 三处均将这个值解释为禁用引擎查找；仅删除环境变量仍会找到用户目录中的引擎，不能模拟无引擎环境。
 
 ## 代码约定
 
@@ -184,21 +188,24 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 
 - **文件名** kebab-case 带类别前缀：`sys-calc-*.js`（系统计算）、`page-*.js`（界面）、`*-factory.js`（工厂）、`calc-*.js` / `*-utils.js`（工具）。
 
-- **文件名一律 ASCII，描述部分用英文单词而非罗马音。** 原作的日文/中文文件名（`EVENT_K3_高貴.ERB`、`据点2.mp3`）移植后**意译**：`kojo-k3-noble.js`、`stronghold-2.mp3`——不是 `kouki`、不是 `judian`。人名无对应英文词，用拉丁转写（マオ → `mao`、菲娅 → `fia`）。口上 22 个源文件的映射表在 `tools/kojo-transpiler.js`，未登记的源名显式报错、不静默回落。
+- **文件名一律使用 ASCII，描述部分翻译为英文单词。** 例如，`EVENT_K3_高貴.ERB` 对应 `kojo-k3-noble.js`，`据点2.mp3` 对应 `stronghold-2.mp3`，不用日文罗马字或中文拼音代替翻译。人名无对应英文词时使用拉丁转写（マオ → `mao`、菲娅 → `fia`）。口上 22 个源文件的映射表位于 `tools/kojo-transpiler.js`；未登记的源文件名必须报错。
   - **资源的注册名不跟着改**：`res/*.csv` 是「注册名,文件名」两列，注册名照抄原作 `PLAYBGM` / `printImage` 的实参（1:1 追溯），只有磁盘文件名改 ASCII。所以 `era.playMusic('据点2.mp3')` 的调用点一行不动。
 - **标识符** snake_case（`get_display_name`、`birth_list`）；引擎 API 自身是 camelCase（`era.printMultiColumns`）。
 - **模块引用** `ere/` 内一律用 `#/` 别名，引擎原生解析、无需构建步骤；别名不覆盖 `tools/`、`test/`，那些目录之间用相对路径。
 - **导入分组排序**：`era` 置顶，其后 `system` / `page` / `event` / `chara` / `kojo` / `facade` / `utils` / `data` / `i18n`（`chara` = 角色域代码，如 `#/chara/chara-ex`，T6 引入；`kojo` = 口上模块，独立顶层目录，#46 起存在；`facade` = 按域门面，#71 起存在）。
-- **变量语义必须注释。** 这是最关键的一条，`era.get('global:3')` 本身不可读：
+- **必须注释变量的含义。** 仅凭 `era.get('global:3')` 无法判断该下标代表什么：
 
   ```js
   // GLOBALNAME:3 = 语言
   set_lan(era.get('global:3') || era.set('global:3', 'zh-CN'));
   ```
 
-- **1:1 追溯** 靠文件头注释而非目录镜像（issue #11）：`// 源: target/ERB/SYSTEM/TITLE ver1.0.8.ERB  @SYSTEM_TITLE`。
-- **原作输出里紧挨着取值的 `$` 是字面量，移植时要写成 `$$`。** `PRINTFORML 所持金：${MONEY}点` 在 Emuera 里是「字面 `$` ＋ `{MONEY}` 取值」，输出 `所持金：$800点`；照抄进 JS 模板串写成 `` `所持金：${era_flag.money}点` `` 时，**`${` 整个被当成插值语法，那个 `$` 就没了**。正确写法是 `` `所持金：$${era_flag.money}点` ``。两种语言里 `${` 都合法、含义不同，eslint 与测试都不会报——只有逐字对拍看得见（#338 实测，M7700 钉住）。`target/` 里还有一处未移植的同款：`EVENT/EVENT_NEXTDAY.ERB:358` 的「生活费花了`${A}`点」。
-- **玩家可见文本一律简体**（issue #60，这是对 1:1 的有意偏离）：`target/` 汉化本身三种文字混用，照抄会把混乱带给玩家。归一表 `tools/lang-table.js` 是唯一真相源，三栏分别是字级繁/日→简机械映射、词级人工译法、整串豁免名单，不要混用。离线转换用 `node tools/lang-normalize.js [--write] <js 文件…>`，运行时不做任何转换。两道锁固定住结果：`test/output-lang-lock.test.js` 扫 `ere/` 全部字符串字面量与 `yml/` 产物串（引擎列名的豁免见表内清单），表内登记的非简体字符与**参考集认定的表外繁侧字**双路即红（#188 收紧：查表命中对表外繁体失明，第二路参考集 `tools/lang-simp-ref.js` 由 OpenCC 繁→简字表派生补上；表外**日文**新字体不在参考集内，仍靠归一表与转译期 REVIEW 兜底，假名按字符区间全量报出）；`test/kojo-text-fidelity.test.js` 把 D 文与 ERB 侧归一后比对。新字种和新词条必须先在语料里找到实据才能进表，**这张表只能有意识地增长**。
+- **用文件头注释记录与原作的对应关系**（issue #11），无需复制原作目录结构。例如：`// 源: target/ERB/SYSTEM/TITLE ver1.0.8.ERB  @SYSTEM_TITLE`。
+- **保留原作输出中的字面量 `$`。** `PRINTFORML 所持金：${MONEY}点` 在 Emuera 中表示字面量 `$` 加上 `{MONEY}` 的值，输出为 `所持金：$800点`。JavaScript 模板串应写成 `` `所持金：$${era_flag.money}点` ``；只写一个 `$` 会将它用于插值语法，输出中便缺少货币符号。ESLint 无法发现这类语义差异，测试必须断言实际输出（#338 通过逐字比对发现，M7700 验证对应测试能检测该错误）。`target/ERB/EVENT/EVENT_NEXTDAY.ERB:358` 的「生活费花了`${A}`点」也有同样的移植要求。
+- **玩家可见文本一律使用简体**（issue #60）。原作混用简体、繁体和日文，移植时按 `tools/lang-table.js` 统一转换；字符映射、词语译法和整串豁免分别维护。使用 `node tools/lang-normalize.js [--write] <js 文件…>` 离线转换，运行时不转换。以下检查共同验证结果：
+  - `test/output-lang-lock.test.js` 扫描 `ere/` 字符串字面量和 `yml/` 文本，检查归一表中的非简体字，以及 `tools/lang-simp-ref.js` 中的繁体字；后者由 OpenCC 字表派生，补充归一表未收录的字符（#188）。引擎列名按清单豁免。未收录的日文新字体仍需通过归一表和转译期 `REVIEW` 处理；假名按字符区间检查。
+  - `test/kojo-text-fidelity.test.js` 的 D 类检查将 JS 字面量片段与转为简体后的 ERB 文本双向比对，范围和规则见测试文件头。
+  - 新增字符映射或词条前，必须在原作语料中找到实际用例。
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（`train` / `ero` / `event` / `chara` / `page` / `data` / `util`）。
 
 ## 移植源：`target/`
@@ -219,11 +226,11 @@ Emuera 1.821.8 简体中文版运行的《ERA魔王 年度版（名字暂定）�
 | `ERB/其他/`                                         |    8,700 | 杂项                         |
 | `ERB/侵略/`、`售卻相關/`、`SYSTEM/`、`怪物相關/` 等 | 各 3k–7k | 其余子系统                   |
 
-关键入口：`ERB/SYSTEM/TITLE ver1.0.8.ERB`（`@SYSTEM_TITLE`，标题画面；根目录的 `ERB/TITLE.ERB` 同名但被引擎忽略，仲裁见 issue #12）→ `ERB/SYSTEM/SYSTEM ver1.0.3.ERB`（`@EVENTFIRST`，全局初始化）→ `ERB/SHOP/DRAW_MAINMENU.ERB`（主菜单）→ `ERB/EVENT/EVENT_NEXTDAY.ERB`（日循环）、`ERB/調教相關/TRAIN_MAIN.ERB`（`@EVENTTRAIN`）。
+关键入口：`ERB/SYSTEM/TITLE ver1.0.8.ERB`（`@SYSTEM_TITLE`，标题画面；根目录的 `ERB/TITLE.ERB` 定义了同名函数，但被引擎忽略，确认过程见 issue #12）→ `ERB/SYSTEM/SYSTEM ver1.0.3.ERB`（`@EVENTFIRST`，全局初始化）→ `ERB/SHOP/DRAW_MAINMENU.ERB`（主菜单）→ `ERB/EVENT/EVENT_NEXTDAY.ERB`（日循环）、`ERB/調教相關/TRAIN_MAIN.ERB`（`@EVENTTRAIN`）。
 
 `target/資料_非必要無須解壓/` 是日文原作文档（readme、补丁历史、flag 说明），可作设计意图的原始依据。
 
-**口上占近一半体量，但它不是纯文本，是带文本的状态机。** 实测输出行仅 31.4%，控制流 33.1%，注释 24.8%。文本被切得极碎：25,091 个连续文本段，中位数 1 行/段，90% 的段 ≤3 行。引擎的 `.kojo` 格式承载不了嵌套分支、状态推进、数值副作用与限时输入，所以**口上一律用 JS**（决议见 issue #8）。
+**口上包含文本、条件分支和状态变化，必须按状态机移植。** 实测输出语句占 31.4%，控制流占 33.1%，注释占 24.8%；25,091 个连续文本段的长度中位数为 1 行，90% 不超过 3 行。引擎的 `.kojo` 格式无法表达所需的嵌套分支、状态变化、数值修改和限时输入，因此**口上一律用 JS 实现**（issue #8）。
 
 移植方式：离线转译器产出初稿（约 98% 的行可机械转换），再人工逐段复核。转译器必须保留注释，那 29,724 行说明文字是理解语义的主要依据。
 
@@ -243,15 +250,15 @@ Emuera 1.821.8 简体中文版运行的《ERA魔王 年度版（名字暂定）�
 
 erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`（事件）、`page/`（界面）、`system/`（系统逻辑，按域再分子目录）、`utils/`（工具）、`i18n/`（多语言）。但**代码层面以 `ere-example` 与 `ere-kanon` 为范例**：官方明确提醒 EraUma 代码缺注释、缺类型检查（`dev-guides/E-erauma-train.md`），它只值得参考设计思路与工程组织。
 
-## Agent skills
+## 技能与流程文档
 
 ### ERA Basic（ERB）语法与 API
 
-读 `target/` 的 ERB 时查它，别凭记忆猜：模型对 ERB 没有可靠训练数据。技能 `emuera-basic-agent-guide`，两边自动发现，也可 `/emuera-basic-agent-guide` 直接调。**这是外部上游材料，必须保持逐字不变**：正文在 `.agents/skills/emuera-basic-agent-guide/`（ante 原生加载——它按 `.claude` → `.agents` → `.ante` 的顺序发现项目级技能，后者按名覆盖前者），`.claude/skills/` 下的同名文件是转发桩，只为 Claude Code 存在（本机造不出软链接，缘由见桩内注释）。
+读取 `target/` 中的 ERB 前，查阅 `emuera-basic-agent-guide` 技能，按文档确认语法与 API。正文位于 `.agents/skills/emuera-basic-agent-guide/`，**属于持续同步的外部材料，必须保持逐字不变**。ante 按 `.claude` → `.agents` → `.ante` 的顺序发现项目技能，同名技能以后者为准；Claude Code 使用 `.claude/skills/` 下的转发文件，采用转发文件的原因见其注释。
 
 ### 工单流程
 
-派发、监督、验收、收尾一张工单的完整 SOP：Paseo MCP 工具与 CLI、并发上限、派发简报模板。见 `docs/agents/ticket-sop.md`。
+工单分配、进度检查、验收与结束步骤见 `docs/agents/ticket-sop.md`，包括 Paseo MCP 和 CLI 用法、并发上限及任务说明模板。
 
 ### Issue 跟踪
 
@@ -263,4 +270,4 @@ erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`�
 
 ### 领域文档
 
-单一上下文：仓库根目录下只有一份 `CONTEXT.md` 和一个 `docs/adr/`。见 `docs/agents/domain.md`。
+术语统一维护在根目录的 `CONTEXT.md`，架构决策记录在 `docs/adr/`。维护规则见 `docs/agents/domain.md`。

@@ -1,59 +1,28 @@
-# Domain Docs
+# 领域文档
 
-How the engineering skills should consume this repo's domain documentation when exploring the codebase.
+开发、审查或研究本项目时，按以下约定查阅术语和架构决策。
 
-**This repo is single-context.** One `CONTEXT.md` and one `docs/adr/` at the root. There is no `CONTEXT-MAP.md` and no per-package `src/<context>/` split.
+项目术语统一记录在根目录的 `CONTEXT.md`，架构决策记录（ADR）保存在 `docs/adr/`，不按包分别维护。
 
-## Before exploring, read these
+## 开始探索前
 
-- **`CONTEXT.md`** at the repo root, or
-- **`CONTEXT-MAP.md`** at the repo root if it exists — it points at one `CONTEXT.md` per context. Read each one relevant to the topic.
-- **`docs/adr/`** — read ADRs that touch the area you're about to work in. In multi-context repos, also check `src/<context>/docs/adr/` for context-scoped decisions.
+先读与当前工作相关的内容：
 
-If any of these files don't exist, **proceed silently**. Don't flag their absence; don't suggest creating them upfront. The `domain-modeling` skill (reached via `grill-with-docs` and `improve-codebase-architecture`) creates them lazily when terms or decisions actually get resolved.
+- 根目录 `CONTEXT.md`；
+- `docs/adr/` 中影响该区域的 ADR。
 
-Neither `CONTEXT.md` nor `docs/adr/` exists yet in this repo. That is the expected starting state — proceed silently.
+## 不属于领域文档的资料
 
-## Not domain docs
+`dev-guides/` 是 EraElectron 引擎的参考资料，说明 API、配置、脚本模型和工具。需要了解引擎行为时读取它；项目术语和架构决策仍写入 `CONTEXT.md` 与 `docs/adr/`。
 
-`dev-guides/` holds reference documentation for the **era engine** (its API, config, scripting model, tooling). It is upstream engine material, not this project's domain model or decision record. Read it to learn how the engine works; don't treat it as `CONTEXT.md`, and don't write domain terms or ADRs into it.
+## 用既有术语写作
 
-## File structure
+Issue 标题、重构建议、假设和测试名称中的领域概念，使用 `CONTEXT.md` 定义的名称，不用其中明确排除的同义词。
 
-Single-context repo (most repos — including this one):
+若所需概念不在术语表中，先判断是否误用了项目外的名称；确有缺口时记录下来，避免临时定义多个说法。
 
-```
-/
-├── CONTEXT.md
-├── docs/adr/
-│   ├── 0001-event-sourced-orders.md
-│   └── 0002-postgres-for-write-model.md
-└── src/
-```
+## ADR 冲突
 
-Multi-context repo (presence of `CONTEXT-MAP.md` at the root):
+输出若与已有 ADR 的结论冲突，要明确指出冲突及重新讨论的理由，不能静默覆盖。例如：
 
-```
-/
-├── CONTEXT-MAP.md
-├── docs/adr/                          ← system-wide decisions
-└── src/
-    ├── ordering/
-    │   ├── CONTEXT.md
-    │   └── docs/adr/                  ← context-specific decisions
-    └── billing/
-        ├── CONTEXT.md
-        └── docs/adr/
-```
-
-## Use the glossary's vocabulary
-
-When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary explicitly avoids.
-
-If the concept you need isn't in the glossary yet, that's a signal — either you're inventing language the project doesn't use (reconsider) or there's a real gap (note it for `domain-modeling`).
-
-## Flag ADR conflicts
-
-If your output contradicts an existing ADR, surface it explicitly rather than silently overriding:
-
-> _Contradicts ADR-0007 (event-sourced orders) — but worth reopening because…_
+> 与 ADR-0007 的结论冲突；需要重新讨论，因为……
