@@ -360,7 +360,8 @@ export default [
   ) {`,
     replace: `  if (era_flag.day_count === 500 && era_exflag.first_run_deadline >= 0) {`,
     tests: ['event-endcheck'],
-    must_mention: '不得置 99',
+    must_mention:
+      'ENDCHECKMAIN 2801：DAY==500 且主线空闲（==0 或 >=90）→ 置 99；其余不动',
   },
   {
     desc: 'M210 ENDCHECKMAIN 2802 反作弊容差丢失（+8766 删掉）',
@@ -445,7 +446,8 @@ export default [
     find: '  if (era_exflag.first_run_deadline === 99 && era_flag.day_count === 500) {',
     replace: '  if (era_exflag.first_run_deadline === 99) {',
     tests: ['event-endcheck'],
-    must_mention: 'DAY != 500 时不得调用',
+    must_mention:
+      'ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身），否则不出现',
   },
   {
     desc: 'M242 FLAG:26 数组槽序颠倒（低位在前改高位在前——var_writes 全量断言红，#138 的数组承载）',
@@ -939,7 +941,8 @@ export default [
     find: '  if (get(`cflag:${cid}:451`) === 0) {',
     replace: '  if (get(`cflag:${cid}:451`) === 1) {',
     tests: ['event-chara-leave'],
-    must_mention: '未生成身体数据时应留存根痕迹',
+    must_mention:
+      'EVENT_CHARA_RETURN：身体数据未生成（CFLAG:451==0）时调真身生成（#385）',
   },
   {
     desc: 'M7934 APHRODISIAC_ADDICT：7 日一次的残留度衰减改成 8 日一次',
@@ -1701,7 +1704,8 @@ export default [
     replace: `        era.get(\`talent:\${a}:314\`) || 0,
       );`,
     tests: ['event-ending'],
-    must_mention: '走的是注入的随机源',
+    must_mention:
+      'CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_generate 的返回值写进 CFLAG:452',
   },
   {
     desc: 'M8273 CHAR_GIFT 种族年龄：实参顺序颠倒（人类年龄 ↔ 种族编号）',
@@ -2673,7 +2677,8 @@ export default [
     find: `    chara(cid).system.主人膣内射精 = 30; // :1011 CFLAG:101 = 30`,
     replace: `    chara(cid).system.主人膣内射精 = 20; // :1011 CFLAG:101 = 30`,
     tests: ['event-nextday'],
-    must_mention: 'CFLAG:101 = 30',
+    must_mention:
+      'NAKADASHI_CHECK 算掷骰上界时看到的 CFLAG:101 必须是 :1011 写入的 30',
   },
   {
     desc: 'M8649 破处支尾部：着衣状态的位 64 扣减写成位 32',

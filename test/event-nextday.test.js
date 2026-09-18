@@ -2271,6 +2271,36 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
   assert.equal(without.store.get('cflag:31:42'), 0, '特别服装一并归零');
 });
 
+test('处女献上（OFFERVIRGIN_CHECK）：膣内射精链清零前，CFLAG:101 确实是 :1011 写入的 30（#439）', async () => {
+  // 上一条测的是清零后的终态——nakadashi_check 无论受孕系统开关都会
+  // 清池，30 与 20（#439 的 M8648）清零后都是 0，终态分不出两者。这里
+  // 把默认夹具的受孕系统开关（FLAG:5 位 2）打开，让 nakadashi_check 走到
+  // 算上界那支、真的调一次 rand(upper)；这个调用发生在 :274 clear_pool
+  // 之前（event-pregnancy.js:302-304），借它当清零前的观测点，不改产
+  // 出结果也不碰生产代码。
+  const fixture = setup_chara_events();
+  seed_virgin_offer(fixture);
+  fixture.store.set('flag:5', 4); // 位 2 = 1：启用妊娠系统
+  fixture.set_inputs(0);
+  const mod = fixture.load_module('event/event-nextday');
+
+  let observed_pool;
+  const spy_rand = () => {
+    if (observed_pool === undefined) {
+      observed_pool = fixture.store.get('cflag:31:101');
+    }
+    return 2;
+  };
+
+  await mod.offervirgin_check(spy_rand);
+
+  assert.equal(
+    observed_pool,
+    30,
+    'NAKADASHI_CHECK 算掷骰上界时看到的 CFLAG:101 必须是 :1011 写入的 30',
+  );
+});
+
 test('处女献上（OFFERVIRGIN_CHECK）：初体验记录与亲族关系的九档编码', async () => {
   // 目标侧的表读 **TALENT:PLAYER:122**（魔王的性别）——[TFLAG:14, 魔王是男人, 期望 CFLAG:15]
   const cases = [
