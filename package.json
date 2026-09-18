@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node tools/engine-launch.mjs",
     "test": "node tools/run-node.mjs -- --test --test-concurrency=4",
-    "test:ci": "node tools/run-node.mjs -- --test --test-concurrency=4 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=tap --test-reporter-destination=test-report.tap",
+    "test:ci": "node tools/run-node.mjs --timeout 1200 -- --test --test-concurrency=4 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=tap --test-reporter-destination=test-report.tap",
     "test:related": "node tools/run-node.mjs -- tools/select-tests.mjs --run",
     "test:inner": "node tools/run-node.mjs -- tools/select-tests.mjs --no-locks --run",
     "test:locks": "node tools/run-node.mjs -- tools/select-tests.mjs --locks-only --run",

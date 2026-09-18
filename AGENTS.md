@@ -96,7 +96,7 @@ npm run format:check     # Prettier，只检查格式
 
 **测试入口统一限制为 4 个测试文件并发**，包括 npm 测试、选择器与变异子进程。它限制进程并发数，不等于 CPU 配额；同时跑多个 agent 或变异副本时仍要控制任务数。Linux 可额外用 `bash tools/capped.sh npm test` 施加 systemd CPU 配额；Windows 直接用 npm 命令。
 
-**测试命令必须有超时**。npm 测试、lint 与格式检查已由 `tools/run-node.mjs` 设置整条命令 600 秒上限；单文件测试与长任务也用它。Windows 的 `timeout.exe` 只是等待命令，不能替代 GNU `timeout`。PowerShell 示例：
+**测试命令必须有超时**。`npm test`、`lint`、`format:check` 这类交互式命令由 `tools/run-node.mjs` 给出默认 600 秒上限；单文件测试与长任务按需显式给更大的 `--timeout`，不依赖默认值。**`npm run test:ci` 是例外，脚本里显式声明 1200 秒**——它跑全库测试，本机带引擎实测 326 秒（`node --test --test-concurrency=4`，5916 例全过），但 `ci.yml` 的 `windows` 任务在 CI runner 上首次运行就撞上默认的 600 秒被杀（#443：`35329826228`，09:30:15 起跑、09:40:16 被 `taskkill` 终止，未跑完），1200 秒留出约 3.7 倍于本机实测的余量。这与 `ci.yml` 各 job 的 `timeout-minutes: 30`（1800 秒）是两层不同的上限：后者是 job 级兜底，覆盖检出、装依赖、跳过数守护等全部步骤；前者是 `test:ci` 这条命令自己的上限，必须留在 job 级上限之内。Windows 的 `timeout.exe` 只是等待命令，不能替代 GNU `timeout`。PowerShell 示例：
 
 ```
 New-Item -ItemType Directory -Force logs/migration | Out-Null
