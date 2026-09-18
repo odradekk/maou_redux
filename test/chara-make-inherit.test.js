@@ -437,6 +437,21 @@ test('cmi_conflict_check：表外下标一起置位不构成任何冲突', () =>
 
 // —— @CHARA_MAKE_INHERIT 的调度（:4-67）——
 
+test('chara_make_inherit：负亲本（L_B < 0）直接 RETURN，不写任何继承结果（:11-12）', () => {
+  // 子代预先带一个素质值——一旦守卫失效、继续往下执行，:20-21 段会把它
+  // 覆盖成 `talent:-1:20`（未声明的负亲本，读回 undefined），从而可观察。
+  const fixture = create_era_fixture();
+  fixture.store.set('talent:8:20', 42);
+  const { chara_make_inherit } = load(fixture);
+  const result = chara_make_inherit(8, -1, -1, () => 1);
+  assert.equal(result, 8, '仍原样返回子代 ID');
+  assert.equal(
+    fixture.store.get('talent:8:20'),
+    42,
+    '负亲本直接 RETURN，子代已有素质值原样保留',
+  );
+});
+
 test('chara_make_inherit：继承候选表的四段与两类排除（每个区间各一侧）', () => {
   // 亲本每个候选下标都置 1，掷骰恒真值（`() => 1` = RAND:N 非零），
   // 于是「子代拿到了哪些下标」就是候选表本身（再扣掉冲突检查消掉的那几个）。
