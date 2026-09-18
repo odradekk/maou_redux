@@ -239,7 +239,8 @@ export default [
     find: '    reset_names: false,',
     replace: '    reset_names: true,',
     tests: ['event-execution'],
-    must_mention: '迷你处刑源未调用 NAME_RESET',
+    must_mention:
+      '迷你处刑不触发全员称呼重建（reset_names:false，NAME_RESET 未被调用）',
   },
   {
     desc: 'M7288 迷你处刑：带说明时漏开头分隔线',

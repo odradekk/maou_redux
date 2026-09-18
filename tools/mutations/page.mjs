@@ -489,7 +489,13 @@ export default [
     replace: `    era_flag.elf_realm_invasion >= 0 && // 变异：门槛恒真
     era_flag.elf_realm_conquered === 0`,
     tests: ['event-ending'],
-    must_mention: '空转零输出',
+    // '空转零输出' 是断言消息，但门槛松开后 ending_3 会在断言执行前就
+    // 因 char_gift 等待未预置的输入而炸穿，断言永远走不到——旧
+    // must_mention 因此从未真正命中。真正专门测「五组门槛全未达标 → 零
+    // 输出」这条判据（含精灵领域默认值 0）的用例是同名测试；改用它自己
+    // 的名字做锚点，跑该测试即会因这条判据被松开而红（#440 实测）。
+    test_name: '五组全不满足',
+    must_mention: '五组全不满足',
   },
   {
     desc: 'M223 LIST_DATA 高亮：删掉 LASTSAVE_NO 的浅绿（SYSTEM_DATA.ERB:309-310）',
