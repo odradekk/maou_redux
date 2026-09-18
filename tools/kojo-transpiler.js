@@ -1240,7 +1240,10 @@ function collect_facade_hints(code) {
 
 /** 生成产物文件内容（头注 + 代码 + REVIEW 清单） */
 function build_product(erb_path, { code, reviews }) {
-  const rel = path.relative(path.join(__dirname, '..'), erb_path);
+  const rel = path
+    .relative(path.join(__dirname, '..'), erb_path)
+    .split(path.sep)
+    .join('/');
   const hints = collect_facade_hints(code);
   const header = [
     // 待复核初稿：era/target/era_flag/rand_n 等变量由复核 agent 补导入，

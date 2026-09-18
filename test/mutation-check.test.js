@@ -776,6 +776,53 @@ test('--ids 点名的编号不存在时当场报错退 1，不静默跑 0 条', 
   }
 });
 
+test('--files 接受 Windows 反斜杠路径', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--files',
+      'lib\\calc.js',
+    ]);
+    assert.equal(status, 0, `反斜杠路径应命中条目：\n${output}`);
+    assert.match(output, /拦截 1 \/ 跳过 0 \/ 红 0/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--files 显式给出的文件零匹配时退 1，不把空跑报告成全拦截', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--files',
+      'lib/missing.js',
+    ]);
+    assert.equal(status, 1, `零匹配必须退 1：\n${output}`);
+    assert.match(output, /--files 没有命中任何变异条目.*lib\/missing\.js/);
+    assert.doesNotMatch(output, /全部变异被测试拦截/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('--ids 是子集档：不带 --skip-baseline 也不核对 ENGINE_SKIP_BASELINE', () => {
   const root = make_fixture();
   try {
@@ -954,6 +1001,13 @@ test('SIGINT 能中断串行档，并把靶文件还原', async () => {
     const child = spawn(
       process.execPath,
       [
+        // Windows child.kill('SIGINT') 是强制终止，不会触发 JS 处理器。
+        // 用 IPC 在子进程内触发同一处理器；POSIX 仍验证真实信号投递。
+        '--import',
+        'data:text/javascript,' +
+          encodeURIComponent(
+            "process.on('message', () => process.emit('SIGINT'));",
+          ),
         TOOL,
         '--root',
         root,
@@ -964,16 +1018,30 @@ test('SIGINT 能中断串行档，并把靶文件还原', async () => {
         '--skip-baseline',
         '0',
       ],
-      { cwd: REPO_ROOT, encoding: 'utf8' },
+      { cwd: REPO_ROOT, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] },
     );
+    let output = '';
     const status = await new Promise((resolve) => {
       child.on('exit', (code, signal) => resolve(code ?? signal));
-      setTimeout(() => child.kill('SIGINT'), 700);
+      // 等第一条变异已执行才请求中断，避免机器启动速度决定信号落点。
+      let requested = false;
+      child.stdout.on('data', (chunk) => {
+        output += chunk;
+        if (requested || !output.includes('红=true')) return;
+        requested = true;
+        if (process.platform === 'win32') child.send('interrupt');
+        else child.kill('SIGINT');
+      });
+      child.stderr.resume();
     });
     assert.equal(
       status,
       130,
       `SIGINT 必须被处理器接住并退 130，实际 ${status}——串行档的循环不让出事件循环时，信号会一直排队到跑完`,
+    );
+    assert.ok(
+      !output.includes('SUMMARY'),
+      '中断必须发生在全轮变异完成之前，否则信号会一直排队到跑完',
     );
     assert.equal(
       fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),

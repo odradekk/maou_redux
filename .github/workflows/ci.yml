@@ -112,6 +112,24 @@ jobs:
           node tools/skip-count-check.mjs test-report.tap
           --baseline test/engine-present-skip-baseline.txt
 
+  # 原生 Windows 开发环境：覆盖盘符、反斜杠、中文临时目录与进程树清理。
+  windows:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: 安装 Windows 开发依赖
+        run: npm ci
+      - uses: ./.github/actions/setup-engine
+      - name: Windows 全库测试（带引擎）
+        run: npm run test:ci
+      - name: 引擎在场时跳过数必须为 0
+        run: node tools/skip-count-check.mjs test-report.tap --baseline test/engine-present-skip-baseline.txt
+
   # —— 手动档：全量变异 ——
   #
   # 「验证其余检查器守得住」的检查器的执行层。条目表的三项结构检查

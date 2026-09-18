@@ -110,6 +110,17 @@ test('--no-locks 去掉全局锁（内环档），但保留真实相关的测试
   );
 });
 
+test('--files 接受 Windows 反斜杠路径', () => {
+  const { status, files, report } = run(
+    '--files',
+    'ere\\chara\\chara-make.js',
+    '--no-locks',
+  );
+  assert.equal(status, 0);
+  assert.ok(files.includes('test/chara-make.test.js'));
+  assert.doesNotMatch(report, /退回全量/);
+});
+
 /**
  * 不可解析的路径必须**在运行时拼**，不能写成字面量。
  *

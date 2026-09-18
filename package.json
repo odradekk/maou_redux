@@ -4,12 +4,15 @@
   "private": true,
   "description": "ere game project (EraElectron)",
   "scripts": {
-    "test": "node --test",
-    "test:ci": "node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=tap --test-reporter-destination=test-report.tap",
-    "test:related": "node tools/select-tests.mjs --run",
-    "test:inner": "node tools/select-tests.mjs --no-locks --run",
-    "test:locks": "node tools/select-tests.mjs --locks-only --run",
-    "test:select": "node tools/select-tests.mjs"
+    "start": "node tools/engine-launch.mjs",
+    "test": "node tools/run-node.mjs -- --test --test-concurrency=4",
+    "test:ci": "node tools/run-node.mjs -- --test --test-concurrency=4 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=tap --test-reporter-destination=test-report.tap",
+    "test:related": "node tools/run-node.mjs -- tools/select-tests.mjs --run",
+    "test:inner": "node tools/run-node.mjs -- tools/select-tests.mjs --no-locks --run",
+    "test:locks": "node tools/run-node.mjs -- tools/select-tests.mjs --locks-only --run",
+    "test:select": "node tools/select-tests.mjs",
+    "lint": "node tools/run-node.mjs -- node_modules/eslint/bin/eslint.js . --max-warnings 0",
+    "format:check": "node tools/run-node.mjs -- node_modules/prettier/bin/prettier.cjs --check ."
   },
   "devDependencies": {
     "@modelcontextprotocol/server": "^2.0.0",
@@ -23,6 +26,6 @@
     "zod": "^4.6.5"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24.13.1"
   }
 }

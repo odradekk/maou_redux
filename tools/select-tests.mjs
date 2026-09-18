@@ -134,7 +134,7 @@ function parse_args(argv) {
     else if (a === '--files')
       out.files = String(next())
         .split(',')
-        .map((s) => s.trim())
+        .map((s) => s.trim().replaceAll('\\', '/'))
         .filter(Boolean);
     else if (a === '--root') out.root = path.resolve(String(next()));
     else if (a === '--ledger-dir')
@@ -319,10 +319,14 @@ async function main() {
   if (full) {
     console.error('（退回全量，等价于 npm test）');
   }
-  const r = spawnSync(process.execPath, ['--test', ...selected], {
-    cwd: args.root,
-    stdio: 'inherit',
-  });
+  const r = spawnSync(
+    process.execPath,
+    ['--test', '--test-concurrency=4', ...selected],
+    {
+      cwd: args.root,
+      stdio: 'inherit',
+    },
+  );
   process.exit(r.status ?? 1);
 }
 

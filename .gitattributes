@@ -3,9 +3,11 @@
 # 默认：由 git 自行判定文本/二进制，不强制改写换行符
 * -text
 
-# 我们自己写的源码与文档：仓库内统一 LF，检出时按平台
+# 我们自己写的源码与文档：仓库与检出文件统一 LF
 # （.prettierrc 与 .eslintrc.js 均为 endOfLine: auto，不与此冲突）
 *.js text eol=lf
+*.mjs text eol=lf
+*.sh text eol=lf
 *.json text eol=lf
 *.md text eol=lf
 *.yml text eol=lf

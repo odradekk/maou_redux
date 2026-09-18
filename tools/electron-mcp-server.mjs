@@ -16,8 +16,7 @@
  * 不是长驻服务。
  */
 
-import { homedir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { McpServer } from '@modelcontextprotocol/server';
@@ -25,25 +24,13 @@ import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import { _electron } from 'playwright-core';
 import * as z from 'zod/v4';
 
+import { engine_launch_options } from './engine-launch.mjs';
+
 // 仓库路径从本文件自己的位置推出（本文件固定放在 <仓库根>/tools/ 下），不依赖
 // ${CLAUDE_PROJECT_DIR} 之类的占位符——实测过它在 Claude Code 当前这个版本里
 // 不生效（.mcp.json 里用它会报 "Missing environment variables"，MCP 服务器
 // 直接连不上），也不依赖子进程 cwd 的隐含约定。
 const repo_path = dirname(dirname(fileURLToPath(import.meta.url)));
-
-// 与 AGENTS.md「运行与调试」一节文档的启动命令一致：引擎运行时不在仓库里，
-// 装在 ~/.era-engine/。executablePath 必须是原生二进制，不是
-// runtime/node_modules/.bin/electron 那个转发用的 Node 脚本。
-const electron_bin = join(
-  homedir(),
-  '.era-engine',
-  'runtime',
-  'node_modules',
-  'electron',
-  'dist',
-  'electron',
-);
-const asar_path = join(homedir(), '.era-engine', 'app.asar');
 
 /** @type {import('playwright-core').ElectronApplication | null} */
 let electron_app = null;
@@ -121,10 +108,7 @@ function create_server() {
       if (electron_app) {
         return fail('引擎已经在运行，先调用 close 再重新 launch_game');
       }
-      electron_app = await _electron.launch({
-        executablePath: electron_bin,
-        args: [asar_path],
-      });
+      electron_app = await _electron.launch(engine_launch_options());
       // 必须主动排空子进程的 stdout/stderr：引擎启动时会同步刷一长串日志
       // （仅角色预设表校验就有几百行），没人读的话管道缓冲区会被写满，
       // 主进程会阻塞在那次同步 write 上，看起来就像 launch_game 卡死不返回

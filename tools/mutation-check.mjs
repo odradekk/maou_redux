@@ -187,7 +187,7 @@ function parse_args(argv) {
     else if (a === '--files')
       out.files = String(next())
         .split(',')
-        .map((s) => s.trim())
+        .map((s) => s.trim().replaceAll('\\', '/'))
         .filter(Boolean);
     else if (a === '--ids') out.ids = parse_ids(String(next()));
     else if (a === '--sample') out.sample = Number(next());
@@ -504,12 +504,16 @@ function run_one(root, m) {
     fs.writeFileSync(full, original.replace(m.find, m.replace), 'utf8');
     const files = m.tests.map((t) => `test/${t}.test.js`);
     const run_tests = (extra) =>
-      spawnSync(process.execPath, ['--test', ...extra, ...files], {
-        cwd: root,
-        encoding: 'utf8',
-        maxBuffer: 16 * 1024 * 1024,
-        env: clean_env(),
-      });
+      spawnSync(
+        process.execPath,
+        ['--test', '--test-concurrency=4', ...extra, ...files],
+        {
+          cwd: root,
+          encoding: 'utf8',
+          maxBuffer: 16 * 1024 * 1024,
+          env: clean_env(),
+        },
+      );
     // 先只跑 must_mention 点名的那个用例（#242）。条目表的主流写法就是
     // 「must_mention 逐字等于测试名」，所以这个模式通常恰好命中一条，
     // 而整份测试文件在口上票里已经涨到几百个用例：K11 实测跑全文 5.9s、
@@ -759,7 +763,9 @@ async function execute_jobs(args) {
     // 测试红，若不先对照，会被误判成「变异被拦截」——误报通过的最大来源
     const controls = await Promise.all(
       copies.map((copy) =>
-        spawn_capture(process.execPath, ['--test'], { cwd: copy }),
+        spawn_capture(process.execPath, ['--test', '--test-concurrency=4'], {
+          cwd: copy,
+        }),
       ),
     );
     for (let i = 0; i < jobs; i += 1) {
@@ -784,7 +790,11 @@ async function execute_jobs(args) {
     // 换表/换基线（测试夹具、诊断）就会在副本里当场撞门（#304）。
     // --ledger-dir 落在 root 内时按相对路径改指副本内的同一处。
     const rel_ledger = path.relative(args.root, args.ledger_dir);
-    const in_root = rel_ledger !== '' && !rel_ledger.startsWith('..');
+    const in_root =
+      rel_ledger !== '' &&
+      !path.isAbsolute(rel_ledger) &&
+      rel_ledger !== '..' &&
+      !rel_ledger.startsWith(`..${path.sep}`);
     const results = await Promise.all(
       copies.map((copy, i) =>
         spawn_capture(
@@ -855,6 +865,11 @@ async function main() {
     console.log('✗ 三项检查未过，拒绝执行');
     process.exitCode = 1;
     return;
+  }
+  if (args.files && select_entries(entries, args).length === 0) {
+    throw new ArgError(
+      `✗ --files 没有命中任何变异条目：${args.files.join(', ')}`,
+    );
   }
   const engine_present = Boolean(locate_asar(args.root, args.asar));
   if (!engine_present) {
