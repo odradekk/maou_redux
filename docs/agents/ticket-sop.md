@@ -297,7 +297,7 @@ CI 引擎安装使用 `~/.era-engine/app.asar`，不能只通过环境变量提�
 
 在路线图 #101 的阶段决策 Issue 关闭前完成，不要求每张实施工单重复运行：
 
-1. **带引擎的全量变异测试**：`node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 4`。全部变异都应被检测到，跳过数和失败条目数均为 0。也可手动触发 `workflow_dispatch`，详见 AGENTS.md 的 CI 说明。
+1. **带引擎的全量变异测试**：给阶段收尾 PR 打 `phase-acceptance` 标签，由 `mutation.yml` 分 16 片在 CI 运行，汇总任务的 job summary 给出「拦截 / 跳过 / 红」合计；全部变异都应被检测到，跳过数和失败条目数均为 0。本机也可用 `node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2` 跑，约 80 分钟。
 2. **引擎运行验收**：在主工作目录启动游戏，完成该阶段的端到端流程。可用 GUI 手工操作，或用已配置的 Electron MCP 工具 `launch_game`、`click`、`type`、`read_text`、`screenshot`。根目录 `.mcp.json` 的配置原用于 Claude Code；其他客户端是否可用，以当前工具配置为准。
 3. **全部样本输出比对**：按 `tools/compare/samples.js` 中的样本逐个运行 `node tools/compare/cli.js --sample <名>`。单张工单验收只需运行受影响样本，见 §5。
 
