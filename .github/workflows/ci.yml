@@ -6,9 +6,9 @@
 #
 #   pull_request   → engine / windows / static   与 master push 同一套全库检查
 #   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线；锚点质量全文量
-#   手动           → mutation                     全量变异（见文末说明）
 #
 # 九份输出比对样本随 engine 任务跑（每份约 1 秒），任一样本有未解释差异即红。
+# 全量变异在 mutation.yml，只对打了 `phase-acceptance` 标签的阶段收尾 PR 跑。
 name: CI
 
 on:
@@ -16,12 +16,6 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  workflow_dispatch:
-    inputs:
-      run_mutation:
-        description: '是否顺带跑全量变异（默认关，避免手动触发误跑 180 分钟任务）'
-        type: boolean
-        default: false
 
 permissions:
   contents: read
@@ -57,7 +51,6 @@ jobs:
 
   # 原生 Windows 开发环境：覆盖盘符、反斜杠、中文临时目录与进程树清理。
   windows:
-    if: github.event_name != 'workflow_dispatch'
     runs-on: windows-latest
     timeout-minutes: 30
     steps:
@@ -115,49 +108,3 @@ jobs:
       # 所以它必须有一个自动执行点。
       - name: 锚点质量全文量（弱锚点只减不增，核对总基线）
         run: node tools/trace-check.mjs --anchor-quality --all
-
-  # —— 手动档：全量变异 ——
-  #
-  # 「验证其余检查器守得住」的检查器的执行层。条目表的三项结构检查
-  # （--verify）是秒级的，已随 test/mutation-check.test.js 进上面几个 job。
-  #
-  # 只挂 workflow_dispatch：阶段收口时的正规跑法是在本机满速跑一次，这里留
-  # 着是为了不必守着本机也能点一轮。--jobs 4 的依据是 runner 实测 4 核 /
-  # 15Gi 内存 / 86G 空闲盘，而 --jobs 2 只用掉 1.5Gi 和 41% 盘。
-  #
-  # 残留守护与**检出基线**比对而非假设干净——裸检出可能带既有脏度（#96 的
-  # dev-guides CRLF），守护证的是「变异逐字节还原」，不是「仓库本来干净」。
-  mutation:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_mutation == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 180
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-      - uses: ./.github/actions/setup-engine
-      - name: 记录检出基线（裸检出未必干净，见 #96）
-        run: git status --porcelain > /tmp/tree-before.txt
-      - name: runner 规格（--jobs 的上限由内存定，不是由核数定）
-        run: |
-          nproc; free -h; df -h /
-      - name: 变异全量（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
-        run: |
-          set +e
-          node tools/mutation-check.mjs --jobs 4
-          rc=$?
-          echo "=== 退出码 $rc ==="
-          free -h
-          df -h / "$RUNNER_TEMP"
-          oom=$(sudo dmesg 2>/dev/null | grep -iE "out of memory|oom-kill|killed process" | tail -20)
-          echo "${oom:-dmesg 里没有 OOM 记录（或读不到 dmesg）}"
-          exit $rc
-      - name: 工作树残留守护（变异必须逐字节还原：与检出基线比对）
-        run: |
-          git status --porcelain > /tmp/tree-after.txt
-          if ! diff -u /tmp/tree-before.txt /tmp/tree-after.txt; then
-            echo "变异运行后工作树相对检出基线有变化（diff 里 - 行是基线、+ 行是跑后）——变异没有逐字节还原"
-            exit 1
-          fi
-          echo "工作树与检出基线一致（变异逐字节还原；基线自身的脏度不属于本守护的判定面）"

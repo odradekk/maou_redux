@@ -1,0 +1,101 @@
+# 全量变异测试（#452 起按标签触发；此前是 ci.yml 里的手动任务）。
+#
+# 只在**阶段收尾 PR** 上跑：给 PR 打 `phase-acceptance` 标签即触发，之后
+# 每次推送也重跑；去掉标签就不再跑。不挂 master push，也不挂手动触发——
+# 入口只有这一条。
+#
+# 分片的依据：`--jobs N` 会忽略外层 `--slice`，两者不能嵌套，所以每个
+# 分片**串行**跑 `--slice i 8`（约 660 条），就地变异、靠工作树残留检查
+# 兜底。首跑（#454，run 35454050870）按 16 片校准：5301 条全部拦截、
+# 跳过 0、红 0，每片 330 条用时 5–10 分钟（含约 1 分钟装引擎），即每条
+# 0.9–1.6 秒；改 8 片后每片估算 20 分钟以内，全部并行落在 30 分钟内。
+#
+# 合格线与本机全量一致：每片「拦截 N / 跳过 0 / 红 0」且退出码 0。汇总
+# 任务只把各片的数字合计写进 job summary，不往 PR 发评论。日志和汇总行
+# 写到 RUNNER_TEMP，不能落在仓库里——首跑就是因为日志落在仓库根目录被
+# 残留检查当成未还原的改动，16 片全红。
+name: Mutation
+
+on:
+  pull_request:
+    types: [labeled, synchronize]
+
+permissions:
+  contents: read
+
+# 同一 PR 只保留最新一次运行；与 ci.yml 的组互不干扰。
+concurrency:
+  group: mutation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  shard:
+    if: >-
+      contains(github.event.pull_request.labels.*.name, 'phase-acceptance') &&
+      (github.event.action == 'synchronize' || github.event.label.name == 'phase-acceptance')
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: ./.github/actions/setup-engine
+      - name: 记录检出基线（裸检出未必干净，见 #96）
+        run: git status --porcelain > /tmp/tree-before.txt
+      - name: 变异分片 ${{ matrix.shard }} / 8（有引擎：拦截 N / 跳过 0 / 红 0 是唯一合格线）
+        run: |
+          set -o pipefail
+          node tools/run-node.mjs --timeout 2100 -- tools/mutation-check.mjs --slice ${{ matrix.shard }} 8 | tee "$RUNNER_TEMP/mutation-shard.log"
+      - name: 工作树残留检查（变异必须逐字节还原：与检出基线比对）
+        if: always()
+        run: |
+          git status --porcelain > /tmp/tree-after.txt
+          if ! diff -u /tmp/tree-before.txt /tmp/tree-after.txt; then
+            echo "变异运行后工作树相对检出基线有变化（- 行是基线、+ 行是跑后）——变异没有逐字节还原"
+            exit 1
+          fi
+      - name: 提取本片汇总行
+        if: always()
+        run: grep '^SUMMARY ' "$RUNNER_TEMP/mutation-shard.log" > "$RUNNER_TEMP/summary-${{ matrix.shard }}.txt" || echo "SUMMARY caught=0 skipped=0 red=0 missing=1" > "$RUNNER_TEMP/summary-${{ matrix.shard }}.txt"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mutation-summary-${{ matrix.shard }}
+          path: ${{ runner.temp }}/summary-${{ matrix.shard }}.txt
+          retention-days: 7
+
+  summary:
+    needs: shard
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: mutation-summary-*
+          merge-multiple: true
+      - name: 合计各片并写入 job summary
+        run: |
+          caught=0; skipped=0; red=0; missing=0
+          for f in summary-*.txt; do
+            line=$(cat "$f")
+            c=$(echo "$line" | sed -n 's/.*caught=\([0-9]*\).*/\1/p')
+            s=$(echo "$line" | sed -n 's/.*skipped=\([0-9]*\).*/\1/p')
+            r=$(echo "$line" | sed -n 's/.*red=\([0-9]*\).*/\1/p')
+            caught=$((caught + c)); skipped=$((skipped + s)); red=$((red + r))
+            case "$line" in *missing=1*) missing=$((missing + 1));; esac
+          done
+          {
+            echo "## 全量变异测试"
+            echo
+            echo "| 拦截 | 跳过 | 红 | 未给出汇总的分片 | 分片任务结果 |"
+            echo "| --- | --- | --- | --- | --- |"
+            echo "| $caught | $skipped | $red | $missing | ${{ needs.shard.result }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "拦截 $caught / 跳过 $skipped / 红 $red / 未给出汇总的分片 $missing / 分片任务结果 ${{ needs.shard.result }}"
+          [ "${{ needs.shard.result }}" = "success" ]
