@@ -49,7 +49,7 @@
 
 判据主体不可机器化——机器看不出「语义变没变」。唯一可机器化的子集是「扩展角色表字段数变了但版本没抬」，覆盖面太窄。
 
-代价那一侧是明确的：`docs/agents/ticket-sop.md` §2 列出的四处固定冲突面（`LEDGER_COUNT_BASELINE`、`test/engine-skip-baseline.txt`、`tools/mutations/*.mjs`、`docs/stub-registry.md`）每加一处，所有并行票都要多付一次 rebase 成本（实测约 15 分钟）。改为在 SOP §5 增加一条人工检查判据。
+代价那一侧是明确的：`docs/agents/dispatch-sop.md` §2 列出的四处固定冲突面（`LEDGER_COUNT_BASELINE`、`test/engine-skip-baseline.txt`、`tools/mutations/*.mjs`、`docs/stub-registry.md`）每加一处，所有并行票都要多付一次 rebase 成本（实测约 15 分钟）。改为在分配与验收流程的验收参考里增加一条人工检查项。
 
 ## 后果
 
