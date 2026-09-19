@@ -143,7 +143,22 @@ jobs:
                 ps auxf
                 echo "--- dmesg 尾部（OOM 排查） ---"
                 sudo dmesg 2>/dev/null | tail -100
-                for pid in $(pgrep -f node); do
+                # 只收集 main_pid 的后代进程：pgrep -f 按整条命令行子串匹配，
+                # 会连带 sh -c "node tools/run-node.mjs ..." 这类命令行里
+                # 恰好含 "node" 字样的普通 shell 一并选中；给它发 SIGUSR2 没有
+                # 处理器，按默认处置直接终止（#449 定位过程中在 35427013360
+                # 上实测踩中：npm error signal SIGUSR2，3 分半就假失败）。
+                # 改成先收集后代 PID，再按 /proc/$pid/comm 精确等于 node 过滤，
+                # 只对真正的 node 进程发信号。
+                descendants="$main_pid"
+                frontier="$main_pid"
+                while [ -n "$frontier" ]; do
+                  frontier=$(pgrep -P "$(echo "$frontier" | tr '\n' ',' | sed 's/,$//')" 2>/dev/null)
+                  [ -z "$frontier" ] && break
+                  descendants="$descendants
+          $frontier"
+                done
+                for pid in $descendants; do
                   echo "--- /proc/$pid ---"
                   tr '\0' ' ' < /proc/$pid/cmdline 2>/dev/null; echo
                   cat /proc/$pid/status 2>/dev/null
@@ -151,7 +166,9 @@ jobs:
                   echo "syscall:"; cat /proc/$pid/syscall 2>/dev/null
                   echo "stack:"; sudo cat /proc/$pid/stack 2>/dev/null
                   echo "fd:"; ls -l /proc/$pid/fd 2>/dev/null
-                  kill -USR2 "$pid" 2>/dev/null
+                  if [ "$(cat /proc/$pid/comm 2>/dev/null)" = "node" ]; then
+                    kill -USR2 "$pid" 2>/dev/null
+                  fi
                 done
                 sleep 5
                 echo "--- logs/449 生成的诊断报告 ---"
