@@ -114,7 +114,6 @@ jobs:
         run: |
           set +e
           mkdir -p logs/449
-          export NODE_OPTIONS="--report-on-signal --report-directory=$PWD/logs/449 ${NODE_OPTIONS:-}"
           rm -f test-report.tap
           # 关键：stdout 不能重定向到文件。未改动的 CI 里这一步的 stdout 是
           # runner 的日志采集管道，写文件永不阻塞、写管道在缓冲区满且读端不
@@ -125,6 +124,16 @@ jobs:
           # 自己把背压消掉了：五次复现全绿，而同期 master 基线仍按老签名卡死
           # 1214 秒。这版改为不碰 stdout，进度改看 test:ci 本来就在写的
           # test-report.tap 的文件大小增长。
+          #
+          # 保住管道拓扑后又收了 7 次全绿，同期干净 master 连卡三次（含
+          # 35426986586）。两边同代码、同触发方式，差别只剩这段诊断脚本，
+          # 7 连绿在真实卡死率约 50% 的前提下概率不到 1%，说明是诊断脚本
+          # 本身压制了卡死，而非运气。诊断脚本还剩三处改变语义的地方：
+          # 后台 &、本轮的监控循环、上面刚删掉的
+          # NODE_OPTIONS=--report-on-signal。优先怀疑后者：它会让 node 起一个
+          # 专门处理信号的线程，改变信号投递路径；卡死签名（无输出、后续文件
+          # 一个未开、已在跑的四个也不产出）与「父进程不再处理子进程事件」
+          # 吻合，去掉这个变量看是否开始复现。
           npm run test:ci &
           main_pid=$!
 
@@ -173,11 +182,10 @@ jobs:
 
                 # 只收集 main_pid 的后代进程：pgrep -f 按整条命令行子串匹配，
                 # 会连带 sh -c "node tools/run-node.mjs ..." 这类命令行里
-                # 恰好含 "node" 字样的普通 shell 一并选中；给它发 SIGUSR2 没有
-                # 处理器，按默认处置直接终止（#449 定位过程中在 35427013360
-                # 上实测踩中：npm error signal SIGUSR2，3 分半就假失败）。
-                # 改成先收集后代 PID，再按 /proc/$pid/comm 精确等于 node 过滤，
-                # 只对真正的 node 进程发信号。
+                # 恰好含 "node" 字样的普通 shell 一并选中（#449 定位过程中在
+                # 35427013360 上实测踩中过发信号误杀）。这版不再发信号
+                # （去掉 NODE_OPTIONS=--report-on-signal 后已没有处理器接住，
+                # 按默认处置会直接终止进程），只按后代 PID 读 /proc 状态。
                 descendants="$main_pid"
                 frontier="$main_pid"
                 while [ -n "$frontier" ]; do
@@ -194,13 +202,7 @@ jobs:
                   echo "syscall:"; cat /proc/$pid/syscall 2>/dev/null
                   echo "stack:"; sudo cat /proc/$pid/stack 2>/dev/null
                   echo "fd:"; ls -l /proc/$pid/fd 2>/dev/null
-                  if [ "$(cat /proc/$pid/comm 2>/dev/null)" = "node" ]; then
-                    kill -USR2 "$pid" 2>/dev/null
-                  fi
                 done
-                sleep 5
-                echo "--- logs/449 生成的诊断报告 ---"
-                ls -la logs/449
               } > logs/449/hang-snapshot.log 2>&1
             fi
           done
