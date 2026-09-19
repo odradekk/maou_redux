@@ -54,12 +54,19 @@ function run_tool(root) {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
 function git(dir, args) {
-  const r = spawnSync('git', args, { cwd: dir, encoding: 'utf8' });
+  const r = spawnSync('git', args, {
+    cwd: dir,
+    encoding: 'utf8',
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
+  });
   assert.equal(
     r.status,
     0,
@@ -101,6 +108,8 @@ test('conflict-marker-check 全绿（跟踪文本无冲突标记，退出码 0�
   const probe = spawnSync('git', ['rev-parse', '--is-inside-work-tree'], {
     cwd: REPO_ROOT,
     encoding: 'utf8',
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   if (probe.status !== 0) {
     return;
@@ -224,6 +233,8 @@ test('外部事实：prettier 确实把 >>>>>>> 规范化成 > > > > > > >（有
     const pr = spawnSync(process.execPath, [PRETTIER, '--write', md], {
       cwd: dir,
       encoding: 'utf8',
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
     });
     assert.equal(
       pr.status,

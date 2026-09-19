@@ -41,6 +41,8 @@ function run_cli(args, cwd = REPO_ROOT, cli = CLI) {
     cwd,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }

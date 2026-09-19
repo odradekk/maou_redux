@@ -41,6 +41,8 @@ function run(...args) {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   return {
     status: r.status,

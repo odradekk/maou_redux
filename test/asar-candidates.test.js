@@ -134,6 +134,8 @@ test('行为验证：ERE_ENGINE_ASAR=none 时 engine-bundle 真的退回无引�
     spawnSync(process.execPath, ['-e', probe], {
       encoding: 'utf8',
       env: { ...process.env, ERE_ENGINE_ASAR: env_value },
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
     }).stdout.trim();
 
   assert.equal(

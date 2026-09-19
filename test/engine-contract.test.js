@@ -433,7 +433,12 @@ test('模块号漂移 → 直接判失败报「引擎变了」（engine-bundle �
           path.join(REPO_ROOT, 'test', 'helpers', 'engine-bundle.js'),
         )}).load_engine_bundle()`,
       ],
-      { encoding: 'utf8', env: { ...process.env, ERE_ENGINE_ASAR: asar_path } },
+      {
+        encoding: 'utf8',
+        env: { ...process.env, ERE_ENGINE_ASAR: asar_path },
+        timeout: 30_000,
+        killSignal: 'SIGKILL',
+      },
     );
     assert.notEqual(probe.status, 0, '模块 183 不再是 EraApi 时必须非 0 退出');
     assert.ok(
@@ -477,7 +482,12 @@ test('模块 183 原型方法缺失 → 单独判失败（84 守卫合法放行�
           path.join(REPO_ROOT, 'test', 'helpers', 'engine-bundle.js'),
         )}).load_engine_bundle()`,
       ],
-      { encoding: 'utf8', env: { ...process.env, ERE_ENGINE_ASAR: asar_path } },
+      {
+        encoding: 'utf8',
+        env: { ...process.env, ERE_ENGINE_ASAR: asar_path },
+        timeout: 30_000,
+        killSignal: 'SIGKILL',
+      },
     );
     const combined = `${probe.stdout || ''}${probe.stderr || ''}`;
     assert.notEqual(
