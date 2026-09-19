@@ -115,7 +115,17 @@ jobs:
           set +e
           mkdir -p logs/449
           export NODE_OPTIONS="--report-on-signal --report-directory=$PWD/logs/449 ${NODE_OPTIONS:-}"
-          npm run test:ci > logs/449/test-stdout.log 2>&1 &
+          rm -f test-report.tap
+          # 关键：stdout 不能重定向到文件。未改动的 CI 里这一步的 stdout 是
+          # runner 的日志采集管道，写文件永不阻塞、写管道在缓冲区满且读端不
+          # 消费时会阻塞在 write 上——两者阻塞语义不同。卡死签名是四个并发
+          # 测试进程同时停止产出、按字母序一大串文件从未开始，形状正是
+          # 「所有写者一起堵在同一管道的 write 上」，不是某个测试自己死循环
+          # （后者不会让另外三个槽位也停）。第一版诊断把 stdout 落盘，等于
+          # 自己把背压消掉了：五次复现全绿，而同期 master 基线仍按老签名卡死
+          # 1214 秒。这版改为不碰 stdout，进度改看 test:ci 本来就在写的
+          # test-report.tap 的文件大小增长。
+          npm run test:ci &
           main_pid=$!
 
           last_size=0
@@ -123,7 +133,7 @@ jobs:
           dumped=0
           while kill -0 "$main_pid" 2>/dev/null; do
             sleep 15
-            size=$(stat -c%s logs/449/test-stdout.log 2>/dev/null || echo 0)
+            size=$(stat -c%s test-report.tap 2>/dev/null || echo 0)
             if [ "$size" = "$last_size" ]; then
               stall=$((stall + 15))
             else
@@ -133,7 +143,7 @@ jobs:
             if [ "$stall" -ge 90 ] && [ "$dumped" -eq 0 ]; then
               dumped=1
               {
-                echo "=== 卡死快照 $(date -u +%FT%TZ)，已连续 ${stall}s 无输出增长 ==="
+                echo "=== 卡死快照 $(date -u +%FT%TZ)，test-report.tap 已连续 ${stall}s 无增长 ==="
                 echo "--- uptime / loadavg ---"
                 uptime
                 cat /proc/loadavg
@@ -143,6 +153,24 @@ jobs:
                 ps auxf
                 echo "--- dmesg 尾部（OOM 排查） ---"
                 sudo dmesg 2>/dev/null | tail -100
+
+                echo "--- 全系统按 pipe inode 分组的 fd 持有者（验证管道背压：找写端与读端） ---"
+                for pid in /proc/[0-9]*; do
+                  p=${pid#/proc/}
+                  [ -d "/proc/$p/fd" ] || continue
+                  for fd in /proc/$p/fd/*; do
+                    fdnum=${fd##*/}
+                    link=$(readlink "$fd" 2>/dev/null)
+                    case "$link" in
+                      pipe:*)
+                        flags=$(grep -o 'flags:.*' "/proc/$p/fdinfo/$fdnum" 2>/dev/null)
+                        cmd=$(tr '\0' ' ' < /proc/$p/cmdline 2>/dev/null)
+                        echo "$link pid=$p fd=$fdnum $flags cmd=$cmd"
+                        ;;
+                    esac
+                  done
+                done | sort
+
                 # 只收集 main_pid 的后代进程：pgrep -f 按整条命令行子串匹配，
                 # 会连带 sh -c "node tools/run-node.mjs ..." 这类命令行里
                 # 恰好含 "node" 字样的普通 shell 一并选中；给它发 SIGUSR2 没有
@@ -178,7 +206,6 @@ jobs:
           done
           wait "$main_pid"
           rc=$?
-          cat logs/449/test-stdout.log
           echo "=== test:ci 退出码 $rc ==="
           exit $rc
       - name: 跳过数守护（引擎在场时只能是 0）
