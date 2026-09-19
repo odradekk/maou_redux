@@ -119,12 +119,12 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 
 `.github/workflows/ci.yml` 根据触发方式运行以下检查（#92 引入 CI，#302 增加引擎检查，阶段 4 调整测试范围）：
 
-| 触发                   | job                     | 内容                                                                                |
-| ---------------------- | ----------------------- | ----------------------------------------------------------------------------------- |
-| `pull_request`         | `pr`                    | Linux 相关测试、默认范围的锚点质量检查、ESLint、Prettier                            |
-| master push / 手动触发 | `engineless` / `engine` | Linux 全库 `npm run test:ci` 和跳过数检查；无引擎任务另跑全部锚点质量检查与格式检查 |
-| PR / master push       | `windows`               | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0                         |
-| 手动触发               | `mutation`              | 全量变异测试，带引擎，在隔离副本中运行，`--jobs 4`                                  |
+| 触发                          | job                     | 内容                                                                                |
+| ----------------------------- | ----------------------- | ----------------------------------------------------------------------------------- |
+| `pull_request`                | `pr`                    | Linux 相关测试、默认范围的锚点质量检查、ESLint、Prettier                            |
+| master push / 手动触发        | `engineless` / `engine` | Linux 全库 `npm run test:ci` 和跳过数检查；无引擎任务另跑全部锚点质量检查与格式检查 |
+| PR / master push              | `windows`               | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0                         |
+| 手动触发且勾选 `run_mutation` | `mutation`              | 全量变异测试，带引擎，在隔离副本中运行，`--jobs 4`                                  |
 
 相关测试用于缩短日常反馈时间；全量测试用于检查跨模块影响，尤其是公共测试辅助代码的改动。选择器无法确定影响范围时，会运行全量测试。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
 
@@ -132,7 +132,7 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 
 **跳过数检查只用于全量测试。** Linux 的 `pr` 任务只跑子集，不与全量基线比较；Linux 的两个全量任务和 Windows 任务均检查跳过数。
 
-**全量变异测试不自动触发。** 阶段验收时在本机运行，也可通过 `workflow_dispatch` 手动启动 CI 任务。
+**全量变异测试不自动触发。** 阶段验收时在本机运行，也可通过 `workflow_dispatch` 手动启动 CI 任务且勾选 `run_mutation`（默认关闭——#449 修复：手动触发本用于快速验证某个分支，默认还顺带点着一个 180 分钟的任务，与验证意图不符）。
 
 **CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-4.8.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 42 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
 
