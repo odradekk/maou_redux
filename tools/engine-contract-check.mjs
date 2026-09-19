@@ -23,16 +23,28 @@
 // 用法：node tools/engine-contract-check.mjs [--asar <path>]
 //   --asar 显式指路（测试与诊断用）：给了就不再三址回落；所指不存在按
 //   「引擎缺失」处理（跳过锚点检查并警告，不静默换一个引擎来查）。
+//
+// 测试用法：import { run } from './engine-contract-check.mjs'，await run({
+// root, asar })——不再 spawnSync 出子进程跑（#449：子进程卡在 Node 自己的
+// 退出收尾期，会把 node --test 的 TAP 顺序输出锁死，整套挂起）。run() 不
+// process.exit，返回 { failures, output }；事实表与条目表按 root 现读
+// （bust 查询串避开 ESM 模块缓存），写坏型探针改的是文件，不是导入实例，
+// 每次调用都能看见探针最新内容。写坏型探针仍然要落在临时仓库副本里——
+// node --test 并行跑测试文件本身仍是多进程，就地改 ere/ 工作树还是会与
+// 并行读者撞车，这条纪律与是否 spawn 本工具无关。
 
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-import { ENGINE_FACTS } from './engine-contract-facts.mjs';
-import { ENGINE_CONTRACT_LEDGER } from './engine-contract-ledger.mjs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+/** 绕开 ESM 模块缓存现读 root 下的事实表/条目表（探针改文件后必须见新内容） */
+async function import_fresh(root, rel) {
+  const url = `${pathToFileURL(path.join(root, rel)).href}?t=${process.hrtime.bigint()}`;
+  return import(url);
+}
 
 const FIXTURE_FILE = 'test/helpers/era-fixture.js';
 const SDK_FILE = 'ere/era-electron.js'; // 引擎 SDK，不是游戏代码，跳过
@@ -98,10 +110,10 @@ function list_asar_files(asar_path) {
 
 // —— 门 A：调用点规则（静态扫 ere/，无需引擎） ——
 
-function list_js_files(rel_dir) {
+function list_js_files(root, rel_dir) {
   const out = [];
   const walk = (rel) => {
-    for (const entry of fs.readdirSync(path.join(REPO, rel), {
+    for (const entry of fs.readdirSync(path.join(root, rel), {
       withFileTypes: true,
     })) {
       const child = `${rel}/${entry.name}`;
@@ -177,15 +189,15 @@ function resolve_number(src, file_text) {
  * （printProgress 调用 + 多列 progress 格），逐处判定 barWidth 显式且在界内。
  * 返回 violations: [{ at, message }]。
  */
-function check_call_site_rules() {
+function check_call_site_rules(root, engine_facts) {
   const violations = [];
-  const facts_with_rule = ENGINE_FACTS.filter((fact) => fact.rule);
+  const facts_with_rule = engine_facts.filter((fact) => fact.rule);
   let count = 0;
-  for (const rel of list_js_files('ere')) {
+  for (const rel of list_js_files(root, 'ere')) {
     if (rel === SDK_FILE) {
       continue;
     }
-    const text = fs.readFileSync(path.join(REPO, rel), 'utf8');
+    const text = fs.readFileSync(path.join(root, rel), 'utf8');
     const targets = [];
     // 形态一：era.printProgress(...)——配平取实参全文
     const call_re = /era\.printProgress\s*\(/g;
@@ -250,7 +262,7 @@ function check_call_site_rules() {
  * @returns {{ status: 'ok', facts: number, anchors: number }
  *         | { status: 'missing' } | { status: 'drift', message: string }}
  */
-function check_anchors(asar_path) {
+function check_anchors(asar_path, engine_facts) {
   const { buf, header_size, files } = list_asar_files(asar_path);
   const map_entry = files.find(([name]) => RENDERER_MAP_RE.test(name));
   if (!map_entry) {
@@ -273,7 +285,7 @@ function check_anchors(asar_path) {
     };
   }
   const renderer_source = sources.join('\n');
-  for (const fact of ENGINE_FACTS) {
+  for (const fact of engine_facts) {
     for (const anchor of fact.anchors) {
       if (!renderer_source.includes(anchor)) {
         return {
@@ -285,17 +297,17 @@ function check_anchors(asar_path) {
   }
   return {
     status: 'ok',
-    facts: ENGINE_FACTS.length,
-    anchors: ENGINE_FACTS.reduce((sum, fact) => sum + fact.anchors.length, 0),
+    facts: engine_facts.length,
+    anchors: engine_facts.reduce((sum, fact) => sum + fact.anchors.length, 0),
   };
 }
 
 // —— 门 C：条目表两项检查 ——
 
-function check_ledger() {
+function check_ledger(root, ledger) {
   const violations = [];
-  const fixture_source = fs.readFileSync(path.join(REPO, FIXTURE_FILE), 'utf8');
-  for (const entry of ENGINE_CONTRACT_LEDGER) {
+  const fixture_source = fs.readFileSync(path.join(root, FIXTURE_FILE), 'utf8');
+  for (const entry of ledger) {
     if (!LEDGER_BASELINE.includes(entry.id)) {
       violations.push(
         `条目表条目 ${entry.id} 不在 #91 基线内（只能变短：消化现有条目 = 删条目；新增分歧确需冻结，必须显式改 engine-contract-check.mjs 的 LEDGER_BASELINE，在版本库差异里看得见）`,
@@ -312,10 +324,29 @@ function check_ledger() {
 
 // —— 入口 ——
 
-function run() {
-  const asar_flag_idx = process.argv.indexOf('--asar');
-  const explicit_asar =
-    asar_flag_idx >= 0 ? process.argv[asar_flag_idx + 1] : undefined;
+/**
+ * @param {{ root?: string, asar?: string }} [options] root 默认真树，测试
+ *   传探针副本根；asar 对应 CLI 的 --asar（未给走三址回落）
+ * @returns {Promise<{ failures: number, output: string }>} output 是本次
+ *   调用打印过的全部行（console 之外再攒一份，供调用方——CLI 或测试——
+ *   同步取用，不用截获真实 stdout）
+ */
+export async function run({ root = REPO, asar } = {}) {
+  const lines = [];
+  const log = (s) => {
+    lines.push(s);
+    console.log(s);
+  };
+  const warn = (s) => {
+    lines.push(s);
+    console.warn(s);
+  };
+
+  const [{ ENGINE_FACTS }, { ENGINE_CONTRACT_LEDGER }] = await Promise.all([
+    import_fresh(root, 'tools/engine-contract-facts.mjs'),
+    import_fresh(root, 'tools/engine-contract-ledger.mjs'),
+  ]);
+
   let failures = 0;
 
   // 门 A：调用点规则
@@ -323,23 +354,23 @@ function run() {
     violations: rule_violations,
     facts_with_rule,
     targets_checked,
-  } = check_call_site_rules();
+  } = check_call_site_rules(root, ENGINE_FACTS);
   for (const v of rule_violations) {
-    console.log(`✗ ${v.at} ${v.message}`);
+    log(`✗ ${v.at} ${v.message}`);
     failures += 1;
   }
 
   // 门 B：锚点校核（引擎缺失 → 跳过并警告，不是失配）
   let anchor_report = '锚点校核跳过';
-  const asar_path = locate_asar(explicit_asar);
+  const asar_path = locate_asar(asar);
   if (!asar_path) {
-    console.warn(
+    warn(
       '⚠ [engine-contract-check] 未找到 app.asar（--asar / ERE_ENGINE_ASAR / 仓库内 / ~/.era-engine 四处都没命中）——锚点校核跳过（引擎比对是加强项，与 test 侧 skip 同一标准）；调用点规则与条目表两项检查照跑',
     );
   } else {
-    const result = check_anchors(asar_path);
+    const result = check_anchors(asar_path, ENGINE_FACTS);
     if (result.status === 'drift') {
-      console.log(`✗ ${result.message}`);
+      log(`✗ ${result.message}`);
       failures += 1;
     } else {
       anchor_report = `锚点 ${result.facts} 事实 / ${result.anchors} 字面全中`;
@@ -347,21 +378,32 @@ function run() {
   }
 
   // 门 C：条目表两项检查
-  for (const message of check_ledger()) {
-    console.log(`✗ ${message}`);
+  for (const message of check_ledger(root, ENGINE_CONTRACT_LEDGER)) {
+    log(`✗ ${message}`);
     failures += 1;
   }
 
   if (failures === 0) {
-    console.log(
+    log(
       `✓ 引擎契约：调用点规则 ${facts_with_rule.length} 条 × 调用点 ${targets_checked} 处全数在界内 · ${anchor_report} · 条目表 ${ENGINE_CONTRACT_LEDGER.length} 条两项检查全过`,
     );
   } else {
     // 汇总不枚举检查项名：哪项检查触发了，上方逐条消息已写明（domain-check 同款
     // 标准——枚举会让「文案断言」型测试被未触发的检查项名误满足）
-    console.log(`✗ ${failures} 处引擎契约失守（逐条见上）`);
+    log(`✗ ${failures} 处引擎契约失守（逐条见上）`);
   }
-  return failures;
+  return { failures, output: lines.join('\n') };
 }
 
-process.exit(run() === 0 ? 0 : 1);
+// 只有直接以 CLI 形式运行（node tools/engine-contract-check.mjs）才落地
+// 到真实 stdout 并带退出码；被 import()/require() 当库用时（测试）这个
+// 分支不执行。用 .then() 而非顶层 await——require(esm) 按语法面识别顶层
+// await，哪怕分支运行期从不进入，含顶层 await 的模块也会被直接拒绝加载
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
+  const asar_flag_idx = process.argv.indexOf('--asar');
+  const explicit_asar =
+    asar_flag_idx >= 0 ? process.argv[asar_flag_idx + 1] : undefined;
+  run({ asar: explicit_asar }).then(({ failures }) => {
+    process.exitCode = failures === 0 ? 0 : 1;
+  });
+}
