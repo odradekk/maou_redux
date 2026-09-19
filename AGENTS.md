@@ -124,7 +124,7 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 
 PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任务只在 master push 跑，用于发现引擎缺失时的退化。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
 
-**全量变异测试只对阶段收尾 PR 跑。** `.github/workflows/mutation.yml` 在 PR 被打上 `phase-acceptance` 标签时触发，之后每次推送重跑，去掉标签即停。5301 条条目按 `--slice i 16` 分成 16 个并行分片各自串行运行，汇总任务把「拦截 / 跳过 / 红」合计写进 job summary；合格线是每片退出码 0（拦截全部、跳过 0、红 0）。本机全量仍可用 `--jobs 2` 跑，约 80 分钟。
+**全量变异测试只对阶段收尾 PR 跑。** `.github/workflows/mutation.yml` 在 PR 被打上 `phase-acceptance` 标签时触发，之后每次推送重跑，去掉标签即停。5301 条条目按 `--slice i 8` 分成 8 个并行分片各自串行运行（首跑实测每条 0.9–1.6 秒，每片 20 分钟内），汇总任务把「拦截 / 跳过 / 红」合计写进 job summary；合格线是每片退出码 0（拦截全部、跳过 0、红 0）。本机全量仍可用 `--jobs 2` 跑，约 80 分钟。
 
 **CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-4.8.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 42 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
 
