@@ -250,7 +250,7 @@ erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`�
 
 ### 工单流程
 
-工单分配、进度检查、验收与结束步骤见 `docs/agents/ticket-sop.md`，包括 Paseo MCP 和 CLI 用法、并发上限及任务说明模板。
+流程文档分两份：主 agent 分配任务、验收与合并按 `docs/agents/dispatch-sop.md`（Paseo 用法、并发上限、profile 选用、提示词开场模板、验收清单与阶段验收）；执行工单的 worker 按 `docs/agents/worker-sop.md`（先写测试、经 Paseo 起 reviewer 做审查、自己开 PR 等 CI、在 issue 下写完成评论）。
 
 ### Issue 跟踪
 
