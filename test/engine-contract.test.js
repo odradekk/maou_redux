@@ -436,6 +436,8 @@ test('模块号漂移 → 直接判失败报「引擎变了」（engine-bundle �
       {
         encoding: 'utf8',
         env: { ...process.env, ERE_ENGINE_ASAR: asar_path },
+        // 本机实测这条 -e 探针（require + 一次 load_engine_bundle 读 asar）
+        // 约 0.2s，30s 留出充足余量（#449 统一默认值）
         timeout: 30_000,
         killSignal: 'SIGKILL',
       },
@@ -485,6 +487,8 @@ test('模块 183 原型方法缺失 → 单独判失败（84 守卫合法放行�
       {
         encoding: 'utf8',
         env: { ...process.env, ERE_ENGINE_ASAR: asar_path },
+        // 本机实测这条 -e 探针（require + 一次 load_engine_bundle 读 asar）
+        // 约 0.2s，30s 留出充足余量（#449 统一默认值）
         timeout: 30_000,
         killSignal: 'SIGKILL',
       },

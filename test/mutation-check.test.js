@@ -69,6 +69,8 @@ function run_tool(args) {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    // 本机实测最重的 --verify 约 2s，其余调用都是临时目录里 1-2 个文件
+    // 的夹具规模、更快；30s 留出充足余量（#449 统一默认值）
     timeout: 30_000,
     killSignal: 'SIGKILL',
   });

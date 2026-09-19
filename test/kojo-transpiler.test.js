@@ -289,6 +289,8 @@ test('多值 CASE：CASE "ORAL", "LES" → 并列 case 标签（#184）', () => 
   fs.writeFileSync(out, code);
   execFileSync(process.execPath, ['--check', out], {
     stdio: 'pipe',
+    // node --check 只解析语法，不执行；本机实测约 0.14s，30s 留出充足
+    // 余量（#449 统一默认值）
     timeout: 30_000,
     killSignal: 'SIGKILL',
   });
@@ -307,6 +309,8 @@ test('产物是合法 JS：DUNGEON_BITCH 转译产物过 node --check（#184 修
   transpile_file(erb, out, { force: true });
   execFileSync(process.execPath, ['--check', out], {
     stdio: 'pipe',
+    // node --check 只解析语法，不执行；本机实测约 0.14s，30s 留出充足
+    // 余量（#449 统一默认值）
     timeout: 30_000,
     killSignal: 'SIGKILL',
   });
@@ -346,6 +350,8 @@ test('PRINTDATA(W|L)?：随机文本块转 pick(list, rand_n)（#182 补方言�
   fs.writeFileSync(out, code);
   execFileSync(process.execPath, ['--check', out], {
     stdio: 'pipe',
+    // node --check 只解析语法，不执行；本机实测约 0.14s，30s 留出充足
+    // 余量（#449 统一默认值）
     timeout: 30_000,
     killSignal: 'SIGKILL',
   });
@@ -365,6 +371,8 @@ test('产物是合法 JS：K5 转译产物过 node --check（裁定一硬门槛�
   // node --check 必须退出 0
   execFileSync(process.execPath, ['--check', out], {
     stdio: 'pipe',
+    // node --check 只解析语法，不执行；本机实测约 0.14s，30s 留出充足
+    // 余量（#449 统一默认值）
     timeout: 30_000,
     killSignal: 'SIGKILL',
   });

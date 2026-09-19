@@ -41,6 +41,8 @@ function run_cli(args, cwd = REPO_ROOT, cli = CLI) {
     cwd,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    // 本机实测缺省样本（target/emuera.log）跑一遍约 2.3s，30s 留约 13 倍
+    // 余量（#449 统一默认值，不是按这条单独量出来的上限）
     timeout: 30_000,
     killSignal: 'SIGKILL',
   });
