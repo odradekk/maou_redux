@@ -22,8 +22,8 @@
 //   - engine = 该条只被引擎比对用例守护（无引擎处按「跳过」放行）。可选，
 //     省略即 false；声明数由门 4 核对，实测由 verdict_problems 交叉核对。
 //
-// 条目表四项检查（照 #72 domain-check 的两项检查形状，多一道测试文件存在性
-// 与一道引擎声明数）：
+// 条目表五项检查（照 #72 domain-check 的两项检查形状，多测试文件存在性、
+// 引擎声明数与 must_mention 出处三道）：
 //   1. 计数检查：每个分片的条数必须等于它自己导出的 COUNT——增删条目必须
 //      显式改同一份文件里的那个数，搬家丢条目、并表时把别人的条目解析掉，
 //      都当场红。这个数**按分片自报**（#367 从单个全局常量改来）：全局常量
@@ -37,10 +37,19 @@
 //      不存在时 node --test 因「找不到文件」退出非 0，形同假拦截。
 //   4. 引擎声明检查（#256）：`engine: true` 的条数必须等于 ENGINE_SKIP_
 //      BASELINE。只对真条目表生效（--ledger-dir 换表时跳过）。
+//   5. must_mention 出处检查（#442）：must_mention 必须能在 tests:/file:/
+//      era-fixture.js 的源码里逐字或按模板字面段找到出处，否则该条目在
+//      「测试改坏、断言与源码早已脱节」时会被静默放过——这一类漏配此前
+//      只能靠一次完整变异跑（约 1.5～2 小时）事后发现（#381）。**这道门查
+//      的是「断言与出处对不上」，不是「断言本身有没有区分力」**：出处存在
+//      不代表 must_mention 真的只在被测行为触发时才出现在输出里，那一层
+//      仍要靠变异跑本身（红没红、命不命中）来验证。少量出处只存在于运行期
+//      字符串拼接或条目表以外的文件里（三类成因见 EXEMPT_MUST_MENTION 头
+//      注），逐条手工核实后登记豁免，豁免清单只许缩短、不许新增。
 //
 // 用法：
 //   node tools/mutation-check.mjs                        全量（串行，就地变异+还原）
-//   node tools/mutation-check.mjs --verify               只跑三项检查（秒级；进 npm test 的快速模式）
+//   node tools/mutation-check.mjs --verify               只跑五项检查（秒级；进 npm test 的快速模式）
 //   node tools/mutation-check.mjs --changed              定向：只跑改动文件的条目（SOP 的 T3 票验收档）
 //   node tools/mutation-check.mjs --sample 12 --seed N   抽样执行（本地想快速看一眼时用；CI 自 #302 起跑全量）
 //   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档 / SOP 的 T4 阶段闸）
@@ -401,6 +410,269 @@ function gate_engine_declared(entries, args) {
       ];
 }
 
+// —— 门 5：must_mention 出处（issue #442）——
+
+/** 反引号模板串的字面段，按 ${...} 切开（不处理嵌套花括号——本仓库测试
+ *  文件里未见占位符内再套花括号的写法）。 */
+function template_literal_segments(source) {
+  const templates = [];
+  const re = /`((?:\\.|[^`\\])*)`/g;
+  let m;
+  while ((m = re.exec(source))) {
+    templates.push(m[1].split(/\$\{[^}]*\}/));
+  }
+  return templates;
+}
+
+/** a 的某个非空后缀是否等于 b 的等长前缀（起点段允许被从中间截断）。 */
+function suffix_overlaps_prefix(a, b) {
+  const max = Math.min(a.length, b.length);
+  for (let k = max; k >= 1; k -= 1) {
+    if (a.slice(a.length - k) === b.slice(0, k)) return true;
+  }
+  return false;
+}
+
+/** seg 的某个非空前缀是否等于 tail 的等长后缀；tail 为空串时自动满足
+ *（must_mention 在这一段开始前已经用完）。 */
+function prefix_overlaps_suffix(seg, tail) {
+  if (tail === '') return true;
+  const max = Math.min(seg.length, tail.length);
+  for (let k = max; k >= 1; k -= 1) {
+    if (seg.slice(0, k) === tail.slice(tail.length - k)) return true;
+  }
+  return false;
+}
+
+/**
+ * must_mention 是否与某个模板串对得上。占位符视为可匹配任意内容的空档；
+ * must_mention 未必覆盖模板整句的首尾，起点、终点都可能落在某一段中间，
+ * 因此枚举「起点落在哪一段、终点落在哪一段」（段数通常 ≤4，代价可忽略）：
+ * 起点段只需后缀重叠、终点段只需前缀重叠，夹在中间、两侧都紧挨占位符的
+ * 段没有「被截断」的余地，必须整段出现。
+ *
+ * 这里是**保守**版本：起点段与 must_mention 完全无重叠（即整个起点段落在
+ * 占位符运行期取值内部，例如 `威望 ${p}（${tier}）...` 里 must_mention 从
+ * ${tier} 的取值中段起跳）时一律不算命中——量测阶段试过放开这道 guard，
+ * 结果把「出处根本不在模板里」的条目（如 M92，见 EXEMPT_MUST_MENTION）也
+ * 判成命中：任何以某段字面文字结尾的字符串都会被判定为「与该模板对得上」，
+ * 与占位符运行期实际取的值无关。按 #431 的准则（宁可窄而能报警，不可宽而
+ * 永远不报警），这里保留更保守、可能漏判的版本；漏判的残留个案进
+ * EXEMPT_MUST_MENTION，逐条手工核实，不指望匹配器本身覆盖到。
+ */
+function matches_template(segments, must_mention) {
+  const n = segments.length;
+  for (let start = 0; start < n; start += 1) {
+    for (let end = start; end < n; end += 1) {
+      if (start === end) {
+        if (segments[start] !== '' && segments[start].includes(must_mention))
+          return true;
+        continue;
+      }
+      if (
+        segments[start] !== '' &&
+        !suffix_overlaps_prefix(segments[start], must_mention)
+      )
+        continue;
+      let pos = 0;
+      if (segments[start] !== '') {
+        const max = Math.min(segments[start].length, must_mention.length);
+        for (let k = max; k >= 0; k -= 1) {
+          if (
+            k === 0 ||
+            segments[start].slice(segments[start].length - k) ===
+              must_mention.slice(0, k)
+          ) {
+            pos = k;
+            break;
+          }
+        }
+      }
+      let ok = true;
+      for (let mid = start + 1; mid < end; mid += 1) {
+        const idx = must_mention.indexOf(segments[mid], pos);
+        if (idx === -1) {
+          ok = false;
+          break;
+        }
+        pos = idx + segments[mid].length;
+      }
+      if (!ok) continue;
+      const tail = must_mention.slice(pos);
+      if (segments[end] === '' || prefix_overlaps_suffix(segments[end], tail))
+        return true;
+    }
+  }
+  return false;
+}
+
+/** must_mention 逐字或按模板字面段，能否在 content 里找到出处。 */
+function must_mention_found(content, must_mention) {
+  if (content.includes(must_mention)) return true;
+  return template_literal_segments(content).some((segs) =>
+    matches_template(segs, must_mention),
+  );
+}
+
+/**
+ * 门 5 的豁免清单（issue #442）：must_mention 逐字 + 模板字面段匹配都在
+ * tests:/file:/era-fixture.js 里找不到出处，但逐条手工核对源码后确认并非
+ * must_mention 过时——按 M 编号钉住，附一句可核实的理由（含文件:行号）。
+ *
+ * **只许缩短，不许新增**：新条目落进这份清单前，先确认真的不是过时——
+ * 缩短已核实的旧条目须重新量测；不许为了让门 5 变绿而放宽已有条目的
+ * must_mention。全表量测（5294 条）结果见 issue #442：逐字匹配不上 524
+ * 条，逐字 + 模板字面段都匹配不上的只剩这 16 条，三类成因：
+ *   A. 模板字面量插值——must_mention 的边界（通常是结尾）落在占位符的
+ *      运行期取值内部，取值前后再无字面文字可供重建，静态展开必然截断，
+ *      是 matches_template 的固有局限，不是缺陷（放宽 guard 的后果见
+ *      matches_template 头注）。
+ *   C. 字符串拼接（+ / .map().join()）拼出最终文本，不是单一模板字面量，
+ *      template_literal_segments 只切单个反引号串，切不出跨拼接的边界。
+ *   D. must_mention 定义在 tests: 引入的共享库模块里，既不是 file: 目标，
+ *      也不是 era-fixture.js，落在门 5 的搜索范围之外。
+ */
+const EXEMPT_MUST_MENTION = new Map([
+  // 类别 A：占位符运行期取值决定匹配边界
+  [
+    '8341',
+    'test/chara-first-exp.test.js:182 `male=${row.male} virgin=${row.virgin}：...`，' +
+      'must_mention 结尾停在 ${row.virgin} 取值中间，其后还有字面「：」与第三段占位符',
+  ],
+  [
+    '9054',
+    'test/chara-temptation.test.js:428 `档 ${slot}：掷骰上界`，must_mention「档 1」' +
+      '止步于 ${slot} 的取值，取值后紧跟的字面「：掷骰上界」够不着',
+  ],
+  [
+    '9055',
+    'test/chara-temptation.test.js:434/439/444/449 同款 `档 ${slot}：...` 模板，' +
+      'must_mention「档 2」同上，止步于 ${slot} 取值',
+  ],
+  [
+    '9056',
+    'test/chara-temptation.test.js 同款 `档 ${slot}：...` 模板，' +
+      'must_mention「档 2」同上，止步于 ${slot} 取值',
+  ],
+  [
+    '6758',
+    'test/dungeon-magic.test.js:484 `治疗 ${type}：按目标类型...`，' +
+      'must_mention「治疗 2」止步于 ${type} 取值',
+  ],
+  [
+    '6759',
+    'test/dungeon-magic.test.js:502 `诅咒 ${type}：按目标类型...`，' +
+      'must_mention「诅咒 1」止步于 ${type} 取值',
+  ],
+  [
+    '8607',
+    'test/event-nextday.test.js:1610 `${label}：RAND:3 = ${roll} → JUEL:L:4`，' +
+      'must_mention「RAND:3 = 2」止步于 ${roll} 取值，够不着后面的「 → JUEL:L:4」',
+  ],
+  [
+    '8609',
+    'test/event-nextday.test.js:1416 `露+抖M = ${sum} 时的 JUEL:8`，' +
+      'must_mention「露+抖M = 8」止步于 ${sum} 取值',
+  ],
+  [
+    '2104',
+    'test/page-invasion.test.js:113 `威望 ${prestige}（${tier}）的侵攻度增量`，' +
+      'must_mention「略受质疑）的侵攻度增量」从 ${tier} 取值中段起跳，起点段' +
+      '「（」与它无字面重叠',
+  ],
+  [
+    '2105',
+    'test/page-invasion.test.js:113 同上模板，must_mention「相安无事）的侵攻度增量」同样从 ${tier} 取值中段起跳',
+  ],
+  [
+    '2106',
+    'test/page-invasion.test.js:113 同上模板，must_mention「广受爱戴）的侵攻度增量」同样从 ${tier} 取值中段起跳',
+  ],
+  [
+    '784',
+    'test/com-order.test.js:162 `T 系数 = ${factor}（含素质段双计）`，' +
+      'must_mention「T 系数 = 4」止步于 ${factor} 取值，够不着「（含素质段双计）」',
+  ],
+  // 类别 C：字符串拼接，非单一模板字面量可重建
+  [
+    '1773',
+    'test/kojo-family-wiring.test.js:111-114 的 format_missing(label, missing)：' +
+      "`${label}漏装：` + missing.map(...).join('；')，must_mention「主启动图漏装：" +
+      'kojo-k4-stoic」横跨模板串与数组 join 的拼接边界',
+  ],
+  [
+    '3328',
+    'test/kojo-family-wiring.test.js:111-114 同一个 format_missing()，' +
+      'must_mention「主启动图漏装：kojo-k13-protector」同样横跨拼接边界',
+  ],
+  [
+    '1521',
+    'test/kojo-family-wiring.test.js:111-114 同一个 format_missing()，' +
+      'must_mention「主启动图漏装：kojo-k5-mao」同样横跨拼接边界',
+  ],
+  // 类别 D：出处在 tests: 引入的共享库模块里，不在 file:/era-fixture.js 范围内
+  [
+    '92',
+    'must_mention「比对窗口不完整」定义在 tools/compare/normalize.js:421 的' +
+      'window_between_inputs()，由 test/compare-first-turn.test.js 用 ' +
+      "require('../tools/compare/normalize') 引入——既非 file: 目标" +
+      '（tools/compare/replay.js），也非 era-fixture.js',
+  ],
+]);
+
+/**
+ * 门 5（#442）：must_mention 必须能在它声明的出处——tests: 各文件、file:
+ * 靶文件、test/helpers/era-fixture.js——里逐字或按模板字面段找到，否则
+ * 判定为「断言与出处脱节」。
+ *
+ * **这道门查得出什么、查不出什么**：查得出「must_mention 改错、测试文件
+ * 改名/删除内容之后断言再也接不上出处」这一类静态可见的脱节；查不出
+ * 「must_mention 虽然有出处，但和被测行为其实没关系」——后一层是语义层面
+ * 的断言有效性，只有变异真跑一遍、看它红没红、命不命中才验证得了，门 5
+ * 不做这个判断，也做不了。
+ */
+function gate_must_mention_source(root, entries) {
+  const errors = [];
+  const content_by_file = new Map();
+  const read = (rel) => {
+    if (!content_by_file.has(rel)) {
+      const full = path.join(root, rel);
+      content_by_file.set(
+        rel,
+        fs.existsSync(full) ? fs.readFileSync(full, 'utf8') : null,
+      );
+    }
+    return content_by_file.get(rel);
+  };
+  const fixture_content = read('test/helpers/era-fixture.js');
+  for (const m of entries) {
+    if (typeof m.must_mention !== 'string' || !m.must_mention) {
+      continue; // gate_shape 已经报过缺 must_mention，这里不重复报
+    }
+    const num = extract_m_number(m.desc);
+    if (num !== null && EXEMPT_MUST_MENTION.has(num)) {
+      continue;
+    }
+    const sources = (Array.isArray(m.tests) ? m.tests : [])
+      .map((t) => read(`test/${t}.test.js`))
+      .concat([
+        typeof m.file === 'string' ? read(m.file) : null,
+        fixture_content,
+      ])
+      .filter((c) => c !== null);
+    const found = sources.some((c) => must_mention_found(c, m.must_mention));
+    if (!found) {
+      errors.push(
+        `[${m.desc}] must_mention「${m.must_mention}」在它声明的出处` +
+          `（tests:${JSON.stringify(m.tests)} / file:${m.file} / era-fixture.js）` +
+          `里都找不到——测试或靶代码是不是改了，断言没跟上？` +
+          `确认并非过时后按 EXEMPT_MUST_MENTION 的格式登记豁免并写明理由`,
+      );
+    }
+  }
+  return errors;
+}
+
 function run_gates(shards, entries, args) {
   const errors = [
     ...gate_shape(entries),
@@ -408,6 +680,7 @@ function run_gates(shards, entries, args) {
     ...gate_targets(args.root, entries),
     ...gate_test_files(args.root, entries),
     ...gate_engine_declared(entries, args),
+    ...gate_must_mention_source(args.root, entries),
   ];
   for (const e of errors) {
     console.log(`✗ 门：${e}`);
@@ -853,16 +1126,16 @@ async function main() {
   if (args.verify) {
     if (gates_ok) {
       console.log(
-        `✓ 结构校验全绿：${entries.length} 条条目表 / ${shards.length} 个分片，三项检查全过`,
+        `✓ 结构校验全绿：${entries.length} 条条目表 / ${shards.length} 个分片，五项检查全过`,
       );
     } else {
-      console.log('✗ 结构校验未过（三项检查见上）');
+      console.log('✗ 结构校验未过（五项检查见上）');
     }
     process.exitCode = gates_ok ? 0 : 1;
     return;
   }
   if (!gates_ok) {
-    console.log('✗ 三项检查未过，拒绝执行');
+    console.log('✗ 五项检查未过，拒绝执行');
     process.exitCode = 1;
     return;
   }
