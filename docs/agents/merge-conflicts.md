@@ -87,7 +87,7 @@ grep -n "STUBBED_CALLS\|stub_line(" <本票改过的 ere/ 文件>
 npx eslint tools/facade-names.js --max-warnings 0 && node tools/gen-facade.js --force
 ```
 
-**跑一次 `npm run test:related` 不够**：上面四种里有三种在改动面之外——本轮那条 `is not a function` 是 master push 才炸的。改了别人也在改的文件时，把对方那几个测试文件点名跑一遍。
+**只跑本票对应的测试文件不够**：上面四种里有三种在改动面之外——本轮那条 `is not a function` 是全库测试才炸的。合并 master 之后开 PR 前跑一次完整 `npm test`；改了别人也在改的文件时，把对方那几个测试文件点名跑一遍。
 
 **产物文件不等于整份都是产物。** `ere/facade/*.js` 有 `// GENERATED END` 之后的手写区，生成器不碰。所以解产物冲突是两步：源表合好后 `node tools/gen-facade.js --force` 重生成，**再看手写区还有没有标记**。手写区的冲突按语义判——阶段 5a 那次是一侧只有 getter、另一侧是 getter＋setter，取超集（调用方要写那个字段）。
 

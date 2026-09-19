@@ -856,9 +856,7 @@ function run_one(root, m) {
 // —— 执行模式 ——
 
 /**
- * 相对 base 的改动文件（含未提交与未跟踪）。与 tools/select-tests.mjs 的
- * changed_files 同款口径——两个工具对「什么算改动」的理解必须一致，
- * 否则会出现「选择器选中了某测试、定向变异却不跑对应条目」的错位。
+ * 相对 base 的改动文件（含未提交与未跟踪），供 --changed 过滤条目。
  */
 function changed_files(root, base) {
   const run = (a) => {

@@ -56,10 +56,10 @@ Linux 仍使用 `~/.era-engine/runtime/node_modules/electron/dist/electron` 加 
 
 ```powershell
 # 开发过程中：运行单个测试文件，整条命令限时 600 秒
-node tools/run-node.mjs -- --test test/select-tests.test.js
+node tools/run-node.mjs -- --test test/train-loop.test.js
 
-# 交付前
-npm run test:related
+# 开 PR 前
+npm test
 npm run lint
 npm run format:check
 

@@ -1,23 +1,14 @@
-# CI（issue #92 起；#302 补引擎；阶段 4 收尾改分层）。
+# CI（issue #92 起；#302 补引擎；阶段 4 分层；#452 改回 PR 也跑全库）。
 #
-# 分层的理由是一条实测：**一条变异条目的判定，只有在它的靶文件或守它的
-# 测试变了的时候才可能翻。** 做 K16 时重跑 K11 那 960 条，得到的结论与上次
-# 逐字相同——那是纯空转。而全量唯一能抓、按面跑抓不到的，是「改了公共底座
-# 把别处的测试悄悄卸了武装」这类跨文件失效（#10 栽过）；它是慢积累的风险，
-# 不是每次提交的风险。所以：
+# 全库 npm test 本机带引擎实测 217 秒（199 个文件、5923 例），runner 上
+# 单个任务 5 分钟内跑完。曾按改动面选测试（#256），实测最多省一半时间，
+# 却让「PR 绿不等于全库绿」成为要额外解释的注意事项，#452 撤掉。现在：
 #
-#   pull_request → pr           按**改动面**跑，目标 10 分钟以内。
-#                               选择器拿不准就退回全量，最坏等于从前的行为。
-#   push(master) → engineless   全库三项自检 + 跳过数守护 + 锚鉴别力全文量。
-#                  engine       同上，带引擎，跳过数必须是 0。
-#   手动         → mutation     全量变异。**不再挂自动触发**：阶段收口时在
-#                               本机满速跑一次（16 核）比在 4 核 runner 上
-#                               挂 100 分钟划算，这里只留一个随时可点的口子。
+#   pull_request   → engine / windows / static   与 master push 同一套全库检查
+#   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线；锚点质量全文量
+#   手动           → mutation                     全量变异（见文末说明）
 #
-# 代价说清楚：**PR 绿不再等于全库绿。** 兜底是 master push——合并后几分钟内
-# 就在同一份内容上跑全库。中间提交会被 concurrency 顶掉（`cancel-in-progress`
-# 对 push 为 false 时，排队中的 run 会被后来者取代），所以真正被验证的是
-# 每一串合并的**最终态**，这对兜底来说够用。
+# 九份输出比对样本随 engine 任务跑（每份约 1 秒），任一样本有未解释差异即红。
 name: CI
 
 on:
@@ -41,67 +32,8 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # —— PR 档：按改动面 ——
-  #
-  # 这里**没有**跳过数守护：它对着全量套件的基线核对，跑子集时数字必然对不
-  # 上，会变成假红。那道守护留在 master push 的两个 job 里。
-  pr:
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: 取回 master（选择器按 merge-base 定改动面，浅克隆算不出来）
-        run: git fetch --no-tags origin +master:refs/remotes/origin/master
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-      - name: 安装依赖
-        run: npm ci
-      - name: 测试（按改动面选；选择器拿不准即退回全量）
-        run: npm run test:related
-      - name: 锚鉴别力（默认档只量未冻结文件——PR 新加的锚正好都在这里）
-        run: node tools/trace-check.mjs --anchor-quality
-      - name: ESLint（零警告，与本地三项自检同一标准）
-        run: npx eslint . --max-warnings 0
-      - name: Prettier（格式比对）
-        run: npx prettier --check .
-
-  # —— master push 档：全库 ——
-  engineless:
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    # 15 分钟在 #242（K11 莉莉，源码 25k 行 + 测试 8.4k 行）上被顶穿：两个
-    # job 都在整 15 分钟被取消，engineless 已跑完测试、跳过数守护、锚质量、
-    # ESLint，倒在最后一步 Prettier 上。超时是防挂死的上限，不是预算。
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-      - name: 安装依赖
-        run: npm ci
-      - name: 测试（无引擎；spec 进日志，TAP 落盘供守护核对）
-        run: npm run test:ci
-      - name: 跳过数守护（引擎缺失的代价必须是看得见的数字）
-        run: node tools/skip-count-check.mjs test-report.tap
-      # 默认路径只量未冻结文件，好让内环不为存量付那 19s；代价是往**已冻结**
-      # 的文件里塞 ENDIF 一类弱锚在默认路径上看不见。`--all` 是唯一重算存量
-      # 并核对总基线的地方，所以它必须有一个自动执行点。
-      - name: 锚鉴别力全文量（弱锚只减不增，核对总基线）
-        run: node tools/trace-check.mjs --anchor-quality --all
-      - name: ESLint（零警告，与本地三项自检同一标准）
-        run: npx eslint . --max-warnings 0
-      - name: Prettier（格式比对）
-        run: npx prettier --check .
-
+  # —— 带引擎全库（PR 与 master push）——
   engine:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -110,12 +42,18 @@ jobs:
         with:
           node-version: 24
       - uses: ./.github/actions/setup-engine
-      - name: 测试（有引擎；TAP 落盘供守护核对）
+      - name: 测试（有引擎；TAP 落盘供跳过数检查核对）
         run: npm run test:ci
-      - name: 跳过数守护（引擎在场时只能是 0）
+      - name: 跳过数检查（引擎在场时只能是 0）
         run: >-
           node tools/skip-count-check.mjs test-report.tap
           --baseline test/engine-present-skip-baseline.txt
+      - name: 九份输出比对样本（未解释差异必须为 0）
+        run: |
+          for s in mainmenu-natural mainmenu-max saveload-natural saveload-max daycycle-natural daycycle-max train-natural train-upgrade sale-natural; do
+            echo "=== 样本 $s ==="
+            node tools/compare/cli.js --sample "$s" || exit 1
+          done
 
   # 原生 Windows 开发环境：覆盖盘符、反斜杠、中文临时目录与进程树清理。
   windows:
@@ -134,6 +72,49 @@ jobs:
         run: npm run test:ci
       - name: 引擎在场时跳过数必须为 0
         run: node tools/skip-count-check.mjs test-report.tap --baseline test/engine-present-skip-baseline.txt
+
+  # —— 静态检查（PR 与 master push）——
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: 安装依赖
+        run: npm ci
+      - name: 锚点质量（默认范围只量未冻结文件，PR 新加的引用都在这里）
+        run: node tools/trace-check.mjs --anchor-quality
+      - name: ESLint（零警告，与本地三项自检同一标准）
+        run: npx eslint . --max-warnings 0
+      - name: Prettier（格式比对）
+        run: npx prettier --check .
+
+  # —— 无引擎全库（只在 master push）——
+  engineless:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    # 15 分钟在 #242（K11 莉莉，源码 25k 行 + 测试 8.4k 行）上被顶穿。超时是
+    # 防挂死的上限，不是预算。
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: 安装依赖
+        run: npm ci
+      - name: 测试（无引擎；spec 进日志，TAP 落盘供跳过数检查核对）
+        run: npm run test:ci
+      - name: 跳过数检查（引擎缺失的代价必须是看得见的数字）
+        run: node tools/skip-count-check.mjs test-report.tap
+      # 默认路径只量未冻结文件；`--all` 是唯一重算存量并核对总基线的地方，
+      # 所以它必须有一个自动执行点。
+      - name: 锚点质量全文量（弱锚点只减不增，核对总基线）
+        run: node tools/trace-check.mjs --anchor-quality --all
 
   # —— 手动档：全量变异 ——
   #

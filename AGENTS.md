@@ -79,22 +79,18 @@ npm run lint             # ESLint，零警告标准
 npm run format:check     # Prettier，只检查格式
 ```
 
-**开发过程优先运行当前改动相关的测试**（#256），避免每次修改都重复运行全量测试：
+**全库 `npm test` 本机带引擎约 4 分钟**（#452 实测 217 秒，199 个文件、5923 例），按下表选择测试范围：
 
-| 何时             | 跑什么                                                             |
-| ---------------- | ------------------------------------------------------------------ |
-| 每次完成一项改动 | 对应测试文件 ＋ `mutation-check --ids <本轮新加的编号>`            |
-| 提交验收前       | `npm run test:related` ＋ `npm run lint` ＋ `npm run format:check` |
-| 合并后           | 由 master push 触发 CI，运行全库测试和静态检查                     |
-| 阶段验收         | 负责人在本机运行全量变异测试、引擎验收和输出比对，见工单流程 §5.6  |
+| 何时              | 跑什么                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------ |
+| 每次完成一项改动  | 对应测试文件 ＋ `mutation-check --ids <本轮新加的编号>`                                                |
+| 开 PR 前          | `npm test` ＋ `npm run lint` ＋ `npm run format:check`                                                 |
+| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）＋ 九份输出比对样本；master 另跑无引擎全库与锚点质量全文量       |
+| 阶段结束          | 给阶段收尾 PR 打 `phase-acceptance` 标签，在 CI 跑全量变异测试；引擎实际运行在本机用 Electron MCP 验收 |
 
-一次修改涉及多个文件时，开发过程中可用 `npm run test:inner` 自动选择相关测试。该命令省略全局回归检查，提交验收前仍须运行 `npm run test:related`。
+曾有按改动文件选择测试的选择器（#256），实测最多省一半时间，#452 撤掉：本地和 CI 只有 `npm test` 一个入口，PR 的 CI 通过即全库通过。
 
-`tools/select-tests.mjs` 根据改动文件选择测试，主要映射来自 `tools/mutations/*.mjs` 中的 `file:` 和 `tests:`。变异测试用于验证这些测试能否发现对应文件中的错误。`npm run test:select` 只列出所选测试，不执行。
-
-**选择器无法确定测试范围时，必须运行全量测试**，不能静默遗漏相关测试。`test/select-tests.test.js` 验证这一要求。测试选择只用于缩短开发反馈时间，不能替代阶段验收。
-
-**测试入口统一限制为 4 个测试文件并发**，包括 npm 测试、选择器与变异子进程。它限制进程并发数，不等于 CPU 配额；同时跑多个 agent 或变异副本时仍要控制任务数。Linux 可额外用 `bash tools/capped.sh npm test` 施加 systemd CPU 配额；Windows 直接用 npm 命令。
+**测试入口统一限制为 4 个测试文件并发**，包括 npm 测试与变异子进程。它限制进程并发数，不等于 CPU 配额；同时跑多个 agent 或变异副本时仍要控制任务数。Linux 可额外用 `bash tools/capped.sh npm test` 施加 systemd CPU 配额；Windows 直接用 npm 命令。
 
 **测试命令必须有超时**。`npm test`、`lint`、`format:check` 这类交互式命令由 `tools/run-node.mjs` 给出默认 600 秒上限；单文件测试与长任务按需显式给更大的 `--timeout`，不依赖默认值。**`npm run test:ci` 是例外，脚本里显式声明 1200 秒**——它跑全库测试，本机带引擎实测 326 秒（`node --test --test-concurrency=4`，5916 例全过），但 `ci.yml` 的 `windows` 任务在 CI runner 上首次运行就撞上默认的 600 秒被杀（#443：`35329826228`，09:30:15 起跑、09:40:16 被 `taskkill` 终止，未跑完），1200 秒留出约 3.7 倍于本机实测的余量。这与 `ci.yml` 各 job 的 `timeout-minutes: 30`（1800 秒）是两层不同的上限：后者是 job 级兜底，覆盖检出、装依赖、跳过数守护等全部步骤；前者是 `test:ci` 这条命令自己的上限，必须留在 job 级上限之内。Windows 的 `timeout.exe` 只是等待命令，不能替代 GNU `timeout`。PowerShell 示例：
 
@@ -117,22 +113,19 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 
 ### CI
 
-`.github/workflows/ci.yml` 根据触发方式运行以下检查（#92 引入 CI，#302 增加引擎检查，阶段 4 调整测试范围）：
+`.github/workflows/ci.yml` 根据触发方式运行以下检查（#92 引入 CI，#302 增加引擎检查，#452 改为 PR 也跑全库）：
 
-| 触发                          | job                     | 内容                                                                                |
-| ----------------------------- | ----------------------- | ----------------------------------------------------------------------------------- |
-| `pull_request`                | `pr`                    | Linux 相关测试、默认范围的锚点质量检查、ESLint、Prettier                            |
-| master push / 手动触发        | `engineless` / `engine` | Linux 全库 `npm run test:ci` 和跳过数检查；无引擎任务另跑全部锚点质量检查与格式检查 |
-| PR / master push              | `windows`               | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0                         |
-| 手动触发且勾选 `run_mutation` | `mutation`              | 全量变异测试，带引擎，在隔离副本中运行，`--jobs 4`                                  |
+| 触发                          | job          | 内容                                                                                   |
+| ----------------------------- | ------------ | -------------------------------------------------------------------------------------- |
+| PR / master push              | `engine`     | Linux 全库 `npm run test:ci`，带引擎，跳过数必须为 0；九份输出比对样本不得有未解释差异 |
+| PR / master push              | `windows`    | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0                            |
+| PR / master push              | `static`     | ESLint、Prettier、默认范围的锚点质量检查                                               |
+| master push / 手动触发        | `engineless` | Linux 全库 `npm run test:ci`，无引擎，跳过数与基线比较；锚点质量全文量                 |
+| 手动触发且勾选 `run_mutation` | `mutation`   | 全量变异测试，带引擎，在隔离副本中运行，`--jobs 4`                                     |
 
-相关测试用于缩短日常反馈时间；全量测试用于检查跨模块影响，尤其是公共测试辅助代码的改动。选择器无法确定影响范围时，会运行全量测试。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
+PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任务只在 master push 跑，用于发现引擎缺失时的退化。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
 
-**Linux 的 `pr` 任务通过，只代表选中的测试通过。** Linux 全量测试在推送到 master 后运行；Windows 任务在 PR 和 master push 时均运行全量测试。
-
-**跳过数检查只用于全量测试。** Linux 的 `pr` 任务只跑子集，不与全量基线比较；Linux 的两个全量任务和 Windows 任务均检查跳过数。
-
-**全量变异测试不自动触发。** 阶段验收时在本机运行，也可通过 `workflow_dispatch` 手动启动 CI 任务且勾选 `run_mutation`（默认关闭——#449 修复：手动触发本用于快速验证某个分支，默认还顺带点着一个 180 分钟的任务，与验证意图不符）。
+**全量变异测试不自动触发。** 阶段验收时通过 `workflow_dispatch` 手动启动 CI 任务且勾选 `run_mutation`（默认关闭——#449 修复：手动触发本用于快速验证某个分支，默认还顺带点着一个 180 分钟的任务，与验证意图不符）。
 
 **CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-4.8.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 42 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
 
