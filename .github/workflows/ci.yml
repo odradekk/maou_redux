@@ -26,6 +26,11 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      run_mutation:
+        description: '是否顺带跑全量变异（默认关，避免手动触发误跑 180 分钟任务）'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -105,12 +110,72 @@ jobs:
         with:
           node-version: 24
       - uses: ./.github/actions/setup-engine
-      - name: 测试（有引擎；TAP 落盘供守护核对）
-        run: npm run test:ci
+      - name: 测试（有引擎；TAP 落盘供守护核对；#449 临时挂进程级诊断，定位挂死后随本任务移除）
+        run: |
+          set +e
+          mkdir -p logs/449
+          export NODE_OPTIONS="--report-on-signal --report-directory=$PWD/logs/449 ${NODE_OPTIONS:-}"
+          npm run test:ci > logs/449/test-stdout.log 2>&1 &
+          main_pid=$!
+
+          last_size=0
+          stall=0
+          dumped=0
+          while kill -0 "$main_pid" 2>/dev/null; do
+            sleep 15
+            size=$(stat -c%s logs/449/test-stdout.log 2>/dev/null || echo 0)
+            if [ "$size" = "$last_size" ]; then
+              stall=$((stall + 15))
+            else
+              stall=0
+            fi
+            last_size=$size
+            if [ "$stall" -ge 90 ] && [ "$dumped" -eq 0 ]; then
+              dumped=1
+              {
+                echo "=== 卡死快照 $(date -u +%FT%TZ)，已连续 ${stall}s 无输出增长 ==="
+                echo "--- uptime / loadavg ---"
+                uptime
+                cat /proc/loadavg
+                echo "--- free -h ---"
+                free -h
+                echo "--- ps auxf（进程树） ---"
+                ps auxf
+                echo "--- dmesg 尾部（OOM 排查） ---"
+                sudo dmesg 2>/dev/null | tail -100
+                for pid in $(pgrep -f node); do
+                  echo "--- /proc/$pid ---"
+                  tr '\0' ' ' < /proc/$pid/cmdline 2>/dev/null; echo
+                  cat /proc/$pid/status 2>/dev/null
+                  echo -n "wchan: "; cat /proc/$pid/wchan 2>/dev/null; echo
+                  echo "syscall:"; cat /proc/$pid/syscall 2>/dev/null
+                  echo "stack:"; sudo cat /proc/$pid/stack 2>/dev/null
+                  echo "fd:"; ls -l /proc/$pid/fd 2>/dev/null
+                  kill -USR2 "$pid" 2>/dev/null
+                done
+                sleep 5
+                echo "--- logs/449 生成的诊断报告 ---"
+                ls -la logs/449
+              } > logs/449/hang-snapshot.log 2>&1
+            fi
+          done
+          wait "$main_pid"
+          rc=$?
+          cat logs/449/test-stdout.log
+          echo "=== test:ci 退出码 $rc ==="
+          exit $rc
       - name: 跳过数守护（引擎在场时只能是 0）
         run: >-
           node tools/skip-count-check.mjs test-report.tap
           --baseline test/engine-present-skip-baseline.txt
+      - name: 上传诊断产物（#449；无论成败都传，便于卡死时事后核验）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: engine-hang-diagnostics
+          path: logs/449/**
+          if-no-files-found: ignore
+          retention-days: 7
 
   # 原生 Windows 开发环境：覆盖盘符、反斜杠、中文临时目录与进程树清理。
   windows:
@@ -142,7 +207,7 @@ jobs:
   # 残留守护与**检出基线**比对而非假设干净——裸检出可能带既有脏度（#96 的
   # dev-guides CRLF），守护证的是「变异逐字节还原」，不是「仓库本来干净」。
   mutation:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_mutation == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
