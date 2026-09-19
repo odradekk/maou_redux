@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 101;
+export const COUNT = 111;
 
 export default [
   {
@@ -948,5 +948,173 @@ export default [
     test_name:
       '探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且报出位置（自动纳入后来者）',
     must_mention: '范围外的未登记引用不该被报出',
+  },
+
+  // —— #442：门 5（must_mention 出处检查）自身的十条自证 ——
+  // 前四条（M9519/M9520/M9526/M9527）让门 5 对自证条目（GOOD_ENTRY 改
+  // must_mention）整体失明，靠 test/mutation-check.test.js 的门 5 自证用例
+  // 抓：拆掉后自证条目不再报错，退出码由非 0 回到 0。后六条改门 5 的搜索
+  // 范围与匹配算法，影响的是全表 5294 条真实条目，靠「快速模式全绿」用例
+  // 抓：全表量测数据见 issue #442（tools/measure-must-mention.mjs 产出）。
+  {
+    desc: 'M9519 门 5 的接线被删（run_gates 不再调用 gate_must_mention_source，自证条目重新变绿）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `    ...gate_engine_declared(entries, args),
+    ...gate_must_mention_source(args.root, entries),
+  ];`,
+    replace: `    ...gate_engine_declared(entries, args),
+  ];`,
+    tests: ['mutation-check'],
+    test_name:
+      'must_mention 出处门（#442）：出处在 tests:/file:/era-fixture.js 里都找不到 → 退出码 1',
+    must_mention: '找不到出处必须非 0，实际退出',
+  },
+  {
+    desc: 'M9520 豁免检查焊死（EXEMPT_MUST_MENTION 判定恒真，任何条目都被当成已豁免直接跳过）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `    const num = extract_m_number(m.desc);
+    if (num !== null && EXEMPT_MUST_MENTION.has(num)) {
+      continue;
+    }`,
+    replace: `    const num = extract_m_number(m.desc);
+    if (true) {
+      continue; // 变异：豁免检查焊死，全部条目直接跳过
+    }`,
+    tests: ['mutation-check'],
+    test_name:
+      'must_mention 出处门（#442）：出处在 tests:/file:/era-fixture.js 里都找不到 → 退出码 1',
+    must_mention: '找不到出处必须非 0，实际退出',
+  },
+  {
+    desc: 'M9526 早退条件焊死（每条 must_mention 都跳过校验，等于门 5 整体失明）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `  for (const m of entries) {
+    if (typeof m.must_mention !== 'string' || !m.must_mention) {
+      continue; // gate_shape 已经报过缺 must_mention，这里不重复报
+    }`,
+    replace: `  for (const m of entries) {
+    if (true) {
+      continue; // 变异：早退条件焊死，跳过全部条目
+    }`,
+    tests: ['mutation-check'],
+    test_name:
+      'must_mention 出处门（#442）：出处在 tests:/file:/era-fixture.js 里都找不到 → 退出码 1',
+    must_mention: '找不到出处必须非 0，实际退出',
+  },
+  {
+    desc: 'M9527 找不到出处不再报错（found 为 false 时 errors 也不推入，判定结果被吞）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `    const found = sources.some((c) => must_mention_found(c, m.must_mention));
+    if (!found) {`,
+    replace: `    const found = sources.some((c) => must_mention_found(c, m.must_mention));
+    if (false) { // 变异：出处缺失不再报错`,
+    tests: ['mutation-check'],
+    test_name:
+      'must_mention 出处门（#442）：出处在 tests:/file:/era-fixture.js 里都找不到 → 退出码 1',
+    must_mention: '找不到出处必须非 0，实际退出',
+  },
+  {
+    desc: 'M9521 搜索范围丢弃 tests:（真实条目的出处几乎全在断言消息里，量测实测新增 1908 条未命中）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `    const sources = (Array.isArray(m.tests) ? m.tests : [])
+      .map((t) => read(\`test/\${t}.test.js\`))
+      .concat([
+        typeof m.file === 'string' ? read(m.file) : null,
+        fixture_content,
+      ])
+      .filter((c) => c !== null);`,
+    replace: `    const sources = [
+      typeof m.file === 'string' ? read(m.file) : null,
+      fixture_content,
+    ].filter((c) => c !== null); // 变异：丢弃 tests: 来源`,
+    tests: ['mutation-check'],
+    test_name:
+      '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
+    must_mention: '应全绿，实际退出',
+  },
+  {
+    desc: 'M9522 搜索范围丢弃 file:（量测实测新增 121 条未命中——靶文件里定义、断言消息里只引用变量的出处会漏掉）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `    const sources = (Array.isArray(m.tests) ? m.tests : [])
+      .map((t) => read(\`test/\${t}.test.js\`))
+      .concat([
+        typeof m.file === 'string' ? read(m.file) : null,
+        fixture_content,
+      ])
+      .filter((c) => c !== null);`,
+    replace: `    const sources = (Array.isArray(m.tests) ? m.tests : [])
+      .map((t) => read(\`test/\${t}.test.js\`))
+      .concat([fixture_content]) // 变异：丢弃 file: 来源
+      .filter((c) => c !== null);`,
+    tests: ['mutation-check'],
+    test_name:
+      '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
+    must_mention: '应全绿，实际退出',
+  },
+  {
+    desc: 'M9523 搜索范围丢弃 era-fixture.js（量测实测新增 3 条未命中——共用夹具里定义的出处会漏掉）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `    const sources = (Array.isArray(m.tests) ? m.tests : [])
+      .map((t) => read(\`test/\${t}.test.js\`))
+      .concat([
+        typeof m.file === 'string' ? read(m.file) : null,
+        fixture_content,
+      ])
+      .filter((c) => c !== null);`,
+    replace: `    const sources = (Array.isArray(m.tests) ? m.tests : [])
+      .map((t) => read(\`test/\${t}.test.js\`))
+      .concat([typeof m.file === 'string' ? read(m.file) : null]) // 变异：丢弃 era-fixture.js 来源
+      .filter((c) => c !== null);`,
+    tests: ['mutation-check'],
+    test_name:
+      '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
+    must_mention: '应全绿，实际退出',
+  },
+  {
+    desc: 'M9524 逐字快速通道被删（must_mention_found 只走模板匹配——量测实测新增 1796 条未命中，绝大多数出处根本不在模板字面量里）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `function must_mention_found(content, must_mention) {
+  if (content.includes(must_mention)) return true;
+  return template_literal_segments(content).some((segs) =>
+    matches_template(segs, must_mention),
+  );
+}`,
+    replace: `function must_mention_found(content, must_mention) {
+  return template_literal_segments(content).some((segs) =>
+    matches_template(segs, must_mention),
+  ); // 变异：逐字快速通道被删，全部走模板匹配
+}`,
+    tests: ['mutation-check'],
+    test_name:
+      '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
+    must_mention: '应全绿，实际退出',
+  },
+  {
+    desc: 'M9525 模板字面段匹配被拆（must_mention_found 只剩逐字——量测实测新增 508 条未命中，即门 5 全表复核时最终豁免清单的由来）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `function must_mention_found(content, must_mention) {
+  if (content.includes(must_mention)) return true;
+  return template_literal_segments(content).some((segs) =>
+    matches_template(segs, must_mention),
+  );
+}`,
+    replace: `function must_mention_found(content, must_mention) {
+  if (content.includes(must_mention)) return true;
+  return false; // 变异：模板字面段匹配被拆
+}`,
+    tests: ['mutation-check'],
+    test_name:
+      '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
+    must_mention: '应全绿，实际退出',
+  },
+  {
+    desc: 'M9528 豁免清单键打错（M92 的键 92 改成 920，这一条真实条目不再被豁免——豁免清单必须逐条对准 M 编号，打错等于没登记）（#442）',
+    file: 'tools/mutation-check.mjs',
+    find: `    '92',`,
+    replace: `    '920', // 变异：豁免键打错——这一条不再豁免任何真实条目`,
+    tests: ['mutation-check'],
+    test_name:
+      '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
+    must_mention: '应全绿，实际退出',
   },
 ];

@@ -4,9 +4,9 @@
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
  * 目录，进程怎么死都污染不到仓库。
  *
- *   1. 快速模式全绿：--verify 退出码 0——三项检查（形状/计数/失配/测试文件）
- *      由此进 npm test，变异检查拿到第一个自动执行点。本文件不持条数
- *      副本（数字只在各分片里），只验行为。
+ *   1. 快速模式全绿：--verify 退出码 0——五项检查（计数/失配/测试文件/
+ *      引擎声明/must_mention 出处）由此进 npm test，变异检查拿到第一个
+ *      自动执行点。本文件不持条数副本（数字只在各分片里），只验行为。
  *   2. 拦截路径：夹具变异被夹具测试拦下（退出码 0），且靶文件逐字节还原
  *      ——还原读回校验从工具外侧再证一遍。
  *   3. 误报通过必红：变异不伤被测行为（测试照过）→ 退出码 1。
@@ -42,6 +42,11 @@
  *  14. 分片没导出 COUNT（门 1，#367）→ 退出码 1：缺声明必须红，而不是
  *      「没声明就不查」——后者会让新分片默认脱离门 1，正是「新增分片
  *      即入账」要防的反面。
+ *  15. must_mention 出处门（#442）：must_mention 在它声明的 tests:/file:/
+ *      era-fixture.js 里都找不到出处（逐字与模板字面段都匹配不上）→
+ *      退出码 1，报错点名 desc 与 must_mention——这道门查的是「断言与
+ *      出处脱节」，不是「断言有没有区分力」，见 gate_must_mention_source
+ *      头注。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -117,10 +122,10 @@ const GOOD_ENTRY = {
   must_mention: '加倍',
 };
 
-test('快速模式全绿：--verify 退出码 0（三项检查进 npm test，变异检查的自动执行点）', () => {
+test('快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）', () => {
   const { status, output } = run_tool(['--verify']);
   assert.equal(status, 0, `--verify 应全绿，实际退出 ${status}：\n${output}`);
-  assert.ok(output.includes('三项检查全过'), `应报告三项检查全过：\n${output}`);
+  assert.ok(output.includes('五项检查全过'), `应报告五项检查全过：\n${output}`);
 });
 
 test('门 1：分片没导出 COUNT → 退出码 1（缺声明不是免检）', () => {
@@ -199,6 +204,14 @@ test('误报通过必红：变异不伤被测行为（测试照过）→ 退出�
 test('未报出即红：测试红了但 must_mention 片段不在输出 → 退出码 1', () => {
   const root = make_fixture();
   try {
+    // 门 5（#442）只按静态出处核对 must_mention，不管它会不会真的出现在
+    // 运行期输出里——这条注释满足门 5 的静态定位，不会被执行到，因此不
+    // 影响本用例要验证的行为：红了但输出里没有这个片段仍必须判红。
+    fs.appendFileSync(
+      path.join(root, 'test', 'calc.test.js'),
+      '// 完全不在输出里的片段：仅供 must_mention 静态定位使用，不会被执行到\n',
+      'utf8',
+    );
     const ledger = write_ledger(root, [
       { ...GOOD_ENTRY, must_mention: '完全不在输出里的片段' },
     ]);
@@ -398,6 +411,38 @@ test('测试文件检查：tests 引用不存在的测试文件 → 退出码 1'
   }
 });
 
+test('must_mention 出处门（#442）：出处在 tests:/file:/era-fixture.js 里都找不到 → 退出码 1', () => {
+  // 自证（issue #442 验收要求）：合成一条 must_mention 与它声明的出处
+  // （tests: calc、file: lib/calc.js）毫无关系的条目——calc.test.js/
+  // calc.js 都不含这段文字，夹具根也没有 era-fixture.js。门 5 必须报错，
+  // 且退出码非 0；关掉/短路这道门时（M9519 一类变异）它必须重新变绿，
+  // 证明「关了它就查不出这类脱节」。
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, must_mention: '这段文字在 calc 的测试与源码里都不存在' },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--verify',
+    ]);
+    assert.notEqual(
+      status,
+      0,
+      `must_mention 找不到出处必须非 0，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('都找不到'),
+      `应报出「出处都找不到」：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
 test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场同场景必须红', () => {
   const root = make_fixture();
   try {
@@ -415,7 +460,15 @@ test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场�
     const ledger = write_ledger(root, [
       // engine: true 是 #256 的交叉核对要求的：实测按「跳过」分类的条目
       // 必须已声明，否则 run_one 当场判红（声明与实测不许分家）。
-      { ...GOOD_ENTRY, tests: ['gated'], engine: true },
+      // must_mention 覆盖成 gated.test.js 里的测试名（门 5，#442 静态出处
+      // 要求）——这条测试恒为 skip: true，failed_as_expected 恒 false，
+      // 换哪个字符串都不改变跳过分类的判定。
+      {
+        ...GOOD_ENTRY,
+        tests: ['gated'],
+        engine: true,
+        must_mention: '依赖引擎的用例',
+      },
     ]);
     const args = ['--root', root, '--ledger-dir', ledger];
     const engineless = run_tool([
@@ -452,7 +505,7 @@ test('无引擎跳过分类：引擎缺失按跳过放行核对；引擎在场�
     // 没声明——必须当场红。门 4 只数得出声明的个数，数对了但标错了哪
     // 一条，只有这里能看见。
     const undeclared = write_ledger(root, [
-      { ...GOOD_ENTRY, tests: ['gated'] },
+      { ...GOOD_ENTRY, tests: ['gated'], must_mention: '依赖引擎的用例' },
     ]);
     const stale = run_tool([
       '--root',
@@ -534,6 +587,7 @@ test('抽样含依赖引擎的条目同样退 0：抽样档不核对，依赖引
         desc: 'T6 依赖引擎条目',
         tests: ['gated'],
         engine: true,
+        must_mention: '依赖引擎的用例', // 门 5（#442）静态出处要求，见 gated.test.js
       },
     ]);
     const { status, output } = run_tool([
@@ -585,6 +639,7 @@ test('引擎在场的硬判不被抽样档短路：sample + 依赖引擎的条�
         desc: 'T7 依赖引擎条目',
         tests: ['gated'],
         engine: true,
+        must_mention: '依赖引擎的用例', // 门 5（#442）静态出处要求，见 gated.test.js
       },
     ]);
     const { status, output } = run_tool([
@@ -625,6 +680,14 @@ test('并行汇总不吞子进程的计数：一片全拦 + 一片判红 → cau
   // 已经把结果报告过了，照它的 SUMMARY 汇总即可。
   const root = make_fixture();
   try {
+    // 门 5（#442）只按静态出处核对 must_mention，不管运行期输出——这条
+    // 注释满足门 5 的静态定位，不会被执行到，不影响 T9 要验证的行为：
+    // 这句话确实不出现在任何失败输出里，因此判红（失配）。
+    fs.appendFileSync(
+      path.join(root, 'test', 'calc.test.js'),
+      '// 这句话不会出现在任何失败输出里（must_mention 静态定位占位注释）\n',
+      'utf8',
+    );
     // 并行模式假定副本就是一份完整仓库：子进程以 cwd=副本 跑
     // <副本>/tools/mutation-check.mjs，条目表取默认的 <副本>/tools/mutations。
     // 所以夹具根要摆成同一形状，工具本体也得拷进去。
