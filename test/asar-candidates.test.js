@@ -134,6 +134,10 @@ test('行为验证：ERE_ENGINE_ASAR=none 时 engine-bundle 真的退回无引�
     spawnSync(process.execPath, ['-e', probe], {
       encoding: 'utf8',
       env: { ...process.env, ERE_ENGINE_ASAR: env_value },
+      // 本机实测这条 -e 探针（require + 一次 load_engine_bundle）约 0.2s，
+      // 30s 是约 150 倍余量的统一默认值（#449），不是按这条单独量出来的上限
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
     }).stdout.trim();
 
   assert.equal(

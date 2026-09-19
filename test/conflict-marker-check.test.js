@@ -54,12 +54,23 @@ function run_tool(root) {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    // 本机实测这个工具跑一遍约 1.4s，30s 留约 20 倍余量（#449 统一默认
+    // 值，不是按这条单独量出来的上限）
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
 function git(dir, args) {
-  const r = spawnSync('git', args, { cwd: dir, encoding: 'utf8' });
+  const r = spawnSync('git', args, {
+    cwd: dir,
+    encoding: 'utf8',
+    // 都是临时仓库上的 init/config/add 一类本地纯本地操作，本机实测
+    // 单条 <0.2s，30s 留出充足余量（#449 统一默认值）
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
+  });
   assert.equal(
     r.status,
     0,
@@ -101,6 +112,9 @@ test('conflict-marker-check 全绿（跟踪文本无冲突标记，退出码 0�
   const probe = spawnSync('git', ['rev-parse', '--is-inside-work-tree'], {
     cwd: REPO_ROOT,
     encoding: 'utf8',
+    // 本机实测约 0.1s，30s 留出充足余量（#449 统一默认值）
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   if (probe.status !== 0) {
     return;
@@ -224,6 +238,9 @@ test('外部事实：prettier 确实把 >>>>>>> 规范化成 > > > > > > >（有
     const pr = spawnSync(process.execPath, [PRETTIER, '--write', md], {
       cwd: dir,
       encoding: 'utf8',
+      // 本机实测单文件 --write 约 0.27s，30s 留出充足余量（#449 统一默认值）
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
     });
     assert.equal(
       pr.status,

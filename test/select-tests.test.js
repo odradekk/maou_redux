@@ -41,6 +41,9 @@ function run(...args) {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    // 本机实测无参数默认调用约 0.5s，30s 留出充足余量（#449 统一默认值）
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   return {
     status: r.status,

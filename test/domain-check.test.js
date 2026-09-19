@@ -54,6 +54,10 @@ function run_tool() {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    // 本机实测这个工具扫全树一遍约 8.5s，30s 留约 3.5 倍余量——比其余
+    // 文件的统一默认值紧，因为它是全树扫描里最重的一个（#449）
+    timeout: 30_000,
+    killSignal: 'SIGKILL',
   });
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
@@ -91,6 +95,9 @@ function run_tool_in(root) {
       cwd: root,
       encoding: 'utf8',
       maxBuffer: 16 * 1024 * 1024,
+      // 副本里的 ere/ownership 全树平移，耗时与真树同数量级（见 run_tool 的注）
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
     },
   );
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };

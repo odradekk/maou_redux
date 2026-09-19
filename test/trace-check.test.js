@@ -74,6 +74,8 @@ function run_tool(extra_args = []) {
     cwd: REPO_ROOT,
     encoding: 'utf8',
     maxBuffer: 16 * 1024 * 1024,
+    timeout: 120_000, // 默认/--anchor-quality 的全文扫描实测约 50s，留够余量
+    killSignal: 'SIGKILL',
   });
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
@@ -140,6 +142,8 @@ function run_tool_in(root, extra_args = []) {
       cwd: root,
       encoding: 'utf8',
       maxBuffer: 16 * 1024 * 1024,
+      timeout: 120_000, // 默认/--anchor-quality 的全文扫描实测约 50s，留够余量
+      killSignal: 'SIGKILL',
     },
   );
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };

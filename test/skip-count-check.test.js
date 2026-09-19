@@ -89,7 +89,14 @@ function run_tool(tap_file, baseline_file) {
   const r = spawnSync(
     process.execPath,
     [TOOL, tap_file, '--baseline', baseline_file],
-    { cwd: REPO_ROOT, encoding: 'utf8' },
+    {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+      // 只解析一个小 TAP 文件，本机实测约 0.15s，30s 留出充足余量
+      // （#449 统一默认值）
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
+    },
   );
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }

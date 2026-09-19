@@ -306,10 +306,11 @@ export default [
     must_mention: '锚点失配',
   },
   {
-    desc: 'M174 退出码语义被拆（失守也退 0——工具只会打印不会红）',
+    desc: 'M174 失守语义被拆（failures 归零——工具只会打印不会红，#449 改同进程调用后靶点随 run() 的返回值挪，不再是 CLI 退出码）',
     file: 'tools/engine-contract-check.mjs',
-    find: 'process.exit(run() === 0 ? 0 : 1);',
-    replace: 'process.exit(0); // 变异：退出码语义拆除',
+    find: "return { failures, output: lines.join('\\n') };",
+    replace:
+      "return { failures: 0, output: lines.join('\\n') }; // 变异：失守语义拆除",
     tests: ['engine-contract-check'],
     must_mention: '锚点失配',
   },

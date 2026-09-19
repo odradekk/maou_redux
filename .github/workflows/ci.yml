@@ -26,6 +26,11 @@ on:
   pull_request:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      run_mutation:
+        description: '是否顺带跑全量变异（默认关，避免手动触发误跑 180 分钟任务）'
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -142,7 +147,7 @@ jobs:
   # 残留守护与**检出基线**比对而非假设干净——裸检出可能带既有脏度（#96 的
   # dev-guides CRLF），守护证的是「变异逐字节还原」，不是「仓库本来干净」。
   mutation:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.run_mutation == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 180
     steps:
