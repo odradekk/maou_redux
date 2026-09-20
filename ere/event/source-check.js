@@ -14,11 +14,13 @@
  *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB  @SOURCE_SEX_CHECK（:31）/
  *     @PLAYER_SKILL_CHECK（:45）/@MASTER_SKILL_CHECK（:172）/
  *     @INCEST_SEX_CHECK（:222）/@LOST_VIRGIN_CHECK（:265，守卫段）/
- *     @UP_TALENT_CVA_CHECK（:691）/@UP_TALENT_CHECK（:740）/
+ *     @TARGET_EJAC_CHECK（:345-524）/@UP_TALENT_CVA_CHECK（:691）/
+ *     @UP_TALENT_CHECK（:740）/
  *     @MARK_GOT_CHECK（:952-1080）/@YOKUBO_UP_CHECK（:1092）/
- *     @JUJUN_UP_CHECK（:1113）/@EXP_GOT_CHECK（:1124）/@SOKUOCHI_CHECK
- *     （:1315）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561）/
- *     @MASTER_FLAG_CHECK（:1615-1711）/@TARGET_WORMBABY_CHECK（:1727）
+ *     @JUJUN_UP_CHECK（:1113）/@EXP_GOT_CHECK（:1124-1310）/@SOKUOCHI_CHECK
+ *     （:1315）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561-1610）/
+ *     @MASTER_FLAG_CHECK（:1615-1711）/@TARGET_WORMBABY_CHECK（:1727-1847）/
+ *     @AUTO_NUM_CHECK（:1852-1879）
  *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB  @SOURCE_LESBIAN_SEX_CHECK
  *     （:9）/@SOURCE_GAY_SEX_CHECK（:242）/@INCEST（:324）/
  *     @SOUL_DISLOCATION_DEBUFF（:350）
@@ -41,12 +43,20 @@
  *   - SOURCE_LESBIAN/GAY_SEX_CHECK（SUB2）：预设角色清一色女性 + 主人是
  *     男人（Chara0），两分支当前不可达，登记；
  *   - INCEST 的 CFLAG:21–25 解码、普通无亲族早退与 SUB1 的源乘算已实现；
- *   - TARGET_EJAC/MILK/WORMBABY_CHECK（素质 121/130/190/191 无预设）；
+ *   - TARGET_EJAC_CHECK（SUB1:345-524）／TARGET_WORMBABY_CHECK
+ *     （SUB1:1727-1847）已随 #462 落地：原登记「TALENT:121/190/191 无预
+ *     设，不可达」只查了 45 个固定预设，漏查动态创建角色/婚姻日程——
+ *     chara-make.js 可设 TALENT:121/122，marriage-day.js 可设
+ *     TALENT:190/191；TARGET_MILK_CHECK（素质 130）仍在册；
  *   - SEIIN_START 与失神组（PASSOUT_CHECK/TEXT/OUTDOOR）已随 #216（J6）
  *     落真身（system/train/seiin.js 与 passout.js）；PISSING_ECST_CHECK
- *     （TEQUIP:22/TALENT:57 门槛）与 SOUL_DISLOCATION_DEBUFF 仍在册；
- *   - EXP_GOT_CHECK / SOKUOCHI_CHECK：生效分支的门槛（TFLAG:100、UP:2/
- *     UP:9 ≥ 阈值、TALENT:73）在当前写入面下全为 0/无预设，整支登记；
+ *     （SUB1:1561-1610）与 SOUL_DISLOCATION_DEBUFF（SUB2:350-356）已随
+ *     #462 落地：前者门槛 TEQUIP:22（com-hardcore.js 等）/TALENT:57
+ *     （event-nextday.js）均有现成写入点；后者登记记错了变量，ERB 实际
+ *     读 EX_TALENT:0，无任何守卫、恒定执行；
+ *   - EXP_GOT_CHECK（SUB1:1124-1310）已随 #462 落地：原登记「生效分支门槛
+ *     在爱抚写入面下全为 0」已过期——com-caress.js/com-hardcore.js 均已
+ *     写 TFLAG:100；SOKUOCHI_CHECK（TALENT:73 无预设）核实无误，仍登记；
  *   - 膣内射精チェック（:426-473）已随 #221 J11 落地：目标侧避孕套、
  *     主人/助手/兽奸/死斗场/触手与逆侵犯的计数链按原 if/else-if 顺序结算；
  *   - KOJO_MESSAGE_PALAMCNG / MARKCNG（:504/:512，FLAG:7 > 0 才达）：分发层
@@ -62,6 +72,7 @@ const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
+const { EXPLV } = require('#/era-utils/exp-level');
 const { train_message_a } = require('#/system/train/train-message');
 const {
   passout_check,
@@ -71,6 +82,7 @@ const {
   passout_outdoor,
 } = require('#/system/train/passout');
 const { seiin_start } = require('#/system/train/seiin');
+const { soiling_cloth_no1 } = require('#/system/train/cloth');
 const {
   EQUIP_COM_CHAIN,
   equip_com_family,
@@ -83,6 +95,10 @@ const {
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { incest } = require('#/system/train/incest');
+const {
+  yokubo_up_check,
+  jujun_up_check,
+} = require('#/system/train/ability-check');
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
@@ -94,14 +110,7 @@ const STUBBED_CALLS = [
   'KOJO_MESSAGE_PALAMCNG',
   'KOJO_MESSAGE_MARKCNG',
   'EQUIP_COM',
-  'SOURCE_LESBIAN_SEX_CHECK',
-  'SOURCE_GAY_SEX_CHECK',
-  'TARGET_EJAC_CHECK',
   'TARGET_MILK_CHECK',
-  'TARGET_WORMBABY_CHECK',
-  'PISSING_ECST_CHECK',
-  'SOUL_DISLOCATION_DEBUFF',
-  'EXP_GOT_CHECK',
   'SOKUOCHI_CHECK',
 ];
 
@@ -152,12 +161,284 @@ const clitoris_name = () => (tal(122) ? '阴茎' : '阴核');
 
 // —— :128-130 调教者侧的源修正（SUB1） ——
 
-// @SOURCE_SEX_CHECK（SUB1:31-43）：同性分支（SUB2 未移植，登记）
+// @SOURCE_SEX_CHECK（SUB1:31-43）：同性分支
 function source_sex_check() {
   if (!tal(122) && !ptal(122)) {
-    stub_line('SOURCE_LESBIAN_SEX_CHECK', '女性同士的检查', '随同性经验票');
+    source_lesbian_sex_check();
   } else if (tal(122) && ptal(122)) {
-    stub_line('SOURCE_GAY_SEX_CHECK', '男性同士的检查', '随同性经验票');
+    source_gay_sex_check();
+  }
+}
+
+// @SOURCE_LESBIAN_SEX_CHECK（SUB2:9-238）：女性同士——TARGET 的百合气质
+// （ABL:22）、百合中毒（ABL:33）与调教者的同名两项共四段乘算级联，末尾
+// 调教者克制（TALENT:PLAYER:20）令疼痛/达成感减半。ABL:PLAYER:33 的档位
+// 在原作里从 ==1 起算，ELSE 同时兜底 0 与 ≥5（与其余三段「0 为最低档、
+// ELSE 只兜底 ≥5」的写法不对称，照抄不改）。
+function source_lesbian_sex_check() {
+  if (abl(22) === 0) {
+    set_src(8, times(src(8), 0.8));
+    set_src(14, times(src(14), 0.8));
+    set_src(13, times(src(13), 0.9));
+  } else if (abl(22) === 1) {
+    set_src(7, src(7) + 100);
+    set_src(8, times(src(8), 0.6));
+    set_src(14, times(src(14), 0.6));
+    set_src(13, times(src(13), 0.75));
+    set_src(0, times(src(0), 1.1));
+    set_src(1, times(src(1), 1.1));
+    set_src(2, times(src(2), 1.1));
+    set_src(5, times(src(5), 1.1));
+    set_src(17, times(src(17), 1.1));
+  } else if (abl(22) === 2) {
+    set_src(7, src(7) + 200);
+    set_src(8, times(src(8), 0.4));
+    set_src(14, times(src(14), 0.4));
+    set_src(13, times(src(13), 0.6));
+    set_src(0, times(src(0), 1.2));
+    set_src(1, times(src(1), 1.2));
+    set_src(2, times(src(2), 1.2));
+    set_src(5, times(src(5), 1.2));
+    set_src(17, times(src(17), 1.2));
+  } else if (abl(22) === 3) {
+    set_src(7, src(7) + 350);
+    set_src(8, times(src(8), 0.25));
+    set_src(14, times(src(14), 0.25));
+    set_src(13, times(src(13), 0.45));
+    set_src(0, times(src(0), 1.3));
+    set_src(1, times(src(1), 1.3));
+    set_src(2, times(src(2), 1.3));
+    set_src(5, times(src(5), 1.3));
+    set_src(17, times(src(17), 1.3));
+  } else if (abl(22) === 4) {
+    set_src(7, src(7) + 500);
+    set_src(8, times(src(8), 0.15));
+    set_src(14, times(src(14), 0.15));
+    set_src(13, times(src(13), 0.3));
+    set_src(0, times(src(0), 1.4));
+    set_src(1, times(src(1), 1.4));
+    set_src(2, times(src(2), 1.4));
+    set_src(5, times(src(5), 1.4));
+    set_src(17, times(src(17), 1.4));
+  } else {
+    set_src(7, src(7) + 750);
+    set_src(8, times(src(8), 0.1));
+    set_src(14, times(src(14), 0.1));
+    set_src(13, times(src(13), 0.15));
+    set_src(0, times(src(0), 1.6));
+    set_src(1, times(src(1), 1.6));
+    set_src(2, times(src(2), 1.6));
+    set_src(5, times(src(5), 1.6));
+    set_src(17, times(src(17), 1.6));
+  }
+
+  if (abl(33) === 0) {
+    set_src(8, times(src(8), 0.8));
+    set_src(14, times(src(14), 0.8));
+    set_src(0, times(src(0), 1.0));
+    set_src(1, times(src(1), 1.0));
+    set_src(2, times(src(2), 1.0));
+    set_src(5, times(src(5), 1.0));
+    set_src(17, times(src(17), 1.0));
+  } else if (abl(33) === 1) {
+    set_src(8, times(src(8), 0.6));
+    set_src(14, times(src(14), 0.6));
+    set_src(0, times(src(0), 1.2));
+    set_src(1, times(src(1), 1.2));
+    set_src(2, times(src(2), 1.2));
+    set_src(5, times(src(5), 1.2));
+    set_src(17, times(src(17), 1.2));
+  } else if (abl(33) === 2) {
+    set_src(8, times(src(8), 0.4));
+    set_src(14, times(src(14), 0.4));
+    set_src(0, times(src(0), 1.4));
+    set_src(1, times(src(1), 1.4));
+    set_src(2, times(src(2), 1.4));
+    set_src(5, times(src(5), 1.4));
+    set_src(17, times(src(17), 1.4));
+  } else if (abl(33) === 3) {
+    set_src(8, times(src(8), 0.3));
+    set_src(14, times(src(14), 0.3));
+    set_src(0, times(src(0), 1.6));
+    set_src(1, times(src(1), 1.6));
+    set_src(2, times(src(2), 1.6));
+    set_src(5, times(src(5), 1.6));
+    set_src(17, times(src(17), 1.6));
+  } else if (abl(33) === 4) {
+    set_src(8, times(src(8), 0.2));
+    set_src(14, times(src(14), 0.2));
+    set_src(0, times(src(0), 1.8));
+    set_src(1, times(src(1), 1.8));
+    set_src(2, times(src(2), 1.8));
+    set_src(5, times(src(5), 1.8));
+    set_src(17, times(src(17), 1.8));
+  } else {
+    set_src(8, times(src(8), 0.1));
+    set_src(14, times(src(14), 0.1));
+    set_src(0, times(src(0), 2.0));
+    set_src(1, times(src(1), 2.0));
+    set_src(2, times(src(2), 2.0));
+    set_src(5, times(src(5), 2.0));
+    set_src(17, times(src(17), 2.0));
+  }
+
+  if (pabl(22) === 0) {
+    set_src(0, times(src(0), 0.4));
+    set_src(1, times(src(1), 0.4));
+    set_src(2, times(src(2), 0.4));
+    set_src(3, times(src(3), 0.2));
+    set_src(4, times(src(4), 0.3));
+    set_src(5, times(src(5), 0.3));
+    set_src(17, times(src(17), 0.4));
+  } else if (pabl(22) === 1) {
+    set_src(0, times(src(0), 0.7));
+    set_src(1, times(src(1), 0.7));
+    set_src(2, times(src(2), 0.7));
+    set_src(3, times(src(3), 0.6));
+    set_src(4, times(src(4), 0.7));
+    set_src(5, times(src(5), 0.7));
+    set_src(17, times(src(17), 0.7));
+  } else if (pabl(22) === 2) {
+    set_src(0, times(src(0), 1.0));
+    set_src(1, times(src(1), 1.0));
+    set_src(2, times(src(2), 1.0));
+    set_src(3, times(src(3), 1.0));
+    set_src(4, times(src(4), 1.0));
+    set_src(5, times(src(5), 1.0));
+    set_src(17, times(src(17), 1.0));
+  } else if (pabl(22) === 3) {
+    set_src(0, times(src(0), 1.1));
+    set_src(1, times(src(1), 1.1));
+    set_src(2, times(src(2), 1.1));
+    set_src(3, times(src(3), 1.4));
+    set_src(4, times(src(4), 1.3));
+    set_src(5, times(src(5), 1.3));
+    set_src(17, times(src(17), 1.1));
+  } else if (pabl(22) === 4) {
+    set_src(0, times(src(0), 1.2));
+    set_src(1, times(src(1), 1.2));
+    set_src(2, times(src(2), 1.2));
+    set_src(3, times(src(3), 1.8));
+    set_src(4, times(src(4), 1.6));
+    set_src(5, times(src(5), 1.6));
+    set_src(17, times(src(17), 1.2));
+  } else {
+    set_src(0, times(src(0), 1.3));
+    set_src(1, times(src(1), 1.3));
+    set_src(2, times(src(2), 1.3));
+    set_src(3, times(src(3), 2.5));
+    set_src(4, times(src(4), 2.0));
+    set_src(5, times(src(5), 2.0));
+    set_src(17, times(src(17), 1.3));
+  }
+
+  if (pabl(33) === 1) {
+    set_src(0, times(src(0), 1.1));
+    set_src(1, times(src(1), 1.1));
+    set_src(2, times(src(2), 1.1));
+    set_src(3, times(src(3), 1.5));
+    set_src(4, times(src(4), 1.5));
+    set_src(5, times(src(5), 1.5));
+    set_src(17, times(src(17), 1.1));
+  } else if (pabl(33) === 2) {
+    set_src(0, times(src(0), 1.2));
+    set_src(1, times(src(1), 1.2));
+    set_src(2, times(src(2), 1.2));
+    set_src(3, times(src(3), 2.0));
+    set_src(4, times(src(4), 2.0));
+    set_src(5, times(src(5), 2.0));
+    set_src(17, times(src(17), 1.2));
+  } else if (pabl(33) === 3) {
+    set_src(0, times(src(0), 1.4));
+    set_src(1, times(src(1), 1.4));
+    set_src(2, times(src(2), 1.4));
+    set_src(3, times(src(3), 2.5));
+    set_src(4, times(src(4), 2.5));
+    set_src(5, times(src(5), 2.5));
+    set_src(17, times(src(17), 1.4));
+  } else if (pabl(33) === 4) {
+    set_src(0, times(src(0), 1.6));
+    set_src(1, times(src(1), 1.6));
+    set_src(2, times(src(2), 1.6));
+    set_src(3, times(src(3), 3.5));
+    set_src(4, times(src(4), 3.0));
+    set_src(5, times(src(5), 3.0));
+    set_src(17, times(src(17), 1.6));
+  } else {
+    set_src(0, times(src(0), 1.8));
+    set_src(1, times(src(1), 1.8));
+    set_src(2, times(src(2), 1.8));
+    set_src(3, times(src(3), 5.0));
+    set_src(4, times(src(4), 4.0));
+    set_src(5, times(src(5), 4.0));
+    set_src(17, times(src(17), 1.8));
+  }
+
+  if (ptal(20)) {
+    set_src(4, times(src(4), 0.5));
+    set_src(5, times(src(5), 0.5));
+  }
+}
+
+// @SOURCE_GAY_SEX_CHECK（SUB2:242-315）：男性同士——只按 TARGET 的ホモっ
+// 気（ABL:23）分档，0-5 共六档，无 ELSE 兜底（ABL:23≥6 整段跳过，照抄原
+// 作）；末尾调教者克制（TALENT:PLAYER:20）同 LESBIAN 分支令疼痛/达成感
+// 减半。
+function source_gay_sex_check() {
+  if (abl(23) === 0) {
+    set_src(8, times(src(8), 4.0));
+    set_src(14, times(src(14), 4.0));
+    set_src(5, times(src(5), 0.5));
+  } else if (abl(23) === 1) {
+    set_src(7, src(7) + 10);
+    set_src(8, times(src(8), 2.0));
+    set_src(14, times(src(14), 2.0));
+    set_src(5, times(src(5), 0.7));
+    set_src(0, times(src(0), 1.1));
+    set_src(1, times(src(1), 1.1));
+    set_src(2, times(src(2), 1.1));
+    set_src(17, times(src(17), 1.1));
+  } else if (abl(23) === 2) {
+    set_src(7, src(7) + 40);
+    set_src(8, times(src(8), 1.4));
+    set_src(14, times(src(14), 1.4));
+    set_src(5, times(src(5), 0.9));
+    set_src(0, times(src(0), 1.2));
+    set_src(1, times(src(1), 1.2));
+    set_src(2, times(src(2), 1.2));
+    set_src(17, times(src(17), 1.2));
+  } else if (abl(23) === 3) {
+    set_src(7, src(7) + 100);
+    set_src(8, times(src(8), 1.0));
+    set_src(14, times(src(14), 1.0));
+    set_src(5, times(src(5), 1.1));
+    set_src(0, times(src(0), 1.3));
+    set_src(1, times(src(1), 1.3));
+    set_src(2, times(src(2), 1.3));
+    set_src(17, times(src(17), 1.3));
+  } else if (abl(23) === 4) {
+    set_src(7, src(7) + 200);
+    set_src(8, times(src(8), 0.7));
+    set_src(14, times(src(14), 0.7));
+    set_src(5, times(src(5), 1.2));
+    set_src(0, times(src(0), 1.4));
+    set_src(1, times(src(1), 1.4));
+    set_src(2, times(src(2), 1.4));
+    set_src(17, times(src(17), 1.4));
+  } else if (abl(23) === 5) {
+    set_src(7, src(7) + 350);
+    set_src(8, times(src(8), 0.5));
+    set_src(14, times(src(14), 0.5));
+    set_src(5, times(src(5), 1.3));
+    set_src(0, times(src(0), 1.5));
+    set_src(1, times(src(1), 1.5));
+    set_src(2, times(src(2), 1.5));
+    set_src(17, times(src(17), 1.5));
+  }
+
+  if (ptal(20)) {
+    set_src(4, times(src(4), 0.5));
+    set_src(5, times(src(5), 0.5));
   }
 }
 
@@ -1253,35 +1534,6 @@ function ecst_check(arg) {
   game.system.绝顶强度 = arg;
 }
 
-// @YOKUBO_UP_CHECK（SUB1:1088）：欲望 ≥ 3 时压抑/抵抗消失
-function yokubo_up_check() {
-  if (abl(11) >= 3 && (tal(32) || tal(34))) {
-    era.print(`${era.get(`callname:${cid}:-1`) ?? ''}的`);
-    if (tal(32)) {
-      era.print('【压抑】');
-      era.set(`talent:${cid}:32`, 0);
-    }
-    if (tal(34)) {
-      era.print('【抵抗】');
-      era.set(`talent:${cid}:34`, 0);
-    }
-    era.print('失去了');
-    era.print('否定点数减半');
-    era.set(`juel:${cid}:100`, idiv(era.get(`juel:${cid}:100`) || 0, 2));
-    game.train.压抑抵抗消灭 = 1;
-  }
-}
-
-// @JUJUN_UP_CHECK（SUB1:1106）：顺从 ≥ 4 时反抗心 → 坦率
-function jujun_up_check() {
-  if (abl(10) >= 4 && tal(11) && tal(18)) {
-    era.print(`${era.get(`callname:${cid}:-1`) ?? ''}的【反抗心】失去了，`);
-    era.print('【坦率】获得。');
-    era.set(`talent:${cid}:11`, 0);
-    chara(cid).chara.坦率 = 1;
-  }
-}
-
 async function ex_check_up() {
   let ex_c = 0;
   let ex_v = 0;
@@ -1508,7 +1760,7 @@ async function ex_check_up() {
     chara(cid).system.欲望 = ex_l;
     era.print(`获得${era.get(`ablname:11`) ?? ''}LV${ex_l}`);
     if (ex_l >= 3) {
-      yokubo_up_check();
+      yokubo_up_check(cid);
     }
   }
 
@@ -1520,6 +1772,578 @@ async function ex_check_up() {
   era.set(`nowex:${cid}:4`, ex_f);
   // 绝顶经验（EXP:2）
   chara(cid).dungeon.绝顶经验 += ex_c + ex_v + ex_a + ex_b + ex_f;
+}
+
+// @TARGET_EJAC_CHECK（SUB1:345-524）：调教对象射精检查。守卫 TALENT:121/122
+// （扶她/男人）均为 0 时早退；未熟（TALENT:135）按随机波动修正、事后钳制在
+// 2000 以内（原作 `;RETURN 0` 已注释停用，未熟不早退，只改走随机修正）；
+// 乘算级联（克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套）后按
+// BASE:2/MAXBASE:2 比值分大量射精/普通射精两档，各自结算 SOURCE:12/13
+// （EXPLV 分档）、EXP、STAIN、TFLAG、NOWEX/EX。
+function target_ejac_check() {
+  if (!tal(121) && !tal(122)) {
+    return;
+  }
+  const is_mijyuku = !!tal(135);
+  const mijyuku = is_mijyuku
+    ? Math.floor(Math.random() * 700) - Math.floor(Math.random() * 800) + 400
+    : 0;
+  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
+
+  let local = up(0) + up(1) + up(2) + up(14);
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }
+  if (tal(70)) {
+    // 接受快感
+    local = times(local, 1.2);
+  }
+  if (tal(76)) {
+    // 淫乱化
+    local = times(local, 1.1);
+  }
+  if (tal(71)) {
+    // 否定快感
+    local = times(local, 0.8);
+  }
+  if (era.get(`tequip:${cid}:21`)) {
+    // 媚药
+    local *= 2;
+  }
+  if (era.get(`tequip:${cid}:22`)) {
+    // 利尿剂
+    local = idiv(local, 2);
+  }
+  if (era.get(`tequip:${cid}:37`)) {
+    // 调教对象安全套装着
+    local = idiv(local, 2);
+  }
+  if (is_mijyuku) {
+    local -= mijyuku;
+  }
+
+  local = 1000 + idiv(local - 1000, 2);
+  chara(cid).train.射精槽 += local; // BASE:2 += LOCAL
+  if (is_mijyuku && mijyuku_kenkai < 2000 && chara(cid).train.射精槽 >= 2000) {
+    era.print(
+      `${era.get(`callname:${cid}:-1`) ?? ''}尚未成熟的${clitoris_name()}似乎渐渐有了感觉。`,
+    );
+  }
+  if (is_mijyuku && mijyuku_kenkai >= 2000 && chara(cid).train.射精槽 <= 2000) {
+    chara(cid).train.射精槽 = 2000;
+  }
+
+  const ejac = era.get(`maxbase:${cid}:2`) || 0;
+  let grade;
+  if (chara(cid).train.射精槽 > ejac * 2) {
+    grade = 2;
+  } else if (chara(cid).train.射精槽 > ejac) {
+    grade = 1;
+  } else {
+    grade = 0;
+  }
+  if (grade === 0) {
+    return;
+  }
+
+  const callname = era.get(`callname:${cid}:-1`) ?? '';
+  const exp3 = chara(cid).train.射精经验;
+  if (grade === 2) {
+    add_lose(0, 20);
+    add_lose(1, 100);
+    if (exp3 < EXPLV[1]) {
+      set_src(12, src(12) + 20000);
+      set_src(13, src(13) + 10000);
+    } else if (exp3 < EXPLV[2]) {
+      set_src(12, src(12) + 10000);
+      set_src(13, src(13) + 8000);
+    } else if (exp3 < EXPLV[3]) {
+      set_src(12, src(12) + 7000);
+      set_src(13, src(13) + 6000);
+    } else if (exp3 < EXPLV[4]) {
+      set_src(12, src(12) + 5000);
+      set_src(13, src(13) + 4000);
+    } else if (exp3 < EXPLV[5]) {
+      set_src(12, src(12) + 3000);
+      set_src(13, src(13) + 2000);
+    } else {
+      set_src(12, src(12) + 1800);
+      set_src(13, src(13) + 1200);
+    }
+
+    era.print(`${callname}大量射精`);
+    era.print('精液经验+1');
+    era.print('射精经验+2');
+    if (exp3 === 0 && !tal(122)) {
+      chara(cid).dungeon.异常经验 += 1;
+      era.print('异常经验+1');
+    }
+    chara(cid).dungeon.精液经验 += 1;
+    chara(cid).train.射精经验 += 2;
+
+    if (is_mijyuku) {
+      chara(cid).dungeon.体力上限 -= 10;
+      chara(cid).dungeon.气力上限 -= 30;
+      add_lose(0, 50);
+      add_lose(1, 100);
+      era.print(`${callname}感到身体被掏空。`);
+      era.print('体力上限下降了10。');
+      era.print('气力上限下降了30。');
+      if (chara(cid).dungeon.体力上限 < 600) {
+        chara(cid).dungeon.体力上限 = 600;
+      }
+      if (chara(cid).dungeon.气力上限 < 100) {
+        chara(cid).dungeon.气力上限 = 100;
+      }
+    }
+
+    chara(cid).train.阴茎污渍 |= 4;
+    chara(cid).train.射精槽 -= ejac * 2;
+    if (chara(cid).train.射精槽 >= ejac) {
+      chara(cid).train.射精槽 = ejac - 1;
+    }
+
+    game.system.对象射精 = 2;
+    era.set(`nowex:${cid}:5`, (era.get(`nowex:${cid}:5`) || 0) + 1);
+    chara(cid).system.喷乳绝顶 += 1; // EX:5（与 TARGET_MILK_CHECK 共用同一计数器）
+  } else {
+    add_lose(1, 40);
+    if (exp3 < EXPLV[1]) {
+      set_src(12, src(12) + 10000);
+      set_src(13, src(13) + 5000);
+    } else if (exp3 < EXPLV[2]) {
+      set_src(12, src(12) + 5000);
+      set_src(13, src(13) + 4000);
+    } else if (exp3 < EXPLV[3]) {
+      set_src(12, src(12) + 2500);
+      set_src(13, src(13) + 2000);
+    } else if (exp3 < EXPLV[4]) {
+      set_src(12, src(12) + 1600);
+      set_src(13, src(13) + 1400);
+    } else if (exp3 < EXPLV[5]) {
+      set_src(12, src(12) + 800);
+      set_src(13, src(13) + 500);
+    } else {
+      set_src(12, src(12) + 200);
+      set_src(13, src(13) + 250);
+    }
+
+    era.print(`${callname}射精`);
+    era.print('射精经验+1');
+    if (exp3 === 0 && !tal(122)) {
+      chara(cid).dungeon.异常经验 += 1;
+      era.print('异常经验+1');
+    }
+    chara(cid).train.射精经验 += 1;
+
+    if (is_mijyuku) {
+      chara(cid).dungeon.体力上限 -= 10;
+      chara(cid).dungeon.气力上限 -= 10;
+      add_lose(0, 10);
+      add_lose(1, 40);
+      era.print(`${callname}感到身体一阵空虚。`);
+      era.print('体力和气力上限下降了10。');
+    }
+
+    chara(cid).train.阴茎污渍 |= 4;
+    chara(cid).train.射精槽 -= ejac;
+    if (chara(cid).train.射精槽 >= ejac) {
+      chara(cid).train.射精槽 = ejac - 1;
+    }
+
+    game.system.对象射精 = 1;
+    era.set(`nowex:${cid}:6`, (era.get(`nowex:${cid}:6`) || 0) + 1);
+    chara(cid).system.普通射精绝顶 += 1;
+  }
+}
+
+// @TARGET_WORMBABY_CHECK（SUB1:1727-1847）：调教对象蠕虫出产检查。守卫
+// TALENT:190/191（私处/直肠产卵）均为 0 时早退；乘算级联（克制/接受快感/
+// 淫乱化/否定快感/媚药，比 TARGET_EJAC_CHECK 少利尿剂/安全套两项）后按
+// LOCAL 固定阈值（25000/10000）分大量/普通出产两档，SOURCE:12/13 分档表与
+// TARGET_EJAC_CHECK 完全相同（原作 C&P）；EXP:60、TFLAG:120/121。
+async function target_wormbaby_check() {
+  if (!tal(190) && !tal(191)) {
+    return;
+  }
+
+  let local = up(0) + up(1) + up(2) + up(14);
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }
+  if (tal(70)) {
+    // 接受快感
+    local = times(local, 1.2);
+  }
+  if (tal(76)) {
+    // 淫乱化
+    local = times(local, 1.1);
+  }
+  if (tal(71)) {
+    // 否定快感
+    local = times(local, 0.8);
+  }
+  if (era.get(`tequip:${cid}:21`)) {
+    // 媚药
+    local *= 2;
+  }
+
+  let grade;
+  if (local > 25000) {
+    grade = 2;
+  } else if (local > 10000) {
+    grade = 1;
+  } else {
+    grade = 0;
+  }
+  if (grade === 0) {
+    return;
+  }
+
+  const site = tal(190) && tal(191) ? '膣内和直肠' : tal(190) ? '膣内' : '直肠';
+  const callname = era.get(`callname:${cid}:-1`) ?? '';
+  const exp3 = chara(cid).train.射精经验;
+  if (grade === 2) {
+    add_lose(0, 20);
+    add_lose(1, 100);
+    if (exp3 < EXPLV[1]) {
+      set_src(12, src(12) + 20000);
+      set_src(13, src(13) + 10000);
+    } else if (exp3 < EXPLV[2]) {
+      set_src(12, src(12) + 10000);
+      set_src(13, src(13) + 8000);
+    } else if (exp3 < EXPLV[3]) {
+      set_src(12, src(12) + 7000);
+      set_src(13, src(13) + 6000);
+    } else if (exp3 < EXPLV[4]) {
+      set_src(12, src(12) + 5000);
+      set_src(13, src(13) + 4000);
+    } else if (exp3 < EXPLV[5]) {
+      set_src(12, src(12) + 3000);
+      set_src(13, src(13) + 2000);
+    } else {
+      set_src(12, src(12) + 1800);
+      set_src(13, src(13) + 1200);
+    }
+
+    era.print(`${callname}的`);
+    await era.printAndWait(`${site}排出了大量的蠕虫幼虫`);
+    era.print('生育经验+2');
+    chara(cid).chara.生育经验 += 2;
+  } else {
+    add_lose(1, 40);
+    if (exp3 < EXPLV[1]) {
+      set_src(12, src(12) + 10000);
+      set_src(13, src(13) + 5000);
+    } else if (exp3 < EXPLV[2]) {
+      set_src(12, src(12) + 5000);
+      set_src(13, src(13) + 4000);
+    } else if (exp3 < EXPLV[3]) {
+      set_src(12, src(12) + 2500);
+      set_src(13, src(13) + 2000);
+    } else if (exp3 < EXPLV[4]) {
+      set_src(12, src(12) + 1600);
+      set_src(13, src(13) + 1400);
+    } else if (exp3 < EXPLV[5]) {
+      set_src(12, src(12) + 800);
+      set_src(13, src(13) + 500);
+    } else {
+      set_src(12, src(12) + 200);
+      set_src(13, src(13) + 250);
+    }
+
+    era.print(`${callname}的`);
+    await era.printAndWait(`${site}排出了的蠕虫幼虫`);
+    era.print('生育经验+1');
+    chara(cid).chara.生育经验 += 1;
+  }
+
+  if (tal(190) && tal(191)) {
+    game.system.V虫产卵 = grade;
+    game.system.A虫产卵 = grade;
+  } else if (tal(190)) {
+    game.system.V虫产卵 = grade;
+  } else {
+    game.system.A虫产卵 = grade;
+  }
+}
+
+// @PISSING_ECST_CHECK（SUB1:1561-1610）：绝顶漏尿检查。TFLAG:29（绝顶强度
+// 累计）× TEQUIP:22（利尿剂）/ TALENT:57（漏尿癖）五档 if/else-if 级联，
+// 档位越高越倾向清空 TEQUIP:22；≥失禁档（2 档起）弄脏 STAIN:2/3 并调用
+// SOILING_CLOTH_NO1，微量失禁档（1 档）只弄脏不调用。
+async function pissing_ecst_check() {
+  const t29 = tflag(29);
+  const tequip22 = !!chara(cid).system.利尿剂;
+  const tal57 = !!tal(57);
+
+  let grade = 0;
+  if (t29 >= 7 && tequip22 && tal57) {
+    grade = 5;
+  } else if ((t29 >= 7 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {
+    grade = 4;
+  } else if (
+    (t29 >= 7 && tal57) ||
+    (t29 >= 5 && tequip22) ||
+    (t29 >= 3 && tequip22 && tal57)
+  ) {
+    grade = 3;
+  } else if (
+    (t29 >= 5 && tal57) ||
+    (t29 >= 3 && tequip22) ||
+    (t29 >= 1 && tequip22 && tal57)
+  ) {
+    grade = 2;
+  } else if ((t29 >= 3 && tal57) || (t29 >= 1 && tequip22)) {
+    grade = 1;
+  }
+  if (grade === 0) {
+    return;
+  }
+
+  era.print(`放尿经验+${grade}`);
+  chara(cid).system.放尿经验 += grade;
+  if (grade >= 3 || (grade === 2 && !tal57)) {
+    chara(cid).system.利尿剂 = 0;
+  }
+  chara(cid).train.阴茎污渍 |= 32;
+  chara(cid).train.阴道污渍 |= 32;
+  if (grade >= 2) {
+    await soiling_cloth_no1(cid);
+  }
+}
+
+// @EXP_GOT_CHECK（SUB1:1124-1310）：三段独立分档经验检查（各自的
+// UP:11/UP:12/UP:6 折减互不干扰，用块级作用域各自隔离 grade/local）。
+// 段 1 侍奉快乐经验：UP:7 档位先放大快乐 UP 总和，仅 TFLAG:100 为真时
+// 才进 6 档阈值判定；段 2 A（肛门）快乐经验：只看 UP:2，无 TFLAG:100
+// 守卫；段 3 被虐/施虐快乐经验：快乐 UP 总和为 0 时回退 UP:5，LOCAL 与
+// UP:9 双阈值 6 档，命中后再按助手 ABL:20+TEQUIP:47 六档二次折算，写
+// 助手侧 EXP:ASSI:33/JUEL:ASSI:5。
+function exp_got_check() {
+  // 段 1：侍奉快乐经验
+  {
+    let local = up(0) + up(1) + up(2) + up(14);
+    const up7 = up(7);
+    if (up7 < 100) {
+      local = 0;
+    } else if (up7 < 300) {
+      local *= 1;
+    } else if (up7 < 700) {
+      local *= 2;
+    } else if (up7 < 1500) {
+      local *= 3;
+    } else {
+      local *= 4;
+    }
+
+    if (tflag(100)) {
+      let grade = 0;
+      if (local >= 12000) {
+        grade = 16;
+        set_up(11, times(up(11), 0.65));
+        set_up(12, times(up(12), 0.3));
+      } else if (local >= 8000) {
+        grade = 12;
+        set_up(11, times(up(11), 0.7));
+        set_up(12, times(up(12), 0.4));
+      } else if (local >= 5000) {
+        grade = 8;
+        set_up(11, times(up(11), 0.75));
+        set_up(12, times(up(12), 0.5));
+      } else if (local >= 3000) {
+        grade = 4;
+        set_up(11, times(up(11), 0.8));
+        set_up(12, times(up(12), 0.6));
+      } else if (local >= 2000) {
+        grade = 2;
+        set_up(11, times(up(11), 0.85));
+        set_up(12, times(up(12), 0.7));
+      } else if (local >= 1000) {
+        grade = 1;
+        set_up(11, times(up(11), 0.9));
+        set_up(12, times(up(12), 0.8));
+      }
+      if (era.get(`tequip:${cid}:88`) && grade) {
+        era.print(`主从爱情经验+${grade}`);
+        chara(cid).stronghold.主从爱情经验 += grade;
+      }
+      if (grade) {
+        era.print(`侍奉快乐经验+${grade}`);
+        chara(cid).dungeon.侍奉快乐经验 += grade;
+        game.train.侍奉快乐经验 = grade;
+      }
+    }
+  }
+
+  // 段 2：A（肛门）快乐经验（无 TFLAG:100 守卫）
+  {
+    let local = up(2);
+    if (up(2) < 300) {
+      local = 0;
+    } else if (up(2) < 1000) {
+      local *= 1;
+    } else if (up(2) < 5000) {
+      local *= 2;
+    } else if (up(2) < 10000) {
+      local *= 3;
+    } else {
+      local *= 4;
+    }
+
+    let grade = 0;
+    if (local >= 12000) {
+      grade = 16;
+      set_up(11, times(up(11), 0.8));
+      set_up(12, times(up(12), 0.9));
+      set_up(6, times(up(6), 1.2));
+    } else if (local >= 8000) {
+      grade = 12;
+      set_up(11, times(up(11), 0.85));
+      set_up(12, times(up(12), 0.9));
+      set_up(6, times(up(6), 1.15));
+    } else if (local >= 5000) {
+      grade = 8;
+      set_up(11, times(up(11), 0.85));
+      set_up(12, times(up(12), 0.95));
+      set_up(6, times(up(6), 1.1));
+    } else if (local >= 3000) {
+      grade = 4;
+      set_up(11, times(up(11), 0.9));
+      set_up(12, times(up(12), 0.95));
+      set_up(6, times(up(6), 1.05));
+    } else if (local >= 2000) {
+      grade = 2;
+      set_up(11, times(up(11), 0.9));
+      set_up(12, times(up(12), 1.0));
+      set_up(6, times(up(6), 1.0));
+    } else if (local >= 1000) {
+      grade = 1;
+      set_up(11, times(up(11), 0.95));
+      set_up(12, times(up(12), 1.0));
+      set_up(6, times(up(6), 1.0));
+    }
+    if (grade) {
+      era.print(`肛门快乐经验+${grade}`);
+      chara(cid).stronghold.肛门快乐经验 += grade;
+      game.train.A快乐经验 = grade;
+    }
+  }
+
+  // 段 3：被虐/施虐快乐经验
+  {
+    let local = up(0) + up(1) + up(2) + up(14);
+    if (local === 0) {
+      local = up(5);
+    }
+    const up9 = up(9);
+
+    let grade = 0;
+    if (local >= 3000 && up9 >= 2000) {
+      grade = 16;
+      set_up(11, times(up(11), 0.65));
+    } else if (local >= 2500 && up9 >= 1500) {
+      grade = 12;
+      set_up(11, times(up(11), 0.7));
+    } else if (local >= 1500 && up9 >= 1000) {
+      grade = 8;
+      set_up(11, times(up(11), 0.75));
+    } else if (local >= 1000 && up9 >= 500) {
+      grade = 4;
+      set_up(11, times(up(11), 0.8));
+    } else if (local >= 600 && up9 >= 300) {
+      grade = 2;
+      set_up(11, times(up(11), 0.85));
+    } else if (local >= 300 && up9 >= 100) {
+      grade = 1;
+      set_up(11, times(up(11), 0.9));
+    }
+
+    if (grade) {
+      if (era.get(`tequip:${cid}:88`)) {
+        era.print(`从属快乐经验+${grade}`);
+        chara(cid).stronghold.从属快乐经验 += grade;
+      }
+      era.print(`被虐快乐经验+${grade}`);
+      chara(cid).dungeon.被虐快乐经验 += grade;
+      game.train.被虐快乐经验 = grade;
+
+      if (era_flag.assiplay && era_flag.assi > 0) {
+        const assi_grade =
+          (era.get(`abl:${era_flag.assi}:20`) || 0) +
+          (era.get(`tequip:${era_flag.assi}:47`) || 0);
+        let local1 = grade;
+        let local2 = 0;
+        if (assi_grade === 0) {
+          local1 = times(local1, 0);
+        } else if (assi_grade === 1) {
+          local1 = times(local1, 0.5);
+        } else if (assi_grade === 2) {
+          local1 = times(local1, 1.0);
+          local2 = idiv(local1, 2);
+        } else if (assi_grade === 3) {
+          local2 = local1 * 2;
+        } else if (assi_grade === 4) {
+          local2 = local1 * 10;
+        } else if (assi_grade >= 5) {
+          local2 = local1 * 50;
+        }
+        const assi_name = era.get(`callname:${era_flag.assi}:-1`) ?? '';
+        if (local1) {
+          era.print(`施虐快乐经验+${local1}(${assi_name})`);
+          chara(era_flag.assi).dungeon.施虐快乐经验 += local1;
+        }
+        if (local2) {
+          era.print(
+            `${era.get('palamname:5') ?? ''}点数+${local2}(${assi_name})`,
+          );
+          era.set(
+            `juel:${era_flag.assi}:5`,
+            (era.get(`juel:${era_flag.assi}:5`) || 0) + local2,
+          );
+        }
+      }
+    }
+  }
+}
+
+// @AUTO_NUM_CHECK（SUB1:1852-1879）：自动调教的 UP 倍率修正，按 CFLAG:667
+// （自动调教回数）八档阈值统一乘算 UP:0-10/14（跳过 11-13/15-16）。唯一
+// 调用方 @SOURCE_CHECK_AUTO（dungeon-battle.js 等，docs/stub-registry.md
+// 「待认领（自动调教）」条目）本身仍是存根，本票不接调用点，只实现函数体
+// 供后续接入；不复用模块级 cid 闭包（本函数不经 SOURCE_CHECK 事件调用），
+// 显式接收 target。
+function auto_num_check(target) {
+  const rate = chara(target).event.自动调教回数;
+  let m;
+  if (rate < 5) {
+    m = 1.25;
+  } else if (rate < 10) {
+    m = 1.5;
+  } else if (rate < 15) {
+    m = 2.1;
+  } else if (rate < 20) {
+    m = 2.85;
+  } else if (rate < 25) {
+    m = 3.9;
+  } else if (rate < 30) {
+    m = 5.3;
+  } else if (rate < 40) {
+    m = 7.25;
+  } else {
+    m = 9.9;
+  }
+  for (let i = 0; i <= 16; i += 1) {
+    if (i >= 11 && i !== 14) {
+      continue;
+    }
+    era.set(
+      `delta:${target}:${i}`,
+      times(era.get(`delta:${target}:${i}`) || 0, m),
+    );
+  }
 }
 
 // —— @MASTER_FLAG_CHECK（SUB1:1615-1711）：好感度累积 ——
@@ -1683,7 +2507,7 @@ function mark_got_check() {
     if (abl(10) === 0 && !tal(12) && !tal(22)) {
       era.print('然后，顺从提升到LV1');
       chara(cid).system.顺从 = 1;
-      jujun_up_check();
+      jujun_up_check(cid);
     }
   } else if (up(9) >= 3000 && mark0 <= 2) {
     chara(cid).system.苦痛刻印 = 3;
@@ -1692,7 +2516,7 @@ function mark_got_check() {
     if (abl(10) === 0 && !tal(12) && !tal(22)) {
       era.print('然后，顺从提升到LV1');
       chara(cid).system.顺从 = 1;
-      jujun_up_check();
+      jujun_up_check(cid);
     }
     if (ptal(83)) {
       era.print('施虐快乐经验＋1');
@@ -1718,7 +2542,7 @@ function mark_got_check() {
     if (abl(10) === 0 && !tal(20) && !tal(22)) {
       era.print('顺从提升到LV1');
       chara(cid).system.顺从 = 1;
-      jujun_up_check();
+      jujun_up_check(cid);
     }
   }
 
@@ -1736,7 +2560,7 @@ function mark_got_check() {
     if (abl(10) === 0 && !tal(22)) {
       era.print('然后，顺从提升到LV1');
       chara(cid).system.顺从 = 1;
-      jujun_up_check();
+      jujun_up_check(cid);
     }
   } else if (tflag200 === 3 && mark2 <= 2) {
     chara(cid).system.屈服刻印 = 3;
@@ -1745,7 +2569,7 @@ function mark_got_check() {
     if (abl(10) <= 1 && !tal(22)) {
       era.print('然后，顺从提升到LV2');
       chara(cid).system.顺从 = 2;
-      jujun_up_check();
+      jujun_up_check(cid);
     }
   }
 }
@@ -1847,6 +2671,16 @@ function show_source() {
     parts.push(`反感追加(${src(15)})`);
   }
   era.print(parts.join('') + '　'); // :2175 PRINTL（行尾以全角空格收行）
+}
+
+// @SOUL_DISLOCATION_DEBUFF（SUB2:350-356）：灵魂错位等级（EX_TALENT:0，
+// TRANSFER_SOUL 施加，见 chara-soul-transfer.js）每级令 SOURCE:0-18 缩水
+// 15%，无任何守卫、恒定执行。
+function soul_dislocation_debuff() {
+  const scale = 100 - 15 * (era.get(`ex_talent:${cid}:0`) || 0);
+  for (let i = 0; i <= 18; i++) {
+    set_src(i, idiv(src(i) * scale, 100));
+  }
 }
 
 // @PALAM_MESSAGE（:2278-2394）：参数状态短语（返回串，拼在行尾——原作
@@ -2131,10 +2965,10 @@ on('SOURCE_CHECK', async () => {
   // :235 绝顶
   await ex_check_up();
 
-  // :238-252 调教对象的射精/喷乳/蠕虫出産（素质门槛不可达，登记）
-  stub_line('TARGET_EJAC_CHECK', '调教对象射精检查', '随扶她/男人票');
+  // :238-252 调教对象的射精/喷乳/蠕虫出産（喷乳/蠕虫出産素质门槛不可达，登记）
+  target_ejac_check();
   stub_line('TARGET_MILK_CHECK', '喷乳检查', '随母乳票');
-  stub_line('TARGET_WORMBABY_CHECK', '蠕虫出产检查', '随蠕虫票');
+  await target_wormbaby_check();
   // :254-255 主人调教的好感度累积
   master_flag_check();
 
@@ -2184,8 +3018,8 @@ on('SOURCE_CHECK', async () => {
     set_lose(0, lose(0) * 2 + 80);
   }
 
-  // :393 灵魂错位（登记）
-  stub_line('SOUL_DISLOCATION_DEBUFF', '灵魂错位减益', '随魂缚票');
+  // :393 灵魂错位
+  soul_dislocation_debuff();
   // :398 失神检查（J6 真身，system/train/passout.js——TFLAG:899 的写入
   // 路径，#213 七道守卫第四道的置位者）
   await passout_check();
@@ -2297,8 +3131,8 @@ on('SOURCE_CHECK', async () => {
     mark_got_check();
     await kojo_message_markcng();
   }
-  // :499 绝顶漏尿（TEQUIP:22/TALENT:57 门槛，登记）
-  stub_line('PISSING_ECST_CHECK', '绝顶漏尿', '随漏尿票');
+  // :499 绝顶漏尿
+  await pissing_ecst_check();
 
   // :504-513 参数变动口上 / 刻印取得口上（FLAG:7，#46/#232）
   if ((era.get('flag:7') || 0) > 0) {
@@ -2311,8 +3145,8 @@ on('SOURCE_CHECK', async () => {
     await kojo_message_markcng();
   }
 
-  // :518 / :523 经验检查与容易陷落（生效门槛不可达，登记）
-  stub_line('EXP_GOT_CHECK', '侍奉/被虐快乐经验检查', '随经验票');
+  // :518 经验检查；:523 容易陷落（生效门槛不可达，登记）
+  exp_got_check();
   stub_line('SOKUOCHI_CHECK', '容易陷落检查', '随陷落票');
 
   // :525 PRINTW ‥×39（读键；点线逐字）
@@ -2358,4 +3192,4 @@ on('SOURCE_CHECK', async () => {
   palam_up_check();
 });
 
-module.exports = { STUBBED_CALLS };
+module.exports = { STUBBED_CALLS, auto_num_check };

@@ -57,6 +57,7 @@ const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
 const { check_sellassiable } = require('#/system/stronghold/sale');
+const { yokubo_up_check } = require('#/system/train/ability-check');
 const { ABLUP_IDS } = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
@@ -67,10 +68,7 @@ const { stub_line } = require('#/utils/stub-line');
  * 分发的全部目标（:170-245），与 system/train/juel-check.js 的
  * @JUEL_CHECK 分发同表——升级规则本体（ABL/ABLUP*.ERB）不在本票范围。
  */
-const STUBBED_CALLS = [
-  ...ABLUP_IDS.map((id) => `ABLUP${id}`),
-  'YOKUBO_UP_CHECK',
-];
+const STUBBED_CALLS = [...ABLUP_IDS.map((id) => `ABLUP${id}`)];
 
 /** 勇者一览的每页行数（:68 `NUM_PAGE = 24`） */
 const ENEMY_NUM_PAGE = 24;
@@ -316,8 +314,10 @@ async function ability_up_core(arg) {
     }
 
     if (result === 999) {
-      // :246-251 结束：欲望变化检查（存根）→ 出售资格复核 → 还原 TARGET
-      stub_line('YOKUBO_UP_CHECK', '欲情变化检查'); // :247
+      // :246-251 结束：欲情变化检查（真身）→ 出售资格复核 → 还原 TARGET
+      // 商店内、非调教期调用，tflag 桶不存在——见 ability-check.js 文件头
+      // 「TFLAG:25 的调教外通道」节
+      yokubo_up_check(era_flag.target, { in_train: false }); // :247
       await check_sellassiable(era_flag.target); // :248（CALL CHECK_SELLASSIABLE 无参）
       // :249 CALL CHECK_SPECIALSKIL 在原作是注释行，不移植
       era_flag.target = previous_target; // :250 TARGET = T

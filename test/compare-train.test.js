@@ -127,9 +127,35 @@ const REPO = path.resolve(__dirname, '..');
 //      （素质行/能力行/刻印行），stub −10、matched 不变（那十行原本就是
 //      「有输出但对不上」的存根行，换真身后逐字对上黄金样本）。
 // 未解释恒 0；数字为合并态重测值。
+// 【#462 后重测】两处改动均只影响存根计数、不影响 matched/unexplained：
+// ① SOUL_DISLOCATION_DEBUFF 落地为真身，SOURCE_CHECK 每次爱抚恒定调用、
+//    默认 EX_TALENT:0=0 时为静默恒等变换，不再 PRINT 占位文字，按样本内
+//    实际调用次数逐条消失（natural 15 次、upgrade 3 次，实测埋点计数）；
+//    本样本 PLAYER/TARGET 为异性配对，SOURCE_LESBIAN/GAY_SEX_CHECK 分支
+//    均未触发（同埋点计数为 0），与本次计数变化无关。
+// ② YOKUBO_UP_CHECK 从 juel-check.js（$LABEL_EXIT，:542）的 stub_line 占位
+//    改接共用真身 ability-check.js；两样本各调用 1 次（对应各自的训练回合
+//    退出），欲望/压抑/抵抗门槛不成立、无 PRINT 输出，占位行消失。
+// 合计 natural 15+1=16（444→428）、upgrade 3+1=4（222→218）。
+// 【#462 二次重测】TARGET_EJAC_CHECK 落地为真身：两样本的 TARGET 均无
+// TALENT:121/122（普通女性），每次调用都在守卫处早退、不再 PRINT 占位
+// 文字（埋点计数验证：natural 调用 15 次、upgrade 调用 3 次，均早退）。
+// stub natural 428→413、upgrade 218→215，matched/unexplained 不变。
+// 【#462 三次重测】TARGET_WORMBABY_CHECK 落地为真身：两样本的 TARGET 均无
+// TALENT:190/191，每次调用都在守卫处早退（埋点计数验证：natural 15 次、
+// upgrade 3 次，均早退）。stub natural 413→398、upgrade 215→212。
+// 【#462 四次重测】PISSING_ECST_CHECK 落地为真身：两样本的 TFLAG:29 判定
+// 均不成立，每次调用都不再 PRINT 占位文字（埋点计数验证：natural 15 次、
+// upgrade 3 次）。stub natural 398→383、upgrade 212→209。
+// 【#462 五次重测】EXP_GOT_CHECK 落地为真身：natural 15 次调用全部三段
+// 判据不成立，stub 383→368（matched 不变）。upgrade 3 次调用中有 1 次
+// 段 3（被虐快乐经验）真实命中——golden train-upgrade-log:319「被虐快乐
+// 经验+2」与 ere 侧逐字匹配，matched 259→262；同段 train-upgrade-log:372
+// 「被虐快乐经验+8」（更高档，未复现）仍由既有的「指令输出块」通用规则
+// 归因为 stub（与本函数无关，是该指令自身尚未完全对齐），unexplained 仍 0。
 const BASELINE = {
-  'train-natural': { matched: 1115, version: 0, stub: 444, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 222, unexplained: 0 },
+  'train-natural': { matched: 1115, version: 0, stub: 368, unexplained: 0 },
+  'train-upgrade': { matched: 262, version: 0, stub: 201, unexplained: 0 },
 };
 
 async function build_report(sample) {

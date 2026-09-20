@@ -86,10 +86,26 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   // 【#234（J24）K3 PALAMCNG/MARKCNG 真身落地后重测】：首回合回放预置
   // CFLAG:221/222/223，首次润滑/欲情/耻情台词不再走存根占位，存根 12 → 10。
   // 【#390 后重测】SHOW_EQUIP_1/2 的占位行消失，stub 10 → 8（matched 不变）
+  // 【#462 后重测】SOUL_DISLOCATION_DEBUFF 落地为真身：SOURCE_CHECK 每次
+  // 恒定调用，默认 EX_TALENT:0=0（无灵魂错位）时缩放系数为 100%，是静默
+  // 恒等变换、不再 PRINT 占位文字，stub 8 → 7（matched 不变）。本回合
+  // PLAYER/TARGET 为异性配对，SOURCE_LESBIAN/GAY_SEX_CHECK 分支未触发，
+  // 与本次计数变化无关。
+  // 【#462 二次重测】TARGET_EJAC_CHECK 落地为真身：TARGET 无 TALENT:121/122
+  // （普通女性），守卫早退、不再 PRINT 占位文字，stub 7 → 6（matched 不变，
+  // 埋点计数验证：本样本调用 1 次，全部在守卫处早退）。
+  // 【#462 三次重测】TARGET_WORMBABY_CHECK 同理：TARGET 无 TALENT:190/191，
+  // 守卫早退，stub 6 → 5（matched 不变，埋点计数验证：调用 1 次全早退）。
+  // 【#462 四次重测】PISSING_ECST_CHECK 落地为真身：本回合 TFLAG:29=0，
+  // 五档级联全不成立、不再 PRINT 占位文字，stub 5 → 4（matched 不变，
+  // 埋点计数验证：调用 1 次，判定不成立）。
+  // 【#462 五次重测】EXP_GOT_CHECK 落地为真身：本回合三段判据均不成立，
+  // 不再 PRINT 占位文字，stub 4 → 3（matched 不变，埋点计数验证：调用
+  // 1 次，三段均不触发）。
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 8,
+    stub: 3,
 
     unexplained: 0,
   });

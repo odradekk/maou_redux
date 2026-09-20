@@ -408,7 +408,7 @@ test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（26 支各回一次占位�
   }
 });
 
-test('ABILITY_UP_CORE：999 收尾三件（欲望检查占位 → 出售资格复核 → 还原 TARGET）', async () => {
+test('ABILITY_UP_CORE：999 收尾三件（欲情变化检查真身 → 出售资格复核 → 还原 TARGET）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '玛奥');
@@ -429,12 +429,31 @@ test('ABILITY_UP_CORE：999 收尾三件（欲望检查占位 → 出售资格�
   const { ability_up_core } = fixture.load_module('page/page-ability-up');
   await ability_up_core(1);
   assert.ok(
-    fixture.text_lines().some((t) => t.includes('@YOKUBO_UP_CHECK')),
-    '欲望变化检查（存根占位）',
+    !fixture.text_lines().some((t) => t.includes('@YOKUBO_UP_CHECK')),
+    'YOKUBO_UP_CHECK 已接真身，不应再打占位行',
   );
   assert.ok(
     fixture.text_lines().includes('玛奥可以卖掉了'),
     'CHECK_SELLASSIABLE 复核的是 CORE 里的 TARGET（1 号）',
   );
   assert.equal(fixture.store.get('flag:10005'), 0, '退出时 TARGET 还原为 T');
+});
+
+test('ABILITY_UP_CORE：999 收尾走欲情变化检查真身（抵抗清除 + 否定点数减半）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '玛奥');
+  fixture.store.set('abl:1:11', 3);
+  fixture.store.set('talent:1:34', 1);
+  fixture.store.set('juel:1:100', 7);
+  fixture.store.set('flag:10005', 0);
+  fixture.set_inputs(999);
+  const { ability_up_core } = fixture.load_module('page/page-ability-up');
+  await ability_up_core(1);
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('【抵抗】')),
+    '真身应打印失去抵抗的提示',
+  );
+  assert.equal(fixture.store.get('talent:1:34'), 0, '抵抗清除');
+  assert.equal(fixture.store.get('juel:1:100'), 3, '否定点数减半截断');
 });

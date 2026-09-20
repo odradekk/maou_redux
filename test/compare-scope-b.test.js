@@ -112,7 +112,14 @@ const BASELINE = {
   // 标记 * 未接入、切换按钮与角色行的 PR #53 按钮化形态差，两侧各一条）；
   // ③ 归一层认「整行只有线绘字符」的折行残段（sale-natural-log:178 的 `═`）。
   // 另六个样本的四数与基线逐字相同（返工实测），未改。
-  'sale-natural': { matched: 163, version: 2, stub: 130, unexplained: 0 },
+  // 【#462 后重测】YOKUBO_UP_CHECK 从 page-ability-up.js（RESULT===999 出口，
+  // :247）与 juel-check.js（$LABEL_EXIT，:542）两处各自的 stub_line 占位，
+  // 改接共用真身 ere/system/train/ability-check.js。本样本经能力提升画面，
+  // 「欲情变化检查尚未移植」占位行消失；温妮欲望达标（ABL:11=5>=3）但压抑/
+  // 抵抗天赋（TALENT:32/34）均未播种，条件不成立、真身无 PRINT 输出，故
+  // 只是差异整行消失（非改判为 matched），stub 130 → 129，matched/
+  // unexplained 不变。
+  'sale-natural': { matched: 163, version: 2, stub: 129, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {
