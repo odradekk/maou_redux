@@ -124,7 +124,11 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 49; // 合并态实测（#399 并上含 #398 的 master）：
+export const PENDING_BASELINE = 39; // 实测（#464）：本票把 ABL/ABLUP0.ERB～
+// ABLUP9.ERB 十个文件整份摆进 ere/system/train/ablup.js，49（分支起点）−
+// 10 = 39，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
+// 重测而非相加；若合并前 master 另有变动，以合并后重测值为准。
+// export const PENDING_BASELINE = 49; // 合并态实测（#399 并上含 #398 的 master）：
 // 51（master）− 2（本票的 SHOP/SHOP_ITEM.ERB 与 SHOP/SHOP_MONSTER.ERB）= 49，
 // 与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
 //

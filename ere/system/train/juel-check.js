@@ -45,20 +45,48 @@ const { check_sellassiable } = require('#/system/stronghold/sale');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const era_flag = require('#/era-utils/era-flag');
+const {
+  ablup0,
+  ablup1,
+  ablup2,
+  ablup3,
+  ablup4,
+} = require('#/system/train/ablup');
 const { stub_line } = require('#/utils/stub-line');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。ABLUPxx 是 @JUEL_CHECK 输入分发的
- * 全部目标（:463-539），升级规则本体超出本段代码（工单「不在范围」）。
+ * ABLUPxx 是 @JUEL_CHECK 输入分发的全部目标（:463-539）。ABLUP_IDS 是
+ * 「引擎认得这个编号」的完整清单，与实现状态无关——page/page-ability-up.js
+ * 的 @ABILITY_UP_CORE 分发同一张表（同表不重列，其文件头有说明）。
  */
 const ABLUP_IDS = [
   0, 1, 2, 3, 4, 10, 11, 12, 13, 14, 15, 16, 17, 20, 21, 22, 23, 30, 31, 32, 33,
   37, 39, 40, 99, 100,
 ];
 
+/**
+ * ABLUP_IDS 中已落真身的编号（issue #464：ABL/ABLUP0.ERB～ABLUP4.ERB）。
+ * ABLUP5～9 的规则本体也已实现（ere/system/train/ablup.js），但 Abl.yml/
+ * Abl.csv 没有编号 5～9 的名字条目，原作没有任何菜单能选中它们，因此不
+ * 接入本表——接入即意味着玩家能选中一个引擎认不出名字的能力，偏离原作。
+ */
+const ABLUP_HANDLERS = {
+  0: ablup0,
+  1: ablup1,
+  2: ablup2,
+  3: ablup3,
+  4: ablup4,
+};
+
+/**
+ * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
+ * 核对固定）；名单变动必须同步清单。升级规则本体超出本段代码的部分见
+ * ABLUP_HANDLERS 的注释。
+ */
 const STUBBED_CALLS = [
-  ...ABLUP_IDS.map((id) => `ABLUP${id}`),
+  ...ABLUP_IDS.filter((id) => !(id in ABLUP_HANDLERS)).map(
+    (id) => `ABLUP${id}`,
+  ),
   'AUTO_ABLUP',
   'YOKUBO_UP_CHECK',
   'CHECK_SPECIALSKIL',
@@ -351,8 +379,9 @@ async function run_juel_check() {
     if (result === 999) {
       break; // :540-541 → $LABEL_EXIT（能力值提高结束）
     }
-    if (ABLUP_IDS.includes(result)) {
-      // :463-539 各能力分支（升级规则本体待办，随能力提升票）
+    if (result in ABLUP_HANDLERS) {
+      await ABLUP_HANDLERS[result](target); // :463-539 各能力分支（issue #464）
+    } else if (ABLUP_IDS.includes(result)) {
       stub_line(`ABLUP${result}`, '能力提升处理');
     }
     // 其余输入无分支命中 → :549 GOTO INPUT_LOOP_1（重绘再来）
@@ -367,6 +396,7 @@ async function run_juel_check() {
 
 module.exports = {
   ABLUP_IDS,
+  ABLUP_HANDLERS,
   STUBBED_CALLS,
   juel_check_main,
   offset_negative_group,
