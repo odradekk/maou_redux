@@ -77,6 +77,13 @@
   id: 91
   name: "heaven_conquered"
   type: "number"
+# 圣灵骑士堡垒攻略进度：15 = 已攻陷（INVASION.ERB:68 的「已征服」判断条件）；
+# 内部推进逻辑属 ARCANA_FORT.ERB（未移植，阶段 5 范围），本表仅登记读点
+# 所需的下标与含义
+"圣灵骑士堡垒攻略进度":
+  id: 92
+  name: "arcana_fort_stage"
+  type: "number"
 # 勇者战役进行中：CAMPAIGN_1.ERB:62 置 1、CAMPAIGN_EVENT.ERB:269/317 战役
 # 结束清 0。为 1 时每回合魔王气力回复改为 -10（SYSTEM ver1.0.3.ERB:713-715）、
 # 战役角色（CFLAG:x:1 == 12）在战役结束后复位（:281-284/:732-735）

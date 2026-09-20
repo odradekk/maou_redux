@@ -3,8 +3,9 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 181; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 195; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
+// #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）
 
 export default [
   {
@@ -1738,5 +1739,130 @@ export default [
     replace: 'const WEAPON_PREFIX_SCALE = 10000;',
     tests: ['page-tailor'],
     must_mention: '装备武器带前缀档',
+  },
+  {
+    desc: 'M9709 精灵领域状态行标签互换（FLAG:87，INVASION.ERB:31）',
+    file: 'ere/page/page-invasion.js',
+    find: "    era_flag.elf_realm_conquered >= 1 ? '黑暗精灵的领土' : '精灵族的领域',",
+    replace:
+      "    era_flag.elf_realm_conquered >= 1 ? '精灵族的领域' : '黑暗精灵的领土', // 变异：标签互换",
+    tests: ['page-invasion'],
+    must_mention: 'flag:87',
+  },
+  {
+    desc: 'M9710 龙之山状态行标签互换（FLAG:89，INVASION.ERB:33）',
+    file: 'ere/page/page-invasion.js',
+    find: "    era_flag.dragon_realm_conquered >= 1 ? '混沌龙之山' : '龙之山脉',",
+    replace:
+      "    era_flag.dragon_realm_conquered >= 1 ? '龙之山脉' : '混沌龙之山', // 变异：标签互换",
+    tests: ['page-invasion'],
+    must_mention: 'flag:89',
+  },
+  {
+    desc: 'M9711 天界状态行标签互换（FLAG:91，INVASION.ERB:35）',
+    file: 'ere/page/page-invasion.js',
+    find: "    era_flag.heaven_conquered >= 1 ? '堕天使的淫界' : '天界',",
+    replace:
+      "    era_flag.heaven_conquered >= 1 ? '天界' : '堕天使的淫界', // 变异：标签互换",
+    tests: ['page-invasion'],
+    must_mention: 'flag:91',
+  },
+  {
+    desc: 'M9712 圣灵骑士堡垒按钮文案互换（FLAG:92 == 15，INVASION.ERB:68-72）',
+    file: 'ere/page/page-invasion.js',
+    find: "    era_flag.arcana_fort_stage === 15\n      ? '巡视圣灵骑士的卖春堡垒（已征服）'\n      : '攻略圣灵骑士的堡垒',",
+    replace:
+      "    era_flag.arcana_fort_stage === 15\n      ? '攻略圣灵骑士的堡垒'\n      : '巡视圣灵骑士的卖春堡垒（已征服）', // 变异：标签互换",
+    tests: ['page-invasion'],
+    must_mention: '的 [4] 按钮文案',
+  },
+  {
+    desc: 'M9713 天神宫已征服门槛挪走（shrine_stage >= 4 改 > 4，INVASION.ERB:73-76）',
+    file: 'ere/page/page-invasion.js',
+    find: "  if (era_exflag.shrine_stage >= 4) {\n    era.printButton('巡视淫乱意志的神宫（已征服）', 5);\n  } else if (era_exflag.shrine_stage >= 1) {",
+    replace:
+      "  if (era_exflag.shrine_stage > 4) {\n    era.printButton('巡视淫乱意志的神宫（已征服）', 5);\n  } else if (era_exflag.shrine_stage >= 1) {",
+    tests: ['page-invasion'],
+    must_mention: '[5] 按钮文案',
+  },
+  {
+    desc: 'M9714 天神宫开窗判据弱化（route_33 双区间 || 改 &&，INVASION.ERB:45/77）',
+    file: 'ere/page/page-invasion.js',
+    find: '  const route_33_open =\n    (era_exflag.route_33 >= 501 && era_exflag.route_33 < 540) ||\n    (era_exflag.route_33 >= 541 && era_exflag.route_33 < 560);',
+    replace:
+      '  const route_33_open =\n    (era_exflag.route_33 >= 501 && era_exflag.route_33 < 540) &&\n    (era_exflag.route_33 >= 541 && era_exflag.route_33 < 560);',
+    tests: ['page-invasion'],
+    must_mention: '：进度条应渲染',
+  },
+  {
+    desc: 'M9715 [999] 取消误报成功（征服后菜单，INVASION.ERB:88-89）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result === 999) {\n      return 0; // :88-89\n    }',
+    replace:
+      '    if (result === 999) {\n      return 1; // :88-89 变异：取消误报成功\n    }',
+    tests: ['page-invasion'],
+    must_mention: '[999] 返回 0',
+  },
+  {
+    desc: 'M9716 [1000] SENGEN_VIDEO 存根登记名改坏（INVASION.ERB:90-92）',
+    file: 'ere/page/page-invasion.js',
+    find: "stub_line_wait('SENGEN_VIDEO', '水晶球投放/流行度', '待认领');",
+    replace:
+      "stub_line_wait('CRYSTAL_BALL', '水晶球投放/流行度', '待认领'); // 变异：登记名改坏",
+    tests: ['page-invasion'],
+    must_mention: '[1000] 转发到 SENGEN_VIDEO 存根',
+  },
+  {
+    desc: 'M9717 [9] CAMPAIGN_MENU 调用丢失（INVASION.ERB:97-99）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result === 9) {\n      await campaign_menu(); // :97-98\n      return 0; // :97-99\n    }',
+    replace:
+      '    if (result === 9) {\n      return 0; // :97-99 变异：CAMPAIGN_MENU 调用丢失\n    }',
+    tests: ['page-invasion'],
+    must_mention: '[9] 调用 campaign_menu()',
+  },
+  {
+    desc: 'M9718 [4] ARCANA_FORT 存根登记名改坏（INVASION.ERB:125-131）',
+    file: 'ere/page/page-invasion.js',
+    find: "stub_line_wait('ARCANA_FORT', '圣灵骑士堡垒攻略', '待认领');",
+    replace:
+      "stub_line_wait('HOLY_FORTRESS', '圣灵骑士堡垒攻略', '待认领'); // 变异：登记名改坏",
+    tests: ['page-invasion'],
+    must_mention: '[4] 转发到 ARCANA_FORT',
+  },
+  {
+    desc: 'M9719 [5] 拒收判据反向（route_33 <= 500 改 > 500，INVASION.ERB:100-101）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result === 5 && era_exflag.route_33 <= 500) {',
+    replace:
+      '    if (result === 5 && era_exflag.route_33 > 500) { // 变异：拒收判据反向',
+    tests: ['page-invasion'],
+    must_mention: '重问耗尽预置输入而不是转发到地区续接',
+  },
+  {
+    desc: 'M9720 shrine_stage >= 3 副作用门槛挪走（改 > 3，INVASION.ERB:136-137）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result === 5 && era_exflag.shrine_stage >= 3) {\n      era_exflag.shrine_stage = era_exflag.shrine_stage + 1; // :136-137\n    }',
+    replace:
+      '    if (result === 5 && era_exflag.shrine_stage > 3) {\n      era_exflag.shrine_stage = era_exflag.shrine_stage + 1; // :136-137\n    }',
+    tests: ['page-invasion'],
+    must_mention: 'shrine_stage=3 → 4',
+  },
+  {
+    desc: 'M9721 [0] 委派 start_campaign() 丢失（INVASION.ERB:109-111）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result === 0) {\n      return await start_campaign(); // :109-111\n    }',
+    replace:
+      '    if (result === 0) {\n      return 0; // :109-111 变异：委派丢失\n    }',
+    tests: ['page-invasion'],
+    must_mention: '[0] 经 post_conquest_menu 委派 start_campaign()',
+  },
+  {
+    desc: 'M9722 invasion() 分派条件反向（FLAG:82，INVASION.ERB:25）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (era_flag.human_realm_fallen !== 0) {',
+    replace: '  if (era_flag.human_realm_fallen === 0) { // 变异：分派条件反向',
+    tests: ['page-invasion'],
+    must_mention: '征服后菜单不会打出窄路径专属的怪物数量提示',
   },
 ];

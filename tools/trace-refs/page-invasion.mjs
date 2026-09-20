@@ -25,6 +25,113 @@ export const FILES = [
         ref: '25-138',
         any: [/^\s*\$INPUT_LOOP2$/m],
       },
+      // 地上征服后菜单渲染与派发（#468）：25-138 内的细分锚点
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '25',
+        any: [/^;地上征服後$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '25-49',
+        any: [
+          /^\s*PRINTFORML 地上的魔界领土　侵攻度　　%BARSTR\(FLAG:81, 10000, 50\)%$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '45',
+        any: [
+          /^\s*IF \(EX_FLAG:2810 >= 501 &&EX_FLAG:2810 < 540\) \|\| \(EX_FLAG:2810 >= 541 && EX_FLAG:2810 < 560\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '73-79',
+        any: [/^\s*PRINTL \[5\] - 巡视淫乱意志的神宫（已征服）$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '77',
+        any: [
+          /^\s*ELSEIF \(EX_FLAG:2810 >= 501 &&EX_FLAG:2810 < 540\) \|\| \(EX_FLAG:2810 >= 541 && EX_FLAG:2810 < 560\)/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '85-106',
+        any: [/^\s*\$INPUT_LOOP2$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '88-89',
+        any: [/^\s*IF RESULT == 999$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '90-92',
+        any: [/^\s*CALL SENGEN_VIDEO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '91',
+        any: [/^\s*CALL SENGEN_VIDEO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '97-98',
+        any: [/^\s*CALL CAMPAIGN_MENU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '97-99',
+        any: [/^\s*CALL CAMPAIGN_MENU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '98',
+        any: [/^\s*CALL CAMPAIGN_MENU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '100',
+        any: [/^\s*ELSEIF RESULT == 5 && EX_FLAG:2810 <= 500$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '100-101',
+        any: [/^\s*ELSEIF RESULT == 5 && EX_FLAG:2810 <= 500$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '102-105',
+        any: [/^\s*ELSEIF RESULT >= 6\s+&& RESULT != 1000 && RESULT != 999$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '108-138',
+        any: [/^\s*;人間界$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '109-111',
+        any: [/^\s*AREA = 81$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '125-131',
+        any: [/^\s*CALL ARCANA_FORT$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '126',
+        any: [/^\s*CALL ARCANA_FORT$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '136-137',
+        any: [/^\s*SIF EX_FLAG:102 >= 3$/m],
+      },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '26',
@@ -77,28 +184,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '193',
-        any: [/^\s*GOTO INPUT_LOOP$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '195',
-        any: [/^\s*GOTO INPUT_LOOP$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '196-199',
         any: [/^\s*ELSEIF RESULT == 0 && MON_NUM < 600$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '197',
-        any: [/^\s*GOTO INPUT_LOOP$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '199',
-        any: [/^\s*GOTO INPUT_LOOP$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
