@@ -933,7 +933,11 @@ test('SOURCE_CHECK_UP_ANTI/_LIKE：仅 CFLAG:1==0 && PLAYER==MASTER 时结算（
     });
     // UP:11（反感）不在 AUTO_NUM_CHECK 处理范围内，300 直达 PALAM 不经缩放；
     // UP:4（恭顺）在处理范围内，AUTO_NUM_CHECK 默认档（CFLAG:667 未播种）×1.25
-    assert.equal(fixture.store.get('palam:31:11'), expect_anti, `${name}：反感`);
+    assert.equal(
+      fixture.store.get('palam:31:11'),
+      expect_anti,
+      `${name}：反感`,
+    );
     assert.equal(fixture.store.get('palam:31:4'), expect_like, `${name}：恭顺`);
   }
 });

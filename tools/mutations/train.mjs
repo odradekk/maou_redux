@@ -5357,7 +5357,8 @@ export default [
     desc: 'M9783 PALAM_UP_CHECK_MINI：顺手"修好" ORDER 末位 14 → 15（原作缺陷被意外补全）',
     file: 'ere/event/source-check.js',
     find: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
-    replace: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];',
+    replace:
+      '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];',
     tests: ['source-check'],
     must_mention: 'UPID 14 结算两次、UPID 15 永不写回',
   },
@@ -5365,7 +5366,8 @@ export default [
     desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 首个 UPID 14（第 4 位）删（UP:14 只单次结算）',
     file: 'ere/event/source-check.js',
     find: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
-    replace: '  const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
+    replace:
+      '  const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
     tests: ['source-check'],
     must_mention: 'UPID 14 结算两次、UPID 15 永不写回',
   },
