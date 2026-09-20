@@ -47,9 +47,10 @@
  * 终端宽折行产生的两物理段与 ere 整行的形态差是记名差异（同点线近似，
  * 归因见 tools/compare/rules.js 判定行规则）。
  *
- * 本文件存根/登记的原作函数（docs/stub-registry.md 必须收录每一个）：
- *   - COM0_AUTO / COM3_AUTO（COMF0:174 / COMF3:381 起）——CALLTRAIN 自动
- *     调教未移植，登记不可达（#218 交付骨架后接线）。
+ * 本文件的 STUBBED_CALLS 现为空：COM0_AUTO / COM3_AUTO（COMF0:174 /
+ * COMF3:872 起）已随 #218 在 ere/event/event-autotrain.js 实现（自动调教），
+ * 调用点在 dungeon 域的 DUNGEON_TOWN.ERB/DUNGEON_TRAP.ERB，与本文件 COM0/COM3
+ * 真身是两条不同的调用路径，不需要本文件登记（#459）。
  *
  * CONFIRM_LOST_VIRGIN（COMF_VAGINASEX.ERB:6，COM8 头部调用）不是存根：
  * #216 落真身于 com-vaginasex.js，本票接线（com8 头部直调）。
@@ -94,7 +95,7 @@ const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
  * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
  * 变动必须同步清单。
  */
-const STUBBED_CALLS = ['COM0_AUTO', 'COM3_AUTO'];
+const STUBBED_CALLS = [];
 
 // —— 纯数据表（错一格不会报错——每档的用例与变异条目固定住） ——
 
@@ -635,10 +636,16 @@ function push_judge_tail(parts, a, v) {
  * @returns {Promise<number>} 原作 RETURN 1（判定不过 RETURN 0）
  */
 async function com3() {
+  // :14-17 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）
+  const jumped = await jump_advanced(3);
+  if (jumped !== false) {
+    return jumped;
+  }
+
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // :14-31 指令名行（装备前缀 + 手淫/自慰，PRINT 累加一行）
+  // :26-38 指令名行（装备前缀 + 手淫/自慰，PRINT 累加一行）
   let title = '';
   if (tequip(53)) {
     title += '公开';

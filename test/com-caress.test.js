@@ -404,6 +404,18 @@ test('@COM3 A ≥ 80：完全驯服的牝奴/牡奴表情行（LOCALS 随性别�
   );
 });
 
+test('@COM3 的升格跳转：PREVCOM ∈ {31,123,124,126,127} 且目标可用 → JUMP COM125（未移植上抛 COM_MISSING）', async () => {
+  const { fixture, com_family, com_able_family } = seed_family_world(3);
+  com_able_family.register(125, async () => 1);
+  fixture.store.set('flag:10009', 124); // PREVCOM = 124（深喉）
+  const result = await com_family.call(3);
+  // @COM125 随 J19——本族隔离夹具未装 com-advanced，视为未移植即 COM_MISSING，
+  // 上抛给回合循环按「重新要求输入」丢弃本回合（train-loop 步骤 12 语义）
+  const { COM_MISSING } = fixture.load_module('system/train/com-family');
+  assert.equal(result, COM_MISSING);
+  assert.equal(fixture.text_lines().length, 0, '跳转路径零输出');
+});
+
 // —— @COM4（口交）真身 ——
 
 test('@COM4：ABL:0 分档 + EVENT_SEITSU 触发（扶她 + 未熟 + 关系 150）', async () => {

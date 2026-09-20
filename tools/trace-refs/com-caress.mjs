@@ -352,8 +352,13 @@ export const FILES = [
       // —— target/ERB/調教相關/COMF3_自慰.ERB ——
       {
         src: 'target/ERB/調教相關/COMF3_自慰.ERB',
-        ref: '14-31',
+        ref: '14-17',
         any: [/LOCAL = 3/],
+      },
+      {
+        src: 'target/ERB/調教相關/COMF3_自慰.ERB',
+        ref: '26-38',
+        any: [/PRINT 二穴振动/],
       },
       {
         src: 'target/ERB/調教相關/COMF3_自慰.ERB',
