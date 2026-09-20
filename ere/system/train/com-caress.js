@@ -48,8 +48,8 @@
  * 归因见 tools/compare/rules.js 判定行规则）。
  *
  * 本文件的 STUBBED_CALLS 现为空：COM0_AUTO / COM3_AUTO（COMF0:174 /
- * COMF3:381 起）已随 #218 在 ere/event/event-autotrain.js 实现（自动调教），
- * 调用点在地下城域的 DUNGEON_TRAP.ERB/DUNGEON_BATLLE.ERB，与本文件 COM0/COM3
+ * COMF3:872 起）已随 #218 在 ere/event/event-autotrain.js 实现（自动调教），
+ * 调用点在 dungeon 域的 DUNGEON_TOWN.ERB/DUNGEON_TRAP.ERB，与本文件 COM0/COM3
  * 真身是两条不同的调用路径，不需要本文件登记（#459）。
  *
  * CONFIRM_LOST_VIRGIN（COMF_VAGINASEX.ERB:6，COM8 头部调用）不是存根：
