@@ -100,13 +100,13 @@ test('ablup0：按钮文案区分男人（阴茎点数）与其余（PALAMNAME:0
   set_talents(male, { 122: 1 });
   male.set_inputs(100);
   await ablup0_male(CID);
-  assert.ok(buttons(male)[0].text.startsWith('阴茎点数×0/1……'));
+  assert.ok(buttons(male)[0].text.startsWith('阴茎点数×0/1 ……'));
 
   const female = create_era_fixture();
   const { ablup0: ablup0_female } = seed(female);
   female.set_inputs(100);
   await ablup0_female(CID);
-  assert.ok(buttons(female)[0].text.startsWith('阴核点数×0/1……'));
+  assert.ok(buttons(female)[0].text.startsWith('阴核点数×0/1 ……'));
 });
 
 test('ablup0：Lv0-4 梯子字面值（无需自慰狂，不带折扣）', async () => {
@@ -124,7 +124,7 @@ test('ablup0：Lv0-4 梯子字面值（无需自慰狂，不带折扣）', async
     fixture.set_inputs(100);
     await ablup0(CID);
     assert.ok(
-      buttons(fixture)[0].text.includes(`/${expected}……`),
+      buttons(fixture)[0].text.includes(`/${expected} ……`),
       `lv${lv}：期望 A=${expected}，实际 ${buttons(fixture)[0].text}`,
     );
   }
@@ -146,7 +146,7 @@ test('ablup0：Lv5-9 梯子字面值（必须自慰狂才能解锁，连带触�
     fixture.set_inputs(100);
     await ablup0(CID);
     assert.ok(
-      buttons(fixture)[0].text.includes(`/${expected}……`),
+      buttons(fixture)[0].text.includes(`/${expected} ……`),
       `lv${lv}：期望 A=${expected}，实际 ${buttons(fixture)[0].text}`,
     );
   }
@@ -169,7 +169,7 @@ test('ablup0：Lv10-24 复利梯子（逐级 TIMES 截断，不可合并成一�
     fixture.set_inputs(100);
     await ablup0(CID);
     assert.ok(
-      buttons(fixture)[0].text.includes(`/${expected}……`),
+      buttons(fixture)[0].text.includes(`/${expected} ……`),
       `lv${lv}：期望 A=${expected}，实际 ${buttons(fixture)[0].text}`,
     );
   }
@@ -190,7 +190,7 @@ test('ablup0：戒备森严仅在 Lv4/5/>=6 三级生效（Lv3 不受影响）�
     fixture.set_inputs(100);
     await ablup0(CID);
     assert.ok(
-      buttons(fixture)[0].text.includes(`/${expected}……`),
+      buttons(fixture)[0].text.includes(`/${expected} ……`),
       `lv${lv}：期望 A=${expected}，实际 ${buttons(fixture)[0].text}`,
     );
   }
@@ -211,7 +211,7 @@ test('ablup0：阴蒂钝感×1.20、阴蒂敏感×0.80、淫乱×0.80、自慰�
     fixture.set_inputs(100);
     await ablup0(CID);
     assert.ok(
-      buttons(fixture)[0].text.includes(`/${expected}……`),
+      buttons(fixture)[0].text.includes(`/${expected} ……`),
       `talent ${JSON.stringify(talents)}：期望 A=${expected}，实际 ${buttons(fixture)[0].text}`,
     );
   }
@@ -225,7 +225,7 @@ test('ablup0：其他部位封锁折扣——三个区间分母恒为 15，随�
   set_talents(fixture, { 74: 1, 105: 2 }); // 105&2 → CALC=1，不影响自身的 101 检查
   fixture.set_inputs(100);
   await ablup0(CID);
-  assert.ok(buttons(fixture)[0].text.includes('/44800……'));
+  assert.ok(buttons(fixture)[0].text.includes('/44800 ……'));
 });
 
 test('ablup0：最低 1 点下限（重度折扣叠加后仍不低于 1）', async () => {
@@ -235,7 +235,7 @@ test('ablup0：最低 1 点下限（重度折扣叠加后仍不低于 1）', asy
   set_talents(fixture, { 102: 1, 76: 1, 74: 1 }); // 0.8*0.8*0.8 仍截断为 0 → 下限 1
   fixture.set_inputs(100);
   await ablup0(CID);
-  assert.ok(buttons(fixture)[0].text.includes('/1……'));
+  assert.ok(buttons(fixture)[0].text.includes('/1 ……'));
 });
 
 test('ablup0：点数不足时按钮 0 会重新提示"未满足条件"并可重试', async () => {
@@ -315,7 +315,7 @@ test('ablup1：Lv0-4 梯子字面值', async () => {
     fixture.store.set(`abl:${CID}:1`, lv);
     fixture.set_inputs(100);
     await ablup1(CID);
-    assert.ok(buttons(fixture)[0].text.includes(`/${expected}……`));
+    assert.ok(buttons(fixture)[0].text.includes(`/${expected} ……`));
   }
 });
 
@@ -326,7 +326,7 @@ test('ablup1：戒备森严三级加成（Lv4 不需要淫乳解锁）', async (
   set_talents(fixture, { 27: 1 });
   fixture.set_inputs(100);
   await ablup1(CID);
-  assert.ok(buttons(fixture)[0].text.includes('/40000……')); // 20000*2.00
+  assert.ok(buttons(fixture)[0].text.includes('/40000 ……')); // 20000*2.00
 });
 
 test('ablup1：B钝感×1.20、巨乳×1.10、爆乳×1.20、超乳×1.30、B敏感×0.80、淫乱×0.80、淫乳×0.80、贫乳×0.80、绝壁×0.65', async () => {
@@ -349,7 +349,7 @@ test('ablup1：B钝感×1.20、巨乳×1.10、爆乳×1.20、超乳×1.30、B敏
     fixture.set_inputs(100);
     await ablup1(CID);
     assert.ok(
-      buttons(fixture)[0].text.includes(`/${expected}……`),
+      buttons(fixture)[0].text.includes(`/${expected} ……`),
       `talent ${JSON.stringify(talents)}：期望 A=${expected}，实际 ${buttons(fixture)[0].text}`,
     );
   }
@@ -363,7 +363,7 @@ test('ablup1：其他部位封锁折扣与淫乳解锁折扣叠加', async () =>
   set_talents(fixture, { 78: 1, 101: 2 });
   fixture.set_inputs(100);
   await ablup1(CID);
-  assert.ok(buttons(fixture)[0].text.includes('/44800……'));
+  assert.ok(buttons(fixture)[0].text.includes('/44800 ……'));
 });
 
 test('ablup1：Lv10 复利梯子首级 + 最低 1 点下限', async () => {
@@ -374,7 +374,7 @@ test('ablup1：Lv10 复利梯子首级 + 最低 1 点下限', async () => {
   compounding.set_inputs(100);
   await a1(CID);
   // 180000*1.25=225000，CALC 折扣(15-1)/15=210000，×0.8(淫乳)=168000
-  assert.ok(buttons(compounding)[0].text.includes('/168000……'));
+  assert.ok(buttons(compounding)[0].text.includes('/168000 ……'));
 
   const floor = create_era_fixture();
   const { ablup1: a2 } = seed(floor);
@@ -382,7 +382,7 @@ test('ablup1：Lv10 复利梯子首级 + 最低 1 点下限', async () => {
   set_talents(floor, { 108: 1, 76: 1, 109: 1 }); // 三个×0.80仍不低于1
   floor.set_inputs(100);
   await a2(CID);
-  assert.ok(buttons(floor)[0].text.includes('/1……'));
+  assert.ok(buttons(floor)[0].text.includes('/1 ……'));
 });
 
 test('ablup1：点数不足重试后成功购买', async () => {
@@ -451,7 +451,7 @@ test('ablup2：Lv0-4 梯子字面值（A/B 双资源）', async () => {
     fixture.store.set(`abl:${CID}:2`, lv);
     fixture.set_inputs(100);
     await ablup2(CID);
-    assert.ok(buttons(fixture)[0].text.includes(`/${a_expected}……`));
+    assert.ok(buttons(fixture)[0].text.includes(`/${a_expected} ……`));
     assert.ok(fixture.text_lines().some((t) => t.includes(`${b_expected}`)));
   }
 });
@@ -463,7 +463,7 @@ test('ablup2：戒备森严对 A/B 同时三级加成', async () => {
   set_talents(fixture, { 27: 1 });
   fixture.set_inputs(100);
   await ablup2(CID);
-  assert.ok(buttons(fixture)[0].text.includes('/40000……')); // 20000*2.00
+  assert.ok(buttons(fixture)[0].text.includes('/40000 ……')); // 20000*2.00
   assert.ok(fixture.text_lines().some((t) => t.includes('300'))); // 150*2.00
 });
 
@@ -482,7 +482,7 @@ test('ablup2：私处钝感 A×1.20/B×1.10、淫乱/性爱狂/私处敏感各×
     fixture.set_inputs(100);
     await ablup2(CID);
     assert.ok(
-      buttons(fixture)[0].text.includes(`/${a_expected}……`),
+      buttons(fixture)[0].text.includes(`/${a_expected} ……`),
       `talent ${JSON.stringify(talents)}：期望 A=${a_expected}，实际 ${buttons(fixture)[0].text}`,
     );
     assert.ok(fixture.text_lines().some((t) => t.includes(`${b_expected}`)));
@@ -498,7 +498,7 @@ test('ablup2：其他部位封锁折扣——A分母15、B分母20不对称', as
   set_talents(fixture, { 75: 1, 101: 2 });
   fixture.set_inputs(100);
   await ablup2(CID);
-  assert.ok(buttons(fixture)[0].text.includes('/44800……'));
+  assert.ok(buttons(fixture)[0].text.includes('/44800 ……'));
   assert.ok(fixture.text_lines().some((t) => t.includes('189')));
 });
 
@@ -511,7 +511,7 @@ test('ablup2：Lv10 复利梯子首级（A/B 各自复利率不对称）+ 最低
   await ablup2(CID);
   // A：180000*1.25=225000，折扣(15-1)/15=210000，再×0.8(性爱狂)=168000
   // B：600*1.15=690，折扣(20-1)/20=655（trunc(690*19/20)=655.5→655），×0.8=524
-  assert.ok(buttons(fixture)[0].text.includes('/168000……'));
+  assert.ok(buttons(fixture)[0].text.includes('/168000 ……'));
   assert.ok(fixture.text_lines().some((t) => t.includes('524')));
 
   const floor = create_era_fixture();
@@ -520,7 +520,7 @@ test('ablup2：Lv10 复利梯子首级（A/B 各自复利率不对称）+ 最低
   set_talents(floor, { 76: 1, 75: 1, 104: 1 }); // 三个×0.80
   floor.set_inputs(100);
   await a2(CID);
-  assert.ok(buttons(floor)[0].text.includes('/1……'));
+  assert.ok(buttons(floor)[0].text.includes('/1 ……'));
   assert.ok(
     floor.text_lines().some((t) => /\b1\/1\b|经验.*1\//.test(t)) || true,
   );
@@ -585,7 +585,7 @@ test('ablup3：Lv0-4 梯子字面值（A/B 双资源）', async () => {
     fixture.store.set(`abl:${CID}:3`, lv);
     fixture.set_inputs(100);
     await ablup3(CID);
-    assert.ok(buttons(fixture)[0].text.includes(`/${a_expected}……`));
+    assert.ok(buttons(fixture)[0].text.includes(`/${a_expected} ……`));
     assert.ok(fixture.text_lines().some((t) => t.includes(`${b_expected}`)));
   }
 });
@@ -604,7 +604,7 @@ test('ablup3：A钝感 A×1.20/B×1.10、淫乱/尻穴狂/A敏感各×0.80(A,B�
     set_talents(fixture, talents);
     fixture.set_inputs(100);
     await ablup3(CID);
-    assert.ok(buttons(fixture)[0].text.includes(`/${a_expected}……`));
+    assert.ok(buttons(fixture)[0].text.includes(`/${a_expected} ……`));
     assert.ok(fixture.text_lines().some((t) => t.includes(`${b_expected}`)));
   }
 });
@@ -617,7 +617,7 @@ test('ablup3：其他部位封锁折扣——A分母15、B分母20不对称', as
   set_talents(fixture, { 77: 1, 101: 2 });
   fixture.set_inputs(100);
   await ablup3(CID);
-  assert.ok(buttons(fixture)[0].text.includes('/44800……'));
+  assert.ok(buttons(fixture)[0].text.includes('/44800 ……'));
   assert.ok(fixture.text_lines().some((t) => t.includes('189')));
 });
 
@@ -1031,7 +1031,9 @@ test('ablup7：欲望门槛（ABL:1）不足计为能力不足，文案始终显
   fixture.set_inputs(100);
   await ablup7(CID);
   assert.ok(fixture.text_lines().includes('乳房感觉1LV以上'));
-  assert.ok(buttons(fixture)[0].text.includes('能力不足'));
+  // bit4 带尾随空格（ABLUP7.ERB:106，与 get_ablup_state 的 bit4 不同，本文件
+  // 不能复用那个共用函数——issue #464 审查发现的真实一字符缺陷）
+  assert.ok(buttons(fixture)[0].text.endsWith('能力不足 '));
 });
 
 test('ablup7：始终生效的第二条经验门槛——Lv<2 要求绝顶经验，Lv>=2 要求调教自慰经验', async () => {
@@ -1258,6 +1260,22 @@ test('ablup8：两个选项各自的"条件不足。"重试文案', async () => 
   await ablup8(CID);
   const retries = fixture.text_lines().filter((t) => t === '条件不足。');
   assert.equal(retries.length, 2);
+});
+
+test('ablup8：选项1 屈服点数（JUEL:6）未声明须按不足处理，不能被 undefined<e 静默放过', async () => {
+  const fixture = create_era_fixture();
+  const { ablup8 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:1`, 1);
+  fixture.store.set(`exp:${CID}:2`, 10); // 绝顶经验门槛满足
+  fixture.store.set(`juel:${CID}:9`, 100); // 苦痛点数门槛满足（Lv0 D=100）
+  // JUEL:6（屈服）刻意不写：未声明地址读回 undefined（issue #13），
+  // 若判定漏了 || 0，`undefined < e` 恒假，会把不足误判为充足
+  fixture.set_inputs(1, 100);
+  await ablup8(CID);
+  const retries = fixture.text_lines().filter((t) => t === '条件不足。');
+  assert.equal(retries.length, 1);
+  assert.equal(fixture.store.get(`abl:${CID}:8`), undefined); // 未升级
+  assert.equal(fixture.store.get(`juel:${CID}:6`), undefined); // 未被倒扣
 });
 
 // ———— ABLUP9：两选项能力，无缺失哨兵缺陷 ————

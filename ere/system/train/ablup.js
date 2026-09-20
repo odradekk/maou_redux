@@ -27,11 +27,31 @@
  * （issue #130，测试夹具同款校验，见 test/helpers/era-fixture.js:892-918）。
  * 故各函数仍保留原作等价的越界/隐藏选项分支，写法与既有 com-colosseum.js
  * 的同类分支一致（引擎层已经拒收代位，分支是防御性保留，不是必要判据）。
+ *
+ * 成功购买的提升文案，各文件原作现状不同：ABLUP0～3 原作本身已是中文
+ * 「{name}变为LV{X}。」，ABLUP7 原作本身是另一句中文「{name}的等级提升到
+ * {X}级了。」——这两组分别 1:1 保留各自原文，不统一措辞。ABLUP4/5/6/8/9
+ * 原作这行是**未翻译的日文**「{name}のレベルが{X}になりました。」（汉化版
+ * 遗留），没有对应的原作中文可以 1:1 保留；按 issue #60 译成简体时沿用
+ * ABLUP0～3 已有的「变为LV{X}。」，不为这五个文件另造第三种措辞。
+ * lang-table.js 未收录这个词条——这是整句译文替换，不是逐字机械转换。
+ *
+ * 重试路径的输出收窄，有意为之，未逐条恢复：ABLUP0～5、7～9 的原作条件不
+ * 满足分支走 RESTART（跳回函数最开头，无 GOTO/标签），会连着 DRAWLINE 与
+ * 开头两行说明文字一起重打；本移植的 for(;;) 循环把这段说明文字放在循环
+ * 外，只执行一次，continue 时只重渲按钮行本身，不重打说明文字。ABLUP6 方向
+ * 相反但同样不是本票引入的偏差：其原作 $INPUT_LOOP+GOTO 不重打任何说明
+ * 文字，而 era.printButton 的注册在每次 era.input() 之后被引擎清空
+ * （returnFromButton 置 rule=[]），移植后每次 continue 必须重渲染按钮
+ * 行——这一方向由引擎强制，不能收窄成原作的"什么都不重打"。两个方向都只
+ * 影响重试时的重复文字，不改变任何判定与数值；黄金样本与输出比对不覆盖
+ * 重试路径，不会被现有回归覆盖到。
  */
 /* eslint-disable no-irregular-whitespace -- ablup2/ablup3 的经验门槛行用全角空格
    对齐（原作 ABLUP2.ERB:53、ABLUP3.ERB:50 的 `EXPNAME　　{EXP}/{B}`），1:1 保留原文 */
 
 const era = require('#/era-electron');
+const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 
 /** TIMES X, m：整数乘小数后截断（math-etc.md；source-check.js 等同款） */
@@ -134,7 +154,7 @@ async function ablup0(cid) {
     if (juel0 < a) i |= 1; // :226-228
 
     const label = talent(122) ? '阴茎' : era.get('palamname:0'); // :63-67
-    era.printButton(`${label}点数×${juel0}/${a}……${get_ablup_state(i)}`, 0); // :64-69
+    era.printButton(`${label}点数×${juel0}/${a} ……${get_ablup_state(i)}`, 0); // :64-69
     era.println();
     era.printButton('停止', 100); // :71
 
@@ -227,7 +247,7 @@ async function ablup1(cid) {
     if (juel14 < a) i |= 1;
 
     era.printButton(
-      `${era.get('palamname:14')}点数×${juel14}/${a}……${get_ablup_state(i)}`,
+      `${era.get('palamname:14')}点数×${juel14}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :45-47
     era.println();
@@ -365,7 +385,7 @@ async function ablup2(cid) {
     if (exp0 < b) i |= 2; // :229-231
 
     era.printButton(
-      `${era.get('palamname:1')}点数×${juel1}/${a}……${get_ablup_state(i)}`,
+      `${era.get('palamname:1')}点数×${juel1}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :49-51
     era.println();
@@ -496,7 +516,7 @@ async function ablup3(cid) {
     if (exp1 < b) i |= 2; // :225-227
 
     era.printButton(
-      `${era.get('palamname:2')}点数×${juel2}/${a}……${get_ablup_state(i)}`,
+      `${era.get('palamname:2')}点数×${juel2}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :47-48
     era.println();
@@ -592,7 +612,6 @@ async function ablup4(cid) {
  * 把 undefined 拼成字面文字。
  */
 async function ablup5(cid) {
-  const { EXPLV } = require('#/era-utils/exp-level');
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
   const abl5 = () => era.get(`abl:${cid}:5`) || 0;
 
@@ -908,7 +927,16 @@ async function ablup7(cid) {
     era.print(gate_line);
     if (anomaly_line) era.print(anomaly_line);
 
-    const status = get_ablup_state(i);
+    // 本文件的可否文案与共用 get_ablup_state 仅差在 bit4：本文件三个分支都带
+    // 尾随空格（ABLUP7.ERB:102-106），get_ablup_state 的 bit4 没有，不能复用
+    let status = '';
+    if (i === 0) {
+      status = 'ＯＫ';
+    } else {
+      if (i & 1) status += '点数不足 ';
+      if (i & 2) status += '经验不足 ';
+      if (i & 4) status += '能力不足 ';
+    }
     era.printButton(
       `${era.get('palamname:8')}点数×${a}、${exp_line}……${status}`, // :81-107
       0,
@@ -1055,9 +1083,10 @@ async function ablup8(cid) {
     // b===0 时 [0] 不渲染，原作对应位置没有 ELSE 哨兵（见文件头缺陷说明）
 
     const exp2 = era.get(`exp:${cid}:2`) || 0;
+    const juel6 = era.get(`juel:${cid}:6`) || 0;
     if (d > 0) {
       if (juel9 < d) j |= 1; // :146-147
-      if (era.get(`juel:${cid}:6`) < e) j |= 1; // :148-150
+      if (juel6 < e) j |= 1; // :148-150
       if (exp30 < c) j |= 2; // :151-153
       if (exp2 < 1) j |= 2; // :154-156
 

@@ -42,9 +42,6 @@
 
 const era = require('#/era-electron');
 const { check_sellassiable } = require('#/system/stronghold/sale');
-const { show_info_exp } = require('#/page/page-info-exp');
-const { show_ablup_select, show_juel } = require('#/page/page-ablup');
-const era_flag = require('#/era-utils/era-flag');
 const {
   ablup0,
   ablup1,
@@ -52,6 +49,9 @@ const {
   ablup3,
   ablup4,
 } = require('#/system/train/ablup');
+const { show_info_exp } = require('#/page/page-info-exp');
+const { show_ablup_select, show_juel } = require('#/page/page-ablup');
+const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
 
 /**
@@ -79,14 +79,20 @@ const ABLUP_HANDLERS = {
 };
 
 /**
+ * ABLUP_IDS 中尚未落真身的编号，转回原作调用名——page-ability-up.js 的
+ * @ABILITY_UP_CORE 分发同一张表，两处存根清单共用这份结果。
+ */
+const STUBBED_ABLUP_NAMES = ABLUP_IDS.filter(
+  (id) => !(id in ABLUP_HANDLERS),
+).map((id) => `ABLUP${id}`);
+
+/**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。升级规则本体超出本段代码的部分见
  * ABLUP_HANDLERS 的注释。
  */
 const STUBBED_CALLS = [
-  ...ABLUP_IDS.filter((id) => !(id in ABLUP_HANDLERS)).map(
-    (id) => `ABLUP${id}`,
-  ),
+  ...STUBBED_ABLUP_NAMES,
   'AUTO_ABLUP',
   'YOKUBO_UP_CHECK',
   'CHECK_SPECIALSKIL',
@@ -397,6 +403,7 @@ async function run_juel_check() {
 module.exports = {
   ABLUP_IDS,
   ABLUP_HANDLERS,
+  STUBBED_ABLUP_NAMES,
   STUBBED_CALLS,
   juel_check_main,
   offset_negative_group,

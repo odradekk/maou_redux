@@ -57,7 +57,11 @@ const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
 const { check_sellassiable } = require('#/system/stronghold/sale');
-const { ABLUP_IDS, ABLUP_HANDLERS } = require('#/system/train/juel-check');
+const {
+  ABLUP_IDS,
+  ABLUP_HANDLERS,
+  STUBBED_ABLUP_NAMES,
+} = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
 
@@ -68,12 +72,7 @@ const { stub_line } = require('#/utils/stub-line');
  * @JUEL_CHECK 分发同表；ABLUP_HANDLERS 覆盖的编号（issue #464）已落真身，
  * 不再登记为存根。
  */
-const STUBBED_CALLS = [
-  ...ABLUP_IDS.filter((id) => !(id in ABLUP_HANDLERS)).map(
-    (id) => `ABLUP${id}`,
-  ),
-  'YOKUBO_UP_CHECK',
-];
+const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES, 'YOKUBO_UP_CHECK'];
 
 /** 勇者一览的每页行数（:68 `NUM_PAGE = 24`） */
 const ENEMY_NUM_PAGE = 24;
