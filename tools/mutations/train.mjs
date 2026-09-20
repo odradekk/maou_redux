@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 512;
+export const COUNT = 519;
 
 export default [
   {
@@ -5212,5 +5212,67 @@ export default [
   const player = era_flag.player;`,
     tests: ['com-caress'],
     must_mention: 'JUMP COM125',
+  },
+
+  // —— #460（COMF203_カビ犬／COMF205_腐れ豚 变异覆盖补齐）——
+  {
+    desc: 'M9829 怪物开战损耗的等级缩放删（203 的气力损耗 LOSEBASE:1）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(level, weak),\n    open_lose1: (level) => level * 20,',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(level, weak),\n    open_lose1: () => 5, // 变异：气力损耗等级缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '霉菌犬',
+  },
+  {
+    desc: 'M9830 怪物败北追加伤害删（203 的 extra_lose）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    extra_lose: ['level', 'level'], // [L9, L9]",
+    replace: '    extra_lose: [0, 0], // 变异：败北追加伤害删',
+    tests: ['com-colosseum'],
+    must_mention: '気力有余的败北支',
+  },
+  {
+    desc: 'M9831 怪物收入倍率表改坏（203 的 ×2 改 ×3）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    income: (lose0) => lose0 * 2,',
+    replace: '    income: (lose0) => lose0 * 3,',
+    tests: ['com-colosseum'],
+    must_mention: '死亡斗场收入 × 2',
+  },
+  {
+    desc: 'M9832 怪物开战损耗的体力值算法改坏（205 的 ×25÷10 缩放删）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(level, weak), // 变异：×25÷10 缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '腐烂猪',
+  },
+  {
+    desc: 'M9833 怪物开战损耗的等级缩放删（205 的气力损耗 LOSEBASE:1）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),\n    open_lose1: (level) => level * 20,',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),\n    open_lose1: () => 5, // 变异：气力损耗等级缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '胜利支',
+  },
+  {
+    desc: 'M9834 怪物败北追加伤害删（205 的 extra_lose）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    threshold: (level) => 4 * level, // :25 IF RESULT < (4 * CFLAG:0:9)\n    extra_lose: ['level*2', 'level*2'],",
+    replace:
+      '    threshold: (level) => 4 * level, // :25 IF RESULT < (4 * CFLAG:0:9)\n    extra_lose: [0, 0], // 变异：败北追加伤害删',
+    tests: ['com-colosseum'],
+    must_mention: '気力有余的败北支',
+  },
+  {
+    desc: 'M9835 怪物收入倍率表改坏（205 的 ×4 改 ×5）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    income: (lose0) => lose0 * 4,',
+    replace: '    income: (lose0) => lose0 * 5,',
+    tests: ['com-colosseum'],
+    must_mention: '死亡斗场收入 × 4',
   },
 ];
