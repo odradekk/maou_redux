@@ -153,9 +153,14 @@ const REPO = path.resolve(__dirname, '..');
 // 经验+2」与 ere 侧逐字匹配，matched 259→262；同段 train-upgrade-log:372
 // 「被虐快乐经验+8」（更高档，未复现）仍由既有的「指令输出块」通用规则
 // 归因为 stub（与本函数无关，是该指令自身尚未完全对齐），unexplained 仍 0。
+// 【#462 六次重测】SOKUOCHI_CHECK 落地为真身：两样本的 TALENT:73 均为 0
+// （无容易陷落），每次调用都在守卫处早退、不再 PRINT 占位文字（埋点计数
+// 验证：natural 调用 15 次、upgrade 调用 3 次，均早退，与 ERB 原文
+// SIF TALENT:73==0 / RETURN 0 的静默行为一致）。stub natural 368→353、
+// upgrade 201→198，matched/unexplained 不变。
 const BASELINE = {
-  'train-natural': { matched: 1115, version: 0, stub: 368, unexplained: 0 },
-  'train-upgrade': { matched: 262, version: 0, stub: 201, unexplained: 0 },
+  'train-natural': { matched: 1115, version: 0, stub: 353, unexplained: 0 },
+  'train-upgrade': { matched: 262, version: 0, stub: 198, unexplained: 0 },
 };
 
 async function build_report(sample) {

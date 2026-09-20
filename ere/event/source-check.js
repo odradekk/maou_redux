@@ -18,7 +18,7 @@
  *     @UP_TALENT_CHECK（:740）/
  *     @MARK_GOT_CHECK（:952-1080）/@YOKUBO_UP_CHECK（:1092）/
  *     @JUJUN_UP_CHECK（:1113）/@EXP_GOT_CHECK（:1124-1310）/@SOKUOCHI_CHECK
- *     （:1315）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561-1610）/
+ *     （:1315-1554）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561-1610）/
  *     @MASTER_FLAG_CHECK（:1615-1711）/@TARGET_WORMBABY_CHECK（:1727-1847）/
  *     @AUTO_NUM_CHECK（:1852-1879）
  *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB  @SOURCE_LESBIAN_SEX_CHECK
@@ -51,12 +51,15 @@
  *   - SEIIN_START 与失神组（PASSOUT_CHECK/TEXT/OUTDOOR）已随 #216（J6）
  *     落真身（system/train/seiin.js 与 passout.js）；PISSING_ECST_CHECK
  *     （SUB1:1561-1610）与 SOUL_DISLOCATION_DEBUFF（SUB2:350-356）已随
- *     #462 落地：前者门槛 TEQUIP:22（com-hardcore.js 等）/TALENT:57
- *     （event-nextday.js）均有现成写入点；后者登记记错了变量，ERB 实际
- *     读 EX_TALENT:0，无任何守卫、恒定执行；
+ *     #462 落地：前者门槛 TEQUIP:22（com-special.js 的 COM52 指令置 1，
+ *     com-hardcore.js 只是清零点）/TALENT:57（event-nextday.js）均有现成
+ *     写入点；后者登记记错了变量，ERB 实际读 EX_TALENT:0，无任何守卫、
+ *     恒定执行；
  *   - EXP_GOT_CHECK（SUB1:1124-1310）已随 #462 落地：原登记「生效分支门槛
  *     在爱抚写入面下全为 0」已过期——com-caress.js/com-hardcore.js 均已
- *     写 TFLAG:100；SOKUOCHI_CHECK（TALENT:73 无预设）核实无误，仍登记；
+ *     写 TFLAG:100；SOKUOCHI_CHECK（SUB1:1315-1554）已随 #462 落地：原登记
+ *     「TALENT:73 无预设，不可达」不准确——turnend-settle.js:222（容易陷落
+ *     戒指结算）是真实写入点，只查 45 个固定预设漏查了该处；
  *   - 膣内射精チェック（:426-473）已随 #221 J11 落地：目标侧避孕套、
  *     主人/助手/兽奸/死斗场/触手与逆侵犯的计数链按原 if/else-if 顺序结算；
  *   - KOJO_MESSAGE_PALAMCNG / MARKCNG（:504/:512，FLAG:7 > 0 才达）：分发层
@@ -111,7 +114,6 @@ const STUBBED_CALLS = [
   'KOJO_MESSAGE_MARKCNG',
   'EQUIP_COM',
   'TARGET_MILK_CHECK',
-  'SOKUOCHI_CHECK',
 ];
 
 // —— 结算上下文：目标 / 调教者的变量读写助手 ——
@@ -2309,6 +2311,139 @@ function exp_got_check() {
   }
 }
 
+// @SOKUOCHI_CHECK（SUB1:1315-1554）：容易陷落（TALENT:73）角色的 ABL 自动
+// 升级。原作是 12 组同构的「ELSEIF 5 档阈值链」，仅判据来源（UP/EXP 下标）、
+// 目标 ABL、可选的钝感封印（TALENT:101/103/105/107 的 &2 位）、可选的前置
+// ABL 门槛不同，本函数用同一个 bump() 承载判据比较、赋值、返回命中档位，
+// 12 组各自的调用点保持与 ERB 逐段一致的顺序。ELSEIF 链语义：从 LV1 起
+// 依次检查，命中第一个满足门槛的档位就赋值并停止，不会一次跳多档（当前
+// ABL 已达到的档位其 `abl < lv` 恒假，被自然跳过，不需要额外处理）。
+function sokuochi_check() {
+  if (!tal(73)) {
+    return;
+  }
+  const TIERS = [1, 30, 60, 200, 1000];
+  const EXP_TIERS = [1, 5, 20, 40, 100];
+
+  // domain[prop] 是 facade 的具名 getter/setter（如 chara(cid).system.顺从），
+  // 用属性名字符串驱动只是省掉 12 组几乎相同的 get/set 闭包，不绕过门面。
+  const bump = (domain, prop, value, tiers, gate) => {
+    for (let lv = 1; lv <= tiers.length; lv += 1) {
+      if (
+        value > tiers[lv - 1] &&
+        domain[prop] < lv &&
+        (!gate || gate() >= lv)
+      ) {
+        domain[prop] = lv;
+        return lv;
+      }
+    }
+    return 0;
+  };
+  const ablname = (id) => era.get(`ablname:${id}`) ?? '';
+
+  const sys = chara(cid).system;
+  const cha = chara(cid).chara;
+
+  // ABL:0（阴蒂/阴茎感觉，守卫 TALENT:101&2 阴蒂钝感，性别专属文案）
+  if (!((tal(101) || 0) & 2)) {
+    const lv = bump(sys, '阴蒂感觉', up(0), TIERS);
+    if (lv) {
+      const label = tal(122) || tal(121) ? '阴茎感觉' : ablname(0);
+      era.print(`${label}LV${lv}了`);
+    }
+  }
+  // ABL:2（守卫 TALENT:103&2 私处钝感）
+  if (!((tal(103) || 0) & 2)) {
+    const lv = bump(sys, '私处感觉', up(1), TIERS);
+    if (lv) {
+      era.print(`${ablname(2)}LV${lv}了`);
+    }
+  }
+  // ABL:3（守卫 TALENT:105&2 肛门钝感）
+  if (!((tal(105) || 0) & 2)) {
+    const lv = bump(sys, '肛门感觉', up(2), TIERS);
+    if (lv) {
+      era.print(`${ablname(3)}LV${lv}了`);
+    }
+  }
+  // ABL:1（守卫 TALENT:107&2 乳房钝感）
+  if (!((tal(107) || 0) & 2)) {
+    const lv = bump(sys, '乳房感觉', up(14), TIERS);
+    if (lv) {
+      era.print(`${ablname(1)}LV${lv}了`);
+    }
+  }
+  // ABL:10（顺从，无守卫）
+  {
+    const lv = bump(sys, '顺从', up(4), TIERS);
+    if (lv) {
+      era.print(`${ablname(10)}LV${lv}了`);
+    }
+  }
+  // ABL:11（欲望，无守卫）
+  {
+    const lv = bump(sys, '欲望', up(5), TIERS);
+    if (lv) {
+      era.print(`${ablname(11)}LV${lv}了`);
+    }
+  }
+  // ABL:12（技巧，无守卫）
+  {
+    const lv = bump(sys, '技巧', up(7), TIERS);
+    if (lv) {
+      era.print(`${ablname(12)}LV${lv}了`);
+    }
+  }
+  // ABL:16（侍奉精神，门槛 ABL:0≥lv）
+  {
+    const lv = bump(sys, '侍奉精神', up(6), TIERS, () => sys.阴蒂感觉);
+    if (lv) {
+      era.print(`${ablname(16)}LV${lv}了`);
+    }
+  }
+  // ABL:17（露出癖，门槛 ABL:1≥lv）
+  {
+    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.乳房感觉);
+    if (lv) {
+      era.print(`${ablname(17)}LV${lv}了`);
+    }
+  }
+  // ABL:21（抖M气质，门槛 ABL:11≥lv）
+  {
+    const lv = bump(sys, '抖M气质', up(9), TIERS, () => sys.欲望);
+    if (lv) {
+      era.print(`${ablname(21)}LV${lv}了`);
+    }
+  }
+  // ABL:22（百合气质，EXP:40 百合经验驱动，门槛 ABL:11≥lv）
+  {
+    const lv = bump(
+      cha,
+      '百合气质',
+      era.get(`exp:${cid}:40`) || 0,
+      EXP_TIERS,
+      () => sys.欲望,
+    );
+    if (lv) {
+      era.print(`${ablname(22)}LV${lv}了`);
+    }
+  }
+  // ABL:23（断背气质，EXP:41 断背经验驱动，门槛 ABL:11≥lv）
+  {
+    const lv = bump(
+      sys,
+      '断背气质',
+      era.get(`exp:${cid}:41`) || 0,
+      EXP_TIERS,
+      () => sys.欲望,
+    );
+    if (lv) {
+      era.print(`${ablname(23)}LV${lv}了`);
+    }
+  }
+}
+
 // @AUTO_NUM_CHECK（SUB1:1852-1879）：自动调教的 UP 倍率修正，按 CFLAG:667
 // （自动调教回数）八档阈值统一乘算 UP:0-10/14（跳过 11-13/15-16）。唯一
 // 调用方 @SOURCE_CHECK_AUTO（dungeon-battle.js 等，docs/stub-registry.md
@@ -3145,9 +3280,9 @@ on('SOURCE_CHECK', async () => {
     await kojo_message_markcng();
   }
 
-  // :518 经验检查；:523 容易陷落（生效门槛不可达，登记）
+  // :518 经验检查；:523 容易陷落
   exp_got_check();
-  stub_line('SOKUOCHI_CHECK', '容易陷落检查', '随陷落票');
+  sokuochi_check();
 
   // :525 PRINTW ‥×39（读键；点线逐字）
   era.print('‥'.repeat(39));

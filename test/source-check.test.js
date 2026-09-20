@@ -1549,6 +1549,259 @@ test('EXP_GOT_CHECK 段 3：助手侧按 ABL:20+TEQUIP:47 六档二次折算', a
   assert.equal(g5.store.get('juel:17:5'), 200);
 });
 
+// —— SOKUOCHI_CHECK ——
+
+test('SOKUOCHI_CHECK：守卫（TALENT:73=0）→ 早退，ABL 不变', async () => {
+  const fixture = await run_caress(undefined, (f) => {
+    zero_up_sources(f);
+    f.store.set('delta:31:0', 5000);
+  });
+  assert.equal(fixture.store.get('abl:31:0') || 0, 0);
+  assert.ok(!fixture.text_lines().some((t) => t.endsWith('了')));
+});
+
+test('SOKUOCHI_CHECK：12 组各自驱动升到 LV1，门槛组读到同轮内已升级的新值', async () => {
+  // 不预置任何前置 ABL：驱动组在代码顺序上先于门槛组执行，本轮把 ABL:0/1/11
+  // 从 0 升到 1 后，紧随其后的 ABL:16/17/21/22/23 门槛检查读到的正是这个
+  // 新值——这是 ELSEIF 链顺序执行的真实语义，不是分两轮才生效。
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      for (const k of [0, 1, 2, 14, 4, 5, 6, 7, 8, 9]) {
+        f.store.set(`delta:31:${k}`, 2);
+      }
+      f.store.set('exp:31:40', 2);
+      f.store.set('exp:31:41', 2);
+    },
+  );
+  const texts = fixture.text_lines();
+  const cases = [
+    [0, '阴蒂感觉'],
+    [2, '私处感觉'],
+    [3, '肛门感觉'],
+    [1, '乳房感觉'],
+    [10, '顺从'],
+    [11, '欲望'],
+    [12, '技巧'],
+    [16, '侍奉精神'],
+    [17, '露出癖'],
+    [21, '抖M气质'],
+    [22, '百合气质'],
+    [23, '断背气质'],
+  ];
+  for (const [abl, name] of cases) {
+    assert.equal(fixture.store.get(`abl:31:${abl}`), 1, `ABL:${abl}`);
+    assert.ok(texts.includes(`${name}LV1了`), `${name}LV1了`);
+  }
+});
+
+test('SOKUOCHI_CHECK：ELSEIF 链每轮只前进一档，不因巨量值跳档', async () => {
+  const from_zero = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:4', 5000);
+    },
+  );
+  assert.equal(from_zero.store.get('abl:31:10'), 1);
+  assert.ok(from_zero.text_lines().includes('顺从LV1了'));
+
+  const from_two = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+      f.store.set('abl:31:10', 2);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:4', 5000);
+    },
+  );
+  assert.equal(from_two.store.get('abl:31:10'), 3);
+  assert.ok(from_two.text_lines().includes('顺从LV3了'));
+});
+
+test('SOKUOCHI_CHECK：阈值不含等号——UP:4=1 不触发，UP:4=2 才触发', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:4', 1);
+    },
+  );
+  assert.equal(fixture.store.get('abl:31:10') || 0, 0);
+  assert.ok(!fixture.text_lines().includes('顺从LV1了'));
+});
+
+test('SOKUOCHI_CHECK：ABL:0 性别专属文案——男人/扶她显示阴茎感觉，否则通用名', async () => {
+  const male = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+      f.store.set('talent:31:122', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:0', 2);
+    },
+  );
+  assert.ok(male.text_lines().includes('阴茎感觉LV1了'));
+
+  const futa = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+      f.store.set('talent:31:121', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:0', 2);
+    },
+  );
+  assert.ok(futa.text_lines().includes('阴茎感觉LV1了'));
+});
+
+test('SOKUOCHI_CHECK：钝感封印（TALENT:101/103/105/107 的 &2 位）逐组阻断自身升级', async () => {
+  const guards = [
+    { talent: 101, up: 0, abl: 0, name: '阴蒂感觉' },
+    { talent: 103, up: 1, abl: 2, name: '私处感觉' },
+    { talent: 105, up: 2, abl: 3, name: '肛门感觉' },
+    { talent: 107, up: 14, abl: 1, name: '乳房感觉' },
+  ];
+  for (const g of guards) {
+    const fixture = await run_caress(
+      (f) => {
+        f.store.set('talent:31:73', 1);
+        f.store.set(`talent:31:${g.talent}`, 2);
+      },
+      (f) => {
+        zero_up_sources(f);
+        f.store.set(`delta:31:${g.up}`, 5000);
+      },
+    );
+    assert.equal(fixture.store.get(`abl:31:${g.abl}`) || 0, 0, `ABL:${g.abl}`);
+    assert.ok(
+      !fixture.text_lines().some((t) => t.startsWith(g.name)),
+      `${g.name} 不应输出`,
+    );
+  }
+});
+
+test('SOKUOCHI_CHECK：前置 ABL 门槛——驱动组本轮未升级时，门槛组同样不升级', async () => {
+  const gates = [
+    { drive: 'delta:31:6', ablTarget: 16, name: '侍奉精神' },
+    { drive: 'delta:31:8', ablTarget: 17, name: '露出癖' },
+    { drive: 'delta:31:9', ablTarget: 21, name: '抖M气质' },
+    { drive: 'exp:31:40', ablTarget: 22, name: '百合气质' },
+    { drive: 'exp:31:41', ablTarget: 23, name: '断背气质' },
+  ];
+  for (const g of gates) {
+    const fixture = await run_caress(
+      (f) => {
+        f.store.set('talent:31:73', 1);
+      },
+      (f) => {
+        zero_up_sources(f);
+        // 门槛来源（ABL:0/1/11）本轮保持 0：不驱动对应的 UP，门槛 >=1 不满足
+        f.store.set(g.drive, 5000);
+      },
+    );
+    assert.equal(
+      fixture.store.get(`abl:31:${g.ablTarget}`) || 0,
+      0,
+      `ABL:${g.ablTarget}`,
+    );
+    assert.ok(
+      !fixture.text_lines().some((t) => t.startsWith(g.name)),
+      `${g.name} 不应输出`,
+    );
+  }
+});
+
+test('SOKUOCHI_CHECK：UP 阈值表与 EXP 阈值表不同——同一驱动值 35 落在不同档位', async () => {
+  // ELSEIF 链每轮只前进一档（同上一测试），要让本轮落在 LV2/LV3，须先把
+  // 起点垂到前一档，让「35 越过的第一个未达档位」正好是要验证的那一档。
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+      f.store.set('abl:31:10', 1);
+      f.store.set('abl:31:22', 2);
+      f.store.set('abl:31:11', 3); // 满足 ABL:22 门槛 ABL:11>=3
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:4', 35); // TIERS：35>30 且不>60 → LV2
+      f.store.set('exp:31:40', 35); // EXP_TIERS：35>20 且不>40 → LV3
+    },
+  );
+  assert.equal(fixture.store.get('abl:31:10'), 2);
+  assert.ok(fixture.text_lines().includes('顺从LV2了'));
+  assert.equal(fixture.store.get('abl:31:22'), 3);
+  assert.ok(fixture.text_lines().includes('百合气质LV3了'));
+});
+
+test('SOKUOCHI_CHECK：驱动下标不与相邻组混淆（ABL:2 读 UP:1 非 UP:0；ABL:21 读 UP:9 非 UP:8）', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      // UP:0 保持 0（不驱动 ABL:0），只驱动 UP:1；若 ABL:2 误读 UP:0 则不触发
+      f.store.set('delta:31:1', 2);
+      // UP:5 驱动欲望本轮先到 LV1，满足 ABL:21 门槛；UP:8 保持 0（不驱动
+      // ABL:17），只驱动 UP:9；若 ABL:21 误读 UP:8 则不触发
+      f.store.set('delta:31:5', 2);
+      f.store.set('delta:31:9', 2);
+    },
+  );
+  assert.equal(fixture.store.get('abl:31:2'), 1);
+  assert.ok(fixture.text_lines().includes('私处感觉LV1了'));
+  assert.equal(fixture.store.get('abl:31:0') || 0, 0);
+  assert.equal(fixture.store.get('abl:31:21'), 1);
+  assert.ok(fixture.text_lines().includes('抖M气质LV1了'));
+  assert.equal(fixture.store.get('abl:31:17') || 0, 0);
+});
+
+test('SOKUOCHI_CHECK：ABL:12（技巧）用 UP 阈值表，不是 EXP 阈值表', async () => {
+  // 起点垂到 LV1；驱动值 20 在 TIERS 下不越过 LV2 门槛（30），在 EXP_TIERS
+  // 下会越过（5）——两表在这个起点/驱动值组合下给出不同结果，能区分误用
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+      f.store.set('abl:31:12', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:7', 20);
+    },
+  );
+  assert.equal(fixture.store.get('abl:31:12'), 1);
+  assert.ok(!fixture.text_lines().some((t) => t.startsWith('技巧')));
+});
+
+test('SOKUOCHI_CHECK：ABL:17（露出癖）门槛来源是乳房感觉，不是欲望', async () => {
+  // 本轮把欲望驱动到 LV1、乳房感觉保持 0：正确门槛（乳房感觉>=1）应挡住
+  // ABL:17；若门槛误用欲望（本轮同样是 1）则会误放行
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:73', 1);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:5', 2); // 欲望本轮升到 LV1
+      f.store.set('delta:31:8', 2); // 驱动 ABL:17 自身，门槛不满足应被挡住
+    },
+  );
+  assert.equal(fixture.store.get('abl:31:1') || 0, 0);
+  assert.equal(fixture.store.get('abl:31:17') || 0, 0);
+  assert.ok(!fixture.text_lines().some((t) => t.startsWith('露出癖')));
+});
+
 // —— AUTO_NUM_CHECK ——
 
 // 无调用点（调用方 @SOURCE_CHECK_AUTO 仍是存根），不走 run_caress/COM0/

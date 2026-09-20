@@ -508,8 +508,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
-        ref: '1315',
-        any: [/@SOKUOCHI_CHECK/],
+        ref: '1315-1554',
+        any: [/^@SOKUOCHI_CHECK\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',

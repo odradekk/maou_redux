@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 572;
+export const COUNT = 585;
 
 export default [
   {
@@ -6476,6 +6476,131 @@ export default [
   },
 
   // —— #459（COMF3_自慰 头部升格跳转补齐）——
+  // —— SOKUOCHI_CHECK（#462）——
+  {
+    desc: 'M9649 SOKUOCHI_CHECK 早退守卫删除（TALENT:73=0 时也会执行 12 组升级）',
+    file: 'ere/event/source-check.js',
+    find: `function sokuochi_check() {
+  if (!tal(73)) {
+    return;
+  }`,
+    replace: `function sokuochi_check() {
+  // 变异：容易陷落守卫被删
+  if (false) {
+    return;
+  }`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：守卫（TALENT:73=0）→ 早退，ABL 不变',
+  },
+  {
+    desc: 'M9650 SOKUOCHI_CHECK TIERS LV1 门槛 1 错改 2',
+    file: 'ere/event/source-check.js',
+    find: `  const TIERS = [1, 30, 60, 200, 1000];`,
+    replace: `  const TIERS = [2, 30, 60, 200, 1000]; // 变异：LV1 门槛 1 错改 2`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：12 组各自驱动升到 LV1',
+  },
+  {
+    desc: 'M9651 SOKUOCHI_CHECK TIERS LV2 门槛 30 错改 60',
+    file: 'ere/event/source-check.js',
+    find: `  const TIERS = [1, 30, 60, 200, 1000];`,
+    replace: `  const TIERS = [1, 60, 60, 200, 1000]; // 变异：LV2 门槛 30 错改 60`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：UP 阈值表与 EXP 阈值表不同',
+  },
+  {
+    desc: 'M9652 SOKUOCHI_CHECK EXP_TIERS LV3 门槛 20 错改 40',
+    file: 'ere/event/source-check.js',
+    find: `  const EXP_TIERS = [1, 5, 20, 40, 100];`,
+    replace: `  const EXP_TIERS = [1, 5, 40, 40, 100]; // 变异：LV3 门槛 20 错改 40`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：UP 阈值表与 EXP 阈值表不同',
+  },
+  {
+    desc: 'M9653 SOKUOCHI_CHECK 阴蒂钝感封印位 &2 错改 &1',
+    file: 'ere/event/source-check.js',
+    find: `  if (!((tal(101) || 0) & 2)) {
+    const lv = bump(sys, '阴蒂感觉', up(0), TIERS);`,
+    replace: `  if (!((tal(101) || 0) & 1)) {
+    // 变异：钝感封印位 &2 错改 &1
+    const lv = bump(sys, '阴蒂感觉', up(0), TIERS);`,
+    tests: ['source-check'],
+    must_mention:
+      'SOKUOCHI_CHECK：钝感封印（TALENT:101/103/105/107 的 &2 位）逐组阻断自身升级',
+  },
+  {
+    desc: 'M9654 SOKUOCHI_CHECK 前置门槛 >=lv 错改 >lv',
+    file: 'ere/event/source-check.js',
+    find: `        domain[prop] < lv &&
+        (!gate || gate() >= lv)`,
+    replace: `        domain[prop] < lv &&
+        (!gate || gate() > lv) // 变异：门槛 >=lv 错改 >lv`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：12 组各自驱动升到 LV1',
+  },
+  {
+    desc: 'M9655 SOKUOCHI_CHECK 当前档位比较 <lv 错改 <=lv（ELSEIF 链跳档）',
+    file: 'ere/event/source-check.js',
+    find: `      if (
+        value > tiers[lv - 1] &&
+        domain[prop] < lv &&`,
+    replace: `      if (
+        value > tiers[lv - 1] &&
+        domain[prop] <= lv && // 变异：< 错改 <=`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：ELSEIF 链每轮只前进一档',
+  },
+  {
+    desc: 'M9656 SOKUOCHI_CHECK 阈值比较 >tiers 错改 >=tiers（含等号）',
+    file: 'ere/event/source-check.js',
+    find: `      if (
+        value > tiers[lv - 1] &&`,
+    replace: `      if (
+        value >= tiers[lv - 1] && // 变异：> 错改 >=`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：阈值不含等号',
+  },
+  {
+    desc: 'M9657 SOKUOCHI_CHECK 性别标签漏判 TALENT:121（扶她分支）',
+    file: 'ere/event/source-check.js',
+    find: `      const label = tal(122) || tal(121) ? '阴茎感觉' : ablname(0);`,
+    replace: `      const label = tal(122) ? '阴茎感觉' : ablname(0); // 变异：漏判 TALENT:121`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：ABL:0 性别专属文案',
+  },
+  {
+    desc: 'M9658 SOKUOCHI_CHECK ABL:2 驱动下标读错（up(1) 错改 up(0)）',
+    file: 'ere/event/source-check.js',
+    find: `    const lv = bump(sys, '私处感觉', up(1), TIERS);`,
+    replace: `    const lv = bump(sys, '私处感觉', up(0), TIERS); // 变异：驱动下标 1 错改 0`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：驱动下标不与相邻组混淆',
+  },
+  {
+    desc: 'M9659 SOKUOCHI_CHECK ABL:21 驱动下标读错（up(9) 错改 up(8)）',
+    file: 'ere/event/source-check.js',
+    find: `    const lv = bump(sys, '抖M气质', up(9), TIERS, () => sys.欲望);`,
+    replace: `    const lv = bump(sys, '抖M气质', up(8), TIERS, () => sys.欲望); // 变异：驱动下标 9 错改 8`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：驱动下标不与相邻组混淆',
+  },
+  {
+    desc: 'M9660 SOKUOCHI_CHECK ABL:12 误用 EXP_TIERS（应为 TIERS）',
+    file: 'ere/event/source-check.js',
+    find: `    const lv = bump(sys, '技巧', up(7), TIERS);`,
+    replace: `    const lv = bump(sys, '技巧', up(7), EXP_TIERS); // 变异：误用 EXP_TIERS`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：ABL:12（技巧）用 UP 阈值表',
+  },
+  {
+    desc: 'M9661 SOKUOCHI_CHECK ABL:17 门槛来源读错（乳房感觉错改欲望）',
+    file: 'ere/event/source-check.js',
+    find: `    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.乳房感觉);`,
+    replace: `    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.欲望); // 变异：门槛来源读错`,
+    tests: ['source-check'],
+    must_mention: 'SOKUOCHI_CHECK：ABL:17（露出癖）门槛来源',
+  },
+
   {
     desc: 'M9529 COM3 头部升格跳转删除（jump_advanced(3) 整段拿掉，PREVCOM 升格判据失效）',
     file: 'ere/system/train/com-caress.js',

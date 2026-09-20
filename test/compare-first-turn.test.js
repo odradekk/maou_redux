@@ -102,10 +102,14 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   // 【#462 五次重测】EXP_GOT_CHECK 落地为真身：本回合三段判据均不成立，
   // 不再 PRINT 占位文字，stub 4 → 3（matched 不变，埋点计数验证：调用
   // 1 次，三段均不触发）。
+  // 【#462 六次重测】SOKUOCHI_CHECK 落地为真身：本回合 TALENT:73=0（无
+  // 容易陷落），守卫早退，不再 PRINT 占位文字，stub 3 → 2（matched 不变，
+  // 调用 1 次全早退，与 ERB 原文 SIF TALENT:73==0 / RETURN 0 的静默行为
+  // 一致）。
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 3,
+    stub: 2,
 
     unexplained: 0,
   });
