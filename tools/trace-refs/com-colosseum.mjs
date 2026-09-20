@@ -823,9 +823,29 @@ export const FILES = [
         any: [/RETURN\ 1/m],
       },
       {
+        src: 'target/ERB/調教相關/COMF203_カビ犬.ERB',
+        ref: '23',
+        any: [/IF\ RESULT\ <\ \(2\ \*\ CFLAG:0:9\)/m],
+      },
+      {
+        src: 'target/ERB/調教相關/COMF203_カビ犬.ERB',
+        ref: '98',
+        any: [/PRINTFORMW\ %SAVESTR:MASTER%让霉菌犬退下了……/m],
+      },
+      {
         src: 'target/ERB/調教相關/COMF204_オーク.ERB',
         ref: '35',
         any: [/PRINTL\ ＜奴隶陷落＞/m],
+      },
+      {
+        src: 'target/ERB/調教相關/COMF205_腐れ豚.ERB',
+        ref: '25',
+        any: [/IF\ RESULT\ <\ \(4\ \*\ CFLAG:0:9\)/m],
+      },
+      {
+        src: 'target/ERB/調教相關/COMF205_腐れ豚.ERB',
+        ref: '100',
+        any: [/PRINTFORMW\ %SAVESTR:MASTER%让腐烂猪退下了……/m],
       },
       {
         src: 'target/ERB/調教相關/COMF206_トロル.ERB',
