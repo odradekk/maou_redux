@@ -2049,7 +2049,15 @@ function auto_num_check() {
 // 的"UPCOUNT==15→UPID=15"专属分支，只有 UPCOUNT<=2/==3/else 三支：
 // UPCOUNT=15 落入 else 得 UPID=15-1=14，与 UPCOUNT=3 的 UPID=14 撞车重复
 // 结算；UPID=15 因此永远不会被这个序列命中——原作自身的缺陷，1:1 保留，
-// 登记见 issue #14
+// 登记见 issue #14。
+// 但 delta:15 仍须无条件清零，这与上面的 UPID 缺陷是两件事：ere 侧的
+// UP/DOWN 落在 delta 表，由本模块当场结算进 palam 并清零、令引擎
+// nextTurnInTrain 的通用结算成为无操作（见文件头顶部 delta/palam 结算职责划分
+// 的说明）——这是 ere 自身
+// 承担的收尾职责，不是对原作 UPID=15 缺陷的补全。ORDER 不含 15 会让
+// touched 永远漏收 15，delta:15 残留到引擎的 nextTurnInTrain 就会被重新
+// 累加进 palam，等于原作从未生效的收益在 ere 侧意外落地（issue #461 验收
+// 发现）
 function palam_up_check_mini() {
   const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
   const touched = [];
@@ -2062,6 +2070,7 @@ function palam_up_check_mini() {
   for (const upid of touched) {
     era.set(`delta:${cid}:${upid}`, 0);
   }
+  era.set(`delta:${cid}:15`, 0);
 }
 
 // @LOSELIFE_BAR / @LOSEVITAL_BAR（:2508-2572）：损耗条（32 格）。返回串，

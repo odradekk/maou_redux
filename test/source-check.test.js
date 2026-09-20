@@ -966,8 +966,12 @@ test('AUTO_NUM_CHECK：CFLAG:667 八档倍率表（SYSTEM_SOURCE_SUB1.ERB:1852-1
   }
 });
 
-test('AUTO_NUM_CHECK：跳过 UP:11/12/13/15/16，UP:14 是例外不跳（原作 SIF LOCAL>=11 && LOCAL!=14 的 CONTINUE）', async () => {
-  const skip_locals = [11, 12, 13, 15, 16];
+test('AUTO_NUM_CHECK：跳过 UP:11/12/13，UP:14 是例外不跳（原作 SIF LOCAL>=11 && LOCAL!=14 的 CONTINUE）', async () => {
+  // 11/12/13 均在 palam_up_check_mini 的 ORDER 里，会被正常处理并写入
+  // palam、再清零 delta——读 palam 能验证 AUTO_NUM_CHECK 是否跳过了档位
+  // 乘算。15/16 不在 ORDER 里，处理器执行完后读 palam 恒为 undefined，
+  // 没有区分力，分别见下方两条独立测试（issue #461 验收发现）
+  const skip_locals = [11, 12, 13];
   for (const local of skip_locals) {
     const key = `delta:31:${local}`;
     const low = await run_auto_check((f) => {
@@ -996,6 +1000,61 @@ test('AUTO_NUM_CHECK：跳过 UP:11/12/13/15/16，UP:14 是例外不跳（原作
     low14.store.get('palam:31:14'),
     high14.store.get('palam:31:14'),
     'UP:14 虽 >= 11，仍不跳过档位乘算',
+  );
+});
+
+test('AUTO_NUM_CHECK：跳过 UP:16（死区，PALAM.yml 无此展示位，需读 delta 而非 palam 验证）', async () => {
+  // UP:16／PALAM:16 全 target/ 目录无消费者，yml/Palam.yml 的展示位止于
+  // 15——16 是原作 FOR LOCAL,0,17 循环上界比实际展示位多出的一档死区。
+  // palam_up_check_mini 的 ORDER 不含 16，处理器执行完后 palam:31:16 恒
+  // 为 undefined、没有区分力；但 16 也不会被 touched 清零或本次新增的
+  // delta:15 无条件清零覆盖，所以 AUTO_NUM_CHECK 结算后的 delta:31:16
+  // 仍保留原值，可以直接读它验证跳过逻辑（issue #461 验收发现）
+  const low = await run_auto_check((f) => {
+    f.store.set('delta:31:16', 200);
+    f.store.set('cflag:31:667', 0); // 第 1 档 ×1.25
+  });
+  const high = await run_auto_check((f) => {
+    f.store.set('delta:31:16', 200);
+    f.store.set('cflag:31:667', 40); // 第 8 档 ×9.90
+  });
+  assert.equal(
+    low.store.get('delta:31:16'),
+    200,
+    'UP:16 应跳过档位乘算，delta 维持种子原值',
+  );
+  assert.equal(
+    low.store.get('delta:31:16'),
+    high.store.get('delta:31:16'),
+    'UP:16 应跳过档位乘算，两档结果应相同',
+  );
+});
+
+test('PALAM_UP_CHECK_MINI：delta:15 处理器执行后恒为 0（收尾清零，不验证 AUTO_NUM_CHECK 对 15 的跳过逻辑）', async () => {
+  // UPID=15 从未进入 palam_up_check_mini 的 ORDER（撞车缺陷，1:1 保留，
+  // 见函数头注释），但 delta:15 仍须无条件清零，否则会被引擎
+  // nextTurnInTrain 的通用结算重新累加进 palam。这行清零是同步执行、
+  // 无条件的，会覆盖 AUTO_NUM_CHECK 对 UP:15 是否跳过档位乘算留下的任何
+  // 差异——SOURCE_CHECK_AUTO 处理器内 auto_num_check 到 palam_up_check_
+  // mini 之间没有 await，测试只能在整个处理器 resolve 之后读取状态，读不
+  // 到"已跳过乘算但尚未清零"的中间值。因此本测试如实只验证清零本身，不
+  // 尝试（也确实测不出）AUTO_NUM_CHECK 对 UP:15 的跳过逻辑（issue #461
+  // 验收发现）
+  const seeded = await run_auto_check((f) => {
+    f.store.set('delta:31:15', 200);
+    f.store.set('cflag:31:667', 40); // 第 8 档 ×9.90，若曾被乘算会是 1980
+  });
+  assert.equal(
+    seeded.store.get('delta:31:15'),
+    0,
+    'delta:15 应在处理器执行后清零',
+  );
+
+  const unseeded = await run_auto_check();
+  assert.equal(
+    unseeded.store.get('delta:31:15'),
+    0,
+    'delta:15 应在处理器执行后清零',
   );
 });
 

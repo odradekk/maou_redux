@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 530;
+export const COUNT = 531;
 
 export default [
   {
@@ -5408,5 +5408,20 @@ export default [
       let next = base;`,
     tests: ['source-check'],
     must_mention: '当场结算到 base',
+  },
+  {
+    desc: 'M9787 PALAM_UP_CHECK_MINI：delta:15 无条件清零行删（跳过档位残留会被引擎重新累加进 palam）',
+    file: 'ere/event/source-check.js',
+    find: `  for (const upid of touched) {
+    era.set(\`delta:\${cid}:\${upid}\`, 0);
+  }
+  era.set(\`delta:\${cid}:15\`, 0);
+}`,
+    replace: `  for (const upid of touched) {
+    era.set(\`delta:\${cid}:\${upid}\`, 0);
+  }
+}`,
+    tests: ['source-check'],
+    must_mention: 'delta:15 应在处理器执行后清零',
   },
 ];
