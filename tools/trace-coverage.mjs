@@ -121,17 +121,21 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 47; // 合并态实测（#460 并上 master）：
+export const PENDING_BASELINE = 37; // 合并态实测（#464 并上含 #460 的 master）：
+// 47（#460 后的 master）− 10（本票的 ABL/ABLUP0.ERB～ABLUP9.ERB 十个文件）
+// = 37，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
+// 重测而非相加；两票改动面互不重叠，巧合与算式相符。
+//
+// #460（Q3）抬低说明（49 → 47）：工单范围内的 COMF0_愛撫.ERB／
+// COMF50_ローション.ERB／COMF63_貝あわせ.ERB 核实后确认功能代码早已完整
+// 实现（非本票新写），此前已不在待移植的分子里，本票未改动其判定；
+// 203/205 的功能代码同样早已完整（com-colosseum.js 的 MONSTER_CONFIGS 与
+// 202/204/206 同构共享 monster_com），本票只补齐了追溯锚点证据
+// （tools/trace-refs/com-colosseum.mjs）使 trace-coverage 的判定从「待移植」
+// 翻正为「已移植」——五个文件只减 2，不是 5。
+// export const PENDING_BASELINE = 47; // 合并态实测（#460 并上 master）：
 // 49（master）− 2（本票的 COMF203_カビ犬.ERB 与 COMF205_腐れ豚.ERB）= 47，
 // 与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
-//
-// #460（Q3）单独的说明：工单范围内的 COMF0_愛撫.ERB／COMF50_ローション.ERB／
-// COMF63_貝あわせ.ERB 核实后确认功能代码早已完整实现（非本票新写），此前已
-// 不在待移植的分子里，本票未改动其判定；203/205 的功能代码同样早已完整
-// （com-colosseum.js 的 MONSTER_CONFIGS 与 202/204/206 同构共享 monster_com），
-// 本票只补齐了追溯锚点证据（tools/trace-refs/com-colosseum.mjs）使
-// trace-coverage 的判定从「待移植」翻正为「已移植」——五个文件只减 2，不是 5。
-//
 // export const PENDING_BASELINE = 49; // 合并态实测（#399 并上含 #398 的 master）：
 // 51（master）− 2（本票的 SHOP/SHOP_ITEM.ERB 与 SHOP/SHOP_MONSTER.ERB）= 49，
 // 与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。

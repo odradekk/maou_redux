@@ -127,8 +127,15 @@ const REPO = path.resolve(__dirname, '..');
 //      （素质行/能力行/刻印行），stub −10、matched 不变（那十行原本就是
 //      「有输出但对不上」的存根行，换真身后逐字对上黄金样本）。
 // 未解释恒 0；数字为合并态重测值。
+// 【#464 ABL·1（Q7）ABLUP0～9 落地后重测】JUEL_CHECK 分发接上 ABLUP0～4 真身
+// （ere/system/train/ablup.js），natural 侧的能力提升反馈行与结算行不再走
+// stub_line 占位：matched 1115→1118、stub 444→382。差值不等于净减少的输出
+// 行数——原本记同一条"未移植指令"原因的若干下游结算/一览行，在 ABLUP0
+// 真身接上后转而记名到"跨画面编号错位"等既有归因（ere 按钮化 PR #53 通则），
+// 不再计入 stub 也不新增 matched，见 rules.js 的记名规则。upgrade 未变
+// （本样本回放未触发 ABLUP0～4 的可提升分支）。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1115, version: 0, stub: 444, unexplained: 0 },
+  'train-natural': { matched: 1118, version: 0, stub: 382, unexplained: 0 },
   'train-upgrade': { matched: 259, version: 0, stub: 222, unexplained: 0 },
 };
 
