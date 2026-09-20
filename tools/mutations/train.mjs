@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 511;
+export const COUNT = 512;
 
 export default [
   {
@@ -5191,5 +5191,26 @@ export default [
     replace: '  if (exp(target, 20) === 0 && tflag(899) < 1) {',
     tests: ['train-message'],
     must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
+  },
+
+  // —— #459（COMF3_自慰 头部升格跳转补齐）——
+  {
+    desc: 'M9529 COM3 头部升格跳转删除（jump_advanced(3) 整段拿掉，PREVCOM 升格判据失效）',
+    file: 'ere/system/train/com-caress.js',
+    find: `async function com3() {
+  // :14-17 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）
+  const jumped = await jump_advanced(3);
+  if (jumped !== false) {
+    return jumped;
+  }
+
+  const target = era_flag.target;
+  const player = era_flag.player;`,
+    replace: `async function com3() {
+  // 变异：升格跳转整段删除
+  const target = era_flag.target;
+  const player = era_flag.player;`,
+    tests: ['com-caress'],
+    must_mention: 'JUMP COM125',
   },
 ];
