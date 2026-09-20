@@ -150,6 +150,22 @@ export const FILES = [
         any: [/^\s*CALL ARCANA_FORT$/m],
       },
       {
+        // cite: true——本行只核对 FLAG:92 位掩码注释的原文准确性，不是
+        // ARCANA_FORT.ERB 本身有移植产物（攻略主体仍整份未移植，见
+        // docs/stub-registry.md 与 tools/trace-coverage.mjs 的 RULINGS 表
+        // 之外——它不在已判定不实现表里，仍计入待移植）
+        src: 'target/ERB/侵略/ARCANA_FORT.ERB',
+        ref: '20',
+        any: [/^;FLAG:92 = 狂王の砦侵攻度 \(&1:東 &2:南 &4:西 &8:北\)$/m],
+        cite: true,
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_FORT.ERB',
+        ref: '76',
+        any: [/^;FLAG:92 = 砦侵攻度 \(&1:東 &2:南 &4:西 &8:北\)$/m],
+        cite: true,
+      },
+      {
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '136-137',
         any: [/^\s*SIF EX_FLAG:102 >= 3$/m],

@@ -41,12 +41,16 @@
  *     拒收重问；
  *   - [1001]（AGENT_MENU）的 PRINTL 按钮渲染行（:84）在原作已被注释，但
  *     ELSEIF RESULT == 1001 / CALL AGENT_MENU（:93-95）本身是活代码，排在
- *     :102 的 >=6 拒收之前——Emuera 的 INPUT 接受任意整数，手工键入 1001
- *     在原作里仍可达。ere 的 era.input() 按本轮已打印按钮做白名单校验
- *     （test/helpers/era-fixture.js 镜像引擎 returnFromButton），未打印过
- *     的 1001 会在引擎层被直接拒收，先于本函数的派发逻辑，因此主动不移植
- *     该分支（docs/stub-registry.md 登记）——原因是引擎层校验，不是原作
- *     已注释。
+ *     :102 的 >=6 拒收之前——Emuera 的 INPUT 接受任意整数，不限于已打印
+ *     按钮，手工键入 1001 在原作里仍可达；era.input() 只在本轮打印过按钮
+ *     时才按白名单校验（test/helpers/era-fixture.js 镜像引擎
+ *     returnFromButton），一旦某次 input() 因合法按钮值被判定为业务层
+ *     无效（如 [5] 触发 :100-101 的拒收）而 continue 且不重新 printButton，
+ *     白名单即清空，下一次 input() 变回自由输入，1001 在 ere 里同样可达
+ *     （实测：flag:82=1、exflag:102=1、exflag:2810=0 时依次输入 5、1001
+ *     可触达）。因此接一个显式存根分支，不落 AGENT_MENU 本体——其所在的
+ *     侵略/AGENT/ 已被 #103 判定为复制改名事故，全库无调用点，登记为
+ *     「只登记、不排期」；
  */
 
 const era = require('#/era-electron');
@@ -70,7 +74,8 @@ const { chara_callname } = require('#/utils/callname-utils');
  * 'INVASION' 是函数内联段的宿主名（先例：DRAW_MAINMENU 指令面板段）：
  * [0]/[2]/[3] 出兵路线三段（:210-/:299-/:442-，start_campaign）、地上征服后
  * 菜单的 [1]/[2]/[3]/[5] 地区续接（:108-138，post_conquest_menu）。
- * 'ARCANA_FORT'（:126，[4]）、'SENGEN_VIDEO'（:91，[1000]）是各自独立的存根
+ * 'ARCANA_FORT'（:126，[4]）、'SENGEN_VIDEO'（:91，[1000]）、'AGENT_MENU'
+ * （:93-95，[1001]，#103 判定的复制改名事故，只登记不排期）是各自独立的存根
  * 调用名。'INVASION_CHECK' 自 #118 起是真身（五组条件 1:1），移出本名单。
  * 'CAMPAIGN_MENU'（:98，[9]）不在此列——调用点本身是真实调用，存根名归属
  * page-campaign.js 自己的 STUBBED_CALLS（#468）。
@@ -78,6 +83,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const STUBBED_CALLS = [
   'INVASION',
   'ARCANA_FORT',
+  'AGENT_MENU',
   'MEDAL_BONUS',
   'INVASION_EVENT_SEIEI',
   'SENGEN_VIDEO',
@@ -384,31 +390,41 @@ async function invasion() {
 /**
  * @INVASION（INVASION.ERB:25-138）：地上征服后的地区选择菜单（#468）。
  *
- * 六条状态行（人间界固定「已征服」；精灵/龙之山/天界随各自 FLAG:87/89/91
- * 征服标记切换标签；圣灵骑士堡垒随 FLAG:92 == 15 切换；天神宫随 route_33
- * 开窗或 shrine_stage >= 4 切换，两条件都不满足时不渲染）+ 六个可选分支
- * （[0] 复用 start_campaign()；[1]/[2]/[3]/[5] 地区续接与 [4] ARCANA_FORT
- * 登记为存根，泛化 $START1 留给后续票）+ [9] CAMPAIGN_MENU + [999] 退出 +
- * [1000] SENGEN_VIDEO。原作 [1001]（AGENT_MENU）的 PRINTL 按钮渲染行已被
- * 注释、永不可达，未移植派发分支。
+ * 五条状态行（人间界固定「已征服」；精灵/龙之山/天界随各自 FLAG:87/89/91
+ * 征服标记切换标签；天神宫随 route_33 开窗或 shrine_stage >= 4 切换，两
+ * 条件都不满足时不渲染；圣灵骑士堡垒原作没有状态行，仅按钮文案随
+ * FLAG:92 == 15 切换）+ 六个可选分支（[0] 复用 start_campaign()；[1]/[2]/
+ * [3]/[5] 地区续接与 [4] ARCANA_FORT 登记为存根，泛化 $START1 留给后续
+ * 票）+ [9] CAMPAIGN_MENU + [999] 退出 + [1000] SENGEN_VIDEO + [1001]
+ * AGENT_MENU（原作按钮渲染行已注释，但 ELSEIF/CALL 分支仍可达，接一个
+ * 存根，不落本体——见文件头）。
  *
  * @returns {Promise<number>} 0 / 1
  */
 async function post_conquest_menu() {
-  // :25-49 六条状态行（BARSTR 偏离说明见文件头）
-  print_progress_line('地上的魔界领土', era_flag.human_realm_invasion, 10000);
+  // :25-49 五条状态行（BARSTR 偏离说明见文件头；圣灵骑士堡垒没有状态行，
+  // 只有按钮，见下方 [4] 的注释）
   print_progress_line(
-    era_flag.elf_realm_conquered >= 1 ? '黑暗精灵的领土' : '精灵族的领域',
+    '地上的魔界领土侵攻度',
+    era_flag.human_realm_invasion,
+    10000,
+  );
+  print_progress_line(
+    era_flag.elf_realm_conquered >= 1
+      ? '黑暗精灵的领土侵攻度'
+      : '精灵族的领域侵攻度',
     era_flag.elf_realm_invasion,
     10000,
   );
   print_progress_line(
-    era_flag.dragon_realm_conquered >= 1 ? '混沌龙之山' : '龙之山脉',
+    era_flag.dragon_realm_conquered >= 1
+      ? '混沌龙之山侵攻度'
+      : '龙之山脉侵攻度',
     era_flag.dragon_realm_invasion,
     10000,
   );
   print_progress_line(
-    era_flag.heaven_conquered >= 1 ? '堕天使的淫界' : '天界',
+    era_flag.heaven_conquered >= 1 ? '堕天使的淫界侵攻度' : '天界侵攻度',
     era_flag.heaven_invasion,
     10000,
   );
@@ -418,9 +434,13 @@ async function post_conquest_menu() {
     (era_exflag.route_33 >= 501 && era_exflag.route_33 < 540) ||
     (era_exflag.route_33 >= 541 && era_exflag.route_33 < 560);
   if (route_33_open) {
-    print_progress_line('天神宫', era_exflag.shrine_invasion, 10000);
+    print_progress_line('天神宫侵攻度', era_exflag.shrine_invasion, 10000);
   } else if (era_exflag.shrine_stage >= 4) {
-    print_progress_line('淫乱意志的神宫', era_exflag.shrine_invasion, 10000);
+    print_progress_line(
+      '淫乱意志的神宫侵攻度',
+      era_exflag.shrine_invasion,
+      10000,
+    );
   }
   era.drawLine();
   era.print('地面上已被你征服了，你指挥着你的军队准备进攻其他领土………');
@@ -441,6 +461,9 @@ async function post_conquest_menu() {
     era_flag.heaven_conquered >= 1 ? '巡视堕天使的淫界（已征服）' : '入侵天界',
     3,
   );
+  // FLAG:92（arcana_fort_stage）是位掩码，不是线性阶段数：&1 东 &2 南
+  // &4 西 &8 北（ARCANA_FORT.ERB:20/:76，ARCANA_FORT 自身按 |= 逐门置位），
+  // 15 = 四门全破；这里只判「是否全部攻陷」，不代表推进到第几关
   era.printButton(
     era_flag.arcana_fort_stage === 15
       ? '巡视圣灵骑士的卖春堡垒（已征服）'
@@ -473,6 +496,13 @@ async function post_conquest_menu() {
       await stub_line_wait('SENGEN_VIDEO', '水晶球投放/流行度', '待认领');
       return 0; // :90-92
     }
+    if (result === 1001) {
+      // :93-95 CALL AGENT_MENU：按钮渲染行原作已注释，但这条 ELSEIF/CALL
+      // 分支本身是活代码，文件头有说明——只接存根，不落 AGENT_MENU 本体
+      // （#103：所在的侵略/AGENT/ 是复制改名事故，只登记、不排期）
+      await stub_line_wait('AGENT_MENU', '代理人相关菜单', '不排期（#103）');
+      return 0;
+    }
     if (result === 9) {
       await campaign_menu(); // :97-98
       return 0; // :97-99
@@ -483,7 +513,7 @@ async function post_conquest_menu() {
       continue;
     }
     if (result >= 6 || result < 0) {
-      continue; // :102-105（含 1001：按钮不渲染，视为无效输入重问）
+      continue; // :102-105
     }
 
     // :108-138 地区选择；仅 [0] 实现，其余登记为存根（文件头有说明）

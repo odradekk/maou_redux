@@ -393,43 +393,54 @@ test('征服后菜单渲染：三个地区状态按征服标记切换标签与�
   const cases = [
     {
       flag: 'flag:87',
-      unconquered_progress: '精灵族的领域',
-      conquered_progress: '黑暗精灵的领土',
+      progress_flag: 'flag:86',
+      unconquered_progress: '精灵族的领域侵攻度',
+      conquered_progress: '黑暗精灵的领土侵攻度',
       unconquered_option: '入侵精灵族的领域',
       conquered_option: '巡视黑暗精灵的领土（已征服）',
       accelerator: 1,
     },
     {
       flag: 'flag:89',
-      unconquered_progress: '龙之山脉',
-      conquered_progress: '混沌龙之山',
+      progress_flag: 'flag:88',
+      unconquered_progress: '龙之山脉侵攻度',
+      conquered_progress: '混沌龙之山侵攻度',
       unconquered_option: '入侵龙之山脉',
       conquered_option: '巡视混沌龙之山（已征服）',
       accelerator: 2,
     },
     {
       flag: 'flag:91',
-      unconquered_progress: '天界',
-      conquered_progress: '堕天使的淫界',
+      progress_flag: 'flag:90',
+      unconquered_progress: '天界侵攻度',
+      conquered_progress: '堕天使的淫界侵攻度',
       unconquered_option: '入侵天界',
       conquered_option: '巡视堕天使的淫界（已征服）',
       accelerator: 3,
     },
   ];
+  // 三个地区共用同一个侵攻度数值：每个用例只给自己的 FLAG 赋值，其余两个
+  // 地区的 FLAG 留在 make_world 的默认 0——如果标签换成了别的地区的数值
+  // 列（比如精灵行误读 FLAG:88），命中的行会显示 0/10000 而不是这个值
+  const PROGRESS_VALUE = 1234;
   for (const c of cases) {
     for (const conquered of [false, true]) {
       const fixture = create_era_fixture();
       make_world(fixture, { fallen: 1 });
       fixture.store.set(c.flag, conquered ? 1 : 0);
+      fixture.store.set(c.progress_flag, PROGRESS_VALUE);
       await run_post_conquest(fixture, 999);
       const expected_progress = conquered
         ? c.conquered_progress
         : c.unconquered_progress;
+      const progress_line = fixture.lines_history.find(
+        (line) =>
+          line.type === 'progress' && line.text.includes(expected_progress),
+      );
+      assert(progress_line, `${c.flag}=${conquered ? 1 : 0} 的状态条标签`);
       assert(
-        progress_texts(fixture).some((line) =>
-          line.includes(expected_progress),
-        ),
-        `${c.flag}=${conquered ? 1 : 0} 的状态条标签`,
+        progress_line.out.includes(`${PROGRESS_VALUE}/10000`),
+        `${c.flag}=${conquered ? 1 : 0} 的状态条数值列取自 ${c.progress_flag}`,
       );
       assert(
         fixture.lines_history.some(
@@ -473,7 +484,7 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项三态，两组条
       label: '开放区间内（route_33=510）：显示天神宫侵攻度条与「攻略天神宫」',
       route_33: 510,
       shrine_stage: 0,
-      progress_text: '天神宫',
+      progress_text: '天神宫侵攻度',
       option_text: '攻略天神宫',
       renders_progress: true,
       renders_option: true,
@@ -492,7 +503,7 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项三态，两组条
         'shrine_stage=4（已征服）：显示「淫乱意志的神宫」进度条与已征服选项',
       route_33: 0,
       shrine_stage: 4,
-      progress_text: '淫乱意志的神宫',
+      progress_text: '淫乱意志的神宫侵攻度',
       option_text: '巡视淫乱意志的神宫（已征服）',
       renders_progress: true,
       renders_option: true,
@@ -505,6 +516,20 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项三态，两组条
       option_text: null,
       renders_progress: false,
       renders_option: false,
+    },
+    {
+      // 交叉格：两组条件（进度条随 route_33 优先、按钮随 shrine_stage 优先）
+      // 独立成立时优先级彼此相反，原作 :45（IF route_33）与 :73（IF
+      // shrine_stage）的分支顺序也确实相反——只用前四组各自单独成立的用例
+      // 测不出这一点，参数改成两组条件谁在 if 谁在 else if 都能蒙混过去
+      label:
+        '交叉格：route_33 开窗且 shrine_stage=4 同时成立，进度条随 route_33、按钮随 shrine_stage',
+      route_33: 510,
+      shrine_stage: 4,
+      progress_text: '天神宫侵攻度',
+      option_text: '巡视淫乱意志的神宫（已征服）',
+      renders_progress: true,
+      renders_option: true,
     },
   ];
   for (const c of cases) {
@@ -541,10 +566,21 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
 
   const crystal_ball = create_era_fixture();
   make_world(crystal_ball, { fallen: 1 });
+  crystal_ball.store.set('exflag:9011', 3); // 分子
+  crystal_ball.store.set('exflag:9010', 7); // 分母
   assert.equal(await run_post_conquest(crystal_ball, 1000), 0);
   assert(
     history_texts(crystal_ball).some((line) => line.includes('@SENGEN_VIDEO')),
     '[1000] 转发到 SENGEN_VIDEO 存根',
+  );
+  assert(
+    crystal_ball.lines_history.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 1000 &&
+        line.rendered.includes('[3/7]'),
+    ),
+    '[1000] 按钮文案的分子分母取自 exflag:9011/9010，顺序不能颠倒',
   );
 
   const campaign = create_era_fixture();
@@ -562,6 +598,37 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
     history_texts(fort).some((line) => line.includes('@ARCANA_FORT')),
     '[4] 转发到 ARCANA_FORT 存根',
   );
+});
+
+// 下面两条测试都要先让 era.input() 的按钮白名单清空，才能喂进未渲染过的
+// 输入值：[5] 命中 :100-101 的拒收会 continue 且不重新 printButton，此时
+// 引擎侧下一次 input() 视为自由输入（test/helpers/era-fixture.js:894-918
+// 镜像引擎 returnFromButton）——这正是原作 [1001] 与越界输入在实机上仍可
+// 达的原因，1:1 保留
+test('征服后菜单派发：[5] 拒收清空按钮白名单后，[1001] 仍可达 AGENT_MENU 存根（INVASION.ERB:93-95）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture, { fallen: 1 });
+  fixture.store.set('exflag:2810', 0); // route_33 开放区间外，[5] 会被拒收
+  fixture.store.set('exflag:102', 1); // shrine_stage >= 1，[5] 按钮仍渲染
+  assert.equal(await run_post_conquest(fixture, 5, 1001), 0);
+  assert(
+    history_texts(fixture).some((line) => line.includes('@AGENT_MENU')),
+    '[1001] 转发到 AGENT_MENU 存根（#103：只登记、不排期，不实现本体）',
+  );
+});
+
+test('征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）', async () => {
+  for (const bad of [6, -1]) {
+    const fixture = create_era_fixture();
+    make_world(fixture, { fallen: 1 });
+    fixture.store.set('exflag:2810', 0);
+    fixture.store.set('exflag:102', 1);
+    await assert.rejects(
+      () => run_post_conquest(fixture, 5, bad),
+      /预置输入已耗尽/,
+      `[${bad}] 白名单清空后仍应被越界守卫拒收重问，而不是落到地区选择`,
+    );
+  }
 });
 
 test('征服后菜单 [0]：与 start_campaign() 直驱产生相同结算（提取前后行为不变）', async () => {
@@ -651,6 +718,7 @@ test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文�
   assert.deepEqual(STUBBED_CALLS, [
     'INVASION',
     'ARCANA_FORT',
+    'AGENT_MENU',
     'MEDAL_BONUS',
     'INVASION_EVENT_SEIEI',
     'SENGEN_VIDEO',

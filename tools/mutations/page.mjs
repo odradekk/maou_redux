@@ -3,9 +3,11 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 195; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 200; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
-// #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）
+// #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
+// 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
+// 水晶球分子分母）
 
 export default [
   {
@@ -1743,27 +1745,27 @@ export default [
   {
     desc: 'M9709 精灵领域状态行标签互换（FLAG:87，INVASION.ERB:31）',
     file: 'ere/page/page-invasion.js',
-    find: "    era_flag.elf_realm_conquered >= 1 ? '黑暗精灵的领土' : '精灵族的领域',",
+    find: "    era_flag.elf_realm_conquered >= 1\n      ? '黑暗精灵的领土侵攻度'\n      : '精灵族的领域侵攻度',",
     replace:
-      "    era_flag.elf_realm_conquered >= 1 ? '精灵族的领域' : '黑暗精灵的领土', // 变异：标签互换",
+      "    era_flag.elf_realm_conquered >= 1\n      ? '精灵族的领域侵攻度' // 变异：标签互换\n      : '黑暗精灵的领土侵攻度',",
     tests: ['page-invasion'],
     must_mention: 'flag:87',
   },
   {
     desc: 'M9710 龙之山状态行标签互换（FLAG:89，INVASION.ERB:33）',
     file: 'ere/page/page-invasion.js',
-    find: "    era_flag.dragon_realm_conquered >= 1 ? '混沌龙之山' : '龙之山脉',",
+    find: "    era_flag.dragon_realm_conquered >= 1\n      ? '混沌龙之山侵攻度'\n      : '龙之山脉侵攻度',",
     replace:
-      "    era_flag.dragon_realm_conquered >= 1 ? '龙之山脉' : '混沌龙之山', // 变异：标签互换",
+      "    era_flag.dragon_realm_conquered >= 1\n      ? '龙之山脉侵攻度' // 变异：标签互换\n      : '混沌龙之山侵攻度',",
     tests: ['page-invasion'],
     must_mention: 'flag:89',
   },
   {
     desc: 'M9711 天界状态行标签互换（FLAG:91，INVASION.ERB:35）',
     file: 'ere/page/page-invasion.js',
-    find: "    era_flag.heaven_conquered >= 1 ? '堕天使的淫界' : '天界',",
+    find: "    era_flag.heaven_conquered >= 1 ? '堕天使的淫界侵攻度' : '天界侵攻度',",
     replace:
-      "    era_flag.heaven_conquered >= 1 ? '天界' : '堕天使的淫界', // 变异：标签互换",
+      "    era_flag.heaven_conquered >= 1 ? '天界侵攻度' : '堕天使的淫界侵攻度', // 变异：标签互换",
     tests: ['page-invasion'],
     must_mention: 'flag:91',
   },
@@ -1864,5 +1866,50 @@ export default [
     replace: '  if (era_flag.human_realm_fallen === 0) { // 变异：分派条件反向',
     tests: ['page-invasion'],
     must_mention: '征服后菜单不会打出窄路径专属的怪物数量提示',
+  },
+  {
+    desc: 'M9723 [1001] AGENT_MENU 存根登记名改坏（INVASION.ERB:93-95，返工#1）',
+    file: 'ere/page/page-invasion.js',
+    find: "stub_line_wait('AGENT_MENU', '代理人相关菜单', '不排期（#103）');",
+    replace:
+      "stub_line_wait('DEPUTY_MENU', '代理人相关菜单', '不排期（#103）'); // 变异：登记名改坏",
+    tests: ['page-invasion'],
+    must_mention: '转发到 AGENT_MENU 存根',
+  },
+  {
+    desc: 'M9724 精灵状态行读错地区标记（改读 dragon_realm_invasion，返工#2 P1）',
+    file: 'ere/page/page-invasion.js',
+    find: '    era_flag.elf_realm_invasion,\n    10000,\n  );',
+    replace:
+      '    era_flag.dragon_realm_invasion, // 变异：读错地区标记\n    10000,\n  );',
+    tests: ['page-invasion'],
+    must_mention: '的状态条数值列取自',
+  },
+  {
+    desc: 'M9725 天神宫状态条优先级改成和按钮一样（返工#2 P2，INVASION.ERB:45）',
+    file: 'ere/page/page-invasion.js',
+    find: "  if (route_33_open) {\n    print_progress_line('天神宫侵攻度', era_exflag.shrine_invasion, 10000);\n  } else if (era_exflag.shrine_stage >= 4) {\n    print_progress_line(\n      '淫乱意志的神宫侵攻度',\n      era_exflag.shrine_invasion,\n      10000,\n    );\n  }",
+    replace:
+      "  if (era_exflag.shrine_stage >= 4) {\n    print_progress_line(\n      '淫乱意志的神宫侵攻度',\n      era_exflag.shrine_invasion,\n      10000,\n    );\n  } else if (route_33_open) {\n    print_progress_line('天神宫侵攻度', era_exflag.shrine_invasion, 10000); // 变异：优先级颠倒\n  }",
+    tests: ['page-invasion'],
+    must_mention: '进度条应渲染',
+  },
+  {
+    desc: 'M9726 越界守卫门槛挪走（>=6||<0 改 >=600||<-100，返工#2 P3，INVASION.ERB:102-105）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result >= 6 || result < 0) {\n      continue; // :102-105\n    }',
+    replace:
+      '    if (result >= 600 || result < -100) {\n      continue; // :102-105 变异：门槛挪走\n    }',
+    tests: ['page-invasion'],
+    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+  },
+  {
+    desc: 'M9727 水晶球按钮分子分母颠倒（返工#2 P4，INVASION.ERB:83）',
+    file: 'ere/page/page-invasion.js',
+    find: "`向城里投放水晶球[${era.get('exflag:9011') || 0}/${era.get('exflag:9010') || 0}]`,",
+    replace:
+      "`向城里投放水晶球[${era.get('exflag:9010') || 0}/${era.get('exflag:9011') || 0}]`, // 变异：分子分母颠倒",
+    tests: ['page-invasion'],
+    must_mention: '分子分母取自 exflag:9011/9010',
   },
 ];
