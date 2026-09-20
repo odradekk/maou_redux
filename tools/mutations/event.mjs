@@ -116,10 +116,30 @@ export default [
     must_mention: 'NOWEX',
   },
   {
-    desc: 'M51 体力气力扣减的去零钳制删掉',
+    desc: 'M51 体力气力扣减的去零钳制删掉（manual 路径，find 锚定 lose0/lose1 快照——#461 起 AUTO 路径有同款语义的第二处 next=Math.max(...) 子句，裸行不再唯一）',
     file: 'ere/event/source-check.js',
-    find: '        next = Math.max(Math.min(next, max), 0);',
-    replace: '        next = next;',
+    find: `  const lose0 = Math.max(lose(0), 0);
+  const lose1 = Math.max(lose(1), 0);
+  for (const k of [0, 1]) {
+    const loss = lose(k);
+    if (loss !== 0) {
+      const base = era.get(\`base:\${cid}:\${k}\`) || 0;
+      const max = era.get(\`maxbase:\${cid}:\${k}\`) || 0;
+      let next = base - loss;
+      if (max > 0) {
+        next = Math.max(Math.min(next, max), 0);
+      }`,
+    replace: `  const lose0 = Math.max(lose(0), 0);
+  const lose1 = Math.max(lose(1), 0);
+  for (const k of [0, 1]) {
+    const loss = lose(k);
+    if (loss !== 0) {
+      const base = era.get(\`base:\${cid}:\${k}\`) || 0;
+      const max = era.get(\`maxbase:\${cid}:\${k}\`) || 0;
+      let next = base - loss;
+      if (max > 0) {
+        next = next;
+      }`,
     tests: ['source-check'],
     must_mention: '气力耗尽',
   },

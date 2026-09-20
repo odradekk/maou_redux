@@ -1,16 +1,20 @@
 /**
- * @file 指令结算事件 @SOURCE_CHECK 的处理器（issue #45：爱抚可达路径）。
+ * @file 指令结算事件 @SOURCE_CHECK 的处理器（issue #45：爱抚可达路径；
+ * issue #461：自动调教入口 @SOURCE_CHECK_AUTO）。
  *
  * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB  @SOURCE_CHECK（:7-576 主体）
  *     @SOURCE_CHECK_UP_C（:579）/ _V（:675）/ _A（:773）/ _B（:872）/
  *     _LOVE（:987）/_IMPULSIVE（:1052）/_ACHIEVE（:1122）/_PAIN（:1186）/
  *     _POISON（:1294）/_DIRTY（:1338）/_MOIST（:1373）/_DESIRE（:1383）/
- *     _FLASHER（:1393）/_SUBMIT（:1471）/_DEVIATE（:1529）/_LIKE（:1587）/
- *     _FREE（:1598）、@LOVE_MOIST_CHECK_UP（:1609）、@PAIN_DAMAGE_CHECK_UP
- *     （:1628）、@EX_CHECK_UP（:1662-2131）、@SHOW_SOURCE（:2137-2175）/
- *     @PALAM_UP_CHECK（:2182-2242）/@PALAM_MESSAGE（:2278-2394）/
- *     @FIGURE_INDENT_2（:2513-2520）/@LOSELIFE_BAR（:2529）/@LOSEVITAL_BAR
- *     （:2561）
+ *     _FLASHER（:1393）/_SUBMIT（:1471）/_DEVIATE（:1529）/_ANTI（:1576，
+ *     issue #461——manual 路径的调用被原作者注释掉，只有 AUTO 调用）/
+ *     _LIKE（:1587）/_FREE（:1598）、@LOVE_MOIST_CHECK_UP（:1609）、
+ *     @PAIN_DAMAGE_CHECK_UP（:1628）、@EX_CHECK_UP（:1662-2131）、
+ *     @SHOW_SOURCE（:2137-2175）/@PALAM_UP_CHECK（:2182-2242）/
+ *     @PALAM_MESSAGE（:2278-2394）/@FIGURE_INDENT_2（:2513-2520）/
+ *     @LOSELIFE_BAR（:2529）/@LOSEVITAL_BAR（:2561）/@SOURCE_CHECK_AUTO
+ *     （:2594-2807，issue #461）/@PALAM_UP_CHECK_MINI（:2248-2277，issue
+ *     #461——AUTO 专用静默结算，UPID 序缺完整版分支，1:1 保留原作缺陷）
  *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB  @SOURCE_SEX_CHECK（:31）/
  *     @PLAYER_SKILL_CHECK（:45）/@MASTER_SKILL_CHECK（:172）/
  *     @INCEST_SEX_CHECK（:222）/@LOST_VIRGIN_CHECK（:265，守卫段）/
@@ -18,7 +22,9 @@
  *     @MARK_GOT_CHECK（:952-1080）/@YOKUBO_UP_CHECK（:1092）/
  *     @JUJUN_UP_CHECK（:1113）/@EXP_GOT_CHECK（:1124）/@SOKUOCHI_CHECK
  *     （:1315）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561）/
- *     @MASTER_FLAG_CHECK（:1615-1711）/@TARGET_WORMBABY_CHECK（:1727）
+ *     @MASTER_FLAG_CHECK（:1615-1711）/@TARGET_WORMBABY_CHECK（:1727）/
+ *     @AUTO_NUM_CHECK（:1852-1881，issue #461——自动调教次数越多、单次结算
+ *     倍率越高，EX_CHECK_UP 之后立即执行，避免自动调教过度绝顶）
  *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB  @SOURCE_LESBIAN_SEX_CHECK
  *     （:9）/@SOURCE_GAY_SEX_CHECK（:242）/@INCEST（:324）/
  *     @SOUL_DISLOCATION_DEBUFF（:350）
@@ -896,6 +902,12 @@ function source_check_up_desire() {
 }
 function source_check_up_like() {
   add_up(4, src(16)); // 恭顺追加 → 恭顺
+}
+// @SOURCE_CHECK_UP_ANTI（:1576）：反感追加 → 反感。manual 路径的调用被原作
+// 者自己注释掉（SYSTEM_SOURCE.ERB:316，"自动调教的反感"），只有 AUTO 路径
+// 真正调用（:2728-2729）
+function source_check_up_anti() {
+  add_up(11, src(15)); // 反感追加 → 反感
 }
 
 // @SOURCE_CHECK_UP_FLASHER（:1393）：露出 → 欲情 + 耻情 + 反感
@@ -2001,6 +2013,57 @@ function palam_up_check() {
   }
 }
 
+// @AUTO_NUM_CHECK（SYSTEM_SOURCE_SUB1.ERB:1852-1881）：自动调教次数越多，
+// 单次结算的倍率越高。FOR LOCAL,0,17 排除 LOCAL>=11&&LOCAL!=14（即
+// 11/12/13/15/16 跳过，14 是例外仍处理），CFLAG:667 决定倍率档
+function auto_num_check() {
+  const cflag667 = era.get(`cflag:${cid}:667`) || 0;
+  let rate;
+  if (cflag667 < 5) {
+    rate = 1.25;
+  } else if (cflag667 < 10) {
+    rate = 1.5;
+  } else if (cflag667 < 15) {
+    rate = 2.1;
+  } else if (cflag667 < 20) {
+    rate = 2.85;
+  } else if (cflag667 < 25) {
+    rate = 3.9;
+  } else if (cflag667 < 30) {
+    rate = 5.3;
+  } else if (cflag667 < 40) {
+    rate = 7.25;
+  } else {
+    rate = 9.9;
+  }
+  for (let local = 0; local < 17; local++) {
+    if (local >= 11 && local !== 14) {
+      continue;
+    }
+    set_up(local, times(up(local), rate));
+  }
+}
+
+// @PALAM_UP_CHECK_MINI（:2248-2277）：自动调教专用的静默结算——不打印任何
+// 行（原作三处 PRINT/CALL PALAM_MESSAGE_MINI 均被注释）。UPID 序缺少完整版
+// 的"UPCOUNT==15→UPID=15"专属分支，只有 UPCOUNT<=2/==3/else 三支：
+// UPCOUNT=15 落入 else 得 UPID=15-1=14，与 UPCOUNT=3 的 UPID=14 撞车重复
+// 结算；UPID=15 因此永远不会被这个序列命中——原作自身的缺陷，1:1 保留，
+// 登记见 issue #14
+function palam_up_check_mini() {
+  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  const touched = [];
+  for (const upid of ORDER) {
+    if (up(upid) > 0 || down(upid) > 0) {
+      era.set(`palam:${cid}:${upid}`, palam(upid) + up(upid) - down(upid));
+      touched.push(upid);
+    }
+  }
+  for (const upid of touched) {
+    era.set(`delta:${cid}:${upid}`, 0);
+  }
+}
+
 // @LOSELIFE_BAR / @LOSEVITAL_BAR（:2508-2572）：损耗条（32 格）。返回串，
 // 与其后的「 -N 」由调用方拼成一行（原作 PRINT/PRINTFORM 同行累积）
 function loss_bar(label, base, maxbase, loss, vital_variant) {
@@ -2356,6 +2419,118 @@ on('SOURCE_CHECK', async () => {
 
   // :576 参数变动的展示与结算
   palam_up_check();
+});
+
+// @SOURCE_CHECK_AUTO（issue #461，SYSTEM_SOURCE.ERB:2594-2807）：自动调教
+// 入口。与 manual 共享大部分函数，但序列不同——不含口上/EQUIP_COM 链/服装
+// 减益/近亲处女判定/SOURCE_SEX_CHECK（这些只在 manual 的 :11-158 出现，
+// AUTO 从 PLAYER_SKILL_CHECK 直接起步）、不含"同一指令连续"减半（AUTO 不
+// 读 SELECTCOM）、不含两处"相性"梯度块、不含 TFLAG:59 赋值、不含灵魂错位/
+// 失神检查、不含挿しっぱ判定
+on('SOURCE_CHECK_AUTO', async () => {
+  cid = era_flag.target;
+  player = era_flag.player;
+  down_map.clear();
+
+  // :2601-2602 调教者能力检查
+  player_skill_check();
+  master_skill_check();
+
+  // :2607-2627 快乐源换算（C/V/A/B/FREE）
+  source_check_up_c();
+  source_check_up_v();
+  source_check_up_a();
+  source_check_up_b();
+  source_check_up_free();
+
+  // :2632-2638 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）
+  if ((era.get(`base:${cid}:1`) || 0) <= 0 && tflag(201) !== 1) {
+    set_up(0, idiv(up(0), 2));
+    set_up(1, idiv(up(1), 2));
+    set_up(2, idiv(up(2), 2));
+    set_up(14, idiv(up(14), 2));
+  }
+
+  // :2643 / :2648 素质乘算（快乐系）与爱液处理
+  up_talent_cva_check();
+  love_moist_check_up();
+
+  // :2653 绝顶
+  await ex_check_up();
+
+  // :2658-2668 调教对象的射精/喷乳/蠕虫出産（素质门槛不可达，登记）
+  stub_line('TARGET_EJAC_CHECK', '调教对象射精检查', '随扶她/男人票');
+  stub_line('TARGET_MILK_CHECK', '喷乳检查', '随母乳票');
+  stub_line('TARGET_WORMBABY_CHECK', '蠕虫出产检查', '随蠕虫票');
+
+  // :2673-2723 情爱以下全部源换算
+  source_check_up_love();
+  source_check_up_impulsive();
+  source_check_up_achieve();
+  source_check_up_pain();
+  source_check_up_poison();
+  source_check_up_dirty();
+  source_check_up_moist();
+  source_check_up_desire();
+  source_check_up_flasher();
+  source_check_up_submit();
+  source_check_up_deviate();
+
+  // :2728-2735 反感／恭顺——AUTO 专属门槛（manual 路径的 ANTI 调用被原作
+  // 者注释掉，LIKE 在 manual 无条件调用；两者在 AUTO 都受同一门槛限制）
+  if ((era.get(`cflag:${cid}:1`) || 0) === 0 && player === MASTER) {
+    source_check_up_anti();
+    source_check_up_like();
+  }
+
+  // :2740 素质乘算（全参数）
+  up_talent_check();
+
+  // :2744-2747 自动调教次数的倍率（原作注释：放在绝顶处理之后会绝顶过度，
+  // 故放在这里；因此本函数不影响 :2653 的 EX_CHECK_UP 判定）
+  auto_num_check();
+
+  // :2750-2763 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
+  // TFLAG:201 豁免——原作 1:1 保留）
+  if ((era.get(`base:${cid}:1`) || 0) <= 0) {
+    for (const k of [3, 4, 5, 7, 9, 13]) {
+      set_up(k, idiv(up(k), 2));
+    }
+    set_lose(0, lose(0) * 2 + 80);
+  }
+
+  // :2768 苦痛的追加损耗
+  pain_damage_check_up();
+
+  // :2773-2774 体力气力扣减（deltabase → base 当场结算并清零，钳
+  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要
+  // manual 那两个 lose0/lose1 快照变量）
+  for (const k of [0, 1]) {
+    const loss = lose(k);
+    if (loss !== 0) {
+      const base = era.get(`base:${cid}:${k}`) || 0;
+      const max = era.get(`maxbase:${cid}:${k}`) || 0;
+      let next = base - loss;
+      if (max > 0) {
+        next = Math.max(Math.min(next, max), 0);
+      }
+      era.set(`base:${cid}:${k}`, next);
+      era.set(`deltabase:${cid}:${k}`, 0);
+    }
+  }
+
+  // :2779 绝顶时的漏尿处理（素质门槛不可达，登记）
+  stub_line('PISSING_ECST_CHECK', '绝顶漏尿', '随漏尿票');
+  // :2784 刻印取得检查
+  mark_got_check();
+  // :2790 / :2795 经验与陷落检查（素质门槛不可达，登记）
+  stub_line('EXP_GOT_CHECK', '侍奉/被虐快乐经验检查', '随经验票');
+  stub_line('SOKUOCHI_CHECK', '容易陷落检查', '随陷落票');
+
+  // :2800 调教源展示
+  show_source();
+  // :2805 参数变动的静默结算（含 DOWN，不打印）
+  palam_up_check_mini();
 });
 
 module.exports = { STUBBED_CALLS };

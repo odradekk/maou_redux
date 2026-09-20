@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 512;
+export const COUNT = 529;
 
 export default [
   {
@@ -5212,5 +5212,175 @@ export default [
   const player = era_flag.player;`,
     tests: ['com-caress'],
     must_mention: 'JUMP COM125',
+  },
+
+  // —— #461（SYSTEM_SOURCE.ERB：SOURCE_CHECK_AUTO 新逻辑 + EQUIP_COM 接线核实）——
+  {
+    desc: 'M9769 AUTO ANTI/LIKE 门槛：source_check_up_anti() 调用删（专属门槛失去 ANTI 分支）',
+    file: 'ere/event/source-check.js',
+    find: `    source_check_up_anti();
+    source_check_up_like();`,
+    replace: `    source_check_up_like();`,
+    tests: ['source-check'],
+    must_mention: 'AUTO 专属门槛',
+  },
+  {
+    desc: 'M9770 AUTO ANTI/LIKE 门槛：PLAYER==MASTER 判据删（助手调教也能结算 ANTI/LIKE）',
+    file: 'ere/event/source-check.js',
+    find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0 && player === MASTER) {`,
+    replace: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0) {`,
+    tests: ['source-check'],
+    must_mention: 'AUTO 专属门槛',
+  },
+  {
+    desc: 'M9771 AUTO ANTI/LIKE 门槛：CFLAG:1==0 判据取反（反抗刻印生效时反而结算）',
+    file: 'ere/event/source-check.js',
+    find: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) === 0 && player === MASTER) {`,
+    replace: `  if ((era.get(\`cflag:\${cid}:1\`) || 0) !== 0 && player === MASTER) {`,
+    tests: ['source-check'],
+    must_mention: 'AUTO 专属门槛',
+  },
+  {
+    desc: 'M9772 SOURCE_CHECK_UP_ANTI：反感追加写入的 UP id 错（11 → 12）',
+    file: 'ere/event/source-check.js',
+    find: '  add_up(11, src(15)); // 反感追加 → 反感',
+    replace: '  add_up(12, src(15)); // 变异：UP id 误写',
+    tests: ['source-check'],
+    must_mention: 'AUTO 专属门槛',
+  },
+  {
+    desc: 'M9773 AUTO_NUM_CHECK 倍率表：第 1 档 1.25 → 1.3',
+    file: 'ere/event/source-check.js',
+    find: '    rate = 1.25;',
+    replace: '    rate = 1.3;',
+    tests: ['source-check'],
+    must_mention: '八档倍率表',
+  },
+  {
+    desc: 'M9774 AUTO_NUM_CHECK 倍率表：第 2 档 1.5 → 1.6',
+    file: 'ere/event/source-check.js',
+    find: '    rate = 1.5;',
+    replace: '    rate = 1.6;',
+    tests: ['source-check'],
+    must_mention: '八档倍率表',
+  },
+  {
+    desc: 'M9775 AUTO_NUM_CHECK 倍率表：第 3 档门槛 < 15 抬到 < 16',
+    file: 'ere/event/source-check.js',
+    find: '  } else if (cflag667 < 15) {',
+    replace: '  } else if (cflag667 < 16) {',
+    tests: ['source-check'],
+    must_mention: '八档倍率表',
+  },
+  {
+    desc: 'M9776 AUTO_NUM_CHECK 倍率表：末档 9.9 → 9.5',
+    file: 'ere/event/source-check.js',
+    find: '    rate = 9.9;',
+    replace: '    rate = 9.5;',
+    tests: ['source-check'],
+    must_mention: '八档倍率表',
+  },
+  {
+    desc: 'M9777 AUTO_NUM_CHECK 跳过逻辑：UP:14 例外删（14 也被当作跳过处理）',
+    file: 'ere/event/source-check.js',
+    find: '    if (local >= 11 && local !== 14) {',
+    replace: '    if (local >= 11) {',
+    tests: ['source-check'],
+    must_mention: 'UP:14 是例外不跳',
+  },
+  {
+    desc: 'M9778 AUTO_NUM_CHECK 跳过逻辑：跳过起点 >= 11 收窄成 > 11（UP:11 不再跳过）',
+    file: 'ere/event/source-check.js',
+    find: '    if (local >= 11 && local !== 14) {',
+    replace: '    if (local > 11 && local !== 14) {',
+    tests: ['source-check'],
+    must_mention: 'UP:14 是例外不跳',
+  },
+  {
+    desc: 'M9779 AUTO handler Block A：UP:0 减半行删（气力 0 时快乐不再减半）',
+    file: 'ere/event/source-check.js',
+    find: `  // :2632-2638 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）
+  if ((era.get(\`base:\${cid}:1\`) || 0) <= 0 && tflag(201) !== 1) {
+    set_up(0, idiv(up(0), 2));
+    set_up(1, idiv(up(1), 2));
+    set_up(2, idiv(up(2), 2));
+    set_up(14, idiv(up(14), 2));
+  }`,
+    replace: `  // :2632-2638 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）
+  if ((era.get(\`base:\${cid}:1\`) || 0) <= 0 && tflag(201) !== 1) {
+    set_up(1, idiv(up(1), 2));
+    set_up(2, idiv(up(2), 2));
+    set_up(14, idiv(up(14), 2));
+  }`,
+    tests: ['source-check'],
+    must_mention: '两处气力 0 减半块',
+  },
+  {
+    desc: 'M9780 AUTO handler Block A：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半）',
+    file: 'ere/event/source-check.js',
+    find: `  // :2632-2638 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）
+  if ((era.get(\`base:\${cid}:1\`) || 0) <= 0 && tflag(201) !== 1) {`,
+    replace: `  // :2632-2638 气力０的快乐减半（与 manual 同款判据，含 TFLAG:201 豁免）
+  if ((era.get(\`base:\${cid}:1\`) || 0) < 0 && tflag(201) !== 1) {`,
+    tests: ['source-check'],
+    must_mention: '两处气力 0 减半块',
+  },
+  {
+    desc: 'M9781 AUTO handler Block B：减半数组漏 UP:9（AUTO_NUM_CHECK 放大后不再减半）',
+    file: 'ere/event/source-check.js',
+    find: `  // :2750-2763 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
+  // TFLAG:201 豁免——原作 1:1 保留）
+  if ((era.get(\`base:\${cid}:1\`) || 0) <= 0) {
+    for (const k of [3, 4, 5, 7, 9, 13]) {`,
+    replace: `  // :2750-2763 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
+  // TFLAG:201 豁免——原作 1:1 保留）
+  if ((era.get(\`base:\${cid}:1\`) || 0) <= 0) {
+    for (const k of [3, 4, 5, 7, 13]) {`,
+    tests: ['source-check'],
+    must_mention: '两处气力 0 减半块',
+  },
+  {
+    desc: 'M9782 AUTO handler Block B：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半加倍）',
+    file: 'ere/event/source-check.js',
+    find: `  // :2750-2763 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
+  // TFLAG:201 豁免——原作 1:1 保留）
+  if ((era.get(\`base:\${cid}:1\`) || 0) <= 0) {
+    for (const k of [3, 4, 5, 7, 9, 13]) {`,
+    replace: `  // :2750-2763 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
+  // TFLAG:201 豁免——原作 1:1 保留）
+  if ((era.get(\`base:\${cid}:1\`) || 0) < 0) {
+    for (const k of [3, 4, 5, 7, 9, 13]) {`,
+    tests: ['source-check'],
+    must_mention: '两处气力 0 减半块',
+  },
+  {
+    desc: 'M9783 PALAM_UP_CHECK_MINI：顺手"修好" ORDER 末位 14 → 15（原作缺陷被意外补全）',
+    file: 'ere/event/source-check.js',
+    find: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
+    replace: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];',
+    tests: ['source-check'],
+    must_mention: 'UPID 14 结算两次、UPID 15 永不写回',
+  },
+  {
+    desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 首个 UPID 14（第 4 位）删（UP:14 只单次结算）',
+    file: 'ere/event/source-check.js',
+    find: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
+    replace: '  const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
+    tests: ['source-check'],
+    must_mention: 'UPID 14 结算两次、UPID 15 永不写回',
+  },
+  {
+    desc: 'M9785 SOURCE_CHECK_AUTO：down_map.clear() 删（DOWN 跨回合残留）',
+    file: 'ere/event/source-check.js',
+    find: `  down_map.clear();
+
+  // :2601-2602 调教者能力检查
+  player_skill_check();
+  master_skill_check();`,
+    replace: `  // :2601-2602 调教者能力检查
+  player_skill_check();
+  master_skill_check();`,
+    tests: ['source-check'],
+    must_mention: '不跨回合残留 DOWN',
   },
 ];
