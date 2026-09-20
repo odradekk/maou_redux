@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 529;
+export const COUNT = 530;
 
 export default [
   {
@@ -5384,5 +5384,29 @@ export default [
   master_skill_check();`,
     tests: ['source-check'],
     must_mention: '不跨回合残留 DOWN',
+  },
+  {
+    desc: 'M9786 AUTO handler：deltabase→base 结算跳过扣减（损耗当场生效但不写回 base）',
+    file: 'ere/event/source-check.js',
+    find: `  // :2773-2774 体力气力扣减（deltabase → base 当场结算并清零，钳
+  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要
+  // manual 那两个 lose0/lose1 快照变量）
+  for (const k of [0, 1]) {
+    const loss = lose(k);
+    if (loss !== 0) {
+      const base = era.get(\`base:\${cid}:\${k}\`) || 0;
+      const max = era.get(\`maxbase:\${cid}:\${k}\`) || 0;
+      let next = base - loss;`,
+    replace: `  // :2773-2774 体力气力扣减（deltabase → base 当场结算并清零，钳
+  // 0..maxbase——与 manual 同款语义，见文件头；AUTO 不显示损耗条，故不需要
+  // manual 那两个 lose0/lose1 快照变量）
+  for (const k of [0, 1]) {
+    const loss = lose(k);
+    if (loss !== 0) {
+      const base = era.get(\`base:\${cid}:\${k}\`) || 0;
+      const max = era.get(\`maxbase:\${cid}:\${k}\`) || 0;
+      let next = base;`,
+    tests: ['source-check'],
+    must_mention: '当场结算到 base',
   },
 ];

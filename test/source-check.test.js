@@ -1025,6 +1025,22 @@ test('AUTO 处理器接线：两处气力 0 减半块与 AUTO_NUM_CHECK 按原�
   );
 });
 
+test('气力 0 损耗结算：Block B 写入的 deltabase 经 :2773-2774 当场结算到 base（AUTO 不显示损耗条，仍须扣减）', async () => {
+  const fixture = await run_auto_check((f) => {
+    f.store.set('base:31:1', 0); // 气力 0，仅触发 set_lose(0, lose(0)*2+80)=80，无其他 delta 输入
+  });
+  assert.equal(
+    fixture.store.get('base:31:0'),
+    1370,
+    'base:31:0 初始 1450，扣减 Block B 写入的 80 损耗',
+  );
+  assert.equal(
+    fixture.store.get('deltabase:31:0'),
+    0,
+    '结算后 deltabase 清零，不残留到下一回合',
+  );
+});
+
 test('PALAM_UP_CHECK_MINI：原作缺失 UPCOUNT==15 分支——UPID 14 结算两次、UPID 15 永不写回（原作缺陷，登记 issue #14）', async () => {
   const fixture = await run_auto_check((f) => {
     f.store.set('delta:31:14', 100); // 乳房快乐：验证双重结算

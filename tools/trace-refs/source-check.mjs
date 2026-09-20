@@ -504,7 +504,7 @@ export const FILES = [
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
         ref: '2728-2729',
-        any: [/CALL SOURCE_CHECK_UP_ANTI/],
+        any: [/^[ \t]*CALL SOURCE_CHECK_UP_ANTI[ \t]*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
