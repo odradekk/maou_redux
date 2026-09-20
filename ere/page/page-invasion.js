@@ -17,6 +17,8 @@
  *   - CLEARLINE 局部重绘不镜像（:26 等）：ere 控制台是滚动视图，画面每次
  *     进入整屏重画（page-select-target 同款先例）；$INPUT_LOOP/$INPUT_LOOP2
  *     对无效输入只重问不重画（GOTO），1:1 保留；
+ *   - [999]/[1000] 原作同行显示（:82-83 的 PRINT 接 PRINTFORML，不换行）；
+ *     ere 侧按钮是块级元素，拆成两个 printButton 各占一行，功能等价；
  *   - BARSTR 文本条 → era 原生进度条格（printMultiColumns 的 progress 格，
  *     page-train 先例）：barWidth 16 保住条后数值列（引擎缺省 24 会被
  *     el-col-0 吞掉，M155 的教训）；本路径无黄金样本（#108 接受），逐字
@@ -37,8 +39,14 @@
  *     派发检查（:100，只认 route_33 <= 500）两组条件不对称是原作真实缺陷，
  *     1:1 保留：shrine_stage >= 1 时按钮可点，但 route_33 未开窗仍会被
  *     拒收重问；
- *   - [1001]（AGENT_MENU）的 PRINTL 按钮渲染行在原作已被注释、永不可达，
- *     未移植派发分支（docs/stub-registry.md 登记）。
+ *   - [1001]（AGENT_MENU）的 PRINTL 按钮渲染行（:84）在原作已被注释，但
+ *     ELSEIF RESULT == 1001 / CALL AGENT_MENU（:93-95）本身是活代码，排在
+ *     :102 的 >=6 拒收之前——Emuera 的 INPUT 接受任意整数，手工键入 1001
+ *     在原作里仍可达。ere 的 era.input() 按本轮已打印按钮做白名单校验
+ *     （test/helpers/era-fixture.js 镜像引擎 returnFromButton），未打印过
+ *     的 1001 会在引擎层被直接拒收，先于本函数的派发逻辑，因此主动不移植
+ *     该分支（docs/stub-registry.md 登记）——原因是引擎层校验，不是原作
+ *     已注释。
  */
 
 const era = require('#/era-electron');

@@ -109,6 +109,28 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '102',
+        any: [/^\s*ELSEIF RESULT >= 6\s+&& RESULT != 1000 && RESULT != 999$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '82-83',
+        any: [
+          /^\s*PRINTFORML \[1000\]向城裏投放水晶球\[\{EX_FLAG:9011\}\/\{EX_FLAG:9010\}\]/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '84',
+        any: [/^\s*;PRINTL \[1001\] - 擾亂工作$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '93-95',
+        any: [/^\s*CALL AGENT_MENU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '108-138',
         any: [/^\s*;人間界$/m],
       },
