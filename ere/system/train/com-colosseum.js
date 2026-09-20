@@ -444,14 +444,14 @@ const MONSTER_CONFIGS = {
     label: '霉菌犬',
     open_lose0: (level, weak) => monster_lose0(level, weak),
     open_lose1: (level) => level * 20,
-    threshold: (level) => 2 * level,
+    threshold: (level) => 2 * level, // :23 IF RESULT < (2 * CFLAG:0:9)
     extra_lose: ['level', 'level'], // [L9, L9]
     income: (lose0) => lose0 * 2,
     lose_no_stamina: '霉菌犬压着筋疲力尽的{t}扭动着腰。',
     lose_hit: '{t}吸入了霉菌犬的有毒吐息。',
     lose_down: '随后筋疲力尽地倒下了。',
     win: '{t}闭气躲过霉菌犬的有毒气息，拼命逃跑着。',
-    retire: '让霉菌犬退下了……',
+    retire: '让霉菌犬退下了……', // :98 PRINTFORMW %SAVESTR:MASTER%让霉菌犬退下了……
   },
   204: {
     label: '兽人',
@@ -471,7 +471,7 @@ const MONSTER_CONFIGS = {
     label: '腐烂猪',
     open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),
     open_lose1: (level) => level * 20,
-    threshold: (level) => 4 * level,
+    threshold: (level) => 4 * level, // :25 IF RESULT < (4 * CFLAG:0:9)
     extra_lose: ['level*2', 'level*2'],
     income: (lose0) => lose0 * 4,
     lose_no_stamina:
@@ -479,7 +479,7 @@ const MONSTER_CONFIGS = {
     lose_hit: '腐烂猪用腐败液体淋透了{t}全身！',
     lose_down: '{t}无法忍耐猛烈的臭气，跪倒在地。',
     win: '{t}向腐烂猪发动突击，才终于勉强打平。',
-    retire: '让腐烂猪退下了……',
+    retire: '让腐烂猪退下了……', // :100 PRINTFORMW %SAVESTR:MASTER%让腐烂猪退下了……
   },
   206: {
     label: '巨魔',

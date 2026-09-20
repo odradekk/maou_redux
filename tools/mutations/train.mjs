@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 531;
+export const COUNT = 598;
 
 export default [
   {
@@ -207,8 +207,8 @@ export default [
   {
     desc: 'M38 能力分支：命中表判假（@ABLUPxx 占位不再出现）',
     file: 'ere/system/train/juel-check.js',
-    find: '    if (ABLUP_IDS.includes(result)) {',
-    replace: '    if (false && ABLUP_IDS.includes(result)) {',
+    find: '    } else if (ABLUP_IDS.includes(result)) {',
+    replace: '    } else if (false && ABLUP_IDS.includes(result)) {',
     tests: ['juel-check'],
     must_mention: '能力分支',
   },
@@ -5192,6 +5192,651 @@ export default [
     tests: ['train-message'],
     must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
   },
+  {
+    desc: 'M9649 get_ablup_state：ARG&1 文案',
+    file: 'ere/system/train/ablup.js',
+    find: "if (arg & 1) text += '点数不足 ';",
+    replace: "if (arg & 1) text += '分数不足 ';",
+    tests: ['ablup'],
+    must_mention: 'get_ablup_state',
+  },
+  {
+    desc: 'M9650 get_ablup_state：ARG&4 文案',
+    file: 'ere/system/train/ablup.js',
+    find: "if (arg & 4) text += '能力不足';",
+    replace: "if (arg & 4) text += '实力不足';",
+    tests: ['ablup'],
+    must_mention: 'get_ablup_state',
+  },
+  {
+    desc: 'M9651 ablup0：Lv5+ 门槛越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl0() >= 5 && talent(74) === 0) {',
+    replace: 'if (abl0() > 5 && talent(74) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'ablup0：三档终止判定',
+  },
+  {
+    desc: 'M9652 ablup0：已达最高级门槛',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl0() >= calc() * 5 + 10) {',
+    replace: 'if (abl0() >= calc() * 5 + 11) {',
+    tests: ['ablup'],
+    must_mention: 'ablup0：已达最高级',
+  },
+  {
+    desc: 'M9653 ablup0：阴蒂钝感倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(101)) a = times(a, 1.2); // 阴蒂钝感 :198-200',
+    replace: 'if (talent(101)) a = times(a, 1.3); // 阴蒂钝感 :198-200',
+    tests: ['ablup'],
+    must_mention: '阴蒂钝感',
+  },
+  {
+    desc: 'M9654 ablup0：阴蒂敏感倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(102)) a = times(a, 0.8); // 阴蒂敏感 :202-204',
+    replace: 'if (talent(102)) a = times(a, 0.7); // 阴蒂敏感 :202-204',
+    tests: ['ablup'],
+    must_mention: '阴蒂钝感',
+  },
+  {
+    desc: 'M9655 ablup0：其他部位封锁折扣分母（第一档）',
+    file: 'ere/system/train/ablup.js',
+    find: `if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (15 - c)) / 15);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+    }
+    if (talent(76)) a = times(a, 0.8); // 淫乱 :215-217
+    if (talent(74)) a = times(a, 0.8); // 自慰狂 :218-220`,
+    replace: `if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (14 - c)) / 15);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+    }
+    if (talent(76)) a = times(a, 0.8); // 淫乱 :215-217
+    if (talent(74)) a = times(a, 0.8); // 自慰狂 :218-220`,
+    tests: ['ablup'],
+    must_mention: '其他部位封锁折扣——三个区间分母恒为 15',
+  },
+  {
+    desc: 'M9656 ablup0：自慰狂折扣倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(74)) a = times(a, 0.8); // 自慰狂 :218-220',
+    replace: 'if (talent(74)) a = times(a, 0.9); // 自慰狂 :218-220',
+    tests: ['ablup'],
+    must_mention: 'ablup0：Lv5-9 梯子字面值',
+  },
+  {
+    desc: 'M9657 ablup1：Lv5+ 门槛越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl1() >= 5 && talent(78) === 0) {',
+    replace: 'if (abl1() > 5 && talent(78) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'ablup1：两档终止判定',
+  },
+  {
+    desc: 'M9658 ablup1：巨乳倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(110)) a = times(a, 1.1); // 巨乳',
+    replace: 'if (talent(110)) a = times(a, 1.2); // 巨乳',
+    tests: ['ablup'],
+    must_mention: 'B钝感×1.20',
+  },
+  {
+    desc: 'M9659 ablup1：绝壁倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(116)) a = times(a, 0.65); // 绝壁',
+    replace: 'if (talent(116)) a = times(a, 0.6); // 绝壁',
+    tests: ['ablup'],
+    must_mention: 'B钝感×1.20',
+  },
+  {
+    desc: 'M9660 ablup1：贫乳倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(109)) a = times(a, 0.8); // 贫乳',
+    replace: 'if (talent(109)) a = times(a, 0.7); // 贫乳',
+    tests: ['ablup'],
+    must_mention: 'B钝感×1.20',
+  },
+  {
+    desc: 'M9661 ablup1：点数不足位判定',
+    file: 'ere/system/train/ablup.js',
+    find: `const juel14 = era.get(\`juel:\${cid}:14\`) || 0;
+    let i = 0;
+    if (juel14 < a) i |= 1;`,
+    replace: `const juel14 = era.get(\`juel:\${cid}:14\`) || 0;
+    let i = 0;
+    if (juel14 <= a) i |= 1;`,
+    tests: ['ablup'],
+    must_mention: 'ablup1：戒备森严三级加成',
+  },
+  {
+    desc: 'M9662 ablup1：成功购买扣珠额',
+    file: 'ere/system/train/ablup.js',
+    find: `era.add(\`juel:\${cid}:14\`, -a); // :64-66`,
+    replace: `era.add(\`juel:\${cid}:14\`, -a - 1); // :64-66`,
+    tests: ['ablup'],
+    must_mention: 'ablup1：两档终止判定',
+  },
+  {
+    desc: 'M9663 ablup2：男人却下守卫',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(122)) return; // 男人却下（原作在 @ABLUP2 与 @DECIDE_ABLUP2 内各查一次，逐字相同，内联后合一）',
+    replace:
+      'if (talent(121)) return; // 男人却下（原作在 @ABLUP2 与 @DECIDE_ABLUP2 内各查一次，逐字相同，内联后合一）',
+    tests: ['ablup'],
+    must_mention: 'ablup2：男人完全无法访问',
+  },
+  {
+    desc: 'M9664 ablup2：私处钝感 A 倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.2);
+      b = times(b, 1.1);`,
+    replace: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.3);
+      b = times(b, 1.1);`,
+    tests: ['ablup'],
+    must_mention: '私处钝感 A×1.20',
+  },
+  {
+    desc: 'M9665 ablup2：私处钝感 B 倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.2);
+      b = times(b, 1.1);`,
+    replace: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.2);
+      b = times(b, 1.2);`,
+    tests: ['ablup'],
+    must_mention: '私处钝感 A×1.20',
+  },
+  {
+    desc: 'M9666 ablup2：性交经验不足位',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel1 < a) i |= 1; // :227-228
+    if (exp0 < b) i |= 2; // :229-231`,
+    replace: `    if (juel1 < a) i |= 1; // :227-228
+    if (exp0 <= b) i |= 2; // :229-231`,
+    tests: ['ablup'],
+    must_mention: '私处经验不足单独计为经验不足位',
+  },
+  {
+    desc: 'M9667 ablup2：性爱狂折扣',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (talent(75)) {
+      a = times(a, 0.8); // 性爱狂
+      b = times(b, 0.8);
+    }`,
+    replace: `    if (talent(75)) {
+      a = times(a, 0.9); // 性爱狂
+      b = times(b, 0.8);
+    }`,
+    tests: ['ablup'],
+    must_mention: '私处钝感 A×1.20',
+  },
+  {
+    desc: 'M9668 ablup2：B 复利率（10-14 档）',
+    file: 'ere/system/train/ablup.js',
+    find: `    const lv = abl2();
+    // A＝私处点数需求、B＝私处经验需求，梯子与复利率彼此不对称（:119-170）
+    let a, b;
+    if (lv <= 9) {
+      a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
+      b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];
+    } else if (lv < 15) {
+      a = 180000;
+      b = 600;
+      for (let n = 0; n < lv - 9; n++) {
+        a = compound(a, 125);
+        b = compound(b, 115);
+      }
+    } else if (lv < 20) {`,
+    replace: `    const lv = abl2();
+    // A＝私处点数需求、B＝私处经验需求，梯子与复利率彼此不对称（:119-170）
+    let a, b;
+    if (lv <= 9) {
+      a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
+      b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];
+    } else if (lv < 15) {
+      a = 180000;
+      b = 600;
+      for (let n = 0; n < lv - 9; n++) {
+        a = compound(a, 125);
+        b = compound(b, 116);
+      }
+    } else if (lv < 20) {`,
+    tests: ['ablup'],
+    must_mention: 'Lv10 复利梯子首级（A/B 各自复利率不对称）',
+  },
+  {
+    desc: 'M9669 ablup2：结算成功扣珠額',
+    file: 'ere/system/train/ablup.js',
+    find: `era.add(\`juel:\${cid}:1\`, -a); // :69-71`,
+    replace: `era.add(\`juel:\${cid}:1\`, -a - 1); // :69-71`,
+    tests: ['ablup'],
+    must_mention: 'ablup2：三档终止判定',
+  },
+  {
+    desc: 'M9670 ablup3：Lv5+ 门槛越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl3() >= 5 && talent(77) === 0) {',
+    replace: 'if (abl3() > 5 && talent(77) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'ablup3：三档终止判定',
+  },
+  {
+    desc: 'M9671 ablup3：A钝感 B 倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (talent(105)) {
+      // A钝感
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+    }`,
+    replace: `    if (talent(105)) {
+      // A钝感
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+    }`,
+    tests: ['ablup'],
+    must_mention: 'A钝感 A×1.20',
+  },
+  {
+    desc: 'M9672 ablup3：尻穴狂折扣',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (talent(77)) {
+      a = times(a, 0.8); // 尻穴狂
+      b = times(b, 0.8);
+    }`,
+    replace: `    if (talent(77)) {
+      a = times(a, 0.7); // 尻穴狂
+      b = times(b, 0.8);
+    }`,
+    tests: ['ablup'],
+    must_mention: 'A钝感 A×1.20',
+  },
+  {
+    desc: 'M9673 ablup3：肛门经验不足位',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel2 < a) i |= 1; // :223-224
+    if (exp1 < b) i |= 2; // :225-227`,
+    replace: `    if (juel2 < a) i |= 1; // :223-224
+    if (exp1 <= b) i |= 2; // :225-227`,
+    tests: ['ablup'],
+    must_mention: 'A钝感 A×1.20',
+  },
+  {
+    desc: 'M9674 ablup3：其他部位封锁折扣 B 分母',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (15 - c)) / 15);
+      b = Math.trunc((b * (20 - c)) / 20);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+      b = Math.trunc((b * (21 - c)) / 20);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+      b = Math.trunc((b * (22 - c)) / 20);
+    }
+    if (talent(76)) {
+      a = times(a, 0.8); // 淫乱
+      b = times(b, 0.8);
+    }
+    if (talent(77)) {`,
+    replace: `    if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (15 - c)) / 15);
+      b = Math.trunc((b * (19 - c)) / 20);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+      b = Math.trunc((b * (21 - c)) / 20);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+      b = Math.trunc((b * (22 - c)) / 20);
+    }
+    if (talent(76)) {
+      a = times(a, 0.8); // 淫乱
+      b = times(b, 0.8);
+    }
+    if (talent(77)) {`,
+    tests: ['ablup'],
+    must_mention: '其他部位封锁折扣——A分母15、B分母20不对称',
+  },
+  {
+    desc: 'M9675 ablup4：Lv2 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: 'let a = [1, 50, 600, 7000, 45000][lv];',
+    replace: 'let a = [1, 50, 601, 7000, 45000][lv];',
+    tests: ['ablup'],
+    must_mention: 'ablup4：Lv0-4 梯子字面值',
+  },
+  {
+    desc: 'M9676 ablup4：Lv3 戒备森严倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv === 3 && talent(27)) a = times(a, 2.0); // :64-66',
+    replace: 'if (lv === 3 && talent(27)) a = times(a, 2.1); // :64-66',
+    tests: ['ablup'],
+    must_mention: 'ablup4：Lv0-4 梯子字面值',
+  },
+  {
+    desc: 'M9677 ablup4：Lv4 戒备森严倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv === 4 && talent(27)) a = times(a, 3.0); // :70-72',
+    replace: 'if (lv === 4 && talent(27)) a = times(a, 3.1); // :70-72',
+    tests: ['ablup'],
+    must_mention: 'ablup4：Lv0-4 梯子字面值',
+  },
+  {
+    desc: 'M9678 ablup4：状态文案尾随空格',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (i & 1) status += '点数不足 ';
+      if (i & 2) status += '经验不足';
+    }
+    era.printButton(\`\${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
+    replace: `      if (i & 1) status += '点数不足';
+      if (i & 2) status += '经验不足';
+    }
+    era.printButton(\`\${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
+    tests: ['ablup'],
+    must_mention: 'ablup4：状态文案手写拼接',
+  },
+  {
+    desc: 'M9679 ablup4：不满足重试文案',
+    file: 'ere/system/train/ablup.js',
+    find: "era.print('条件不足。'); // :33",
+    replace: "era.print('条件足够。'); // :33",
+    tests: ['ablup'],
+    must_mention: 'ablup4：点数不足重试提示',
+  },
+  {
+    desc: 'M9680 ablup5：Lv1 EXPLV 阈值索引',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[3] ? 20 : 50;',
+    replace: 'a = exp1 >= EXPLV[4] ? 20 : 50;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9681 ablup5：Lv1 覆盖后价格',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[3] ? 20 : 50;',
+    replace: 'a = exp1 >= EXPLV[3] ? 21 : 50;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9682 ablup5：Lv2 未达阈值价格',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[4] ? 100 : 600;',
+    replace: 'a = exp1 >= EXPLV[4] ? 100 : 601;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9683 ablup5：Lv3 覆盖后价格',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[5] ? 500 : 7000;',
+    replace: 'a = exp1 >= EXPLV[5] ? 501 : 7000;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9684 ablup5：Lv4 B 门槛',
+    file: 'ere/system/train/ablup.js',
+    find: `      a = exp1 >= EXPLV[5] ? 8000 : 45000;
+      b = 300;`,
+    replace: `      a = exp1 >= EXPLV[5] ? 8000 : 45000;
+      b = 301;`,
+    tests: ['ablup'],
+    must_mention: '戒备森严在 Lv3/4 对 A、B 同时加成',
+  },
+  {
+    desc: 'M9685 ablup5：Lv4 戒备森严倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (talent(27)) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
+      }
+    }
+
+    const juel2 = era.get(\`juel:\${cid}:2\`) || 0;`,
+    replace: `      if (talent(27)) {
+        a = times(a, 3.1);
+        b = times(b, 3.0);
+      }
+    }
+
+    const juel2 = era.get(\`juel:\${cid}:2\`) || 0;`,
+    tests: ['ablup'],
+    must_mention: '戒备森严在 Lv3/4 对 A、B 同时加成',
+  },
+  {
+    desc: 'M9686 ablup6：Lv0 C 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [100, 20, 100, 1, 1];',
+    replace: '[a, b, c, d, e] = [100, 20, 101, 1, 1];',
+    tests: ['ablup'],
+    must_mention: 'Lv0 梯子字面值，三个选项各自的按钮文案',
+  },
+  {
+    desc: 'M9687 ablup6：倒错的折扣误加到 E',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 倒错的：:59-65，仅 A/B/C/D，不含 E
+      a = times(a, 0.75);
+      b = times(b, 0.75);
+      c = times(c, 0.75);
+      d = times(d, 0.75);
+    }`,
+    replace: `      // 倒错的：:59-65，仅 A/B/C/D，不含 E
+      a = times(a, 0.75);
+      b = times(b, 0.75);
+      c = times(c, 0.75);
+      d = times(d, 0.75);
+      e = times(e, 0.75);
+    }`,
+    tests: ['ablup'],
+    must_mention: '倒错的×0.75 同时折扣 A/B/C/D，唯独不动 E',
+  },
+  {
+    desc: 'M9688 ablup6：顺从门槛公式',
+    file: 'ere/system/train/ablup.js',
+    find: `    const gate_needed = lv + 1;
+    const gate_line = \`\${era.get('ablname:0')}\${gate_needed}LV以上\`; // :68-70`,
+    replace: `    const gate_needed = lv + 2;
+    const gate_line = \`\${era.get('ablname:0')}\${gate_needed}LV以上\`; // :68-70`,
+    tests: ['ablup'],
+    must_mention: '顺从门槛（ABL:0）不足时三个选项同时计为能力不足',
+  },
+  {
+    desc: 'M9689 ablup6：异常经验门槛错套到 Lv2',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (lv === 3 && talent(86) === 0) {
+      anomaly_line = \`\${era.get('expname:50')}有\`;
+      if ((era.get(\`exp:\${cid}:50\`) || 0) === 0) {`,
+    replace: `    if (lv === 2 && talent(86) === 0) {
+      anomaly_line = \`\${era.get('expname:50')}有\`;
+      if ((era.get(\`exp:\${cid}:50\`) || 0) === 0) {`,
+    tests: ['ablup'],
+    must_mention: '异常经验门槛仅 Lv3/4 生效',
+  },
+  {
+    desc: 'M9690 ablup6：选项0 精液经验门槛位',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel6 < a) i |= 1; // :100-101
+    if (exp2 < e) i |= 2; // :102-104 绝顶经验
+    if (exp20 < e) i |= 2; // :105-107 精液经验（同一个 bit）`,
+    replace: `    if (juel6 < a) i |= 1; // :100-101
+    if (exp2 < e) i |= 2; // :102-104 绝顶经验
+    if (exp20 <= e) i |= 2; // :105-107 精液经验（同一个 bit）`,
+    tests: ['ablup'],
+    must_mention: '选项0 的绝顶/精液经验双门槛各自独立触发经验不足',
+  },
+  {
+    desc: 'M9691 ablup6：Lv3 E 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [10000, 2000, 0, 20, 10];',
+    replace: '[a, b, c, d, e] = [10000, 2000, 0, 20, 11];',
+    tests: ['ablup'],
+    must_mention: '戒备森严在 Lv3/4 对 A/B/D 三级加成',
+  },
+  {
+    desc: 'M9692 ablup6：Lv4 D 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [30000, 8000, 0, 100, 20];',
+    replace: '[a, b, c, d, e] = [30000, 8000, 0, 101, 20];',
+    tests: ['ablup'],
+    must_mention: 'Lv4 奉仕快乐经验门槛正好等于 D=100 时判定为充足',
+  },
+  {
+    desc: 'M9693 ablup6：三个选项越界重试文案',
+    file: 'ere/system/train/ablup.js',
+    find: "      era.print('条件不足。请重新输入。'); // :211-212",
+    replace: "      era.print('条件足够。请重新输入。'); // :211-212",
+    tests: ['ablup'],
+    must_mention: '三个选项各自的"条件不足。请重新输入。"重试文案',
+  },
+  {
+    desc: 'M9694 ablup7：Lv2 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: 'let a = [100, 1000, 5000, 15000, 35000][lv]; // :14-30',
+    replace: 'let a = [100, 1000, 5001, 15000, 35000][lv]; // :14-30',
+    tests: ['ablup'],
+    must_mention: 'ablup7：Lv0-4 梯子字面值',
+  },
+  {
+    desc: 'M9695 ablup7：修复重复折扣缺陷（第二段应判 TALENT:28）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(80)) a = times(a, 0.5); // :37-40 缺陷：应判 TALENT:28，1:1 保留',
+    replace:
+      'if (talent(28)) a = times(a, 0.5); // :37-40 缺陷：应判 TALENT:28，1:1 保留',
+    tests: ['ablup'],
+    must_mention: '双重折扣缺陷',
+  },
+  {
+    desc: 'M9696 ablup7：始终生效经验门槛分档',
+    file: 'ere/system/train/ablup.js',
+    find: `    let exp_line;
+    if (lv < 2) {`,
+    replace: `    let exp_line;
+    if (lv < 3) {`,
+    tests: ['ablup'],
+    must_mention: '始终生效的第二条经验门槛',
+  },
+  {
+    desc: 'M9697 ablup7：欲望门槛公式',
+    file: 'ere/system/train/ablup.js',
+    find: `    const gate_needed = lv + 1;
+    const gate_line = \`\${era.get('ablname:1')}\${gate_needed}LV以上\`; // :43-45`,
+    replace: `    const gate_needed = lv + 2;
+    const gate_line = \`\${era.get('ablname:1')}\${gate_needed}LV以上\`; // :43-45`,
+    tests: ['ablup'],
+    must_mention: '欲望门槛（ABL:1）不足计为能力不足',
+  },
+  {
+    desc: 'M9698 ablup7：不满足重试文案',
+    file: 'ere/system/train/ablup.js',
+    find: "era.print('条件不满足。'); // :118",
+    replace: "era.print('条件已满足。'); // :118",
+    tests: ['ablup'],
+    must_mention: '点数不足重试提示"条件不满足。"',
+  },
+  {
+    desc: 'M9699 ablup8：Lv1 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [500, 500, 0, 500, 300];',
+    replace: '[a, b, c, d, e] = [500, 500, 0, 501, 300];',
+    tests: ['ablup'],
+    must_mention: 'ablup8：Lv1 梯子字面值',
+  },
+  {
+    desc: 'M9700 ablup8：开放折扣倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 开放：:57-64，先于倒错的，五个变量都受影响
+      a = times(a, 0.5);`,
+    replace: `      // 开放：:57-64，先于倒错的，五个变量都受影响
+      a = times(a, 0.6);`,
+    tests: ['ablup'],
+    must_mention: '开放×0.50 先于倒错的×0.75',
+  },
+  {
+    desc: 'M9701 ablup8：修复缺失哨兵缺陷',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (b > 0) {
+      if (juel9 < a) i |= 1; // :106-107`,
+    replace: `    if (b >= 0) {
+      if (juel9 < a) i |= 1; // :106-107`,
+    tests: ['ablup'],
+    must_mention: '缺失哨兵缺陷',
+  },
+  {
+    desc: 'M9702 ablup8：Lv3 E 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [0, 0, 10, 3000, 6000];',
+    replace: '[a, b, c, d, e] = [0, 0, 10, 3000, 6001];',
+    tests: ['ablup'],
+    must_mention: 'Lv3 起选项0（B=0）不再渲染',
+  },
+  {
+    desc: 'M9703 ablup8：选项1 绝顶经验门槛',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (exp30 < c) j |= 2; // :151-153
+      if (exp2 < 1) j |= 2; // :154-156`,
+    replace: `      if (exp30 < c) j |= 2; // :151-153
+      if (exp2 < 2) j |= 2; // :154-156`,
+    tests: ['ablup'],
+    must_mention: '选项1 绝顶经验门槛正好等于 1 时判定为充足',
+  },
+  {
+    desc: 'M9704 ablup9：Lv1 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d] = [1000, 200, 0, 5000];',
+    replace: '[a, b, c, d] = [1001, 200, 0, 5000];',
+    tests: ['ablup'],
+    must_mention: 'ablup9：Lv1 梯子字面值',
+  },
+  {
+    desc: 'M9705 ablup9：双性恋折扣倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 双性恋：:52-58，先于倒错的
+      a = times(a, 0.25);`,
+    replace: `      // 双性恋：:52-58，先于倒错的
+      a = times(a, 0.3);`,
+    tests: ['ablup'],
+    must_mention: '双性恋×0.25 先于倒错的×0.75',
+  },
+  {
+    desc: 'M9706 ablup9：选项1 隐藏门槛',
+    file: 'ere/system/train/ablup.js',
+    find: `    const juel0 = era.get(\`juel:\${cid}:0\`) || 0;
+    if (d > 0) {`,
+    replace: `    const juel0 = era.get(\`juel:\${cid}:0\`) || 0;
+    if (d >= 0) {`,
+    tests: ['ablup'],
+    must_mention: '隐藏选项(D=0)结构上不可选中',
+  },
+  {
+    desc: 'M9707 ablup9：选项0 屈服点数判定',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel5 < a) i |= 1; // :87-89
+    if (juel6 < c) i |= 1; // :90-92`,
+    replace: `    if (juel5 < a) i |= 1; // :87-89
+    if (juel6 <= c) i |= 1; // :90-92`,
+    tests: ['ablup'],
+    must_mention: 'ablup9：Lv2 起选项0 显示屈服点数门槛',
+  },
+  {
+    desc: 'M9708 ablup9：成功购买结算文案',
+    file: 'ere/system/train/ablup.js',
+    find: `await era.printAndWait(\`\${era.get('ablname:9') || ''}变为LV\${new_lv}。\`); // :185-188 PRINTW`,
+    replace: `await era.printAndWait(\`\${era.get('ablname:9') || ''}升级到LV\${new_lv}。\`); // :185-188 PRINTW`,
+    tests: ['ablup'],
+    must_mention: '两个成功购买路径各自扣对应珠、升级、等待按键后显示变为LV',
+  },
 
   // —— #459（COMF3_自慰 头部升格跳转补齐）——
   {
@@ -5423,5 +6068,66 @@ export default [
 }`,
     tests: ['source-check'],
     must_mention: 'delta:15 应在处理器执行后清零',
+  },
+  // —— #460（COMF203_カビ犬／COMF205_腐れ豚 变异覆盖补齐）——
+  {
+    desc: 'M9829 怪物开战损耗的等级缩放删（203 的气力损耗 LOSEBASE:1）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(level, weak),\n    open_lose1: (level) => level * 20,',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(level, weak),\n    open_lose1: () => 5, // 变异：气力损耗等级缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '霉菌犬',
+  },
+  {
+    desc: 'M9830 怪物败北追加伤害删（203 的 extra_lose）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    extra_lose: ['level', 'level'], // [L9, L9]",
+    replace: '    extra_lose: [0, 0], // 变异：败北追加伤害删',
+    tests: ['com-colosseum'],
+    must_mention: '気力有余的败北支',
+  },
+  {
+    desc: 'M9831 怪物收入倍率表改坏（203 的 ×2 改 ×3）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    income: (lose0) => lose0 * 2,',
+    replace: '    income: (lose0) => lose0 * 3,',
+    tests: ['com-colosseum'],
+    must_mention: '死亡斗场收入 × 2',
+  },
+  {
+    desc: 'M9832 怪物开战损耗的体力值算法改坏（205 的 ×25÷10 缩放删）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(level, weak), // 变异：×25÷10 缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '腐烂猪',
+  },
+  {
+    desc: 'M9833 怪物开战损耗的等级缩放删（205 的气力损耗 LOSEBASE:1）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),\n    open_lose1: (level) => level * 20,',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),\n    open_lose1: () => 5, // 变异：气力损耗等级缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '胜利支',
+  },
+  {
+    desc: 'M9834 怪物败北追加伤害删（205 的 extra_lose）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    threshold: (level) => 4 * level, // :25 IF RESULT < (4 * CFLAG:0:9)\n    extra_lose: ['level*2', 'level*2'],",
+    replace:
+      '    threshold: (level) => 4 * level, // :25 IF RESULT < (4 * CFLAG:0:9)\n    extra_lose: [0, 0], // 变异：败北追加伤害删',
+    tests: ['com-colosseum'],
+    must_mention: '気力有余的败北支',
+  },
+  {
+    desc: 'M9835 怪物收入倍率表改坏（205 的 ×4 改 ×5）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    income: (lose0) => lose0 * 4,',
+    replace: '    income: (lose0) => lose0 * 5,',
+    tests: ['com-colosseum'],
+    must_mention: '死亡斗场收入 × 4',
   },
 ];
