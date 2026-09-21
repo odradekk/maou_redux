@@ -21295,7 +21295,7 @@ async function try_kojo_or_stub(
           // :5527`,
     replace: `        if (chara(target).train.穿孔装着 & p) {
           // :5527`,
-    tests: ['kojo-k3-noble'],
+    tests: ['kojo-k3-noble', 'facade-property-check'],
     must_mention: '因为第一次在皮肤上开洞而发出了悲鸣',
   },
   {

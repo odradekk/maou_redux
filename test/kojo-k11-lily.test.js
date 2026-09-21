@@ -7912,42 +7912,46 @@ test('SELF_KOJO_K11 妊娠发觉 野良犬支按 CFLAG:1 != 9 判牝犬：== 9 �
       breakdown: false,
       talent136: true,
       state: 2,
-      fragment: '是魔王大人饲养的那头健壮勇猛的野狗的孩子',
+      expect: [
+        '「人家怀孕了……是魔王大人饲养的那头健壮勇猛的野狗的孩子呢……会像父亲一样强壮的，请祝福它吧，魔王大人♪」',
+      ],
     },
     {
       name: '初回 非牝犬持ち（!136 && != 9）',
       breakdown: false,
       talent136: false,
       state: 2,
-      fragment: '为，为什么会怀上……狗的孩子！',
+      expect: ['「为，为什么会怀上……狗的孩子！」'],
     },
     {
       name: '初回 発情状态 9（CFLAG:1 == 9）',
       breakdown: false,
       talent136: true,
       state: 9,
-      fragment: '被侵犯得怀孕了',
+      expect: ['「被侵犯得怀孕了……呜呜……可是，也没有办法了……」'],
     },
     {
       name: '崩坏后 牝犬持ち（136 && != 9）',
       breakdown: true,
       talent136: true,
       state: 2,
-      fragment: '是魔王大人饲养的那头健壮勇猛的野狗的孩子',
+      expect: [
+        '「人家怀孕了……是魔王大人饲养的那头健壮勇猛的野狗的孩子呢……会像父亲一样强壮的，请祝福它吧，魔王大人♪」',
+      ],
     },
     {
       name: '崩坏后 非牝犬持ち（!136 && != 9）',
       breakdown: true,
       talent136: false,
       state: 2,
-      fragment: '为，为什么会怀上……狗的孩子！',
+      expect: ['「为，为什么会怀上……狗的孩子！」'],
     },
     {
       name: '崩坏后 発情状态 9（CFLAG:1 == 9）',
       breakdown: true,
       talent136: true,
       state: 9,
-      fragment: '被侵犯得怀孕了',
+      expect: ['「被侵犯得怀孕了……呜呜……可是，也没有办法了……」'],
     },
   ];
   for (const item of cases) {
@@ -7963,10 +7967,11 @@ test('SELF_KOJO_K11 妊娠发觉 野良犬支按 CFLAG:1 != 9 判牝犬：== 9 �
       }
     });
     await speak_self11(fixture);
-    const text = fixture.text_lines().join('\n');
-    assert.ok(
-      text.includes(item.fragment),
-      `妊娠发觉 ${item.name}：应含「${item.fragment}」\n${text}`,
+    // 六支各只有一句：整段断言，防止「同段其余台词不设防」
+    assert.deepEqual(
+      fixture.text_lines(),
+      item.expect,
+      `妊娠发觉 ${item.name}`,
     );
     assert.equal(fixture.store.get(`cflag:${LILY}:271`), 1, item.name);
   }
