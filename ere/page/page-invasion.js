@@ -32,9 +32,10 @@
  *   - %SAVESTR:MASTER%（魔王存档名）经 callname:0:-1 承载（#5 决议，
  *     utils/callname-utils），新档 =「你」；
  *   - 地上征服后菜单（:25-138，post_conquest_menu，#468）：[0] 复用
- *     start_campaign()（结算与返回值完全一致）；[1]/[2]/[3]/[5] 地区续接与
- *     [4] ARCANA_FORT 登记为存根——$START1 结算体内硬编码人间界语义
- *     （FLAG:81/kyoten_event(1)），泛化到其他地区留给后续票；
+ *     start_campaign()（结算与返回值完全一致）；[4] ARCANA_FORT 接真身
+ *     （#470，invasion 域跨域调用不受限）；[1]/[2]/[3]/[5] 地区续接仍为
+ *     存根——$START1 结算体内硬编码人间界语义（FLAG:81/kyoten_event(1)），
+ *     泛化到其他地区留给后续票；
  *   - [5] 天神宫的按钮渲染（:73-79，随 shrine_stage 或 route_33 开窗）与
  *     派发检查（:100，只认 route_33 <= 500）两组条件不对称是原作真实缺陷，
  *     1:1 保留：shrine_stage >= 1 时按钮可点，但 route_33 未开窗仍会被
@@ -64,6 +65,7 @@ const {
   ending_4,
   ending_5,
 } = require('#/event/event-ending');
+const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
 const { chara } = require('#/facade/chara');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
@@ -74,15 +76,15 @@ const { chara_callname } = require('#/utils/callname-utils');
  * 'INVASION' 是函数内联段的宿主名（先例：DRAW_MAINMENU 指令面板段）：
  * [0]/[2]/[3] 出兵路线三段（:210-/:299-/:442-，start_campaign）、地上征服后
  * 菜单的 [1]/[2]/[3]/[5] 地区续接（:108-138，post_conquest_menu）。
- * 'ARCANA_FORT'（:126，[4]）、'SENGEN_VIDEO'（:91，[1000]）、'AGENT_MENU'
- * （:93-95，[1001]，#103 判定的复制改名事故，只登记不排期）是各自独立的存根
- * 调用名。'INVASION_CHECK' 自 #118 起是真身（五组条件 1:1），移出本名单。
+ * 'SENGEN_VIDEO'（:91，[1000]）与 'AGENT_MENU'（:93-95，[1001]，#103 判定的
+ * 复制改名事故，只登记不排期）是各自独立的存根调用名。'INVASION_CHECK' 自
+ * #118 起是真身（五组条件 1:1），移出本名单；'ARCANA_FORT'（:126，[4]）自
+ * #470 起是真身（ere/invasion/invasion-arcana-fort.js），同样移出。
  * 'CAMPAIGN_MENU'（:98，[9]）不在此列——调用点本身是真实调用，存根名归属
  * page-campaign.js 自己的 STUBBED_CALLS（#468）。
  */
 const STUBBED_CALLS = [
   'INVASION',
-  'ARCANA_FORT',
   'AGENT_MENU',
   'MEDAL_BONUS',
   'INVASION_EVENT_SEIEI',
@@ -393,11 +395,11 @@ async function invasion() {
  * 五条状态行（人间界固定「已征服」；精灵/龙之山/天界随各自 FLAG:87/89/91
  * 征服标记切换标签；天神宫随 route_33 开窗或 shrine_stage >= 4 切换，两
  * 条件都不满足时不渲染；圣灵骑士堡垒原作没有状态行，仅按钮文案随
- * FLAG:92 == 15 切换）+ 六个可选分支（[0] 复用 start_campaign()；[1]/[2]/
- * [3]/[5] 地区续接与 [4] ARCANA_FORT 登记为存根，泛化 $START1 留给后续
- * 票）+ [9] CAMPAIGN_MENU + [999] 退出 + [1000] SENGEN_VIDEO + [1001]
- * AGENT_MENU（原作按钮渲染行已注释，但 ELSEIF/CALL 分支仍可达，接一个
- * 存根，不落本体——见文件头）。
+ * FLAG:92 == 15 切换）+ 六个可选分支（[0] 复用 start_campaign()；[4] 转
+ * ARCANA_FORT 真身，#470；[1]/[2]/[3]/[5] 地区续接仍为存根，泛化 $START1
+ * 留给后续票）+ [9] CAMPAIGN_MENU + [999] 退出 + [1000] SENGEN_VIDEO +
+ * [1001] AGENT_MENU（原作按钮渲染行已注释，但 ELSEIF/CALL 分支仍可达，接
+ * 一个存根，不落本体——见文件头）。
  *
  * @returns {Promise<number>} 0 / 1
  */
@@ -516,14 +518,14 @@ async function post_conquest_menu() {
       continue; // :102-105
     }
 
-    // :108-138 地区选择；仅 [0] 实现，其余登记为存根（文件头有说明）
+    // :108-138 地区选择；[0]/[4] 已实现，其余登记为存根（文件头有说明）
     if (result === 0) {
       return await start_campaign(); // :109-111
     }
     if (result === 4) {
-      // :125-131 CALL ARCANA_FORT；存根不产出「胜利」结果，固定 RETURN 0
-      await stub_line_wait('ARCANA_FORT', '圣灵骑士堡垒攻略', '待认领');
-      return 0;
+      // :125-131 CALL ARCANA_FORT：RETURN 1（打了一仗、回合已耗）→ 本函数
+      // 同样 RETURN 1，由调用方 BEGIN TURNEND；0（撤退/无候选/已全破）→ 0
+      return await arcana_fort();
     }
     if (result === 5 && era_exflag.shrine_stage >= 3) {
       era_exflag.shrine_stage = era_exflag.shrine_stage + 1; // :136-137
