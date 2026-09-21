@@ -7902,6 +7902,81 @@ test('SELF_KOJO_K11 妊娠发觉按 CFLAG:102 与 CSTR:2 插入生父称呼', as
   assert.equal(fixture.store.get(`cflag:${LILY}:271`), 1);
 });
 
+test('SELF_KOJO_K11 妊娠发觉 野良犬支按 CFLAG:1 != 9 判牝犬：== 9 落回兜底', async () => {
+  // 原作 :12108/:12111/:12139/:12142 是 `CFLAG:102 == 5 && [TALENT:136 &&]
+  // CFLAG:1 != 9`；CFLAG:1 属 invasion 域。（#493 修前读的是 kojo 域不存在的
+  // 「状态」：undefined !== 9 恒真，两块都无条件走野良犬支。）
+  const cases = [
+    {
+      name: '初回 牝犬持ち（136 && != 9）',
+      breakdown: false,
+      talent136: true,
+      state: 2,
+      expect: [
+        '「人家怀孕了……是魔王大人饲养的那头健壮勇猛的野狗的孩子呢……会像父亲一样强壮的，请祝福它吧，魔王大人♪」',
+      ],
+    },
+    {
+      name: '初回 非牝犬持ち（!136 && != 9）',
+      breakdown: false,
+      talent136: false,
+      state: 2,
+      expect: ['「为，为什么会怀上……狗的孩子！」'],
+    },
+    {
+      name: '初回 発情状态 9（CFLAG:1 == 9）',
+      breakdown: false,
+      talent136: true,
+      state: 9,
+      expect: ['「被侵犯得怀孕了……呜呜……可是，也没有办法了……」'],
+    },
+    {
+      name: '崩坏后 牝犬持ち（136 && != 9）',
+      breakdown: true,
+      talent136: true,
+      state: 2,
+      expect: [
+        '「人家怀孕了……是魔王大人饲养的那头健壮勇猛的野狗的孩子呢……会像父亲一样强壮的，请祝福它吧，魔王大人♪」',
+      ],
+    },
+    {
+      name: '崩坏后 非牝犬持ち（!136 && != 9）',
+      breakdown: true,
+      talent136: false,
+      state: 2,
+      expect: ['「为，为什么会怀上……狗的孩子！」'],
+    },
+    {
+      name: '崩坏后 発情状态 9（CFLAG:1 == 9）',
+      breakdown: true,
+      talent136: true,
+      state: 9,
+      expect: ['「被侵犯得怀孕了……呜呜……可是，也没有办法了……」'],
+    },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('tflag:13', 11);
+      f.store.set(`cflag:${LILY}:102`, 5); // 妊娠相手 = 5 野良犬
+      f.store.set(`cflag:${LILY}:1`, item.state);
+      if (item.talent136) {
+        f.store.set(`talent:${LILY}:136`, 1); // 牝犬持ち
+      }
+      if (item.breakdown) {
+        f.store.set(`cflag:${LILY}:271`, 1); // 妊娠发觉已发生 → 崩坏块
+      }
+    });
+    await speak_self11(fixture);
+    // 六支各只有一句：整段断言，防止「同段其余台词不设防」
+    assert.deepEqual(
+      fixture.text_lines(),
+      item.expect,
+      `妊娠发觉 ${item.name}`,
+    );
+    assert.equal(fixture.store.get(`cflag:${LILY}:271`), 1, item.name);
+  }
+});
+
 // —— 迷宫、肉便器与死斗场口上 ——
 
 test('K11 迷宫凌辱前后口上注册进两个分发族', async () => {

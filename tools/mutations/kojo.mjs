@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2282; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）
+export const COUNT = 2289; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）
 
 export default [
   {
@@ -21278,5 +21278,76 @@ async function try_kojo_or_stub(
     era_flag.target = cid; // 变异：0 被当缺省（TARGET = B）`,
     tests: ['event-k-dispatch'],
     must_mention: '分发期间 TARGET = 0',
+  },
+  // —— #493：门面属性名/域写错（JS 静默读 undefined）——
+  {
+    desc: 'M10700 K3 胸爱抚乳头环支属性名退回不存在的「穿孔装着」（#493：undefined & 1 === 0，本支恒不触发）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '        chara(target).train.穿环状态 & 1 &&',
+    replace: '        chara(target).train.穿孔装着 & 1 &&',
+    tests: ['kojo-k3-noble', 'facade-property-check'],
+    must_mention: '被那么用力地揉的话',
+  },
+  {
+    desc: 'M10701 K3 穿环初回支属性名退回「穿孔装着」（#493：六段「初次开洞」演出全部失效）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: `        if (chara(target).train.穿环状态 & p) {
+          // :5527`,
+    replace: `        if (chara(target).train.穿孔装着 & p) {
+          // :5527`,
+    tests: ['kojo-k3-noble', 'facade-property-check'],
+    must_mention: '因为第一次在皮肤上开洞而发出了悲鸣',
+  },
+  {
+    desc: 'M10702 K11 妊娠发觉野良犬支域写错（invasion 改 kojo，#493：undefined !== 9 恒真）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find: `        era.get(\`talent:\${target}:136\`) &&
+        chara(target).invasion.状态 !== 9
+      ) {
+        // :12108`,
+    replace: `        era.get(\`talent:\${target}:136\`) &&
+        chara(target).kojo.状态 !== 9
+      ) {
+        // :12108`,
+    tests: ['kojo-k11-lily', 'facade-property-check'],
+    must_mention: '被侵犯得怀孕了',
+  },
+  {
+    desc: 'M10703 K14 PALAMCNG 耻情读成增量一侧（#493：当前值 + 增量的算式被拆，NaN > PALAMLV:2 恒假）',
+    file: 'ere/kojo/kojo-k14-nobleman.js',
+    find: '  const P3 = chara(target).train.耻情 + chara(target).train.耻情增量;',
+    replace:
+      '  const P3 = chara(target).train.耻情增量 + chara(target).train.耻情增量;',
+    tests: ['kojo-k14-nobleman'],
+    must_mention: '首次耻情 Lv2 置 223=1',
+  },
+  {
+    desc: 'M10704 K14 PALAMCNG 恐怖读成增量一侧（#493：同上，两块恒不成立）',
+    file: 'ere/kojo/kojo-k14-nobleman.js',
+    find: '  const P4 = chara(target).train.恐怖 + chara(target).train.恐怖增量;',
+    replace:
+      '  const P4 = chara(target).train.恐怖增量 + chara(target).train.恐怖增量;',
+    tests: ['kojo-k14-nobleman'],
+    must_mention: '首次恐怖 Lv2 置 224=1',
+  },
+  {
+    desc: 'M10709 K9 对面座位爱慕支的初吻判据域写错（train 改别名上的 kojo，#493 复核发现的第 14 处：undefined >= 0 恒假，亲吻句恒不出）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find: `          if (chara(target).train.初吻对象 >= 0) {
+            // :2439`,
+    replace: `          if (kojo.初吻对象 >= 0) {
+            // :2439`,
+    tests: ['kojo-k9-diamond', 'facade-property-check'],
+    must_mention: '湿润的舌头就立马从缝隙中钻进来',
+  },
+  {
+    desc: 'M10711 K9 对面座位爱慕支 RAND:2 臂的同一处初吻判据退回（:2449 的第 14 处第二站点）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find: `          if (chara(target).train.初吻对象 >= 0) {
+            // :2449`,
+    replace: `          if (kojo.初吻对象 >= 0) {
+            // :2449`,
+    tests: ['kojo-k9-diamond'],
+    must_mention: '贪婪地亲吻着',
   },
 ];

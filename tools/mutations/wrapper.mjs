@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 11;
+export const COUNT = 13;
 
 export default [
   {
@@ -116,5 +116,25 @@ export default [
   }`,
     tests: ['tequip-model'],
     must_mention: '四个口上守卫位经 train 域门面可写',
+  },
+  // —— #493：调教域手写区补的两条 palam 访问器（ownership 无 8/10 的测量
+  // 事实，生成器发不出来，改从手写区读「当前值」一侧）——
+  {
+    desc: 'M10705 chara-train 手写区「耻情」寻址与「恐怖」串位（palam:8 改 10，#493）',
+    file: 'ere/facade/chara-train.js',
+    find: '    return era.get(`palam:${this.cid}:8`) || 0;',
+    replace:
+      '    return era.get(`palam:${this.cid}:10`) || 0; // 变异：与恐怖串位',
+    tests: ['kojo-k14-nobleman'],
+    must_mention: '首次耻情 Lv2 置 223=1',
+  },
+  {
+    desc: 'M10706 chara-train 手写区「恐怖」寻址与「耻情」串位（palam:10 改 8，#493）',
+    file: 'ere/facade/chara-train.js',
+    find: '    return era.get(`palam:${this.cid}:10`) || 0;',
+    replace:
+      '    return era.get(`palam:${this.cid}:8`) || 0; // 变异：与耻情串位',
+    tests: ['kojo-k14-nobleman'],
+    must_mention: '首次恐怖 Lv2 置 224=1',
   },
 ];

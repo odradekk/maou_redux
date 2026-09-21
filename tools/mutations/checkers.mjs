@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 108;
+export const COUNT = 112;
 
 export default [
   {
@@ -1087,5 +1087,56 @@ export default [
     test_name:
       '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
     must_mention: '应全绿，实际退出',
+  },
+  // —— #493：新加的门面属性检查器自己的行为锁 ——
+  {
+    desc: 'M10707 门面属性存在性检查焊死（直链上的 chara() 属性都放行——探针用例必须抓到失明，#493）',
+    file: 'tools/facade-property-check.mjs',
+    find: `    if (members.length >= 2) {
+      checked += 1;
+      if (!ctx.props.get(domain).has(members[1])) {`,
+    replace: `    if (members.length >= 2) {
+      checked += 1;
+      if (false) { // 变异：属性存在性检查焊死`,
+    tests: ['facade-property-check'],
+    must_mention: '探针的属性名未被逐处报出',
+  },
+  {
+    desc: 'M10708 手写区访问器不再解析（Object.defineProperty 的属性集为空，chara().dungeon.体力上限 一类被误判缺失，#493）',
+    file: 'tools/facade-property-check.mjs',
+    find: `  while ((match = defined.exec(text))) {
+    props.add(match[1]);
+  }`,
+    replace: `  while (false && (match = defined.exec(text))) {
+    props.add(match[1]);
+  }`,
+    tests: ['facade-property-check'],
+    must_mention: '门面属性检查应全绿，实际退出',
+  },
+  {
+    desc: 'M10710 域切片别名判定焊死（const kojo = chara(x).kojo 之后的 kojo.<属性> 不再判——第 14 处那类写法失明，#493）',
+    file: 'tools/facade-property-check.mjs',
+    find: `      checked += 1;
+      if (!ctx.props.get(domain).has(members[0])) {`,
+    replace: `      checked += 1;
+      if (false) { // 变异：别名判定焊死`,
+    tests: ['facade-property-check'],
+    must_mention: '别名上的属性未被报出',
+  },
+  {
+    desc: 'M10712 视图别名判定焊死（const view = chara(x) 之后的 view.<域>.<属性> 不再判——第三条判定面失明，#493）',
+    file: 'tools/facade-property-check.mjs',
+    find: `      if (members.length < 2) {
+        continue;
+      }
+      checked += 1;
+      if (!ctx.props.get(domain).has(members[1])) {`,
+    replace: `      if (members.length < 2) {
+        continue;
+      }
+      checked += 1;
+      if (false) { // 变异：视图别名判定焊死`,
+    tests: ['facade-property-check'],
+    must_mention: '视图别名上的属性未被报出',
   },
 ];
