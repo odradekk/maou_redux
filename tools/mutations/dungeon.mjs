@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 254;
+export const COUNT = 255; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原 M9838 与 #462 撞号后改）
 
 export default [
   {
@@ -2236,5 +2236,18 @@ export default [
       '  if (chara(cid).event.牝犬 == 1 || cid === 0) {\n    if (rand(2) <= 1) { // 变异：饮精随机误入交合\n      if (',
     tests: ['marriage-day'],
     must_mention: 'HORSE：饮精分支获得五倍口交与兽奸经验',
+  },
+  {
+    desc: 'M9882 SOURCE_CHECK_AUTO 接线退回存根（source_check_auto 改回 stub_line_wait，不再转发真实处理器）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: `async function source_check_auto() {
+  await emit('SOURCE_CHECK_AUTO');
+}`,
+    replace: `async function source_check_auto() {
+  // 变异：退回存根占位，不再发事件
+  await stub_line_wait('SOURCE_CHECK_AUTO', '自动调教结算', '随调教自动票');
+}`,
+    tests: ['dungeon-battle'],
+    must_mention: '真实处理器执行',
   },
 ];

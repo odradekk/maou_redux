@@ -170,9 +170,14 @@ const REPO = path.resolve(__dirname, '..');
 // 开发，均从 natural{matched:1115,stub:444}/upgrade{matched:259,stub:222}
 // 出发；两者互不覆盖同一批输出行（前者动 SOURCE_CHECK 链，后者动 JUEL_CHECK
 // 的 ABLUP 分发），合并后按 SOP §5.5 实跑 cli --sample 取准，不做算术加总。
+// 【#461+#462 返工合并后重测（merge origin/master 9457309）】三条变化叠加：
+// #461 删避孕套占位（natural -15 / upgrade -3）、#462 六轮已计入上一次
+// BASELINE、#462 返工删 TARGET_MILK_CHECK 占位（manual 路径每次 SOURCE_CHECK
+// 打印一行，真身守卫早退静默）。与 #461（master 侧 382/222 基础上到
+// 367/219）互不覆盖同一批输出行，合并后实跑取准（下方数值），不做算术加总。
 const BASELINE = {
-  'train-natural': { matched: 1118, version: 0, stub: 291, unexplained: 0 },
-  'train-upgrade': { matched: 262, version: 0, stub: 198, unexplained: 0 },
+  'train-natural': { matched: 1118, version: 0, stub: 261, unexplained: 0 },
+  'train-upgrade': { matched: 262, version: 0, stub: 192, unexplained: 0 },
 };
 
 async function build_report(sample) {

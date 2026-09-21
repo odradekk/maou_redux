@@ -391,6 +391,21 @@ class TrainFacade {
   }
 
   /**
+   * 助手避孕套（tequip:cid:36 ↔ TEQUIP:36）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行512 TEQUIP:36 助手がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:19-51 的 event 跨域写走本门面，#461）
+   * @returns {number}
+   */
+  get 助手避孕套() {
+    return era.get(`tequip:${this.cid}:36`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 助手避孕套(v) {
+    era.set(`tequip:${this.cid}:36`, v);
+  }
+
+  /**
    * 对象避孕套（tequip:cid:37 ↔ TEQUIP:37）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行513 TEQUIP:37 調教対象がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:427-430 的 system 跨域清零）
    * @returns {number}

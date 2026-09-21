@@ -929,9 +929,10 @@ const deltabase = {
 // —— TEQUIP：调教中的装备位（#215 J5 建模；名字源 = 旗标一览，属主见
 //    ownership/tequip-ownership.yml 的 12 个区间）。TEquip.yml 保持空表
 //    （引擎建桶用；登记名字表会让 initCharaTable 预置 0，见该文件头注），
-//    名字只进本表。只名六个：跨域两段（22 属 system、35 属 event——train
-//    侧写它必须走门面）与 #213 口上头部守卫消费的四位（45/55/89/90，
-//    train 域内——族票写它时可直写也可走门面，具名是给可读性）。
+//    名字只进本表。只名七个：跨域三段（22 属 system、35 属 event、36 属
+//    train——各自的跨域调用点写它都必须走门面，#461 补 36）与 #213 口上
+//    头部守卫消费的四位（45/55/89/90，train 域内——族票写它时可直写也
+//    可走门面，具名是给可读性）。
 //    其余属主下标随各自族票补名（#71 裁定三：未命名不进门面）。——
 const tequip = {
   18: named_tail('淋浴中', src(SRC_FLAG, ':507 TEQUIP:18 シャワー使用中')),
@@ -948,6 +949,13 @@ const tequip = {
     src(
       SRC_FLAG,
       ':511 TEQUIP:35 マスターがコンドーム装着（属主 event：SYSTEM_SOURCE/COMF_CONDOM 的跨域写走本门面）',
+    ),
+  ),
+  36: named_tail(
+    '助手避孕套',
+    src(
+      SRC_FLAG,
+      ':512 TEQUIP:36 助手がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:19-51 的 event 跨域写走本门面，#461）',
     ),
   ),
   37: named_tail(

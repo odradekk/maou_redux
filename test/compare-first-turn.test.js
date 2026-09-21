@@ -106,10 +106,17 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   // 容易陷落），守卫早退，不再 PRINT 占位文字，stub 3 → 2（matched 不变，
   // 调用 1 次全早退，与 ERB 原文 SIF TALENT:73==0 / RETURN 0 的静默行为
   // 一致）。
+  // 【#461+#462 合并后重测（merge origin/master 9457309）】两条线各自从
+  // stub 8 出发、互不重叠：#461 删避孕套占位（stub -1，matched 不变）、
+  // #462 六轮删 SOURCE_CHECK 链占位（stub -6）加返工删 TARGET_MILK_CHECK
+  // 占位（stub -1，真身守卫早退静默）。合并实测 stub 0（见下方断言），
+  // 不做算术加总、以实跑为准。
+  // 【#461 避孕套判定落真身后重测（master 侧）】EQUIP_COM 存根占位（「避孕
+  // 套判定尚未移植」一行）不再输出，stub 8 → 7（matched 不变）
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 2,
+    stub: 0,
 
     unexplained: 0,
   });

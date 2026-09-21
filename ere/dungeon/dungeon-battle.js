@@ -44,6 +44,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { emit } = require('#/system/event/registry');
 const {
   attack_koujo: speak_attack_koujo,
   victory_koujo: speak_victory_koujo,
@@ -74,13 +75,14 @@ const {
  * 核对固定）；名单变动必须同步清单。QUEST_BATTLE_SET / RESULT_QUEST 不在
  * 此列（#178 真身 ere/dungeon/dungeon-quest.js，:77/:363/:365 经模块对象
  * quest_mod 调用）；#217（J7）起 SELECT_BENKI_MENU / NAME_BENKI_MENU /
- * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除。
+ * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除；
+ * #461 起 SOURCE_CHECK_AUTO 换真身（source_check_auto 改发同名事件，真身在
+ * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)），从名单移除。
  */
 const STUBBED_CALLS = [
   'CAMPAIGN_MONSTER_LIST',
   'BEFORE_AUTOTRAIN',
   'COM13_AUTO',
-  'SOURCE_CHECK_AUTO',
   'ATTACK_KOUJO',
   'VICTORY_KOUJO',
 ];
@@ -132,11 +134,15 @@ async function com13_auto() {
 }
 
 /**
- * @SOURCE_CHECK_AUTO 存根（调教票）：自动调教结算。
+ * @SOURCE_CHECK_AUTO（调教票，#461 起真身）：自动调教结算。调用点同上
+ * （BEFORE_AUTOTRAIN/COM13_AUTO 紧邻的 DUNGEON_TRAP.ERB / DUNGEON_TOWN.ERB
+ * 三处，详见 docs/stub-registry.md）与真身分属迷宫域与 event 域，接线走
+ * 事件注册表——本函数只发事件，不重复实现调度逻辑；真身见
+ * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
 async function source_check_auto() {
-  await stub_line_wait('SOURCE_CHECK_AUTO', '自动调教结算', '随调教自动票');
+  await emit('SOURCE_CHECK_AUTO');
 }
 
 /**
