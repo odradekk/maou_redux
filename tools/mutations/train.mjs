@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 903; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+export const COUNT = 913; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
 
 export default [
   {
@@ -9669,5 +9669,189 @@ export default [
     replace: '    if (b >= cflag9) m += 1;',
     tests: ['ablup'],
     must_mention: 'ablup100：两道门槛同时不满足',
+  },
+  // —— #491 第二步第一批：ABLUP21/23/32/37/39 的戒备森严四档逐级（M10579-M10588）——
+  // ablup22/23/32/33 的戒备森严块去掉注释后同形，find 靠注释行区分：
+  // ablup23 的两条取注释描述的后半段（不含 `:N` 行号，行号重定位不受影响），
+  // ablup32 的两条仍带 `:154-176` 整行，重定位时按失配报错手工同步。
+  {
+    desc: 'M10579 ablup21：戒备森严 Lv5 档的 ×2.50 误改为 ×2.60（C/D/E 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `      } else if (lv === 5) {
+        c = times(c, 2.5);`,
+    replace: `      } else if (lv === 5) {
+        c = times(c, 2.6);`,
+    tests: ['ablup'],
+    must_mention: 'ablup21：Lv5 戒备森严 ×2.5',
+  },
+  {
+    desc: 'M10580 ablup21：戒备森严 Lv6 档的 ×3.00 误改为 ×3.10（C/D/E 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `      } else if (lv >= 6) {
+        c = times(c, 3.0);`,
+    replace: `      } else if (lv >= 6) {
+        c = times(c, 3.1);`,
+    tests: ['ablup'],
+    must_mention: 'ablup21：Lv6 戒备森严 ×3',
+  },
+  {
+    desc: 'M10581 ablup23：戒备森严 Lv3 档的 ×1.50 误改为 ×1.60（A/B/C 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `（A/B/C 三列，与 ABLUP22 相同）
+      if (lv === 3) {
+        a = times(a, 1.5);`,
+    replace: `（A/B/C 三列，与 ABLUP22 相同）
+      if (lv === 3) {
+        a = times(a, 1.6);`,
+    tests: ['ablup'],
+    must_mention: 'ablup23：Lv3 戒备森严 ×1.5',
+  },
+  {
+    desc: 'M10582 ablup23：戒备森严 Lv6 档的 ×3.00 误改为 ×3.10（A/B/C 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `（A/B/C 三列，与 ABLUP22 相同）
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 2.0);
+        c = times(c, 2.0);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);`,
+    replace: `（A/B/C 三列，与 ABLUP22 相同）
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 2.0);
+        c = times(c, 2.0);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.1);`,
+    tests: ['ablup'],
+    must_mention: 'ablup23：Lv6 戒备森严 ×3',
+  },
+  {
+    desc: 'M10583 ablup32：戒备森严 Lv6 档的 ×3.00 误改为 ×3.10（A/B/C 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 2.0);
+        c = times(c, 2.0);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);`,
+    replace: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 2.0);
+        c = times(c, 2.0);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.1);`,
+    tests: ['ablup'],
+    must_mention: 'ablup32：Lv6 戒备森严 ×3',
+  },
+  {
+    desc: 'M10584 ablup32：戒备森严 Lv3 档的 ×1.50 误改为 ×1.60（A/B/C 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+      if (lv === 3) {
+        a = times(a, 1.5);`,
+    replace: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+      if (lv === 3) {
+        a = times(a, 1.6);`,
+    tests: ['ablup'],
+    must_mention: 'ablup32：Lv3 戒备森严 ×1.5',
+  },
+  {
+    desc: 'M10585 ablup37：戒备森严 Lv3 档的 D 轨 ×1.50 误改为 ×1.60（#491 验收逃逸的那一处）',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+        d = times(d, 1.5);
+      } else if (lv === 4) {`,
+    replace: `      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+        d = times(d, 1.6);
+      } else if (lv === 4) {`,
+    tests: ['ablup'],
+    must_mention: 'ablup37：Lv3 戒备森严 ×1.5',
+  },
+  {
+    desc: 'M10586 ablup37：戒备森严 Lv5 档的 ×2.50 误改为 ×2.60（A-D 四列）',
+    file: 'ere/system/train/ablup.js',
+    find: `      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+        d = times(d, 2.5);
+      } else if (lv >= 6) {`,
+    replace: `      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+        d = times(d, 2.6);
+      } else if (lv >= 6) {`,
+    tests: ['ablup'],
+    must_mention: 'ablup37：Lv5 戒备森严 ×2.5',
+  },
+  {
+    desc: 'M10587 ablup39：戒备森严 ABL:37==4 档的 ×2.50 误改为 ×2.60（A/B/C 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `      } else if (gate === 4) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);`,
+    replace: `      } else if (gate === 4) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.6);`,
+    tests: ['ablup'],
+    must_mention: 'ablup39：Lv3 戒备森严 ×2.5',
+  },
+  {
+    desc: 'M10588 ablup39：戒备森严 ABL:37>=5 档的 ×3.00 误改为 ×3.10（A/B/C 三列）',
+    file: 'ere/system/train/ablup.js',
+    find: `      } else if (gate >= 5) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
+        c = times(c, 3.0);`,
+    replace: `      } else if (gate >= 5) {
+        a = times(a, 3.1);
+        b = times(b, 3.0);
+        c = times(c, 3.0);`,
+    tests: ['ablup'],
+    must_mention: 'ablup39：Lv3 戒备森严 ×3',
   },
 ];
