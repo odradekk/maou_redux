@@ -23773,7 +23773,7 @@ async function self_kojo_k11(rand) {
       } else if (
         chara(target).event.妊娠相手 === 5 &&
         era.get(`talent:${target}:136`) &&
-        chara(target).kojo.状态 !== 9
+        chara(target).invasion.状态 !== 9
       ) {
         // :12108
         await era.printAndWait(
@@ -23781,7 +23781,7 @@ async function self_kojo_k11(rand) {
         ); // :12109
       } else if (
         chara(target).event.妊娠相手 === 5 &&
-        chara(target).kojo.状态 !== 9
+        chara(target).invasion.状态 !== 9
       ) {
         // :12111
         await era.printAndWait(`「为，为什么会怀上……狗的孩子！」`); // :12112
@@ -23837,7 +23837,7 @@ async function self_kojo_k11(rand) {
       } else if (
         chara(target).event.妊娠相手 === 5 &&
         era.get(`talent:${target}:136`) &&
-        chara(target).kojo.状态 !== 9
+        chara(target).invasion.状态 !== 9
       ) {
         // :12139
         await era.printAndWait(
@@ -23845,7 +23845,7 @@ async function self_kojo_k11(rand) {
         ); // :12140
       } else if (
         chara(target).event.妊娠相手 === 5 &&
-        chara(target).kojo.状态 !== 9
+        chara(target).invasion.状态 !== 9
       ) {
         // :12142
         await era.printAndWait(`「为，为什么会怀上……狗的孩子！」`); // :12143

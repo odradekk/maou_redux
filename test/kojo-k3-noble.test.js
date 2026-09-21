@@ -693,6 +693,45 @@ test('胸爱抚二次以后：淫乱 / 爱慕 / B感覚Lv3 / それ以外', asyn
   assert.equal(other.store.get('cflag:31:306'), 2, '胸爱抚それ以外推进到 2');
 });
 
+test('胸爱抚首次 乳头环支（CFLAG:7 & 1 且 抖M气质Lv3）：两句反应，爱慕时多一句炫耀乳环', async () => {
+  // :1343 IF CFLAG:7 & 1 && ABL:21 >= 3——CFLAG:7 是穿环状态位（#493：曾误读
+  // 成 train 域不存在的「穿孔装着」，undefined & 1 === 0 使本支恒不触发）
+  const lewd = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('cflag:31:7', 1); // 双乳头已装
+    f.store.set('abl:31:21', 3); // 抖M气质 Lv3
+  });
+  await speak_k3(lewd, seq_rand(0, 0));
+  assert.deepEqual(lewd.text_lines(), [
+    '「啊啊~♡ 被那么用力地揉的话~♡」',
+    '「就会有感觉了~♡」',
+  ]);
+  assert.equal(lewd.store.get('cflag:31:306'), 1, '胸爱抚乳头环支推进到 1');
+
+  const love = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('cflag:31:7', 1);
+    f.store.set('abl:31:21', 3);
+    f.store.set('talent:31:85', 1); // 爱慕 → 追加一句炫耀乳环
+  });
+  await speak_k3(love, seq_rand(0, 0));
+  assert.equal(love.text_lines().length, 3, '爱慕时多一句乳环叙事');
+  assert.match(love.text_lines()[2], /将胸前的乳头环摇晃起来了/);
+});
+
+test('胸爱抚首次 乳头环支 的门槛 ABL:21 >= 3：抖M气质 Lv2 落回下一支', async () => {
+  const fixture = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 5;
+    f.store.set('cflag:31:7', 1);
+    f.store.set('abl:31:21', 2); // 差一级
+  });
+  await speak_k3(fixture, seq_rand(0, 0));
+  assert.deepEqual(fixture.text_lines(), ['「嗯呜…不要…弄得那么疼………」']);
+});
+
 test('接吻调教首次（CFLAG:307 == 0 且非 TFLAG:13）：才不算什么 + 推进到 1', async () => {
   const fixture = await setup_k3((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
@@ -771,6 +810,121 @@ test('自己扒开首次（SELECTCOM 7 / CFLAG:308 == 0）：非素质支 + 推�
     '「不，不行了啊…已经不能再张开了…哈呜！…我明、明白了…会张得…更大的………」',
   ]);
   assert.equal(fixture.store.get('cflag:31:308'), 1, '自己扒开首次推进到 1');
+});
+
+// —— SELECTCOM 87（穿环 CFLAG:348）——
+
+test('穿环（SELECTCOM 87）：CFLAG:7 命中部位位 P 时走「初次开洞」演出，未命中走拿掉环', async () => {
+  // 原作 :5527/:5570/:5613/:5664/:5707/:5750 都是 `IF CFLAG:7 & P`——装着与
+  // 取り外し的分岔，#493 修的就是读不到的 train.穿孔装着。P 由 @COM87 写进
+  // piercing_state（com-hardcore.js:1590），此处直接注入。七例各断言整段文本：
+  // 装着的六段演出在修前一律不触发，P 的分档（乳环/肚脐/阴唇/舌/唇/鼻）也一并锁住。
+  const cases = [
+    {
+      name: '初回 淫乱 p=1',
+      talent: { 76: 1 },
+      cflag348: 0,
+      cflag7: 1,
+      p: 1,
+      expect348: 1,
+      expect: [
+        '温妮因为第一次在皮肤上开洞而发出了悲鸣。',
+        '「啊啊…好漂亮的乳环啊~…乳头已经勃起地那么厉害了…♡」',
+        '温妮轻轻地摇动着胸部。乳环微微地闪着微光………',
+      ],
+    },
+    {
+      name: '初回 爱慕 p=2',
+      talent: { 85: 1 },
+      cflag348: 0,
+      cflag7: 2,
+      p: 2,
+      expect348: 1,
+      expect: [
+        '温妮因为第一次在皮肤上开洞而发出了小声的悲鸣。',
+        '「大人您给予得礼物…我会好好对待下来的~…♪」',
+        '温妮抚摸着肚脐的周围………',
+      ],
+    },
+    {
+      name: '初回 それ以外 p=16',
+      talent: {},
+      cflag348: 0,
+      cflag7: 16,
+      p: 16,
+      expect348: 1,
+      expect: [
+        '温妮因为第一次皮肤上开洞而发出了悲鸣、留下了眼泪。',
+        '「不要…呸呜咯…请呼要拉胡来呜~………」',
+        '你将温妮的舌头抓住、确定着舌环………',
+      ],
+    },
+    {
+      name: '二回目 淫乱 p=4',
+      talent: { 76: 1 },
+      cflag348: 1,
+      cflag7: 4,
+      p: 4,
+      expect348: 4,
+      expect: [
+        '「啊~…嗯~…这样做的话，不管什么时候都是都会有感觉了…真是困扰呢~~…♡」',
+        '温妮因为阴唇环的刺穿而发情起来了………',
+      ],
+    },
+    {
+      name: '二回目 爱慕 p=32',
+      talent: { 85: 1 },
+      cflag348: 1,
+      cflag7: 32,
+      p: 32,
+      expect348: 3,
+      expect: [
+        '「呐~…温妮担心有没有好好地固定住呢…所以请用kiss来测试一下吧…♡」',
+        '温妮舔了一下唇环确定了后、向你撒起了娇………',
+      ],
+    },
+    {
+      name: '二回目 それ以外 p=64',
+      talent: {},
+      cflag348: 1,
+      cflag7: 64,
+      p: 64,
+      expect348: 2,
+      expect: [
+        '「居然对我…对我做出屈辱的事情………呜呜呜~~」',
+        '温妮的鼻子打上了跟牛的环一样的鼻环、眼泪哗啦啦地流下来了………',
+      ],
+    },
+    {
+      name: '取り外し（P 位未命中）',
+      talent: { 76: 1 },
+      cflag348: 0,
+      cflag7: 0,
+      p: 1,
+      expect348: 1,
+      expect: ['温妮抚摸着拿掉环后的痕迹………'],
+    },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k3((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 87;
+      for (const [id, value] of Object.entries(item.talent)) {
+        f.store.set(`talent:31:${id}`, value);
+      }
+      f.store.set('cflag:31:348', item.cflag348);
+      f.store.set('cflag:31:7', item.cflag7);
+    });
+    fixture.load_module('system/train/piercing-state').piercing_state.p =
+      item.p;
+    await speak_k3(fixture, seq_rand(0, 0));
+    assert.deepEqual(fixture.text_lines(), item.expect, `穿环 ${item.name}`);
+    assert.equal(
+      fixture.store.get('cflag:31:348'),
+      item.expect348,
+      `穿环 ${item.name}：CFLAG:348 推进`,
+    );
+  }
 });
 
 test('EVENTTRAIN NORMAL：初调教 CFLAG:201 默认支 + 推进到 1', async () => {
