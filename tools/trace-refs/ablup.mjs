@@ -28,6 +28,7 @@ const ABLUP6 = 'target/ERB/ABL/ABLUP6.ERB';
 const ABLUP7 = 'target/ERB/ABL/ABLUP7.ERB';
 const ABLUP8 = 'target/ERB/ABL/ABLUP8.ERB';
 const ABLUP9 = 'target/ERB/ABL/ABLUP9.ERB';
+const ABL = 'target/ERB/ABL/ABL.ERB';
 const ABLUP10 = 'target/ERB/ABL/ABLUP10.ERB';
 const ABLUP11 = 'target/ERB/ABL/ABLUP11.ERB';
 const ABLUP12 = 'target/ERB/ABL/ABLUP12.ERB';
@@ -801,6 +802,17 @@ export const FILES = [
       { src: ABLUP12, ref: '91-203', any: [lit('@DECIDE_ABLUP12')] },
       {
         src: ABLUP12,
+        ref: '30',
+        any: [lit(';习得点数による可否（I=0:可、I&1:点数不足、I&2:経験不足）')],
+      },
+      // 审查修复新增引用：组合上限提前 RETURN 后 DECIDE 从未赋值（issue #14）
+      {
+        src: ABLUP12,
+        ref: '99-101',
+        any: [lit(';判定変数を空に\nA = 0\nI = 0')],
+      },
+      {
+        src: ABLUP12,
         ref: '197-198',
         any: [lit('SIF NO:TARGET == 0 && ABL:MASTER:12 > FLAG:30 + 1')],
       },
@@ -1016,6 +1028,17 @@ export const FILES = [
       // —— ablup15 ↔ ABLUP15.ERB（issue #465）——
       { src: ABLUP15, ref: '9-68', any: [lit('@ABLUP15')] },
       { src: ABLUP15, ref: '85-304', any: [lit('@DECIDE_ABLUP15')] },
+      // 审查修复新增引用：组合上限提前 RETURN 后 DECIDE 从未赋值（issue #14）
+      {
+        src: ABLUP15,
+        ref: '30-38',
+        any: [lit('A = 0\n;必要な调教会话经验\nB = 0\n;必要な卖淫经验\nC = 0')],
+      },
+      {
+        src: ABLUP15,
+        ref: '93-96',
+        any: [lit('A = 0\nB = 0\nC = 0\nI = 0')],
+      },
       { src: ABLUP15, ref: '10', any: [whole_line('DRAWLINE')] },
       { src: ABLUP15, ref: '16-17', any: [lit('	PRINTW 已达最高级')] },
       {
@@ -1080,6 +1103,9 @@ export const FILES = [
       // —— ablup16 ↔ ABLUP16.ERB（issue #465）——
       { src: ABLUP16, ref: '9-115', any: [lit('@ABLUP16')] },
       { src: ABLUP16, ref: '136-533', any: [lit('@DECIDE_ABLUP16')] },
+      // 审查修复新增引用：DECIDE_ABLUP16 在 ABL.ERB 的另两个调用点之一
+      // （@SHOW_ABLUP_SELECT 的"*"标记；:78 已由 ABLUP10 的 ref '78' 覆盖）
+      { src: ABL, ref: '146', any: [lit('CALL DECIDE_ABLUP16')] },
       {
         src: ABLUP16,
         ref: '16',
@@ -1229,6 +1255,18 @@ export const FILES = [
       { src: ABLUP17, ref: '9-83', any: [lit('@ABLUP17')] },
       { src: ABLUP17, ref: '99-282', any: [lit('@DECIDE_ABLUP17')] },
       { src: ABLUP17, ref: '106-109', any: [lit('A = 0')] },
+      // 审查修复新增引用：C/D 并非恒 0——各自等级分支里赋值一次（issue #14 结论修正）
+      {
+        src: ABLUP17,
+        ref: '113-115',
+        any: [lit('IF ABL:17 == 0\nA = 100\nC = 1')],
+      },
+      { src: ABLUP17, ref: '115', any: [lit('C = 1')] },
+      {
+        src: ABLUP17,
+        ref: '116-118',
+        any: [lit('ELSEIF ABL:17 == 1\nA = 1000\nD = 1')],
+      },
       { src: ABLUP17, ref: '60-61', any: [lit('SIF D > 0')] },
       { src: ABLUP17, ref: '268-269', any: [lit('SIF EXP:2 < C')] },
       { src: ABLUP17, ref: '271-272', any: [lit('SIF EXP:11 < D')] },

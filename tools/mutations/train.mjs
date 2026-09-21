@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 650; // 598（master，含 #461 的 M9769-M9787）+ 52（本票 M9900-M9951）
+export const COUNT = 652; // 598（master，含 #461 的 M9769-M9787）+ 54（本票 M9900-M9953）
 
 export default [
   {
@@ -6294,9 +6294,9 @@ export default [
   {
     desc: 'M9917 ablup12：Lv0 习得点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: 'let a = [1, 25, 200, 3000, 8000, 12000, 16000, 22000, 28000, 35000][lv];',
+    find: 'a = [1, 25, 200, 3000, 8000, 12000, 16000, 22000, 28000, 35000][lv];',
     replace:
-      'let a = [2, 25, 200, 3000, 8000, 12000, 16000, 22000, 28000, 35000][lv];',
+      'a = [2, 25, 200, 3000, 8000, 12000, 16000, 22000, 28000, 35000][lv];',
     tests: ['ablup'],
     must_mention: '不显示金钱提示、不检查 bit2/bit4',
   },
@@ -6607,13 +6607,27 @@ export default [
     must_mention: '写入 chara(cid).system.露出癖',
   },
   {
-    desc: 'M9951 ablup17：死代码 C 变量改为非零，唤醒不可达分支',
+    desc: 'M9951 ablup17：绝顶经验只在 Lv0→1 需要，等级判定改错',
     file: 'ere/system/train/ablup.js',
-    find: `    const c = 0;
-    const d = 0;`,
-    replace: `    const c = 1;
-    const d = 0;`,
+    find: 'const c = lv === 0 ? 1 : 0; // :113-115 仅 Lv0→1 需要绝顶经验',
+    replace: 'const c = lv === 1 ? 1 : 0; // :113-115 仅 Lv0→1 需要绝顶经验',
     tests: ['ablup'],
-    must_mention: 'C/D 恒为 0，对应显示行与门槛检查永久不可触达',
+    must_mention: 'C(绝顶经验)只在 Lv0→1 生效',
+  },
+  {
+    desc: 'M9952 ablup12：技巧+话术组合上限免费突破越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'const combo_break = lv + abl15() >= 15;',
+    replace: 'const combo_break = lv + abl15() > 15;',
+    tests: ['ablup'],
+    must_mention: 'DECIDE 提前 RETURN 使 A/I 维持清零，等于免费购买',
+  },
+  {
+    desc: 'M9953 ablup15：技巧+话术组合上限免费突破越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'const combo_break = abl12() + lv >= 15;',
+    replace: 'const combo_break = abl12() + lv > 15;',
+    tests: ['ablup'],
+    must_mention: 'DECIDE 提前 RETURN 使 A/B/C/I 维持清零，等于免费购买',
   },
 ];

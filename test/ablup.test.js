@@ -1487,11 +1487,12 @@ test('ablup10：Lv4→5 异常经验门槛（E=1），六项素质任一命中�
 });
 
 test('ablup10：四个购买路径各自扣对应珠、写入 chara(cid).system.顺从、显示变为LV', async () => {
-  for (const [result, key, juel_key] of [
-    [0, 10, 10],
-    [1, 4, 4],
-    [2, 5, 5],
-    [3, 6, 6],
+  // Lv0 梯子：A=10/B=10/C=300/D=200，扣珠后剩余值逐一钉死
+  for (const [result, juel_key, remaining] of [
+    [0, 10, 990],
+    [1, 4, 990],
+    [2, 5, 700],
+    [3, 6, 800],
   ]) {
     const fixture = create_era_fixture();
     const { ablup10 } = seed(fixture);
@@ -1499,9 +1500,8 @@ test('ablup10：四个购买路径各自扣对应珠、写入 chara(cid).system.
     fixture.set_inputs(result);
     await ablup10(CID);
     assert.equal(fixture.store.get(`abl:${CID}:10`), 1);
+    assert.equal(fixture.store.get(`juel:${CID}:${juel_key}`), remaining);
     assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
-    void key;
-    void juel_key;
   }
 });
 
@@ -1594,6 +1594,19 @@ test('ablup12：已达最高级；技巧+话术组合上限单行 PRINTFORMW（�
   capped.set_inputs(100);
   await a2(CID);
   assert.ok(capped.text_lines().includes('技巧(8)＋话术(7)上限为15'));
+});
+
+test('ablup12：issue #14 缺陷——技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/I 维持清零，等于免费购买', async () => {
+  const fixture = create_era_fixture();
+  const { ablup12 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:12`, 8);
+  fixture.store.set(`abl:${CID}:15`, 7); // 8+7=15
+  fixture.store.set(`juel:${CID}:7`, 64000); // 恰好达到 8²×1000，越过入口拦截
+  fixture.set_inputs(0);
+  await ablup12(CID);
+  assert.equal(buttons(fixture)[0].text, '习得点数×64000/0 ……ＯＫ');
+  assert.equal(fixture.store.get(`abl:${CID}:12`), 9);
+  assert.equal(fixture.store.get(`juel:${CID}:7`), 64000); // 未被扣珠
 });
 
 test('ablup12：非自我训练（cid≠MASTER）时不显示金钱提示、不检查 bit2/bit4', async () => {
@@ -1804,6 +1817,19 @@ test('ablup15：已达最高级；技巧+话术组合上限单行 PRINTFORMW', a
   assert.ok(capped.text_lines().includes('技巧(8)＋话术(7)上限为15'));
 });
 
+test('ablup15：issue #14 缺陷——技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/B/C/I 维持清零，等于免费购买', async () => {
+  const fixture = create_era_fixture();
+  const { ablup15 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:12`, 8);
+  fixture.store.set(`abl:${CID}:15`, 7); // 8+7=15
+  fixture.store.set(`juel:${CID}:7`, 49000); // 恰好达到 7²×1000，越过入口拦截
+  fixture.set_inputs(0);
+  await ablup15(CID);
+  assert.equal(buttons(fixture)[0].text, '习得点数×49000/0 ……ＯＫ');
+  assert.equal(fixture.store.get(`abl:${CID}:15`), 8);
+  assert.equal(fixture.store.get(`juel:${CID}:7`), 49000); // 未被扣珠
+});
+
 test('ablup15：Lv0 梯子字面值，EXP 行字面量" or"仅出现在第一行', async () => {
   const fixture = create_era_fixture();
   const { ablup15 } = seed(fixture);
@@ -1969,15 +1995,36 @@ test('ablup17：无[爱慕]时门槛查欲望，有[爱慕]时改查顺从', asy
   assert.ok(with_love.text_lines().includes('顺从LV1以上(现在LV0)且'));
 });
 
-test('ablup17：issue #14 缺陷——C/D 恒为 0，对应显示行与门槛检查永久不可触达', async () => {
-  const fixture = create_era_fixture();
-  const { ablup17 } = seed(fixture);
-  fixture.store.set(`exp:${CID}:2`, 0); // 若 C 曾被赋非零值，此行会拉低门槛判定
-  fixture.store.set(`exp:${CID}:11`, 0);
-  fixture.set_inputs(100);
-  await ablup17(CID);
-  assert.ok(!fixture.text_lines().some((t) => t.includes('绝顶经验')));
-  assert.ok(!fixture.text_lines().some((t) => t.includes('调教自慰经验')));
+test('ablup17：C(绝顶经验)只在 Lv0→1 生效，D(调教自慰经验)只在 Lv1→2 生效，其余等级不显示也不拦', async () => {
+  const lv0 = create_era_fixture();
+  const { ablup17: a0 } = seed(lv0);
+  lv0.store.set(`abl:${CID}:11`, 1); // 满足欲望门槛
+  lv0.store.set(`juel:${CID}:8`, 100);
+  lv0.set_inputs(100);
+  await a0(CID);
+  assert.ok(lv0.text_lines().includes('　　　绝顶经验　0/1'));
+  assert.ok(!lv0.text_lines().some((t) => t.includes('调教自慰经验')));
+  assert.ok(buttons(lv0)[0].text.includes('经验不足')); // exp:2 未满足，C=1
+
+  const lv1 = create_era_fixture();
+  const { ablup17: a1 } = seed(lv1);
+  lv1.store.set(`abl:${CID}:17`, 1);
+  lv1.store.set(`abl:${CID}:11`, 2);
+  lv1.store.set(`juel:${CID}:8`, 1000);
+  lv1.set_inputs(100);
+  await a1(CID);
+  assert.ok(lv1.text_lines().includes('　　　调教自慰经验　0/1'));
+  assert.ok(!lv1.text_lines().some((t) => t.includes('绝顶经验')));
+
+  const lv2 = create_era_fixture();
+  const { ablup17: a2 } = seed(lv2);
+  lv2.store.set(`abl:${CID}:17`, 2);
+  lv2.store.set(`abl:${CID}:11`, 3);
+  lv2.store.set(`juel:${CID}:8`, 3000);
+  lv2.set_inputs(100);
+  await a2(CID);
+  assert.ok(!lv2.text_lines().some((t) => t.includes('绝顶经验')));
+  assert.ok(!lv2.text_lines().some((t) => t.includes('调教自慰经验')));
 });
 
 test('ablup17：唯一带句号的重试文案"未满足条件。"（其余 ABLUP10～16 均无句号）', async () => {
@@ -1993,6 +2040,7 @@ test('ablup17：成功购买写入 chara(cid).system.露出癖，扣珠、显示
   const { ablup17 } = seed(fixture);
   fixture.store.set(`juel:${CID}:8`, 100);
   fixture.store.set(`abl:${CID}:11`, 1); // 满足欲望门槛（无[爱慕]时）
+  fixture.store.set(`exp:${CID}:2`, 1); // Lv0→1 需要绝顶经验（C=1）
   fixture.set_inputs(0);
   await ablup17(CID);
   assert.equal(fixture.store.get(`abl:${CID}:17`), 1);
