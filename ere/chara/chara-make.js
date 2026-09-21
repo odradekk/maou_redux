@@ -1720,8 +1720,9 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         // :143-147 是异国勇者：CHAR_MAKE_INPORT 内已 ADDCHARA，用它的返回值
         newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
       }
-      // :145 LOCAL:0 = 1（异国）／:60 LOCAL:0 = 0 —— 只用于 :174-175 的
-      // 「异国的」前缀，那一段在收下分支里（下方）。
+      // :145 LOCAL:0 = 1（异国）／:60 LOCAL:0 = 0 —— 原作只用于 :174-175 的
+      // 「异国的」前缀；本文件不承载这个局部量，收下分支也因此没有那段前缀
+      // （属 #394 的域，本票未动）。
       //
       // ⚠ 已知结构偏离（早于 #487，未裁定）：原作的性格/发色落地（:66-72）、
       // 形象确认循环（:75-125）、FLAG:1/2 搬迁（:126-135）、FLAG:402（:139）
