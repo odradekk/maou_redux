@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 332; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）+2（#461 避孕套判定 M9836/M9837）
+export const COUNT = 332; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）+2（#461 避孕套判定 M9880/M9881，号段见 #461 完成报告——原 M9836/M9837 与 #462 撞号后改）
 
 export default [
   {
@@ -3054,7 +3054,7 @@ export default [
     must_mention: 'RAND:20/10/10（次数）',
   },
   {
-    desc: 'M9836 避孕套判定·主人侧：清位删（TEQUIP:35 不清零，下次判定会重复触发）',
+    desc: 'M9880 避孕套判定·主人侧：清位删（TEQUIP:35 不清零，下次判定会重复触发）',
     file: 'ere/event/source-check.js',
     find: `    era.print('射在避孕套里');
     chara(cid).event.主人避孕套 = 0;
@@ -3067,7 +3067,7 @@ export default [
     must_mention: '避孕套',
   },
   {
-    desc: 'M9837 避孕套判定：主人/助手分支的清位对象写反（TEQUIP:35/36 互换）',
+    desc: 'M9881 避孕套判定：主人/助手分支的清位对象写反（TEQUIP:35/36 互换）',
     file: 'ere/event/source-check.js',
     find: `    era_flag.assiplay === 0 &&
     chara(cid).event.主人避孕套 &&
