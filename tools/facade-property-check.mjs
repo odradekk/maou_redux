@@ -25,6 +25,17 @@
 // 赋值式挂载（`facade.x = …`）与普通方法，属性集不靠 getter/setter 枚举，需要
 // 另一套解析。
 //
+// 已知边界（都朝「漏判」一侧倒，不产生误报）：
+//   - 形参遮蔽只认 `function` / 带括号的箭头 / `catch` / 纯标识符列表的方法简写；
+//     解构形参（`f({train})`）、`for (const kojo of …)`、无括号单参箭头
+//     （`kojo => …`）识别不到——命中时该文件只是漏判，不误报。
+//   - 模板串正文照扫（`${}` 里是真代码，剥不得）：串里正好写着 `别名.属性`
+//     样子的文本会被判；实测 ere/ 无此写法。
+//   - 属性集与域清单的解析耦合生成器与手写区的书写格式（`^ {2}` 缩进、
+//     单引号键、`Object.defineProperty` / `X.prototype.Y =` 两种形态）。格式变了
+//     会**整体误红**（大声失败），不会静默失守——这一条是隐性契约，改生成器
+//     排版时先跑一遍本工具。
+//
 // 域清单从 ere/facade/chara.js 的装配体（`this.<域> = new XxxFacade(cid)`）推导，
 // 属性集从 ere/facade/chara-<域>.js 的生成区（getter/setter）与手写区
 // （`Object.defineProperty(<类>.prototype, '<属性>'`、`<类>.prototype.<成员> =`）
