@@ -8871,26 +8871,26 @@ export default [
   {
     desc: 'M10442 ablup30：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(屈服)/C(性交经验) 梯子 :135-180\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3000, 10000, 10];',
+    find: '    // A(欲情)/B(屈服)/C(性交经验) 梯子 :129-169\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3000, 10000, 10];',
     replace:
-      '    // A(欲情)/B(屈服)/C(性交经验) 梯子 :135-180\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3001, 10000, 10];',
+      '    // A(欲情)/B(屈服)/C(性交经验) 梯子 :129-169\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3001, 10000, 10];',
     tests: ['ablup'],
     must_mention: '欲情点数×0/3000 ……点数不足 经验不足 能力不足',
   },
   {
     desc: 'M10443 ablup30：[1] 轨三倍点数改为两倍',
     file: 'ere/system/train/ablup.js',
-    find: "      `${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,\n      1,\n    ); // :59-62（恒渲染，无 256 分支）",
+    find: "      `${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,\n      1,\n    ); // :60-62（恒渲染，无 256 分支）",
     replace:
-      "      `${era.get('palamname:5')}点数×${juel5}/${a * 2} ……${get_ablup_state(j)}`,\n      1,\n    ); // :59-62（恒渲染，无 256 分支）",
+      "      `${era.get('palamname:5')}点数×${juel5}/${a * 2} ……${get_ablup_state(j)}`,\n      1,\n    ); // :60-62（恒渲染，无 256 分支）",
     tests: ['ablup'],
     must_mention: '欲情点数×0/9000 ……点数不足 经验不足 能力不足',
   },
   {
     desc: 'M10444 ablup30：[1] 轨半经验改为整除丢失去掉（C/2 → C）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (exp5 < Math.floor(c / 2)) j |= 2; // :349（C/2 整除）',
-    replace: '    if (exp5 < c) j |= 2; // :349（C/2 整除）',
+    find: '    if (exp5 < Math.floor(c / 2)) j |= 2;',
+    replace: '    if (exp5 < c) j |= 2;',
     tests: ['ablup'],
     must_mention: 'ablup30：两条购买路径各自扣对应珠、era.add 写入 abl:30',
   },
@@ -8906,18 +8906,18 @@ export default [
   {
     desc: 'M10446 ablup30：崩坏 ×0.80 误改为 ×2.00（混用 ABLUP20/21 的系数）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(9)) {\n      // 崩坏 :311-315（×0.80，非 ABLUP20/21 的 ×2.00）\n      a = times(a, 0.8);\n      b = times(b, 0.8);\n      c = times(c, 0.8);\n    }',
+    find: '    if (talent(9)) {\n      // 崩坏 :302-306（×0.80，非 ABLUP20/21 的 ×2.00）\n      a = times(a, 0.8);\n      b = times(b, 0.8);\n      c = times(c, 0.8);\n    }',
     replace:
-      '    if (talent(9)) {\n      // 崩坏 :311-315（×0.80，非 ABLUP20/21 的 ×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n    }',
+      '    if (talent(9)) {\n      // 崩坏 :302-306（×0.80，非 ABLUP20/21 的 ×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n    }',
     tests: ['ablup'],
     must_mention: '欲情点数×0/2400 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10447 ablup30：侍奉精神门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl16() < lv + 1) {\n      // 侍奉精神门槛，双轨同时命中（:335-340）',
+    find: '    if (abl16() < lv + 1) {\n      // 侍奉精神门槛，双轨同时命中（:327-330）',
     replace:
-      '    if (abl16() <= lv + 1) {\n      // 侍奉精神门槛，双轨同时命中（:335-340）',
+      '    if (abl16() <= lv + 1) {\n      // 侍奉精神门槛，双轨同时命中（:327-330）',
     tests: ['ablup'],
     must_mention:
       'ablup30：Lv2→3 异常经验门槛 F=lv-1，开放可免；素质修正——容易陷落×0.50、崩坏×0.80（非 2.00）',
@@ -8925,9 +8925,9 @@ export default [
   {
     desc: 'M10448 ablup30：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
-    find: '      const new_lv = era.add(`abl:${cid}:30`, 1); // :82（train 属主）',
+    find: '      const new_lv = era.add(`abl:${cid}:30`, 1); // :81（train 属主）',
     replace:
-      '      const new_lv = era.add(`abl:${cid}:30`, 2); // :82（train 属主）',
+      '      const new_lv = era.add(`abl:${cid}:30`, 2); // :81（train 属主）',
     tests: ['ablup'],
     must_mention: 'ablup30：两条购买路径各自扣对应珠、era.add 写入 abl:30',
   },
@@ -9434,24 +9434,24 @@ export default [
   {
     desc: 'M10550 ablup30：抵抗的 ×1.20 误改为 ×1.25',
     file: 'ere/system/train/ablup.js',
-    find: '      // 抵抗 :254-259（×1.20）\n      a = times(a, 1.2);',
-    replace: '      // 抵抗 :254-259（×1.20）\n      a = times(a, 1.25);',
+    find: '      // 抵抗 :242-246（×1.20）\n      a = times(a, 1.2);',
+    replace: '      // 抵抗 :242-246（×1.20）\n      a = times(a, 1.25);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10551 ablup30：容易上瘾的 ×0.60 误改为 ×0.65',
     file: 'ere/system/train/ablup.js',
-    find: '      // 容易上瘾 :286-290（×0.60）\n      a = times(a, 0.6);',
-    replace: '      // 容易上瘾 :286-290（×0.60）\n      a = times(a, 0.65);',
+    find: '      // 容易上瘾 :272-276（×0.60）\n      a = times(a, 0.6);',
+    replace: '      // 容易上瘾 :272-276（×0.60）\n      a = times(a, 0.65);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10552 ablup30：容易陷落的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: '      // 容易陷落 :291-295（×0.50）\n      a = times(a, 0.5);',
-    replace: '      // 容易陷落 :291-295（×0.50）\n      a = times(a, 0.55);',
+    find: '      // 容易陷落 :278-282（×0.50）\n      a = times(a, 0.5);',
+    replace: '      // 容易陷落 :278-282（×0.50）\n      a = times(a, 0.55);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },

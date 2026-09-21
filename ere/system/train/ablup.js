@@ -4341,7 +4341,7 @@ async function ablup23(cid) {
 }
 
 /**
- * 源: target/ERB/ABL/ABLUP30.ERB @ABLUP30 :11-93 + @DECIDE_ABLUP30 :108-358。
+ * 源: target/ERB/ABL/ABLUP30.ERB @ABLUP30 :9-92 + @DECIDE_ABLUP30 :112-356。
  * 性交中毒（ABL:30，train 属主——era.add）。双轨道：[0] 正常需求、
  * [1] 三倍点数+半经验（A*3/B*3/C/2），两轨恒渲染（无 256 隐藏分支）。
  *
@@ -4362,7 +4362,7 @@ async function ablup30(cid) {
   const abl30 = () => era.get(`abl:${cid}:30`) || 0;
   const abl31 = () => era.get(`abl:${cid}:31`) || 0;
 
-  era.drawLine(); // :12
+  era.drawLine(); // :10
 
   if (
     abl30() >= 5 &&
@@ -4373,11 +4373,11 @@ async function ablup30(cid) {
       talent(75) === 0 ||
       talent(77) === 0)
   ) {
-    await era.printAndWait('需要特殊素质才能继续提升'); // :16-18（OR：任一为 0 即拦）
+    await era.printAndWait('需要特殊素质才能继续提升'); // :17-19（OR：任一为 0 即拦）
     return;
   }
   if (abl30() >= 10) {
-    await era.printAndWait('已达最高级'); // :19-21
+    await era.printAndWait('已达最高级'); // :20-22
     return;
   }
   if (abl30() + abl31() >= 10) {
@@ -4389,10 +4389,10 @@ async function ablup30(cid) {
     ) {
       await era.printAndWait(
         `性交中毒(${abl30()})＋自慰中毒(${abl31()})上限为10`,
-      ); // :26
+      ); // :27
       era.print(
         `至少达成${era.get('palamname:5')}点数${abl30() * abl30() * 1000}点或${era.get('palamname:6')}点数${abl30() * abl30() * 300}点的其中一项`,
-      ); // :27-28（文案的表与判定交叉，原作如此）
+      ); // :28（文案的表与判定交叉，原作如此）
       await era.printAndWait('方可提升当前性交中毒的等级'); // :29
       return;
     }
@@ -4400,7 +4400,7 @@ async function ablup30(cid) {
 
   for (;;) {
     const lv = abl30();
-    // A(欲情)/B(屈服)/C(性交经验) 梯子 :135-180
+    // A(欲情)/B(屈服)/C(性交经验) 梯子 :129-169
     let a, b, c;
     if (lv === 0) [a, b, c] = [3000, 10000, 10];
     else if (lv === 1) [a, b, c] = [8000, 25000, 25];
@@ -4414,7 +4414,7 @@ async function ablup30(cid) {
     else [a, b, c] = [200000, 900000, 2000]; // lv === 9
 
     if (talent(27)) {
-      // 戒备森严 :183-205（A/B/C 三列）
+      // 戒备森严 :172-190（A/B/C 三列）
       if (lv === 3) {
         a = times(a, 1.5);
         b = times(b, 1.5);
@@ -4435,31 +4435,31 @@ async function ablup30(cid) {
     }
 
     if (talent(12)) {
-      // 刚强 :208-212（×1.20）
+      // 刚强 :193-197（×1.20）
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
     }
     if (talent(20)) {
-      // 克制 :213-217（×1.20）
+      // 克制 :199-203（×1.20）
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
     }
     if (talent(21)) {
-      // 冷漠 :218-222（×1.20）
+      // 冷漠 :205-209（×1.20）
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
     }
     if (talent(24)) {
-      // 保守的 :223-228（×1.20）
+      // 保守的 :211-215（×1.20）
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
     }
     if (talent(30)) {
-      // 看重贞操 :230-235 / 看轻贞操 :236-241（×1.20 / ×0.90）
+      // 看重贞操 :218-222 / 看轻贞操 :223-227（×1.20 / ×0.90）
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
@@ -4469,7 +4469,7 @@ async function ablup30(cid) {
       c = times(c, 0.9);
     }
     if (talent(32)) {
-      // 压抑 :242-247 / 开放 :248-253（×1.20 / ×0.80）
+      // 压抑 :230-234 / 开放 :235-239（×1.20 / ×0.80）
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
@@ -4479,13 +4479,13 @@ async function ablup30(cid) {
       c = times(c, 0.8);
     }
     if (talent(34)) {
-      // 抵抗 :254-259（×1.20）
+      // 抵抗 :242-246（×1.20）
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
     }
     if (talent(35)) {
-      // 害羞 :261-266 / 不知羞耻 :267-272（×1.10 / ×0.95）
+      // 害羞 :249-253 / 不知羞耻 :254-258（×1.10 / ×0.95）
       a = times(a, 1.1);
       b = times(b, 1.1);
       c = times(c, 1.1);
@@ -4495,7 +4495,7 @@ async function ablup30(cid) {
       c = times(c, 0.95);
     }
     if (talent(70)) {
-      // 接受快感 :274-279 / 否定快感 :280-285（×0.90 / ×1.20）
+      // 接受快感 :261-265 / 否定快感 :266-270（×0.90 / ×1.20）
       a = times(a, 0.9);
       b = times(b, 0.9);
       c = times(c, 0.9);
@@ -4505,48 +4505,48 @@ async function ablup30(cid) {
       c = times(c, 1.2);
     }
     if (talent(72)) {
-      // 容易上瘾 :286-290（×0.60）
+      // 容易上瘾 :272-276（×0.60）
       a = times(a, 0.6);
       b = times(b, 0.6);
       c = times(c, 0.6);
     }
     if (talent(73)) {
-      // 容易陷落 :291-295（×0.50）
+      // 容易陷落 :278-282（×0.50）
       a = times(a, 0.5);
       b = times(b, 0.5);
       c = times(c, 0.5);
     }
     if (talent(76)) {
-      // 淫乱 :296-300（×0.80）
+      // 淫乱 :284-288（×0.80）
       a = times(a, 0.8);
       b = times(b, 0.8);
       c = times(c, 0.8);
     }
     if (talent(87)) {
-      // 小恶魔 :301-305（×0.90）
+      // 小恶魔 :290-294（×0.90）
       a = times(a, 0.9);
       b = times(b, 0.9);
       c = times(c, 0.9);
     }
     if (talent(123)) {
-      // 疯狂 :306-310（×0.80）
+      // 疯狂 :296-300（×0.80）
       a = times(a, 0.8);
       b = times(b, 0.8);
       c = times(c, 0.8);
     }
     if (talent(9)) {
-      // 崩坏 :311-315（×0.80，非 ABLUP20/21 的 ×2.00）
+      // 崩坏 :302-306（×0.80，非 ABLUP20/21 的 ×2.00）
       a = times(a, 0.8);
       b = times(b, 0.8);
       c = times(c, 0.8);
     }
 
-    if (a < 1) a = 1; // :318-319
-    if (b < 1) b = 1; // :320-321
-    if (c < 1) c = 1; // :322-323
+    if (a < 1) a = 1; // :309-310
+    if (b < 1) b = 1; // :311-312
+    if (c < 1) c = 1; // :313-314
 
     // F(异常经验)：lv>=2 且无[开放/容易上瘾/淫乱/疯狂]时 = lv-1，不足即
-    // 双轨同置 bit2（:325-333）
+    // 双轨同置 bit2（:317-324）
     let f = 0;
     if (
       lv >= 2 &&
@@ -4569,7 +4569,7 @@ async function ablup30(cid) {
       j |= 2;
     }
     if (abl16() < lv + 1) {
-      // 侍奉精神门槛，双轨同时命中（:335-340）
+      // 侍奉精神门槛，双轨同时命中（:327-330）
       i |= 4;
       j |= 4;
     }
@@ -4577,41 +4577,41 @@ async function ablup30(cid) {
     if (juel6 < b) i |= 1; // :346-347
     if (exp5 < c) i |= 2; // :349-350
     if (juel5 < a * 3) j |= 1; // :353-354
-    if (juel6 < b * 3) j |= 1; // :346
-    if (exp5 < Math.floor(c / 2)) j |= 2; // :349（C/2 整除）
+    if (juel6 < b * 3) j |= 1; // :346-347
+    if (exp5 < Math.floor(c / 2)) j |= 2; // :349-350（C/2 整除）
 
     if (f > 0) {
       era.print(`${era.get('expname:50')}${f}以上(现在${exp50})且`); // :46-47
     }
-    era.print(`${era.get('ablname:16')}LV${lv + 1}以上(现在LV${abl16()})且`); // :49-50
+    era.print(`${era.get('ablname:16')}LV${lv + 1}以上(现在LV${abl16()})且`); // :50
     era.printButton(
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
-    ); // :52-55（恒渲染）
+    ); // :53-55（恒渲染）
     era.println();
-    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b}`); // :56-57
-    era.print(`　　　${era.get('expname:5')}　${exp5}/${c}`); // :58
+    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b}`); // :56
+    era.print(`　　　${era.get('expname:5')}　${exp5}/${c}`); // :57
     era.printButton(
       `${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,
       1,
-    ); // :59-62（恒渲染，无 256 分支）
+    ); // :60-62（恒渲染，无 256 分支）
     era.println();
-    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b * 3}`); // :63-64
-    era.print(`　　　${era.get('expname:5')}　${exp5}/${Math.floor(c / 2)}`); // :65
-    era.printButton('停止', 100); // :67
+    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b * 3}`); // :63
+    era.print(`　　　${era.get('expname:5')}　${exp5}/${Math.floor(c / 2)}`); // :64
+    era.printButton('停止', 100); // :66
 
-    const result = await era.input(); // :69
+    const result = await era.input(); // :68
     if (result === 100) {
       return;
     } else if (result === 0 && i !== 0) {
-      era.print('未满足条件'); // :72-73
+      era.print('未满足条件'); // :71-72
       continue;
     } else if (result === 1 && j !== 0) {
-      era.print('未满足条件'); // :75-76
+      era.print('未满足条件'); // :74-75
       continue;
     } else if (result === 0) {
-      const new_lv = era.add(`abl:${cid}:30`, 1); // :82（train 属主）
-      era.add(`juel:${cid}:5`, -a); // :84-85
+      const new_lv = era.add(`abl:${cid}:30`, 1); // :81（train 属主）
+      era.add(`juel:${cid}:5`, -a); // :83-84
       era.add(`juel:${cid}:6`, -b);
       era.print(`${era.get('ablname:30')}变为LV${new_lv}。`); // :90
       return;
