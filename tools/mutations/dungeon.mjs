@@ -3,11 +3,13 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 263; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
+export const COUNT = 266; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
 // M9838 与 #462 撞号后改）；#469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
 // dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
 // 计数、全员取消派遣判据、三个 FLAG:400 早退守卫、MONSTER_LIST 的两处
-// whenMissing 骸骨缺省）
+// whenMissing 骸骨缺省）；#484 起 +3（M10620/M10621 再起点分支的 CFLAG:520
+// 写点：门面名与目标值；M10622 体力富余臂的 CFLAG:520 写值，交付前
+// 十项区分力抽查的补位项）
 
 export default [
   {
@@ -2370,5 +2372,29 @@ export default [
 }`,
     tests: ['dungeon-battle'],
     must_mention: '真实处理器执行',
+  },
+  {
+    desc: 'M10620 再起点分支：CFLAG:520 的门面名退回未登记的「到达阶层」（写不落 era.set，#484）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `              chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8`,
+    replace: `              chara(arg0).dungeon.到达阶层 = 8; // 变异：退回未登记的门面名`,
+    tests: ['dungeon-main'],
+    must_mention: '再起点分支的 CFLAG:520 = 8 真的落进变量',
+  },
+  {
+    desc: 'M10621 再起点分支：CFLAG:520 的目标值改错（8 改 7，#484）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `              chara(arg0).dungeon.目标阶层 = 8; // CFLAG:520 = 8`,
+    replace: `              chara(arg0).dungeon.目标阶层 = 7; // 变异：目标值改错`,
+    tests: ['dungeon-main'],
+    must_mention: '再起点分支的 CFLAG:520 = 8 真的落进变量',
+  },
+  {
+    desc: 'M10622 体力富余臂：CFLAG:520 的写值改错（FLOOR 改 FLOOR + 1，#484 抽查补位）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `            era.set(\`cflag:\${arg0}:520\`, floor); // CFLAG:520 = FLOOR`,
+    replace: `            era.set(\`cflag:\${arg0}:520\`, floor + 1); // 变异：写值改错`,
+    tests: ['dungeon-main'],
+    must_mention: '体力富余臂：状态良好时 CFLAG:520 记下当前阶层并下潜一层',
   },
 ];
