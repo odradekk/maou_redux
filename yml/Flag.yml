@@ -464,3 +464,21 @@
   id: 84
   name: "exhibit_count"
   type: "number"
+# —— CONFIG 残余票（issue #463）——
+# 陷落之后处女主动献身的后续发生方式：菜单 0/1/2 → -1/0/1（从不发生/每人
+# 一次/持续触发，CONFIG.ERB:47-67 设定/:70-82 状态）。属主 system 的
+# FLAG:37 与本 id 同属合并区间「37-38」（ownership/flag-ownership.yml），
+# 跨域写须具名，故进本表生成包装层（era_flag.virgin_conceded_mode）
+"处女献上后续发生方式":
+  id: 38
+  name: "virgin_conceded_mode"
+  type: "number"
+# 勇者相关杂项开关（位掩码，CONFIG.ERB:243-245 INVERTBIT FLAG:8,LOCAL-22）：
+# &1 男冒险者许可（:182 菜单文字原作即注释掉，未公开隐藏分支）、&2 勇者
+# 出現时的素质表示（:184）、&4 勇者的恋爱发展（:185）、&8 勇者的任务揭示板
+# （:186，显示语义反向——置位＝禁止）。FLAG:8 无归属条目，仍需具名
+# （tools/domain-ledger.mjs 已冻结、不接受新裸写）
+"勇者相关杂项开关":
+  id: 8
+  name: "adventurer_flags"
+  type: "number"

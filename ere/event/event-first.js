@@ -29,10 +29,7 @@ const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const { stub_line } = require('#/utils/stub-line');
 const { begin, STATE } = require('#/system/flow/begin-signal');
-const {
-  ask_initial_slave,
-  ask_dungeon_mode,
-} = require('#/event/first-setting');
+const { first_setting } = require('#/event/first-setting');
 const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
 const { chara_name_init } = require('#/chara/chara-name-list');
 const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
@@ -85,13 +82,13 @@ on('EVENTFIRST', async () => {
   // :15 FLAG:500 = 2 —— 狂王初期性别：扶她
   era.set('flag:500', 2);
 
-  // :19 CALL FIRST_SETTING —— 交互式开局设置。#50 起部分实现：初期奴隶
-  // 一问（FLAG:501：0 随机 / 1 村娘）+ #181（H12）加的地下城模式一问
-  // （FLAG:502：0 普通 / 1 2D，#168 裁定 5「连带补开关」），问答见
-  // event/first-setting.js，置法决议与依据在 issue #50/#181。其余各问维持
-  // 默认（FLAG:500 已在 :15 置 2、丽塔启动！= 0 关闭），占位行随问答打印。
-  await ask_initial_slave();
-  await ask_dungeon_mode();
+  // :19 CALL FIRST_SETTING —— 交互式开局设置，issue #463 起全量实现（除
+  // 丽塔/卡拉隐藏分支，SAVEDATA 变量无 ere 落点，见 first-setting.js 文件
+  // 头）。五问（魔王性别/肉棒尺寸/狂王性别/初期奴隶/地下城模式）的编排在
+  // event/first-setting.js 的 first_setting()。FLAG:500 会被狂王性别一问
+  // 覆盖——下面 :15 置的 2 只是问答前的暂定值（原作同款：函数入口先给个
+  // 初值，问答按玩家选择改写）。
+  await first_setting();
 
   // :21-24 REPEAT 14：FLAG:60..73 = -1（男性冒险者用着素质展示位等）
   for (let i = 60; i < 60 + 14; i += 1) {

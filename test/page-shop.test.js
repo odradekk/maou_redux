@@ -439,18 +439,30 @@ async function dispatch(...results) {
 }
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
-  // 四次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
+  // 两次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
   // 200 自 #136 起是真身存档界面，199 自 #395 起是真身 BEGIN TURNEND
   // 转场（专属用例见下），101 自 #391 起是真身角色信息画面
-  // （test/page-chara-info.test.js 独立覆盖），均不再走占位
-  const fixture = await dispatch(777, 103, 525);
+  // （test/page-chara-info.test.js 独立覆盖），777 自 #463 起是真身设定
+  // 界面（test/page-config.test.js 独立覆盖），均不再走占位
+  const fixture = await dispatch(103, 525);
   const texts = history_texts(fixture);
-  for (const name of ['@CONFIG', '@批量处刑', '@SHOW_FLOOR']) {
+  for (const name of ['@批量处刑', '@SHOW_FLOOR']) {
     assert(
       texts.some((line) => line.includes(name)),
       `指令壳应占位 ${name}`,
     );
   }
+});
+
+test('777 设定：真身接线到 page-config.js 的 config_menu（#463，不再打存根）', async () => {
+  const fixture = create_shop_fixture();
+  const { usershop } = fixture.load_module('page/page-shop');
+  fixture.set_inputs(100); // config_menu 自身的 [100] 返回
+  await usershop(777);
+  const texts = history_texts(fixture);
+  assert(!texts.some((line) => line.includes('@CONFIG')));
+  const buttons = fixture.lines_history.filter((l) => l.type === 'button');
+  assert(buttons.some((b) => b.accelerator === 13 && b.text.includes('过滤')));
 });
 
 test('199 休息：内联文本 + FLAG:9 += 5 + BEGIN TURNEND（#395，回合真能推进）', async () => {
@@ -770,13 +782,13 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // page-dungeon-info2.js），CHARA_INFO / CHARA_INFO_INDIVIDUAL_WAPPED
   // 自 #391 起为真身（101/498/499 分支，page-chara-info.js），
   // ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 分支 → show_shop 调用
-  // page/page-shop-trap.js；#395 的运行时占位随之撤除），均已移出。
+  // page/page-shop-trap.js；#395 的运行时占位随之撤除），CONFIG 自 #463
+  // 起为真身（777 分支，page/page-config.js），均已移出。
   assert.deepEqual(STUBBED_CALLS, [
     '批量处刑',
     'INTERCEPT',
     'ABILITY_UP',
     'TAILOR_MAIN',
-    'CONFIG',
     'LABO',
     'SHOW_FLOOR',
     'DEBUG_MENU_U',

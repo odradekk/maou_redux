@@ -121,17 +121,33 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 24; // 合并态实测（#467 并上含 #465 的 master）：
-// 29（#465 后的 master）− 5（本票的 ABL/ABLUP37.ERB／ABLUP39.ERB／
-// ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB 五个文件）= 24，与
-// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
-// 同票不清 ABLUP0.ERB 与 ABLUP20～33：ABL.ERB 的三条归因（@DECIDE_ABLUP 族、
-// @AUTO_ABLUP、@USERABLUP）已在本票清了，ABL 目录实测 已移植 23／
+export const PENDING_BASELINE = 22; // 合并态实测（#467 并上含 #463 的 master）：
+// 27（#463 后的 master，见下方 #463 说明）− 5（本票的 ABL/ABLUP37.ERB／
+// ABLUP39.ERB／ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB 五个文件）= 22，
+// 与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+// 同票不清 ABLUP0.ERB 与 ABLUP20～33：ABL.ERB 自己的三条归因（@DECIDE_ABLUP
+// 族、@AUTO_ABLUP、@USERABLUP）已在本票清了，ABL 目录实测 已移植 23／
 // 部分移植 1（ABLUP0.ERB，伞状行仍挂着 #466 的 8 个名字）／待移植 8。
+// export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#462 的 master）：
+// #465 先把基线抬到 29（37−8，ABL/ABLUP10.ERB～ABLUP17.ERB）；本票再减 2
+// （SYSTEM/CONFIG.ERB 落地真身 ere/page/page-config.js、SYSTEM/
+// SYSTEM_MODEINT.ERB 的 @QUE2MK 落地 ere/event/first-setting.js 的 que2mk，
+// 各自从「待移植」转「已移植」）：29 − 2 = 27，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+// SYSTEM ver1.0.3.ERB 本票一并从「部分移植」翻「已移植」（六个函数全部了结：
+// EVENTFIRST／EVENTTURNEND 三档／EVENTLOAD 早已落地，FIRST_SETTING 五问本票
+// 全量实现，SAVEINFO 随 #136，MONEYSYS 全库零调用点判死不移植，见
+// docs/stub-registry.md 的 EX_FLAG:4444 行），但部分移植不在待移植分子里，
+// 不动本数（同 #399 的 SHOP_CHARA 先例）。此前卡判定的 EVENTTURNEND（普通档）
+// 行是 #114 建表时的七格畸形行，行尾「登记（尚未接入）」被按末格读成状态、
+// 而 TURNEND 分派 #44 起就在 main-loop.js——#463 清掉过期格后文件翻面。
 // export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
 // 37（#464 后的 master）− 8（本票的 ABL/ABLUP10.ERB～ABLUP17.ERB 八个文件）
 // = 29，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
 // 重测而非相加。
+// export const PENDING_BASELINE = 35; // 合并态实测（#463 两阶段，并上 9457309 的
+// master 时）：阶段一 CONFIG.ERB 37−1=36、阶段二 SYSTEM_MODEINT.ERB 36−1=35；
+// master 前进（#465 抬到 29）后按 29−2=27 重测改写现役值，两阶段叙事见上。
 // export const PENDING_BASELINE = 37; // 合并态实测（#464 并上含 #460 的 master）：
 // 47（#460 后的 master）− 10（本票的 ABL/ABLUP0.ERB～ABLUP9.ERB 十个文件）
 // = 37，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
