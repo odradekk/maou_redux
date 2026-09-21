@@ -92,14 +92,14 @@ npm run format:check     # Prettier，只检查格式
 
 **测试入口统一限制为 4 个测试文件并发**，包括 npm 测试与变异子进程。它限制进程并发数，不等于 CPU 配额；同时跑多个 agent 或变异副本时仍要控制任务数。Linux 可额外用 `bash tools/capped.sh npm test` 施加 systemd CPU 配额；Windows 直接用 npm 命令。
 
-**测试命令必须有超时**。`npm test`、`lint`、`format:check` 这类交互式命令由 `tools/run-node.mjs` 给出默认 600 秒上限；单文件测试与长任务按需显式给更大的 `--timeout`，不依赖默认值。**`npm run test:ci` 是例外，脚本里显式声明 1200 秒**——它跑全库测试，本机带引擎实测 326 秒（`node --test --test-concurrency=4`，5916 例全过），但 `ci.yml` 的 `windows` 任务在 CI runner 上首次运行就撞上默认的 600 秒被杀（#443：`35329826228`，09:30:15 起跑、09:40:16 被 `taskkill` 终止，未跑完），1200 秒留出约 3.7 倍于本机实测的余量。这与 `ci.yml` 各 job 的 `timeout-minutes: 30`（1800 秒）是两层不同的上限：后者是 job 级兜底，覆盖检出、装依赖、跳过数守护等全部步骤；前者是 `test:ci` 这条命令自己的上限，必须留在 job 级上限之内。Windows 的 `timeout.exe` 只是等待命令，不能替代 GNU `timeout`。PowerShell 示例：
+**测试命令必须有超时**。`npm test`、`npm run lint`、`npm run format:check` **直接跑**——`package.json` 里这三条脚本本身就是 `node tools/run-node.mjs -- …`，默认 600 秒上限已经在里面了。`run-node.mjs` 自己 spawn 的是 node，参数必须是 node 脚本或 node 选项；手工再包一层（`run-node … -- npm run test`）在 Windows 上会报 `Cannot find module …\npm`，因为它找的是 `npm` 而不是 `npm.cmd`。单文件测试与长任务用 `run-node` 显式给更大的 `--timeout`，不依赖默认值。**`npm run test:ci` 是例外，脚本里显式声明 1200 秒**——它跑全库测试，本机带引擎实测 326 秒（`node --test --test-concurrency=4`，5916 例全过），但 `ci.yml` 的 `windows` 任务在 CI runner 上首次运行就撞上默认的 600 秒被杀（#443：`35329826228`，09:30:15 起跑、09:40:16 被 `taskkill` 终止，未跑完），1200 秒留出约 3.7 倍于本机实测的余量。这与 `ci.yml` 各 job 的 `timeout-minutes: 30`（1800 秒）是两层不同的上限：后者是 job 级兜底，覆盖检出、装依赖、跳过数守护等全部步骤；前者是 `test:ci` 这条命令自己的上限，必须留在 job 级上限之内。Windows 的 `timeout.exe` 只是等待命令，不能替代 GNU `timeout`。PowerShell 示例：
 
 ```
 New-Item -ItemType Directory -Force logs/migration | Out-Null
 node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> logs/migration/mutation-full.log
 ```
 
-超时返回 124；Windows 用 `taskkill /T /F` 终止本次命令的子进程树，POSIX 先中断、5 秒后强制终止。**Windows 长变异任务使用 `--jobs 2` 或更高的隔离副本模式**，强制终止无法保证在原目录修改文件的变异脚本执行 `finally`；短的串行 `--ids` 任务若被强制终止，要检查被修改文件的 diff。
+超时返回 124；Windows 用 `taskkill /T /F` 终止本次命令的子进程树，POSIX 先中断、5 秒后强制终止。**Windows 长变异任务使用 `--jobs 2` 或更高的隔离副本模式**：串行变异在原目录改文件，靠 `finally` 还原，而强制终止不执行 `finally`。**串行 `--ids` 跑完一律看一眼 `git status`，不论退出码**——异常退出同样跳过 `finally`，会把源文件留在变异态（#493 验收时 `kojo-k14-nobleman.js` 就被留成了 M10703 的样子，退出码看不出来）。留下的改动核对 diff 后 `git checkout --` 还原，重跑一次。
 
 **等待长任务时，使用任务本身提供的等待接口，并取得最终退出码。** 不要另写基于进程名的轮询：`pgrep -f` 可能匹配轮询命令自身，导致循环无法结束。
 
