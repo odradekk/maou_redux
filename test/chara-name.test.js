@@ -908,24 +908,44 @@ function load_rand(fixture) {
 test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并返回新角色号', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 2);
+  seed_hero(fixture, 9);
+  fixture.era.addCharacter(9); // 编制**不连号**（#487）：只有 9 号先在场
+  fixture.store.set('flag:1', 2); // 上一位调教对象 == 新角色（掷出 2 号）
   answer_sequence(fixture, [100, 2]); // :107 继续 → :158 收下
   const result = await load_rand(fixture)(seq_capture([1]), not_overseas);
 
-  assert.equal(result, 0, ':194 RETURN CHARANUM-1（加入前 0 人）');
+  // #487：:63-64 的 A / ID_OF_NEWCHARA 是**角色号**（掷中的勇者位），不是
+  // 「第几个加入」——招募后 CHARANUM = 2 →「已加入数 - 1」= 1 ≠ 2
+  assert.equal(result, 2, ':194 RETURN CHARANUM-1 = 新角色的角色号');
   assert.deepEqual(
     fixture.era.getAddedCharacters(),
-    [2],
+    [2, 9],
     ':61 ADDCHARA 落在 2 号位',
   );
-  // 夹具的 chara_no 是**插入序数组**（对应引擎 data.no），CHARANUM-1 因此
-  // 是「第几个加入」而非角色号——这里的 0 就是「刚加入的那位」。
-  assert.equal(fixture.store.get('cflag:0:1'), 0, ':180 CFLAG:1 归零');
+  assert.equal(fixture.store.get('cflag:2:1'), 0, ':180 CFLAG:1 归零');
+  assert.equal(
+    fixture.store.get('cflag:1:1'),
+    undefined,
+    '不写到「人数 - 1」的 1 号',
+  );
   assert.equal(fixture.store.get('flag:402'), 0, ':182 派遣标志归位');
-  // :126-130 的搬迁读的是 FLAG:1 / FLAG:2（「上一次的调教对象 / 助手」），
-  // 未种时按 0 读——本用例的新角色索引恰是 0，故 :127-128 命中并清空；
+  // :126-130 的搬迁读的是 FLAG:1 / FLAG:2（「上一次的调教对象 / 助手」）——
+  // 种进去的 FLAG:1 恰好是新角色的角色号，故 :127-128 命中并清空；
   // 末尾 :184-185 再把 FLAG 原样赋回 TARGET / ASSI 指针槽
   assert.equal(fixture.store.get('flag:1'), -1, ':128 等于新角色 → 清空');
   assert.equal(fixture.store.get('flag:10005'), -1, ':184 TARGET = FLAG:1');
+  // :173-178 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
+  // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
+  const recruit_name = fixture.store.get('callname:2:-1');
+  assert.ok(recruit_name, '新加入的 2 号有称呼');
+  assert.ok(
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'text' &&
+        line.text === `冒险者${recruit_name}被囚禁在了地牢里！`,
+    ),
+    ':173-178 收下播报点名新加入的 2 号（源 SAVESTR:(CHARANUM-1)）',
+  );
 });
 
 test('rand_chara_make：:52 的 RAND(1,17) 上界恒 16（勇者位 1-16）', async () => {
@@ -936,21 +956,43 @@ test('rand_chara_make：:52 的 RAND(1,17) 上界恒 16（勇者位 1-16）', as
   await load_rand(fixture)(cap, not_overseas);
   assert.equal(cap.bounds[0], 16, '第一掷上界 16 → 位号 1-16');
   assert.deepEqual(fixture.era.getAddedCharacters(), [5], '4 + 1 = 5');
+  // :62 的 ADDCHARA_EX 拿的同样是角色号（5）。编制为空时「已加入数 - 1」
+  // 是 0，而 0 号走 CHARA_EX_0（EXCOM.ERB:28 的守卫放行）、会给魔王点亮
+  // EX 素质——这里顺手钉住「不落到那个值」（#487）
+  assert.equal(
+    fixture.store.get('ex_talent:0:200'),
+    undefined,
+    ':62 add_chara_ex 不落到「已加入数 - 1」的 0 号（魔王标记）',
+  );
 });
 
-test('rand_chara_make：异国勇者分支不再 ADDCHARA，直接用最后一位', async () => {
+test('rand_chara_make：异国勇者分支不 ADDCHARA，用 CHAR_MAKE_INPORT 返回的角色号', async () => {
   const fixture = create_era_fixture();
-  // CHAR_MAKE_INPORT 判定通过时，原作由它内部 ADDCHARA（此处用打桩模拟）
+  seed_hero(fixture, 5);
+  seed_hero(fixture, 9);
+  fixture.era.addCharacter(9); // 编制**不连号**（#487）：只有 9 号先在场
+  // CHAR_MAKE_INPORT 判定通过时由它内部 ADDCHARA（此处用打桩模拟），并把
+  // 新角色的**角色号**交回调用点——原作 :57 的 RESULT 直接就是它（#487）。
+  // 返回值故意与位号不同（5 ≠ :52 掷出的 7），「用位号顶替」会被抓出来
   const overseas = async () => {
-    seed_hero(fixture, 7);
-    fixture.era.addCharacter(7);
-    return 1;
+    fixture.era.addCharacter(5);
+    return 5;
   };
   answer_sequence(fixture, [100, 2]);
   const result = await load_rand(fixture)(seq_capture([6]), overseas);
-  assert.equal(result, 0, 'ID_OF_NEWCHARA = CHARANUM-1');
-  assert.deepEqual(fixture.era.getAddedCharacters(), [7], '不重复 ADDCHARA');
-  assert.equal(fixture.store.get('cflag:0:1'), 0, '新角色 = 第 0 个加入的那位');
+  assert.equal(
+    result,
+    5,
+    'ID_OF_NEWCHARA = CHAR_MAKE_INPORT 的返回值（角色号）',
+  );
+  assert.deepEqual(fixture.era.getAddedCharacters(), [5, 9], '不重复 ADDCHARA');
+  assert.equal(fixture.store.get('cflag:5:1'), 0, '新角色 = 5 号');
+  assert.equal(fixture.store.get('cflag:7:1'), undefined, '不写到掷中的位号 7');
+  assert.equal(
+    fixture.store.get('cflag:1:1'),
+    undefined,
+    '不写到「人数 - 1」的 1 号',
+  );
 });
 
 test('rand_chara_make：16 位占满时早退（只掷一次、返回 0）', async () => {
@@ -973,27 +1015,30 @@ test('rand_chara_make：16 位占满时早退（只掷一次、返回 0）', asy
 
 test('rand_chara_make：:159 换人支删除刚加的角色并回到 :50 重挑', async () => {
   const fixture = create_era_fixture();
+  seed_hero(fixture, 1);
   seed_hero(fixture, 2);
-  seed_hero(fixture, 4);
+  seed_hero(fixture, 9);
+  fixture.era.addCharacter(9); // 编制**不连号**（#487）：只有 9 号先在场
   answer_sequence(fixture, [100, 1, 100, 2]); // 改形象→换一个→再改形象→收下
-  // 第一次掷 1 → 位号 2；换人后第二次掷 1 → 位号 2 已被删，仍可挑中
+  // 第一次掷 1 → 位号 2；换人后的重挑掷骰用尽回落 0 → 位号 1（另一个角色号）
   const result = await load_rand(fixture)(seq_capture([1]), not_overseas);
   assert.deepEqual(
     fixture.era.getAddedCharacters(),
-    [2],
-    ':161 第一位被 DELCHARA 后重挑回同位号',
+    [1, 9],
+    ':161 第一位（2 号）被 DELCHARA，重挑到 1 号',
   );
-  assert.equal(result, 0, '返回重挑后的 CHARANUM-1');
+  assert.equal(result, 1, '返回重挑后的角色号');
 });
 
 test('rand_chara_make：TARGET/ASSI 搬迁——等于新角色则清空、大于则前移', async () => {
   const fixture = create_era_fixture();
-  seed_hero(fixture, 2);
-  fixture.era.getAddedCharacters = () => [0]; // 让新角色就是 0 号位
-  fixture.store.set('flag:1', 0); // 上一位调教对象 == 新角色
+  seed_hero(fixture, 3);
+  seed_hero(fixture, 9);
+  fixture.era.addCharacter(9); // 编制**不连号**（#487）
+  fixture.store.set('flag:1', 3); // 上一位调教对象 == 新角色（掷出 3 号）
   fixture.store.set('flag:2', 5); // 助手编号在新角色之后
   answer_sequence(fixture, [100, 2]);
-  await load_rand(fixture)(seq_capture([0]), not_overseas);
+  await load_rand(fixture)(seq_capture([2]), not_overseas);
   assert.equal(fixture.store.get('flag:2'), 4, ':134 大于新角色 → 前移一格');
   assert.equal(fixture.store.get('flag:1'), -1, ':128 等于新角色 → 清空');
 });
