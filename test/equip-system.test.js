@@ -10,8 +10,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -269,16 +267,10 @@ test('equip_select：宝箱检查、道具消耗、换装与早退各分支', as
   assert.equal(await select.equip_select(31), 0);
   assert.ok(!fixture.text_lines().includes('勇者发现了宝箱！'));
 
-  // 战役中（CFLAG:1 == 12）走 CAMPAIGN_EQUIP_SELECT 存根（RESULT 0 → 早退）
+  // 战役中（CFLAG:1 == 12）走 CAMPAIGN_EQUIP_SELECT，FLAG:400 未置位恒 0 早退
   store.set('cflag:31:1', 12);
   store.set('item:306', 5);
   assert.equal(await select.equip_select(31), 0);
-  assert.ok(
-    fixture
-      .text_lines()
-      .some((l) => l.includes('原作 @CAMPAIGN_EQUIP_SELECT，')),
-    '战役分支应打存根占位行',
-  );
   assert.ok(!fixture.text_lines().includes('勇者发现了宝箱！'));
   store.set('cflag:31:1', 0);
 
@@ -305,6 +297,21 @@ test('equip_select：宝箱检查、道具消耗、换装与早退各分支', as
   await no_swap.select.equip_select(31);
   assert.ok(no_swap.fixture.text_lines().includes('似乎没什么好东西。'));
   assert.equal(no_swap.fixture.store.get('item:306'), 2, '道具仍被消耗');
+});
+
+test('campaign_equip_select()：FLAG:400 = 1 时按 CAMPAIGN_EQUIP_SELECT_1 的楼层表返回道具号（#469）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_equip_select } = fixture.load_module(
+    'system/equip/equip-select',
+  );
+  assert.equal(await campaign_equip_select(3), 0, 'FLAG:400 < 1 时恒 0');
+
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  assert.equal(await campaign_equip_select(3), 313, '3 层：死の指輪');
+  assert.equal(await campaign_equip_select(4), 314, '4 层：衰弱の指輪');
+  assert.equal(await campaign_equip_select(5), 319, '5 层：試練の指輪');
+  assert.equal(await campaign_equip_select(1), 0, '未登记楼层恒 0');
 });
 
 test('equip_powerup：素质修正各分支（含能力者的属性化与强化两途）', () => {
@@ -468,15 +475,5 @@ test('weapon_restore：装备强化倍率、铁壁、劣化、攻防变动、勋
   assert.equal(not_full.fixture.store.get('cflag:31:11'), 10);
 });
 
-test('存根清单核对：equip-select 的 STUBBED_CALLS 收录进 docs/stub-registry.md', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('system/equip/equip-select');
-  assert.deepEqual(STUBBED_CALLS, ['CAMPAIGN_EQUIP_SELECT']);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
+// equip-select 的 STUBBED_CALLS 已清空（CAMPAIGN_EQUIP_SELECT 换真身，
+// #469）：清单核对测试随之移除，同 dungeon-room.test.js 的处置

@@ -6,7 +6,8 @@
  *     迷宫侧随 H3 落地后接线本模块）
  *
  * 勇者开宝箱换装：宝箱道具号按阶层存 FLAG:(阶层+339)；战役中
- * （CFLAG:1 == 12）改由 @CAMPAIGN_EQUIP_SELECT 决定（阶段 5，存根）。
+ * （CFLAG:1 == 12）改由 @CAMPAIGN_EQUIP_SELECT 决定（#469 起真身，
+ * DispatchFamily 声明空间 {1}，战役 1 实现在 page-campaign-1.js）。
  * 两枚装饰槽（CFLAG:551/552）里，空槽（-1）或强度低于阶层且未诅咒的，
  * 经 @REMOVE_CURSE 换新；产物是装饰（W:7 == 1）才装上。
  */
@@ -14,17 +15,41 @@
 'use strict';
 
 const era = require('#/era-electron');
+const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
+const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { equip_database } = require('#/system/equip/equip-lookup');
 const { equip_ring_spans } = require('#/system/equip/equip-print');
 const { remove_curse } = require('#/system/equip/equip-curse');
 
+const STUBBED_CALLS = [];
+
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * @CAMPAIGN_EQUIP_SELECT_{FLAG:400} 族：战役迷宫的指轮宝箱（#469，
+ * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
+ * 依据）；实现在 ere/page/page-campaign-1.js 注册。
  */
-const STUBBED_CALLS = ['CAMPAIGN_EQUIP_SELECT'];
+const campaign_equip_select_family = new DispatchFamily(
+  'CAMPAIGN_EQUIP_SELECT',
+  [1],
+);
+
+/**
+ * @CAMPAIGN_EQUIP_SELECT（CAMPAIGN_EVENT.ERB:215-223）：战役迷宫的指轮
+ * 宝箱道具号。
+ * @param {number} floor 阶层（原作 ARG:0，EQUIP.ERB:218 传 CFLAG:A:501）
+ * @returns {Promise<number>} 道具号（FLAG:400 < 1 时恒 0）
+ */
+async function campaign_equip_select(floor) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }
+  return campaign_equip_select_family.call(active, {
+    whenMissing: 0,
+    args: [floor],
+  });
+}
 
 /** RAND:N 的默认实现（0..N-1 均匀整数） */
 function default_rand(n) {
@@ -47,9 +72,8 @@ async function equip_select(cid, rng = default_rand) {
   // FLAG:(阶层+339) 的道具号并消费一件
   let x;
   if (chara(cid).invasion.状态 === 12) {
-    // :218 战役中（CFLAG:A:1 == 12）——CAMPAIGN_* 留存根随阶段 5（#169）
-    stub_line('CAMPAIGN_EQUIP_SELECT', '战役宝箱装备选择');
-    x = 0; // 存根 RESULT = 0 → 下面的 X < 300 早退
+    // :218 战役中（CFLAG:A:1 == 12）——#469 起真身
+    x = await campaign_equip_select(chara(cid).dungeon.侵攻阶层);
   } else {
     // :223-224 Y = CFLAG:A:501 + 339；X = FLAG:Y
     const y = (era.get(`cflag:${cid}:501`) || 0) + 339;
@@ -99,4 +123,10 @@ async function equip_select(cid, rng = default_rand) {
   return 0;
 }
 
-module.exports = { equip_select, STUBBED_CALLS };
+module.exports = {
+  equip_select,
+  STUBBED_CALLS,
+  campaign_equip_select,
+  // page-campaign-1.js 向这个族 register(1, ...)，本文件只声明、不参与注册
+  campaign_equip_select_family,
+};

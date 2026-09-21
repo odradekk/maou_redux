@@ -28,6 +28,7 @@ const {
 const { campaign_room_family } = require('#/dungeon/dungeon');
 const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
 const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
+const { campaign_equip_select_family } = require('#/system/equip/equip-select');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 战役名两段展示文本（:76/:78/:80 FONTBOLD 段 + FONTREGULAR 段） */
@@ -141,6 +142,23 @@ function campaign_trap_1(trap_num) {
 }
 campaign_trap_family.register(1, campaign_trap_1);
 
+/** @CAMPAIGN_EQUIP_SELECT_1（:171-189）的楼层 → 戒指 ID 映射表 */
+const RING_BY_FLOOR = new Map([
+  [3, 313], // 死の指輪
+  [4, 314], // 衰弱の指輪
+  [5, 319], // 試練の指輪
+]);
+
+/**
+ * @CAMPAIGN_EQUIP_SELECT_1（:171-189）：楼层指轮宝箱的道具号。
+ * @param {number} floor 阶层（原作 ARG:0）
+ * @returns {number} 道具号（未登记的楼层恒 0）
+ */
+function campaign_equip_select_1(floor) {
+  return RING_BY_FLOOR.get(floor) ?? 0;
+}
+campaign_equip_select_family.register(1, campaign_equip_select_1);
+
 module.exports = {
   campaign_name_1,
   campaign_exist_1,
@@ -148,4 +166,5 @@ module.exports = {
   campaign_room_1,
   campaign_room_extra_1,
   campaign_trap_1,
+  campaign_equip_select_1,
 };
