@@ -197,11 +197,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '143-151',
-        any: [/^\s*\$START1$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '144-186',
         any: [/^\s*REPEAT 90$/m],
       },
@@ -241,11 +236,6 @@ export const FILES = [
         any: [
           /^\s*PRINTL \*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*$/m,
         ],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '209-263',
-        any: [/^\s*IF INV_TYPE == 0$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -358,11 +348,6 @@ export const FILES = [
         any: [/^\s*ELSEIF INV_TYPE == 3$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '442-561',
-        any: [/^\s*\$INPUT_LOOP_TMPO3$/m],
-      },
-      {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
         ref: '539',
         any: [
@@ -412,11 +397,6 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '609-618',
         any: [/^\s*IF INV_TYPE == 3$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '613-615',
-        any: [/^\s*ELSE$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -1265,6 +1245,597 @@ export const FILES = [
         any: [
           /^[ \t]*PRINTFORML \[1000\]向城裏投放水晶球\[\{EX_FLAG:9011\}\/\{EX_FLAG:9010\}\][ \t]*$/m,
         ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '6',
+        any: [/^[ \t]*@INVASION[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '7-21',
+        any: [/^[ \t]*#DIM AREA, 1[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '11',
+        any: [/^[ \t]*#DIM YUSYA_I[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '19',
+        any: [/^[ \t]*#DIM NUM_PAGE = 26[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '143',
+        any: [/^[ \t]*\$START1[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '145-151',
+        any: [/^[ \t]*MON_NUM = 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '173',
+        any: [/^[ \t]*IF MON_NUM < 600[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '179',
+        any: [/^[ \t]*IF MON_NUM < 600[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '210-263',
+        any: [/^[ \t]*IF INV_TYPE == 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '211-232',
+        any: [/^[ \t]*REPEAT 90[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '214-215',
+        any: [/^[ \t]*SIF ITEM:MON_ID < 1[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '217',
+        any: [/^[ \t]*CALL MONSTER_DATA, MON_ID, 0, 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '219-221',
+        any: [/^[ \t]*MON_ATK \+= E:2[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '223-224',
+        any: [/^[ \t]*SIF E:5 != 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '229',
+        any: [/^[ \t]*ITEM:MON_ID \/= 2[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '231',
+        any: [
+          /^[ \t]*SINKOU \+= MON_ATK \* \(\(ITEM:MON_ID \/ 9\) \+ 1\)[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '234',
+        any: [/^[ \t]*SINKOU \/= 20[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '239',
+        any: [/^[ \t]*PRINTW 侵攻失败[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '263',
+        any: [/^[ \t]*PRINTFORMW 怪物的战斗力　\{SINKOU\}点[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '270-293',
+        any: [/^[ \t]*IF EX_FLAG:99 <= 20 && EX_FLAG:99 >= 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '299-441',
+        any: [/^[ \t]*ELSEIF INV_TYPE == 2[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '325',
+        any: [/^[ \t]*RESTART[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '377',
+        any: [/^[ \t]*RESTART[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '442-563',
+        any: [/^[ \t]*ELSEIF INV_TYPE == 3[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '444',
+        any: [/^[ \t]*;選択基準は迎撃に準じる[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '445-449',
+        any: [/^[ \t]*LIST_POS = 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '450-460',
+        any: [/^[ \t]*REPEAT CHARANUM[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '452',
+        any: [/^[ \t]*SIF BASE:COUNT:0 < 1 \|\|[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '452-456',
+        any: [/^[ \t]*SIF BASE:COUNT:0 < 1 \|\|[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '452-458',
+        any: [/^[ \t]*SIF BASE:COUNT:0 < 1 \|\|[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '453',
+        any: [/^[ \t]*COUNT == 0 \|\|[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '454',
+        any: [/^[ \t]*CFLAG:COUNT:1 != 0 \|\|[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '455',
+        any: [
+          /^[ \t]*\(CFLAG:COUNT:0 == 0 && TALENT:COUNT:254 == 0\) \|\|[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '456',
+        any: [
+          /^[ \t]*\(TALENT:COUNT:153 == 1 && GETBIT\(FLAG:5,10\) == 0\)[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '459',
+        any: [/^[ \t]*YUSYA_I\+\+[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '461-466',
+        any: [/^[ \t]*IF \(YUSYA_I % NUM_PAGE\) > 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '467-470',
+        any: [/^[ \t]*IF YUSYA_I == 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '471',
+        any: [/^[ \t]*\$INPUT_LOOP_TMPO3[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '474-484',
+        any: [/^[ \t]*IF NO_PAGE == 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '486-488',
+        any: [/^[ \t]*CUSTOMDRAWLINE =[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '489-505',
+        any: [/^[ \t]*L_LCOUNT = LINECOUNT[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '490',
+        any: [/^[ \t]*T_LCOUNT = NUM_PAGE \* NO_PAGE \+ 1[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '491',
+        any: [/^[ \t]*FOR COUNT, LIST_POS, CHARANUM[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '491-505',
+        any: [/^[ \t]*FOR COUNT, LIST_POS, CHARANUM[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '493-500',
+        any: [/^[ \t]*SIF		BASE:COUNT:0 < 1 \|\|[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '498-499',
+        any: [/^[ \t]*T_LCOUNT >= \(NO_PAGE \+ 1\)\*NUM_PAGE \|\|[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '502',
+        any: [/^[ \t]*CALL LIFE_LIST_ITEM\(COUNT\)[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '503',
+        any: [/^[ \t]*T_LCOUNT\+\+[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '504',
+        any: [/^[ \t]*LIST_POS = COUNT[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '506-511',
+        any: [/^[ \t]*L_LCOUNT = LINECOUNT - L_LCOUNT[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '512-515',
+        any: [/^[ \t]*PRINTLC \[1000\] - 上一页[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '517',
+        any: [/^[ \t]*INPUT[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '519-520',
+        any: [/^[ \t]*IF RESULT == 999[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '521-526',
+        any: [/^[ \t]*ELSEIF RESULT == 1000		;上一页[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '527-532',
+        any: [/^[ \t]*ELSEIF RESULT == 1001		;下一页[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '533-535',
+        any: [/^[ \t]*ELSEIF RESULT < 0 \|\| RESULT >= CHARANUM[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '536-545',
+        any: [/^[ \t]*\{[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '547',
+        any: [/^[ \t]*YUSYA_I = RESULT[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '549-551',
+        any: [/^[ \t]*SINKOU = BASE:0:1 \/ 25[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '551',
+        any: [/^[ \t]*PRINTFORMW 魔王的力量　\{SINKOU\}点[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '553',
+        any: [/^[ \t]*TMP2_I = CFLAG:YUSYA_I:9 \+ 100[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '553-557',
+        any: [/^[ \t]*TMP2_I = CFLAG:YUSYA_I:9 \+ 100[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '554',
+        any: [
+          /^[ \t]*PRINTFORMW 勇者补正　x\{TMP2_I\/100\}\.%TOSTR\(TMP2_I%100,"00"\)%[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '556-557',
+        any: [/^[ \t]*SINKOU \*= TMP2_I[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '559-561',
+        any: [/^[ \t]*CALL MEDAL_BONUS,YUSYA_I[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '610-611',
+        any: [/^[ \t]*;略奪は侵攻力が激減[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '613-614',
+        any: [/^[ \t]*FLAG:AREA \+= SINKOU[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '620-692',
+        any: [/^[ \t]*IF INV_TYPE == 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '620-975',
+        any: [/^[ \t]*IF INV_TYPE == 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '624-628',
+        any: [/^[ \t]*IF AREA == 81 && FLAG:SINDO[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '626',
+        any: [/^[ \t]*PRINTFORMW 强制征收了\{SINKOU \* 10\}点！[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '647-651',
+        any: [/^[ \t]*PRINTFORMW 得到了\{SINKOU \* 10\}点的战利品！[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '648',
+        any: [/^[ \t]*PRINTFORMW 得到了\{SINKOU \* 10\}点的战利品！[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '653-667',
+        any: [/^[ \t]*SIF AREA == 81[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '667',
+        any: [/^[ \t]*WAIT[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '669-671',
+        any: [/^[ \t]*;人間界[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '686-692',
+        any: [/^[ \t]*IF RAND:100 < 5[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '687',
+        any: [/^[ \t]*PRINTFORMW 好像抓到了负隅顽抗的勇者…………[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '691',
+        any: [
+          /^[ \t]*PRINTFORMW 犒赏士兵，捕获到的勇者被赏赐给部下了。[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '891-975',
+        any: [/^[ \t]*ELSEIF INV_TYPE == 3[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '892-908',
+        any: [/^[ \t]*PRINTFORM %SAVESTR:YUSYA_I%得到了魔王的力量！[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '909',
+        any: [/^[ \t]*CALL KARMA, YUSYA_I, -5[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '912-918',
+        any: [/^[ \t]*IF AREA == 81 && FLAG:SINDO[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '912-957',
+        any: [/^[ \t]*IF AREA == 81 && FLAG:SINDO[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '914',
+        any: [/^[ \t]*PRINTFORMW 强行征收到了\{SINKOU\}点！[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '915',
+        any: [/^[ \t]*MONEY \+= SINKOU[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '916',
+        any: [/^[ \t]*EX_FLAG:4444 \+= SINKOU[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '917',
+        any: [/^[ \t]*EXP:YUSYA_I:80 \+= SINKOU \/ 20[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '918',
+        any: [
+          /^[ \t]*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/20\}点经验值！[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '951-956',
+        any: [/^[ \t]*PRINTFORMW 获得了\{SINKOU\}点的战利品！[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '952',
+        any: [/^[ \t]*PRINTFORMW 获得了\{SINKOU\}点的战利品！[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '953',
+        any: [/^[ \t]*MONEY \+= SINKOU[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '954',
+        any: [/^[ \t]*EX_FLAG:4444 \+= SINKOU[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '955',
+        any: [/^[ \t]*EXP:YUSYA_I:80 \+= SINKOU \/ 20[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '959-973',
+        any: [/^[ \t]*SIF AREA == 81[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '973',
+        any: [/^[ \t]*WAIT[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '224',
+        any: [/^[ \t]*LOCAL = RAND:10[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '226-227',
+        any: [/^[ \t]*IF LOCAL == 9[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '226-230',
+        any: [/^[ \t]*IF LOCAL == 9[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '228-229',
+        any: [/^[ \t]*ELSEIF LOCAL == 8[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '232',
+        any: [
+          /^[ \t]*JUMP INVASION_EVENT_SEIEI, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '250-271',
+        any: [/^[ \t]*SIF FLAG:SINDO != 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '257',
+        any: [/^[ \t]*IF FLAG:AREA == 0 && FLAG:SINDO == 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '261',
+        any: [
+          /^[ \t]*ELSEIF FLAG:AREA >= 1 && FLAG:AREA < 5000 && FLAG:SINDO == 0 && INV_TYPE != 1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '261-265',
+        any: [
+          /^[ \t]*ELSEIF FLAG:AREA >= 1 && FLAG:AREA < 5000 && FLAG:SINDO == 0 && INV_TYPE != 1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '266',
+        any: [
+          /^[ \t]*ELSEIF FLAG:AREA >= 1 && FLAG:AREA < 10000 && FLAG:SINDO == 0 && INV_TYPE != 1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '266-270',
+        any: [
+          /^[ \t]*ELSEIF FLAG:AREA >= 1 && FLAG:AREA < 10000 && FLAG:SINDO == 0 && INV_TYPE != 1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '530-814',
+        any: [
+          /^[ \t]*@INVASION_EVENT_FORT, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '815-1054',
+        any: [
+          /^[ \t]*@INVASION_EVENT_CHALLENGE, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '542-808',
+        any: [/^[ \t]*IF AREA == 81[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '828-1162',
+        any: [/^[ \t]*IF AREA == 81[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1041',
+        any: [/^[ \t]*EX_FLAG:95 = LOCAL:20[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '209-563',
+        any: [/^[ \t]*IF INV_TYPE == 0[ \t]*$/m],
       },
     ],
   },

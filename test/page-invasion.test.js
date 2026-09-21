@@ -44,18 +44,33 @@ function make_world(
   fixture.store.set('callname:0:-1', '你');
 }
 
-// 直驱 invasion()，预置输入，返回其返回值
-async function run_invasion(fixture, ...inputs) {
-  fixture.set_inputs(...inputs);
-  const { invasion } = fixture.load_module('page/page-invasion');
-  return invasion();
+/**
+ * 按上界取值的确定性随机源（缺省 1 = 一切 `RAND:N == 0` 的守卫不命中、
+ * @INVASION_EVENT 的 RAND:10 落到 SEIEI 臂）。出兵路线的随机消费量随怪物
+ * 数据、持有数与地区旁白而变，写不满一份精确序列，所以用按上界查表的形式
+ * （invasion-ravish.test.js 的同名 knob 先例）；需要精确序列的用例仍用 seq。
+ * @param {Object<number, number>} overrides 上界 → 取值
+ */
+function knob(overrides = {}) {
+  return (n) => {
+    const value = overrides[n] ?? 1;
+    assert.ok(value >= 0 && value < n, `随机值 ${value} 不在 RAND:${n} 范围内`);
+    return value;
+  };
 }
 
-// 直驱 post_conquest_menu()，预置输入，返回其返回值
-async function run_post_conquest(fixture, ...inputs) {
+// 直驱 invasion()，预置输入与随机源，返回其返回值
+async function run_invasion(fixture, inputs = [], rand = knob()) {
+  fixture.set_inputs(...inputs);
+  const { invasion } = fixture.load_module('page/page-invasion');
+  return invasion(rand);
+}
+
+// 直驱 post_conquest_menu()，预置输入与随机源，返回其返回值
+async function run_post_conquest(fixture, inputs = [], rand = knob()) {
   fixture.set_inputs(...inputs);
   const { post_conquest_menu } = fixture.load_module('page/page-invasion');
-  return post_conquest_menu();
+  return post_conquest_menu(rand);
 }
 
 function history_texts(fixture) {
@@ -125,7 +140,7 @@ async function run_sengen_video(fixture, inputs, rand = seq([])) {
 test('【验收 1】气力 10000 出兵一次：侵攻度 +400、气力减半、威望 +2、经验 +200', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
-  const result = await run_invasion(fixture, 1);
+  const result = await run_invasion(fixture, [1]);
 
   assert.equal(result, 1, '魔力出兵成功应返回 1（走 BEGIN TURNEND）');
   assert.equal(fixture.store.get('flag:81'), 400, 'FLAG:81 += 10000/25');
@@ -175,7 +190,7 @@ test('【验收 2】威望区间折扣：五档与原作公式逐档一致（INV
   for (const { prestige, expected, tier } of cases) {
     const fixture = create_era_fixture();
     make_world(fixture, { prestige, invasion: 100 });
-    const result = await run_invasion(fixture, 1);
+    const result = await run_invasion(fixture, [1]);
     assert.equal(result, 1);
     assert.equal(
       fixture.store.get('flag:81'),
@@ -194,14 +209,14 @@ test('【验收 2】威望区间折扣：五档与原作公式逐档一致（INV
   // 21-40 档的中间报文（PRINTW 侵攻战斗力减少，:277）
   const fixture = create_era_fixture();
   make_world(fixture, { prestige: 30 });
-  await run_invasion(fixture, 1);
+  await run_invasion(fixture, [1]);
   assert(history_texts(fixture).includes('侵攻战斗力减少'));
 });
 
 test('威望岌岌可危（0–20）：气力照减半、侵攻度与威望不变，仍返回 1（:270-274）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { prestige: 10 });
-  const result = await run_invasion(fixture, 1);
+  const result = await run_invasion(fixture, [1]);
 
   // 早退在共通补正之前：气力已在 :268 减半，其余全部未动
   assert.equal(result, 1, '失败路径同样消耗回合（RETURN 1）');
@@ -217,7 +232,7 @@ test('威望岌岌可危（0–20）：气力照减半、侵攻度与威望不�
 test('[999] 返回 0：零副作用，不消耗回合（:190-191）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
-  const result = await run_invasion(fixture, 999);
+  const result = await run_invasion(fixture, [999]);
   assert.equal(result, 0);
   assert.equal(fixture.store.get('flag:81'), 0);
   assert.equal(fixture.store.get('base:0:1'), 10000);
@@ -231,7 +246,7 @@ test('无兵力门槛：0 只怪物也能走 [1]；[0]/[2] 不可达（引擎侧
   const locked = create_era_fixture();
   make_world(locked);
   await assert.rejects(
-    () => run_invasion(locked, 0),
+    () => run_invasion(locked, [0]),
     /输入不合法！请输入以下值之一：/,
   );
   assert.deepEqual(locked.inputs_consumed, [], '0 未被送达');
@@ -245,7 +260,7 @@ test('无兵力门槛：0 只怪物也能走 [1]；[0]/[2] 不可达（引擎侧
   // [1] 无兵力门槛即可选：0 只怪物照常出兵
   const fixture = create_era_fixture();
   make_world(fixture);
-  const result = await run_invasion(fixture, 1);
+  const result = await run_invasion(fixture, [1]);
   assert.equal(result, 1);
   assert.equal(fixture.store.get('flag:81'), 400);
 
@@ -272,30 +287,29 @@ test('无兵力门槛：0 只怪物也能走 [1]；[0]/[2] 不可达（引擎侧
   );
 });
 
-test('[0]/[2]/[3] 路线存根：占位行可见、返回 0、零结算（登记项）', async () => {
-  // [3] 无兵力门槛即可选
-  const raid = create_era_fixture();
-  make_world(raid);
-  assert.equal(
-    await run_invasion(raid, 3),
-    0,
-    '掠夺路线存根返回 0（不消耗回合）',
+test('[0] 的 600 只门槛：不足时是 [-] 文本占位，够则渲染为按钮（:173-183）', async () => {
+  // 门槛下沿：599 只仍不足（[0] 不是按钮，键入 0 被引擎拒收）
+  const under = create_era_fixture();
+  make_world(under);
+  under.store.set('item:100', 599);
+  await assert.rejects(
+    () => run_invasion(under, [0], knob({ 100: 99 })),
+    /输入不合法！请输入以下值之一：/,
+    '599 只仍不够 600',
   );
-  assert(
-    raid.store.get('flag:81') === 0 && raid.store.get('base:0:1') === 10000,
-  );
-  assert(
-    history_texts(raid).some((line) => line.includes('@INVASION')),
-    '路线存根占位行带原作函数名',
-  );
+  assert.equal(under.store.get('item:100'), 599, '被拒后不扣怪物');
 
-  // 700 只怪物（item:100 = 700 ≥ 600）后 [0] 变为可选，仍是存根
+  // 700 只怪物（item:100 = 700 ≥ 600）后 [0] 变为可选按钮
   const monster = create_era_fixture();
   make_world(monster);
   monster.store.set('item:100', 700);
   const { invasion } = monster.load_module('page/page-invasion');
   monster.set_inputs(0);
-  assert.equal(await invasion(), 0);
+  assert.equal(
+    await invasion(knob({ 100: 99 })),
+    1,
+    '[0] 走完 RETURN 1（#503 起是真身）',
+  );
   assert(
     monster.lines_history.some(
       (line) =>
@@ -304,6 +318,673 @@ test('[0]/[2]/[3] 路线存根：占位行可见、返回 0、零结算（登记
     ),
     '怪物 ≥ 600 时 [0] 渲染为按钮',
   );
+});
+
+// ————————————————————————————————————————————————————————————————
+// #503：出兵路线 [0] 怪物出兵（:210-263 + 结果段 :620-692）与
+// [3] 勇者掠夺（:442-563 + 结果段 :891-975）
+// ————————————————————————————————————————————————————————————————
+
+/**
+ * 掠夺路线的候选世界：把若干角色做成「可派遣」。
+ * 五条判据（:452-456）里只留「合法」那一档，具体用例再逐条改坏。
+ */
+function seed_raidable(fixture, ids) {
+  for (const id of ids) {
+    fixture.seed_chara(id, { name: `勇者${id}`, callname: `勇者${id}` });
+    fixture.era.addCharacter(id);
+    fixture.store.set(`base:${id}:0`, 500); // :452 体力
+    fixture.store.set(`cflag:${id}:0`, 1); // :455 出售与助手资格
+    fixture.store.set(`cflag:${id}:1`, 0); // :454 待机
+    fixture.store.set(`cflag:${id}:9`, 10); // 等级（勇者补正的读数源）
+  }
+}
+
+test('[0] 怪物出兵：怪物减半、战力按 MONSTER_DATA 累加、战利品入账（:210-263）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  fixture.store.set('item:100', 600); // 狗头人 600 只（正好过 600 门槛）
+  // 100 号狗头人（等级 1/攻击 1/防御 2/速度 0/特殊 0/魔法 0）在魔王等级 0
+  // 下：MONSTER_DATA 写 E:2 = 1*2+2 = 4、E:3 = 2*2+2 = 6、E:4 = 0 →
+  // MON_ATK = 4+6 = 10；减半后 300 只 → SINKOU = 10 * (⌊300/9⌋+1) = 340 →
+  // /20 = 17（掷点全 1：等级骰与两枚数量骰都取 1 档；100 号不触发 5% 抓捕）
+  const rand = knob({ 100: 99 });
+  assert.equal(await run_invasion(fixture, [0], rand), 1);
+
+  assert.equal(fixture.store.get('item:100'), 300, ':229 ITEM:MON_ID /= 2');
+  assert.equal(fixture.store.get('flag:81'), 17, ':231/:234 SINKOU 累加后 /20');
+  assert.equal(fixture.store.get('flag:10004'), 170, ':649 MONEY += SINKOU*10');
+  assert.equal(fixture.store.get('exflag:4444'), 170, ':650 EX_FLAG:4444 同步');
+  assert.equal(fixture.store.get('exflag:99'), 72, ':978 威望 +2');
+  assert.equal(
+    fixture.store.get('exp:0:80'),
+    undefined,
+    '怪物路线不给魔王经验（只有 [1]/[3] 的经验段才写 EXP:0:80）',
+  );
+
+  const texts = history_texts(fixture);
+  assert(texts.includes('怪物的战斗力　17点'), ':263 PRINTFORMW 怪物的战斗力');
+  assert(
+    texts.includes('威望值是【相安无事】'),
+    '威望 70 落 61-80 档（:251-252）',
+  );
+  assert(texts.includes('合计　17点'), ':598 PRINTFORMW 合计');
+  assert(texts.includes('得到了170点的战利品！'), ':648 未征服 → 战利品');
+  assert(
+    !texts.some((line) => line.includes('魔力爆发')),
+    '不走魔力路线的结果段（:694-757）',
+  );
+  assert(
+    !texts.some((line) => line.includes('好像抓到了负隅顽抗的勇者')),
+    '5% 抓捕未命中（rand(100) = 5）',
+  );
+});
+
+test('[0] 多个怪物识别号各自减半并累加（:211-232 的 REPEAT 90 段）', async () => {
+  const a = create_era_fixture();
+  make_world(a);
+  a.store.set('item:100', 600);
+  assert.equal(await run_invasion(a, [0], knob({ 100: 99 })), 1);
+  assert.equal(a.store.get('flag:81'), 17, '单队：340 / 20');
+
+  const b = create_era_fixture();
+  make_world(b);
+  b.store.set('item:100', 600);
+  b.store.set('item:101', 1200); // 哥布林（等级 1/攻击 2/防御 1）
+  assert.equal(await run_invasion(b, [0], knob({ 100: 99 })), 1);
+
+  assert.equal(b.store.get('item:100'), 300, '每个识别号各自减半');
+  assert.equal(b.store.get('item:101'), 600);
+  assert.equal(b.store.get('flag:81'), 50, '(340 + 670) / 20：两队累加');
+});
+
+test('[0] 威望岌岌可危：侵攻失败早退，怪物照减半但零战利品（:236-240）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture, { prestige: 10 });
+  fixture.store.set('item:100', 600);
+  assert.equal(await run_invasion(fixture, [0], knob({ 100: 99 })), 1);
+
+  assert.equal(fixture.store.get('item:100'), 300, '减半在威望判定之前');
+  assert.equal(fixture.store.get('flag:81'), 0, '侵攻失败不加侵攻度');
+  assert.equal(fixture.store.get('flag:10004'), undefined, '无战利品');
+  assert.equal(fixture.store.get('exflag:99'), 10, '早退跳过 :978 的 +2');
+  const texts = history_texts(fixture);
+  assert(texts.includes('威望值是【岌岌可危】'));
+  assert(texts.includes('侵攻失败'));
+  assert(!texts.some((line) => line.includes('战利品')));
+});
+
+test('[0] 结算段 5% 抓捕：命中调 GET_ENEMY，人数上限早退才有犒赏行（:686-692）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  fixture.store.set('item:100', 600);
+  // 已加入数顶到 61 只（> 60）：GET_ENEMY 的人数上限首支（FLAG:82 == 0 且
+  // CHARANUM > 60，enter-enemy.js:113）早退 0 → 才有「犒赏士兵」那一行。
+  // 少于 61 只会走进 CHAR_MAKE——本用例的世界没有预设数据，那条路跑不下去
+  for (let id = 1; id <= 61; id += 1) {
+    fixture.chara_no.push(id);
+  }
+  assert.equal(await run_invasion(fixture, [0], knob({ 100: 0 })), 1);
+
+  const texts = history_texts(fixture);
+  assert(texts.includes('好像抓到了负隅顽抗的勇者…………'), ':687 PRINTFORMW');
+  assert(
+    texts.includes('犒赏士兵，捕获到的勇者被赏赐给部下了。'),
+    ':691 SIF RESULT == 0 才有这一行',
+  );
+  assert.equal(fixture.chara_no.length, 61, '人数上限早退：没有新角色加入');
+
+  // 阈值上沿：rand(100) = 5 不命中。用同一份「已顶到人数上限」的世界跑，
+  // 阈值一旦放宽（< 6）会命中并走 GET_ENEMY 的早退口——不会掉进 CHAR_MAKE
+  // 的深水区（本用例的世界没有预设数据，那条路跑不下去）
+  const edge = create_era_fixture();
+  make_world(edge);
+  edge.store.set('item:100', 600);
+  for (let id = 1; id <= 61; id += 1) {
+    edge.chara_no.push(id);
+  }
+  assert.equal(await run_invasion(edge, [0], knob({ 100: 5 })), 1);
+  assert(
+    !history_texts(edge).some((line) =>
+      line.includes('好像抓到了负隅顽抗的勇者'),
+    ),
+    '5% 抓捕未命中（rand(100) = 5）',
+  );
+});
+
+test('[0] 已征服的人间界（经征服后菜单的 [0]）：强制征收 + 100000 封顶', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture, { fallen: 1 }); // FLAG:82 != 0
+  fixture.store.set('item:100', 600);
+  // 先经 post_conquest_menu 的 [0]，再走出兵菜单的 [0]
+  assert.equal(await run_post_conquest(fixture, [0, 0], knob({ 100: 99 })), 1);
+  assert.equal(fixture.store.get('flag:81'), 17, ':614 已征服也是全额累加');
+  assert.equal(fixture.store.get('flag:10004'), 170, ':627 强制征收 SINKOU*10');
+  assert(
+    history_texts(fixture).includes('强制征收了170点！'),
+    ':626 已征服用「强制征收」（未征服是「战利品」）',
+  );
+});
+
+test('[0] 已征服且 SINKOU 超 100000 时封顶（:625 的 MIN）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture, { fallen: 1 });
+  // 400 万只 → 减半 200 万 → SINKOU = 10 * (⌊2000000/9⌋+1) / 20 = 111111
+  fixture.store.set('item:100', 4000000);
+  await run_post_conquest(fixture, [0, 0], knob({ 100: 99 }));
+  assert(
+    history_texts(fixture).includes('强制征收了1000000点！'),
+    ':625 SINKOU 封到 100000 后 ×10',
+  );
+  assert.equal(fixture.store.get('flag:10004'), 1000000, ':627 封顶后的入账');
+});
+
+test('[3] 已征服的掠夺：SINKOU 超 100000 时同样封顶（:913 的 MIN）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture, { fallen: 1, willpower: 3000000 });
+  seed_raidable(fixture, [1]);
+  await run_post_conquest(fixture, [0, 3, 1], knob());
+  // 3000000 / 25 = 120000 → ×1.10 = 132000 → 封到 100000
+  assert(
+    history_texts(fixture).includes('强行征收到了100000点！'),
+    ':913 SINKOU 封到 100000 后 ×1',
+  );
+  assert.equal(
+    fixture.store.get('flag:10004'),
+    100000,
+    ':915 MONEY += 封顶后的 SINKOU',
+  );
+});
+
+test('[3] 勇者掠夺：候选筛选、选中者带队、掠夺额与经验（:442-563 + :891-975）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  seed_raidable(fixture, [1, 2]);
+  // 1 号妊娠且未开「怀孕时的迎击」位 → 不进列表（选中者的筛选与列表同源）
+  fixture.store.set('talent:1:153', 1);
+  // 2 号的勋章经验 6 枚（> 5）→ MEDAL_BONUS 真读勇者号的 EXP:2:81（x1.01）
+  fixture.store.set('exp:2:81', 6);
+  assert.equal(await run_invasion(fixture, [3, 2], knob()), 1);
+
+  // 战力 = 魔王之力（BASE:0:1 = 10000 → 400，减半到 5000）
+  assert.equal(fixture.store.get('base:0:1'), 5000, ':550 BASE:0:1 /= 2');
+  // 勇者补正 x1.10（等级 10）→ 440；勋章补正 x1.01（勇者号）→ 444
+  assert.equal(fixture.store.get('flag:81'), 22, ':611 掠夺路线 SINKOU/20');
+  assert.equal(fixture.store.get('flag:10004'), 444, ':915 MONEY += SINKOU');
+  assert.equal(fixture.store.get('exflag:4444'), 444, ':916 同步');
+  assert.equal(
+    fixture.store.get('exp:2:80'),
+    22,
+    ':917 EXP:YUSYA_I:80 += SINKOU/20',
+  );
+  assert.equal(fixture.store.get('cflag:2:151'), -5, ':909 KARMA, YUSYA_I, -5');
+  assert.equal(
+    fixture.store.get('exp:0:80'),
+    undefined,
+    '掠夺不给魔王经验（:791 的 EXP:0:80 只在 [1] 结果段）',
+  );
+
+  const texts = history_texts(fixture);
+  assert(texts.includes('派遣谁去侵攻呢？'), ':487 列表标题');
+  assert(texts.includes('魔王的力量　400点'), ':551 PRINTFORMW');
+  assert(
+    texts.includes('勇者补正　x1.10'),
+    ':554（掠夺是单空格，[2] 路线是三格）',
+  );
+  assert(
+    texts.includes('勇者2的勋章补正\u3000x1.01'),
+    ':559-561 勋章补正按勇者号查 EXP:2:81（不是魔王的 0）',
+  );
+  assert(
+    texts.includes('勇者2得到了魔王的力量！人间界被掠夺了。（善恶值:-5）'),
+    ':892-908 三段 PRINT 并入同一显示行',
+  );
+  assert(texts.includes('获得了444点的战利品！'), ':952 未征服 → 战利品');
+  assert(texts.includes('勇者2获得了22点经验值！'), ':918');
+  assert(texts.includes('合计　444点'), ':598');
+
+  // 列表行的正文格带角色呼び名（编号在按钮格里，见 page-life-list.js 文件头）
+  assert(
+    texts.some((line) => line.includes('勇者2')),
+    ':502 候选 2 在列表里',
+  );
+  assert(
+    !texts.some((line) => line.includes('勇者1')),
+    ':456 妊娠且未开位的 1 不进列表',
+  );
+});
+
+test('[3] 列表输入的引擎边界：未渲染的值送不进游戏层（#130）', async () => {
+  // 列表每轮都画 [1000]/[999]/[1001] 与全部候选行，白名单外的手工键入在
+  // 渲染层就被拒收（引擎侧只按已打印按钮校验）。原作的越界守卫
+  // `RESULT < 0 || RESULT >= CHARANUM`（:533-535）因此是引擎死路径，
+  // 1:1 保留、不设变异条目（#470 的 ARCANA_FORT 越界守卫同款处置）
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  seed_raidable(fixture, [1]);
+  await assert.rejects(
+    () => run_invasion(fixture, [3, 99], knob()),
+    /输入不合法！请输入以下值之一：/,
+  );
+  const consumed = fixture.inputs_consumed
+    .filter((entry) => entry.api === 'input')
+    .map((entry) => entry.value);
+  assert.deepEqual(consumed, [3], '99 未被送达游戏层');
+});
+
+test('[3] 没有候选勇者：PRINTW + RESTART 回到出兵菜单（:467-470）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture); // 只有魔王 0
+  // [3] → 无候选 RESTART → 菜单重画 → [999] 返回 0
+  assert.equal(await run_invasion(fixture, [3, 999]), 0);
+  const texts = history_texts(fixture);
+  assert(texts.includes('没有勇者可进行侵攻。'), ':468 PRINTW');
+  assert.equal(
+    texts.filter((line) => line === '你的怪物数量 0只').length,
+    2,
+    'RESTART 重画整屏（$START1 :143）',
+  );
+});
+
+test('[3] 列表 [999] 返回：RESTART 回菜单、不消耗回合（:519-520）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  seed_raidable(fixture, [1]);
+  // [3] → 列表 → [999] RESTART → 菜单 → [999] 返回 0
+  assert.equal(await run_invasion(fixture, [3, 999, 999]), 0);
+  const texts = history_texts(fixture);
+  assert.equal(
+    texts.filter((line) => line === '派遣谁去侵攻呢？').length,
+    1,
+    '列表画过一次',
+  );
+  assert.equal(
+    texts.filter((line) => line === '你的怪物数量 0只').length,
+    2,
+    'RESTART 后菜单重画',
+  );
+  assert.equal(fixture.store.get('base:0:1'), 10000, '返回不扣气力');
+});
+
+test('[3] 翻页：页窗判据与 [上一页]/[下一页]（:490-532）', async () => {
+  // 27 个候选人（NUM_PAGE = 26）：MAX_PAGE = ⌈27/26⌉-1 = 1。第 0 页的
+  // T_LCOUNT 从 1 起、页窗上界 (0+1)*26 在第 26 行先命中 → 只渲染 25 行；
+  // 第 1 页从 LIST_POS（= 最后渲染的 25 号）起扫，于是 25 号重复出现一次
+  // ——原作翻页判据的现状（T_LCOUNT 只在渲染支内自增），1:1 保留
+  const ids = [];
+  for (let id = 1; id <= 27; id += 1) {
+    ids.push(id);
+  }
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  seed_raidable(fixture, ids);
+  // [3] → 下一页 → [999] 返回 → 菜单 [999] 退出
+  assert.equal(await run_invasion(fixture, [3, 1001, 999, 999]), 0);
+
+  const all_rows = [];
+  for (let id = 1; id <= 25; id += 1) {
+    all_rows.push(id);
+  }
+  const expected_buttons = [
+    1,
+    3,
+    999, // 出兵菜单（[0]/[2] 因兵力不足未渲染）
+    ...all_rows, // 第 0 页：1..25
+    1000,
+    999,
+    1001,
+    25,
+    26,
+    27, // 第 1 页：25 号重复（页窗起点）
+    1000,
+    999,
+    1001,
+    1,
+    3,
+    999, // [999] 返回 → RESTART 后的菜单
+  ];
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.accelerator),
+    expected_buttons,
+  );
+  assert.equal(
+    history_texts(fixture).filter((line) => line === '派遣谁去侵攻呢？').length,
+    2,
+    '翻页重画列表（GOTO INPUT_LOOP_TMPO3）',
+  );
+  assert.equal(fixture.store.get('base:0:1'), 10000, '返回不扣气力');
+});
+
+test('[3] 上一页在首页：不动页码，GOTO 回循环头重画（:521-526）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  seed_raidable(fixture, [1]);
+  // [3] → 上一页（no_page 已 0，不动）→ 列表重画 → 选 1
+  assert.equal(await run_invasion(fixture, [3, 1000, 1], knob()), 1);
+  assert.equal(
+    history_texts(fixture).filter((line) => line === '派遣谁去侵攻呢？').length,
+    2,
+    '上一页也走 GOTO（重画），不是就地返回',
+  );
+  assert.equal(fixture.store.get('flag:81'), 22, '重画后仍能正常选中');
+});
+
+test('[3] 派遣资格五条逐条（:452-456）', async () => {
+  const cases = [
+    {
+      label: '体力 0（濒死）',
+      setup: (f) => f.store.set('base:1:0', 0),
+      rejected: true,
+    },
+    {
+      label: '非待机（CFLAG:1 != 0）',
+      setup: (f) => f.store.set('cflag:1:1', 2),
+      rejected: true,
+    },
+    {
+      label: '未驯服（CFLAG:0 == 0 且无魔之刻印）',
+      setup: (f) => f.store.set('cflag:1:0', 0),
+      rejected: true,
+    },
+    {
+      label: '未驯服但持魔之刻印（TALENT:254）→ 可派遣',
+      setup: (f) => {
+        f.store.set('cflag:1:0', 0);
+        f.store.set('talent:1:254', 1);
+      },
+      rejected: false,
+    },
+    {
+      label: '孕妇且未开「怀孕时的迎击」位',
+      setup: (f) => f.store.set('talent:1:153', 1),
+      rejected: true,
+    },
+    {
+      label: '孕妇但开了位（FLAG:5 位 10 = 1024）→ 可派遣',
+      setup: (f) => {
+        f.store.set('talent:1:153', 1);
+        f.store.set('flag:5', 1024);
+      },
+      rejected: false,
+    },
+    {
+      label: '魔王自己（0 号）',
+      seed: [0],
+      setup: () => {},
+      rejected: true,
+    },
+  ];
+  for (const c of cases) {
+    const fixture = create_era_fixture();
+    make_world(fixture);
+    seed_raidable(fixture, c.seed ?? [1]);
+    c.setup(fixture);
+    if (c.rejected) {
+      // 无候选 → RESTART → 菜单 → [999] 返回 0
+      assert.equal(
+        await run_invasion(fixture, [3, 999]),
+        0,
+        `${c.label}：无候选回到菜单`,
+      );
+      assert(
+        history_texts(fixture).includes('没有勇者可进行侵攻。'),
+        `${c.label}：被筛掉`,
+      );
+    } else {
+      assert.equal(
+        await run_invasion(fixture, [3, 1, 999]),
+        1,
+        `${c.label}：可派遣并出兵`,
+      );
+      // 列表行的正文格才有呼び名——只查按钮快捷键接不到「谁进了列表」
+      // （出兵菜单自己的 [1] 也是 accelerator 1）
+      assert(
+        history_texts(fixture).some((line) => line.includes('勇者1')),
+        `${c.label}：1 号进列表`,
+      );
+    }
+  }
+});
+
+test('[3] 页窗守卫：max_page == 0 时 [上一页]/[下一页] 都不动页码（:521-532）', async () => {
+  // 26 个候选人正好一页：MAX_PAGE = ⌈26/26⌉-1 = 0。三次操作都只重画第 0 页
+  // ——[上一页] 在首页（no_page > 0 不成立）、[下一页] 在唯一一页（no_page <
+  // MAX_PAGE 不成立）都不推进页码，任何一处守卫放宽都会画出别的窗口
+  const ids = [];
+  for (let id = 1; id <= 26; id += 1) {
+    ids.push(id);
+  }
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  seed_raidable(fixture, ids);
+  assert.equal(await run_invasion(fixture, [3, 1000, 1001, 999, 999]), 0);
+
+  const page0 = [];
+  for (let id = 1; id <= 25; id += 1) {
+    page0.push(id);
+  }
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.accelerator),
+    [
+      1,
+      3,
+      999, // 出兵菜单
+      ...page0,
+      1000,
+      999,
+      1001, // 第 0 页
+      ...page0,
+      1000,
+      999,
+      1001, // [上一页] 在首页：重画同一页
+      ...page0,
+      1000,
+      999,
+      1001, // [下一页] 在唯一一页：重画同一页
+      1,
+      3,
+      999, // [999] 返回 → RESTART 后的菜单
+    ],
+    'max_page == 0 时两个翻页键都不动页码',
+  );
+  // :506-511 的补行：每页渲染 25 行、NUM_PAGE - rows = 1 行空行（三次重画各一次）
+  assert.equal(
+    history_texts(fixture).filter((line) => line === '').length,
+    3,
+    '页高补行按 NUM_PAGE - 渲染行数算（:506-511）',
+  );
+});
+
+test('[3] 列表选中不合法项：白名单内不存在这种输入（与上一例同源的引擎边界）', async () => {
+  // 渲染判据与选中判据是同一个 raid_rejected，所以「能点的都不非法」；
+  // 想喂一个非法 ID（如妊娠未开位的 1）只能靠手工键入，而渲染层先拒收。
+  // 原作的 `RESULT == 0 || BASE:RESULT:0 < 1 || ...`（:536-545）因此同样是
+  // 引擎死路径，保留 1:1、不设变异条目
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  seed_raidable(fixture, [1, 2]);
+  fixture.store.set('talent:1:153', 1); // 1 号被筛掉
+  await assert.rejects(
+    () => run_invasion(fixture, [3, 1], knob()),
+    /输入不合法！请输入以下值之一：/,
+  );
+  assert.equal(fixture.store.get('base:0:1'), 10000, '未出兵');
+});
+
+test('@INVASION_EVENT 的 RAND:10 真分发：9 → FORT、8 → CHALLENGE、其余 → SEIEI（:224-232）', async () => {
+  const run_with = async (roll) => {
+    const fixture = create_era_fixture();
+    make_world(fixture);
+    fixture.store.set('item:100', 600); // 过 600 门槛，[0] 才是按钮
+    const uppers = [];
+    const rand = knob({ 10: roll, 100: 99 });
+    const spy = (n) => {
+      uppers.push(n);
+      return rand(n);
+    };
+    await run_invasion(fixture, [0], spy);
+    return { texts: history_texts(fixture), uppers };
+  };
+
+  const fort = await run_with(9);
+  assert.equal(
+    fort.uppers[0],
+    10,
+    '第一枚骰子就是分发的 LOCAL = RAND:10（上界不许改错）',
+  );
+  assert(
+    fort.texts.some((line) => line.includes('@INVASION_EVENT_FORT')),
+    '9 → FORT 臂（存根占位行，随 [2] 路线票）',
+  );
+
+  const challenge = await run_with(8);
+  assert(
+    challenge.texts.some((line) => line.includes('@INVASION_EVENT_CHALLENGE')),
+    '8 → CHALLENGE 臂（存根占位行）',
+  );
+
+  const seiei = await run_with(0);
+  assert(
+    !seiei.texts.some((line) => line.includes('@INVASION_EVENT_FORT')),
+    '0-7 → SEIEI 臂：不打两臂的占位行',
+  );
+  assert(
+    seiei.texts.includes(
+      '根据传闻狂王为了应对魔王军的入侵已开始组织起了精锐部队。',
+    ),
+    'SEIEI 的首档传闻（:257-260，FLAG:81 == 0 时无 INV_TYPE 条件）',
+  );
+});
+
+test('@INVASION_EVENT 三臂的守卫：FORT/CHALLENGE 对 INV_TYPE == 1 仍作废（:539/:824）', async () => {
+  for (const [roll, arm] of [
+    [9, 'INVASION_EVENT_FORT'],
+    [8, 'INVASION_EVENT_CHALLENGE'],
+  ]) {
+    const fixture = create_era_fixture();
+    make_world(fixture);
+    // 魔力路线（[1]）：两臂的 SIF 守卫把 INV_TYPE == 1 挡回 -1，无占位行
+    await run_invasion(fixture, [1], knob({ 10: roll }));
+    assert(
+      !history_texts(fixture).some((line) => line.includes(`@${arm}`)),
+      `INV_TYPE == 1 时 ${arm} 被守卫挡下（零输出、继续侵攻）`,
+    );
+    assert.equal(fixture.store.get('flag:81'), 400, '魔力路线的结算不受影响');
+  }
+
+  // FLAG:SINDO != 0（已征服）时 FORT 的守卫同样早退
+  const conquered = create_era_fixture();
+  make_world(conquered, { fallen: 1 });
+  await run_post_conquest(conquered, [0, 1], knob({ 10: 9 }));
+  assert(
+    !history_texts(conquered).some((line) =>
+      line.includes('@INVASION_EVENT_FORT'),
+    ),
+    ':539 的 FLAG:SINDO 分支早退',
+  );
+});
+
+test('@INVASION_EVENT_SEIEI 的三档传闻：后两档只对非魔力路线开（:257/:261/:266）', async () => {
+  const first = '根据传闻狂王为了应对魔王军的入侵已开始组织起了精锐部队。';
+  const second = '狂王组织的精锐部队似乎已经开始行动了。';
+  const second2 = '如果不尽快采取行动的话………';
+  const third =
+    '根据斥候打探的消息，狂王的精锐部队似乎已经在前方的城镇中布下了防线。';
+  const third2 = '而且精锐部队的真正目的就是要捕捉魔王麾下的勇者………';
+
+  // 直接驱动该臂：三档的判据是「FLAG:AREA 区间 × INV_TYPE 条件」，与
+  // 出兵路线无关（路线侧由上面两条用例覆盖）
+  const run_at = async (progress, inv_type) => {
+    const fixture = create_era_fixture();
+    fixture.store.set('flag:81', progress); // FLAG:AREA
+    fixture.store.set('flag:82', 0); // FLAG:SINDO
+    const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+    const ret = await invasion_event_seiei(81, 82, inv_type);
+    return { ret, texts: fixture.text_lines() };
+  };
+
+  // 首档（侵攻度 == 0）：无 INV_TYPE 条件 → 魔力路线也打
+  for (const inv_type of [0, 1, 3]) {
+    const r = await run_at(0, inv_type);
+    assert.deepEqual(
+      r.texts,
+      [first],
+      `侵攻度 0 + INV_TYPE ${inv_type} 打首档`,
+    );
+    assert.equal(r.ret, -1, '非 [2] 路线返回 -1 继续侵攻');
+  }
+  // [2] 路线继续进战斗体（存根占位行 + 返回 0）
+  const brute = await run_at(0, 2);
+  assert.deepEqual(brute.texts[0], first, '侵攻度 0 + INV_TYPE 2 也打首档');
+  assert(
+    brute.texts.some((line) => line.includes('@INVASION_EVENT_SEIEI')),
+    'INV_TYPE == 2 继续进战斗体（存根，随 [2] 路线票）',
+  );
+  assert.equal(brute.ret, 0, '存根返回 0');
+  // 第二档（1-4999）：INV_TYPE != 1
+  for (const inv_type of [0, 3]) {
+    assert.deepEqual(
+      (await run_at(1, inv_type)).texts,
+      [second, second2],
+      `侵攻度 1 + INV_TYPE ${inv_type} 打第二档`,
+    );
+    assert.deepEqual(
+      (await run_at(4999, inv_type)).texts,
+      [second, second2],
+      `侵攻度 4999（上界内）+ INV_TYPE ${inv_type}`,
+    );
+  }
+  assert.deepEqual(
+    (await run_at(1, 1)).texts,
+    [],
+    '魔力路线不打第二档（:261 的 INV_TYPE != 1）',
+  );
+  // 第三档（5000-9999）
+  for (const inv_type of [0, 3]) {
+    assert.deepEqual(
+      (await run_at(5000, inv_type)).texts,
+      [third, third2],
+      `侵攻度 5000 + INV_TYPE ${inv_type} 打第三档`,
+    );
+  }
+  assert.deepEqual(
+    (await run_at(5000, 2)).texts[0],
+    third,
+    '侵攻度 5000 + INV_TYPE 2 也打第三档（后面接战斗体存根）',
+  );
+  assert.deepEqual((await run_at(5000, 1)).texts, [], '魔力路线不打第三档');
+  assert.deepEqual(
+    (await run_at(9999, 0)).texts,
+    [third, third2],
+    '9999 仍在档内',
+  );
+  // 10000 起三档都不命中（首档要求 == 0、末档要求 < 10000）
+  for (const inv_type of [0, 1, 3]) {
+    assert.deepEqual(
+      (await run_at(10000, inv_type)).texts,
+      [],
+      `侵攻度 10000 + INV_TYPE ${inv_type} 不打任何传闻`,
+    );
+  }
+  assert.equal(
+    (await run_at(10000, 2)).texts[0],
+    // [2] 路线照旧进战斗体存根，故列表首项是占位行而不是传闻
+    '（精锐部队战斗尚未移植，此处为占位——原作 @INVASION_EVENT_SEIEI，随勇者出兵票，见 docs/stub-registry.md。）',
+    '侵攻度 10000 + INV_TYPE 2 也不打传闻（直接进战斗体）',
+  );
+});
+
+test('@INVASION_EVENT_SEIEI 的已征服早退：FLAG:SINDO != 0 时零输出（:250-251）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:81', 0); // 首档条件成立也不打
+  fixture.store.set('flag:82', 2);
+  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  assert.equal(await invasion_event_seiei(81, 82, 0), -1);
+  assert.deepEqual(fixture.text_lines(), [], '已征服：不打印任何传闻');
 });
 
 test('KYOTEN_EVENT 人间界臂：五档推进、夺回回退、阈值间空转（INVASION_EVENT.ERB:14-104）', async () => {
@@ -368,7 +1049,7 @@ test('侵攻度封顶 10000 与 KYOTEN_EVENT 经结算链触发（:617-618/:984�
   // SINKOU = 400 × 1.10 = 440；9900 + 440 = 10340 → 封顶 10000；KYOTEN_EVENT
   // 首档（93 == 0）打「占领了村庄」。封顶后结算尾的 INVASION_CHECK 命中
   // 人间界组（#118 本体）：ENDING_1 演出 → 选 [0] 继续游戏
-  const result = await run_invasion(fixture, 1, 0);
+  const result = await run_invasion(fixture, [1, 0]);
   assert.equal(result, 1, '结局演出后 invasion() 仍返回 1（走 TURNEND）');
   assert.equal(fixture.store.get('flag:81'), 10000, '侵攻度封顶');
   assert.equal(fixture.store.get('flag:93'), 1, '结算尾部 KYOTEN_EVENT 已跑');
@@ -417,7 +1098,7 @@ test('invasion()：FLAG:82 决定路由到 post_conquest_menu() 还是 start_cam
   const conquered = create_era_fixture();
   make_world(conquered, { fallen: 1 });
   assert.equal(
-    await run_invasion(conquered, 999),
+    await run_invasion(conquered, [999]),
     0,
     'FLAG:82 != 0 时走征服后菜单',
   );
@@ -429,7 +1110,7 @@ test('invasion()：FLAG:82 决定路由到 post_conquest_menu() 还是 start_cam
   const narrow = create_era_fixture();
   make_world(narrow, { fallen: 0 });
   assert.equal(
-    await run_invasion(narrow, 999),
+    await run_invasion(narrow, [999]),
     0,
     'FLAG:82 == 0 时走既有窄路径',
   );
@@ -479,7 +1160,7 @@ test('征服后菜单渲染：三个地区状态按征服标记切换标签与�
       make_world(fixture, { fallen: 1 });
       fixture.store.set(c.flag, conquered ? 1 : 0);
       fixture.store.set(c.progress_flag, PROGRESS_VALUE);
-      await run_post_conquest(fixture, 999);
+      await run_post_conquest(fixture, [999]);
       const expected_progress = conquered
         ? c.conquered_progress
         : c.unconquered_progress;
@@ -515,7 +1196,7 @@ test('征服后菜单渲染：圣灵骑士堡垒按 FLAG:92 == 15 切换选项�
     const fixture = create_era_fixture();
     make_world(fixture, { fallen: 1 });
     fixture.store.set('flag:92', stage);
-    await run_post_conquest(fixture, 999);
+    await run_post_conquest(fixture, [999]);
     assert(
       fixture.lines_history.some(
         (line) =>
@@ -587,7 +1268,7 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项三态，两组条
     make_world(fixture, { fallen: 1 });
     fixture.store.set('exflag:2810', c.route_33);
     fixture.store.set('exflag:102', c.shrine_stage);
-    await run_post_conquest(fixture, 999);
+    await run_post_conquest(fixture, [999]);
     if (c.renders_progress) {
       assert(
         progress_texts(fixture).some((line) => line.includes(c.progress_text)),
@@ -612,14 +1293,14 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项三态，两组条
 test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块（INVASION.ERB:88-131）', async () => {
   const cancel = create_era_fixture();
   make_world(cancel, { fallen: 1 });
-  assert.equal(await run_post_conquest(cancel, 999), 0, '[999] 返回 0');
+  assert.equal(await run_post_conquest(cancel, [999]), 0, '[999] 返回 0');
 
   const crystal_ball = create_era_fixture();
   make_world(crystal_ball, { fallen: 1 });
   crystal_ball.store.set('exflag:9011', 3); // 分子
   crystal_ball.store.set('exflag:9010', 7); // 分母
   // [1000] 自 #502 起接 SENGEN_VIDEO 真身：菜单画出后由 [999] 退出（:90-92）
-  assert.equal(await run_post_conquest(crystal_ball, 1000, 999), 0);
+  assert.equal(await run_post_conquest(crystal_ball, [1000, 999]), 0);
   assert(
     history_texts(crystal_ball).some((line) =>
       line.startsWith('可用于投放的水晶球'),
@@ -644,7 +1325,7 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
   make_world(campaign, { fallen: 1 });
   // 9 → post_conquest_menu 转发到 campaign_menu()；999 → campaign_menu()
   // 自身循环的 [返回]（#469 起真身，不再是单行占位输出）
-  assert.equal(await run_post_conquest(campaign, 9, 999), 0);
+  assert.equal(await run_post_conquest(campaign, [9, 999]), 0);
   assert(
     history_texts(campaign).some((line) => line.includes('当前选择的行动')),
     '[9] 调用 campaign_menu()（page-campaign.js，#469 起真身）',
@@ -656,7 +1337,11 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
   const fort = create_era_fixture();
   make_world(fort, { fallen: 1 });
   fort.store.set('flag:92', 15);
-  assert.equal(await run_post_conquest(fort, 4), 0, '[4] 的四门全破路径返回 0');
+  assert.equal(
+    await run_post_conquest(fort, [4]),
+    0,
+    '[4] 的四门全破路径返回 0',
+  );
   const fort_texts = history_texts(fort);
   assert(
     fort_texts.includes('圣灵骑士全部都被打倒了，四个据点也都被攻陷了。'),
@@ -678,7 +1363,7 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，[1001] 仍可
   make_world(fixture, { fallen: 1 });
   fixture.store.set('exflag:2810', 0); // route_33 开放区间外，[5] 会被拒收
   fixture.store.set('exflag:102', 1); // shrine_stage >= 1，[5] 按钮仍渲染
-  assert.equal(await run_post_conquest(fixture, 5, 1001), 0);
+  assert.equal(await run_post_conquest(fixture, [5, 1001]), 0);
   assert(
     history_texts(fixture).some((line) => line.includes('@AGENT_MENU')),
     '[1001] 转发到 AGENT_MENU 存根（#103：只登记、不排期，不实现本体）',
@@ -692,7 +1377,7 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入�
     fixture.store.set('exflag:2810', 0);
     fixture.store.set('exflag:102', 1);
     await assert.rejects(
-      () => run_post_conquest(fixture, 5, bad),
+      () => run_post_conquest(fixture, [5, bad]),
       /预置输入已耗尽/,
       `[${bad}] 白名单清空后仍应被越界守卫拒收重问，而不是落到地区选择`,
     );
@@ -703,7 +1388,7 @@ test('征服后菜单 [0]：与 start_campaign() 直驱产生相同结算（提�
   const via_menu = create_era_fixture();
   make_world(via_menu, { fallen: 1 });
   assert.equal(
-    await run_post_conquest(via_menu, 0, 1),
+    await run_post_conquest(via_menu, [0, 1]),
     1,
     '[0] 经 post_conquest_menu 委派 start_campaign()，回合已耗返回 1',
   );
@@ -726,7 +1411,7 @@ test('征服后菜单 [1]/[2]/[3]/[5]：地区选择后的出兵续接是登记�
     const fixture = create_era_fixture();
     make_world(fixture, { fallen: 1 });
     assert.equal(
-      await run_post_conquest(fixture, result),
+      await run_post_conquest(fixture, [result]),
       0,
       `[${result}] 存根返回 0`,
     );
@@ -740,7 +1425,7 @@ test('征服后菜单 [1]/[2]/[3]/[5]：地区选择后的出兵续接是登记�
   const shrine = create_era_fixture();
   make_world(shrine, { fallen: 1 });
   shrine.store.set('exflag:2810', 510);
-  assert.equal(await run_post_conquest(shrine, 5), 0, '[5] 存根返回 0');
+  assert.equal(await run_post_conquest(shrine, [5]), 0, '[5] 存根返回 0');
   assert(
     history_texts(shrine).some((line) => line.includes('@INVASION')),
     '[5] 占位行带原作函数名',
@@ -770,7 +1455,7 @@ test('征服后菜单 [5]：选中后 shrine_stage >= 3 时无条件 +=1（:136-
     make_world(fixture, { fallen: 1 });
     fixture.store.set('exflag:2810', 510); // 开放区间内，派发不被拒
     fixture.store.set('exflag:102', stage);
-    await run_post_conquest(fixture, 5);
+    await run_post_conquest(fixture, [5]);
     assert.equal(
       fixture.store.get('exflag:102'),
       expected,
@@ -784,11 +1469,16 @@ test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文�
   const { STUBBED_CALLS } = fixture.load_module('page/page-invasion');
   // INVASION_CHECK 自 #118 起是真身（五组条件），不在存根名单；
   // ARCANA_FORT 自 #470 起是真身（ere/invasion/invasion-arcana-fort.js），
-  // MEDAL_BONUS 与 SENGEN_VIDEO 自 #502 起也是真身（本文件内），同样移出
+  // MEDAL_BONUS 与 SENGEN_VIDEO 自 #502 起也是真身（本文件内），同样移出；
+  // #503 起 [0]/[3] 两条出兵路线落地，'INVASION' 只剩 [2] 路线与地区续接，
+  // 而 @INVASION_EVENT 的 RAND:10 三臂恢复真分发后，FORT/CHALLENGE 两臂
+  // 各自登记为存根（行为体随 [2] 路线票）
   assert.deepEqual(STUBBED_CALLS, [
     'INVASION',
     'AGENT_MENU',
     'INVASION_EVENT_SEIEI',
+    'INVASION_EVENT_FORT',
+    'INVASION_EVENT_CHALLENGE',
   ]);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
@@ -867,7 +1557,7 @@ test('MEDAL_BONUS 经窄路径生效：勋章 > 5 时 SINKOU 按补正放大（:
   make_world(fixture);
   fixture.store.set('callname:0:-2', '魔王'); // 呼び名（%CALLNAME:MASTER% 的读数源）
   fixture.store.set('exp:0:81', 6); // > 5 → x1.01
-  const result = await run_invasion(fixture, 1);
+  const result = await run_invasion(fixture, [1]);
   assert.equal(result, 1);
   assert.equal(
     fixture.store.get('flag:81'),
