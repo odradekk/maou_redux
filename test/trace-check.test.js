@@ -1231,6 +1231,89 @@ test('移植状态表全绿（真树）：合计恰为 346，真值点与两类�
   assert.equal(status, 0, `--coverage 应全绿（真树移植状态表）：\n${output}`);
 });
 
+/**
+ * #501 存根清单过时行普查。
+ *
+ * 这些行在代码里早已做完（有真身、接进调用链），清单里却停在「存根／部分实现」，
+ * 后果由 tools/trace-coverage.mjs 的规则 4 放大：有移植产物 ∩ 表里仍有未了结项
+ * 归因到该文件 → 「部分移植」，一行过时文字就能把做完了的文件永久卡住。本用例
+ * 钉住两条：
+ *   ① 行级——表里的状态格（最后一格）不再以「存根／部分实现」开头（工具判
+ *      「未了结」的同款判据），并在行里写清本体位置与调用点（照 COM63_AUTO
+ *      行的先例）；
+ *   ② 工具级——三个此前被这些行拖住的文件在 `--coverage --list` 里判「已移植」
+ *      （#501 的验收判据）。
+ * 定位子串在表里唯一；行内文字一改即失效（要改行就同步这里）。
+ */
+test('存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植', () => {
+  const registry = fs.readFileSync(
+    path.resolve(REPO_ROOT, 'docs', 'stub-registry.md'),
+    'utf8',
+  );
+  const lines = registry.split(/\r?\n/);
+  // [定位子串, 行内必须出现的本体/调用点/票据]
+  const census = [
+    [
+      '`GET_ADV_COM`（升格规则族）',
+      ['com-caress.js:3790-3799', 'com-advanced.js:3800'],
+    ],
+    ['`MAOU_TENSHIN`', ['event-nextday.js:1292', 'event-end.js:122']],
+    ['`RAND_AUTOTRAIN`', ['event-autotrain.js:646']],
+    [
+      '`KOJO_MESSAGE_COM_8`（K8 银黑桃，全指令）',
+      ['kojo-k8-spade.js', 'kojo_message_com_family.register(8'],
+    ],
+    ['CALL INTERCEPT（:113）', ['已实现，#397', 'page-intercept.js']],
+    ['CALL ABILITY_UP（:115）', ['已实现，#397', 'page-ability-up.js']],
+    [
+      'CALL TAILOR_MAIN; TARGET = FLAG:1（:121-122）',
+      ['已实现，#397', 'page-tailor.js'],
+    ],
+    [
+      'CALL INFRASTRUCTURE（:132-133）',
+      ['已实现，#348', 'page-infrastructure.js'],
+    ],
+    ['CALL CONFIG（:144）', ['已实现，#463', 'page-config.js']],
+    ['CALL MAOUNET（:146）', ['已实现，#350', 'cross-save-sharing.js']],
+    ['COMF134\\_背后位ＳＰ.ERB:7', ['COM64 已实现', 'com-assistant.js:2676']],
+  ];
+  for (const [key, needles] of census) {
+    const hits = lines.filter((line) => line.includes(key));
+    assert.equal(hits.length, 1, `定位子串必须唯一命中一行：${key}`);
+    const row = hits[0];
+    const status = row.split('|').slice(1, -1).pop().trim();
+    assert.ok(
+      !status.startsWith('存根') && !status.startsWith('部分实现'),
+      `#501：${key} 的状态格仍是未了结项（${status.slice(0, 40)}）`,
+    );
+    for (const needle of needles) {
+      assert.ok(row.includes(needle), `#501：${key} 行必须写清 ${needle}`);
+    }
+  }
+  // 验收判据：工具按清单归因，三个文件从「部分移植」翻「已移植」
+  const { status, output } = run_tool([
+    '--coverage',
+    '--list',
+    '--only',
+    'target/ERB/調教相關/,target/ERB/口上/,target/ERB/迷宮/',
+  ]);
+  for (const f of [
+    'target/ERB/調教相關/COMF_JUMP.ERB', // #501 票面点名的验收点
+    'target/ERB/口上/EVENT_K8_スペード.ERB',
+    'target/ERB/迷宮/DUNGEON_TOWN.ERB',
+  ]) {
+    assert.ok(
+      output.includes(`已移植 ${f}`),
+      `#501：${f} 必须判已移植（清单行清干净才会翻）：\n${output}`,
+    );
+    assert.ok(
+      !output.includes(`部分移植 ${f}`),
+      `#501：${f} 不得再判部分移植：\n${output}`,
+    );
+  }
+  assert.equal(status, 0, `限定范围的移植状态表应全绿：\n${output}`);
+});
+
 test('移植状态表：yml 承载与存根归因的规则行为（--only 限定，共享副本）', () => {
   const root = probe_repo();
   const js_path = path.join(root, 'ere', '__cov_probe__.js');
