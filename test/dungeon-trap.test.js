@@ -859,6 +859,25 @@ test('SLAVE_TRAP_SET：库存 < 99 补一个、≥ 99 按价换金', async () =>
   );
 });
 
+// —— CAMPAIGN_TRAP（#469 起真身）——
+
+test('campaign_trap()：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_trap } = load(fixture);
+  assert.equal(await campaign_trap(301), 0);
+});
+
+test('campaign_trap()：FLAG:400 = 1 时按 CAMPAIGN_TRAP_1 的映射表返回陷阱 ID', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_trap } = load(fixture);
+  assert.equal(await campaign_trap(301), 60, '2 层落穴');
+  assert.equal(await campaign_trap(305), 78, '6 层火炎放射');
+  assert.equal(await campaign_trap(325), 65, '6 层触手床');
+  assert.equal(await campaign_trap(300), 0, '未登记槽号恒 0（原作默认值）');
+});
+
 // —— 存根清单核对（dungeon-battle.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录 dungeon-trap 的全部存根化调用', () => {

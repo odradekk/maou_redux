@@ -27,6 +27,7 @@ const {
 } = require('#/page/page-campaign');
 const { campaign_room_family } = require('#/dungeon/dungeon');
 const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
+const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 战役名两段展示文本（:76/:78/:80 FONTBOLD 段 + FONTREGULAR 段） */
@@ -114,10 +115,37 @@ function campaign_room_extra_1(floor) {
 }
 campaign_room_extra_family.register(1, campaign_room_extra_1);
 
+/** @CAMPAIGN_TRAP_1（:115-168）的 TRAP_NUM → TRAP_ID 映射表 */
+const TRAP_ID_BY_NUM = new Map([
+  [301, 60],
+  [302, 60],
+  [303, 82],
+  [304, 82],
+  [305, 78],
+  [312, 72],
+  [313, 72],
+  [314, 84],
+  [315, 84],
+  [323, 76],
+  [324, 65],
+  [325, 65],
+]);
+
+/**
+ * @CAMPAIGN_TRAP_1（:115-168）：楼层陷阱槽的具体陷阱 ID。
+ * @param {number} trap_num FLAG 槽号（原作 ARG:0）
+ * @returns {number} 陷阱 ID（未登记的槽号恒 0）
+ */
+function campaign_trap_1(trap_num) {
+  return TRAP_ID_BY_NUM.get(trap_num) ?? 0;
+}
+campaign_trap_family.register(1, campaign_trap_1);
+
 module.exports = {
   campaign_name_1,
   campaign_exist_1,
   campaign_set_1,
   campaign_room_1,
   campaign_room_extra_1,
+  campaign_trap_1,
 };
