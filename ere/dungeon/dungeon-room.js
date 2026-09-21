@@ -65,7 +65,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
+const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const ex_item_mod = require('#/dungeon/ex-item');
 const summon_mod = require('#/dungeon/monster-summon');
 
@@ -73,7 +73,17 @@ const summon_mod = require('#/dungeon/monster-summon');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['CAMPAIGN_ROOM_EXTRA'];
+const STUBBED_CALLS = [];
+
+/**
+ * @CAMPAIGN_ROOM_EXTRA_{FLAG:400} 族：战役迷宫房间的扩张位域（#469，
+ * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
+ * 依据）；实现在 ere/page/page-campaign-1.js 注册。
+ */
+const campaign_room_extra_family = new DispatchFamily(
+  'CAMPAIGN_ROOM_EXTRA',
+  [1],
+);
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -85,18 +95,21 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-// —— 域内存根（#177 登记，归属见 docs/stub-registry.md）——
-
 /**
- * @CAMPAIGN_ROOM_EXTRA 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役迷宫
- * 房间的扩张位域。EXTRA = RESULT——存根返回 0（无扩张，与 CAMPAIGN_ROOM
- * 存根返回 0 同构：战役房间整体无效果）。FLAG:400 无写入路径恒 0，本票
- * 不达。
- * @returns {number} 扩张位域（存根恒 0）
+ * @CAMPAIGN_ROOM_EXTRA（CAMPAIGN_EVENT.ERB:169-179）：战役迷宫房间的
+ * 扩张位域。
+ * @param {number} floor 阶层（原作 ARG:0）
+ * @returns {Promise<number>} 扩张位域（FLAG:400 < 1 时恒 0）
  */
-function campaign_room_extra() {
-  stub_line('CAMPAIGN_ROOM_EXTRA', '战役房间扩张', '随战役票（阶段 5）');
-  return 0;
+async function campaign_room_extra(floor) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }
+  return campaign_room_extra_family.call(active, {
+    whenMissing: 0,
+    args: [floor],
+  });
 }
 
 /** 设施头部的「扩张：○」段（:121-135 等七处同构的 SIF 三连，文件头） */
@@ -151,10 +164,11 @@ async function dungeon_room(arg0, rand, ctx) {
   let room;
   let extra;
   if (place === 12) {
-    // :33-38 戦役：CAMPAIGN_ROOM / EXTRA（域内/延迟 require 存根，恒 0）
+    // :33-38 戦役：CAMPAIGN_ROOM（延迟 require dungeon.js，防环）/
+    // CAMPAIGN_ROOM_EXTRA（域内真身，#469 起）
     const dungeon_mod = require('#/dungeon/dungeon');
     room = await dungeon_mod.campaign_room(chara(arg0).dungeon.侵攻阶层);
-    extra = campaign_room_extra(chara(arg0).dungeon.侵攻阶层);
+    extra = await campaign_room_extra(chara(arg0).dungeon.侵攻阶层);
   } else {
     const room_id = chara(arg0).dungeon.侵攻阶层 + 349; // :40
     // :42-44 施設なし
@@ -1268,4 +1282,7 @@ module.exports = {
   dungeon_mase,
   dungeon_museum,
   dungeon_hotel,
+  campaign_room_extra,
+  // page-campaign-1.js 向这个族 register(1, ...)，本文件只声明、不参与注册
+  campaign_room_extra_family,
 };

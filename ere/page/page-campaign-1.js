@@ -18,13 +18,15 @@
 
 'use strict';
 
+const era = require('#/era-electron');
+const era_flag = require('#/era-utils/era-flag');
 const {
   campaign_name_family,
   campaign_exist_family,
   campaign_set_family,
 } = require('#/page/page-campaign');
-const era = require('#/era-electron');
-const era_flag = require('#/era-utils/era-flag');
+const { campaign_room_family } = require('#/dungeon/dungeon');
+const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 战役名两段展示文本（:76/:78/:80 FONTBOLD 段 + FONTREGULAR 段） */
@@ -84,8 +86,38 @@ async function campaign_set_1() {
 }
 campaign_set_family.register(1, campaign_set_1);
 
+/**
+ * @CAMPAIGN_ROOM_1（:84-95）：楼层设施。4 层以上是人类牧场（502）。
+ * @param {number} floor 阶层（原作 ARG:0）
+ * @returns {number} 房间类型（0 = 无设施）
+ */
+function campaign_room_1(floor) {
+  return floor > 3 ? 502 : 0;
+}
+campaign_room_family.register(1, campaign_room_1);
+
+/**
+ * @CAMPAIGN_ROOM_EXTRA_1（:98-112）：楼层设施扩张位域。5 层以上 +1（位 0，
+ * 搾乳设备），6 层以上再 +2（位 1，种付奴隶）。
+ * @param {number} floor 阶层（原作 ARG:0）
+ * @returns {number} 扩张位域（0-3）
+ */
+function campaign_room_extra_1(floor) {
+  let extra = 0;
+  if (floor > 4) {
+    extra += 1;
+  }
+  if (floor > 5) {
+    extra += 2;
+  }
+  return extra;
+}
+campaign_room_extra_family.register(1, campaign_room_extra_1);
+
 module.exports = {
   campaign_name_1,
   campaign_exist_1,
   campaign_set_1,
+  campaign_room_1,
+  campaign_room_extra_1,
 };
