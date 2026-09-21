@@ -944,6 +944,10 @@ test('转发层 re-export @CHAR_INIT（chara-init.js 的 #118 实现）', async 
  * **候选表长度**这个数值：`rand_n(16)` 与 `rand_n(14)` 在同一个固定返回值下
  * 分不出结果，只有直接断实际传入的 n 才拦得住（`seq_capture` 的同类写法，
  * 见 test/chara-name.test.js 头注）。
+ *
+ * 与 `seq` 的差别：`seq` 越界即断言失败，这里越界静默回落 0——本文件多处靠
+ * 「恒 0 推进流程」，回落是刻意的；要断言「不再掷骰」的用例读 `bounds`，不看
+ * 返回值（如 16 位全满那条的 `capture([])`）。
  */
 function capture(values) {
   const bounds = [];
@@ -1045,7 +1049,10 @@ test('campaign_slave=true：只在未被占用的勇者位里抽，已占用的�
   );
 
   // 第二位：掷到候选表末位（索引 13）应落到 16 号——按候选表索引而非 1-16
-  // 原区间取值（原区间索引 13 是 14 号）
+  // 原区间取值（原区间索引 13 是 14 号）。布置：魔王 0 与 1、9 号在场（编制
+  // 不连号，候选表 = 2-8 与 10-16 共 14 位），16 号是被抽中的那位——它的预设
+  // 必需（夹具的 addCharacter 按预设放行，CHAR_MAKE 也从它取表），0/1/9 的
+  // 预设只是编制占位，不参与断言
   const fixture2 = create_era_fixture();
   for (const cid of [0, 1, 9]) {
     fixture2.seed_chara(cid, {

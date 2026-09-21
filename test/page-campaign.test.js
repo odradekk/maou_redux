@@ -167,7 +167,8 @@ test('招募：成功后扣 100 气力、点亮本战役招募素质位（TALENT
 test('招募：16 位勇者位全满时走原作失败文案，不扣气力也不点素质位', async () => {
   // #483：战役招募只在未被占用的勇者位里抽，候选为空（16 位全满）时
   // RAND_CHARA_MAKE 返回 0，招募分支在扣气力之前返回（源 CAMPAIGN_EVENT.ERB
-  // 的 `SIF RESULT == 0 GOTO INPUT_LOOP` 排在 `BASE:MASTER:1 -= 100` 之前）
+  // 的 `SIF RESULT == 0 GOTO INPUT_LOOP` 在 :58-59、扣气力的
+  // `BASE:MASTER:1 -= 100` 在 :64，前者在前）
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   fixture.store.set('base:0:1', 200);
