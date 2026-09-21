@@ -287,6 +287,32 @@ test('冒险者·回头臂：RAND:4 != 0 时放弃英雄梦，写挫折记忆，
   assert.equal(fixture.store.get('cflag:1:520'), 8, 'CFLAG:520 = 8');
 });
 
+test('冒险者·回头臂：再起点分支的 CFLAG:520 = 8 真的落进变量（#484）', async () => {
+  const fixture = setup_world();
+  fixture.store.set('talent:1:122', 1); // 冒险者（回头臂入口）
+  // 直接摆在第 9 层、侵攻度 50：max 下本轮 WALK = 73，50 + 73 ≥ 100 →
+  // 首次调用即进勇者臂的「魔王的房间」段，不进体力富余臂。刻意避开那条
+  // 路径上的 CFLAG:520 = FLOOR（DUNGEON.ERB :228-247）：在既有用例的推进
+  // 路径上它恰好把 520 写成 8，末尾断言于是读的是残留值、对写点零分辨力
+  // ——#484 的既有断言正是这样失效的
+  fixture.store.set('cflag:1:501', 9);
+  fixture.store.set('cflag:1:502', 50);
+  fixture.store.set('cflag:1:520', 3); // 与写点目标值不同的初值
+  const { run_dungeon } = load(fixture);
+
+  await run_dungeon(1, max);
+  assert(
+    text_lines(fixture).includes('阿尔放弃了成为英雄的念头，开始回头了。'),
+    '走到再起点分支（max 下 RAND:4 = 3 ≠ 0）',
+  );
+  // :221 CFLAG:520 = 8（门面写：chara(...).dungeon.目标阶层）
+  assert.equal(
+    fixture.store.get('cflag:1:520'),
+    8,
+    '再起点分支写 CFLAG:520 = 8',
+  );
+});
+
 test('冒险者·挑战臂：RAND:4 == 0 且魔王欲望不足 → 失败成为奴隶（CFLAG:1 = 0）', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:122', 1);
@@ -690,6 +716,30 @@ test('撤退决议：满状态继续前进', async () => {
     '继续攻略演出',
   );
   assert.equal(fixture.store.get('cflag:1:507') ?? 0, 0, '不立撤退标志');
+});
+
+// —— 勇者臂·体力富余（:225-264 的 CFLAG:520 = FLOOR 写点；#484 抽查补位）——
+
+test('体力富余臂：状态良好时 CFLAG:520 记下当前阶层并下潜一层', async () => {
+  const fixture = setup_world();
+  // 第 3 层、侵攻度 50：max 下本轮 WALK = 73，50 + 73 ≥ 100 进勇者臂，
+  // FLOOR 3 < 9 → 体力富余臂（队长满血满气，tired 恒 0）
+  fixture.store.set('cflag:1:501', 3);
+  fixture.store.set('cflag:1:502', 50);
+  const { run_dungeon } = load(fixture);
+
+  await run_dungeon(1, max);
+  assert(
+    text_lines(fixture).includes('状态良好的阿尔的队伍、向更深阶层发起挑战……'),
+    'tired == 0 → 向更深阶层挑战的演出',
+  );
+  // :247 CFLAG:520 = FLOOR（进入本轮时的阶层，下潜前）
+  assert.equal(
+    fixture.store.get('cflag:1:520'),
+    3,
+    'CFLAG:520 = FLOOR（:247 裸寻址写）',
+  );
+  assert.equal(fixture.store.get('cflag:1:501'), 4, '同一轮下潜到第 4 层');
 });
 
 // —— #184 返工 1：H3 留的 DUNGEON_BITCH 存根换真身（运行时可达）——
