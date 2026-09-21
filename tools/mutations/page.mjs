@@ -2715,7 +2715,7 @@ export default [
     find: '      life_list_item(cid); // :502\n      t_lcount += 1; // :503\n      state.list_pos = cid; // :504',
     replace: '      life_list_item(cid); // :502\n      t_lcount += 1; // :503',
     tests: ['page-invasion'],
-    must_mention: '列表',
+    must_mention: '页窗判据',
   },
   {
     desc: 'M10788 @INVASION_EVENT 分发骰的上界改坏（RAND:10 改 RAND:9）',
@@ -2726,11 +2726,12 @@ export default [
     must_mention: 'RAND:10',
   },
   {
-    desc: 'M10789 @INVASION_EVENT 分发：两臂的值互换（9 → 8）',
+    desc: 'M10789 FORT 守卫按 C 式「&& 优先」读错（左结合改先 || 后 &&，#503 审查订正）',
     file: 'ere/page/page-invasion.js',
-    find: '  if (local === 9) {',
-    replace: '  if (local === 8) { // 变异：值互换',
+    find: '    ((era.get(`flag:${sindo}`) || 0) !== 0 || inv_type !== 0) &&\n    inv_type !== 2 &&\n    inv_type !== 3',
+    replace:
+      '    (era.get(`flag:${sindo}`) || 0) !== 0 ||\n    (inv_type !== 0 && inv_type !== 2 && inv_type !== 3)',
     tests: ['page-invasion'],
-    must_mention: 'FORT 臂',
+    must_mention: '左结合读法',
   },
 ];
