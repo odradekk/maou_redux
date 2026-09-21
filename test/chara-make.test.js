@@ -932,11 +932,48 @@ test('转发层 re-export @CHAR_INIT（chara-init.js 的 #118 实现）', async 
 });
 
 // —— 战役招募模式（#469 起真身，rand_chara_make 的 campaign_slave 形参）——
+//
+// #483（结论·方案 2）起，campaign_slave 为真时只在**未被占用**的勇者位里抽，
+// 候选表为空（16 位全满）就落 :188-191 的失败分支。下列用例的编制一律布成
+// **不连号**且至少有一位已被占用：连号编制下「角色号」与「已加入数 - 1」
+// 偶然相等（只有魔王、掷 0 时两者都是 1），区分不出「只抽空位」与「掷 1-16
+// 后撞上占用位再重挑」。
+
+/**
+ * 记录每次调用传入的上界（返回值按给定序列取，越界回落 0）。上界用来钉住
+ * **候选表长度**这个数值：`rand_n(16)` 与 `rand_n(14)` 在同一个固定返回值下
+ * 分不出结果，只有直接断实际传入的 n 才拦得住（`seq_capture` 的同类写法，
+ * 见 test/chara-name.test.js 头注）。
+ *
+ * 与 `seq` 的差别：`seq` 越界即断言失败，这里越界静默回落 0——本文件多处靠
+ * 「恒 0 推进流程」，回落是刻意的；要断言「不再掷骰」的用例读 `bounds`，不看
+ * 返回值（如 16 位全满那条的 `capture([])`）。
+ */
+function capture(values) {
+  const bounds = [];
+  let index = 0;
+  const rand = (n) => {
+    bounds.push(n);
+    return values[index++] ?? 0;
+  };
+  rand.bounds = bounds;
+  return rand;
+}
+
+/** 1-16 里未被占用的勇者位（升序）——战役招募的候选表，测试侧独立算一遍 */
+function free_hero_slots(fixture) {
+  const added = new Set(fixture.era.getAddedCharacters());
+  return Array.from({ length: 16 }, (_, i) => i + 1).filter(
+    (slot) => !added.has(slot),
+  );
+}
 
 test('campaign_slave=true：形象确认段与确认对话换战役招募措辞', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制**不连号**：只有魔王与 9 号在场
   fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
   fixture.store.set('cflag:1:6', 99);
   const answers = [100, 2];
@@ -944,11 +981,11 @@ test('campaign_slave=true：形象确认段与确认对话换战役招募措辞'
   fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
   const { rand_chara_make } = load(fixture);
   const result = await rand_chara_make(
-    () => 0,
+    () => 0, // 候选表首位（空位 1 号）
     () => Promise.resolve(0),
     true,
   );
-  assert.notEqual(result, 0, '招募成功');
+  assert.equal(result, 1, '招募成功，落在空位 1 号');
   const texts = stub_texts(fixture);
   assert(
     texts.some((t) => t.includes('当前挑选出来的奴隶，是这个形象的')),
@@ -964,54 +1001,204 @@ test('campaign_slave=true：形象确认段与确认对话换战役招募措辞'
   );
 });
 
-test('campaign_slave=true：:55 存在性判定被绕过，已占用的勇者位仍照常招募', async () => {
-  // 注意：夹具的 addCharacter 只镜像引擎的「滤同号再入列」，不镜像引擎对
-  // 同号的**全表重置**（base/talent/cflag/… 回预设）。因此本用例只能证明
-  // 招募流程未被占用判定挡下，证明不了该号原有数据的存续——这层差异登记在
-  // ere/chara/chara-make.js 的 :61 调用点注释（#469 规范审查 F1，待裁定）。
+test('campaign_slave=true：只在未被占用的勇者位里抽，已占用的位子不入选', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
-  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
-  fixture.era.addCharacter(9); // 编制**不连号**（#487）：招募后 CHARANUM = 3
   fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
-  fixture.era.addCharacter(1); // chara_id=1 提前已注册
-  fixture.store.set('cflag:1:6', 99);
+  fixture.era.addCharacter(1); // 1 号**已被占用**：掷 0 时旧写法正落在它头上
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制不连号
+  fixture.seed_chara(2, { id: 2, name: '勇者2', callname: '勇者2' });
+  fixture.store.set('cflag:2:6', 99);
   const answers = [100, 2];
   let asked = 0;
   fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
   const { rand_chara_make } = load(fixture);
-  const result = await rand_chara_make(
-    () => 0, // chara_id 恒 = 1（已占用）
-    () => Promise.resolve(0),
-    true,
+  const candidates = free_hero_slots(fixture); // 招募前的候选表
+  const cap = capture([0]); // 候选表首位
+  const result = await rand_chara_make(cap, () => Promise.resolve(0), true);
+
+  assert.deepEqual(
+    candidates,
+    [2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16],
+    '候选表 = 勇者位 1-16 去掉已占用的 1 与 9',
   );
-  assert.notEqual(result, 0, '战役招募绕过占用判定，照常成功');
+  assert.equal(result, 2, '落在候选表首位 2 号（1 号是占用位，不入选）');
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [0, 1, 2, 9],
+    '新增的是 2 号；已占用的 1 号不动',
+  );
+  assert.equal(fixture.store.get('cflag:2:1'), 0, ':180 CFLAG:1 归零落在 2 号');
   assert.equal(
-    result,
-    1,
-    '返回掷中的角色号 1，不是「已加入数 - 1」= 2（#487）',
+    fixture.store.get('cflag:1:1'),
+    undefined,
+    '被占用的 1 号未被重置（旧写法会原地重置它）',
   );
-  assert.equal(fixture.store.get('cflag:1:1'), 0, ':180 写的是 1 号');
-  assert(
-    !stub_texts(fixture).some((t) => t.includes('由于对魔王的恐惧')),
-    '不应落空',
+  assert.equal(
+    fixture.store.get('talent:1:161'),
+    undefined,
+    '1 号的性格素质未被覆盖',
   );
+  // 上界放在最后：它是「候选表长度」这个数值的钉子，语义结果已在上方断言过
+  assert.equal(
+    cap.bounds[0],
+    candidates.length,
+    '上界 = 候选表长度 14，不是 16',
+  );
+
+  // 第二位：掷到候选表末位（索引 13）应落到 16 号——按候选表索引而非 1-16
+  // 原区间取值（原区间索引 13 是 14 号）。布置：魔王 0 与 1、9 号在场（编制
+  // 不连号，候选表 = 2-8 与 10-16 共 14 位），16 号是被抽中的那位——它的预设
+  // 必需（夹具的 addCharacter 按预设放行，CHAR_MAKE 也从它取表），0/1/9 的
+  // 预设只是编制占位，不参与断言
+  const fixture2 = create_era_fixture();
+  for (const cid of [0, 1, 9]) {
+    fixture2.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture2.era.addCharacter(cid);
+  }
+  fixture2.seed_chara(16, { id: 16, name: '勇者16', callname: '勇者16' });
+  fixture2.store.set('cflag:16:6', 99);
+  const answers2 = [100, 2];
+  let asked2 = 0;
+  fixture2.era.input = () => Promise.resolve(answers2[asked2++] ?? 100);
+  const { rand_chara_make: make2 } = load(fixture2);
+  const candidates2 = free_hero_slots(fixture2);
+  const cap2 = capture([13]);
+  const result2 = await make2(cap2, () => Promise.resolve(0), true);
+  assert.equal(result2, 16, '候选表索引 13 → 16 号（原区间索引 13 是 14 号）');
+  assert.equal(cap2.bounds[0], candidates2.length, '上界同样是候选表长度 14');
 });
 
-test('campaign_slave 缺省（false）：占用的勇者位落空，不绕过判定', async () => {
+test('campaign_slave=true：16 位全满时不掷骰，走 :188-191 失败文案并返回 0', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
-  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
-  fixture.era.addCharacter(1); // chara_id=1 提前已注册，未传 campaign_slave
+  for (const cid of Array.from({ length: 16 }, (_, i) => i + 1)) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `勇者${cid}`,
+      callname: `勇者${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
   const { rand_chara_make } = load(fixture);
-  const result = await rand_chara_make(() => 0);
-  assert.equal(result, 0, '默认行为：占用即落空');
+  const cap = capture([]);
+  const result = await rand_chara_make(cap, () => Promise.resolve(0), true);
+  assert.equal(result, 0, ':191 RETURN 0（调用点据此不扣气力）');
+  assert.deepEqual(
+    cap.bounds,
+    [],
+    '候选表为空：一次随机数都不掷（不循环重掷）',
+  );
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    Array.from({ length: 17 }, (_, i) => i),
+    '编制不变，不新增也不重置任何角色',
+  );
+  assert(
+    stub_texts(fixture).some((t) =>
+      t.includes(
+        '由于对魔王的恐惧，勇者没有出现。（奴隶数已达上限，请处决几个）',
+      ),
+    ),
+    ':188-191 原作文案逐字（含括号内的提示，不另造文本）',
+  );
+  assert(
+    fixture.waits.some((w) => w.waited),
+    ':190 WAIT 已执行',
+  );
+});
+
+test('campaign_slave=true：候选表只剩一位时上界 1、抽中唯一空位', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  // 勇者位 1-15 已占用，只剩 16 —— 候选表长度 1（#483 的最后一个空位边界）
+  for (const cid of Array.from({ length: 15 }, (_, i) => i + 1)) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `勇者${cid}`,
+      callname: `勇者${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  fixture.seed_chara(16, { id: 16, name: '勇者16', callname: '勇者16' });
+  fixture.store.set('cflag:16:6', 99);
+  const answers = [100, 2];
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const { rand_chara_make } = load(fixture);
+  const cap = capture([]); // 越界回落 0：候选表只有一位，索引恒 0
+  const result = await rand_chara_make(cap, () => Promise.resolve(0), true);
+  assert.equal(result, 16, '唯一的空位 16 号被抽中');
+  assert.equal(cap.bounds[0], 1, '上界 = 候选表长度 1（不是 0，也不是 16）');
+  assert.equal(
+    fixture.era.getAddedCharacters().length,
+    17,
+    '编制变为 0-16（新增 16 号）',
+  );
+});
+
+test('campaign_slave=true：选「换一个」后重挑仍走候选表', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制不连号：候选表长度 15
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99);
+  const answers = [100, 1, 100, 2]; // 改形象 → 换一个 → 再改形象 → 收下
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const add_calls = [];
+  const original_add = fixture.era.addCharacter;
+  fixture.era.addCharacter = (...ids) => {
+    add_calls.push(ids);
+    return original_add(...ids);
+  };
+  const { rand_chara_make } = load(fixture);
+  // 全 0 的随机源：两次抽取（首抽与重挑）都取候选表首位。重挑前 1 号刚被
+  // DELCHARA，于是它重新成为空位——候选表在重挑时是重算的，结果因此仍是 1 号
+  const cap = capture([]);
+  const result = await rand_chara_make(cap, () => Promise.resolve(0), true);
+  assert.equal(cap.bounds[0], 15, '首次抽取的上界 = 候选表长度 15（不是 16）');
+  assert.equal(add_calls.length, 2, '换一个后重挑了：ADDCHARA 调用两次');
+  assert.ok(
+    cap.bounds.filter((n) => n === 15).length >= 2,
+    '重挑时仍按候选表长度掷骰（至少两次上界 15）',
+  );
+  assert.equal(result, 1, '重挑收下的仍是空位 1 号');
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [0, 1, 9],
+    '1 号被换掉（DELCHARA）后重新招募，编制与首抽一致',
+  );
+});
+
+test('campaign_slave 缺省（false）：掷中已占用的勇者位仍落空，不绕过判定', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(2, { id: 2, name: '勇者2', callname: '勇者2' });
+  fixture.era.addCharacter(2); // 2 号已占用，未传 campaign_slave
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制不连号
+  const { rand_chara_make } = load(fixture);
+  const cap = capture([1]); // RAND:16 落 1 → 位号 2（已占用）
+  const result = await rand_chara_make(cap);
+  assert.equal(cap.bounds[0], 16, '普通路径照原作掷 1-16，不建候选表');
+  assert.equal(result, 0, '默认行为：掷中占用位即落空');
   assert(
     stub_texts(fixture).some((t) => t.includes('由于对魔王的恐惧')),
     ':188-191 落空文案',
   );
+  assert.deepEqual(fixture.era.getAddedCharacters(), [0, 2, 9], '不加人');
 });
 
 test('campaign_slave=true 且选 [3] 算了不选了：删除角色、直接返回 0（不重挑）', async () => {
@@ -1019,7 +1206,7 @@ test('campaign_slave=true 且选 [3] 算了不选了：删除角色、直接返�
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
   fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
-  fixture.era.addCharacter(9); // 编制**不连号**（#487）：招募后 CHARANUM = 3
+  fixture.era.addCharacter(9); // 编制**不连号**：只有魔王与 9 号在场
   fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
   fixture.store.set('cflag:1:6', 99);
   const answers = [100, 3];
@@ -1033,7 +1220,7 @@ test('campaign_slave=true 且选 [3] 算了不选了：删除角色、直接返�
   };
   const { rand_chara_make } = load(fixture);
   const result = await rand_chara_make(
-    () => 0,
+    () => 0, // 候选表首位（空位 1 号）
     () => Promise.resolve(0),
     true,
   );
@@ -1050,6 +1237,8 @@ test('campaign_slave 缺省（false）：answer=3 落入收下分支，不触发
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制**不连号**：只有魔王与 9 号在场
   fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
   fixture.store.set('cflag:1:6', 99);
   const answers = [100, 3];
@@ -1057,10 +1246,10 @@ test('campaign_slave 缺省（false）：answer=3 落入收下分支，不触发
   fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
   const { rand_chara_make } = load(fixture);
   const result = await rand_chara_make(
-    () => 0,
+    () => 0, // RAND:16 落 0 → 位号 1（空位）
     () => Promise.resolve(0),
   );
-  assert.notEqual(result, 0, '非战役场景：answer=3 落入收下分支，照常招募成功');
+  assert.equal(result, 1, '非战役场景：answer=3 落入收下分支，照常招募成功');
   assert(
     stub_texts(fixture).some((t) => t.includes('被囚禁在了地牢里')),
     ':172-187 收下文案',
