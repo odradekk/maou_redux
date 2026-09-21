@@ -232,6 +232,35 @@ test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', as
   );
 });
 
+test('SELECTCOM==22 爱慕支：CFLAG:16 >= 0（已初吻）才出那句亲吻，未初吻不出', async () => {
+  // 原作 :2438/:2448 是 `SIF CFLAG:16 >= 0`——CFLAG:16 属 train 域
+  // （chara-train.js 的 初吻对象，未経験は -1 初期化）。#493 复核发现的第 14 处：
+  // 修前读的是 kojo 域不存在的「初吻对象」，`undefined >= 0` 恒假、两句恒不出。
+  const kissed = await setup_k9((f) => {
+    f.store.set('cflag:20:323', 1); // 对面座位二回目以降
+    f.store.set('talent:20:85', 1); // 爱慕
+    f.store.set('cflag:20:16', 5); // 已初吻（相手编号+1）
+  }, 22);
+  await speak_k9(kissed, () => 0); // RAND:3 == 0 支
+  assert.deepEqual(kissed.text_lines(), [
+    '「啊嗯~…嗯~…最…最喜欢你了噢~…嗯~…嗯哼嗯~…♡」',
+    '黑方片一副呆呆的样子被你抱住、因为从下往上的抽插带来的快感而从嘴边漏出了呻吟。',
+    '一和黑方片的嘴唇重叠之后黑方片湿润的舌头就立马从缝隙中钻进来、从嘴边漏出了娇喘。',
+  ]);
+  assert.equal(kissed.store.get('cflag:20:323'), 5, '对面座位推进到 5');
+
+  const virgin = await setup_k9((f) => {
+    f.store.set('cflag:20:323', 1);
+    f.store.set('talent:20:85', 1);
+    f.store.set('cflag:20:16', -1); // 未初吻
+  }, 22);
+  await speak_k9(virgin, () => 0);
+  assert.deepEqual(virgin.text_lines(), [
+    '「啊嗯~…嗯~…最…最喜欢你了噢~…嗯~…嗯哼嗯~…♡」',
+    '黑方片一副呆呆的样子被你抱住、因为从下往上的抽插带来的快感而从嘴边漏出了呻吟。',
+  ]);
+});
+
 test('头部守卫①-⑦：ASSIPLAY/口塞/失神/兽奸/死斗场/崩坏/触手 各自静默跳过或岔走真身', async () => {
   const assiplay = await setup_k9((f, era_flag) => {
     era_flag.assi = 21;

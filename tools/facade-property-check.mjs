@@ -4,24 +4,31 @@
 // 守什么：口上与其他游戏代码按门面读角色变量时，属性名写错、或域写错，JS 静默
 // 返回 undefined——不报错，判定随之失效。#493 的 13 处就是这样：`train.穿孔装着`
 // 使六段「初次穿环」演出恒不触发，`kojo.状态` 使 `undefined !== 9` 恒真，
-// `train.耻情` 让 `NaN > PALAMLV:2` 恒假。既有防线一条都拦不住：
+// `train.耻情` 让 `NaN > PALAMLV:2` 恒假；复核又发现第 14 处
+// （`kojo.初吻对象`——CFLAG:16 属 train 域，`undefined >= 0` 恒假）。既有防线
+// 一条都拦不住：
 //   - tools/domain-check.mjs 只查裸跨域写（看的是 era.set/get 的寻址串）；
 //   - ESLint 看不出「访问了不存在的属性」；
 //   - 口上本来就缺用例覆盖。
 //
-// 怎么守：门面类的成员静态可枚举——生成的 getter/setter 对，加上手写区的
-// `Object.defineProperty(<类>.prototype, '<属性>', …)`。扫 ere/ 全树里的
-// `chara(<实参>).<域>.<属性>`：
-//   1. `<域>` 取不到门面切片 → 红（域段写错）；
-//   2. `<属性>` 不在该域类上 → 红，并给整改指引——别的域有同名属性时按「域
-//      写错」指路，都没有时按「拼写或先补名进门面」指路。
-// 域清单从 ere/facade/chara.js 的装配体（`this.<域> = new XxxFacade(cid)`）
-// 推导，不手工维护：`chara()` 返回的就是那个视图，任何非装配域的段名都是缺陷。
+// 判定面（属性名不在该域门面类上就红，逐处报 file:line）：
+//   1. 直链 `chara(<实参>).<域>.<属性>`；
+//   2. 域切片别名——同文件里 `const kojo = chara(target).kojo` 之后的 `kojo.<属性>`
+//      （口上 12,000+ 处走这条，复核发现的第 14 处缺陷正落在这一面）；
+//   3. 视图别名——同文件里 `const view = chara(target)` 之后的 `view.<域>.<属性>`。
+// 别名的解析取保守解：该名在**同一文件**里的全部 `const/let/var` 声明都是同一种
+// 别名、域唯一、且不出现在该文件的形参表里，才判；任何一处不同即视为「不可判定」，
+// 只计数报出（宁可漏判，不可误报——误报会让全库测试对所有人变红）。
 //
-// 不判定的读法（计进报告，不红）：动态属性 `chara(x).train[expr]`——属性名在
-// 静态不可知，只能被看见。`game.<域>.<成员>` 不在本检查范围内：一维门面的成员
-// 还有「赋值式挂载」（`facade.with_self_kojo_event = …`）与普通方法，属性集不
-// 靠 getter/setter 枚举，需要另一套解析。
+// 不判定（逐处报出位置，不红）：动态属性 `chara(x).train[expr]` / `别名[expr]`；
+// 名字不唯一的别名读。`game.<域>.<成员>` 不在本检查范围内：一维门面的成员还有
+// 赋值式挂载（`facade.x = …`）与普通方法，属性集不靠 getter/setter 枚举，需要
+// 另一套解析。
+//
+// 域清单从 ere/facade/chara.js 的装配体（`this.<域> = new XxxFacade(cid)`）推导，
+// 属性集从 ere/facade/chara-<域>.js 的生成区（getter/setter）与手写区
+// （`Object.defineProperty(<类>.prototype, '<属性>'`、`<类>.prototype.<成员> =`）
+// 提取——都不手工维护。
 //
 // 用法：node tools/facade-property-check.mjs
 //   全绿退出码 0；任何失配退出码 1（逐条报出 file:line 与整改指引）。
@@ -38,6 +45,69 @@ const SDK_FILE = 'ere/era-electron.js';
 /** 门面根：域切片文件在 chara-<域>.js，装配体在 chara.js */
 const FACADE_DIR = 'ere/facade';
 const CHARA_ROOT = 'ere/facade/chara.js';
+
+/** chara() 视图上域段之外的合法成员 */
+const VIEW_MEMBERS = new Set(['cid']);
+
+// —— 注释剥离 ——
+
+/**
+ * 剥掉行注释与块注释（换成等长空白，保住行号）。字符串按引号短路——实测
+ * ere/ 的字符串字面量里没有 `//` 或 `/*`；模板串里的 `${}` 不单独处理，漏判
+ * 只发生在「注释写在模板内插表达式里」这种写法上。
+ * @param {string} text 文件正文
+ * @returns {string} 同长度、同换行结构的正文
+ */
+function strip_comments(text) {
+  let out = '';
+  let i = 0;
+  const n = text.length;
+  while (i < n) {
+    const ch = text[i];
+    if (ch === '/' && text[i + 1] === '/') {
+      while (i < n && text[i] !== '\n') {
+        out += ' ';
+        i += 1;
+      }
+      continue;
+    }
+    if (ch === '/' && text[i + 1] === '*') {
+      while (i < n && !(text[i] === '*' && text[i + 1] === '/')) {
+        out += text[i] === '\n' ? '\n' : ' ';
+        i += 1;
+      }
+      if (i < n) {
+        out += '  ';
+        i += 2;
+      }
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') {
+      const quote = ch;
+      out += ch;
+      i += 1;
+      while (i < n) {
+        if (text[i] === '\\') {
+          out += text[i] + (text[i + 1] ?? '');
+          i += 2;
+          continue;
+        }
+        out += text[i];
+        if (text[i] === quote) {
+          i += 1;
+          break;
+        }
+        i += 1;
+      }
+      continue;
+    }
+    out += ch;
+    i += 1;
+  }
+  return out;
+}
+
+// —— 门面侧解析 ——
 
 /**
  * 装配体里的域：`this.kojo = new KojoFacade(cid);`。
@@ -56,8 +126,8 @@ function parse_domains(text) {
 }
 
 /**
- * 门面类声明的成员名：生成的 `get X() {` / `set X(v) {` 与手写区的
- * `Object.defineProperty(<类>.prototype, 'X', {`。
+ * 门面类声明的成员名：生成的 `get X() {` / `set X(v) {`，手写区的
+ * `Object.defineProperty(<类>.prototype, 'X', {` 与 `<类>.prototype.X = `。
  * @param {string} text 域切片文件正文
  * @returns {Set<string>} 属性名
  */
@@ -73,6 +143,10 @@ function parse_props(text) {
   while ((match = defined.exec(text))) {
     props.add(match[1]);
   }
+  const assigned = /^([A-Za-z0-9_$]+)\.prototype\.([^\s=(]+)\s*=/gm;
+  while ((match = assigned.exec(text))) {
+    props.add(match[2]);
+  }
   return props;
 }
 
@@ -84,6 +158,8 @@ function load_domain_props(domain) {
   }
   return parse_props(fs.readFileSync(file, 'utf8'));
 }
+
+// —— 扫描基础设施 ——
 
 function list_js_files(dir) {
   const out = [];
@@ -103,153 +179,372 @@ function list_js_files(dir) {
   return out.sort();
 }
 
-/** 属性名/域名的字符集合：标识符（含中文等非 ASCII 标识符字符） */
-const NAME = /^[\p{L}\p{N}_$]+/u;
+const IDENT = /^[\p{L}\p{N}_$]+/u;
+
+/** 从 '(' 起配平括号，返回匹配 ')' 的下标（找不到返回 -1） */
+function match_paren(text, from) {
+  let depth = 0;
+  for (let i = from; i < text.length; i += 1) {
+    if (text[i] === '(') {
+      depth += 1;
+    } else if (text[i] === ')') {
+      depth -= 1;
+      if (depth === 0) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
 
 /**
- * 扫一段正文里的 `chara(...)` 调用点。实参是任意表达式，按括号配对取到匹配的
- * 右括号，再看紧跟其后的两条 `.` 链。
- * @param {string} text
- * @returns {Array<{ line: number, domain: string, prop: string|null }>} prop 为
- *   null = 动态属性（`chara(x).train[...]`）
+ * 从某位置起读一条 `.名` 链（成员之间允许换行与空格；`[` 视为动态属性）。
+ * @param {string} text 已剥注释的正文
+ * @param {number} from 起点
+ * @returns {{ members: string[], dynamic: boolean }}
  */
-function scan_chara_accesses(text) {
-  const sites = [];
-  const opener = /(?<![\w.$])chara\(/g;
+function read_chain(text, from) {
+  const members = [];
+  let i = from;
+  for (;;) {
+    let j = i;
+    while (j < text.length && /\s/.test(text[j])) {
+      j += 1;
+    }
+    if (text[j] === '.') {
+      const name = IDENT.exec(text.slice(j + 1));
+      if (!name) {
+        return { members, dynamic: false };
+      }
+      members.push(name[0]);
+      i = j + 1 + name[0].length;
+      continue;
+    }
+    if (text[j] === '[') {
+      return { members, dynamic: true };
+    }
+    return { members, dynamic: false };
+  }
+}
+
+// —— 别名解析（同一文件内的保守判定）——
+
+/**
+ * 收集一个文件里的 `const/let/var` 声明，判定哪些名字是 chara 门面别名。
+ * 规则：该名的全部声明都必须是同一种别名、单步域别名的域唯一、且该名不出现在
+ * 形参表里；任一不满足即不判（进 ambiguous，使用时只计数报出）。
+ * @param {string} text 已剥注释的正文
+ * @returns {{ alias_domain: Map<string,string>, view_alias: Set<string>, ambiguous: Set<string> }}
+ */
+function classify_declarations(text) {
+  const sites = new Map(); // name -> [{ kind, domain }]
+  const decl = /(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=/g;
   let match;
-  while ((match = opener.exec(text))) {
-    // 配对右括号：实参里可能有嵌套调用（chara(count() - 1)）
-    let depth = 0;
-    let i = match.index + 'chara'.length;
-    for (; i < text.length; i += 1) {
-      if (text[i] === '(') {
-        depth += 1;
-      } else if (text[i] === ')') {
-        depth -= 1;
-        if (depth === 0) {
-          break;
+  while ((match = decl.exec(text))) {
+    const name = match[1];
+    let i = match.index + match[0].length;
+    while (i < text.length && /\s/.test(text[i])) {
+      i += 1;
+    }
+    let kind = 'other';
+    let domain = null;
+    if (text.startsWith('chara(', i)) {
+      const close = match_paren(text, i + 'chara'.length);
+      if (close >= 0) {
+        const chain = read_chain(text, close + 1);
+        if (chain.members.length === 0 && !chain.dynamic) {
+          kind = 'view';
+        } else if (chain.members.length === 1 && !chain.dynamic) {
+          kind = 'domain';
+          domain = chain.members[0];
         }
       }
     }
-    if (depth !== 0) {
-      continue;
+    if (!sites.has(name)) {
+      sites.set(name, []);
     }
-    const line = text.slice(0, match.index).split('\n').length;
-    const rest = text.slice(i + 1);
-    const domain = /^\.([A-Za-z_][A-Za-z0-9_]*)/.exec(rest);
-    if (!domain) {
-      continue;
-    }
-    const after = rest.slice(domain[0].length);
-    if (after.startsWith('[')) {
-      sites.push({ line, domain: domain[1], prop: null });
-      continue;
-    }
-    const prop = /^\.([\p{L}\p{N}_$]+)/u.exec(after);
-    if (!prop) {
-      continue;
-    }
-    sites.push({ line, domain: domain[1], prop: prop[1] });
+    sites.get(name).push({ kind, domain });
   }
-  return sites;
+  // 形参名（函数、箭头、catch）：同名的形参会遮蔽别名
+  const params = new Set();
+  const param_res = [
+    /function\s*[A-Za-z0-9_$]*\s*\(([^)]*)\)/g,
+    /\(([^()]*)\)\s*=>/g,
+    /catch\s*\(([^)]*)\)/g,
+  ];
+  for (const re of param_res) {
+    while ((match = re.exec(text))) {
+      for (const piece of match[1].split(',')) {
+        const name = IDENT.exec(piece.trim());
+        if (name) {
+          params.add(name[0]);
+        }
+      }
+    }
+  }
+  const alias_domain = new Map();
+  const view_alias = new Set();
+  const ambiguous = new Set();
+  for (const [name, list] of sites) {
+    // 只关心与 chara 门面有关的名字：`const era = require(…)` 这类与别名无关的
+    // 声明不进报告（否则「不可判定」会被全库的普通变量淹没）
+    if (list.every((site) => site.kind === 'other')) {
+      continue;
+    }
+    if (params.has(name)) {
+      ambiguous.add(name);
+      continue;
+    }
+    if (list.every((site) => site.kind === 'domain')) {
+      const domains = new Set(list.map((site) => site.domain));
+      if (domains.size === 1) {
+        alias_domain.set(name, [...domains][0]);
+      } else {
+        ambiguous.add(name);
+      }
+      continue;
+    }
+    if (list.every((site) => site.kind === 'view')) {
+      view_alias.add(name);
+      continue;
+    }
+    ambiguous.add(name);
+  }
+  return { alias_domain, view_alias, ambiguous };
 }
 
-/** 实测：失配逐处指位，动态访问只计数 */
+// —— 单文件扫描 ——
+
+/**
+ * 扫一个文件里的门面访问。
+ * @param {string} rel 仓库相对路径
+ * @param {string} raw 文件正文（未剥注释，用于报行号）
+ * @param {{ domains: string[], props: Map<string,Set<string>>, homes: Map<string,string[]> }} ctx
+ * @returns {{ checked: number, failures: object[], dynamic: string[], unjudged: string[] }}
+ */
+function scan_text(rel, raw, ctx) {
+  const text = strip_comments(raw);
+  const line_of = (index) => raw.slice(0, index).split('\n').length;
+  const failures = [];
+  const dynamic = [];
+  const unjudged = [];
+  let checked = 0;
+  const { alias_domain, view_alias, ambiguous } = classify_declarations(text);
+
+  const report = (domain, prop, index) => {
+    const elsewhere = (ctx.homes.get(prop) ?? []).filter((d) => d !== domain);
+    const remedy =
+      elsewhere.length > 0
+        ? `「${prop}」在 ${elsewhere.join(' / ')} 域存在——域写错？`
+        : `${domain} 域门面没有「${prop}」——属性名拼错，或先在 tools/facade-names.js 补名（生成区）／${FACADE_DIR}/chara-${domain}.js 手写区补访问器，再改用之`;
+    failures.push({ file: rel, line: line_of(index), domain, prop, remedy });
+  };
+
+  // 1) 直链 chara(…).<域>.<属性>
+  const call = /(?<![\w.$])chara\(/g;
+  let match;
+  while ((match = call.exec(text))) {
+    const close = match_paren(text, match.index + 'chara'.length);
+    if (close < 0) {
+      continue;
+    }
+    const { members, dynamic: is_dynamic } = read_chain(text, close + 1);
+    if (members.length === 0) {
+      if (is_dynamic) {
+        dynamic.push(`${rel}:${line_of(match.index)} chara(…)[…]`);
+      }
+      continue;
+    }
+    const domain = members[0];
+    if (is_dynamic) {
+      dynamic.push(
+        `${rel}:${line_of(match.index)} chara(…).${domain}[…] —— 动态属性名`,
+      );
+      continue;
+    }
+    if (!ctx.props.has(domain)) {
+      if (VIEW_MEMBERS.has(domain)) {
+        continue;
+      }
+      failures.push({
+        file: rel,
+        line: line_of(match.index),
+        domain,
+        prop: members[1] ?? domain,
+        remedy: `chara() 视图上没有「${domain}」域（装配体 ${CHARA_ROOT}）——域段写错；现有域：${ctx.domains.join(' / ')}`,
+      });
+      continue;
+    }
+    if (members.length >= 2) {
+      checked += 1;
+      if (!ctx.props.get(domain).has(members[1])) {
+        report(domain, members[1], match.index);
+      }
+    }
+  }
+
+  // 2) 域切片别名 `const k = chara(x).<域>` 之后的 `k.<属性>`
+  for (const [name, domain] of alias_domain) {
+    if (!ctx.props.has(domain)) {
+      continue;
+    }
+    const use = new RegExp(`(?<![\\w.$])${name}\\b`, 'g');
+    while ((match = use.exec(text))) {
+      const { members, dynamic: is_dynamic } = read_chain(
+        text,
+        match.index + name.length,
+      );
+      if (members.length === 0 && !is_dynamic) {
+        continue;
+      }
+      if (is_dynamic) {
+        dynamic.push(
+          `${rel}:${line_of(match.index)} ${name}[…]（${domain} 域别名）—— 动态属性名`,
+        );
+        continue;
+      }
+      checked += 1;
+      if (!ctx.props.get(domain).has(members[0])) {
+        report(domain, members[0], match.index);
+      }
+    }
+  }
+
+  // 3) 视图别名 `const v = chara(x)` 之后的 `v.<域>.<属性>`
+  for (const name of view_alias) {
+    const use = new RegExp(`(?<![\\w.$])${name}\\b`, 'g');
+    while ((match = use.exec(text))) {
+      const { members, dynamic: is_dynamic } = read_chain(
+        text,
+        match.index + name.length,
+      );
+      if (members.length === 0) {
+        continue;
+      }
+      if (is_dynamic) {
+        dynamic.push(
+          `${rel}:${line_of(match.index)} ${name}[…]（chara 视图别名）—— 动态属性名`,
+        );
+        continue;
+      }
+      const domain = members[0];
+      if (!ctx.props.has(domain)) {
+        if (VIEW_MEMBERS.has(domain) || members.length < 2) {
+          continue;
+        }
+        unjudged.push(
+          `${rel}:${line_of(match.index)} ${name}.${domain} —— 视图别名上的域段「${domain}」不在装配体里（不判定，值得人工看一眼）`,
+        );
+        continue;
+      }
+      if (members.length < 2) {
+        continue;
+      }
+      checked += 1;
+      if (!ctx.props.get(domain).has(members[1])) {
+        report(domain, members[1], match.index);
+      }
+    }
+  }
+
+  // 4) 名字不唯一的别名读：只计数报出（不判定）
+  for (const name of ambiguous) {
+    const use = new RegExp(`(?<![\\w.$])${name}\\b`, 'g');
+    let count = 0;
+    while ((match = use.exec(text))) {
+      const { members, dynamic: is_dynamic } = read_chain(
+        text,
+        match.index + name.length,
+      );
+      if (members.length > 0 || is_dynamic) {
+        count += 1;
+      }
+    }
+    if (count > 0) {
+      unjudged.push(
+        `${rel} ${name}.* —— 别名不可判定（同名多域／含其它声明／与形参同名），${count} 处未判`,
+      );
+    }
+  }
+
+  return { checked, failures, dynamic, unjudged };
+}
+
+// —— 实测 ——
+
 function measure() {
   const domains = parse_domains(
     fs.readFileSync(path.join(REPO, CHARA_ROOT), 'utf8'),
   );
-  const props_by_domain = new Map();
+  const props = new Map();
   const missing_files = [];
   for (const domain of domains) {
-    const props = load_domain_props(domain);
-    if (props === null) {
+    const declared = load_domain_props(domain);
+    if (declared === null) {
       missing_files.push(domain);
-      props_by_domain.set(domain, new Set());
+      props.set(domain, new Set());
       continue;
     }
-    props_by_domain.set(domain, props);
+    props.set(domain, declared);
   }
-  // 属性 → 拥有它的域（整改指引用：别的域有同名属性就是域写错）
   const homes = new Map();
-  for (const [domain, props] of props_by_domain) {
-    for (const prop of props) {
-      if (!homes.has(prop)) {
-        homes.set(prop, []);
+  for (const [domain, names] of props) {
+    for (const name of names) {
+      if (!homes.has(name)) {
+        homes.set(name, []);
       }
-      homes.get(prop).push(domain);
+      homes.get(name).push(domain);
     }
   }
+  const ctx = { domains, props, homes };
+  let checked = 0;
   const failures = [];
   const dynamic = [];
-  let checked = 0;
+  const unjudged = [];
   for (const rel of list_js_files('ere')) {
     if (rel === SDK_FILE) {
       continue;
     }
-    const text = fs.readFileSync(path.join(REPO, rel), 'utf8');
-    for (const site of scan_chara_accesses(text)) {
-      if (site.prop === null) {
-        dynamic.push(`${rel}:${site.line} chara(...).${site.domain}[…]`);
-        continue;
-      }
-      const props = props_by_domain.get(site.domain);
-      if (props === undefined) {
-        failures.push({
-          file: rel,
-          line: site.line,
-          domain: site.domain,
-          prop: site.prop,
-          remedy: `chara() 视图上没有「${site.domain}」域（装配体 ${CHARA_ROOT}）——域段写错；现有域：${domains.join(' / ')}`,
-        });
-        continue;
-      }
-      checked += 1;
-      if (props.has(site.prop)) {
-        continue;
-      }
-      const elsewhere = (homes.get(site.prop) ?? []).filter(
-        (domain) => domain !== site.domain,
-      );
-      const remedy =
-        elsewhere.length > 0
-          ? `「${site.prop}」在 ${elsewhere.join(' / ')} 域存在——域写错？`
-          : `${site.domain} 域门面没有「${site.prop}」——属性名拼错，或先在 tools/facade-names.js 补名（生成区）／${FACADE_DIR}/chara-${site.domain}.js 手写区补访问器，再改用之`;
-      failures.push({
-        file: rel,
-        line: site.line,
-        domain: site.domain,
-        prop: site.prop,
-        remedy,
-      });
-    }
+    const result = scan_text(
+      rel,
+      fs.readFileSync(path.join(REPO, rel), 'utf8'),
+      ctx,
+    );
+    checked += result.checked;
+    failures.push(...result.failures);
+    dynamic.push(...result.dynamic);
+    unjudged.push(...result.unjudged);
   }
-  return { domains, missing_files, checked, failures, dynamic };
+  return { domains, missing_files, checked, failures, dynamic, unjudged };
 }
 
 function run() {
-  const { domains, missing_files, checked, failures, dynamic } = measure();
-  let failures_count = failures.length;
+  const { domains, missing_files, checked, failures, dynamic, unjudged } =
+    measure();
+  let count = failures.length;
   for (const domain of missing_files) {
     console.log(
       `✗ ${FACADE_DIR}/chara-${domain}.js 不存在——装配体 ${CHARA_ROOT} 挂了这个域`,
     );
-    failures_count += 1;
+    count += 1;
   }
   for (const item of failures) {
     console.log(
-      `✗ ${item.file}:${item.line} chara(...).${item.domain}.${item.prop} —— ${item.remedy}`,
+      `✗ ${item.file}:${item.line} chara(…).${item.domain}.${item.prop} —— ${item.remedy}`,
     );
   }
-  if (failures_count > 0) {
-    console.log(`✗ ${failures_count} 处门面属性失守（逐条见上）`);
-    return failures_count;
+  if (count > 0) {
+    console.log(`✗ ${count} 处门面属性失守（逐条见上）`);
+    return count;
   }
   const report = [
-    `✓ 门面属性：${checked} 处 chara() 门面访问的属性都落在对应域门面上（域：${domains.join(' / ')}）`,
+    `✓ 门面属性：${checked} 处 chara() 门面访问的属性都落在对应域门面上（域：${domains.join(' / ')}；判定面含直链、域切片别名、视图别名）`,
   ];
   for (const site of dynamic) {
-    report.push(`  ⚠ ${site} —— 动态属性名，静态不可判定`);
+    report.push(`  ⚠ ${site}`);
+  }
+  for (const site of unjudged) {
+    report.push(`  ⚠ ${site}`);
   }
   console.log(report.join('\n'));
   return 0;

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2287; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +5（M10700-M10704）
+export const COUNT = 2288; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +6（M10700-M10704、M10709）
 
 export default [
   {
@@ -21329,5 +21329,15 @@ async function try_kojo_or_stub(
       '  const P4 = chara(target).train.恐怖增量 + chara(target).train.恐怖增量;',
     tests: ['kojo-k14-nobleman'],
     must_mention: '首次恐怖 Lv2 置 224=1',
+  },
+  {
+    desc: 'M10709 K9 对面座位爱慕支的初吻判据域写错（train 改别名上的 kojo，#493 复核发现的第 14 处：undefined >= 0 恒假，亲吻句恒不出）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find: `          if (chara(target).train.初吻对象 >= 0) {
+            // :2439`,
+    replace: `          if (kojo.初吻对象 >= 0) {
+            // :2439`,
+    tests: ['kojo-k9-diamond', 'facade-property-check'],
+    must_mention: '湿润的舌头就立马从缝隙中钻进来',
   },
 ];

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 110;
+export const COUNT = 111;
 
 export default [
   {
@@ -1090,10 +1090,14 @@ export default [
   },
   // —— #493：新加的门面属性检查器自己的行为锁 ——
   {
-    desc: 'M10707 门面属性存在性检查焊死（任何 chara() 属性都放行——探针用例必须抓到失明，#493）',
+    desc: 'M10707 门面属性存在性检查焊死（直链上的 chara() 属性都放行——探针用例必须抓到失明，#493）',
     file: 'tools/facade-property-check.mjs',
-    find: '      if (props.has(site.prop)) {',
-    replace: '      if (true) { // 变异：属性存在性检查焊死',
+    find: `    if (members.length >= 2) {
+      checked += 1;
+      if (!ctx.props.get(domain).has(members[1])) {`,
+    replace: `    if (members.length >= 2) {
+      checked += 1;
+      if (false) { // 变异：属性存在性检查焊死`,
     tests: ['facade-property-check'],
     must_mention: '探针的属性名未被逐处报出',
   },
@@ -1108,5 +1112,15 @@ export default [
   }`,
     tests: ['facade-property-check'],
     must_mention: '门面属性检查应全绿，实际退出',
+  },
+  {
+    desc: 'M10710 域切片别名判定焊死（const kojo = chara(x).kojo 之后的 kojo.<属性> 不再判——第 14 处那类写法失明，#493）',
+    file: 'tools/facade-property-check.mjs',
+    find: `      checked += 1;
+      if (!ctx.props.get(domain).has(members[0])) {`,
+    replace: `      checked += 1;
+      if (false) { // 变异：别名判定焊死`,
+    tests: ['facade-property-check'],
+    must_mention: '别名上的属性未被报出',
   },
 ];

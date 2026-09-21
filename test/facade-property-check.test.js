@@ -5,8 +5,9 @@
  *   1. 全绿运行：tools/facade-property-check.mjs 退出码 0。本用例把工具并入
  *      npm test——门面改名、域切片搬走、口上里新写错属性名，任一都会让三项
  *      自检变红，不再依赖记得手动跑。
- *   2. 探针：把 #493 的三类缺陷各写一处进 ere/（属性名写错、域写错、域段写错），
- *      工具必须非 0、逐处报出 file:line 与地址，并给出可区分的整改指引。
+ *   2. 探针：把 #493 的四类写法各写一处进 ere/（属性名写错、域写错、域段写错、
+ *      域切片别名上的属性写错），工具必须非 0、逐处报出 file:line 与地址，并给出
+ *      可区分的整改指引。
  *   3. 探针删净后复绿——证明红的正是探针，不是副本或工具坏了。
  *
  * 写坏型探针住在**临时仓库副本**里（#89 的纪律，见 helpers/probe-repo.js）：
@@ -64,18 +65,20 @@ after(() => {
   }
 });
 
-// 探针模块主体：#493 修前的三类写法各一处（属性名写错 / 域写错 / 域段写错）。
-// 三行都带独立的域.属性串，报错文案互不重叠；变异拆掉哪一类判定，对应用例
-// 就因「红或文案缺失」而失败。
+// 探针模块主体：#493 修前的四类写法（属性名写错 / 域写错 / 域段写错 / 别名上的
+// 属性名写错）各一处。四行都带独立的域.属性串，报错文案互不重叠；变异拆掉哪一类
+// 判定，对应用例就因「红或文案缺失」而失败。
 const PROBE_BODY = [
   '// 探针模块（test/facade-property-check.test.js 写入，跑完即删）：',
-  '// #493 修前的三类写法，门面属性检查器的靶子。',
+  '// #493 修前的四类写法，门面属性检查器的靶子。',
   'module.exports = {};',
   'function probe(cid) {',
+  '  const kojo = chara(cid).kojo; // 域切片别名（复核发现的第 14 处藏在别名写法里）',
   '  return {',
   '    a: chara(cid).train.穿孔装着, // 属性名写错（train 域无此属性）',
   '    b: chara(cid).kojo.状态, // 域写错（CFLAG:1 属 invasion 域）',
   '    c: chara(cid).trains.状态, // 域段写错（chara() 视图没有 trains）',
+  '    d: kojo.初吻对象, // 别名上的域写错（CFLAG:16 属 train 域）',
   '  };',
   '}',
   '',
@@ -168,6 +171,45 @@ test('探针：域写错（kojo.状态）与域段写错（trains）必须红，
       wrong_segment,
       /chara\(\) 视图上没有「trains」域/,
       `域段写错应指路装配体：\n${wrong_segment}`,
+    );
+  } finally {
+    cleanup();
+  }
+  const restored = run_tool(probe_tool(root), root);
+  assert.equal(
+    restored.status,
+    0,
+    `探针删了还红——副本或工具有一边不对：\n${restored.output}`,
+  );
+});
+
+test('探针：域切片别名上的属性必须同样受判（const kojo = chara(x).kojo → kojo.初吻对象）', () => {
+  // 复核发现的第 14 处（K9 的 `kojo.初吻对象`）落在别名写法上，直链扫描看不见。
+  // 本用例钉住别名这一面真的进了判定：只破坏别名路径也应报出位置与属主域。
+  const root = probe_repo();
+  const probe = path.join(root, 'ere', '__facade_probe__.js');
+  const cleanup = () => {
+    if (fs.existsSync(probe)) {
+      fs.unlinkSync(probe);
+    }
+  };
+  cleanup();
+  try {
+    fs.writeFileSync(probe, PROBE_BODY, 'utf8');
+    const { status, output } = run_tool(probe_tool(root), root);
+    assert.notEqual(status, 0, '探针在，工具必须非 0');
+    const hit = output
+      .split('\n')
+      .find(
+        (line) =>
+          line.includes('__facade_probe__.js') &&
+          line.includes('kojo.初吻对象'),
+      );
+    assert.ok(hit, `别名上的属性未被报出：\n${output}`);
+    assert.match(
+      hit,
+      /「初吻对象」在 train 域存在/,
+      `别名路径的整改指引应指路属主域：\n${hit}`,
     );
   } finally {
     cleanup();
