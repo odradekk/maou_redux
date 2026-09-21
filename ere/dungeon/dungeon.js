@@ -1132,7 +1132,7 @@ async function run_dungeon(arg0, rand) {
   }
 
   await dungeon_bitch_mod.dungeon_bitch(after_target, rand_n); // :718（真身 #184；rand_n 透传，迷宫与卖春共用随机源。模块对象不解构——测试可替换导出断言被调，enter-enemy 先例）
-  await get_junk_item(after_target); // :719
+  await get_junk_item(after_target, rand_n); // :719（rand_n 透传同 :718；#469 e2e 确定性——缺省会落回 Math.random）
 
   // === 宝箱を見つける（:721-731；侵攻中 2 且 RAND:4 == 0，各自判定）===
   if (chara(arg0).invasion.状态 === 2 && rand_n(4) === 0) {
