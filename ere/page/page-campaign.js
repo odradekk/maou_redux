@@ -229,7 +229,7 @@ async function dispatch_campaign_slave() {
  * @CAMPAIGN_MENU（:6-127，无参）：战役主菜单。
  * @param {(n: number) => number} [rand] 原作 RAND:N 的随机源，透传给招募
  *   分支的 rand_chara_make（缺省均匀随机，测试注入定值序）
- * @returns {Promise<number>} RETURN 0（原作恒 0 出口，:37/:127 末尾 GOTO 回到循环顶部）
+ * @returns {Promise<number>} RETURN 0（原作恒 0 出口，:36-37 的 [999] 直接返回；:127 末尾 GOTO 回到循环顶部）
  */
 async function campaign_menu(rand) {
   for (;;) {

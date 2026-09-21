@@ -201,7 +201,7 @@ campaign_monster_list_family.register(1, campaign_monster_list_1);
 /**
  * @CAMPAIGN_QUEST_1（:284-307）：楼层踏破判定。
  *
- * 原作按 CFLAG:(ARG:0):501（楼层）分 6 个 IF/ELSEIF 分支，但每支都是空
+ * 原作按楼层（CFLAG 的 501 下标）分 6 个 IF/ELSEIF 分支，但每支都是空
  * 语句（原作注释「今回はギミック無し」——本战役未设置楼层专属机关），
  * 与恒 RETURN 1 等价，不逐支复刻空分支。
  * @returns {number} RETURN 1（恒成功；原作 ARG:0 全程未被引用）

@@ -1833,7 +1833,7 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         cn_rebuild(); // :167 CALL NAME_RESET
         era_flag.target = game.event.上次调教对象; // :169 TARGET = FLAG:1
         era_flag.assi = game.event.上次助手; // :170 ASSI = FLAG:2
-        return 0; // :171
+        return 0; // :169-171 复位后返回
       }
 
       // :172-187 收下

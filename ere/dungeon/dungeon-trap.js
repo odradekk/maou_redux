@@ -112,7 +112,7 @@ function cbit(cid, idx, bit) {
  *
  * 原作 RESULT 预置 0（非 -1）：CAMPAIGN_TRAP_1 的 SELECTCASE 对未登记的
  * trap_num 也是落 TRAP_ID = 0（CAMPAIGN_1.ERB:121 默认值），与「陷阱槽
- * 无陷阱」同值——调用点 :238/:255/:261 的 `trap_id < 0` 判据因此在战役
+ * 无陷阱」同值——DUNGEON_TRAP.ERB:42/:60/:67 的 `TRAP_ID < 0` 判据因此在战役
  * 分支同样不可达（与非战役分支同构，era.get 也从不产生负值）。
  * @param {number} trap_num FLAG 槽号（原作 ARG:0）
  * @returns {Promise<number>} 该槽的陷阱 ID（FLAG:400 < 1 时恒 0）

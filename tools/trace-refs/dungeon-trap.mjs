@@ -1584,6 +1584,23 @@ export const FILES = [
         ref: '652',
         any: [/CALL COM0_AUTO/],
       },
+      // —— #469 战役陷阱槽：@CAMPAIGN_TRAP 的 TRAP_ID < 0 判据三处
+      //    （IF 两处同形构成平行复现，SIF 一处全文唯一）——
+      {
+        src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
+        ref: '42',
+        any: [/IF TRAP_ID < 0/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
+        ref: '60',
+        any: [/IF TRAP_ID < 0/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
+        ref: '67',
+        any: [/SIF TRAP_ID < 0/],
+      },
     ],
   },
 ];
