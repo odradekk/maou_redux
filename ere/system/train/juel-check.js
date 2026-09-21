@@ -49,6 +49,14 @@ const {
   ablup2,
   ablup3,
   ablup4,
+  ablup10,
+  ablup11,
+  ablup12,
+  ablup13,
+  ablup14,
+  ablup15,
+  ablup16,
+  ablup17,
 } = require('#/system/train/ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
@@ -66,7 +74,8 @@ const ABLUP_IDS = [
 ];
 
 /**
- * ABLUP_IDS 中已落真身的编号（issue #464：ABL/ABLUP0.ERB～ABLUP4.ERB）。
+ * ABLUP_IDS 中已落真身的编号（issue #464：ABL/ABLUP0.ERB～ABLUP4.ERB；
+ * issue #465：ABL/ABLUP10.ERB～ABLUP17.ERB）。
  * ABLUP5～9 的规则本体也已实现（ere/system/train/ablup.js），但 Abl.yml/
  * Abl.csv 没有编号 5～9 的名字条目，原作没有任何菜单能选中它们，因此不
  * 接入本表——接入即意味着玩家能选中一个引擎认不出名字的能力，偏离原作。
@@ -77,6 +86,14 @@ const ABLUP_HANDLERS = {
   2: ablup2,
   3: ablup3,
   4: ablup4,
+  10: ablup10,
+  11: ablup11,
+  12: ablup12,
+  13: ablup13,
+  14: ablup14,
+  15: ablup15,
+  16: ablup16,
+  17: ablup17,
 };
 
 /**
