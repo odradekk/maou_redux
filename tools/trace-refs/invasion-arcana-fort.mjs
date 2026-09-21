@@ -560,6 +560,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/ARCANA_FORT.ERB',
+        ref: '493-496',
+        any: [/PRINT 而且/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_FORT.ERB',
         ref: '494-521',
         any: [/;東の砦/],
       },
