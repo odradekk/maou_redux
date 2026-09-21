@@ -479,6 +479,15 @@ const cflag = {
     '装饰2',
     src(SRC_FLAG, 'CFLAG:550～559 装備品枠——装飾2（存储编号，EQUIP.ERB:37）'),
   ),
+  // —— ARCANA_BATTLE 对人决斗的弹药（#470 Q13：invasion 域写、dungeon 域
+  //    属主，ownership/cflag-ownership.yml "571" owner: dungeon）——
+  571: named_tail(
+    '弹药',
+    erb(
+      '侵略/ARCANA_BATTLE.ERB',
+      ':21-22 CFLAG:ATKER/DEFER:571 = 15（对人决斗弹药补充；对人格斗一族的弾薬消耗同族字段见 550-552 装备枠）',
+    ),
+  ),
   // —— 勇者来袭的跨域写（#171 H2 @ENTER_ENEMY；named_tail 让本票与
   //    并行票的产物落点不相邻，#170 先例。まとめ文档无这三条的词条，
   //    出处直接给 ERB）——
