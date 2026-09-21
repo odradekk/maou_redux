@@ -725,3 +725,77 @@ test('战后探索：run_dungeon 调用卖春真身（#184 接线，非存根占
     'rand_n 透传（迷宫与卖春共用随机源）',
   );
 });
+
+// —— CAMPAIGN_QUEST / CAMPAIGN_STORY / CAMPAIGN_ENDING（#469 起真身）——
+
+test('campaign_quest()：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_quest } = load(fixture);
+  assert.equal(await campaign_quest(1), 0);
+});
+
+test('campaign_quest()：楼层超过剧情进度时推进 CAMPAIGN_STORY，随后派发 CAMPAIGN_QUEST_1', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('flag:400', 1);
+  fixture.store.set('flag:401', 0); // 剧情进度 0
+  fixture.store.set('cflag:1:501', 1); // 队长楼层 1 > 0
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_quest } = load(fixture);
+  const ret = await campaign_quest(1);
+  assert.equal(ret, 1, 'CAMPAIGN_QUEST_1 恒成功');
+  assert.equal(fixture.store.get('flag:401'), 1, ':196 FLAG:401 += 1');
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('―STORY―'),
+    ),
+    ':192 剧情标题行',
+  );
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('奇形怪状的植物'),
+    ),
+    'CAMPAIGN_STORY_1 进度 0 段文本',
+  );
+});
+
+test('campaign_quest()：楼层未超过剧情进度时不重复推进剧情', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('flag:400', 1);
+  fixture.store.set('flag:401', 3);
+  fixture.store.set('cflag:1:501', 2); // 队长楼层 2 <= 剧情进度 3
+  fixture.load_module('page/page-campaign-1');
+  const { campaign_quest } = load(fixture);
+  await campaign_quest(1);
+  assert.equal(fixture.store.get('flag:401'), 3, '进度不变');
+  assert.ok(
+    !fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('―STORY―'),
+    ),
+    '不触发剧情标题行',
+  );
+});
+
+test('campaign_story_1()：按进度 0-5 六档打印对应剧情，5 档无「报告结束」收尾行', async () => {
+  for (let progress = 0; progress <= 5; progress += 1) {
+    const fixture = create_era_fixture();
+    fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+    fixture.era.addCharacter(0);
+    fixture.store.set('flag:401', progress);
+    const { campaign_story_1 } = fixture.load_module('page/page-campaign-1');
+    const ret = await campaign_story_1();
+    assert.equal(ret, 1);
+    const texts = fixture.lines_history
+      .filter((l) => l.type === 'text')
+      .map((l) => l.text);
+    if (progress === 5) {
+      assert.ok(texts.some((t) => t.includes('最后一战一触即发')));
+      assert.ok(!texts.some((t) => t.includes('报告到这就结束了')));
+    } else {
+      assert.ok(texts.some((t) => t.includes('报告到这就结束了')));
+    }
+  }
+});

@@ -959,6 +959,11 @@ const EXEMPT_STRINGS = [
       '・ 是原作在「肉体」与「精神」之间的并列连接样式，不是日文假名；夥 已按字级归一成 伙。' +
       '逐字照抄（CHARA_MARRIAGE 的 1:1 追溯口径），按整串豁免。#393 收录。',
   },
+  {
+    value: '-ROAD・to・CRIMSON・FOREST-',
+    where: 'ere/page/page-campaign-1.js（CAMPAIGN_NAME_1/CAMPAIGN_EXIST_1）',
+    why: 'CAMPAIGN_1.ERB:80「PRINT -ROAD・to・CRIMSON・FOREST-」的战役副标题，・ 是原作在英文单词间的装饰分隔样式（与 K10「亲・爱・的」同款处置，#241 先例），非日文假名。逐字照抄，按整串豁免。#469 收录。',
+  },
 ];
 
 // 引擎按名读取的 yml 列名（原作 CSV 列名照抄进产物），非玩家可见文本；

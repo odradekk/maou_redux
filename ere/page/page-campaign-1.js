@@ -25,7 +25,11 @@ const {
   campaign_exist_family,
   campaign_set_family,
 } = require('#/page/page-campaign');
-const { campaign_room_family } = require('#/dungeon/dungeon');
+const {
+  campaign_room_family,
+  campaign_quest_family,
+  campaign_story_family,
+} = require('#/dungeon/dungeon');
 const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
 const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
 const { campaign_equip_select_family } = require('#/system/equip/equip-select');
@@ -193,6 +197,86 @@ function campaign_monster_list_1(floor, rand = default_rand) {
 }
 campaign_monster_list_family.register(1, campaign_monster_list_1);
 
+/**
+ * @CAMPAIGN_QUEST_1（:284-307）：楼层踏破判定。
+ *
+ * 原作按 CFLAG:(ARG:0):501（楼层）分 6 个 IF/ELSEIF 分支，但每支都是空
+ * 语句（原作注释「今回はギミック無し」——本战役未设置楼层专属机关），
+ * 与恒 RETURN 1 等价，不逐支复刻空分支。
+ * @returns {number} RETURN 1（恒成功；原作 ARG:0 全程未被引用）
+ */
+function campaign_quest_1() {
+  return 1;
+}
+campaign_quest_family.register(1, campaign_quest_1);
+
+/** @CAMPAIGN_STORY_1（:310-357）按 FLAG:401（0-5）六档分支的剧情文本 */
+const STORY_LINES_BY_PROGRESS = [
+  [
+    '真是奇妙的森林。奇形怪状的植物、还有与其共生进化而来的动物和昆虫',
+    '并非秋季却红的发紫的巨大树叶。半裸的原住民见到{master}的奴隶便四下逃开了',
+    '有趣的是这当中并没有年轻的女性。传言的话、所有人都会聚集到森林深处的神殿、只有小孩才能返回',
+    '在森林深处进行着荒淫的派对。开得煞是妖艳的花不禁让人联想到了如此画面',
+    '总之先向着那里前进吧。{master}的奴隶静静地继续前进了',
+    '――水晶球映出的报告到这就结束了',
+  ],
+  [
+    '森林外围墓碑林立。到处都是、被苔藓藤蔓树根常年侵蚀得无法辨识枯坟野冢',
+    '护理这些坟墓的是一个看起来30来岁的女守墓人。一番交谈。她解开了自己的长袍、将身体露了出来',
+    '清晰可见被破坏了的性器。伤痕累累的身体。碎裂的乳头',
+    '「从森林深处回来的都是像我这样的对象。不停地生产、直到不能再用、成了废品为止、就会被抛弃」',
+    '谈话结束之后、奴隶便静静地继续前进了',
+    '――水晶球映出的报告到这就结束了',
+  ],
+  [
+    '惨遭侵犯的肉便器。被成群结队的红皮兽人不断侵犯着。肚子已经怀孕到了几乎要炸开的程度',
+    '看来已经是废弃品了。森林中萦绕着娇喘声和喘息声。女人似乎已经被玩坏了',
+    '魔王的奴隶在林间暗中观察着。肉便器的身上被烙着「废弃品」的印记',
+    '女人一直痴笑着祈求着精液。可想而知她被从森林弃出之后会是什么下场',
+    '兽人射着精、将已然崩坏的笑容染白了',
+    '――水晶球映出的报告到这就结束了',
+  ],
+  [
+    '森林深处坐落着巨大的神殿。魔王的奴隶稳健地将敌人击倒、一点一点的前进着',
+    '女信徒祈祷着。将腰抬得老高、头点着地面、被从后面侵犯着',
+    '无论男女、都进入了兴奋异常的状态、完全没有注意到侵入者的到来',
+    '奴隶抬头一看。在眼中映出的是一尊奇妙的雕像。但是、完全感觉不到任何力量',
+    '也许在神殿深处的才是「本尊」。是它将奇妙的效果影响到了神殿全域',
+    '――水晶球映出的报告到这就结束了',
+  ],
+  [
+    '女王就在那。根据捕获的女信徒的说法。女王被年轻的少年们簇拥着',
+    '沐浴着年轻的精液、维持着年轻与美貌的魔女。奴隶得出了她就是雕像管理者的结论',
+    '随着向神殿深处迈进、充满野性的腥味越来越浓郁',
+    '宽敞的房间里、几个女人疯狂地向巨魔的巨根张开双腿、祈求着临幸',
+    '走廊里的情侣们、不断摆动着腰肢流着口水露出了享受的神情',
+    '――水晶球映出的报告到这就结束了',
+  ],
+  [
+    '找到女王了。半裸着身子将下半身露了出来、端坐在玉座之上',
+    '察觉到了侵入者的气息、便将奴隶少年们拉到一边去',
+    '紧接着出现的是护卫的战士们。将肉便器装饰在肉棒上的巨魔、奇怪的魔术师',
+    '最后一战一触即发',
+  ],
+];
+
+/**
+ * @CAMPAIGN_STORY_1（:310-357）：按剧情进度打印对应段落。
+ * @returns {Promise<number>} RETURN 1
+ */
+async function campaign_story_1() {
+  const master = chara_callname(0); // %SAVESTR:MASTER%
+  const lines = STORY_LINES_BY_PROGRESS[era_flag.campaign_story_progress];
+  if (lines) {
+    for (const line of lines) {
+      era.print(line.replace('{master}', master));
+      await era.waitAnyKey();
+    }
+  }
+  return 1;
+}
+campaign_story_family.register(1, campaign_story_1);
+
 module.exports = {
   campaign_name_1,
   campaign_exist_1,
@@ -202,4 +286,6 @@ module.exports = {
   campaign_trap_1,
   campaign_equip_select_1,
   campaign_monster_list_1,
+  campaign_quest_1,
+  campaign_story_1,
 };
