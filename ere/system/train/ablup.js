@@ -4573,10 +4573,10 @@ async function ablup30(cid) {
       i |= 4;
       j |= 4;
     }
-    if (juel5 < a) i |= 1; // :343-344
-    if (juel6 < b) i |= 1; // :346-347
-    if (exp5 < c) i |= 2; // :349-350
-    if (juel5 < a * 3) j |= 1; // :353-354
+    if (juel5 < a) i |= 1; // :333-334
+    if (juel6 < b) i |= 1; // :336-337
+    if (exp5 < c) i |= 2; // :339-340
+    if (juel5 < a * 3) j |= 1; // :343-344
     if (juel6 < b * 3) j |= 1; // :346-347
     if (exp5 < Math.floor(c / 2)) j |= 2; // :349-350（C/2 整除）
 

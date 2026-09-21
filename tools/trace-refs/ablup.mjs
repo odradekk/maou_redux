@@ -1943,7 +1943,7 @@ export const FILES = [
             'SIF ABL:20 >= 5 && (TALENT:80 == 0 && TALENT:83 == 0 && TALENT:127 == 0)',
           ),
         ],
-      }, // 锚取 :97
+      }, // 锚取 :99
       { src: ABLUP20, ref: '49-56', any: [lit('PRINT ＯＫ')] }, // 锚取 :49
       // 交接改正的四条（原 :118-140/:143/:146 的落点与 :257-262 的淫乱说明
       // 都错，见 #466 的完成报告）：戒备森严块、C 赋值、G、淫乱块
@@ -1969,18 +1969,18 @@ export const FILES = [
       { src: ABLUP20, ref: '289-292', any: [lit('IF TALENT:83')] }, // 锚取 :289
       { src: ABLUP20, ref: '294-297', any: [lit('IF TALENT:88')] }, // 锚取 :294
       { src: ABLUP20, ref: '299-302', any: [lit('IF TALENT:84')] }, // 锚取 :299
-      { src: ABLUP20, ref: '304-307', any: [lit('IF TALENT:87')] }, // 锚取 :283
-      { src: ABLUP20, ref: '309-312', any: [lit('IF TALENT:123')] }, // 锚取 :289
-      { src: ABLUP20, ref: '314-317', any: [lit('IF TALENT:9')] }, // 锚取 :293
-      { src: ABLUP20, ref: '320-321', any: [lit('SIF JUEL:5 < A')] }, // 锚取 :299
-      { src: ABLUP20, ref: '324-325', any: [lit('SIF EXP:33 < B')] }, // 锚取 :303
-      { src: ABLUP20, ref: '328-329', any: [lit('SIF EXP:50 < C')] }, // 锚取 :308
-      { src: ABLUP20, ref: '332-333', any: [lit('SIF ABL:11 < ABL:20 + 1')] }, // 锚取 :311
+      { src: ABLUP20, ref: '304-307', any: [lit('IF TALENT:87')] }, // 锚取 :304
+      { src: ABLUP20, ref: '309-312', any: [lit('IF TALENT:123')] }, // 锚取 :309
+      { src: ABLUP20, ref: '314-317', any: [lit('IF TALENT:9')] }, // 锚取 :314
+      { src: ABLUP20, ref: '320-321', any: [lit('SIF JUEL:5 < A')] }, // 锚取 :320
+      { src: ABLUP20, ref: '324-325', any: [lit('SIF EXP:33 < B')] }, // 锚取 :324
+      { src: ABLUP20, ref: '328-329', any: [lit('SIF EXP:50 < C')] }, // 锚取 :328
+      { src: ABLUP20, ref: '332-333', any: [lit('SIF ABL:11 < ABL:20 + 1')] }, // 锚取 :332
       {
         src: ABLUP20,
         ref: '41',
         any: [lit('PRINTFORML %ABLNAME:11%LV{ABL:20+1}以上(现在LV{ABL:11})且')],
-      }, // 锚取 :332
+      }, // 锚取 :41
       {
         src: ABLUP20,
         ref: '47-57',
@@ -1993,7 +1993,7 @@ export const FILES = [
       }, // 锚取 :79
       // —— ABLUP21.ERB（issue #466）——
       { src: ABLUP21, ref: '8-111', any: [lit(';PRINTL 奴隶的M气质提升了。')] }, // 锚取 :10
-      { src: ABLUP21, ref: '131-529', any: [lit('@DECIDE_ABLUP21')] }, // 锚取 :129
+      { src: ABLUP21, ref: '131-529', any: [lit('@DECIDE_ABLUP21')] }, // 锚取 :131
       {
         src: ABLUP21,
         ref: '249',
@@ -2033,18 +2033,18 @@ export const FILES = [
       { src: ABLUP21, ref: '455-461', any: [lit('IF TALENT:88')] }, // 锚取 :455
       { src: ABLUP21, ref: '463-469', any: [lit('IF TALENT:123')] }, // 锚取 :463
       { src: ABLUP21, ref: '471-477', any: [lit('IF TALENT:9')] }, // 锚取 :471
-      { src: ABLUP21, ref: '480-484', any: [lit('IF ABL:11 < ABL:21+1')] }, // 锚取 :414
-      { src: ABLUP21, ref: '487-490', any: [lit('IF EXP:50 < F')] }, // 锚取 :421
-      { src: ABLUP21, ref: '493-505', any: [lit('IF B > 0\n	;苦痛点数が不足')] }, // 锚取 :430
-      { src: ABLUP21, ref: '504', any: [lit('	I = 256')] }, // 锚取 :438
-      { src: ABLUP21, ref: '508-520', any: [lit('IF D > 0\n	;苦痛点数が不足')] }, // 锚取 :442
-      { src: ABLUP21, ref: '522', any: [lit('	J = 256')] }, // 锚取 :455
+      { src: ABLUP21, ref: '480-484', any: [lit('IF ABL:11 < ABL:21+1')] }, // 锚取 :480
+      { src: ABLUP21, ref: '487-490', any: [lit('IF EXP:50 < F')] }, // 锚取 :487
+      { src: ABLUP21, ref: '493-505', any: [lit('IF B > 0\n	;苦痛点数が不足')] }, // 锚取 :493
+      { src: ABLUP21, ref: '504', any: [lit('	I = 256')] }, // 锚取 :504
+      { src: ABLUP21, ref: '508-520', any: [lit('IF D > 0\n	;苦痛点数が不足')] }, // 锚取 :508
+      { src: ABLUP21, ref: '522', any: [lit('	J = 256')] }, // 锚取 :522
       { src: ABLUP21, ref: '54-55', any: [lit('SIF F > 0')] }, // 锚取 :54
       {
         src: ABLUP21,
         ref: '57-59',
         any: [lit('PRINTFORM [0] - %PALAMNAME:9%点数×{JUEL:9}/{A} ……')],
-      }, // 锚取 :508
+      }, // 锚取 :58
       {
         src: ABLUP21,
         ref: '61-62',
@@ -2064,7 +2064,7 @@ export const FILES = [
         src: ABLUP21,
         ref: '90-91',
         any: [lit('ELSEIF J == 256 && RESULT == 1')],
-      }, // 锚取 :75
+      }, // 锚取 :90
       {
         src: ABLUP21,
         ref: '109',
@@ -2093,7 +2093,7 @@ export const FILES = [
         any: [
           lit('PRINTFORML %ABLNAME:11%LV{ABL:22 + 1}以上(现在LV{ABL:11})且'),
         ],
-      }, // 锚取 :49
+      }, // 锚取 :50
       {
         src: ABLUP22,
         ref: '214',
@@ -2102,7 +2102,7 @@ export const FILES = [
             'SIF ABL:22 >= 3 && (TALENT:33 == 0 && TALENT:80 == 0 && TALENT:81 == 0 && TALENT:123 == 0)',
           ),
         ],
-      }, // 锚取 :167
+      }, // 锚取 :214
       {
         src: ABLUP22,
         ref: '18',
@@ -2115,7 +2115,7 @@ export const FILES = [
       { src: ABLUP22, ref: '12', any: [whole_line('DRAWLINE')] }, // 锚取 :12
       { src: ABLUP22, ref: '21-23', any: [lit('PRINTW 已达最高级')] }, // 锚取 :22
       { src: ABLUP22, ref: '140-190', any: [lit('A = 40000')] }, // 锚取 :166
-      { src: ABLUP22, ref: '193-211', any: [lit('IF TALENT:27')] }, // 锚取 :215
+      { src: ABLUP22, ref: '193-211', any: [lit('IF TALENT:27')] }, // 锚取 :193
       {
         src: ABLUP22,
         ref: '214-215',
@@ -2137,22 +2137,22 @@ export const FILES = [
       { src: ABLUP22, ref: '323-324', any: [lit('SIF B < 1')] }, // 锚取 :323
       { src: ABLUP22, ref: '333-334', any: [lit('SIF JUEL:5 < A')] }, // 锚取 :333
       { src: ABLUP22, ref: '336-337', any: [lit('SIF JUEL:6 < C')] }, // 锚取 :336
-      { src: ABLUP22, ref: '339-340', any: [lit('SIF EXP:40 < B\n	I |= 2')] }, // 锚取 :353
-      { src: ABLUP22, ref: '343-347', any: [lit('IF ABL:11 < ABL:22 + 1')] }, // 锚取 :358
-      { src: ABLUP22, ref: '350-356', any: [lit('IF D > 0\n	;阴核点数が不足')] }, // 锚取 :349
+      { src: ABLUP22, ref: '339-340', any: [lit('SIF EXP:40 < B\n	I |= 2')] }, // 锚取 :339
+      { src: ABLUP22, ref: '343-347', any: [lit('IF ABL:11 < ABL:22 + 1')] }, // 锚取 :343
+      { src: ABLUP22, ref: '350-356', any: [lit('IF D > 0\n	;阴核点数が不足')] }, // 锚取 :350
       { src: ABLUP22, ref: '358', any: [lit('J = 256')] }, // 锚取 :358
       { src: ABLUP22, ref: '46-47', any: [lit('SIF E > 0')] }, // 锚取 :46
       {
         src: ABLUP22,
         ref: '53-55',
         any: [lit('PRINTFORM [0] - %PALAMNAME:5%点数×{JUEL:5}/{A} ……')],
-      }, // 锚取 :52
+      }, // 锚取 :53
       { src: ABLUP22, ref: '56-57', any: [lit('SIF C > 0')] }, // 锚取 :56
       {
         src: ABLUP22,
         ref: '58',
         any: [lit('PRINTFORML 　　　%EXPNAME:40%　{EXP:40}/{B}')],
-      }, // 锚取 :350
+      }, // 锚取 :58
       {
         src: ABLUP22,
         ref: '61-64',
@@ -2168,12 +2168,12 @@ export const FILES = [
         ref: '79-80',
         any: [lit('ELSEIF J != 0 && RESULT == 1')],
       }, // 锚取 :79
-      { src: ABLUP22, ref: '89-90', any: [lit('	JUEL:5 -= A\n	JUEL:6 -= C')] }, // 锚取 :88
+      { src: ABLUP22, ref: '89-90', any: [lit('	JUEL:5 -= A\n	JUEL:6 -= C')] }, // 锚取 :89
       {
         src: ABLUP22,
         ref: '95',
         any: [lit('PRINTFORML %ABLNAME:22%变为LV{ABL:22}。')],
-      }, // 锚取 :89
+      }, // 锚取 :95
       // —— ABLUP23.ERB（issue #466）——
       { src: ABLUP23, ref: '8-96', any: [lit(';男人でないととダメ')] }, // 锚取 :9
       { src: ABLUP23, ref: '115-345', any: [lit('@DECIDE_ABLUP23')] }, // 锚取 :115
@@ -2200,17 +2200,17 @@ export const FILES = [
       { src: ABLUP23, ref: '286-291', any: [lit('IF TALENT:80')] }, // 锚取 :286
       { src: ABLUP23, ref: '300-305', any: [lit('IF TALENT:123')] }, // 锚取 :300
       { src: ABLUP23, ref: '308-309', any: [lit('SIF A < 1')] }, // 锚取 :308
-      { src: ABLUP23, ref: '314-317', any: [lit('IF EXP:50 < E')] }, // 锚取 :313
-      { src: ABLUP23, ref: '320-321', any: [lit('SIF JUEL:5 < A')] }, // 锚取 :319
-      { src: ABLUP23, ref: '323-324', any: [lit('SIF JUEL:6 < C')] }, // 锚取 :322
-      { src: ABLUP23, ref: '326-327', any: [lit('SIF EXP:41 < B\n	I |= 2')] }, // 锚取 :325
-      { src: ABLUP23, ref: '330-336', any: [lit('IF D > 0\n	;肛门点数が不足')] }, // 锚取 :329
-      { src: ABLUP23, ref: '338', any: [lit('	J = 256')] }, // 锚取 :335
+      { src: ABLUP23, ref: '314-317', any: [lit('IF EXP:50 < E')] }, // 锚取 :314
+      { src: ABLUP23, ref: '320-321', any: [lit('SIF JUEL:5 < A')] }, // 锚取 :320
+      { src: ABLUP23, ref: '323-324', any: [lit('SIF JUEL:6 < C')] }, // 锚取 :323
+      { src: ABLUP23, ref: '326-327', any: [lit('SIF EXP:41 < B\n	I |= 2')] }, // 锚取 :326
+      { src: ABLUP23, ref: '330-336', any: [lit('IF D > 0\n	;肛门点数が不足')] }, // 锚取 :330
+      { src: ABLUP23, ref: '338', any: [lit('	J = 256')] }, // 锚取 :338
       {
         src: ABLUP23,
         ref: '59-62',
         any: [lit('PRINTFORM [1] - %PALAMNAME:2%点数×{JUEL:2}/{D} ……')],
-      }, // 锚取 :330
+      }, // 锚取 :60
       {
         src: ABLUP23,
         ref: '64',
@@ -2289,12 +2289,13 @@ export const FILES = [
         ],
       }, // 锚取 :317
       { src: ABLUP30, ref: '327-330', any: [lit('IF ABL:16 < ABL:30 + 1')] }, // 锚取 :327
+      { src: ABLUP30, ref: '333-334', any: [lit('SIF JUEL:5 < A\nI |= 1')] }, // 锚取 :333
+      { src: ABLUP30, ref: '336-337', any: [lit('SIF JUEL:6 < B\nI |= 1')] }, // 锚取 :336
+      { src: ABLUP30, ref: '339-340', any: [lit('SIF EXP:5 < C\nI |= 2')] }, // 锚取 :339
       { src: ABLUP30, ref: '343-344', any: [lit('SIF JUEL:5 < A * 3')] }, // 锚取 :343
       { src: ABLUP30, ref: '346-347', any: [lit('SIF JUEL:6 < B * 3')] }, // 锚取 :346
       { src: ABLUP30, ref: '349-350', any: [lit('SIF EXP:5 < C / 2')] }, // 锚取 :349
-      { src: ABLUP30, ref: '346-347', any: [lit('SIF JUEL:6 < B * 3')] }, // 锚取 :346
-      { src: ABLUP30, ref: '349-350', any: [lit('SIF EXP:5 < C / 2')] }, // 锚取 :349
-      { src: ABLUP30, ref: '81', any: [lit('ABL:30 += 1')] }, // 锚取 :82
+      { src: ABLUP30, ref: '81', any: [lit('ABL:30 += 1')] }, // 锚取 :81
       // —— ABLUP31.ERB（issue #466）——
       {
         src: ABLUP31,
@@ -2334,7 +2335,7 @@ export const FILES = [
             '	PRINTFORML 至少达成%PALAMNAME:5%点数{ABL:31 * ABL:31 * 2550}点、%PALAMNAME:0%点数{ABL:31 * ABL:31 * 15000}点或%PALAMNAME:8%点数{ABL:31 * ABL:31 * 2000}点的其中一项',
           ),
         ],
-      }, // 锚取 :156
+      }, // 锚取 :28
       {
         src: ABLUP31,
         ref: '29',
@@ -2362,23 +2363,23 @@ export const FILES = [
       }, // 锚取 :244
       { src: ABLUP31, ref: '291-294', any: [lit('IF ABL:17 < ABL:31 + 1')] }, // 锚取 :291
       { src: ABLUP31, ref: '297-300', any: [lit('IF ABL:0 < ABL:31 + 1')] }, // 锚取 :297
-      { src: ABLUP31, ref: '305-306', any: [lit('SIF B < 1')] }, // 锚取 :225
-      { src: ABLUP31, ref: '309-310', any: [lit('SIF D < 1')] }, // 锚取 :229
-      { src: ABLUP31, ref: '316-317', any: [lit('SIF JUEL:5 < A\n	I |= 1')] }, // 锚取 :237
+      { src: ABLUP31, ref: '305-306', any: [lit('SIF B < 1')] }, // 锚取 :305
+      { src: ABLUP31, ref: '309-310', any: [lit('SIF D < 1')] }, // 锚取 :309
+      { src: ABLUP31, ref: '316-317', any: [lit('SIF JUEL:5 < A\n	I |= 1')] }, // 锚取 :316
       {
         src: ABLUP31,
         ref: '319-320',
         any: [lit('SIF JUEL:0 < B\nI |= 1')],
       }, // 锚取 :319
-      { src: ABLUP31, ref: '322-323', any: [lit('SIF JUEL:8 < C\n	I |= 1')] }, // 锚取 :243
-      { src: ABLUP31, ref: '333-334', any: [lit('SIF JUEL:0 < B\n	J |= 1')] }, // 锚取 :251
-      { src: ABLUP31, ref: '336-337', any: [lit('SIF JUEL:8 < C\n	J |= 1')] }, // 锚取 :254
-      { src: ABLUP31, ref: '56-57', any: [lit('SIF F > 0')] }, // 锚取 :59
+      { src: ABLUP31, ref: '322-323', any: [lit('SIF JUEL:8 < C\n	I |= 1')] }, // 锚取 :322
+      { src: ABLUP31, ref: '333-334', any: [lit('SIF JUEL:0 < B\n	J |= 1')] }, // 锚取 :333
+      { src: ABLUP31, ref: '336-337', any: [lit('SIF JUEL:8 < C\n	J |= 1')] }, // 锚取 :336
+      { src: ABLUP31, ref: '56-57', any: [lit('SIF F > 0')] }, // 锚取 :56
       {
         src: ABLUP31,
         ref: '63',
         any: [lit('PRINTFORML %ABLNAME:0%LV{ABL:31 + 1}以上(现在LV{ABL:0})且')],
-      }, // 锚取 :336
+      }, // 锚取 :63
       {
         src: ABLUP31,
         ref: '71',
@@ -2388,20 +2389,15 @@ export const FILES = [
         src: ABLUP31,
         ref: '89-90',
         any: [lit('ELSEIF J != 0 && RESULT == 1')],
-      }, // 锚取 :99
-      { src: ABLUP31, ref: '96', any: [lit('ABL:31 += 1')] }, // 锚取 :101
-      {
-        src: ABLUP31,
-        ref: '99-101',
-        any: [lit('	JUEL:5 -= A\n	JUEL:0 -= B\n	JUEL:8 -= C')],
-      }, // 锚取 :99
+      }, // 锚取 :89
+      { src: ABLUP31, ref: '96', any: [lit('ABL:31 += 1')] }, // 锚取 :96
       {
         src: ABLUP31,
         ref: '104',
         any: [lit('PRINTFORML %ABLNAME:31%变为LV{ABL:31}。')],
       }, // 锚取 :104
       // —— ABLUP32.ERB（issue #466）——
-      { src: ABLUP32, ref: '8-103', any: [lit('@ABLUP32')] }, // 锚取 :121
+      { src: ABLUP32, ref: '8-103', any: [lit('@ABLUP32')] }, // 锚取 :8
       {
         src: ABLUP32,
         ref: '123-382',
@@ -2415,7 +2411,7 @@ export const FILES = [
             'IF TALENT:76 == 0\n	PRINTFORML %ABLNAME:16%LV{ABL:32 + 1}以上(现在LV{ABL:16})且',
           ),
         ],
-      }, // 锚取 :246
+      }, // 锚取 :55
       {
         src: ABLUP32,
         ref: '25',
@@ -2424,7 +2420,7 @@ export const FILES = [
             '	IF JUEL:5 < ABL:32 * ABL:32 * 6500 || JUEL:6 < ABL:32 * ABL:32 * 19000',
           ),
         ],
-      }, // 锚取 :55
+      }, // 锚取 :25
       {
         src: ABLUP32,
         ref: '27',
@@ -2433,14 +2429,14 @@ export const FILES = [
             '	PRINTFORML 至少达成%PALAMNAME:5%点数{ABL:32 * ABL:32 * 4000}点或%PALAMNAME:6%点数{ABL:32 * ABL:32 * 19000}点的其中一项',
           ),
         ],
-      }, // 锚取 :148
+      }, // 锚取 :27
       {
         src: ABLUP32,
         ref: '185-188',
         any: [
           lit('IF ABL:32 + ABL:33 + ABL:39 >= 10\n	A = ABL:32 * ABL:32 * 4000'),
         ],
-      }, // 锚取 :154
+      }, // 锚取 :185
       {
         src: ABLUP32,
         ref: '19-21',
@@ -2450,9 +2446,9 @@ export const FILES = [
         src: ABLUP32,
         ref: '28',
         any: [lit('	PRINTFORMW 方可提升当前精液中毒的等级')],
-      }, // 锚取 :134
+      }, // 锚取 :28
       { src: ABLUP32, ref: '143-183', any: [lit('B = 10000')] }, // 锚取 :145
-      { src: ABLUP32, ref: '191-209', any: [lit('IF TALENT:27')] }, // 锚取 :179
+      { src: ABLUP32, ref: '191-209', any: [lit('IF TALENT:27')] }, // 锚取 :191
       {
         src: ABLUP32,
         ref: '212-213',
@@ -2461,7 +2457,7 @@ export const FILES = [
             'SIF ABL:32 >= 2 && (TALENT:61 == 0 && TALENT:72 == 0 && TALENT:80 == 0 && TALENT:123 == 0 && TALENT:47 == 0)',
           ),
         ],
-      }, // 锚取 :182
+      }, // 锚取 :212
       {
         src: ABLUP32,
         ref: '216-220',
@@ -2472,8 +2468,8 @@ export const FILES = [
         ref: '222-226',
         any: [lit('IF TALENT:22')],
       }, // 锚取 :222
-      { src: ABLUP32, ref: '228-232', any: [lit('IF TALENT:24')] }, // 锚取 :201
-      { src: ABLUP32, ref: '235-239', any: [lit('IF TALENT:32')] }, // 锚取 :204
+      { src: ABLUP32, ref: '228-232', any: [lit('IF TALENT:24')] }, // 锚取 :228
+      { src: ABLUP32, ref: '235-239', any: [lit('IF TALENT:32')] }, // 锚取 :235
       {
         src: ABLUP32,
         ref: '240-244',
@@ -2512,46 +2508,46 @@ export const FILES = [
           ),
         ],
       }, // 锚取 :348
-      { src: ABLUP32, ref: '358-359', any: [lit('SIF JUEL:5 < A\n	I |= 1')] }, // 锚取 :313
-      { src: ABLUP32, ref: '361-362', any: [lit('SIF JUEL:6 < B\n	I |= 1')] }, // 锚取 :316
-      { src: ABLUP32, ref: '369-370', any: [lit('SIF JUEL:5 < A*3')] }, // 锚取 :372
-      { src: ABLUP32, ref: '372-373', any: [lit('SIF JUEL:6 < B*3')] }, // 锚取 :375
-      { src: ABLUP32, ref: '375-376', any: [lit('SIF EXP:20 < C/2')] }, // 锚取 :51
+      { src: ABLUP32, ref: '358-359', any: [lit('SIF JUEL:5 < A\n	I |= 1')] }, // 锚取 :358
+      { src: ABLUP32, ref: '361-362', any: [lit('SIF JUEL:6 < B\n	I |= 1')] }, // 锚取 :361
+      { src: ABLUP32, ref: '369-370', any: [lit('SIF JUEL:5 < A*3')] }, // 锚取 :369
+      { src: ABLUP32, ref: '372-373', any: [lit('SIF JUEL:6 < B*3')] }, // 锚取 :372
+      { src: ABLUP32, ref: '375-376', any: [lit('SIF EXP:20 < C/2')] }, // 锚取 :375
       {
         src: ABLUP32,
         ref: '51-52',
         any: [lit('SIF D > 0')],
-      }, // 锚取 :361
+      }, // 锚取 :51
       {
         src: ABLUP32,
         ref: '67',
         any: [lit('PRINTFORML 　　　%EXPNAME:20%　{EXP:20}/{C}')],
       }, // 锚取 :67
-      { src: ABLUP32, ref: '78', any: [lit('INPUT')] }, // 锚取 :82
-      { src: ABLUP32, ref: '81-82', any: [lit('PRINTL 未满足条件')] }, // 锚取 :85
+      { src: ABLUP32, ref: '78', any: [lit('INPUT')] }, // 锚取 :78
+      { src: ABLUP32, ref: '81-82', any: [lit('PRINTL 未满足条件')] }, // 锚取 :82
       {
         src: ABLUP32,
         ref: '84-85',
         any: [lit('ELSEIF J != 0 && RESULT == 1')],
-      }, // 锚取 :93
+      }, // 锚取 :84
       {
         src: ABLUP32,
         ref: '101',
         any: [lit('PRINTFORML %ABLNAME:32%变为LV{ABL:32}。')],
-      }, // 锚取 :97
+      }, // 锚取 :101
       // —— ABLUP33.ERB（issue #466）——
       {
         src: ABLUP33,
         ref: '97-98',
         any: [lit('	JUEL:6 -= A')],
       }, // 锚取 :97
-      { src: ABLUP33, ref: '8-86', any: [lit('@ABLUP33')] }, // 锚取 :104
+      { src: ABLUP33, ref: '8-86', any: [lit('@ABLUP33')] }, // 锚取 :8
       {
         src: ABLUP33,
         ref: '60',
         any: [lit('PRINTFORML 　　　%PALAMNAME:5%点数×{JUEL:5}/{A}')],
-      }, // 锚取 :80
-      { src: ABLUP33, ref: '351', any: [lit('		J |= 2')] }, // 锚取 :366
+      }, // 锚取 :60
+      { src: ABLUP33, ref: '351', any: [lit('		J |= 2')] }, // 锚取 :351
       {
         src: ABLUP33,
         ref: '357',
@@ -2575,13 +2571,6 @@ export const FILES = [
         ref: '31',
         any: [lit('	PRINTFORMW 方可提升当前百合中毒的等级')],
       }, // 锚取 :31
-      {
-        src: ABLUP33,
-        ref: '168-171',
-        any: [
-          lit('IF ABL:32 + ABL:33 + ABL:39 >= 10\n	A = ABL:33 * ABL:33 * 4000'),
-        ],
-      }, // 锚取 :168
       { src: ABLUP33, ref: '174-192', any: [lit('TIMES B , 3.00')] }, // 锚取 :189
       { src: ABLUP33, ref: '199-203', any: [lit('IF TALENT:11')] }, // 锚取 :199
       { src: ABLUP33, ref: '205-209', any: [lit('IF TALENT:20')] }, // 锚取 :205
@@ -2597,13 +2586,13 @@ export const FILES = [
       { src: ABLUP33, ref: '284-288', any: [lit('IF TALENT:73')] }, // 锚取 :284
       { src: ABLUP33, ref: '304-308', any: [lit('IF TALENT:80')] }, // 锚取 :304
       { src: ABLUP33, ref: '316-320', any: [lit('IF TALENT:82')] }, // 锚取 :316
-      { src: ABLUP33, ref: '328-332', any: [lit('IF TALENT:123')] }, // 锚取 :321
-      { src: ABLUP33, ref: '341-342', any: [lit('SIF A < 1')] }, // 锚取 :327
-      { src: ABLUP33, ref: '343-344', any: [lit('SIF B < 1')] }, // 锚取 :345
-      { src: ABLUP33, ref: '345-346', any: [lit('SIF C < 1')] }, // 锚取 :333
-      { src: ABLUP33, ref: '364-365', any: [lit('SIF JUEL:5 < A')] }, // 锚取 :367
-      { src: ABLUP33, ref: '367-368', any: [lit('SIF JUEL:6 < A')] }, // 锚取 :355
-      { src: ABLUP33, ref: '76', any: [lit('ABL:33 += 1')] }, // 锚取 :78
+      { src: ABLUP33, ref: '328-332', any: [lit('IF TALENT:123')] }, // 锚取 :328
+      { src: ABLUP33, ref: '341-342', any: [lit('SIF A < 1')] }, // 锚取 :341
+      { src: ABLUP33, ref: '343-344', any: [lit('SIF B < 1')] }, // 锚取 :343
+      { src: ABLUP33, ref: '345-346', any: [lit('SIF C < 1')] }, // 锚取 :345
+      { src: ABLUP33, ref: '364-365', any: [lit('SIF JUEL:5 < A')] }, // 锚取 :364
+      { src: ABLUP33, ref: '367-368', any: [lit('SIF JUEL:6 < A')] }, // 锚取 :367
+      { src: ABLUP33, ref: '76', any: [lit('ABL:33 += 1')] }, // 锚取 :76
       {
         src: ABLUP33,
         ref: '84',
@@ -2768,7 +2757,6 @@ export const FILES = [
       { src: ABLUP30, ref: '20-22', any: [lit('ELSEIF ABL:30 >= 10')] }, // 锚取 :20
       { src: ABLUP30, ref: '242-246', any: [lit('IF TALENT:34')] }, // 锚取 :242
       { src: ABLUP30, ref: '313-314', any: [lit('SIF C < 1')] }, // 锚取 :313
-      { src: ABLUP30, ref: '353-354', any: [lit('	RETURN 1')] }, // 锚取 :353
       {
         src: ABLUP30,
         ref: '57',
