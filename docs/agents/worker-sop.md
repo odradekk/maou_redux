@@ -55,8 +55,11 @@ node tools/run-node.mjs -- tools/mutation-check.mjs --ids <新增编号>
 
 - `list_profiles` 取 `Reviewer` profile 的 provider、model、thinkingOptionId 原样填入。
 - `workspaceId` 用当前工作区（`list_workspaces` 按当前目录找）。
+- `modeId` 设 `plan`（只读）。审查员因此跑不了会改文件的 `mutation-check --ids`，那部分由你在本机实跑、在完成评论里写明。
 - 提示词写明只读：审查 `origin/master..HEAD` 的改动，对照 issue #N 的要求，不修改文件；给出每条发现的文件、行、问题和依据。
 - 用 `create_agent` 的完成通知或 `get_agent_status` 等结果，不轮询。审完 `archive_agent`。
+
+**审查员卡住时换 Flash 重起。** 判据是 `get_agent_status` 的输出计数二十分钟不变（会话还在长 thinking，不会自己结束）。`archive_agent` 之后用 `codebuddy-code` / `deepseek-v4.1-flash`、`modeId: plan`、thinking `max` 重起同一份审查提示词，并在完成评论第 5 项写明这次换人。#467 的 `Reviewer` profile 跑了四十多分钟卡住，换 Flash 后正常出结论。
 
 发现的处理规则：确认无误的正确性问题必须修；其余由你决定，驳回的在完成评论里列出理由。修完再跑一遍对应测试与 `--ids`。
 

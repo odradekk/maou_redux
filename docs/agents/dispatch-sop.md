@@ -74,13 +74,16 @@ rename_workspace{workspaceId: "<workspaceId>", title: "T<N> <标题>"}
 
 ### profile 选用
 
-| 工单类型                                                     | profile         |
-| ------------------------------------------------------------ | --------------- |
-| 默认：数据表转换、改名、清单元数据修正、文档同步等机械型工单 | Flash Worker    |
-| 逻辑移植、口上、跨模块改动等复杂工单                         | Sonnet 5 Worker |
-| 审查（由 worker 自己起）                                     | Reviewer        |
+| 用途                     | profile      | provider / model                         |
+| ------------------------ | ------------ | ---------------------------------------- |
+| 全部实施工单             | Flash Worker | `codebuddy-code` / `deepseek-v4.1-flash` |
+| 审查（由 worker 自己起） | Reviewer     | `pi` / `cpa/kimi-k3-256k`                |
 
-返工两轮仍不过由主 agent 接手，不升级 profile。
+阶段 5c 的十余张票（含 ABLUP 两千行的逻辑移植、战役全链、口上跨模块改动）全部由 Flash Worker 完成并通过验收，**不再按工单复杂度分配不同 profile**。
+
+`list_profiles` 里有三个 profile 都叫 `Worker`（`pi/glm-5.3`、`cursor/grok-4.6`、`claude/claude-sonnet-5[1m]`），按名字取会撞上；要用别的 profile 就照 `provider`/`model` 取，别按名字。
+
+返工两轮仍不过由主 agent 接手，不升级 profile。审查员卡住时 worker 自己换 Flash 重起（`worker-sop.md` §4）。
 
 ### 提示词
 

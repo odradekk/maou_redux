@@ -89,6 +89,15 @@ npx eslint tools/facade-names.js --max-warnings 0 && node tools/gen-facade.js --
 
 **只跑本票对应的测试文件不够**：上面四种里有三种在改动面之外——本轮那条 `is not a function` 是全库测试才炸的。合并 master 之后开 PR 前跑一次完整 `npm test`；改了别人也在改的文件时，把对方那几个测试文件点名跑一遍。
 
+**解完九处冲突那种大合并，再对一次两份文件清单。** 本票自己改过的文件，与「本分支和 master 的全部差异」应当是同一份清单：
+
+```
+git diff --name-only origin/master...HEAD   # 本票自己改的
+git diff --name-only origin/master HEAD     # 与 master 的全部差异
+```
+
+第二份里多出来的每一个文件，都是**本票没打算改、却和 master 不一致**的——多半是解冲突时整份重贴、把对侧的改动一起盖掉了。#467 那次多出八个（`chara-make.js` 与四份 chara/campaign 测试、两张变异表），其中 `tools/mutations/chara.mjs` 整批丢了 #487 的 M10600-M10609。逐个取 master 版补回，再跑一次全库。
+
 **产物文件不等于整份都是产物。** `ere/facade/*.js` 有 `// GENERATED END` 之后的手写区，生成器不碰。所以解产物冲突是两步：源表合好后 `node tools/gen-facade.js --force` 重生成，**再看手写区还有没有标记**。手写区的冲突按语义判——阶段 5a 那次是一侧只有 getter、另一侧是 getter＋setter，取超集（调用方要写那个字段）。
 
 ## 数组分隔符处的隐形断裂
