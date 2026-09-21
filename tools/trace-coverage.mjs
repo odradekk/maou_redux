@@ -121,7 +121,25 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#462 的 master）：
+export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463/#481 的 master）：
+// 再并一次 master（#481 / 3a02bbe）后重测仍是 23——#469 把 CAMPAIGN 族做进 ere/
+// 时，侵略/CAMPAIGN/CAMPAIGN_1.ERB 与 CAMPAIGN_EVENT.ERB 在本票的基线里本就已经
+// 是「部分移植」（不在待移植分子里），所以本数不动；那次合并把「归因不到」
+// 从 11 抬低到 6，改的是 UNATTRIBUTED_BASELINE（见其条目），两条基线各自独立。
+// master 侧 #463 已把基线抬到 27（#465 先抬到 29；SYSTEM/CONFIG.ERB 落地
+// ere/page/page-config.js、SYSTEM/SYSTEM_MODEINT.ERB 的 @QUE2MK 落地
+// ere/event/first-setting.js 的 que2mk，各减 1）；本票再减 4——侵略/
+// ARCANA_BATTLE.ERB（主循环与 DEATH_CHECK4 落
+// ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/MONSTER_ATTACK3
+// 判死）、侵略/ARCANA_FORT.ERB（:2-551，落
+// ere/invasion/invasion-arcana-fort.js）、侵略/INVASION_RYOUZYOKU.ERB
+// （:1-782 全量，落 ere/invasion/invasion-ravish.js）三个从「待移植」
+// 转「已移植」，侵略/GROUP_BATTLE.ERB 转「已判定不实现」（RULINGS 表，
+// 两个函数零调用点 + 主循环空转）：27 − 4 = 23，与
+// `node tools/trace-check.mjs --coverage` 的重测一致（数字取自重测而非
+// 相加——本票分支侧的中间值 28 是在 master 仍是 29 时按「29 − 1」测出来的，
+// master 前进后三项都在，见下方旧注）。
+// export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#462 的 master）：
 // #465 先把基线抬到 29（37−8，ABL/ABLUP10.ERB～ABLUP17.ERB）；本票再减 2
 // （SYSTEM/CONFIG.ERB 落地真身 ere/page/page-config.js、SYSTEM/
 // SYSTEM_MODEINT.ERB 的 @QUE2MK 落地 ere/event/first-setting.js 的 que2mk，
@@ -134,6 +152,11 @@ export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#46
 // 不动本数（同 #399 的 SHOP_CHARA 先例）。此前卡判定的 EVENTTURNEND（普通档）
 // 行是 #114 建表时的七格畸形行，行尾「登记（尚未接入）」被按末格读成状态、
 // 而 TURNEND 分派 #44 起就在 main-loop.js——#463 清掉过期格后文件翻面。
+// export const PENDING_BASELINE = 28; // 本票分支侧的中间态，从未上过 master：
+// 29（#465 后的 master）− 1（侵略/ARCANA_BATTLE.ERB——主循环与 DEATH_CHECK4
+// 落 ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/MONSTER_ATTACK3
+// 判死）。与 master 侧同期走出的 27 只是两条并行的抬低路径，合并后按重测
+// 收敛到 25（27 − ARCANA_BATTLE − ARCANA_FORT）。
 // export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
 // 37（#464 后的 master）− 8（本票的 ABL/ABLUP10.ERB～ABLUP17.ERB 八个文件）
 // = 29，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
@@ -359,6 +382,11 @@ export const RULINGS = [
     path: 'target/ERB/其他/TEST.ERB',
     reason:
       '#14：ENDCHECKDRAGONSIS 与两个旗标换算函数全库无调用者，是开发残留死代码',
+  },
+  {
+    path: 'target/ERB/侵略/GROUP_BATTLE.ERB',
+    reason:
+      '#470：两个函数零调用点（target/ERB、target/ERH 全库只命中定义行 :4/:78），主循环 :56-59 空转，@GROUP_BATTLE_DEATH_CHECK 的 ATKID/DEFID 全函数无赋值（:95 恒假）——开发残留死代码，登记 #14',
   },
   {
     path: 'target/ERB/キャラ関数/FULLMOON.ERB',

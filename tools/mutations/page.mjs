@@ -1828,13 +1828,12 @@ export default [
     must_mention: '[9] 调用 campaign_menu()',
   },
   {
-    desc: 'M9718 [4] ARCANA_FORT 存根登记名改坏（INVASION.ERB:125-131）',
+    desc: 'M9718 [4] ARCANA_FORT 的分派条件改坏（result === 4 → 8，INVASION.ERB:125-131）',
     file: 'ere/page/page-invasion.js',
-    find: "stub_line_wait('ARCANA_FORT', '圣灵骑士堡垒攻略', '待认领');",
-    replace:
-      "stub_line_wait('HOLY_FORTRESS', '圣灵骑士堡垒攻略', '待认领'); // 变异：登记名改坏",
+    find: '    if (result === 4) {',
+    replace: '    if (result === 8) { // 变异：分派条件改坏',
     tests: ['page-invasion'],
-    must_mention: '[4] 转发到 ARCANA_FORT',
+    must_mention: '[4] 转发到 ARCANA_FORT 真身',
   },
   {
     desc: 'M9719 [5] 拒收判据反向（route_33 <= 500 改 > 500，INVASION.ERB:100-101）',

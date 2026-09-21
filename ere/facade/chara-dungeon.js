@@ -224,6 +224,21 @@ class DungeonFacade {
   }
 
   /**
+   * 弹药（cflag:cid:571 ↔ CFLAG:571）
+   * 源: target/ERB/侵略/ARCANA_BATTLE.ERB 行21-22 CFLAG:ATKER/DEFER:571 = 15（对人决斗弹药补充；对人格斗一族的弾薬消耗同族字段见 550-552 装备枠）
+   * @returns {number}
+   */
+  get 弹药() {
+    return era.get(`cflag:${this.cid}:571`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 弹药(v) {
+    era.set(`cflag:${this.cid}:571`, v);
+  }
+
+  /**
    * 所持金（cflag:cid:580 ↔ CFLAG:580）
    * 源: target/ERB/迷宮/DUNGEON_TOWN.ERB 行121 勇者所持金（城镇经济消费，ENTER_ENEMY.ERB 的初期加算同此下标）
    * @returns {number}
