@@ -109,10 +109,25 @@ test('campaign_monster_list()：FLAG:400 = 1 时按 CAMPAIGN_MONSTER_LIST_1 三�
   fixture.store.set('flag:400', 1);
   fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
   const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
-  assert.equal(await campaign_monster_list(1, () => 0), 600, '1 层 DICE 0');
-  assert.equal(await campaign_monster_list(1, () => 1), 601, '1 层 DICE 1');
-  assert.equal(await campaign_monster_list(1, () => 2), 602, '1 层 DICE 2');
-  assert.equal(await campaign_monster_list(6, () => 2), 609, '6 层 DICE 2');
+  // 原作 CAMPAIGN_1.ERB:201-256 的 6 层 × 3 怪整表（#469 需求审查 3a 指出
+  // 旧用例只抽了 4 格）
+  const TABLE = [
+    [1, [600, 601, 602]],
+    [2, [601, 602, 603]],
+    [3, [603, 604, 605]],
+    [4, [604, 605, 606]],
+    [5, [606, 607, 608]],
+    [6, [607, 608, 609]],
+  ];
+  for (const [floor, ids] of TABLE) {
+    for (const dice of [0, 1, 2]) {
+      assert.equal(
+        await campaign_monster_list(floor, () => dice),
+        ids[dice],
+        `${floor} 层 DICE ${dice}`,
+      );
+    }
+  }
   assert.equal(await campaign_monster_list(0, () => 0), 0, '未登记楼层恒 0');
 });
 

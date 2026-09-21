@@ -419,7 +419,7 @@ async function run_dungeon(arg0, rand) {
         }
 
         if ((era.get('flag:400') || 0) > 0 && floor >= 6) {
-          // :193-197 戦役的盡頭（战役终局，存根）
+          // :193-197 戦役的盡頭（战役终局；#469 起 campaign_ending 为真身）
           era.print(`到达了${mapc}的尽头………`);
           await campaign_ending(arg0);
           walk20 = 0;
@@ -464,6 +464,10 @@ async function run_dungeon(arg0, rand) {
               chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1
               chara(arg0).dungeon.再起点 = 7; // CFLAG:508 = 7
               chara(arg0).invasion.存档点 = 7; // CFLAG:521 = 7
+              // ⚠ 此处写不落 CFLAG:520（#469 规范审查 4c 发现，既有缺陷、
+              // 非本票引入）：DungeonFacade 只有「目标阶层」没有「到达阶层」，
+              // 赋值落在 JS 对象自身上，下方同名的裸寻址读数读不到。属主域外的
+              // 遗留项，修它要另开票（含测试），本票只登记不改行为。
               chara(arg0).dungeon.到达阶层 = 8; // CFLAG:520 = 8
             }
           }
