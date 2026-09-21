@@ -29,7 +29,13 @@ const { campaign_room_family } = require('#/dungeon/dungeon');
 const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
 const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
 const { campaign_equip_select_family } = require('#/system/equip/equip-select');
+const { campaign_monster_list_family } = require('#/dungeon/dungeon-battle');
 const { chara_callname } = require('#/utils/callname-utils');
+
+/** 原作 RAND:N（0..N-1）的缺省实现 */
+function default_rand(n) {
+  return Math.floor(Math.random() * n);
+}
 
 /** 战役名两段展示文本（:76/:78/:80 FONTBOLD 段 + FONTREGULAR 段） */
 const NAME_BOLD = '赤森谜路 ';
@@ -159,6 +165,34 @@ function campaign_equip_select_1(floor) {
 }
 campaign_equip_select_family.register(1, campaign_equip_select_1);
 
+/**
+ * @CAMPAIGN_MONSTER_LIST_1（:192-258）的楼层 → 三选一怪物 ID 表
+ * （DICE = RAND:3 的下标 0/1/2 对应 IF/ELSEIF/ELSE 三支）。
+ */
+const MONSTER_IDS_BY_FLOOR = new Map([
+  [1, [600, 601, 602]],
+  [2, [601, 602, 603]],
+  [3, [603, 604, 605]],
+  [4, [604, 605, 606]],
+  [5, [606, 607, 608]],
+  [6, [607, 608, 609]],
+]);
+
+/**
+ * @CAMPAIGN_MONSTER_LIST_1（:192-258）：楼层出现怪物（随机三选一）。
+ * @param {number} floor 阶层（原作 ARG:0）
+ * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @returns {number} 怪物 ID（未登记的楼层恒 0）
+ */
+function campaign_monster_list_1(floor, rand = default_rand) {
+  // :199 DICE = RAND:3——无条件掷（即使楼层不在表内也照掷），保持 PRNG
+  // 序列与原作对齐（dungeon-battle.js 文件头同款纪律）
+  const dice = rand(3);
+  const ids = MONSTER_IDS_BY_FLOOR.get(floor);
+  return ids ? ids[dice] : 0;
+}
+campaign_monster_list_family.register(1, campaign_monster_list_1);
+
 module.exports = {
   campaign_name_1,
   campaign_exist_1,
@@ -167,4 +201,5 @@ module.exports = {
   campaign_room_extra_1,
   campaign_trap_1,
   campaign_equip_select_1,
+  campaign_monster_list_1,
 };

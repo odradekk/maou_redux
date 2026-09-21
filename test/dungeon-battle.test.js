@@ -96,6 +96,26 @@ function setup_duel_world() {
   return fixture;
 }
 
+// —— CAMPAIGN_MONSTER_LIST（#469 起真身）——
+
+test('campaign_monster_list()：FLAG:400 < 1 时恒 190（骸骨缺省）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  assert.equal(await campaign_monster_list(3), 190);
+});
+
+test('campaign_monster_list()：FLAG:400 = 1 时按 CAMPAIGN_MONSTER_LIST_1 三选一（DICE = RAND:3）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  assert.equal(await campaign_monster_list(1, () => 0), 600, '1 层 DICE 0');
+  assert.equal(await campaign_monster_list(1, () => 1), 601, '1 层 DICE 1');
+  assert.equal(await campaign_monster_list(1, () => 2), 602, '1 层 DICE 2');
+  assert.equal(await campaign_monster_list(6, () => 2), 609, '6 层 DICE 2');
+  assert.equal(await campaign_monster_list(0, () => 0), 0, '未登记楼层恒 0');
+});
+
 // —— 存根清单核对（enter-enemy.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 monster-data 的全部存根化调用', () => {

@@ -43,7 +43,8 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { stub_line_wait } = require('#/utils/stub-line');
+const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const {
   attack_koujo: speak_attack_koujo,
   victory_koujo: speak_victory_koujo,
@@ -77,13 +78,23 @@ const {
  * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除。
  */
 const STUBBED_CALLS = [
-  'CAMPAIGN_MONSTER_LIST',
   'BEFORE_AUTOTRAIN',
   'COM13_AUTO',
   'SOURCE_CHECK_AUTO',
   'ATTACK_KOUJO',
   'VICTORY_KOUJO',
 ];
+
+/**
+ * @CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，
+ * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
+ * 依据）；实现在 ere/page/page-campaign-1.js 注册。whenMissing 按原作
+ * :233 预置 190（骸骨缺省）。
+ */
+const campaign_monster_list_family = new DispatchFamily(
+  'CAMPAIGN_MONSTER_LIST',
+  [1],
+);
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -107,12 +118,24 @@ function she(cid) {
 // （:77 与 :363/:365 的调用点经模块对象 quest_mod 引用，见文件头）。
 
 /**
- * @CAMPAIGN_MONSTER_LIST 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役
- * 迷宫的怪物表。存根返回 0。
- * @returns {number} 原作 RETURN（存根恒 0）
+ * @CAMPAIGN_MONSTER_LIST（CAMPAIGN_EVENT.ERB:226-235）：战役迷宫的出现
+ * 怪物表。原作 RESULT 预置 190（骸骨缺省，非旧存根实际返回的 undefined
+ * ——旧 JSDoc 写「恒 0」但 stub_line 本身无返回值，1:1 修正）。
+ * @param {number} floor 阶层（原作 ARG:0）
+ * @param {(n: number) => number} [rand] RAND:N 随机源，透传给
+ *   CAMPAIGN_MONSTER_LIST_1 的 DICE = RAND:3（缺省均匀随机，与调用方
+ *   dungeon_party_battle 共用同一注入源，保持 PRNG 序列对齐）
+ * @returns {Promise<number>} 怪物 ID（FLAG:400 < 1 时恒 190）
  */
-function campaign_monster_list() {
-  return stub_line('CAMPAIGN_MONSTER_LIST', '战役怪物表', '随战役票（阶段 5）');
+async function campaign_monster_list(floor, rand) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 190;
+  }
+  return campaign_monster_list_family.call(active, {
+    whenMissing: 190,
+    args: [floor, rand],
+  });
 }
 
 /**
@@ -1268,9 +1291,12 @@ async function dungeon_party_battle(arg0, rand, move_ctx = {}) {
     // 2Dフィールド用処理。ほぼ廃止——M:2 无通道、2D 线随 H12（#185），
     // 结构保留（空分支 + 注释），怪物选召不发生
   } else if (chara(arg0).invasion.状态 === 12) {
-    // イベントダンジョン（战役；CAMPAIGN_MONSTER_LIST 存根恒 0）
+    // イベントダンジョン（战役；#469 起真身）
     for (let count = 0; count < 4; count += 1) {
-      const local = campaign_monster_list(chara(arg0).dungeon.侵攻阶层);
+      const local = await campaign_monster_list(
+        chara(arg0).dungeon.侵攻阶层,
+        rand_n,
+      );
       monster_data_call(local, count, arg0, -1, rand_n);
     }
   } else {
@@ -1633,4 +1659,7 @@ module.exports = {
   before_autotrain,
   com13_auto,
   source_check_auto,
+  campaign_monster_list,
+  // page-campaign-1.js 向这个族 register(1, ...)，本文件只声明、不参与注册
+  campaign_monster_list_family,
 };
