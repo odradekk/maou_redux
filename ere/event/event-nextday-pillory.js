@@ -29,7 +29,6 @@ const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const { clothtype_main2_text } = require('#/page/page-clothtype');
 const {
   conception_check_syoku_to_t,
@@ -686,7 +685,20 @@ async function pillory(rand = default_rand) {
     `${name}的身体，被弄了${cflag(661) + cflag(662) + cflag(663) + cflag(664) + cflag(665)}次，精液流得到处都是……`,
   ); // :2388
 
-  stub_line('CAMPAIGN_EXP_PILLORY', '战役经验结算'); // :2390 跨边（侵略域，未交付）
+  // :2390 战役经验结算（CAMPAIGN_EVENT.ERB:284-300，#469 起真身）：全体
+  // 派遣中（CFLAG:1 == 12）的角色按本次示众台平均凌辱次数获得战斗经验
+  if (era_flag.hero_campaign_active >= 1) {
+    const exp_gain =
+      Math.floor(
+        (cflag(661) + cflag(662) + cflag(663) + cflag(664) + cflag(665)) / 5,
+      ) + 1;
+    for (const dispatched of era.getAddedCharacters()) {
+      if (chara(dispatched).invasion.状态 === 12) {
+        chara(dispatched).dungeon.战斗经验 += exp_gain;
+      }
+    }
+    era.print(`通过榨取攻略中的奴隶的能量获得了${exp_gain}点经验值`);
+  }
   await era.waitAnyKey(); // :2392 WAIT
 
   // :2394-2416 精神达到极限则解放（第二支判据被第一支吞掉，不可达，照抄）

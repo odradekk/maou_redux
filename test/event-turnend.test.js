@@ -640,9 +640,7 @@ test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', asyn
   const settle_head = texts.findIndex((line) =>
     line.includes('@FORMAT_AUTOTRAIN'),
   );
-  const settle_tail = texts.findIndex((line) =>
-    line.includes('@CAMPAIGN_GAMEOVER'),
-  );
+  const settle_tail = texts.findIndex((line) => line.includes('@AUTOTRAIN'));
   assert.ok(settle_head >= 0 && settle_tail >= 0);
   assert.ok(settle_head < settle_tail, '普通档内部的两条占位行先后有序');
   // #PRI 档的尾观测点在 #401 之后不再有存根文本（AUTO_BUYING/DEBUG_CHECK
@@ -660,6 +658,38 @@ test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', asyn
     '#PRI 档的尾部写入必须先于普通档的头部写入（#6：BEGIN 不中止链）',
   );
   assert.equal(STATE.SHOP, 'SHOP');
+});
+
+test('CAMPAIGN_GAMEOVER：气力被扣到 <= 0 时战役结束、清零派遣（#469）', async () => {
+  const world = setup_turnend();
+  join_slave_chara(world.fixture, 31, '温妮');
+  world.fixture.store.set('flag:400', 1); // 战役中
+  world.fixture.store.set('base:0:1', 5); // 气力 5，扣 10 后 <= 0
+  world.fixture.store.set('maxbase:0:1', 1000);
+  world.fixture.store.set('cflag:31:1', 12); // 温妮派遣中
+  world.fixture.store.set('cflag:31:507', 1);
+
+  await world.emit('EVENTTURNEND');
+
+  assert.equal(world.fixture.store.get('flag:400'), 0, 'FLAG:400 清零');
+  assert.equal(world.fixture.store.get('base:0:1'), 1, '气力钳回 1');
+  assert.equal(world.fixture.store.get('cflag:31:1'), 0, '派遣状态清零');
+  assert.equal(world.fixture.store.get('cflag:31:507'), 0, '回城标志清零');
+  assert.ok(
+    world.fixture.text_lines().some((t) => t.includes('体力耗尽了')),
+    '战役失败播报',
+  );
+});
+
+test('CAMPAIGN_GAMEOVER：不在战役中时气力扣到 0 也不触发', async () => {
+  const world = setup_turnend();
+  world.fixture.store.set('base:0:1', 5);
+  world.fixture.store.set('maxbase:0:1', 1000);
+
+  await world.emit('EVENTTURNEND');
+
+  assert.equal(world.fixture.store.get('flag:400'), undefined);
+  assert.ok(!world.fixture.text_lines().some((t) => t.includes('体力耗尽了')));
 });
 
 test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
@@ -687,7 +717,6 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
     'FORMAT_AUTOTRAIN',
     '自動處刑',
     'AUTOTRAIN',
-    'CAMPAIGN_GAMEOVER',
     'GET_LOOK_INFO',
   ]);
   const registry = fs.readFileSync(
