@@ -49,7 +49,13 @@
  *     `RESULT < 0 || RESULT >= CHARANUM` 的范围语义一致；
  *   - **赤森奴隶经 rand_chara_make() 的 campaign_slave 形参注入**
  *     （chara-make.js #469）：替代原作 :55-57 的全局变量置位/复位，
- *     招募分支显式传 `true`。
+ *     招募分支显式传 `true`；
+ *   - **`CHAR_MAKE.ERB:57` 的异国勇者判定经 char_make_inport 注入**（#494）：
+ *     原作 `CALL RAND_CHARA_MAKE`（:55-57）无参，但 `CALL CHAR_MAKE_INPORT`
+ *     在 `@RAND_CHARA_MAKE` 体内（`CHAR_MAKE.ERB:57`，位于 `CHAR_MAKE.ERB:58`
+ *     的 IF 之前），开局初始奴隶与战役招募两条路径都会跑；转发层与本分支
+ *     各自的 require 成环，故由调用点显式传（同款注入见 chara-make.js 的
+ *     JSDoc）。
  */
 
 'use strict';
@@ -57,6 +63,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { char_make_inport } = require('#/chara/char-make');
 const { rand_chara_make } = require('#/chara/chara-make');
 const { life_list_item } = require('#/page/page-life-list');
 const { chara } = require('#/facade/chara');
@@ -134,7 +141,8 @@ function render_dispatch_page(no_page, candidate_ids) {
 /**
  * 招募分支（:46-67）：奴隷選別。
  * @param {(n: number) => number} [rand] 原作 RAND:N 的随机源，透传给
- *   rand_chara_make（缺省均匀随机，测试注入定值序）
+ *   rand_chara_make 与 `CHAR_MAKE.ERB:57` 的异国勇者判定（缺省均匀随机，
+ *   测试注入定值序）
  * @returns {Promise<void>}
  */
 async function recruit_campaign_slave(rand) {
@@ -151,7 +159,18 @@ async function recruit_campaign_slave(rand) {
   }
   // :55-57 赤森奴隶=1 CALL RAND_CHARA_MAKE 赤森奴隶=0 —— campaign_slave
   // 形参注入替代原作的全局开关置位/复位（chara-make.js #469）
-  const recruited = await rand_chara_make(rand, undefined, true);
+  //
+  // 第二个实参是 `CHAR_MAKE.ERB:57` 的 `CALL CHAR_MAKE_INPORT`：它在
+  // `@RAND_CHARA_MAKE` 体内、`CHAR_MAKE.ERB:58` 的 IF 之前，开局初始奴隶与
+  // 战役招募**两条路径都会跑**（#494）。它的真身在转发层，而转发层与本函数
+  // 各自 require 的 chara-make.js 相互成环，只能由调用点注入——`rand_n` 一路
+  // 传下去，与原作共用一条 RAND 序列（enter-enemy.js 的两处调用点同款）。
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
+  const recruited = await rand_chara_make(
+    rand_n,
+    () => char_make_inport(1, rand_n),
+    true,
+  );
   if (recruited === 0) {
     return;
   }

@@ -928,6 +928,16 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
     undefined,
     '不写到「人数 - 1」的 1 号',
   );
+  // :139 的置 1 会被 :182 的归 0 掩盖，只看终值分不出有没有写过——按写
+  // 记录断言（#494 补 #487 验收发现的覆盖缺口：该行的 1 改成 0 时
+  // chara-name / chara-make / chara-and-hair / campaign-e2e / page-campaign
+  // 五份用例曾全绿）
+  assert.ok(
+    fixture.var_writes.some(
+      (write) => write.name === 'flag:402' && write.value === 1,
+    ),
+    ':139 派遣奴隶标志置 1（等级 1 生成）',
+  );
   assert.equal(fixture.store.get('flag:402'), 0, ':182 派遣标志归位');
   // :126-130 的搬迁读的是 FLAG:1 / FLAG:2（「上一次的调教对象 / 助手」）——
   // 种进去的 FLAG:1 恰好是新角色的角色号，故 :127-128 命中并清空；
@@ -978,7 +988,9 @@ test('rand_chara_make：异国勇者分支不 ADDCHARA，用 CHAR_MAKE_INPORT �
     fixture.era.addCharacter(5);
     return 5;
   };
-  answer_sequence(fixture, [100, 2]);
+  // 异国路径不进 :75-125 的形象确认循环（#494），唯一的 INPUT 是 :158 的
+  // 收下确认——序列里只有一项
+  answer_sequence(fixture, [2]);
   const result = await load_rand(fixture)(seq_capture([6]), overseas);
   assert.equal(
     result,
@@ -993,6 +1005,140 @@ test('rand_chara_make：异国勇者分支不 ADDCHARA，用 CHAR_MAKE_INPORT �
     undefined,
     '不写到「人数 - 1」的 1 号',
   );
+});
+
+// —— #494：:66-141 整段归非异国分支 ——
+//
+// 原作 :58 的 `IF RESULT == 0` 开到 :143 的 `ELSE`，性格/发色的预设落地
+// （:66-72）、形象确认循环（:75-125）、FLAG:1/2 搬迁（:126-137）、FLAG:402
+// （:139）与 CHAR_MAKE（:141）全在分支体内；异国路径只有 :144-146 三行。
+// 两条用例各站一侧：异国不跑、非异国照旧。
+
+test('rand_chara_make：异国分支不跑非异国段——名单带来的性格/发色不被覆盖、不进形象确认、不写 FLAG:402、不调 CHAR_MAKE', async () => {
+  const fixture = create_era_fixture();
+  seed_hero(fixture, 5);
+  seed_hero(fixture, 9);
+  fixture.era.addCharacter(9); // 编制不连号：只有 9 号先在场
+  // :126-135 的搬迁段也在非异国分支里：新角色是 5 号，故 FLAG:1 = 3 不动、
+  // FLAG:2 = 7 也不该前移（搬迁跑起来会把它减成 6）
+  fixture.store.set('flag:1', 3); // 上一次的调教对象
+  fixture.store.set('flag:2', 7); // 上一次的助手
+  // CHAR_MAKE_INPORT 真身会把名单记录里的十张二维表回填到新角色身上
+  // （chara-make-inport.js 的 TABLE_SEGMENTS），性格（TALENT 160-175）与
+  // 发色（TALENT 300）就在 talent 表里。这里用打桩模拟「记录带来了性格
+  // 161、发色 4 与等级 30」——161 在 ID_OF_GENERAL_CHARASTERISTICS 表内
+  // （chara-and-hair.js），会被 SET_CHARASTERISTIC 的 CLEAR 清掉，正对
+  // 本用例要守的症状
+  const overseas = async () => {
+    fixture.era.addCharacter(5);
+    fixture.store.set('talent:5:161', 1); // 名单带来的性格
+    fixture.store.set('talent:5:300', 4); // 名单带来的发色（红发）
+    fixture.store.set('cflag:5:9', 30); // 名单带来的等级（CHAR_MAKE 会置 1）
+    return 5;
+  };
+  let asked = 0;
+  fixture.era.input = () => {
+    asked += 1;
+    return Promise.resolve(asked === 1 ? 2 : 100); // 首个答案 2 = :158 收下
+  };
+  const result = await load_rand(fixture)(seq_capture([6]), overseas);
+
+  assert.equal(
+    result,
+    5,
+    'ID_OF_NEWCHARA = CHAR_MAKE_INPORT 的返回值（角色号）',
+  );
+  // 断言顺序即「哪条变异先被逮住」：先钉 :141 的 CHAR_MAKE，再钉 :66-72 的
+  // 预设落地（CHAR_MAKE 内部也会写 talent:160，两者会互相盖住）
+  //
+  // :141 CALL CHAR_MAKE：异国路径不调。cflag:9 是 CHAR_MAKE 的第一处写入
+  // （chara-make.js:140 `CFLAG:A:9 = 1`），名单带来的等级因此原样保留
+  assert.equal(
+    fixture.store.get('cflag:5:9'),
+    30,
+    ':141 CHAR_MAKE 未执行（名单带来的等级未被重置为 1）',
+  );
+  // :66-72 性格与发色的预设落地：只在非异国分支里，异国路径一条都不该写
+  assert.equal(fixture.store.get('talent:5:161'), 1, '名单带来的性格未被覆盖');
+  assert.equal(
+    fixture.store.get('talent:5:160'),
+    undefined,
+    ':67 SET_CHARASTERISTIC 未执行（异国路径不跑预设落地）',
+  );
+  assert.equal(fixture.store.get('talent:5:300'), 4, '名单带来的发色未被覆盖');
+  // :75-125 形象确认循环：异国路径直落 :150，唯一的 INPUT 在 :158
+  assert.equal(asked, 1, ':107 的形象确认未执行（只问了 :158 的收下确认）');
+  assert.ok(
+    !fixture.lines_history.some(
+      (line) => line.type === 'text' && line.text.includes('[0] 印象'),
+    ),
+    ':81 形象确认段的输出未打印',
+  );
+  // :139 派遣奴隶标志：异国路径不写。只看终值区分不出（:182 会归 0），
+  // 按写记录断言「从未写过 1」
+  assert.ok(
+    !fixture.var_writes.some(
+      (write) => write.name === 'flag:402' && write.value === 1,
+    ),
+    ':139 FLAG:402 = 1 未执行（异国路径不写派遣奴隶标志）',
+  );
+  assert.equal(fixture.store.get('flag:402'), 0, ':182 归位');
+  // :126-135 的 FLAG:1/2 搬迁同样在非异国分支里，异国路径不动它们；
+  // :184-185 的指针复位读的就是这对未被搬迁的值
+  assert.equal(
+    fixture.store.get('flag:1'),
+    3,
+    ':128 等于新角色则清空、:132 大于则前移，都未执行',
+  );
+  assert.equal(
+    fixture.store.get('flag:2'),
+    7,
+    ':134 FLAG:2 未前移（搬迁段未执行）',
+  );
+  assert.equal(
+    fixture.store.get('flag:10005'),
+    3,
+    ':184 TARGET = FLAG:1（未搬迁的值）',
+  );
+  assert.equal(
+    fixture.store.get('flag:10006'),
+    7,
+    ':185 ASSI = FLAG:2（未搬迁的值）',
+  );
+});
+
+test('rand_chara_make：异国分支换人重挑不把上一位的发色落到新导入的角色上', async () => {
+  const fixture = create_era_fixture();
+  seed_hero(fixture, 5);
+  seed_hero(fixture, 6);
+  seed_hero(fixture, 9);
+  fixture.era.addCharacter(9); // 编制不连号：只有 9 号先在场
+  // 两次异国导入：先 5 号（红发 4），选「换一个」后再导入 6 号（蓝发 6）
+  const ids = [5, 6];
+  const colors = [4, 6];
+  let call = 0;
+  const overseas = async () => {
+    const cid = ids[call];
+    fixture.era.addCharacter(cid);
+    fixture.store.set(`talent:${cid}:300`, colors[call]); // 名单带来的发色
+    call += 1;
+    return cid;
+  };
+  // :158 换一个（DELCHARA + GOTO $INPUT_LOOP_11）→ 重挑后 :158 收下。
+  // 异国路径不跑形象确认循环，两个答案都落在 :158 上
+  answer_sequence(fixture, [1, 2]);
+  const result = await load_rand(fixture)(seq_capture([6]), overseas);
+
+  assert.equal(result, 6, '重挑后收下的仍是「角色号」6');
+  assert.equal(call, 2, '两次导入各调一次 CHAR_MAKE_INPORT');
+  // :70-71 的发色落地读的是跨 $INPUT_LOOP_11 迭代携带的 HAIRCOLOR 局部量；
+  // 异国路径不跑那段，HAIRCOLOR 恒 0，第二位导入的角色保住自己的发色
+  assert.equal(
+    fixture.store.get('talent:6:300'),
+    6,
+    ':71 SET_HAIRCOLOR 未把上一位的发色写到新导入的角色上',
+  );
+  assert.equal(fixture.store.get('talent:5:300'), 4, '5 号的发色未被改写');
 });
 
 test('rand_chara_make：16 位占满时早退（只掷一次、返回 0）', async () => {
@@ -1041,4 +1187,8 @@ test('rand_chara_make：TARGET/ASSI 搬迁——等于新角色则清空、大�
   await load_rand(fixture)(seq_capture([2]), not_overseas);
   assert.equal(fixture.store.get('flag:2'), 4, ':134 大于新角色 → 前移一格');
   assert.equal(fixture.store.get('flag:1'), -1, ':128 等于新角色 → 清空');
+  // :136-137 与 :184-185 都写同一对值（原作如此，重复是 1:1 保留的），故只断
+  // 终值。两条都是「搬迁后的 FLAG:1/2 → TARGET/ASSI 指针槽」这条链的出口
+  assert.equal(fixture.store.get('flag:10005'), -1, ':184 TARGET = FLAG:1');
+  assert.equal(fixture.store.get('flag:10006'), 4, ':185 ASSI = FLAG:2');
 });
