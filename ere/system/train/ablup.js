@@ -53,12 +53,17 @@
 const era = require('#/era-electron');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
+const era_flag = require('#/era-utils/era-flag');
+const era_exflag = require('#/era-utils/era-exflag');
 
 /** TIMES X, m：整数乘小数后截断（math-etc.md；source-check.js 等同款） */
 const times = (v, m) => Math.floor(v * m);
 
 /** A = A * n / 100 型整数复利（区别于 TIMES：整数乘整数除，非小数乘法截断） */
 const compound = (v, numerator) => Math.trunc((v * numerator) / 100);
+
+/** MASTER 角色编号（page-usercom.js:85 同款本地约定），ABLUP12 自我训练判定用 */
+const MASTER = 0;
 
 /**
  * ABLUP0～3 共用的可否状态文案。
@@ -1268,6 +1273,1537 @@ async function ablup9(cid) {
   }
 }
 
+/**
+ * 源: target/ERB/ABL/ABLUP10.ERB @ABLUP10 :8-115 + @DECIDE_ABLUP10 :137-342。
+ * 顺从，system 域（写 chara(cid).system.顺从）。四条轨道：A(恐惧
+ * JUEL:10)/B(恭顺 JUEL:4，恒 >0 不设 256 哨兵)/C(欲情 JUEL:5)/D(屈服
+ * JUEL:6)，I/J/K/L 四个独立可否位；K/L 在对应等级为 0 时置 256（自动不可，
+ * 对应选项不渲染，era.input() 结构上收不到该值，issue #130）。I 没有对称
+ * 的 256 专用分支（源码 :81-96，K/L 各有但 I 没有），与 K/L 不对称，但因
+ * 选项本就不渲染而同样不可达，1:1 保留不补齐。
+ */
+async function ablup10(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl10 = () => era.get(`abl:${cid}:10`) || 0;
+
+  era.drawLine(); // :9 DRAWLINE
+
+  if (abl10() >= 5 && talent(85) === 0 && talent(86) === 0) {
+    await era.printAndWait('需要特殊素质才能继续提升'); // :15-17
+    return;
+  }
+  if (abl10() >= 10) {
+    await era.printAndWait('已达最高级'); // :18-20
+    return;
+  }
+
+  for (;;) {
+    const lv = abl10();
+    // A/B/C/D：:156-206 梯子
+    let a, b, c, d;
+    if (lv === 0) [a, b, c, d] = [10, 10, 300, 200];
+    else if (lv === 1) [a, b, c, d] = [150, 100, 1000, 1200];
+    else if (lv === 2) [a, b, c, d] = [1000, 800, 2000, 3000];
+    else if (lv === 3) [a, b, c, d] = [3000, 3000, 0, 12000];
+    else if (lv === 4) [a, b, c, d] = [8000, 5000, 0, 0];
+    else if (lv === 5) [a, b, c, d] = [12000, 10000, 0, 0];
+    else if (lv === 6) [a, b, c, d] = [25000, 20000, 0, 0];
+    else if (lv === 7) [a, b, c, d] = [0, 40000, 0, 0];
+    else if (lv === 8) [a, b, c, d] = [0, 80000, 0, 0];
+    else [a, b, c, d] = [0, 150000, 0, 0]; // lv === 9
+
+    // 异常经验：lv4→5 需 1 次、lv7→8 需 2 次，六项素质任一命中可免（:208-216）
+    let e = 0;
+    const anomaly_exempt10 =
+      talent(10) === 0 &&
+      talent(13) === 0 &&
+      talent(76) === 0 &&
+      talent(73) === 0 &&
+      talent(85) === 0 &&
+      talent(86) === 0;
+    if (lv === 4 && anomaly_exempt10) e = 1;
+    else if (lv === 7 && anomaly_exempt10) e = 2;
+
+    if (talent(10)) {
+      // 胆怯 :218-223
+      a = times(a, 0.5);
+      b = times(b, 0.9);
+      d = times(d, 0.9);
+    }
+    if (talent(11)) {
+      // 反抗心 :224-230
+      a = times(a, 2.0);
+      b = times(b, 1.5);
+      c = times(c, 1.2);
+      d = times(d, 1.5);
+    }
+    if (talent(12)) {
+      // 刚强 :231-237
+      a = times(a, 3.0);
+      b = times(b, 1.5);
+      c = times(c, 1.2);
+      d = times(d, 1.5);
+    }
+    if (talent(13)) {
+      // 坦率 :238-242
+      b = times(b, 0.8);
+      d = times(d, 0.9);
+    }
+    if (talent(16)) {
+      // 嚣张 :243-248
+      a = times(a, 1.2);
+      b = times(b, 1.5);
+      d = times(d, 1.2);
+    }
+    if (talent(15)) {
+      // 高姿态 :249-253
+      a = times(a, 1.2);
+      b = times(b, 1.5);
+      d = times(d, 2.0);
+    } else if (talent(17)) {
+      // 低姿态 :254-258
+      b = times(b, 0.8);
+      d = times(d, 0.8);
+    }
+    if (talent(32)) {
+      // 压抑 :260-266
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      c = times(c, 2.0);
+      d = times(d, 1.2);
+    } else if (talent(33)) {
+      // 开放 :266-269
+      c = times(c, 0.5);
+    }
+    if (talent(34)) {
+      // 抵抗 :270-276
+      a = times(a, 1.5);
+      b = times(b, 1.5);
+      c = times(c, 2.0);
+      d = times(d, 2.0);
+    }
+    if (talent(76)) c = times(c, 0.5); // 淫乱 :278-280
+    if (talent(85)) b = times(b, 0.75); // 爱慕 :281-283
+    if (talent(86)) b = times(b, 0.2); // 盲从 :284-286
+    if (talent(84)) {
+      // 嫉妒 :288-293
+      b = times(b, 5.0);
+      c = times(c, 0.8);
+      d = times(d, 2.0);
+    }
+
+    if (b < 1) b = 1; // :295-297（唯一设底的轨道）
+
+    const juel10 = era.get(`juel:${cid}:10`) || 0;
+    const juel4 = era.get(`juel:${cid}:4`) || 0;
+    const juel5 = era.get(`juel:${cid}:5`) || 0;
+    const juel6 = era.get(`juel:${cid}:6`) || 0;
+    let i = 0,
+      j = 0,
+      k = 0,
+      l = 0;
+    if (a > 0) {
+      if (juel10 < a) i |= 1; // :300-306
+    } else {
+      i = 256;
+    }
+    if (juel4 < b) j |= 1; // :308-310（B 恒 >0，无哨兵）
+    if (c > 0) {
+      if (juel5 < c) k |= 1; // :312-319
+    } else {
+      k = 256;
+    }
+    if (d > 0) {
+      if (juel6 < d) l |= 1; // :321-328
+    } else {
+      l = 256;
+    }
+    const exp50_10 = era.get(`exp:${cid}:50`) || 0;
+    if (e > exp50_10) {
+      // :330-336
+      i |= 2;
+      j |= 2;
+      k |= 2;
+      l |= 2;
+    }
+
+    if (e > 0) {
+      era.print(`${era.get('expname:50')}${e}以上(现在${exp50_10})且`); // :47-48
+    }
+    if (a > 0) {
+      era.printButton(
+        `${era.get('palamname:10')}点数×${juel10}/${a} ……${get_ablup_state(i)}`,
+        0,
+      ); // :50-54
+      era.println();
+    }
+    era.printButton(
+      `${era.get('palamname:4')}点数×${juel4}/${b} ……${get_ablup_state(j)}`,
+      1,
+    ); // :57-60（恒渲染，无 IF 包裹）
+    era.println();
+    if (c > 0) {
+      era.printButton(
+        `${era.get('palamname:5')}点数×${juel5}/${c} ……${get_ablup_state(k)}`,
+        2,
+      ); // :62-66
+      era.println();
+    }
+    if (d > 0) {
+      era.printButton(
+        `${era.get('palamname:6')}点数×${juel6}/${d} ……${get_ablup_state(l)}`,
+        3,
+      ); // :69-73
+      era.println();
+    }
+    era.printButton('停止', 100); // :76
+
+    const result = await era.input(); // :78
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      // i===256（a===0）与 i&1/i&2 走同一分支，源码未对 I 设专门的静默
+      // 256 分支（与 K/L 不对称，见文件头），两者在 era.input() 层面
+      // 同样不可达（issue #130）
+      era.print('未满足条件'); // :81-82
+      continue;
+    } else if (result === 1 && j !== 0) {
+      era.print('未满足条件'); // :84-85
+      continue;
+    } else if (result === 2 && k === 256) {
+      continue; // :87-88 c===0 时隐藏选项，引擎层拒收代位（issue #130）
+    } else if (result === 2 && k !== 0) {
+      era.print('未满足条件'); // :89-90
+      continue;
+    } else if (result === 3 && l === 256) {
+      continue; // :92-93 d===0 时隐藏选项（issue #130）
+    } else if (result === 3 && l !== 0) {
+      era.print('未满足条件'); // :94-95
+      continue;
+    } else if (result === 0) {
+      const new_lv = (chara(cid).system.顺从 += 1); // :101
+      era.add(`juel:${cid}:10`, -a); // :103-104
+      era.print(`${era.get('ablname:10')}变为LV${new_lv}。`); // :113
+      return;
+    } else if (result === 1) {
+      const new_lv = (chara(cid).system.顺从 += 1);
+      era.add(`juel:${cid}:4`, -b); // :105-106
+      era.print(`${era.get('ablname:10')}变为LV${new_lv}。`);
+      return;
+    } else if (result === 2) {
+      const new_lv = (chara(cid).system.顺从 += 1);
+      era.add(`juel:${cid}:5`, -c); // :107-108
+      era.print(`${era.get('ablname:10')}变为LV${new_lv}。`);
+      return;
+    } else if (result === 3) {
+      const new_lv = (chara(cid).system.顺从 += 1);
+      era.add(`juel:${cid}:6`, -d); // :109-110
+      era.print(`${era.get('ablname:10')}变为LV${new_lv}。`);
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
+/**
+ * 源: target/ERB/ABL/ABLUP11.ERB @ABLUP11 :8-71 + @DECIDE_ABLUP11 :87-223。
+ * 欲望，system 域。单轨道 A(欲情 JUEL:5)/I，原作未调用共用的
+ * GET_ABLUP_STATE，手写内联状态文案（点数不足/经验不足，无能力不足位）。
+ */
+async function ablup11(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl11 = () => era.get(`abl:${cid}:11`) || 0;
+
+  const status_text = (bits) => {
+    if (bits === 0) return 'ＯＫ';
+    let text = '';
+    if (bits & 1) text += '点数不足 '; // :44-45（带尾随空格）
+    if (bits & 2) text += '经验不足'; // :46-47（无尾随空格）
+    return text;
+  };
+
+  era.drawLine(); // :9
+
+  if (abl11() >= 5 && talent(73) === 0 && talent(76) === 0) {
+    await era.printAndWait('需要特殊素质才能继续提升'); // :15-17
+    return;
+  }
+  if (abl11() >= 10) {
+    await era.printAndWait('已达最高级'); // :18-20
+    return;
+  }
+
+  for (;;) {
+    const lv = abl11();
+    // A：:100-120 梯子
+    let a = [5, 50, 1000, 5000, 12000, 20000, 30000, 50000, 80000, 150000][lv];
+
+    if (talent(27)) {
+      // 戒备森严 :122-132
+      if (lv === 3) a = times(a, 1.5);
+      if (lv === 4) a = times(a, 2.0);
+      if (lv === 5) a = times(a, 2.5);
+      if (lv >= 6) a = times(a, 3.0);
+    }
+    if (talent(20)) a = times(a, 1.2); // 克制 :134-137
+    if (talent(24)) a = times(a, 1.1); // 保守的 :139-142
+    if (talent(30))
+      a = times(a, 1.5); // 看重贞操 :144-146
+    else if (talent(31)) a = times(a, 0.95); // 看轻贞操 :147-150
+    if (talent(32))
+      a = times(a, 1.5); // 压抑 :152-154
+    else if (talent(33)) a = times(a, 0.9); // 开放 :155-158
+    if (talent(34)) a = times(a, 1.5); // 抵抗 :160-162
+    if (talent(35))
+      a = times(a, 1.1); // 害羞 :164-166
+    else if (talent(36)) a = times(a, 0.95); // 不知羞耻 :167-170
+    if (talent(70))
+      a = times(a, 0.8); // 接受快感 :172-174
+    else if (talent(71)) a = times(a, 1.5); // 否定快感 :175-178
+    if (talent(72)) a = times(a, 0.95); // 容易上瘾 :180-182
+    if (talent(73)) a = times(a, 0.5); // 容易陷落 :183-185
+    if (talent(76)) a = times(a, 0.7); // 淫乱 :186-188
+    if (talent(180)) a = times(a, 0.9); // 妓女 :189-191
+    if (talent(181)) a = times(a, 0.8); // 倾城 :192-194
+    if (talent(157)) a = times(a, 0.8); // 人妻 :195-197
+
+    // 异常经验：lv4→5 需 1 次、lv7→8 需 3 次，五项素质任一命中可免（:199-205）
+    let e = 0;
+    const anomaly_exempt11 =
+      talent(33) === 0 &&
+      talent(70) === 0 &&
+      talent(73) === 0 &&
+      talent(76) === 0 &&
+      talent(123) === 0;
+    if (lv === 4 && anomaly_exempt11) e = 1;
+    else if (lv === 7 && anomaly_exempt11) e = 3;
+
+    if (a < 1) a = 1; // :207-209
+
+    const juel5 = era.get(`juel:${cid}:5`) || 0;
+    const exp50_11 = era.get(`exp:${cid}:50`) || 0;
+    let i = 0;
+    if (juel5 < a) i |= 1; // :211-213
+    if (e > exp50_11) i |= 2; // :215-217
+
+    if (e > 0) {
+      era.print(`${era.get('expname:50')}${e}以上(现在${exp50_11})且`); // :36-37
+    }
+    era.printButton(
+      `${era.get('palamname:5')}点数×${juel5}/${a} ……${status_text(i)}`,
+      0,
+    ); // :39-49
+    era.println();
+    era.printButton('停止', 100); // :51
+
+    const result = await era.input(); // :53
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      era.print('未满足条件'); // :56-57
+      continue;
+    } else if (result === 0) {
+      const new_lv = (chara(cid).system.欲望 += 1); // :63
+      era.add(`juel:${cid}:5`, -a); // :65-66
+      era.print(`${era.get('ablname:11')}变为LV${new_lv}。`); // :69
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
+/**
+ * 源: target/ERB/ABL/ABLUP12.ERB @ABLUP12 :8-75 + @DECIDE_ABLUP12 :91-203。
+ * 技巧，system 域。单轨道 A(习得点数 JUEL:7)/I，手写内联状态文案（含 bit4
+ * “金钱不足”，原文尾随一个制表符，1:1 保留）。NO:TARGET==0（本档以
+ * cid===MASTER 表示自我训练）时，额外收取金钱 5000 与 EX_FLAG:4444
+ * 5000，且 DECIDE 的 bit4/bit2 判定仅在该条件下生效。
+ * issue #14 待登记缺陷：DECIDE 用“经验不足”(bit2)文案显示
+ * ABL:MASTER:12 与 FLAG:30+1 的比较（:197-198），与经验完全无关，属于
+ * 原作文案与判定错位；bit2+bit4 同时命中时两段文案之间没有分隔符
+ * （:41-47），显示会粘连成“…经验不足金钱不足”。
+ */
+async function ablup12(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl12 = () => era.get(`abl:${cid}:12`) || 0;
+  const abl15 = () => era.get(`abl:${cid}:15`) || 0;
+
+  const status_text = (bits) => {
+    if (bits === 0) return 'ＯＫ';
+    let text = '';
+    if (bits & 1) text += '点数不足 '; // :41-42
+    if (bits & 2) text += '经验不足'; // :43-44（实际比较 ABL:MASTER:12 与 FLAG:30，与经验无关，issue #14）
+    if (bits & 4) text += '金钱不足\t'; // :45-46（尾随制表符，原文如此）
+    return text;
+  };
+
+  era.drawLine(); // :9
+
+  if (abl12() >= 10) {
+    await era.printAndWait('已达最高级'); // :14-16
+    return;
+  }
+  if (abl12() + abl15() >= 15) {
+    const juel7_gate = era.get(`juel:${cid}:7`) || 0;
+    if (juel7_gate < abl12() * abl12() * 1000) {
+      await era.printAndWait(`技巧(${abl12()})＋话术(${abl15()})上限为15`); // :20-23
+      return;
+    }
+  }
+
+  const self_training = cid === MASTER; // NO:TARGET == 0
+
+  for (;;) {
+    const lv = abl12();
+    // A：:103-123 梯子
+    let a = [1, 25, 200, 3000, 8000, 12000, 16000, 22000, 28000, 35000][lv];
+
+    if (talent(27)) {
+      // 戒备森严 :126-135
+      if (lv === 3) a = times(a, 1.5);
+      if (lv === 4) a = times(a, 2.0);
+      if (lv === 5) a = times(a, 2.5);
+      if (lv >= 6) a = times(a, 3.0);
+    }
+    if (talent(13)) a = times(a, 0.95); // 坦率 :137-139
+    if (talent(21)) a = times(a, 1.05); // 冷漠 :140-142
+    if (talent(23)) a = times(a, 0.95); // 好奇心 :143-145
+    if (talent(24)) a = times(a, 1.1); // 保守的 :146-148
+    if (talent(32))
+      a = times(a, 1.1); // 压抑 :150-152
+    else if (talent(33)) a = times(a, 0.9); // 开放 :153-156
+    if (talent(34)) a = times(a, 1.2); // 抵抗 :158-160
+    if (talent(35))
+      a = times(a, 1.05); // 害羞 :162-164
+    else if (talent(36)) a = times(a, 0.95); // 不知羞耻 :165-168
+    if (talent(50))
+      a = times(a, 0.8); // 快速学习 :170-172
+    else if (talent(51)) a = times(a, 1.5); // 学习缓慢 :173-176
+    if (talent(52)) a = times(a, 0.95); // 擅用舌头 :178-180
+    if (talent(63)) a = times(a, 0.95); // 献身的 :181-183
+    if (talent(64)) a = times(a, 0.95); // 不怕脏 :184-186
+
+    if (a < 1) a = 1; // :188-190
+
+    const juel7 = era.get(`juel:${cid}:7`) || 0;
+    const money = era_flag.money;
+    const master_abl12 = era.get(`abl:${MASTER}:12`) || 0;
+    const flag30 = era.get('flag:30') || 0;
+    let i = 0;
+    if (juel7 < a) i |= 1; // :192-194
+    if (self_training && money < 5000) i |= 4; // :195-196
+    if (self_training && master_abl12 > flag30 + 1) i |= 2; // :197-198（文案错位，见文件头）
+
+    if (self_training) {
+      era.print('魔王通过这种方式提升技巧仍然需要金钱5000点'); // :34-35
+    }
+    era.printButton(
+      `${era.get('palamname:7')}点数×${juel7}/${a} ……${status_text(i)}`,
+      0,
+    ); // :36-48
+    era.println();
+    era.printButton('停止', 100); // :50
+
+    const result = await era.input(); // :52
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      era.print('未满足条件'); // :55-56
+      continue;
+    } else if (result === 0) {
+      const new_lv = (chara(cid).system.技巧 += 1); // :62
+      if (self_training) {
+        era_flag.money -= 5000; // :63-65
+        era_exflag.legit_money -= 5000;
+        era.print('花费金钱5000点。'); // :66
+      }
+      era.add(`juel:${cid}:7`, -a); // :69-70
+      era.print(`${era.get('ablname:12')}变为LV${new_lv}。`); // :73
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
+/**
+ * 源: target/ERB/ABL/ABLUP13.ERB @ABLUP13 :9-69 + @DECIDE_ABLUP13 :86-269。
+ * 侍奉技术，train 域（同域写，直接 era.add）。单轨道 A(习得点数
+ * JUEL:7)/I，共用 GET_ABLUP_STATE。与 ABLUP14 共享“侍奉技术＋性交技术
+ * ≤10”组合上限，突破价 TEMP=max(ABL:13,ABL:14)，TEMP²×500；入口的溢出
+ * 提示是两行（PRINTFORML 后跟 PRINTFORMW），与 ABLUP12/15 的单行 PRINTFORMW
+ * 不同，1:1 保留。
+ * issue #14 待登记缺陷：Lv5 及以上本应改查“侍奉精神≥侍奉技术+1”的门槛
+ * （:261-263）在原作中被注释掉，实际只保留 Lv5 以下的“技巧≥侍奉技术+1”
+ * 检查（:259-260），Lv5 以上完全不受门槛约束，属死代码，1:1 保留不恢复。
+ */
+async function ablup13(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl12 = () => era.get(`abl:${cid}:12`) || 0;
+  const abl13 = () => era.get(`abl:${cid}:13`) || 0;
+  const abl14 = () => era.get(`abl:${cid}:14`) || 0;
+  const abl16 = () => era.get(`abl:${cid}:16`) || 0;
+
+  era.drawLine(); // :12
+
+  if ((abl13() >= 5 && abl16() < 5) || abl13() >= 10) {
+    await era.printAndWait('已达最高级'); // :18-19
+    return;
+  }
+  if (abl13() + abl14() >= 10) {
+    const temp = Math.max(abl13(), abl14()); // :23-24
+    const juel7_gate = era.get(`juel:${cid}:7`) || 0;
+    if (juel7_gate < temp * temp * 500) {
+      era.print(`侍奉技术(${abl13()})＋性交技术(${abl14()})上限为10`); // :26
+      await era.printAndWait(
+        `${era.get('palamname:7')}点数至少达到${temp * temp * 500}点、方可突破技术等级限制`,
+      ); // :27
+      return;
+    }
+  }
+
+  for (;;) {
+    const lv = abl13();
+    // A：:102-122 梯子，组合上限达到时改用 TEMP²×500（:124-125）
+    let a = [5, 400, 1000, 3000, 6000, 9000, 12000, 16000, 20000, 25000][lv];
+    if (lv + abl14() >= 10) {
+      const temp = Math.max(lv, abl14());
+      a = temp * temp * 500;
+    }
+
+    if (talent(27)) {
+      // 戒备森严 :128-137
+      if (lv === 3) a = times(a, 1.5);
+      if (lv === 4) a = times(a, 2.0);
+      if (lv === 5) a = times(a, 2.5);
+      if (lv >= 6) a = times(a, 3.0);
+    }
+    if (talent(11)) a = times(a, 1.2); // 反抗心 :139-142
+    if (talent(13)) a = times(a, 0.95); // 坦率 :143-146
+    if (talent(16)) a = times(a, 1.2); // 嚣张 :147-150
+    if (talent(15))
+      a = times(a, 1.2); // 高姿态 :152-154
+    else if (talent(17)) a = times(a, 0.95); // 低姿态 :155-158
+    if (talent(21)) a = times(a, 1.05); // 冷漠 :160-163
+    if (talent(22)) a = times(a, 1.05); // 感情淡薄 :164-167
+    if (talent(23)) a = times(a, 0.95); // 好奇心 :168-171
+    if (talent(24)) a = times(a, 1.1); // 保守的 :172-175
+    if (talent(32))
+      a = times(a, 1.1); // 压抑 :177-179
+    else if (talent(33)) a = times(a, 0.9); // 开放 :180-183
+    if (talent(34)) a = times(a, 1.2); // 抵抗 :185-188
+    if (talent(35))
+      a = times(a, 1.05); // 害羞 :190-192
+    else if (talent(36)) a = times(a, 0.95); // 不知羞耻 :193-196
+    if (talent(37)) a = times(a, 0.9); // 把柄 :198-201
+    if (talent(50))
+      a = times(a, 0.8); // 快速学习 :203-206
+    else if (talent(51)) a = times(a, 1.5); // 学习缓慢 :207-209
+    if (talent(52)) a = times(a, 0.9); // 擅用舌头 :211-214
+    if (talent(63)) a = times(a, 0.9); // 献身的 :215-218
+    if (talent(64)) a = times(a, 0.9); // 不怕脏 :219-222
+    if (talent(73)) a = times(a, 0.9); // 容易陷落 :223-226
+    if (talent(80)) a = times(a, 0.95); // 倒錯的 :228-231
+    if (talent(83)) a = times(a, 1.1); // 施虐狂 :232-235
+    // 侍奉精神分级折扣（非素质，按 ABL:16 当前等级，:237-248）
+    if (abl16() < 3) a = times(a, 1.0);
+    else if (abl16() < 6) a = times(a, 0.95);
+    else if (abl16() < 8) a = times(a, 0.9);
+    else if (abl16() < 10) a = times(a, 0.85);
+    else a = times(a, 0.8);
+
+    if (a < 1) a = 1; // :250-252
+
+    const juel7 = era.get(`juel:${cid}:7`) || 0;
+    let i = 0;
+    if (juel7 < a) i |= 1; // :254-256
+    // Lv5 未满时检查技巧≥侍奉技术+1（:258-260）；Lv5 以上的对应检查在原作
+    // 中被注释掉（:262-263），死代码不恢复，issue #14
+    if (lv < 5 && abl12() < lv + 1) i |= 2;
+
+    if (lv < 5) {
+      era.print(`${era.get('ablname:12')}LV${lv + 1}以上(现在LV${abl12()})且`); // :42-43
+    } else {
+      era.print(`${era.get('ablname:16')}LV${lv + 1}以上(现在LV${abl16()})且`); // :45-46
+    }
+    era.printButton(
+      `${era.get('palamname:7')}点数×${juel7}/${a} ……${get_ablup_state(i)}`,
+      0,
+    ); // :48-50
+    era.println();
+    era.printButton('停止', 100); // :51
+
+    const result = await era.input(); // :53
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      era.print('未满足条件'); // :56-57
+      continue;
+    } else if (result === 0) {
+      const new_lv = era.add(`abl:${cid}:13`, 1); // :63
+      era.add(`juel:${cid}:7`, -a); // :64-65
+      era.print(`${era.get('ablname:13')}变为LV${new_lv}。`); // :67
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
+/**
+ * 源: target/ERB/ABL/ABLUP14.ERB @ABLUP14 :9-70 + @DECIDE_ABLUP14 :87-264。
+ * 性交技术，train 域。双值 A(习得点数 JUEL:7)/B(性交经验 EXP:5)，共用
+ * GET_ABLUP_STATE。与 ABLUP13 共享同一组合上限，两行溢出提示同款。
+ * issue #14 待登记缺陷：DECIDE 的技巧门槛检查（:257-258）写作
+ * `ABL:12 < 5 && ABL:12 < ABL:14 + 1`，两个子句都比较 ABL:12，第一个子句
+ * 应参照 ABLUP13 同类检查的写法比较自身等级（ABL:14 < 5）却错写成
+ * ABL:12——效果是：一旦 ABL:12 达到 5，此门槛此后对任何 ABL:14 等级都
+ * 不再生效，而渲染层的技巧要求文案（:44-45）仍然只在 ABL:14 < 5 时显示，
+ * 二者不对称，属真实缺陷，1:1 保留。
+ */
+async function ablup14(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl12 = () => era.get(`abl:${cid}:12`) || 0;
+  const abl13 = () => era.get(`abl:${cid}:13`) || 0;
+  const abl14 = () => era.get(`abl:${cid}:14`) || 0;
+  const abl30 = () => era.get(`abl:${cid}:30`) || 0;
+
+  era.drawLine(); // :12
+
+  if (abl14() >= 10) {
+    await era.printAndWait('已达最高级'); // :18-19
+    return;
+  }
+  if (abl13() + abl14() >= 10) {
+    const temp = Math.max(abl13(), abl14()); // :23-24
+    const juel7_gate = era.get(`juel:${cid}:7`) || 0;
+    if (juel7_gate < temp * temp * 500) {
+      era.print(`侍奉技术(${abl13()})＋性交技术(${abl14()})上限为10`); // :26
+      await era.printAndWait(
+        `${era.get('palamname:7')}点数至少达到${temp * temp * 500}点、方可突破技术等级限制`,
+      ); // :27
+      return;
+    }
+  }
+
+  for (;;) {
+    const lv = abl14();
+    // A/B：:101-131 梯子，组合上限达到时 A 改用 TEMP²×500（:133-134）
+    let a, b;
+    if (lv === 0) [a, b] = [1, 3];
+    else if (lv === 1) [a, b] = [10, 10];
+    else if (lv === 2) [a, b] = [100, 30];
+    else if (lv === 3) [a, b] = [1500, 80];
+    else if (lv === 4) [a, b] = [4000, 100];
+    else if (lv === 5) [a, b] = [5000, 130];
+    else if (lv === 6) [a, b] = [6500, 160];
+    else if (lv === 7) [a, b] = [8000, 200];
+    else if (lv === 8) [a, b] = [10000, 250];
+    else [a, b] = [15000, 300]; // lv === 9
+    if (abl13() + lv >= 10) {
+      const temp = Math.max(lv, abl13());
+      a = temp * temp * 500;
+    }
+
+    if (talent(27)) {
+      // 戒备森严 :137-151
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 2.0);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
+      }
+    }
+    if (talent(13)) {
+      // 坦率 :154-157
+      a = times(a, 0.9);
+      b = times(b, 0.95);
+    }
+    if (talent(21)) {
+      // 冷漠 :159-162
+      a = times(a, 1.1);
+      b = times(b, 1.05);
+    }
+    if (talent(22)) {
+      // 感情淡薄 :164-167
+      a = times(a, 1.1);
+      b = times(b, 1.05);
+    }
+    if (talent(23)) {
+      // 好奇心 :169-172
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+    }
+    if (talent(24)) {
+      // 保守的 :174-177
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+    }
+    if (talent(32)) {
+      // 压抑 :180-183
+      a = times(a, 1.1);
+      b = times(b, 1.05);
+    } else if (talent(33)) {
+      // 开放 :184-187
+      a = times(a, 0.9);
+      b = times(b, 0.95);
+    }
+    if (talent(34)) {
+      // 抵抗 :190-193
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+    }
+    if (talent(35)) {
+      // 害羞 :196-199
+      a = times(a, 1.1);
+      b = times(b, 1.05);
+    } else if (talent(36)) {
+      // 不知羞耻 :200-203
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+    }
+    if (talent(50)) {
+      // 快速学习 :206-209
+      a = times(a, 0.8);
+      b = times(b, 0.8);
+    } else if (talent(51)) {
+      // 学习缓慢 :210-213
+      a = times(a, 1.5);
+      b = times(b, 1.2);
+    }
+    if (talent(63)) {
+      // 献身的 :216-219
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+    }
+    if (talent(64)) {
+      // 不怕脏 :221-224
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+    }
+    // 性交中毒分级折扣（非素质，按 ABL:30，:227-242）
+    if (abl30() < 3) {
+      a = times(a, 1.0);
+      b = times(b, 1.0);
+    } else if (abl30() < 6) {
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+    } else if (abl30() < 8) {
+      a = times(a, 0.9);
+      b = times(b, 0.9);
+    } else if (abl30() < 10) {
+      a = times(a, 0.85);
+      b = times(b, 0.85);
+    } else {
+      a = times(a, 0.8);
+      b = times(b, 0.8);
+    }
+
+    if (a < 1) a = 1; // :245-246
+    if (b < 1) b = 1; // :247-248
+
+    const juel7 = era.get(`juel:${cid}:7`) || 0;
+    const exp5 = era.get(`exp:${cid}:5`) || 0;
+    let i = 0;
+    if (juel7 < a) i |= 1; // :250-252
+    if (exp5 < b) i |= 2; // :253-255
+    // 两个子句都比较 ABL:12，第一个子句本应比较 ABL:14<5，与渲染层
+    // 的门槛文案不对称，是原作真实缺陷，1:1 保留（见文件头，issue #14）
+    if (abl12() < 5 && abl12() < lv + 1) i |= 4; // :256-258
+
+    if (lv < 5) {
+      era.print(`${era.get('ablname:12')}LV${lv + 1}以上(现在LV${abl12()})且`); // :44-45
+    }
+    era.printButton(
+      `${era.get('palamname:7')}点数×${juel7}/${a} ……${get_ablup_state(i)}`,
+      0,
+    ); // :47-49
+    era.println();
+    era.print(`      ${era.get('expname:5')}　${exp5}/${b}`); // :50
+    era.printButton('停止', 100); // :52
+
+    const result = await era.input(); // :54
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      era.print('未满足条件'); // :57-58
+      continue;
+    } else if (result === 0) {
+      const new_lv = era.add(`abl:${cid}:14`, 1); // :64
+      era.add(`juel:${cid}:7`, -a); // :65-66
+      era.print(`${era.get('ablname:14')}变为LV${new_lv}。`); // :68
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
+/**
+ * 源: target/ERB/ABL/ABLUP15.ERB @ABLUP15 :9-68 + @DECIDE_ABLUP15 :85-304。
+ * 话术，train 域。三值 A(习得点数 JUEL:7)/B(调教会话经验 EXP:73)/C(卖淫
+ * 经验 EXP:74)，共用 GET_ABLUP_STATE。与 ABLUP12 共享“技巧＋话术≤15”
+ * 组合上限，入口溢出提示是单行 PRINTFORMW（与 ABLUP13/14 的两行不同）。
+ * bit2（经验不足）要求 B、C 两条经验轨道都不足才命中——EXP:73/74 任一
+ * 达标即可免——渲染文案的行尾字面量 " or" 与此呼应，1:1 保留。
+ */
+async function ablup15(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl12 = () => era.get(`abl:${cid}:12`) || 0;
+  const abl15 = () => era.get(`abl:${cid}:15`) || 0;
+
+  era.drawLine(); // :10
+
+  if (abl15() >= 10) {
+    await era.printAndWait('已达最高级'); // :16-17
+    return;
+  }
+  if (abl12() + abl15() >= 15) {
+    const juel7_gate = era.get(`juel:${cid}:7`) || 0;
+    if (juel7_gate < abl15() * abl15() * 1000) {
+      await era.printAndWait(`技巧(${abl12()})＋话术(${abl15()})上限为15`); // :22
+      return;
+    }
+  }
+
+  for (;;) {
+    const lv = abl15();
+    // A/B/C：:98-138 梯子
+    let a, b, c;
+    if (lv === 0) [a, b, c] = [1, 3, 5];
+    else if (lv === 1) [a, b, c] = [10, 10, 20];
+    else if (lv === 2) [a, b, c] = [100, 30, 50];
+    else if (lv === 3) [a, b, c] = [1500, 50, 100];
+    else if (lv === 4) [a, b, c] = [3000, 100, 150];
+    else if (lv === 5) [a, b, c] = [4000, 120, 180];
+    else if (lv === 6) [a, b, c] = [5200, 150, 250];
+    else if (lv === 7) [a, b, c] = [7500, 180, 320];
+    else if (lv === 8) [a, b, c] = [9000, 220, 350];
+    else [a, b, c] = [13000, 250, 400]; // lv === 9
+
+    if (talent(27)) {
+      // 戒备森严 :140-159
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.25);
+        c = times(c, 1.25);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 1.75);
+        c = times(c, 1.75);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);
+        b = times(b, 2.0);
+        c = times(c, 2.0);
+      }
+    }
+    if (talent(11)) {
+      // 反抗心 :162-166
+      a = times(a, 1.5);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+    }
+    if (talent(13)) {
+      // 坦率 :168-172
+      a = times(a, 0.9);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+    }
+    if (talent(16)) {
+      // 嚣张 :174-178
+      a = times(a, 1.25);
+      b = times(b, 1.15);
+      c = times(c, 1.15);
+    }
+    if (talent(15)) {
+      // 高姿态 :180-184
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+      c = times(c, 1.1);
+    }
+    if (talent(21)) {
+      // 冷漠 :186-190
+      a = times(a, 1.5);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+    }
+    if (talent(22)) {
+      // 感情淡薄 :192-196
+      a = times(a, 1.5);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+    }
+    if (talent(23)) {
+      // 好奇心 :198-202
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+    }
+    if (talent(25)) {
+      // 乐观的 :205-209
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+    } else if (talent(26)) {
+      // 悲观的 :210-214
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+      c = times(c, 1.1);
+    }
+    if (talent(28)) {
+      // 爱表现 :217-221
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+    }
+    if (talent(32)) {
+      // 压抑 :224-228
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+      c = times(c, 1.1);
+    } else if (talent(33)) {
+      // 开放 :229-233
+      a = times(a, 0.9);
+      b = times(b, 0.9);
+      c = times(c, 0.9);
+    }
+    if (talent(34)) {
+      // 抵抗 :236-240
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+      c = times(c, 1.1);
+    }
+    if (talent(35)) {
+      // 害羞 :243-247
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+      c = times(c, 1.1);
+    } else if (talent(36)) {
+      // 不知羞耻 :248-252
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+    }
+    if (talent(50)) {
+      // 快速学习 :255-259
+      a = times(a, 0.8);
+      b = times(b, 0.8);
+      c = times(c, 0.8);
+    } else if (talent(51)) {
+      // 学习缓慢 :260-264
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+      c = times(c, 1.1);
+    }
+    if (talent(92)) {
+      // 谜之魅力 :267-271
+      a = times(a, 0.9);
+      b = times(b, 0.9);
+      c = times(c, 0.9);
+    }
+    if (talent(87)) {
+      // 小恶魔 :273-277
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+    }
+    if (talent(182)) {
+      // 巧言 :279-283
+      a = times(a, 0.6);
+      b = times(b, 0.8);
+      c = times(c, 0.8);
+    }
+
+    if (a < 1) a = 1; // :286-287
+    if (b < 1) b = 1; // :288-289
+    if (c < 1) c = 1; // :290-291
+
+    const juel7 = era.get(`juel:${cid}:7`) || 0;
+    const exp73 = era.get(`exp:${cid}:73`) || 0;
+    const exp74 = era.get(`exp:${cid}:74`) || 0;
+    let i = 0;
+    if (juel7 < a) i |= 1; // :293-295
+    if (exp73 < b && exp74 < c) i |= 2; // :296-298（任一经验达标即可免）
+
+    era.printButton(
+      `${era.get('palamname:7')}点数×${juel7}/${a} ……${get_ablup_state(i)}`,
+      0,
+    ); // :42-44
+    era.println();
+    era.print(`      ${era.get('expname:73')}　${exp73}/${b} or`); // :45
+    era.print(`      ${era.get('expname:74')}　${exp74}/${c}`); // :46
+    era.printButton('停止', 100); // :48
+
+    const result = await era.input(); // :50
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      era.print('未满足条件'); // :53-54
+      continue;
+    } else if (result === 0) {
+      const new_lv = era.add(`abl:${cid}:15`, 1); // :60
+      era.add(`juel:${cid}:7`, -a); // :62-63
+      era.print(`${era.get('ablname:15')}变为LV${new_lv}。`); // :66
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
+/**
+ * 源: target/ERB/ABL/ABLUP16.ERB @ABLUP16 :9-115 + @DECIDE_ABLUP16 :136-533。
+ * 侍奉精神，system 域。三条可购买轨道 A(屈服点数 JUEL:6)/B(恭顺点数
+ * JUEL:4，B=0 时 J=256)/C(习得点数 JUEL:7，C=0 时 K=256)，I/J/K 三个独立
+ * 可否位，外加 D(侍奉快乐经验 EXP:21，仅随 B 轨显示)、E(绝顶+精液经验
+ * EXP:2/EXP:20，随 A 轨恒显示)。输入用 $INPUT_LOOP+GOTO（非 RESTART），
+ * 与 ABLUP6/8/9 同款：整段计算与渲染放进 for(;;) 循环体内，因为
+ * era.printButton 的注册在每次 era.input() 之后被引擎清空。
+ * issue #14 待登记缺陷：入口把关（:16）用 OR（TALENT:63==0 ||
+ * TALENT:85==0 || TALENT:86==0，任一素质缺失即挡），@DECIDE_ABLUP16
+ * 自身的复查（:139）却用 AND（三项全缺才挡）——因为 DECIDE 只在入口把关
+ * 通过后才会被调用，此时三项必已全部具备，AND 复查恒假，是死代码，
+ * 1:1 保留不改。
+ */
+async function ablup16(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl10 = () => era.get(`abl:${cid}:10`) || 0;
+  const abl16 = () => era.get(`abl:${cid}:16`) || 0;
+
+  era.drawLine(); // :10
+
+  if (
+    abl16() >= 5 &&
+    (talent(63) === 0 || talent(85) === 0 || talent(86) === 0)
+  ) {
+    await era.printAndWait('需要特殊素质才能继续提升'); // :16-18
+    return;
+  }
+  if (abl16() >= 10) {
+    await era.printAndWait('已达最高级'); // :19-21
+    return;
+  }
+
+  for (;;) {
+    const lv = abl16();
+    // A/B/C/D/E：:156-216 梯子（C 只在 lv 0-2 非零）
+    let a, b, c, d, e;
+    if (lv === 0) [a, b, c, d, e] = [100, 20, 100, 1, 1];
+    else if (lv === 1) [a, b, c, d, e] = [1200, 400, 2000, 1, 3];
+    else if (lv === 2) [a, b, c, d, e] = [5000, 2000, 10000, 20, 6];
+    else if (lv === 3) [a, b, c, d, e] = [10000, 3000, 0, 20, 10];
+    else if (lv === 4) [a, b, c, d, e] = [30000, 10000, 0, 100, 20];
+    else if (lv === 5) [a, b, c, d, e] = [50000, 20000, 0, 200, 80];
+    else if (lv === 6) [a, b, c, d, e] = [70000, 30000, 0, 350, 150];
+    else if (lv === 7) [a, b, c, d, e] = [100000, 50000, 0, 500, 200];
+    else if (lv === 8) [a, b, c, d, e] = [150000, 80000, 0, 700, 400];
+    else [a, b, c, d, e] = [200000, 150000, 0, 1000, 800]; // lv === 9
+
+    if (talent(27)) {
+      // 戒备森严 :219-241（A/B/D/E，C 不受影响）
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        d = times(d, 1.5);
+        e = times(e, 1.5);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 2.0);
+        d = times(d, 2.0);
+        e = times(e, 2.0);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        d = times(d, 2.5);
+        e = times(e, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
+        d = times(d, 3.0);
+        e = times(e, 3.0);
+      }
+    }
+
+    // 异常经验：lv>=3 时需要，三项素质任一命中可免（:243-246）
+    let f = 0;
+    if (lv >= 3 && talent(63) === 0 && talent(85) === 0 && talent(86) === 0) {
+      f = lv - 2;
+    }
+
+    if (talent(11)) {
+      // 反抗心 :249-254
+      a = times(a, 1.2);
+      b = times(b, 1.4);
+      d = times(d, 1.2);
+      e = times(e, 1.2);
+    }
+    if (talent(12)) {
+      // 刚强 :257-260
+      a = times(a, 1.2);
+      d = times(d, 1.2);
+    }
+    if (talent(13)) {
+      // 坦率 :263-268
+      a = times(a, 0.9);
+      b = times(b, 0.8);
+      c = times(c, 0.8);
+      d = times(d, 0.7);
+    }
+    if (talent(16)) {
+      // 嚣张 :271-274
+      a = times(a, 1.1);
+      b = times(b, 1.1);
+    }
+    if (talent(15)) {
+      // 高姿态 :277-282
+      a = times(a, 1.4);
+      b = times(b, 1.3);
+      d = times(d, 1.2);
+      e = times(e, 1.2);
+    } else if (talent(17)) {
+      // 低姿态 :283-288
+      a = times(a, 0.9);
+      b = times(b, 0.8);
+      d = times(d, 0.8);
+      e = times(e, 0.8);
+    }
+    if (talent(20)) {
+      // 克制 :291-296
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      d = times(d, 1.2);
+      e = times(e, 1.2);
+    }
+    if (talent(21)) {
+      // 冷漠 :299-304
+      a = times(a, 1.1);
+      b = times(b, 1.1);
+      d = times(d, 1.2);
+      e = times(e, 1.1);
+    }
+    if (talent(22)) {
+      // 感情淡薄 :307-312
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      d = times(d, 1.4);
+      e = times(e, 1.2);
+    }
+    if (talent(24)) {
+      // 保守的 :315-321
+      a = times(a, 1.3);
+      b = times(b, 1.3);
+      c = times(c, 1.3);
+      d = times(d, 1.2);
+      e = times(e, 1.2);
+    }
+    if (talent(25)) {
+      // 乐观的 :324-329
+      a = times(a, 0.9);
+      b = times(b, 0.8);
+      d = times(d, 0.7);
+      e = times(e, 0.75);
+    } else if (talent(26)) {
+      // 悲观的 :330-335
+      a = times(a, 0.8);
+      b = times(b, 0.8);
+      d = times(d, 0.8);
+      e = times(e, 0.8);
+    }
+    if (talent(28)) {
+      // 爱表现 :338-343
+      a = times(a, 0.9);
+      b = times(b, 0.9);
+      c = times(c, 0.9);
+      d = times(d, 0.9);
+    }
+    if (talent(32)) {
+      // 压抑 :346-351
+      a = times(a, 1.1);
+      b = times(b, 1.1);
+      d = times(d, 2.5);
+      e = times(e, 3.0);
+    } else if (talent(33)) {
+      // 开放 :352-357
+      a = times(a, 0.9);
+      b = times(b, 0.9);
+      d = times(d, 0.7);
+      e = times(e, 0.6);
+    }
+    if (talent(34)) {
+      // 抵抗 :360-366
+      a = times(a, 1.5);
+      b = times(b, 1.5);
+      c = times(c, 1.5);
+      d = times(d, 2.0);
+      e = times(e, 2.0);
+    }
+    if (talent(37)) {
+      // 把柄 :369-375
+      a = times(a, 0.8);
+      b = times(b, 0.8);
+      c = times(c, 0.8);
+      d = times(d, 0.5);
+      e = times(e, 0.5);
+    }
+    if (talent(50)) c = times(c, 0.8); // 快速学习 :378-379
+    if (talent(51)) c = times(c, 1.6); // 学习缓慢 :382-383
+    if (talent(52)) c = times(c, 0.8); // 擅用舌头 :386-387
+    if (talent(63)) {
+      // 献身的 :390-395
+      a = times(a, 0.8);
+      b = times(b, 0.7);
+      d = times(d, 0.6);
+      e = times(e, 0.8);
+    }
+    if (talent(70)) {
+      // 接受快感 :398-400
+      e = times(e, 0.7);
+    } else if (talent(71)) {
+      // 否定快感 :401-403
+      e = times(e, 3.0);
+    }
+    if (talent(73)) {
+      // 容易陷落 :406-411
+      a = times(a, 0.5);
+      b = times(b, 0.5);
+      d = times(d, 0.5);
+      e = times(e, 0.5);
+    }
+    if (talent(80)) {
+      // 倒錯的 :414-420
+      a = times(a, 0.75);
+      b = times(b, 0.75);
+      c = times(c, 0.75);
+      d = times(d, 0.75);
+      e = times(e, 0.75);
+    }
+    if (talent(83)) {
+      // 施虐狂 :423-427
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      d = times(d, 1.5);
+    }
+    if (talent(85)) {
+      // 爱慕 :430-435
+      a = times(a, 0.75);
+      b = times(b, 0.75);
+      c = times(c, 0.75);
+      d = times(d, 0.75);
+    }
+    if (talent(86)) {
+      // 盲从 :438-444
+      a = times(a, 0.5);
+      b = times(b, 0.5);
+      c = times(c, 0.5);
+      d = times(d, 0.5);
+      e = times(e, 0.5);
+    }
+    if (talent(87)) {
+      // 小恶魔 :447-452
+      a = times(a, 1.1);
+      b = times(b, 1.1);
+      d = times(d, 1.2);
+      e = times(e, 0.8);
+    }
+    if (talent(123)) {
+      // 疯狂 :455-461
+      a = times(a, 2.5);
+      b = times(b, 3.0);
+      c = times(c, 1.5);
+      d = times(d, 0.8);
+      e = times(e, 0.5);
+    }
+    if (talent(9)) {
+      // 崩坏 :464-470
+      a = times(a, 2.5);
+      b = times(b, 2.5);
+      c = times(c, 2.5);
+      d = times(d, 0.5);
+      e = times(e, 0.5);
+    }
+
+    if (a < 1) a = 1; // :473-474
+    if (b < 1) b = 1; // :475-476
+    if (d < 1) d = 1; // :477-478
+    if (e < 1) e = 1; // :479-480（C 无底线，靠 256 哨兵表达不可购买）
+
+    const juel6 = era.get(`juel:${cid}:6`) || 0;
+    const juel4 = era.get(`juel:${cid}:4`) || 0;
+    const juel7 = era.get(`juel:${cid}:7`) || 0;
+    const exp2 = era.get(`exp:${cid}:2`) || 0;
+    const exp20 = era.get(`exp:${cid}:20`) || 0;
+    const exp21 = era.get(`exp:${cid}:21`) || 0;
+    const exp50_16 = era.get(`exp:${cid}:50`) || 0;
+    let i = 0,
+      j = 0,
+      k = 0;
+    if (juel6 < a) i |= 1; // :483-484
+    if (b > 0) {
+      if (juel4 < b) j |= 1; // :487-489
+      if (exp21 < d) j |= 2; // :490-492
+    } else {
+      j = 256; // :493-495
+    }
+    if (c > 0) {
+      if (juel7 < c) k |= 1; // :498-500
+      if (exp2 < 1) k |= 2; // :501-503（固定阈值 1，与 D/E 门槛无关）
+    } else {
+      k = 256; // :504-506
+    }
+    if (exp2 < e) i |= 2; // :508-510
+    if (exp20 < e) i |= 2; // :511-513
+    if (abl10() < lv + 1) {
+      // 顺从门槛，三条轨道同时命中（:515-520）
+      i |= 4;
+      j |= 4;
+      k |= 4;
+    }
+    if (f > exp50_16) {
+      // 异常经验不足，三条轨道同时命中（:522-527）
+      i |= 2;
+      j |= 2;
+      k |= 2;
+    }
+
+    era.print(`${era.get('ablname:10')}LV${lv + 1}以上(现在LV${abl10()})且`); // :47-48
+    if (f > 0) {
+      era.print(`${era.get('expname:50')}${f}以上(现在${exp50_16})且`); // :51-52
+    }
+    era.printButton(
+      `${era.get('palamname:6')}点数×${juel6}/${a} ……${get_ablup_state(i)}`,
+      0,
+    ); // :55-57（恒渲染）
+    era.println();
+    if (e > 0) {
+      era.print(`　　　${era.get('expname:2')}　${exp2}/${e}`); // :59
+      era.print(`　　　${era.get('expname:20')}　${exp20}/${e}`); // :60
+    }
+    if (b > 0) {
+      era.printButton(
+        `${era.get('palamname:4')}点数×${juel4}/${b} ……${get_ablup_state(j)}`,
+        1,
+      ); // :65-67
+      era.println();
+      if (d > 0) {
+        era.print(`　　　${era.get('expname:21')}　${exp21}/${d}`); // :69
+      }
+    }
+    if (c > 0) {
+      era.printButton(
+        `${era.get('palamname:7')}点数×${juel7}/${c} ……${get_ablup_state(k)}`,
+        2,
+      ); // :74-76
+      era.println();
+      era.print(`　　　${era.get('expname:2')}　${exp2}/1`); // :77（分母固定为 1，非变量）
+    }
+    era.printButton('停止', 100); // :80
+
+    const result = await era.input(); // :83
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      era.print('未满足条件'); // :86-87
+      continue;
+    } else if (result === 1 && j === 256) {
+      continue; // :89-90 b===0 时隐藏选项，issue #130
+    } else if (result === 1 && j !== 0) {
+      era.print('未满足条件'); // :91-92
+      continue;
+    } else if (result === 2 && k === 256) {
+      continue; // :94-95 c===0 时隐藏选项，issue #130
+    } else if (result === 2 && k !== 0) {
+      era.print('未满足条件'); // :96-97
+      continue;
+    } else if (result === 0) {
+      const new_lv = (chara(cid).system.侍奉精神 += 1); // :103
+      era.add(`juel:${cid}:6`, -a); // :105-106
+      era.print(`${era.get('ablname:16')}变为LV${new_lv}。`); // :113
+      return;
+    } else if (result === 1) {
+      const new_lv = (chara(cid).system.侍奉精神 += 1);
+      era.add(`juel:${cid}:4`, -b); // :107-108
+      era.print(`${era.get('ablname:16')}变为LV${new_lv}。`);
+      return;
+    } else if (result === 2) {
+      const new_lv = (chara(cid).system.侍奉精神 += 1);
+      era.add(`juel:${cid}:7`, -c); // :109-110
+      era.print(`${era.get('ablname:16')}变为LV${new_lv}。`);
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
+/**
+ * 源: target/ERB/ABL/ABLUP17.ERB @ABLUP17 :9-83 + @DECIDE_ABLUP17 :99-282。
+ * 露出癖，system 域。单轨道 A(耻情点数 JUEL:8)/I，共用 GET_ABLUP_STATE。
+ * 前置门槛依 TALENT:85（爱慕）二选一：无该素质时查欲望(ABL:11)，有该
+ * 素质时改查顺从(ABL:10)。唯一一处重试文案带句号“未满足条件。”，
+ * 其余 ABLUP10～16 均不带句号，1:1 保留这一不一致。
+ * issue #14 待登记缺陷：C(绝顶经验)、D(调教自慰经验)在 @DECIDE_ABLUP17
+ * 中声明并清零后，再没有任何赋值语句（:106-109 均恒为 0），对应的
+ * 显示行（:57-58、:60-61）与门槛检查（:268-269、:271-272）因此永久不可
+ * 触达——EXP 恒为非负，`EXP:x < 0` 恒假。判定应是从姊妹函数
+ * （如 ABLUP10/16）复制遗留的残留变量，1:1 保留不清理。
+ */
+async function ablup17(cid) {
+  const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
+  const abl10 = () => era.get(`abl:${cid}:10`) || 0;
+  const abl11 = () => era.get(`abl:${cid}:11`) || 0;
+  const abl17 = () => era.get(`abl:${cid}:17`) || 0;
+
+  era.drawLine(); // :10
+
+  if (
+    abl17() >= 5 &&
+    talent(13) === 0 &&
+    talent(33) === 0 &&
+    talent(28) === 0 &&
+    talent(89) === 0
+  ) {
+    await era.printAndWait('需要特殊素质才能继续提升'); // :16-18
+    return;
+  }
+  if (abl17() >= 10) {
+    await era.printAndWait('已达最高级'); // :19-21
+    return;
+  }
+
+  for (;;) {
+    const lv = abl17();
+    // A：:113-135 梯子
+    let a = [100, 1000, 3000, 6000, 12000, 25000, 50000, 80000, 120000, 150000][
+      lv
+    ];
+
+    if (talent(27)) {
+      // 戒备森严 :138-147
+      if (lv === 3) a = times(a, 1.5);
+      if (lv === 4) a = times(a, 2.0);
+      if (lv === 5) a = times(a, 2.5);
+      if (lv >= 6) a = times(a, 3.0);
+    }
+
+    // 异常经验：lv>=3 时需要，六项素质任一命中可免（:149-152）
+    let b = 0;
+    if (
+      lv >= 3 &&
+      talent(28) === 0 &&
+      talent(33) === 0 &&
+      talent(76) === 0 &&
+      talent(80) === 0 &&
+      talent(88) === 0 &&
+      talent(123) === 0
+    ) {
+      b = lv - 2;
+    }
+
+    if (talent(9)) a = times(a, 0.8); // 崩坏 :154-156
+    if (talent(10)) a = times(a, 1.2); // 胆怯 :157-159
+    if (talent(11)) a = times(a, 1.5); // 反抗心 :160-162
+    if (talent(12)) a = times(a, 1.1); // 刚强 :163-165
+    if (talent(16)) a = times(a, 1.1); // 嚣张 :166-168
+    if (talent(20)) a = times(a, 1.1); // 克制 :169-171
+    if (talent(21)) a = times(a, 1.1); // 冷漠 :172-174
+    if (talent(22)) a = times(a, 1.5); // 感情淡薄 :175-177
+    if (talent(28)) a = times(a, 0.5); // 爱表现 :178-180
+    if (talent(30)) a = times(a, 1.2); // 看重贞操 :181-183
+    if (talent(31)) a = times(a, 0.9); // 看轻贞操 :184-186
+    if (talent(32))
+      a = times(a, 1.2); // 压抑 :188-190
+    else if (talent(33)) a = times(a, 0.8); // 开放 :191-194
+    if (talent(34)) a = times(a, 1.5); // 抵抗 :196-198
+    if (talent(35))
+      a = times(a, 1.1); // 害羞 :200-202
+    else if (talent(36)) a = times(a, 0.9); // 不知羞耻 :203-206
+    if (talent(37)) a = times(a, 0.8); // 把柄 :208-210
+    if (talent(60)) a = times(a, 0.9); // 容易自慰 :212-214
+    if (talent(70))
+      a = times(a, 0.9); // 接受快感 :216-218
+    else if (talent(71)) a = times(a, 1.2); // 否定快感 :219-222
+    if (talent(72)) a = times(a, 0.9); // 容易上瘾 :224-226
+    if (talent(73)) a = times(a, 0.5); // 容易陷落 :227-229
+    if (talent(76)) a = times(a, 0.8); // 淫乱 :230-232
+    if (talent(80)) a = times(a, 0.75); // 倒錯的 :233-235
+    if (talent(83)) a = times(a, 1.2); // 施虐狂 :236-238
+    if (talent(88)) a = times(a, 0.75); // 受虐狂 :239-241
+    if (talent(123)) a = times(a, 0.5); // 疯狂 :242-244
+
+    let i = 0;
+    // 欲望/顺从门槛：有[爱慕]时改查顺从，否则查欲望（:246-258）
+    if (talent(85) === 0) {
+      if (abl11() < lv + 1) i |= 4;
+    } else {
+      if (abl10() < lv + 1) i |= 4;
+    }
+
+    if (a < 1) a = 1; // :260-262
+
+    const exp50_17 = era.get(`exp:${cid}:50`) || 0;
+    // C(绝顶经验)/D(调教自慰经验) 恒为 0，检查永久不可触达，见文件头 issue #14
+    const c = 0;
+    const d = 0;
+    const exp2 = era.get(`exp:${cid}:2`) || 0;
+    const exp11 = era.get(`exp:${cid}:11`) || 0;
+    if (exp50_17 < b) i |= 2; // :264-266
+    if (exp2 < c) i |= 2; // :267-269（恒假，c 恒为 0）
+    if (exp11 < d) i |= 2; // :270-272（恒假，d 恒为 0）
+
+    const juel8 = era.get(`juel:${cid}:8`) || 0;
+    if (juel8 < a) i |= 1; // :274-276
+
+    if (talent(85) === 0) {
+      era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :41-42
+    } else {
+      era.print(`${era.get('ablname:10')}LV${lv + 1}以上(现在LV${abl10()})且`); // :45-46
+    }
+    if (b > 0) {
+      era.print(`${era.get('expname:50')}${b}以上(现在${exp50_17})且`); // :50-51
+    }
+    era.printButton(
+      `${era.get('palamname:8')}点数×${juel8}/${a} ……${get_ablup_state(i)}`,
+      0,
+    ); // :53-55
+    era.println();
+    if (c > 0) {
+      era.print(`　　　${era.get('expname:2')}　${exp2}/${c}`); // :57-58（死代码，c 恒为 0）
+    }
+    if (d > 0) {
+      era.print(`　　　${era.get('expname:11')}　${exp11}/${d}`); // :60-61（死代码，d 恒为 0）
+    }
+    era.printButton('停止', 100); // :63
+
+    const result = await era.input(); // :65
+    if (result === 100) {
+      return;
+    } else if (result === 0 && i !== 0) {
+      era.print('未满足条件。'); // :68-69（唯一带句号）
+      continue;
+    } else if (result === 0) {
+      const new_lv = (chara(cid).system.露出癖 += 1); // :75
+      era.add(`juel:${cid}:8`, -a); // :77-78
+      era.print(`${era.get('ablname:17')}变为LV${new_lv}。`); // :81
+      return;
+    } else {
+      continue; // 引擎层拒收代位，防御性保留（issue #130）
+    }
+  }
+}
+
 module.exports = {
   get_ablup_state,
   ablup0,
@@ -1280,4 +2816,12 @@ module.exports = {
   ablup7,
   ablup8,
   ablup9,
+  ablup10,
+  ablup11,
+  ablup12,
+  ablup13,
+  ablup14,
+  ablup15,
+  ablup16,
+  ablup17,
 };
