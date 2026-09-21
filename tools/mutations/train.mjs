@@ -5923,7 +5923,7 @@ export default [
     must_mention: '死亡斗场收入 × 4',
   },
   {
-    desc: 'M9836 ablup10：需要特殊素质门槛越界值',
+    desc: 'M9900 ablup10：需要特殊素质门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: '  if (abl10() >= 5 && talent(85) === 0 && talent(86) === 0) {',
     replace: '  if (abl10() > 5 && talent(85) === 0 && talent(86) === 0) {',
@@ -5931,7 +5931,7 @@ export default [
     must_mention: 'ablup10：两档终止判定',
   },
   {
-    desc: 'M9837 ablup10：已达最高级门槛越界值',
+    desc: 'M9901 ablup10：已达最高级门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl10() >= 10) {
     await era.printAndWait('已达最高级'); // :18-20`,
@@ -5941,7 +5941,7 @@ export default [
     must_mention: 'ablup10：两档终止判定',
   },
   {
-    desc: 'M9838 ablup10：Lv0 恐怖点数梯子字面值',
+    desc: 'M9902 ablup10：Lv0 恐怖点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'if (lv === 0) [a, b, c, d] = [10, 10, 300, 200];',
     replace: 'if (lv === 0) [a, b, c, d] = [11, 10, 300, 200];',
@@ -5949,7 +5949,7 @@ export default [
     must_mention: 'ablup10：Lv0 梯子字面值',
   },
   {
-    desc: 'M9839 ablup10：反抗心 A 倍率',
+    desc: 'M9903 ablup10：反抗心 A 倍率',
     file: 'ere/system/train/ablup.js',
     find: `      // 反抗心 :224-230
       a = times(a, 2.0);`,
@@ -5959,7 +5959,7 @@ export default [
     must_mention: '反抗心 A×2.00',
   },
   {
-    desc: 'M9840 ablup10：异常经验豁免素质爱慕的比较方向反转',
+    desc: 'M9904 ablup10：异常经验豁免素质爱慕的比较方向反转',
     file: 'ere/system/train/ablup.js',
     find: `      talent(73) === 0 &&
       talent(85) === 0 &&
@@ -5973,7 +5973,7 @@ export default [
     must_mention: '异常经验门槛（E=1），六项素质任一命中可免',
   },
   {
-    desc: 'M9841 ablup10：Lv4→5 异常经验门槛值',
+    desc: 'M9905 ablup10：Lv4→5 异常经验门槛值',
     file: 'ere/system/train/ablup.js',
     find: '    if (lv === 4 && anomaly_exempt10) e = 1;',
     replace: '    if (lv === 4 && anomaly_exempt10) e = 2;',
@@ -5981,7 +5981,7 @@ export default [
     must_mention: '异常经验门槛',
   },
   {
-    desc: 'M9842 ablup10：重试文案误加句号',
+    desc: 'M9906 ablup10：重试文案误加句号',
     file: 'ere/system/train/ablup.js',
     find: `      era.print('未满足条件'); // :81-82
       continue;
@@ -5993,7 +5993,7 @@ export default [
     must_mention: '无句号',
   },
   {
-    desc: 'M9843 ablup10：成功购买写入等级改为 +2',
+    desc: 'M9907 ablup10：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
     find: '      const new_lv = (chara(cid).system.顺从 += 1); // :101',
     replace: '      const new_lv = (chara(cid).system.顺从 += 2); // :101',
@@ -6001,7 +6001,7 @@ export default [
     must_mention: '写入 chara(cid).system.顺从',
   },
   {
-    desc: 'M9844 ablup11：需要特殊素质门槛越界值',
+    desc: 'M9908 ablup11：需要特殊素质门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: '  if (abl11() >= 5 && talent(73) === 0 && talent(76) === 0) {',
     replace: '  if (abl11() > 5 && talent(73) === 0 && talent(76) === 0) {',
@@ -6009,7 +6009,7 @@ export default [
     must_mention: 'ablup11：两档终止判定',
   },
   {
-    desc: 'M9845 ablup11：已达最高级门槛越界值',
+    desc: 'M9909 ablup11：已达最高级门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl11() >= 10) {
     await era.printAndWait('已达最高级'); // :18-20`,
@@ -6019,7 +6019,7 @@ export default [
     must_mention: 'ablup11：两档终止判定',
   },
   {
-    desc: 'M9846 ablup11：Lv0 欲情点数梯子字面值',
+    desc: 'M9910 ablup11：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'let a = [5, 50, 1000, 5000, 12000, 20000, 30000, 50000, 80000, 150000][lv];',
     replace:
@@ -6028,7 +6028,7 @@ export default [
     must_mention: 'ablup11：Lv0 梯子字面值',
   },
   {
-    desc: 'M9847 ablup11：看重贞操倍率',
+    desc: 'M9911 ablup11：看重贞操倍率',
     file: 'ere/system/train/ablup.js',
     find: 'a = times(a, 1.5); // 看重贞操 :144-146',
     replace: 'a = times(a, 1.6); // 看重贞操 :144-146',
@@ -6036,7 +6036,7 @@ export default [
     must_mention: '看重贞操',
   },
   {
-    desc: 'M9848 ablup11：Lv4→5 异常经验门槛值',
+    desc: 'M9912 ablup11：Lv4→5 异常经验门槛值',
     file: 'ere/system/train/ablup.js',
     find: '    if (lv === 4 && anomaly_exempt11) e = 1;',
     replace: '    if (lv === 4 && anomaly_exempt11) e = 2;',
@@ -6044,7 +6044,7 @@ export default [
     must_mention: '异常经验门槛（E=1）可被开放跳过',
   },
   {
-    desc: 'M9849 ablup11：手写状态文案 bit2 误加尾随空格',
+    desc: 'M9913 ablup11：手写状态文案 bit2 误加尾随空格',
     file: 'ere/system/train/ablup.js',
     find: "    if (bits & 2) text += '经验不足'; // :46-47（无尾随空格）",
     replace: "    if (bits & 2) text += '经验不足 '; // :46-47（无尾随空格）",
@@ -6052,7 +6052,7 @@ export default [
     must_mention: '手写状态文案（点数不足带尾随空格）',
   },
   {
-    desc: 'M9850 ablup11：成功购买写入等级改为 +2',
+    desc: 'M9914 ablup11：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
     find: '      const new_lv = (chara(cid).system.欲望 += 1); // :63',
     replace: '      const new_lv = (chara(cid).system.欲望 += 2); // :63',
@@ -6060,7 +6060,7 @@ export default [
     must_mention: '写入 chara(cid).system.欲望',
   },
   {
-    desc: 'M9851 ablup12：已达最高级门槛越界值',
+    desc: 'M9915 ablup12：已达最高级门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl12() >= 10) {
     await era.printAndWait('已达最高级'); // :14-16`,
@@ -6070,7 +6070,7 @@ export default [
     must_mention: '已达最高级；技巧+话术组合上限',
   },
   {
-    desc: 'M9852 ablup12：技巧+话术组合上限越界值',
+    desc: 'M9916 ablup12：技巧+话术组合上限越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl12() + abl15() >= 15) {
     const juel7_gate = era.get(\`juel:\${cid}:7\`) || 0;
@@ -6082,7 +6082,7 @@ export default [
     must_mention: '技巧+话术组合上限单行',
   },
   {
-    desc: 'M9853 ablup12：Lv0 习得点数梯子字面值',
+    desc: 'M9917 ablup12：Lv0 习得点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'let a = [1, 25, 200, 3000, 8000, 12000, 16000, 22000, 28000, 35000][lv];',
     replace:
@@ -6091,7 +6091,7 @@ export default [
     must_mention: '不显示金钱提示、不检查 bit2/bit4',
   },
   {
-    desc: 'M9854 ablup12：自我训练金钱不足门槛值',
+    desc: 'M9918 ablup12：自我训练金钱不足门槛值',
     file: 'ere/system/train/ablup.js',
     find: '    if (self_training && money < 5000) i |= 4; // :195-196',
     replace: '    if (self_training && money < 4000) i |= 4; // :195-196',
@@ -6099,7 +6099,7 @@ export default [
     must_mention: 'bit2+bit4 无分隔符粘连',
   },
   {
-    desc: 'M9855 ablup12：自我训练 bit2 错位判定阈值',
+    desc: 'M9919 ablup12：自我训练 bit2 错位判定阈值',
     file: 'ere/system/train/ablup.js',
     find: '    if (self_training && master_abl12 > flag30 + 1) i |= 2; // :197-198（文案错位，见文件头）',
     replace:
@@ -6108,7 +6108,7 @@ export default [
     must_mention: 'bit2 用"经验不足"文案显示 ABL:MASTER:12',
   },
   {
-    desc: 'M9856 ablup12：自我训练金钱扣款额',
+    desc: 'M9920 ablup12：自我训练金钱扣款额',
     file: 'ere/system/train/ablup.js',
     find: '        era_flag.money -= 5000; // :63-65',
     replace: '        era_flag.money -= 4000; // :63-65',
@@ -6116,7 +6116,7 @@ export default [
     must_mention: '各 5000',
   },
   {
-    desc: 'M9857 ablup12：手写状态文案 bit4 制表符丢失',
+    desc: 'M9921 ablup12：手写状态文案 bit4 制表符丢失',
     file: 'ere/system/train/ablup.js',
     find: "    if (bits & 4) text += '金钱不足\\t'; // :45-46（尾随制表符，原文如此）",
     replace:
@@ -6125,7 +6125,7 @@ export default [
     must_mention: 'bit2+bit4 无分隔符粘连',
   },
   {
-    desc: 'M9858 ablup13：Lv5 侍奉精神门槛越界值',
+    desc: 'M9922 ablup13：Lv5 侍奉精神门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: '  if ((abl13() >= 5 && abl16() < 5) || abl13() >= 10) {',
     replace: '  if ((abl13() >= 5 && abl16() <= 5) || abl13() >= 10) {',
@@ -6133,7 +6133,7 @@ export default [
     must_mention: 'Lv5 靠侍奉精神越过上限',
   },
   {
-    desc: 'M9859 ablup13：Lv0 习得点数梯子字面值',
+    desc: 'M9923 ablup13：Lv0 习得点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'let a = [5, 400, 1000, 3000, 6000, 9000, 12000, 16000, 20000, 25000][lv];',
     replace:
@@ -6142,7 +6142,7 @@ export default [
     must_mention: '成功购买写入 abl:cid:13',
   },
   {
-    desc: 'M9860 ablup13：组合上限突破价系数',
+    desc: 'M9924 ablup13：组合上限突破价系数',
     file: 'ere/system/train/ablup.js',
     find: `    if (lv + abl14() >= 10) {
       const temp = Math.max(lv, abl14());
@@ -6156,7 +6156,7 @@ export default [
     must_mention: 'TEMP²×500，侍奉精神分级折扣仍在其后叠加',
   },
   {
-    desc: 'M9861 ablup13：侍奉精神分级折扣第二档倍率',
+    desc: 'M9925 ablup13：侍奉精神分级折扣第二档倍率',
     file: 'ere/system/train/ablup.js',
     find: `    else if (abl16() < 6) a = times(a, 0.95);
     else if (abl16() < 8) a = times(a, 0.9);`,
@@ -6166,7 +6166,7 @@ export default [
     must_mention: 'TEMP²×500，侍奉精神分级折扣仍在其后叠加',
   },
   {
-    desc: 'M9862 ablup13：成功购买写入等级改为 +2',
+    desc: 'M9926 ablup13：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
     find: '      const new_lv = era.add(`abl:${cid}:13`, 1); // :63',
     replace: '      const new_lv = era.add(`abl:${cid}:13`, 2); // :63',
@@ -6174,7 +6174,7 @@ export default [
     must_mention: '同域直接 era.add',
   },
   {
-    desc: 'M9863 ablup13：Lv5 起门槛提示文案等级偏移',
+    desc: 'M9927 ablup13：Lv5 起门槛提示文案等级偏移',
     file: 'ere/system/train/ablup.js',
     find: "      era.print(`${era.get('ablname:16')}LV${lv + 1}以上(现在LV${abl16()})且`); // :45-46",
     replace:
@@ -6183,7 +6183,7 @@ export default [
     must_mention: 'Lv5 前后切换门槛提示文案',
   },
   {
-    desc: 'M9864 ablup14：已达最高级门槛越界值',
+    desc: 'M9928 ablup14：已达最高级门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl14() >= 10) {
     await era.printAndWait('已达最高级'); // :18-19`,
@@ -6193,7 +6193,7 @@ export default [
     must_mention: '已达最高级；组合上限溢出两行提示',
   },
   {
-    desc: 'M9865 ablup14：Lv0 习得点数梯子字面值',
+    desc: 'M9929 ablup14：Lv0 习得点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'if (lv === 0) [a, b] = [1, 3];',
     replace: 'if (lv === 0) [a, b] = [2, 3];',
@@ -6201,7 +6201,7 @@ export default [
     must_mention: 'EXP 门槛行前导 6 个半角空格',
   },
   {
-    desc: 'M9866 ablup14：技巧门槛误比较 ABL:12 被"修正"为 ABL:14',
+    desc: 'M9930 ablup14：技巧门槛误比较 ABL:12 被"修正"为 ABL:14',
     file: 'ere/system/train/ablup.js',
     find: '    if (abl12() < 5 && abl12() < lv + 1) i |= 4; // :256-258',
     replace: '    if (abl14() < 5 && abl12() < lv + 1) i |= 4; // :256-258',
@@ -6209,7 +6209,7 @@ export default [
     must_mention: 'DECIDE 的技巧门槛误比较 ABL:12<5',
   },
   {
-    desc: 'M9867 ablup14：EXP 门槛行前导空格丢失一格',
+    desc: 'M9931 ablup14：EXP 门槛行前导空格丢失一格',
     file: 'ere/system/train/ablup.js',
     find: "era.print(`      ${era.get('expname:5')}　${exp5}/${b}`); // :50",
     replace: "era.print(`     ${era.get('expname:5')}　${exp5}/${b}`); // :50",
@@ -6217,7 +6217,7 @@ export default [
     must_mention: 'EXP 门槛行前导 6 个半角空格',
   },
   {
-    desc: 'M9868 ablup14：成功购买写入等级改为 +2',
+    desc: 'M9932 ablup14：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
     find: '      const new_lv = era.add(`abl:${cid}:14`, 1); // :64',
     replace: '      const new_lv = era.add(`abl:${cid}:14`, 2); // :64',
@@ -6225,7 +6225,7 @@ export default [
     must_mention: '写入 abl:cid:14',
   },
   {
-    desc: 'M9869 ablup14：性交中毒第二档折扣倍率',
+    desc: 'M9933 ablup14：性交中毒第二档折扣倍率',
     file: 'ere/system/train/ablup.js',
     find: `    } else if (abl30() < 6) {
       a = times(a, 0.95);
@@ -6239,7 +6239,7 @@ export default [
     must_mention: '性交中毒(ABL:30)分级折扣',
   },
   {
-    desc: 'M9870 ablup15：已达最高级门槛越界值',
+    desc: 'M9934 ablup15：已达最高级门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl15() >= 10) {
     await era.printAndWait('已达最高级'); // :16-17`,
@@ -6249,7 +6249,7 @@ export default [
     must_mention: '已达最高级；技巧+话术组合上限单行',
   },
   {
-    desc: 'M9871 ablup15：技巧+话术组合上限越界值',
+    desc: 'M9935 ablup15：技巧+话术组合上限越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl12() + abl15() >= 15) {
     const juel7_gate = era.get(\`juel:\${cid}:7\`) || 0;
@@ -6261,7 +6261,7 @@ export default [
     must_mention: '技巧+话术组合上限单行',
   },
   {
-    desc: 'M9872 ablup15：Lv0 习得点数梯子字面值',
+    desc: 'M9936 ablup15：Lv0 习得点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'if (lv === 0) [a, b, c] = [1, 3, 5];',
     replace: 'if (lv === 0) [a, b, c] = [2, 3, 5];',
@@ -6269,7 +6269,7 @@ export default [
     must_mention: 'ablup15：Lv0 梯子字面值',
   },
   {
-    desc: 'M9873 ablup15：bit2 由 AND 误改为 OR',
+    desc: 'M9937 ablup15：bit2 由 AND 误改为 OR',
     file: 'ere/system/train/ablup.js',
     find: '    if (exp73 < b && exp74 < c) i |= 2; // :296-298（任一经验达标即可免）',
     replace:
@@ -6278,7 +6278,7 @@ export default [
     must_mention: 'bit2 需要两条经验轨道同时不足才命中',
   },
   {
-    desc: 'M9874 ablup15：EXP 行字面量" or"丢失',
+    desc: 'M9938 ablup15：EXP 行字面量" or"丢失',
     file: 'ere/system/train/ablup.js',
     find: "era.print(`      ${era.get('expname:73')}　${exp73}/${b} or`); // :45",
     replace:
@@ -6287,7 +6287,7 @@ export default [
     must_mention: 'EXP 行字面量" or"仅出现在第一行',
   },
   {
-    desc: 'M9875 ablup15：成功购买写入等级改为 +2',
+    desc: 'M9939 ablup15：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
     find: '      const new_lv = era.add(`abl:${cid}:15`, 1); // :60',
     replace: '      const new_lv = era.add(`abl:${cid}:15`, 2); // :60',
@@ -6295,7 +6295,7 @@ export default [
     must_mention: '写入 abl:cid:15',
   },
   {
-    desc: 'M9876 ablup16：入口把关 OR 误改为 AND',
+    desc: 'M9940 ablup16：入口把关 OR 误改为 AND',
     file: 'ere/system/train/ablup.js',
     find: '    (talent(63) === 0 || talent(85) === 0 || talent(86) === 0)\n  ) {',
     replace:
@@ -6304,7 +6304,7 @@ export default [
     must_mention: '入口把关用 OR',
   },
   {
-    desc: 'M9877 ablup16：Lv0 屈服点数梯子字面值',
+    desc: 'M9941 ablup16：Lv0 屈服点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'if (lv === 0) [a, b, c, d, e] = [100, 20, 100, 1, 1];',
     replace: 'if (lv === 0) [a, b, c, d, e] = [101, 20, 100, 1, 1];',
@@ -6312,7 +6312,7 @@ export default [
     must_mention: 'ablup16：Lv0 梯子字面值',
   },
   {
-    desc: 'M9878 ablup16：习得轨道固定分母丢失',
+    desc: 'M9942 ablup16：习得轨道固定分母丢失',
     file: 'ere/system/train/ablup.js',
     find: "era.print(`　　　${era.get('expname:2')}　${exp2}/1`); // :77（分母固定为 1，非变量）",
     replace:
@@ -6321,7 +6321,7 @@ export default [
     must_mention: '固定阈值 1',
   },
   {
-    desc: 'M9879 ablup16：顺从门槛比较改为 <=',
+    desc: 'M9943 ablup16：顺从门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
     find: '    if (abl10() < lv + 1) {\n      // 顺从门槛，三条轨道同时命中（:515-520）',
     replace:
@@ -6330,7 +6330,7 @@ export default [
     must_mention: 'Lv0 梯子字面值，三个选项皆渲染',
   },
   {
-    desc: 'M9880 ablup16：成功购买写入等级改为 +2',
+    desc: 'M9944 ablup16：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
     find: '      const new_lv = (chara(cid).system.侍奉精神 += 1); // :103',
     replace: '      const new_lv = (chara(cid).system.侍奉精神 += 2); // :103',
@@ -6338,7 +6338,7 @@ export default [
     must_mention: '写入 chara(cid).system.侍奉精神',
   },
   {
-    desc: 'M9881 ablup17：已达最高级门槛越界值',
+    desc: 'M9945 ablup17：已达最高级门槛越界值',
     file: 'ere/system/train/ablup.js',
     find: `  if (abl17() >= 10) {
     await era.printAndWait('已达最高级'); // :19-21`,
@@ -6348,7 +6348,7 @@ export default [
     must_mention: '两档终止判定，四项豁免素质任一命中即可越过 Lv5',
   },
   {
-    desc: 'M9882 ablup17：四项豁免素质最后一项 AND 误改为 OR',
+    desc: 'M9946 ablup17：四项豁免素质最后一项 AND 误改为 OR',
     file: 'ere/system/train/ablup.js',
     find: `    talent(28) === 0 &&
     talent(89) === 0
@@ -6360,7 +6360,7 @@ export default [
     must_mention: '四项豁免素质任一命中即可越过 Lv5',
   },
   {
-    desc: 'M9883 ablup17：Lv0 耻情点数梯子字面值',
+    desc: 'M9947 ablup17：Lv0 耻情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
     find: 'let a = [100, 1000, 3000, 6000, 12000, 25000, 50000, 80000, 120000, 150000][\n      lv\n    ];',
     replace:
@@ -6369,7 +6369,7 @@ export default [
     must_mention: '无[爱慕]时门槛查欲望',
   },
   {
-    desc: 'M9884 ablup17：爱慕分支渲染条件判定值改错',
+    desc: 'M9948 ablup17：爱慕分支渲染条件判定值改错',
     file: 'ere/system/train/ablup.js',
     find: `    if (talent(85) === 0) {
       era.print(\`\${era.get('ablname:11')}LV\${lv + 1}以上(现在LV\${abl11()})且\`); // :41-42
@@ -6381,7 +6381,7 @@ export default [
     must_mention: '无[爱慕]时门槛查欲望，有[爱慕]时改查顺从',
   },
   {
-    desc: 'M9885 ablup17：重试文案句号丢失',
+    desc: 'M9949 ablup17：重试文案句号丢失',
     file: 'ere/system/train/ablup.js',
     find: "      era.print('未满足条件。'); // :68-69（唯一带句号）",
     replace: "      era.print('未满足条件'); // :68-69（唯一带句号）",
@@ -6389,7 +6389,7 @@ export default [
     must_mention: '唯一带句号的重试文案',
   },
   {
-    desc: 'M9886 ablup17：成功购买写入等级改为 +2',
+    desc: 'M9950 ablup17：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
     find: '      const new_lv = (chara(cid).system.露出癖 += 1); // :75',
     replace: '      const new_lv = (chara(cid).system.露出癖 += 2); // :75',
@@ -6397,7 +6397,7 @@ export default [
     must_mention: '写入 chara(cid).system.露出癖',
   },
   {
-    desc: 'M9887 ablup17：死代码 C 变量改为非零，唤醒不可达分支',
+    desc: 'M9951 ablup17：死代码 C 变量改为非零，唤醒不可达分支',
     file: 'ere/system/train/ablup.js',
     find: `    const c = 0;
     const d = 0;`,
