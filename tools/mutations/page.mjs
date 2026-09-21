@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 227; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 245; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -14,6 +14,10 @@ export const COUNT = 227; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // 剧情 5 档收尾行）
 // #494 起 +1（M10125，page-campaign.js：招募分支把 char_make_inport 注入
 // rand_chara_make，源 CHAR_MAKE.ERB:57 在开局与战役两条路径上都会跑）
+// #502 起 +18（M10726-M10743，page-invasion.js：MEDAL_BONUS
+// 十一档与提示、SENGEN_VIDEO 的定宽/守卫/入账/成败判据与 [2][3][4] 三档的
+// 金额与封顶、SENGEN_VIDEO_BONUS 的两档随机序列与系数；M10742/M10743 是
+// 「十处自查」发现的上界缺口补钉）
 
 export default [
   {
@@ -1812,13 +1816,13 @@ export default [
     must_mention: '[999] 返回 0',
   },
   {
-    desc: 'M9716 [1000] SENGEN_VIDEO 存根登记名改坏（INVASION.ERB:90-92）',
+    desc: 'M9716 [1000] SENGEN_VIDEO 调用丢失（#502 起真身，调用点改打）',
     file: 'ere/page/page-invasion.js',
-    find: "stub_line_wait('SENGEN_VIDEO', '水晶球投放/流行度', '待认领');",
-    replace:
-      "stub_line_wait('CRYSTAL_BALL', '水晶球投放/流行度', '待认领'); // 变异：登记名改坏",
+    find: `      await sengen_video();
+      return 0;`,
+    replace: `      return 0; // 变异：SENGEN_VIDEO 调用丢失`,
     tests: ['page-invasion'],
-    must_mention: '[1000] 转发到 SENGEN_VIDEO 存根',
+    must_mention: '[1000] 转发到 SENGEN_VIDEO 真身（#502）',
   },
   {
     desc: 'M9717 [9] CAMPAIGN_MENU 调用丢失（INVASION.ERB:97-99）',
@@ -1832,8 +1836,10 @@ export default [
   {
     desc: 'M9718 [4] ARCANA_FORT 的分派条件改坏（result === 4 → 8，INVASION.ERB:125-131）',
     file: 'ere/page/page-invasion.js',
-    find: '    if (result === 4) {',
-    replace: '    if (result === 8) { // 变异：分派条件改坏',
+    find: `    if (result === 4) {
+      // :125-131 CALL ARCANA_FORT`,
+    replace: `    if (result === 8) { // 变异：分派条件改坏
+      // :125-131 CALL ARCANA_FORT`,
     tests: ['page-invasion'],
     must_mention: '[4] 转发到 ARCANA_FORT 真身',
   },
@@ -1911,9 +1917,9 @@ export default [
   {
     desc: 'M9727 水晶球按钮分子分母颠倒（返工#2 P4，INVASION.ERB:83）',
     file: 'ere/page/page-invasion.js',
-    find: "`向城里投放水晶球[${era.get('exflag:9011') || 0}/${era.get('exflag:9010') || 0}]`,",
+    find: '`向城里投放水晶球[${era_exflag.crystal_ball_deployed}/${era_exflag.crystal_ball_stock}]`,',
     replace:
-      "`向城里投放水晶球[${era.get('exflag:9010') || 0}/${era.get('exflag:9011') || 0}]`, // 变异：分子分母颠倒",
+      '`向城里投放水晶球[${era_exflag.crystal_ball_stock}/${era_exflag.crystal_ball_deployed}]`, // 变异：分子分母颠倒',
     tests: ['page-invasion'],
     must_mention: '分子分母取自 exflag:9011/9010',
   },
@@ -2198,5 +2204,159 @@ export default [
     replace: "getbit(v5, 0) ? '禁止' : '许可'",
     tests: ['page-config'],
     must_mention: '首屏渲染 page 0',
+  },
+  // —— #502：MEDAL_BONUS 与 SENGEN_VIDEO 族（INVASION.ERB:1026-1266）——
+  {
+    desc: 'M10726 勋章首档阈值 5 改 4（6 枚落 100 档的边界被吃掉，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '  { over: 5, bonus: 101 },',
+    replace: '  { over: 4, bonus: 101 }, // 变异：阈值挪一格',
+    tests: ['page-invasion'],
+    must_mention: 'MEDAL_BONUS 档位',
+  },
+  {
+    desc: 'M10727 勋章最高档数值 160 改 150（501 枚的补正少一档，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '  { over: 500, bonus: 160 },',
+    replace: '  { over: 500, bonus: 150 }, // 变异：数值改坏',
+    tests: ['page-invasion'],
+    must_mention: 'MEDAL_BONUS 档位',
+  },
+  {
+    desc: 'M10728 勋章分档判据方向改坏（medals > over 改 >=，档界整体下移一档，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '  const tier = MEDAL_TIERS.find((t) => medals > t.over);',
+    replace: '  const tier = MEDAL_TIERS.find((t) => medals >= t.over);',
+    tests: ['page-invasion'],
+    must_mention: 'MEDAL_BONUS 档位',
+  },
+  {
+    desc: 'M10729 勋章补正提示不打印（PRINTFORMW 整支删除，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: `  era.print(
+    chara_nickname(cid) + '的勋章补正　x' + (tier.bonus / 100).toFixed(2),
+  );`,
+    replace: '  // 变异：补正提示不打印',
+    tests: ['page-invasion'],
+    must_mention: 'MEDAL_BONUS 提示',
+  },
+  {
+    desc: 'M10730 {值,N} 定宽少一列（padStart(width) 改 width - 1，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '  return String(value).padStart(width);',
+    replace: '  return String(value).padStart(width - 1); // 变异：宽度少一列',
+    tests: ['page-invasion'],
+    must_mention: '顶栏：库存 7-3=4、已投放 3 各补到 3 位',
+  },
+  {
+    desc: 'M10731 无库存守卫反向（!== 999 改 === 999：无库存时反而放行未知输入、[999] 被吃掉，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (stock === 0 && result !== 999) {',
+    replace: '    if (stock === 0 && result === 999) { // 变异：守卫反向',
+    tests: ['page-invasion'],
+    must_mention: '预置输入已耗尽',
+  },
+  {
+    desc: 'M10732 投放数量的入账改坏（9011 += count 改 += 1，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '      era_exflag.crystal_ball_deployed += count; // :1109 EX_FLAG:9011 += RESULT',
+    replace: '      era_exflag.crystal_ball_deployed += 1; // 变异：只记 1 部',
+    tests: ['page-invasion'],
+    must_mention: ':1109 EX_FLAG:9011 += RESULT',
+  },
+  {
+    desc: 'M10733 加成后的数漏写流行度（9012 += placed 整行删除，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '        era_exflag.crystal_ball_popularity += placed; // :1113',
+    replace: '        // 变异：流行度不累加',
+    tests: ['page-invasion'],
+    must_mention: ':1113 EX_FLAG:9012 += 加成后的 RESULT',
+  },
+  {
+    desc: 'M10734 投放成败判据放宽（placed >= 1 改 >= 0：0 部也算成功，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: `      if (placed >= 1) {
+        // :1111-1114`,
+    replace: `      if (placed >= 0) {
+        // :1111-1114`,
+    tests: ['page-invasion'],
+    must_mention: '加成为 0 走失败支',
+  },
+  {
+    desc: 'M10735 加成模式判据反向（mode !== 0 改 === 0：#502 两档的随机序列互换）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (mode !== 0) {',
+    replace: '  if (mode === 0) { // 变异：模式判据反向',
+    tests: ['page-invasion'],
+    must_mention: '随机序列耗尽或越界',
+  },
+  {
+    desc: 'M10736 缩水系数改坏（times(placed, 0.8) 改 0.2，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (rand(3) === 0) placed = times(placed, 0.8);',
+    replace:
+      '  if (rand(3) === 0) placed = times(placed, 0.2); // 变异：系数改坏',
+    tests: ['page-invasion'],
+    must_mention: 'MODE 0 的缩水系数：10 × 0.80 = 8',
+  },
+  {
+    desc: 'M10737 缩水的骰点判据改坏（rand(3) === 0 改 === 1，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (rand(3) === 0) placed = times(placed, 0.8);',
+    replace:
+      '  if (rand(3) === 1) placed = times(placed, 0.8); // 变异：骰点判据改坏',
+    tests: ['page-invasion'],
+    must_mention: ':1113 EX_FLAG:9012 += 加成后的 RESULT',
+  },
+  {
+    desc: 'M10738 增强效果的封顶改坏（M*2 改 M*3，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '      if (grown > before * 2) grown = before * 2; // :1195-1196',
+    replace:
+      '      if (grown > before * 3) grown = before * 3; // 变异：封顶放宽',
+    tests: ['page-invasion'],
+    must_mention: ':1195-1196 封顶 M*2',
+  },
+  {
+    desc: 'M10739 延长时长的保底删除（(9013 - M) < 1 → M + 1 整支删掉，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '      if (grown - before < 1) grown = before + 1; // :1226-1227',
+    replace: '      // 变异：保底删除',
+    tests: ['page-invasion'],
+    must_mention: ':1226-1227 保底 +1',
+  },
+  {
+    desc: 'M10740 奸商的犒赏扣款倍率改坏（M*5000 改 M*500，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '            era_flag.money -= base * 5000; // :1151 MONEY -= (M * 5000)',
+    replace: '            era_flag.money -= base * 500; // 变异：少扣一个零',
+    tests: ['page-invasion'],
+    must_mention: ':1151 MONEY -= M*5000',
+  },
+  {
+    desc: 'M10741 增强效果的支付金额改坏（50000 改 5000，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '          era_flag.money -= 50000; // :1179',
+    replace: '          era_flag.money -= 5000; // 变异：支付金额改坏',
+    tests: ['page-invasion'],
+    must_mention: ':1179 MONEY -= 50000',
+  },
+  {
+    desc: 'M10742 增强段第一枚骰子的上界改坏（RAND:5 改 RAND:10，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '      if (rand(5) === 0) grown = times(grown, 1.6); // :1191-1192',
+    replace:
+      '      if (rand(10) === 0) grown = times(grown, 1.6); // 变异：上界改坏',
+    tests: ['page-invasion'],
+    must_mention: '增强段的两枚骰子：先是 RAND:5',
+  },
+  {
+    desc: 'M10743 延长段第一枚骰子的上界改坏（RAND:5 改 RAND:4，#502）',
+    file: 'ere/page/page-invasion.js',
+    find: '      if (rand(5) === 0) grown = times(grown, 1.6); // :1220-1221',
+    replace:
+      '      if (rand(4) === 0) grown = times(grown, 1.6); // 变异：上界改坏',
+    tests: ['page-invasion'],
+    must_mention: '延长段的两枚骰子与增强段同款',
   },
 ];

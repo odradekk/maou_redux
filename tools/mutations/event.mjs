@@ -3,9 +3,11 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 341; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+export const COUNT = 345; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
-// 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）
+// 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）；
+// #502 起 +4（M10744-M10747，SENGEN_VIDEO_DE 的骰点与两段清零、EVENT_TURNEND
+// 的宣言数真读）
 
 export default [
   {
@@ -3159,5 +3161,40 @@ export default [
     replace: 'chara(0).train.初吻对象 = 1; // :784',
     tests: ['event-first'],
     must_mention: '问答选 0 后与原作开局值逐项一致',
+  },
+  // —— #502：SENGEN_VIDEO_DE（侵略/INVASION.ERB:1269-1281）与宣言数真读 ——
+  {
+    desc: 'M10744 流行度的骰子判定恒真（SIF RAND:3 改 if (true)，#502）',
+    file: 'ere/event/event-nextday.js',
+    find: '  if (rand(3)) {',
+    replace: '  if (true) { // 变异：骰子恒真',
+    tests: ['event-nextday'],
+    must_mention: 'RAND:3 的上界',
+  },
+  {
+    desc: 'M10745 过时倒计时的清零条件改坏（<= 0 改 <= -1，#502）',
+    file: 'ere/event/event-nextday.js',
+    find: '  if (era_exflag.crystal_ball_expire <= 0) {',
+    replace:
+      '  if (era_exflag.crystal_ball_expire <= -1) { // 变异：清零条件改坏',
+    tests: ['event-nextday'],
+    must_mention: '9013 落到 0 → 两段清零',
+  },
+  {
+    desc: 'M10746 流行度的清零条件改坏（<= 0 改 === 0，负值不再清零，#502）',
+    file: 'ere/event/event-nextday.js',
+    find: '  if (era_exflag.crystal_ball_popularity <= 0) {',
+    replace:
+      '  if (era_exflag.crystal_ball_popularity === 0) { // 变异：负值漏过',
+    tests: ['event-nextday'],
+    must_mention: '9012 落到 -1 → 第二段清零',
+  },
+  {
+    desc: 'M10747 宣言数退回硬编码 0（EX_FLAG:9012 真读删除，#502）',
+    file: 'ere/event/event-turnend.js',
+    find: '      const ex_flag_9012 = era_exflag.crystal_ball_popularity;',
+    replace: '      const ex_flag_9012 = 0; // 变异：退回硬编码',
+    tests: ['event-turnend'],
+    must_mention: '流行度 6 → 当日衰减为 5',
   },
 ];
