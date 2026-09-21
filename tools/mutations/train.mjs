@@ -8677,9 +8677,9 @@ export default [
   {
     desc: 'M10420 ablup22：男人判定反转（TALENT:122 误判为非男人才返回）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(122)) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）',
+    find: '  if (talent(122)) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine(); // :12\n\n  if (\n    abl22() >= 5 &&',
     replace:
-      '  if (talent(122) === 0) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）',
+      '  if (talent(122) === 0) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine(); // :12\n\n  if (\n    abl22() >= 5 &&',
     tests: ['ablup'],
     must_mention: '男人（TALENT:122）在 DRAWLINE 前直接返回',
   },
@@ -9132,9 +9132,9 @@ export default [
   {
     desc: 'M10470 ablup33：男人判定反转',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(122)) return; // :13-15 男人直接返回（DRAWLINE 之前，无输出）',
+    find: '  if (talent(122)) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine(); // :12\n\n  if (\n    abl33() >= 5 &&',
     replace:
-      '  if (talent(122) === 0) return; // :13-15 男人直接返回（DRAWLINE 之前，无输出）',
+      '  if (talent(122) === 0) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine(); // :12\n\n  if (\n    abl33() >= 5 &&',
     tests: ['ablup'],
     must_mention: '男人直接返回',
   },
@@ -9187,9 +9187,9 @@ export default [
   {
     desc: 'M10476 ablup33：保守的 ×1.50 误改为 ×1.20（混用 ABLUP22/23 的系数）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(24)) {\n      // 保守的 :209-214（×1.50，非 ABLUP22/23 的 ×1.20）\n      a = times(a, 1.5);\n      b = times(b, 1.5);\n      c = times(c, 1.5);\n    }',
+    find: '    if (talent(24)) {\n      // 保守的 :217-221（×1.50，非 ABLUP22/23 的 ×1.20）\n      a = times(a, 1.5);\n      b = times(b, 1.5);\n      c = times(c, 1.5);\n    }',
     replace:
-      '    if (talent(24)) {\n      // 保守的 :209-214（×1.50，非 ABLUP22/23 的 ×1.20）\n      a = times(a, 1.2);\n      b = times(b, 1.2);\n      c = times(c, 1.2);\n    }',
+      '    if (talent(24)) {\n      // 保守的 :217-221（×1.50，非 ABLUP22/23 的 ×1.20）\n      a = times(a, 1.2);\n      b = times(b, 1.2);\n      c = times(c, 1.2);\n    }',
     tests: ['ablup'],
     must_mention:
       'ablup33：Lv0 梯子字面值；欲情/屈服需求同为 A；百合气质门槛；输入白名单无 [1]',
@@ -9197,9 +9197,9 @@ export default [
   {
     desc: 'M10477 ablup33：男人婆 ×2.00 丢失（改为 ×1.0）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(79)) {\n      // 男人婆 :281-286（×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n    }',
+    find: '    if (talent(79)) {\n      // 男人婆 :297-301（×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n    }',
     replace:
-      '    if (talent(79)) {\n      // 男人婆 :281-286（×2.00）\n      a = times(a, 1.0);\n      b = times(b, 1.0);\n      c = times(c, 1.0);\n    }',
+      '    if (talent(79)) {\n      // 男人婆 :297-301（×2.00）\n      a = times(a, 1.0);\n      b = times(b, 1.0);\n      c = times(c, 1.0);\n    }',
     tests: ['ablup'],
     must_mention: '阴核点数×0/10000 ……点数不足 经验不足 ',
   },
@@ -9216,9 +9216,9 @@ export default [
   {
     desc: 'M10479 ablup33：成功购买漏扣屈服点数（三项同扣破坏）',
     file: 'ere/system/train/ablup.js',
-    find: '      era.add(`juel:${cid}:0`, -b); // :78-80\n      era.add(`juel:${cid}:5`, -a);\n      era.add(`juel:${cid}:6`, -a);',
+    find: '      era.add(`juel:${cid}:0`, -b); // :79-81\n      era.add(`juel:${cid}:5`, -a);\n      era.add(`juel:${cid}:6`, -a);',
     replace:
-      '      era.add(`juel:${cid}:0`, -b); // :78-80\n      era.add(`juel:${cid}:5`, -a);',
+      '      era.add(`juel:${cid}:0`, -b); // :79-81\n      era.add(`juel:${cid}:5`, -a);',
     tests: ['ablup'],
     must_mention: '成功购买扣三项珠',
   },
@@ -9520,24 +9520,24 @@ export default [
   {
     desc: 'M10560 ablup33：不怕污臭的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 不怕污臭 :238-242（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 不怕污臭 :238-242（×0.95）\n      a = times(a, 0.9);',
+    find: '      // 不怕污臭 :248-252（×0.95）\n      a = times(a, 0.95);',
+    replace: '      // 不怕污臭 :248-252（×0.95）\n      a = times(a, 0.9);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10561 ablup33：不怕脏的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 不怕脏 :248-252（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 不怕脏 :248-252（×0.95）\n      a = times(a, 0.9);',
+    find: '      // 不怕脏 :260-264（×0.95）\n      a = times(a, 0.95);',
+    replace: '      // 不怕脏 :260-264（×0.95）\n      a = times(a, 0.9);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10562 ablup33：小恶魔的 ×0.90 误改为 ×0.95',
     file: 'ere/system/train/ablup.js',
-    find: '      // 小恶魔 :305-310（×0.90）\n      a = times(a, 0.9);',
-    replace: '      // 小恶魔 :305-310（×0.90）\n      a = times(a, 0.95);',
+    find: '      // 小恶魔 :322-326（×0.90）\n      a = times(a, 0.9);',
+    replace: '      // 小恶魔 :322-326（×0.90）\n      a = times(a, 0.95);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
