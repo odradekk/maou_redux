@@ -3,11 +3,10 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 200; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
-// #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
-// #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
-// 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
-// 水晶球分子分母）
+export const COUNT = 209; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+// #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）；
+// #468 并入 master：+19（M9709-M9727，post_conquest_menu() 菜单渲染与派发，
+// 返工第一轮再 +5）；#463 起 +9（M10200-M10208，page-config.js 全量新增）
 
 export default [
   {
@@ -1911,5 +1910,78 @@ export default [
       "`向城里投放水晶球[${era.get('exflag:9010') || 0}/${era.get('exflag:9011') || 0}]`, // 变异：分子分母颠倒",
     tests: ['page-invasion'],
     must_mention: '分子分母取自 exflag:9011/9010',
+  },
+  {
+    desc: 'M10200 PAGE-CONFIG 处女献上后续发生方式写入错位（RESULT-1 → RESULT）',
+    file: 'ere/page/page-config.js',
+    find: 'era_flag.virgin_conceded_mode = result - 1;',
+    replace: 'era_flag.virgin_conceded_mode = result;',
+    tests: ['page-config'],
+    must_mention: 'virgin_conceded_mode = RESULT-1',
+  },
+  {
+    desc: 'M10201 PAGE-CONFIG 阴茎形态回显文案错位（巨根 → 短小）',
+    file: 'ere/page/page-config.js',
+    find: "'《巨根》',",
+    replace: "'《短小》',",
+    tests: ['page-config'],
+    must_mention: '并回显名称',
+  },
+  {
+    desc: 'M10202 PAGE-CONFIG 阴茎的状态写入值偏移（result → result+1）',
+    file: 'ere/page/page-config.js',
+    find: 'chara(0).chara.阴茎的状态 = result;',
+    replace: 'chara(0).chara.阴茎的状态 = result + 1;',
+    tests: ['page-config'],
+    must_mention: '并回显名称',
+  },
+  {
+    desc: 'M10203 PAGE-CONFIG 自动提升角色能力三态循环清位不全（漏清位 36）',
+    file: 'ere/page/page-config.js',
+    find: 'v = v - 2 ** 35 - 2 ** 36;',
+    replace: 'v = v - 2 ** 35;',
+    tests: ['page-config'],
+    must_mention: '三态循环',
+  },
+  {
+    desc: 'M10204 PAGE-CONFIG 勇者相关杂项开关位号错位（local-22 → local-23）',
+    file: 'ere/page/page-config.js',
+    find: 'local - 22,',
+    replace: 'local - 23,',
+    tests: ['page-config'],
+    must_mention: 'FLAG:8 位 0-3 独立切换',
+  },
+  {
+    desc: 'M10205 PAGE-CONFIG 翻页丢失循环（漏 % 2，页码会越过 1）',
+    file: 'ere/page/page-config.js',
+    find: 'return (page + 1) % 2;',
+    replace: 'return page + 1;',
+    tests: ['page-config'],
+    must_mention: '翻页在 0/1 间循环',
+  },
+  {
+    desc: 'M10206 PAGE-CONFIG 过滤状态摘要标签错位（爱抚 → 爱抚2）',
+    file: 'ere/page/page-config.js',
+    find: "const SHORT_LABELS = ['爱抚', '器具', '私处类', '肛门类', 'SM系'];",
+    replace:
+      "const SHORT_LABELS = ['爱抚2', '器具', '私处类', '肛门类', 'SM系'];",
+    tests: ['page-config'],
+    must_mention: '按位〇/× 摘要',
+  },
+  {
+    desc: 'M10207 PAGE-CONFIG INVERTBIT 两支写反（置位与清位互换）',
+    file: 'ere/page/page-config.js',
+    find: 'return getbit(v, n) ? v - 2 ** n : v + 2 ** n;',
+    replace: 'return getbit(v, n) ? v + 2 ** n : v - 2 ** n;',
+    tests: ['page-config'],
+    must_mention: 'INVERTBIT FLAG:5 逐位切换',
+  },
+  {
+    desc: 'M10208 PAGE-CONFIG 勇者投降后的凌辱初始状态文案写反（许可/禁止互换）',
+    file: 'ere/page/page-config.js',
+    find: "getbit(v5, 0) ? '许可' : '禁止'",
+    replace: "getbit(v5, 0) ? '禁止' : '许可'",
+    tests: ['page-config'],
+    must_mention: '首屏渲染 page 0',
   },
 ];
