@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 112;
+export const COUNT = 116;
 
 export default [
   {
@@ -1138,5 +1138,45 @@ export default [
       if (false) { // 变异：视图别名判定焊死`,
     tests: ['facade-property-check'],
     must_mention: '视图别名上的属性未被报出',
+  },
+  {
+    desc: 'M10900 存根清单过时行普查失效（GET_ADV_COM 行退回「部分实现」——行级状态守卫先红，COMF_JUMP.ERB 也会被卡回部分移植，#501）',
+    file: 'docs/stub-registry.md',
+    find: '已实现（#501 普查订正）——21 个 CASE 与 COMF_JUMP.ERB 全同',
+    replace: '部分实现（变异）——21 个 CASE 与 COMF_JUMP.ERB 全同',
+    tests: ['trace-check'],
+    test_name:
+      '存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植',
+    must_mention: '的状态格仍是未了结项',
+  },
+  {
+    desc: 'M10901 存根清单过时行普查失效（COM64 升格目标行抹掉注册点——#501 的勘误证据被删）',
+    file: 'docs/stub-registry.md',
+    find: '本体 com-assistant.js:1317 的 com64、注册点 com-assistant.js:2676 的 com_family.register(64, com64)',
+    replace: '本体 com-assistant.js:1317 的 com64',
+    tests: ['trace-check'],
+    test_name:
+      '存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植',
+    must_mention: '行必须写清 com-assistant.js:2676',
+  },
+  {
+    desc: 'M10902 存根清单过时行普查失效（@USERSHOP 行的「占位名」格退回裸壳名——行级守卫必须点名该格，#501）',
+    file: 'docs/stub-registry.md',
+    find: '| CALL INTERCEPT（:113）                                                                                                                                                                                          | （已实现，#397）',
+    replace: '| CALL INTERCEPT（:113） | INTERCEPT',
+    tests: ['trace-check'],
+    test_name:
+      '存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植',
+    must_mention: '的「占位名」格仍是壳',
+  },
+  {
+    desc: 'M10903 存根清单过时行普查失效（K 口上行的欠账点名被删——K2/K4 未注册的事实必须留在行里，#501）',
+    file: 'docs/stub-registry.md',
+    find: '17 个性格模块已注册进族（K0-K15/K19/K903/K904）；K2/K4 有本体（kojo-k2-timid.js:10327/10395',
+    replace: '17 个性格模块已注册进族（K0-K15/K19/K903/K904）',
+    tests: ['trace-check'],
+    test_name:
+      '存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植',
+    must_mention: '行必须写清 kojo-k2-timid.js:10327',
   },
 ];
