@@ -1812,7 +1812,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '815-1054',
+        ref: '815-1162',
         any: [
           /^[ \t]*@INVASION_EVENT_CHALLENGE, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I[ \t]*$/m,
         ],
@@ -1836,6 +1836,23 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '209-563',
         any: [/^[ \t]*IF INV_TYPE == 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '601',
+        any: [
+          /^[ \t]*CALL INVASION_EVENT, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '243',
+        any: [/^[ \t]*PRINTW 侵攻战斗力减少[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '277',
+        any: [/^[ \t]*PRINTW 侵攻战斗力减少[ \t]*$/m],
       },
     ],
   },
