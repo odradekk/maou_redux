@@ -1206,6 +1206,32 @@ const era_flag = {
   set exhibit_count(v) {
     era.set('flag:84', v);
   },
+  /**
+   * 处女献上后续发生方式（flag:38 ↔ FLAG:38）
+   * @returns {number}
+   */
+  get virgin_conceded_mode() {
+    return era.get('flag:38') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set virgin_conceded_mode(v) {
+    era.set('flag:38', v);
+  },
+  /**
+   * 勇者相关杂项开关（flag:8 ↔ FLAG:8）
+   * @returns {number}
+   */
+  get adventurer_flags() {
+    return era.get('flag:8') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set adventurer_flags(v) {
+    era.set('flag:8', v);
+  },
 };
 // GENERATED END
 

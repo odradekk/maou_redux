@@ -53,6 +53,7 @@ const { ability_up } = require('#/page/page-ability-up');
 const { intercept } = require('#/page/page-intercept');
 const { tailor_main } = require('#/page/page-tailor');
 const { save_game, load_game } = require('#/page/page-save-load');
+const { config_menu } = require('#/page/page-config');
 const {
   chara_info,
   chara_info_individual_wrapped,
@@ -80,14 +81,14 @@ const MAX_CHARANUM = 90;
  * 自 #398 起为真身（110 分支，page/page-shop-labo.js），ITEM_SHOP 自 #399
  * 起为真身（BOUGHT 0-53 的道具商店，page/page-item-shop.js；#395 的运行时
  * 占位随之撤），MONSTER_SHOP 自 #399 起为真身（120 分支的召唤商店，
- * page/page-monster-shop.js），均移出本名单。
+ * page/page-monster-shop.js），CONFIG 自 #463 起为真身（777 分支，
+ * page/page-config.js），均移出本名单。
  */
 const STUBBED_CALLS = [
   '批量处刑',
   'INTERCEPT',
   'ABILITY_UP',
   'TAILOR_MAIN',
-  'CONFIG',
   'LABO',
   'SHOW_FLOOR',
   'DEBUG_MENU_U',
@@ -389,8 +390,8 @@ async function usershop(result) {
     // 后 era.loadData 已整体替换数据表，回循环重绘的主菜单读新值
     await load_game();
   } else if (result === 777) {
-    // 设定（:144）
-    await stub_line_wait('CONFIG', '设定', '随设定票');
+    // 设定（:144）。#463 起为真身——CONFIG.ERB 全量移植
+    await config_menu();
   } else if (result === 888) {
     // 通信（:146）
     await maounet();

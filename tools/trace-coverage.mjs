@@ -121,7 +121,15 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 37; // 合并态实测（#464 并上含 #460 的 master）：
+export const PENDING_BASELINE = 36; // 合并态实测（#463 并上 master）：
+// SYSTEM/CONFIG.ERB 落地真身（ere/page/page-config.js，8 个函数全部移植 +
+// 追溯锚表 tools/trace-refs/page-config.mjs）使该文件从「部分移植/待移植」
+// 转「已移植」：37（master）− 1 = 36，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+// 同票范围内的 SYSTEM/SYSTEM_MODEINT.ERB 仍是「待移植」（@QUE2MK 随
+// first-setting.js 落地，另一张票的收尾）、SYSTEM ver1.0.3.ERB 仍是
+// 「部分移植」（@FIRST_SETTING 与 @MONEYSYS 残余同上），均不动本数。
+// export const PENDING_BASELINE = 37; // 合并态实测（#464 并上含 #460 的 master）：
 // 47（#460 后的 master）− 10（本票的 ABL/ABLUP0.ERB～ABLUP9.ERB 十个文件）
 // = 37，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
 // 重测而非相加；两票改动面互不重叠，巧合与算式相符。
