@@ -372,7 +372,7 @@ test('ABILITY_UP：魔王自己（输入 0）也进 CORE', async () => {
 
 // —— @ABILITY_UP_CORE ——
 
-test('ABILITY_UP_CORE：ABLUP0-4 已接上真身（issue #464），走真实判定而非占位', async () => {
+test('ABILITY_UP_CORE：已接真身的 ABLUP 全部走真实判定而非占位（#464/#465/#466）', async () => {
   const { ABLUP_HANDLERS } = create_era_fixture().load_module(
     'system/train/juel-check',
   );
@@ -383,6 +383,9 @@ test('ABILITY_UP_CORE：ABLUP0-4 已接上真身（issue #464），走真实判�
     fixture.store.set('base:1:0', 1);
     if (id === 4) {
       fixture.store.set('cstr:1:7', '舔'); // 局部感觉按钮需定制癖好名才渲染
+    }
+    if (id === 23) {
+      fixture.store.set('talent:1:122', 1); // 断背气质按钮仅男性渲染（:44-48 性别过滤）
     }
     fixture.set_inputs(id, 100, 999); // 选中能力 → 选中能力自身的 [100] 放弃 → 退出
     const { ability_up_core } = fixture.load_module('page/page-ability-up');
@@ -395,7 +398,7 @@ test('ABILITY_UP_CORE：ABLUP0-4 已接上真身（issue #464），走真实判�
   }
 });
 
-test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（剩余 21 支各回一次占位，不退出循环）', async () => {
+test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（剩余 5 个编号，ABLUP100 不可达被跳过）', async () => {
   const { ABLUP_IDS, ABLUP_HANDLERS } = create_era_fixture().load_module(
     'system/train/juel-check',
   );

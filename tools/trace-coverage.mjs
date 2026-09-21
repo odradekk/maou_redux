@@ -121,7 +121,15 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463/#481 的 master）：
+export const PENDING_BASELINE = 15; // 合并态实测（#466 并上含 #470/#469 的 master 94e2da8）：
+// master 侧的 23（#470：侵略/ARCANA_BATTLE.ERB、ARCANA_FORT.ERB、
+// INVASION_RYOUZYOKU.ERB 三个转「已移植」、GROUP_BATTLE.ERB 转「已判定不实现」，
+// 见下方旧注）− 本票的 8（ABL/ABLUP20.ERB～ABLUP23.ERB、ABLUP30.ERB～
+// ABLUP33.ERB）= 15，与 `node tools/trace-check.mjs --coverage` 的重测一致——
+// 合并时先把现役值换成 999 占位再跑，数字取自重测而非相加；两票各减各的文件，
+// 既不相加也不取一侧。同一次合并把「归因不到」从 6 顶到 12 的是存根清单解冲突
+// 过程中的中间态，落回 6，UNATTRIBUTED_BASELINE 不动。
+// export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463/#481 的 master）：
 // 再并一次 master（#481 / 3a02bbe）后重测仍是 23——#469 把 CAMPAIGN 族做进 ere/
 // 时，侵略/CAMPAIGN/CAMPAIGN_1.ERB 与 CAMPAIGN_EVENT.ERB 在本票的基线里本就已经
 // 是「部分移植」（不在待移植分子里），所以本数不动；那次合并把「归因不到」
@@ -139,6 +147,14 @@ export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463/#48
 // `node tools/trace-check.mjs --coverage` 的重测一致（数字取自重测而非
 // 相加——本票分支侧的中间值 28 是在 master 仍是 29 时按「29 − 1」测出来的，
 // master 前进后三项都在，见下方旧注）。
+// export const PENDING_BASELINE = 19; // 合并态实测（#466 并上含 #462/#463 的 master 7c3b040）：
+// 27（#463 后的 master）− 8（本票的 ABL/ABLUP20.ERB～ABLUP23.ERB、
+// ABLUP30.ERB～ABLUP33.ERB 八个文件）= 19，与
+// `node tools/trace-check.mjs --coverage` 的重测一致——合并时先把现役值换成
+// 999 占位再跑，数字取自重测而非相加（#462/#463 先落 master，沿分支上的 21
+// 提交会把两侧的成果白送回去）。开 PR 前又并了一次 master（#469，3a02bbe）：
+// 那张票把 ABLUP 之外的 2 个文件从「部分移植」翻「已移植」，**不动待移植分子**
+// （部分移植不在分母里），重测仍为 19，故不再改写数值。
 // export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#462 的 master）：
 // #465 先把基线抬到 29（37−8，ABL/ABLUP10.ERB～ABLUP17.ERB）；本票再减 2
 // （SYSTEM/CONFIG.ERB 落地真身 ere/page/page-config.js、SYSTEM/
