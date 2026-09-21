@@ -31,24 +31,27 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   preset_gamebase(fixture);
   // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
   preset_chara_0(fixture);
-  fixture.set_inputs(1, 0, 0);
+  fixture.set_inputs(1, 1, 2, 0, 0);
   const main = fixture.load_module('main');
 
   // 流程：标题画面（消费输入 1，resetData + 加入角色 0，BEGIN FIRST 信号
-  // 上抛）→ 主循环进 FIRST → emit('EVENTFIRST')：初期奴隶问答（消费输入 0
-  // 选随机，#50）、地下城模式问答（消费输入 0 选普通，#181）、真身完成
-  // 初始化、开场叙事与随机路径读键共 7 次、
-  // begin(SHOP)（事件路径，链内信号由 emit 捕获暂存）→ 主循环进入 SHOP
-  // （#23 已接入）：绘制主菜单 → era.input() 队列已空，抛「预置输入已耗尽」
-  // 上抛终止。初始化细节的逐项断言在 test/event-first.test.js，此处证主
-  // 循环的转场接驳与到站画面。
+  // 上抛）→ 主循环进 FIRST → emit('EVENTFIRST')：FIRST_SETTING 五问（#463
+  // 全量实现）——魔王性别选女性（消费输入 1，跳过肉棒尺寸一问）、狂王性别
+  // 选扶她（消费输入 2）、初期奴隶问答（消费输入 0 选随机，#50）、地下城
+  // 模式问答（消费输入 0 选普通，#181）、真身完成初始化、开场叙事与随机
+  // 路径读键共 7 次、begin(SHOP)（事件路径，链内信号由 emit 捕获暂存）→
+  // 主循环进入 SHOP（#23 已接入）：绘制主菜单 → era.input() 队列已空，抛
+  // 「预置输入已耗尽」上抛终止。初始化细节的逐项断言在
+  // test/event-first.test.js，此处证主循环的转场接驳与到站画面。
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
-  // 标题与问答各恰消费一次输入；此后至报错为止只有叙事读键（主菜单的
+  // 标题与五问各恰消费一次输入；此后至报错为止只有叙事读键（主菜单的
   // input 在取数前抛错，不记入已消费）
   assert.deepEqual(fixture.inputs_consumed, [
-    { api: 'input', value: 1 },
-    { api: 'input', value: 0 },
+    { api: 'input', value: 1 }, // 标题「新的猎物」
+    { api: 'input', value: 1 }, // 魔王性别「女性」（跳过肉棒尺寸一问）
+    { api: 'input', value: 2 }, // 狂王性别「扶她」
+    { api: 'input', value: 0 }, // 初期奴隶（随机）
     { api: 'input', value: 0 }, // #181 地下城模式（普通）
     ...Array.from({ length: 7 }, () => ({ api: 'waitAnyKey' })),
   ]);
@@ -112,7 +115,7 @@ test('链内后写信号胜出后进入真实 SHOP 渲染（#22 守卫用例随 
   preset_gamebase(fixture);
   // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
   preset_chara_0(fixture);
-  fixture.set_inputs(1, 0, 0);
+  fixture.set_inputs(1, 1, 2, 0, 0);
   const { on, TIER } = fixture.load_module('system/event/registry');
   const { begin, STATE } = fixture.load_module('system/flow/begin-signal');
   // 真身出口本就 begin(SHOP)；再追加一个 LATER 档处理器重复 begin(SHOP)，

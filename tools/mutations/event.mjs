@@ -3,7 +3,9 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 332; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）+2（#461 避孕套判定 M9880/M9881，号段见 #461 完成报告——原 M9836/M9837 与 #462 撞号后改）
+export const COUNT = 341; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+// #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
+// 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）
 
 export default [
   {
@@ -3083,5 +3085,79 @@ export default [
     chara(cid).train.助手避孕套 = 0;`,
     tests: ['source-check'],
     must_mention: '避孕套',
+  },
+  {
+    desc: 'M10209 FIRST-SETTING QUE2MK 恒返回值错位（0 → 1）',
+    file: 'ere/event/first-setting.js',
+    find: 'function que2mk() {\n  return 0;\n}',
+    replace: 'function que2mk() {\n  return 1;\n}',
+    tests: ['event-first'],
+    must_mention: 'QUE2MK 恒返回 0',
+  },
+  {
+    desc: 'M10210 FIRST-SETTING 魔王性别男性支：童贞写入错位（1 → 0）',
+    file: 'ere/event/first-setting.js',
+    find: 'if (result === 0) {\n      chara(0).train.童贞 = 1;',
+    replace: 'if (result === 0) {\n      chara(0).train.童贞 = 0;',
+    tests: ['event-first'],
+    must_mention: '四个分支各自的 TALENT/CFLAG 写入',
+  },
+  {
+    desc: 'M10211 FIRST-SETTING 魔王性别女性支：男人写入错位（0 → 1）',
+    file: 'ere/event/first-setting.js',
+    find: '} else if (result === 1) {\n      chara(0).train.童贞 = 0;\n      chara(0).chara.男人 = 0;',
+    replace:
+      '} else if (result === 1) {\n      chara(0).train.童贞 = 0;\n      chara(0).chara.男人 = 1;',
+    tests: ['event-first'],
+    must_mention: '四个分支各自的 TALENT/CFLAG 写入',
+  },
+  {
+    desc: 'M10212 FIRST-SETTING 魔王性别扶她支：扶她写入错位（1 → 0）',
+    file: 'ere/event/first-setting.js',
+    find: '} else if (result === 2) {\n      chara(0).train.童贞 = 1;\n      chara(0).chara.男人 = 0;\n      chara(0).chara.扶她 = 1;',
+    replace:
+      '} else if (result === 2) {\n      chara(0).train.童贞 = 1;\n      chara(0).chara.男人 = 0;\n      chara(0).chara.扶她 = 0;',
+    tests: ['event-first'],
+    must_mention: '四个分支各自的 TALENT/CFLAG 写入',
+  },
+  {
+    desc: 'M10213 FIRST-SETTING 魔王性别少年支：未熟写入错位（1 → 0）',
+    file: 'ere/event/first-setting.js',
+    find: 'chara(0).train.未熟 = 1;',
+    replace: 'chara(0).train.未熟 = 0;',
+    tests: ['event-first'],
+    must_mention: '四个分支各自的 TALENT/CFLAG 写入',
+  },
+  {
+    desc: 'M10214 FIRST-SETTING 肉棒尺寸写入偏移（result → result+1）',
+    file: 'ere/event/first-setting.js',
+    find: 'chara(0).chara.阴茎的状态 = result;\n      return result;',
+    replace: 'chara(0).chara.阴茎的状态 = result + 1;\n      return result;',
+    tests: ['event-first'],
+    must_mention: '0-4 写 chara(0).chara.阴茎的状态',
+  },
+  {
+    desc: 'M10215 FIRST-SETTING 狂王性别写入偏移（result → result+1）',
+    file: 'ere/event/first-setting.js',
+    find: 'game.system.狂王性别 = result;',
+    replace: 'game.system.狂王性别 = result + 1;',
+    tests: ['event-first'],
+    must_mention: '0-2 写 game.system.狂王性别',
+  },
+  {
+    desc: 'M10216 FIRST-SETTING 跳过肉棒尺寸的判据写反（!== 1 → !== 0）',
+    file: 'ere/event/first-setting.js',
+    find: 'if (maou_sex !== 1) {',
+    replace: 'if (maou_sex !== 0) {',
+    tests: ['event-first'],
+    must_mention: '跳过肉棒尺寸一问',
+  },
+  {
+    desc: 'M10217 FIRST-SETTING 初吻对象初值写反（-1 → 1）',
+    file: 'ere/event/first-setting.js',
+    find: 'chara(0).train.初吻对象 = -1; // :784',
+    replace: 'chara(0).train.初吻对象 = 1; // :784',
+    tests: ['event-first'],
+    must_mention: '问答选 0 后与原作开局值逐项一致',
   },
 ];

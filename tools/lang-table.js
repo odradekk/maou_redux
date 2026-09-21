@@ -964,6 +964,11 @@ const EXEMPT_STRINGS = [
     where: 'ere/page/page-campaign-1.js（CAMPAIGN_NAME_1/CAMPAIGN_EXIST_1）',
     why: 'CAMPAIGN_1.ERB:80「PRINT -ROAD・to・CRIMSON・FOREST-」的战役副标题，・ 是原作在英文单词间的装饰分隔样式（与 K10「亲・爱・的」同款处置，#241 先例），非日文假名。逐字照抄，按整串豁免。#469 收录。',
   },
+  {
+    value: '怀孕时的迎击・临月调教　  现在：',
+    where: 'ere/page/page-config.js',
+    why: 'CONFIG.ERB:167 的菜单行「PRINTFORML [10] 怀孕时的迎击・临月调教　  现在：」，・ 是原作在「迎击」与「临月调教」之间的并列连接样式，不是日文假名——与 TRAIN_NAME:128-132、USERCOM:211 同款处置。逐字照抄，按整串豁免。#463 收录。',
+  },
 ];
 
 // 引擎按名读取的 yml 列名（原作 CSV 列名照抄进产物），非玩家可见文本；

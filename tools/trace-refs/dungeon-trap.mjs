@@ -1584,17 +1584,19 @@ export const FILES = [
         ref: '652',
         any: [/CALL COM0_AUTO/],
       },
-      // —— #469 战役陷阱槽：@CAMPAIGN_TRAP 的 TRAP_ID < 0 判据三处
-      //    （IF 两处同形构成平行复现，SIF 一处全文唯一）——
+      // —— #469 战役陷阱槽：@CAMPAIGN_TRAP 的 TRAP_ID < 0 判据三处。
+      //    三条锚都取全文只命中一次的行：两处 IF 的判据行本身同形（各命中 2
+      //    处、窗口不同 = 弱锚），改锚进各自分支的标志行 TRAP_NUM += 309/319
+      //    （js 侧注释同为 :42-49 / :60-69，范围一致）；SIF 一处全文唯一——
       {
         src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
-        ref: '42',
-        any: [/IF TRAP_ID < 0/],
+        ref: '42-49',
+        any: [/TRAP_NUM = CFLAG:A:501 \+ 309/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
-        ref: '60',
-        any: [/IF TRAP_ID < 0/],
+        ref: '60-69',
+        any: [/TRAP_NUM = CFLAG:A:501 \+ 319/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',

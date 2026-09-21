@@ -158,9 +158,10 @@ test('端到端：2D 模式新档从标题走到 ENDING_2（LABO_DUNGEON_MAP:175
       '标题画面新游戏',
     );
 
-    // —— @EVENTFIRST：初期奴隶选「村娘」[1]、地下城模式选「2D」[1]
+    // —— @EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
+    // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]、地下城模式选「2D」[1]
     // （#181 加的一问——本条与 3D 版在此分岔）、搬运选「抱起」[1] ——
-    fixture.set_inputs(1, 1, 1);
+    fixture.set_inputs(1, 2, 1, 1, 1);
     const first_exit = await emit('EVENTFIRST');
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
     assert.equal(
