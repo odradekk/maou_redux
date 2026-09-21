@@ -1966,7 +1966,7 @@ export default [
     replace:
       "const SHORT_LABELS = ['爱抚2', '器具', '私处类', '肛门类', 'SM系'];",
     tests: ['page-config'],
-    must_mention: '按位打印〇/× 摘要',
+    must_mention: '按位〇/× 摘要',
   },
   {
     desc: 'M10207 PAGE-CONFIG INVERTBIT 两支写反（置位与清位互换）',

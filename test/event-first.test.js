@@ -410,8 +410,9 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  // 六次问答：魔王性别「女性」（跳过肉棒尺寸）+ 狂王性别「扶她」+
-  // 初期奴隶「随机」+ 地下城模式「普通」（#181 的第二问）
+  // 四次问答（emit 直调不经标题与搬运，只消费五问中的四问）：魔王性别
+  // 「女性」（跳过肉棒尺寸）+ 狂王性别「扶她」+ 初期奴隶「随机」+
+  // 地下城模式「普通」（#181 的第二问）
   fixture.set_inputs(1, 2, 0, 0);
   const pending = await emit('EVENTFIRST');
 

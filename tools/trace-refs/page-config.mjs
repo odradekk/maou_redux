@@ -35,6 +35,11 @@ export const FILES = [
         any: [/^\s*@CONFIG_PENIS_YOU_SETTING\s*$/m],
       },
       {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '104-113',
+        any: [/^\tIF RESULT == 1\s*$/m],
+      },
+      {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
         ref: '53',
         any: [/^\s*冒險者性別\s*=\s*-1\s*$/m],
@@ -70,6 +75,11 @@ export const FILES = [
         src: 'target/ERB/SYSTEM/CONFIG.ERB',
         ref: '243-245',
         any: [/^\s*ELSEIF LOCAL >= 22 && LOCAL <= 25\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '253-285',
+        any: [/^\tIF\t+ 冒險者性別 == -1\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/CONFIG.ERB',

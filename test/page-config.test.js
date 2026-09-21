@@ -38,13 +38,12 @@ test('config_filter_setting：0-4 切换 FLAG:25 对应位，100 返回', async 
   assert.equal(game.train.指令过滤, 0b101); // 位0（爱抚）与位2（私处性交）
 });
 
-test('config_show_filter_status：按位打印〇/× 摘要（颜色不镜像，文字标记保留信息）', () => {
+test('filter_status_text：按位〇/× 摘要（颜色不镜像，文字标记保留信息）', () => {
   const fixture = create_era_fixture();
-  const { config_show_filter_status } = load(fixture);
+  const { filter_status_text } = load(fixture);
   const { game } = fixture.load_module('facade/game');
   game.train.指令过滤 = 0b1; // 位0（爱抚）已过滤
-  config_show_filter_status();
-  const [line] = fixture.text_lines();
+  const line = filter_status_text();
   assert(line.includes('爱抚×'));
   assert(line.includes('器具〇'));
 });
@@ -71,24 +70,20 @@ test('config_virgin_conceded_setting：100 直接返回，不写 FLAG:38', async
   );
 });
 
-test('config_virgin_conceded_status：三档文案（<=-1/0/>=1）', () => {
+test('virgin_conceded_status_text：三档文案（<=-1/0/>=1）', () => {
   const fixture = create_era_fixture();
-  const { config_virgin_conceded_status } = load(fixture);
+  const { virgin_conceded_status_text } = load(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
 
   era_flag.virgin_conceded_mode = -1;
-  config_virgin_conceded_status();
-  assert.equal(fixture.text_lines()[0], '从不发生\n');
+  assert.equal(virgin_conceded_status_text(), '从不发生');
 
   era_flag.virgin_conceded_mode = 0;
-  config_virgin_conceded_status();
-  assert.equal(fixture.text_lines()[1], '每人一次\n');
+  assert.equal(virgin_conceded_status_text(), '每人一次');
 
   era_flag.virgin_conceded_mode = 1;
-  config_virgin_conceded_status();
-  assert.equal(fixture.text_lines()[2], '持续触发\n');
+  assert.equal(virgin_conceded_status_text(), '持续触发');
 });
-
 test('config_penis_you_setting：0-4 写 chara(0).chara.阴茎的状态 并回显名称', async () => {
   const fixture = create_era_fixture();
   const { config_penis_you_setting } = load(fixture);
@@ -111,20 +106,18 @@ test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 �
   assert.equal(chara(0).chara.阴茎的状态, before);
 });
 
-test('adventurer_gender_status：MOD SAVEDATA 未落地，恒显示 -1 档文案（女多男少）', () => {
+test('adventurer_gender_status_text：MOD SAVEDATA 未落地，恒显示 -1 档文案（女多男少）', () => {
   const fixture = create_era_fixture();
-  const { adventurer_gender_status } = load(fixture);
-  adventurer_gender_status();
-  assert.equal(fixture.text_lines()[0], '女多男少\n');
+  const { adventurer_gender_status_text } = load(fixture);
+  assert.equal(adventurer_gender_status_text(), '女多男少');
 });
 
-test('prostitution_effect_status：MOD SAVEDATA 未落地，恒显示默认档文案', () => {
+test('prostitution_effect_status_text：MOD SAVEDATA 未落地，恒显示默认档文案', () => {
   const fixture = create_era_fixture();
-  const { prostitution_effect_status } = load(fixture);
-  prostitution_effect_status();
+  const { prostitution_effect_status_text } = load(fixture);
   assert.equal(
-    fixture.text_lines()[0],
-    '【负面】让奴隶的售价下降（默认设置）\n',
+    prostitution_effect_status_text(),
+    '【负面】让奴隶的售价下降（默认设置）',
   );
 });
 

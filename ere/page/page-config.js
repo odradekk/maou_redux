@@ -10,16 +10,16 @@
  *
  * 按钮不能拼接：printButton 独占一行，原作 PRINTFORM（不换行）+ CALL 状态
  * 函数（接着打印）拼一行的习惯在这里行不通。凡状态展示依赖独立函数的选项
- * （[13]/[21]/[27]/[29]），改造成`*_text()`纯文本helper，供“行内按钮拼接”与
- * “独立状态函数”两处共用，避免逻辑重复。
+ * （[13]/[21]/[27]/[29]），改造成 `*_text()` 纯文本 helper 供行内按钮拼接；
+ * 原作的状态函数只做打印，ere 侧没有第二个调用方，不再保留独立打印包装。
  */
 
 const era = require('#/era-electron');
+const era_flag = require('#/era-utils/era-flag');
+const { ScreenBlock } = require('#/page/components/screen-block');
+const { get_look_info, KIND } = require('#/chara/look-info');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
-const era_flag = require('#/era-utils/era-flag');
-const { get_look_info, KIND } = require('#/chara/look-info');
-const { ScreenBlock } = require('#/page/components/screen-block');
 const { stub_line_wait } = require('#/utils/stub-line');
 
 /**
@@ -82,20 +82,17 @@ async function config_filter_setting() {
   }
 }
 
-/** CONFIG_SHOW_FILTER_STATUS 的文本内容（[13] 行内按钮与独立状态函数共用） */
+/**
+ * @CONFIG_SHOW_FILTER_STATUS（:30-44）：过滤状态单行摘要。原作用 SETCOLOR
+ * 深灰着色 + PRINT 输出；ere 侧文本内联进 [13] 按钮行（见文件头「按钮不能
+ * 拼接」），本函数是唯一文本载体，颜色不镜像（改〇/× 文字标记）。
+ */
 function filter_status_text() {
   const v = game.train.指令过滤;
   const SHORT_LABELS = ['爱抚', '器具', '私处类', '肛门类', 'SM系'];
   return SHORT_LABELS.map(
     (label, i) => label + (getbit(v, i) ? '×' : '〇') + '　',
   ).join('');
-}
-
-/**
- * @CONFIG_SHOW_FILTER_STATUS（:30-44）：过滤状态单行摘要。
- */
-function config_show_filter_status() {
-  era.print(`${filter_status_text()}\n`);
 }
 
 /**
@@ -128,7 +125,10 @@ async function config_virgin_conceded_setting() {
   }
 }
 
-/** CONFIG_VIRGIN_CONCEDED_STATUS 的文本内容（[21] 行内按钮与独立状态函数共用） */
+/**
+ * @CONFIG_VIRGIN_CONCEDED_STATUS（:70-82）：三态文案（从不发生/每人一次/
+ * 持续触发）。原作独立打印；ere 侧内联进 [21] 按钮行，本函数是唯一文本载体。
+ */
 function virgin_conceded_status_text() {
   const v = era_flag.virgin_conceded_mode;
   if (v <= -1) {
@@ -141,18 +141,15 @@ function virgin_conceded_status_text() {
 }
 
 /**
- * @CONFIG_VIRGIN_CONCEDED_STATUS（:70-82）。
- */
-function config_virgin_conceded_status() {
-  era.print(`${virgin_conceded_status_text()}\n`);
-}
-
-/**
  * @CONFIG_PENIS_YOU_SETTING（:85-116）：魔王的阴茎形态设定，写
  * chara(0).chara.阴茎的状态（TALENT:0:318，与 ask_penis_size 共用门面）。
  *
  * 原作单次 INPUT，无重试循环——非 999、非 0-4 的输入直接落到函数尾、
  * 什么也不做（1:1 保留，不补校验）。
+ *
+ * 确认回显原作是 PRINT（不换行）+ PRINTW（换行并等键，:104-113）——等键
+ * 保证玩家在下一次整页重绘清屏前看到结果；ere 侧用 printAndWait 镜像该
+ * 语义，单纯的 print 会在 config_menu 下一轮 redraw 里一闪即逝。
  */
 async function config_penis_you_setting() {
   era.print('魔王的兵器是如意金箍棒，可大也可小！！\n\n');
@@ -175,40 +172,31 @@ async function config_penis_you_setting() {
       '《包茎》',
       '《马阴茎》',
     ];
-    era.print(`你的鸡鸡状态：${PENIS_LABELS[result]}\n`);
+    await era.printAndWait(`你的鸡鸡状态：${PENIS_LABELS[result]}\n`);
     chara(0).chara.阴茎的状态 = result;
   }
   return 0;
 }
 
-/** 冒険者性別顯示 的文本内容（[27] 行内按钮与独立状态函数共用） */
+/**
+ * @冒險者性別顯示（:118-134）：冒险者性别限制的档位文案。冒険者性別
+ * （MOD SAVEDATA，魔改新增/魔改使用.ERH:2）本项目无 ere 存储；原作
+ * FIRST_SETTING（:53）恒初始化新档为 -1（docs/stub-registry.md
+ * 「冒険者性別 = -1」行），故恒显示该档对应文案，不做假状态展示。ere 侧
+ * 文本内联进 [27] 按钮行，本函数是唯一文本载体。
+ */
 function adventurer_gender_status_text() {
-  // 冒険者性別（MOD SAVEDATA，魔改新增/魔改使用.ERH:2）本项目无 ere 存储；
-  // 原作 FIRST_SETTING（:53）恒初始化新档为 -1（docs/stub-registry.md
-  // 「冒険者性別 = -1」行），故恒显示该档对应文案，不做假状态展示
   return '女多男少';
 }
 
 /**
- * @冒險者性別顯示（:118-134）。
+ * @卖淫影响（:136-145）：卖淫对奴隶售价影响的档位文案。卖淫影响
+ * （MOD SAVEDATA，魔改新增/魔改使用.ERH:4）本项目无 ere 存储，
+ * DIM 默认 0——原作 CASE 0 的「（默认设置）」注释印证 0 即预期常态，
+ * 恒显示该档。ere 侧文本内联进 [29] 按钮行，本函数是唯一文本载体。
  */
-function adventurer_gender_status() {
-  era.print(`${adventurer_gender_status_text()}\n`);
-}
-
-/** 卖淫影响 的文本内容（[29] 行内按钮与独立状态函数共用） */
 function prostitution_effect_status_text() {
-  // 卖淫影响（MOD SAVEDATA，魔改新增/魔改使用.ERH:4）本项目无 ere 存储，
-  // DIM 默认 0——原作 CASE 0 的「（默认设置）」注释印证 0 即预期常态，
-  // 恒显示该档
   return '【负面】让奴隶的售价下降（默认设置）';
-}
-
-/**
- * @卖淫影响（:136-145）。
- */
-function prostitution_effect_status() {
-  era.print(`${prostitution_effect_status_text()}\n`);
 }
 
 function draw_config_page(page) {
@@ -407,10 +395,12 @@ async function dispatch_config(local, page) {
   } else if (local === 26) {
     await stub_line_wait('MODLIST', 'MOD 开关', undefined);
   }
-  // LOCAL==27/28/29/30：冒険者性別/立绘/卖淫影响/反作弊——四个 MOD
-  // SAVEDATA 变量本项目均无 ere 存储（冒険者性別/反作弊见
-  // docs/stub-registry.md 对应行；立绘、卖淫影响 DIM 默认 0、无消费点），
-  // 维持恒定默认值，不做任何写入（1:1 体现「设置了也不生效」的原作现状）
+  // LOCAL==27/28/29/30：冒険者性別/立绘/卖淫影响/反作弊。原作 :253-285 这四
+  // 支真写 MOD SAVEDATA 变量（冒険者性別 -1→0→…→4 循环、立绘 0/1、卖淫影响
+  // 0→1→2、反作弊 0/1），其中反作弊有消费者（恒 0 令 DEBUG_CHECK 每回合执
+  // 行，docs/stub-registry.md「反作弊」行）；本项目四个变量均无 ere 存储
+  // （#18 刻意不收 Global.yml，MOD 归属阶段 6），四支空转不写——这是有意
+  // 偏离而非原作现状，按钮照常渲染（原作按钮行可见）
   return page;
 }
 
@@ -442,12 +432,12 @@ async function config_menu() {
 module.exports = {
   STUBBED_CALLS,
   config_filter_setting,
-  config_show_filter_status,
+  filter_status_text,
   config_virgin_conceded_setting,
-  config_virgin_conceded_status,
+  virgin_conceded_status_text,
   config_penis_you_setting,
-  adventurer_gender_status,
-  prostitution_effect_status,
+  adventurer_gender_status_text,
+  prostitution_effect_status_text,
   config_menu,
   dispatch_config,
 };
