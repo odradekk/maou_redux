@@ -508,7 +508,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
-        ref: '1315-1554',
+        ref: '1315-1550',
         any: [/^@SOKUOCHI_CHECK\s*$/m],
       },
       {

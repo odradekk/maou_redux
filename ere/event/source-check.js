@@ -18,7 +18,7 @@
  *     @UP_TALENT_CHECK（:740）/
  *     @MARK_GOT_CHECK（:952-1080）/@YOKUBO_UP_CHECK（:1092）/
  *     @JUJUN_UP_CHECK（:1113）/@EXP_GOT_CHECK（:1124-1310）/@SOKUOCHI_CHECK
- *     （:1315-1554）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561-1610）/
+ *     （:1315-1550）/@ECST_CHECK（:1555）/@PISSING_ECST_CHECK（:1561-1610）/
  *     @MASTER_FLAG_CHECK（:1615-1711）/@TARGET_WORMBABY_CHECK（:1727-1847）/
  *     @AUTO_NUM_CHECK（:1852-1879）
  *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB  @SOURCE_LESBIAN_SEX_CHECK
@@ -57,7 +57,7 @@
  *     恒定执行；
  *   - EXP_GOT_CHECK（SUB1:1124-1310）已随 #462 落地：原登记「生效分支门槛
  *     在爱抚写入面下全为 0」已过期——com-caress.js/com-hardcore.js 均已
- *     写 TFLAG:100；SOKUOCHI_CHECK（SUB1:1315-1554）已随 #462 落地：原登记
+ *     写 TFLAG:100；SOKUOCHI_CHECK（SUB1:1315-1550）已随 #462 落地：原登记
  *     「TALENT:73 无预设，不可达」不准确——turnend-settle.js:222（容易陷落
  *     戒指结算）是真实写入点，只查 45 个固定预设漏查了该处；
  *   - 膣内射精チェック（:426-473）已随 #221 J11 落地：目标侧避孕套、
@@ -2311,7 +2311,7 @@ function exp_got_check() {
   }
 }
 
-// @SOKUOCHI_CHECK（SUB1:1315-1554）：容易陷落（TALENT:73）角色的 ABL 自动
+// @SOKUOCHI_CHECK（SUB1:1315-1550）：容易陷落（TALENT:73）角色的 ABL 自动
 // 升级。原作是 12 组同构的「ELSEIF 5 档阈值链」，仅判据来源（UP/EXP 下标）、
 // 目标 ABL、可选的钝感封印（TALENT:101/103/105/107 的 &2 位）、可选的前置
 // ABL 门槛不同，本函数用同一个 bump() 承载判据比较、赋值、返回命中档位，
