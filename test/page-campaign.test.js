@@ -164,6 +164,35 @@ test('招募：成功后扣 100 气力、点亮本战役招募素质位（TALENT
   );
 });
 
+test('招募：16 位勇者位全满时走原作失败文案，不扣气力也不点素质位', async () => {
+  // #483：战役招募只在未被占用的勇者位里抽，候选为空（16 位全满）时
+  // RAND_CHARA_MAKE 返回 0，招募分支在扣气力之前返回（源 CAMPAIGN_EVENT.ERB
+  // 的 `SIF RESULT == 0 GOTO INPUT_LOOP` 排在 `BASE:MASTER:1 -= 100` 之前）
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '魔王');
+  fixture.store.set('base:0:1', 200);
+  fixture.store.set('flag:400', 1);
+  for (let cid = 1; cid <= 16; cid += 1) {
+    add_chara(fixture, cid, `勇者${cid}`);
+  }
+  const { campaign_menu } = load(fixture);
+  // [1] 招募 → 直接失败（不消耗输入）→ 菜单重画 → [999] 退出
+  fixture.set_inputs(1, 999);
+  await campaign_menu(() => 0);
+  assert.equal(fixture.store.get('base:0:1'), 200, '气力未被扣');
+  assert.equal(
+    fixture.store.get('talent:1:361'),
+    undefined,
+    '未点亮招募素质位（候选为空，没招募到人）',
+  );
+  assert.ok(
+    texts(fixture.lines_history).some((t) =>
+      t.includes('由于对魔王的恐惧，勇者没有出现'),
+    ),
+    ':188-191 原作文案',
+  );
+});
+
 // —— 派遣分支（RESULT == 2）——
 
 test('派遣：翻页与返回不写任何 CFLAG', async () => {

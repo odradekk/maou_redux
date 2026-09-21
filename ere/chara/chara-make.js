@@ -13,6 +13,12 @@
  * 调用点走转发层的名字，不折叠）。
  *
  * 移植说明（有意偏离，均注明依据）：
+ *   - **战役招募的勇者位只从未被占用的位里抽**（#483 结论·方案 2，见
+ *     pick_free_hero_slot）：原作 CHAR_MAKE.ERB:52 的 `CHARA = RAND(1, 17)`
+ *     配合 :55 的 `|| 赤森奴隶` 会取到已占用的位，:61 的 `ADDCHARA CHARA`
+ *     在同号上追加一位同模板角色；ere 的角色号即预设号，同号双角色结构性
+ *     不可表达（#21），落地只剩「原地重置重募」——会丢掉玩家育成过的角色。
+ *     偏离只限一次 RAND 的取值范围，16 位全满时落 :188-191 的原作失败分支；
  *   - 原作经全局 A 传角色（SWAP A, ARG 的 EraBasic 传参惯例）、经全局 X/
  *     TARGET 换手调 LOOK_SET / WEARING_CLOTH_ABLE，ere 侧一律显式传参
  *     （#5 决议第六条：指针不隐式读全局），SWAP 语义随传参消解；
@@ -1621,6 +1627,34 @@ async function cm_cloth(cid, rand_n) {
   return 0;
 }
 
+/** 勇者位的取值范围：原作 :52 `CHARA = RAND(1, 17)` 的 1-16（16 位） */
+const HERO_SLOT_IDS = Array.from({ length: 16 }, (_, i) => i + 1);
+
+/**
+ * 战役招募的勇者位抽取（#483 结论·方案 2）：只在未被占用的勇者位里抽一位。
+ *
+ * 原作 :52 的 `CHARA = RAND(1, 17)` 配合 :55 的 `|| 赤森奴隶` 会取到已占用
+ * 的位，:61 的 `ADDCHARA CHARA` 在 CHARA 号已占用时**追加**一位同模板角色
+ * （原角色不动、CHARANUM + 1）。ere 的角色号即预设号、同号双角色结构性不可
+ * 表达（#21），落地只能是「原地重置重募」——会把玩家育成过的该号奴隶重置回
+ * 预设。故战役招募改为先收集空位、再于候选表内抽一次。
+ *
+ * **不循环重掷**：重掷会多消耗随机数，打乱测试注入的定值序，也让 #458 要录
+ * 的输出比对样本难以复现。
+ *
+ * @param {(n: number) => number} rand_n 原作 RAND:N（[0,n) 整数）的随机源
+ * @returns {number} 抽中的勇者位（1-16）；候选为空（16 位全满）时 0——调用点
+ *   据此落 :188-191 的原作失败分支
+ */
+function pick_free_hero_slot(rand_n) {
+  const occupied = new Set(era.getAddedCharacters());
+  const free_slots = HERO_SLOT_IDS.filter((slot) => !occupied.has(slot));
+  if (free_slots.length === 0) {
+    return 0;
+  }
+  return free_slots[rand_n(free_slots.length)];
+}
+
 /**
  * @RAND_CHARA_MAKE（CHAR_MAKE.ERB:42-194）：随机挑一名勇者加入队伍，并走一遍
  * 人工确认（换一个 / 改性格 / 改发色 / 收下）。
@@ -1636,8 +1670,10 @@ async function cm_cloth(cid, rand_n) {
  *   - **赤森奴隶**（魔改使用.ERH:12，普通变量非 SAVEDATA）经形参
  *     `campaign_slave` 注入（#469 起真身；`CAMPAIGN_EVENT.ERB:55/:57`
  *     调用点在招募分支临时置位）：:55 的
- *     `GETCHARA(CHARA, 0) == -1 || 赤森奴隶` 对应 `!getAddedCharacters()
- *     .includes(chara_id) || campaign_slave`；:76-80 / :151-157 的文案分支
+ *     `GETCHARA(CHARA, 0) == -1 || 赤森奴隶` 里，后半截在 ere 侧的落点是
+ *     **勇者位的选法**——战役招募改走 `pick_free_hero_slot()`（#483 结论·
+ *     方案 2：只从未被占用的位里抽，见该函数与 `:61` 调用点的注释），
+ *     占用判定本身对两条路径一致；:76-80 / :151-157 的文案分支
  *     与 :164 的 `RESULT == 3 && 赤森奴隶`（算了，不选了）都按
  *     `campaign_slave` 走真实分支。
  *
@@ -1676,7 +1712,8 @@ async function cm_cloth(cid, rand_n) {
  *   奴隶时为真，由调用点（CAMPAIGN_EVENT.ERB:55/:57 对应的 campaign_menu()
  *   招募分支）显式传入；缺省 false 即现有行为（普通开局勇者招募）
  * @returns {Promise<number>} 新角色的角色号（末尾 RETURN CHARANUM-1）；
- *   16 位占满的 :191 分支与「算了，不选了」（:169-171）给 0
+ *   16 位占满的 :191 分支与「算了，不选了」（:169-171）给 0——战役招募下
+ *   16 位全满同样落前者（候选表为空，见 pick_free_hero_slot）
  */
 async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -1692,11 +1729,20 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
   // :50 $INPUT_LOOP_11 —— 换人重挑的循环入口
   for (;;) {
     // 名字用 chara_id 而非 chara：后者是本文件顶部 import 的 chara 门面
-    const chara_id = rand_n(16) + 1; // :52 CHARA = RAND(1, 17)（勇者位 1-16）
+    //
+    // :52 CHARA = RAND(1, 17)（勇者位 1-16）。普通路径照原作掷 1-16；战役招募
+    // 改走 pick_free_hero_slot（#483 结论·方案 2：只从未被占用的位里抽），
+    // 它给 0 表示 16 位全满——下方 `chara_id !== 0` 不成立，直接落 :188-191
+    // 的原作失败分支（调用方 CAMPAIGN_EVENT.ERB 的 `SIF RESULT == 0` 已处理，
+    // 且在扣 100 气力之前）
+    const chara_id = campaign_slave
+      ? pick_free_hero_slot(rand_n)
+      : rand_n(16) + 1;
 
-    // :55 GETCHARA(CHARA,0)==-1 || 赤森奴隶：战役招募恒进入招募分支，
-    // 即使该勇者位已被占用也照常招募（不重挑）
-    if (!era.getAddedCharacters().includes(chara_id) || campaign_slave) {
+    // :55 GETCHARA(CHARA,0)==-1 || 赤森奴隶。战役招募的 chara_id 由
+    // pick_free_hero_slot 保证未被占用，占用判定自然成立；普通路径照旧——
+    // 掷中已占用的勇者位就落 :188-191 的失败文案
+    if (chara_id !== 0 && !era.getAddedCharacters().includes(chara_id)) {
       // :56-58 异国勇者判定：非异国时返回 0，异国时是那个新角色的角色号
       // （#487：它经 :146 的 ID_OF_NEWCHARA 一路用到底，本函数不自行推算）
       const inport_cid = await inport_check();
@@ -1704,15 +1750,17 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       if (inport_cid === 0) {
         // :60-64 不是异国勇者：新建一位
         //
-        // ⚠ 与引擎语义的有意偏离（#469 规范审查 F1，已登记待裁定）：原作
-        // :61 `ADDCHARA CHARA` 在 CHARA 号已被占用时**追加**一位同模板角色
-        // （原角色不动、CHARANUM+1），这正是 :55 `|| 赤森奴隶` 绕开存在性
-        // 判定的目的；引擎 `EraApi.addCharacter` 对同号的语义是「从 data.no
-        // 滤出后重推 + 全表（base/abl/talent/cflag/exp/relation…）按预设重置」
-        // （app.asar 实测，夹具只镜像了前半段，见 test/helpers/era-fixture.js
-        // 的 addCharacter 段）。ere 的变量按角色 ID 键控，同号双角色结构性
-        // 不可表达，故取「原地重置重募」。后果：campaign_slave 且该勇者位已
-        // 被占用时，玩家育成过的该号奴隶会被重置回预设、编制不增加。
+        // ⚠ 有意偏离（#483 结论·方案 2）：原作 :61 `ADDCHARA CHARA` 在 CHARA
+        // 号已被占用时**追加**一位同模板角色（原角色不动、CHARANUM+1）——:55
+        // 的 `|| 赤森奴隶` 正是为绕开 :55 的存在性判定而写；引擎
+        // `EraApi.addCharacter` 对同号的语义则是「从 data.no 滤出后重推 +
+        // 全表（base/abl/talent/cflag/exp/relation…）按预设重置」（app.asar
+        // 实测，夹具只镜像了前半段，见 test/helpers/era-fixture.js 的
+        // addCharacter 段），而 ere 的变量按角色 ID 键控、同号双角色结构性
+        // 不可表达（#21），落地只剩「原地重置重募」——玩家育成过的该号奴隶会
+        // 被重置回预设。本票因此把战役招募的勇者位选法改为只从未被占用的位里
+        // 抽（pick_free_hero_slot），偏离只限于一次 RAND 的取值范围：本行不再
+        // 可能落在已被占用的位子上。
         era.addCharacter(chara_id); // :61 ADDCHARA CHARA
         await add_chara_ex(chara_id); // :62 ADDCHARA_EX, CHARANUM-1（= 角色号）
         newchara = chara_id; // :63-64 A / ID_OF_NEWCHARA（= 新角色的角色号）
@@ -1880,7 +1928,7 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       return newchara; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）
     }
 
-    // :188-191 16 个勇者位都占着
+    // :188-191 16 个勇者位都占着（普通路径掷中已占用的位；战役招募候选为空）
     era.print('由于对魔王的恐惧，勇者没有出现。（奴隶数已达上限，请处决几个）');
     await era.waitAnyKey(); // :190 WAIT
     return 0; // :191

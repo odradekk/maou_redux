@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 52; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）
+export const COUNT = 56; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）
 
 export default [
   {
@@ -503,5 +503,40 @@ export default [
       '        await add_chara_ex(era.getAddedCharacters().length - 1); // :62 ADDCHARA_EX, CHARANUM-1（= 角色号）',
     tests: ['chara-name'],
     must_mention: '不落到「已加入数 - 1」的 0 号（魔王标记）',
+  },
+  // —— #483：战役招募只在未被占用的勇者位里抽（结论·方案 2）——
+  {
+    desc: 'M10610 候选表的空位过滤恒真（已占用的勇者位重新入选——#483 的原缺陷形态）',
+    file: 'ere/chara/chara-make.js',
+    find: '  const free_slots = HERO_SLOT_IDS.filter((slot) => !occupied.has(slot));',
+    replace:
+      '  const free_slots = HERO_SLOT_IDS.filter(() => true); // 变异：不过滤占用位',
+    tests: ['chara-make'],
+    must_mention: '落在候选表首位 2 号',
+  },
+  {
+    desc: 'M10611 候选表内抽取的上界退回 16（多算上已占用的位，索引与候选表脱节）',
+    file: 'ere/chara/chara-make.js',
+    find: '  return free_slots[rand_n(free_slots.length)];',
+    replace: '  return free_slots[rand_n(16)]; // 变异：上界退回勇者位总数',
+    tests: ['chara-make'],
+    must_mention: '上界 = 候选表长度 14，不是 16',
+  },
+  {
+    desc: 'M10612 16 位全满的失败文案被改写（原作 :189 的文本不得另造，#483 要求 2）',
+    file: 'ere/chara/chara-make.js',
+    find: "    era.print('由于对魔王的恐惧，勇者没有出现。（奴隶数已达上限，请处决几个）');",
+    replace:
+      "    era.print('由于对魔王的恐惧，勇者没有出现。'); // 变异：括号提示删",
+    tests: ['chara-make'],
+    must_mention: ':188-191 原作文案逐字（含括号内的提示，不另造文本）',
+  },
+  {
+    desc: 'M10613 16 位全满的 RETURN 0 改成 1（调用点据此误判招募成功：扣气力、点素质位）',
+    file: 'ere/chara/chara-make.js',
+    find: '    return 0; // :191',
+    replace: '    return HERO_SLOT_IDS[0]; // 变异：不再返回 0',
+    tests: ['chara-make', 'page-campaign'],
+    must_mention: ':191 RETURN 0（调用点据此不扣气力）',
   },
 ];

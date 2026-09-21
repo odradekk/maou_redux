@@ -447,10 +447,12 @@ export default [
     must_mention: 'PAIRS 表',
   },
   {
+    // #483 起靶代码从单行变成三元（战役招募走候选表、普通路径仍是 RAND(1,17)），
+    // 靶落在普通路径那一支上
     desc: 'M8030 RAND_CHARA_MAKE 的位号掷骰上界 16 改 17（挑到 17 号勇者位）',
     file: 'ere/chara/chara-make.js',
-    find: '    const chara_id = rand_n(16) + 1; // :52 CHARA = RAND(1, 17)',
-    replace: '    const chara_id = rand_n(17) + 1; // :52 CHARA = RAND(1, 17)',
+    find: '      : rand_n(16) + 1;',
+    replace: '      : rand_n(17) + 1;',
     tests: ['chara-name'],
     must_mention: 'RAND(1,17) 上界',
   },
