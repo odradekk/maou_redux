@@ -424,6 +424,29 @@ test('[0] 威望岌岌可危：侵攻失败早退，怪物照减半但零战利�
   assert(!texts.some((line) => line.includes('战利品')));
 });
 
+test('威望动荡不安档的提示是 PRINTW：比无修正档多一次等键（:243/:277）', async () => {
+  // 五档里只有 21-40 档的第二行是 PRINTW（要停键），其余是 PRINTl/PRINTL。
+  // 同一世界只换威望值，等键次数之差就落在这一处——删掉 waitAnyKey 即红。
+  const calm = create_era_fixture();
+  make_world(calm, { prestige: 70 });
+  calm.store.set('item:100', 600);
+  await run_invasion(calm, [0], knob({ 100: 99 }));
+
+  const restless = create_era_fixture();
+  make_world(restless, { prestige: 30 });
+  restless.store.set('item:100', 600);
+  await run_invasion(restless, [0], knob({ 100: 99 }));
+
+  const t = history_texts(restless);
+  assert(t.includes('威望值是【动荡不安】'), ':242 档位行（PRINTL，不停键）');
+  assert(t.includes('侵攻战斗力减少'), ':243 的 PRINTW 文本');
+  assert.equal(
+    restless.waits.filter((w) => w.waited).length,
+    calm.waits.filter((w) => w.waited).length + 1,
+    '动荡不安档比相安无事档多一次等键（PRINTW 的 WAIT，:243）',
+  );
+});
+
 test('[0] 结算段 5% 抓捕：命中调 GET_ENEMY，人数上限早退才有犒赏行（:686-692）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
@@ -614,6 +637,29 @@ test('[3] 列表 [999] 返回：RESTART 回菜单、不消耗回合（:519-520�
     'RESTART 后菜单重画',
   );
   assert.equal(fixture.store.get('base:0:1'), 10000, '返回不扣气力');
+});
+
+test('[3] 已征服来路的 RESTART：落点是征服后菜单而非出兵菜单（:6 的 FLAG:82 分派）', async () => {
+  // 征服后菜单 [0] → 出兵菜单 [3] → 列表 [999] 返回 → 原作的 RESTART 回
+  // @INVASION 开头重走 FLAG:82 分派 → 已征服 = 征服后菜单（region 续接仍是
+  // 存根，由 invasion() 的外层循环承接）→ 再 [999] 退出
+  const fixture = create_era_fixture();
+  make_world(fixture, { fallen: 1 });
+  seed_raidable(fixture, [1]);
+  assert.equal(await run_invasion(fixture, [0, 3, 999, 999]), 0);
+  const texts = history_texts(fixture);
+  assert.equal(
+    texts.filter((line) =>
+      line.includes('地面上已被你征服了，你指挥着你的军队准备进攻其他领土'),
+    ).length,
+    2,
+    'RESTART 后重画的是征服后菜单',
+  );
+  assert.equal(
+    texts.filter((line) => line === '派遣谁去侵攻呢？').length,
+    1,
+    '英雄列表只画过一次（没有回到出兵菜单）',
+  );
 });
 
 test('[3] 翻页：页窗判据与 [上一页]/[下一页]（:490-532）', async () => {
@@ -841,11 +887,11 @@ test('@INVASION_EVENT 的 RAND:10 真分发：9 → FORT、8 → CHALLENGE、其
   };
 
   const fort = await run_with(9);
-  assert.equal(
-    fort.uppers[0],
-    10,
-    '第一枚骰子就是分发的 LOCAL = RAND:10（上界不许改错）',
-  );
+  // 首枚 RAND:10 是 MONSTER_DATA 的生成等级骰（dungeon/monster-data.js:354/:360），
+  // 与分发骰共用上界，所以这条只钉「上界仍是 10」这一层；分发骰自己改坏上界时
+  // 拿不到 9（knob 的 9 无覆盖值 → 1），落进 SEIEI 臂，由下面的 FORT 占位行断言
+  // 接管（M10788）。
+  assert.equal(fort.uppers[0], 10, 'MONSTER_DATA 等级骰的上界是 RAND:10');
   assert(
     fort.texts.some((line) => line.includes('@INVASION_EVENT_FORT')),
     '9 → FORT 臂（存根占位行，随 [2] 路线票）',
@@ -885,16 +931,33 @@ test('@INVASION_EVENT 三臂的守卫：FORT/CHALLENGE 对 INV_TYPE == 1 仍作�
     );
     assert.equal(fixture.store.get('flag:81'), 400, '魔力路线的结算不受影响');
   }
+});
 
-  // FLAG:SINDO != 0（已征服）时 FORT 的守卫同样早退
-  const conquered = create_era_fixture();
-  make_world(conquered, { fallen: 1 });
-  await run_post_conquest(conquered, [0, 1], knob({ 10: 9 }));
+test('FORT 守卫按 Emuera 的左结合求值：2/3 恒进、0 看 FLAG:SINDO（:539）', async () => {
+  // 原式 `SIF FLAG:SINDO || INV_TYPE != 0 && INV_TYPE != 2 && INV_TYPE != 3`
+  // 里 `&&` 与 `||` **同优先级、左结合**，等价于
+  // `((FLAG:SINDO || INV_TYPE != 0) && INV_TYPE != 2) && INV_TYPE != 3`：
+  // 已征服（FLAG:SINDO != 0）时 INV_TYPE == 3 照样不早退、== 0 才早退。
+  // C 式「&& 优先」的读法会把已征服的 3 也挡掉——这一对反例就是那道门。
+  const raid = create_era_fixture();
+  make_world(raid, { fallen: 1 });
+  seed_raidable(raid, [1]);
+  // 征服后菜单 [0] → 出兵菜单 [3] → 列表选 1；RAND:10 = 9 命中 FORT
+  await run_post_conquest(raid, [0, 3, 1], knob({ 10: 9, 100: 99 }));
   assert(
-    !history_texts(conquered).some((line) =>
+    history_texts(raid).some((line) => line.includes('@INVASION_EVENT_FORT')),
+    'INV_TYPE == 3 + 已征服：FORT 不早退（左结合读法）',
+  );
+
+  const monster = create_era_fixture();
+  make_world(monster, { fallen: 1 });
+  monster.store.set('item:100', 600);
+  await run_post_conquest(monster, [0, 0], knob({ 10: 9, 100: 99 }));
+  assert(
+    !history_texts(monster).some((line) =>
       line.includes('@INVASION_EVENT_FORT'),
     ),
-    ':539 的 FLAG:SINDO 分支早退',
+    'INV_TYPE == 0 + 已征服：FORT 的守卫早退（`(FLAG:SINDO || …)` 为真）',
   );
 });
 

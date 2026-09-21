@@ -18,7 +18,9 @@
  *     target/ERB/侵略/INVASION_EVENT.ERB  @KYOTEN_EVENT（:2-209，仅 ARG:0
  *       == 1 人间界臂）/ @INVASION_EVENT（:212-235，RAND:10 真分发，三臂
  *       JUMP 到 SEIEI / FORT / CHALLENGE）/ @INVASION_EVENT_FORT
- *       （:530-814，存根）/ @INVASION_EVENT_CHALLENGE（:815-1054，存根）
+ *       （:530-814，存根）/ @INVASION_EVENT_CHALLENGE（:815-1162，存根；
+ *       该函数是文件里最后一个 @，到文件尾 RETURN 0 为止——工单与
+ *       #456 正文写的末行 1054 是笔误，实际 1162）
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - CLEARLINE 局部重绘不镜像（:26 等）：ere 控制台是滚动视图，画面每次
@@ -33,17 +35,21 @@
  *   - @INVASION_EVENT 的 RAND:10 分发（:224-232）**自 #503 起掷骰真分发**：
  *     #117 只做魔力路线时，三臂对 INV_TYPE == 1 一律「打印守卫后 RETURN -1」
  *     （FORT :539、CHALLENGE :824 的 SIF 守卫、SEIEI :273 的 SIF INV_TYPE
- *     != 2），掷不掷骰结果相同，故当时归约成直接调 SEIEI 臂。[0] 落地后
- *     INV_TYPE 取 0，FORT :539 的 `SIF FLAG:SINDO || INV_TYPE != 0 && ...`
- *     与 CHALLENGE :824 的 `SIF INV_TYPE != 0 && ...` 都不再拦它（[3] 的 3
- *     同理）——两臂真的可达，归约的依据当场失效，因此恢复真分发；两臂的
+ *     != 2），掷不掷骰结果相同，故当时归约成直接调 SEIEI 臂。[0]/[3] 落地后
+ *     INV_TYPE 取 0/3：CHALLENGE :824 的 `!= 0 && != 2 && != 3` 链对两者都
+ *     放行；FORT :539 的 `FLAG:SINDO || INV_TYPE != 0 && ...` 按 Emuera 的
+ *     **同优先级左结合**（见 invasion_event_fort 的注释）读成
+ *     `((FLAG:SINDO || INV_TYPE != 0) && INV_TYPE != 2) && INV_TYPE != 3`——
+ *     对 2/3 恒不早退、对 0 才看 FLAG:SINDO，两条路线照样可达（已征服的 [3]
+ *     也进）。两臂真的可达，归约的依据当场失效，因此恢复真分发；两臂的
  *     行为体仍随 [2] 路线票，登记为存根（零结算、返回 -1 继续侵攻）；
  *   - [0]/[3] 两条出兵路线自 #503 起是真身（含 :609-618 的 [3] 除算与
  *     :620-692/:891-975 两条结果段）；[2] 仍整支存根，其存根返回 0
  *     （不消耗回合、零结算）——原作 [2] 走完 RETURN 1，真身落地时一并恢复；
- *   - RESTART（:325/:377 等）按 control-flow.md「回到当前函数开头重新
- *     执行、局部量不重置」处理：@INVASION 的开头是 :6 的 FLAG:82 分派，故
- *     用 RESTART 常量把信号透传给 invasion() 的外层循环，由那里重走
+ *   - RESTART（:325/:377 等）按 control-flow.md:376「回到当前函数开头重新
+ *     执行」（局部量不重置见 user-defined-variables.md）处理：@INVASION 的
+ *     开头是 :6 的 FLAG:82 分派，故用 RESTART 常量把信号透传给 invasion() 的
+ *     外层循环，由那里重走
  *     「分派 → 菜单」（先例：page-chara-info-show.js 的返回 true 外层重画）；
  *   - %SAVESTR:MASTER%（魔王存档名）经 callname:0:-1 承载（#5 决议，
  *     utils/callname-utils），新档 =「你」；
@@ -117,8 +123,9 @@ const STUBBED_CALLS = [
 ];
 
 /**
- * 原作 RESTART 的 ere 侧信号（control-flow.md：回到当前函数开头重新执行，
- * #DIM 局部量不随 RESTART 重置）。@INVASION 的开头是 :6 的 FLAG:82 分派，
+ * 原作 RESTART 的 ere 侧信号（control-flow.md:376「回到当前函数开头重新
+ * 执行」；`#DIM` 局部量不随 RESTART 重置见 user-defined-variables.md 的
+ * 局部变量一节）。@INVASION 的开头是 :6 的 FLAG:82 分派，
  * 所以信号一路透传到 invasion() 的外层循环——那里重走「FLAG:82 分派 →
  * 菜单」，与原作的 RESTART 等价（含「征服后菜单的 [0] 出发时回到征服后
  * 菜单」这一形态）。
@@ -160,9 +167,9 @@ function times(value, factor) {
 }
 
 /**
- * 数值型 INPUT 的读数（本文件八处：`SENGEN_VIDEO` 内的六处
- * :1093/:1102/:1127/:1148/:1176/:1208，以及 post_conquest_menu 与
- * start_campaign 各一处菜单读数）。
+ * 数值型 INPUT 的读数（本文件九处：`SENGEN_VIDEO` 内的六处
+ * :1093/:1102/:1127/:1148/:1176/:1208，post_conquest_menu 与 start_campaign
+ * 各一处菜单读数，以及 #503 的 pick_raid_hero 一处——:517 的列表选人）。
  *
  * 引擎 `era.input()` 与原作 `INPUT` 有两处差异（逐字镜像见
  * test/helpers/era-fixture.js 的 #151/G6，`getNumber(val)` 即 `Number(val)`、
@@ -322,11 +329,18 @@ function recapture_key(stage) {
  * 真分发**（归约依据失效的经过见文件头）——掷出的值决定落到哪一臂，三臂各自
  * 有自己的守卫与行为体。
  *
+ * **#504 接行为体时要改签名**：原作五参是 `AREA, SINDO, INV_TYPE, SINKOU
+ * (#DIM REF), YUSYA_I`——FORT/CHALLENGE 的强攻与潜入段会改写 SINKOU、并用
+ * YUSYA_I 取勇者（:601 的调用点按引用传）。当前三臂是存根/只读头部，本函数
+ * 与 `invasion_event_fort/challenge` 都只收前三参；接真身时把后两参补上并按
+ * 调用方接回改写后的 SINKOU（现签名不是最终形态）。
+ *
  * @param {number} area 侵攻地区 FLAG 下标（81）
  * @param {number} sindo 征服标记 FLAG 下标（82）
  * @param {number} inv_type 出兵类别（0/1/2/3）
  * @param {(n: number) => number} [rand] RAND:N 随机源（RAND:10 的上界）
- * @returns {Promise<number>} -1 = 继续侵攻；>0 = 侵攻中止（调用方透传返回）
+ * @returns {Promise<number>} 0/-1 = 继续侵攻（原作 INVASION_EVENT.ERB:213
+ *   的契约是「0 继续、1 结束」，三臂照此返回）；>0 = 侵攻中止（调用方透传）
  */
 async function invasion_event(area, sindo, inv_type, rand = default_rand) {
   const local = rand(10); // :224 LOCAL = RAND:10
@@ -352,7 +366,8 @@ async function invasion_event(area, sindo, inv_type, rand = default_rand) {
  * @param {number} area 侵攻地区 FLAG 下标（81）
  * @param {number} sindo 征服标记 FLAG 下标（82）
  * @param {number} inv_type 出兵类别（0/1/2/3）
- * @returns {Promise<number>} -1 = 继续侵攻
+ * @returns {Promise<number>} -1 = 继续侵攻（非 [2] 路线恒此值）；0 = [2] 路线
+ *   进战斗体后的存根返回值（对应原作 :459 的 RETURN 0）
  */
 async function invasion_event_seiei(area, sindo, inv_type) {
   // :250-251 SIF FLAG:SINDO != 0 → RETURN -1
@@ -398,11 +413,11 @@ async function invasion_event_seiei(area, sindo, inv_type) {
 /**
  * @INVASION_EVENT_FORT（INVASION_EVENT.ERB:530-814）：侵略中途事件（要塞）。
  *
- * 守卫（:539 `SIF FLAG:SINDO || INV_TYPE != 0 && INV_TYPE != 2 && INV_TYPE
- * != 3`）对 0/2/3 放行——[0]/[3] 两条路线自 #503 起真的会走到这里（#117
- * 时期「窄路径不可达」的判定当场失效，见文件头）。行为体（:542-808：三个
- * 选项、强攻/潜入/绕路三段结算）随 [2] 路线票，当前是零结算存根，按原作
- * 两处早退的同值返回 -1（继续侵攻、不消耗回合）。
+ * 守卫（:539，见下方注释的读法）对 INV_TYPE == 2/3 恒放行、对 0 看 FLAG:SINDO、
+ * 对 1 恒早退——[0]/[3] 两条路线自 #503 起真的会走到这里（#117 时期「窄路径
+ * 不可达」的判定当场失效，见文件头）。行为体（:542-808：三个选项、强攻/潜入/
+ * 绕路三段结算，含 `#DIM REF SINKOU` 对侵攻点的改写）随 [2] 路线票，当前是
+ * 零结算存根，按原作两处早退的同值返回 -1（继续侵攻、不消耗回合）。
  *
  * @param {number} area 侵攻地区 FLAG 下标（81）
  * @param {number} sindo 征服标记 FLAG 下标（82）
@@ -410,11 +425,17 @@ async function invasion_event_seiei(area, sindo, inv_type) {
  * @returns {Promise<-1>} 恒 -1（继续侵攻）
  */
 async function invasion_event_fort(area, sindo, inv_type) {
-  // :539 `||` 两侧：FLAG:SINDO 非 0，或 INV_TYPE 不在 {0,2,3} 里
-  if ((era.get(`flag:${sindo}`) || 0) !== 0) {
-    return -1;
-  }
-  if (inv_type !== 0 && inv_type !== 2 && inv_type !== 3) {
+  // :539 `SIF FLAG:SINDO || INV_TYPE != 0 && INV_TYPE != 2 && INV_TYPE != 3`
+  // —— Emuera 里 `&&` 与 `||` **同优先级、左结合**（operators.md 的优先级表
+  // 把两者排在同一行；com-sex.js:1837 / train-message.js:251 同款读法），
+  // 因此原式等价于 `((FLAG:SINDO || INV_TYPE != 0) && INV_TYPE != 2)
+  // && INV_TYPE != 3`，而不是 C 式「&& 优先」的 `FLAG:SINDO || (...)`：
+  // 2/3 两值恒不早退（已征服也进要塞事件），1 恒早退，0 才看 FLAG:SINDO。
+  if (
+    ((era.get(`flag:${sindo}`) || 0) !== 0 || inv_type !== 0) &&
+    inv_type !== 2 &&
+    inv_type !== 3
+  ) {
     return -1;
   }
   await stub_line_wait('INVASION_EVENT_FORT', '要塞事件', '随勇者出兵票');
@@ -422,14 +443,14 @@ async function invasion_event_fort(area, sindo, inv_type) {
 }
 
 /**
- * @INVASION_EVENT_CHALLENGE（INVASION_EVENT.ERB:815-1054）：侵略中途事件
+ * @INVASION_EVENT_CHALLENGE（INVASION_EVENT.ERB:815-1162）：侵略中途事件
  * （被勇者叫阵单挑）。
  *
- * 同 FORT：守卫（:824）对 0/2/3 放行，[0]/[3] 自 #503 起可达；行为体
- * （:828-1162：按地区的称呼表、单挑选项、开挂战斗与抓捕结算）随 [2] 路线票。
- * 零结算存根，按原作早退的同值返回 -1。区内的 `SIF EX_FLAG:95 & (地区位)`
- * 只在开挂取胜支（:1041 `EX_FLAG:95 = LOCAL:20`）之后才有真值，属行为体
- * 的一部分，随 #504 一并接。
+ * 同 FORT：守卫（:824）对 0/2/3 放行（纯 `&&` 链，无优先级歧义），[0]/[3] 自
+ * #503 起可达；行为体（:828-1162：按地区的称呼表、单挑选项、开挂战斗与抓捕
+ * 结算，含 `#DIM REF SINKOU` 的改写）随 [2] 路线票。零结算存根，按原作早退的
+ * 同值返回 -1。区内的 `SIF EX_FLAG:95 & (地区位)` 只在开挂取胜支（:1041
+ * `EX_FLAG:95 = LOCAL:20`）之后才有真值，属行为体的一部分，随 #504 一并接。
  *
  * @param {number} area 侵攻地区 FLAG 下标（81）
  * @param {number} sindo 征服标记 FLAG 下标（82）
@@ -474,8 +495,9 @@ const MEDAL_TIERS = [
  * 返回 100-160 的百分比。未达首档（≤5 枚）返回 100 且不打任何输出
  * （:1030 的 LOCAL 初值）。
  *
- * 原作实参 ARG 是角色号：窄路径恒 0（魔王，:593 CALL MEDAL_BONUS,0），
- * [2]/[3] 路线传勇者号（:439/:559 CALL MEDAL_BONUS,YUSYA_I，随后续票接）。
+ * 原作实参 ARG 是角色号：窄路径恒 0（魔王，:593 CALL MEDAL_BONUS,0）；
+ * [3] 路线的 :559 已随 #503 接真（传勇者号），[2] 路线的 :439
+ * （CALL MEDAL_BONUS,YUSYA_I）随后续出兵票接。
  *
  * @param {number} [cid] 角色 ID（EXP 与 CALLNAME 的下标）
  * @returns {Promise<number>} 补正百分比（100-160）
@@ -871,12 +893,16 @@ async function invasion_check() {
 
 /**
  * 威望修正（INVASION.ERB:270-293，魔力分支内的一份；怪物分支 :236-259
- * 同构）。五档；0-20 档侵攻失败（早退，返回 true 表示已 RETURN）。
+ * 同构，两处共用本函数，#503 起 [0] 也走这里）。五档；0-20 档侵攻失败
+ * （早退，返回 true 表示已 RETURN），21-40 档的提示是 PRINTW（:243/:277
+ * `PRINTW 侵攻战斗力减少`）——**要等键**，其余三档是 PRINTl/PRINTL（不等键）。
+ * 等键使本函数变成 async（#503 审查发现：原先两行打印后直接返回，#117 起的
+ * 存量偏差，[0] 也走这条档位后一并修正）。
  *
  * @param {number} sinkou 档前侵攻点
- * @returns {{sinkou: number, failed: boolean}} 档后侵攻点 / 是否失败早退
+ * @returns {Promise<{sinkou: number, failed: boolean}>} 档后侵攻点 / 是否失败早退
  */
-function apply_prestige_tier(sinkou) {
+async function apply_prestige_tier(sinkou) {
   const prestige = era_exflag.prestige; // EX_FLAG:99 威望
   if (prestige <= 20 && prestige >= 0) {
     // :270-274 岌岌可危：SINKOU = 0，PRINTW 侵攻失败，RETURN 1
@@ -884,9 +910,10 @@ function apply_prestige_tier(sinkou) {
     return { sinkou: 0, failed: true };
   }
   if (prestige <= 40 && prestige > 20) {
-    // :275-278 动荡不安：÷4
+    // :275-278 动荡不安：÷4（PRINTW 的等键落在「侵攻战斗力减少」之后）
     era.print('威望值是【动荡不安】');
     era.print('侵攻战斗力减少');
+    await era.waitAnyKey();
     return { sinkou: Math.floor(sinkou / 4), failed: false };
   }
   if (prestige <= 60 && prestige > 40) {
@@ -1145,8 +1172,9 @@ function raid_rejected(cid) {
  * 实际渲染 NUM_PAGE - 1 行、且上一页的最后一行会重复（原作现状，1:1 不修）。
  *
  * NO_PAGE/LIST_POS/PREV_PAGE/PREV_LIST_POS 是 @INVASION 的 #DIM 局部量：
- * RESTART 不重置它们（control-flow.md 的实测结论），故由调用方持有、本函数
- * 读写。
+ * RESTART 不重置它们（control-flow.md:376 的回函数头重执行 +
+ * user-defined-variables.md 的「局部变量在 RESTART 时不重置」），故由调用方
+ * 持有、本函数读写。
  *
  * @param {{no_page: number, list_pos: number, prev_page: number,
  *   prev_list_pos: number}} state 跨 RESTART 保留的翻页游标
@@ -1464,7 +1492,7 @@ async function start_campaign(rand = default_rand) {
       }
       sinkou = Math.trunc(sinkou / 20); // :234
       // :236-259 威望修正（与魔力分支 :270-293 同构，共用一套五档）
-      const tier = apply_prestige_tier(sinkou);
+      const tier = await apply_prestige_tier(sinkou);
       sinkou = tier.sinkou;
       if (tier.failed) {
         era.print('侵攻失败'); // :239 PRINTW
@@ -1477,7 +1505,15 @@ async function start_campaign(rand = default_rand) {
       // ===== [3] 勇者掠夺（:442-563）=====
       const picked = await pick_raid_hero(page_state);
       if (picked === RESTART) {
-        continue; // :467-470/:519-520 RESTART → 重画出兵菜单
+        // :467-470 没有候选 / :519-520 [999] 返回：原作的 RESTART 回
+        // @INVASION 开头（:6）重走 FLAG:82 分派。未征服时落点是 $START1
+        // （就是本函数的循环头，`continue` 连 #DIM 翻页游标一起保住）；
+        // 已征服时（从征服后菜单 [0] 进来）落点是征服后菜单，本函数到不了，
+        // 把信号透传给 invasion() 的外层循环——那里的三元就是 :25 的分派。
+        if (era_flag.human_realm_fallen !== 0) {
+          return RESTART;
+        }
+        continue;
       }
       yusya_i = picked; // :547 YUSYA_I = RESULT
       // :549-551 掠夺的战力来源是魔王之力（BASE:0:1），与 [0]/[2] 的怪物无关
@@ -1504,7 +1540,7 @@ async function start_campaign(rand = default_rand) {
       sinkou = Math.floor(chara(0).dungeon.气力 / 25);
       chara(0).dungeon.气力 = Math.floor(chara(0).dungeon.气力 / 2);
       // :269-293 威望修正（失败档早退：PRINTW 侵攻失败 → RETURN 1）
-      const tier = apply_prestige_tier(sinkou);
+      const tier = await apply_prestige_tier(sinkou);
       sinkou = tier.sinkou;
       if (tier.failed) {
         era.print('侵攻失败');
