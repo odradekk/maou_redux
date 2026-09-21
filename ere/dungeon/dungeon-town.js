@@ -10,7 +10,9 @@
  *       @TOWN_PT_SHOPPING（:331-343，采购段）、@TOWN_SHOPPING（:346-357，
  *       个人采购）、@TOWN_PT_PLANNING（:368-567，冒险计划）、@TOWN_PT_PARTY
  *       （:575-679，宴会）、@TOWN_PT_DAYEVENT（:686-700，日常段）、
- *       @RAND_AUTOTRAIN（:705-710，自动调教随机表——β 空壳，域内存根）
+ *       @RAND_AUTOTRAIN（:705-710，自动调教随机表——β 空壳）——真身在
+ *       ere/event/event-autotrain.js 的 rand_autotrain（#218），本文件
+ *       不定义、无调用点
  *
  * 勇者资产闭环（简报第 5 条）：CFLAG:580 所持金（dungeon 门面「所持金」）、
  * CFLAG:582 借款（patch 门面「借款」，#176 建）、CFLAG:581 战利品换金
@@ -61,12 +63,12 @@ const ex_item_mod = require('#/dungeon/ex-item');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。COM63_AUTO 与 RAND_AUTOTRAIN 在文件
- * 下方定义；KARMA / BEFORE_AUTOTRAIN / COM0_AUTO / SOURCE_CHECK_AUTO 复用
- * 既有域内存根；DUNGEON_TOWN_LOVER 随 #341、SELL_EX_ITEM / ADD_EX_ITEM
- * 随 #344 换成真身。对 dungeon.js /
- * dungeon-battle.js / dungeon-trap.js 的引用一律函数内延迟 require 防环
- * （dungeon.js → 本文件是顶层引用，反向只许延迟）。
+ * 核对固定）；名单变动必须同步清单。COM63_AUTO 随 #178、COM0_AUTO 随
+ * #500 直调 ere/event/event-autotrain.js 的真身；KARMA /
+ * BEFORE_AUTOTRAIN / SOURCE_CHECK_AUTO 复用既有域内存根；
+ * DUNGEON_TOWN_LOVER 随 #341、SELL_EX_ITEM / ADD_EX_ITEM 随 #344 换成
+ * 真身。对 dungeon.js / dungeon-battle.js 的引用一律函数内延迟 require
+ * 防环（dungeon.js → 本文件是顶层引用，反向只许延迟）。
  */
 const STUBBED_CALLS = [
   'SHOW_LIST_TRAINABLE',
@@ -94,7 +96,7 @@ function party_of(arg) {
   ];
 }
 
-// —— 域内存根层（本票新增，登记 docs/stub-registry.md）——
+// —— 城镇主流程与各段（#500 起本文件无域内存根；存根清单见 docs/stub-registry.md）——
 
 /**
  * @DUNGEON_TOWN（:5-75）：勇者撤到迷宫外时的城镇事件主流程。
@@ -777,8 +779,8 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
         }
         // :643-645 愛撫自動調教（扶她或男——扶她两连）
         if (futanari || man) {
-          const { com0_auto } = require('#/dungeon/dungeon-trap');
-          await com0_auto();
+          const { com0_auto } = require('#/event/event-autotrain'); // :645 CALL COM0_AUTO
+          com0_auto();
         }
         await source_check_auto(); // :646
       } else if (era.get(`talent:${t}:143`) || 0) {
@@ -789,8 +791,8 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
           source_check_auto,
         } = require('#/dungeon/dungeon-battle');
         await before_autotrain();
-        const { com0_auto } = require('#/dungeon/dungeon-trap');
-        await com0_auto();
+        const { com0_auto } = require('#/event/event-autotrain'); // :652 CALL COM0_AUTO
+        com0_auto();
         await source_check_auto();
       }
       // :654-665 ELSEIF TALENT:122 && ABL:23 > 1——**恒不达**（蕴含
