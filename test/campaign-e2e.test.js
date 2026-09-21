@@ -38,13 +38,13 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
   fixture.era.addCharacter(0);
   fixture.store.set('base:0:1', 100000); // 气力充裕（招募消耗 + 战役每日 -10）
   fixture.store.set('maxbase:0:1', 100000);
-  // 编制**不连号**（#487）：0 号魔王之外再放一位 9 号。rand_chara_make 的
-  // :52 CHARA = RAND(1,17) 恒 1 → 掷中的勇者位是 1，招募后 CHARANUM = 3
+  // 编制**不连号**（#487）：0 号魔王之外再放一位 9 号。rand 恒 0 → 战役招募
+  // （#483 起走候选表）抽中候选表首位，即空着的 1 号；招募后 CHARANUM = 3
   // →「已加入数 - 1」= 2 ≠ 1：按人数取新角色号的旧写法写不到 1 号身上，
   // 下面的招募素质位与派遣断言因此能区分「角色号」与「人数」
   fixture.seed_chara(9, { id: 9, name: '杂役', callname: '杂役' });
   fixture.era.addCharacter(9);
-  // 待招募的预设角色（rand_chara_make 的 :52 CHARA = RAND(1,17) 恒 1）
+  // 待招募的预设角色（候选表首位 1 号，9 号已占位故候选表里没有 9）
   fixture.seed_chara(1, { id: 1, name: '候补者', callname: '候补者' });
   fixture.store.set('cflag:1:6', 99); // 名字编号：避让随机命名重掷
 
@@ -56,9 +56,9 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
   // 第一轮 [0] 选战役 → SELECT_CAMPAIGN 选 [1] → CAMPAIGN_SET_1 跑完；
   // 第二轮 [1] 招募 → rand_chara_make 的形象确认 [100]（继续）→ 收下 [2]；
   // 第三轮 [999] 退出菜单（派遣分批在下面单独驱动，中间要插入体力预置）
-  // 菜单段用恒 0 的随机源：rand_chara_make 的 :52 CHARA = RAND(1,17) 需要
-  // 命中预设的角色 1（本文件只 seed 了这一个候补预设）；dungeon 段单独
-  // 传 max，两段随机源互不影响（campaign_menu 与 run_dungeon 各自调用）
+  // 菜单段用恒 0 的随机源：战役招募要命中候选表首位，即预设的角色 1
+  // （本文件只 seed 了这一个候补预设）；dungeon 段单独传 max，两段随机源
+  // 互不影响（campaign_menu 与 run_dungeon 各自调用）
   fixture.set_inputs(0, 1, 1, 100, 2, 999);
   await campaign_menu(() => 0);
 

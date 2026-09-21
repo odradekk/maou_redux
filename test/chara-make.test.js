@@ -1108,6 +1108,72 @@ test('campaign_slave=true：16 位全满时不掷骰，走 :188-191 失败文案
   );
 });
 
+test('campaign_slave=true：候选表只剩一位时上界 1、抽中唯一空位', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  // 勇者位 1-15 已占用，只剩 16 —— 候选表长度 1（#483 的最后一个空位边界）
+  for (const cid of Array.from({ length: 15 }, (_, i) => i + 1)) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `勇者${cid}`,
+      callname: `勇者${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  fixture.seed_chara(16, { id: 16, name: '勇者16', callname: '勇者16' });
+  fixture.store.set('cflag:16:6', 99);
+  const answers = [100, 2];
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const { rand_chara_make } = load(fixture);
+  const cap = capture([]); // 越界回落 0：候选表只有一位，索引恒 0
+  const result = await rand_chara_make(cap, () => Promise.resolve(0), true);
+  assert.equal(result, 16, '唯一的空位 16 号被抽中');
+  assert.equal(cap.bounds[0], 1, '上界 = 候选表长度 1（不是 0，也不是 16）');
+  assert.equal(
+    fixture.era.getAddedCharacters().length,
+    17,
+    '编制变为 0-16（新增 16 号）',
+  );
+});
+
+test('campaign_slave=true：选「换一个」后重挑仍走候选表', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制不连号：候选表长度 15
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99);
+  const answers = [100, 1, 100, 2]; // 改形象 → 换一个 → 再改形象 → 收下
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const add_calls = [];
+  const original_add = fixture.era.addCharacter;
+  fixture.era.addCharacter = (...ids) => {
+    add_calls.push(ids);
+    return original_add(...ids);
+  };
+  const { rand_chara_make } = load(fixture);
+  // 全 0 的随机源：两次抽取（首抽与重挑）都取候选表首位。重挑前 1 号刚被
+  // DELCHARA，于是它重新成为空位——候选表在重挑时是重算的，结果因此仍是 1 号
+  const cap = capture([]);
+  const result = await rand_chara_make(cap, () => Promise.resolve(0), true);
+  assert.equal(cap.bounds[0], 15, '首次抽取的上界 = 候选表长度 15（不是 16）');
+  assert.equal(add_calls.length, 2, '换一个后重挑了：ADDCHARA 调用两次');
+  assert.ok(
+    cap.bounds.filter((n) => n === 15).length >= 2,
+    '重挑时仍按候选表长度掷骰（至少两次上界 15）',
+  );
+  assert.equal(result, 1, '重挑收下的仍是空位 1 号');
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [0, 1, 9],
+    '1 号被换掉（DELCHARA）后重新招募，编制与首抽一致',
+  );
+});
+
 test('campaign_slave 缺省（false）：掷中已占用的勇者位仍落空，不绕过判定', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });

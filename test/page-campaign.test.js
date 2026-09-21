@@ -141,7 +141,7 @@ test('招募：成功后扣 100 气力、点亮本战役招募素质位（TALENT
   add_chara(fixture, 0, '魔王');
   fixture.store.set('base:0:1', 200);
   fixture.store.set('flag:400', 1);
-  // rand_chara_make 的 :52 CHARA = RAND(1,17)：rand 恒 0 → chara_id = 1。
+  // rand 恒 0 → 战役招募（#483 起走候选表）抽中候选表首位，即空着的 1 号。
   // 先让 9 号在场凑成**不连号**编制（#487）：招募后 CHARANUM = 3 →
   // 「已加入数 - 1」= 2 ≠ 1，按人数取新角色号的写法点不亮 1 号的素质位
   add_chara(fixture, 9, '勇者9');
