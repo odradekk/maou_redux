@@ -53,9 +53,9 @@
  *   - **`CHAR_MAKE.ERB:57` 的异国勇者判定经 char_make_inport 注入**（#494）：
  *     原作 `CALL RAND_CHARA_MAKE`（:55-57）无参，但 `CALL CHAR_MAKE_INPORT`
  *     在 `@RAND_CHARA_MAKE` 体内（`CHAR_MAKE.ERB:57`，位于 `CHAR_MAKE.ERB:58`
- *     的 IF 之前），开局初始奴隶与战役招募两条路径都会跑；转发层与本分支
- *     各自的 require 成环，故由调用点显式传（同款注入见 chara-make.js 的
- *     JSDoc）。
+ *     的 IF 之前），开局初始奴隶与战役招募两条路径都会跑；它由转发层
+ *     `#/chara/char-make` 持有，真身反向 require 转发层会成环，故由调用点
+ *     显式传（同款注入见 chara-make.js 的 JSDoc）。
  */
 
 'use strict';
@@ -162,9 +162,11 @@ async function recruit_campaign_slave(rand) {
   //
   // 第二个实参是 `CHAR_MAKE.ERB:57` 的 `CALL CHAR_MAKE_INPORT`：它在
   // `@RAND_CHARA_MAKE` 体内、`CHAR_MAKE.ERB:58` 的 IF 之前，开局初始奴隶与
-  // 战役招募**两条路径都会跑**（#494）。它的真身在转发层，而转发层与本函数
-  // 各自 require 的 chara-make.js 相互成环，只能由调用点注入——`rand_n` 一路
-  // 传下去，与原作共用一条 RAND 序列（enter-enemy.js 的两处调用点同款）。
+  // 战役招募**两条路径都会跑**（#494）。它由转发层 `#/chara/char-make` 持有，
+  // 而转发层 require 了本函数用到的 `#/chara/chara-make`——真身再反向 require
+  // 转发层即成环，所以只能由调用点作形参注入（chara-make.js 的 JSDoc 同款
+  // 说明）；`rand_n` 一路传下去，与原作共用一条 RAND 序列
+  // （enter-enemy.js 的两处调用点同款）。
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const recruited = await rand_chara_make(
     rand_n,

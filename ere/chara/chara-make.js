@@ -17,7 +17,8 @@
  *     CHAR_MAKE.ERB:58 的 `IF RESULT == 0` 一直开到 :143 的 `ELSE`，性格/
  *     发色落地、形象确认循环、FLAG 搬迁、FLAG:402 与 CHAR_MAKE 都在其分支体
  *     内；异国路径只有 :144-146。本文件曾把整段放在 if/else 之外，已按原作
- *     归位，详见 rand_chara_make 的 JSDoc；
+ *     归位（收下播报的「异国的」前缀 :174-175 也随之落地），详见
+ *     rand_chara_make 的 JSDoc；
  *   - **战役招募的勇者位只从未被占用的位里抽**（#483 结论·方案 2，见
  *     pick_free_hero_slot）：原作 CHAR_MAKE.ERB:52 的 `CHARA = RAND(1, 17)`
  *     配合 :55 的 `|| 赤森奴隶` 会取到已占用的位，:61 的 `ADDCHARA CHARA`
@@ -1718,6 +1719,10 @@ function pick_free_hero_slot(rand_n) {
  *     （整段放在 if/else 之外），后果是异国勇者导入后名单记录带来的性格/发色
  *     被预设落地覆盖、白跑一轮形象确认、并多写一次 FLAG:402。
  *
+ *   - **`:174-175` 的「异国的」前缀按 `inport_cid` 拼**（#494）：原作靠
+ *     `LOCAL:0`（异国档 1、非异国档 0），本文件不承载局部量，改判
+ *     `inport_cid` 是否为 0；收下播报因此两条路径各有各的文案。
+ *
  *   - **`:57` 的 `CALL CHAR_MAKE_INPORT` 经参数注入**：它的真身在转发层
  *     ere/chara/char-make.js（它自己 require 本文件），本文件反向 require 会
  *     成环；而转发层不许折叠（#170 验收第 2 条）。`char_make_inport` 因此
@@ -1893,8 +1898,8 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
       }
       // :145 LOCAL:0 = 1（异国）／:60 LOCAL:0 = 0 —— 原作只用于 :174-175 的
-      // 「异国的」前缀；本文件不承载这个局部量，收下分支也因此没有那段前缀
-      // （属 #394 的域，本票未动）。
+      // 「异国的」前缀。本文件不承载这个局部量，等价物是 `inport_cid`
+      // （0 = 非异国），收下分支的播报据此拼前缀（#494）。
 
       // :150 CALL SHOW_CHARA_INFO（#390 真身）。**惰性 require**：本文件顶层
       // 引入会把 page-chara-info-show 及其整条链（含 dungeon-quest ↔
@@ -1939,7 +1944,11 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
 
       // :172-187 收下
       era.print('*****************************************');
-      era.print(`冒险者${chara_callname(newchara)}被囚禁在了地牢里！`);
+      // :174-175 `SIF LOCAL:0` 的「异国的」前缀（LOCAL:0 只在异国分支置 1，
+      // 见上方的 :145 注释）；PRINT/PRINTS/PRINTL 三段合成一行
+      era.print(
+        `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,
+      );
       era.print('*****************************************');
       chara(newchara).invasion.状态 = 0; // :180 CFLAG:1 初始位置
       era.set('flag:402', 0); // :182 用过的标志归位

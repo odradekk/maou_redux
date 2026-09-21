@@ -948,6 +948,15 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
   // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
   const recruit_name = fixture.store.get('callname:2:-1');
   assert.ok(recruit_name, '新加入的 2 号有称呼');
+  // :174-175 的 SIF LOCAL:0：非异国档不加「异国的」前缀。放在逐字相等那条
+  // **之前**——前缀判据被写反时先红在这一条上，报出的是「加错档」而不是
+  // 「点名点错人」
+  assert.ok(
+    !fixture.lines_history.some(
+      (line) => line.type === 'text' && line.text.includes('异国的'),
+    ),
+    ':174-175 非异国档不加「异国的」前缀',
+  );
   assert.ok(
     fixture.lines_history.some(
       (line) =>
@@ -1104,6 +1113,13 @@ test('rand_chara_make：异国分支不跑非异国段——名单带来的性�
     fixture.store.get('flag:10006'),
     7,
     ':185 ASSI = FLAG:2（未搬迁的值）',
+  );
+  // :173-178 的收下播报带「异国的」前缀（LOCAL:0 = 1 只在异国分支写）
+  assert.ok(
+    fixture.lines_history.some(
+      (line) => line.type === 'text' && line.text.startsWith('异国的冒险者'),
+    ),
+    ':174-175 SIF LOCAL:0 →「异国的」前缀',
   );
 });
 

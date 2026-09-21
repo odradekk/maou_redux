@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 61; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +5（M10614-M10618）
+export const COUNT = 63; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）
 
 export default [
   {
@@ -460,9 +460,9 @@ export default [
   {
     desc: 'M10605 收下播报的称呼取「已加入数 - 1」（#487：报的是别人的名字）',
     file: 'ere/chara/chara-make.js',
-    find: '      era.print(`冒险者${chara_callname(newchara)}被囚禁在了地牢里！`);',
+    find: "        `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,",
     replace:
-      '      era.print(`冒险者${chara_callname(era.getAddedCharacters().length - 1)}被囚禁在了地牢里！`);',
+      "        `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(era.getAddedCharacters().length - 1)}被囚禁在了地牢里！`,",
     tests: ['chara-and-hair'],
     must_mention: '收下播报点名新加入的 3 号',
   },
@@ -599,5 +599,25 @@ export default [
         }`,
     tests: ['chara-name'],
     must_mention: ':134 FLAG:2 未前移（搬迁段未执行）',
+  },
+  {
+    desc: 'M10619 收下播报的「异国的」前缀判据反转（原作 :174-175 的 SIF LOCAL:0 加错档）',
+    file: 'ere/chara/chara-make.js',
+    find: "        `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,",
+    replace:
+      "        `${inport_cid === 0 ? '异国的' : ''}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,",
+    tests: ['chara-name'],
+    must_mention: ':174-175 非异国档不加「异国的」前缀',
+  },
+  {
+    desc: 'M10623 异国分支也进形象确认段（把 :76-81 与 :107 的 INPUT 复制进 ELSE——#494 的原缺陷形态之一）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
+        era.print('呃……面前的勇者，是这个形象的……'); // 变异：异国也进形象确认段
+        era.print('[0] 印象 ： '); // 变异
+        await era.input(); // 变异：:107 的 INPUT`,
+    tests: ['chara-name'],
+    must_mention: ':107 的形象确认未执行（只问了 :158 的收下确认）',
   },
 ];

@@ -345,6 +345,12 @@ on('EVENTFIRST', async () => {
   era.print('………');
 
   // :203 CALL RAND_CHARA_MAKE —— 随机角色生成（初始奴隶=随机，存根）
+  //
+  // 落地时必须把 `char_make_inport` 传进 rand_chara_make（转发层
+  // ere/chara/char-make.js 的实现）：原作 `@RAND_CHARA_MAKE` 体内的
+  // `CALL CHAR_MAKE_INPORT`（CHAR_MAKE.ERB:57）在开局与战役招募两条路径上
+  // 都会跑，缺省回落（chara-make.js 的 `char_make_inport ?? (() => 0)`）会让
+  // 异国判定静默不跑——#494 修的就是战役那一处。
   stub_line('RAND_CHARA_MAKE', '随机角色生成');
 
   // :205-215 IF 丽塔启动！ == 1 —— 丽塔块（ADDCHARA 223 + ADDCHARA_EX +
