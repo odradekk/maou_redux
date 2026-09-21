@@ -2868,14 +2868,17 @@ async function ablup20(cid) {
 
   era.drawLine(); // :10
 
-  if (abl20() >= 5 && talent(80) === 0 && talent(83) === 0 && talent(127) === 0) {
+  if (
+    abl20() >= 5 &&
+    talent(80) === 0 &&
+    talent(83) === 0 &&
+    talent(127) === 0
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :15-17
     return;
   }
   if (abl20() + abl21() >= 20) {
-    await era.printAndWait(
-      `抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`,
-    ); // :19-20
+    await era.printAndWait(`抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`); // :19-20
     return;
   }
   if (abl20() >= 10) {
@@ -2887,15 +2890,29 @@ async function ablup20(cid) {
     const lv = abl20();
     // A(欲情点数)/B(施虐快乐经验) 梯子 :113-160
     const ladder = [
-      [100, 5], [500, 20], [1500, 50], [3000, 120], [5000, 300], [8000, 600],
-      [12000, 1500], [15000, 3000], [25000, 5000], [30000, 8000],
+      [100, 5],
+      [500, 20],
+      [1500, 50],
+      [3000, 120],
+      [5000, 300],
+      [8000, 600],
+      [12000, 1500],
+      [15000, 3000],
+      [25000, 5000],
+      [30000, 8000],
     ][lv];
     let [a, b] = ladder;
     // C(异常经验)：lv3/4/7 且无[倒错的/施虐狂/嫉妒/小恶魔]时 = lv-2（:141-143）。
     // 戒备森严（:118-140）与淫乱（:276-281）的 TIMES C 都在 C 赋值前，乘 0
     // 无效，1:1 保留为不应用；D/E/G 无读者，不移植（见函数头注释）
     let c = 0;
-    if ((lv === 3 || lv === 4 || lv === 7) && talent(80) === 0 && talent(83) === 0 && talent(84) === 0 && talent(87) === 0) {
+    if (
+      (lv === 3 || lv === 4 || lv === 7) &&
+      talent(80) === 0 &&
+      talent(83) === 0 &&
+      talent(84) === 0 &&
+      talent(87) === 0
+    ) {
       c = lv - 2;
     }
 
@@ -3076,14 +3093,18 @@ async function ablup21(cid) {
 
   era.drawLine(); // :10
 
-  if (abl21() >= 5 && talent(10) === 0 && talent(14) === 0 && talent(37) === 0 && talent(88) === 0) {
+  if (
+    abl21() >= 5 &&
+    talent(10) === 0 &&
+    talent(14) === 0 &&
+    talent(37) === 0 &&
+    talent(88) === 0
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :15-17
     return;
   }
   if (abl20() + abl21() >= 20) {
-    await era.printAndWait(
-      `抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`,
-    ); // :19-20
+    await era.printAndWait(`抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`); // :19-20
     return;
   }
   if (abl21() >= 10) {
@@ -3130,7 +3151,12 @@ async function ablup21(cid) {
 
     // F(异常经验)：lv3/4/7 且无[开放/倒错的/受虐狂]时 = lv-2（:223-225）
     let f = 0;
-    if ((lv === 3 || lv === 4 || lv === 7) && talent(33) === 0 && talent(80) === 0 && talent(88) === 0) {
+    if (
+      (lv === 3 || lv === 4 || lv === 7) &&
+      talent(33) === 0 &&
+      talent(80) === 0 &&
+      talent(88) === 0
+    ) {
       f = lv - 2;
     }
     const g = 1; // 绝顶经验需求，全等级 1（:227-228）
@@ -3182,7 +3208,7 @@ async function ablup21(cid) {
       e = times(e, 0.9);
     }
     if (talent(20)) {
-      // 克制 :269-274
+      // 克制 :300-306
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
@@ -3214,7 +3240,7 @@ async function ablup21(cid) {
       e = times(e, 1.2);
     }
     if (talent(26)) {
-      // 悲观的 :293-298（×0.90）
+      // 悲观的 :332-338（×0.90）
       a = times(a, 0.9);
       b = times(b, 0.9);
       c = times(c, 0.9);
@@ -3250,7 +3276,7 @@ async function ablup21(cid) {
       e = times(e, 0.6);
     }
     if (talent(34)) {
-      // 抵抗 :326-331（×2.00）
+      // 抵抗 :373-379（×2.00）
       a = times(a, 2.0);
       b = times(b, 2.0);
       c = times(c, 2.0);
@@ -3430,7 +3456,7 @@ async function ablup21(cid) {
       const new_lv = (chara(cid).system.抖M气质 += 1); // :101（system 属主）
       era.add(`juel:${cid}:9`, -a); // :103-104
       era.add(`juel:${cid}:5`, -b);
-      era.print(`${era.get('ablname:21')}变为LV${new_lv}。`); // :108
+      era.print(`${era.get('ablname:21')}变为LV${new_lv}。`); // :109
       return;
     } else if (result === 1) {
       const new_lv = (chara(cid).system.抖M气质 += 1);
@@ -3464,7 +3490,14 @@ async function ablup22(cid) {
 
   era.drawLine(); // :15
 
-  if (abl22() >= 5 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(82) === 0 && talent(123) === 0) {
+  if (
+    abl22() >= 5 &&
+    talent(33) === 0 &&
+    talent(80) === 0 &&
+    talent(81) === 0 &&
+    talent(82) === 0 &&
+    talent(123) === 0
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :18-20
     return;
   }
@@ -3510,10 +3543,16 @@ async function ablup22(cid) {
       }
     }
 
-    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:240-242，
+    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:214，
     // 名单不含 TALENT:82 讨厌男人）
     let e = 0;
-    if (lv >= 3 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(123) === 0) {
+    if (
+      lv >= 3 &&
+      talent(33) === 0 &&
+      talent(80) === 0 &&
+      talent(81) === 0 &&
+      talent(123) === 0
+    ) {
       e = lv - 2;
     }
 
@@ -3627,7 +3666,7 @@ async function ablup22(cid) {
       i |= 2;
       j |= 2;
     }
-    if (juel5 < a) i |= 1; // :347-348
+    if (juel5 < a) i |= 1; // :333
     if (juel6 < c) i |= 1; // :350-351
     if (exp40 < b) i |= 2; // :353-354
     if (abl11() < lv + 1) {
@@ -3636,11 +3675,11 @@ async function ablup22(cid) {
       j |= 4;
     }
     if (d > 0) {
-      // [1] 阴核轨道 :364-369
+      // [1] 阴核轨道 :349-356
       if (juel0 < d) j |= 1;
       if (exp40 < b) j |= 2;
     } else {
-      j = 256; // :370-372（lv>=2，[1] 隐藏）
+      j = 256; // :357-359（lv>=2，[1] 隐藏）
     }
 
     if (e > 0) {
@@ -3666,7 +3705,7 @@ async function ablup22(cid) {
     }
     era.printButton('停止', 100); // :67
 
-    const result = await era.input(); // :70
+    const result = await era.input(); // :71
     if (result === 100) {
       return;
     } else if (result === 0 && i !== 0) {
@@ -3681,7 +3720,7 @@ async function ablup22(cid) {
       const new_lv = (chara(cid).chara.百合气质 += 1); // :86（chara 属主）
       era.add(`juel:${cid}:5`, -a); // :88-89
       era.add(`juel:${cid}:6`, -c);
-      era.print(`${era.get('ablname:22')}变为LV${new_lv}。`); // :93
+      era.print(`${era.get('ablname:22')}变为LV${new_lv}。`); // :95
       return;
     } else if (result === 1) {
       const new_lv = (chara(cid).chara.百合气质 += 1);
@@ -3710,7 +3749,13 @@ async function ablup23(cid) {
 
   era.drawLine(); // :15
 
-  if (abl23() >= 5 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(123) === 0) {
+  if (
+    abl23() >= 5 &&
+    talent(33) === 0 &&
+    talent(80) === 0 &&
+    talent(81) === 0 &&
+    talent(123) === 0
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :18-20
     return;
   }
@@ -3757,7 +3802,13 @@ async function ablup23(cid) {
 
     // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）
     let e = 0;
-    if (lv >= 3 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(123) === 0) {
+    if (
+      lv >= 3 &&
+      talent(33) === 0 &&
+      talent(80) === 0 &&
+      talent(81) === 0 &&
+      talent(123) === 0
+    ) {
       e = lv - 2;
     }
 
@@ -3816,7 +3867,7 @@ async function ablup23(cid) {
       d = times(d, 0.95);
     }
     if (talent(70)) {
-      // 接受快感 :273-278 / 否定快感 :279-284（×0.95 / ×1.20）
+      // 接受快感 :273-278 / 否定快感 :277-283（×0.95 / ×1.20）
       a = times(a, 0.95);
       b = times(b, 0.95);
       c = times(c, 0.95);
@@ -3849,7 +3900,7 @@ async function ablup23(cid) {
       d = times(d, 0.5);
     }
 
-    if (a < 1) a = 1; // :305-306
+    if (a < 1) a = 1; // :308-309
     if (b < 1) b = 1; // :307-308
 
     const juel5 = era.get(`juel:${cid}:5`) || 0;
@@ -3912,7 +3963,7 @@ async function ablup23(cid) {
       const new_lv = (chara(cid).system.断背气质 += 1); // :85（system 属主）
       era.add(`juel:${cid}:5`, -a); // :87-88
       era.add(`juel:${cid}:6`, -c);
-      era.print(`${era.get('ablname:23')}变为LV${new_lv}。`); // :92
+      era.print(`${era.get('ablname:23')}变为LV${new_lv}。`); // :94
       return;
     } else if (result === 1) {
       const new_lv = (chara(cid).system.断背气质 += 1);
@@ -3949,7 +4000,15 @@ async function ablup30(cid) {
 
   era.drawLine(); // :12
 
-  if (abl30() >= 5 && (talent(85) === 0 || talent(76) === 0 || talent(63) === 0 || talent(70) === 0 || talent(75) === 0 || talent(77) === 0)) {
+  if (
+    abl30() >= 5 &&
+    (talent(85) === 0 ||
+      talent(76) === 0 ||
+      talent(63) === 0 ||
+      talent(70) === 0 ||
+      talent(75) === 0 ||
+      talent(77) === 0)
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :16-18（OR：任一为 0 即拦）
     return;
   }
@@ -3960,7 +4019,10 @@ async function ablup30(cid) {
   if (abl30() + abl31() >= 10) {
     const juel6_gate = era.get(`juel:${cid}:6`) || 0;
     const juel5_gate = era.get(`juel:${cid}:5`) || 0;
-    if (juel6_gate < abl30() * abl30() * 1000 || juel5_gate < abl30() * abl30() * 300) {
+    if (
+      juel6_gate < abl30() * abl30() * 1000 ||
+      juel5_gate < abl30() * abl30() * 300
+    ) {
       await era.printAndWait(
         `性交中毒(${abl30()})＋自慰中毒(${abl31()})上限为10`,
       ); // :26
@@ -4122,7 +4184,13 @@ async function ablup30(cid) {
     // F(异常经验)：lv>=2 且无[开放/容易上瘾/淫乱/疯狂]时 = lv-1，不足即
     // 双轨同置 bit2（:325-333）
     let f = 0;
-    if (lv >= 2 && talent(33) === 0 && talent(72) === 0 && talent(76) === 0 && talent(123) === 0) {
+    if (
+      lv >= 2 &&
+      talent(33) === 0 &&
+      talent(72) === 0 &&
+      talent(76) === 0 &&
+      talent(123) === 0
+    ) {
       f = lv - 1;
     }
 
@@ -4145,8 +4213,8 @@ async function ablup30(cid) {
     if (juel6 < b) i |= 1; // :346-347
     if (exp5 < c) i |= 2; // :349-350
     if (juel5 < a * 3) j |= 1; // :353-354
-    if (juel6 < b * 3) j |= 1; // :356-357
-    if (exp5 < Math.floor(c / 2)) j |= 2; // :359-360（C/2 整除）
+    if (juel6 < b * 3) j |= 1; // :346
+    if (exp5 < Math.floor(c / 2)) j |= 2; // :349（C/2 整除）
 
     if (f > 0) {
       era.print(`${era.get('expname:50')}${f}以上(现在${exp50})且`); // :46-47
@@ -4216,7 +4284,15 @@ async function ablup31(cid) {
 
   era.drawLine(); // :12
 
-  if (abl31() >= 5 && talent(85) === 0 && talent(76) === 0 && talent(60) === 0 && talent(70) === 0 && talent(74) === 0 && talent(78) === 0) {
+  if (
+    abl31() >= 5 &&
+    talent(85) === 0 &&
+    talent(76) === 0 &&
+    talent(60) === 0 &&
+    talent(70) === 0 &&
+    talent(74) === 0 &&
+    talent(78) === 0
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :16-18（AND：全 0 才拦）
     return;
   }
@@ -4228,10 +4304,12 @@ async function ablup31(cid) {
     const juel5_gate = era.get(`juel:${cid}:5`) || 0;
     const juel0_gate = era.get(`juel:${cid}:0`) || 0;
     const juel8_gate = era.get(`juel:${cid}:8`) || 0;
-    if (juel5_gate < abl31() * abl31() * 2550 || juel0_gate < abl31() * abl31() * 15000 || juel8_gate < abl31() * abl31() * 2000) {
-      era.print(
-        `性交中毒(${abl30()})＋自慰中毒(${abl31()})上限为10`,
-      ); // :26（PRINTFORML，与 ABLUP30 的 PRINTFORMW 不同）
+    if (
+      juel5_gate < abl31() * abl31() * 2550 ||
+      juel0_gate < abl31() * abl31() * 15000 ||
+      juel8_gate < abl31() * abl31() * 2000
+    ) {
+      era.print(`性交中毒(${abl30()})＋自慰中毒(${abl31()})上限为10`); // :26（PRINTFORML，与 ABLUP30 的 PRINTFORMW 不同）
       era.print(
         `至少达成${era.get('palamname:5')}点数${abl31() * abl31() * 2550}点、${era.get('palamname:0')}点数${abl31() * abl31() * 15000}点或${era.get('palamname:8')}点数${abl31() * abl31() * 2000}点的其中一项`,
       ); // :27
@@ -4287,7 +4365,14 @@ async function ablup31(cid) {
     // F(异常经验)：仅 lv==2 且无[开放/容易自慰/容易上瘾/淫乱/疯狂]时 = 1，
     // 不足即双轨同置 bit2（:151-161）
     let f = 0;
-    if (lv === 2 && talent(33) === 0 && talent(60) === 0 && talent(72) === 0 && talent(76) === 0 && talent(123) === 0) {
+    if (
+      lv === 2 &&
+      talent(33) === 0 &&
+      talent(60) === 0 &&
+      talent(72) === 0 &&
+      talent(76) === 0 &&
+      talent(123) === 0
+    ) {
       f = lv - 1;
     }
 
@@ -4356,7 +4441,7 @@ async function ablup31(cid) {
     if (juel8 < c) i |= 1; // :240-241
     if (exp10 < d) i |= 2; // :243-244
     if (juel5 < a) j |= 1; // :247-248
-    if (juel0 < b) j |= 1; // :249-250
+    if (juel0 < b) j |= 1; // :333
     if (juel8 < c) j |= 1; // :251-252
     if (exp11 < e) j |= 2; // :254-255
 
@@ -4372,7 +4457,7 @@ async function ablup31(cid) {
     era.println();
     era.print(`　　　${era.get('palamname:0')}点数×${juel0}/${b}`); // :69-70
     era.print(`　　　${era.get('palamname:8')}点数×${juel8}/${c}`); // :71
-    era.print(`　　　${era.get('expname:10')}　${exp10}/${d}`); // :72
+    era.print(`　　　${era.get('expname:10')}　${exp10}/${d}`); // :71
     era.printButton(
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(j)}`,
       1,
@@ -4397,7 +4482,7 @@ async function ablup31(cid) {
       era.add(`juel:${cid}:5`, -a); // :101-103
       era.add(`juel:${cid}:0`, -b);
       era.add(`juel:${cid}:8`, -c);
-      era.print(`${era.get('ablname:31')}变为LV${new_lv}。`); // :106
+      era.print(`${era.get('ablname:31')}变为LV${new_lv}。`); // :104
       return;
     } else {
       continue; // 引擎层拒收代位，防御性保留（issue #130）
@@ -4430,7 +4515,14 @@ async function ablup32(cid) {
 
   era.drawLine(); // :12
 
-  if (abl32() >= 5 && talent(76) === 0 && talent(50) === 0 && talent(61) === 0 && talent(64) === 0 && talent(47) === 0) {
+  if (
+    abl32() >= 5 &&
+    talent(76) === 0 &&
+    talent(50) === 0 &&
+    talent(61) === 0 &&
+    talent(64) === 0 &&
+    talent(47) === 0
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :16-18（AND：全 0 才拦）
     return;
   }
@@ -4441,7 +4533,10 @@ async function ablup32(cid) {
   if (abl32() + abl33() + abl39() >= 10) {
     const juel5_gate = era.get(`juel:${cid}:5`) || 0;
     const juel6_gate = era.get(`juel:${cid}:6`) || 0;
-    if (juel5_gate < abl32() * abl32() * 6500 || juel6_gate < abl32() * abl32() * 19000) {
+    if (
+      juel5_gate < abl32() * abl32() * 6500 ||
+      juel6_gate < abl32() * abl32() * 19000
+    ) {
       era.print(
         `精液中毒(${abl32()})＋百合中毒(${abl33()})＋兽奸中毒(${abl39()})上限为10`,
       ); // :25
@@ -4498,7 +4593,14 @@ async function ablup32(cid) {
     // D(异常经验)：lv>=2 且无[不怕污臭/容易上瘾/倒错的/疯狂/喜欢精液]时
     // = lv-1（:179-180）
     let d = 0;
-    if (lv >= 2 && talent(61) === 0 && talent(72) === 0 && talent(80) === 0 && talent(123) === 0 && talent(47) === 0) {
+    if (
+      lv >= 2 &&
+      talent(61) === 0 &&
+      talent(72) === 0 &&
+      talent(80) === 0 &&
+      talent(123) === 0 &&
+      talent(47) === 0
+    ) {
       d = lv - 1;
     }
 
@@ -4607,7 +4709,7 @@ async function ablup32(cid) {
       c = times(c, 0.9);
     }
 
-    if (a < 1) a = 1; // :283-284
+    if (a < 1) a = 1; // :329
     if (b < 1) b = 1; // :285-286
     if (c < 1) c = 1; // :287-288
 
@@ -4639,8 +4741,8 @@ async function ablup32(cid) {
     if (juel6 < b) i |= 1; // :313-314
     if (exp20 < c) i |= 2; // :316-317
     if (juel5 < a * 3) j |= 1; // :320-321
-    if (juel6 < b * 3) j |= 1; // :323-324
-    if (exp20 < Math.floor(c / 2)) j |= 2; // :326-327（C/2 整除）
+    if (juel6 < b * 3) j |= 1; // :372
+    if (exp20 < Math.floor(c / 2)) j |= 2; // :375（C/2 整除）
 
     if (d > 0) {
       era.print(`${era.get('expname:50')}${d}以上(现在${exp50})且`); // :51-53
@@ -4717,7 +4819,13 @@ async function ablup33(cid) {
 
   era.drawLine(); // :16
 
-  if (abl33() >= 5 && talent(76) === 0 && talent(80) === 0 && talent(81) === 0 && talent(82) === 0) {
+  if (
+    abl33() >= 5 &&
+    talent(76) === 0 &&
+    talent(80) === 0 &&
+    talent(81) === 0 &&
+    talent(82) === 0
+  ) {
     await era.printAndWait('需要特殊素质才能继续提升'); // :24-26
     return;
   }
@@ -4729,7 +4837,11 @@ async function ablup33(cid) {
     const juel5_gate = era.get(`juel:${cid}:5`) || 0;
     const juel6_gate = era.get(`juel:${cid}:6`) || 0;
     const juel0_gate = era.get(`juel:${cid}:0`) || 0;
-    if (juel5_gate < abl33() * abl33() * 4000 || juel6_gate < abl33() * abl33() * 4000 || juel0_gate < abl33() * abl33() * 10000) {
+    if (
+      juel5_gate < abl33() * abl33() * 4000 ||
+      juel6_gate < abl33() * abl33() * 4000 ||
+      juel0_gate < abl33() * abl33() * 10000
+    ) {
       era.print(
         `精液中毒(${abl32()})＋百合中毒(${abl33()})＋兽奸中毒(${abl39()})上限为10`,
       ); // :28
@@ -4786,7 +4898,14 @@ async function ablup33(cid) {
     // D(异常经验)：lv>=2 且无[容易上瘾/倒错的/双性恋/讨厌男人/疯狂]时
     // = lv-1（:189-190）
     let d = 0;
-    if (lv >= 2 && talent(72) === 0 && talent(80) === 0 && talent(81) === 0 && talent(82) === 0 && talent(123) === 0) {
+    if (
+      lv >= 2 &&
+      talent(72) === 0 &&
+      talent(80) === 0 &&
+      talent(81) === 0 &&
+      talent(82) === 0 &&
+      talent(123) === 0
+    ) {
       d = lv - 1;
     }
 
@@ -4927,7 +5046,7 @@ async function ablup33(cid) {
 
     if (a < 1) a = 1; // :325-326
     if (b < 1) b = 1; // :327-328
-    if (c < 1) c = 1; // :329-330
+    if (c < 1) c = 1; // :345
 
     const juel0 = era.get(`juel:${cid}:0`) || 0;
     const juel5 = era.get(`juel:${cid}:5`) || 0;
@@ -4939,7 +5058,7 @@ async function ablup33(cid) {
     if (abl22() < lv + 1) i |= 4; // :339-344（百合气质门槛；J|=4 同为死写入）
     if (juel0 < b) i |= 1; // :346-347
     if (juel5 < a) i |= 1; // :349-350
-    if (juel6 < a) i |= 1; // :352-353（欲情/屈服需求同为 A）
+    if (juel6 < a) i |= 1; // :367（欲情/屈服需求同为 A）
     if (exp40 < c) i |= 2; // :355-356
 
     if (d > 0) {

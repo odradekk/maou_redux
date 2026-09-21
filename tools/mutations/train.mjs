@@ -8357,36 +8357,36 @@ export default [
   {
     desc: 'M10400 ablup20：入口把关三素质 AND 误改为 OR',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl20() >= 5 && talent(80) === 0 && talent(83) === 0 && talent(127) === 0) {',
+    find: 'if (\n    abl20() >= 5 &&\n    talent(80) === 0 &&\n    talent(83) === 0 &&\n    talent(127) === 0\n  ) {',
     replace:
-      '  if (abl20() >= 5 && (talent(80) === 0 || talent(83) === 0 || talent(127) === 0)) {',
+      'if (\n    abl20() >= 5 &&\n    (talent(80) === 0 || talent(83) === 0 || talent(127) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention: '抖S气质(10)＋抖M气质(10)上限为20',
   },
   {
     desc: 'M10401 ablup20：组合上限越界值',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl20() + abl21() >= 20) {\n    await era.printAndWait(\n      `抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`,\n    ); // :19-20\n    return;\n  }\n  if (abl20() >= 10) {',
+    find: '  if (abl20() + abl21() >= 20) {\n    await era.printAndWait(`抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`); // :19-20\n    return;\n  }\n  if (abl20() >= 10) {',
     replace:
-      '  if (abl20() + abl21() > 20) {\n    await era.printAndWait(\n      `抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`,\n    ); // :19-20\n    return;\n  }\n  if (abl20() >= 10) {',
+      '  if (abl20() + abl21() > 20) {\n    await era.printAndWait(`抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`); // :19-20\n    return;\n  }\n  if (abl20() >= 10) {',
     tests: ['ablup'],
     must_mention: '抖S气质(10)＋抖M气质(10)上限为20',
   },
   {
     desc: 'M10402 ablup20：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '      [100, 5], [500, 20], [1500, 50], [3000, 120], [5000, 300], [8000, 600],',
+    find: '[100, 5],\n      [500, 20],\n      [1500, 50],\n      [3000, 120],\n      [5000, 300],\n      [8000, 600],',
     replace:
-      '      [101, 5], [500, 20], [1500, 50], [3000, 120], [5000, 300], [8000, 600],',
+      '[110, 5],\n      [500, 20],\n      [1500, 50],\n      [3000, 120],\n      [5000, 300],\n      [8000, 600],',
     tests: ['ablup'],
     must_mention: '欲情点数×0/100 ……点数不足 经验不足能力不足 ',
   },
   {
     desc: 'M10403 ablup20：异常经验 C 的等级集合改错（lv4 换成 lv5）',
     file: 'ere/system/train/ablup.js',
-    find: '    if ((lv === 3 || lv === 4 || lv === 7) && talent(80) === 0 && talent(83) === 0 && talent(84) === 0 && talent(87) === 0) {',
+    find: 'if (\n      (lv === 3 || lv === 4 || lv === 7) &&\n      talent(80) === 0 &&\n      talent(83) === 0 &&\n      talent(84) === 0 &&\n      talent(87) === 0\n    ) {',
     replace:
-      '    if ((lv === 3 || lv === 5 || lv === 7) && talent(80) === 0 && talent(83) === 0 && talent(84) === 0 && talent(87) === 0) {',
+      'if (\n      (lv === 3 || lv === 5 || lv === 7) &&\n      talent(80) === 0 &&\n      talent(83) === 0 &&\n      talent(84) === 0 &&\n      talent(87) === 0\n    ) {',
     tests: ['ablup'],
     must_mention: '异常经验2以上（现在0）且',
   },
@@ -8447,9 +8447,9 @@ export default [
   {
     desc: 'M10410 ablup21：入口把关四项素质最后一项 AND 误改为 OR',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl21() >= 5 && talent(10) === 0 && talent(14) === 0 && talent(37) === 0 && talent(88) === 0) {',
+    find: 'if (\n    abl21() >= 5 &&\n    talent(10) === 0 &&\n    talent(14) === 0 &&\n    talent(37) === 0 &&\n    talent(88) === 0\n  ) {',
     replace:
-      '  if (abl21() >= 5 && talent(10) === 0 && talent(14) === 0 && (talent(37) === 0 || talent(88) === 0)) {',
+      'if (\n    abl21() >= 5 &&\n    talent(10) === 0 &&\n    talent(14) === 0 &&\n    (talent(37) === 0 || talent(88) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention: 'ablup21：三档终止判定（特殊素质/组合上限/已达最高级）',
   },
@@ -8528,9 +8528,9 @@ export default [
   {
     desc: 'M10419 ablup21：异常经验 F 的豁免素质漏掉受虐狂（88）',
     file: 'ere/system/train/ablup.js',
-    find: '    if ((lv === 3 || lv === 4 || lv === 7) && talent(33) === 0 && talent(80) === 0 && talent(88) === 0) {',
+    find: 'if (\n      (lv === 3 || lv === 4 || lv === 7) &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(88) === 0\n    ) {',
     replace:
-      '    if ((lv === 3 || lv === 4 || lv === 7) && talent(33) === 0 && talent(80) === 0) {',
+      'if (\n      (lv === 3 || lv === 4 || lv === 7) &&\n      talent(33) === 0 &&\n      talent(80) === 0 \n    ) {',
     tests: ['ablup'],
     must_mention: '受虐狂可免',
   },
@@ -8546,9 +8546,9 @@ export default [
   {
     desc: 'M10421 ablup22：Lv5 上限豁免五项素质最后一项 AND 误改为 OR',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl22() >= 5 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(82) === 0 && talent(123) === 0) {',
+    find: 'if (\n    abl22() >= 5 &&\n    talent(33) === 0 &&\n    talent(80) === 0 &&\n    talent(81) === 0 &&\n    talent(82) === 0 &&\n    talent(123) === 0\n  ) {',
     replace:
-      '  if (abl22() >= 5 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && (talent(82) === 0 || talent(123) === 0)) {',
+      'if (\n    abl22() >= 5 &&\n    talent(33) === 0 &&\n    talent(80) === 0 &&\n    talent(81) === 0 &&\n    (talent(82) === 0 || talent(123) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention: '两档终止判定（五项豁免素质',
   },
@@ -8635,9 +8635,9 @@ export default [
   {
     desc: 'M10431 ablup23：讨厌男人误加入 Lv5 上限豁免名单',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl23() >= 5 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(123) === 0) {',
+    find: '  if (\n    abl23() >= 5 &&\n    talent(33) === 0 &&\n    talent(80) === 0 &&\n    talent(81) === 0 &&\n    talent(123) === 0\n  ) {',
     replace:
-      '  if (abl23() >= 5 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(82) === 0 && talent(123) === 0) {',
+      '  if (\n    abl23() >= 5 &&\n    talent(33) === 0 &&\n    talent(80) === 0 &&\n    talent(81) === 0 &&\n    talent(82) === 0 &&\n    talent(123) === 0\n  ) {',
     tests: ['ablup'],
     must_mention: '讨厌男人不在名单内',
   },
@@ -8662,9 +8662,9 @@ export default [
   {
     desc: 'M10434 ablup23：异常经验 E 的 lv-2 改为 lv-1',
     file: 'ere/system/train/ablup.js',
-    find: '    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）\n    let e = 0;\n    if (lv >= 3 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(123) === 0) {\n      e = lv - 2;\n    }',
+    find: '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 2;\n    }',
     replace:
-      '    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）\n    let e = 0;\n    if (lv >= 3 && talent(33) === 0 && talent(80) === 0 && talent(81) === 0 && talent(123) === 0) {\n      e = lv - 1;\n    }',
+      '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 1;\n    }',
     tests: ['ablup'],
     must_mention: '异常经验1以上(现在0)且',
   },
@@ -8717,9 +8717,9 @@ export default [
   {
     desc: 'M10440 ablup30：入口把关 OR 误改为 AND（六项全缺才拦）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl30() >= 5 && (talent(85) === 0 || talent(76) === 0 || talent(63) === 0 || talent(70) === 0 || talent(75) === 0 || talent(77) === 0)) {',
+    find: 'if (\n    abl30() >= 5 &&\n    (talent(85) === 0 ||\n      talent(76) === 0 ||\n      talent(63) === 0 ||\n      talent(70) === 0 ||\n      talent(75) === 0 ||\n      talent(77) === 0)\n  ) {',
     replace:
-      '  if (abl30() >= 5 && (talent(85) === 0 && talent(76) === 0 && talent(63) === 0 && talent(70) === 0 && talent(75) === 0 && talent(77) === 0)) {',
+      'if (\n    abl30() >= 5 &&\n    (talent(85) === 0 && talent(76) === 0 && talent(63) === 0 && talent(70) === 0 && talent(75) === 0 &&\n      talent(77) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention:
       'ablup30：三档终止判定（六项豁免须全有——主流程 OR 拦截）/组合上限三行提示',
@@ -8727,9 +8727,9 @@ export default [
   {
     desc: 'M10441 ablup30：组合上限拦截判定 JUEL:6/JUEL:5 与提示文案错位被"修正"',
     file: 'ere/system/train/ablup.js',
-    find: '    if (juel6_gate < abl30() * abl30() * 1000 || juel5_gate < abl30() * abl30() * 300) {',
+    find: 'if (\n      juel6_gate < abl30() * abl30() * 1000 ||\n      juel5_gate < abl30() * abl30() * 300\n    ) {',
     replace:
-      '    if (juel5_gate < abl30() * abl30() * 1000 || juel6_gate < abl30() * abl30() * 300) {',
+      'if (\n      juel5_gate < abl30() * abl30() * 1000 || juel6_gate < abl30() * abl30() * 300\n    ) {',
     tests: ['ablup'],
     must_mention:
       'ablup30：合计 10-19 且珠够时放行（DECIDE 里 >=20 才 RETURN），照常出需求',
@@ -8755,17 +8755,17 @@ export default [
   {
     desc: 'M10444 ablup30：[1] 轨半经验改为整除丢失去掉（C/2 → C）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (exp5 < Math.floor(c / 2)) j |= 2; // :359-360（C/2 整除）',
-    replace: '    if (exp5 < c) j |= 2; // :359-360（C/2 整除）',
+    find: '    if (exp5 < Math.floor(c / 2)) j |= 2; // :349（C/2 整除）',
+    replace: '    if (exp5 < c) j |= 2; // :349（C/2 整除）',
     tests: ['ablup'],
     must_mention: 'ablup30：两条购买路径各自扣对应珠、era.add 写入 abl:30',
   },
   {
     desc: 'M10445 ablup30：异常经验 F 的 lv-1 改为 lv-2',
     file: 'ere/system/train/ablup.js',
-    find: '    if (lv >= 2 && talent(33) === 0 && talent(72) === 0 && talent(76) === 0 && talent(123) === 0) {\n      f = lv - 1;\n    }',
+    find: 'if (\n      lv >= 2 &&\n      talent(33) === 0 &&\n      talent(72) === 0 &&\n      talent(76) === 0 &&\n      talent(123) === 0\n    ) {\n      f = lv - 1;\n    }',
     replace:
-      '    if (lv >= 2 && talent(33) === 0 && talent(72) === 0 && talent(76) === 0 && talent(123) === 0) {\n      f = lv - 2;\n    }',
+      'if (\n      lv >= 2 &&\n      talent(33) === 0 &&\n      talent(72) === 0 &&\n      talent(76) === 0 &&\n      talent(123) === 0\n    ) {\n      f = lv - 2;\n    }',
     tests: ['ablup'],
     must_mention: '异常经验1以上(现在0)且',
   },
@@ -8810,9 +8810,9 @@ export default [
   {
     desc: 'M10450 ablup31：入口把关 AND 误改为 OR（六项任一为 0 即拦）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl31() >= 5 && talent(85) === 0 && talent(76) === 0 && talent(60) === 0 && talent(70) === 0 && talent(74) === 0 && talent(78) === 0) {',
+    find: 'if (\n    abl31() >= 5 &&\n    talent(85) === 0 &&\n    talent(76) === 0 &&\n    talent(60) === 0 &&\n    talent(70) === 0 &&\n    talent(74) === 0 &&\n    talent(78) === 0\n  ) {',
     replace:
-      '  if (abl31() >= 5 && (talent(85) === 0 || talent(76) === 0 || talent(60) === 0 || talent(70) === 0 || talent(74) === 0 || talent(78) === 0)) {',
+      'if (\n    abl31() >= 5 &&\n    (talent(85) === 0 || talent(76) === 0 || talent(60) === 0 || talent(70) === 0 || talent(74) === 0 || talent(78) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention:
       'ablup31：三档终止判定（六项豁免任一命中即可——与 ABLUP30 的全有相反）',
@@ -8820,9 +8820,9 @@ export default [
   {
     desc: 'M10451 ablup31：组合上限拦截欲情系数 2550 改为 2500',
     file: 'ere/system/train/ablup.js',
-    find: '    if (juel5_gate < abl31() * abl31() * 2550 || juel0_gate < abl31() * abl31() * 15000 || juel8_gate < abl31() * abl31() * 2000) {',
+    find: 'if (\n      juel5_gate < abl31() * abl31() * 2550 ||\n      juel0_gate < abl31() * abl31() * 15000 ||\n      juel8_gate < abl31() * abl31() * 2000\n    ) {',
     replace:
-      '    if (juel5_gate < abl31() * abl31() * 2500 || juel0_gate < abl31() * abl31() * 15000 || juel8_gate < abl31() * abl31() * 2000) {',
+      'if (\n      juel0_gate < abl31() * abl31() * 2550 ||\n      juel0_gate < abl31() * abl31() * 15000 ||\n      juel8_gate < abl31() * abl31() * 2000\n    ) {',
     tests: ['ablup'],
     must_mention:
       'ablup31：组合上限拦截线的精确边界（Lv4 欲情 4²×2550 = 40800）',
@@ -8839,9 +8839,9 @@ export default [
   {
     desc: 'M10453 ablup31：异常经验 F 只在 lv==2 的判定放宽为 lv>=2',
     file: 'ere/system/train/ablup.js',
-    find: '    if (lv === 2 && talent(33) === 0 && talent(60) === 0 && talent(72) === 0 && talent(76) === 0 && talent(123) === 0) {',
+    find: 'if (\n      lv === 2 &&\n      talent(33) === 0 &&\n      talent(60) === 0 &&\n      talent(72) === 0 &&\n      talent(76) === 0 &&\n      talent(123) === 0\n    ) {',
     replace:
-      '    if (lv >= 2 && talent(33) === 0 && talent(60) === 0 && talent(72) === 0 && talent(76) === 0 && talent(123) === 0) {',
+      'if (\n      lv >= 2 &&\n      talent(33) === 0 &&\n      talent(60) === 0 &&\n      talent(72) === 0 &&\n      talent(76) === 0 &&\n      talent(123) === 0\n    ) {',
     tests: ['ablup'],
     must_mention: '半角括号异常行只在 Lv2',
   },
@@ -8902,9 +8902,9 @@ export default [
   {
     desc: 'M10460 ablup32：入口把关五项素质最后一项 AND 误改为 OR',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl32() >= 5 && talent(76) === 0 && talent(50) === 0 && talent(61) === 0 && talent(64) === 0 && talent(47) === 0) {',
+    find: 'if (\n    abl32() >= 5 &&\n    talent(76) === 0 &&\n    talent(50) === 0 &&\n    talent(61) === 0 &&\n    talent(64) === 0 &&\n    talent(47) === 0\n  ) {',
     replace:
-      '  if (abl32() >= 5 && talent(76) === 0 && talent(50) === 0 && talent(61) === 0 && talent(64) === 0 || talent(47) === 0) {',
+      'if (\n    abl32() >= 5 ||\n    talent(76) === 0 &&\n    talent(50) === 0 &&\n    talent(61) === 0 &&\n    talent(64) === 0 &&\n    talent(47) === 0\n  ) {',
     tests: ['ablup'],
     must_mention:
       'ablup32：三档终止判定（五项豁免须全无才拦）/拦截阈值 6500 与提示文案 4000 不一致（原作如此）',
@@ -8912,9 +8912,9 @@ export default [
   {
     desc: 'M10461 ablup32：拦截判定 6500 误改为与文案一致的 4000',
     file: 'ere/system/train/ablup.js',
-    find: '    if (juel5_gate < abl32() * abl32() * 6500 || juel6_gate < abl32() * abl32() * 19000) {',
+    find: 'if (\n      juel5_gate < abl32() * abl32() * 6500 ||\n      juel6_gate < abl32() * abl32() * 19000\n    ) {',
     replace:
-      '    if (juel5_gate < abl32() * abl32() * 4000 || juel6_gate < abl32() * abl32() * 19000) {',
+      'if (\n      juel5_gate < abl32() * abl32() * 4000 ||\n      juel6_gate < abl32() * abl32() * 19000\n    ) {',
     tests: ['ablup'],
     must_mention: '拦截阈值 6500 与提示文案 4000 不一致',
   },
@@ -8968,9 +8968,9 @@ export default [
   {
     desc: 'M10467 ablup32：异常经验 D 的 lv-1 改为 lv-2',
     file: 'ere/system/train/ablup.js',
-    find: '    if (lv >= 2 && talent(61) === 0 && talent(72) === 0 && talent(80) === 0 && talent(123) === 0 && talent(47) === 0) {\n      d = lv - 1;\n    }',
+    find: 'if (\n      lv >= 2 &&\n      talent(61) === 0 &&\n      talent(72) === 0 &&\n      talent(80) === 0 &&\n      talent(123) === 0 &&\n      talent(47) === 0\n    ) {\n      d = lv - 1;\n    }',
     replace:
-      '    if (lv >= 2 && talent(61) === 0 && talent(72) === 0 && talent(80) === 0 && talent(123) === 0 && talent(47) === 0) {\n      d = lv - 2;\n    }',
+      'if (\n      lv >= 2 &&\n      talent(61) === 0 &&\n      talent(72) === 0 &&\n      talent(80) === 0 &&\n      talent(123) === 0 &&\n      talent(47) === 0\n    ) {\n      d = lv - 2;\n    }',
     tests: ['ablup'],
     must_mention: '异常经验1以上(现在0)且',
   },
@@ -8986,8 +8986,8 @@ export default [
   {
     desc: 'M10469 ablup32：[1] 轨半经验改为整（C/2 → C）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (exp20 < Math.floor(c / 2)) j |= 2; // :326-327（C/2 整除）',
-    replace: '    if (exp20 < c) j |= 2; // :326-327（C/2 整除）',
+    find: '    if (exp20 < Math.floor(c / 2)) j |= 2; // :375（C/2 整除）',
+    replace: '    if (exp20 < c) j |= 2; // :375（C/2 整除）',
     tests: ['ablup'],
     must_mention: 'ablup32：两条购买路径各自扣对应珠、era.add 写入 abl:32',
   },
@@ -9003,18 +9003,18 @@ export default [
   {
     desc: 'M10471 ablup33：Lv5 上限豁免四项素质最后一项 AND 误改为 OR',
     file: 'ere/system/train/ablup.js',
-    find: '  if (abl33() >= 5 && talent(76) === 0 && talent(80) === 0 && talent(81) === 0 && talent(82) === 0) {',
+    find: 'if (\n    abl33() >= 5 &&\n    talent(76) === 0 &&\n    talent(80) === 0 &&\n    talent(81) === 0 &&\n    talent(82) === 0\n  ) {',
     replace:
-      '  if (abl33() >= 5 && talent(76) === 0 && talent(80) === 0 && (talent(81) === 0 || talent(82) === 0)) {',
+      'if (\n    abl33() >= 5 &&\n    talent(76) === 0 &&\n    talent(80) === 0 &&\n    (talent(81) === 0 || talent(82) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention: '四项豁免须全无才拦',
   },
   {
     desc: 'M10472 ablup33：组合上限拦截阴核系数 10000 改为 1000',
     file: 'ere/system/train/ablup.js',
-    find: '    if (juel5_gate < abl33() * abl33() * 4000 || juel6_gate < abl33() * abl33() * 4000 || juel0_gate < abl33() * abl33() * 10000) {',
+    find: 'if (\n      juel5_gate < abl33() * abl33() * 4000 ||\n      juel6_gate < abl33() * abl33() * 4000 ||\n      juel0_gate < abl33() * abl33() * 10000\n    ) {',
     replace:
-      '    if (juel5_gate < abl33() * abl33() * 4000 || juel6_gate < abl33() * abl33() * 4000 || juel0_gate < abl33() * abl33() * 1000) {',
+      'if (\n      juel5_gate < abl33() * abl33() * 4000 ||\n      juel6_gate < abl33() * abl33() * 4000 ||\n      juel0_gate < abl33() * abl33() * 1000\n    ) {',
     tests: ['ablup'],
     must_mention:
       'ablup33：组合上限拦截线的精确边界（Lv4 阴核 4²×10000 = 160000）',
