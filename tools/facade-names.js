@@ -989,6 +989,16 @@ const ex = {
       ':EX:5 射精·喷乳（COM_EJAC_PLAYER_MILK 的 EX:PLAYER:5 += 1）',
     ),
   ),
+  6: named(
+    '普通射精绝顶',
+    erb('SYSTEM/SYSTEM_SOURCE_SUB1.ERB', ':523 @TARGET_EJAC_CHECK 通常の射精'),
+  ),
+};
+
+const stain = {
+  2: named('阴茎污渍', src(SRC_FLAG, 'STAIN:2 = ペニス')),
+  3: named('阴道污渍', src(SRC_FLAG, 'STAIN:3 = ヴァギナ')),
+  5: named('胸部污渍', src(SRC_FLAG, 'STAIN:5 = 胸')),
 };
 
 // —— 移植自建表的属主声明（#90 裁定，依据见 issue #90）——
@@ -1016,6 +1026,7 @@ const NAMES = {
   mark,
   cstr,
   tequip,
+  stain,
   delta,
   deltabase,
 };

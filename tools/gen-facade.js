@@ -69,6 +69,7 @@ const TWO_DIM_TABLES = [
   'mark',
   'exp',
   'ex',
+  'stain',
   'delta',
   'deltabase',
 ];
