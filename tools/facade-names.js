@@ -990,6 +990,7 @@ const ex = {
 const stain = {
   2: named('阴茎污渍', src(SRC_FLAG, 'STAIN:2 = ペニス')),
   3: named('阴道污渍', src(SRC_FLAG, 'STAIN:3 = ヴァギナ')),
+  5: named('胸部污渍', src(SRC_FLAG, 'STAIN:5 = 胸')),
 };
 
 // —— 移植自建表的属主声明（#90 裁定，依据见 issue #90）——

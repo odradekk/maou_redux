@@ -1358,6 +1358,21 @@ class TrainFacade {
     era.set(`stain:${this.cid}:3`, v);
   }
 
+  /**
+   * 胸部污渍（stain:cid:5 ↔ STAIN:5）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt STAIN:5 = 胸
+   * @returns {number}
+   */
+  get 胸部污渍() {
+    return era.get(`stain:${this.cid}:5`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 胸部污渍(v) {
+    era.set(`stain:${this.cid}:5`, v);
+  }
+
   // —— delta ——
   /**
    * 阴核增量（delta:cid:0 ↔ UP:0）

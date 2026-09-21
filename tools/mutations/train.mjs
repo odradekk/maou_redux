@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 652;
+export const COUNT = 671;
 
 export default [
   {
@@ -5381,7 +5381,8 @@ export default [
   if (era.get(\`tequip:\${cid}:22\`)) {
     // 利尿剂
     local = idiv(local, 2);
-  }`,
+  }
+  if (era.get(\`tequip:\${cid}:37\`)) {`,
     replace: `  if (era.get(\`tequip:\${cid}:21\`)) {
     // 媚药（变异：系数错改 *1）
     local *= 1;
@@ -5389,7 +5390,8 @@ export default [
   if (era.get(\`tequip:\${cid}:22\`)) {
     // 利尿剂
     local = idiv(local, 2);
-  }`,
+  }
+  if (era.get(\`tequip:\${cid}:37\`)) {`,
     tests: ['source-check'],
     must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
   },
@@ -7243,6 +7245,319 @@ export default [
     replace: `    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.欲望); // 变异：门槛来源读错`,
     tests: ['source-check'],
     must_mention: 'SOKUOCHI_CHECK：ABL:17（露出癖）门槛来源',
+  },
+
+  // —— TARGET_MILK_CHECK（#462，验收返工）——
+  {
+    desc: 'M9849 TARGET_MILK_CHECK 早退守卫删除（TALENT:130=0 时也会执行喷乳结算）',
+    file: 'ere/event/source-check.js',
+    find: `function target_milk_check() {
+  if (!chara(cid).chara.母乳体质) {
+    return;
+  }`,
+    replace: `function target_milk_check() {
+  // 变异：容易陷落式守卫被删
+  if (false) {
+    return;
+  }`,
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：守卫（TALENT:130=0）→ 早退，无喷乳结算',
+  },
+  {
+    desc: 'M9850 TARGET_MILK_CHECK 克制折减删',
+    file: 'ere/event/source-check.js',
+    find: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }`,
+    replace: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
+  if (tal(20)) {
+    // 变异：克制折减删
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9851 TARGET_MILK_CHECK 接受快感系数 1.2 错改 1.0',
+    file: 'ere/event/source-check.js',
+    find: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }
+  if (tal(70)) {
+    // 接受快感
+    local = times(local, 1.2);
+  }`,
+    replace: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }
+  if (tal(70)) {
+    // 接受快感（变异：系数错改 1.0）
+    local = times(local, 1.0);
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9852 TARGET_MILK_CHECK 淫乱化系数 1.1 错改 1.0',
+    file: 'ere/event/source-check.js',
+    find: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }
+  if (tal(70)) {
+    // 接受快感
+    local = times(local, 1.2);
+  }
+  if (tal(76)) {
+    // 淫乱化
+    local = times(local, 1.1);
+  }`,
+    replace: `  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }
+  if (tal(70)) {
+    // 接受快感
+    local = times(local, 1.2);
+  }
+  if (tal(76)) {
+    // 淫乱化（变异：系数错改 1.0）
+    local = times(local, 1.0);
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9853 TARGET_MILK_CHECK 否定快感系数 0.8 错改 1.0',
+    file: 'ere/event/source-check.js',
+    find: `  if (tal(71)) {
+    // 否定快感
+    local = times(local, 0.8);
+  }
+  if (tal(108)) {
+    // 乳房敏感`,
+    replace: `  if (tal(71)) {
+    // 否定快感（变异：系数错改 1.0）
+    local = times(local, 1.0);
+  }
+  if (tal(108)) {
+    // 乳房敏感`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9854 TARGET_MILK_CHECK 乳房敏感系数 1.5 错改 1.0',
+    file: 'ere/event/source-check.js',
+    find: `  if (tal(108)) {
+    // 乳房敏感
+    local = times(local, 1.5);
+  }`,
+    replace: `  if (tal(108)) {
+    // 乳房敏感（变异：系数错改 1.0）
+    local = times(local, 1.0);
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9855 TARGET_MILK_CHECK 媚药系数 *2 错改 *1',
+    file: 'ere/event/source-check.js',
+    find: `  if (tal(108)) {
+    // 乳房敏感
+    local = times(local, 1.5);
+  }
+  if (era.get(\`tequip:\${cid}:21\`)) {
+    // 媚药
+    local *= 2;
+  }`,
+    replace: `  if (tal(108)) {
+    // 乳房敏感
+    local = times(local, 1.5);
+  }
+  if (era.get(\`tequip:\${cid}:21\`)) {
+    // 媚药（变异：系数错改 *1）
+    local *= 1;
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9856 TARGET_MILK_CHECK 利尿剂折减删',
+    file: 'ere/event/source-check.js',
+    find: `  if (era.get(\`tequip:\${cid}:22\`)) {
+    // 利尿剂
+    local = idiv(local, 2);
+  }
+  if (era.get(\`talent:\${era_flag.player}:131\`)) {
+    // 调教者幼儿退行`,
+    replace: `  if (era.get(\`tequip:\${cid}:22\`)) {
+    // 变异：利尿剂折减删
+  }
+  if (era.get(\`talent:\${era_flag.player}:131\`)) {
+    // 调教者幼儿退行`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9857 TARGET_MILK_CHECK 调教者幼儿退行系数 *2 错改 *1',
+    file: 'ere/event/source-check.js',
+    find: `  if (era.get(\`talent:\${era_flag.player}:131\`)) {
+    // 调教者幼儿退行
+    local *= 2;
+  }`,
+    replace: `  if (era.get(\`talent:\${era_flag.player}:131\`)) {
+    // 调教者幼儿退行（变异：系数错改 *1）
+    local *= 1;
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9858 TARGET_MILK_CHECK 调教者幼稚系数 *2 错改 *1',
+    file: 'ere/event/source-check.js',
+    find: `  if (era.get(\`talent:\${era_flag.player}:132\`)) {
+    // 调教者幼稚
+    local *= 2;
+  }`,
+    replace: `  if (era.get(\`talent:\${era_flag.player}:132\`)) {
+    // 调教者幼稚（变异：系数错改 *1）
+    local *= 1;
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9859 TARGET_MILK_CHECK 贫乳系数 0.5 错改 1.0',
+    file: 'ere/event/source-check.js',
+    find: `  if (tal(109)) {
+    // 贫乳
+    local = times(local, 0.5);
+  }`,
+    replace: `  if (tal(109)) {
+    // 贫乳（变异：系数错改 1.0）
+    local = times(local, 1.0);
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9860 TARGET_MILK_CHECK 绝壁系数 0.2 错改 1.0',
+    file: 'ere/event/source-check.js',
+    find: `  if (tal(116)) {
+    // 绝壁
+    local = times(local, 0.2);
+  }`,
+    replace: `  if (tal(116)) {
+    // 绝壁（变异：系数错改 1.0）
+    local = times(local, 1.0);
+  }`,
+    tests: ['source-check'],
+    must_mention: '十一项乘算系数各自方向正确',
+  },
+  {
+    desc: 'M9861 TARGET_MILK_CHECK 三档判定 > ejac*2 错改 >= ejac*2',
+    file: 'ere/event/source-check.js',
+    find: `  const ejac = era.get(\`maxbase:\${cid}:3\`) || 0;
+  let grade;
+  if (chara(cid).train.母乳槽 > ejac * 2) {`,
+    replace: `  const ejac = era.get(\`maxbase:\${cid}:3\`) || 0;
+  let grade;
+  if (chara(cid).train.母乳槽 >= ejac * 2) {
+    // 变异：判据 > 错改 >=`,
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：三档判定边界',
+  },
+  {
+    desc: 'M9862 TARGET_MILK_CHECK 大量档 EXPLV 最低档判据删',
+    file: 'ere/event/source-check.js',
+    find: `  if (grade === 2) {
+    add_lose(0, 20);
+    add_lose(1, 100);
+    if (exp54 < EXPLV[1]) {`,
+    replace: `  if (grade === 2) {
+    add_lose(0, 20);
+    add_lose(1, 100);
+    if (false) {
+      // 变异：EXPLV[1] 判据删`,
+    tests: ['source-check'],
+    must_mention: '恒加异常经验',
+  },
+  {
+    desc: 'M9863 TARGET_MILK_CHECK 异常经验条件误加性别门槛（应恒不带门槛，区别于 TARGET_EJAC_CHECK）',
+    file: 'ere/event/source-check.js',
+    find: `    era.print(\`\${callname}的乳头喷出了大量的母乳。\`);
+    era.print('喷奶经验+2');
+    if (exp54 === 0) {`,
+    replace: `    era.print(\`\${callname}的乳头喷出了大量的母乳。\`);
+    era.print('喷奶经验+2');
+    if (exp54 === 0 && !tal(122)) {
+      // 变异：误加 TALENT:122 性别门槛`,
+    tests: ['source-check'],
+    must_mention: '恒加异常经验',
+  },
+  {
+    desc: 'M9864 TARGET_MILK_CHECK 普通档胸部污渍位 16 错改 32',
+    file: 'ere/event/source-check.js',
+    find: `    chara(cid).train.喷奶经验 += 1;
+    chara(cid).train.胸部污渍 |= 16;`,
+    replace: `    chara(cid).train.喷奶经验 += 1;
+    chara(cid).train.胸部污渍 |= 32; // 变异：弄脏位 16 错改 32`,
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：普通档',
+  },
+  {
+    desc: 'M9865 TARGET_MILK_CHECK 大量档喷奶经验 += 2 错改 += 1',
+    file: 'ere/event/source-check.js',
+    find: `    era.print('喷奶经验+2');
+    if (exp54 === 0) {
+      chara(cid).dungeon.异常经验 += 1;
+      era.print('异常经验+1');
+    }
+    chara(cid).train.喷奶经验 += 2;`,
+    replace: `    era.print('喷奶经验+2');
+    if (exp54 === 0) {
+      chara(cid).dungeon.异常经验 += 1;
+      era.print('异常经验+1');
+    }
+    chara(cid).train.喷奶经验 += 1; // 变异：增量 2 错改 1`,
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）',
+  },
+  {
+    desc: 'M9866 TARGET_MILK_CHECK 搾乳器检查 TEQUIP:90 判据删（覆盖时仍会累加）',
+    file: 'ere/event/source-check.js',
+    find: `    game.system.对象喷乳 += 1;
+    if (era.get(\`tequip:\${cid}:16\`) && !era.get(\`tequip:\${cid}:90\`)) {
+      game.system.榨乳中 += 1;
+    }`,
+    replace: `    game.system.对象喷乳 += 1;
+    if (era.get(\`tequip:\${cid}:16\`)) {
+      // 变异：TEQUIP:90 判据删
+      game.system.榨乳中 += 1;
+    }`,
+    tests: ['source-check'],
+    must_mention: '搾乳器检查',
+  },
+  {
+    desc: 'M9867 TARGET_MILK_CHECK 大量档对象喷乳 TFLAG:11 += 2 错改 += 1',
+    file: 'ere/event/source-check.js',
+    find: `    chara(cid).train.母乳槽 = ejac - 1;
+    }
+
+    game.system.对象喷乳 += 2;`,
+    replace: `    chara(cid).train.母乳槽 = ejac - 1;
+    }
+
+    game.system.对象喷乳 += 1; // 变异：增量 2 错改 1`,
+    tests: ['source-check'],
+    must_mention: 'TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）',
   },
 
   // —— #459（COMF3_自慰 头部升格跳转补齐）——

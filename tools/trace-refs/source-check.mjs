@@ -543,6 +543,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
+        ref: '529-690',
+        any: [/^@TARGET_MILK_CHECK\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
         ref: '1727-1847',
         any: [/@TARGET_WORMBABY_CHECK/],
       },

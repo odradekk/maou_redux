@@ -1004,6 +1004,246 @@ function spread_local(f, total) {
   f.store.set('delta:31:14', total - quarter * 3);
 }
 
+// —— TARGET_MILK_CHECK ——
+
+// 全部用 UP:14（×3、无除法取整）单维驱动 LOCAL，数值可精确手算，且远低于
+// ex_check_up 的绝顶阈值（10000），不会连带触发绝顶判定污染 SOURCE 断言。
+test('TARGET_MILK_CHECK：守卫（TALENT:130=0）→ 早退，无喷乳结算', async () => {
+  const fixture = await run_caress(undefined, (f) => {
+    f.store.set('maxbase:31:3', 1000);
+    zero_up_sources(f);
+    f.store.set('delta:31:14', 1500);
+  });
+  assert.equal(fixture.store.get('tflag:11') || 0, 0);
+  assert.equal(fixture.store.get('base:31:3') || 0, 0);
+  assert.ok(!fixture.text_lines().some((t) => t.includes('母乳')));
+});
+
+test('TARGET_MILK_CHECK：普通档（EJAC < BASE:3 ≤ EJAC*2），EXP:54 非 0 时不加异常经验', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:130', 1);
+      f.store.set('maxbase:31:3', 1000);
+      f.store.set('base:31:3', 0);
+      f.store.set('exp:31:54', 3); // 避开「EXP:54=0 恒加异常经验」分支，见专门测试
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:14', 900);
+    },
+  );
+  // LOCAL=900×3=2700 → 1000+idiv(1700,2)=1850 → BASE:3=1850，EJAC=1000：>1000 不>2000
+  // EXPLV=[0,1,4,20,50,200]：EXP:54=3 不 <EXPLV[1]=1，但 <EXPLV[2]=4，落二档
+  assert.equal(fixture.store.get('source:31:12'), 5000);
+  assert.equal(fixture.store.get('source:31:13'), 4000);
+  const texts = fixture.text_lines();
+  assert.ok(texts.includes('温妮的乳头流出了母乳。'));
+  assert.ok(texts.includes('喷奶经验+1'));
+  assert.ok(!texts.some((t) => t.includes('异常经验')));
+  assert.equal(fixture.store.get('exp:31:54'), 4);
+  assert.equal(fixture.store.get('base:31:3'), 850); // 1850-1000=850，不再触发钳制
+  assert.equal(fixture.store.get('stain:31:5'), 16);
+  assert.equal(fixture.store.get('tflag:11'), 1);
+  assert.equal(fixture.store.get('nowex:31:5'), 1);
+  assert.equal(fixture.store.get('ex:31:5'), 1);
+});
+
+test('TARGET_MILK_CHECK：大量档（BASE:3 > EJAC*2）', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:130', 1);
+      f.store.set('maxbase:31:3', 1000);
+      f.store.set('base:31:3', 0);
+      f.store.set('exp:31:54', 3);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:14', 1500);
+    },
+  );
+  // LOCAL=1500×3=4500 → 1000+idiv(3500,2)=2750 → BASE:3=2750，EJAC=1000：>2000
+  // EXP:54=3 落二档（同上）
+  assert.equal(fixture.store.get('source:31:12'), 10000);
+  assert.equal(fixture.store.get('source:31:13'), 8000);
+  const texts = fixture.text_lines();
+  assert.ok(texts.includes('温妮的乳头喷出了大量的母乳。'));
+  assert.ok(texts.includes('喷奶经验+2'));
+  assert.equal(fixture.store.get('exp:31:54'), 5);
+  assert.equal(fixture.store.get('stain:31:5'), 16);
+  assert.equal(fixture.store.get('tflag:11'), 2);
+  assert.equal(fixture.store.get('nowex:31:5'), 1);
+  assert.equal(fixture.store.get('ex:31:5'), 1);
+  assert.equal(fixture.store.get('base:31:3'), 750); // 2750-2000=750，不再触发钳制
+});
+
+test('TARGET_MILK_CHECK：大量档 EXP:54=0 → EXPLV 最低档 + 恒加异常经验，不受性别门槛（区别于 TARGET_EJAC_CHECK）', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:130', 1);
+      f.store.set('talent:31:122', 1); // TARGET 男人——若照抄 EJAC 的性别门槛会被误挡
+      // TALENT:122=1 同时解开 TARGET_EJAC_CHECK 的守卫；把它的 EJAC 钳制拉到
+      // 天文数字，让它的 grade 恒为 0、早退不写 SOURCE，避免和本函数的
+      // SOURCE:12/13 断言相撞（两函数同读 UP:14）
+      f.store.set('maxbase:31:2', 999999);
+      f.store.set('maxbase:31:3', 1000);
+      f.store.set('base:31:3', 0);
+      // exp:31:54 不设（保持 0）：EXPLV[1]=1，恰是「EXP:54 < EXPLV[1]」最低档
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:14', 1500); // 大量档
+    },
+  );
+  assert.equal(fixture.store.get('source:31:12'), 20000);
+  assert.equal(fixture.store.get('source:31:13'), 10000);
+  const texts = fixture.text_lines();
+  assert.ok(texts.includes('异常经验+1'));
+  assert.equal(fixture.store.get('exp:31:50'), 1);
+});
+
+test('TARGET_MILK_CHECK：三档判定边界，BASE:3 恰等于 EJAC*2 时归入普通档（非 >=）', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:130', 1);
+      f.store.set('maxbase:31:3', 1000); // EJAC=1000，EJAC*2=2000
+      f.store.set('base:31:3', 0);
+      f.store.set('exp:31:54', 3);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:14', 1000); // LOCAL=3000 → 1000+idiv(2000,2)=2000 恰等于 EJAC*2
+    },
+  );
+  const texts = fixture.text_lines();
+  assert.ok(texts.includes('温妮的乳头流出了母乳。'));
+  assert.ok(!texts.includes('温妮的乳头喷出了大量的母乳。'));
+});
+
+test('TARGET_MILK_CHECK：EXPLV 中间档（EXPLV[2]≤EXP:54<EXPLV[3]）不与两端档位混淆', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:130', 1);
+      f.store.set('maxbase:31:3', 1000);
+      f.store.set('base:31:3', 0);
+      f.store.set('exp:31:54', 10); // EXPLV=[0,1,4,20,50,200]：4≤10<20 落 EXPLV[3] 档
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:14', 1500);
+    },
+  );
+  assert.equal(fixture.store.get('source:31:12'), 7000);
+  assert.equal(fixture.store.get('source:31:13'), 6000);
+});
+
+test('TARGET_MILK_CHECK：EXPLV 最高档（EXP:54 ≥ 200）走 ELSE 分支', async () => {
+  const fixture = await run_caress(
+    (f) => {
+      f.store.set('talent:31:130', 1);
+      f.store.set('maxbase:31:3', 1000);
+      f.store.set('base:31:3', 0);
+      f.store.set('exp:31:54', 300);
+    },
+    (f) => {
+      zero_up_sources(f);
+      f.store.set('delta:31:14', 1500);
+    },
+  );
+  assert.equal(fixture.store.get('source:31:12'), 1800);
+  assert.equal(fixture.store.get('source:31:13'), 1200);
+});
+
+test('TARGET_MILK_CHECK：十一项乘算系数各自方向正确（克制/接受快感/淫乱化/否定快感/乳房敏感/媚药/利尿剂/调教者幼儿退行/调教者幼稚/贫乳/绝壁）', async () => {
+  // EJAC 设得足够大，任何一档系数都不会跨过三档判定门槛——只比较 BASE:3 这个中间量
+  const seed_with = (overrides) => (f) => {
+    f.store.set('talent:31:130', 1);
+    f.store.set('maxbase:31:3', 100000);
+    f.store.set('base:31:3', 0);
+    for (const [k, v] of Object.entries(overrides)) {
+      f.store.set(k, v);
+    }
+  };
+  const post = (f) => {
+    zero_up_sources(f);
+    f.store.set('delta:31:14', 200);
+  };
+  const baseline = await run_caress(seed_with({}), post);
+  assert.equal(baseline.store.get('base:31:3'), 800); // LOCAL=600→1000+idiv(-400,2)
+
+  // 克制/媚药/利尿剂三项在 up_talent_cva_check（:691，先于本函数执行）里
+  // 各自也响应同一个 TALENT/TEQUIP，对 delta:14 先做一次独立缩放——同
+  // TARGET_EJAC_CHECK 的先例，断言取叠加后的最终值。
+  const restrained = await run_caress(seed_with({ 'talent:31:20': 1 }), post);
+  // cva：200×0.3=60；本函数：idiv(60×3,2)=90→1000+idiv(-910,2)
+  assert.equal(restrained.store.get('base:31:3'), 545);
+
+  const accept = await run_caress(seed_with({ 'talent:31:70': 1 }), post);
+  assert.equal(accept.store.get('base:31:3'), 860); // 600×1.2=720→1000+idiv(-280,2)
+
+  const corrupt = await run_caress(seed_with({ 'talent:31:76': 1 }), post);
+  assert.equal(corrupt.store.get('base:31:3'), 830); // 600×1.1=660→1000+idiv(-340,2)
+
+  const deny = await run_caress(seed_with({ 'talent:31:71': 1 }), post);
+  assert.equal(deny.store.get('base:31:3'), 740); // 600×0.8=480→1000+idiv(-520,2)
+
+  const sensitive = await run_caress(seed_with({ 'talent:31:108': 1 }), post);
+  assert.equal(sensitive.store.get('base:31:3'), 950); // 600×1.5=900→1000+idiv(-100,2)
+
+  const aphrodisiac = await run_caress(seed_with({ 'tequip:31:21': 1 }), post);
+  // cva：200×2.0=400；本函数：(400×3)×2=2400→1000+idiv(1400,2)
+  assert.equal(aphrodisiac.store.get('base:31:3'), 1700);
+
+  const diuretic = await run_caress(seed_with({ 'tequip:31:22': 1 }), post);
+  // cva：200×0.7=140；本函数：idiv(140×3,2)=210→1000+idiv(-790,2)
+  assert.equal(diuretic.store.get('base:31:3'), 605);
+
+  const regression = await run_caress(
+    seed_with({ [`talent:0:131`]: 1 }), // 调教者（chara 0，PLAYER）幼儿退行
+    post,
+  );
+  assert.equal(regression.store.get('base:31:3'), 1100); // 600×2=1200→1000+idiv(200,2)
+
+  const childish = await run_caress(
+    seed_with({ [`talent:0:132`]: 1 }), // 调教者幼稚
+    post,
+  );
+  assert.equal(childish.store.get('base:31:3'), 1100);
+
+  const flat = await run_caress(seed_with({ 'talent:31:109': 1 }), post);
+  assert.equal(flat.store.get('base:31:3'), 650); // 600×0.5=300→1000+idiv(-700,2)
+
+  const cliff = await run_caress(seed_with({ 'talent:31:116': 1 }), post);
+  assert.equal(cliff.store.get('base:31:3'), 560); // 600×0.2=120→1000+idiv(-880,2)
+});
+
+test('TARGET_MILK_CHECK：搾乳器检查——TEQUIP:16 且非 TEQUIP:90 才累加 TFLAG:35（榨乳中）', async () => {
+  const seed_with = (overrides) => (f) => {
+    f.store.set('talent:31:130', 1);
+    f.store.set('maxbase:31:3', 1000);
+    f.store.set('base:31:3', 0);
+    f.store.set('exp:31:54', 3);
+    for (const [k, v] of Object.entries(overrides)) {
+      f.store.set(k, v);
+    }
+  };
+  const post = (f) => {
+    zero_up_sources(f);
+    f.store.set('delta:31:14', 900); // 普通档
+  };
+
+  const none = await run_caress(seed_with({}), post);
+  assert.equal(none.store.get('tflag:35') || 0, 0);
+
+  const collected = await run_caress(seed_with({ 'tequip:31:16': 1 }), post);
+  assert.equal(collected.store.get('tflag:35'), 1);
+
+  const overridden = await run_caress(
+    seed_with({ 'tequip:31:16': 1, 'tequip:31:90': 1 }),
+    post,
+  );
+  assert.equal(overridden.store.get('tflag:35') || 0, 0);
+});
+
 test('TARGET_WORMBABY_CHECK：守卫（TALENT:190/191 均 0）→ 早退，无出产结算', async () => {
   const fixture = await run_caress(undefined, (f) => spread_local(f, 30000));
   assert.equal(fixture.store.get('exp:31:60') || 0, 0);

@@ -14,7 +14,8 @@
  *     target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB  @SOURCE_SEX_CHECK（:31）/
  *     @PLAYER_SKILL_CHECK（:45）/@MASTER_SKILL_CHECK（:172）/
  *     @INCEST_SEX_CHECK（:222）/@LOST_VIRGIN_CHECK（:265，守卫段）/
- *     @TARGET_EJAC_CHECK（:345-524）/@UP_TALENT_CVA_CHECK（:691）/
+ *     @TARGET_EJAC_CHECK（:345-524）/@TARGET_MILK_CHECK（:529-690）/
+ *     @UP_TALENT_CVA_CHECK（:691）/
  *     @UP_TALENT_CHECK（:740）/
  *     @MARK_GOT_CHECK（:952-1080）/@YOKUBO_UP_CHECK（:1092）/
  *     @JUJUN_UP_CHECK（:1113）/@EXP_GOT_CHECK（:1124-1310）/@SOKUOCHI_CHECK
@@ -47,7 +48,10 @@
  *     （SUB1:1727-1847）已随 #462 落地：原登记「TALENT:121/190/191 无预
  *     设，不可达」只查了 45 个固定预设，漏查动态创建角色/婚姻日程——
  *     chara-make.js 可设 TALENT:121/122，marriage-day.js 可设
- *     TALENT:190/191；TARGET_MILK_CHECK（素质 130）仍在册；
+ *     TALENT:190/191；TARGET_MILK_CHECK（SUB1:529-690）
+ *     已随 #462 落地：原登记「TALENT:130 无预设，不可达」同样只查了固定
+ *     预设——com-caress.js:1347 的 event_junyu（COMF5_胸愛撫.ERB:105-121，
+ *     #219 J9）与 marriage-day.js:1209（婚姻日程批量赋质）均是真实写入点；
  *   - SEIIN_START 与失神组（PASSOUT_CHECK/TEXT/OUTDOOR）已随 #216（J6）
  *     落真身（system/train/seiin.js 与 passout.js）；PISSING_ECST_CHECK
  *     （SUB1:1561-1610）与 SOUL_DISLOCATION_DEBUFF（SUB2:350-356）已随
@@ -113,7 +117,6 @@ const STUBBED_CALLS = [
   'KOJO_MESSAGE_PALAMCNG',
   'KOJO_MESSAGE_MARKCNG',
   'EQUIP_COM',
-  'TARGET_MILK_CHECK',
 ];
 
 // —— 结算上下文：目标 / 调教者的变量读写助手 ——
@@ -1960,6 +1963,174 @@ function target_ejac_check() {
   }
 }
 
+// @TARGET_MILK_CHECK（SUB1:529-690）：调教对象喷乳检查。
+// 守卫 TALENT:130（母乳体质）为 0 时早退——原登记「无预设不可达」不准确：
+// event_junyu（ere/system/train/com-caress.js:1347，COMF5_胸愛撫.ERB:105-
+// 121，#219 J9）与 marriage-day.js:1209（婚姻日程批量赋质）均是真实写入
+// 点。乘算级联（克制/接受快感/淫乱化/否定快感/乳房敏感/媚药/利尿剂/调教者
+// 幼儿退行/调教者幼稚/贫乳/绝壁）后按 BASE:3/MAXBASE:3 比值分大量/普通两
+// 档，SOURCE:12/13 分档表与 TARGET_EJAC_CHECK 完全相同（原作 C&P）；
+// EXP:54、STAIN:5、TFLAG:11/35、NOWEX:5/EX:5（两档共用同一计数器，与
+// TARGET_EJAC_CHECK 大量射精档的 chara(cid).system.喷乳绝顶 是同一属性）。
+function target_milk_check() {
+  if (!chara(cid).chara.母乳体质) {
+    return;
+  }
+
+  let local = idiv(up(0), 5) + idiv(up(1), 5) + idiv(up(2), 5) + up(14) * 3;
+  if (tal(20)) {
+    // 克制
+    local = idiv(local, 2);
+  }
+  if (tal(70)) {
+    // 接受快感
+    local = times(local, 1.2);
+  }
+  if (tal(76)) {
+    // 淫乱化
+    local = times(local, 1.1);
+  }
+  if (tal(71)) {
+    // 否定快感
+    local = times(local, 0.8);
+  }
+  if (tal(108)) {
+    // 乳房敏感
+    local = times(local, 1.5);
+  }
+  if (era.get(`tequip:${cid}:21`)) {
+    // 媚药
+    local *= 2;
+  }
+  if (era.get(`tequip:${cid}:22`)) {
+    // 利尿剂
+    local = idiv(local, 2);
+  }
+  if (era.get(`talent:${era_flag.player}:131`)) {
+    // 调教者幼儿退行
+    local *= 2;
+  }
+  if (era.get(`talent:${era_flag.player}:132`)) {
+    // 调教者幼稚
+    local *= 2;
+  }
+  if (tal(109)) {
+    // 贫乳
+    local = times(local, 0.5);
+  }
+  if (tal(116)) {
+    // 绝壁
+    local = times(local, 0.2);
+  }
+
+  local = 1000 + idiv(local - 1000, 2);
+  chara(cid).train.母乳槽 += local; // BASE:3 += LOCAL
+
+  const ejac = era.get(`maxbase:${cid}:3`) || 0;
+  let grade;
+  if (chara(cid).train.母乳槽 > ejac * 2) {
+    grade = 2;
+  } else if (chara(cid).train.母乳槽 > ejac) {
+    grade = 1;
+  } else {
+    grade = 0;
+  }
+  if (grade === 0) {
+    return;
+  }
+
+  const callname = era.get(`callname:${cid}:-1`) ?? '';
+  const exp54 = chara(cid).train.喷奶经验;
+  if (grade === 2) {
+    add_lose(0, 20);
+    add_lose(1, 100);
+    if (exp54 < EXPLV[1]) {
+      set_src(12, src(12) + 20000);
+      set_src(13, src(13) + 10000);
+    } else if (exp54 < EXPLV[2]) {
+      set_src(12, src(12) + 10000);
+      set_src(13, src(13) + 8000);
+    } else if (exp54 < EXPLV[3]) {
+      set_src(12, src(12) + 7000);
+      set_src(13, src(13) + 6000);
+    } else if (exp54 < EXPLV[4]) {
+      set_src(12, src(12) + 5000);
+      set_src(13, src(13) + 4000);
+    } else if (exp54 < EXPLV[5]) {
+      set_src(12, src(12) + 3000);
+      set_src(13, src(13) + 2000);
+    } else {
+      set_src(12, src(12) + 1800);
+      set_src(13, src(13) + 1200);
+    }
+
+    era.print(`${callname}的乳头喷出了大量的母乳。`);
+    era.print('喷奶经验+2');
+    if (exp54 === 0) {
+      chara(cid).dungeon.异常经验 += 1;
+      era.print('异常经验+1');
+    }
+    chara(cid).train.喷奶经验 += 2;
+    chara(cid).train.胸部污渍 |= 16;
+
+    chara(cid).train.母乳槽 -= ejac * 2;
+    if (chara(cid).train.母乳槽 >= ejac) {
+      chara(cid).train.母乳槽 = ejac - 1;
+    }
+
+    game.system.对象喷乳 += 2;
+    if (era.get(`tequip:${cid}:16`) && !era.get(`tequip:${cid}:90`)) {
+      game.system.榨乳中 += 2;
+    }
+
+    era.set(`nowex:${cid}:5`, (era.get(`nowex:${cid}:5`) || 0) + 1);
+    chara(cid).system.喷乳绝顶 += 1;
+  } else {
+    add_lose(1, 40);
+    if (exp54 < EXPLV[1]) {
+      set_src(12, src(12) + 10000);
+      set_src(13, src(13) + 5000);
+    } else if (exp54 < EXPLV[2]) {
+      set_src(12, src(12) + 5000);
+      set_src(13, src(13) + 4000);
+    } else if (exp54 < EXPLV[3]) {
+      set_src(12, src(12) + 2500);
+      set_src(13, src(13) + 2000);
+    } else if (exp54 < EXPLV[4]) {
+      set_src(12, src(12) + 1600);
+      set_src(13, src(13) + 1400);
+    } else if (exp54 < EXPLV[5]) {
+      set_src(12, src(12) + 800);
+      set_src(13, src(13) + 500);
+    } else {
+      set_src(12, src(12) + 200);
+      set_src(13, src(13) + 250);
+    }
+
+    era.print(`${callname}的乳头流出了母乳。`);
+    era.print('喷奶经验+1');
+    if (exp54 === 0) {
+      chara(cid).dungeon.异常经验 += 1;
+      era.print('异常经验+1');
+    }
+    chara(cid).train.喷奶经验 += 1;
+    chara(cid).train.胸部污渍 |= 16;
+
+    chara(cid).train.母乳槽 -= ejac;
+    if (chara(cid).train.母乳槽 >= ejac) {
+      chara(cid).train.母乳槽 = ejac - 1;
+    }
+
+    game.system.对象喷乳 += 1;
+    if (era.get(`tequip:${cid}:16`) && !era.get(`tequip:${cid}:90`)) {
+      game.system.榨乳中 += 1;
+    }
+
+    era.set(`nowex:${cid}:5`, (era.get(`nowex:${cid}:5`) || 0) + 1);
+    chara(cid).system.喷乳绝顶 += 1;
+  }
+}
+
 // @TARGET_WORMBABY_CHECK（SUB1:1727-1847）：调教对象蠕虫出产检查。守卫
 // TALENT:190/191（私处/直肠产卵）均为 0 时早退；乘算级联（克制/接受快感/
 // 淫乱化/否定快感/媚药，比 TARGET_EJAC_CHECK 少利尿剂/安全套两项）后按
@@ -3100,9 +3271,9 @@ on('SOURCE_CHECK', async () => {
   // :235 绝顶
   await ex_check_up();
 
-  // :238-252 调教对象的射精/喷乳/蠕虫出産（喷乳/蠕虫出産素质门槛不可达，登记）
+  // :238-252 调教对象的射精/喷乳/蠕虫出産
   target_ejac_check();
-  stub_line('TARGET_MILK_CHECK', '喷乳检查', '随母乳票');
+  target_milk_check();
   await target_wormbaby_check();
   // :254-255 主人调教的好感度累积
   master_flag_check();
