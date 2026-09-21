@@ -956,6 +956,14 @@ test('rand_chara_make：:52 的 RAND(1,17) 上界恒 16（勇者位 1-16）', as
   await load_rand(fixture)(cap, not_overseas);
   assert.equal(cap.bounds[0], 16, '第一掷上界 16 → 位号 1-16');
   assert.deepEqual(fixture.era.getAddedCharacters(), [5], '4 + 1 = 5');
+  // :62 的 ADDCHARA_EX 拿的同样是角色号（5）。编制为空时「已加入数 - 1」
+  // 是 0，而 0 号走 CHARA_EX_0（EXCOM.ERB:28 的守卫放行）、会给魔王点亮
+  // EX 素质——这里顺手钉住「不落到那个值」（#487）
+  assert.equal(
+    fixture.store.get('ex_talent:0:200'),
+    undefined,
+    ':62 add_chara_ex 不落到「已加入数 - 1」的 0 号（魔王标记）',
+  );
 });
 
 test('rand_chara_make：异国勇者分支不 ADDCHARA，用 CHAR_MAKE_INPORT 返回的角色号', async () => {

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 51; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +9（M10600-M10608）
+export const COUNT = 52; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）
 
 export default [
   {
@@ -425,8 +425,9 @@ export default [
   {
     desc: 'M10601 异国分支不用 CHAR_MAKE_INPORT 的返回值（#487：那位是它内部 ADDCHARA 的，不是掷中的位号）',
     file: 'ere/chara/chara-make.js',
-    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1',
-    replace: '        newchara = chara_id; // 变异：不用返回值',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace:
+      '        newchara = chara_id; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
     tests: ['chara-name'],
     must_mention: 'ID_OF_NEWCHARA = CHAR_MAKE_INPORT 的返回值（角色号）',
   },
@@ -477,8 +478,9 @@ export default [
   {
     desc: 'M10607 末尾 RETURN 给「已加入数 - 1」（#487：调用点据此点亮素质位）',
     file: 'ere/chara/chara-make.js',
-    find: '      return newchara; // :194 RETURN (CHARANUM - 1)',
-    replace: '      return era.getAddedCharacters().length - 1; // 变异',
+    find: '      return newchara; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
+    replace:
+      '      return era.getAddedCharacters().length - 1; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
     tests: ['chara-name'],
     must_mention: 'RETURN CHARANUM-1 = 新角色的角色号',
   },
@@ -492,5 +494,14 @@ export default [
     // 变异后 :85 的随机补设仍会把 talent:3:160 写上（那一支先跑），红的是
     // 「2 号不该被写」
     must_mention: '不写到「人数 - 1」的 2 号',
+  },
+  {
+    desc: 'M10609 ADDCHARA_EX 的实参退回「已加入数 - 1」（#487：编制为空时落 0 号，误触 CHARA_EX_0 的魔王标记）',
+    file: 'ere/chara/chara-make.js',
+    find: '        await add_chara_ex(chara_id); // :62 ADDCHARA_EX, CHARANUM-1（= 角色号）',
+    replace:
+      '        await add_chara_ex(era.getAddedCharacters().length - 1); // :62 ADDCHARA_EX, CHARANUM-1（= 角色号）',
+    tests: ['chara-name'],
+    must_mention: '不落到「已加入数 - 1」的 0 号（魔王标记）',
   },
 ];

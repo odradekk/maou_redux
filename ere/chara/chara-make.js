@@ -1645,12 +1645,12 @@ async function cm_cloth(cid, rand_n) {
  *     #21 把原作「已定义但未加入」那一档扁平化掉了，`chara:${id}` 读到对象
  *     只说明静态表里有这个预设、不代表在场，故用出场名单判定。
  *
- *   - 原作经全局 A / TARGET / ASSI / CHARANUM 传值，ere 一律显式传参，
- *     角色数用 `getAddedCharacters().length`（#5 决议第六条）。
+ *   - 原作经全局 A / TARGET / ASSI / CHARANUM 传值，ere 一律显式传参
+ *     （#5 决议第六条）；在场判定用 `getAddedCharacters()`（见上）。
  *
  *   - **`:63-64` 的 `A` / `ID_OF_NEWCHARA` 是「注册序里最后一位」，在扁平化
- *     下就是刚 ADDCHARA 的那位角色的**角色号**，即 `chara_id`——不是「第几个
- *     加入」（#487）。原作凭 `CHARANUM - 1` 取到它，靠的是「新角色排在注册序
+ *     下就是刚 ADDCHARA 的那位角色的角色号（即 `chara_id`），不是「第几个
+ *     加入」**（#487）。原作凭 `CHARANUM - 1` 取到它，靠的是「新角色排在注册序
  *     末尾」这层位置语义；ere 没有它：角色号与预设号同值（#21），
  *     `getAddedCharacters()` 返回的是**按角色号升序**的已加入名单（引擎
  *     `Object.keys(this.data.base).map(Number)`，整数键升序枚举），
@@ -1714,14 +1714,22 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         // 不可表达，故取「原地重置重募」。后果：campaign_slave 且该勇者位已
         // 被占用时，玩家育成过的该号奴隶会被重置回预设、编制不增加。
         era.addCharacter(chara_id); // :61 ADDCHARA CHARA
-        await add_chara_ex(chara_id); // :62 CALL ADDCHARA_EX, CHARANUM-1
+        await add_chara_ex(chara_id); // :62 ADDCHARA_EX, CHARANUM-1（= 角色号）
         newchara = chara_id; // :63-64 A / ID_OF_NEWCHARA（= 新角色的角色号）
       } else {
         // :143-147 是异国勇者：CHAR_MAKE_INPORT 内已 ADDCHARA，用它的返回值
-        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1
+        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
       }
       // :145 LOCAL:0 = 1（异国）／:60 LOCAL:0 = 0 —— 只用于 :174-175 的
       // 「异国的」前缀，那一段在收下分支里（下方）。
+      //
+      // ⚠ 已知结构偏离（早于 #487，未裁定）：原作的性格/发色落地（:66-72）、
+      // 形象确认循环（:75-125）、FLAG:1/2 搬迁（:126-135）、FLAG:402（:139）
+      // 与 CHAR_MAKE（:141）都在 `IF RESULT == 0`（非异国）分支内，异国路径
+      // 从 :143-147 直落 :150；本文件把它们放在 if/else 之外，异国路径同样会
+      // 执行。#487 只把 newchara 修成角色号、未改这段的分支归属，于是异国勇者
+      // 导入后性格/发色会被预设落地覆盖（原作保留名单带来的值）。还原原作语义
+      // 要先裁定整段该不该移进非异国分支，不是只挪 :66-72 的两个守卫。
 
       // :66-72 性格与发色的**预设落地**（两个守卫是原作写法，见下方注释）
       // :66 IF CHARACTER != -1 —— CHARACTER 初值 0，故首轮恒进；第二轮起
@@ -1868,7 +1876,7 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       era_flag.target = game.event.上次调教对象; // :184 TARGET = FLAG:1
       era_flag.assi = game.event.上次助手; // :185 ASSI = FLAG:2
       await era.waitAnyKey(); // :186 WAIT
-      return newchara; // :194 RETURN (CHARANUM - 1)
+      return newchara; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）
     }
 
     // :188-191 16 个勇者位都占着

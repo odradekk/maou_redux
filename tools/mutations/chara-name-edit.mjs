@@ -476,8 +476,9 @@ export default [
     // 「多减一」随之落在这个局部量上
     desc: 'M8033 RAND_CHARA_MAKE 的新角色号返回时多减一',
     file: 'ere/chara/chara-make.js',
-    find: '      return newchara; // :194 RETURN (CHARANUM - 1)',
-    replace: '      return newchara - 1; // :194 RETURN (CHARANUM - 1)',
+    find: '      return newchara; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
+    replace:
+      '      return newchara - 1; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
     tests: ['chara-name'],
     must_mention: 'RETURN CHARANUM-1',
   },
