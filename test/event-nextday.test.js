@@ -218,7 +218,7 @@ test('每推进一天 ENDCHECK 恰好被调用一次：午后回合 0 次、日�
   );
 });
 
-test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 ENDCHECK 追加清场与反叛写', async () => {
+test('单元级全量写入：EVENT_NEXTDAY 写 FLAG:61 与水晶球每日结算；EVENT_NEWDAY 经 ENDCHECK 追加清场与反叛写', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -228,11 +228,28 @@ test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 EN
     'event/event-nextday',
   );
 
-  await run_event_nextday();
+  // 水晶球结算（#502）的 RAND:3 走 Math.random：钉成常数 1/2 让两枚都非零
+  // （floor(0.5×3) = 1，即「流行度也 -1」的那 2/3 侧），写入序列才是确定的
+  fixture.override_math_random(() => 0.5);
+  try {
+    await run_event_nextday();
+  } finally {
+    fixture.restore_math_random();
+  }
   assert.deepEqual(
     fixture.var_writes,
-    [{ name: 'flag:61', value: 0 }],
-    '只有魔王（循环全跳过）时，EVENT_NEXTDAY 的唯一写入是熏香清零',
+    [
+      { name: 'flag:61', value: 0 },
+      // @SENGEN_VIDEO_DE（#502，INVASION.ERB:1271-1281）：过时倒计时 -1、
+      // 流行度 -1，两段同款的清零 IF 各写一对（已是 0 也照写，1:1 保留）
+      { name: 'exflag:9013', value: -1 },
+      { name: 'exflag:9012', value: -1 },
+      { name: 'exflag:9013', value: 0 },
+      { name: 'exflag:9012', value: 0 },
+      { name: 'exflag:9013', value: 0 },
+      { name: 'exflag:9012', value: 0 },
+    ],
+    '只有魔王（循环全跳过）时的全部写入 = 熏香清零 + 水晶球每日结算',
   );
 
   // EVENT_NEWDAY 的晨间事件全是存根；入口自动存档（#137，见下一条用例）
@@ -246,6 +263,12 @@ test('单元级全量写入：EVENT_NEXTDAY 只写 FLAG:61；EVENT_NEWDAY 经 EN
     fixture.var_writes,
     [
       { name: 'flag:61', value: 0 },
+      { name: 'exflag:9013', value: -1 },
+      { name: 'exflag:9012', value: -1 },
+      { name: 'exflag:9013', value: 0 },
+      { name: 'exflag:9012', value: 0 },
+      { name: 'exflag:9013', value: 0 },
+      { name: 'exflag:9012', value: 0 },
       { name: 'flag:10005', value: 0 }, // TARGET = FLAG:1（自动存档的 SAVEINFO 副作用）
       { name: 'flag:10006', value: 0 }, // ASSI = FLAG:2（同上）
       { name: 'exflag:2805', value: 0 }, // 玛奥
@@ -3304,6 +3327,92 @@ test('随机上界：示众台每个 RAND:N 的 n 逐个钉住（表驱动）', 
   }
 });
 
+test('#502 SENGEN_VIDEO_DE 每日结算：9013 必减、9012 有 2/3 概率减，任一落到 0 以下两者清零', () => {
+  // rand 的入参即 RAND:N 的上界（N == 3），顺带钉住上界
+  const cases = [
+    { expire: 3, popularity: 5, roll: 1, after: [2, 4], why: '两枚都减' },
+    {
+      expire: 3,
+      popularity: 5,
+      roll: 0,
+      after: [2, 5],
+      why: 'RAND:3 == 0 时只减 9013',
+    },
+    {
+      expire: 2,
+      popularity: 9,
+      roll: 2,
+      after: [1, 8],
+      why: '非零即真（取值 1/2 都算真）',
+    },
+    {
+      expire: 1,
+      popularity: 5,
+      roll: 1,
+      after: [0, 0],
+      why: '9013 落到 0 → 两段清零',
+    },
+    {
+      expire: 5,
+      popularity: 0,
+      roll: 1,
+      after: [0, 0],
+      why: '9012 落到 -1 → 第二段清零',
+    },
+    {
+      expire: 5,
+      popularity: 0,
+      roll: 0,
+      after: [0, 0],
+      why: '9012 本就是 0 → 第二段清零',
+    },
+    {
+      expire: 0,
+      popularity: 0,
+      roll: 1,
+      after: [0, 0],
+      why: '两者皆 0：减到 -1 后回 0',
+    },
+  ];
+  for (const { expire, popularity, roll, after, why } of cases) {
+    const fixture = create_era_fixture();
+    fixture.store.set('exflag:9013', expire);
+    fixture.store.set('exflag:9012', popularity);
+    const uppers = [];
+    const { sengen_video_de } = fixture.load_module('event/event-nextday');
+    sengen_video_de((upper) => {
+      uppers.push(upper);
+      return roll;
+    });
+    assert.deepEqual(uppers, [3], 'RAND:3 的上界');
+    assert.deepEqual(
+      [fixture.store.get('exflag:9013'), fixture.store.get('exflag:9012')],
+      after,
+      `${why}（${expire}/${popularity} + roll ${roll} → ${after.join('/')}）`,
+    );
+    assert.deepEqual(fixture.text_lines(), [], '无输出（原作无 PRINT）');
+  }
+});
+
+test('#502 SENGEN_VIDEO_DE 在 run_event_nextday 的 :184 被无条件每日调用', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.load_module('dungeon/monster-summon').summon_monster = async () => 0;
+  fixture.store.set('exflag:9013', 4);
+  fixture.store.set('exflag:9012', 6);
+  const { run_event_nextday } = fixture.load_module('event/event-nextday');
+
+  fixture.override_math_random(() => 0.9); // RAND:3 = 2 → 9012 也减
+  try {
+    await run_event_nextday();
+  } finally {
+    fixture.restore_math_random();
+  }
+  assert.equal(fixture.store.get('exflag:9013'), 3, '过时倒计时每日 -1');
+  assert.equal(fixture.store.get('exflag:9012'), 5, '流行度随 RAND:3 非零 -1');
+});
+
 test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS: nextday_stubs } = fixture.load_module(
@@ -3313,15 +3422,20 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     'event/event-nextmonth',
   );
   // 名单本身固定（增删存根必须同步本测试与清单）
-  assert.deepEqual(nextday_stubs, [
-    // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）；
-    // #177 起 DUNGEON_ROOM_DAY 换真身（ere/dungeon/dungeon-room.js）；
-    // #400（N16）起 APHRODISIAC_ADDICT / SABBATH / SABBATH_DAY / TAX_GET
-    // 四张跨边接线落地（真身由 #405 / #396 交付），MAOU_KOUHO 本体同票落成；
-    // @PILLORY 自 #400 起真身（ere/event/event-nextday-pillory.js），其体内的
-    // CAMPAIGN_EXP_PILLORY 调用点（侵略域）自 #469 起也换真身，已从名单移除
-    'SENGEN_VIDEO_DE',
-  ]);
+  assert.deepEqual(
+    nextday_stubs,
+    [
+      // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）；
+      // #177 起 DUNGEON_ROOM_DAY 换真身（ere/dungeon/dungeon-room.js）；
+      // #400（N16）起 APHRODISIAC_ADDICT / SABBATH / SABBATH_DAY / TAX_GET
+      // 四张跨边接线落地（真身由 #405 / #396 交付），MAOU_KOUHO 本体同票落成；
+      // @PILLORY 自 #400 起真身（ere/event/event-nextday-pillory.js），其体内的
+      // CAMPAIGN_EXP_PILLORY 调用点（侵略域）自 #469 起也换真身，已从名单移除；
+      // #502 起 SENGEN_VIDEO_DE 换真身（本文件的 sengen_video_de，
+      // INVASION.ERB:1269-1281）——名单至此清空
+    ],
+    'SENGEN_VIDEO_DE 落地后本模块零存根',
+  );
   // HUMAN_AGE_GENERATE 自 #385 起为真身（ere/chara/chara-body.js），本模块
   // 的存根名单已清空
   assert.deepEqual(nextmonth_stubs, []);
