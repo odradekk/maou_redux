@@ -2101,15 +2101,33 @@ test('ablup20：欲望门槛行与施虐快乐经验行；异常经验行用全�
   assert.ok(lv3.text_lines().includes('异常经验1以上（现在0）且'));
 });
 
-test('ablup20：异常经验 C 恒为 lv-2——戒备森严与淫乱的 TIMES C 都在 C 赋值之前，乘 0 无效', async () => {
-  // Lv4：C=lv-2=2。若 TIMES C×2.00 误在赋值后生效则显示 4
-  const fixture = create_era_fixture();
-  const { ablup20 } = seed(fixture);
-  fixture.store.set(`abl:${CID}:20`, 4);
-  set_talents(fixture, { 27: 1, 76: 1 }); // 戒备森严(×2.00) + 淫乱(×0.80) 都只作用于 0
-  fixture.set_inputs(100);
-  await ablup20(CID);
-  assert.ok(fixture.text_lines().includes('异常经验2以上（现在0）且'));
+test('ablup20：异常经验 C 的两段折扣——戒备森严在赋值前（无效）、淫乱在赋值后（×0.80 生效）', async () => {
+  // Lv4：C=lv-2=2。戒备森严的 TIMES C 在 :175 赋值之前，乘 0 无效 → 仍为 2
+  const guarded = create_era_fixture();
+  const { ablup20: a1 } = seed(guarded);
+  guarded.store.set(`abl:${CID}:20`, 4);
+  set_talents(guarded, { 27: 1 });
+  guarded.set_inputs(100);
+  await a1(CID);
+  assert.ok(guarded.text_lines().includes('异常经验2以上（现在0）且'));
+
+  // 淫乱的 TIMES C 在 :175 之后（:279）→ floor(2×0.80)=1
+  const lewd = create_era_fixture();
+  const { ablup20: a2 } = seed(lewd);
+  lewd.store.set(`abl:${CID}:20`, 4);
+  set_talents(lewd, { 76: 1 });
+  lewd.set_inputs(100);
+  await a2(CID);
+  assert.ok(lewd.text_lines().includes('异常经验1以上（现在0）且'));
+
+  // 两者同时：戒备森严仍无效，淫乱照常折扣
+  const both = create_era_fixture();
+  const { ablup20: a3 } = seed(both);
+  both.store.set(`abl:${CID}:20`, 4);
+  set_talents(both, { 27: 1, 76: 1 });
+  both.set_inputs(100);
+  await a3(CID);
+  assert.ok(both.text_lines().includes('异常经验1以上（现在0）且'));
 });
 
 test('ablup20：素质修正——胆怯只乘 A(×1.50)，施虐狂 A/B 同乘(×0.50)', async () => {
@@ -2944,6 +2962,16 @@ test('ablup32：三档终止判定（五项豁免须全无才拦）/拦截阈值
   fixture.store.set(`abl:${CID}:32`, 5);
   await ablup32(CID);
   assert.ok(fixture.text_lines().includes('需要特殊素质才能继续提升'));
+
+  // 五项里只差最后一项（喜欢精液 TALENT:47）：AND 语义下不拦，OR 语义下会拦
+  const partial = create_era_fixture();
+  const { ablup32: a_p } = seed(partial);
+  partial.store.set(`abl:${CID}:32`, 5);
+  set_talents(partial, { 47: 1 });
+  partial.set_inputs(100);
+  await a_p(CID);
+  assert.ok(!partial.text_lines().includes('需要特殊素质才能继续提升'));
+  assert.equal(buttons(partial).length, 3); // [0][1][100]，未被门槛拦下
 
   // Lv5、合计 10：满足提示值（欲情 100000）但仍低于 6500 拦截线（162500）→ 仍拦
   const capped = create_era_fixture();

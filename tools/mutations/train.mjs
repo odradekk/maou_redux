@@ -8382,13 +8382,14 @@ export default [
     must_mention: '欲情点数×0/100 ……点数不足 经验不足能力不足 ',
   },
   {
-    desc: 'M10403 ablup20：异常经验 C 的等级集合改错（lv4 换成 lv5）',
+    desc: 'M10403 ablup20：淫乱漏掉异常经验 C 的 ×0.80 折扣（原作 :279 在 C 赋值 :175 之后）',
     file: 'ere/system/train/ablup.js',
-    find: 'if (\n      (lv === 3 || lv === 4 || lv === 7) &&\n      talent(80) === 0 &&\n      talent(83) === 0 &&\n      talent(84) === 0 &&\n      talent(87) === 0\n    ) {',
+    find: '      // 淫乱 :275-282（TIMES C 在 C 赋值（:175）之后，×0.80 真实生效）\n      a = times(a, 0.8);\n      b = times(b, 0.8);\n      c = times(c, 0.8);',
     replace:
-      'if (\n      (lv === 3 || lv === 5 || lv === 7) &&\n      talent(80) === 0 &&\n      talent(83) === 0 &&\n      talent(84) === 0 &&\n      talent(87) === 0\n    ) {',
+      '      // 淫乱 :275-282（TIMES C 在 C 赋值（:175）之后，×0.80 真实生效）\n      a = times(a, 0.8);\n      b = times(b, 0.8);',
     tests: ['ablup'],
-    must_mention: '异常经验2以上（现在0）且',
+    must_mention:
+      'ablup20：异常经验 C 的两段折扣——戒备森严在赋值前（无效）、淫乱在赋值后（×0.80 生效）',
   },
   {
     desc: 'M10404 ablup20：胆怯 A×1.50 改为 ×1.60（只乘 A 的证据）',
@@ -8822,7 +8823,7 @@ export default [
     file: 'ere/system/train/ablup.js',
     find: 'if (\n      juel5_gate < abl31() * abl31() * 2550 ||\n      juel0_gate < abl31() * abl31() * 15000 ||\n      juel8_gate < abl31() * abl31() * 2000\n    ) {',
     replace:
-      'if (\n      juel0_gate < abl31() * abl31() * 2550 ||\n      juel0_gate < abl31() * abl31() * 15000 ||\n      juel8_gate < abl31() * abl31() * 2000\n    ) {',
+      'if (\n      juel5_gate < abl31() * abl31() * 2500 ||\n      juel0_gate < abl31() * abl31() * 15000 ||\n      juel8_gate < abl31() * abl31() * 2000\n    ) {',
     tests: ['ablup'],
     must_mention:
       'ablup31：组合上限拦截线的精确边界（Lv4 欲情 4²×2550 = 40800）',
@@ -8904,7 +8905,7 @@ export default [
     file: 'ere/system/train/ablup.js',
     find: 'if (\n    abl32() >= 5 &&\n    talent(76) === 0 &&\n    talent(50) === 0 &&\n    talent(61) === 0 &&\n    talent(64) === 0 &&\n    talent(47) === 0\n  ) {',
     replace:
-      'if (\n    abl32() >= 5 ||\n    talent(76) === 0 &&\n    talent(50) === 0 &&\n    talent(61) === 0 &&\n    talent(64) === 0 &&\n    talent(47) === 0\n  ) {',
+      'if (\n    abl32() >= 5 &&\n    talent(76) === 0 &&\n    talent(50) === 0 &&\n    talent(61) === 0 &&\n    (talent(64) === 0 || talent(47) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention:
       'ablup32：三档终止判定（五项豁免须全无才拦）/拦截阈值 6500 与提示文案 4000 不一致（原作如此）',
