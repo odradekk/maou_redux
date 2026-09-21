@@ -176,8 +176,13 @@ const REPO = path.resolve(__dirname, '..');
 // 打印一行，真身守卫早退静默）。与 #461（master 侧 382/222 基础上到
 // 367/219）互不覆盖同一批输出行，合并后实跑取准（下方数值），不做算术加总。
 const BASELINE = {
-  'train-natural': { matched: 1118, version: 0, stub: 261, unexplained: 0 },
-  'train-upgrade': { matched: 262, version: 0, stub: 192, unexplained: 0 },
+  // 【#467 后重测】AUTO_ABLUP 与 @DECIDE_ABLUP 族落真身：juel-check 的自动升级
+  // 分支不再打占位行，取而代之的是真身的等级行；样本里能力提升画面的 `*`
+  // 可提升标记按 DECIDE 结果渲染，两处合计 matched +2 / stub −4（natural
+  // 1118→1120、261→257）与 matched +1 / stub −2（upgrade 262→263、192→190），
+  // unexplained 保持 0。数字取自重跑，不做算术加总。
+  'train-natural': { matched: 1120, version: 0, stub: 257, unexplained: 0 },
+  'train-upgrade': { matched: 263, version: 0, stub: 190, unexplained: 0 },
 };
 
 async function build_report(sample) {

@@ -2949,7 +2949,7 @@ async function ablup16(cid, mode) {
       return { i, j, k };
     }
     if (mode === 'core') {
-      era.add(`abl:${cid}:16`, 1); // @CORE_ABLUP16: ABL:16 ++
+      chara(cid).system.侍奉精神 += 1; // @CORE_ABLUP16: ABL:16 ++（system 域，走门面）
       if (i === 0) era.add(`juel:${cid}:6`, -a);
       else if (j === 0) era.add(`juel:${cid}:4`, -b);
       else if (k === 0) era.add(`juel:${cid}:7`, -c);
