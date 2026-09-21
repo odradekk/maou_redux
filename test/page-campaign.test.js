@@ -44,6 +44,12 @@ test('campaign_menu()：FLAG:400 == 0 时只显示[行动选择] + [返回]', as
   assert.equal(ret, 0);
   const added = fixture.lines.slice(before);
   assert.deepEqual(accs(added), [0, 999]);
+  // :12/:22/:31 三条分隔线的位置：头部一条、行动按钮前一条、[999] 前再一条
+  assert.deepEqual(
+    added.map((l) => l.type),
+    ['divider', 'text', 'divider', 'button', 'divider', 'button'],
+    ':31 行动按钮与 [999] 之间的第二条分隔线',
+  );
   assert.ok(
     texts(added).some((t) => t.includes('无')),
     ':18 未选战役显示"无"',
@@ -170,6 +176,26 @@ test('派遣：翻页与返回不写任何 CFLAG', async () => {
   fixture.set_inputs(2, 1001, 999, 999);
   await campaign_menu();
   assert.equal(fixture.store.get('cflag:1:1'), undefined, '未派遣任何人');
+});
+
+test('派遣：子菜单的页码在同一菜单会话内保留（原作 NO_PAGE 是 CAMPAIGN_MENU 的 #DIM，:8）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '魔王');
+  for (let cid = 1; cid <= 27; cid += 1) {
+    add_chara(fixture, cid);
+  }
+  fixture.store.set('flag:400', 1);
+  const { campaign_menu } = load(fixture);
+  // [2] 进派遣 → [1001] 翻到第 2 页 → [999] 退回主菜单 → 再 [2] 进派遣
+  // （页码应停在第 2 页）→ [999] 退子菜单 → [999] 退主菜单
+  fixture.set_inputs(2, 1001, 999, 2, 999, 999);
+  await campaign_menu();
+  // 第 2 页才有的 24-27 号按钮每轮各画一次；页码若被重置，第二轮画的是
+  // 第 1 页，这四行只会出现一次
+  const page_two_rows = fixture.lines_history.filter(
+    (l) => l.type === 'button' && l.accelerator >= 24 && l.accelerator <= 27,
+  );
+  assert.equal(page_two_rows.length, 8, '第 2 页两轮各 4 行');
 });
 
 test('派遣：多重校验——临死/无天赋/魔王之影/已派遣/其他状态', async () => {

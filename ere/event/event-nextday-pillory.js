@@ -698,6 +698,9 @@ async function pillory(rand = default_rand) {
       }
     }
     era.print(`通过榨取攻略中的奴隶的能量获得了${exp_gain}点经验值`);
+    // 原作 :298 是 PRINTFORMW（自带等待），调用点 :2392 另有一个 WAIT——
+    // 两次等键都要还原，少一次玩家就少一次确认
+    await era.waitAnyKey();
   }
   await era.waitAnyKey(); // :2392 WAIT
 

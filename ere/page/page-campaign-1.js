@@ -25,6 +25,7 @@ const {
   campaign_exist_family,
   campaign_set_family,
 } = require('#/page/page-campaign');
+const { campaign_equip_select_family } = require('#/system/equip/equip-select');
 const {
   campaign_room_family,
   campaign_quest_family,
@@ -33,7 +34,6 @@ const {
 } = require('#/dungeon/dungeon');
 const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
 const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
-const { campaign_equip_select_family } = require('#/system/equip/equip-select');
 const { campaign_monster_list_family } = require('#/dungeon/dungeon-battle');
 const { chara_callname } = require('#/utils/callname-utils');
 
@@ -204,7 +204,8 @@ campaign_monster_list_family.register(1, campaign_monster_list_1);
  * 原作按楼层（CFLAG 的 501 下标）分 6 个 IF/ELSEIF 分支，但每支都是空
  * 语句（原作注释「今回はギミック無し」——本战役未设置楼层专属机关），
  * 与恒 RETURN 1 等价，不逐支复刻空分支。
- * @returns {number} RETURN 1（恒成功；原作 ARG:0 全程未被引用）
+ * @returns {number} RETURN 1（恒成功；原作 ARG:0 只用于 :292 读楼层，
+ *   六个分支体全空，读数不产生效果）
  */
 function campaign_quest_1() {
   return 1;
@@ -258,6 +259,7 @@ const STORY_LINES_BY_PROGRESS = [
     '察觉到了侵入者的气息、便将奴隶少年们拉到一边去',
     '紧接着出现的是护卫的战士们。将肉便器装饰在肉棒上的巨魔、奇怪的魔术师',
     '最后一战一触即发',
+    '――水晶球映出的报告到这就结束了',
   ],
 ];
 

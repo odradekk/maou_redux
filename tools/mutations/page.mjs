@@ -3,14 +3,15 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 225; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 226; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
 // 水晶球分子分母）
 // #463 起 +9（M10200-M10208，page-config.js 全量新增）
-// #469 起 +16（M10100-M10115，page-campaign.js / page-campaign-1.js：招募/
-// 派遣校验链、SELECT_CAMPAIGN 的范围守卫与深度重置、战役 1 的四张映射表）
+// #469 起 +17（M10100-M10115、M10124，page-campaign.js / page-campaign-1.js：
+// 招募/派遣校验链、SELECT_CAMPAIGN 的范围守卫与深度重置、战役 1 的四张映射表、
+// 剧情 5 档收尾行）
 
 export default [
   {
@@ -814,6 +815,8 @@ export default [
     tests: ['page-dungeon-setup'],
     must_mention: '进了 MAP 界面',
   },
+
+  // —— #212（J2 调教回合骨架）：M704-M712 ——
   {
     desc: 'M705 @P_C 回落顺序倒置（TRAIN_NAME 抢在 TRAINNAME 前）',
     file: 'ere/page/page-usercom.js',
@@ -2100,6 +2103,19 @@ export default [
   return ids ? ids[(dice + 1) % 3] : 0; // 变异：下标偏移`,
     tests: ['dungeon-battle'],
     must_mention: '1 层 DICE 0',
+  },
+  {
+    desc: 'M10124 CAMPAIGN_STORY_1：5 档漏收尾行（删「报告结束」行，#469 需求审查）',
+    file: 'ere/page/page-campaign-1.js',
+    find: `    '最后一战一触即发',
+    '――水晶球映出的报告到这就结束了',
+  ],
+];`,
+    replace: `    '最后一战一触即发',
+  ],
+];`,
+    tests: ['dungeon-main'],
+    must_mention: '5 档的行数',
   },
   {
     desc: 'M10200 PAGE-CONFIG 处女献上后续发生方式写入错位（RESULT-1 → RESULT）',

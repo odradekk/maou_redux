@@ -780,8 +780,31 @@ test('campaign_quest()：楼层未超过剧情进度时不重复推进剧情', a
   );
 });
 
-test('campaign_story_1()：按进度 0-5 六档打印对应剧情，5 档无「报告结束」收尾行', async () => {
-  for (let progress = 0; progress <= 5; progress += 1) {
+test('campaign_story_1()：按进度 0-5 六档打印对应剧情，六档都以「报告结束」收尾', async () => {
+  // [进度, 首行（逐字，原作 :315/:322/:329/:336/:343/:350）, 本档行数]
+  // 行数按原作各档 PRINTFORMW 条数：0-4 档 6 行、5 档 5 行（:354 的收尾行
+  // 同样在 5 档内——#469 首版漏了它，本用例的行数断言即为此设）
+  const CASES = [
+    [0, '真是奇妙的森林。奇形怪状的植物、还有与其共生进化而来的动物和昆虫', 6],
+    [
+      1,
+      '森林外围墓碑林立。到处都是、被苔藓藤蔓树根常年侵蚀得无法辨识枯坟野冢',
+      6,
+    ],
+    [
+      2,
+      '惨遭侵犯的肉便器。被成群结队的红皮兽人不断侵犯着。肚子已经怀孕到了几乎要炸开的程度',
+      6,
+    ],
+    [
+      3,
+      '森林深处坐落着巨大的神殿。魔王的奴隶稳健地将敌人击倒、一点一点的前进着',
+      6,
+    ],
+    [4, '女王就在那。根据捕获的女信徒的说法。女王被年轻的少年们簇拥着', 6],
+    [5, '找到女王了。半裸着身子将下半身露了出来、端坐在玉座之上', 5],
+  ];
+  for (const [progress, first_line, line_count] of CASES) {
     const fixture = create_era_fixture();
     fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
     fixture.era.addCharacter(0);
@@ -792,12 +815,19 @@ test('campaign_story_1()：按进度 0-5 六档打印对应剧情，5 档无「�
     const texts = fixture.lines_history
       .filter((l) => l.type === 'text')
       .map((l) => l.text);
-    if (progress === 5) {
-      assert.ok(texts.some((t) => t.includes('最后一战一触即发')));
-      assert.ok(!texts.some((t) => t.includes('报告到这就结束了')));
-    } else {
-      assert.ok(texts.some((t) => t.includes('报告到这就结束了')));
-    }
+    assert.equal(texts.length, line_count, `${progress} 档的行数`);
+    assert.equal(texts[0], first_line, `${progress} 档首行`);
+    assert.equal(
+      texts[line_count - 1],
+      '――水晶球映出的报告到这就结束了',
+      `${progress} 档以收尾行结束`,
+    );
+    // 每档都带一个 waitAnyKey（原作 PRINTFORMW 自带等待）
+    assert.equal(
+      fixture.waits.filter((w) => w.waited).length,
+      line_count,
+      `${progress} 档逐行等待`,
+    );
   }
 });
 

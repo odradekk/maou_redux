@@ -22,6 +22,10 @@ const { equip_database } = require('#/system/equip/equip-lookup');
 const { equip_ring_spans } = require('#/system/equip/equip-print');
 const { remove_curse } = require('#/system/equip/equip-curse');
 
+/**
+ * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
+ * 核对固定）；名单变动必须同步清单。
+ */
 const STUBBED_CALLS = [];
 
 /**

@@ -34,10 +34,19 @@
  *     与派遣子菜单的 [999]/[1000]/[1001] 均改 `era.printButton`，input
  *     因此天然被白名单约束，原作 :98-99/:112-114 的越界重问分支在 ere
  *     侧不可达（引擎只回传已打印按钮的编号），1:1 保留分支结构、不删；
+ *     主菜单的两处同款守卫则**省略不写**：:38-40（`*无法在行动进行时进行
+ *     变更*`，RESULT==0 而 FLAG:400!=0）要求 [0] 在战役进行中被渲染，
+ *     :43-45（`*请选择行动*`）要求未渲染的编号被回传，按钮化后都不可达，
+ *     且它们是 ELSEIF 链上的重问分支、没有可保留的结构；
  *   - **派遣列表沿用 page-intercept.js 的按命中序号开窗**（page-life-list.js
  *     文件头第 7 条同款修正）：`life_list_item` 逐条渲染，不用整页级的
  *     `life_list()`——原作 `CLEARLINE LINECOUNT-L_LCOUNT` 局部重绘在 ere
- *     侧无对应 API，翻页改整页重绘（@INTERCEPT 先例，视觉等效）；
+ *     侧无对应 API，翻页改整页重绘（@INTERCEPT 先例，视觉等效）。代价是
+ *     窗口按 `getAddedCharacters()` 开（含魔王 0 号），而原作 @LIFE_LIST
+ *     除表头行外只列 1..CHARANUM-1：魔王多出一行可点按钮（点选后与原作
+ *     输入 0 一样被 TALENT 校验拒绝，无状态影响）、页内内容相对原作后移
+ *     一位。判据（`candidate_ids.includes`）保留含 0 的集合，与原作
+ *     `RESULT < 0 || RESULT >= CHARANUM` 的范围语义一致；
  *   - **赤森奴隶经 rand_chara_make() 的 campaign_slave 形参注入**
  *     （chara-make.js #469）：替代原作 :55-57 的全局变量置位/复位，
  *     招募分支显式传 `true`。
@@ -155,11 +164,13 @@ async function recruit_campaign_slave(rand) {
 
 /**
  * 派遣分支（:68-124）：奴隷派遣，含分页与多重校验的子循环。
- * @returns {Promise<void>}
+ * @param {number} no_page 进入时的页码——原作 NO_PAGE 是 CAMPAIGN_MENU 顶的
+ *   `#DIM NO_PAGE = 0`（:8），同一菜单会话内反复进出派遣子菜单保留页码，
+ *   因此这里由调用方持有、随入参进出一趟。
+ * @returns {Promise<number>} 退出（[999] 或 RESULT==999 的同义出口）时的页码
  */
-async function dispatch_campaign_slave() {
+async function dispatch_campaign_slave(no_page) {
   const talent_slot = era_flag.hero_campaign_active + 360; // LOCAL = FLAG:400 + 360
-  let no_page = 0;
   for (;;) {
     const candidate_ids = era.getAddedCharacters();
     const max_page = Math.max(
@@ -169,7 +180,7 @@ async function dispatch_campaign_slave() {
     render_dispatch_page(no_page, candidate_ids);
     const result = await era.input();
     if (result === 999) {
-      return;
+      return no_page;
     }
     if (result === 1000) {
       if (no_page > 0) {
@@ -232,6 +243,8 @@ async function dispatch_campaign_slave() {
  * @returns {Promise<number>} RETURN 0（原作恒 0 出口，:36-37 的 [999] 直接返回；:127 末尾 GOTO 回到循环顶部）
  */
 async function campaign_menu(rand) {
+  // :8 #DIM NO_PAGE = 0——函数级，跨派遣子菜单的反复进出保留页码
+  let dispatch_page = 0;
   for (;;) {
     era.drawLine();
     const active = era_flag.hero_campaign_active;
@@ -251,6 +264,7 @@ async function campaign_menu(rand) {
       era.printButton('奴隶选招（气力-100）', 1);
       era.printButton('派遣奴隶', 2);
     }
+    era.drawLine(); // :31-32 行动按钮与 [999] 之间的第二条分隔线
     era.printButton('返回', 999);
 
     const result = await era.input();
@@ -264,7 +278,7 @@ async function campaign_menu(rand) {
     if (result === 1) {
       await recruit_campaign_slave(rand);
     } else if (result === 2) {
-      await dispatch_campaign_slave();
+      dispatch_page = await dispatch_campaign_slave(dispatch_page);
     }
   }
 }

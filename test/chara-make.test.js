@@ -965,6 +965,10 @@ test('campaign_slave=true：形象确认段与确认对话换战役招募措辞'
 });
 
 test('campaign_slave=true：:55 存在性判定被绕过，已占用的勇者位仍照常招募', async () => {
+  // 注意：夹具的 addCharacter 只镜像引擎的「滤同号再入列」，不镜像引擎对
+  // 同号的**全表重置**（base/talent/cflag/… 回预设）。因此本用例只能证明
+  // 招募流程未被占用判定挡下，证明不了该号原有数据的存续——这层差异登记在
+  // ere/chara/chara-make.js 的 :61 调用点注释（#469 规范审查 F1，待裁定）。
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);

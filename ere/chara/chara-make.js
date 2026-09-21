@@ -1690,6 +1690,16 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       let newchara;
       if ((await inport_check()) === 0) {
         // :60-64 不是异国勇者：新建一位
+        //
+        // ⚠ 与引擎语义的有意偏离（#469 规范审查 F1，已登记待裁定）：原作
+        // :61 `ADDCHARA CHARA` 在 CHARA 号已被占用时**追加**一位同模板角色
+        // （原角色不动、CHARANUM+1），这正是 :55 `|| 赤森奴隶` 绕开存在性
+        // 判定的目的；引擎 `EraApi.addCharacter` 对同号的语义是「从 data.no
+        // 滤出后重推 + 全表（base/abl/talent/cflag/exp/relation…）按预设重置」
+        // （app.asar 实测，夹具只镜像了前半段，见 test/helpers/era-fixture.js
+        // 的 addCharacter 段）。ere 的变量按角色 ID 键控，同号双角色结构性
+        // 不可表达，故取「原地重置重募」。后果：campaign_slave 且该勇者位已
+        // 被占用时，玩家育成过的该号奴隶会被重置回预设、编制不增加。
         era.addCharacter(chara_id); // :61 ADDCHARA CHARA
         await add_chara_ex(count() - 1); // :62 CALL ADDCHARA_EX, CHARANUM-1
         newchara = count() - 1; // :63-64 A / ID_OF_NEWCHARA

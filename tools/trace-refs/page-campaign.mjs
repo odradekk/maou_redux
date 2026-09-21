@@ -108,6 +108,34 @@ export const FILES = [
         ref: '150',
         any: [/FLAG:401 = 0/],
       },
+      {
+        // 需求审查（#469）：菜单顶部与 [999] 前是两条分隔线，末条在 :31；
+        // DRAWLINE 单行全文多处命中，锚取「分隔线 + 返回行」两行（与
+        // :139-140 的 SELECT_CAMPAIGN 同形，属平行复现，非弱锚）
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '31-32',
+        any: [/DRAWLINE\nPRINTL \[999\] 返回/],
+      },
+      {
+        // 需求审查（#469）：NO_PAGE 是 CAMPAIGN_MENU 顶的函数级 #DIM，
+        // 派遣子菜单反复进出保留页码
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '8',
+        any: [/#DIM NO_PAGE = 0/],
+      },
+      {
+        // 规范审查（#469）：主菜单两处越界重问守卫在按钮化后不可达、省略
+        // 不写（`*无法在行动进行时进行变更*` 需要 [0] 在战役进行中被渲染，
+        // `*请选择行动*` 需要未渲染的编号被回传）
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '38-40',
+        any: [/PRINTL \*无法在行动进行时进行变更\*/],
+      },
+      {
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '43-45',
+        any: [/PRINTL \*请选择行动\*/],
+      },
     ],
   },
 ];

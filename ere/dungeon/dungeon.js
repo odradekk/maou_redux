@@ -151,8 +151,9 @@ async function campaign_quest(cid) {
  * :304-312 的角色复位循环无条件跑（不受 :313 的 FLAG:400 < 1 早退约束，
  * 原作把 FOR 循环放在 SIF 之前）——即使调用点已经用 `FLAG:400 > 0` 挡过一层
  * （源 DUNGEON.ERB:195 唯一调用点），函数体自身仍照抄这个无条件动作。
- * @param {number} cid 队长（原作 ARG:0，函数体自身不使用——ARG:0 全程未被
- *   引用，@CAMPAIGN_ENDING_{n} 本身也不接收参数，见 CAMPAIGN_1.ERB:360）
+ *
+ * 调用点传 ARG:0（队长），但函数体自身不使用，@CAMPAIGN_ENDING_{n} 也不接收
+ * 参数（见 CAMPAIGN_1.ERB:360）——故本移植不设形参。
  * @returns {Promise<number>} 原作 RETURN（FLAG:400 < 1 时恒 0）
  */
 async function campaign_ending() {

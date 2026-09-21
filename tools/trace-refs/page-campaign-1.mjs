@@ -123,6 +123,12 @@ export const FILES = [
         ref: '375-378',
         any: [/PRINTW -ROAD・to・CRIMSON・FOREST-（終）/],
       },
+      {
+        // 规范审查（#469）：CAMPAIGN_QUEST_1 只有这一个读点，六个分支体全空
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_1.ERB',
+        ref: '292',
+        any: [/LOCAL = CFLAG:\(ARG:0\):501/],
+      },
     ],
   },
 ];
