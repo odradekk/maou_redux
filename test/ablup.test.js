@@ -4031,3 +4031,951 @@ test('ablup33：Lv2 异常经验 D=lv-1；成功购买扣三项珠（JUEL:0/5/6�
   assert.equal(fixture.store.get(`juel:${CID}:6`), 0);
   assert.ok(fixture.text_lines().some((t) => t.includes('百合中毒变为LV1。')));
 });
+
+// ———— 素质倍率 / 异常经验档位 / 门槛比较的表驱动补覆盖（issue #491） ————
+//
+// #466、#467 的用例每函数只抽 1～2 个素质：ABLUP20～33 用到的素质编号里有
+// 约 27 个一次都没出现过（12/14/15/16/17/20/21/22/23/26/31/32/34/35/36/37/
+// 52/61/64/71/72/84/87/123/127 等），门槛比较也只被零散点到。#466 验收按
+// SOP §5 抽查三处，两处逃逸（ablup20 感情淡薄的 B 轨 ×1.2、ablup21 抵抗的
+// ×2.0），#467 验收再抽三处又逃逸两处（ablup40 否定快感 ×1.75、ablup39
+// 欲望门槛 `< lv + 1`）。倍率与门槛直接决定玩家要付的点数与能否购买，是
+// 玩家可见行为，故这里按分支逐条列表驱动，把「素质编号」这一维补齐。
+//
+// 期望值一律现算，不抄 ere/system/train/ablup.js：
+//   · 「梯子基值」抄自 target/ERB/ABL/ABLUP<nn>.ERB @DECIDE_ABLUP<nn> 里
+//     `IF ABL:<n> == <lv>` 分支的 A/B/C/D/E 赋值，原文行号写在各行注释里；
+//   · 「素质倍率」抄自同一文件的 TIMES 行，行号同样写在注释里；
+//   · 合成按 TIMES 语义逐次截断（Math.floor(v * m)），不是一次乘完。
+// `refs` 是该等级实际打印的分母，按输出顺序排列；`a*3`、`c/2` 照抄原作的
+// `{A*3}`、`{C/2}`，用来核对 [1] 轨与整除半经验的分母。
+
+/** TIMES X, m 的语义：整数乘小数后截断。 */
+const scale = (base, factor) => Math.floor(base * factor);
+
+/** 把同一个倍率摊到多条轨道上，写表时少抄几遍（轨道名见各行 base）。 */
+const spread = (tracks, factor) =>
+  Object.fromEntries([...tracks].map((track) => [track, factor]));
+
+/** 把 `{ talent: {10: 1}, abl: {11: 2}, juel: {5: 100} }` 形状的状态写进夹具。 */
+function set_state(fixture, state = {}) {
+  for (const [family, entries] of Object.entries(state)) {
+    for (const [index, value] of Object.entries(entries)) {
+      fixture.store.set(`${family}:${CID}:${index}`, value);
+    }
+  }
+}
+
+/** 按输出顺序取出夹具各行的 `分子/分母` 里的分母。 */
+function denominators(fixture) {
+  const found = [];
+  for (const line of fixture.lines) {
+    if (typeof line.text !== 'string') continue;
+    for (const matched of line.text.matchAll(/\/(\d+)/g)) {
+      found.push(Number(matched[1]));
+    }
+  }
+  return found;
+}
+
+/** 求 `refs` 里的一位分母：`a`、`a*3`、`c/2`（后者照抄原作的整除）。 */
+function ref_value(values, ref) {
+  const [name, operator, operand] = ref.split(/([*/])/);
+  if (operator === '*') return values[name] * Number(operand);
+  if (operator === '/') return Math.floor(values[name] / Number(operand));
+  return values[name];
+}
+
+/** 选项按钮（跳过 [100] 停止）里 `……` 之后那截状态文案。 */
+function option_states(fixture) {
+  return buttons(fixture)
+    .filter((button) => button.accelerator !== 100)
+    .map((button) => button.text.slice(button.text.indexOf('……') + 2));
+}
+
+/**
+ * 倍率规格：`rows` 每项是一份独立夹具配置（`state` 给出等级与前置素质，
+ * `base` 是该等级梯子，`refs` 是该等级打印的分母）；`talents` 是素质编号 →
+ * 该素质 TIMES 到的轨道与倍率，未列出的轨道按 ×1。分支互斥的 IF/ELSEIF
+ * 两侧各占一行，分别用只带该素质的数据触发。
+ */
+const MULTIPLIER_SPECS = [
+  {
+    id: 20,
+    source: 'ABLUP20.ERB',
+    rows: [
+      // 梯子 :120-150（Lv0：A=100、B=5）。C 只在 Lv3/4/7 非零（:174-175），此处不渲染
+      { state: { abl: { 20: 0 } }, base: { a: 100, b: 5 }, refs: ['a', 'b'] },
+    ],
+    talents: {
+      10: { a: 1.5 }, // 胆怯 :181-183（只乘 A）
+      11: { a: 0.9, b: 0.9 }, // 反抗心 :185-188
+      12: { a: 0.9 }, // 刚强 :189-191（只乘 A）
+      14: { a: 1.2 }, // 文静 :192-194（只乘 A）
+      16: { a: 0.9, b: 0.9 }, // 嚣张 :195-199
+      15: { a: 0.9, b: 0.9 }, // 高姿态 :201-204
+      17: { a: 1.1, b: 1.1 }, // 低姿态（与高姿态互斥）:205-209
+      20: { a: 1.2, b: 1.2 }, // 克制 :211-215
+      21: { a: 1.2, b: 1.2 }, // 冷漠 :216-220
+      22: { a: 1.5, b: 1.2 }, // 感情淡薄 :221-225（A/B 倍率不同）
+      23: { a: 0.9, b: 0.9 }, // 好奇心 :226-230
+      26: { a: 1.1 }, // 悲观的 :231-233（只乘 A）
+      28: { a: 0.9, b: 0.9 }, // 爱表现 :234-238
+      30: { a: 1.1, b: 1.1 }, // 看重贞操 :240-242 的 IF 侧
+      31: { a: 0.95, b: 0.95 }, // 看轻贞操 :244-246 的 ELSEIF 侧
+      32: { a: 0.95, b: 0.95 }, // 压抑 :250-252 的 IF 侧
+      33: { a: 0.9, b: 0.9 }, // 开放 :254-256 的 ELSEIF 侧
+      79: { a: 0.95, b: 0.95 }, // 讨厌男人 or 男人婆 :259-263（OR 两侧各测一次）
+      82: { a: 0.95, b: 0.95 },
+      40: { a: 1.2, b: 1.2 }, // 害怕疼痛 :266-268 的 IF 侧
+      41: { a: 0.9, b: 0.9 }, // 不惧疼痛 :270-272 的 ELSEIF 侧
+      76: { a: 0.8, b: 0.8 }, // 淫乱 :275-282（C 的 ×0.80 另见上文两段折扣用例）
+      80: { a: 0.8, b: 0.8 }, // 倒错的 :283-287
+      83: { a: 0.5, b: 0.5 }, // 施虐狂 :288-292
+      88: { a: 1.2, b: 1.2 }, // 受虐狂 :293-297
+      84: { a: 0.8, b: 0.8 }, // 嫉妒 :298-302
+      87: { a: 0.8, b: 0.8 }, // 小恶魔 :303-307
+      123: { a: 0.5, b: 0.5 }, // 疯狂 :308-312
+      9: { a: 2.0, b: 2.0 }, // 崩坏 :313-317
+    },
+  },
+  {
+    id: 21,
+    source: 'ABLUP21.ERB',
+    rows: [
+      // 梯子 :161-221。Lv0：A=B=100、C=0、D=E=100（C 不在输出里）
+      {
+        state: { abl: { 21: 0 } },
+        base: { a: 100, b: 100, c: 0, d: 100, e: 100, g: 1 },
+        refs: ['a', 'b', 'd', 'e', 'g'],
+      },
+      // Lv3 起 A=B=0（[0] 轨隐藏），C=30、D=2800、E=6000
+      {
+        state: { abl: { 21: 3 } },
+        base: { a: 0, b: 0, c: 30, d: 2800, e: 6000, g: 1 },
+        refs: ['d', 'e', 'c', 'g'],
+      },
+    ],
+    talents: {
+      10: spread('abcde', 1.1), // 胆怯 :252-258
+      11: spread('abcde', 1.2), // 反抗心 :260-266
+      12: spread('abcde', 1.2), // 刚强 :268-274
+      16: spread('abcde', 1.2), // 嚣张 :276-282
+      15: spread('abcde', 1.2), // 高姿态 :285-291
+      17: spread('abcde', 0.9), // 低姿态（与高姿态互斥）:292-298
+      20: spread('abcde', 1.2), // 克制 :301-307
+      21: spread('abcde', 1.1), // 冷漠 :309-315
+      22: spread('abcde', 1.5), // 感情淡薄 :317-323
+      24: spread('abcde', 1.2), // 保守的 :325-331
+      26: spread('abcde', 0.9), // 悲观的 :333-339
+      30: spread('abcde', 1.2), // 看重贞操 :342-348
+      31: spread('abcde', 0.9), // 看轻贞操（互斥）:349-355
+      32: spread('abcde', 1.2), // 压抑 :358-364
+      33: spread('abcde', 0.6), // 开放（互斥）:365-371
+      34: spread('abcde', 2.0), // 抵抗 :373-380
+      35: spread('abcde', 0.9), // 害羞 :383-389
+      36: spread('abcde', 1.2), // 不知羞耻（互斥）:390-396
+      40: spread('abcde', 1.1), // 害怕疼痛 :398-405
+      41: spread('abcde', 0.95), // 不惧疼痛（互斥）:406-412
+      70: spread('abcde', 0.9), // 接受快感 :414-421
+      71: spread('abcde', 1.1), // 否定快感（互斥）:422-428
+      76: spread('abcde', 0.8), // 淫乱 :430-437
+      80: spread('abcde', 0.75), // 倒錯的 :438-445
+      83: spread('abcde', 1.2), // 施虐狂 :446-453
+      88: spread('abcde', 0.5), // 受虐狂 :454-461
+      123: spread('abcde', 0.8), // 疯狂 :462-469
+      9: spread('abcde', 2.0), // 崩坏 :470-477
+    },
+  },
+  {
+    id: 22,
+    source: 'ABLUP22.ERB',
+    rows: [
+      // 梯子 :140-190。Lv0：A=200、B=50、C=0、D=1000；B 行两条轨道各打一次
+      {
+        state: { abl: { 22: 0 } },
+        base: { a: 200, b: 50, c: 0, d: 1000 },
+        refs: ['a', 'b', 'd', 'b'],
+      },
+      // Lv2：A=3000、B=300、C=1000、D=0（[1] 轨隐藏）——借 C 非零覆盖 C 轨
+      {
+        state: { abl: { 22: 2 } },
+        base: { a: 3000, b: 300, c: 1000, d: 0 },
+        refs: ['a', 'c', 'b'],
+      },
+    ],
+    clamp: ['a', 'b'], // :320-324「最低でも1回・1個は必要」
+    talents: {
+      13: spread('abcd', 0.95), // 坦率 :217-223
+      21: spread('abcd', 1.2), // 冷漠 :224-230
+      23: spread('abcd', 0.95), // 好奇心 :231-237
+      24: spread('abcd', 1.2), // 保守的 :238-244
+      30: spread('abcd', 1.2), // 看重贞操 :246-251
+      31: spread('abcd', 0.95), // 看轻贞操（互斥）:252-258
+      63: spread('abcd', 0.95), // 献身的 :260-266
+      70: spread('abcd', 0.95), // 接受快感 :268-273
+      71: spread('abcd', 1.2), // 否定快感（互斥）:274-280
+      80: spread('abcd', 0.8), // 倒錯的 :282-288
+      79: spread('abcd', 2.0), // 男人婆 :290-296（百合特有加成）
+      81: spread('abcd', 0.5), // 双性恋 :298-304
+      82: spread('abcd', 0.5), // 讨厌男人 :305-311
+      123: spread('abcd', 0.5), // 疯狂 :312-318
+    },
+  },
+  {
+    id: 23,
+    source: 'ABLUP23.ERB',
+    rows: [
+      // 梯子与 ABLUP22 相同（:136-186）。前置：TALENT:122 必须非 0（:117-118）
+      {
+        state: { abl: { 23: 0 }, talent: { 122: 1 } },
+        base: { a: 200, b: 50, c: 0, d: 1000 },
+        refs: ['a', 'b', 'd', 'b'],
+      },
+      {
+        state: { abl: { 23: 2 }, talent: { 122: 1 } },
+        base: { a: 3000, b: 300, c: 1000, d: 0 },
+        refs: ['a', 'c', 'b'],
+      },
+    ],
+    clamp: ['a', 'b'], // :307-311
+    talents: {
+      13: spread('abcd', 0.95), // 坦率 :213-219
+      21: spread('abcd', 1.2), // 冷漠 :220-226
+      23: spread('abcd', 0.95), // 好奇心 :227-233
+      24: spread('abcd', 1.2), // 保守的 :234-240
+      30: spread('abcd', 1.2), // 看重贞操 :242-247
+      31: spread('abcd', 0.95), // 看轻贞操（互斥）:248-254
+      82: spread('abcd', 3.0), // 讨厌男人 :256-262（与 ABLUP22 的 ×0.50 相反）
+      63: spread('abcd', 0.95), // 献身的 :263-269
+      70: spread('abcd', 0.95), // 接受快感 :271-277
+      71: spread('abcd', 1.2), // 否定快感（互斥）:277-283
+      80: spread('abcd', 0.8), // 倒錯的 :285-291
+      81: spread('abcd', 0.5), // 双性恋 :292-298
+      123: spread('abcd', 0.5), // 疯狂 :299-305
+    },
+  },
+  {
+    id: 30,
+    source: 'ABLUP30.ERB',
+    rows: [
+      // 梯子 :129-169。Lv0：A=3000、B=10000、C=10；[1] 轨为 A*3/B*3/C/2
+      {
+        state: { abl: { 30: 0 } },
+        base: { a: 3000, b: 10000, c: 10 },
+        refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
+      },
+    ],
+    clamp: ['a', 'b', 'c'], // :309-314
+    talents: {
+      12: spread('abc', 1.2), // 刚强 :193-197
+      20: spread('abc', 1.2), // 克制 :199-203
+      21: spread('abc', 1.2), // 冷漠 :205-209
+      24: spread('abc', 1.2), // 保守的 :211-215
+      30: spread('abc', 1.2), // 看重贞操 :218-222
+      31: spread('abc', 0.9), // 看轻贞操（互斥）:223-227
+      32: spread('abc', 1.2), // 压抑 :230-234
+      33: spread('abc', 0.8), // 开放（互斥）:235-239
+      34: spread('abc', 1.2), // 抵抗 :242-246
+      35: spread('abc', 1.1), // 害羞 :249-253
+      36: spread('abc', 0.95), // 不知羞耻（互斥）:254-258
+      70: spread('abc', 0.9), // 接受快感 :261-265
+      71: spread('abc', 1.2), // 否定快感（互斥）:266-270
+      72: spread('abc', 0.6), // 容易上瘾 :272-276
+      73: spread('abc', 0.5), // 容易陷落 :278-282
+      76: spread('abc', 0.8), // 淫乱 :284-288
+      87: spread('abc', 0.9), // 小恶魔 :290-294
+      123: spread('abc', 0.8), // 疯狂 :296-300
+      9: spread('abc', 0.8), // 崩坏 :302-306（非 ABLUP20/21 的 ×2.00）
+    },
+  },
+  {
+    id: 31,
+    source: 'ABLUP31.ERB',
+    rows: [
+      // 梯子 :150-210。Lv0：A=3000、B=10000、C=1000、D=100、E=20；两条轨道同价
+      {
+        state: { abl: { 31: 0 } },
+        base: { a: 3000, b: 10000, c: 1000, d: 100, e: 20 },
+        refs: ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'e'],
+      },
+    ],
+    clamp: ['a', 'b', 'c', 'd', 'e'], // :303-313
+    talents: {
+      // :252-281 四项都只乘 A-D，E（[1] 轨调教自慰经验）不受影响
+      60: { a: 0.25, b: 0.25, c: 0.25, d: 0.25 }, // 容易自慰 :252-258
+      72: { a: 0.5, b: 0.5, c: 0.5, d: 0.5 }, // 容易上瘾 :260-266
+      80: { a: 0.75, b: 0.75, c: 0.75, d: 0.75 }, // 倒错的 :268-274
+      76: { a: 0.5, b: 0.5, c: 0.5, d: 0.5 }, // 淫乱化 :276-282
+    },
+  },
+  {
+    id: 32,
+    source: 'ABLUP32.ERB',
+    rows: [
+      // 梯子 :143-183。Lv0：A=3000、B=10000、C=10（组合上限 <10，梯子未被覆盖）
+      {
+        state: { abl: { 32: 0 } },
+        base: { a: 3000, b: 10000, c: 10 },
+        refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
+      },
+    ],
+    clamp: ['a', 'b', 'c'], // :329-334
+    talents: {
+      11: spread('abc', 1.5), // 反抗心 :216-220
+      22: spread('abc', 0.95), // 感情淡薄 :222-226
+      24: spread('abc', 1.2), // 保守的 :228-232
+      32: spread('abc', 1.2), // 压抑 :235-239
+      33: spread('abc', 0.8), // 开放（互斥）:240-244
+      34: spread('abc', 2.0), // 抵抗 :247-251
+      47: spread('abc', 0.5), // 喜欢精液 :254-258
+      52: spread('abc', 0.95), // 擅用舌头 :261-265
+      61: spread('abc', 0.9), // 不怕污臭 :268-272
+      62: spread('abc', 2.0), // 反感污臭（互斥）:273-277
+      64: spread('abc', 0.9), // 不怕脏 :279-283
+      72: spread('abc', 0.5), // 容易上瘾 :286-290
+      73: spread('abc', 0.5), // 容易陷落 :292-296
+      76: spread('abc', 0.9), // 淫乱 :298-302
+      80: spread('abc', 0.75), // 倒错的 :304-308
+      87: spread('abc', 0.95), // 小恶魔 :310-314
+      123: spread('abc', 0.9), // 疯狂 :316-320
+      9: spread('abc', 0.9), // 崩坏 :322-326
+    },
+  },
+  {
+    id: 33,
+    source: 'ABLUP33.ERB',
+    rows: [
+      // 梯子 :126-165。Lv0：A=1200、B=5000、C=300（按钮是 B 阴核，A 供欲情/屈服两行）
+      {
+        state: { abl: { 33: 0 } },
+        base: { a: 1200, b: 5000, c: 300 },
+        refs: ['b', 'a', 'a', 'c'],
+      },
+    ],
+    clamp: ['a', 'b', 'c'], // :341-346
+    talents: {
+      11: spread('abc', 1.5), // 反抗心 :199-203
+      20: spread('abc', 1.2), // 克制 :205-208
+      21: spread('abc', 1.2), // 冷漠 :211-214
+      24: spread('abc', 1.5), // 保守的 :217-220（非 ABLUP22/23 的 ×1.20）
+      32: spread('abc', 1.2), // 压抑 :224-227
+      33: spread('abc', 0.8), // 开放（互斥）:229-232
+      34: spread('abc', 2.0), // 抵抗 :236-239
+      52: spread('abc', 0.9), // 擅用舌头 :242-245
+      61: spread('abc', 0.95), // 不怕污臭 :248-251
+      63: spread('abc', 0.9), // 献身的 :254-257
+      64: spread('abc', 0.95), // 不怕脏 :260-263
+      70: spread('abc', 0.9), // 接受快感 :267-270
+      71: spread('abc', 1.1), // 否定快感（互斥）:272-275
+      72: spread('abc', 0.5), // 容易上瘾 :278-281
+      73: spread('abc', 0.5), // 容易陷落 :284-287
+      76: spread('abc', 0.75), // 淫乱 :290-293
+      79: spread('abc', 2.0), // 男人婆 :297-300
+      80: spread('abc', 0.75), // 倒错的 :304-307
+      81: spread('abc', 0.5), // 双性恋 :310-313
+      82: spread('abc', 0.5), // 讨厌男人 :316-319
+      87: spread('abc', 0.9), // 小恶魔 :322-325
+      123: spread('abc', 0.5), // 疯狂 :328-331
+      9: spread('abc', 0.8), // 崩坏 :334-337
+    },
+  },
+  {
+    id: 37,
+    source: 'ABLUP37.ERB',
+    rows: [
+      // 梯子 :109-160。Lv0：A=2000、B=3000、C=1000、D=50
+      {
+        state: { abl: { 37: 0 } },
+        base: { a: 2000, b: 3000, c: 1000, d: 50 },
+        refs: ['a', 'b', 'c', 'd'],
+      },
+    ],
+    clamp: ['a', 'b', 'c', 'd'], // :411-418
+    talents: {
+      11: spread('abcd', 1.5), // 反抗心 :187-191
+      12: spread('abcd', 1.2), // 刚强 :194-198
+      20: spread('abcd', 1.5), // 克制 :201-205
+      24: spread('abcd', 1.5), // 保守的 :208-212
+      26: spread('abcd', 0.9), // 悲观的 :216-220
+      28: spread('abcd', 0.9), // 爱表现 :223-227
+      30: spread('abcd', 2.0), // 看重贞操 :231-235
+      31: spread('abcd', 0.9), // 看轻贞操（互斥）:237-241
+      32: spread('abcd', 1.2), // 压抑 :245-249
+      33: spread('abcd', 0.8), // 开放（互斥）:251-255
+      34: spread('abcd', 2.0), // 抵抗 :259-263
+      35: spread('abcd', 1.1), // 害羞 :267-271
+      36: spread('abcd', 0.9), // 不知羞耻（互斥）:273-277
+      63: spread('abcd', 0.9), // 献身的 :280-284
+      72: spread('abcd', 0.5), // 容易上瘾 :287-291
+      76: { a: 0.8, b: 0.5, c: 0.8, d: 0.8 }, // 淫乱 :294-298（B 轨 ×0.50 与其余 ×0.80 不同，原作如此）
+      82: spread('abcd', 3.0), // 讨厌男人 :301-305
+      85: spread('abcd', 1.5), // 爱慕 :308-312
+      153: spread('abcd', 2.0), // 妊娠 :315-319
+      123: spread('abcd', 0.5), // 疯狂 :322-326
+      9: spread('abcd', 0.8), // 崩坏 :329-333
+      180: spread('abcd', 0.8), // 妓女 :336-340
+      181: spread('abcd', 0.5), // 倾城 :343-347
+      183: spread('abcd', 0.9), // 有常客 :350-354
+      184: spread('abcd', 2.0), // 求爱 :357-361
+    },
+  },
+  {
+    id: 39,
+    source: 'ABLUP39.ERB',
+    rows: [
+      // 梯子 :107-146。Lv0：A=B=2000、C=30（三中毒合计 <10，A/B 未被突破价覆盖）
+      {
+        state: { abl: { 39: 0 } },
+        base: { a: 2000, b: 2000, c: 30 },
+        refs: ['a', 'b', 'c'],
+      },
+    ],
+    clamp: ['a', 'b', 'c'], // :229-235
+    talents: {
+      20: { a: 2.5, b: 2.5, c: 1.5 }, // 克制 :177-181（A/B 与 C 倍率不同）
+      70: { a: 0.75, b: 0.75 }, // 接受快感 :183-186（只乘 A/B，C 不动）
+      71: { a: 1.75, b: 1.75 }, // 否定快感（互斥）:187-189
+      72: spread('abc', 0.5), // 容易上瘾 :192-195
+      80: spread('abc', 0.75), // 倒錯的 :198-201
+      123: spread('abc', 0.5), // 疯狂 :204-207
+      124: spread('abc', 0.8), // 动物耳朵 :210-213
+      136: spread('abc', 0.5), // 牝犬 :216-219
+      85: { a: 1.8, b: 1.8, c: 1.5 }, // 爱慕 :222-225（A/B 与 C 倍率不同）
+    },
+  },
+  {
+    id: 40,
+    source: 'ABLUP40.ERB',
+    rows: [
+      // 梯子 :70-92。Lv0：A=2000（单轨道，按钮分母就是 A）
+      { state: { abl: { 40: 0 } }, base: { a: 2000 }, refs: ['a'] },
+    ],
+    clamp: ['a'], // :124-125
+    talents: {
+      20: { a: 2.5 }, // 克制 :98-99
+      70: { a: 0.75 }, // 接受快感 :102-103
+      71: { a: 1.75 }, // 否定快感（互斥）:105-106
+      72: { a: 0.5 }, // 容易上瘾 :109-110
+      80: { a: 0.75 }, // 倒錯的 :113-114
+      123: { a: 0.5 }, // 疯狂 :117-118
+    },
+  },
+  {
+    id: 99,
+    source: 'ABLUP99.ERB',
+    rows: [
+      // 刻印阶梯 :98-103。MARK:3=1 → A=5000（门槛 MARK:3 <= 0 在最前面拦空输入）
+      { state: { mark: { 3: 1 } }, base: { a: 5000 }, refs: ['a'] },
+    ],
+    talents: {
+      12: { a: 3.0 }, // 刚强 :107-108
+      16: { a: 1.5 }, // 嚣张 :112-113
+      13: { a: 0.5 }, // 坦率 :117-118
+      85: { a: 0.5 }, // 爱慕 :122-123
+    },
+  },
+  {
+    id: 100,
+    source: 'ABLUP100.ERB',
+    rows: [
+      // 刻印阶梯 :82-92。MARK:10=1 → A=2000
+      { state: { mark: { 10: 1 } }, base: { a: 2000 }, refs: ['a'] },
+    ],
+    talents: {
+      10: { a: 1.2 }, // 胆小 :95-96
+      172: { a: 0.8 }, // 智慧 :100-101
+      12: { a: 1.8 }, // 刚强 :105-106
+      16: { a: 1.2 }, // 嚣张 :110-111
+      13: { a: 0.5 }, // 坦率 :115-116
+      85: { a: 0.5 }, // 爱慕 :120-121
+      76: { a: 0.7 }, // 淫乱 :125-126
+    },
+  },
+];
+
+for (const spec of MULTIPLIER_SPECS) {
+  test(`ablup${spec.id}：素质倍率逐条表驱动（期望取自 ${spec.source}）`, async () => {
+    for (const row of spec.rows) {
+      for (const [id, factors] of Object.entries(spec.talents)) {
+        const fixture = create_era_fixture();
+        const module = seed(fixture);
+        set_state(fixture, {
+          ...row.state,
+          talent: { ...(row.state?.talent ?? {}), [id]: 1 },
+        });
+        fixture.set_inputs(100);
+
+        const values = {};
+        for (const [track, base] of Object.entries(row.base)) {
+          values[track] = scale(base, factors[track] ?? 1);
+        }
+        for (const track of spec.clamp ?? []) {
+          if (values[track] < 1) values[track] = 1;
+        }
+
+        await module[`ablup${spec.id}`](CID);
+        assert.deepEqual(
+          denominators(fixture),
+          row.refs.map((ref) => ref_value(values, ref)),
+          `ablup${spec.id}：素质 ${id}，等级 ${JSON.stringify(row.state.abl ?? row.state.mark)}`,
+        );
+      }
+    }
+  });
+}
+
+/**
+ * 戒备森严（TALENT:27）按 ABL 等级四档。ABLUP20 的 C/D/E 三列在 TIMES 时
+ * 尚未赋值（原作的次序缺陷，见上文两段折扣用例），因此该文件里这一分支
+ * 观测不到差异，不列表。ABLUP39 的分档判 ABL:37，另见其专属用例。ABLUP40
+ * 原作没有这一分支。
+ */
+const TIER_SPECS = [
+  {
+    id: 22,
+    // 梯子 :155-157 / :160-162 / :165-167 / :170-172；戒备森严 :193-211 作用于 A/B/C。
+    // Lv5 起入口把关（:18）要求 [开放/倒錯的/双性恋/讨厌男人/疯狂] 至少有一项，
+    // 取 33（开放）——它在本文件里只做豁免，不参与任何 TIMES
+    rows: [
+      {
+        lv: 3,
+        base: { a: 8000, b: 500, c: 2000, d: 0 },
+        tier: 1.5,
+        refs: ['a', 'c', 'b'],
+      },
+      {
+        lv: 4,
+        base: { a: 20000, b: 800, c: 5000, d: 0 },
+        tier: 2.0,
+        refs: ['a', 'c', 'b'],
+      },
+      {
+        lv: 5,
+        talents: { 27: 1, 33: 1 },
+        base: { a: 40000, b: 1200, c: 10000, d: 0 },
+        tier: 2.5,
+        refs: ['a', 'c', 'b'],
+      },
+      {
+        lv: 6,
+        talents: { 27: 1, 33: 1 },
+        base: { a: 80000, b: 1800, c: 13000, d: 0 },
+        tier: 3.0,
+        refs: ['a', 'c', 'b'],
+      },
+    ],
+  },
+  {
+    id: 30,
+    // 梯子 :141-156；戒备森严 :172-189 作用于 A/B/C。Lv5 起入口把关（:16）是
+    // **六项任一为 0 即拦**，必须六项全有，其中 [接受快感]（:261-265 ×0.90）
+    // 与 [淫乱]（:284-288 ×0.80）本身也乘 A/B/C，故按原文次序补进 extras
+    rows: [
+      {
+        lv: 3,
+        base: { a: 30000, b: 100000, c: 80 },
+        tier: 1.5,
+        refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
+      },
+      {
+        lv: 4,
+        base: { a: 55000, b: 200000, c: 200 },
+        tier: 2.0,
+        refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
+      },
+      {
+        lv: 5,
+        talents: { 27: 1, 85: 1, 76: 1, 63: 1, 70: 1, 75: 1, 77: 1 },
+        extras: [spread('abc', 0.9), spread('abc', 0.8)],
+        base: { a: 70000, b: 300000, c: 400 },
+        tier: 2.5,
+        refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
+      },
+      {
+        lv: 6,
+        talents: { 27: 1, 85: 1, 76: 1, 63: 1, 70: 1, 75: 1, 77: 1 },
+        extras: [spread('abc', 0.9), spread('abc', 0.8)],
+        base: { a: 90000, b: 400000, c: 800 },
+        tier: 3.0,
+        refs: ['a', 'b', 'c', 'a*3', 'b*3', 'c/2'],
+      },
+    ],
+  },
+  {
+    id: 31,
+    // 梯子 :168-191；戒备森严 :213-238 作用于 A-E 五列。Lv5 起入口把关（:16）是
+    // AND（六项全 0 才拦），取 85（爱慕）——它在本文件里不参与任何 TIMES
+    rows: [
+      {
+        lv: 3,
+        base: { a: 20000, b: 100000, c: 15000, d: 1000, e: 100 },
+        tier: 1.5,
+        refs: ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'e'],
+      },
+      {
+        lv: 4,
+        base: { a: 32000, b: 200000, c: 30000, d: 1500, e: 150 },
+        tier: 2.0,
+        refs: ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'e'],
+      },
+      {
+        lv: 5,
+        talents: { 27: 1, 85: 1 },
+        base: { a: 50000, b: 250000, c: 40000, d: 2000, e: 200 },
+        tier: 2.5,
+        refs: ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'e'],
+      },
+      {
+        lv: 6,
+        talents: { 27: 1, 85: 1 },
+        base: { a: 70000, b: 320000, c: 50000, d: 3000, e: 320 },
+        tier: 3.0,
+        refs: ['a', 'b', 'c', 'd', 'a', 'b', 'c', 'e'],
+      },
+    ],
+  },
+  {
+    id: 33,
+    // 梯子 :138-162；戒备森严 :174-192 作用于 A/B/C。Lv5 起入口把关（:112）是
+    // AND（四项全 0 才拦），但四项（76/80/81/82）本身都乘 A/B/C，取 81
+    // （双性恋 ×0.50，:310-313）补进 extras
+    rows: [
+      {
+        lv: 3,
+        base: { a: 18000, b: 50000, c: 1400 },
+        tier: 1.5,
+        refs: ['b', 'a', 'a', 'c'],
+      },
+      {
+        lv: 4,
+        base: { a: 30000, b: 70000, c: 2100 },
+        tier: 2.0,
+        refs: ['b', 'a', 'a', 'c'],
+      },
+      {
+        lv: 5,
+        talents: { 27: 1, 81: 1 },
+        extras: [spread('abc', 0.5)],
+        base: { a: 55000, b: 120000, c: 3000 },
+        tier: 2.5,
+        refs: ['b', 'a', 'a', 'c'],
+      },
+      {
+        lv: 6,
+        talents: { 27: 1, 81: 1 },
+        extras: [spread('abc', 0.5)],
+        base: { a: 70000, b: 200000, c: 4000 },
+        tier: 3.0,
+        refs: ['b', 'a', 'a', 'c'],
+      },
+    ],
+  },
+];
+
+for (const spec of TIER_SPECS) {
+  test(`ablup${spec.id}：戒备森严四档逐级（ABLUP${spec.id}.ERB 的 TIMES 行）`, async () => {
+    for (const row of spec.rows) {
+      const fixture = create_era_fixture();
+      const module = seed(fixture);
+      set_state(fixture, {
+        abl: { [spec.id]: row.lv },
+        talent: row.talents ?? { 27: 1 },
+      });
+      fixture.set_inputs(100);
+
+      const values = {};
+      for (const [track, base] of Object.entries(row.base)) {
+        let value = scale(
+          base,
+          ['a', 'b', 'c', 'd', 'e'].includes(track) ? row.tier : 1,
+        );
+        for (const extra of row.extras ?? []) {
+          value = scale(value, extra[track] ?? 1);
+        }
+        values[track] = value;
+      }
+
+      await module[`ablup${spec.id}`](CID);
+      assert.deepEqual(
+        denominators(fixture),
+        row.refs.map((ref) => ref_value(values, ref)),
+        `ablup${spec.id}：Lv${row.lv} 戒备森严 ×${row.tier}`,
+      );
+    }
+  });
+}
+
+/**
+ * 异常经验需求（C/F/D/E）的档位公式。译文行里 `异常经验{N}以上` 的 N 就是
+ * 该等级要求的次数，直接读出来核对公式，不必绕到状态位。`levels` 里没写的
+ * 等级期望 N=0，即整行不打印。
+ */
+const EXP_REQUIREMENT_SPECS = [
+  {
+    id: 20,
+    // 梯子 :120-150；豁免名单 :174-175（:175 赋值后才做淫乱折扣，见上文用例）
+    // 前置素质 127 只用于越过 Lv5 入口把关（:15），不在 C 的豁免名单里
+    talents: { 127: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 3: 1, 4: 2, 7: 5 },
+  },
+  {
+    id: 21,
+    // :245-246；前置素质 37 只用于越过 Lv5 入口把关（:15）
+    talents: { 37: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 3: 1, 4: 2, 7: 5 },
+  },
+  {
+    id: 22,
+    // :214-215（ABL:22 >= 3 起，不是 == 3/4/7）；前置素质 82 越过 Lv5 把关（:18）
+    talents: { 82: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 3: 1, 4: 2, 5: 3, 6: 4, 7: 5, 8: 6, 9: 7 },
+  },
+  {
+    id: 23,
+    // :210-211（ABL:23 >= 3 起）；前置素质 122=男人（:117-118）。Lv5 起入口把关
+    // （:121）的名单与 E 的豁免名单（33/80/81/123）**完全相同**，越过把关就必然
+    // 把 E 清零，故 Lv5 以上 E 恒为 0
+    talents: { 122: 1, 82: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 3: 1, 4: 2 },
+  },
+  {
+    id: 30,
+    // :317（ABL:30 >= 2 起 lv-1）。Lv>=5 的入口把关是「六项任一为 0 即拦」，
+    // 六项里含 F 的豁免素质 76，故 Lv5 以上 F 恒为 0，不必也无法区分
+    talents: {},
+    levels: [0, 1, 2, 3, 4],
+    expected: { 2: 1, 3: 2, 4: 3 },
+  },
+  {
+    id: 31,
+    // :242（仅 ABL:31 == 2 时 F=lv-1，注释写「LV2→3、3→4、4→5」但代码只判 ==2）
+    talents: {},
+    levels: [0, 1, 2, 3, 4],
+    expected: { 2: 1 },
+  },
+  {
+    id: 32,
+    // :212（ABL:32 >= 2 起 lv-1）；前置素质 50 越过 Lv5 入口把关（:128）
+    talents: { 50: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8 },
+  },
+  {
+    id: 33,
+    // :195（ABL:33 >= 2 起 lv-1）；Lv5 的入口把关是 AND，且名单（76/80/81/82）
+    // 里只有 76 不在 D 的豁免名单（72/80/81/82/123）里，故取 76 越过把关
+    talents: { 76: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8 },
+  },
+  {
+    id: 37,
+    // :368-401（ABL:37 >= 2 起 lv-1，再做 17 项素质增减表，下限 0）；
+    // 前置素质 31 不在增减表内，只用于越过 Lv5 入口把关（:97）
+    talents: { 31: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8 },
+  },
+  {
+    id: 39,
+    // :173（ABL:39 >= 2 起 F = lv+1）；前置素质 124 越过 Lv5 入口把关（:98），
+    // 且不在 F 的豁免名单（72/76/136）内
+    talents: { 124: 1 },
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10 },
+  },
+  {
+    id: 40,
+    // :94（ABL:40 >= 2 起 F = lv+1）；本文件没有 Lv5 入口把关，只有 Lv10 硬顶
+    talents: {},
+    levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    expected: { 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10 },
+  },
+];
+
+for (const spec of EXP_REQUIREMENT_SPECS) {
+  test(`ablup${spec.id}：异常经验需求的档位逐级（ABLUP${spec.id}.ERB 的赋值行）`, async () => {
+    for (const lv of spec.levels) {
+      const fixture = create_era_fixture();
+      const module = seed(fixture);
+      set_state(fixture, { abl: { [spec.id]: lv }, talent: spec.talents });
+      fixture.set_inputs(100);
+      await module[`ablup${spec.id}`](CID);
+
+      assert.equal(
+        exp_requirement(fixture),
+        spec.expected[lv] ?? 0,
+        `ablup${spec.id}：Lv${lv} 的异常经验需求`,
+      );
+    }
+  });
+}
+
+/** 读出需求行里的异常经验次数；整行不打印时返回 0。 */
+function exp_requirement(fixture) {
+  for (const text of fixture.text_lines()) {
+    const matched = /异常经验(\d+)以上/.exec(text);
+    if (matched) return Number(matched[1]);
+  }
+  return 0;
+}
+
+/**
+ * 「门槛恰好相等必须判为满足」——原作文面是严格小于。每条给一组把其它位
+ * 都补齐的状态，只留被测门槛在临界值两侧摆动：`abl:<gate>` 取 `lv` 与
+ * `lv + 1` 各跑一次，前者必须点亮能力不足位，后者必须不点亮。
+ */
+const GATE_SPECS = [
+  {
+    id: 20,
+    // :332 `SIF ABL:11 < ABL:20 + 1` → I |= 4；Lv3 的 A/B/C = 3000/120/1
+    cases: [
+      { lv: 3, gate: 11, state: { juel: { 5: 3000 }, exp: { 33: 120 } } },
+    ],
+  },
+  {
+    id: 21,
+    // :480-484 `IF ABL:11 < ABL:21+1` → I/J 同置 4
+    cases: [{ lv: 0, gate: 11, state: {} }],
+  },
+  {
+    id: 22,
+    // :343-347 `IF ABL:11 < ABL:22 + 1` → I/J 同置 4
+    cases: [{ lv: 0, gate: 11, state: {} }],
+  },
+  {
+    id: 30,
+    // :327 `IF ABL:16 < ABL:30 + 1` → I/J 同置 4
+    cases: [{ lv: 0, gate: 16, state: {} }],
+  },
+  {
+    id: 31,
+    // :291 `IF ABL:17 < ABL:31 + 1` 与 :297 `IF ABL:0 < ABL:31 + 1` 两道；
+    // 两道都置能力位，故测其中一道时把另一道补到临界值之上
+    cases: [
+      { lv: 0, gate: 17, state: { abl: { 0: 1 } } },
+      { lv: 0, gate: 0, state: { abl: { 17: 1 } } },
+    ],
+  },
+  {
+    id: 32,
+    // :344 无淫乱查 ABL:16、:350 有淫乱（TALENT:76）改查 ABL:11
+    cases: [
+      { lv: 0, gate: 16, state: {} },
+      { lv: 0, gate: 11, state: { talent: { 76: 1 } } },
+    ],
+  },
+  {
+    id: 33,
+    // :355 `IF ABL:22 < ABL:33 + 1` → I |= 4
+    cases: [{ lv: 0, gate: 22, state: {} }],
+  },
+  {
+    id: 37,
+    // :421 `IF ABL:11 < ABL:37 + 1` → I |= 4
+    cases: [{ lv: 0, gate: 11, state: {} }],
+  },
+  {
+    id: 39,
+    // :237 `SIF ABL:11 < ABL:39 + 1` → I |= 4（#467 验收逃逸的那一处）
+    cases: [{ lv: 0, gate: 11, state: {} }],
+  },
+  {
+    id: 40,
+    // :128 `SIF ABL:11 < ABL:40 + 1` → I |= 4
+    cases: [{ lv: 0, gate: 11, state: {} }],
+  },
+];
+
+for (const spec of GATE_SPECS) {
+  test(`ablup${spec.id}：门槛比较在临界值两侧（恰好相等判为满足）`, async () => {
+    for (const item of spec.cases) {
+      for (const [offset, expected] of [
+        [0, true],
+        [1, false],
+      ]) {
+        const fixture = create_era_fixture();
+        const module = seed(fixture);
+        set_state(fixture, {
+          ...item.state,
+          abl: {
+            ...(item.state.abl ?? {}),
+            [spec.id]: item.lv,
+            [item.gate]: item.lv + offset,
+          },
+        });
+        fixture.set_inputs(100);
+        await module[`ablup${spec.id}`](CID);
+
+        const states = option_states(fixture);
+        assert.ok(states.length > 0, `ablup${spec.id}：没有渲染出选项按钮`);
+        for (const state of states) {
+          assert.equal(
+            state.includes('能力不足'),
+            expected,
+            `ablup${spec.id}：ABL:${item.gate}=${item.lv + offset}，门槛 ${item.lv + 1}，状态「${state}」`,
+          );
+        }
+      }
+    }
+  });
+}
+
+test('ablup99：两道刻印门槛在临界值两侧（屈服刻印须 >= MARK:3，顺从须 >= MARK:3+2）', async () => {
+  // MARK:3=2 → A=10000（:100-101）、B=MARK:3+2=4（:131）
+  for (const [mark2, abl10, expected] of [
+    [2, 4, 'ＯＫ'], // 两道门槛都取等号，判为满足
+    [1, 4, '经验不足 '], // MARK:3 > MARK:2 → I |= 2
+    [2, 3, '能力不足'], // B > ABL:10 → I |= 4
+    [1, 3, '经验不足 能力不足'],
+  ]) {
+    const fixture = create_era_fixture();
+    const { ablup99 } = seed(fixture);
+    set_state(fixture, {
+      mark: { 3: 2, 2: mark2 },
+      abl: { 10: abl10 },
+      juel: { 6: 10000 },
+    });
+    fixture.set_inputs(100);
+    await ablup99(CID);
+    assert.equal(
+      option_states(fixture)[0],
+      expected,
+      `MARK:2=${mark2}、ABL:10=${abl10}`,
+    );
+  }
+});
+
+test('ablup100：两道门槛同时不满足（M==2）才点亮能力位——OR 关系（原作 :132/:137）', async () => {
+  // MARK:10=1 → 感觉门槛 `MARK:10 < C - 5`（C>6 才算不满足）、战斗门槛
+  // `MARK:10*10 > CFLAG:9`（即 10>CFLAG:9）。两处各取临界值：C=6 与 CFLAG:9=10
+  // 都判为满足；一侧不满足时 M==1，两道同时不满足才 M==2 → 能力不足
+  for (const [senses, cflag9, expected] of [
+    [6, 10, 'ＯＫ'], // 两道都满足 → M==0
+    [7, 10, 'ＯＫ'], // 感觉门槛不满足 → M==1，仍放行（OR）
+    [6, 9, 'ＯＫ'], // 战斗门槛不满足 → M==1，仍放行
+    [7, 9, '能力不足'], // 两道同时不满足 → M==2
+  ]) {
+    const fixture = create_era_fixture();
+    const { ablup100 } = seed(fixture);
+    set_state(fixture, {
+      mark: { 10: 1 },
+      // C 是 ABL:0～4 五项感觉之和（:131）
+      abl: { 0: senses },
+      cflag: { 9: cflag9 },
+      exp: { 99: 2000 }, // A=2000，隔离出点数位
+    });
+    fixture.set_inputs(100);
+    await ablup100(CID);
+    assert.equal(
+      option_states(fixture)[0],
+      expected,
+      `感觉合计=${senses}、战斗等级=${cflag9}`,
+    );
+  }
+});
