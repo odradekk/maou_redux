@@ -372,24 +372,49 @@ test('ABILITY_UP：魔王自己（输入 0）也进 CORE', async () => {
 
 // —— @ABILITY_UP_CORE ——
 
-test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（26 支各回一次占位，不退出循环）', async () => {
-  const { ABLUP_IDS } = create_era_fixture().load_module(
+test('ABILITY_UP_CORE：ABLUP0-4 已接上真身（issue #464），走真实判定而非占位', async () => {
+  const { ABLUP_HANDLERS } = create_era_fixture().load_module(
+    'system/train/juel-check',
+  );
+  for (const id of Object.keys(ABLUP_HANDLERS).map(Number)) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '玛奥');
+    fixture.store.set('base:1:0', 1);
+    if (id === 4) {
+      fixture.store.set('cstr:1:7', '舔'); // 局部感觉按钮需定制癖好名才渲染
+    }
+    fixture.set_inputs(id, 100, 999); // 选中能力 → 选中能力自身的 [100] 放弃 → 退出
+    const { ability_up_core } = fixture.load_module('page/page-ability-up');
+    const ret = await ability_up_core(1);
+    assert.equal(ret, 0, `ABLUP${id} 之后 [999] 正常结束`);
+    assert.ok(
+      !fixture.text_lines().some((t) => t.includes(`@ABLUP${id}`)),
+      `ABLUP${id} 不应再打占位行`,
+    );
+  }
+});
+
+test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（剩余 21 支各回一次占位，不退出循环）', async () => {
+  const { ABLUP_IDS, ABLUP_HANDLERS } = create_era_fixture().load_module(
     'system/train/juel-check',
   );
   for (const id of ABLUP_IDS) {
-    if (id === 100) {
+    if (id === 100 || id in ABLUP_HANDLERS) {
       // [100] 异界综合征的按钮来自原作的 `[IF_DEBUG]` 块（page-ablup.js 的
       // 文件头：调试编译块不移植），ere 侧没有这个按钮 → RESULT == 100 的
-      // 分支经输入通道不可达，见文件头不可达支说明
+      // 分支经输入通道不可达，见文件头不可达支说明。ABLUP_HANDLERS 覆盖的
+      // 编号（issue #464）已落真身，上一条用例单独覆盖，这里跳过
       continue;
     }
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     add_chara(fixture, 1, '玛奥');
     fixture.store.set('base:1:0', 1);
-    if (id === 4 || id === 40) {
-      // 癖好两项只在 CSTR:7 定制后由 @SHOW_ABLUP_SELECT 渲染出按钮
-      // （page-ablup.js:92-101），否则输入通道到不了这两支
+    if (id === 40) {
+      // 局部中毒只在 CSTR:7 定制后由 @SHOW_ABLUP_SELECT 渲染出按钮
+      // （page-ablup.js:92-101），否则输入通道到不了这一支（局部感觉 [4]
+      // 同样受此限制，但已随 issue #464 落真身，见上一条用例）
       fixture.store.set('cstr:1:7', '舔');
     }
     if (id === 23) {

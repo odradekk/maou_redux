@@ -58,7 +58,11 @@ const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { yokubo_up_check } = require('#/system/train/ability-check');
-const { ABLUP_IDS } = require('#/system/train/juel-check');
+const {
+  ABLUP_IDS,
+  ABLUP_HANDLERS,
+  STUBBED_ABLUP_NAMES,
+} = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
 
@@ -66,9 +70,10 @@ const { stub_line } = require('#/utils/stub-line');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。ABLUPxx 是 @ABILITY_UP_CORE 输入
  * 分发的全部目标（:170-245），与 system/train/juel-check.js 的
- * @JUEL_CHECK 分发同表——升级规则本体（ABL/ABLUP*.ERB）不在本票范围。
+ * @JUEL_CHECK 分发同表；ABLUP_HANDLERS 覆盖的编号（issue #464）已落真身，
+ * 不再登记为存根。
  */
-const STUBBED_CALLS = [...ABLUP_IDS.map((id) => `ABLUP${id}`)];
+const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES];
 
 /** 勇者一览的每页行数（:68 `NUM_PAGE = 24`） */
 const ENEMY_NUM_PAGE = 24;
@@ -308,8 +313,12 @@ async function ability_up_core(arg) {
     // 话术 15 / 侍奉精神 16 / 露出癖 17 / 抖S气质 20 / 抖M气质 21 / 百合气质
     // 22 / ホモっ気 23 / 性交中毒 30 / 自慰中毒 31 / 精液中毒 32 / 百合中毒 33 /
     // 卖淫中毒 37 / 兽奸中毒 39 / 局部中毒 40 / 反抗刻印 99 / 100）
+    if (result in ABLUP_HANDLERS) {
+      await ABLUP_HANDLERS[result](arg); // issue #464
+      continue; // :254 GOTO INPUT_LOOP_1
+    }
     if (ABLUP_IDS.includes(result)) {
-      stub_line(`ABLUP${result}`, '能力提升处理'); // 升级规则本体随能力提升票
+      stub_line(`ABLUP${result}`, '能力提升处理'); // 剩余编号仍是存根
       continue; // :254 GOTO INPUT_LOOP_1
     }
 

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 585;
+export const COUNT = 592;
 
 export default [
   {
@@ -207,8 +207,8 @@ export default [
   {
     desc: 'M38 能力分支：命中表判假（@ABLUPxx 占位不再出现）',
     file: 'ere/system/train/juel-check.js',
-    find: '    if (ABLUP_IDS.includes(result)) {',
-    replace: '    if (false && ABLUP_IDS.includes(result)) {',
+    find: '    } else if (ABLUP_IDS.includes(result)) {',
+    replace: '    } else if (false && ABLUP_IDS.includes(result)) {',
     tests: ['juel-check'],
     must_mention: '能力分支',
   },
@@ -5193,1292 +5193,654 @@ export default [
     must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
   },
   {
-    desc: 'M9589 TARGET_EJAC_CHECK 早退守卫的 TALENT:122 判据删（只剩 121）',
-    file: 'ere/event/source-check.js',
-    find: `function target_ejac_check() {
-  if (!tal(121) && !tal(122)) {
-    return;
-  }`,
-    replace: `function target_ejac_check() {
-  if (!tal(121)) {
-    return; // 变异：TALENT:122 判据删
-  }`,
-    tests: ['source-check'],
-    must_mention: '守卫（TALENT:121/122 均 0）',
+    desc: 'M9649 get_ablup_state：ARG&1 文案',
+    file: 'ere/system/train/ablup.js',
+    find: "if (arg & 1) text += '点数不足 ';",
+    replace: "if (arg & 1) text += '分数不足 ';",
+    tests: ['ablup'],
+    must_mention: 'get_ablup_state',
   },
   {
-    desc: 'M9590 TARGET_EJAC_CHECK 未熟随机修正 tal(135) 判据焊死为恒假',
-    file: 'ere/event/source-check.js',
-    find: `  const is_mijyuku = !!tal(135);
-  const mijyuku = is_mijyuku
-    ? Math.floor(Math.random() * 700) - Math.floor(Math.random() * 800) + 400
-    : 0;`,
-    replace: `  const is_mijyuku = false; // 变异：tal(135) 焊死为恒假
-  const mijyuku = is_mijyuku
-    ? Math.floor(Math.random() * 700) - Math.floor(Math.random() * 800) + 400
-    : 0;`,
-    tests: ['source-check'],
-    must_mention: '未熟（TALENT:135）BASE:2 < 2000',
+    desc: 'M9650 get_ablup_state：ARG&4 文案',
+    file: 'ere/system/train/ablup.js',
+    find: "if (arg & 4) text += '能力不足';",
+    replace: "if (arg & 4) text += '实力不足';",
+    tests: ['ablup'],
+    must_mention: 'get_ablup_state',
   },
   {
-    desc: 'M9591 TARGET_EJAC_CHECK 克制系数 idiv(local,2) 删',
-    file: 'ere/event/source-check.js',
-    find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }`,
-    replace: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 变异：克制折减删
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
+    desc: 'M9651 ablup0：Lv5+ 门槛越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl0() >= 5 && talent(74) === 0) {',
+    replace: 'if (abl0() > 5 && talent(74) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'ablup0：三档终止判定',
   },
   {
-    desc: 'M9592 TARGET_EJAC_CHECK 接受快感系数 1.2 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }`,
-    replace: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感（变异：系数错改 1.0）
-    local = times(local, 1.0);
-  }`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
+    desc: 'M9652 ablup0：已达最高级门槛',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl0() >= calc() * 5 + 10) {',
+    replace: 'if (abl0() >= calc() * 5 + 11) {',
+    tests: ['ablup'],
+    must_mention: 'ablup0：已达最高级',
   },
   {
-    desc: 'M9593 TARGET_EJAC_CHECK 淫乱化系数 1.1 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }`,
-    replace: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化（变异：系数错改 1.0）
-    local = times(local, 1.0);
-  }`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
+    desc: 'M9653 ablup0：阴蒂钝感倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(101)) a = times(a, 1.2); // 阴蒂钝感 :198-200',
+    replace: 'if (talent(101)) a = times(a, 1.3); // 阴蒂钝感 :198-200',
+    tests: ['ablup'],
+    must_mention: '阴蒂钝感',
   },
   {
-    desc: 'M9594 TARGET_EJAC_CHECK 否定快感系数 0.8 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }`,
-    replace: `  const mijyuku_kenkai = chara(cid).train.射精槽; // BASE:2 早期快照，用于未熟钳制判定
-
-  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感（变异：系数错改 1.0）
-    local = times(local, 1.0);
-  }`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
+    desc: 'M9654 ablup0：阴蒂敏感倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(102)) a = times(a, 0.8); // 阴蒂敏感 :202-204',
+    replace: 'if (talent(102)) a = times(a, 0.7); // 阴蒂敏感 :202-204',
+    tests: ['ablup'],
+    must_mention: '阴蒂钝感',
   },
   {
-    desc: 'M9595 TARGET_EJAC_CHECK 媚药系数 *2 错改 *1',
-    file: 'ere/event/source-check.js',
-    find: `  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-  if (era.get(\`tequip:\${cid}:22\`)) {
-    // 利尿剂
-    local = idiv(local, 2);
-  }`,
-    replace: `  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药（变异：系数错改 *1）
-    local *= 1;
-  }
-  if (era.get(\`tequip:\${cid}:22\`)) {
-    // 利尿剂
-    local = idiv(local, 2);
-  }`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
+    desc: 'M9655 ablup0：其他部位封锁折扣分母（第一档）',
+    file: 'ere/system/train/ablup.js',
+    find: `if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (15 - c)) / 15);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+    }
+    if (talent(76)) a = times(a, 0.8); // 淫乱 :215-217
+    if (talent(74)) a = times(a, 0.8); // 自慰狂 :218-220`,
+    replace: `if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (14 - c)) / 15);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+    }
+    if (talent(76)) a = times(a, 0.8); // 淫乱 :215-217
+    if (talent(74)) a = times(a, 0.8); // 自慰狂 :218-220`,
+    tests: ['ablup'],
+    must_mention: '其他部位封锁折扣——三个区间分母恒为 15',
   },
   {
-    desc: 'M9596 TARGET_EJAC_CHECK 利尿剂折减删',
-    file: 'ere/event/source-check.js',
-    find: `  if (era.get(\`tequip:\${cid}:22\`)) {
-    // 利尿剂
-    local = idiv(local, 2);
-  }
-  if (era.get(\`tequip:\${cid}:37\`)) {
-    // 调教对象安全套装着
-    local = idiv(local, 2);
-  }`,
-    replace: `  if (era.get(\`tequip:\${cid}:22\`)) {
-    // 变异：利尿剂折减删
-  }
-  if (era.get(\`tequip:\${cid}:37\`)) {
-    // 调教对象安全套装着
-    local = idiv(local, 2);
-  }`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
+    desc: 'M9656 ablup0：自慰狂折扣倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(74)) a = times(a, 0.8); // 自慰狂 :218-220',
+    replace: 'if (talent(74)) a = times(a, 0.9); // 自慰狂 :218-220',
+    tests: ['ablup'],
+    must_mention: 'ablup0：Lv5-9 梯子字面值',
   },
   {
-    desc: 'M9597 TARGET_EJAC_CHECK 安全套折减删',
-    file: 'ere/event/source-check.js',
-    find: `  if (era.get(\`tequip:\${cid}:37\`)) {
-    // 调教对象安全套装着
-    local = idiv(local, 2);
-  }
-  if (is_mijyuku) {
-    local -= mijyuku;
-  }`,
-    replace: `  if (era.get(\`tequip:\${cid}:37\`)) {
-    // 变异：安全套折减删
-  }
-  if (is_mijyuku) {
-    local -= mijyuku;
-  }`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药/利尿剂/安全套',
+    desc: 'M9657 ablup1：Lv5+ 门槛越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl1() >= 5 && talent(78) === 0) {',
+    replace: 'if (abl1() > 5 && talent(78) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'ablup1：两档终止判定',
   },
   {
-    desc: 'M9598 TARGET_EJAC_CHECK 三档判定 > ejac*2 错改 >= ejac*2',
-    file: 'ere/event/source-check.js',
-    find: `  const ejac = era.get(\`maxbase:\${cid}:2\`) || 0;
-  let grade;
-  if (chara(cid).train.射精槽 > ejac * 2) {
-    grade = 2;
-  } else if (chara(cid).train.射精槽 > ejac) {`,
-    replace: `  const ejac = era.get(\`maxbase:\${cid}:2\`) || 0;
-  let grade;
-  if (chara(cid).train.射精槽 >= ejac * 2) {
-    // 变异：三档判定边界错改为 >=
-    grade = 2;
-  } else if (chara(cid).train.射精槽 > ejac) {`,
-    tests: ['source-check'],
-    must_mention: 'BASE:2 恰等于 EJAC*2 时归入普通档',
+    desc: 'M9658 ablup1：巨乳倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(110)) a = times(a, 1.1); // 巨乳',
+    replace: 'if (talent(110)) a = times(a, 1.2); // 巨乳',
+    tests: ['ablup'],
+    must_mention: 'B钝感×1.20',
   },
   {
-    desc: 'M9599 TARGET_EJAC_CHECK 大量射精档 EXPLV 最低档判据删',
-    file: 'ere/event/source-check.js',
-    find: `  const ejac = era.get(\`maxbase:\${cid}:2\`) || 0;
-  let grade;
-  if (chara(cid).train.射精槽 > ejac * 2) {
-    grade = 2;
-  } else if (chara(cid).train.射精槽 > ejac) {
-    grade = 1;
-  } else {
-    grade = 0;
-  }
-  if (grade === 0) {
-    return;
-  }
-
-  const callname = era.get(\`callname:\${cid}:-1\`) ?? '';
-  const exp3 = chara(cid).train.射精经验;
-  if (grade === 2) {
-    add_lose(0, 20);
-    add_lose(1, 100);
-    if (exp3 < EXPLV[1]) {`,
-    replace: `  const ejac = era.get(\`maxbase:\${cid}:2\`) || 0;
-  let grade;
-  if (chara(cid).train.射精槽 > ejac * 2) {
-    grade = 2;
-  } else if (chara(cid).train.射精槽 > ejac) {
-    grade = 1;
-  } else {
-    grade = 0;
-  }
-  if (grade === 0) {
-    return;
-  }
-
-  const callname = era.get(\`callname:\${cid}:-1\`) ?? '';
-  const exp3 = chara(cid).train.射精经验;
-  if (grade === 2) {
-    add_lose(0, 20);
-    add_lose(1, 100);
-    if (false) {
-      // 变异：EXPLV[1] 判据删`,
-    tests: ['source-check'],
-    must_mention: '大量射精档（BASE:2 > EJAC*2）',
+    desc: 'M9659 ablup1：绝壁倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(116)) a = times(a, 0.65); // 绝壁',
+    replace: 'if (talent(116)) a = times(a, 0.6); // 绝壁',
+    tests: ['ablup'],
+    must_mention: 'B钝感×1.20',
   },
   {
-    desc: 'M9600 TARGET_EJAC_CHECK 异常经验条件的 TALENT:122 判据删',
-    file: 'ere/event/source-check.js',
-    find: `    era.print(\`\${callname}大量射精\`);
-    era.print('精液经验+1');
-    era.print('射精经验+2');
-    if (exp3 === 0 && !tal(122)) {
-      chara(cid).dungeon.异常经验 += 1;
-      era.print('异常经验+1');
+    desc: 'M9660 ablup1：贫乳倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(109)) a = times(a, 0.8); // 贫乳',
+    replace: 'if (talent(109)) a = times(a, 0.7); // 贫乳',
+    tests: ['ablup'],
+    must_mention: 'B钝感×1.20',
+  },
+  {
+    desc: 'M9661 ablup1：点数不足位判定',
+    file: 'ere/system/train/ablup.js',
+    find: `const juel14 = era.get(\`juel:\${cid}:14\`) || 0;
+    let i = 0;
+    if (juel14 < a) i |= 1;`,
+    replace: `const juel14 = era.get(\`juel:\${cid}:14\`) || 0;
+    let i = 0;
+    if (juel14 <= a) i |= 1;`,
+    tests: ['ablup'],
+    must_mention: 'ablup1：戒备森严三级加成',
+  },
+  {
+    desc: 'M9662 ablup1：成功购买扣珠额',
+    file: 'ere/system/train/ablup.js',
+    find: `era.add(\`juel:\${cid}:14\`, -a); // :64-66`,
+    replace: `era.add(\`juel:\${cid}:14\`, -a - 1); // :64-66`,
+    tests: ['ablup'],
+    must_mention: 'ablup1：两档终止判定',
+  },
+  {
+    desc: 'M9663 ablup2：男人却下守卫',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(122)) return; // 男人却下（原作在 @ABLUP2 与 @DECIDE_ABLUP2 内各查一次，逐字相同，内联后合一）',
+    replace:
+      'if (talent(121)) return; // 男人却下（原作在 @ABLUP2 与 @DECIDE_ABLUP2 内各查一次，逐字相同，内联后合一）',
+    tests: ['ablup'],
+    must_mention: 'ablup2：男人完全无法访问',
+  },
+  {
+    desc: 'M9664 ablup2：私处钝感 A 倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.2);
+      b = times(b, 1.1);`,
+    replace: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.3);
+      b = times(b, 1.1);`,
+    tests: ['ablup'],
+    must_mention: '私处钝感 A×1.20',
+  },
+  {
+    desc: 'M9665 ablup2：私处钝感 B 倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.2);
+      b = times(b, 1.1);`,
+    replace: `      // 私处钝感：:186-190，A/B 加成率不同
+      a = times(a, 1.2);
+      b = times(b, 1.2);`,
+    tests: ['ablup'],
+    must_mention: '私处钝感 A×1.20',
+  },
+  {
+    desc: 'M9666 ablup2：性交经验不足位',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel1 < a) i |= 1; // :227-228
+    if (exp0 < b) i |= 2; // :229-231`,
+    replace: `    if (juel1 < a) i |= 1; // :227-228
+    if (exp0 <= b) i |= 2; // :229-231`,
+    tests: ['ablup'],
+    must_mention: '私处经验不足单独计为经验不足位',
+  },
+  {
+    desc: 'M9667 ablup2：性爱狂折扣',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (talent(75)) {
+      a = times(a, 0.8); // 性爱狂
+      b = times(b, 0.8);
     }`,
-    replace: `    era.print(\`\${callname}大量射精\`);
-    era.print('精液经验+1');
-    era.print('射精经验+2');
-    if (exp3 === 0) {
-      // 变异：!tal(122) 判据删
-      chara(cid).dungeon.异常经验 += 1;
-      era.print('异常经验+1');
+    replace: `    if (talent(75)) {
+      a = times(a, 0.9); // 性爱狂
+      b = times(b, 0.8);
     }`,
-    tests: ['source-check'],
-    must_mention: '大量射精档 + 男人 → 不加异常经验',
+    tests: ['ablup'],
+    must_mention: '私处钝感 A×1.20',
   },
   {
-    desc: 'M9601 TARGET_EJAC_CHECK 未熟体力上限下限 600 钳制删',
-    file: 'ere/event/source-check.js',
-    find: `      if (chara(cid).dungeon.体力上限 < 600) {
-        chara(cid).dungeon.体力上限 = 600;
+    desc: 'M9668 ablup2：B 复利率（10-14 档）',
+    file: 'ere/system/train/ablup.js',
+    find: `    const lv = abl2();
+    // A＝私处点数需求、B＝私处经验需求，梯子与复利率彼此不对称（:119-170）
+    let a, b;
+    if (lv <= 9) {
+      a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
+      b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];
+    } else if (lv < 15) {
+      a = 180000;
+      b = 600;
+      for (let n = 0; n < lv - 9; n++) {
+        a = compound(a, 125);
+        b = compound(b, 115);
       }
-      if (chara(cid).dungeon.气力上限 < 100) {
-        chara(cid).dungeon.气力上限 = 100;
-      }`,
-    replace: `      // 变异：体力上限下限 600 钳制删
-      if (chara(cid).dungeon.气力上限 < 100) {
-        chara(cid).dungeon.气力上限 = 100;
-      }`,
-    tests: ['source-check'],
-    must_mention: '钳制下限 600/100',
-  },
-  {
-    desc: 'M9602 TARGET_EJAC_CHECK 大量射精档阴茎污渍位 4 错改 8',
-    file: 'ere/event/source-check.js',
-    find: `    chara(cid).train.阴茎污渍 |= 4;
-    chara(cid).train.射精槽 -= ejac * 2;`,
-    replace: `    chara(cid).train.阴茎污渍 |= 8; // 变异：位 4 错改 8
-    chara(cid).train.射精槽 -= ejac * 2;`,
-    tests: ['source-check'],
-    must_mention: '扶她非男人 → 异常经验+1',
-  },
-  {
-    desc: 'M9603 TARGET_WORMBABY_CHECK 早退守卫的 TALENT:191 判据删（只剩 190）',
-    file: 'ere/event/source-check.js',
-    find: `async function target_wormbaby_check() {
-  if (!tal(190) && !tal(191)) {
-    return;
-  }`,
-    replace: `async function target_wormbaby_check() {
-  if (!tal(190)) {
-    return; // 变异：TALENT:191 判据删
-  }`,
-    tests: ['source-check'],
-    must_mention: '守卫（TALENT:190/191 均 0）',
-  },
-  {
-    desc: 'M9604 TARGET_WORMBABY_CHECK 大量出产档阈值 25000 错改 30000',
-    file: 'ere/event/source-check.js',
-    find: `  let grade;
-  if (local > 25000) {
-    grade = 2;
-  } else if (local > 10000) {`,
-    replace: `  let grade;
-  if (local > 30000) {
-    // 变异：大量出产阈值错改为 30000
-    grade = 2;
-  } else if (local > 10000) {`,
-    tests: ['source-check'],
-    must_mention: '大量出产档（LOCAL > 25000）',
-  },
-  {
-    desc: 'M9605 TARGET_WORMBABY_CHECK 普通出产档阈值 10000 错改 20000',
-    file: 'ere/event/source-check.js',
-    find: `  if (local > 25000) {
-    grade = 2;
-  } else if (local > 10000) {
-    grade = 1;
-  } else {
-    grade = 0;
-  }`,
-    replace: `  if (local > 25000) {
-    grade = 2;
-  } else if (local > 20000) {
-    // 变异：普通出产阈值错改为 20000
-    grade = 1;
-  } else {
-    grade = 0;
-  }`,
-    tests: ['source-check'],
-    must_mention: '普通出产档（10000 < LOCAL ≤ 25000）',
-  },
-  {
-    desc: 'M9606 TARGET_WORMBABY_CHECK 克制系数 idiv(local,2) 删',
-    file: 'ere/event/source-check.js',
-    find: `  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 克制
-    local = idiv(local, 2);
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    replace: `  let local = up(0) + up(1) + up(2) + up(14);
-  if (tal(20)) {
-    // 变异：克制折减删
-  }
-  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药',
-  },
-  {
-    desc: 'M9607 TARGET_WORMBABY_CHECK 接受快感系数 1.2 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `  if (tal(70)) {
-    // 接受快感
-    local = times(local, 1.2);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    replace: `  if (tal(70)) {
-    // 接受快感（变异：系数错改 1.0）
-    local = times(local, 1.0);
-  }
-  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药',
-  },
-  {
-    desc: 'M9608 TARGET_WORMBABY_CHECK 淫乱化系数 1.1 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `  if (tal(76)) {
-    // 淫乱化
-    local = times(local, 1.1);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    replace: `  if (tal(76)) {
-    // 淫乱化（变异：系数错改 1.0）
-    local = times(local, 1.0);
-  }
-  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药',
-  },
-  {
-    desc: 'M9609 TARGET_WORMBABY_CHECK 否定快感系数 0.8 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `  if (tal(71)) {
-    // 否定快感
-    local = times(local, 0.8);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    replace: `  if (tal(71)) {
-    // 否定快感（变异：系数错改 1.0）
-    local = times(local, 1.0);
-  }
-  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药',
-  },
-  {
-    desc: 'M9610 TARGET_WORMBABY_CHECK 媚药系数 *2 错改 *1',
-    file: 'ere/event/source-check.js',
-    find: `  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药
-    local *= 2;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    replace: `  if (era.get(\`tequip:\${cid}:21\`)) {
-    // 媚药（变异：系数错改 *1）
-    local *= 1;
-  }
-
-  let grade;
-  if (local > 25000) {`,
-    tests: ['source-check'],
-    must_mention: '克制/接受快感/淫乱化/否定快感/媚药',
-  },
-  {
-    desc: 'M9611 TARGET_WORMBABY_CHECK 输出部位文案 both 分支判据删',
-    file: 'ere/event/source-check.js',
-    find: `  const site = tal(190) && tal(191) ? '膣内和直肠' : tal(190) ? '膣内' : '直肠';`,
-    replace: `  const site = tal(190) ? '膣内' : '直肠'; // 变异：both 分支判据删`,
-    tests: ['source-check'],
-    must_mention: '私处+直肠同时产卵',
-  },
-  {
-    desc: 'M9612 TARGET_WORMBABY_CHECK 大量出产档 EXPLV 最低档判据删',
-    file: 'ere/event/source-check.js',
-    find: `  if (grade === 2) {
-    add_lose(0, 20);
-    add_lose(1, 100);
-    if (exp3 < EXPLV[1]) {
-      set_src(12, src(12) + 20000);
-      set_src(13, src(13) + 10000);
-    } else if (exp3 < EXPLV[2]) {
-      set_src(12, src(12) + 10000);
-      set_src(13, src(13) + 8000);
-    } else if (exp3 < EXPLV[3]) {
-      set_src(12, src(12) + 7000);
-      set_src(13, src(13) + 6000);
-    } else if (exp3 < EXPLV[4]) {
-      set_src(12, src(12) + 5000);
-      set_src(13, src(13) + 4000);
-    } else if (exp3 < EXPLV[5]) {
-      set_src(12, src(12) + 3000);
-      set_src(13, src(13) + 2000);
-    } else {
-      set_src(12, src(12) + 1800);
-      set_src(13, src(13) + 1200);
-    }
-
-    era.print(\`\${callname}的\`);
-    await era.printAndWait(\`\${site}排出了大量的蠕虫幼虫\`);`,
-    replace: `  if (grade === 2) {
-    add_lose(0, 20);
-    add_lose(1, 100);
-    if (false) {
-      // 变异：EXPLV[1] 判据删
-      set_src(12, src(12) + 20000);
-      set_src(13, src(13) + 10000);
-    } else if (exp3 < EXPLV[2]) {
-      set_src(12, src(12) + 10000);
-      set_src(13, src(13) + 8000);
-    } else if (exp3 < EXPLV[3]) {
-      set_src(12, src(12) + 7000);
-      set_src(13, src(13) + 6000);
-    } else if (exp3 < EXPLV[4]) {
-      set_src(12, src(12) + 5000);
-      set_src(13, src(13) + 4000);
-    } else if (exp3 < EXPLV[5]) {
-      set_src(12, src(12) + 3000);
-      set_src(13, src(13) + 2000);
-    } else {
-      set_src(12, src(12) + 1800);
-      set_src(13, src(13) + 1200);
-    }
-
-    era.print(\`\${callname}的\`);
-    await era.printAndWait(\`\${site}排出了大量的蠕虫幼虫\`);`,
-    tests: ['source-check'],
-    must_mention: '大量出产档（LOCAL > 25000）',
-  },
-  {
-    desc: 'M9613 TARGET_WORMBABY_CHECK 大量出产档生育经验 +=2 错改 +=1',
-    file: 'ere/event/source-check.js',
-    find: `    era.print(\`\${callname}的\`);
-    await era.printAndWait(\`\${site}排出了大量的蠕虫幼虫\`);
-    era.print('生育经验+2');
-    chara(cid).chara.生育经验 += 2;`,
-    replace: `    era.print(\`\${callname}的\`);
-    await era.printAndWait(\`\${site}排出了大量的蠕虫幼虫\`);
-    era.print('生育经验+2');
-    chara(cid).chara.生育经验 += 1; // 变异：+=2 错改 +=1`,
-    tests: ['source-check'],
-    must_mention: '大量出产档（LOCAL > 25000）',
-  },
-  {
-    desc: 'M9614 TARGET_WORMBABY_CHECK TFLAG:120/121 双写的 both 分支判据删',
-    file: 'ere/event/source-check.js',
-    find: `  if (tal(190) && tal(191)) {
-    game.system.V虫产卵 = grade;
-    game.system.A虫产卵 = grade;
-  } else if (tal(190)) {
-    game.system.V虫产卵 = grade;
-  } else {
-    game.system.A虫产卵 = grade;
-  }`,
-    replace: `  if (tal(190)) {
-    // 变异：both 分支判据删，TALENT:191 单独分支不再写 A 虫产卵
-    game.system.V虫产卵 = grade;
-  } else {
-    game.system.A虫产卵 = grade;
-  }`,
-    tests: ['source-check'],
-    must_mention: '私处+直肠同时产卵',
-  },
-  {
-    desc: 'M9615 PISSING_ECST_CHECK 守卫 grade===0 早退判据改错（漏尿经验恒记 0 档）',
-    file: 'ere/event/source-check.js',
-    find: `  } else if ((t29 >= 3 && tal57) || (t29 >= 1 && tequip22)) {
-    grade = 1;
-  }
-  if (grade === 0) {
-    return;
-  }`,
-    replace: `  } else if ((t29 >= 3 && tal57) || (t29 >= 1 && tequip22)) {
-    grade = 1;
-  }
-  if (grade < 0) {
-    // 变异：grade===0 早退判据改为恒假（grade 从不为负）
-    return;
-  }`,
-    tests: ['source-check'],
-    must_mention: '守卫（TFLAG:29=0）',
-  },
-  {
-    desc: 'M9616 PISSING_ECST_CHECK grade5 的 TALENT:57 判据删',
-    file: 'ere/event/source-check.js',
-    find: `  let grade = 0;
-  if (t29 >= 7 && tequip22 && tal57) {
-    grade = 5;
-  } else if ((t29 >= 7 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {`,
-    replace: `  let grade = 0;
-  if (t29 >= 7 && tequip22) {
-    // 变异：TALENT:57 判据删，grade5 与 grade4 分支重叠
-    grade = 5;
-  } else if ((t29 >= 7 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {`,
-    tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
-  },
-  {
-    desc: 'M9617 PISSING_ECST_CHECK grade4 的 TFLAG:29≥7 门槛错改 ≥10',
-    file: 'ere/event/source-check.js',
-    find: `  } else if ((t29 >= 7 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {
-    grade = 4;
-  } else if (
-    (t29 >= 7 && tal57) ||`,
-    replace: `  } else if ((t29 >= 10 && tequip22) || (t29 >= 5 && tequip22 && tal57)) {
-    // 变异：门槛 ≥7 错改 ≥10
-    grade = 4;
-  } else if (
-    (t29 >= 7 && tal57) ||`,
-    tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
-  },
-  {
-    desc: 'M9618 PISSING_ECST_CHECK grade3 的 (t29≥7&&tal57) 分支删',
-    file: 'ere/event/source-check.js',
-    find: `  } else if (
-    (t29 >= 7 && tal57) ||
-    (t29 >= 5 && tequip22) ||
-    (t29 >= 3 && tequip22 && tal57)
-  ) {
-    grade = 3;`,
-    replace: `  } else if (
-    (t29 >= 5 && tequip22) ||
-    (t29 >= 3 && tequip22 && tal57)
-  ) {
-    // 变异：(t29≥7&&tal57) 分支删
-    grade = 3;`,
-    tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
-  },
-  {
-    desc: 'M9619 PISSING_ECST_CHECK grade2 的 (t29≥3&&tequip22) 分支删',
-    file: 'ere/event/source-check.js',
-    find: `  } else if (
-    (t29 >= 5 && tal57) ||
-    (t29 >= 3 && tequip22) ||
-    (t29 >= 1 && tequip22 && tal57)
-  ) {
-    grade = 2;`,
-    replace: `  } else if (
-    (t29 >= 5 && tal57) ||
-    (t29 >= 1 && tequip22 && tal57)
-  ) {
-    // 变异：(t29≥3&&tequip22) 分支删
-    grade = 2;`,
-    tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
-  },
-  {
-    desc: 'M9620 PISSING_ECST_CHECK grade1 的 (t29≥3&&tal57) 分支删',
-    file: 'ere/event/source-check.js',
-    find: `  } else if ((t29 >= 3 && tal57) || (t29 >= 1 && tequip22)) {
-    grade = 1;
-  }
-  if (grade === 0) {
-    return;
-  }`,
-    replace: `  } else if (t29 >= 1 && tequip22) {
-    // 变异：(t29≥3&&tal57) 分支删
-    grade = 1;
-  }
-  if (grade === 0) {
-    return;
-  }`,
-    tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
-  },
-  {
-    desc: 'M9621 PISSING_ECST_CHECK 放尿经验累加 +=grade 错改固定 +=1',
-    file: 'ere/event/source-check.js',
-    find: `  era.print(\`放尿经验+\${grade}\`);
-  chara(cid).system.放尿经验 += grade;`,
-    replace: `  era.print(\`放尿经验+\${grade}\`);
-  chara(cid).system.放尿经验 += 1; // 变异：+=grade 错改固定 +=1`,
-    tests: ['source-check'],
-    must_mention: '五档级联按判据优先级依次命中',
-  },
-  {
-    desc: 'M9622 PISSING_ECST_CHECK TEQUIP:22 清零规则 grade≥3 门槛错改 ≥4',
-    file: 'ere/event/source-check.js',
-    find: `  if (grade >= 3 || (grade === 2 && !tal57)) {
-    chara(cid).system.利尿剂 = 0;
-  }`,
-    replace: `  if (grade >= 4 || (grade === 2 && !tal57)) {
-    // 变异：grade≥3 门槛错改 ≥4
-    chara(cid).system.利尿剂 = 0;
-  }`,
-    tests: ['source-check'],
-    must_mention: 'TEQUIP:22 清零规则',
-  },
-  {
-    desc: 'M9623 PISSING_ECST_CHECK TEQUIP:22 清零规则 grade===2 分支的 !TALENT:57 判据删',
-    file: 'ere/event/source-check.js',
-    find: `  if (grade >= 3 || (grade === 2 && !tal57)) {
-    chara(cid).system.利尿剂 = 0;
-  }
-  chara(cid).train.阴茎污渍 |= 32;`,
-    replace: `  if (grade >= 3 || grade === 2) {
-    // 变异：!TALENT:57 判据删
-    chara(cid).system.利尿剂 = 0;
-  }
-  chara(cid).train.阴茎污渍 |= 32;`,
-    tests: ['source-check'],
-    must_mention: 'TEQUIP:22 清零规则',
-  },
-  {
-    desc: 'M9624 PISSING_ECST_CHECK 阴茎污渍位 32 错改 16',
-    file: 'ere/event/source-check.js',
-    find: `  chara(cid).train.阴茎污渍 |= 32;
-  chara(cid).train.阴道污渍 |= 32;
-  if (grade >= 2) {
-    await soiling_cloth_no1(cid);
-  }`,
-    replace: `  chara(cid).train.阴茎污渍 |= 16; // 变异：位 32 错改 16
-  chara(cid).train.阴道污渍 |= 32;
-  if (grade >= 2) {
-    await soiling_cloth_no1(cid);
-  }`,
-    tests: ['source-check'],
-    must_mention: 'STAIN:2/3 弄脏标记（阴茎/阴道污渍位 32）',
-  },
-  {
-    desc: 'M9625 PISSING_ECST_CHECK 阴道污渍位 32 错改 16',
-    file: 'ere/event/source-check.js',
-    find: `  chara(cid).train.阴茎污渍 |= 32;
-  chara(cid).train.阴道污渍 |= 32;
-  if (grade >= 2) {
-    await soiling_cloth_no1(cid);
-  }
-}
-
-// @EXP_GOT_CHECK`,
-    replace: `  chara(cid).train.阴茎污渍 |= 32;
-  chara(cid).train.阴道污渍 |= 16; // 变异：位 32 错改 16
-  if (grade >= 2) {
-    await soiling_cloth_no1(cid);
-  }
-}
-
-// @EXP_GOT_CHECK`,
-    tests: ['source-check'],
-    must_mention: 'STAIN:2/3 弄脏标记（阴茎/阴道污渍位 32）',
-  },
-  {
-    desc: 'M9626 PISSING_ECST_CHECK STAIN 弄脏两行被误套上 grade≥2 条件（1 档不该受限）',
-    file: 'ere/event/source-check.js',
-    find: `  chara(cid).train.阴茎污渍 |= 32;
-  chara(cid).train.阴道污渍 |= 32;
-  if (grade >= 2) {
-    await soiling_cloth_no1(cid);
-  }
-}`,
-    replace: `  if (grade >= 2) {
-    // 变异：STAIN 弄脏两行误套上 grade≥2 条件，1 档不再弄脏
-    chara(cid).train.阴茎污渍 |= 32;
-    chara(cid).train.阴道污渍 |= 32;
-    await soiling_cloth_no1(cid);
-  }
-}`,
-    tests: ['source-check'],
-    must_mention: 'STAIN:2/3 弄脏标记（阴茎/阴道污渍位 32）',
-  },
-  {
-    desc: 'M9627 EXP_GOT_CHECK 段 1 的 UP:7<100 强制归零判据删',
-    file: 'ere/event/source-check.js',
-    find: `    let local = up(0) + up(1) + up(2) + up(14);
-    const up7 = up(7);
-    if (up7 < 100) {
-      local = 0;
-    } else if (up7 < 300) {`,
-    replace: `    let local = up(0) + up(1) + up(2) + up(14);
-    const up7 = up(7);
-    if (false) {
-      // 变异：UP:7<100 强制归零判据删
-      local = 0;
-    } else if (up7 < 300) {`,
-    tests: ['source-check'],
-    must_mention: '守卫（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0',
-  },
-  {
-    desc: 'M9628 EXP_GOT_CHECK 段 1 的 TFLAG:100 守卫判据删',
-    file: 'ere/event/source-check.js',
-    find: `    if (tflag(100)) {
-      let grade = 0;
-      if (local >= 12000) {
-        grade = 16;
-        set_up(11, times(up(11), 0.65));
-        set_up(12, times(up(12), 0.3));`,
-    replace: `    if (true) {
-      // 变异：TFLAG:100 守卫判据删
-      let grade = 0;
-      if (local >= 12000) {
-        grade = 16;
-        set_up(11, times(up(11), 0.65));
-        set_up(12, times(up(12), 0.3));`,
-    tests: ['source-check'],
-    must_mention: '守卫（TFLAG:100=0）与 UP:7<100 强制 LOCAL=0',
-  },
-  {
-    desc: 'M9629 EXP_GOT_CHECK 段 1 最低档阈值 1000 错改 2500',
-    file: 'ere/event/source-check.js',
-    find: `      } else if (local >= 2000) {
-        grade = 2;
-        set_up(11, times(up(11), 0.85));
-        set_up(12, times(up(12), 0.7));
-      } else if (local >= 1000) {
-        grade = 1;
-        set_up(11, times(up(11), 0.9));
-        set_up(12, times(up(12), 0.8));
+    } else if (lv < 20) {`,
+    replace: `    const lv = abl2();
+    // A＝私处点数需求、B＝私处经验需求，梯子与复利率彼此不对称（:119-170）
+    let a, b;
+    if (lv <= 9) {
+      a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
+      b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];
+    } else if (lv < 15) {
+      a = 180000;
+      b = 600;
+      for (let n = 0; n < lv - 9; n++) {
+        a = compound(a, 125);
+        b = compound(b, 116);
       }
-      if (era.get(\`tequip:\${cid}:88\`) && grade) {`,
-    replace: `      } else if (local >= 2000) {
-        grade = 2;
-        set_up(11, times(up(11), 0.85));
-        set_up(12, times(up(12), 0.7));
-      } else if (local >= 2500) {
-        // 变异：最低档阈值 1000 错改 2500
-        grade = 1;
-        set_up(11, times(up(11), 0.9));
-        set_up(12, times(up(12), 0.8));
+    } else if (lv < 20) {`,
+    tests: ['ablup'],
+    must_mention: 'Lv10 复利梯子首级（A/B 各自复利率不对称）',
+  },
+  {
+    desc: 'M9669 ablup2：结算成功扣珠額',
+    file: 'ere/system/train/ablup.js',
+    find: `era.add(\`juel:\${cid}:1\`, -a); // :69-71`,
+    replace: `era.add(\`juel:\${cid}:1\`, -a - 1); // :69-71`,
+    tests: ['ablup'],
+    must_mention: 'ablup2：三档终止判定',
+  },
+  {
+    desc: 'M9670 ablup3：Lv5+ 门槛越界值',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl3() >= 5 && talent(77) === 0) {',
+    replace: 'if (abl3() > 5 && talent(77) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'ablup3：三档终止判定',
+  },
+  {
+    desc: 'M9671 ablup3：A钝感 B 倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (talent(105)) {
+      // A钝感
+      a = times(a, 1.2);
+      b = times(b, 1.1);
+    }`,
+    replace: `    if (talent(105)) {
+      // A钝感
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+    }`,
+    tests: ['ablup'],
+    must_mention: 'A钝感 A×1.20',
+  },
+  {
+    desc: 'M9672 ablup3：尻穴狂折扣',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (talent(77)) {
+      a = times(a, 0.8); // 尻穴狂
+      b = times(b, 0.8);
+    }`,
+    replace: `    if (talent(77)) {
+      a = times(a, 0.7); // 尻穴狂
+      b = times(b, 0.8);
+    }`,
+    tests: ['ablup'],
+    must_mention: 'A钝感 A×1.20',
+  },
+  {
+    desc: 'M9673 ablup3：肛门经验不足位',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel2 < a) i |= 1; // :223-224
+    if (exp1 < b) i |= 2; // :225-227`,
+    replace: `    if (juel2 < a) i |= 1; // :223-224
+    if (exp1 <= b) i |= 2; // :225-227`,
+    tests: ['ablup'],
+    must_mention: 'A钝感 A×1.20',
+  },
+  {
+    desc: 'M9674 ablup3：其他部位封锁折扣 B 分母',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (15 - c)) / 15);
+      b = Math.trunc((b * (20 - c)) / 20);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+      b = Math.trunc((b * (21 - c)) / 20);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+      b = Math.trunc((b * (22 - c)) / 20);
+    }
+    if (talent(76)) {
+      a = times(a, 0.8); // 淫乱
+      b = times(b, 0.8);
+    }
+    if (talent(77)) {`,
+    replace: `    if (lv > 5 && lv <= 10 && c > 0) {
+      a = Math.trunc((a * (15 - c)) / 15);
+      b = Math.trunc((b * (19 - c)) / 20);
+    } else if (lv <= 15 && c > 1) {
+      a = Math.trunc((a * (16 - c)) / 15);
+      b = Math.trunc((b * (21 - c)) / 20);
+    } else if (lv <= 20 && c > 2) {
+      a = Math.trunc((a * (17 - c)) / 15);
+      b = Math.trunc((b * (22 - c)) / 20);
+    }
+    if (talent(76)) {
+      a = times(a, 0.8); // 淫乱
+      b = times(b, 0.8);
+    }
+    if (talent(77)) {`,
+    tests: ['ablup'],
+    must_mention: '其他部位封锁折扣——A分母15、B分母20不对称',
+  },
+  {
+    desc: 'M9675 ablup4：Lv2 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: 'let a = [1, 50, 600, 7000, 45000][lv];',
+    replace: 'let a = [1, 50, 601, 7000, 45000][lv];',
+    tests: ['ablup'],
+    must_mention: 'ablup4：Lv0-4 梯子字面值',
+  },
+  {
+    desc: 'M9676 ablup4：Lv3 戒备森严倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv === 3 && talent(27)) a = times(a, 2.0); // :64-66',
+    replace: 'if (lv === 3 && talent(27)) a = times(a, 2.1); // :64-66',
+    tests: ['ablup'],
+    must_mention: 'ablup4：Lv0-4 梯子字面值',
+  },
+  {
+    desc: 'M9677 ablup4：Lv4 戒备森严倍率',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv === 4 && talent(27)) a = times(a, 3.0); // :70-72',
+    replace: 'if (lv === 4 && talent(27)) a = times(a, 3.1); // :70-72',
+    tests: ['ablup'],
+    must_mention: 'ablup4：Lv0-4 梯子字面值',
+  },
+  {
+    desc: 'M9678 ablup4：状态文案尾随空格',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (i & 1) status += '点数不足 ';
+      if (i & 2) status += '经验不足';
+    }
+    era.printButton(\`\${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
+    replace: `      if (i & 1) status += '点数不足';
+      if (i & 2) status += '经验不足';
+    }
+    era.printButton(\`\${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
+    tests: ['ablup'],
+    must_mention: 'ablup4：状态文案手写拼接',
+  },
+  {
+    desc: 'M9679 ablup4：不满足重试文案',
+    file: 'ere/system/train/ablup.js',
+    find: "era.print('条件不足。'); // :33",
+    replace: "era.print('条件足够。'); // :33",
+    tests: ['ablup'],
+    must_mention: 'ablup4：点数不足重试提示',
+  },
+  {
+    desc: 'M9680 ablup5：Lv1 EXPLV 阈值索引',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[3] ? 20 : 50;',
+    replace: 'a = exp1 >= EXPLV[4] ? 20 : 50;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9681 ablup5：Lv1 覆盖后价格',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[3] ? 20 : 50;',
+    replace: 'a = exp1 >= EXPLV[3] ? 21 : 50;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9682 ablup5：Lv2 未达阈值价格',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[4] ? 100 : 600;',
+    replace: 'a = exp1 >= EXPLV[4] ? 100 : 601;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9683 ablup5：Lv3 覆盖后价格',
+    file: 'ere/system/train/ablup.js',
+    find: 'a = exp1 >= EXPLV[5] ? 500 : 7000;',
+    replace: 'a = exp1 >= EXPLV[5] ? 501 : 7000;',
+    tests: ['ablup'],
+    must_mention: 'EXPLV 阈值覆盖仅作用于 A',
+  },
+  {
+    desc: 'M9684 ablup5：Lv4 B 门槛',
+    file: 'ere/system/train/ablup.js',
+    find: `      a = exp1 >= EXPLV[5] ? 8000 : 45000;
+      b = 300;`,
+    replace: `      a = exp1 >= EXPLV[5] ? 8000 : 45000;
+      b = 301;`,
+    tests: ['ablup'],
+    must_mention: '戒备森严在 Lv3/4 对 A、B 同时加成',
+  },
+  {
+    desc: 'M9685 ablup5：Lv4 戒备森严倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (talent(27)) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
       }
-      if (era.get(\`tequip:\${cid}:88\`) && grade) {`,
-    tests: ['source-check'],
-    must_mention: '最低/最高档级联，UP:11/UP:12 各自折减',
-  },
-  {
-    desc: 'M9630 EXP_GOT_CHECK 段 1 最高档 UP:11 折减系数 0.65 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `      if (local >= 12000) {
-        grade = 16;
-        set_up(11, times(up(11), 0.65));
-        set_up(12, times(up(12), 0.3));
-      } else if (local >= 8000) {`,
-    replace: `      if (local >= 12000) {
-        grade = 16;
-        set_up(11, times(up(11), 1.0)); // 变异：折减系数 0.65 错改 1.0
-        set_up(12, times(up(12), 0.3));
-      } else if (local >= 8000) {`,
-    tests: ['source-check'],
-    must_mention: '最低/最高档级联，UP:11/UP:12 各自折减',
-  },
-  {
-    desc: 'M9631 EXP_GOT_CHECK 段 1 主从爱情经验的 TEQUIP:88 判据删',
-    file: 'ere/event/source-check.js',
-    find: `      if (era.get(\`tequip:\${cid}:88\`) && grade) {
-        era.print(\`主从爱情经验+\${grade}\`);
-        chara(cid).stronghold.主从爱情经验 += grade;
+    }
+
+    const juel2 = era.get(\`juel:\${cid}:2\`) || 0;`,
+    replace: `      if (talent(27)) {
+        a = times(a, 3.1);
+        b = times(b, 3.0);
       }
-      if (grade) {
-        era.print(\`侍奉快乐经验+\${grade}\`);`,
-    replace: `      if (grade) {
-        // 变异：TEQUIP:88 判据删，主从爱情经验恒随 grade 触发
-        era.print(\`主从爱情经验+\${grade}\`);
-        chara(cid).stronghold.主从爱情经验 += grade;
-      }
-      if (grade) {
-        era.print(\`侍奉快乐经验+\${grade}\`);`,
-    tests: ['source-check'],
-    must_mention: 'TEQUIP:88（驯兽陪玩）联动主从爱情经验',
-  },
-  {
-    desc: 'M9632 EXP_GOT_CHECK 段 2 的 UP:2<5000 系数 ×2 错改 ×1',
-    file: 'ere/event/source-check.js',
-    find: `    } else if (up(2) < 1000) {
-      local *= 1;
-    } else if (up(2) < 5000) {
-      local *= 2;
-    } else if (up(2) < 10000) {`,
-    replace: `    } else if (up(2) < 1000) {
-      local *= 1;
-    } else if (up(2) < 5000) {
-      local *= 1; // 变异：系数 ×2 错改 ×1
-    } else if (up(2) < 10000) {`,
-    tests: ['source-check'],
-    must_mention: 'UP:2<300 强制 LOCAL=0；UP:11/12/6 三项折减',
-  },
-  {
-    desc: 'M9633 EXP_GOT_CHECK 段 2 grade4 判定阈值 3000 错改 5000',
-    file: 'ere/event/source-check.js',
-    find: `    } else if (local >= 3000) {
-      grade = 4;
-      set_up(11, times(up(11), 0.9));
-      set_up(12, times(up(12), 0.95));
-      set_up(6, times(up(6), 1.05));
-    } else if (local >= 2000) {
-      grade = 2;
-      set_up(11, times(up(11), 0.9));
-      set_up(12, times(up(12), 1.0));
-      set_up(6, times(up(6), 1.0));
-    } else if (local >= 1000) {
-      grade = 1;
-      set_up(11, times(up(11), 0.95));
-      set_up(12, times(up(12), 1.0));
-      set_up(6, times(up(6), 1.0));
     }
-    if (grade) {
-      era.print(\`肛门快乐经验+\${grade}\`);`,
-    replace: `    } else if (local >= 5000) {
-      // 变异：grade4 阈值 3000 错改 5000
-      grade = 4;
-      set_up(11, times(up(11), 0.9));
-      set_up(12, times(up(12), 0.95));
-      set_up(6, times(up(6), 1.05));
-    } else if (local >= 2000) {
-      grade = 2;
-      set_up(11, times(up(11), 0.9));
-      set_up(12, times(up(12), 1.0));
-      set_up(6, times(up(6), 1.0));
-    } else if (local >= 1000) {
-      grade = 1;
-      set_up(11, times(up(11), 0.95));
-      set_up(12, times(up(12), 1.0));
-      set_up(6, times(up(6), 1.0));
-    }
-    if (grade) {
-      era.print(\`肛门快乐经验+\${grade}\`);`,
-    tests: ['source-check'],
-    must_mention: 'UP:2<300 强制 LOCAL=0；UP:11/12/6 三项折减',
+
+    const juel2 = era.get(\`juel:\${cid}:2\`) || 0;`,
+    tests: ['ablup'],
+    must_mention: '戒备森严在 Lv3/4 对 A、B 同时加成',
   },
   {
-    desc: 'M9634 EXP_GOT_CHECK 段 2 最高档 UP:6 折减系数 1.2 错改 1.0',
-    file: 'ere/event/source-check.js',
-    find: `    if (local >= 12000) {
-      grade = 16;
-      set_up(11, times(up(11), 0.8));
-      set_up(12, times(up(12), 0.9));
-      set_up(6, times(up(6), 1.2));
-    } else if (local >= 8000) {`,
-    replace: `    if (local >= 12000) {
-      grade = 16;
-      set_up(11, times(up(11), 0.8));
-      set_up(12, times(up(12), 0.9));
-      set_up(6, times(up(6), 1.0)); // 变异：折减系数 1.2 错改 1.0
-    } else if (local >= 8000) {`,
-    tests: ['source-check'],
-    must_mention: 'UP:2<300 强制 LOCAL=0；UP:11/12/6 三项折减',
+    desc: 'M9686 ablup6：Lv0 C 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [100, 20, 100, 1, 1];',
+    replace: '[a, b, c, d, e] = [100, 20, 101, 1, 1];',
+    tests: ['ablup'],
+    must_mention: 'Lv0 梯子字面值，三个选项各自的按钮文案',
   },
   {
-    desc: 'M9635 EXP_GOT_CHECK 段 2 肛门快乐经验累加 +=grade 错改固定 +=1',
-    file: 'ere/event/source-check.js',
-    find: `    if (grade) {
-      era.print(\`肛门快乐经验+\${grade}\`);
-      chara(cid).stronghold.肛门快乐经验 += grade;
-      game.train.A快乐经验 = grade;
+    desc: 'M9687 ablup6：倒错的折扣误加到 E',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 倒错的：:59-65，仅 A/B/C/D，不含 E
+      a = times(a, 0.75);
+      b = times(b, 0.75);
+      c = times(c, 0.75);
+      d = times(d, 0.75);
     }`,
-    replace: `    if (grade) {
-      era.print(\`肛门快乐经验+\${grade}\`);
-      chara(cid).stronghold.肛门快乐经验 += 1; // 变异：+=grade 错改固定 +=1
-      game.train.A快乐经验 = grade;
+    replace: `      // 倒错的：:59-65，仅 A/B/C/D，不含 E
+      a = times(a, 0.75);
+      b = times(b, 0.75);
+      c = times(c, 0.75);
+      d = times(d, 0.75);
+      e = times(e, 0.75);
     }`,
-    tests: ['source-check'],
-    must_mention: 'UP:2<300 强制 LOCAL=0；UP:11/12/6 三项折减',
+    tests: ['ablup'],
+    must_mention: '倒错的×0.75 同时折扣 A/B/C/D，唯独不动 E',
   },
   {
-    desc: 'M9636 EXP_GOT_CHECK 段 3 快乐 UP 总和为 0 时回退 UP:5 判据删',
-    file: 'ere/event/source-check.js',
-    find: `    let local = up(0) + up(1) + up(2) + up(14);
-    if (local === 0) {
-      local = up(5);
-    }
-    const up9 = up(9);`,
-    replace: `    let local = up(0) + up(1) + up(2) + up(14);
-    // 变异：回退 UP:5 判据删
-    const up9 = up(9);`,
-    tests: ['source-check'],
-    must_mention: '快乐 UP 总和为 0 时回退 UP:5',
+    desc: 'M9688 ablup6：顺从门槛公式',
+    file: 'ere/system/train/ablup.js',
+    find: `    const gate_needed = lv + 1;
+    const gate_line = \`\${era.get('ablname:0')}\${gate_needed}LV以上\`; // :68-70`,
+    replace: `    const gate_needed = lv + 2;
+    const gate_line = \`\${era.get('ablname:0')}\${gate_needed}LV以上\`; // :68-70`,
+    tests: ['ablup'],
+    must_mention: '顺从门槛（ABL:0）不足时三个选项同时计为能力不足',
   },
   {
-    desc: 'M9637 EXP_GOT_CHECK 段 3 最低档的 UP:9 双阈值判据删',
-    file: 'ere/event/source-check.js',
-    find: `    } else if (local >= 600 && up9 >= 300) {
-      grade = 2;
-      set_up(11, times(up(11), 0.85));
-    } else if (local >= 300 && up9 >= 100) {
-      grade = 1;
-      set_up(11, times(up(11), 0.9));
-    }`,
-    replace: `    } else if (local >= 600 && up9 >= 300) {
-      grade = 2;
-      set_up(11, times(up(11), 0.85));
-    } else if (local >= 300) {
-      // 变异：UP:9 双阈值判据删（up9 >= 100 不再要求）
-      grade = 1;
-      set_up(11, times(up(11), 0.9));
-    }`,
-    tests: ['source-check'],
-    must_mention: '快乐 UP 总和为 0 时回退 UP:5',
+    desc: 'M9689 ablup6：异常经验门槛错套到 Lv2',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (lv === 3 && talent(86) === 0) {
+      anomaly_line = \`\${era.get('expname:50')}有\`;
+      if ((era.get(\`exp:\${cid}:50\`) || 0) === 0) {`,
+    replace: `    if (lv === 2 && talent(86) === 0) {
+      anomaly_line = \`\${era.get('expname:50')}有\`;
+      if ((era.get(\`exp:\${cid}:50\`) || 0) === 0) {`,
+    tests: ['ablup'],
+    must_mention: '异常经验门槛仅 Lv3/4 生效',
   },
   {
-    desc: 'M9638 EXP_GOT_CHECK 段 3 从属快乐经验的 TEQUIP:88 判据删',
-    file: 'ere/event/source-check.js',
-    find: `    if (grade) {
-      if (era.get(\`tequip:\${cid}:88\`)) {
-        era.print(\`从属快乐经验+\${grade}\`);
-        chara(cid).stronghold.从属快乐经验 += grade;
-      }
-      era.print(\`被虐快乐经验+\${grade}\`);`,
-    replace: `    if (grade) {
-      // 变异：TEQUIP:88 判据删，从属快乐经验恒随 grade 触发
-      era.print(\`从属快乐经验+\${grade}\`);
-      chara(cid).stronghold.从属快乐经验 += grade;
-      era.print(\`被虐快乐经验+\${grade}\`);`,
-    tests: ['source-check'],
-    must_mention: 'TEQUIP:88（驯兽陪玩）联动从属快乐经验',
+    desc: 'M9690 ablup6：选项0 精液经验门槛位',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel6 < a) i |= 1; // :100-101
+    if (exp2 < e) i |= 2; // :102-104 绝顶经验
+    if (exp20 < e) i |= 2; // :105-107 精液经验（同一个 bit）`,
+    replace: `    if (juel6 < a) i |= 1; // :100-101
+    if (exp2 < e) i |= 2; // :102-104 绝顶经验
+    if (exp20 <= e) i |= 2; // :105-107 精液经验（同一个 bit）`,
+    tests: ['ablup'],
+    must_mention: '选项0 的绝顶/精液经验双门槛各自独立触发经验不足',
   },
   {
-    desc: 'M9639 EXP_GOT_CHECK 助手折算 assi_grade===0 分支的归零改错为 ×0.5',
-    file: 'ere/event/source-check.js',
-    find: `        let local1 = grade;
-        let local2 = 0;
-        if (assi_grade === 0) {
-          local1 = times(local1, 0);
-        } else if (assi_grade === 1) {
-          local1 = times(local1, 0.5);
-        }`,
-    replace: `        let local1 = grade;
-        let local2 = 0;
-        if (assi_grade === 0) {
-          local1 = times(local1, 0.5); // 变异：归零改错为 ×0.5
-        } else if (assi_grade === 1) {
-          local1 = times(local1, 0.5);
-        }`,
-    tests: ['source-check'],
-    must_mention: '助手侧按 ABL:20+TEQUIP:47 六档二次折算',
+    desc: 'M9691 ablup6：Lv3 E 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [10000, 2000, 0, 20, 10];',
+    replace: '[a, b, c, d, e] = [10000, 2000, 0, 20, 11];',
+    tests: ['ablup'],
+    must_mention: '戒备森严在 Lv3/4 对 A/B/D 三级加成',
   },
   {
-    desc: 'M9640 EXP_GOT_CHECK 助手折算 assi_grade===2 分支的 idiv(local1,2) 错改 idiv(local1,4)',
-    file: 'ere/event/source-check.js',
-    find: `        } else if (assi_grade === 2) {
-          local1 = times(local1, 1.0);
-          local2 = idiv(local1, 2);
-        } else if (assi_grade === 3) {`,
-    replace: `        } else if (assi_grade === 2) {
-          local1 = times(local1, 1.0);
-          local2 = idiv(local1, 4); // 变异：idiv(,2) 错改 idiv(,4)
-        } else if (assi_grade === 3) {`,
-    tests: ['source-check'],
-    must_mention: '助手侧按 ABL:20+TEQUIP:47 六档二次折算',
+    desc: 'M9692 ablup6：Lv4 D 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [30000, 8000, 0, 100, 20];',
+    replace: '[a, b, c, d, e] = [30000, 8000, 0, 101, 20];',
+    tests: ['ablup'],
+    must_mention: 'Lv4 奉仕快乐经验门槛正好等于 D=100 时判定为充足',
   },
   {
-    desc: 'M9641 EXP_GOT_CHECK 助手折算 assi_grade===3 分支的 *2 错改 *3',
-    file: 'ere/event/source-check.js',
-    find: `        } else if (assi_grade === 3) {
-          local2 = local1 * 2;
-        } else if (assi_grade === 4) {
-          local2 = local1 * 10;`,
-    replace: `        } else if (assi_grade === 3) {
-          local2 = local1 * 3; // 变异：*2 错改 *3
-        } else if (assi_grade === 4) {
-          local2 = local1 * 10;`,
-    tests: ['source-check'],
-    must_mention: '助手侧按 ABL:20+TEQUIP:47 六档二次折算',
+    desc: 'M9693 ablup6：三个选项越界重试文案',
+    file: 'ere/system/train/ablup.js',
+    find: "      era.print('条件不足。请重新输入。'); // :211-212",
+    replace: "      era.print('条件足够。请重新输入。'); // :211-212",
+    tests: ['ablup'],
+    must_mention: '三个选项各自的"条件不足。请重新输入。"重试文案',
   },
   {
-    desc: 'M9642 EXP_GOT_CHECK 助手折算 assi_grade===4 分支的 *10 错改 *20',
-    file: 'ere/event/source-check.js',
-    find: `        } else if (assi_grade === 4) {
-          local2 = local1 * 10;
-        } else if (assi_grade >= 5) {
-          local2 = local1 * 50;
-        }`,
-    replace: `        } else if (assi_grade === 4) {
-          local2 = local1 * 20; // 变异：*10 错改 *20
-        } else if (assi_grade >= 5) {
-          local2 = local1 * 50;
-        }`,
-    tests: ['source-check'],
-    must_mention: '助手侧按 ABL:20+TEQUIP:47 六档二次折算',
+    desc: 'M9694 ablup7：Lv2 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: 'let a = [100, 1000, 5000, 15000, 35000][lv]; // :14-30',
+    replace: 'let a = [100, 1000, 5001, 15000, 35000][lv]; // :14-30',
+    tests: ['ablup'],
+    must_mention: 'ablup7：Lv0-4 梯子字面值',
   },
   {
-    desc: 'M9643 AUTO_NUM_CHECK 跳过条件 i>=11 错改 i>=12（下标 11 不再跳过）',
-    file: 'ere/event/source-check.js',
-    find: `  for (let i = 0; i <= 16; i += 1) {
-    if (i >= 11 && i !== 14) {
-      continue;
-    }`,
-    replace: `  for (let i = 0; i <= 16; i += 1) {
-    if (i >= 12 && i !== 14) {
-      // 变异：跳过条件 i>=11 错改 i>=12
-      continue;
-    }`,
-    tests: ['source-check'],
-    must_mention: '跳过边界 LOCAL≥11 && LOCAL!=14',
+    desc: 'M9695 ablup7：修复重复折扣缺陷（第二段应判 TALENT:28）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (talent(80)) a = times(a, 0.5); // :37-40 缺陷：应判 TALENT:28，1:1 保留',
+    replace:
+      'if (talent(28)) a = times(a, 0.5); // :37-40 缺陷：应判 TALENT:28，1:1 保留',
+    tests: ['ablup'],
+    must_mention: '双重折扣缺陷',
   },
   {
-    desc: 'M9644 AUTO_NUM_CHECK 例外条件 i!==14 判据删（下标 14 被误跳过）',
-    file: 'ere/event/source-check.js',
-    find: `  for (let i = 0; i <= 16; i += 1) {
-    if (i >= 11 && i !== 14) {
-      continue;
-    }
-    era.set(`,
-    replace: `  for (let i = 0; i <= 16; i += 1) {
-    if (i >= 11) {
-      // 变异：i!==14 例外判据删
-      continue;
-    }
-    era.set(`,
-    tests: ['source-check'],
-    must_mention: '跳过边界 LOCAL≥11 && LOCAL!=14',
+    desc: 'M9696 ablup7：始终生效经验门槛分档',
+    file: 'ere/system/train/ablup.js',
+    find: `    let exp_line;
+    if (lv < 2) {`,
+    replace: `    let exp_line;
+    if (lv < 3) {`,
+    tests: ['ablup'],
+    must_mention: '始终生效的第二条经验门槛',
   },
   {
-    desc: 'M9645 AUTO_NUM_CHECK CFLAG:667 阈值 5 档判据改错为 6',
-    file: 'ere/event/source-check.js',
-    find: `  const rate = chara(target).event.自动调教回数;
-  let m;
-  if (rate < 5) {
-    m = 1.25;
-  } else if (rate < 10) {`,
-    replace: `  const rate = chara(target).event.自动调教回数;
-  let m;
-  if (rate < 6) {
-    // 变异：阈值 5 错改 6
-    m = 1.25;
-  } else if (rate < 10) {`,
-    tests: ['source-check'],
-    must_mention: 'CFLAG:667（自动调教回数）八档阈值',
+    desc: 'M9697 ablup7：欲望门槛公式',
+    file: 'ere/system/train/ablup.js',
+    find: `    const gate_needed = lv + 1;
+    const gate_line = \`\${era.get('ablname:1')}\${gate_needed}LV以上\`; // :43-45`,
+    replace: `    const gate_needed = lv + 2;
+    const gate_line = \`\${era.get('ablname:1')}\${gate_needed}LV以上\`; // :43-45`,
+    tests: ['ablup'],
+    must_mention: '欲望门槛（ABL:1）不足计为能力不足',
   },
   {
-    desc: 'M9646 AUTO_NUM_CHECK CFLAG:667 阈值 10 档系数 1.5 错改 1.25',
-    file: 'ere/event/source-check.js',
-    find: `  } else if (rate < 10) {
-    m = 1.5;
-  } else if (rate < 15) {`,
-    replace: `  } else if (rate < 10) {
-    m = 1.25; // 变异：系数 1.5 错改 1.25（与前一档相同）
-  } else if (rate < 15) {`,
-    tests: ['source-check'],
-    must_mention: 'CFLAG:667（自动调教回数）八档阈值',
+    desc: 'M9698 ablup7：不满足重试文案',
+    file: 'ere/system/train/ablup.js',
+    find: "era.print('条件不满足。'); // :118",
+    replace: "era.print('条件已满足。'); // :118",
+    tests: ['ablup'],
+    must_mention: '点数不足重试提示"条件不满足。"',
   },
   {
-    desc: 'M9647 AUTO_NUM_CHECK CFLAG:667 阈值 40 档系数 7.25 错改 5.3',
-    file: 'ere/event/source-check.js',
-    find: `  } else if (rate < 40) {
-    m = 7.25;
-  } else {
-    m = 9.9;
-  }`,
-    replace: `  } else if (rate < 40) {
-    m = 5.3; // 变异：系数 7.25 错改 5.3（与前一档相同）
-  } else {
-    m = 9.9;
-  }`,
-    tests: ['source-check'],
-    must_mention: 'CFLAG:667（自动调教回数）八档阈值',
+    desc: 'M9699 ablup8：Lv1 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [500, 500, 0, 500, 300];',
+    replace: '[a, b, c, d, e] = [500, 500, 0, 501, 300];',
+    tests: ['ablup'],
+    must_mention: 'ablup8：Lv1 梯子字面值',
   },
   {
-    desc: 'M9648 AUTO_NUM_CHECK 循环上界 i<=16 错改 i<=10（下标 14 不再处理）',
-    file: 'ere/event/source-check.js',
-    find: `  for (let i = 0; i <= 16; i += 1) {
-    if (i >= 11 && i !== 14) {
-      continue;
-    }
-    era.set(
-      \`delta:\${target}:\${i}\`,`,
-    replace: `  for (let i = 0; i <= 10; i += 1) {
-    // 变异：循环上界 i<=16 错改 i<=10，下标 14 不再处理
-    if (i >= 11 && i !== 14) {
-      continue;
-    }
-    era.set(
-      \`delta:\${target}:\${i}\`,`,
-    tests: ['source-check'],
-    must_mention: '跳过边界 LOCAL≥11 && LOCAL!=14',
+    desc: 'M9700 ablup8：开放折扣倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 开放：:57-64，先于倒错的，五个变量都受影响
+      a = times(a, 0.5);`,
+    replace: `      // 开放：:57-64，先于倒错的，五个变量都受影响
+      a = times(a, 0.6);`,
+    tests: ['ablup'],
+    must_mention: '开放×0.50 先于倒错的×0.75',
+  },
+  {
+    desc: 'M9701 ablup8：修复缺失哨兵缺陷',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (b > 0) {
+      if (juel9 < a) i |= 1; // :106-107`,
+    replace: `    if (b >= 0) {
+      if (juel9 < a) i |= 1; // :106-107`,
+    tests: ['ablup'],
+    must_mention: '缺失哨兵缺陷',
+  },
+  {
+    desc: 'M9702 ablup8：Lv3 E 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d, e] = [0, 0, 10, 3000, 6000];',
+    replace: '[a, b, c, d, e] = [0, 0, 10, 3000, 6001];',
+    tests: ['ablup'],
+    must_mention: 'Lv3 起选项0（B=0）不再渲染',
+  },
+  {
+    desc: 'M9703 ablup8：选项1 绝顶经验门槛',
+    file: 'ere/system/train/ablup.js',
+    find: `      if (exp30 < c) j |= 2; // :151-153
+      if (exp2 < 1) j |= 2; // :154-156`,
+    replace: `      if (exp30 < c) j |= 2; // :151-153
+      if (exp2 < 2) j |= 2; // :154-156`,
+    tests: ['ablup'],
+    must_mention: '选项1 绝顶经验门槛正好等于 1 时判定为充足',
+  },
+  {
+    desc: 'M9704 ablup9：Lv1 梯子字面值',
+    file: 'ere/system/train/ablup.js',
+    find: '[a, b, c, d] = [1000, 200, 0, 5000];',
+    replace: '[a, b, c, d] = [1001, 200, 0, 5000];',
+    tests: ['ablup'],
+    must_mention: 'ablup9：Lv1 梯子字面值',
+  },
+  {
+    desc: 'M9705 ablup9：双性恋折扣倍率',
+    file: 'ere/system/train/ablup.js',
+    find: `      // 双性恋：:52-58，先于倒错的
+      a = times(a, 0.25);`,
+    replace: `      // 双性恋：:52-58，先于倒错的
+      a = times(a, 0.3);`,
+    tests: ['ablup'],
+    must_mention: '双性恋×0.25 先于倒错的×0.75',
+  },
+  {
+    desc: 'M9706 ablup9：选项1 隐藏门槛',
+    file: 'ere/system/train/ablup.js',
+    find: `    const juel0 = era.get(\`juel:\${cid}:0\`) || 0;
+    if (d > 0) {`,
+    replace: `    const juel0 = era.get(\`juel:\${cid}:0\`) || 0;
+    if (d >= 0) {`,
+    tests: ['ablup'],
+    must_mention: '隐藏选项(D=0)结构上不可选中',
+  },
+  {
+    desc: 'M9707 ablup9：选项0 屈服点数判定',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (juel5 < a) i |= 1; // :87-89
+    if (juel6 < c) i |= 1; // :90-92`,
+    replace: `    if (juel5 < a) i |= 1; // :87-89
+    if (juel6 <= c) i |= 1; // :90-92`,
+    tests: ['ablup'],
+    must_mention: 'ablup9：Lv2 起选项0 显示屈服点数门槛',
+  },
+  {
+    desc: 'M9708 ablup9：成功购买结算文案',
+    file: 'ere/system/train/ablup.js',
+    find: `await era.printAndWait(\`\${era.get('ablname:9') || ''}变为LV\${new_lv}。\`); // :185-188 PRINTW`,
+    replace: `await era.printAndWait(\`\${era.get('ablname:9') || ''}升级到LV\${new_lv}。\`); // :185-188 PRINTW`,
+    tests: ['ablup'],
+    must_mention: '两个成功购买路径各自扣对应珠、升级、等待按键后显示变为LV',
   },
 
-  // —— #459（COMF3_自慰 头部升格跳转补齐）——
   // —— SOKUOCHI_CHECK（#462）——
   {
-    desc: 'M9649 SOKUOCHI_CHECK 早退守卫删除（TALENT:73=0 时也会执行 12 组升级）',
+    desc: 'M9836 SOKUOCHI_CHECK 早退守卫删除（TALENT:73=0 时也会执行 12 组升级）',
     file: 'ere/event/source-check.js',
     find: `function sokuochi_check() {
   if (!tal(73)) {
@@ -6493,7 +5855,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：守卫（TALENT:73=0）→ 早退，ABL 不变',
   },
   {
-    desc: 'M9650 SOKUOCHI_CHECK TIERS LV1 门槛 1 错改 2',
+    desc: 'M9837 SOKUOCHI_CHECK TIERS LV1 门槛 1 错改 2',
     file: 'ere/event/source-check.js',
     find: `  const TIERS = [1, 30, 60, 200, 1000];`,
     replace: `  const TIERS = [2, 30, 60, 200, 1000]; // 变异：LV1 门槛 1 错改 2`,
@@ -6501,7 +5863,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：12 组各自驱动升到 LV1',
   },
   {
-    desc: 'M9651 SOKUOCHI_CHECK TIERS LV2 门槛 30 错改 60',
+    desc: 'M9838 SOKUOCHI_CHECK TIERS LV2 门槛 30 错改 60',
     file: 'ere/event/source-check.js',
     find: `  const TIERS = [1, 30, 60, 200, 1000];`,
     replace: `  const TIERS = [1, 60, 60, 200, 1000]; // 变异：LV2 门槛 30 错改 60`,
@@ -6509,7 +5871,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：UP 阈值表与 EXP 阈值表不同',
   },
   {
-    desc: 'M9652 SOKUOCHI_CHECK EXP_TIERS LV3 门槛 20 错改 40',
+    desc: 'M9839 SOKUOCHI_CHECK EXP_TIERS LV3 门槛 20 错改 40',
     file: 'ere/event/source-check.js',
     find: `  const EXP_TIERS = [1, 5, 20, 40, 100];`,
     replace: `  const EXP_TIERS = [1, 5, 40, 40, 100]; // 变异：LV3 门槛 20 错改 40`,
@@ -6517,7 +5879,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：UP 阈值表与 EXP 阈值表不同',
   },
   {
-    desc: 'M9653 SOKUOCHI_CHECK 阴蒂钝感封印位 &2 错改 &1',
+    desc: 'M9840 SOKUOCHI_CHECK 阴蒂钝感封印位 &2 错改 &1',
     file: 'ere/event/source-check.js',
     find: `  if (!((tal(101) || 0) & 2)) {
     const lv = bump(sys, '阴蒂感觉', up(0), TIERS);`,
@@ -6529,7 +5891,7 @@ export default [
       'SOKUOCHI_CHECK：钝感封印（TALENT:101/103/105/107 的 &2 位）逐组阻断自身升级',
   },
   {
-    desc: 'M9654 SOKUOCHI_CHECK 前置门槛 >=lv 错改 >lv',
+    desc: 'M9841 SOKUOCHI_CHECK 前置门槛 >=lv 错改 >lv',
     file: 'ere/event/source-check.js',
     find: `        domain[prop] < lv &&
         (!gate || gate() >= lv)`,
@@ -6539,7 +5901,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：12 组各自驱动升到 LV1',
   },
   {
-    desc: 'M9655 SOKUOCHI_CHECK 当前档位比较 <lv 错改 <=lv（ELSEIF 链跳档）',
+    desc: 'M9842 SOKUOCHI_CHECK 当前档位比较 <lv 错改 <=lv（ELSEIF 链跳档）',
     file: 'ere/event/source-check.js',
     find: `      if (
         value > tiers[lv - 1] &&
@@ -6551,7 +5913,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：ELSEIF 链每轮只前进一档',
   },
   {
-    desc: 'M9656 SOKUOCHI_CHECK 阈值比较 >tiers 错改 >=tiers（含等号）',
+    desc: 'M9843 SOKUOCHI_CHECK 阈值比较 >tiers 错改 >=tiers（含等号）',
     file: 'ere/event/source-check.js',
     find: `      if (
         value > tiers[lv - 1] &&`,
@@ -6561,7 +5923,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：阈值不含等号',
   },
   {
-    desc: 'M9657 SOKUOCHI_CHECK 性别标签漏判 TALENT:121（扶她分支）',
+    desc: 'M9844 SOKUOCHI_CHECK 性别标签漏判 TALENT:121（扶她分支）',
     file: 'ere/event/source-check.js',
     find: `      const label = tal(122) || tal(121) ? '阴茎感觉' : ablname(0);`,
     replace: `      const label = tal(122) ? '阴茎感觉' : ablname(0); // 变异：漏判 TALENT:121`,
@@ -6569,7 +5931,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：ABL:0 性别专属文案',
   },
   {
-    desc: 'M9658 SOKUOCHI_CHECK ABL:2 驱动下标读错（up(1) 错改 up(0)）',
+    desc: 'M9845 SOKUOCHI_CHECK ABL:2 驱动下标读错（up(1) 错改 up(0)）',
     file: 'ere/event/source-check.js',
     find: `    const lv = bump(sys, '私处感觉', up(1), TIERS);`,
     replace: `    const lv = bump(sys, '私处感觉', up(0), TIERS); // 变异：驱动下标 1 错改 0`,
@@ -6577,7 +5939,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：驱动下标不与相邻组混淆',
   },
   {
-    desc: 'M9659 SOKUOCHI_CHECK ABL:21 驱动下标读错（up(9) 错改 up(8)）',
+    desc: 'M9846 SOKUOCHI_CHECK ABL:21 驱动下标读错（up(9) 错改 up(8)）',
     file: 'ere/event/source-check.js',
     find: `    const lv = bump(sys, '抖M气质', up(9), TIERS, () => sys.欲望);`,
     replace: `    const lv = bump(sys, '抖M气质', up(8), TIERS, () => sys.欲望); // 变异：驱动下标 9 错改 8`,
@@ -6585,7 +5947,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：驱动下标不与相邻组混淆',
   },
   {
-    desc: 'M9660 SOKUOCHI_CHECK ABL:12 误用 EXP_TIERS（应为 TIERS）',
+    desc: 'M9847 SOKUOCHI_CHECK ABL:12 误用 EXP_TIERS（应为 TIERS）',
     file: 'ere/event/source-check.js',
     find: `    const lv = bump(sys, '技巧', up(7), TIERS);`,
     replace: `    const lv = bump(sys, '技巧', up(7), EXP_TIERS); // 变异：误用 EXP_TIERS`,
@@ -6593,7 +5955,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：ABL:12（技巧）用 UP 阈值表',
   },
   {
-    desc: 'M9661 SOKUOCHI_CHECK ABL:17 门槛来源读错（乳房感觉错改欲望）',
+    desc: 'M9848 SOKUOCHI_CHECK ABL:17 门槛来源读错（乳房感觉错改欲望）',
     file: 'ere/event/source-check.js',
     find: `    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.乳房感觉);`,
     replace: `    const lv = bump(sys, '露出癖', up(8), TIERS, () => sys.欲望); // 变异：门槛来源读错`,
@@ -6601,6 +5963,7 @@ export default [
     must_mention: 'SOKUOCHI_CHECK：ABL:17（露出癖）门槛来源',
   },
 
+  // —— #459（COMF3_自慰 头部升格跳转补齐）——
   {
     desc: 'M9529 COM3 头部升格跳转删除（jump_advanced(3) 整段拿掉，PREVCOM 升格判据失效）',
     file: 'ere/system/train/com-caress.js',
@@ -6619,5 +5982,67 @@ export default [
   const player = era_flag.player;`,
     tests: ['com-caress'],
     must_mention: 'JUMP COM125',
+  },
+
+  // —— #460（COMF203_カビ犬／COMF205_腐れ豚 变异覆盖补齐）——
+  {
+    desc: 'M9829 怪物开战损耗的等级缩放删（203 的气力损耗 LOSEBASE:1）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(level, weak),\n    open_lose1: (level) => level * 20,',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(level, weak),\n    open_lose1: () => 5, // 变异：气力损耗等级缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '霉菌犬',
+  },
+  {
+    desc: 'M9830 怪物败北追加伤害删（203 的 extra_lose）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    extra_lose: ['level', 'level'], // [L9, L9]",
+    replace: '    extra_lose: [0, 0], // 变异：败北追加伤害删',
+    tests: ['com-colosseum'],
+    must_mention: '気力有余的败北支',
+  },
+  {
+    desc: 'M9831 怪物收入倍率表改坏（203 的 ×2 改 ×3）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    income: (lose0) => lose0 * 2,',
+    replace: '    income: (lose0) => lose0 * 3,',
+    tests: ['com-colosseum'],
+    must_mention: '死亡斗场收入 × 2',
+  },
+  {
+    desc: 'M9832 怪物开战损耗的体力值算法改坏（205 的 ×25÷10 缩放删）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(level, weak), // 变异：×25÷10 缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '腐烂猪',
+  },
+  {
+    desc: 'M9833 怪物开战损耗的等级缩放删（205 的气力损耗 LOSEBASE:1）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),\n    open_lose1: (level) => level * 20,',
+    replace:
+      '    open_lose0: (level, weak) => monster_lose0(idiv(level * 25, 10), weak),\n    open_lose1: () => 5, // 变异：气力损耗等级缩放删',
+    tests: ['com-colosseum'],
+    must_mention: '胜利支',
+  },
+  {
+    desc: 'M9834 怪物败北追加伤害删（205 的 extra_lose）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    threshold: (level) => 4 * level, // :25 IF RESULT < (4 * CFLAG:0:9)\n    extra_lose: ['level*2', 'level*2'],",
+    replace:
+      '    threshold: (level) => 4 * level, // :25 IF RESULT < (4 * CFLAG:0:9)\n    extra_lose: [0, 0], // 变异：败北追加伤害删',
+    tests: ['com-colosseum'],
+    must_mention: '気力有余的败北支',
+  },
+  {
+    desc: 'M9835 怪物收入倍率表改坏（205 的 ×4 改 ×5）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: '    income: (lose0) => lose0 * 4,',
+    replace: '    income: (lose0) => lose0 * 5,',
+    tests: ['com-colosseum'],
+    must_mention: '死亡斗场收入 × 4',
   },
 ];

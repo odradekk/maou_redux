@@ -158,8 +158,20 @@ const REPO = path.resolve(__dirname, '..');
 // 验证：natural 调用 15 次、upgrade 调用 3 次，均早退，与 ERB 原文
 // SIF TALENT:73==0 / RETURN 0 的静默行为一致）。stub natural 368→353、
 // upgrade 201→198，matched/unexplained 不变。
+// 【#464 ABL·1（Q7）ABLUP0～9 落地后重测】JUEL_CHECK 分发接上 ABLUP0～4 真身
+// （ere/system/train/ablup.js），natural 侧的能力提升反馈行与结算行不再走
+// stub_line 占位：matched 1115→1118、stub 444→382。差值不等于净减少的输出
+// 行数——原本记同一条"未移植指令"原因的若干下游结算/一览行，在 ABLUP0
+// 真身接上后转而记名到"跨画面编号错位"等既有归因（ere 按钮化 PR #53 通则），
+// 不再计入 stub 也不新增 matched，见 rules.js 的记名规则。upgrade 未变
+// （本样本回放未触发 ABLUP0～4 的可提升分支）。未解释恒 0。
+// 【#462 与 #464 合并后重测（rebase 时才发现两票并行开发同一片区域）】
+// #462（六轮 SOURCE_CHECK 存根真身化）与 #464（ABLUP0～4 落真身）各自独立
+// 开发，均从 natural{matched:1115,stub:444}/upgrade{matched:259,stub:222}
+// 出发；两者互不覆盖同一批输出行（前者动 SOURCE_CHECK 链，后者动 JUEL_CHECK
+// 的 ABLUP 分发），合并后按 SOP §5.5 实跑 cli --sample 取准，不做算术加总。
 const BASELINE = {
-  'train-natural': { matched: 1115, version: 0, stub: 353, unexplained: 0 },
+  'train-natural': { matched: 1118, version: 0, stub: 291, unexplained: 0 },
   'train-upgrade': { matched: 262, version: 0, stub: 198, unexplained: 0 },
 };
 
