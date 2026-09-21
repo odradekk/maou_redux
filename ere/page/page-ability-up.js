@@ -304,7 +304,7 @@ async function ability_up_core(arg) {
     era.drawLine(); // :162 CUSTOMDRAWLINE ‥
     show_info_exp(arg); // :163 CALL SHOW_INFO_EXP
     show_juel(arg); // :164 CALL SHOW_JUEL
-    show_ablup_select(arg); // :165 CALL SHOW_ABLUP_SELECT
+    await show_ablup_select(arg); // :165 CALL SHOW_ABLUP_SELECT（`*` 标记要看 DECIDE，故 await）
 
     const result = await era.input(); // :167 INPUT
 

@@ -121,7 +121,14 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
+export const PENDING_BASELINE = 24; // 合并态实测（#467 并上含 #465 的 master）：
+// 29（#465 后的 master）− 5（本票的 ABL/ABLUP37.ERB／ABLUP39.ERB／
+// ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB 五个文件）= 24，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+// 同票不清 ABLUP0.ERB 与 ABLUP20～33：ABL.ERB 的三条归因（@DECIDE_ABLUP 族、
+// @AUTO_ABLUP、@USERABLUP）已在本票清了，ABL 目录实测 已移植 23／
+// 部分移植 1（ABLUP0.ERB，伞状行仍挂着 #466 的 8 个名字）／待移植 8。
+// export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
 // 37（#464 后的 master）− 8（本票的 ABL/ABLUP10.ERB～ABLUP17.ERB 八个文件）
 // = 29，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
 // 重测而非相加。

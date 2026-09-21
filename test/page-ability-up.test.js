@@ -372,19 +372,30 @@ test('ABILITY_UP：魔王自己（输入 0）也进 CORE', async () => {
 
 // —— @ABILITY_UP_CORE ——
 
-test('ABILITY_UP_CORE：ABLUP0-4 已接上真身（issue #464），走真实判定而非占位', async () => {
+test('ABILITY_UP_CORE：ABLUP 已落真身的编号走真实判定而非占位', async () => {
   const { ABLUP_HANDLERS } = create_era_fixture().load_module(
     'system/train/juel-check',
   );
   for (const id of Object.keys(ABLUP_HANDLERS).map(Number)) {
+    if (id === 100) {
+      // [100] 异界综合征的按钮来自原作的 `[IF_DEBUG]` 块（page-ablup.js 文件
+      // 头），ere 侧没有这个按钮 → RESULT == 100 经输入通道不可达；分发表
+      // 里保留它（SHOP_2.ERB:244 的原作分支如此），但这里喂不进去
+      continue;
+    }
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     add_chara(fixture, 1, '玛奥');
     fixture.store.set('base:1:0', 1);
-    if (id === 4) {
-      fixture.store.set('cstr:1:7', '舔'); // 局部感觉按钮需定制癖好名才渲染
+    if (id === 4 || id === 40) {
+      // 局部感觉 [4] 与局部中毒 [40] 只在 CSTR:7 定制后渲染出按钮
+      // （page-ablup.js:92-101）
+      fixture.store.set('cstr:1:7', '舔');
     }
-    fixture.set_inputs(id, 100, 999); // 选中能力 → 选中能力自身的 [100] 放弃 → 退出
+    // 选中能力 → （能力自身的 [100] 放弃）→ 退出。[99] 是例外：无刻印时
+    // 反抗刻印消去走「打印 + WAIT」早退（ABLUP99.ERB:28-32），没有子菜单。
+    // 夹具的 waitAnyKey 不取输入队列（既定桩策略），所以那一趟不需要 [100]
+    fixture.set_inputs(...(id === 99 ? [id, 999] : [id, 100, 999]));
     const { ability_up_core } = fixture.load_module('page/page-ability-up');
     const ret = await ability_up_core(1);
     assert.equal(ret, 0, `ABLUP${id} 之后 [999] 正常结束`);
@@ -395,7 +406,7 @@ test('ABILITY_UP_CORE：ABLUP0-4 已接上真身（issue #464），走真实判�
   }
 });
 
-test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（剩余 21 支各回一次占位，不退出循环）', async () => {
+test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（剩余 8 支各回一次占位，不退出循环）', async () => {
   const { ABLUP_IDS, ABLUP_HANDLERS } = create_era_fixture().load_module(
     'system/train/juel-check',
   );

@@ -1331,6 +1331,34 @@ export const FILES = [
         ref: '81',
         any: [lit('PRINTFORML %ABLNAME:17%变为LV{ABL:17}。')],
       },
+
+      // —— ABL.ERB 本体：@DECIDE_ABLUP 分发 / @USERABLUP / @AUTO_ABLUP
+      //    （issue #467；标记渲染侧在 page-ablup.mjs）——
+      { src: ABL, ref: '113-189', any: [lit('@DECIDE_ABLUP\n;阴蒂感觉')] },
+      { src: ABL, ref: '192-200', any: [lit('@USERABLUP\nIF RESULT == 999')] },
+      {
+        src: ABL,
+        ref: '193-195',
+        any: [lit('CALL JUJUN_UP_CHECK\nCALL YOKUBO_UP_CHECK')],
+      },
+      { src: ABL, ref: '203-241', any: [lit('@AUTO_ABLUP, ARG = -1')] },
+      {
+        src: ABL,
+        ref: '230-232',
+        any: [lit('SIF COUNT == 37 && 卖淫影响 == 0')],
+      },
+      {
+        src: ABL,
+        ref: '233-235',
+        any: [lit('SIF COUNT > 15 && GETBIT(FLAG:5,36)')],
+      },
+      { src: ABL, ref: '247-267', any: [lit('@AUTO_ABLUP_CORE, NUM, INFO')] },
+      { src: ABL, ref: '256', any: [lit('TRYCALLFORM DECIDE_ABLUP{NUM}')] },
+      {
+        src: ABL,
+        ref: '264-265',
+        any: [lit('SIF RESULT >= 0 && INFO')],
+      },
     ],
   },
 ];

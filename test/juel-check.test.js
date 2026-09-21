@@ -458,10 +458,11 @@ test('交互循环：能力分支命中打占位、重绘后可再选（进得�
 // 在引擎侧不可达（本画面印出的编号全部落在 ABLUP_IDS ∪ {999}）。重绘
 // 机理本身由上一用例（能力尝试 + 退出 → 等级行两轮）覆盖。
 
-test('自动升级（GETBIT(FLAG:5,35)）：不进交互，直接收尾', async () => {
+test('自动升级（GETBIT(FLAG:5,35)）：不吃 INPUT，AUTO_ABLUP 真身三连生效', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('flag:5', 2 ** 35);
+  fixture.store.set('juel:31:0', 1); // 阴蒂感觉 Lv0 的 1 点，目标可自动升一级
 
   await fixture.load_module('system/train/juel-check').run_juel_check();
 
@@ -470,9 +471,21 @@ test('自动升级（GETBIT(FLAG:5,35)）：不进交互，直接收尾', async 
     [{ api: 'waitAnyKey' }],
     '自动模式不吃 INPUT',
   );
-  assert(
-    fixture.text_lines().some((line) => line.includes('@AUTO_ABLUP')),
-    'AUTO_ABLUP 占位行必须出现',
+  // :452-455 三连：目标升一级并打印 ;453-454 的 ASSI 分支由 ASSI <= 0 跳过，
+  // :455 的 MASTER（角色 0）确实被调到（读过它的 abl:0:0）
+  assert.equal(fixture.store.get('abl:31:0'), 1);
+  assert.equal(fixture.store.get('juel:31:0'), 0);
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('温妮的阴蒂感觉变为LV1')),
+    '@AUTO_ABLUP_CORE 的等级行（:264-265）',
+  );
+  assert.ok(
+    fixture.var_reads.some((read) => read.name === 'abl:0:0'),
+    'MASTER 那一连确实执行了',
+  );
+  assert.ok(
+    !fixture.text_lines().some((line) => line.includes('@AUTO_ABLUP')),
+    'AUTO_ABLUP 不再是存根，占位行必须消失',
   );
   assert(
     fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
@@ -613,14 +626,15 @@ test('SHOW_JUEL：男人（TALENT:122）第 0 项显示「阴茎」', () => {
   assert.ok(fixture.text_lines()[0].startsWith(' 阴茎点数：  3479'));
 });
 
-test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别过滤与 [999]', () => {
+test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别过滤与 [999]', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('abl:31:0', 3);
   fixture.store.set('mark:31:3', 1);
   const { show_ablup_select } = fixture.load_module('page/page-ablup');
 
-  show_ablup_select(31);
+  // #467 起本函数是 async（逐行调 DECIDE 打 `*`）
+  await show_ablup_select(31);
 
   const buttons = fixture.lines.filter((line) => line.type === 'button');
   // 样本 :262-268 的条目序（0-3、10-17、20-22、30-33、37、39、99）——女
@@ -643,13 +657,13 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
   assert.equal(br_count, 8);
 });
 
-test('SHOW_ABLUP_SELECT：男无 私处感觉/百合气质/百合中毒，第 0 项改「阴茎感觉」', () => {
+test('SHOW_ABLUP_SELECT：男无 私处感觉/百合气质/百合中毒，第 0 项改「阴茎感觉」', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:122', 1);
   const { show_ablup_select } = fixture.load_module('page/page-ablup');
 
-  show_ablup_select(31);
+  await show_ablup_select(31);
 
   const accelerators = fixture.lines
     .filter((line) => line.type === 'button')
@@ -664,26 +678,26 @@ test('SHOW_ABLUP_SELECT：男无 私处感觉/百合气质/百合中毒，第 0 
   );
 });
 
-test('SHOW_ABLUP_SELECT：感觉缺失灰显（TALENT:101 & 2 → 阴蒂钮变灰）', () => {
+test('SHOW_ABLUP_SELECT：感觉缺失灰显（TALENT:101 & 2 → 阴蒂钮变灰）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:101', 2);
   const { show_ablup_select } = fixture.load_module('page/page-ablup');
 
-  show_ablup_select(31);
+  await show_ablup_select(31);
 
   const button = fixture.lines.find((line) => line.accelerator === 0);
   assert.equal(button.color, '#808080');
 });
 
-test('SHOW_ABLUP_SELECT：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中毒钮', () => {
+test('SHOW_ABLUP_SELECT：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中毒钮', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('cstr:31:7', '足交');
   fixture.store.set('abl:31:4', 2);
   const { show_ablup_select } = fixture.load_module('page/page-ablup');
 
-  show_ablup_select(31);
+  await show_ablup_select(31);
 
   assert.equal(
     fixture.lines.find((line) => line.accelerator === 4).rendered,
@@ -692,6 +706,44 @@ test('SHOW_ABLUP_SELECT：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中�
   assert.equal(
     fixture.lines.find((line) => line.accelerator === 40).rendered,
     '[40] 足交中毒 - LV 0',
+  );
+});
+
+// ———— @DECIDE_ABLUP 族的 `*` 标记（issue #467） ————
+
+test('SHOW_ABLUP_SELECT：#467 `*` 标记按 DECIDE 结果逐行渲染', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  // 阴蒂感觉 Lv0 只需 JUEL:0 ≥ 1；反抗刻印 Lv1 需屈服刻印(2)≥反抗刻印(3)、
+  // 顺从(10) ≥ 反抗刻印+2，且屈服珠(6) ≥ 5000
+  fixture.store.set('juel:31:0', 1);
+  fixture.store.set('mark:31:2', 1);
+  fixture.store.set('mark:31:3', 1);
+  fixture.store.set('abl:31:10', 3);
+  fixture.store.set('juel:31:6', 5000);
+  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+
+  await show_ablup_select(31);
+
+  const rendered = (acc) =>
+    fixture.lines.find((line) => line.accelerator === acc).rendered;
+  assert.equal(rendered(0), '[0] 阴蒂感觉 - LV 0 *', 'JUEL:0=1 恰好够 Lv0 的 1 点');
+  assert.equal(rendered(1), '[1] 乳房感觉 - LV 0', 'JUEL:14=0 → 点数不足，无标记');
+  assert.equal(rendered(99), '[99] 反抗刻印 - LV 1 *', '两门槛与屈服珠全达标');
+});
+
+test('SHOW_ABLUP_SELECT：#467 满级行不打 `*`（DECIDE 的提前 RETURN 0）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('abl:31:0', 5); // Lv5 且无[自慰狂] → 需要特殊素质
+  fixture.store.set('juel:31:0', 999999); // 珠再多也不可提升
+  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+
+  await show_ablup_select(31);
+
+  assert.equal(
+    fixture.lines.find((line) => line.accelerator === 0).rendered,
+    '[0] 阴蒂感觉 - LV 5',
   );
 });
 
@@ -704,7 +756,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.equal(STUBBED_CALLS.length, 15); // #465 落 ABLUP10-17（存根 21→13）+ #462 落 YOKUBO_UP_CHECK 真身（收尾/自动 3→2），13 + 2
+  assert.equal(STUBBED_CALLS.length, 9); // #467 落 ABLUP37/39/40/99/100（存根 13→8）与 AUTO_ABLUP：8 + CHECK_SPECIALSKIL = 9
   for (const name of STUBBED_CALLS) {
     assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
   }

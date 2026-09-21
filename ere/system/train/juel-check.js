@@ -57,6 +57,12 @@ const {
   ablup15,
   ablup16,
   ablup17,
+  ablup37,
+  ablup39,
+  ablup40,
+  ablup99,
+  ablup100,
+  auto_ablup,
 } = require('#/system/train/ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
@@ -94,6 +100,11 @@ const ABLUP_HANDLERS = {
   15: ablup15,
   16: ablup16,
   17: ablup17,
+  37: ablup37,
+  39: ablup39,
+  40: ablup40,
+  99: ablup99,
+  100: ablup100,
 };
 
 /**
@@ -111,7 +122,6 @@ const STUBBED_ABLUP_NAMES = ABLUP_IDS.filter(
  */
 const STUBBED_CALLS = [
   ...STUBBED_ABLUP_NAMES,
-  'AUTO_ABLUP',
   'CHECK_SPECIALSKIL',
 ];
 
@@ -393,10 +403,15 @@ async function run_juel_check() {
     // :449-458 自动升级点数（:450 IF GETBIT(FLAG:5,35)）：不进交互，直接
     // 收尾。:452-455 的三次 AUTO_ABLUP（TARGET / ASSI>0 / MASTER）共享一行占位
     if (getbit(era.get('flag:5'), 35)) {
-      stub_line('AUTO_ABLUP', '自动能力提升（目标/助手/魔王三连）');
+      // :452-455 AUTO_ABLUP 三连：目标 → 助手（仅 ASSI > 0）→ 魔王
+      await auto_ablup(); // :452 CALL AUTO_ABLUP
+      if ((era_flag.assi || 0) > 0) {
+        await auto_ablup(era_flag.assi); // :453-454 CALL AUTO_ABLUP, ASSI
+      }
+      await auto_ablup(0); // :455 CALL AUTO_ABLUP, MASTER（魔王恒为角色 0）
       break; // :457 GOTO LABEL_EXIT
     }
-    show_ablup_select(target); // :459 CALL SHOW_ABLUP_SELECT
+    await show_ablup_select(target); // :459 CALL SHOW_ABLUP_SELECT（`*` 标记要看 DECIDE，故 await）
 
     const result = await era.input(); // :461 INPUT
     if (result === 999) {
