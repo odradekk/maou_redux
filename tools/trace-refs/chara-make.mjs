@@ -2224,10 +2224,33 @@ export const FILES = [
         ref: '164',
         any: [/^\tELSEIF RESULT == 3 &&  赤森奴隶\r?$/m],
       },
+      // #469 战役招募：js 侧「算了不选了」分支的引用从 :165-171 扩为
+      // :164-171（含 ELSEIF 行本身）；TARGET/ASSI 复位与出口按行登记——
+      // TARGET/ASSI 两行与 :136-137 的同形行构成平行复现
       {
         src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
-        ref: '165-171',
+        ref: '164-171',
         any: [/^\t\tRETURN 0\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '169',
+        any: [/^\t\tTARGET = FLAG:1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '169-170',
+        any: [/^\t\tTARGET = FLAG:1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '169-171',
+        any: [/^\t\tTARGET = FLAG:1\r?$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '170',
+        any: [/^\t\tASSI = FLAG:2\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',

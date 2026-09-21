@@ -93,6 +93,13 @@
   id: 400
   name: "hero_campaign_active"
   type: "number"
+# 战役剧情进度：SELECT_CAMPAIGN 选定战役时归零（CAMPAIGN_EVENT.ERB:150），
+# CAMPAIGN_QUEST 判定角色所在楼层（CFLAG:501）超过本值时推进剧情、本值 +1
+# （:190-196）；CAMPAIGN_STORY_1 按本值 0-5 六档分支打印对应剧情文本
+"战役剧情进度":
+  id: 401
+  name: "campaign_story_progress"
+  type: "number"
 # 2D 地图模式开关（设定菜单写入，SYSTEM ver1.0.3.ERB:924、
 # LABO_DUNGEON_MAP.ERB:262）：迷宫走 2D 地图（:66/:287-295）还是文本探索
 "二维地图模式":

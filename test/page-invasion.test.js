@@ -585,10 +585,12 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
 
   const campaign = create_era_fixture();
   make_world(campaign, { fallen: 1 });
-  assert.equal(await run_post_conquest(campaign, 9), 0);
+  // 9 → post_conquest_menu 转发到 campaign_menu()；999 → campaign_menu()
+  // 自身循环的 [返回]（#469 起真身，不再是单行占位输出）
+  assert.equal(await run_post_conquest(campaign, 9, 999), 0);
   assert(
-    history_texts(campaign).some((line) => line.includes('@CAMPAIGN_MENU')),
-    '[9] 调用 campaign_menu()（page-campaign.js，#469 之前的占位输出）',
+    history_texts(campaign).some((line) => line.includes('当前选择的行动')),
+    '[9] 调用 campaign_menu()（page-campaign.js，#469 起真身）',
   );
 
   const fort = create_era_fixture();

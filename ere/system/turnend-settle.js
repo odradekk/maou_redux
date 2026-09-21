@@ -38,6 +38,7 @@ const { kyoten_event } = require('#/page/page-invasion');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
+const { chara_callname } = require('#/utils/callname-utils');
 const { run_event_newday } = require('#/event/event-nextday');
 const { equip_check } = require('#/system/equip/equip-check');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
@@ -69,7 +70,6 @@ const STUBBED_CALLS = [
   'FORMAT_AUTOTRAIN',
   '自動處刑',
   'AUTOTRAIN',
-  'CAMPAIGN_GAMEOVER',
   'GET_LOOK_INFO',
 ];
 
@@ -513,8 +513,25 @@ on('EVENTTURNEND', async () => {
     chara(0).dungeon.气力 = maou_max_wp;
   }
 
-  // :721 战役败北检查
-  stub_line('CAMPAIGN_GAMEOVER', '战役败北检查');
+  // :721 战役败北检查（CAMPAIGN_EVENT.ERB:260-281，#469 起真身）：气力
+  // 刚被本函数扣到 <= 0（:713-714 战役中 -10）即战役失败。原作播报文案写
+  // 「体力耗尽」，但判定的其实是气力（BASE:MASTER:1）——原作用词与判定
+  // 变量不一致，1:1 照抄文案，不据判定变量改写
+  if (era_flag.hero_campaign_active >= 1 && chara(0).dungeon.气力 <= 0) {
+    era.print(`***${chara_callname(0)}的体力耗尽了***`);
+    await era.waitAnyKey();
+    era.print('战役结束了');
+    await era.waitAnyKey();
+    era_flag.hero_campaign_active = 0;
+    chara(0).dungeon.气力 = 1;
+    for (const cid of era.getAddedCharacters()) {
+      if (chara(cid).invasion.状态 === 12) {
+        party_del(cid);
+        chara(cid).invasion.状态 = 0;
+        chara(cid).invasion.回城标志 = 0;
+      }
+    }
+  }
 
   // :723 目标还原（暂存值；助手不还原——行 755 读 FLAG:2）
   era_flag.target = target_pool;

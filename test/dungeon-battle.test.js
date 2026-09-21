@@ -96,6 +96,54 @@ function setup_duel_world() {
   return fixture;
 }
 
+// —— CAMPAIGN_MONSTER_LIST（#469 起真身）——
+
+test('campaign_monster_list()：FLAG:400 < 1 时恒 190（骸骨缺省）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  assert.equal(await campaign_monster_list(3), 190);
+});
+
+test('campaign_monster_list()：FLAG:400 = 1 时按 CAMPAIGN_MONSTER_LIST_1 三选一（DICE = RAND:3）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  // 原作 CAMPAIGN_1.ERB:201-256 的 6 层 × 3 怪整表（#469 需求审查 3a 指出
+  // 旧用例只抽了 4 格）
+  const TABLE = [
+    [1, [600, 601, 602]],
+    [2, [601, 602, 603]],
+    [3, [603, 604, 605]],
+    [4, [604, 605, 606]],
+    [5, [606, 607, 608]],
+    [6, [607, 608, 609]],
+  ];
+  for (const [floor, ids] of TABLE) {
+    for (const dice of [0, 1, 2]) {
+      assert.equal(
+        await campaign_monster_list(floor, () => dice),
+        ids[dice],
+        `${floor} 层 DICE ${dice}`,
+      );
+    }
+  }
+  assert.equal(await campaign_monster_list(0, () => 0), 0, '未登记楼层恒 0');
+});
+
+test('campaign_monster_list()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 骸骨缺省', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  // 不 load_module('page/page-campaign-1')：族声明空间含 1 但未注册实现，
+  // 命中 DispatchFamily 的合法缺失分支（非拼写错误）
+  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  assert.equal(
+    await campaign_monster_list(1, () => 0),
+    190,
+    'whenMissing 骸骨缺省',
+  );
+});
+
 // —— SOURCE_CHECK_AUTO 接线（#461：真身落在 event/source-check.js，
 //    dungeon-battle.js 的 source_check_auto 只转发事件）——
 

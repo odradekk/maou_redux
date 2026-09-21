@@ -859,6 +859,57 @@ test('SLAVE_TRAP_SET：库存 < 99 补一个、≥ 99 按价换金', async () =>
   );
 });
 
+// —— CAMPAIGN_TRAP（#469 起真身）——
+
+test('campaign_trap()：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_trap } = load(fixture);
+  assert.equal(await campaign_trap(301), 0);
+});
+
+test('campaign_trap()：FLAG:400 = 1 时按 CAMPAIGN_TRAP_1 的映射表返回陷阱 ID', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_trap } = load(fixture);
+  // 原作 CAMPAIGN_1.ERB:126-165 的 SELECTCASE 全表（12 个 CASE，逐行；#469
+  // 需求审查 3a 指出旧用例只抽了 3 行），外加三处空档与段外槽号
+  const CASES = [
+    [301, 60, '2 层落穴'],
+    [302, 60, '3 层落穴'],
+    [303, 82, '4 层攻击阵地'],
+    [304, 82, '5 层攻击阵地'],
+    [305, 78, '6 层火炎放射'],
+    [312, 72, '3 层蜘蛛网'],
+    [313, 72, '4 层蜘蛛网'],
+    [314, 84, '5 层魔法阵地'],
+    [315, 84, '6 层魔法阵地'],
+    [323, 76, '4 层魔力扩散'],
+    [324, 65, '5 层触手床'],
+    [325, 65, '6 层触手床'],
+    [300, 0, 'A 段空档恒 0'],
+    [311, 0, 'B 段空档恒 0'],
+    [320, 0, 'C 段空档恒 0'],
+    [326, 0, '段外槽号恒 0'],
+  ];
+  for (const [trap_num, expected, label] of CASES) {
+    assert.equal(
+      await campaign_trap(trap_num),
+      expected,
+      `${label}（TRAP_NUM ${trap_num}）`,
+    );
+  }
+});
+
+test('campaign_trap()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 原作预置值 0', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  // 不 load_module('page/page-campaign-1')：族声明空间含 1 但未注册实现，
+  // 命中 DispatchFamily 的合法缺失分支（非拼写错误）
+  const { campaign_trap } = load(fixture);
+  assert.equal(await campaign_trap(301), 0, 'whenMissing 原作预置值 0');
+});
+
 // —— 存根清单核对（dungeon-battle.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录 dungeon-trap 的全部存根化调用', () => {

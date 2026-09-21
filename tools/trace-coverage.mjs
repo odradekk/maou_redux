@@ -312,11 +312,14 @@ export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#46
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 11; // #350：GET_TATOO 清单行补回准确源文件；
+export const UNATTRIBUTED_BASELINE = 6; // #350：GET_TATOO 清单行补回准确源文件；
 // #383：CSVCSTR 行（源写「Emuera 内建函数」，三路归因规则都够不着）从
 // 存根改判已实现后不再进入归因扫描，13 → 12（显式改小，非顺手改数字）。
 // #457：BEFORE_AUTOTRAIN 行补回准确源文件（EVENT/EVENT_AUTOTRAIN.ERB:91，
 // 原写「調教相關（自动调教）」够不着任何文件），12 → 11（显式改小）。
+// #469：CAMPAIGN 族清单行重写时「源」列从目录级（侵略/CAMPAIGN/）落回
+// 具体文件（CAMPAIGN_EVENT.ERB 各行号 / DUNGEON.ERB / EQUIP.ERB 调用点），
+// 11 → 6（显式改小，#461 合并态实测）。
 
 /** 文件级「已判定不实现」显式表：推翻裁定 = 改这里（每条注明出处）。 */
 export const RULINGS = [

@@ -19,8 +19,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -115,23 +113,40 @@ test('分发·毒沼：ROOM == 501 时受者吃 CFLAG:0:9 + 10 伤害（:392/:40
   );
 });
 
-test('分发·战役：CFLAG:1 == 12 走 CAMPAIGN_ROOM/EXTRA 存根，无设施效果', async () => {
+test('分发·战役：CFLAG:1 == 12 走 CAMPAIGN_ROOM/EXTRA，FLAG:400 未置位时恒 0', async () => {
   const fixture = setup_world(501);
   fixture.store.set('cflag:1:1', 12);
   const { dungeon_room } = load(fixture);
   const ret = await dungeon_room(1, (n) => 1 % n);
-  assert.equal(ret, 0, '存根房间类型恒 0 → 无设施分发');
-  assert.equal(stub_count(fixture, 'CAMPAIGN_ROOM'), 1, '战役房间存根（:34）');
-  assert.equal(
-    stub_count(fixture, 'CAMPAIGN_ROOM_EXTRA'),
-    1,
-    '战役扩张存根（:37）',
-  );
+  assert.equal(ret, 0, 'FLAG:400 < 1 → CAMPAIGN_ROOM/EXTRA 均恒 0');
   assert.equal(
     fixture.store.get('base:1:0'),
     2000,
     '毒沼不在战役分支里（ROOM = 0，:33-38）',
   );
+});
+
+test('CAMPAIGN_ROOM/CAMPAIGN_ROOM_EXTRA：FLAG:400 = 1 时按楼层派发到 ROOM_1/ROOM_EXTRA_1（#469）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_room_extra } = fixture.load_module('dungeon/dungeon-room');
+  const { campaign_room } = fixture.load_module('dungeon/dungeon');
+  // ROOM_1：楼层 > 3 → 502，否则 0
+  assert.equal(await campaign_room(3), 0);
+  assert.equal(await campaign_room(4), 502);
+  // ROOM_EXTRA_1：楼层 > 4 位 0（+1），> 5 再位 1（+2）
+  assert.equal(await campaign_room_extra(4), 0);
+  assert.equal(await campaign_room_extra(5), 1);
+  assert.equal(await campaign_room_extra(6), 3);
+});
+
+test('CAMPAIGN_ROOM/CAMPAIGN_ROOM_EXTRA：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_room_extra } = fixture.load_module('dungeon/dungeon-room');
+  const { campaign_room } = fixture.load_module('dungeon/dungeon');
+  assert.equal(await campaign_room(4), 0);
+  assert.equal(await campaign_room_extra(6), 0);
 });
 
 test('分发·迎击：CFLAG:1 == 3 转建设（A = ARG:0），不掷店遭遇', async () => {
@@ -801,19 +816,6 @@ test('贯通·迷阵：MASE 的 D:20 写经 ctx 收回侵攻度（:835 ↔ :748�
 });
 
 // —— 存根清单核对（dungeon-trap.test.js 同款）——
-
-test('存根清单可检索：docs/stub-registry.md 收录 dungeon-room 的全部存根化调用', () => {
-  const fixture = create_era_fixture();
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  const names = load(fixture).STUBBED_CALLS;
-  // 只防循环空转，不锁条数：存根被实现掉时这个数只会减，锁下限等于
-  // 给每张实现存根的票设路障（SOP §5 判据 5；#333 已在
-  // dungeon-battle.test.js 踩过一次）。契约是下面那个循环。
-  assert.ok(names.length > 0, '名单为空，下面的循环会空过');
-  for (const name of names) {
-    assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
+// #469 起 dungeon-room.js 的 STUBBED_CALLS 已清空（CAMPAIGN_ROOM_EXTRA
+// 换真身，见上）：清单核对测试随之移除——名单为空时循环本身没有契约
+// 可验证，留着只是形式（SOP §5 判据 5 的精神是防漏登记，不是防清单变短）。
