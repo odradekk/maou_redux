@@ -34,7 +34,10 @@ const { preset_chara_0, preset_chara_17 } = require('./helpers/chara');
 // DAY:1/MONEY 走包装层（flag:10001/10004），TARGET 走指针槽（flag:10005）。
 // initial_slave = FLAG:501（#50：first-setting.js 问答的写入，:19 位置）；
 // 选村娘（1）时追加村娘分支（:95-187）的写入组——原作的序号 1 一律译为
-// 角色 ID 17。
+// 角色 ID 17。#463 起 :19 CALL FIRST_SETTING 全量实现五问：本函数固定用
+// 魔王性别「女性」（跳过肉棒尺寸一问，减少本测试的输入面）+ 狂王性别
+// 「扶她」（与 :15 的暂定值同值，flag:500 因此写两次、值不变）+
+// initial_slave（唯一按参数变化的轴）+ 地下城模式「普通」。
 function expected_init_writes(initial_slave) {
   const writes = [
     // 移植自建（#136 返工）：存读档指针 11 槽初值 -1（见 event-first 的
@@ -47,9 +50,20 @@ function expected_init_writes(initial_slave) {
     // 表槽 0-5（base-1000 打包 232015325431115011 的逐槽拆解，#105 决议四
     // 的数组承载——超 JS 安全整数，整数照搬必失精度）
     { name: 'flag:27', value: [1, 1] }, // :12 种族年龄表槽 6-7（原 001001）
-    { name: 'flag:500', value: 2 }, // :15 狂王初期性别：扶她
-    { name: 'flag:501', value: initial_slave }, // :19 FIRST_SETTING 初期奴隶一问
-    { name: 'flag:502', value: 0 }, // :19 FIRST_SETTING 地下城模式一问（#181，选普通）
+    { name: 'flag:500', value: 2 }, // :15 狂王初期性别：扶她（问答前的暂定值）
+    // :19 CALL FIRST_SETTING（#463 起全量五问，first-setting.js 的
+    // first_setting()）：
+    { name: 'cflag:0:16', value: -1 }, // :784 初吻对象（四个魔王性别分支
+    // 写的都是同一个值，挪到编排层只写一次）
+    // 魔王性别选「女性」（RESULT==1，:867-873）：四个 TALENT 全 0
+    { name: 'talent:0:1', value: 0 },
+    { name: 'talent:0:122', value: 0 },
+    { name: 'talent:0:121', value: 0 },
+    { name: 'talent:0:100', value: 0 },
+    // 女性跳过肉棒尺寸一问（:800 IF MAOUSEX != 1）
+    { name: 'flag:500', value: 2 }, // 狂王性别选「扶她」（第二次写，值不变）
+    { name: 'flag:501', value: initial_slave }, // 初期奴隶一问
+    { name: 'flag:502', value: 0 }, // 地下城模式一问（#181，选普通）
     ...Array.from({ length: 14 }, (_, k) => ({
       name: `flag:${60 + k}`,
       value: -1,
@@ -135,23 +149,116 @@ test('FLAG:26/27 数组承载与原打包值逐槽等价（BigInt 拆解原值 2
   assert.deepEqual(unpack('001001', 2), [1, 1]);
 });
 
+test('que2mk：QUE2MK 恒返回 0（真身，非占位——SYSTEM_MODEINT.ERB:1-2 的真实翻译）', () => {
+  const fixture = create_era_fixture();
+  const { que2mk } = fixture.load_module('event/first-setting');
+  assert.equal(que2mk(), 0);
+});
+
+test('ask_maou_sex：四个分支各自的 TALENT/CFLAG 写入（:860-889）', async () => {
+  const fixture = create_era_fixture();
+  const { ask_maou_sex } = fixture.load_module('event/first-setting');
+  const { chara } = fixture.load_module('facade/chara');
+
+  const cases = [
+    { result: 0, 童贞: 1, 男人: 1, 扶她: 0, 娇小: 0, 未熟: 0 },
+    { result: 1, 童贞: 0, 男人: 0, 扶她: 0, 娇小: 0, 未熟: 0 },
+    { result: 2, 童贞: 1, 男人: 0, 扶她: 1, 娇小: 0, 未熟: 0 },
+    { result: 3, 童贞: 1, 男人: 1, 扶她: 0, 娇小: 1, 未熟: 1 },
+  ];
+  for (const c of cases) {
+    fixture.set_inputs(c.result);
+    const picked = await ask_maou_sex();
+    assert.equal(picked, c.result);
+    assert.equal(chara(0).train.童贞, c.童贞);
+    assert.equal(chara(0).chara.男人, c.男人);
+    assert.equal(chara(0).chara.扶她, c.扶她);
+    assert.equal(chara(0).chara.娇小, c.娇小);
+    assert.equal(chara(0).train.未熟, c.未熟);
+  }
+});
+
+test('ask_maou_sex：越界输入不落笔、重问直到有效值（原作无重试豁免，本切片强制作答）', async () => {
+  const fixture = create_era_fixture();
+  const { ask_maou_sex } = fixture.load_module('event/first-setting');
+  fixture.set_inputs(9, 1); // 9 不是任何已打印按钮的快捷键
+  await assert.rejects(
+    () => ask_maou_sex(),
+    /测试夹具：输入不合法/,
+    '9 不在本轮按钮白名单内，引擎侧不可达（#130），不应被当作有效重问输入消费',
+  );
+});
+
+test('ask_penis_size：0-4 写 chara(0).chara.阴茎的状态（:891-898）', async () => {
+  const fixture = create_era_fixture();
+  const { ask_penis_size } = fixture.load_module('event/first-setting');
+  const { chara } = fixture.load_module('facade/chara');
+  fixture.set_inputs(3);
+  const picked = await ask_penis_size();
+  assert.equal(picked, 3);
+  assert.equal(chara(0).chara.阴茎的状态, 3);
+});
+
+test('ask_kuangwang_sex：0-2 写 game.system.狂王性别（:900-908），走具名门面不裸写 FLAG:500', async () => {
+  const fixture = create_era_fixture();
+  const { ask_kuangwang_sex } = fixture.load_module('event/first-setting');
+  const { game } = fixture.load_module('facade/game');
+  fixture.set_inputs(1);
+  const picked = await ask_kuangwang_sex();
+  assert.equal(picked, 1);
+  assert.equal(game.system.狂王性别, 1);
+  assert(
+    fixture.text_lines().some((t) => t.includes('狂王是支配这个地区的领主')),
+  );
+});
+
+test('first_setting：魔王性别选女性（1）跳过肉棒尺寸一问（:800 IF MAOUSEX != 1）', async () => {
+  const fixture = create_era_fixture();
+  const { first_setting } = fixture.load_module('event/first-setting');
+  // 女性 + 狂王男性 + 初期奴隶随机 + 地下城模式普通——若肉棒尺寸一问被
+  // 误触发，第二个输入 0 会被它消费而非狂王性别，之后的断言会连锁错位
+  fixture.set_inputs(1, 0, 0, 0);
+  await first_setting();
+  assert.equal(
+    fixture.inputs_consumed.filter((e) => e.api === 'input').length,
+    4,
+    '跳过肉棒尺寸后，五问只消费四次输入',
+  );
+  assert.equal(
+    fixture.var_writes.filter((w) => w.name === 'talent:0:318').length,
+    0,
+    '肉棒尺寸一问不应被触发，不应出现任何 talent:0:318 写入',
+  );
+});
+
+test('first_setting：魔王性别选男性（0）会问肉棒尺寸（:800 条件为真）', async () => {
+  const fixture = create_era_fixture();
+  const { first_setting } = fixture.load_module('event/first-setting');
+  fixture.set_inputs(0, 2, 0, 0, 0); // 男性 + 肉棒尺寸短小包茎 + 狂王男性 + 随机 + 普通
+  await first_setting();
+  const { chara } = fixture.load_module('facade/chara');
+  assert.equal(chara(0).chara.阴茎的状态, 2);
+});
+
 test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转向 SHOP 渲染主菜单', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   // 严格夹具：角色 0/17 都要有预设才加得进（#35 镜像的引擎守卫）
   preset_chara_0(fixture);
   preset_chara_17(fixture);
-  // 四次输入：标题「新的猎物」、初期奴隶问答「村娘」、地下城模式「普通」
-  // （#181 加的一问）、搬运方式「抱起来」
-  fixture.set_inputs(1, 1, 0, 1);
+  // 六次输入：标题「新的猎物」、魔王性别「女性」（跳过肉棒尺寸一问）、
+  // 狂王性别「扶她」、初期奴隶问答「村娘」、地下城模式「普通」（#181 加的
+  // 一问）、搬运方式「抱起来」
+  fixture.set_inputs(1, 1, 2, 1, 0, 1);
   const main = fixture.load_module('main');
 
   // 流程：标题消费输入 1（resetData + 加入角色 0 + 专属初始化）→ BEGIN
-  // FIRST → @EVENTFIRST 真身：初期奴隶问答（输入 1）→ 地下城模式问答
-  // （输入 0，#181 加的一问）→ 直线赋值、开场叙事（:91 读键）→ 村娘分支：
-  // 加入角色 17、CFLAG 一组、描写（读键）、搬运二选一（输入 1）、囚禁播报
-  // （读键）→ BEGIN SHOP → 主循环进 SHOP：绘制主菜单 → era.input() 输入
-  // 耗尽抛错到站。
+  // FIRST → @EVENTFIRST 真身：FIRST_SETTING 五问（魔王性别「女性」→ 跳过
+  // 肉棒尺寸 → 狂王性别「扶她」→ 初期奴隶「村娘」→ 地下城模式「普通」，
+  // #463 全量实现）→ 直线赋值、开场叙事（:91 读键）→ 村娘分支：加入角色
+  // 17、CFLAG 一组、描写（读键）、搬运二选一（输入 1）、囚禁播报（读键）
+  // → BEGIN SHOP → 主循环进 SHOP：绘制主菜单 → era.input() 输入耗尽抛错
+  // 到站。
   await assert.rejects(() => main(), /预置输入已耗尽/);
 
   // 新游戏四件套（标题侧）+ 村娘（#50）：清档后已加入 [0, 17]
@@ -167,8 +274,10 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   // 前抛错，不记入已消费）：:91 开场叙事 1 次、村娘分支 :96-100 五次、
   // :126-129 四次、抱起分支 :138-142 五次、:175 囚禁播报 1 次
   assert.deepEqual(fixture.inputs_consumed, [
-    { api: 'input', value: 1 },
-    { api: 'input', value: 1 },
+    { api: 'input', value: 1 }, // 标题「新的猎物」
+    { api: 'input', value: 1 }, // 魔王性别「女性」（跳过肉棒尺寸一问）
+    { api: 'input', value: 2 }, // 狂王性别「扶她」
+    { api: 'input', value: 1 }, // 初期奴隶「村娘」
     { api: 'input', value: 0 }, // #181 地下城模式一问（普通）
     ...Array.from({ length: 1 }, () => ({ api: 'waitAnyKey' })),
     ...Array.from({ length: 5 }, () => ({ api: 'waitAnyKey' })),
@@ -190,15 +299,15 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     fixture.var_reads.some((r) => r.name === 'namelistkeys'),
     'EVENTFIRST 链必须真的调用了 chara_name_init',
   );
-  for (const name of [
-    'FIRST_SETTING', // 其余各问的占位（first-setting.js 打印）
-    'CHARA_NAME_DEFINE', // 村娘分支内，#50 起可达
-  ]) {
-    assert(
-      texts.some((line) => line.includes(`@${name}`)),
-      `存根 ${name} 必须打印含函数名的占位行`,
-    );
-  }
+  // FIRST_SETTING 自 #463 起五问全部落地，first-setting.js 不再打占位行
+  assert(
+    !texts.some((line) => line.includes('@FIRST_SETTING')),
+    'FIRST_SETTING 已全量实现，不得再出现存根占位行',
+  );
+  assert(
+    texts.some((line) => line.includes('@CHARA_NAME_DEFINE')),
+    '存根 CHARA_NAME_DEFINE 必须打印含函数名的占位行（村娘分支内，#50 起可达）',
+  );
   // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/chara/chara-body.js）：
   // 判据从占位行改为 CFLAG:17:451-457 的落盘（本用例不注入随机源，只断言
   // 写入发生；逐值与全量写入断言在下方两条「初始化写入」用例里）
@@ -301,7 +410,9 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  fixture.set_inputs(0, 0); // 问答：随机 + 普通（#181 的第二问）
+  // 六次问答：魔王性别「女性」（跳过肉棒尺寸）+ 狂王性别「扶她」+
+  // 初期奴隶「随机」+ 地下城模式「普通」（#181 的第二问）
+  fixture.set_inputs(1, 2, 0, 0);
   const pending = await emit('EVENTFIRST');
 
   // 出口：随机路径的共用出口 :231 BEGIN SHOP
@@ -317,8 +428,8 @@ test('初始化写入（随机）：问答选 0 后与原作开局值逐项一�
     '11 个存读档指针槽必须初始化为 -1（登记后 fillData 补 0 会冒充 0 号槽）',
   );
   assert.deepEqual(fixture.var_writes, expected_init_writes(0));
-  // 存根清单核对用的导出（FIRST_SETTING 移交 first-setting.js 的
-  // 部分实现，村娘分支的两个存根自 #50 起在可达路径上）
+  // 存根清单核对用的导出（FIRST_SETTING 自 #463 起全量实现、不再存根化，
+  // 村娘分支的 CHARA_NAME_DEFINE 自 #50 起在可达路径上）
   assert.deepEqual(STUBBED_CALLS, ['RAND_CHARA_MAKE', 'CHARA_NAME_DEFINE']);
 });
 
@@ -332,8 +443,9 @@ test('初始化写入（村娘）：CFLAG 一组 1:1 落在角色 ID 17 上（�
   // 恒 0）把九个身体数据写入钉成定值（算式见 expected_init_writes 的注释）
   fixture.override_math_random(() => 0);
   try {
-    // 三次输入：问答「村娘」、地下城模式「普通」（#181 的第二问）、搬运「抱起来」
-    fixture.set_inputs(1, 0, 1);
+    // 五次输入：魔王性别「女性」（跳过肉棒尺寸）、狂王性别「扶她」、问答
+    // 「村娘」、地下城模式「普通」（#181 的第二问）、搬运「抱起来」
+    fixture.set_inputs(1, 2, 1, 0, 1);
     const pending = await emit('EVENTFIRST');
 
     // 出口：村娘分支自己的 :187 BEGIN SHOP
@@ -355,7 +467,7 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
   preset_chara_17(fixture);
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
-  fixture.set_inputs(1, 0, 1); // 村娘 + 普通（#181 第二问）+ 搬运默认走完
+  fixture.set_inputs(1, 2, 1, 0, 1); // 女性 + 扶她 + 村娘 + 普通（#181 第二问）+ 搬运默认走完
   // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，村娘加入后世界才是
   // 原作语境的 [0, 17]——序号 1 恰好指向村娘
   fixture.era.addCharacter(0);
@@ -385,23 +497,27 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  // 原作用例曾先喂 9（越界）验证重问。问答每轮重印 [0]/[1] 按钮，引擎的
-  // input() 只送达已打印按钮的快捷键，9 在渲染层被弹回——重问分支是引擎
-  // 死路径，此处只走有效输入
-  fixture.set_inputs(0, 0); // 初期奴隶「随机」+ 地下城模式「普通」（#181 第二问）
+  // 原作用例曾先喂 9（越界）验证重问。问答每轮重印按钮，引擎的 input()
+  // 只送达已打印按钮的快捷键，越界值在渲染层被弹回——重问分支是引擎死
+  // 路径，此处只走有效输入。魔王性别选男性（0）以同时覆盖肉棒尺寸一问
+  // （0 = 普通阴茎），狂王性别选男性（0）
+  fixture.set_inputs(0, 0, 0, 0, 0); // 男性 + 普通阴茎 + 男性 + 随机 + 普通
   const pending = await emit('EVENTFIRST');
 
   assert.deepEqual(
     fixture.inputs_consumed.filter((e) => e.api === 'input'),
     [
-      { api: 'input', value: 0 },
-      { api: 'input', value: 0 },
+      { api: 'input', value: 0 }, // 魔王性别「男性」
+      { api: 'input', value: 0 }, // 肉棒尺寸「普通阴茎」（男性不跳过）
+      { api: 'input', value: 0 }, // 狂王性别「男性」
+      { api: 'input', value: 0 }, // 初期奴隶「随机」
+      { api: 'input', value: 0 }, // 地下城模式「普通」
     ],
   );
   const question_rounds = fixture.lines.filter(
     (line) => line.type === 'button' && line.accelerator === 0,
   );
-  assert.equal(question_rounds.length, 2, '两问各渲染一轮（奴隶 + 模式）');
+  assert.equal(question_rounds.length, 5, '五问各渲染一轮');
   assert.equal(fixture.store.get('flag:501'), 0);
   // 选 0 走随机路径：共用出口
   assert.equal(pending, STATE.SHOP);
@@ -412,19 +528,21 @@ test('搬运方式：拖拽分支与抱起分支输出不同，无效输入重�
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
 
-  // 村娘 → 地下城模式普通（#181 第二问）→ 搬运方式选 2 拖拽。原作用例
-  // 曾在中间喂越界的 3 验证 GOTO 重问：搬运画面只印一次 [1]/[2]，引擎的
-  // input() 只送达已打印按钮的快捷键，3 在渲染层被弹回——重问分支是引擎
-  // 死路径（#130），此处只走有效输入
-  fixture.set_inputs(1, 0, 2);
+  // 女性（跳过肉棒尺寸）→ 狂王性别扶她 → 村娘 → 地下城模式普通（#181 第二问）
+  // → 搬运方式选 2 拖拽。原作用例曾在中间喂越界的 3 验证 GOTO 重问：搬运
+  // 画面只印一次 [1]/[2]，引擎的 input() 只送达已打印按钮的快捷键，3 在
+  // 渲染层被弹回——重问分支是引擎死路径（#130），此处只走有效输入
+  fixture.set_inputs(1, 2, 1, 0, 2);
   await emit('EVENTFIRST');
 
   assert.deepEqual(
     fixture.inputs_consumed.filter((e) => e.api === 'input'),
     [
-      { api: 'input', value: 1 },
-      { api: 'input', value: 0 },
-      { api: 'input', value: 2 },
+      { api: 'input', value: 1 }, // 魔王性别「女性」
+      { api: 'input', value: 2 }, // 狂王性别「扶她」
+      { api: 'input', value: 1 }, // 初期奴隶「村娘」
+      { api: 'input', value: 0 }, // 地下城模式「普通」
+      { api: 'input', value: 2 }, // 搬运方式「拖拽」
     ],
   );
 
@@ -454,9 +572,9 @@ test('era-flag 包装层：月份/所持金的底层寻址钉在 yml/Flag.yml �
 test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('event/event-first');
-  const { STUBBED_CALLS: SETTING_STUBS } = fixture.load_module(
-    'event/first-setting',
-  );
+  // first-setting.js 自 #463 起五问全量实现，不再导出 STUBBED_CALLS
+  // （无存根可核对——FIRST_SETTING 整体已从存根清单的运行时占位转已实现，
+  // 见 docs/stub-registry.md 对应行）
   const registry_path = path.resolve(
     __dirname,
     '..',
@@ -465,8 +583,8 @@ test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用'
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
 
-  // 两处存根名单必须在清单里（删清单行或删存根不同步，都会在这里红）
-  for (const name of [...STUBBED_CALLS, ...SETTING_STUBS]) {
+  // 存根名单必须在清单里（删清单行或删存根不同步，都会在这里红）
+  for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
   // 工单指出的优先项 + 既有存根（page-title 的读档）也必须可检索

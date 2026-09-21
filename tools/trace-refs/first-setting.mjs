@@ -1,25 +1,41 @@
 // 源: tools/trace-check.mjs  @FILES/@LOG_REFS/@SAMPLE_LOG_REFS
 // issue #290 按 js 文件拆出：first-setting.mjs
+// issue #463：魔王性别/肉棒尺寸/狂王性别/QUE2MK/编排层五问全量登记，
+// 同步清理 #290 迁移时遗留的三条失配注册（919/921/923，从未有对应引用）。
 
 export const FILES = [
-  // —— #181 H12 2D 地下城（新增引用，该文件其余引用见豁免表）：ere/event/first-setting.js ——
   {
     js: 'ere/event/first-setting.js',
     refs: [
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '16-17',
-        any: [/;初期奴隷の初期値は村娘/],
+        ref: '781-950',
+        any: [/^\s*@FIRST_SETTING\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '781-935',
-        any: [/@FIRST_SETTING/],
+        ref: '787-941',
+        any: [/^\s*\$INPUT_LOOP\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '787-864',
-        any: [/\$INPUT_LOOP/],
+        ref: '784',
+        any: [/^\s*CFLAG:0:16 = -1\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '785',
+        any: [/^\s*CALL QUE2MK\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '786',
+        any: [/^\s*IF !RESULT\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '800',
+        any: [/^\s*IF MAOUSEX != 1\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
@@ -28,13 +44,30 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '909-915',
-        any: [/ELSEIF RESULT == 3/],
+        ref: '841',
+        any: [
+          /^\s*;PRINT\s+\[7\]\s+开发者的自娱自乐模式\s+\[锐意制作中\]\s+：\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '911',
-        any: [/	;初期奴隷/],
+        ref: '855-889',
+        any: [/^\s*;魔王の性別\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '891-898',
+        any: [/^\s*;チンボのサイズ\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '900-908',
+        any: [/^\s*;狂王の性別\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '910-916',
+        any: [/^\s*ELSEIF RESULT == 3\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
@@ -43,23 +76,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '913',
-        any: [/	INPUT/],
-      },
-      {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '914-915',
-        any: [/	SIF RESULT >= 0 && RESULT <= 1/],
-      },
-      {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
         ref: '918-924',
         any: [/ELSEIF RESULT == 4/],
-      },
-      {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '919',
-        any: [/	;モード/],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
@@ -68,18 +86,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '921',
-        any: [/	INPUT/],
-      },
-      {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '923',
-        any: [/	SIF RESULT >= 0 && RESULT <= 1/],
-      },
-      {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
         ref: '924',
         any: [/		FLAG:502 = RESULT/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '942',
+        any: [/^\s*ELSEIF RESULT\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_MODEINT.ERB',
+        ref: '1-2',
+        any: [/^\s*@QUE2MK\s*$/m],
       },
     ],
   },

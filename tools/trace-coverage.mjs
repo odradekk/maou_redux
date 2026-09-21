@@ -121,13 +121,27 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 36; // 合并态实测（#463 并上 master）：
+export const PENDING_BASELINE = 35; // 合并态实测（#463 并上 master，两次落地）：
+// 本票分两阶段落地。阶段一：SYSTEM/CONFIG.ERB 落地真身（ere/page/page-config.js，
+// 8 个函数全部移植 + 追溯锚表 tools/trace-refs/page-config.mjs）使该文件从
+// 「部分移植/待移植」转「已移植」：37（master）− 1 = 36。阶段二：
+// SYSTEM/SYSTEM_MODEINT.ERB 落地真身（@QUE2MK 恒 0，ere/event/first-setting.js
+// 的 que2mk）使该文件同样转「已移植」：36 − 1 = 35，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+// SYSTEM ver1.0.3.ERB 本票一并从「部分移植」翻「已移植」（六个函数全部了结：
+// EVENTFIRST／EVENTTURNEND 三档／EVENTLOAD 早已落地，FIRST_SETTING 五问本票
+// 全量实现，SAVEINFO 随 #136，MONEYSYS 全库零调用点判死不移植，见
+// docs/stub-registry.md 的 EX_FLAG:4444 行），但部分移植不在待移植分子里，
+// 不动本数（同 #399 的 SHOP_CHARA 先例）。此前卡判定的 EVENTTURNEND（普通档）
+// 行是 #114 建表时的七格畸形行，行尾「登记（尚未接入）」被按末格读成状态、
+// 而 TURNEND 分派 #44 起就在 main-loop.js——#463 清掉过期格后文件翻面。
+// export const PENDING_BASELINE = 36; // 合并态实测（#463 阶段一，并上 master）：
 // SYSTEM/CONFIG.ERB 落地真身（ere/page/page-config.js，8 个函数全部移植 +
 // 追溯锚表 tools/trace-refs/page-config.mjs）使该文件从「部分移植/待移植」
 // 转「已移植」：37（master）− 1 = 36，与
 // `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
 // 同票范围内的 SYSTEM/SYSTEM_MODEINT.ERB 仍是「待移植」（@QUE2MK 随
-// first-setting.js 落地，另一张票的收尾）、SYSTEM ver1.0.3.ERB 仍是
+// first-setting.js 落地，同票阶段二的收尾）、SYSTEM ver1.0.3.ERB 仍是
 // 「部分移植」（@FIRST_SETTING 与 @MONEYSYS 残余同上），均不动本数。
 // export const PENDING_BASELINE = 37; // 合并态实测（#464 并上含 #460 的 master）：
 // 47（#460 后的 master）− 10（本票的 ABL/ABLUP0.ERB～ABLUP9.ERB 十个文件）
