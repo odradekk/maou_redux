@@ -76,9 +76,11 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
   );
 });
 
-test('分发：该列无怪（数量 0）时凌辱类型就地清零，不打印也不调旁白', async () => {
+test('分发：全灭回退到骷髅 190（凌辱类型 0）时不打印开场行、也不调旁白', async () => {
   const fixture = create_era_fixture();
-  // 不持有 110 → MONSTER_DATA 的「全滅」早退把它换成 190 骷髅（凌辱类型 0）
+  // 不持有 110 → MONSTER_DATA 的「全滅」早退把它换成 190 骷髅（凌辱类型 0），
+  // 本用例覆盖的就是这条回退路径；就地清零守卫在 ere 侧不可达（依据见
+  // invasion-ravish.js 文件头），没有用例守着它。
   const mod = fixture.load_module('invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
   assert.equal(r, 0);

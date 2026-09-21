@@ -465,17 +465,20 @@ export default [
   {
     desc: 'M8032 RAND_CHARA_MAKE 的收下分支不再清 CFLAG:1',
     file: 'ere/chara/chara-make.js',
-    find: '      chara(count() - 1).invasion.状态 = 0; // :180 CFLAG:1 初始位置',
+    find: '      chara(newchara).invasion.状态 = 0; // :180 CFLAG:1 初始位置',
     replace:
-      '      chara(count() - 1).invasion.状态 = 2; // :180 CFLAG:1 初始位置',
+      '      chara(newchara).invasion.状态 = 2; // :180 CFLAG:1 初始位置',
     tests: ['chara-name'],
     must_mention: 'CFLAG:1 归零',
   },
   {
-    desc: 'M8033 RAND_CHARA_MAKE 的 CHARANUM-1 返回值多减一',
+    // #487 起靶代码从 `count() - 1` 改成新角色的角色号（newchara），
+    // 「多减一」随之落在这个局部量上
+    desc: 'M8033 RAND_CHARA_MAKE 的新角色号返回时多减一',
     file: 'ere/chara/chara-make.js',
-    find: '      return count() - 1; // :194 RETURN (CHARANUM - 1)',
-    replace: '      return count() - 2; // :194 RETURN (CHARANUM - 1)',
+    find: '      return newchara; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
+    replace:
+      '      return newchara - 1; // :194 RETURN (CHARANUM - 1)（= 角色号，见函数头）',
     tests: ['chara-name'],
     must_mention: 'RETURN CHARANUM-1',
   },

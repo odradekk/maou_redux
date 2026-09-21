@@ -440,25 +440,58 @@ test('CHOOSE_CHARASTERISTIC 用的是按钮（原作 :103 是 PRINTFORM，不是
 
 test('接入：rand_chara_make 的形象确认段走真身，性格与发色被写上', async () => {
   const fixture = create_era_fixture();
-  // 魔王 0 先在场：rand_chara_make 的新角色号取「已加入数 - 1」（源 CHARANUM-1），
-  // 场上只有勇者 1 时那个数是 0、写不到 1 号身上
+  // 编制**不连号**（#487）：魔王 0 与勇者 9 先在场，掷中的勇者位是 3。
+  // 招募后 CHARANUM = 3 →「已加入数 - 1」= 2 ≠ 3——按人数取新角色号的旧写法
+  // 会写到 2 号身上，本用例因此能区分「角色号」与「人数」
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
-  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
-  fixture.store.set('cflag:1:6', 99); // 名字编号：避让随机命名的重掷
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9);
+  fixture.seed_chara(3, { id: 3, name: '勇者3', callname: '勇者3' });
+  fixture.store.set('cflag:3:6', 99); // 名字编号：避让随机命名的重掷
   // @RAND_CHARA_MAKE 的两处 INPUT：:107 形象确认（100 = 继续）→ :158 收下（2）
   const answers = [100, 2];
   let asked = 0;
   fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
   const { rand_chara_make } = fixture.load_module('chara/chara-make');
-  // RAND 恒 0：位号掷中 1、性格掷中表内第 0 项（160）、发色掷中 11（粉发）
+  // :52 的位号掷骰（上界 16）只命中第一次、给 2（位号 3）；其余随机恒 0：
+  // 性格掷中表内第 0 项（160）、发色掷中 11（粉发）
+  let rolled = false;
   await rand_chara_make(
-    () => 0,
+    (n) => {
+      if (n === 16 && !rolled) {
+        rolled = true;
+        return 2;
+      }
+      return 0;
+    },
     () => Promise.resolve(0),
   );
 
-  assert.equal(fixture.store.get('talent:1:160'), 1, '性格落在表内第 0 项');
-  assert.equal(fixture.store.get('talent:1:300'), 11, '发色 = 11（粉发）');
+  assert.equal(fixture.store.get('talent:3:160'), 1, '性格落在表内第 0 项');
+  assert.equal(fixture.store.get('talent:3:300'), 11, '发色 = 11（粉发）');
+  assert.equal(
+    fixture.store.get('talent:2:160'),
+    undefined,
+    '不写到「人数 - 1」的 2 号（#487）',
+  );
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [0, 3, 9],
+    '新加入的是掷中的 3 号',
+  );
+  // :173-178 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
+  // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
+  const recruit_name = fixture.store.get('callname:3:-1');
+  assert.ok(recruit_name, '新加入的 3 号有称呼');
+  assert.ok(
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'text' &&
+        line.text === `冒险者${recruit_name}被囚禁在了地牢里！`,
+    ),
+    ':173-178 收下播报点名新加入的 3 号（源 SAVESTR:(CHARANUM-1)）',
+  );
   const placeholders = [
     'SET_CHARASTERISTIC',
     'SET_HAIRCOLOR',

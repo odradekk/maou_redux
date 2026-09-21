@@ -38,6 +38,12 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
   fixture.era.addCharacter(0);
   fixture.store.set('base:0:1', 100000); // 气力充裕（招募消耗 + 战役每日 -10）
   fixture.store.set('maxbase:0:1', 100000);
+  // 编制**不连号**（#487）：0 号魔王之外再放一位 9 号。rand_chara_make 的
+  // :52 CHARA = RAND(1,17) 恒 1 → 掷中的勇者位是 1，招募后 CHARANUM = 3
+  // →「已加入数 - 1」= 2 ≠ 1：按人数取新角色号的旧写法写不到 1 号身上，
+  // 下面的招募素质位与派遣断言因此能区分「角色号」与「人数」
+  fixture.seed_chara(9, { id: 9, name: '杂役', callname: '杂役' });
+  fixture.era.addCharacter(9);
   // 待招募的预设角色（rand_chara_make 的 :52 CHARA = RAND(1,17) 恒 1）
   fixture.seed_chara(1, { id: 1, name: '候补者', callname: '候补者' });
   fixture.store.set('cflag:1:6', 99); // 名字编号：避让随机命名重掷
@@ -61,6 +67,18 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
     texts(fixture).some((t) => t.includes('极东之地')),
     'CAMPAIGN_SET_1 的开场白',
   );
+  // 招募的收尾（rand_chara_make 的返回值）必须是**角色号 1**：#487 之前按
+  // 「已加入数 - 1」取号，这里会落到 2 号（既不是候选角色、也不在编制里）
+  assert.equal(
+    fixture.store.get('talent:1:361'),
+    1,
+    '招募素质位点亮在 1 号身上（角色号 1 ≠ 人数 - 1 = 2）',
+  );
+  assert.equal(
+    fixture.store.get('talent:2:361'),
+    undefined,
+    '不写到「人数 - 1」的 2 号',
+  );
 
   // rand_chara_make 走 CM_BASE 时按角色数据随机生成体力/气力，未必落在
   // 「不算临死」的门槛之上，且 run_dungeon 的战斗（H6 真身）会消耗气力——
@@ -73,8 +91,9 @@ test('战役 1 全链：CAMPAIGN_MENU 招募/派遣 → run_dungeon 真实推进
   fixture.store.set('maxbase:1:1', 100000);
 
   // —— 第二段：CAMPAIGN_MENU 里派遣刚招募的角色 ——
-  // [2] 派遣 → 候补者的角色 ID 是 count()-1 = 1（魔王 0 之后新增的第一位）
-  // → 派遣列表选 [1] → 派遣成功后子循环重画列表，[999] 退出派遣子菜单；
+  // [2] 派遣 → 候补者的角色号是 1（掷中的勇者位，不是「第几位加入」）
+  // → 派遣列表按钮的快捷键就是角色号，选 [1] → 派遣成功后子循环重画列表，
+  // [999] 退出派遣子菜单；
   // 随后 [999] 退出战役主菜单
   fixture.set_inputs(2, 1, 999, 999);
   await campaign_menu(() => 0);

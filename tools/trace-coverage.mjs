@@ -121,13 +121,29 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 18; // 合并态实测（#467 并上含 #470/#469 的 master）：
+export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#487 的 master cf3b5d9）：
+// 先把现役值换成 999 占位再跑 `node tools/trace-check.mjs --coverage`，实测 10；
+// master 侧现役 15（#466 的 23 → 15）− 本票的 5（ABL/ABLUP37.ERB／ABLUP39.ERB／
+// ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB）= 10，与重测一致——数字取自重测，
+// 既不相加也不取一侧。本票还把 ABLUP0～ABLUP100 伞状行整行删除（#466 合并后
+// 该行剩的五个名字就是本票的），ABLUP0.ERB 随之从「部分移植」翻「已移植」
+// （部分移植不在待移植分子里，不动本数）。
+// export const PENDING_BASELINE = 999; // 合并态重测用的占位（#467 合并时）
+// export const PENDING_BASELINE = 18; // 合并态实测（#467 并上含 #470/#469 的 master）：
 // 23（#470 后的 master，见下方 #470 说明）− 5（本票的 ABL/ABLUP37.ERB／
 // ABLUP39.ERB／ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB 五个文件）= 18，与
 // `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
 // 同票不清 ABLUP0.ERB 与 ABLUP20～33：ABL.ERB 自己的三条归因（@DECIDE_ABLUP
 // 族、@AUTO_ABLUP、@USERABLUP）已在本票清了，ABL 目录实测 已移植 23／
 // 部分移植 1（ABLUP0.ERB，伞状行仍挂着 #466 的 8 个名字）／待移植 8。
+// export const PENDING_BASELINE = 15; // 合并态实测（#466 并上含 #470/#469 的 master 94e2da8）：
+// master 侧的 23（#470：侵略/ARCANA_BATTLE.ERB、ARCANA_FORT.ERB、
+// INVASION_RYOUZYOKU.ERB 三个转「已移植」、GROUP_BATTLE.ERB 转「已判定不实现」，
+// 见下方旧注）− 本票的 8（ABL/ABLUP20.ERB～ABLUP23.ERB、ABLUP30.ERB～
+// ABLUP33.ERB）= 15，与 `node tools/trace-check.mjs --coverage` 的重测一致——
+// 合并时先把现役值换成 999 占位再跑，数字取自重测而非相加；两票各减各的文件，
+// 既不相加也不取一侧。同一次合并把「归因不到」从 6 顶到 12 的是存根清单解冲突
+// 过程中的中间态，落回 6，UNATTRIBUTED_BASELINE 不动。
 // export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463/#481 的 master）：
 // 再并一次 master（#481 / 3a02bbe）后重测仍是 23——#469 把 CAMPAIGN 族做进 ere/
 // 时，侵略/CAMPAIGN/CAMPAIGN_1.ERB 与 CAMPAIGN_EVENT.ERB 在本票的基线里本就已经
@@ -146,6 +162,14 @@ export const PENDING_BASELINE = 18; // 合并态实测（#467 并上含 #470/#46
 // `node tools/trace-check.mjs --coverage` 的重测一致（数字取自重测而非
 // 相加——本票分支侧的中间值 28 是在 master 仍是 29 时按「29 − 1」测出来的，
 // master 前进后三项都在，见下方旧注）。
+// export const PENDING_BASELINE = 19; // 合并态实测（#466 并上含 #462/#463 的 master 7c3b040）：
+// 27（#463 后的 master）− 8（本票的 ABL/ABLUP20.ERB～ABLUP23.ERB、
+// ABLUP30.ERB～ABLUP33.ERB 八个文件）= 19，与
+// `node tools/trace-check.mjs --coverage` 的重测一致——合并时先把现役值换成
+// 999 占位再跑，数字取自重测而非相加（#462/#463 先落 master，沿分支上的 21
+// 提交会把两侧的成果白送回去）。开 PR 前又并了一次 master（#469，3a02bbe）：
+// 那张票把 ABLUP 之外的 2 个文件从「部分移植」翻「已移植」，**不动待移植分子**
+// （部分移植不在分母里），重测仍为 19，故不再改写数值。
 // export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#462 的 master）：
 // #465 先把基线抬到 29（37−8，ABL/ABLUP10.ERB～ABLUP17.ERB）；本票再减 2
 // （SYSTEM/CONFIG.ERB 落地真身 ere/page/page-config.js、SYSTEM/

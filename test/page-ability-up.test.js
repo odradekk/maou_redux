@@ -372,7 +372,7 @@ test('ABILITY_UP：魔王自己（输入 0）也进 CORE', async () => {
 
 // —— @ABILITY_UP_CORE ——
 
-test('ABILITY_UP_CORE：ABLUP 已落真身的编号走真实判定而非占位', async () => {
+test('ABILITY_UP_CORE：已接真身的 ABLUP 全部走真实判定而非占位（#464/#465/#466/#467）', async () => {
   const { ABLUP_HANDLERS } = create_era_fixture().load_module(
     'system/train/juel-check',
   );
@@ -392,6 +392,9 @@ test('ABILITY_UP_CORE：ABLUP 已落真身的编号走真实判定而非占位',
       // （page-ablup.js:92-101）
       fixture.store.set('cstr:1:7', '舔');
     }
+    if (id === 23) {
+      fixture.store.set('talent:1:122', 1); // 断背气质按钮仅男性渲染（:44-48 性别过滤）
+    }
     // 选中能力 → （能力自身的 [100] 放弃）→ 退出。[99] 是例外：无刻印时
     // 反抗刻印消去走「打印 + WAIT」早退（ABLUP99.ERB:28-32），没有子菜单。
     // 夹具的 waitAnyKey 不取输入队列（既定桩策略），所以那一趟不需要 [100]
@@ -406,42 +409,28 @@ test('ABILITY_UP_CORE：ABLUP 已落真身的编号走真实判定而非占位',
   }
 });
 
-test('ABILITY_UP_CORE：ABLUP 分发表整表驱动（剩余 8 支各回一次占位，不退出循环）', async () => {
-  const { ABLUP_IDS, ABLUP_HANDLERS } = create_era_fixture().load_module(
-    'system/train/juel-check',
-  );
+test('ABILITY_UP_CORE：ABLUP 分发表覆盖全部可达编号（只剩 [100] 不可达）', async () => {
+  const { ABLUP_IDS, ABLUP_HANDLERS, STUBBED_ABLUP_NAMES } =
+    create_era_fixture().load_module('system/train/juel-check');
+  // #467 起 0-17/20-23/30-33/37/39/40/99/100 全部落真身，分发表之外没有任何
+  // 编号会落到占位分支（[100] 也在表内，只是它的按钮来自原作 `[IF_DEBUG]`
+  // 块、ere 侧不渲染 → 经输入通道不可达）
+  assert.deepEqual(STUBBED_ABLUP_NAMES, []);
   for (const id of ABLUP_IDS) {
-    if (id === 100 || id in ABLUP_HANDLERS) {
-      // [100] 异界综合征的按钮来自原作的 `[IF_DEBUG]` 块（page-ablup.js 的
-      // 文件头：调试编译块不移植），ere 侧没有这个按钮 → RESULT == 100 的
-      // 分支经输入通道不可达，见文件头不可达支说明。ABLUP_HANDLERS 覆盖的
-      // 编号（issue #464）已落真身，上一条用例单独覆盖，这里跳过
-      continue;
-    }
-    const fixture = create_era_fixture();
-    add_chara(fixture, 0, '你');
-    add_chara(fixture, 1, '玛奥');
-    fixture.store.set('base:1:0', 1);
-    if (id === 40) {
-      // 局部中毒只在 CSTR:7 定制后由 @SHOW_ABLUP_SELECT 渲染出按钮
-      // （page-ablup.js:92-101），否则输入通道到不了这一支（局部感觉 [4]
-      // 同样受此限制，但已随 issue #464 落真身，见上一条用例）
-      fixture.store.set('cstr:1:7', '舔');
-    }
-    if (id === 23) {
-      // [23] 断背气质只对男性角色渲染（page-ablup.js:44-48 的性别过滤），
-      // 名字也随性别换（ホモっ気）；女性档下这个按钮不存在
-      fixture.store.set('talent:1:122', 1);
-    }
-    fixture.set_inputs(id, 999);
-    const { ability_up_core } = fixture.load_module('page/page-ability-up');
-    const ret = await ability_up_core(1);
-    assert.equal(ret, 0, `ABLUP${id} 之后 [999] 正常结束`);
     assert.ok(
-      fixture.text_lines().some((t) => t.includes(`@ABLUP${id}`)),
-      `ABLUP${id} 应打一行带原作函数名的占位`,
+      id in ABLUP_HANDLERS || id === 100,
+      `ABLUP${id} 既不在分发表、也不是不可达的 [100]`,
     );
   }
+
+  // 不可达的 [100] 真的喂不进去：引擎层直接拒收（夹具同款校验）
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '玛奥');
+  fixture.store.set('base:1:0', 1);
+  fixture.set_inputs(100, 999);
+  const { ability_up_core } = fixture.load_module('page/page-ability-up');
+  await assert.rejects(() => ability_up_core(1), /输入不合法/);
 });
 
 test('ABILITY_UP_CORE：999 收尾三件（欲情变化检查真身 → 出售资格复核 → 还原 TARGET）', async () => {
