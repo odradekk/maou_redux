@@ -972,6 +972,8 @@ test('campaign_slave=true：:55 存在性判定被绕过，已占用的勇者位
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制**不连号**（#487）：招募后 CHARANUM = 3
   fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
   fixture.era.addCharacter(1); // chara_id=1 提前已注册
   fixture.store.set('cflag:1:6', 99);
@@ -985,6 +987,12 @@ test('campaign_slave=true：:55 存在性判定被绕过，已占用的勇者位
     true,
   );
   assert.notEqual(result, 0, '战役招募绕过占用判定，照常成功');
+  assert.equal(
+    result,
+    1,
+    '返回掷中的角色号 1，不是「已加入数 - 1」= 2（#487）',
+  );
+  assert.equal(fixture.store.get('cflag:1:1'), 0, ':180 写的是 1 号');
   assert(
     !stub_texts(fixture).some((t) => t.includes('由于对魔王的恐惧')),
     '不应落空',
@@ -1010,6 +1018,8 @@ test('campaign_slave=true 且选 [3] 算了不选了：删除角色、直接返�
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9); // 编制**不连号**（#487）：招募后 CHARANUM = 3
   fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
   fixture.store.set('cflag:1:6', 99);
   const answers = [100, 3];
@@ -1032,7 +1042,7 @@ test('campaign_slave=true 且选 [3] 算了不选了：删除角色、直接返�
   assert.equal(
     fixture.era.getAddedCharacters().includes(1),
     false,
-    ':166 DELCHARA 已把角色移除',
+    ':166 DELCHARA 删掉的是刚招募的 1 号（角色号，不是「已加入数 - 1」= 2）',
   );
 });
 
