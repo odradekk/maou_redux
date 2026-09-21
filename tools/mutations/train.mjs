@@ -8762,8 +8762,8 @@ export default [
   {
     desc: 'M10430 ablup23：非男人判定反转',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(122) === 0) return; // :12-14 非男人直接返回（无输出）',
-    replace: '  if (talent(122)) return; // :12-14 非男人直接返回（无输出）',
+    find: '  if (talent(122) === 0) return;',
+    replace: '  if (talent(122)) return;',
     tests: ['ablup'],
     must_mention: '非男人（TALENT:122==0）在 DRAWLINE 前直接返回',
   },
@@ -8779,27 +8779,27 @@ export default [
   {
     desc: 'M10432 ablup23：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(断背经验)/C(屈服)/D([1]肛门点数) 梯子 :143-192（与 ABLUP22 相同）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];',
+    find: '    // A(欲情)/B(断背经验)/C(屈服)/D([1]肛门点数) 梯子 :136-186（与 ABLUP22 相同）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];',
     replace:
-      '    // A(欲情)/B(断背经验)/C(屈服)/D([1]肛门点数) 梯子 :143-192（与 ABLUP22 相同）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];',
+      '    // A(欲情)/B(断背经验)/C(屈服)/D([1]肛门点数) 梯子 :136-186（与 ABLUP22 相同）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];',
     tests: ['ablup'],
     must_mention: '欲情点数×0/200 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10433 ablup23：讨厌男人 ×3.00 改为 ×2.00（与 ABLUP22 混同）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(82)) {\n      // 讨厌男人 :261-266（×3.00，与 ABLUP22 相反）\n      a = times(a, 3.0);\n      b = times(b, 3.0);\n      c = times(c, 3.0);\n      d = times(d, 3.0);\n    }',
+    find: '    if (talent(82)) {\n      // 讨厌男人 :257-262（×3.00，与 ABLUP22 相反）\n      a = times(a, 3.0);\n      b = times(b, 3.0);\n      c = times(c, 3.0);\n      d = times(d, 3.0);\n    }',
     replace:
-      '    if (talent(82)) {\n      // 讨厌男人 :261-266（×3.00，与 ABLUP22 相反）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n    }',
+      '    if (talent(82)) {\n      // 讨厌男人 :257-262（×3.00，与 ABLUP22 相反）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n    }',
     tests: ['ablup'],
     must_mention: '欲情点数×0/600 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10434 ablup23：异常经验 E 的 lv-2 改为 lv-1',
     file: 'ere/system/train/ablup.js',
-    find: '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 2;\n    }',
+    find: '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 2;\n    }',
     replace:
-      '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 1;\n    }',
+      '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 1;\n    }',
     tests: ['ablup'],
     must_mention: '异常经验1以上(现在0)且',
   },
@@ -8815,9 +8815,8 @@ export default [
   {
     desc: 'M10436 ablup23：断背经验行误用百合经验表（expname:40 → 41）',
     file: 'ere/system/train/ablup.js',
-    find: "    era.print(`　　　${era.get('expname:41')}　${exp41}/${b}`); // :55-56",
-    replace:
-      "    era.print(`　　　${era.get('expname:40')}　${exp41}/${b}`); // :55-56",
+    find: "    era.print(`　　　${era.get('expname:41')}　${exp41}/${b}`); // :56",
+    replace: "    era.print(`　　　${era.get('expname:40')}　${exp41}/${b}`); // :56",
     tests: ['ablup'],
     must_mention: 'ablup23：Lv0 梯子字面值；[1] 用肛门点数；无欲望门槛行',
   },
@@ -8842,9 +8841,9 @@ export default [
   {
     desc: 'M10439 ablup23：Lv4 戒备森严 ×2.00 改为 ×2.20',
     file: 'ere/system/train/ablup.js',
-    find: '      } else if (lv === 4) {\n        a = times(a, 2.0);\n        b = times(b, 2.0);\n        c = times(c, 2.0);\n      } else if (lv === 5) {\n        a = times(a, 2.5);\n        b = times(b, 2.5);\n        c = times(c, 2.5);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）',
+    find: '      } else if (lv === 4) {\n        a = times(a, 2.0);\n        b = times(b, 2.0);\n        c = times(c, 2.0);\n      } else if (lv === 5) {\n        a = times(a, 2.5);\n        b = times(b, 2.5);\n        c = times(c, 2.5);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）',
     replace:
-      '      } else if (lv === 4) {\n        a = times(a, 2.2);\n        b = times(b, 2.2);\n        c = times(c, 2.2);\n      } else if (lv === 5) {\n        a = times(a, 2.5);\n        b = times(b, 2.5);\n        c = times(c, 2.5);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:220-222）',
+      '      } else if (lv === 4) {\n        a = times(a, 2.2);\n        b = times(b, 2.2);\n        c = times(c, 2.2);\n      } else if (lv === 5) {\n        a = times(a, 2.5);\n        b = times(b, 2.5);\n        c = times(c, 2.5);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）',
     tests: ['ablup'],
     must_mention:
       'ablup23：Lv4 戒备森严 A/B/C ×2.00（20000→40000、800→1600、5000→10000）',
@@ -9419,16 +9418,16 @@ export default [
   {
     desc: 'M10548 ablup23：保守的 ×1.20 误改为 ×1.30',
     file: 'ere/system/train/ablup.js',
-    find: '      // 保守的 :241-246（×1.20）\n      a = times(a, 1.2);',
-    replace: '      // 保守的 :241-246（×1.20）\n      a = times(a, 1.3);',
+    find: '      // 保守的 :235-240（×1.20）\n      a = times(a, 1.2);',
+    replace: '      // 保守的 :235-240（×1.20）\n      a = times(a, 1.3);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10549 ablup23：献身的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 献身的 :267-272（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 献身的 :267-272（×0.95）\n      a = times(a, 0.9);',
+    find: '      // 献身的 :264-269（×0.95）\n      a = times(a, 0.95);',
+    replace: '      // 献身的 :264-269（×0.95）\n      a = times(a, 0.9);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
