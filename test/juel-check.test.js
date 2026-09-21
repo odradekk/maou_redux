@@ -755,6 +755,25 @@ test('SHOW_ABLUP_SELECT：#467 满级行不打 `*`（DECIDE 的提前 RETURN 0�
   );
 });
 
+test('SHOW_ABLUP_SELECT：#467 癖好行（[4]／[40]）也按各自 DECIDE 打 `*`', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('cstr:31:7', '舔'); // 两行只在定制癖好名后才渲染
+  fixture.store.set('juel:31:15', 1); // 局部感觉 Lv0 恰需 1 点
+  const { show_ablup_select } = fixture.load_module('page/page-ablup');
+
+  await show_ablup_select(31);
+
+  const rendered = (acc) =>
+    fixture.lines.find((line) => line.accelerator === acc).rendered;
+  assert.equal(rendered(4), '[4] 舔感觉 - LV 0 *', '局部感觉 Lv0 的 1 点够了');
+  assert.equal(
+    rendered(40),
+    '[40] 舔中毒 - LV 0',
+    '局部中毒 Lv0 需 2000，不够',
+  );
+});
+
 // ———— 存根清单核对 ————
 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {

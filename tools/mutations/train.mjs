@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 767; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 23（#467：M10500-M10522）
+export const COUNT = 769; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 25（#467：M10500-M10524）
 
 export default [
   {
@@ -8469,5 +8469,21 @@ export default [
     replace: "  const mark99 = (await decide_ablup(cid, 99)) === 1 ? '' : '';",
     tests: ['juel-check'],
     must_mention: '两门槛与屈服珠全达标',
+  },
+  {
+    desc: 'M10523 decide_ablup39：上限判据改错（32+33+39 >= 30 → >= 10）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (abl_sum() >= 30) return null;',
+    replace: '      if (abl_sum() >= 10) return null;',
+    tests: ['ablup'],
+    must_mention: '合计 27：DECIDE 放行',
+  },
+  {
+    desc: 'M10524 page-ablup：[4] 癖好感觉行的 `*` 标记恒不上屏',
+    file: 'ere/page/page-ablup.js',
+    find: "    const mark_f = (await decide_ablup(cid, 4)) === 1 ? ' *' : '';",
+    replace: "    const mark_f = (await decide_ablup(cid, 4)) === 1 ? '' : '';",
+    tests: ['juel-check'],
+    must_mention: '局部感觉 Lv0 的 1 点够了',
   },
 ];

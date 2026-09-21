@@ -1,12 +1,14 @@
 /**
- * @file 能力 ABL·1（issue #464）：ABLUP0～ABLUP9 十项能力升级判定与交互。
+ * @file 能力 ABL 的升级判定与交互（ABLUP0～ABLUP17 见 issue #464/#465，
+ * ABLUP37/39/40/99/100 与 ABL.ERB 本体见 issue #467）。
  *
- * 源: target/ERB/ABL/ABLUP0.ERB ～ ABLUP9.ERB，各文件的 @ABLUPn 主流程与
+ * 源: target/ERB/ABL/ABLUP0.ERB ～ ABLUP17.ERB、ABLUP37.ERB、ABLUP39.ERB、
+ *     ABLUP40.ERB、ABLUP99.ERB、ABLUP100.ERB，各文件的 @ABLUPn 主流程与
  *     @DECIDE_ABLUPn 判定就地合并成单一函数——@DECIDE_ABLUPn 在各自文件内
  *     只有一个调用点（@ABLUPn 自身的 CALL），内联不改变语义。@CORE_ABLUPn
- *     （ABLUP0～3 各自定义）在自己文件内没有任何调用点，是 @AUTO_ABLUP 专用
- *     的另一条独立通路；AUTO_ABLUP 仍是 juel-check.js 的 STUBBED_CALLS 存根，
- *     不在本票范围，故不移植。
+ *     （每个文件各自定义）在自己文件内没有任何调用点，是 @AUTO_ABLUP 专用
+ *     的另一条独立通路；#467 起本文件同时承载 @AUTO_ABLUP／@AUTO_ABLUP_CORE
+ *     与 @USERABLUP（源 target/ERB/ABL/ABL.ERB，见文件末段）。
  *
  * 调用方: ere/system/train/juel-check.js 的 @JUEL_CHECK 输入分发
  *     （:463-539）。只有 ABLUP0～ABLUP4 接入分发——Abl.yml/Abl.csv 没有
@@ -734,9 +736,13 @@ function evaluate_ablup4(cid) {
 }
 
 /**
- * @DECIDE_ABLUP4 的 RESULT 语义。注意原作没有 ABL:4 >= 5 的
- * 提前 RETURN 0（见 evaluate_ablup4 的说明）——`*` 标记在满级行的行为
- * 取决于调用前残留的 A，移植按 A=0 处理。
+ * @DECIDE_ABLUP4 的 RESULT 语义。注意原作没有 ABL:4 >= 5 的提前 RETURN 0
+ * （见 evaluate_ablup4 的说明）——满级行的 `*` 标记在原作取决于调用前残留
+ * 的 A。移植的做法是：`evaluate_ablup4` 对 lv>=5 返回 blocked='max'
+ * （A 视为 0、I 视为 0），`decide_ablup4` 因 blocked 非空而恒返回 0——
+ * **满级行一律不打 `*`**。这与「原作 A 恰好残留为 0 时 I=0 → RETURN 1
+ * （会打标记）」不同，是有意取「满级不打标记」的更稳一侧；该偏离与
+ * evaluate_ablup4 的说明一并登记在 issue #14。
  * @param {number} cid TARGET
  * @returns {number} 1 / 0
  */
@@ -3931,8 +3937,10 @@ async function ablup99(cid, mode) {
  * 与实际判定 `MARK:10 < C-5`（即 C > MARK:10+5，严格大于）文字脱节，
  * 且 C < 5 时 C-5 为负、感觉门槛数值上恒过——显示与判定双双脱节，原作
  * 照抄。MARK:10 与 EXP:99 均属 train 域（ownership 表），裸写。成功购买
- * 后 MARK:10 -= 1 并无条件扣异界经验。@CORE_ABLUP100 见本文件
- * core_ablup100。
+ * 后 MARK:10 -= 1 并无条件扣异界经验。原作有 @CORE_ABLUP100（定义在
+ * ABLUP100.ERB 内）但**没有任何调用点**——@AUTO_ABLUP 的 REPEAT 40 不含
+ * 100，与 @CORE_ABLUP4 同款；移植不造 core_ablup100，decide_ablup100 的
+ * 干跑出口只服务 `*` 标记（原作该标记行同样在 `[IF_DEBUG]` 块里）。
  */
 async function ablup100(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;

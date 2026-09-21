@@ -2726,3 +2726,22 @@ test('userablup：非 999 返回 0；999 调 JUJUN／YOKUBO 两检查并返回 1
   assert.equal(fixture.store.get(`talent:${CID}:32`), 0, '压抑清除');
   assert.equal(fixture.store.get(`juel:${CID}:100`), 50, '否定点数减半');
 });
+
+test('decide_ablup39：上限判据是 32+33+39 >= 30（主流程是 >= 10）', async () => {
+  const fixture = create_era_fixture();
+  const { decide_ablup } = seed(fixture);
+  // Lv9：梯子 a/b=300000、c(兽奸经验)=6000；三重上限时 A/B 覆盖为
+  // lv²×4000 = 324000（主流程那条 >= 10 的价位门槛因此要 324000 才放行）
+  fixture.store.set(`abl:${CID}:32`, 9);
+  fixture.store.set(`abl:${CID}:33`, 9);
+  fixture.store.set(`abl:${CID}:39`, 9); // 合计 27 < 30
+  set_talents(fixture, { 76: 1 }); // Lv5+ 解锁（淫乱）
+  fixture.store.set(`abl:${CID}:11`, 10); // 欲望门槛 lv+1 = 10
+  fixture.store.set(`juel:${CID}:5`, 400000);
+  fixture.store.set(`juel:${CID}:6`, 400000);
+  fixture.store.set(`exp:${CID}:56`, 6000);
+  fixture.store.set(`exp:${CID}:50`, 10); // F = lv-1 = 8
+  assert.equal(await decide_ablup(CID, 39), 1, '合计 27：DECIDE 放行');
+  fixture.store.set(`abl:${CID}:33`, 12); // 合计 30 → :100-102 判死
+  assert.equal(await decide_ablup(CID, 39), 0, '合计 30：DECIDE 判死');
+});

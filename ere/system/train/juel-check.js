@@ -398,7 +398,8 @@ async function run_juel_check() {
     show_info_exp(target); // :445 CALL SHOW_INFO_EXP
     show_juel(target); // :446 CALL SHOW_JUEL
     // :449-458 自动升级点数（:450 IF GETBIT(FLAG:5,35)）：不进交互，直接
-    // 收尾。:452-455 的三次 AUTO_ABLUP（TARGET / ASSI>0 / MASTER）共享一行占位
+    // 收尾；:452-455 的三次 AUTO_ABLUP（TARGET / ASSI>0 / MASTER）自 #467
+    // 起改调真身（ere/system/train/ablup.js 的 auto_ablup）
     if (getbit(era.get('flag:5'), 35)) {
       // :452-455 AUTO_ABLUP 三连：目标 → 助手（仅 ASSI > 0）→ 魔王
       await auto_ablup(); // :452 CALL AUTO_ABLUP
