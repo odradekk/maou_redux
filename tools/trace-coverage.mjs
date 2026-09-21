@@ -129,7 +129,7 @@ export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463 的
 // ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/MONSTER_ATTACK3
 // 判死）、侵略/ARCANA_FORT.ERB（:2-551，落
 // ere/invasion/invasion-arcana-fort.js）、侵略/INVASION_RYOUZYOKU.ERB
-// （:1-782 全量，落 ere/invasion/invasion-ryouzyoku.js）三个从「待移植」
+// （:1-782 全量，落 ere/invasion/invasion-ravish.js）三个从「待移植」
 // 转「已移植」，侵略/GROUP_BATTLE.ERB 转「已判定不实现」（RULINGS 表，
 // 两个函数零调用点 + 主循环空转）：27 − 4 = 23，与
 // `node tools/trace-check.mjs --coverage` 的重测一致（数字取自重测而非
