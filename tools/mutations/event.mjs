@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 330; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）
+export const COUNT = 332; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）+2（#461 避孕套判定 M9880/M9881，号段见 #461 完成报告——原 M9836/M9837 与 #462 撞号后改）
 
 export default [
   {
@@ -116,10 +116,30 @@ export default [
     must_mention: 'NOWEX',
   },
   {
-    desc: 'M51 体力气力扣减的去零钳制删掉',
+    desc: 'M51 体力气力扣减的去零钳制删掉（manual 路径，find 锚定 lose0/lose1 快照——#461 起 AUTO 路径有同款语义的第二处 next=Math.max(...) 子句，裸行不再唯一）',
     file: 'ere/event/source-check.js',
-    find: '        next = Math.max(Math.min(next, max), 0);',
-    replace: '        next = next;',
+    find: `  const lose0 = Math.max(lose(0), 0);
+  const lose1 = Math.max(lose(1), 0);
+  for (const k of [0, 1]) {
+    const loss = lose(k);
+    if (loss !== 0) {
+      const base = era.get(\`base:\${cid}:\${k}\`) || 0;
+      const max = era.get(\`maxbase:\${cid}:\${k}\`) || 0;
+      let next = base - loss;
+      if (max > 0) {
+        next = Math.max(Math.min(next, max), 0);
+      }`,
+    replace: `  const lose0 = Math.max(lose(0), 0);
+  const lose1 = Math.max(lose(1), 0);
+  for (const k of [0, 1]) {
+    const loss = lose(k);
+    if (loss !== 0) {
+      const base = era.get(\`base:\${cid}:\${k}\`) || 0;
+      const max = era.get(\`maxbase:\${cid}:\${k}\`) || 0;
+      let next = base - loss;
+      if (max > 0) {
+        next = next;
+      }`,
     tests: ['source-check'],
     must_mention: '气力耗尽',
   },
@@ -3032,5 +3052,36 @@ export default [
       "    era.print('『处女』'); // :1616\n    count_a += rand(19) + 1;",
     tests: ['event-nextday'],
     must_mention: 'RAND:20/10/10（次数）',
+  },
+  {
+    desc: 'M9880 避孕套判定·主人侧：清位删（TEQUIP:35 不清零，下次判定会重复触发）',
+    file: 'ere/event/source-check.js',
+    find: `    era.print('射在避孕套里');
+    chara(cid).event.主人避孕套 = 0;
+    clear_condom_ejac();
+  } else if (`,
+    replace: `    era.print('射在避孕套里');
+    clear_condom_ejac(); // 变异：主人避孕套清位删
+  } else if (`,
+    tests: ['source-check'],
+    must_mention: '避孕套',
+  },
+  {
+    desc: 'M9881 避孕套判定：主人/助手分支的清位对象写反（TEQUIP:35/36 互换）',
+    file: 'ere/event/source-check.js',
+    find: `    era_flag.assiplay === 0 &&
+    chara(cid).event.主人避孕套 &&
+    condom_ejac_hit()
+  ) {
+    era.print('射在避孕套里');
+    chara(cid).event.主人避孕套 = 0;`,
+    replace: `    era_flag.assiplay === 0 &&
+    chara(cid).train.助手避孕套 && // 变异：主人侧误读助手位
+    condom_ejac_hit()
+  ) {
+    era.print('射在避孕套里');
+    chara(cid).train.助手避孕套 = 0;`,
+    tests: ['source-check'],
+    must_mention: '避孕套',
   },
 ];
