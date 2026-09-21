@@ -3200,7 +3200,7 @@ async function ablup17(cid, mode) {
 }
 
 /**
- * 源: target/ERB/ABL/ABLUP20.ERB @ABLUP20 :9-81 + @DECIDE_ABLUP20 :99-340。
+ * 源: target/ERB/ABL/ABLUP20.ERB @ABLUP20 :8-81 + @DECIDE_ABLUP20 :97-339。
  * 抖S气质（ABL:20，train 属主——era.add 裸写，同 ablup12-15 先例）。
  * 单轨道：欲情点数（JUEL:5）+ 施虐快乐经验（EXP:33）+ 异常经验（EXP:50）。
  *
@@ -3210,8 +3210,8 @@ async function ablup17(cid, mode) {
  *   @GET_ABLUP_STATE（ABLUP0.ERB:97-110，经验不足带空格、能力不足不带）
  *   恰好相反，不能复用 get_ablup_state。
  * - @DECIDE_ABLUP20 的异常经验 C 分两段：C = ABL:20-2 在 :175，戒备森严块
- *   （:152-171）的 TIMES C 在它**之前**——乘的是 0，全部无效；而淫乱
- *   （:275-282）的 TIMES C 在它**之后**，×0.80 真实生效（lv4 无豁免素质时
+ *   （:153-171）的 TIMES C 在它**之前**——乘的是 0，全部无效；而淫乱
+ *   （:276-282）的 TIMES C 在它**之后**，×0.80 真实生效（lv4 无豁免素质时
  *   C = floor(2×0.8) = 1，不是 2）。D/E 在本文件无任何读者，是死写入；
  *   G=1（:178）同样无读者。
  * - 异常经验行（:45）用全角括号「（现在{EXP:50}）」，其余 ABLUP 文件均为
@@ -3229,7 +3229,7 @@ async function ablup20(cid) {
     return `${i & 1 ? '点数不足 ' : ''}${i & 2 ? '经验不足' : ''}${i & 4 ? '能力不足 ' : ''}`;
   };
 
-  era.drawLine(); // :10
+  era.drawLine(); // :9
 
   if (
     abl20() >= 5 &&
@@ -3241,7 +3241,7 @@ async function ablup20(cid) {
     return;
   }
   if (abl20() + abl21() >= 20) {
-    await era.printAndWait(`抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`); // :19-20
+    await era.printAndWait(`抖S气质(${abl20()})＋抖M气质(${abl21()})上限为20`); // :19-21
     return;
   }
   if (abl20() >= 10) {
@@ -3251,7 +3251,7 @@ async function ablup20(cid) {
 
   for (;;) {
     const lv = abl20();
-    // A(欲情点数)/B(施虐快乐经验) 梯子 :113-160
+    // A(欲情点数)/B(施虐快乐经验) 梯子 :120-150
     const ladder = [
       [100, 5],
       [500, 20],
@@ -3266,7 +3266,7 @@ async function ablup20(cid) {
     ][lv];
     let [a, b] = ladder;
     // C(异常经验)：lv3/4/7 且无[倒错的/施虐狂/嫉妒/小恶魔]时 = lv-2（:174-175）。
-    // 戒备森严（:152-171）的 TIMES C 在赋值前，乘 0 无效；淫乱（:275-282）的
+    // 戒备森严（:153-171）的 TIMES C 在赋值前，乘 0 无效；淫乱（:276-282）的
     // 在赋值之后，见下面淫乱块的 ×0.80；D/E/G 无读者，不移植（见函数头注释）
     let c = 0;
     if (
@@ -3279,124 +3279,124 @@ async function ablup20(cid) {
       c = lv - 2;
     }
 
-    if (talent(10)) a = times(a, 1.5); // 胆怯 :163-165（只乘 A）
+    if (talent(10)) a = times(a, 1.5); // 胆怯 :181-183（只乘 A）
     if (talent(11)) {
-      // 反抗心 :167-170
+      // 反抗心 :185-188
       a = times(a, 0.9);
       b = times(b, 0.9);
     }
-    if (talent(12)) a = times(a, 0.9); // 刚强 :172-174
-    if (talent(14)) a = times(a, 1.2); // 文静 :176-178
+    if (talent(12)) a = times(a, 0.9); // 刚强 :190-191
+    if (talent(14)) a = times(a, 1.2); // 文静 :193-194
     if (talent(16)) {
-      // 嚣张 :180-183
+      // 嚣张 :196-199
       a = times(a, 0.9);
       b = times(b, 0.9);
     }
     if (talent(15)) {
-      // 高姿态 :186-189
+      // 高姿态 :202-204
       a = times(a, 0.9);
       b = times(b, 0.9);
     } else if (talent(17)) {
-      // 低姿态 :190-193
+      // 低姿态 :206-208
       a = times(a, 1.1);
       b = times(b, 1.1);
     }
     if (talent(20)) {
-      // 克制 :195-198
+      // 克制 :212-215
       a = times(a, 1.2);
       b = times(b, 1.2);
     }
     if (talent(21)) {
-      // 冷漠 :200-203
+      // 冷漠 :217-220
       a = times(a, 1.2);
       b = times(b, 1.2);
     }
     if (talent(22)) {
-      // 感情淡薄 :205-208（B 是 ×1.2 非 ×1.5）
+      // 感情淡薄 :222-225（B 是 ×1.2 非 ×1.5）
       a = times(a, 1.5);
       b = times(b, 1.2);
     }
     if (talent(23)) {
-      // 好奇心 :210-213
+      // 好奇心 :227-230
       a = times(a, 0.9);
       b = times(b, 0.9);
     }
-    if (talent(26)) a = times(a, 1.1); // 悲观的 :215-217
+    if (talent(26)) a = times(a, 1.1); // 悲观的 :232-233
     if (talent(28)) {
-      // 爱表现 :219-222
+      // 爱表现 :235-238
       a = times(a, 0.9);
       b = times(b, 0.9);
     }
     if (talent(30)) {
-      // 看重贞操 :225-228
+      // 看重贞操 :240-242
       a = times(a, 1.1);
       b = times(b, 1.1);
     } else if (talent(31)) {
-      // 看轻贞操 :229-232
+      // 看轻贞操 :244-246
       a = times(a, 0.95);
       b = times(b, 0.95);
     }
     if (talent(32)) {
-      // 压抑 :234-237
+      // 压抑 :250-252
       a = times(a, 0.95);
       b = times(b, 0.95);
     } else if (talent(33)) {
-      // 开放 :238-241
+      // 开放 :254-256
       a = times(a, 0.9);
       b = times(b, 0.9);
     }
     if (talent(79) || talent(82)) {
-      // 讨厌男人/男人婆 :243-246
+      // 讨厌男人/男人婆 :260-263
       a = times(a, 0.95);
       b = times(b, 0.95);
     }
     if (talent(40)) {
-      // 害怕疼痛 :248-251
+      // 害怕疼痛 :266-268
       a = times(a, 1.2);
       b = times(b, 1.2);
     } else if (talent(41)) {
-      // 不惧疼痛 :252-255
+      // 不惧疼痛 :270-272
       a = times(a, 0.9);
       b = times(b, 0.9);
     }
     if (talent(76)) {
-      // 淫乱 :275-282（TIMES C 在 C 赋值（:175）之后，×0.80 真实生效）
+      // 淫乱 :276-282（TIMES C 在 C 赋值（:175）之后，×0.80 真实生效）
       a = times(a, 0.8);
       b = times(b, 0.8);
       c = times(c, 0.8);
     }
     if (talent(80)) {
-      // 倒错的 :264-267
+      // 倒错的 :284-287
       a = times(a, 0.8);
       b = times(b, 0.8);
     }
     if (talent(83)) {
-      // 施虐狂 :269-272
+      // 施虐狂 :289-292
       a = times(a, 0.5);
       b = times(b, 0.5);
     }
     if (talent(88)) {
-      // 受虐狂 :273-276
+      // 受虐狂 :294-297
       a = times(a, 1.2);
       b = times(b, 1.2);
     }
     if (talent(84)) {
-      // 嫉妒 :278-281
+      // 嫉妒 :299-302
       a = times(a, 0.8);
       b = times(b, 0.8);
     }
     if (talent(87)) {
-      // 小恶魔 :283-286
+      // 小恶魔 :304-307
       a = times(a, 0.8);
       b = times(b, 0.8);
     }
     if (talent(123)) {
-      // 疯狂 :288-291
+      // 疯狂 :309-312
       a = times(a, 0.5);
       b = times(b, 0.5);
     }
     if (talent(9)) {
-      // 崩坏 :293-296
+      // 崩坏 :314-317
       a = times(a, 2.0);
       b = times(b, 2.0);
     }
@@ -3405,10 +3405,10 @@ async function ablup20(cid) {
     const exp33 = era.get(`exp:${cid}:33`) || 0;
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
-    if (juel5 < a) i |= 1; // :299-300
-    if (exp33 < b) i |= 2; // :303-304
-    if (exp50 < c) i |= 2; // :307-308
-    if (abl11() < lv + 1) i |= 4; // :311-312
+    if (juel5 < a) i |= 1; // :320-321
+    if (exp33 < b) i |= 2; // :324-325
+    if (exp50 < c) i |= 2; // :328-329
+    if (abl11() < lv + 1) i |= 4; // :332-333
 
     era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :41
     if (c > 0) {
@@ -3431,8 +3431,8 @@ async function ablup20(cid) {
       era.print('未满足条件'); // :68-69
       continue;
     } else if (result === 0) {
-      const new_lv = era.add(`abl:${cid}:20`, 1); // :74（train 属主，era.add）
-      era.add(`juel:${cid}:5`, -a); // :76
+      const new_lv = era.add(`abl:${cid}:20`, 1); // :75（train 属主，era.add）
+      era.add(`juel:${cid}:5`, -a); // :77
       era.print(`${era.get('ablname:20')}变为LV${new_lv}。`); // :79
       return;
     } else {
