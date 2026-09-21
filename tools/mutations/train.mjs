@@ -8671,9 +8671,9 @@ export default [
   {
     desc: 'M10420 ablup22：男人判定反转（TALENT:122 误判为非男人才返回）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(122)) return; // :12-14 男人直接返回（DRAWLINE 之前，无输出）',
+    find: '  if (talent(122)) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）',
     replace:
-      '  if (talent(122) === 0) return; // :12-14 男人直接返回（DRAWLINE 之前，无输出）',
+      '  if (talent(122) === 0) return; // :10-11 男人直接返回（DRAWLINE 之前，无输出）',
     tests: ['ablup'],
     must_mention: '男人（TALENT:122）在 DRAWLINE 前直接返回',
   },
@@ -8689,54 +8689,54 @@ export default [
   {
     desc: 'M10422 ablup22：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(百合经验)/C(屈服)/D([1]阴核点数) 梯子 :163-212\n    // Lv0/1 双轨（D=1000/5000），Lv2 起 D=0（[1] 轨隐藏）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];',
+    find: '    // A(欲情)/B(百合经验)/C(屈服)/D([1]阴核点数) 梯子 :140-190\n    // Lv0/1 双轨（D=1000/5000），Lv2 起 D=0（[1] 轨隐藏）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];',
     replace:
-      '    // A(欲情)/B(百合经验)/C(屈服)/D([1]阴核点数) 梯子 :163-212\n    // Lv0/1 双轨（D=1000/5000），Lv2 起 D=0（[1] 轨隐藏）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];',
+      '    // A(欲情)/B(百合经验)/C(屈服)/D([1]阴核点数) 梯子 :140-190\n    // Lv0/1 双轨（D=1000/5000），Lv2 起 D=0（[1] 轨隐藏）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];',
     tests: ['ablup'],
     must_mention: '欲情点数×0/200 ……点数不足 经验不足 能力不足',
   },
   {
     desc: 'M10423 ablup22：显示顺序颠倒——欲望行先于异常经验行',
     file: 'ere/system/train/ablup.js',
-    find: "    if (e > 0) {\n      era.print(`${era.get('expname:50')}${e}以上(现在${exp50})且`); // :46-48（先异常行）\n    }\n    era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :49-50（后欲望行）",
+    find: "    if (e > 0) {\n      era.print(`${era.get('expname:50')}${e}以上(现在${exp50})且`); // :46-47（先异常行）\n    }\n    era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :50（后欲望行）",
     replace:
-      "    era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :49-50（后欲望行）\n    if (e > 0) {\n      era.print(`${era.get('expname:50')}${e}以上(现在${exp50})且`); // :46-48（先异常行）\n    }",
+      "    era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :50（后欲望行）\n    if (e > 0) {\n      era.print(`${era.get('expname:50')}${e}以上(现在${exp50})且`); // :46-47（先异常行）\n    }",
     tests: ['ablup'],
     must_mention: '异常经验行应先于欲望行',
   },
   {
     desc: 'M10424 ablup22：坦率 ×0.95 改为 ×0.90（四元组）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 坦率 :244-248（四元组 ×0.95）\n      a = times(a, 0.95);\n      b = times(b, 0.95);\n      c = times(c, 0.95);\n      d = times(d, 0.95);',
+    find: '      // 坦率 :218-223（四元组 ×0.95）\n      a = times(a, 0.95);\n      b = times(b, 0.95);\n      c = times(c, 0.95);\n      d = times(d, 0.95);',
     replace:
-      '      // 坦率 :244-248（四元组 ×0.95）\n      a = times(a, 0.9);\n      b = times(b, 0.9);\n      c = times(c, 0.9);\n      d = times(d, 0.9);',
+      '      // 坦率 :218-223（四元组 ×0.95）\n      a = times(a, 0.9);\n      b = times(b, 0.9);\n      c = times(c, 0.9);\n      d = times(d, 0.9);',
     tests: ['ablup'],
     must_mention: 'ablup22：坦率（TALENT:13）×0.95 四元组（A/B/C/D 同步）',
   },
   {
     desc: 'M10425 ablup22：双性恋 ×0.50 改为 ×0.55（四元组）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(81)) {\n      // 双性恋 :313-318（×0.50）\n      a = times(a, 0.5);\n      b = times(b, 0.5);\n      c = times(c, 0.5);\n      d = times(d, 0.5);\n    }',
+    find: '    if (talent(81)) {\n      // 双性恋 :299-304（×0.50）\n      a = times(a, 0.5);\n      b = times(b, 0.5);\n      c = times(c, 0.5);\n      d = times(d, 0.5);\n    }',
     replace:
-      '    if (talent(81)) {\n      // 双性恋 :313-318（×0.50）\n      a = times(a, 0.55);\n      b = times(b, 0.55);\n      c = times(c, 0.55);\n      d = times(d, 0.55);\n    }',
+      '    if (talent(81)) {\n      // 双性恋 :299-304（×0.50）\n      a = times(a, 0.55);\n      b = times(b, 0.55);\n      c = times(c, 0.55);\n      d = times(d, 0.55);\n    }',
     tests: ['ablup'],
     must_mention: '欲情点数×0/100 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10426 ablup22：男人婆 ×2.00 改为 ×2.20（百合特有加成）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(79)) {\n      // 男人婆 :306-311（×2.00，百合特有）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n    }',
+    find: '    if (talent(79)) {\n      // 男人婆 :291-296（×2.00，百合特有）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n    }',
     replace:
-      '    if (talent(79)) {\n      // 男人婆 :306-311（×2.00，百合特有）\n      a = times(a, 2.2);\n      b = times(b, 2.2);\n      c = times(c, 2.2);\n      d = times(d, 2.2);\n    }',
+      '    if (talent(79)) {\n      // 男人婆 :291-296（×2.00，百合特有）\n      a = times(a, 2.2);\n      b = times(b, 2.2);\n      c = times(c, 2.2);\n      d = times(d, 2.2);\n    }',
     tests: ['ablup'],
     must_mention: '欲情点数×0/400 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10427 ablup22：[0] 轨购买路径的屈服点数判定含等号（JUEL:6 <= C）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (juel6 < c) i |= 1; // :350-351\n    if (exp40 < b) i |= 2; // :353-354',
+    find: '    if (juel6 < c) i |= 1; // :336-337\n    if (exp40 < b) i |= 2; // :339-340',
     replace:
-      '    if (juel6 <= c) i |= 1; // :350-351\n    if (exp40 < b) i |= 2; // :353-354',
+      '    if (juel6 <= c) i |= 1; // :336-337\n    if (exp40 < b) i |= 2; // :339-340',
     tests: ['ablup'],
     must_mention:
       'ablup22：两条购买路径各自扣对应珠、写入 chara(cid).chara.百合气质',
@@ -8744,8 +8744,8 @@ export default [
   {
     desc: 'M10428 ablup22：[1] 轨购买误扣欲情点数（JUEL:0 → JUEL:5）',
     file: 'ere/system/train/ablup.js',
-    find: '      era.add(`juel:${cid}:0`, -d); // :90-91',
-    replace: '      era.add(`juel:${cid}:5`, -d); // :90-91',
+    find: '      era.add(`juel:${cid}:0`, -d); // :92',
+    replace: '      era.add(`juel:${cid}:5`, -d); // :92',
     tests: ['ablup'],
     must_mention: '写入 chara(cid).chara.百合气质',
   },
@@ -9403,16 +9403,16 @@ export default [
   {
     desc: 'M10546 ablup22：好奇心的 ×0.95 误改为 ×0.90（四元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 好奇心 :255-259（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 好奇心 :255-259（×0.95）\n      a = times(a, 0.9);',
+    find: '      // 好奇心 :232-237（×0.95）\n      a = times(a, 0.95);',
+    replace: '      // 好奇心 :232-237（×0.95）\n      a = times(a, 0.9);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10547 ablup22：献身的 ×0.95 误改为 ×0.90（四元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 献身的 :281-286（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 献身的 :281-286（×0.95）\n      a = times(a, 0.9);',
+    find: '      // 献身的 :261-266（×0.95）\n      a = times(a, 0.95);',
+    replace: '      // 献身的 :261-266（×0.95）\n      a = times(a, 0.9);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
