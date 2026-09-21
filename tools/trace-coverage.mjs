@@ -121,11 +121,12 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
-// 37（#464 后的 master）− 8（本票的 ABL/ABLUP10.ERB～ABLUP17.ERB 八个文件）
-// = 29，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
-// 重测而非相加。
-// export const PENDING_BASELINE = 37; // 合并态实测（#464 并上含 #460 的 master）：
+export const PENDING_BASELINE = 21; // 合并态实测（#466 基于含 #465 的 master 0bd537c）：
+// 29（#465 后的 master）− 8（本票的 ABL/ABLUP20.ERB～ABLUP23.ERB、
+// ABLUP30.ERB～ABLUP33.ERB 八个文件）= 21，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非
+// 相加；若 #462/#463/#469/#470 四张并行票先合并，合并 master 后必须重算。
+// export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
 // 47（#460 后的 master）− 10（本票的 ABL/ABLUP0.ERB～ABLUP9.ERB 十个文件）
 // = 37，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
 // 重测而非相加；两票改动面互不重叠，巧合与算式相符。

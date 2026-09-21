@@ -415,14 +415,15 @@ test('交互循环：选 999 退出，收尾三查各占位一行', async () => 
 test('交互循环：能力分支命中打占位、重绘后可再选（进得去出得来）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  // 探测用编号改为 20：0-4 已随 issue #464、10-17 已随 issue #465 接上真身，不再打占位
-  fixture.set_inputs(20, 999);
+  // 探测用编号改为 37：0-4（#464）、10-17（#465）、20-23/30-33（#466）
+  // 已接上真身，不再打占位
+  fixture.set_inputs(37, 999);
 
   await fixture.load_module('system/train/juel-check').run_juel_check();
 
   assert(
-    fixture.text_lines().some((line) => line.includes('@ABLUP20')),
-    'ABLUP20 占位行必须出现',
+    fixture.text_lines().some((line) => line.includes('@ABLUP37')),
+    'ABLUP37 占位行必须出现',
   );
   // 重绘两次首轮：SHOW_INFO_EXP 的等级行每轮一条
   assert.equal(
@@ -683,7 +684,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.equal(STUBBED_CALLS.length, 16); // 13 个仍存根的 ABLUPxx + 3 个收尾/自动
+  assert.equal(STUBBED_CALLS.length, 8); // 5 个仍存根的 ABLUPxx + 3 个收尾/自动
   for (const name of STUBBED_CALLS) {
     assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
   }
