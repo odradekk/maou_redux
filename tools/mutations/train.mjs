@@ -8822,7 +8822,8 @@ export default [
     desc: 'M10436 ablup23：断背经验行误用百合经验表（expname:40 → 41）',
     file: 'ere/system/train/ablup.js',
     find: "    era.print(`　　　${era.get('expname:41')}　${exp41}/${b}`); // :56",
-    replace: "    era.print(`　　　${era.get('expname:40')}　${exp41}/${b}`); // :56",
+    replace:
+      "    era.print(`　　　${era.get('expname:40')}　${exp41}/${b}`); // :56",
     tests: ['ablup'],
     must_mention: 'ablup23：Lv0 梯子字面值；[1] 用肛门点数；无欲望门槛行',
   },
