@@ -1138,7 +1138,7 @@ function raid_rejected(cid) {
  * 掠夺路线的勇者选择（:442-563 的选人段）。
  *
  * 原作 `FOR COUNT, LIST_POS, CHARANUM` 在「角色号」上扫，ere 侧改成已加入
- * 角色 ID 的升序表（#21 扁平化的既有做法，见文件头第 3 条），LIST_POS 仍是
+ * 角色 ID 的升序表（#21 扁平化的既有做法，见文件头的移植说明），LIST_POS 仍是
  * 「最后渲染的那个 ID」——与 SHOP_2.ERB:282-335 的迎击列表**逐字同源**，
  * 连翻页判据的怪癖一并保留：T_LCOUNT 从 `NUM_PAGE * NO_PAGE + 1` 起算且只在
  * 渲染支内自增，页窗是 `[NO_PAGE*NUM_PAGE+1, (NO_PAGE+1)*NUM_PAGE)`，于是每页
