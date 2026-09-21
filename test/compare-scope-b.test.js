@@ -125,7 +125,10 @@ const BASELINE = {
   // 抵抗天赋（TALENT:32/34）均未播种，条件不成立、真身无 PRINT 输出，故
   // 只是差异整行消失（非改判为 matched），stub 130 → 129，matched/
   // unexplained 不变。
-  'sale-natural': { matched: 163, version: 2, stub: 129, unexplained: 0 },
+  // 【#467 后重测】能力提升画面的 `*` 可提升标记开始按 @DECIDE_ABLUPn 渲染
+  // （本样本的 flag:5 同样只置了 bit34，AUTO_ABLUP 分支不进样本）：matched
+  // 163→164、stub 129→127，unexplained 保持 0。数字取自重跑。
+  'sale-natural': { matched: 164, version: 2, stub: 127, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {

@@ -28,6 +28,31 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABL.ERB',
+        ref: '89',
+        any: [/^\s*CALL DECIDE_ABLUP99\s*$/m],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '90-91',
+        any: [/^\s*SIF RESULT == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '94',
+        any: [/^\s*CALL DECIDE_ABLUP4\s*$/m],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '99',
+        any: [/^\s*CALL DECIDE_ABLUP40\s*$/m],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '105',
+        any: [/^\s*CALL DECIDE_ABLUP100\s*$/m],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
         ref: '15-18',
         any: [
           /^\s*IF COUNT == 0 && TALENT:TARGET:122\s*$/m,

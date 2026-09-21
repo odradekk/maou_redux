@@ -11,11 +11,15 @@
  * 的 2 位编号补位（[ 0]）与 9 宽名字列是字符终端排版，按钮化后由引擎
  * 排版接管——比对差异登记在 #47，逐字比对归 #48。
  *
- * 待办（docs/stub-registry.md）：@DECIDE_ABLUP 族（可提升标记 `*` 的
- * 判定与渲染）未接入——升级规则超出 #47 范围，本画面不渲染 `*` 标记。
+ * `*` 可提升标记（:78/:89/:94/:99/:105 的 `CALL DECIDE_ABLUP*` + `SIF
+ * RESULT == 1 → PRINT *`）由 #467 接入：逐行调 system/train/ablup.js 的
+ * decide_ablup（@DECIDE_ABLUP 分发），可提升时在按钮正文尾追一个空格加
+ * `*`（原作是 PRINTFORM 之后 `PRINT *`，同一行）。编号 20-23/30-33 的
+ * @DECIDE_ABLUPn 尚未落地（它们的 ABLUPn.ERB 仍是存根），这几行不打标记。
  */
 
 const era = require('#/era-electron');
+const { decide_ablup } = require('#/system/train/ablup');
 
 // 感觉缺失（[―] 灰显）的判定：能力 0-3 → TALENT:101/107/103/105 的第 1
 // 位（& 2）。名前：阴蒂/乳房/私处/肛门钝感（yml/Talent.yml）
@@ -63,9 +67,11 @@ function show_juel(cid) {
  * @SHOW_ABLUP_SELECT（:29-117）：能力值列表（按钮化，见文件头）+ 收尾
  * 的反抗刻印 / 癖好条目与 [999] 结束键。
  *
+ * `*` 标记（#467）要看 @DECIDE_ABLUPn 的 RESULT，因此本函数是 async。
+ *
  * @param {number} cid 调教目标（原作隐式 TARGET）
  */
-function show_ablup_select(cid) {
+async function show_ablup_select(cid) {
   let u = 0; // :30 U = 0（本行条目计数）
   for (let count = 0; count < 40; count += 1) {
     // :31 REPEAT 40 —— 编号空间的空洞整组跳过（:32-41）
@@ -86,12 +92,14 @@ function show_ablup_select(cid) {
     // :66-69 能力名（男人的第 0 项显示「阴茎感觉」）
     const name = count === 0 && male ? '阴茎感觉' : era.get(`ablname:${count}`);
     const level = era.get(`abl:${cid}:${count}`) || 0;
+    // :78 CALL DECIDE_ABLUP 的 `*` 可提升标记（#467）：原作在 `- LV{ABL:X,2}`
+    // 之后 `SIF RESULT == 1 → PRINT *`，按钮正文尾追同一格式
+    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';
     era.printButton(
-      `${name} - LV ${level}`, // :77 - LV{ABL:X,2}（按钮正文空白折叠，不补位）
+      `${name} - LV ${level}${mark}`, // :77 - LV{ABL:X,2}（按钮正文空白折叠，不补位）
       count,
       lost ? { color: GRAY } : undefined,
     );
-    // :78 CALL DECIDE_ABLUP 的 `*` 可提升标记未接入（文件头待办）
     u += 1; // :80
     if (u % 4 === 0) {
       era.println(); // :81-83 每 4 条换行
@@ -101,14 +109,24 @@ function show_ablup_select(cid) {
     era.println(); // :85-86 末行不足 4 条也收行
   }
 
-  // :88-91 [99] 反抗刻印（DECIDE_ABLUP99 的 `*` 未接入）
+  // :88-91 [99] 反抗刻印（:89 CALL DECIDE_ABLUP99 + :90-91 的 `*`）
   const mark3 = era.get(`mark:${cid}:3`) || 0;
-  era.printButton(`${era.get('markname:3')} - LV ${mark3}`, 99);
-  // :92-101 癖好（CSTR:7 定制了才有）：[4] 癖好感觉与 [40] 癖好中毒
+  const mark99 = (await decide_ablup(cid, 99)) === 1 ? ' *' : '';
+  era.printButton(`${era.get('markname:3')} - LV ${mark3}${mark99}`, 99);
+  // :92-101 癖好（CSTR:7 定制了才有）：[4] 癖好感觉与 [40] 癖好中毒，
+  // 各自在 :94/:99 调 DECIDE_ABLUP4 / DECIDE_ABLUP40 打 `*`
   const fetish = era.get(`cstr:${cid}:7`);
   if (fetish) {
-    era.printButton(`${fetish}感觉 - LV ${era.get(`abl:${cid}:4`) || 0}`, 4);
-    era.printButton(`${fetish}中毒 - LV ${era.get(`abl:${cid}:40`) || 0}`, 40);
+    const mark_f = (await decide_ablup(cid, 4)) === 1 ? ' *' : '';
+    era.printButton(
+      `${fetish}感觉 - LV ${era.get(`abl:${cid}:4`) || 0}${mark_f}`,
+      4,
+    );
+    const mark_p = (await decide_ablup(cid, 40)) === 1 ? ' *' : '';
+    era.printButton(
+      `${fetish}中毒 - LV ${era.get(`abl:${cid}:40`) || 0}${mark_p}`,
+      40,
+    );
   }
   // :102-108 [IF_DEBUG] 的 [100] 异界综合征行——调试编译块，不移植
   era.println(); // :109

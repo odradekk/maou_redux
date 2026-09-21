@@ -1339,6 +1339,588 @@ export const FILES = [
         ref: '81',
         any: [lit('PRINTFORML %ABLNAME:17%变为LV{ABL:17}。')],
       },
+
+      // —— ABL.ERB 本体：@DECIDE_ABLUP 分发 / @USERABLUP / @AUTO_ABLUP
+      //    （issue #467；标记渲染侧在 page-ablup.mjs）——
+      { src: ABL, ref: '113-189', any: [lit('@DECIDE_ABLUP\n;阴蒂感觉')] },
+      { src: ABL, ref: '192-200', any: [lit('@USERABLUP\nIF RESULT == 999')] },
+      {
+        src: ABL,
+        ref: '193-195',
+        any: [lit('CALL JUJUN_UP_CHECK\nCALL YOKUBO_UP_CHECK')],
+      },
+      { src: ABL, ref: '203-241', any: [lit('@AUTO_ABLUP, ARG = -1')] },
+      {
+        src: ABL,
+        ref: '230-232',
+        any: [lit('SIF COUNT == 37 && 卖淫影响 == 0')],
+      },
+      {
+        src: ABL,
+        ref: '233-235',
+        any: [lit('SIF COUNT > 15 && GETBIT(FLAG:5,36)')],
+      },
+      { src: ABL, ref: '247-267', any: [lit('@AUTO_ABLUP_CORE, NUM, INFO')] },
+      { src: ABL, ref: '256', any: [lit('TRYCALLFORM DECIDE_ABLUP{NUM}')] },
+      {
+        src: ABL,
+        ref: '264-265',
+        any: [lit('SIF RESULT >= 0 && INFO')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP0.ERB',
+        ref: '38',
+        any: [lit('\tPRINTW 需要特殊素质才能继续提升')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP0.ERB',
+        ref: '139-145',
+        any: [lit('SIF ABL:0 >= 5 && TALENT:74 == 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP0.ERB',
+        ref: '37-52',
+        any: [
+          lit(
+            'IF ABL:0 >= 5 && TALENT:74 == 0\n\tPRINTW 需要特殊素质才能继续提升',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP0.ERB',
+        ref: '230-234',
+        any: [lit('\tRETURN 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP1.ERB',
+        ref: '116-120',
+        any: [
+          lit(
+            '\tA = 400\nELSEIF ABL:1 == 3\n\tA = 8000\nELSEIF ABL:1 == 4\n\tA = 20000',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP0.ERB',
+        ref: '84-88',
+        any: [lit('ABL:0 += 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP1.ERB',
+        ref: '99-105',
+        any: [lit('SIF ABL:1 >= 5 && TALENT:78 == 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP2.ERB',
+        ref: '18-20',
+        any: [lit(';男人は却下\nSIF TALENT:122\n\tRETURN 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP2.ERB',
+        ref: '67-71',
+        any: [lit('ABL:2 += 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP3.ERB',
+        ref: '65-69',
+        any: [lit('ABL:3 += 1')],
+      },
+      { src: 'target/ERB/ABL/ABLUP1.ERB', ref: '50-53', any: [lit('INPUT')] },
+      {
+        src: 'target/ERB/ABL/ABLUP10.ERB',
+        ref: '338-342',
+        any: [lit('IF I == 0 || J == 0 || K == 0 || L ==0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP11.ERB',
+        ref: '220-223',
+        any: [lit('\tRETURN 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP12.ERB',
+        ref: '95-97',
+        any: [lit('SIF ABL:12 + ABL:15 >= 15')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP12.ERB',
+        ref: '79-85',
+        any: [lit('@CORE_ABLUP12')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP17.ERB',
+        ref: '8-77',
+        any: [lit('@ABLUP17')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP17.ERB',
+        ref: '94-358',
+        any: [lit(';露出癖のLvUP可否判定')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '11-14',
+        any: [lit(';PRINTL 卖淫中毒越高，越容易在卖淫中感到满足，')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '104-148',
+        any: [lit('IF ABL:37 == 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '150-162',
+        any: [lit('\tA = 150000')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '164-168',
+        any: [lit('\t\tTIMES D , 1.50\n\tELSEIF ABL:37 == 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '169-173',
+        any: [lit('\t\tTIMES D , 2.00\n\tELSEIF ABL:37 == 5')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '185-191',
+        any: [lit(';反抗心')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '192-198',
+        any: [lit(';刚强')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '199-203',
+        any: [lit(';克制')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '204-208',
+        any: [lit(';保守的')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '214-217',
+        any: [lit(';悲观的')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '218-222',
+        any: [lit(';爱表现')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '223-227',
+        any: [lit('IF TALENT:28')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '232-236',
+        any: [lit(';看轻贞操')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '237-241',
+        any: [lit('ELSEIF TALENT:31')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '242-246',
+        any: [lit(';压抑')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '247-251',
+        any: [lit(';开放')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '257-261',
+        any: [lit(';抵抗')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '262-266',
+        any: [lit(';害羞')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '272-276',
+        any: [lit(';不知羞耻')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '277-281',
+        any: [lit(';献身的')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '282-286',
+        any: [lit(';容易上瘾')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '287-291',
+        any: [
+          lit(
+            'IF TALENT:72\n\tTIMES A , 0.50\n\tTIMES B , 0.50\n\tTIMES C , 0.50\n\tTIMES D , 0.50',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '293-325',
+        any: [lit(';淫乱')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '315-316',
+        any: [lit('IF TALENT:153')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '327-330',
+        any: [lit(';崩坏')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '317-321',
+        any: [lit(';疯狂')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '350-351',
+        any: [lit('IF TALENT:183')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '44',
+        any: [lit('\tPRINTFORML %EXPNAME:50%{F}以上(现在{EXP:50})且')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '59-60',
+        any: [lit('ELSEIF I != 0 && RESULT == 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '8-78',
+        any: [lit('@ABLUP37')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '93-187',
+        any: [lit('@DECIDE_ABLUP37')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '22-24',
+        any: [lit(';でも、珠が沢山あるの場合はレベルアップできる。')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '26-31',
+        any: [
+          lit(
+            '\tPRINTFORML 精液中毒({ABL:32})＋百合中毒({ABL:33})＋兽奸中毒({ABL:39})上限为10',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '28',
+        any: [lit('\tPRINTFORMW 方可提升当前兽奸中毒的等级')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '104-143',
+        any: [lit(';条件別にＯＫかダメかを記録する')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '145-149',
+        any: [lit('\tB = 300000')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '151-165',
+        any: [lit('\tB = ABL:39 * ABL:39 * 4000\t')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '167-171',
+        any: [lit('\t\tTIMES C , 3.00')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '173-177',
+        any: [
+          lit(
+            'SIF ABL:39 >= 2 && (TALENT:72 == 0 && TALENT:76 == 0 && TALENT:136 == 0)',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '184-188',
+        any: [lit(';否定快感')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '189-193',
+        any: [lit('\tTIMES B , 1.75')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '194-198',
+        any: [lit(';倒錯的')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '209-214',
+        any: [lit(';动物耳朵')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '216-221',
+        any: [lit('IF TALENT:136')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '228-229',
+        any: [lit(';最低でも１回・１個は必要')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '233-234',
+        any: [lit('SIF C < 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '236-237',
+        any: [lit('SIF ABL:11 < ABL:39 + 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '100-102',
+        any: [lit('SIF ABL:32 + ABL:33 + ABL:39 >= 30')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '48-49',
+        any: [
+          lit('PRINTFORML %ABLNAME:11%LV{ABL:39 + 1}以上(现在LV{ABL:11})且'),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '52-55',
+        any: [lit('PRINTV GET_ABLUP_STATE(I)')],
+      },
+      { src: 'target/ERB/ABL/ABLUP39.ERB', ref: '58', any: [lit('INPUT')] },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '67-68',
+        any: [lit('ABL:39 += 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '73-74',
+        any: [lit('PRINTFORML %ABLNAME:39%变为LV{ABL:39}。')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '5-59',
+        any: [lit('@ABLUP39')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '63-116',
+        any: [lit('ELSEIF RESULT == 100')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '111-112',
+        any: [lit(';倒錯的')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '113-114',
+        any: [lit('IF TALENT:80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '116-117',
+        any: [lit(';狂気')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '123-124',
+        any: [lit(';最低でも１回・１個は必要')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '33-41',
+        any: [lit('\tSIF I & 2')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '27-28',
+        any: [lit('PRINTFORM [0] - %PALAMNAME:15%点数×{JUEL:15}/{A} ……')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '32-42',
+        any: [lit('\t\tPRINT 点数不足 ')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '22-64',
+        any: [lit('\tPRINTFORML %EXPNAME:50%{F}以上(現在{EXP:50})')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '88-120',
+        any: [lit('ELSEIF ABL:40 == 9')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '22-23',
+        any: [lit('@ABLUP99\nDRAWLINE')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '24-26',
+        any: [lit(';PRINTL 奴隶的反抗程度减少了。')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '98-103',
+        any: [lit('IF MARK:3 == 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '109-111',
+        any: [lit(';嚣张')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '117-119',
+        any: [lit('IF TALENT:13')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '121-122',
+        any: [lit(';爱慕')],
+      },
+      { src: 'target/ERB/ABL/ABLUP99.ERB', ref: '35', any: [lit('A = 0')] },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '39-42',
+        any: [lit(';条件別にＯＫかダメかを記録する')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '4-58',
+        any: [lit(';>屈服刻印を消してみるテスト')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '72-118',
+        any: [lit('@CORE_ABLUP99')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '4-5',
+        any: [lit('@ABLUP100\nDRAWLINE')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '6-8',
+        any: [lit(';PRINTL 异界综合征有所緩解了。')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '79-88',
+        any: [lit('IF MARK:10 == 1')],
+      },
+      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '94-96', any: [lit(';胆小')] },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '98-100',
+        any: [lit(';智慧')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '106-108',
+        any: [lit('\tTIMES A , 1.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '110-112',
+        any: [lit('IF TALENT:16')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '114-116',
+        any: [lit(';坦率')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '119-123',
+        any: [lit(';爱慕')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '33-36',
+        any: [lit('PRINTFORM [0] - %EXPNAME:99%点数×{EXP:99}/{A} ……')],
+      },
+      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '40', any: [lit('INPUT')] },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '89',
+        any: [lit('\tA = 30000')],
+      },
+      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '94', any: [lit(';胆小')] },
+      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '99', any: [lit(';智慧')] },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '105',
+        any: [lit('IF TALENT:12')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '203-267',
+        any: [lit('@AUTO_ABLUP, ARG = -1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP16.ERB',
+        ref: '529-533',
+        any: [lit('IF I == 0 || J == 0 || K == 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '204-206',
+        any: [lit('LOCAL = TARGET')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '208-213',
+        any: [lit(';优先削去反发印记')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '215-238',
+        any: [
+          lit(
+            ';卖淫为负面评价时，等级不会自动提昇\nSIF COUNT == 37 && 卖淫影响 == 0',
+          ),
+        ],
+      },
+      { src: 'target/ERB/ABL/ABL.ERB', ref: '267', any: [lit('RESTART')] },
       // —— ABLUP20.ERB～ABLUP33.ERB（issue #466）——
       //
       // 交接实测：本段初稿的 `// :N` 行号有一批对不上原文，且**同一文件内偏移

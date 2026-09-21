@@ -65,6 +65,12 @@ const {
   ablup31,
   ablup32,
   ablup33,
+  ablup37,
+  ablup39,
+  ablup40,
+  ablup99,
+  ablup100,
+  auto_ablup,
 } = require('#/system/train/ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
@@ -112,6 +118,11 @@ const ABLUP_HANDLERS = {
   31: ablup31,
   32: ablup32,
   33: ablup33,
+  37: ablup37,
+  39: ablup39,
+  40: ablup40,
+  99: ablup99,
+  100: ablup100,
 };
 
 /**
@@ -127,11 +138,7 @@ const STUBBED_ABLUP_NAMES = ABLUP_IDS.filter(
  * 核对固定）；名单变动必须同步清单。升级规则本体超出本段代码的部分见
  * ABLUP_HANDLERS 的注释。
  */
-const STUBBED_CALLS = [
-  ...STUBBED_ABLUP_NAMES,
-  'AUTO_ABLUP',
-  'CHECK_SPECIALSKIL',
-];
+const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES, 'CHECK_SPECIALSKIL'];
 
 // PALAMLV の初期値（Emuera 默认：_replace.csv 的该键被注释未启用——
 // target/CSV/_replace.csv:74）。page-train.js 持有同源常量，system 侧
@@ -409,12 +416,18 @@ async function run_juel_check() {
     show_info_exp(target); // :445 CALL SHOW_INFO_EXP
     show_juel(target); // :446 CALL SHOW_JUEL
     // :449-458 自动升级点数（:450 IF GETBIT(FLAG:5,35)）：不进交互，直接
-    // 收尾。:452-455 的三次 AUTO_ABLUP（TARGET / ASSI>0 / MASTER）共享一行占位
+    // 收尾；:452-455 的三次 AUTO_ABLUP（TARGET / ASSI>0 / MASTER）自 #467
+    // 起改调真身（ere/system/train/ablup.js 的 auto_ablup）
     if (getbit(era.get('flag:5'), 35)) {
-      stub_line('AUTO_ABLUP', '自动能力提升（目标/助手/魔王三连）');
+      // :452-455 AUTO_ABLUP 三连：目标 → 助手（仅 ASSI > 0）→ 魔王
+      await auto_ablup(); // :452 CALL AUTO_ABLUP
+      if ((era_flag.assi || 0) > 0) {
+        await auto_ablup(era_flag.assi); // :453-454 CALL AUTO_ABLUP, ASSI
+      }
+      await auto_ablup(0); // :455 CALL AUTO_ABLUP, MASTER（魔王恒为角色 0）
       break; // :457 GOTO LABEL_EXIT
     }
-    show_ablup_select(target); // :459 CALL SHOW_ABLUP_SELECT
+    await show_ablup_select(target); // :459 CALL SHOW_ABLUP_SELECT（`*` 标记要看 DECIDE，故 await）
 
     const result = await era.input(); // :461 INPUT
     if (result === 999) {

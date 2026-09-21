@@ -400,14 +400,23 @@ test('AUTOTRAIN: after_autotrain gotjuel:100 清零、cflag:667 累加与封顶�
     await after_autotrain(17);
     assert.equal(fixture.store.get('cflag:17:667'), 50);
   }
-  // flag:5 bit 35 → AUTO_ABLUP 占位
+  // flag:5 bit 35 → AUTO_ABLUP 真身（:150-151）
   {
     const { fixture } = seed_autotrain_world();
     const { after_autotrain } = fixture.load_module('event/event-autotrain');
     fixture.store.set('cflag:17:666', 1);
     fixture.store.set('flag:5', 1 << 35);
+    fixture.store.set('juel:17:0', 1); // 阴蒂感觉 Lv0 的 1 点
     await after_autotrain(17);
-    assert.ok(fixture.text_lines().some((l) => l.includes('自动能力提升')));
+    assert.equal(fixture.store.get('abl:17:0'), 1, 'target 17 自动升一级');
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes('变为LV1')),
+      'AUTO_ABLUP_CORE 的等级行（本夹具没播名字表，断言到后缀）',
+    );
+    assert.ok(
+      !fixture.text_lines().some((l) => l.includes('自动能力提升')),
+      '不再是存根占位',
+    );
   }
 });
 

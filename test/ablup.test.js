@@ -2047,6 +2047,704 @@ test('ablup17：成功购买写入 chara(cid).system.露出癖，扣珠、显示
   assert.equal(fixture.store.get(`juel:${CID}:8`), 0);
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
+// ———— ABLUP37：卖淫中毒（issue #467） ——
+
+test('ablup37：两档终止判定（特殊素质/已达最高级）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup37 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:37`, 5);
+  await ablup37(CID);
+  assert.ok(fixture.text_lines().includes('需要特殊素质才能继续提升'));
+  assert.equal(buttons(fixture).length, 0);
+
+  const maxed = create_era_fixture();
+  const { ablup37: a2 } = seed(maxed);
+  maxed.store.set(`abl:${CID}:37`, 10);
+  set_talents(maxed, { 76: 1 }); // 淫乱解锁后暴露第二档
+  await a2(CID);
+  assert.ok(maxed.text_lines().includes('已达最高级'));
+});
+
+test('ablup37：[看轻贞操]/[妓女]同样解锁 Lv5 以上', async () => {
+  for (const t of [31, 180]) {
+    const fixture = create_era_fixture();
+    const { ablup37 } = seed(fixture);
+    fixture.store.set(`abl:${CID}:37`, 5);
+    fixture.store.set(`abl:${CID}:11`, 6);
+    set_talents(fixture, { [t]: 1 });
+    fixture.set_inputs(100);
+    await ablup37(CID);
+    assert.ok(buttons(fixture).length > 0, `talent ${t} 应放行`);
+  }
+});
+
+test('ablup37：Lv0 梯子（A=2000/B=3000/C=1000/D=50）与需求行文案', async () => {
+  const fixture = create_era_fixture();
+  const { ablup37 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 1); // 欲望门槛 lv0+1=1
+  fixture.store.set(`exp:${CID}:74`, 50); // 卖淫经验恰好达标，隔离出「点数不足」一位
+  fixture.set_inputs(100);
+  await ablup37(CID);
+  const b = buttons(fixture);
+  assert.equal(b.length, 2); // [0] [100]
+  assert.equal(b[0].text, '恭顺点数×0/2000 ……点数不足 ');
+  assert.ok(fixture.text_lines().includes('欲望LV1以上(现在LV1)且'));
+  assert.ok(fixture.text_lines().includes('　　　欲情点数×0/3000'));
+  assert.ok(fixture.text_lines().includes('　　　屈服点数×0/1000'));
+  assert.ok(fixture.text_lines().includes('卖淫经验　50/50'));
+  assert.equal(b[1].text, '停止');
+  // lv0 无需异常经验，F 行不渲染
+  assert.ok(!fixture.text_lines().some((t) => t.includes('异常经验')));
+});
+
+test('ablup37：Lv2 起需要异常经验（F=lv-1），不足时经验位点亮', async () => {
+  const fixture = create_era_fixture();
+  const { ablup37 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:37`, 2);
+  fixture.store.set(`abl:${CID}:11`, 3);
+  fixture.store.set(`exp:${CID}:74`, 150); // 卖淫经验够（D=150）
+  fixture.set_inputs(100);
+  await ablup37(CID);
+  assert.ok(fixture.text_lines().includes('异常经验1以上(现在0)且'));
+  assert.ok(buttons(fixture)[0].text.endsWith('……点数不足 经验不足 '));
+});
+
+test('ablup37：F 的素质增减——[容易上瘾]-2、[反抗心]+1', async () => {
+  const addicted = create_era_fixture();
+  const { ablup37: a1 } = seed(addicted);
+  addicted.store.set(`abl:${CID}:37`, 4);
+  addicted.store.set(`abl:${CID}:11`, 5);
+  set_talents(addicted, { 72: 1 });
+  addicted.set_inputs(100);
+  await a1(CID);
+  // F = 4-1-2 = 1（lv4→5 基准 F=3，容易上瘾 -2）
+  assert.ok(addicted.text_lines().includes('异常经验1以上(现在0)且'));
+
+  const rebel = create_era_fixture();
+  const { ablup37: a2 } = seed(rebel);
+  rebel.store.set(`abl:${CID}:37`, 2);
+  rebel.store.set(`abl:${CID}:11`, 3);
+  set_talents(rebel, { 11: 1 });
+  rebel.set_inputs(100);
+  await a2(CID);
+  // F = 2-1+1 = 2
+  assert.ok(rebel.text_lines().includes('异常经验2以上(现在0)且'));
+});
+
+test('ablup37：淫乱的 B 轨 ×0.50（其余 ×0.80）——原作不对称倍率', async () => {
+  const fixture = create_era_fixture();
+  const { ablup37 } = seed(fixture);
+  set_talents(fixture, { 76: 1 });
+  fixture.store.set(`abl:${CID}:11`, 1);
+  fixture.store.set(`exp:${CID}:74`, 40); // 卖淫经验达标（50×0.8），隔离出点数位
+  fixture.set_inputs(100);
+  await ablup37(CID);
+  assert.equal(buttons(fixture)[0].text, '恭顺点数×0/1600 ……点数不足 '); // 2000*0.8
+  assert.ok(fixture.text_lines().includes('　　　欲情点数×0/1500')); // 3000*0.5
+  assert.ok(fixture.text_lines().includes('　　　屈服点数×0/800')); // 1000*0.8
+  assert.ok(fixture.text_lines().includes('卖淫经验　40/40')); // 50*0.8
+});
+
+test('ablup37：戒备森严按等级分档（lv3 ×1.5 / lv6 ×3.0）', async () => {
+  const lv3 = create_era_fixture();
+  const { ablup37: a1 } = seed(lv3);
+  lv3.store.set(`abl:${CID}:37`, 3);
+  lv3.store.set(`abl:${CID}:11`, 4);
+  set_talents(lv3, { 27: 1 });
+  lv3.set_inputs(100);
+  await a1(CID);
+  assert.ok(lv3.text_lines().includes('　　　欲情点数×0/45000')); // 30000*1.5
+
+  const lv6 = create_era_fixture();
+  const { ablup37: a2 } = seed(lv6);
+  lv6.store.set(`abl:${CID}:37`, 6);
+  lv6.store.set(`abl:${CID}:11`, 7);
+  set_talents(lv6, { 27: 1, 76: 1 });
+  lv6.set_inputs(100);
+  await a2(CID);
+  // lv6 的 B=120000；戒备森严 ×3.0 → 360000，再淫乱 B 轨 ×0.50 → 180000
+  assert.ok(lv6.text_lines().includes('　　　欲情点数×0/180000'));
+});
+
+test('ablup37：欲望门槛不足点亮能力位（ABL:11 < lv+1）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup37 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 0);
+  fixture.set_inputs(100);
+  await ablup37(CID);
+  assert.ok(buttons(fixture)[0].text.endsWith('……点数不足 经验不足 能力不足'));
+});
+
+test('ablup37：条件不满足时输入 0 打「未满足条件」并重试', async () => {
+  const fixture = create_era_fixture();
+  const { ablup37 } = seed(fixture);
+  fixture.set_inputs(0, 100);
+  await ablup37(CID);
+  assert.ok(fixture.text_lines().includes('未满足条件'));
+  // 未升级：abl:37 从未被写过（夹具只记录真实写）
+  assert.ok(!fixture.var_writes.some((w) => w.name === `abl:${CID}:37`));
+});
+
+test('ablup37：成功购买 +1 级并三轨扣珠', async () => {
+  const fixture = create_era_fixture();
+  const { ablup37 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 1);
+  fixture.store.set(`juel:${CID}:4`, 2000);
+  fixture.store.set(`juel:${CID}:5`, 3000);
+  fixture.store.set(`juel:${CID}:6`, 1000);
+  fixture.store.set(`exp:${CID}:74`, 50);
+  fixture.set_inputs(0);
+  await ablup37(CID);
+  assert.equal(fixture.store.get(`abl:${CID}:37`), 1);
+  assert.equal(fixture.store.get(`juel:${CID}:4`), 0);
+  assert.equal(fixture.store.get(`juel:${CID}:5`), 0);
+  assert.equal(fixture.store.get(`juel:${CID}:6`), 0);
+  assert.ok(fixture.text_lines().some((t) => t.includes('卖淫中毒变为LV1。')));
+});
+
+// ———— ABLUP39：兽奸中毒（issue #467） ——
+
+test('ablup39：两档终止判定（特殊素质/已达最高级）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup39 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:39`, 5);
+  await ablup39(CID);
+  assert.ok(fixture.text_lines().includes('需要特殊素质才能继续提升'));
+
+  const maxed = create_era_fixture();
+  const { ablup39: a2 } = seed(maxed);
+  maxed.store.set(`abl:${CID}:39`, 10);
+  set_talents(maxed, { 124: 1 }); // 动物耳朵解锁后暴露第二档
+  await a2(CID);
+  assert.ok(maxed.text_lines().includes('已达最高级'));
+});
+
+test('ablup39：三重上限（32+33+39>=10）珠不足时三行说明拦截', async () => {
+  const fixture = create_era_fixture();
+  const { ablup39 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:32`, 6);
+  fixture.store.set(`abl:${CID}:33`, 4);
+  fixture.store.set(`abl:${CID}:39`, 1); // 总和 11 >= 10；lv=1 → 1*1*4000=4000
+  await ablup39(CID);
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('精液中毒(6)＋百合中毒(4)＋兽奸中毒(1)上限为10'),
+  );
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((t) =>
+        t.includes('至少达成欲情点数4000点或屈服点数4000点的其中一项'),
+      ),
+  );
+  assert.ok(fixture.text_lines().includes('方可提升当前兽奸中毒的等级'));
+});
+
+test('ablup39：三重上限时 A/B 覆盖为 lv²×4000（梯子作废）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup39 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:32`, 6);
+  fixture.store.set(`abl:${CID}:33`, 4);
+  fixture.store.set(`abl:${CID}:39`, 1);
+  fixture.store.set(`juel:${CID}:5`, 4000); // 原作判 ||：两珠任一不足即拦，
+  fixture.store.set(`juel:${CID}:6`, 4000); // 文案写「或」但代码要求都足——照代码
+  fixture.store.set(`abl:${CID}:11`, 2);
+  fixture.store.set(`exp:${CID}:56`, 100); // 兽奸经验达标（lv1 的 C=100）
+  fixture.set_inputs(100);
+  await ablup39(CID);
+  assert.equal(buttons(fixture)[0].text, '欲情点数×4000/4000 ……ＯＫ');
+});
+
+test('ablup39：Lv0 梯子与需求行（A=B=2000/C=30，无 F 行）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup39 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 1);
+  fixture.store.set(`exp:${CID}:56`, 30); // 兽奸经验达标（lv0 的 C=30）
+  fixture.set_inputs(100);
+  await ablup39(CID);
+  const b = buttons(fixture);
+  assert.equal(b.length, 2);
+  assert.equal(b[0].text, '欲情点数×0/2000 ……点数不足 ');
+  assert.ok(fixture.text_lines().includes('　　　屈服点数×0/2000'));
+  assert.ok(fixture.text_lines().includes('兽奸经验　30/30'));
+  assert.ok(!fixture.text_lines().some((t) => t.includes('异常经验')));
+});
+
+test('ablup39：戒备森严读 ABL:37（卖淫中毒）——原作复制粘贴缺陷 1:1 保留', async () => {
+  // talent:27 的分档判 ABL:37==4 → ×2.0，与自身等级无关
+  const fixture = create_era_fixture();
+  const { ablup39 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:39`, 1); // 若按自身等级（1）不该有加成
+  fixture.store.set(`abl:${CID}:37`, 4); // 按卖淫中毒 4 → ×2.0 生效
+  fixture.store.set(`abl:${CID}:11`, 2);
+  set_talents(fixture, { 27: 1 });
+  fixture.store.set(`exp:${CID}:56`, 250); // 兽奸经验达标（100×2.5），隔离出点数位
+  fixture.set_inputs(100);
+  await ablup39(CID);
+  assert.equal(buttons(fixture)[0].text, '欲情点数×0/12500 ……点数不足 '); // 5000*2.5
+  assert.ok(fixture.text_lines().includes('兽奸经验　250/250')); // 100*2.5
+});
+
+test('ablup39：Lv2 起需要异常经验（F=lv+1），[牝犬]可免', async () => {
+  const fixture = create_era_fixture();
+  const { ablup39 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:39`, 2);
+  fixture.store.set(`abl:${CID}:11`, 3);
+  fixture.store.set(`exp:${CID}:56`, 220); // 兽奸经验够
+  fixture.set_inputs(100);
+  await ablup39(CID);
+  assert.ok(fixture.text_lines().includes('异常经验3以上(现在0)且'));
+
+  const dog = create_era_fixture();
+  const { ablup39: a2 } = seed(dog);
+  dog.store.set(`abl:${CID}:39`, 2);
+  dog.store.set(`abl:${CID}:11`, 3);
+  set_talents(dog, { 136: 1 });
+  dog.set_inputs(100);
+  await a2(dog);
+  assert.ok(!dog.text_lines().some((t) => t.includes('异常经验')));
+});
+
+test('ablup39：克制 A/B×2.5、C×1.5；爱慕 A/B×1.8、C×1.5', async () => {
+  const restraint = create_era_fixture();
+  const { ablup39: a1 } = seed(restraint);
+  set_talents(restraint, { 20: 1 });
+  restraint.store.set(`abl:${CID}:11`, 1);
+  restraint.store.set(`exp:${CID}:56`, 45); // 兽奸经验达标（30×1.5）
+  restraint.set_inputs(100);
+  await a1(CID);
+  assert.equal(buttons(restraint)[0].text, '欲情点数×0/5000 ……点数不足 '); // 2000*2.5
+  assert.ok(restraint.text_lines().includes('兽奸经验　45/45')); // 30*1.5
+
+  const love = create_era_fixture();
+  const { ablup39: a2 } = seed(love);
+  set_talents(love, { 85: 1 });
+  love.store.set(`abl:${CID}:11`, 1);
+  love.store.set(`exp:${CID}:56`, 45);
+  love.set_inputs(100);
+  await a2(CID);
+  assert.equal(buttons(love)[0].text, '欲情点数×0/3600 ……点数不足 '); // 2000*1.8
+  assert.ok(love.text_lines().includes('兽奸经验　45/45')); // 30*1.5
+});
+
+test('ablup39：成功购买 +1 级并扣欲情/屈服双珠', async () => {
+  const fixture = create_era_fixture();
+  const { ablup39 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 1);
+  fixture.store.set(`juel:${CID}:5`, 2000);
+  fixture.store.set(`juel:${CID}:6`, 2000);
+  fixture.store.set(`exp:${CID}:56`, 30);
+  fixture.set_inputs(0);
+  await ablup39(CID);
+  assert.equal(fixture.store.get(`abl:${CID}:39`), 1);
+  assert.equal(fixture.store.get(`juel:${CID}:5`), 0);
+  assert.equal(fixture.store.get(`juel:${CID}:6`), 0);
+  assert.ok(fixture.text_lines().some((t) => t.includes('兽奸中毒变为LV1。')));
+});
+
+// ———— ABLUP40：局部中毒（issue #467） ——
+
+test('ablup40：已达上限文案是独有的「已达到MAX」', async () => {
+  const fixture = create_era_fixture();
+  const { ablup40 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:40`, 10);
+  await ablup40(CID);
+  assert.ok(fixture.text_lines().includes('已达到MAX'));
+});
+
+test('ablup40：Lv0 需求行——欲望行显示 ABL:39+1（原作缺陷）且无「且」尾', async () => {
+  const fixture = create_era_fixture();
+  const { ablup40 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 1);
+  fixture.store.set(`abl:${CID}:39`, 5);
+  fixture.set_inputs(100);
+  await ablup40(CID);
+  assert.ok(fixture.text_lines().includes('欲望LV6以上(现在LV1)')); // 39+1=6，非 40+1
+});
+
+test('ablup40：内联状态文案（非 GET_ABLUP_STATE）与「放弃」按钮', async () => {
+  const fixture = create_era_fixture();
+  const { ablup40 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 1); // 欲望够（判定位按 ABL:40+1=1）
+  fixture.store.set(`juel:${CID}:15`, 2000); // 点数达标，隔离出「ＯＫ」
+  fixture.set_inputs(100);
+  await ablup40(CID);
+  const b = buttons(fixture);
+  assert.equal(b.length, 2);
+  assert.equal(b[0].text, '局部点数×2000/2000 ……ＯＫ');
+  assert.equal(b[1].text, '放弃');
+
+  const lack = create_era_fixture();
+  const { ablup40: a2 } = seed(lack);
+  lack.store.set(`abl:${CID}:40`, 2);
+  lack.store.set(`abl:${CID}:11`, 3);
+  lack.set_inputs(100);
+  await a2(CID);
+  // i = 点数（JUEL:15=0 < 10000）| 经验（F=3 > EXP:50=0）；能力位 3<3 为假不亮
+  assert.equal(buttons(lack)[0].text, '局部点数×0/10000 ……点数不足 经验不足');
+});
+
+test('ablup40：Lv2 起需要异常经验（F=lv+1），异常经验行无「且」尾', async () => {
+  const fixture = create_era_fixture();
+  const { ablup40 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:40`, 2);
+  fixture.store.set(`abl:${CID}:11`, 3);
+  fixture.set_inputs(100);
+  await ablup40(CID);
+  const line = fixture.text_lines().find((t) => t.includes('异常经验'));
+  assert.ok(line.includes('异常经验3以上(现在0)'));
+  assert.ok(!line.endsWith('且'));
+});
+
+test('ablup40：条件不足时输入 0 打「条件不足」（本文件独有措辞）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup40 } = seed(fixture);
+  fixture.set_inputs(0, 100);
+  await ablup40(CID);
+  assert.ok(fixture.text_lines().includes('条件不足'));
+});
+
+test('ablup40：成功购买 +1 级扣局部点数（JUEL:15）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup40 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:11`, 1);
+  fixture.store.set(`juel:${CID}:15`, 2000);
+  fixture.set_inputs(0);
+  await ablup40(CID);
+  assert.equal(fixture.store.get(`abl:${CID}:40`), 1);
+  assert.equal(fixture.store.get(`juel:${CID}:15`), 0);
+  assert.ok(fixture.text_lines().some((t) => t.includes('局部中毒变为LV1。')));
+});
+
+// ———— ABLUP99：反抗刻印消去（issue #467） ——
+
+test('ablup99：无刻印时提示并等待', async () => {
+  const fixture = create_era_fixture();
+  const { ablup99 } = seed(fixture);
+  await ablup99(CID);
+  assert.ok(fixture.text_lines().includes('不存在反抗行为'));
+  assert.equal(buttons(fixture).length, 0);
+});
+
+test('ablup99：Lv1 需求（A=5000，B=3）与两行门槛文案', async () => {
+  const fixture = create_era_fixture();
+  const { ablup99 } = seed(fixture);
+  fixture.store.set(`mark:${CID}:3`, 1);
+  fixture.set_inputs(100);
+  await ablup99(CID);
+  assert.ok(fixture.text_lines().includes('屈服刻印1以上(现在LV0)且'));
+  assert.ok(fixture.text_lines().includes('顺从LV3以上(现在LV0)必要'));
+  assert.equal(
+    buttons(fixture)[0].text,
+    '屈服点数×0/5000 ……点数不足 经验不足 能力不足',
+  );
+});
+
+test('ablup99：刻印阶梯 2→10000 / 3→50000；刚强 ×3.0、坦率 ×0.5', async () => {
+  const lv2 = create_era_fixture();
+  const { ablup99: a1 } = seed(lv2);
+  lv2.store.set(`mark:${CID}:3`, 2);
+  lv2.set_inputs(100);
+  await a1(CID);
+  assert.ok(buttons(lv2)[0].text.includes('/10000'));
+
+  const strong = create_era_fixture();
+  const { ablup99: a2 } = seed(strong);
+  strong.store.set(`mark:${CID}:3`, 3);
+  set_talents(strong, { 12: 1 });
+  strong.set_inputs(100);
+  await a2(CID);
+  assert.ok(buttons(strong)[0].text.includes('/150000')); // 50000*3.0
+
+  const frank = create_era_fixture();
+  const { ablup99: a3 } = seed(frank);
+  frank.store.set(`mark:${CID}:3`, 3);
+  set_talents(frank, { 13: 1 });
+  frank.set_inputs(100);
+  await a3(CID);
+  assert.ok(buttons(frank)[0].text.includes('/25000')); // 50000*0.5
+});
+
+test('ablup99：成功消去一级（MARK:3-1）并扣屈服珠，文案显示下降后的等级', async () => {
+  const fixture = create_era_fixture();
+  const { ablup99 } = seed(fixture);
+  fixture.store.set(`mark:${CID}:2`, 1); // 屈服刻印 >= 反抗刻印
+  fixture.store.set(`mark:${CID}:3`, 1);
+  fixture.store.set(`abl:${CID}:10`, 3); // 顺从 >= 1+2
+  fixture.store.set(`juel:${CID}:6`, 5000);
+  fixture.set_inputs(0);
+  await ablup99(CID);
+  assert.equal(fixture.store.get(`mark:${CID}:3`), 0);
+  assert.equal(fixture.store.get(`juel:${CID}:6`), 0);
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('反抗刻印下降为LV0。')),
+  );
+});
+
+// ———— ABLUP100：异界综合征消去（issue #467） ——
+
+test('ablup100：无综合征时提示并等待', async () => {
+  const fixture = create_era_fixture();
+  const { ablup100 } = seed(fixture);
+  await ablup100(CID);
+  assert.ok(fixture.text_lines().includes('并没有异界异常反应'));
+});
+
+test('ablup100：Lv1 需求行（A=2000，感觉门槛 mark10+5、战斗门槛 10）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup100 } = seed(fixture);
+  fixture.store.set(`mark:${CID}:10`, 1);
+  fixture.store.set(`cflag:${CID}:9`, 0);
+  fixture.set_inputs(100);
+  await ablup100(CID);
+  assert.ok(fixture.text_lines().includes('各处感觉总计6以上(现在0)或'));
+  assert.ok(
+    fixture.text_lines().includes('战斗等级LV10以上(现在LV0)必要，然后'),
+  );
+  // C=0 时 C-5 为负，感觉门槛数值上恒过（显示与判定脱节，原作照抄）；只剩
+  // 战斗门槛不满足（M=1 不点亮能力位）与异界经验不足 → 只有经验位
+  assert.equal(buttons(fixture)[0].text, '异界经验点数×0/2000 ……经验不足 ');
+});
+
+test('ablup100：M==1（只差一项）不点亮能力位——两条件是 OR 关系', async () => {
+  const fixture = create_era_fixture();
+  const { ablup100 } = seed(fixture);
+  fixture.store.set(`mark:${CID}:10`, 1);
+  fixture.store.set(`abl:${CID}:0`, 6); // C=6，C-5=1 <= mark10=1 → 感觉门槛过
+  fixture.store.set(`cflag:${CID}:9`, 0); // 战斗 0 < 10 → 不满足
+  fixture.store.set(`exp:${CID}:99`, 2000);
+  fixture.set_inputs(0);
+  await ablup100(CID);
+  assert.equal(fixture.store.get(`mark:${CID}:10`), 0);
+  assert.equal(fixture.store.get(`exp:${CID}:99`), 0);
+});
+
+test('ablup100：阶梯 5→50000 与刚强 ×1.8、智慧 ×0.8', async () => {
+  const base = create_era_fixture();
+  const { ablup100: a1 } = seed(base);
+  base.store.set(`mark:${CID}:10`, 5);
+  base.set_inputs(100);
+  await a1(CID);
+  assert.ok(buttons(base)[0].text.includes('/50000'));
+
+  const strong = create_era_fixture();
+  const { ablup100: a2 } = seed(strong);
+  strong.store.set(`mark:${CID}:10`, 5);
+  set_talents(strong, { 12: 1, 172: 1 });
+  strong.set_inputs(100);
+  await a2(CID);
+  // 50000*1.8*0.8 = 72000
+  assert.ok(buttons(strong)[0].text.includes('/72000'));
+});
+
+test('ablup100：成功消去一级并扣异界经验（EXP:99）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup100 } = seed(fixture);
+  fixture.store.set(`mark:${CID}:10`, 1);
+  fixture.store.set(`abl:${CID}:0`, 6); // C=6，C-5=1 <= mark10=1 → 感觉门槛过
+  fixture.store.set(`cflag:${CID}:9`, 10); // B=10 <= 10 → 战斗门槛过
+  fixture.store.set(`exp:${CID}:99`, 2000);
+  fixture.set_inputs(0);
+  await ablup100(CID);
+  assert.equal(fixture.store.get(`mark:${CID}:10`), 0);
+  assert.equal(fixture.store.get(`exp:${CID}:99`), 0);
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('异界综合征下降为LV0。')),
+  );
+});
+
+// ———— ABL.ERB 本体（issue #467）：@DECIDE_ABLUP 分发 / @AUTO_ABLUP / @USERABLUP ————
+
+test('decide_ablup：分发到已登记编号，未登记与表外返回 0', async () => {
+  const fixture = create_era_fixture();
+  const { decide_ablup } = seed(fixture);
+  fixture.store.set(`juel:${CID}:0`, 1); // 阴蒂感觉 Lv0 恰需 1 点
+  assert.equal(await decide_ablup(CID, 0), 1, 'JUEL:0 = 1 恰好够阴蒂感觉 Lv0');
+  assert.equal(await decide_ablup(CID, 1), 0, 'JUEL:14 = 0 → 点数不足');
+  assert.equal(
+    await decide_ablup(CID, 20),
+    0,
+    'ABLUP20 的 DECIDE 尚未落地 → 落空',
+  );
+  assert.equal(await decide_ablup(CID, 999), 0, '表外编号');
+});
+
+test('decide_ablup：满级与封锁走 DECIDE 的提前 RETURN 0', async () => {
+  const fixture = create_era_fixture();
+  const { decide_ablup } = seed(fixture);
+  fixture.store.set(`abl:${CID}:0`, 5);
+  fixture.store.set(`juel:${CID}:0`, 999999);
+  assert.equal(
+    await decide_ablup(CID, 0),
+    0,
+    'Lv5 且无[自慰狂] → :139-140 判死',
+  );
+  set_talents(fixture, { 74: 1 });
+  assert.equal(await decide_ablup(CID, 0), 1, '解锁后 Lv5 的 40000 点也够');
+
+  const locked = create_era_fixture();
+  const { decide_ablup: d2 } = seed(locked);
+  set_talents(locked, { 101: 2 }); // 阴蒂钝感
+  locked.store.set(`juel:${CID}:0`, 999999);
+  assert.equal(await d2(CID, 0), 0, '封锁 → :144-145 判死');
+});
+
+test('decide_ablup37：组合门槛 ABL:37+ABL:38>=10 是 DECIDE 独有的', async () => {
+  const fixture = create_era_fixture();
+  const { decide_ablup, ablup37 } = seed(fixture);
+  fixture.store.set(`abl:${CID}:37`, 1);
+  fixture.store.set(`abl:${CID}:38`, 9); // 合计 10 → DECIDE 判死
+  fixture.store.set(`abl:${CID}:11`, 2); // 欲望门槛（lv+1 = 2）
+  fixture.store.set(`juel:${CID}:4`, 5000);
+  fixture.store.set(`juel:${CID}:5`, 8000);
+  fixture.store.set(`juel:${CID}:6`, 2500);
+  fixture.store.set(`exp:${CID}:74`, 100);
+  assert.equal(await decide_ablup(CID, 37), 0, 'DECIDE_ABLUP37 :95-96');
+  fixture.set_inputs(100);
+  await ablup37(CID); // 主流程没有这条门槛（文件头登记）
+  assert.equal(buttons(fixture)[0].text, '恭顺点数×5000/5000 ……ＯＫ');
+});
+
+test('auto_ablup_core：连升到不能升为止，info 控制等级行', async () => {
+  const fixture = create_era_fixture();
+  const { auto_ablup_core } = seed(fixture);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = CID;
+  fixture.store.set(`juel:${CID}:0`, 21); // Lv0→1 需 1 点、Lv1→2 需 20 点
+  await auto_ablup_core(0, 1);
+  assert.equal(fixture.store.get(`abl:${CID}:0`), 2);
+  assert.equal(fixture.store.get(`juel:${CID}:0`), 0);
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('变为LV1')),
+    'info=1：每个成功等级都打等级行',
+  );
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('变为LV2')),
+    'info=1：连升两级各打一行',
+  );
+
+  const quiet = create_era_fixture();
+  const { auto_ablup_core: q } = seed(quiet);
+  quiet.load_module('era-utils/era-flag').target = CID;
+  quiet.store.set(`juel:${CID}:0`, 21);
+  await q(0, 0); // info = 0
+  assert.equal(quiet.store.get(`abl:${CID}:0`), 2);
+  assert.ok(!quiet.text_lines().some((t) => t.includes('变为LV')));
+});
+
+test('auto_ablup_core：未落地编号（20-33）落空跳过，满级直接返回', async () => {
+  const fixture = create_era_fixture();
+  const { auto_ablup_core } = seed(fixture);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = CID;
+  fixture.store.set(`juel:${CID}:7`, 999999); // 珠再多也没有 DECIDE_ABLUP20
+  await auto_ablup_core(20, 1);
+  assert.equal(fixture.store.get(`abl:${CID}:20`) ?? 0, 0);
+  fixture.store.set(`abl:${CID}:0`, 10);
+  await auto_ablup_core(0, 1);
+  assert.equal(fixture.store.get(`abl:${CID}:0`), 10, 'ABL >= 10 直接返回');
+});
+
+test('auto_ablup：ARG 换目标后还原 TARGET；卖淫影响 0 时跳过 37', async () => {
+  const OTHER = CID + 1;
+  const fixture = create_era_fixture();
+  const { auto_ablup } = seed(fixture);
+  join_slave_chara(fixture, OTHER);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = CID;
+  fixture.store.set(`juel:${OTHER}:0`, 1); // 阴蒂感觉 Lv0（证明循环确实在跑）
+  fixture.store.set(`abl:${OTHER}:11`, 1); // 37 的欲望门槛（lv+1 = 1）
+  // 珠给足：循环里 10（顺从）/11（欲望）先消耗 4/5 轨，37 仍要有 2000/3000/1000
+  fixture.store.set(`juel:${OTHER}:4`, 100000);
+  fixture.store.set(`juel:${OTHER}:5`, 100000);
+  fixture.store.set(`juel:${OTHER}:6`, 100000);
+  fixture.store.set(`exp:${OTHER}:74`, 100000);
+
+  await auto_ablup(OTHER);
+  assert.equal(era_flag.target, CID, 'TARGET 还原');
+  assert.equal(fixture.store.get(`abl:${OTHER}:0`), 1);
+  assert.equal(
+    fixture.store.get(`abl:${OTHER}:37`) ?? 0,
+    0,
+    '卖淫影响缺省 0（负面）→ 37 跳过',
+  );
+
+  await auto_ablup(OTHER, { prostitution_effect: 1 });
+  // auto_ablup_core 会一直升到升不动（:267 RESTART），珠给足就连升多级
+  assert.ok(
+    (fixture.store.get(`abl:${OTHER}:37`) || 0) >= 1,
+    '卖淫影响为 1（正面）时 37 参与自动提升',
+  );
+});
+
+test('auto_ablup：FLAG:5 位 36 打开时 COUNT > 15 直接 BREAK', async () => {
+  const OTHER = CID + 1;
+  const fixture = create_era_fixture();
+  const { auto_ablup } = seed(fixture);
+  join_slave_chara(fixture, OTHER);
+  fixture.load_module('era-utils/era-flag').target = OTHER;
+  fixture.store.set('flag:5', 2 ** 36); // 只自动提升部分能力
+  fixture.store.set(`juel:${OTHER}:0`, 1);
+  fixture.store.set(`abl:${OTHER}:11`, 1);
+  fixture.store.set(`juel:${OTHER}:4`, 100000);
+  fixture.store.set(`juel:${OTHER}:5`, 100000);
+  fixture.store.set(`juel:${OTHER}:6`, 100000);
+  fixture.store.set(`exp:${OTHER}:74`, 100000);
+
+  // 卖淫影响传 1：37 不再被「负面评价」那条挡掉，只剩位 36 的 BREAK 能拦住它
+  await auto_ablup(-1, { prostitution_effect: 1 });
+  assert.equal(fixture.store.get(`abl:${OTHER}:0`), 1, 'COUNT 0 仍提升');
+  assert.equal(
+    fixture.store.get(`abl:${OTHER}:37`) ?? 0,
+    0,
+    'COUNT 37 > 15 → BREAK，不提升',
+  );
+});
+
+test('userablup：非 999 返回 0；999 调 JUJUN／YOKUBO 两检查并返回 1', async () => {
+  const fixture = create_era_fixture();
+  const { userablup } = seed(fixture);
+  fixture.era.beginTrain(0, CID); // 两个检查在调教域内（TFLAG:25 通道）
+  fixture.load_module('era-utils/era-flag').target = CID;
+
+  assert.equal(await userablup(0), 0);
+  assert.equal(await userablup(998), 0);
+
+  // JUJUN_UP_CHECK：顺从 >= 4 且反抗心 + 傲娇 → 反抗心 → 坦率
+  fixture.store.set(`abl:${CID}:10`, 4);
+  fixture.store.set(`talent:${CID}:11`, 1);
+  fixture.store.set(`talent:${CID}:18`, 1);
+  // YOKUBO_UP_CHECK：欲望 >= 3 且压抑 → 清除压抑 + 否定点数减半
+  fixture.store.set(`abl:${CID}:11`, 3);
+  fixture.store.set(`talent:${CID}:32`, 1);
+  fixture.store.set(`juel:${CID}:100`, 100);
+
+  assert.equal(await userablup(999), 1, 'BEGIN TURNEND 的转场信号');
+  assert.equal(fixture.store.get(`talent:${CID}:11`), 0, '反抗心失去');
+  assert.equal(fixture.store.get(`talent:${CID}:13`), 1, '获得坦率');
+  assert.equal(fixture.store.get(`talent:${CID}:32`), 0, '压抑清除');
+  assert.equal(fixture.store.get(`juel:${CID}:100`), 50, '否定点数减半');
+});
+
+test('decide_ablup39：上限判据是 32+33+39 >= 30（主流程是 >= 10）', async () => {
+  const fixture = create_era_fixture();
+  const { decide_ablup } = seed(fixture);
+  // Lv9：梯子 a/b=300000、c(兽奸经验)=6000；三重上限时 A/B 覆盖为
+  // lv²×4000 = 324000（主流程那条 >= 10 的价位门槛因此要 324000 才放行）
+  fixture.store.set(`abl:${CID}:32`, 9);
+  fixture.store.set(`abl:${CID}:33`, 9);
+  fixture.store.set(`abl:${CID}:39`, 9); // 合计 27 < 30
+  set_talents(fixture, { 76: 1 }); // Lv5+ 解锁（淫乱）
+  fixture.store.set(`abl:${CID}:11`, 10); // 欲望门槛 lv+1 = 10
+  fixture.store.set(`juel:${CID}:5`, 400000);
+  fixture.store.set(`juel:${CID}:6`, 400000);
+  fixture.store.set(`exp:${CID}:56`, 6000);
+  fixture.store.set(`exp:${CID}:50`, 10); // F = lv-1 = 8
+  assert.equal(await decide_ablup(CID, 39), 1, '合计 27：DECIDE 放行');
+  fixture.store.set(`abl:${CID}:33`, 12); // 合计 30 → :100-102 判死
+  assert.equal(await decide_ablup(CID, 39), 0, '合计 30：DECIDE 判死');
+});
 
 // ———— ABLUP20：抖S气质（train 域），单轨道，内联状态文案与全角括号 ————
 

@@ -20,9 +20,10 @@ const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { clothtype_text } = require('#/page/page-clothtype');
 const { juel_check_main } = require('#/system/train/juel-check');
+const { auto_ablup } = require('#/system/train/ablup');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
-const STUBBED_CALLS = ['AUTO_ABLUP'];
+/** 本文件存根化的原作调用名（空：#467 起 AUTO_ABLUP 已接真身） */
+const STUBBED_CALLS = [];
 
 /**
  * 获取角色称呼（SAVESTR / CALLNAME）
@@ -127,7 +128,7 @@ async function after_autotrain(target) {
   juel_check_main(target);
 
   if ((era.get('flag:5') || 0) & (1 << 35)) {
-    stub_line('AUTO_ABLUP', '自动能力提升');
+    await auto_ablup(); // :150-151 SIF GETBIT(FLAG:5,35) → CALL AUTO_ABLUP
   }
 
   if ((era.get(`cflag:${target}:667`) || 0) > 50) {
