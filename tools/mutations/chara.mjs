@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 42; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）
+export const COUNT = 51; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +9（M10600-M10608）
 
 export default [
   {
@@ -411,5 +411,86 @@ export default [
     replace: '    if (!preset) {',
     tests: ['chara-self-call'],
     must_mention: '档位 >=200',
+  },
+  // —— #487：RAND_CHARA_MAKE 的新角色号必须是角色号，不是「已加入数 - 1」——
+  {
+    desc: 'M10600 非异国分支的新角色号退回「已加入数 - 1」（#487 的原缺陷：编制不连号时写到别人身上）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = chara_id; // :63-64 A / ID_OF_NEWCHARA（= 新角色的角色号）',
+    replace:
+      '        newchara = era.getAddedCharacters().length - 1; // 变异：按人数取号',
+    tests: ['chara-name'],
+    must_mention: 'RETURN CHARANUM-1 = 新角色的角色号',
+  },
+  {
+    desc: 'M10601 异国分支不用 CHAR_MAKE_INPORT 的返回值（#487：那位是它内部 ADDCHARA 的，不是掷中的位号）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1',
+    replace: '        newchara = chara_id; // 变异：不用返回值',
+    tests: ['chara-name'],
+    must_mention: 'ID_OF_NEWCHARA = CHAR_MAKE_INPORT 的返回值（角色号）',
+  },
+  {
+    desc: 'M10602 异国判定式反转（:58 的 RESULT == 0 语义被破坏，非异国走成异国分支）',
+    file: 'ere/chara/chara-make.js',
+    find: '      if (inport_cid === 0) {',
+    replace: '      if (inport_cid !== 0) {',
+    tests: ['chara-name'],
+    must_mention: 'RETURN CHARANUM-1 = 新角色的角色号',
+  },
+  {
+    desc: 'M10603 换人支 DELCHARA 传「已加入数 - 1」（#487：删的不是刚加的那位）',
+    file: 'ere/chara/chara-make.js',
+    find: '        era.removeCharacter(newchara); // :161 DELCHARA',
+    replace:
+      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异',
+    tests: ['chara-name'],
+    must_mention: ':161 第一位（2 号）被 DELCHARA，重挑到 1 号',
+  },
+  {
+    desc: 'M10604 「算了，不选了」支 DELCHARA 传「已加入数 - 1」（#487：刚招募的留在编制里）',
+    file: 'ere/chara/chara-make.js',
+    find: '        era.removeCharacter(newchara); // :166 DELCHARA',
+    replace:
+      '        era.removeCharacter(era.getAddedCharacters().length - 1); // 变异',
+    tests: ['chara-make'],
+    must_mention: '刚招募的 1 号（角色号，不是「已加入数 - 1」= 2）',
+  },
+  {
+    desc: 'M10605 收下播报的称呼取「已加入数 - 1」（#487：报的是别人的名字）',
+    file: 'ere/chara/chara-make.js',
+    find: '      era.print(`冒险者${chara_callname(newchara)}被囚禁在了地牢里！`);',
+    replace:
+      '      era.print(`冒险者${chara_callname(era.getAddedCharacters().length - 1)}被囚禁在了地牢里！`);',
+    tests: ['chara-and-hair'],
+    must_mention: '收下播报点名新加入的 3 号',
+  },
+  {
+    desc: 'M10606 CFLAG:1 初始位置写「已加入数 - 1」（#487：归零落到别人身上）',
+    file: 'ere/chara/chara-make.js',
+    find: '      chara(newchara).invasion.状态 = 0; // :180 CFLAG:1 初始位置',
+    replace:
+      '      chara(era.getAddedCharacters().length - 1).invasion.状态 = 0; // 变异',
+    tests: ['chara-name'],
+    must_mention: ':180 CFLAG:1 归零',
+  },
+  {
+    desc: 'M10607 末尾 RETURN 给「已加入数 - 1」（#487：调用点据此点亮素质位）',
+    file: 'ere/chara/chara-make.js',
+    find: '      return newchara; // :194 RETURN (CHARANUM - 1)',
+    replace: '      return era.getAddedCharacters().length - 1; // 变异',
+    tests: ['chara-name'],
+    must_mention: 'RETURN CHARANUM-1 = 新角色的角色号',
+  },
+  {
+    desc: 'M10608 性格预设落点改「已加入数 - 1」（#487：SET_CHARASTERISTIC 写错人）',
+    file: 'ere/chara/chara-make.js',
+    find: '        set_charasteristic(newchara, character); // :67 CALL SET_CHARASTERISTIC',
+    replace:
+      '        set_charasteristic(era.getAddedCharacters().length - 1, character); // 变异',
+    tests: ['chara-and-hair'],
+    // 变异后 :85 的随机补设仍会把 talent:3:160 写上（那一支先跑），红的是
+    // 「2 号不该被写」
+    must_mention: '不写到「人数 - 1」的 2 号',
   },
 ];
