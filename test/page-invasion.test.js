@@ -841,12 +841,22 @@ test('MEDAL_BONUS：十一档与档界逐例（> 阈值判定），≤5 枚不�
     const texts = history_texts(fixture);
     if (expected === 100) {
       assert.deepEqual(texts, [], `MEDAL_BONUS 无输出：勋章 ${medals}（≤5）`);
+      assert.deepEqual(
+        fixture.waits,
+        [],
+        'MEDAL_BONUS 无输出时不调 waitAnyKey',
+      );
     } else {
       assert.deepEqual(
         texts,
         // %CALLNAME:ARG% 是呼び名（callname:0:-2），提示里的全角空格照抄原作
         ['魔王的勋章补正\u3000x' + (expected / 100).toFixed(2)],
         `MEDAL_BONUS 提示：勋章 ${medals}`,
+      );
+      assert.equal(
+        fixture.waits.filter((w) => w.waited).length,
+        1,
+        'MEDAL_BONUS 提示后等键（PRINTFORMW）',
       );
     }
   }
@@ -965,6 +975,11 @@ test('SENGEN_VIDEO [1] 投放：数量入 9011、加成后的数入 9012/9013（
     '加成提示（:1262-1263）',
   );
   assert(texts.includes('成功投放12部水晶球'), ':1112 报的是加成后的数');
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    1,
+    ':1112 成功投放后等键（PRINTFORMW）',
+  );
 });
 
 test('SENGEN_VIDEO [1] 投放失败：加成为 0 时只消耗 9011，不增 9012/9013（:1115-1117）', async () => {
@@ -985,6 +1000,11 @@ test('SENGEN_VIDEO [1] 投放失败：加成为 0 时只消耗 9011，不增 901
     '加成为 0 走失败支（:1115-1117）',
   );
   assert(!texts.some((line) => line.startsWith('成功投放')), '不打成功行');
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    1,
+    ':1116 投放失败后等键（PRINTFORMW）',
+  );
 });
 
 test('SENGEN_VIDEO [1] 子输入：超量只重问、0 回菜单重画（$INPUT_LOOP_TMP0，:1101-1107）', async () => {
@@ -1038,6 +1058,11 @@ test('SENGEN_VIDEO [2] 奸商代理：付金币或勋章，两种酬劳都不够
   assert(
     history_texts(money).includes('成功投放11部水晶球'),
     '成功行报的是加成后的 11（:1140）',
+  );
+  assert.equal(
+    money.waits.filter((w) => w.waited).length,
+    1,
+    ':1140 奸商成功投放后等键（PRINTFORMW）',
   );
   assert(history_texts(money).includes('犒赏了奸商50000G'), ':1150');
 

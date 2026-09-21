@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 245; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 249; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -2358,5 +2358,46 @@ export default [
       '      if (rand(4) === 0) grown = times(grown, 1.6); // 变异：上界改坏',
     tests: ['page-invasion'],
     must_mention: '延长段的两枚骰子与增强段同款',
+  },
+  // —— #502 追加：PRINTFORMW 等键的四条守卫（验收抽样发现缺号段后补，M10748-M10751）——
+  {
+    desc: 'M10748 MEDAL_BONUS 的补正提示后不等键（PRINTFORMW 的 WAIT 删除）',
+    file: 'ere/page/page-invasion.js',
+    find: `  await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+  return tier.bonus;`,
+    replace: `  // 变异：补正提示后不等键
+  return tier.bonus;`,
+    tests: ['page-invasion'],
+    must_mention: 'MEDAL_BONUS 提示后等键（PRINTFORMW）',
+  },
+  {
+    desc: 'M10749 [1] 投放成功支不等键（:1112 的 PRINTFORMW 删除）',
+    file: 'ere/page/page-invasion.js',
+    find: `        await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+        era_exflag.crystal_ball_popularity += placed; // :1113`,
+    replace: `        // 变异：成功投放后不等键
+        era_exflag.crystal_ball_popularity += placed; // :1113`,
+    tests: ['page-invasion'],
+    must_mention: ':1112 成功投放后等键（PRINTFORMW）',
+  },
+  {
+    desc: 'M10750 [1] 投放失败支不等键（:1116 的 PRINTFORMW 删除）',
+    file: 'ere/page/page-invasion.js',
+    find: `        era.print('投放，似乎失败了。'); // :1116
+        await era.waitAnyKey(); // PRINTFORMW 的 WAIT`,
+    replace: `        era.print('投放，似乎失败了。'); // :1116
+        // 变异：投放失败后不等键`,
+    tests: ['page-invasion'],
+    must_mention: ':1116 投放失败后等键（PRINTFORMW）',
+  },
+  {
+    desc: 'M10751 [2] 奸商代理成功支不等键（:1140 的 PRINTFORMW 删除）',
+    file: 'ere/page/page-invasion.js',
+    find: `        await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+        era_exflag.crystal_ball_popularity += placed; // :1141`,
+    replace: `        // 变异：奸商成功投放后不等键
+        era_exflag.crystal_ball_popularity += placed; // :1141`,
+    tests: ['page-invasion'],
+    must_mention: ':1140 奸商成功投放后等键（PRINTFORMW）',
   },
 ];
