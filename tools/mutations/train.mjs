@@ -8982,35 +8982,35 @@ export default [
   {
     desc: 'M10454 ablup31：容易自慰 ×0.25 改为 ×0.20（A-D 四元组）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(60)) {\n      // 容易自慰 :163-168（A-D 四列 ×0.25，E 不受影响）\n      a = times(a, 0.25);\n      b = times(b, 0.25);\n      c = times(c, 0.25);\n      d = times(d, 0.25);\n    }',
+    find: '    if (talent(60)) {\n      // 容易自慰 :252-257（A-D 四列 ×0.25，E 不受影响）\n      a = times(a, 0.25);\n      b = times(b, 0.25);\n      c = times(c, 0.25);\n      d = times(d, 0.25);\n    }',
     replace:
-      '    if (talent(60)) {\n      // 容易自慰 :163-168（A-D 四列 ×0.25，E 不受影响）\n      a = times(a, 0.2);\n      b = times(b, 0.2);\n      c = times(c, 0.2);\n      d = times(d, 0.2);\n    }',
+      '    if (talent(60)) {\n      // 容易自慰 :252-257（A-D 四列 ×0.25，E 不受影响）\n      a = times(a, 0.2);\n      b = times(b, 0.2);\n      c = times(c, 0.2);\n      d = times(d, 0.2);\n    }',
     tests: ['ablup'],
     must_mention: '欲情点数×0/750 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10455 ablup31：[1] 轨购买多扣一份（两轨同价破坏）',
     file: 'ere/system/train/ablup.js',
-    find: '    } else if (result === 0 || result === 1) {\n      const new_lv = era.add(`abl:${cid}:31`, 1); // :99（train 属主；两轨扣点相同）\n      era.add(`juel:${cid}:5`, -a); // :101-103\n      era.add(`juel:${cid}:0`, -b);\n      era.add(`juel:${cid}:8`, -c);',
+    find: '    } else if (result === 0 || result === 1) {\n      const new_lv = era.add(`abl:${cid}:31`, 1); // :96（train 属主；两轨扣点相同）\n      era.add(`juel:${cid}:5`, -a); // :99-101\n      era.add(`juel:${cid}:0`, -b);\n      era.add(`juel:${cid}:8`, -c);',
     replace:
-      '    } else if (result === 0 || result === 1) {\n      const new_lv = era.add(`abl:${cid}:31`, 1); // :99（train 属主；两轨扣点相同）\n      era.add(`juel:${cid}:5`, -a * 2); // :101-103\n      era.add(`juel:${cid}:0`, -b);\n      era.add(`juel:${cid}:8`, -c);',
+      '    } else if (result === 0 || result === 1) {\n      const new_lv = era.add(`abl:${cid}:31`, 1); // :96（train 属主；两轨扣点相同）\n      era.add(`juel:${cid}:5`, -a * 2); // :99-101\n      era.add(`juel:${cid}:0`, -b);\n      era.add(`juel:${cid}:8`, -c);',
     tests: ['ablup'],
     must_mention: '两条购买路径扣点相同',
   },
   {
     desc: 'M10456 ablup31：阴蒂感觉门槛漏检（abl0 判定改为恒假）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl0() < lv + 1) {\n      // 阴蒂感觉门槛（:214-219）\n      i |= 4;\n      j |= 4;\n    }',
+    find: '    if (abl0() < lv + 1) {\n      // 阴蒂感觉门槛（:297-300）\n      i |= 4;\n      j |= 4;\n    }',
     replace:
-      '    if (abl0() < 0) {\n      // 阴蒂感觉门槛（:214-219）\n      i |= 4;\n      j |= 4;\n    }',
+      '    if (abl0() < 0) {\n      // 阴蒂感觉门槛（:297-300）\n      i |= 4;\n      j |= 4;\n    }',
     tests: ['ablup'],
     must_mention: 'ablup31：阴蒂感觉门槛（ABL:0）不足时两条轨道同时计能力不足',
   },
   {
     desc: 'M10457 ablup31：露出癖门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl17() < lv + 1) {\n      // 露出癖门槛（:207-212）',
-    replace: '    if (abl17() <= lv + 1) {\n      // 露出癖门槛（:207-212）',
+    find: '    if (abl17() < lv + 1) {\n      // 露出癖门槛（:291-294）',
+    replace: '    if (abl17() <= lv + 1) {\n      // 露出癖门槛（:291-294）',
     tests: ['ablup'],
     must_mention:
       'ablup31：Lv0 梯子字面值，双轨道同点数、不同经验行；容易自慰×0.25 四元组',
@@ -9018,18 +9018,16 @@ export default [
   {
     desc: 'M10458 ablup31：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
-    find: '      const new_lv = era.add(`abl:${cid}:31`, 1); // :99（train 属主；两轨扣点相同）',
-    replace:
-      '      const new_lv = era.add(`abl:${cid}:31`, 2); // :99（train 属主；两轨扣点相同）',
+    find: '      const new_lv = era.add(`abl:${cid}:31`, 1);',
+    replace: '      const new_lv = era.add(`abl:${cid}:31`, 2);',
     tests: ['ablup'],
     must_mention: 'ablup31：两条购买路径扣点相同（JUEL:5/0/8），经验行各查各的',
   },
   {
     desc: 'M10459 ablup31：[1] 轨经验行误用自慰经验表（expname:11 → 10）',
     file: 'ere/system/train/ablup.js',
-    find: "    era.print(`　　　${era.get('expname:11')}　${exp11}/${e}`); // :80",
-    replace:
-      "    era.print(`　　　${era.get('expname:10')}　${exp11}/${e}`); // :80",
+    find: "    era.print(`　　　${era.get('expname:11')}　${exp11}/${e}`);",
+    replace: "    era.print(`　　　${era.get('expname:10')}　${exp11}/${e}`);",
     tests: ['ablup'],
     must_mention: '　　　调教自慰经验　0/20',
   },
@@ -9467,16 +9465,16 @@ export default [
   {
     desc: 'M10554 ablup31：倒错的 ×0.75 误改为 ×0.70（A-D 四元组，E 不受影响）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 倒错的 :175-180（×0.75）\n      a = times(a, 0.75);',
-    replace: '      // 倒错的 :175-180（×0.75）\n      a = times(a, 0.7);',
+    find: '      // 倒错的 :268-273（×0.75）\n      a = times(a, 0.75);',
+    replace: '      // 倒错的 :268-273（×0.75）\n      a = times(a, 0.7);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10555 ablup31：淫乱化的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: '      // 淫乱化 :182-187（×0.50）\n      a = times(a, 0.5);',
-    replace: '      // 淫乱化 :182-187（×0.50）\n      a = times(a, 0.55);',
+    find: '      // 淫乱化 :276-281（×0.50）\n      a = times(a, 0.5);',
+    replace: '      // 淫乱化 :276-281（×0.50）\n      a = times(a, 0.55);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
