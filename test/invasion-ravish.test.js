@@ -1,5 +1,5 @@
 /**
- * ere/invasion/invasion-ryouzyoku.js 的行为测试（issue #470，Q13
+ * ere/invasion/invasion-ravish.js 的行为测试（issue #470，Q13
  * 侵略残余·3）。
  *
  * 源: target/ERB/侵略/INVASION_RYOUZYOKU.ERB 的 @INVASION_RYOUZYOKU（:1-66）
@@ -14,6 +14,11 @@
  *      随机分支与嵌套门槛用表驱动逐条给值。
  *
  * knob 缺省返回 1：所有 `== 0` 的守卫都不命中、`> N` 门槛一律要显式给点。
+ *
+ * **战场表是手抄的**：#470 独立审查抓到一处「龙族女神官 → 龙族神官」的抄漏，
+ * 而期望值也手抄同一份、两侧同步错，测试照样绿。加称呼表或改表时，逐字对着
+ * `target/ERB/侵略/INVASION_RYOUZYOKU.ERB` 的 `LOCALS:n = …` 行核一遍
+ * （`Select-String -Pattern 'LOCALS:2 = '` 之类），别信这份镜像。
  */
 
 const assert = require('node:assert/strict');
@@ -32,7 +37,7 @@ function knob(overrides = {}) {
 
 /** 旁白函数的一次调用：预置输入后取该次新增的文本行 */
 async function run_plain(fixture, name, area, point, rand) {
-  const mod = fixture.load_module('invasion/invasion-ryouzyoku');
+  const mod = fixture.load_module('invasion/invasion-ravish');
   await mod[name](area, point, rand);
   return fixture.text_lines();
 }
@@ -43,7 +48,7 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
   const fixture = create_era_fixture();
   fixture.store.set('item:110', 1); // 兽人（110-199 段的第一个），持有 1 只
   fixture.store.set('itemname:110', '兽人');
-  const mod = fixture.load_module('invasion/invasion-ryouzyoku');
+  const mod = fixture.load_module('invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
   assert.equal(r, 0, '原作 :66 RETURN 0');
 
@@ -74,7 +79,7 @@ test('分发：三列各抽一怪、写 E: 列、按凌辱类型调旁白、列�
 test('分发：该列无怪（数量 0）时凌辱类型就地清零，不打印也不调旁白', async () => {
   const fixture = create_era_fixture();
   // 不持有 110 → MONSTER_DATA 的「全滅」早退把它换成 190 骷髅（凌辱类型 0）
-  const mod = fixture.load_module('invasion/invasion-ryouzyoku');
+  const mod = fixture.load_module('invasion/invasion-ravish');
   const r = await mod.invasion_ryouzyoku(1, 0, knob({ 9: 0, 5: 0 }));
   assert.equal(r, 0);
   assert.equal(fixture.store.get('e:7') ?? 0, 0, '骷髅的凌辱类型是 0');
@@ -98,14 +103,14 @@ test('分发：侵攻点 ÷5000 归一（:10）——门槛按归一后的档位
   // 10000 / 5000 = 2 > 1 → 兽人第一臂
   const yes = make();
   await yes
-    .load_module('invasion/invasion-ryouzyoku')
+    .load_module('invasion/invasion-ravish')
     .invasion_ryouzyoku(1, 10000, knob({ 9: 0, 5: 0 }));
   assert(yes.text_lines().includes(arm_line), '10000 → 2 档，跨过 > 1');
 
   // 4999 / 5000 = 0（整数除算）→ 档位不到，第一臂不走
   const no = make();
   await no
-    .load_module('invasion/invasion-ryouzyoku')
+    .load_module('invasion/invasion-ravish')
     .invasion_ryouzyoku(1, 4999, knob({ 9: 0, 5: 0 }));
   assert(!no.text_lines().includes(arm_line), '4999 → 0 档');
   assert(no.text_lines().includes('「新人，就在里面！」'), '落 ELSE 臂');
@@ -134,7 +139,7 @@ test('战场表：12 个旁白函数的 area 1-5 与 ELSE 回落逐个可区分'
       {
         1: ['女人', '女孩', '年轻修女'],
         2: ['精灵女性', '精灵女孩', '精灵巫女'],
-        3: ['龙族女性', '龙族女孩', '龙族神官'],
+        3: ['龙族女性', '龙族女孩', '龙族女神官'],
         4: ['天使', '妙龄天使', '天使神官'],
         5: ['十字军', '十字军护卫', '十字军神官'],
         6: ['女人', '女孩', '年轻修女'],

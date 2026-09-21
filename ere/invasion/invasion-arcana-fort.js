@@ -229,7 +229,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   era.printButton('撤退', 4);
 
   // $INPUT_LOOP :105-125（GOTO 重问不重画）
-  let tmp_aracana = -1;
+  let tmp_arcana = -1;
   for (;;) {
     const result = await era.input();
     if (result === 4) {
@@ -250,7 +250,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     if ((stage & 8) !== 0 && result === 3) {
       continue; // :121-122
     }
-    tmp_aracana = result; // :125 TMP_ARCANA = RESULT
+    tmp_arcana = result; // :125 TMP_ARCANA = RESULT
     break;
   }
 
@@ -336,7 +336,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     era.print(text);
     await era.waitAnyKey();
   };
-  if (tmp_aracana === 0) {
+  if (tmp_arcana === 0) {
     // :328-342 東の砦 黑方片
     if (former_hero) {
       await print_w('在东方堡垒遇到了黑方片，把剑插在地上，双臂交叉抱于胸前。');
@@ -358,7 +358,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       }
       await print_w('黑方片挥舞着黑亮的大剑发起了袭击。');
     }
-  } else if (tmp_aracana === 1) {
+  } else if (tmp_arcana === 1) {
     // :343-358 西の砦 白梅花
     if (former_hero) {
       await print_w(
@@ -388,7 +388,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
         '白梅花无奈地叹着气，但雪白的魔杖却突然开始放出强烈的魔力波动！',
       );
     }
-  } else if (tmp_aracana === 2) {
+  } else if (tmp_arcana === 2) {
     // :359-374 南の砦 银黑桃
     if (former_hero) {
       await print_w(
@@ -416,7 +416,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       }
       await print_w('银黑桃分出了分身袭击过来了！');
     }
-  } else if (tmp_aracana === 3) {
+  } else if (tmp_arcana === 3) {
     // :375-390 北の砦 金红桃
     if (former_hero) {
       await print_w(
@@ -453,20 +453,20 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     2: { preset: 21, weapon: 44 + 9000 + 300000 }, // :427-441 南 银黑桃：手里剑·強度9·致命
     3: { preset: 20, weapon: 50 + 10000 + 400000 }, // :443-462 北 金红桃：细剑·強度10·强击
   };
-  const knight = KNIGHTS[tmp_aracana];
+  const knight = KNIGHTS[tmp_arcana];
   const a_arcana = knight.preset; // A = CHARANUM-1（扁平化 = 预设号，文件头）
   era.addCharacter(a_arcana); // :396 等 ADDCHARA 22
   await add_chara_ex(a_arcana); // :397 等 ADDCHARA_EX(CHARANUM-1)
   // SAVESTR:A = %NAME:A% 是 no-op（文件头）；CSTR:1 照写
   chara(a_arcana).chara.加入时名字 = name_of(a_arcana); // :400 等 CSTR:A:1
-  if (tmp_aracana === 1) {
+  if (tmp_arcana === 1) {
     chara(a_arcana).train.自慰中毒 = 1; // :416 ABL:A:31 = 1
     chara(a_arcana).dungeon.自慰经验 = 30; // :417 EXP:A:10 = 30
   }
-  if (tmp_aracana === 2) {
+  if (tmp_arcana === 2) {
     chara(a_arcana).dungeon.自慰经验 = 10; // :433 EXP:A:10 = 10
   }
-  if (tmp_aracana === 3) {
+  if (tmp_arcana === 3) {
     chara(a_arcana).dungeon.私处经验 = 20; // :449 EXP:A:0 = 20
     if ((era.get('flag:500') || 0) === 0 || (era.get('flag:500') || 0) === 2) {
       // :451-452 狂王が男か扶她ならば精液经验（EXP:A:5 = EXP:A:0）
@@ -509,7 +509,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
 
     // :494-521 各门的牌、台词与 FLAG:92 置位；CHAR_SIZE_GENERATE 的
     // 人类换算年龄（東 21 / 西 27 / 南 24 / 北 18，:501/:508/:515/:521）
-    const gate_age = { 0: 21, 1: 27, 2: 24, 3: 18 }[tmp_aracana];
+    const gate_age = { 0: 21, 1: 27, 2: 24, 3: 18 }[tmp_arcana];
     const gate_texts = {
       0: ['获得了黑方片持有的【方片Ａ】牌。', '「我居然输了………」'],
       1: [
@@ -521,13 +521,12 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
         '获得了金红桃持有的【红桃Ａ】牌。',
         '「怎么这样……狂王大人！救救我啊！！」',
       ],
-    }[tmp_aracana];
+    }[tmp_arcana];
     await print_w(gate_texts[0]);
     await print_w(`然后，被俘虏了的${name_of(a_arcana)}被带到你的地下城了………`);
     await print_w(gate_texts[1]);
     // :499/:506/:513/:520 FLAG:92 |= 位
-    era_flag.arcana_fort_stage =
-      stage | { 0: 1, 1: 4, 2: 2, 3: 8 }[tmp_aracana];
+    era_flag.arcana_fort_stage = stage | { 0: 1, 1: 4, 2: 2, 3: 8 }[tmp_arcana];
     // :501/:508/:515/:521 CALL CHAR_SIZE_GENERATE（RESULT:0-6 带出）
     const size = char_size_generate(a_arcana, gate_age, 0, rand);
 

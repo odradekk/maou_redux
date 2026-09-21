@@ -1,5 +1,5 @@
 // 源: tools/trace-check.mjs  @FILES/@LOG_REFS/@SAMPLE_LOG_REFS
-// issue #470 按 js 文件拆出：invasion-ryouzyoku.mjs
+// issue #470 按 js 文件拆出：invasion-ravish.mjs
 //
 // 本模块是纯文本旁白，锚一律取原文的 PRINT 行（台词、叙述句）——这些行
 // 在整份 ERB 里逐字唯一，天然带鉴别力。少数「同款结构复用在多个函数里」
@@ -10,9 +10,9 @@
 // 侧把每段结尾的引用写成 `:N-2-N` 这样的**含末条 PRINT 行的区间**。
 
 export const FILES = [
-  // —— #470 Q13 侵略残余·3：ere/invasion/invasion-ryouzyoku.js ——
+  // —— #470 Q13 侵略残余·3：ere/invasion/invasion-ravish.js ——
   {
-    js: 'ere/invasion/invasion-ryouzyoku.js',
+    js: 'ere/invasion/invasion-ravish.js',
     refs: [
       {
         src: 'target/ERB/侵略/INVASION_RYOUZYOKU.ERB',

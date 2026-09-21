@@ -152,7 +152,7 @@ export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463 的
 // 29（#465 后的 master）− 1（侵略/ARCANA_BATTLE.ERB——主循环与 DEATH_CHECK4
 // 落 ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/MONSTER_ATTACK3
 // 判死）。与 master 侧同期走出的 27 只是两条并行的抬低路径，合并后按重测
-// 收敛到 26（27 − 1 的 ARCANA_FORT）。
+// 收敛到 25（27 − ARCANA_BATTLE − ARCANA_FORT）。
 // export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
 // 37（#464 后的 master）− 8（本票的 ABL/ABLUP10.ERB～ABLUP17.ERB 八个文件）
 // = 29，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自

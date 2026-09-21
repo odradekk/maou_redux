@@ -1,6 +1,10 @@
 /**
  * @file 侵略时的凌辱旁白（issue #470，阶段 5c Q13 侵略残余·3）。
  *
+ * 文件名按仓库约定意译（凌辱 → ravish；同词先例是
+ * `tools/kojo-transpiler.js` 的 `DUNGEON_RYOUZYOKU.ERB → kojo-dungeon-ravish.js`）；
+ * 函数名 `invasion_ryouzyoku` 1:1 跟随原作 `@INVASION_RYOUZYOKU`，不改。
+ *
  * 源: target/ERB/侵略/INVASION_RYOUZYOKU.ERB  @INVASION_RYOUZYOKU（:1-66，
  *       分发）× 12 个战场旁白函数：@ORC_INV（:71-162）/ @SLIME_INV
  *       （:165-237）/ @INSECT_INV（:240-291）/ @IVY_INV（:294-346）/
@@ -20,8 +24,9 @@
  * 移植说明（有意保留的原作形态，均注明出处）：
  *   - :10 `ARG:1 /= 5000` 是侵攻点的整数除算（0..10 档）；分发函数只在入口
  *     归一一次，12 个旁白函数收到的已是归一后的档位。
- *   - :14 `X = (RAND:9 + 1) * 10 + 100 + RAND:5` 抽 110-199 的怪物号，
- *     :15 `CALL MONSTER_DATA, X, COUNT, 0, -1` 把数据写进第 COUNT 列
+ *   - :14 `X = (RAND:9 + 1) * 10 + 100 + RAND:5` 抽 110-194 的怪物号
+ *     （`(RAND:9 + 1)` 上界 9 → 190，再 + RAND:5 的上界 4），:15
+ *     `CALL MONSTER_DATA, X, COUNT, 0, -1` 把数据写进第 COUNT 列
  *     （COUNT = 0/1/2 三列），rand 一路透传。
  *   - :19-21 `IF E:NUM <= 0 THEN E:RYOUZYOKU = 0` 是原作的就地清零：
  *     该列无怪（数量 0）时把凌辱类型抹掉，后续 `E:RYOUZYOKU > 0` 与分发
@@ -238,7 +243,7 @@ async function slime_inv(area, sinkou, rand = default_rand) {
   const [l0, l1, l2] = {
     1: ['女人', '女孩', '年轻修女'],
     2: ['精灵女性', '精灵女孩', '精灵巫女'],
-    3: ['龙族女性', '龙族女孩', '龙族神官'],
+    3: ['龙族女性', '龙族女孩', '龙族女神官'],
     4: ['天使', '妙龄天使', '天使神官'],
     5: ['十字军', '十字军护卫', '十字军神官'],
   }[area] ?? ['女人', '女孩', '年轻修女'];
