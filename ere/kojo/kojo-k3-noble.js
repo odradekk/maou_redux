@@ -939,7 +939,7 @@ async function kojo_message_com_3(rand) {
         }
       } else if (
         // :1343 乳头ピアス+抖M气质Lv3
-        chara(target).train.穿孔装着 & 1 &&
+        chara(target).train.穿环状态 & 1 &&
         system.抖M气质 >= 3
       ) {
         era.print(`「啊啊~${heart(1)} 被那么用力地揉的话~${heart(1)}」`); // :1344 PRINTFORML
@@ -8552,7 +8552,7 @@ async function kojo_message_com_3(rand) {
       } else if (era.get(`talent:${target}:76`) === 1) {
         // :5525
 
-        if (chara(target).train.穿孔装着 & p) {
+        if (chara(target).train.穿环状态 & p) {
           // :5527
           await era.printAndWait(
             `${target_name}因为第一次在皮肤上开洞而发出了悲鸣。`,
@@ -8626,7 +8626,7 @@ async function kojo_message_com_3(rand) {
       } else if (era.get(`talent:${target}:85`) === 1) {
         // :5568
 
-        if (chara(target).train.穿孔装着 & p) {
+        if (chara(target).train.穿环状态 & p) {
           // :5570
           await era.printAndWait(
             `${target_name}因为第一次在皮肤上开洞而发出了小声的悲鸣。`,
@@ -8704,7 +8704,7 @@ async function kojo_message_com_3(rand) {
           ); // :5608
         }
       } else {
-        if (chara(target).train.穿孔装着 & p) {
+        if (chara(target).train.穿环状态 & p) {
           // :5613
           await era.printAndWait(
             `${target_name}因为第一次皮肤上开洞而发出了悲鸣、留下了眼泪。`,
@@ -8793,7 +8793,7 @@ async function kojo_message_com_3(rand) {
       ) {
         // :5662
 
-        if (chara(target).train.穿孔装着 & p) {
+        if (chara(target).train.穿环状态 & p) {
           // :5664
 
           if (p === 1) {
@@ -8869,7 +8869,7 @@ async function kojo_message_com_3(rand) {
       ) {
         // :5705
 
-        if (chara(target).train.穿孔装着 & p) {
+        if (chara(target).train.穿环状态 & p) {
           // :5707
 
           if (p === 1) {
@@ -8948,7 +8948,7 @@ async function kojo_message_com_3(rand) {
       } else if (kojo.穿环 <= 1 || game.kojo.口上开关 === 2) {
         // :5748
 
-        if (chara(target).train.穿孔装着 & p) {
+        if (chara(target).train.穿环状态 & p) {
           // :5750
 
           if (p === 1) {

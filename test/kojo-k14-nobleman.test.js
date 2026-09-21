@@ -380,6 +380,78 @@ test('PALAMCNG 首次润滑超Lv2（P1>500 && CFLAG:221==0）：置 221=1', asyn
   assert.equal(fixture.store.get('cflag:20:221'), 1);
 });
 
+test('PALAMCNG 首次耻情超Lv2（P3 = PALAM:8 + UP:8 > 500 && CFLAG:223==0）：置 223=1', async () => {
+  // 原作 :4439 P = PALAM:8 + UP:8，#493 修前读的是 train 域不存在的「耻情」
+  // （同域只有 delta:8 的「耻情增量」），NaN > PALAMLV:2 恒假、本块恒不成立
+  const fixture = await setup_k14((f) => {
+    f.store.set('palam:20:8', 600);
+    f.store.set('delta:20:8', 0);
+  });
+  const { kojo_message_palamcng_14 } = fixture.load_module(
+    'kojo/kojo-k14-nobleman',
+  );
+  await kojo_message_palamcng_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:223'), 1, '首次耻情 Lv2 置 223=1');
+  assert.equal(fixture.text_lines().length, 1, '耻情超 Lv2 出一行');
+});
+
+test('PALAMCNG 首次耻情超Lv2 的算式含增量：PALAM:8 + UP:8 一起过阈值', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('palam:20:8', 400);
+    f.store.set('delta:20:8', 200); // 400 + 200 = 600 > PALAMLV:2
+  });
+  const { kojo_message_palamcng_14 } = fixture.load_module(
+    'kojo/kojo-k14-nobleman',
+  );
+  await kojo_message_palamcng_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:223'), 1, '增量计入 P3');
+});
+
+test('PALAMCNG 首次恐怖超Lv2（P4 = PALAM:10 + UP:10 > 500 && CFLAG:224==0）：置 224=1', async () => {
+  const fixture = await setup_k14((f) => {
+    f.store.set('palam:20:10', 600);
+    f.store.set('delta:20:10', 0);
+  });
+  const { kojo_message_palamcng_14 } = fixture.load_module(
+    'kojo/kojo-k14-nobleman',
+  );
+  await kojo_message_palamcng_14(() => 0);
+  assert.equal(fixture.store.get('cflag:20:224'), 1, '首次恐怖 Lv2 置 224=1');
+  assert.equal(fixture.text_lines().length, 1, '恐怖超 Lv2 出一行');
+});
+
+test('PALAMCNG 阈值闸恰在 PALAMLV:2（500）：> 而非 >=，500 不触发、501 触发', async () => {
+  // 原作 :4440/:4455 都是 `P > PALAMLV:2`，阈值本身不算命中——门槛判据
+  // 写成 >= 会把恰好 500 的情形也触发（边界的两个方向各断言一次）。
+  const cases = [
+    { name: '耻情 500', index: 8, cflag: 223, value: 500, fires: false },
+    { name: '耻情 501', index: 8, cflag: 223, value: 501, fires: true },
+    { name: '恐怖 500', index: 10, cflag: 224, value: 500, fires: false },
+    { name: '恐怖 501', index: 10, cflag: 224, value: 501, fires: true },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k14((f) => {
+      f.store.set(`palam:20:${item.index}`, item.value);
+      f.store.set(`delta:20:${item.index}`, 0);
+    });
+    const { kojo_message_palamcng_14 } = fixture.load_module(
+      'kojo/kojo-k14-nobleman',
+    );
+    await kojo_message_palamcng_14(() => 0);
+    // 未写入的序号读出 undefined（issue #13），未触发即等于「没写」
+    assert.equal(
+      fixture.store.get(`cflag:20:${item.cflag}`) ?? 0,
+      item.fires ? 1 : 0,
+      `PALAMLV:2 边界 ${item.name}`,
+    );
+    assert.equal(
+      fixture.text_lines().length,
+      item.fires ? 1 : 0,
+      `PALAMLV:2 边界 ${item.name}`,
+    );
+  }
+});
+
 test('MARKCNG 苦痛刻印 Lv3 初回（TFLAG:22==3 && CFLAG:297==0）：置 297=1', async () => {
   const fixture = await setup_k14((f) => {
     f.store.set('tflag:22', 3);

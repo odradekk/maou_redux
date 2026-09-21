@@ -4749,7 +4749,7 @@ async function kojo_message_com_9(rand) {
           await era.printAndWait(
             `${target_name}一副呆呆的样子被${player_name}抱住、因为从下往上的抽插带来的快感而从嘴边漏出了呻吟。`,
           ); // :2437
-          if (kojo.初吻对象 >= 0) {
+          if (chara(target).train.初吻对象 >= 0) {
             // :2439
             await era.printAndWait(
               `一和${target_name}的嘴唇重叠之后${target_name}湿润的舌头就立马从缝隙中钻进来、从嘴边漏出了娇喘。`,
@@ -4778,7 +4778,7 @@ async function kojo_message_com_9(rand) {
               `「小、小穴也…好激烈的感觉…我…已经…已经…啊啊啊啊~${heart(1)}」`,
             ); // :2447
           } // :2447
-          if (kojo.初吻对象 >= 0) {
+          if (chara(target).train.初吻对象 >= 0) {
             // :2449
             await era.printAndWait(
               `发出了十分淫乱的慷慨的${target_name}如同要吃掉一样紧紧地抱住${player_name}、贪婪地亲吻着………`,

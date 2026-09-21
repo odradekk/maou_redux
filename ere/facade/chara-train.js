@@ -1663,4 +1663,30 @@ class TrainFacade {
 // GENERATED END
 
 // —— 手写区（重新生成不会触碰）——
+/**
+ * 耻情（palam:cid:8 ↔ PALAM:8）。
+ * 生成器不发射本项：ownership/palam-ownership.yml 只有 3/5/12 的测量事实，
+ * 8/10 无写入记录（原作的实际写点在 @SOURCE_CHECK_UP_* 的 UP:8 一侧，
+ * palam 表由引擎在回合末结算），故 ownership 侧无下标可切。口上要读
+ * 「当前值 + 增量」的当前值一侧（K14 贵公子 PALAMCNG，行4439 P = PALAM:8 + UP:8，#493）。
+ */
+Object.defineProperty(TrainFacade.prototype, '耻情', {
+  get() {
+    return era.get(`palam:${this.cid}:8`) || 0;
+  },
+  set(v) {
+    era.set(`palam:${this.cid}:8`, v);
+  },
+});
+
+/** 恐怖（palam:cid:10 ↔ PALAM:10）；手写理由同 耻情（同上段，行4454 P = PALAM:10 + UP:10）。 */
+Object.defineProperty(TrainFacade.prototype, '恐怖', {
+  get() {
+    return era.get(`palam:${this.cid}:10`) || 0;
+  },
+  set(v) {
+    era.set(`palam:${this.cid}:10`, v);
+  },
+});
+
 module.exports = TrainFacade;
