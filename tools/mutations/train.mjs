@@ -7816,10 +7816,16 @@ export default [
     file: 'ere/system/train/ablup.js',
     find: `      era.print('未满足条件'); // :81-82
       continue;
-    } else if (result === 1 && j !== 0) {`,
+    } else if (result === 1 && j !== 0) {
+      era.print('未满足条件'); // :84-85
+      continue;
+    } else if (result === 2 && k === 256) {`,
     replace: `      era.print('未满足条件。'); // :81-82
       continue;
-    } else if (result === 1 && j !== 0) {`,
+    } else if (result === 1 && j !== 0) {
+      era.print('未满足条件'); // :84-85
+      continue;
+    } else if (result === 2 && k === 256) {`,
     tests: ['ablup'],
     must_mention: '无句号',
   },
@@ -9062,9 +9068,9 @@ export default [
   {
     desc: 'M10463 ablup32：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(屈服)/C(精液经验) 梯子 :133-175\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3000, 10000, 10];',
+    find: '    // A(欲情)/B(屈服)/C(精液经验) 梯子 :143-183\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3000, 10000, 10];',
     replace:
-      '    // A(欲情)/B(屈服)/C(精液经验) 梯子 :133-175\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3001, 10000, 10];',
+      '    // A(欲情)/B(屈服)/C(精液经验) 梯子 :143-183\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3001, 10000, 10];',
     tests: ['ablup'],
     must_mention: '欲情点数×0/3000 ……点数不足 经验不足 ',
   },
@@ -9081,9 +9087,9 @@ export default [
   {
     desc: 'M10465 ablup32：侍奉/欲望门槛二选一判定反转（talent(76)===0 → ===1）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(76) === 0) {\n      // 无淫乱：侍奉精神门槛（:296-301）',
+    find: '    if (talent(76) === 0) {\n      // 无淫乱：侍奉精神门槛（:343-347）',
     replace:
-      '    if (talent(76) === 1) {\n      // 无淫乱：侍奉精神门槛（:296-301）',
+      '    if (talent(76) === 1) {\n      // 无淫乱：侍奉精神门槛（:343-347）',
     tests: ['ablup'],
     must_mention:
       'ablup32：无淫乱查侍奉精神、有淫乱改查欲望（渲染行与判定同步切换）',
@@ -9109,17 +9115,17 @@ export default [
   {
     desc: 'M10468 ablup32：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
-    find: '      const new_lv = era.add(`abl:${cid}:32`, 1); // :93（train 属主）',
+    find: '      const new_lv = era.add(`abl:${cid}:32`, 1); // :91（train 属主）',
     replace:
-      '      const new_lv = era.add(`abl:${cid}:32`, 2); // :93（train 属主）',
+      '      const new_lv = era.add(`abl:${cid}:32`, 2); // :91（train 属主）',
     tests: ['ablup'],
     must_mention: 'ablup32：两条购买路径各自扣对应珠、era.add 写入 abl:32',
   },
   {
     desc: 'M10469 ablup32：[1] 轨半经验改为整（C/2 → C）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (exp20 < Math.floor(c / 2)) j |= 2; // :375（C/2 整除）',
-    replace: '    if (exp20 < c) j |= 2; // :375（C/2 整除）',
+    find: '    if (exp20 < Math.floor(c / 2)) j |= 2;',
+    replace: '    if (exp20 < c) j |= 2;',
     tests: ['ablup'],
     must_mention: 'ablup32：两条购买路径各自扣对应珠、era.add 写入 abl:32',
   },
@@ -9489,16 +9495,16 @@ export default [
   {
     desc: 'M10557 ablup32：擅用舌头的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 擅用舌头 :222-226（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 擅用舌头 :222-226（×0.95）\n      a = times(a, 0.9);',
+    find: '      // 擅用舌头 :261-265（×0.95）\n      a = times(a, 0.95);',
+    replace: '      // 擅用舌头 :261-265（×0.95）\n      a = times(a, 0.9);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10558 ablup32：不怕脏的 ×0.90 误改为 ×0.95',
     file: 'ere/system/train/ablup.js',
-    find: '      // 不怕脏 :239-243（×0.90）\n      a = times(a, 0.9);',
-    replace: '      // 不怕脏 :239-243（×0.90）\n      a = times(a, 0.95);',
+    find: '      // 不怕脏 :279-283（×0.90）\n      a = times(a, 0.9);',
+    replace: '      // 不怕脏 :279-283（×0.90）\n      a = times(a, 0.95);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9741,7 +9747,7 @@ export default [
   {
     desc: 'M10583 ablup32：戒备森严 Lv6 档的 ×3.00 误改为 ×3.10（A/B/C 三列）',
     file: 'ere/system/train/ablup.js',
-    find: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+    find: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
       if (lv === 3) {
         a = times(a, 1.5);
         b = times(b, 1.5);
@@ -9756,7 +9762,7 @@ export default [
         c = times(c, 2.5);
       } else if (lv >= 6) {
         a = times(a, 3.0);`,
-    replace: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+    replace: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
       if (lv === 3) {
         a = times(a, 1.5);
         b = times(b, 1.5);
@@ -9777,10 +9783,10 @@ export default [
   {
     desc: 'M10584 ablup32：戒备森严 Lv3 档的 ×1.50 误改为 ×1.60（A/B/C 三列）',
     file: 'ere/system/train/ablup.js',
-    find: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+    find: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
       if (lv === 3) {
         a = times(a, 1.5);`,
-    replace: `      // 戒备森严 :154-176（作用于覆盖后的 A/B/C）
+    replace: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
       if (lv === 3) {
         a = times(a, 1.6);`,
     tests: ['ablup'],
