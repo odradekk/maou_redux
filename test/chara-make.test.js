@@ -931,6 +931,128 @@ test('转发层 re-export @CHAR_INIT（chara-init.js 的 #118 实现）', async 
   assert.equal(fixture.store.get('cstr:35:60'), '我', '一人称已设');
 });
 
+// —— 战役招募模式（#469 起真身，rand_chara_make 的 campaign_slave 形参）——
+
+test('campaign_slave=true：形象确认段与确认对话换战役招募措辞', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99);
+  const answers = [100, 2];
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0,
+    () => Promise.resolve(0),
+    true,
+  );
+  assert.notEqual(result, 0, '招募成功');
+  const texts = stub_texts(fixture);
+  assert(
+    texts.some((t) => t.includes('当前挑选出来的奴隶，是这个形象的')),
+    ':76-80 战役招募文案',
+  );
+  assert(
+    texts.some((t) => t.includes('这位挑选出来的奴隶，您还满意吗')),
+    ':151-157 战役招募确认文案',
+  );
+  assert(
+    !texts.some((t) => t.includes('呃……面前的勇者')),
+    '不与普通招募文案混杂',
+  );
+});
+
+test('campaign_slave=true：:55 存在性判定被绕过，已占用的勇者位仍照常招募', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.era.addCharacter(1); // chara_id=1 提前已注册
+  fixture.store.set('cflag:1:6', 99);
+  const answers = [100, 2];
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0, // chara_id 恒 = 1（已占用）
+    () => Promise.resolve(0),
+    true,
+  );
+  assert.notEqual(result, 0, '战役招募绕过占用判定，照常成功');
+  assert(
+    !stub_texts(fixture).some((t) => t.includes('由于对魔王的恐惧')),
+    '不应落空',
+  );
+});
+
+test('campaign_slave 缺省（false）：占用的勇者位落空，不绕过判定', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.era.addCharacter(1); // chara_id=1 提前已注册，未传 campaign_slave
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(() => 0);
+  assert.equal(result, 0, '默认行为：占用即落空');
+  assert(
+    stub_texts(fixture).some((t) => t.includes('由于对魔王的恐惧')),
+    ':188-191 落空文案',
+  );
+});
+
+test('campaign_slave=true 且选 [3] 算了不选了：删除角色、直接返回 0（不重挑）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99);
+  const answers = [100, 3];
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const add_calls = [];
+  const original_add = fixture.era.addCharacter;
+  fixture.era.addCharacter = (...ids) => {
+    add_calls.push(ids);
+    return original_add(...ids);
+  };
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0,
+    () => Promise.resolve(0),
+    true,
+  );
+  assert.equal(result, 0, ':171 RETURN 0');
+  assert.equal(add_calls.length, 1, '不重挑：ADDCHARA 只调用过一次');
+  assert.equal(
+    fixture.era.getAddedCharacters().includes(1),
+    false,
+    ':166 DELCHARA 已把角色移除',
+  );
+});
+
+test('campaign_slave 缺省（false）：answer=3 落入收下分支，不触发算了不选了', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99);
+  const answers = [100, 3];
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0,
+    () => Promise.resolve(0),
+  );
+  assert.notEqual(result, 0, '非战役场景：answer=3 落入收下分支，照常招募成功');
+  assert(
+    stub_texts(fixture).some((t) => t.includes('被囚禁在了地牢里')),
+    ':172-187 收下文案',
+  );
+});
+
 // —— 存根清单核对（与 event-first.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', () => {

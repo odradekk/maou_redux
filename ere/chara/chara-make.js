@@ -24,9 +24,12 @@
  *     （该文件头注明确留给魔改子系统票），ere 无寻址通道，按 Emuera 零值
  *     0 落地——@CM_GENDER 的 SELECTCASE 唯一可达臂是 CASE 0；六臂条件
  *     结构 1:1 保留，魔改票落地后改读访问器；
- *   - 赤森奴隶（魔改使用.ERH:12，普通变量非 SAVEDATA）只被
- *     CAMPAIGN_EVENT.ERB:55/:57 写入（阶段 5 战役线未移植），恒 0，
- *     :15 的 `!EX_TALENT:A:2 || 赤森奴隶` 化简为 !EX_TALENT:2；
+ *   - 赤森奴隶（魔改使用.ERH:12，普通变量非 SAVEDATA）仅在
+ *     rand_chara_make() 的战役招募模式内为真（#469 起真身），且该模式下
+ *     传给本函数的角色恒是刚 ADDCHARA 的非后代（EX_TALENT:A:2 恒 0，由
+ *     调用链决定，非本函数负责保证）——:15 的
+ *     `!EX_TALENT:A:2 || 赤森奴隶` 化简为 !EX_TALENT:2 因此仍然成立，
+ *     不随 #469 改动；
  *   - ere 无全局 RAND 序列（#117 决议），全部 RAND:N 经注入的 rand_n
  *     掷出（缺省均匀随机，测试注入定值序——ere/chara/chara-init.js 先例）；
  *   - 跨域写一律走门面（#71：属主域门面 setter；本文件属 chara 域，
@@ -1630,10 +1633,13 @@ async function cm_cloth(cid, rand_n) {
  *     CHAR_MAKE.ERB:67/:71/:83/:85/:86/:95/:97/:98/:112/:118），故以
  *     真身在 ere/chara/chara-and-hair.js（#392 起接入，见 rand_chara_make）。
  *
- *   - **赤森奴隶**（魔改使用.ERH:12，普通变量非 SAVEDATA）只被
- *     CAMPAIGN_EVENT.ERB:55/:57 写入（阶段 5 战役线未移植），恒 0：
- *     :55 的 `GETCHARA(CHARA, 0) == -1 || 赤森奴隶` 化简为纯存在性判定，
- *     :76 / :151 / :164 三处分支恒走另一侧（与 chara-make.js 文件头同款处置）。
+ *   - **赤森奴隶**（魔改使用.ERH:12，普通变量非 SAVEDATA）经形参
+ *     `campaign_slave` 注入（#469 起真身；`CAMPAIGN_EVENT.ERB:55/:57`
+ *     调用点在招募分支临时置位）：:55 的
+ *     `GETCHARA(CHARA, 0) == -1 || 赤森奴隶` 对应 `!getAddedCharacters()
+ *     .includes(chara_id) || campaign_slave`；:76-80 / :151-157 的文案分支
+ *     与 :164 的 `RESULT == 3 && 赤森奴隶`（算了，不选了）都按
+ *     `campaign_slave` 走真实分支。
  *
  *   - **`GETCHARA(CHARA, 0) == -1` 的 ere 等价物是 `getAddedCharacters()`**：
  *     #21 把原作「已定义但未加入」那一档扁平化掉了，`chara:${id}` 读到对象
@@ -1655,9 +1661,12 @@ async function cm_cloth(cid, rand_n) {
  * @param {(n: number) => number} [rand] 原作 RAND:N（[0,n) 整数）的随机源
  * @param {() => Promise<number>} [char_make_inport] :57 的异国勇者判定
  *   （转发层 ere/chara/char-make.js 的实现）；缺省视为判定不通过（返回 0）
+ * @param {boolean} [campaign_slave] 赤森奴隶（魔改使用.ERH:12）：招募战役
+ *   奴隶时为真，由调用点（CAMPAIGN_EVENT.ERB:55/:57 对应的 campaign_menu()
+ *   招募分支）显式传入；缺省 false 即现有行为（普通开局勇者招募）
  * @returns {Promise<number>} 末尾 RETURN CHARANUM-1；16 位占满的 :191 分支给 0
  */
-async function rand_chara_make(rand, char_make_inport) {
+async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const inport_check = char_make_inport ?? (() => Promise.resolve(0));
   const count = () => era.getAddedCharacters().length;
@@ -1674,7 +1683,9 @@ async function rand_chara_make(rand, char_make_inport) {
     // 名字用 chara_id 而非 chara：后者是本文件顶部 import 的 chara 门面
     const chara_id = rand_n(16) + 1; // :52 CHARA = RAND(1, 17)（勇者位 1-16）
 
-    if (!era.getAddedCharacters().includes(chara_id)) {
+    // :55 GETCHARA(CHARA,0)==-1 || 赤森奴隶：战役招募恒进入招募分支，
+    // 即使该勇者位已被占用也照常招募（不重挑）
+    if (!era.getAddedCharacters().includes(chara_id) || campaign_slave) {
       // :56-58 异国勇者判定：非异国时返回 0
       let newchara;
       if ((await inport_check()) === 0) {
@@ -1705,8 +1716,12 @@ async function rand_chara_make(rand, char_make_inport) {
       // :75-125 $INPUT_LOOP_12 —— 形象确认（改性格 / 改发色 / 继续）
       // 其中 :83-100 是性格与发色的显示段（两段同构）
       for (;;) {
-        // :76-80 赤森奴隶恒 0 → 恒走 ELSE 侧
-        era.print('呃……面前的勇者，是这个形象的……');
+        // :76-80 赤森奴隶按招募场景切换文案
+        if (campaign_slave) {
+          era.print('当前挑选出来的奴隶，是这个形象的……');
+        } else {
+          era.print('呃……面前的勇者，是这个形象的……');
+        }
         era.print('[0] 印象 ： '); // :81
 
         // :83-90 性格：显示 →（未定义则随机补设 → 再显示）→ 回写 CHARACTER，
@@ -1790,9 +1805,16 @@ async function rand_chara_make(rand, char_make_inport) {
         rand_n,
       );
 
-      // :151-157 确认提示（赤森奴隶恒 0 → 恒走 ELSE 侧）
-      era.print('解开你封印的，真的是这样的对象吗…？');
-      era.print('[1] 不不不不…我看错了！  [2] 是她！是她！就是她！抓起来！…');
+      // :151-157 确认提示按招募场景切换文案
+      if (campaign_slave) {
+        era.print('这位挑选出来的奴隶，您还满意吗？');
+        era.print(
+          '[1] 不，换一个      [2] 嘛…还行，就这位吧    [3] 算了，不选了',
+        );
+      } else {
+        era.print('解开你封印的，真的是这样的对象吗…？');
+        era.print('[1] 不不不不…我看错了！  [2] 是她！是她！就是她！抓起来！…');
+      }
 
       const answer = await era.input(); // :158 INPUT
       if (answer === 1) {
@@ -1802,10 +1824,16 @@ async function rand_chara_make(rand, char_make_inport) {
         cn_rebuild(); // :162 CALL NAME_RESET
         continue; // :163 GOTO INPUT_LOOP_11
       }
-      if (answer === 3) {
-        // :164 `RESULT == 3 && 赤森奴隶` —— 赤森奴隶恒 0，本支不可达；
-        // 1:1 留档（结构上与 :159 的换人支并列，:165-171 的删除序列相同）
-        return 0;
+      if (answer === 3 && campaign_slave) {
+        // :164-171 算了，不选了（仅战役招募场景可选）：删掉后直接返回 0，
+        // 不重挑。:169-170 的 TARGET/ASSI 复位与 :136-137（上方已做过一次）
+        // 重复赋同一对值，原作如此，1:1 保留
+        party_char_del(count() - 1); // :165 CALL PARTY_CHAR_DEL
+        era.removeCharacter(count() - 1); // :166 DELCHARA
+        cn_rebuild(); // :167 CALL NAME_RESET
+        era_flag.target = game.event.上次调教对象; // :169 TARGET = FLAG:1
+        era_flag.assi = game.event.上次助手; // :170 ASSI = FLAG:2
+        return 0; // :171
       }
 
       // :172-187 收下
