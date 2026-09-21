@@ -127,22 +127,24 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       return 0;
     }
     if (stage === 14 || stage === 13 || stage === 11 || stage === 7) {
-      // :29-39 捕獲３人：只剩一位
-      era.print('最后只剩下');
+      // :29-39 捕獲３人：只剩一位（原作是 PRINT×N 接收尾的 PRINTW，
+      // **同一条显示行**，ere 侧拼成一串再打一次）
+      let last_one = '';
       if ((stage & 1) === 0) {
-        era.print('黑方片');
+        last_one += '黑方片';
       }
       if ((stage & 2) === 0) {
-        era.print('银黑桃');
+        last_one += '银黑桃';
       }
       if ((stage & 4) === 0) {
-        era.print('白梅花');
+        last_one += '白梅花';
       }
       if ((stage & 8) === 0) {
-        era.print('金红桃');
+        last_one += '金红桃';
       }
-      era.print('一位圣灵骑士，决战时刻临近了……');
-      await era.waitAnyKey();
+      await era.printAndWait(
+        `最后只剩下${last_one}一位圣灵骑士，决战时刻临近了……`,
+      );
     } else if (
       stage === 3 ||
       stage === 5 ||
@@ -155,22 +157,23 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
       era.print('现在打倒了两位圣灵骑士，还剩下两个堡垒……');
       await era.waitAnyKey();
     } else if (stage === 1 || stage === 2 || stage === 4 || stage === 8) {
-      // :44-54 捕獲１人
-      era.print('你的奴隶，将伟大的圣灵骑士');
+      // :44-54 捕獲１人（同为 PRINT×N + PRINTW 串成的同一条显示行）
+      let knight_name = '';
       if (stage === 1) {
-        era.print('黑方片');
+        knight_name = '黑方片';
       }
       if (stage === 2) {
-        era.print('银黑桃');
+        knight_name = '银黑桃';
       }
       if (stage === 4) {
-        era.print('白梅花');
+        knight_name = '白梅花';
       }
       if (stage === 8) {
-        era.print('金红桃');
+        knight_name = '金红桃';
       }
-      era.print('打倒了，还剩下三位圣灵骑士……');
-      await era.waitAnyKey();
+      await era.printAndWait(
+        `你的奴隶，将伟大的圣灵骑士${knight_name}打倒了，还剩下三位圣灵骑士……`,
+      );
     }
   } else {
     // :56-72 初回：俘虏情报 + 有无可派刺客（:62-65 的侦察判据无妊娠项）
@@ -505,8 +508,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     era_exflag.legit_money += gain;
     era.print(`获得了${gain}G！`);
     await era.waitAnyKey();
-    era.print('而且');
-
+    // :493-496 的 PRINT 而且 与各门的 PRINTW 牌是同一条显示行
     // :494-521 各门的牌、台词与 FLAG:92 置位；CHAR_SIZE_GENERATE 的
     // 人类换算年龄（東 21 / 西 27 / 南 24 / 北 18，:501/:508/:515/:521）
     const gate_age = { 0: 21, 1: 27, 2: 24, 3: 18 }[tmp_arcana];
@@ -522,7 +524,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
         '「怎么这样……狂王大人！救救我啊！！」',
       ],
     }[tmp_arcana];
-    await print_w(gate_texts[0]);
+    await print_w(`而且${gate_texts[0]}`);
     await print_w(`然后，被俘虏了的${name_of(a_arcana)}被带到你的地下城了………`);
     await print_w(gate_texts[1]);
     // :499/:506/:513/:520 FLAG:92 |= 位

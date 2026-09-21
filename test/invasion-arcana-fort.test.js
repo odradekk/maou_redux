@@ -181,19 +181,18 @@ test('FLAG:92 == 15：四门全破的总结叙述后 RETURN 0', async () => {
 
 test('捕获进度的三种叙述：剩一位拼名、两位、一位点名', async () => {
   const cases = [
+    // 原作 :29-39 / :44-54 是 PRINT×N 接收尾 PRINTW 的**同一条显示行**，
+    // 断言按拼好的整行写（拆成多行会让这里变红）
     // 14 = 1110：东未破 → 黑方片
-    [14, ['最后只剩下', '黑方片', '一位圣灵骑士，决战时刻临近了……']],
+    [14, ['最后只剩下黑方片一位圣灵骑士，决战时刻临近了……']],
     // 13 = 1101：南未破 → 银黑桃
-    [13, ['最后只剩下', '银黑桃', '一位圣灵骑士，决战时刻临近了……']],
+    [13, ['最后只剩下银黑桃一位圣灵骑士，决战时刻临近了……']],
     // 11 = 1011：西未破 → 白梅花
-    [11, ['最后只剩下', '白梅花', '一位圣灵骑士，决战时刻临近了……']],
+    [11, ['最后只剩下白梅花一位圣灵骑士，决战时刻临近了……']],
     // 7 = 0111：北未破 → 金红桃
-    [7, ['最后只剩下', '金红桃', '一位圣灵骑士，决战时刻临近了……']],
+    [7, ['最后只剩下金红桃一位圣灵骑士，决战时刻临近了……']],
     [6, ['现在打倒了两位圣灵骑士，还剩下两个堡垒……']],
-    [
-      4,
-      ['你的奴隶，将伟大的圣灵骑士', '白梅花', '打倒了，还剩下三位圣灵骑士……'],
-    ],
+    [4, ['你的奴隶，将伟大的圣灵骑士白梅花打倒了，还剩下三位圣灵骑士……']],
   ];
   for (const [stage, expected] of cases) {
     const fixture = stage_zero_world();
@@ -268,13 +267,22 @@ test('[999] 返回：候选列表退出不打仗，RETURN 0', async () => {
 test('胜利：四门表驱动——武器编码、经验/初体验、FLAG:92 置位、赏金镜像', async () => {
   const cases = [
     // [门号, 预设号, 武器编码, FLAG:92 位, 骑士名, 等级（1000×等级 = 赏金）,
-    //  战后弹药（补弹 15 − 该骑士武器的弹药消耗：手里剑 44 号消耗 1）]
-    [0, 22, 40 + 9000 + 900000, 1, '黑方片', 105, 15],
-    [1, 23, 41 + 9000 + 600000, 4, '白梅花', 315, 15],
-    [2, 21, 44 + 9000 + 300000, 2, '银黑桃', 550, 14],
-    [3, 20, 50 + 10000 + 400000, 8, '金红桃', 700, 15],
+    //  战后弹药（补弹 15 − 该骑士武器的弹药消耗：手里剑 44 号消耗 1）, 牌名]
+    [0, 22, 40 + 9000 + 900000, 1, '黑方片', 105, 15, '方片Ａ'],
+    [1, 23, 41 + 9000 + 600000, 4, '白梅花', 315, 15, '梅花Ａ'],
+    [2, 21, 44 + 9000 + 300000, 2, '银黑桃', 550, 14, '黑桃Ａ'],
+    [3, 20, 50 + 10000 + 400000, 8, '金红桃', 700, 15, '红桃Ａ'],
   ];
-  for (const [gate, preset, weapon, bit, knight_name, level, ammo] of cases) {
+  for (const [
+    gate,
+    preset,
+    weapon,
+    bit,
+    knight_name,
+    level,
+    ammo,
+    card,
+  ] of cases) {
     const fixture = stage_zero_world();
     fixture.reset_inputs(gate, 0); // 门 → 列表第 0 号（阿尔）
     const mod = fixture.load_module('invasion/invasion-arcana-fort');
@@ -341,15 +349,56 @@ test('胜利：四门表驱动——武器编码、经验/初体验、FLAG:92 �
       'EX_FLAG:4444 镜像',
     );
 
-    // 胜利叙述
+    // 胜利叙述（:493 的 PRINT 而且 与 :496 的 PRINTW 牌是同一条显示行）
     const texts = fixture.text_lines();
     assert(texts.includes(`圣灵骑士${knight_name}战败了…`));
     assert(texts.includes(`获得了${1000 * level}G！`));
+    assert(
+      texts.includes(`而且获得了${knight_name}持有的【${card}】牌。`),
+      '「而且」与牌名必须同一条显示行',
+    );
     assert(
       texts.includes(`然后，被俘虏了的${knight_name}被带到你的地下城了………`),
     );
   }
 });
+
+test('FLAG:60 的追加强化：逐级 ST_UP（2 级）后再算赏金', async () => {
+  const fixture = stage_zero_world();
+  fixture.reset_inputs(0, 0); // 东门 → 阿尔
+  fixture.store.set('flag:60', 2); // :470-475 REPEAT FLAG:60
+  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  await mod.arcana_fort(knob());
+  assert.equal(fixture.store.get('cflag:22:9'), 107, '黑方片 105 → 107 级');
+  assert.equal(
+    fixture.store.get('flag:10004'),
+    107000,
+    '赏金按升级后的等级算（:490 在 ST_UP 段之后）',
+  );
+});
+
+test('金红桃：FLAG:500 决定精液经验档——男/扶她写、女不写', async () => {
+  const cases = [
+    [0, 20, '狂王 = 男'],
+    [2, 20, '狂王 = 扶她'],
+    [1, undefined, '狂王 = 女'],
+  ];
+  for (const [king, expected, label] of cases) {
+    const fixture = stage_zero_world();
+    fixture.reset_inputs(3, 0); // 北门 → 阿尔
+    fixture.store.set('flag:500', king);
+    const mod = fixture.load_module('invasion/invasion-arcana-fort');
+    await mod.arcana_fort(knob());
+    assert.equal(fixture.store.get('exp:20:0'), 20, `${label}：私处经验恒写`);
+    assert.equal(
+      fixture.store.get(`exp:20:5`),
+      expected,
+      `${label}：性交经验（EXP:5 = EXP:0 的档）`,
+    );
+  }
+});
+
+// —— 胜利叙述分支 ——
 
 test('胜利叙述分支：曾经的同伴（TALENT:167）与全裸（CFLAG:40 == 0）', async () => {
   // 同伴分支 + 全裸行

@@ -1,10 +1,11 @@
 // issue #470（Q13 侵略残余·3）：ARCANA_BATTLE / ARCANA_FORT /
 // INVASION_RYOUZYOKU 的变异条目与 GROUP_BATTLE 判死登记的守护。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 46; // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
+export const COUNT = 49; // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
 // 1 条 dungeon-battle2.js 攻击演出解码修复的回退守护）+ 第二批
 // M10318-M10345（ARCANA_FORT 15 条 + INVASION_RYOUZYOKU 13 条；
-// GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的守护）
+// GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的守护）+ 第三批
+// M10346-M10348（独立审查整改后补钉的三条：拼名、FLAG:500 档、FLAG:60 循环）
 
 export default [
   {
@@ -383,5 +384,31 @@ export default [
     replace: 'if (rand(2) === 1) {\n    // :768-774',
     tests: ['invasion-ravish'],
     must_mention: '战场表：',
+  },
+  // —— 第三批：独立审查整改后的补钉（M10346-M10348）——
+  {
+    desc: 'M10346 捕获三人行里西门的拼名改坏（白梅花 → 金红桃）',
+    file: 'ere/invasion/invasion-arcana-fort.js',
+    find: "        last_one += '白梅花';",
+    replace: "        last_one += '金红桃';",
+    tests: ['invasion-arcana-fort'],
+    must_mention: '进度：',
+  },
+  {
+    desc: 'M10347 金红桃精液经验档的判据改坏（FLAG:500 == 0 改 == 3）',
+    file: 'ere/invasion/invasion-arcana-fort.js',
+    find: "if ((era.get('flag:500') || 0) === 0 || (era.get('flag:500') || 0) === 2) {",
+    replace:
+      "if ((era.get('flag:500') || 0) === 3 || (era.get('flag:500') || 0) === 2) {",
+    tests: ['invasion-arcana-fort'],
+    must_mention: '性交经验',
+  },
+  {
+    desc: 'M10348 FLAG:60 的升级循环只跑一级（i < level_ups 改 i < 1）',
+    file: 'ere/invasion/invasion-arcana-fort.js',
+    find: 'for (let i = 0; i < level_ups; i += 1) {',
+    replace: 'for (let i = 0; i < 1; i += 1) {',
+    tests: ['invasion-arcana-fort'],
+    must_mention: '黑方片 105 → 107 级',
   },
 ];
