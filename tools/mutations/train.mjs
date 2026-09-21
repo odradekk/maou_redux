@@ -8607,17 +8607,17 @@ export default [
   {
     desc: 'M10413 ablup21：[1] 轨绝顶经验需求 G=1 改为 2',
     file: 'ere/system/train/ablup.js',
-    find: '    const g = 1; // 绝顶经验需求，全等级 1（:227-228）',
-    replace: '    const g = 2; // 绝顶经验需求，全等级 1（:227-228）',
+    find: '    const g = 1; // 绝顶经验需求，全等级 1（:249）',
+    replace: '    const g = 2; // 绝顶经验需求，全等级 1（:249）',
     tests: ['ablup'],
     must_mention: '　　　绝顶经验　0/1',
   },
   {
     desc: 'M10414 ablup21：受虐狂 ×0.50 改为 ×0.55（五元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(88)) {\n      // 受虐狂 :393-398（×0.50）\n      a = times(a, 0.5);\n      b = times(b, 0.5);\n      c = times(c, 0.5);\n      d = times(d, 0.5);\n      e = times(e, 0.5);\n    }',
+    find: '    if (talent(88)) {\n      // 受虐狂 :455-461（×0.50）\n      a = times(a, 0.5);\n      b = times(b, 0.5);\n      c = times(c, 0.5);\n      d = times(d, 0.5);\n      e = times(e, 0.5);\n    }',
     replace:
-      '    if (talent(88)) {\n      // 受虐狂 :393-398（×0.50）\n      a = times(a, 0.55);\n      b = times(b, 0.55);\n      c = times(c, 0.55);\n      d = times(d, 0.55);\n      e = times(e, 0.55);\n    }',
+      '    if (talent(88)) {\n      // 受虐狂 :455-461（×0.50）\n      a = times(a, 0.55);\n      b = times(b, 0.55);\n      c = times(c, 0.55);\n      d = times(d, 0.55);\n      e = times(e, 0.55);\n    }',
     tests: ['ablup'],
     must_mention: '苦痛点数×0/50 ……点数不足 ',
   },
@@ -8634,27 +8634,27 @@ export default [
   {
     desc: 'M10416 ablup21：欲望门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl11() < lv + 1) {\n      // 欲望门槛，双轨同时命中（:414-419）',
+    find: '    if (abl11() < lv + 1) {\n      // 欲望门槛，双轨同时命中（:480-484）',
     replace:
-      '    if (abl11() <= lv + 1) {\n      // 欲望门槛，双轨同时命中（:414-419）',
+      '    if (abl11() <= lv + 1) {\n      // 欲望门槛，双轨同时命中（:480-484）',
     tests: ['ablup'],
     must_mention: 'Lv3→4 异常经验门槛',
   },
   {
     desc: 'M10417 ablup21：[0] 轨购买误扣屈服点数（JUEL:5 → JUEL:6）',
     file: 'ere/system/train/ablup.js',
-    find: '      era.add(`juel:${cid}:9`, -a); // :103-104\n      era.add(`juel:${cid}:5`, -b);',
+    find: '      era.add(`juel:${cid}:9`, -a); // :102-103\n      era.add(`juel:${cid}:5`, -b);',
     replace:
-      '      era.add(`juel:${cid}:9`, -a); // :103-104\n      era.add(`juel:${cid}:6`, -b);',
+      '      era.add(`juel:${cid}:9`, -a); // :102-103\n      era.add(`juel:${cid}:6`, -b);',
     tests: ['ablup'],
     must_mention: '两条购买路径各自扣对应珠',
   },
   {
     desc: 'M10418 ablup21：成功购买写入 chara(cid).system.抖M气质 改为 +2',
     file: 'ere/system/train/ablup.js',
-    find: '      const new_lv = (chara(cid).system.抖M气质 += 1); // :101（system 属主）',
+    find: '      const new_lv = (chara(cid).system.抖M气质 += 1); // :99（system 属主）',
     replace:
-      '      const new_lv = (chara(cid).system.抖M气质 += 2); // :101（system 属主）',
+      '      const new_lv = (chara(cid).system.抖M气质 += 2); // :99（system 属主）',
     tests: ['ablup'],
     must_mention:
       'ablup21：两条购买路径各自扣对应珠、写入 chara(cid).system.抖M气质',
@@ -9236,9 +9236,9 @@ export default [
   {
     desc: 'M10526 ablup21：抵抗的 ×2.00 误改为 ×1.50（#466 验收逃逸的那一处）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 抵抗 :373-379（×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n      e = times(e, 2.0);',
+    find: '      // 抵抗 :374-380（×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n      e = times(e, 2.0);',
     replace:
-      '      // 抵抗 :373-379（×2.00）\n      a = times(a, 1.5);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n      e = times(e, 2.0);',
+      '      // 抵抗 :374-380（×2.00）\n      a = times(a, 1.5);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n      e = times(e, 2.0);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9353,16 +9353,16 @@ export default [
   {
     desc: 'M10540 ablup21：冷漠的 ×1.10 误改为 ×1.20（五元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 冷漠 :275-280（×1.10）\n      a = times(a, 1.1);',
-    replace: '      // 冷漠 :275-280（×1.10）\n      a = times(a, 1.2);',
+    find: '      // 冷漠 :309-315（×1.10）\n      a = times(a, 1.1);',
+    replace: '      // 冷漠 :309-315（×1.10）\n      a = times(a, 1.2);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10541 ablup21：保守的 ×1.20 误改为 ×1.30',
     file: 'ere/system/train/ablup.js',
-    find: '      // 保守的 :287-292\n      a = times(a, 1.2);',
-    replace: '      // 保守的 :287-292\n      a = times(a, 1.3);',
+    find: '      // 保守的 :325-331\n      a = times(a, 1.2);',
+    replace: '      // 保守的 :325-331\n      a = times(a, 1.3);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9377,17 +9377,17 @@ export default [
   {
     desc: 'M10543 ablup21：接受快感的 ×0.90 误改为 ×0.95（与否定快感同段的 IF 侧）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 接受快感 :359-364 / 否定快感 :365-370\n      a = times(a, 0.9);',
+    find: '      // 接受快感 :415-420 / 否定快感 :422-427\n      a = times(a, 0.9);',
     replace:
-      '      // 接受快感 :359-364 / 否定快感 :365-370\n      a = times(a, 0.95);',
+      '      // 接受快感 :415-420 / 否定快感 :422-427\n      a = times(a, 0.95);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10544 ablup21：反抗心的 ×1.20 误改为 ×1.25',
     file: 'ere/system/train/ablup.js',
-    find: '      // 反抗心 :237-242\n      a = times(a, 1.2);',
-    replace: '      // 反抗心 :237-242\n      a = times(a, 1.25);',
+    find: '      // 反抗心 :260-266\n      a = times(a, 1.2);',
+    replace: '      // 反抗心 :260-266\n      a = times(a, 1.25);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
