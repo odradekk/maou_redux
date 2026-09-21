@@ -91,8 +91,14 @@ const BASELINE = {
   // 下游仍是存根），净减 7：natural 190 → 183、max 230 → 223。matched 不变
   // （这些占位行本就不产生 matched），unexplained 仍 0。数字为合并态实测
   // （并上含 #389/#397 的 master 之后），由派单人重测写回。
-  'daycycle-natural': { matched: 71, version: 2, stub: 182, unexplained: 0 },
-  'daycycle-max': { matched: 71, version: 2, stub: 222, unexplained: 0 },
+  // #469 推进：@CAMPAIGN_GAMEOVER 落真身（turnend-settle.js，FLAG:400 = 0
+  // 早退、无输出）——回合结束处原先无条件的占位行消失，本处 ere 侧只剩
+  // AUTOTRAIN 一条占位，与 golden 侧两行地图读数的配对随之重排：占位行改配
+  // 第一行读数，第二行改归 GEO_OUTPUT_2（2D 地图输出未移植）。net -1
+  // 存根：natural 182 → 181、max 222 → 221；matched 不变（占位行不产生
+  // matched），unexplained 仍 0。数字为合入 #461 返工 master 后实测写回。
+  'daycycle-natural': { matched: 71, version: 2, stub: 181, unexplained: 0 },
+  'daycycle-max': { matched: 71, version: 2, stub: 221, unexplained: 0 },
   // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
   // #384 推进（rebase 到 #419 之后重测）：CN_REBUILD 从存根落真身
   // （ere/chara/chara-name.js；改名后按姓名重建称呼，**无输出**），出售段
