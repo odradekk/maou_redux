@@ -227,5 +227,14 @@ export const SAMPLE_LOG_REFS = {
         { ref: '348', any: [/刺激Ｇ点\[  8\]/] },
       ],
     },
+    {
+      // #462：EXP_GOT_CHECK 落地后 matched 实证——两行同为「被虐快乐经验」
+      // 不同档位，各自单独登记避免弱锚复现判定
+      js: 'test/compare-train.test.js',
+      refs: [
+        { ref: '319', any: [/^被虐快乐经验\+2$/] },
+        { ref: '372', any: [/^被虐快乐经验\+8$/] },
+      ],
+    },
   ],
 };

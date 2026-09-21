@@ -68,9 +68,10 @@ test('端到端：据点一日循环——主菜单选休息 → 日期推进 �
   fixture.set_inputs(1);
   await expect_signal(run_title_page(), 'FIRST', BeginSignal, '标题画面新游戏');
 
-  // —— @EVENTFIRST：初期奴隶选「村娘」[1]、地下城模式选「普通」[0]、
+  // —— @EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
+  // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]、地下城模式选「普通」[0]、
   // 搬运选「抱起」[1]；村娘分支出口 BEGIN SHOP ——
-  fixture.set_inputs(1, 0, 1);
+  fixture.set_inputs(1, 2, 1, 0, 1);
   const first_exit = await emit('EVENTFIRST');
   assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 

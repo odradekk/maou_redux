@@ -129,10 +129,11 @@ test('端到端：新档从标题走到 ENDING_1（三信号 + 实测天数）',
       '标题画面新游戏',
     );
 
-    // —— @EVENTFIRST：初期奴隶选「村娘」[1]（#50 真身）、地下城模式选
+    // —— @EVENTFIRST（#463 起五问）：魔王性别选「女性」[1]（跳过肉棒尺寸）、
+    // 狂王性别选「扶她」[2]、初期奴隶选「村娘」[1]（#50 真身）、地下城模式选
     // 「普通」[0]（#181 加的一问，本条走 3D 路径）、搬运选「抱起」[1]；
     // 村娘分支自己的出口 BEGIN SHOP（链上暂存，emit 返回）——
-    fixture.set_inputs(1, 0, 1);
+    fixture.set_inputs(1, 2, 1, 0, 1);
     const first_exit = await emit('EVENTFIRST');
     assert.equal(first_exit, 'SHOP', '初始化的出口必是 BEGIN SHOP');
 
