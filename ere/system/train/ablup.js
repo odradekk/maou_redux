@@ -2391,7 +2391,8 @@ async function ablup15(cid, mode) {
   if (abl12() + abl15() >= 15) {
     const juel7_gate = era.get(`juel:${cid}:7`) || 0;
     if (juel7_gate < abl15() * abl15() * 1000) {
-      if (!mode) await era.printAndWait(`技巧(${abl12()})＋话术(${abl15()})上限为15`); // :22
+      if (!mode)
+        await era.printAndWait(`技巧(${abl12()})＋话术(${abl15()})上限为15`); // :22
       return;
     }
   }
@@ -3487,9 +3488,7 @@ async function ablup37(cid, mode) {
     if (f > 0) {
       era.print(`${era.get('expname:50')}${f}以上(现在${exp50})且`); // :41-42
     }
-    era.print(
-      `${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`,
-    ); // :44
+    era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :44
     era.printButton(
       `${era.get('palamname:4')}点数×${juel4}/${a} ……${get_ablup_state(i)}`,
       0,
@@ -3519,7 +3518,6 @@ async function ablup37(cid, mode) {
   }
 }
 
-
 /**
  * 源: target/ERB/ABL/ABLUP39.ERB @ABLUP39 :8-78 + @DECIDE_ABLUP39 :93-187。
  * 兽奸中毒，train 域（裸写 abl:39）。双珠 A(欲情 JUEL:5)/B(屈服 JUEL:6)
@@ -3535,9 +3533,7 @@ async function ablup39(cid, mode) {
   const abl11 = () => era.get(`abl:${cid}:11`) || 0;
   const abl39 = () => era.get(`abl:${cid}:39`) || 0;
   const abl_sum = () =>
-    (era.get(`abl:${cid}:32`) || 0) +
-    (era.get(`abl:${cid}:33`) || 0) +
-    abl39();
+    (era.get(`abl:${cid}:32`) || 0) + (era.get(`abl:${cid}:33`) || 0) + abl39();
 
   if (!mode) era.drawLine(); // :10 DRAWLINE（:11-14 叙事文本已被注释掉，不移植）
 
@@ -3706,9 +3702,7 @@ async function ablup39(cid, mode) {
     if (f > 0) {
       era.print(`${era.get('expname:50')}${f}以上(现在${exp50})且`); // :48-49
     }
-    era.print(
-      `${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`,
-    ); // :50
+    era.print(`${era.get('ablname:11')}LV${lv + 1}以上(现在LV${abl11()})且`); // :50
     era.printButton(
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
@@ -3902,9 +3896,7 @@ async function ablup99(cid, mode) {
       return 0;
     }
 
-    era.print(
-      `${era.get('markname:2')}${mark3()}以上(现在LV${mark2()})且`,
-    ); // :35
+    era.print(`${era.get('markname:2')}${mark3()}以上(现在LV${mark2()})且`); // :35
     era.print(`${era.get('ablname:10')}LV${b}以上(现在LV${abl10})必要`); // :37
     era.printButton(
       `${era.get('palamname:6')}点数×${juel6}/${a} ……${get_ablup_state(i)}`,
@@ -4014,7 +4006,6 @@ async function ablup100(cid) {
     }
   }
 }
-
 
 // ———— ABL.ERB：@DECIDE_ABLUP 族 / @AUTO_ABLUP / @USERABLUP ————
 //

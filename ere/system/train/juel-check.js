@@ -120,10 +120,7 @@ const STUBBED_ABLUP_NAMES = ABLUP_IDS.filter(
  * 核对固定）；名单变动必须同步清单。升级规则本体超出本段代码的部分见
  * ABLUP_HANDLERS 的注释。
  */
-const STUBBED_CALLS = [
-  ...STUBBED_ABLUP_NAMES,
-  'CHECK_SPECIALSKIL',
-];
+const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES, 'CHECK_SPECIALSKIL'];
 
 // PALAMLV の初期値（Emuera 默认：_replace.csv 的该键被注释未启用——
 // target/CSV/_replace.csv:74）。page-train.js 持有同源常量，system 侧

@@ -727,8 +727,16 @@ test('SHOW_ABLUP_SELECT：#467 `*` 标记按 DECIDE 结果逐行渲染', async (
 
   const rendered = (acc) =>
     fixture.lines.find((line) => line.accelerator === acc).rendered;
-  assert.equal(rendered(0), '[0] 阴蒂感觉 - LV 0 *', 'JUEL:0=1 恰好够 Lv0 的 1 点');
-  assert.equal(rendered(1), '[1] 乳房感觉 - LV 0', 'JUEL:14=0 → 点数不足，无标记');
+  assert.equal(
+    rendered(0),
+    '[0] 阴蒂感觉 - LV 0 *',
+    'JUEL:0=1 恰好够 Lv0 的 1 点',
+  );
+  assert.equal(
+    rendered(1),
+    '[1] 乳房感觉 - LV 0',
+    'JUEL:14=0 → 点数不足，无标记',
+  );
   assert.equal(rendered(99), '[99] 反抗刻印 - LV 1 *', '两门槛与屈服珠全达标');
 });
 

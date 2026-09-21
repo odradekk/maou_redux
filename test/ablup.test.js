@@ -2128,7 +2128,8 @@ test('ablup37：F 的素质增减——[容易上瘾]-2、[反抗心]+1', async 
   rebel.set_inputs(100);
   await a2(CID);
   // F = 2-1+1 = 2
-  assert.ok(rebel.text_lines().includes('异常经验2以上(现在0)且'));});
+  assert.ok(rebel.text_lines().includes('异常经验2以上(现在0)且'));
+});
 
 test('ablup37：淫乱的 B 轨 ×0.50（其余 ×0.80）——原作不对称倍率', async () => {
   const fixture = create_era_fixture();
@@ -2225,11 +2226,17 @@ test('ablup39：三重上限（32+33+39>=10）珠不足时三行说明拦截', a
   fixture.store.set(`abl:${CID}:33`, 4);
   fixture.store.set(`abl:${CID}:39`, 1); // 总和 11 >= 10；lv=1 → 1*1*4000=4000
   await ablup39(CID);
-  assert.ok(fixture.text_lines().includes('精液中毒(6)＋百合中毒(4)＋兽奸中毒(1)上限为10'));
   assert.ok(
-    fixture.text_lines().some((t) =>
-      t.includes('至少达成欲情点数4000点或屈服点数4000点的其中一项'),
-    ),
+    fixture
+      .text_lines()
+      .includes('精液中毒(6)＋百合中毒(4)＋兽奸中毒(1)上限为10'),
+  );
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((t) =>
+        t.includes('至少达成欲情点数4000点或屈服点数4000点的其中一项'),
+      ),
   );
   assert.ok(fixture.text_lines().includes('方可提升当前兽奸中毒的等级'));
 });
@@ -2470,7 +2477,9 @@ test('ablup99：成功消去一级（MARK:3-1）并扣屈服珠，文案显示�
   await ablup99(CID);
   assert.equal(fixture.store.get(`mark:${CID}:3`), 0);
   assert.equal(fixture.store.get(`juel:${CID}:6`), 0);
-  assert.ok(fixture.text_lines().some((t) => t.includes('反抗刻印下降为LV0。')));
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('反抗刻印下降为LV0。')),
+  );
 });
 
 // ———— ABLUP100：异界综合征消去（issue #467） ——
@@ -2490,7 +2499,9 @@ test('ablup100：Lv1 需求行（A=2000，感觉门槛 mark10+5、战斗门槛 1
   fixture.set_inputs(100);
   await ablup100(CID);
   assert.ok(fixture.text_lines().includes('各处感觉总计6以上(现在0)或'));
-  assert.ok(fixture.text_lines().includes('战斗等级LV10以上(现在LV0)必要，然后'));
+  assert.ok(
+    fixture.text_lines().includes('战斗等级LV10以上(现在LV0)必要，然后'),
+  );
   // C=0 时 C-5 为负，感觉门槛数值上恒过（显示与判定脱节，原作照抄）；只剩
   // 战斗门槛不满足（M=1 不点亮能力位）与异界经验不足 → 只有经验位
   assert.equal(buttons(fixture)[0].text, '异界经验点数×0/2000 ……经验不足 ');
@@ -2538,7 +2549,9 @@ test('ablup100：成功消去一级并扣异界经验（EXP:99）', async () => 
   await ablup100(CID);
   assert.equal(fixture.store.get(`mark:${CID}:10`), 0);
   assert.equal(fixture.store.get(`exp:${CID}:99`), 0);
-  assert.ok(fixture.text_lines().some((t) => t.includes('异界综合征下降为LV0。')));
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('异界综合征下降为LV0。')),
+  );
 });
 
 // ———— ABL.ERB 本体（issue #467）：@DECIDE_ABLUP 分发 / @AUTO_ABLUP / @USERABLUP ————
@@ -2547,9 +2560,13 @@ test('decide_ablup：分发到已登记编号，未登记与表外返回 0', asy
   const fixture = create_era_fixture();
   const { decide_ablup } = seed(fixture);
   fixture.store.set(`juel:${CID}:0`, 1); // 阴蒂感觉 Lv0 恰需 1 点
-  assert.equal(await decide_ablup(CID, 0), 1);
+  assert.equal(await decide_ablup(CID, 0), 1, 'JUEL:0 = 1 恰好够阴蒂感觉 Lv0');
   assert.equal(await decide_ablup(CID, 1), 0, 'JUEL:14 = 0 → 点数不足');
-  assert.equal(await decide_ablup(CID, 20), 0, 'ABLUP20 的 DECIDE 尚未落地 → 落空');
+  assert.equal(
+    await decide_ablup(CID, 20),
+    0,
+    'ABLUP20 的 DECIDE 尚未落地 → 落空',
+  );
   assert.equal(await decide_ablup(CID, 999), 0, '表外编号');
 });
 
@@ -2558,7 +2575,11 @@ test('decide_ablup：满级与封锁走 DECIDE 的提前 RETURN 0', async () => 
   const { decide_ablup } = seed(fixture);
   fixture.store.set(`abl:${CID}:0`, 5);
   fixture.store.set(`juel:${CID}:0`, 999999);
-  assert.equal(await decide_ablup(CID, 0), 0, 'Lv5 且无[自慰狂] → :139-140 判死');
+  assert.equal(
+    await decide_ablup(CID, 0),
+    0,
+    'Lv5 且无[自慰狂] → :139-140 判死',
+  );
   set_talents(fixture, { 74: 1 });
   assert.equal(await decide_ablup(CID, 0), 1, '解锁后 Lv5 的 40000 点也够');
 
@@ -2594,8 +2615,14 @@ test('auto_ablup_core：连升到不能升为止，info 控制等级行', async 
   await auto_ablup_core(0, 1);
   assert.equal(fixture.store.get(`abl:${CID}:0`), 2);
   assert.equal(fixture.store.get(`juel:${CID}:0`), 0);
-  assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1')));
-  assert.ok(fixture.text_lines().some((t) => t.includes('变为LV2')));
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('变为LV1')),
+    'info=1：每个成功等级都打等级行',
+  );
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('变为LV2')),
+    'info=1：连升两级各打一行',
+  );
 
   const quiet = create_era_fixture();
   const { auto_ablup_core: q } = seed(quiet);
@@ -2665,7 +2692,8 @@ test('auto_ablup：FLAG:5 位 36 打开时 COUNT > 15 直接 BREAK', async () =>
   fixture.store.set(`juel:${OTHER}:6`, 100000);
   fixture.store.set(`exp:${OTHER}:74`, 100000);
 
-  await auto_ablup();
+  // 卖淫影响传 1：37 不再被「负面评价」那条挡掉，只剩位 36 的 BREAK 能拦住它
+  await auto_ablup(-1, { prostitution_effect: 1 });
   assert.equal(fixture.store.get(`abl:${OTHER}:0`), 1, 'COUNT 0 仍提升');
   assert.equal(
     fixture.store.get(`abl:${OTHER}:37`) ?? 0,
