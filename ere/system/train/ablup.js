@@ -171,7 +171,7 @@ function core_ablup0(cid) {
   const r = evaluate_ablup0(cid);
   chara(cid).system.阴蒂感觉 += 1; // ABL:0 ++
   if (r.blocked === null && r.i === 0) {
-    era.add(`juel:${cid}:0`, -r.a); // JUEL:0 -= A
+    era.add(`juel:${cid}:0`, -r.a); // JUEL:0 -= A（:86-88）
   }
   return 0; // CORE 无 RETURN，Emuera 视作 RESULT = 0（@AUTO_ABLUP_CORE 判 >= 0 才打印）
 }
@@ -365,7 +365,7 @@ async function ablup1(cid) {
 /**
  * @DECIDE_ABLUP2（ABLUP2.ERB:91-237）的判定本体，与 @ABLUP2 主流程共用。
  * 男人（TALENT:122）在 DECIDE 里也是提前 RETURN 0（:102-104），与主流程
- * :20-22 的却下同判据，归入 blocked='male'。
+ * :18-20 的却下同判据，归入 blocked='male'。
  * @param {number} cid TARGET
  * @returns {{blocked: (null|'male'|'talent'|'locked'|'max'), lv: number,
  *   a: number, b: number, juel: number, exp: number, i: number}}
@@ -482,7 +482,7 @@ function decide_ablup2(cid) {
 function core_ablup2(cid) {
   const r = evaluate_ablup2(cid);
   chara(cid).system.私处感觉 += 1; // ABL:2 ++
-  if (r.blocked === null && r.i === 0) era.add(`juel:${cid}:1`, -r.a);
+  if (r.blocked === null && r.i === 0) era.add(`juel:${cid}:1`, -r.a); // :69-71
   return 0;
 }
 
@@ -653,7 +653,7 @@ function decide_ablup3(cid) {
 function core_ablup3(cid) {
   const r = evaluate_ablup3(cid);
   chara(cid).system.肛门感觉 += 1; // ABL:3 ++
-  if (r.blocked === null && r.i === 0) era.add(`juel:${cid}:2`, -r.a);
+  if (r.blocked === null && r.i === 0) era.add(`juel:${cid}:2`, -r.a); // :67-69
   return 0;
 }
 
@@ -710,7 +710,7 @@ async function ablup3(cid) {
  * @DECIDE_ABLUP4（ABLUP4.ERB:50-83）的判定本体：梯子只有 5 级、无复利区间。
  * 原作这里**不把 A 清零**（:50-53 只清 I），A 是文件级全局——ABL.ERB:94
  * 的 `CALL DECIDE_ABLUP4` 会读到上一行 DECIDE 留下的 A；到了 lv>=5（梯子
- * 五档全落空）A 保持旧值，`JUEL:15 < A` 就成了对残留值的比较，`*` 标记
+ * 五档全落空）A 保持旧值，`JUEL < A` 就成了对残留值的比较，`*` 标记
  * 因此不确定。移植没有 Emuera 的全局 A，本函数按「A 初始为 0」处理：
  * lv>=5 时 I 恒 0（与原作 A 恰好为 0 时一致），这条不可移植的残留依赖
  * 登记在 issue #14，不额外模拟。
@@ -734,7 +734,7 @@ function evaluate_ablup4(cid) {
 }
 
 /**
- * @DECIDE_ABLUP4 的 RESULT 语义（:79-83）。注意原作没有 ABL:4 >= 5 的
+ * @DECIDE_ABLUP4 的 RESULT 语义。注意原作没有 ABL:4 >= 5 的
  * 提前 RETURN 0（见 evaluate_ablup4 的说明）——`*` 标记在满级行的行为
  * 取决于调用前残留的 A，移植按 A=0 处理。
  * @param {number} cid TARGET
@@ -765,7 +765,8 @@ async function ablup4(cid) {
     const { a, i } = evaluate_ablup4(cid);
 
     // 无 GET_ABLUP_STATE：手写状态文案，"点数不足 " 带尾随空格、"经验不足"
-    // 不带（:16-23，与 GET_ABLUP_STATE 的两个 bit 都带尾随空格不同）
+    // 不带（:16-23，与 GET_ABLUP_STATE 的两个 bit 都带尾随空格不同）；
+    // I&2 分支（:21-22）在原作与本移植里都恒假，1:1 保留
     let status;
     if (i === 0) {
       status = 'ＯＫ';
@@ -2029,7 +2030,7 @@ async function ablup12(cid, mode) {
  * 源: target/ERB/ABL/ABLUP13.ERB @ABLUP13 :9-69 + @DECIDE_ABLUP13 :86-269。
  * 侍奉技术，train 域（同域写，直接 era.add）。单轨道 A(习得点数
  * JUEL:7)/I，共用 GET_ABLUP_STATE。与 ABLUP14 共享“侍奉技术＋性交技术
- * ≤10”组合上限，突破价 TEMP=max(ABL:13,ABL:14)，TEMP²×500；入口的溢出
+ * ≤10”组合上限，突破价 TEMP=max(ABL:13,ABL，TEMP²×500；入口的溢出
  * 提示是两行（PRINTFORML 后跟 PRINTFORMW），与 ABLUP12/15 的单行 PRINTFORMW
  * 不同，1:1 保留。
  * issue #14 待登记缺陷：Lv5 及以上本应改查“侍奉精神≥侍奉技术+1”的门槛
@@ -2164,10 +2165,10 @@ async function ablup13(cid, mode) {
  * 性交技术，train 域。双值 A(习得点数 JUEL:7)/B(性交经验 EXP:5)，共用
  * GET_ABLUP_STATE。与 ABLUP13 共享同一组合上限，两行溢出提示同款。
  * issue #14 待登记缺陷：DECIDE 的技巧门槛检查（:257-258）写作
- * `ABL:12 < 5 && ABL:12 < ABL:14 + 1`，两个子句都比较 ABL:12，第一个子句
- * 应参照 ABLUP13 同类检查的写法比较自身等级（ABL:14 < 5）却错写成
- * ABL:12——效果是：一旦 ABL:12 达到 5，此门槛此后对任何 ABL:14 等级都
- * 不再生效，而渲染层的技巧要求文案（:44-45）仍然只在 ABL:14 < 5 时显示，
+ * `ABL:12 < 5 && ABL:12 < ABL + 1`，两个子句都比较 ABL:12，第一个子句
+ * 应参照 ABLUP13 同类检查的写法比较自身等级（ABL < 5）却错写成
+ * ABL:12——效果是：一旦 ABL:12 达到 5，此门槛此后对任何 ABL 等级都
+ * 不再生效，而渲染层的技巧要求文案（:44-45）仍然只在 ABL < 5 时显示，
  * 二者不对称，属真实缺陷，1:1 保留。
  */
 async function ablup14(cid, mode) {
@@ -2325,14 +2326,14 @@ async function ablup14(cid, mode) {
     let i = 0;
     if (juel7 < a) i |= 1; // :250-252
     if (exp5 < b) i |= 2; // :253-255
-    // 两个子句都比较 ABL:12，第一个子句本应比较 ABL:14<5，与渲染层
+    // 两个子句都比较 ABL:12，第一个子句本应比较 ABL<5，与渲染层
     // 的门槛文案不对称，是原作真实缺陷，1:1 保留（见文件头，issue #14）
     if (abl12() < 5 && abl12() < lv + 1) i |= 4; // :256-258
 
     // 干跑出口（decide_ablup14 / core_ablup14）
     if (mode === 'decide') return { i };
     if (mode === 'core') {
-      era.add(`abl:${cid}:14`, 1); // @CORE_ABLUP14: ABL:14 ++
+      era.add(`abl:${cid}:14`, 1); // @CORE_ABLUP14: ABL ++
       if (i === 0) era.add(`juel:${cid}:7`, -a); // JUEL:7 -= A
       return 0;
     }
@@ -2578,7 +2579,7 @@ async function ablup15(cid, mode) {
       return { i };
     }
     if (mode === 'core') {
-      era.add(`abl:${cid}:15`, 1); // @CORE_ABLUP15: ABL:15 ++
+      era.add(`abl:${cid}:15`, 1); // @CORE_ABLUP15: ABL ++
       if (i === 0) era.add(`juel:${cid}:7`, -a); // JUEL:7 -= A
       return 0;
     }
@@ -3189,7 +3190,7 @@ async function ablup17(cid, mode) {
 
 /**
  * 源: target/ERB/ABL/ABLUP37.ERB @ABLUP37 :8-77 + @DECIDE_ABLUP37 :94-358。
- * 卖淫中毒，train 域（裸写 abl:37）。三珠资源 A(恭顺 JUEL:4)/B(欲情
+ * 卖淫中毒，train 域（裸写 abl。三珠资源 A(恭顺 JUEL:4)/B(欲情
  * JUEL:5)/C(屈服 JUEL:6) + D(卖淫经验 EXP:74)；F(异常经验) lv>=2 起要
  * （疯狂/崩坏可免），17 项素质增减表。淫乱的 B 轨 ×0.50、其余 ×0.80——
  * 原作不对称倍率，1:1 保留。@DECIDE_ABLUP37 的 J 位（|=2/|=4）与 I 同
@@ -3277,7 +3278,7 @@ async function ablup37(cid, mode) {
       d = times(d, 1.5);
     }
     if (talent(24)) {
-      // 保守的 :179-183
+      // 保守的
       a = times(a, 1.5);
       b = times(b, 1.5);
       c = times(c, 1.5);
@@ -3311,7 +3312,7 @@ async function ablup37(cid, mode) {
       d = times(d, 0.9);
     }
     if (talent(32)) {
-      // 压抑 :209-213
+      // 压抑
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
@@ -3372,7 +3373,7 @@ async function ablup37(cid, mode) {
       d = times(d, 3.0);
     }
     if (talent(85)) {
-      // 爱慕 :252-256
+      // 爱慕
       a = times(a, 1.5);
       b = times(b, 1.5);
       c = times(c, 1.5);
@@ -3462,11 +3463,11 @@ async function ablup37(cid, mode) {
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
     if (exp50 < f) i |= 2; // :317-321（F 段内）
-    if (abl11() < lv + 1) i |= 4; // :337-340 欲望门槛
-    if (juel4 < a) i |= 1; // :344-345
-    if (juel5 < b) i |= 1; // :347-348
+    if (abl11() < lv + 1) i |= 4; //  欲望门槛
+    if (juel4 < a) i |= 1; //
+    if (juel5 < b) i |= 1; //
     if (juel6 < c) i |= 1; // :350-351
-    if (exp74 < d) i |= 2; // :353-354
+    if (exp74 < d) i |= 2; //
 
     // 干跑出口（decide_ablup37 / core_ablup37）
     if (mode === 'decide') {
@@ -3476,7 +3477,7 @@ async function ablup37(cid, mode) {
       return { i };
     }
     if (mode === 'core') {
-      era.add(`abl:${cid}:37`, 1); // @CORE_ABLUP37: ABL:37 ++
+      era.add(`abl:${cid}:37`, 1); // @CORE_ABLUP37: ABL ++
       if (i === 0) {
         era.add(`juel:${cid}:4`, -a);
         era.add(`juel:${cid}:5`, -b);
@@ -3524,7 +3525,7 @@ async function ablup37(cid, mode) {
  * + C(兽奸经验 EXP:56)；F(异常经验) lv>=2 起要（容易上瘾/淫乱/牝犬可免，
  * F=lv+1，无增减表）。三重上限：32+33+39>=10 时 A/B 覆盖为 lv²×4000；
  * 主流程的放行判定是「两珠任一不足即拦」（||），文案却写「或……其中一项」
- * ——代码与文案矛盾，1:1 按代码。戒备森严的分档判 **ABL:37**（卖淫中毒
+ * ——代码与文案矛盾，1:1 按代码。戒备森严的分档判 **ABL**（卖淫中毒
  * 等级），倍率 2.0/2.5/3.0——复制粘贴缺陷，按原作保留（issue #14 登记）。
  * @CORE_ABLUP39 见本文件 core_ablup39。
  */
@@ -3566,7 +3567,7 @@ async function ablup39(cid, mode) {
         ); // :29
         await era.printAndWait('方可提升当前兽奸中毒的等级'); // :30 PRINTW
       }
-      return; // :31
+      return; //
     }
   }
 
@@ -3591,7 +3592,7 @@ async function ablup39(cid, mode) {
       b = lv * lv * 4000;
     }
 
-    // 戒备森严 :151-165——分档判 ABL:37（卖淫中毒），非本能力等级，
+    // 戒备森严 :151-165——分档判 ABL（卖淫中毒），非本能力等级，
     // 原作复制粘贴缺陷 1:1 保留（issue #14）
     if (talent(27)) {
       const gate = era.get(`abl:${cid}:37`) || 0;
@@ -3677,7 +3678,7 @@ async function ablup39(cid, mode) {
     const exp56 = era.get(`exp:${cid}:56`) || 0;
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
-    if (abl11() < lv + 1) i |= 4; // :225-226 欲望门槛
+    if (abl11() < lv + 1) i |= 4; //  欲望门槛
     if (juel5 < a) i |= 1; // :228-229
     if (juel6 < b) i |= 1; // :230-231
     if (exp56 < c) i |= 2; // :233-234 兽奸经验
@@ -3733,7 +3734,7 @@ async function ablup39(cid, mode) {
 /**
  * 源: target/ERB/ABL/ABLUP40.ERB @ABLUP40 :5-59 + @DECIDE_ABLUP40 :63-116。
  * 局部中毒（癖好中毒），train 域（裸写 abl:40）。单轨道 A(局部点数
- * JUEL:15) + F(异常经验，lv>=2 起要、容易上瘾/淫乱可免，F=lv+1)。无
+ * JUEL + F(异常经验，lv>=2 起要、容易上瘾/淫乱可免，F=lv+1)。无
  * DRAWLINE、无 Lv5 素质解锁（直接 Lv10 上限），终止文案「已达到MAX」、
  * 重试文案「条件不足」、停止按钮「放弃」均与本族其他文件不同，1:1 保留。
  * 欲望门槛判 ABL:11 < ABL:40+1，但需求行的显示是 LV{ABL:39+1}——显示与
@@ -3750,7 +3751,7 @@ async function ablup40(cid, mode) {
   const abl40 = () => era.get(`abl:${cid}:40`) || 0;
 
   if (abl40() >= 10) {
-    if (!mode) await era.printAndWait('已达到MAX'); // :8-10 PRINTW
+    if (!mode) await era.printAndWait('已达到MAX'); //  PRINTW
     return;
   }
 
@@ -3792,9 +3793,9 @@ async function ablup40(cid, mode) {
     const juel15 = era.get(`juel:${cid}:15`) || 0;
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
-    if (abl11() < lv + 1) i |= 4; // :120-121 欲望门槛（判 ABL:40+1）
+    if (abl11() < lv + 1) i |= 4; //  欲望门槛（判 ABL:40+1）
     if (juel15 < a) i |= 1; // :123-124
-    if (exp50 < f) i |= 2; // :126-127
+    if (exp50 < f) i |= 2; //
 
     // 干跑出口（decide_ablup40）：@DECIDE_ABLUP40 的门槛与主流程同判据
     // （只有 ABL:40 >= 10 与同段的 i 位）。原作无 @CORE_ABLUP40
@@ -3856,12 +3857,12 @@ async function ablup99(cid, mode) {
   const mark2 = () => era.get(`mark:${cid}:2`) || 0;
   const mark3 = () => era.get(`mark:${cid}:3`) || 0;
 
-  if (!mode) era.drawLine(); // :23 DRAWLINE（:24-26 叙事文本已被注释掉，不移植）
+  if (!mode) era.drawLine(); // :22-23 DRAWLINE（:24-26 叙事文本已被注释掉，不移植）
 
   if (mark3() <= 0) {
     if (!mode) {
-      era.print('不存在反抗行为'); // :31 PRINTL
-      await era.waitAnyKey(); // :32 WAIT
+      era.print('不存在反抗行为'); //  PRINTL
+      await era.waitAnyKey(); //  WAIT
     }
     return;
   }
@@ -3883,9 +3884,9 @@ async function ablup99(cid, mode) {
     const juel6 = era.get(`juel:${cid}:6`) || 0;
     let i = 0;
     if (mark3() > mark2()) i |= 2; // :121-122 屈服刻印门槛
-    const b = mark3() + 2; // :125 反抗刻印+2 的顺从
-    if (b > abl10) i |= 4; // :126-127
-    if (juel6 < a) i |= 1; // :129-130
+    const b = mark3() + 2; //  反抗刻印+2 的顺从
+    if (b > abl10) i |= 4; //
+    if (juel6 < a) i |= 1; //
 
     // 干跑出口（decide_ablup99 / core_ablup99）：@DECIDE_ABLUP99 的门槛与
     // 主流程同判据（MARK:3 <= 0 的提前 RETURN 0 已在上方守卫里）
@@ -3897,7 +3898,7 @@ async function ablup99(cid, mode) {
     }
 
     era.print(`${era.get('markname:2')}${mark3()}以上(现在LV${mark2()})且`); // :35
-    era.print(`${era.get('ablname:10')}LV${b}以上(现在LV${abl10})必要`); // :37
+    era.print(`${era.get('ablname:10')}LV${b}以上(现在LV${abl10})必要`); //
     era.printButton(
       `${era.get('palamname:6')}点数×${juel6}/${a} ……${get_ablup_state(i)}`,
       0,
@@ -3937,11 +3938,11 @@ async function ablup100(cid) {
   const talent = (id) => era.get(`talent:${cid}:${id}`) || 0;
   const mark10 = () => era.get(`mark:${cid}:10`) || 0;
 
-  era.drawLine(); // :5 DRAWLINE（:6-8 叙事文本已被注释掉，不移植）
+  era.drawLine(); // :4-5 DRAWLINE（:6-8 叙事文本已被注释掉，不移植）
 
   if (mark10() <= 0) {
-    era.print('并没有异界异常反应'); // :14 PRINTL
-    await era.waitAnyKey(); // :15 WAIT
+    era.print('并没有异界异常反应'); //  PRINTL
+    await era.waitAnyKey(); //  WAIT
     return;
   }
 
@@ -3982,7 +3983,7 @@ async function ablup100(cid) {
     if (exp99 < a) i |= 2; // :127-128
 
     era.print(`各处感觉总计${mark10() + 5}以上(现在${c})或`); // :29
-    era.print(`战斗等级LV${b}以上(现在LV${cflag9})必要，然后`); // :31
+    era.print(`战斗等级LV${b}以上(现在LV${cflag9})必要，然后`); //
     era.printButton(
       `${era.get('expname:99')}点数×${exp99}/${a} ……${get_ablup_state(i)}`,
       0,
@@ -4065,7 +4066,7 @@ async function core_ablup13(cid) {
   await ablup13(cid, 'core');
   return 0;
 }
-/** @DECIDE_ABLUP14 的 RESULT 语义（原作判 `ABL:14 == 10`，本体按 >=10；
+/** @DECIDE_ABLUP14 的 RESULT 语义（原作判 `ABL == 10`，本体按 >=10；
  * 到达 >10 无路径，两者同效） */
 async function decide_ablup14(cid) {
   const r = await ablup14(cid, 'decide');
@@ -4271,7 +4272,7 @@ async function auto_ablup_core(num, info) {
     const result = await core(target);
     if (result >= 0 && info) {
       era.print(
-        `${chara_callname(target)}的${era.get(`ablname:${num}`)}变为LV${era.get(`abl:${target}:${num}`) || 0}`,
+        `${chara_callname(target)}的${era.get(`ablname:${num}`)}变为LV${era.get(`abl:${target}:${num}`) || 0}`, // :264-265
       );
     }
   }
@@ -4293,7 +4294,7 @@ async function auto_ablup_core(num, info) {
  */
 async function userablup(result) {
   if (result !== 999) return 0;
-  jujun_up_check(era_flag.target); // CALL JUJUN_UP_CHECK
+  jujun_up_check(era_flag.target); // CALL JUJUN_UP_CHECK（:193-195 的两句 CALL）
   yokubo_up_check(era_flag.target); // CALL YOKUBO_UP_CHECK
   return 1; // BEGIN TURNEND
 }

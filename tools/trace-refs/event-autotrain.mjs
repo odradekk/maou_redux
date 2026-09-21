@@ -25,6 +25,11 @@ export const FILES = [
         ref: '108-159',
         any: [/@AFTER_AUTOTRAIN/],
       },
+      {
+        src: 'target/ERB/EVENT/EVENT_AUTOTRAIN.ERB',
+        ref: '150-151',
+        any: [/SIF GETBIT\(FLAG:5,35\)\s+CALL AUTO_ABLUP/],
+      },
     ],
   },
 ];

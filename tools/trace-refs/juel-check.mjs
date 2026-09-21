@@ -57,6 +57,21 @@ export const FILES = [
       },
       {
         src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '452',
+        any: [/^\s*CALL AUTO_ABLUP\s*$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '453-454',
+        any: [/^\s*SIF ASSI > 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '455',
+        any: [/^\s*CALL AUTO_ABLUP, MASTER\s*$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
         ref: '457',
         any: [/^\s*GOTO LABEL_EXIT\s*$/m],
       },
