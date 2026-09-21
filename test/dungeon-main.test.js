@@ -725,3 +725,147 @@ test('战后探索：run_dungeon 调用卖春真身（#184 接线，非存根占
     'rand_n 透传（迷宫与卖春共用随机源）',
   );
 });
+
+// —— CAMPAIGN_QUEST / CAMPAIGN_STORY / CAMPAIGN_ENDING（#469 起真身）——
+
+test('campaign_quest()：FLAG:400 < 1 时恒 0（未在战役中）', async () => {
+  const fixture = create_era_fixture();
+  const { campaign_quest } = load(fixture);
+  assert.equal(await campaign_quest(1), 0);
+});
+
+test('campaign_quest()：楼层超过剧情进度时推进 CAMPAIGN_STORY，随后派发 CAMPAIGN_QUEST_1', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('flag:400', 1);
+  fixture.store.set('flag:401', 0); // 剧情进度 0
+  fixture.store.set('cflag:1:501', 1); // 队长楼层 1 > 0
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_quest } = load(fixture);
+  const ret = await campaign_quest(1);
+  assert.equal(ret, 1, 'CAMPAIGN_QUEST_1 恒成功');
+  assert.equal(fixture.store.get('flag:401'), 1, ':196 FLAG:401 += 1');
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('―STORY―'),
+    ),
+    ':192 剧情标题行',
+  );
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('奇形怪状的植物'),
+    ),
+    'CAMPAIGN_STORY_1 进度 0 段文本',
+  );
+});
+
+test('campaign_quest()：楼层未超过剧情进度时不重复推进剧情', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('flag:400', 1);
+  fixture.store.set('flag:401', 3);
+  // 队长楼层与剧情进度相等（严格 > 判据的边界：楼层 3 不「超过」进度 3）
+  fixture.store.set('cflag:1:501', 3);
+  fixture.load_module('page/page-campaign-1');
+  const { campaign_quest } = load(fixture);
+  await campaign_quest(1);
+  assert.equal(fixture.store.get('flag:401'), 3, '进度不变');
+  assert.ok(
+    !fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('―STORY―'),
+    ),
+    '不触发剧情标题行',
+  );
+});
+
+test('campaign_story_1()：按进度 0-5 六档打印对应剧情，六档都以「报告结束」收尾', async () => {
+  // [进度, 首行（逐字，原作 :315/:322/:329/:336/:343/:350）, 本档行数]
+  // 行数按原作各档 PRINTFORMW 条数：0-4 档 6 行、5 档 5 行（:354 的收尾行
+  // 同样在 5 档内——#469 首版漏了它，本用例的行数断言即为此设）
+  const CASES = [
+    [0, '真是奇妙的森林。奇形怪状的植物、还有与其共生进化而来的动物和昆虫', 6],
+    [
+      1,
+      '森林外围墓碑林立。到处都是、被苔藓藤蔓树根常年侵蚀得无法辨识枯坟野冢',
+      6,
+    ],
+    [
+      2,
+      '惨遭侵犯的肉便器。被成群结队的红皮兽人不断侵犯着。肚子已经怀孕到了几乎要炸开的程度',
+      6,
+    ],
+    [
+      3,
+      '森林深处坐落着巨大的神殿。魔王的奴隶稳健地将敌人击倒、一点一点的前进着',
+      6,
+    ],
+    [4, '女王就在那。根据捕获的女信徒的说法。女王被年轻的少年们簇拥着', 6],
+    [5, '找到女王了。半裸着身子将下半身露了出来、端坐在玉座之上', 5],
+  ];
+  for (const [progress, first_line, line_count] of CASES) {
+    const fixture = create_era_fixture();
+    fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+    fixture.era.addCharacter(0);
+    fixture.store.set('flag:401', progress);
+    const { campaign_story_1 } = fixture.load_module('page/page-campaign-1');
+    const ret = await campaign_story_1();
+    assert.equal(ret, 1);
+    const texts = fixture.lines_history
+      .filter((l) => l.type === 'text')
+      .map((l) => l.text);
+    assert.equal(texts.length, line_count, `${progress} 档的行数`);
+    assert.equal(texts[0], first_line, `${progress} 档首行`);
+    assert.equal(
+      texts[line_count - 1],
+      '――水晶球映出的报告到这就结束了',
+      `${progress} 档以收尾行结束`,
+    );
+    // 每档都带一个 waitAnyKey（原作 PRINTFORMW 自带等待）
+    assert.equal(
+      fixture.waits.filter((w) => w.waited).length,
+      line_count,
+      `${progress} 档逐行等待`,
+    );
+  }
+});
+
+test('campaign_ending()：FLAG:400 < 1 时不派发也不清零，但仍无条件取消全员派遣（:304-312）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.era.addCharacter(1);
+  fixture.store.set('cflag:1:1', 12);
+  fixture.store.set('cflag:1:507', 1);
+  const { campaign_ending } = load(fixture);
+  const ret = await campaign_ending();
+  assert.equal(ret, 0);
+  assert.equal(fixture.store.get('cflag:1:1'), 0, '无条件取消派遣');
+  assert.equal(fixture.store.get('cflag:1:507'), 0, '回城标志清零');
+});
+
+test('campaign_ending()：FLAG:400 = 1 时派发 CAMPAIGN_ENDING_1 并清零 FLAG:400（#469）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_ending } = load(fixture);
+  const ret = await campaign_ending();
+  assert.equal(ret, 1, 'CAMPAIGN_ENDING_1 恒 RETURN 1');
+  assert.equal(fixture.store.get('flag:400'), 0, ':317 战役结束清零');
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('神像之力竟不奏效'),
+    ),
+    'CAMPAIGN_ENDING_1 的开场白',
+  );
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('赤森谜路'),
+    ),
+    '结尾战役名重现',
+  );
+});

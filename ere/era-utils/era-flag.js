@@ -167,6 +167,19 @@ const era_flag = {
     era.set('flag:400', v);
   },
   /**
+   * 战役剧情进度（flag:401 ↔ FLAG:401）
+   * @returns {number}
+   */
+  get campaign_story_progress() {
+    return era.get('flag:401') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set campaign_story_progress(v) {
+    era.set('flag:401', v);
+  },
+  /**
    * 二维地图模式（flag:502 ↔ FLAG:502）
    * @returns {number}
    */

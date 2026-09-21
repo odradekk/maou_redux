@@ -6,18 +6,18 @@ export default [
   {
     desc: 'M7800 MAGIC 重新登记成 dungeon-battle 存根（端到端宿主）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = [\n  'CAMPAIGN_MONSTER_LIST',",
+    find: "const STUBBED_CALLS = [\n  'BEFORE_AUTOTRAIN',",
     replace:
-      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'CAMPAIGN_MONSTER_LIST',",
+      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'BEFORE_AUTOTRAIN',",
     tests: ['event-ending2-e2e'],
     must_mention: 'MAGIC 在 ENDING_2 战斗路径实际执行且未退回存根',
   },
   {
     desc: 'M7801 MONSTER_SKILL 重新登记成 dungeon-battle 存根（端到端宿主）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = [\n  'CAMPAIGN_MONSTER_LIST',",
+    find: "const STUBBED_CALLS = [\n  'BEFORE_AUTOTRAIN',",
     replace:
-      "const STUBBED_CALLS = [\n  'MONSTER_SKILL', // 变异：真身倒退为存根登记\n  'CAMPAIGN_MONSTER_LIST',",
+      "const STUBBED_CALLS = [\n  'MONSTER_SKILL', // 变异：真身倒退为存根登记\n  'BEFORE_AUTOTRAIN',",
     tests: ['event-ending2-e2e'],
     must_mention: 'MONSTER_SKILL 在 ENDING_2 战斗路径实际执行且未退回存根',
   },

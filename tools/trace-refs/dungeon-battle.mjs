@@ -656,6 +656,13 @@ export const FILES = [
         ref: '365',
         any: [/CALL RESULT_QUEST,ARG:0,"失败"/],
       },
+      // —— #469 战役怪物表（CAMPAIGN_EVENT.ERB 的 @CAMPAIGN_MONSTER_LIST
+      //    预置段；RESULT = 190 与 MONSTER_EXTRA 的同形行构成平行复现）——
+      {
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '233',
+        any: [/RESULT = 190/],
+      },
     ],
   },
 ];
