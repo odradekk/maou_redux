@@ -8422,9 +8422,8 @@ export default [
   {
     desc: 'M10516 ablup100：感觉门槛的显示值改错（mark10+5 → mark10+6）',
     file: 'ere/system/train/ablup.js',
-    find: '    era.print(`各处感觉总计${mark10() + 5}以上(现在${c})或`); // :29',
-    replace:
-      '    era.print(`各处感觉总计${mark10() + 6}以上(现在${c})或`); // :29',
+    find: '    era.print(`各处感觉总计${mark10() + 5}以上(现在${c})或`);',
+    replace: '    era.print(`各处感觉总计${mark10() + 6}以上(现在${c})或`);',
     tests: ['ablup'],
     must_mention: '各处感觉总计6以上',
   },
@@ -8569,9 +8568,9 @@ export default [
   {
     desc: 'M10408 ablup20：异常经验行全角括号误改为半角',
     file: 'ere/system/train/ablup.js',
-    find: "      era.print(`${era.get('expname:50')}${c}以上（现在${exp50}）且`); // :44-45（全角括号）",
+    find: "      era.print(`${era.get('expname:50')}${c}以上（现在${exp50}）且`);",
     replace:
-      "      era.print(`${era.get('expname:50')}${c}以上(现在${exp50})且`); // :44-45（全角括号）",
+      "      era.print(`${era.get('expname:50')}${c}以上(现在${exp50})且`);",
     tests: ['ablup'],
     must_mention: '异常经验1以上（现在0）且',
   },
@@ -9179,9 +9178,9 @@ export default [
   {
     desc: 'M10475 ablup33：欲情/屈服需求同为 A——屈服分母误改为 B',
     file: 'ere/system/train/ablup.js',
-    find: "    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${a}`); // :61（分母同为 A）",
+    find: "    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${a}`);",
     replace:
-      "    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b}`); // :61（分母同为 A）",
+      "    era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b}`);",
     tests: ['ablup'],
     must_mention: '　　　屈服点数×0/1200',
   },
@@ -9207,9 +9206,8 @@ export default [
   {
     desc: 'M10478 ablup33：成功购买写入等级改为 +2',
     file: 'ere/system/train/ablup.js',
-    find: '      const new_lv = era.add(`abl:${cid}:33`, 1); // :76（train 属主）',
-    replace:
-      '      const new_lv = era.add(`abl:${cid}:33`, 2); // :76（train 属主）',
+    find: '      const new_lv = era.add(`abl:${cid}:33`, 1);',
+    replace: '      const new_lv = era.add(`abl:${cid}:33`, 2);',
     tests: ['ablup'],
     must_mention:
       'ablup33：Lv2 异常经验 D=lv-1；成功购买扣三项珠（JUEL:0/5/6）、era.add 写入 abl:33',
@@ -9676,7 +9674,8 @@ export default [
   // —— #491 第二步第一批：ABLUP21/23/32/37/39 的戒备森严四档逐级（M10579-M10588）——
   // ablup22/23/32/33 的戒备森严块去掉注释后同形，find 靠注释行区分：
   // ablup23 的两条取注释描述的后半段（不含 `:N` 行号，行号重定位不受影响），
-  // ablup32 的两条仍带 `:154-176` 整行，重定位时按失配报错手工同步。
+  // ablup32 的两条必须带上那行含 `:N` 的注释（它随行号重定位一起同步：
+  // 重定位后现为 `:191-209`，同步见 70431ef）。
   {
     desc: 'M10579 ablup21：戒备森严 Lv5 档的 ×2.50 误改为 ×2.60（C/D/E 三列）',
     file: 'ere/system/train/ablup.js',
