@@ -1342,6 +1342,52 @@ class TrainFacade {
     era.set(`exp:${this.cid}:99`, v);
   }
 
+  // —— stain ——
+  /**
+   * 阴茎污渍（stain:cid:2 ↔ STAIN:2）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt STAIN:2 = ペニス
+   * @returns {number}
+   */
+  get 阴茎污渍() {
+    return era.get(`stain:${this.cid}:2`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 阴茎污渍(v) {
+    era.set(`stain:${this.cid}:2`, v);
+  }
+
+  /**
+   * 阴道污渍（stain:cid:3 ↔ STAIN:3）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt STAIN:3 = ヴァギナ
+   * @returns {number}
+   */
+  get 阴道污渍() {
+    return era.get(`stain:${this.cid}:3`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 阴道污渍(v) {
+    era.set(`stain:${this.cid}:3`, v);
+  }
+
+  /**
+   * 胸部污渍（stain:cid:5 ↔ STAIN:5）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt STAIN:5 = 胸
+   * @returns {number}
+   */
+  get 胸部污渍() {
+    return era.get(`stain:${this.cid}:5`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 胸部污渍(v) {
+    era.set(`stain:${this.cid}:5`, v);
+  }
+
   // —— delta ——
   /**
    * 阴核增量（delta:cid:0 ↔ UP:0）

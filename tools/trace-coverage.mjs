@@ -121,15 +121,42 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 28; // 合并态实测（#470 并上含 #465 的 master）：
-// 29（#465 后的 master）− 1（本票的 侵略/ARCANA_BATTLE.ERB——主循环与
-// DEATH_CHECK4 落 ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/
-// MONSTER_ATTACK3 判死）= 28，与 `node tools/trace-check.mjs --coverage`
-// 的重测一致。数字取自重测而非相加。
+export const PENDING_BASELINE = 25; // 合并态实测（#470 并上含 #463 的 master）：
+// master 侧 #463 已把基线抬到 27（#465 先抬到 29；SYSTEM/CONFIG.ERB 落地
+// ere/page/page-config.js、SYSTEM/SYSTEM_MODEINT.ERB 的 @QUE2MK 落地
+// ere/event/first-setting.js 的 que2mk，各减 1）；本票再减 2——侵略/
+// ARCANA_BATTLE.ERB（主循环与 DEATH_CHECK4 落
+// ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/MONSTER_ATTACK3
+// 判死）与侵略/ARCANA_FORT.ERB（:2-551，落
+// ere/invasion/invasion-arcana-fort.js）各自从「待移植」转「已移植」：
+// 27 − 2 = 25，与 `node tools/trace-check.mjs --coverage` 的重测一致（数字
+// 取自重测而非相加——本票分支侧的中间值 28 是在 master 仍是 29 时按
+// 「29 − 1」测出来的，master 前进后两项都在，见下方旧注）。
+// export const PENDING_BASELINE = 27; // 合并态实测（#463 并上含 #465/#462 的 master）：
+// #465 先把基线抬到 29（37−8，ABL/ABLUP10.ERB～ABLUP17.ERB）；本票再减 2
+// （SYSTEM/CONFIG.ERB 落地真身 ere/page/page-config.js、SYSTEM/
+// SYSTEM_MODEINT.ERB 的 @QUE2MK 落地 ere/event/first-setting.js 的 que2mk，
+// 各自从「待移植」转「已移植」）：29 − 2 = 27，与
+// `node tools/trace-check.mjs --coverage` 的重测一致。数字取自重测而非相加。
+// SYSTEM ver1.0.3.ERB 本票一并从「部分移植」翻「已移植」（六个函数全部了结：
+// EVENTFIRST／EVENTTURNEND 三档／EVENTLOAD 早已落地，FIRST_SETTING 五问本票
+// 全量实现，SAVEINFO 随 #136，MONEYSYS 全库零调用点判死不移植，见
+// docs/stub-registry.md 的 EX_FLAG:4444 行），但部分移植不在待移植分子里，
+// 不动本数（同 #399 的 SHOP_CHARA 先例）。此前卡判定的 EVENTTURNEND（普通档）
+// 行是 #114 建表时的七格畸形行，行尾「登记（尚未接入）」被按末格读成状态、
+// 而 TURNEND 分派 #44 起就在 main-loop.js——#463 清掉过期格后文件翻面。
+// export const PENDING_BASELINE = 28; // 本票分支侧的中间态，从未上过 master：
+// 29（#465 后的 master）− 1（侵略/ARCANA_BATTLE.ERB——主循环与 DEATH_CHECK4
+// 落 ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/MONSTER_ATTACK3
+// 判死）。与 master 侧同期走出的 27 只是两条并行的抬低路径，合并后按重测
+// 收敛到 26（27 − 1 的 ARCANA_FORT）。
 // export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
 // 37（#464 后的 master）− 8（本票的 ABL/ABLUP10.ERB～ABLUP17.ERB 八个文件）
 // = 29，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
 // 重测而非相加。
+// export const PENDING_BASELINE = 35; // 合并态实测（#463 两阶段，并上 9457309 的
+// master 时）：阶段一 CONFIG.ERB 37−1=36、阶段二 SYSTEM_MODEINT.ERB 36−1=35；
+// master 前进（#465 抬到 29）后按 29−2=27 重测改写现役值，两阶段叙事见上。
 // export const PENDING_BASELINE = 37; // 合并态实测（#464 并上含 #460 的 master）：
 // 47（#460 后的 master）− 10（本票的 ABL/ABLUP0.ERB～ABLUP9.ERB 十个文件）
 // = 37，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自

@@ -53,6 +53,11 @@ async function run_corrupt_path() {
   fixture.store.set('abl:17:0', 4);
   fixture.store.set('abl:17:1', 0);
   fixture.store.set('abl:17:11', 1);
+  // TALENT:0:122 = 男人：PLAYER（chara 0）默认设定为男性。不设置时
+  // PLAYER/TARGET 的 TALENT:122 都读到 undefined，source_sex_check() 会
+  // 误判为「双方均非男性」触发 SOURCE_LESBIAN_SEX_CHECK，改变爱抚产生的
+  // 快感系数，导致本测试依赖的 MARK:1 阈值判定失真。
+  fixture.store.set('talent:0:122', 1);
   fixture.load_module('event/event-train');
   fixture.load_module('event/event-end');
   fixture.load_module('event/event-com');
