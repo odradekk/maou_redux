@@ -52,7 +52,7 @@ const trap_mod = require('#/dungeon/dungeon-trap');
  * 延迟 require 防环（dungeon.js ↔ dungeon-quest.js、dungeon-battle.js ↔
  * dungeon-quest.js 双向各一处，顶层只单向）。
  */
-const STUBBED_CALLS = ['ADD_EX_ITEM', 'CAMPAIGN_MONSTER_LIST'];
+const STUBBED_CALLS = ['ADD_EX_ITEM'];
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
 function name_of(cid) {
@@ -175,10 +175,12 @@ async function set_quest(arg, rand = default_rand) {
 
     // :88-96 討伐対象（モンスターID）
     if (chara(cid).invasion.状态 === 12) {
-      // 戦役（CFLAG:1 == 12）：怪物表由战役侧给出（存根恒 0 → 讨伐对象 0，
-      // RESULT_QUEST 的 E 列比对永不命中，战役线任务不结算——存根语义自洽）
+      // 戦役（CFLAG:1 == 12）：怪物表由战役侧给出（#469 起真身）
       const { campaign_monster_list } = require('#/dungeon/dungeon-battle');
-      const monid = campaign_monster_list(era.get(`cflag:${cid}:501`) || 0);
+      const monid = await campaign_monster_list(
+        era.get(`cflag:${cid}:501`) || 0,
+        rand_n,
+      );
       era.set(`cflag:${cid}:538`, monid);
     } else {
       // 常规：目标阶层 × 10 + 种类 0-4 + 100（RAND:0 恒 0，阶层 0 时

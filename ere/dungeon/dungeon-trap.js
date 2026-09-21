@@ -67,7 +67,8 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const { stub_line_wait } = require('#/utils/stub-line');
+const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 // 迎击分断（SHOOT 的 PARTY_DEL）经模块对象引用——测试可替换导出断言
 // 被调（battle_mod 同款；解构绑定会让替换失效）
 const party_mod = require('#/dungeon/dungeon-party');
@@ -80,7 +81,14 @@ const summon_mod = require('#/dungeon/monster-summon');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
  */
-const STUBBED_CALLS = ['CAMPAIGN_TRAP', 'COM0_AUTO', 'COM3_AUTO', 'COM50_AUTO'];
+const STUBBED_CALLS = ['COM0_AUTO', 'COM3_AUTO', 'COM50_AUTO'];
+
+/**
+ * @CAMPAIGN_TRAP_{FLAG:400} 族：战役迷宫的陷阱槽读值（#469，决议 #7）。
+ * 键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款依据）；实现在
+ * ere/page/page-campaign-1.js 注册。
+ */
+const campaign_trap_family = new DispatchFamily('CAMPAIGN_TRAP', [1]);
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -100,15 +108,25 @@ function cbit(cid, idx, bit) {
 // —— 存根层（#176 登记，归属见 docs/stub-registry.md）——
 
 /**
- * @CAMPAIGN_TRAP 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役迷宫的
- * 陷阱槽读值（FLAG:400 战役分支专用）。存根返回 -1（该槽无陷阱）——
- * 三槽全 -1 时主循环照 :68 直接 RETURN，与「无陷阱」路径同构。战役线
- * FLAG:400 无写入路径恒 0，本票不达。
- * @param {number} trap_num FLAG 槽号（原作实参）
- * @returns {number} 该槽的陷阱 ID（存根恒 -1）
+ * @CAMPAIGN_TRAP（CAMPAIGN_EVENT.ERB:203-212）：战役迷宫的陷阱槽读值。
+ *
+ * 原作 RESULT 预置 0（非 -1）：CAMPAIGN_TRAP_1 的 SELECTCASE 对未登记的
+ * trap_num 也是落 TRAP_ID = 0（CAMPAIGN_1.ERB:121 默认值），与「陷阱槽
+ * 无陷阱」同值——DUNGEON_TRAP.ERB 的三处 `TRAP_ID < 0` 判据（:42-49 /
+ * :60-69 / :67）因此在战役分支同样不可达（与非战役分支同构，era.get 也从不
+ * 产生负值）。
+ * @param {number} trap_num FLAG 槽号（原作 ARG:0）
+ * @returns {Promise<number>} 该槽的陷阱 ID（FLAG:400 < 1 时恒 0）
  */
-function campaign_trap() {
-  return stub_line('CAMPAIGN_TRAP', '战役陷阱槽', '随战役票（阶段 5）');
+async function campaign_trap(trap_num) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }
+  return campaign_trap_family.call(active, {
+    whenMissing: 0,
+    args: [trap_num],
+  });
 }
 
 /**
@@ -231,7 +249,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
     let trap_num = chara(a).dungeon.侵攻阶层 + 299;
     let trap_id = era.get(`flag:${trap_num}`) || 0;
     if (place === 12) {
-      trap_id = campaign_trap(trap_num);
+      trap_id = await campaign_trap(trap_num);
     }
 
     // :42-49 Ａになければ陷阱がＢにあるか？
@@ -239,7 +257,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
       trap_num = chara(a).dungeon.侵攻阶层 + 309;
       trap_id = era.get(`flag:${trap_num}`) || 0;
       if (place === 12) {
-        trap_id = campaign_trap(trap_num);
+        trap_id = await campaign_trap(trap_num);
       }
     }
 
@@ -248,7 +266,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
       // :53-57
       trap_id = era.get(`flag:${trap_num}`) || 0;
       if (place === 12) {
-        trap_id = campaign_trap(trap_num);
+        trap_id = await campaign_trap(trap_num);
       }
 
       // :60-69 陷阱がＣにあるか？
@@ -256,7 +274,7 @@ async function dungeon_trap(a, tries, rand, ctx) {
         trap_num = chara(a).dungeon.侵攻阶层 + 319;
         trap_id = era.get(`flag:${trap_num}`) || 0;
         if (place === 12) {
-          trap_id = campaign_trap(trap_num);
+          trap_id = await campaign_trap(trap_num);
         }
         if (trap_id < 0) {
           return ctx; // :68 RETURN 0（不经尾部 WAIT）
@@ -2469,4 +2487,7 @@ module.exports = {
   // #178（H9）起导出：DUNGEON_TOWN.ERB:645/:652（宴会风俗的爱抚自动调教）
   // 复用本域内存根（此前仅本文件 :1283 淫虫陷阱内部调用，未导出）
   com0_auto,
+  campaign_trap,
+  // page-campaign-1.js 向这个族 register(1, ...)，本文件只声明、不参与注册
+  campaign_trap_family,
 };

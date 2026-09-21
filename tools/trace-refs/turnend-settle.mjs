@@ -257,6 +257,12 @@ export const FILES = [
         ref: '753-758',
         any: [/TARGET = FLAG:1/],
       },
+      // —— #469 战役败北检查（CAMPAIGN_GAMEOVER 判定前的气力扣减）——
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '713-714',
+        any: [/SIF FLAG:400 > 0/],
+      },
     ],
   },
 ];

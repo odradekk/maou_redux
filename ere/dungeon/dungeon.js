@@ -50,6 +50,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
 const { stub_line_wait } = require('#/utils/stub-line');
+const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
 const { party_del } = require('#/dungeon/dungeon-party');
@@ -76,12 +77,22 @@ const ex_item_mod = require('#/dungeon/ex-item');
  * ere/dungeon/dungeon-room.js）；DUNGEON_TOWN 亦不在此列（#178 真身
  * ere/dungeon/dungeon-town.js，撤到迷宫外的调用点经模块对象 town_mod）。
  */
-const STUBBED_CALLS = [
-  'CAMPAIGN_QUEST',
-  'CAMPAIGN_ENDING',
-  'CAMPAIGN_ROOM',
-  'BEDROOM_BATTLE_MALE',
-];
+const STUBBED_CALLS = ['BEDROOM_BATTLE_MALE'];
+
+// —— 战役 1「赤蛮咒森」的 DispatchFamily（#469，决议 #7）——
+// 键都是 FLAG:400（当前进行中的战役号）；只有 CAMPAIGN_SET_1 存在，
+// FLAG:400 在可达状态下只能是 0/1（各调用点先挡 < 1），declaredIds
+// 声明 {1} 即可（page-campaign.js 文件头同款依据）。实现在
+// ere/page/page-campaign-1.js 注册。
+
+/** @CAMPAIGN_ROOM_{FLAG:400} 族：战役迷宫的房间类型 */
+const campaign_room_family = new DispatchFamily('CAMPAIGN_ROOM', [1]);
+/** @CAMPAIGN_QUEST_{FLAG:400} 族：战役中的踏破判定 */
+const campaign_quest_family = new DispatchFamily('CAMPAIGN_QUEST', [1]);
+/** @CAMPAIGN_STORY_{FLAG:400} 族：踏破推进时插播的剧情文本 */
+const campaign_story_family = new DispatchFamily('CAMPAIGN_STORY', [1]);
+/** @CAMPAIGN_ENDING_{FLAG:400} 族：战役终局演出 */
+const campaign_ending_family = new DispatchFamily('CAMPAIGN_ENDING', [1]);
 
 /** 名字承载（#5 决议；savestr 通道不存在，文件头） */
 function name_of(cid) {
@@ -113,36 +124,70 @@ function default_rand(n) {
 // 补给 / 任务 / 娼馆，CFLAG:580 所持金的消费端）。
 
 /**
- * @CAMPAIGN_QUEST 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役中的踏破
- * 判定。RESULT：1 = 攻略成功 / 0 = 失败被赶回。FLAG:400 无写入路径恒 0，
- * 本票不达；返回 1（成功）贴近「不改变推进」。
+ * @CAMPAIGN_QUEST（CAMPAIGN_EVENT.ERB:182-200）：战役中的踏破判定，含
+ * 楼层推进剧情（:190-197 内嵌 CAMPAIGN_STORY 派发）。
+ * RESULT：1 = 攻略成功 / 0 = 失败被赶回。
  * @param {number} cid 队长（原作 ARG:0）
- * @returns {Promise<number>} RESULT（存根恒 1）
+ * @returns {Promise<number>} RESULT（FLAG:400 < 1 时恒 0）
  */
-async function campaign_quest() {
-  await stub_line_wait('CAMPAIGN_QUEST', '战役踏破判定', '随战役票（阶段 5）');
-  return 1;
+async function campaign_quest(cid) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }
+  // :190-197 楼层（CFLAG:cid:501）超过剧情进度（FLAG:401）时推进一段剧情
+  if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {
+    era.print('―STORY―');
+    await era.waitAnyKey(true); // FORCEWAIT
+    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
+    era_flag.campaign_story_progress += 1;
+  }
+  return campaign_quest_family.call(active, { whenMissing: 0, args: [cid] });
 }
 
 /**
- * @CAMPAIGN_ENDING 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役终局演出。
- * @param {number} cid 队长（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
+ * @CAMPAIGN_ENDING（CAMPAIGN_EVENT.ERB:303-318）：战役终局演出。
+ *
+ * :304-312 的角色复位循环无条件跑（不受 :313 的 FLAG:400 < 1 早退约束，
+ * 原作把 FOR 循环放在 SIF 之前）——即使调用点已经用 `FLAG:400 > 0` 挡过一层
+ * （源 DUNGEON.ERB:195 唯一调用点），函数体自身仍照抄这个无条件动作。
+ *
+ * 调用点传 ARG:0（队长），但函数体自身不使用，@CAMPAIGN_ENDING_{n} 也不接收
+ * 参数（见 CAMPAIGN_1.ERB:360）——故本移植不设形参。
+ * @returns {Promise<number>} 原作 RETURN（FLAG:400 < 1 时恒 0）
  */
 async function campaign_ending() {
-  await stub_line_wait('CAMPAIGN_ENDING', '战役终局', '随战役票（阶段 5）');
-  return 0;
+  // :304-312 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立照抄）
+  for (const cid of era.getAddedCharacters()) {
+    if (chara(cid).invasion.状态 === 12) {
+      party_del(cid);
+      chara(cid).invasion.状态 = 0;
+      chara(cid).invasion.回城标志 = 0;
+    }
+  }
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }
+  const result = await campaign_ending_family.call(active, {
+    whenMissing: 0,
+    args: [],
+  });
+  era_flag.hero_campaign_active = 0; // :317 FLAG:400 = 0 战役结束清零
+  return result;
 }
 
 /**
- * @CAMPAIGN_ROOM 存根（侵略/CAMPAIGN/；战役票，阶段 5）：战役迷宫的房间
- * 类型。ROOM = RESULT——存根返回 0。
+ * @CAMPAIGN_ROOM（CAMPAIGN_EVENT.ERB:155-166）：战役迷宫的房间类型。
  * @param {number} floor 阶层（原作 ARG:0）
- * @returns {Promise<number>} 房间类型（存根恒 0）
+ * @returns {Promise<number>} 房间类型（FLAG:400 < 1 时恒 0）
  */
-async function campaign_room() {
-  await stub_line_wait('CAMPAIGN_ROOM', '战役房间', '随战役票（阶段 5）');
-  return 0;
+async function campaign_room(floor) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }
+  return campaign_room_family.call(active, { whenMissing: 0, args: [floor] });
 }
 
 /**
@@ -374,7 +419,7 @@ async function run_dungeon(arg0, rand) {
         }
 
         if ((era.get('flag:400') || 0) > 0 && floor >= 6) {
-          // :193-197 戦役的盡頭（战役终局，存根）
+          // :193-197 戦役的盡頭（战役终局；#469 起 campaign_ending 为真身）
           era.print(`到达了${mapc}的尽头………`);
           await campaign_ending(arg0);
           walk20 = 0;
@@ -419,6 +464,10 @@ async function run_dungeon(arg0, rand) {
               chara(arg0).invasion.回城标志 = 1; // CFLAG:507 = 1
               chara(arg0).dungeon.再起点 = 7; // CFLAG:508 = 7
               chara(arg0).invasion.存档点 = 7; // CFLAG:521 = 7
+              // ⚠ 此处写不落 CFLAG:520（#469 规范审查 4c 发现，既有缺陷、
+              // 非本票引入）：DungeonFacade 只有「目标阶层」没有「到达阶层」，
+              // 赋值落在 JS 对象自身上，下方同名的裸寻址读数读不到。属主域外的
+              // 遗留项，修它要另开票（含测试），本票只登记不改行为。
               chara(arg0).dungeon.到达阶层 = 8; // CFLAG:520 = 8
             }
           }
@@ -1088,7 +1137,7 @@ async function run_dungeon(arg0, rand) {
   }
 
   await dungeon_bitch_mod.dungeon_bitch(after_target, rand_n); // :718（真身 #184；rand_n 透传，迷宫与卖春共用随机源。模块对象不解构——测试可替换导出断言被调，enter-enemy 先例）
-  await get_junk_item(after_target); // :719
+  await get_junk_item(after_target, rand_n); // :719（rand_n 透传同 :718；#469 e2e 确定性——缺省会落回 Math.random）
 
   // === 宝箱を見つける（:721-731；侵攻中 2 且 RAND:4 == 0，各自判定）===
   if (chara(arg0).invasion.状态 === 2 && rand_n(4) === 0) {
@@ -1449,4 +1498,12 @@ module.exports = {
   add_ex_item: ex_item_mod.add_ex_item,
   use_ex_item: ex_item_mod.use_ex_item,
   campaign_room,
+  campaign_quest,
+  campaign_ending,
+  // 战役 1「赤蛮咒森」的族实例（#469）：page-campaign-1.js 向这四个族
+  // register(1, ...)，本文件只声明、不参与注册
+  campaign_room_family,
+  campaign_quest_family,
+  campaign_story_family,
+  campaign_ending_family,
 };

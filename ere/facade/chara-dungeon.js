@@ -59,6 +59,21 @@ class DungeonFacade {
   }
 
   /**
+   * 目标阶层（cflag:cid:520 ↔ CFLAG:520）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行418 CFLAG:520 目標階層
+   * @returns {number}
+   */
+  get 目标阶层() {
+    return era.get(`cflag:${this.cid}:520`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 目标阶层(v) {
+    era.set(`cflag:${this.cid}:520`, v);
+  }
+
+  /**
    * 已接任务（cflag:cid:534 ↔ CFLAG:534）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:534 受注クエスト
    * @returns {number}
@@ -206,6 +221,21 @@ class DungeonFacade {
    */
   set 再起点(v) {
     era.set(`cflag:${this.cid}:508`, v);
+  }
+
+  /**
+   * 弹药（cflag:cid:571 ↔ CFLAG:571）
+   * 源: target/ERB/侵略/ARCANA_BATTLE.ERB 行21-22 CFLAG:ATKER/DEFER:571 = 15（对人决斗弹药补充；对人格斗一族的弾薬消耗同族字段见 550-552 装备枠）
+   * @returns {number}
+   */
+  get 弹药() {
+    return era.get(`cflag:${this.cid}:571`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 弹药(v) {
+    era.set(`cflag:${this.cid}:571`, v);
   }
 
   /**

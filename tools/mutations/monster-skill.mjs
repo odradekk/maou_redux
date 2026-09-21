@@ -307,9 +307,9 @@ export default [
   {
     desc: 'M7175 MONSTER_SKILL 重新登记成 dungeon-battle 存根',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = [\n  'CAMPAIGN_MONSTER_LIST',",
+    find: "const STUBBED_CALLS = [\n  'BEFORE_AUTOTRAIN',",
     replace:
-      "const STUBBED_CALLS = [\n  'MONSTER_SKILL', // 变异：真身倒退为存根登记\n  'CAMPAIGN_MONSTER_LIST',",
+      "const STUBBED_CALLS = [\n  'MONSTER_SKILL', // 变异：真身倒退为存根登记\n  'BEFORE_AUTOTRAIN',",
     tests: ['monster-skill'],
     must_mention: 'MONSTER_SKILL 不再登记为存根',
   },

@@ -179,6 +179,21 @@ class CharaFacade {
   }
 
   /**
+   * 身高（cflag:cid:453 ↔ CFLAG:453）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行363 CFLAG:453 = 身長
+   * @returns {number}
+   */
+  get 身高() {
+    return era.get(`cflag:${this.cid}:453`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 身高(v) {
+    era.set(`cflag:${this.cid}:453`, v);
+  }
+
+  /**
    * 体重（cflag:cid:454 ↔ CFLAG:454）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行364 CFLAG:454 = 体重
    * @returns {number}
@@ -206,6 +221,36 @@ class CharaFacade {
    */
   set 胸围(v) {
     era.set(`cflag:${this.cid}:455`, v);
+  }
+
+  /**
+   * 腰围（cflag:cid:456 ↔ CFLAG:456）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行366 CFLAG:456 = W
+   * @returns {number}
+   */
+  get 腰围() {
+    return era.get(`cflag:${this.cid}:456`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 腰围(v) {
+    era.set(`cflag:${this.cid}:456`, v);
+  }
+
+  /**
+   * 臀围（cflag:cid:457 ↔ CFLAG:457）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行367 CFLAG:457 = H
+   * @returns {number}
+   */
+  get 臀围() {
+    return era.get(`cflag:${this.cid}:457`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 臀围(v) {
+    era.set(`cflag:${this.cid}:457`, v);
   }
 
   /**
