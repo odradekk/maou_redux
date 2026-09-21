@@ -501,7 +501,7 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
   // 的性交尾段）随公共段合流一并删除——那份尾段已归 train-message.js 的公共
   // 段，本模块不再需要它，故这一格改用 dungeon-trap 的同类形态。
   const cases = [
-    ['ere/dungeon/dungeon-trap.js', 2008, false], // 行号随 #469 顶部族声明下移（原 1991）
+    ['ere/dungeon/dungeon-trap.js', 2009, false], // 行号随 #469 顶部族声明下移（原 1991；#469 合并后 campaign_trap JSDoc 再落一行，2008 → 2009）
     ['ere/kojo/kojo-k2-timid.js', 1291, false],
     ['ere/kojo/kojo-k3-noble.js', 8543, false],
     ['ere/system/train/com-tentacle.js', 394, false],
