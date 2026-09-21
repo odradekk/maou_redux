@@ -388,7 +388,7 @@ engine_test(
 
 // ———— $INPUT_LOOP_1（:443-549） ————
 
-test('交互循环：选 999 退出，收尾三查各占位一行', async () => {
+test('交互循环：选 999 退出，收尾一处占位（欲情变化检查已接真身）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.set_inputs(999);
@@ -399,12 +399,14 @@ test('交互循环：选 999 退出，收尾三查各占位一行', async () => 
     { api: 'waitAnyKey' }, // :439 WAIT（结算表后的读键）
     { api: 'input', value: 999 }, // :461 INPUT → :540 退出
   ]);
-  for (const name of ['YOKUBO_UP_CHECK', 'CHECK_SPECIALSKIL']) {
-    assert(
-      fixture.text_lines().some((line) => line.includes(`@${name}`)),
-      `${name} 占位行必须出现`,
-    );
-  }
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
+    'CHECK_SPECIALSKIL 占位行必须出现',
+  );
+  assert.ok(
+    !fixture.text_lines().some((line) => line.includes('@YOKUBO_UP_CHECK')),
+    'YOKUBO_UP_CHECK 已接真身，不应再打占位行',
+  );
   // [999] 按钮按 PR #53 通则断言 rendered（正文不写编号前缀，引擎拼）
   const exit_button = fixture.lines.find(
     (line) => line.type === 'button' && line.accelerator === 999,
@@ -412,17 +414,36 @@ test('交互循环：选 999 退出，收尾三查各占位一行', async () => 
   assert.equal(exit_button.rendered, '[999] - 能力值提高结束');
 });
 
+test('交互循环：999 退出后欲情变化检查走真身（压抑清除 + 否定点数减半）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('abl:31:11', 3);
+  fixture.store.set('talent:31:32', 1);
+  fixture.store.set('juel:31:100', 9);
+  fixture.set_inputs(999);
+
+  await fixture.load_module('system/train/juel-check').run_juel_check();
+
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('【压抑】')),
+    '真身应打印失去压抑的提示',
+  );
+  assert.equal(fixture.store.get('talent:31:32'), 0, '压抑清除');
+  assert.equal(fixture.store.get('juel:31:100'), 4, '否定点数减半截断');
+  assert.equal(fixture.store.get('tflag:25'), 1, '压抑抵抗消灭旗标');
+});
+
 test('交互循环：能力分支命中打占位、重绘后可再选（进得去出得来）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  // 探测用编号改为 10（顺从）：0-4 已随 issue #464 接上真身，不再打占位
-  fixture.set_inputs(10, 999);
+  // 探测用编号改为 20：0-4 已随 issue #464、10-17 已随 issue #465 接上真身，不再打占位
+  fixture.set_inputs(20, 999);
 
   await fixture.load_module('system/train/juel-check').run_juel_check();
 
   assert(
-    fixture.text_lines().some((line) => line.includes('@ABLUP10')),
-    'ABLUP10 占位行必须出现',
+    fixture.text_lines().some((line) => line.includes('@ABLUP20')),
+    'ABLUP20 占位行必须出现',
   );
   // 重绘两次首轮：SHOW_INFO_EXP 的等级行每轮一条
   assert.equal(
@@ -683,7 +704,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.equal(STUBBED_CALLS.length, 24); // 21 个仍存根的 ABLUPxx + 3 个收尾/自动
+  assert.equal(STUBBED_CALLS.length, 15); // #465 落 ABLUP10-17（存根 21→13）+ #462 落 YOKUBO_UP_CHECK 真身（收尾/自动 3→2），13 + 2
   for (const name of STUBBED_CALLS) {
     assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
   }

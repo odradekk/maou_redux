@@ -127,6 +127,37 @@ const REPO = path.resolve(__dirname, '..');
 //      （素质行/能力行/刻印行），stub −10、matched 不变（那十行原本就是
 //      「有输出但对不上」的存根行，换真身后逐字对上黄金样本）。
 // 未解释恒 0；数字为合并态重测值。
+// 【#462 后重测】两处改动均只影响存根计数、不影响 matched/unexplained：
+// ① SOUL_DISLOCATION_DEBUFF 落地为真身，SOURCE_CHECK 每次爱抚恒定调用、
+//    默认 EX_TALENT:0=0 时为静默恒等变换，不再 PRINT 占位文字，按样本内
+//    实际调用次数逐条消失（natural 15 次、upgrade 3 次，实测埋点计数）；
+//    本样本 PLAYER/TARGET 为异性配对，SOURCE_LESBIAN/GAY_SEX_CHECK 分支
+//    均未触发（同埋点计数为 0），与本次计数变化无关。
+// ② YOKUBO_UP_CHECK 从 juel-check.js（$LABEL_EXIT，:542）的 stub_line 占位
+//    改接共用真身 ability-check.js；两样本各调用 1 次（对应各自的训练回合
+//    退出），欲望/压抑/抵抗门槛不成立、无 PRINT 输出，占位行消失。
+// 合计 natural 15+1=16（444→428）、upgrade 3+1=4（222→218）。
+// 【#462 二次重测】TARGET_EJAC_CHECK 落地为真身：两样本的 TARGET 均无
+// TALENT:121/122（普通女性），每次调用都在守卫处早退、不再 PRINT 占位
+// 文字（埋点计数验证：natural 调用 15 次、upgrade 调用 3 次，均早退）。
+// stub natural 428→413、upgrade 218→215，matched/unexplained 不变。
+// 【#462 三次重测】TARGET_WORMBABY_CHECK 落地为真身：两样本的 TARGET 均无
+// TALENT:190/191，每次调用都在守卫处早退（埋点计数验证：natural 15 次、
+// upgrade 3 次，均早退）。stub natural 413→398、upgrade 215→212。
+// 【#462 四次重测】PISSING_ECST_CHECK 落地为真身：两样本的 TFLAG:29 判定
+// 均不成立，每次调用都不再 PRINT 占位文字（埋点计数验证：natural 15 次、
+// upgrade 3 次）。stub natural 398→383、upgrade 212→209。
+// 【#462 五次重测】EXP_GOT_CHECK 落地为真身：natural 15 次调用全部三段
+// 判据不成立，stub 383→368（matched 不变）。upgrade 3 次调用中有 1 次
+// 段 3（被虐快乐经验）真实命中——golden train-upgrade-log:319「被虐快乐
+// 经验+2」与 ere 侧逐字匹配，matched 259→262；同段 train-upgrade-log:372
+// 「被虐快乐经验+8」（更高档，未复现）仍由既有的「指令输出块」通用规则
+// 归因为 stub（与本函数无关，是该指令自身尚未完全对齐），unexplained 仍 0。
+// 【#462 六次重测】SOKUOCHI_CHECK 落地为真身：两样本的 TALENT:73 均为 0
+// （无容易陷落），每次调用都在守卫处早退、不再 PRINT 占位文字（埋点计数
+// 验证：natural 调用 15 次、upgrade 调用 3 次，均早退，与 ERB 原文
+// SIF TALENT:73==0 / RETURN 0 的静默行为一致）。stub natural 368→353、
+// upgrade 201→198，matched/unexplained 不变。
 // 【#464 ABL·1（Q7）ABLUP0～9 落地后重测】JUEL_CHECK 分发接上 ABLUP0～4 真身
 // （ere/system/train/ablup.js），natural 侧的能力提升反馈行与结算行不再走
 // stub_line 占位：matched 1115→1118、stub 444→382。差值不等于净减少的输出
@@ -134,13 +165,19 @@ const REPO = path.resolve(__dirname, '..');
 // 真身接上后转而记名到"跨画面编号错位"等既有归因（ere 按钮化 PR #53 通则），
 // 不再计入 stub 也不新增 matched，见 rules.js 的记名规则。upgrade 未变
 // （本样本回放未触发 ABLUP0～4 的可提升分支）。未解释恒 0。
-// 【#461 避孕套判定落真身后重测】SOURCE_CHECK 的 EQUIP_COM 存根占位（「避孕
-// 套判定尚未移植」一行）不再输出：natural 侧 stub 382→367（回放触发 15
-// 次）、upgrade 侧 stub 222→219（回放触发 3 次），两侧 matched 均不变——
-// 命中的对话轮次均未触及黄金样本里的对应文本，纯粹是占位行消失。未解释恒 0。
+// 【#462 与 #464 合并后重测（rebase 时才发现两票并行开发同一片区域）】
+// #462（六轮 SOURCE_CHECK 存根真身化）与 #464（ABLUP0～4 落真身）各自独立
+// 开发，均从 natural{matched:1115,stub:444}/upgrade{matched:259,stub:222}
+// 出发；两者互不覆盖同一批输出行（前者动 SOURCE_CHECK 链，后者动 JUEL_CHECK
+// 的 ABLUP 分发），合并后按 SOP §5.5 实跑 cli --sample 取准，不做算术加总。
+// 【#461+#462 返工合并后重测（merge origin/master 9457309）】三条变化叠加：
+// #461 删避孕套占位（natural -15 / upgrade -3）、#462 六轮已计入上一次
+// BASELINE、#462 返工删 TARGET_MILK_CHECK 占位（manual 路径每次 SOURCE_CHECK
+// 打印一行，真身守卫早退静默）。与 #461（master 侧 382/222 基础上到
+// 367/219）互不覆盖同一批输出行，合并后实跑取准（下方数值），不做算术加总。
 const BASELINE = {
-  'train-natural': { matched: 1118, version: 0, stub: 367, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 219, unexplained: 0 },
+  'train-natural': { matched: 1118, version: 0, stub: 261, unexplained: 0 },
+  'train-upgrade': { matched: 262, version: 0, stub: 192, unexplained: 0 },
 };
 
 async function build_report(sample) {
