@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 111;
+export const COUNT = 112;
 
 export default [
   {
@@ -1122,5 +1122,21 @@ export default [
       if (false) { // 变异：别名判定焊死`,
     tests: ['facade-property-check'],
     must_mention: '别名上的属性未被报出',
+  },
+  {
+    desc: 'M10712 视图别名判定焊死（const view = chara(x) 之后的 view.<域>.<属性> 不再判——第三条判定面失明，#493）',
+    file: 'tools/facade-property-check.mjs',
+    find: `      if (members.length < 2) {
+        continue;
+      }
+      checked += 1;
+      if (!ctx.props.get(domain).has(members[1])) {`,
+    replace: `      if (members.length < 2) {
+        continue;
+      }
+      checked += 1;
+      if (false) { // 变异：视图别名判定焊死`,
+    tests: ['facade-property-check'],
+    must_mention: '视图别名上的属性未被报出',
   },
 ];

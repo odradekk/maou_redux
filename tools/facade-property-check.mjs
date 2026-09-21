@@ -52,9 +52,18 @@ const VIEW_MEMBERS = new Set(['cid']);
 // —— 注释剥离 ——
 
 /**
- * 剥掉行注释与块注释（换成等长空白，保住行号）。字符串按引号短路——实测
- * ere/ 的字符串字面量里没有 `//` 或 `/*`；模板串里的 `${}` 不单独处理，漏判
- * 只发生在「注释写在模板内插表达式里」这种写法上。
+ * 剥掉行注释、块注释与单/双引号字符串的内容（一律换成等长空白，保住行号与
+ * 长度）；模板串原样保留——`${}` 里是真代码，要判。
+ *
+ * 为什么要剥字符串：字符串里的 `chara(x).train.某属性` 是文本不是访问，不剥
+ * 就会误报（误报会让全库测试对所有人变红）。为什么不剥模板串：`${}` 里可能
+ * 有真访问，剥掉即漏判；代价是模板串正文里的同类文本仍会被判，属已知边界。
+ *
+ * 失同步的边界（正则字面量）与兜底：正则里的引号或 `//` 会让本函数认错一段，
+ * 但**单行有界**——`'`/`"` 扫到行尾即收（JS 单双引号字面量本就不跨行），
+ * `//` 同样只吃当行，故误判不会漫到后文；`/*` 起头的块注释没有行界，正则里
+ * 出现 `\\/*` 这类形态时才会漫延（实测 ere/ 的字符串与正则中都没有
+ * `//`、`/*`，这条是给未来的兜底）。
  * @param {string} text 文件正文
  * @returns {string} 同长度、同换行结构的正文
  */
@@ -84,15 +93,16 @@ function strip_comments(text) {
     }
     if (ch === "'" || ch === '"' || ch === '`') {
       const quote = ch;
+      const blank = quote !== '`'; // 模板串保留内容（${} 里有真代码）
       out += ch;
       i += 1;
-      while (i < n) {
+      while (i < n && text[i] !== '\n') {
         if (text[i] === '\\') {
-          out += text[i] + (text[i + 1] ?? '');
+          out += blank ? '  ' : text[i] + (text[i + 1] ?? '');
           i += 2;
           continue;
         }
-        out += text[i];
+        out += blank ? ' ' : text[i];
         if (text[i] === quote) {
           i += 1;
           break;
@@ -265,15 +275,24 @@ function classify_declarations(text) {
     }
     sites.get(name).push({ kind, domain });
   }
-  // 形参名（函数、箭头、catch）：同名的形参会遮蔽别名
+  // 形参名（函数、箭头、catch、方法简写）：同名的形参会遮蔽别名。方法简写
+  // 只认纯标识符列表——`if (kojo.x === 0) {`、`for (const k of …) {` 与它同形，
+  // 若不设这道闸，别名**使用**会被当成声明，直接把判定面挖空（实测 kojo 别名
+  // 从 12,000+ 处判定掉到几百处）。
+  const PARAM_LIST =
+    /^\s*(?:[A-Za-z_$][\w$]*\s*(?:,\s*[A-Za-z_$][\w$]*\s*)*)?$/;
   const params = new Set();
   const param_res = [
-    /function\s*[A-Za-z0-9_$]*\s*\(([^)]*)\)/g,
-    /\(([^()]*)\)\s*=>/g,
-    /catch\s*\(([^)]*)\)/g,
+    { re: /function\s*[A-Za-z0-9_$]*\s*\(([^)]*)\)/g, strict: false },
+    { re: /\(([^()]*)\)\s*=>/g, strict: false },
+    { re: /catch\s*\(([^)]*)\)/g, strict: false },
+    { re: /(?:^|[\s;{}])[A-Za-z_$][\w$]*\s*\(([^()]*)\)\s*\{/g, strict: true },
   ];
-  for (const re of param_res) {
+  for (const { re, strict } of param_res) {
     while ((match = re.exec(text))) {
+      if (strict && !PARAM_LIST.test(match[1])) {
+        continue;
+      }
       for (const piece of match[1].split(',')) {
         const name = IDENT.exec(piece.trim());
         if (name) {

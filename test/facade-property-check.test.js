@@ -65,24 +65,34 @@ after(() => {
   }
 });
 
-// 探针模块主体：#493 修前的四类写法（属性名写错 / 域写错 / 域段写错 / 别名上的
-// 属性名写错）各一处。四行都带独立的域.属性串，报错文案互不重叠；变异拆掉哪一类
-// 判定，对应用例就因「红或文案缺失」而失败。
+// 探针模块主体：#493 修前的五类写法（属性名写错 / 域写错 / 域段写错 / 域切片
+// 别名上的属性写错 / 视图别名上的属性写错）各一处，另附一条「字符串正文里长着
+// 访问样子」的文本——它不得被判（误报会让全库测试对所有人变红）。各行都带独立
+// 的域.属性串，报错文案互不重叠；变异拆掉哪一类判定，对应用例就因「红或文案
+// 缺失」而失败。
 const PROBE_BODY = [
   '// 探针模块（test/facade-property-check.test.js 写入，跑完即删）：',
-  '// #493 修前的四类写法，门面属性检查器的靶子。',
+  '// #493 修前的五类写法，门面属性检查器的靶子。',
   'module.exports = {};',
+  "const text = 'chara(cid).train.穿孔装着'; // 字符串正文：不是访问，不得判",
   'function probe(cid) {',
+  '  const view = chara(cid); // 视图别名',
   '  const kojo = chara(cid).kojo; // 域切片别名（复核发现的第 14 处藏在别名写法里）',
   '  return {',
   '    a: chara(cid).train.穿孔装着, // 属性名写错（train 域无此属性）',
   '    b: chara(cid).kojo.状态, // 域写错（CFLAG:1 属 invasion 域）',
   '    c: chara(cid).trains.状态, // 域段写错（chara() 视图没有 trains）',
   '    d: kojo.初吻对象, // 别名上的域写错（CFLAG:16 属 train 域）',
+  '    e: view.invasion.穿孔装着, // 视图别名上的属性名写错（invasion 域无此属性）',
   '  };',
   '}',
   '',
 ].join('\n');
+
+/** 探针正文里含 marker 的那一行号（1 起，报错指位用） */
+function probe_line(marker) {
+  return PROBE_BODY.split('\n').findIndex((line) => line.includes(marker)) + 1;
+}
 
 test('facade-property-check 全绿（chara() 门面访问的属性都落在对应域门面上）', () => {
   const { status, output } = run_tool(TOOL, REPO_ROOT);
@@ -183,9 +193,10 @@ test('探针：域写错（kojo.状态）与域段写错（trains）必须红，
   );
 });
 
-test('探针：域切片别名上的属性必须同样受判（const kojo = chara(x).kojo → kojo.初吻对象）', () => {
-  // 复核发现的第 14 处（K9 的 `kojo.初吻对象`）落在别名写法上，直链扫描看不见。
-  // 本用例钉住别名这一面真的进了判定：只破坏别名路径也应报出位置与属主域。
+test('探针：域切片别名与视图别名上的属性必须同样受判', () => {
+  // 复核发现的第 14 处（K9 的 `kojo.初吻对象`）落在域切片别名上，直链扫描看不见。
+  // 本用例钉住两条别名路径真的进了判定（报错按「行号 + 规范化地址」比对，因为
+  // 别名写在报错里也归一成 `chara(…).<域>.<属性>`）。
   const root = probe_repo();
   const probe = path.join(root, 'ere', '__facade_probe__.js');
   const cleanup = () => {
@@ -198,18 +209,41 @@ test('探针：域切片别名上的属性必须同样受判（const kojo = char
     fs.writeFileSync(probe, PROBE_BODY, 'utf8');
     const { status, output } = run_tool(probe_tool(root), root);
     assert.notEqual(status, 0, '探针在，工具必须非 0');
-    const hit = output
+
+    const slice = output
       .split('\n')
       .find(
         (line) =>
           line.includes('__facade_probe__.js') &&
           line.includes('kojo.初吻对象'),
       );
-    assert.ok(hit, `别名上的属性未被报出：\n${output}`);
+    assert.ok(slice, `域切片别名上的属性未被报出：\n${output}`);
     assert.match(
-      hit,
+      slice,
       /「初吻对象」在 train 域存在/,
-      `别名路径的整改指引应指路属主域：\n${hit}`,
+      `域切片别名路径的整改指引应指路属主域：\n${slice}`,
+    );
+
+    const view_line = probe_line('view.invasion.穿孔装着');
+    const view = output
+      .split('\n')
+      .find((line) =>
+        line.includes(
+          `__facade_probe__.js:${view_line} chara(…).invasion.穿孔装着`,
+        ),
+      );
+    assert.ok(view, `视图别名上的属性未被报出：\n${output}`);
+    assert.match(
+      view,
+      /invasion 域门面没有「穿孔装着」/,
+      `视图别名路径应给出补名／补访问器的指引：\n${view}`,
+    );
+
+    // 字符串正文里的同类文本不是访问，不得被判
+    const text_line = probe_line("const text = 'chara(cid).train.穿孔装着'");
+    assert.ok(
+      !output.includes(`__facade_probe__.js:${text_line} `),
+      `字符串正文被当成访问了（误报）：\n${output}`,
     );
   } finally {
     cleanup();
