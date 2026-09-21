@@ -233,32 +233,63 @@ test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', as
 });
 
 test('SELECTCOM==22 爱慕支：CFLAG:16 >= 0（已初吻）才出那句亲吻，未初吻不出', async () => {
-  // 原作 :2438/:2448 是 `SIF CFLAG:16 >= 0`——CFLAG:16 属 train 域
+  // 原作 :2438 与 :2448 都是 `SIF CFLAG:16 >= 0`——CFLAG:16 属 train 域
   // （chara-train.js 的 初吻对象，未経験は -1 初期化）。#493 复核发现的第 14 处：
-  // 修前读的是 kojo 域不存在的「初吻对象」，`undefined >= 0` 恒假、两句恒不出。
-  const kissed = await setup_k9((f) => {
-    f.store.set('cflag:20:323', 1); // 对面座位二回目以降
-    f.store.set('talent:20:85', 1); // 爱慕
-    f.store.set('cflag:20:16', 5); // 已初吻（相手编号+1）
-  }, 22);
-  await speak_k9(kissed, () => 0); // RAND:3 == 0 支
-  assert.deepEqual(kissed.text_lines(), [
-    '「啊嗯~…嗯~…最…最喜欢你了噢~…嗯~…嗯哼嗯~…♡」',
-    '黑方片一副呆呆的样子被你抱住、因为从下往上的抽插带来的快感而从嘴边漏出了呻吟。',
-    '一和黑方片的嘴唇重叠之后黑方片湿润的舌头就立马从缝隙中钻进来、从嘴边漏出了娇喘。',
-  ]);
-  assert.equal(kissed.store.get('cflag:20:323'), 5, '对面座位推进到 5');
+  // 修前经 kojo 域切片别名读不存在的「初吻对象」，`undefined >= 0` 恒假、
+  // 两句恒不出。RAND:3 与 RAND:2 两支各走一处，两支都断言。
+  const seq_rand =
+    (...draws) =>
+    (n) => {
+      const value = draws.shift() ?? 0;
+      return value % n;
+    };
+  const cases = [
+    {
+      name: 'RAND:3 == 0 支',
+      draws: [0],
+      base: [
+        '「啊嗯~…嗯~…最…最喜欢你了噢~…嗯~…嗯哼嗯~…♡」',
+        '黑方片一副呆呆的样子被你抱住、因为从下往上的抽插带来的快感而从嘴边漏出了呻吟。',
+      ],
+      kiss: '一和黑方片的嘴唇重叠之后黑方片湿润的舌头就立马从缝隙中钻进来、从嘴边漏出了娇喘。',
+    },
+    {
+      name: 'RAND:2 == 0 支',
+      draws: [1, 0],
+      base: [
+        '「嗯~…嗯嗯~…这、这个好棒呢~…啊啊啊啊~…在被摩擦着…啊嗯~…哈啊啊啊~♡」',
+        '黑方片的腰紧紧地压下来并且左右晃动着、小豆豆也充分地品味到了刺激。',
+        '「啊啊~…嗯~…这个~…好厉害~…啊啊啊~♡」',
+      ],
+      kiss: '发出了十分淫乱的慷慨的黑方片如同要吃掉一样紧紧地抱住你、贪婪地亲吻着………',
+    },
+  ];
+  for (const item of cases) {
+    const kissed = await setup_k9((f) => {
+      f.store.set('cflag:20:323', 1); // 对面座位二回目以降
+      f.store.set('talent:20:85', 1); // 爱慕
+      f.store.set('cflag:20:16', 5); // 已初吻（相手编号+1）
+    }, 22);
+    await speak_k9(kissed, seq_rand(...item.draws));
+    assert.deepEqual(
+      kissed.text_lines(),
+      [...item.base, item.kiss],
+      `${item.name}：已初吻应多出亲吻句`,
+    );
 
-  const virgin = await setup_k9((f) => {
-    f.store.set('cflag:20:323', 1);
-    f.store.set('talent:20:85', 1);
-    f.store.set('cflag:20:16', -1); // 未初吻
-  }, 22);
-  await speak_k9(virgin, () => 0);
-  assert.deepEqual(virgin.text_lines(), [
-    '「啊嗯~…嗯~…最…最喜欢你了噢~…嗯~…嗯哼嗯~…♡」',
-    '黑方片一副呆呆的样子被你抱住、因为从下往上的抽插带来的快感而从嘴边漏出了呻吟。',
-  ]);
+    const virgin = await setup_k9((f) => {
+      f.store.set('cflag:20:323', 1);
+      f.store.set('talent:20:85', 1);
+      f.store.set('cflag:20:16', -1); // 未初吻
+    }, 22);
+    await speak_k9(virgin, seq_rand(...item.draws));
+    assert.deepEqual(
+      virgin.text_lines(),
+      item.base,
+      `${item.name}：未初吻不得出亲吻句`,
+    );
+    assert.equal(kissed.store.get('cflag:20:323'), 5, '对面座位推进到 5');
+  }
 });
 
 test('头部守卫①-⑦：ASSIPLAY/口塞/失神/兽奸/死斗场/崩坏/触手 各自静默跳过或岔走真身', async () => {

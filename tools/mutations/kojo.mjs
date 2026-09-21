@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2288; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +6（M10700-M10704、M10709）
+export const COUNT = 2289; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）
 
 export default [
   {
@@ -21339,5 +21339,15 @@ async function try_kojo_or_stub(
             // :2439`,
     tests: ['kojo-k9-diamond', 'facade-property-check'],
     must_mention: '湿润的舌头就立马从缝隙中钻进来',
+  },
+  {
+    desc: 'M10711 K9 对面座位爱慕支 RAND:2 臂的同一处初吻判据退回（:2449 的第 14 处第二站点）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find: `          if (chara(target).train.初吻对象 >= 0) {
+            // :2449`,
+    replace: `          if (kojo.初吻对象 >= 0) {
+            // :2449`,
+    tests: ['kojo-k9-diamond'],
+    must_mention: '贪婪地亲吻着',
   },
 ];
