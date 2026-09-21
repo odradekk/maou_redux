@@ -42,6 +42,7 @@
 
 const era = require('#/era-electron');
 const { check_sellassiable } = require('#/system/stronghold/sale');
+const { yokubo_up_check } = require('#/system/train/ability-check');
 const {
   ablup0,
   ablup1,
@@ -111,7 +112,6 @@ const STUBBED_ABLUP_NAMES = ABLUP_IDS.filter(
 const STUBBED_CALLS = [
   ...STUBBED_ABLUP_NAMES,
   'AUTO_ABLUP',
-  'YOKUBO_UP_CHECK',
   'CHECK_SPECIALSKIL',
 ];
 
@@ -410,8 +410,8 @@ async function run_juel_check() {
     // 其余输入无分支命中 → :549 GOTO INPUT_LOOP_1（重绘再来）
   }
 
-  // $LABEL_EXIT :541-546：收尾三查（各占位一行）
-  stub_line('YOKUBO_UP_CHECK', '欲情变化检查'); // :542
+  // $LABEL_EXIT :541-546：收尾三查（欲情变化检查已接真身，余下一处占位）
+  yokubo_up_check(target); // :542
   await check_sellassiable(target); // :543
   stub_line('CHECK_SPECIALSKIL', '特殊技能获得检查'); // :544
   // :545 LOCAL = TARGET —— CALL 方传 RESULT 的暂存，无人读，不镜像

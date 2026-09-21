@@ -628,13 +628,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
-        ref: '1124',
-        any: [/@EXP_GOT_CHECK/],
+        ref: '1124-1310',
+        any: [/^@EXP_GOT_CHECK\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
-        ref: '1315',
-        any: [/@SOKUOCHI_CHECK/],
+        ref: '1315-1550',
+        any: [/^@SOKUOCHI_CHECK\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
@@ -643,8 +643,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
-        ref: '1561',
-        any: [/@PISSING_ECST_CHECK/],
+        ref: '1561-1610',
+        any: [/^@PISSING_ECST_CHECK\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
@@ -663,12 +663,22 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
-        ref: '1727',
+        ref: '345-524',
+        any: [/^@TARGET_EJAC_CHECK\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
+        ref: '529-690',
+        any: [/^@TARGET_MILK_CHECK\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
+        ref: '1727-1847',
         any: [/@TARGET_WORMBABY_CHECK/],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
-        ref: '1852-1881',
+        ref: '1852-1879',
         any: [/@AUTO_NUM_CHECK/],
       },
       {
