@@ -29,6 +29,7 @@ const {
   campaign_room_family,
   campaign_quest_family,
   campaign_story_family,
+  campaign_ending_family,
 } = require('#/dungeon/dungeon');
 const { campaign_room_extra_family } = require('#/dungeon/dungeon-room');
 const { campaign_trap_family } = require('#/dungeon/dungeon-trap');
@@ -277,6 +278,49 @@ async function campaign_story_1() {
 }
 campaign_story_family.register(1, campaign_story_1);
 
+/** @CAMPAIGN_ENDING_1（:360-380）的固定结局文本（:363-368 六段） */
+const ENDING_LINES = [
+  '「为何、为何这个女人……不受诱惑！？　神像之力竟不奏效……竟有这种事」',
+  '女王对于猥神雕像无法控制感到了恐慌。也难怪了。毕竟是一直处在受着邪恶的淫荡之神加护的魔王的支配下的奴隶啊',
+  '神像的力量越来越强。少年奴隶们再也抑制不住他们的性欲、向女王围了上去',
+  '女王也一样、从中途开始大脑便被性欲控制了、疯狂不止地交媾了起来',
+  '这样一来神殿也走到头了。全员都为性欲所支配、持续不断地交尾下去',
+  '然而并没有任何斩获、奴隶便静静地踏上了归途',
+];
+
+/**
+ * @CAMPAIGN_ENDING_1（:360-380）：固定结局演出。
+ * @returns {Promise<number>} RETURN 1
+ */
+async function campaign_ending_1() {
+  const master = chara_callname(0); // %SAVESTR:MASTER%
+  for (const line of ENDING_LINES) {
+    era.print(line);
+    await era.waitAnyKey();
+  }
+  era.print(''); // :369 PRINTW（空白等键行）
+  await era.waitAnyKey();
+  era.print('――水晶球映出的报告到这就结束了');
+  await era.waitAnyKey();
+  era.print('这次的远征或许以失败告终了');
+  await era.waitAnyKey();
+  era.print('但是、世界仍有尚未发掘的事物');
+  await era.waitAnyKey();
+  era.print(`为了进行下一次远征、${master}再次链接了水晶球――`);
+  await era.waitAnyKey();
+  era.print('――'); // :374 PRINTW
+  await era.waitAnyKey();
+  // :375-378 FONTBOLD 战役名 + FONTREGULAR 副标题（終）——与 CAMPAIGN_NAME_1
+  // 共用两段文本常量，此处额外拼「（终）」收尾
+  era.print([
+    { content: NAME_BOLD, fontWeight: 'bold' },
+    { content: `${NAME_REGULAR}（终）` },
+  ]);
+  await era.waitAnyKey();
+  return 1;
+}
+campaign_ending_family.register(1, campaign_ending_1);
+
 module.exports = {
   campaign_name_1,
   campaign_exist_1,
@@ -288,4 +332,5 @@ module.exports = {
   campaign_monster_list_1,
   campaign_quest_1,
   campaign_story_1,
+  campaign_ending_1,
 };

@@ -799,3 +799,42 @@ test('campaign_story_1()：按进度 0-5 六档打印对应剧情，5 档无「�
     }
   }
 });
+
+test('campaign_ending()：FLAG:400 < 1 时不派发也不清零，但仍无条件取消全员派遣（:304-312）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.era.addCharacter(1);
+  fixture.store.set('cflag:1:1', 12);
+  fixture.store.set('cflag:1:507', 1);
+  const { campaign_ending } = load(fixture);
+  const ret = await campaign_ending();
+  assert.equal(ret, 0);
+  assert.equal(fixture.store.get('cflag:1:1'), 0, '无条件取消派遣');
+  assert.equal(fixture.store.get('cflag:1:507'), 0, '回城标志清零');
+});
+
+test('campaign_ending()：FLAG:400 = 1 时派发 CAMPAIGN_ENDING_1 并清零 FLAG:400（#469）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  fixture.store.set('flag:400', 1);
+  fixture.load_module('page/page-campaign-1'); // 触发 CAMPAIGN_1 的 register()
+  const { campaign_ending } = load(fixture);
+  const ret = await campaign_ending();
+  assert.equal(ret, 1, 'CAMPAIGN_ENDING_1 恒 RETURN 1');
+  assert.equal(fixture.store.get('flag:400'), 0, ':317 战役结束清零');
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('神像之力竟不奏效'),
+    ),
+    'CAMPAIGN_ENDING_1 的开场白',
+  );
+  assert.ok(
+    fixture.lines_history.some(
+      (l) => l.type === 'text' && l.text.includes('赤森谜路'),
+    ),
+    '结尾战役名重现',
+  );
+});
