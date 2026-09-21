@@ -3,7 +3,10 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 254;
+export const COUNT = 262; // #469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
+// dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
+// 计数、全员取消派遣判据、三个 FLAG:400 早退守卫、MONSTER_LIST 的两处
+// whenMissing 骸骨缺省）
 
 export default [
   {
@@ -18,8 +21,10 @@ export default [
   {
     desc: 'M376 迷宫接入点·战役臂守卫改坏（CFLAG:1 == 12 判定恒假）',
     file: 'ere/system/turnend-settle.js',
-    find: '    if (chara(cid).invasion.状态 === 12) {',
-    replace: '    if (chara(cid).invasion.状态 === 1200) {',
+    find: `    weapon_restore(cid); // CALL WEAPON_RESTORE（行 267；#174 起真身）
+    if (chara(cid).invasion.状态 === 12) {`,
+    replace: `    weapon_restore(cid); // CALL WEAPON_RESTORE（行 267；#174 起真身）
+    if (chara(cid).invasion.状态 === 1200) {`,
     tests: ['event-turnend'],
     must_mention: '状态 12 恰好一次 DUNGEON',
   },
@@ -1064,9 +1069,9 @@ export default [
   {
     desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = [\n  'CAMPAIGN_MONSTER_LIST',",
+    find: "const STUBBED_CALLS = [\n  'BEFORE_AUTOTRAIN',",
     replace:
-      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'CAMPAIGN_MONSTER_LIST',",
+      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'BEFORE_AUTOTRAIN',",
     tests: ['dungeon-magic'],
     must_mention: '不再登记为存根',
   },
@@ -2236,5 +2241,120 @@ export default [
       '  if (chara(cid).event.牝犬 == 1 || cid === 0) {\n    if (rand(2) <= 1) { // 变异：饮精随机误入交合\n      if (',
     tests: ['marriage-day'],
     must_mention: 'HORSE：饮精分支获得五倍口交与兽奸经验',
+  },
+  {
+    desc: 'M10116 CAMPAIGN_QUEST：剧情推进门槛 off-by-one（> 改 >=，重复推进，#469）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `  if (chara(cid).dungeon.侵攻阶层 > era_flag.campaign_story_progress) {`,
+    replace: `  if (chara(cid).dungeon.侵攻阶层 >= era_flag.campaign_story_progress) {`,
+    tests: ['dungeon-main'],
+    must_mention: '楼层未超过剧情进度时不重复推进剧情',
+  },
+  {
+    desc: 'M10117 CAMPAIGN_QUEST：剧情进度计数删除（FLAG:401 停在 0，#469）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
+    era_flag.campaign_story_progress += 1;`,
+    replace: `    await campaign_story_family.call(active, { whenMissing: 0, args: [] });
+    // 变异：进度计数删除`,
+    tests: ['dungeon-main'],
+    must_mention: ':196 FLAG:401 += 1',
+  },
+  {
+    desc: 'M10118 CAMPAIGN_ENDING：全员取消派遣判据失效（=== 12 改 === 1200，#469）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `  for (const cid of era.getAddedCharacters()) {
+    if (chara(cid).invasion.状态 === 12) {
+      party_del(cid);
+      chara(cid).invasion.状态 = 0;
+      chara(cid).invasion.回城标志 = 0;
+    }
+  }`,
+    replace: `  for (const cid of era.getAddedCharacters()) {
+    if (chara(cid).invasion.状态 === 1200) {
+      // 变异：判据失效
+      party_del(cid);
+      chara(cid).invasion.状态 = 0;
+      chara(cid).invasion.回城标志 = 0;
+    }
+  }`,
+    tests: ['dungeon-main'],
+    must_mention: '无条件取消全员派遣',
+  },
+  {
+    desc: 'M10119 CAMPAIGN_ROOM：FLAG:400 早退守卫失效（<1 改 <0，#469）',
+    file: 'ere/dungeon/dungeon.js',
+    find: `async function campaign_room(floor) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }`,
+    replace: `async function campaign_room(floor) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 0) {
+    // 变异：守卫失效
+    return 0;
+  }`,
+    tests: ['dungeon-room'],
+    must_mention: 'FLAG:400 < 1 时恒 0（未在战役中）',
+  },
+  {
+    desc: 'M10120 CAMPAIGN_ROOM_EXTRA：FLAG:400 早退守卫失效（<1 改 <0，#469）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: `async function campaign_room_extra(floor) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0;
+  }`,
+    replace: `async function campaign_room_extra(floor) {
+  const active = era_flag.hero_campaign_active;
+  if (active < 0) {
+    // 变异：守卫失效
+    return 0;
+  }`,
+    tests: ['dungeon-room'],
+    must_mention: 'FLAG:400 < 1 时恒 0（未在战役中）',
+  },
+  {
+    desc: 'M10121 CAMPAIGN_TRAP：whenMissing 从原作预置值 0 改回旧存根的 -1（#469）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `  return campaign_trap_family.call(active, {
+    whenMissing: 0,
+    args: [trap_num],
+  });`,
+    replace: `  return campaign_trap_family.call(active, {
+    whenMissing: -1, // 变异：倒退回旧存根的 -1
+    args: [trap_num],
+  });`,
+    tests: ['dungeon-trap'],
+    must_mention: 'FLAG:400 = 1 时按 CAMPAIGN_TRAP_1 的映射表返回陷阱 ID',
+  },
+  {
+    desc: 'M10122 CAMPAIGN_MONSTER_LIST：FLAG:400 未置位时骸骨缺省改错（190 改 0，#469）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: `  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 190;
+  }`,
+    replace: `  const active = era_flag.hero_campaign_active;
+  if (active < 1) {
+    return 0; // 变异：骸骨缺省改错
+  }`,
+    tests: ['dungeon-battle'],
+    must_mention: '骸骨缺省',
+  },
+  {
+    desc: 'M10123 CAMPAIGN_MONSTER_LIST：whenMissing 骸骨缺省改错（190 改 0，#469）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: `  return campaign_monster_list_family.call(active, {
+    whenMissing: 190,
+    args: [floor, rand],
+  });`,
+    replace: `  return campaign_monster_list_family.call(active, {
+    whenMissing: 0, // 变异：骸骨缺省改错
+    args: [floor, rand],
+  });`,
+    tests: ['dungeon-battle'],
+    must_mention: 'whenMissing 骸骨缺省',
   },
 ];

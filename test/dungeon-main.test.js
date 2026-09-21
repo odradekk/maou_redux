@@ -766,7 +766,8 @@ test('campaign_quest()：楼层未超过剧情进度时不重复推进剧情', a
   fixture.era.addCharacter(0);
   fixture.store.set('flag:400', 1);
   fixture.store.set('flag:401', 3);
-  fixture.store.set('cflag:1:501', 2); // 队长楼层 2 <= 剧情进度 3
+  // 队长楼层与剧情进度相等（严格 > 判据的边界：楼层 3 不「超过」进度 3）
+  fixture.store.set('cflag:1:501', 3);
   fixture.load_module('page/page-campaign-1');
   const { campaign_quest } = load(fixture);
   await campaign_quest(1);

@@ -878,6 +878,15 @@ test('campaign_trap()：FLAG:400 = 1 时按 CAMPAIGN_TRAP_1 的映射表返回�
   assert.equal(await campaign_trap(300), 0, '未登记槽号恒 0（原作默认值）');
 });
 
+test('campaign_trap()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 原作预置值 0', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  // 不 load_module('page/page-campaign-1')：族声明空间含 1 但未注册实现，
+  // 命中 DispatchFamily 的合法缺失分支（非拼写错误）
+  const { campaign_trap } = load(fixture);
+  assert.equal(await campaign_trap(301), 0, 'whenMissing 原作预置值 0');
+});
+
 // —— 存根清单核对（dungeon-battle.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录 dungeon-trap 的全部存根化调用', () => {

@@ -86,6 +86,22 @@ test('SELECT_CAMPAIGN：选 [999] 直接返回，不触碰 FLAG:400', async () =
   assert.equal(fixture.store.get('flag:400'), undefined);
 });
 
+test('SELECT_CAMPAIGN：超出 1-20 声明空间的输入不派发 CAMPAIGN_SET（DispatchFamily 的空间外判定是拼写错误用的，不能替代这层范围保护）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '魔王');
+  const { select_campaign } = load(fixture);
+  // era.input() 正常受按钮白名单约束，只能取到 1/999；直接替换 input 绕开
+  // 白名单，验证 :96 的范围守卫本身（而非依赖白名单）挡住越界值
+  fixture.era.input = () => Promise.resolve(500);
+  const ret = await select_campaign();
+  assert.equal(ret, 0);
+  assert.equal(
+    fixture.store.get('flag:400'),
+    undefined,
+    '越界的 RESULT 不应派发到任何 CAMPAIGN_SET 实现',
+  );
+});
+
 // —— 招募分支（RESULT == 1）——
 
 test('招募：气力不足（BASE:MASTER:1 < 100）拒绝，不消耗角色名额', async () => {

@@ -116,6 +116,19 @@ test('campaign_monster_list()：FLAG:400 = 1 时按 CAMPAIGN_MONSTER_LIST_1 三�
   assert.equal(await campaign_monster_list(0, () => 0), 0, '未登记楼层恒 0');
 });
 
+test('campaign_monster_list()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 骸骨缺省', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:400', 1);
+  // 不 load_module('page/page-campaign-1')：族声明空间含 1 但未注册实现，
+  // 命中 DispatchFamily 的合法缺失分支（非拼写错误）
+  const { campaign_monster_list } = load(fixture, 'dungeon/dungeon-battle');
+  assert.equal(
+    await campaign_monster_list(1, () => 0),
+    190,
+    'whenMissing 骸骨缺省',
+  );
+});
+
 // —— 存根清单核对（enter-enemy.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 monster-data 的全部存根化调用', () => {
