@@ -39,17 +39,18 @@
  *     math-etc.md「整数乘以小数」）；
  *   - SETCOLORBYNAME / RESETCOLOR（A_WORM :1211-1214、诈骗陷阱多处）：
  *     配色不做、注释留痕（#175 同款裁定——玩家可见的行序与文案 1:1）；
- *   - PLAYER = 0（A_WORM :1217、LOVE_BUG :1279）：唯一消费者是 COM*_AUTO
- *     存根链，不落变量、注释留痕（#175 先例：dungeon-battle.js 对
- *     ENEMY_ATTACK 的 PLAYER 同款处理）；
+ *   - PLAYER = 0（A_WORM :1217、LOVE_BUG :1279）：无读者（_AUTO 一族的
+ *     真身不读 PLAYER，只读 TARGET），不落变量、注释留痕（#175 先例：
+ *     dungeon-battle.js 对 ENEMY_ATTACK 的 PLAYER 同款处理）；
  *   - MONEY / EX_FLAG:4444 → era_flag.money / era_exflag.legit_money
  *     （dungeon.js 先例）；
  *   - KARMA（DARK_JUEL :1344）经函数内延迟 require 引用 dungeon.js 的
  *     域内存根（避开循环初始化，#175 先例）；
- *   - BEFORE_AUTOTRAIN / COM13_AUTO / SOURCE_CHECK_AUTO 复用 #175 在
- *     dungeon-battle.js 的域内存根（经模块对象引用，测试可替换）；
- *     COM0_AUTO / COM3_AUTO / COM50_AUTO / CAMPAIGN_TRAP 是本文件的域内
- *     存根；SUMMON_MONSTER 已复用 monster-summon.js 真身；
+ *   - BEFORE_AUTOTRAIN 复用 #175 在 dungeon-battle.js 的域内存根（经模块
+ *     对象引用，测试可替换）；COM0_AUTO / COM3_AUTO / COM13_AUTO /
+ *     COM50_AUTO 自 #500 起直调 ere/event/event-autotrain.js 的真身；
+ *     CAMPAIGN_TRAP 是 #469 起的族真身；SUMMON_MONSTER 已复用
+ *     monster-summon.js 真身；
  *   - 原作 PRINT/PRINTFORM 不换行、PRINTL/PRINTFORML 换行：同一显示行
  *     的拼接归并为一次 era.print（引擎 print 每调用一行，dungeon.js
  *     先例）；PRINTW/PRINTFORMW 是 print + 读键；
@@ -67,21 +68,24 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 // 迎击分断（SHOOT 的 PARTY_DEL）经模块对象引用——测试可替换导出断言
 // 被调（battle_mod 同款；解构绑定会让替换失效）
 const party_mod = require('#/dungeon/dungeon-party');
-// 自动调教三件套复用 #175 的域内存根（经模块对象引用——测试可替换导出
-// 断言被调，dungeon-battle2.js 先例）
+// 自动调教前置复用 #175 的域内存根（经模块对象引用——测试可替换导出断言
+// 被调，dungeon-battle2.js 先例）；四个 _AUTO 变体直接 require
+// event-autotrain.js 的真身（#500，dungeon-town.js:775 先例）
 const battle = require('#/dungeon/dungeon-battle');
 const summon_mod = require('#/dungeon/monster-summon');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。
+ * #500 起为空：COM0_AUTO / COM3_AUTO / COM13_AUTO / COM50_AUTO 的调用点
+ * 全部接上 ere/event/event-autotrain.js 的真身，CAMPAIGN_TRAP 自 #469 起
+ * 已是族真身。
  */
-const STUBBED_CALLS = ['COM0_AUTO', 'COM3_AUTO', 'COM50_AUTO'];
+const STUBBED_CALLS = [];
 
 /**
  * @CAMPAIGN_TRAP_{FLAG:400} 族：战役迷宫的陷阱槽读值（#469，决议 #7）。
@@ -105,7 +109,7 @@ function cbit(cid, idx, bit) {
   return ((era.get(`cflag:${cid}:${idx}`) || 0) & bit) !== 0;
 }
 
-// —— 存根层（#176 登记，归属见 docs/stub-registry.md）——
+// —— 战役陷阱槽（#469 起族真身，归属见 docs/stub-registry.md）——
 
 /**
  * @CAMPAIGN_TRAP（CAMPAIGN_EVENT.ERB:203-212）：战役迷宫的陷阱槽读值。
@@ -127,35 +131,6 @@ async function campaign_trap(trap_num) {
     whenMissing: 0,
     args: [trap_num],
   });
-}
-
-/**
- * @COM0_AUTO 存根（調教相關/COMF0_愛撫.ERB:174-243；自动调教票）：
- * 自动爱抚（CALLTRAIN 的指令内变体）。com-caress.js（COM0 部分随 #219 搬入族模块） 的 STUBBED_CALLS
- * 登记的「不可达」指手动调教侧的 CALLTRAIN 分支；本调用点
- * （LOVE_BUG :1283）随本票接入后可达。
- * @returns {Promise<void>} 原作无 RESULT 消费
- */
-async function com0_auto() {
-  await stub_line_wait('COM0_AUTO', '爱抚调教', '随调教自动票');
-}
-
-/**
- * @COM3_AUTO 存根（調教相關/COMF3_自慰.ERB；自动调教票）：自动自慰
- * （SELF_SAIMIN :611/:624 两处）。
- * @returns {Promise<void>} 原作无 RESULT 消费
- */
-async function com3_auto() {
-  await stub_line_wait('COM3_AUTO', '自慰调教', '随调教自动票');
-}
-
-/**
- * @COM50_AUTO 存根（調教相關/COMF50_ローション.ERB；自动调教票）：
- * 润滑自动调教（SLIME_ROOM :882）。
- * @returns {Promise<void>} 原作无 RESULT 消费
- */
-async function com50_auto() {
-  await stub_line_wait('COM50_AUTO', '润滑调教', '随调教自动票');
 }
 
 /**
@@ -949,7 +924,8 @@ async function love_bath_trap(a, rand_n) {
 /**
  * @SELF_SAIMIN_TRAP（:585-632）：自慰催眠陷阱（ITEM:67）——淫堕型。
  * 欲情中（位 9）时 DICE ×0.80 更易中招。两档催眠自慰走自动调教三连
- * （COM3_AUTO 是本文件域内存根，随调教自动票换真身）。
+ * （:611/:624 CALL COM3_AUTO——真身 ere/event/event-autotrain.js，同族
+ * com63_auto 在 dungeon-town.js:775 的先例）。
  * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
  */
 async function self_saimin_trap(a, rand_n) {
@@ -985,7 +961,8 @@ async function self_saimin_trap(a, rand_n) {
       );
     }
     await battle.before_autotrain();
-    await com3_auto();
+    const { com3_auto } = require('#/event/event-autotrain'); // :611 CALL COM3_AUTO
+    com3_auto();
     await battle.source_check_auto();
     if (show) {
       era.print(
@@ -1002,7 +979,8 @@ async function self_saimin_trap(a, rand_n) {
       );
     }
     await battle.before_autotrain();
-    await com3_auto();
+    const { com3_auto } = require('#/event/event-autotrain'); // :624 CALL COM3_AUTO
+    com3_auto();
     await battle.source_check_auto();
     if (show) {
       era.print(
@@ -1271,7 +1249,7 @@ async function succubus_trap(a, rand_n) {
 /**
  * @SLIME_ROOM_TRAP（:826-887）：史莱姆房间陷阱（ITEM:71）——淫堕型。
  * 落下时 DICE -20 更易中招；中招后润滑位（位 3）立起；走自动调教三连
- * （COM50_AUTO 是本文件域内存根）。
+ * （:882 CALL COM50_AUTO——真身 ere/event/event-autotrain.js）。
  * @returns {Promise<number>} 原作 RETURN（逃脱也是 0 = 作动、消耗）
  */
 async function slime_room_trap(a, rand_n) {
@@ -1350,7 +1328,8 @@ async function slime_room_trap(a, rand_n) {
 
   // :880-883 ローション自動調教
   await battle.before_autotrain();
-  await com50_auto();
+  const { com50_auto } = require('#/event/event-autotrain'); // :882 CALL COM50_AUTO
+  com50_auto();
   await battle.source_check_auto();
 
   // :885 ヌルヌル付与（位 3）
@@ -1779,7 +1758,8 @@ async function fire_trap(a, rand_n) {
 /**
  * @A_WORM_TRAP（:1181-1229）：肛门虫陷阱（ITEM:79）——淫堕型。润滑中
  * （位 3）威力 ×1.30；A 经验 > 30 且未寄生时寄生（TALENT:193）；已寄生
- * 时走肛门虫自动调教三连（COM13_AUTO 是 #175 的域内存根）。
+ * 时走肛门虫自动调教三连（:1221 CALL COM13_AUTO——真身
+ * ere/event/event-autotrain.js）。
  * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
  */
 async function a_worm_trap(a, rand_n) {
@@ -1832,11 +1812,12 @@ async function a_worm_trap(a, rand_n) {
     }
     era.set(`talent:${a}:193`, 1);
   } else if (era.get(`talent:${a}:193`)) {
-    // :1217 PLAYER = 0——消费者是 COM*_AUTO 存根链，不落变量（#175 先例）
+    // :1217 PLAYER = 0——消费者是 _AUTO 一族，不落变量（#175 先例）
     era_flag.target = a; // :1218 TARGET = A
-    // アナルワーム自動調教
+    // アナルワーム自動調教（:1221 CALL COM13_AUTO——真身）
     await battle.before_autotrain();
-    await battle.com13_auto();
+    const { com13_auto } = require('#/event/event-autotrain');
+    com13_auto();
     await battle.source_check_auto();
   }
 
@@ -1851,7 +1832,8 @@ async function a_worm_trap(a, rand_n) {
 
 /**
  * @LOVE_BUG_TRAP（:1232-1292）：淫虫陷阱（ITEM:80）——淫堕型。伤害后
- * 走爱抚自动调教三连（COM0_AUTO 是本文件域内存根）。:1257 的 RETURN 01
+ * 走爱抚自动调教三连（:1283 CALL COM0_AUTO——真身
+ * ere/event/event-autotrain.js）。:1257 的 RETURN 01
  * 是十进制 1 的前导零写法（Emuera 无八进制字面量），非八进制。
  * @returns {Promise<number>} 原作 RETURN（1 = 未作动）
  */
@@ -1917,11 +1899,12 @@ async function love_bug_trap(a, rand_n) {
     era.println();
   }
 
-  // :1279 PLAYER = 0——消费者是 COM*_AUTO 存根链，不落变量（#175 先例）
+  // :1279 PLAYER = 0——消费者是 _AUTO 一族，不落变量（#175 先例）
   era_flag.target = a; // :1280 TARGET = A
-  // 愛撫自動調教
+  // 愛撫自動調教（:1283 CALL COM0_AUTO——真身）
   await battle.before_autotrain();
-  await com0_auto();
+  const { com0_auto } = require('#/event/event-autotrain');
+  com0_auto();
   await battle.source_check_auto();
 
   // :1286-1290 胆怯
@@ -2484,9 +2467,6 @@ module.exports = {
   mag_down_trap,
   all_down_trap,
   fraud_trap,
-  // #178（H9）起导出：DUNGEON_TOWN.ERB:645/:652（宴会风俗的爱抚自动调教）
-  // 复用本域内存根（此前仅本文件 :1283 淫虫陷阱内部调用，未导出）
-  com0_auto,
   campaign_trap,
   // page-campaign-1.js 向这个族 register(1, ...)，本文件只声明、不参与注册
   campaign_trap_family,

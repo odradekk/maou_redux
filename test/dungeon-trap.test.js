@@ -261,18 +261,41 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { self_saimin_trap } = load(fixture);
+  // 开调教域（#461 的 SOURCE_CHECK_AUTO 接线用例先例）：COM3_AUTO 真身
+  // 写的 SOURCE 要落得下才看得到效果，否则被夹具的引擎守卫静默丢弃
+  fixture.era.beginTrain(0, 1);
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 80);
   assert.equal(await self_saimin_trap(1, seq(70)), 1, 'DICE>60 清醒（未作动）');
+  assert.equal(
+    fixture.store.get('cflag:1:666') ?? 0,
+    0,
+    '清醒档不走自动调教（:955 提前返回）',
+  );
   await self_saimin_trap(1, seq(5)); // DICE=5 < 10 深度
   assert.equal(fixture.store.get('cflag:1:11'), 0, '攻击力归零（:615）');
   assert.equal(fixture.store.get('cflag:1:12'), 0, '防御力归零（:616）');
   assert.equal(era_flag.target, 1, 'TARGET = A（:594）');
+  // :611 CALL COM3_AUTO——真身（ere/event/event-autotrain.js 的 com3_auto）。
+  // 全素质 0 时 SOURCE:4 = 100（技巧 0 档的常量）、自慰经验 +1
+  assert.ok(
+    text_lines(fixture).some((line) => line.includes('≪自慰≫')),
+    'COM3_AUTO 真身被调（:611）',
+  );
+  assert.equal(fixture.store.get('source:1:4'), 100, '性行为 100（本体常量）');
+  assert.equal(fixture.store.get('exp:1:10'), 1, '自慰经验 +1（本体）');
+  assert.equal(fixture.store.get('losebase:0'), 5, 'losebase:0 +5（本体常量）');
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 80);
   await self_saimin_trap(1, seq(30)); // 浅度 → 减半
   assert.equal(fixture.store.get('cflag:1:11'), 50, '攻击力减半（:628）');
   assert.equal(fixture.store.get('cflag:1:12'), 40, '防御力减半（:629）');
+  assert.equal(
+    fixture.store.get('cflag:1:666'),
+    2,
+    '浅度档同样接真身（:624 是第二个调用点）',
+  );
   // 欲情中 → DICE ×0.80（TIMES 截断）：70 → 56 仍 >10 ≤60 走浅档；99 → 79 走浅档
   fixture.store.set('cflag:1:503', 512);
   fixture.store.set('cflag:1:11', 100);
@@ -339,10 +362,17 @@ test('SUCCUBUS（:740）：非男人者百合经验 +1 档、五宝珠与攻防�
 test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位 3）', async () => {
   const fixture = setup_world();
   const { slime_room_trap } = load(fixture);
+  // 开调教域：COM50_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫）
+  fixture.era.beginTrain(0, 1);
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 90);
   assert.equal(await slime_room_trap(1, seq(90)), 0, 'DICE>80 逃脱也是作动');
   assert.equal(fixture.store.get('cflag:1:11'), 100, '逃脱不弱化');
+  assert.equal(
+    fixture.store.get('cflag:1:666') ?? 0,
+    0,
+    '逃脱档提前返回，不走自动调教（:846-849）',
+  );
   await slime_room_trap(1, seq(5)); // DICE=5 < 10 深档
   assert.equal(fixture.store.get('cflag:1:11'), 50, '攻减半（:854）');
   assert.equal(fixture.store.get('cflag:1:12'), 45, '防减半（:855）');
@@ -353,6 +383,18 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
     8,
     '润滑位置起（位 3，:885）',
   );
+  // :882 CALL COM50_AUTO——真身（ere/event/event-autotrain.js 的 com50_auto）
+  assert.ok(
+    text_lines(fixture).some((line) => line.includes('≪粘液≫')),
+    'COM50_AUTO 真身被调（:882）',
+  );
+  assert.equal(
+    fixture.store.get('source:1:10'),
+    10000,
+    '液体追加 10000（本体）',
+  );
+  assert.equal(fixture.store.get('source:1:12'), 300, '露出 300（本体）');
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
 test('NET（:890）：气力损耗按上限 1/20 封顶、魔虫知识追打 HP', async () => {
@@ -550,13 +592,22 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
     '寄生（TALENT:193 = 1，:1215）',
   );
   assert.equal(fixture.store.get('exp:1:1'), 32, '寄生后再 +1');
-  // 已寄生 → 肛门虫自动调教三连（存根行）
+  // 已寄生 → 肛门虫自动调教三连（:1221 CALL COM13_AUTO——真身）
   fixture.store.set('base:1:1', 1000);
+  fixture.era.beginTrain(0, 1); // 开调教域：SOURCE 写要落得下（夹具守卫）
   await a_worm_trap(1, seq(50));
   assert.ok(
-    text_lines(fixture).some((line) => line.includes('原作 @COM13_AUTO，')),
-    'COM13_AUTO 存根被调（:1221）',
+    text_lines(fixture).some((line) => line.includes('＜肛门虫插入中＞')),
+    'COM13_AUTO 真身被调（:1221；本体只在 TEQUIP:90 时改说「肛门触手」）',
   );
+  assert.equal(fixture.store.get('losebase:0'), 10, 'losebase:0 +10（本体）');
+  assert.equal(fixture.store.get('losebase:1'), 30, 'losebase:1 +30（本体）');
+  assert.equal(
+    fixture.store.get('source:1:14'),
+    400,
+    '逃离 = 400（本体：顺从 0 档 ×2.0）',
+  );
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   // 润滑位 ×1.30（TIMES 截断）
   fixture.store.set('cflag:1:503', 8);
   fixture.store.set('base:1:1', 1000);
@@ -571,16 +622,28 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
 test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使免疫', async () => {
   const fixture = setup_world();
   const { love_bug_trap } = load(fixture);
+  // 开调教域：COM0_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫）
+  fixture.era.beginTrain(0, 1);
   fixture.store.set('talent:1:314', 6); // 天使
   assert.equal(await love_bug_trap(1, seq(10)), 1, '天使飞起（未作动）');
   fixture.store.set('talent:1:314', 0);
   assert.equal(await love_bug_trap(1, seq(3)), 1, 'DICE<5 避开（未作动）');
+  assert.equal(
+    fixture.store.get('cflag:1:666') ?? 0,
+    0,
+    '两个提前返回档都不走自动调教',
+  );
   await love_bug_trap(1, seq(10, 39)); // else 档：39+1 = 40
   assert.equal(fixture.store.get('base:1:0'), 2000 - 40, '体力 -= RAND:40+1');
+  // :1283 CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）
   assert.ok(
-    text_lines(fixture).some((line) => line.includes('原作 @COM0_AUTO，')),
-    'COM0_AUTO 存根被调（:1283）',
+    text_lines(fixture).some((line) => line.includes('≪摸来摸去≫')),
+    'COM0_AUTO 真身被调（:1283）',
   );
+  assert.equal(fixture.store.get('source:1:4'), 60, '性行为 60（本体常量）');
+  assert.equal(fixture.store.get('losebase:0'), 1, 'losebase:0 +1（本体常量）');
+  assert.equal(fixture.store.get('losebase:1'), 5, 'losebase:1 +5（本体常量）');
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('talent:1:10', 1); // 胆怯
   fixture.store.set('base:1:1', 1000);
   await love_bug_trap(1, seq(10, 39));
@@ -912,18 +975,20 @@ test('campaign_trap()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 原
 
 // —— 存根清单核对（dungeon-battle.test.js 同款）——
 
-test('存根清单可检索：docs/stub-registry.md 收录 dungeon-trap 的全部存根化调用', () => {
+test('本文件无运行时存根：STUBBED_CALLS 已空，且四行在 docs/stub-registry.md 记为已实现', () => {
   const fixture = create_era_fixture();
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
   );
   const names = load(fixture).STUBBED_CALLS;
-  // 只防循环空转，不锁条数：存根被实现掉时这个数只会减，锁下限等于
-  // 给每张实现存根的票设路障（SOP §5 判据 5；#333 已在
-  // dungeon-battle.test.js 踩过一次）。契约是下面那个循环。
-  assert.ok(names.length > 0, '名单为空，下面的循环会空过');
-  for (const name of names) {
+  // #500 起四个 _AUTO 变体接真身、#469 起 CAMPAIGN_TRAP 是族真身，名单
+  // 清算空。空名单不等于不核对：下面的循环型契约（每个名字都能在清单里
+  // 查到）在空名单上恒真，故按 com-tentacle.test.js 的先例改断言空集，
+  // 另查登记表确实记了本票的四处实现（#500）
+  assert.deepEqual(names, [], '名单应已清空');
+  for (const name of ['COM0_AUTO', 'COM3_AUTO', 'COM13_AUTO', 'COM50_AUTO']) {
     assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
   }
+  assert.ok(registry.includes('#500'), '存根清单须登记本票的实现出处（#500）');
 });

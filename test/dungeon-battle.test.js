@@ -181,6 +181,49 @@ test('SOURCE_CHECK_AUTO 接线：source_check_auto 转发到 event/source-check 
   );
 });
 
+// —— COM13_AUTO 接线（#500：肛门虫自动调教三连直调真身）——
+//
+// 两个战斗入口的 TALENT:193 分支都走「BEFORE_AUTOTRAIN → COM13_AUTO →
+// SOURCE_CHECK_AUTO」三连。此处只观察 COM13_AUTO 真身的效果：把后续的
+// MAGIC 短路（模块对象替换，dungeon-magic.test.js 先例），让被调真身的
+// 常量落进变量——com13_auto 的 losebase:0 +10 是同族四个变体里唯一的
+// 值（COM0 +1 / COM3 +5 / COM50 +0），可分辨「调错变体」。
+
+test('ENEMY_ATTACK：TALENT:193 的自动调教三连接 COM13_AUTO 真身（:572）', async () => {
+  const fixture = setup_world();
+  const battle = load(fixture, 'dungeon/dungeon-battle');
+  battle.magic = async () => 999; // 战斗链短路
+  fixture.store.set('talent:1:193', 1); // 肛门虫寄生
+
+  assert.equal(await battle.enemy_attack(1, 0, () => 0), 999, 'MAGIC 短路');
+  assert.equal(
+    fixture.store.get('losebase:0'),
+    10,
+    'losebase:0 +10（COM13 专属）',
+  );
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
+});
+
+test('DUEL_ATTACK：TALENT:193 的自动调教三连接 COM13_AUTO 真身（:670）', async () => {
+  const fixture = setup_duel_world();
+  const battle = load(fixture, 'dungeon/dungeon-battle');
+  battle.magic = async () => 999; // 战斗链短路
+  const battle2 = load(fixture, 'dungeon/dungeon-battle2');
+  fixture.store.set('talent:1:193', 1); // 攻击方（奴隶 1）带肛门虫
+
+  assert.equal(
+    await battle2.duel_attack(1, 0, 2, 0, () => 0),
+    999,
+    'MAGIC 短路',
+  );
+  assert.equal(
+    fixture.store.get('losebase:0'),
+    10,
+    'losebase:0 +10（COM13 专属）',
+  );
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
+});
+
 // —— 存根清单核对（enter-enemy.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 monster-data 的全部存根化调用', () => {

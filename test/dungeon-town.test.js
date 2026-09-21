@@ -444,6 +444,52 @@ test('PARTY：karma ≤ 50 恒进第二臂——巫女（206）的祈祷臂不�
   assert.equal(fixture.store.get('flag:10005'), 1, 'TARGET 恢复暂存值');
 });
 
+test('PARTY：娼婦購入臂的爱抚自动调教接 COM0_AUTO 真身（:645）', async () => {
+  const fixture = setup_world();
+  fixture.store.set('flag:5', 32); // 宴会演出有守卫
+  fixture.store.set('cflag:1:580', 5000); // 宴会预算（TARGET = 勇者 1）
+  fixture.store.set('cflag:1:151', 0); // karma ≤ 50 → 进第二臂
+  fixture.store.set('talent:1:122', 1); // 男人 → 娼婦購入
+  // 开调教域：COM0_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫）
+  fixture.era.beginTrain(0, 1);
+  const ret = await load(fixture).town_pt_party(1, 0, 0, seq_rand([1]));
+  assert.equal(ret, 1, '开宴');
+  const lines = text_lines(fixture);
+  assert(
+    lines.some((l) => l.includes('妓女买了春')),
+    '娼婦購入演出',
+  );
+  // :645 CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）
+  assert.ok(
+    lines.some((l) => l.includes('≪摸来摸去≫')),
+    'COM0_AUTO 真身被调（:645）',
+  );
+  assert.equal(fixture.store.get('source:1:4'), 60, '性行为 60（本体常量）');
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
+});
+
+test('PARTY：少年风俗臂的爱抚自动调教接 COM0_AUTO 真身（:652）', async () => {
+  const fixture = setup_world();
+  fixture.store.set('flag:5', 32);
+  fixture.store.set('cflag:1:580', 5000);
+  fixture.store.set('cflag:1:151', 0);
+  fixture.store.set('talent:1:143', 1); // 正太控 → 少年风俗臂
+  fixture.era.beginTrain(0, 1);
+  const ret = await load(fixture).town_pt_party(1, 0, 0, seq_rand([1]));
+  assert.equal(ret, 1, '开宴');
+  const lines = text_lines(fixture);
+  assert(
+    lines.some((l) => l.includes('少年')),
+    '少年风俗演出',
+  );
+  // :652 CALL COM0_AUTO——同一真身的第二个调用点
+  assert.ok(
+    lines.some((l) => l.includes('≪摸来摸去≫')),
+    'COM0_AUTO 真身被调（:652）',
+  );
+  assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
+});
+
 // —— 主流程 @DUNGEON_TOWN ——
 
 test('DUNGEON_TOWN：507 复位、再起点消耗与全恢复、9/10 散会', async () => {

@@ -712,6 +712,18 @@ export const FILES = [
         ref: '643-645',
         any: [/愛撫自動調教/],
       },
+      // #500：宴会风俗/少年风俗两处 COM0_AUTO 直调 event-autotrain.js 真身，
+      // 锚随 js 注释（// :645 CALL COM0_AUTO / // :652 CALL COM0_AUTO）落到本表
+      {
+        src: 'target/ERB/迷宮/DUNGEON_TOWN.ERB',
+        ref: '645',
+        any: [/CALL COM0_AUTO/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_TOWN.ERB',
+        ref: '652',
+        any: [/CALL COM0_AUTO/],
+      },
       {
         src: 'target/ERB/迷宮/DUNGEON_TOWN.ERB',
         ref: '646',

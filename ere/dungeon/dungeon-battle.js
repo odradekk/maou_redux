@@ -78,14 +78,11 @@ const {
  * quest_mod 调用）；#217（J7）起 SELECT_BENKI_MENU / NAME_BENKI_MENU /
  * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除；
  * #461 起 SOURCE_CHECK_AUTO 换真身（source_check_auto 改发同名事件，真身在
- * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)），从名单移除。
+ * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)），从名单移除；
+ * #500 起 COM13_AUTO 换真身（调用点直调 ere/event/event-autotrain.js），
+ * 从名单移除。
  */
-const STUBBED_CALLS = [
-  'BEFORE_AUTOTRAIN',
-  'COM13_AUTO',
-  'ATTACK_KOUJO',
-  'VICTORY_KOUJO',
-];
+const STUBBED_CALLS = ['BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO'];
 
 /**
  * @CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，
@@ -149,17 +146,10 @@ async function before_autotrain() {
 }
 
 /**
- * @COM13_AUTO 存根（调教票）：肛门虫自动调教。
- * @returns {Promise<void>} 原作无 RESULT 消费
- */
-async function com13_auto() {
-  await stub_line_wait('COM13_AUTO', '肛门虫调教', '随调教自动票');
-}
-
-/**
- * @SOURCE_CHECK_AUTO（调教票，#461 起真身）：自动调教结算。调用点同上
- * （BEFORE_AUTOTRAIN/COM13_AUTO 紧邻的 DUNGEON_TRAP.ERB / DUNGEON_TOWN.ERB
- * 三处，详见 docs/stub-registry.md）与真身分属迷宫域与 event 域，接线走
+ * @SOURCE_CHECK_AUTO（调教票，#461 起真身）：自动调教结算。调用点同
+ * BEFORE_AUTOTRAIN 一族（DUNGEON_TRAP.ERB / DUNGEON_TOWN.ERB /
+ * DUNGEON_BATLLE.ERB / DUNGEON_BATLLE2.ERB，详见 docs/stub-registry.md）
+ * 与真身分属迷宫域与 event 域，接线走
  * 事件注册表——本函数只发事件，不重复实现调度逻辑；真身见
  * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
  * @returns {Promise<void>} 原作无 RESULT 消费
@@ -597,10 +587,12 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
 
   // :568 PLAYER = 0——本函数无读者，不落变量（死赋值，注释留痕）
 
-  // :570-574 肛门虫（TALENT:193）自动调教（存根三连）
+  // :570-574 肛门虫（TALENT:193）自动调教三连（:572 CALL COM13_AUTO——
+  // 真身 ere/event/event-autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await before_autotrain();
-    await com13_auto();
+    const { com13_auto } = require('#/event/event-autotrain');
+    com13_auto();
     await source_check_auto();
   }
 
@@ -1663,7 +1655,6 @@ module.exports = {
   dungeon_party_battle,
   attack_koujo,
   before_autotrain,
-  com13_auto,
   source_check_auto,
   campaign_monster_list,
   // page-campaign-1.js 向这个族 register(1, ...)，本文件只声明、不参与注册

@@ -3,13 +3,15 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 266; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
+export const COUNT = 279; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
 // M9838 与 #462 撞号后改）；#469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
 // dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
 // 计数、全员取消派遣判据、三个 FLAG:400 早退守卫、MONSTER_LIST 的两处
 // whenMissing 骸骨缺省）；#484 起 +3（M10620/M10621 再起点分支的 CFLAG:520
 // 写点：门面名与目标值；M10622 体力富余臂的 CFLAG:520 写值，交付前
-// 十项区分力抽查的补位项）
+// 十项区分力抽查的补位项）；#500 起 +13（M10713-M10725，四个 _AUTO 变体的
+// 九处调用点接线：退回占位按调用点各一条、调错变体按变体各一条——号段见
+// #500 完成报告）
 
 export default [
   {
@@ -1072,9 +1074,9 @@ export default [
   {
     desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = [\n  'BEFORE_AUTOTRAIN',",
+    find: "const STUBBED_CALLS = ['BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO'];",
     replace:
-      "const STUBBED_CALLS = [\n  'MAGIC', // 变异：真身倒退为存根登记\n  'BEFORE_AUTOTRAIN',",
+      "const STUBBED_CALLS = ['MAGIC', 'BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
     tests: ['dungeon-magic'],
     must_mention: '不再登记为存根',
   },
@@ -2396,5 +2398,131 @@ export default [
     replace: `            era.set(\`cflag:\${arg0}:520\`, floor + 1); // 变异：写值改错`,
     tests: ['dungeon-main'],
     must_mention: '体力富余臂：状态良好时 CFLAG:520 记下当前阶层并下潜一层',
+  },
+
+  // —— #500 四个 _AUTO 变体的调用点接线（守两类：调用点退回占位、
+  //    调错变体）。九处调用点里两处战斗入口各一条、淫虫/史莱姆/肛门虫
+  //    各一条、催眠两档各一条、宴会风俗两条；「调错变体」按变体各给一条
+  //    （换成一个效果可区分的同类变体，测试的输出/常量断言当场红）——
+  {
+    desc: 'M10713 COM3_AUTO 深档调用点退回占位（:611 不再执行真身——自动调教回数与专属文本都不出）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `    const { com3_auto } = require('#/event/event-autotrain'); // :611 CALL COM3_AUTO
+    com3_auto();`,
+    replace: `    // 变异：调用点退回占位（不执行 COM3_AUTO 真身）`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM3_AUTO 真身被调（:611）',
+  },
+  {
+    desc: 'M10714 COM3_AUTO 深档调错变体（com3_auto 换成 com0_auto——自动调教回数照涨，文本与常量露馅）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `    const { com3_auto } = require('#/event/event-autotrain'); // :611 CALL COM3_AUTO
+    com3_auto();`,
+    replace: `    const { com0_auto } = require('#/event/event-autotrain'); // 变异：调错变体
+    com0_auto();`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM3_AUTO 真身被调（:611）',
+  },
+  {
+    desc: 'M10715 COM3_AUTO 浅档调用点退回占位（:624 不再执行真身——浅度催眠档的回数停在 1）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `    const { com3_auto } = require('#/event/event-autotrain'); // :624 CALL COM3_AUTO
+    com3_auto();`,
+    replace: `    // 变异：浅度档的调用点退回占位`,
+    tests: ['dungeon-trap'],
+    must_mention: '浅度档同样接真身（:624 是第二个调用点）',
+  },
+  {
+    desc: 'M10716 COM50_AUTO 调用点退回占位（:882 不再执行真身——液体追加/露出与专属文本都不出）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `  const { com50_auto } = require('#/event/event-autotrain'); // :882 CALL COM50_AUTO
+  com50_auto();`,
+    replace: `  // 变异：调用点退回占位（不执行 COM50_AUTO 真身）`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM50_AUTO 真身被调（:882）',
+  },
+  {
+    desc: 'M10717 COM50_AUTO 调错变体（com50_auto 换成 com3_auto——回数照涨，液体追加/露出落空）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `  const { com50_auto } = require('#/event/event-autotrain'); // :882 CALL COM50_AUTO
+  com50_auto();`,
+    replace: `  const { com3_auto } = require('#/event/event-autotrain'); // 变异：调错变体
+  com3_auto();`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM50_AUTO 真身被调（:882）',
+  },
+  {
+    desc: 'M10718 COM13_AUTO 肛门虫陷阱调用点退回占位（:1221 不再执行真身——losebase 与逃离常量都不出）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    com13_auto();`,
+    replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM13_AUTO 真身被调（:1221',
+  },
+  {
+    desc: 'M10719 COM13_AUTO 调错变体（com13_auto 换成 com0_auto——回数照涨，本体文本换人）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    com13_auto();`,
+    replace: `    const { com0_auto } = require('#/event/event-autotrain'); // 变异：调错变体
+    com0_auto();`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM13_AUTO 真身被调（:1221',
+  },
+  {
+    desc: 'M10720 COM0_AUTO 淫虫陷阱调用点退回占位（:1283 不再执行真身——性行为 60 与 losebase 常量都不出）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `  const { com0_auto } = require('#/event/event-autotrain');
+  com0_auto();`,
+    replace: `  // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM0_AUTO 真身被调（:1283）',
+  },
+  {
+    desc: 'M10721 COM0_AUTO 调错变体（com0_auto 换成 com63_auto——回数照涨，专属文本与常量落空）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: `  const { com0_auto } = require('#/event/event-autotrain');
+  com0_auto();`,
+    replace: `  const { com63_auto } = require('#/event/event-autotrain'); // 变异：调错变体
+  com63_auto();`,
+    tests: ['dungeon-trap'],
+    must_mention: 'COM0_AUTO 真身被调（:1283）',
+  },
+  {
+    desc: 'M10722 COM0_AUTO 宴会风俗（娼婦購入臂）调用点退回占位（:645 不再执行真身）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: `          const { com0_auto } = require('#/event/event-autotrain'); // :645 CALL COM0_AUTO
+          com0_auto();`,
+    replace: `          // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
+    tests: ['dungeon-town'],
+    must_mention: 'COM0_AUTO 真身被调（:645）',
+  },
+  {
+    desc: 'M10723 COM0_AUTO 宴会风俗（少年风俗臂）调用点退回占位（:652 不再执行真身）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: `        const { com0_auto } = require('#/event/event-autotrain'); // :652 CALL COM0_AUTO
+        com0_auto();`,
+    replace: `        // 变异：调用点退回占位（不执行 COM0_AUTO 真身）`,
+    tests: ['dungeon-town'],
+    must_mention: 'COM0_AUTO 真身被调（:652）',
+  },
+  {
+    desc: 'M10724 COM13_AUTO 勇者侧攻击调用点退回占位（DUNGEON_BATLLE.ERB:572 不再执行真身）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    com13_auto();`,
+    replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
+    tests: ['dungeon-battle'],
+    must_mention: 'losebase:0 +10（COM13 专属）',
+  },
+  {
+    desc: 'M10725 COM13_AUTO 角色对角色的攻击调用点退回占位（DUNGEON_BATLLE2.ERB:670 不再执行真身）',
+    file: 'ere/dungeon/dungeon-battle2.js',
+    find: `    const { com13_auto } = require('#/event/event-autotrain');
+    com13_auto();`,
+    replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
+    tests: ['dungeon-battle'],
+    must_mention: 'losebase:0 +10（COM13 专属）',
   },
 ];

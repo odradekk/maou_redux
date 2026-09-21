@@ -385,6 +385,13 @@ export const FILES = [
         ref: '570-574',
         any: [/IF TALENT:肛门虫/],
       },
+      // #500：肛门虫自动调教直调 event-autotrain.js 真身，锚随 js 注释
+      // （// :572 CALL COM13_AUTO）落到本表
+      {
+        src: 'target/ERB/迷宮/DUNGEON_BATLLE.ERB',
+        ref: '572',
+        any: [/CALL COM13_AUTO/],
+      },
       {
         src: 'target/ERB/迷宮/DUNGEON_BATLLE.ERB',
         ref: '577-595',
