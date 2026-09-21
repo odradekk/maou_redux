@@ -185,14 +185,18 @@ test('SOURCE_CHECK_AUTO 接线：source_check_auto 转发到 event/source-check 
 //
 // 两个战斗入口的 TALENT:193 分支都走「BEFORE_AUTOTRAIN → COM13_AUTO →
 // SOURCE_CHECK_AUTO」三连。此处只观察 COM13_AUTO 真身的效果：把后续的
-// MAGIC 短路（模块对象替换，dungeon-magic.test.js 先例），让被调真身的
-// 常量落进变量——com13_auto 的 losebase:0 +10 是同族四个变体里唯一的
-// 值（COM0 +1 / COM3 +5 / COM50 +0），可分辨「调错变体」。
+// MAGIC 短路，让被调真身的常量落进变量——com13_auto 的 losebase:0 +10
+// 是同族四个变体里唯一的值（COM0 +1 / COM3 +5 / COM50 +0），可分辨
+// 「调错变体」。短路要按各自的查表路径下手：enemy_attack 走魔法的模块
+// 对象（dungeon-battle.js:612 的 magic_mod.magic），duel_attack 走
+// dungeon-battle 的导出属性（dungeon-battle2.js:358 的 battle.magic，
+// dungeon-magic.test.js:147 先例）。
 
 test('ENEMY_ATTACK：TALENT:193 的自动调教三连接 COM13_AUTO 真身（:572）', async () => {
   const fixture = setup_world();
+  const magic_mod = load(fixture, 'dungeon/magic');
+  magic_mod.magic = async () => 999; // 战斗链短路（enemy_attack 的查表路径）
   const battle = load(fixture, 'dungeon/dungeon-battle');
-  battle.magic = async () => 999; // 战斗链短路
   fixture.store.set('talent:1:193', 1); // 肛门虫寄生
 
   assert.equal(await battle.enemy_attack(1, 0, () => 0), 999, 'MAGIC 短路');
@@ -207,7 +211,7 @@ test('ENEMY_ATTACK：TALENT:193 的自动调教三连接 COM13_AUTO 真身（:57
 test('DUEL_ATTACK：TALENT:193 的自动调教三连接 COM13_AUTO 真身（:670）', async () => {
   const fixture = setup_duel_world();
   const battle = load(fixture, 'dungeon/dungeon-battle');
-  battle.magic = async () => 999; // 战斗链短路
+  battle.magic = async () => 999; // 战斗链短路（duel_attack 的查表路径）
   const battle2 = load(fixture, 'dungeon/dungeon-battle2');
   fixture.store.set('talent:1:193', 1); // 攻击方（奴隶 1）带肛门虫
 

@@ -39,9 +39,10 @@
  *     math-etc.md「整数乘以小数」）；
  *   - SETCOLORBYNAME / RESETCOLOR（A_WORM :1211-1214、诈骗陷阱多处）：
  *     配色不做、注释留痕（#175 同款裁定——玩家可见的行序与文案 1:1）；
- *   - PLAYER = 0（A_WORM :1217、LOVE_BUG :1279）：无读者（_AUTO 一族的
- *     真身不读 PLAYER，只读 TARGET），不落变量、注释留痕（#175 先例：
- *     dungeon-battle.js 对 ENEMY_ATTACK 的 PLAYER 同款处理）；
+ *   - PLAYER = 0（A_WORM :1217、LOVE_BUG :1279）：_AUTO 本体不读（只读
+ *     TARGET），三连第三站的结算读（source-check.js 的
+ *     player = era_flag.player → player_skill_check 连乘）——迷宫路径上
+ *     1:1 不落变量、注释留痕（#175 先例）；
  *   - MONEY / EX_FLAG:4444 → era_flag.money / era_exflag.legit_money
  *     （dungeon.js 先例）；
  *   - KARMA（DARK_JUEL :1344）经函数内延迟 require 引用 dungeon.js 的
@@ -1812,7 +1813,8 @@ async function a_worm_trap(a, rand_n) {
     }
     era.set(`talent:${a}:193`, 1);
   } else if (era.get(`talent:${a}:193`)) {
-    // :1217 PLAYER = 0——消费者是 _AUTO 一族，不落变量（#175 先例）
+    // :1217 PLAYER = 0——不落变量、注释留痕（读者面见文件头：本体不读、
+    // 三连第三站的结算读）
     era_flag.target = a; // :1218 TARGET = A
     // アナルワーム自動調教（:1221 CALL COM13_AUTO——真身）
     await battle.before_autotrain();
@@ -1899,7 +1901,8 @@ async function love_bug_trap(a, rand_n) {
     era.println();
   }
 
-  // :1279 PLAYER = 0——消费者是 _AUTO 一族，不落变量（#175 先例）
+  // :1279 PLAYER = 0——不落变量、注释留痕（读者面见文件头：本体不读、
+  // 三连第三站的结算读）
   era_flag.target = a; // :1280 TARGET = A
   // 愛撫自動調教（:1283 CALL COM0_AUTO——真身）
   await battle.before_autotrain();

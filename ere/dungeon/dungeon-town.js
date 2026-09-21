@@ -10,7 +10,9 @@
  *       @TOWN_PT_SHOPPING（:331-343，采购段）、@TOWN_SHOPPING（:346-357，
  *       个人采购）、@TOWN_PT_PLANNING（:368-567，冒险计划）、@TOWN_PT_PARTY
  *       （:575-679，宴会）、@TOWN_PT_DAYEVENT（:686-700，日常段）、
- *       @RAND_AUTOTRAIN（:705-710，自动调教随机表——β 空壳，域内存根）
+ *       @RAND_AUTOTRAIN（:705-710，自动调教随机表——β 空壳）——真身在
+ *       ere/event/event-autotrain.js 的 rand_autotrain（#218），本文件
+ *       不定义、无调用点
  *
  * 勇者资产闭环（简报第 5 条）：CFLAG:580 所持金（dungeon 门面「所持金」）、
  * CFLAG:582 借款（patch 门面「借款」，#176 建）、CFLAG:581 战利品换金
@@ -94,7 +96,7 @@ function party_of(arg) {
   ];
 }
 
-// —— 域内存根层（本票新增，登记 docs/stub-registry.md）——
+// —— 城镇主流程与各段（#500 起本文件无域内存根；存根清单见 docs/stub-registry.md）——
 
 /**
  * @DUNGEON_TOWN（:5-75）：勇者撤到迷宫外时的城镇事件主流程。

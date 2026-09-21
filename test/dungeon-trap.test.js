@@ -270,7 +270,7 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   assert.equal(
     fixture.store.get('cflag:1:666') ?? 0,
     0,
-    '清醒档不走自动调教（:955 提前返回）',
+    '清醒档不走自动调教（原作 :600-603 提前返回）',
   );
   await self_saimin_trap(1, seq(5)); // DICE=5 < 10 深度
   assert.equal(fixture.store.get('cflag:1:11'), 0, '攻击力归零（:615）');
@@ -295,6 +295,11 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
     fixture.store.get('cflag:1:666'),
     2,
     '浅度档同样接真身（:624 是第二个调用点）',
+  );
+  assert.equal(
+    fixture.store.get('exp:1:10'),
+    2,
+    '自慰经验再 +1（浅档也走 COM3 本体，别的变体不写这一项）',
   );
   // 欲情中 → DICE ×0.80（TIMES 截断）：70 → 56 仍 >10 ≤60 走浅档；99 → 79 走浅档
   fixture.store.set('cflag:1:503', 512);
@@ -985,10 +990,25 @@ test('本文件无运行时存根：STUBBED_CALLS 已空，且四行在 docs/stu
   // #500 起四个 _AUTO 变体接真身、#469 起 CAMPAIGN_TRAP 是族真身，名单
   // 清算空。空名单不等于不核对：下面的循环型契约（每个名字都能在清单里
   // 查到）在空名单上恒真，故按 com-tentacle.test.js 的先例改断言空集，
-  // 另查登记表确实记了本票的四处实现（#500）
+  // 另按 tools/trace-coverage.mjs 的同一判据逐行查状态格——只看「名字
+  // 出现过」抓不住「状态列仍写存根」，那样测试照样绿
   assert.deepEqual(names, [], '名单应已清空');
   for (const name of ['COM0_AUTO', 'COM3_AUTO', 'COM13_AUTO', 'COM50_AUTO']) {
-    assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
+    const row = registry
+      .split('\n')
+      .find(
+        (line) =>
+          line.startsWith(`|\`${name}\``) || line.startsWith(`| \`${name}\``),
+      );
+    assert.ok(row, `存根清单缺少 ${name}`);
+    const status = row
+      .split('|')
+      .map((c) => c.trim())
+      .filter(Boolean)
+      .pop();
+    assert.ok(
+      status.startsWith('已实现'),
+      `${name} 的状态格应为「已实现…」，实际「${status}」`,
+    );
   }
-  assert.ok(registry.includes('#500'), '存根清单须登记本票的实现出处（#500）');
 });
