@@ -8,8 +8,10 @@
  *       :25-138（#468，post_conquest_menu；[9] 转 CAMPAIGN_MENU）/ [1] 魔力
  *       出兵（#117，start_campaign）：菜单 :139-204、魔力分支 :266-296、
  *       共通补正 :565-603、结果段 :609-618 + :694-757、结算尾 :976-997 /
- *       @MEDAL_BONUS（:1026-1067，存根）/ @INVASION_CHECK（:999-1021，#118
- *       五组条件 1:1；ENDING_x 演出本体在 ere/event/event-ending.js）
+ *       @MEDAL_BONUS（:1026-1067）/ @SENGEN_VIDEO（:1070-1233）+
+ *       @SENGEN_VIDEO_BONUS（:1236-1266）（三者 #502）/ @INVASION_CHECK
+ *       （:999-1021，#118 五组条件 1:1；ENDING_x 演出本体在
+ *       ere/event/event-ending.js）
  *     target/ERB/侵略/INVASION_EVENT.ERB  @KYOTEN_EVENT（:2-209，仅 ARG:0
  *       == 1 人间界臂）/ @INVASION_EVENT（:212-235，魔力臂）
  *
@@ -67,8 +69,8 @@ const {
 } = require('#/event/event-ending');
 const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
 const { chara } = require('#/facade/chara');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
-const { chara_callname } = require('#/utils/callname-utils');
+const { stub_line_wait } = require('#/utils/stub-line');
+const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
@@ -76,26 +78,71 @@ const { chara_callname } = require('#/utils/callname-utils');
  * 'INVASION' 是函数内联段的宿主名（先例：DRAW_MAINMENU 指令面板段）：
  * [0]/[2]/[3] 出兵路线三段（:210-/:299-/:442-，start_campaign）、地上征服后
  * 菜单的 [1]/[2]/[3]/[5] 地区续接（:108-138，post_conquest_menu）。
- * 'SENGEN_VIDEO'（:91，[1000]）与 'AGENT_MENU'（:93-95，[1001]，#103 判定的
- * 复制改名事故，只登记不排期）是各自独立的存根调用名。'INVASION_CHECK' 自
- * #118 起是真身（五组条件 1:1），移出本名单；'ARCANA_FORT'（:126，[4]）自
- * #470 起是真身（ere/invasion/invasion-arcana-fort.js），同样移出。
+ * 'AGENT_MENU'（:93-95，[1001]，#103 判定的复制改名事故，只登记不排期）是
+ * 独立存根调用名。'INVASION_CHECK' 自 #118 起是真身（五组条件 1:1），
+ * 'ARCANA_FORT'（:126，[4]）自 #470 起是真身（ere/invasion/invasion-arcana-fort.js），
+ * 'MEDAL_BONUS'（:593，共通补正）与 'SENGEN_VIDEO'（:91，[1000]）自 #502 起
+ * 同样是真身（本文件内），四者都已移出本名单。
  * 'CAMPAIGN_MENU'（:98，[9]）不在此列——调用点本身是真实调用，存根名归属
  * page-campaign.js 自己的 STUBBED_CALLS（#468）。
  */
-const STUBBED_CALLS = [
-  'INVASION',
-  'AGENT_MENU',
-  'MEDAL_BONUS',
-  'INVASION_EVENT_SEIEI',
-  'SENGEN_VIDEO',
-];
+const STUBBED_CALLS = ['INVASION', 'AGENT_MENU', 'INVASION_EVENT_SEIEI'];
 
 /** 进度条的条宽（< 24，否则引擎 el-col-0 吞掉条后数值列，见文件头） */
 const BAR_WIDTH = 16;
 
 /** 侵略目标的人间界 FLAG 下标（:110-111，AREA/SINDO 依原作命名） */
 const HUMAN_WORLD = { area: 81, sindo: 82 };
+
+/** 原作 RAND:N（0..N-1）的缺省随机源（同族模块同款；各函数以 rand 为注入名） */
+function default_rand(n) {
+  return Math.floor(Math.random() * n);
+}
+
+/**
+ * 原作 `TIMES 整数, 小数` 的等价物：乘完截断小数部分。Emuera 的双精度与 JS
+ * 同为 IEEE 754，两边逐位同值（`SENGEN_VIDEO` 的 ×1.20/×1.60、`SENGEN_VIDEO_BONUS`
+ * 的 ×1.10/×1.20/×0.80 共十二处）。
+ * @param {number} value 整数原值
+ * @param {number} factor 小数倍率
+ * @returns {number} 截断后的整数
+ */
+function times(value, factor) {
+  return Math.floor(value * factor);
+}
+
+/**
+ * 数值型 INPUT 的读数（本文件八处：`SENGEN_VIDEO` 内的六处
+ * :1093/:1102/:1127/:1148/:1176/:1208，以及 post_conquest_menu 与
+ * start_campaign 各一处菜单读数）。
+ *
+ * 引擎 `era.input()` 与原作 `INPUT` 有两处差异（逐字镜像见
+ * test/helpers/era-fixture.js 的 #151/G6，`getNumber(val)` 即 `Number(val)`、
+ * 解析失败原样返回）：
+ *   - **空输入归一成 0**——原作的 `INPUT` 没有默认值时会在引擎层原地重问，
+ *     游戏层永远看不到空值；ere 侧区分不出「空」与「显式键入 0」，两者都走
+ *     `RESULT == 0` 那一支；
+ *   - **非数字串原样回传**（字符串），而原作的 `RESULT` 恒为数值——不归一
+ *     就会让 `count` 变成 NaN：`count > stock` 恒假、直接被当合法数量收下，
+ *     随后 `EX_FLAG:9011 += count`（:1109/:1137）把 NaN 写进存档变量。
+ *
+ * @returns {Promise<number>} 输入值；空输入与非数字一律归一到 0
+ */
+async function number_input() {
+  const value = await era.input();
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0;
+}
+
+/**
+ * 原作 FORMAT `{值,N}` 的定宽：位数不足补半角空格（右对齐；数字是半角，
+ * 与全角算两格的规则无关）。
+ * @param {number} value 数值
+ * @param {number} width 显示位数
+ * @returns {string}
+ */
+function pad_number(value, width) {
+  return String(value).padStart(width);
+}
 
 // @KYOTEN_EVENT 的星号横幅（INVASION_EVENT.ERB:16-22 等十处，逐字抄自原作，
 // 含全角空格的手工对齐）
@@ -251,17 +298,359 @@ async function invasion_event(area, sindo, inv_type) {
   return 0;
 }
 
+/** @MEDAL_BONUS 的十一档补正（:1032-1064 的降序 IF 链：命中即返，不再往下判） */
+const MEDAL_TIERS = [
+  { over: 500, bonus: 160 },
+  { over: 250, bonus: 150 },
+  { over: 150, bonus: 140 },
+  { over: 100, bonus: 130 },
+  { over: 60, bonus: 120 },
+  { over: 40, bonus: 110 },
+  { over: 30, bonus: 105 },
+  { over: 20, bonus: 104 },
+  { over: 15, bonus: 103 },
+  { over: 10, bonus: 102 },
+  { over: 5, bonus: 101 },
+];
+
 /**
  * @MEDAL_BONUS（INVASION.ERB:1026-1067）：勋章补正（EXP:ARG:81 分档）。
  *
- * 存根恒返回 100（无补正）：新档魔王的 EXP:0:81 = 0，原作在该档本就返回
- * 100，窄路径数值不受影响。真实分档随勋章票。原作实参 ARG 是角色号（调用
- * 点恒 0 = 魔王），存根不读。
- * @returns {Promise<number>} 恒 100
+ * 十一档降序判定，命中即打印 `%CALLNAME:ARG%` +「的勋章补正」+ 一个全角
+ * 空格 + `x1.xx`（U+3000，照抄原作 :1033 的对齐）并等键（PRINTFORMW），
+ * 返回 100-160 的百分比。未达首档（≤5 枚）返回 100 且不打任何输出
+ * （:1030 的 LOCAL 初值）。
+ *
+ * 原作实参 ARG 是角色号：窄路径恒 0（魔王，:593 CALL MEDAL_BONUS,0），
+ * [2]/[3] 路线传勇者号（:439/:559 CALL MEDAL_BONUS,YUSYA_I，随后续票接）。
+ *
+ * @param {number} [cid] 角色 ID（EXP 与 CALLNAME 的下标）
+ * @returns {Promise<number>} 补正百分比（100-160）
  */
-async function medal_bonus() {
-  stub_line('MEDAL_BONUS', '勋章补正', '随勋章票');
-  return 100;
+async function medal_bonus(cid = 0) {
+  const medals = chara(cid).event.勋章经验; // EXP:cid:81
+  const tier = MEDAL_TIERS.find((t) => medals > t.over);
+  if (tier === undefined) {
+    return 100; // :1030 LOCAL = 100（无补正档）
+  }
+  // :1033 等：%CALLNAME:ARG% 取自呼び名（callname:cid:-2）。全角空格不能进
+  // 模板串（no-irregular-whitespace），按既有先例拼普通字符串字面量
+  era.print(
+    chara_nickname(cid) + '的勋章补正　x' + (tier.bonus / 100).toFixed(2),
+  );
+  await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+  return tier.bonus;
+}
+
+/**
+ * @SENGEN_VIDEO_BONUS（INVASION.ERB:1236-1266）：投放量的随机加成。
+ *
+ * 原作 RESULT 是**按引用回传**的实参（`TIMES RESULT, …` 直接改写调用方的
+ * RESULT），ere 侧改成返回值由调用方接。MODE 0（普通）先跳 `$MODE_0`
+ * （:1243-1244），只掷 :1254-1257 两枚；MODE 1（奸商）先掷 :1246-1251 的
+ * 三枚加成再落同一段——**判定顺序即 RAND 消费顺序，不可交换**。
+ * MODE 1 只会变大（:1260-1261 的 `RESULT <= M → RESULT = M` 保底），
+ * MODE 0 可能缩水到 0（×0.80 截断），调用方据此走「投放失败」分支。
+ *
+ * @param {number} result 投放数（原作 RESULT 的传入值）
+ * @param {number} [mode] 0 = 普通，1 = 奸商（原作 MODE 的默认值 0）
+ * @param {(n: number) => number} [rand] 随机源（RAND:2/3/4 的上界）
+ * @returns {number} 加成后的投放数（原作回写的 RESULT）
+ */
+function sengen_video_bonus(result, mode = 0, rand = default_rand) {
+  const base = result; // :1242 M = RESULT
+  let placed = result;
+  if (mode !== 0) {
+    // :1245-1251 奸商加成段（MODE == 0 时被 :1243-1244 跳过）
+    placed = times(placed, 1.1);
+    if (rand(2) === 0) placed = times(placed, 1.2);
+    if (rand(3) === 0) placed = times(placed, 1.2);
+    if (rand(4) === 0) placed = times(placed, 1.2);
+  }
+  // $MODE_0 :1253-1257 两段共用
+  if (rand(2) === 0) placed = times(placed, 1.2);
+  if (rand(3) === 0) placed = times(placed, 0.8);
+  // :1258-1265 提示与保底（四条 SIF 的先后即输出次序）
+  if (placed > base && mode === 1) {
+    era.print('奸商们制作更多的版本提升了投放效果。'); // :1258-1259
+  }
+  if (mode === 1 && placed <= base) {
+    placed = base; // :1260-1261
+  }
+  if (placed > base && mode === 0) {
+    era.print('在投放过程中似乎传出了不同的版本，投放效果提升了。'); // :1262-1263
+  }
+  if (placed < base) {
+    era.print('似乎有些水晶球投放不是太成功。'); // :1264-1265
+  }
+  return placed;
+}
+
+/**
+ * @SENGEN_VIDEO（INVASION.ERB:1070-1233）：水晶球投放菜单（post_conquest_menu
+ * 的 [1000]，:90-92 CALL SENGEN_VIDEO 后 RETURN 0）。
+ *
+ * 四档操作：投放（:1096-1119）、雇奸商代理投放（:1120-1163，付 5000G/枚 或
+ * 1 枚勋章）、花钱增强流行效果（:1164-1198）、花钱延长流行时间
+ * （:1199-1229）；[999] 退出（:1230-1233，含落尾的隐式 RETURN 0）。
+ *
+ * 循环形态沿用文件头的既有取舍：GOTO INPUT_LOOP 重画整屏（ere 追加式）、
+ * GOTO $INPUT_LOOP_TMP<n> 只重问不重画；`PRINTL [n] …` 改 printButton
+ * （引擎自动拼 `[n] `，正文不得自带前缀，PR #30）；`{值,N}` 走 pad_number。
+ *
+ * 两处原作行为 1:1 保留并在此登记：
+ *   - 犒赏段（:1143-1157）的两条按钮渲染条件（`(M*5000) < MONEY`、
+ *     `M < EXP:0:81`）与接受条件同式，但支付发生在**加成之后**、判据用的是
+ *     `M`（= 投入数）：`M*5000 == MONEY` 或 `M == 勋章数` 时按钮不渲染，
+ *     而 ere 的引擎白名单会拒收未渲染的 [1]/[2]，玩家只能重问——原作靠
+ *     `GOTO $INPUT_LOOP_TMP2` 空转；
+ *   - :1189-1196 的效果增强与 :1218-1227 的时长延长在随机段之后各有一道
+ *     封顶（×2 / +5）与一道保底（时长的 `(9013 - M) < 1 → M + 1`，即最小
+ *     也涨 1 天）。
+ *
+ * 三处由引擎形态带出的说明（都不是行为偏离）：
+ *   - 六处数值读数走 number_input()：空输入与非数字归一到 0，见该函数的
+ *     JSDoc（原作 RESULT 恒为数值，空输入在引擎层就被重问掉）；
+ *   - 菜单每轮至少打印 `[999]`，所以 `STOCK == 0 && RESULT != 999`
+ *     （:1094-1095）与落尾的空 ELSE（:1230-1233 的末段）在真引擎里都
+ *     不可达——白名单外的手工键入送不到游戏层，两支都按原作 1:1 保留；
+ *   - 顶栏的 `\t\t` 与 8/1 个前导空格照抄原作（同 page-chara-shop.js 的
+ *     `\t\t` 先例）；引擎输出走 HTML 会折叠连续空白，列对齐在实机上不
+ *     成立，这是全项目共有的一条表现层差异（比对工具两侧同款归一化）。
+ *
+ * @param {(n: number) => number} [rand] 随机源（增强段的 RAND:2/5 与
+ *   SENGEN_VIDEO_BONUS 的上界）
+ * @returns {Promise<0>} 原作两条出口都 RETURN 0
+ */
+async function sengen_video(rand = default_rand) {
+  // $INPUT_LOOP :1073-1095（画在循环头：GOTO INPUT_LOOP 即重画）
+  menu: for (;;) {
+    const stock =
+      era_exflag.crystal_ball_stock - era_exflag.crystal_ball_deployed; // :1074
+    era.drawLine(); // :1075-1076
+    // :1076 可用于投放的水晶球{STOCK,3}部\t\t已投放{EX_FLAG:9011,3}部
+    era.print(
+      `可用于投放的水晶球${pad_number(stock, 3)}部\t\t已投放${pad_number(
+        era_exflag.crystal_ball_deployed,
+        3,
+      )}部`,
+    );
+    // :1077-1081 两者都非零才显示流行中的数量与剩余天数
+    if (era_exflag.crystal_ball_popularity && era_exflag.crystal_ball_expire) {
+      era.print(
+        `        正流行的有${pad_number(
+          era_exflag.crystal_ball_popularity,
+          3,
+        )}部\t\t${pad_number(era_exflag.crystal_ball_expire, 2)}天后将过时`,
+      );
+    } else {
+      era.print(' 目前没有投放中的水晶球'); // :1080
+    }
+    era.drawLine(); // :1082-1083
+    if (stock > 0) {
+      // :1083-1087
+      era.printButton('投放水晶球', 1);
+      era.printButton('派奸商投放水晶球', 2);
+      era.printButton('增强流行效果', 3);
+      era.printButton('延长流行时间', 4);
+    } else {
+      era.print('当前没有可以用于投放的水晶球'); // :1089
+    }
+    era.drawLine(); // :1091-1092
+    era.printButton('离开', 999); // :1092
+
+    const result = await number_input(); // :1093
+    if (stock === 0 && result !== 999) {
+      continue; // :1094-1095（引擎白名单先一步拒收未渲染的 [1]-[4]）
+    }
+
+    if (result === 1) {
+      // :1096-1119 投放
+      era.drawLine(); // :1096-1097
+      era.print('通过投放拍摄的影像，激起反抗魔王的决心。'); // :1098
+      era.drawLine(); // :1099-1100
+      era.print('请输入要投放的数量'); // :1100
+      // $INPUT_LOOP_TMP0 :1101-1107（0 = 回菜单，超量 = 只重问）
+      let count;
+      for (;;) {
+        count = await number_input(); // :1102
+        if (count === 0) {
+          continue menu; // :1103-1104 GOTO INPUT_LOOP
+        }
+        if (count > stock) {
+          era.print('超出数量，请重新输入'); // :1106
+          continue; // :1107 GOTO INPUT_LOOP_TMP0
+        }
+        break;
+      }
+      era_exflag.crystal_ball_deployed += count; // :1109 EX_FLAG:9011 += RESULT
+      // :1110 CALL SENGEN_VIDEO_BONUS, RESULT（RESULT 按引用回写）
+      const placed = sengen_video_bonus(count, 0, rand);
+      if (placed >= 1) {
+        // :1111-1114
+        era.print(`成功投放${placed}部水晶球`); // :1112
+        await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+        era_exflag.crystal_ball_popularity += placed; // :1113
+        era_exflag.crystal_ball_expire += placed; // :1114
+      } else {
+        era.print('投放，似乎失败了。'); // :1116
+        await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+      }
+      continue; // :1118 GOTO INPUT_LOOP
+    }
+
+    if (result === 2) {
+      // :1120-1163 奸商代理投放
+      era.drawLine(); // :1120-1121
+      era.print('通过奸商代理投放拍摄的影像，或许更能激起反抗魔王的决心。'); // :1122
+      era.print('但需要收取代理酬劳，每部5000G或是1枚勋章。'); // :1123
+      era.drawLine(); // :1124-1125
+      era.print('请输入要投放的数量'); // :1125
+      // $INPUT_LOOP_TMP1 :1126-1135
+      let count;
+      for (;;) {
+        count = await number_input(); // :1127
+        if (count === 0) {
+          continue menu; // :1128-1129 GOTO INPUT_LOOP
+        }
+        if (count > stock) {
+          era.print('超出可投放数量，请重新输入'); // :1131
+          continue; // :1132 GOTO INPUT_LOOP_TMP1
+        }
+        // :1133-1135 两种酬劳都付不起：重问
+        if (count > chara(0).event.勋章经验 && count * 5000 > era_flag.money) {
+          era.print('没有足够的奖赏来打动奸商');
+          continue; // :1135 GOTO INPUT_LOOP_TMP1
+        }
+        break;
+      }
+      era_exflag.crystal_ball_deployed += count; // :1137 EX_FLAG:9011 += RESULT
+      // :1138 CALL SENGEN_VIDEO_BONUS, RESULT, 1；犒赏段（:1143-1157）消费的
+      // M 就是调用前的投入数（原作 M 是全局量、:1242 赋值后一直留到调用方）
+      const base = count;
+      const placed = sengen_video_bonus(count, 1, rand);
+      if (placed >= 1) {
+        era.print(`成功投放${placed}部水晶球`); // :1140
+        await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+        era_exflag.crystal_ball_popularity += placed; // :1141
+        era_exflag.crystal_ball_expire += placed; // :1142
+        if (base * 5000 < era_flag.money) {
+          era.printButton('犒赏金币', 1); // :1143-1144
+        }
+        if (base < chara(0).event.勋章经验) {
+          era.printButton('犒赏勋章', 2); // :1145-1146
+        }
+        // $INPUT_LOOP_TMP2 :1147-1158（无效输入重问，见函数 JSDoc 的缺陷说明）
+        for (;;) {
+          const pay = await number_input(); // :1148
+          if (pay === 1 && base * 5000 < era_flag.money) {
+            era.print(`犒赏了奸商${base * 5000}G`); // :1150
+            era_flag.money -= base * 5000; // :1151 MONEY -= (M * 5000)
+            era_exflag.legit_money -= base * 5000; // :1152 EX_FLAG:4444 -=
+            break;
+          }
+          if (pay === 2 && base < chara(0).event.勋章经验) {
+            era.print(`犒赏了奸商${base}枚勋章`); // :1154
+            chara(0).event.勋章经验 -= base; // :1155 EXP:0:81 -= M
+            break;
+          }
+          // :1156-1157 ELSE → GOTO INPUT_LOOP_TMP2
+        }
+      } else {
+        era.print('投放，似乎失败了。'); // :1160
+        await era.waitAnyKey(); // PRINTFORMW 的 WAIT
+      }
+      continue; // :1162 GOTO INPUT_LOOP
+    }
+
+    if (result === 3) {
+      // :1164-1198 增强流行效果
+      era.drawLine(); // :1164-1165
+      era.print('通过奸商代理投放拍摄的影像，增强投放的效果。'); // :1166
+      era.print('将收取50000G或是5枚勋章。'); // :1167
+      era.drawLine(); // :1168-1169
+      era.print('请选择要支付方式'); // :1169
+      if (era_flag.money > 50000) {
+        era.printButton('支付金币', 1); // :1170-1171
+      }
+      if (chara(0).event.勋章经验 > 5) {
+        era.printButton('支付勋章', 2); // :1172-1173
+      }
+      era.printButton('离开', 999); // :1174
+      // $INPUT_LOOP_TMP3 :1175-1188
+      for (;;) {
+        const pay = await number_input(); // :1176
+        if (pay === 1 && era_flag.money > 50000) {
+          era.print('犒赏了奸商50000G'); // :1178
+          era_flag.money -= 50000; // :1179
+          era_exflag.legit_money -= 50000; // :1180
+          break;
+        }
+        if (pay === 2 && chara(0).event.勋章经验 > 5) {
+          era.print('犒赏了奸商5枚勋章'); // :1182
+          chara(0).event.勋章经验 -= 5; // :1183
+          break;
+        }
+        if (pay === 999) {
+          continue menu; // :1184-1185 GOTO INPUT_LOOP
+        }
+        // :1186-1187 ELSE → GOTO INPUT_LOOP_TMP3
+      }
+      // :1189-1196 ×1.20，1/5 再 ×1.60，1/2 再 ×1.20，封顶 ×2
+      const before = era_exflag.crystal_ball_popularity; // :1189 M = EX_FLAG:9012
+      let grown = times(before, 1.2); // :1190 TIMES EX_FLAG:9012, 1.20
+      if (rand(5) === 0) grown = times(grown, 1.6); // :1191-1192
+      if (rand(2) === 0) grown = times(grown, 1.2); // :1193-1194
+      if (grown > before * 2) grown = before * 2; // :1195-1196
+      era_exflag.crystal_ball_popularity = grown;
+      era.print('因为剪辑出了更多的版本，投放效果增强了'); // :1197
+      continue; // :1198 GOTO INPUT_LOOP
+    }
+
+    if (result === 4) {
+      // :1199-1229 延长流行时间
+      era.drawLine(); // :1199-1200
+      era.print('通过增加投放量延长流行时间。'); // :1201
+      era.print('将收取50000G。'); // :1202
+      era.drawLine(); // :1203-1204
+      if (era_flag.money > 50000) {
+        era.printButton('支付', 1); // :1204-1205
+      }
+      era.printButton('算了', 999); // :1206
+      // $INPUT_LOOP_TMP4 :1207-1217
+      for (;;) {
+        const pay = await number_input(); // :1208
+        if (pay === 1 && era_flag.money > 50000) {
+          era.print('支付了50000G'); // :1210
+          era_flag.money -= 50000; // :1211
+          era_exflag.legit_money -= 50000; // :1212
+          break;
+        }
+        if (pay === 999) {
+          continue menu; // :1213-1214 GOTO INPUT_LOOP
+        }
+        // :1215-1216 ELSE → GOTO INPUT_LOOP_TMP4
+      }
+      // :1218-1227 ×1.20，1/5 再 ×1.60，1/2 再 ×1.20，封顶 +5、保底 +1
+      const before = era_exflag.crystal_ball_expire; // :1218 M = EX_FLAG:9013
+      let grown = times(before, 1.2); // :1219 TIMES EX_FLAG:9013, 1.20
+      if (rand(5) === 0) grown = times(grown, 1.6); // :1220-1221
+      if (rand(2) === 0) grown = times(grown, 1.2); // :1222-1223
+      if (grown > before + 5) grown = before + 5; // :1224-1225
+      if (grown - before < 1) grown = before + 1; // :1226-1227
+      era_exflag.crystal_ball_expire = grown;
+      era.print('流行时间延长了'); // :1228
+      continue; // :1229 GOTO INPUT_LOOP
+    }
+
+    if (result === 999) {
+      return 0; // :1230-1233（[999] 的 RETURN 0 与紧随其后落尾的空 ELSE 同值）
+    }
+    // 其余值落在原作的空 ELSE 上：落尾即隐式 RETURN 0，同样退出菜单。
+    // 真引擎里同样不可达（菜单每轮都打印 [999]，白名单外的手工键入送不到
+    // 游戏层），两支都按原作保留
+    return 0;
+  }
 }
 
 /**
@@ -482,21 +871,25 @@ async function post_conquest_menu() {
   era.printButton('向着世界之外', 9);
   era.drawLine();
   era.printButton('退出', 999);
-  // SENGEN_VIDEO（水晶球投放/流行度）未移植，EX_FLAG:9010/9011 无门面，直读
+  // :83 [1000] 的分子/分母走具名门面（#502 起；此前的「无门面、直读」注释
+  // 已过时，era-exflag.js 的 crystal_ball_deployed/stock 早已备好）
   era.printButton(
-    `向城里投放水晶球[${era.get('exflag:9011') || 0}/${era.get('exflag:9010') || 0}]`,
+    `向城里投放水晶球[${era_exflag.crystal_ball_deployed}/${era_exflag.crystal_ball_stock}]`,
     1000,
   );
 
   // $INPUT_LOOP2 :85-106：无效输入重问不重画（GOTO，见文件头）
   for (;;) {
-    const result = await era.input();
+    const result = await number_input();
     if (result === 999) {
       return 0; // :88-89
     }
     if (result === 1000) {
-      await stub_line_wait('SENGEN_VIDEO', '水晶球投放/流行度', '待认领');
-      return 0; // :90-92
+      // :90-92 CALL SENGEN_VIDEO → RETURN 0（#502 起真身）；注释单占一行，
+      // 免得变异条目的 find 串把带 trace ref 的注释当锚点（trace-check 的
+      // 「引用不进锁」约定）
+      await sengen_video();
+      return 0;
     }
     if (result === 1001) {
       // :93-95 CALL AGENT_MENU：按钮渲染行原作已注释，但这条 ELSEIF/CALL
@@ -590,7 +983,7 @@ async function start_campaign() {
   // $INPUT_LOOP :188-200：无效输入重问不重画（GOTO INPUT_LOOP，见文件头）
   let inv_type; // :202 INV_TYPE = RESULT
   for (;;) {
-    const result = await era.input();
+    const result = await number_input();
     if (result === 999) {
       return 0; // :190-191
     }
@@ -667,7 +1060,7 @@ async function start_campaign() {
     await era.waitAnyKey();
     sinkou = Math.floor((sinkou * 110) / 100);
   }
-  // :593-595 勋章补正（存根恒 x1.00，窄路径数值不变）
+  // :593-595 勋章补正（#502 起真身：EXP:0:81 分档，本世界 > 5 枚时真有数值差）
   sinkou = Math.floor((sinkou * (await medal_bonus())) / 100);
   // :598 PRINTFORMW 合计
   era.print('合计　' + sinkou + '点');
@@ -736,5 +1129,7 @@ module.exports = {
   kyoten_event,
   medal_bonus,
   post_conquest_menu,
+  sengen_video,
+  sengen_video_bonus,
   start_campaign,
 };

@@ -72,6 +72,56 @@ function progress_texts(fixture) {
     .map((line) => line.text);
 }
 
+/**
+ * 确定随机源：按给定序列返回，同时记录每次调用的上界（RAND:2/3/4/5 的
+ * 参数不许改错——上界单独断言）。序列耗尽或越界即红（同 chara-family 的
+ * seq 先例）；上界也一并报出，便于定位是哪个 RAND:N 变了。
+ */
+function seq(values) {
+  let index = 0;
+  const uppers = [];
+  const rand = (upper) => {
+    uppers.push(upper);
+    const value = values[index];
+    index += 1;
+    assert.ok(
+      value !== undefined && value >= 0 && value < upper,
+      `随机序列耗尽或越界（第 ${index} 次抽取，上界 ${upper}）`,
+    );
+    return value;
+  };
+  rand.uppers = uppers;
+  return rand;
+}
+
+/** 水晶球投放菜单的最小世界：库存/已投放/流行度/剩余天数 + 资金与勋章 */
+function make_video_world({
+  stock = 0,
+  deployed = 0,
+  popularity = 0,
+  expire = 0,
+  money = 0,
+  medals = 0,
+} = {}) {
+  const fixture = create_era_fixture();
+  fixture.store.set('exflag:9010', stock); // EX_FLAG:9010 库存
+  fixture.store.set('exflag:9011', deployed); // EX_FLAG:9011 已投放
+  fixture.store.set('exflag:9012', popularity); // EX_FLAG:9012 流行度
+  fixture.store.set('exflag:9013', expire); // EX_FLAG:9013 过时倒计时
+  fixture.store.set('flag:10004', money); // MONEY
+  fixture.store.set('exflag:4444', money); // EX_FLAG:4444 非作弊资金
+  fixture.store.set('exp:0:81', medals); // EXP:0:81 勋章经验
+  fixture.store.set('callname:0:-2', '魔王'); // CALLNAME:0（勋章补正提示用）
+  return fixture;
+}
+
+// 直驱 sengen_video()，预置输入序列与随机源
+async function run_sengen_video(fixture, inputs, rand = seq([])) {
+  fixture.set_inputs(...inputs);
+  const { sengen_video } = fixture.load_module('page/page-invasion');
+  return sengen_video(rand);
+}
+
 test('【验收 1】气力 10000 出兵一次：侵攻度 +400、气力减半、威望 +2、经验 +200', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
@@ -568,10 +618,17 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
   make_world(crystal_ball, { fallen: 1 });
   crystal_ball.store.set('exflag:9011', 3); // 分子
   crystal_ball.store.set('exflag:9010', 7); // 分母
-  assert.equal(await run_post_conquest(crystal_ball, 1000), 0);
+  // [1000] 自 #502 起接 SENGEN_VIDEO 真身：菜单画出后由 [999] 退出（:90-92）
+  assert.equal(await run_post_conquest(crystal_ball, 1000, 999), 0);
   assert(
-    history_texts(crystal_ball).some((line) => line.includes('@SENGEN_VIDEO')),
-    '[1000] 转发到 SENGEN_VIDEO 存根',
+    history_texts(crystal_ball).some((line) =>
+      line.startsWith('可用于投放的水晶球'),
+    ),
+    '[1000] 转发到 SENGEN_VIDEO 真身（#502）',
+  );
+  assert(
+    !history_texts(crystal_ball).some((line) => line.includes('@SENGEN_VIDEO')),
+    '存根占位行已撤',
   );
   assert(
     crystal_ball.lines_history.some(
@@ -727,13 +784,11 @@ test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文�
   const { STUBBED_CALLS } = fixture.load_module('page/page-invasion');
   // INVASION_CHECK 自 #118 起是真身（五组条件），不在存根名单；
   // ARCANA_FORT 自 #470 起是真身（ere/invasion/invasion-arcana-fort.js），
-  // 同样移出
+  // MEDAL_BONUS 与 SENGEN_VIDEO 自 #502 起也是真身（本文件内），同样移出
   assert.deepEqual(STUBBED_CALLS, [
     'INVASION',
     'AGENT_MENU',
-    'MEDAL_BONUS',
     'INVASION_EVENT_SEIEI',
-    'SENGEN_VIDEO',
   ]);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
@@ -742,4 +797,473 @@ test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文�
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
+});
+
+// ————————————————————————————————————————————————————————————————
+// #502：@MEDAL_BONUS / @SENGEN_VIDEO / @SENGEN_VIDEO_BONUS
+// ————————————————————————————————————————————————————————————————
+
+test('MEDAL_BONUS：十一档与档界逐例（> 阈值判定），≤5 枚不打任何输出（:1030-1067）', async () => {
+  const cases = [
+    [0, 100],
+    [5, 100], // 未达首档：LOCAL 初值 100，且无 PRINTFORM
+    [6, 101],
+    [10, 101],
+    [11, 102],
+    [15, 102],
+    [16, 103],
+    [20, 103],
+    [21, 104],
+    [30, 104],
+    [31, 105],
+    [40, 105],
+    [41, 110],
+    [60, 110],
+    [61, 120],
+    [100, 120],
+    [101, 130],
+    [150, 130],
+    [151, 140],
+    [250, 140],
+    [251, 150],
+    [500, 150],
+    [501, 160],
+    [100000, 160], // 上限档不封顶
+  ];
+  for (const [medals, expected] of cases) {
+    const fixture = make_video_world({ medals });
+    const { medal_bonus } = fixture.load_module('page/page-invasion');
+    assert.equal(
+      await medal_bonus(),
+      expected,
+      `MEDAL_BONUS 档位：勋章 ${medals}`,
+    );
+    const texts = history_texts(fixture);
+    if (expected === 100) {
+      assert.deepEqual(texts, [], `MEDAL_BONUS 无输出：勋章 ${medals}（≤5）`);
+      assert.deepEqual(
+        fixture.waits,
+        [],
+        'MEDAL_BONUS 无输出时不调 waitAnyKey',
+      );
+    } else {
+      assert.deepEqual(
+        texts,
+        // %CALLNAME:ARG% 是呼び名（callname:0:-2），提示里的全角空格照抄原作
+        ['魔王的勋章补正\u3000x' + (expected / 100).toFixed(2)],
+        `MEDAL_BONUS 提示：勋章 ${medals}`,
+      );
+      assert.equal(
+        fixture.waits.filter((w) => w.waited).length,
+        1,
+        'MEDAL_BONUS 提示后等键（PRINTFORMW）',
+      );
+    }
+  }
+});
+
+test('MEDAL_BONUS 经窄路径生效：勋章 > 5 时 SINKOU 按补正放大（:593-595）', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture);
+  fixture.store.set('callname:0:-2', '魔王'); // 呼び名（%CALLNAME:MASTER% 的读数源）
+  fixture.store.set('exp:0:81', 6); // > 5 → x1.01
+  const result = await run_invasion(fixture, 1);
+  assert.equal(result, 1);
+  assert.equal(
+    fixture.store.get('flag:81'),
+    404,
+    'SINKOU 400 × 101% = 404（补正真读 EXP:0:81）',
+  );
+  assert(
+    history_texts(fixture).includes('魔王的勋章补正\u3000x1.01'),
+    '补正提示行随打印（呼び名 -2，不是 SAVESTR 的 -1「你」）',
+  );
+});
+
+test('SENGEN_VIDEO 顶栏与选项：库存/已投放/流行行按 {值,N} 定宽，四档按钮随库存开窗（:1074-1092）', async () => {
+  const fixture = make_video_world({
+    stock: 7,
+    deployed: 3,
+    popularity: 5,
+    expire: 4,
+  });
+  assert.equal(await run_sengen_video(fixture, [999]), 0);
+  const texts = history_texts(fixture);
+  // {STOCK,3} / {EX_FLAG:9011,3} 右对齐补半角空格；两处 \t\t 照抄原作
+  assert(
+    texts.includes('可用于投放的水晶球  4部\t\t已投放  3部'),
+    '顶栏：库存 7-3=4、已投放 3 各补到 3 位（:1076）',
+  );
+  assert(
+    texts.includes('        正流行的有  5部\t\t 4天后将过时'),
+    '流行行：9 空格缩进 + 流行度 3 位 + 剩余天数 2 位（:1078）',
+  );
+  const accelerators = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.accelerator);
+  assert.deepEqual(accelerators, [1, 2, 3, 4, 999], '四档 + 离开');
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.deepEqual(
+    rendered,
+    [
+      '[1] 投放水晶球',
+      '[2] 派奸商投放水晶球',
+      '[3] 增强流行效果',
+      '[4] 延长流行时间',
+      '[999] 离开',
+    ],
+    '按钮正文不得自带 [编号] 前缀（引擎 showAcc 自动拼，PR #30）',
+  );
+
+  // 无库存：不打四档选项、也不打流行行（EX_FLAG:9012/9013 任一为 0）
+  const empty = make_video_world({ stock: 3, deployed: 3, expire: 2 });
+  assert.equal(await run_sengen_video(empty, [999]), 0);
+  assert(
+    history_texts(empty).includes('当前没有可以用于投放的水晶球'),
+    ':1089 无库存文案',
+  );
+  assert(
+    history_texts(empty).includes(' 目前没有投放中的水晶球'),
+    ':1080 无流行文案（流行度 0）',
+  );
+  assert.deepEqual(
+    empty.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.accelerator),
+    [999],
+    '无库存时只有 [999]（:1094-1095 的守卫由引擎白名单先行兜住）',
+  );
+});
+
+test('SENGEN_VIDEO 无库存时 [1]-[4] 被引擎拒收（:1094-1095 的引擎等价形态）', async () => {
+  const fixture = make_video_world({ stock: 0, deployed: 0 });
+  await assert.rejects(
+    () => run_sengen_video(fixture, [1]),
+    /输入不合法！请输入以下值之一：/,
+    '未渲染的 [1] 送不进游戏层',
+  );
+  assert.deepEqual(fixture.inputs_consumed, [], '1 未被送达');
+});
+
+test('SENGEN_VIDEO [1] 投放：数量入 9011、加成后的数入 9012/9013（:1096-1119）', async () => {
+  // 投放 10 部；加成序列 RAND:2=0（×1.2）→ 12，RAND:3=1（不缩水）
+  const fixture = make_video_world({ stock: 20, money: 0 });
+  const rand = seq([0, 1]);
+  assert.equal(await run_sengen_video(fixture, [1, 10, 999], rand), 0);
+  assert.deepEqual(rand.uppers, [2, 3], 'MODE 0 只掷 RAND:2 与 RAND:3');
+  assert.equal(
+    fixture.store.get('exflag:9011'),
+    10,
+    ':1109 EX_FLAG:9011 += RESULT',
+  );
+  assert.equal(
+    fixture.store.get('exflag:9012'),
+    12,
+    ':1113 EX_FLAG:9012 += 加成后的 RESULT',
+  );
+  assert.equal(
+    fixture.store.get('exflag:9013'),
+    12,
+    ':1114 EX_FLAG:9013 += 同值',
+  );
+  const texts = history_texts(fixture);
+  assert(texts.includes('请输入要投放的数量'), ':1100');
+  assert(
+    texts.includes('在投放过程中似乎传出了不同的版本，投放效果提升了。'),
+    '加成提示（:1262-1263）',
+  );
+  assert(texts.includes('成功投放12部水晶球'), ':1112 报的是加成后的数');
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    1,
+    ':1112 成功投放后等键（PRINTFORMW）',
+  );
+});
+
+test('SENGEN_VIDEO [1] 投放失败：加成为 0 时只消耗 9011，不增 9012/9013（:1115-1117）', async () => {
+  // 投放 1 部；RAND:2=1（不加成）、RAND:3=0（×0.8 → floor(1×0.8)=0）
+  const fixture = make_video_world({ stock: 5, popularity: 2, expire: 3 });
+  const rand = seq([1, 0]);
+  assert.equal(await run_sengen_video(fixture, [1, 1, 999], rand), 0);
+  assert.equal(fixture.store.get('exflag:9011'), 1, '投放数已计入已投放');
+  assert.equal(fixture.store.get('exflag:9012'), 2, '流行度不变');
+  assert.equal(fixture.store.get('exflag:9013'), 3, '倒计时不变');
+  const texts = history_texts(fixture);
+  assert(
+    texts.includes('似乎有些水晶球投放不是太成功。'),
+    '缩水提示（:1264-1265）',
+  );
+  assert(
+    texts.includes('投放，似乎失败了。'),
+    '加成为 0 走失败支（:1115-1117）',
+  );
+  assert(!texts.some((line) => line.startsWith('成功投放')), '不打成功行');
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    1,
+    ':1116 投放失败后等键（PRINTFORMW）',
+  );
+});
+
+test('SENGEN_VIDEO [1] 子输入：超量只重问、0 回菜单重画（$INPUT_LOOP_TMP0，:1101-1107）', async () => {
+  // 超量 6 > 库存 3：打「超出数量，请重新输入」后重问，第二次 2 被接受
+  const fixture = make_video_world({ stock: 3 });
+  const rand = seq([1, 1]); // 2 部：RAND:2=1、RAND:3=1 → 不加成不减
+  assert.equal(await run_sengen_video(fixture, [1, 6, 2, 999], rand), 0);
+  assert(
+    history_texts(fixture).includes('超出数量，请重新输入'),
+    '超量提示：超出数量，请重新输入（:1106）',
+  );
+  assert.equal(fixture.store.get('exflag:9011'), 2, '超量的 6 不被接受');
+  assert.equal(
+    history_texts(fixture).filter((line) => line === '请输入要投放的数量')
+      .length,
+    1,
+    '重问不重画（$INPUT_LOOP_TMP0 只回到 INPUT）',
+  );
+
+  // 输入 0 → GOTO INPUT_LOOP：整屏重画（顶栏出现两次）
+  const back = make_video_world({ stock: 3 });
+  assert.equal(await run_sengen_video(back, [1, 0, 999]), 0);
+  assert.equal(
+    history_texts(back).filter((line) => line.startsWith('可用于投放的水晶球'))
+      .length,
+    2,
+    ':1103-1104 回菜单重画顶栏',
+  );
+  assert.equal(back.store.get('exflag:9011'), 0, '0 部不入账');
+});
+
+test('SENGEN_VIDEO [2] 奸商代理：付金币或勋章，两种酬劳都不够则重问（:1120-1163）', async () => {
+  // 付金币：M×5000 = 50000 < 100000
+  const money = make_video_world({ stock: 20, money: 100000, medals: 0 });
+  assert.equal(
+    await run_sengen_video(money, [2, 10, 1, 999], seq([1, 1, 1, 1, 1])),
+    0,
+  );
+  assert.equal(money.store.get('flag:10004'), 50000, ':1151 MONEY -= M*5000');
+  assert.equal(
+    money.store.get('exflag:4444'),
+    50000,
+    ':1152 EX_FLAG:4444 -= M*5000',
+  );
+  assert.equal(money.store.get('exflag:9011'), 10, '代理投放同样入 9011');
+  assert.equal(
+    money.store.get('exflag:9012'),
+    11,
+    'MODE 1 的无条件 ×1.10：10 → 11（随后两枚随机全 Miss）',
+  );
+  assert(
+    history_texts(money).includes('成功投放11部水晶球'),
+    '成功行报的是加成后的 11（:1140）',
+  );
+  assert.equal(
+    money.waits.filter((w) => w.waited).length,
+    1,
+    ':1140 奸商成功投放后等键（PRINTFORMW）',
+  );
+  assert(history_texts(money).includes('犒赏了奸商50000G'), ':1150');
+
+  // 付勋章：金币条件不成立（M*5000 > MONEY），勋章够
+  const medal = make_video_world({ stock: 20, money: 0, medals: 20 });
+  assert.equal(
+    await run_sengen_video(medal, [2, 10, 2, 999], seq([1, 1, 1, 1, 1])),
+    0,
+  );
+  assert.equal(medal.store.get('exp:0:81'), 10, ':1155 EXP:0:81 -= M');
+  assert.equal(medal.store.get('flag:10004'), 0, '不扣钱');
+  assert(history_texts(medal).includes('犒赏了奸商10枚勋章'), ':1154');
+  assert(
+    !history_texts(medal).some((line) => line.includes('犒赏金币')),
+    '金币按钮的渲染条件 (M*5000) < MONEY 不成立',
+  );
+
+  // 两种酬劳都不够：M > 勋章数 且 M*5000 > MONEY → 重问（0 回菜单）
+  const poor = make_video_world({ stock: 5, money: 10000, medals: 1 });
+  assert.equal(await run_sengen_video(poor, [2, 3, 0, 999]), 0);
+  assert(history_texts(poor).includes('没有足够的奖赏来打动奸商'), ':1134');
+  assert.equal(poor.store.get('exflag:9011'), 0, '被拒的投放数不入账');
+});
+
+test('SENGEN_VIDEO [3] 增强流行效果：50000G/5 勋章二选一，×1.2 起且封顶 ×2（:1164-1198）', async () => {
+  const money = make_video_world({ stock: 5, money: 100000, popularity: 10 });
+  // RAND:5=1（不额外加成）、RAND:2=1（不额外加成）→ floor(10×1.2) = 12
+  const money_rand = seq([1, 1]);
+  assert.equal(await run_sengen_video(money, [3, 1, 999], money_rand), 0);
+  assert.deepEqual(
+    money_rand.uppers,
+    [5, 2],
+    '增强段的两枚骰子：先是 RAND:5（1/5 再 ×1.60）、再是 RAND:2（1/2 再 ×1.20）',
+  );
+  assert.equal(money.store.get('flag:10004'), 50000, ':1179 MONEY -= 50000');
+  assert.equal(
+    money.store.get('exflag:4444'),
+    50000,
+    ':1180 EX_FLAG:4444 -= 50000',
+  );
+  assert.equal(money.store.get('exflag:9012'), 12, ':1190 TIMES 1.20');
+  assert(
+    history_texts(money).includes('因为剪辑出了更多的版本，投放效果增强了'),
+    ':1197',
+  );
+  assert(history_texts(money).includes('请选择要支付方式'), ':1169');
+
+  // 封顶 ×2：6 → 7（1.2）→ 11（×1.6）→ 13（×1.2）→ 封顶 12
+  const capped = make_video_world({ stock: 5, money: 100000, popularity: 6 });
+  assert.equal(await run_sengen_video(capped, [3, 1, 999], seq([0, 0])), 0);
+  assert.equal(capped.store.get('exflag:9012'), 12, ':1195-1196 封顶 M*2');
+
+  // 勋章支付：MONEY 不足 50000，勋章 > 5
+  const medal = make_video_world({
+    stock: 5,
+    money: 0,
+    medals: 9,
+    popularity: 1,
+  });
+  assert.equal(await run_sengen_video(medal, [3, 2, 999], seq([1, 1])), 0);
+  assert.equal(medal.store.get('exp:0:81'), 4, ':1183 EXP:0:81 -= 5');
+  assert.equal(medal.store.get('exflag:9012'), 1, 'floor(1×1.2) = 1');
+
+  // [999] 离开：不进增强段、不扣款
+  const leave = make_video_world({ stock: 5, money: 100000, popularity: 10 });
+  assert.equal(await run_sengen_video(leave, [3, 999, 999]), 0);
+  assert.equal(leave.store.get('flag:10004'), 100000, '离开不扣款');
+  assert.equal(leave.store.get('exflag:9012'), 10, '离开不影响流行度');
+
+  // 钱正好 50000：按钮不渲染（严格 >），只能离开（原作同样只能重问）
+  const edge = make_video_world({ stock: 5, money: 50000, popularity: 10 });
+  assert.equal(await run_sengen_video(edge, [3, 999, 999]), 0);
+  assert.equal(edge.store.get('flag:10004'), 50000, 'MONEY == 50000 不扣');
+  assert.equal(edge.store.get('exflag:9012'), 10);
+});
+
+test('SENGEN_VIDEO [4] 延长流行时间：50000G 一次，封顶 +5、保底 +1（:1199-1229）', async () => {
+  const normal = make_video_world({ stock: 5, money: 100000, expire: 3 });
+  // RAND:5=1、RAND:2=1 → floor(3×1.2) = 3 → 保底 (3-3) < 1 → 3+1 = 4
+  const normal_rand = seq([1, 1]);
+  assert.equal(await run_sengen_video(normal, [4, 1, 999], normal_rand), 0);
+  assert.deepEqual(
+    normal_rand.uppers,
+    [5, 2],
+    '延长段的两枚骰子与增强段同款（RAND:5 与 RAND:2）',
+  );
+  assert.equal(normal.store.get('flag:10004'), 50000, ':1211');
+  assert.equal(normal.store.get('exflag:9013'), 4, ':1226-1227 保底 +1');
+  assert(history_texts(normal).includes('流行时间延长了'), ':1228');
+  assert(history_texts(normal).includes('将收取50000G。'), ':1202');
+
+  // 封顶 M+5：10 → 12 → 19 → 22 → 封顶 15
+  const capped = make_video_world({ stock: 5, money: 100000, expire: 10 });
+  assert.equal(await run_sengen_video(capped, [4, 1, 999], seq([0, 0])), 0);
+  assert.equal(capped.store.get('exflag:9013'), 15, ':1224-1225 封顶 M+5');
+
+  // [999] 算了：回菜单，不扣钱也不延长
+  const skip = make_video_world({ stock: 5, money: 100000, expire: 3 });
+  assert.equal(await run_sengen_video(skip, [4, 999, 999]), 0);
+  assert.equal(skip.store.get('flag:10004'), 100000, '算了不扣款');
+  assert.equal(skip.store.get('exflag:9013'), 3, '算了不延长');
+});
+
+test('SENGEN_VIDEO 数量输入的空值与非数字：归一到 0 回菜单，NaN 不入账（#502 登记）', async () => {
+  // 引擎把空串归一成 0（#151/G6 的 getNumber 镜像），非数字串原样回传——
+  // 两者都不是原作那个「数值型 RESULT」的世界；number_input 一并归一到 0，
+  // 于是走 :1103-1104 的 GOTO INPUT_LOOP。数量输入是本菜单唯一没有按钮
+  // 白名单保护的读数点（上一轮输入清空白名单、之后只 print 不 printButton），
+  // 归一前 'abc' 会被当合法数量收下并把 NaN 写进 9011
+  for (const typed of ['', 'abc', NaN]) {
+    const fixture = make_video_world({ stock: 3 });
+    assert.equal(await run_sengen_video(fixture, [1, typed, 999]), 0);
+    assert.equal(
+      fixture.store.get('exflag:9011'),
+      0,
+      `输入 ${JSON.stringify(typed)}：数量不入账（更不许写 NaN）`,
+    );
+    assert.equal(
+      history_texts(fixture).filter((line) =>
+        line.startsWith('可用于投放的水晶球'),
+      ).length,
+      2,
+      `输入 ${JSON.stringify(typed)}：按 0 处理 → 回菜单重画（:1103-1104）`,
+    );
+  }
+});
+
+test('SENGEN_VIDEO_BONUS：MODE 0/1 的随机序列、保底与提示逐条（:1236-1266）', () => {
+  // 每个夹具一套模块实例：取本夹具里的函数，别跨夹具复用
+  const bonus_of = (fixture) =>
+    fixture.load_module('page/page-invasion').sengen_video_bonus;
+
+  // MODE 0：RAND:2=0（×1.2）→ 12，RAND:3=1（不缩水）
+  const plain = create_era_fixture();
+  const plain_rand = seq([0, 1]);
+  assert.equal(bonus_of(plain)(10, 0, plain_rand), 12);
+  assert.deepEqual(plain_rand.uppers, [2, 3]);
+  assert.deepEqual(
+    plain.text_lines(),
+    ['在投放过程中似乎传出了不同的版本，投放效果提升了。'],
+    'MODE 0 的加成提示（:1262-1263）',
+  );
+
+  // MODE 0 缩水：1 × 0.80 → 0
+  const shrunk = create_era_fixture();
+  assert.equal(bonus_of(shrunk)(1, 0, seq([1, 0])), 0);
+  assert.deepEqual(
+    shrunk.text_lines(),
+    ['似乎有些水晶球投放不是太成功。'],
+    '缩水提示（:1264-1265）',
+  );
+
+  // MODE 0 的缩水系数：10 × 0.80 = 8（改成 0.20 会得 2——系数值单独钉住）
+  const shrunk10 = create_era_fixture();
+  assert.equal(
+    bonus_of(shrunk10)(10, 0, seq([1, 0])),
+    8,
+    'MODE 0 的缩水系数：10 × 0.80 = 8',
+  );
+
+  // MODE 1：三枚加分 + 两枚共用（RAND:2/3/4/2/3），全 Miss → ×1.10 截断
+  const merchant = create_era_fixture();
+  const merchant_rand = seq([1, 1, 1, 1, 1]);
+  assert.equal(bonus_of(merchant)(10, 1, merchant_rand), 11);
+  assert.deepEqual(
+    merchant_rand.uppers,
+    [2, 3, 4, 2, 3],
+    'MODE 1 的抽取顺序不可交换',
+  );
+  assert.deepEqual(
+    merchant.text_lines(),
+    ['奸商们制作更多的版本提升了投放效果。'],
+    'MODE 1 的加成提示（:1258-1259）',
+  );
+
+  // MODE 1 保底：加成后仍 <= M 时回 M，且无提示（三条 SIF 都不命中）
+  const floored = create_era_fixture();
+  assert.equal(
+    bonus_of(floored)(1, 1, seq([1, 1, 1, 1, 0])),
+    1,
+    ':1260-1261 保底',
+  );
+  assert.deepEqual(floored.text_lines(), [], 'MODE 1 保底档不打任何提示');
+
+  // MODE 1 连续加成：10 → 11（1.10）→ 13（1.2）→ 15（1.2）→ 18（1.2）
+  const boosted = create_era_fixture();
+  assert.equal(bonus_of(boosted)(10, 1, seq([0, 0, 0, 1, 1])), 18);
+  assert.deepEqual(
+    boosted.text_lines(),
+    ['奸商们制作更多的版本提升了投放效果。'],
+    '加成后的提示只打一次',
+  );
+});
+
+test('SENGEN_VIDEO 的库存来源真读 EX_FLAG:9010/9011（售卻相關的写入点之后）', async () => {
+  // 顶栏分子分母与菜单开窗同源：EX_FLAG:9010 - EX_FLAG:9011
+  const fixture = make_video_world({ stock: 1, deployed: 1 });
+  assert.equal(await run_sengen_video(fixture, [999]), 0);
+  assert(
+    history_texts(fixture).includes('可用于投放的水晶球  0部\t\t已投放  1部'),
+    'stock 0：顶栏打 0、选项区走无库存分支',
+  );
+  assert(history_texts(fixture).includes('当前没有可以用于投放的水晶球'));
 });

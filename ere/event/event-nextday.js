@@ -67,7 +67,6 @@ const {
   chara_name,
   chara_nickname,
 } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 // 三张跨边的被调方，皆由并行票交付、本票只接线（各自的调用点备注见
 // docs/stub-registry.md 的「调用点接线随 #400」）
 const { aphrodisiac_addict } = require('#/event/event-addict');
@@ -92,9 +91,10 @@ const room_day_mod = require('#/dungeon/dungeon-room');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。#502 起 SENGEN_VIDEO_DE 换真身
+ * （本文件的 sengen_video_de），名单清空。
  */
-const STUBBED_CALLS = ['SENGEN_VIDEO_DE'];
+const STUBBED_CALLS = [];
 
 /** 原作 RAND:N（0..N-1）的缺省随机源（各函数以 rand 为注入名，同族模块同款） */
 function default_rand(n) {
@@ -1269,6 +1269,36 @@ function maou_kouho() {
 }
 
 /**
+ * @SENGEN_VIDEO_DE（INVASION.ERB:1269-1281）：水晶球投放的每日结算。
+ *
+ * 流行过时倒计时必减 1；另有 2/3 概率让流行度减 1（`SIF RAND:3` 是非零即
+ * 真，RAND:3 取值 0..2）。任一降到 0 以下即两者清零——原作写了**两段同款
+ * 的 IF**（:1274-1277 与 :1278-1281），第二段在多数情况下只是重写同一对值，
+ * 1:1 保留（#14 的登记对象，不擅自合并）。
+ *
+ * 无输出、无交互、零 CALL；原作 EVENT_NEXTDAY.ERB:184 无条件每日调用，
+ * 调用点在 run_event_nextday 的 :184。
+ *
+ * @param {(n: number) => number} [rand] 随机源（RAND:3 的上界）
+ */
+function sengen_video_de(rand = default_rand) {
+  era_exflag.crystal_ball_expire = era_exflag.crystal_ball_expire - 1; // :1271
+  if (rand(3)) {
+    era_exflag.crystal_ball_popularity = era_exflag.crystal_ball_popularity - 1; // :1272-1273
+  }
+  if (era_exflag.crystal_ball_expire <= 0) {
+    // :1274-1277
+    era_exflag.crystal_ball_expire = 0;
+    era_exflag.crystal_ball_popularity = 0;
+  }
+  if (era_exflag.crystal_ball_popularity <= 0) {
+    // :1278-1281
+    era_exflag.crystal_ball_expire = 0;
+    era_exflag.crystal_ball_popularity = 0;
+  }
+}
+
+/**
  * @MAOU_TENSHIN（:2455-2479）：魔王替换（旧魔王倒下后由候补继位）。
  *
  * **`MASTER = GETCHARA(17)`（:2463）的 ere 等价物是 `swap_chara(0, cid)`**：
@@ -1635,7 +1665,7 @@ async function run_event_nextday() {
 
   // :181 税収 / :184 水晶球投放结算 / :187 确定魔王候补（均无条件）
   await tax_get(); // #396 真身（system/stronghold/tax.js），#400 接线
-  stub_line('SENGEN_VIDEO_DE', '水晶球投放结算');
+  sengen_video_de(); // #502 真身（本文件；INVASION.ERB:1269-1281）
   maou_kouho();
 
   // :189-190 RETURN 1
@@ -1694,5 +1724,6 @@ module.exports = {
   event_youji,
   run_event_nextday,
   run_event_newday,
+  sengen_video_de,
   STUBBED_CALLS,
 };

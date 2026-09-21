@@ -437,11 +437,12 @@ on(
       // :93 随机遇敌的第一件（参数 0；#171 起为真身 ere/event/enter-enemy.js）
       await enter_enemy_mod.enter_enemy(0);
 
-      // :95-107 宣言数 SENGEN/SENGENMAX（EX_FLAG:9012 = 宣言回数）。EX_FLAG
-      // 表未落地（#113），读无可读，此处按 0 承接——落表后换真读。DAY 分档
-      // 依原作（>=100/>=300/>=500 各减一档，注意原作 IF 顺序：DAY >= 500 的
-      // 分支因 >= 100 先命中而不可达，1:1 照搬）
-      const ex_flag_9012 = 0; // TODO(#113): EX_FLAG:9012 落表后改真读
+      // :95-107 宣言数 SENGEN/SENGENMAX（EX_FLAG:9012 = 水晶球流行度，SENGEN
+      // 一族：投放时累加、每日 SENGEN_VIDEO_DE 衰减）。#502 起真读——此前
+      // 「EX_FLAG 表未落地、按 0 承接」的 TODO 已过时（门面早已备好）。
+      // DAY 分档依原作（>=100/>=300/>=500 各减一档，注意原作 IF 顺序：
+      // DAY >= 500 的分支因 >= 100 先命中而不可达，1:1 照搬）
+      const ex_flag_9012 = era_exflag.crystal_ball_popularity;
       const day = era_flag.day_count;
       let sengen;
       let sengenmax;
