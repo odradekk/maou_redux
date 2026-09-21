@@ -716,6 +716,48 @@ test('射精结算：目标避孕套先清 TFLAG:10 与装备，阻止同回合�
   assert.ok(fixture.text_lines().includes('射在避孕套里（温妮）'));
 });
 
+// —— #461：SYSTEM_SOURCE.ERB :19-51 避孕套判定（谁在戴 + 独立的助手射精分支）——
+
+test('避孕套判定：主人戴着 + 命中任一射精 TFLAG → 清位并打印固定文本', async () => {
+  const fixture = await run_ejaculation_settlement({
+    seed: (f) => {
+      f.store.set('tequip:31:35', 1);
+      f.store.set('tflag:2', 1);
+    },
+  });
+  assert.equal(fixture.store.get('tequip:31:35'), 0);
+  assert.equal(fixture.store.get('tflag:2'), 0);
+  assert.ok(fixture.text_lines().includes('射在避孕套里'));
+});
+
+test('避孕套判定：调教者是助手 + 助手戴着 + 命中射精 TFLAG → 清位并打印固定文本', async () => {
+  const fixture = await run_ejaculation_settlement({
+    assi: 17,
+    assiplay: 1,
+    seed: (f) => {
+      f.store.set('tequip:31:36', 1);
+      f.store.set('tflag:0', 1);
+    },
+  });
+  assert.equal(fixture.store.get('tequip:31:36'), 0);
+  assert.equal(fixture.store.get('tflag:0'), 0);
+  assert.ok(fixture.text_lines().includes('射在避孕套里'));
+});
+
+test('避孕套判定：助手射精独立分支 → 打印整行含助手称呼（全角括号，%SAVESTR:ASSI%→callname:-2）', async () => {
+  const fixture = await run_ejaculation_settlement({
+    assi: 17,
+    seed: (f, era_flag) => {
+      f.store.set(`callname:${era_flag.assi}:-2`, '小助手');
+      f.store.set('tequip:31:36', 1);
+      f.store.set('tflag:6', 1);
+    },
+  });
+  assert.equal(fixture.store.get('tequip:31:36'), 0);
+  assert.equal(fixture.store.get('tflag:6'), 0);
+  assert.ok(fixture.text_lines().includes('射在避孕套里（小助手）'));
+});
+
 test('射精结算：TFLAG:19 严格优先链的每对相邻分支', async () => {
   const cases = [
     [
@@ -882,4 +924,259 @@ test('射精结算：逆侵犯与 COM62/65 按助手/主人落 CFLAG:104/101', a
     });
     assert.equal(fixture.store.get(key), value, `COM${selectcom}`);
   }
+});
+
+// —— @SOURCE_CHECK_AUTO（issue #461：自动调教入口，与 SOURCE_CHECK 共享大
+// 部分函数，调用序列不同——差异见各测试注释）——
+
+// 世界底座（与 run_caress 相同）+ 一次 SOURCE_CHECK_AUTO。不调用 COM_FAMILY：
+// AUTO 不读 era_flag.selectcom。
+async function run_auto_check(seed) {
+  const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  fixture.era.addCharacter(0);
+  join_slave_chara(fixture, 31, '温妮');
+  seed_static_names(fixture);
+  fixture.era.beginTrain(0, 31);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  era_flag.player = 0;
+  era_flag.assi = -1;
+  era_flag.assiplay = 0;
+  fixture.store.set('maxbase:31:0', 2000);
+  fixture.store.set('maxbase:31:1', 2000);
+  fixture.store.set('base:31:0', 1450);
+  fixture.store.set('base:31:1', 410);
+  if (seed) {
+    seed(fixture, era_flag);
+  }
+  fixture.load_module('event/source-check');
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('SOURCE_CHECK_AUTO');
+  return fixture;
+}
+
+test('SOURCE_CHECK_UP_ANTI/_LIKE：仅 CFLAG:1==0 && PLAYER==MASTER 时结算（原作 :2728-2735 的 AUTO 专属门槛，manual 路径的 ANTI 调用被原作者注释掉）', async () => {
+  const cases = [
+    ['主人调教·无反抗刻印', {}, 300, Math.floor(400 * 1.25)],
+    ['反抗刻印生效（CFLAG:1 != 0）', { cflag1: 1 }, undefined, undefined],
+    ['助手调教（PLAYER != MASTER）', { player: 31 }, undefined, undefined],
+  ];
+  for (const [name, opts, expect_anti, expect_like] of cases) {
+    const fixture = await run_auto_check((f, era_flag) => {
+      f.store.set('source:31:15', 300); // ANTI 输入（反感追加）
+      f.store.set('source:31:16', 400); // LIKE 输入（恭顺）
+      if (opts.cflag1 !== undefined) {
+        f.store.set('cflag:31:1', opts.cflag1);
+      }
+      if (opts.player !== undefined) {
+        era_flag.player = opts.player;
+      }
+    });
+    // UP:11（反感）不在 AUTO_NUM_CHECK 处理范围内，300 直达 PALAM 不经缩放；
+    // UP:4（恭顺）在处理范围内，AUTO_NUM_CHECK 默认档（CFLAG:667 未播种）×1.25
+    assert.equal(
+      fixture.store.get('palam:31:11'),
+      expect_anti,
+      `${name}：反感`,
+    );
+    assert.equal(fixture.store.get('palam:31:4'), expect_like, `${name}：恭顺`);
+  }
+});
+
+test('AUTO_NUM_CHECK：CFLAG:667 八档倍率表（SYSTEM_SOURCE_SUB1.ERB:1852-1881）', async () => {
+  const cases = [
+    [0, 1.25],
+    [5, 1.5],
+    [10, 2.1],
+    [15, 2.85],
+    [20, 3.9],
+    [25, 5.3],
+    [30, 7.25],
+    [40, 9.9],
+  ];
+  for (const [cflag667, rate] of cases) {
+    const fixture = await run_auto_check((f) => {
+      f.store.set('delta:31:0', 100);
+      f.store.set('cflag:31:667', cflag667);
+    });
+    assert.equal(
+      fixture.store.get('palam:31:0'),
+      Math.floor(100 * rate),
+      `CFLAG:667=${cflag667} → ×${rate}`,
+    );
+  }
+});
+
+test('AUTO_NUM_CHECK：跳过 UP:11/12/13，UP:14 是例外不跳（原作 SIF LOCAL>=11 && LOCAL!=14 的 CONTINUE）', async () => {
+  // 11/12/13 均在 palam_up_check_mini 的 ORDER 里，会被正常处理并写入
+  // palam、再清零 delta——读 palam 能验证 AUTO_NUM_CHECK 是否跳过了档位
+  // 乘算。15/16 不在 ORDER 里，处理器执行完后读 palam 恒为 undefined，
+  // 没有区分力，分别见下方两条独立测试（issue #461 验收发现）
+  const skip_locals = [11, 12, 13];
+  for (const local of skip_locals) {
+    const key = `delta:31:${local}`;
+    const low = await run_auto_check((f) => {
+      f.store.set(key, 200);
+      f.store.set('cflag:31:667', 0); // 第 1 档 ×1.25
+    });
+    const high = await run_auto_check((f) => {
+      f.store.set(key, 200);
+      f.store.set('cflag:31:667', 40); // 第 8 档 ×9.90
+    });
+    assert.equal(
+      low.store.get(`palam:31:${local}`),
+      high.store.get(`palam:31:${local}`),
+      `UP:${local} 应跳过档位乘算，两档结果应相同`,
+    );
+  }
+  const low14 = await run_auto_check((f) => {
+    f.store.set('delta:31:14', 200);
+    f.store.set('cflag:31:667', 0);
+  });
+  const high14 = await run_auto_check((f) => {
+    f.store.set('delta:31:14', 200);
+    f.store.set('cflag:31:667', 40);
+  });
+  assert.notEqual(
+    low14.store.get('palam:31:14'),
+    high14.store.get('palam:31:14'),
+    'UP:14 虽 >= 11，仍不跳过档位乘算',
+  );
+});
+
+test('AUTO_NUM_CHECK：跳过 UP:16（死区，PALAM.yml 无此展示位，需读 delta 而非 palam 验证）', async () => {
+  // UP:16／PALAM:16 全 target/ 目录无消费者，yml/Palam.yml 的展示位止于
+  // 15——16 是原作 FOR LOCAL,0,17 循环上界比实际展示位多出的一档死区。
+  // palam_up_check_mini 的 ORDER 不含 16，处理器执行完后 palam:31:16 恒
+  // 为 undefined、没有区分力；但 16 也不会被 touched 清零或本次新增的
+  // delta:15 无条件清零覆盖，所以 AUTO_NUM_CHECK 结算后的 delta:31:16
+  // 仍保留原值，可以直接读它验证跳过逻辑（issue #461 验收发现）
+  const low = await run_auto_check((f) => {
+    f.store.set('delta:31:16', 200);
+    f.store.set('cflag:31:667', 0); // 第 1 档 ×1.25
+  });
+  const high = await run_auto_check((f) => {
+    f.store.set('delta:31:16', 200);
+    f.store.set('cflag:31:667', 40); // 第 8 档 ×9.90
+  });
+  assert.equal(
+    low.store.get('delta:31:16'),
+    200,
+    'UP:16 应跳过档位乘算，delta 维持种子原值',
+  );
+  assert.equal(
+    low.store.get('delta:31:16'),
+    high.store.get('delta:31:16'),
+    'UP:16 应跳过档位乘算，两档结果应相同',
+  );
+});
+
+test('PALAM_UP_CHECK_MINI：delta:15 处理器执行后恒为 0（收尾清零，不验证 AUTO_NUM_CHECK 对 15 的跳过逻辑）', async () => {
+  // UPID=15 从未进入 palam_up_check_mini 的 ORDER（撞车缺陷，1:1 保留，
+  // 见函数头注释），但 delta:15 仍须无条件清零，否则会被引擎
+  // nextTurnInTrain 的通用结算重新累加进 palam。这行清零是同步执行、
+  // 无条件的，会覆盖 AUTO_NUM_CHECK 对 UP:15 是否跳过档位乘算留下的任何
+  // 差异——SOURCE_CHECK_AUTO 处理器内 auto_num_check 到 palam_up_check_
+  // mini 之间没有 await，测试只能在整个处理器 resolve 之后读取状态，读不
+  // 到"已跳过乘算但尚未清零"的中间值。因此本测试如实只验证清零本身，不
+  // 尝试（也确实测不出）AUTO_NUM_CHECK 对 UP:15 的跳过逻辑（issue #461
+  // 验收发现）
+  const seeded = await run_auto_check((f) => {
+    f.store.set('delta:31:15', 200);
+    f.store.set('cflag:31:667', 40); // 第 8 档 ×9.90，若曾被乘算会是 1980
+  });
+  assert.equal(
+    seeded.store.get('delta:31:15'),
+    0,
+    'delta:15 应在处理器执行后清零',
+  );
+
+  const unseeded = await run_auto_check();
+  assert.equal(
+    unseeded.store.get('delta:31:15'),
+    0,
+    'delta:15 应在处理器执行后清零',
+  );
+});
+
+test('AUTO 处理器接线：两处气力 0 减半块与 AUTO_NUM_CHECK 按原作顺序复合', async () => {
+  // Block A（原作 :2601-2606，UP:0/1/2/14 减半）先于 AUTO_NUM_CHECK：
+  // 1000 → 减半 500 → ×1.25（CFLAG:667 未播种）= 625
+  const fixture_a = await run_auto_check((f) => {
+    f.store.set('delta:31:0', 1000);
+    f.store.set('base:31:1', 0); // 气力 0，触发两处 IF BASE:1<=0
+  });
+  assert.equal(
+    fixture_a.store.get('palam:31:0'),
+    625,
+    'Block A 先减半，AUTO_NUM_CHECK 再放大',
+  );
+
+  // Block B（原作 :2752-2763，UP:3/4/5/7/9/13 减半）后于 AUTO_NUM_CHECK：
+  // 100 × 1.25 = 125 → 减半 62
+  const fixture_b = await run_auto_check((f) => {
+    f.store.set('delta:31:9', 100);
+    f.store.set('base:31:1', 0);
+  });
+  assert.equal(
+    fixture_b.store.get('palam:31:9'),
+    62,
+    'AUTO_NUM_CHECK 先放大，Block B 再减半',
+  );
+});
+
+test('气力 0 损耗结算：Block B 写入的 deltabase 经 :2773-2774 当场结算到 base（AUTO 不显示损耗条，仍须扣减）', async () => {
+  const fixture = await run_auto_check((f) => {
+    f.store.set('base:31:1', 0); // 气力 0，仅触发 set_lose(0, lose(0)*2+80)=80，无其他 delta 输入
+  });
+  assert.equal(
+    fixture.store.get('base:31:0'),
+    1370,
+    'base:31:0 初始 1450，扣减 Block B 写入的 80 损耗',
+  );
+  assert.equal(
+    fixture.store.get('deltabase:31:0'),
+    0,
+    '结算后 deltabase 清零，不残留到下一回合',
+  );
+});
+
+test('PALAM_UP_CHECK_MINI：原作缺失 UPCOUNT==15 分支——UPID 14 结算两次、UPID 15 永不写回（原作缺陷，登记 issue #14）', async () => {
+  const fixture = await run_auto_check((f) => {
+    f.store.set('delta:31:14', 100); // 乳房快乐：验证双重结算
+    f.store.set('delta:31:13', 50); // 抑郁：不在 AUTO_NUM_CHECK 处理范围内的单次基线
+    f.store.set('source:31:18', 90); // SOURCE_CHECK_UP_FREE 的输入 → UP:15
+  });
+  // UP:14 经 Block A（BASE:1>0，跳过）与 AUTO_NUM_CHECK（×1.25）后为 125；
+  // MINI 的 ORDER 数组含两次 14（UPCOUNT=3 与缺陷版 UPCOUNT=15），各自累计一次
+  assert.equal(
+    fixture.store.get('palam:31:14'),
+    Math.floor(100 * 1.25) * 2,
+    'UPID 14 因原作缺陷被结算两次',
+  );
+  assert.equal(fixture.store.get('palam:31:13'), 50, 'UPID 13：单次结算基线');
+  assert.equal(
+    fixture.store.get('palam:31:15'),
+    undefined,
+    'UPID 15：ORDER 数组不含 15，UP:15=90 非零也永不写回',
+  );
+});
+
+test('down_map 在每次 SOURCE_CHECK_AUTO 开头清空，不跨回合残留 DOWN', async () => {
+  const fixture = await run_auto_check((f) => {
+    f.store.set('palam:31:0', 10000); // 与本回合 UP:0=0 合计恰好触及 LV4 门槛
+  });
+  assert.equal(
+    fixture.store.get('palam:31:0'),
+    1000,
+    '首次调用：EX_CHECK_UP 触发 DOWN:0=9000，结算为 10000-9000',
+  );
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('SOURCE_CHECK_AUTO');
+  assert.equal(
+    fixture.store.get('palam:31:0'),
+    1000,
+    '第二次调用：down_map 已清空，UP:0=DOWN:0=0，PALAM:0 不再变化（若 clear() 缺失会跌到 -8000）',
+  );
 });

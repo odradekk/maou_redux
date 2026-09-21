@@ -86,10 +86,12 @@ test('首回合比对：未解释差异为零，分类计数与当前待办清�
   // 【#234（J24）K3 PALAMCNG/MARKCNG 真身落地后重测】：首回合回放预置
   // CFLAG:221/222/223，首次润滑/欲情/耻情台词不再走存根占位，存根 12 → 10。
   // 【#390 后重测】SHOW_EQUIP_1/2 的占位行消失，stub 10 → 8（matched 不变）
+  // 【#461 避孕套判定落真身后重测】EQUIP_COM 存根占位（「避孕套判定尚未
+  // 移植」一行）不再输出，stub 8 → 7（matched 不变）
   assert.deepEqual(report.summary, {
     matched: 72,
     version: 0,
-    stub: 8,
+    stub: 7,
 
     unexplained: 0,
   });

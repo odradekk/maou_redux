@@ -134,9 +134,13 @@ const REPO = path.resolve(__dirname, '..');
 // 真身接上后转而记名到"跨画面编号错位"等既有归因（ere 按钮化 PR #53 通则），
 // 不再计入 stub 也不新增 matched，见 rules.js 的记名规则。upgrade 未变
 // （本样本回放未触发 ABLUP0～4 的可提升分支）。未解释恒 0。
+// 【#461 避孕套判定落真身后重测】SOURCE_CHECK 的 EQUIP_COM 存根占位（「避孕
+// 套判定尚未移植」一行）不再输出：natural 侧 stub 382→367（回放触发 15
+// 次）、upgrade 侧 stub 222→219（回放触发 3 次），两侧 matched 均不变——
+// 命中的对话轮次均未触及黄金样本里的对应文本，纯粹是占位行消失。未解释恒 0。
 const BASELINE = {
-  'train-natural': { matched: 1118, version: 0, stub: 382, unexplained: 0 },
-  'train-upgrade': { matched: 259, version: 0, stub: 222, unexplained: 0 },
+  'train-natural': { matched: 1118, version: 0, stub: 367, unexplained: 0 },
+  'train-upgrade': { matched: 259, version: 0, stub: 219, unexplained: 0 },
 };
 
 async function build_report(sample) {

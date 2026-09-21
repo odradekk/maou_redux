@@ -129,6 +129,43 @@ test('campaign_monster_list()：FLAG:400 = 1 但战役 1 未注册时走 whenMis
   );
 });
 
+// —— SOURCE_CHECK_AUTO 接线（#461：真身落在 event/source-check.js，
+//    dungeon-battle.js 的 source_check_auto 只转发事件）——
+
+test('SOURCE_CHECK_AUTO 接线：source_check_auto 转发到 event/source-check 的真实处理器（不再是占位行）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(1);
+  fixture.store.set('maxbase:1:0', 2000);
+  fixture.store.set('maxbase:1:1', 2000);
+  fixture.store.set('base:1:0', 1450);
+  fixture.store.set('base:1:1', 410);
+  fixture.era.beginTrain(0, 1);
+  const era_flag = load(fixture, 'era-utils/era-flag');
+  era_flag.target = 1;
+  era_flag.player = 0;
+  era_flag.assi = -1;
+  era_flag.assiplay = 0;
+  fixture.store.set('palam:1:0', 10000); // 与本回合 UP:0=0 合计恰好触及 LV4 门槛
+  load(fixture, 'event/source-check');
+  const battle = load(fixture, 'dungeon/dungeon-battle');
+
+  await battle.source_check_auto();
+  assert.equal(
+    fixture.store.get('palam:1:0'),
+    1000,
+    '首次调用：EX_CHECK_UP 触发 DOWN:0=9000，结算为 10000-9000——真实处理器执行，不是占位行',
+  );
+  await battle.source_check_auto();
+  assert.equal(
+    fixture.store.get('palam:1:0'),
+    1000,
+    '第二次调用：down_map 已清空（同一事件处理器持续生效，不是各自独立的占位调用）',
+  );
+});
+
 // —— 存根清单核对（enter-enemy.test.js 同款）——
 
 test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 monster-data 的全部存根化调用', () => {

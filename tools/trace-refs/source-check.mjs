@@ -442,6 +442,131 @@ export const FILES = [
         any: [/@LOSEVITAL_BAR/],
       },
       {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '11-158',
+        any: [/CALL INCEST_SEX_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '1576',
+        any: [/@SOURCE_CHECK_UP_ANTI/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2248-2277',
+        any: [/@PALAM_UP_CHECK_MINI/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2594-2807',
+        any: [/@SOURCE_CHECK_AUTO/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2601-2602',
+        any: [/CALL PLAYER_SKILL_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2607-2627',
+        any: [/CALL SOURCE_CHECK_UP_FREE/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2632-2638',
+        any: [/IF BASE:1 <= 0 && TFLAG:201 != 1/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2643',
+        any: [/CALL UP_TALENT_CVA_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2648',
+        any: [/CALL LOVE_MOIST_CHECK_UP/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2653',
+        any: [/CALL EX_CHECK_UP/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2658-2668',
+        any: [/CALL TARGET_WORMBABY_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2673-2723',
+        any: [/CALL SOURCE_CHECK_UP_DEVIATE/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2728-2729',
+        any: [/^[ \t]*CALL SOURCE_CHECK_UP_ANTI[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2728-2735',
+        any: [/CALL SOURCE_CHECK_UP_LIKE/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2740',
+        any: [/CALL UP_TALENT_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2744-2747',
+        any: [/CALL AUTO_NUM_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2750-2763',
+        any: [/LOSEBASE:0 \+= 80/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2768',
+        any: [/CALL PAIN_DAMAGE_CHECK_UP/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2773-2774',
+        any: [/BASE:0 -= LOSEBASE:0/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2779',
+        any: [/CALL PISSING_ECST_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2784',
+        any: [/CALL MARK_GOT_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2790',
+        any: [/CALL EXP_GOT_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2795',
+        any: [/CALL SOKUOCHI_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2800',
+        any: [/CALL SHOW_SOURCE/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE.ERB',
+        ref: '2805',
+        any: [/CALL PALAM_UP_CHECK_MINI/],
+      },
+      {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
         ref: '31-43',
         any: [/@SOURCE_SEX_CHECK/],
@@ -540,6 +665,11 @@ export const FILES = [
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
         ref: '1727',
         any: [/@TARGET_WORMBABY_CHECK/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB',
+        ref: '1852-1881',
+        any: [/@AUTO_NUM_CHECK/],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM_SOURCE_SUB2.ERB',
