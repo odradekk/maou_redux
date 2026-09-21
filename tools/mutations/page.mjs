@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 226; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 227; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -12,6 +12,8 @@ export const COUNT = 226; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // #469 起 +17（M10100-M10115、M10124，page-campaign.js / page-campaign-1.js：
 // 招募/派遣校验链、SELECT_CAMPAIGN 的范围守卫与深度重置、战役 1 的四张映射表、
 // 剧情 5 档收尾行）
+// #494 起 +1（M10125，page-campaign.js：招募分支把 char_make_inport 注入
+// rand_chara_make，源 CHAR_MAKE.ERB:57 在开局与战役两条路径上都会跑）
 
 export default [
   {
@@ -2115,6 +2117,14 @@ export default [
 ];`,
     tests: ['dungeon-main'],
     must_mention: '5 档的行数',
+  },
+  {
+    desc: 'M10125 招募：调用点不传 char_make_inport（退回 #494 前的形态，异国勇者判定在战役路径上恒不通过）',
+    file: 'ere/page/page-campaign.js',
+    find: '    () => char_make_inport(1, rand_n),',
+    replace: '    undefined, // 变异：不注入异国勇者判定',
+    tests: ['page-campaign'],
+    must_mention: '素质位点亮在导入的异国勇者 3 号身上',
   },
   {
     desc: 'M10200 PAGE-CONFIG 处女献上后续发生方式写入错位（RESULT-1 → RESULT）',

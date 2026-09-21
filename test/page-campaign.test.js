@@ -194,6 +194,88 @@ test('招募：16 位勇者位全满时走原作失败文案，不扣气力也�
   );
 });
 
+// —— #494：招募路径上的异国勇者判定 ——
+//
+// 原作 CAMPAIGN_EVENT.ERB:56 的 `CALL RAND_CHARA_MAKE` 虽然无参，但
+// `CALL CHAR_MAKE_INPORT`（CHAR_MAKE.ERB:57）在 `@RAND_CHARA_MAKE` 体内、
+// :55 的 IF 之内、:58 的 IF 之前，两条路径都会跑。ere 侧因转发层与真身
+// 相互 require 成环，只能由调用点把 char_make_inport 注入进去。
+
+test('招募：FLAG:76 与名单就绪时导入异国勇者，不建新的普通勇者（:57 的异国判定在战役路径上也跑）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '魔王');
+  fixture.store.set('base:0:1', 200);
+  fixture.store.set('flag:400', 1);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' }); // 普通路径会挑中的空位
+  fixture.store.set('cflag:1:6', 99); // 名字编号：避让随机命名重掷
+  add_chara(fixture, 9, '勇者9'); // 编制不连号，候选表首位是空位 1 号
+
+  // 通信名单（原作 GLOBALS:0..99，ere 侧是 global:100 的 JSON 数组）里放一条
+  // 异国勇者记录：唯一标记_预设号_等级_称呼_十张表段。预设号 3 不在编制里，
+  // talent 段带着性格 161（在 ID_OF_GENERAL_CHARASTERISTICS 表内，会被
+  // :67 的 SET_CHARASTERISTIC 清掉）
+  fixture.seed_chara(3, { id: 3, name: '预设3', callname: '预设3' });
+  fixture.store.set('flag:76', 30); // 外来勇者等级上限（:9-10 的闸门）
+  fixture.store.set(
+    'global:100',
+    JSON.stringify([
+      [
+        '401',
+        '3',
+        '5',
+        '异国者',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '161,1/',
+        '',
+        '',
+      ].join('_'),
+    ]),
+  );
+
+  const { campaign_menu } = load(fixture);
+  // [1] 招募 → [100] 收下（异国路径不跑形象确认循环，这已是 :158）→ 菜单
+  // [999] 退出。**用「兜底 999」而不是 set_inputs**：异国判定没跑通时会退回
+  // 非异国路径，那一轮多消耗一个 :107 的形象确认 INPUT（100 在那边正是
+  // 「继续」），兜底值让两条路径都停在「收下 → 菜单退出」上——本用例是想让
+  // 没注入 char_make_inport 的形态撞在断言上，不是撞在夹具的输入耗尽上
+  const answers = [1, 100, 999];
+  let asked = 0;
+  fixture.era.input = () => Promise.resolve(answers[asked++] ?? 999);
+  await campaign_menu(() => 0);
+
+  assert.equal(fixture.store.get('base:0:1'), 100, '扣 100 气力');
+  assert.equal(
+    fixture.store.get('talent:3:361'),
+    1,
+    '素质位点亮在导入的异国勇者 3 号身上',
+  );
+  assert.equal(
+    fixture.store.get('talent:1:361'),
+    undefined,
+    '不落到普通路径会挑中的 1 号（调用点没传 char_make_inport 时就会）',
+  );
+  assert.equal(
+    fixture.store.get('talent:3:161'),
+    1,
+    '名单记录带来的性格保留（:66-72 的预设落地在异国路径上不跑）',
+  );
+  assert.equal(
+    fixture.store.get('talent:3:160'),
+    undefined,
+    ':67 SET_CHARASTERISTIC 未执行',
+  );
+  assert.ok(
+    !texts(fixture.lines_history).some((t) => t.includes('[0] 印象')),
+    '异国路径不进 :81 的形象确认段',
+  );
+});
+
 // —— 派遣分支（RESULT == 2）——
 
 test('派遣：翻页与返回不写任何 CFLAG', async () => {

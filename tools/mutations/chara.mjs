@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 56; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）
+export const COUNT = 63; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）
 
 export default [
   {
@@ -460,9 +460,9 @@ export default [
   {
     desc: 'M10605 收下播报的称呼取「已加入数 - 1」（#487：报的是别人的名字）',
     file: 'ere/chara/chara-make.js',
-    find: '      era.print(`冒险者${chara_callname(newchara)}被囚禁在了地牢里！`);',
+    find: "        `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,",
     replace:
-      '      era.print(`冒险者${chara_callname(era.getAddedCharacters().length - 1)}被囚禁在了地牢里！`);',
+      "        `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(era.getAddedCharacters().length - 1)}被囚禁在了地牢里！`,",
     tests: ['chara-and-hair'],
     must_mention: '收下播报点名新加入的 3 号',
   },
@@ -538,5 +538,86 @@ export default [
     replace: '    return HERO_SLOT_IDS[0]; // 变异：不再返回 0',
     tests: ['chara-make', 'page-campaign'],
     must_mention: ':191 RETURN 0（调用点据此不扣气力）',
+  },
+  // —— #494：:66-141 整段归非异国分支（异国路径只做 :144-146）——
+  //
+  // 前三条各复制一段原属非异国路径的代码进 `ELSE`，还原「整段放在 if/else
+  // 之外」那个原缺陷的三种症状；末一条补 #487 验收发现的覆盖缺口
+  // （:139 的置 1 改成 0 时五份用例曾全绿）。
+  {
+    desc: 'M10614 派遣奴隶标志置位改 0（原作 :139 的 FLAG:402 = 1 名存实亡，#494 补 #487 验收发现的覆盖缺口）',
+    file: 'ere/chara/chara-make.js',
+    find: "        era.set('flag:402', 1); // :139 派遣奴隶标志（等级 1 生成）",
+    replace: "        era.set('flag:402', 0); // 变异：置位改成 0",
+    tests: ['chara-name'],
+    must_mention: ':139 派遣奴隶标志置 1（等级 1 生成）',
+  },
+  {
+    desc: 'M10615 异国分支也跑性格与发色的预设落地（把 :66-72 复制进 ELSE——#494 的原缺陷形态之一）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
+        if (character !== -1) {
+          set_charasteristic(newchara, character); // 变异：异国也跑预设落地
+        }
+        if (haircolor > 0) {
+          set_haircolor(newchara, haircolor); // 变异：异国也跑预设落地
+        }`,
+    tests: ['chara-name'],
+    must_mention: '名单带来的性格未被覆盖',
+  },
+  {
+    desc: 'M10616 异国分支也写 FLAG:402 = 1（把 :139 复制进 ELSE——#494 的原缺陷形态之一）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
+        era.set('flag:402', 1); // 变异：异国也写派遣奴隶标志`,
+    tests: ['chara-name'],
+    must_mention: ':139 FLAG:402 = 1 未执行（异国路径不写派遣奴隶标志）',
+  },
+  {
+    desc: 'M10617 异国分支也调 CHAR_MAKE（把 :141 复制进 ELSE——#494 的原缺陷形态之一）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
+        await chara_make(newchara, xingge, 0, rand_n, newchara); // 变异：异国也调 CHAR_MAKE`,
+    tests: ['chara-name'],
+    must_mention: ':141 CHAR_MAKE 未执行（名单带来的等级未被重置为 1）',
+  },
+  {
+    desc: 'M10618 异国分支也跑 FLAG:1/2 搬迁（把 :126-135 复制进 ELSE——#494 的原缺陷形态之一）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
+        if (game.event.上次调教对象 === newchara) game.event.上次调教对象 = -1;
+        if (game.event.上次助手 === newchara) game.event.上次助手 = -1;
+        if (game.event.上次调教对象 > newchara) {
+          game.event.上次调教对象 -= 1; // 变异：异国也跑搬迁
+        }
+        if (game.event.上次助手 > newchara) {
+          game.event.上次助手 -= 1; // 变异：异国也跑搬迁
+        }`,
+    tests: ['chara-name'],
+    must_mention: ':134 FLAG:2 未前移（搬迁段未执行）',
+  },
+  {
+    desc: 'M10619 收下播报的「异国的」前缀判据反转（原作 :174-175 的 SIF LOCAL:0 加错档）',
+    file: 'ere/chara/chara-make.js',
+    find: "        `${inport_cid === 0 ? '' : '异国的'}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,",
+    replace:
+      "        `${inport_cid === 0 ? '异国的' : ''}冒险者${chara_callname(newchara)}被囚禁在了地牢里！`,",
+    tests: ['chara-name'],
+    must_mention: ':174-175 非异国档不加「异国的」前缀',
+  },
+  {
+    desc: 'M10623 异国分支也进形象确认段（把 :76-81 与 :107 的 INPUT 复制进 ELSE——#494 的原缺陷形态之一）',
+    file: 'ere/chara/chara-make.js',
+    find: '        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）',
+    replace: `        newchara = inport_cid; // :146 ID_OF_NEWCHARA = CHARANUM-1（= 角色号）
+        era.print('呃……面前的勇者，是这个形象的……'); // 变异：异国也进形象确认段
+        era.print('[0] 印象 ： '); // 变异
+        await era.input(); // 变异：:107 的 INPUT`,
+    tests: ['chara-name'],
+    must_mention: ':107 的形象确认未执行（只问了 :158 的收下确认）',
   },
 ];

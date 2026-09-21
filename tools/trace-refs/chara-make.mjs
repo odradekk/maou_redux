@@ -2120,8 +2120,11 @@ export const FILES = [
         any: [/^\t\tLOCAL:0 = 0\r?$/m],
       },
       {
+        // #494：非异国分支的分支体（:58 的 `IF RESULT == 0` 开到 :143 的
+        // ELSE）。:126-137 那段 FLAG 搬迁缩进是一层、看着像在分支外，结构
+        // 上仍在里面——原实现据此误判过归属，锚取 :61 的 ADDCHARA CHARA
         src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
-        ref: '60-64',
+        ref: '59-142',
         any: [/^\t\tADDCHARA CHARA\r?$/m],
       },
       {
@@ -2138,6 +2141,18 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
         ref: '63-64',
         any: [/^\t\tID_OF_NEWCHARA = CHARANUM - 1\r?$/m],
+      },
+      {
+        // #494：FLAG:1/2 的搬迁段（缩进一层、看着像在非异国分支外）
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '126-137',
+        any: [/^\tSIF FLAG:1 == TARGET\r?$/m],
+      },
+      {
+        // #494：异国分支的三行（:145 LOCAL:0 = 1 与本文件不承载的 :146）
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '144-146',
+        any: [/^\t\t;異国の勇者である\r?$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
@@ -2308,8 +2323,10 @@ export const FILES = [
         any: [/^#DIM XINGGE\r?$/m],
       },
       {
+        // #494：整段非异国代码的跨度（性格/发色落地 → 形象确认 → FLAG 搬迁
+        // → FLAG:402 → CHAR_MAKE），锚取 :83 的性格显示
         src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
-        ref: '66-125',
+        ref: '66-141',
         any: [/^\t\tCALL SHOW_CHARASTERISTIC\(ID_OF_NEWCHARA\)\r?$/m],
       },
       {
