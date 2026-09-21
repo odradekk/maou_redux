@@ -716,6 +716,48 @@ test('射精结算：目标避孕套先清 TFLAG:10 与装备，阻止同回合�
   assert.ok(fixture.text_lines().includes('射在避孕套里（温妮）'));
 });
 
+// —— #461：SYSTEM_SOURCE.ERB :19-51 避孕套判定（谁在戴 + 独立的助手射精分支）——
+
+test('避孕套判定：主人戴着 + 命中任一射精 TFLAG → 清位并打印固定文本', async () => {
+  const fixture = await run_ejaculation_settlement({
+    seed: (f) => {
+      f.store.set('tequip:31:35', 1);
+      f.store.set('tflag:2', 1);
+    },
+  });
+  assert.equal(fixture.store.get('tequip:31:35'), 0);
+  assert.equal(fixture.store.get('tflag:2'), 0);
+  assert.ok(fixture.text_lines().includes('射在避孕套里'));
+});
+
+test('避孕套判定：调教者是助手 + 助手戴着 + 命中射精 TFLAG → 清位并打印固定文本', async () => {
+  const fixture = await run_ejaculation_settlement({
+    assi: 17,
+    assiplay: 1,
+    seed: (f) => {
+      f.store.set('tequip:31:36', 1);
+      f.store.set('tflag:0', 1);
+    },
+  });
+  assert.equal(fixture.store.get('tequip:31:36'), 0);
+  assert.equal(fixture.store.get('tflag:0'), 0);
+  assert.ok(fixture.text_lines().includes('射在避孕套里'));
+});
+
+test('避孕套判定：助手射精独立分支 → 打印整行含助手称呼（全角括号，%SAVESTR:ASSI%→callname:-2）', async () => {
+  const fixture = await run_ejaculation_settlement({
+    assi: 17,
+    seed: (f, era_flag) => {
+      f.store.set(`callname:${era_flag.assi}:-2`, '小助手');
+      f.store.set('tequip:31:36', 1);
+      f.store.set('tflag:6', 1);
+    },
+  });
+  assert.equal(fixture.store.get('tequip:31:36'), 0);
+  assert.equal(fixture.store.get('tflag:6'), 0);
+  assert.ok(fixture.text_lines().includes('射在避孕套里（小助手）'));
+});
+
 test('射精结算：TFLAG:19 严格优先链的每对相邻分支', async () => {
   const cases = [
     [

@@ -42,8 +42,9 @@
  *     -2126 的 EX += …）。
  *
  * 可达性判断（哪些分支整支存根，依据写在 issue #45）：
- *   - 避孕套判定（:19-51，TEQUIP:35/36）、装备持续效果组（:58-123 的
- *     EQUIP_COMxx）：各装备位是否已有真身由 equip_com_family 按位判定；
+ *   - 避孕套判定（:19-51，TEQUIP:35/36）已随 #461 落真身；装备持续效果组
+ *     （:58-123 的 EQUIP_COMxx）：各装备位是否已有真身由 equip_com_family
+ *     按位判定；
  *   - SOURCE_LESBIAN/GAY_SEX_CHECK（SUB2）：预设角色清一色女性 + 主人是
  *     男人（Chara0），两分支当前不可达，登记；
  *   - INCEST 的 CFLAG:21–25 解码、普通无亲族早退与 SUB1 的源乘算已实现；
@@ -2109,10 +2110,60 @@ on('SOURCE_CHECK', async () => {
     await kojo_message_com();
   }
 
-  // :19-51 避孕套判定（TEQUIP:35/36——避孕套使用判定未移植，随 J6
-  // COMF_CONDOM；装备持续效果组已随 #223 拆出，见下方链循环）
-  // :53-55 助手避孕套（TEQUIP:36，同上）
-  stub_line('EQUIP_COM', '避孕套判定', '随共用子程序票');
+  // :19-51 避孕套判定（#461 落真身）。谁在戴：TEQUIP:35（主人避孕套，属
+  // event 域，本域内直写）/ TEQUIP:36（助手避孕套，属 train 域，跨域写走
+  // #461 新补门面）命中同一组射精类 TFLAG 即清位。TFLAG:0/1/2/4/5/7/8/9
+  // 属 train 域、TFLAG:18 属 dungeon 域，读写均走各自门面
+  // （game.train.*/game.dungeon.*）。
+  const condom_ejac_hit = () =>
+    game.train.口中射精 ||
+    game.train.手中射精 ||
+    game.train.性交射精 ||
+    game.train.接吻射精 ||
+    game.train.舔阴射精 ||
+    game.train.主人犯助手射精 ||
+    game.train.口交射精后 ||
+    game.train.股间射精 ||
+    game.dungeon.足交射精或处遇口上;
+  const clear_condom_ejac = () => {
+    game.train.口中射精 = 0;
+    game.train.手中射精 = 0;
+    game.train.性交射精 = 0;
+    game.train.接吻射精 = 0;
+    game.train.舔阴射精 = 0;
+    game.train.主人犯助手射精 = 0;
+    game.train.口交射精后 = 0;
+    game.train.股间射精 = 0;
+    game.dungeon.足交射精或处遇口上 = 0;
+  };
+  if (
+    era_flag.assiplay === 0 &&
+    chara(cid).event.主人避孕套 &&
+    condom_ejac_hit()
+  ) {
+    era.print('射在避孕套里');
+    chara(cid).event.主人避孕套 = 0;
+    clear_condom_ejac();
+  } else if (
+    era_flag.assiplay &&
+    chara(cid).train.助手避孕套 &&
+    condom_ejac_hit()
+  ) {
+    era.print('射在避孕套里');
+    chara(cid).train.助手避孕套 = 0;
+    clear_condom_ejac();
+  }
+
+  // 避孕套判定·助手射精（同段内独立 IF，紧接上段）：与上面「调教者是谁」
+  // 的判据无关，TEQUIP:36 若已被上一段清零则本段条件自然不成立（原作段内
+  // 顺序执行，1:1 保留）
+  if (chara(cid).train.助手避孕套 && game.train.助手射精 && era_flag.assi > 0) {
+    era.print(
+      `射在避孕套里（${era.get(`callname:${era_flag.assi}:-2`) ?? ''}）`,
+    );
+    chara(cid).train.助手避孕套 = 0;
+    game.train.助手射精 = 0;
+  }
 
   // :56 CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线（排版近似，记名差异
   // 见 issue #45；TRAIN_MESSAGE_B/A 的同类分隔线同此）
