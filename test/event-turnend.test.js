@@ -692,6 +692,46 @@ test('CAMPAIGN_GAMEOVER：不在战役中时气力扣到 0 也不触发', async 
   assert.ok(!world.fixture.text_lines().some((t) => t.includes('体力耗尽了')));
 });
 
+test('#502 宣言数 SENGEN 真读 EX_FLAG:9012：衰减后的流行度决定追加遇敌次数', async () => {
+  // 数一次日推进回合里的 ENTER_ENEMY 调用：:93 的无条件一次 + :121-125 的
+  // FOR EFFECT, 0, SENGEN（SENGEN = EX_FLAG:9012 - 2，DAY < 100 档）。
+  // 同一回合里 SENGEN_VIDEO_DE 先跑（:418 的 run_event_nextday），所以读到
+  // 的是当日衰减后的流行度——常数 0.5 让 RAND:3 = 1（非零）必减 1；过时
+  // 倒计时预置成 10，避免它归零时把流行度一并清零
+  const count_calls = async (popularity) => {
+    const { fixture, emit, era_flag } = setup_turnend();
+    era_flag.time = 1; // 站在日推进回合（TIME 1 → 0 的那次 emit）
+    fixture.store.set('exflag:9012', popularity);
+    fixture.store.set('exflag:9013', 10);
+    const calls = [];
+    fixture.load_module('event/enter-enemy').enter_enemy = async (which) => {
+      calls.push(which);
+      return 0;
+    };
+    fixture.override_math_random(() => 0.5);
+    try {
+      await emit('EVENTTURNEND');
+    } finally {
+      fixture.restore_math_random();
+    }
+    return calls;
+  };
+
+  const none = await count_calls(0);
+  assert.equal(
+    none.length,
+    1,
+    '流行度 0：只有 :93 的无条件一次（:119-120 归零）',
+  );
+  const some = await count_calls(6);
+  assert.equal(
+    some.length,
+    4,
+    '流行度 6 → 当日衰减为 5 → 一次 + FOR EFFECT 循环 3 次（5 - 2）',
+  );
+  assert.deepEqual(some, [0, 0, 0, 0], '全部无实参（原作 CALL ENTER_ENEMY）');
+});
+
 test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS: pri_stubs } = fixture.load_module(
