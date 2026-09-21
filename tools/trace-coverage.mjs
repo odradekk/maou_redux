@@ -121,7 +121,12 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
+export const PENDING_BASELINE = 28; // 合并态实测（#470 并上含 #465 的 master）：
+// 29（#465 后的 master）− 1（本票的 侵略/ARCANA_BATTLE.ERB——主循环与
+// DEATH_CHECK4 落 ere/invasion/invasion-arcana-battle.js，ENEMY_ATTACK3/
+// MONSTER_ATTACK3 判死）= 28，与 `node tools/trace-check.mjs --coverage`
+// 的重测一致。数字取自重测而非相加。
+// export const PENDING_BASELINE = 29; // 合并态实测（#465 并上含 #464 的 master）：
 // 37（#464 后的 master）− 8（本票的 ABL/ABLUP10.ERB～ABLUP17.ERB 八个文件）
 // = 29，与 `node tools/trace-check.mjs --coverage` 的重测一致。数字取自
 // 重测而非相加。

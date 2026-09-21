@@ -3,7 +3,8 @@
 
 export const FILES = [
   // —— #470 Q13 侵略残余·3：ere/invasion/invasion-arcana-battle.js。
-  //    锚 = 所引区间内带鉴别力的原文行 ——
+  //    注册集 = js 注释里引用的全部区间（含判死段 :182-353/:356-525 的
+  //    头部提及）；锚 = 所引区间内带鉴别力的原文行 ——
   {
     js: 'ere/invasion/invasion-arcana-battle.js',
     refs: [
@@ -14,13 +15,28 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
-        ref: '20-22',
+        ref: '9-12',
+        any: [/PRINTW \* 一对一单挑！\*/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '19-22',
+        any: [/;弾の補充/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '21-22',
         any: [/CFLAG:ATKER:571 = 15/],
       },
       {
         src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
-        ref: '24-32',
-        any: [/IF TALENT:ATKER:252 == 1/, /;先制圣灵/],
+        ref: '24-27',
+        any: [/IF TALENT:ATKER:252 == 1/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '29-32',
+        any: [/;先制圣灵/],
       },
       {
         src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
@@ -49,6 +65,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '73',
+        any: [/IF X >= Y/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
         ref: '79-85',
         any: [/PRINTL 战斗中断了/],
       },
@@ -74,13 +95,33 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
-        ref: '116-121',
-        any: [/CALL WEAPON_RESTORE,ATKER/, /SIF CFLAG:DEFER:1 == 0/],
+        ref: '116-117',
+        any: [/CALL WEAPON_RESTORE,ATKER/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '119-121',
+        any: [/SIF CFLAG:DEFER:1 == 0/],
       },
       {
         src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
         ref: '124-177',
         any: [/;ホビットの加速ボーナス/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '182-353',
+        any: [/@ENEMY_ATTACK3, ARG:0, ARG:1, ARG:2/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '356-525',
+        any: [/@MONSTER_ATTACK3, ARG:0, ARG:1, ARG:2/],
+      },
+      {
+        src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
+        ref: '531-584',
+        any: [/@DEATH_CHECK4/],
       },
       {
         src: 'target/ERB/侵略/ARCANA_BATTLE.ERB',
