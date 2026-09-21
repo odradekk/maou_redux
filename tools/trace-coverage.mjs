@@ -366,9 +366,10 @@ export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#48
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 5; // #501：MAOU_TENSHIN 行（源写「待核（@EVENTEND 魔王倒下
-// 分支的调用）」，三路归因规则都够不着）从「存根」订正为「已实现」后不再进入归因扫描，
-// 6 → 5，与 `node tools/trace-check.mjs --coverage` 的合并态重测一致（显式改小，非顺手改数字）。
+export const UNATTRIBUTED_BASELINE = 5; // #501：MAOU_TENSHIN 行从「存根」订正为「已实现」后不再进入归因扫描——
+// 订正前它「源」写「待核（@EVENTEND 魔王倒下分支的调用）」，三路归因规则都够不着（「源」列同票补成真实出处
+// EVENT/EVENT_NEXTDAY.ERB:2455-2479）。6 → 5，与 `node tools/trace-check.mjs --coverage` 的合并态重测一致
+// （显式改小，非顺手改数字）。
 // #350：GET_TATOO 清单行补回准确源文件；
 // #383：CSVCSTR 行（源写「Emuera 内建函数」，三路归因规则都够不着）从
 // 存根改判已实现后不再进入归因扫描，13 → 12（显式改小，非顺手改数字）。

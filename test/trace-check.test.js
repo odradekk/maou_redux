@@ -1237,11 +1237,13 @@ test('移植状态表全绿（真树）：合计恰为 346，真值点与两类�
  * 这些行在代码里早已做完（有真身、接进调用链），清单里却停在「存根／部分实现」，
  * 后果由 tools/trace-coverage.mjs 的规则 4 放大：有移植产物 ∩ 表里仍有未了结项
  * 归因到该文件 → 「部分移植」，一行过时文字就能把做完了的文件永久卡住。本用例
- * 钉住两条：
- *   ① 行级——表里的状态格（最后一格）不再以「存根／部分实现」开头（工具判
- *      「未了结」的同款判据），并在行里写清本体位置与调用点（照 COM63_AUTO
- *      行的先例）；
- *   ② 工具级——三个此前被这些行拖住的文件在 `--coverage --list` 里判「已移植」
+ * 钉三层：
+ *   ① 第一张表行级——状态格（末格，即工具读的那一格）不再以「存根／部分实现」
+ *      开头。这是工具判「未了结」的一半判据；另一半「登记（…）不带死标记」本表
+ *      钉的行都不是登记行，故不在此列；
+ *   ② 措辞订正的行——钉事实（本体/调用点位置），不钉散文：这些行本票只把事实
+ *      写准，未了结状态原样保留（如 K2/K4 未注册、调用点未接线）；
+ *   ③ 工具级——三个此前被这些行拖住的文件在 `--coverage --list` 里判「已移植」
  *      （#501 的验收判据）。
  * 定位子串在表里唯一；行内文字一改即失效（要改行就同步这里）。
  */
@@ -1251,8 +1253,16 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
     'utf8',
   );
   const lines = registry.split(/\r?\n/);
-  // [定位子串, 行内必须出现的本体/调用点/票据]
-  const census = [
+  /** 取某行按未转义的 | 拆出的第 n 格（n 为负取倒数；正文里的 \| 是字面竖线） */
+  const cell_of = (row, n) =>
+    row
+      .split(/(?<!\\)\|/)
+      .slice(1, -1)
+      .at(n)
+      .trim();
+
+  // ① 第一张表：本票订正为「已实现」的行（状态列 = 末格）
+  const first_table = [
     [
       '`GET_ADV_COM`（升格规则族）',
       ['com-caress.js:3790-3799', 'com-advanced.js:3800'],
@@ -1263,25 +1273,13 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
       '`KOJO_MESSAGE_COM_8`（K8 银黑桃，全指令）',
       ['kojo-k8-spade.js', 'kojo_message_com_family.register(8'],
     ],
-    ['CALL INTERCEPT（:113）', ['已实现，#397', 'page-intercept.js']],
-    ['CALL ABILITY_UP（:115）', ['已实现，#397', 'page-ability-up.js']],
-    [
-      'CALL TAILOR_MAIN; TARGET = FLAG:1（:121-122）',
-      ['已实现，#397', 'page-tailor.js'],
-    ],
-    [
-      'CALL INFRASTRUCTURE（:132-133）',
-      ['已实现，#348', 'page-infrastructure.js'],
-    ],
-    ['CALL CONFIG（:144）', ['已实现，#463', 'page-config.js']],
-    ['CALL MAOUNET（:146）', ['已实现，#350', 'cross-save-sharing.js']],
     ['COMF134\\_背后位ＳＰ.ERB:7', ['COM64 已实现', 'com-assistant.js:2676']],
   ];
-  for (const [key, needles] of census) {
+  for (const [key, needles] of first_table) {
     const hits = lines.filter((line) => line.includes(key));
     assert.equal(hits.length, 1, `定位子串必须唯一命中一行：${key}`);
     const row = hits[0];
-    const status = row.split('|').slice(1, -1).pop().trim();
+    const status = cell_of(row, -1);
     assert.ok(
       !status.startsWith('存根') && !status.startsWith('部分实现'),
       `#501：${key} 的状态格仍是未了结项（${status.slice(0, 40)}）`,
@@ -1290,6 +1288,60 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
       assert.ok(row.includes(needle), `#501：${key} 行必须写清 ${needle}`);
     }
   }
+
+  // ② 措辞订正的行：状态照旧（前两条仍是未了结），但事实必须写准
+  const wording = [
+    // 本体在 event-autotrain.js，调用点仍是迷宫域内存根——两句都要在场
+    [
+      '| `BEFORE_AUTOTRAIN`',
+      ['event-autotrain.js:40', 'dungeon-battle.js:144'],
+    ],
+    // 已注册的范围与欠账（K2/K4 有本体未注册）必须点名
+    [
+      '| `ATTACK_KOUJO` / `ATTACK_KOUJO_B`',
+      ['K2/K4', 'kojo-k2-timid.js:10327'],
+    ],
+    ['| `VICTORY_KOUJO`', ['K2/K4', 'kojo-k2-timid.js:10327']],
+    // 调用点已接线（原写「仍是存根」过时）
+    ['|`AUTO_NUM_CHECK`', ['source-check.js:3659']],
+  ];
+  for (const [key, needles] of wording) {
+    const hits = lines.filter((line) => line.includes(key));
+    assert.equal(hits.length, 1, `定位子串必须唯一命中一行：${key}`);
+    for (const needle of needles) {
+      assert.ok(hits[0].includes(needle), `#501：${key} 行必须写清 ${needle}`);
+    }
+  }
+
+  // ③ @USERSHOP 表：表头是「输入｜原作行为｜占位名｜归属」，状态语义在占位名格
+  // （工具不解析这张表，行级守卫只有本用例；别把断言打在末格「归属」上）
+  const shop_rows = [
+    ['CALL INTERCEPT（:113）', ['（已实现，#397）', 'page-intercept.js']],
+    ['CALL ABILITY_UP（:115）', ['（已实现，#397）', 'page-ability-up.js']],
+    [
+      'CALL TAILOR_MAIN; TARGET = FLAG:1（:121-122）',
+      ['（已实现，#397）', 'page-tailor.js'],
+    ],
+    [
+      'CALL INFRASTRUCTURE（:132-133）',
+      ['（已实现，#348）', 'page-infrastructure.js'],
+    ],
+    ['CALL CONFIG（:144）', ['（已实现，#463）', 'page-config.js']],
+    ['CALL MAOUNET（:146）', ['（已实现，#350）', 'cross-save-sharing.js']],
+  ];
+  for (const [key, needles] of shop_rows) {
+    const hits = lines.filter((line) => line.includes(key));
+    assert.equal(hits.length, 1, `定位子串必须唯一命中一行：${key}`);
+    const row = hits[0];
+    assert.ok(
+      cell_of(row, 2).startsWith('（已实现'),
+      `#501：${key} 的「占位名」格仍是壳（${cell_of(row, 2)}）`,
+    );
+    for (const needle of needles) {
+      assert.ok(row.includes(needle), `#501：${key} 行必须写清 ${needle}`);
+    }
+  }
+
   // 验收判据：工具按清单归因，三个文件从「部分移植」翻「已移植」
   const { status, output } = run_tool([
     '--coverage',
