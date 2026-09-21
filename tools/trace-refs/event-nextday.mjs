@@ -2802,6 +2802,13 @@ export const FILES = [
         any: [/CALL CAMPAIGN_EXP_PILLORY,TARGET/],
       },
       {
+        // 需求审查（#469）：经验行的两次等键——被调方 CAMPAIGN_EVENT.ERB:298
+        // 是 PRINTFORMW（自带一次），调用点 :2392 的 WAIT 是第二次
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '298',
+        any: [/PRINTFORMW 通過榨取攻略中的奴隷的能量獲得了/],
+      },
+      {
         src: 'target/ERB/EVENT/EVENT_NEXTDAY.ERB',
         ref: '2392',
         any: [/WAIT/],

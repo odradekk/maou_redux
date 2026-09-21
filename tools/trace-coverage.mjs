@@ -121,7 +121,11 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463 的 master）：
+export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463/#481 的 master）：
+// 再并一次 master（#481 / 3a02bbe）后重测仍是 23——#469 把 CAMPAIGN 族做进 ere/
+// 时，侵略/CAMPAIGN/CAMPAIGN_1.ERB 与 CAMPAIGN_EVENT.ERB 在本票的基线里本就已经
+// 是「部分移植」（不在待移植分子里），所以本数不动；那次合并把「归因不到」
+// 从 11 抬低到 6，改的是 UNATTRIBUTED_BASELINE（见其条目），两条基线各自独立。
 // master 侧 #463 已把基线抬到 27（#465 先抬到 29；SYSTEM/CONFIG.ERB 落地
 // ere/page/page-config.js、SYSTEM/SYSTEM_MODEINT.ERB 的 @QUE2MK 落地
 // ere/event/first-setting.js 的 que2mk，各减 1）；本票再减 4——侵略/
@@ -331,11 +335,14 @@ export const PENDING_BASELINE = 23; // 合并态实测（#470 并上含 #463 的
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 11; // #350：GET_TATOO 清单行补回准确源文件；
+export const UNATTRIBUTED_BASELINE = 6; // #350：GET_TATOO 清单行补回准确源文件；
 // #383：CSVCSTR 行（源写「Emuera 内建函数」，三路归因规则都够不着）从
 // 存根改判已实现后不再进入归因扫描，13 → 12（显式改小，非顺手改数字）。
 // #457：BEFORE_AUTOTRAIN 行补回准确源文件（EVENT/EVENT_AUTOTRAIN.ERB:91，
 // 原写「調教相關（自动调教）」够不着任何文件），12 → 11（显式改小）。
+// #469：CAMPAIGN 族清单行重写时「源」列从目录级（侵略/CAMPAIGN/）落回
+// 具体文件（CAMPAIGN_EVENT.ERB 各行号 / DUNGEON.ERB / EQUIP.ERB 调用点），
+// 11 → 6（显式改小，#461 合并态实测）。
 
 /** 文件级「已判定不实现」显式表：推翻裁定 = 改这里（每条注明出处）。 */
 export const RULINGS = [

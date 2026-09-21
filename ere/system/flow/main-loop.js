@@ -88,6 +88,10 @@ require('#/system/train/com-tentacle');
 // 与上面 event-turnend.js 的 #PRI 档、event-turnend-later.js 的空 #LATER 档
 // 同链，按 #PRI → 普通 → #LATER 依次执行（#6 语义）
 require('#/system/turnend-settle');
+// 战役1「赤蛮呪森」（#469）：CAMPAIGN_1.ERB 的 13 个编号函数向
+// page-campaign.js / dungeon.js 等文件声明的 CAMPAIGN_* DispatchFamily
+// 注册实现，注册是顶层副作用，必须在此显式 require 才会触发
+require('#/page/page-campaign-1');
 // 口上（#46）：公共底座（@EVENTSHOP 总开关 / @GET_KOJO_NUM / 指令口上
 // 分发族）与口上模块（K0 慈爱、K1 自信家、K2 気弱、K3 高貴、K4 冷徹、
 // K5 マオ、K6 悪女、K7 金红桃、K8 银黑桃、K9 方片、K10 俱乐部、K11

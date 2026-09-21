@@ -1240,6 +1240,28 @@ export const FILES = [
         ref: '294',
         any: [/街でのイベント/],
       },
+      // —— #469 战役族（CAMPAIGN_EVENT.ERB 的 @CAMPAIGN_QUEST/@CAMPAIGN_ENDING
+      //    与 DUNGEON.ERB 的终局调用点）——
+      {
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '190-197',
+        any: [/LOCAL = CFLAG:\(ARG:0\):501/],
+      },
+      {
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '304-312',
+        any: [/;エンディング/],
+      },
+      {
+        src: 'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB',
+        ref: '313',
+        any: [/SIF FLAG:400 < 1/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON.ERB',
+        ref: '195',
+        any: [/CALL CAMPAIGN_ENDING,ARG:0/],
+      },
     ],
   },
 ];

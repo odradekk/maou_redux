@@ -375,9 +375,7 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   const endcheck = texts.findIndex((line) =>
     line.includes('银黑桃乳业获得的收入desu'),
   ); // ENDCHECK 内部（@EVENT_NEWDAY :241 之后，ENDCHECKSPADE 的 151 档播报）
-  const campaign = texts.findIndex((line) =>
-    line.includes('@CAMPAIGN_GAMEOVER'),
-  ); // 普通档尾部
+  const campaign = texts.findIndex((line) => line.includes('@AUTOTRAIN')); // 普通档尾部
   assert.ok(nextday >= 0 && month_roll >= 0 && endcheck >= 0 && campaign >= 0);
   assert.ok(
     nextday < month_roll,
@@ -3064,9 +3062,49 @@ test('示众台（PILLORY）：COUNT_V > 0 时接妊娠链（CFLAG:107 + #401 �
     fixture.var_writes.some((w) => w.name === 'cflag:31:107' && w.value === 1),
     'CFLAG:107 += COUNT_V',
   );
+  // 战役经验结算（#469 起真身，跨边）：FLAG:400 未置位时不触发
   assert(
-    fixture.text_lines().some((t) => t.includes('@CAMPAIGN_EXP_PILLORY')),
-    '侵略域的跨边仍是存根（占位行）',
+    !fixture.text_lines().some((t) => t.includes('点经验值')),
+    'FLAG:400 未置位，战役经验结算不触发',
+  );
+});
+
+test('示众台（PILLORY）：战役经验结算——FLAG:400 置位时派遣中角色获得平均凌辱次数经验（#469）', async () => {
+  const fixture = setup_chara_events();
+  seed_pillory(fixture); // 温妮（31）在示众台上，CFLAG:1 == 8
+  join_slave_chara(fixture, 32, '派遣中的奴隶');
+  fixture.store.set('flag:400', 1);
+  fixture.store.set('cflag:31:661', 3);
+  fixture.store.set('cflag:31:662', 2);
+  fixture.store.set('cflag:31:663', 0);
+  fixture.store.set('cflag:31:664', 0);
+  fixture.store.set('cflag:31:665', 0);
+  fixture.store.set('cflag:32:1', 12); // 32 号派遣中，非被示众的 31 号
+  fixture.store.set('exp:32:80', 10);
+  const { pillory } = fixture.load_module('event/event-nextday-pillory');
+
+  await pillory(() => 0);
+
+  // (3+2+0+0+0)/5 + 1 = 2
+  assert.equal(fixture.store.get('exp:32:80'), 12, '派遣中角色获得经验');
+  assert.equal(
+    fixture.store.get('exp:31:80'),
+    undefined,
+    '被示众的角色本身不在派遣状态，不重复计入',
+  );
+  assert(
+    fixture.text_lines().some((t) => t.includes('获得了2点经验值')),
+    '结算播报',
+  );
+  // :298 是 PRINTFORMW（自带等待）、调用点 :2392 另有一个 WAIT——两次等键
+  // 都要还原：缺了前者，这个等待会落在那之后的下一行输出上
+  const exp_line = fixture.lines_history.find(
+    (l) => l.type === 'text' && l.text.includes('获得了2点经验值'),
+  );
+  assert.ok(exp_line, '结算播报行');
+  assert.ok(
+    fixture.waits.some((w) => w.waited && w.rows_at_wait === exp_line.row + 1),
+    ':298 PRINTFORMW 的等待',
   );
 });
 
@@ -3281,8 +3319,7 @@ test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-
     // #400（N16）起 APHRODISIAC_ADDICT / SABBATH / SABBATH_DAY / TAX_GET
     // 四张跨边接线落地（真身由 #405 / #396 交付），MAOU_KOUHO 本体同票落成；
     // @PILLORY 自 #400 起真身（ere/event/event-nextday-pillory.js），其体内的
-    // CAMPAIGN_EXP_PILLORY 调用点（侵略域）仍留存根
-    'CAMPAIGN_EXP_PILLORY',
+    // CAMPAIGN_EXP_PILLORY 调用点（侵略域）自 #469 起也换真身，已从名单移除
     'SENGEN_VIDEO_DE',
   ]);
   // HUMAN_AGE_GENERATE 自 #385 起为真身（ere/chara/chara-body.js），本模块

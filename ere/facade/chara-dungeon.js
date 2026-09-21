@@ -59,6 +59,21 @@ class DungeonFacade {
   }
 
   /**
+   * 目标阶层（cflag:cid:520 ↔ CFLAG:520）
+   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行418 CFLAG:520 目標階層
+   * @returns {number}
+   */
+  get 目标阶层() {
+    return era.get(`cflag:${this.cid}:520`) || 0;
+  }
+  /**
+   * @param {number} v
+   */
+  set 目标阶层(v) {
+    era.set(`cflag:${this.cid}:520`, v);
+  }
+
+  /**
    * 已接任务（cflag:cid:534 ↔ CFLAG:534）
    * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:534 受注クエスト
    * @returns {number}

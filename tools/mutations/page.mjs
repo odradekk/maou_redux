@@ -3,10 +3,15 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 209; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
-// #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）；
-// #468 并入 master：+19（M9709-M9727，post_conquest_menu() 菜单渲染与派发，
-// 返工第一轮再 +5）；#463 起 +9（M10200-M10208，page-config.js 全量新增）
+export const COUNT = 226; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+// #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
+// #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
+// 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
+// 水晶球分子分母）
+// #463 起 +9（M10200-M10208，page-config.js 全量新增）
+// #469 起 +17（M10100-M10115、M10124，page-campaign.js / page-campaign-1.js：
+// 招募/派遣校验链、SELECT_CAMPAIGN 的范围守卫与深度重置、战役 1 的四张映射表、
+// 剧情 5 档收尾行）
 
 export default [
   {
@@ -1909,6 +1914,207 @@ export default [
       "`向城里投放水晶球[${era.get('exflag:9010') || 0}/${era.get('exflag:9011') || 0}]`, // 变异：分子分母颠倒",
     tests: ['page-invasion'],
     must_mention: '分子分母取自 exflag:9011/9010',
+  },
+  {
+    desc: 'M10100 招募：气力不足守卫失效（<100 改 <0，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `  if (chara(0).dungeon.气力 < 100) {
+    era.print('*气力不足！*');
+    await era.waitAnyKey();
+    return;
+  }`,
+    replace: `  if (chara(0).dungeon.气力 < 0) {
+    era.print('*气力不足！*');
+    await era.waitAnyKey();
+    return;
+  }`,
+    tests: ['page-campaign'],
+    must_mention: '气力不足（BASE:MASTER:1 < 100）拒绝',
+  },
+  {
+    desc: 'M10101 招募：奴隶数上限守卫失效（>80 改 >800，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `  if (era.getAddedCharacters().length > 80) {`,
+    replace: `  if (era.getAddedCharacters().length > 800) {`,
+    tests: ['page-campaign'],
+    must_mention: '已达上限',
+  },
+  {
+    desc: 'M10102 招募：素质位计算漏加战役号偏移（+360 删掉，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `  const talent_slot = era_flag.hero_campaign_active + 360; // LOCAL = FLAG:400 + 360
+  era.set(\`talent:\${recruited}:\${talent_slot}\`, 1);`,
+    replace: `  const talent_slot = era_flag.hero_campaign_active; // 变异：漏加 360
+  era.set(\`talent:\${recruited}:\${talent_slot}\`, 1);`,
+    tests: ['page-campaign'],
+    must_mention: 'TALENT:(400+360)=361 点亮',
+  },
+  {
+    desc: 'M10103 派遣：临死中角色排除守卫失效（<1 改 <0，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `    if (chara(result).dungeon.体力 < 1) {
+      continue; // :101-102 临死中的角色排除
+    }`,
+    replace: `    if (chara(result).dungeon.体力 < 0) {
+      continue; // :101-102 变异：临死守卫失效
+    }`,
+    tests: ['page-campaign'],
+    must_mention: '临死中（BASE:0 < 1）',
+  },
+  {
+    desc: 'M10104 派遣：魔王之影守卫删除（#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `    if (chara(result).stronghold.魔王之影) {
+      era.print(\`由于\${chara_callname(result)}是魔王之影而无法派遣\`);
+      await era.waitAnyKey();
+      continue;
+    }`,
+    replace: `    // 变异：魔王之影守卫删除`,
+    tests: ['page-campaign'],
+    must_mention: '魔王之影',
+  },
+  {
+    desc: 'M10105 派遣：已派遣守卫失效（=== 12 改 === 120，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `    if (chara(result).invasion.状态 === 12) {
+      era.print(\`\${chara_callname(result)}已经被派遣了\`);
+      await era.waitAnyKey();
+      continue;
+    }`,
+    replace: `    if (chara(result).invasion.状态 === 120) {
+      era.print(\`\${chara_callname(result)}已经被派遣了\`); // 变异：判据失效
+      await era.waitAnyKey();
+      continue;
+    }`,
+    tests: ['page-campaign'],
+    must_mention: '已经被派遣了',
+  },
+  {
+    desc: 'M10106 派遣：其他状态守卫反转（!== 0 改 === 0，把待机者误挡、其他状态放行，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `    if (chara(result).invasion.状态 !== 0) {
+      era.print(\`\${chara_callname(result)}当前无法被派遣\`);
+      await era.waitAnyKey();
+      continue;
+    }`,
+    replace: `    if (chara(result).invasion.状态 === 0) {
+      era.print(\`\${chara_callname(result)}当前无法被派遣\`); // 变异：判据反转
+      await era.waitAnyKey();
+      continue;
+    }`,
+    tests: ['page-campaign'],
+    must_mention: '其他状态（CFLAG:1 == 2，侵攻中）',
+  },
+  {
+    desc: 'M10107 派遣：目标阶层重置漏归零（0 改 1，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `    chara(result).dungeon.目标阶层 = 0;`,
+    replace: `    chara(result).dungeon.目标阶层 = 1; // 变异：应归 0`,
+    tests: ['page-campaign'],
+    must_mention: ':121 目标阶层重置',
+  },
+  {
+    desc: 'M10108 SELECT_CAMPAIGN：深度重置（FLAG:401 = 0）删除（#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `  era_flag.campaign_story_progress = 0; // :150 FLAG:401 = 0 深度重置
+  return 0;`,
+    replace: `  // 变异：深度重置删除
+  return 0;`,
+    tests: ['page-campaign'],
+    must_mention: ':150 深度重置',
+  },
+  {
+    desc: 'M10109 SELECT_CAMPAIGN：CAMPAIGN_SET 范围守卫失效（<= 20 改 <= 2000，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `  if (result >= 1 && result <= 20) {`,
+    replace: `  if (result >= 1 && result <= 2000) {`,
+    tests: ['page-campaign'],
+    must_mention: '超出 1-20 声明空间的输入不派发 CAMPAIGN_SET',
+  },
+  {
+    desc: 'M10110 菜单头部：战役进行中的按钮分支判据反转（=== 0 改 !== 0，#469）',
+    file: 'ere/page/page-campaign.js',
+    find: `    if (active === 0) {
+      era.printButton('行动选择', 0);
+    } else {`,
+    replace: `    if (active !== 0) {
+      era.printButton('行动选择', 0); // 变异：分支判据反转
+    } else {`,
+    tests: ['page-campaign'],
+    must_mention: 'FLAG:400 == 0 时只显示',
+  },
+  {
+    desc: 'M10111 CAMPAIGN_ROOM_1：楼层门槛 off-by-one（> 3 改 >= 3，#469）',
+    file: 'ere/page/page-campaign-1.js',
+    find: `function campaign_room_1(floor) {
+  return floor > 3 ? 502 : 0;
+}`,
+    replace: `function campaign_room_1(floor) {
+  return floor >= 3 ? 502 : 0; // 变异：off-by-one
+}`,
+    tests: ['dungeon-room'],
+    must_mention: 'ROOM_1',
+  },
+  {
+    desc: 'M10112 CAMPAIGN_ROOM_EXTRA_1：位 1（种付奴隶）累加值改错（+= 2 改 += 1，#469）',
+    file: 'ere/page/page-campaign-1.js',
+    find: `  if (floor > 5) {
+    extra += 2;
+  }
+  return extra;
+}`,
+    replace: `  if (floor > 5) {
+    extra += 1; // 变异：位值改错，与位 0 混淆
+  }
+  return extra;
+}`,
+    tests: ['dungeon-room'],
+    must_mention: 'ROOM_EXTRA_1',
+  },
+  {
+    desc: 'M10113 CAMPAIGN_TRAP_1：6 层火炎放射档漏登记（删 [305, 78]，#469）',
+    file: 'ere/page/page-campaign-1.js',
+    find: `  [304, 82],
+  [305, 78],
+  [312, 72],`,
+    replace: `  [304, 82],
+  // 变异：[305, 78] 删除
+  [312, 72],`,
+    tests: ['dungeon-trap'],
+    must_mention: '6 层火炎放射',
+  },
+  {
+    desc: 'M10114 CAMPAIGN_EQUIP_SELECT_1：4 层戒指号改错（314 改 313，与 3 层混淆，#469）',
+    file: 'ere/page/page-campaign-1.js',
+    find: `  [4, 314], // 衰弱の指輪`,
+    replace: `  [4, 313], // 变异：与 3 层混淆`,
+    tests: ['equip-system'],
+    must_mention: '4 层：衰弱の指輪',
+  },
+  {
+    desc: 'M10115 CAMPAIGN_MONSTER_LIST_1：DICE 下标偏移（table[dice] 改 table[(dice + 1) % 3]，#469）',
+    file: 'ere/page/page-campaign-1.js',
+    find: `  const dice = rand(3);
+  const ids = MONSTER_IDS_BY_FLOOR.get(floor);
+  return ids ? ids[dice] : 0;`,
+    replace: `  const dice = rand(3);
+  const ids = MONSTER_IDS_BY_FLOOR.get(floor);
+  return ids ? ids[(dice + 1) % 3] : 0; // 变异：下标偏移`,
+    tests: ['dungeon-battle'],
+    must_mention: '1 层 DICE 0',
+  },
+  {
+    desc: 'M10124 CAMPAIGN_STORY_1：5 档漏收尾行（删「报告结束」行，#469 需求审查）',
+    file: 'ere/page/page-campaign-1.js',
+    find: `    '最后一战一触即发',
+    '――水晶球映出的报告到这就结束了',
+  ],
+];`,
+    replace: `    '最后一战一触即发',
+  ],
+];`,
+    tests: ['dungeon-main'],
+    must_mention: '5 档的行数',
   },
   {
     desc: 'M10200 PAGE-CONFIG 处女献上后续发生方式写入错位（RESULT-1 → RESULT）',
