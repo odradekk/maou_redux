@@ -37,7 +37,10 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
 const { equip_check, equip_powerup } = require('#/system/equip/equip-check');
-const { equip_database } = require('#/system/equip/equip-lookup');
+const {
+  equip_database,
+  decode_equip_no,
+} = require('#/system/equip/equip-lookup');
 const { e_get, e_set, monster_data } = require('#/dungeon/monster-data');
 const monster_skill_mod = require('#/dungeon/monster-skill');
 const battle = require('#/dungeon/dungeon-battle');
@@ -395,7 +398,10 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     chara(arg0).chara.武装 = 40; // CFLAG:550（跨域写走门面，#71/#72）
   }
 
-  // :728-731 攻击演出（行内拼接）
+  // :728-731 攻击演出（行内拼接）。原作 CALL PRINT_EQUIPTYPE_WEAPON
+  // （其他/EQUIP.ERB:784-790）自行从 W:0 解码前缀/识别号/強度——此处
+  // equip_database 尚未执行、w 三段还是 undefined，按同一解码取值
+  const show = decode_equip_no(w.存储编号);
   if ((settings & 32) !== 0) {
     era.print(
       `${skill_tag}${atktitle}${punct}${name_of(arg0)}使用${
@@ -410,7 +416,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
           '雷霆',
           '魔导',
           '暗黑',
-        ][w.前缀] ?? ''
+        ][show.前缀] ?? ''
       }${
         {
           40: '剑',
@@ -426,8 +432,8 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
           50: '细剑',
           51: '偃月刀',
           52: '指拳',
-        }[w.识别号] ?? '剑'
-      }${w.强度 !== 0 ? `+${w.强度}` : ''}攻击！！`,
+        }[show.识别号] ?? '剑'
+      }${show.强度 !== 0 ? `+${show.强度}` : ''}攻击！！`,
     );
   }
 

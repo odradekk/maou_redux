@@ -593,12 +593,21 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
     '[9] 调用 campaign_menu()（page-campaign.js，#469 起真身）',
   );
 
+  // [4] ARCANA_FORT 自 #470 起接真身（invasion 域跨域调用不受限）。用
+  // FLAG:92 == 15（四门全破）取最短路径：arcana_fort 打三段总结叙述、
+  // RETURN 0（不耗回合），不碰角色表
   const fort = create_era_fixture();
   make_world(fort, { fallen: 1 });
-  assert.equal(await run_post_conquest(fort, 4), 0);
+  fort.store.set('flag:92', 15);
+  assert.equal(await run_post_conquest(fort, 4), 0, '[4] 的四门全破路径返回 0');
+  const fort_texts = history_texts(fort);
   assert(
-    history_texts(fort).some((line) => line.includes('@ARCANA_FORT')),
-    '[4] 转发到 ARCANA_FORT 存根',
+    fort_texts.includes('圣灵骑士全部都被打倒了，四个据点也都被攻陷了。'),
+    '[4] 转发到 ARCANA_FORT 真身（#470）',
+  );
+  assert(
+    !fort_texts.some((line) => line.includes('@ARCANA_FORT')),
+    '存根行已撤，不再是占位输出',
   );
 });
 
@@ -716,10 +725,11 @@ test('征服后菜单 [5]：选中后 shrine_stage >= 3 时无条件 +=1（:136-
 test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文件全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-invasion');
-  // INVASION_CHECK 自 #118 起是真身（五组条件），不在存根名单
+  // INVASION_CHECK 自 #118 起是真身（五组条件），不在存根名单；
+  // ARCANA_FORT 自 #470 起是真身（ere/invasion/invasion-arcana-fort.js），
+  // 同样移出
   assert.deepEqual(STUBBED_CALLS, [
     'INVASION',
-    'ARCANA_FORT',
     'AGENT_MENU',
     'MEDAL_BONUS',
     'INVASION_EVENT_SEIEI',

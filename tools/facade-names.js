@@ -480,6 +480,15 @@ const cflag = {
     '装饰2',
     src(SRC_FLAG, 'CFLAG:550～559 装備品枠——装飾2（存储编号，EQUIP.ERB:37）'),
   ),
+  // —— ARCANA_BATTLE 对人决斗的弹药（#470 Q13：invasion 域写、dungeon 域
+  //    属主，ownership/cflag-ownership.yml "571" owner: dungeon）——
+  571: named_tail(
+    '弹药',
+    erb(
+      '侵略/ARCANA_BATTLE.ERB',
+      ':21-22 CFLAG:ATKER/DEFER:571 = 15（对人决斗弹药补充；对人格斗一族的弾薬消耗同族字段见 550-552 装备枠）',
+    ),
+  ),
   // —— 勇者来袭的跨域写（#171 H2 @ENTER_ENEMY；named_tail 让本票与
   //    并行票的产物落点不相邻，#170 先例。まとめ文档无这三条的词条，
   //    出处直接给 ERB）——
@@ -614,8 +623,14 @@ const cflag = {
   // #398（N14 SHOP_LABO）：身体生成的体重与胸围（CHAR_BODY.ERB:33-34 同款，
   //   本票 MODIFY_BUSTUP:387-388 等三处按 CHAR_SIZE_GENERATE 的返回值回写）——
   //   属主 chara（ownership/cflag-ownership.yml "450-459"，与 451/452 同段）
+  453: named_tail('身高', src(SRC_FLAG, ':363 CFLAG:453 = 身長')),
   454: named_tail('体重', src(SRC_FLAG, ':364 CFLAG:454 = 体重')),
   455: named_tail('胸围', src(SRC_FLAG, ':365 CFLAG:455 = B')),
+  // #470（Q13 侵略残余）补齐同段三围尾：ARCANA_FORT 胜利分支把
+  // CHAR_SIZE_GENERATE 的 RESULT:0-6 回写 CFLAG:451-457（GETBIT(FLAG:5,12)||
+  // GETBIT(FLAG:5,15) 守卫内），453/456/457 与 454/455 同缺访问器
+  456: named_tail('腰围', src(SRC_FLAG, ':366 CFLAG:456 = W')),
+  457: named_tail('臀围', src(SRC_FLAG, ':367 CFLAG:457 = H')),
   // #399：异界勇者召唤的成交标记（@CHARA_SIM_SHOP :123-124 的唯一一次写，
   //   属主 stronghold——ownership/cflag-ownership.yml "999"；全库无读者）
   999: named(
