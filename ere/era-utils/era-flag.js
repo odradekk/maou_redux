@@ -141,6 +141,19 @@ const era_flag = {
     era.set('flag:91', v);
   },
   /**
+   * 圣灵骑士堡垒攻略进度（flag:92 ↔ FLAG:92）
+   * @returns {number}
+   */
+  get arcana_fort_stage() {
+    return era.get('flag:92') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set arcana_fort_stage(v) {
+    era.set('flag:92', v);
+  },
+  /**
    * 勇者战役中（flag:400 ↔ FLAG:400）
    * @returns {number}
    */
