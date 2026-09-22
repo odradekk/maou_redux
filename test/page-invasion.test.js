@@ -97,6 +97,24 @@ function progress_texts(fixture) {
 }
 
 /**
+ * 地区出兵菜单（start_campaign 的 $START1 画面）是否渲染过。
+ *
+ * `你的怪物数量 N只`（INVASION.ERB:169）只有出兵菜单打，征服后菜单一行都不打。
+ *
+ * 用途是把「征服后菜单的循环把输入拒收掉、原地重问」与「输入过了守卫、
+ * 一路落到地区分派」分开（#538）：两条路径的可观察结果都是 Continue 后
+ * 重新 `await era.input()`，预置输入不够时都会抛「预置输入已耗尽」——
+ * 只看耗尽与否区分不了（M9726 就是这么漏掉的）。而**出兵菜单只在后一条
+ * 路径上渲染**，所以这一行出现就等于「没被守卫拦住」。
+ *
+ * @param {object} fixture 夹具
+ * @returns {boolean} true = 落进了地区出兵菜单
+ */
+function entered_campaign_menu(fixture) {
+  return history_texts(fixture).some((line) => line.includes('你的怪物数量'));
+}
+
+/**
  * 确定随机源：按给定序列返回，同时记录每次调用的上界（RAND:2/3/4/5 的
  * 参数不许改错——上界单独断言）。序列耗尽或越界即红（同 chara-family 的
  * seq 先例）；上界也一并报出，便于定位是哪个 RAND:N 变了。
@@ -1417,12 +1435,19 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
 
   // [4] ARCANA_FORT 自 #470 起接真身（invasion 域跨域调用不受限）。用
   // FLAG:92 == 15（四门全破）取最短路径：arcana_fort 打三段总结叙述、
-  // RETURN 0（不耗回合），不碰角色表
+  // RETURN 0（不耗回合），不碰角色表。
+  //
+  // 多备一枚 [999]（#538）：分派条件若被改坏，[4] 会一路落到地区分派、
+  // 进人间界出兵菜单。那份菜单也吃 999 并返回 0，所以「返回值」这一层
+  // 分辨不出来——备着它只是让流程活到下面那条**真身文案**的断言上，
+  // 由那条断言给出「红的正是 [4] 没转发到 ARCANA_FORT」的结论；
+  // 不备的话流程当场撞上「预置输入已耗尽」，断言根本没执行到（M9718
+  // 的实测现场）。多出来的输入在正常路径上不会被消费。
   const fort = create_era_fixture();
   make_world(fort, { fallen: 1 });
   fort.store.set('flag:92', 15);
   assert.equal(
-    await run_post_conquest(fort, [4]),
+    await run_post_conquest(fort, [4, 999]),
     0,
     '[4] 的四门全破路径返回 0',
   );
@@ -1434,6 +1459,10 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
   assert(
     !fort_texts.some((line) => line.includes('@ARCANA_FORT')),
     '存根行已撤，不再是占位输出',
+  );
+  assert(
+    !entered_campaign_menu(fort),
+    '[4] 转发到 ARCANA_FORT 真身（#470）：不得落进地区出兵菜单',
   );
 });
 
@@ -1455,6 +1484,8 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，[1001] 仍可
 });
 
 test('征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）', async () => {
+  // 取守卫的两个边界值：6 是第一个被 `>= 6` 拒收的，-1 是最后一个被
+  // `< 0` 拒收的——门槛挪一格（>= 7 / < -1）当场就被这两条钉住。
   for (const bad of [6, -1]) {
     const fixture = create_era_fixture();
     make_world(fixture, { fallen: 1 });
@@ -1464,6 +1495,14 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入�
       () => run_post_conquest(fixture, [5, bad]),
       /预置输入已耗尽/,
       `[${bad}] 白名单清空后仍应被越界守卫拒收重问，而不是落到地区选择`,
+    );
+    // 「拒绝重问」与「掉过守卫、无人处理」都会耗尽输入（#538/M9726 的
+    // 漏网现场），所以还要看**守卫之后的分派有没有发生**：只有后者会落进
+    // 地区出兵菜单。`continue` 不重画菜单，征服后菜单这一侧一行都不加。
+    assert.equal(
+      entered_campaign_menu(fixture),
+      false,
+      `[${bad}] 白名单清空后仍应被越界守卫拒收重问，而不是落到地区选择——守卫之后的分派一行都不许发生`,
     );
   }
 });
@@ -1504,6 +1543,53 @@ test('征服后菜单 [5] 的原作真实缺陷：按钮渲染为可选，但 ro
     () => post_conquest_menu(),
     /预置输入已耗尽/,
     '按钮可选但派发被拒：重问耗尽预置输入而不是转发到地区续接',
+  );
+  // 拒收与「不拒收」都会把预置输入耗光（#538/M9719 的漏网现场），所以
+  // 还要证「转发到地区续接」这一步没发生：拒收走 `continue` 原地重问，
+  // 菜单不重画也不加行；转发则会进天神宫的出兵菜单，那里会打
+  // `你的怪物数量 N只`。区间外的 [5] 只许前者。
+  assert.equal(
+    entered_campaign_menu(fixture),
+    false,
+    '按钮可选但派发被拒：重问耗尽预置输入而不是转发到地区续接（出兵菜单一行都不许打）',
+  );
+});
+
+test('征服后菜单 [5] 拒收判断条件的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）', async () => {
+  // 500 是「开放区间外」的最后一档、501 是区间内第一档（:45/:77 的窗口从
+  // 501 起）。`route_33 <= 500` 这个字面量往小改一格（<= 499 / < 500）时，
+  // 只有 500 这一个输入能分辨——现有用例用的是 0 与 510，两侧都不动。
+  const outside = create_era_fixture();
+  make_world(outside, { fallen: 1 });
+  outside.store.set('exflag:2810', 500); // route_33：开放区间外最后一档
+  outside.store.set('exflag:102', 1); // shrine_stage = 1（[5] 按钮渲染，副作用门槛 3 不到）
+  await assert.rejects(
+    () => run_post_conquest(outside, [5]),
+    /预置输入已耗尽/,
+    'route_33 = 500 仍在拒收侧：重问耗尽预置输入',
+  );
+  assert.equal(
+    entered_campaign_menu(outside),
+    false,
+    'route_33 = 500 仍在拒收侧：不得落进天神宫的出兵菜单',
+  );
+
+  // 501 → 放行，落进天神宫的出兵菜单（第二枚 [999] 是出兵菜单的返回）。
+  // 这一支同时是上面那条「不得落进出兵菜单」的**正面参照**：helper 认得出
+  // 这份菜单，断言 false 才有区分能力。
+  const inside = create_era_fixture();
+  make_world(inside, { fallen: 1 });
+  inside.store.set('exflag:2810', 501); // route_33：开放区间内第一档
+  inside.store.set('exflag:102', 1); // shrine_stage = 1
+  assert.equal(
+    await run_post_conquest(inside, [5, 999]),
+    0,
+    '出兵菜单 [999] 返回 0',
+  );
+  assert.equal(
+    entered_campaign_menu(inside),
+    true,
+    'route_33 = 501 在放行侧：落进天神宫的出兵菜单',
   );
 });
 

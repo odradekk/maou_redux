@@ -50,12 +50,12 @@ export default [
     must_mention: 'trace-check 应全绿',
   },
   {
-    desc: 'M11064 错绑基线过期核对失守（消化后忘删的条目不再红——基线用例必须抓到）',
+    desc: 'M11064 错绑基线过期核对失守（消化后忘删的条目不再红——基线用例必须报出规则自己的报错文案，只报条目总数上界不算）',
     file: 'tools/trace-check.mjs',
     find: 'if (misbind_seen.has(misbind_key(rel, src, ref))) {',
     replace: 'if (true) {',
     tests: ['trace-check'],
-    must_mention: '基线只收真实的存量',
+    must_mention: '过期规则没有开火',
   },
   {
     desc: 'M11065 B 侧基线内错绑也报红（存量冻结失效——真树 286 条全打，全绿用例必红）',
@@ -951,15 +951,15 @@ export default [
     must_mention: '只被 cite 标记引用的文件必须判待移植',
   },
   {
-    desc: 'M9301 扫描面塌掉一整块（ere/kojo/ 不再进完整性扫描——工具仍全绿，只有「两侧引用数同量级」判据拦得住，#431）',
+    desc: 'M9301 扫描面塌掉一整块（ere/kojo/ 不再进完整性扫描——全量跑法先被 #513 的基线条目过期拦下，扫描面本身由「单独跑一个口上文件时完整性计数不得为 0」正面锁住，#431/#538）',
     file: 'tools/trace-check.mjs',
     find: "for (const rel of list_js_files('ere')) {",
     replace:
       "for (const rel of list_js_files('ere').filter((r) => !r.includes('/kojo/'))) {",
     tests: ['trace-check'],
     test_name:
-      'trace-check 全绿（锚校验 + 两侧扫描完整性 + 豁免核对，退出码 0）',
-    must_mention: '两侧引用数不同量级',
+      '#431 扫描面：单独跑一个口上文件时完整性计数不得为 0（ere/kojo/ 必须在面内）',
+    must_mention: '扫描面塌陷',
   },
   {
     desc: 'M9302 锚表行数不再累加（FILES 循环的 checked 恒不加——报告里的 inline 只剩日志锚，引用一条不少，#431）',
