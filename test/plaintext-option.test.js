@@ -24,6 +24,7 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const {
+  consumer_uses_free_input,
   count_by_file,
   scan_repo,
   scan_text,
@@ -39,10 +40,17 @@ test('扫描器自证：命中与跳过的形态各钉一条（判定面收窄�
     'era.print(',
     '  `[3] - ${clothtype(target)}\\n  ${more}`,',
     ');', // 命中：跨行实参（原样保留 \\n 转义）
+    'era.print(`[${index}] ${label}`);', // 命中：编号本身是插值（循环里逐行生成）
+    'era.print(`[${String(index).padStart(2)}] 看看${name}`);', // 命中：同上，表达式形态
     "era.printButton('选项乙', 4);", // 跳过：按钮，不是纯文本
     "era.printMultiColumns([{ type: 'button', content: '[5] 选项丙' }]);", // 跳过：按钮格
     'era.print(`下标不算：${items[0]}`);', // 跳过：插值里的下标
+    'era.print(`[${talentname(243 + count)}]`);', // 跳过：装饰/标签括号（后面不跟正文）
+    "era.print(`体力[${'.'.repeat(32)}] -${lose} ★死亡★`);", // 跳过：不在字面量开头
     "// era.print('[6] 注释掉的不算');", // 跳过：整行注释
+    '/**',
+    " * era.print('[7] 文件头注释里的也不算');",
+    ' */', // 跳过：块注释（`/**` 开头那行与 `*` 开头那行）
     "era.print('不带编号的说明文字');", // 跳过：没有 [N]
   ].join('\n');
 
@@ -53,13 +61,28 @@ test('扫描器自证：命中与跳过的形态各钉一条（判定面收窄�
       [2, ' [0] - 好的'],
       [3, '[2] 选项${label}'],
       [4, '[3] - ${clothtype(target)}\\n  ${more}'],
+      [7, '[${index}] ${label}'],
+      [8, '[${String(index).padStart(2)}] 看看${name}'],
     ],
-    '命中面 = print/println/printAndWait 的首实参字面量里含 [数字]',
+    '命中面 = print/println/printAndWait 的首实参字面量里的选项编号（字面数字与插值数字两种写法）',
   );
   assert.equal(
     strip_interpolation('${items[0]} 不带编号'),
     ' 不带编号',
     '插值先剥掉（否则下标会被当成选项编号）',
+  );
+  assert.equal(
+    consumer_uses_free_input(
+      'const x = await era.input({ useRule: false });',
+      0,
+    ),
+    true,
+    'useRule: false 的消费点要能标出来（结构性免疫）',
+  );
+  assert.equal(
+    consumer_uses_free_input('const x = await era.input();', 0),
+    false,
+    '普通 input 不标',
   );
 });
 

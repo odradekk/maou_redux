@@ -1267,6 +1267,7 @@ export default [
   const trimmed = line.trim();
   return (
     trimmed.startsWith('//') ||
+    trimmed.startsWith('/*') || // 含块注释开头的 \`/**\`（文件头注释第一行）
     trimmed.startsWith('*') ||
     trimmed.startsWith(';')
   );

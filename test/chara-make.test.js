@@ -1327,7 +1327,8 @@ test('campaign_slave=true：确认对话的三个选项经 printButton 出，正
       .filter((entry) => entry.api === 'input')
       .map((entry) => entry.value),
     [100, 2],
-    '两次输入都被夹具的白名单放行（[2] 在白名单里＝它真是按钮）',
+    '输入序列原样（这条只记录消费了什么；本轮的按钮成色由上面的 rendered ' +
+      '断言守——白名单在这一步是空集，夹具对空集不设限）',
   );
 });
 

@@ -1917,9 +1917,10 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       // 打印过的按钮快捷键，纯文本的 `[N] 文字` 行玩家敲不进编号——原作
       // Emuera 的 INPUT 收任意数值，`PRINTL [N] …` 在那边能用，EraElectron
       // 不行（#130/#530）。实机表现是整条战役线卡死在这里（#530）。
-      // 原作把选项排在同一行（:153/:156），按钮用 printMultiColumns 保持一行
-      // 布局，24 列均分。**正文不写 `[N]` 前缀**：引擎按 showAcc 自动拼，自带
-      // 会显示成 `[1] [1] 不，换一个`（AGENTS.md 硬约束，PR #30 踩过）。
+      // 原作把三/两个选项排在同一行（就是上面那段 :151-157 里的两行 PRINTL），
+      // 按钮用 printMultiColumns 保持一行布局，24 列均分。**正文不写 `[N]`
+      // 前缀**：引擎按 showAcc 自动拼，自带会显示成 `[1] [1] 不，换一个`
+      // （AGENTS.md 硬约束，PR #30 踩过）。
       if (campaign_slave) {
         era.print('这位挑选出来的奴隶，您还满意吗？');
         era.printMultiColumns([
@@ -1941,7 +1942,7 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
             content: '算了，不选了',
             config: { align: 'left', width: 8 },
           },
-        ]); // :153
+        ]);
       } else {
         era.print('解开你封印的，真的是这样的对象吗…？');
         era.printMultiColumns([
@@ -1957,7 +1958,7 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
             content: '是她！是她！就是她！抓起来！…',
             config: { align: 'left', width: 12 },
           },
-        ]); // :156
+        ]);
       }
 
       const answer = await era.input(); // :158 INPUT

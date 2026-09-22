@@ -3,25 +3,33 @@
  * 「看着像菜单、其实玩家敲不进编号」的写法。
  *
  * 为什么需要它：引擎的 input 只接受**本轮打印过的按钮快捷键**（渲染层
- * returnFromButton：`rule.length > 0 && rule.indexOf(Number(val)) === -1`
- * 即拒收、不回调游戏；规则见 #130、`[N] 文字` + INPUT 升级为 printButton 的
- * 通则见 PR #53）。原作 Emuera 的 INPUT 收任意数值，`PRINTL [N] …` 在那边
- * 能用，EraElectron 不行——纯文本选项行会变成死路（#129 的主菜单 [109]、
- * PR #53 的 [100]、#530 的战役招募都是这个病灶）。
+ * returnFromButton：整段校验包在 `if (useRule)` 里，数组臂
+ * `rule.length > 0 && rule.indexOf(Number(val)) === -1` 即拒收、不回调游戏；
+ * 规则见 #130、`[N] 文字` + INPUT 升级为 printButton 的通则见 PR #53）。
+ * 原作 Emuera 的 INPUT 收任意数值，`PRINTL [N] …` 在那边能用，EraElectron
+ * 不行——纯文本选项行会变成死路（#129 的主菜单 [109]、PR #53 的 [100]、
+ * #530 的战役招募都是这个病灶）。反过来，消费方传 `era.input({useRule:false})`
+ * 就整段跳过校验，那种行**结构性免疫**（报告第二节的 C 类，先例与裁定见
+ * ere/page/page-shop-labo.js:42-47）——扫描器把它们标成〔useRule:false〕。
  *
  * 判定面（有意收窄，理由逐条）：
  *   - 只认 `era.print` / `era.println` / `era.printAndWait` 的**首实参字面量**
  *     （含模板串）。这是全库菜单行的既有写法；数组形态的 `era.print([{content: …}])`
  *     多为排版片段（如 chara-info-title.js 的 `[8] 一人称重设`，原作本身用的
  *     是 PRINTPLAINFORM，不由 INPUT 消费），不纳入——纳入会把排版文字算成选项。
- *   - 模板插值 `${…}` 先剥掉：`${items[0]}` 这类下标不是选项编号。
- *   - 整行注释（`//`、`*`、`;` 开头）跳过；`era.printButton` 等按钮 API 自然
- *     不匹配（它们不是纯文本）。
+ *   - 选项编号认两种写法：字面数字 `[1]` 与插值数字 `[${index}]`（后者在循环里
+ *     逐行生成，见 OPTION_RE/INTERPOLATED_OPTION_RE 的注释）。字面那一支先剥
+ *     模板插值：`${items[0]}` 这类下标不是选项编号；插值那一支要求「以 `[` 开头
+ *     且后面跟正文」，把装饰/标签括号挡在外面。
+ *   - 整行注释（`//`、`/*`（含 `/**`）、`*`、`;` 开头）跳过；`era.printButton`
+ *     等按钮 API 自然不匹配（它们不是纯文本）。
  *
- * 面外已知项（同一病灶、选项文本不落在首实参字面量上，共 14 行，清单与判定见
+ * 面外已知项（同一病灶、选项文本不落在首实参字面量上，共 17 行，清单与判定见
  * docs/research/plaintext-options.md 第四节末尾）：`ere/data/ending-scripts.js`
- * 的数据表 11 行、`ere/event/event-ending.js:537`（选项文本在数组元素上、
- * 经循环打印）、`ere/event/event-execution.js:116` 与
+ * 的数据表 11 行、`ere/chara/chara-and-hair.js:226`/`:327` 与
+ * `ere/chara/chara-custom.js:131`（选项文本拼进字符串变量、再整行 `era.print`）、
+ * `ere/event/event-ending.js:537`（选项文本在数组元素上、经循环打印）、
+ * `ere/event/event-execution.js:116` 与
  * `ere/page/components/chara-info-title.js:151`（数组形态的 `content`）。把数据
  * 表纳入棘轮会把「数据」与「打印调用点」混在一个判定面里，故不纳入。
  *
@@ -55,7 +63,19 @@ export const SCAN_ROOT = 'ere';
 // 「这一行是不是纯文本选项行」，截断会让 `[N]` 落在截断点之后而漏判）。
 const CALL_RE =
   /era\.(?:print|println|printAndWait)\(\s*(['"`])((?:\\.|[^\\])*?)\1/g;
+// 选项编号的两种写法：字面数字（`[1]`）与插值数字（`[${index}]`）。后者在
+// 循环里逐行生成，是同一形态——不认它会把 page-infrastructure 的展品行、
+// page-dungeon-info2 的怪物行（#180 明文保留的那批）整组漏掉。
+// 字面数字那一支要**先剥插值**再测，否则 `${items[0]}` 这种下标会被误命中；
+// 插值数字那一支要在原文上测（剥掉就什么都不剩了），且要求**字面量以它开头、
+// 后面还跟正文**：`[${index}] 选项` 是选项行，而
+// `[${talentname(243 + count)}]`（条件提示里的标签）与
+// `体力[${'.'.repeat(32)}]`（死亡提示里的装饰括号）都不是——两条实测的反例
+// 分别由「后面要跟正文」与「要在字面量开头」两条挡住。
 const OPTION_RE = /\[\s*\d+\s*\]/;
+const INTERPOLATED_OPTION_RE = /^\s*\[\s*\$\{[^}]*\}\s*\]\s*\S/;
+// 消费这次输入的调用形态，用来标注「该行所在的输入是否传了 useRule: false」
+const INPUT_RE = /era\.(?:input|printAndWait)\(([^)]*)\)/g;
 
 /** 剥掉模板插值：`${items[0]}` 的 `[0]` 是下标，不是选项编号 */
 export function strip_interpolation(literal) {
@@ -67,6 +87,7 @@ function is_comment_line(line) {
   const trimmed = line.trim();
   return (
     trimmed.startsWith('//') ||
+    trimmed.startsWith('/*') || // 含块注释开头的 `/**`（文件头注释第一行）
     trimmed.startsWith('*') ||
     trimmed.startsWith(';')
   );
@@ -111,17 +132,45 @@ export function scan_text(text) {
     if (is_comment_line(lines[line - 1] ?? '')) {
       continue;
     }
-    if (OPTION_RE.test(strip_interpolation(match[2]))) {
-      hits.push({ line, literal: match[2] });
+    if (
+      OPTION_RE.test(strip_interpolation(match[2])) ||
+      INTERPOLATED_OPTION_RE.test(match[2])
+    ) {
+      hits.push({ at: match.index, line, literal: match[2] });
     }
   }
   return hits;
 }
 
 /**
+ * 该命中之后最近的一次输入调用是否传了 `useRule: false`（**指示，不是判据**）。
+ *
+ * 引擎的 `returnFromButton` 整段校验包在 `if (inputParam.value['useRule'])` 里
+ * （渲染层 app.asar），`showInput` 的缺省是 true；游戏侧显式传
+ * `era.input({ useRule: false })` 就整段跳过白名单——那种消费点上的纯文本
+ * 选项行**结构性免疫**本病灶（page-infrastructure.js、event-grotesque.js 的
+ * 先例，裁定见 page-shop-labo.js:42-47）。这里只往后找最近的 `era.input` /
+ * `era.printAndWait` 实参文本，跨函数/跨分支时可能对不上，故只作报告里的
+ * 标注用，不进基线、不参与棘轮比较。
+ *
+ * @param {string} text 文件全文
+ * @param {number} from 命中点的字符偏移
+ * @returns {boolean} 最近的后续输入调用是否传了 useRule: false
+ */
+export function consumer_uses_free_input(text, from) {
+  INPUT_RE.lastIndex = from;
+  const match = INPUT_RE.exec(text);
+  if (match === null) {
+    return false;
+  }
+  return /useRule\s*:\s*false/.test(match[1]);
+}
+
+/**
  * 扫描 `ere/` 全目录。
  * @param {string} [root] 仓库根目录
- * @returns {Array<{file: string, line: number, literal: string}>} file 为仓库相对路径（正斜杠）
+ * @returns {Array<{file: string, line: number, literal: string, free_input: boolean}>}
+ *   file 为仓库相对路径（正斜杠）；free_input 见 consumer_uses_free_input
  */
 export function scan_repo(root = REPO) {
   const files = [];
@@ -139,8 +188,13 @@ export function scan_repo(root = REPO) {
   const hits = [];
   for (const full of files) {
     const rel = path.relative(root, full).split(path.sep).join('/');
-    for (const hit of scan_text(fs.readFileSync(full, 'utf8'))) {
-      hits.push({ file: rel, ...hit });
+    const text = fs.readFileSync(full, 'utf8');
+    for (const hit of scan_text(text)) {
+      hits.push({
+        file: rel,
+        ...hit,
+        free_input: consumer_uses_free_input(text, hit.at),
+      });
     }
   }
   return hits.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);
@@ -177,6 +231,11 @@ export function render_baseline(counts) {
  * 纪律：棘轮只许收紧不许放松——新增一行必须红，修掉一行必须同步删数
  * （与 tools/engine-contract-ledger.mjs 的「只能变短、不许过期失效」同款）。
  * 收窄扫描面（改判定规则）时要一并重生成本文件，并在 #530 下说明理由。
+ *
+ * 已知限度（#530 二轮审查指出）：计数按「文件 → 条数」，**同一文件里删一行
+ * 再加一行不会红**（净额不变）。要钉到具体行就得把基线换成锚点串，
+ * engine-contract-ledger.mjs 那种粒度；本票取的是计数，够拦住「新增一行」
+ * 这一主要风险，代价是丢掉了同文件等额增减的分辨力。
  */
 export default {
 ${rows.join('\n')}
@@ -184,11 +243,18 @@ ${rows.join('\n')}
 `;
 }
 
-/** 汇总文本：按文件打印条数与行号，供 --write 之外的排查用 */
+/**
+ * 汇总文本：按文件打印条数与行号，供 --write 之外的排查用。
+ *
+ * 带 `〔useRule:false〕` 标记的行＝该行之后最近的一次输入显式关掉了白名单校验，
+ * 结构性免疫本病灶（见 consumer_uses_free_input；指示，不是判据）。
+ */
 export function format_report(hits) {
   const counts = count_by_file(hits);
+  const immune = hits.filter((hit) => hit.free_input).length;
   const lines = [
-    `命中 ${hits.length} 行 / ${Object.keys(counts).length} 个文件`,
+    `命中 ${hits.length} 行 / ${Object.keys(counts).length} 个文件` +
+      `（其中 ${immune} 行的消费点传了 useRule: false，结构性免疫）`,
   ];
   let current = null;
   for (const hit of hits) {
@@ -197,7 +263,9 @@ export function format_report(hits) {
       lines.push(`\n${current}  （${counts[current]} 行）`);
     }
     lines.push(
-      `  :${hit.line}  ${hit.literal.slice(0, 96).replace(/\n/g, '\\n')}`,
+      `  :${hit.line}${hit.free_input ? ' 〔useRule:false〕' : ''}  ${hit.literal
+        .slice(0, 96)
+        .replace(/\n/g, '\\n')}`,
     );
   }
   return lines.join('\n');

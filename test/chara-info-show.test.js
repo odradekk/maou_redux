@@ -38,6 +38,19 @@ function seq(values) {
 /** FLAG:5 的位值（位号 → 掩码） */
 const bit = (index) => 1 << index;
 
+/**
+ * 画面里所有按钮条目的引擎实显文本（夹具的 `rendered`，见 era-fixture 的
+ * make_button_entry）。#530 起用它断言选项「经 printButton 出、编号由引擎拼」：
+ * 只看 text 会漏掉手写前缀与引擎前缀撞车（实显成 `[2] [2] …`）。
+ * @param {object} fixture 夹具
+ * @returns {string[]}
+ */
+function button_rendered(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+}
+
 function title_fixture(flag5 = 0) {
   const fixture = create_era_fixture();
   fixture.store.set('flag:5', flag5);
@@ -2127,9 +2140,7 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
   );
   // 两个出口是真按钮（#530）：编号由引擎按 showAcc 拼，正文不带 `[N]`，
   // 也不再是纯文本行——纯文本行玩家敲不进编号（#130 的通则）
-  const rendered = fixture.lines_history
-    .filter((line) => line.type === 'button')
-    .map((line) => line.rendered);
+  const rendered = button_rendered(fixture);
   assert.ok(
     rendered.some((text) => text === '[10] 查看符合条件的奴隶或勇者'),
     `[10] 要由引擎拼在正文前（实显：${JSON.stringify(rendered)}）`,
@@ -2163,9 +2174,7 @@ test('SHOW_CHARA_INFO：祭品名单的 [100] 返回是真按钮（名单轮次�
   const result = await show_chara_info(7, -1, always, 0x000000);
 
   assert.equal(result, 1, '[100] 从名单里返回首页');
-  const rendered = fixture.lines_history
-    .filter((line) => line.type === 'button')
-    .map((line) => line.rendered);
+  const rendered = button_rendered(fixture);
   assert.ok(
     rendered.filter((text) => text === '[100] 返回').length >= 2,
     `两个出口 + 名单各有一枚 [100] 返回（实显：${JSON.stringify(rendered)}）`,
@@ -2782,9 +2791,7 @@ test('SHOW_CHARA_INFO：献祭成功后对应的分项计数 +100', async () => 
   assert.equal(fixture.store.get(`cflag:${victim}:1`), 0, '被献祭者状态清零');
   // 确认对话的两个选项是真按钮（#530）：上面喂的 `1` 之所以能被夹具放行，
   // 正是因为它是本轮打印过的按钮快捷键——纯文本行会被白名单当场拒收
-  const rendered = fixture.lines_history
-    .filter((line) => line.type === 'button')
-    .map((line) => line.rendered);
+  const rendered = button_rendered(fixture);
   assert.ok(
     rendered.some((text) => text === '[1] 献祭') &&
       rendered.some((text) => text === '[0] 终止'),
