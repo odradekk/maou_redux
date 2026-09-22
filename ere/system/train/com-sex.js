@@ -1365,6 +1365,12 @@ adv_com_family.register(20, async (rand) => {
   // COMF_JUMP.ERB:152-163
   const prev2 = get('tflag:59');
   const prev = era_flag.prevcom;
+  // COMF_JUMP.ERB:156 `(TFLAG:59==128 && PREVCOM==129) || (TFLAG:59==129 &&
+  // PREVCOM==128) || TFLAG:59==130 && (PREVCOM==128 || PREVCOM==129)` 同层
+  // 混写：Emuera 的 && 与 || 同优先级、左结合，读作
+  // `((…128…) || (…129…) || TFLAG:59==130) && PREVCOM ∈ {128,129}`。
+  // 前两臂本身已含 PREVCOM ∈ {128,129}，故左结合与 C 式「&& 优先」在此
+  // 一切取值上同值，保留原式的显式括号结构（#517）。
   if (
     same_trainer() &&
     ((prev2 === 128 && prev === 129) ||

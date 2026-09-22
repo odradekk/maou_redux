@@ -1566,9 +1566,16 @@ export const FILES = [
       // —— target/ERB/調教相關/COMF_JUMP.ERB ——
       {
         src: 'target/ERB/調教相關/COMF_JUMP.ERB',
-        ref: '17-28',
+        ref: '51-63',
         any: [
           /IF \(ASSIPLAY \&\& TFLAG:50\) \|\| \(ASSIPLAY == 0 \&\& TFLAG:50 == 0\)/,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/COMF_JUMP.ERB',
+        ref: '56',
+        any: [
+          /IF \(ASSIPLAY \&\& TFLAG:50\) \|\| \(ASSIPLAY == 0 \&\& TFLAG:50 == 0\) \&\& TEQUIP:89 == 0/,
         ],
       },
       {
