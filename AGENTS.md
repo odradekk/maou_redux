@@ -90,6 +90,8 @@ npm run format:check     # Prettier，只检查格式
 
 曾有按改动文件选择测试的选择器（#256），实测最多省一半时间，#452 撤掉：本地和 CI 只有 `npm test` 一个入口，PR 的 CI 通过即全库通过。
 
+**引擎验收要走到后期流程时，用 `tools/make-acceptance-save.mjs` 造档。** 从新档实打到「人间界已征服」这类前置要上百个游戏日的交互，不现实。做法是两步：先在引擎里开新档、存一个槽（存档结构由引擎自己写），再用该脚本把前置所需的那几个 flag 注入到另一个槽。**注入哪些键写在脚本的 `PATCH` 表里，改它要同步改对应工单的验收记录**——验收记录必须写明「基础存档是引擎产出的，构造的只有 PATCH 列出的键」，不能当成「从新档打通」（#471 的用法见该票评论）。
+
 **测试入口统一限制为 4 个测试文件并发**，包括 npm 测试与变异子进程。它限制进程并发数，不等于 CPU 配额；同时跑多个 agent 或变异副本时仍要控制任务数。Linux 可额外用 `bash tools/capped.sh npm test` 施加 systemd CPU 配额；Windows 直接用 npm 命令。
 
 **测试命令必须有超时**。`npm test`、`npm run lint`、`npm run format:check` **直接跑**——`package.json` 里这三条脚本本身就是 `node tools/run-node.mjs -- …`，默认 600 秒上限已经在里面了。`run-node.mjs` 自己 spawn 的是 node，参数必须是 node 脚本或 node 选项；手工再包一层（`run-node … -- npm run test`）在 Windows 上会报 `Cannot find module …\npm`，因为它找的是 `npm` 而不是 `npm.cmd`。单文件测试与长任务用 `run-node` 显式给更大的 `--timeout`，不依赖默认值。**`npm run test:ci` 是例外，脚本里显式声明 1200 秒**——它跑全库测试，本机带引擎实测 326 秒（`node --test --test-concurrency=4`，5916 例全过），但 `ci.yml` 的 `windows` 任务在 CI runner 上首次运行就撞上默认的 600 秒被杀（#443：`35329826228`，09:30:15 起跑、09:40:16 被 `taskkill` 终止，未跑完），1200 秒留出约 3.7 倍于本机实测的余量。这与 `ci.yml` 各 job 的 `timeout-minutes: 30`（1800 秒）是两层不同的上限：后者是 job 级兜底，覆盖检出、装依赖、跳过数守护等全部步骤；前者是 `test:ci` 这条命令自己的上限，必须留在 job 级上限之内。Windows 的 `timeout.exe` 只是等待命令，不能替代 GNU `timeout`。PowerShell 示例：
