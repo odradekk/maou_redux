@@ -398,15 +398,21 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   const endcheck = texts.findIndex((line) =>
     line.includes('银黑桃乳业获得的收入desu'),
   ); // ENDCHECK 内部（@EVENT_NEWDAY :241 之后，ENDCHECKSPADE 的 151 档播报）
-  const campaign = texts.findIndex((line) => line.includes('@AUTOTRAIN')); // 普通档尾部
-  assert.ok(nextday >= 0 && month_roll >= 0 && endcheck >= 0 && campaign >= 0);
+  assert.ok(nextday >= 0 && month_roll >= 0 && endcheck >= 0);
   assert.ok(
     nextday < month_roll,
     'EVENT_NEXTDAY（:77）必须先于月替（:84）——原作调用序',
   );
+  // 普通档尾部（:740 AUTOTRAIN → :749-751 EVENT_NEWDAY）的序证人。#508 换
+  // 真身后 @AUTOTRAIN 的占位行没了，改用写入序：AUTOTRAIN 自身的指针簿记
+  // （PLAYER = 0，其后无人再写 flag:10008）必须先于 ENDCHECK 的乳业收入入账
+  const writes = world.fixture.var_writes;
+  const autotrain_mark = writes.map((w) => w.name).lastIndexOf('flag:10008');
   assert.ok(
-    campaign < endcheck,
-    'ENDCHECK（@EVENT_NEWDAY :241，经普通档 :751）必须在普通档尾部之后',
+    writes.some(
+      (w, i) => i > autotrain_mark && w.name === 'flag:10004' && w.value > 0,
+    ),
+    'ENDCHECK（@EVENT_NEWDAY :241，经普通档 :749-751）必须在普通档尾部之后',
   );
 });
 

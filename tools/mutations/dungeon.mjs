@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 279; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
+export const COUNT = 280; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
 // M9838 与 #462 撞号后改）；#469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
 // dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
 // 计数、全员取消派遣判据、三个 FLAG:400 早退守卫、MONSTER_LIST 的两处
@@ -11,7 +11,7 @@ export const COUNT = 279; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段�
 // 写点：门面名与目标值；M10622 体力富余臂的 CFLAG:520 写值，交付前
 // 十项区分力抽查的补位项）；#500 起 +13（M10713-M10725，四个 _AUTO 变体的
 // 九处调用点接线：退回占位按调用点各一条、调错变体按变体各一条——号段见
-// #500 完成报告）
+// #500 完成报告）；#508 起 +1（M11007，source_check_auto 的 UPCHECK 等价步）
 
 export default [
   {
@@ -1074,9 +1074,9 @@ export default [
   {
     desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = ['BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO'];",
+    find: "const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];",
     replace:
-      "const STUBBED_CALLS = ['MAGIC', 'BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
+      "const STUBBED_CALLS = ['MAGIC', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
     tests: ['dungeon-magic'],
     must_mention: '不再登记为存根',
   },
@@ -2363,14 +2363,14 @@ export default [
     must_mention: 'whenMissing 骸骨缺省',
   },
   {
-    desc: 'M9882 SOURCE_CHECK_AUTO 接线退回存根（source_check_auto 改回 stub_line_wait，不再转发真实处理器）',
+    desc: 'M9882 SOURCE_CHECK_AUTO 接线退回存根（source_check_auto 不再转发真实处理器）',
     file: 'ere/dungeon/dungeon-battle.js',
     find: `async function source_check_auto() {
   await emit('SOURCE_CHECK_AUTO');
+  era.nextTurnInTrain();
 }`,
     replace: `async function source_check_auto() {
-  // 变异：退回存根占位，不再发事件
-  await stub_line_wait('SOURCE_CHECK_AUTO', '自动调教结算', '随调教自动票');
+  // 变异：不再转发真实处理器（事件订阅者收不到，回合循环的 UPCHECK 等价步也没了）
 }`,
     tests: ['dungeon-battle'],
     must_mention: '真实处理器执行',
@@ -2514,7 +2514,7 @@ export default [
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],
-    must_mention: 'losebase:0 +10（COM13 专属）',
+    must_mention: 'LOSEBASE:0 = 10（COM13 专属，deltabase 存负值）',
   },
   {
     desc: 'M10725 COM13_AUTO 角色对角色的攻击调用点退回占位（DUNGEON_BATLLE2.ERB:670 不再执行真身）',
@@ -2523,6 +2523,15 @@ export default [
     com13_auto();`,
     replace: `    // 变异：调用点退回占位（不执行 COM13_AUTO 真身）`,
     tests: ['dungeon-battle'],
-    must_mention: 'losebase:0 +10（COM13 专属）',
+    must_mention: 'LOSEBASE:0 = 10（COM13 专属，deltabase 存负值）',
+  },
+  // —— #508：迷宫自动调教链的 UPCHECK 等价步 ——
+  {
+    desc: 'M11007 自动调教结算后不补 nextTurnInTrain（NOWEX→EX 不合并、SOURCE 不消费）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: '  era.nextTurnInTrain();',
+    replace: '  // 变异：不补 UPCHECK 等价步',
+    tests: ['dungeon-trap'],
+    must_mention: 'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零',
   },
 ];

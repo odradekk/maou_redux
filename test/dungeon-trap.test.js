@@ -261,8 +261,10 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   const fixture = setup_world();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { self_saimin_trap } = load(fixture);
-  // 开调教域（#461 的 SOURCE_CHECK_AUTO 接线用例先例）：COM3_AUTO 真身
-  // 写的 SOURCE 要落得下才看得到效果，否则被夹具的引擎守卫静默丢弃
+  // 开调教域（#508）：自动调教三连的本体写的 SOURCE 要落得下才看得到效果，
+  // 否则被夹具的引擎守卫静默丢弃；三连的第三站 SOURCE_CHECK_AUTO 是真身
+  // 事件（生产由 main-loop.js:47 加载），也要显式载入才会响应
+  fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 80);
@@ -282,9 +284,22 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
     text_lines(fixture).some((line) => line.includes('≪自慰≫')),
     'COM3_AUTO 真身被调（:611）',
   );
-  assert.equal(fixture.store.get('source:1:4'), 100, '性行为 100（本体常量）');
+  assert.equal(
+    fixture.store.get('source:1:4'),
+    0,
+    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零',
+  );
   assert.equal(fixture.store.get('exp:1:10'), 1, '自慰经验 +1（本体）');
-  assert.equal(fixture.store.get('losebase:0'), 5, 'losebase:0 +5（本体常量）');
+  assert.equal(
+    fixture.store.get('base:1:1'),
+    950,
+    '气力 -50（本体 LOSEBASE:1 = 50 经 SOURCE_CHECK_AUTO 结算落 BASE）',
+  );
+  assert.equal(
+    fixture.store.get('palam:1:8'),
+    5000,
+    '耻情 5000（SOURCE:12 = 2000 的换算结果，#508：快感半边不再空转）',
+  );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 80);
@@ -367,7 +382,9 @@ test('SUCCUBUS（:740）：非男人者百合经验 +1 档、五宝珠与攻防�
 test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位 3）', async () => {
   const fixture = setup_world();
   const { slime_room_trap } = load(fixture);
-  // 开调教域：COM50_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫）
+  // 开调教域（#508）：COM50_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫），
+  // 第三站 SOURCE_CHECK_AUTO 的真身也要显式载入（生产由 main-loop.js:47 加载）
+  fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('cflag:1:11', 100);
   fixture.store.set('cflag:1:12', 90);
@@ -395,10 +412,24 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
   );
   assert.equal(
     fixture.store.get('source:1:10'),
-    10000,
-    '液体追加 10000（本体）',
+    0,
+    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（液体追加 10000 是本体写的原值）',
   );
-  assert.equal(fixture.store.get('source:1:12'), 300, '露出 300（本体）');
+  assert.equal(
+    fixture.store.get('source:1:12'),
+    0,
+    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（露出 300 是本体写的原值）',
+  );
+  assert.equal(
+    fixture.store.get('palam:1:3'),
+    12500,
+    '润滑 12500（SOURCE:10 的换算结果）',
+  );
+  assert.equal(
+    fixture.store.get('palam:1:8'),
+    375,
+    '耻情 375（SOURCE:12 的换算结果）',
+  );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
@@ -599,27 +630,44 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
   assert.equal(fixture.store.get('exp:1:1'), 32, '寄生后再 +1');
   // 已寄生 → 肛门虫自动调教三连（:1221 CALL COM13_AUTO——真身）
   fixture.store.set('base:1:1', 1000);
-  fixture.era.beginTrain(0, 1); // 开调教域：SOURCE 写要落得下（夹具守卫）
+  fixture.load_module('event/source-check'); // #508：第三站真身要注册
+  fixture.era.beginTrain(0, 1); // #508：SOURCE 等调教域表要落得下（夹具守卫）
   await a_worm_trap(1, seq(50));
   assert.ok(
     text_lines(fixture).some((line) => line.includes('＜肛门虫插入中＞')),
     'COM13_AUTO 真身被调（:1221；本体只在 TEQUIP:90 时改说「肛门触手」）',
   );
-  assert.equal(fixture.store.get('losebase:0'), 10, 'losebase:0 +10（本体）');
-  assert.equal(fixture.store.get('losebase:1'), 30, 'losebase:1 +30（本体）');
+  assert.equal(
+    fixture.store.get('deltabase:1:0'),
+    0,
+    'LOSEBASE 经 SOURCE_CHECK_AUTO 结算进 BASE 并清零',
+  );
   assert.equal(
     fixture.store.get('source:1:14'),
-    400,
-    '逃离 = 400（本体：顺从 0 档 ×2.0）',
+    0,
+    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（逃离 400 是本体写的原值）',
+  );
+  assert.equal(
+    fixture.store.get('base:1:0'),
+    1927,
+    '体力：本体损耗 + 链条损耗',
+  );
+  assert.equal(fixture.store.get('base:1:1'), 827, '气力：本体损耗 + 链条损耗');
+  assert.equal(
+    fixture.store.get('palam:1:9'),
+    1012,
+    '苦痛 1012（SOURCE:6 的换算结果）',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
-  // 润滑位 ×1.30（TIMES 截断）
+  // 润滑位 ×1.30（TIMES 截断）：本体的 50 档变 65；余下的 93 是同一次
+  // 自动调教三连的损耗（COM13_AUTO 的 LOSEBASE + SOURCE_CHECK_AUTO 的
+  // 苦痛追加），#508 前它们落在没有结算点的 losebase 上、不进 BASE
   fixture.store.set('cflag:1:503', 8);
   fixture.store.set('base:1:1', 1000);
   await a_worm_trap(1, seq(50));
   assert.equal(
     fixture.store.get('base:1:1'),
-    1000 - (Math.floor(50 * 1.3) + 30),
+    1000 - (Math.floor(50 * 1.3) + 30) - 93,
     '×1.3',
   );
 });
@@ -627,7 +675,9 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
 test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使免疫', async () => {
   const fixture = setup_world();
   const { love_bug_trap } = load(fixture);
-  // 开调教域：COM0_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫）
+  // 开调教域（#508）：COM0_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫），
+  // 第三站 SOURCE_CHECK_AUTO 的真身也要显式载入（生产由 main-loop.js:47 加载）
+  fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
   fixture.store.set('talent:1:314', 6); // 天使
   assert.equal(await love_bug_trap(1, seq(10)), 1, '天使飞起（未作动）');
@@ -639,20 +689,40 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
     '两个提前返回档都不走自动调教',
   );
   await love_bug_trap(1, seq(10, 39)); // else 档：39+1 = 40
-  assert.equal(fixture.store.get('base:1:0'), 2000 - 40, '体力 -= RAND:40+1');
+  assert.equal(
+    fixture.store.get('base:1:0'),
+    2000 - 40 - 1,
+    '体力 -= RAND:40+1（本体伤害）+ 1（COM0_AUTO 的 LOSEBASE:0，已结算落 BASE）',
+  );
   // :1283 CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）
   assert.ok(
     text_lines(fixture).some((line) => line.includes('≪摸来摸去≫')),
     'COM0_AUTO 真身被调（:1283）',
   );
-  assert.equal(fixture.store.get('source:1:4'), 60, '性行为 60（本体常量）');
-  assert.equal(fixture.store.get('losebase:0'), 1, 'losebase:0 +1（本体常量）');
-  assert.equal(fixture.store.get('losebase:1'), 5, 'losebase:1 +5（本体常量）');
+  assert.equal(
+    fixture.store.get('source:1:4'),
+    0,
+    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零',
+  );
+  assert.equal(
+    fixture.store.get('base:1:1'),
+    995,
+    '气力 -5（本体 LOSEBASE:1 = 5 经 SOURCE_CHECK_AUTO 结算落 BASE）',
+  );
+  assert.equal(
+    fixture.store.get('palam:1:8'),
+    125,
+    '耻情 125（SOURCE:12 = 100 × 露出倍率的换算结果）',
+  );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('talent:1:10', 1); // 胆怯
   fixture.store.set('base:1:1', 1000);
   await love_bug_trap(1, seq(10, 39));
-  assert.equal(fixture.store.get('base:1:1'), 1000 - 10, '胆怯气力 -10');
+  assert.equal(
+    fixture.store.get('base:1:1'),
+    1000 - 10 - 5,
+    '胆怯气力 -10 + COM0_AUTO 的 LOSEBASE:1 = 5（已结算落 BASE）',
+  );
 });
 
 test('DARK_JUEL（:1295）：掠夺换金（CFLAG:581）+ 屈服宝珠 + 善恶值下降', async () => {

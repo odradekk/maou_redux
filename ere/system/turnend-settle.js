@@ -8,6 +8,11 @@
  * 跳转，链继续），尾部 BEGIN SHOP（行 758）覆盖暂存值（同为 SHOP，无差异）。
  * 第三处 #LATER 定义是空的（ere/event/event-turnend-later.js）。
  *
+ * #508（自动调教链的调教域表生命周期）：本档的 :250-258 与 :740 之间是
+ * 迷宮域自动调教三连（BEFORE_AUTOTRAIN → COM*_AUTO → SOURCE_CHECK_AUTO，
+ * 十处调用点全在迷宮/ 下）+ 回合尾部的 AUTOTRAIN 结算，全程需要一个打开的
+ * 调教窗口（`era.beginTrain` → `era.endTrain`）。理由见下方 :250-258 段的注释。
+ *
  * 移植说明：
  *   - 跨域写一律走门面（#71/#72：属主域门面 setter）：base 体力/气力、
  *     cflag 状态/新人/回城标志/休憩/已接任务/好感度/基础攻击/基础防御、
@@ -64,14 +69,11 @@ const { run_seedbed } = require('#/system/train/seedbed');
  * 重绘）亦接真身（ere/dungeon/labo-dungeon-map.js 与 labo-map.js）；#179
  * （H10）起 LVUP / DUNGEON_AFTER 亦接真身（ere/dungeon/dungeon-lvup.js 与
  * dungeon-after.js）；#217（J7）起 BENKI 亦接真身（ere/system/train/
- * benki.js）——四条均从名单移除。
+ * benki.js）——四条均从名单移除；#508 起 FORMAT_AUTOTRAIN / AUTOTRAIN
+ * 亦接真身（ere/event/event-autotrain.js 的同名函数，调用点原为占位行），
+ * 从名单移除。
  */
-const STUBBED_CALLS = [
-  'FORMAT_AUTOTRAIN',
-  '自動處刑',
-  'AUTOTRAIN',
-  'GET_LOOK_INFO',
-];
+const STUBBED_CALLS = ['自動處刑', 'GET_LOOK_INFO'];
 
 /** 原作 RAND:N（0..N-1）的等价物 */
 function rand(n) {
@@ -86,11 +88,33 @@ on('EVENTTURNEND', async () => {
   era_flag.assi = -1;
 
   // :250-258 全角色：自动调教格式化、新人/自动调教标志消去
+  //
+  // #508：本档从 FORMAT_AUTOTRAIN（:250-258）到 AUTOTRAIN（:740）之间要开一个
+  // 调教窗口。原作的 SOURCE / UP / PALAM / TFLAG / LOSEBASE 是常驻角色
+  // 变量；ere 引擎把它们放进 beginTrain 建、endTrain 删的调教域表
+  // （app.asar 模块 183，test/helpers/era-fixture.js:1014-1054 逐字镜像）。
+  // 迷宫域的自动调教三连跑在本处理器里：窗口不开时 COM*_AUTO 写的 SOURCE、
+  // SOURCE_CHECK_AUTO 换算出的 UP（delta）/ PALAM 全部被引擎静默丢弃
+  // （三段寻址在角色子表缺失时 `if(!this.data[a]||!this.data[a][c])return;`，
+  // test/train-loop.test.js 的引擎比对用例locking），于是「快感 → 能力成长」
+  // 的整半空转——#500 接真身的四个 _AUTO 调用点，用例都得先手工
+  // beginTrain(0, 1) 才看得见 SOURCE 落值（test/dungeon-trap.test.js）。
+  //
+  // 窗口边界＝原作的两个端点：FORMAT_AUTOTRAIN（重置 PALAM / SOURCE /
+  // TFLAG / BASE 槽）开，AUTOTRAIN（PALAM → 珠/能力的结算）关。之后的
+  // PARTY_JOIN（:743）与 EVENT_NEWDAY（:749-751）留在窗口外，保持既有行为
+  // （event-nextday.js:442 的「PALAM 读回来恒空」判据依赖它）。
+  era.beginTrain(...era.getAddedCharacters());
   for (const cid of era.getAddedCharacters()) {
-    stub_line('FORMAT_AUTOTRAIN', '自动调教格式化');
+    // 原作 FOR TARGET 赋值即指好指针，format_autotrain 读的就是它
+    era_flag.target = cid;
+    require('#/event/event-autotrain').format_autotrain(); // :250-258（#508 真身）
     chara(cid).invasion.新人 = 0; // CFLAG:506 = 0（行 254）
     chara(cid).train.自动调教 = 0; // CFLAG:666 = 0（行 256）
   }
+  // 循环末位不留在 TARGET 上（原作留在末位，本处理器按角色 ID 直迭、不读
+  // 该指针；后续模块按既有约定读 target_pool）
+  era_flag.target = target_pool;
 
   // :263 队伍编成（パーティー設定）——#172 起真身（ere/dungeon/）
   party_unite();
@@ -551,8 +575,13 @@ on('EVENTTURNEND', async () => {
     }
   }
 
-  // :740 自动调教
-  stub_line('AUTOTRAIN', '自动调教');
+  // :740 自动调教（#508 起真身：ere/event/event-autotrain.js 的 autotrain
+  // ——逐角色 AFTER_AUTOTRAIN → JUEL_CHECK_MAIN 把本回合攒下的 PALAM 结算
+  // 成珠、AUTO_ABLUP 结算能力；CFLAG:666 由迷宫域的 COM*_AUTO 累加）
+  await require('#/event/event-autotrain').autotrain();
+  // 关窗：删调教域表。引擎 endTrain 的 gotjuel→juel 加算在本移植是精确
+  // 无操作——juel_check_main 的结算尾部已把 gotjuel 清零（juel-check.js 文件头）
+  era.endTrain();
 
   // :743 队伍结成——#172 起真身（ere/dungeon/；内含 PARTY_UNITE 复调）
   await party_join();

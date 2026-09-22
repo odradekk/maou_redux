@@ -26,6 +26,19 @@ const { chara } = require('#/facade/chara');
 const STUBBED_CALLS = [];
 
 /**
+ * LOSEBASE → `deltabase:${cid}:${i}` 的负向累加（全项目同款写法，见
+ * system/train/com-caress.js 等）。#508 订正：原写 `era.add('losebase:0', v)`
+ * 在真引擎上落 `key error in getter/setter! key (losebase:0)` 且写不落——
+ * EraElectron 没有 losebase 表（app.asar 寻址层，engine-bundle 探针实证），
+ * 夹具对未知二段族照收，故此前测试看不出来。
+ * @param {number} cid
+ * @param {number} i LOSEBASE 下标（0 体力 / 1 气力）
+ * @param {number} v 原作 `LOSEBASE:i += v` 的 v（正数＝损耗量）
+ * @returns {unknown} era.add 的返回值
+ */
+const lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);
+
+/**
  * 获取角色称呼（SAVESTR / CALLNAME）
  * @param {number} cid
  * @returns {string}
@@ -36,13 +49,21 @@ function chara_name(cid) {
 
 /**
  * @BEFORE_AUTOTRAIN（:91-104）：自动调教前的重置
+ *
+ * 原作 `SOURCE:LOCAL = 0` / `UP:LOCAL = 0` 的单下标写法在 Emuera 里就是
+ * 「当前 TARGET 的那一格」（角色变量 + 单下标 = TARGET）。#508 订正：
+ * 原写 `era.set('source:${local}', 0)` 是二段寻址——引擎对角色桶表
+ * （source/palam/base/… 非 tflag 族）的二段写入**静默忽略**（app.asar
+ * 寻址层，engine-bundle 探针实证：`set source:1 = 42` 返回桶对象、不落值），
+ * 所以这条重置在真机上一直没生效。改按 3 段写 TARGET 那一格；
+ * TARGET 未指（< 0）时无格可清，跳过——与下面 delta 的同款守卫。
  */
 function before_autotrain() {
-  for (let local = 0; local < 17; local += 1) {
-    era.set(`source:${local}`, 0);
-  }
   const target = era_flag.target;
   if (target >= 0) {
+    for (let local = 0; local < 17; local += 1) {
+      era.set(`source:${target}:${local}`, 0);
+    }
     for (let local = 0; local < 17; local += 1) {
       era.set(`delta:${target}:${local}`, 0);
     }
@@ -65,8 +86,9 @@ function format_autotrain() {
   chara(target).train.母乳槽 = 0;
   chara(0).train.触手射精槽 = 0;
 
-  era.set('losebase:0', 0);
-  era.set('losebase:1', 0);
+  // :64-65 LOSEBASE:0/1 = 0（损耗槽归零；deltabase 是负值通道）
+  era.set(`deltabase:${target}:0`, 0);
+  era.set(`deltabase:${target}:1`, 0);
 
   for (let i = 0; i < 200; i += 1) {
     era.set(`tflag:${i}`, 0);
@@ -181,8 +203,8 @@ function com0_auto() {
   const target = era_flag.target;
   era.print('≪摸来摸去≫');
 
-  era.add('losebase:0', 1);
-  era.add('losebase:1', 5);
+  lose(target, 0, 1);
+  lose(target, 1, 5);
 
   let source0 = 0;
   let source17 = 0;
@@ -251,8 +273,8 @@ function com3_auto() {
   const target = era_flag.target;
   era.print('≪自慰≫');
 
-  era.add('losebase:0', 5);
-  era.add('losebase:1', 50);
+  lose(target, 0, 5);
+  lose(target, 1, 50);
   chara(target).train.逃离 = 400;
   let source0 = 0;
   let source12 = 0;
@@ -394,8 +416,8 @@ function com13_auto() {
     era.print('＜肛门虫插入中＞');
   }
 
-  era.add('losebase:0', 10);
-  era.add('losebase:1', 30);
+  lose(target, 0, 10);
+  lose(target, 1, 30);
   chara(target).train.逃离 = 200;
   let local0 = 0;
   let local1 = 0;
@@ -535,8 +557,8 @@ function com50_auto() {
   const target = era_flag.target;
   era.print('≪粘液≫');
 
-  era.add('losebase:0', 0);
-  era.add('losebase:1', 0);
+  lose(target, 0, 0);
+  lose(target, 1, 0);
 
   chara(target).train.液体追加 = 10000;
   chara(target).train.露出 = 300;
@@ -552,8 +574,8 @@ function com63_auto() {
   const target = era_flag.target;
   era.print(`${chara_name(target)}和妓女用阴唇相互摩擦着…`);
 
-  era.add('losebase:1', 30);
-  era.add('losebase:1', 90);
+  lose(target, 1, 30);
+  lose(target, 1, 90);
 
   let source12 = 250;
   let source13 = 400;

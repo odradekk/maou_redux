@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 913; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+export const COUNT = 916; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
 
 export default [
   {
@@ -9855,5 +9855,36 @@ export default [
         c = times(c, 3.0);`,
     tests: ['ablup'],
     must_mention: 'ablup39：Lv3 戒备森严 ×3',
+  },
+  // —— #508：自动调教本体的两处寻址订正与一处清零（event-autotrain.js） ——
+  {
+    desc: 'M11004 BEFORE_AUTOTRAIN 的 SOURCE 重置退回二段寻址（角色桶表二段写被引擎静默忽略）',
+    file: 'ere/event/event-autotrain.js',
+    find: `    for (let local = 0; local < 17; local += 1) {
+      era.set(\`source:\${target}:\${local}\`, 0);
+    }`,
+    replace: `    for (let local = 0; local < 17; local += 1) {
+      era.set(\`source:\${local}\`, 0); // 变异：退回二段（写不落）
+    }`,
+    tests: ['event-autotrain'],
+    must_mention: 'AUTOTRAIN: format_autotrain & before_autotrain 重置行为',
+  },
+  {
+    desc: 'M11005 lose 助手的负值通道写反（deltabase 存正值——损耗反成回复）',
+    file: 'ere/event/event-autotrain.js',
+    find: 'const lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, -v);',
+    replace:
+      'const lose = (cid, i, v) => era.add(`deltabase:${cid}:${i}`, v); // 变异：符号写反',
+    tests: ['event-autotrain'],
+    must_mention: 'LOSEBASE:0 = 1 → deltabase 负值',
+  },
+  {
+    desc: 'M11006 FORMAT_AUTOTRAIN 的 LOSEBASE 归零删除（损耗槽跨场残留）',
+    file: 'ere/event/event-autotrain.js',
+    find: `  era.set(\`deltabase:\${target}:0\`, 0);
+  era.set(\`deltabase:\${target}:1\`, 0);`,
+    replace: '  // 变异：LOSEBASE 归零删除',
+    tests: ['event-autotrain'],
+    must_mention: 'LOSEBASE 归零（deltabase 是负值通道',
   },
 ];

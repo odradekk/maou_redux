@@ -450,7 +450,9 @@ test('PARTY：娼婦購入臂的爱抚自动调教接 COM0_AUTO 真身（:645）
   fixture.store.set('cflag:1:580', 5000); // 宴会预算（TARGET = 勇者 1）
   fixture.store.set('cflag:1:151', 0); // karma ≤ 50 → 进第二臂
   fixture.store.set('talent:1:122', 1); // 男人 → 娼婦購入
-  // 开调教域：COM0_AUTO 真身写的 SOURCE 要落得下（夹具镜像引擎守卫）
+  // 开调教域（#508）：自动调教三连的本体写的 SOURCE 要落得下（夹具镜像引擎
+  // 守卫），第三站 SOURCE_CHECK_AUTO 的真身也要显式载入（生产由 main-loop 加载）
+  fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
   const ret = await load(fixture).town_pt_party(1, 0, 0, seq_rand([1]));
   assert.equal(ret, 1, '开宴');
@@ -464,7 +466,21 @@ test('PARTY：娼婦購入臂的爱抚自动调教接 COM0_AUTO 真身（:645）
     lines.some((l) => l.includes('≪摸来摸去≫')),
     'COM0_AUTO 真身被调（:645）',
   );
-  assert.equal(fixture.store.get('source:1:4'), 60, '性行为 60（本体常量）');
+  assert.equal(
+    fixture.store.get('source:1:4'),
+    0,
+    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（性行为 60 是本体写的原值）',
+  );
+  assert.equal(
+    fixture.store.get('palam:1:8'),
+    25125,
+    '耻情 25125（SOURCE:12 = 100 的换算结果）',
+  );
+  assert.equal(
+    fixture.store.get('base:1:1'),
+    295,
+    '气力 400 − 105（本体 LOSEBASE + 链条损耗，SOURCE_CHECK_AUTO 结算落 BASE）',
+  );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
