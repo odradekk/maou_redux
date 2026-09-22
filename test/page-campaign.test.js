@@ -122,7 +122,7 @@ test('招募：气力不足（BASE:MASTER:1 < 100）拒绝，不消耗角色名�
   assert.ok(texts(fixture.lines_history).some((t) => t.includes('气力不足')));
 });
 
-test('招募：奴隶数已达上限（CHARANUM > 80）拒绝', async () => {
+test('招募：奴隶数已达上限（CHARANUM > 80）拒绝——战役层守卫的原文，不是 16 位全满的兜底文案（#521）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
   fixture.store.set('base:0:1', 500);
@@ -133,7 +133,20 @@ test('招募：奴隶数已达上限（CHARANUM > 80）拒绝', async () => {
   const { campaign_menu } = load(fixture);
   fixture.set_inputs(1, 999);
   await campaign_menu();
-  assert.ok(texts(fixture.lines_history).some((t) => t.includes('已达上限')));
+  const out = texts(fixture.lines_history);
+  // 不能只断言「已达上限」四个字：1..16 全在场时，绕过本守卫的执行流会
+  // 落进 rand_chara_make :188-191 的兜底文案「由于对魔王的恐惧，勇者没有
+  // 出现。（奴隶数已达上限，请处决几个）」，同样含这四个字（#483 起候选
+  // 表为空即走该分支——#521 逃逸的成因）。按带星号的守卫原文断言，并把
+  // 兜底文案的到达判为失败。
+  assert.ok(
+    out.some((t) => t.includes('*奴隶数已达上限，请处决几个*')),
+    ':51 战役层守卫文案必须出现',
+  );
+  assert.ok(
+    out.every((t) => !t.includes('由于对魔王的恐惧')),
+    '守卫应先于招募触发，不应进入 rand_chara_make 的 16 位全满兜底',
+  );
 });
 
 test('招募：成功后扣 100 气力、点亮本战役招募素质位（TALENT:(FLAG:400+360)）', async () => {
