@@ -3562,7 +3562,7 @@ export default [
       '    if (result === 5 && era_exflag.route_33 < 500) { // 变异：上界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单 [5] 拒收判据的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）',
+      '征服后菜单 [5] 拒收判断条件的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）',
     must_mention: 'route_33 = 500 仍在拒收侧：不得落进天神宫的出兵菜单',
   },
 ];

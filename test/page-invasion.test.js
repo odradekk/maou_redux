@@ -1502,7 +1502,7 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入�
     assert.equal(
       entered_campaign_menu(fixture),
       false,
-      `[${bad}] 白名单清空后仍应被越界守卫拒收重问，而不是落到地区选择`,
+      `[${bad}] 白名单清空后仍应被越界守卫拒收重问，而不是落到地区选择——守卫之后的分派一行都不许发生`,
     );
   }
 });
@@ -1555,14 +1555,14 @@ test('征服后菜单 [5] 的原作真实缺陷：按钮渲染为可选，但 ro
   );
 });
 
-test('征服后菜单 [5] 拒收判据的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）', async () => {
+test('征服后菜单 [5] 拒收判断条件的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）', async () => {
   // 500 是「开放区间外」的最后一档、501 是区间内第一档（:45/:77 的窗口从
   // 501 起）。`route_33 <= 500` 这个字面量往小改一格（<= 499 / < 500）时，
   // 只有 500 这一个输入能分辨——现有用例用的是 0 与 510，两侧都不动。
   const outside = create_era_fixture();
   make_world(outside, { fallen: 1 });
-  outside.store.set('exflag:2810', 500);
-  outside.store.set('exflag:102', 1);
+  outside.store.set('exflag:2810', 500); // route_33：开放区间外最后一档
+  outside.store.set('exflag:102', 1); // shrine_stage = 1（[5] 按钮渲染，副作用门槛 3 不到）
   await assert.rejects(
     () => run_post_conquest(outside, [5]),
     /预置输入已耗尽/,
@@ -1579,8 +1579,8 @@ test('征服后菜单 [5] 拒收判据的两侧边界：route_33 = 500 拒收 / 
   // 这份菜单，断言 false 才有区分能力。
   const inside = create_era_fixture();
   make_world(inside, { fallen: 1 });
-  inside.store.set('exflag:2810', 501);
-  inside.store.set('exflag:102', 1);
+  inside.store.set('exflag:2810', 501); // route_33：开放区间内第一档
+  inside.store.set('exflag:102', 1); // shrine_stage = 1
   assert.equal(
     await run_post_conquest(inside, [5, 999]),
     0,
