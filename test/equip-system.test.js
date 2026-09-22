@@ -299,6 +299,40 @@ test('equip_select：宝箱检查、道具消耗、换装与早退各分支', as
   assert.equal(no_swap.fixture.store.get('item:306'), 2, '道具仍被消耗');
 });
 
+test('equip_select：空槽也吃「强度 < 阶层」门（源 :243/:258 左结合）', async () => {
+  // 源 :243 / :258 `W:0 == -1 || RESULT && W:2 < CFLAG:A:501 && W:5 == 0`
+  // ——Emuera 的 && 与 || 同优先级、左结合，读作
+  // `(空槽（-1）|| 有效) && 强度 < 阶层 && 未诅咒`（#517）。
+  // 阶层 0 时 `0 < 0` 判假，两枚空槽都不换装（先例：同族 :911 用的正是
+  // 等价式 `(CFLAG:40 & 17) && FLAG:37`）。
+  const { fixture, select } = setup_equip();
+  const store = fixture.store;
+  store.set('cflag:31:501', 0); // 阶层 0 → FLAG:339
+  store.set('flag:339', 306); // 欲望戒指（诅咒品）
+  store.set('item:306', 3);
+  store.set('cflag:31:551', -1); // 两枚装饰槽都空
+  store.set('cflag:31:552', -1);
+  store.set('talent:31:202', 1); // 神官（解咒必成，排除随机）
+  assert.equal(await select.equip_select(31, () => 0), 0);
+  assert.equal(store.get('cflag:31:551'), -1, '阶层 0 → 空槽 551 不换装');
+  assert.equal(store.get('cflag:31:552'), -1, '阶层 0 → 空槽 552 不换装');
+  assert.ok(fixture.text_lines().includes('似乎没什么好东西。'));
+  assert.equal(store.get('item:306'), 2, '宝箱道具仍被消耗');
+
+  // 阶层 1 时同一世界就该换装（上门的另一边）
+  const one = setup_equip();
+  one.fixture.store.set('cflag:31:501', 1);
+  one.fixture.store.set('flag:340', 306);
+  one.fixture.store.set('item:306', 3);
+  one.fixture.store.set('cflag:31:551', -1);
+  one.fixture.store.set('cflag:31:552', -1);
+  one.fixture.store.set('talent:31:202', 1);
+  const seq = [7, 0];
+  let drawn = 0;
+  assert.equal(await one.select.equip_select(31, (n) => seq[drawn++] % n), 0);
+  assert.equal(one.fixture.store.get('cflag:31:551'), 8 + 2 * 1000);
+});
+
 test('campaign_equip_select()：FLAG:400 = 1 时按 CAMPAIGN_EQUIP_SELECT_1 的楼层表返回道具号（#469）', async () => {
   const fixture = create_era_fixture();
   const { campaign_equip_select } = fixture.load_module(

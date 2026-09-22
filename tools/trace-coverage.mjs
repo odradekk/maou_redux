@@ -366,7 +366,14 @@ export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#48
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 3; // #501：MAOU_TENSHIN 行从「存根」订正为「已实现」后不再进入归因扫描——
+export const UNATTRIBUTED_BASELINE = 2; // #515：DUNGEON_BATTLE2 行改判死形态（原作全库无定义，状态列不再计
+// 未了结项）后不再进入归因扫描——它的「源」写「（无源——**原作全库无定义**，同上）」，三路归因规则都够不着，
+// 是原基线 3 行里的 1 行；同一票的 DUNGEON_BATTLE（源里有裸文件名 LABO_DUNGEON_MAP.ERB:2）与 AGENT_MENU
+// （归因到侵略/AGENT/AGENT_EVENT.ERB）本来归因得到，不计入本数。3 → 2，与
+// `node tools/trace-check.mjs --coverage` 的重测一致（显式改小，非顺手改数字）。同票其余分类数字：
+// 已移植 310 → 311、部分移植 6 → 5（迷宮/LABO_DUNGEON_MAP.ERB 随两条判死行离开欠账）；待移植 10 不动，
+// PENDING_BASELINE 不改。
+// #501：MAOU_TENSHIN 行从「存根」订正为「已实现」后不再进入归因扫描——
 // 订正前它「源」写「待核（@EVENTEND 魔王倒下分支的调用）」，三路归因规则都够不着（「源」列同票补成真实出处
 // EVENT/EVENT_NEXTDAY.ERB:2455-2479）。6 → 5，与 `node tools/trace-check.mjs --coverage` 的合并态重测一致
 // （显式改小，非顺手改数字）。

@@ -74,14 +74,18 @@ rename_workspace{workspaceId: "<workspaceId>", title: "T<N> <标题>"}
 
 ### profile 选用
 
-| 用途                     | profile      | provider / model                         |
-| ------------------------ | ------------ | ---------------------------------------- |
-| 全部实施工单             | Flash Worker | `codebuddy-code` / `deepseek-v4.1-flash` |
-| 审查（由 worker 自己起） | Reviewer     | `pi` / `cpa/kimi-k3-256k`                |
+| 用途                     | provider / model                                                       |
+| ------------------------ | ---------------------------------------------------------------------- |
+| 全部实施工单             | `codebuddy-code` / `deepseek-v4.1-flash`                               |
+| 审查（由 worker 自己起） | `claude` / `claude-opus-5` 或 `codebuddy-code` / `deepseek-v4.1-flash` |
 
-阶段 5c 的十余张票（含 ABLUP 两千行的逻辑移植、战役全链、口上跨模块改动）全部由 Flash Worker 完成并通过验收，**不再按工单复杂度分配不同 profile**。
+阶段 5c 的十余张票（含 ABLUP 两千行的逻辑移植、战役全链、口上跨模块改动）全部由 `codebuddy-code` / `deepseek-v4.1-flash` 完成并通过验收，**不再按工单复杂度分配不同 profile**。
 
-`list_profiles` 里有三个 profile 都叫 `Worker`（`pi/glm-5.3`、`cursor/grok-4.6`、`claude/claude-sonnet-5[1m]`），按名字取会撞上；要用别的 profile 就照 `provider`/`model` 取，别按名字。
+**只读审查一律用支持 `modeId: plan` 的提供方。** `pi` 不提供任何 mode（`create_agent` 传 `modeId` 直接报 `Invalid mode 'plan' for provider 'pi'`），提示词里写「只读」拦不住它动手：#505 的 `pi` 审查员跑了 `mutation-check --ids`，被工具超时强杀、`finally` 未执行，把 M10852 的变异留在了 `ere/page/page-invasion.js` 里。`Reviewer` profile 正是 `pi`，因此不能用于只读审查。实测出结论耗时：`claude`/`claude-opus-5` 约 3 分钟，`codebuddy-code`/`deepseek-v4.1-flash` 十几分钟，`pi`/`cpa/kimi-k3-256k` 20–65 分钟；三者都给出过有价值的发现。
+
+**`pi` / `cpa/glm-5.3` 只派不接触游戏文本的工单。** 它对本作的口上与调教文本触发内容过滤并整轮中止（`stopReason=error`）：#517 读 `COMF_JUMP.ERB` 的 CASE 分支时当场断掉，换 Flash 才跑完。工具、测试基础设施、变异条目一类的票（#513/#520/#521）它做得很好。
+
+`list_profiles` 里有三个 profile 都叫 `Worker`（`pi/cpa/glm-5.3`、`cursor/grok-4.6`、`claude/claude-sonnet-5[1m]`），按名字取会撞上；要用别的 profile 就照 `provider`/`model` 取，别按名字。
 
 返工两轮仍不过由主 agent 接手，不升级 profile。审查员卡住时 worker 自己换 Flash 重起（`worker-sop.md` §4）。
 
@@ -100,7 +104,8 @@ rename_workspace{workspaceId: "<workspaceId>", title: "T<N> <标题>"}
 变异条目编号区间：M<k+1>–M<k+w>（并行工单已用 M<x>–M<y>）。当前无引擎跳过基线：<m>。
 提交 scope：<scope>。
 
-完成标准：先写测试再实现；/code-review 的审查子 agent 用 Paseo create_agent 起（Reviewer profile）；
+完成标准：先写测试再实现；/code-review 的审查子 agent 用 Paseo create_agent 起，
+必须用支持 modeId: plan 的提供方（claude/claude-opus-5 或 codebuddy-code/deepseek-v4.1-flash）；
 自己开 PR 并等 CI 全绿；在 issue 下按 worker-sop.md §7 写完成评论。不合并 PR。
 ```
 

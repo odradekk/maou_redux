@@ -783,16 +783,15 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // 自 #391 起为真身（101/498/499 分支，page-chara-info.js），
   // ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 分支 → show_shop 调用
   // page/page-shop-trap.js；#395 的运行时占位随之撤除），CONFIG 自 #463
-  // 起为真身（777 分支，page/page-config.js），均已移出。
-  assert.deepEqual(STUBBED_CALLS, [
-    '批量处刑',
-    'INTERCEPT',
-    'ABILITY_UP',
-    'TAILOR_MAIN',
-    'LABO',
-    'SHOW_FLOOR',
-    'DEBUG_MENU_U',
-  ]);
+  // 起为真身（777 分支，page/page-config.js），INTERCEPT / ABILITY_UP /
+  // TAILOR_MAIN 自 #397 起为真身（104/105/108 分支，page-intercept.js /
+  // page-ability-up.js / page-tailor.js），均已移出。#397 那三个是 #515
+  // 订正的：名单与这份断言一起停在旧状态，所以一直没人发现。
+  assert.deepEqual(
+    STUBBED_CALLS,
+    ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'],
+    '存根名单必须只列仍未接真身的分支（#397 起 INTERCEPT/ABILITY_UP/TAILOR_MAIN 已接真身）',
+  );
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);

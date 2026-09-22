@@ -3,7 +3,11 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 126;
+export const COUNT = 133; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
+// 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
+// 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
+// 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 靶在 ere/page/page-shop.js，
+// 记在 tools/mutations/page.mjs）
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -1260,5 +1264,71 @@ export default [
     test_name:
       '存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植',
     must_mention: '行必须写清 kojo-k2-timid.js:10327',
+  },
+  {
+    desc: 'M11111 登记表判死措辞退回存根（DUNGEON_BATTLE 行——原作全库无定义，退回未了结形态即红，#515）',
+    file: 'docs/stub-registry.md',
+    find: '不实现（不可达的调用目标——原作全库无定义，ere 侧留中性占位，见 ere/dungeon/labo-dungeon-map.js；判据与依据见 issue #181，#14 缺陷登记）',
+    replace: '存根（ere/dungeon/labo-dungeon-map.js，判据与依据见 issue #181）',
+    tests: ['trace-check'],
+    test_name: '存根清单收尾（#515）',
+    must_mention: 'LABO_DUNGEON_MAP.ERB 会被这条行卡在部分移植',
+  },
+  {
+    desc: 'M11112 登记表判死措辞退回存根（AGENT_MENU 行——#103 的裁定是不实现，退回「存根」即被计成欠账，#515）',
+    file: 'docs/stub-registry.md',
+    find: '不实现（#103 裁定：原作的复制改名事故，只登记不排期——本体不移植；ere/page/page-invasion.js 的调用点保留运行时占位；裁定见 issue #103；#515 订正措辞，#103 裁定不变）',
+    replace:
+      '存根（运行时占位，ere/page/page-invasion.js；调用点已接通，主体不实现——#103 裁定的复制改名事故，只登记不排期）',
+    tests: ['trace-check'],
+    test_name: '存根清单收尾（#515）',
+    must_mention: 'AGENT_MENU 的状态格仍是未了结形态',
+  },
+  {
+    desc: 'M11113 登记表过期说法退回（ABILITY_UP_CORE 行重写「37-100 仍是存根」——#467 起五个编号已落真身，#515）',
+    file: 'docs/stub-registry.md',
+    find: '37/39/40/99/100（#467），见 ere/system/train/ablup.js 文件头）',
+    replace: '37-100 仍是存根，见 `ABLUP0`～`ABLUP100` 行）',
+    tests: ['trace-check'],
+    test_name: '存根清单收尾（#515）',
+    must_mention: 'ABILITY_UP_CORE 行不得再写',
+  },
+  {
+    desc: 'M11114 登记表判死措辞退回存根（DUNGEON_BATTLE2 行——归因不到基线 3→2 的那一行，退回即顶破基线，#515）',
+    file: 'docs/stub-registry.md',
+    find: '不实现（不可达的调用目标——原作全库无定义，同上一行；ere 侧留中性占位，见 ere/dungeon/labo-dungeon-map.js）',
+    replace: '存根（ere/dungeon/labo-dungeon-map.js，同上）',
+    tests: ['trace-check'],
+    test_name: '存根清单收尾（#515）',
+    must_mention: 'LABO_DUNGEON_MAP.ERB 会被这条行卡在部分移植',
+  },
+  {
+    desc: 'M11115 登记表判死依据从状态格删掉（DUNGEON_BATTLE 行——留着判死词但抹去「原作全库无定义」，依据断言必须红，#515）',
+    file: 'docs/stub-registry.md',
+    find: '不实现（不可达的调用目标——原作全库无定义，ere 侧留中性占位，见 ere/dungeon/labo-dungeon-map.js；判据与依据见 issue #181，#14 缺陷登记）',
+    replace:
+      '不实现（不可达的调用目标，ere 侧留中性占位，见 ere/dungeon/labo-dungeon-map.js；判据与依据见 issue #181，#14 缺陷登记）',
+    tests: ['trace-check'],
+    test_name: '存根清单收尾（#515）',
+    must_mention: '的状态格必须留下判死依据',
+  },
+  {
+    desc: 'M11116 登记表判死行抹掉裁定票号（AGENT_MENU 行的状态格去掉 #103——行内其它列仍留着该票号，断言必须只看状态格，#515）',
+    file: 'docs/stub-registry.md',
+    find: '不实现（#103 裁定：原作的复制改名事故，只登记不排期——本体不移植；ere/page/page-invasion.js 的调用点保留运行时占位；裁定见 issue #103；#515 订正措辞，#103 裁定不变）',
+    replace:
+      '不实现（原作的复制改名事故，只登记不排期——本体不移植；ere/page/page-invasion.js 的调用点保留运行时占位；裁定不变）',
+    tests: ['trace-check'],
+    test_name: '存根清单收尾（#515）',
+    must_mention: 'AGENT_MENU 的状态格必须引 #103',
+  },
+  {
+    desc: 'M11117 登记表过期说法退回（JUEL_CHECK 行重写「循环内的能力提升还没做，见下六行」——下面六行已全是已实现；该行不进归因扫描，只有 #515 用例拦得住）',
+    file: 'docs/stub-registry.md',
+    find: '已实现（#47；循环内的能力提升随后续票全部落地——见下六行各条的状态列与票号，#515 订正）',
+    replace: '已实现（循环内的能力提升还没做，见下六行）',
+    tests: ['trace-check'],
+    test_name: '存根清单收尾（#515）',
+    must_mention: 'JUEL_CHECK 的状态格不得再写',
   },
 ];

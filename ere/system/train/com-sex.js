@@ -1365,6 +1365,12 @@ adv_com_family.register(20, async (rand) => {
   // COMF_JUMP.ERB:152-163
   const prev2 = get('tflag:59');
   const prev = era_flag.prevcom;
+  // COMF_JUMP.ERB:156 `(TFLAG:59==128 && PREVCOM==129) || (TFLAG:59==129 &&
+  // PREVCOM==128) || TFLAG:59==130 && (PREVCOM==128 || PREVCOM==129)` 同层
+  // 混写：Emuera 的 && 与 || 同优先级、左结合，读作
+  // `((…128…) || (…129…) || TFLAG:59==130) && PREVCOM ∈ {128,129}`。
+  // 前两臂本身已含 PREVCOM ∈ {128,129}，故左结合与 C 式「&& 优先」在此
+  // 一切取值上同值，保留原式的显式括号结构（#517）。
   if (
     same_trainer() &&
     ((prev2 === 128 && prev === 129) ||
@@ -1927,17 +1933,16 @@ async function message_b29() {
 function message_a_position() {
   const cid = era_flag.target;
   const com = era_flag.selectcom;
-  // Emuera 的 &&/|| 同优先级左结合：三式分别是
-  // (20 || 26) && 失神门、(22 || 28) && 失神门、(23 || 29) && 失神门。
-  // 故 20/22/23 不受 TFLAG:899 约束，26/28/29 才受约束。
+  // EVENT_TRAIN_MESSAGE_A.ERB:1154-1168 的三式
+  // `SELECTCOM == 20 || SELECTCOM == 26 && TFLAG:899 <= 1`（及 22/28、23/29）
+  // 按 Emuera 的「&& 与 || 同优先级、左结合」读作 `(20 || 26) && 失神门`
+  // 等三式——**六条指令都吃失神门**，不是 C 式「&& 优先」的「20 无条件、
+  // 26 才吃门」（#517）。
   const passout_guard = get('tflag:899') <= 1;
   const position_group =
-    com === 20 ||
-    (com === 26 && passout_guard) ||
-    com === 22 ||
-    (com === 28 && passout_guard) ||
-    com === 23 ||
-    (com === 29 && passout_guard);
+    ((com === 20 || com === 26) && passout_guard) ||
+    ((com === 22 || com === 28) && passout_guard) ||
+    ((com === 23 || com === 29) && passout_guard);
   if (
     !position_group ||
     !get('tflag:2') ||

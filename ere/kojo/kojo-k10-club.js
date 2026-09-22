@@ -728,6 +728,11 @@ on('EVENTTRAIN', async () => {
       } // :392-394
       return 1; // :392-396
     } else if (
+      // EVENT_K10_クラブ.ERB:398
+      // `CFLAG:202 == 1 && FLAG:7 == 2 && TALENT:85 == 1 || TALENT:76 == 1`
+      // 同层混写：Emuera 的 && 与 || 同优先级、左结合，读作
+      // `(三项 && ) || 淫乱`——`||` 之后没有 `&&`，两种读法同值（#517）。
+      // 本文件另两处同形（202/203/204 三阶）。
       (chara(target).kojo.简易助手_0 == 1 &&
         game.kojo.口上开关 == 2 &&
         era.get(`talent:${target}:85`) == 1) ||
