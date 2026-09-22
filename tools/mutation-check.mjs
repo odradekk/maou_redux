@@ -735,6 +735,19 @@ function locate_asar(root, explicit) {
 // —— 单条执行（就地变异 + 还原 + 还原读回校验）——
 
 /**
+ * 应用一条变异：把 content 里唯一那次 find 换成 replace。
+ *
+ * **必须只有这一份实现**：`run_one` 用它写下去，#532 的残留自检
+ * （detect_residue）用它算「残留该长什么样」。两边一旦分家——比如自检改用
+ * split/join 拼——`String.replace` 对 `$&`、`$'`、`$$` 的展开差异就会让
+ * 判定悄悄漏掉既非逐字也非模板的形态（1246 条条目的 find、1056 条的
+ * replace 里带 `$`），而漏判的正是这个工单要治的那类残留。
+ */
+function apply_mutation(content, m) {
+  return content.replace(m.find, m.replace);
+}
+
+/**
  * 孙进程环境消毒：node --test 给测试文件传 NODE_TEST_CONTEXT，原样漏进
  * 再起的 node --test 会让后者误入「测试子进程上报模式」、静默退 0——
  * 快速模式（npm test 内驱动本工具，工具再起 node --test）必踩，红不了
@@ -787,7 +800,7 @@ function run_one(root, m) {
   let failed_as_expected = false;
   let output = '';
   try {
-    fs.writeFileSync(full, original.replace(m.find, m.replace), 'utf8');
+    fs.writeFileSync(full, apply_mutation(original, m), 'utf8');
     const files = m.tests.map((t) => `test/${t}.test.js`);
     const run_tests = (extra) =>
       spawnSync(
@@ -1178,9 +1191,17 @@ function git_head_content(root, rel) {
  *
  * 判据因此做成**恒等**的，而不是「与 HEAD 不一致」：后者会把开发流程整个
  * 卡死（同票既改靶文件又给它加变异条目是常态，#530 就是这么跑的），也会
- * 让并行副本与临时夹具全部跑不起来。代价是一次 `git diff --name-only
- * HEAD`（本机 Windows 实测约 110 ms，Linux 更便宜；#532 实测记录见该
- * issue 的完成评论），另有改动的靶文件各多读一次 `git show HEAD:<file>`。
+ * 让并行副本与临时夹具全部跑不起来。
+ *
+ * 代价（#532 实测，Windows）：与 HEAD 干净的树上一次 `git diff --name-only
+ * HEAD` 90～110 ms（Linux 更便宜），`--verify` 全程 2371 ms 里占约 4%；每个
+ * 不一致的靶文件再加一次 `git show HEAD:<file>`；每条候选条目一次整串恒等
+ * 判定。最坏形态是口上那种「正被改的大文件 × 它的近千条条目」：1.2 MB ×
+ * 961 条实测 564 ms（一次进程一次，不是每条变异一次）。试过两条更便宜的
+ * 前置（长度差、`startsWith(replace, i)`）能压到 122～215 ms，但
+ * `String.replace` 会展开 replace 里的 `$&`/`$'`/`$$`（1056 条条目的
+ * replace 带 `$`），这两条前置对这些条目不成立——拿它们当判据会漏判残留，
+ * 正是本工单要治的，故保留整串判定。
  *
  * 取不到 git 时（非 git 仓库、临时夹具、并行模式的隔离副本——COPY_DENY
  * 把 `.git` 排除在副本外）整段跳过：副本里的变异由父进程在真树上查过。
@@ -1203,14 +1224,14 @@ function detect_residue(root, entries) {
     if (!fs.existsSync(full)) continue;
     const working = fs.readFileSync(full, 'utf8');
     const head = git_head_content(root, file);
+    // HEAD 里取不到这份文件（新增文件只进了索引、还没提交）：无从定义
+    // 「HEAD 内容应用该条变异」，这条靶文件跳过。
     if (head === null) continue;
     for (const m of candidates) {
-      // HEAD 里 find 本就不恰 1 次：这条的靶代码早就重构过（门 2 会报），
-      // 判据要求的是「HEAD 是干净的原样」，不能拿它推残留。
+      // 前置条件与门 2 同一判据：HEAD 里 find 恰 1 次。不恰 1 次说明这条
+      // 的靶代码早就重构过（门 2 会报），不能拿它推残留。
       if (head.split(m.find).length - 1 !== 1) continue;
-      // 与 run_one 用同一个表达式：残留的定义就是「run_one 写下去的那个
-      // 字节序列」。两边一旦分家，这里会漏判，而漏判正是这个工单要治的。
-      if (head.replace(m.find, m.replace) === working) {
+      if (apply_mutation(head, m) === working) {
         findings.push({
           file,
           desc: m.desc,

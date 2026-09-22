@@ -1,5 +1,5 @@
 /**
- * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，十七条
+ * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，二十条
  * 行为在此固定。全部通过临时目录夹具驱动（--root/--ledger-dir/--asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
  * 目录，进程怎么死都污染不到仓库。
@@ -57,6 +57,18 @@
  *      （正在改那个靶文件）一律不拦——恒等判定零误报，见 detect_residue
  *      头注。夹具因此要造真 git 仓库（make_git_fixture），非 git 夹具
  *      根自检跳过。
+ *  18. 自检排在门之前、所有档位都查（#532）：`--verify` 读的也是工作区里
+ *      的靶文件，残留态下它的「五项检查全过」是假结论，比不报更坏（它在
+ *      npm test 里）。这条与 16 一起构成 `--verify` 的两种形态：干净树报
+ *      绿且只读，残留态拒绝并给还原命令。
+ *  19. 自检的两条鲁棒分支（#532）：靶文件只进了索引、HEAD 里还没有它
+ *      （取不到 HEAD 内容）→ 跳过该文件而不是崩；旧条目 desc 没有 M 编号
+ *      → 报「某条」而不是「Mnull」，还原命令照给。后者是 #113 遗留的 4 条。
+ *  20. 判据与 `run_one` 共用同一份 `apply_mutation`（#532）：replace 里的
+ *      `$$`/`$&`/`$'` 会被 String.replace 展开（1056 条条目的 replace 带
+ *      `$`），所以「写下去的字节」不等于条目表里的字面 replace。整串恒等
+ *      判定不许换成「长度差对得上就算残留」这类便宜近似——最坏形态
+ *      （1.2 MB × 961 条）正诱人这么省，见 detect_residue 头注的实测。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -1157,7 +1169,9 @@ function snapshot_tree(root) {
  * 副本外）。
  *
  * `-c` 覆盖逐条写给需要的地方：全局 config 里的 user/签名/换行转换都不能
- * 影响夹具的确定性（CI 与各人本机的 git 配置不同）。
+ * 影响夹具的确定性（CI 与各人本机的 git 配置不同）。子进程调用一律带
+ * timeout（test/child-process-timeout-check.test.js 守着：#449 那次挂死
+ * 就是一处裸 spawnSync 卡住了整份测试文件的退出）。
  */
 function make_git_fixture() {
   const root = make_fixture();
@@ -1175,7 +1189,12 @@ function make_git_fixture() {
         'core.autocrlf=false',
         ...args,
       ],
-      { cwd: root, encoding: 'utf8' },
+      {
+        cwd: root,
+        encoding: 'utf8',
+        timeout: 30_000,
+        killSignal: 'SIGKILL',
+      },
     );
   for (const a of [
     ['init', '-q'],
@@ -1307,11 +1326,14 @@ test('启动自检：靶文件停在变异态就拒绝启动，点名 M 编号�
       `残留态必须拒绝启动，实际退出 ${status}：\n${output}`,
     );
     assert.ok(
-      output.includes('启动自检') && output.includes('停在'),
+      output.includes('启动自检') && output.includes('的变异态'),
       `应点名启动自检与「停在某条的变异态」：\n${output}`,
     );
+    // 断言的是**点名**（停在 M9001 的变异态），不是 desc 里出现过 M9001——
+    // 报告的第二行本来就印 desc，拿 output.includes('M9001') 会恒真
+    // （M11246 实测正是这样漏过去的：编号被焊死成「某条」也照样命中）。
     assert.ok(
-      output.includes('M9001'),
+      output.includes('停在 M9001 的变异态'),
       `必须点名是哪一条的变异态，否则不知道该还原成什么：\n${output}`,
     );
     assert.ok(
@@ -1372,6 +1394,196 @@ test('启动自检零误报：靶文件有未提交的合法改动时照常执�
       output,
       /拦截 1 \/ 跳过 0 \/ 红 0/,
       `应照常执行并拦截：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('启动自检覆盖 --verify 档：残留态下不许给出「结构校验全绿」的假结论（#532）', () => {
+  // --verify 读的也是工作区里的靶文件。残留态下它的「五项检查全过」是个假
+  // 结论——比不报更坏，因为 --verify 是最高频的入口（npm test 里就有一条），
+  // 绿了就等于告诉所有人工作区没问题。自检因此排在门之前、所有档位都查。
+  const root = make_git_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏（n*2 → n*3）' },
+    ]);
+    fs.writeFileSync(
+      path.join(root, 'lib', 'calc.js'),
+      MUTATED_CALC_JS,
+      'utf8',
+    );
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--verify',
+    ]);
+    assert.equal(
+      status,
+      1,
+      `残留态下 --verify 必须拒绝，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('启动自检') && output.includes('停在 M9001 的变异态'),
+      `--verify 档也要走自检并点名 M 编号：\n${output}`,
+    );
+    assert.doesNotMatch(
+      output,
+      /五项检查全过/,
+      `残留态下不得报「五项检查全过」：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('启动自检的退化形态一：靶文件只进了索引、HEAD 里还没有它 → 跳过该文件，工具照常跑（#532）', () => {
+  // git show HEAD:<file> 取不到内容时必须跳过（否则 null.split 当场崩），
+  // 而这类文件确实会出现在 `git diff --name-only HEAD` 里（git add 之后
+  // 未提交）。属门前的鲁棒分支，不跳就是工具直接抛栈。
+  const root = make_git_fixture();
+  try {
+    fs.writeFileSync(
+      path.join(root, 'lib', 'new.js'),
+      'const triple = (n) => n * 3;\nmodule.exports = { triple };\n',
+      'utf8',
+    );
+    fs.writeFileSync(
+      path.join(root, 'test', 'new.test.js'),
+      [
+        "const { test } = require('node:test');",
+        "const assert = require('node:assert/strict');",
+        "const { triple } = require('../lib/new');",
+        "test('三倍', () => {",
+        '  assert.equal(triple(21), 63);',
+        '});',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    const git = spawnSync('git', ['add', 'lib/new.js', 'test/new.test.js'], {
+      cwd: root,
+      encoding: 'utf8',
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
+    });
+    assert.equal(git.status, 0, `夹具 git add 失败：${git.stderr}`);
+    const ledger = write_ledger(root, [
+      {
+        ...GOOD_ENTRY,
+        desc: 'M9001 新靶文件的三倍系数改坏',
+        file: 'lib/new.js',
+        find: 'n * 3',
+        replace: 'n * 4',
+        tests: ['new'],
+        must_mention: '三倍',
+      },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--ids',
+      'M9001',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `HEAD 里没有该文件时自检必须跳过而不是崩，实际退出 ${status}：\n${output}`,
+    );
+    assert.match(output, /拦截 1 \/ 跳过 0 \/ 红 0/, `应照常执行：\n${output}`);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('启动自检的退化形态二：旧条目 desc 没有 M 编号 → 报「某条」而不是「Mnull」（#532）', () => {
+  // #113 遗留的 4 条老条目 desc 没有 M 编号（extract_m_number 返回 null）。
+  // 还原命令仍然照给，否则这四条一旦残留就只能自己猜该退什么。
+  // 不带 --ids：这条 desc 取不出编号，点名档会先报「编号不存在」。
+  const root = make_git_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'T1 加倍系数改坏（无 M 编号的老条目形态）' },
+    ]);
+    fs.writeFileSync(
+      path.join(root, 'lib', 'calc.js'),
+      MUTATED_CALC_JS,
+      'utf8',
+    );
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+    ]);
+    assert.equal(status, 1, `残留态必须拒绝，实际 ${status}：\n${output}`);
+    assert.ok(
+      output.includes('停在 某条 的变异态'),
+      `无 M 编号的老条目应报「某条」：\n${output}`,
+    );
+    assert.ok(
+      output.includes('git checkout HEAD -- lib/calc.js'),
+      `无 M 编号也要给还原命令：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('启动自检认得 replace 里的 $ 转义：整串判定不许换成便宜的近似（#532）', () => {
+  // String.replace 会展开 replace 里的 $$/$&/$'/$`（1246 条条目的 find、
+  // 1056 条条目的 replace 里带 $），所以「写下去的那串字节」不等于条目表里
+  // 的字面 replace。判据必须与 run_one 共用同一份实现（apply_mutation）；
+  // 换成「长度差对得上就算残留」这类便宜的近似，这些条目就漏判了——而
+  // 1.2 MB × 961 条那种最坏形态下正有人想这么省（见 detect_residue 头注）。
+  const root = make_git_fixture();
+  try {
+    // 条目表里的 replace 是 `n * 2 + $$100`，实际写下去的是 `n * 2 + $100`
+    const ledger = write_ledger(root, [
+      {
+        ...GOOD_ENTRY,
+        desc: 'M9001 报价系数改坏（replace 带 $$ 转义）',
+        replace: 'n * 2 + $$100',
+      },
+    ]);
+    fs.writeFileSync(
+      path.join(root, 'lib', 'calc.js'),
+      'const double = (n) => n * 2 + $100;\nmodule.exports = { double };\n',
+      'utf8',
+    );
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+      '--ids',
+      'M9001',
+    ]);
+    assert.equal(
+      status,
+      1,
+      `带 $ 转义的残留也必须被认出来（近似判定会漏掉它），实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('停在 M9001 的变异态'),
+      `应点名 M9001：\n${output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
