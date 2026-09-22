@@ -3,7 +3,7 @@
 //
 // 每条 ref 一对应一个函数的入口或一段判据：锚取自该段里的一条源行
 // （含正文，非裸命令），行号漂了即红。全表由该 JS 文件的移植注释扫描生成
-// （tools/trace-check.mjs 的 scan_erb_refs），覆盖文件里出现的每个 :N 引用。
+// （tools/trace-check.mjs 的源绑定解析 get_src_binding），覆盖文件里出现的每个 :N 引用。
 
 export const FILES = [
   {
