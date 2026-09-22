@@ -156,14 +156,14 @@ function run_tool_in(root, extra_args = []) {
 /**
  * 两侧引用数是否同量级（#431）。
  *
- * 两个数的产地都在工具的全绿报告行（tools/trace-check.mjs:1298），口径不同：
+ * 两个数的产地都在工具的全绿报告行（tools/trace-check.mjs 末段的 console.log），口径不同：
  *   inline = 工具里的 `checked`，**锚表行数** —— FILES 行 + LOG_REFS 行 +
  *            SAMPLE_LOG_REFS 行；同一对 (js, :N) 按不同 src 登记多次就计多行
  *            （重复登记共 66 行，com-sm.js 一个文件占 37），指向黄金样本日志
  *            的 91 条也计在内（那 91 条不是 ERB 引用）；
  *   erb    = 工具里的 `erb_found_total`，**按文件去重**扫出的 :N/:N-M 数 ——
- *            ere/ 每个 js 跑一遍 scan_erb_refs(...).size 再求和（工具 :1166
- *            起），日志锚不在此列。
+ *            ere/ 每个 js 按源绑定解析去重出的 :N/:N-M 数（get_src_binding 返回
+ *            的 refs 按 Map 键去重再求和），日志锚不在此列。
  * 两数由同一批移植票同步增长，但**差额**由几笔互不相干的小量构成（master
  * 实测，以 erb 侧独有的为正、inline 侧独有的为负）：
  *   erb − inline = 豁免等未在锚表登记的 267
@@ -432,7 +432,7 @@ function write_srcbind_probe(root) {
     fs.mkdirSync(erb_dir, { recursive: true });
     fs.writeFileSync(path.join(erb_dir, name), lines.join('\n'), 'utf8');
   };
-  const x_lines = Array.from({ length: 16 }, (_, i) => `;X_LINE_${i + 1}`);
+  const x_lines = Array.from({ length: 80 }, (_, i) => `;X_LINE_${i + 1}`);
   x_lines[11] = ';X_UNIQUE_12_14'; // 第 12 行
   x_lines[13] = ';X_UNIQUE_12_14'; // 第 14 行
   mk('X.ERB', x_lines);
@@ -593,6 +593,41 @@ test('#513 错绑基线：基线外的错绑红；条目不再错绑（已消化
       r.output.includes('999999') || r.output.includes('#513'),
       `必须点名过期基线条目：\n${r.output}`,
     );
+    // 其二：真实的新错绑塞进基线（两侧条目都补齐，过期失效与基线外红都
+    // 不开火）→ 只有条目总数上界拦得住——「新错绑不许进基线」的机械形态
+    const probe = write_srcbind_probe(root);
+    try {
+      const js_text = fs.readFileSync(probe.js_path, 'utf8');
+      fs.writeFileSync(
+        probe.js_path,
+        js_text.replace(
+          '// :12-14 X 段的胆怯式注释',
+          '// :12-14 X 段的胆怯式注释\n  // :66 X 段新增的未登记引用（基线外的真错绑）',
+        ),
+        'utf8',
+      );
+      const mutated = fs.readFileSync(tool_path, 'utf8');
+      fs.writeFileSync(
+        tool_path,
+        mutated.replace(
+          decl,
+          `${decl}\n  'ere/__srcbind_probe__.js': ['target/ERB/__srcbind__/X.ERB|66'],`,
+        ),
+        'utf8',
+      );
+      const r2 = run_tool_in(root, ['--only', 'ere/__srcbind_probe__.js']);
+      assert.notEqual(
+        r2.status,
+        0,
+        '新错绑塞进基线（错绑真实存在，过期失效与基线外红都不开火），只有条目总数上界能拦——工具必须红',
+      );
+      assert.ok(
+        r2.output.includes('超出 #513 冻结上界'),
+        `必须点名基线超出冻结上界：\n${r2.output}`,
+      );
+    } finally {
+      probe.cleanup();
+    }
   } finally {
     fs.writeFileSync(tool_path, original, 'utf8'); // 单文件还原，省一次整目录回拷
   }

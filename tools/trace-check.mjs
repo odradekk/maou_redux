@@ -83,9 +83,10 @@
 //     源」的集合性声明，不定位具体引用；锚表挂多 src 的文件（如
 //     page-invasion.js 的 4 个源）在 js 侧无从按段绑定，维持按 ref 匹配的
 //     现状语义。开放区出现同样满足跨文件条目的在场检查（#486 的路径限定
-//     写法 Z.ERB:77 由注释侧扫描天然排除，仍靠现状 ref_re 全文兜底）。
-//   - 存量错绑冻结进 SRC_MISBIND_BASELINE（只减不增；条目不再报错绑时必须
-//     删——消化即删，与 ERB_EXEMPT_BASELINE 同款两道规则）。
+//     写法 Z.ERB:77 由注释侧扫描天然排除，仍由锚校验在场的全文检查覆盖）。
+//   - 存量错绑冻结进 SRC_MISBIND_BASELINE：基线外错绑即红、条目不再报错绑
+//     时必须删、条目总数不得超出冻结上界——三道规则与 ERB_EXEMPT_BASELINE
+//     同款，消化即改小。
 //
 // 用法：node tools/trace-check.mjs（全绿退出码 0，任何失配退出码 1）。
 //       node tools/trace-check.mjs --anchor-quality
@@ -199,11 +200,11 @@ function load_js_text(rel) {
 // 引用形态（#63 起的统一定义）：「注释内、冒号前不是词字符/点号/花括号的
 // :数字」——覆盖行尾 `// :N`、块注释 `* :N`、括号 `（:N）` 及其复合（斜杠
 // 链 :A/:B、@函数名 :N），同时天然排除三段寻址与「路径:行号」限定写法
-// （#486——路径限定引用不进完整性锁，靠锚校验在场的全文兜底）。
+// （#486——路径限定引用不进完整性锁，由锚校验在场的全文检查覆盖）。
 const ERB_REF_RE = /(?<![A-Za-z0-9_.{}]):(\d+)(?:-(\d+))?/g;
 
 // 「源:」声明可接受的路径扩展名（#513）
-const SRC_PATH_EXT_RE = /\.(?:ERB|ERH|CSV|TXT|txt|log)$/i;
+const SRC_PATH_EXT_RE = /\.(?:ERB|ERH|CSV|TXT|log)$/i;
 
 // —— #513 源错绑冻结基线（只减不增）。收紧判定暴露的存量「js :N ↔ 锚表
 //    src」两侧不一致逐条登记在此：消化一条（js 行号/src 两侧核对后对齐，
@@ -525,9 +526,22 @@ function get_src_binding(rel) {
   return binding;
 }
 
-/** 错绑对的键（#513）：js\0src\0ref —— A/B 两侧共用同一身份核对基线 */
+/**
+ * 错绑对的键（#513）。同一物理错绑会占两条：A 侧的 src 是 js 注释按「源:」
+ * 声明的归属、B 侧的 src 是锚表条目挂的 src——两侧各自对基线核对，消化
+ * 掉任何一侧都会让对应条目过期（另一侧仍在时那条继续红）。
+ */
 function misbind_key(js, src, ref) {
   return `${js}\u0000${src}\u0000${ref}`;
+}
+
+/**
+ * 记一笔错绑对并核对基线：基线外的返回 true（调用方打印并计失败），基线内
+ * 的返回 false（存量记账，扫描结束统一核对过期失效）。
+ */
+function note_misbind(js, src, ref) {
+  misbind_seen.add(misbind_key(js, src, ref));
+  return !(SRC_MISBIND_BASELINE[js] ?? []).includes(`${src}|${ref}`);
 }
 
 const misbind_seen = new Set(); // 本轮扫到的错绑对（基线内核对用；基线内计数在核对处统一算，防同对多次命中重复累计）
@@ -783,14 +797,12 @@ for (const { js, refs } of FILES) {
     // 1) js 侧：引用仍在（防静默删除/改动）；#513 起再绑一层源——绑定区的
     //    出现须归属本条目的 src。开放区出现维持按 ref 匹配的现状语义；注释
     //    侧完全无出现时（路径限定写法、区间前缀一类 ERB_REF_RE 看不见的形
-    //    态）退回全文 ref_re 兜底，不扩大打击面。
+    //    态）退回现状的全文检查，不扩大打击面。
     const occ = get_src_binding(js).refs.get(ref) ?? [];
     if (occ.length > 0) {
       if (!occ.some((o) => o.src === null || o.src === src)) {
         const actuals = [...new Set(occ.map((o) => o.src))].join('、');
-        const key = misbind_key(js, src, ref);
-        misbind_seen.add(key);
-        if (!(SRC_MISBIND_BASELINE[js] ?? []).includes(`${src}|${ref}`)) {
+        if (note_misbind(js, src, ref)) {
           console.log(
             `✗ ${label} —— js 里 :${ref} 的出现全部归属其他源（${actuals}），无本 src 或开放区出现（#513 源绑定：行号或 src 挂错了文件？核对后同步 js 或锚表）`,
           );
@@ -1529,7 +1541,7 @@ function extract_single_src(rest) {
   const after = rest.slice(rest.indexOf(m[0]) + m[0].length);
   if (!SRC_PATH_EXT_RE.test(p)) {
     // 空格修正：提取段不以扩展名结尾且紧随一段是扩展名结尾 → 合成一个路径
-    const nxt = after.match(/^\s+(\S+\.(?:ERB|ERH|CSV|TXT|txt|log))(?!\w)/);
+    const nxt = after.match(/^\s+(\S+\.(?:ERB|ERH|CSV|TXT|log))(?!\w)/);
     if (nxt) {
       p = `${p} ${nxt[1]}`;
     }
@@ -1645,19 +1657,6 @@ function parse_src_bindings(lines) {
   return { refs };
 }
 
-/** 扫单个 js 文本里的 ERB 行号引用（注释侧；代码侧不扫，见文件头） */
-function scan_erb_refs(text) {
-  const found = new Set();
-  for (const line of text.split(/\r?\n/)) {
-    for (const part of comment_parts(line)) {
-      for (const m of part.matchAll(ERB_REF_RE)) {
-        found.add(m[2] ? `${m[1]}-${m[2]}` : m[1]);
-      }
-    }
-  }
-  return found;
-}
-
 const erb_registered_by_file = new Map(
   FILES.map(({ js, refs }) => [js, new Set(refs.map((r) => r.ref))]),
 );
@@ -1691,8 +1690,8 @@ for (const rel of list_js_files('ere')) {
     const bound = occ.filter((o) => o.src !== null);
     const has_open = occ.some((o) => o.src === null);
     if (bound.length > 0) {
-      // 绑定区出现逐个核对同 src 登记（#513）：同 ref 的其他合法出现掩护不
-      // 了漂进来的那一条；另有开放区出现且按现状判定能过的，整体宽放——锁
+      // 绑定区出现逐个核对同 src 登记（#513）：同 ref 的其他合法出现不能
+      // 替代漂进来的那一条；另有开放区出现且按现状判定能过的，整体宽放——锁
       // 的是「只出现在绑定区却挂错源」
       const bad = bound.filter(
         (o) => !registered_pairs?.has(`${o.src}\u0000${ref}`),
@@ -1701,9 +1700,7 @@ for (const rel of list_js_files('ere')) {
       if (exempt.includes(ref)) continue;
       if (has_open && registered?.has(ref)) continue;
       for (const o of bad) {
-        const key = misbind_key(rel, o.src, ref);
-        misbind_seen.add(key);
-        if (!(SRC_MISBIND_BASELINE[rel] ?? []).includes(`${o.src}|${ref}`)) {
+        if (note_misbind(rel, o.src, ref)) {
           console.log(
             `✗ ${rel} :${ref} —— 按「源:」声明归属 ${o.src}（@js:${o.line}），锚表同 src 无此登记（#513 源绑定：行号漂到别的文件名下了？核对后同步 js 或锚表）`,
           );
@@ -1751,6 +1748,16 @@ const misbind_baseline_total = Object.values(SRC_MISBIND_BASELINE).reduce(
   (sum, pairs) => sum + pairs.length,
   0,
 );
+// 规则 3「基线只收存量」：条目总数上界（#513 冻结）。往表里追加新错绑以
+// 逃避修复时，过期失效与基线外红都拦不住（错绑真实存在且在表内），只有
+// 这道上界能拦——扩基线必须显式改这个数，与 ERB_EXEMPT_BASELINE 同款。
+const SRC_MISBIND_BASELINE_COUNT = 286;
+if (misbind_baseline_total > SRC_MISBIND_BASELINE_COUNT) {
+  console.log(
+    `✗ 错绑基线 ${misbind_baseline_total} 条，超出 #513 冻结上界 ${SRC_MISBIND_BASELINE_COUNT}（新错绑不许进基线——那是判定要拦的东西；消化存量时上界一并改小）`,
+  );
+  failures += 1;
+}
 let misbind_in_baseline = 0; // 基线内且本轮仍扫到的错绑对数（在核对处统一数，防同对多次命中重复累计）
 for (const [rel, pairs] of Object.entries(SRC_MISBIND_BASELINE)) {
   if (!in_scope(rel)) continue;

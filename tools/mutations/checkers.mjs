@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 125;
+export const COUNT = 126;
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -50,8 +50,8 @@ export default [
   {
     desc: 'M11065 B 侧基线内错绑也报红（存量冻结失效——真树 286 条全打，全绿用例必红）',
     file: 'tools/trace-check.mjs',
-    find: 'if (!(SRC_MISBIND_BASELINE[js] ?? []).includes(`${src}|${ref}`)) {',
-    replace: 'if (true) {',
+    find: 'return !(SRC_MISBIND_BASELINE[js] ?? []).includes(`${src}|${ref}`);',
+    replace: 'return true;',
     tests: ['trace-check'],
     must_mention: 'trace-check 应全绿',
   },
@@ -64,7 +64,7 @@ export default [
     must_mention: 'trace-check 应全绿',
   },
   {
-    desc: 'M11067 行注释窄段覆盖到文件尾（kojo-k903 的 K902 段劫持后续——真树必红）',
+    desc: 'M11067 行注释窄段覆盖到文件尾（kojo-k903 的 K902 段吞掉后续段落——真树必红）',
     file: 'tools/trace-check.mjs',
     find: 'end: Math.min(l, lines.length - 1),',
     replace: 'end: lines.length - 1,',
@@ -78,6 +78,15 @@ export default [
     replace: 'if (false) continue;',
     tests: ['trace-check'],
     must_mention: 'trace-check 应全绿',
+  },
+  {
+    desc: 'M11069 错绑基线上界核对失守（新错绑塞进基线不再红——上界探针必须抓到）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (misbind_baseline_total > SRC_MISBIND_BASELINE_COUNT) {',
+    replace:
+      'if (false && misbind_baseline_total > SRC_MISBIND_BASELINE_COUNT) {',
+    tests: ['trace-check'],
+    must_mention: '只有条目总数上界能拦',
   },
   {
     desc: 'M94 ERB 完整性检查焊死（未登记引用不再红——探针用例必须抓到失明）',
