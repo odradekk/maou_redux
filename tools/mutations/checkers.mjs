@@ -1170,10 +1170,10 @@ export default [
     must_mention: '的「占位名」格仍是壳',
   },
   {
-    desc: 'M10903 存根清单过时行普查失效（K 口上行的欠账点名被删——K2/K4 未注册的事实必须留在行里，#501）',
+    desc: 'M10903 存根清单过时行普查失效（K 口上行的欠账点名被删——K2/K4 的真身与状态必须留在行里，#501/#514）',
     file: 'docs/stub-registry.md',
-    find: '17 个性格模块已注册进族（K0-K15/K19/K903/K904）；K2/K4 有本体（kojo-k2-timid.js:10327/10395',
-    replace: '17 个性格模块已注册进族（K0-K15/K19/K903/K904）',
+    find: '（K2/K4 的真身 kojo-k2-timid.js:10327/10395、kojo-k4-stoic.js:5616/5674 自 #514 起接上）',
+    replace: '（K2/K4 已接上）',
     tests: ['trace-check'],
     test_name:
       '存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植',

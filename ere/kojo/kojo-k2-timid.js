@@ -30,9 +30,16 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
   banishment_koujo_family,
+  benki_koujo_family,
+  dungeon_attack_family,
+  dungeon_victory_family,
+  enterenemy_koujo_family,
   exucution_koujo_family,
+  gobi_koujo_family,
   grotesque_koujo_family,
   kojo_message_com_family,
+  kojo_message_markcng_family,
+  kojo_message_palamcng_family,
   museum_koujo_family,
   ntr_koujo_family,
   public_exucution_koujo_family,
@@ -40,6 +47,7 @@ const {
 } = require('#/kojo/kojo-system');
 const {
   gohoubi_after_koujo_family,
+  gohoubi_request_koujo_family,
   osioski_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
 const {
@@ -11252,18 +11260,30 @@ async function gobi_koujo_k2(arg_0, rand) {
 on('EVENTTRAIN', eventtrain_k2);
 on('EVENTEND', eventend_k2);
 
+// 口上族接线：本文件每个**有分发路径**的真身都要在下面登记一处；漏一处 =
+// 玩家侧看到占位行或不响。文件内直调的真身不在此列（COLOSSEUM_KOJO_2 由 COM
+// 头部守卫直调；DOG_KOJO_2 有真身但守卫静默跳过，见文件头）。范围与接线由
+// test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
 kojo_message_com_family.register(2, kojo_message_com_2);
+kojo_message_palamcng_family.register(2, kojo_message_palamcng_2);
+kojo_message_markcng_family.register(2, kojo_message_markcng_2);
 self_kojo_family.register(2, self_kojo_k2);
 gohoubi_after_koujo_family.register(2, gohoubi_after_koujo_k2);
 osioski_koujo_family.register(2, osioki_koujo_k2);
 ryouzyoku_kojo_family.register(2, dungeon_ryouzyoku_k2);
 ryouzyoku_after_kojo_family.register(2, dungeon_ryouzyoku_after_k2);
+benki_koujo_family.register(2, benki_koujo_k2);
+dungeon_victory_family.register(2, dungeon_victory_k2);
+dungeon_attack_family.register(2, dungeon_attack_k2);
 ntr_koujo_family.register(2, ntr_koujo_k2);
 museum_koujo_family.register(2, museum_koujo_k2);
 exucution_koujo_family.register(2, exucution_koujo_k2);
 banishment_koujo_family.register(2, banishment_koujo_k2);
 public_exucution_koujo_family.register(2, public_exucution_koujo_k2);
 grotesque_koujo_family.register(2, grotesque_koujo_k2);
+enterenemy_koujo_family.register(2, enterenemy_koujo_k2);
+gohoubi_request_koujo_family.register(2, gohoubi_request_koujo_k2);
+gobi_koujo_family.register(2, gobi_koujo_k2);
 
 module.exports = {
   STUBBED_CALLS,
