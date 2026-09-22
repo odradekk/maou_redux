@@ -11260,8 +11260,9 @@ async function gobi_koujo_k2(arg_0, rand) {
 on('EVENTTRAIN', eventtrain_k2);
 on('EVENTEND', eventend_k2);
 
-// 口上族接线：本文件每个真身都必须在下面登记一处（顺序照 kojo-system.js 的
-// 分发表）。漏一处 = 玩家侧看到占位行 / 口上不响——条文与实际接线由
+// 口上族接线：本文件每个**有分发路径**的真身都要在下面登记一处；漏一处 =
+// 玩家侧看到占位行或不响。文件内直调的真身不在此列（COLOSSEUM_KOJO_2 由 COM
+// 头部守卫直调；DOG_KOJO_2 有真身但守卫静默跳过，见文件头）。范围与接线由
 // test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
 kojo_message_com_family.register(2, kojo_message_com_2);
 kojo_message_palamcng_family.register(2, kojo_message_palamcng_2);

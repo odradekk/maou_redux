@@ -6361,9 +6361,10 @@ async function gobi_koujo_k4(arg_0, rand) {
   }
 }
 
-// 口上族接线：本文件每个真身都必须在下面登记一处（顺序照 kojo-system.js 的
-// 分发表）。漏一处 = 玩家侧看到占位行 / 口上不响——条文与实际接线由
-// test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
+// 口上族接线：本文件每个**有分发路径**的真身都要在下面登记一处（顺序照
+// kojo-system.js 的分发表）；漏一处 = 玩家侧看到占位行或不响。文件内直调的
+// 真身不在此列（DOG_KOJO_4 与 COLOSSEUM_KOJO_4 由 COM 头部守卫直调）。范围与
+// 接线由 test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
 kojo_message_com_family.register(4, kojo_message_com_4);
 kojo_message_palamcng_family.register(4, kojo_message_palamcng_4);
 kojo_message_markcng_family.register(4, kojo_message_markcng_4);
