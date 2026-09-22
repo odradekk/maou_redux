@@ -27,7 +27,7 @@
  * 于是 `dog_kojo_family` / `colosseum_kojo_family` 自然落在范围外：原作这两族
  * 是文件内直接 `CALL DOG_KOJO_N` / `CALL COLOSSEUM_KOJO_N`（全库扫过，无一处
  * TRYCALLFORM；如 `target/ERB/口上/EVENT_K4_冷徹.ERB:533`/:541），ere 侧同形
- * 直调（如 kojo-k2-timid.js:1296），族本身没有调用者——K0/K1/K6 往族里的既有
+ * 直调（如 kojo-k2-timid.js:1304），族本身没有调用者——K0/K1/K6 往族里的既有
  * 注册（#231/#237 等口上票落的）因此是死接线，补全它们没有意义、也不是本契约
  * 要守的东西。**这里不写豁免清单**——范围由「有没有调用路径」推出，将来给这两
  * 族加调用点时本锁自动把它们纳入核对。

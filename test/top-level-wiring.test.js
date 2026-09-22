@@ -57,7 +57,8 @@
  *
  *   - `ere/system/train/com-service.js` 的 `train_message_a_riding`
  *     （函数内 require com-sex）；
- *   - `ere/kojo/kojo-k2-timid.js:1285`（函数内 require com-hardcore）；
+ *   - `ere/kojo/kojo-k2-timid.js:1299`（函数内 require com-hardcore；
+ *     行号随 #514 顶部族导入下移，原 1285/1291）；
  *   - `ere/kojo/kojo-k3-noble.js:8543`（函数内 require com-hardcore）。
  *   - `ere/system/train/com-tentacle.js:394`（本票修的现存违规：com208
  *     函数内 require com-colosseum，原来是顶层，守卫上线即红——这与
@@ -502,7 +503,7 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
   // 段，本模块不再需要它，故这一格改用 dungeon-trap 的同类形态。
   const cases = [
     ['ere/dungeon/dungeon-trap.js', 2009, false], // 行号随 #469 顶部族声明下移（原 1991；#469 合并后 campaign_trap JSDoc 再落一行，2008 → 2009）
-    ['ere/kojo/kojo-k2-timid.js', 1291, false],
+    ['ere/kojo/kojo-k2-timid.js', 1299, false], // 行号随 #514 顶部族导入补齐 8 行下移（1291 → 1299）
     ['ere/kojo/kojo-k3-noble.js', 8543, false],
     ['ere/system/train/com-tentacle.js', 394, false],
   ];
