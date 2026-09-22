@@ -1698,7 +1698,7 @@ for (const rel of list_js_files('ere')) {
       );
       if (bad.length === 0) continue;
       if (exempt.includes(ref)) continue;
-      if (has_open && registered?.has(ref)) continue;
+      if (false) continue;
       for (const o of bad) {
         if (note_misbind(rel, o.src, ref)) {
           console.log(
