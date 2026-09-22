@@ -3,11 +3,12 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 133; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
+export const COUNT = 137; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
 // 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
 // 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 靶在 ere/page/page-shop.js，
-// 记在 tools/mutations/page.mjs）
+// 记在 tools/mutations/page.mjs）；#532 起 +4（M11240-M11243：--verify 只读与残留态启动自检，
+// 由 test/mutation-check.test.js 的 #532 用例守护）
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -1330,5 +1331,46 @@ export default [
     tests: ['trace-check'],
     test_name: '存根清单收尾（#515）',
     must_mention: 'JUEL_CHECK 的状态格不得再写',
+  },
+
+  // —— #532：--verify 只读 + 残留态启动自检（靶同为 tools/mutation-check.mjs）——
+  {
+    desc: 'M11240 --verify 的只读短路被拆（if (args.verify) 恒假，--verify 落进执行阶段、就地变异并写靶文件）（#532）',
+    file: 'tools/mutation-check.mjs',
+    find: '  if (args.verify) {',
+    replace: '  if (false) { // 变异：--verify 不再短路，直接落进执行阶段',
+    tests: ['mutation-check'],
+    test_name:
+      '--verify 全程只读：靶文件置为只读照样报绿，且不进入执行阶段（#532）',
+    must_mention: '工作区只读不该影响结构校验',
+  },
+  {
+    desc: 'M11241 残留判定焊死为「都命中」（脏靶文件一律当残留，恒等判定失效——正在改那个靶文件的开发常态被拦下）（#532）',
+    file: 'tools/mutation-check.mjs',
+    find: '      if (head.replace(m.find, m.replace) === working) {',
+    replace: '      if (true) { // 变异：脏靶文件一律当残留',
+    tests: ['mutation-check'],
+    test_name: '启动自检零误报：靶文件有未提交的合法改动时照常执行（#532）',
+    must_mention: '合法改动不该被当成残留拦下',
+  },
+  {
+    desc: 'M11242 残留恒等判定恒假（残留再也认不出来，退回到门 2 那句「靶代码被重构了？」——#513 的 M11069 那一类重新变成隐形）（#532）',
+    file: 'tools/mutation-check.mjs',
+    find: '      if (head.replace(m.find, m.replace) === working) {',
+    replace: '      if (false) { // 变异：恒等判定恒假，残留认不出来',
+    tests: ['mutation-check'],
+    test_name:
+      '启动自检：靶文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
+    must_mention: '应点名启动自检与',
+  },
+  {
+    desc: 'M11243 残留自检不再打印还原命令（报出残留却不给可照抄的 git checkout，人只能自己猜怎么回退）（#532）',
+    file: 'tools/mutation-check.mjs',
+    find: '    还原：git checkout HEAD -- ${f.file}',
+    replace: '    残留：${f.file}',
+    tests: ['mutation-check'],
+    test_name:
+      '启动自检：靶文件停在变异态就拒绝启动，点名 M 编号并给出还原命令（#532）',
+    must_mention: '必须打印可直接照抄的还原命令',
   },
 ];

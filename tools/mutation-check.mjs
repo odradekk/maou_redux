@@ -68,6 +68,19 @@
 //                           三址回落，所指不存在按无引擎处理——测试与诊断
 //                           用，与 tools/engine-contract-check.mjs 同款标准）
 //
+// 两条与「工作区干净」有关的性质（#532）：
+//
+//   **`--verify` 全程只读。** 它只读条目表、靶文件与 tests: 声明的出处，
+//   不写工作区里的任何一个字节——门全过与门失败两种形态都是（门失败时也
+//   不代为还原）。测试用「靶文件置为只读」锁住这条：往里加一次写，Windows
+//   上当场 EPERM、Linux 上是 EACCES。反过来，`--verify` 的绿**不等于**工作
+//   区干净：它照样读工作区，残留态下给的是假结论（下面那条治它）。
+//
+//   **启动自检（任何档位，含 --verify）。** 靶文件若停在「HEAD 内容应用了
+//   某条变异」的残留态（变异被强杀时 finally 不执行），当场点出 M 编号与
+//   还原命令并退出 1，不继续跑——否则后续结果全部不可信。判据与开销见
+//   detect_residue 头注。
+//
 // 退出码：全拦 = 0（无引擎环境下另允许「跳过数恰等于基线」）；任何
 // 失配、误报通过、还原失败、副本破损 = 1。测试驱动工具看退出码，不在测试
 // 里复制基线（trace-check 的整改教训：规则写在测试里而不在工具里，
@@ -1116,10 +1129,130 @@ async function execute_jobs(args) {
 
 // —— 主流程 ——
 
+/**
+ * 与 HEAD 不一致的文件集（含已暂存）；**非 git 仓库返回 null**（自检跳过）。
+ *
+ * 路径按仓库根解析（cwd = root），与 changed_files 的假定一致。
+ */
+function git_dirty_files(root) {
+  const r = spawnSync('git', ['diff', '--name-only', 'HEAD'], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  if (r.error || r.status !== 0) {
+    return null;
+  }
+  return new Set(
+    r.stdout
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
+}
+
+/** HEAD 里那份文件的内容；HEAD 里没有（新增文件）取不到时返回 null */
+function git_head_content(root, rel) {
+  const r = spawnSync('git', ['show', `HEAD:${rel}`], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  return !r.error && r.status === 0 ? r.stdout : null;
+}
+
+/**
+ * 启动自检（#532）：找出**停在变异态**的靶文件——工作树内容恰等于「HEAD
+ * 内容应用了某条变异」的结果。
+ *
+ * 为什么要有它：变异被强杀（`run-node` 到点 `taskkill /T /F`、Ctrl+C 后的
+ * 硬杀）时 `finally` 不执行，靶文件就留在那一态（#493/#500/#505/#513 一晚
+ * 四次）。而这一路**不能指望门 2 兜底**：
+ *
+ *   - 门 2 只查 find 恰 1 次。6077 条里有 38 条的 replace 仍含 find（往
+ *     函数体开头插一句 `return 0;` 的那一类，如 M6882），残留之后 find
+ *     照样恰 1 次——门全绿、真树也全绿，肉眼与 CI 都看不出来，#513 的
+ *     M11069 因此被误提交过一次（66bc345）。
+ *   - 查得出来的那 6000 多条，门 2 报的是「靶代码被重构了？先同步 find
+ *     串再跑」——照着做正好把残留坐实成正式代码。
+ *
+ * 判据因此做成**恒等**的，而不是「与 HEAD 不一致」：后者会把开发流程整个
+ * 卡死（同票既改靶文件又给它加变异条目是常态，#530 就是这么跑的），也会
+ * 让并行副本与临时夹具全部跑不起来。代价是一次 `git diff --name-only
+ * HEAD`（本机 Windows 实测约 110 ms，Linux 更便宜；#532 实测记录见该
+ * issue 的完成评论），另有改动的靶文件各多读一次 `git show HEAD:<file>`。
+ *
+ * 取不到 git 时（非 git 仓库、临时夹具、并行模式的隔离副本——COPY_DENY
+ * 把 `.git` 排除在副本外）整段跳过：副本里的变异由父进程在真树上查过。
+ *
+ * @returns {null|Array<{file: string, desc: string, number: string|null}>}
+ *   null = 无从查起（非 git 仓库）；数组 = 命中（可能为空）
+ */
+function detect_residue(root, entries) {
+  const dirty = git_dirty_files(root);
+  if (dirty === null) return null;
+  const by_file = new Map();
+  for (const m of entries) {
+    if (typeof m.file !== 'string' || !dirty.has(m.file)) continue;
+    if (!by_file.has(m.file)) by_file.set(m.file, []);
+    by_file.get(m.file).push(m);
+  }
+  const findings = [];
+  for (const [file, candidates] of by_file) {
+    const full = path.join(root, file);
+    if (!fs.existsSync(full)) continue;
+    const working = fs.readFileSync(full, 'utf8');
+    const head = git_head_content(root, file);
+    if (head === null) continue;
+    for (const m of candidates) {
+      // HEAD 里 find 本就不恰 1 次：这条的靶代码早就重构过（门 2 会报），
+      // 判据要求的是「HEAD 是干净的原样」，不能拿它推残留。
+      if (head.split(m.find).length - 1 !== 1) continue;
+      // 与 run_one 用同一个表达式：残留的定义就是「run_one 写下去的那个
+      // 字节序列」。两边一旦分家，这里会漏判，而漏判正是这个工单要治的。
+      if (head.replace(m.find, m.replace) === working) {
+        findings.push({
+          file,
+          desc: m.desc,
+          number: extract_m_number(m.desc),
+        });
+      }
+    }
+  }
+  return findings;
+}
+
+/** 只报不修：还原由人决定（工单方向是「脏了立刻发现」，不是「脏了之后自动修」） */
+function report_residue(findings) {
+  for (const f of findings) {
+    const which = f.number === null ? '某条' : `M${f.number}`;
+    console.log(
+      `✗ 启动自检：${f.file} 停在 ${which} 的变异态` +
+        `——工作树内容 = HEAD 内容应用该条变异的结果`,
+    );
+    console.log(`    ${f.desc}`);
+    console.log(`    还原：git checkout HEAD -- ${f.file}`);
+  }
+}
+
 async function main() {
   const args = parse_args(process.argv.slice(2));
   const shards = await load_shards(args.ledger_dir);
   const entries = shards.flatMap((s) => s.entries);
+  // 自检排在门之前：残留态下门 2 报的是「靶代码被重构了？先同步 find 串」，
+  // 把人引向改 find 串——那正好把残留坐实。自检先说清是残留、怎么还原，
+  // 这一路才走不到那句误导上。所有模式都查（含 --verify：它同样读工作区，
+  // 残留态下「结构校验全绿」是个假结论）。
+  const residue = detect_residue(args.root, entries);
+  if (residue !== null && residue.length > 0) {
+    report_residue(residue);
+    console.log(
+      '✗ 靶文件带着残留，拒绝执行：残留态下测试对着已改坏的源码跑，' +
+        '后续结果全部不可信（按上面的命令还原后重跑）',
+    );
+    process.exitCode = 1;
+    return;
+  }
   const gates_ok = run_gates(shards, entries, args);
   if (args.verify) {
     if (gates_ok) {
