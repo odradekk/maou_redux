@@ -396,6 +396,15 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
     '逃脱档提前返回，不走自动调教（:846-849）',
   );
   await slime_room_trap(1, seq(5)); // DICE=5 < 10 深档
+  // :882 CALL COM50_AUTO——真身（ere/event/event-autotrain.js 的 com50_auto）。
+  // **这条身份断言排在第一**（#538）：调错变体（com3_auto）同样会把自动调教
+  // 回数 +1、并让后面的气力/宝珠数值各自落在另一个值上，那些数值断言会先
+  // 红在「气力 -25-10」这类派生量上，把「真身被调」这条结论盖掉（M10717 的
+  // 实测现场）。真身文案是「调对了哪个变体」的直接证据，先判它。
+  assert.ok(
+    text_lines(fixture).some((line) => line.includes('≪粘液≫')),
+    'COM50_AUTO 真身被调（:882）',
+  );
   assert.equal(fixture.store.get('cflag:1:11'), 50, '攻减半（:854）');
   assert.equal(fixture.store.get('cflag:1:12'), 45, '防减半（:855）');
   assert.equal(fixture.store.get('exp:1:1'), 1, '肛门经验 +1（:861）');
@@ -404,11 +413,6 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
     (fixture.store.get('cflag:1:503') || 0) & 8,
     8,
     '润滑位置起（位 3，:885）',
-  );
-  // :882 CALL COM50_AUTO——真身（ere/event/event-autotrain.js 的 com50_auto）
-  assert.ok(
-    text_lines(fixture).some((line) => line.includes('≪粘液≫')),
-    'COM50_AUTO 真身被调（:882）',
   );
   assert.equal(
     fixture.store.get('source:1:10'),
@@ -689,15 +693,20 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
     '两个提前返回档都不走自动调教',
   );
   await love_bug_trap(1, seq(10, 39)); // else 档：39+1 = 40
+  // :1283 CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）。
+  // **这条身份断言排在第一**（#538）：调用点退回占位或调错变体（com63_auto）
+  // 时，本体的伤害照打，但 COM0_AUTO 的 LOSEBASE:0 = 1 不再进 BASE——下面
+  // 那条合并了「本体伤害 + 本体损耗」的数值断言会先红在「体力 -= RAND:40+1…」
+  // 上，把「真身被调」这条结论盖掉（M10720/M10721 的实测现场）。真身文案
+  // 是「调对了哪个变体」的直接证据，先判它。
+  assert.ok(
+    text_lines(fixture).some((line) => line.includes('≪摸来摸去≫')),
+    'COM0_AUTO 真身被调（:1283）',
+  );
   assert.equal(
     fixture.store.get('base:1:0'),
     2000 - 40 - 1,
     '体力 -= RAND:40+1（本体伤害）+ 1（COM0_AUTO 的 LOSEBASE:0，已结算落 BASE）',
-  );
-  // :1283 CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）
-  assert.ok(
-    text_lines(fixture).some((line) => line.includes('≪摸来摸去≫')),
-    'COM0_AUTO 真身被调（:1283）',
   );
   assert.equal(
     fixture.store.get('source:1:4'),

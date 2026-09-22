@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 377; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）；
+export const COUNT = 380; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -43,7 +43,9 @@ export const COUNT = 377; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // 合并态（#505 与 #521 并集）实测 373，取 `import('./tools/mutations/page.mjs')
 // .then(m => m.default.length)` 的数——两侧都不含对方的条目，故不是任一单侧的
 // 数、也不在两侧声明上相加；#515 在其上实测 374；#530 起 +3（M11204-M11206，
-// page-chara-info-show.js 的献祭选项与 [100] 返回）实测 377
+// page-chara-info-show.js 的献祭选项与 [100] 返回）实测 377；#538 起 +3
+// （M11260-M11262，post_conquest_menu() 两个守卫的边界各挪一格——越界守卫的
+// 上下界与 [5] 拒收的 route_33 上界）实测 380
 
 export default [
   {
@@ -3531,5 +3533,36 @@ export default [
   const choice = await era.input(); // :82 INPUT`,
     tests: ['chara-info-show'],
     must_mention: '输入不合法！请输入以下值之一',
+  },
+  {
+    desc: 'M11260 越界守卫上界挪一格（>= 6 改 >= 7——6 落进地区分派，#538）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result >= 6 || result < 0) {',
+    replace: '    if (result >= 7 || result < 0) { // 变异：上界挪一格',
+    tests: ['page-invasion'],
+    test_name:
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
+    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+  },
+  {
+    desc: 'M11261 越界守卫下界挪一格（< 0 改 < -1——-1 落进地区分派，#538）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result >= 6 || result < 0) {',
+    replace: '    if (result >= 6 || result < -1) { // 变异：下界挪一格',
+    tests: ['page-invasion'],
+    test_name:
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
+    must_mention: '白名单清空后仍应被越界守卫拒收重问',
+  },
+  {
+    desc: 'M11262 [5] 拒收上界挪一格（route_33 <= 500 改 < 500——500 落进天神宫出兵菜单，#538）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (result === 5 && era_exflag.route_33 <= 500) {',
+    replace:
+      '    if (result === 5 && era_exflag.route_33 < 500) { // 变异：上界挪一格',
+    tests: ['page-invasion'],
+    test_name:
+      '征服后菜单 [5] 拒收判断条件的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）',
+    must_mention: 'route_33 = 500 仍在拒收侧：不得落进天神宫的出兵菜单',
   },
 ];
