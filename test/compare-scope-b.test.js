@@ -97,8 +97,13 @@ const BASELINE = {
   // 第一行读数，第二行改归 GEO_OUTPUT_2（2D 地图输出未移植）。net -1
   // 存根：natural 182 → 181、max 222 → 221；matched 不变（占位行不产生
   // matched），unexplained 仍 0。数字为合入 #461 返工 master 后实测写回。
-  'daycycle-natural': { matched: 71, version: 2, stub: 181, unexplained: 0 },
-  'daycycle-max': { matched: 71, version: 2, stub: 221, unexplained: 0 },
+  // #508 推进：@AUTOTRAIN 落真身（turnend-settle.js:740 直调
+  // event-autotrain.js 的 autotrain；占位行消失）。本样本的回放窗口经过三次
+  // 回合结算，故两份各 -3：natural 181 → 178、max 221 → 218；matched 与
+  // unexplained 不变（占位行不产生 matched，AUTOTRAIN 在本样本世界无入列
+  // 角色 → 真身零输出）。数字为本次 --sample 重测的实测值。
+  'daycycle-natural': { matched: 71, version: 2, stub: 178, unexplained: 0 },
+  'daycycle-max': { matched: 71, version: 2, stub: 218, unexplained: 0 },
   // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
   // #384 推进（rebase 到 #419 之后重测）：CN_REBUILD 从存根落真身
   // （ere/chara/chara-name.js；改名后按姓名重建称呼，**无输出**），出售段

@@ -403,11 +403,15 @@ test('已征服反抗臂的保底钳制：衰减跌破 100 时钳回 100（SYSTE
   );
 });
 
-test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 ARG 2 臂，空转零副作用', async () => {
+test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 ARG 2 臂，按领域号只打本领域的星号', async () => {
   // 两手构造：FLAG:86 = 2100 让精灵衰减块执行（证明该块的调用点真的跑到，
   // 且它调的 KYOTEN_EVENT 实参应是 2）；FLAG:81 = 300 + FLAG:93 = 2 让人间界
   // 块先回退一档到 1——若精灵块把领域号误传成 1，会以 FLAG:81（<= 500，
   // stage 1）再回退一档到 0 并打出夺回横幅，本用例当场红
+  //
+  // #505 起三臂是真身（判定由「不可达」改判为可达）：衰减后的 FLAG:86 = 2050
+  // 已过首档 2000，ARG 2 臂会打一行星号——本用例因此同时钉住「日循环这条
+  // 调用族真的会走到三臂的行为体」（#505 之前该臂空转，断言无从下手）
   //
   // #195 随机源注入（恒 0.5，选择依据同「已征服的反抗臂」用例，issue #120
   // 评论）：真实随机下精灵块首掷 RAND:100 = 0（约 1%）会让循环进第 2 轮，
@@ -451,14 +455,37 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 A
   assert.equal(
     world.fixture.store.get('flag:94'),
     undefined,
-    'ARG 2 臂空转：不创建 FLAG:94（汉化版三臂无状态推进，见 issue #119）',
+    'ARG 2 臂不推进状态字：不创建 FLAG:94（汉化版三臂无状态推进，见 issue #119）',
   );
   assert(
     !world.fixture.lines_history.some(
       (line) =>
         line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
     ),
-    'ARG 2 臂空转：不打第二档以下的夺回横幅',
+    'ARG 2 臂不走人间界臂：不打夺回横幅',
+  );
+
+  // 单起一条最小世界钉住「ARG 2 臂真的打出一行星号」（#505 起是真身；上面
+  // 那条世界里人间界臂也会打自己的七行横幅，两支的星号混在一起数不清）：
+  // FLAG:81 = 0 → 人间界块整块跳过，只剩精灵块跑一次
+  const only_elf = setup_turnend();
+  only_elf.fixture.store.set('flag:82', 0);
+  only_elf.fixture.store.set('flag:81', 0);
+  only_elf.fixture.store.set('flag:93', 0);
+  only_elf.fixture.store.set('flag:87', 0);
+  only_elf.fixture.store.set('flag:86', 2100);
+  only_elf.fixture.override_math_random(() => 0.5);
+  try {
+    await only_elf.emit('EVENTTURNEND');
+  } finally {
+    only_elf.fixture.restore_math_random();
+  }
+  assert.equal(
+    only_elf.fixture.lines_history.filter(
+      (line) => line.type === 'text' && line.text === '*'.repeat(91),
+    ).length,
+    1,
+    'FLAG:86 衰减到 2050 仍过首档 2000 → ARG 2 臂打一行星号（#505 起是真身）',
   );
 });
 
@@ -522,7 +549,20 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
   fixture.store.set('base:0:1', 50);
 
   await emit('EVENTTURNEND');
-  assert.deepEqual(fixture.var_writes, [
+  // #508：FORMAT_AUTOTRAIN / BEFORE_AUTOTRAIN 换真身后，窗口内多出三段批量
+  // 零写（原作全在 EVENT_AUTOTRAIN.ERB：TFLAG 0..199 与 PALAM 0..16 在
+  // @FORMAT_AUTOTRAIN :68-75，SOURCE 0..16 与 UP/DOWN 0..16 在
+  // @BEFORE_AUTOTRAIN :91-104）。
+  // 逐条展开 260 行不可读，按原作 :64-104 的 FOR 循环区间生成；生成式不
+  // 掩盖「少写/多写」——区间条数在下面单独断言，区间之外仍逐条列出
+  const zero_span = (prefix, count) =>
+    Array.from({ length: count }, (_, i) => ({
+      name: `${prefix}${i}`,
+      value: 0,
+    }));
+  const writes = fixture.var_writes;
+  // 窗口开前的全部写入（逐条，含 #PRI 档与普通档头部）
+  assert.deepEqual(writes.slice(0, 11), [
     // :14 FOR TARGET,0,CHARANUM 写全局 TARGET（#401 起循环体内显式写回，
     // 否则妊娠判定会读到上个角色的残留）
     { name: 'flag:10005', value: 0 },
@@ -542,8 +582,27 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'flag:10006', value: -1 }, // ASSI = -1
     { name: 'flag:10008', value: 0 }, // 普通档 PLAYER = 0
     { name: 'flag:10006', value: -1 }, // ASSI = -1（普通档开头）
+  ]);
+  // 调教窗口内的写入（逐条 + 三段区间），共 262 笔
+  assert.deepEqual(writes.slice(11, 273), [
+    { name: 'flag:10005', value: 0 }, // #508：FORMAT 循环逐角色指 TARGET 指针
+    { name: 'base:0:2', value: 0 }, // 魔王射精槽（:56）
+    { name: 'base:0:2', value: 0 }, // 目标射精槽（:58；本世界 TARGET=0）
+    { name: 'base:0:3', value: 0 }, // 母乳槽（:61）
+    { name: 'base:0:4', value: 0 }, // 触手射精槽（:62）
+    { name: 'deltabase:0:0', value: 0 }, // LOSEBASE:0 = 0（:64；负值通道）
+    { name: 'deltabase:0:1', value: 0 }, // LOSEBASE:1 = 0（:65）
+    ...zero_span('tflag:', 200), // :68-70 REPEAT 200
+    ...zero_span('palam:0:', 17), // :73-75 FOR LOCAL,0,17
+    ...zero_span('source:0:', 17), // BEFORE_AUTOTRAIN（:95-97）
+    ...zero_span('delta:0:', 17), // BEFORE_AUTOTRAIN（:100-103）
+    { name: 'tflag:402', value: 0 }, // 死斗场收入清零（:86）
     { name: 'cflag:0:506', value: 0 }, // 新人标志消去
     { name: 'cflag:0:666', value: 0 }, // 自动调教标志消去
+    { name: 'flag:10005', value: -1 }, // #508：TARGET 指针还原暂存值
+  ]);
+  // 窗口关闭之后的写入（逐条）
+  assert.deepEqual(writes.slice(273), [
     // PARTY_UNITE（#172 真身）行动完了复位：原作 FOR CHARID, 0 起，魔王
     // 的 CFLAG:530 也清（行 263，先于 WEAPON_RESTORE）
     { name: 'cflag:0:530', value: 0 },
@@ -559,19 +618,41 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
     { name: 'base:0:1', value: 1050 }, // 魔王气力 +1000
     { name: 'base:0:1', value: 300 }, // 超上限钳回 MAXBASE:0:1
     { name: 'flag:10005', value: -1 }, // TARGET = TARGET_POOL（暂存值）
+    // :740 AUTOTRAIN（#508 起真身）自身的指针簿记：PLAYER/ASSI 置调教态、
+    // 逐角色指 TARGET（本世界 getAllCharacters 只有 0 号），收尾还原
+    { name: 'flag:10008', value: 0 },
+    { name: 'flag:10006', value: -1 },
+    { name: 'flag:10005', value: 0 },
+    { name: 'flag:10005', value: -1 },
+    { name: 'flag:10006', value: -1 },
     // PARTY_JOIN（#172 真身）内联的 PARTY_UNITE 复调（行 743 → :98），
     // 魔王的 530 再清一次
     { name: 'cflag:0:530', value: 0 },
     { name: 'flag:10005', value: 0 }, // TARGET = FLAG:1（开局 0）
     { name: 'flag:10006', value: 0 }, // ASSI = FLAG:2（开局 0）
   ]);
+  // 区间条数（生成式不掩盖少写）：200 + 17×3
+  assert.equal(
+    writes.filter((w) => w.name.startsWith('tflag:') && w.value === 0).length,
+    201,
+    'TFLAG 0..199 + tflag:402',
+  );
+  assert.equal(
+    writes.filter((w) => w.name.startsWith('palam:0:')).length,
+    17,
+    'PALAM 0..16 清零',
+  );
   // 普通档结算循环跳过魔王：cflag:0:570 一类结算写入不得出现
   assert(
     !fixture.var_writes.some((w) => w.name === 'cflag:0:570'),
     '结算主循环必须跳过魔王（原作 A = 1 起）',
   );
-  // 结算中段的原作 WAIT 恰好一次
-  assert.deepEqual(fixture.inputs_consumed, [{ api: 'waitAnyKey' }]);
+  // 结算中段的原作 WAIT 恰好一次。#508 前这里断言的是「消费了一次输入」，
+  // 那是两条占位行把它前面垫满（引擎语义：有可读输出才真等键）；换真身后
+  // 本世界窗口内零输出，WAIT 仍被调用、但不消费——两项都钉住
+  assert.equal(fixture.waits.length, 1, '结算中段的原作 WAIT 恰一次');
+  assert.equal(fixture.waits[0].waited, false, '之前无可读输出：不消费输入');
+  assert.deepEqual(fixture.inputs_consumed, []);
 });
 
 test('装备效果接入（#174 真身）：再生戒指的 HP 回复加成与死之戒指的回复减衰', async () => {
@@ -636,13 +717,23 @@ test('回合结算：苗床角色进入真实业务，不再停在 NAEDOKO 存�
 test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', async () => {
   const { fixture, emit, STATE } = setup_turnend();
   await emit('EVENTTURNEND');
-  const texts = fixture.text_lines();
-  const settle_head = texts.findIndex((line) =>
-    line.includes('@FORMAT_AUTOTRAIN'),
+  // 普通档内部的开闭点（#508：FORMAT_AUTOTRAIN / AUTOTRAIN 换真身后不再有
+  // 占位行，改用调教窗口的开闭序与调教域表的存在性作序证人）
+  const calls = fixture.calls.map((c) => c.api);
+  const window_open = calls.indexOf('beginTrain');
+  const window_close = calls.indexOf('endTrain');
+  assert.ok(window_open >= 0, '普通档要开一次调教窗口');
+  assert.ok(window_close >= 0, '窗口必须在结算尾部关上（endTrain）');
+  assert.ok(window_open < window_close, '调教窗口先开后关');
+  assert(
+    !fixture
+      .text_lines()
+      .some(
+        (line) =>
+          line.includes('@FORMAT_AUTOTRAIN') || line.includes('@AUTOTRAIN'),
+      ),
+    '两条占位行必须消失（#508 起都是真身）',
   );
-  const settle_tail = texts.findIndex((line) => line.includes('@AUTOTRAIN'));
-  assert.ok(settle_head >= 0 && settle_tail >= 0);
-  assert.ok(settle_head < settle_tail, '普通档内部的两条占位行先后有序');
   // #PRI 档的尾观测点在 #401 之后不再有存根文本（AUTO_BUYING/DEBUG_CHECK
   // 已落真身、两者在本世界都零写入），改用写入序作序证人：:135 的
   // `ASSI = -1` 是该档最后两笔写之一、普通档开头的 `PLAYER = 0` 记其后
@@ -658,6 +749,60 @@ test('三档链序：#PRI 先于普通档执行，两处出口同为 SHOP', asyn
     '#PRI 档的尾部写入必须先于普通档的头部写入（#6：BEGIN 不中止链）',
   );
   assert.equal(STATE.SHOP, 'SHOP');
+});
+
+// —— #508：自动调教三连的调教窗口与回合尾部结算 ——
+
+test('调教窗口（#508）：FORMAT_AUTOTRAIN 的 PALAM 重置落得下，窗口在 AUTOTRAIN 后关', async () => {
+  const { fixture, emit } = setup_turnend();
+  join_slave_chara(fixture, 31, '温妮');
+  // 常时发情（TALENT:271）：FORMAT_AUTOTRAIN 会给目标写 PALAM:3/5 各 3000——
+  // 这是「窗口确实开着」的直接证据：窗口外引擎对三段写静默丢弃
+  fixture.store.set('talent:31:271', 1);
+
+  await emit('EVENTTURNEND');
+
+  assert.ok(
+    fixture.var_writes.some((w) => w.name === 'palam:31:3' && w.value === 3000),
+    '常时发情的 3000 起步必须落进 palam（窗口开着的直接证据）',
+  );
+  assert.ok(
+    fixture.var_writes.some((w) => w.name === 'palam:31:5' && w.value === 3000),
+  );
+  const calls = fixture.calls.map((call) => call.api);
+  const open = calls.indexOf('beginTrain');
+  const close = calls.indexOf('endTrain');
+  assert.ok(open >= 0 && close > open, '开窗在关窗之前');
+  // 关窗即删调教域表（引擎 endTrain 语义）：窗口外的读者仍读回空，
+  // event-nextday.js:442 的「PALAM 读回来恒空」判据不受影响
+  assert.equal(fixture.store.get('palam:31:3'), undefined);
+});
+
+test('调教窗口（#508）：AUTOTRAIN 在窗口里跑真身，PALAM → 珠可结算', async () => {
+  const { fixture, emit } = setup_turnend();
+  join_slave_chara(fixture, 31, '温妮');
+  const mod = fixture.load_module('event/event-autotrain');
+  const real_autotrain = mod.autotrain;
+  let palam_inside_window;
+  mod.autotrain = async () => {
+    // 站在 AUTOTRAIN（:740）的位置：窗口开着的话这一格写得进
+    fixture.era.set('palam:31:5', 12345);
+    palam_inside_window = fixture.store.get('palam:31:5');
+    // 迷宫域的 COM*_AUTO 会把 CFLAG:666 拉起来（本世界不跑迷宫，替身模拟
+    // 它的产物；AUTOTRAIN 的入列判据就是它）
+    fixture.era.set('cflag:31:666', 1);
+    return real_autotrain();
+  };
+
+  await emit('EVENTTURNEND');
+
+  assert.equal(palam_inside_window, 12345, 'AUTOTRAIN 跑在调教窗口里');
+  assert.equal(
+    fixture.store.get('juel:31:5'),
+    1000,
+    'PALAM:5 = 12345 → 欲情珠 1000（JUEL_CHECK_MAIN 的换算梯子）',
+  );
+  assert.equal(fixture.store.get('cflag:31:667'), 1, 'CFLAG:667 += CFLAG:666');
 });
 
 test('CAMPAIGN_GAMEOVER：气力被扣到 <= 0 时战役结束、清零派遣（#469）', async () => {
@@ -752,13 +897,10 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（labo-dungeon-map.js 与
   // labo-map.js）；#179 起 LVUP/DUNGEON_AFTER 换真身（dungeon-lvup.js 与
   // dungeon-after.js）；#217 起 BENKI 换真身（system/train/benki.js）——
-  // 四条均已从名单移除；#342 起 MARRIAGE_DAY 亦接真身
-  assert.deepEqual(settle_stubs, [
-    'FORMAT_AUTOTRAIN',
-    '自動處刑',
-    'AUTOTRAIN',
-    'GET_LOOK_INFO',
-  ]);
+  // 四条均已从名单移除；#342 起 MARRIAGE_DAY 亦接真身；#508 起
+  // FORMAT_AUTOTRAIN / AUTOTRAIN 亦接真身（ere/event/event-autotrain.js
+  // 的同名函数，调用点原为占位行）
+  assert.deepEqual(settle_stubs, ['自動處刑', 'GET_LOOK_INFO']);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
@@ -799,9 +941,9 @@ test('结婚日接线：完成婚后事件后顺接剩余结算并回到 SHOP', 
     fixture.restore_math_random();
   }
   assert.equal(fixture.store.get('cflag:0:602'), 1);
-  assert(
-    fixture.text_lines().some((line) => line.includes('@AUTOTRAIN')),
-    '结婚日后的自动调教结算仍可达',
+  assert.ok(
+    fixture.calls.some((call) => call.api === 'endTrain'),
+    '结婚日后的自动调教结算仍可达（#508：真身跑在调教窗口里，窗口在结算后关）',
   );
 });
 

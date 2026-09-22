@@ -398,15 +398,19 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
   const endcheck = texts.findIndex((line) =>
     line.includes('银黑桃乳业获得的收入desu'),
   ); // ENDCHECK 内部（@EVENT_NEWDAY :241 之后，ENDCHECKSPADE 的 151 档播报）
-  const campaign = texts.findIndex((line) => line.includes('@AUTOTRAIN')); // 普通档尾部
-  assert.ok(nextday >= 0 && month_roll >= 0 && endcheck >= 0 && campaign >= 0);
+  assert.ok(nextday >= 0 && month_roll >= 0 && endcheck >= 0);
   assert.ok(
     nextday < month_roll,
     'EVENT_NEXTDAY（:77）必须先于月替（:84）——原作调用序',
   );
+  // 普通档尾部的序证人。#508 起 @AUTOTRAIN 的占位行没了，改用纯文本的位置
+  // 关系：ENDCHECK 在普通档的 :749-751（EVENT_NEWDAY 内）跑，必在 #PRI 档的
+  // 月替（:84）之后——三档链序或 EVENT_NEWDAY 调用点被挪动，本断言即红。
+  // 「AUTOTRAIN 真的执行了」不在本证人的射程内（它在本世界零输出，由
+  // event-turnend 的窗口用例与变异 M11002 单独钉）
   assert.ok(
-    campaign < endcheck,
-    'ENDCHECK（@EVENT_NEWDAY :241，经普通档 :751）必须在普通档尾部之后',
+    month_roll < endcheck,
+    'ENDCHECK（@EVENT_NEWDAY :241，经普通档 :749-751）必须在 #PRI 的月替之后',
   );
 });
 

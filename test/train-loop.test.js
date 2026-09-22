@@ -488,9 +488,14 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   assert(fixture.era.getAddedCharacters().includes(31));
   // 调教回数 +1（PRITRAIN 承载头部）
   assert.equal(fixture.store.get('cflag:31:10'), 1);
-  // beginTrain/endTrain 各恰一次
-  assert.equal(fixture.calls.filter((c) => c.api === 'beginTrain').length, 1);
-  assert.equal(fixture.calls.filter((c) => c.api === 'endTrain').length, 1);
+  // beginTrain/endTrain 各恰两次：调教场一次 + 回合结算的自动调教窗口一次
+  // （#508：普通档在 FORMAT_AUTOTRAIN 前开、AUTOTRAIN 后关），两次都成对
+  assert.equal(
+    fixture.calls.filter((c) => c.api === 'beginTrain').length,
+    2,
+    '调教场 + 回合结算的自动调教窗口',
+  );
+  assert.equal(fixture.calls.filter((c) => c.api === 'endTrain').length, 2);
 });
 
 // —— 夹具守卫的引擎比对：调教域表的寻址前置条件是真引擎行为 ——

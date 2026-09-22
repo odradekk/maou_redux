@@ -3,11 +3,12 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 345; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+export const COUNT = 349; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
 // 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）；
 // #502 起 +4（M10744-M10747，SENGEN_VIDEO_DE 的骰点与两段清零、EVENT_TURNEND
-// 的宣言数真读）
+// 的宣言数真读）；#508 起 +4（M11000-M11003，回合结算的调教窗口开关、
+// AUTOTRAIN 调用点与 FORMAT 循环的 TARGET 指针）
 
 export default [
   {
@@ -3196,5 +3197,38 @@ export default [
     replace: '      const ex_flag_9012 = 0; // 变异：退回硬编码',
     tests: ['event-turnend'],
     must_mention: '流行度 6 → 当日衰减为 5',
+  },
+  // —— #508：自动调教三连的调教窗口与回合尾部结算接线 ——
+  {
+    desc: 'M11000 回合结算不开调教窗口（删 beginTrain——自动调教三连的 SOURCE/PALAM 写全被引擎静默丢弃；夹具里 tflag 二段写先炸）',
+    file: 'ere/system/turnend-settle.js',
+    find: '  era.beginTrain(...era.getAddedCharacters());',
+    replace: '  // 变异：不开调教窗口',
+    tests: ['event-turnend'],
+    must_mention: 'key error in getter/setter! key (tflag:0)',
+  },
+  {
+    desc: 'M11001 回合结算不关调教窗口（删 endTrain——调教域表不删）',
+    file: 'ere/system/turnend-settle.js',
+    find: '  era.endTrain();',
+    replace: '  // 变异：不关窗口',
+    tests: ['event-turnend'],
+    must_mention: '开窗在关窗之前',
+  },
+  {
+    desc: 'M11002 回合尾部不调 AUTOTRAIN（PALAM → 珠/能力的结算整段丢失）',
+    file: 'ere/system/turnend-settle.js',
+    find: "  await require('#/event/event-autotrain').autotrain();",
+    replace: '  // 变异：不调 AUTOTRAIN',
+    tests: ['event-turnend'],
+    must_mention: 'AUTOTRAIN 跑在调教窗口里',
+  },
+  {
+    desc: 'M11003 FORMAT 循环不逐角色指 TARGET 指针（format_autotrain 写到旧指针上）',
+    file: 'ere/system/turnend-settle.js',
+    find: '    era_flag.target = cid;',
+    replace: '    // 变异：不指 TARGET 指针',
+    tests: ['event-turnend'],
+    must_mention: '常时发情的 3000 起步必须落进 palam（窗口开着的直接证据）',
   },
 ];

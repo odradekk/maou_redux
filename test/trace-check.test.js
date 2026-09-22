@@ -1567,6 +1567,11 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
       ['kojo-k8-spade.js', 'kojo_message_com_family.register(8'],
     ],
     ['COMF134\\_背后位ＳＰ.ERB:7', ['COM64 已实现', 'com-assistant.js:2676']],
+    // #508：本体与调用点接线（原 #501 记在下方措辞组，本票落地后转「已实现」）
+    [
+      '| `BEFORE_AUTOTRAIN`',
+      ['event-autotrain.js:61', 'dungeon-battle.js:146'],
+    ],
   ];
   for (const [key, needles] of first_table) {
     const hits = lines.filter((line) => line.includes(key));
@@ -1584,13 +1589,9 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
 
   // ② 措辞订正的行：状态照旧（前两条仍是未了结），但事实必须写准
   const wording = [
-    // 本体在 event-autotrain.js，调用点仍是迷宫域内存根——两句都要在场
-    [
-      '| `BEFORE_AUTOTRAIN`',
-      ['event-autotrain.js:40', 'dungeon-battle.js:144'],
-    ],
     // 已注册的范围与 K2/K4 的真身位置必须点名（#514 起是「已接上」而非欠账，
     // 两个 needle 仍要在场：行里少了它们，欠账/已接上的事实就无从核起）
+    // —— #508 起 BEFORE_AUTOTRAIN 行不在本组：它已转「已实现」并列进上表
     [
       '| `ATTACK_KOUJO` / `ATTACK_KOUJO_B`',
       ['K2/K4', 'kojo-k2-timid.js:10327'],

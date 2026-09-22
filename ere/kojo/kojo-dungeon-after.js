@@ -42,7 +42,11 @@
  *     正常落）。Emuera 侧调教期读不到奖惩残留靠「TRAIN 开始清零」，ere
  *     侧靠「endTrain 删表」，两者等价；被替换的只是 ere 引擎里本就不
  *     存在的「调教外写 tflag」通道。口上实现移植时读 choice 参数、不读
- *     tflag:18（stub-registry 该行的说明同步）；
+ *     tflag:18（stub-registry 该行的说明同步）。**#508 补记**：本链的调用点
+ *     （dungeon-after.js 的 @GOHOUBI / @OSIOKI）自 #508 起落在回合结算的
+ *     调教窗口内——「EVENTTURNEND 里没有 tflag 桶」这一条现状不再成立，
+ *     参数链仍保持（值同、读者同，见 dungeon-after.js 文件头的补记）；
+ *     直读 tflag:18 的口上实现（K14/K19/K904）都在窗口外语境，语义不变；
  *   - 存在判定（SIF FLAG:LOCAL == 0 → RETURN 0）在原作就是注释状态
  *     （:471-472），不移植；GET_KOJO_NUM 的 EX 半边同 kojo-system 的
  *     待办说明。

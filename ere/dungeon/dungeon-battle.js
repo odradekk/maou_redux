@@ -43,7 +43,6 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { emit } = require('#/system/event/registry');
 const {
@@ -80,9 +79,10 @@ const {
  * #461 起 SOURCE_CHECK_AUTO 换真身（source_check_auto 改发同名事件，真身在
  * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)），从名单移除；
  * #500 起 COM13_AUTO 换真身（调用点直调 ere/event/event-autotrain.js），
- * 从名单移除。
+ * 从名单移除；#508 起 BEFORE_AUTOTRAIN 亦换真身（同一模块的
+ * before_autotrain），从名单移除。
  */
-const STUBBED_CALLS = ['BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO'];
+const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];
 
 /**
  * @CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，
@@ -138,11 +138,13 @@ async function campaign_monster_list(floor, rand) {
 }
 
 /**
- * @BEFORE_AUTOTRAIN 存根（调教票）：自动调教前置。
- * @returns {Promise<void>} 原作无 RESULT 消费
+ * @BEFORE_AUTOTRAIN（EVENT_AUTOTRAIN.ERB:91-104；#508 起真身）：
+ * 自动调教前置——SOURCE / delta 清零。真身在 ere/event/event-autotrain.js，
+ * 调用点直调（浏览器/测试可替换导出，同 SOURCE_CHECK_AUTO 一族的先例）。
+ * @returns {Promise<number>} 原作 RETURN 0（调用点不消费）
  */
 async function before_autotrain() {
-  await stub_line_wait('BEFORE_AUTOTRAIN', '自动调教前置', '随调教自动票');
+  return require('#/event/event-autotrain').before_autotrain();
 }
 
 /**
@@ -152,10 +154,17 @@ async function before_autotrain() {
  * 与真身分属迷宫域与 event 域，接线走
  * 事件注册表——本函数只发事件，不重复实现调度逻辑；真身见
  * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)。
+ *
+ * #508：结算后补一次 `era.nextTurnInTrain()`——这是调教回合循环里 SOURCE_CHECK
+ * 之后那一步（UPCHECK 的 ere 等价物，train-loop.js:70-74）在迷宫路径上的
+ * 对应物。本移植把 NOWEX→EX 的合并交给引擎的 nextTurnInTrain（source-check.js
+ * 文件头的职责划分），而迷宫路径不经过回合循环，不补这一步的话 EX:0-4
+ * （绝顶次数，JUEL_CHECK_MAIN 的珠加成读它）在 endTrain 删表时丢掉。
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
 async function source_check_auto() {
   await emit('SOURCE_CHECK_AUTO');
+  era.nextTurnInTrain();
 }
 
 /**

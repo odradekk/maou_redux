@@ -64,8 +64,10 @@ const ex_item_mod = require('#/dungeon/ex-item');
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。COM63_AUTO 随 #178、COM0_AUTO 随
- * #500 直调 ere/event/event-autotrain.js 的真身；KARMA /
- * BEFORE_AUTOTRAIN / SOURCE_CHECK_AUTO 复用既有域内存根；
+ * #500 直调 ere/event/event-autotrain.js 的真身；KARMA 复用 dungeon.js 的
+ * 域内存根；BEFORE_AUTOTRAIN / SOURCE_CHECK_AUTO 经模块对象引用
+ * dungeon-battle.js 的同名转发（#508 起 before_autotrain 已是那侧的真身
+ * 转发，SOURCE_CHECK_AUTO 自 #461 起发同名事件）；
  * DUNGEON_TOWN_LOVER 随 #341、SELL_EX_ITEM / ADD_EX_ITEM 随 #344 换成
  * 真身。对 dungeon.js / dungeon-battle.js 的引用一律函数内延迟 require
  * 防环（dungeon.js → 本文件是顶层引用，反向只许延迟）。

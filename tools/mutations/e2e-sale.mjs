@@ -6,18 +6,18 @@ export default [
   {
     desc: 'M7800 MAGIC 重新登记成 dungeon-battle 存根（端到端宿主）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = ['BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO'];",
+    find: "const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];",
     replace:
-      "const STUBBED_CALLS = ['MAGIC', 'BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
+      "const STUBBED_CALLS = ['MAGIC', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
     tests: ['event-ending2-e2e'],
     must_mention: 'MAGIC 在 ENDING_2 战斗路径实际执行且未退回存根',
   },
   {
     desc: 'M7801 MONSTER_SKILL 重新登记成 dungeon-battle 存根（端到端宿主）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = ['BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO'];",
+    find: "const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];",
     replace:
-      "const STUBBED_CALLS = ['MONSTER_SKILL', 'BEFORE_AUTOTRAIN', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
+      "const STUBBED_CALLS = ['MONSTER_SKILL', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
     tests: ['event-ending2-e2e'],
     must_mention: 'MONSTER_SKILL 在 ENDING_2 战斗路径实际执行且未退回存根',
   },
