@@ -3,15 +3,88 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 116;
+export const COUNT = 125;
 
 export default [
+  // —— #513：内联 :N 的源绑定（trace-check）——
+  {
+    desc: 'M11060 B 侧源绑定失守（表侧错挂 src 不再点名——A 侧兜底拦下但 Y.ERB 断言必须红）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (!occ.some((o) => o.src === null || o.src === src)) {',
+    replace: 'if (false) {',
+    tests: ['trace-check'],
+    must_mention: '必须点名 :12-14 与错挂的 Y.ERB',
+  },
+  {
+    desc: 'M11061 B 侧开放区宽放拆除（跨文件条目的开放区出现被拒——真树全绿必须红）',
+    file: 'tools/trace-check.mjs',
+    find: '(o) => o.src === null || o.src === src',
+    replace: '(o) => o.src === src',
+    tests: ['trace-check'],
+    must_mention: 'trace-check 应全绿',
+  },
+  {
+    desc: 'M11062 A 侧错绑判定短路（绑定区出现不再逐个核对——合成探针反例必须红）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (bad.length === 0) continue;',
+    replace: 'if (bad.length >= 0) continue;',
+    tests: ['trace-check'],
+    must_mention: '必须点名 :30-32 与它归属的 X.ERB',
+  },
+  {
+    desc: 'M11063 对级登记键塌缩（pairs 集合只剩 ref——绑定区引用全部误报，真树必红）',
+    file: 'tools/trace-check.mjs',
+    find: 'new Set(refs.map((r) => `${r.src}\\u0000${r.ref}`)),',
+    replace: 'new Set(refs.map((r) => `${r.src}\\u0000${r.ref}`.slice(6))),',
+    tests: ['trace-check'],
+    must_mention: 'trace-check 应全绿',
+  },
+  {
+    desc: 'M11064 错绑基线过期核对失守（消化后忘删的条目不再红——基线用例必须抓到）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (misbind_seen.has(misbind_key(rel, src, ref))) {',
+    replace: 'if (true) {',
+    tests: ['trace-check'],
+    must_mention: '基线只收真实的存量',
+  },
+  {
+    desc: 'M11065 B 侧基线内错绑也报红（存量冻结失效——真树 286 条全打，全绿用例必红）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (!(SRC_MISBIND_BASELINE[js] ?? []).includes(`${src}|${ref}`)) {',
+    replace: 'if (true) {',
+    tests: ['trace-check'],
+    must_mention: 'trace-check 应全绿',
+  },
+  {
+    desc: 'M11066 B 侧无出现不再退回 ref_re 兜底（路径限定/区间前缀条目被误杀，真树必红）',
+    file: 'tools/trace-check.mjs',
+    find: "const ref_re = new RegExp(`:${ref.replace('-', '-')}(?!\\\\d)`);",
+    replace: 'const ref_re = /x^/;',
+    tests: ['trace-check'],
+    must_mention: 'trace-check 应全绿',
+  },
+  {
+    desc: 'M11067 行注释窄段覆盖到文件尾（kojo-k903 的 K902 段劫持后续——真树必红）',
+    file: 'tools/trace-check.mjs',
+    find: 'end: Math.min(l, lines.length - 1),',
+    replace: 'end: lines.length - 1,',
+    tests: ['trace-check'],
+    must_mention: 'trace-check 应全绿',
+  },
+  {
+    desc: 'M11068 A 侧开放区宽放拆除（同 ref 混合出现被误杀——真树必红）',
+    file: 'tools/trace-check.mjs',
+    find: 'if (has_open && registered?.has(ref)) continue;',
+    replace: 'if (false) continue;',
+    tests: ['trace-check'],
+    must_mention: 'trace-check 应全绿',
+  },
   {
     desc: 'M94 ERB 完整性检查焊死（未登记引用不再红——探针用例必须抓到失明）',
     file: 'tools/trace-check.mjs',
-    find: '    if (!registered?.has(ref) && !exempt.includes(ref)) {',
+    find: '    } else if (!registered?.has(ref) && !exempt.includes(ref)) {',
     replace:
-      '    if (false && !registered?.has(ref) && !exempt.includes(ref)) {',
+      '    } else if (false && !registered?.has(ref) && !exempt.includes(ref)) {',
     tests: ['trace-check'],
     must_mention: '完整性检查对后来者失明',
   },
@@ -912,9 +985,9 @@ export default [
   {
     desc: 'M9306 完整性扫描拆掉 --only 过滤（范围外的未登记引用也被报出——#431 补的探针用例必须红）',
     file: 'tools/trace-check.mjs',
-    find: '  if (!in_scope(rel)) continue;\n  const found = scan_erb_refs(load_js_text(rel));',
+    find: '  if (!in_scope(rel)) continue;\n  // #513：扫描换成带源归属的出现明细',
     replace:
-      '  // 变异：完整性扫描不再按 --only 过滤\n  const found = scan_erb_refs(load_js_text(rel));',
+      '  // 变异：完整性扫描不再按 --only 过滤\n  // #513：扫描换成带源归属的出现明细',
     tests: ['trace-check'],
     test_name:
       '探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且报出位置（自动纳入后来者）',

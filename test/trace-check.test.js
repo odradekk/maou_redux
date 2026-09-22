@@ -37,6 +37,10 @@
  *      缺陷：30 行无空格形态曾被跳过，MONSTER_SETUP 所在文件被报成已移植）；
  *      证据悬空、分母漂移、已判定表悬空、待移植基线与归因不到基线超限
  *      各自即红；`--only` 在该模式下限定 target 路径并自报范围。
+ *   9. #513 源绑定：内联 :N 按最近的「源: target/…ERB」单文件声明归属到具体
+ *      ERB——js 侧（绑定区引用须有同 src 登记）与表侧（条目须有归属该 src
+ *      的引用在场）双向锁死；文件头开放区与路径限定写法（#486）不误伤；
+ *      存量错绑冻结进 SRC_MISBIND_BASELINE（只减不增、消化后删条目）。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  *
@@ -305,6 +309,295 @@ test('K19 错锚证伪：登记号随引用漂移，静态正文锚仍须判红'
     0,
     `K19 错锚探针还原后必须复绿：\n${restored.output}`,
   );
+});
+
+// —— #513：内联 :N 与源 ERB 的绑定。锚校验此前只对 ref 数值做在场与锚两
+//    道，不绑 src——行号漂到同表其他文件的登记值时照样绿（#491 抽样：
+//    ablup.js ABLUP20 段的 :181-183 改成 :281-283，后者挂在 ABLUP10 名下，
+//    放行）。绑定信号 = 最近的「源: target/…ERB」单文件声明（jsdoc 段、
+//    行注释窄段）；文件头注释区与无声明区是开放区——引用多个 ERB 的文件
+//    在那里无从绑定，维持按 ref 匹配的现状语义。合法跨文件写法
+//    （路径限定 Z.ERB:77，#486）只作在场信号。存量错绑冻结进
+//    SRC_MISBIND_BASELINE，只减不增，消化在后续票。 ——
+
+test('#513 源绑定重放：胆怯 :181-183 漂到 :281-283（挂 ABLUP10 名下）必须红', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', 'system', 'train', 'ablup.js');
+  const original = fs.readFileSync(js_path, 'utf8');
+  // 锚取 ABLUP20 段 3282 行那条「胆怯」注释（工单实测的放行现场）：锚表里
+  // :281-283 挂 ABLUP10（lit(';爱慕')），:181-183 挂 ABLUP20（IF TALENT:10）。
+  const anchor = '// 胆怯 :181-183（只乘 A）';
+  assert.equal(
+    original.split(anchor).length - 1,
+    1,
+    '探针锚行不在 ablup.js 里（或不再唯一）——文件被改过？',
+  );
+  try {
+    fs.writeFileSync(
+      js_path,
+      original.replace(anchor, '// 胆怯 :281-283（只乘 A）'),
+      'utf8',
+    );
+    const { status, output } = run_tool_in(root, [
+      '--only',
+      'ere/system/train/ablup.js',
+    ]);
+    assert.notEqual(
+      status,
+      0,
+      ':281-283 漂到 ABLUP10 名下的登记值（注释在 ABLUP20 段），源绑定必须拦下',
+    );
+    assert.ok(
+      output.includes(':281-283') && output.includes('ABLUP20'),
+      `必须点名 :281-283 与它按「源:」声明归属的 ABLUP20：\n${output}`,
+    );
+  } finally {
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+  const restored = run_tool_in(root, ['--only', 'ere/system/train/ablup.js']);
+  assert.equal(
+    restored.status,
+    0,
+    `探针还原后必须复绿（ABLUP20 存量错绑在基线内）：\n${restored.output}`,
+  );
+});
+
+test('#513 源绑定重放：漂到全表未登记值仍红；锚表侧改号仍红（回归）', () => {
+  const root = probe_repo();
+  const js_path = path.join(root, 'ere', 'system', 'train', 'ablup.js');
+  const shard_path = path.join(root, 'tools', 'trace-refs', 'ablup.mjs');
+  const js_original = fs.readFileSync(js_path, 'utf8');
+  const shard_original = fs.readFileSync(shard_path, 'utf8');
+  const anchor = '// 胆怯 :181-183（只乘 A）';
+  const ref_anchor =
+    "{ src: ABLUP20, ref: '181-183', any: [lit('IF TALENT:10')] },";
+  assert.equal(js_original.split(anchor).length - 1, 1, 'js 探针锚行必须唯一');
+  assert.equal(
+    shard_original.split(ref_anchor).length - 1,
+    1,
+    '锚表探针行不在 ablup.mjs 里（或不再唯一）——分片被改过？',
+  );
+  try {
+    // 其一：js 侧漂到全表未登记值——现状即红（未登记进 FILES），源绑定不得放松
+    fs.writeFileSync(
+      js_path,
+      js_original.replace(anchor, '// 胆怯 :377-379（只乘 A）'),
+      'utf8',
+    );
+    const r1 = run_tool_in(root, ['--only', 'ere/system/train/ablup.js']);
+    assert.notEqual(r1.status, 0, '漂到全表未登记值必须仍红（回归）');
+    assert.ok(
+      r1.output.includes(':377-379'),
+      `必须点名未登记值：\n${r1.output}`,
+    );
+    fs.writeFileSync(js_path, js_original, 'utf8');
+    // 其二：锚表侧改号——js 里已无 :191-193，现状即红，双向锁死不放松
+    fs.writeFileSync(
+      shard_path,
+      shard_original.replace(
+        ref_anchor,
+        "{ src: ABLUP20, ref: '191-193', any: [lit('IF TALENT:10')] },",
+      ),
+      'utf8',
+    );
+    const r2 = run_tool_in(root, ['--only', 'ere/system/train/ablup.js']);
+    assert.notEqual(r2.status, 0, '锚表改号、js 里已不存在，必须仍红（回归）');
+    assert.ok(
+      r2.output.includes(':191-193'),
+      `必须点名 js 里已不存在的登记号：\n${r2.output}`,
+    );
+  } finally {
+    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
+  }
+  const restored = run_tool_in(root, ['--only', 'ere/system/train/ablup.js']);
+  assert.equal(restored.status, 0, `探针还原后必须复绿：\n${restored.output}`);
+});
+
+// —— #513 合成探针：绑定段的正反两面。X/Y 两个函数段各自声明源；Z 只在
+//    文件头开放区被跨文件引用（无就近声明），另有一条路径限定写法
+//    （Z.ERB:77）验证在场信号。正例全绿证明判定不误伤合法形态；反例分别
+//    从 js 侧（行号漂到邻段已登记值）与锚表侧（src 挂错段）双侧证伪。 ——
+
+/** 搭一份源绑定探针：合成 js + 两个段源 + 一个跨文件源 + 锚表分片 */
+function write_srcbind_probe(root) {
+  const js_path = path.join(root, 'ere', '__srcbind_probe__.js');
+  const shard_path = path.join(
+    root,
+    'tools',
+    'trace-refs',
+    '__srcbind_probe__.mjs',
+  );
+  const erb_dir = path.join(root, 'target', 'ERB', '__srcbind__');
+  const mk = (name, lines) => {
+    fs.mkdirSync(erb_dir, { recursive: true });
+    fs.writeFileSync(path.join(erb_dir, name), lines.join('\n'), 'utf8');
+  };
+  const x_lines = Array.from({ length: 16 }, (_, i) => `;X_LINE_${i + 1}`);
+  x_lines[11] = ';X_UNIQUE_12_14'; // 第 12 行
+  x_lines[13] = ';X_UNIQUE_12_14'; // 第 14 行
+  mk('X.ERB', x_lines);
+  const y_lines = Array.from({ length: 34 }, (_, i) => `;Y_LINE_${i + 1}`);
+  y_lines[29] = ';Y_UNIQUE_30_32'; // 第 30 行
+  y_lines[31] = ';Y_UNIQUE_30_32'; // 第 32 行
+  mk('Y.ERB', y_lines);
+  const z_lines = Array.from({ length: 80 }, (_, i) => `;Z_LINE_${i + 1}`);
+  z_lines[4] = ';Z_UNIQUE_5_6'; // 第 5 行
+  z_lines[5] = ';Z_UNIQUE_5_6'; // 第 6 行
+  z_lines[76] = ';Z_UNIQUE_77'; // 第 77 行
+  mk('Z.ERB', z_lines);
+  fs.writeFileSync(
+    js_path,
+    [
+      '/**',
+      ' * 探针模块（test/trace-check.test.js 写入，跑完即删）。',
+      ' * 文件头开放区：@Z 分发（:5-6）——跨文件引用，无就近声明。',
+      ' */',
+      '/**',
+      ' * 源: target/ERB/__srcbind__/X.ERB @FUNC_X',
+      ' */',
+      'function func_x() {',
+      '  return 1; // :12-14 X 段的胆怯式注释',
+      '}',
+      '/**',
+      ' * 源: target/ERB/__srcbind__/Y.ERB @FUNC_Y',
+      ' */',
+      'function func_y() {',
+      '  return 2; // :30-32 Y 段注释',
+      '}',
+      '// 参见 Z.ERB:77 的说明（#486 路径限定写法）。',
+      'module.exports = {};',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  fs.writeFileSync(
+    shard_path,
+    [
+      "const X = 'target/ERB/__srcbind__/X.ERB';",
+      "const Y = 'target/ERB/__srcbind__/Y.ERB';",
+      "const Z = 'target/ERB/__srcbind__/Z.ERB';",
+      'export const FILES = [',
+      '  {',
+      "    js: 'ere/__srcbind_probe__.js',",
+      '    refs: [',
+      "      { src: Z, ref: '5-6', any: [/Z_UNIQUE_5_6/] },",
+      "      { src: X, ref: '12-14', any: [/X_UNIQUE_12_14/] },",
+      "      { src: Y, ref: '30-32', any: [/Y_UNIQUE_30_32/] },",
+      "      { src: Z, ref: '77', any: [/Z_UNIQUE_77/] },",
+      '    ],',
+      '  },',
+      '];',
+      'export const LOG_REFS = [];',
+      'export const SAMPLE_LOG_REFS = {};',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  const cleanup = () => {
+    for (const p of [js_path, shard_path]) {
+      if (fs.existsSync(p)) fs.unlinkSync(p);
+    }
+    fs.rmSync(erb_dir, { recursive: true, force: true });
+  };
+  return { js_path, shard_path, cleanup };
+}
+
+test('#513 源绑定：绑定段登记绿；漂到邻段登记值或表侧挂错段，双侧都必须红', () => {
+  const root = probe_repo();
+  const probe = write_srcbind_probe(root);
+  const args = ['--only', 'ere/__srcbind_probe__.js'];
+  try {
+    // 正例：X/Y 段各自登记、文件头开放区跨文件、路径限定在场——全绿
+    const green = run_tool_in(root, args);
+    assert.equal(
+      green.status,
+      0,
+      `合法形态（绑定段登记 / 开放区跨文件 / 路径限定）必须全绿：\n${green.output}`,
+    );
+
+    // 反例 1（js 侧漂移）：X 段的 :12-14 改成 :30-32（Y 段已登记）
+    const js_text = fs.readFileSync(probe.js_path, 'utf8');
+    fs.writeFileSync(
+      probe.js_path,
+      js_text.replace(
+        '// :12-14 X 段的胆怯式注释',
+        '// :30-32 X 段的胆怯式注释',
+      ),
+      'utf8',
+    );
+    const red1 = run_tool_in(root, args);
+    assert.notEqual(
+      red1.status,
+      0,
+      'X 段行号漂到 Y 段已登记的 :30-32，源绑定必须红（#491 的放行现场）',
+    );
+    assert.ok(
+      red1.output.includes(':30-32') && red1.output.includes('X.ERB'),
+      `必须点名 :30-32 与它归属的 X.ERB：\n${red1.output}`,
+    );
+    fs.writeFileSync(probe.js_path, js_text, 'utf8');
+
+    // 反例 2（表侧挂错段）：{ X, 12-14 } 的 src 改成 Y
+    const shard_text = fs.readFileSync(probe.shard_path, 'utf8');
+    fs.writeFileSync(
+      probe.shard_path,
+      shard_text.replace(
+        "{ src: X, ref: '12-14', any: [/X_UNIQUE_12_14/] },",
+        // 锚换成在 Y.ERB:12-14 也能命中的文本——源侧校验放行，红只剩源绑定
+        "{ src: Y, ref: '12-14', any: [/;Y_LINE_13/] },",
+      ),
+    );
+    const red2 = run_tool_in(root, args);
+    assert.notEqual(
+      red2.status,
+      0,
+      '锚表把 X 段的引用挂到 Y 名下（js 侧 :12-14 绑 X），必须红',
+    );
+    assert.ok(
+      red2.output.includes(':12-14') && red2.output.includes('Y.ERB'),
+      `必须点名 :12-14 与错挂的 Y.ERB：\n${red2.output}`,
+    );
+  } finally {
+    probe.cleanup();
+  }
+  const restored = run_tool_in(root, args);
+  assert.equal(restored.status, 0, `探针删净后必须复绿：\n${restored.output}`);
+});
+
+test('#513 错绑基线：基线外的错绑红；条目不再错绑（已消化）时必须删', () => {
+  const root = probe_repo();
+  const tool_path = path.join(root, 'tools', 'trace-check.mjs');
+  const original = fs.readFileSync(tool_path, 'utf8');
+  const decl = 'const SRC_MISBIND_BASELINE = {';
+  assert.ok(
+    original.includes(decl),
+    'SRC_MISBIND_BASELINE 必须内嵌在工具里——规则不复制到别处',
+  );
+  try {
+    // 塞一条永不红的假条目 → 「条目已消化，必须删」方向开火
+    fs.writeFileSync(
+      tool_path,
+      original.replace(
+        decl,
+        `${decl}\n  'ere/main.js': ['target/ERB/ABL/ABLUP9.ERB|999999'],`,
+      ),
+      'utf8',
+    );
+    const r = run_tool_in(root, ['--only', 'ere/main.js']);
+    assert.notEqual(
+      r.status,
+      0,
+      '基线条目对应的错绑不存在（已消化或凭空塞入），工具必须红——基线只收真实的存量',
+    );
+    assert.ok(
+      r.output.includes('999999') || r.output.includes('#513'),
+      `必须点名过期基线条目：\n${r.output}`,
+    );
+  } finally {
+    fs.writeFileSync(tool_path, original, 'utf8'); // 单文件还原，省一次整目录回拷
+  }
+  const restored = run_tool_in(root, ['--only', 'ere/main.js']);
+  assert.equal(restored.status, 0, `基线还原后必须复绿：\n${restored.output}`);
 });
 
 test('探针：往 ere/ 塞未登记引用的模块，trace-check 必须红且报出位置（自动纳入后来者）', () => {
