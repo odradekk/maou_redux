@@ -334,7 +334,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '298-441',
+        ref: '299-441',
         any: [/^\s*\$INPUT_LOOP_TMPO2$/m],
       },
       {
@@ -1819,12 +1819,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '542-808',
+        ref: '530-814',
         any: [/^[ \t]*IF AREA == 81[ \t]*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '828-1162',
+        ref: '815-1162',
         any: [/^[ \t]*IF AREA == 81[ \t]*$/m],
       },
       {
@@ -1853,6 +1853,2453 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '277',
         any: [/^[ \t]*PRINTW 侵攻战斗力减少[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '758-888',
+        any: [/^\s*PRINTFORM %SAVESTR:YUSYA_I%带着怪物到达了\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '240-459',
+        any: [
+          /^\s*@INVASION_EVENT_SEIEI, AREA, SINDO, INV_TYPE, SINKOU, YUSYA_I\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '462-529',
+        any: [/^\s*@_INV_DEATH_CHECK, ARG:0, ARG:1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '893-910',
+        any: [
+          /^\s*DATA 『快去叫亲爱的魔王大人出来，人家要和他比试比试呢』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '936-951',
+        any: [/^\s*DATA 『哎呀~是亲爱魔王大人的手下呢』\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '959-964',
+        any: [
+          /^\s*DATA 『今天运气真是不错哦~可悲的魔族，你们的脑袋是我的了！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1015-1028',
+        any: [
+          /^\s*DATAFORM %LOCALS:2%陷入了泥沼中，动弹不得，被魔王抓住了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '307-309',
+        any: [/^\s*;勇者基礎レベル補正\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '391',
+        any: [/^\s*CALL _INV_DEATH_CHECK\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '394-395',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/5\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '791-807',
+        any: [/^\s*ELSEIF L_CHOICE == 3 && INV_TYPE == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '738-739',
+        any: [/^\s*ELSEIF L_CHOICE == 2 && INV_TYPE == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '793-794',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%绕开%LOCALS:2%向%LOCALS:0%进发，因为路途遥远地形复杂耗费了一些体力。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '546',
+        any: [/^\s*LOCAL:3 = TALENT:YUSYA_I:种族 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '361',
+        any: [
+          /^\s*IF CFLAG:SEIEI_I:12 < \(CFLAG:YUSYA_I:11 \* \(SINKOU\/2048\+1\)\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '366',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%率领魔王军的攻击使%CALLNAME:SEIEI_I%受到了\{\(CFLAG:YUSYA_I:11 \*\(SINKOU\/1024\+1\) - TMP2_I\)\*4\}点伤害！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '213',
+        any: [/^\s*; 返回值：0 - 继续侵攻，1 - 侵攻结束\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '466-479',
+        any: [/^\s*;勇者死亡判定\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '468',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:\(ARG:1\)%被%SAVESTR:\(ARG:0\)%率领的魔王军消灭了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '468-469',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:\(ARG:1\)%被%SAVESTR:\(ARG:0\)%率领的魔王军消灭了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '470-471',
+        any: [/^\s*ELSEIF BASE:\(ARG:1\):0 <= 100\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '472',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:\(ARG:1\)%被%SAVESTR:\(ARG:0\)%率领的魔王军击溃了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '472-473',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:\(ARG:1\)%被%SAVESTR:\(ARG:0\)%率领的魔王军击溃了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '474-475',
+        any: [/^\s*ELSEIF BASE:\(ARG:1\):1 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '476',
+        any: [
+          /^\s*PRINTFORML 被魔王军包围的%CALLNAME:\(ARG:1\)%失去战斗的意志投降了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '476-477',
+        any: [
+          /^\s*PRINTFORML 被魔王军包围的%CALLNAME:\(ARG:1\)%失去战斗的意志投降了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '476-478',
+        any: [
+          /^\s*PRINTFORML 被魔王军包围的%CALLNAME:\(ARG:1\)%失去战斗的意志投降了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '482-521',
+        any: [
+          /^\s*IF BASE:\(ARG:0\):1 <= 1000 && TALENT:\(ARG:0\):280 && \(FLAG:5 & 128\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '482-487',
+        any: [
+          /^\s*IF BASE:\(ARG:0\):1 <= 1000 && TALENT:\(ARG:0\):280 && \(FLAG:5 & 128\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '483',
+        any: [
+          /^\s*PRINTFORML 被狂王俘虏过的%SAVESTR:\(ARG:0\)%丧失了战意，抛下武器投降了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '484',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:\(ARG:1\)%俘获了%SAVESTR:\(ARG:0\)%………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '484-485',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:\(ARG:1\)%俘获了%SAVESTR:\(ARG:0\)%………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '487-488',
+        any: [/^\s*ELSEIF BASE:\(ARG:0\):0 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '488-509',
+        any: [/^\s*ELSEIF BASE:\(ARG:0\):0 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '510-520',
+        any: [/^\s*ELSEIF BASE:\(ARG:0\):1 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '489',
+        any: [/^\s*PRINTFORM 魔王军被%CALLNAME:\(ARG:1\)%消灭了，\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '494',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%孤身逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '500',
+        any: [/^\s*PRINTFORM 魔王军被%CALLNAME:\(ARG:1\)%击溃了，\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '505',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%从乱军中逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '511',
+        any: [
+          /^\s*PRINTFORM 被%CALLNAME:\(ARG:1\)%包围的魔王军失去战斗的意志投降了，\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '513',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%被投降的部下献给了%CALLNAME:\(ARG:1\)%…………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '516',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%没脸见人地逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '524-528',
+        any: [/^\s*;侵略中途事件（要塞）\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '492-494',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%孤身逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '494-495',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%孤身逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '505-506',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%从乱军中逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '513-514',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%被投降的部下献给了%CALLNAME:\(ARG:1\)%…………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '497-499',
+        any: [/^\s*ELSEIF BASE:\(ARG:0\):0 <= 300\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '508-510',
+        any: [/^\s*ELSEIF BASE:\(ARG:0\):1 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '516-519',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%没脸见人地逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '509-510',
+        any: [/^\s*ELSEIF BASE:\(ARG:0\):1 <= 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '516-520',
+        any: [/^\s*PRINTFORMW %SAVESTR:\(ARG:0\)%没脸见人地逃了回来…………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '298',
+        any: [/^\s*ADDCHARA 18\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '303',
+        any: [/^\s*ADDCHARA 19\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '317',
+        any: [/^\s*REPEAT 21\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '318',
+        any: [/^\s*IF TIME_I > 19\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '362',
+        any: [/^\s*IF RAND:5 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '412',
+        any: [/^\s*IF CFLAG:YUSYA_I:12 < CFLAG:SEIEI_I:11\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '282-283',
+        any: [/^\s*IF LOCAL > 2000\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '284-286',
+        any: [/^\s*PRINTFORMW 精锐部队出现了！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '286',
+        any: [/^\s*PRINTFORMW 精锐部队出现了！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '293-294',
+        any: [
+          /^\s*PRINTFORMW 你的勇者%SAVESTR:YUSYA_I%率领着魔王军和精锐部队展开了战斗！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '295',
+        any: [/^\s*TIME_I = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '296-306',
+        any: [/^\s*IF RAND:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '300',
+        any: [/^\s*SEIEI_I = GETCHARA\(18\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '304-305',
+        any: [/^\s*SEIEI_I = GETCHARA\(19\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '305',
+        any: [/^\s*SEIEI_I = GETCHARA\(19\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '307-313',
+        any: [/^\s*;勇者基礎レベル補正\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '307-308',
+        any: [/^\s*;勇者基礎レベル補正\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '307-310',
+        any: [/^\s*;勇者基礎レベル補正\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '311-314',
+        any: [/^\s*MAXBASE:SEIEI_I:1 \+= \(10 \* FLAG:60\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '312-314',
+        any: [/^\s*BASE:SEIEI_I:0 \+= \(10 \* FLAG:60\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '313',
+        any: [/^\s*BASE:SEIEI_I:1 \+= \(10 \* FLAG:60\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '315-316',
+        any: [/^\s*BASE:YUSYA_I:0 \+= SINKOU\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '318-333',
+        any: [/^\s*IF TIME_I > 19\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '318-319',
+        any: [/^\s*IF TIME_I > 19\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '320-322',
+        any: [/^\s*PRINTFORML 没有时间了，战线已经不可能再维持下去了！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '321-322',
+        any: [/^\s*PRINTFORML 没有时间了，战线已经不可能再维持下去了！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '322',
+        any: [/^\s*PRINTFORML 没有时间了，战线已经不可能再维持下去了！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '323',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%的部队开始了后退，怪物们在后退中溃散着。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '324',
+        any: [/^\s*PRINTFORML 最终活着回来的怪物不到十只………\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '326',
+        any: [/^\s*EXP:YUSYA_I:80 \+= SINKOU \/ 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '327',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/10\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '327-331',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/10\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '332-336',
+        any: [/^\s*;魔王軍\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '335-357',
+        any: [/^\s*;魔王軍\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '337',
+        any: [/^\s*PRINTFORML 魔王军 %SAVESTR:YUSYA_I%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '338-340',
+        any: [/^\s*BAR BASE:YUSYA_I:0, MAXBASE:YUSYA_I:0, 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '341-343',
+        any: [/^\s*BAR BASE:YUSYA_I:1, MAXBASE:YUSYA_I:1, 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '344',
+        any: [
+          /^\s*PRINTFORML 攻击\{CFLAG:YUSYA_I:11 \* \(SINKOU\/1024\+1\)\} 防御\{CFLAG:YUSYA_I:12\} 怪物的合计战力\{SINKOU\}点\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '346',
+        any: [/^\s*PRINTW VS\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '349',
+        any: [/^\s*PRINTFORML %CALLNAME:SEIEI_I%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '350-352',
+        any: [/^\s*BAR BASE:SEIEI_I:0, MAXBASE:SEIEI_I:0, 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '353-355',
+        any: [/^\s*BAR BASE:SEIEI_I:1, MAXBASE:SEIEI_I:1, 50\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '356',
+        any: [
+          /^\s*PRINTFORML 攻击\{CFLAG:SEIEI_I:11\} 防御\{CFLAG:SEIEI_I:12\}\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '356-357',
+        any: [
+          /^\s*PRINTFORML 攻击\{CFLAG:SEIEI_I:11\} 防御\{CFLAG:SEIEI_I:12\}\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '360-389',
+        any: [/^\s*;魔王軍の先制攻撃\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '362-363',
+        any: [/^\s*IF RAND:5 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '375-377',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%率领魔王军的攻击使%CALLNAME:SEIEI_I%受到了\{\(CFLAG:YUSYA_I:11 \*\(SINKOU\/1024\+1\) - TMP2_I\)\*2\}点伤害！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '364-365',
+        any: [/^\s*PRINTFORML 迅猛的一击！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '376-377',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%率领魔王军的攻击使%CALLNAME:SEIEI_I%受到了\{\(CFLAG:YUSYA_I:11 \*\(SINKOU\/1024\+1\) - TMP2_I\)\*2\}点伤害！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '365',
+        any: [/^\s*PRINTFORML 迅猛的一击！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '366-368',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%率领魔王军的攻击使%CALLNAME:SEIEI_I%受到了\{\(CFLAG:YUSYA_I:11 \*\(SINKOU\/1024\+1\) - TMP2_I\)\*4\}点伤害！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '377-379',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%率领魔王军的攻击使%CALLNAME:SEIEI_I%受到了\{\(CFLAG:YUSYA_I:11 \*\(SINKOU\/1024\+1\) - TMP2_I\)\*2\}点伤害！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '369-371',
+        any: [
+          /^\s*BASE:SEIEI_I:0 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '380-382',
+        any: [
+          /^\s*BASE:SEIEI_I:0 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '371',
+        any: [
+          /^\s*BASE:SEIEI_I:0 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '382',
+        any: [
+          /^\s*BASE:SEIEI_I:0 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '372',
+        any: [
+          /^\s*BASE:SEIEI_I:1 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '383',
+        any: [
+          /^\s*BASE:SEIEI_I:1 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '372-373',
+        any: [
+          /^\s*BASE:SEIEI_I:1 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*4\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '383-384',
+        any: [
+          /^\s*BASE:SEIEI_I:1 -= \(CFLAG:YUSYA_I:11\*\(SINKOU\/1024\+1\) - TMP2_I\)\*2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '387',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:SEIEI_I%承受着%SAVESTR:YUSYA_I%的攻击。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '387-388',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:SEIEI_I%承受着%SAVESTR:YUSYA_I%的攻击。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '391-408',
+        any: [/^\s*CALL _INV_DEATH_CHECK\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '394-401',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/5\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '395',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/5\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '395-400',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/5\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '395-401',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/5\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '403-410',
+        any: [/^\s*;精鋭部隊の攻撃\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '407-410',
+        any: [/^\s*;精鋭部隊の攻撃\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '410-428',
+        any: [/^\s*;精鋭部隊の攻撃\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '413',
+        any: [/^\s*CALL MONSTER_DATA, MON_ID, 0, YUSYA_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '414-416',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:SEIEI_I%发起进攻使%SAVESTR:YUSYA_I%率领的魔王军受到了\{\(CFLAG:SEIEI_I:11 - TMP2_I\)\*5\}点伤害！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '416',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:SEIEI_I%发起进攻使%SAVESTR:YUSYA_I%率领的魔王军受到了\{\(CFLAG:SEIEI_I:11 - TMP2_I\)\*5\}点伤害！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '417-418',
+        any: [/^\s*SIF TALENT:YUSYA_I:251 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '419-424',
+        any: [/^\s*SIF CFLAG:YUSYA_I:11 < 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '421',
+        any: [/^\s*BASE:YUSYA_I:0 -= \(CFLAG:SEIEI_I:11 - TMP2_I\)\*5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '422',
+        any: [/^\s*BASE:YUSYA_I:1 -= \(CFLAG:SEIEI_I:11 - TMP2_I\)\*5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '422-424',
+        any: [/^\s*BASE:YUSYA_I:1 -= \(CFLAG:SEIEI_I:11 - TMP2_I\)\*5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '425-426',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%率领的魔王军承受着%CALLNAME:SEIEI_I%的攻击。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '425-427',
+        any: [
+          /^\s*PRINTFORML %SAVESTR:YUSYA_I%率领的魔王军承受着%CALLNAME:SEIEI_I%的攻击。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '430-443',
+        any: [/^\s*CALL _INV_DEATH_CHECK, YUSYA_I, SEIEI_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '430-435',
+        any: [/^\s*CALL _INV_DEATH_CHECK, YUSYA_I, SEIEI_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '430-436',
+        any: [/^\s*CALL _INV_DEATH_CHECK, YUSYA_I, SEIEI_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '438-444',
+        any: [/^\s*TIME_I \+= 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '279',
+        any: [
+          /^\s*IF FLAG:AREA >= 5000 && FLAG:SINDO == 0 && INV_TYPE == 2\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '250',
+        any: [/^\s*SIF FLAG:SINDO != 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '280-281',
+        any: [/^\s*LOCAL = FLAG:AREA\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '283-451',
+        any: [/^\s*PRINTFORMW 精锐部队出现了！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '446-452',
+        any: [/^\s*ELSEIF INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '452-457',
+        any: [/^\s*ELSEIF INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '542-567',
+        any: [/^\s*LOCALS:1 = 人类军队\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '570-606',
+        any: [/^\s*PRINTFORML \[1\] 全军强攻\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '571-574',
+        any: [/^\s*PRINTFORML \[1\] 全军强攻\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '572-574',
+        any: [/^\s*PRINTFORML \[1\] 全军强攻\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '573-574',
+        any: [/^\s*PRINTFORML \[1\] 全军强攻\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '574',
+        any: [/^\s*PRINTFORML \[1\] 全军强攻\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '575',
+        any: [/^\s*PRINTFORML \[2\] 亲自潜入\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '576',
+        any: [/^\s*PRINTFORML \[3\] 绕路\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '578-587',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%向%LOCALS:0%进发着，却在必经之路上遇到了%LOCALS:1%建起的一座%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '587',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%向%LOCALS:0%进发着，却在必经之路上遇到了%LOCALS:1%建起的一座%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '588-589',
+        any: [/^\s*PRINTFORML \[1\] 偷偷潜入\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '589',
+        any: [/^\s*PRINTFORML \[1\] 偷偷潜入\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '590',
+        any: [/^\s*PRINTFORML \[2\] 绕路\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '595',
+        any: [/^\s*L_CHOICE = RESULT \+ 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '592-599',
+        any: [/^\s*L_CHOICE = RESULT \+ 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '602-603',
+        any: [
+          /^\s*PRINTFORMW %LOCALS:2%看起来防御坚固防备森严，于是魔王军发起了强攻。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '603',
+        any: [
+          /^\s*PRINTFORMW %LOCALS:2%看起来防御坚固防备森严，于是魔王军发起了强攻。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '605',
+        any: [/^\s*L_CHOICE = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '608-609',
+        any: [/^\s*;\[1\] 全军强攻\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '610-670',
+        any: [/^\s*;强攻成功（40%）\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '611-612',
+        any: [/^\s*;强攻成功（40%）\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '614',
+        any: [
+          /^\s*PRINTFORML 魔王军向着%LOCALS:2%发起了最为猛烈的进攻，在付出较小的代价后攻破了%LOCALS:2%的一角。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '615',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%中的%LOCALS:1%仓皇外逃，被%LOCALS:2%外的魔王军尽数剿灭、\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '615-616',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%中的%LOCALS:1%仓皇外逃，被%LOCALS:2%外的魔王军尽数剿灭、\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '615-617',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%中的%LOCALS:1%仓皇外逃，被%LOCALS:2%外的魔王军尽数剿灭、\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '619-624',
+        any: [/^\s*PRINTFORML 怪物数量减少了10\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '624',
+        any: [/^\s*PRINTFORML 怪物数量减少了10\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '624-625',
+        any: [/^\s*PRINTFORML 怪物数量减少了10\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '627-628',
+        any: [/^\s*;强攻惨胜（40%）\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '630-631',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%的防御极其坚固，%LOCALS:1%凭借着掩体不断地攻击，让魔王军损失惨重。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '631',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%的防御极其坚固，%LOCALS:1%凭借着掩体不断地攻击，让魔王军损失惨重。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '633',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%不得不亲自上阵，这才逆转了局面，攻下了%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '635',
+        any: [
+          /^\s*PRINTFORML 在付出巨大的代价后，魔王军才攻下了%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '637',
+        any: [/^\s*PRINTFORML 侥幸获胜的魔王军继续向%LOCALS:0%进发。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '637-638',
+        any: [/^\s*PRINTFORML 侥幸获胜的魔王军继续向%LOCALS:0%进发。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '640-645',
+        any: [/^\s*PRINTFORML %SAVESTR:YUSYA_I%的体力减少了一半！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '644-645',
+        any: [/^\s*PRINTFORML %SAVESTR:YUSYA_I%的体力减少了一半！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '645',
+        any: [/^\s*PRINTFORML %SAVESTR:YUSYA_I%的体力减少了一半！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '649-650',
+        any: [/^\s*SINKOU = SINKOU  \/ 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '649',
+        any: [/^\s*SINKOU = SINKOU  \/ 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '651-652',
+        any: [/^\s*;惨败（20%）\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '654-655',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%的防御极其坚固，令魔王军久攻不下，陷入僵局。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '655',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%的防御极其坚固，令魔王军久攻不下，陷入僵局。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '656',
+        any: [
+          /^\s*PRINTFORML 打破僵局的是一支突然出现在魔王军背后的%LOCALS:1%援军。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '657',
+        any: [
+          /^\s*PRINTFORML 腹背受敌的魔王军一触即溃，随即被里应外合的两支军队尽数歼灭。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '659',
+        any: [
+          /^\s*PRINTFORML 率领魔王军的%CALLNAME:YUSYA_I%孤身一人逃了回来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '659-660',
+        any: [
+          /^\s*PRINTFORML 率领魔王军的%CALLNAME:YUSYA_I%孤身一人逃了回来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '662',
+        any: [/^\s*BASE:YUSYA_I:0 = BASE:YUSYA_I:0 \* 3 \/ 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '663',
+        any: [/^\s*PRINTFORML %SAVESTR:YUSYA_I%的体力减少了70\\%！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '663-665',
+        any: [/^\s*PRINTFORML %SAVESTR:YUSYA_I%的体力减少了70\\%！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '668-673',
+        any: [/^\s*ELSEIF L_CHOICE == 2 && INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '669-673',
+        any: [/^\s*ELSEIF L_CHOICE == 2 && INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '673-735',
+        any: [/^\s*ELSEIF L_CHOICE == 2 && INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '738-764',
+        any: [/^\s*ELSEIF L_CHOICE == 2 && INV_TYPE == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '673-674',
+        any: [/^\s*ELSEIF L_CHOICE == 2 && INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '677-678',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%趁着夜色从空中潜入了%LOCALS:2%，在躲过多支巡逻队后终于打开了%LOCALS:2%的大门。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '678',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%趁着夜色从空中潜入了%LOCALS:2%，在躲过多支巡逻队后终于打开了%LOCALS:2%的大门。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '679',
+        any: [
+          /^\s*PRINTFORML 早已等待多时的魔王军迅速杀入了%LOCALS:2%内，没有遇到顽强的抵抗便控制了整个%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '680',
+        any: [
+          /^\s*PRINTFORML 当天空出现第一缕阳光时，%LOCALS:2%内已经只剩下了魔王军和魔王军的俘虏了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '680-681',
+        any: [
+          /^\s*PRINTFORML 当天空出现第一缕阳光时，%LOCALS:2%内已经只剩下了魔王军和魔王军的俘虏了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '680-682',
+        any: [
+          /^\s*PRINTFORML 当天空出现第一缕阳光时，%LOCALS:2%内已经只剩下了魔王军和魔王军的俘虏了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '680-685',
+        any: [
+          /^\s*PRINTFORML 当天空出现第一缕阳光时，%LOCALS:2%内已经只剩下了魔王军和魔王军的俘虏了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '688',
+        any: [/^\s*PRINTFORML 人间牧场肉便器数量\+5。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '690-695',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%乔装打扮成功混进了%LOCALS:2%里。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '694-708',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%乔装打扮成功混进了%LOCALS:2%里。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '695',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%乔装打扮成功混进了%LOCALS:2%里。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '697',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%内的%LOCALS:1%还没有组织起反抗便被消灭殆尽。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '697-698',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%内的%LOCALS:1%还没有组织起反抗便被消灭殆尽。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '697-699',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%内的%LOCALS:1%还没有组织起反抗便被消灭殆尽。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '697-702',
+        any: [
+          /^\s*PRINTFORML %LOCALS:2%内的%LOCALS:1%还没有组织起反抗便被消灭殆尽。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '704',
+        any: [/^\s*FLAG:83 \+= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '705',
+        any: [/^\s*PRINTFORML 人间牧场肉便器数量\+5。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '707-713',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%杀出一条血路，勉强逃回了魔王军。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '708-713',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%杀出一条血路，勉强逃回了魔王军。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '711-724',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%杀出一条血路，勉强逃回了魔王军。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '712-713',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%杀出一条血路，勉强逃回了魔王军。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '713',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%杀出一条血路，勉强逃回了魔王军。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '714',
+        any: [
+          /^\s*PRINTFORML 魔王军不得已只好发动强攻，在鏖战后最终惨胜。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '715',
+        any: [/^\s*PRINTFORML 侥幸获胜的魔王军，继续向%LOCALS:0%进发。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '715-716',
+        any: [/^\s*PRINTFORML 侥幸获胜的魔王军，继续向%LOCALS:0%进发。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '718-719',
+        any: [/^\s*PRINTFORML %SAVESTR:YUSYA_I%的体力归零\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '719',
+        any: [/^\s*PRINTFORML %SAVESTR:YUSYA_I%的体力归零\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '721',
+        any: [/^\s*SINKOU = SINKOU \* 7 \/ 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '722',
+        any: [/^\s*PRINTFORML 怪物数量减少了30\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '722-723',
+        any: [/^\s*PRINTFORML 怪物数量减少了30\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '722-724',
+        any: [/^\s*PRINTFORML 怪物数量减少了30\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '727-734',
+        any: [
+          /^\s*PRINTFORML 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '728-729',
+        any: [
+          /^\s*PRINTFORML 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '729',
+        any: [
+          /^\s*PRINTFORML 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '730',
+        any: [
+          /^\s*PRINTFORML 失去指挥官的魔王军随即被出城迎击的%LOCALS:1%击溃。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '731-732',
+        any: [/^\s*PRINTFORMW %CALLNAME:YUSYA_I%被俘虏，侵攻中止。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '732',
+        any: [/^\s*PRINTFORMW %CALLNAME:YUSYA_I%被俘虏，侵攻中止。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '732-733',
+        any: [/^\s*PRINTFORMW %CALLNAME:YUSYA_I%被俘虏，侵攻中止。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '732-734',
+        any: [/^\s*PRINTFORMW %CALLNAME:YUSYA_I%被俘虏，侵攻中止。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '743',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%趁着夜色从空中穿过了%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '743-744',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%趁着夜色从空中穿过了%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '747',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%乔装打扮成功通过了%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '747-748',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%乔装打扮成功通过了%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '751-752',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%杀出一条血路，勉强逃了回去。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '752',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%杀出一条血路，勉强逃了回去。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '752-754',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%杀出一条血路，勉强逃了回去。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '752-755',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%杀出一条血路，勉强逃了回去。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '756-760',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '759-760',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '760',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '760-762',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '760-763',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被%LOCALS:1%生擒。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '767-787',
+        any: [/^\s*ELSEIF L_CHOICE == 3 && INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '767-768',
+        any: [/^\s*ELSEIF L_CHOICE == 3 && INV_TYPE == 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '772',
+        any: [
+          /^\s*PRINTFORML 魔王军绕开%LOCALS:2%向%LOCALS:0%进发，因为路途遥远地形复杂损失了一些人马。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '775-776',
+        any: [/^\s*PRINTFORMW 怪物数量减少了10\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '776',
+        any: [/^\s*CALL KARMA, YUSYA_I, -50\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '776-777',
+        any: [/^\s*PRINTFORMW 怪物数量减少了10\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '780',
+        any: [
+          /^\s*PRINTFORML 魔王军绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '781',
+        any: [
+          /^\s*PRINTFORML 在一番血战后，魔王军击退了伏军继续向%LOCALS:0%进发。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '784',
+        any: [/^\s*SINKOU = SINKOU \* 5 \/ 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '785',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%是优秀的指挥官，带领着怪物们侵略了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '785-786',
+        any: [/^\s*PRINTFORMW 怪物数量减少了50\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '798',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '800',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被活捉了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '800-801',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%还是被活捉了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '803',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%终于逃了回来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '803-804',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%终于逃了回来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '806',
+        any: [/^\s*MONEY \+= SINKOU \* 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '810-813',
+        any: [/^\s*;侵略中途事件（被勇者叫阵单挑）\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '742-743',
+        any: [
+          /^\s*PRINTFORMW %CALLNAME:YUSYA_I%趁着夜色从空中穿过了%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '828-887',
+        any: [/^\s*LOCALS:1 = 一座河边的桥\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '996-1010',
+        any: [/^\s*IF FLAG:82 == 0 && CHARANUM > 60\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '35-47',
+        any: [
+          /^\s*PRINTL \*\*\*\*\*\*\*\*\*　　　　　　　　　　　　　　　攻陷了堡垒　　　　　　　　　　　　　　　　\*\*\*\*\*\*\*\*\*\*\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '332-344',
+        any: [/^\s*;魔王軍\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '996-997',
+        any: [/^\s*IF FLAG:82 == 0 && CHARANUM > 60\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '998-999',
+        any: [
+          /^\s*ELSEIF FLAG:87 == 0 && FLAG:89 == 0 && FLAG:91 == 0 && CHARANUM > 65\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1000-1001',
+        any: [
+          /^\s*ELSEIF \(\(FLAG:87 \* FLAG:89 == 0\) && \(FLAG:89 \* FLAG:91 == 0\) && \(FLAG:91 \* FLAG:87 == 0\)\) && CHARANUM > 70\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1002-1003',
+        any: [
+          /^\s*ELSEIF \(FLAG:87 == 0 \|\| FLAG:89 == 0 \|\| FLAG:91 == 0\) && CHARANUM > 75\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1004-1005',
+        any: [/^\s*ELSEIF FLAG:92 < 15  && CHARANUM > 80\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1006-1007',
+        any: [/^\s*ELSEIF FLAG:94 == 0 && CHARANUM > 90\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1008-1009',
+        any: [/^\s*ELSEIF CHARANUM >= MAX_CHARANUM\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '847',
+        any: [/^\s*LOCAL:12 = RAND:2 \? 12 # 16	;弓手\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '859',
+        any: [/^\s*LOCAL:12 = RAND:2 \? 10 # 14	;巫女\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '871-872',
+        any: [/^\s*LOCAL:20 = EX_FLAG:95 \| 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '882-883',
+        any: [/^\s*LOCAL:10 = 6	;天使\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '836',
+        any: [/^\s*LOCAL:20 = EX_FLAG:95 \| 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '837-838',
+        any: [/^\s*SIF EX_FLAG:95 & 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '890-969',
+        any: [
+          /^\s*DATA 『快去叫亲爱的魔王大人出来，人家要和他比试比试呢』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '891-896',
+        any: [
+          /^\s*DATA 『快去叫亲爱的魔王大人出来，人家要和他比试比试呢』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '892-896',
+        any: [
+          /^\s*DATA 『快去叫亲爱的魔王大人出来，人家要和他比试比试呢』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '911-913',
+        any: [
+          /^\s*PRINTFORMW 面对%LOCALS:2%的挑衅，%CALLNAME:YUSYA_I%决定……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '913',
+        any: [
+          /^\s*PRINTFORMW 面对%LOCALS:2%的挑衅，%CALLNAME:YUSYA_I%决定……\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '916-925',
+        any: [/^\s*PRINTFORML \[3\] 无视，全军进攻\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '928',
+        any: [
+          /^\s*PRINTFORML 魔王回应了%CALLNAME:YUSYA_I%召唤前来迎战%LOCALS:2%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '930',
+        any: [/^\s*PRINTFORML %CALLNAME:YUSYA_I%决定亲自迎战%LOCALS:2%。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '932',
+        any: [
+          /^\s*PRINTFORML 在%CALLNAME:YUSYA_I%一声令下，魔王军缓缓前进，展开了对%LOCALS:2%战斗。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '935',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%向%LOCALS:0%进发着，却在%LOCALS:1%前被一名突然出现的%LOCALS:2%拦下了脚步。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '957-961',
+        any: [
+          /^\s*DATA 『今天运气真是不错哦~可悲的魔族，你们的脑袋是我的了！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '958-961',
+        any: [
+          /^\s*DATA 『今天运气真是不错哦~可悲的魔族，你们的脑袋是我的了！』\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '965-967',
+        any: [/^\s*L_CHOICE = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '967',
+        any: [/^\s*L_CHOICE = 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '968',
+        any: [
+          /^\s*PRINTFORMW 在意识到敌人只有一个人后，魔王军向敢于挑衅的%LOCALS:2%发起了猛烈的进攻。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '971-1085',
+        any: [/^\s*;\[1\] 召唤魔王应战\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '974-989',
+        any: [/^\s*IF MONEY >= 3000\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '975',
+        any: [
+          /^\s*PRINTFORML 但对方看起来也不是省油的灯、未必能稳操胜券、\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '979',
+        any: [/^\s*PRINTFORML \[1\] 使用氪金道具\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '980',
+        any: [/^\s*PRINTFORML \[2\] 堂堂正正一决胜负\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '982-989',
+        any: [/^\s*IF L_CHOICE != 1 && L_CHOICE != 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '991-995',
+        any: [/^\s*;抓捕勇者数量限制\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '994-995',
+        any: [/^\s*;抓捕勇者数量限制\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1012-1043',
+        any: [/^\s*IF L_CHOICE == 1 && LOCAL >= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1012-1013',
+        any: [/^\s*IF L_CHOICE == 1 && LOCAL >= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1012-1014',
+        any: [/^\s*IF L_CHOICE == 1 && LOCAL >= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1017-1027',
+        any: [
+          /^\s*DATAFORM %LOCALS:2%陷入了泥沼中，动弹不得，被魔王抓住了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1029-1030',
+        any: [/^\s*PRINTFORMW 魔王军高呼魔王万岁，继续向%LOCALS:0%进发。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1031-1036',
+        any: [/^\s*;生成相应种族职业勇者一名。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1034-1035',
+        any: [/^\s*CALL CHARA_MAKE\(CHARANUM -1, , LOCAL:10\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1035',
+        any: [/^\s*CALL CHARA_MAKE\(CHARANUM -1, , LOCAL:10\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1037',
+        any: [/^\s*CFLAG:A:1 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1038',
+        any: [/^\s*PRINTFORMW %CALLNAME:A%被魔王抓住了。金钱-3000\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1038-1039',
+        any: [/^\s*PRINTFORMW %CALLNAME:A%被魔王抓住了。金钱-3000\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1040-1041',
+        any: [/^\s*EX_FLAG:95 = LOCAL:20\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1042',
+        any: [/^\s*EX_FLAG:99 \+= 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1043-1044',
+        any: [/^\s*;开挂失败 20%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1045-1060',
+        any: [/^\s*ELSEIF L_CHOICE == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1045-1046',
+        any: [/^\s*ELSEIF L_CHOICE == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1045-1047',
+        any: [/^\s*ELSEIF L_CHOICE == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1049-1053',
+        any: [
+          /^\s*PRINTFORML 然而%LOCALS:2%提前察觉了魔王的动作，躲闪掉了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1053',
+        any: [
+          /^\s*PRINTFORML 然而%LOCALS:2%提前察觉了魔王的动作，躲闪掉了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1054',
+        any: [
+          /^\s*PRINTFORML 在鄙夷地看了魔王一眼后，%LOCALS:2%%LOCALS:3%。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1055',
+        any: [
+          /^\s*PRINTFORML 虽然被人鄙视了，但腼着脸的魔王命令魔王军继续向%LOCALS:0%前进。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1056-1057',
+        any: [/^\s*PRINTFORMW 金钱-3000。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1057',
+        any: [/^\s*PRINTFORMW 金钱-3000。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1057-1058',
+        any: [/^\s*PRINTFORMW 金钱-3000。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1059-1061',
+        any: [/^\s*;不开挂取胜 20%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1060-1061',
+        any: [/^\s*;不开挂取胜 20%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1062-1072',
+        any: [/^\s*ELSEIF LOCAL < 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1063-1064',
+        any: [/^\s*PRINTFORML 尽管%LOCALS:2%的%LOCALS:4%、\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1064',
+        any: [/^\s*PRINTFORML 尽管%LOCALS:2%的%LOCALS:4%、\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1065',
+        any: [/^\s*PRINTFORML 但还是敌不过魔王的邪恶魔法、\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1066',
+        any: [/^\s*PRINTFORML 很快就成为了一具尸体。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1067',
+        any: [/^\s*PRINTFORML 魔王军高呼魔王万岁、继续向%LOCALS:0%进发。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1068-1069',
+        any: [/^\s*PRINTFORMW 魔王魔力减少50\\%、魔王经验\+500\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1069',
+        any: [/^\s*PRINTFORMW 魔王魔力减少50\\%、魔王经验\+500\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1070',
+        any: [/^\s*BASE:MASTER:1 \/= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1070-1071',
+        any: [/^\s*BASE:MASTER:1 \/= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1072-1073',
+        any: [/^\s*;不开挂失败 80%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1074-1084',
+        any: [/^\s*PRINTFORML %LOCALS:2%的%LOCALS:4%、\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1077',
+        any: [/^\s*PRINTFORML 魔王左支右绌、招架不住、\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1078',
+        any: [/^\s*PRINTFORML 被%LOCALS:4%抓住空隙、达成了重伤。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1079',
+        any: [
+          /^\s*PRINTFORML 魔王军士气动摇、救下昏迷的魔王匆匆逃回魔王城。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1081',
+        any: [/^\s*PRINTFORMW 魔王体力魔力清空、侵攻中止\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1082',
+        any: [/^\s*BASE:MASTER:0 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1083',
+        any: [/^\s*BASE:MASTER:1 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1083-1084',
+        any: [/^\s*BASE:MASTER:1 = 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1087-1135',
+        any: [/^\s*;奴隶取胜 20%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1088-1090',
+        any: [/^\s*;奴隶取胜 20%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1090-1104',
+        any: [/^\s*;奴隶取胜 20%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1094',
+        any: [/^\s*PRINTFORML %LOCALS:2%心有不甘地%LOCALS:3%。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1096',
+        any: [/^\s*PRINTFORML 魔王军高万岁，继续向%LOCALS:0%进发。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1101',
+        any: [/^\s*PRINTFORMW %CALLNAME:YUSYA_I%经验\+500，体力-50\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1103-1105',
+        any: [/^\s*;奴隶不分胜负 40%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1104-1105',
+        any: [/^\s*;奴隶不分胜负 40%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1106-1119',
+        any: [/^\s*ELSEIF LOCAL < 6\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1108',
+        any: [
+          /^\s*PRINTFORML 虽然%LOCALS:2%%LOCALS:4%，但%CALLNAME:YUSYA_I%也不遑多让。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1117',
+        any: [/^\s*PRINTFORMW %CALLNAME:YUSYA_I%体力-90\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1119-1120',
+        any: [/^\s*;奴隶失败 40%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1121-1134',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%与%LOCALS:2%激烈交战起来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1124',
+        any: [/^\s*PRINTFORML %LOCALS:2%轻蔑的一笑，%LOCALS:3%。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1126',
+        any: [/^\s*PRINTFORML 失去指挥官的魔王军只好撤退了。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1128',
+        any: [
+          /^\s*PRINTFORML 晕过去的%CALLNAME:YUSYA_I%成为了狂王的俘虏。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1134-1137',
+        any: [/^\s*ELSEIF L_CHOICE == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1137-1159',
+        any: [/^\s*ELSEIF L_CHOICE == 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1143',
+        any: [/^\s*PRINTFORML %LOCALS:2%轻蔑的一笑、%LOCALS:3%。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1144',
+        any: [/^\s*PRINTFORML 魔王军元气大伤只好撤退了。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1144-1145',
+        any: [/^\s*PRINTFORML 魔王军元气大伤只好撤退了。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1144-1146',
+        any: [/^\s*PRINTFORML 魔王军元气大伤只好撤退了。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1147-1149',
+        any: [/^\s*;损失一般继续进攻 50%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1153',
+        any: [/^\s*PRINTFORML 最后%LOCALS:2%体力不支、%LOCALS:3%。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1156',
+        any: [/^\s*PRINTFORMW 魔物数量-20\\%。\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1157',
+        any: [/^\s*SINKOU = SINKOU \* 4 \/5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1157-1158',
+        any: [/^\s*SINKOU = SINKOU \* 4 \/5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '307-312',
+        any: [/^\s*SIF COUNT == 0 \|\|\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '349-354',
+        any: [/^\s*SIF		COUNT == 0 \|\|\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '305-316',
+        any: [/^\s*SEIEI_I = GETCHARA\(19\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '349-357',
+        any: [/^\s*PRINTFORML %CALLNAME:SEIEI_I%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '307',
+        any: [/^\s*SIF COUNT == 0 \|\|\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '315',
+        any: [/^\s*BASE:YUSYA_I:0 \+= SINKOU\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '803-847',
+        any: [
+          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%终于逃了回来。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '759-775',
+        any: [/^\s*PRINTFORM %SAVESTR:YUSYA_I%带着怪物到达了\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '778-800',
+        any: [
+          /^\s*PRINTFORML 魔王军绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '797-799',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '779',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%在侵略的时候依旧全程保持着慈爱的笑容，她终于明白到一切都是为了%SAVESTR:MASTER%而存在的………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '782',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%身先士卒，第一个飞跳入战场里，而且最后毫发无损。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '788',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%穿着%SAVESTR:MASTER%赐予的被诅咒的铠甲，高声大笑着率领怪物们突击了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '791',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%冷哼着耻笑跪求饶命的草民，随手将他们交给饥饿的巨兽了。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '794',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%一边发出异样的笑声，一边用手中的火把将四周都点燃了………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '797',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%把侵略时所抢夺的金银财宝都献给了%SAVESTR:MASTER%………\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '797-809',
+        any: [
+          /^\s*PRINTFORML %CALLNAME:YUSYA_I%绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '805',
+        any: [/^\s*PRINTFORMW 强制征收了\{SINKOU \* 5\}点！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '807',
+        any: [/^\s*EX_FLAG:4444 \+= SINKOU \* 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '808',
+        any: [/^\s*EXP:YUSYA_I:80 \+= SINKOU \/ 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '809',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%获得了\{SINKOU\/2\}点经验值！\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '841-846',
+        any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '842',
+        any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '842-843',
+        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '842-844',
+        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '842-845',
+        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '842-846',
+        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '849-863',
+        any: [/^\s*SIF AREA == 81\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '863',
+        any: [/^\s*WAIT\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '867',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 1, SINKOU\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '882-888',
+        any: [/^\s*IF RAND:100 < 9\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '884-885',
+        any: [/^\s*LOCAL:20 = EX_FLAG:95 \| 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '885',
+        any: [/^\s*EX_FLAG:99 \+= 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '885-887',
+        any: [/^\s*SIF EX_FLAG:95 & 16\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '405',
+        any: [/^\s*YUSYA_I = RESULT\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '407-427',
+        any: [/^\s*CALL MONSTER_DATA, MON_ID, 0, YUSYA_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '410-413',
+        any: [/^\s*;精鋭部隊の攻撃\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '413-417',
+        any: [/^\s*TMP2_I = CFLAG:YUSYA_I:12\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '424',
+        any: [/^\s*ITEM:MON_ID \/= 3\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '426',
+        any: [/^\s*ITEM:MON_ID \*= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '429-430',
+        any: [/^\s*CALL _INV_DEATH_CHECK, YUSYA_I, SEIEI_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '429-431',
+        any: [/^\s*CALL _INV_DEATH_CHECK, YUSYA_I, SEIEI_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '433-437',
+        any: [
+          /^\s*PRINTFORMW 勇者补正　　　x\{TMP2_I\/100\}\.%TOSTR\(TMP2_I%100,"00"\)%\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '433-434',
+        any: [/^\s*CALL PARTY_CHAR_DEL, SEIEI_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '434',
+        any: [
+          /^\s*PRINTFORMW 勇者补正　　　x\{TMP2_I\/100\}\.%TOSTR\(TMP2_I%100,"00"\)%\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '434-437',
+        any: [/^\s*ELSEIF RESULT == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '439-443',
+        any: [/^\s*CALL PARTY_CHAR_DEL, SEIEI_I\s*$/m],
       },
     ],
   },
