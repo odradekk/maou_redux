@@ -22,6 +22,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/EVENT/EVENT_AUTOTRAIN.ERB',
+        ref: '64-65',
+        any: [/LOSEBASE:0 = 0/],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AUTOTRAIN.ERB',
         ref: '108-159',
         any: [/@AFTER_AUTOTRAIN/],
       },

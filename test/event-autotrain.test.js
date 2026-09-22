@@ -2,11 +2,12 @@
  * @file 单元测试：EVENT_AUTOTRAIN 与 6 个 _AUTO 调教分支。
  *
  * 覆盖（issue #218 补轮）：
- *   - @BEFORE_AUTOTRAIN：source 清零（target 指针为空时跳过 delta）；
- *   - @FORMAT_AUTOTRAIN：射精槽/母乳槽/触手射精槽、losebase、tflag、
+ *   - @BEFORE_AUTOTRAIN：source 清零（target 指针为空时同 delta 一起跳过）；
+ *   - @FORMAT_AUTOTRAIN：射精槽/母乳槽/触手射精槽、deltabase（LOSEBASE 的
+ *     负值通道）、tflag、
  *     palam、delta 重置，常时发情（TALENT:271）润滑/欲情 3000 起步，
  *     死斗场收入清零；
- *   - @COM0_AUTO：SOURCE 分档（C 感觉 × B 感觉各档）、losebase、自动回数；
+ *   - @COM0_AUTO：SOURCE 分档（C 感觉 × B 感觉各档）、deltabase、自动回数；
  *   - @COM3_AUTO：C/B 感觉分档、技巧乘算、自慰中毒乘算、阴毛设定、
  *     自慰经验、自动回数；
  *   - @COM13_AUTO：体力/气力门槛、触手/虫分支、A 感觉/经验/润滑/欲情/
@@ -62,10 +63,10 @@ test('AUTOTRAIN: format_autotrain & before_autotrain 重置行为', async () => 
   const { before_autotrain, format_autotrain } = fixture.load_module(
     'event/event-autotrain',
   );
-  fixture.store.set('source:0', 100);
+  fixture.store.set('source:17:0', 100); // #508：单下标＝当前 TARGET 那一格
   fixture.store.set('delta:17:0', 50);
   before_autotrain();
-  assert.equal(fixture.store.get('source:0'), 0);
+  assert.equal(fixture.store.get('source:17:0'), 0);
   assert.equal(fixture.store.get('delta:17:0'), 0);
 
   fixture.store.set('talent:17:271', 1); // 常时发情
@@ -74,16 +75,20 @@ test('AUTOTRAIN: format_autotrain & before_autotrain 重置行为', async () => 
   assert.equal(fixture.store.get('palam:17:5'), 3000);
 });
 
-test('AUTOTRAIN: before_autotrain 指针为空时跳过 delta', async () => {
+test('AUTOTRAIN: before_autotrain 指针为空时不动任何角色格（#508 订正后同源/增量一起跳过）', async () => {
   const { fixture, era_flag } = seed_autotrain_world();
   const { before_autotrain } = fixture.load_module('event/event-autotrain');
-  fixture.store.set('source:0', 100);
-  fixture.store.set('source:7', 88);
+  fixture.store.set('source:17:0', 100);
+  fixture.store.set('source:17:7', 88);
   fixture.store.set('delta:17:0', 50);
-  era_flag.target = -1; // 调教目标为空
+  era_flag.target = -1; // 调教目标为空：单下标没有落点
   before_autotrain();
-  assert.equal(fixture.store.get('source:0'), 0);
-  assert.equal(fixture.store.get('source:7'), 0);
+  assert.equal(
+    fixture.store.get('source:17:0'),
+    100,
+    'target<0 时不得触碰他人的 SOURCE（否则会误清别的角色）',
+  );
+  assert.equal(fixture.store.get('source:17:7'), 88);
   assert.equal(
     fixture.store.get('delta:17:0'),
     50,
@@ -98,8 +103,8 @@ test('AUTOTRAIN: format_autotrain 重置全套状态', async () => {
   fixture.store.set('base:17:2', 300); // 目标射精槽
   fixture.store.set('base:17:3', 400); // 母乳槽
   fixture.store.set('base:0:4', 600); // 触手射精槽
-  fixture.store.set('losebase:0', 10);
-  fixture.store.set('losebase:1', 20);
+  fixture.store.set('deltabase:17:0', -10); // LOSEBASE:0 = 10 的 ere 等价物
+  fixture.store.set('deltabase:17:1', -20); // LOSEBASE:1 = 20（存负值）
   fixture.store.set('tflag:5', 9);
   fixture.store.set('tflag:199', 7);
   fixture.store.set('palam:17:3', 5000);
@@ -111,8 +116,12 @@ test('AUTOTRAIN: format_autotrain 重置全套状态', async () => {
   assert.equal(fixture.store.get('base:17:2'), 0);
   assert.equal(fixture.store.get('base:17:3'), 0);
   assert.equal(fixture.store.get('base:0:4'), 0);
-  assert.equal(fixture.store.get('losebase:0'), 0);
-  assert.equal(fixture.store.get('losebase:1'), 0);
+  assert.equal(
+    fixture.store.get('deltabase:17:0'),
+    0,
+    'LOSEBASE 归零（deltabase 是负值通道，#508 订正）',
+  );
+  assert.equal(fixture.store.get('deltabase:17:1'), 0);
   assert.equal(fixture.store.get('tflag:5'), 0);
   assert.equal(fixture.store.get('tflag:199'), 0);
   assert.equal(fixture.store.get('palam:17:3'), 0);
@@ -222,8 +231,12 @@ test('AUTOTRAIN: com0_auto SOURCE 分档（C感觉 × B感觉）', async () => {
   assert.equal(fixture.store.get('source:17:4'), 60);
   assert.equal(fixture.store.get('source:17:8'), 30);
   assert.equal(fixture.store.get('source:17:12'), 100);
-  assert.equal(fixture.store.get('losebase:0'), 1);
-  assert.equal(fixture.store.get('losebase:1'), 5);
+  assert.equal(
+    fixture.store.get('deltabase:17:0'),
+    -1,
+    'LOSEBASE:0 = 1 → deltabase 负值（#508 订正：losebase 不是引擎的表）',
+  );
+  assert.equal(fixture.store.get('deltabase:17:1'), -5);
   assert.equal(fixture.store.get('cflag:17:666'), 1);
 });
 
