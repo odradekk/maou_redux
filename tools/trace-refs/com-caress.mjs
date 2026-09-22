@@ -1567,9 +1567,7 @@ export const FILES = [
       {
         src: 'target/ERB/調教相關/COMF_JUMP.ERB',
         ref: '51-63',
-        any: [
-          /IF \(ASSIPLAY \&\& TFLAG:50\) \|\| \(ASSIPLAY == 0 \&\& TFLAG:50 == 0\)/,
-        ],
+        any: [/;COMF1_舔阴/],
       },
       {
         src: 'target/ERB/調教相關/COMF_JUMP.ERB',
@@ -1580,24 +1578,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/調教相關/COMF_JUMP.ERB',
-        ref: '56-66',
-        any: [
-          /IF \(ASSIPLAY \&\& TFLAG:50\) \|\| \(ASSIPLAY == 0 \&\& TFLAG:50 == 0\) \&\& TEQUIP:89 == 0/,
-        ],
+        ref: '66-78',
+        any: [/;COMF3_/],
       },
       {
         src: 'target/ERB/調教相關/COMF_JUMP.ERB',
-        ref: '71-81',
-        any: [
-          /IF \(ASSIPLAY \&\& TFLAG:50\) \|\| \(ASSIPLAY == 0 \&\& TFLAG:50 == 0\)/,
-        ],
+        ref: '81-93',
+        any: [/;COMF4_/],
       },
       {
         src: 'target/ERB/調教相關/COMF_JUMP.ERB',
-        ref: '86-119',
-        any: [
-          /IF \(ASSIPLAY \&\& TFLAG:50\) \|\| \(ASSIPLAY == 0 \&\& TFLAG:50 == 0\)/,
-        ],
+        ref: '96-132',
+        any: [/;COMF5_/],
       },
       {
         src: 'target/ERB/調教相關/COMF_JUMP.ERB',

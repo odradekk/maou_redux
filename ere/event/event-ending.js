@@ -364,9 +364,9 @@ async function char_gift(arg, rand = default_rand) {
       era.print('[1] 金发  [2]栗发  [3]黑发  [4]红发  [5]银发  ');
       era.print('[6] 青发  [7]绿发  [8]紫发  [9]白发  [10]暗金发');
       const picked = await era.input();
-      // :254 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`——Emuera 的 &&
-      // 与 || 同优先级、左结合，读作 `((1..10) 或 == 11)`；两种读法在此同值
-      // （|| 之后没有 &&），故按显式括号保留结构（#517）
+      // :254 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`：该层运算符序列是
+      // 「`&&` … `||`」，`||` 之后没有 `&&`，左折叠与 C 式分组得到同一棵树——
+      // 两种读法在一切取值上同值，故按显式括号保留结构（#517）
       if ((picked >= 1 && picked <= 10) || picked === 11) {
         chara(a).chara.头发颜色 = picked; // :255
         haircolor = picked; // :256

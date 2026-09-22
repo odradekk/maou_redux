@@ -3289,7 +3289,7 @@ async function adv_rule_6() {
 // && TEQUIP:89 == 0` 按 Emuera 的「&& 与 || 同优先级、左结合」读作
 // `(同调教者两臂) && TEQUIP:89 == 0`——兽奸门是整个同调教者条件的合取项，
 // 不是 C 式「&& 优先」的「第二臂各自带兽奸门」（#517）。后续 PREVCOM 三选一
-// 与 TEQUIP:44 == 0 是嵌套 IF，与上一条同层合取。
+// 与 TEQUIP:44 == 0 是嵌套 IF，布尔上与外层条件合取。
 async function adv_rule_1() {
   if (
     same_player_as_last() &&
@@ -3303,7 +3303,7 @@ async function adv_rule_1() {
   return 1;
 }
 
-// CASE 3（:56-66）：自慰 → 口交时自慰（125）
+// CASE 3（:66-78）：自慰 → 口交时自慰（125）
 async function adv_rule_3() {
   if (
     same_player_as_last() &&
@@ -3315,7 +3315,7 @@ async function adv_rule_3() {
   return 3;
 }
 
-// CASE 4（:71-81）：口交 → 六九式（69）——非绳缚、非兽奸
+// CASE 4（:81-93）：口交 → 六九式（69）——非绳缚、非兽奸
 async function adv_rule_4() {
   if (
     same_player_as_last() &&
@@ -3329,7 +3329,7 @@ async function adv_rule_4() {
   return 4;
 }
 
-// CASE 5（:86-119）：胸爱抚 → 正常位・胸爱抚（129）/ 背后位・胸爱抚（131）
+// CASE 5（:96-132）：胸爱抚 → 正常位・胸爱抚（129）/ 背后位・胸爱抚（131）
 async function adv_rule_5() {
   const prev = era_flag.prevcom;
   const prev2 = era.get('tflag:59') || 0;
