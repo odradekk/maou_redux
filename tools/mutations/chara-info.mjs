@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 34; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）
+export const COUNT = 35; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）
 
 export default [
   {
@@ -170,9 +170,8 @@ export default [
     desc: 'M7864 COMPARE_CHARA_ACT 侵攻/异层迎击的楼层比较支整支短路',
     file: 'ere/page/page-chara-info.js',
     find: `  if (
-    state_a === 2 ||
-    (state_a === 3 &&
-      (era.get(\`cflag:\${a}:501\`) || 0) !== (era.get(\`cflag:\${b}:501\`) || 0))
+    (state_a === 2 || state_a === 3) &&
+    (era.get(\`cflag:\${a}:501\`) || 0) !== (era.get(\`cflag:\${b}:501\`) || 0)
   ) {`,
     replace: `  if (false) {`,
     tests: ['page-chara-info'],
@@ -322,5 +321,14 @@ export default [
     replace: `        if (marriage_result !== 2) return 0;`,
     tests: ['page-chara-info'],
     must_mention: '个别信息页把 1 上浮给 CHARA_INFO（回合结束）',
+  },
+  {
+    desc: 'M11141 COMPARE_CHARA_ACT 按 C 式「&& 优先」读错（状态 2 不再吃楼层判据，源 :813 左结合，#517）',
+    file: 'ere/page/page-chara-info.js',
+    find: '    (state_a === 2 || state_a === 3) &&\n    (era.get(`cflag:${a}:501`) || 0) !== (era.get(`cflag:${b}:501`) || 0)',
+    replace:
+      '    state_a === 2 ||\n    (state_a === 3 &&\n      (era.get(`cflag:${a}:501`) || 0) !== (era.get(`cflag:${b}:501`) || 0))',
+    tests: ['page-chara-info'],
+    must_mention: '楼层相等时落 ID 决胜',
   },
 ];

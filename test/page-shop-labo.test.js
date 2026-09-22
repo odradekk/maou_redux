@@ -915,6 +915,49 @@ test('守卫整表：触发一次、提示原文、不扣款、不写入', async
   }
 });
 
+test('anti_aging 守卫：种族年龄门是整个条件的合取项（源 :4364 左结合）', async () => {
+  // 源 :4364 `CFLAG:RESULT:451 < 18 || GETBIT(FLAG:5,13) && CFLAG:RESULT:452 < 18`
+  // ——Emuera 的 && 与 || 同优先级、左结合，读作
+  // `(年龄 < 18 || 长命种) && 种族年龄 < 18`（#517）。年龄 < 18 但种族年龄
+  // 不低时整支不命中，药水照常可用。
+  const fixture = make_fixture({
+    seed: { 'cflag:1:451': 17, 'cflag:1:452': 30 },
+  });
+  seed_talentnames(fixture);
+  const money = fixture.store.get('flag:10004');
+  // 选人 1 → 确认画面答「不要」（守卫不拦时才会走到确认）
+  const { added } = await run(fixture, 'anti_aging', [1, 1], {});
+  assert.ok(
+    !all_text(added).includes('无法再变得更年轻了'),
+    `年龄 17 但种族年龄 30 → 不拦（实际：${texts(added).join(' / ')}）`,
+  );
+  assert.ok(all_text(added).includes('要让奴隶1服用减龄魔药吗？'), '走到确认');
+  assert.equal(fixture.store.get('flag:10004'), money, '确认前不扣款');
+
+  // 两门都成立才拦：种族年龄也 < 18
+  const blocked = make_fixture({
+    seed: { 'cflag:1:451': 17, 'cflag:1:452': 17 },
+  });
+  seed_talentnames(blocked);
+  const r = await run(blocked, 'anti_aging', [1], {});
+  assert.equal(r.ret, 0);
+  assert.ok(
+    all_text(r.added).includes('奴隶1无法再变得更年轻了'),
+    '年龄与种族年龄都 < 18 → 拦下',
+  );
+
+  // 长命种位（FLAG:5 位 13）也吃种族年龄门：位开、种族年龄够 → 放行
+  const long_lived = make_fixture({
+    seed: { 'cflag:1:451': 30, 'cflag:1:452': 30, 'flag:5': 1 << 13 },
+  });
+  seed_talentnames(long_lived);
+  const { added: text2 } = await run(long_lived, 'anti_aging', [1, 1], {});
+  assert.ok(
+    !all_text(text2).includes('无法再变得更年轻了'),
+    '长命种 + 种族年龄 30 → 不拦',
+  );
+});
+
 test('MODIFY 族：页高 23（第 1 页恰好画 23 名奴隶 + 魔王行）', async () => {
   const fixture = make_fixture({ slaves: 24, seed: {} });
   const { added } = await run(fixture, 'modify_animal', [999], {});

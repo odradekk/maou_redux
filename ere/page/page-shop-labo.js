@@ -2622,11 +2622,12 @@ const ANTI_AGING_ITEM = {
   ],
   master: true,
   guard: (cid) => {
-    // :4364 18 岁以下不可用（长命种另按 FLAG:5 位 13 判种族年龄）
-    if (
-      cflag(cid, 451) < 18 ||
-      (((settings_bitmap() >> 13) & 1) !== 0 && cflag(cid, 452) < 18)
-    ) {
+    // :4364 `CFLAG:RESULT:451 < 18 || GETBIT(FLAG:5,13) && CFLAG:RESULT:452 < 18`
+    // 按 Emuera 的「&& 与 || 同优先级、左结合」读作
+    // `(年龄 < 18 || 长命种) && 种族年龄 < 18`——种族年龄不低时整支不命中，
+    // 年龄 < 18 也照样放行（#517）。
+    const long_lived = ((settings_bitmap() >> 13) & 1) !== 0;
+    if ((cflag(cid, 451) < 18 || long_lived) && cflag(cid, 452) < 18) {
       return `${savestr(cid)}无法再变得更年轻了`; // :4365
     }
     if (cflag(cid, 1) === 2) {

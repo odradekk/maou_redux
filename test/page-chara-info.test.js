@@ -75,20 +75,26 @@ test('COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/
     '苗床（rank 5）排在可调教（rank 9）之前',
   );
 
-  // 状态 2（侵攻中）：不论楼层是否相等都进「按楼层比」分支，相等时判假、
-  // b 反而排前——原作如此，1:1 保留（文件头已注明）
+  // 状态 2/3（侵攻中/迎击中）：源 :813 的 `… == 2 || … == 3 && 楼层不等` 按
+  // Emuera 的「&& 与 || 同优先级、左结合」读作 `(状态 ∈ {2,3}) && 楼层不等`，
+  // 楼层相等时整支不命中、落到末行的 ID 决胜（#517）
   fixture.store.set('cflag:1:1', 2);
   fixture.store.set('cflag:2:1', 2);
   fixture.store.set('cflag:1:501', 5);
   fixture.store.set('cflag:2:501', 5);
   assert.equal(
     compare_chara_act(1, 2, 2),
-    1,
-    '楼层相等时 a 反而排后（原作行为）',
+    -1,
+    '楼层相等时落 ID 决胜（a 编号小 → 排前）',
   );
 
   fixture.store.set('cflag:2:501', 8); // a 楼层更浅
   assert.equal(compare_chara_act(1, 2, 2), -1);
+
+  // 楼层序与 ID 序相反：这一侧才区分得出「真的在按楼层比」与「落到 ID 决胜」
+  // （a=1 楼层 5、b=2 楼层 3 → 按楼层该判 1，按 ID 该判 -1）
+  fixture.store.set('cflag:2:501', 3);
+  assert.equal(compare_chara_act(1, 2, 2), 1, 'b 楼层更浅 → 按楼层判 1');
 
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set('cflag:2:1', 0);
