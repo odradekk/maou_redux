@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 374; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 377; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -42,7 +42,8 @@ export const COUNT = 374; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // 固定断言必须红）
 // 合并态（#505 与 #521 并集）实测 373，取 `import('./tools/mutations/page.mjs')
 // .then(m => m.default.length)` 的数——两侧都不含对方的条目，故不是任一单侧的
-// 数、也不在两侧声明上相加；#515 在其上实测 374
+// 数、也不在两侧声明上相加；#515 在其上实测 374；#530 起 +3（M11204-M11206，
+// page-chara-info-show.js 的献祭选项与 [100] 返回）实测 377
 
 export default [
   {
@@ -3496,5 +3497,39 @@ export default [
     tests: ['page-shop'],
     test_name: '存根清单可检索',
     must_mention: '存根名单必须只列仍未接真身的分支',
+  },
+  {
+    desc: 'M11204 祭品名单的 [100] 返回退回纯文本（该轮白名单非空——名单行与条件键都是按钮，编号被引擎拒收，#530）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: `    // :127 \` [100] 返回 \`——真按钮（#530）。**这一轮的白名单非空**：名单行与
+    // 六个条件键都在上面打印过了，纯文本行必然被引擎拒收（夹具当场抛「输入
+    // 不合法」，见 test/chara-info-show.test.js 的 #530 用例）。
+    era.printButton('返回', 100);`,
+    replace: `    // :127 变异：退回纯文本（该轮白名单非空，编号会被引擎拒收）
+    era.print(' [100] 返回 ');`,
+    tests: ['chara-info-show'],
+    must_mention: '输入不合法！请输入以下值之一',
+  },
+  {
+    desc: 'M11205 献祭确认的两个选项一起退回纯文本（#530 的原形态：该轮白名单因此为空，1/0 走自由输入照样能过——只有按钮断言拦得住）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: `      era.printButton('献祭', 1);
+      era.println();
+      era.printButton('终止', 0);`,
+    replace: `      era.print(' [1] 献祭 ');
+      era.println();
+      era.print(' [0] 终止 ');`,
+    tests: ['chara-info-show'],
+    must_mention: '确认选项要由引擎拼编号',
+  },
+  {
+    desc: 'M11206 献祭两个出口的 [100] 返回退回纯文本（白名单里有 [10]，100 被引擎拒收，#530）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: `  era.printButton('返回', 100);
+  const choice = await era.input(); // :82 INPUT`,
+    replace: `  era.print(' [100] 返回 '); // 变异：退回纯文本
+  const choice = await era.input(); // :82 INPUT`,
+    tests: ['chara-info-show'],
+    must_mention: '输入不合法！请输入以下值之一',
   },
 ];

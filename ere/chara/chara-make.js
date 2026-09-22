@@ -1911,15 +1911,54 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
         rand_n,
       );
 
-      // :151-157 确认提示按招募场景切换文案
+      // :151-157 确认提示按招募场景切换文案。
+      //
+      // 两个/三个选项都做成**真按钮**（PR #53 通则）：引擎的 input 只接受本轮
+      // 打印过的按钮快捷键，纯文本的 `[N] 文字` 行玩家敲不进编号——原作
+      // Emuera 的 INPUT 收任意数值，`PRINTL [N] …` 在那边能用，EraElectron
+      // 不行（#130/#530）。实机表现是整条战役线卡死在这里（#530）。
+      // 原作把三/两个选项排在同一行（就是上面那段 :151-157 里的两行 PRINTL），
+      // 按钮用 printMultiColumns 保持一行布局，24 列均分。**正文不写 `[N]`
+      // 前缀**：引擎按 showAcc 自动拼，自带会显示成 `[1] [1] 不，换一个`
+      // （AGENTS.md 硬约束，PR #30 踩过）。
       if (campaign_slave) {
         era.print('这位挑选出来的奴隶，您还满意吗？');
-        era.print(
-          '[1] 不，换一个      [2] 嘛…还行，就这位吧    [3] 算了，不选了',
-        );
+        era.printMultiColumns([
+          {
+            type: 'button',
+            accelerator: 1,
+            content: '不，换一个',
+            config: { align: 'left', width: 8 },
+          },
+          {
+            type: 'button',
+            accelerator: 2,
+            content: '嘛…还行，就这位吧',
+            config: { align: 'left', width: 8 },
+          },
+          {
+            type: 'button',
+            accelerator: 3,
+            content: '算了，不选了',
+            config: { align: 'left', width: 8 },
+          },
+        ]);
       } else {
         era.print('解开你封印的，真的是这样的对象吗…？');
-        era.print('[1] 不不不不…我看错了！  [2] 是她！是她！就是她！抓起来！…');
+        era.printMultiColumns([
+          {
+            type: 'button',
+            accelerator: 1,
+            content: '不不不不…我看错了！',
+            config: { align: 'left', width: 12 },
+          },
+          {
+            type: 'button',
+            accelerator: 2,
+            content: '是她！是她！就是她！抓起来！…',
+            config: { align: 'left', width: 12 },
+          },
+        ]);
       }
 
       const answer = await era.input(); // :158 INPUT

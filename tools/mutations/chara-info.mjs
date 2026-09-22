@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 35; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）
+export const COUNT = 37; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）
 
 export default [
   {
@@ -330,5 +330,30 @@ export default [
       '    state_a === 2 ||\n    (state_a === 3 &&\n      (era.get(`cflag:${a}:501`) || 0) !== (era.get(`cflag:${b}:501`) || 0))',
     tests: ['page-chara-info'],
     must_mention: '楼层相等时落 ID 决胜',
+  },
+  {
+    desc: 'M11209 名册的魔王行退回纯文本（[0] 不进白名单——角色行按角色号、0 被 added_chara_ids 滤掉，#530）',
+    file: 'ere/page/page-chara-info.js',
+    find: `    {
+      type: 'button',
+      accelerator: 0,
+      content: '',
+      config: { align: 'left', width: 3 },
+    },`,
+    replace: `    {
+      type: 'text',
+      content: '[0]',
+      config: { align: 'left', width: 3 },
+    },`,
+    tests: ['page-chara-info'],
+    must_mention: '魔王行的 [0] 是真按钮',
+  },
+  {
+    desc: 'M11210 名册魔王行的等级地址写错（cflag:0:9 读成 cflag:0:10——名字与等级同格，等级此前无人断言，#530 验收抽样）',
+    file: 'ere/page/page-chara-info.js',
+    find: "LV${era.get('cflag:0:9') || 0}`",
+    replace: "LV${era.get('cflag:0:10') || 0}`",
+    tests: ['page-chara-info'],
+    must_mention: '魔王行的等级取自 cflag:0:9',
   },
 ];

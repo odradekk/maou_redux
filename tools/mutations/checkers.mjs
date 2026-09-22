@@ -3,13 +3,17 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 144; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
+export const COUNT = 146; // 合并态实测（#532 与 #530 两侧条目全留；按 merge-conflicts.md，计数型基线
+// 不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本票 144、master 135，
+// 递增账：133 + #532 的 11 + #530 的 2 = 146，与实测相符）
+// #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
 // 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
 // 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 靶在 ere/page/page-shop.js，
 // 记在 tools/mutations/page.mjs）；#532 起 +11（M11240-M11250：--verify 只读、残留态启动
 // 自检与其 in-flight 标记、run_one/SIGINT 两处还原本身——由 test/mutation-check.test.js
-// 的 #532 用例与既有的拦截路径/SIGINT 用例守护）
+// 的 #532 用例与既有的拦截路径/SIGINT 用例守护）；#530 起 +2（M11207/M11208：纯文本选项行的棘轮两个方向——新增一行、基线留过期条目，
+// 均由 test/plaintext-option.test.js 守护）
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -1448,5 +1452,34 @@ export default [
     tests: ['mutation-check'],
     test_name: '启动自检认得「变异运行内部」的标记，且按 root 比对（#532）',
     must_mention: '标记指向别的 root 时自检必须照常生效',
+  },
+
+  // —— #530：纯文本选项行棘轮（靶在 ere/system/train/com-toy.js 与 tools/plaintext-options.mjs）——
+  {
+    desc: 'M11207 新增一行纯文本选项（com-toy 的满月确认多打一枚 [2] 行——棘轮的「只许收紧」门必须拦住，#530）',
+    file: 'ere/system/train/com-toy.js',
+    find: "  era.print('[0] 好的 [1] 算了');",
+    replace: `  era.print('[0] 好的 [1] 算了');
+  era.print('[2] 再看一下'); // 变异：新增纯文本选项行`,
+    tests: ['plaintext-option'],
+    must_mention: '新增了纯文本选项行',
+  },
+  {
+    desc: 'M11208 扫描器失明（is_comment_line 恒真——所有纯文本选项行都被跳过，棘轮的「条数变少」门必须拦住，#530）',
+    file: 'tools/plaintext-options.mjs',
+    find: `function is_comment_line(line) {
+  const trimmed = line.trim();
+  return (
+    trimmed.startsWith('//') ||
+    trimmed.startsWith('/*') || // 含块注释开头的 \`/**\`（文件头注释第一行）
+    trimmed.startsWith('*') ||
+    trimmed.startsWith(';')
+  );
+}`,
+    replace: `function is_comment_line(line) {
+  return true; // 变异：扫描器失明
+}`,
+    tests: ['plaintext-option'],
+    must_mention: '基线里这些文件的条数变少了',
   },
 ];

@@ -231,10 +231,31 @@ function marriage_bracket_text(cid) {
 
 // —— 列表行的共享渲染（四个 SHOW_CHARA_*_LIST 共用的行结构） ——
 
+/**
+ * 名册第一行的魔王（源 :141-143）：编号做成**真按钮**（#530）。
+ *
+ * 名册这一轮的白名单非空——角色行按角色号、排序表头 1200-1700、翻页
+ * 997/998、返回 999 都在同屏打印过，而 `added_chara_ids()` 把 0 滤掉了，
+ * **没有别的按钮编号是 0**。纯文本的 `[0] …` 玩家因此敲不进编号（引擎只认
+ * 本轮打印过的按钮快捷键），主循环里 `result === 0` 那条分支（原作
+ * `:91-94 CASE 0 TO CHARANUM-1`，主循环内的注释已引）会成为死支路。编号由
+ * 引擎按 showAcc 拼成 `[0] `，正文不写 `[N]`（AGENTS.md 硬约束）；排版沿用
+ * 原作的 3 列编号格 + 名字格。
+ */
 function print_master_header() {
-  era.print(
-    `[0]\u3000\u3000\u3000\u3000\u3000${name_of(0)} LV${era.get('cflag:0:9') || 0}`,
-  );
+  era.printMultiColumns([
+    {
+      type: 'button',
+      accelerator: 0,
+      content: '',
+      config: { align: 'left', width: 3 },
+    },
+    {
+      type: 'text',
+      content: `\u3000\u3000\u3000\u3000\u3000${name_of(0)} LV${era.get('cflag:0:9') || 0}`,
+      config: { align: 'left', width: 13 },
+    },
+  ]);
 }
 
 function atk_def_fragment(cid) {
