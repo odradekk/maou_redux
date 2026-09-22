@@ -2289,6 +2289,8 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
   seed_seiei(fixture, 18);
   seed_seiei(fixture, 19);
   fixture.store.set('base:18:0', 100);
+  // 上限与当前值刻意不等：气力条读错上限下标（拿体力的 9000 当上限）时数值列会变
+  fixture.store.set('maxbase:18:1', 12000);
 
   const state = { sinkou: 2048, yusya_i: 1 };
   const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
@@ -2352,6 +2354,10 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
   assert(
     progress_outs(fixture).includes(' 100/9000'),
     '精锐体力条的数值列可见',
+  );
+  assert(
+    progress_outs(fixture).includes(' 9000/12000'),
+    '精锐气力条读的是 :1 号上限（不是体力的 :0）',
   );
 });
 
@@ -2913,6 +2919,12 @@ test('FORT [2] 亲自潜入 INV_TYPE == 2：四档与 FLAG:83/经验（:673-735�
     0,
     ':694 `LOCAL >= 5 || LOCAL:3`（人间界要求 TALENT:314 == 0）',
   );
+  assert.equal(native_state.sinkou, 100, '走的是成功支（失败支会剩七成）');
+  assert.equal(
+    native.store.get('exp:1:80'),
+    20,
+    ':701 成功支给经验（失败支不给）',
+  );
 
   // D. 失败逃窜 30%：体力归零、SINKOU 剩七成
   const fled = make_arm_world();
@@ -3314,6 +3326,25 @@ test('CHALLENGE 的人数上限七分支：LOCAL 归零把开挂降级成失败�
     '前提：人数确实超过 60',
   );
   assert.equal(over60.ret, 0, 'LOCAL = 0 → 开挂取胜不成立');
+  // 同一阈值下把第一支的条件（FLAG:82 == 0）打掉：人数仍超 60 但要走第七支，
+  // 用来把「第一支读的是 82 而不是别的 FLAG」钉住
+  const other_flags = await run((f) => {
+    for (let id = 2; id <= 62; id += 1) {
+      f.seed_chara(id, { name: `勇者${id}`, callname: `勇者${id}` });
+      f.era.addCharacter(id);
+    }
+    f.store.set('flag:82', 1); // 前六支的分支条件全部失效
+    f.store.set('flag:87', 1);
+    f.store.set('flag:89', 1);
+    f.store.set('flag:91', 1);
+    f.store.set('flag:92', 15);
+    f.store.set('flag:94', 1);
+  });
+  assert.equal(
+    other_flags.fixture.store.get('exflag:95'),
+    1,
+    'FLAG:82 != 0 时第一支不成立（61 人未到 MAX_CHARANUM）',
+  );
   assert(
     over60.fixture.text_lines().includes('金钱-3000。'),
     ':1045-1060 落到开挂失败支',
