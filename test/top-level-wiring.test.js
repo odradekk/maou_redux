@@ -55,14 +55,24 @@
  *
  * 现存四处正确形态（阳性对照，防守卫把正解也拦下）：
  *
- *   - `ere/system/train/com-service.js` 的 `train_message_a_riding`
- *     （函数内 require com-sex）；
- *   - `ere/kojo/kojo-k2-timid.js:1299`（函数内 require com-hardcore；
- *     行号随 #514 顶部族导入下移，原 1285/1291）；
- *   - `ere/kojo/kojo-k3-noble.js:8543`（函数内 require com-hardcore）。
- *   - `ere/system/train/com-tentacle.js:394`（本票修的现存违规：com208
- *     函数内 require com-colosseum，原来是顶层，守卫上线即红——这与
- *     #233/#234 两次被全量变异抓到的形态完全同构，只是还没被变异抓到）。
+ *   - `ere/dungeon/dungeon-trap.js` 的 `dark_juel_trap`（函数内 require
+ *     dungeon；#402 的 com-service 延迟 require 随公共段合流删除后换的
+ *     同类形态。dungeon 不在保护集合，全树守卫本就不会拦它，这格只承担
+ *     扫描器分类的回归，不承担「守卫不拦正解」的实证）；
+ *   - `ere/kojo/kojo-k2-timid.js` 的 `kojo_message_com_2`（函数内 require
+ *     com-hardcore，#233 先例）；
+ *   - `ere/kojo/kojo-k3-noble.js` 的 `kojo_message_com_3`（函数内 require
+ *     com-hardcore，#234 先例）；
+ *   - `ere/system/train/com-tentacle.js` 的 `com208`（函数内 require
+ *     com-colosseum，原来是顶层，守卫上线即红——与 #233/#234 两次被全量
+ *     变异抓到的形态完全同构，只是还没被变异抓到）。
+ *
+ * 阳性对照按「文件 × target」聚合断言：该文件所有指向该 target 的 require
+ * 都在函数体内（#520）。不写生产行号——行号不承载契约，只用于区分同文件
+ * 同 target 的多处 require；写死后任何无关增删行都会撞红（#402/#469/#500/
+ * #514 四张票记六次，计数口径见 #520）。当前四格都不存在「同 target 顶层
+ * 与函数内并存」（各 target 在各自文件里的顶层出现次数为 0）；若将来出现
+ * 这种情形，聚合断言会报出顶层那处，届时再议区分手段。
  *
  * 解析不了的 require（非字符串参数）抛错，不许静默漏过（#274 的既有
  * 约定：扫描器解析不了新写法必须红，不能假装看不见）。
@@ -493,39 +503,46 @@ function protected_modules() {
 // —— 用例 ——
 
 test('扫描器：正确区分顶层与函数体内 require（现存阳性对照）', () => {
-  // 四处正确形态的延迟 require 必须判「函数内」（不拦）。前两处是 #233/
-  // #234 的既有先例（K2/K3 函数内 require com-hardcore），第三处是
-  // kojo-k12 的函数内 require，第四处是本票修的现存违规（com-tentacle 的
-  // com208 函数内 require com-colosseum，原来是顶层，#288 守卫上线即红，
-  // 挪进函数体后恢复绿）。
-  // **#402 换过一处**：com-service:1911 的延迟 require（riding 里复用 com-sex
-  // 的性交尾段）随公共段合流一并删除——那份尾段已归 train-message.js 的公共
-  // 段，本模块不再需要它，故这一格改用 dungeon-trap 的同类形态。
-  // **#500 再移一次**：dungeon-trap 的三个 _AUTO 存根删除后整体上移，随后
-  // 两处 PLAYER 注释与文件头补写又下移三行，净落 1995（dark_juel_trap 里的
-  // require('#/dungeon/dungeon').karma）。
+  // 四处正确形态的延迟 require 必须判「函数体内」（不拦）。按「文件 ×
+  // target」聚合断言：该文件中所有指向 target 的 require 都在函数体内，
+  // 且至少存在一处（零处则阳性对照失去意义）。不写生产行号——行号不承载
+  // 契约，只用于区分同文件同 target 的多处 require；写死后任何无关增删行
+  // 都会撞红（四张票记六次，计数口径见文件头，#520 解耦）。对照来源见文件头。
   const cases = [
-    ['ere/dungeon/dungeon-trap.js', 1995, false], // 行号随 #469 顶部族声明下移（原 1991），#500 删三存根与补注释后净 +3
-    ['ere/kojo/kojo-k2-timid.js', 1299, false], // 行号随 #514 顶部族导入补齐 8 行下移（1291 → 1299）
-    ['ere/kojo/kojo-k3-noble.js', 8543, false],
-    ['ere/system/train/com-tentacle.js', 394, false],
+    ['ere/dungeon/dungeon-trap.js', '#/dungeon/dungeon'],
+    ['ere/kojo/kojo-k2-timid.js', '#/system/train/com-hardcore'],
+    ['ere/kojo/kojo-k3-noble.js', '#/system/train/com-hardcore'],
+    ['ere/system/train/com-tentacle.js', '#/system/train/com-colosseum'],
   ];
-  for (const [rel, line, top_level] of cases) {
+  for (const [rel, target] of cases) {
     const src = fs.readFileSync(
       path.join(ERE_DIR, rel.replace(/^ere\//, '')),
       'utf8',
     );
-    const hit =
-      scan_requires(src).find(
-        (r) => r.line === line && r.target === '#/system/train/com-hardcore',
-      ) ?? scan_requires(src).find((r) => r.line === line);
-    assert.ok(hit, `${rel}:${line} 应有 require`);
-    assert.equal(
-      hit.top_level,
-      top_level,
-      `${rel}:${line} → ${hit.target} 的顶层判定应为 ${top_level}`,
-    );
+    const hits = scan_requires(src).filter((r) => r.target === target);
+    assert.ok(hits.length > 0, `${rel} 应存在指向 ${target} 的 require`);
+    for (const hit of hits) {
+      assert.equal(
+        hit.top_level,
+        false,
+        `${rel}:${hit.line} → ${hit.target} 应判「函数体内」（延迟 require 是正解）`,
+      );
+    }
   }
+  // 反向对照：顶层 require 必须判 true——否则把 top_level 恒置 false 的
+  // 扫描器也能让上面四格全绿（规范审查 F1，#520）。用内联字符串字面量，
+  // 不读生产文件，天然对行号免疫。
+  assert.equal(
+    scan_requires("const x = require('#/a');")[0].top_level,
+    true,
+    '顶层 require 应判 top_level=true',
+  );
+  assert.equal(
+    scan_requires("function f() {\n  const x = require('#/a');\n }")[0]
+      .top_level,
+    false,
+    '函数体内 require 应判 top_level=false',
+  );
 });
 
 test('保护集合：main-loop 清单 ∩ 族注册，底座不进表', () => {
