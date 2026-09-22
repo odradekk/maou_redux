@@ -17127,7 +17127,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '爱慕推进到 6',
   },
   {
-    desc: 'M3312 K13 屈服Lv2 原作 &&/|| 优先级「修好」（先 AND 后 OR 改成先 OR，#244）',
+    desc: 'M3312 K13 屈服Lv2 的 &&/|| 混写按 C 式读错（157 被提到整个 || 之前，#244/#517）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: `  } else if (kojo.初调教 < 3 && era0(\`mark:\${target}:2\`) == 2) {
     // :176
@@ -17147,7 +17147,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
         era0(\`talent:\${target}:119\`))
     ) {`,
     tests: ['kojo-k13-protector'],
-    must_mention: '原作缺陷：157 && 110 || 114 || 119 先 AND 后 OR',
+    must_mention:
+      '源 :178 的 157 && 110 || 114 || 119：同层 && … ||，左结合与 C 式同值，非缺陷',
   },
   {
     desc: 'M3313 K13 K13_KOJO2 反抗刻印Lv3 判据改错（MARK:3==3 改 ==2，#244）',
