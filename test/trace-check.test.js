@@ -1296,7 +1296,8 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
       '| `BEFORE_AUTOTRAIN`',
       ['event-autotrain.js:40', 'dungeon-battle.js:144'],
     ],
-    // 已注册的范围与欠账（K2/K4 有本体未注册）必须点名
+    // 已注册的范围与 K2/K4 的真身位置必须点名（#514 起是「已接上」而非欠账，
+    // 两个 needle 仍要在场：行里少了它们，欠账/已接上的事实就无从核起）
     [
       '| `ATTACK_KOUJO` / `ATTACK_KOUJO_B`',
       ['K2/K4', 'kojo-k2-timid.js:10327'],

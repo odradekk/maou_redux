@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2289; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）
+export const COUNT = 2294; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）
 
 export default [
   {
@@ -21349,5 +21349,45 @@ async function try_kojo_or_stub(
             // :2449`,
     tests: ['kojo-k9-diamond'],
     must_mention: '贪婪地亲吻着',
+  },
+  {
+    desc: 'M10980 K2 迷宫胜利口上的族注册整行删除（#514：有本体没注册，玩家侧打占位行）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: 'dungeon_victory_family.register(2, dungeon_victory_k2);',
+    replace: '// 变异：dungeon_victory_k2 不注册进族',
+    tests: ['kojo-register-coverage'],
+    must_mention: '未注册进 dungeon_victory_family[2]',
+  },
+  {
+    desc: 'M10981 K4 迷宫攻击口上的族注册整行删除（#514：同上，K4 侧）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: 'dungeon_attack_family.register(4, dungeon_attack_k4);',
+    replace: '// 变异：dungeon_attack_k4 不注册进族',
+    tests: ['kojo-register-coverage'],
+    must_mention: '未注册进 dungeon_attack_family[4]',
+  },
+  {
+    desc: 'M10982 K2 肉便器口上的族注册整行删除（#514：契约锁不只看迷宫两族）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: 'benki_koujo_family.register(2, benki_koujo_k2);',
+    replace: '// 变异：benki_koujo_k2 不注册进族',
+    tests: ['kojo-register-coverage'],
+    must_mention: '未注册进 benki_koujo_family[2]',
+  },
+  {
+    desc: 'M10983 K4 迎击惩罚口上的族注册整行删除（#514：静默族同样要守）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: 'osioski_koujo_family.register(4, osioski_koujo_k4);',
+    replace: '// 变异：osioski_koujo_k4 不注册进族',
+    tests: ['kojo-register-coverage'],
+    must_mention: '未注册进 osioski_koujo_family[4]',
+  },
+  {
+    desc: 'M10984 K2 迷宫胜利口上注册号改错（2 改 3，注册在但接不上本体）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find: 'dungeon_victory_family.register(2, dungeon_victory_k2);',
+    replace: 'dungeon_victory_family.register(3, dungeon_victory_k2);',
+    tests: ['kojo-register-coverage'],
+    must_mention: '未注册进 dungeon_victory_family[2]',
   },
 ];
