@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 926; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 13（#512 第一步：M10920-M10932）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+export const COUNT = 932; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
 
 export default [
   {
@@ -9974,5 +9974,55 @@ export default [
       'if (lv >= 2 && talent(73) === 0 && talent(76) === 0) {\n      f = lv + 1;\n    }',
     tests: ['ablup'],
     must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  // #512 第二步补齐的三处（十处自选改错的 9/10 轮）：梯子逐级、三重上限的
+  // 覆盖价门槛、CORE_ABLUP99 的降级幅度。
+  {
+    desc: 'M10933 ablup37：梯子 Lv9 的 D 误改（3000 → 2000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else [a, b, c, d] = [300000, 600000, 150000, 3000];',
+    replace: 'else [a, b, c, d] = [300000, 600000, 150000, 2000];',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10934 ablup39：梯子 Lv8 的 C 误改（4000 → 3000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else if (lv === 8) [a, b, c] = [200000, 200000, 4000];',
+    replace: 'else if (lv === 8) [a, b, c] = [200000, 200000, 3000];',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10935 ablup40：梯子 Lv9 的 A 误改（300000 → 200000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else a = 300000; // lv === 9',
+    replace: 'else a = 200000; // lv === 9',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10936 ablup100：刻印阶梯 Lv5 的 A 误改（50000 → 40000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else a = 50000; // lv === 5',
+    replace: 'else a = 40000; // lv === 5',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10937 ablup39：三重上限的覆盖价门槛改错（>= 10 → >= 11）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl_sum() >= 10) {\n      a = lv * lv * 4000;',
+    replace: 'if (abl_sum() >= 11) {\n      a = lv * lv * 4000;',
+    tests: ['ablup'],
+    must_mention: '合计 10 与 11 两档',
+  },
+  {
+    desc: 'M10938 ablup99：CORE_ABLUP99 一次降两级（MARK:3 -- → -= 2）',
+    file: 'ere/system/train/ablup.js',
+    find: 'chara(cid).system.反抗刻印 -= 1; // @CORE_ABLUP99',
+    replace: 'chara(cid).system.反抗刻印 -= 2; // @CORE_ABLUP99',
+    tests: ['ablup'],
+    must_mention: 'CORE_ABLUP99 每次只降一级',
   },
 ];
