@@ -96,7 +96,7 @@ on('EVENTTURNEND', async () => {
   // 迷宫域的自动调教三连跑在本处理器里：窗口不开时 COM*_AUTO 写的 SOURCE、
   // SOURCE_CHECK_AUTO 换算出的 UP（delta）/ PALAM 全部被引擎静默丢弃
   // （三段寻址在角色子表缺失时 `if(!this.data[a]||!this.data[a][c])return;`，
-  // test/train-loop.test.js 的引擎比对用例locking），于是「快感 → 能力成长」
+  // test/train-loop.test.js 的引擎比对用例锁定），于是「快感 → 能力成长」
   // 的整半空转——#500 接真身的四个 _AUTO 调用点，用例都得先手工
   // beginTrain(0, 1) 才看得见 SOURCE 落值（test/dungeon-trap.test.js）。
   //

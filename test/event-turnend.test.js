@@ -522,8 +522,10 @@ test('全量写入断言：只有魔王的最小世界走一回合，写入清�
   fixture.store.set('base:0:1', 50);
 
   await emit('EVENTTURNEND');
-  // #508：FORMAT_AUTOTRAIN 换真身后，窗口内多出三段批量零写（原作
-  // SYSTEM_SOURCE 侧的 PALAM/SOURCE/UP 清零 + AUTOTRAIN 侧的 TFLAG 0..199）。
+  // #508：FORMAT_AUTOTRAIN / BEFORE_AUTOTRAIN 换真身后，窗口内多出三段批量
+  // 零写（原作全在 EVENT_AUTOTRAIN.ERB：TFLAG 0..199 与 PALAM 0..16 在
+  // @FORMAT_AUTOTRAIN :68-75，SOURCE 0..16 与 UP/DOWN 0..16 在
+  // @BEFORE_AUTOTRAIN :91-104）。
   // 逐条展开 260 行不可读，按原作 :64-104 的 FOR 循环区间生成；生成式不
   // 掩盖「少写/多写」——区间条数在下面单独断言，区间之外仍逐条列出
   const zero_span = (prefix, count) =>

@@ -2532,6 +2532,6 @@ export default [
     find: '  era.nextTurnInTrain();',
     replace: '  // 变异：不补 UPCHECK 等价步',
     tests: ['dungeon-trap'],
-    must_mention: 'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零',
+    must_mention: '已被第三站清零',
   },
 ];

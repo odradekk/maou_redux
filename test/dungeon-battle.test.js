@@ -190,7 +190,7 @@ test('SOURCE_CHECK_AUTO 接线：source_check_auto 转发到 event/source-check 
 // #508 订正后 LOSEBASE 走 `deltabase` 负值通道（原写 `losebase:0` 在真机上
 // 落 key error）；这里不载入 SOURCE_CHECK_AUTO 真身，观察的是三连的中间态
 // ——生产里第三步会把它结算进 BASE 并清零。短路要按各自的查表路径下手：
-// enemy_attack 走魔法的模块对象（dungeon-battle.js:612 的 magic_mod.magic），
+// enemy_attack 走魔法的模块对象（dungeon-battle.js:621 的 magic_mod.magic），
 // duel_attack 走 dungeon-battle 的导出属性（dungeon-battle2.js:358 的
 // battle.magic，dungeon-magic.test.js:147 先例）。
 

@@ -469,12 +469,13 @@ test('PARTY：娼婦購入臂的爱抚自动调教接 COM0_AUTO 真身（:645）
   assert.equal(
     fixture.store.get('source:1:4'),
     0,
-    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（性行为 60 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（性行为 60 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('palam:1:8'),
     25125,
-    '耻情 25125（SOURCE:12 = 100 的换算结果）',
+    '耻情 25125 =（TARGET_EJAC_CHECK 大量射精写的 SOURCE:12 = 20100，TALENT:122 男人进场）' +
+      ' × 自动调教倍率 1.25',
   );
   assert.equal(
     fixture.store.get('base:1:1'),

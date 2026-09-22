@@ -47,8 +47,9 @@
  *     （dungeon.js 先例）；
  *   - KARMA（DARK_JUEL :1344）经函数内延迟 require 引用 dungeon.js 的
  *     域内存根（避开循环初始化，#175 先例）；
- *   - BEFORE_AUTOTRAIN 复用 #175 在 dungeon-battle.js 的域内存根（经模块
- *     对象引用，测试可替换）；COM0_AUTO / COM3_AUTO / COM13_AUTO /
+ *   - BEFORE_AUTOTRAIN 经模块对象引用 dungeon-battle.js 的同名转发（该
+ *     转发自 #508 起指向 ere/event/event-autotrain.js 的真身；原本只是
+ *     #175 的占位），测试可替换；COM0_AUTO / COM3_AUTO / COM13_AUTO /
  *     COM50_AUTO 自 #500 起直调 ere/event/event-autotrain.js 的真身；
  *     CAMPAIGN_TRAP 是 #469 起的族真身；SUMMON_MONSTER 已复用
  *     monster-summon.js 真身；

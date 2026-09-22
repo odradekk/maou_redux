@@ -22,12 +22,17 @@
  *   - **TFLAG:18 改经 choice 参数链内传递**（本票裁定）：原作各分支开头
  *     `TFLAG:18 = N` 的 N 与 INPUT 的 RESULT 同值，唯一读者是同链的口上
  *     分发（读 TFLAG:18 选台词）——ere 引擎的 tflag 桶 beginTrain 建 /
- *     endTrain 删，调教外（EVENTTURNEND）写 `tflag:18` 落引擎兜底分支
- *     era.error 且丢失（engine-bundle 驱动 setVar 的探针实证，裁定全文
- *     见 ere/kojo/kojo-dungeon-after.js 文件头）。故 result 直接作为
+ *     endTrain 删，裁定当时「调教外（EVENTTURNEND）写 `tflag:18` 落引擎兜底
+ *     分支 era.error 且丢失」（engine-bundle 驱动 setVar 的探针实证，裁定
+ *     全文见 ere/kojo/kojo-dungeon-after.js 文件头）。故 result 直接作为
  *     第二参传给口上分发，原作各分支的赋值行不落、序号值 1:1 透传；
  *     TFLAG:18 的调教期语义（足コキ / SYSTEM_SOURCE）不受影响——那
- *     些调用点桶在场，仍走 era.set；
+ *     些调用点桶在场，仍走 era.set。
+ *     **#508 补记**：本链唯一的调用点（turnend-settle.js:163，原作 :302）
+ *     自 #508 起落在回合结算开出的调教窗口内——`tflag:18` 在该语境下已能
+ *     落值，「窗口外写不落」不再是本链的现状描述。参数链保持不动：已实现、
+ *     与 era.set 等价（值同、读者同），不因窗口出现回头改；后续若有人
+ *     想恢复直写，注意口上侧读的是 choice 参数、不读 tflag:18；
  *   - CFLAG:A:504（要求的奖赏种类，フラグまとめ CFLAG:504）裸寻址；
  *     CFLAG:A:7 是穿孔位图（&1 乳首，フラグまとめ CFLAG:7），位判定
  *     裸寻址；

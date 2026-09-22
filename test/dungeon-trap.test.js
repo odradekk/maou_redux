@@ -287,7 +287,7 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   assert.equal(
     fixture.store.get('source:1:4'),
     0,
-    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零',
+    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）',
   );
   assert.equal(fixture.store.get('exp:1:10'), 1, '自慰经验 +1（本体）');
   assert.equal(
@@ -298,7 +298,7 @@ test('SELF_SAIMIN（:585）：两档催眠自慰——攻防归零 / 减半，TA
   assert.equal(
     fixture.store.get('palam:1:8'),
     5000,
-    '耻情 5000（SOURCE:12 = 2000 的换算结果，#508：快感半边不再空转）',
+    '耻情 5000 = COM3_AUTO 的露出 2000（阴毛设定 ×2）× 自动调教倍率 1.25',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('cflag:1:11', 100);
@@ -413,22 +413,22 @@ test('SLIME_ROOM（:826）：攻防弱化 + 肛门经验 + 润滑位置起（位
   assert.equal(
     fixture.store.get('source:1:10'),
     0,
-    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（液体追加 10000 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（液体追加 10000 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('source:1:12'),
     0,
-    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（露出 300 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（露出 300 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('palam:1:3'),
     12500,
-    '润滑 12500（SOURCE:10 的换算结果）',
+    '润滑 12500（SOURCE:10 = 10000 的换算结果）',
   );
   assert.equal(
     fixture.store.get('palam:1:8'),
     375,
-    '耻情 375（SOURCE:12 的换算结果）',
+    '耻情 375 = COM50_AUTO 的露出 300 × 自动调教倍率 1.25',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
@@ -645,7 +645,7 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
   assert.equal(
     fixture.store.get('source:1:14'),
     0,
-    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零（逃离 400 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（逃离 400 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('base:1:0'),
@@ -656,7 +656,7 @@ test('A_WORM（:1181）：气力损耗、A 经验 > 30 未寄生则寄生（TALE
   assert.equal(
     fixture.store.get('palam:1:9'),
     1012,
-    '苦痛 1012（SOURCE:6 的换算结果）',
+    '苦痛 1012（SOURCE:6 = 2000 经苦痛换算 × 自动调教倍率的截断结果）',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   // 润滑位 ×1.30（TIMES 截断）：本体的 50 档变 65；余下的 93 是同一次
@@ -702,7 +702,7 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
   assert.equal(
     fixture.store.get('source:1:4'),
     0,
-    'SOURCE 已被 SOURCE_CHECK_AUTO 消费清零',
+    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）',
   );
   assert.equal(
     fixture.store.get('base:1:1'),
@@ -712,7 +712,7 @@ test('LOVE_BUG（:1232）：伤害 + 爱抚自动调教（COM0_AUTO）+ 天使�
   assert.equal(
     fixture.store.get('palam:1:8'),
     125,
-    '耻情 125（SOURCE:12 = 100 × 露出倍率的换算结果）',
+    '耻情 125 = COM0_AUTO 的露出 100 × 自动调教倍率 1.25（本世界无射精加成）',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
   fixture.store.set('talent:1:10', 1); // 胆怯

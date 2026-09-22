@@ -403,16 +403,14 @@ test('执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、END
     nextday < month_roll,
     'EVENT_NEXTDAY（:77）必须先于月替（:84）——原作调用序',
   );
-  // 普通档尾部（:740 AUTOTRAIN → :749-751 EVENT_NEWDAY）的序证人。#508 换
-  // 真身后 @AUTOTRAIN 的占位行没了，改用写入序：AUTOTRAIN 自身的指针簿记
-  // （PLAYER = 0，其后无人再写 flag:10008）必须先于 ENDCHECK 的乳业收入入账
-  const writes = world.fixture.var_writes;
-  const autotrain_mark = writes.map((w) => w.name).lastIndexOf('flag:10008');
+  // 普通档尾部的序证人。#508 起 @AUTOTRAIN 的占位行没了，改用纯文本的位置
+  // 关系：ENDCHECK 在普通档的 :749-751（EVENT_NEWDAY 内）跑，必在 #PRI 档的
+  // 月替（:84）之后——三档链序或 EVENT_NEWDAY 调用点被挪动，本断言即红。
+  // 「AUTOTRAIN 真的执行了」不在本证人的射程内（它在本世界零输出，由
+  // event-turnend 的窗口用例与变异 M11002 单独钉）
   assert.ok(
-    writes.some(
-      (w, i) => i > autotrain_mark && w.name === 'flag:10004' && w.value > 0,
-    ),
-    'ENDCHECK（@EVENT_NEWDAY :241，经普通档 :749-751）必须在普通档尾部之后',
+    month_roll < endcheck,
+    'ENDCHECK（@EVENT_NEWDAY :241，经普通档 :749-751）必须在 #PRI 的月替之后',
   );
 });
 
