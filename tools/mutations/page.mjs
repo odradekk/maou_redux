@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 347; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 348; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -29,6 +29,8 @@ export const COUNT = 347; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // 两处档位除数的不对称、会心与倍率、四条退场判据的阈值与退场状态、[2] 的
 // 三分之一消耗与结果段金额/经验/善恶值/抓捕、FORT 的三路线各档判据与减员
 // 比例、CHALLENGE 的位域守卫/开挂档/人数上限/三选项分支）
+// #521 返工起 +1（M11100，page-campaign.js：招募上限 >80 的差一边界——验收
+// 抽样发现 >79 放行，两条边界用例夹住 80/81 两个方向）
 
 export default [
   {
@@ -3248,5 +3250,13 @@ export default [
     replace: '  } else if (progress >= 1 && progress < 10000) {',
     tests: ['page-invasion'],
     must_mention: '三档传闻',
+  },
+  {
+    desc: 'M11100 招募上限差一边界：>80 改 >79（恰好 80 人被误拦，#521 返工）',
+    file: 'ere/page/page-campaign.js',
+    find: `  if (era.getAddedCharacters().length > 80) {`,
+    replace: `  if (era.getAddedCharacters().length > 79) {`,
+    tests: ['page-campaign'],
+    must_mention: '恰好 80 人',
   },
 ];

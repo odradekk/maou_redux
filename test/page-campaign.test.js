@@ -127,7 +127,9 @@ test('招募：奴隶数已达上限（CHARANUM > 80）拒绝——战役层守�
   add_chara(fixture, 0, '魔王');
   fixture.store.set('base:0:1', 500);
   fixture.store.set('flag:400', 1);
-  for (let cid = 1; cid <= 81; cid += 1) {
+  // 恰好 81 人（含魔王）＝触发侧边界：81 > 80 拦、81 > 81 放（#521 返工
+  // 从 82 人收紧到边界；通过侧由下一用例的 80 人夹住，两个方向各差一可测）
+  for (let cid = 1; cid <= 80; cid += 1) {
     add_chara(fixture, cid);
   }
   const { campaign_menu } = load(fixture);
@@ -146,6 +148,36 @@ test('招募：奴隶数已达上限（CHARANUM > 80）拒绝——战役层守�
   assert.ok(
     out.every((t) => !t.includes('由于对魔王的恐惧')),
     '守卫应先于招募触发，不应进入 rand_chara_make 的 16 位全满兜底',
+  );
+});
+
+test('招募：恰好 80 人（CHARANUM == 80）不触上限，招募成功', async () => {
+  // 返工（#521 验收抽样）：>80 改 >79 时旧用例在场 82 人、两个判据同真，
+  // 差一测不出来。本用例钉通过侧边界：80 人（含魔王）不拦截、走完招募。
+  // 在场者避开勇者位 1..16（用 17..95 号），候选表非空，招募能真正完成；
+  // base 恰好 100 同时钉住 :48 气力守卫（<100）的通过侧边界。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '魔王');
+  fixture.store.set('base:0:1', 100);
+  fixture.store.set('flag:400', 1);
+  for (let cid = 17; cid <= 95; cid += 1) {
+    add_chara(fixture, cid);
+  }
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99); // 名字编号：避让随机命名重掷
+  const { campaign_menu } = load(fixture);
+  // rand 恒 0 → 抽中候选表首位（空着的 1 号）；形象确认 100（继续）→ 收下 2
+  fixture.era.input = (() => {
+    const answers = [1, 100, 2, 999];
+    let i = 0;
+    return () => Promise.resolve(answers[i++] ?? 999);
+  })();
+  await campaign_menu(() => 0);
+  assert.equal(fixture.store.get('base:0:1'), 0, '恰好 100 气力扣 100 后为 0');
+  assert.equal(
+    fixture.store.get('talent:1:361'),
+    1,
+    '招募成功点亮 1 号的战役素质位',
   );
 });
 
