@@ -74,8 +74,12 @@ const CALL_RE =
 // 分别由「后面要跟正文」与「要在字面量开头」两条挡住。
 const OPTION_RE = /\[\s*\d+\s*\]/;
 const INTERPOLATED_OPTION_RE = /^\s*\[\s*\$\{[^}]*\}\s*\]\s*\S/;
-// 消费这次输入的调用形态，用来标注「该行所在的输入是否传了 useRule: false」
-const INPUT_RE = /era\.(?:input|printAndWait)\(([^)]*)\)/g;
+// 消费这次输入的调用形态，用来标注「该行所在的输入是否传了 useRule: false」。
+// 只认 `era.input(`：`printAndWait` 等的是任意键、没有 useRule 这一说，
+// 把它算进来会让「菜单在别的函数里打印、消费点在调用方」的行（如
+// page-infrastructure.js 的 print_menu，中间夹着 show_exhibit 的 printAndWait）
+// 误标成不免疫。
+const INPUT_RE = /era\.input\(([^)]*)\)/g;
 
 /** 剥掉模板插值：`${items[0]}` 的 `[0]` 是下标，不是选项编号 */
 export function strip_interpolation(literal) {
@@ -149,9 +153,9 @@ export function scan_text(text) {
  * （渲染层 app.asar），`showInput` 的缺省是 true；游戏侧显式传
  * `era.input({ useRule: false })` 就整段跳过白名单——那种消费点上的纯文本
  * 选项行**结构性免疫**本病灶（page-infrastructure.js、event-grotesque.js 的
- * 先例，裁定见 page-shop-labo.js:42-47）。这里只往后找最近的 `era.input` /
- * `era.printAndWait` 实参文本，跨函数/跨分支时可能对不上，故只作报告里的
- * 标注用，不进基线、不参与棘轮比较。
+ * 先例，裁定见 page-shop-labo.js:42-47）。这里只往后找最近的 `era.input`
+ * 实参文本，跨函数/跨分支时可能对不上，故只作报告里的标注用，不进基线、
+ * 不参与棘轮比较。
  *
  * @param {string} text 文件全文
  * @param {number} from 命中点的字符偏移

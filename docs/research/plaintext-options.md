@@ -25,8 +25,10 @@
    里，`showInput` 的缺省是 `safeUndefinedCheck(data.config.useRule, true)`。
    游戏侧显式写 `era.input({ useRule: false })` 就**整段跳过白名单**——那种
    消费点上的纯文本选项行**结构性免疫**本病灶，与「本轮有没有按钮」无关。
-   面内 **22 行**的消费点就是这个写法（`page-infrastructure.js` 16 行、
-   `event-banishment.js` 5 行等，逐行标注见扫描器的 `〔useRule:false〕`）。
+   面内 **28 行**的消费点就是这个写法（`page-infrastructure.js` 16 行、
+   `event-banishment.js` 5 行、`event-public-execution.js` 3 行、
+   `event-execution.js` 2 行、`event-grotesque.js` 1 行、
+   `page-shop-labo.js` 1 行；逐行标注见扫描器的 `〔useRule:false〕`）。
    项目里这是**在案裁定**而不是偶然：`ere/page/page-shop-labo.js:42-47` 写着
    「输入一律按钮化，自由输入用 `useRule: false`……打了按钮就把输入集锁死在
    按钮上，自由输入进不去」。**整改名单必须把这些行排除掉**（§6 已按此改正）。
@@ -141,42 +143,42 @@ C 类更不要（按钮会把「敲任意数字」的通道堵死）。
 `node tools/plaintext-options.mjs` 重跑（输出的 `〔useRule:false〕` 标记＝该行属
 C 类，消费点关了白名单）。
 
-| 文件                                  | 行数 | 判定要点                                                                                                                                |
-| ------------------------------------- | ---: | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `ere/chara/chara-custom.js`           |    2 | 真选项（性别选择、`[999]` 返回）                                                                                                        |
-| `ere/chara/chara-custom2.js`          |   10 | 真选项（种族/部位/性别选择组，多行拼行）                                                                                                |
-| `ere/chara/chara-make.js`             |    2 | **已修 5 处后的余项**：`:1821` `[0] 印象 ： `、`:1841` `[1] 发色 ： ` 是形象确认轮的标签式选项（0/1 改性格/发色，100 继续），该轮无按钮 |
-| `ere/dungeon/dungeon-after.js`        |    6 | 真选项；**有意保留纯文本**（文件头 :14-17，#180）                                                                                       |
-| `ere/dungeon/dungeon-battle2.js`      |    2 | 真选项（`[0] 好的 [1] 不要`）                                                                                                           |
-| `ere/event/event-addict.js`           |    2 | 同上                                                                                                                                    |
-| `ere/event/event-banishment.js`       |    5 | 真选项（流放处置五选一）；**全 5 行属 C 类**（消费点 `useRule: false`）                                                                 |
-| `ere/event/event-ending.js`           |   10 | 真选项（后缀选择的两页：性格 8 项、发色 10 项、`[100] 决定`）                                                                           |
-| `ere/event/event-execution.js`        |    2 | 真选项（`:113` 的 `[100] 停止`；同段的 `[101]` 走数组形态打印，在扫描面外）                                                             |
-| `ere/event/event-grotesque.js`        |    1 | 真选项（处刑菜单 `[${index}] ${label}`）；**C 类**（消费点 :119 `useRule: false`）                                                      |
-| `ere/event/event-nextday.js`          |    6 | 真选项（三组是非提问）                                                                                                                  |
-| `ere/event/event-public-execution.js` |    3 | 真选项（处刑三选一）；**全 3 行属 C 类**（消费点 :38 `useRule: false`）                                                                 |
-| `ere/event/get-specialtalent.js`      |    2 | 真选项（封印二选一）                                                                                                                    |
-| `ere/kojo/kojo-dungeon-bitch.js`      |    2 | 真选项：`:1651` 的 `[${num}] 卖春积极性 - `（PTJ 菜单行）与 `:1673` 的等级 `[0]`-`[5]`                                                  |
-| `ere/kojo/kojo-dungeon-ravish.js`     |    4 | 真选项（旁观/不要，两处重复段）                                                                                                         |
-| `ere/kojo/kojo-k10-club.js`           |    4 | 真选项（两处二选一）                                                                                                                    |
-| `ere/page/page-chara-info.js`         |    0 | **A 类死路已修**：名单第一行的魔王行 `[0] …` 曾是纯文本，敲 0 被拒收（结论第 5 条）                                                     |
-| `ere/page/page-chara-shop.js`         |    4 | 真选项（性别、返回、`[0]/[1]` 确认）                                                                                                    |
-| `ere/page/page-dungeon-info2.js`      |    2 | `:339` 怪物行 `[${a}] ${b}只…`（**#180 明文保留**）+ `:346` 的 `[999] 返回`；**有意保留纯文本**（:331-338）                             |
-| `ere/page/page-infrastructure.js`     |   16 | 真选项（博物馆/牧场两级菜单，含 `:193` 逐展品行）；**全 16 行属 C 类**（四个消费点 :258/:266/:313/:335 都传 `useRule: false`）          |
-| `ere/page/page-item-shop.js`          |    2 | 真选项（购买确认）                                                                                                                      |
-| `ere/page/page-life-list.js`          |    1 | 真选项（`[0] 是的 [1] 不要`）                                                                                                           |
-| `ere/page/page-monster-shop.js`       |   12 | 真选项（召唤菜单：性别三选一、种族九选三、返回）                                                                                        |
-| `ere/page/page-shop-labo.js`          |    1 | 真选项（`[0] - 不生成`）；**C 类**（消费点 :2562 `useRule: false`）                                                                     |
-| `ere/system/train/cloth.js`           |    2 | 真选项（洗/不洗）                                                                                                                       |
-| `ere/system/train/com-cloth.js`       |   24 | 真选项（COM110 穿脱衣服大菜单，两页）                                                                                                   |
-| `ere/system/train/com-hardcore.js`    |   17 | 真选项（COM 穿环菜单，两页两态）                                                                                                        |
-| `ere/system/train/com-toy.js`         |    1 | 真选项（满月确认 `[0] 好的 [1] 算了`）                                                                                                  |
+| 文件                                  | 行数 | 判定要点                                                                                                                                                        |
+| ------------------------------------- | ---: | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ere/chara/chara-custom.js`           |    2 | 真选项（性别选择、`[999]` 返回）                                                                                                                                |
+| `ere/chara/chara-custom2.js`          |   10 | 真选项（种族/部位/性别选择组，多行拼行）                                                                                                                        |
+| `ere/chara/chara-make.js`             |    2 | **已修 5 处后的余项**：`:1821` `[0] 印象 ： `、`:1841` `[1] 发色 ： ` 是形象确认轮的标签式选项（0/1 改性格/发色，100 继续），该轮无按钮                         |
+| `ere/dungeon/dungeon-after.js`        |    6 | 真选项；**有意保留纯文本**（文件头 :14-17，#180）                                                                                                               |
+| `ere/dungeon/dungeon-battle2.js`      |    2 | 真选项（`[0] 好的 [1] 不要`）                                                                                                                                   |
+| `ere/event/event-addict.js`           |    2 | 同上                                                                                                                                                            |
+| `ere/event/event-banishment.js`       |    5 | 真选项（流放处置五选一）；**全 5 行属 C 类**（消费点 `useRule: false`）                                                                                         |
+| `ere/event/event-ending.js`           |   10 | 真选项（后缀选择的两页：性格 8 项、发色 10 项、`[100] 决定`）                                                                                                   |
+| `ere/event/event-execution.js`        |    2 | 真选项（`:113` 的 `[100] 停止`、`:309` 的 `[100] 返回`）；**两行都属 C 类**（之后的下一次输入都传 `useRule: false`；同段的 `[101]` 走数组形态打印，在扫描面外） |
+| `ere/event/event-grotesque.js`        |    1 | 真选项（处刑菜单 `[${index}] ${label}`）；**C 类**（消费点 :119 `useRule: false`）                                                                              |
+| `ere/event/event-nextday.js`          |    6 | 真选项（三组是非提问）                                                                                                                                          |
+| `ere/event/event-public-execution.js` |    3 | 真选项（处刑三选一）；**全 3 行属 C 类**（消费点 :38 `useRule: false`）                                                                                         |
+| `ere/event/get-specialtalent.js`      |    2 | 真选项（封印二选一）                                                                                                                                            |
+| `ere/kojo/kojo-dungeon-bitch.js`      |    2 | 真选项：`:1651` 的 `[${num}] 卖春积极性 - `（PTJ 菜单行）与 `:1673` 的等级 `[0]`-`[5]`                                                                          |
+| `ere/kojo/kojo-dungeon-ravish.js`     |    4 | 真选项（旁观/不要，两处重复段）                                                                                                                                 |
+| `ere/kojo/kojo-k10-club.js`           |    4 | 真选项（两处二选一）                                                                                                                                            |
+| `ere/page/page-chara-info.js`         |    0 | **A 类死路已修**：名单第一行的魔王行 `[0] …` 曾是纯文本，敲 0 被拒收（结论第 5 条）                                                                             |
+| `ere/page/page-chara-shop.js`         |    4 | 真选项（性别、返回、`[0]/[1]` 确认）                                                                                                                            |
+| `ere/page/page-dungeon-info2.js`      |    2 | `:339` 怪物行 `[${a}] ${b}只…`（**#180 明文保留**）+ `:346` 的 `[999] 返回`；**有意保留纯文本**（:331-338）                                                     |
+| `ere/page/page-infrastructure.js`     |   16 | 真选项（博物馆/牧场两级菜单，含 `:193` 逐展品行）；**全 16 行属 C 类**（四个消费点 :258/:266/:313/:335 都传 `useRule: false`）                                  |
+| `ere/page/page-item-shop.js`          |    2 | 真选项（购买确认）                                                                                                                                              |
+| `ere/page/page-life-list.js`          |    1 | 真选项（`[0] 是的 [1] 不要`）                                                                                                                                   |
+| `ere/page/page-monster-shop.js`       |   12 | 真选项（召唤菜单：性别三选一、种族九选三、返回）                                                                                                                |
+| `ere/page/page-shop-labo.js`          |    1 | 真选项（`[0] - 不生成`）；**C 类**（消费点 :2562 `useRule: false`）                                                                                             |
+| `ere/system/train/cloth.js`           |    2 | 真选项（洗/不洗）                                                                                                                                               |
+| `ere/system/train/com-cloth.js`       |   24 | 真选项（COM110 穿脱衣服大菜单，两页）                                                                                                                           |
+| `ere/system/train/com-hardcore.js`    |   17 | 真选项（COM 穿环菜单，两页两态）                                                                                                                                |
+| `ere/system/train/com-toy.js`         |    1 | 真选项（满月确认 `[0] 好的 [1] 算了`）                                                                                                                          |
 
-C 类合计 **22 行**（`event-banishment` 5、`event-grotesque` 1、`event-public-execution` 3、
-`page-infrastructure` 16、`page-shop-labo` 1 —— 按扫描器的标记统计；同一文件里
-只有标记到的那几行属 C 类）。**没有「纯说明文字」的误判**：模板插值里的下标
-（`${items[0]}`、`pm[0]`、`talent_multipliers[310]` 一类）已在扫描器里剥掉；
-插值编号那一支还要求「以 `[` 开头且后面跟正文」，把
+C 类合计 **28 行**（`page-infrastructure` 16、`event-banishment` 5、
+`event-public-execution` 3、`event-execution` 2、`event-grotesque` 1、
+`page-shop-labo` 1 —— 按扫描器的标记统计）。**没有「纯说明文字」的误判**：
+模板插值里的下标（`${items[0]}`、`pm[0]`、`talent_multipliers[310]` 一类）已在
+扫描器里剥掉；插值编号那一支还要求「以 `[` 开头且后面跟正文」，把
 `[${talentname(243 + count)}]`（条件提示的标签）与 `体力[${'.'.repeat(32)}]`
 （死亡提示的装饰括号）挡在外面；数组形态 `era.print([{content: '[8] …'}])`
 是有意排除的排版片段（原作本身用 PRINTPLAINFORM）——理由都写在
