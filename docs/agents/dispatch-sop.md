@@ -36,7 +36,18 @@ gh api repos/odradekk/maou_redux/actions/runs/<id>/jobs --jq '.jobs[]|{name,conc
 
 没有步骤且 `runner_name` 为空时先查权限、排队、配额和取消原因；不要仅凭运行状态把失败归因于代码。CI 因运行环境问题无法验证时，本地补跑本次 CI 未执行的全量测试和静态检查；无引擎检查在全新克隆里跑，显式设置 `ERE_ENGINE_ASAR=none`。
 
-同时最多处理 5 张 issue。创建前统计 `running` 和 `idle` agent，不计主工作目录的 local 工作区：`list_agents{statuses: ["running", "idle"]}`。
+同时最多处理 5 张 issue。创建前统计 `running` 和 `idle` agent，不计主工作目录的 local 工作区。
+
+**`list_agents` 不带 `cwd` 时只返回调用方自己那个目录里的 agent，看不见任何 worktree 工作区。** 主 agent 在 `D:\Code\era` 里调用，返回的就只有主 agent 自己——所有 worker 都在 `C:\Users\s1n19\.paseo\worktrees\…` 下，一个都不出现。所以统计并发数和巡检状态时，**必须先 `list_workspaces` 拿到全部 `cwd`，再逐个 `list_agents{cwd}`**：
+
+```
+list_workspaces                                   # 取每个工作区的 cwd
+list_agents{cwd: "<工作区 cwd>", sinceHours: 24}  # 逐个查
+```
+
+同理，`get_agent_status` 只认完整 UUID，传 `list_agents` 输出里那个 7 位 `shortId` 会返回 `Agent <id> not found`——**这个报错读起来像「agent 已经没了」，实际只是 id 形式不对**。
+
+这两条合起来制造过一次真实事故（2026-09-22，#530／#532）：巡检时不带 `cwd` 调 `list_agents` 只看到主 agent，又用 shortId 调 `get_agent_status` 收到 not found，据此判定两位 worker 的进程都已消失，于是在两个工作区各起了一位「接手」的 agent。实际上原 worker 一直在跑，两个工作区同时有两个写者；#532 那边新起的 agent 跑了几轮 `mutation-check --ids`（会就地改源文件），并把当时工作树的全部改动提交成了一个原 worker 没打算打的提交。**判断一位 worker 是否还活着，看的是它工作区 `cwd` 下的 `list_agents` 输出，外加工作树文件的 mtime 是否还在变；不看不带 `cwd` 的列表，也不看 shortId 查出来的 not found。**
 
 **有前置依赖，或会修改相邻公共位置的工单，按「验收、合并、再创建后续工作区」的顺序处理。** #115/#117/#118/#119 提前创建后在公共计数和登记表处重复冲突。无依赖且修改位置不相邻的可以并行。创建前检查以下隐含依赖：
 
@@ -125,10 +136,12 @@ rg -o --no-filename '\bM[0-9]+\b' tools/mutations | Sort-Object -Unique
 ## 4. 跟进
 
 ```
-get_agent_status{agentId}
+get_agent_status{agentId}     # agentId 必须是完整 UUID，shortId 会报 not found
 get_agent_activity{agentId}
 send_agent_prompt{agentId, prompt: "<追加说明>", background: true}
 ```
+
+`get_agent_activity` 的输出可能有十万字符量级、超出单次工具返回上限，会被存成文件让你分块读。真正要判断的通常只是「它还在不在动、动的是哪几个文件」，这两件事查工作树文件的 mtime 更省事，不必去读那份活动记录。
 
 追加说明前先看活动，避免要求重复已完成的步骤。提示词与原作冲突时重新核对原文再修正要求：#222 的 `PREVCOM === 8` 与原作 `SELECTCOM = 84` 不符；#251 的 `EX_FLAG` 写入与 `EX_TALENT` 读取是原作的双变量结构，不能仅凭名称不同认定缺陷。
 
