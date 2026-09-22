@@ -340,10 +340,12 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   // :661-664 一応代入（A/B/TARGET）
   era_flag.target = arg0;
 
-  // :668-672 肛门虫（TALENT:193）自动调教（存根三连）
+  // :668-672 肛门虫（TALENT:193）自动调教三连（:670 CALL COM13_AUTO——
+  // 真身 ere/event/event-autotrain.js，#500）
   if ((era.get(`talent:${arg0}:193`) || 0) !== 0) {
     await battle.before_autotrain();
-    await battle.com13_auto();
+    const { com13_auto } = require('#/event/event-autotrain');
+    com13_auto();
     await battle.source_check_auto();
   }
 

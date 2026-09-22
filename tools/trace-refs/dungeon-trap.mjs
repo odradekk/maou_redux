@@ -1291,6 +1291,13 @@ export const FILES = [
         ref: '1218',
         any: [/TARGET\ =\ A/],
       },
+      // #500：肛门虫自动调教直调 event-autotrain.js 真身，锚随 js 注释
+      // （// :1221 CALL COM13_AUTO）落到本表
+      {
+        src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
+        ref: '1221',
+        any: [/CALL\ COM13_AUTO/],
+      },
       {
         src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
         ref: '1225-1227',
@@ -1572,17 +1579,6 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_TRAP.ERB',
         ref: '1520',
         any: [/RETURN\ 100/],
-      },
-      // #178：DUNGEON_TOWN.ERB:645/:652（宴会风俗的爱抚自动调教）复用本域内存根
-      {
-        src: 'target/ERB/迷宮/DUNGEON_TOWN.ERB',
-        ref: '645',
-        any: [/CALL COM0_AUTO/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_TOWN.ERB',
-        ref: '652',
-        any: [/CALL COM0_AUTO/],
       },
       // —— #469 战役陷阱槽：@CAMPAIGN_TRAP 的 TRAP_ID < 0 判据三处。
       //    三条锚都取全文只命中一次的行：两处 IF 的判据行本身同形（各命中 2

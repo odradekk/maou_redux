@@ -501,8 +501,11 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
   // **#402 换过一处**：com-service:1911 的延迟 require（riding 里复用 com-sex
   // 的性交尾段）随公共段合流一并删除——那份尾段已归 train-message.js 的公共
   // 段，本模块不再需要它，故这一格改用 dungeon-trap 的同类形态。
+  // **#500 再移一次**：dungeon-trap 的三个 _AUTO 存根删除后整体上移，随后
+  // 两处 PLAYER 注释与文件头补写又下移三行，净落 1995（dark_juel_trap 里的
+  // require('#/dungeon/dungeon').karma）。
   const cases = [
-    ['ere/dungeon/dungeon-trap.js', 2009, false], // 行号随 #469 顶部族声明下移（原 1991；#469 合并后 campaign_trap JSDoc 再落一行，2008 → 2009）
+    ['ere/dungeon/dungeon-trap.js', 1995, false], // 行号随 #469 顶部族声明下移（原 1991），#500 删三存根与补注释后净 +3
     ['ere/kojo/kojo-k2-timid.js', 1299, false], // 行号随 #514 顶部族导入补齐 8 行下移（1291 → 1299）
     ['ere/kojo/kojo-k3-noble.js', 8543, false],
     ['ere/system/train/com-tentacle.js', 394, false],

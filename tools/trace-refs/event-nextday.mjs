@@ -2374,6 +2374,28 @@ export const FILES = [
         ref: '2477',
         any: [/	EX_FLAG:99 -= 15/],
       },
+      // —— #502：SENGEN_VIDEO_DE（@EVENT_NEXTDAY 的 :184 调用点，本体在
+      // 侵略/INVASION.ERB:1269-1281）——
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '1274-1277',
+        any: [/^[ \t]*IF EX_FLAG:9013 <= 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '1278-1281',
+        any: [/^[ \t]*IF EX_FLAG:9012 <= 0[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '1271',
+        any: [/^[ \t]*EX_FLAG:9013--[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '1272-1273',
+        any: [/^[ \t]*SIF RAND:3[ \t]*$/m],
+      },
     ],
   },
   {
