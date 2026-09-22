@@ -50,12 +50,12 @@ export default [
     must_mention: 'trace-check 应全绿',
   },
   {
-    desc: 'M11064 错绑基线过期核对失守（消化后忘删的条目不再红——基线用例必须点名规则自己的报错文案，只报条目总数上界不算）',
+    desc: 'M11064 错绑基线过期核对失守（消化后忘删的条目不再红——基线用例必须报出规则自己的报错文案，只报条目总数上界不算）',
     file: 'tools/trace-check.mjs',
     find: 'if (misbind_seen.has(misbind_key(rel, src, ref))) {',
     replace: 'if (true) {',
     tests: ['trace-check'],
-    must_mention: '基线只收真实的存量',
+    must_mention: '过期规则没有开火',
   },
   {
     desc: 'M11065 B 侧基线内错绑也报红（存量冻结失效——真树 286 条全打，全绿用例必红）',
