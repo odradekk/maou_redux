@@ -91,6 +91,11 @@ test('COMPARE_CHARA_ACT：按 (状态+11-act)%11 排名，同排名再按楼层/
   fixture.store.set('cflag:2:501', 8); // a 楼层更浅
   assert.equal(compare_chara_act(1, 2, 2), -1);
 
+  // 楼层序与 ID 序相反：这一侧才区分得出「真的在按楼层比」与「落到 ID 决胜」
+  // （a=1 楼层 5、b=2 楼层 3 → 按楼层该判 1，按 ID 该判 -1）
+  fixture.store.set('cflag:2:501', 3);
+  assert.equal(compare_chara_act(1, 2, 2), 1, 'b 楼层更浅 → 按楼层判 1');
+
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set('cflag:2:1', 0);
   assert.equal(compare_chara_act(1, 2, 2), -1, '排名并列时按 ID 升序决胜');
