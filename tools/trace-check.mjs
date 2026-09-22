@@ -212,12 +212,17 @@ const SRC_PATH_EXT_RE = /\.(?:ERB|ERH|CSV|TXT|log)$/i;
 //    两条都在下面的核对里执行（与 ERB_EXEMPT_BASELINE 同款语义）。新错绑
 //    不许进——那是判定要拦的东西。 ——
 const SRC_MISBIND_BASELINE = {
-  // #513 真空基线实测 286 条（A 侧 221 + B 侧 75 去重），三个文件：
-  //   - ablup.js 280：大头是 decide/core_ablupN 辅助函数的 jsdoc 没写「源:」行、
+  // #513 真空基线实测 286 条（A 侧 221 + B 侧 75 去重），三个文件（分文件数
+  // 按下表逐项点数，勿凭记忆改写）：
+  //   - ablup.js 260：大头是 decide/core_ablupN 辅助函数的 jsdoc 没写「源:」行、
   //     被上一段声明覆盖而错位（如 decide_ablup10 的引用绑到 ABLUP9 段），含
   //     ABLUP9 段 :281-283 挂 ABLUP10 一类锚表 src 错位；
-  //   - monster-data.js 4：@ENEMY_DATA_CHECK/@CRUSADER 段 jsdoc 无「源:」声明、
-  //     延续 CAMPAIGN_EVENT 段；
+  //   - monster-data.js 24：js:57 的 campaign_dungeon_lv jsdoc 声明「源:
+  //     CAMPAIGN_EVENT」之后，文件尾段各函数（@ENEMY_DATA_CHECK/@CRUSADER、
+  //     @SKELETON、@MONSTER_SETUP、@MONSTER_DATA 主函数等，js:68/191/348-569
+  //     的引用）jsdoc 均无「源:」行、全部延续 CAMPAIGN_EVENT 段，而锚表把
+  //     这些引用挂在 MONSTER_DATA/ENEMY_DATA 名下（src 多数是对的——真身在
+  //     那些文件，缺的是 js 侧声明）；
   //   - kojo-k10-club.js 2：:657-665 段声明与锚表 src 对不上。
   // 逐条明细见 #513 完成报告。消化 = 核对后同步 js 行号或锚表 src（或给函数
   // 头注补「源:」声明），删本表条目。
