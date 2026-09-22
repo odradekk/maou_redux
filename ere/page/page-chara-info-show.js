@@ -222,12 +222,15 @@ async function sacrifice_flow(cid, background) {
   }
 
   // :79-80 未满 30：给两个出口（各是 `PRINTS "\n"*2 + 文案`）
+  // 两枚都是**真按钮**（PR #53 通则，#530 补齐本文件剩余几处）：引擎的 input
+  // 只接受本轮打印过的按钮快捷键，纯文本的 ` [N] 文字 ` 行玩家敲不进编号。
+  // 正文不写 `[N]`（引擎按 showAcc 自动拼，自带会显示成 `[10] [ 10] …`）。
   era.println();
   era.println();
-  era.print(' [ 10] 查看符合条件的奴隶或勇者 ');
+  era.printButton('查看符合条件的奴隶或勇者', 10); // 原作 `[ 10]` 的补位交给引擎排版
   era.println();
   era.println();
-  era.print(' [100] 返回 ');
+  era.printButton('返回', 100);
   const choice = await era.input(); // :82 INPUT
   if (choice === 100) {
     return false; // :84-87 返回首页
@@ -272,7 +275,10 @@ async function sacrifice_flow(cid, background) {
     }
     era.println();
     era.println();
-    era.print(' [100] 返回 '); // :127
+    // :127 ` [100] 返回 `——真按钮（#530）。**这一轮的白名单非空**：名单行与
+    // 六个条件键都在上面打印过了，纯文本行必然被引擎拒收（夹具当场抛「输入
+    // 不合法」，见 test/chara-info-show.test.js 的 #530 用例）。
+    era.printButton('返回', 100);
     era.println();
 
     const result = await era.input(); // :129
@@ -303,9 +309,11 @@ async function sacrifice_flow(cid, background) {
         `确定要将 ${chara_callname(result)} 献祭？（*将永远失去这个奴隶）`,
       );
       era.println();
-      era.print(' [1] 献祭 ');
+      // 两个选项也是真按钮（#530）：本轮白名单为空时它们「碰巧」能用（自由
+      // 输入），一旦上面多打一枚按钮就成了死路——按通则一律按钮化
+      era.printButton('献祭', 1);
       era.println();
-      era.print(' [0] 终止 ');
+      era.printButton('终止', 0);
       const confirm = await era.input();
       if (confirm === 1) {
         era.print(`${chara_callname(result)} 成为了祭品之一`);

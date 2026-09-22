@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 63; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）
+export const COUNT = 67; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的靶代码被改写、M7821 的靶搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）
 
 export default [
   {
@@ -619,5 +619,83 @@ export default [
         await era.input(); // 变异：:107 的 INPUT`,
     tests: ['chara-name'],
     must_mention: ':107 的形象确认未执行（只问了 :158 的收下确认）',
+  },
+  {
+    desc: 'M11200 战役招募确认的三个选项退回纯文本（engine 只认本轮按钮快捷键，玩家敲不进 1/2/3——#530 的实机死路）',
+    file: 'ere/chara/chara-make.js',
+    find: `        era.printMultiColumns([
+          {
+            type: 'button',
+            accelerator: 1,
+            content: '不，换一个',
+            config: { align: 'left', width: 8 },
+          },`,
+    replace: `        era.print('[1] 不，换一个');
+        era.printMultiColumns([
+          {
+            type: 'text',
+            content: '不，换一个',
+            config: { align: 'left', width: 8 },
+          },`,
+    tests: ['chara-make'],
+    must_mention: '要由引擎拼在按钮正文前',
+  },
+  {
+    desc: 'M11201 非战役分支的两个选项退回纯文本（同 M11200，普通招募那条臂）',
+    file: 'ere/chara/chara-make.js',
+    find: `        era.printMultiColumns([
+          {
+            type: 'button',
+            accelerator: 1,
+            content: '不不不不…我看错了！',
+            config: { align: 'left', width: 12 },
+          },`,
+    replace: `        era.print('[1] 不不不不…我看错了！');
+        era.printMultiColumns([
+          {
+            type: 'text',
+            content: '不不不不…我看错了！',
+            config: { align: 'left', width: 12 },
+          },`,
+    tests: ['chara-make'],
+    must_mention: '要由引擎拼在按钮正文前',
+  },
+  {
+    desc: 'M11202 战役招募确认的按钮正文自带 [N] 前缀（引擎 showAcc 会再拼一层，实显成 [2] [2] …——PR #30 的硬约束）',
+    file: 'ere/chara/chara-make.js',
+    find: "            content: '嘛…还行，就这位吧',",
+    replace: "            content: '[2] 嘛…还行，就这位吧',",
+    tests: ['chara-make'],
+    must_mention: '要由引擎拼在按钮正文前',
+  },
+  {
+    desc: 'M11203 战役招募确认的 [2]/[3] 快捷键互换（2 = 收下、3 = 放弃 的语义被换掉——编号字面量改错必须红）',
+    file: 'ere/chara/chara-make.js',
+    find: `          {
+            type: 'button',
+            accelerator: 2,
+            content: '嘛…还行，就这位吧',
+            config: { align: 'left', width: 8 },
+          },
+          {
+            type: 'button',
+            accelerator: 3,
+            content: '算了，不选了',
+            config: { align: 'left', width: 8 },
+          },`,
+    replace: `          {
+            type: 'button',
+            accelerator: 3,
+            content: '嘛…还行，就这位吧',
+            config: { align: 'left', width: 8 },
+          },
+          {
+            type: 'button',
+            accelerator: 2,
+            content: '算了，不选了',
+            config: { align: 'left', width: 8 },
+          },`,
+    tests: ['chara-make'],
+    must_mention: '要由引擎拼在按钮正文前',
   },
 ];

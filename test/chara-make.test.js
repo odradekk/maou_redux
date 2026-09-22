@@ -1256,8 +1256,133 @@ test('campaign_slave 缺省（false）：answer=3 落入收下分支，不触发
   );
 });
 
-// —— 存根清单核对（与 event-first.test.js 同款）——
+// —— 确认对话的选项必须是引擎按钮（#530）——
+//
+// 引擎的 input 只接受本轮打印过的按钮快捷键（渲染层 returnFromButton：
+// `rule.length > 0 && rule.indexOf(Number(val)) === -1` 即拒收、不回调；
+// #130 把这条写进了夹具，#53 立了「`[N] 文字` + INPUT 升级为 printButton」
+// 的通则）。原作 Emuera 的 INPUT 收任意数值，`PRINTL [N] …` 在那边能用；
+// EraElectron 不行——纯文本的选项行玩家敲不进编号，实机表现正是「输
+// 0/1/2/3 全部无反应」(#530)。
+//
+// **只断言文案出现过抓不住**：文案在按钮与纯文本两种实现下都在。断言看
+// 夹具的 button 条目（type === 'button'，rendered = 引擎实显文本）。
+// 另一个陷阱是正文自带 `[N]`：引擎 showAcc 会再拼一层，rendered 因此是
+// `[1] [1] …`（AGENTS.md 硬约束，PR #30 实机撞见）——本组用例一并钉住。
 
+/** 夹具记录里的按钮条目（含已从画面清掉的；rendered = 引擎实显文本） */
+function button_rendered(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+}
+
+/** 战役招募的公共布景：编制不连号（只有魔王 0 与 9 号），候补预设 1 号 */
+function campaign_fixture() {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(9, { id: 9, name: '勇者9', callname: '勇者9' });
+  fixture.era.addCharacter(9);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99); // 名字编号：避让随机命名重掷
+  return fixture;
+}
+
+test('campaign_slave=true：确认对话的三个选项经 printButton 出，正文不带 [N] 前缀', async () => {
+  const fixture = campaign_fixture();
+  // 走夹具的真实 input（含按钮白名单校验）：[100] 進む → [2] 收下
+  fixture.set_inputs(100, 2);
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0, // 候选表首位（空位 1 号）
+    () => Promise.resolve(0),
+    true,
+  );
+
+  assert.equal(result, 1, '招募成功，落在空位 1 号');
+  const rendered = button_rendered(fixture);
+  for (const [accelerator, content] of [
+    [1, '不，换一个'],
+    [2, '嘛…还行，就这位吧'],
+    [3, '算了，不选了'],
+  ]) {
+    // 逐字相等，不用 includes 取子串：正文自带 [N] 时引擎会再拼一层，
+    // 实显成 `[2] [2] 嘛…还行，就这位吧`——子串判据照样成立，抓不住 PR #30
+    assert.ok(
+      rendered.some((text) => text === `[${accelerator}] ${content}`),
+      `[${accelerator}] 要由引擎拼在按钮正文前（实显：${JSON.stringify(rendered)}）`,
+    );
+  }
+  // 三个选项不许再以纯文本出现：[N] 是引擎按钮的快捷键，纯文本行敲不进去
+  const texts = stub_texts(fixture);
+  for (const content of ['不，换一个', '嘛…还行，就这位吧', '算了，不选了']) {
+    assert.ok(
+      !texts.some((t) => t.includes(content)),
+      `选项 ${content} 是纯文本行（引擎收不到它的快捷键）`,
+    );
+  }
+  assert.deepEqual(
+    fixture.inputs_consumed
+      .filter((entry) => entry.api === 'input')
+      .map((entry) => entry.value),
+    [100, 2],
+    '两次输入都被夹具的白名单放行（[2] 在白名单里＝它真是按钮）',
+  );
+});
+
+test('campaign_slave=true：三个选项分支走夹具真实输入路径（重挑／收下／放弃）', async () => {
+  // 本用例走夹具的真实 input（不就地替换），三个可用输入因此要能被夹具消费：
+  // [100] 進む 在白名单为空的轮次里是自由输入，[1]/[2]/[3] 收下确认。**它抓不
+  // 住 #530**——那一轮的白名单在夹具里是空的，纯文本选项也会被放行；抓 #530
+  // 的是上面那条结构性断言（看 type === 'button' 的条目）。
+  // [预置输入, 期望返回, 说明]——每个分支一个可区分的输入
+  const cases = [
+    [[100, 1, 100, 2], 1, '[1] 不，换一个 → 重挑后收下'],
+    [[100, 2], 1, '[2] 嘛…还行，就这位吧 → 收下'],
+    [[100, 3], 0, '[3] 算了，不选了 → 删掉并返回 0'],
+  ];
+  for (const [answers, expected, label] of cases) {
+    const fixture = campaign_fixture();
+    fixture.set_inputs(...answers);
+    const { rand_chara_make } = load(fixture);
+    const result = await rand_chara_make(
+      () => 0,
+      () => Promise.resolve(0),
+      true,
+    );
+    assert.equal(result, expected, label);
+  }
+});
+
+test('campaign_slave 缺省（false）：确认对话的两个选项经 printButton 出，正文不带 [N] 前缀', async () => {
+  const fixture = campaign_fixture();
+  fixture.set_inputs(100, 2);
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0, // RAND:16 落 0 → 位号 1（空位）
+    () => Promise.resolve(0),
+  );
+
+  assert.equal(result, 1, '普通招募同样是收下');
+  const rendered = button_rendered(fixture);
+  for (const [accelerator, content] of [
+    [1, '不不不不…我看错了！'],
+    [2, '是她！是她！就是她！抓起来！…'],
+  ]) {
+    assert.ok(
+      rendered.some((text) => text === `[${accelerator}] ${content}`),
+      `[${accelerator}] 要由引擎拼在按钮正文前（实显：${JSON.stringify(rendered)}）`,
+    );
+  }
+  const texts = stub_texts(fixture);
+  assert.ok(
+    !texts.some((t) => t.includes('不不不不…我看错了！')),
+    '选项不是纯文本行',
+  );
+});
+
+// —— 存根清单核对（与 event-first.test.js 同款）——
 test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = load(fixture);

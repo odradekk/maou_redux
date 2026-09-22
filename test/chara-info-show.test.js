@@ -2117,7 +2117,7 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10, 801: 10 }, // 合计 20 < 30：未满，走两个出口
   });
-  fixture.set_inputs(100); // 选 [100] 返回
+  fixture.set_inputs(100); // 选 [100] 返回（真按钮，见下）
   const result = await show_chara_info(7, -1, always, 0x000000);
   const lines = fixture.text_lines();
   assert.equal(lines[1], '已献祭的肉便器数量', '第 0 行是标题行');
@@ -2125,9 +2125,51 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
     lines.some((t) => t.startsWith('合计')),
     '合计行按六项之和',
   );
-  assert(lines.some((t) => t.includes('[ 10] 查看符合条件的奴隶或勇者 ')));
-  assert(lines.some((t) => t.includes('[100] 返回 ')));
+  // 两个出口是真按钮（#530）：编号由引擎按 showAcc 拼，正文不带 `[N]`，
+  // 也不再是纯文本行——纯文本行玩家敲不进编号（#130 的通则）
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(
+    rendered.some((text) => text === '[10] 查看符合条件的奴隶或勇者'),
+    `[10] 要由引擎拼在正文前（实显：${JSON.stringify(rendered)}）`,
+  );
+  assert.ok(
+    rendered.some((text) => text === '[100] 返回'),
+    `[100] 要由引擎拼在正文前（实显：${JSON.stringify(rendered)}）`,
+  );
+  assert(
+    !lines.some((t) => t.includes('查看符合条件的奴隶或勇者')),
+    '出口不是纯文本行',
+  );
   assert.equal(result, 1, '返回首页（directToHomePage 的返回值形态）');
+});
+
+test('SHOW_CHARA_INFO：祭品名单的 [100] 返回是真按钮（名单轮次白名单非空，#530）', async () => {
+  // 名单轮次的白名单本来就非空——名单行自身是按钮（角色号），六个条件键是
+  // 按钮（1000+下标）。此时若 `[100] 返回` 仍是纯文本行，玩家敲 100 会被
+  // 引擎拒收（renderFromButton 的 rule.indexOf 判据），夹具同款抛
+  // 「输入不合法」：本用例在修好之前必定红。
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  const victim = 9;
+  fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+  fixture.era.addCharacter(victim);
+  fixture.store.set(`cflag:${victim}:1`, 8);
+  fixture.store.set('callname:7:-1', '考狄利亚'); // 名单只列同条件的角色
+  // 进名单 → 名单里 [100] 返回 → RESTART 回到「两个出口」→ 再 [100] 返回首页
+  fixture.set_inputs(10, 100, 100);
+  const result = await show_chara_info(7, -1, always, 0x000000);
+
+  assert.equal(result, 1, '[100] 从名单里返回首页');
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(
+    rendered.filter((text) => text === '[100] 返回').length >= 2,
+    `两个出口 + 名单各有一枚 [100] 返回（实显：${JSON.stringify(rendered)}）`,
+  );
 });
 
 test('SHOW_CHARA_INFO：献祭满足时走「完全召唤」演出并清零状态位', async () => {
@@ -2738,4 +2780,14 @@ test('SHOW_CHARA_INFO：献祭成功后对应的分项计数 +100', async () => 
     'CFLAG:800 += 100（源 :157）',
   );
   assert.equal(fixture.store.get(`cflag:${victim}:1`), 0, '被献祭者状态清零');
+  // 确认对话的两个选项是真按钮（#530）：上面喂的 `1` 之所以能被夹具放行，
+  // 正是因为它是本轮打印过的按钮快捷键——纯文本行会被白名单当场拒收
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(
+    rendered.some((text) => text === '[1] 献祭') &&
+      rendered.some((text) => text === '[0] 终止'),
+    `确认选项要由引擎拼编号（实显：${JSON.stringify(rendered)}）`,
+  );
 });
