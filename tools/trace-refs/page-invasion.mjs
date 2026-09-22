@@ -3441,16 +3441,14 @@ export const FILES = [
         any: [/^\s*IF FLAG:82 == 0 && CHARANUM > 60\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/EVENT/ENTER_ENEMY.ERB',
         ref: '35-47',
-        any: [
-          /^\s*PRINTL \*\*\*\*\*\*\*\*\*　　　　　　　　　　　　　　　攻陷了堡垒　　　　　　　　　　　　　　　　\*\*\*\*\*\*\*\*\*\*\s*$/m,
-        ],
+        any: [/^\s*IF FLAG:82 == 0 && CHARANUM > 60\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/EVENT/ENTER_ENEMY.ERB',
         ref: '332-344',
-        any: [/^\s*;魔王軍\s*$/m],
+        any: [/^\s*IF FLAG:82 == 0 && CHARANUM > 60\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
@@ -4051,14 +4049,14 @@ export const FILES = [
         any: [/^\s*SIF		COUNT == 0 \|\|\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '305-316',
-        any: [/^\s*SEIEI_I = GETCHARA\(19\)\s*$/m],
+        any: [/^\s*SIF COUNT == 0 \|\|\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '349-357',
-        any: [/^\s*PRINTFORML %CALLNAME:SEIEI_I%\s*$/m],
+        any: [/^\s*SIF		COUNT == 0 \|\|\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4066,16 +4064,14 @@ export const FILES = [
         any: [/^\s*SIF COUNT == 0 \|\|\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '315',
-        any: [/^\s*BASE:YUSYA_I:0 \+= SINKOU\s*$/m],
+        any: [/^\s*YUSYA_I\+\+\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '803-847',
-        any: [
-          /^\s*PRINTFORMW 在一番激烈战斗后%CALLNAME:YUSYA_I%终于逃了回来。\s*$/m,
-        ],
+        any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4083,17 +4079,15 @@ export const FILES = [
         any: [/^\s*PRINTFORM %SAVESTR:YUSYA_I%带着怪物到达了\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '778-800',
-        any: [
-          /^\s*PRINTFORML 魔王军绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
-        ],
+        any: [/^\s*IF TALENT:YUSYA_I:160\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '797-799',
         any: [
-          /^\s*PRINTFORML %CALLNAME:YUSYA_I%绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%把侵略时所抢夺的金银财宝都献给了%SAVESTR:MASTER%………\s*$/m,
         ],
       },
       {
@@ -4139,10 +4133,10 @@ export const FILES = [
         ],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '797-809',
         any: [
-          /^\s*PRINTFORML %CALLNAME:YUSYA_I%绕开%LOCALS:2%向%LOCALS:0%进发，但却遇到了埋伏。\s*$/m,
+          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%把侵略时所抢夺的金银财宝都献给了%SAVESTR:MASTER%………\s*$/m,
         ],
       },
       {
@@ -4178,24 +4172,24 @@ export const FILES = [
         any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '842-843',
-        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+        any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '842-844',
-        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+        any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '842-845',
-        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+        any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '842-846',
-        any: [/^\s*LOCALS:1 = 一条密林中的狭道\s*$/m],
+        any: [/^\s*PRINTFORMW 得到了\{SINKOU \* 5\}点的战利品！\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4218,9 +4212,9 @@ export const FILES = [
         any: [/^\s*IF RAND:100 < 9\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '884-885',
-        any: [/^\s*LOCAL:20 = EX_FLAG:95 \| 16\s*$/m],
+        any: [/^\s*EX_FLAG:99 \+= 1\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4228,9 +4222,9 @@ export const FILES = [
         any: [/^\s*EX_FLAG:99 \+= 1\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '885-887',
-        any: [/^\s*SIF EX_FLAG:95 & 16\s*$/m],
+        any: [/^\s*EX_FLAG:99 \+= 1\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4244,13 +4238,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '410-413',
-        any: [/^\s*;精鋭部隊の攻撃\s*$/m],
+        ref: '413',
+        any: [/^\s*TMP2_I = CFLAG:YUSYA_I:12\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '410-413',
+        any: [/^\s*CALL MONSTER_DATA, MON_ID, 0, YUSYA_I\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '413-417',
-        any: [/^\s*TMP2_I = CFLAG:YUSYA_I:12\s*$/m],
+        any: [/^\s*CALL MONSTER_DATA, MON_ID, 0, YUSYA_I\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4263,14 +4262,14 @@ export const FILES = [
         any: [/^\s*ITEM:MON_ID \*= 2\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '429-430',
-        any: [/^\s*CALL _INV_DEATH_CHECK, YUSYA_I, SEIEI_I\s*$/m],
+        any: [/^\s*;怪物カンストで最大約12万の1\/20\s*$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '429-431',
-        any: [/^\s*CALL _INV_DEATH_CHECK, YUSYA_I, SEIEI_I\s*$/m],
+        any: [/^\s*;怪物カンストで最大約12万の1\/20\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4280,9 +4279,11 @@ export const FILES = [
         ],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '433-434',
-        any: [/^\s*CALL PARTY_CHAR_DEL, SEIEI_I\s*$/m],
+        any: [
+          /^\s*PRINTFORMW 勇者补正　　　x\{TMP2_I\/100\}\.%TOSTR\(TMP2_I%100,"00"\)%\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4292,14 +4293,23 @@ export const FILES = [
         ],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '434-437',
-        any: [/^\s*ELSEIF RESULT == 1\s*$/m],
+        any: [
+          /^\s*PRINTFORMW 勇者补正　　　x\{TMP2_I\/100\}\.%TOSTR\(TMP2_I%100,"00"\)%\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '439-443',
+        any: [/^\s*;略奪\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '439-443',
-        any: [/^\s*CALL PARTY_CHAR_DEL, SEIEI_I\s*$/m],
+        ref: '1109-1112',
+        any: [
+          /^\s*PRINTFORML 在大战几百回合之后，%LOCALS:2%心有不甘地%LOCALS:3%。$/m,
+        ],
       },
     ],
   },

@@ -3259,6 +3259,13 @@ test('CHALLENGE [召唤魔王应战] 的道具二选一：堂堂正正与开挂�
     ':1059 EX_FLAG:4444 -= 3000',
   );
   assert(failed.text_lines().includes('金钱-3000。'), ':1057');
+  // :1049-1051 的 PRINTDATAL 三选一打的是**整行**（不是首字符）
+  assert(
+    failed
+      .text_lines()
+      .includes('魔王趁女骑士不备，向女骑士扔出了高级泥沼卷轴。'),
+    ':1049 道具行整行输出',
+  );
   assert.equal(
     failed.store.get('exflag:95'),
     0,

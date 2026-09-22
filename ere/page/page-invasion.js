@@ -132,13 +132,13 @@ const {
 } = require('#/event/event-ending');
 const { get_enemy, MAX_CHARANUM } = require('#/event/enter-enemy');
 const { karma } = require('#/chara/chara-stats');
-const { e_get, monster_data } = require('#/dungeon/monster-data');
-const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
-const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { add_chara_ex } = require('#/chara/chara-ex');
 const { char_make, name_reset } = require('#/chara/char-make');
-const { chara } = require('#/facade/chara');
+const { e_get, monster_data } = require('#/dungeon/monster-data');
 const { party_char_del } = require('#/dungeon/dungeon-party');
+const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
+const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
+const { chara } = require('#/facade/chara');
 const { stub_line_wait } = require('#/utils/stub-line');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
@@ -147,8 +147,8 @@ const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
  *
  * 'INVASION' 是函数内联段的宿主名（先例：DRAW_MAINMENU 指令面板段）：
  * 地上征服后菜单的 [1]/[2]/[3]/[5] 地区续接（:108-138，
- * post_conquest_menu）——四条出兵路线（[0] #503、[1] #117、[2]/[3] 含
- * #503）自 #504 起全部落地，不再在列。
+ * post_conquest_menu）——四条出兵路线自 #504 起全部落地（[1] #117、
+ * [0]/[3] #503、[2] #504），不再在列。
  * 'AGENT_MENU'（:93-95，[1001]，#103 判定的复制改名事故，只登记不排期）是
  * 本文件仅剩的存根调用名。'INVASION_EVENT_SEIEI' / 'INVASION_EVENT_FORT' /
  * 'INVASION_EVENT_CHALLENGE'（:212-235 的 RAND:10 三臂）自 #504 起同为真身，
@@ -1082,7 +1082,7 @@ async function invasion_event_fort(
       );
       era.print(`${chara_nickname(yusya)}杀出一条血路，勉强逃了回去。`); // :752 PRINTFORMW
       await era.waitAnyKey();
-      era.println(); // 源 :752 与 :752-754 之间的空行（PRINTFORML 无实参）
+      // 源 :752-754 段之间是纯空白行（不产生输出），ere 侧不打空行
       chara(yusya).dungeon.体力 = 1; // :752-754
       chara(yusya).invasion.状态 = 0; // :752-755
       return 1; // :756-760
@@ -1094,7 +1094,7 @@ async function invasion_event_fort(
       `在一番激烈战斗后${chara_nickname(yusya)}还是被${info.troop}生擒。`, // :760 PRINTFORMW
     );
     await era.waitAnyKey();
-    era.println(); // 源 :760 与 :760-762 之间的空行
+    // 源 :760-762 段之间是纯空白行（不产生输出），ere 侧不打空行
     chara(yusya).invasion.状态 = 9; // :760-762
     return 1; // :760-763
   }
@@ -1188,7 +1188,8 @@ async function fort_hero_reward(inv_type, state, divisor) {
 /**
  * 「带队奴隶有天使/恶魔翼」（FORT :677-678/:742-743 与 CHALLENGE 同款的
  * `TALENT:恶魔翅膀 || TALENT:种族 == 6 || TALENT:种族 == 8`）。
- * 恶魔翅膀 = TALENT:245、种族 = TALENT:314（yml/Talent.yml）。
+ * 恶魔翅膀 = TALENT:245、种族 = TALENT:314（yml/Talent.yml）；种族 6 是**天使**、
+ * 8 是魔族（对照 CHALLENGE 地区表的 `race` 列：天界/天神宫两组都是 6）。
  * @param {number} cid 角色 ID
  * @returns {boolean}
  */
@@ -1407,7 +1408,7 @@ async function invasion_event_challenge(
     ])) {
       era.print(line); // :936-951
     }
-    era.println(); // :952 PRINTFORML（空行）
+    // 源 :952 是纯空白行，ere 侧不打空行
     await era.waitAnyKey(); // :953 WAIT
     choice = 2; // :954
   } else {
@@ -1424,7 +1425,7 @@ async function invasion_event_challenge(
       era.print(line); // :959-964
     }
     era.print(`毫无紧张感的${info.foe}这样说着。`); // :965-967
-    era.println(); // 源 :965-967 与 :967 之间的空行（PRINTFORML 无实参）
+    // 源 :965-967 段之间是纯空白行（不产生输出），ere 侧不打空行
     choice = 3; // :967
     era.print(
       `在意识到敌人只有一个人后，魔王军向敢于挑衅的${info.foe}发起了猛烈的进攻。`, // :968 PRINTFORMW
@@ -1494,7 +1495,7 @@ async function invasion_event_challenge(
         [`魔王趁${info.foe}不备，向${info.foe}扔出了强效麻痹药水。`],
         [`魔王趁${info.foe}不备，向${info.foe}祭起了邪能封印壶。`],
       ])) {
-        era.print(line[0]); // :1049-1053
+        era.print(line); // :1049-1053（三选一，整行打印；`printdata` 已解出块）
       }
       era.print(`然而${info.foe}提前察觉了魔王的动作，躲闪掉了。`); // :1053
       era.print(
@@ -1569,7 +1570,7 @@ async function invasion_event_challenge(
       era.print(
         `在大战几百回合之后，${info.foe}心有不甘地${info.leave}。`, // :1109
       );
-      era.println();
+      // 源 :1109-1112 段之间是纯空白行（不产生输出），ere 侧不打空行
       era.print(
         inv_type === 2
           ? `魔王军高呼万岁，继续向${info.place}进发。` // :1112
