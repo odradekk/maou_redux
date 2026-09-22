@@ -43,7 +43,11 @@ export const BASELINE_FILE = path.join(
 /** 扫描根目录（仓库相对） */
 export const SCAN_ROOT = 'ere';
 
-const CALL_RE = /era\.(?:print|println|printAndWait)\(\s*(['"`])([\s\S]*?)\1/g;
+// 首实参字面量（单/双引号串或模板串）。转义序列按 `\\.` 吃掉，否则
+// `'it\'s'` 这类串会在转义引号处提前收尾，把字面量截断（判定面要的是
+// 「这一行是不是纯文本选项行」，截断会让 `[N]` 落在截断点之后而漏判）。
+const CALL_RE =
+  /era\.(?:print|println|printAndWait)\(\s*(['"`])((?:\\.|[^\\])*?)\1/g;
 const OPTION_RE = /\[\s*\d+\s*\]/;
 
 /** 剥掉模板插值：`${items[0]}` 的 `[0]` 是下标，不是选项编号 */
