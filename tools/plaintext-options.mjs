@@ -18,6 +18,13 @@
  *   - 整行注释（`//`、`*`、`;` 开头）跳过；`era.printButton` 等按钮 API 自然
  *     不匹配（它们不是纯文本）。
  *
+ * 面外已知项（同一病灶、选项文本不落在首实参字面量上，共 14 行，清单与判定见
+ * docs/research/plaintext-options.md 第四节末尾）：`ere/data/ending-scripts.js`
+ * 的数据表 11 行、`ere/event/event-ending.js:537`（选项文本在数组元素上、
+ * 经循环打印）、`ere/event/event-execution.js:116` 与
+ * `ere/page/components/chara-info-title.js:151`（数组形态的 `content`）。把数据
+ * 表纳入棘轮会把「数据」与「打印调用点」混在一个判定面里，故不纳入。
+ *
  * 用法：
  *   node tools/plaintext-options.mjs            # 打印清单与按文件计数
  *   node tools/plaintext-options.mjs --write    # 重写 tools/plaintext-option-baseline.mjs
