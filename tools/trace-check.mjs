@@ -69,6 +69,25 @@
 // `--anchor-quality` 打印本次量到的分布；`--anchor-quality --all` 才全文量
 // 并核对总基线（消化弱锚后基线一并改小）。完成报告用带 `--all` 的那条。
 //
+// #513 起第 1 步再绑一层源：内联 :N 按最近的「源: target/…ERB」单文件声明
+// 归属到具体 ERB——js 侧（绑定区引用须有同 src 登记）与表侧（条目须有
+// 归属该 src 的引用在场）双向锁死。此前只对 ref 数值判在场，行号漂到同表
+// 其他文件的登记值时照样绿（#491 抽样实测；#504 的 20 条系统性 src 错位、
+// #512 的五个函数自撞，都是这一款）。绑定信号与作用域：
+//   - jsdoc 块（文件头区之后）内的单文件声明从该块起生效，延续到下一个含
+//     声明的 jsdoc；列举式（路径后跟 ～/、）开开放段；无「源:」的 jsdoc 不
+//     改变当前段——函数体里穿插的字段注释不断段。
+//   - 行注释「// 源: …」只覆盖注释组 + 紧随的第一条语句（注册行注解形态，
+//     见 kojo-k903-garde.js:695），之后回到 jsdoc 层的当前段。
+//   - 文件头区（文件起首 jsdoc 或连续 // 行组）恒开放：那是「本文件承载哪些
+//     源」的集合性声明，不定位具体引用；锚表挂多 src 的文件（如
+//     page-invasion.js 的 4 个源）在 js 侧无从按段绑定，维持按 ref 匹配的
+//     现状语义。开放区出现同样满足跨文件条目的在场检查（#486 的路径限定
+//     写法 Z.ERB:77 由注释侧扫描天然排除，仍由锚校验在场的全文检查覆盖）。
+//   - 存量错绑冻结进 SRC_MISBIND_BASELINE：基线外错绑即红、条目不再报错绑
+//     时必须删、条目总数不得超出冻结上界——三道规则与 ERB_EXEMPT_BASELINE
+//     同款，消化即改小。
+//
 // 用法：node tools/trace-check.mjs（全绿退出码 0，任何失配退出码 1）。
 //       node tools/trace-check.mjs --anchor-quality
 //         打印本次鉴别力分布（默认只含未冻结文件）。
@@ -169,6 +188,368 @@ const { FILES, LOG_REFS, SAMPLE_LOG_REFS } = await load_trace_refs(
 );
 
 // —— 校核 ——
+
+const js_text_cache = new Map();
+function load_js_text(rel) {
+  if (!js_text_cache.has(rel)) {
+    js_text_cache.set(rel, fs.readFileSync(path.join(REPO, rel), 'utf8'));
+  }
+  return js_text_cache.get(rel);
+}
+
+// 引用形态（#63 起的统一定义）：「注释内、冒号前不是词字符/点号/花括号的
+// :数字」——覆盖行尾 `// :N`、块注释 `* :N`、括号 `（:N）` 及其复合（斜杠
+// 链 :A/:B、@函数名 :N），同时天然排除三段寻址与「路径:行号」限定写法
+// （#486——路径限定引用不进完整性锁，由锚校验在场的全文检查覆盖）。
+const ERB_REF_RE = /(?<![A-Za-z0-9_.{}]):(\d+)(?:-(\d+))?/g;
+
+// 「源:」声明可接受的路径扩展名（#513）
+const SRC_PATH_EXT_RE = /\.(?:ERB|ERH|CSV|TXT|log)$/i;
+
+// —— #513 源错绑冻结基线（只减不增）。收紧判定暴露的存量「js :N ↔ 锚表
+//    src」两侧不一致逐条登记在此：消化一条（js 行号/src 两侧核对后对齐，
+//    或给函数头注补「源:」声明）就删一条；基线条目不再报错绑时也必须删，
+//    两条都在下面的核对里执行（与 ERB_EXEMPT_BASELINE 同款语义）。新错绑
+//    不许进——那是判定要拦的东西。 ——
+const SRC_MISBIND_BASELINE = {
+  // #513 真空基线实测 286 条（A 侧 221 + B 侧 75 去重），三个文件（分文件数
+  // 按下表逐项点数，勿凭记忆改写）：
+  //   - ablup.js 260：大头是 decide/core_ablupN 辅助函数的 jsdoc 没写「源:」行、
+  //     被上一段声明覆盖而错位（如 decide_ablup10 的引用绑到 ABLUP9 段），含
+  //     ABLUP9 段 :281-283 挂 ABLUP10 一类锚表 src 错位；
+  //   - monster-data.js 24：js:57 的 campaign_dungeon_lv jsdoc 声明「源:
+  //     CAMPAIGN_EVENT」之后，文件尾段各函数（@ENEMY_DATA_CHECK/@CRUSADER、
+  //     @SKELETON、@MONSTER_SETUP、@MONSTER_DATA 主函数等，js:68/191/348-569
+  //     的引用）jsdoc 均无「源:」行、全部延续 CAMPAIGN_EVENT 段，而锚表把
+  //     这些引用挂在 MONSTER_DATA/ENEMY_DATA 名下（src 多数是对的——真身在
+  //     那些文件，缺的是 js 侧声明）；
+  //   - kojo-k10-club.js 2：:657-665 段声明与锚表 src 对不上。
+  // 逐条明细见 #513 完成报告。消化 = 核对后同步 js 行号或锚表 src（或给函数
+  // 头注补「源:」声明），删本表条目。
+  'ere/dungeon/monster-data.js': [
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|96-110',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|112-170',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|171-172',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|174-182',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|184-214',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|216-339',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|341-355',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|357-419',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|421-437',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|443-456',
+    'target/ERB/怪物相關/MONSTER_DATA.ERB|2861-2875',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|10-40',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|96-110',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|112-170',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|171-172',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|174-182',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|184-214',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|216-339',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|341-355',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|357-419',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|421-437',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|443-456',
+    'target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB|2861-2875',
+    'target/ERB/侵略/ENEMY_DATA.ERB|10-40',
+  ],
+  'ere/kojo/kojo-k10-club.js': [
+    'target/ERB/口上/EVENT_K10_クラブ.ERB|657-665',
+    'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB|657-665',
+  ],
+  'ere/system/train/ablup.js': [
+    'target/ERB/ABL/ABL.ERB|78',
+    'target/ERB/ABL/ABL.ERB|89',
+    'target/ERB/ABL/ABL.ERB|94',
+    'target/ERB/ABL/ABL.ERB|99',
+    'target/ERB/ABL/ABL.ERB|105',
+    'target/ERB/ABL/ABL.ERB|146',
+    'target/ERB/ABL/ABL.ERB|193-195',
+    'target/ERB/ABL/ABL.ERB|203-267',
+    'target/ERB/ABL/ABL.ERB|204-206',
+    'target/ERB/ABL/ABL.ERB|208-213',
+    'target/ERB/ABL/ABL.ERB|215-238',
+    'target/ERB/ABL/ABL.ERB|230-232',
+    'target/ERB/ABL/ABL.ERB|233-235',
+    'target/ERB/ABL/ABL.ERB|264-265',
+    'target/ERB/ABL/ABL.ERB|267',
+    'target/ERB/ABL/ABLUP0.ERB|84',
+    'target/ERB/ABL/ABLUP0.ERB|99-105',
+    'target/ERB/ABL/ABLUP0.ERB|116-120',
+    'target/ERB/ABL/ABLUP1.ERB|18-20',
+    'target/ERB/ABL/ABLUP1.ERB|50-53',
+    'target/ERB/ABL/ABLUP1.ERB|62',
+    'target/ERB/ABL/ABLUP1.ERB|62-66',
+    'target/ERB/ABL/ABLUP1.ERB|64-66',
+    'target/ERB/ABL/ABLUP1.ERB|69-71',
+    'target/ERB/ABL/ABLUP1.ERB|99-105',
+    'target/ERB/ABL/ABLUP1.ERB|102-104',
+    'target/ERB/ABL/ABLUP1.ERB|116-120',
+    'target/ERB/ABL/ABLUP1.ERB|119-170',
+    'target/ERB/ABL/ABLUP1.ERB|173-184',
+    'target/ERB/ABL/ABLUP1.ERB|186-190',
+    'target/ERB/ABL/ABLUP1.ERB|192-202',
+    'target/ERB/ABL/ABLUP1.ERB|227-228',
+    'target/ERB/ABL/ABLUP1.ERB|229-231',
+    'target/ERB/ABL/ABLUP10.ERB|156-206',
+    'target/ERB/ABL/ABLUP10.ERB|208-216',
+    'target/ERB/ABL/ABLUP10.ERB|218-223',
+    'target/ERB/ABL/ABLUP10.ERB|224-230',
+    'target/ERB/ABL/ABLUP10.ERB|231-237',
+    'target/ERB/ABL/ABLUP10.ERB|238-242',
+    'target/ERB/ABL/ABLUP10.ERB|243-248',
+    'target/ERB/ABL/ABLUP10.ERB|249-253',
+    'target/ERB/ABL/ABLUP10.ERB|254-258',
+    'target/ERB/ABL/ABLUP10.ERB|260-266',
+    'target/ERB/ABL/ABLUP10.ERB|266-269',
+    'target/ERB/ABL/ABLUP10.ERB|270-276',
+    'target/ERB/ABL/ABLUP10.ERB|278-280',
+    'target/ERB/ABL/ABLUP10.ERB|281-283',
+    'target/ERB/ABL/ABLUP10.ERB|284-286',
+    'target/ERB/ABL/ABLUP10.ERB|288-293',
+    'target/ERB/ABL/ABLUP10.ERB|295-297',
+    'target/ERB/ABL/ABLUP10.ERB|300-306',
+    'target/ERB/ABL/ABLUP10.ERB|308-310',
+    'target/ERB/ABL/ABLUP10.ERB|312-319',
+    'target/ERB/ABL/ABLUP10.ERB|321-328',
+    'target/ERB/ABL/ABLUP10.ERB|330-336',
+    'target/ERB/ABL/ABLUP10.ERB|338-342',
+    'target/ERB/ABL/ABLUP100.ERB|45',
+    'target/ERB/ABL/ABLUP100.ERB|78',
+    'target/ERB/ABL/ABLUP100.ERB|89',
+    'target/ERB/ABL/ABLUP100.ERB|94',
+    'target/ERB/ABL/ABLUP100.ERB|99',
+    'target/ERB/ABL/ABLUP100.ERB|105',
+    'target/ERB/ABL/ABLUP100.ERB|193-195',
+    'target/ERB/ABL/ABLUP100.ERB|203-267',
+    'target/ERB/ABL/ABLUP100.ERB|204-206',
+    'target/ERB/ABL/ABLUP100.ERB|208-213',
+    'target/ERB/ABL/ABLUP100.ERB|215-238',
+    'target/ERB/ABL/ABLUP100.ERB|230-232',
+    'target/ERB/ABL/ABLUP100.ERB|233-235',
+    'target/ERB/ABL/ABLUP100.ERB|264-265',
+    'target/ERB/ABL/ABLUP100.ERB|267',
+    'target/ERB/ABL/ABLUP100.ERB|529-533',
+    'target/ERB/ABL/ABLUP11.ERB|9',
+    'target/ERB/ABL/ABLUP11.ERB|15-17',
+    'target/ERB/ABL/ABLUP11.ERB|18-20',
+    'target/ERB/ABL/ABLUP12.ERB|9',
+    'target/ERB/ABL/ABLUP12.ERB|26',
+    'target/ERB/ABL/ABLUP12.ERB|96-97',
+    'target/ERB/ABL/ABLUP12.ERB|192-194',
+    'target/ERB/ABL/ABLUP13.ERB|45-46',
+    'target/ERB/ABL/ABLUP13.ERB|51',
+    'target/ERB/ABL/ABLUP13.ERB|53',
+    'target/ERB/ABL/ABLUP13.ERB|56-57',
+    'target/ERB/ABL/ABLUP13.ERB|63',
+    'target/ERB/ABL/ABLUP13.ERB|139-142',
+    'target/ERB/ABL/ABLUP13.ERB|147-150',
+    'target/ERB/ABL/ABLUP13.ERB|152-154',
+    'target/ERB/ABL/ABLUP13.ERB|155-158',
+    'target/ERB/ABL/ABLUP13.ERB|207-209',
+    'target/ERB/ABL/ABLUP14.ERB|12',
+    'target/ERB/ABL/ABLUP14.ERB|18-19',
+    'target/ERB/ABL/ABLUP14.ERB|23-24',
+    'target/ERB/ABL/ABLUP14.ERB|26',
+    'target/ERB/ABL/ABLUP14.ERB|27',
+    'target/ERB/ABL/ABLUP14.ERB|44-45',
+    'target/ERB/ABL/ABLUP14.ERB|50',
+    'target/ERB/ABL/ABLUP14.ERB|52',
+    'target/ERB/ABL/ABLUP14.ERB|65-66',
+    'target/ERB/ABL/ABLUP14.ERB|164-167',
+    'target/ERB/ABL/ABLUP14.ERB|180-183',
+    'target/ERB/ABL/ABLUP14.ERB|250-252',
+    'target/ERB/ABL/ABLUP15.ERB|50',
+    'target/ERB/ABL/ABLUP15.ERB|66',
+    'target/ERB/ABL/ABLUP15.ERB|89-90',
+    'target/ERB/ABL/ABLUP16.ERB|10',
+    'target/ERB/ABL/ABLUP16.ERB|47-48',
+    'target/ERB/ABL/ABLUP16.ERB|60',
+    'target/ERB/ABL/ABLUP16.ERB|69',
+    'target/ERB/ABL/ABLUP16.ERB|89-90',
+    'target/ERB/ABL/ABLUP16.ERB|94-95',
+    'target/ERB/ABL/ABLUP16.ERB|105-106',
+    'target/ERB/ABL/ABLUP16.ERB|107-108',
+    'target/ERB/ABL/ABLUP16.ERB|109-110',
+    'target/ERB/ABL/ABLUP16.ERB|113',
+    'target/ERB/ABL/ABLUP16.ERB|146',
+    'target/ERB/ABL/ABLUP16.ERB|529-533',
+    'target/ERB/ABL/ABLUP17.ERB|10',
+    'target/ERB/ABL/ABLUP17.ERB|16-18',
+    'target/ERB/ABL/ABLUP17.ERB|19-21',
+    'target/ERB/ABL/ABLUP17.ERB|41-42',
+    'target/ERB/ABL/ABLUP17.ERB|45-46',
+    'target/ERB/ABL/ABLUP17.ERB|57-58',
+    'target/ERB/ABL/ABLUP17.ERB|63',
+    'target/ERB/ABL/ABLUP17.ERB|118',
+    'target/ERB/ABL/ABLUP17.ERB|160-162',
+    'target/ERB/ABL/ABLUP17.ERB|172-174',
+    'target/ERB/ABL/ABLUP17.ERB|178-180',
+    'target/ERB/ABL/ABLUP17.ERB|181-183',
+    'target/ERB/ABL/ABLUP17.ERB|184-186',
+    'target/ERB/ABL/ABLUP17.ERB|188-190',
+    'target/ERB/ABL/ABLUP17.ERB|203-206',
+    'target/ERB/ABL/ABLUP17.ERB|219-222',
+    'target/ERB/ABL/ABLUP2.ERB|18-20',
+    'target/ERB/ABL/ABLUP2.ERB|67',
+    'target/ERB/ABL/ABLUP2.ERB|67-69',
+    'target/ERB/ABL/ABLUP2.ERB|69-71',
+    'target/ERB/ABL/ABLUP2.ERB|119-170',
+    'target/ERB/ABL/ABLUP2.ERB|173-184',
+    'target/ERB/ABL/ABLUP2.ERB|186-190',
+    'target/ERB/ABL/ABLUP2.ERB|192-202',
+    'target/ERB/ABL/ABLUP2.ERB|223-224',
+    'target/ERB/ABL/ABLUP2.ERB|225-227',
+    'target/ERB/ABL/ABLUP2.ERB|227-228',
+    'target/ERB/ABL/ABLUP2.ERB|229-231',
+    'target/ERB/ABL/ABLUP20.ERB|19-21',
+    'target/ERB/ABL/ABLUP20.ERB|63',
+    'target/ERB/ABL/ABLUP20.ERB|185-188',
+    'target/ERB/ABL/ABLUP21.ERB|9',
+    'target/ERB/ABL/ABLUP21.ERB|15-17',
+    'target/ERB/ABL/ABLUP21.ERB|19-21',
+    'target/ERB/ABL/ABLUP21.ERB|22-24',
+    'target/ERB/ABL/ABLUP21.ERB|84',
+    'target/ERB/ABL/ABLUP21.ERB|276-282',
+    'target/ERB/ABL/ABLUP22.ERB|65',
+    'target/ERB/ABL/ABLUP22.ERB|71',
+    'target/ERB/ABL/ABLUP22.ERB|327-330',
+    'target/ERB/ABL/ABLUP23.ERB|10-11',
+    'target/ERB/ABL/ABLUP23.ERB|12',
+    'target/ERB/ABL/ABLUP23.ERB|18',
+    'target/ERB/ABL/ABLUP23.ERB|18-20',
+    'target/ERB/ABL/ABLUP23.ERB|21-23',
+    'target/ERB/ABL/ABLUP23.ERB|46-47',
+    'target/ERB/ABL/ABLUP23.ERB|67',
+    'target/ERB/ABL/ABLUP23.ERB|78-79',
+    'target/ERB/ABL/ABLUP3.ERB|50-53',
+    'target/ERB/ABL/ABLUP3.ERB|64-66',
+    'target/ERB/ABL/ABLUP3.ERB|65',
+    'target/ERB/ABL/ABLUP3.ERB|67-69',
+    'target/ERB/ABL/ABLUP3.ERB|70-72',
+    'target/ERB/ABL/ABLUP3.ERB|76-77',
+    'target/ERB/ABL/ABLUP3.ERB|223-224',
+    'target/ERB/ABL/ABLUP3.ERB|225-227',
+    'target/ERB/ABL/ABLUP30.ERB|17',
+    'target/ERB/ABL/ABLUP30.ERB|26',
+    'target/ERB/ABL/ABLUP30.ERB|27',
+    'target/ERB/ABL/ABLUP30.ERB|29',
+    'target/ERB/ABL/ABLUP30.ERB|46-47',
+    'target/ERB/ABL/ABLUP30.ERB|50',
+    'target/ERB/ABL/ABLUP30.ERB|53-55',
+    'target/ERB/ABL/ABLUP30.ERB|56',
+    'target/ERB/ABL/ABLUP30.ERB|63',
+    'target/ERB/ABL/ABLUP30.ERB|64',
+    'target/ERB/ABL/ABLUP30.ERB|68',
+    'target/ERB/ABL/ABLUP30.ERB|74-75',
+    'target/ERB/ABL/ABLUP30.ERB|235-239',
+    'target/ERB/ABL/ABLUP30.ERB|249-253',
+    'target/ERB/ABL/ABLUP30.ERB|254-258',
+    'target/ERB/ABL/ABLUP30.ERB|261-265',
+    'target/ERB/ABL/ABLUP31.ERB|10',
+    'target/ERB/ABL/ABLUP31.ERB|17-19',
+    'target/ERB/ABL/ABLUP31.ERB|20-22',
+    'target/ERB/ABL/ABLUP31.ERB|27',
+    'target/ERB/ABL/ABLUP31.ERB|60',
+    'target/ERB/ABL/ABLUP31.ERB|70',
+    'target/ERB/ABL/ABLUP31.ERB|77',
+    'target/ERB/ABL/ABLUP31.ERB|78',
+    'target/ERB/ABL/ABLUP31.ERB|79',
+    'target/ERB/ABL/ABLUP31.ERB|81',
+    'target/ERB/ABL/ABLUP31.ERB|86-87',
+    'target/ERB/ABL/ABLUP31.ERB|311-312',
+    'target/ERB/ABL/ABLUP31.ERB|339-340',
+    'target/ERB/ABL/ABLUP32.ERB|9',
+    'target/ERB/ABL/ABLUP32.ERB|26',
+    'target/ERB/ABL/ABLUP32.ERB|57-59',
+    'target/ERB/ABL/ABLUP32.ERB|66',
+    'target/ERB/ABL/ABLUP32.ERB|76',
+    'target/ERB/ABL/ABLUP32.ERB|91',
+    'target/ERB/ABL/ABLUP32.ERB|97-98',
+    'target/ERB/ABL/ABLUP32.ERB|364-365',
+    'target/ERB/ABL/ABLUP33.ERB|10-11',
+    'target/ERB/ABL/ABLUP33.ERB|19-21',
+    'target/ERB/ABL/ABLUP33.ERB|22-24',
+    'target/ERB/ABL/ABLUP33.ERB|29',
+    'target/ERB/ABL/ABLUP33.ERB|51-52',
+    'target/ERB/ABL/ABLUP33.ERB|57',
+    'target/ERB/ABL/ABLUP33.ERB|57-59',
+    'target/ERB/ABL/ABLUP33.ERB|64',
+    'target/ERB/ABL/ABLUP33.ERB|66',
+    'target/ERB/ABL/ABLUP33.ERB|67',
+    'target/ERB/ABL/ABLUP33.ERB|97-98',
+    'target/ERB/ABL/ABLUP33.ERB|242-246',
+    'target/ERB/ABL/ABLUP33.ERB|254-258',
+    'target/ERB/ABL/ABLUP33.ERB|290-294',
+    'target/ERB/ABL/ABLUP33.ERB|310-314',
+    'target/ERB/ABL/ABLUP33.ERB|322-326',
+    'target/ERB/ABL/ABLUP33.ERB|361-362',
+    'target/ERB/ABL/ABLUP37.ERB|62',
+    'target/ERB/ABL/ABLUP39.ERB|63',
+    'target/ERB/ABL/ABLUP4.ERB|64-66',
+    'target/ERB/ABL/ABLUP4.ERB|70-72',
+    'target/ERB/ABL/ABLUP40.ERB|46',
+    'target/ERB/ABL/ABLUP7.ERB|52',
+    'target/ERB/ABL/ABLUP7.ERB|59',
+    'target/ERB/ABL/ABLUP8.ERB|2-189',
+    'target/ERB/ABL/ABLUP9.ERB|15-17',
+    'target/ERB/ABL/ABLUP9.ERB|18-20',
+    'target/ERB/ABL/ABLUP9.ERB|156-206',
+    'target/ERB/ABL/ABLUP9.ERB|208-216',
+    'target/ERB/ABL/ABLUP9.ERB|218-223',
+    'target/ERB/ABL/ABLUP9.ERB|224-230',
+    'target/ERB/ABL/ABLUP9.ERB|231-237',
+    'target/ERB/ABL/ABLUP9.ERB|238-242',
+    'target/ERB/ABL/ABLUP9.ERB|243-248',
+    'target/ERB/ABL/ABLUP9.ERB|249-253',
+    'target/ERB/ABL/ABLUP9.ERB|254-258',
+    'target/ERB/ABL/ABLUP9.ERB|260-266',
+    'target/ERB/ABL/ABLUP9.ERB|266-269',
+    'target/ERB/ABL/ABLUP9.ERB|270-276',
+    'target/ERB/ABL/ABLUP9.ERB|278-280',
+    'target/ERB/ABL/ABLUP9.ERB|281-283',
+    'target/ERB/ABL/ABLUP9.ERB|284-286',
+    'target/ERB/ABL/ABLUP9.ERB|288-293',
+    'target/ERB/ABL/ABLUP9.ERB|295-297',
+    'target/ERB/ABL/ABLUP9.ERB|300-306',
+    'target/ERB/ABL/ABLUP9.ERB|308-310',
+    'target/ERB/ABL/ABLUP9.ERB|312-319',
+    'target/ERB/ABL/ABLUP9.ERB|321-328',
+    'target/ERB/ABL/ABLUP9.ERB|330-336',
+    'target/ERB/ABL/ABLUP9.ERB|338-342',
+    'target/ERB/ABL/ABLUP99.ERB|61',
+  ],
+};
+
+// #513：js 侧源绑定（按文件惰性解析；锚校验在场检查与 ERB 完整性共用）
+const src_binding_cache = new Map();
+function get_src_binding(rel) {
+  let binding = src_binding_cache.get(rel);
+  if (!binding) {
+    binding = parse_src_bindings(load_js_text(rel).split(/\r?\n/));
+    src_binding_cache.set(rel, binding);
+  }
+  return binding;
+}
+
+/**
+ * 错绑对的键（#513）。同一物理错绑会占两条：A 侧的 src 是 js 注释按「源:」
+ * 声明的归属、B 侧的 src 是锚表条目挂的 src——两侧各自对基线核对，消化
+ * 掉任何一侧都会让对应条目过期（另一侧仍在时那条继续红）。
+ */
+function misbind_key(js, src, ref) {
+  return `${js}\u0000${src}\u0000${ref}`;
+}
+
+/**
+ * 记一笔错绑对并核对基线：基线外的返回 true（调用方打印并计失败），基线内
+ * 的返回 false（存量记账，扫描结束统一核对过期失效）。
+ */
+function note_misbind(js, src, ref) {
+  misbind_seen.add(misbind_key(js, src, ref));
+  return !(SRC_MISBIND_BASELINE[js] ?? []).includes(`${src}|${ref}`);
+}
+
+const misbind_seen = new Set(); // 本轮扫到的错绑对（基线内核对用；基线内计数在核对处统一算，防同对多次命中重复累计）
 
 const source_cache = new Map();
 const source_pack_cache = new Map();
@@ -418,14 +799,31 @@ for (const { js, refs } of FILES) {
   for (const { src, ref, any } of refs) {
     checked += 1;
     const label = `${js} :${ref} ↔ ${src}`;
-    // 1) js 侧：引用仍在（防静默删除/改动）
-    const ref_re = new RegExp(`:${ref.replace('-', '-')}(?!\\d)`);
-    if (!ref_re.test(js_text)) {
-      console.log(
-        `✗ ${label} —— js 里已不存在「:${ref}」（引用被删或被改？同步更新本表）`,
-      );
-      failures += 1;
-      continue;
+    // 1) js 侧：引用仍在（防静默删除/改动）；#513 起再绑一层源——绑定区的
+    //    出现须归属本条目的 src。开放区出现维持按 ref 匹配的现状语义；注释
+    //    侧完全无出现时（路径限定写法、区间前缀一类 ERB_REF_RE 看不见的形
+    //    态）退回现状的全文检查，不扩大打击面。
+    const occ = get_src_binding(js).refs.get(ref) ?? [];
+    if (occ.length > 0) {
+      if (!occ.some((o) => o.src === null || o.src === src)) {
+        const actuals = [...new Set(occ.map((o) => o.src))].join('、');
+        if (note_misbind(js, src, ref)) {
+          console.log(
+            `✗ ${label} —— js 里 :${ref} 的出现全部归属其他源（${actuals}），无本 src 或开放区出现（#513 源绑定：行号或 src 挂错了文件？核对后同步 js 或锚表）`,
+          );
+          failures += 1;
+          continue;
+        }
+      }
+    } else {
+      const ref_re = new RegExp(`:${ref.replace('-', '-')}(?!\\d)`);
+      if (!ref_re.test(js_text)) {
+        console.log(
+          `✗ ${label} —— js 里已不存在「:${ref}」（引用被删或被改？同步更新本表）`,
+        );
+        failures += 1;
+        continue;
+      }
     }
     // 2) 源侧：所引行命中锚（防行号偏移/源漂移）
     const pack = load_source_pack(src);
@@ -474,14 +872,6 @@ for (const { js, refs } of FILES) {
 }
 // —— emuera.log 引用：同款两道校验（presence 用带 log: 前缀的更严形态，
 //    单值引用不得被区间引用的「log:N-M」前缀冒名满足）——
-
-const js_text_cache = new Map();
-function load_js_text(rel) {
-  if (!js_text_cache.has(rel)) {
-    js_text_cache.set(rel, fs.readFileSync(path.join(REPO, rel), 'utf8'));
-  }
-  return js_text_cache.get(rel);
-}
 
 for (const { js, refs } of LOG_REFS) {
   const js_text = load_js_text(js);
@@ -1124,37 +1514,163 @@ const ERB_EXEMPT_BASELINE = {
 //    新增引用绕过锚表。引用形态见文件头第 4 条；豁免清单只能变短、
 //    不许过期失效（见 tools/trace-exempt.mjs 头注） ——
 
-const ERB_REF_RE = /(?<![A-Za-z0-9_.{}]):(\d+)(?:-(\d+))?/g;
+/** 注释可扫片段：块注释行、// 之后的部分、行内块注释段（scan_erb_refs 与 #513 源绑定共用） */
+function comment_parts(line) {
+  const parts = [];
+  // 块注释行（jsdoc 的 * 续行与 /* 起始行）整行可扫
+  if (/^\s*\*/.test(line) || /^\s*\/\*/.test(line)) parts.push(line);
+  // 行注释：只扫 // 之后的部分（前面是代码，含三段寻址）
+  const ci = line.indexOf('//');
+  if (ci >= 0) {
+    parts.push(line.slice(ci));
+  }
+  // 行内 /* … */ 段（本仓库罕用，出现即扫）
+  for (const m of line.matchAll(/\/\*(.*?)\*\//g)) {
+    parts.push(m[1]);
+  }
+  return parts;
+}
 
-/** 扫单个 js 文本里的 ERB 行号引用（注释侧；代码侧不扫，见文件头） */
-function scan_erb_refs(text) {
-  const found = new Set();
-  for (const line of text.split(/\r?\n/)) {
-    const parts = [];
-    // 块注释行（jsdoc 的 * 续行与 /* 起始行）整行可扫
-    if (/^\s*\*/.test(line) || /^\s*\/\*/.test(line)) {
-      parts.push(line);
-    }
-    // 行注释：只扫 // 之后的部分（前面是代码，含三段寻址）
-    const ci = line.indexOf('//');
-    if (ci >= 0) {
-      parts.push(line.slice(ci));
-    }
-    // 行内 /* … */ 段（本仓库罕用，出现即扫）
-    for (const m of line.matchAll(/\/\*(.*?)\*\//g)) {
-      parts.push(m[1]);
-    }
-    for (const part of parts) {
-      for (const m of part.matchAll(ERB_REF_RE)) {
-        found.add(m[2] ? `${m[1]}-${m[2]}` : m[1]);
-      }
+// —— #513：源绑定解析。绑定信号 = 注释里的「源: target/…ERB」单文件声明，
+//    作用域见文件头注。开放区（src = null）的引用维持按 ref 匹配的现状语义。 ——
+
+/**
+ * 「源:」行剩余文本 → 单文件 src / { listing: true } / null（无完整路径）。
+ * 带空格的文件名（EVENT_K902_普林希丝 ver1.0.3.ERB）按「首段 + 次段扩展名」
+ * 吞并；列举式（路径后紧跟 ～/、，或行内多个 target/ 段）不开绑定段。
+ */
+function extract_single_src(rest) {
+  const m = rest.match(/target\/\S+/);
+  if (!m) return null;
+  let p = m[0].replace(/[）)。、，,;；:：]+$/, '');
+  const after = rest.slice(rest.indexOf(m[0]) + m[0].length);
+  if (!SRC_PATH_EXT_RE.test(p)) {
+    // 空格修正：提取段不以扩展名结尾且紧随一段是扩展名结尾 → 合成一个路径
+    const nxt = after.match(/^\s+(\S+\.(?:ERB|ERH|CSV|TXT|log))(?!\w)/);
+    if (nxt) {
+      p = `${p} ${nxt[1]}`;
     }
   }
-  return found;
+  if (!SRC_PATH_EXT_RE.test(p)) return null;
+  const path_count = (rest.match(/target\/\S+/g) ?? []).length;
+  if (/^\s*[～~、]/.test(after) || path_count > 1) return { listing: true };
+  return { src: p };
+}
+
+/**
+ * 解析一份 js 的源绑定（#513）。
+ *
+ * @param {string[]} lines 按行拆开的 js 文本
+ * @returns {{ refs: Map<string, {line: number, src: string|null}[]> }}
+ *   refs：注释侧每个 :N/:N-M 引用的出现位置与归属 src（null = 开放区）。
+ */
+function parse_src_bindings(lines) {
+  const tags = new Array(lines.length).fill(null);
+  const first_nonempty = lines.findIndex((l) => l.trim() !== '');
+  let header_end = -1;
+  if (first_nonempty >= 0) {
+    const ft = lines[first_nonempty].trimStart();
+    if (ft.startsWith('/**')) {
+      let j = first_nonempty;
+      while (j < lines.length && !lines[j].includes('*/')) j += 1;
+      header_end = Math.min(j, lines.length - 1);
+    } else if (ft.startsWith('//')) {
+      let j = first_nonempty;
+      while (j < lines.length && lines[j].trimStart().startsWith('//')) j += 1;
+      header_end = j - 1;
+    }
+  }
+  // 文件头区（含起首 jsdoc / 起首 // 组）恒开放：集合性声明不定位具体引用
+  const events = []; // { line(0-based 生效行), kind: 'bind'|'open'|'narrow', src, end }
+  let k = header_end + 1;
+  while (k < lines.length) {
+    const t = lines[k].trimStart();
+    if (t.startsWith('/**')) {
+      let j = k;
+      while (j < lines.length && !lines[j].includes('*/')) j += 1;
+      let decl = null;
+      for (let x = k; x <= Math.min(j, lines.length - 1); x += 1) {
+        for (const part of comment_parts(lines[x])) {
+          const dm = part.match(/源[:：]\s*(.*)/);
+          if (dm && decl === null) decl = extract_single_src(dm[1]);
+        }
+      }
+      if (decl) {
+        events.push(
+          decl.listing
+            ? { line: k, kind: 'open' }
+            : { line: k, kind: 'bind', src: decl.src },
+        );
+      }
+      // 无「源:」的 jsdoc 不切段：函数体里穿插的字段注释延续当前段
+      k = j + 1;
+      continue;
+    }
+    if (t.startsWith('//')) {
+      const group_start = k;
+      let j = k;
+      while (j < lines.length && lines[j].trimStart().startsWith('//')) j += 1;
+      let decl = null;
+      for (let x = group_start; x < j; x += 1) {
+        const part = lines[x].slice(lines[x].indexOf('//'));
+        const dm = part.match(/源[:：]\s*(.*)/);
+        if (dm && decl === null) decl = extract_single_src(dm[1]);
+      }
+      if (decl && !decl.listing) {
+        // 行注释声明只盖住注释组 + 紧随的第一条语句（注册行注解形态）
+        let l = j;
+        while (l < lines.length && lines[l].trim() === '') l += 1;
+        events.push({
+          line: group_start,
+          kind: 'narrow',
+          src: decl.src,
+          end: Math.min(l, lines.length - 1),
+        });
+      }
+      k = j;
+      continue;
+    }
+    k += 1;
+  }
+  events.sort((a, b) => a.line - b.line);
+  const narrows = events.filter((ev) => ev.kind === 'narrow');
+  let current = null;
+  let e = 0;
+  for (let n = 0; n < lines.length; n += 1) {
+    while (e < events.length && events[e].line <= n) {
+      const ev = events[e];
+      if (ev.kind === 'bind') current = ev.src;
+      else if (ev.kind === 'open') current = null;
+      e += 1;
+    }
+    let tag = current;
+    for (const nw of narrows) {
+      if (nw.line <= n && n <= nw.end) tag = nw.src;
+    }
+    tags[n] = tag;
+  }
+  const refs = new Map();
+  lines.forEach((line, idx) => {
+    for (const part of comment_parts(line)) {
+      for (const rm of part.matchAll(ERB_REF_RE)) {
+        const ref = rm[2] ? `${rm[1]}-${rm[2]}` : rm[1];
+        if (!refs.has(ref)) refs.set(ref, []);
+        refs.get(ref).push({ line: idx + 1, src: tags[idx] });
+      }
+    }
+  });
+  return { refs };
 }
 
 const erb_registered_by_file = new Map(
   FILES.map(({ js, refs }) => [js, new Set(refs.map((r) => r.ref))]),
+);
+// #513：同 src 同 ref 的成对登记（绑定区引用按「段 src + ref」核对）
+const erb_registered_pairs_by_file = new Map(
+  FILES.map(({ js, refs }) => [
+    js,
+    new Set(refs.map((r) => `${r.src}\u0000${r.ref}`)),
+  ]),
 );
 const erb_baseline_total = Object.values(ERB_EXEMPT_BASELINE).reduce(
   (sum, refs) => sum + refs.length,
@@ -1167,13 +1683,36 @@ for (const rel of list_js_files('ere')) {
     continue; // 引擎 SDK：JSDoc 示例不是移植注释
   }
   if (!in_scope(rel)) continue;
-  const found = scan_erb_refs(load_js_text(rel));
+  // #513：扫描换成带源归属的出现明细（ref 集合口径不变，按 Map 键去重）
+  const binding = get_src_binding(rel);
+  const found = binding.refs;
   erb_found_total += found.size;
   const registered = erb_registered_by_file.get(rel);
+  const registered_pairs = erb_registered_pairs_by_file.get(rel);
   const exempt = ERB_EXEMPT[rel] ?? [];
   erb_exempt_total += exempt.length;
-  for (const ref of found) {
-    if (!registered?.has(ref) && !exempt.includes(ref)) {
+  for (const [ref, occ] of found) {
+    const bound = occ.filter((o) => o.src !== null);
+    const has_open = occ.some((o) => o.src === null);
+    if (bound.length > 0) {
+      // 绑定区出现逐个核对同 src 登记（#513）：同 ref 的其他合法出现不能
+      // 替代漂进来的那一条；另有开放区出现且按现状判定能过的，整体宽放——锁
+      // 的是「只出现在绑定区却挂错源」
+      const bad = bound.filter(
+        (o) => !registered_pairs?.has(`${o.src}\u0000${ref}`),
+      );
+      if (bad.length === 0) continue;
+      if (exempt.includes(ref)) continue;
+      if (has_open && registered?.has(ref)) continue;
+      for (const o of bad) {
+        if (note_misbind(rel, o.src, ref)) {
+          console.log(
+            `✗ ${rel} :${ref} —— 按「源:」声明归属 ${o.src}（@js:${o.line}），锚表同 src 无此登记（#513 源绑定：行号漂到别的文件名下了？核对后同步 js 或锚表）`,
+          );
+          failures += 1;
+        }
+      }
+    } else if (!registered?.has(ref) && !exempt.includes(ref)) {
       console.log(
         `✗ ${rel} :${ref} —— 未登记进 FILES（新引用必须登记锚表；豁免清单是 #63 冻结的现有，不收新条目）`,
       );
@@ -1205,6 +1744,42 @@ for (const [rel, refs] of Object.entries(ERB_EXEMPT)) {
   }
 }
 
+// —— #513 错绑基线两道核对：
+//    规则 1「基线外的错绑」在两侧扫描里当场报（见上方两处 ✗）；
+//    规则 2「不许过期失效」在此——基线条目对应的错绑已不存在（消化后忘了删，
+//    或凭空塞入）必须红。只核对本次扫描面内的文件（--only 时其余文件不在面内，
+//    没扫到不等于消化）。 ——
+const misbind_baseline_total = Object.values(SRC_MISBIND_BASELINE).reduce(
+  (sum, pairs) => sum + pairs.length,
+  0,
+);
+// 规则 3「基线只收存量」：条目总数上界（#513 冻结）。往表里追加新错绑以
+// 逃避修复时，过期失效与基线外红都拦不住（错绑真实存在且在表内），只有
+// 这道上界能拦——扩基线必须显式改这个数，与 ERB_EXEMPT_BASELINE 同款。
+const SRC_MISBIND_BASELINE_COUNT = 286;
+if (misbind_baseline_total > SRC_MISBIND_BASELINE_COUNT) {
+  console.log(
+    `✗ 错绑基线 ${misbind_baseline_total} 条，超出 #513 冻结上界 ${SRC_MISBIND_BASELINE_COUNT}（新错绑不许进基线——那是判定要拦的东西；消化存量时上界一并改小）`,
+  );
+  failures += 1;
+}
+let misbind_in_baseline = 0; // 基线内且本轮仍扫到的错绑对数（在核对处统一数，防同对多次命中重复累计）
+for (const [rel, pairs] of Object.entries(SRC_MISBIND_BASELINE)) {
+  if (!in_scope(rel)) continue;
+  for (const pair of pairs) {
+    const sep = pair.lastIndexOf('|');
+    const src = pair.slice(0, sep);
+    const ref = pair.slice(sep + 1);
+    if (misbind_seen.has(misbind_key(rel, src, ref))) {
+      misbind_in_baseline += 1;
+      continue;
+    }
+    console.log(
+      `✗ ${rel} :${ref} ↔ ${src} —— #513 基线条目已不再报错绑（错绑已消化？删掉本条——基线只减不增）`,
+    );
+    failures += 1;
+  }
+}
 // —— #298 鉴别力：弱锚只减不增 ——
 //
 // 弱锚 = 全文命中 >1 且（窗口彼此不同，或窗口无正文）。平行复现（窗口
@@ -1294,7 +1869,7 @@ const scope_note =
     : `（本次限定范围：--only ${ONLY.join(',')}，不等于全量绿）`;
 console.log(
   failures === 0
-    ? `✓ ${checked} 条内联行号引用全部与源文件一致${scope_note}；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免 ${erb_exempt_total}/${erb_baseline_total} 条，#63 基线内只减不增，条目表见 tools/trace-exempt.mjs）`
+    ? `✓ ${checked} 条内联行号引用全部与源文件一致${scope_note}；ERB 完整性：ere/ ${erb_found_total} 条引用全数登记或豁免（豁免 ${erb_exempt_total}/${erb_baseline_total} 条，#63 基线内只减不增，条目表见 tools/trace-exempt.mjs）；存量源错绑 ${misbind_in_baseline}/${misbind_baseline_total}（#513 基线只减不增）`
     : `✗ ${failures}/${checked} 条引用对不上${scope_note}（另有 ERB 完整性失守计入 failures）`,
 );
 // 同上：锚校验模式也成批打印失败行，而这是文件最后一句，设 exitCode 让
