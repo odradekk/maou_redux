@@ -3672,7 +3672,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '1012-1014',
+        ref: '1012-1013',
         any: [/^\s*IF L_CHOICE == 1 && LOCAL >= 2\s*$/m],
       },
       {
@@ -3744,7 +3744,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '1045-1047',
+        ref: '1045-1046',
         any: [/^\s*ELSEIF L_CHOICE == 1\s*$/m],
       },
       {
@@ -4303,6 +4303,41 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '439-443',
         any: [/^\s*;略奪\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '328-331',
+        any: [/^\s*SEIEI_I = CHARANUM - 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1014',
+        any: [/^\s*PRINTFORM 在试探数合之后，\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1047',
+        any: [/^\s*PRINTFORM 在试探数合之后，\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '624-626',
+        any: [/^\s*PRINTFORML 怪物数量减少了10\\%\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '649-650',
+        any: [/^\s*SINKOU = SINKOU  \/ 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '687-690',
+        any: [/^\s*FLAG:83 \+= 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '704-707',
+        any: [/^\s*FLAG:83 \+= 5\s*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',

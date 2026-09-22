@@ -572,20 +572,17 @@ async function seiei_battle(area, state, rand) {
       await era.waitAnyKey();
       era.print('…'); // :321-322
       await era.waitAnyKey();
-      era.print('没有时间了，战线已经不可能再维持下去了！'); // :322
-      era.println();
+      era.print('没有时间了，战线已经不可能再维持下去了！'); // :322 PRINTFORML
       era.print(
-        `${chara_callname(yusya)}的部队开始了后退，怪物们在后退中溃散着。`, // :323
+        `${chara_callname(yusya)}的部队开始了后退，怪物们在后退中溃散着。`, // :323 PRINTFORML
       );
-      era.println();
-      era.print('最终活着回来的怪物不到十只………'); // :324
-      era.println();
-      era.println(); // :325 PRINTL
+      era.print('最终活着回来的怪物不到十只………'); // :324 PRINTFORML
+      era.println(); // :325 PRINTL（空行）
       const gained = Math.trunc(sinkou / 10);
       chara(yusya).dungeon.战斗经验 += gained; // :326 EXP:YUSYA_I:80
-      era.print(`${chara_callname(yusya)}获得了${gained}点经验值！`); // :327
+      era.print(`${chara_callname(yusya)}获得了${gained}点经验值！`); // :327 PRINTFORMW
       await era.waitAnyKey();
-      await seiei_cleanup(seiei); // :327-331
+      await seiei_cleanup(seiei); // :328-331
       return 1; // :332-336
     }
 
@@ -877,7 +874,15 @@ async function invasion_event_fort(
   }
 
   const yusya = state.yusya_i;
-  const info = FORT_AREAS[area] ?? { place: '', troop: '', fort: '', race: 0 };
+  // 未列出的 AREA：原作 `LOCAL:3` 保持初值 0（恒假）→ 这里用 -1 保证
+  // `talent:314 === race` 永不成立（TALENT:314 是非负值），不能写 0——
+  // 那会让种族 0（人类）在未知地区恒吃 100% 潜成功（#505 地区泛化时会生效）
+  const info = FORT_AREAS[area] ?? {
+    place: '',
+    troop: '',
+    fort: '',
+    race: -1,
+  };
   const native = (era.get(`talent:${yusya}:314`) || 0) === info.race; // :546 LOCAL:3
 
   // :570-606 选项（PRINTFORML 的 `[n]` 改 printButton，引擎自动拼前缀）
@@ -932,10 +937,10 @@ async function invasion_event_fort(
       );
       era.print(`获胜的魔王军高呼万岁，继续向${info.place}进发。`); // :615-616
       era.print(''); // :615-617 PRINTFORML（空行）
-      await fort_hero_reward(inv_type, state, 5); // :619-624 EXP:SINKOU/5
+      fort_hero_reward(inv_type, state, 5); // :619-624 EXP:SINKOU/5
       era.print('怪物数量减少了10%'); // :624（`\%` 是字面量百分号）
       state.sinkou = Math.trunc((state.sinkou * 9) / 10); // :624-625
-      await era.waitAnyKey(); // :626 WAIT
+      await era.waitAnyKey(); // :624-626 WAIT
       return 0; // :627-628
     }
     if (roll >= 2) {
@@ -953,7 +958,7 @@ async function invasion_event_fort(
       era.print(`侥幸获胜的魔王军继续向${info.place}进发。`); // :637
       era.print(''); // :637-638
       if (inv_type === 2) {
-        await fort_hero_reward(inv_type, state, 5); // :640-645
+        fort_hero_reward(inv_type, state, 5); // :640-645
         chara(yusya).dungeon.体力 = Math.trunc(chara(yusya).dungeon.体力 / 2); // :644-645
         era.print(`${chara_callname(yusya)}的体力减少了一半！`); // :645
         // 注意：:645 的 PRINTFORML 后没有 WAIT，等键在 :649-650 的 WAIT
@@ -1003,7 +1008,7 @@ async function invasion_event_fort(
       );
       era.print(`获胜的魔王军高呼万岁，继续向${info.place}进发。`); // :680-681
       era.print(''); // :680-682
-      await fort_hero_reward(inv_type, state, 5); // :680-685
+      fort_hero_reward(inv_type, state, 5); // :680-685
       era_flag.meat_toilet_count += 5; // :687 FLAG:83 += 5
       era.print('人间牧场肉便器数量+5。'); // :688
       await era.waitAnyKey(); // :690-695 WAIT
@@ -1020,7 +1025,7 @@ async function invasion_event_fort(
       );
       era.print(`获胜的魔王军高呼万岁，继续向${info.place}进发。`); // :697-698
       era.print(''); // :697-699
-      await fort_hero_reward(inv_type, state, 5); // :697-702
+      fort_hero_reward(inv_type, state, 5); // :697-702
       era_flag.meat_toilet_count += 5; // :704
       era.print('人间牧场肉便器数量+5。'); // :705
       await era.waitAnyKey(); // :707-713 WAIT
@@ -1170,19 +1175,20 @@ async function fort_choice(allowed) {
 
 /**
  * FORT [2] 路线的经验段（:619-624 / :640-645 / :680-685 / :697-702）。
- * 只有 INV_TYPE == 2 给经验，且用的是**减员前**的 SINKOU。
+ * 只有 INV_TYPE == 2 给经验，且用的是**减员前**的 SINKOU。原作四处都是
+ * `EXP:…` 接 `PRINTFORML`（不等键）——等键在各分支末尾的 WAIT
+ * （:624-626 / :649-650 / :687-690 / :704-707），所以这里不 wait。
  * @param {number} inv_type 出兵类别
  * @param {{sinkou: number, yusya_i: number}} state 共享局部量
  * @param {number} divisor 除数（四处都是 SINKOU/5）
  */
-async function fort_hero_reward(inv_type, state, divisor) {
+function fort_hero_reward(inv_type, state, divisor) {
   if (inv_type !== 2) {
     return;
   }
   const gained = Math.trunc(state.sinkou / divisor);
   chara(state.yusya_i).dungeon.战斗经验 += gained;
   era.print(`${chara_callname(state.yusya_i)}获得了${gained}点经验值！`);
-  await era.waitAnyKey();
 }
 
 /**
@@ -1453,8 +1459,8 @@ async function invasion_event_challenge(
     // :1012-1043 开挂取胜
     if (choice === 1 && local >= 2) {
       era.print(`魔王和${info.foe}的战斗开始了。`); // :1012-1013
-      era.print('在试探数合之后，'); // :1012-1014 PRINTFORM（与下一行同显示行）
-      for (const line of printdata(rand, [
+      // :1014 的 PRINTFORM 与 PRINTDATAL 的第一行同显示行（归并见文件头）
+      const items = printdata(rand, [
         [
           `魔王趁${info.foe}不备，向${info.foe}扔出了高级泥沼卷轴。`,
           `${info.foe}陷入了泥沼中，动弹不得，被魔王抓住了。`,
@@ -1467,8 +1473,10 @@ async function invasion_event_challenge(
           `魔王趁${info.foe}不备，向${info.foe}祭起了邪能封印壶。`,
           `${info.foe}猝不及防被吸进了封印壶内，被魔王抓住了。`,
         ],
-      ])) {
-        era.print(line); // :1017-1027 DATALIST 的两行都打
+      ]);
+      era.print(`在试探数合之后，${items[0]}`); // :1014/:1017-1027 首行
+      for (const line of items.slice(1)) {
+        era.print(line); // 同一 DATALIST 的后续行
       }
       era.print(''); // :1029-1030 PRINTFORML（空行）
       era.print(`魔王军高呼魔王万岁，继续向${info.place}进发。`); // :1030 PRINTFORMW
@@ -1489,14 +1497,13 @@ async function invasion_event_challenge(
     // :1045-1060 开挂失败
     if (choice === 1) {
       era.print(`魔王和${info.foe}的战斗开始了。`); // :1045-1046
-      era.print('在试探数合之后，'); // :1045-1047 PRINTFORM
-      for (const line of printdata(rand, [
+      // :1047 的 PRINTFORM 与 PRINTDATAL 的第一行同显示行（归并见文件头）
+      const items = printdata(rand, [
         [`魔王趁${info.foe}不备，向${info.foe}扔出了高级泥沼卷轴。`],
         [`魔王趁${info.foe}不备，向${info.foe}扔出了强效麻痹药水。`],
         [`魔王趁${info.foe}不备，向${info.foe}祭起了邪能封印壶。`],
-      ])) {
-        era.print(line); // :1049-1053（三选一，整行打印；`printdata` 已解出块）
-      }
+      ]);
+      era.print(`在试探数合之后，${items[0]}`); // :1047/:1049-1053（三选一整行）
       era.print(`然而${info.foe}提前察觉了魔王的动作，躲闪掉了。`); // :1053
       era.print(
         `在鄙夷地看了魔王一眼后，${info.foe}${info.leave}。`, // :1054
