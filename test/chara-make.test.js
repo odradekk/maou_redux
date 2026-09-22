@@ -1308,7 +1308,7 @@ test('campaign_slave=true：确认对话的三个选项经 printButton 出，正
     [3, '算了，不选了'],
   ]) {
     // 逐字相等，不用 includes 取子串：正文自带 [N] 时引擎会再拼一层，
-    // 实显成 `[2] [2] 嘛…还行，就这位吧`——子串判据照样成立，抓不住 PR #30
+    // 实显成 `[2] [2] 嘛…还行，就这位吧`——按子串判断照样成立，抓不住 PR #30
     assert.ok(
       rendered.some((text) => text === `[${accelerator}] ${content}`),
       `[${accelerator}] 要由引擎拼在按钮正文前（实显：${JSON.stringify(rendered)}）`,

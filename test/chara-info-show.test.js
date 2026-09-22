@@ -2159,7 +2159,7 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
 test('SHOW_CHARA_INFO：祭品名单的 [100] 返回是真按钮（名单轮次白名单非空，#530）', async () => {
   // 名单轮次的白名单本来就非空——名单行自身是按钮（角色号），六个条件键是
   // 按钮（1000+下标）。此时若 `[100] 返回` 仍是纯文本行，玩家敲 100 会被
-  // 引擎拒收（renderFromButton 的 rule.indexOf 判据），夹具同款抛
+  // 引擎拒收（renderFromButton 按 rule.indexOf 判定），夹具同款抛
   // 「输入不合法」：本用例在修好之前必定红。
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },

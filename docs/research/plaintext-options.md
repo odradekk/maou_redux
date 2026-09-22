@@ -8,9 +8,9 @@
 ## 一、结论摘要
 
 1. **病灶的机制**：引擎的输入校验只认**本轮打印过的按钮快捷键**——渲染层
-   `returnFromButton(val)` 先看 `if (useRule)`，正则臂是
+   `returnFromButton(val)` 先看 `if (useRule)`，正则分支是
    `if (rule.length === undefined) { if (!rule.test(val.toString())) { 报错; return; } }`，
-   数组臂是 `else if (rule.length > 0 && rule.indexOf(Number(val)) === -1) { 报错; return; }`；
+   数组分支是 `else if (rule.length > 0 && rule.indexOf(Number(val)) === -1) { 报错; return; }`；
    两条报错都弹「输入不合法！…」并 `return`——**值不回传游戏**，`inputParam.val`
    也不清空。玩家看到的就是「敲了没反应、画面无新增输出」。
    #129（主菜单 `[109]`）、PR #53（`[100]` 调教按钮）两次是实机确证的形态，
@@ -19,7 +19,7 @@
    `getButtonObject` 把 accelerator 推进 `rule`（repeated 快捷键只告警不入集，
    disabled 按钮整体不入集）；**任何一次成功回传**（`input`、`waitAnyKey` 的
    `input({any:true})`、`printAndWait` 的内部等待）都把 `rule` 置空；`clear`
-   不碰它。夹具（`test/helpers/era-fixture.js:892-919`，由 #130 落地）已逐字
+   不碰它。夹具（`test/helpers/era-fixture.js:892-919`，由 #130 实现）已逐字
    镜像这条规则。
 3. **还有一条闸门是 `useRule`**：整个校验包在 `if (inputParam.value['useRule'])`
    里，`showInput` 的缺省是 `safeUndefinedCheck(data.config.useRule, true)`。
@@ -29,9 +29,9 @@
    `event-banishment.js` 5 行、`event-public-execution.js` 3 行、
    `event-execution.js` 2 行、`event-grotesque.js` 1 行、
    `page-shop-labo.js` 1 行；逐行标注见扫描器的 `〔useRule:false〕`）。
-   项目里这是**在案裁定**而不是偶然：`ere/page/page-shop-labo.js:42-47` 写着
+   项目里这是**在案结论**而不是偶然：`ere/page/page-shop-labo.js:42-47` 写着
    「输入一律按钮化，自由输入用 `useRule: false`……打了按钮就把输入集锁死在
-   按钮上，自由输入进不去」。**整改名单必须把这些行排除掉**（§6 已按此改正）。
+   按钮上，自由输入进不去」。**返工名单必须把这些行排除掉**（§6 已按此改正）。
 4. **普查规模**：`ere/` 全目录共 **145 行 / 27 个文件**属于「打印调用的首实参
    字面量里带选项编号（`[1]` 或 `[${index}]` 两种写法）」这个形态（修前是
    153 行 / 29 个文件——本票把 `chara-make.js` 的 2 行、
@@ -39,7 +39,7 @@
    清单见第四节，扫描器 `tools/plaintext-options.mjs` 可重跑，计数冻结在
    `tools/plaintext-option-baseline.mjs`（棘轮：只能变短、不许过期失效；
    两个方向各有一条变异条目守着，M11207/M11208）。
-5. **本票修掉的**（判据见第二节的 A 类）：
+5. **本票修掉的**（判断条件见第二节的 A 类）：
    - `ere/chara/chara-make.js` 的招募确认对话 3 + 2 个选项（阻断项本体）；
    - `ere/page/page-chara-info-show.js` 的 5 处（祭品名单的 `[100] 返回` 是
      实测**必然被拒收**的一处——名单轮次的白名单非空，夹具当场复现）；
@@ -55,7 +55,7 @@
    也不是都安全——**面内**剩余的落在「本轮没有按钮」的轮次里（引擎的自由
    输入通道），或落在 `useRule: false` 的消费点上（第 3 条），其中
    `ere/dungeon/dungeon-after.js` 与 `ere/page/page-dungeon-info2.js` 两处
-   还有**在案的有意保留**（#180 的裁定，见第二节）。把它们一律按钮化会
+   还有**在案的有意保留**（#180 的结论，见第二节）。把它们一律按钮化会
    **更坏**：那些界面的多轮 `WAIT` 会清空白名单，早段按钮会被整段拒收。
    `page-chara-info-show.js` 的献祭确认正是「碰巧安全」的活样本：两个选项
    一起退回纯文本时该轮白名单为空、`1`/`0` 走自由输入照样过（M11205 实测），
@@ -64,16 +64,16 @@
 7. **一条必须记下的不确定性**：战役招募那一步的 `rule` 在离线模型里重建为
    **空**（夹具的真实 `input` 也因此放行 `0/1/2/3`），实机却拒收。也就是说
    **离线重建的 `rule` 不完全可信**，本报告第三节的 A/B 分类只能当**指示**、
-   不能当**判据**：一个站点到底安不安全，只有引擎实测能定。魔王行那一处
+   不能当**判定条件**：一个站点到底安不安全，只有引擎实测能定。魔王行那一处
    反过来印证了这一点——它在离线重建里是 A 类且被夹具当场拒收，与实机
    一致；战役招募那一步却对不上，两者的差别还没查清。
-8. **因此**：本票不扫全库改按钮（会与 #180 的裁定和 `useRule: false` 的先例
+8. **因此**：本票不扫全库改按钮（会与 #180 的结论和 `useRule: false` 的先例
    冲突，且 145 行分布在 27 个文件、每处都要按界面轮次单独判断）。剩下的
-   清单、判据与重跑方式就是本报告，建议另开一张普查/整改票按界面逐个过。
+   清单、判断条件与重跑方式就是本报告，建议另开一张普查/返工票按界面逐个过。
 
-## 二、判据：什么时候纯文本是对的
+## 二、判断条件：什么时候纯文本是对的
 
-`ere/page/page-dungeon-info2.js:331-338`（#180 查实后的在案裁定，逐字）：
+`ere/page/page-dungeon-info2.js:331-338`（#180 查实后的在案结论，逐字）：
 
 > `:460 PRINTFORML [{A}] {B}只%MONSTERNAME(A)%`——纯文本 + 自由输入（原作形态）。
 > **不**改按钮（PR #53 通则在此处的例外）：本界面的逐层 WAIT（:447）在 ere
@@ -83,15 +83,15 @@
 > （`dev-guides/05-interaction.md`），键盘键入 `[A]` 与 `[999]` 全程可达，
 > 1:1 于 Emuera 的键盘交互。
 
-`ere/dungeon/dungeon-after.js:14-17` 同款（奖惩两臂的选项菜单）。
+`ere/dungeon/dungeon-after.js:14-17` 同款（奖惩两个分支的选项菜单）。
 
-由此得到三类判据：
+由此得到三类判断条件：
 
 | 类                  | 条件                                                                      | 纯文本是否正确                                                                                             |
 | ------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | **A（死路）**       | 消费这次输入的轮次里，上一次回传之后已打印过按钮，且消费方没关白名单      | **错**。`rule` 非空，编号被拒收。必须改成按钮                                                              |
 | **B（自由输入）**   | 该轮没有按钮（或最近的按钮已被 `WAIT`／上一次回传清掉），消费方没关白名单 | **对**。引擎放行自由输入，纯文本是这里唯一可行的形态                                                       |
-| **C（白名单关着）** | 消费方传了 `era.input({ useRule: false })`                                | **对，且必须保持纯文本**。整段校验被跳过；按钮化反而把自由输入锁死（`page-shop-labo.js:42-47` 的在案裁定） |
+| **C（白名单关着）** | 消费方传了 `era.input({ useRule: false })`                                | **对，且必须保持纯文本**。整段校验被跳过；按钮化反而把自由输入锁死（`page-shop-labo.js:42-47` 的在案结论） |
 
 A 类的修法只能是 `printButton` / `printMultiColumns` 的按钮格；正文不写 `[N]`
 前缀（引擎按 `showAcc` 自动拼，自带会显示成 `[1] [1] …`，AGENTS.md 硬约束、
@@ -99,13 +99,13 @@ PR #30 实机撞见）。B 类**不要**顺手按钮化——#180 的例外正�
 C 类更不要（按钮会把「敲任意数字」的通道堵死）。
 
 > C 类这一维是第二轮规范审查补上的：判定面的头两版只按「本轮有没有按钮」
-> 分类，漏了 `useRule` 这一层——照那个口径写整改名单，会把
+> 分类，漏了 `useRule` 这一层——照那个统计方式写返工名单，会把
 > `page-infrastructure.js`（面内 16 行、全在 C 类）排进优先按钮化对象，
-> 与 `page-shop-labo.js` 的在案裁定直接冲突。
+> 与 `page-shop-labo.js` 的在案结论直接冲突。
 
 ## 三、为什么离线守不住这一类
 
-夹具的 `input()` 判据（`test/helpers/era-fixture.js:904-919`）与引擎同构：
+夹具 `input()` 的判断条件（`test/helpers/era-fixture.js:904-919`）与引擎同构：
 
 ```js
 } else if (input_rules.length > 0 && !input_rules.includes(Number(value))) {
@@ -131,7 +131,7 @@ C 类更不要（按钮会把「敲任意数字」的通道堵死）。
 2. `ere/chara/chara-make.js:1908` 调 `show_chara_info(newchara, -1, rand_n)`，
    而原作 `target/ERB/キャラ関数/CHAR_MAKE.ERB:150` 传的是 **`-2`**（贡品信息）。
    `-1`（调教信息）多出两处 `await era.waitAnyKey()`。页码取错是**未登记的
-   移植偏离**（`page-chara-info-show.js` 文件头的六个页码臂里 `-2` = 贡品时、
+   移植偏离**（`page-chara-info-show.js` 文件头的六个页码分支里 `-2` = 贡品时、
    `-1` = 调教时），本票按「不夹带无关修改」未动，登记在此备查。
 
 两者都不影响本票的修法：选项做成按钮后，`1/2/3` 无论 `rule` 里还有什么都在
@@ -202,7 +202,7 @@ C 类合计 **28 行**（`page-infrastructure` 16、`event-banishment` 5、
 | `ere/page/components/chara-info-title.js:151` |    1 | 数组形态 `{ content: '[8] 一人称重设 ' }`                                                                                       | **有意不是按钮**：原作此处用 `PRINTPLAINFORM`，是页码提示文字，不由 INPUT 消费（该行注释已写明）                              |
 
 合计 **17 行**（11 数据 + 6 代码）。把数据表也纳入棘轮会把「数据」和「打印调用点」
-混在一个判定面里，噪声大于收益；后续整改票按界面过的时候一并处理这张清单即可
+混在一个判定面里，噪声大于收益；后续返工票按界面过的时候一并处理这张清单即可
 （`chara-and-hair.js` 的两处与 `chara-custom.js` 那一处都在 B 类，与各自的界面
 一起按钮化即可；`event-ending.js:537` 与 `event-execution.js:116` 同理）。
 
@@ -213,7 +213,7 @@ C 类合计 **28 行**（`page-infrastructure` 16、`event-banishment` 5、
 （`logs/` 里的探针输出；夹具 `rendered` 字段可复现）。这是 PR #30 撞过的那条
 AGENTS.md 硬约束，属**显示**缺陷、与 #530 的输入死路不同类；`page-chara-info.test.js`
 的行筛选用的是 `text`（`/^\[\d+\]$/`），所以现有用例抓不住它。本票只把新增的魔王行
-按正确写法落（正文空串、编号由引擎拼），**没有**动其余行按钮的正文——那会改变
+按正确写法实现（正文空串、编号由引擎拼），**没有**动其余行按钮的正文——那会改变
 整屏 24 行的显示，而该文件的文件头明确把这一屏的排版留给引擎实测核对
 （:32-38「已知局限，留给真正在引擎里核对排版时调整」）。建议随排版核对一起处理。
 
@@ -226,9 +226,9 @@ node tools/run-node.mjs -- --test test/plaintext-option.test.js
 ```
 
 `test/plaintext-option.test.js` 两个方向都判红：新增一行即红；修掉一行而基线
-没同步删数也红。**计数不符时不要直接改基线**——先按第二节的判据判断新增的是
-A/B/C 哪一类：A 类改成 `printButton` / `printMultiColumns` 的按钮格；B 类保持
-纯文本并在判据里说明该轮为什么没有按钮；C 类保持纯文本（消费点关了白名单）。
+没同步删数也红。**计数不符时不要直接改基线**——先按第二节的判断条件判断新增的
+是 A/B/C 哪一类：A 类改成 `printButton` / `printMultiColumns` 的按钮格；B 类保持
+纯文本并在判断条件里说明该轮为什么没有按钮；C 类保持纯文本（消费点关了白名单）。
 基线是「文件 → 条数」的粒度，同一文件里删一行再加一行不会红——这是计数粒度
 的已知限度，理由与替代方案写在 `tools/plaintext-option-baseline.mjs` 头部。
 
@@ -238,12 +238,12 @@ A/B/C 哪一类：A 类改成 `printButton` / `printMultiColumns` 的按钮格�
 **先排除 C 类**：`page-infrastructure.js`（16 行，四个消费点全传
 `useRule: false`）、`event-banishment.js`（5 行）、`event-public-execution.js`
 （3 行）、`event-grotesque.js`（1 行）、`page-shop-labo.js` 的 `:2562` 那一行
-——这些行按钮化会把自由输入锁死，`page-shop-labo.js:42-47` 有在案裁定，
+——这些行按钮化会把自由输入锁死，`page-shop-labo.js:42-47` 有在案结论，
 **不改**。剩下的按「没有多轮 WAIT、按钮化不会自我矛盾」排序：
 `event-ending.js`、`page-monster-shop.js`、`com-cloth.js`、`com-hardcore.js`
 这几处行数最多、也最像常规菜单；`dungeon-after.js` 与 `page-dungeon-info2.js`
-按 #180 维持现状（前者已在文件头登记、后者的怪物行现在计进棘轮了，整改时要
-连同 `:331-338` 的裁定一起看）。
+按 #180 维持现状（前者已在文件头登记、后者的怪物行现在计进棘轮了，返工时要把
+`:331-338` 的结论一起看）。
 
 `ere/chara/chara-and-hair.js` 的两处（形象确认轮的选项组）与
 `chara-custom.js:131` 属 B 类，跟着各自的界面一起按钮化即可。

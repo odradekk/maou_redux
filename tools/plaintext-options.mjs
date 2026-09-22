@@ -3,13 +3,13 @@
  * 「看着像菜单、其实玩家敲不进编号」的写法。
  *
  * 为什么需要它：引擎的 input 只接受**本轮打印过的按钮快捷键**（渲染层
- * returnFromButton：整段校验包在 `if (useRule)` 里，数组臂
+ * returnFromButton：整段校验包在 `if (useRule)` 里，数组分支
  * `rule.length > 0 && rule.indexOf(Number(val)) === -1` 即拒收、不回调游戏；
  * 规则见 #130、`[N] 文字` + INPUT 升级为 printButton 的通则见 PR #53）。
  * 原作 Emuera 的 INPUT 收任意数值，`PRINTL [N] …` 在那边能用，EraElectron
  * 不行——纯文本选项行会变成死路（#129 的主菜单 [109]、PR #53 的 [100]、
  * #530 的战役招募都是这个病灶）。反过来，消费方传 `era.input({useRule:false})`
- * 就整段跳过校验，那种行**结构性免疫**（报告第二节的 C 类，先例与裁定见
+ * 就整段跳过校验，那种行**结构性免疫**（报告第二节的 C 类，先例与结论见
  * ere/page/page-shop-labo.js:42-47）——扫描器把它们标成〔useRule:false〕。
  *
  * 判定面（有意收窄，理由逐条）：
@@ -147,13 +147,13 @@ export function scan_text(text) {
 }
 
 /**
- * 该命中之后最近的一次输入调用是否传了 `useRule: false`（**指示，不是判据**）。
+ * 该命中之后最近的一次输入调用是否传了 `useRule: false`（**指示，不是判定条件**）。
  *
  * 引擎的 `returnFromButton` 整段校验包在 `if (inputParam.value['useRule'])` 里
  * （渲染层 app.asar），`showInput` 的缺省是 true；游戏侧显式传
  * `era.input({ useRule: false })` 就整段跳过白名单——那种消费点上的纯文本
  * 选项行**结构性免疫**本病灶（page-infrastructure.js、event-grotesque.js 的
- * 先例，裁定见 page-shop-labo.js:42-47）。这里只往后找最近的 `era.input`
+ * 先例，结论见 page-shop-labo.js:42-47）。这里只往后找最近的 `era.input`
  * 实参文本，跨函数/跨分支时可能对不上，故只作报告里的标注用，不进基线、
  * 不参与棘轮比较。
  *
@@ -251,7 +251,7 @@ ${rows.join('\n')}
  * 汇总文本：按文件打印条数与行号，供 --write 之外的排查用。
  *
  * 带 `〔useRule:false〕` 标记的行＝该行之后最近的一次输入显式关掉了白名单校验，
- * 结构性免疫本病灶（见 consumer_uses_free_input；指示，不是判据）。
+ * 结构性免疫本病灶（见 consumer_uses_free_input；指示，不是判定条件）。
  */
 export function format_report(hits) {
   const counts = count_by_file(hits);
