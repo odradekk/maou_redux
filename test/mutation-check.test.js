@@ -1300,7 +1300,7 @@ test('启动自检：靶文件停在变异态就拒绝启动，点名 M 编号�
   // 不执行；而拆掉上界核对的残留形态（还有 38 条 replace 含 find 的条目
   // 同款）对全绿真树没有输出影响，肉眼与 CI 都看不出来，实施者因而误把
   // 变异态提交过一次（66bc345）。门 2 也兜不住那一类（残留后 find 照样
-  // 恰 1 次），它报的那句「靶代码被重构了？」还会把人引向改 find 串。
+  // 恰 1 次），它那句「find 出现 0 次」还会把人引向改 find 串。
   const root = make_git_fixture();
   const target = path.join(root, 'lib', 'calc.js');
   try {

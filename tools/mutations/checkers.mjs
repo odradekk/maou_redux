@@ -3,12 +3,13 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 141; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
+export const COUNT = 143; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
 // 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
 // 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 靶在 ere/page/page-shop.js，
-// 记在 tools/mutations/page.mjs）；#532 起 +8（M11240-M11247：--verify 只读与残留态启动自检，
-// 由 test/mutation-check.test.js 的 #532 用例守护）
+// 记在 tools/mutations/page.mjs）；#532 起 +10（M11240-M11249：--verify 只读、残留态启动自检，
+// 以及 run_one/SIGINT 两处还原本身——由 test/mutation-check.test.js 的 #532 用例与既有的
+// 拦截路径/SIGINT 用例守护）
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -1415,5 +1416,23 @@ export default [
     test_name:
       '启动自检认得 replace 里的 $ 转义：整串判定不许换成便宜的近似（#532）',
     must_mention: '带 $ 转义的残留也必须被认出来',
+  },
+  {
+    desc: 'M11248 run_one 的 finally 还原被拆（变异写下后不再还原，靶文件留在变异态，工具自报「还原失败（读回不一致）」）（#532）',
+    file: 'tools/mutation-check.mjs',
+    find: "  } finally {\n    fs.writeFileSync(full, original, 'utf8');\n  }",
+    replace: '  } finally {\n    // 变异：还原被拆\n  }',
+    tests: ['mutation-check'],
+    test_name: '拦截路径：变异被拦下退出码 0，且靶文件逐字节还原',
+    must_mention: '还原失败（读回不一致）',
+  },
+  {
+    desc: 'M11249 SIGINT 处理器退的不是 130（中断被处理了，退出码却报成功——CI 与脚本据此判成败）（#532 初版想守处理器的兜底还原，实测那一段到不了：信号只在条目间的 setImmediate 让出点派发，那时 active_restore 已是 null。改守同一用例里非空的那半）',
+    file: 'tools/mutation-check.mjs',
+    find: '  process.exit(130);',
+    replace: '  process.exit(0); // 变异：中断退出码报成功',
+    tests: ['mutation-check'],
+    test_name: 'SIGINT 能中断串行档，并把靶文件还原',
+    must_mention: 'SIGINT 必须被处理器接住并退 130',
   },
 ];
