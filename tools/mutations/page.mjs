@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 371; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 372; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -29,12 +29,12 @@ export const COUNT = 371; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // 两处档位除数的不对称、会心与倍率、四条退场判据的阈值与退场状态、[2] 的
 // 三分之一消耗与结果段金额/经验/善恶值/抓捕、FORT 的三路线各档判据与减员
 // 比例、CHALLENGE 的位域守卫/开挂档/人数上限/三选项分支）
-// #505 起 +24（M10850-M10873，page-invasion.js 的地区续接与地区泛化：
+// #505 起 +25（M10850-M10874，page-invasion.js 的地区续接与地区泛化：
 // CAMPAIGN_REGIONS 的 AREA/SINDO/标签/凌辱地区号/KYOTEN 实参五组表项、
 // 累加写侧与读点表选择、[0] 已征服臂漏列 101、结果段的地区名与进度条表、
-// 魔力结果段的已征服封顶与判据、征服后菜单传参与出货流程默认地区、
-// KYOTEN_EVENT 三臂的命中判据/不推进状态字/精灵臂守卫、[2] 与 [0] 两处
-// 凌辱地区号）
+// 魔力结果段的已征服封顶与判据（含判据写死字面量）、征服后菜单传参与出货
+// 流程默认地区、KYOTEN_EVENT 三臂的命中判据/不推进状态字/精灵臂守卫、
+// [2] 与 [0] 两处凌辱地区号）
 
 export default [
   {
@@ -3322,7 +3322,7 @@ export default [
     desc: 'M10857 [2] 结果段的地区名写死人间界（:762-773 的 PRINT 分派丢失）',
     file: 'ere/page/page-invasion.js',
     find: '到达了${region.name}，尽可能地施暴着',
-    replace: '到达了人间界，尽可能地施暴着 // 变异：地区名写死',
+    replace: '到达了人间界，尽可能地施暴着',
     tests: ['page-invasion'],
     must_mention: '地区名取 AREA=86',
   },
@@ -3330,7 +3330,7 @@ export default [
     desc: 'M10858 [3] 结果段的地区名写死人间界（:894-906 的 PRINT 分派丢失）',
     file: 'ere/page/page-invasion.js',
     find: '得到了魔王的力量！${region.name}被掠夺了',
-    replace: '得到了魔王的力量！人间界被掠夺了 // 变异：地区名写死',
+    replace: '得到了魔王的力量！人间界被掠夺了',
     tests: ['page-invasion'],
     must_mention: '[3] 的地区名取 AREA=88',
   },
@@ -3462,5 +3462,13 @@ export default [
       '  await invasion_ryouzyoku(1, sinkou, rand); // 变异：凌辱地区号写死\n  // :882-888',
     tests: ['page-invasion'],
     must_mention: '[2] 传给 @INVASION_RYOUZYOKU 的地区号也是 2',
+  },
+  {
+    desc: 'M10874 魔力结果段的已征服判据写死（region.sindo 改字面量 82）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {',
+    replace: "    if ((era.get('flag:82') || 0) !== 0) { // 变异：判据写死",
+    tests: ['page-invasion'],
+    must_mention: '判据读 FLAG:87（写死 FLAG:82 会误封顶）',
   },
 ];

@@ -4310,6 +4310,13 @@ export const FILES = [
         ],
       },
       // —— #505：地区续接与 start_campaign 的地区泛化 ——
+      // 翻页游标（NO_PAGE 等 #DIM）的声明块：start_campaign 里那段「跨 RESTART
+      // 保留、但绕回 invasion() 重建时实测不可观测」的注释引它
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '18-22',
+        any: [/^#DIM NO_PAGE = 0$/m],
+      },
       // 出兵目标的地区分派（INVASION.ERB:108-138 的 RESULT → AREA/SINDO）
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4612,6 +4619,52 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION_EVENT.ERB',
         ref: '1006',
         any: [/^\s*ELSEIF FLAG:94 == 0 && CHARANUM > 90$/m],
+      },
+      // #505 复审补钉：下面 8 个行号在 **INVASION.ERB 与 INVASION_EVENT.ERB
+      // 里都存在**，而 js 里两种语境都用同一串数字（例：`:752-755` 既是 FORT
+      // 臂的 :1274、也是 page-invasion.js 注释里的 INVASION.ERB:752-755）。
+      // 锚表按 ref 号登记，先前只留了 INVASION_EVENT.ERB 一份，INVASION.ERB
+      // 侧那一半因此没有锚保护（工具只判「数值在本文件登记过」，照样全绿）——
+      // 同号双绑是既有做法（先例：`:413`），逐条各自校核。
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '624',
+        any: [/^\s*IF AREA == 81 && FLAG:SINDO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '655',
+        any: [/^\s*PRINT 侵攻度[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '657',
+        any: [/^\s*PRINT 精灵族的领域　侵攻度[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '663',
+        any: [/^\s*PRINT 天神宫　侵攻度[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '680',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 4, SINKOU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '713',
+        any: [/^\s*SINKOU = MIN\( SINKOU, 10000 \* 10 \)$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '743',
+        any: [/^\s*PRINT 侵攻度[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '752-755',
+        any: [/^\s*IF AREA <= 100$/m],
       },
     ],
   },

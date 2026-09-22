@@ -4019,13 +4019,6 @@ const SHRINE_REGION = {
   kyoten: null,
 };
 
-/** progress 格的数值列（outContent = ` ${value}/${max}`，见 print_progress_line） */
-function progress_values(fixture) {
-  return fixture.lines_history
-    .filter((line) => line.type === 'progress')
-    .map((line) => line.out);
-}
-
 /**
  * progress 格的（标签, 数值列）对。**不能只断言数值出现过**——同一画面里
  * 其它地区条或征服后菜单的状态行也会打印同样的值（#505 变异自证实测：
@@ -4195,7 +4188,10 @@ test('【地区续接·已征服臂】[0] 的强制征收只列 81/86/88/90，�
       `[${region.result}] 两臂的入账金额相同（:627-628 / :649-650）`,
     );
     assert(
-      progress_values(fixture).includes(' 17/10000'),
+      progress_cells(fixture).some(
+        (cell) =>
+          cell.label === region.result_label && cell.value === ' 17/10000',
+      ),
       `[${region.result}] [0] 结果段的进度条一律读 FLAG:AREA（:664），天神宫因此读 FLAG:101`,
     );
   }
@@ -4214,7 +4210,11 @@ test('【地区续接】结果段的地区名随 AREA 切换：[2] 到达 / [3] 
     '[2] 的三段 PRINT 并入同一显示行，地区名取 AREA=86',
   );
 
-  for (const region of [REGION_CASES[1], SHRINE_REGION]) {
+  for (const region of [
+    REGION_CASES[1], // 龙之山脉
+    REGION_CASES[2], // 天界（[2] 那条路走不到这里，天界的 name 只在这条路上出现）
+    SHRINE_REGION,
+  ]) {
     const raid = make_conquest_world(region);
     if (region.result === 5) {
       raid.store.set('exflag:2810', 510);
@@ -4307,6 +4307,35 @@ test('【地区续接】[1] 魔力结果段的已征服封顶：SINKOU 超 10000
   fresh.seed_chara(35, { name: '菲娅', callname: '菲娅' });
   assert.equal(await run_invasion(fresh, [1, 0]), 1);
   assert.equal(fresh.store.get('exp:0:80'), 200000, 'ELSE 臂不封顶');
+
+  // 判据读的是 region.sindo（不是写死的 FLAG:82）：换成**非人间界**的未征服
+  // 地区，同样的高气力——精灵的征服标记是 FLAG:87（= 0），写死 82 会读到
+  // 征服后世界恒为 1 的 FLAG:82 而误判成已征服、把经验封到 50000。
+  // 这条世界正好也走通了 #505 新开出的「地区续接 → 结算尾 → ENDING_3」链：
+  // SINKOU 400000 把 FLAG:86 顶到封顶 10000（FLAG:87 仍为 0）→ ENDING_3
+  // 演出里的 CHAR_GIFT 收下精灵族圣女（[0]）→ FLAG:87 走 1→2
+  const elf = make_conquest_world(REGION_CASES[0]);
+  elf.store.set('base:0:1', 10000000);
+  elf.store.set('maxbase:0:1', 10000000);
+  elf.seed_chara(31, { name: '琼', callname: '琼' });
+  assert.equal(await run_post_conquest(elf, [1, 1, 0]), 1);
+  assert.equal(
+    elf.store.get('exp:0:80'),
+    200000,
+    '未征服的非人间界同样走 ELSE 臂：判据读 FLAG:87（写死 FLAG:82 会误封顶）',
+  );
+  assert.equal(elf.store.get('flag:86'), 10000, ':617-618 侵攻度封顶');
+  assert.equal(
+    elf.store.get('flag:87'),
+    2,
+    'ENDING_3 已被触发（1）且 CHAR_GIFT 收下圣女（2）——地区续接 → INVASION_CHECK 的链是通的',
+  );
+  assert(
+    history_texts(elf).some((line) =>
+      line.includes('魔王终于征服了精灵族的领域'),
+    ),
+    'ENDING_3 的横幅经结算尾打出（不再是「窄路径不可达」）',
+  );
 });
 
 test('【地区泛化】KYOTEN_EVENT 的 ARG 2/3/4 臂：单行星号、不推进状态字（INVASION_EVENT.ERB:106-206）', async () => {
