@@ -3,11 +3,13 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 133; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
+export const COUNT = 135; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
 // 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
 // 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 靶在 ere/page/page-shop.js，
-// 记在 tools/mutations/page.mjs）
+// 记在 tools/mutations/page.mjs）；
+// #530 起 +2（M11207/M11208：纯文本选项行的棘轮两个方向——新增一行、基线留过期条目，
+// 均由 test/plaintext-option.test.js 守护）
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -1330,5 +1332,32 @@ export default [
     tests: ['trace-check'],
     test_name: '存根清单收尾（#515）',
     must_mention: 'JUEL_CHECK 的状态格不得再写',
+  },
+  {
+    desc: 'M11207 新增一行纯文本选项（com-toy 的满月确认多打一枚 [2] 行——棘轮的「只许收紧」门必须拦住，#530）',
+    file: 'ere/system/train/com-toy.js',
+    find: "  era.print('[0] 好的 [1] 算了');",
+    replace: `  era.print('[0] 好的 [1] 算了');
+  era.print('[2] 再看一下'); // 变异：新增纯文本选项行`,
+    tests: ['plaintext-option'],
+    must_mention: '新增了纯文本选项行',
+  },
+  {
+    desc: 'M11208 扫描器失明（is_comment_line 恒真——所有纯文本选项行都被跳过，棘轮的「条数变少」门必须拦住，#530）',
+    file: 'tools/plaintext-options.mjs',
+    find: `function is_comment_line(line) {
+  const trimmed = line.trim();
+  return (
+    trimmed.startsWith('//') ||
+    trimmed.startsWith('/*') || // 含块注释开头的 \`/**\`（文件头注释第一行）
+    trimmed.startsWith('*') ||
+    trimmed.startsWith(';')
+  );
+}`,
+    replace: `function is_comment_line(line) {
+  return true; // 变异：扫描器失明
+}`,
+    tests: ['plaintext-option'],
+    must_mention: '基线里这些文件的条数变少了',
   },
 ];

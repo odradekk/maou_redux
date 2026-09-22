@@ -24,6 +24,15 @@ export const FILES = [
         ref: '114-217',
         any: [/^@SHOW_CHARA_INFO_LIST\(NO_PAGE\ =\ 0\)/m],
       },
+      // #530：名册第一行（魔王行）的编号格——从纯文本升级为真按钮
+      {
+        src: INFO,
+        ref: '141-143',
+        any: [
+          /^;\ 第一行，魔王$/m,
+          /^PRINTFORML\ %LOCALS,\ MAX_NUM_LEN\+2,\ RIGHT% /m,
+        ],
+      },
       {
         src: INFO,
         ref: '218-382',

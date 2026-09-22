@@ -344,6 +344,48 @@ test('SHOW_CHARA_DEBT_LIST：按 CFLAG:582 升序（负值越小债务越多，�
 
 // —— CHARA_INFO 主循环 ——
 
+test('CHARA_INFO：魔王行的 [0] 是真按钮（名册轮次白名单非空，纯文本行敲不进编号，#530）', async () => {
+  // 名册这一轮的白名单非空——角色行按角色号、排序表头 1200-1700、翻页
+  // 997/998、返回 999 都在上面打印过；而 added_chara_ids() 把 0 滤掉了，
+  // **没有别的按钮编号是 0**。魔王行若是纯文本，玩家敲 0 被引擎拒收
+  // （夹具同款校验当场抛「输入不合法」），`result === 0` 就成了死支路。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  // 等级设成可区分的值：魔王行的名字与等级在同一个 text 格里，编号格只有
+  // `[0] `——地址（cflag:0:9）读错时下面那条断言必须红（M11210）
+  fixture.store.set('cflag:0:9', 7);
+  const { chara_info } = fixture.load_module('page/page-chara-info');
+
+  // 点魔王行 → 个别页 [100] 返回 → 名册 [999] 返回主菜单
+  fixture.set_inputs(0, 100, 999);
+  const result = await chara_info();
+
+  assert.equal(result, 0, '999 返回主菜单');
+  assert.equal(
+    printed_includes(fixture, 'NO.0'),
+    true,
+    '魔王(0) 的个别信息页已打开（:`581` result === 0 的分支可达）',
+  );
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(
+    rendered.some((text) => text === '[0] '),
+    `魔王行的编号按钮由引擎拼 [0]（实显：${JSON.stringify(rendered.slice(0, 6))}…）`,
+  );
+  assert.ok(
+    printed_includes(fixture, '你 LV7'),
+    `魔王行的等级取自 cflag:0:9，名字与等级同格实显（实际文本格：${JSON.stringify(
+      fixture.lines_history
+        .filter(
+          (line) => line.type === 'text' && (line.text ?? '').includes('你'),
+        )
+        .map((line) => line.text),
+    )}）`,
+  );
+});
+
 test('CHARA_INFO：翻页/换排序视图/统一积极性与换号存根/返回主菜单', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -375,8 +417,10 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
   fixture.set_inputs(998, 997, 999); // 下一页 → 上一页 → 返回主菜单
   assert.equal(await chara_info(), 0);
 
-  // 每次绘制以 [998] 收尾，用它把三次绘制切片；行按钮的 text 是 `[编号]`
-  // （排序表头等按钮的 text 是中文标签，天然滤掉）
+  // 每次绘制以 [998] 收尾，用它把三次绘制切片；角色行按钮的 text 是
+  // `[编号]`（排序表头等按钮的 text 是中文标签）；魔王行的编号格 text 是
+  // 空串（正文不写 [0]，编号由引擎按 showAcc 拼，见 print_master_header），
+  // 两者都被下面这条筛选条件天然滤掉。
   const draws = [];
   let start = 0;
   fixture.lines_history.forEach((line, idx) => {
@@ -394,7 +438,7 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
   assert.equal(
     rows_of(draws[0]).length,
     24,
-    '第 1 页 24 行（魔王行是文本行，不计）',
+    '第 1 页 24 行（魔王行的编号格 text 是空串，不计）',
   );
   assert.equal(rows_of(draws[0]).includes('[24]'), true, '第 24 人在第 1 页');
   assert.equal(
