@@ -5548,7 +5548,7 @@ async function ablup37(cid, mode) {
       d = times(d, 1.5);
     }
     if (talent(24)) {
-      // 保守的
+      // 保守的 :208-213
       a = times(a, 1.5);
       b = times(b, 1.5);
       c = times(c, 1.5);
@@ -5582,7 +5582,7 @@ async function ablup37(cid, mode) {
       d = times(d, 0.9);
     }
     if (talent(32)) {
-      // 压抑
+      // 压抑 :245-249
       a = times(a, 1.2);
       b = times(b, 1.2);
       c = times(c, 1.2);
@@ -5643,7 +5643,7 @@ async function ablup37(cid, mode) {
       d = times(d, 3.0);
     }
     if (talent(85)) {
-      // 爱慕
+      // 爱慕 :308-313
       a = times(a, 1.5);
       b = times(b, 1.5);
       c = times(c, 1.5);
@@ -5733,11 +5733,11 @@ async function ablup37(cid, mode) {
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
     if (exp50 < f) i |= 2; // :403-407（F 段内）
-    if (abl11() < lv + 1) i |= 4; // 欲望门槛
-    if (juel4 < a) i |= 1; // 恭顺
-    if (juel5 < b) i |= 1; // 欲情
+    if (abl11() < lv + 1) i |= 4; // :421-424 欲望门槛
+    if (juel4 < a) i |= 1; // :427-428 恭顺
+    if (juel5 < b) i |= 1; // :430-431 欲情
     if (juel6 < c) i |= 1; // :433-434 屈服
-    if (exp74 < d) i |= 2; // 卖淫经验
+    if (exp74 < d) i |= 2; // :436-437 卖淫经验
 
     // 干跑出口（decide_ablup37 / core_ablup37）
     if (mode === 'decide') {
@@ -5821,7 +5821,7 @@ async function ablup39(cid, mode) {
     if (!mode) await era.printAndWait('已达最高级'); // :19-21
     return;
   }
-  // :24-31 精液+百合+兽奸三中毒合计 10 以上：两珠任一不足即拦
+  // :24-30 精液+百合+兽奸三中毒合计 10 以上：两珠任一不足即拦
   if (abl_sum() >= 10) {
     const bulk = abl39() * abl39() * 4000;
     if (
@@ -5948,7 +5948,7 @@ async function ablup39(cid, mode) {
     const exp56 = era.get(`exp:${cid}:56`) || 0;
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
-    if (abl11() < lv + 1) i |= 4; //  欲望门槛
+    if (abl11() < lv + 1) i |= 4; // :237-238 欲望门槛
     if (juel5 < a) i |= 1; // :240-241
     if (juel6 < b) i |= 1; // :243-244
     if (exp56 < c) i |= 2; // :247-248 兽奸经验
@@ -6063,9 +6063,9 @@ async function ablup40(cid, mode) {
     const juel15 = era.get(`juel:${cid}:15`) || 0;
     const exp50 = era.get(`exp:${cid}:50`) || 0;
     let i = 0;
-    if (abl11() < lv + 1) i |= 4; //  欲望门槛（判 ABL:40+1）
+    if (abl11() < lv + 1) i |= 4; // :128-129 欲望门槛（判 ABL:40+1）
     if (juel15 < a) i |= 1; // :131-132
-    if (exp50 < f) i |= 2; //
+    if (exp50 < f) i |= 2; // :135-136 异常经验
 
     // 干跑出口（decide_ablup40）：@DECIDE_ABLUP40 的门槛与主流程同判据
     // （只有 ABL:40 >= 10 与同段的 i 位）。原作无 @CORE_ABLUP40
@@ -6154,9 +6154,9 @@ async function ablup99(cid, mode) {
     const juel6 = era.get(`juel:${cid}:6`) || 0;
     let i = 0;
     if (mark3() > mark2()) i |= 2; // :127-128 屈服刻印门槛
-    const b = mark3() + 2; //  反抗刻印+2 的顺从
-    if (b > abl10) i |= 4; //
-    if (juel6 < a) i |= 1; //
+    const b = mark3() + 2; // :131 反抗刻印+2 的顺从
+    if (b > abl10) i |= 4; // :132-133
+    if (juel6 < a) i |= 1; // :136-137 屈服珠
 
     // 干跑出口（decide_ablup99 / core_ablup99）：@DECIDE_ABLUP99 的门槛与
     // 主流程同判据（MARK:3 <= 0 的提前 RETURN 0 已在上方守卫里）
@@ -6168,7 +6168,7 @@ async function ablup99(cid, mode) {
     }
 
     era.print(`${era.get('markname:2')}${mark3()}以上(现在LV${mark2()})且`); // :45
-    era.print(`${era.get('ablname:10')}LV${b}以上(现在LV${abl10})必要`); //
+    era.print(`${era.get('ablname:10')}LV${b}以上(现在LV${abl10})必要`); // :48
     era.printButton(
       `${era.get('palamname:6')}点数×${juel6}/${a} ……${get_ablup_state(i)}`,
       0,
@@ -6236,7 +6236,7 @@ async function ablup100(cid) {
     if (talent(85)) a = times(a, 0.5); // 爱慕 :120-122
     if (talent(76)) a = times(a, 0.7); // 淫乱 :125-127
 
-    // 感觉合计（五项：阴蒂/乳房/私处/肛门/局部）
+    // :131 感觉合计（五项：阴蒂/乳房/私处/肛门/局部）
     const c =
       (era.get(`abl:${cid}:0`) || 0) +
       (era.get(`abl:${cid}:1`) || 0) +
@@ -6255,7 +6255,7 @@ async function ablup100(cid) {
     if (exp99 < a) i |= 2; // :146-147
 
     era.print(`各处感觉总计${mark10() + 5}以上(现在${c})或`); // :29
-    era.print(`战斗等级LV${b}以上(现在LV${cflag9})必要，然后`); //
+    era.print(`战斗等级LV${b}以上(现在LV${cflag9})必要，然后`); // :32
     era.printButton(
       `${era.get('expname:99')}点数×${exp99}/${a} ……${get_ablup_state(i)}`,
       0,

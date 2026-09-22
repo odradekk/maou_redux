@@ -1112,7 +1112,8 @@ export const FILES = [
       { src: ABLUP16, ref: '9-115', any: [lit('@ABLUP16')] },
       { src: ABLUP16, ref: '136-533', any: [lit('@DECIDE_ABLUP16')] },
       // 审查修复新增引用：DECIDE_ABLUP16 在 ABL.ERB 的另两个调用点之一
-      // （@SHOW_ABLUP_SELECT 的"*"标记；:78 已由 ABLUP10 的 ref '78' 覆盖）
+      // （@SHOW_ABLUP_SELECT 的"*"标记；本表的 ABL.ERB `:78` 条目在 #512 补上，
+      // 那之前只靠 ABLUP10 的 ref '78' 按值兜底）
       { src: ABL, ref: '146', any: [lit('CALL DECIDE_ABLUP16')] },
       {
         src: ABLUP16,
@@ -1513,6 +1514,16 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '208-213',
+        any: [lit('IF TALENT:24\n\tTIMES A , 1.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '245-249',
+        any: [lit('IF TALENT:32\n\tTIMES A , 1.20')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
         ref: '216-221',
         any: [lit('IF TALENT:26\n\tTIMES A , 0.90')],
       },
@@ -1573,6 +1584,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '308-313',
+        any: [lit('IF TALENT:85\n\tTIMES A , 1.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
         ref: '315-320',
         any: [lit('IF TALENT:153\n\tTIMES A , 2.00')],
       },
@@ -1628,8 +1644,28 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '421-424',
+        any: [lit('IF ABL:11 < ABL:37 + 1\n\tI |= 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '427-428',
+        any: [lit('SIF JUEL:4 < A\n\tI |= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '430-431',
+        any: [lit('SIF JUEL:5 < B\n\tI |= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
         ref: '433-434',
         any: [lit('SIF JUEL:6 < C')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '436-437',
+        any: [lit('SIF EXP:74 < D\n\tI |= 2')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
@@ -1743,7 +1779,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '24-31',
+        ref: '24-30',
         any: [lit('ELSEIF ABL:32 + ABL:33 + ABL:39 >= 10')],
       },
       {
@@ -1846,6 +1882,11 @@ export const FILES = [
         src: 'target/ERB/ABL/ABLUP39.ERB',
         ref: '229-234',
         any: [lit('SIF A < 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '237-238',
+        any: [lit('SIF ABL:11 < ABL:39 + 1\n\tI |= 4')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
@@ -1998,8 +2039,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '128-129',
+        any: [lit('SIF ABL:11 < ABL:40 + 1\n\tI |= 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
         ref: '131-132',
         any: [lit('SIF JUEL:15 < A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '135-136',
+        any: [lit('SIF EXP:50 < F\n\tI |= 2')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
@@ -2106,6 +2157,26 @@ export const FILES = [
         src: 'target/ERB/ABL/ABLUP99.ERB',
         ref: '127-128',
         any: [lit('SIF MARK:3 > MARK:2')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '131',
+        any: [lit('B = MARK:3 + 2')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '132-133',
+        any: [lit('SIF B > ABL:10\n\tI |= 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '136-137',
+        any: [lit('SIF JUEL:6 < A\n\tI |= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '48',
+        any: [lit('PRINTFORML %ABLNAME:10%LV{B}以上(现在LV{ABL:10})必要')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
@@ -2220,8 +2291,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '131',
+        any: [lit('C = ABL:0 + ABL:1 + ABL:2 + ABL:3 + ABL:4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
         ref: '146-147',
         any: [lit('SIF EXP:99 < A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '32',
+        any: [lit('PRINTFORML 战斗等级LV{B}以上(现在LV{CFLAG:9})必要，然后')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
@@ -2268,8 +2349,10 @@ export const FILES = [
         ref: '54',
         any: [lit('PRINTFORML %MARKNAME:10%下降为LV{MARK:10}。')],
       },
-      // @SHOW_ABLUP_SELECT 里的三处单独调用（page-ablup 的 `*` 标记来源）。
-      // 用整行锚：`CALL DECIDE_ABLUP` 是 `CALL DECIDE_ABLUP99` 等的子串。
+      // @SHOW_ABLUP_SELECT 里对 @DECIDE_ABLUP 族的五处独立调用（page-ablup 的
+      // `*` 标记来源）：`:78` 在 REPEAT 循环里、`:89/:94/:99` 是循环后的三处
+      // 单独调用、`:105` 在 `[IF_DEBUG]` 块里。其中 `:78`/`:94` 用整行锚——
+      // `CALL DECIDE_ABLUP`、`CALL DECIDE_ABLUP4` 会撞进更长的调用名。
       {
         src: 'target/ERB/ABL/ABL.ERB',
         ref: '78',

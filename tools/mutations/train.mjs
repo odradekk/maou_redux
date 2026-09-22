@@ -9255,9 +9255,9 @@ export default [
   {
     desc: 'M10528 ablup39：欲望门槛的 `< lv + 1` 误改为 `< lv`（#467 验收逃逸的那一处）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl11() < lv + 1) i |= 4; //  欲望门槛\n    if (juel5 < a) i |= 1;',
+    find: '    if (abl11() < lv + 1) i |= 4; // :237-238 欲望门槛\n    if (juel5 < a) i |= 1;',
     replace:
-      '    if (abl11() < lv) i |= 4; //  欲望门槛\n    if (juel5 < a) i |= 1;',
+      '    if (abl11() < lv) i |= 4; // :237-238 欲望门槛\n    if (juel5 < a) i |= 1;',
     tests: ['ablup'],
     must_mention: '门槛比较在临界值两侧',
   },
