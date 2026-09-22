@@ -600,6 +600,10 @@ async function purchase(item_id) {
  */
 async function event_buy(bought) {
   // :89-91 複数持てるアイテム
+  // 末段 `BOUGHT >= 60 && BOUGHT != 90` 与前面八个 `||` 同层：按 Emuera 的
+  // 「&& 与 || 同优先级、左结合」应读作 `(九项 || BOUGHT >= 60) && BOUGHT != 90`。
+  // 九项都 < 60、BOUGHT == 90 又不在九项里，两种读法在一切取值上同值，
+  // 故这里按显式括号保留结构（#517）。
   if (
     PLURAL_ITEMS.includes(bought) ||
     (bought >= PLURAL_RANGE_START && bought !== PLURAL_EXCLUDE)
@@ -972,6 +976,9 @@ async function use_item(bought) {
       continue;
     }
     // :678-686 妊娠中・育儿中的角色用不了排卵促进剂
+    // 该段条件 `BOUGHT == 40 && TALENT:RESULT:153 || TALENT:RESULT:154` 同层
+    // 混写：左结合读作 `(BOUGHT == 40 && 妊娠) || 育儿`。因 `育儿` 臂不带
+    // BOUGHT 门，两种读法在一切取值上同值，故按显式括号保留结构（#517）。
     if (
       bought === 40 &&
       ((era.get(`talent:${result}:153`) || 0) !== 0 ||

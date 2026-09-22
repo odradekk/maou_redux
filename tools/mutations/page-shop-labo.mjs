@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 72;
+export const COUNT = 73;
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -537,5 +537,13 @@ export default [
     '    if (base(result, 0) < 1) {',
     '    if (base(result, 0) <= 1) {',
     'BASE == 1 的角色可选（< 1 的等号侧）；BASE == 0 的被跳过',
+  ),
+  // —— #517：运算符优先级普查（源 :4364 的 &&/|| 同层混写按 C 式读错） ——
+  make(
+    11142,
+    '减龄魔药守卫按 C 式「&& 优先」读错（年龄 < 18 不再吃种族年龄门）',
+    '    if ((cflag(cid, 451) < 18 || long_lived) && cflag(cid, 452) < 18) {',
+    '    if (cflag(cid, 451) < 18 || (long_lived && cflag(cid, 452) < 18)) {',
+    '年龄 17 但种族年龄 30 → 不拦',
   ),
 ];

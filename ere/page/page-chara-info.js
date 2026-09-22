@@ -158,12 +158,12 @@ function compare_chara_act(a, b, act = 2) {
   const rank_b = (state_b + 11 - act) % 11;
   if (rank_a !== rank_b) return rank_a < rank_b ? -1 : 1;
   // :813 `CFLAG:ARG:1==2 || CFLAG:ARG:1==3 && CFLAG:ARG:501!=CFLAG:(ARG:1):501`
-  // Emuera && 优先于 ||：state_a==2 时不论楼层是否相等都进这支（相等时
-  // "< " 判假，b 反而排前——原作如此，1:1 保留）
+  // 按 Emuera 的「&& 与 || 同优先级、左结合」读作
+  // `(CFLAG:ARG:1 ∈ {2,3}) && 楼层不等`——两态都吃楼层判据，楼层相等时
+  // 整支不命中，落到末行的 `a < b ? -1 # 1`（#517）。
   if (
-    state_a === 2 ||
-    (state_a === 3 &&
-      (era.get(`cflag:${a}:501`) || 0) !== (era.get(`cflag:${b}:501`) || 0))
+    (state_a === 2 || state_a === 3) &&
+    (era.get(`cflag:${a}:501`) || 0) !== (era.get(`cflag:${b}:501`) || 0)
   ) {
     const floor_a = era.get(`cflag:${a}:501`) || 0;
     const floor_b = era.get(`cflag:${b}:501`) || 0;
