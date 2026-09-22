@@ -403,11 +403,15 @@ test('已征服反抗臂的保底钳制：衰减跌破 100 时钳回 100（SYSTE
   );
 });
 
-test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 ARG 2 臂，空转零副作用', async () => {
+test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 ARG 2 臂，按领域号只打本领域的星号', async () => {
   // 两手构造：FLAG:86 = 2100 让精灵衰减块执行（证明该块的调用点真的跑到，
   // 且它调的 KYOTEN_EVENT 实参应是 2）；FLAG:81 = 300 + FLAG:93 = 2 让人间界
   // 块先回退一档到 1——若精灵块把领域号误传成 1，会以 FLAG:81（<= 500，
   // stage 1）再回退一档到 0 并打出夺回横幅，本用例当场红
+  //
+  // #505 起三臂是真身（判定由「不可达」改判为可达）：衰减后的 FLAG:86 = 2050
+  // 已过首档 2000，ARG 2 臂会打一行星号——本用例因此同时钉住「日循环这条
+  // 调用族真的会走到三臂的行为体」（#505 之前该臂空转，断言无从下手）
   //
   // #195 随机源注入（恒 0.5，选择依据同「已征服的反抗臂」用例，issue #120
   // 评论）：真实随机下精灵块首掷 RAND:100 = 0（约 1%）会让循环进第 2 轮，
@@ -451,14 +455,37 @@ test('KYOTEN_EVENT 经日循环触发（#119 接线）：精灵领域衰减走 A
   assert.equal(
     world.fixture.store.get('flag:94'),
     undefined,
-    'ARG 2 臂空转：不创建 FLAG:94（汉化版三臂无状态推进，见 issue #119）',
+    'ARG 2 臂不推进状态字：不创建 FLAG:94（汉化版三臂无状态推进，见 issue #119）',
   );
   assert(
     !world.fixture.lines_history.some(
       (line) =>
         line.type === 'text' && line.text.includes('人间界的军队占领了村庄'),
     ),
-    'ARG 2 臂空转：不打第二档以下的夺回横幅',
+    'ARG 2 臂不走人间界臂：不打夺回横幅',
+  );
+
+  // 单起一条最小世界钉住「ARG 2 臂真的打出一行星号」（#505 起是真身；上面
+  // 那条世界里人间界臂也会打自己的七行横幅，两支的星号混在一起数不清）：
+  // FLAG:81 = 0 → 人间界块整块跳过，只剩精灵块跑一次
+  const only_elf = setup_turnend();
+  only_elf.fixture.store.set('flag:82', 0);
+  only_elf.fixture.store.set('flag:81', 0);
+  only_elf.fixture.store.set('flag:93', 0);
+  only_elf.fixture.store.set('flag:87', 0);
+  only_elf.fixture.store.set('flag:86', 2100);
+  only_elf.fixture.override_math_random(() => 0.5);
+  try {
+    await only_elf.emit('EVENTTURNEND');
+  } finally {
+    only_elf.fixture.restore_math_random();
+  }
+  assert.equal(
+    only_elf.fixture.lines_history.filter(
+      (line) => line.type === 'text' && line.text === '*'.repeat(91),
+    ).length,
+    1,
+    'FLAG:86 衰减到 2050 仍过首档 2000 → ARG 2 臂打一行星号（#505 起是真身）',
   );
 });
 

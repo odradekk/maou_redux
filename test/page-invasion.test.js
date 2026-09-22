@@ -1490,31 +1490,8 @@ test('征服后菜单 [0]：与 start_campaign() 直驱产生相同结算（提�
   assert.equal(direct.store.get('flag:81'), 400);
 });
 
-test('征服后菜单 [1]/[2]/[3]/[5]：地区选择后的出兵续接是登记良好的存根（返回 0）', async () => {
-  for (const result of [1, 2, 3]) {
-    const fixture = create_era_fixture();
-    make_world(fixture, { fallen: 1 });
-    assert.equal(
-      await run_post_conquest(fixture, [result]),
-      0,
-      `[${result}] 存根返回 0`,
-    );
-    assert(
-      history_texts(fixture).some((line) => line.includes('@INVASION')),
-      `[${result}] 占位行带原作函数名`,
-    );
-  }
-
-  // [5] 需要先落在 route_33 的开放区间内才会派发到这里，否则被 :100-101 拒收（见下一用例）
-  const shrine = create_era_fixture();
-  make_world(shrine, { fallen: 1 });
-  shrine.store.set('exflag:2810', 510);
-  assert.equal(await run_post_conquest(shrine, [5]), 0, '[5] 存根返回 0');
-  assert(
-    history_texts(shrine).some((line) => line.includes('@INVASION')),
-    '[5] 占位行带原作函数名',
-  );
-});
+// 征服后菜单 [1]/[2]/[3]/[5] 的出兵续接自 #505 起是真身，用例在本文件末尾的
+// 「#505：地区续接与 start_campaign 的地区泛化」一节。
 
 test('征服后菜单 [5] 的原作真实缺陷：按钮渲染为可选，但 route_33 在开放区间外仍被拒收（:73-76/:100-101）', async () => {
   const fixture = create_era_fixture();
@@ -1539,7 +1516,13 @@ test('征服后菜单 [5]：选中后 shrine_stage >= 3 时无条件 +=1（:136-
     make_world(fixture, { fallen: 1 });
     fixture.store.set('exflag:2810', 510); // 开放区间内，派发不被拒
     fixture.store.set('exflag:102', stage);
-    await run_post_conquest(fixture, [5]);
+    // 副作用在 $START1 之前无条件应用（:133-138 的 ELSEIF 体），之后才进
+    // 出兵菜单——第二枚输入是出兵菜单的 [999] 返回（#505 起不再是存根）
+    assert.equal(
+      await run_post_conquest(fixture, [5, 999]),
+      0,
+      '出兵菜单 [999] 返回 0',
+    );
     assert.equal(
       fixture.store.get('exflag:102'),
       expected,
@@ -1555,9 +1538,9 @@ test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文�
   // ARCANA_FORT 自 #470 起是真身（ere/invasion/invasion-arcana-fort.js），
   // MEDAL_BONUS 与 SENGEN_VIDEO 自 #502 起也是真身（本文件内），同样移出；
   // #503 起 [0]/[3] 两条出兵路线落地；#504 起 [2] 路线与 @INVASION_EVENT 的
-  // 三个事件函数全部换真身，'INVASION' 只剩「地区选择后的出兵续接」一处，
-  // 加上 #103 判定不排期的 AGENT_MENU。三臂的占位名随之移出本名单。
-  assert.deepEqual(STUBBED_CALLS, ['INVASION', 'AGENT_MENU']);
+  // 三个事件函数全部换真身；#505 起地区续接（[1]/[2]/[3]/[5]）也换真身，
+  // 'INVASION' 这个名字彻底移出本名单——只剩 #103 判定不排期的 AGENT_MENU。
+  assert.deepEqual(STUBBED_CALLS, ['AGENT_MENU']);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
@@ -3958,4 +3941,462 @@ test('CHALLENGE 的档界与人数上限边界（:996/:1012/:1106）', async () 
     over60.fixture.text_lines().includes('金钱-3000。'),
     '降级成开挂失败支',
   );
+});
+
+// ————————————————————————————————————————————————————————————————
+// #505：地区续接（post_conquest_menu 的 [1]/[2]/[3]/[5]）与
+//       start_campaign() 的地区泛化
+// ————————————————————————————————————————————————————————————————
+
+/** @KYOTEN_EVENT 三臂的星号横幅（INVASION_EVENT.ERB:110 等十处，91 个星号） */
+const KYOTEN_STAR = '*'.repeat(91);
+
+/**
+ * 三个走 FLAG 侧的非人间界出兵目标（INVASION.ERB:108-138 的 RESULT →
+ * AREA/SINDO），连同各处按 AREA 分派所需的派生值。测试侧独立抄自原作，
+ * 不复用实现里的地区表：
+ *   - `name`：结果段里的地区名（:762/:765/:768/:771/:773 与 :895/:898/…）
+ *   - `campaign_label`：出兵菜单（$START1）的进度条标签（:156/:159/:162）
+ *   - `result_label`：结果段的进度条标签（:657/:659/… 与 :745/:747/…）
+ *   - `ravish`：@INVASION_RYOUZYOKU 的地区号（:674/:677/:680/:683）
+ *   - `ravish_mark`：该地区号下 @ORC_INV 的战场称呼之一（invasion-ravish.js
+ *     的 `{2: [精灵少女, 精灵猎手, 精灵少女], 3: [看板娘, 龙族女战士, …], …}`
+ *     的第二项），用来把「传给凌辱演出的地区号」变成可断言的输出
+ *   - `kyoten`：@KYOTEN_EVENT 的实参（:987/:990/:993）
+ */
+const REGION_CASES = [
+  {
+    result: 1,
+    area: 86,
+    sindo: 87,
+    name: '精灵族的领域',
+    campaign_label: '精灵族领域的侵攻度',
+    result_label: '精灵族的领域　侵攻度',
+    ravish: 2,
+    ravish_mark: '精灵猎手',
+    kyoten: 2,
+  },
+  {
+    result: 2,
+    area: 88,
+    sindo: 89,
+    name: '龙之山脉',
+    campaign_label: '龙之山脉的侵攻度',
+    result_label: '龙之山脉　侵攻度',
+    ravish: 3,
+    ravish_mark: '龙族女战士',
+    kyoten: 3,
+  },
+  {
+    result: 3,
+    area: 90,
+    sindo: 91,
+    name: '天界',
+    campaign_label: '天界的侵攻度',
+    result_label: '天界　侵攻度',
+    ravish: 4,
+    ravish_mark: '破邪天使',
+    kyoten: 4,
+  },
+];
+
+/**
+ * 天神宫（[5]）单独一组：AREA=101/SINDO=102，侵攻度的**读点**在 EX_FLAG
+ * （:165 的 EX_FLAG:AREA、:752-755 的 `AREA <= 100 ? FLAG : EX_FLAG`），
+ * 累加点却在 FLAG:AREA（:611-618）——原作错位，#102 查明、1:1 保留。
+ * `campaign_label`/`result_label` 用于 [1] 结果段（读 EX_FLAG）；[0]/[2]/[3]
+ * 三处结果段只写 `BAR FLAG:AREA`（:664/:860/:970），读的是 FLAG 侧。
+ */
+const SHRINE_REGION = {
+  result: 5,
+  area: 101,
+  sindo: 102,
+  name: '天神宫',
+  campaign_label: '天神宫的侵攻度',
+  result_label: '天神宫　侵攻度',
+  ravish: 5,
+  ravish_mark: '十字军队长',
+  kyoten: null,
+};
+
+/**
+ * progress 格的（标签, 数值列）对。**不能只断言数值出现过**——同一画面里
+ * 其它地区条或征服后菜单的状态行也会打印同样的值（#505 变异自证实测：
+ * M10853 把天神宫的读点改回 FLAG 侧后，` 7000/10000` 仍被 post_conquest_menu
+ * 的状态行 satisfies 掉，断言假绿）。
+ */
+function progress_cells(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'progress')
+    .map((line) => ({ label: line.text, value: line.out }));
+}
+
+/** 人间界已陷落的征服后世界；可选地把目标地区预置到指定状态 */
+function make_conquest_world(region, { invasion = 0, conquered = 0 } = {}) {
+  const fixture = create_era_fixture();
+  make_world(fixture, { fallen: 1 });
+  fixture.store.set(`flag:${region.area}`, invasion);
+  fixture.store.set(`flag:${region.sindo}`, conquered);
+  return fixture;
+}
+
+test('【地区续接】[1]/[2]/[3] 各映射到自己的 AREA/SINDO 并汇入同一结算体（INVASION.ERB:108-138）', async () => {
+  for (const region of REGION_CASES) {
+    const fixture = make_conquest_world(region, { invasion: 1900 });
+    assert.equal(
+      await run_post_conquest(fixture, [region.result, 1]),
+      1,
+      `[${region.result}] 魔力出兵走完 → 返回 1（回合已耗）`,
+    );
+
+    assert.equal(
+      fixture.store.get(`flag:${region.area}`),
+      2300,
+      `[${region.result}] 1900 + 400：累加进 FLAG:${region.area}（:614 FLAG:AREA += SINKOU）`,
+    );
+    assert.equal(fixture.store.get('exflag:99'), 72, ':978 EX_FLAG:99 += 2');
+    assert.equal(
+      fixture.store.get('exp:0:80'),
+      200,
+      ':715 EXP:0:80 += SINKOU / 2',
+    );
+    assert.equal(
+      fixture.store.get('flag:81'),
+      0,
+      `[${region.result}] 不再写人间界的 FLAG:81`,
+    );
+
+    const labels = progress_texts(fixture);
+    assert(
+      labels.includes(region.campaign_label),
+      `[${region.result}] 出兵菜单的进度条标签（:156/:159/:162 的按 AREA 分派）`,
+    );
+    assert(
+      labels.includes(region.result_label),
+      `[${region.result}] 结果段的进度条标签`,
+    );
+    assert(
+      progress_cells(fixture).some(
+        (cell) =>
+          cell.label === region.result_label && cell.value === ' 2300/10000',
+      ),
+      `[${region.result}] 结果段的进度条读本地区的侵攻度`,
+    );
+
+    // 结算尾的 @KYOTEN_EVENT 实参按 AREA 分派（:983-994）：本地区跨过首档
+    // 2000 → 一行星号；实参传错会去读别的地区的 FLAG（恒 0）→ 一行都不打
+    assert.equal(
+      history_texts(fixture).filter((line) => line === KYOTEN_STAR).length,
+      1,
+      `[${region.result}] KYOTEN_EVENT 走 ARG ${region.kyoten} 臂：星号恰好一行`,
+    );
+    for (const [flag, who] of [
+      [93, '人间界的 FLAG:93'],
+      [94, '精灵的 FLAG:94'],
+      [95, '龙的 FLAG:95'],
+      [96, '天界的 FLAG:96'],
+    ]) {
+      assert.equal(
+        fixture.store.get(`flag:${flag}`),
+        undefined,
+        `[${region.result}] KYOTEN_EVENT 三臂不推进状态字（${who} 不变）`,
+      );
+    }
+  }
+});
+
+test('【地区续接·天神宫】[5]：累加写 FLAG:101、显示读 EX_FLAG:101 的原作错位（1:1 保留）', async () => {
+  const fixture = make_conquest_world(SHRINE_REGION);
+  fixture.store.set('exflag:101', 7000); // 天神宫侵攻度（显示侧）
+  fixture.store.set('exflag:2810', 510); // route_33 开放区间内，[5] 不被拒收
+  fixture.store.set('exflag:102', 3); // shrine_stage >= 3 → 派发前无条件 +=1
+  // 人间界侵攻度预置到首档之上：若结算尾误调 KYOTEN_EVENT(1)（原作没有 101
+  // 臂，天神宫本就不该调），人间界臂会打横幅——本用例末尾的「一行星号都不打」
+  // 因此能真正鉴别实参表（M10862 的靶）
+  fixture.store.set('flag:81', 2000);
+  assert.equal(await run_post_conquest(fixture, [5, 1]), 1);
+
+  assert.equal(
+    fixture.store.get('flag:101'),
+    400,
+    ':611-614 的 FLAG:AREA 对 AREA=101 就是 FLAG:101（与 K1 口上存在标志同槽，原作缺陷）',
+  );
+  assert.equal(
+    fixture.store.get('exflag:101'),
+    7000,
+    'EX_FLAG:101 全程不被写（原作只读它显示）',
+  );
+  assert.equal(
+    fixture.store.get('exflag:102'),
+    4,
+    ':136-137 shrine_stage += 1',
+  );
+
+  const labels = progress_texts(fixture);
+  assert(labels.includes('天神宫的侵攻度'), ':165 出兵菜单读 EX_FLAG:AREA');
+  assert(
+    labels.includes('天神宫　侵攻度'),
+    ':743/:751 结果段也读 EX_FLAG（[1] 路线正确的那一处）',
+  );
+  const cells = progress_cells(fixture);
+  assert(
+    cells.some(
+      (cell) => cell.label === '天神宫的侵攻度' && cell.value === ' 7000/10000',
+    ),
+    '出兵菜单的进度条读 EX_FLAG:101 = 7000（不是 FLAG:101 的 400）',
+  );
+  assert(
+    cells.some(
+      (cell) => cell.label === '天神宫　侵攻度' && cell.value === ' 7000/10000',
+    ),
+    '结果段的进度条也读 EX_FLAG:101（同一画面里 FLAG:101 是 400）',
+  );
+  assert.equal(
+    history_texts(fixture).filter((line) => line === KYOTEN_STAR).length,
+    0,
+    ':983-994 的 KYOTEN_EVENT 分派没有 101 臂 —— 天神宫一行星号都不打',
+  );
+});
+
+test('【地区续接·已征服臂】[0] 的强制征收只列 81/86/88/90，天神宫落到 ELSE（:624-651 的原作缺陷）', async () => {
+  for (const region of [...REGION_CASES, SHRINE_REGION]) {
+    const fixture = make_conquest_world(region, { conquered: 1 });
+    if (region.result === 5) {
+      fixture.store.set('exflag:2810', 510); // [5] 需 route_33 开放区间
+    }
+    fixture.store.set('item:100', 600); // 过 600 门槛，SINKOU = 17（同 [0] 主用例）
+    assert.equal(
+      await run_invasion(fixture, [region.result, 0], knob({ 100: 99 })),
+      1,
+    );
+
+    const texts = history_texts(fixture);
+    const conquered_arm = region.area !== 101;
+    assert.equal(
+      texts.includes('强制征收了170点！'),
+      conquered_arm,
+      `[${region.result}] ${conquered_arm ? '走已征服臂（强制征收 ×10）' : '落 ELSE 臂（战利品 ×10，原作漏列 101）'}`,
+    );
+    assert.equal(
+      texts.includes('得到了170点的战利品！'),
+      !conquered_arm,
+      `[${region.result}] 两臂互补`,
+    );
+    assert.equal(
+      fixture.store.get('flag:10004'),
+      170,
+      `[${region.result}] 两臂的入账金额相同（:627-628 / :649-650）`,
+    );
+    assert(
+      progress_cells(fixture).some(
+        (cell) =>
+          cell.label === region.result_label && cell.value === ' 17/10000',
+      ),
+      `[${region.result}] [0] 结果段的进度条一律读 FLAG:AREA（:664），天神宫因此读 FLAG:101`,
+    );
+  }
+});
+
+test('【地区续接】结果段的地区名随 AREA 切换：[2] 到达 / [3] 掠夺（:761-774 / :894-907）', async () => {
+  const brute = make_conquest_world(REGION_CASES[0]); // 精灵族的领域
+  brute.store.set('base:0:0', 10000);
+  brute.store.set('item:100', 600);
+  seed_brute_hero(brute, 1);
+  assert.equal(await run_invasion(brute, [1, 2, 1], knob({ 100: 99 })), 1);
+  assert(
+    history_texts(brute).includes(
+      '勇者1带着怪物到达了精灵族的领域，尽可能地施暴着。（善良值:-50）',
+    ),
+    '[2] 的三段 PRINT 并入同一显示行，地区名取 AREA=86',
+  );
+
+  for (const region of [
+    REGION_CASES[1], // 龙之山脉
+    REGION_CASES[2], // 天界（[2] 那条路走不到这里，天界的 name 只在这条路上出现）
+    SHRINE_REGION,
+  ]) {
+    const raid = make_conquest_world(region);
+    if (region.result === 5) {
+      raid.store.set('exflag:2810', 510);
+    }
+    seed_raidable(raid, [1]);
+    assert.equal(await run_invasion(raid, [region.result, 3, 1], knob()), 1);
+    assert(
+      history_texts(raid).includes(
+        `勇者1得到了魔王的力量！${region.name}被掠夺了。（善恶值:-5）`,
+      ),
+      `[${region.result}] [3] 的地区名取 AREA=${region.area}`,
+    );
+  }
+});
+
+test('【地区续接】凌辱演出的地区号按 AREA 分派（:669-684 / :866-880）', async () => {
+  // 兽人（110）的凌辱类型是 1 → 三列都走 @ORC_INV；knob 把 X 定到 110。
+  // 三条结果段各有自己的调用点：[0] 在 :669-684、[2] 在 :866-880，两处的
+  // 地区号都必须来自 CAMPAIGN_REGIONS（写死 1 时下面两条断言各自变红）
+  const ravish_knob = knob({ 9: 0, 5: 0, 4: 0, 100: 99 });
+  for (const region of [...REGION_CASES, SHRINE_REGION]) {
+    const fixture = make_conquest_world(region);
+    if (region.result === 5) {
+      fixture.store.set('exflag:2810', 510);
+    }
+    fixture.store.set('item:110', 600);
+    fixture.store.set('itemname:110', '兽人');
+    assert.equal(
+      await run_invasion(fixture, [region.result, 0], ravish_knob),
+      1,
+    );
+    assert(
+      history_texts(fixture).some((line) => line.includes(region.ravish_mark)),
+      `[${region.result}] 传给 @INVASION_RYOUZYOKU 的地区号是 ${region.ravish}（@ORC_INV 的战场称呼）`,
+    );
+  }
+
+  // [2] 勇者出兵路线的同一分派（:866-880）：跑一条地区即可鉴别写死 1
+  const brute = make_conquest_world(REGION_CASES[0]); // 精灵族的领域
+  brute.store.set('base:0:0', 10000);
+  brute.store.set('item:110', 600);
+  brute.store.set('itemname:110', '兽人');
+  seed_brute_hero(brute, 1);
+  assert.equal(await run_invasion(brute, [1, 2, 1], ravish_knob), 1);
+  assert(
+    history_texts(brute).some((line) =>
+      line.includes(REGION_CASES[0].ravish_mark),
+    ),
+    '[2] 传给 @INVASION_RYOUZYOKU 的地区号也是 2（:866-880 那一段）',
+  );
+});
+
+test('【地区续接】非人间界的 RESTART 同样透传到征服后菜单（:6 的 FLAG:82 分派）', async () => {
+  const fixture = make_conquest_world(REGION_CASES[1]); // 龙之山脉
+  seed_raidable(fixture, [1]);
+  // [2] 龙之山脉 → [3] 掠夺 → 列表 [999] 返回（RESTART）→ 征服后菜单重画 → [999] 退出
+  assert.equal(await run_invasion(fixture, [2, 3, 999, 999]), 0);
+  assert.equal(
+    history_texts(fixture).filter((line) =>
+      line.startsWith('地面上已被你征服了'),
+    ).length,
+    2,
+    'RESTART 的落点是征服后菜单（不是 $START1），菜单画了两次',
+  );
+  assert.equal(
+    fixture.store.get(`flag:${REGION_CASES[1].area}`),
+    0,
+    'RESTART 不消耗回合、不改侵攻度',
+  );
+});
+
+test('【地区续接】[1] 魔力结果段的已征服封顶：SINKOU 超 100000 时经验按 100000 计（:712-739）', async () => {
+  // 已征服（FLAG:SINDO != 0）：五个地区的臂只差那一行 `MIN(SINKOU, 10000*10)`，
+  // 文本与经验式相同。气力 10000000 / 25 = 400000 → 封顶后经验 50000
+  const conquered = create_era_fixture();
+  make_world(conquered, { fallen: 1, willpower: 10000000 });
+  assert.equal(await run_post_conquest(conquered, [0, 1]), 1);
+  assert.equal(
+    conquered.store.get('exp:0:80'),
+    50000,
+    ':713 MIN(SINKOU, 100000) 之后 / 2',
+  );
+  assert.equal(conquered.store.get('flag:81'), 10000, ':617-618 侵攻度封顶');
+
+  // 未征服：:736-738 的 ELSE 臂没有 MIN，经验全额。SINKOU > 10000 会让
+  // 结算尾的 INVASION_CHECK 命中人间界组（FLAG:81 封顶 10000 且 FLAG:82
+  // 仍为 0）——预置 ENDING_1 的菲娅与「[0] 继续」的输入，看过经验再让它演完
+  const fresh = create_era_fixture();
+  make_world(fresh, { willpower: 10000000 });
+  fresh.seed_chara(35, { name: '菲娅', callname: '菲娅' });
+  assert.equal(await run_invasion(fresh, [1, 0]), 1);
+  assert.equal(fresh.store.get('exp:0:80'), 200000, 'ELSE 臂不封顶');
+
+  // 判据读的是 region.sindo（不是写死的 FLAG:82）：换成**非人间界**的未征服
+  // 地区，同样的高气力——精灵的征服标记是 FLAG:87（= 0），写死 82 会读到
+  // 征服后世界恒为 1 的 FLAG:82 而误判成已征服、把经验封到 50000。
+  // 这条世界正好也走通了 #505 新开出的「地区续接 → 结算尾 → ENDING_3」链：
+  // SINKOU 400000 把 FLAG:86 顶到封顶 10000（FLAG:87 仍为 0）→ ENDING_3
+  // 演出里的 CHAR_GIFT 收下精灵族圣女（[0]）→ FLAG:87 走 1→2
+  const elf = make_conquest_world(REGION_CASES[0]);
+  elf.store.set('base:0:1', 10000000);
+  elf.store.set('maxbase:0:1', 10000000);
+  elf.seed_chara(31, { name: '琼', callname: '琼' });
+  assert.equal(await run_post_conquest(elf, [1, 1, 0]), 1);
+  assert.equal(
+    elf.store.get('exp:0:80'),
+    200000,
+    '未征服的非人间界同样走 ELSE 臂：判据读 FLAG:87（写死 FLAG:82 会误封顶）',
+  );
+  assert.equal(elf.store.get('flag:86'), 10000, ':617-618 侵攻度封顶');
+  assert.equal(
+    elf.store.get('flag:87'),
+    2,
+    'ENDING_3 已被触发（1）且 CHAR_GIFT 收下圣女（2）——地区续接 → INVASION_CHECK 的链是通的',
+  );
+  assert(
+    history_texts(elf).some((line) =>
+      line.includes('魔王终于征服了精灵族的领域'),
+    ),
+    'ENDING_3 的横幅经结算尾打出（不再是「窄路径不可达」）',
+  );
+});
+
+test('【地区泛化】KYOTEN_EVENT 的 ARG 2/3/4 臂：单行星号、不推进状态字（INVASION_EVENT.ERB:106-206）', async () => {
+  // 模块必须从同一份夹具加载：fixture 每建一份就 purge 一次 ere/ 的模块缓存，
+  // era 的绑定是每夹具一份（test/helpers/era-fixture.js:78-83）
+  const run_kyoten = (fixture, arg) => {
+    const { kyoten_event } = fixture.load_module('page/page-invasion');
+    return kyoten_event(arg);
+  };
+  const star_count = (fixture) =>
+    history_texts(fixture).filter((line) => line === KYOTEN_STAR).length;
+
+  for (const arm of [
+    { arg: 2, progress: 86, stage: 94 },
+    { arg: 3, progress: 88, stage: 95 },
+    { arg: 4, progress: 90, stage: 96 },
+  ]) {
+    const fixture = create_era_fixture();
+    fixture.store.set(`flag:${arm.progress}`, 2000); // 首档 :109/:143/:176 的下沿
+    assert.equal(await run_kyoten(fixture, arm.arg), 0, '原作恒 RETURN 0');
+    assert.equal(
+      star_count(fixture),
+      1,
+      `ARG ${arm.arg}：档内只剩一行星号（:110 等十处）`,
+    );
+    assert.equal(
+      fixture.store.get(`flag:${arm.stage}`),
+      undefined,
+      `ARG ${arm.arg}：FLAG:${arm.stage} 的推进赋值在汉化版被注释 → 状态字永远是 0`,
+    );
+
+    // 反复调用照样每次都打（「一度のみ」:5 的设计意图被残缺破坏）——原作缺陷钉住
+    await run_kyoten(fixture, arm.arg);
+    assert.equal(
+      star_count(fixture),
+      2,
+      `ARG ${arm.arg}：状态字不推进 → 首档判定每次成立、星号反复刷`,
+    );
+  }
+
+  // 精灵臂独有的征服守卫（:108 `IF FLAG:87 == 0`）：已征服则空转
+  const elf = create_era_fixture();
+  elf.store.set('flag:86', 9999);
+  elf.store.set('flag:87', 1);
+  await run_kyoten(elf, 2);
+  assert.equal(
+    star_count(elf),
+    0,
+    '精灵臂的 FLAG:87 == 0 守卫（龙/天界两臂没有这一层）',
+  );
+
+  // 未达首档：空转
+  const calm = create_era_fixture();
+  calm.store.set('flag:88', 1999);
+  await run_kyoten(calm, 3);
+  assert.equal(star_count(calm), 0, 'FLAG:88 == 1999 未达 2000 首档');
+
+  // ARG 0/5 及以上：原作三条 ELSEIF 都不进，落到 :207 的 ENDIF 之外空转
+  const outside = create_era_fixture();
+  for (const arg of [0, 5]) {
+    assert.equal(await run_kyoten(outside, arg), 0, `ARG ${arg} 空转`);
+  }
+  assert.equal(star_count(outside), 0, 'ARG 0/5 不打任何横幅');
 });

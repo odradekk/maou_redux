@@ -366,7 +366,7 @@ export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#48
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 5; // #501：MAOU_TENSHIN 行从「存根」订正为「已实现」后不再进入归因扫描——
+export const UNATTRIBUTED_BASELINE = 3; // #501：MAOU_TENSHIN 行从「存根」订正为「已实现」后不再进入归因扫描——
 // 订正前它「源」写「待核（@EVENTEND 魔王倒下分支的调用）」，三路归因规则都够不着（「源」列同票补成真实出处
 // EVENT/EVENT_NEXTDAY.ERB:2455-2479）。6 → 5，与 `node tools/trace-check.mjs --coverage` 的合并态重测一致
 // （显式改小，非顺手改数字）。
@@ -375,6 +375,9 @@ export const UNATTRIBUTED_BASELINE = 5; // #501：MAOU_TENSHIN 行从「存根�
 // 存根改判已实现后不再进入归因扫描，13 → 12（显式改小，非顺手改数字）。
 // #457：BEFORE_AUTOTRAIN 行补回准确源文件（EVENT/EVENT_AUTOTRAIN.ERB:91，
 // 原写「調教相關（自动调教）」够不着任何文件），12 → 11（显式改小）。
+// #514：ATTACK_KOUJO / ATTACK_KOUJO_B 与 VICTORY_KOUJO 两行随 K2/K4 的族注册
+// 补齐，由「部分移植」改判「已实现」（不再进归因扫描），5 → 3（实测
+// `node tools/trace-check.mjs --coverage` 的合并态重测一致；显式改小）。
 // #469：CAMPAIGN 族清单行重写时「源」列从目录级（侵略/CAMPAIGN/）落回
 // 具体文件（CAMPAIGN_EVENT.ERB 各行号 / DUNGEON.ERB / EQUIP.ERB 调用点），
 // 11 → 6（显式改小，#461 合并态实测）。

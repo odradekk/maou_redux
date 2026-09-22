@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 916; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+export const COUNT = 935; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
 
 export default [
   {
@@ -9247,17 +9247,17 @@ export default [
   {
     desc: 'M10527 ablup40：否定快感的 ×1.75 误改为 ×1.50（#467 验收逃逸的那一处）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 否定快感 :107-108\n      a = times(a, 1.75);',
-    replace: '      // 否定快感 :107-108\n      a = times(a, 1.5);',
+    find: '      // 否定快感 :105-106\n      a = times(a, 1.75);',
+    replace: '      // 否定快感 :105-106\n      a = times(a, 1.5);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10528 ablup39：欲望门槛的 `< lv + 1` 误改为 `< lv`（#467 验收逃逸的那一处）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl11() < lv + 1) i |= 4; //  欲望门槛\n    if (juel5 < a) i |= 1;',
+    find: '    if (abl11() < lv + 1) i |= 4; // :237-238 欲望门槛\n    if (juel5 < a) i |= 1;',
     replace:
-      '    if (abl11() < lv) i |= 4; //  欲望门槛\n    if (juel5 < a) i |= 1;',
+      '    if (abl11() < lv) i |= 4; // :237-238 欲望门槛\n    if (juel5 < a) i |= 1;',
     tests: ['ablup'],
     must_mention: '门槛比较在临界值两侧',
   },
@@ -9543,24 +9543,24 @@ export default [
   {
     desc: 'M10563 ablup37：妊娠的 ×2.00 误改为 ×2.50',
     file: 'ere/system/train/ablup.js',
-    find: '      // 妊娠 :257-261\n      a = times(a, 2.0);',
-    replace: '      // 妊娠 :257-261\n      a = times(a, 2.5);',
+    find: '      // 妊娠 :315-320\n      a = times(a, 2.0);',
+    replace: '      // 妊娠 :315-320\n      a = times(a, 2.5);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10564 ablup37：倾城的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: '      // 倾城 :277-281\n      a = times(a, 0.5);',
-    replace: '      // 倾城 :277-281\n      a = times(a, 0.55);',
+    find: '      // 倾城 :343-348\n      a = times(a, 0.5);',
+    replace: '      // 倾城 :343-348\n      a = times(a, 0.55);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10565 ablup37：有常客的 ×0.90 误改为 ×0.95',
     file: 'ere/system/train/ablup.js',
-    find: '      // 有常客 :282-286\n      a = times(a, 0.9);',
-    replace: '      // 有常客 :282-286\n      a = times(a, 0.95);',
+    find: '      // 有常客 :350-355\n      a = times(a, 0.9);',
+    replace: '      // 有常客 :350-355\n      a = times(a, 0.95);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9576,16 +9576,16 @@ export default [
   {
     desc: 'M10567 ablup39：动物耳朵的 ×0.80 误改为 ×0.85（三列同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 动物耳朵 :199-203\n      a = times(a, 0.8);',
-    replace: '      // 动物耳朵 :199-203\n      a = times(a, 0.85);',
+    find: '      // 动物耳朵 :210-214\n      a = times(a, 0.8);',
+    replace: '      // 动物耳朵 :210-214\n      a = times(a, 0.85);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10568 ablup39：牝犬的 ×0.50 误改为 ×0.55（三列同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 牝犬 :204-208\n      a = times(a, 0.5);',
-    replace: '      // 牝犬 :204-208\n      a = times(a, 0.55);',
+    find: '      // 牝犬 :216-220\n      a = times(a, 0.5);',
+    replace: '      // 牝犬 :216-220\n      a = times(a, 0.55);',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9601,16 +9601,16 @@ export default [
   {
     desc: 'M10570 ablup40：倒錯的 ×0.75 误改为 ×0.70',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(80)) a = times(a, 0.75); // 倒錯的 :111-112',
-    replace: 'if (talent(80)) a = times(a, 0.7); // 倒錯的 :111-112',
+    find: 'if (talent(80)) a = times(a, 0.75); // 倒錯的 :113-115',
+    replace: 'if (talent(80)) a = times(a, 0.7); // 倒錯的 :113-115',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10571 ablup40：疯狂的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(123)) a = times(a, 0.5); // 疯狂 :113-114',
-    replace: 'if (talent(123)) a = times(a, 0.55); // 疯狂 :113-114',
+    find: 'if (talent(123)) a = times(a, 0.5); // 疯狂 :117-119',
+    replace: 'if (talent(123)) a = times(a, 0.55); // 疯狂 :117-119',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9626,8 +9626,8 @@ export default [
   {
     desc: 'M10573 ablup99：嚣张的 ×1.50 误改为 ×1.60',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(16)) a = times(a, 1.5); // 嚣张 :109-111',
-    replace: 'if (talent(16)) a = times(a, 1.6); // 嚣张 :109-111',
+    find: 'if (talent(16)) a = times(a, 1.5); // 嚣张 :112-114',
+    replace: 'if (talent(16)) a = times(a, 1.6); // 嚣张 :112-114',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9650,16 +9650,16 @@ export default [
   {
     desc: 'M10576 ablup100：智慧的 ×0.80 误改为 ×0.85',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(172)) a = times(a, 0.8); // 智慧 :94-96',
-    replace: 'if (talent(172)) a = times(a, 0.85); // 智慧 :94-96',
+    find: 'if (talent(172)) a = times(a, 0.8); // 智慧 :100-102',
+    replace: 'if (talent(172)) a = times(a, 0.85); // 智慧 :100-102',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10577 ablup100：嚣张的 ×1.20 误改为 ×1.30（与刚强的 ×1.80 区分）',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(16)) a = times(a, 1.2); // 嚣张 :102-104',
-    replace: 'if (talent(16)) a = times(a, 1.3); // 嚣张 :102-104',
+    find: 'if (talent(16)) a = times(a, 1.2); // 嚣张 :110-112',
+    replace: 'if (talent(16)) a = times(a, 1.3); // 嚣张 :110-112',
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9886,5 +9886,174 @@ export default [
     replace: '  // 变异：LOSEBASE 归零删除',
     tests: ['event-autotrain'],
     must_mention: 'LOSEBASE 归零（deltabase 是负值通道',
+  },
+  // —— #512 第一步：ABLUP37/39/40 的素质表与门槛补覆盖（M10920-M10932）——
+  // 新增用例在 test/ablup.test.js 的三处：「ablup37：F 的素质增减表逐条」、
+  // 「ablup39：F 的豁免素质逐条」「ablup39：三重上限的拦法…」「ablup40：F 的
+  // 豁免素质逐条」。find 都不含 `// :N`，与行号注释解耦。
+  {
+    desc: 'M10920 ablup37：F 表的[接受快感]减免改错（-1 → -2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(70)) f -= 1; // 接受快感',
+    replace: '      if (talent(70)) f -= 2; // 接受快感',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10921 ablup37：F 表的[容易陷落]减免改错（-1 → -2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(73)) f -= 1; // 容易陷落',
+    replace: '      if (talent(73)) f -= 2; // 容易陷落',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10922 ablup37：F 表的[否定快感]加成改错（+1 → +2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(71)) f += 1; // 否定快感',
+    replace: '      if (talent(71)) f += 2; // 否定快感',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10923 ablup37：F 表的[倾城]减免改错（-2 → -1）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(181)) f -= 2; // 倾城',
+    replace: '      if (talent(181)) f -= 1; // 倾城',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10924 ablup37：F 表的[求爱]加成改错（+2 → +1）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(184)) f += 2; // 求爱',
+    replace: '      if (talent(184)) f += 1; // 求爱',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10925 ablup37：F 表的[倒錯的]减免改错（-1 → -2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(80)) f -= 1; // 倒錯的',
+    replace: '      if (talent(80)) f -= 2; // 倒錯的',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10926 ablup37：F 整块豁免的[疯狂]判反（=== 0 → === 1）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(123) === 0 && talent(9) === 0) {',
+    replace: 'if (lv >= 2 && talent(123) === 1 && talent(9) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10927 ablup39：F 豁免的[牝犬]素质号读错（136 → 137）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    replace:
+      'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(137) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10928 ablup39：F 豁免的[容易上瘾]素质号读错（72 → 73）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    replace:
+      'if (lv >= 2 && talent(73) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10929 ablup39：F 豁免的[淫乱]素质号读错（76 → 77）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    replace:
+      'if (lv >= 2 && talent(72) === 0 && talent(77) === 0 && talent(136) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10930 ablup39：三重上限的拦法由「两珠任一不足即拦」改成「都缺才拦」（|| → &&）',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (
+      (era.get(\`juel:\${cid}:5\`) || 0) < bulk ||
+      (era.get(\`juel:\${cid}:6\`) || 0) < bulk
+    ) {`,
+    replace: `    if (
+      (era.get(\`juel:\${cid}:5\`) || 0) < bulk &&
+      (era.get(\`juel:\${cid}:6\`) || 0) < bulk
+    ) {`,
+    tests: ['ablup'],
+    must_mention: '任一不足即拦',
+  },
+  {
+    desc: 'M10931 ablup40：F 豁免的[淫乱]素质号读错（76 → 77）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0) {\n      f = lv + 1;\n    }',
+    replace:
+      'if (lv >= 2 && talent(72) === 0 && talent(77) === 0) {\n      f = lv + 1;\n    }',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10932 ablup40：F 豁免的[容易上瘾]素质号读错（72 → 73）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0) {\n      f = lv + 1;\n    }',
+    replace:
+      'if (lv >= 2 && talent(73) === 0 && talent(76) === 0) {\n      f = lv + 1;\n    }',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  // #512 第二步补齐的三处（十处自选改错的 9/10 轮）：梯子逐级、三重上限的
+  // 覆盖价门槛、CORE_ABLUP99 的降级幅度。
+  {
+    desc: 'M10933 ablup37：梯子 Lv9 的 D 误改（3000 → 2000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else [a, b, c, d] = [300000, 600000, 150000, 3000];',
+    replace: 'else [a, b, c, d] = [300000, 600000, 150000, 2000];',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10934 ablup39：梯子 Lv8 的 C 误改（4000 → 3000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else if (lv === 8) [a, b, c] = [200000, 200000, 4000];',
+    replace: 'else if (lv === 8) [a, b, c] = [200000, 200000, 3000];',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10935 ablup40：梯子 Lv9 的 A 误改（300000 → 200000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else a = 300000; // lv === 9',
+    replace: 'else a = 200000; // lv === 9',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10936 ablup100：刻印阶梯 Lv5 的 A 误改（50000 → 40000）',
+    file: 'ere/system/train/ablup.js',
+    find: 'else a = 50000; // lv === 5',
+    replace: 'else a = 40000; // lv === 5',
+    tests: ['ablup'],
+    must_mention: '梯子逐级字面值',
+  },
+  {
+    desc: 'M10937 ablup39：三重上限的覆盖价门槛改错（>= 10 → >= 11）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (abl_sum() >= 10) {\n      a = lv * lv * 4000;',
+    replace: 'if (abl_sum() >= 11) {\n      a = lv * lv * 4000;',
+    tests: ['ablup'],
+    must_mention: '合计 10 与 11 两档',
+  },
+  {
+    desc: 'M10938 ablup99：CORE_ABLUP99 一次降两级（MARK:3 -- → -= 2）',
+    file: 'ere/system/train/ablup.js',
+    find: 'chara(cid).system.反抗刻印 -= 1; // @CORE_ABLUP99',
+    replace: 'chara(cid).system.反抗刻印 -= 2; // @CORE_ABLUP99',
+    tests: ['ablup'],
+    must_mention: 'CORE_ABLUP99 每次只降一级',
   },
 ];

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 347; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 373; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -29,6 +29,17 @@ export const COUNT = 347; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // 两处档位除数的不对称、会心与倍率、四条退场判据的阈值与退场状态、[2] 的
 // 三分之一消耗与结果段金额/经验/善恶值/抓捕、FORT 的三路线各档判据与减员
 // 比例、CHALLENGE 的位域守卫/开挂档/人数上限/三选项分支）
+// #505 起 +25（M10850-M10874，page-invasion.js 的地区续接与地区泛化：
+// CAMPAIGN_REGIONS 的 AREA/SINDO/标签/凌辱地区号/KYOTEN 实参五组表项、
+// 累加写侧与读点表选择、[0] 已征服臂漏列 101、结果段的地区名与进度条表、
+// 魔力结果段的已征服封顶与判据（含判据写死字面量）、征服后菜单传参与出货
+// 流程默认地区、KYOTEN_EVENT 三臂的命中判据/不推进状态字/精灵臂守卫、
+// [2] 与 [0] 两处凌辱地区号）
+// #521 返工起 +1（M11100，page-campaign.js：招募上限 >80 的差一边界——验收
+// 抽样发现 >79 放行，两条边界用例夹住 80/81 两个方向）
+// 合并态（#505 与 #521 并集）实测 373，取 `import('./tools/mutations/page.mjs')
+// .then(m => m.default.length)` 的数——两侧都不含对方的条目，故不是任一单侧的
+// 数、也不在两侧声明上相加
 
 export default [
   {
@@ -398,19 +409,20 @@ export default [
     must_mention: '广受爱戴）的侵攻度增量',
   },
   {
-    desc: 'M2107 侵攻度封顶阈值挪走（>=10000 改 >=99999，:617-618）',
+    desc: 'M2107 侵攻度封顶阈值挪走（10000 改 99999，:617-618）',
     file: 'ere/page/page-invasion.js',
-    find: '  if (era_flag.human_realm_invasion >= 10000) {',
+    find: '  era.set(`flag:${region.area}`, Math.min(next, 10000)); // :617-618 封顶',
     replace:
-      '  if (era_flag.human_realm_invasion >= 99999) { // 变异：封顶失效',
+      '  era.set(`flag:${region.area}`, Math.min(next, 99999)); // 变异：封顶失效',
     tests: ['page-invasion'],
     must_mention: '侵攻度封顶',
   },
   {
     desc: 'M2108 KYOTEN_EVENT 首档阈值 2000 改 3000（FLAG:93 状态机）',
     file: 'ere/page/page-invasion.js',
-    find: '  if (progress >= 2000 && stage === 0) {',
-    replace: '  if (progress >= 3000 && stage === 0) { // 变异：阈值挪走',
+    find: '  if (progress >= 2000 && stage === 0) return 1;',
+    replace:
+      '  if (progress >= 3000 && stage === 0) return 1; // 变异：阈值挪走',
     tests: ['page-invasion'],
     must_mention: '占领了村庄',
   },
@@ -1877,7 +1889,7 @@ export default [
   {
     desc: 'M9721 [0] 委派 start_campaign() 丢失（INVASION.ERB:109-111）',
     file: 'ere/page/page-invasion.js',
-    find: '    if (result === 0) {\n      // :109-111 复用出兵流程；其内部的 RESTART（原作出兵路线里的 [999]\n      // 返回等）原样透传，由 invasion() 的外层循环回到 :6 的分派\n      return await start_campaign(rand);\n    }',
+    find: '    if (result === 0) {\n      // :109-111 人间界：复用出兵流程；其内部的 RESTART（原作出兵路线里的\n      // [999] 返回等）原样透传，由 invasion() 的外层循环回到 :6 的分派\n      return await start_campaign(rand, HUMAN_WORLD);\n    }',
     replace:
       '    if (result === 0) {\n      return 0; // 变异：委派丢失\n    }',
     tests: ['page-invasion'],
@@ -2504,9 +2516,9 @@ export default [
   {
     desc: 'M10762 [0] 结果段封顶值改坏（10000*10 改 10000*5）',
     file: 'ere/page/page-invasion.js',
-    find: '    // :624-628 人间界（已征服）：封顶 100000 + 强制征收\n    sinkou = Math.min(sinkou, 10000 * 10);',
+    find: '    // :624-646 人间界/精灵/龙/天界（已征服）：封顶 100000 + 强制征收\n    sinkou = Math.min(sinkou, 10000 * 10);',
     replace:
-      '    // :624-628 人间界（已征服）：封顶 100000 + 强制征收\n    sinkou = Math.min(sinkou, 10000 * 5);',
+      '    // :624-646 人间界/精灵/龙/天界（已征服）：封顶 100000 + 强制征收\n    sinkou = Math.min(sinkou, 10000 * 5);',
     tests: ['page-invasion'],
     must_mention: 'SINKOU 封到 100000',
   },
@@ -2608,9 +2620,9 @@ export default [
   {
     desc: 'M10774 [3] 掠夺结算的封顶值改坏（10000*10 改 10000*9）',
     file: 'ere/page/page-invasion.js',
-    find: '    // :912-918（已征服）：封顶 100000 + 强行征收到\n    sinkou = Math.min(sinkou, 10000 * 10);',
+    find: '    // :912-950（已征服）：封顶 100000 + 强行征收到\n    sinkou = Math.min(sinkou, 10000 * 10);',
     replace:
-      '    // :912-918（已征服）：封顶 100000 + 强行征收到\n    sinkou = Math.min(sinkou, 10000 * 9);',
+      '    // :912-950（已征服）：封顶 100000 + 强行征收到\n    sinkou = Math.min(sinkou, 10000 * 9);',
     tests: ['page-invasion'],
     must_mention: '封到 100000',
   },
@@ -3248,5 +3260,228 @@ export default [
     replace: '  } else if (progress >= 1 && progress < 10000) {',
     tests: ['page-invasion'],
     must_mention: '三档传闻',
+  },
+  // —— #505：地区续接与 start_campaign 的地区泛化 ——
+  {
+    desc: 'M10850 地区表的 AREA 改坏（精灵族领域 86 → 88，INVASION.ERB:113-115）',
+    file: 'ere/page/page-invasion.js',
+    find: '    area: 86,\n    sindo: 87,',
+    replace: '    area: 88,\n    sindo: 87, // 变异：AREA 改坏',
+    tests: ['page-invasion'],
+    must_mention: '累加进 FLAG:86',
+  },
+  {
+    desc: 'M10851 地区表的 SINDO 改坏（精灵族领域 87 → 89，INVASION.ERB:114-115）',
+    file: 'ere/page/page-invasion.js',
+    find: '    area: 86,\n    sindo: 87,',
+    replace: '    area: 86,\n    sindo: 89, // 变异：SINDO 改坏',
+    tests: ['page-invasion'],
+    must_mention: '走已征服臂',
+  },
+  {
+    desc: 'M10852 侵攻度累加写到 EX_FLAG 侧（FLAG:AREA → EX_FLAG:AREA）',
+    file: 'ere/page/page-invasion.js',
+    find: '  era.set(`flag:${region.area}`, Math.min(next, 10000)); // :617-618 封顶',
+    replace:
+      '  era.set(`exflag:${region.area}`, Math.min(next, 10000)); // 变异：写侧换表',
+    tests: ['page-invasion'],
+    must_mention: '累加进 FLAG:86',
+  },
+  {
+    desc: 'M10853 侵攻度读点的表判据改坏（AREA > 100 改 > 200，:165/:752-755）',
+    file: 'ere/page/page-invasion.js',
+    find: "  const table = use_exflag && region.area > 100 ? 'exflag' : 'flag';",
+    replace:
+      "  const table = use_exflag && region.area > 200 ? 'exflag' : 'flag'; // 变异：判据改坏",
+    tests: ['page-invasion'],
+    must_mention: '出兵菜单的进度条读 EX_FLAG:101',
+  },
+  {
+    desc: 'M10854 侵攻度读点的表对调（use_exflag 语义反转）',
+    file: 'ere/page/page-invasion.js',
+    find: "  const table = use_exflag && region.area > 100 ? 'exflag' : 'flag';",
+    replace:
+      "  const table = use_exflag && region.area > 100 ? 'flag' : 'exflag'; // 变异：表对调",
+    tests: ['page-invasion'],
+    must_mention: '结果段的进度条读本地区的侵攻度',
+  },
+  {
+    desc: 'M10855 [0] 结果段的进度条改用 EX_FLAG（原作 :664 只写 FLAG:AREA）',
+    file: 'ere/page/page-invasion.js',
+    find: '  // :653-667 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:664）\n  era.drawLine();\n  print_progress_line(\n    region.result_label,\n    region_progress(region, false),\n    10000,\n  );',
+    replace:
+      '  // 变异：进度条改读 EX_FLAG\n  era.drawLine();\n  print_progress_line(\n    region.result_label,\n    region_progress(region, true),\n    10000,\n  );',
+    tests: ['page-invasion'],
+    must_mention: '[0] 结果段的进度条一律读 FLAG:AREA',
+  },
+  {
+    desc: 'M10856 [0] 的已征服臂补上天神宫（原作 :624-646 漏列 101）',
+    file: 'ere/page/page-invasion.js',
+    find: 'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90];',
+    replace:
+      'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101]; // 变异：补上 101',
+    tests: ['page-invasion'],
+    must_mention: '落 ELSE 臂',
+  },
+  {
+    desc: 'M10857 [2] 结果段的地区名写死人间界（:762-773 的 PRINT 分派丢失）',
+    file: 'ere/page/page-invasion.js',
+    find: '到达了${region.name}，尽可能地施暴着',
+    replace: '到达了人间界，尽可能地施暴着',
+    tests: ['page-invasion'],
+    must_mention: '地区名取 AREA=86',
+  },
+  {
+    desc: 'M10858 [3] 结果段的地区名写死人间界（:894-906 的 PRINT 分派丢失）',
+    file: 'ere/page/page-invasion.js',
+    find: '得到了魔王的力量！${region.name}被掠夺了',
+    replace: '得到了魔王的力量！人间界被掠夺了',
+    tests: ['page-invasion'],
+    must_mention: '[3] 的地区名取 AREA=88',
+  },
+  {
+    desc: 'M10859 [0] 结果段的凌辱地区号写死 1（:669-684 的地区号分派丢失）',
+    file: 'ere/page/page-invasion.js',
+    find: '  // :669-684 CALL INVASION_RYOUZYOKU, <地区号>, SINKOU（#470 的真身）\n  await invasion_ryouzyoku(region.ravish_area, sinkou, rand);',
+    replace:
+      '  // 变异：凌辱地区号写死 1\n  await invasion_ryouzyoku(1, sinkou, rand);',
+    tests: ['page-invasion'],
+    must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
+  },
+  {
+    desc: 'M10860 地区表的凌辱地区号改坏（精灵族领域 2 → 4，:674）',
+    file: 'ere/page/page-invasion.js',
+    find: '    ravish_area: 2,\n    kyoten_arg: 2,',
+    replace: '    ravish_area: 4,\n    kyoten_arg: 2, // 变异：凌辱地区号改坏',
+    tests: ['page-invasion'],
+    must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
+  },
+  {
+    desc: 'M10861 地区表的 KYOTEN 实参改坏（精灵族领域 2 → 4，:987）',
+    file: 'ere/page/page-invasion.js',
+    find: '    ravish_area: 2,\n    kyoten_arg: 2,',
+    replace: '    ravish_area: 2,\n    kyoten_arg: 4, // 变异：KYOTEN 实参改坏',
+    tests: ['page-invasion'],
+    must_mention: 'KYOTEN_EVENT 走 ARG 2 臂',
+  },
+  {
+    desc: 'M10862 天神宫补上 KYOTEN 实参（原作 :983-994 没有 101 臂）',
+    file: 'ere/page/page-invasion.js',
+    find: '    ravish_area: 5,\n    kyoten_arg: null,',
+    replace:
+      '    ravish_area: 5,\n    kyoten_arg: 1, // 变异：天神宫也调 KYOTEN',
+    tests: ['page-invasion'],
+    must_mention: 'KYOTEN_EVENT 分派没有 101 臂',
+  },
+  {
+    desc: 'M10863 征服后菜单的地区续接丢地区（CAMPAIGN_REGIONS[result] 删去）',
+    file: 'ere/page/page-invasion.js',
+    find: '    return await start_campaign(rand, CAMPAIGN_REGIONS[result]);',
+    replace: '    return await start_campaign(rand); // 变异：地区泛化丢失',
+    tests: ['page-invasion'],
+    must_mention: '累加进 FLAG:86',
+  },
+  {
+    desc: 'M10864 三臂的命中判据反转（=== stage 改 !== stage，命中档时反而不打星号）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (kyoten_next_stage(progress, stage) === stage) {\n    return 0; // 未命中任何档：空转\n  }',
+    replace:
+      '  if (kyoten_next_stage(progress, stage) !== stage) { // 变异：判据反转\n    return 0;\n  }',
+    tests: ['page-invasion'],
+    must_mention: '档内只剩一行星号',
+  },
+  {
+    desc: 'M10865 三臂把推进赋值补回去（原作注释态被「修好」，#14 登记的缺陷）',
+    file: 'ere/page/page-invasion.js',
+    find: '  // :106-206 的十处：档内只剩这一行星号（推进赋值被注释，不写回状态字）\n  era.print(BANNER_STAR);',
+    replace:
+      '  // 变异：把推进赋值补回去\n  era.print(BANNER_STAR);\n  era.set(`flag:${arm.stage}`, kyoten_next_stage(progress, stage));',
+    tests: ['page-invasion'],
+    must_mention: '的推进赋值在汉化版被注释',
+  },
+  {
+    desc: 'M10866 精灵臂的征服守卫删掉（:108 `IF FLAG:87 == 0`）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (arm.guard !== undefined && (era.get(`flag:${arm.guard}`) || 0) !== 0) {\n    return 0;\n  }',
+    replace: '  // 变异：精灵臂的征服守卫删除',
+    tests: ['page-invasion'],
+    must_mention: '精灵臂的 FLAG:87 == 0 守卫',
+  },
+  {
+    desc: 'M10867 出兵菜单的地区标签改坏（精灵族领域的侵攻度 → 侵攻度，:156）',
+    file: 'ere/page/page-invasion.js',
+    find: "    campaign_label: '精灵族领域的侵攻度',",
+    replace: "    campaign_label: '侵攻度', // 变异：标签改坏",
+    tests: ['page-invasion'],
+    must_mention: '出兵菜单的进度条标签',
+  },
+  {
+    desc: 'M10868 结果段的地区标签改坏（精灵族领域　侵攻度 → 侵攻度，:657）',
+    file: 'ere/page/page-invasion.js',
+    find: "    result_label: '精灵族的领域　侵攻度',",
+    replace: "    result_label: '侵攻度', // 变异：标签改坏",
+    tests: ['page-invasion'],
+    must_mention: '结果段的进度条标签',
+  },
+  {
+    desc: 'M10869 魔力结果段的已征服封顶改大（100000 改 1000000，:713-733）',
+    file: 'ere/page/page-invasion.js',
+    find: '      exp_sinkou = Math.min(exp_sinkou, 10000 * 10); // :713/:718/:723/:728/:733',
+    replace:
+      '      exp_sinkou = Math.min(exp_sinkou, 10000 * 100); // 变异：封顶改大',
+    tests: ['page-invasion'],
+    must_mention: 'MIN(SINKOU, 100000) 之后 / 2',
+  },
+  {
+    desc: 'M10870 魔力结果段的已征服判据恒真（!== 0 改 >= 0，:712-732）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10); // :713/:718/:723/:728/:733',
+    replace:
+      '    if ((era.get(`flag:${region.sindo}`) || 0) >= 0) {\n      exp_sinkou = Math.min(exp_sinkou, 10000 * 10); // 变异：判据恒真',
+    tests: ['page-invasion'],
+    must_mention: 'ELSE 臂不封顶',
+  },
+  {
+    desc: 'M10871 出兵流程的默认地区改坏（HUMAN_WORLD 改 CAMPAIGN_REGIONS[1]）',
+    file: 'ere/page/page-invasion.js',
+    find: 'async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {',
+    replace:
+      'async function start_campaign(rand = default_rand, region = CAMPAIGN_REGIONS[1]) { // 变异：默认地区改坏',
+    tests: ['page-invasion'],
+    must_mention: 'FLAG:81 += 10000/25',
+  },
+  {
+    desc: 'M10872 [0] 结果段的地区实参写死人间界（region 改 HUMAN_WORLD）',
+    file: 'ere/page/page-invasion.js',
+    find: '    await monster_result_section(region, sinkou, rand); // :620-692',
+    replace:
+      '    await monster_result_section(HUMAN_WORLD, sinkou, rand); // 变异：地区写死',
+    tests: ['page-invasion'],
+    must_mention: '结果段的进度条一律读 FLAG:AREA',
+  },
+  {
+    desc: 'M10873 [2] 结果段的凌辱地区号写死 1（:866-880 的地区号分派丢失）',
+    file: 'ere/page/page-invasion.js',
+    find: '  await invasion_ryouzyoku(region.ravish_area, sinkou, rand);\n  // :882-888',
+    replace:
+      '  await invasion_ryouzyoku(1, sinkou, rand); // 变异：凌辱地区号写死\n  // :882-888',
+    tests: ['page-invasion'],
+    must_mention: '[2] 传给 @INVASION_RYOUZYOKU 的地区号也是 2',
+  },
+  {
+    desc: 'M10874 魔力结果段的已征服判据写死（region.sindo 改字面量 82）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if ((era.get(`flag:${region.sindo}`) || 0) !== 0) {',
+    replace: "    if ((era.get('flag:82') || 0) !== 0) { // 变异：判据写死",
+    tests: ['page-invasion'],
+    must_mention: '判据读 FLAG:87（写死 FLAG:82 会误封顶）',
+  },
+  {
+    desc: 'M11100 招募上限差一边界：>80 改 >79（恰好 80 人被误拦，#521 返工）',
+    file: 'ere/page/page-campaign.js',
+    find: `  if (era.getAddedCharacters().length > 80) {`,
+    replace: `  if (era.getAddedCharacters().length > 79) {`,
+    tests: ['page-campaign'],
+    must_mention: '恰好 80 人',
   },
 ];
