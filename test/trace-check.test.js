@@ -1368,6 +1368,139 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
   assert.equal(status, 0, `限定范围的移植状态表应全绿：\n${output}`);
 });
 
+/**
+ * #515 登记表收尾（#501 普查留下的三行 + 一条过期说法）。
+ *
+ * 三件事的共同点是「代码与裁定早已到位，登记表没回头改」：
+ *   - DUNGEON_BATTLE / DUNGEON_BATTLE2：原作全库无定义（#14 登记的原作缺陷），
+ *     ere 侧调用点留中性占位。状态格停在「存根」，规则 4 据此把它归因到
+ *     迷宮/LABO_DUNGEON_MAP.ERB，让该文件永远卡在「部分移植」。
+ *   - AGENT_MENU：#103 已裁定「复制改名事故，只登记不排期」，状态格以「存根」
+ *     开头，被 is_outstanding 计成未了结项（裁定本身不改）。
+ *   - ABILITY_UP_CORE 行仍写「37-100 仍是存根」并引用 #467 已整行删除的
+ *     ABLUP0～ABLUP100 伞状行——37/39/40/99/100 随 #467 落地。
+ * 本用例钉两层：行级（状态格离开未了结形态、判死依据写在状态格里）与工具级
+ * （LABO_DUNGEON_MAP.ERB 从「部分移植」翻「已移植」）。定位子串在表里唯一；
+ * 行内文字一改即失效（要改行就同步这里）。
+ */
+test('存根清单收尾（#515）：判死行不再计未了结、过期说法订正', () => {
+  const registry = fs.readFileSync(
+    path.resolve(REPO_ROOT, 'docs', 'stub-registry.md'),
+    'utf8',
+  );
+  const lines = registry.split(/\r?\n/);
+  /** 取某行按未转义的 | 拆出的第 n 格（n 为负取倒数；正文里的 \| 是字面竖线） */
+  const cell_of = (row, n) =>
+    row
+      .split(/(?<!\\)\|/)
+      .slice(1, -1)
+      .at(n)
+      .trim();
+  /** 工具认的判死标记（tools/trace-coverage.mjs 的 DEAD_MARKERS） */
+  const dead_markers = ['判死', '不移植', '不实现', '不可达', '落空'];
+
+  // ① DUNGEON_BATTLE / DUNGEON_BATTLE2：状态格改判死形态，判死依据写在状态格里
+  for (const key of ['| `DUNGEON_BATTLE`', '| `DUNGEON_BATTLE2`']) {
+    const hits = lines.filter((line) => line.startsWith(key));
+    assert.equal(hits.length, 1, `定位子串必须唯一命中一行：${key}`);
+    const row = hits[0];
+    const status = cell_of(row, -1);
+    assert.ok(
+      !status.startsWith('存根') && !status.startsWith('部分实现'),
+      `#515：${key} 的状态格仍是未了结形态（${status.slice(0, 40)}）——` +
+        'LABO_DUNGEON_MAP.ERB 会被这条行卡在部分移植',
+    );
+    assert.ok(
+      dead_markers.some((w) => status.includes(w)),
+      `#515：${key} 的状态格必须带判死标记（判死/不移植/不实现/不可达/落空）：${status}`,
+    );
+    assert.ok(
+      status.includes('原作全库无定义'),
+      `#515：${key} 的状态格必须留下判死依据（原作全库无定义，#14 已登记）`,
+    );
+  }
+
+  // ② AGENT_MENU：#103 的裁定不变（只登记不排期），状态格改判死形态
+  {
+    const hits = lines.filter((line) => line.startsWith('| `AGENT_MENU`'));
+    assert.equal(hits.length, 1, '定位子串必须唯一命中一行：AGENT_MENU');
+    const row = hits[0];
+    const status = cell_of(row, -1);
+    assert.ok(
+      !status.startsWith('存根') && !status.startsWith('部分实现'),
+      `#515：AGENT_MENU 的状态格仍是未了结形态（${status.slice(0, 40)}）`,
+    );
+    assert.ok(
+      dead_markers.some((w) => status.includes(w)),
+      `#515：AGENT_MENU 的状态格必须带判死标记：#103 的裁定是不实现，不是欠账`,
+    );
+    assert.ok(
+      status.includes('#103'),
+      '#515：AGENT_MENU 的状态格必须引 #103 的裁定',
+    );
+    assert.ok(
+      status.includes('不排期'),
+      '#515：AGENT_MENU 的状态格必须保留 #103 的裁定本身（只登记不排期）',
+    );
+  }
+
+  // ③ ABILITY_UP_CORE：ABLUP 族全部落地，过期说法与已删除的伞状行引用都要消失
+  {
+    const hits = lines.filter((line) => line.startsWith('| `ABILITY_UP_CORE`'));
+    assert.equal(hits.length, 1, '定位子串必须唯一命中一行：ABILITY_UP_CORE');
+    const row = hits[0];
+    assert.ok(
+      !row.includes('仍是存根'),
+      '#515：ABILITY_UP_CORE 行不得再写「仍是存根」（#467 起 37/39/40/99/100 已落真身）',
+    );
+    assert.ok(
+      row.includes('37/39/40/99/100'),
+      '#515：ABILITY_UP_CORE 行必须点名 #467 落地的五个编号',
+    );
+    assert.ok(
+      row.includes('#467'),
+      '#515：ABILITY_UP_CORE 行必须写出这批的票号',
+    );
+  }
+
+  // ④ JUEL_CHECK：过期说法「循环内的能力提升还没做，见下六行」已随本票订正
+  // ——下面六行现在全是「已实现」，原说法把做完的活记成欠账。行级守卫同前：
+  // 这个状态格即使退回旧说法也改不动任何分类数字（该行本来就以「已实现」开头、
+  // 不进归因扫描），只有这条断言拦得住（#515 验收实测：退回旧说法全绿放行）。
+  {
+    const hits = lines.filter((line) => line.startsWith('| `JUEL_CHECK`'));
+    assert.equal(hits.length, 1, '定位子串必须唯一命中一行：JUEL_CHECK');
+    const row = hits[0];
+    const status = cell_of(row, -1);
+    assert.ok(
+      !status.includes('还没做'),
+      `#515：JUEL_CHECK 的状态格不得再写「还没做」（下六行已全是已实现）：` +
+        `${status.slice(0, 60)}`,
+    );
+    assert.ok(
+      status.includes('#515'),
+      '#515：JUEL_CHECK 的状态格必须写出这次订正的票号',
+    );
+  }
+
+  // 工具按清单归因：判死行不再算欠账，LABO_DUNGEON_MAP.ERB 随之离开部分移植
+  const { status, output } = run_tool([
+    '--coverage',
+    '--list',
+    '--only',
+    'target/ERB/迷宮/',
+  ]);
+  assert.ok(
+    output.includes('已移植 target/ERB/迷宮/LABO_DUNGEON_MAP.ERB'),
+    `#515：LABO_DUNGEON_MAP.ERB 必须判已移植（两条判死行不再构成欠账）：\n${output}`,
+  );
+  assert.ok(
+    !output.includes('部分移植 target/ERB/迷宮/LABO_DUNGEON_MAP.ERB'),
+    `#515：LABO_DUNGEON_MAP.ERB 不得再判部分移植：\n${output}`,
+  );
+  assert.equal(status, 0, `限定范围的移植状态表应全绿：\n${output}`);
+});
+
 test('移植状态表：yml 承载与存根归因的规则行为（--only 限定，共享副本）', () => {
   const root = probe_repo();
   const js_path = path.join(root, 'ere', '__cov_probe__.js');

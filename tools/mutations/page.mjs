@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 373; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
+export const COUNT = 374; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接线）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -37,9 +37,12 @@ export const COUNT = 373; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 
 // [2] 与 [0] 两处凌辱地区号）
 // #521 返工起 +1（M11100，page-campaign.js：招募上限 >80 的差一边界——验收
 // 抽样发现 >79 放行，两条边界用例夹住 80/81 两个方向）
+// #515 起 +1（M11110，page-shop.js：STUBBED_CALLS 退回旧状态——#397 已接
+// 真身的 INTERCEPT/ABILITY_UP/TAILOR_MAIN 重新列入时，名单的 deepEqual
+// 固定断言必须红）
 // 合并态（#505 与 #521 并集）实测 373，取 `import('./tools/mutations/page.mjs')
 // .then(m => m.default.length)` 的数——两侧都不含对方的条目，故不是任一单侧的
-// 数、也不在两侧声明上相加
+// 数、也不在两侧声明上相加；#515 在其上实测 374
 
 export default [
   {
@@ -3483,5 +3486,15 @@ export default [
     replace: `  if (era.getAddedCharacters().length > 79) {`,
     tests: ['page-campaign'],
     must_mention: '恰好 80 人',
+  },
+  {
+    desc: 'M11110 page-shop 存根名单退回旧状态（INTERCEPT/ABILITY_UP/TAILOR_MAIN 自 #397 起已接真身，重新列入即红，#515）',
+    file: 'ere/page/page-shop.js',
+    find: "const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
+    replace:
+      "const STUBBED_CALLS = [\n  '批量处刑',\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
+    tests: ['page-shop'],
+    test_name: '存根清单可检索',
+    must_mention: '存根名单必须只列仍未接真身的分支',
   },
 ];

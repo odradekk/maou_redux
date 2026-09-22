@@ -82,17 +82,12 @@ const MAX_CHARANUM = 90;
  * 起为真身（BOUGHT 0-53 的道具商店，page/page-item-shop.js；#395 的运行时
  * 占位随之撤），MONSTER_SHOP 自 #399 起为真身（120 分支的召唤商店，
  * page/page-monster-shop.js），CONFIG 自 #463 起为真身（777 分支，
- * page/page-config.js），均移出本名单。
+ * page/page-config.js），INTERCEPT / ABILITY_UP / TAILOR_MAIN 自 #397 起为
+ * 真身（104/105/108 分支，page-intercept.js / page-ability-up.js /
+ * page-tailor.js），均移出本名单（#515 订正：三个名字此前与测试一同停在旧
+ * 状态，见 test/page-shop.test.js 的固定断言）。
  */
-const STUBBED_CALLS = [
-  '批量处刑',
-  'INTERCEPT',
-  'ABILITY_UP',
-  'TAILOR_MAIN',
-  'LABO',
-  'SHOW_FLOOR',
-  'DEBUG_MENU_U',
-];
+const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];
 
 /**
  * @EVENTSHOP（:4-20）：每轮 BEGIN SHOP 进入时执行一次。
