@@ -464,10 +464,10 @@ test('交互循环：能力分支命中表兜底——handler 缺位的编号仍
   const juel_check = seed_world(fixture);
   // #467 起 ABLUP_IDS 的全部编号都接了真身，else-if 兜底分支在按钮白名单
   // 下不可达，M38 因此逃逸（#521）。兜底契约本身仍在：ABLUP_IDS 里的编号
-  // 失去 handler（未来接线遗漏/新存根）时，分发必须落 @ABLUPxx 占位行，
-  // 而不是静默无操作——STUBBED_ABLUP_NAMES 与 stub-registry 的记载都以
-  // 它为前提。从导出表摘掉 99 模拟该状态：夹具每例重建 ere/ 模块缓存，表
-  // 手术不外泄；[99] 反抗刻印行照常打印，白名单放行。
+  // 失去 handler（未来接入遗漏/新存根——STUBBED_ABLUP_NAMES 正是按「表内
+  // 减 handler」算出的）时，分发必须落 @ABLUPxx 占位行，而不是静默无操作。
+  // 从导出表删掉 99 的 handler 模拟该状态：夹具每例重建 ere/ 模块缓存，
+  // 改动不外泄；[99] 反抗刻印行照常打印，白名单放行。
   delete juel_check.ABLUP_HANDLERS[99];
   fixture.set_inputs(99, 999);
 
