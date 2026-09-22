@@ -20,7 +20,9 @@
  * == 原作缺陷 1:1 保留 ==
  *
  * EVENTTRAIN 屈服Lv2/Lv3/淫乱的 `TALENT:157 && TALENT:110 || TALENT:114 ||
- * TALENT:119` 先 AND 后 OR；EVENTEND 淫乱体力>=500 臂无 RETURN 1。
+ * TALENT:119`：Emuera 的 && 与 || 同优先级、左结合，读作
+ * `((TALENT:157 && TALENT:110) || TALENT:114) || TALENT:119`——`||` 之后没有
+ * `&&`，两种读法同值（#517）；EVENTEND 淫乱体力>=500 臂无 RETURN 1。
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */

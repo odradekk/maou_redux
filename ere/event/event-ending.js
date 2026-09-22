@@ -365,7 +365,8 @@ async function char_gift(arg, rand = default_rand) {
       era.print('[6] 青发  [7]绿发  [8]紫发  [9]白发  [10]暗金发');
       const picked = await era.input();
       // :254 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`——Emuera 的 &&
-      // 优先于 ||，等价于 1..11
+      // 与 || 同优先级、左结合，读作 `((1..10) 或 == 11)`；两种读法在此同值
+      // （|| 之后没有 &&），故按显式括号保留结构（#517）
       if ((picked >= 1 && picked <= 10) || picked === 11) {
         chara(a).chara.头发颜色 = picked; // :255
         haircolor = picked; // :256
