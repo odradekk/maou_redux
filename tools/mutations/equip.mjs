@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 18;
+export const COUNT = 19;
 
 export default [
   {
@@ -151,5 +151,14 @@ export default [
     replace: '  // 变异：不调 curse_equip_ring',
     tests: ['event-nextday'],
     must_mention: '装饰戒指被消耗一件',
+  },
+  {
+    desc: 'M11140 宝箱换装守卫按 C 式「&& 优先」读错（空槽不再吃强度/诅咒门，源 :243/:258 左结合，#517）',
+    file: 'ere/system/equip/equip-select.js',
+    find: '    if ((w.存储编号 === -1 || found) && w.强度 < floor && w.诅咒 === 0) {',
+    replace:
+      '    if (w.存储编号 === -1 || (found && w.强度 < floor && w.诅咒 === 0)) {',
+    tests: ['equip-system'],
+    must_mention: '阶层 0 → 空槽 551 不换装',
   },
 ];
