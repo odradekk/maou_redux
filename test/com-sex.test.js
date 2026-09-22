@@ -217,7 +217,7 @@ test('B20/B21：130/134 只可作为前前回 + 120/121，不可直接续插', a
   }
 });
 
-test('A：无玩家射精时保留高潮余韵；20 不受失神门、26 受其约束', async () => {
+test('A：无玩家射精时保留高潮余韵；姿势句六条指令都吃失神门', async () => {
   const afterglow = seed_world();
   afterglow.era_flag.selectcom = 20;
   afterglow.fixture.store.set('tflag:29', 3);
@@ -231,25 +231,35 @@ test('A：无玩家射精时保留高潮余韵；20 不受失神门、26 受其�
       .some((line) => line.includes('绝顶高潮的余韵')),
   );
 
-  for (const [id, expected] of [
-    [20, true],
-    [26, false],
-  ]) {
-    const world = seed_world();
-    world.era_flag.selectcom = id;
-    world.fixture.store.set('tflag:2', 1);
-    world.fixture.store.set('tflag:899', 2);
-    world.fixture.store.set('abl:31:10', 3);
-    world.fixture.store.set('abl:31:11', 3);
-    const { train_message_a: message } = world.fixture.load_module(
-      'system/train/train-message',
-    );
-    await message();
-    assert.equal(
-      world.fixture.text_lines().some((line) => line.includes('把脚缠到')),
-      expected,
-      `COM${id}`,
-    );
+  // 源 :1154/:1161/:1168 三式都是 `SELECTCOM == 20 || SELECTCOM == 26
+  // && TFLAG:899 <= 1` 形态——按 Emuera 的「&& 与 || 同优先级、左结合」读作
+  // `(20 || 26) && 失神门`：**六条指令都吃失神门**，不是 20/22/23 无条件（#517）
+  const probes = [
+    [20, '把脚缠到'],
+    [26, '把脚缠到'],
+    [22, '的脖子'],
+    [28, '的脖子'],
+    [23, '的背脊后仰'],
+    [29, '的背脊后仰'],
+  ];
+  for (const passout of [1, 2]) {
+    for (const [id, probe] of probes) {
+      const world = seed_world();
+      world.era_flag.selectcom = id;
+      world.fixture.store.set('tflag:2', 1);
+      world.fixture.store.set('tflag:899', passout);
+      world.fixture.store.set('abl:31:10', 3);
+      world.fixture.store.set('abl:31:11', 3);
+      const { train_message_a: message } = world.fixture.load_module(
+        'system/train/train-message',
+      );
+      await message();
+      assert.equal(
+        world.fixture.text_lines().some((line) => line.includes(probe)),
+        passout <= 1,
+        `COM${id}：TFLAG:899 = ${passout} 时姿势句${passout <= 1 ? '落' : '不落'}`,
+      );
+    }
   }
 });
 

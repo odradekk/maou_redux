@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 936; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+export const COUNT = 937; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
 
 export default [
   {
@@ -10064,5 +10064,14 @@ export default [
       "  if ((worn & 1) !== 0 || ((worn & 16) !== 0 && era.get('flag:37'))) {",
     tests: ['com-caress'],
     must_mention: 'FLAG:37 关 → 位 1 不挡',
+  },
+  {
+    desc: 'M11144 姿势句守卫按 C 式「&& 优先」读错（20/22/23 不再吃 TFLAG:899 失神门，源 :1154/:1161/:1168 左结合，#517）',
+    file: 'ere/system/train/com-sex.js',
+    find: '  const position_group =\n    ((com === 20 || com === 26) && passout_guard) ||\n    ((com === 22 || com === 28) && passout_guard) ||\n    ((com === 23 || com === 29) && passout_guard);',
+    replace:
+      '  const position_group =\n    com === 20 ||\n    (com === 26 && passout_guard) ||\n    com === 22 ||\n    (com === 28 && passout_guard) ||\n    com === 23 ||\n    (com === 29 && passout_guard);',
+    tests: ['com-sex'],
+    must_mention: 'COM20：TFLAG:899 = 2 时姿势句不落',
   },
 ];
