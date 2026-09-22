@@ -65,14 +65,30 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const {
   banishment_koujo_family,
+  benki_koujo_family,
+  dungeon_attack_family,
+  dungeon_victory_family,
+  enterenemy_koujo_family,
   exucution_koujo_family,
+  gobi_koujo_family,
   grotesque_koujo_family,
   kojo_message_com_family,
+  kojo_message_markcng_family,
+  kojo_message_palamcng_family,
   museum_koujo_family,
   ntr_koujo_family,
   public_exucution_koujo_family,
   self_kojo_family,
 } = require('#/kojo/kojo-system');
+const {
+  gohoubi_after_koujo_family,
+  gohoubi_request_koujo_family,
+  osioski_koujo_family,
+} = require('#/kojo/kojo-dungeon-after');
+const {
+  ryouzyoku_kojo_family,
+  ryouzyoku_after_kojo_family,
+} = require('#/kojo/kojo-dungeon-ravish');
 const { heart } = require('#/kojo/kojo-text');
 const { game } = require('#/facade/game');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
@@ -3782,9 +3798,6 @@ async function kojo_message_com_4(rand) {
   }
 }
 
-// 注册进分发族（TRYCALLFORM KOJO_MESSAGE_COM_4 的等价物；重复注册抛错）
-kojo_message_com_family.register(4, kojo_message_com_4);
-
 /**
  * @DOG_KOJO_4（:3094-3907）：兽奸 PLAY 的专用口上（头部守卫 TEQUIP:89 岔入）。
  * 与主 COM_4 同构：SELECTCOM 0/1/5/6/9/21/27/30/31/34/37/43/56 各支 +
@@ -5331,15 +5344,6 @@ async function self_kojo_k4() {
   return 0;
 }
 
-// 注册进事件口上分发族（TRYCALLFORM SELF_KOJO_K4 的等价物）
-self_kojo_family.register(4, self_kojo_k4);
-ntr_koujo_family.register(4, (rand, p) => ntr_koujo_k4(p));
-museum_koujo_family.register(4, museum_koujo_k4);
-exucution_koujo_family.register(4, exucution_koujo_k4);
-banishment_koujo_family.register(4, banishment_koujo_k4);
-public_exucution_koujo_family.register(4, public_exucution_koujo_k4);
-grotesque_koujo_family.register(4, grotesque_koujo_k4);
-
 /**
  * @DUNGEON_RYOUZYOKU_K4（:4463-4551）：迷宫凌辱前的口上（H13 分派，TARGET = ARG）。
  * 处女/非处女 × 性格分档（冷漠/低姿态/反抗/胆怯/其他）。
@@ -6356,6 +6360,30 @@ async function gobi_koujo_k4(arg_0, rand) {
     }
   }
 }
+
+// 口上族接线：本文件每个真身都必须在下面登记一处（顺序照 kojo-system.js 的
+// 分发表）。漏一处 = 玩家侧看到占位行 / 口上不响——条文与实际接线由
+// test/kojo-register-coverage.test.js 的「有本体必有 register」契约锁守。
+kojo_message_com_family.register(4, kojo_message_com_4);
+kojo_message_palamcng_family.register(4, kojo_message_palamcng_4);
+kojo_message_markcng_family.register(4, kojo_message_markcng_4);
+self_kojo_family.register(4, self_kojo_k4);
+ryouzyoku_kojo_family.register(4, dungeon_ryouzyoku_k4);
+ryouzyoku_after_kojo_family.register(4, dungeon_ryouzyoku_after_k4);
+benki_koujo_family.register(4, benki_koujo_k4);
+dungeon_victory_family.register(4, dungeon_victory_k4);
+dungeon_attack_family.register(4, dungeon_attack_k4);
+ntr_koujo_family.register(4, (rand, p) => ntr_koujo_k4(p));
+exucution_koujo_family.register(4, exucution_koujo_k4);
+museum_koujo_family.register(4, museum_koujo_k4);
+banishment_koujo_family.register(4, banishment_koujo_k4);
+public_exucution_koujo_family.register(4, public_exucution_koujo_k4);
+grotesque_koujo_family.register(4, grotesque_koujo_k4);
+enterenemy_koujo_family.register(4, enterenemy_koujo_k4);
+gohoubi_request_koujo_family.register(4, gohoubi_request_koujo_k4);
+gohoubi_after_koujo_family.register(4, gohoubi_after_koujo_k4);
+osioski_koujo_family.register(4, osioski_koujo_k4);
+gobi_koujo_family.register(4, gobi_koujo_k4);
 
 module.exports = {
   STUBBED_CALLS,
