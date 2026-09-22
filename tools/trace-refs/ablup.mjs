@@ -1112,7 +1112,8 @@ export const FILES = [
       { src: ABLUP16, ref: '9-115', any: [lit('@ABLUP16')] },
       { src: ABLUP16, ref: '136-533', any: [lit('@DECIDE_ABLUP16')] },
       // 审查修复新增引用：DECIDE_ABLUP16 在 ABL.ERB 的另两个调用点之一
-      // （@SHOW_ABLUP_SELECT 的"*"标记；:78 已由 ABLUP10 的 ref '78' 覆盖）
+      // （@SHOW_ABLUP_SELECT 的"*"标记；本表的 ABL.ERB `:78` 条目在 #512 补上，
+      // 那之前只靠 ABLUP10 的 ref '78' 按值兜底）
       { src: ABL, ref: '146', any: [lit('CALL DECIDE_ABLUP16')] },
       {
         src: ABLUP16,
@@ -1446,186 +1447,356 @@ export const FILES = [
         ref: '79-85',
         any: [lit('@CORE_ABLUP12')],
       },
+      // —— ABLUP37.ERB（#512 重落位；区间按 JS 注释约定：块体不含前导 `;`
+      //    注释行，IF/ELSEIF 对各自成段）——
       {
-        src: 'target/ERB/ABL/ABLUP17.ERB',
-        ref: '8-77',
-        any: [lit('@ABLUP17')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP17.ERB',
-        ref: '94-358',
-        any: [lit(';露出癖のLvUP可否判定')],
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '8-76',
+        any: [lit('@ABLUP37')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '11-14',
+        ref: '94-443',
+        any: [lit('@DECIDE_ABLUP37')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '9',
+        any: [whole_line('DRAWLINE')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '10-13',
         any: [lit(';PRINTL 卖淫中毒越高，越容易在卖淫中感到满足，')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '104-148',
-        any: [lit('IF ABL:37 == 0')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '150-162',
-        any: [lit('\tA = 150000')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '164-168',
-        any: [lit('\t\tTIMES D , 1.50\n\tELSEIF ABL:37 == 4')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '169-173',
-        any: [lit('\t\tTIMES D , 2.00\n\tELSEIF ABL:37 == 5')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '185-191',
-        any: [lit(';反抗心')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '192-198',
-        any: [lit(';刚强')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '199-203',
-        any: [lit(';克制')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '204-208',
-        any: [lit(';保守的')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '214-217',
-        any: [lit(';悲观的')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '218-222',
-        any: [lit(';爱表现')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '223-227',
-        any: [lit('IF TALENT:28')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '232-236',
-        any: [lit(';看轻贞操')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '237-241',
-        any: [lit('ELSEIF TALENT:31')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '242-246',
-        any: [lit(';压抑')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '247-251',
-        any: [lit(';开放')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '257-261',
-        any: [lit(';抵抗')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '262-266',
-        any: [lit(';害羞')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '272-276',
-        any: [lit(';不知羞耻')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '277-281',
-        any: [lit(';献身的')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '282-286',
-        any: [lit(';容易上瘾')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '287-291',
+        ref: '16-18',
+        // 单写条件行会撞进 @DECIDE_ABLUP37 的 `SIF ABL:37 >= 5 && …`（子串），
+        // 故带上紧随的 PRINTW 行。
         any: [
           lit(
-            'IF TALENT:72\n\tTIMES A , 0.50\n\tTIMES B , 0.50\n\tTIMES C , 0.50\n\tTIMES D , 0.50',
+            'IF ABL:37 >= 5 && (TALENT:76 == 0 && TALENT:31 == 0 && TALENT:180 == 0)\n\tPRINTW 需要特殊素质才能继续提升',
           ),
         ],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '293-325',
-        any: [lit(';淫乱')],
+        ref: '19-21',
+        any: [lit('ELSEIF ABL:37 >= 10')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '315-316',
-        any: [lit('IF TALENT:153')],
+        ref: '109-159',
+        any: [lit('IF ABL:37 == 0')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '327-330',
-        any: [lit(';崩坏')],
+        ref: '162-184',
+        any: [lit('IF TALENT:27')],
+      },
+      // 倍率块的锚取「IF/ELSEIF + 首行 TIMES」两行：单写 `IF TALENT:N` 会撞进
+      // 更长的编号（`IF TALENT:12` 命中 `IF TALENT:123`），命中数 >1 即弱锚。
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '187-192',
+        any: [lit('IF TALENT:11\n\tTIMES A , 1.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '317-321',
-        any: [lit(';疯狂')],
+        ref: '194-199',
+        any: [lit('IF TALENT:12\n\tTIMES A , 1.20')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '350-351',
-        any: [lit('IF TALENT:183')],
+        ref: '201-206',
+        any: [lit('IF TALENT:20\n\tTIMES A , 1.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '44',
-        any: [lit('\tPRINTFORML %EXPNAME:50%{F}以上(现在{EXP:50})且')],
+        ref: '208-213',
+        any: [lit('IF TALENT:24\n\tTIMES A , 1.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '59-60',
-        any: [lit('ELSEIF I != 0 && RESULT == 0')],
+        ref: '245-249',
+        any: [lit('IF TALENT:32\n\tTIMES A , 1.20')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '8-78',
-        any: [lit('@ABLUP37')],
+        ref: '216-221',
+        any: [lit('IF TALENT:26\n\tTIMES A , 0.90')],
       },
       {
         src: 'target/ERB/ABL/ABLUP37.ERB',
-        ref: '93-187',
-        any: [lit('@DECIDE_ABLUP37')],
+        ref: '223-228',
+        any: [lit('IF TALENT:28\n\tTIMES A , 0.90')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '231-235',
+        any: [lit('IF TALENT:30\n\tTIMES A , 2.00')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '237-241',
+        any: [lit('ELSEIF TALENT:31\n\tTIMES A , 0.90')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '251-255',
+        any: [lit('ELSEIF TALENT:33\n\tTIMES A , 0.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '259-264',
+        any: [lit('IF TALENT:34\n\tTIMES A , 2.00')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '267-271',
+        any: [lit('IF TALENT:35\n\tTIMES A , 1.10')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '273-277',
+        any: [lit('ELSEIF TALENT:36\n\tTIMES A , 0.90')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '280-285',
+        any: [lit('IF TALENT:63\n\tTIMES A , 0.90')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '287-292',
+        any: [lit('IF TALENT:72\n\tTIMES A , 0.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '294-299',
+        any: [lit('IF TALENT:76\n\tTIMES A , 0.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '301-306',
+        any: [lit('IF TALENT:82\n\tTIMES A , 3.00')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '308-313',
+        any: [lit('IF TALENT:85\n\tTIMES A , 1.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '315-320',
+        any: [lit('IF TALENT:153\n\tTIMES A , 2.00')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '322-327',
+        any: [lit('IF TALENT:123\n\tTIMES A , 0.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '329-334',
+        any: [lit('IF TALENT:9\n\tTIMES A , 0.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '336-341',
+        any: [lit('IF TALENT:180\n\tTIMES A , 0.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '343-348',
+        any: [lit('IF TALENT:181\n\tTIMES A , 0.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '350-355',
+        any: [lit('IF TALENT:183\n\tTIMES A , 0.90')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '357-362',
+        any: [lit('IF TALENT:184\n\tTIMES A , 2.00')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '368-408',
+        any: [lit('IF ABL:37 >= 2 && (TALENT:123 == 0 && TALENT:9 == 0)')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '401-402',
+        any: [lit('SIF F < 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '403-407',
+        any: [lit('IF EXP:50 < F')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '411-418',
+        any: [lit('SIF A < 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '421-424',
+        any: [lit('IF ABL:11 < ABL:37 + 1\n\tI |= 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '427-428',
+        any: [lit('SIF JUEL:4 < A\n\tI |= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '430-431',
+        any: [lit('SIF JUEL:5 < B\n\tI |= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '433-434',
+        any: [lit('SIF JUEL:6 < C')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '436-437',
+        any: [lit('SIF EXP:74 < D\n\tI |= 2')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '95-96',
+        any: [lit('SIF ABL:37 + ABL:38 >= 10')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '43-44',
+        any: [
+          lit('SIF F > 0\n\tPRINTFORML %EXPNAME:50%{F}以上(现在{EXP:50})且'),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '47',
+        any: [
+          lit('PRINTFORML %ABLNAME:11%LV{ABL:37 + 1}以上(现在LV{ABL:11})且'),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '49-50',
+        any: [lit('PRINTFORM [0] - %PALAMNAME:4%点数×{JUEL:4}/{A}')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '52',
+        any: [lit('PRINTFORML 　　　%PALAMNAME:5%点数×{JUEL:5}/{B}')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '53',
+        any: [lit('PRINTFORML 　　　%PALAMNAME:6%点数×{JUEL:6}/{C}')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '54',
+        any: [lit('PRINTFORML 　　　%EXPNAME:74%　{EXP:74}/{D}')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '55',
+        any: [lit('PRINTL [100] - 停止')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '57',
+        any: [whole_line('INPUT')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '60-61',
+        any: [lit('ELSEIF I != 0 && RESULT == 0\n\tPRINTL 未满足条件')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '63-64',
+        any: [lit('ELSEIF RESULT == 100\n\tRETURN 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '67',
+        any: [lit('ABL:37 += 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '68-72',
+        any: [lit('IF RESULT == 0\n\tJUEL:4 -= A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP37.ERB',
+        ref: '74',
+        any: [lit('PRINTFORML %ABLNAME:37%变为LV{ABL:37}。')],
+      },
+      // —— ABLUP39.ERB（#512 重落位；约定同 ABLUP37）——
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '8-76',
+        any: [lit('@ABLUP39')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '22-24',
-        any: [lit(';でも、珠が沢山あるの場合はレベルアップできる。')],
+        ref: '93-257',
+        any: [lit('@DECIDE_ABLUP39')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '26-31',
+        ref: '9',
+        any: [whole_line('DRAWLINE')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '10-13',
+        any: [lit(';PRINTL 兽奸中毒越高，越容易在兽交中感到满足，')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '16-18',
+        // 同 ABLUP37：单写条件行会撞进 @DECIDE 里的 `SIF ABL:39 >= 5 && …`
+        any: [
+          lit(
+            'IF ABL:39 >= 5 && (TALENT:76 == 0 && TALENT:124 == 0 && TALENT:136 == 0)\n\tPRINTW 需要特殊素质才能继续提升',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '19-21',
+        any: [lit('ELSEIF ABL:39 >= 10')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '24-30',
+        any: [lit('ELSEIF ABL:32 + ABL:33 + ABL:39 >= 10')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '26',
         any: [
           lit(
             '\tPRINTFORML 精液中毒({ABL:32})＋百合中毒({ABL:33})＋兽奸中毒({ABL:39})上限为10',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '27',
+        any: [
+          lit(
+            '\tPRINTFORML 至少达成%PALAMNAME:5%点数{ABL:39 * ABL:39 * 4000}点或%PALAMNAME:6%点数{ABL:39 * ABL:39 * 4000}点的其中一项',
           ),
         ],
       },
@@ -1636,160 +1807,321 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '104-143',
-        any: [lit(';条件別にＯＫかダメかを記録する')],
+        ref: '107-147',
+        any: [lit('IF ABL:39 == 0')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '145-149',
-        any: [lit('\tB = 300000')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '151-165',
-        any: [lit('\tB = ABL:39 * ABL:39 * 4000\t')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '167-171',
-        any: [lit('\t\tTIMES C , 3.00')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '173-177',
+        ref: '149-152',
         any: [
           lit(
-            'SIF ABL:39 >= 2 && (TALENT:72 == 0 && TALENT:76 == 0 && TALENT:136 == 0)',
+            'IF ABL:32 + ABL:33 + ABL:39 >= 10\n\tA = ABL:39 * ABL:39 * 4000',
           ),
         ],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '184-188',
-        any: [lit(';否定快感')],
+        ref: '155-169',
+        any: [lit('IF TALENT:27')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '189-193',
-        any: [lit('\tTIMES B , 1.75')],
+        ref: '173-174',
+        any: [
+          lit(
+            'SIF ABL:39 >= 2 && (TALENT:72 == 0 && TALENT:76 == 0 && TALENT:136 == 0)\n\t\tF = ABL:39 + 1',
+          ),
+        ],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '194-198',
-        any: [lit(';倒錯的')],
+        ref: '177-181',
+        any: [lit('IF TALENT:20\n\tTIMES A , 2.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '209-214',
-        any: [lit(';动物耳朵')],
+        ref: '183-185',
+        any: [lit('IF TALENT:70\n\tTIMES A , 0.75')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '216-221',
-        any: [lit('IF TALENT:136')],
+        ref: '187-189',
+        any: [lit('ELSEIF TALENT:71\n\tTIMES A , 1.75')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '228-229',
-        any: [lit(';最低でも１回・１個は必要')],
+        ref: '192-196',
+        any: [lit('IF TALENT:72\n\tTIMES A , 0.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '233-234',
-        any: [lit('SIF C < 1')],
+        ref: '198-202',
+        any: [lit('IF TALENT:80\n\tTIMES A , 0.75')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '236-237',
-        any: [lit('SIF ABL:11 < ABL:39 + 1')],
+        ref: '204-208',
+        any: [lit('IF TALENT:123\n\tTIMES A , 0.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '100-102',
+        ref: '210-214',
+        any: [lit('IF TALENT:124\n\tTIMES A , 0.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '216-220',
+        any: [lit('IF TALENT:136\n\tTIMES A , 0.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '222-226',
+        any: [lit('IF TALENT:85\n\tTIMES A , 1.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '229-234',
+        any: [lit('SIF A < 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '237-238',
+        any: [lit('SIF ABL:11 < ABL:39 + 1\n\tI |= 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '240-241',
+        any: [lit('SIF JUEL:5 < A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '243-244',
+        any: [lit('SIF JUEL:6 < B')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '247-248',
+        any: [lit('SIF EXP:56 < C')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '250-251',
+        any: [lit('SIF EXP:50 < F')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '101-102',
         any: [lit('SIF ABL:32 + ABL:33 + ABL:39 >= 30')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '48-49',
+        ref: '45-46',
+        any: [
+          lit('SIF F > 0\n\tPRINTFORML %EXPNAME:50%{F}以上(现在{EXP:50})且'),
+        ],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '49',
         any: [
           lit('PRINTFORML %ABLNAME:11%LV{ABL:39 + 1}以上(现在LV{ABL:11})且'),
         ],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '52-55',
-        any: [lit('PRINTV GET_ABLUP_STATE(I)')],
+        ref: '51-52',
+        any: [lit('PRINTFORM [0] - %PALAMNAME:5%点数×{JUEL:5}/{A}')],
       },
-      { src: 'target/ERB/ABL/ABLUP39.ERB', ref: '58', any: [lit('INPUT')] },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '67-68',
+        ref: '54',
+        any: [lit('PRINTFORML 　　　%PALAMNAME:6%点数×{JUEL:6}/{B}')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '55',
+        any: [lit('PRINTFORML 　　　%EXPNAME:56%　{EXP:56}/{C}')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '56',
+        any: [lit('PRINTL [100] - 停止')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '58',
+        any: [whole_line('INPUT')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '61-62',
+        any: [lit('ELSEIF I != 0 && RESULT == 0\n\tPRINTL 未满足条件')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '64-65',
+        any: [lit('ELSEIF RESULT == 100\n\tRETURN 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '68',
         any: [lit('ABL:39 += 1')],
       },
       {
         src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '73-74',
+        ref: '69-72',
+        any: [lit('IF RESULT == 0\n\tJUEL:5 -= A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP39.ERB',
+        ref: '74',
         any: [lit('PRINTFORML %ABLNAME:39%变为LV{ABL:39}。')],
       },
+      // —— ABLUP40.ERB（#512 重落位）——
       {
-        src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '5-59',
-        any: [lit('@ABLUP39')],
-      },
-      {
-        src: 'target/ERB/ABL/ABLUP39.ERB',
-        ref: '63-116',
-        any: [lit('ELSEIF RESULT == 100')],
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '5-58',
+        any: [lit('@ABLUP40')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '111-112',
-        any: [lit(';倒錯的')],
+        ref: '63-142',
+        any: [lit('@DECIDE_ABLUP40')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '113-114',
-        any: [lit('IF TALENT:80')],
+        ref: '70-90',
+        any: [lit('IF ABL:40 == 0')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '116-117',
-        any: [lit(';狂気')],
+        ref: '94-95',
+        any: [
+          lit(
+            'SIF ABL:40 >= 2 && (TALENT:72 == 0 && TALENT:76 == 0)\n\t\tF = ABL:40 + 1',
+          ),
+        ],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '123-124',
-        any: [lit(';最低でも１回・１個は必要')],
+        ref: '98-100',
+        any: [lit('IF TALENT:20\n\tTIMES A , 2.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '33-41',
-        any: [lit('\tSIF I & 2')],
+        ref: '102-103',
+        any: [lit('IF TALENT:70\n\tTIMES A , 0.75')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '27-28',
+        ref: '105-106',
+        any: [lit('ELSEIF TALENT:71\n\tTIMES A , 1.75')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '109-111',
+        any: [lit('IF TALENT:72\n\tTIMES A , 0.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '113-115',
+        any: [lit('IF TALENT:80\n\tTIMES A , 0.75')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '117-119',
+        any: [lit('IF TALENT:123\n\tTIMES A , 0.50')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '124-125',
+        any: [lit('SIF A < 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '128-129',
+        any: [lit('SIF ABL:11 < ABL:40 + 1\n\tI |= 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '131-132',
+        any: [lit('SIF JUEL:15 < A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '135-136',
+        any: [lit('SIF EXP:50 < F\n\tI |= 2')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '28-37',
+        any: [lit('IF I == 0\n\tPRINT ＯＫ')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '21-22',
+        any: [lit('SIF F > 0\n\tPRINTFORML %EXPNAME:50%{F}以上(現在{EXP:50})')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '25',
+        any: [lit('PRINTFORML %ABLNAME:11%LV{ABL:39 + 1}以上(現在LV{ABL:11})')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '27-37',
         any: [lit('PRINTFORM [0] - %PALAMNAME:15%点数×{JUEL:15}/{A} ……')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '32-42',
-        any: [lit('\t\tPRINT 点数不足 ')],
+        ref: '39',
+        any: [lit('PRINTL [100] - 放弃')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '22-64',
-        any: [lit('\tPRINTFORML %EXPNAME:50%{F}以上(現在{EXP:50})')],
+        ref: '41',
+        any: [whole_line('INPUT')],
       },
       {
         src: 'target/ERB/ABL/ABLUP40.ERB',
-        ref: '88-120',
-        any: [lit('ELSEIF ABL:40 == 9')],
+        ref: '44-45',
+        any: [lit('ELSEIF I != 0 && RESULT == 0\n\tPRINTL 条件不足')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '47-48',
+        any: [lit('ELSEIF RESULT == 100\n\tRETURN 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '51',
+        any: [lit('ABL:40 += 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '52-54',
+        any: [lit('IF RESULT == 0\n\tJUEL:15 -= A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP40.ERB',
+        ref: '56',
+        any: [lit('PRINTFORML %ABLNAME:40%のレベルが{ABL:40}になりました')],
+      },
+      // —— ABLUP99.ERB（#512 重落位）——
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '22-72',
+        any: [lit('@ABLUP99')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
-        ref: '22-23',
-        any: [lit('@ABLUP99\nDRAWLINE')],
+        ref: '88-143',
+        any: [lit('@DECIDE_ABLUP99')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '23',
+        any: [whole_line('DRAWLINE')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
@@ -1798,44 +2130,114 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
-        ref: '98-103',
+        ref: '98-104',
         any: [lit('IF MARK:3 == 1')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
-        ref: '109-111',
-        any: [lit(';嚣张')],
+        ref: '107-109',
+        any: [lit('IF TALENT:12\n\tTIMES A , 3.00')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '112-114',
+        any: [lit('IF TALENT:16\n\tTIMES A , 1.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
         ref: '117-119',
-        any: [lit('IF TALENT:13')],
+        any: [lit('IF TALENT:13\n\tTIMES A , 0.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
-        ref: '121-122',
-        any: [lit(';爱慕')],
-      },
-      { src: 'target/ERB/ABL/ABLUP99.ERB', ref: '35', any: [lit('A = 0')] },
-      {
-        src: 'target/ERB/ABL/ABLUP99.ERB',
-        ref: '39-42',
-        any: [lit(';条件別にＯＫかダメかを記録する')],
+        ref: '122-124',
+        any: [lit('IF TALENT:85\n\tTIMES A , 0.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
-        ref: '4-58',
-        any: [lit(';>屈服刻印を消してみるテスト')],
+        ref: '127-128',
+        any: [lit('SIF MARK:3 > MARK:2')],
       },
       {
         src: 'target/ERB/ABL/ABLUP99.ERB',
-        ref: '72-118',
-        any: [lit('@CORE_ABLUP99')],
+        ref: '131',
+        any: [lit('B = MARK:3 + 2')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '132-133',
+        any: [lit('SIF B > ABL:10\n\tI |= 4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '136-137',
+        any: [lit('SIF JUEL:6 < A\n\tI |= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '48',
+        any: [lit('PRINTFORML %ABLNAME:10%LV{B}以上(现在LV{ABL:10})必要')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '45',
+        any: [lit('PRINTFORML %MARKNAME:2%{MARK:3}以上(现在LV{MARK:2})且')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '50-51',
+        any: [lit('PRINTFORM [0] - %PALAMNAME:6%点数×{JUEL:6}/{A}')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '54',
+        any: [lit('PRINTL [100] - 停止')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '56',
+        any: [whole_line('INPUT')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '59-60',
+        any: [lit('ELSEIF I != 0 && RESULT == 0\n\tPRINTL 未满足条件')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '62-63',
+        any: [lit('ELSEIF RESULT == 100\n\tRETURN 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '66',
+        any: [lit('MARK:3 -= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '68',
+        any: [lit('JUEL:6 -= A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP99.ERB',
+        ref: '70',
+        any: [lit('PRINTFORML %MARKNAME:3%下降为LV{MARK:3}。')],
+      },
+      // —— ABLUP100.ERB（#512 重落位）——
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '4-56',
+        any: [lit('@ABLUP100')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '4-5',
-        any: [lit('@ABLUP100\nDRAWLINE')],
+        ref: '72-153',
+        any: [lit('@DECIDE_ABLUP100')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '5',
+        any: [whole_line('DRAWLINE')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
@@ -1844,52 +2246,137 @@ export const FILES = [
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '79-88',
+        ref: '82-92',
         any: [lit('IF MARK:10 == 1')],
       },
-      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '94-96', any: [lit(';胆小')] },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '98-100',
-        any: [lit(';智慧')],
+        ref: '95-97',
+        any: [lit('IF TALENT:10\n\tTIMES A, 1.20')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '106-108',
-        any: [lit('\tTIMES A , 1.80')],
+        ref: '100-102',
+        any: [lit('IF TALENT:172\n\tTIMES A, 0.80')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '105-107',
+        any: [lit('IF TALENT:12\n\tTIMES A , 1.80')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
         ref: '110-112',
-        any: [lit('IF TALENT:16')],
+        any: [lit('IF TALENT:16\n\tTIMES A , 1.20')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '114-116',
-        any: [lit(';坦率')],
+        ref: '115-117',
+        any: [lit('IF TALENT:13\n\tTIMES A , 0.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '119-123',
-        any: [lit(';爱慕')],
+        ref: '120-122',
+        any: [lit('IF TALENT:85\n\tTIMES A , 0.50')],
       },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '33-36',
+        ref: '125-127',
+        any: [lit('IF TALENT:76\n\tTIMES A , 0.70')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '129-141',
+        any: [lit('SIF MARK:10 < C - 5')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '131',
+        any: [lit('C = ABL:0 + ABL:1 + ABL:2 + ABL:3 + ABL:4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '146-147',
+        any: [lit('SIF EXP:99 < A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '32',
+        any: [lit('PRINTFORML 战斗等级LV{B}以上(现在LV{CFLAG:9})必要，然后')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '29',
+        any: [lit('PRINTFORML 各处感觉总计{MARK:10 + 5}以上(现在{C})或')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '34-35',
         any: [lit('PRINTFORM [0] - %EXPNAME:99%点数×{EXP:99}/{A} ……')],
       },
-      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '40', any: [lit('INPUT')] },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
-        ref: '89',
-        any: [lit('\tA = 30000')],
+        ref: '38',
+        any: [lit('PRINTL [100] - 停止')],
       },
-      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '94', any: [lit(';胆小')] },
-      { src: 'target/ERB/ABL/ABLUP100.ERB', ref: '99', any: [lit(';智慧')] },
       {
         src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '40',
+        any: [whole_line('INPUT')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '43-44',
+        any: [lit('ELSEIF I != 0 && RESULT == 0\n\tPRINTL 未满足条件')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '46-47',
+        any: [lit('ELSEIF RESULT == 100\n\tRETURN 0')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '50',
+        any: [lit('MARK:10 -= 1')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '52',
+        any: [lit('EXP:99 -= A')],
+      },
+      {
+        src: 'target/ERB/ABL/ABLUP100.ERB',
+        ref: '54',
+        any: [lit('PRINTFORML %MARKNAME:10%下降为LV{MARK:10}。')],
+      },
+      // @SHOW_ABLUP_SELECT 里对 @DECIDE_ABLUP 族的五处独立调用（page-ablup 的
+      // `*` 标记来源）：`:78` 在 REPEAT 循环里、`:89/:94/:99` 是循环后的三处
+      // 单独调用、`:105` 在 `[IF_DEBUG]` 块里。其中 `:78`/`:94` 用整行锚——
+      // `CALL DECIDE_ABLUP`、`CALL DECIDE_ABLUP4` 会撞进更长的调用名。
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '78',
+        any: [whole_line('CALL DECIDE_ABLUP')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '89',
+        any: [lit('CALL DECIDE_ABLUP99')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '94',
+        any: [whole_line('CALL DECIDE_ABLUP4')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
+        ref: '99',
+        any: [lit('CALL DECIDE_ABLUP40')],
+      },
+      {
+        src: 'target/ERB/ABL/ABL.ERB',
         ref: '105',
-        any: [lit('IF TALENT:12')],
+        any: [lit('CALL DECIDE_ABLUP100')],
       },
       {
         src: 'target/ERB/ABL/ABL.ERB',
