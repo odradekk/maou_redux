@@ -13,8 +13,9 @@
 //   由 gate_shape 随 --verify 秒级核对。引用变异时也可用运行时生成的
 //   稳定短号 [M-xxxxxxxx]（desc 内容哈希）或直接引 desc。字段：
 //     { desc, file, find, replace, tests, must_mention, engine? }
-//   - find 必须在靶文件中恰好出现 1 次（失配 = 直接判失败：靶代码被重构后，
-//     工具当场红而不是静默失守——这条安全性质不许拆）；
+//   - find 必须在靶文件中恰好出现 1 次（失配 = 直接判失败：靶代码被重构、
+//     或上次变异被强杀留下了残留，工具当场红而不是静默失守——这条安全性质
+//     不许拆；两种成因要做的处置相反，报错里分开写，见 gate_targets）；
 //   - tests = 应变红的测试文件名（不含 test/ 前缀与 .test.js 后缀）；
 //   - must_mention = 测试输出里必须能找到的片段，证明红的正是被测行为。
 //     语义是「输出包含该片段」，不是「只有它红了」——按实义命名
@@ -67,6 +68,21 @@
 //   --asar <path|none>      显式指引擎 asar（none = 视为无引擎；给了就不再
 //                           三址回落，所指不存在按无引擎处理——测试与诊断
 //                           用，与 tools/engine-contract-check.mjs 同款标准）
+//
+// 两条与「工作区干净」有关的性质（#532）：
+//
+//   **`--verify` 全程只读。** 它只读条目表、靶文件与 tests: 声明的出处，
+//   不写工作区里的任何一个字节——门全过与门失败两种形态都是（门失败时也
+//   不代为还原）。测试用「靶文件置为只读」锁住这条：往里加一次写，Windows
+//   上当场 EPERM、Linux 上是 EACCES。反过来，`--verify` 的绿**不等于**工作
+//   区干净：它照样读工作区，残留态下给的是假结论（下面那条治它）。
+//
+//   **启动自检（任何档位，含 --verify）。** 靶文件若停在「HEAD 内容应用了
+//   某条变异」的残留态（变异被强杀时 finally 不执行），当场点出 M 编号与
+//   还原命令并退出 1，不继续跑——否则后续结果全部不可信。判据、开销与已知
+//   盲区见 detect_residue 头注。变异运行自己拉起来的进程跳过这道自检（标记
+//   的 root 与自己的相同，那种脏是故意的）：`MUTATION_CHECK_INFLIGHT_ROOT`，
+//   见 INFLIGHT_ROOT_ENV 头注。
 //
 // 退出码：全拦 = 0（无引擎环境下另允许「跳过数恰等于基线」）；任何
 // 失配、误报通过、还原失败、副本破损 = 1。测试驱动工具看退出码，不在测试
@@ -154,6 +170,25 @@ const ENGINE_SKIP_BASELINE = 19;
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
 const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
+
+/**
+ * 「我正在就地变异这个仓库根」的环境标记（#532）。
+ *
+ * `run_one` 给测试子进程带上它，值就是它正在变异的 root。启动自检只在标记
+ * 与自己的 `--root` 一致时跳过：那条变异是**故意**施加的（测试正要观察被
+ * 改坏的工具或靶文件），不是残留。
+ *
+ * 不加这道口会怎样：靶在本工具自己的文件上时（M733、M9519-M9528 那一批），
+ * 变异就是把 `tools/mutation-check.mjs` 写成「HEAD + 该条变异」——而测试里
+ * 的 `--verify` 跑在真仓库上，被它拉起来的本工具一看：工作树恰好等于某条的
+ * 变异态 → 报残留并拒绝启动。于是这些条目全部变成「无论如何都红」的假守卫
+ * （#532 的 `--changed` 实测：M733 直接判红、六条退化成靠断言消息命中），
+ * 而它们本来要观察的是门 4/门 5 的行为。
+ *
+ * 标记按 root 比对，不按「有没有设」：夹具跑的是另一个 root，自检照常生效
+ * （`test/mutation-check.test.js` 的 #532 用例锁着两个方向）。
+ */
+const INFLIGHT_ROOT_ENV = 'MUTATION_CHECK_INFLIGHT_ROOT';
 
 /**
  * 并行副本不携带的顶层条目（拒绝清单而非白名单：仓库里凡测试可能读到
@@ -355,9 +390,18 @@ function gate_targets(root, entries) {
     }
     const count = content.split(m.find).length - 1;
     if (count !== 1) {
+      // 0 次有两种成因，且该做的事相反：靶代码被重构了要「同步 find 串」，
+      // 上次变异被强杀留下的残留则要「还原」（照着同步 find 串正好把残留
+      // 坐实成正式代码——#513 就吃过这一口，见 detect_residue 头注）。
+      // 启动自检能认出的那一类在此之前就报了，走到这句的残留多半是它查不
+      // 出来的盲区（变异写下时靶文件就带着未提交改动），所以这半句不能省。
+      const hint =
+        count === 0
+          ? `——要么靶代码被重构了（先同步 find 串），要么上次变异被强杀留下了残留` +
+            `（先 git diff ${m.file} 核一下，是残留就 git checkout HEAD -- ${m.file}）`
+          : `——同一段代码在靶文件里出现多次，替换目标有歧义，先同步 find 串再跑`;
       errors.push(
-        `[${m.desc}] find 在 ${m.file} 中出现 ${count} 次（要求恰 1 次）` +
-          `——靶代码被重构了？先同步 find 串再跑`,
+        `[${m.desc}] find 在 ${m.file} 中出现 ${count} 次（要求恰 1 次）${hint}`,
       );
     }
   }
@@ -722,6 +766,19 @@ function locate_asar(root, explicit) {
 // —— 单条执行（就地变异 + 还原 + 还原读回校验）——
 
 /**
+ * 应用一条变异：把 content 里唯一那次 find 换成 replace。
+ *
+ * **必须只有这一份实现**：`run_one` 用它写下去，#532 的残留自检
+ * （detect_residue）用它算「残留该长什么样」。两边一旦分家——比如自检改用
+ * split/join 拼——`String.replace` 对 `$&`、`$'`、`$$` 的展开差异就会让
+ * 判定悄悄漏掉既非逐字也非模板的形态（1246 条条目的 find、1056 条的
+ * replace 里带 `$`），而漏判的正是这个工单要治的那类残留。
+ */
+function apply_mutation(content, m) {
+  return content.replace(m.find, m.replace);
+}
+
+/**
  * 孙进程环境消毒：node --test 给测试文件传 NODE_TEST_CONTEXT，原样漏进
  * 再起的 node --test 会让后者误入「测试子进程上报模式」、静默退 0——
  * 快速模式（npm test 内驱动本工具，工具再起 node --test）必踩，红不了
@@ -774,7 +831,7 @@ function run_one(root, m) {
   let failed_as_expected = false;
   let output = '';
   try {
-    fs.writeFileSync(full, original.replace(m.find, m.replace), 'utf8');
+    fs.writeFileSync(full, apply_mutation(original, m), 'utf8');
     const files = m.tests.map((t) => `test/${t}.test.js`);
     const run_tests = (extra) =>
       spawnSync(
@@ -784,7 +841,9 @@ function run_one(root, m) {
           cwd: root,
           encoding: 'utf8',
           maxBuffer: 16 * 1024 * 1024,
-          env: clean_env(),
+          // 标记挂在 env 上，不经命令行：测试里再拉起来的本工具也要拿到它
+          // （见 INFLIGHT_ROOT_ENV 头注）。
+          env: { ...clean_env(), [INFLIGHT_ROOT_ENV]: root },
         },
       );
     // 先只跑 must_mention 点名的那个用例（#242）。条目表的主流写法就是
@@ -1116,10 +1175,162 @@ async function execute_jobs(args) {
 
 // —— 主流程 ——
 
+/**
+ * 与 HEAD 不一致的文件集（含已暂存）；**非 git 仓库返回 null**（自检跳过）。
+ *
+ * 路径按仓库根解析（cwd = root），与 changed_files 的假定一致。
+ */
+function git_dirty_files(root) {
+  const r = spawnSync('git', ['diff', '--name-only', 'HEAD'], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  if (r.error || r.status !== 0) {
+    return null;
+  }
+  return new Set(
+    r.stdout
+      .split('\n')
+      .map((s) => s.trim())
+      .filter(Boolean),
+  );
+}
+
+/** HEAD 里那份文件的内容；HEAD 里没有（新增文件）取不到时返回 null */
+function git_head_content(root, rel) {
+  const r = spawnSync('git', ['show', `HEAD:${rel}`], {
+    cwd: root,
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+  });
+  return !r.error && r.status === 0 ? r.stdout : null;
+}
+
+/**
+ * 启动自检（#532）：找出**停在变异态**的靶文件——工作树内容恰等于「HEAD
+ * 内容应用了某条变异」的结果。
+ *
+ * 为什么要有它：变异被强杀（`run-node` 到点 `taskkill /T /F`、Ctrl+C 后的
+ * 硬杀）时 `finally` 不执行，靶文件就留在那一态（#493/#500/#505/#513 一晚
+ * 四次）。而这一路**不能指望门 2 兜底**：
+ *
+ *   - 门 2 只查 find 恰 1 次。6077 条里有 38 条的 replace 仍含 find（往
+ *     函数体开头插一句 `return 0;` 的那一类，如 M6882），残留之后 find
+ *     照样恰 1 次——门全绿、真树也全绿，肉眼与 CI 都看不出来，#513 的
+ *     M11069 因此被误提交过一次（66bc345）。
+ *   - 查得出来的那 6000 多条，门 2 报的是「find 出现 0 次」并提示两种成因
+ *     （同步 find 串 / 还原）。只按前一种做——把 find 串改成残留后的样子
+ *     ——正好把残留坐实成正式代码。
+ *
+ * 判据因此做成**恒等**的，而不是「与 HEAD 不一致」：后者会把开发流程整个
+ * 卡死（同票既改靶文件又给它加变异条目是常态，#530 就是这么跑的），也会
+ * 让并行副本与临时夹具全部跑不起来。
+ *
+ * 代价（#532 实测，Windows）：与 HEAD 干净的树上一次 `git diff --name-only
+ * HEAD` 90～110 ms（Linux 更便宜），`--verify` 全程 2371 ms 里占约 4%；每个
+ * 不一致的靶文件再加一次 `git show HEAD:<file>`；每条候选条目一次整串恒等
+ * 判定。最坏形态是口上那种「正被改的大文件 × 它的近千条条目」：1.2 MB ×
+ * 961 条实测 564 ms（一次进程一次，不是每条变异一次）。试过两条更便宜的
+ * 前置（长度差、`startsWith(replace, i)`）能压到 122～215 ms，但
+ * `String.replace` 会展开 replace 里的 `$&`/`$'`/`$$`（1056 条条目的
+ * replace 带 `$`），这两条前置对这些条目不成立——拿它们当判据会漏判残留，
+ * 正是本工单要治的，故保留整串判定。
+ *
+ * 取不到 git 时（非 git 仓库、临时夹具、并行模式的隔离副本——COPY_DENY
+ * 把 `.git` 排除在副本外）整段跳过：副本里的变异由父进程在真树上查过。
+ *
+ * **查得出来的与查不出来的（#532 规范/需求审查各点了一次）**：判据拿 HEAD
+ * 当基准，因此只在「变异写下时靶文件恰与 HEAD 一致」时成立。两种情形**查
+ * 不出来**，都属已知盲区，本票不治：
+ *
+ *   - 靶文件当时就带着未提交改动（开发常态：同票既改靶文件、又跑打它的
+ *     变异条目，SOP §2 的内环）。残留 = 那份工作树内容 + 变异，与
+ *     「HEAD + 变异」不等。这一路只剩门 2 的「find 出现 0 次」在喊，而
+ *     38 条 replace 含 find 的条目连它也不喊。
+ *   - 靶文件还没进 HEAD（新文件，`git show HEAD:<file>` 取不到）——同上。
+ *
+ * 根治的办法是让 `run_one` 事前留痕：写下变异前把原文另存一份、`finally`
+ * 删掉，被强杀时备份还在，于是「基准是什么」有了答案，判定对任意脏工作树
+ * 都成立。那要新增一份状态文件（位置、陈旧备份、并发同名——本仓库常有多
+ * 个 agent 同时跑），是一次独立的改动，建议另开票（#532 完成评论里记了）。
+ *
+ * @returns {null|Array<{file: string, desc: string, number: string|null}>}
+ *   null = 无从查起（非 git 仓库）；数组 = 命中（可能为空）
+ */
+function detect_residue(root, entries) {
+  const dirty = git_dirty_files(root);
+  if (dirty === null) return null;
+  const by_file = new Map();
+  for (const m of entries) {
+    if (typeof m.file !== 'string' || !dirty.has(m.file)) continue;
+    if (!by_file.has(m.file)) by_file.set(m.file, []);
+    by_file.get(m.file).push(m);
+  }
+  const findings = [];
+  for (const [file, candidates] of by_file) {
+    const full = path.join(root, file);
+    if (!fs.existsSync(full)) continue;
+    const working = fs.readFileSync(full, 'utf8');
+    const head = git_head_content(root, file);
+    // HEAD 里取不到这份文件（新增文件只进了索引、还没提交）：无从定义
+    // 「HEAD 内容应用该条变异」，这条靶文件跳过。
+    if (head === null) continue;
+    for (const m of candidates) {
+      // 前置条件与门 2 同一判据：HEAD 里 find 恰 1 次。不恰 1 次说明这条
+      // 的靶代码早就重构过（门 2 会报），不能拿它推残留。
+      if (head.split(m.find).length - 1 !== 1) continue;
+      if (apply_mutation(head, m) === working) {
+        findings.push({
+          file,
+          desc: m.desc,
+          number: extract_m_number(m.desc),
+        });
+      }
+    }
+  }
+  return findings;
+}
+
+/** 只报不修：还原由人决定（工单方向是「脏了立刻发现」，不是「脏了之后自动修」） */
+function report_residue(findings) {
+  for (const f of findings) {
+    const which = f.number === null ? '某条' : `M${f.number}`;
+    console.log(
+      `✗ 启动自检：${f.file} 停在 ${which} 的变异态` +
+        `——工作树内容 = HEAD 内容应用该条变异的结果`,
+    );
+    console.log(`    ${f.desc}`);
+    console.log(`    还原：git checkout HEAD -- ${f.file}`);
+  }
+}
+
 async function main() {
   const args = parse_args(process.argv.slice(2));
   const shards = await load_shards(args.ledger_dir);
   const entries = shards.flatMap((s) => s.entries);
+  // 自检排在门之前：残留态下门 2 那句「find 出现 0 次」会把人引向改 find
+  // 串——那正好把残留坐实。自检先说清是残留、怎么还原，这一路才走不到那句
+  // 误导上。所有模式都查（含 --verify：它同样读工作区，残留态下「结构校验
+  // 全绿」是个假结论）。
+  //
+  // 唯一的例外是「我正因为某个变异运行而被拉起来，而那个变异打的正是我
+  // 这个 root」——那种脏是故意的，见 INFLIGHT_ROOT_ENV 头注。标记按 root
+  // 比对：夹具跑了别的 root 就照常查。
+  const inflight = process.env[INFLIGHT_ROOT_ENV];
+  const residue =
+    inflight && path.resolve(inflight) === args.root
+      ? null
+      : detect_residue(args.root, entries);
+  if (residue !== null && residue.length > 0) {
+    report_residue(residue);
+    console.log(
+      '✗ 靶文件带着残留，拒绝执行：残留态下测试对着已改坏的源码跑，' +
+        '后续结果全部不可信（按上面的命令还原后重跑）',
+    );
+    process.exitCode = 1;
+    return;
+  }
   const gates_ok = run_gates(shards, entries, args);
   if (args.verify) {
     if (gates_ok) {
