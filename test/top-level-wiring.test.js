@@ -57,9 +57,12 @@
  *
  *   - `ere/dungeon/dungeon-trap.js` 的 `dark_juel_trap`（函数内 require
  *     dungeon；#402 的 com-service 延迟 require 随公共段合流删除后换的
- *     同类形态）；
- *   - `ere/kojo/kojo-k2-timid.js`（函数内 require com-hardcore，#233 先例）；
- *   - `ere/kojo/kojo-k3-noble.js`（函数内 require com-hardcore，#234 先例）；
+ *     同类形态。dungeon 不在保护集合，全树守卫本就不会拦它，这格只承担
+ *     扫描器分类的回归，不承担「守卫不拦正解」的实证）；
+ *   - `ere/kojo/kojo-k2-timid.js` 的 `kojo_message_com_2`（函数内 require
+ *     com-hardcore，#233 先例）；
+ *   - `ere/kojo/kojo-k3-noble.js` 的 `kojo_message_com_3`（函数内 require
+ *     com-hardcore，#234 先例）；
  *   - `ere/system/train/com-tentacle.js` 的 `com208`（函数内 require
  *     com-colosseum，原来是顶层，守卫上线即红——与 #233/#234 两次被全量
  *     变异抓到的形态完全同构，只是还没被变异抓到）。
@@ -67,9 +70,10 @@
  * 阳性对照按「文件 × target」聚合断言：该文件所有指向该 target 的 require
  * 都在函数体内（#520）。不写生产行号——行号不承载契约，只用于区分同文件
  * 同 target 的多处 require；写死后任何无关增删行都会撞红（#402/#469/#500/
- * #514 共六次）。当前四格的 target 在各自文件里都只有一处 require；若将来
+ * #514 四张票记六次，计数口径见 #520）。当前四格的 target 在各自文件里都
  * 出现「同 target 顶层与函数内并存」，聚合断言会报出顶层那处，届时再议
  * 区分手段。
+ *
  * 解析不了的 require（非字符串参数）抛错，不许静默漏过（#274 的既有
  * 约定：扫描器解析不了新写法必须红，不能假装看不见）。
  *
@@ -503,7 +507,7 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
   // target」聚合断言：该文件中所有指向 target 的 require 都在函数体内，
   // 且至少存在一处（零处则阳性对照失去意义）。不写生产行号——行号不承载
   // 契约，只用于区分同文件同 target 的多处 require；写死后任何无关增删行
-  // 都会撞红（#402/#469/#500/#514 共六次，#520 解耦）。对照来源见文件头。
+  // 都会撞红（四张票记六次，计数口径见文件头，#520 解耦）。对照来源见文件头。
   const cases = [
     ['ere/dungeon/dungeon-trap.js', '#/dungeon/dungeon'],
     ['ere/kojo/kojo-k2-timid.js', '#/system/train/com-hardcore'],
@@ -525,6 +529,20 @@ test('扫描器：正确区分顶层与函数体内 require（现存阳性对照
       );
     }
   }
+  // 反向对照：顶层 require 必须判 true——否则把 top_level 恒置 false 的
+  // 扫描器也能让上面四格全绿（规范审查 F1，#520）。用内联字符串字面量，
+  // 不读生产文件，天然对行号免疫。
+  assert.equal(
+    scan_requires("const x = require('#/a');")[0].top_level,
+    true,
+    '顶层 require 应判 top_level=true',
+  );
+  assert.equal(
+    scan_requires("function f() {\n  const x = require('#/a');\n }")[0]
+      .top_level,
+    false,
+    '函数体内 require 应判 top_level=false',
+  );
 });
 
 test('保护集合：main-loop 清单 ∩ 族注册，底座不进表', () => {
