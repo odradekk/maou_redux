@@ -358,7 +358,7 @@ test('每个口上本体都注册进了它所属的族', () => {
   );
 });
 
-test('每族的注册号数与扫到的本体条数相等，且第二参与编号对得上', () => {
+test('每族的注册号数与扫到的本体条数相等，且注册的第二参就是该本体', () => {
   const found = bodies_cached();
   const problems = [];
   for (const family of [...coverage_cached().keys()].sort()) {
@@ -372,18 +372,22 @@ test('每族的注册号数与扫到的本体条数相等，且第二参与编�
     if (ids.size !== bodies_count) {
       problems.push(`${family} 注册号 ${ids.size} / 本体 ${bodies_count}`);
     }
-    // 第二参若在本文件里有定义，其尾号必须等于注册号：`register(2, X_k3)`
-    // 这类「号与函数对不上」当场红。适配器/包装函数（如
+    // 第二参必须就是该族该号的本体：`register(2, X_k3)`（号与函数对不上）与
+    // `register(2, 别的本体)`（号对、函数错）都当场红。适配器/包装函数（如
     // ntr_koujo_family 的 adapt_legacy_ntr_koujo，定义在 kojo-system.js）
     // 不在本文件，跳过——那不是本体，核对不了也不该猜。
     for (const [file, rows] of REGISTERS) {
       for (const row of rows) {
         if (row.family !== family || row.fn === null) continue;
         if (!DEFINED.get(file).has(row.fn)) continue;
-        const tail = row.fn.match(/(\d+)$/);
-        if (tail === null || Number(tail[1]) !== row.id) {
+        const body = found.find(
+          (row2) =>
+            row2.file === file && row2.family === family && row2.id === row.id,
+        );
+        if (body === undefined || body.fn !== row.fn) {
           problems.push(
-            `${file} 的 ${row.family}.register(${row.id}, ${row.fn}) 号与函数对不上`,
+            `${file} 的 ${row.family}.register(${row.id}, ${row.fn}) 与本体对不上` +
+              `（该族该号在本文件的本体是 ${body === undefined ? '无' : body.fn}）`,
           );
         }
       }
