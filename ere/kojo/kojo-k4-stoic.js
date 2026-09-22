@@ -50,13 +50,13 @@
  * == 非调教口上（#209 裁定 2：本票连带） ==
  *
  * DOG_KOJO_4（兽奸）与 COLOSSEUM_KOJO_4（死斗场）由头部守卫直调（真身
- * 在本文件）；BENKI_KOUJO_K4 / NTR_KOUJO_K4 / EXUCUTION_KOUJO_K4 /
+ * 在本文件，不经分发族）；BENKI_KOUJO_K4 / NTR_KOUJO_K4 / EXUCUTION_KOUJO_K4 /
  * MUSEUM_KOUJO_K4 / BANISHMENT_KOUJO_K4 / PUBLIC_EXUCUTION_KOUJO_K4 /
  * GROTESQUE_KOUJO_K4 / ENTERENEMY_KOUJO_K4 / GOHOUBI_REQUEST_KOUJO_K4 /
  * GOHOUBI_AFTER_KOUJO_K4 / OSIOKI_KOUJO_K4 / GOBI_KOUJO_K4 /
  * DUNGEON_RYOUZYOKU_K4 / DUNGEON_RYOUZYOKU_AFTER_K4 / DUNGEON_VICTORY_K4 /
- * DUNGEON_ATTACK_K4 以 module 导出随各自调度侧接线（ere 侧 dispatch 族与
- * 调用点在阶段 5 落地；SELF_KOJO_K4 注册进 self_kojo_family）。
+ * DUNGEON_ATTACK_K4 以 module 导出，并在文件末尾统一注册进各自的分发族
+ * （SELF_KOJO_K4 进 self_kojo_family；#514 把此前漏掉的 12 处一并补齐）。
  */
 
 const era = require('#/era-electron');
