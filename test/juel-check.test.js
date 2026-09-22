@@ -459,6 +459,26 @@ test('交互循环：能力分支走真身、重绘后可再选（进得去出�
   );
 });
 
+test('交互循环：能力分支命中表兜底——handler 缺位的编号仍打 @ABLUPxx 占位（#521）', async () => {
+  const fixture = create_era_fixture();
+  const juel_check = seed_world(fixture);
+  // #467 起 ABLUP_IDS 的全部编号都接了真身，else-if 兜底分支在按钮白名单
+  // 下不可达，M38 因此逃逸（#521）。兜底契约本身仍在：ABLUP_IDS 里的编号
+  // 失去 handler（未来接线遗漏/新存根）时，分发必须落 @ABLUPxx 占位行，
+  // 而不是静默无操作——STUBBED_ABLUP_NAMES 与 stub-registry 的记载都以
+  // 它为前提。从导出表摘掉 99 模拟该状态：夹具每例重建 ere/ 模块缓存，表
+  // 手术不外泄；[99] 反抗刻印行照常打印，白名单放行。
+  delete juel_check.ABLUP_HANDLERS[99];
+  fixture.set_inputs(99, 999);
+
+  await juel_check.run_juel_check();
+
+  assert.ok(
+    fixture.text_lines().some((line) => line.includes('@ABLUP99')),
+    'handler 缺位的编号必须打 @ABLUP99 占位行（M38 守的兜底分支）',
+  );
+});
+
 // 原「交互循环：无分支输入静默重绘」用例（喂 7）已删（#130）：7 不是
 // 已打印按钮的快捷键，引擎的 input() 在渲染层就把它弹回——「无分支输入」
 // 在引擎侧不可达（本画面印出的编号全部落在 ABLUP_IDS ∪ {999}）。重绘
