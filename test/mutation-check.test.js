@@ -1,5 +1,5 @@
 /**
- * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，二十条
+ * @file mutation-check 的行为锁（issue #89）：工具不只「条目表对得上」，二十一条
  * 行为在此固定。全部通过临时目录夹具驱动（--root/--ledger-dir/--asar），**不往工作树写探针**——#92 两次探针残留的教训（进程在写入与
  * finally 还原之间被杀，脏数据留在工作树）在这里从根上排除：夹具住临时
  * 目录，进程怎么死都污染不到仓库。
@@ -69,6 +69,12 @@
  *      `$`），所以「写下去的字节」不等于条目表里的字面 replace。整串恒等
  *      判定不许换成「长度差对得上就算残留」这类便宜近似——最坏形态
  *      （1.2 MB × 961 条）正诱人这么省，见 detect_residue 头注的实测。
+ *  21. 启动自检认「变异运行内部」的标记，且按 root 比对（#532）：靶在本
+ *      工具自己的文件上时，`run_one` 给测试子进程带
+ *      `MUTATION_CHECK_INFLIGHT_ROOT=<root>`，于是被测试拉起来的本工具不
+ *      把自己的变异态读成残留（不认这个标记的话，M733 与 M9519-M9528 那一
+ *      批会退化成「无论如何都红」的假守卫——#532 的 `--changed` 实测捕到）；
+ *      标记指别的 root 或压根没标记时自检照常生效。
  *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  */
@@ -86,7 +92,7 @@ const REPO_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(REPO_ROOT, 'tools', 'mutation-check.mjs');
 
 /** 跑一遍工具（夹具用例一律 --asar none 固定引擎判定，机器上装没装引擎都不影响） */
-function run_tool(args) {
+function run_tool(args, env) {
   const r = spawnSync(process.execPath, [TOOL, ...args], {
     cwd: REPO_ROOT,
     encoding: 'utf8',
@@ -95,6 +101,7 @@ function run_tool(args) {
     // 的夹具规模、更快；30s 留出充足余量（#449 统一默认值）
     timeout: 30_000,
     killSignal: 'SIGKILL',
+    ...(env ? { env: { ...process.env, ...env } } : {}),
   });
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
@@ -1537,6 +1544,69 @@ test('启动自检的退化形态二：旧条目 desc 没有 M 编号 → 报「
     assert.ok(
       output.includes('git checkout HEAD -- lib/calc.js'),
       `无 M 编号也要给还原命令：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('启动自检认得「变异运行内部」的标记，且按 root 比对（#532）', () => {
+  // 靶在本工具自己的文件上时（M733、M9519-M9528 那一批），变异就是把
+  // tools/mutation-check.mjs 写成「HEAD + 该条变异」；测试里的 --verify
+  // 跑在真仓库上，被它拉起来的本工具会把自己的变异态读成残留。若自检不看
+  // 这个标记，那批条目全部退化成「无论如何都红」的假守卫（#532 的
+  // --changed 实测：M733 判红、六条只能靠断言消息命中）。
+  //
+  // 标记必须按 root 比对，不能只按「有没有设」：夹具跑的是另一个 root，
+  // 那里没有任何人故意污染，自检要照常生效——本文件另外几条残留用例就是
+  // 在「标记已设、root 不同」的环境下跑的（harness 拉测试时带着真仓库的
+  // 标记），它们全绿即是这一半的守卫。
+  const root = make_git_fixture();
+  const target = path.join(root, 'lib', 'calc.js');
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9001 加倍系数改坏（n*2 → n*3）' },
+    ]);
+    fs.writeFileSync(target, MUTATED_CALC_JS, 'utf8');
+    const args = [
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--skip-baseline',
+      '0',
+    ];
+    const inside = run_tool(args, { MUTATION_CHECK_INFLIGHT_ROOT: root });
+    assert.equal(
+      inside.status,
+      1,
+      `故意污染的 root 里，剩下的门该照常判红（靶文件的 find 已不在），实际 ${inside.status}：\n${inside.output}`,
+    );
+    assert.doesNotMatch(
+      inside.output,
+      /启动自检/,
+      `标记指向自己的 root 时不该报残留（那是故意的），应当由门 2 报：\n${inside.output}`,
+    );
+    assert.ok(
+      inside.output.includes('五项检查未过，拒绝执行'),
+      `跳过自检后应走到门，由门拒绝执行：\n${inside.output}`,
+    );
+
+    const other_root = run_tool(args, {
+      MUTATION_CHECK_INFLIGHT_ROOT: path.join(root, '别处'),
+    });
+    assert.match(
+      other_root.output,
+      /启动自检/,
+      `标记指向别的 root 时自检必须照常生效（夹具不是那个 root）：\n${other_root.output}`,
+    );
+    const none = run_tool(args);
+    assert.match(
+      none.output,
+      /启动自检/,
+      `没有标记时自检必须生效：\n${none.output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

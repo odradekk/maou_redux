@@ -3,13 +3,13 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 143; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
+export const COUNT = 144; // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
 // 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
 // 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 靶在 ere/page/page-shop.js，
-// 记在 tools/mutations/page.mjs）；#532 起 +10（M11240-M11249：--verify 只读、残留态启动自检，
-// 以及 run_one/SIGINT 两处还原本身——由 test/mutation-check.test.js 的 #532 用例与既有的
-// 拦截路径/SIGINT 用例守护）
+// 记在 tools/mutations/page.mjs）；#532 起 +11（M11240-M11250：--verify 只读、残留态启动
+// 自检与其 in-flight 标记、run_one/SIGINT 两处还原本身——由 test/mutation-check.test.js
+// 的 #532 用例与既有的拦截路径/SIGINT 用例守护）
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -1377,9 +1377,14 @@ export default [
   {
     desc: 'M11244 verify 档跳过启动自检（--verify 在残留态上照报「五项检查全过」——最高频入口给出假绿）（#532）',
     file: 'tools/mutation-check.mjs',
-    find: '  const residue = detect_residue(args.root, entries);',
-    replace:
-      '  const residue = args.verify ? null : detect_residue(args.root, entries); // 变异：verify 档不自检',
+    find: `  const residue =
+    inflight && path.resolve(inflight) === args.root
+      ? null
+      : detect_residue(args.root, entries);`,
+    replace: `  const residue =
+    args.verify || (inflight && path.resolve(inflight) === args.root) // 变异：verify 档不自检
+      ? null
+      : detect_residue(args.root, entries);`,
     tests: ['mutation-check'],
     test_name:
       '启动自检覆盖 --verify 档：残留态下不许给出「结构校验全绿」的假结论（#532）',
@@ -1434,5 +1439,14 @@ export default [
     tests: ['mutation-check'],
     test_name: 'SIGINT 能中断串行档，并把靶文件还原',
     must_mention: 'SIGINT 必须被处理器接住并退 130',
+  },
+  {
+    desc: 'M11250 in-flight 标记不再核对 root（环境里有标记就跳过自检——夹具与并行副本从此不受自检保护，#532 的 --changed 就是这么发现标记本身必要）',
+    file: 'tools/mutation-check.mjs',
+    find: '    inflight && path.resolve(inflight) === args.root',
+    replace: '    inflight !== undefined // 变异：标记只按有没有设',
+    tests: ['mutation-check'],
+    test_name: '启动自检认得「变异运行内部」的标记，且按 root 比对（#532）',
+    must_mention: '标记指向别的 root 时自检必须照常生效',
   },
 ];

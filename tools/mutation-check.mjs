@@ -79,8 +79,10 @@
 //
 //   **启动自检（任何档位，含 --verify）。** 靶文件若停在「HEAD 内容应用了
 //   某条变异」的残留态（变异被强杀时 finally 不执行），当场点出 M 编号与
-//   还原命令并退出 1，不继续跑——否则后续结果全部不可信。判据与开销见
-//   detect_residue 头注。
+//   还原命令并退出 1，不继续跑——否则后续结果全部不可信。判据、开销与已知
+//   盲区见 detect_residue 头注。变异运行自己拉起来的进程跳过这道自检（标记
+//   的 root 与自己的相同，那种脏是故意的）：`MUTATION_CHECK_INFLIGHT_ROOT`，
+//   见 INFLIGHT_ROOT_ENV 头注。
 //
 // 退出码：全拦 = 0（无引擎环境下另允许「跳过数恰等于基线」）；任何
 // 失配、误报通过、还原失败、副本破损 = 1。测试驱动工具看退出码，不在测试
@@ -168,6 +170,25 @@ const ENGINE_SKIP_BASELINE = 19;
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
 const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
+
+/**
+ * 「我正在就地变异这个仓库根」的环境标记（#532）。
+ *
+ * `run_one` 给测试子进程带上它，值就是它正在变异的 root。启动自检只在标记
+ * 与自己的 `--root` 一致时跳过：那条变异是**故意**施加的（测试正要观察被
+ * 改坏的工具或靶文件），不是残留。
+ *
+ * 不加这道口会怎样：靶在本工具自己的文件上时（M733、M9519-M9528 那一批），
+ * 变异就是把 `tools/mutation-check.mjs` 写成「HEAD + 该条变异」——而测试里
+ * 的 `--verify` 跑在真仓库上，被它拉起来的本工具一看：工作树恰好等于某条的
+ * 变异态 → 报残留并拒绝启动。于是这些条目全部变成「无论如何都红」的假守卫
+ * （#532 的 `--changed` 实测：M733 直接判红、六条退化成靠断言消息命中），
+ * 而它们本来要观察的是门 4/门 5 的行为。
+ *
+ * 标记按 root 比对，不按「有没有设」：夹具跑的是另一个 root，自检照常生效
+ * （`test/mutation-check.test.js` 的 #532 用例锁着两个方向）。
+ */
+const INFLIGHT_ROOT_ENV = 'MUTATION_CHECK_INFLIGHT_ROOT';
 
 /**
  * 并行副本不携带的顶层条目（拒绝清单而非白名单：仓库里凡测试可能读到
@@ -820,7 +841,9 @@ function run_one(root, m) {
           cwd: root,
           encoding: 'utf8',
           maxBuffer: 16 * 1024 * 1024,
-          env: clean_env(),
+          // 标记挂在 env 上，不经命令行：测试里再拉起来的本工具也要拿到它
+          // （见 INFLIGHT_ROOT_ENV 头注）。
+          env: { ...clean_env(), [INFLIGHT_ROOT_ENV]: root },
         },
       );
     // 先只跑 must_mention 点名的那个用例（#242）。条目表的主流写法就是
@@ -1290,7 +1313,15 @@ async function main() {
   // 串——那正好把残留坐实。自检先说清是残留、怎么还原，这一路才走不到那句
   // 误导上。所有模式都查（含 --verify：它同样读工作区，残留态下「结构校验
   // 全绿」是个假结论）。
-  const residue = detect_residue(args.root, entries);
+  //
+  // 唯一的例外是「我正因为某个变异运行而被拉起来，而那个变异打的正是我
+  // 这个 root」——那种脏是故意的，见 INFLIGHT_ROOT_ENV 头注。标记按 root
+  // 比对：夹具跑了别的 root 就照常查。
+  const inflight = process.env[INFLIGHT_ROOT_ENV];
+  const residue =
+    inflight && path.resolve(inflight) === args.root
+      ? null
+      : detect_residue(args.root, entries);
   if (residue !== null && residue.length > 0) {
     report_residue(residue);
     console.log(
