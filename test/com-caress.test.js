@@ -722,17 +722,22 @@ test('@COM_ABLE3：失神/从不自慰/绳子/着衣挡；助手双低挡（小�
   assert.equal(await com_able_family.call(3), 1);
 });
 
-test('@COM_ABLE4：默认放行；(CFLAG:40 & 1) 位（优先级：&1 单独成立即挡）', async () => {
+test('@COM_ABLE4：默认放行；服装位（位 1|16）与 FLAG:37 同层合取', async () => {
   const { fixture, com_able_family } = able_world();
   assert.equal(await com_able_family.call(4), 1);
+  // 源 :183 `(CFLAG:40 & 1) || (CFLAG:40 & 16) && FLAG:37`——Emuera 的 &&
+  // 与 || 同优先级、左结合，FLAG:37 是**整个**服装位的合取项（#517）
   fixture.store.set('flag:37', 0);
   fixture.store.set('cflag:31:40', 1);
-  assert.equal(await com_able_family.call(4), 0, '位 1（内裤）不看 FLAG:37');
-  fixture.store.delete('cflag:31:40');
-  fixture.store.set('cflag:31:40', 16); // 位 16：需 FLAG:37 才挡
+  assert.equal(await com_able_family.call(4), 1, 'FLAG:37 关 → 位 1 不挡');
+  fixture.store.set('cflag:31:40', 16);
   assert.equal(await com_able_family.call(4), 1, 'FLAG:37 关 → 位 16 不挡');
   fixture.store.set('flag:37', 1);
-  assert.equal(await com_able_family.call(4), 0);
+  assert.equal(await com_able_family.call(4), 0, 'FLAG:37 开 + 位 16');
+  fixture.store.set('cflag:31:40', 1);
+  assert.equal(await com_able_family.call(4), 0, 'FLAG:37 开 + 位 1');
+  fixture.store.set('cflag:31:40', 0);
+  assert.equal(await com_able_family.call(4), 1, '两个服装位都无 → 放行');
 });
 
 test('@COM_ABLE5：男人/胸罩位（位 2|4）挡', async () => {

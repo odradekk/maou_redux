@@ -1846,6 +1846,10 @@ adv_com_family.register(31, async (rand) => {
     return 64;
   }
   if (
+    // COMF_JUMP.ERB:522 `(ASSIPLAY && TFLAG:50 == 0) || (ASSIPLAY == 0 &&
+    // TFLAG:50) && TEQUIP:89 == 0` 按 Emuera 的「&& 与 || 同优先级、左结合」
+    // 读作 `(调教者切换两臂) && TEQUIP:89 == 0`（#517）——不是 C 式
+    // 「&& 优先」的「第二臂各自带兽奸门」。
     ((era_flag.assiplay && !game.system.上次调教者是助手) ||
       (!era_flag.assiplay && game.system.上次调教者是助手)) &&
     !target_tequip(89) &&

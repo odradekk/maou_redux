@@ -98,7 +98,12 @@ async function equip_select(cid, rng = default_rand) {
   era.print('勇者发现了宝箱！'); // :235 PRINTW
   await era.waitAnyKey();
 
-  const w = { 备注: x }; // :237 W:8 = X
+  // W:2（强度）/ W:5（诅咒）是原作**全局 W 数组**的残留列：@EQUIP_DATABASE
+  // 命中才写、空槽短路时不写，于是守卫读到的可能是上一次调用的旧值。ere 侧的
+  // 装备记录按次新建（ere/data/equip-database.js 文件头），这里按「会话起点的
+  // W = 0」起算、并让两个槽共享同一份记录——同一调用内的残留行为与原作一致，
+  // 跨调用的外部残留不建模。
+  const w = { 备注: x, 强度: 0, 诅咒: 0 }; // :237 W:8 = X
   const floor = era.get(`cflag:${cid}:501`) || 0; // CFLAG:A:501（阶层）
 
   // :239-267 两枚装饰槽同构（551 → 552；装饰 = CFLAG:551、装饰2 = CFLAG:552，
@@ -107,8 +112,11 @@ async function equip_select(cid, rng = default_rand) {
     w.存储编号 = chara(cid).event[field]; // W:0 = CFLAG:A:55x
     const found = equip_database(w);
 
-    // :243 / :258 空槽（-1），或有效且强度低于阶层、未诅咒 → 可换装
-    if (w.存储编号 === -1 || (found && w.强度 < floor && w.诅咒 === 0)) {
+    // :243 / :258 `W:0 == -1 || RESULT && W:2 < CFLAG:A:501 && W:5 == 0` 按
+    // Emuera 的「&& 与 || 同优先级、左结合」读作
+    // `(空槽 || 有效) && 强度 < 阶层 && 未诅咒`——空槽不是无条件放行，后两项
+    // 照样要过（#517）。
+    if ((w.存储编号 === -1 || found) && w.强度 < floor && w.诅咒 === 0) {
       const equipped = await remove_curse(w, cid, rng);
       // :245-250 / :260-265 RESULT && W:7 == 1（装饰）才装上
       if (equipped && w.部位 === 1) {

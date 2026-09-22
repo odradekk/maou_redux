@@ -374,6 +374,10 @@ async function pritrain_message() {
     }
   }
 
+  // EVENT_BEFORETRAIN.ERB:173 `(CFLAG:7 & 4) || (CFLAG:7 & 8) && (CFLAG:40 & 1) == 0
+  // && (CFLAG:40 & 16) == 0` 按 Emuera 的「&& 与 || 同优先级、左结合」读作
+  // `((CFLAG:7 & 4) || (CFLAG:7 & 8)) && 无内裤 && 非裤装`——注入位两臂同吃
+  // 后两项合取（#517）。
   // 下半身穿孔无内裤非裤装
   if (
     (cflag7 & 4 || cflag7 & 8) &&
