@@ -71,7 +71,12 @@ jobs:
 
   summary:
     needs: shard
-    if: always()
+    # 与 shard 同源的守卫：分片压根没跑时汇总也不跑。没有标签的 PR 只触发本
+    # workflow、不触发任何分片，此时 always() 会让 summary 在无产物可下时走到
+    # 末尾的退出判定，给每条 PR 挂一条与问题无关的红（#509）。always() 仍留给
+    # 「分片红了也要出汇总」；分片被跳过不算合格，真跳过（矩阵配错、取不到
+    # runner）必须继续以红暴露。
+    if: always() && needs.shard.result != 'skipped'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
