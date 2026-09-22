@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 913; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+export const COUNT = 926; // 598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 13（#512 第一步：M10920-M10932）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
 
 export default [
   {
@@ -9855,5 +9855,124 @@ export default [
         c = times(c, 3.0);`,
     tests: ['ablup'],
     must_mention: 'ablup39：Lv3 戒备森严 ×3',
+  },
+  // —— #512 第一步：ABLUP37/39/40 的素质表与门槛补覆盖（M10920-M10932）——
+  // 新增用例在 test/ablup.test.js 的三处：「ablup37：F 的素质增减表逐条」、
+  // 「ablup39：F 的豁免素质逐条」「ablup39：三重上限的拦法…」「ablup40：F 的
+  // 豁免素质逐条」。find 都不含 `// :N`，与行号注释解耦。
+  {
+    desc: 'M10920 ablup37：F 表的[接受快感]减免改错（-1 → -2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(70)) f -= 1; // 接受快感',
+    replace: '      if (talent(70)) f -= 2; // 接受快感',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10921 ablup37：F 表的[容易陷落]减免改错（-1 → -2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(73)) f -= 1; // 容易陷落',
+    replace: '      if (talent(73)) f -= 2; // 容易陷落',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10922 ablup37：F 表的[否定快感]加成改错（+1 → +2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(71)) f += 1; // 否定快感',
+    replace: '      if (talent(71)) f += 2; // 否定快感',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10923 ablup37：F 表的[倾城]减免改错（-2 → -1）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(181)) f -= 2; // 倾城',
+    replace: '      if (talent(181)) f -= 1; // 倾城',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10924 ablup37：F 表的[求爱]加成改错（+2 → +1）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(184)) f += 2; // 求爱',
+    replace: '      if (talent(184)) f += 1; // 求爱',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10925 ablup37：F 表的[倒錯的]减免改错（-1 → -2）',
+    file: 'ere/system/train/ablup.js',
+    find: '      if (talent(80)) f -= 1; // 倒錯的',
+    replace: '      if (talent(80)) f -= 2; // 倒錯的',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10926 ablup37：F 整块豁免的[疯狂]判反（=== 0 → === 1）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(123) === 0 && talent(9) === 0) {',
+    replace: 'if (lv >= 2 && talent(123) === 1 && talent(9) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 的素质增减表逐条',
+  },
+  {
+    desc: 'M10927 ablup39：F 豁免的[牝犬]素质号读错（136 → 137）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    replace:
+      'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(137) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10928 ablup39：F 豁免的[容易上瘾]素质号读错（72 → 73）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    replace:
+      'if (lv >= 2 && talent(73) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10929 ablup39：F 豁免的[淫乱]素质号读错（76 → 77）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0 && talent(136) === 0) {',
+    replace:
+      'if (lv >= 2 && talent(72) === 0 && talent(77) === 0 && talent(136) === 0) {',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10930 ablup39：三重上限的拦法由「两珠任一不足即拦」改成「都缺才拦」（|| → &&）',
+    file: 'ere/system/train/ablup.js',
+    find: `    if (
+      (era.get(\`juel:\${cid}:5\`) || 0) < bulk ||
+      (era.get(\`juel:\${cid}:6\`) || 0) < bulk
+    ) {`,
+    replace: `    if (
+      (era.get(\`juel:\${cid}:5\`) || 0) < bulk &&
+      (era.get(\`juel:\${cid}:6\`) || 0) < bulk
+    ) {`,
+    tests: ['ablup'],
+    must_mention: '任一不足即拦',
+  },
+  {
+    desc: 'M10931 ablup40：F 豁免的[淫乱]素质号读错（76 → 77）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0) {\n      f = lv + 1;\n    }',
+    replace:
+      'if (lv >= 2 && talent(72) === 0 && talent(77) === 0) {\n      f = lv + 1;\n    }',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
+  },
+  {
+    desc: 'M10932 ablup40：F 豁免的[容易上瘾]素质号读错（72 → 73）',
+    file: 'ere/system/train/ablup.js',
+    find: 'if (lv >= 2 && talent(72) === 0 && talent(76) === 0) {\n      f = lv + 1;\n    }',
+    replace:
+      'if (lv >= 2 && talent(73) === 0 && talent(76) === 0) {\n      f = lv + 1;\n    }',
+    tests: ['ablup'],
+    must_mention: 'F 整块豁免，不该渲染异常经验行',
   },
 ];

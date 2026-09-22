@@ -2131,6 +2131,59 @@ test('ablup37：F 的素质增减——[容易上瘾]-2、[反抗心]+1', async 
   assert.ok(rebel.text_lines().includes('异常经验2以上(现在0)且'));
 });
 
+/**
+ * ABLUP37 异常经验 F 的素质增减表（ABLUP37.ERB:368-402 的 SIF 行）逐条。
+ * 基准 F = lv-1（lv=4 → 3），每条只加一项；[疯狂][崩坏]不是增减项而是整块
+ * 豁免（:368 的条件），命中时 F 恒为 0、整行不打印。
+ */
+const ABLUP37_F_TABLE = [
+  { talent: null, f: 3 }, // 控制组：无增减项
+  { talent: 33, f: 2 }, // 开放 -1
+  { talent: 70, f: 2 }, // 接受快感 -1（只在 F 表里出现，倍率表没有它）
+  { talent: 72, f: 1 }, // 容易上瘾 -2
+  { talent: 73, f: 2 }, // 容易陷落 -1（同上，只在 F 表）
+  { talent: 76, f: 2 }, // 淫乱 -1
+  { talent: 80, f: 2 }, // 倒錯的 -1
+  { talent: 180, f: 2 }, // 妓女 -1
+  { talent: 181, f: 1 }, // 倾城 -2
+  { talent: 11, f: 4 }, // 反抗心 +1
+  { talent: 20, f: 4 }, // 克制 +1
+  { talent: 32, f: 4 }, // 压抑 +1
+  { talent: 34, f: 4 }, // 抵抗 +1
+  { talent: 71, f: 4 }, // 否定快感 +1（同上，只在 F 表）
+  { talent: 85, f: 4 }, // 爱慕 +1
+  { talent: 184, f: 5 }, // 求爱 +2
+  { talent: 123, f: 0 }, // 疯狂：整块豁免
+  { talent: 9, f: 0 }, // 崩坏：整块豁免
+];
+
+test('ablup37：F 的素质增减表逐条（ABLUP37.ERB:368-402 的 SIF 行）', async () => {
+  for (const row of ABLUP37_F_TABLE) {
+    const fixture = create_era_fixture();
+    const { ablup37 } = seed(fixture);
+    fixture.store.set(`abl:${CID}:37`, 4); // 基准 F = 3
+    fixture.store.set(`abl:${CID}:11`, 5); // 欲望门槛 lv+1
+    if (row.talent !== null) set_talents(fixture, { [row.talent]: 1 });
+    fixture.set_inputs(100);
+
+    await ablup37(CID);
+    const line = fixture.text_lines().find((t) => t.startsWith('异常经验'));
+    if (row.f === 0) {
+      assert.equal(
+        line,
+        undefined,
+        `talent ${row.talent}：F 整块豁免，不该渲染`,
+      );
+    } else {
+      assert.equal(
+        line,
+        `异常经验${row.f}以上(现在0)且`,
+        `talent ${row.talent} 的 F`,
+      );
+    }
+  }
+});
+
 test('ablup37：淫乱的 B 轨 ×0.50（其余 ×0.80）——原作不对称倍率', async () => {
   const fixture = create_era_fixture();
   const { ablup37 } = seed(fixture);
@@ -2256,6 +2309,30 @@ test('ablup39：三重上限时 A/B 覆盖为 lv²×4000（梯子作废）', asy
   assert.equal(buttons(fixture)[0].text, '欲情点数×4000/4000 ……ＯＫ');
 });
 
+test('ablup39：三重上限的拦法是「两珠任一不足即拦」（||，不是 &&）', async () => {
+  // 原作文案写「或……其中一项」，代码判 ||：一颗刚好够、另一颗不足时仍拦。
+  // 只在「一颗够一颗不够」时才与 && 有区别，故两向各跑一遍。
+  for (const [juel5, juel6] of [
+    [4000, 0],
+    [0, 4000],
+  ]) {
+    const fixture = create_era_fixture();
+    const { ablup39 } = seed(fixture);
+    fixture.store.set(`abl:${CID}:32`, 6);
+    fixture.store.set(`abl:${CID}:33`, 4);
+    fixture.store.set(`abl:${CID}:39`, 1); // 三中毒合计 11 >= 10；bulk = 1²×4000
+    fixture.store.set(`juel:${CID}:5`, juel5);
+    fixture.store.set(`juel:${CID}:6`, juel6);
+    fixture.set_inputs(100); // 变异成 && 时会走到需求行，用 100 收尾
+    await ablup39(CID);
+    assert.ok(
+      fixture.text_lines().some((t) => t.includes('上限为10')),
+      `欲情 ${juel5} / 屈服 ${juel6}：任一不足即拦`,
+    );
+    assert.equal(buttons(fixture).length, 0);
+  }
+});
+
 test('ablup39：Lv0 梯子与需求行（A=B=2000/C=30，无 F 行）', async () => {
   const fixture = create_era_fixture();
   const { ablup39 } = seed(fixture);
@@ -2304,6 +2381,33 @@ test('ablup39：Lv2 起需要异常经验（F=lv+1），[牝犬]可免', async (
   dog.set_inputs(100);
   await a2(dog);
   assert.ok(!dog.text_lines().some((t) => t.includes('异常经验')));
+});
+
+test('ablup39：F 的豁免素质逐条（容易上瘾/淫乱/牝犬整块免）', async () => {
+  const control = create_era_fixture();
+  const { ablup39: control_ablup39 } = seed(control);
+  control.store.set(`abl:${CID}:39`, 2);
+  control.store.set(`abl:${CID}:11`, 3);
+  control.set_inputs(100);
+  await control_ablup39(CID);
+  assert.ok(
+    control.text_lines().includes('异常经验3以上(现在0)且'),
+    '控制组：无豁免时 F = lv+1',
+  );
+
+  for (const t of [72, 76, 136]) {
+    const fixture = create_era_fixture();
+    const { ablup39 } = seed(fixture);
+    fixture.store.set(`abl:${CID}:39`, 2);
+    fixture.store.set(`abl:${CID}:11`, 3);
+    set_talents(fixture, { [t]: 1 });
+    fixture.set_inputs(100);
+    await ablup39(CID);
+    assert.ok(
+      !fixture.text_lines().some((x) => x.includes('异常经验')),
+      `talent ${t}：F 整块豁免，不该渲染异常经验行`,
+    );
+  }
 });
 
 test('ablup39：克制 A/B×2.5、C×1.5；爱慕 A/B×1.8、C×1.5', async () => {
@@ -2395,6 +2499,33 @@ test('ablup40：Lv2 起需要异常经验（F=lv+1），异常经验行无「且
   const line = fixture.text_lines().find((t) => t.includes('异常经验'));
   assert.ok(line.includes('异常经验3以上(现在0)'));
   assert.ok(!line.endsWith('且'));
+});
+
+test('ablup40：F 的豁免素质逐条（容易上瘾/淫乱整块免）', async () => {
+  const control = create_era_fixture();
+  const { ablup40: control_ablup40 } = seed(control);
+  control.store.set(`abl:${CID}:40`, 2);
+  control.store.set(`abl:${CID}:11`, 3);
+  control.set_inputs(100);
+  await control_ablup40(CID);
+  assert.ok(
+    control.text_lines().some((t) => t.includes('异常经验3以上(现在0)')),
+    '控制组：无豁免时 F = lv+1',
+  );
+
+  for (const t of [72, 76]) {
+    const fixture = create_era_fixture();
+    const { ablup40 } = seed(fixture);
+    fixture.store.set(`abl:${CID}:40`, 2);
+    fixture.store.set(`abl:${CID}:11`, 3);
+    set_talents(fixture, { [t]: 1 });
+    fixture.set_inputs(100);
+    await ablup40(CID);
+    assert.ok(
+      !fixture.text_lines().some((x) => x.includes('异常经验')),
+      `talent ${t}：F 整块豁免，不该渲染异常经验行`,
+    );
+  }
 });
 
 test('ablup40：条件不足时输入 0 打「条件不足」（本文件独有措辞）', async () => {
