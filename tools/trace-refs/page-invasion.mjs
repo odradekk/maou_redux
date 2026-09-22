@@ -16,11 +16,6 @@ export const FILES = [
         any: [/^\s*@INVASION$/m],
       },
       {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '15-104',
-        any: [/^\s*IF FLAG:81 >= 2000 && FLAG:93 == 0$/m],
-      },
-      {
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '25-138',
         any: [/^\s*\$INPUT_LOOP2$/m],
@@ -174,16 +169,6 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '26',
         any: [/^\s*CLEARLINE LINECOUNT$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '110-111',
-        any: [/^\s*AREA = 81$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
-        ref: '111',
-        any: [/^\s*;FLAG:94 = 1$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -1601,11 +1586,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '624-628',
-        any: [/^[ \t]*IF AREA == 81 && FLAG:SINDO[ \t]*$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '626',
         any: [/^[ \t]*PRINTFORMW 强制征收了\{SINKOU \* 10\}点！[ \t]*$/m],
       },
@@ -1628,11 +1608,6 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '667',
         any: [/^[ \t]*WAIT[ \t]*$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '669-671',
-        any: [/^[ \t]*;人間界[ \t]*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -1665,11 +1640,6 @@ export const FILES = [
         src: 'target/ERB/侵略/INVASION.ERB',
         ref: '909',
         any: [/^[ \t]*CALL KARMA, YUSYA_I, -5[ \t]*$/m],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '912-918',
-        any: [/^[ \t]*IF AREA == 81 && FLAG:SINDO[ \t]*$/m],
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
@@ -4134,13 +4104,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/侵略/INVASION.ERB',
-        ref: '797-809',
-        any: [
-          /^\s*PRINTFORMW %SAVESTR:YUSYA_I%把侵略时所抢夺的金银财宝都献给了%SAVESTR:MASTER%………\s*$/m,
-        ],
-      },
-      {
-        src: 'target/ERB/侵略/INVASION.ERB',
         ref: '805',
         any: [/^\s*PRINTFORMW 强制征收了\{SINKOU \* 5\}点！\s*$/m],
       },
@@ -4345,6 +4308,310 @@ export const FILES = [
         any: [
           /^\s*PRINTFORML 在大战几百回合之后，%LOCALS:2%心有不甘地%LOCALS:3%。$/m,
         ],
+      },
+      // —— #505：地区续接与 start_campaign 的地区泛化 ——
+      // 出兵目标的地区分派（INVASION.ERB:108-138 的 RESULT → AREA/SINDO）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '109',
+        any: [/^\s*IF RESULT == 0$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '113',
+        any: [/^\s*ELSEIF RESULT == 1$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '117',
+        any: [/^\s*ELSEIF RESULT == 2$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '121',
+        any: [/^\s*ELSEIF RESULT == 3$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '133',
+        any: [/^\s*ELSEIF RESULT == 5$/m],
+      },
+      // 出兵菜单（$START1）的侵攻度条：五个地区各一行（:152-167）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '152-167',
+        any: [/^\s*ELSEIF AREA == 101$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '153',
+        any: [/^\s*PRINTFORML 　侵攻度　%BARSTR\(FLAG:AREA, 10000, 50\)%$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '156',
+        any: [
+          /^\s*PRINTFORML 精灵族领域的侵攻度　%BARSTR\(FLAG:AREA, 10000, 50\)%$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '159',
+        any: [
+          /^\s*PRINTFORML 龙之山脉的侵攻度　%BARSTR\(FLAG:AREA, 10000, 50\)%$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '162',
+        any: [
+          /^\s*PRINTFORML 天界的侵攻度　%BARSTR\(FLAG:AREA, 10000, 50\)%$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '165',
+        any: [
+          /^\s*PRINTFORML 天神宫的侵攻度　%BARSTR\(EX_FLAG:AREA, 10000, 50\)%$/m,
+        ],
+      },
+      // 侵攻度累加与封顶（:611-618）：一律写 FLAG:AREA
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '611-618',
+        any: [/^\s*SIF FLAG:AREA >= 10000$/m],
+      },
+      // [0] 怪物路线的已征服臂：只列 81/86/88/90（:624-646），天神宫落 ELSE
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '624-646',
+        any: [/^\s*IF AREA == 81 && FLAG:SINDO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '630',
+        any: [/^\s*ELSEIF AREA == 86 && FLAG:SINDO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '636',
+        any: [/^\s*ELSEIF AREA == 88 && FLAG:SINDO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '642',
+        any: [/^\s*ELSEIF AREA == 90 && FLAG:SINDO$/m],
+      },
+      // [0] 结果段的侵攻度条与凌辱演出的地区号（:664/:669-684；:669-684 的
+      // 锚取该段的首行，:866-880 同）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '664',
+        any: [/^\s*BAR FLAG:AREA, 10000, 50$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '669-684',
+        any: [/^\s*IF AREA == 81$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '671',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 1, SINKOU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '674',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 2, SINKOU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '677',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 3, SINKOU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '683',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 5, SINKOU$/m],
+      },
+      // 魔力结果段的经验段五臂（:713 人间界，其余四臂的封顶行）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '718',
+        any: [/^\s*SINKOU = MIN\( SINKOU, 10000 \* 10 \)$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '723',
+        any: [/^\s*SINKOU = MIN\( SINKOU, 10000 \* 10 \)$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '728',
+        any: [/^\s*SINKOU = MIN\( SINKOU, 10000 \* 10 \)$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '733',
+        any: [/^\s*SINKOU = MIN\( SINKOU, 10000 \* 10 \)$/m],
+      },
+      // 魔力结果段的侵攻度条标签（:743/:745/…/:751）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '745',
+        any: [/^\s*PRINT 精灵族的领域　侵攻度[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '751',
+        any: [/^\s*PRINT 天神宫　侵攻度[ \t]*$/m],
+      },
+      // [2] 结果段的地区名（:762/:765/…/:773）与 [3] 的同款（:895/:898/…/:906）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '762',
+        any: [/^\s*PRINT 人间界$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '765',
+        any: [/^\s*PRINT 精灵族的领域$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '773',
+        any: [/^\s*PRINT 天神宫$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '895',
+        any: [/^\s*PRINT 人间界$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '898',
+        any: [/^\s*PRINT 精灵族的领域$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '906',
+        any: [/^\s*PRINT 天神宫$/m],
+      },
+      // [2] 结果段的已征服臂（:803-840，五臂都列了）与侵权度条
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '803-840',
+        any: [/^\s*SINKOU = MIN\( SINKOU, 10000 \* 10 \)$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '834',
+        any: [/^\s*ELSEIF AREA == 101 && FLAG:SINDO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '860',
+        any: [/^\s*BAR FLAG:AREA, 10000, 50$/m],
+      },
+      // [2] 结果段的凌辱演出（:866-880）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '866-880',
+        any: [/^\s*IF AREA == 81$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '870',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 2, SINKOU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '873',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 3, SINKOU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '876',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 4, SINKOU$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '879',
+        any: [/^\s*CALL INVASION_RYOUZYOKU, 5, SINKOU$/m],
+      },
+      // [3] 结果段的已征服臂（:912-950）与侵攻度条（:970）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '912-950',
+        any: [/^\s*IF AREA == 81 && FLAG:SINDO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '944',
+        any: [/^\s*ELSEIF AREA == 101 && FLAG:SINDO$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '970',
+        any: [/^\s*BAR FLAG:AREA, 10000, 50$/m],
+      },
+      // 结算尾的 KYOTEN_EVENT 实参按 AREA 分派（:984/:987/:990/:993）
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '984',
+        any: [/^\s*CALL KYOTEN_EVENT, 1$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '987',
+        any: [/^\s*CALL KYOTEN_EVENT, 2$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '990',
+        any: [/^\s*CALL KYOTEN_EVENT, 3$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION.ERB',
+        ref: '993',
+        any: [/^\s*CALL KYOTEN_EVENT, 4$/m],
+      },
+      // KYOTEN_EVENT 的四臂（INVASION_EVENT.ERB:2-209）：人间界完整臂
+      // :14-105、三臂骨架 :106-206
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '5',
+        any: [/^;2000、4000、6000、8000、10000でイベント開始、一度のみ。$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '14-105',
+        any: [/^\s*IF ARG:0 == 1$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '106-206',
+        any: [/^\s*ELSEIF ARG:0 == 2$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '108',
+        any: [/^\s*IF FLAG:87 == 0$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '142',
+        any: [/^\s*ELSEIF ARG == 3$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '175',
+        any: [/^\s*ELSEIF ARG == 4$/m],
+      },
+      {
+        src: 'target/ERB/侵略/INVASION_EVENT.ERB',
+        ref: '1006',
+        any: [/^\s*ELSEIF FLAG:94 == 0 && CHARANUM > 90$/m],
       },
     ],
   },
