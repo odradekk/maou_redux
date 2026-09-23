@@ -544,8 +544,8 @@ test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {
 });
 
 // —— COLOSSEUM_KOJO_10：ITEM:PBAND → item:4（#552；源 :6767/:6801/:6827） ——
-// 原作 `SYSTEM ver1.0.3.ERB:42` 的 `PBAND = 4`（CSV/VariableSize.csv:61 声明的
-// 自定义全局变量），即假阳具的道具号；yml/Item.yml 名字表无 PBAND 条目，
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；VariableSize.csv:61
+// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下列用例必须红。
 // sc21/sc27 两支的拼接词与尾部文案逐字相同，只有开场白能区分——每档断言各自

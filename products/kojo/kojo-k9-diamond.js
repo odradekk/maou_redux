@@ -290,9 +290,9 @@
  *   167. :6912 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   168. :6918 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   169. :6920 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
- *   170. :7088 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   171. :7122 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   172. :7147 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   170. :7088 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   171. :7122 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   172. :7147 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   173. :7423 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
  *   174. :7433 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
  *   175. :7437 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
@@ -8833,9 +8833,9 @@ async function GOBI_KOUJO_K9() {
 // 167. :6912 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 168. :6918 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 169. :6920 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
-// 170. :7088 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 171. :7122 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 172. :7147 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 170. :7088 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 171. :7122 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 172. :7147 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 173. :7423 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
 // 174. :7433 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
 // 175. :7437 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一

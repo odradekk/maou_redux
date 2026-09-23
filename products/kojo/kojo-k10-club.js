@@ -296,9 +296,9 @@
  *   169. :6590 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   170. :6596 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   171. :6598 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
- *   172. :6766 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   173. :6800 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   174. :6826 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   172. :6766 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   173. :6800 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   174. :6826 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   175. :6859 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   176. :7110 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
  *   177. :7114 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
@@ -8504,9 +8504,9 @@ async function GOBI_KOUJO_K10() {
 // 169. :6590 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 170. :6596 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 171. :6598 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
-// 172. :6766 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 173. :6800 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 174. :6826 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 172. :6766 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 173. :6800 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 174. :6826 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 175. :6859 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 176. :7110 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
 // 177. :7114 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一

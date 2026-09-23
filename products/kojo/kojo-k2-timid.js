@@ -313,9 +313,9 @@
  *   193. :6591 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   194. :6606 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   195. :6608 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
- *   196. :6677 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   197. :6710 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   198. :6734 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   196. :6677 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   197. :6710 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   198. :6734 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   199. :6966 插值 未知插值 %SELF_CALL(A)% —— 保真锁会红，须人工定归一
  *   200. :6969 插值 未知插值 %SELF_CALL(A)% —— 保真锁会红，须人工定归一
  *   201. :6972 插值 未知插值 %SELF_CALL(A)% —— 保真锁会红，须人工定归一
@@ -8432,9 +8432,9 @@ async function GOBI_KOUJO_K2() {
 // 193. :6591 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 194. :6606 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 195. :6608 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
-// 196. :6677 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 197. :6710 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 198. :6734 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 196. :6677 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 197. :6710 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 198. :6734 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 199. :6966 插值 未知插值 %SELF_CALL(A)% —— 保真锁会红，须人工定归一
 // 200. :6969 插值 未知插值 %SELF_CALL(A)% —— 保真锁会红，须人工定归一
 // 201. :6972 插值 未知插值 %SELF_CALL(A)% —— 保真锁会红，须人工定归一

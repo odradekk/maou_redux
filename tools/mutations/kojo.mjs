@@ -21670,7 +21670,7 @@ async function try_kojo_or_stub(
     desc: 'M11600 K0 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: `        era.get(\`talent:\${assi}:122\`) != 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :7786`,
     replace: `        era.get(\`talent:\${assi}:122\`) != 1 &&
@@ -21684,7 +21684,7 @@ async function try_kojo_or_stub(
     desc: 'M11601 K0 死斗场 SC21 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: `        era.get(\`talent:\${assi}:122\`) != 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :7819`,
     replace: `        era.get(\`talent:\${assi}:122\`) != 1 &&
@@ -21697,7 +21697,7 @@ async function try_kojo_or_stub(
   {
     desc: 'M11602 K4 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         await era.print(\`假阳具\`); // :4956`,
     replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
@@ -21717,7 +21717,7 @@ async function try_kojo_or_stub(
   {
     desc: 'M11604 K5 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k5-mao.js',
-    find: `        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+    find: `        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :7278`,
     replace: `        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
@@ -21730,7 +21730,7 @@ async function try_kojo_or_stub(
     desc: 'M11605 K6 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k6-wicked.js',
     find: `        (era.get(\`talent:\${assi}:122\`) || 0) !== 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :7495`,
     replace: `        (era.get(\`talent:\${assi}:122\`) || 0) !== 1 &&
@@ -21744,7 +21744,7 @@ async function try_kojo_or_stub(
     desc: 'M11606 K8 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: `        era0(\`talent:\${assi}:122\`) != 1 &&
-        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         await era.print(\`假阴茎\`); // :7355`,
     replace: `        era0(\`talent:\${assi}:122\`) != 1 &&
@@ -21757,7 +21757,7 @@ async function try_kojo_or_stub(
   {
     desc: 'M11607 K10 死斗场 SC21 的假阳具判定回退成具名寻址 item:PBAND（#552；sc21/sc27 同词，只有开场白分得开）',
     file: 'ere/kojo/kojo-k10-club.js',
-    find: `        era.get('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+    find: `        era.get('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :6801`,
     replace: `        era.get('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
@@ -21769,7 +21769,7 @@ async function try_kojo_or_stub(
   {
     desc: 'M11608 K15 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k15-clever.js',
-    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         await era.print(\`假阳具\`); // :5847`,
     replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
@@ -21781,7 +21781,7 @@ async function try_kojo_or_stub(
   {
     desc: 'M11609 K903 死斗场 SC27 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k903-garde.js',
-    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :5451`,
     replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）

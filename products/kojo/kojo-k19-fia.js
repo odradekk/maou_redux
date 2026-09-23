@@ -680,9 +680,9 @@
  *   563. :6096 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   564. :6144 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
  *   565. :6147 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
- *   566. :6163 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   567. :6196 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   568. :6220 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   566. :6163 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   567. :6196 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   568. :6220 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   569. :6282 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
  *   570. :6693 函数参数 @GOBI_KOUJO_K19, ARG:0 —— 参数声明已剥（JS 函数签名人工定）
  *   571. :6696 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）
@@ -8618,9 +8618,9 @@ async function GOBI_KOUJO_K19() {
 // 563. :6096 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 564. :6144 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
 // 565. :6147 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
-// 566. :6163 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 567. :6196 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 568. :6220 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 566. :6163 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 567. :6196 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 568. :6220 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 569. :6282 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
 // 570. :6693 函数参数 @GOBI_KOUJO_K19, ARG:0 —— 参数声明已剥（JS 函数签名人工定）
 // 571. :6696 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）

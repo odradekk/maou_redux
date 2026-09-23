@@ -457,8 +457,8 @@ test('迷宫胜利淫乱档：决め台词 + 随机第一句', async () => {
 });
 
 // —— SELECTCOM 69 六九式 & COLOSSEUM_KOJO_5：ITEM:PBAND → item:4（#552） ——
-// PBAND 是 Emuera 内建常量 4（SYSTEM ver1.0.3.ERB:42 的 `PBAND = 4`，假阳具
-// 的道具号）；yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
 // 源：六九式 :5191/:5204/:5236（PLAYER 侧判 121/122/PBAND）、死斗场
 // :7278/:7311/:7335（ASSI 侧判 121/122/PBAND）。

@@ -579,8 +579,8 @@ test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模�
 });
 
 // —— COLOSSEUM_KOJO_903：ITEM:PBAND → item:4（#552；源 :5394/:5427/:5451） ——
-// 原作 `SYSTEM ver1.0.3.ERB:42` 的 `PBAND = 4`（CSV/VariableSize.csv:61 声明的
-// 自定义全局变量），即假阳具的道具号；yml/Item.yml 名字表无 PBAND 条目，
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；VariableSize.csv:61
+// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下面三档必须红。助手用嘉德自己（同本文件
 // 死斗场先例）：TALENT:121/122 均未置位，121/122 门不成立，判定只看假阳具位。

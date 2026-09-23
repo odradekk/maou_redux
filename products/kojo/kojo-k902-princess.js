@@ -222,9 +222,9 @@
  *   115. :5279 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   116. :5281 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   117. :5332 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
- *   118. :5351 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   119. :5384 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   120. :5408 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   118. :5351 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   119. :5384 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   120. :5408 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   121. :5665 假名残留 归一后仍含日文假名：・ —— 查 lang-table 是否应收
  *   122. :5960 函数参数 @GOBI_KOUJO_K903, ARG:0 —— 参数声明已剥（JS 函数签名人工定）
  *   123. :5963 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）
@@ -6901,9 +6901,9 @@ async function GOBI_KOUJO_K903() {
 // 115. :5279 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 116. :5281 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 117. :5332 插值 未知插值 %SAVESTR:MASTER% —— 保真锁会红，须人工定归一
-// 118. :5351 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 119. :5384 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 120. :5408 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 118. :5351 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 119. :5384 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 120. :5408 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 121. :5665 假名残留 归一后仍含日文假名：・ —— 查 lang-table 是否应收
 // 122. :5960 函数参数 @GOBI_KOUJO_K903, ARG:0 —— 参数声明已剥（JS 函数签名人工定）
 // 123. :5963 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）

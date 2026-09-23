@@ -10009,7 +10009,7 @@ async function kojo_message_com_5(rand) {
           `「啊嗯~…更加地…玩弄那里嘛~…那样的话我就会好好地吸主人的`,
         ); // :5190
         if (
-          // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+          // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
           era.get(`talent:${player}:122`) ||
           era.get(`talent:${player}:121`) ||
           (era.get(`talent:${player}:122`) === 0 && era.get('item:4') === 1)
@@ -10036,7 +10036,7 @@ async function kojo_message_com_5(rand) {
           // :5202
           await era.print(`阴茎`); // :5203
         } else if (
-          // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+          // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
           era.get(`talent:${player}:122`) === 0 &&
           era.get('item:4') === 1 &&
           rand_n(3) === 0
@@ -10104,7 +10104,7 @@ async function kojo_message_com_5(rand) {
           // :5234
           await era.print(`阴茎`); // :5235
         } else if (
-          // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+          // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
           era.get(`talent:${player}:122`) === 0 &&
           era.get('item:4') === 1 &&
           rand_n(3) === 0
@@ -13189,7 +13189,7 @@ async function colosseum_kojo_5(rand) {
       if (
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :7278
         await era.print(`假阳具`); // :7278
@@ -13237,7 +13237,7 @@ async function colosseum_kojo_5(rand) {
       if (
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :7311
         await era.print(`假阳具`); // :7311
@@ -13273,7 +13273,7 @@ async function colosseum_kojo_5(rand) {
       if (
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         // :7335
         await era.print(`假阳具`); // :7335

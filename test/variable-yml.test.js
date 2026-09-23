@@ -298,8 +298,8 @@ engine_test(
 engine_test(
   '引擎 setVar：item:PBAND 名字表查不到 → 读恒 undefined、写另立键（口上 25 处读错下标的依据，#552）',
   () => {
-    // PBAND 是 Emuera 内建常量 4（SYSTEM ver1.0.3.ERB:42 的 `PBAND = 4`，
-    // 假阳具的道具号，Item.csv:5）。口上初稿把它当字符串下标写成
+    // PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；
+    // 4 号 = 假阳具，Item.csv:5）。口上初稿把它当字符串下标写成
     // era.get('item:PBAND')——引擎 setVar（模块 648）的 item 分支按
     // staticData.item.name[下标] 翻译名字，yml/Item.yml 没有 PBAND 条目，
     // 翻译不中就原样回落，落到 data.item.hold['pband'] 这个不存在的键上。

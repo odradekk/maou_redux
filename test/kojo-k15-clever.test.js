@@ -1853,8 +1853,8 @@ test('死斗场交谈：気力>0 助手用 SELF_CALL(A)；非助手骂怪物', a
 test('死斗场口交 PRINT 拼接 + 假阳具持有位；背后位巨魔 TFLAG:400==206', async () => {
   const assi = await setup_k15((f, era_flag) => {
     f.store.set(`tequip:${CID}:55`, 1);
-    // 原作 ITEM:PBAND（SYSTEM ver1.0.3.ERB:42 的 `PBAND = 4`，
-    // CSV/VariableSize.csv:61 声明的自定义全局变量）= ITEM:4 假阳具（#552）
+    // 原作 ITEM:PBAND（PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4）
+    // = ITEM:4 假阳具（#552）
     f.store.set('item:4', 1);
     era_flag.assi = CID;
     era_flag.assiplay = 1;

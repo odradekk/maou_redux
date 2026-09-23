@@ -234,11 +234,11 @@
  *   113. :4863 表达式寻址 PALAMLV:4 → era.get('palamlv:4')——族名直译，语义与归属人工定
  *   114. :4871 表达式寻址 PALAMLV:4 → era.get('palamlv:4')——族名直译，语义与归属人工定
  *   115. :4873 表达式寻址 PALAMLV:2 → era.get('palamlv:2')——族名直译，语义与归属人工定
- *   116. :5191 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   116. :5191 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   117. :5204 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
- *   118. :5204 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   118. :5204 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   119. :5236 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
- *   120. :5236 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   120. :5236 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   121. :5685 局部变量 A = UP:11 + UP:12 —— 单字母局部变量，JS 侧声明与赋值人工定
  *   122. :5725 局部变量 P = PALAM:3 + UP:3 —— 单字母局部变量，JS 侧声明与赋值人工定
  *   123. :5726 表达式寻址 PALAMLV:2 → era.get('palamlv:2')——族名直译，语义与归属人工定
@@ -261,9 +261,9 @@
  *   140. :7201 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   141. :7208 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   142. :7210 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
- *   143. :7277 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   144. :7310 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
- *   145. :7334 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   143. :7277 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   144. :7310 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+ *   145. :7334 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
  *   146. :7745 函数参数 @GOBI_KOUJO_K5, ARG:0 —— 参数声明已剥（JS 函数签名人工定）
  *   147. :7748 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）
  *   148. :7751 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）
@@ -8906,11 +8906,11 @@ async function GOBI_KOUJO_K5() {
 // 113. :4863 表达式寻址 PALAMLV:4 → era.get('palamlv:4')——族名直译，语义与归属人工定
 // 114. :4871 表达式寻址 PALAMLV:4 → era.get('palamlv:4')——族名直译，语义与归属人工定
 // 115. :4873 表达式寻址 PALAMLV:2 → era.get('palamlv:2')——族名直译，语义与归属人工定
-// 116. :5191 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 116. :5191 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 117. :5204 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
-// 118. :5204 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 118. :5204 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 119. :5236 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
-// 120. :5236 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 120. :5236 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 121. :5685 局部变量 A = UP:11 + UP:12 —— 单字母局部变量，JS 侧声明与赋值人工定
 // 122. :5725 局部变量 P = PALAM:3 + UP:3 —— 单字母局部变量，JS 侧声明与赋值人工定
 // 123. :5726 表达式寻址 PALAMLV:2 → era.get('palamlv:2')——族名直译，语义与归属人工定
@@ -8933,9 +8933,9 @@ async function GOBI_KOUJO_K5() {
 // 140. :7201 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 141. :7208 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 142. :7210 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
-// 143. :7277 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 144. :7310 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
-// 145. :7334 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 143. :7277 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 144. :7310 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
+// 145. :7334 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）
 // 146. :7745 函数参数 @GOBI_KOUJO_K5, ARG:0 —— 参数声明已剥（JS 函数签名人工定）
 // 147. :7748 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）
 // 148. :7751 局部参数 ARG:0 → arg_0（JS 局部变量，形参名人工定）

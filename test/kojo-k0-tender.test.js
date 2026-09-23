@@ -5055,8 +5055,8 @@ test('COLOSSEUM：selectcom 31 + 助手调教 → 助手名插值', async () => 
 });
 
 // —— COLOSSEUM：ITEM:PBAND → item:4（#552；源 :7786/:7819/:7843） ——
-// PBAND 是 Emuera 内建常量 4（SYSTEM ver1.0.3.ERB:42 的 `PBAND = 4`，即
-// 假阳具的道具号）；yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND')
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND')
 // 在引擎里恒 undefined（test/variable-yml.test.js 的引擎用例），持有假阳具也
 // 判不出——地址写回 item:PBAND 时下列用例必须红。
 test('COLOSSEUM：SELECTCOM 31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接假阳具词', async () => {

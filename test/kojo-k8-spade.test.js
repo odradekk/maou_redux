@@ -3405,8 +3405,8 @@ test('COLOSSEUM_KOJO_8 SC51 媚药史莱姆：单行台词', async () => {
 });
 
 // —— COLOSSEUM_KOJO_8：ITEM:PBAND → item:4（#552；源 :7355/:7390/:7417） ——
-// 原作 `SYSTEM ver1.0.3.ERB:42` 的 `PBAND = 4`（CSV/VariableSize.csv:61 声明的
-// 自定义全局变量），即假阳具的道具号；yml/Item.yml 名字表无 PBAND 条目，
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；VariableSize.csv:61
+// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下面三档必须红。
 test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阴茎」', async () => {
