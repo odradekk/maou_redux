@@ -368,23 +368,14 @@ test('升格到未实现目标：输出占位并按 JUMPFORM 返回 1', async ()
   );
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录本族全部升格占位', () => {
+test('存根清单可检索：升格目标全部落地后名单清空（#565）', () => {
   const world = seed_world();
   const { STUBBED_CALLS } = world.fixture.load_module('system/train/com-sex');
-  const registry = require('node:fs').readFileSync(
-    require('node:path').resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  assert.deepEqual(STUBBED_CALLS, [
-    'COM64',
-    'COM120',
-    'COM121',
-    'COM130',
-    'COM134',
-  ]);
-  for (const name of STUBBED_CALLS) {
-    assert.ok(registry.includes(name), `docs/stub-registry.md 缺少 ${name}`);
-  }
+  // #565：本族升格能命中的 COM64/120/121/130/134 已全部由 #225/#229 落地
+  // 注册，jump_to_advanced 的占位回落不再触发；回落保留为 JUMPFORM 防御网
+  // （占位 + RETURN 1 语义见 com-sex.js 的名单注释）。名字 ↔ 清单状态的
+  // 机械核对在 test/stub-registry-status.test.js 与 --coverage
+  assert.deepEqual(STUBBED_CALLS, []);
 });
 
 test('COM_ABLE：特殊守卫保持各指令原作差异', async () => {

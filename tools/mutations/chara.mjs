@@ -3,9 +3,42 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 76; // #548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）；#546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）
+export const COUNT = 80; // #546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）；#548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#565 起 +2（M11614/M11615，@CM_ST/@CM_ST_ACE 的 ST_UP 接线）+ 审查轮 +2（M11624/M11625，SHOW_CHARA_INFO 页码与 [100] 進む按钮）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）
 
 export default [
+  // —— #565 ST_UP 接线（@CM_ST / @CM_ST_ACE） ——
+  {
+    desc: 'M11614 cm_st 的逐级 ST_UP 调用删除（勇者初始等级不升）',
+    file: 'ere/chara/chara-make.js',
+    find: '      st_up(cid, rand_n); // :879 CALL ST_UP, A（逐级一次；RETURN 0 无人读）',
+    replace: '      // 变异：ST_UP 调用删除',
+    tests: ['chara-make'],
+    must_mention: 'REPEAT FLAG:60 次：等级 2',
+  },
+  {
+    desc: 'M11615 cm_st_ace 的逐级 ST_UP 调用删除（精英初始等级不升）',
+    file: 'ere/chara/chara-make.js',
+    find: '      st_up(cid, rand_n); // :892 CALL ST_UP, A（逐级一次；RETURN 0 无人读）',
+    replace: '      // 变异：ST_UP 调用删除',
+    tests: ['chara-make'],
+    must_mention: '(60 + 2) / 10 = 6 次逐级',
+  },
+  {
+    desc: 'M11624 形象确认的 SHOW_CHARA_INFO 页码回 -1（调教信息顶替贡品页）',
+    file: 'ere/chara/chara-make.js',
+    find: `      await require('#/page/page-chara-info-show').show_chara_info(\n        newchara,\n        -2,\n        rand_n,\n      );`,
+    replace: `      await require('#/page/page-chara-info-show').show_chara_info(\n        newchara,\n        -1,\n        rand_n,\n      ); // 变异：页码回 -1`,
+    tests: ['page-campaign'],
+    must_mention: '贡品页的外貌段',
+  },
+  {
+    desc: 'M11625 形象确认的 [100] 進む按钮退回纯文本（实机敲不进 100）',
+    file: 'ere/chara/chara-make.js',
+    find: `          era.printButton(\n            '你发动了魔王真眼，深入探究更进一步的详细素质……',\n            100,\n          );`,
+    replace: `          era.print('你发动了魔王真眼，深入探究更进一步的详细素质……'); // 变异：按钮退回纯文本`,
+    tests: ['event-first'],
+    must_mention: '[100] 進む按钮',
+  },
   {
     desc: 'M307 CM_STP 的 CFLAG:A:1 = 2 改 3（接入点触发条件被改坏——三分叉测试必须红）',
     file: 'ere/chara/chara-make.js',

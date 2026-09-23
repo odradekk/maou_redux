@@ -12,8 +12,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -641,39 +639,63 @@ test('cm_look：LOOK_SET 真身落盘 + 白虎 5%（:860-872）', async () => {
 
 // —— @CM_ST / @CM_ST_ACE（:875-894）——
 
-test('cm_st：FLAG:60 = 0 不掷 ST_UP；体力气力回满（:877-883）', async () => {
+test('cm_st：FLAG:60 = 0 不升 ST_UP；体力气力回满（:877-883）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('maxbase:3:0', 500);
   fixture.store.set('maxbase:3:1', 300);
   const { cm_st } = load(fixture);
-  await cm_st(3);
+  await cm_st(3, never);
   assert.equal(fixture.store.get('base:3:0'), 500, 'BASE = MAXBASE');
   assert.equal(fixture.store.get('base:3:1'), 300, 'BASE = MAXBASE');
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@ST_UP')),
-    'FLAG:60 = 0：不逐级',
-  );
+  // FLAG:60 = 0：不逐级（等级与上限都停在原值）
+  assert.equal(fixture.store.get('cflag:3:9') ?? 0, 0, '不升 ST_UP（等级）');
+  assert.equal(fixture.store.get('maxbase:3:0'), 500, '不升 ST_UP（体力上限）');
 });
 
-test('cm_st：FLAG:60 = 2 且非派遣 → 两行 ST_UP 占位', async () => {
+test('cm_st：FLAG:60 = 2 且非派遣 → 逐级 CALL ST_UP 两次（:878-880，#565 接真身）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:60', 2);
+  fixture.store.set('flag:402', 0); // 非派遣
   const { cm_st } = load(fixture);
-  await cm_st(3);
-  const count = stub_texts(fixture).filter((line) =>
-    line.includes('@ST_UP'),
-  ).length;
-  assert.equal(count, 2, 'REPEAT FLAG:60 次占位');
+  await cm_st(3, never);
+  // never → rand(2) 恒 1（防御臂）：每级等级 +1、攻 +1、防 +1（基础）+1
+  // （掷骰臂）、体力/气力上限各 +10。两级合计：
+  assert.equal(fixture.store.get('cflag:3:9'), 2, 'REPEAT FLAG:60 次：等级 2');
+  assert.equal(
+    fixture.store.get('cflag:3:13'),
+    2,
+    '基础攻击每级 +1（掷骰落防臂不再加攻）',
+  );
+  assert.equal(
+    fixture.store.get('cflag:3:14'),
+    4,
+    '基础防御每级 +1，掷骰 rand(2)=1 再 +1',
+  );
+  assert.equal(fixture.store.get('maxbase:3:0'), 20, '体力上限每级 +10');
+  assert.equal(fixture.store.get('maxbase:3:1'), 20, '气力上限每级 +10');
+  // 尾部 BASE = MAXBASE（:882-883）在升级后取新上限
+  assert.equal(fixture.store.get('base:3:0'), 20);
+  assert.equal(fixture.store.get('base:3:1'), 20);
 });
 
-test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级', async () => {
+test('cm_st：派遣中（FLAG:402 != 0）不逐级（:877 的第二条件）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:60', 3);
+  fixture.store.set('flag:402', 1); // 派遣奴隶标志（RAND_CHARA_MAKE :139 置 1）
+  const { cm_st } = load(fixture);
+  await cm_st(3, never);
+  assert.equal(fixture.store.get('cflag:3:9') ?? 0, 0, 'FLAG:402 != 0：不逐级');
+});
+
+test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级（#565 接真身）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:60', 1);
   fixture.store.set('cflag:0:9', 2); // 魔王等级 2（不 > 2）
   const { cm_st_ace } = load(fixture);
   await cm_st_ace(3, never);
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@ST_UP')),
+  assert.equal(
+    fixture.store.get('cflag:3:9') ?? 0,
+    0,
     '魔王等级 2 不 > 2：不逐级',
   );
 
@@ -681,11 +703,12 @@ test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级',
   fixture2.store.set('flag:60', 1);
   fixture2.store.set('cflag:0:9', 10);
   const { cm_st_ace: ace2 } = load(fixture2);
-  await ace2(4, never); // rand(10) = 1 → (10*6 + 1*2) / 10 = 6 次
-  const count = stub_texts(fixture2).filter((line) =>
-    line.includes('@ST_UP'),
-  ).length;
-  assert.equal(count, 6, '(60 + 2) / 10 = 6 次逐级');
+  await ace2(4, never); // rand(10) = 1 → (10*6 + 1*2) / 10 = 6 次逐级
+  assert.equal(fixture2.store.get('cflag:4:9'), 6, '(60 + 2) / 10 = 6 次逐级');
+  // never → rand(2) 恒 1：每级攻 +1、防 +2
+  assert.equal(fixture2.store.get('cflag:4:13'), 6);
+  assert.equal(fixture2.store.get('cflag:4:14'), 12);
+  assert.equal(fixture2.store.get('maxbase:4:0'), 60, '体力上限每级 +10');
 });
 
 // —— @CM_FAMILY_TALENT（:896-1042）——
@@ -1388,11 +1411,11 @@ test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用'
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = load(fixture);
   const { STUBBED_CALLS: FORWARD_STUBS } = load_forward(fixture);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
+  // #565 起 ST_UP 已接线（cm_st / cm_st_ace），两份名单都清空；名字与清单
+  // 状态的机械核对在 test/stub-registry-status.test.js 与 --coverage。
+  assert.deepEqual(
+    [STUBBED_CALLS, FORWARD_STUBS],
+    [[], []],
+    'chara-make 实现层与转发层均无存根化调用（#565）',
   );
-  for (const name of [...STUBBED_CALLS, ...FORWARD_STUBS]) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });

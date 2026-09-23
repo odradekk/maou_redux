@@ -70,7 +70,6 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
 const { chara_callname } = require('#/utils/callname-utils');
 const { e_get, monster_name } = require('#/dungeon/monster-data');
 const {
@@ -2945,9 +2944,10 @@ async function train_message_a_0() {
   const player_name = chara_callname(era_flag.player);
   const target_name = chara_callname(target);
 
-  // :746 分支守卫（SELECTCOM == 0 由分发表保证；另两条在此）
+  // :746 分支守卫（SELECTCOM == 0 由分发表保证；另两条在此）。原作条件
+  // 不满足时整条 IF/ELSEIF 链没有分支命中、**什么都不输出**——此前打的
+  // 「紧缚/失神中的爱抚反应」占位与原作不符，#565 起按原作改为直接返回
   if (era.get(`tequip:${target}:44`) || (era.get('tflag:899') || 0) > 1) {
-    stub_line('TRAIN_MESSAGE_A', '紧缚/失神中的爱抚反应', '随失神票');
     return;
   }
 

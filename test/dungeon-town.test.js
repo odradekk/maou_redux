@@ -76,10 +76,10 @@ test('存根清单可检索：docs/stub-registry.md 收录城镇文件的新增�
     'utf8',
   );
   const names = [...load(fixture).STUBBED_CALLS];
-  // 只防循环空转，不锁条数：存根被实现掉时这个数只会减，锁下限等于
-  // 给每张实现存根的票设路障（SOP §5 判据 5；#333 已在
-  // dungeon-battle.test.js 踩过一次）。契约是下面那个循环。
-  assert.ok(names.length > 0, '名单为空，下面的循环会空过');
+  // #565 起四名全数落地（CHARADEAD_CHECK 随 #548，其余三名的调用点随本票
+  // 接真身）、名单清空；名字 ↔ 清单状态的机械核对在
+  // test/stub-registry-status.test.js 与 --coverage
+  assert.deepEqual(names, []);
   for (const name of names) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

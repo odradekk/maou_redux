@@ -305,13 +305,13 @@ export default [
     must_mention: '精英版的数值差异与写入位置',
   },
   {
-    desc: 'M7175 MONSTER_SKILL 重新登记成 dungeon-battle 存根',
+    desc: 'M7175 MONSTER_SKILL 重新登记成 dungeon-battle 存根（#565 起名单为空，改由存根名核对拦截）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];",
+    find: 'const STUBBED_CALLS = [];',
     replace:
-      "const STUBBED_CALLS = ['MONSTER_SKILL', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
-    tests: ['monster-skill'],
-    must_mention: 'MONSTER_SKILL 不再登记为存根',
+      "const STUBBED_CALLS = ['MONSTER_SKILL']; // 变异：真身倒退为存根登记",
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
   },
   {
     desc: 'M7176 怪物战斗入口不再透传随机源',

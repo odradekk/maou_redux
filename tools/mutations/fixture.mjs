@@ -3,9 +3,18 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 41;
+export const COUNT = 42;
 
 export default [
+  // —— #565 ——
+  {
+    desc: 'M11623 preset_chara_0 的静态表层删除（CSVCALLNAME 读空串）',
+    file: 'test/helpers/chara.js',
+    find: "  fixture.store.set('chara:0', CHARA_0_SHAPE);",
+    replace: '  // 变异：静态表层删除',
+    tests: ['event-first'],
+    must_mention: 'callname:0:-1',
+  },
   {
     // 注：find 原覆盖函数头整段（#130 前的形状）；入集合逻辑插进函数体后
     // 按工具规则同步 find/replace 到仍唯一的 return 形状段，变异语义不变。

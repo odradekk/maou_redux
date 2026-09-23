@@ -72,6 +72,7 @@ const {
   ablup100,
   auto_ablup,
 } = require('#/system/train/ablup');
+const { check_specialskil } = require('#/event/get-specialtalent'); // #565 起接线
 const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const era_flag = require('#/era-utils/era-flag');
@@ -138,7 +139,7 @@ const STUBBED_ABLUP_NAMES = ABLUP_IDS.filter(
  * 核对固定）；名单变动必须同步清单。升级规则本体超出本段代码的部分见
  * ABLUP_HANDLERS 的注释。
  */
-const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES, 'CHECK_SPECIALSKIL'];
+const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES]; // CHECK_SPECIALSKIL 自 #565 起接线（get-specialtalent 真身）
 
 // PALAMLV の初期値（Emuera 默认：_replace.csv 的该键被注释未启用——
 // target/CSV/_replace.csv:74）。page-train.js 持有同源常量，system 侧
@@ -444,7 +445,9 @@ async function run_juel_check() {
   // $LABEL_EXIT :541-546：收尾三查（欲情变化检查已接真身，余下一处占位）
   yokubo_up_check(target); // :542
   await check_sellassiable(target); // :543
-  stub_line('CHECK_SPECIALSKIL', '特殊技能获得检查'); // :544
+  // :544 CALL CHECK_SPECIALSKIL, 1（#565 起真身 ere/event/get-specialtalent.js；
+  // 实参 1 = SEIIN——强制精饮绝顶次数超阈值时的档位判定用，见 :607）
+  await check_specialskil(target, 1);
   // :545 LOCAL = TARGET —— CALL 方传 RESULT 的暂存，无人读，不镜像
 }
 

@@ -4,22 +4,21 @@ export const COUNT = 6;
 
 export default [
   {
-    desc: 'M7800 MAGIC 重新登记成 dungeon-battle 存根（端到端宿主）',
+    desc: 'M7800 MAGIC 重新登记成 dungeon-battle 存根（端到端宿主；#565 起名单为空，改由存根名核对拦截）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];",
-    replace:
-      "const STUBBED_CALLS = ['MAGIC', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
-    tests: ['event-ending2-e2e'],
-    must_mention: 'MAGIC 在 ENDING_2 战斗路径实际执行且未退回存根',
+    find: 'const STUBBED_CALLS = [];',
+    replace: "const STUBBED_CALLS = ['MAGIC']; // 变异：真身倒退为存根登记",
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
   },
   {
-    desc: 'M7801 MONSTER_SKILL 重新登记成 dungeon-battle 存根（端到端宿主）',
+    desc: 'M7801 MONSTER_SKILL 重新登记成 dungeon-battle 存根（端到端宿主；#565 起名单为空，改由存根名核对拦截）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];",
+    find: 'const STUBBED_CALLS = [];',
     replace:
-      "const STUBBED_CALLS = ['MONSTER_SKILL', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
-    tests: ['event-ending2-e2e'],
-    must_mention: 'MONSTER_SKILL 在 ENDING_2 战斗路径实际执行且未退回存根',
+      "const STUBBED_CALLS = ['MONSTER_SKILL']; // 变异：真身倒退为存根登记",
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
   },
   {
     desc: 'M7802 USE_EX_ITEM 战斗中调用点删除',

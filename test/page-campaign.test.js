@@ -173,6 +173,12 @@ test('招募：恰好 80 人（CHARANUM == 80）不触上限，招募成功', as
     return () => Promise.resolve(answers[i++] ?? 999);
   })();
   await campaign_menu(() => 0);
+  // SHOW_CHARA_INFO 走 -2 贡品页（CHAR_MAKE.ERB:150 的原作实参；#565 订正，
+  // 战役招募与开局随机共用同一调用点）：外貌段的种族行必须真的铺出来
+  assert(
+    fixture.text_lines().includes('[人类]'),
+    '招募确认页应展示 -2 贡品页的外貌段（种族行）',
+  );
   assert.equal(fixture.store.get('base:0:1'), 0, '恰好 100 气力扣 100 后为 0');
   assert.equal(
     fixture.store.get('talent:1:361'),

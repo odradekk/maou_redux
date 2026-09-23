@@ -80,9 +80,11 @@ const {
  * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)），从名单移除；
  * #500 起 COM13_AUTO 换真身（调用点直调 ere/event/event-autotrain.js），
  * 从名单移除；#508 起 BEFORE_AUTOTRAIN 亦换真身（同一模块的
- * before_autotrain），从名单移除。
+ * before_autotrain），从名单移除；#514 起 ATTACK_KOUJO / VICTORY_KOUJO
+ * 的分发族补齐（本文件的调用点直调 kojo-system 的分发层），亦从名单
+ * 移除，名单自此清空。
  */
-const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];
+const STUBBED_CALLS = [];
 
 /**
  * @CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，

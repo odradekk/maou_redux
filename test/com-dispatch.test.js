@@ -331,7 +331,7 @@ test('@V_ABLE：六条判定逐条（男 / 未成熟 / 处女 / 贞操带三条�
 
 // —— 5. TRAIN_MESSAGE 分发族的缺号语义 ——
 
-test('TRAIN_MESSAGE 分发族：声明空间 121；缺失落占位行；空间外显式抛错', async () => {
+test('TRAIN_MESSAGE 分发族：声明空间 121；缺失零输出（#565 还原原作语义）；空间外显式抛错', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -356,12 +356,13 @@ test('TRAIN_MESSAGE 分发族：声明空间 121；缺失落占位行；空间�
   assert.ok(train_message_b_family.has(0));
   assert.ok(!train_message_b_family.has(84));
 
-  // 缺失（族票未落地）→ 存根占位行（default 落占位，不静默）
-  era_flag.selectcom = 84; // 升格可达的高级号：J19 落地前是缺失分支
+  // 缺失（族模块未装载）→ 零输出（#565 起按原作语义：源侧对无分支的号
+  // 什么都不打印；#45–#402 期间 ere 给缺号打占位行，全量收口后还原）
+  era_flag.selectcom = 84; // 升格可达的高级号：本世界未装载 com-hardcore
   await train_message_b();
   assert(
-    fixture.text_lines().some((l) => l.includes('@TRAIN_MESSAGE_B')),
-    '缺失分支必须落可检索的占位行',
+    !fixture.text_lines().some((l) => l.includes('@TRAIN_MESSAGE_B')),
+    '缺失分支零输出，不得再落占位行（#565）',
   );
 
   // 空间外 → 显式抛错（SELECTCOM 只会是 121 之一，越界即引擎对接 bug）

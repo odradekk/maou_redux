@@ -48,11 +48,12 @@ const trap_mod = require('#/dungeon/dungeon-trap');
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
  * 核对固定）；名单变动必须同步清单。ADD_EX_ITEM / CAMPAIGN_MONSTER_LIST
  * 复用既有域内存根（#176 先例：复用、调用点列补新处），KARMA 已由
- * #332 接入真身，
+ * #332 接入真身；ADD_EX_ITEM 已随 ex-item.js 落地并由本文件直调
+ * （#344），#565 起从名单移除，名单自此清空。
  * 延迟 require 防环（dungeon.js ↔ dungeon-quest.js、dungeon-battle.js ↔
  * dungeon-quest.js 双向各一处，顶层只单向）。
  */
-const STUBBED_CALLS = ['ADD_EX_ITEM'];
+const STUBBED_CALLS = [];
 
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
 function name_of(cid) {

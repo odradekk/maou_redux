@@ -26,11 +26,16 @@ const { test } = require('node:test');
 const {
   DEAD_MARKERS,
   check_registry_statuses,
+  check_stub_names,
   classify_status,
+  collect_stub_line_names,
   is_group_title_row,
+  list_ere_js,
   parse_registry_tables,
+  parse_stubbed_calls,
   split_row_cells,
 } = require('../tools/trace-coverage.mjs');
+const { create_era_fixture } = require('./helpers/era-fixture');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const REGISTRY = path.join(REPO_ROOT, 'docs', 'stub-registry.md');
@@ -369,4 +374,178 @@ test('真树清单：#542 判死的八行状态格以判死词开头（退回存
       `#542：${key} 的状态格必须以「${prefix}」开头的判死终态，实际：${status.slice(0, 40)}`,
     );
   }
+});
+
+// —— #565：代码里的存根名 ↔ 清单状态 ——
+
+test('收集器：stub_line 名字容忍多行调用，jsdoc 里引用的字样不计（#565）', () => {
+  const source = [
+    `
+    /**
+     * 调用点说明：train/juel-check.js 内已有的 stub_line('CHECK_SPECIALSKIL', …)
+     */
+    "use strict";
+    stub_line(
+      'TRAIN_MESSAGE_B',
+      '指令 12 的情景描写',
+    );
+    await stub_line_wait('ST_UP', '按等级的基础数值初始化');
+  `,
+  ].join('\n');
+  assert.deepEqual(collect_stub_line_names(source).sort(), [
+    'ST_UP',
+    'TRAIN_MESSAGE_B',
+  ]);
+});
+
+test('收集器：STUBBED_CALLS 的字面项与 spread 标识符分开解析（#565）', () => {
+  const source = [
+    `
+    const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES, 'CHECK_SPECIALSKIL'];
+  `,
+  ].join('\n');
+  assert.deepEqual(parse_stubbed_calls(source), {
+    literals: ['CHECK_SPECIALSKIL'],
+    spreads: ['STUBBED_ABLUP_NAMES'],
+    errors: [],
+  });
+  assert.equal(parse_stubbed_calls('const X = [];'), null);
+});
+
+test('收集器：元素前的注释剥掉再认，解析不了的元素必须进 errors（#565 审查）', () => {
+  // 反例来源：审查实测——元素前加一行注释，旧版把 'CHECK_SPECIALSKIL'
+  // 连注释一起塞进 spread（静默消失），已实现名就这样漏出守卫
+  const commented = [
+    'const STUBBED_CALLS = [',
+    '  // 待接入调用',
+    "  'CHECK_SPECIALSKIL',",
+    '  ...REST, // 行尾注释也不影响',
+    '];',
+  ].join('\n');
+  assert.deepEqual(parse_stubbed_calls(commented), {
+    literals: ['CHECK_SPECIALSKIL'],
+    spreads: ['REST'],
+    errors: [],
+  });
+  // 坏形（双引号名 / 裸标识符）不得静默：进 errors 由调用方判红
+  const broken = [
+    'const STUBBED_CALLS = [',
+    '  "DOUBLE_QUOTED",',
+    '  bareWord,',
+    '];',
+  ].join('\n');
+  assert.deepEqual(parse_stubbed_calls(broken), {
+    literals: [],
+    spreads: [],
+    errors: ['"DOUBLE_QUOTED"', 'bareWord'],
+  });
+});
+
+test('收集器：无插值模板串的 stub_line 名也要收（#565 审查）', () => {
+  const source = [
+    "const { stub_line } = require('#/utils/stub-line');",
+    'stub_line(`CHECK_SPECIALSKIL`, `占位`);',
+  ].join('\n');
+  assert.deepEqual(collect_stub_line_names(source), ['CHECK_SPECIALSKIL']);
+});
+
+test('核对：名字必须对应「存根/终态」行——已实现行、缺行都红（合成样本，#565）', () => {
+  const text = sample_registry([
+    [
+      '函数级存根',
+      [
+        ['`WIRED_ONE`', '源A', '已实现（ere/x.js 的 wired_one）'],
+        ['`PENDING_ONE`', '源B', '存根（运行时占位，随下一票）'],
+        ['`DEAD_ONE`', '源C', '不可达（#1 主菜单无此按钮）'],
+        // 同名双行：实现行 + 调用点存根行（RANDOM_SELF_CALL 形态）
+        ['`DUAL`', '源D1', '已实现（ere/d.js）'],
+        ['`DUAL`', '源D2', '存根（ere/page/p.js 的调用点，随 S5）'],
+        // 一行多名（COM64 / COM120 形态）
+        ['`COM64` / `COM120`（升格跳转目标）', '源E', '存根（随下一票）'],
+      ],
+    ],
+    [
+      '@USERSHOP 指令分支待办项',
+      [
+        // 按编号登记的行：名字藏在「原作行为」列的 CALL 里（400 → LABO 形态）
+        ['400', 'CALL LABO（:148；面板无此按钮）', '不可达（#181）'],
+        ['103', 'CALL 批量处刑（:110）', '已实现（#543）'],
+      ],
+    ],
+  ]);
+
+  // 故意写错的用例（工单第 4 条）：WIRED_ONE 的行是「已实现」——函数已落
+  // 真身时调用点必须接线，检查必须红并点名
+  const failures = check_stub_names(
+    [
+      { file: 'ere/system/train/wired.js', name: 'WIRED_ONE' },
+      { file: 'ere/page/page-x.js', name: 'GHOST_ONE' },
+      { file: 'ere/dungeon/dungeon-y.js', name: 'PENDING_ONE' },
+      { file: 'ere/dungeon/dungeon-z.js', name: 'DEAD_ONE' },
+      { file: 'ere/chara/chara-d.js', name: 'DUAL' },
+      { file: 'ere/system/train/com-x.js', name: 'COM120' },
+      { file: 'ere/page/page-shop.js', name: 'LABO' },
+    ],
+    text,
+  );
+  assert.equal(failures.length, 2, failures.join('\n'));
+  assert.match(
+    failures[0],
+    /已实现函数仍在打占位：ere\/system\/train\/wired\.js 的「WIRED_ONE」/,
+    '已实现行的名字必须点名报错',
+  );
+  assert.match(
+    failures[1],
+    /存根名无清单行：ere\/page\/page-x\.js 的「GHOST_ONE」/,
+    '没登记的名字必须报缺行',
+  );
+  // 中文名（批量处刑）不进索引也不误匹配——代码侧不会出现非 ASCII 的
+  // stub_line 名（模板与字面都是 ASCII），无需为它造条目
+});
+
+test('真树：ere/ 全部 stub_line 名与 STUBBED_CALLS 字面名都对应存根/终态行（现状对照，#565）', () => {
+  const registry_text = fs.readFileSync(REGISTRY, 'utf8');
+  const entries = [];
+  for (const rel of list_ere_js(REPO_ROOT)) {
+    const text = fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
+    for (const name of collect_stub_line_names(text)) {
+      entries.push({ file: rel, name });
+    }
+    const stubbed = parse_stubbed_calls(text);
+    const bad_items = stubbed?.errors ?? [];
+    assert.deepEqual(
+      bad_items,
+      [],
+      `${rel} 的 STUBBED_CALLS 名单有解析不了的元素（只认单引号字面名与 ...spread）`,
+    );
+    if (stubbed !== null) {
+      for (const name of stubbed.literals) {
+        entries.push({ file: rel, name });
+      }
+    }
+  }
+  // 下限随 #540 清零进程逐票下调（#548 后真树剩 8 名；#565 起草时 17 名）
+  assert.ok(entries.length >= 5, '收集面塌了（ere/ 尚未清零，收集器失效即红）');
+  assert.deepEqual(
+    check_stub_names(entries, registry_text),
+    [],
+    '已实现函数的调用点不得再打占位（#565 接线票的机械守卫）',
+  );
+});
+
+test('真树：STUBBED_CALLS 的 spread 名单经夹具取运行时值核对（juel-check / page-ability-up，#565）', async () => {
+  // `[...STUBBED_ABLUP_NAMES]` 是 ABLUP_IDS 与 ABLUP_HANDLERS 的差集，
+  // 静态求不了值——真身以模块导出为准（当前为空数组：全部 ABLUP 编号
+  // 已有处理器）。将来往 ABLUP_IDS 加号而补不上处理器时，这里会抓到
+  // `ABLUP<n>` 名字，清单必须为它登记「存根」行。
+  const fixture = create_era_fixture();
+  const registry_text = fs.readFileSync(REGISTRY, 'utf8');
+  const entries = [];
+  for (const mod of ['system/train/juel-check', 'page/page-ability-up']) {
+    const { STUBBED_CALLS } = fixture.load_module(mod);
+    for (const name of STUBBED_CALLS ?? []) {
+      entries.push({ file: `ere/${mod}.js`, name });
+    }
+  }
+  assert.deepEqual(check_stub_names(entries, registry_text), []);
 });

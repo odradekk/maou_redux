@@ -872,17 +872,13 @@ test('TRAIN_MESSAGE 120-135：骨架空操作，不得出族票未落地占位�
   }
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录 COM64', () => {
+test('存根清单可检索：COM64 落地后名单清空（#565）', () => {
   const world = seed_world();
   const { STUBBED_CALLS } = world.fixture.load_module(
     'system/train/com-advanced',
   );
-  const registry = require('node:fs').readFileSync(
-    require('node:path').resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  assert.deepEqual(STUBBED_CALLS, ['COM64']);
-  for (const name of STUBBED_CALLS) {
-    assert.ok(registry.includes(name), `docs/stub-registry.md 缺少 ${name}`);
-  }
+  // #565：CASE 21 的升格目标 COM64 已由 #225 落地，占位回落不再触发；
+  // 名字 ↔ 清单状态的机械核对在 test/stub-registry-status.test.js 与
+  // --coverage
+  assert.deepEqual(STUBBED_CALLS, []);
 });

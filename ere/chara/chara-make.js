@@ -81,13 +81,13 @@ const {
   choose_haircolor,
 } = require('#/chara/chara-and-hair'); // #392 起真身（源 キャラ関数/FUNC_CHARA_AND_HAIR.ERB）
 const { party_char_del } = require('#/dungeon/dungeon-party');
+const { st_up } = require('#/dungeon/dungeon-lvup'); // #565 起接线（源 迷宮/LVUP.ERB:44）
 const { chara_callname } = require('#/utils/callname-utils');
 // WEARING_CLOTH_ABLE 自 #215（J5）起为真身（ere/system/train/cloth.js）
 const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line_wait } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -104,10 +104,11 @@ const { stub_line_wait } = require('#/utils/stub-line');
  * 名单移除。
  *
  * #390 变更：SHOW_CHARA_INFO 换真身（rand_chara_make 的形象确认段改调
- * ere/page/page-chara-info-show.js），也从名单移除。两票各删一批，合并后
- * 名单只剩 ST_UP。
+ * ere/page/page-chara-info-show.js），也从名单移除。#565 起 @CM_ST /
+ * @CM_ST_ACE 的 CALL ST_UP（:879/:892）亦接真身（ere/dungeon/dungeon-
+ * lvup.js 的 st_up，rand_n 透传掷骰），名单自此清空。
  */
-const STUBBED_CALLS = ['ST_UP'];
+const STUBBED_CALLS = [];
 
 /**
  * @CHARA_MAKE（:2-120）：随机生成一名完整角色。
@@ -158,7 +159,7 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   if (!elite && !ex1 && !offspring) {
     await cm_stp(cid); // :34 侵攻楼层·侵攻度·侵攻中·再起点
     await cm_base(cid); // :36 职业、基础
-    await cm_st(cid); // :38 勇者初始等级
+    await cm_st(cid, rand_n); // :38 勇者初始等级（rand_n 透传给 ST_UP 的掷骰）
   } else if (!offspring) {
     chara(cid).invasion.状态 = 0; // :41 初始位置（精英部下）
     await cm_base(cid); // :43 职业、基础
@@ -1092,13 +1093,14 @@ async function cm_look(cid, arg, rand_n) {
  * 随后体力/气力回满（BASE = MAXBASE）。
  *
  * @param {number} cid 角色 ID
+ * @param {(n: number) => number} [rand_n] RAND:N 随机源（透传给 ST_UP 的
+ *   掷骰；缺省均匀随机——st_up 的缺省同款，#565 起接线）
  */
-async function cm_st(cid) {
+async function cm_st(cid, rand_n) {
   if ((era.get('flag:60') || 0) > 0 && (era.get('flag:402') || 0) === 0) {
     const times = era.get('flag:60') || 0;
     for (let i = 0; i < times; i += 1) {
-      // :879 CALL ST_UP, A（存根，逐级一次）
-      await stub_line_wait('ST_UP', '按等级的基础数值初始化', '随升级票');
+      st_up(cid, rand_n); // :879 CALL ST_UP, A（逐级一次；RETURN 0 无人读）
     }
   }
   chara(cid).dungeon.体力 = era.get(`maxbase:${cid}:0`) || 0; // :882
@@ -1121,8 +1123,7 @@ async function cm_st_ace(cid, rand_n) {
     local += rand_n(maou_lv) * 2; // :889
     local = Math.floor(local / 10); // :890
     for (let i = 0; i < local; i += 1) {
-      // :892 CALL ST_UP, A（存根，逐级一次）
-      await stub_line_wait('ST_UP', '按等级的基础数值初始化', '随升级票');
+      st_up(cid, rand_n); // :892 CALL ST_UP, A（逐级一次；RETURN 0 无人读）
     }
   }
 }
@@ -1848,9 +1849,18 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
           haircolor = shown_color; // :100
           era.print(''); // :101 PRINTL
 
-          // :103-104 分隔线 + 魔王真眼
+          // :103-104 分隔线 + 魔王真眼。**按钮化（PR #53 通则）**：原作
+          // PRINTL [100] … + INPUT 在 Emuera 里玩家可敲任意数，EraElectron 的
+          // input 只收本轮按钮快捷键（#130/#530）——纯文本前缀行在实机敲不进
+          // 100，形象确认会整个卡死。正文不写 [100] 前缀，引擎按 showAcc 自拼
+          // （审查 #565 发现：前版漏了这行的前缀，实机更无从继续）。同循环的
+          // [0]/[1] 行是 #530 起的既有基线债（值文本由 show_* 打印、进不了
+          // 独占一行的按钮），随其票升级
           era.drawLine();
-          era.print('你发动了魔王真眼，深入探究更进一步的详细素质……');
+          era.printButton(
+            '你发动了魔王真眼，深入探究更进一步的详细素质……',
+            100,
+          );
 
           const choice = await era.input(); // :107 INPUT
           if (choice === 0) {
@@ -1901,13 +1911,16 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       // 「异国的」前缀。本文件不承载这个局部量，等价物是 `inport_cid`
       // （0 = 非异国），收下分支的播报据此拼前缀（#494）。
 
-      // :150 CALL SHOW_CHARA_INFO（#390 真身）。**惰性 require**：本文件顶层
+      // :150 CALL SHOW_CHARA_INFO, ID_OF_NEWCHARA, -2（#390 真身）：**页码
+      // 是 -2（贡品信息：身体数据 + 外貌）**——原作此处的实参即 -2；#390 起
+      // 写成 -1（调教信息）是对「CALL SHOW_CHARA_INFO, X, -1」其他调用点的
+      // 串线，审查 #565 订正。**惰性 require**：本文件顶层
       // 引入会把 page-chara-info-show 及其整条链（含 dungeon-quest ↔
       // dungeon-battle 的既有环）提前拉起来，dungeon-quest 会变成半成品；
       // 只有这一条形象确认支路用得到，就在用到处取。
       await require('#/page/page-chara-info-show').show_chara_info(
         newchara,
-        -1,
+        -2,
         rand_n,
       );
 

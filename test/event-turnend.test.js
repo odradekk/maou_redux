@@ -899,8 +899,10 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   // dungeon-after.js）；#217 起 BENKI 换真身（system/train/benki.js）——
   // 四条均已从名单移除；#342 起 MARRIAGE_DAY 亦接真身；#508 起
   // FORMAT_AUTOTRAIN / AUTOTRAIN 亦接真身（ere/event/event-autotrain.js
-  // 的同名函数，调用点原为占位行）
-  assert.deepEqual(settle_stubs, ['GET_LOOK_INFO']);
+  // 的同名函数，调用点原为占位行）；#543 起自動處刑接真身；#565 起
+  // GET_LOOK_INFO（头发生长 :540/:564 的发色段）亦接真身（look-info.js）
+  // ——名单自此清空
+  assert.deepEqual(settle_stubs, []);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',
@@ -1157,6 +1159,64 @@ test('#401 妊娠判定接入：第二组（卖春/狂王兽奸/NTR）只在日�
   );
 });
 
+test('#565 头发/阴毛生长播报：GET_LOOK_INFO 接线后按原作拼「发色的」（:536-582）', async () => {
+  // 靶场同 setup_pregnancy：全链随机源取常数 0（生长判定与播报本身不吃
+  // 随机，链上其余段落需要定值才能走完）
+  const fixture = create_era_fixture();
+  for (const cid of [0, 31]) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  fixture.store.set('flag:5', 4);
+  fixture.store.set('flag:10004', 10000);
+  fixture.store.set('exflag:4444', 1234);
+  fixture.load_module('event/event-turnend');
+  fixture.load_module('system/turnend-settle');
+  fixture.load_module('event/event-turnend-later');
+  const { emit } = fixture.load_module('system/event/registry');
+  fixture.disable_enter_enemy();
+  fixture.store.set('flag:10005', -1); // TARGET
+  fixture.store.set('flag:10003', 0); // TIME（午前）
+
+  // 头发：50 → 51 触发半长播报；魅力点 22（美丽的）、发色 4（红色，
+  // LOOK.ERB:2895-2917 的形容词表）；阴毛：1 → 2 触发汗毛播报，生长极限
+  // 200 未达、非白虎（125 未设）
+  fixture.store.set('talent:31:302', 50);
+  fixture.store.set('talent:31:300', 4);
+  fixture.store.set('talent:31:312', 22);
+  fixture.store.set('talent:31:310', 1);
+  fixture.store.set('talent:31:311', 200);
+
+  fixture.override_math_random(() => 0);
+  try {
+    await emit('EVENTTURNEND');
+  } finally {
+    fixture.restore_math_random();
+  }
+
+  const texts = fixture.text_lines();
+  // :536-545 一行拼成：名字 + 美丽的 + 发色形容词 + 的 + 半长句
+  assert(
+    texts.includes('角色31美丽的红色的头发半长，到肩膀了。'),
+    '头发半长播报必须含 GET_LOOK_INFO("发色(颜色)") 的「红色的」段',
+  );
+  // :552-567 同理一行拼成：名字 + 艳丽 + 的阴阜上， + 发色 + 的 + 汗毛句
+  assert(
+    texts.includes('角色31艳丽的阴阜上，红色的汗毛长出来了。'),
+    '阴毛播报必须按原作拼成单行（含发色段，不再拆两行/省「的」）',
+  );
+  assert(
+    !texts.some((line) => line.includes('@GET_LOOK_INFO')),
+    'GET_LOOK_INFO 已接真身，不得再出现占位行',
+  );
+  // 生长确实发生（51 / 2，钳制未触发——311 = 200 远未达）
+  assert.equal(fixture.store.get('talent:31:302'), 51);
+  assert.equal(fixture.store.get('talent:31:310'), 2);
+});
 test('#401 AUTO_BUYING：三个开关位各自的可达条件与边界', async () => {
   const fixture = create_era_fixture();
   const { auto_buying } = fixture.load_module('event/event-turnend');

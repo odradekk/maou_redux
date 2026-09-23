@@ -13,8 +13,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -388,9 +386,13 @@ engine_test(
 
 // ———— $INPUT_LOOP_1（:443-549） ————
 
-test('交互循环：选 999 退出，收尾一处占位（欲情变化检查已接真身）', async () => {
+test('交互循环：选 999 退出，收尾三查全走真身（#565：CHECK_SPECIALSKIL 接线）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
+  // 让 CHECK_SPECIALSKIL 有可观察产出：异种妊娠经验 20 → 体变检查取得
+  //【同族妊娠不能】（GET_SPECIALTALENT.ERB:740-752，test/event-get-
+  // specialtalent.test.js 同款前态）
+  fixture.store.set('exp:31:62', 20);
   fixture.set_inputs(999);
 
   await fixture.load_module('system/train/juel-check').run_juel_check();
@@ -400,8 +402,17 @@ test('交互循环：选 999 退出，收尾一处占位（欲情变化检查已
     { api: 'input', value: 999 }, // :461 INPUT → :540 退出
   ]);
   assert.ok(
-    fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
-    'CHECK_SPECIALSKIL 占位行必须出现',
+    fixture.text_lines().some((line) => line.includes('生育了太多异种的孩子')),
+    'CHECK_SPECIALSKIL 真身必须真的被调到（体变检查的播报）',
+  );
+  assert.equal(
+    fixture.store.get('talent:31:158'),
+    1,
+    ':544 CALL CHECK_SPECIALSKIL, 1 的实参链要落到目标角色',
+  );
+  assert.ok(
+    !fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
+    'CHECK_SPECIALSKIL 已接真身，不应再打占位行',
   );
   assert.ok(
     !fixture.text_lines().some((line) => line.includes('@YOKUBO_UP_CHECK')),
@@ -514,7 +525,8 @@ test('自动升级（GETBIT(FLAG:5,35)）：不吃 INPUT，AUTO_ABLUP 真身三�
     'AUTO_ABLUP 不再是存根，占位行必须消失',
   );
   assert(
-    fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
+    !fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
+    'CHECK_SPECIALSKIL 已接真身（#565），占位行必须消失',
   );
   // 位 34 不得误触发（相邻位防串）
   const other = create_era_fixture();
@@ -805,12 +817,11 @@ test('SHOW_ABLUP_SELECT：#467 癖好行（[4]／[40]）也按各自 DECIDE 打 
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = seed_world(fixture);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
+  // #565 起 CHECK_SPECIALSKIL 接线；ABLUP 族自 #467 起已清零（spread 展开
+  // 为空数组）。名字 ↔ 清单状态的机械核对在 test/stub-registry-status.test.js。
+  assert.deepEqual(
+    STUBBED_CALLS,
+    [],
+    'juel-check 的存根名单清空（ABLUP 缺号回落仍由 STUBBED_ABLUP_NAMES 驱动）',
   );
-  assert.equal(STUBBED_CALLS.length, 1); // #466 落 ABLUP20-23/30-33、#467 落 ABLUP37/39/40/99/100 与 AUTO_ABLUP 后，ABLUP 族存根清零，只剩 CHECK_SPECIALSKIL
-  for (const name of STUBBED_CALLS) {
-    assert.ok(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });

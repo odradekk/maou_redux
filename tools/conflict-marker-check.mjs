@@ -11,7 +11,11 @@
 //   1. 原始标记：行首七个小于号 / 七个等号 / 七个大于号（可带后随文本）；
 //   2. prettier 洗净的 markdown 形态：七个用空格隔开的大于号（含后面再
 //      嵌一行开始标记的复合形态）；
-//   3. 七个等号在 markdown 里、上一行有正文时按 setext 标题下划线排除，
+//   3. 行中标记：正文后面拖着的「七连大于/小于号 + 空格 + ref」尾巴——
+//      #565 解冲突时把标记并进既有行尾，行首形态全部漏过（四道守卫都绿）。
+//      只认「恰七个子符 + 空格、两侧不再被子符延长」：golden/*.log 的进度条
+//      `[>>>>>>>>..]` 是八连子符夹点号，不命中；
+//   4. 七个等号在 markdown 里、上一行有正文时按 setext 标题下划线排除，
 //      上一行空白仍报——排除按上下文不是按扩展名一刀切。
 // 扫描面：git ls-files 的跟踪文本，排除 target/（只读输入）与
 // node_modules/。二进制按扩展名与 NUL 字节跳过。
@@ -33,6 +37,15 @@ const START_MARK = '<'.repeat(7);
 const END_MARK = '>'.repeat(7);
 const SEP_MARK = '='.repeat(7);
 const WASHED_PREFIX = Array(7).fill('>').join(' ');
+// 行中尾巴：恰七个子/父符 + 空格，两侧不得再被子/父符延长（进度条是
+// `>>>>>>>>..` 一类的八连子符，靠「不再延长」与「后随空格」排除）。
+// 行中尾巴：前面有正文（非空白、非同类子符）、恰七个子/父符 + 空格、后面
+// 不再被子/父符延长。前视排除行首形态（行首归上面的原始标记分支，两条
+// 判定面互不重叠——删掉任一分支都有对应探针能红）；进度条 `>>>>>>>>..`
+// 一类的八连子符夹点号，靠「不再延长」与「后随空格」排除。运行时拼接
+// 构造，避免字面量让本工具扫中自己。
+const INLINE_END_RE = new RegExp(`(?<=[^\\s>])${END_MARK} (?!>)`);
+const INLINE_START_RE = new RegExp(`(?<=[^\\s<])${START_MARK} (?!<)`);
 
 const BINARY_EXT = new Set([
   '.png',
@@ -145,6 +158,10 @@ function scan_text(rel, text) {
     const prev = i > 0 ? lines[i - 1] : '';
     if (is_washed_marker(line)) {
       hits.push({ kind: 'prettier 洗净', line: i + 1, text: line.trim() });
+      continue;
+    }
+    if (INLINE_END_RE.test(line) || INLINE_START_RE.test(line)) {
+      hits.push({ kind: '行中标记', line: i + 1, text: line.trim() });
       continue;
     }
     if (is_raw_marker(line)) {

@@ -343,12 +343,13 @@ test('B/A 对 201-207 注册显式无操作：源侧无分支，不得出占位�
       `SELECTCOM = ${com} 两张表的输出都应为空（无占位行）`,
     );
   }
-  // 对照：未落地的族（SELECTCOM = 30）仍出占位行——无操作只对本族生效
+  // 对照：未装载的族（SELECTCOM = 30，com-service 不在本世界）零输出——
+  // #565 起缺号按原作语义归零，显式无操作与缺失同为零输出
   era_flag.selectcom = 30;
   await train_message_b();
   assert.ok(
-    fixture.text_lines().some((l) => l.includes('占位')),
-    '别族缺失分支照旧落占位行',
+    !fixture.text_lines().some((l) => l.includes('占位')),
+    '别族缺失分支零输出（#565），不得再落占位行',
   );
 });
 

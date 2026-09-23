@@ -136,12 +136,16 @@ test('B 省略设定（FLAG:6 & 1）：整函数短路，无任何输出', async
   assert.equal(fixture.lines.length, 0);
 });
 
-test('B 其他指令：落存根占位行（可检索原作函数名）', async () => {
+test('B 其他指令（未装载族模块）：零输出（#565 起缺号回落按原作归零）', async () => {
+  // 12 号属 com-toy 族——本测试世界未装载它，族表缺失。原作对无分支的
+  // 号什么都不输出；ere 自 #45 起给缺号打占位行、#565 起还原为零输出
+  // （全量装载后 121 段全数有主，这一形态只在模块未装载的测试世界可达）
   const { fixture, era_flag, train_message_b } = seed_message_world();
   era_flag.selectcom = 12;
   await train_message_b();
   assert(
-    fixture.text_lines().some((line) => line.includes('@TRAIN_MESSAGE_B')),
+    !fixture.text_lines().some((line) => line.includes('@TRAIN_MESSAGE_B')),
+    '未装载的号不得再出占位行（缺号 = 原作零输出）',
   );
 });
 
@@ -204,24 +208,38 @@ test('A 第三档的感情淡薄前缀（TALENT:22）', async () => {
   );
 });
 
-test('A 守卫：TEQUIP:44 / TFLAG:899 > 1 / 其他指令 → 存根占位', async () => {
+test('A 守卫：TEQUIP:44 / TFLAG:899 > 1 → 整条 IF 链落空，零输出（#565 还原 :746）', async () => {
+  // 对照组：同世界去掉绳子/失神后，:751 起的六档文本正常出现——「零输出」
+  // 才有区分力（否则删掉整个爱抚分支也能绿）
+  const control = seed_message_world();
+  control.fixture.store.set('delta:31:0', 50);
+  await control.train_message_a();
+  assert(
+    control.fixture
+      .text_lines()
+      .some((l) => l.includes('把身体扭来扭去、好像没有感觉到快感的样子')),
+    '对照组：无紧缚/失神时爱抚反应正常输出',
+  );
+
+  // 原作 :746 的守卫是 `SELECTCOM == 0 && TEQUIP:44 == 0 && TFLAG:899 <= 1`：
+  // 紧缚（TEQUIP:44）或深度失神（TFLAG:899 > 1）时整条 IF/ELSEIF 链无分支
+  // 命中，什么都不输出——此前打的「紧缚/失神中的爱抚反应」占位与原作不符
   const rope = seed_message_world();
+  rope.fixture.store.set('delta:31:0', 50);
   rope.fixture.store.set('tequip:31:44', 1);
   await rope.train_message_a();
-  assert(rope.fixture.text_lines().some((l) => l.includes('@TRAIN_MESSAGE_A')));
+  assert(
+    !rope.fixture.text_lines().some((l) => l.includes('好像没有感觉到快感')),
+    'TEQUIP:44（紧缚）时不得输出爱抚反应',
+  );
 
   const fainted = seed_message_world();
+  fainted.fixture.store.set('delta:31:0', 50);
   fainted.fixture.store.set('tflag:899', 2);
   await fainted.train_message_a();
   assert(
-    fainted.fixture.text_lines().some((l) => l.includes('@TRAIN_MESSAGE_A')),
-  );
-
-  const other = seed_message_world();
-  other.era_flag.selectcom = 12;
-  await other.train_message_a();
-  assert(
-    other.fixture.text_lines().some((l) => l.includes('@TRAIN_MESSAGE_A')),
+    !fainted.fixture.text_lines().some((l) => l.includes('好像没有感觉到快感')),
+    'TFLAG:899 > 1（深度失神）时不得输出爱抚反应',
   );
 });
 
@@ -1063,15 +1081,19 @@ for (const id of [43, 45, 49, 110, 111]) {
   });
 }
 
-test('对照：族票未落地的号仍落占位行（占位语义没被上一条吃掉）', async () => {
-  // com-toy/com-sm 等族模块未装载时，12 号（B）与 45 之外的 A 位由族表缺失
+test('对照：族票未装载的号零输出（#565 起缺号回落按原作归零）', async () => {
+  // 与前面的显式无操作用例同型（B 12 未装载 com-toy，族表缺失），以
+  // 「尚未移植」字样判：显式无操作与缺号回落现在同为零输出，占位文案
+  // 整体退出这两条路径
+  const { fixture, era_flag } = seed_message_world();
+  era_flag.selectcom = 12;
+  fixture.lines.length = 0;
+  const { train_message_b } = fixture.load_module('system/train/train-message');
+  await train_message_b();
   assert.equal(
-    await dispatch_marks(async ({ load_module }) => {
-      const { train_message_b } = load_module('system/train/train-message');
-      await train_message_b();
-    }, 12),
-    true,
-    'B 12 未装载 com-toy → 占位行仍在',
+    fixture.text_lines().some((line) => line.includes('尚未移植')),
+    false,
+    'B 12 未装载 com-toy → 零输出，不得再出占位行',
   );
 });
 

@@ -16,6 +16,32 @@ export const FILES = [
         ref: '68',
         any: [/	CALL SET_VIL/],
       },
+      // —— #565 开局接线（RAND_CHARA_MAKE / CHARA_NAME_DEFINE）：ere/event/event-first.js ——
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '110',
+        any: [/	CFLAG:420 = 1/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '205',
+        any: [/IF 丽塔启动！ == 0/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '57',
+        any: [/	CALL CHAR_MAKE_INPORT/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '151-186',
+        any: [/是她！是她！就是她！/, /被囚禁在了地牢里！/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHAR_MAKE.ERB',
+        ref: '188-191',
+        any: [/由于对魔王的恐惧，勇者没有出现。/],
+      },
     ],
   },
 ];

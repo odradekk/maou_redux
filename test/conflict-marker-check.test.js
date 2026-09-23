@@ -8,15 +8,17 @@
  * JS 侧未解标记一跑就是 SyntaxError（#221），但报错不点名根因；markdown
  * 侧一张网都没有。
  *
- * 四条行为在此固定：
+ * 五条行为在此固定：
  *
  *   1. 全绿运行：tools/conflict-marker-check.mjs 对真树退出码 0。
  *   2. 探针：.md 与 .js 各塞一处原始冲突标记，必须红且点名两处文件与行号。
  *   3. 探针：markdown 只留结束标记，先 prettier --write 洗成引用块再跑，
- *      仍须红——只认原始形态等于没修（本票核心判据）。
- *   4. setext 标题下划线（上一行是标题正文、本行七个等号）不报；markdown 里
+ *      仍须红——只认原始形态等于没修（#299 核心判据）。
+ *   4. 探针：正文行尾拖着「七连大于号 + 空格 + ref」的行中标记必须红——
+ *      #565 解冲突时把标记并进既有行尾，行首形态四道守卫全绿（含本工具
+ *      上一版）；golden/*.log 的八连大于号进度条不得误报。
+ *   5. setext 标题下划线（上一行是标题正文、本行七个等号）不报；markdown 里
  *      上一行空白的孤立分隔线仍须红，证明排除是按上下文不是按扩展名。
- *
  * 工具是 CLI（import 即执行并 process.exit），故用 spawn 而非 require。
  * 写坏型探针住临时 git 仓库（#89：不写真树），用完即删。
  *
@@ -169,7 +171,7 @@ test('探针：markdown 的结束标记经 prettier --write 洗净后仍须红',
     // 洗净形态直接写死，不在这里现跑 prettier。
     //
     // 本用例锁的是**我们的检查器认不认这个形态**；「prettier 会把
-    // `>>>>>>> x` 规范化成 `> > > > > > > x`」是外部事实，由下面那条
+    // 七连大于号行规范化成七个空格分隔的大于号」是外部事实，由下面那条
     // 单独的用例在有 node_modules 的环境里核对。分开的理由是环境：
     // CI 的 engine / mutation 两个 job 不跑 npm ci（变异的隔离副本更是
     // 按 COPY_DENY 把 node_modules 排除在外），在那里 spawn prettier
@@ -190,6 +192,44 @@ test('探针：markdown 的结束标记经 prettier --write 洗净后仍须红',
     assert.ok(
       output.includes(WASHED) || output.includes('洗净'),
       `未点名 prettier 洗净形态：\n${output}`,
+    );
+  });
+});
+
+test('探针：行尾拖着的行中标记必须红，进度条形态不得误报', () => {
+  with_repo((dir) => {
+    // #565 的真实残留形态：解冲突脚本按整行定位标记，把尾巴并进了
+    // 既有行尾——行首守卫全绿。
+    add_file(
+      dir,
+      'docs/registry-probe.md',
+      `| \`COM132\` | 源列 | 调用点列 | 说明列 | 票列 | 已实现（ere/system/train/com-advanced.js） |${'>'.repeat(7)} 1aec2470 (feat(event): #565 …)\n`,
+    );
+    add_file(
+      dir,
+      'tools/mutations/probe.mjs',
+      `export const COUNT = 939; // 链段说明${'>'.repeat(7)} 1aec2470 (feat(event): #565 …)\n`,
+    );
+    // golden 日志的进度条：八连大于号夹点号，且七连处后面不是空格。
+    add_file(
+      dir,
+      'golden/probe.log',
+      `      屈服[>>>>>>>>..]  2400      习得[>>>>>>....]   192\n`,
+    );
+    const { status, output } = run_tool(dir);
+    assert.notEqual(status, 0, '行中标记必须红——行首形态的守卫拦不住它');
+    assert.ok(
+      /docs\/registry-probe\.md:\d+/.test(output),
+      `markdown 行中标记探针未被报出：\n${output}`,
+    );
+    assert.ok(
+      /tools\/mutations\/probe\.mjs:\d+/.test(output),
+      `mjs 行中标记探针未被报出：\n${output}`,
+    );
+    assert.ok(output.includes('行中标记'), `未点名行中标记形态：\n${output}`);
+    assert.ok(
+      !output.includes('golden/probe.log'),
+      `进度条的八连大于号被误报：\n${output}`,
     );
   });
 });
@@ -222,7 +262,7 @@ test('markdown 里上一行空白的孤立分隔线仍须红', () => {
   });
 });
 
-test('外部事实：prettier 确实把 >>>>>>> 规范化成 > > > > > > >（有 node_modules 时才跑）', () => {
+test(`外部事实：prettier 确实把 ${'>'.repeat(7)} 规范化成 > > > > > > >（有 node_modules 时才跑）`, () => {
   // 上一条用例把洗净形态写死了，这条负责证明那个形态不是我们臆想的。
   // 依赖 node_modules 里的 prettier，而 CI 的 engine / mutation job 与变异
   // 的隔离副本都没有它——**用 return 而不是 t.skip()**：跳过数守护在有

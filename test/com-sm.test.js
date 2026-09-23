@@ -1255,7 +1255,9 @@ test('存根清单可检索：docs/stub-registry.md 收录 com-sm.js 的 COM132'
     path.join(REPO, 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.deepEqual(mod.STUBBED_CALLS, ['COM132']);
+  // #565：COM132 已由 #229 落地（com_family 注册在案），jump_to_advanced
+  // 直调真身、占位回落不再触发，名单清空
+  assert.deepEqual(mod.STUBBED_CALLS, []);
   for (const name of mod.STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }

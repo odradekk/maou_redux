@@ -67,9 +67,11 @@ const { enterenemy_koujo } = require('#/kojo/kojo-system');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。ENTERENEMY_KOUJO 的分发入口是
+ * kojo-system.js 的 enterenemy_koujo（本文件顶层已引），#565 起从名单
+ * 移除，名单自此清空。
  */
-const STUBBED_CALLS = ['ENTERENEMY_KOUJO'];
+const STUBBED_CALLS = [];
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
 const MAX_CHARANUM = 90;
