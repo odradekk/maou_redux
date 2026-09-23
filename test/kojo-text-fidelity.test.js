@@ -195,6 +195,19 @@ const ERB_TOKEN_RULES = [
   [/^LOCALS:1$/, 'LOCALS1'],
   [/^LOCALS:2$/, 'LOCALS2'],
   [/^LOCALS:3$/, 'LOCALS3'],
+  // —— #544：强制肉偿（魔改新增/强制肉偿.ERB）——抵债额、欠金、片酬与
+  // 结算行的经验/点数名。{PLAY*N} 由 norm_erb_token 的通用规则覆盖 ——
+  [/^COST$/, 'COST'],
+  [/^CFLAG:ARG:582$/, 'DEBT'],
+  [/^COST\*1\/3 \+ RAND:100$/, 'FILM_PRICE'],
+  [/^EXPNAME:50$/, 'EXPNAME50'],
+  [/^EXPNAME:70$/, 'EXPNAME70'],
+  [/^EXPNAME:22$/, 'EXPNAME22'],
+  [/^EXPNAME:20$/, 'EXPNAME20'],
+  [/^EXPNAME:74$/, 'EXPNAME74'],
+  [/^EXPNAME:1$/, 'EXPNAME1'],
+  [/^PALAMNAME:2$/, 'PALAMNAME2'],
+  [/^PALAMNAME:7$/, 'PALAMNAME7'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -305,6 +318,18 @@ const JS_TOKEN_RULES = [
   [/^locals_1$/, 'LOCALS1'],
   [/^locals_2$/, 'LOCALS2'],
   [/^locals_3$/, 'LOCALS3'],
+  // —— #544：强制肉偿（与 ERB_TOKEN_RULES 的同名块一一配对）——
+  [/^cost$/, 'COST'],
+  [/^debt_of\(arg\)$/, 'DEBT'],
+  [/^shown_price$/, 'FILM_PRICE'],
+  [/^expname\(50\)$/, 'EXPNAME50'],
+  [/^expname\(70\)$/, 'EXPNAME70'],
+  [/^expname\(22\)$/, 'EXPNAME22'],
+  [/^expname\(20\)$/, 'EXPNAME20'],
+  [/^expname\(74\)$/, 'EXPNAME74'],
+  [/^expname\(1\)$/, 'EXPNAME1'],
+  [/^palamname\(2\)$/, 'PALAMNAME2'],
+  [/^palamname\(7\)$/, 'PALAMNAME7'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
