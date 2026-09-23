@@ -138,9 +138,11 @@ export const DENOMINATOR = 346;
 // 剩下的 1 是 S2/#543（處刑改寫.ERB）的移植目标。
 // 各票沿革：#542 把 DEBUG小白娘2024ver0.0.14.ERB、MOD/ 五个文件、魔改新增/
 // img.ERB 七条判死（依据 #540 范围决定 2–4），七份文件从「待移植」进「已判定
-// 不实现」；#544 把 魔改新增/强制肉偿.ERB 移出待移植；#545 把 魔改新增/
-// 统一卖春积极性.ERB 移出待移植（角色編號交換.ERB 原为部分移植，落真身后转
-// 已移植，不进本计数）。
+// 不实现」（10 − 7 = 3）；#544 把 魔改新增/强制肉偿.ERB 移出待移植（3 → 2）；
+// #545 把 魔改新增/统一卖春积极性.ERB 移出待移植（2 → 1），角色編號交換.ERB
+// 原为部分移植、落真身后转已移植，不进本计数。
+// #541 合并态实测 10：本票未动任何证据面，只是状态词归一与登记订正。
+export const PENDING_BASELINE = 1;
 // —— 以下为 #467 并上含 #466/#487 的 master cf3b5d9 时的推导记录，保留备查 ——
 // export const PENDING_BASELINE = 10; // 先把现役值换成 999 占位再跑
 // `node tools/trace-check.mjs --coverage`，实测 10；
@@ -149,7 +151,7 @@ export const DENOMINATOR = 346;
 // 既不相加也不取一侧。本票还把 ABLUP0～ABLUP100 伞状行整行删除（#466 合并后
 // 该行剩的五个名字就是本票的），ABLUP0.ERB 随之从「部分移植」翻「已移植」
 // （部分移植不在待移植分子里，不动本数）。
-// export const PENDING_BASELINE = 1; // 合并态重测用的占位（#467 合并时）
+// export const PENDING_BASELINE = 999; // 合并态重测用的占位（#467 合并时）
 // export const PENDING_BASELINE = 18; // 合并态实测（#467 并上含 #470/#469 的 master）：
 // 23（#470 后的 master，见下方 #470 说明）− 5（本票的 ABL/ABLUP37.ERB／
 // ABLUP39.ERB／ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB 五个文件）= 18，与
