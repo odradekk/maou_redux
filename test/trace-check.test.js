@@ -1629,8 +1629,9 @@ test('移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现
       `#542 判死的文件必须离开待移植：${rel}\n${output}`,
     );
   }
-  // 合并 S3（#544 把 强制肉偿.ERB 做进 ere/）后，阶段 6 收口前剩下的待移植
-  // 恰为 S2/S4 的两个魔改新增文件——它们各自的票交付时更新这里
+  // 合并 S3（#544 把 强制肉偿.ERB 做进 ere/）与 S2（#543 把 處刑改寫.ERB
+  // 做进 ere/event/event-execution-batch.js）后，阶段 6 收口前剩下的待移植
+  // 只剩 S4 的 统一卖春积极性.ERB——该票交付时更新这里
   const pending = output
     .split('\n')
     .filter((line) => line.startsWith('待移植 target/'))
@@ -1638,11 +1639,8 @@ test('移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现
     .sort();
   assert.deepEqual(
     pending,
-    [
-      'target/ERB/魔改新增/统一卖春积极性.ERB',
-      'target/ERB/魔改新增/處刑改寫.ERB',
-    ].sort(),
-    `待移植必须只剩 S2/S4 的两个文件（PENDING_BASELINE = 2）：\n${output}`,
+    ['target/ERB/魔改新增/统一卖春积极性.ERB'].sort(),
+    `待移植必须只剩 S4 的一个文件（PENDING_BASELINE = 1）：\n${output}`,
   );
 });
 
