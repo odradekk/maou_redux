@@ -202,12 +202,18 @@ async function campaign_room(floor) {
  * 只能落在 0-3，不可达）。原作 #DIM SWITCH 死变量（写 0 后全库无读者），
  * 不落。
  *
- * 调用方 :209 的 PRINTFORM 与 MODE 1-3 的输出是同一句「察觉到了气息」
- * ——源侧即双打印（PRINTFORM 均无换行，视觉上拼成一行；ere 的 print
- * 一次一行，故为两行），1:1 保留。
+ * **本函数不打印，返回该行的后半句**（#548 订正）：调用方 :209 的
+ * `PRINTFORM %SAVESTR:0%察觉到了…的气息。` 与本体 :1056/:1058 的
+ * `PRINTFORM …` 都不换行，两句拼在同一显示行，由调用方合成一次输出
+ * （同行合并的写法见 event-nextday.js:966 / source-check.js:3185）。
+ *
+ * 它之后的行缓冲：:224 的 `D:20 = 0` 起原作继续走设施（:386）与陷阱
+ * （:405）两段，行一直开着——那两段的输出若发生，会接在同一行上。本项目
+ * 按文件头「一次 print 一行」的约定让各段各自成行（既有取舍，非本函数
+ * 引入；设施段通常无输出，实际显示与「两句一行」一致）。
  *
  * @param {number} cid 挑战者（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN 0（函数尾无 RETURN，隐式）
+ * @returns {Promise<string>} 该行后半句（MODE 0 与 MODE 1-3 两种文案）
  */
 async function bedroom_battle_male(cid) {
   let mode = 0; // :1046 MODE = 0（:1048-1049 的 SIF 恒等写，省）
@@ -218,12 +224,9 @@ async function bedroom_battle_male(cid) {
     mode += 1; // :1052-1053
   }
   // :1054-1064 SELECTCASE MODE（CASE 1/2/3 同文归并）
-  if (mode === 0) {
-    era.print(`${name_of(0)}从睡梦中醒了过来。`); // :1056
-  } else {
-    era.print(`${name_of(0)}察觉到了${name_of(cid)}的气息。`); // :1058-1062
-  }
-  return 0;
+  return mode === 0
+    ? `${name_of(0)}从睡梦中醒了过来。` // :1056
+    : `${name_of(0)}察觉到了${name_of(cid)}的气息。`; // :1058-1062
 }
 
 /**
@@ -469,8 +472,12 @@ async function run_dungeon(arg0, rand) {
                   (era.get('abl:0:23') || 0) > 3) ||
                 (era.get('abl:0:11') || 0) > 6
               ) {
-                era.print(`${name_of(0)}察觉到了${leader_name}的气息。`);
-                await bedroom_battle_male(arg0); // :210
+                // :209-210 两句 PRINTFORM 都不换行 → 拼成同一显示行
+                //（本函数返回后半句，一次 print 落行；#548 订正）
+                era.print(
+                  `${name_of(0)}察觉到了${leader_name}的气息。` +
+                    (await bedroom_battle_male(arg0)),
+                );
               } else {
                 // :212-213 挑战失败成为奴隶
                 era.print(

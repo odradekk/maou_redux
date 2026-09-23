@@ -13,11 +13,13 @@
  * ABL:0:11（欲望）> 8 → 再 +1。CASE 1/2/3 文案相同（原作三支同文），
  * CASE 0 独有「从睡梦中醒了过来」。
  *
+ * **本函数只返回台词、不打印**（#548 订正）：调用方 :209 的 PRINTFORM 与本体
+ * :1056/:1058 的 PRINTFORM 都不换行，两句是同一显示行——调用方合成一次输出。
+ *
  * 覆盖：
- *   - 四个 MODE 各自的输出行（表驱动）；
+ *   - 四个 MODE 各自的返回值（表驱动）＋「不打印」；
  *   - %SAVESTR:0% / %SAVESTR:(ARG:0)% 的 callname 承载（#5 决议）；
- *   - run_dungeon 挑战臂的双行连打（调用方 :209 先打一句「察觉到了气息」，
- *     MODE 1-3 时函数再打同一句——原作双打印，1:1 保留）。
+ *   - run_dungeon 挑战臂的**单行**合成（MODE 1 时前半句与后半句同句）。
  */
 
 'use strict';
@@ -43,7 +45,7 @@ function setup_world() {
   return fixture;
 }
 
-// 表驱动：[男人位, 欲望, 期望行]
+// 表驱动：[男人位, 欲望, 期望台词]
 const MODE_TABLE = [
   [0, 8, '你从睡梦中醒了过来。', 'MODE 0：女魔王欲望 ≤ 8（睡着）'],
   [0, 9, '你察觉到了贝尔的气息。', 'MODE 1：女魔王欲望 > 8'],
@@ -58,8 +60,12 @@ for (const [male, desire, expected, label] of MODE_TABLE) {
     fixture.store.set('abl:0:11', desire);
     const { bedroom_battle_male } = fixture.load_module('dungeon/dungeon');
 
-    assert.equal(await bedroom_battle_male(7), 0, 'RETURN 0（隐式）');
-    assert.deepEqual(text_lines(fixture), [expected]);
+    assert.equal(await bedroom_battle_male(7), expected, '返回该行的后半句');
+    assert.deepEqual(
+      text_lines(fixture),
+      [],
+      '本函数不打印（由调用方合成一行）',
+    );
   });
 }
 
@@ -69,11 +75,14 @@ test('边界：欲望恰为 8 不加档（> 8 判据）、恰为 0 的男人位�
   fixture.store.set('abl:0:11', 8);
   const { bedroom_battle_male } = fixture.load_module('dungeon/dungeon');
 
-  await bedroom_battle_male(7);
-  assert.deepEqual(text_lines(fixture), ['你察觉到了贝尔的气息。'], 'MODE 2');
+  assert.equal(
+    await bedroom_battle_male(7),
+    '你察觉到了贝尔的气息。',
+    'MODE 2',
+  );
 });
 
-test('接线：run_dungeon 挑战臂先打调用方的气息行，MODE ≥ 1 时同一句连打两次', async () => {
+test('接线：run_dungeon 挑战臂把两句合成同一行（MODE 1）', async () => {
   const fixture = setup_world();
   // 勇者 7：冒险者（TALENT:122）、侵攻中、第 9 层、侵攻度 50（一轮即达房间）
   fixture.store.set('talent:7:122', 1);
@@ -99,9 +108,13 @@ test('接线：run_dungeon 挑战臂先打调用方的气息行，MODE ≥ 1 时
     texts.includes('但贝尔仍是向魔王发起了挑战。'),
     'RAND:4 == 0 → 挑战臂',
   );
+  // :209 的 PRINTFORM 与本体 :1058 的 PRINTFORM 都不换行 → 一句一行
   assert.equal(
-    texts.filter((line) => line === '你察觉到了贝尔的气息。').length,
-    2,
-    '调用方 :209 与函数 MODE 1 各打一句（原作双打印，1:1）',
+    texts.filter(
+      (line) => line === '你察觉到了贝尔的气息。你察觉到了贝尔的气息。',
+    ).length,
+    1,
+    '两句拼成同一行（#548 订正：原先是两行）',
   );
+  assert(!texts.includes('你察觉到了贝尔的气息。'), '不得再有单独的前半句行');
 });

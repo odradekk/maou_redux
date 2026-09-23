@@ -3,8 +3,8 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 359; // #548 起 +10（M11470-M11479：CHARADEAD_CHECK 真身与 @EVENTEND
-// 接线、K_34 加入点的 MARK,4,3 补偿）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+export const COUNT = 357; // #548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
+// 接线；M11478/M11479 的靶位在返工轮搬去 chara.mjs——补偿写在 @CHARA_EX_34 里，随靶文件分片）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
 // 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）；
 // #502 起 +4（M10744-M10747，SENGEN_VIDEO_DE 的骰点与两段清零、EVENT_TURNEND
@@ -3297,21 +3297,5 @@ export default [
     replace: '      // 变异：漏调 PARTY_CHAR_DEL',
     tests: ['event-charadead'],
     must_mention: 'party_del 复位',
-  },
-  {
-    desc: 'M11478 K_34 加入点的 MARK,4,3 补偿写错值（3 改成 2：反抗刻印履历未满，LV3 门还开着）',
-    file: 'ere/event/enter-enemy.js',
-    find: '  chara(34).system.反抗刻印履历 = 3;',
-    replace: '  chara(34).system.反抗刻印履历 = 2; // 变异：履历值错',
-    tests: ['chara34-mark'],
-    must_mention: 'MARK,4,3 在加入点补写',
-  },
-  {
-    desc: 'M11479 K_34 加入点漏写 MARK,4,3 补偿（预设仍被名字表缺口丢下）',
-    file: 'ere/event/enter-enemy.js',
-    find: '  chara(34).system.反抗刻印履历 = 3;',
-    replace: '  // 变异：漏写反抗刻印履历补偿',
-    tests: ['chara34-mark'],
-    must_mention: 'MARK,4,3 在加入点补写',
   },
 ];

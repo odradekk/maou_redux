@@ -19,6 +19,7 @@
 
 const era = require('#/era-electron');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
+const { chara } = require('#/facade/chara');
 
 // 声明的编号空间：target/CSV/Chara/ 的 45 个角色编号（0-24、31-35、100、
 // 150、201-211、223、777），离线生成（#7 决议「索引全部离线生成」——运行时
@@ -121,6 +122,16 @@ chara_ex.register(34, (cid) => {
   era.set(`ex_talent:${cid}:4`, 1);
   era.set(`ex_talent:${cid}:801`, 1);
   era.set(`ex_talent:${cid}:901`, 1);
+  // MARK:4 = 3（Chara34.csv:91 的 CSV 预设，非 @CHARA_EX_34 的内容）：
+  // Emuera 的 ADDCHARA 会把预设整份拷进角色，而 ere 引擎只按 Mark.yml
+  // 名字表建槽——4 号无名条目被丢（#118 定夺不扩名表：那会给所有角色预建
+  // 该槽）。**每个加入点都要过 ADDCHARA_EX**（#548 验收：研究所复活
+  // `page-shop-labo.js` 的 resulection 走的就是这条路），所以补偿写在这里，
+  // 而不是某一个加入点（原先只在 enter-enemy 的 K_34 剧情里写，#548 返工）。
+  // 反抗刻印履历 = 3 → @MARK_GOT_CHECK 的三档门（mark:4 <= 0/1/2）全关，
+  // 她不会再获得原作不给的反抗刻印（test/chara34-mark.test.js 锁行为）。
+  // 跨域写走门面（domain-check 的裸写检查；mark 属 chara.system 域）
+  chara(cid).system.反抗刻印履历 = 3;
 });
 chara_ex.register(35, (cid) => {
   // @CHARA_EX_35（CHARA35.ERB）：EX_TALENT:104 = 菲娅

@@ -79,6 +79,30 @@ test('K_34 加入点：mark:34:4 = 3（反抗刻印履历）与 mark:34:3 预设
   // 钉住：data.mark[34][1] = 3 / [3] = 3）；夹具不读 yml/，此处不重复断言
 });
 
+test('研究所复活：RESULECTION 也过 ADDCHARA_EX，补偿照样落（#548 返工）', async () => {
+  // 复活 34 号：FLAG:(34+999) = -2 是新的 @CHARADEAD_CHECK 写的死亡旗，
+  // 按钮编号 = COUNT + 100（COUNT = 33 → 133 → preset = 133 - 99 = 34）
+  const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
+  fixture.store.set('exp:0:81', 5); // 勋章经验（> 0 才进复活流程）
+  fixture.store.set('flag:1033', -2); // :2608 判据（可复活）
+  fixture.set_inputs(0, 133); // :2575 确定 → :2599 选 34 号
+  const { resulection } = fixture.load_module('page/page-shop-labo');
+
+  assert.equal(await resulection(() => 0), 1, '复活流程走完（RETURN 1）');
+  assert(
+    fixture.era.getAddedCharacters().includes(34),
+    '34 号被 ADDCHARA 收回',
+  );
+  assert.equal(
+    fixture.store.get('mark:34:4'),
+    3,
+    'MARK,4,3 的补偿写在 @CHARA_EX_34 里，复活路径同样经过',
+  );
+});
+
 /**
  * 调教链世界：目标 34 已按「加入点」形态带着 MARK 1/3/4 = 3（SOURCE_CHECK
  * 的判死门读 mark:4）。post 在 SOURCE_CHECK 前把反感源面改大（source-check.

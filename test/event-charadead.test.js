@@ -163,7 +163,10 @@ test('魔王死亡·候补是他人（非 17 非 PLAYER/ASSI）：镜室叙事 +
   );
   // 共通死亡段：魔王自己死了（%SAVESTR:TARGET%）
   assert(texts.includes('你死掉了……'));
-  assert.equal(fixture.store.get('base:0:0'), -1, 'BASE:0 = -1');
+  // :76 BASE:0 = -1 的写入意图；真引擎把 base 钳到 0（dev-guides/09-static.md:203），
+  // 夹具不钳。不断言 -1——那是引擎存不下的值，★死亡★ 显示不出来
+  //（文件头「移植说明」记了这处偏离）
+  assert.ok(fixture.store.get('base:0:0') <= 0, 'BASE:0 = -1（引擎落盘为 0）');
   assert.equal(fixture.store.get('flag:999'), -2, 'FLAG:(NO+999) 死亡旗');
   assert.equal(fixture.store.get('flag:31'), 1, '杀害数 +1');
 });
@@ -180,7 +183,7 @@ test('魔王死亡·候补是 PLAYER：巨镜叙事（原本属于自己的身�
   assert(texts.includes('从一旁的巨大镜子中映出的是温妮的身影……'), '巨大镜子');
 });
 
-test('魔王死亡·候补是 17 号：成为魔王横幅（分支三/四，:46-53）', async () => {
+test('魔王死亡·候补是 17 号且不在身旁：第四支（突然瘫坐，:54-57）', async () => {
   const { fixture } = seed_maou_death({ successor: 17 });
 
   await run_check(fixture);
@@ -189,6 +192,35 @@ test('魔王死亡·候补是 17 号：成为魔王横幅（分支三/四，:46-
     texts.some((line) => line.includes('成为魔王了')),
     '「X成为魔王了」横幅（GETCHARA(17) 的候补）',
   );
+  // 第四支（EX_FLAG:3 == GETCHARA(17) 且不在 PLAYER/ASSI）
+  assert(texts.includes('玛奥突然像丢了魂似的瘫坐在地上……'), '第四支首句');
+  assert(!texts.includes('玛奥看着倒在眼前的东西……'), '不走第三支');
+  assert(!texts.includes('心中有些怅然若失……'), '不走第三支');
+});
+
+test('魔王死亡·候补是 17 号且在身旁（PLAYER）：第三支（看着倒在眼前的东西，:46-50）', async () => {
+  const { fixture } = seed_maou_death({ successor: 17, player: 17 });
+
+  await run_check(fixture);
+  const texts = text_lines(fixture);
+  // 第三支首两句与第四支完全不同，用来区分两支（两支都以「成为魔王了」收尾）
+  assert(texts.includes('玛奥看着倒在眼前的东西……'), '第三支首句');
+  assert(texts.includes('心中有些怅然若失……'), '第三支次句');
+  assert(!texts.includes('玛奥突然像丢了魂似的瘫坐在地上……'), '不走第四支');
+  assert(
+    !texts.includes('你猛的醒了过来、看着这似曾相识的房间……'),
+    '不走第二支',
+  );
+});
+
+test('魔王死亡·候补是 17 号且在身旁（ASSI）：第三支（:46-50）', async () => {
+  const { fixture, era_flag } = seed_maou_death({ successor: 17 });
+  era_flag.assi = 17; // :49 的 (== PLAYER || == ASSI) 另一半
+
+  await run_check(fixture);
+  const texts = text_lines(fixture);
+  assert(texts.includes('玛奥看着倒在眼前的东西……'), '第三支首句（ASSI 侧）');
+  assert(!texts.includes('玛奥突然像丢了魂似的瘫坐在地上……'), '不走第四支');
 });
 
 test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数（:59-92）', async () => {

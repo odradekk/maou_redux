@@ -3,8 +3,9 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 391; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
-// 跳过、设施名表、近卫护卫判据、怪物行对齐）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
+export const COUNT = 395; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+// 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
+// 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
 // 快捷键、M11329 page-config 的提示检索键——由 test/page-config.test.js、
 // test/page-shop.test.js 与 test/page-chara-info.test.js 守护）；此前 380，其中 #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）
@@ -3610,6 +3611,38 @@ export default [
       '      era.print(`${String(count).padStart(2)}只${monstername(base_slot + i)}`); // 变异：对齐反向',
     tests: ['page-shop-floor'],
     must_mention: '怪物行（数量左对齐两位）',
+  },
+  {
+    desc: 'M11490 SHOW_FLOOR 路径的护卫名单退回按实参判断（floor === 10：1-9 层漏掉护卫行——原作判据是全局 X == 10，#548）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  if (x_is_10) {',
+    replace: '  if (floor === 10) { // 变异：退回按实参判断',
+    tests: ['page-shop-floor'],
+    must_mention: '1-9 层也出护卫行',
+  },
+  {
+    desc: 'M11491 护卫行编号丢宽度（[{COUNT,2}] 的右对齐改成 [{COUNT}]，个位编号不再补空格）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: "            content: `[${String(cid).padStart(2, ' ')}]`,",
+    replace: '            content: `[${cid}]`, // 变异：丢宽度',
+    tests: ['page-dungeon-info'],
+    must_mention: '宽度 2 右对齐的编号',
+  },
+  {
+    desc: 'M11492 ENEMY_EXIST2 的首行空行删掉（原作 :595/:630 的 PRINTL，两个调用方都受影响，#548/#180）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  // :595 / :629-630 调用方的行已落，本函数先落一个空行（见 JSDoc）\n  era.println();',
+    replace: '  // 变异：漏掉首行空行',
+    tests: ['page-dungeon-info'],
+    must_mention: '开头的空行',
+  },
+  {
+    desc: 'M11493 SHOW_FLOOR 末尾的无参 PRINTW 只等键不落空行（printAndWait → waitAnyKey，:500 少一行）',
+    file: 'ere/page/page-shop.js',
+    find: "  await era.printAndWait('');",
+    replace: '  await era.waitAnyKey(); // 变异：少一个空行',
+    tests: ['page-shop-floor'],
+    must_mention: 'PRINTW 的空行',
   },
   // —— #542：设置页 [26]/[28] 与主菜单 999 的不移植提示 ——
   {

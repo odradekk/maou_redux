@@ -472,7 +472,7 @@ async function usershop(result) {
 
 /**
  * @SHOW_FLOOR（SHOP ver1.0.2.ERB:426-500）：显示楼层状态（主菜单阶层
- * 按钮 [521]-[530] 的阶层信息；10 层为近卫）。
+ * 按钮 [521]-[530] 的阶层信息）。
  *
  * 结构（近卫层 GOTO MONSTERDATA 跳过设施与部下段）：
  *   - 1-9 层：楼层头（与设施后缀合一行——原作 PRINTFORM 第N阶层 +
@@ -481,9 +481,16 @@ async function usershop(result) {
  *     分隔符，正文自带一个前导空格，与 page-main-menu.js:171 的 ` 上午` 同源）→
  *     设施四格（FLAG 299+ARG+{0,10,20,40}，REPEAT 内 COUNT==3 → COUNT=4
  *     跳过 +30 段；格上有库存道具才出 [道具名]，四格合一行）→
- *     @ENEMY_EXIST2 的勇侧行 → 空行 → 怪物库存十格 → PRINTW；
- *   - 10 层：近卫兵头 → 护卫名单（!CFLAG:1 && EX_TALENT:1 一行一人，
+ *     @ENEMY_EXIST2 的勇侧行（含护卫名单，见下）→ 空行 → 怪物库存十格 →
+ *     无参 PRINTW 的空行 + 读键；
+ *   - 10 层：近卫兵头 → 本层的护卫名单（!CFLAG:1 && EX_TALENT:1 一行一人，
  *     [名] —— + TALENT:200-211 素质名）→ 分隔线 → 怪物库存（190 段）。
+ *
+ * **两条与「10 层」无关的既有行为，按原作保留**：
+ *   - 护卫名单在 `@ENEMY_EXIST2` 里由**全局 X == 10** 触发（#548 订正，
+ *     #14 登记）——从地城概况进来时 X 恒为 10，所以**1-9 层也会追加**全部
+ *     护卫的 `[护卫中]…` 行；10 层这里的是原作本条分支自己的名单。
+ *   - 首行的空行由 `@ENEMY_EXIST2` 落（调用方的行已落）。
  *
  * 怪物行的 {ITEM:LOCAL,2,LEFT}：数量左对齐两位（padEnd）拼「只+名」
  * （@MONSTERNAME 的拼接名，含改造前缀——monstername 真身 #176）。
@@ -526,8 +533,10 @@ async function show_floor(arg) {
       era.print(install_fragments.join('')); // 四格合一行（PRINTFORM 链）
       era.drawLine(); // IF LOCAL:1 → PRINTL + DRAWLINE
     }
-    // :488 @ENEMY_EXIST2（#180 真身）+ 空行
-    await enemy_exist2(arg);
+    // :488 @ENEMY_EXIST2（#180 真身）+ 空行。第二个实参是原作的 `X == 10`：
+    // 从地城概况进来时 X 恒为 10（DRAW_MAINMENU 楼层循环的末值），所以
+    // 1-9 层也会追加护卫名单（#548 订正，依据见 @ENEMY_EXIST2 的 JSDoc）
+    await enemy_exist2(arg, true);
     era.println();
   } else {
     // :434-449 近卫层：近卫兵头 + 护卫名单（GOTO MONSTERDATA 的等价跳过：
@@ -563,7 +572,8 @@ async function show_floor(arg) {
       era.print(`${String(count).padEnd(2)}只${monstername(base_slot + i)}`);
     }
   }
-  await era.waitAnyKey(); // PRINTW
+  // :500 无参 PRINTW＝先落一个空行再等键（同 kojo-dungeon-ravish.js:923）
+  await era.printAndWait('');
 }
 
 /**

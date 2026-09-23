@@ -482,6 +482,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '500',
+        any: [/^PRINTW\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
         ref: '451-469',
         any: [/^\s*SELECTCASE FLAG:\(ARG\+349\)\s*$/m],
       },

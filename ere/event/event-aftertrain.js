@@ -13,6 +13,19 @@
  * 原作缺陷 1:1 照抄（#14 / #270）：兽奸报告分支源 :837 `JUEL:8 += A*200`
  * 而打印用 `B*200`。本模块用 leftover_a 只建模同模块内自慰→兽奸那一跳，
  * 跨模块残留不建模。
+ *
+ * 移植说明（有意偏离）：
+ *   - **@CHARADEAD_CHECK 的 `BASE:0 = -1`（:76）落到 0**：引擎自动钳制 base
+ *     （小于 0 时重置为 0，大于 maxbase 时重置为 maxbase——
+ *     `dev-guides/09-static.md:203`），ere 侧写不进 -1。**后果不是「等价」**：
+ *     魔王死亡且有继任者时，旧魔王的身体留在场上，原作
+ *     `CHARA_INFO_SHOW ver1.1.2.ERB:1159-1160` 对 `BASE:0 < 0` 显示
+ *     ★死亡★，ere 只能落到「体力 0」那一档的 ★濒死★。后续判死全部走
+ *     `< 1`（:357 / :364 / :376 的判据），所以除显示档位外的行为不受影响。
+ *     写入仍照原作写 -1（意图 1:1），钳制是引擎的行为。
+ *   - 原作 `#DIM TEMP` / `TEMPMAOU` 是死变量（#14 登记）：:68-73 的
+ *     `IF !TEMP || ...` 恒走第一支，`ELSEIF` 的叙事与 `%SAVESTR:TEMP%`
+ *     不可达，不构造。
  */
 
 const era = require('#/era-electron');
@@ -117,8 +130,11 @@ function get_chara(no) {
  * %SAVESTR:TEMP% 不可达，不构造（#405 可证死代码同款）。TEMPMAOU 同为
  * 死变量。
  *
- * BASE:0 = -1 的写：真引擎会把 base 钳在 0~maxbase（AGENTS.md），-1 落盘
- * 为 0；后续判死全部走 `< 1`，0 与 -1 行为等价，不另设通道。
+ * BASE:0 = -1 的写：引擎自动把 base 钳到 0~maxbase（`dev-guides/09-static.md:203`
+ * ——小于 0 重置为 0），写入落盘即 0。**这不是等价替换**：原作
+ * `CHARA_INFO_SHOW ver1.1.2.ERB:1159-1160` 对 `BASE:0 < 0` 显示 ★死亡★，
+ * ere 只剩 ★濒死★（文件头「移植说明」有完整说明）。判死判据全走 `< 1`，
+ * 除显示档位外的行为不受影响；写入仍照原作写 -1。
  *
  * @returns {Promise<number>} 原作 RESULT（QUIT 路径 throw，不返回）
  */
@@ -250,7 +266,8 @@ async function charadead_check() {
   era.print(`${chara_name(target)}死掉了……`);
   era.println();
   era.drawLine();
-  // :76 BASE:0 = -1（引擎钳 0，见 JSDoc）
+  // :76 BASE:0 = -1（意图 1:1；引擎把 base 钳到 0，★死亡★ 显示不出来——
+  // 见文件头「移植说明」的这处偏离）
   chara(target).dungeon.体力 = -1;
 
   // :78-80 死亡フラグを残す：FLAG:(NO+999) = -2（与 @EVENTEND 死亡删除

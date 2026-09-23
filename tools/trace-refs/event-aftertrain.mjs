@@ -154,6 +154,22 @@ export const FILES = [
         ref: '68-75',
         any: [/^\s*IF !TEMP \|\| TEMP == GETCHARA\(17\)\s*$/m],
       },
+      // —— #548 返工（BASE:0 = -1 的钳制说明引到的三条 @EVENTEND 判死判据）——
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '357',
+        any: [/^IF FLAG:37 && BASE:0 > 0$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '364',
+        any: [/^IF BASE:0 < 1 && TARGET != MASTER$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '376',
+        any: [/^ELSEIF \(BASE:0 < 1 \|\| BASE:1 < 1\) && TARGET == MASTER$/m],
+      },
     ],
   },
 ];

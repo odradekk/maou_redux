@@ -1,7 +1,7 @@
 /**
  * @SHOW_FLOOR 的行为测试（#548 / S7：主菜单阶层按钮 [521]-[530] 的阶层信息）。
  *
- * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @SHOW_FLOOR（:426-501）
+ * 源: target/ERB/SHOP/SHOP ver1.0.2.ERB  @SHOW_FLOOR（:426-500）
  *     依赖: @ENEMY_EXIST2（ere/page/page-dungeon-info2.js，#180 真身）与
  *     @MONSTERNAME（ere/dungeon/monster-data.js，#176 真身）。
  *
@@ -15,9 +15,12 @@
  *   - 设施四格（FLAG 299+ARG+{0,10,20,40}——REPEAT 内 COUNT==3→4 跳过 +30
  *     段）与「格上有道具才出行」的判据；
  *   - 近卫层（ARG = 10）的护卫名单（!CFLAG:1 && EX_TALENT:1）与素质名拼接；
+ *   - **@ENEMY_EXIST2 的护卫名单在 1-9 层也追加**（原作判据是全局 X == 10，
+ *     不是实参——#548 返工订正）与编号的宽度 2 右对齐；
  *   - 怪物库存十格（槽 = (ARG-1)*10+100，{N,2,LEFT} 的左对齐两位）；
+ *   - 三处空行（@ENEMY_EXIST2 首行、:489 的 PRINTL、:500 无参 PRINTW 的空行）；
  *   - LIMIT(ARG,1,10) 钳制；
- *   - 分发接线（523 → 第 3 阶层）与 PRINTW 的读键。
+ *   - 分发接线（523 → 第 3 阶层）。
  */
 
 'use strict';
@@ -74,10 +77,60 @@ test('第 1 阶层：楼层头 + 设施后缀合行、设施四格、怪物库�
   assert(texts.includes('[落穴]'), '设施四格的 [道具名] 行');
   // :495 怪物库存：{5,2,LEFT} = "5 " + 只 + 名
   assert(texts.includes('5 只史莱姆'), '怪物行（数量左对齐两位）');
-  // :500 PRINTW 的读键恰好一次
+  // 空行三处（#548 起）：@ENEMY_EXIST2 的首行空行（:595 / :630）+ :489 的
+  // PRINTL——两处走 era.println（夹具记为 'br' 行）；:500 的无参 PRINTW 走
+  // printAndWait('')（'text' 空行，读键按夹具契约不入 inputs_consumed）
   assert.equal(
-    fixture.inputs_consumed.filter((c) => c.api === 'waitAnyKey').length,
-    1,
+    fixture.lines_history.filter((l) => l.type === 'br').length,
+    2,
+    'ENEMY_EXIST2 首行 + :489 PRINTL 两处空行',
+  );
+  assert.equal(texts.filter((line) => line === '').length, 1, 'PRINTW 的空行');
+});
+
+test('1-9 层也追加护卫名单：原作判据是全局 X == 10，不是参数（#548 订正）', async () => {
+  const fixture = create_floor_fixture();
+  fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
+  fixture.era.addCharacter(34);
+  fixture.store.set('ex_talent:34:1', 1); // EX_TALENT:1 = 近卫
+
+  await show_floor_via_usershop(fixture, 523); // 第 3 阶层
+
+  const texts = text_lines(fixture);
+  assert(texts.includes('第3阶层'), '仍是所点阶层的画面');
+  assert(
+    texts.includes('[护卫中]\u3000[34]葵希罗'),
+    '1-9 层也出护卫行（DRAW_MAINMENU 的楼层循环把 X 留成 10）',
+  );
+});
+
+test('护卫行的编号是宽度 2 的右对齐（原作 [{COUNT,2}]）', async () => {
+  const fixture = create_floor_fixture();
+  fixture.seed_chara(7, { id: 7, name: '贝尔', callname: '贝尔' });
+  fixture.era.addCharacter(7);
+  fixture.store.set('ex_talent:7:1', 1);
+
+  await show_floor_via_usershop(fixture, 521);
+
+  assert(
+    text_lines(fixture).includes('[护卫中]\u3000[ 7]贝尔'),
+    '个位编号补前导空格（右对齐），不是 [7]',
+  );
+});
+
+test('非护卫不进行名单：CFLAG:1 != 0（已加入阵营）或 EX_TALENT:1 为 0', async () => {
+  const fixture = create_floor_fixture();
+  fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
+  fixture.era.addCharacter(31);
+  fixture.store.set('ex_talent:31:1', 1); // 是近卫，但
+  fixture.store.set('cflag:31:1', 2); // CFLAG:1 = 2（侵攻中）→ 不列
+
+  await show_floor_via_usershop(fixture, 521);
+
+  const texts = text_lines(fixture);
+  assert(
+    !texts.some((line) => line.includes('护卫中')),
+    'CFLAG:1 != 0 不进护卫名单',
   );
 });
 
