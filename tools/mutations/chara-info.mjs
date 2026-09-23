@@ -448,7 +448,7 @@ export default [
     replace:
       "    scope = { states: [2], message: '全迎击中的奴隶（不含以后追加的新奴隶）' }; // :47/:52",
     tests: ['page-chara-info'],
-    must_mention: 'scope=2001：角色 2 应写入',
+    must_mention: 'scope=2001：角色 1 不应写入',
   },
   {
     desc: 'M11432 统一卖春积极性：全部档丢掉迎击臂（只剩侵攻）',
@@ -503,7 +503,7 @@ export default [
     replace: `  } else {
   }`,
     tests: ['page-chara-info'],
-    must_mention: '取消：不进等级选择',
+    must_mention: '预置输入已耗尽',
   },
   {
     desc: 'M11438 换号显示守卫：苗床（状态 7）不再列出',
@@ -535,7 +535,7 @@ export default [
     find: 'const NUM_PAGE = 25;',
     replace: 'const NUM_PAGE = 24;',
     tests: ['page-chara-info'],
-    must_mention: '第 25 人还在第 1 页',
+    must_mention: '页首按上一页后仍停在第 1 页',
   },
   {
     desc: 'M11442 换号第一屏：下一页守卫 <= 写成 <（恰 25 人时进不了空尾页）',
