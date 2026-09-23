@@ -439,14 +439,15 @@ async function dispatch(...results) {
 }
 
 test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
-  // 两次分发各打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
+  // 一次分发打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
   // 200 自 #136 起是真身存档界面，199 自 #395 起是真身 BEGIN TURNEND
   // 转场（专属用例见下），101 自 #391 起是真身角色信息画面
   // （test/page-chara-info.test.js 独立覆盖），777 自 #463 起是真身设定
-  // 界面（test/page-config.test.js 独立覆盖），均不再走占位
-  const fixture = await dispatch(103, 525);
+  // 界面（test/page-config.test.js 独立覆盖），103 自 #543 起是真身批量
+  // 处刑（test/event-execution-batch.test.js 独立覆盖），均不再走占位
+  const fixture = await dispatch(525);
   const texts = history_texts(fixture);
-  for (const name of ['@批量处刑', '@SHOW_FLOOR']) {
+  for (const name of ['@SHOW_FLOOR']) {
     assert(
       texts.some((line) => line.includes(name)),
       `指令壳应占位 ${name}`,
@@ -793,8 +794,8 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // 订正的：名单与这份断言一起停在旧状态，所以一直没人发现。
   assert.deepEqual(
     STUBBED_CALLS,
-    ['批量处刑', 'LABO', 'SHOW_FLOOR'],
-    '存根名单必须只列仍未接真身的分支（#397 起 INTERCEPT/ABILITY_UP/TAILOR_MAIN 已接真身；DEBUG_MENU_U 自 #542 起判不移植，提示行不再是存根占位）',
+    ['LABO', 'SHOW_FLOOR'],
+    '存根名单必须只列仍未接真身的分支（#397 起 INTERCEPT/ABILITY_UP/TAILOR_MAIN 已接真身；#542 起 DEBUG_MENU_U 判不移植；#543 起批量处刑已接真身）',
   );
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
   for (const name of STUBBED_CALLS) {

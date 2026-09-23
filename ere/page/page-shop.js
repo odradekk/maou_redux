@@ -61,6 +61,7 @@ const {
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { secret_labo } = require('#/page/page-shop-labo');
+const { batch_execution } = require('#/event/event-execution-batch');
 const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
@@ -84,12 +85,14 @@ const MAX_CHARANUM = 90;
  * page/page-monster-shop.js），CONFIG 自 #463 起为真身（777 分支，
  * page/page-config.js），INTERCEPT / ABILITY_UP / TAILOR_MAIN 自 #397 起为
  * 真身（104/105/108 分支，page-intercept.js / page-ability-up.js /
- * page-tailor.js），均移出本名单（#515 订正：三个名字此前与测试一同停在旧
- * 状态，见 test/page-shop.test.js 的固定断言）。999 分支的 DEBUG_MENU_U
- * 自 #542 起判不移植（原作者调试工具），运行时提示行不是存根占位，移出
- * 本名单；分支结构与汇合路径保留（usershop 的 999 分支注释）。
+ * page-tailor.js），批量处刑自 #543 起为真身（103 分支，
+ * event/event-execution-batch.js），均移出本名单（#515 订正：三个名字
+ * 此前与测试一同停在旧状态，见 test/page-shop.test.js 的固定断言）。999
+ * 分支的 DEBUG_MENU_U 自 #542 起判不移植（原作者调试工具），运行时提示行
+ * 不是存根占位，移出本名单；分支结构与汇合路径保留（usershop 的 999 分支
+ * 注释）。
  */
-const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR'];
+const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR'];
 
 /**
  * @EVENTSHOP（:4-20）：每轮 BEGIN SHOP 进入时执行一次。
@@ -325,8 +328,10 @@ async function usershop(result) {
     // 在 page-main-menu.js 的指令面板段，随本票落地）
     await dungeon_info2();
   } else if (result === 103) {
-    // 处刑（:110；原作 EXECUTION 的调用已注释，现行调批量处刑）
-    await stub_line_wait('批量处刑', '处刑（批量处刑）', '随处刑票');
+    // 处刑（:110；原作 EXECUTION 的调用已注释，现行调批量处刑）——#543 起
+    // 真身（ere/event/event-execution-batch.js；会话内自带调教窗口以提供
+    // 口上通道的 tflag 表，见该文件头）
+    await batch_execution();
   } else if (result === 104) {
     // 迎击（:113 CALL INTERCEPT）：#397 起真身（page/page-intercept.js），
     // 返回前自己完成出击决定与 GOHOUBI_REQUEST，回到这里只需重绘

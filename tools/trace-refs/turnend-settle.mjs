@@ -23,6 +23,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '250-740',
+        any: [/^CALL AUTOTRAIN$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
         ref: '263',
         any: [/^CALL PARTY_UNITE$/m],
       },
