@@ -3,7 +3,10 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 171; // #542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
+export const COUNT = 169; // #547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+// SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
+// 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
+// 将来再登记存根行时随票补回同型条目）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
 // 背景音乐音量三行退回存根，M11330：RULINGS 路径悬空——由 test/trace-check.test.js 的 #542 用例与
 // test/stub-registry-status.test.js 的八行棘轮守护）；此前 166 = 合并态实测（#532 与 #530 两侧条目全留；
 // 按 merge-conflicts.md，计数型基线不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本票 144、
@@ -1678,26 +1681,9 @@ export default [
       '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
     must_mention: '存根清单状态词不在三类里',
   },
-  {
-    desc: 'M11287 未了结行的源被指到 DUNGEON_BATLLE2 上（该文件必须一直判已移植——#541 第 2 条的源订正把它从欠账里摘出来；#548 起 BEDROOM_BATTLE_MALE 行、#547 起 RACE_CONFIG 行已实现、不进归因扫描，靶位改挂到仍未了结的 SHOW_BUTTON_EQUIP 行）',
-    file: 'docs/stub-registry.md',
-    find: '其他/EQUIP.ERB:1074',
-    replace: '迷宮/DUNGEON_BATLLE2.ERB',
-    tests: ['stub-registry-status'],
-    test_name:
-      '真树清单：--coverage 打印的四张表计数与统计值逐项一致（现状对照）',
-    must_mention: 'DUNGEON_BATLLE2.ERB 必须判已移植',
-  },
-  {
-    desc: 'M11288 待核行文退回（未了结行的源写回「調教相關/（@EVENTEND 的调用，文件待核）」——归因不到的行多一条，超 #541 归零后的基线；#548 起 CHARADEAD_CHECK 行、#547 起 CONFIG_AGE_SETTING 行已实现、不进归因扫描，靶位改挂到仍未了结的 EQUIP_ST_SHOW 行）',
-    file: 'docs/stub-registry.md',
-    find: '其他/EQUIP.ERB:1030',
-    replace: '調教相關/（@EVENTEND 的调用，文件待核）',
-    tests: ['trace-check'],
-    test_name:
-      '移植状态表：清单归因不到行数基线只减不增（全树副本，多一行必须红）',
-    must_mention: '清单还原后必须复绿',
-  },
+  // M11287/M11288 已删（#547 返工）：靶类「未了结行的源」随存根清单清空
+  // （#540 终点）而无实体可挂；两条的历次改挂（#548→CHARA_BODY 行、#547→
+  // EQUIP 行）与删除依据见 COUNT 注释。
   {
     desc: 'M11289 函数表节标题改错（FUNCTION_TABLE_TITLE 与清单的小节名对不上——parse_stub_registry 当场抛错，--coverage 整条崩掉，#541 重构后的靶位）',
     file: 'tools/trace-coverage.mjs',
