@@ -3,7 +3,9 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 386; // #542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
+export const COUNT = 395; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+// 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
+// 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
 // 快捷键、M11329 page-config 的提示检索键——由 test/page-config.test.js、
 // test/page-shop.test.js 与 test/page-chara-info.test.js 守护）；此前 380，其中 #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）
@@ -3496,9 +3498,9 @@ export default [
   {
     desc: 'M11110 page-shop 存根名单退回旧状态（INTERCEPT/ABILITY_UP/TAILOR_MAIN 自 #397 起已接真身，重新列入即红，#515）',
     file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR'];",
+    find: "const STUBBED_CALLS = ['LABO'];",
     replace:
-      "const STUBBED_CALLS = [\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n];",
+      "const STUBBED_CALLS = [\n  '批量处刑',\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
     tests: ['page-shop'],
     test_name: '存根清单可检索',
     must_mention: '存根名单必须只列仍未接真身的分支',
@@ -3568,6 +3570,80 @@ export default [
       '征服后菜单 [5] 拒收判断条件的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）',
     must_mention: 'route_33 = 500 仍在拒收侧：不得落进天神宫的出兵菜单',
   },
+  {
+    desc: 'M11480 SHOW_FLOOR 漏 LIMIT 钳制（ARG 直用：0 与 99 不再落到边界层）',
+    file: 'ere/page/page-shop.js',
+    find: '  arg = Math.min(Math.max(arg, 1), 10); // :429 ARG = LIMIT(ARG,1,10)',
+    replace: '  // 变异：漏 LIMIT 钳制',
+    tests: ['page-shop-floor'],
+    must_mention: '钳制',
+  },
+  {
+    desc: 'M11481 SHOW_FLOOR 设施四格多读 +30 段（REPEAT 内 COUNT==3 → 4 的跳过删掉）',
+    file: 'ere/page/page-shop.js',
+    find: '    for (const slot of [0, 10, 20, 40]) {',
+    replace:
+      '    for (const slot of [0, 10, 20, 30, 40]) { // 变异：多读 +30 段',
+    tests: ['page-shop-floor'],
+    must_mention: '+30',
+  },
+  {
+    desc: 'M11482 SHOW_FLOOR 设施名表错（500 商店街的全角尾随空格去掉：合行文本对不上）',
+    file: 'ere/page/page-shop.js',
+    find: "      500: '商店街\\u3000',",
+    replace: "      500: '商店街', // 变异：尾随全角空格删",
+    tests: ['page-shop-floor'],
+    must_mention: '楼层头与设施后缀合一行',
+  },
+  {
+    desc: 'M11483 SHOW_FLOOR 近卫护卫判据取反（EX_TALENT:x:1 非 0 改成 == 0：名单整段空）',
+    file: 'ere/page/page-shop.js',
+    find: '        (era.get(`ex_talent:${cid}:1`) || 0) !== 0',
+    replace: '        (era.get(`ex_talent:${cid}:1`) || 0) === 0',
+    tests: ['page-shop-floor'],
+    must_mention: '护卫行：[名] ——',
+  },
+  {
+    desc: 'M11484 SHOW_FLOOR 怪物行数量对齐反向（padEnd 改 padStart：{N,2,LEFT} 语义变 RIGHT）',
+    file: 'ere/page/page-shop.js',
+    find: '      era.print(`${String(count).padEnd(2)}只${monstername(base_slot + i)}`);',
+    replace:
+      '      era.print(`${String(count).padStart(2)}只${monstername(base_slot + i)}`); // 变异：对齐反向',
+    tests: ['page-shop-floor'],
+    must_mention: '怪物行（数量左对齐两位）',
+  },
+  {
+    desc: 'M11490 SHOW_FLOOR 路径的护卫名单退回按实参判断（floor === 10：1-9 层漏掉护卫行——原作判据是全局 X == 10，#548）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  if (x_is_10) {',
+    replace: '  if (floor === 10) { // 变异：退回按实参判断',
+    tests: ['page-shop-floor'],
+    must_mention: '1-9 层也出护卫行',
+  },
+  {
+    desc: 'M11491 护卫行编号丢宽度（[{COUNT,2}] 的右对齐改成 [{COUNT}]，个位编号不再补空格）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: "            content: `[${String(cid).padStart(2, ' ')}]`,",
+    replace: '            content: `[${cid}]`, // 变异：丢宽度',
+    tests: ['page-dungeon-info'],
+    must_mention: '宽度 2 右对齐的编号',
+  },
+  {
+    desc: 'M11492 ENEMY_EXIST2 的首行空行删掉（原作 :595/:630 的 PRINTL，两个调用方都受影响，#548/#180）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  // :595 / :629-630 调用方的行已落，本函数先落一个空行（见 JSDoc）\n  era.println();',
+    replace: '  // 变异：漏掉首行空行',
+    tests: ['page-dungeon-info'],
+    must_mention: '开头的空行',
+  },
+  {
+    desc: 'M11493 SHOW_FLOOR 末尾的无参 PRINTW 只等键不落空行（printAndWait → waitAnyKey，:500 少一行）',
+    file: 'ere/page/page-shop.js',
+    find: "  await era.printAndWait('');",
+    replace: '  await era.waitAnyKey(); // 变异：少一个空行',
+    tests: ['page-shop-floor'],
+    must_mention: 'PRINTW 的空行',
+  },
   // —— #542：设置页 [26]/[28] 与主菜单 999 的不移植提示 ——
   {
     desc: 'M11313 设置页 [26] 的不移植提示整段删掉（回到空转——按钮在、按了没反应，#542）',
@@ -3618,7 +3694,7 @@ export default [
   {
     desc: 'M11321 page-shop 存根名单退回旧状态（DEBUG_MENU_U 已随 #542 判不移植，重新列入即红）',
     file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR'];",
+    find: "const STUBBED_CALLS = ['LABO'];",
     replace: "const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
     tests: ['page-shop'],
     test_name: '存根清单可检索：docs/stub-registry.md 收录这张票全部占位名',

@@ -3,7 +3,8 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 280; // #461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
+export const COUNT = 284; // #548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
+// 男人位判据、欲望门槛、睡着分支文案；M11489：挑战臂漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
 // M9838 与 #462 撞号后改）；#469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
 // dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
 // 计数、全员取消派遣判据、三个 FLAG:400 早退守卫、MONSTER_LIST 的两处
@@ -2533,5 +2534,38 @@ export default [
     replace: '  // 变异：不补 UPCHECK 等价步',
     tests: ['dungeon-trap'],
     must_mention: '已被第三站清零',
+  },
+  {
+    desc: 'M11485 BEDROOM_BATTLE_MALE 男人位判据取反（TALENT:0:122 非 0 改成取反：男女魔王的 MODE 互换）',
+    file: 'ere/dungeon/dungeon.js',
+    find: "  if (era.get('talent:0:122')) {",
+    replace: "  if (!era.get('talent:0:122')) { // 变异：判据取反",
+    tests: ['dungeon-bedroom'],
+    must_mention: 'MODE 2',
+  },
+  {
+    desc: 'M11486 BEDROOM_BATTLE_MALE 欲望门槛 > 8 改成 > 7（8 档被错升一档）',
+    file: 'ere/dungeon/dungeon.js',
+    find: "  if ((era.get('abl:0:11') || 0) > 8) {",
+    replace: "  if ((era.get('abl:0:11') || 0) > 7) { // 变异：门槛错",
+    tests: ['dungeon-bedroom'],
+    must_mention: '欲望恰为 8',
+  },
+  {
+    desc: 'M11487 BEDROOM_BATTLE_MALE 睡着分支文案错（MODE 0 也返回「察觉到了气息」）',
+    file: 'ere/dungeon/dungeon.js',
+    find: '    ? `${name_of(0)}从睡梦中醒了过来。` // :1056',
+    replace:
+      '    ? `${name_of(0)}察觉到了${name_of(cid)}的气息。` // 变异：MODE 0 文案错',
+    tests: ['dungeon-bedroom'],
+    must_mention: 'MODE 0',
+  },
+  {
+    desc: 'M11489 BEDROOM_BATTLE_MALE 挑战臂漏掉函数返回的后半句（只打调用方那一句——两句本应同一行，#548）',
+    file: 'ere/dungeon/dungeon.js',
+    find: '                    (await bedroom_battle_male(arg0)),',
+    replace: "                    '', // 变异：漏掉函数返回的后半句",
+    tests: ['dungeon-bedroom'],
+    must_mention: '两句拼成同一行',
   },
 ];

@@ -629,7 +629,9 @@ export const FILES = [
       {
         src: 'target/ERB/迷宮/DUNGEON_INFO2.ERB',
         ref: '629-630',
-        any: [/^\s*PRINTL$/m],
+        // #548 返工：锚从裸 `PRINTL` 收紧成「结尾换行的注释 + PRINTL」——
+        // ENEMY_EXIST2 的首行空行就出自这里（另见 JSDoc 的 :595）
+        any: [/^\s*;最后一支队伍的结尾换行$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_INFO2.ERB',
@@ -650,6 +652,17 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_INFO2.ERB',
         ref: '638-641',
         any: [/^\s*FOR LOCAL, 200, 212$/m, /^\s*SIF TALENT:COUNT:LOCAL$/m],
+      },
+      // —— #548（S7）：ENEMY_EXIST2 的护卫行编号锚（宽度 2 右对齐）——
+      {
+        src: 'target/ERB/迷宮/DUNGEON_INFO2.ERB',
+        ref: '445-454',
+        any: [/^\s*CALL ENEMY_EXIST2\(X\)$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_INFO2.ERB',
+        ref: '636',
+        any: [/^\s*PRINTFORM \[\{COUNT,2\}\]$/m],
       },
     ],
   },
