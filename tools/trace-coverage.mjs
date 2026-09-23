@@ -133,7 +133,13 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#487 的 master cf3b5d9）：
+export const PENDING_BASELINE = 9; // #544（S3）起：#467 合并态的 10 − 1 = 9——
+// 魔改新增/强制肉偿.ERB 随本票落 ere/kojo/kojo-forced-payment.js、清单对应行
+// 转「已实现」，`node tools/trace-check.mjs --coverage` 重测一致（已移植 308／
+// 部分移植 9／已判定不实现 10／待移植 9／纯声明 10）。数字取自重测，不相加、
+// 不取一侧。
+// ——以下为 #467 的原始说明，数值已随本票抬低——
+// export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#487 的 master cf3b5d9）：
 // 先把现役值换成 999 占位再跑 `node tools/trace-check.mjs --coverage`，实测 10；
 // master 侧现役 15（#466 的 23 → 15）− 本票的 5（ABL/ABLUP37.ERB／ABLUP39.ERB／
 // ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB）= 10，与重测一致——数字取自重测，
