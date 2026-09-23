@@ -84,6 +84,12 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+// 导入分组按 AGENTS.md（system 在 page 前；本文件存量的 chara-before-page
+// 顺序是历史形态，本票新增行按约定位置放）
+const {
+  show_button_equip,
+  equip_st_show,
+} = require('#/system/equip/equip-show');
 const { search_family } = require('#/chara/chara-family');
 const {
   chara_info_name_edit,
@@ -94,10 +100,6 @@ const { sort_by_number } = require('#/chara/chara-portcflag');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
 const { uniform_bitch_level } = require('#/page/page-uniform-bitch-level');
-const {
-  show_button_equip,
-  equip_st_show,
-} = require('#/system/equip/equip-show');
 const { chara_number_swap } = require('#/page/page-chara-number-swap');
 const { ability_up_core } = require('#/page/page-ability-up');
 const { tailor_core } = require('#/page/page-tailor');

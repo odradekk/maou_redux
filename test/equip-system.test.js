@@ -646,6 +646,16 @@ test('equip_st_show：空槽（-1）与未知识别号都经名称臂回落 40 �
   }
 });
 
+test('equip_st_show：名称表空名段（53-60）不重置，查表走 ELSE 黑戒指行 → 印 *带有诅咒', () => {
+  // EQUIP_WEAPON_NAMES 的 53-60 是 ''（原作预留空名）而不是 undefined——
+  // 名称臂的「回落 40 号剑」重置不触发；查表落 ELSE 臂（诅咒 1、伤害强化
+  // 100），名称行是空串、随后印诅咒行（规范审查指出此处可达，#546）
+  const { fixture, show } = setup_show();
+  fixture.store.set('cflag:31:550', 53);
+  assert.equal(show.equip_st_show(31), 2);
+  assert.deepEqual(fixture.text_lines(), ['', '*带有诅咒', '*100的打击力']);
+});
+
 test('equip_st_show：按角色素质强化后再显示（初心者 291 的伤害-10/失手+10）', () => {
   const { fixture, show } = setup_show();
   fixture.store.set('cflag:31:550', 47); // 战锤 +0：伤害 150、失手 30

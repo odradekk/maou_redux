@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 31; // #174 建表 19 条；#546 +12（M11520-M11531：装备详情显示三函数）
+export const COUNT = 32; // #174 建表 19 条；#546 +13（M11520-M11531、M11547：装备详情显示三函数——诅咒行随规范审查补可达用例）
 
 export default [
   {
@@ -257,5 +257,13 @@ export default [
     replace: '    era.print(`*${w.伤害强化}的攻击力`);',
     tests: ['equip-system'],
     must_mention: '战锤+2',
+  },
+  {
+    desc: 'M11547 EQUIP_ST_SHOW 的诅咒行门槛改坏（if (w.诅咒) 改 if (false)——空名段 53 的黑戒指行不再印 *带有诅咒）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if (w.诅咒) {',
+    replace: '  if (false && w.诅咒) {',
+    tests: ['equip-system'],
+    must_mention: '*带有诅咒',
   },
 ];

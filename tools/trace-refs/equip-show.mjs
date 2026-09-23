@@ -63,6 +63,13 @@ export const FILES = [
       { src: EQUIP, ref: '1081-1084', any: [/^\s*IF LOCAL == 1$/m] },
       {
         src: EQUIP,
+        ref: '1082-1083',
+        any: [/	; 条件に合わないならボタン自体を表示しない\n	RETURN 0/],
+      },
+      { src: EQUIP, ref: '1086', any: [/^\s*RESETCOLOR$/m] },
+      { src: EQUIP, ref: '1086-1087', any: [/RESETCOLOR\nRETURN 0/] },
+      {
+        src: EQUIP,
         ref: '1085',
         any: [/^\s*PRINTFORM \[\{NUM\}\] 装备情报/m],
       },

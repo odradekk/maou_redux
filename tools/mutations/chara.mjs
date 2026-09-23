@@ -718,8 +718,8 @@ export default [
   {
     desc: 'M11534 MODE 1 的空输入映射丢（raw !== 0 改 raw !== 1——输入 0 被当自定义文本，一人称变「0」）',
     file: 'ere/chara/chara-self-call.js',
-    find: "    if (raw !== 0 && raw !== '' && raw != null) {",
-    replace: "    if (raw !== 1 && raw !== '' && raw != null) {",
+    find: '    if (raw !== 0) {',
+    replace: '    if (raw !== 1) {',
     tests: ['chara-self-call'],
     must_mention: '空输入（引擎把 "" 归一成 0）',
   },

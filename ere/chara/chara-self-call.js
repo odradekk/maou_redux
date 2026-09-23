@@ -566,8 +566,9 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     // （dev-guides/05-interaction.md:124「不会是 undefined 或空字符串''」）。
     // 原作「不输入择随机设定」在 ere 的可达等价物因此是**输入 0**：按 0
     // 走随机路径；其余值字符串化落为自定义一人称（chara-name-edit.js 的
-    // INPUTS 同款约定——游戏读到的是归一后的值）
-    if (raw !== 0 && raw !== '' && raw != null) {
+    // INPUTS 同款约定——游戏读到的是归一后的值）。'' 与 "0" 到手都已是
+    // 数值 0，判空只写 raw !== 0 一道；其余不存在的手输形态见上注
+    if (raw !== 0) {
       // :18-21 STRLENS(LOCALS) > 0（ELSE 内的判空，恒真）：写入并清档位
       era.set(`cstr:${cid}:60`, String(raw));
       era.set(`cflag:${cid}:450`, 0);
