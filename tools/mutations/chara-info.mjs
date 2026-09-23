@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 40; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）
+export const COUNT = 45; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）
 
 export default [
   {
@@ -387,5 +387,49 @@ export default [
       content: '',`,
     tests: ['page-chara-info'],
     must_mention: '角色行的按钮带角色号（点得动、也敲得进白名单）',
+  },
+  {
+    desc: 'M11303 名册魔王行姓名格的空档退回 10 格（5 个全角空格——引擎实测名字比角色行右一个半角字符，#535 验收）',
+    file: 'ere/page/page-chara-info.js',
+    find: 'content: `\\u3000\\u3000\\u3000\\u3000 ${name_of(0)}',
+    replace: 'content: `\\u3000\\u3000\\u3000\\u3000\\u3000${name_of(0)}',
+    tests: ['page-chara-info'],
+    must_mention: '魔王行与角色行的姓名前缀显示宽度相等',
+  },
+  {
+    desc: 'M11304 名册魔王行姓名格的半角空格被吃掉（空档只剩 8 格，#535）',
+    file: 'ere/page/page-chara-info.js',
+    find: 'content: `\\u3000\\u3000\\u3000\\u3000 ${name_of(0)}',
+    replace: 'content: `\\u3000\\u3000\\u3000\\u3000${name_of(0)}',
+    tests: ['page-chara-info'],
+    must_mention: '魔王行与角色行的姓名前缀显示宽度相等',
+  },
+  {
+    desc: 'M11305 名册角色行姓名格多一个空格（前缀 10 格，与魔王行不齐，#535）',
+    file: 'ere/page/page-chara-info.js',
+    find: '{ content: ` ${name_of(cid)} LV',
+    replace: '{ content: `  ${name_of(cid)} LV',
+    tests: ['page-chara-info'],
+    must_mention: '魔王行与角色行的姓名前缀显示宽度相等',
+  },
+  {
+    desc: 'M11306 名册角色行姓名格少了徽章后的空格（前缀 8 格，与魔王行不齐，#535）',
+    file: 'ere/page/page-chara-info.js',
+    find: '{ content: ` ${name_of(cid)} LV',
+    replace: '{ content: `${name_of(cid)} LV',
+    tests: ['page-chara-info'],
+    must_mention: '魔王行与角色行的姓名前缀显示宽度相等',
+  },
+  {
+    desc: 'M11307 名册魔王行姓名格的列宽 13 改 12（span 变了，姓名列整体左移，#535）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      config: { align: 'left', width: 13 },
+    },
+  ]);`,
+    replace: `      config: { align: 'left', width: 12 },
+    },
+  ]);`,
+    tests: ['page-chara-info'],
+    must_mention: '魔王行的两格 ＋ 两名角色各四格',
   },
 ];

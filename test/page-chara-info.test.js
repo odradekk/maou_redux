@@ -30,6 +30,31 @@ function buttons_with(fixture, accelerator) {
   );
 }
 
+/**
+ * 显示宽度：全角按 2 格、半角按 1 格（原作 Emuera 的字符格口径）。
+ * 只覆盖本屏会出现的字符——U+3000 全角空格、U+2015 横线、CJK 汉字与全角
+ * 标点、半角 ASCII；不是通用的 East Asian Width 实现，别拿去量别处的文本。
+ * @param {string} text
+ * @returns {number}
+ */
+function display_width(text) {
+  let width = 0;
+  for (const char of text) {
+    const code = char.codePointAt(0);
+    const wide =
+      code === 0x3000 || // 全角空格（这一屏的列对齐靠它）
+      code === 0x2015 || // ―（SHOW_CHARA_ACT 回落文案里的横线）
+      (code >= 0x2e80 && code <= 0xa4cf) || // CJK 部首～彝文（汉字都在内）
+      (code >= 0xac00 && code <= 0xd7a3) || // 谚文音节
+      (code >= 0xf900 && code <= 0xfaff) || // CJK 兼容表意文字
+      (code >= 0xfe30 && code <= 0xfe4f) || // CJK 兼容符号
+      (code >= 0xff00 && code <= 0xff60) || // 全角 ASCII 变体
+      (code >= 0xffe0 && code <= 0xffe6); // 全角货币符号
+    width += wide ? 2 : 1;
+  }
+  return width;
+}
+
 // —— SHOW_CHARA_ACT ——
 
 test('SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射，未登记状态回落残留字面量——表驱动走完 state 整个维度', () => {
@@ -243,10 +268,8 @@ test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] �
 
   // 角色行的姓名 / 等级 / 攻防善恶同格：等级地址（cflag:cid:9）与魔王行
   // 同款，#530 的验收在魔王行上撞出过「名字有人守、等级没人守」的空缺
-  // （M11210），角色行这边一并钉住。
-  // **只取角色行**（夹具按多列调用分组，row>0；魔王行是 row 0）：魔王行
-  // 名字格的缩进比角色行多一格，是这一屏既有的排版偏离，是否调整由 #535
-  // 第 4 项的引擎核对定，不在这里当契约钉死（本票未跑 Electron MCP）。
+  // （M11210），角色行这边一并钉住。只取角色行（夹具按多列调用分组，
+  // row > 0）——魔王行自己的等级由 #530 那两个用例守着，不在这里重复。
   assert.deepEqual(
     fixture.lines_history
       .filter(
@@ -259,6 +282,53 @@ test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] �
       '[可调教] 乙 LV7 攻击3/防御4 善恶值-12',
     ],
     '角色行的等级取自 cflag:cid:9（甲 LV5 / 乙 LV7）；地址读成 :10 会变 LV0',
+  );
+});
+
+test('SHOW_CHARA_INFO_LIST：魔王行与角色行的姓名列在格内同宽（全角按 2、半角按 1，#535 引擎实测）', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 11, '乙');
+  const { show_chara_info_list } = fixture.load_module('page/page-chara-info');
+
+  show_chara_info_list(0);
+
+  // 引擎里每格的横向位置由 el-col 的 span 决定，**不随前一格文本长度变化**
+  // （#535 验收在引擎里实测确认），所以「姓名列齐不齐」只取决于姓名格内部
+  // 到姓名为止的显示宽度：魔王行是空档，角色行是状态徽章 + 一个空格。
+  // 实测口径：全角按 2 格、半角按 1 格（原作 Emuera 的字符格）。
+  // 魔王行原来空档 10 格（5 个全角空格），实机上「你」比角色行的名字右一个
+  // 半角字符（原作两行是齐的——golden 目录下的名册基准日志里可以直接数出来），
+  // #535 改成 4 个全角 + 1 个半角＝9 格。
+  const prefix_widths = [
+    { row: 0, name: '你', label: '魔王行' },
+    { row: 1, name: '甲', label: '角色行（1 位数编号）' },
+    { row: 2, name: '乙', label: '角色行（2 位数编号）' },
+  ].map(({ row, name, label }) => {
+    const cell = fixture.lines_history.find(
+      (line) =>
+        line.type === 'text' && line.row === row && line.text.includes(' LV'),
+    );
+    assert.ok(cell, `${label}应有姓名格（row ${row}）`);
+    const name_at = cell.text.indexOf(name);
+    assert.ok(name_at >= 0, `${label}的姓名格里有「${name}」`);
+    return display_width(cell.text.slice(0, name_at));
+  });
+  assert.deepEqual(
+    prefix_widths,
+    [9, 9, 9],
+    '魔王行与角色行的姓名前缀显示宽度相等：魔王行 4 全角 + 1 半角；角色行徽章 8 + 1 半角',
+  );
+
+  // 编号格的实显宽度本来就不等（`[0] ` 4 格 / `[1] ` 4 格 / `[11] ` 5 格），
+  // 姓名列照样齐——这正是「格位置由 span 定、不由前一格文本撑开」的观测面
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] ', '[1] ', '[11] '],
+    '编号格实显宽度不等，但姓名列仍然对齐',
   );
 });
 
