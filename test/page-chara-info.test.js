@@ -1069,13 +1069,17 @@ test('case 8（:1062）：[8] 一人称重设走 MODE 1 自定义输入，写入
   assert.equal(result, 0);
   assert.ok(
     printed_includes(fixture, '请输入想设定的第一人称，若不输入择随机设定'),
-    'MODE 1 的提示行印出',
+    'MODE 1 的提示行印出（1:1 照抄原作）',
+  );
+  assert.ok(
+    printed_includes(fixture, '（输入 0 随机设定）'),
+    'ere 侧补的「输入 0」提示行印出（有意偏离，#567）',
   );
   assert.equal(fixture.store.get('cstr:1:60'), '在下');
   assert.equal(fixture.store.get('cflag:1:450'), 0);
 });
 
-test('case 8：空输入（引擎归一为 0）→ 随机重掷路径（<9 直设「我」）', async () => {
+test('case 8：输入 0 代替空输入（有意偏离，原作会把一人称写成「0」）→ 随机重掷路径（<9 直设「我」）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');

@@ -714,12 +714,17 @@ test('random_self_call MODE 1：自由文本 → 写入 CSTR:60、档位清 0、
   assert.equal(fixture.store.get('cstr:1:60'), '在下', 'CSTR:x:60 = 输入文本');
   assert.equal(fixture.store.get('cflag:1:450'), 0, 'CFLAG:x:450 = 0');
   assert.equal(rand_calls, 0, '自定义命中不掷骰');
-  // $INPUT_LOOP 的三行：两条分割线夹一句提示（:10-12）
+  // $INPUT_LOOP 的输出：两条分割线夹提示（:10-12）+ ere 侧补的一句
+  // 「（输入 0 随机设定）」（有意偏离，见实现处注释）
   const texts = fixture.text_lines();
   assert.equal(
     texts.filter((t) => t === '请输入想设定的第一人称，若不输入择随机设定')
       .length,
     1,
+  );
+  assert.ok(
+    texts.includes('（输入 0 随机设定）'),
+    'ere 侧补的「输入 0 随机设定」提示行印出',
   );
   assert.equal(fixture.lines.filter((l) => l.type === 'divider').length, 2);
 });
@@ -732,17 +737,11 @@ test('random_self_call MODE 1：数字文本按引擎归一成数值再字符串
   assert.equal(fixture.store.get('cstr:1:60'), '8');
   assert.equal(fixture.store.get('cflag:1:450'), 0);
 });
-
-test('random_self_call MODE 1：空输入（引擎把 "" 归一成 0）→ 落随机路径，等同 MODE 0', async () => {
-  const fixture = create_era_fixture();
-  add_chara(fixture, 1);
-  fixture.set_inputs(''); // 夹具按引擎同款 getNumber 归一，游戏收到 0
-  assert.equal(await load(fixture).random_self_call(1, seq([]), 1), 9);
-  assert.equal(fixture.store.get('cstr:1:60'), '我', '随机路径 <9 直设「我」');
-  assert.equal(fixture.store.get('cflag:1:450'), 9);
-});
-
-test('random_self_call MODE 1：随机路径沿用进入时的档位（先读 CFLAG:450 再提示，:6）', async () => {
+// （曾有「set_inputs('') 模拟空输入」一例：真实引擎不受理空提交，该路径只在
+// 夹具里存在，getNumber 的 ''→0 归一已由 test/fixture.test.js 钉住，删除）
+test('random_self_call MODE 1：输入 0 代替空输入（有意偏离，原作会把一人称写成「0」）→ 随机路径沿用进入时的档位（:6）', async () => {
+  // 引擎不受理空提交（渲染层吞掉直接回车），「不输入择随机设定」的等价物
+  // 是输入 0；提示行后另有一句 ere 侧说明「（输入 0 随机设定）」
   const fixture = create_era_fixture();
   add_chara(fixture, 1, '皐月'); // 和名 2 字：绰号表 CASE 0 直接命中
   fixture.store.set('cflag:1:6', 200);

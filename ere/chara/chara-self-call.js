@@ -18,7 +18,9 @@
  *     已随角色详情页接线，mode 形参排在 rand 之后（既有调用方都以第二参传
  *     随机源，chara-custom2/test 同款，不破坏签名）。空输入的语义映射见
  *     函数体内注释：引擎把 '' 归一成 0 且不受理空提交，原作「不输入择随机
- *     设定」在 ere 的可达等价物是输入 0。
+ *     设定」在 ere 的可达等价物是输入 0；提示行后因此**补了一句 ere 侧说明
+ *     「（输入 0 随机设定）」**——有意偏离 1:1 文案（第 1 轮验收要求，
+ *     空输入语义的 A/B 分歧统一见 #567）。
  *
  *   - **CSVCSTR(NO:ARG,60) 不用 `staticcstr:${cid}:60` 三段寻址**，改读
  *     `era.get('chara:${cid}')`（引擎文档化 API，dev-guides/09-static.md
@@ -557,6 +559,12 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     // :10-12 $INPUT_LOOP：两条分割线夹一句提示
     era.drawLine();
     era.print('请输入想设定的第一人称，若不输入择随机设定');
+    // 有意偏离（#567，第 1 轮验收补）：上一行 1:1 照抄原作，但 ere 的渲染层
+    // 不受理空提交（app.asar returnFromInput 的 `if (!any && !val) return`——
+    // 直接回车没有反应），「不输入」走不到 $RANDOM，只有输入 0 才进随机路径；
+    // 补一行提示玩家。不能用 `era.input({ any: true })` 替代：any 键模式在
+    // 按下第一个键时就提交，自由文本反而输不成
+    era.print('（输入 0 随机设定）');
     era.drawLine();
     // :13-14 INPUTS → LOCALS '= RESULTS
     const raw = await era.input();

@@ -721,7 +721,7 @@ export default [
     find: '    if (raw !== 0) {',
     replace: '    if (raw !== 1) {',
     tests: ['chara-self-call'],
-    must_mention: '空输入（引擎把 "" 归一成 0）',
+    must_mention: '输入 0 代替空输入（有意偏离',
   },
   {
     desc: 'M11535 MODE 1 的档位清零漏写（CFLAG:450 = 0 被删——自定义后档位仍留旧值）',

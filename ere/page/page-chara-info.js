@@ -60,6 +60,11 @@
  *   - 四个列表的行内彩色片段（爱慕/淫乱/组队/归还/侵攻迎击徽章）用
  *     `{content,color}` 片段数组承载（page-dungeon-info2.js 同款 fragments
  *     写法），颜色为 `SETCOLOR r,g,b` 的十六进制等价；
+ *   - CASE 8 / CASE 16 的分发（:1062/:1070-1074）沿用项目按钮输入通例：
+ *     原作两支 CASE 无前置判断、Emuera 的 INPUT 接受任意整数（手输 8/16 在
+ *     任何分页都进得去，含魔王与按钮不显示的场合）；ere 只接受已打印按钮
+ *     的快捷键（#129），[8]/[16] 的可见性判定因此变成访问限制——两处
+ *     case 内的注释写明，行为保持（第 1 轮验收补记）；
  *   - 立绘更换按钮 `[20]`（:870-871）：立绘系统判不移植（#542，#540 范围
  *     决定 4——开关默认关、素材不在仓库、只增强显示）。原作守卫「立绘开关
  *     && CFLAG:ARG:1 == 0 && ARG != MASTER」的开关项恒假，照抄则按钮永不可
@@ -895,7 +900,12 @@ async function chara_info_individual(arg, chara_sort) {
       case 8:
         // :1062 CALL RANDOM_SELF_CALL(ARG,1)（#546 真身：chara/chara-
         // self-call.js 的 MODE 1——自定义输入分支；[8] 按钮由 SHOW_BLOCK
-        // 渲染，见 components/chara-info-title.js）
+        // 渲染，见 components/chara-info-title.js）。
+        // 有意偏离（第 1 轮验收补记）：原作 CASE 8 无前置判断，任何分页手输
+        // 8（含魔王、[8] 按钮不显示的第 2/3 页）都能重设一人称；ere 的
+        // input 只接受本轮已打印按钮的快捷键（#129），[8] 又只在非魔王的
+        // 页 0/1 打印——SHOW_BLOCK 的可见性判定在这里变成了**访问限制**
+        //（魔王的一人称无法自定义）。行为保持，与项目按钮输入通例一致
         await random_self_call(current, undefined, 1);
         continue;
       case 9:
@@ -906,7 +916,11 @@ async function chara_info_individual(arg, chara_sort) {
       case 16:
         // :1070-1074 LOCAL = LINECOUNT（死赋值，无人再读）→ CALL
         // EQUIP_ST_SHOW, ARG（#546 真身：system/equip/equip-show.js）→ WAIT
-        // → GOTO DRAW_PAGE（本循环天然整页重绘，continue 即是）
+        // → GOTO DRAW_PAGE（本循环天然整页重绘，continue 即是）。
+        // 有意偏离（第 1 轮验收补记）：原作 CASE 16 同样无前置判断——
+        // CHECK_ABLE_TO_SHOW_EQUIP 返回 1 时只是不显示 [16] 按钮，手输 16
+        // 在任何分页仍能看装备；ere 只接受已打印按钮，判定不放行 = 完全
+        // 不可达。行为保持，与项目按钮输入通例一致
         equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行
         await era.waitAnyKey();
         continue;
