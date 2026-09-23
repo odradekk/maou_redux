@@ -272,7 +272,7 @@ function draw_main_menu() {
   // 按钮（PR #53），正文不写 [102] 前缀（PR #30）。
   era.printButton((era.get('flag:502') || 0) === 0 ? '地下城' : '场子', 102);
 
-  // :247-251 [103] 处刑 —— CALL 批量处刑（存根，随处刑票）；守卫 A > 0
+  // :247-251 [103] 处刑 —— CALL 批量处刑（#543 起真身，ere/event/event-execution-batch.js）；守卫 A > 0
   // （同 [100]/[104]，不发明可用性规则）。
   if (count_selectable_slaves() > 0) {
     era.printButton('处刑', 103);
@@ -508,7 +508,8 @@ function draw_have_traps() {
  * @DRAW_DUNGEON_OVERVIEW（:427-577）：地城概况信息面板（FLAG:36 == 4）。
  *
  * 头行读数（迷宫 Lv / 陷阱 Lv / 勇者初期 Lv）+ 逐层的部下/勇者/迎击/设施
- * 一览（每层一枚 [520+n] 按钮，USERSHOP 的 521-530 分支 → SHOW_FLOOR 存根）
+ * 一览（每层一枚 [520+n] 按钮，USERSHOP 的 521-530 分支 → SHOW_FLOOR
+ * 阶层信息，#548 起真身）
  * + 尾部统计行。
  *
  * 原作 → ere 的映射：TEMP/TEMP1 计数桶 → 局部数组；原作的隔层按钮排版

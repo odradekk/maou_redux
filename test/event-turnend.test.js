@@ -900,7 +900,7 @@ test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/st
   // 四条均已从名单移除；#342 起 MARRIAGE_DAY 亦接真身；#508 起
   // FORMAT_AUTOTRAIN / AUTOTRAIN 亦接真身（ere/event/event-autotrain.js
   // 的同名函数，调用点原为占位行）
-  assert.deepEqual(settle_stubs, ['自動處刑', 'GET_LOOK_INFO']);
+  assert.deepEqual(settle_stubs, ['GET_LOOK_INFO']);
   const registry = fs.readFileSync(
     path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
     'utf8',

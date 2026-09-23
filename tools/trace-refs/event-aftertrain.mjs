@@ -7,7 +7,7 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
-        ref: '6-85',
+        ref: '6-92',
         any: [/@CHARADEAD_CHECK/],
       },
       {
@@ -71,6 +71,104 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '6250',
         any: [/Sは売却値/],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '11-13',
+        any: [/^\s*EX_FLAG:2807 = 170\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '16-17',
+        any: [/^\s*SIF BASE:0 > 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '19-24',
+        any: [/^\s*;瀕死時に調教を自動終了\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '26-61',
+        any: [/^\s*;mowangsiwang\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '28-31',
+        any: [/^\s*IF !EX_FLAG:3\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '33',
+        any: [/^\s*CALL MAOU_KOUHO\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '39-58',
+        any: [
+          /^\s*IF EX_FLAG:3 != GETCHARA\(17\) && \(EX_FLAG:3 == PLAYER \|\| EX_FLAG:3 == ASSI\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '68-73',
+        any: [/^\s*IF !TEMP \|\| TEMP == GETCHARA\(17\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '76',
+        any: [/^\s*BASE:0 = -1\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '78-80',
+        any: [/^\s*;死亡フラグを残す\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '82-83',
+        any: [/^\s*;キャラの殺害回数に加算\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '86-90',
+        any: [/^\s*;殺した人数が3人以上で、【威圧感】が付く\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '92',
+        any: [/^\s*RETURN 1, TEMP\s*$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '339',
+        any: [/^\s*CALL CHARADEAD_CHECK\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '63-67',
+        any: [/^\s*;死亡時口上\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '68-75',
+        any: [/^\s*IF !TEMP \|\| TEMP == GETCHARA\(17\)\s*$/m],
+      },
+      // —— #548 返工（BASE:0 = -1 的钳制说明引到的三条 @EVENTEND 判死判据）——
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '357',
+        any: [/^IF FLAG:37 && BASE:0 > 0$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '364',
+        any: [/^IF BASE:0 < 1 && TARGET != MASTER$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '376',
+        any: [/^ELSEIF \(BASE:0 < 1 \|\| BASE:1 < 1\) && TARGET == MASTER$/m],
       },
     ],
   },

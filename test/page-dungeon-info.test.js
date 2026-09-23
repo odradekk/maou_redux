@@ -122,6 +122,12 @@ test('ENEMY_EXIST2：同队一行、状态前缀与颜色，异队分行', async
   assert.ok(invasion_line.includes('勇者乙'), '同队队员同行');
   assert.ok(intercept_line.includes('贝丝'), '迎击队行含贝丝');
   assert.equal(texts.length, 2, '两支队伍恰好两行');
+  // 首行空行来自 :595 / :630 的 PRINTL（#180 补）——夹具把 println 记为 'br'
+  assert.equal(
+    fixture.lines_history.filter((l) => l.type === 'br').length,
+    1,
+    '开头的空行',
+  );
 });
 
 test('ENEMY_EXIST2：逃走中前缀优先于侵攻中；nF 侵攻显示推进层数', async () => {
@@ -155,8 +161,37 @@ test('ENEMY_EXIST2：近卫层（floor 10）追加护卫中名单（EX_TALENT + 
   const guard_line = texts.find((t) => t.includes('[护卫中]'));
   assert.ok(guard_line, `近卫层应有护卫行，实际 ${texts}`);
   assert.ok(guard_line.includes('勇者乙'));
-  assert.ok(guard_line.includes('[2]'), '护卫行含角色编号（原文 :636）');
+  assert.ok(
+    guard_line.includes('[ 2]'),
+    '护卫行含宽度 2 右对齐的编号（原文 :636 的 {COUNT,2}）',
+  );
   assert.ok(guard_line.includes('剑术'), '护卫行含 TALENTNAME 素质名');
+});
+
+test('ENEMY_EXIST2：护卫名单看原作的全局 X，不是实参（#548 订正）', async () => {
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  fixture.store.set('ex_talent:2:1', 1); // 勇者乙是护卫
+
+  // DUNGEON_INFO2 的调用点：X 与实参同值 → 第 3 层不追加
+  await enemy_exist2(3);
+  assert.ok(
+    !fixture.text_lines().some((t) => t.includes('[护卫中]')),
+    'floor 3（X = 3）不追加护卫名单',
+  );
+
+  // SHOW_FLOOR 的调用点：X 恒为 10 → 第 3 层也追加（1-9 层同理）
+  const second = setup_world();
+  const { enemy_exist2: enemy_exist2_b } = load(
+    second,
+    'page/page-dungeon-info2',
+  );
+  second.store.set('ex_talent:2:1', 1);
+  await enemy_exist2_b(3, true);
+  assert.ok(
+    second.text_lines().some((t) => t.includes('[护卫中]')),
+    'X == 10 时第 3 层也追加护卫名单',
+  );
 });
 
 // —— @DUNGEON_INFO2 主界面 ——

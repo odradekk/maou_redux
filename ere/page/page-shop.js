@@ -39,7 +39,7 @@ const {
 } = require('#/page/page-main-menu');
 const { select_target, select_assi } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
-const { dungeon_info2 } = require('#/page/page-dungeon-info2');
+const { dungeon_info2, enemy_exist2 } = require('#/page/page-dungeon-info2');
 const { infrastructure } = require('#/page/page-infrastructure');
 const { item_shop_trap } = require('#/page/page-shop-trap');
 const {
@@ -61,6 +61,10 @@ const {
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { secret_labo } = require('#/page/page-shop-labo');
+// SHOW_FLOOR 的怪物行与近卫名单（#548）：怪物名与 %SAVESTR% 的承载
+const { item_name, monstername } = require('#/dungeon/monster-data');
+const { chara_callname } = require('#/utils/callname-utils');
+const { batch_execution } = require('#/event/event-execution-batch');
 const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
@@ -78,18 +82,20 @@ const MAX_CHARANUM = 90;
  * CHARA_INFO_INDIVIDUAL_WAPPED 自 #391 起为真身（101/498/499 分支，
  * page-chara-info.js），ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 的
  * 陷阱商店，page/page-shop-trap.js；#395 的运行时占位随之撤），SECRET_LABO
- * 自 #398 起为真身（110 分支，page/page-shop-labo.js），ITEM_SHOP 自 #399
- * 起为真身（BOUGHT 0-53 的道具商店，page/page-item-shop.js；#395 的运行时
+ * 自 #398 起为真身（110 分支，page-shop-labo.js），ITEM_SHOP 自 #399 起为
+ * 真身（BOUGHT 0-53 的道具商店，page-item-shop.js；#395 的运行时
  * 占位随之撤），MONSTER_SHOP 自 #399 起为真身（120 分支的召唤商店，
- * page/page-monster-shop.js），CONFIG 自 #463 起为真身（777 分支，
- * page/page-config.js），INTERCEPT / ABILITY_UP / TAILOR_MAIN 自 #397 起为
+ * page-monster-shop.js），CONFIG 自 #463 起为真身（777 分支，
+ * page-config.js），INTERCEPT / ABILITY_UP / TAILOR_MAIN 自 #397 起为
  * 真身（104/105/108 分支，page-intercept.js / page-ability-up.js /
- * page-tailor.js），均移出本名单（#515 订正：三个名字此前与测试一同停在旧
- * 状态，见 test/page-shop.test.js 的固定断言）。999 分支的 DEBUG_MENU_U
- * 自 #542 起判不移植（原作者调试工具），运行时提示行不是存根占位，移出
- * 本名单；分支结构与汇合路径保留（usershop 的 999 分支注释）。
+ * page-tailor.js），SHOW_FLOOR 自 #548（S7）起为真身（52x 分支，本文件
+ * show_floor），批量处刑自 #543 起为真身（103 分支，
+ * event/event-execution-batch.js），均移出本名单（#515 订正：三个名字此前
+ * 与测试一同停在旧状态，见 test/page-shop.test.js 的固定断言）。999 分支的
+ * DEBUG_MENU_U 自 #542 起判不移植（原作者调试工具），运行时提示行不是存根
+ * 占位，移出本名单；分支结构与汇合路径保留（usershop 的 999 分支注释）。
  */
-const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR'];
+const STUBBED_CALLS = ['LABO'];
 
 /**
  * @EVENTSHOP（:4-20）：每轮 BEGIN SHOP 进入时执行一次。
@@ -127,9 +133,11 @@ on(
  *   主菜单画面组件（run_shop 进入 SHOP 状态时创建；本函数即组件的每轮重入）
  */
 async function show_shop(main_menu) {
-  // :24 SAVESTR:0 = 你（魔王的存档名字串）：SAVESTR 未落表，消费者（名字
-  // 按钮 498/499 等）随角色数据票——登记 docs/stub-registry.md 变量级待办
-  // （#5 已决由内置 callname 承载，接入随彼票）。
+  // :24 SAVESTR:0 = 你（魔王的存档名字串）：#5 决议由内置 callname:0:-1
+  // 承载（Chara0.yml 的名前同为「你」，且原作每轮都重写回「你」——改名
+  // 不残留）。原作仅有的三个读取点（DUNGEON.ERB:209 / AGENT.ERB:210 /
+  // BEDROOM_BATTLE_MALE）在 ere 全走 name_of(0)/chara_callname，此行为
+  // 空操作、不落槽位（#548 清单订正：名字按钮 498/499 并不读它）。
 
   // :25 CALL CLEAR_SHOP（清 ITEMSALES:0-299）：每轮重绘前都清一遍，商店
   // 本体（@ITEM_SHOP / @ITEM_SHOP_TRAP）随后各自重新点亮——清与亮分居两处
@@ -325,8 +333,10 @@ async function usershop(result) {
     // 在 page-main-menu.js 的指令面板段，随本票落地）
     await dungeon_info2();
   } else if (result === 103) {
-    // 处刑（:110；原作 EXECUTION 的调用已注释，现行调批量处刑）
-    await stub_line_wait('批量处刑', '处刑（批量处刑）', '随处刑票');
+    // 处刑（:110；原作 EXECUTION 的调用已注释，现行调批量处刑）——#543 起
+    // 真身（ere/event/event-execution-batch.js；会话内自带调教窗口以提供
+    // 口上通道的 tflag 表，见该文件头）
+    await batch_execution();
   } else if (result === 104) {
     // 迎击（:113 CALL INTERCEPT）：#397 起真身（page/page-intercept.js），
     // 返回前自己完成出击决定与 GOHOUBI_REQUEST，回到这里只需重绘
@@ -427,7 +437,7 @@ async function usershop(result) {
     era.set('flag:36', 5);
   } else if (result > 520 && result <= 530) {
     // 阶层信息（:168-170）：RESULT -= 520 → CALL SHOW_FLOOR（10 层为近卫）
-    await stub_line_wait('SHOW_FLOOR', '阶层信息', '随迷宫票');
+    await show_floor(result - 520);
   } else if (result === 120) {
     // 召唤（:172-221）：卡拉启动！== 1 时内联卡拉入队事件（SAVEDATA 自定义
     // 变量、无 ere 落点 → 恒非 1，#24 起登记，本票不改）；否则
@@ -462,6 +472,112 @@ async function usershop(result) {
   // :226-229 RETURN 0：认不出 / 守卫拦下的输入一律落到这里，回 @SHOW_SHOP
   // 重绘（run_shop 的下一轮循环）。原作的 RETURN 0/1 都被引擎循环忽略、
   // 恒重绘，ere 侧无需区分。
+}
+
+/**
+ * @SHOW_FLOOR（SHOP ver1.0.2.ERB:426-500）：显示楼层状态（主菜单阶层
+ * 按钮 [521]-[530] 的阶层信息）。
+ *
+ * 结构（近卫层 GOTO MONSTERDATA 跳过设施与部下段）：
+ *   - 1-9 层：楼层头（与设施后缀合一行——原作 PRINTFORM 第N阶层 +
+ *     SELECTCASE 后缀 + PRINTL 是一个显示行，ere 归并为一次 print；
+ *     后缀原文 `PRINTFORM  - 商店街` + 全角空格 的两个空格里只有一个作命令
+ *     分隔符，正文自带一个前导空格，与 page-main-menu.js:171 的 ` 上午` 同源）→
+ *     设施四格（FLAG 299+ARG+{0,10,20,40}，REPEAT 内 COUNT==3 → COUNT=4
+ *     跳过 +30 段；格上有库存道具才出 [道具名]，四格合一行）→
+ *     @ENEMY_EXIST2 的勇侧行（含护卫名单，见下）→ 空行 → 怪物库存十格 →
+ *     无参 PRINTW 的空行 + 读键；
+ *   - 10 层：近卫兵头 → 本层的护卫名单（!CFLAG:1 && EX_TALENT:1 一行一人，
+ *     [名] —— + TALENT:200-211 素质名）→ 分隔线 → 怪物库存（190 段）。
+ *
+ * **两条与「10 层」无关的既有行为，按原作保留**：
+ *   - 护卫名单在 `@ENEMY_EXIST2` 里由**全局 X == 10** 触发（#548 订正，
+ *     #14 登记）——从地城概况进来时 X 恒为 10，所以**1-9 层也会追加**全部
+ *     护卫的 `[护卫中]…` 行；10 层这里的是原作本条分支自己的名单。
+ *   - 首行的空行由 `@ENEMY_EXIST2` 落（调用方的行已落）。
+ *
+ * 怪物行的 {ITEM:LOCAL,2,LEFT}：数量左对齐两位（padEnd）拼「只+名」
+ * （@MONSTERNAME 的拼接名，含改造前缀——monstername 真身 #176）。
+ *
+ * @param {number} arg 阶层（原作 ARG；LIMIT(ARG,1,10) 钳制）
+ * @returns {Promise<void>} 原作无 RETURN（隐式 0，调用方不消费）
+ */
+async function show_floor(arg) {
+  arg = Math.min(Math.max(arg, 1), 10); // :429 ARG = LIMIT(ARG,1,10)
+  era.drawLine();
+  if (arg <= 9) {
+    // :433 + :451-469 楼层头与设施后缀合行（SELECTCASE 不命中则无后缀）
+    const facility = era.get(`flag:${arg + 349}`) || 0;
+    const facility_names = {
+      500: '商店街\u3000',
+      501: '沼泽\u3000\u3000',
+      502: '人类牧场',
+      503: '冰室\u3000\u3000',
+      504: '热砂\u3000\u3000',
+      505: '迷宫\u3000\u3000',
+      506: '博物馆\u3000',
+      507: '娼馆街\u3000',
+    };
+    era.print(
+      facility in facility_names
+        ? `第${arg}阶层 - ${facility_names[facility]}`
+        : `第${arg}阶层`,
+    );
+    era.drawLine();
+    // :472-486 设施四格（+0/+10/+20/+40，跳 +30——COUNT==3 → COUNT=4）
+    const install_fragments = [];
+    for (const slot of [0, 10, 20, 40]) {
+      // LOCAL = 300+ARG-1+COUNT*10（格上的道具号）；有库存才显示
+      const item = era.get(`flag:${299 + arg + slot}`) || 0;
+      if (item > 0 && (era.get(`item:${item}`) || 0) > 0) {
+        install_fragments.push(`[${item_name(item)}]`);
+      }
+    }
+    if (install_fragments.length > 0) {
+      era.print(install_fragments.join('')); // 四格合一行（PRINTFORM 链）
+      era.drawLine(); // IF LOCAL:1 → PRINTL + DRAWLINE
+    }
+    // :488 @ENEMY_EXIST2（#180 真身）+ 空行。第二个实参是原作的 `X == 10`：
+    // 从地城概况进来时 X 恒为 10（DRAW_MAINMENU 楼层循环的末值），所以
+    // 1-9 层也会追加护卫名单（#548 订正，依据见 @ENEMY_EXIST2 的 JSDoc）
+    await enemy_exist2(arg, true);
+    era.println();
+  } else {
+    // :434-449 近卫层：近卫兵头 + 护卫名单（GOTO MONSTERDATA 的等价跳过：
+    // 设施/四格/ENEMY_EXIST2 三段整段不走）
+    era.print('近卫兵'); // :435（PRINTL 只落行尾）
+    era.drawLine();
+    for (const cid of era.getAddedCharacters()) {
+      // :438-446 FOR COUNT, 0, CHARANUM：未在勇者阵营（CFLAG:1 状态 0）
+      // 但是近卫（EX_TALENT:1）
+      if (
+        (era.get(`cflag:${cid}:1`) || 0) === 0 &&
+        (era.get(`ex_talent:${cid}:1`) || 0) !== 0
+      ) {
+        const fragments = [{ content: `[${chara_callname(cid)}] —— ` }];
+        // :441-444 TALENT:200-211 的素质名依次追加
+        for (let t = 200; t < 212; t += 1) {
+          if (era.get(`talent:${cid}:${t}`)) {
+            fragments.push({
+              content: String(era.get(`talentname:${t}`) ?? ''),
+            });
+          }
+        }
+        era.print(fragments); // 一人一行
+      }
+    }
+    era.drawLine();
+  }
+  // :491-498 $MONSTERDATA：该层怪物库存十格（槽 = (ARG-1)*10+100）
+  const base_slot = (arg - 1) * 10 + 100;
+  for (let i = 0; i < 10; i += 1) {
+    const count = era.get(`item:${base_slot + i}`) || 0;
+    if (count > 0) {
+      era.print(`${String(count).padEnd(2)}只${monstername(base_slot + i)}`);
+    }
+  }
+  // :500 无参 PRINTW＝先落一个空行再等键（同 kojo-dungeon-ravish.js:923）
+  await era.printAndWait('');
 }
 
 /**
@@ -505,4 +621,4 @@ async function run_shop({ skip_eventshop = false } = {}) {
 // （名字按钮随角色数据票）、52x（阶层信息，DRAW_DUNGEON_OVERVIEW 的
 // [520]-[530] 已打，登记与本文件无关）与 999/7788（隐藏调试入口，原作
 // 本就无 PRINTLC）——这些分支的分发行为只能经直接调用测试，不经输入通道。
-module.exports = { run_shop, usershop, STUBBED_CALLS };
+module.exports = { run_shop, usershop, show_floor, STUBBED_CALLS };

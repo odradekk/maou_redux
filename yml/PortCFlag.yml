@@ -29,3 +29,16 @@
   # 按判定表属破坏性改动，抬版本废档处理，不据此补值。寻址示例：
   # era.get(`portcflag:17:数据版本`)——具名与序号（:0）同槽，引擎
   # staticData.portcflag 翻译。
+"排序编号":
+  id: 1
+  name: "sort_number"
+  type: "number"
+  # 语义：角色在名册「编号」视图里的排列键（issue #545 返工，ADR-0001）。
+  # 名册页 [1700] 的换号只交换两个角色的这个值——不搬任何角色数据、不改
+  # 角色 ID（ID 即身份，见 issue #21）。0 = 未设，读取侧一律 `|| 角色 ID`
+  # 回落，所以默认顺序与 ID 序一致；只有换过号的角色才带非 0 值。
+  # 显示口径：屏幕上的编号格仍是角色 ID（引擎按 showAcc 拼的按钮快捷键），
+  # 排序编号只决定行的先后，理由见 ere/page/page-chara-number-swap.js 文件头。
+  # 随档往返：真引擎的写入 → saveData → loadData 往返由
+  # test/portcflag-table.test.js 驱动引擎代码钉住；本字段另由
+  # test/page-chara-info.test.js 的「排序编号随存档往返」用例覆盖。

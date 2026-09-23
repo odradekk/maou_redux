@@ -1262,6 +1262,69 @@ export const FILES = [
         ref: '195',
         any: [/CALL CAMPAIGN_ENDING,ARG:0/],
       },
+      {
+        src: 'target/ERB/迷宮/DUNGEON.ERB',
+        ref: '209',
+        any: [
+          /^\s*PRINTFORM %SAVESTR:0%察觉到了%SAVESTR:\(ARG:0\)%的气息。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1048-1049',
+        any: [/^\s*SIF TALENT:0:122 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1048-1053',
+        any: [/^\s*SIF TALENT:0:122 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1050-1051',
+        any: [/^\s*SIF TALENT:0:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1052-1053',
+        any: [/^\s*SIF ABL:0:11 > 8\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1054-1064',
+        any: [/^\s*SELECTCASE MODE\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1056',
+        any: [/^\s*PRINTFORM %SAVESTR:0%从睡梦中醒了过来。\s*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1058-1062',
+        any: [/^\s*PRINTFORM %SAVESTR:0%察觉到了%SAVESTR:\(ARG:0\)%的气息。/m],
+      },
+      // —— #548 返工：挑战臂两句同行（:209 + :210）、行缓冲后续的设施/陷阱段 ——
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '1058',
+        any: [
+          /^\s*PRINTFORM %SAVESTR:0%察觉到了%SAVESTR:\(ARG:0\)%的气息。\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON.ERB',
+        ref: '209-210',
+        any: [
+          /^\s*PRINTFORM %SAVESTR:0%察觉到了%SAVESTR:\(ARG:0\)%的气息。\s*$/m,
+          /^\s*CALL BEDROOM_BATTLE_MALE,ARG:0\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON.ERB',
+        ref: '405',
+        any: [/^\s*CALL DUNGEON_TRAP\s*$/m],
+      },
     ],
   },
 ];

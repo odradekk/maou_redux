@@ -4,7 +4,8 @@
  * 缝 = test/helpers/era-fixture.js。每条指令至少固定：@COM 真身、@COM_ABLE
  * 判据与 TRAIN_MESSAGE_B；另覆盖 11/13–19 的装备持续效果、满月取消和产卵
  * （Math.random 注入钉满月掷）、TRAIN_MESSAGE_A 的 10–14 真分支及 15–19
- * 显式空分支、触手榨乳存根；装备持续效果另有一条经 emit('SOURCE_CHECK')
+ * 显式空分支、触手榨乳接线（#548 起 EQUIP_COM16 真调 SYOKUSYU_MILK）；
+ * 装备持续效果另有一条经 emit('SOURCE_CHECK')
  * → EQUIP_COM_CHAIN 的正式链集成回归。
  */
 
@@ -396,13 +397,56 @@ test('@EQUIP_COM14–17：分别累加对应快感与同性经验', async () => 
   assert.ok((world.fixture.store.get('exp:31:40') || 0) >= 3);
 });
 
-test('@EQUIP_COM16：触手路径保留 SYOKUSYU_MILK 运行时存根', async () => {
+test('@EQUIP_COM16：触手路径真调 SYOKUSYU_MILK——B感度≥5 且无母乳体质时获得', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:16', 1);
   world.fixture.store.set('tequip:31:90', 1);
+  world.fixture.store.set('abl:31:1', 5); // B感度 = 5（门槛）
   await world.equip_com_family.call(16);
-  assert.ok(
-    world.fixture.text_lines().some((line) => line.includes('@SYOKUSYU_MILK')),
+  assert(
+    world.fixture.text_lines().some((line) => line.includes('流出了母乳')),
+    'COMF100:414 的母乳行',
+  );
+  assert(
+    world.fixture
+      .text_lines()
+      .some((line) => line.includes('获得了【母乳体质】')),
+    'COMF100:416 的获得行',
+  );
+  assert.equal(world.fixture.store.get('talent:31:130'), 1, 'TALENT:130 = 1');
+});
+
+test('@EQUIP_COM16：触手榨乳的四道否决（B感度/贫乳/绝壁/男人）与已有体质', async () => {
+  // 表驱动：任一条件不满足 → 无输出、不落体质
+  for (const [key, value] of [
+    ['abl:31:1', 4], // B感度 < 5
+    ['talent:31:109', 1], // 贫乳
+    ['talent:31:116', 1], // 绝壁
+    ['talent:31:122', 1], // 男人
+    ['talent:31:130', 1], // 已有母乳体质
+  ]) {
+    const world = seed_world();
+    world.fixture.store.set('tequip:31:16', 1);
+    world.fixture.store.set('tequip:31:90', 1);
+    world.fixture.store.set('abl:31:1', 5);
+    world.fixture.store.set(key, value);
+    await world.equip_com_family.call(16);
+    assert(
+      !world.fixture.text_lines().some((line) => line.includes('母乳')),
+      `${key} = ${value} 时不触发（COMF100:413 的五连判据）`,
+    );
+  }
+});
+
+test('@EQUIP_COM16：非触手路径不调 SYOKUSYU_MILK', async () => {
+  const world = seed_world();
+  world.fixture.store.set('tequip:31:16', 1);
+  world.fixture.store.set('tequip:31:90', 0);
+  world.fixture.store.set('abl:31:1', 5);
+  await world.equip_com_family.call(16);
+  assert(
+    !world.fixture.text_lines().some((line) => line.includes('母乳')),
+    'TEQUIP:90 关 → COMF16:216 的 IF 不进',
   );
 });
 
@@ -529,6 +573,8 @@ test('存根清单可检索：docs/stub-registry.md 收录 SYOKUSYU_MILK', () =>
     path.join(REPO, 'docs', 'stub-registry.md'),
     'utf8',
   );
-  assert.deepEqual(mod.STUBBED_CALLS, ['SYOKUSYU_MILK']);
-  assert.ok(registry.includes('`SYOKUSYU_MILK`'));
+  // #548 起 SYOKUSYU_MILK 换真身（ere/system/train/com-tentacle.js），
+  // 本模块存根名单清空
+  assert.deepEqual(mod.STUBBED_CALLS, []);
+  assert.ok(registry.includes('`SYOKUSYU_MILK`'), '登记表的历史行仍在');
 });

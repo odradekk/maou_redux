@@ -8,8 +8,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -67,13 +65,12 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   // :334-336 前回指针记录（FLAG:1/FLAG:2）
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
-  // 存根各打一行占位（可检索）
-  for (const name of ['CHARADEAD_CHECK']) {
-    assert(
-      fixture.text_lines().some((line) => line.includes(`@${name}`)),
-      `存根 ${name} 必须打印含函数名的占位行`,
-    );
-  }
+  // CHARADEAD_CHECK / PARTY_CHAR_DEL 自 #548（S7）起为真身（存活路径
+  // 静默、死亡路径在 test/event-charadead.test.js 锁行为），不再打占位行
+  assert(
+    !fixture.text_lines().some((line) => line.includes('@CHARADEAD_CHECK')),
+  );
+
   // AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身：着衣分支可达
   // （FLAG:37 = 1 且存活）但本世界 TFLAG:45 = 0、无衣物状态变化 → 静默
   // （真身的行为锁在 test/cloth-func.test.js）
@@ -160,6 +157,10 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
     !fixture.text_lines().some((line) => line.includes('以上的点数变化了。')),
     '死亡分支后的珠结算不得执行',
   );
+  // #548 起 CHARADEAD_CHECK 为真身：死亡叙事先行（温妮死掉了……），
+  // SELF_CHECK 因 RESULT != 0 被跳过（:341-345）
+  assert(fixture.text_lines().includes('温妮死掉了……'));
+  assert.equal(fixture.store.get('tflag:13'), 999, '死亡口上事件码');
 });
 
 test('时常发情蓄积：润滑/欲情各按万分比进 CFLAG:81/82，不足清零', async () => {
@@ -218,18 +219,10 @@ test('气力回复钳上限：超上限回落 MAXBASE', async () => {
   );
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
+test('存根名单：#548 后本模块不再持有运行时占位', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('event/event-end');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-
-  // MAOU_TENSHIN 自 #400（N16）起为真身（ere/event/event-nextday.js），
-  // 本模块的存根名单随之少一项
-  assert.deepEqual(STUBBED_CALLS, ['CHARADEAD_CHECK', 'PARTY_CHAR_DEL']);
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
+  // MAOU_TENSHIN 自 #400（N16）、CHARADEAD_CHECK / PARTY_CHAR_DEL 自 #548
+  // （S7）起为真身，本模块存根名单清空
+  assert.deepEqual(STUBBED_CALLS, []);
 });

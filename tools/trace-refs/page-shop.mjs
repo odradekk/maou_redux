@@ -450,6 +450,61 @@ export const FILES = [
         ref: '226-229',
         any: [new RegExp('^\\s*SIF RESULT == 7788\\s*$', 'm')],
       },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '429',
+        any: [/^\s*ARG = LIMIT\(ARG,1,10\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '433',
+        any: [/^\s*PRINTFORM 第\{ARG\}阶层\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '434-449',
+        any: [/^\s*ELSEIF ARG == 10\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '435',
+        any: [/^\s*PRINTFORM 近卫兵\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '438-446',
+        any: [/^\s*IF !CFLAG:COUNT:1 && EX_TALENT:COUNT:1\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '441-444',
+        any: [/^\s*FOR LOCAL, 200, 212\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '500',
+        any: [/^PRINTW\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '451-469',
+        any: [/^\s*SELECTCASE FLAG:\(ARG\+349\)\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '472-486',
+        any: [/^\s*LOCAL = 0, 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '488',
+        any: [/^\s*CALL ENEMY_EXIST2, ARG\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP ver1.0.2.ERB',
+        ref: '491-498',
+        any: [/^\s*\$MONSTERDATA\s*$/m],
+      },
     ],
   },
 ];

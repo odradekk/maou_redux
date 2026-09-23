@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 68; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）
+export const COUNT = 70; // #548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）
 //；#547 起 +1（M11581，chara-make.js 的 CM_GENDER 接通 global:3——由 test/chara-make.test.js 守护）
 
 export default [
@@ -698,6 +698,22 @@ export default [
           },`,
     tests: ['chara-make'],
     must_mention: '要由引擎拼在按钮正文前',
+  },
+  {
+    desc: 'M11478 @CHARA_EX_34 的 MARK,4,3 补偿写错值（3 改成 2：反抗刻印履历未满，LV3 门还开着）',
+    file: 'ere/chara/chara-ex.js',
+    find: '  chara(cid).system.反抗刻印履历 = 3;',
+    replace: '  chara(cid).system.反抗刻印履历 = 2; // 变异：履历值错',
+    tests: ['chara34-mark'],
+    must_mention: 'MARK,4,3',
+  },
+  {
+    desc: 'M11479 @CHARA_EX_34 漏写 MARK,4,3 补偿（CSV 预设仍被名字表缺口丢下；K_34 与研究所复活两条加入路径都受影响）',
+    file: 'ere/chara/chara-ex.js',
+    find: '  chara(cid).system.反抗刻印履历 = 3;',
+    replace: '  // 变异：漏写反抗刻印履历补偿',
+    tests: ['chara34-mark'],
+    must_mention: 'MARK,4,3',
   },
   {
     desc: 'M11581 CM_GENDER 的 SELECTCASE 恒走 0 档（不读 global:3，#547）',

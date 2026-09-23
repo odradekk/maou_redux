@@ -2,7 +2,7 @@
  * @file 调教后自主行为检查（EVENT_AFTERTRAIN.ERB 移植）。
  *
  * 源: target/ERB/EVENT/EVENT_AFTERTRAIN.ERB
- *     @CHARADEAD_CHECK（:6-85）
+ *     @CHARADEAD_CHECK（:6-92，#548/S7 起真身）
  *     @SELF_CHECK（:100-128）
  *     @AFTERTRAIN_SEX_CHECK（:140-250）
  *     @AFTERTRAIN_ANALSEX_CHECK（:255-349）
@@ -13,13 +13,32 @@
  * 原作缺陷 1:1 照抄（#14 / #270）：兽奸报告分支源 :837 `JUEL:8 += A*200`
  * 而打印用 `B*200`。本模块用 leftover_a 只建模同模块内自慰→兽奸那一跳，
  * 跨模块残留不建模。
+ *
+ * 移植说明（有意偏离）：
+ *   - **@CHARADEAD_CHECK 的 `BASE:0 = -1`（:76）落到 0**：引擎自动钳制 base
+ *     （小于 0 时重置为 0，大于 maxbase 时重置为 maxbase——
+ *     `dev-guides/09-static.md:203`），ere 侧写不进 -1。**后果不是「等价」**：
+ *     魔王死亡且有继任者时，旧魔王的身体留在场上，原作
+ *     `CHARA_INFO_SHOW ver1.1.2.ERB:1159-1160` 对 `BASE:0 < 0` 显示
+ *     ★死亡★，ere 只能落到「体力 0」那一档的 ★濒死★。后续判死全部走
+ *     `< 1`（:357 / :364 / :376 的判据），所以除显示档位外的行为不受影响。
+ *     写入仍照原作写 -1（意图 1:1），钳制是引擎的行为。
+ *   - 原作 `#DIM TEMP` / `TEMPMAOU` 是死变量（#14 登记）：:68-73 的
+ *     `IF !TEMP || ...` 恒走第一支，`ELSEIF` 的叙事与 `%SAVESTR:TEMP%`
+ *     不可达，不构造。
  */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const era_exflag = require('#/era-utils/era-exflag');
+// @MAOU_KOUHO 的真身（EVENT_NEXTDAY.ERB:2430-2451）——原作另一处调用点正是
+// 本文件的 @CHARADEAD_CHECK（:33），ere 侧此前只有 @EVENTEND 的魔王倒下分支
+// 引用它
+const { maou_kouho } = require('#/event/event-nextday');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { self_kojo } = require('#/kojo/kojo-system');
+const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /**
@@ -91,6 +110,182 @@ function remember_aftertrain_s(v) {
  */
 function chara_name(cid) {
   return chara_callname(cid);
+}
+
+/** 原作 GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
+function get_chara(no) {
+  return era.getAddedCharacters().includes(no) ? no : -1;
+}
+
+/**
+ * @CHARADEAD_CHECK（:6-92）：调教后死亡检查（@EVENTEND :339 的 CALL）。
+ *
+ * RESULT：0 = 存活（或濒死自动结束）；1 = 目标已死（调用方跳过 SELF_CHECK，
+ * 死亡删除分支接管）。原作尾行 `RETURN 1, TEMP` 的第二个返回值全库无读者
+ * （TEMP 是 #DIM 死变量），ere 侧只回 RESULT。
+ *
+ * 原作缺陷 1:1 保留（#14 登记）：`#DIM TEMP = 0` / `#DIM TEMPMAOU = 0`
+ * 之后两者从未被赋值——:68-73 的 `IF !TEMP || ...` 恒走第一支
+ * 「%SAVESTR:TARGET%死掉了……」，ELSEIF 的「身体死掉了/苏醒了」叙事与
+ * %SAVESTR:TEMP% 不可达，不构造（#405 可证死代码同款）。TEMPMAOU 同为
+ * 死变量。
+ *
+ * BASE:0 = -1 的写：引擎自动把 base 钳到 0~maxbase（`dev-guides/09-static.md:203`
+ * ——小于 0 重置为 0），写入落盘即 0。**这不是等价替换**：原作
+ * `CHARA_INFO_SHOW ver1.1.2.ERB:1159-1160` 对 `BASE:0 < 0` 显示 ★死亡★，
+ * ere 只剩 ★濒死★（文件头「移植说明」有完整说明）。判死判据全走 `< 1`，
+ * 除显示档位外的行为不受影响；写入仍照原作写 -1。
+ *
+ * @returns {Promise<number>} 原作 RESULT（QUIT 路径 throw，不返回）
+ */
+async function charadead_check() {
+  const target = era_flag.target;
+  // :11-13 菲娅线推进（EX_FLAG:2807 落在 160-169 段且调教对象是菲娅 → 170）
+  const route = era_exflag.route_35;
+  if (route >= 160 && route < 170 && target === get_chara(35)) {
+    era_exflag.route_35 = 170;
+  }
+
+  // :16-17 生きてるなら問題ナシ（BASE:0 = 目标的体力）
+  if ((era.get(`base:${target}:0`) || 0) > 0) {
+    return 0;
+  }
+
+  // :19-24 瀕死時に調教を自動終了（FLAG:35 = 濒死自动结束开关，
+  // event-comend.js 同一变量）：体力钳到 1 后按存活返回
+  if (era.get('flag:35')) {
+    if ((era.get(`base:${target}:0`) || 0) < 1) {
+      chara(target).dungeon.体力 = 1;
+    }
+    return 0;
+  }
+
+  // :26-61 mowangsiwang（TARGET == 0 = 魔王自己倒下）
+  if (target === 0) {
+    if (!era_exflag.next_maou) {
+      // :28-31 无继任（EX_FLAG:3 = 0）：GAMEOVER + INPUT + QUIT。QUIT 是
+      // throw 型（#148）：之后的死亡口上/死亡旗整段不可达
+      era.print(
+        '-------------------------------GAMEOVER---------------------------------',
+      );
+      await era.input();
+      era.quit();
+    } else {
+      // :33 继任候补的确定（净效果 = 最后一个持 EX_TALENT:3 的角色，
+      // event-nextday.js 的 JSDoc 有证明）
+      maou_kouho();
+      era.print(
+        '-------------------------------GAMEOVER---------------------------------',
+      );
+      era.print(
+        '------------------------------------------------------------------------',
+      );
+      await era.waitAnyKey(); // PRINTW
+      era.print(
+        '------------------------------------------------------------------------',
+      );
+      await era.waitAnyKey();
+      era.print(
+        '------------------------------------------------------------------------',
+      );
+      await era.waitAnyKey();
+      era.print(
+        '-------------------------------@@@@@@@@---------------------------------',
+      );
+      await era.waitAnyKey();
+      const successor = era_exflag.next_maou;
+      const successor_name = chara_name(successor);
+      // :39-58 四分支叙事（SAVESTR → callname 承载，#5 决议）
+      if (
+        successor !== get_chara(17) &&
+        (successor === era_flag.player || successor === era_flag.assi)
+      ) {
+        // 分支一：候补是调教者或助手（旁观的旧身体）
+        era.print('你猛的醒了过来、看见了倒在了自己身旁的原本属于自己的身体');
+        await era.waitAnyKey();
+        era.print('你似乎明白了什么……');
+        await era.waitAnyKey();
+        era.print(`从一旁的巨大镜子中映出的是${successor_name}的身影……`);
+        await era.waitAnyKey();
+        era.print(`「果然…${self_call(successor)}……死了呢」`);
+        await era.waitAnyKey();
+      } else if (
+        successor !== get_chara(17) &&
+        successor !== era_flag.player &&
+        successor !== era_flag.assi
+      ) {
+        // 分支二：候补另有其人（似曾相识的房间）
+        era.print('你猛的醒了过来、看着这似曾相识的房间……');
+        await era.waitAnyKey();
+        era.print('你似乎明白了什么……');
+        await era.waitAnyKey();
+        era.print(`从一旁的镜子中映出的是${successor_name}的身影……`);
+        await era.waitAnyKey();
+        era.print(`「果然…${self_call(successor)}……死了呢」`);
+        await era.waitAnyKey();
+      } else if (
+        successor === get_chara(17) &&
+        (successor === era_flag.player || successor === era_flag.assi)
+      ) {
+        // 分支三：候补是 17 号且在身旁
+        era.print(`${successor_name}看着倒在眼前的东西……`);
+        await era.waitAnyKey();
+        era.print('心中有些怅然若失……');
+        await era.waitAnyKey();
+        era.print(
+          `但很快、${successor_name}似乎感受到了什么似的、眼中闪过了一丝光芒`,
+        );
+        await era.waitAnyKey();
+        era.print(`==============${successor_name}成为魔王了==============`);
+        await era.waitAnyKey();
+      } else if (
+        successor === get_chara(17) &&
+        (successor !== era_flag.player || successor !== era_flag.assi)
+      ) {
+        // 分支四：候补是 17 号且不在身旁（条件的 || 形态照抄——17 号已在前
+        // 一支被 (==PLAYER || ==ASSI) 挡过，这里的 OR 与 AND 同效）
+        era.print(`${successor_name}突然像丢了魂似的瘫坐在地上……`);
+        await era.waitAnyKey();
+        era.print(
+          `但很快、${successor_name}似乎感受到了什么似的、眼中闪过了一丝光芒`,
+        );
+        await era.waitAnyKey();
+        era.print(`==============${successor_name}成为魔王了==============`);
+        await era.waitAnyKey();
+      }
+    }
+  }
+
+  // :63-67 死亡時口上（TFLAG:13 = 999 的事件码；@EVENTEND 尚在调教期，
+  // tflag 表开着——self_check 的同款调法）
+  game.train.初吻与自我口上 = 999;
+  await self_kojo();
+  era.drawLine();
+  era.println(); // PRINTL（空行）
+  // :68-75 TEMP 恒 0 → 恒走第一支（ELSEIF 不可达，见 JSDoc）
+  era.print(`${chara_name(target)}死掉了……`);
+  era.println();
+  era.drawLine();
+  // :76 BASE:0 = -1（意图 1:1；引擎把 base 钳到 0，★死亡★ 显示不出来——
+  // 见文件头「移植说明」的这处偏离）
+  chara(target).dungeon.体力 = -1;
+
+  // :78-80 死亡フラグを残す：FLAG:(NO+999) = -2（与 @EVENTEND 死亡删除
+  // 分支的 FLAG:(NO+199) = 1 是两段不同的旗）
+  // FLAGNAME:(TARGET+999) = 死亡旗（-2 = 已死）
+  era.set(`flag:${target + 999}`, -2);
+
+  // :82-83 キャラの殺害回数に加算
+  game.event.杀死人数 += 1;
+
+  // :86-90 殺した人数が3人以上で、【威圧感】が付く（TALENT:93）
+  if (game.event.杀死人数 >= 3 && !era.get('talent:0:93')) {
+    era.print(`${chara_name(0)}掌握了【${era.get('talentname:93') ?? ''}】。`);
+    await era.waitAnyKey(); // PRINTFORMW 的读键
+    era.set('talent:0:93', 1);
+  }
+
+  return 1; // :92 RETURN 1, TEMP（TEMP 无读者，见 JSDoc）
 }
 
 /**
@@ -761,6 +956,7 @@ async function self_check(rand) {
 }
 
 module.exports = {
+  charadead_check,
   aftertrain_analsex_check,
   aftertrain_beastsex_check,
   aftertrain_lesbiansex_check,

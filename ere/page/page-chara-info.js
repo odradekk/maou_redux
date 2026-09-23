@@ -22,6 +22,16 @@
  *     天然无缺口），不再用 `LIST_HEADER/LIST_FOOTER` 之类的序号算术，
  *     也不需要原作「跳过魔王插入位、行数不足补空行」那套只服务序号世界
  *     的补丁；
+ *   - 「编号」视图的顺序按移植自建的排序编号（#545 返工：number_view_order，
+ *     PORTCFLAG:角色:排序编号，默认＝角色 ID）。原作的编号就是序号/数组
+ *     下标，「换号」靠 SWAPCHARA 搬角色数据来换编号；ere 里 ID 即身份，换号
+ *     只交换排序编号这一个值，行内编号格显示的仍是角色 ID（＝可点击可手输的
+ *     快捷键），细节与该取舍的依据见 page-chara-number-swap.js 文件头；
+ *   - 名册自己的 NO_PAGE/SORT_SELECT/SORT_ACT 是本函数的局部变量（原作是
+ *     静态变量）：子流程返回后不归零靠的是「同一轮循环 continue 重绘」，与
+ *     JUMP CHARA_INFO 同效果；但**从名册之外重进**（主菜单 → 名单）会回初值，
+ *     原作不会——#391 起的既有取舍，本票不动它（换号页的 NO_PAGE 是另一个
+ *     函数里的独立静态变量，那个已按原作提到模块级，见该文件头）；
  *   - REDRAW 0/1、CLEARLINE 局部重绘不镜像（page-dungeon-info2.js/
  *     page-select-target.js 同款先例）：本文件的 CHARA_INFO 与
  *     CHARA_INFO_INDIVIDUAL 都是「每轮整屏重绘」的 `for(;;)` 循环；
@@ -66,9 +76,10 @@
  *   - `RESULT == 0 && MASTER` 分支（角色行选中处）同理恒假，不需要代码，
  *     仅在注释中说明；
  *   - `CALL 換號` 的 `@換號` 定义在 `target/ERB/魔改新增/角色編號交換.ERB`
- *     （角色排序编号互换 UI，130 行）——不是死引用（先前一版票据记录有误，
- *     #391 勘误：`魔改新增/` 是已被 #329/#101 划出阶段 6 的 MOD 内容，本票
- *     只登记占位、不随本票移植该文件）。
+ *     （130 行换号界面）。先前一版票据记录曾把它当 MOD 内容只登记占位；
+ *     #540 开图后按「魔改新增/ 其余部分照常移植」随 #545 落地真身——
+ *     @換號 见 ere/page/page-chara-number-swap.js（含「换号只换排列键」的
+ *     做法与依据），@统一卖春积极性 见 ere/page/page-uniform-bitch-level.js。
  */
 
 const era = require('#/era-electron');
@@ -78,8 +89,11 @@ const {
   chara_info_name_edit,
   show_button_name_edit,
 } = require('#/chara/chara-name-edit');
+const { sort_by_number } = require('#/chara/chara-portcflag');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
+const { uniform_bitch_level } = require('#/page/page-uniform-bitch-level');
+const { chara_number_swap } = require('#/page/page-chara-number-swap');
 const { ability_up_core } = require('#/page/page-ability-up');
 const { tailor_core } = require('#/page/page-tailor');
 const { enemy_compare } = require('#/page/page-dungeon-info2');
@@ -127,19 +141,18 @@ const NUM_PAGE = 24;
  * 结婚三对按钮与流程换真身（ere/chara/chara-job-change.js、
  * chara-temptation.js、chara-marriage.js），九条从名单移除；#390 起
  * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除。
- * 两票各删一批，合并后四条一并不在。#542 起 PTJ_BUTTON（打工 MOD）与
- * 更换立绘（立绘系统）判不移植：入口提示行不是存根占位，移出名单；
- * PTJ_BUTTON 的默认态分支（[18] 卖春积极性按钮）换真身接线。
+ * 两票各删一批，合并后四条一并不在：#542 起 PTJ_BUTTON（打工 MOD）与更换
+ * 立绘（立绘系统）判不移植——入口提示行不是存根占位，移出名单（PTJ_BUTTON
+ * 的默认态分支＝[18] 卖春积极性按钮，另一支真身见 kojo-dungeon-bitch）；#545
+ * 起统一卖春积极性 / 换号两支换真身（page-uniform-bitch-level.js、
+ * page-chara-number-swap.js），最后两条也移出。
  */
 const STUBBED_CALLS = [
   'SHOW_BUTTON_EQUIP',
   'EQUIP_ST_SHOW',
   'CHAR_DEBUG',
   'RANDOM_SELF_CALL',
-  '统一卖春积极性',
-  '换号',
 ];
-
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
@@ -394,6 +407,19 @@ function added_chara_ids() {
   return era.getAddedCharacters().filter((id) => id !== 0);
 }
 
+/**
+ * 名册「编号」视图的排列顺序：按移植自建的排序编号升序（PORTCFLAG:角色:
+ * 排序编号，未设＝角色 ID）。名册页 [1700] 的换号只交换这个值，所以「换号」
+ * 能看到的净效果就是本视图的行序变化——#545 返工改掉了先前「搬角色数据」
+ * 的做法（那个做法把角色 ID 与人对调，与 issue #21「ID 即身份」的约定冲突）。
+ * 行内编号格显示的仍是角色 ID（引擎按 showAcc 拼的按钮快捷键），两者不同的
+ * 理由见 page-chara-number-swap.js 文件头。
+ * @returns {number[]} 角色 ID 表
+ */
+function number_view_order() {
+  return sort_by_number(added_chara_ids());
+}
+
 function page_slice(ids, no_page) {
   return ids.slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE);
 }
@@ -403,10 +429,11 @@ function page_slice(ids, no_page) {
 /**
  * @param {number} no_page 页码（0 起）
  * @returns {number[]} 本视图的角色 ID 顺序（原作 CHARA_SORT 的 ere 等价，
- *   供 CHARA_INFO_INDIVIDUAL_WAPPED 的前一人/后一人导航复用）
+ *   供 CHARA_INFO_INDIVIDUAL_WAPPED 的前一人/后一人导航复用）；本视图是
+ *   「编号」视图，顺序按排序编号（#545 返工，见 number_view_order）
  */
 function show_chara_info_list(no_page) {
-  const order = added_chara_ids();
+  const order = number_view_order();
   print_master_header();
   for (const cid of page_slice(order, no_page)) {
     print_chara_row(cid, atk_def_fragment(cid), common_suffix_fragments(cid));
@@ -591,21 +618,20 @@ async function chara_info() {
     const result = await era.input();
 
     if (result === 1600) {
-      await stub_line_wait(
-        '统一卖春积极性',
-        '一并调整全部角色的卖春积极性',
-        '随卖春票',
-      );
+      // :62-63 CALL 统一卖春积极性（#545 真身：page-uniform-bitch-level.js）。
+      // 被调函数尾 JUMP CHARA_INFO：原作的 NO_PAGE/SORT_SELECT/SORT_ACT 是静态
+      // 变量（指南 user-defined-variables.md:67-69），重进名册沿用现值；本函数里
+      // 它们是局部变量，靠「同一轮循环 continue 重绘」复现该效果——子流程返回后
+      // 页码与排序不归零（从名册之外重进会回初值，见文件头的有意偏离）
+      await uniform_bitch_level();
       continue;
     }
     if (result === 1700) {
-      // 换号：@換號 定义在 target/ERB/魔改新增/角色編號交換.ERB（阶段 6 MOD
-      // 内容，已被 #329/#101 划出本票范围，文件头有勘误说明）
-      await stub_line_wait(
-        '换号',
-        '角色排序编号互换',
-        '阶段 6 MOD 范围，随 MOD 票',
-      );
+      // :74-75 CALL 換號（#545 真身：page-chara-number-swap.js）。唯一出口
+      // [1999] 結束换号 → JUMP CHARA_INFO（同上：同一轮 continue 沿用现值）；
+      // RETURN 0 出口在确认屏只打印 [4000]/[4001] 的输入白名单下不可达
+      // （该文件文件头）
+      await chara_number_swap();
       continue;
     }
     if (
@@ -638,7 +664,7 @@ async function chara_info() {
       // 恒 0 常量，逻辑与运算里恒假），无需代码
       const sub_result =
         sort_select === 1200
-          ? await chara_info_individual(result, added_chara_ids())
+          ? await chara_info_individual(result, number_view_order())
           : await chara_info_individual(result, order);
       if (sub_result === 1) {
         return 1;
@@ -651,12 +677,14 @@ async function chara_info() {
 
 /**
  * @CHARA_INFO_INDIVIDUAL_WAPPED（:820-832）：SORT_SELECT==1200 视图下打开
- * 个别信息页的入口——建 1..N 的顺位表（ere 侧用已加入 ID 表，见文件头）。
+ * 个别信息页的入口——原作现建的是 `LOCAL:COUNT = COUNT + 1`（1..CHARANUM）
+ * 的序号顺位表，即「编号」视图那套顺序；ere 侧换成同一套排列键
+ * （number_view_order，按移植自建的排序编号）。
  * @param {number} cid 角色 ID
  * @returns {Promise<number>}
  */
 async function chara_info_individual_wrapped(cid) {
-  return chara_info_individual(cid, added_chara_ids());
+  return chara_info_individual(cid, number_view_order());
 }
 
 // —— @CHARA_INFO_INDIVIDUAL（:833-1100） ——
