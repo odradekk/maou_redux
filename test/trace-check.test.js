@@ -2203,18 +2203,9 @@ test('移植状态表：待移植基线只减不增（全树副本，改小一�
   const m = original.match(/export const PENDING_BASELINE = (\d+);/);
   assert.ok(m, 'PENDING_BASELINE 必须内嵌在工具里——规则不复制到别处');
   const current = Number(m[1]);
-  if (current === 0) {
-    // 阶段 6 的终点（#543+#545 合并后待移植清空）：`current - 1` 不再是合法计数，
-    // 「改小一位必须红」的探针没有语义了——改为钉住终点形态本身
-    const r = run_tool_in(root, ['--coverage']);
-    assert.equal(r.status, 0, `基线为 0 时工具必须全绿：\n${r.output}`);
-    assert.ok(
-      r.output.includes('待移植 0 / 基线 0'),
-      `基线 0 必须对应实测待移植 0（#540 终点判据第一条）：\n${r.output}`,
-    );
-    return;
-  }
-  assert.ok(current > 0, '基线必须大于 0（现状冻结，不是空表）');
+  // 阶段 6 收口后基线是 0：`current - 1` = -1，探针照样成立（实测待移植 0 > -1
+  // 即红），故下限只要求非负——不要在这里早退，早退等于把 M6514 的守卫放空
+  assert.ok(current >= 0, '基线必须是 0 或正整数（现状冻结，不是空表）');
   try {
     fs.writeFileSync(
       tool_path,
