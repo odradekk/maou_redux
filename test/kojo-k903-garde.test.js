@@ -577,3 +577,55 @@ test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模�
     '飞机杯段是注释模板空槽，SELECTCOM:17 无输出无状态',
   );
 });
+
+// —— COLOSSEUM_KOJO_903：ITEM:PBAND → item:4（#552；源 :5394/:5427/:5451） ——
+// 原作 `SYSTEM ver1.0.3.ERB:42` 的 `PBAND = 4`（CSV/VariableSize.csv:61 声明的
+// 自定义全局变量），即假阳具的道具号；yml/Item.yml 名字表无 PBAND 条目，
+// era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
+// 用例），地址写回 item:PBAND 时下面三档必须红。助手用嘉德自己（同本文件
+// 死斗场先例）：TALENT:121/122 均未置位，121/122 门不成立，判定只看假阳具位。
+test('COLOSSEUM_KOJO_903 SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+  const cases = [
+    {
+      selectcom: 31,
+      lines: [
+        '「啊…唔……唔唔………就……就在这里吗？…咳……！」',
+        '嘉德把',
+        '假阳具',
+        '粗暴地塞入嘉德的嘴里，露出了心满意足的神情……',
+      ],
+    },
+    {
+      selectcom: 21,
+      lines: [
+        '「啊…！唔……啊啊啊！…好深………弄的好深啦……！」',
+        '嘉德听到悲鸣，更加兴奋了，继续用',
+        '假阳具',
+        '毫不留情地蹂躏着嘉德的私处……',
+      ],
+    },
+    {
+      selectcom: 27,
+      lines: [
+        '「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」',
+        '嘉德听到悲鸣，更加兴奋了，继续用',
+        '假阳具',
+        '毫不留情地蹂躏着嘉德的肛门……',
+      ],
+    },
+  ];
+  for (const { selectcom, lines } of cases) {
+    const fixture = await setup_k903((f, era_flag) => {
+      f.store.set(`tequip:${CID}:55`, 1);
+      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      era_flag.assi = CID;
+      era_flag.assiplay = 1;
+    }, selectcom);
+    await speak(fixture);
+    assert.deepEqual(
+      fixture.text_lines(),
+      lines,
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阳具」`,
+    );
+  }
+});

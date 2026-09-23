@@ -124,7 +124,9 @@ on('EVENTFIRST', async () => {
     era.set(`flag:${i}`, 1);
   }
 
-  // :42 PBAND = 4 —— 调教 PBAND，表未声明写了即 no-op，随调教票（存根清单）。
+  // :42 PBAND = 4 —— 假阳具的道具号（CSV/VariableSize.csv:61 声明的自定义全局
+  // 变量，全库不再改写）。读取处直接用常量 4（`era.get('item:4')`，ere/kojo 八
+  // 个口上文件共 25 处），无需播种（#552）。
 
   // :45 FLAG:35 = 0 —— 濒死时自动结束调教：关
   era.set('flag:35', 0);

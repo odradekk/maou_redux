@@ -700,3 +700,34 @@ test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', asyn
     );
   }
 });
+
+// —— COLOSSEUM_KOJO_4：ITEM:PBAND → item:4（#552；源 :4956/:4989/:5013） ——
+// PBAND 是 Emuera 内建常量 4（SYSTEM ver1.0.3.ERB:42 的 `PBAND = 4`，假阳具
+// 的道具号）；yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
+// undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
+test('COLOSSEUM_KOJO_4：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+  const cases = [
+    { selectcom: 31, tail: '粗暴地塞入' },
+    { selectcom: 21, tail: '的私处' },
+    { selectcom: 27, tail: '的肛门' },
+  ];
+  for (const { selectcom, tail } of cases) {
+    const fixture = await setup_k4((f) => {
+      f.store.set('tequip:31:55', 1);
+      join_slave_chara(f, 17, '玛奥');
+      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 17;
+      era_flag.assiplay = 1;
+    }, selectcom);
+    await speak_k4(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().some((l) => l === '假阳具'),
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阳具」`,
+    );
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(tail)),
+      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
+    );
+  }
+});

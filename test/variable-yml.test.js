@@ -294,3 +294,38 @@ engine_test(
     assert.equal(fake_this.data.item.sales[53], 1);
   },
 );
+
+engine_test(
+  '引擎 setVar：item:PBAND 名字表查不到 → 读恒 undefined、写另立键（口上 25 处读错下标的依据，#552）',
+  () => {
+    // PBAND 是 Emuera 内建常量 4（SYSTEM ver1.0.3.ERB:42 的 `PBAND = 4`，
+    // 假阳具的道具号，Item.csv:5）。口上初稿把它当字符串下标写成
+    // era.get('item:PBAND')——引擎 setVar（模块 648）的 item 分支按
+    // staticData.item.name[下标] 翻译名字，yml/Item.yml 没有 PBAND 条目，
+    // 翻译不中就原样回落，落到 data.item.hold['pband'] 这个不存在的键上。
+    const product = fs.readFileSync(
+      path.join(REPO_ROOT, 'yml', 'Item.yml'),
+      'utf8',
+    );
+    const loader = load_yml_table(product, 'item');
+    assert.ok(!('pband' in loader.static_data.item.name));
+    assert.equal(loader.static_data.item.name['假阳具'], 4);
+    const fake_this = {
+      staticData: loader.static_data,
+      data: { item: { hold: {}, price: {}, sales: {} } },
+      global: {},
+      extendedTables: {},
+    };
+    fake_this.data.item.hold[4] = 1; // 助手持有假阳具（era.set('item:4', 1)）
+    assert.equal(engine.set_var.call(fake_this, 'item:4'), 1);
+    assert.equal(
+      engine.set_var.call(fake_this, 'item:PBAND'),
+      undefined,
+      '具名地址在名字表与数据桶里都落空，必须读到 undefined——持有假阳具也判不出',
+    );
+    // 写侧同样另立门户：era.set('item:PBAND', 1) 落 hold['pband']，与 hold[4]
+    // 互不相通（#13「写未声明的名字会静默建变量」在 item 族的形态）
+    engine.set_var.call(fake_this, 'item:PBAND', 1);
+    assert.deepEqual(Object.keys(fake_this.data.item.hold), ['4', 'pband']);
+  },
+);

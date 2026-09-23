@@ -1850,17 +1850,19 @@ test('死斗场交谈：気力>0 助手用 SELF_CALL(A)；非助手骂怪物', a
   );
 });
 
-test('死斗场口交 PRINT 拼接 + PBAND；背后位巨魔 TFLAG:400==206', async () => {
+test('死斗场口交 PRINT 拼接 + 假阳具持有位；背后位巨魔 TFLAG:400==206', async () => {
   const assi = await setup_k15((f, era_flag) => {
     f.store.set(`tequip:${CID}:55`, 1);
-    f.store.set('item:PBAND', 1);
+    // 原作 ITEM:PBAND（SYSTEM ver1.0.3.ERB:42 的 `PBAND = 4`，
+    // CSV/VariableSize.csv:61 声明的自定义全局变量）= ITEM:4 假阳具（#552）
+    f.store.set('item:4', 1);
     era_flag.assi = CID;
     era_flag.assiplay = 1;
   }, 31);
   await speak_k15(assi, seq_rand(0));
   assert.ok(
-    assi.text_lines().some((l) => l.includes('假阳具')),
-    '死斗场口交助手无 121/122 + PBAND → 假阳具',
+    assi.text_lines().some((l) => l === '假阳具'),
+    '死斗场口交助手无 121/122 + item:4（原作 ITEM:PBAND）→ 假阳具',
   );
   assert.ok(
     assi.text_lines().some((l) => l.includes('侵犯着对方的口腔')),

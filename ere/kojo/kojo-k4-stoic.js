@@ -5819,7 +5819,7 @@ async function colosseum_kojo_4() {
       if (
         era0(`talent:${assi}:121`) != 1 &&
         era0(`talent:${assi}:122`) != 1 &&
-        era0('item:PBAND') == 1
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
       ) {
         await era.print(`假阳具`); // :4956
       }
@@ -5860,7 +5860,7 @@ async function colosseum_kojo_4() {
       if (
         era0(`talent:${assi}:121`) != 1 &&
         era0(`talent:${assi}:122`) != 1 &&
-        era0('item:PBAND') == 1
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
       ) {
         await era.print(`假阳具`); // :4989
       }
@@ -5887,7 +5887,7 @@ async function colosseum_kojo_4() {
       if (
         era0(`talent:${assi}:121`) != 1 &&
         era0(`talent:${assi}:122`) != 1 &&
-        era0('item:PBAND') == 1
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
       ) {
         await era.print(`假阳具`); // :5013
       }

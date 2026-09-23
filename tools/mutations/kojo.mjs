@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2322; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）
+export const COUNT = 2332; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）
 
 export default [
   {
@@ -21628,5 +21628,133 @@ async function try_kojo_or_stub(
       '    // :77 CALL 强制肉偿(ARG)\n    forced_payment(arg, rand); // 变异：漏 await',
     tests: ['kojo-forced-payment', 'kojo-dungeon-bitch'],
     must_mention: '调用点与真身的抽取序',
+  },
+  // #552 起口上按常量 4 读 item:4（原作 ITEM:PBAND = ITEM:4，PBAND 由
+  // SYSTEM ver1.0.3.ERB:42 赋 4）。下列条目把某处回退成字符串具名寻址
+  // era.get('item:PBAND')——Item.yml 名字表没有 PBAND 条目，该判定从此恒
+  // undefined，对应分支必须不再出词，测试必须红。
+  {
+    desc: 'M11600 K0 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${assi}:122\`) != 1 &&
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        // :7786`,
+    replace: `        era.get(\`talent:\${assi}:122\`) != 1 &&
+        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        // :7786`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '拼接「吞咽着假阳具的」',
+  },
+  {
+    desc: 'M11601 K0 死斗场 SC21 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: `        era.get(\`talent:\${assi}:122\`) != 1 &&
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        // :7819`,
+    replace: `        era.get(\`talent:\${assi}:122\`) != 1 &&
+        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        // :7819`,
+    tests: ['kojo-k0-tender'],
+    must_mention: '拼接「用假阳具」',
+  },
+  {
+    desc: 'M11602 K4 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k4-stoic.js',
+    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        await era.print(\`假阳具\`); // :4956`,
+    replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        await era.print(\`假阳具\`); // :4956`,
+    tests: ['kojo-k4-stoic'],
+    must_mention: '拼接「假阳具」',
+  },
+  {
+    desc: 'M11603 K5 六九式初回·淫乱档的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: `          (era.get(\`talent:\${player}:122\`) === 0 && era.get('item:4') === 1)`,
+    replace: `          (era.get(\`talent:\${player}:122\`) === 0 && era.get('item:PBAND') === 1) // 变异：回退字符串具名寻址（#552）`,
+    tests: ['kojo-k5-mao'],
+    must_mention: '拼接「大鸡巴」',
+  },
+  {
+    desc: 'M11604 K5 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find: `        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        // :7278`,
+    replace: `        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        // :7278`,
+    tests: ['kojo-k5-mao'],
+    must_mention: '拼接「假阳具」',
+  },
+  {
+    desc: 'M11605 K6 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: `        (era.get(\`talent:\${assi}:122\`) || 0) !== 1 &&
+        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        // :7495`,
+    replace: `        (era.get(\`talent:\${assi}:122\`) || 0) !== 1 &&
+        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        // :7495`,
+    tests: ['kojo-k6-wicked'],
+    must_mention: '拼接「假阳具」',
+  },
+  {
+    desc: 'M11606 K8 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: `        era0(\`talent:\${assi}:122\`) != 1 &&
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        await era.print(\`假阴茎\`); // :7355`,
+    replace: `        era0(\`talent:\${assi}:122\`) != 1 &&
+        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        await era.print(\`假阴茎\`); // :7355`,
+    tests: ['kojo-k8-spade'],
+    must_mention: '拼接「假阴茎」',
+  },
+  {
+    desc: 'M11607 K10 死斗场 SC21 的假阳具判定回退成具名寻址 item:PBAND（#552；sc21/sc27 同词，只有开场白分得开）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: `        era.get('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        // :6801`,
+    replace: `        era.get('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        // :6801`,
+    tests: ['kojo-k10-club'],
+    must_mention: '拼接「用粗大的假阳具」',
+  },
+  {
+    desc: 'M11608 K15 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        await era.print(\`假阳具\`); // :5847`,
+    replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        await era.print(\`假阳具\`); // :5847`,
+    tests: ['kojo-k15-clever'],
+    must_mention: 'item:4（原作 ITEM:PBAND）→ 假阳具',
+  },
+  {
+    desc: 'M11609 K903 死斗场 SC27 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    file: 'ere/kojo/kojo-k903-garde.js',
+    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+      ) {
+        // :5451`,
+    replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
+      ) {
+        // :5451`,
+    tests: ['kojo-k903-garde'],
+    must_mention: '拼接「假阳具」',
   },
 ];
