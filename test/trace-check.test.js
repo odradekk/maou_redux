@@ -1616,9 +1616,9 @@ test('移植状态表全绿（真树）：合计恰为 346，真值点与两类�
  * 后果由 tools/trace-coverage.mjs 的规则 4 放大：有移植产物 ∩ 表里仍有未了结项
  * 归因到该文件 → 「部分移植」，一行过时文字就能把做完了的文件永久卡住。本用例
  * 钉三层：
- *   ① 第一张表行级——状态格（末格，即工具读的那一格）不再以「存根／部分实现」
- *      开头。这是工具判「未了结」的一半判据；另一半「登记（…）不带死标记」本表
- *      钉的行都不是登记行，故不在此列；
+ *   ① 第一张表行级——状态格（末格，即工具读的那一格）不再以「存根」开头
+ *      （#541 起「未了结」只有这一个判据；旧词形「部分实现 / 登记（…）不带
+ *      死标记」已随该票归一）。本表钉的行都不是登记行，故不在此列；
  *   ② 措辞订正的行——钉事实（本体/调用点位置），不钉散文：这些行本票只把事实
  *      写准，未了结状态原样保留（如 K2/K4 未注册、调用点未接线）；
  *   ③ 工具级——三个此前被这些行拖住的文件在 `--coverage --list` 里判「已移植」
@@ -1646,7 +1646,7 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
       ['com-caress.js:3790-3799', 'com-advanced.js:3800'],
     ],
     ['`MAOU_TENSHIN`', ['event-nextday.js:1292', 'event-end.js:122']],
-    ['`RAND_AUTOTRAIN`', ['event-autotrain.js:646']],
+    ['`RAND_AUTOTRAIN`', ['event-autotrain.js:668']],
     [
       '`KOJO_MESSAGE_COM_8`（K8 银黑桃，全指令）',
       ['kojo-k8-spade.js', 'kojo_message_com_family.register(8'],
@@ -1693,29 +1693,29 @@ test('存根清单普查（#501）：已做完的行转「已实现」，名下�
     }
   }
 
-  // ③ @USERSHOP 表：表头是「输入｜原作行为｜占位名｜归属」，状态语义在占位名格
-  // （工具不解析这张表，行级守卫只有本用例；别把断言打在末格「归属」上）
+  // ③ @USERSHOP 表：末格是状态列（#541 起四张表统一到三类词形，原「占位名」
+  // 格的状态语义并入末格；工具的状态核对按末格判，行级守卫也跟着判末格）
   const shop_rows = [
-    ['CALL INTERCEPT（:113）', ['（已实现，#397）', 'page-intercept.js']],
-    ['CALL ABILITY_UP（:115）', ['（已实现，#397）', 'page-ability-up.js']],
+    ['CALL INTERCEPT（:113）', ['已实现（#397', 'page-intercept.js']],
+    ['CALL ABILITY_UP（:115）', ['已实现（#397', 'page-ability-up.js']],
     [
       'CALL TAILOR_MAIN; TARGET = FLAG:1（:121-122）',
-      ['（已实现，#397）', 'page-tailor.js'],
+      ['已实现（#397', 'page-tailor.js'],
     ],
     [
       'CALL INFRASTRUCTURE（:132-133）',
-      ['（已实现，#348）', 'page-infrastructure.js'],
+      ['已实现（#348', 'page-infrastructure.js'],
     ],
-    ['CALL CONFIG（:144）', ['（已实现，#463）', 'page-config.js']],
-    ['CALL MAOUNET（:146）', ['（已实现，#350）', 'cross-save-sharing.js']],
+    ['CALL CONFIG（:144）', ['已实现（#463', 'page-config.js']],
+    ['CALL MAOUNET（:146）', ['已实现（#350', 'cross-save-sharing.js']],
   ];
   for (const [key, needles] of shop_rows) {
     const hits = lines.filter((line) => line.includes(key));
     assert.equal(hits.length, 1, `定位子串必须唯一命中一行：${key}`);
     const row = hits[0];
     assert.ok(
-      cell_of(row, 2).startsWith('（已实现'),
-      `#501：${key} 的「占位名」格仍是壳（${cell_of(row, 2)}）`,
+      cell_of(row, -1).startsWith('已实现'),
+      `#501：${key} 的末格不是标准状态词（${cell_of(row, -1)}）`,
     );
     for (const needle of needles) {
       assert.ok(row.includes(needle), `#501：${key} 行必须写清 ${needle}`);
@@ -1925,7 +1925,9 @@ test('移植状态表：yml 承载与存根归因的规则行为（--only 限定
       ].join('\n'),
       'utf8',
     );
-    // 合成清单行：存根（真欠账）与登记（判死——完结方式，不是欠账）。
+    // 合成清单行：存根（真欠账）与判死（完结方式，不是欠账）。判死行的
+    // 词形是 #541 归一后的三类词之一：判死词必须在**开头**（原写
+    // 「登记（判死不移植，探针）」——那是 #541 之前的旧词形，核对会判非法）。
     // 管道符后带/不带空格两种形态各一行——真清单里两种都有（254/30 行），
     // 只认一种会把另一种形态的欠账静默漏成已移植（验收缺陷，M6520 钉住）。
     // 无空格形态指向独立文件 NOP2：两行若指向同一文件，跳过一行不可观测。
@@ -1935,7 +1937,7 @@ test('移植状态表：yml 承载与存根归因的规则行为（--only 限定
     const rows = [
       '| `__COV_PART` | __cov_probe__/PART.ERB:1 | 探针 | 探针 | 探针 | 存根（运行时占位，探针） |',
       '|`__COV_NOP2` | __cov_probe__/NOP2.ERB:1 | 探针 | 探针 | 探针 | 存根（运行时占位，探针） |',
-      '| `__COV_DEAD` | __cov_probe__/DEAD.ERB:1 | 探针 | 探针 | 探针 | 登记（判死不移植，探针） |',
+      '| `__COV_DEAD` | __cov_probe__/DEAD.ERB:1 | 探针 | 探针 | 探针 | 判死（不移植，探针） |',
       '',
     ].join('\n');
     fs.writeFileSync(
@@ -2194,20 +2196,24 @@ test('移植状态表：待移植基线只减不增（全树副本，改小一�
   assert.equal(restored.status, 0, `基线还原后必须复绿：\n${restored.output}`);
 });
 
-test('移植状态表：清单归因不到行数基线只减不增（全树副本，改小一位必须红）', () => {
+test('移植状态表：清单归因不到行数基线只减不增（全树副本，多一行必须红）', () => {
   const root = coverage_full_repo();
-  const tool_path = path.join(root, 'tools', 'trace-coverage.mjs');
-  const original = fs.readFileSync(tool_path, 'utf8');
-  const m = original.match(/export const UNATTRIBUTED_BASELINE = (\d+);/);
+  const registry_path = path.join(root, 'docs', 'stub-registry.md');
+  const original = fs.readFileSync(registry_path, 'utf8');
+  const m = fs
+    .readFileSync(path.join(root, 'tools', 'trace-coverage.mjs'), 'utf8')
+    .match(/export const UNATTRIBUTED_BASELINE = (\d+);/);
   assert.ok(m, 'UNATTRIBUTED_BASELINE 必须内嵌在工具里——规则不复制到别处');
   const current = Number(m[1]);
-  assert.ok(current > 0, '基线必须大于 0（现状冻结，不是空表）');
   try {
+    // 现状是 0（#541 把 CHARADEAD_CHECK / PARTY_CHAR_DEL 两条待核行的源补实）：
+    // 再塞一行「源」写不出真实出处的存根，超基线必须红——原用例把基线改小一位
+    // 来验，0 之后没有更小的合法值，改成从清单侧多写一行（同一件事的正面形态）
     fs.writeFileSync(
-      tool_path,
+      registry_path,
       original.replace(
-        `export const UNATTRIBUTED_BASELINE = ${current};`,
-        `export const UNATTRIBUTED_BASELINE = ${current - 1};`,
+        '\n## 变量级待办项',
+        '\n| `ZZ_UNATTRIBUTED` | 待核（@EVENTEND 的调用） | 存根（运行时占位） |\n\n## 变量级待办项',
       ),
       'utf8',
     );
@@ -2215,17 +2221,17 @@ test('移植状态表：清单归因不到行数基线只减不增（全树副�
     assert.notEqual(
       r.status,
       0,
-      '归因不到基线改小一位必须红——静默多出的归因不到行正是欠账被漏成已实现的方向',
+      `多一行归因不到必须红（基线现值 ${current}）——静默多出的归因不到行正是欠账被漏成已实现的方向`,
     );
     assert.ok(
       r.output.includes('清单归因不到'),
       `红的原因必须是归因不到基线失守：\n${r.output}`,
     );
   } finally {
-    fs.writeFileSync(tool_path, original, 'utf8'); // 单文件还原，省一次整目录回拷
+    fs.writeFileSync(registry_path, original, 'utf8');
   }
   const restored = run_tool_in(root, ['--coverage']);
-  assert.equal(restored.status, 0, `基线还原后必须复绿：\n${restored.output}`);
+  assert.equal(restored.status, 0, `清单还原后必须复绿：\n${restored.output}`);
 });
 
 test('移植状态表 --only：限定范围跳过全局核对（残缺 target 也能跑且自报范围）', () => {
