@@ -15,12 +15,14 @@
  * == 原作缺陷（1:1 保留，登记 #14） ==
  *
  *   1. `#DIMS ORAL / ANAL / SEX`（:5-7）只声明、全库无任何赋值点（实测
- *      grep 无写入），所以 `CALL EXP_BITCH(ARG,, ORAL, PLAY)`（:105/:107/
- *      :111）传进 @EXP_BITCH 的 TYPE 恒为空串（第二实参省略，PLACE 也是
- *      空串）——SELECTCASE 不落任何臂，EXP/JUEL **实际一个也不变**，只有
- *      紧跟其后的 PRINTFORML 声称「经验值上升了{PLAY}」「点数＋…」。
- *      #184 的 exp_bitch 真身按 TYPE 分档，本文件按「实参是空串」调用，
- *      不臆改为 "ORAL"/"ANAL"/"SEX"；测试钉住「除 EXP:50/70 外全不变」。
+ *      grep 无写入），所以 `CALL EXP_BITCH(ARG,, ORAL, PLAY)`（:105 无条件
+ *      一次，:107/:111 在 `IF TALENT:ARG:122` 两臂内各一次）传进
+ *      @EXP_BITCH 的 TYPE 恒为空串（第二实参省略，PLACE 也是空串）——
+ *      SELECTCASE 不落任何臂，EXP/JUEL **实际一个也不变**，只有紧跟其后
+ *      的 PRINTFORML 声称「经验值上升了{PLAY}」「点数＋…」。#184 的
+ *      exp_bitch 真身按 TYPE 分档，本文件按「实参是空串」调用三次，不臆改
+ *      为 "ORAL"/"ANAL"/"SEX"；测试钉住「调用三次、TYPE 全空」与「除
+ *      EXP:50/70 外 EXP/JUEL 全不变」。
  *   2. 拍片片酬 `COST*1/3 + RAND:100` 在显示（:92）与入账（:95）各求值
  *      一次，RAND:100 因此取两次——片酬显示值与实际入账值不相等。
  *
@@ -85,7 +87,7 @@ function is_veteran(arg) {
  *
  * @param {number} arg 角色 ID
  * @param {(n: number) => number} [rand] RAND 随机源
- * @returns {Promise<number>} 0
+ * @returns {Promise<number>} 0（原作无 RETURN 语句，Emuera 的缺省返回值）
  */
 async function forced_payment(arg, rand = default_rand) {
   const rand_n = rand;
@@ -252,8 +254,10 @@ async function forced_payment(arg, rand = default_rand) {
     chara(arg).train.拍摄经验 += 1; // :103 EXP:ARG:70（train 域）
   }
 
-  // :105-114 经验/点数结算。TYPE 实参是空串（见文件头「原作缺陷」1），
-  // 两档都按空串调用 exp_bitch——实际不动 EXP/JUEL，只打印声称变化的文案。
+  // :105-114 经验/点数结算。TYPE 实参恒为空串（见文件头「原作缺陷」1），
+  // 三次调用都按空串传给 exp_bitch——实际不动 EXP/JUEL，只打印声称变化的文案。
+  // :105 CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前
+  require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);
   if (era.get(`talent:${arg}:122`)) {
     // :107 CALL EXP_BITCH(ARG,, ANAL, PLAY)（ANAL 恒为空串）
     require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);

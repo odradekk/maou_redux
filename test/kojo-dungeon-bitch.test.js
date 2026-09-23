@@ -590,8 +590,9 @@ test('HEROINE_BITCH：债务过高强制卖春接真身（CFLAG:582 < -10000 且
   });
   // !RAND:3 → RAND:3 = 0 → 触发强制肉偿真身（#544）。真身的抽取序见
   // test/kojo-forced-payment.test.js（:11 档 0、:22 PLAY 0、:23 COST 0、
-  // :88 拍片 1），末尾的 36 是 DUNGEON_BITCH.ERB:78 自慰判定的 RAND:36
-  await mod.heroine_bitch(31, seq_rand(0, 0, 0, 0, 1, 36));
+  // :88 拍片 1），末尾的 35 是 DUNGEON_BITCH.ERB:78 自慰判定的 RAND:36
+  //（35 > 0 → 不触发；传 36 会被 36 % 36 = 0 判成触发）
+  await mod.heroine_bitch(31, seq_rand(0, 0, 0, 0, 1, 35));
   const lines = fixture.text_lines();
   assert.ok(
     lines.some((l) => l.startsWith('由于温妮欠的债务实在太高了')),

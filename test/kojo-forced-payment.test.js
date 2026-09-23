@@ -168,7 +168,16 @@ test('强制肉偿：高档 PLAY = RAND:20 + 10、COST = PLAY*100 + RAND:1000 + 
       return n === 3 ? 1 : 0; // 拍片判定取 1（不拍片），其余取 0
     };
     await mod.forced_payment(31, rand);
-    assert.deepEqual(uppers, [4, 20, 1000, 3], `第 ${roll} 档 RAND 上界序`);
+    assert.deepEqual(
+      uppers.slice(0, 2),
+      [4, 20],
+      `第 ${roll} 档高档 PLAY 的 RAND 上界`,
+    );
+    assert.deepEqual(
+      uppers.slice(2, 4),
+      [1000, 3],
+      `第 ${roll} 档高档 COST 的 RAND 上界`,
+    );
     // PLAY = 0 + 10 = 10；COST = 10*100 + 0 + 1000 = 2000（不拍片，全进债务）
     assert.equal(DEBT(fixture), -20000 + 2000, `第 ${roll} 档债务`);
   }
@@ -184,7 +193,16 @@ test('强制肉偿：低档 PLAY = RAND:10 + 5、COST = PLAY*100 + RAND:500 + 50
       return n === 3 ? 1 : 0;
     };
     await mod.forced_payment(31, rand);
-    assert.deepEqual(uppers, [4, 10, 500, 3], `第 ${roll} 档 RAND 上界序`);
+    assert.deepEqual(
+      uppers.slice(0, 2),
+      [4, 10],
+      `第 ${roll} 档低档 PLAY 的 RAND 上界`,
+    );
+    assert.deepEqual(
+      uppers.slice(2, 4),
+      [500, 3],
+      `第 ${roll} 档低档 COST 的 RAND 上界`,
+    );
     // PLAY = 0 + 5 = 5；COST = 5*100 + 0 + 500 = 1000
     assert.equal(DEBT(fixture), -20000 + 1000, `第 ${roll} 档债务`);
   }
@@ -198,7 +216,12 @@ test('强制肉偿：拍片分支的两处 RAND:100 上界（片酬显示与入�
     return 0; // 档 0、PLAY 0、COST 0、拍片 0（进入）、两处片酬 0
   };
   await mod.forced_payment(31, rand);
-  assert.deepEqual(uppers, [4, 10, 500, 3, 100, 100], 'RAND 上界序');
+  assert.deepEqual(
+    uppers.slice(0, 5),
+    [4, 10, 500, 3, 100],
+    '拍片显示侧 RAND 上界序',
+  );
+  assert.deepEqual(uppers.slice(5), [100], '拍片入账侧 RAND 上界序');
   // 显示侧的片酬只打印不加算；入账侧 +333
   assert.equal(DEBT(fixture), -20000 + 1000 + 333);
 });
@@ -207,15 +230,15 @@ test('强制肉偿：拍片分支的两处 RAND:100 上界（片酬显示与入�
 
 test('强制肉偿：分档条件（ABL:11 >= 3 / ABL:37 / EXP:20 >= 30）逐项表驱动', async () => {
   const table = [
-    // [ABL:11, ABL:37, EXP:20, 是否高档]
-    [3, 0, 0, true],
-    [2, 0, 0, false],
-    [0, 1, 0, true],
-    [0, 0, 30, true],
-    [0, 0, 29, false],
-    [0, 0, 0, false],
+    // [ABL:11, ABL:37, EXP:20, 是否高档, 断言标签（逐行独立，变异条目按它定位）]
+    [3, 0, 0, true, 'ABL:11 = 3 应为高档'],
+    [2, 0, 0, false, 'ABL:11 = 2 应为低档'],
+    [0, 1, 0, true, 'ABL:37 = 1 应为高档'],
+    [0, 0, 30, true, 'EXP:20 = 30 应为高档'],
+    [0, 0, 29, false, 'EXP:20 = 29 应为低档'],
+    [0, 0, 0, false, '三项全不满足应为低档'],
   ];
-  for (const [abl11, abl37, exp20, high] of table) {
+  for (const [abl11, abl37, exp20, high, label] of table) {
     const { fixture, mod } = setup(
       with_debt(-20000, (f) => {
         f.store.set('abl:31:11', abl11);
@@ -233,7 +256,7 @@ test('强制肉偿：分档条件（ABL:11 >= 3 / ABL:37 / EXP:20 >= 30）逐项
     // PLAY = 0+10（高档）/ 0+5（低档）
     assert.ok(
       play_line.endsWith(high ? '经验值上升了10' : '经验值上升了5'),
-      `ABL:11=${abl11} ABL:37=${abl37} EXP:20=${exp20} → ${high ? '高档' : '低档'}`,
+      label,
     );
   }
 });
@@ -339,6 +362,31 @@ test('强制肉偿：EXP_BITCH 收到空 TYPE——除 EXP:50/70 外 EXP/JUEL �
   }
 });
 
+test('强制肉偿：EXP_BITCH 被调用两次、TYPE 全为空串（:105 无条件 + 两臂各一次）', async () => {
+  for (const male of [0, 1]) {
+    const { fixture, mod } = setup(
+      with_debt(-20000, (f) => f.store.set('talent:31:122', male)),
+    );
+    const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
+    const calls = [];
+    const saved = bitch.exp_bitch;
+    bitch.exp_bitch = (...args) => {
+      calls.push(args);
+    };
+    try {
+      // draws [档 0, PLAY 0, COST 0, 拍片 1] → 低档 PLAY = 5
+      await mod.forced_payment(31, seq_rand(0, 0, 0, 1));
+    } finally {
+      bitch.exp_bitch = saved;
+    }
+    // :105 一次（无条件）+ :107 或 :111 一次（分支内）
+    assert.equal(calls.length, 2, `男人=${male} 的调用次数`);
+    for (const args of calls) {
+      assert.deepEqual(args, [31, '', '', 5], `男人=${male} 的实参`);
+    }
+  }
+});
+
 test('强制肉偿：男人（TALENT:122）走 ANAL 档文案、否则走 SEX 档文案', async () => {
   // draws [档 0, PLAY 0, COST 0, 拍片 1] → 低档 PLAY = 5
   const { fixture, mod } = setup(
@@ -389,6 +437,16 @@ test('强制肉偿：LOCAL = -1 * PLAY / 4 向零截断，KARMA 实际下调', a
     'LOCAL 显示与截断方向',
   );
   assert.equal(fixture.store.get('cflag:31:151'), -2, '善恶值下调');
+
+  // 低档 PLAY = 3 + 5 = 8 → LOCAL = -8/4 = -2（除数是 5 则得 -1，
+  // 这条把除数与「向零截断」分开守）
+  const { fixture: f2, mod: m2 } = setup(with_debt(-20000));
+  await m2.forced_payment(31, seq_rand(0, 3, 0, 1));
+  assert.ok(
+    f2.text_lines().includes('（善恶值减少了：-2）'),
+    '除数 4 与向零截断',
+  );
+  assert.equal(f2.store.get('cflag:31:151'), -2, 'PLAY = 8 时的善恶值下调');
 });
 
 // —— 调用点接真身 ——
@@ -409,9 +467,10 @@ test('强制肉偿：HEROINE_BITCH 的调用点接真身（占位行消失）', 
   fixture.store.set('abl:31:31', 0);
   fixture.store.set('talent:31:60', 0);
   const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
-  // draws: RAND:3 → 0（触发）；RAND:4 → 0；PLAY 0 → 10；COST 0 → 2000；
-  //        拍片 1（不拍）；自慰 RAND:36 → 36（不触发）
-  await bitch.heroine_bitch(31, seq_rand(0, 0, 0, 0, 1, 36));
+  // draws: RAND:3 → 0（触发）；RAND:4 → 0（档 0）；PLAY 0 → 5、COST 0 → 1000
+  //（本用例没设 ABL:11/ABL:37/EXP:20，走低档）；拍片 1（不拍）；
+  //自慰 RAND:36 → 35（35 > 0，不触发）
+  await bitch.heroine_bitch(31, seq_rand(0, 0, 0, 0, 1, 35));
   const lines = fixture.text_lines();
   assert.ok(
     lines.includes(
