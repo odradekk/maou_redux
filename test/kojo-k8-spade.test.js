@@ -3404,6 +3404,60 @@ test('COLOSSEUM_KOJO_8 SC51 媚药史莱姆：单行台词', async () => {
   ]);
 });
 
+// —— COLOSSEUM_KOJO_8：ITEM:PBAND → item:4（#552；源 :7355/:7390/:7417） ——
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；VariableSize.csv:61
+// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
+// era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
+// 用例），地址写回 item:PBAND 时下面三档必须红。
+test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阴茎」', async () => {
+  const cases = [
+    {
+      selectcom: 31,
+      lines: [
+        '「啊嗯…恩咕…咕…会好好舔的所以不要用暴力…嗯嗯嗯！」',
+        '奴隶5因为',
+        '假阴茎',
+        '被银黑桃舔着而露出了心旷神怡的表情……',
+      ],
+    },
+    {
+      selectcom: 21,
+      lines: [
+        '「嗯…咕…你故意这么激烈…嗯…啊啊…好、好痛…再温柔一点…啊啊——！」',
+        '奴隶5一边听着银黑桃的悲鸣用',
+        '假阴茎',
+        '毫不留情的蹂躏着银黑桃的腔内。',
+        '随着银黑桃发出悲鸣，观众沸腾了起来………',
+      ],
+    },
+    {
+      selectcom: 27,
+      lines: [
+        '「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」',
+        '奴隶5一边听着银黑桃的悲鸣。一边用',
+        '假阴茎',
+        '一般毫不留情的继续蹂躏着银黑桃的肛门。',
+        '随着银黑桃发出悲鸣，观众沸腾了起来………',
+      ],
+    },
+  ];
+  for (const { selectcom, lines } of cases) {
+    const fixture = await setup_k8((f, ef) => {
+      join_slave_chara(f, 5, '奴隶5');
+      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      ef.assi = 5;
+      ef.assiplay = 1;
+    }, selectcom);
+    const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+    await colosseum_kojo_8();
+    assert.deepEqual(
+      fixture.text_lines(),
+      lines,
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阴茎」`,
+    );
+  }
+});
+
 // —— KOJO_MESSAGE_PALAMCNG_8（参数变动口上） ——
 
 async function speak_palamcng_k8(fixture, rand) {

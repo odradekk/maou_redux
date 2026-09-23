@@ -257,8 +257,10 @@ engine_test(
 
     // 缺口一（MARK:4）：Mark.yml 无 4 号名条目 → initCharaTable 不建 4 槽，
     // Chara34 的 MARK,4,3 预设丢弃（装载层在 static_data.chara[34].mark）。
-    // 修复＝扩 Mark.yml 名条目，会改变所有角色的预置，按 #118 的定夺留给
-    // 刻印消费者落地时处理。
+    // **#548 定夺**：不扩 Mark.yml 名条目（那会改变所有角色的预置，#118），
+    // 改为在她加入点直写 mark:34:4 = 3（ere/event/enter-enemy.js 的
+    // k_34_crazylord，test/chara34-mark.test.js 锁行为）。本用例钉的是引擎
+    // addCharacter 的原样行为，仍在。
     assert.equal(adder.add(34), true);
     assert.equal(adder.data.mark[34][4], undefined);
     assert.equal(loader.static_data.chara[34].mark[4], 3, '装载层预设仍在');

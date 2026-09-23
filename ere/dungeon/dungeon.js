@@ -49,7 +49,6 @@ const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
@@ -76,8 +75,10 @@ const ex_item_mod = require('#/dungeon/ex-item');
  * ere/dungeon/dungeon-trap.js）；DUNGEON_ROOM 不在此列（#177 真身
  * ere/dungeon/dungeon-room.js）；DUNGEON_TOWN 亦不在此列（#178 真身
  * ere/dungeon/dungeon-town.js，撤到迷宫外的调用点经模块对象 town_mod）。
+ * BEDROOM_BATTLE_MALE 亦不在此列（#548 真身，本文件的
+ * bedroom_battle_male——ENDING ver 1.0.1.ERB 的定义随 S0 订正）。
  */
-const STUBBED_CALLS = ['BEDROOM_BATTLE_MALE'];
+const STUBBED_CALLS = [];
 
 // —— 战役 1「赤蛮咒森」的 DispatchFamily（#469，决议 #7）——
 // 键都是 FLAG:400（当前进行中的战役号）；只有 CAMPAIGN_SET_1 存在，
@@ -104,8 +105,7 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-// —— 存根层（工单 #172 十组中余下的 + 附属；DUNGEON_BITCH 已随 #184 换真身——
-//    真身在 ere/kojo/kojo-dungeon-bitch.js，:718 经模块对象调用；归属见 docs/stub-registry.md）——
+// —— 已换真身的原存根（工单 #172 十组 + 附属，归属见 docs/stub-registry.md）——
 
 // H6（#175）起三处战斗存根换成真身：DUNGEON_SPY / DUNGEON_PARTY_BATTLE /
 // DUNGEON_BATTLE2_PARTY 见 ere/dungeon/dungeon-battle2.js 与
@@ -118,6 +118,8 @@ function default_rand(n) {
 // H9（#178）起 DUNGEON_TOWN 存根换成真身：ere/dungeon/dungeon-town.js
 // （:294 调用点经模块对象引用 town_mod，同款可替换；其余反向引用用函数内
 // 延迟 require 防环）。
+// S7（#548）起 BEDROOM_BATTLE_MALE 存根换成真身（本文件
+// bedroom_battle_male，源 ENDING ver 1.0.1.ERB:1042）。
 
 // @DUNGEON_TOWN（迷宮/DUNGEON_TOWN.ERB）：#178（H9）起为真身
 // ere/dungeon/dungeon-town.js 的 dungeon_town（撤到迷宫外时的城镇事件——
@@ -191,18 +193,40 @@ async function campaign_room(floor) {
 }
 
 /**
- * @BEDROOM_BATTLE_MALE 存根（阶段 5）：男魔王对挑战者的寝室战（冒险者
- * TALENT:122 四分之一概率挑战、且魔王欲望条件满足时，:210）。
+ * @BEDROOM_BATTLE_MALE（ENDING ver 1.0.1.ERB:1042-1064）：男魔王寝室战
+ * （冒险者 TALENT:122 四分之一概率挑战、且魔王欲望条件满足时，:210）。
+ *
+ * MODE 组成（:1048-1053）：TALENT:0:122（魔王男人位）非 0 → +2；
+ * ABL:0:11（欲望）> 8 → 再 +1。CASE 1/2/3 三支文案相同（原作同文三写，
+ * 1:1 归并）；CASE 0 独有「从睡梦中醒了过来」。CASEELSE 无输出（MODE
+ * 只能落在 0-3，不可达）。原作 #DIM SWITCH 死变量（写 0 后全库无读者），
+ * 不落。
+ *
+ * **本函数不打印，返回该行的后半句**（#548 订正）：调用方 :209 的
+ * `PRINTFORM %SAVESTR:0%察觉到了…的气息。` 与本体 :1056/:1058 的
+ * `PRINTFORM …` 都不换行，两句拼在同一显示行，由调用方合成一次输出
+ * （同行合并的写法见 event-nextday.js:966 / source-check.js:3185）。
+ *
+ * 它之后的行缓冲：:224 的 `D:20 = 0` 起原作继续走设施（:386）与陷阱
+ * （:405）两段，行一直开着——那两段的输出若发生，会接在同一行上。本项目
+ * 按文件头「一次 print 一行」的约定让各段各自成行（既有取舍，非本函数
+ * 引入；设施段通常无输出，实际显示与「两句一行」一致）。
+ *
  * @param {number} cid 挑战者（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
+ * @returns {Promise<string>} 该行后半句（MODE 0 与 MODE 1-3 两种文案）
  */
-async function bedroom_battle_male() {
-  await stub_line_wait(
-    'BEDROOM_BATTLE_MALE',
-    '魔王寝室战',
-    '随寝室战票（阶段 5）',
-  );
-  return 0;
+async function bedroom_battle_male(cid) {
+  let mode = 0; // :1046 MODE = 0（:1048-1049 的 SIF 恒等写，省）
+  if (era.get('talent:0:122')) {
+    mode = 2; // :1050-1051
+  }
+  if ((era.get('abl:0:11') || 0) > 8) {
+    mode += 1; // :1052-1053
+  }
+  // :1054-1064 SELECTCASE MODE（CASE 1/2/3 同文归并）
+  return mode === 0
+    ? `${name_of(0)}从睡梦中醒了过来。` // :1056
+    : `${name_of(0)}察觉到了${name_of(cid)}的气息。`; // :1058-1062
 }
 
 /**
@@ -448,8 +472,12 @@ async function run_dungeon(arg0, rand) {
                   (era.get('abl:0:23') || 0) > 3) ||
                 (era.get('abl:0:11') || 0) > 6
               ) {
-                era.print(`${name_of(0)}察觉到了${leader_name}的气息。`);
-                await bedroom_battle_male(arg0); // :210
+                // :209-210 两句 PRINTFORM 都不换行 → 拼成同一显示行
+                //（本函数返回后半句，一次 print 落行；#548 订正）
+                era.print(
+                  `${name_of(0)}察觉到了${leader_name}的气息。` +
+                    (await bedroom_battle_male(arg0)),
+                );
               } else {
                 // :212-213 挑战失败成为奴隶
                 era.print(
@@ -1483,6 +1511,7 @@ async function get_down_enemy(arg0) {
 module.exports = {
   STUBBED_CALLS,
   run_dungeon,
+  bedroom_battle_male,
   check_status,
   check_status_one,
   get_junk_item,

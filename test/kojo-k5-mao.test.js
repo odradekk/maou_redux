@@ -455,3 +455,87 @@ test('迷宫胜利淫乱档：决め台词 + 随机第一句', async () => {
     '迷宫胜利必须含「快点来侵犯我啊」',
   );
 });
+
+// —— SELECTCOM 69 六九式 & COLOSSEUM_KOJO_5：ITEM:PBAND → item:4（#552） ——
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
+// undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
+// 源：六九式 :5191/:5204/:5236（PLAYER 侧判 121/122/PBAND）、死斗场
+// :7278/:7311/:7335（ASSI 侧判 121/122/PBAND）。
+test('六九式初回·淫乱（TALENT:76）：调教者无 121/122 且 item:4 → 「大鸡巴」而非「花蕾」', async () => {
+  const fixture = await setup_k5((f) => {
+    f.store.set('talent:17:76', 1); // 淫乱 → :5189 分支
+    f.store.set('talent:0:122', 0); // 调教者（PLAYER = 0）无男性器（unset 读 undefined，=== 0 不成立，须显式 0）
+    f.store.set('item:4', 1); // 原作 ITEM:PBAND
+  });
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.selectcom = 69;
+  await speak_k5(fixture, seq_rand(0));
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('大鸡巴')),
+    '六九式初回·淫乱：调教者无 121/122 且持假阳具（item:4）→ 拼接「大鸡巴」',
+  );
+  assert.equal(fixture.store.get('cflag:17:364'), 1, '六九式初回 → 1');
+});
+
+test('六九式初回·爱慕（TALENT:85）：调教者无 121/122 且 item:4、RAND:3 == 0 → 「假阳具」而非「阴唇」', async () => {
+  const fixture = await setup_k5((f) => {
+    f.store.set('talent:17:85', 1); // 爱慕 → :5199 分支
+    f.store.set('talent:0:122', 0);
+    f.store.set('item:4', 1);
+  });
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.selectcom = 69;
+  await speak_k5(fixture, seq_rand(0));
+  assert.ok(
+    fixture.text_lines().some((l) => l === '假阳具'),
+    '六九式初回·爱慕：持假阳具（item:4）且 RAND:3 == 0 → 拼接「假阳具」',
+  );
+});
+
+test('六九式二回目·爱慕（CFLAG:364 == 1）：同条件复现「假阳具」', async () => {
+  const fixture = await setup_k5((f) => {
+    f.store.set('talent:17:85', 1);
+    f.store.set('talent:0:122', 0);
+    f.store.set('item:4', 1);
+    f.store.set('cflag:17:364', 1); // 二回目以降
+  });
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.selectcom = 69;
+  await speak_k5(fixture, seq_rand(0));
+  assert.ok(
+    fixture.text_lines().some((l) => l === '假阳具'),
+    '六九式二回目·爱慕：持假阳具（item:4）且 RAND:3 == 0 → 拼接「假阳具」',
+  );
+  assert.equal(fixture.store.get('cflag:17:364'), 4, '二回目爱慕档推进到 4');
+});
+
+test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+  // K5 的 COM 头部助手跳过在死斗场岔之前（:772-773 先于 :787），assiplay 下
+  // 到不了真身——与 K8 同款直接驱动 colosseum_kojo_5（原作死代码路径，1:1 保留）
+  const cases = [
+    { selectcom: 31, tail: '露出心旷神怡的表情' },
+    { selectcom: 21, tail: '的阴道' },
+    { selectcom: 27, tail: '的肛门' },
+  ];
+  for (const { selectcom, tail } of cases) {
+    const fixture = await setup_k5((f) => {
+      join_slave_chara(f, 5, '奴隶5');
+      f.store.set('item:4', 1); // 原作 ITEM:PBAND
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = selectcom;
+    era_flag.assi = 5;
+    era_flag.assiplay = 1;
+    const mod = fixture.load_module('kojo/kojo-k5-mao');
+    await mod.colosseum_kojo_5(seq_rand(0));
+    assert.ok(
+      fixture.text_lines().some((l) => l === '假阳具'),
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阳具」`,
+    );
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(tail)),
+      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
+    );
+  }
+});

@@ -170,6 +170,8 @@ test('add_chara_ex(31/34)：cid 透传进实现（原作经 TARGET，ere 经 arg
   await add_chara_ex(34);
 
   // 31 → 琼（:101）；34 → 狂王替身/无双/一人军团（:4/:801/:901，三连写）
+  // + MARK,4,3 的预设补偿（#548：引擎只按 Mark.yml 名字表建槽，CSV 的
+  // 4 号条目会被丢——补偿写在 @CHARA_EX_34 里，所有加入点都过这条路）
   assert.deepEqual(
     fixture.var_writes.map((w) => w.name),
     [
@@ -177,6 +179,7 @@ test('add_chara_ex(31/34)：cid 透传进实现（原作经 TARGET，ere 经 arg
       'ex_talent:34:4',
       'ex_talent:34:801',
       'ex_talent:34:901',
+      'mark:34:4',
     ],
   );
 });

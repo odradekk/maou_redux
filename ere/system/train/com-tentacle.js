@@ -454,8 +454,9 @@ async function com208(rand = default_rand) {
 }
 
 /**
- * @SYOKUSYU_MILK（COMF100:412-）：触手榨乳触发的母乳体质获得。
- * 调用点在 COMF16（#220）；本票只提供真身，不改 #220 文件。
+ * @SYOKUSYU_MILK（COMF100:412-424）：触手榨乳触发的母乳体质获得。
+ * 调用点在 @EQUIP_COM16（COMF16:218，ere/system/train/com-toy.js——#548
+ * 起换真身调用）。
  * @returns {Promise<number>}
  */
 async function syokusyu_milk() {

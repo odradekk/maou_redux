@@ -150,13 +150,30 @@ function enemy_compare(a, b) {
  * 筛选：CFLAG:x:501 == floor 且（侵攻 2 / 迎击 3 / TALENT:x:221 的奴隶），
  * 排序经 enemy_compare 插入。纯输出、不输入。
  *
- * @param {number} floor 阶层（1-9；10 = 近卫层——尾部追加护卫中名单）
- * @returns {void}
+ * 首行空行（:595 / :629-630）：调用方进入本函数时行已经落了（SHOW_FLOOR 与
+ * DUNGEON_INFO2 的 $PRINT 段都在 CALL 前 DRAWLINE/PRINTL），所以第一支队伍
+ * 前的 `PRINTL`（:595）落出一个空行；没有队伍时由尾部的 `PRINTL`（:629-630）
+ * 落出同一个空行。此处固定先落一个空行（#180 补）。
+ *
+ * **护卫名单（:632-645）的判定是全局 `X == 10`，不是参数**（#548 订正，
+ * #14 登记）：@DUNGEON_INFO2 的调用点（:445-454 的 `CALL ENEMY_EXIST2(X)`）
+ * 里 X 就是当前的 `Z / 10`，与实参同值；而 @SHOW_FLOOR 的调用点里 X 恒为
+ * 10——DRAW_MAINMENU 的楼层循环（打印那十枚阶层按钮的那段）结束时
+ * `X = Z / 10 + 1` = 10，此后到 CALL SHOW_FLOOR 之间没有地方改写 X。所以
+ * **从地城概况点开任一层**都会在勇者行之后追加全部护卫的 `[护卫中]` +
+ * 全角空格 + `[NN]名字素质……` 行，从部下一览进来时只有第 10 段会。
+ *
+ * @param {number} floor 阶层（1-9；10 = 近卫层）
+ * @param {boolean} [x_is_10] 原作的 `X == 10`：缺省按「与实参同值」取值
+ *   （DUNGEON_INFO2 的调用点如此），SHOW_FLOOR 传 true
+ * @returns {Promise<void>}
  */
-async function enemy_exist2(floor) {
+async function enemy_exist2(floor, x_is_10 = floor === 10) {
   // :553-554 VARSET LOCAL + L_LEN = 0（插入排序的缓冲区与长度）
   const sorted = [];
   let max_name_len = 0;
+  // :595 / :629-630 调用方的行已落，本函数先落一个空行（见 JSDoc）
+  era.println();
   // :557-580 筛选并排序
   for (const cid of era.getAddedCharacters()) {
     // 原作 FOR L_CHAR, 1, CHARANUM 从 1 起（0 = 魔王不在其列）
@@ -251,8 +268,8 @@ async function enemy_exist2(floor) {
   if (row_fragments !== null) {
     era.print(row_fragments);
   }
-  // :632-645 近卫层（floor == 10）：追加护卫中名单（EX_TALENT:x:1 且未占用）
-  if (floor === 10) {
+  // :632-645 护卫名单：原作的判据是全局 X == 10（见 JSDoc，不是 floor == 10）
+  if (x_is_10) {
     for (const cid of era.getAddedCharacters()) {
       // 原作 FOR COUNT, 0, CHARANUM 从 0 起
       if (
@@ -261,7 +278,11 @@ async function enemy_exist2(floor) {
       ) {
         const fragments = [
           { content: '[护卫中]\u3000', color: COLOR_SUBORDINATE },
-          { content: `[${cid}]`, color: COLOR_SUBORDINATE },
+          // :636 [{COUNT,2}]——宽度 2 的右对齐（Emuera 的 {n,w} 缺省右对齐）
+          {
+            content: `[${String(cid).padStart(2, ' ')}]`,
+            color: COLOR_SUBORDINATE,
+          },
           // :637 %SAVESTR:COUNT,MAX_NAME_LEN,LEFT%
           { content: name_of(cid).padEnd(max_name_len, ' ') },
         ];

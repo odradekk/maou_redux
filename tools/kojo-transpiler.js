@@ -521,10 +521,26 @@ function convert_expr(expr, line_no, review_notes) {
     'DELTA',
     'DELTABASE',
   ];
+  // 4a3) ITEM:PBAND —— 唯一一处「下标是变量、不是数字」的具名寻址（#552）。
+  //     PBAND 是 Emuera 内建非角色变量（CSV/_replace.csv 的 `PBANDの初期値`
+  //     默认 4，VariableSize.csv:61 的 `PBAND,1000` 只是给它扩容），
+  //     SYSTEM ver1.0.3.ERB:42 赋 4、全库不再改写，故 ITEM:PBAND 恒等于
+  //     ITEM:4（4 号假阳具）。族名直译会落成 era.get('item:PBAND')：
+  //     yml/Item.yml 名字表没有 PBAND 条目，引擎翻译不中就原样回落，该判定
+  //     永远读到 undefined——持有假阳具也判不出。转译期直接落 item:4，
+  //     不留给复核 agent 定。
   for (const fam of OTHER_FAMILIES) {
     const lower = fam.toLowerCase();
     const re = new RegExp(`\\b${fam}:([A-Za-z0-9_]+)`, 'gi');
     out = out.replace(re, (whole, idx) => {
+      if (fam === 'ITEM' && idx.toUpperCase() === 'PBAND') {
+        review_notes.push({
+          kind: '表达式寻址',
+          line: line_no,
+          msg: `${whole} → era.get('item:4')——PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，#552）`,
+        });
+        return "era.get('item:4')";
+      }
       review_notes.push({
         kind: '表达式寻址',
         line: line_no,

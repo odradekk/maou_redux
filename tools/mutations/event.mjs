@@ -3,7 +3,8 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 349; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+export const COUNT = 357; // #548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
+// 接线；M11478/M11479 的靶位在返工轮搬去 chara.mjs——补偿写在 @CHARA_EX_34 里，随靶文件分片）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
 // 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）；
 // #502 起 +4（M10744-M10747，SENGEN_VIDEO_DE 的骰点与两段清零、EVENT_TURNEND
@@ -62,10 +63,10 @@ export default [
   {
     desc: 'M19 EVENTEND 死亡删除：漏除名（DELCHARA）',
     file: 'ere/event/event-end.js',
-    find: `      stub_line('PARTY_CHAR_DEL', '队伍移除');
+    find: `      party_char_del(target); // :372 CALL PARTY_CHAR_DEL, A（#548 起真身）
       // DELCHARA：引擎等价物 removeCharacter（从已加入列表除名）
       era.removeCharacter(target);`,
-    replace: `      stub_line('PARTY_CHAR_DEL', '队伍移除');
+    replace: `      party_char_del(target); // :372 CALL PARTY_CHAR_DEL, A（#548 起真身）
       // 变异：不除名`,
     tests: ['event-end'],
     must_mention: '除名',
@@ -3230,5 +3231,71 @@ export default [
     replace: '    // 变异：不指 TARGET 指针',
     tests: ['event-turnend'],
     must_mention: '常时发情的 3000 起步必须落进 palam（窗口开着的直接证据）',
+  },
+  {
+    desc: 'M11470 CHARADEAD_CHECK 存活判据取反（BASE:0 > 0 改成 >= 0：体力 0 也算存活，死亡判定整段不可达）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if ((era.get(`base:${target}:0`) || 0) > 0) {\n    return 0;\n  }',
+    replace:
+      '  if ((era.get(`base:${target}:0`) || 0) >= 0) { // 变异：0 也算存活\n    return 0;\n  }',
+    tests: ['event-charadead'],
+    must_mention: '奴隶死亡',
+  },
+  {
+    desc: 'M11471 CHARADEAD_CHECK 濒死自动结束的钳值 1 改成 2（FLAG:35 开关下体力应钳到 1）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '      chara(target).dungeon.体力 = 1;',
+    replace: '      chara(target).dungeon.体力 = 2; // 变异：钳值错',
+    tests: ['event-charadead'],
+    must_mention: '钳到 1',
+  },
+  {
+    desc: 'M11472 CHARADEAD_CHECK 菲娅线判据取反（目标判据 target === GETCHARA(35) 改成 !==：非菲娅的调教也会被推线）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  if (route >= 160 && route < 170 && target === get_chara(35)) {',
+    replace:
+      '  if (route >= 160 && route < 170 && target !== get_chara(35)) { // 变异：判据取反',
+    tests: ['event-charadead'],
+    must_mention: '菲娅线推进',
+  },
+  {
+    desc: 'M11473 CHARADEAD_CHECK 死亡旗写错段（FLAG:(NO+999) 改成 NO+199——与 @EVENTEND 的删除旗撞段）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  era.set(`flag:${target + 999}`, -2);',
+    replace: '  era.set(`flag:${target + 199}`, -2); // 变异：段错',
+    tests: ['event-charadead'],
+    must_mention: 'FLAG:(31+999)',
+  },
+  {
+    desc: 'M11474 CHARADEAD_CHECK 威压感门槛 >= 3 改成 >= 4（杀害数 3 不再授予）',
+    file: 'ere/event/event-aftertrain.js',
+    find: "  if (game.event.杀死人数 >= 3 && !era.get('talent:0:93')) {",
+    replace: "  if (game.event.杀死人数 >= 4 && !era.get('talent:0:93')) {",
+    tests: ['event-charadead'],
+    must_mention: '威压感',
+  },
+  {
+    desc: 'M11475 CHARADEAD_CHECK 威压感只播报不落素质（漏写 TALENT:MASTER:93 = 1）',
+    file: 'ere/event/event-aftertrain.js',
+    find: "    era.set('talent:0:93', 1);",
+    replace: '    // 变异：漏写威压感素质',
+    tests: ['event-charadead'],
+    must_mention: '威压感：杀害数累计到 3',
+  },
+  {
+    desc: 'M11476 CHARADEAD_CHECK 魔王死亡无候补分支漏 QUIT（GAMEOVER 后游戏继续）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '      await era.input();\n      era.quit();',
+    replace: '      await era.input();\n      // 变异：漏 QUIT',
+    tests: ['event-charadead'],
+    must_mention: '魔王死亡·无候补',
+  },
+  {
+    desc: 'M11477 EVENTEND 死亡删除分支漏调 PARTY_CHAR_DEL（队伍数据不复位就除名）',
+    file: 'ere/event/event-end.js',
+    find: '      party_char_del(target); // :372 CALL PARTY_CHAR_DEL, A（#548 起真身）',
+    replace: '      // 变异：漏调 PARTY_CHAR_DEL',
+    tests: ['event-charadead'],
+    must_mention: 'party_del 复位',
   },
 ];

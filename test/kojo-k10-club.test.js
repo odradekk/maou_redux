@@ -542,3 +542,72 @@ test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {
     '「唔呼呼、这种程度的石化魔法，之前的我只要一瞬间就能反制…啊啊……啊………」',
   ]);
 });
+
+// —— COLOSSEUM_KOJO_10：ITEM:PBAND → item:4（#552；源 :6767/:6801/:6827） ——
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；VariableSize.csv:61
+// 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
+// era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
+// 用例），地址写回 item:PBAND 时下列用例必须红。
+// sc21/sc27 两支的拼接词与尾部文案逐字相同，只有开场白能区分——每档断言各自
+// 的开场白，避免两支互相冒充。
+// K10 的 COM 头部助手跳过在死斗场岔之前，assiplay 下到不了真身——直接驱动
+// colosseum_kojo_10（与 test/kojo-k8-spade.test.js 的 COLOSSEUM 段同款）。
+test('COLOSSEUM_KOJO_10：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+  const cases = [
+    {
+      selectcom: 31,
+      open: '「哈噗…唔…嗯～…嗯～…嗯呼…还要再舔吗…嗯～…咕噜…啾」',
+      word: '粗大的假阳具',
+    },
+    {
+      selectcom: 21,
+      open: '「呀～！请住手～求你了～…啊啊～…啊～！」',
+      word: '用粗大的假阳具',
+    },
+    {
+      selectcom: 27,
+      open: '「屁股那～…哈啊～明明讨要那些肮脏的东西…啊～…哈啊～…噫～…屁股要坏掉了！」',
+      word: '用粗大的假阳具',
+    },
+  ];
+  for (const { selectcom, open, word } of cases) {
+    const fixture = await setup_k10((f) => {
+      join_slave_chara(f, 17, '玛奥');
+      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 17;
+      era_flag.assiplay = 1;
+    }, selectcom);
+    const mod = fixture.load_module('kojo/kojo-k10-club');
+    await mod.colosseum_kojo_10();
+    const lines = fixture.text_lines();
+    assert.ok(
+      lines.some((l) => l === open),
+      `selectcom ${selectcom} 分支开场白「${open}」`,
+    );
+    assert.ok(
+      lines.some((l) => l === word),
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「${word}」`,
+    );
+  }
+});
+
+test('COLOSSEUM_KOJO_10：持假阳具判定只认 item:4——未持有（item:4 缺席）时该行不出现', async () => {
+  const fixture = await setup_k10((f) => {
+    join_slave_chara(f, 17, '玛奥');
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.assi = 17;
+    era_flag.assiplay = 1;
+  }, 31);
+  const mod = fixture.load_module('kojo/kojo-k10-club');
+  await mod.colosseum_kojo_10();
+  const lines = fixture.text_lines();
+  assert.ok(
+    lines.some((l) => l.includes('心旷神怡的表情')),
+    '助手在场分支照常走完（对照组不是空跑）',
+  );
+  assert.ok(
+    !lines.some((l) => l.includes('假阳具')),
+    'item:4 未置 1 → 拼接行不出现',
+  );
+});

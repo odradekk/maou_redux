@@ -111,6 +111,11 @@ export const FILES = [
         ref: '986-1149',
         any: [/ELSEIF SELECTCOM == 10/],
       },
+      {
+        src: 'target/ERB/調教相關/COMF16_搾乳器.ERB',
+        ref: '218',
+        any: [/^\s*CALL SYOKUSYU_MILK\s*$/m],
+      },
     ],
   },
 ];

@@ -21,7 +21,7 @@
  *   - @MAOU_TENSHIN 另由 @EVENTEND 的魔王倒下分支调用
  *     （TRAIN_MAIN.ERB:376-378）——ere/event/event-end.js；
  *   - @MAOU_KOUHO 的原作另一处调用点在 @CHARADEAD_CHECK（EVENT_AFTERTRAIN
- *     :33）内，该函数在 ere 侧仍是存根（CHARADEAD_CHECK）。
+ *     :33）内（自 #548 起为真身，ere/event/event-aftertrain.js）。
  *
  * 移植说明：
  *   - 原作注释态的调用 1:1 保持不调用（:59 熏香洗濯链、:75/:84/:88 出产三

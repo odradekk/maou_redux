@@ -425,6 +425,8 @@ async function k_34_crazylord(rand_n) {
 
   era.addCharacter(34); // :247
   await add_chara_ex(34); // :248
+  // MARK,4,3 的预设补偿不在这里：它写在 @CHARA_EX_34（chara-ex.js）里，
+  // 因为所有加入 34 号的路径都要过 ADDCHARA_EX——研究所复活也是（#548 返工）
   era_flag.crazylord_entered = 1; // :252
   const a = 34; // :254 A = CHARANUM-1（扁平化：刚加入的 34）
   // :255 SAVESTR:A = %NAME:A% → callname:-1 承载（文件头，写入 no-op）
