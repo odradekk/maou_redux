@@ -3,8 +3,11 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 385; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
-// 跳过、设施名表、近卫护卫判据、怪物行对齐）；#396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）；
+export const COUNT = 391; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+// 跳过、设施名表、近卫护卫判据、怪物行对齐）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
+// M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
+// 快捷键、M11329 page-config 的提示检索键——由 test/page-config.test.js、
+// test/page-shop.test.js 与 test/page-chara-info.test.js 守护）；此前 380，其中 #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -3494,7 +3497,7 @@ export default [
   {
     desc: 'M11110 page-shop 存根名单退回旧状态（INTERCEPT/ABILITY_UP/TAILOR_MAIN 自 #397 起已接真身，重新列入即红，#515）',
     file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['批量处刑', 'LABO', 'DEBUG_MENU_U'];",
+    find: "const STUBBED_CALLS = ['批量处刑', 'LABO'];",
     replace:
       "const STUBBED_CALLS = [\n  '批量处刑',\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
     tests: ['page-shop'],
@@ -3607,5 +3610,87 @@ export default [
       '      era.print(`${String(count).padStart(2)}只${monstername(base_slot + i)}`); // 变异：对齐反向',
     tests: ['page-shop-floor'],
     must_mention: '怪物行（数量左对齐两位）',
+  },
+  // —— #542：设置页 [26]/[28] 与主菜单 999 的不移植提示 ——
+  {
+    desc: 'M11313 设置页 [26] 的不移植提示整段删掉（回到空转——按钮在、按了没反应，#542）',
+    file: 'ere/page/page-config.js',
+    find: `  } else if (local === 26) {
+    await not_ported_line_wait(
+      'MODLIST',
+      'MOD 开关菜单',
+      '#542 判不移植：需手动开启、默认全关的 MOD 子系统',
+    );
+  } else if (local === 28) {`,
+    replace: `  } else if (local === 28) { // 变异：[26] 分支整段删掉`,
+    tests: ['page-config'],
+    must_mention: '提示行必须带原作函数名 @MODLIST',
+  },
+  {
+    desc: 'M11314 设置页 [28] 的不移植提示换成误写变量（不移植的功能被按下却写 flag——开关不落地被破坏，#542）',
+    file: 'ere/page/page-config.js',
+    // 提示行留着、只在后面补一次写——这样红的是「开关不落地」那条断言本身，
+    // 不会先撞上「提示行必须带 @更换立绘」（前一次写法整段删掉，红的变成了
+    // 前一条断言，must_mention 对不上）
+    find: `    await not_ported_line_wait(
+      '更换立绘',
+      '立绘系统',
+      '#542 判不移植：开关默认关、素材不在仓库',
+    );`,
+    replace: `    await not_ported_line_wait(
+      '更换立绘',
+      '立绘系统',
+      '#542 判不移植：开关默认关、素材不在仓库',
+    );
+    era.set('flag:999', 1); // 变异：不移植的开关反而写状态`,
+    tests: ['page-config'],
+    must_mention: '立绘开关不落地',
+  },
+  {
+    desc: 'M11320 主菜单 999 的不移植提示退回占位话术（「随调试票」——判死终态被读成待办，#542）',
+    file: 'ere/page/page-shop.js',
+    find: `    await not_ported_line_wait(
+      'DEBUG_MENU_U',
+      '调试菜单',
+      '#542 判不移植：原作者的调试工具',
+    );`,
+    replace: `    await stub_line_wait('DEBUG_MENU_U', '调试菜单', '随调试票'); // 变异：退回占位话术`,
+    tests: ['page-shop'],
+    must_mention: '不移植提示要说清是什么与为何',
+  },
+  {
+    desc: 'M11321 page-shop 存根名单退回旧状态（DEBUG_MENU_U 已随 #542 判不移植，重新列入即红）',
+    file: 'ere/page/page-shop.js',
+    find: "const STUBBED_CALLS = ['批量处刑', 'LABO'];",
+    replace:
+      "const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
+    tests: ['page-shop'],
+    test_name: '存根清单可检索：docs/stub-registry.md 收录这张票全部占位名',
+    must_mention: '存根名单必须只列仍未接真身的分支',
+  },
+  {
+    desc: 'M11328 [20] 更换立绘按钮快捷键错位（20 改 21——清单行的编号与引擎分发对不上，#542）',
+    file: 'ere/page/page-chara-info.js',
+    find: "      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);",
+    replace:
+      "      if (state === 0 && current !== 0) era.printButton('更换立绘', 21); // 变异：快捷键错位",
+    tests: ['page-chara-info'],
+    must_mention: '奴隶 + 状态 0：渲染',
+  },
+  {
+    desc: 'M11329 设置页 [28] 的提示文案串成 [26] 的（note 改「MOD 开关菜单」——立绘开关按下却说 MOD，#542）',
+    file: 'ere/page/page-config.js',
+    find: `    await not_ported_line_wait(
+      '更换立绘',
+      '立绘系统',
+      '#542 判不移植：开关默认关、素材不在仓库',
+    );`,
+    replace: `    await not_ported_line_wait(
+      '更换立绘',
+      'MOD 开关菜单',
+      '#542 判不移植：开关默认关、素材不在仓库',
+    );`,
+    tests: ['page-config'],
+    must_mention: '不移植提示要说清是什么与为何',
   },
 ];

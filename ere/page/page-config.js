@@ -20,13 +20,14 @@ const { ScreenBlock } = require('#/page/components/screen-block');
 const { get_look_info, KIND } = require('#/chara/look-info');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait } = require('#/utils/stub-line');
+const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
 
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个，
- * 测试核对固定，同 page-shop.js/event-first.js 的既有先例）。
+ * 测试核对固定，同 page-shop.js/event-first.js 的既有先例）。MODLIST 随
+ * #542 判不移植离开本名单——按钮 [26] 保留可见，按下打不移植提示。
  */
-const STUBBED_CALLS = ['CONFIG_AGE_SETTING', 'MODLIST'];
+const STUBBED_CALLS = ['CONFIG_AGE_SETTING'];
 
 /** GETBIT(X, n)：FLAG:5 用到位 32-36，位运算在 JS 里按 32 位截断会溢出，改算术运算 */
 function getbit(v, n) {
@@ -317,9 +318,9 @@ function draw_config_page(page) {
       '勇者的任务揭示板  　　　 现在：' + (getbit(af, 3) ? '禁止' : '许可'),
       25,
     );
-    // [26] MOD开关：CONFIG_MODLIST（状态展示）与 MODLIST（设置动作）均未
-    // 移植（MOD/mod开关ver1.0.11/MOD_SWITCH ver1.0.11.ERB，
-    // docs/stub-registry.md 新增行）；按钮本体可达，只省略「现在：」预览
+    // [26] MOD开关：CONFIG_MODLIST（状态展示）与 MODLIST（设置动作）随
+    // MOD 子系统判不移植（#542，#540 范围决定 2）；按钮本体保留可见（原作
+    // :190 无条件打印该行），按下打不移植提示，只省略「现在：」状态预览
     era.printButton('MOD开关', 26);
     era.printButton(
       '出现冒险者的性别限制　　 现在：' + adventurer_gender_status_text(),
@@ -393,13 +394,25 @@ async function dispatch_config(local, page) {
       local - 22,
     );
   } else if (local === 26) {
-    await stub_line_wait('MODLIST', 'MOD 开关', undefined);
+    await not_ported_line_wait(
+      'MODLIST',
+      'MOD 开关菜单',
+      '#542 判不移植：需手动开启、默认全关的 MOD 子系统',
+    );
+  } else if (local === 28) {
+    // [28] 立绘开关（:266-271 只翻 SAVEDATA 开关，无函数调用）：立绘系统
+    // 判不移植（#542，#540 范围决定 4），开关不落地、按下打不移植提示
+    await not_ported_line_wait(
+      '更换立绘',
+      '立绘系统',
+      '#542 判不移植：开关默认关、素材不在仓库',
+    );
   }
-  // LOCAL==27/28/29/30：冒険者性別/立绘/卖淫影响/反作弊。原作 :253-285 这四
-  // 支真写 MOD SAVEDATA 变量（冒険者性別 -1→0→…→4 循环、立绘 0/1、卖淫影响
-  // 0→1→2、反作弊 0/1），其中反作弊有消费者（恒 0 令 DEBUG_CHECK 每回合执
-  // 行，docs/stub-registry.md「反作弊」行）；本项目四个变量均无 ere 存储
-  // （#18 刻意不收 Global.yml，MOD 归属阶段 6），四支空转不写——这是有意
+  // LOCAL==27/29/30：冒険者性別/卖淫影响/反作弊。原作 :253-285 这三支真写
+  // MOD SAVEDATA 变量（冒険者性別 -1→0→…→4 循环、卖淫影响 0→1→2、反作弊
+  // 0/1），其中反作弊有消费者（恒 0 令 DEBUG_CHECK 每回合执行，
+  // docs/stub-registry.md「反作弊」行）；本项目三个变量均无 ere 存储
+  // （#18 刻意不收 Global.yml，#547 落地前三支空转不写——这是有意
   // 偏离而非原作现状，按钮照常渲染（原作按钮行可见）
   return page;
 }

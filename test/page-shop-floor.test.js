@@ -168,5 +168,11 @@ test('LIMIT 钳制：0 与 99 都按边界层显示（源 :429 ARG = LIMIT(ARG,1
 test('STUBBED_CALLS：SHOW_FLOOR 移出存根名单', () => {
   const fixture = create_floor_fixture();
   const { STUBBED_CALLS } = fixture.load_module('page/page-shop');
-  assert.deepEqual(STUBBED_CALLS, ['批量处刑', 'LABO', 'DEBUG_MENU_U']);
+  // 精确名单由 test/page-shop.test.js 锁（#397/#515 的固定断言）；本票只锁
+  // 「SHOW_FLOOR 不在名单里」这一点——同一份名单在两张票的断言里各写一遍
+  // 会在每次并行票合并时撞一次冲突（#542 与 #548 实测一次）
+  assert.ok(
+    !STUBBED_CALLS.includes('SHOW_FLOOR'),
+    'SHOW_FLOOR 已接真身，不得留在存根名单',
+  );
 });

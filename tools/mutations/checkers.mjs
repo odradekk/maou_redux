@@ -3,9 +3,11 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 166; // 合并态实测（#532 与 #530 两侧条目全留；按 merge-conflicts.md，计数型基线
-// 不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本票 144、master 135，
-// 递增账：133 + #532 的 11 + #530 的 2 = 146，与实测相符）
+export const COUNT = 171; // #542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
+// 背景音乐音量三行退回存根，M11330：RULINGS 路径悬空——由 test/trace-check.test.js 的 #542 用例与
+// test/stub-registry-status.test.js 的八行棘轮守护）；此前 166 = 合并态实测（#532 与 #530 两侧条目全留；
+// 按 merge-conflicts.md，计数型基线不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本票 144、
+// master 135，递增账：133 + #532 的 11 + #530 的 2 = 146，与实测相符）
 // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
 // 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
@@ -1705,5 +1707,66 @@ export default [
     tests: ['trace-check'],
     test_name: '移植状态表全绿（真树）：合计恰为 346，真值点与两类误报规则判对',
     must_mention: '里找不到「##',
+  },
+  // —— #542：七文件判死与清单八行的落判 ——
+  {
+    desc: 'M11322 RULINGS 表删掉 img.ERB 的判死条目（立绘回到待移植、基线超限，#542）',
+    file: 'tools/trace-coverage.mjs',
+    find: `  {
+    path: 'target/ERB/魔改新增/img.ERB',
+    reason:
+      '#542（#540 范围决定 4）：立绘系统——设置页 [28] 开关默认关、素材约 260 张 13MB 不在仓库、只增强显示，与 #101 Out of scope「立绘纸娃娃合成系统」同一结论；[28] 与角色详情 [20] 按钮保留可见，按下打不移植提示',
+  },
+`,
+    replace: `  // 变异：删掉 img.ERB 的判死条目
+`,
+    tests: ['trace-check'],
+    test_name:
+      '移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现，待移植只剩魔改新增两个',
+    must_mention: '超出 #331 基线',
+  },
+  {
+    desc: 'M11330 RULINGS 表的 MOD_SWITCH 路径指向不存在的文件（表悬空——裁定被 target/ 变动架空，#542）',
+    file: 'tools/trace-coverage.mjs',
+    find: "    path: 'target/ERB/MOD/mod开关ver1.0.11/MOD_SWITCH ver1.0.11.ERB',",
+    replace:
+      "    path: 'target/ERB/MOD/mod开关ver1.0.11/MOD_SWITCH ver1.0.11.ERB.bak', // 变异：表悬空",
+    tests: ['trace-check'],
+    test_name:
+      '移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现，待移植只剩魔改新增两个',
+    must_mention: '已判定不实现表悬空',
+  },
+  {
+    desc: 'M11323 清单大书库行退回存根（判死终态被读回待办——#540 终点判据的分子多一行，#542）',
+    file: 'docs/stub-registry.md',
+    find: '不移植（#540 范围决定 3、#542 落判：播放点所在画面随 DEBUG小白娘 整块判不移植，本条随之终态；音频文件与注册名保持登记（#69 的 res/ 备份，1:1 追溯），永无消费者）',
+    replace:
+      '存根（未接入：播放点所在画面随 DEBUG 整块；不实现结论由 #542 S1 写进清单）',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：#542 判死的八行状态格以判死词开头（退回存根/待认领即红）',
+    must_mention: '必须以「不移植」开头的判死终态',
+  },
+  {
+    desc: 'M11324 清单 MODLIST 行退回存根（判死终态被读回待办——#540 终点判据的分子多一行，#542）',
+    file: 'docs/stub-registry.md',
+    find: '不移植（#540 范围决定 2、#542 落判：五个 MOD 全部需手动开启、默认全关，整目录判不移植；[26] 按钮保留可见（原作 :190 无条件打印），按下打一行不移植提示（ere/page/page-config.js 的 dispatch_config(26)），CONFIG_MODLIST 的内联状态预览仍因按钮拼接限制省略）',
+    replace:
+      '存根（运行时占位「MODLIST」，ere/page/page-config.js:396；CONFIG_MODLIST 因按钮拼接限制被省略、只留按钮本体不带状态预览）',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：#542 判死的八行状态格以判死词开头（退回存根/待认领即红）',
+    must_mention: '必须以「不移植」开头的判死终态',
+  },
+  {
+    desc: 'M11325 清单背景音乐音量行退回存根（「落空」被读回待办——66 的播种已随 #542 落空取消）',
+    file: 'docs/stub-registry.md',
+    find: '落空（#542 落判：音量的唯一写点（MOD_SWITCH 音声设置）与逐曲音量消费（SETBGMVOLUME）均判不移植，audio:1 永无消费者；66 的默认值播种随落空取消，新档 0 = 不播，与 #69 主菜单读点的现状一致）',
+    replace:
+      '存根（未播种：audio:1 暂无消费者、新档 0；随首个消费者，与 MOD_SWITCH 同票——#542 S1）',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：#542 判死的八行状态格以判死词开头（退回存根/待认领即红）',
+    must_mention: '必须以「落空」开头的判死终态',
   },
 ];
