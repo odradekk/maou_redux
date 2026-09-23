@@ -1041,6 +1041,36 @@ test('可处刑每次进入函数复位：清标签结束、再进入时 [121] �
   );
 });
 
+test('可处刑在 JUMP 批量处刑 后复位：剃除收藏目标重启界面时 [121] 消失', async () => {
+  // 标记 31 再取消，[121] 按静态语义保留；再标记收藏目标 47，重绘时扫描到它
+  // → 播报、剃除、JUMP 批量处刑。JUMP 重跑 :13，重启后的界面没有带标签的
+  // 目标，[121] 不再显示
+  const fixture = seed_world(31, 47);
+  fixture.store.set('cflag:47:700', 1); // 收藏
+  fixture.set_inputs(31, 31, 47, 1999);
+  const { batch_execution } = load_batch(fixture);
+
+  await batch_execution(seq([0]));
+
+  const rows = fixture.lines_history;
+  const jump_index = rows.findIndex(
+    (line) => line.type === 'text' && line.text.includes('自动剃除处刑标签'),
+  );
+  assert(jump_index >= 0, '收藏目标被剃除并重启界面');
+  assert(
+    rows
+      .slice(0, jump_index)
+      .some((line) => line.type === 'button' && line.accelerator === 121),
+    '重启前 [121] 一直显示（取消标签不清零）',
+  );
+  assert(
+    !rows
+      .slice(jump_index)
+      .some((line) => line.type === 'button' && line.accelerator === 121),
+    'JUMP 批量处刑 之后 可处刑 已复位（:13），不再显示 [121]',
+  );
+});
+
 test('分隔线：顶部不画 CUSTOMDRAWLINE 线，普通 DRAWLINE 用默认线型', async () => {
   // 原作 :11 的 `CUSTOMDRAWLINE =` 只画一条线，随即被 :16 的
   // `CLEARLINE LINECOUNT` 清掉；:21/:24/:53 是普通 DRAWLINE（默认线型）

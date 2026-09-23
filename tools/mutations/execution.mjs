@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 139;
+export const COUNT = 140;
 
 export default [
   {
@@ -1191,5 +1191,17 @@ export default [
     replace: '      let executable = true; // 变异：初值不复位',
     tests: ['event-execution-batch'],
     must_mention: '再次进入时 可处刑 已复位（:13），不再显示 [121]',
+  },
+  // M11428：剃除收藏目标后的 JUMP 批量处刑 当成 GOTO 处刑介面——ere 里两者
+  // 唯一的差别是 :13 的可处刑复位。编号取自未分配的 M11428（本票区间已用满）
+  {
+    desc: 'M11428 剃除收藏目标后不重启界面（JUMP 当 GOTO：可处刑不复位，[121] 仍显示）',
+    file: 'ere/event/event-execution-batch.js',
+    find: `            chara(cid).patch.待处刑标签 = 0;
+            continue restart;`,
+    replace: `            chara(cid).patch.待处刑标签 = 0;
+            continue screen; // 变异：JUMP 当 GOTO`,
+    tests: ['event-execution-batch'],
+    must_mention: 'JUMP 批量处刑 之后 可处刑 已复位（:13），不再显示 [121]',
   },
 ];
