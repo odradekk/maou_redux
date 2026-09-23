@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2295; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#542 起 +1（M11319 bich_level_text 首档判据写反——page-chara-info 的 [18] 按钮表驱动用例守护）
+export const COUNT = 2325; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）
 
 export default [
   {
@@ -21403,5 +21403,263 @@ async function try_kojo_or_stub(
   if (level !== 0) { // 变异：首档判据写反`,
     tests: ['page-chara-info'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
+  },
+  {
+    desc: 'M11326 卖春积极性档位第二臂文案写错（level === 1 的「普通」改「普通级」——一到三级串档，#542）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: `  if (level === 1) {
+    return '普通'; // :1162
+  }`,
+    replace: `  if (level === 1) {
+    return '普通级'; // 变异：第二臂文案写错
+  }`,
+    tests: ['page-chara-info'],
+    must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
+  },
+  {
+    desc: 'M11327 卖春积极性档位第三臂数值错位（${level}等级 改 ${level + 1}等级——档位文案与 CFLAG:120 对不上，#542）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '  return `${level}等级`; // :1164',
+    replace: '  return `${level + 1}等级`; // 变异：第三臂数值错位',
+    tests: ['page-chara-info'],
+    must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
+  },
+
+  // —— #544（S3 强制肉偿）：魔改新增/强制肉偿.ERB → ere/kojo/kojo-forced-payment.js ——
+
+  {
+    desc: 'M11400 强制肉偿的分档条件 ABL:11 门槛放低（>= 3 改 >= 2，欲望 2 的勇者被误判为高档，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    (era.get(`abl:${arg}:11`) || 0) >= 3 ||',
+    replace: '    (era.get(`abl:${arg}:11`) || 0) >= 2 ||',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'ABL:11 = 2 应为低档',
+  },
+  {
+    desc: 'M11401 强制肉偿的分档条件 EXP:20 门槛放低（>= 30 改 >= 29，精液经验 29 被误判为高档，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    (era.get(`exp:${arg}:20`) || 0) >= 30',
+    replace: '    (era.get(`exp:${arg}:20`) || 0) >= 29',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'EXP:20 = 29 应为低档',
+  },
+  {
+    desc: 'M11402 强制肉偿的分档条件 ABL:37（卖淫中毒）项删除（中毒非零却掉进低档，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    Boolean(era.get(`abl:${arg}:37`)) ||\n',
+    replace: '',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'ABL:37 = 1 应为高档',
+  },
+  {
+    desc: 'M11403 强制肉偿的档位抽取上界改错（RAND:4 改 RAND:3，第四档永远抽不到，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '  switch (rand_n(4)) {',
+    replace: '  switch (rand_n(3)) {',
+    tests: ['kojo-forced-payment'],
+    must_mention: '档首行',
+  },
+  {
+    desc: 'M11404 强制肉偿的高档 PLAY 上界改错（RAND:20 改 RAND:19，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '        play = rand_n(20) + 10; // :18',
+    replace: '        play = rand_n(19) + 10; // :18',
+    tests: ['kojo-forced-payment'],
+    must_mention: '档高档 PLAY 的 RAND 上界',
+  },
+  {
+    desc: 'M11405 强制肉偿的高档 COST 上界改错（RAND:1000 改 RAND:900，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '        cost = play * 100 + rand_n(1000) + 1000; // :19',
+    replace: '        cost = play * 100 + rand_n(900) + 1000; // :19',
+    tests: ['kojo-forced-payment'],
+    must_mention: '档高档 COST 的 RAND 上界',
+  },
+  {
+    desc: 'M11406 强制肉偿的低档 PLAY 上界改错（RAND:10 改 RAND:9，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '        play = rand_n(10) + 5; // :22',
+    replace: '        play = rand_n(9) + 5; // :22',
+    tests: ['kojo-forced-payment'],
+    must_mention: '档低档 PLAY 的 RAND 上界',
+  },
+  {
+    desc: 'M11407 强制肉偿的低档 COST 上界改错（RAND:500 改 RAND:400，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '        cost = play * 100 + rand_n(500) + 500; // :23',
+    replace: '        cost = play * 100 + rand_n(400) + 500; // :23',
+    tests: ['kojo-forced-payment'],
+    must_mention: '档低档 COST 的 RAND 上界',
+  },
+  {
+    desc: 'M11408 强制肉偿的单次抵债额改错（PLAY*100 改 PLAY*10，抵债额缩成十分之一，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '        cost = play * 100 + rand_n(1000) + 1000; // :34',
+    replace: '        cost = play * 10 + rand_n(1000) + 1000; // :34',
+    tests: ['kojo-forced-payment'],
+    must_mention: '档债务',
+  },
+  {
+    desc: 'M11409 强制肉偿的债务抵完清零值改错（= 0 改 = 1，欠金永远回不到 0，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).patch.借款 = 0; // :74',
+    replace: '    chara(arg).patch.借款 = 1; // :74',
+    tests: ['kojo-forced-payment'],
+    must_mention: '债务被抵完时清零',
+  },
+  {
+    desc: 'M11410 强制肉偿的债务累加方向改反（+= COST 改 -= COST，欠债越还越多，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).patch.借款 += cost; // :76',
+    replace: '    chara(arg).patch.借款 -= cost; // :76',
+    tests: ['kojo-forced-payment'],
+    must_mention: '-19000',
+  },
+  {
+    desc: 'M11411 强制肉偿的拍片判定取反（!RAND:3 改 RAND:3，2/3 概率拍片，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '  if (!rand_n(3)) {',
+    replace: '  if (rand_n(3)) {',
+    tests: ['kojo-forced-payment'],
+    must_mention: '异常经验 +1',
+  },
+  {
+    desc: 'M11412 强制肉偿的拍片异常经验加错（EXP:50 += 1 改 += 2，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).dungeon.异常经验 += 1; // :102 EXP:ARG:50',
+    replace: '    chara(arg).dungeon.异常经验 += 2; // :102 EXP:ARG:50',
+    tests: ['kojo-forced-payment'],
+    must_mention: '异常经验 +1',
+  },
+  {
+    desc: 'M11413 强制肉偿的拍片拍摄经验加错（EXP:70 的 train 域写 += 1 改 += 2，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).train.拍摄经验 += 1; // :103 EXP:ARG:70（train 域）',
+    replace:
+      '    chara(arg).train.拍摄经验 += 2; // :103 EXP:ARG:70（train 域）',
+    tests: ['kojo-forced-payment'],
+    must_mention: '拍摄经验 +1',
+  },
+  {
+    desc: 'M11414 强制肉偿的片酬只求值一次（入账改用显示的 shown_price，两次 RAND:100 变成一次，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(100);',
+    replace:
+      '    chara(arg).patch.借款 += shown_price; // 变异：入账复用显示值',
+    tests: ['kojo-forced-payment'],
+    must_mention: '片酬分两次求值',
+  },
+  {
+    desc: 'M11415 强制肉偿的片酬除数改错（COST*1/3 改 COST*1/2，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);',
+    replace:
+      '    const shown_price = Math.trunc((cost * 1) / 2) + rand_n(100);',
+    tests: ['kojo-forced-payment'],
+    must_mention: '片酬 333',
+  },
+  {
+    desc: 'M11416 强制肉偿的 EXP_BITCH 实参被「修正」成 "ORAL"（原作 #DIMS 空串被臆改，EXP/JUEL 开始真的变了，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: "    // :107 CALL EXP_BITCH(ARG,, ANAL, PLAY)（ANAL 恒为空串）\n    require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);",
+    replace:
+      "    // :107 变异：TYPE 改成 ANAL\n    require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', 'ANAL', play);",
+    tests: ['kojo-forced-payment'],
+    must_mention: '不应变化（男人=',
+  },
+  {
+    desc: 'M11417 强制肉偿的男人判定读错下标（TALENT:122 改 TALENT:121，扶她走 ANAL 档文案，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '  if (era.get(`talent:${arg}:122`)) {',
+    replace: '  if (era.get(`talent:${arg}:121`)) {',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'ANAL 档经验名（肛门）',
+  },
+  {
+    desc: 'M11418 强制肉偿的善恶值截断方向改错（Math.trunc 改 Math.floor，-10/4 从 -2 变 -3，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '  const local = Math.trunc((-1 * play) / 4);',
+    replace: '  const local = Math.floor((-1 * play) / 4);',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'LOCAL 显示与截断方向',
+  },
+  {
+    desc: 'M11419 强制肉偿的开场行插值顺序错位（「由于{名}欠的」写成「{名}由于欠的」，显示名跑到句首，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    `由于${name_of(arg)}欠的债务实在太高了，在休息的时候${name_of(arg)}被某位的债主绑架了！`,',
+    replace:
+      '    `${name_of(arg)}由于欠的债务实在太高了，在休息的时候${name_of(arg)}被某位的债主绑架了！`,',
+    tests: ['kojo-forced-payment', 'kojo-text-fidelity'],
+    must_mention: '档开场',
+  },
+  {
+    desc: 'M11420 强制肉偿的触发门槛取反（heroine_bitch 的 !RAND:3 改 RAND:3，2/3 概率被强偿，#544）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '    !era.get(`talent:${arg}:0`) &&\n    !rand_n(3)\n  ) {\n    // :77 CALL 强制肉偿(ARG)',
+    replace:
+      '    !era.get(`talent:${arg}:0`) &&\n    rand_n(3)\n  ) {\n    // :77 CALL 强制肉偿(ARG)',
+    tests: ['kojo-forced-payment', 'kojo-dungeon-bitch'],
+    must_mention: '真身开场',
+  },
+  {
+    desc: 'M11421 强制肉偿的片酬显示上界改错（RAND:100 改 RAND:50，显示侧的片酬区间缩半——两处 100 只改显示侧，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);',
+    replace: '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(50);',
+    tests: ['kojo-forced-payment'],
+    must_mention: '拍片显示侧 RAND 上界序',
+  },
+  {
+    desc: 'M11422 强制肉偿的片酬入账上界改错（RAND:100 改 RAND:90，入账侧的片酬区间缩窄，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(100);',
+    replace:
+      '    chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(90);',
+    tests: ['kojo-forced-payment'],
+    must_mention: '拍片入账侧 RAND 上界序',
+  },
+  {
+    desc: 'M11423 强制肉偿的 ANAL 档点数系数改错（{PLAY*10} 改 {PLAY*11}，点数文案与 PLAY 脱钩，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '      `${name_of(arg)}的${palamname(2)}点数＋${play * 10}，${palamname(5)}点数＋${play * 20}，${palamname(7)}点数＋${play}`,',
+    replace:
+      '      `${name_of(arg)}的${palamname(2)}点数＋${play * 11}，${palamname(5)}点数＋${play * 20}，${palamname(7)}点数＋${play}`,',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'ANAL 档点数名（肛门）',
+  },
+  {
+    desc: 'M11424 强制肉偿的 SEX 档点数系数改错（{PLAY*20} 改 {PLAY*21}，SEX 档的欲情点数，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '      `${name_of(arg)}的${palamname(1)}点数＋${play * 10}，${palamname(5)}点数＋${play * 20}，${palamname(7)}点数＋${play}`,',
+    replace:
+      '      `${name_of(arg)}的${palamname(1)}点数＋${play * 10}，${palamname(5)}点数＋${play * 21}，${palamname(7)}点数＋${play}`,',
+    tests: ['kojo-forced-payment'],
+    must_mention: 'SEX 档点数名（私处）',
+  },
+  {
+    desc: 'M11425 强制肉偿的善恶值除数改错（-1*PLAY/4 改 /5，LOCAL 的档位整体偏移，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '  const local = Math.trunc((-1 * play) / 4);',
+    replace: '  const local = Math.trunc((-1 * play) / 5);',
+    tests: ['kojo-forced-payment'],
+    must_mention: '除数 4 与向零截断',
+  },
+  {
+    desc: 'M11426 强制肉偿的 :105 无条件 EXP_BITCH 调用删除（ORAL 那一次整个丢掉，只剩两臂内的一次，#544）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: "  // :105 CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前\n  require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);",
+    replace:
+      '  // :105 CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前\n  // 变异：删掉 :105 的空串调用',
+    tests: ['kojo-forced-payment'],
+    must_mention: '的调用次数',
+  },
+  {
+    desc: 'M11427 强制肉偿的调用点漏写 await（heroine_bitch 不等真身跑完就往下走，:78 的 RAND:36 抢走 RAND:4 的随机数、输出顺序也反了，#544 第 1 轮验收返工）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '    // :77 CALL 强制肉偿(ARG)\n    await forced_payment(arg, rand);',
+    replace:
+      '    // :77 CALL 强制肉偿(ARG)\n    forced_payment(arg, rand); // 变异：漏 await',
+    tests: ['kojo-forced-payment', 'kojo-dungeon-bitch'],
+    must_mention: '调用点与真身的抽取序',
   },
 ];

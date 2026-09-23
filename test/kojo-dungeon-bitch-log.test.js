@@ -407,7 +407,7 @@ test('DUNGEON_SEX_LOG/ANAL_LOG/LES_LOG：死代码函数可调用、按 ARG:0 �
 
 // —— 存根清单核对（kojo-dungeon-bitch.js 已删前六项） ——
 
-test('【验收】kojo-dungeon-bitch.js 的 STUBBED_CALLS 已删前六项（真身换接）', () => {
+test('【验收】kojo-dungeon-bitch.js 的 STUBBED_CALLS 已清空（真身换接）', () => {
   const fixture = create_era_fixture();
   const mod = fixture.load_module('kojo/kojo-dungeon-bitch');
   const removed = [
@@ -417,6 +417,8 @@ test('【验收】kojo-dungeon-bitch.js 的 STUBBED_CALLS 已删前六项（真�
     'LOG_BITCH_SELF',
     'FS_BITCH',
     'FS_LOG_BITCH',
+    // #544：强制肉偿换真身（ere/kojo/kojo-forced-payment.js）
+    '强制肉偿',
   ];
   for (const name of removed) {
     assert.ok(
@@ -424,7 +426,7 @@ test('【验收】kojo-dungeon-bitch.js 的 STUBBED_CALLS 已删前六项（真�
       `STUBBED_CALLS 应已删 ${name}`,
     );
   }
-  assert.deepEqual(mod.STUBBED_CALLS, ['强制肉偿']);
+  assert.deepEqual(mod.STUBBED_CALLS, []);
 });
 
 test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BITCH 真身文本）', async () => {

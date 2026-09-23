@@ -18,12 +18,15 @@
  *
  * == 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） ==
  *
- *   - LOG_TRY_BITCH / LOG_AFTER_BITCH / LOG_BITCH_ANIMAL / LOG_BITCH_SELF /
- *     FS_BITCH / FS_LOG_BITCH —— 均在 DUNGEON_BITCH_LOG.ERB（H16 #185，
- *     被本票阻塞）。卖春主流程的日志/文本函数暂以占位行替代，随 H16。
- *   - KARMA —— CHAR_ST.ERB:71（善恶值增减，阶段 5，见 #169 跨目录依赖表）。
- *   - 强制肉偿 —— 魔改新增/强制肉偿.ERB（债务过高强制卖春；调用 EXP_BITCH，
- *     随强制肉偿票）。
+ *   无。LOG_* / FS_* 六项随 H16 #185 换真身，强制肉偿随 #544 换真身
+ *   （ere/kojo/kojo-forced-payment.js），名单已空。
+ *
+ * == 跨文件调用 ==
+ *
+ *   强制肉偿（魔改新增/强制肉偿.ERB，:77 调用点）落在 ere/kojo/
+ *   kojo-forced-payment.js，本文件顶层 import 它的 forced_payment；它对
+ *   exp_bitch 走**函数内延迟 require** 回指本文件——两个模块相互引用，
+ *   装载期的循环由那一侧的延迟 require 打断（dungeon-trap.js:1996 先例）。
  *
  * == 随机源 ==
  *
@@ -45,7 +48,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
-const { stub_line } = require('#/utils/stub-line');
+const { forced_payment } = require('#/kojo/kojo-forced-payment');
 const {
   expname,
   palamname,
@@ -59,9 +62,9 @@ const {
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 核对固定）；名单变动必须同步清单。#544 起强制肉偿已换真身，名单为空。
  */
-const STUBBED_CALLS = ['强制肉偿'];
+const STUBBED_CALLS = [];
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -176,7 +179,8 @@ async function heroine_bitch(arg, rand = default_rand) {
     !era.get(`talent:${arg}:0`) &&
     !rand_n(3)
   ) {
-    stub_line('强制肉偿', '债务过高强制卖春'); // :77 CALL 强制肉偿
+    // :77 CALL 强制肉偿(ARG)
+    await forced_payment(arg, rand);
   }
 
   // :78-81 自慰（RAND:36 <= ... 且 ABLE）
