@@ -113,11 +113,16 @@
 # #388 那行里的旧名按现状改回现名。
 # #548（S7 零散存根）复测：+1（chara34-mark.test.js 的引擎门控用例「引擎接受
 # mark:<cid>:4 的写入：addCharacter 后 setVar 落 data 可读回」——引擎真
-# parse_data_file + create_add_character + set_var 驱动），现为 80
-# （6560 = 6479 过 + 80 跳过 + 1 挂，ERE_ENGINE_ASAR=none 实测；那 1 挂是
-# 同票漏在 com-toy.js 顶层的 require，与跳过数无关，已在交付前修掉）。
-# 算式：79（既有）+ 1（chara34-mark 的 engine_test）= 80。本票另三个新测试
+# parse_data_file + create_add_character + set_var 驱动）。本票另三个新测试
 # 文件（dungeon-bedroom / event-charadead / page-shop-floor）与 com-toy /
 # event-end / page-shop / compare-train / extalent-table 的改动全走
 # era-fixture 路径，无 engine-bundle 门控，不新增跳过。
-80
+# #552（S9 口上 PBAND 下标）：+1（variable-yml.test.js 的引擎门控用例「item:PBAND
+# 名字表查不到 → 读恒 undefined、写另立键」——引擎侧证据钉住「口上具名地址
+# 永远判不出持有」的依据）。本票的口上分支用例全走 era-fixture 路径，不加数。
+# 两支合并后重测（#548 并入 #552）：79（#435 基线）+ 1（#548 的 chara34-mark）
+# + 1（#552 的 variable-yml）= 81。**实测**：ERE_ENGINE_ASAR=none 跑全库
+# （6625 = 6544 过 + 81 跳过 + 0 挂），node tools/skip-count-check.mjs 与
+# 本基线一致。两边各自把 79 改成 80 是各算各的，合并后既不是 80 也不是
+# 80+80，只能实测（merge-conflicts.md 的计数型基线一节）。
+81

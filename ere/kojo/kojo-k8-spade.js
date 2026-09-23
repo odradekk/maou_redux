@@ -11968,7 +11968,7 @@ async function colosseum_kojo_8() {
       if (
         era0(`talent:${assi}:121`) != 1 &&
         era0(`talent:${assi}:122`) != 1 &&
-        era0('item:PBAND') == 1
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         await era.print(`假阴茎`); // :7355
       }
@@ -12011,7 +12011,7 @@ async function colosseum_kojo_8() {
       if (
         era0(`talent:${assi}:121`) != 1 &&
         era0(`talent:${assi}:122`) != 1 &&
-        era0('item:PBAND') == 1
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         await era.print(`假阴茎`); // :7390
       }
@@ -12051,7 +12051,7 @@ async function colosseum_kojo_8() {
       if (
         era0(`talent:${assi}:121`) != 1 &&
         era0(`talent:${assi}:122`) != 1 &&
-        era0('item:PBAND') == 1
+        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
       ) {
         await era.print(`假阴茎`); // :7417
       }

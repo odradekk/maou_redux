@@ -25,8 +25,23 @@
  * mark/stain/tequip/source/palam/juel/gotjuel，含 VariableSize.csv 的声明
  * 上限）与两个字符串表（cstr/tstr）。不覆盖 portcflag/c_relation/
  * c_relation_sub——后两者是按 [角色][角色] 二维矩阵寻址的关系表，交换语义
- * 需要同时改写矩阵里所有指向这两个角色的行，不是按 cid 整表互换；当前唯一
- * 调用点（CASE 17，人间界单人转移）不依赖这三张表，真正需要时再补。
+ * 需要同时改写矩阵里所有指向这两个角色的行，不是按 cid 整表互换。
+ *
+ * **SWAPCHARA 覆盖 NAME/CALLNAME、不覆盖 SAVESTR**（指南 commands/
+ * character.md「交换两个角色的所有数据」＋ #545 逐行核）：SAVESTR 是普通
+ * SAVEDATA 字符串数组、不是 CHARADATA，所以 魔改新增/角色編號交換.ERB:112-116
+ * 才要手工换回它（先暂存两个名字、SWAPCHARA 之后写回）——净效果是「名字与
+ * 数据作为整体互换编号」。先前一版注释由该手法反推「SWAPCHARA 不覆盖
+ * NAME」，方向错了（SAVESTR 与 NAME 在本作共用存储是 ere 侧的巧合，原作里
+ * 是两套）；结论不变：swap_chara() 范围表不含 callname，姓名两槽由调用方
+ * 显式处理（transferapp 的呼び名互换）。
+ *
+ * **换号（角色編號交換.ERB @換號）不走 SWAPCHARA**（#545 返工）：原作用它
+ * 换「编号」，而 ere 的角色 ID 即身份，搬数据会把身份与人拆开（读点如
+ * kojo-k1-confident.js 的 `(no:assi || assi) === 17` 会落到另一个人身上）。
+ * ere 侧的换号只交换移植自建的排序编号——见 ere/page/page-chara-number-swap.js
+ * 文件头与该字段的实现 ere/chara/chara-portcflag.js。先前那版在此实现的
+ * swap_chara_numbers() 随之删除。
  *
  * 二次互换会互相抵消（原作行为，非移植缺陷，1:1 保留）：TRANSFER_SOUL 先
  * `SWAPCHARA MASTER, ARG` 整表互换 cflag/talent/base/maxbase/abl/ex_talent 等，
@@ -36,9 +51,10 @@
  * swap_chara() 覆盖范围内的字段（呼び名 callname:-2、灵魂错位 debuff 的最终
  * 赋值）才是真正发生的净变化。「等级/攻防/婚姻状态随身体留下、只有呼び名与
  * 错位素质跟灵魂走」是否为原作本意无法考证，这里不做修正，只如实保留可观测
- * 效果（对照 target/ERB/魔改新增/角色編號交換.ERB:111-114 的 SAVESTR 显式
- * 重写手法可推断 SWAPCHARA 不覆盖 SAVESTR/NAME，本文件的 swap_chara() 范围
- * 表因此也不含 callname，与此互相印证）。
+ * 效果（SAVESTR 是普通 SAVEDATA 字符串数组、SWAPCHARA 不动它，所以
+ * target/ERB/魔改新增/角色編號交換.ERB:112-116 才手工换回；NAME/CALLNAME
+ * 与覆盖范围见上段）。本文件的 swap_chara() 范围表不含 callname，姓名两槽
+ * 由调用方显式处理。
  */
 
 const era = require('#/era-electron');

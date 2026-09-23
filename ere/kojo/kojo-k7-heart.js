@@ -13553,10 +13553,11 @@ async function dungeon_attack_k7(rand) {
 /**
  * @COLOSSEUM_KOJO_7（:8206-8349）：死斗场专用口上（TEQUIP:55 时由
  * KOJO_MESSAGE_COM_7 头部守卫岔入）。SELECTCOM 覆盖：55/56/31/5/21/27/51。
- * `ITEM:PBAND`（源 :8258/:8293/:8320）里的 PBAND 是 `CSV/VariableSize.csv`
- * 声明的自定义全局变量，`SYSTEM ver1.0.3.ERB:42` 启动时赋值 4 且全库未
- * 再改写，等价常量 `ITEM:4`（同 system/train/com-hardcore.js 的
- * `const PBAND = 4` 先例），故按 `item:4` 直译，非字符串具名寻址。
+ * `ITEM:PBAND`（源 :8258/:8293/:8320）里的 PBAND 是 Emuera 内建非角色变量
+ * （`CSV/_replace.csv` 的 `PBANDの初期値` 默认 4），`SYSTEM ver1.0.3.ERB:42`
+ * 启动时赋值 4 且全库未再改写，恒等于 `ITEM:4`（4 号假阳具；同
+ * system/train/com-hardcore.js 的 `const PBAND = 4` 先例），故按 `item:4`
+ * 直译，非字符串具名寻址。
  * @returns {Promise<number>} 0
  */
 async function colosseum_kojo_7() {
