@@ -2457,6 +2457,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH.ERB',
+        ref: '1160-1164',
+        any: [/^\s*PRINT 没有/m, /^\s*ELSEIF CFLAG:ARG:120 == 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_BITCH.ERB',
         ref: '1164',
         any: [/^\s*PRINTFORM \{CFLAG:ARG:120\}等级/m],
       },

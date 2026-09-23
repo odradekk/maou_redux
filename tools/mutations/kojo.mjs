@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2332; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）
+export const COUNT = 2335; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）
 
 export default [
   {
@@ -21390,6 +21390,39 @@ async function try_kojo_or_stub(
     replace: 'dungeon_victory_family.register(3, dungeon_victory_k2);',
     tests: ['kojo-register-coverage'],
     must_mention: '未注册进 dungeon_victory_family[2]',
+  },
+  // —— #542：卖春积极性档位文案（PTJ_BUTTON 默认态的 [18] 按钮共用）——
+  {
+    desc: 'M11319 卖春积极性档位首判写反（level === 0 改 !== 0——「没有」与「N等级」两档互串，#542）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: `function bich_level_text(arg) {
+  const level = era.get(\`cflag:\${arg}:120\`) || 0;
+  if (level === 0) {`,
+    replace: `function bich_level_text(arg) {
+  const level = era.get(\`cflag:\${arg}:120\`) || 0;
+  if (level !== 0) { // 变异：首档判据写反`,
+    tests: ['page-chara-info', 'kojo-dungeon-bitch'],
+    must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
+  },
+  {
+    desc: 'M11326 卖春积极性档位第二臂文案写错（level === 1 的「普通」改「普通级」——一到三级串档，#542）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: `  if (level === 1) {
+    return '普通'; // :1162
+  }`,
+    replace: `  if (level === 1) {
+    return '普通级'; // 变异：第二臂文案写错
+  }`,
+    tests: ['page-chara-info', 'kojo-dungeon-bitch'],
+    must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
+  },
+  {
+    desc: 'M11327 卖春积极性档位第三臂数值错位（${level}等级 改 ${level + 1}等级——档位文案与 CFLAG:120 对不上，#542）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '  return `${level}等级`; // :1164',
+    replace: '  return `${level + 1}等级`; // 变异：第三臂数值错位',
+    tests: ['page-chara-info', 'kojo-dungeon-bitch'],
+    must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
 
   // —— #544（S3 强制肉偿）：魔改新增/强制肉偿.ERB → ere/kojo/kojo-forced-payment.js ——

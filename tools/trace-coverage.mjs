@@ -108,11 +108,11 @@
 //     清单状态词核对与未了结计数**不随范围收窄**（它读的是清单，不是
 //     target 文件）——写坏型探针正靠它带进副本跑。
 //
-// 已判定不实现之外的两处显式裁定落点（票内定夺，依据见 issue #331 评论）：
-//   - DEBUG小白娘2024ver0.0.14.ERB 与 MOD/、魔改新增/ 未移植文件归
-//     待移植：清单给它们挂着存根与 #542（S1）的归属，是排期不是不实现
-//     （阶段 6 / #329 裁定 6、#540「阶段 6」范围决定 2–4；不实现结论由
-//     #542 写进清单，#541 只把状态词归一）。
+// 已判定不实现之外的显式裁定落点（票内定夺，依据见 issue #331 评论）：
+//   - DEBUG小白娘2024ver0.0.14.ERB、MOD/ 五个文件、魔改新增/img.ERB 自
+//     #542 起在 RULINGS 表里判死（依据 #540 范围决定 2–4），不再归待移植；
+//     清单同名行同步改判死终态。#541 时它们还是排期（挂 #542 的归属），
+//     本票把裁定写进两处。
 //   - 口上/EVENT_K902_普林希丝 ver1.0.3.ERB 归已移植（经证据）而非
 //     清单 251 行的「不实现」：那行判的是普林希丝没有自己的口上
 //     （#14 缺陷 1 的 1:1 保留）；文件里生效的那份 _903 定义与
@@ -133,12 +133,23 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 9; // #544（S3）起：#467 合并态的 10 − 1 = 9——
+export const PENDING_BASELINE = 2; // #542 合并态实测（并上 #544 的 master f45e31f）：RULINGS 表加
+// DEBUG小白娘2024ver0.0.14.ERB、MOD/ 五个文件、魔改新增/img.ERB 七条判死
+// （依据 #540 范围决定 2–4），七份文件从「待移植」直接进「已判定不实现」；
+// master 侧 #544 已把 魔改新增/强制肉偿.ERB 减 1。10 − 7 − 1 = 2，与
+// `node tools/trace-check.mjs --coverage` 的重测一致（显式改小，非顺手改数字）。
+// 剩下的 2 是 S2/#543（處刑改寫.ERB）与 S4（统一卖春积极性.ERB）的移植目标，
+// 各票交付时各自 −1。历次说明保留在下面，不改写。
+// #541 合并态实测 10：本票未动任何证据面，S0 只是状态词归一与登记订正，
+// 待移植 10 不动。
+// #544（S3）合并态实测 9：魔改新增/强制肉偿.ERB 落 ere/kojo/kojo-forced-payment.js、
+// 清单对应行转「已实现」，10 − 1 = 9。
+// 以下为 #467 及更早的记录。
+// export const PENDING_BASELINE = 9; // #544（S3）起：#467 合并态的 10 − 1 = 9——
 // 魔改新增/强制肉偿.ERB 随本票落 ere/kojo/kojo-forced-payment.js、清单对应行
 // 转「已实现」，`node tools/trace-check.mjs --coverage` 重测一致（已移植 308／
 // 部分移植 9／已判定不实现 10／待移植 9／纯声明 10）。数字取自重测，不相加、
 // 不取一侧。
-// ——以下为 #467 的原始说明，数值已随本票抬低——
 // export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#487 的 master cf3b5d9）：
 // 先把现役值换成 999 占位再跑 `node tools/trace-check.mjs --coverage`，实测 10；
 // master 侧现役 15（#466 的 23 → 15）− 本票的 5（ABL/ABLUP37.ERB／ABLUP39.ERB／
@@ -460,6 +471,41 @@ export const RULINGS = [
     path: 'target/ERB/キャラ関数/FULLMOON.ERB',
     reason:
       '#394：@FULLMOON_EFFECT 全库零调用者（只命中它自己的定义行），判据就是这一条。文件头 `; CALLBY @WEAPON_RESTORE` 是搬迁前调用点的化石，而 CHAR_ST.ERB:62-66 的活代码只接手了它的一部分：狼人那档的 `CFLAG:11/12 *= 10` 两条照搬并加上了真正的满月窗口 `DAY:2 ∈ [14,16]`，但 CASE 2 里的 `BASE:0/1 = MAXBASE:0/1`（体力气力回满）没有跟过去，`$LABEL_种族` 的其余分支与整个 `$LABEL_种族2` 在活代码里也没有对应物。所以它是被弃用的旧实现，不是被逐字取代',
+  },
+  {
+    path: 'target/ERB/DEBUG小白娘2024ver0.0.14/DEBUG小白娘2024ver0.0.14.ERB',
+    reason:
+      '#542（#540 范围决定 3）：原作者的调试工具，与 #101 Out of scope「DEBUG小白娘 开发者菜单」一致。原作在商店输入 999 进入——ere 的输入只接受已打印按钮（#130 实测不送达），该入口在 ere 里本来就输不进来；验收造档走 tools/make-acceptance-save.mjs',
+  },
+  {
+    path: 'target/ERB/MOD/PartTimeJob/PTJ.ERB',
+    reason:
+      '#542（#540 范围决定 2）：需在设置页 [26] 手动开启、默认关闭的打工 MOD。默认态分支（SHOW_BUTTON_BICH_LEVEL 的 [18] 卖春积极性按钮）已照原作接线（ere/page/page-chara-info.js），打工变体不显示',
+  },
+  {
+    path: 'target/ERB/MOD/mod开关ver1.0.11/MOD_SWITCH ver1.0.11.ERB',
+    reason:
+      '#542（#540 范围决定 2）：MOD 开关页——设置页 [26] 进入的设置菜单，五个 MOD 全部默认关、整目录判不移植；[26] 按钮保留可见，按下打不移植提示',
+  },
+  {
+    path: 'target/ERB/MOD/一键升级/CHARA_INFO_FUNC.ERB',
+    reason:
+      '#542（#540 范围决定 2）：一键升级 MOD，与基础版 キャラ関数/CHARA_INFO_FUNC.ERB 六个同名函数只有 CHARA_INFO_UP_LEVEL 不同（MOD 版多批量升级）——基础版已移植，重名选哪份不再实测，MOD 版不移植',
+  },
+  {
+    path: 'target/ERB/MOD/魔界银行 ver 1.0.1/INTEREST.ERB',
+    reason:
+      '#542（#540 范围决定 2）：魔界银行的利息结算，入口在网络菜单 [5]（MAOUNET_MODPRINT 的 GETBIT(EX_FLAG:9000,0) 守卫，默认关不打印）——随 MOD 目录整体判不移植',
+  },
+  {
+    path: 'target/ERB/MOD/魔界银行 ver 1.0.1/MAKAI_BANK.ERB',
+    reason:
+      '#542（#540 范围决定 2）：魔界银行本体，同 INTEREST.ERB——默认关闭的 MOD，网络菜单按钮在默认态不打印',
+  },
+  {
+    path: 'target/ERB/魔改新增/img.ERB',
+    reason:
+      '#542（#540 范围决定 4）：立绘系统——设置页 [28] 开关默认关、素材约 260 张 13MB 不在仓库、只增强显示，与 #101 Out of scope「立绘纸娃娃合成系统」同一结论；[28] 与角色详情 [20] 按钮保留可见，按下打不移植提示',
   },
 ];
 
