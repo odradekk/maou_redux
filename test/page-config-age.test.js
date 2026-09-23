@@ -66,8 +66,14 @@ test('CONFIG_AGE_SETTING 菜单：[0]-[3] 恒渲染，[9] 只在位 13（使用�
   assert.ok(accelerators.has(3));
   assert.ok(!accelerators.has(9), '位 13 关：[9] 不渲染（原作 :865-866）');
   // 四个开关的初始状态文案（flag:5 未设 → 全 OFF）
-  assert.ok(texts_of(fixture, 0).some((t) => t.includes('OFF')), '年龄显示初始 OFF');
-  assert.ok(texts_of(fixture, 1).some((t) => t.includes('OFF')), '种族年龄初始 OFF');
+  assert.ok(
+    texts_of(fixture, 0).some((t) => t.includes('OFF')),
+    '年龄显示初始 OFF',
+  );
+  assert.ok(
+    texts_of(fixture, 1).some((t) => t.includes('OFF')),
+    '种族年龄初始 OFF',
+  );
 
   const fixture2 = create_era_fixture();
   const { config_age_setting: again } = load(fixture2);
@@ -80,8 +86,14 @@ test('CONFIG_AGE_SETTING 菜单：[0]-[3] 恒渲染，[9] 只在位 13（使用�
     new Set(button_entries(fixture2).map(([acc]) => acc)).has(9),
     '位 13 开：[9] 渲染',
   );
-  assert.ok(texts_of(fixture2, 1).some((t) => t.includes('ON')), '位 13 开：种族年龄 ON');
-  assert.ok(!texts_of(fixture2, 0).some((t) => t.includes('ON')), '位 12 关：年龄显示 OFF');
+  assert.ok(
+    texts_of(fixture2, 1).some((t) => t.includes('ON')),
+    '位 13 开：种族年龄 ON',
+  );
+  assert.ok(
+    !texts_of(fixture2, 0).some((t) => t.includes('ON')),
+    '位 12 关：年龄显示 OFF',
+  );
 
   const fixture3 = create_era_fixture();
   const { config_age_setting: third } = load(fixture3);
@@ -331,7 +343,10 @@ test('RACE_CONFIG [98]：确认后整表回默认并直接返回（:1035-1048）
     fixture.text_lines().some((t) => t.includes('全种族的年龄均返回默认值。')),
     '确认页首行',
   );
-  assert(fixture.text_lines().some((t) => t.includes('确认吗？')), '确认页询问行');
+  assert(
+    fixture.text_lines().some((t) => t.includes('确认吗？')),
+    '确认页询问行',
+  );
 });
 
 test('RACE_CONFIG [98]：取消（[1]）回顶层不写表', async () => {

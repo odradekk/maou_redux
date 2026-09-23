@@ -346,8 +346,14 @@ test('draw_config_page 的 [30] 状态行随反作弊开关翻转（OFF = 可开
   const off_line = fixture.lines_history.find(
     (l) => l.type === 'button' && l.accelerator === 30,
   );
-  assert.ok(off_line.text.includes('反作弊开关'), `[30] 按钮行标签：${off_line.text}`);
-  assert.ok(off_line.text.includes('OFF（可开修改）'), `OFF 档：${off_line.text}`);
+  assert.ok(
+    off_line.text.includes('反作弊开关'),
+    `[30] 按钮行标签：${off_line.text}`,
+  );
+  assert.ok(
+    off_line.text.includes('OFF（可开修改）'),
+    `OFF 档：${off_line.text}`,
+  );
 
   const fixture2 = create_era_fixture();
   const { config_menu: again } = load(fixture2);
