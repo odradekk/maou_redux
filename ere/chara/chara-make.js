@@ -211,7 +211,7 @@ async function chara_make(cid, arg1 = 0, arg2 = 0, rand, template_id = cid) {
   await cm_cloth(cid, rand_n);
 
   // :112 一人称の設定（ere/chara/chara-self-call.js 的 #383 实现复用）
-  random_self_call(cid);
+  await random_self_call(cid); // #546 起为 async（MODE 1 的输入等待）
 
   // :114-117 年齢/身長表示设定（FLAG:5 位 12/15）时生成身体数据（真身自
   // #385 起在 ere/chara/chara-body.js；此处照原作只判 FLAG:5，不判 CFLAG

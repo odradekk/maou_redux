@@ -60,6 +60,11 @@
  *   - 四个列表的行内彩色片段（爱慕/淫乱/组队/归还/侵攻迎击徽章）用
  *     `{content,color}` 片段数组承载（page-dungeon-info2.js 同款 fragments
  *     写法），颜色为 `SETCOLOR r,g,b` 的十六进制等价；
+ *   - CASE 8 / CASE 16 的分发（:1062/:1070-1074）沿用项目按钮输入通例：
+ *     原作两支 CASE 无前置判断、Emuera 的 INPUT 接受任意整数（手输 8/16 在
+ *     任何分页都进得去，含魔王与按钮不显示的场合）；ere 只接受已打印按钮
+ *     的快捷键（#129），[8]/[16] 的可见性判定因此变成访问限制——两处
+ *     case 内的注释写明，行为保持（第 1 轮验收补记）；
  *   - 立绘更换按钮 `[20]`（:870-871）：立绘系统判不移植（#542，#540 范围
  *     决定 4——开关默认关、素材不在仓库、只增强显示）。原作守卫「立绘开关
  *     && CFLAG:ARG:1 == 0 && ARG != MASTER」的开关项恒假，照抄则按钮永不可
@@ -84,11 +89,18 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+// 导入分组按 AGENTS.md（system 在 page 前；本文件存量的 chara-before-page
+// 顺序是历史形态，本票新增行按约定位置放）
+const {
+  show_button_equip,
+  equip_st_show,
+} = require('#/system/equip/equip-show');
 const { search_family } = require('#/chara/chara-family');
 const {
   chara_info_name_edit,
   show_button_name_edit,
 } = require('#/chara/chara-name-edit');
+const { random_self_call } = require('#/chara/chara-self-call');
 const { sort_by_number } = require('#/chara/chara-portcflag');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
@@ -126,11 +138,7 @@ const {
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { show_chara_info } = require('#/page/page-chara-info-show');
-const {
-  stub_line,
-  stub_line_wait,
-  not_ported_line_wait,
-} = require('#/utils/stub-line');
+const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
 
 const NUM_PAGE = 24;
 
@@ -141,18 +149,16 @@ const NUM_PAGE = 24;
  * 结婚三对按钮与流程换真身（ere/chara/chara-job-change.js、
  * chara-temptation.js、chara-marriage.js），九条从名单移除；#390 起
  * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除。
- * 两票各删一批，合并后四条一并不在：#542 起 PTJ_BUTTON（打工 MOD）与更换
+ * 多票各删一批，合并后只剩一条：#542 起 PTJ_BUTTON（打工 MOD）与更换
  * 立绘（立绘系统）判不移植——入口提示行不是存根占位，移出名单（PTJ_BUTTON
- * 的默认态分支＝[18] 卖春积极性按钮，另一支真身见 kojo-dungeon-bitch）；#545
- * 起统一卖春积极性 / 换号两支换真身（page-uniform-bitch-level.js、
- * page-chara-number-swap.js），最后两条也移出。
+ * 的默认态分支＝[18] 卖春积极性按钮，另一支真身见 kojo-dungeon-bitch）；
+ * #545 起统一卖春积极性 / 换号两支换真身（page-uniform-bitch-level.js、
+ * page-chara-number-swap.js）；#546 起装备详情三函数换真身
+ * （system/equip/equip-show.js，[16] 按钮与 CASE 16）、RANDOM_SELF_CALL 的
+ * MODE 1 换真身（chara/chara-self-call.js，CASE 8 的自定义输入）——四条
+ * 一并移出，仅剩 CHAR_DEBUG（调试功能不移植）。
  */
-const STUBBED_CALLS = [
-  'SHOW_BUTTON_EQUIP',
-  'EQUIP_ST_SHOW',
-  'CHAR_DEBUG',
-  'RANDOM_SELF_CALL',
-];
+const STUBBED_CALLS = ['CHAR_DEBUG'];
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
@@ -737,7 +743,9 @@ async function chara_info_individual(arg, chara_sort) {
     } else if (sub_page === 1 || sub_page === 2) {
       if (is_trainable(current) === 0) era.printButton('设为目标', 6);
       if (is_assistable(current) === 0) era.printButton('设为助手', 7);
-      await stub_line('SHOW_BUTTON_EQUIP', '「装备确认」按钮', '随装备票');
+      // :880 CALL SHOW_BUTTON_EQUIP(16,ARG)（#546 真身：system/equip/
+      // equip-show.js——五道 OR 判定放行才渲染按钮，不放行时零输出）
+      show_button_equip(16, current);
       // :883 CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
       // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE =
       // SHOW_BUTTON_BICH_LEVEL(18,ARG) 的 [18] 卖春积极性按钮（档位文案
@@ -890,14 +898,15 @@ async function chara_info_individual(arg, chara_sort) {
         await child_care_chara(current);
         continue;
       case 8:
-        // RANDOM_SELF_CALL(ARG,1)：MODE 1 是自定义输入改名分支，已落地的
-        // random_self_call() 只实现 MODE 0（随机重掷），两者不是同一行为
-        // （chara-init.js 文件头），此处不能借用，登记为独立存根
-        await stub_line_wait(
-          'RANDOM_SELF_CALL',
-          '一人称改名（自定义输入模式）',
-          '随改名票',
-        );
+        // :1062 CALL RANDOM_SELF_CALL(ARG,1)（#546 真身：chara/chara-
+        // self-call.js 的 MODE 1——自定义输入分支；[8] 按钮由 SHOW_BLOCK
+        // 渲染，见 components/chara-info-title.js）。
+        // 有意偏离（第 1 轮验收补记）：原作 CASE 8 无前置判断，任何分页手输
+        // 8（含魔王、[8] 按钮不显示的第 2/3 页）都能重设一人称；ere 的
+        // input 只接受本轮已打印按钮的快捷键（#129），[8] 又只在非魔王的
+        // 页 0/1 打印——SHOW_BLOCK 的可见性判定在这里变成了**访问限制**
+        //（魔王的一人称无法自定义）。行为保持，与项目按钮输入通例一致
+        await random_self_call(current, undefined, 1);
         continue;
       case 9:
         if (current !== 0) {
@@ -905,7 +914,15 @@ async function chara_info_individual(arg, chara_sort) {
         }
         continue;
       case 16:
-        await stub_line_wait('EQUIP_ST_SHOW', '装备状态一览', '随装备票');
+        // :1070-1074 LOCAL = LINECOUNT（死赋值，无人再读）→ CALL
+        // EQUIP_ST_SHOW, ARG（#546 真身：system/equip/equip-show.js）→ WAIT
+        // → GOTO DRAW_PAGE（本循环天然整页重绘，continue 即是）。
+        // 有意偏离（第 1 轮验收补记）：原作 CASE 16 同样无前置判断——
+        // CHECK_ABLE_TO_SHOW_EQUIP 返回 1 时只是不显示 [16] 按钮，手输 16
+        // 在任何分页仍能看装备；ere 只接受已打印按钮，判定不放行 = 完全
+        // 不可达。行为保持，与项目按钮输入通例一致
+        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行
+        await era.waitAnyKey();
         continue;
       case 18:
         await set_bich_level(current);

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 19;
+export const COUNT = 32; // #174 建表 19 条；#546 +13（M11520-M11531、M11547：装备详情显示三函数——诅咒行随规范审查补可达用例）
 
 export default [
   {
@@ -160,5 +160,110 @@ export default [
       '    if (w.存储编号 === -1 || (found && w.强度 < floor && w.诅咒 === 0)) {',
     tests: ['equip-system'],
     must_mention: '阶层 0 → 空槽 551 不换装',
+  },
+  // —— #546：装备详情显示三函数（ere/system/equip/equip-show.js）——
+  {
+    desc: 'M11520 CHECK_ABLE_TO_SHOW_EQUIP 可出售门槛改坏（> 0 改 > 1——出售标记 1 的角色被判不可见）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if ((era.get(`cflag:${cid}:0`) || 0) > 0) {',
+    replace: '  if ((era.get(`cflag:${cid}:0`) || 0) > 1) {',
+    tests: ['equip-system'],
+    must_mention: '可出售（CFLAG:0 > 0）',
+  },
+  {
+    desc: 'M11521 CHECK_ABLE_TO_SHOW_EQUIP 信赖度门槛改坏（>= 20 改 >= 21——信赖度恰 20 被判不可见）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if ((era.get(`cflag:${cid}:2`) || 0) >= 20) {',
+    replace: '  if ((era.get(`cflag:${cid}:2`) || 0) >= 21) {',
+    tests: ['equip-system'],
+    must_mention: '信赖度 20（恰好达标）',
+  },
+  {
+    desc: 'M11522 CHECK_ABLE_TO_SHOW_EQUIP 顺从条件改坏（> 0 改 >= 0——恒真，善恶值 1 也放行）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if ((era.get(`abl:${cid}:10`) || 0) > 0) {',
+    replace: '  if ((era.get(`abl:${cid}:10`) || 0) >= 0) {',
+    tests: ['equip-system'],
+    must_mention: '善恶值 1 且其余全不满足',
+  },
+  {
+    desc: 'M11523 CHECK_ABLE_TO_SHOW_EQUIP 爱表现读错素质号（TALENT:28 改 29）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if (era.get(`talent:${cid}:28`) || 0) {',
+    replace: '  if (era.get(`talent:${cid}:29`) || 0) {',
+    tests: ['equip-system'],
+    must_mention: '爱表现（TALENT:28）',
+  },
+  {
+    desc: 'M11524 CHECK_ABLE_TO_SHOW_EQUIP 善恶值边界改坏（<= 0 改 < 0——善恶值恰 0 被判不可见）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if ((era.get(`cflag:${cid}:151`) || 0) <= 0) {',
+    replace: '  if ((era.get(`cflag:${cid}:151`) || 0) < 0) {',
+    tests: ['equip-system'],
+    must_mention: '未设善恶值（读得 0 ≤ 0）',
+  },
+  {
+    desc: 'M11525 CHECK_ABLE_TO_SHOW_EQUIP 不可见返回值改坏（return 1 改 return 0——五道全不满足也放行）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  // :1113 見せられないよ\n  return 1;',
+    replace: '  // :1113 見せられないよ\n  return 0;',
+    tests: ['equip-system'],
+    must_mention: '善恶值 1 且其余全不满足',
+  },
+  {
+    desc: 'M11526 SHOW_BUTTON_EQUIP 守卫取反（=== 1 改 === 0——放行时反而不渲染按钮）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if (check_able_to_show_equip(cid) === 1) {',
+    replace: '  if (check_able_to_show_equip(cid) === 0) {',
+    tests: ['equip-system'],
+    must_mention: '[16] 装备情报',
+  },
+  {
+    desc: 'M11527 SHOW_BUTTON_EQUIP 按钮正文手写快捷键前缀（实显 [16] [16] 装备情报，PR #30 同款事故）',
+    file: 'ere/system/equip/equip-show.js',
+    find: "  era.printButton('装备情报\\u3000', num);",
+    replace: "  era.printButton('[16] 装备情报\\u3000', num);",
+    tests: ['equip-system'],
+    must_mention: '[16] 装备情报',
+  },
+  {
+    desc: 'M11528 EQUIP_ST_SHOW 武装槽读错（CFLAG:550 改 551——读到装饰戒指编号，回落 40 号剑）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  const w = { 存储编号: era.get(`cflag:${cid}:550`) || 0 };',
+    replace: '  const w = { 存储编号: era.get(`cflag:${cid}:551`) || 0 };',
+    tests: ['equip-system'],
+    must_mention: '战锤+2',
+  },
+  {
+    desc: 'M11529 EQUIP_ST_SHOW 查表调用删（EQUIP_DATABASE 不跑——战斗修正列全 undefined，状态行整段消失）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  equip_database(w);\n  equip_powerup(w, cid);',
+    replace: '  equip_powerup(w, cid);',
+    tests: ['equip-system'],
+    must_mention: '战锤+2',
+  },
+  {
+    desc: 'M11530 EQUIP_ST_SHOW 素质强化调用删（初心者的伤害 -10 不再生效，显示回 150）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  equip_database(w);\n  equip_powerup(w, cid);',
+    replace: '  equip_database(w);',
+    tests: ['equip-system'],
+    must_mention: '初心者 291',
+  },
+  {
+    desc: 'M11531 EQUIP_ST_SHOW 打击力行的文案改字（的打击力 → 的攻击力）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '    era.print(`*${w.伤害强化}的打击力`);',
+    replace: '    era.print(`*${w.伤害强化}的攻击力`);',
+    tests: ['equip-system'],
+    must_mention: '战锤+2',
+  },
+  {
+    desc: 'M11547 EQUIP_ST_SHOW 的诅咒行门槛改坏（if (w.诅咒) 改 if (false)——空名段 53 的黑戒指行不再印 *带有诅咒）',
+    file: 'ere/system/equip/equip-show.js',
+    find: '  if (w.诅咒) {',
+    replace: '  if (false && w.诅咒) {',
+    tests: ['equip-system'],
+    must_mention: '*带有诅咒',
   },
 ];

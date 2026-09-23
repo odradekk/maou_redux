@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 89; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致
+export const COUNT = 94; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致；#546 +5（M11539-M11543：[16] 装备情报按钮接线、CASE 16 详情与 WAIT、CASE 8 的 MODE 实参、STUBBED_CALLS 收敛）
 
 export default [
   {
@@ -821,5 +821,47 @@ export default [
     replace: '        String(era.get(`cflag:${cid}:9`) || 0),\n        3,',
     tests: ['page-chara-info'],
     must_mention: '1 位等级补 3 格',
+  },
+  // —— #546：装备详情与自定义一人称的接线（ere/page/page-chara-info.js）——
+  {
+    desc: 'M11539 [16] 装备情报按钮接线删（SHOW_BUTTON_EQUIP 调用改空——判定放行也不渲染按钮）',
+    file: 'ere/page/page-chara-info.js',
+    find: '      show_button_equip(16, current);',
+    replace: '      // 变异：不调 show_button_equip',
+    tests: ['page-chara-info'],
+    must_mention: 'CHECK_ABLE_TO_SHOW_EQUIP 放行才渲染',
+  },
+  {
+    desc: 'M11540 CASE 16 的装备详情调用删（EQUIP_ST_SHOW 不跑——状态行整段消失）',
+    file: 'ere/page/page-chara-info.js',
+    find: '        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行',
+    replace: '        // 变异：不调 equip_st_show',
+    tests: ['page-chara-info'],
+    must_mention: '装备状态行随 [16] 印出',
+  },
+  {
+    desc: 'M11541 CASE 16 的 WAIT 删（详情印完不等键直接重绘）',
+    file: 'ere/page/page-chara-info.js',
+    find: '        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行\n        await era.waitAnyKey();',
+    replace:
+      '        equip_st_show(current); // 同步纯输出（原作 CALL 无等待），WAIT 在下一行',
+    tests: ['page-chara-info'],
+    must_mention: '详情后 WAIT 至少一次',
+  },
+  {
+    desc: 'M11542 CASE 8 的 MODE 实参丢失（random_self_call 落回 MODE 0——没有输入提示，直接随机重掷）',
+    file: 'ere/page/page-chara-info.js',
+    find: '        await random_self_call(current, undefined, 1);',
+    replace: '        await random_self_call(current, undefined);',
+    tests: ['page-chara-info'],
+    must_mention: '输入不合法！请输入以下值之一',
+  },
+  {
+    desc: 'M11543 STUBBED_CALLS 残留旧条目（SHOW_BUTTON_EQUIP 没随换真身移出名单）',
+    file: 'ere/page/page-chara-info.js',
+    find: "const STUBBED_CALLS = ['CHAR_DEBUG'];",
+    replace: "const STUBBED_CALLS = ['CHAR_DEBUG', 'SHOW_BUTTON_EQUIP'];",
+    tests: ['page-chara-info'],
+    must_mention: '已有真身（#546），不应再留在本文件的存根名单里',
   },
 ];

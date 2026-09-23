@@ -346,9 +346,9 @@ export default [
   {
     desc: 'M8018 一人称重设的档位门槛 99 改 98',
     file: 'ere/chara/chara-name-edit.js',
-    find: '  if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {\n    random_self_call(arg); // :106 一人称設定',
+    find: '  if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {\n    await random_self_call(arg); // :106 一人称設定',
     replace:
-      '  if ((era.get(`cflag:${arg}:450`) || 0) >= 98) {\n    random_self_call(arg); // :106 一人称設定',
+      '  if ((era.get(`cflag:${arg}:450`) || 0) >= 98) {\n    await random_self_call(arg); // :106 一人称設定',
     tests: ['chara-name-edit'],
     must_mention: '门槛恰在 99 两侧',
   },

@@ -80,7 +80,7 @@ async function char_init(cid, rand) {
   wearing_cloth_able(cid);
 
   // :27 一人称の設定（CALL RANDOM_SELF_CALL）
-  random_self_call(cid);
+  await random_self_call(cid); // #546 起为 async（MODE 1 的输入等待）
 
   // :29-33 年齢/身長显示设定（FLAG:5 位 12/15，:30）且身体数据缺失（CFLAG:451
   // == 0 || CFLAG:453 == 0）时生成。FLAG:5 是开局设置位图，窄路径恒 0；真身
