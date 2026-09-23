@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 60;
+export const COUNT = 63; // #390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
 const TALENTS = 'ere/page/components/chara-talents.js';
@@ -540,5 +540,30 @@ export default [
     'const SACRIFICABLE_STATES = [0, 7, 8];',
     'const SACRIFICABLE_STATES = [0, 7];',
     '可献祭',
+  ),
+  // —— #546：SHOW_BLOCK 的 [8] 一人称重设真按钮 ——
+  make(
+    11544,
+    'SHOW_BLOCK：[8] 一人称重设按钮的快捷键改坏（8 改 9——CASE 8 分发落在白名单外）',
+    SHOW,
+    "    era.printButton('一人称重设 ', 8);",
+    "    era.printButton('一人称重设 ', 9);",
+    '[8] 一人称重设真按钮',
+  ),
+  make(
+    11545,
+    'SHOW_BLOCK：[8] 按钮正文手写快捷键前缀（实显 [8] [8] 一人称重设，PR #30 同款事故）',
+    SHOW,
+    "    era.printButton('一人称重设 ', 8);",
+    "    era.printButton('[8] 一人称重设 ', 8);",
+    '[8] 一人称重设真按钮',
+  ),
+  make(
+    11546,
+    'SHOW_BLOCK：一人称行的补宽 26 改 24（自称列对齐契约）',
+    SHOW,
+    '    era.print(`一人称：${pad_display(self_call(cid), 26)}`);',
+    '    era.print(`一人称：${pad_display(self_call(cid), 24)}`);',
+    '[8] 一人称重设真按钮',
   ),
 ];

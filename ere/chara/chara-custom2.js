@@ -1054,7 +1054,7 @@ async function char_custom(cid, mode, rand = default_rand) {
           await cm_base(cid); // :67 CALL CM_BASE
           await cm_kind(cid, rand); // :69 CALL CM_KIND
           await cm_cloth(cid, rand); // :71 CALL CM_CLOTH
-          random_self_call(cid, rand); // :73 CALL RANDOM_SELF_CALL, A
+          await random_self_call(cid, rand); // :73 CALL RANDOM_SELF_CALL, A
           const settings = era.get('flag:5') || 0; // :75 GETBIT(FLAG:5,12/15)
           if (((settings >> 12) & 1) !== 0 || ((settings >> 15) & 1) !== 0) {
             char_body_generate_wapped(cid, rand); // :76

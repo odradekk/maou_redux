@@ -616,24 +616,28 @@ test('set_nick_selfcall：洋名 CASE1 字数<=2 是严格边界，字数=2 仍�
 
 // ---- random_self_call ----
 
-test('random_self_call：档位 <9 直设为「我」，并把档位钉在 9', () => {
+test('random_self_call：档位 <9 直设为「我」，并把档位钉在 9', async () => {
   const cases = [undefined, 0, 8];
   for (const preset of cases) {
     const fixture = create_era_fixture();
     add_chara(fixture, 1);
     if (preset !== undefined) fixture.store.set('cflag:1:450', preset);
-    assert.equal(load(fixture).random_self_call(1, seq([])), 9, String(preset));
+    assert.equal(
+      await load(fixture).random_self_call(1, seq([])),
+      9,
+      String(preset),
+    );
     assert.equal(fixture.store.get('cstr:1:60'), '我', 'CSTR:x:60 = 我');
     assert.equal(fixture.store.get('cflag:1:450'), 9, 'CFLAG:x:450 = 9');
   }
 });
 
-test('random_self_call：档位落 [9,100) 委派合适一人称表，档位与返回值同为 命中档+10', () => {
+test('random_self_call：档位落 [9,100) 委派合适一人称表，档位与返回值同为 命中档+10', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1); // 全零素质命中 CASE 3（三维均为 0）
   fixture.store.set('cflag:1:450', 9); // start = 9-10 = -1，从 CASE 0 起顺序尝试
   assert.equal(
-    load(fixture).random_self_call(1, seq([])),
+    await load(fixture).random_self_call(1, seq([])),
     13,
     '命中档+10委派合适一人称表',
   );
@@ -649,27 +653,26 @@ test('random_self_call：档位落 [9,100) 委派合适一人称表，档位与�
   );
 });
 
-test('random_self_call：合适一人称表耗尽后落到绰号一人称表，档位为 命中档+100 但返回值只是命中档（原作不对称，1:1 保留）', () => {
+test('random_self_call：合适一人称表耗尽后落到绰号一人称表，档位为 命中档+100 但返回值只是命中档（原作不对称，1:1 保留）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1, '皐月'); // 2 字，和名 CASE 0 直接命中
   fixture.store.set('cflag:1:6', 200); // 和名区间
   fixture.store.set('cflag:1:450', 99); // 合适表 start=89，越界立即落空
-  assert.equal(load(fixture).random_self_call(1, seq([])), 0);
+  assert.equal(await load(fixture).random_self_call(1, seq([])), 0);
   assert.equal(fixture.store.get('cstr:1:60'), '皐月');
   assert.equal(fixture.store.get('cflag:1:450'), 100);
 });
 
-test('random_self_call：两张表均落空时清空档位重试一次，最终落回<9 直设', () => {
+test('random_self_call：两张表均落空时清空档位重试一次，最终落回<9 直设', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1, 'Bob'); // 半角姓名：绰号表任何档位都立即落空
   set_talents(fixture, 1, { 15: 1 }); // 姿态定死为 10：合适表四档全部落空
   fixture.store.set('cflag:1:450', 50); // 落在 [9,100) 区间，先试合适表
-  assert.equal(load(fixture).random_self_call(1, seq([])), 9);
+  assert.equal(await load(fixture).random_self_call(1, seq([])), 9);
   assert.equal(fixture.store.get('cstr:1:60'), '我');
   assert.equal(fixture.store.get('cflag:1:450'), 9);
 });
-
-test('random_self_call：档位 >=200 或为负数时走 CSV 预设回落；预设存在则采用并把档位清零', () => {
+test('random_self_call：档位 >=200 或为负数时走 CSV 预设回落；预设存在则采用并把档位清零', async () => {
   const cases = [
     ['档位 >=200', 200],
     ['档位为负', -5],
@@ -679,17 +682,84 @@ test('random_self_call：档位 >=200 或为负数时走 CSV 预设回落；预�
     add_chara(fixture, 1);
     fixture.store.set('cflag:1:450', preset_flag);
     fixture.store.set('chara:1', { cstr: { 60: '朕' } }); // CSV 预设一人称
-    assert.equal(load(fixture).random_self_call(1, seq([])), 0, label);
+    assert.equal(await load(fixture).random_self_call(1, seq([])), 0, label);
     assert.equal(fixture.store.get('cstr:1:60'), '朕', label);
     assert.equal(fixture.store.get('cflag:1:450'), 0, label);
   }
 });
-
-test('random_self_call：CSV 预设缺失时降级为 <9 直设分支（不清空档位重试，因为已经落在 <0 分支内部）', () => {
+test('random_self_call：CSV 预设缺失时降级为 <9 直设分支（不清空档位重试，因为已经落在 <0 分支内部）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1); // 未预置 chara:1，即无 CSTR 预设
   fixture.store.set('cflag:1:450', -1);
-  assert.equal(load(fixture).random_self_call(1, seq([])), 9);
+  assert.equal(await load(fixture).random_self_call(1, seq([])), 9);
   assert.equal(fixture.store.get('cstr:1:60'), '我');
   assert.equal(fixture.store.get('cflag:1:450'), 9);
+});
+
+// ---- random_self_call MODE 1（自定义输入，#546）——
+// 引擎事实（app.asar 与 dev-guides/05-interaction.md:124）：INPUTS 的 ere 等价物
+// `era.input()` 在本轮未打印按钮时接受任意文本，回传值经 getNumber 归一
+// （`Number(e); isNaN ? e : 数值`）——空串与 "0" 都归一成 0，非数字串原样。
+
+test('random_self_call MODE 1：自由文本 → 写入 CSTR:60、档位清 0、返回 0；不碰两张子表', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1);
+  fixture.set_inputs('在下');
+  let rand_calls = 0;
+  const rand = () => {
+    rand_calls += 1;
+    return 0;
+  };
+  assert.equal(await load(fixture).random_self_call(1, rand, 1), 0);
+  assert.equal(fixture.store.get('cstr:1:60'), '在下', 'CSTR:x:60 = 输入文本');
+  assert.equal(fixture.store.get('cflag:1:450'), 0, 'CFLAG:x:450 = 0');
+  assert.equal(rand_calls, 0, '自定义命中不掷骰');
+  // $INPUT_LOOP 的输出：两条分割线夹提示（:10-12）+ ere 侧补的一句
+  // 「（输入 0 随机设定）」（有意偏离，见实现处注释）
+  const texts = fixture.text_lines();
+  assert.equal(
+    texts.filter((t) => t === '请输入想设定的第一人称，若不输入择随机设定')
+      .length,
+    1,
+  );
+  assert.ok(
+    texts.includes('（输入 0 随机设定）'),
+    'ere 侧补的「输入 0 随机设定」提示行印出',
+  );
+  assert.equal(fixture.lines.filter((l) => l.type === 'divider').length, 2);
+});
+
+test('random_self_call MODE 1：数字文本按引擎归一成数值再字符串化（输入 8 → 一人称「8」）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1);
+  fixture.set_inputs(8); // 引擎把 "8" 归一成数值 8
+  assert.equal(await load(fixture).random_self_call(1, seq([]), 1), 0);
+  assert.equal(fixture.store.get('cstr:1:60'), '8');
+  assert.equal(fixture.store.get('cflag:1:450'), 0);
+});
+// （曾有「set_inputs('') 模拟空输入」一例：真实引擎不受理空提交，该路径只在
+// 夹具里存在，getNumber 的 ''→0 归一已由 test/fixture.test.js 钉住，删除）
+test('random_self_call MODE 1：输入 0 代替空输入（有意偏离，原作会把一人称写成「0」）→ 随机路径沿用进入时的档位（:6）', async () => {
+  // 引擎不受理空提交（渲染层吞掉直接回车），「不输入择随机设定」的等价物
+  // 是输入 0；提示行后另有一句 ere 侧说明「（输入 0 随机设定）」
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1, '皐月'); // 和名 2 字：绰号表 CASE 0 直接命中
+  fixture.store.set('cflag:1:6', 200);
+  set_talents(fixture, 1, { 15: 1 }); // 高姿态：合适表四档全落空，落空后 local=99
+  fixture.store.set('cflag:1:450', 99); // 落空路径：合适表耗尽 → 绰号表 CASE 0 起试
+  fixture.set_inputs(0);
+  assert.equal(await load(fixture).random_self_call(1, seq([]), 1), 0);
+  assert.equal(fixture.store.get('cstr:1:60'), '皐月');
+  assert.equal(fixture.store.get('cflag:1:450'), 100);
+});
+
+test('random_self_call MODE 0：不打印提示行（与 MODE 1 的对照）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 1);
+  await load(fixture).random_self_call(1, seq([]));
+  assert.equal(
+    fixture.text_lines().filter((t) => t.includes('请输入想设定的第一人称'))
+      .length,
+    0,
+  );
 });

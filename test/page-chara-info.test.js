@@ -880,7 +880,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：顺位表是全部已加入角色（按排�
 
 // —— 未落地调用一律走存根，登记与实现同步 ——
 
-test('STUBBED_CALLS：装备两处/调试/一人称改名四条仍在列；兼职与更换立绘随 #542 判死移出，统一积极性与换号随 #545 换真身移出', async () => {
+test('STUBBED_CALLS：只剩调试一条在列；装备两处与一人称改名随 #546 换真身移出，兼职与更换立绘随 #542 判死移出，统一积极性与换号随 #545 换真身移出', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -893,21 +893,30 @@ test('STUBBED_CALLS：装备两处/调试/一人称改名四条仍在列；兼�
   // 自 #401 起是真身（ere/event/event-pregnancy.js），转职 / 魔的诱惑 / 结婚
   // 三对自 #393 起是真身（ere/chara/chara-job-change.js、chara-temptation.js、
   // chara-marriage.js），统一卖春积极性 / 换号自 #545 起是真身
-  // （ere/page/page-uniform-bitch-level.js、page-chara-number-swap.js）
-  for (const name of [
-    'SHOW_BUTTON_EQUIP',
-    'EQUIP_ST_SHOW',
-    'CHAR_DEBUG',
-    'RANDOM_SELF_CALL',
-  ]) {
-    assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
-  }
+  // （ere/page/page-uniform-bitch-level.js、page-chara-number-swap.js），
+  // 装备详情三函数与 RANDOM_SELF_CALL 的 MODE 1 自 #546 起是真身
+  // （ere/system/equip/equip-show.js、ere/chara/chara-self-call.js）
+  assert.ok(
+    STUBBED_CALLS.includes('CHAR_DEBUG'),
+    'CHAR_DEBUG 应在存根登记表内',
+  );
   // PTJ_BUTTON / 更换立绘 自 #542 起是判死终态（打工 MOD 与立绘系统不移植），
   // 入口提示行不是存根占位，不再进名单；清单同名行仍在函数表（改判不移植）
   for (const name of ['PTJ_BUTTON', '更换立绘']) {
     assert.ok(
       !STUBBED_CALLS.includes(name),
       `${name} 已判不移植（#542），不应再留在存根名单里`,
+    );
+  }
+  // #546 起 [16] 装备情报按钮与详情流程换真身：随真身名单核对，见下方专测
+  for (const name of [
+    'SHOW_BUTTON_EQUIP',
+    'EQUIP_ST_SHOW',
+    'RANDOM_SELF_CALL',
+  ]) {
+    assert.ok(
+      !STUBBED_CALLS.includes(name),
+      `${name} 已有真身（#546），不应再留在本文件的存根名单里`,
     );
   }
   // SHOW_CHARA_INFO 自 #390 起是真身（ere/page/page-chara-info-show.js），
@@ -931,7 +940,7 @@ test('STUBBED_CALLS：装备两处/调试/一人称改名四条仍在列；兼�
     );
   }
   // 绘制期：改名自 #384、三对动作按钮自 #393、育儿室自 #401 起都是真按钮
-  // （都在判定放行时才渲染）；装备(sub_page 1/2)仍是 stub_line 占位。
+  // （都在判定放行时才渲染）；#546 起装备详情（sub_page 1/2 的 [16]）也是真按钮
   fixture.set_inputs(100);
   const result = await chara_info_individual(1, [1]);
   assert.equal(result, 0);
@@ -955,6 +964,10 @@ test('STUBBED_CALLS：装备两处/调试/一人称改名四条仍在列；兼�
     !rendered.includes('[5] 前往育儿室'),
     '角色 1 不在育儿室（CFLAG:1:1 = 0）→ 育儿室按钮不渲染（#401 真身，:459-467）',
   );
+  assert.ok(
+    !rendered.some((text) => text.includes('装备情报')),
+    'sub_page 0 不渲染 [16] 装备情报（:873 的 ELSEIF 不含 0）',
+  );
   for (const stub_name of [
     'SHOW_BUTTON_JOB_CHANGE',
     'SHOW_BUTTON_TEMPTATION',
@@ -962,6 +975,9 @@ test('STUBBED_CALLS：装备两处/调试/一人称改名四条仍在列；兼�
     'CHARA_INFO_JOB_CHANGE',
     'TEMPTATION',
     'MARRIAGE',
+    'SHOW_BUTTON_EQUIP',
+    'EQUIP_ST_SHOW',
+    'RANDOM_SELF_CALL',
   ]) {
     assert.equal(
       printed_includes(fixture, `@${stub_name}`),
@@ -969,6 +985,110 @@ test('STUBBED_CALLS：装备两处/调试/一人称改名四条仍在列；兼�
       `${stub_name} 的占位行不该再出现`,
     );
   }
+});
+
+// —— #546：装备详情与自定义一人称的接线 ——
+
+test('[16] 装备情报按钮（:880）：CHECK_ABLE_TO_SHOW_EQUIP 放行才渲染——表驱动', async () => {
+  // 五道 OR 之一成立 = 放行（此处用善恶值 ≤0 与顺从 >0 两道代表）；
+  // 全不满足（善恶值 1）= 按钮整个不出现
+  const table = [
+    ['善恶值 0 → 渲染', { 'cflag:1:151': 0 }, true],
+    ['顺从 1 → 渲染', { 'abl:1:10': 1 }, true],
+    ['全不满足（善恶值 1）→ 不渲染', { 'cflag:1:151': 1 }, false],
+  ];
+  for (const [label, seeds, expected] of table) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    for (const [key, value] of Object.entries(seeds)) {
+      fixture.store.set(key, value);
+    }
+    fixture.set_inputs(102, 100); // 后页到 sub_page 1，再返回
+    await fixture
+      .load_module('page/page-chara-info')
+      .chara_info_individual(1, [1]);
+    const buttons = fixture.lines_history.filter(
+      (line) => line.type === 'button' && line.accelerator === 16,
+    );
+    assert.equal(buttons.length > 0, expected, label);
+    if (expected) {
+      assert.equal(buttons[0].rendered, '[16] 装备情报 ', label);
+    }
+  }
+});
+
+test('case 16（:1070-1074）：印出装备状态行并等键，重绘回页（LOCAL = LINECOUNT 是死赋值）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:151', 0); // 放行 [16]
+  fixture.store.set('cflag:1:550', 47 + 2 * 1000); // 战锤 +2
+  fixture.set_inputs(102, 16, 100);
+  const result = await fixture
+    .load_module('page/page-chara-info')
+    .chara_info_individual(1, [1]);
+  assert.equal(result, 0);
+  assert.ok(
+    printed_includes(fixture, '*160的打击力') &&
+      printed_includes(fixture, '*30％概率打偏'),
+    '装备状态行随 [16] 印出',
+  );
+  assert.ok(printed_includes(fixture, '战锤+2'), '名称行印出');
+  // WAIT：详情行之后有一次真实等待（rows_at_wait 在详情行之后）
+  const waited = fixture.waits.filter((w) => w.waited);
+  assert.ok(waited.length >= 1, '详情后 WAIT 至少一次');
+  const equip_pos = fixture.lines_history.findIndex((line) =>
+    (line.text ?? '').includes('*160的打击力'),
+  );
+  assert.ok(
+    equip_pos >= 0 && fixture.lines_history[equip_pos].row !== undefined,
+    '装备详情行是 Row 条目',
+  );
+  assert.ok(
+    waited.some((w) => w.rows_at_wait > fixture.lines_history[equip_pos].row),
+    '等待发生在装备详情行之后',
+  );
+  // 等键后 GOTO DRAW_PAGE：同一轮里页导航按钮再次出现
+  assert.ok(
+    fixture.lines_history.filter(
+      (line) => line.type === 'button' && line.accelerator === 100,
+    ).length >= 2,
+    '详情显示后页面重绘（返回按钮再次出现）',
+  );
+});
+
+test('case 8（:1062）：[8] 一人称重设走 MODE 1 自定义输入，写入 CSTR:60 与档位 0', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.set_inputs(8, '在下', 100);
+  const result = await fixture
+    .load_module('page/page-chara-info')
+    .chara_info_individual(1, [1]);
+  assert.equal(result, 0);
+  assert.ok(
+    printed_includes(fixture, '请输入想设定的第一人称，若不输入择随机设定'),
+    'MODE 1 的提示行印出（1:1 照抄原作）',
+  );
+  assert.ok(
+    printed_includes(fixture, '（输入 0 随机设定）'),
+    'ere 侧补的「输入 0」提示行印出（有意偏离，#567）',
+  );
+  assert.equal(fixture.store.get('cstr:1:60'), '在下');
+  assert.equal(fixture.store.get('cflag:1:450'), 0);
+});
+
+test('case 8：输入 0 代替空输入（有意偏离，原作会把一人称写成「0」）→ 随机重掷路径（<9 直设「我」）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.set_inputs(8, 0, 100);
+  await fixture
+    .load_module('page/page-chara-info')
+    .chara_info_individual(1, [1]);
+  assert.equal(fixture.store.get('cstr:1:60'), '我');
+  assert.equal(fixture.store.get('cflag:1:450'), 9);
 });
 
 // —— #542：PTJ_BUTTON 与更换立绘的判死落点 ——

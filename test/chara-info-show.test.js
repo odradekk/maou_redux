@@ -209,15 +209,30 @@ function block_fixture(flag5 = 0, flag8 = 0) {
   };
 }
 
-test('SHOW_BLOCK：一人称行 = 自称宽 26 左对齐 + 重设提示', () => {
+test('SHOW_BLOCK：一人称行 = 自称宽 26 左对齐 + [8] 一人称重设真按钮（#546）', async () => {
   const { fixture, show_block } = block_fixture();
   fixture.store.set('cstr:7:60', '人家'); // CSTR:60 自称
-  return show_block(7).then(() => {
-    assert.equal(
-      text_at(fixture, 0),
-      `一人称：${'人家' + ' '.repeat(22)}[8] 一人称重设 `,
-    );
-  });
+  await show_block(7);
+  // 原作 :374-375 是 PRINTPLAINFORM + PRINTFORM 的同一行文字提示；ere 的
+  // input 只接受已打印按钮的快捷键（#129），[8] 升级为真按钮才能点进
+  // RANDOM_SELF_CALL 的 MODE 1——按钮自成一行（项目通例，见 #384 先例）
+  assert.equal(text_at(fixture, 0), `一人称：${'人家' + ' '.repeat(22)}`);
+  const buttons = fixture.lines.filter(
+    (line) => line.type === 'button' && line.accelerator === 8,
+  );
+  assert.equal(buttons.length, 1);
+  assert.equal(buttons[0].rendered, '[8] 一人称重设 ');
+});
+
+test('SHOW_BLOCK：魔王（cid 0）不打印一人称行与 [8] 按钮（:373 的 ARG != MASTER）', async () => {
+  const { fixture, show_block } = block_fixture();
+  await show_block(0);
+  assert.equal(fixture.text_lines().length, 0, '魔王没有一人称行');
+  assert.equal(
+    fixture.lines.filter((line) => line.type === 'button').length,
+    0,
+    '魔王没有 [8] 按钮',
+  );
 });
 
 test('SHOW_BLOCK：三围行只在 FLAG:5 位 15 且非魔王时出现（两侧）', () => {
@@ -255,7 +270,7 @@ test('SHOW_BLOCK：身高/胸围行与罩杯括号，男性位改补 8 空格', 
       if (man === 1) fixture.store.set('talent:7:122', 1);
       await show_block(7);
       assert.equal(
-        text_at(fixture, 1),
+        text_at(fixture, 2), // 0 一人称行、1 [8] 按钮（#546 起真按钮）
         `  身高 160.0 cm\u3000B  80.0 cm${tail}`,
         label,
       );
