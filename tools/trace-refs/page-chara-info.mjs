@@ -117,6 +117,17 @@ export const FILES = [
         ref: '1060',
         any: [/^\tCALL CHILD_CARE_CHARA\(ARG\)$/m],
       },
+      // #546：CASE 8（RANDOM_SELF_CALL 的 MODE 1）与 CASE 16（装备详情）
+      {
+        src: INFO,
+        ref: '1062',
+        any: [/^\s*CALL RANDOM_SELF_CALL\(ARG,1\)$/m],
+      },
+      {
+        src: INFO,
+        ref: '1070-1074',
+        any: [/^\s*CALL EQUIP_ST_SHOW, ARG$/m],
+      },
       // #393 接线：三个动作按钮与三个动作分支的调用点回显
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
@@ -187,6 +198,12 @@ export const FILES = [
           /^SIF 立绘 && CFLAG:ARG:1 == 0 && ARG != MASTER$/m,
           /^\s*PRINT \[20\] 更换立绘$/m,
         ],
+      },
+      // #546：[16] 装备情报按钮（sub_page 1/2 的操作行）
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '880',
+        any: [/^\s*CALL SHOW_BUTTON_EQUIP\(16,ARG\)/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',

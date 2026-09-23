@@ -144,12 +144,14 @@ async function show_block(cid) {
   const show_size = getbit(BIT_SIZE) && is_not_master;
 
   if (is_not_master) {
-    // :374-375 PRINTPLAINFORM 一人称：%SELF_CALL(ARG),26,LEFT% + PRINTFORM [8] …
-    //（`[8]` 是页码按钮提示的纯文本，不是引擎按钮——原作此处用 PRINTPLAINFORM）
-    era.print([
-      { content: `一人称：${pad_display(self_call(cid), 26)}` },
-      { content: '[8] 一人称重设 ' },
-    ]);
+    // :374 PRINTPLAINFORM 一人称：%SELF_CALL(ARG),26,LEFT%
+    era.print(`一人称：${pad_display(self_call(cid), 26)}`);
+    // :375 PRINTFORM [8] 一人称重設 ——原作是与上一行同行的纯文字提示（Emuera
+    // 的 INPUT 接受手输任意编号，敲 8 即可）；ere 的 input 只接受本轮已打印
+    // 按钮的快捷键（#129），CASE 8（RANDOM_SELF_CALL 的 MODE 1）必须由真
+    // 按钮接进——升级为 printButton（本项目通例，#384 改名按钮同款），按钮
+    // 自成一行；正文不写 [8] 前缀（AGENTS.md 硬约束），尾部半角空格照抄
+    era.printButton('一人称重设 ', 8);
   }
 
   if (show_size) {

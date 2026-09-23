@@ -1,7 +1,8 @@
 /**
  * 装备系统行为测试（issue #174：@EQUIP_CHECK/@EQUIP_DATABASE 行为/@PRINT_*
  * /@REMOVE_CURSE/@CURSE_EQUIP_RING/@EQUIP_SELECT/@EQUIP_GET/@GET_EQUIP_NUM/
- * @EQUIP_POWERUP/@USEABLE_EQUIPMENT/@WEAPON_RESTORE）。
+ * @EQUIP_POWERUP/@USEABLE_EQUIPMENT/@WEAPON_RESTORE；#546：@EQUIP_ST_SHOW/
+ * @SHOW_BUTTON_EQUIP/@CHECK_ABLE_TO_SHOW_EQUIP）。
  *
  * 缝 = test/helpers/era-fixture.js。随机源以 rng 参数注入（RAND:N = 0..N-1），
  * 构造确定序列；数据表与 ERB 的逐分支等价在 test/equip-database.test.js。
@@ -511,3 +512,148 @@ test('weapon_restore：装备强化倍率、铁壁、劣化、攻防变动、勋
 
 // equip-select 的 STUBBED_CALLS 已清空（CAMPAIGN_EQUIP_SELECT 换真身，
 // #469）：清单核对测试随之移除，同 dungeon-room.test.js 的处置
+
+// —— #546：装备详情显示三函数（其他/EQUIP.ERB:1030-1113）——
+
+/** 造带 equip-show 模块的夹具：角色 31（温妮）+ 武装槽可预置 */
+function setup_show() {
+  const base = setup_equip();
+  base.show = base.fixture.load_module('system/equip/equip-show');
+  return base;
+}
+
+test('check_able_to_show_equip：五道 OR 的表驱动，返回 1 = 不可见（EQUIP.ERB:1090-1113）', () => {
+  const table = [
+    ['善恶值 1 且其余全不满足 → 1', { 'cflag:31:151': 1 }, 1],
+    ['未设善恶值（读得 0 ≤ 0）→ 0', {}, 0],
+    ['可出售（CFLAG:0 > 0）', { 'cflag:31:0': 1, 'cflag:31:151': 1 }, 0],
+    ['信赖度 20（恰好达标）', { 'cflag:31:2': 20, 'cflag:31:151': 1 }, 0],
+    ['信赖度 19（差一不可见）', { 'cflag:31:2': 19, 'cflag:31:151': 1 }, 1],
+    ['顺从 1（ABL:10 > 0）', { 'abl:31:10': 1, 'cflag:31:151': 1 }, 0],
+    ['爱表现（TALENT:28）', { 'talent:31:28': 1, 'cflag:31:151': 1 }, 0],
+    ['善恶值 0（<= 0 即可见）', { 'cflag:31:151': 0 }, 0],
+    ['善恶值 -1（负数同可见）', { 'cflag:31:151': -1 }, 0],
+  ];
+  for (const [label, seeds, expected] of table) {
+    const { fixture, show } = setup_show();
+    for (const [key, value] of Object.entries(seeds)) {
+      fixture.store.set(key, value);
+    }
+    assert.equal(show.check_able_to_show_equip(31), expected, label);
+    assert.equal(fixture.text_lines().length, 0, `${label}：判定不得有输出`);
+  }
+});
+
+test('show_button_equip：判定放行渲染 [16] 装备情报按钮，不放行零输出（:1074-1087）', () => {
+  const able = setup_show();
+  able.fixture.store.set('cflag:31:151', 0);
+  able.show.show_button_equip(16, 31);
+  const buttons = able.fixture.lines.filter((line) => line.type === 'button');
+  assert.equal(buttons.length, 1);
+  assert.equal(buttons[0].accelerator, 16);
+  assert.equal(buttons[0].rendered, '[16] 装备情报 ');
+
+  const unable = setup_show();
+  unable.fixture.store.set('cflag:31:151', 1); // 五道全不满足
+  unable.show.show_button_equip(16, 31);
+  assert.equal(unable.fixture.lines.length, 0, '不可见时连按钮带文字都不输出');
+});
+
+test('equip_st_show：战锤+2 的状态行，=100 的防御/气力伤害两行不显示（:1030-1071）', () => {
+  const { fixture, show } = setup_show();
+  fixture.store.set('cflag:31:550', 47 + 2 * 1000); // 战锤 +2
+  assert.equal(show.equip_st_show(31), 2, 'RETURN 2');
+  assert.deepEqual(fixture.text_lines(), [
+    '战锤+2',
+    '*160的打击力', // 150 + 强度 2*5
+    '*30％概率打偏',
+  ]);
+  const name_row = fixture.lines[0];
+  assert.equal(name_row.content[0].color, 'LightSalmon');
+});
+
+test('equip_st_show：气力回复正负两臂与气力伤害（触手 49 / 法杖 41）', () => {
+  const tentacle = setup_show();
+  tentacle.fixture.store.set('cflag:31:550', 49); // 触手：气力回复 -10、气力伤害 120
+  tentacle.show.equip_st_show(31);
+  assert.deepEqual(tentacle.fixture.text_lines(), [
+    '触手',
+    '*100的打击力',
+    '*消费10气力',
+    '*打击气力120％',
+  ]);
+
+  const staff = setup_show();
+  staff.fixture.store.set('cflag:31:550', 41); // 法杖：气力回复 20
+  staff.show.equip_st_show(31);
+  assert.deepEqual(staff.fixture.text_lines(), [
+    '法杖',
+    '*80的打击力',
+    '*恢复20气力',
+  ]);
+});
+
+test('equip_st_show：附魔前缀的四个特殊位行与前缀名（毒/火/寒冰/电）', () => {
+  const table = [
+    [2, '剧毒', '*带有毒液'],
+    [5, '烈火', '*带火'],
+    [6, '寒冰', '*带寒冰'],
+    [7, '雷霆', '*带电'],
+  ];
+  for (const [prefix, name, line] of table) {
+    const { fixture, show } = setup_show();
+    fixture.store.set('cflag:31:550', prefix * 100000 + 40);
+    show.equip_st_show(31);
+    assert.ok(fixture.text_lines().includes(line), `${name} → ${line}`);
+    assert.equal(
+      fixture.text_lines()[0],
+      `${name}剑`,
+      `${name}前缀名拼进名称行`,
+    );
+  }
+});
+
+test('equip_st_show：连击率（匕首 30）与防御伤害（鞭 120）各自行', () => {
+  const dagger = setup_show();
+  dagger.fixture.store.set('cflag:31:550', 43);
+  dagger.show.equip_st_show(31);
+  assert.deepEqual(dagger.fixture.text_lines(), [
+    '匕首',
+    '*70的打击力',
+    '*30％概率二连击',
+  ]);
+
+  const whip = setup_show();
+  whip.fixture.store.set('cflag:31:550', 42);
+  whip.show.equip_st_show(31);
+  assert.deepEqual(whip.fixture.text_lines(), [
+    '鞭',
+    '*80的打击力',
+    '*打击防御120％',
+  ]);
+});
+
+test('equip_st_show：空槽（-1）与未知识别号都经名称臂回落 40 号剑', () => {
+  for (const stored of [-1, 999, 5]) {
+    const { fixture, show } = setup_show();
+    fixture.store.set('cflag:31:550', stored);
+    show.equip_st_show(31);
+    assert.deepEqual(
+      fixture.text_lines(),
+      ['剑', '*100的打击力'],
+      `存储编号 ${stored} 回落 40 号剑`,
+    );
+  }
+});
+
+test('equip_st_show：按角色素质强化后再显示（初心者 291 的伤害-10/失手+10）', () => {
+  const { fixture, show } = setup_show();
+  fixture.store.set('cflag:31:550', 47); // 战锤 +0：伤害 150、失手 30
+  fixture.store.set('talent:31:291', 1);
+  show.equip_st_show(31);
+  assert.deepEqual(fixture.text_lines(), [
+    '战锤',
+    '*140的打击力',
+    '*40％概率打偏',
+  ]);
+});

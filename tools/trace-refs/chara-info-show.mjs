@@ -1525,12 +1525,16 @@ export const FILES = [
         ref: '411',
         any: [/SIF GETBIT\(FLAG:5,15\) && \(ARG != MASTER \|\| MASTER\)/],
       },
+      // #546 起 :374 与 :375 分开引用（[8] 升级为真按钮，两行各自的注释锚）
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
-        ref: '374-375',
-        any: [
-          /	PRINTPLAINFORM 一人称：%SELF_CALL\(ARG\),26,LEFT%\n	PRINTFORM \[8\] 一人称重設 /,
-        ],
+        ref: '374',
+        any: [/	PRINTPLAINFORM 一人称：%SELF_CALL\(ARG\),26,LEFT%/],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
+        ref: '375',
+        any: [/	PRINTFORM \[8\] 一人称重設 /],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
