@@ -1,0 +1,32 @@
+# 魔改 SAVEDATA 变量表（issue #547）：原作「魔改新增/魔改使用.ERH」里
+# #DIM SAVEDATA（随游戏存档、非 GLOBAL）一族的 ere 落点。与同文件的 GLOBAL
+# 支不同类：冒險者性別（原文用字）是 GLOBAL SAVEDATA，走公共存档跨局共享，
+# 落 yml/Global.yml id 3；本表收随 saveData/resetData 存清的单档变量——引擎侧
+# 由扩展普通表自动承载（先例 yml/Audio.yml，issue #69：app.asar eraStart 对
+# 非内建表名登记 tableType.normal，fillData 自动建 data 桶并把声明槽位置 0；
+# saveData 整存 this.data、resetData 重建桶——存清语义与 #DIM SAVEDATA 一致）。
+#
+# 本表为人工产出（先例：Global.yml #18、Audio.yml #69），不经 csv-to-yml 生成。
+# 条目与 id 分配（#547；Emuera 侧命名变量按名字存取、无序号，ere 侧取空闲
+# 低端自洽即可）：
+#   id 0 = 卖淫影响（魔改使用.ERH:4，无声明默认值 → 新档 0 = 负面，原作
+#   CONFIG.ERB:139 的「（默认设置）」注释印证）。写点 CONFIG.ERB:273-278
+#   （设置页 [29] 档位 0→1→2 循环）；读点 ABL.ERB:231（自动提升 37 的跳过档）、
+#   SELL_CHARA.ERB / SELL_CHARA_ESTIMATE.ERB（估价倍率）、CONFIG.ERB:136-145
+#   （档位文案）。
+#   id 1 = 反作弊（魔改使用.ERH:15，无声明默认值 → 新档 0）。写点
+#   CONFIG.ERB:281-285（设置页 [30] 翻 0/1）；读点 EVENT_TURNEND.ERB:137
+#   `SIF !反作弊` → CALL DEBUG_CHECK（反作弊 1 = 关闭检查，可开修改）。
+# 未收录：立绘（魔改使用.ERH:6，#542 判不移植）、NO_SP（:9，SP 图像开关，
+# 立绘同判）、赤森奴隶（:12，非 SAVEDATA 的普通 #DIM，无存档语义）。
+#
+# 包装层产物：ere/era-utils/era-modsave.js（tools/gen-wrapper.js 生成初稿）。
+# 各变量在原作中的语义与来源见该文件手写区补注。
+"卖淫影响":
+  id: 0
+  name: "prostitution_effect"
+  type: "number"
+"反作弊":
+  id: 1
+  name: "anti_cheat"
+  type: "number"

@@ -51,6 +51,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const era_modsave = require('#/era-utils/era-modsave');
 const { chara_callname } = require('#/utils/callname-utils');
 const {
   conception_check_all,
@@ -173,9 +174,9 @@ async function auto_buying() {
  * @DEBUG_CHECK（:170-334）：反作弊检查与三段「爆炸」事件。
  *
  * 调用点 :137-138 是 `SIF !反作弊`——反作弊是 MOD 追加的 SAVEDATA 开关
- * （魔改新增/魔改使用.ERH:15），ere 侧无落点、恒 0，故每回合执行（#113
- * 起的既有判断，本次不改）。它**不是**无副作用的检查：三段事件都会
- * 删角色、清钱，其中第三段直接 GAMEOVER。
+ * （魔改新增/魔改使用.ERH:15），#547 起落 modsave:1（era_modsave.anti_cheat）：
+ * 新档默认 0 = 每回合执行，设置页 [30] 切 1 后跳过（OFF = 可开修改）。它
+ * **不是**无副作用的检查：三段事件都会删角色、清钱，其中第三段直接 GAMEOVER。
  *
  * 三道前置的语义（原作文档：資料_非必要無須解壓/eramaouフラグまとめ - 汉化人员.txt:34-35）：
  *   - `EX_FLAG:4444` = 非作弊资金。开局不变量 `MONEY == 4444 + 8766`
@@ -499,9 +500,13 @@ on(
     era_flag.target = -1;
     era_flag.assi = -1;
 
-    // :137-138 反作弊检查（!反作弊 时执行；反作弊是 SAVEDATA 自定义变量、
-    // 无 ere 落点、恒 0 → 每回合执行）
-    await debug_check();
+    // :137-138 反作弊检查（`SIF !反作弊` → CALL DEBUG_CHECK）。反作弊是 MOD
+    // 追加的 SAVEDATA 开关（魔改使用.ERH:15），#547 落 modsave:1
+    // （era_modsave.anti_cheat）：0 = 每回合执行（新档默认），1 = 跳过检查
+    // （设置页 [30] 可切，OFF = 可开修改）
+    if (!era_modsave.anti_cheat) {
+      await debug_check();
+    }
 
     // :140 BEGIN SHOP —— 无条件出口（链继续，普通档与 #LATER 随后执行，
     // #6 用 emuera.log 证明的原作行为）

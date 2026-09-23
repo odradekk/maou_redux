@@ -62,6 +62,7 @@ const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const era_modsave = require('#/era-utils/era-modsave');
 // @USERABLUP（ABL.ERB:192-200）要调的两个检查（#462 落真身，同域）
 const {
   jujun_up_check,
@@ -6476,18 +6477,21 @@ function auto_getbit(value, n) {
  * TARGET；ARG >= 0 时临时代入该角色（原作 :204-206 的 LOCAL/TARGET 换出
  * 换回），结束时还原。
  *
- * 两条与移植状态有关的取舍（都不是原作行为）：
- *   * 「卖淫影响」是阶段 6 魔改目录的 SAVEDATA（target/ERB/魔改新增/
- *     魔改使用.ERH:4），移植侧没有这张表。取售价侧 sale.js 的同款缺省值
- *     0（负面评价）——卖淫中毒因此不参与自动提升（:230-232）。表落地后
- *     这个参数应改为读真身。
- *   * COUNT > 15 的 `GETBIT(FLAG:5,36)` 是「只自动提升前 15 项」的开关，
- *     与调用方的位 35（自动化总开关）不是同一位，1:1 保留（:233-235）。
+ * 「卖淫影响」的读法（1:1 的缺省化）：原作 :230-232 直读 SAVEDATA 变量；ere 侧
+ * 自 #547 落 yml/ModSave.yml id 0（era_modsave.prostitution_effect，设置页
+ * [29] 可切），参数缺省值读它，显式传参覆盖（通道仅为测试注入保留）——
+ * 0 档（负面评价）跳过 37 卖淫中毒的自动提升。
+ *
+ * 另一条取舍：COUNT > 15 的 `GETBIT(FLAG:5,36)` 是「只自动提升前 15 项」的
+ * 开关，与调用方的位 35（自动化总开关）不是同一位，1:1 保留（:233-235）。
  * @param {number} [arg] 原作 ARG（-1 = 当前 TARGET）
  * @param {{prostitution_effect?: number}} [opts]
  * @returns {Promise<void>}
  */
-async function auto_ablup(arg = -1, { prostitution_effect = 0 } = {}) {
+async function auto_ablup(
+  arg = -1,
+  { prostitution_effect = era_modsave.prostitution_effect } = {},
+) {
   const keep_target = era_flag.target;
   if (arg >= 0) era_flag.target = arg;
   const target = era_flag.target;

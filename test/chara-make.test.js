@@ -412,7 +412,7 @@ test('cm_kj 随机排除：独特性格 165 与男人恶女 166 重掷（:233/:2
   assert.equal(fixture2.store.get('talent:2:161'), 1, '男人恶女被重掷');
 });
 
-// —— @CM_GENDER（:255-294，SELECTCASE 冒險者性別恒 0）——
+// —— @CM_GENDER（:255-294，SELECTCASE 冒險者性別 → global:3，#547 落存储）——
 
 test('cm_gender CASE 0：2% 扶他、无男性分支', async () => {
   const fixture = create_era_fixture();
@@ -426,6 +426,54 @@ test('cm_gender CASE 0：2% 扶他、无男性分支', async () => {
   await gender2(2, never); // RAND:50 = 1 → 什么都不设
   assert.equal(fixture2.store.get('talent:2:121'), undefined, '未掷中扶他');
   assert.equal(fixture2.store.get('talent:2:122'), undefined, '保持女性');
+});
+
+test('cm_gender 六臂按 global:3 冒险者性别分派（#547 接通存储）', async () => {
+  // -1 女多男少：2% 扶他、20% 男性（RAND:50==0 → 扶她；RAND:5==0 → 男人）
+  const f1 = create_era_fixture();
+  f1.store.set('global:3', -1);
+  await load(f1).cm_gender(1, (n) => (n === 50 ? 0 : 1));
+  assert.equal(f1.store.get('talent:1:121'), 1, '-1 档：掷中扶他');
+
+  const f1b = create_era_fixture();
+  f1b.store.set('global:3', -1);
+  await load(f1b).cm_gender(1, (n) => (n === 5 ? 0 : 1));
+  assert.equal(f1b.store.get('talent:1:122'), 1, '-1 档：掷中男人');
+
+  // 1 只有男性：未掷中扶他则恒为男人（RAND:5 >= 0 恒真）
+  const f2 = create_era_fixture();
+  f2.store.set('global:3', 1);
+  await load(f2).cm_gender(2, never);
+  assert.equal(f2.store.get('talent:2:122'), 1, '1 档：男人');
+
+  // 2 男多女少：RAND:5 >= 1（五分之四）→ 男人；掷 0 → 女性
+  const f3 = create_era_fixture();
+  f3.store.set('global:3', 2);
+  await load(f3).cm_gender(3, (n) => (n === 50 ? 1 : 1));
+  assert.equal(f3.store.get('talent:3:122'), 1, '2 档：五分之四的男性');
+
+  const f3b = create_era_fixture();
+  f3b.store.set('global:3', 2);
+  await load(f3b).cm_gender(3, (n) => (n === 5 ? 0 : 1));
+  assert.equal(f3b.store.get('talent:3:122'), undefined, '2 档：掷 0 为女性');
+
+  // 3 男女持平：RAND:2 < 1（二分之一）→ 男人
+  const f4 = create_era_fixture();
+  f4.store.set('global:3', 3);
+  await load(f4).cm_gender(4, (n) => (n === 2 ? 0 : 1));
+  assert.equal(f4.store.get('talent:4:122'), 1, '3 档：掷 0 为男人');
+
+  const f4b = create_era_fixture();
+  f4b.store.set('global:3', 3);
+  await load(f4b).cm_gender(4, () => 1);
+  assert.equal(f4b.store.get('talent:4:122'), undefined, '3 档：掷 1 为女性');
+
+  // 4 全是扶她（不掷骰）
+  const f5 = create_era_fixture();
+  f5.store.set('global:3', 4);
+  await load(f5).cm_gender(5, never);
+  assert.equal(f5.store.get('talent:5:121'), 1, '4 档：恒扶她');
+  assert.equal(f5.store.get('talent:5:122'), undefined, '4 档：无男性');
 });
 
 // —— @CM_VIRGIN（:295-347）——

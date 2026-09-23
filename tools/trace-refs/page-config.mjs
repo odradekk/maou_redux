@@ -40,11 +40,6 @@ export const FILES = [
         any: [/^\tIF RESULT == 1\s*$/m],
       },
       {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '53',
-        any: [/^\s*冒險者性別\s*=\s*-1\s*$/m],
-      },
-      {
         src: 'target/ERB/SYSTEM/CONFIG.ERB',
         ref: '118-134',
         any: [/^\s*@冒險者性別顯示\s*$/m],
@@ -76,10 +71,21 @@ export const FILES = [
         ref: '243-245',
         any: [/^\s*ELSEIF LOCAL >= 22 && LOCAL <= 25\s*$/m],
       },
+      // #547：[27]/[29]/[30] 三支随魔改存档变量落地，按支登记
       {
         src: 'target/ERB/SYSTEM/CONFIG.ERB',
-        ref: '253-285',
+        ref: '253-264',
         any: [/^\tIF\t+ 冒險者性別 == -1\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '273-278',
+        any: [/^\tIF\t 卖淫影响 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '281-285',
+        any: [/^\tIF\t 反作弊\s*$/m],
       },
       {
         src: 'target/ERB/SYSTEM/CONFIG.ERB',

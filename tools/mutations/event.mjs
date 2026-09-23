@@ -3,12 +3,13 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 349; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+export const COUNT = 352; // #400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
 // 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）；
 // #502 起 +4（M10744-M10747，SENGEN_VIDEO_DE 的骰点与两段清零、EVENT_TURNEND
 // 的宣言数真读）；#508 起 +4（M11000-M11003，回合结算的调教窗口开关、
 // AUTOTRAIN 调用点与 FORMAT 循环的 TARGET 指针）
+//；#547 起 +3（M11578-M11580，event-first 的冒险者性别播种与 event-turnend 的反作弊闸门——由 test/event-first.test.js 与 test/event-turnend.test.js 守护）
 
 export default [
   {
@@ -3230,5 +3231,35 @@ export default [
     replace: '    // 变异：不指 TARGET 指针',
     tests: ['event-turnend'],
     must_mention: '常时发情的 3000 起步必须落进 palam（窗口开着的直接证据）',
+  },
+  {
+    desc: 'M11578 EVENTFIRST 的冒险者性别播种写成 0（原作 :53 是 -1，#547）',
+    file: 'ere/event/event-first.js',
+    find: `  era_global.adventurer_gender = -1;`,
+    replace: `  era_global.adventurer_gender = 0; // 变异：播种值错档`,
+    tests: ['event-first'],
+    must_mention: '初始化写入（随机）',
+  },
+  {
+    desc: 'M11579 EVENTTURNEND 的反作弊闸门取反（开着检查、关了执行，#547）',
+    file: 'ere/event/event-turnend.js',
+    find: `    if (!era_modsave.anti_cheat) {
+      await debug_check();
+    }`,
+    replace: `    if (era_modsave.anti_cheat) {
+      await debug_check();
+    } // 变异：闸门取反`,
+    tests: ['event-turnend'],
+    must_mention: '反作弊 1 时跳过 DEBUG_CHECK',
+  },
+  {
+    desc: 'M11580 EVENTTURNEND 的反作弊闸门删除（开关失效，恒执行 DEBUG_CHECK，#547）',
+    file: 'ere/event/event-turnend.js',
+    find: `    if (!era_modsave.anti_cheat) {
+      await debug_check();
+    }`,
+    replace: `    await debug_check(); // 变异：闸门删除`,
+    tests: ['event-turnend'],
+    must_mention: '反作弊 1 时跳过 DEBUG_CHECK',
   },
 ];

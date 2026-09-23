@@ -138,3 +138,43 @@ test('seed_title_music_defaults：这张票之前的旧档（无 global:2 槽）
   assert.equal(fixture.store.get('global:0'), 1);
   assert.equal(fixture.store.get('global:2'), 1);
 });
+
+// —— 冒险者性别（global:3，#547：魔改使用.ERH 的 GLOBAL SAVEDATA 落表）——
+
+test('冒险者性别：未初始化读 0、写入读回落在 global:3', () => {
+  const fixture = create_era_fixture();
+  const era_global = fixture.load_module('era-utils/era-global');
+
+  assert.equal(era_global.adventurer_gender, 0);
+  era_global.adventurer_gender = -1;
+  assert.equal(era_global.adventurer_gender, -1);
+  assert.equal(fixture.store.get('global:3'), -1);
+});
+
+test('cycle_adventurer_gender：-1→0→1→2→3→4→-1 六档循环（CONFIG.ERB:253-264）', () => {
+  const fixture = create_era_fixture();
+  const era_global = fixture.load_module('era-utils/era-global');
+
+  era_global.adventurer_gender = -1;
+  assert.equal(era_global.cycle_adventurer_gender(), 0);
+  assert.equal(era_global.cycle_adventurer_gender(), 1);
+  assert.equal(era_global.cycle_adventurer_gender(), 2);
+  assert.equal(era_global.cycle_adventurer_gender(), 3);
+  assert.equal(era_global.cycle_adventurer_gender(), 4);
+  assert.equal(era_global.cycle_adventurer_gender(), -1);
+  assert.equal(fixture.store.get('global:3'), -1);
+});
+
+test('冒险者性别不随单档存档走：loadData 后保持现值（GLOBAL 跨档共享语义）', async () => {
+  const fixture = create_era_fixture();
+  const era_global = fixture.load_module('era-utils/era-global');
+
+  era_global.adventurer_gender = 4;
+  await fixture.era.saveData(0, 'test');
+  // 换档期间玩家经设置页改了全局值
+  era_global.adventurer_gender = 1;
+  assert.equal(await fixture.era.loadData(0), true);
+  // global:* 不在快照里（夹具 snapshot_store 明确跳过 global: 前缀），读档
+  // 不回滚全局值——@EVENTFIRST 才会重置它（ere/event/event-first.js）
+  assert.equal(era_global.adventurer_gender, 1);
+});

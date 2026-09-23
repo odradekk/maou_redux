@@ -22,8 +22,9 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'stub-registry.md',
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
-  // MODLIST 随 #542 判不移植离开存根名单（清单同名行改判死终态，行仍在表）
-  assert.deepEqual(STUBBED_CALLS, ['CONFIG_AGE_SETTING']);
+  // MODLIST 随 #542 判不移植离开存根名单；CONFIG_AGE_SETTING 随 #547 落地为
+  // ere/page/page-config-age.js——名单已空（空名单也必须被核对测试看见）
+  assert.deepEqual(STUBBED_CALLS, []);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
@@ -107,21 +108,40 @@ test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 �
   assert.equal(chara(0).chara.阴茎的状态, before);
 });
 
-test('adventurer_gender_status_text：MOD SAVEDATA 未落地，恒显示 -1 档文案（女多男少）', () => {
+test('adventurer_gender_status_text：六档文案（global:3，@EVENTFIRST 开局 -1）', () => {
   const fixture = create_era_fixture();
   const { adventurer_gender_status_text } = load(fixture);
-  assert.equal(adventurer_gender_status_text(), '女多男少');
+  const era_global = fixture.load_module('era-utils/era-global');
+
+  const expectations = [
+    [-1, '女多男少'],
+    [0, '只有女性'],
+    [1, '只有男性'],
+    [2, '男多女少'],
+    [3, '男女持平'],
+    [4, '全是扶她'],
+  ];
+  for (const [value, text] of expectations) {
+    era_global.adventurer_gender = value;
+    assert.equal(adventurer_gender_status_text(), text, `档位 ${value}`);
+  }
 });
 
-test('prostitution_effect_status_text：MOD SAVEDATA 未落地，恒显示默认档文案', () => {
+test('prostitution_effect_status_text：三档文案（modsave:0，0 为默认）', () => {
   const fixture = create_era_fixture();
   const { prostitution_effect_status_text } = load(fixture);
+  const era_modsave = fixture.load_module('era-utils/era-modsave');
+
   assert.equal(
     prostitution_effect_status_text(),
     '【负面】让奴隶的售价下降（默认设置）',
+    '未初始化 = 0（DIM 无声明默认值）',
   );
+  era_modsave.prostitution_effect = 1;
+  assert.equal(prostitution_effect_status_text(), '【正面】让奴隶的售价上升');
+  era_modsave.prostitution_effect = 2;
+  assert.equal(prostitution_effect_status_text(), '【无影响】不会影响奴隶售价');
 });
-
 test('dispatch_config(0-10)：INVERTBIT FLAG:5 逐位切换', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
@@ -202,13 +222,23 @@ test('dispatch_config(13)：进入 config_filter_setting 子菜单并可退出',
   assert.equal(page, 0);
 });
 
-test('dispatch_config(15)：CONFIG_AGE_SETTING 走存根占位并等键', async () => {
+test('dispatch_config(15)：进入年龄/三围子菜单（CONFIG_AGE_SETTING 真身）', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
+  fixture.set_inputs(100); // 子菜单直接退出（位 12/15 全关，退出块不动）
   const page = await dispatch_config(15, 1);
   assert.equal(page, 1);
-  assert(fixture.text_lines().some((t) => t.includes('@CONFIG_AGE_SETTING')));
-  assert.equal(fixture.waits.length, 1);
+  // 真的渲染了年龄菜单（按钮行，而非存根占位文本行）
+  assert(
+    fixture.lines_history.some(
+      (l) => l.type === 'button' && l.text.includes('年龄的显示'),
+    ),
+    '年龄菜单首行',
+  );
+  assert(
+    !fixture.text_lines().some((t) => t.includes('@CONFIG_AGE_SETTING')),
+    '存根占位行必须消失',
+  );
 });
 
 test('dispatch_config(19)：进入 config_penis_you_setting 子菜单', async () => {
@@ -279,16 +309,57 @@ test('dispatch_config(28)：立绘开关按 #542 判不移植，按下打一行�
   );
 });
 
-test('dispatch_config(27/29/30)：三个 MOD SAVEDATA 未落地变量恒不写入（1:1「设置了也不生效」）', async () => {
-  // [28] 立绘开关自 #542 起走判不移植的提示分支（见上面 dispatch_config(28)
-  // 的用例），不再是 MOD SAVEDATA 变量，故不在本用例的取值表里
+test('dispatch_config(27/29/30)：三个魔改存档变量的切换落地（#547 存储）', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
-  for (const local of [27, 29, 30]) {
-    const page = await dispatch_config(local, 1);
-    assert.equal(page, 1);
-  }
-  assert.equal(fixture.var_writes.length, 0);
+  const era_global = fixture.load_module('era-utils/era-global');
+  const era_modsave = fixture.load_module('era-utils/era-modsave');
+
+  // [27] 冒险者性别（GLOBAL）：开局 -1 → 按一下到 0
+  era_global.adventurer_gender = -1;
+  assert.equal(await dispatch_config(27, 1), 1);
+  assert.equal(era_global.adventurer_gender, 0);
+
+  // [29] 卖淫影响（SAVEDATA）：0 → 1 → 2 → 0
+  assert.equal(await dispatch_config(29, 1), 1);
+  assert.equal(era_modsave.prostitution_effect, 1);
+  await dispatch_config(29, 1);
+  assert.equal(era_modsave.prostitution_effect, 2);
+  await dispatch_config(29, 1);
+  assert.equal(era_modsave.prostitution_effect, 0);
+
+  // [30] 反作弊（SAVEDATA）：0 → 1 → 0
+  assert.equal(await dispatch_config(30, 1), 1);
+  assert.equal(era_modsave.anti_cheat, 1);
+  await dispatch_config(30, 1);
+  assert.equal(era_modsave.anti_cheat, 0);
+});
+
+test('draw_config_page 的 [30] 状态行随反作弊开关翻转（OFF = 可开修改）', async () => {
+  const fixture = create_era_fixture();
+  const { config_menu } = load(fixture);
+  const era_modsave = fixture.load_module('era-utils/era-modsave');
+
+  era_modsave.anti_cheat = 1;
+  fixture.set_inputs(101, 100); // 翻到 page 1 后退出
+  await config_menu();
+  const off_line = fixture.lines_history.find(
+    (l) => l.type === 'button' && l.accelerator === 30,
+  );
+  assert.ok(off_line.text.includes('反作弊开关'), `[30] 按钮行标签：${off_line.text}`);
+  assert.ok(off_line.text.includes('OFF（可开修改）'), `OFF 档：${off_line.text}`);
+
+  const fixture2 = create_era_fixture();
+  const { config_menu: again } = load(fixture2);
+  fixture2.set_inputs(101, 100);
+  await again();
+  const on_line = fixture2.lines_history.find(
+    (l) => l.type === 'button' && l.accelerator === 30,
+  );
+  assert.ok(
+    on_line.text.includes('ON（不可开修改）'),
+    `ON 档（默认 0）：${on_line.text}`,
+  );
 });
 
 test('dispatch_config(101/102)：翻页在 0/1 间循环；100 返回 null（退出信号）', async () => {

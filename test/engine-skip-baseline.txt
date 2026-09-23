@@ -110,5 +110,8 @@
 # setVar 驱动生产模块查表），现为 79（5904 = 5825 过 + 79 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测）。表名/读取键随改名同步
 # （CharaNameList.yml → NameList.yml、charanamelist* → namelist*），上面
-# #388 那行里的旧名按现状改回现名。
-79
+# #547（S6 设置页魔改存档变量）：+1（era-modsave.test.js 的引擎门控用例
+# 「ModSave.yml 经引擎装载后 setVar 接受 modsave: 寻址」——扩展普通表路径，
+# resource-media.test.js 的 Audio.yml 同款），现为 80。#552（S9）合并后各自 +1，
+# 合并时按 merge-conflicts.md 实测写回。
+80

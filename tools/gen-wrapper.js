@@ -38,11 +38,15 @@ const GENERATED_END = '// GENERATED END';
 // 落扩展普通表 yml/Audio.yml，引擎侧自动建桶（见该 yml 头注）。
 // exflag 自 issue #117 起入白名单：EX_FLAG 一族（威望、非作弊资金、结局线
 // 等）落 yml/ExFlag.yml（#113 落表，头注点名首个消费者生成包装层）。
+// modsave 自 issue #547 起入白名单：魔改使用.ERH 的单档 SAVEDATA 一族
+// （卖淫影响/反作弊）落扩展普通表 yml/ModSave.yml，GLOBAL 那支（冒险者性别）
+// 在 yml/Global.yml（见该 yml 头注）。
 const RENDERABLE_ONE_DIM_TABLES = new Set([
   'global',
   'flag',
   'audio',
   'exflag',
+  'modsave',
 ]);
 
 // 变量字段行：id / name / type（引擎三字段，见 #5 决议与 18-tools.md）
