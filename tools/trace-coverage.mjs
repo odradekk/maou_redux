@@ -58,16 +58,25 @@
 //      两种形态都认**（`| \`FN\`` 254 行与 `|\`FN\`` 30 行——人工维护的
 //      表，prettier 对两种都判合格，规范化它会在下一次手写时重新失效，
 //      后者手写清单行时照这两种形态之一写即可）。未了结 = 状态以
-//      存根 / 部分实现 开头，或 登记（ 开头且不带死标记（判死 / 不移植
-//      / 不实现 / 不可达 / 落空）——登记行一半是「判死 1:1 保留」，那
-//      不是欠账是完结方式，计入会把带死分支的已移植文件永远卡在
-//      部分移植。已实现行不欠账，不归因。归因不到的行（待核 / 无源 /
-//      内建函数 / 目录级引用）不构成信号，由 UNATTRIBUTED_BASELINE
-//      钉住总数（见判据 ⑥）。只解析第一张表：变量级 /
-//      资源级 / @USERSHOP 各表粒度不同，#329 普查同样只认第一张。
+//      「存根」开头（#541 起四张表统一到三类词形，见下；此前认「存根 /
+//      部分实现 / 不带死标记的登记（…）」三种，那一批词形已随 #541 归一）。
+//      归因不到的行（待核 / 无源 / 内建函数 / 目录级引用）不构成信号，
+//      由 UNATTRIBUTED_BASELINE 钉住总数（见判据 ⑥）。只解析第一张表：
+//      变量级 / 资源级 / @USERSHOP 各表粒度不同，#329 普查同样只认第一张。
 //   5. 有证据、无未了结项 → 已移植。
 //   6. 无任何证据 → 待移植（正判据是「三路证据并集为空」，不是兜底：
 //      证据面坏了会被待移植基线拦下，见下）。
+//
+// 状态词的三分类与「清空」（#541，每行末格是状态列）：
+//   已实现（…）／存根（…）／判死终态（判死｜不移植｜不实现｜不可达｜落空
+//   之一开头）。**只写去向判不出来**——「处刑票」「设定票」一类既不表示
+//   做完也不表示判死，未了结行数因此数不准，#540 的终点判据第二条
+//   （四张表没有未了结条目）正是据此检查：`check_registry_statuses` 逐行
+//   核对词形（不在三类里即红）并打印每张表的已实现／存根／终态计数，
+//   未了结合计只作统计、不设基线（S1–S8 逐票抬低到 0 是它的用法）。
+//   分组标题行（首格以「——」开头、其余各格全空，函数表 :150/:179 两条）
+//   没有状态列，跳过——把标题行算成「状态词不在三类里」是开图时的误读
+//   （#541 评论的订正）。
 //
 // 失败判据（#331 验收：「无未归类项」的具体化 + 两道只减不增基线）：
 //   ① 分母漂移：target/ERB 枚举数 ≠ 346 即红——target/ 是只读输入，
@@ -91,16 +100,19 @@
 //      写成公告的时机。
 //
 // 用法（挂在 tools/trace-check.mjs 的 --coverage 下，本模块不进 CLI）：
-//   node tools/trace-check.mjs --coverage            五类计数 + 基线
+//   node tools/trace-check.mjs --coverage            五类计数 + 基线 + 清单状态
 //   node tools/trace-check.mjs --coverage --list     逐文件列出（验收对账用）
 //   node tools/trace-check.mjs --coverage --only <子串[,子串…]>
 //     只分类路径含子串的 target 文件；分母 / 基线 / 表悬空核对按范围
 //     跳过或收窄，报告行自报范围（限定范围的绿不是全量绿，探针用）。
+//     清单状态词核对与未了结计数**不随范围收窄**（它读的是清单，不是
+//     target 文件）——写坏型探针正靠它带进副本跑。
 //
 // 已判定不实现之外的两处显式裁定落点（票内定夺，依据见 issue #331 评论）：
 //   - DEBUG小白娘2024ver0.0.14.ERB 与 MOD/、魔改新增/ 未移植文件归
-//     待移植：清单给它们挂着「调试票」「魔改子系统票」的归属，是排期
-//     不是不实现（阶段 6 / #329 裁定 6）。
+//     待移植：清单给它们挂着存根与 #542（S1）的归属，是排期不是不实现
+//     （阶段 6 / #329 裁定 6、#540「阶段 6」范围决定 2–4；不实现结论由
+//     #542 写进清单，#541 只把状态词归一）。
 //   - 口上/EVENT_K902_普林希丝 ver1.0.3.ERB 归已移植（经证据）而非
 //     清单 251 行的「不实现」：那行判的是普林希丝没有自己的口上
 //     （#14 缺陷 1 的 1:1 保留）；文件里生效的那份 _903 定义与
@@ -366,7 +378,12 @@ export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#48
  * MONSTER_DATA.ERB 被报成已移植而无人看见）。冻结后，新增归因不到的行
  * 必须显式抬基线——那是把「这行确实挂不到文件上」写成公告的时机。
  */
-export const UNATTRIBUTED_BASELINE = 2; // #515：DUNGEON_BATTLE2 行改判死形态（原作全库无定义，状态列不再计
+export const UNATTRIBUTED_BASELINE = 0; // #541：CHARADEAD_CHECK（源写「調教相關/（@EVENTEND 的调用，文件待核）」）与
+// PARTY_CHAR_DEL（源写「待核（@EVENTEND 死亡分支的调用）」）两条待核行补上真实出处（前者 EVENT/EVENT_AFTERTRAIN.ERB:6、
+// 后者 迷宮/DUNGEON_PARTY.ERB:300）后，归因不到 2 → 0，与 `node tools/trace-check.mjs --coverage` 的重测一致
+// （显式改小，非顺手改数字）。**0 是真数不是空表**：四张表的状态词核对（check_registry_statuses）同时上线，
+// 任何新行只要「源」列写得可归因就不会碰到这条基线，写不出来时当场红。
+// export const UNATTRIBUTED_BASELINE = 2; // #515：DUNGEON_BATTLE2 行改判死形态（原作全库无定义，状态列不再计
 // 未了结项）后不再进入归因扫描——它的「源」写「（无源——**原作全库无定义**，同上）」，三路归因规则都够不着，
 // 是原基线 3 行里的 1 行；同一票的 DUNGEON_BATTLE（源里有裸文件名 LABO_DUNGEON_MAP.ERB:2）与 AGENT_MENU
 // （归因到侵略/AGENT/AGENT_EVENT.ERB）本来归因得到，不计入本数。3 → 2，与
@@ -440,8 +457,15 @@ export const RULINGS = [
   },
 ];
 
-/** 登记行里的死标记：带这些词的登记是完结方式，不算未了结欠账。 */
-const DEAD_MARKERS = ['判死', '不移植', '不实现', '不可达', '落空'];
+/**
+ * 登记行里的死标记：带这些词的登记是完结方式，不算未了结欠账。
+ * 同时是状态列的判死终态词形（#541 的三分类之一）。
+ */
+export const DEAD_MARKERS = ['判死', '不移植', '不实现', '不可达', '落空'];
+
+/** 状态列的另两类（#541）：已实现 = 了结，存根 = 未了结 */
+export const STATUS_SETTLED = '已实现';
+export const STATUS_PENDING = '存根';
 
 const TARGET_ERB_DIR = 'target/ERB';
 const STUB_REGISTRY = 'docs/stub-registry.md';
@@ -557,23 +581,137 @@ export function expand_range_mentions(mentions, files_set) {
   return out;
 }
 
-// —— 存根清单归因 ——
+// —— 存根清单：分节、拆格、状态分类（#541） ——
 
-function parse_stub_registry(text) {
-  const lines = text.split(/\r?\n/);
-  const start = lines.findIndex((l) => l.startsWith('## 函数级存根'));
-  const end = lines.findIndex((l, i) => i > start && l.startsWith('## '));
-  if (start < 0) {
-    throw new Error('docs/stub-registry.md 里找不到「## 函数级存根」表');
-  }
-  return lines.slice(start + 1, end < 0 ? lines.length : end);
+/**
+ * 把清单的一行拆成单元格（去掉首尾两根管道）。正文里的 `\|` 是字面竖线，
+ * 不参与分列——变量表的 `` `24\|17` ``（Chara24 预设的相性）与 @USERSHOP 的
+ * `FLAG:83 \| FLAG:84` 守卫都会把内容格劈成两半，末格随即取错（#541）。
+ * @param {string} line
+ * @returns {string[]}
+ */
+export function split_row_cells(line) {
+  return line
+    .split(/(?<!\\)\|/)
+    .slice(1, -1)
+    .map((c) => c.trim());
 }
 
-function is_outstanding(status) {
-  if (status.startsWith('存根') || status.startsWith('部分实现')) return true;
+/**
+ * 分组标题行：首格以「——」开头、其余各格全空——函数表里仅有的两条把
+ * 同一段多行归成一组，本来就没有状态列，不该被当成「状态词不在三类里」
+ * （#541 评论的订正；词形写进 docs/stub-registry.md 的维护规则）。
+ * 其余各格非空即不是标题行：那是一条忘了写状态的数据行，该红。
+ * @param {string[]} cells
+ * @returns {boolean}
+ */
+export function is_group_title_row(cells) {
   return (
-    status.startsWith('登记（') && !DEAD_MARKERS.some((d) => status.includes(d))
+    cells.length > 1 &&
+    cells[0].startsWith('——') &&
+    cells.slice(1).every((c) => c === '')
   );
+}
+
+/** 分隔行（`| --- | … |`）——紧随其后的上一行即表头，两行都不是数据行 */
+function is_separator_row(cells) {
+  return cells.length === 0 || /^-+$/.test(cells[0]);
+}
+
+/**
+ * 状态列（每行末格）的三分类。取值只有三类（docs/stub-registry.md「状态
+ * 含义」）：`已实现（…）`、`存根（…）`、判死终态（DEAD_MARKERS 之一开头）。
+ * 只写去向（「处刑票」「设定票」一类）、写错词形（「已落地」「真身」）或
+ * 留空都是 `invalid`——那正是 #541 要根除的形态：状态词判不了，未了结行数
+ * 就数不准。
+ * @param {string} text 状态格原文
+ * @returns {'settled'|'pending'|'dead'|'invalid'}
+ */
+export function classify_status(text) {
+  if (text.startsWith(STATUS_SETTLED)) return 'settled';
+  if (text.startsWith(STATUS_PENDING)) return 'pending';
+  if (DEAD_MARKERS.some((w) => text.startsWith(w))) return 'dead';
+  return 'invalid';
+}
+
+/**
+ * 解析清单里的表格：按 `## ` 分节，取每节里以 `|` 开头的行，只保留有表格
+ * 行的小节（即四张登记表；「状态含义」「维护规则」一类纯文字小节不入账）。
+ * 表头与分隔行照收但打 `frame` 标（markdown 规则：分隔行的上一行是表头），
+ * 核对与归因都跳过它们——表头的末格写着「状态」「去向」「归属」这类列名，
+ * 不标出来就会被当成一个非法状态词。
+ * @param {string} text docs/stub-registry.md 全文
+ * @returns {{ title: string, rows: { line: number, cells: string[], frame?: boolean }[] }[]}
+ */
+export function parse_registry_tables(text) {
+  const sections = [];
+  let cur = null;
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line.startsWith('## ')) {
+      cur = { title: line.slice(3).trim(), rows: [] };
+      sections.push(cur);
+    } else if (cur !== null && line.startsWith('|')) {
+      cur.rows.push({ line: i + 1, cells: split_row_cells(line) });
+      if (is_separator_row(cur.rows.at(-1).cells) && cur.rows.length > 1) {
+        cur.rows.at(-2).frame = true; // 分隔行的上一行 = 表头
+        cur.rows.at(-1).frame = true;
+      }
+    }
+  }
+  return sections.filter((s) => s.rows.length > 0);
+}
+
+/**
+ * 四张表逐行核对状态词，并统计每张表的已实现／存根／终态行数。
+ * 未了结 = 存根行（#540 的「清空」= 四张表 pending 合计 0）。
+ * @param {string} text docs/stub-registry.md 全文
+ * @returns {{ tables: { title: string, settled: number, pending: number, dead: number }[], failures: string[] }}
+ */
+export function check_registry_statuses(text) {
+  const failures = [];
+  const tables = [];
+  for (const section of parse_registry_tables(text)) {
+    const stat = { title: section.title, settled: 0, pending: 0, dead: 0 };
+    for (const { line, cells, frame } of section.rows) {
+      if (frame === true || is_group_title_row(cells)) continue;
+      const status = cells.at(-1) ?? '';
+      const kind = classify_status(status);
+      if (kind === 'invalid') {
+        failures.push(
+          `✗ 存根清单状态词不在三类里：docs/stub-registry.md:${line}（${section.title}）末格写的是「${status.slice(0, 40)}」——` +
+            `状态列只能以 ${[STATUS_SETTLED, STATUS_PENDING, ...DEAD_MARKERS].join(' / ')} 之一开头（词形见「状态含义」，只写去向判不出来）`,
+        );
+        continue;
+      }
+      stat[kind] += 1;
+    }
+    tables.push(stat);
+  }
+  return { tables, failures };
+}
+
+// —— 存根清单归因 ——
+
+/** 函数表的节标题：归因只认这一张（其余三张粒度不同，#329 普查同判据） */
+const FUNCTION_TABLE_TITLE = '函数级存根';
+
+function parse_stub_registry(text) {
+  const section = parse_registry_tables(text).find(
+    (s) => s.title === FUNCTION_TABLE_TITLE,
+  );
+  if (section === undefined) {
+    throw new Error(
+      `docs/stub-registry.md 里找不到「## ${FUNCTION_TABLE_TITLE}」表`,
+    );
+  }
+  return section.rows;
+}
+
+/** 未了结 = 状态以「存根」开头（#541 起四张表统一到三类词形） */
+function is_outstanding(status) {
+  return status.startsWith(STATUS_PENDING);
 }
 
 /**
@@ -593,19 +731,15 @@ export function attribute_stub_rows(repo, files) {
   }
   const attributed = new Map();
   let unattributed = 0;
-  for (const line of parse_stub_registry(text)) {
+  for (const { cells, frame } of parse_stub_registry(text)) {
     // 行形态两种都认：`| \`FN\``（带空格，254 行）与 `|\`FN\``（无空格，30 行，
     // 含 MONSTER_SETUP / PASSOUT_CHECK / SEIIN_START 等——漏掉即把它们静默
     // 报成已实现。清单是人工维护的表，两种形态 prettier 都判合格，规范化
     // 会在下一次有人手写时重新失效，所以认两种而不是改表）
-    if (!/^\|\s*`/.test(line)) continue;
-    const cells = line
-      .split('|')
-      .map((c) => c.trim())
-      .filter((c, i, a) => !(c === '' && (i === 0 || i === a.length - 1)));
+    if (frame === true || !cells[0].startsWith('`')) continue;
     const fn = cells[0].replace(/[`*]/g, '');
     const src = cells[1] ?? '';
-    const status = cells[cells.length - 1] ?? '';
+    const status = cells.at(-1) ?? '';
     if (!is_outstanding(status)) continue;
     const cell = src.replaceAll('\\_', '_');
     const hits = new Set();
@@ -717,6 +851,17 @@ export async function run_coverage({ repo, only = [], list = false }) {
   // 未了结存根归因（部分移植信号）
   const { attributed, unattributed } = attribute_stub_rows(repo, files);
 
+  // 四张表的状态词核对与未了结行数（#541）。与归因同读一遍清单文件：
+  // 归因只认函数表、「清空」看四张表，#540 的终点判据第二条要的是后者。
+  const registry_status = check_registry_statuses(
+    fs.readFileSync(path.join(repo, STUB_REGISTRY), 'utf8'),
+  );
+  for (const msg of registry_status.failures) fail(msg);
+  const pending_rows = registry_status.tables.reduce(
+    (s, t) => s + t.pending,
+    0,
+  );
+
   const ruled = new Map(RULINGS.map((r) => [r.path, r.reason]));
   const categories = {
     已移植: [],
@@ -775,6 +920,17 @@ export async function run_coverage({ repo, only = [], list = false }) {
     : '';
   console.log(
     `移植状态表（#331）：${parts.join('；')}；合计 ${total}/${DENOMINATOR}${scope_note}`,
+  );
+  console.log(
+    `存根清单状态（#541，四张表逐行）：${registry_status.tables
+      .map(
+        (t) =>
+          `${t.title} 已实现 ${t.settled}／存根 ${t.pending}／终态 ${t.dead}`,
+      )
+      .join('；')}`,
+  );
+  console.log(
+    `存根清单存根行合计 ${pending_rows} 行（四张表；#540 终点判据：清空 = 0）`,
   );
   if (!scoped) {
     console.log(

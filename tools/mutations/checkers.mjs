@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 146; // 合并态实测（#532 与 #530 两侧条目全留；按 merge-conflicts.md，计数型基线
+export const COUNT = 166; // 合并态实测（#532 与 #530 两侧条目全留；按 merge-conflicts.md，计数型基线
 // 不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本票 144、master 135，
 // 递增账：133 + #532 的 11 + #530 的 2 = 146，与实测相符）
 // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
@@ -13,7 +13,10 @@ export const COUNT = 146; // 合并态实测（#532 与 #530 两侧条目全留�
 // 记在 tools/mutations/page.mjs）；#532 起 +11（M11240-M11250：--verify 只读、残留态启动
 // 自检与其 in-flight 标记、run_one/SIGINT 两处还原本身——由 test/mutation-check.test.js
 // 的 #532 用例与既有的拦截路径/SIGINT 用例守护）；#530 起 +2（M11207/M11208：纯文本选项行的棘轮两个方向——新增一行、基线留过期条目，
-// 均由 test/plaintext-option.test.js 守护）
+// 均由 test/plaintext-option.test.js 守护）；#541 起 +20（M11270-M11289：存根清单四张表的状态词三分类、
+// 分组标题行与表头/分隔行跳过、拆格的 \| 转义、未了结计数与打印面、以及清单三处行文退回——
+// 除注明外由 test/stub-registry-status.test.js 守护；M6511/M6512/M6520 的靶行随同票重构改写，
+// M10901/M10902 两条清单行条目的 find 同步到新行文）
 
 export default [
   // —— #513：内联 :N 的源绑定（trace-check）——
@@ -821,20 +824,20 @@ export default [
     must_mention: '范围式引用必须展开',
   },
   {
-    desc: 'M6511 未了结归因焊死（存根/部分实现行不再算欠账——部分移植一律漏成已移植）',
+    desc: 'M6511 未了结归因焊死（存根行不再算欠账——部分移植一律漏成已移植；#541 起「未了结」只有 is_outstanding 一条判据，靶行随之改到这里）',
     file: 'tools/trace-coverage.mjs',
-    find: "  if (status.startsWith('存根') || status.startsWith('部分实现')) return true;",
-    replace:
-      "  if (false && (status.startsWith('存根') || status.startsWith('部分实现'))) return true;",
+    find: '  return status.startsWith(STATUS_PENDING);',
+    replace: '  return false; // 变异：未了结归因焊死',
     tests: ['trace-check'],
     test_name: 'yml 承载与存根归因',
     must_mention: '存根归因必须把未了结项记成部分移植',
   },
   {
-    desc: 'M6512 死标记黑名单清空（判死登记被当成欠账——带死分支的已移植文件永远卡在部分移植）',
+    desc: 'M6512 死标记黑名单清空（判死行被当成欠账——带死分支的已移植文件永远卡在部分移植；#541 起死标记由 classify_status 认词、欠账由 is_outstanding 认「存根」，靶行改到后者）',
     file: 'tools/trace-coverage.mjs',
-    find: "const DEAD_MARKERS = ['判死', '不移植', '不实现', '不可达', '落空'];",
-    replace: 'const DEAD_MARKERS = [];',
+    find: '  return status.startsWith(STATUS_PENDING);',
+    replace:
+      '  return (\n    status.startsWith(STATUS_PENDING) ||\n    DEAD_MARKERS.some((w) => status.startsWith(w))\n  ); // 变异：死标记行也算欠账',
     tests: ['trace-check'],
     test_name: 'yml 承载与存根归因',
     must_mention: '判死登记不是欠账',
@@ -911,23 +914,23 @@ export default [
     must_mention: '必须输出移植状态表',
   },
   {
-    desc: 'M6520 清单行判据退回只认带空格形态（30 行无空格欠账被静默跳过——归因用例必须红）',
+    desc: 'M6520 清单行形态判据退化（拆格不再 trim——「|`FN`|」无空格形态与列名的空白一起读歪，欠账被静默跳过；#541 起两种管道符形态由 split_row_cells 的 trim 统一承担，靶行随之改到这里）',
     file: 'tools/trace-coverage.mjs',
-    find: '    if (!/^\\|\\s*`/.test(line)) continue;',
-    replace: "    if (!line.startsWith('| `')) continue;",
+    find: '    .map((c) => c.trim());',
+    replace: '    .map((c) => c); // 变异：拆格不 trim',
     tests: ['trace-check'],
     test_name: 'yml 承载与存根归因',
-    must_mention: '无空格清单行必须照常归因',
+    must_mention: '存根清单状态词不在三类里',
   },
   {
-    desc: 'M6521 归因不到基线校验焊死（静默多出的归因不到行无人拦——欠账漏成已实现的方向）',
+    desc: 'M6521 归因不到基线校验焊死（静默多出的归因不到行无人拦——未了结被漏成已实现的方向；#541 把基线降到 0 后，探针从「把基线改小一位」改成「往清单里多写一行归因不到」，靶行不变）',
     file: 'tools/trace-coverage.mjs',
     find: '  if (!scoped && unattributed > UNATTRIBUTED_BASELINE) {',
     replace:
       '  if (false && !scoped && unattributed > UNATTRIBUTED_BASELINE) {',
     tests: ['trace-check'],
     test_name: '归因不到行数基线',
-    must_mention: '归因不到基线改小一位必须红',
+    must_mention: '多一行归因不到必须红',
   },
   {
     desc: 'M7806 cite 标记失效（锚表 src 不论 cite 一律计入移植证据——只被引用的文件被误判已移植，#382）',
@@ -1252,14 +1255,14 @@ export default [
     must_mention: '行必须写清 com-assistant.js:2676',
   },
   {
-    desc: 'M10902 存根清单过时行普查失效（@USERSHOP 行的「占位名」格退回裸壳名——行级守卫必须点名该格，#501）',
+    desc: 'M10902 存根清单过时行普查失效（@USERSHOP 行的状态格退回裸壳名——行级守卫必须点名末格，#501；#541 起状态进末格，靶串随行文改写）',
     file: 'docs/stub-registry.md',
-    find: '| CALL INTERCEPT（:113）                                                                                                                                                                                          | （已实现，#397）',
-    replace: '| CALL INTERCEPT（:113） | INTERCEPT',
+    find: '已实现（#397：ere/page/page-intercept.js intercept；page-shop.js:336 分支已接真身）',
+    replace: 'INTERCEPT',
     tests: ['trace-check'],
     test_name:
       '存根清单普查（#501）：已做完的行转「已实现」，名下文件随之离开部分移植',
-    must_mention: '的「占位名」格仍是壳',
+    must_mention: '的末格不是标准状态词',
   },
   {
     desc: 'M10903 存根清单过时行普查失效（K 口上行的欠账点名被删——K2/K4 的真身与状态必须留在行里，#501/#514）',
@@ -1481,5 +1484,226 @@ export default [
 }`,
     tests: ['plaintext-option'],
     must_mention: '基线里这些文件的条数变少了',
+  },
+
+  // —— #541：存根清单四张表的状态词与未了结计数（靶在 tools/trace-coverage.mjs
+  // 与 docs/stub-registry.md；除注明外由 test/stub-registry-status.test.js 守护）——
+  {
+    desc: 'M11270 未了结词形改错（STATUS_PENDING 写成别的词——「存根（…）」行全部落进三类之外，四张表的未了结数当场数不出来，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: "export const STATUS_PENDING = '存根';",
+    replace: "export const STATUS_PENDING = '待办'; // 变异：未了结词形改错",
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '存根清单状态词不在三类里',
+  },
+  {
+    desc: 'M11271 终态词表少一个（「落空」掉出 DEAD_MARKERS——@COM110/@COM111 那条落空行立刻判非法：#541 的终态词表与清单里的行文必须一致）',
+    file: 'tools/trace-coverage.mjs',
+    find: "export const DEAD_MARKERS = ['判死', '不移植', '不实现', '不可达', '落空'];",
+    replace:
+      "export const DEAD_MARKERS = ['判死', '不移植', '不实现', '不可达']; // 变异：落空不再是终态词",
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '存根清单状态词不在三类里',
+  },
+  {
+    desc: 'M11272 分组标题行不再被认出来（函数表 :150/:179 两条被当成状态为空的未了结行——#541 评论专门订正过这一条）',
+    file: 'tools/trace-coverage.mjs',
+    find: `  return (
+    cells.length > 1 &&
+    cells[0].startsWith('——') &&
+    cells.slice(1).every((c) => c === '')
+  );`,
+    replace: '  return false; // 变异：分组标题行不再被认出来',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '存根清单状态词不在三类里',
+  },
+  {
+    desc: 'M11273 分组标题行只看首格（「其余各列全空」不查——一条忘写状态、正文写到别的格里的数据行被静默跳过，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: `  return (
+    cells.length > 1 &&
+    cells[0].startsWith('——') &&
+    cells.slice(1).every((c) => c === '')
+  );`,
+    replace:
+      "  return cells.length > 1 && cells[0].startsWith('——'); // 变异：只看首格",
+    tests: ['stub-registry-status'],
+    test_name: '分组标题行：首格以 —— 开头即认，其余各格必须全空（#541 订正）',
+    must_mention: '分组标题行：首格以',
+  },
+  {
+    desc: 'M11274 分隔行不再被认出来（表头行不打 frame 标且自身末格是「---」，四张表各多出两行非法状态词，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: '  return cells.length === 0 || /^-+$/.test(cells[0]);',
+    replace: '  return cells.length === 0; // 变异：分隔行不再被认出来',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '存根清单状态词不在三类里',
+  },
+  {
+    desc: 'M11275 表头行不打 frame 标（分隔行照认、只漏标它的上一行——表头的末格是列名「状态／去向／归属」，被当成非法状态词，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: `      if (is_separator_row(cur.rows.at(-1).cells) && cur.rows.length > 1) {
+        cur.rows.at(-2).frame = true; // 分隔行的上一行 = 表头
+        cur.rows.at(-1).frame = true;
+      }`,
+    replace: `      if (is_separator_row(cur.rows.at(-1).cells) && cur.rows.length > 1) {
+        cur.rows.at(-1).frame = true; // 变异：表头不打 frame 标
+      }`,
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '存根清单状态词不在三类里',
+  },
+  {
+    desc: 'M11276 拆格退化（按裸 | 拆——正文里的 \\| 把内容格劈成两半，变量表 `24\\|17` 与 @USERSHOP 的 FLAG:83 \\| FLAG:84 两处当场歪，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    .split(/(?<!\\\\)\\|/)',
+    replace: "    .split('|') // 变异：正文里的 \\| 也拆",
+    tests: ['stub-registry-status'],
+    test_name: '拆格：正文里的 \\| 是字面竖线，不参与分列（#541）',
+    must_mention: '拆格：正文里的',
+  },
+  {
+    desc: 'M11277 做完的算未了结（已实现行判成 pending——四张表的存根行数被做完的行顶起来，清空判据永远到不了 0，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: "  if (text.startsWith(STATUS_SETTLED)) return 'settled';",
+    replace:
+      "  if (text.startsWith(STATUS_SETTLED)) return 'pending'; // 变异：做完的算未了结",
+    tests: ['stub-registry-status'],
+    test_name: '四张表逐行统计：三类各计一行，未了结行数按表汇总（合成样本）',
+    must_mention: '四张表逐行统计：三类各计一行',
+  },
+  {
+    desc: 'M11278 状态词失守不上报（核对照跑、failures 不再接进退出码——--coverage 对着错词报绿，写坏型探针整条失效，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: '  for (const msg of registry_status.failures) fail(msg);',
+    replace: '  // 变异：状态词失守不上报',
+    tests: ['stub-registry-status'],
+    test_name:
+      '探针：清单里写一个非标准状态词，--coverage 必须红并报出（副本）',
+    must_mention: '非标准状态词必须让 --coverage 红',
+  },
+  {
+    desc: 'M11279 只核第一张表（统计循环核完函数表就 break——变量表 / 资源表 / @USERSHOP 的错词从此无人管，#541 的四张表只剩一张）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    tables.push(stat);\n  }\n  return { tables, failures };',
+    replace:
+      '    tables.push(stat);\n    break; // 变异：只核第一张表\n  }\n  return { tables, failures };',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '四张表一张都不能少',
+  },
+  {
+    desc: 'M11280 无表格的小节也算一张表（「状态含义」「维护规则」一类纯文字小节入账——四张表的清单被撑成五张，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: '  return sections.filter((s) => s.rows.length > 0);',
+    replace: '  return sections; // 变异：无表格的小节也算一张表',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '四张表一张都不能少',
+  },
+  {
+    desc: 'M11281 归因读了别的表（parse_stub_registry 不再按标题定位，取最后一张——函数表的存根行全部漏归因，部分移植一律变已移植，#541 重构后的靶位）',
+    file: 'tools/trace-coverage.mjs',
+    find: '  const section = parse_registry_tables(text).find(\n    (s) => s.title === FUNCTION_TABLE_TITLE,\n  );',
+    replace:
+      '  const section = parse_registry_tables(text).at(-1); // 变异：归因读了别的表',
+    tests: ['trace-check'],
+    test_name:
+      '移植状态表：yml 承载与存根归因的规则行为（--only 限定，共享副本）',
+    must_mention: '存根归因必须把未了结项记成部分移植',
+  },
+  {
+    desc: 'M11282 状态格取错列（末格改成首格——原作函数名当状态词读，四张表逐行非法，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: "      const status = cells.at(-1) ?? '';\n      const kind = classify_status(status);",
+    replace:
+      "      const status = cells[0] ?? ''; // 变异：状态格取错列\n      const kind = classify_status(status);",
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '存根清单状态词不在三类里',
+  },
+  {
+    desc: 'M11283 存根行合计数报成终态数（--coverage 打印的「存根清单存根行合计 N 行」取 t.dead——#540 终点判据读的就是这个数，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: '  const pending_rows = registry_status.tables.reduce(\n    (s, t) => s + t.pending,\n    0,\n  );',
+    replace:
+      '  const pending_rows = registry_status.tables.reduce(\n    (s, t) => s + t.dead,\n    0,\n  ); // 变异：未了结数报成终态数',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：--coverage 打印的四张表计数与统计值逐项一致（现状对照）',
+    must_mention: '打印的存根行合计数与四张表的存根行数不一致',
+  },
+  {
+    desc: 'M11284 计数打印串位（每张表那行的「存根」与「终态」两个数互换——打印面与统计值对不上，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: '          `${t.title} 已实现 ${t.settled}／存根 ${t.pending}／终态 ${t.dead}`,',
+    replace:
+      '          `${t.title} 已实现 ${t.settled}／存根 ${t.dead}／终态 ${t.pending}`, // 变异：存根与终态串位',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：--coverage 打印的四张表计数与统计值逐项一致（现状对照）',
+    must_mention: '计数与统计值不一致',
+  },
+  {
+    desc: 'M11285 非法行计入未了结（错词行不再 continue，直接算成 pending——三类之外的词被默默当成存根，「清空」判据被它堵住，#541）',
+    file: 'tools/trace-coverage.mjs',
+    find: '        continue;\n      }\n      stat[kind] += 1;',
+    replace:
+      '        stat.pending += 1; // 变异：非法行也计成存根\n        continue;\n      }\n      stat[kind] += 1;',
+    tests: ['stub-registry-status'],
+    test_name: '四张表逐行统计：非标准状态词必须报出表、行号与原文（合成样本）',
+    must_mention: '非法行不计入任何一类',
+  },
+  {
+    desc: 'M11286 清单行文退回只写去向（SHOW_FLOOR 行的状态格从「存根（…随 #548 S7）」退回「迷宫票」——#541 要根除的形态，退回即非法词）',
+    file: 'docs/stub-registry.md',
+    find: '存根（未接入：RESULT -= 520 → CALL SHOW_FLOOR，ere/page/page-shop.js:428 打占位「SHOW_FLOOR」；随 #548 S7）',
+    replace: '迷宫票',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）',
+    must_mention: '存根清单状态词不在三类里',
+  },
+  {
+    desc: 'M11287 BEDROOM_BATTLE_MALE 的源退回 DUNGEON_BATLLE2（#541 第 2 条订正的那一处——退回即把该文件拖回部分移植）',
+    file: 'docs/stub-registry.md',
+    find: 'EVENT/ENDING ver 1.0.1.ERB:1042',
+    replace: '迷宮/DUNGEON_BATLLE2.ERB 系（男魔王寝室战）',
+    tests: ['stub-registry-status'],
+    test_name:
+      '真树清单：--coverage 打印的四张表计数与统计值逐项一致（现状对照）',
+    must_mention: 'DUNGEON_BATLLE2.ERB 必须判已移植',
+  },
+  {
+    desc: 'M11288 待核行文退回（CHARADEAD_CHECK 的源退回「調教相關/（@EVENTEND 的调用，文件待核）」——归因不到的行多一条，超 #541 归零后的基线）',
+    file: 'docs/stub-registry.md',
+    find: 'EVENT/EVENT_AFTERTRAIN.ERB:6',
+    replace: '調教相關/（@EVENTEND 的调用，文件待核）',
+    tests: ['trace-check'],
+    test_name:
+      '移植状态表：清单归因不到行数基线只减不增（全树副本，多一行必须红）',
+    must_mention: '清单还原后必须复绿',
+  },
+  {
+    desc: 'M11289 函数表节标题改错（FUNCTION_TABLE_TITLE 与清单的小节名对不上——parse_stub_registry 当场抛错，--coverage 整条崩掉，#541 重构后的靶位）',
+    file: 'tools/trace-coverage.mjs',
+    find: "const FUNCTION_TABLE_TITLE = '函数级存根';",
+    replace:
+      "const FUNCTION_TABLE_TITLE = '函数存根'; // 变异：节标题与清单对不上",
+    tests: ['trace-check'],
+    test_name: '移植状态表全绿（真树）：合计恰为 346，真值点与两类误报规则判对',
+    must_mention: '里找不到「##',
   },
 ];

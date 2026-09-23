@@ -1,0 +1,337 @@
+/**
+ * @file #541：存根清单四张表的「状态词」与「未了结行数」。
+ *
+ * 判定面在 tools/trace-coverage.mjs（`--coverage` 每次都核对）：四张表每行的
+ * 末格是状态列，取值只有三类——
+ *
+ *   已实现（…）／存根（…）／判死终态（判死｜不移植｜不实现｜不可达｜落空）。
+ *
+ * 分组标题行（首格以「——」开头、其余各格全空）没有状态列，跳过；表头行与
+ * 分隔行同样不计。见 docs/stub-registry.md 的「状态含义」与「维护规则」。
+ *
+ * **规则先由合成样本表证明，真树清单只作一次「现状合规」的对照**：反过来
+ * （只读现网清单）会让清单自身的错词跟着一起绿——那是 #541 要根除的形态
+ * （第 6 条的检查要求，见工单）。
+ */
+
+'use strict';
+
+const assert = require('node:assert/strict');
+const { spawnSync } = require('node:child_process');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const { test } = require('node:test');
+
+const {
+  DEAD_MARKERS,
+  check_registry_statuses,
+  classify_status,
+  is_group_title_row,
+  parse_registry_tables,
+  split_row_cells,
+} = require('../tools/trace-coverage.mjs');
+
+const REPO_ROOT = path.resolve(__dirname, '..');
+const REGISTRY = path.join(REPO_ROOT, 'docs', 'stub-registry.md');
+const TOOL = path.join(REPO_ROOT, 'tools', 'trace-check.mjs');
+
+/** 合成样本的表格行（前导空格照真表写，拆格必须自己 trim） */
+function sample_registry(rows_by_table) {
+  const out = ['# 合成样本清单', ''];
+  for (const [title, rows] of rows_by_table) {
+    out.push(`## ${title}`, '', '| 甲 | 乙 | 状态 |', '| --- | --- | --- |');
+    for (const row of rows) out.push(`| ${row.join(' | ')} |`);
+    out.push('');
+  }
+  return out.join('\n');
+}
+
+test('拆格：正文里的 \\| 是字面竖线，不参与分列（#541）', () => {
+  // 真表两处实例：变量表 `24\|17`（Chara24 预设的相性）、@USERSHOP 的
+  // `FLAG:83 \| FLAG:84` 守卫。按裸 | 拆会把内容格劈成两半、末格取错。
+  assert.deepEqual(
+    split_row_cells('| `相性` | :46 | `24\\|17` | 已实现（#139） |'),
+    ['`相性`', ':46', '`24\\|17`', '已实现（#139）'],
+  );
+  assert.deepEqual(
+    split_row_cells(
+      '| 111 | 守卫 FLAG:83 \\| FLAG:84 | （无） | 存根（#541） |',
+    ),
+    ['111', '守卫 FLAG:83 \\| FLAG:84', '（无）', '存根（#541）'],
+  );
+});
+
+test('状态词三类：四个标准前缀各自归类，去向与本票号一律判非法（#541）', () => {
+  assert.equal(classify_status('已实现（ere/page/page-shop.js）'), 'settled');
+  assert.equal(
+    classify_status('存根（运行时占位，ere/page/page-shop.js）'),
+    'pending',
+  );
+  for (const word of DEAD_MARKERS) {
+    assert.equal(classify_status(`${word}（#14 登记）`), 'dead', word);
+  }
+  assert.deepEqual(DEAD_MARKERS, [
+    '判死',
+    '不移植',
+    '不实现',
+    '不可达',
+    '落空',
+  ]);
+
+  // 现状里出现过的「只写去向」形态与空状态格：三类之外一律非法
+  for (const bad of [
+    '处刑票',
+    '迷宫票',
+    '调试票',
+    '魔改子系统票',
+    '设定票',
+    '刻印消费者票',
+    '调教票（表落地时补）',
+    '表现层票（#73）',
+    '纸娃娃合成系统票',
+    '#44（ere/page/page-shop.js）',
+    '已落地（#138）',
+    '真身（ere/system/train/benki.js）',
+    '',
+    '   ',
+  ]) {
+    assert.equal(classify_status(bad), 'invalid', bad);
+  }
+});
+
+test('分组标题行：首格以 —— 开头即认，其余各格必须全空（#541 订正）', () => {
+  const title = split_row_cells(
+    '| —— #118 结局判定与 ENDING_1 链（条件结构已 1:1 移植） |  |  |  |  |  |',
+  );
+  assert.ok(is_group_title_row(title));
+
+  // 有状态格的行不是标题行；首格不是 —— 开头的也不是
+  assert.equal(
+    is_group_title_row(
+      split_row_cells('| `GEO_TEST` | 迷宮/LABO.ERB:109 | 已实现（#181） |'),
+    ),
+    false,
+  );
+  assert.equal(
+    is_group_title_row(split_row_cells('| 100 | 进调教 | 存根（#541） |')),
+    false,
+  );
+  // 以 —— 开头但其余格非空：那是忘写状态的数据行，不能当标题放过
+  assert.equal(
+    is_group_title_row(split_row_cells('| —— 分组标题 | 说明 |')),
+    false,
+  );
+});
+
+test('四张表逐行统计：三类各计一行，未了结行数按表汇总（合成样本）', () => {
+  const text = sample_registry([
+    [
+      '函数级存根',
+      [
+        ['`A`', '源A', '已实现（#1）'],
+        ['`B`', '源B', '存根（运行时占位）'],
+        ['—— 分组标题（无状态）', '', '', '', ''],
+        ['`C`', '源C', '判死（#2）'],
+      ],
+    ],
+    [
+      '变量级待办项',
+      [
+        ['`D`', ':10', '不移植（#3）'],
+        ['`E`', ':11', '存根（未接入）'],
+      ],
+    ],
+    ['资源级待办项', [['F', '源F', '不可达（无作用点）']]],
+    ['@USERSHOP 指令分支待办项', [['1', 'CALL X', '落空（静默）']]],
+  ]);
+
+  const { tables, failures } = check_registry_statuses(text);
+  assert.deepEqual(failures, []);
+  assert.deepEqual(
+    tables.map((t) => [t.title, t.settled, t.pending, t.dead]),
+    [
+      ['函数级存根', 1, 1, 1],
+      ['变量级待办项', 0, 1, 1],
+      ['资源级待办项', 0, 0, 1],
+      ['@USERSHOP 指令分支待办项', 0, 0, 1],
+    ],
+  );
+  assert.equal(
+    tables.reduce((sum, t) => sum + t.pending, 0),
+    2,
+    '未了结合计 = 四张表的存根行之和',
+  );
+});
+
+test('四张表逐行统计：非标准状态词必须报出表、行号与原文（合成样本）', () => {
+  const text = sample_registry([
+    [
+      '函数级存根',
+      [
+        ['`A`', '源A', '已实现（#1）'],
+        ['`B`', '源B', '处刑票'],
+      ],
+    ],
+    ['变量级待办项', [['`C`', ':11', '']]],
+  ]);
+
+  const { tables, failures } = check_registry_statuses(text);
+  assert.equal(failures.length, 2, failures.join('\n'));
+  // 工具的报错文案固定成这个形状（变异条目的 must_mention 与本断言都靠它）：
+  // 「✗ 存根清单状态词不在三类里：docs/stub-registry.md:<行>（<表名>）末格写的是「<原文>」…」
+  assert.ok(
+    failures[0].includes('存根清单状态词不在三类里'),
+    `必须报出「状态词不在三类里」这个判定：${failures[0]}`,
+  );
+  assert.ok(
+    failures[0].includes('函数级存根') && failures[0].includes('处刑票'),
+    `必须报出表名与原文：${failures[0]}`,
+  );
+  assert.match(failures[0], /:8/, `必须报出 markdown 行号：${failures[0]}`);
+  assert.ok(
+    failures[1].includes('变量级待办项'),
+    `空状态格同样非法：${failures[1]}`,
+  );
+  assert.deepEqual(
+    tables.map((t) => t.pending),
+    [0, 0],
+    '非法行不计入任何一类（否则「未了结」少算一行）',
+  );
+});
+
+test('四张表的定位：表头与分隔行不算数据行，缺表即少一张（合成样本）', () => {
+  const sections = parse_registry_tables(
+    sample_registry([
+      [
+        '函数级存根',
+        [
+          ['`A`', '源A', '已实现（#1）'],
+          ['`B`', '源B', '存根（#541）'],
+        ],
+      ],
+    ]),
+  );
+  assert.equal(sections.length, 1, '维护规则一类无表格的小节不入账');
+  assert.equal(sections[0].title, '函数级存根');
+  assert.equal(sections[0].rows.length, 4, '表头 + 分隔 + 两行数据都进 rows');
+  assert.deepEqual(sections[0].rows[0].cells, ['甲', '乙', '状态']);
+  assert.equal(sections[0].rows[0].frame, true, '表头要打 frame 标');
+  assert.equal(sections[0].rows[1].frame, true, '分隔行要打 frame 标');
+  assert.equal(sections[0].rows[2].frame, undefined, '数据行不带 frame 标');
+});
+
+test('真树清单：四张表齐全、无非标准状态词，未了结行数打印（现状对照）', () => {
+  const text = fs.readFileSync(REGISTRY, 'utf8');
+  const { tables, failures } = check_registry_statuses(text);
+  assert.deepEqual(failures, [], failures.join('\n'));
+  assert.deepEqual(
+    tables.map((t) => t.title),
+    [
+      '函数级存根',
+      '变量级待办项（初始化赋值无处落地或刻意缓议）',
+      '资源级待办项（美术与音频，#69 起登记）',
+      '@USERSHOP 指令分支待办项（#24 整组登记；100 分支已随 #44 实现）',
+    ],
+    '四张表一张都不能少——少了表，未了结行数会静默变小',
+  );
+  for (const t of tables) {
+    assert.ok(
+      t.settled + t.pending + t.dead > 0,
+      `${t.title} 一行都没统计到（表名或行形态失效）`,
+    );
+  }
+  // 这里不断言「函数表还有存根」：#540 的终点就是四张表清零，把现状当契约
+  // 会在清空那天误报。计数本身会不会恒 0，由合成样本用例（三类各计一行）
+  // 与上面的「每张表至少统到一行」两条正面锁住。
+});
+
+test('真树清单：--coverage 打印的四张表计数与统计值逐项一致（现状对照）', () => {
+  const { tables } = check_registry_statuses(fs.readFileSync(REGISTRY, 'utf8'));
+  const r = spawnSync(process.execPath, [TOOL, '--coverage', '--list'], {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+    maxBuffer: 16 * 1024 * 1024,
+    timeout: 120_000,
+  });
+  const output = `${r.stdout || ''}${r.stderr || ''}`;
+  assert.equal(r.status, 0, `真树 --coverage 应全绿：\n${output}`);
+  for (const t of tables) {
+    assert.ok(
+      output.includes(
+        `${t.title} 已实现 ${t.settled}／存根 ${t.pending}／终态 ${t.dead}`,
+      ),
+      `打印的「${t.title}」计数与统计值不一致：\n${output}`,
+    );
+  }
+  const pending = tables.reduce((sum, t) => sum + t.pending, 0);
+  assert.ok(
+    output.includes(`存根清单存根行合计 ${pending} 行`),
+    `打印的存根行合计数与四张表的存根行数不一致（#540 终点判据读的就是这个数）：\n${output}`,
+  );
+  // #541 第 2 条的两个源订正：BEDROOM_BATTLE_MALE 的源落回 ENDING ver 1.0.1.ERB
+  // 之后，DUNGEON_BATLLE2.ERB 不再被它拖住——这条一直成立，退回去就是红
+  assert.ok(
+    output.includes('已移植 target/ERB/迷宮/DUNGEON_BATLLE2.ERB') &&
+      !output.includes('部分移植 target/ERB/迷宮/DUNGEON_BATLLE2.ERB'),
+    `DUNGEON_BATLLE2.ERB 必须判已移植（BEDROOM_BATTLE_MALE 的源在 EVENT/ENDING ver 1.0.1.ERB:1042，不在它身上）：\n${output}`,
+  );
+});
+
+test('探针：清单里写一个非标准状态词，--coverage 必须红并报出（副本）', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-registry-probe-'));
+  try {
+    // 判定面最小集：工具本体（tools/ 含 trace-refs 锚表）、清单、一个
+    // target 源（list_erb_files 要 target/ERB 存在）、空 ere/（注释块扫描
+    // 要目录存在）。--only 限定范围跳过分母与基线核对——那两道与本用例无关。
+    for (const rel of [
+      'tools',
+      'docs/stub-registry.md',
+      'target/ERB/TITLE.ERB',
+    ]) {
+      const from = path.join(REPO_ROOT, rel);
+      const to = path.join(root, rel);
+      fs.mkdirSync(path.dirname(to), { recursive: true });
+      if (fs.statSync(from).isDirectory())
+        fs.cpSync(from, to, { recursive: true });
+      else fs.copyFileSync(from, to);
+    }
+    fs.mkdirSync(path.join(root, 'ere'), { recursive: true });
+    const registry_path = path.join(root, 'docs', 'stub-registry.md');
+    const probe_row = '| `ZZ_PROBE` | 迷宮/LABO.ERB:109 | 迷宫票 |\n';
+    fs.writeFileSync(
+      registry_path,
+      fs
+        .readFileSync(registry_path, 'utf8')
+        .replace('\n## 变量级待办项', `\n${probe_row}\n## 变量级待办项`),
+      'utf8',
+    );
+    const r = spawnSync(
+      process.execPath,
+      [
+        path.join(root, 'tools', 'trace-check.mjs'),
+        '--coverage',
+        '--only',
+        'ZZ_PROBE',
+      ],
+      {
+        cwd: root,
+        encoding: 'utf8',
+        maxBuffer: 16 * 1024 * 1024,
+        timeout: 120_000,
+      },
+    );
+    const output = `${r.stdout || ''}${r.stderr || ''}`;
+    assert.notEqual(
+      r.status,
+      0,
+      `非标准状态词必须让 --coverage 红：\n${output}`,
+    );
+    assert.ok(
+      output.includes('状态词') && output.includes('迷宫票'),
+      `必须报出状态词与原文：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
