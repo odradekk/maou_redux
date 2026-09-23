@@ -1682,7 +1682,7 @@ export default [
     desc: 'M11287 未了结行的源被指到 DUNGEON_BATLLE2 上（该文件必须一直判已移植——#541 第 2 条的源订正把它从欠账里摘出来；#548 起 BEDROOM_BATTLE_MALE 行已实现、不进归因扫描，靶位改挂到仍未了结的 RACE_CONFIG 行）',
     file: 'docs/stub-registry.md',
     find: 'キャラ関数/CHARA_BODY.ERB:931-1333',
-    replace: '迷宮/DUNGEON_BATLLE2.ERB 系（男魔王寝室战）',
+    replace: '迷宮/DUNGEON_BATLLE2.ERB',
     tests: ['stub-registry-status'],
     test_name:
       '真树清单：--coverage 打印的四张表计数与统计值逐项一致（现状对照）',

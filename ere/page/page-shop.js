@@ -40,8 +40,6 @@ const {
 const { select_target, select_assi } = require('#/page/page-select-target');
 const { invasion } = require('#/page/page-invasion');
 const { dungeon_info2, enemy_exist2 } = require('#/page/page-dungeon-info2');
-const { item_name, monstername } = require('#/dungeon/monster-data');
-const { chara_callname } = require('#/utils/callname-utils');
 const { infrastructure } = require('#/page/page-infrastructure');
 const { item_shop_trap } = require('#/page/page-shop-trap');
 const {
@@ -63,6 +61,9 @@ const {
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { secret_labo } = require('#/page/page-shop-labo');
+// SHOW_FLOOR 的怪物行与近卫名单（#548）：怪物名与 %SAVESTR% 的承载
+const { item_name, monstername } = require('#/dungeon/monster-data');
+const { chara_callname } = require('#/utils/callname-utils');
 const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
@@ -470,12 +471,14 @@ async function usershop(result) {
 }
 
 /**
- * @SHOW_FLOOR（SHOP ver1.0.2.ERB:426-501）：显示楼层状态（主菜单阶层
+ * @SHOW_FLOOR（SHOP ver1.0.2.ERB:426-500）：显示楼层状态（主菜单阶层
  * 按钮 [521]-[530] 的阶层信息；10 层为近卫）。
  *
  * 结构（近卫层 GOTO MONSTERDATA 跳过设施与部下段）：
  *   - 1-9 层：楼层头（与设施后缀合一行——原作 PRINTFORM 第N阶层 +
- *     SELECTCASE 后缀 + PRINTL 是一个显示行，ere 归并为一次 print）→
+ *     SELECTCASE 后缀 + PRINTL 是一个显示行，ere 归并为一次 print；
+ *     后缀原文 `PRINTFORM  - 商店街` + 全角空格 的两个空格里只有一个作命令
+ *     分隔符，正文自带一个前导空格，与 page-main-menu.js:171 的 ` 上午` 同源）→
  *     设施四格（FLAG 299+ARG+{0,10,20,40}，REPEAT 内 COUNT==3 → COUNT=4
  *     跳过 +30 段；格上有库存道具才出 [道具名]，四格合一行）→
  *     @ENEMY_EXIST2 的勇侧行 → 空行 → 怪物库存十格 → PRINTW；
@@ -506,7 +509,7 @@ async function show_floor(arg) {
     };
     era.print(
       facility in facility_names
-        ? `第${arg}阶层  - ${facility_names[facility]}`
+        ? `第${arg}阶层 - ${facility_names[facility]}`
         : `第${arg}阶层`,
     );
     era.drawLine();
@@ -532,7 +535,8 @@ async function show_floor(arg) {
     era.print('近卫兵'); // :435（PRINTL 只落行尾）
     era.drawLine();
     for (const cid of era.getAddedCharacters()) {
-      // :438-446 FOR COUNT, 0, CHARANUM：!CFLAG:x:1 && EX_TALENT:x:1
+      // :438-446 FOR COUNT, 0, CHARANUM：未在勇者阵营（CFLAG:1 状态 0）
+      // 但是近卫（EX_TALENT:1）
       if (
         (era.get(`cflag:${cid}:1`) || 0) === 0 &&
         (era.get(`ex_talent:${cid}:1`) || 0) !== 0

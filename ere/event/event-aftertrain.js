@@ -18,15 +18,15 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+// @MAOU_KOUHO 的真身（EVENT_NEXTDAY.ERB:2430-2451）——原作另一处调用点正是
+// 本文件的 @CHARADEAD_CHECK（:33），ere 侧此前只有 @EVENTEND 的魔王倒下分支
+// 引用它
+const { maou_kouho } = require('#/event/event-nextday');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname } = require('#/utils/callname-utils');
-// @MAOU_KOUHO 的真身（EVENT_NEXTDAY.ERB:2430-2451）——原作另一处调用点正是
-// 本文件的 @CHARADEAD_CHECK（:33），ere 侧此前只有 @EVENTEND 的魔王倒下分支
-// 引用它
-const { maou_kouho } = require('#/event/event-nextday');
 
 /**
  * 原作 A 是跨函数全局（技能指南 glossary.md:151）。本项目只建模同模块内

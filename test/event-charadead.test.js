@@ -1,7 +1,7 @@
 /**
  * @CHARADEAD_CHECK 的行为测试（#548 / S7：调教后死亡检查）。
  *
- * 源: target/ERB/EVENT/EVENT_AFTERTRAIN.ERB  @CHARADEAD_CHECK（:6-99）
+ * 源: target/ERB/EVENT/EVENT_AFTERTRAIN.ERB  @CHARADEAD_CHECK（:6-92）
  *     调用点: target/ERB/調教相關/TRAIN_MAIN.ERB @EVENTEND（:339，
  *     ere/event/event-end.js——本文件末两用例覆盖接线）。
  *

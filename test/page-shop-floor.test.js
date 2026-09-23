@@ -67,8 +67,8 @@ test('第 1 阶层：楼层头 + 设施后缀合行、设施四格、怪物库�
   const texts = text_lines(fixture);
   // :433 + :452-467 + :469 的合行（PRINTFORM 链 + PRINTL 落行）
   assert(
-    texts.includes('第1阶层  - 商店街　'),
-    '楼层头与设施后缀合一行（含两个前导空格与全角尾随空格）',
+    texts.includes('第1阶层 - 商店街　'),
+    '楼层头与设施后缀合一行（正文自带的那个前导半角空格 + 全角尾随空格）',
   );
   // :478-486 设施四格（有格命中才出行 + 分隔线）
   assert(texts.includes('[落穴]'), '设施四格的 [道具名] 行');
@@ -115,7 +115,7 @@ test('设施四格全空：不出道具行也不出多余分隔线（IF LOCAL:1 
   await show_floor_via_usershop(fixture, 521);
 
   const texts = text_lines(fixture);
-  assert(texts.includes('第1阶层  - 迷宫　　'));
+  assert(texts.includes('第1阶层 - 迷宫　　'));
   assert(
     !texts.some((line) => line.includes('[')),
     '无设施道具时不得输出 [道具] 行',
