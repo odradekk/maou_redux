@@ -36,6 +36,8 @@ export const FILES = [
         any: [/^\t\t\t\tIF COUNT >= CHARANUM\s*$/m],
       },
       { src: SWAP, ref: '16-18', any: [/对象是魔王剃除/m] },
+      { src: SWAP, ref: '14', any: [/^\s*PRINTL\s*$/m] },
+      { src: SWAP, ref: '62', any: [/^\s*PRINTL\s*$/m] },
       { src: SWAP, ref: '31', any: [/^\s*PRINTL\s*$/m] },
       { src: SWAP, ref: '32', any: [/^\s*PRINTL\s*$/m] },
       { src: SWAP, ref: '33', any: [/^\t\tPRINTLC \[2000\] 上一页\s*$/m] },
@@ -122,11 +124,7 @@ export const FILES = [
       { src: SWAP, ref: '108', any: [/^\t\tPRINTLC \[4000\] 是\s*$/m] },
       { src: SWAP, ref: '109', any: [/^\t\tPRINTLC \[4001\] 否\s*$/m] },
       { src: SWAP, ref: '110', any: [/^\s*INPUT\s*$/m] },
-      {
-        src: SWAP,
-        ref: '111-116',
-        any: [/^\s*IF\s+RESULT == 4000\s*$/m],
-      },
+
       {
         src: SWAP,
         ref: '112-116',

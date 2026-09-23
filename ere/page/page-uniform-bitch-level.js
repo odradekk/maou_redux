@@ -1,6 +1,6 @@
 /**
  * @file 统一卖春积极性（issue #545，阶段 6 S4）：名册页 [1600] 的批量卖春
- * 积性设置流程。
+ * 积极性设置流程。
  *
  * 源: target/ERB/魔改新增/统一卖春积极性.ERB 全 1 函数——
  *     @统一卖春积极性（:2-76，文件首行是空行）。
@@ -96,7 +96,7 @@ async function uniform_bitch_level() {
   // 状态判据命中才写 CFLAG:COUNT:120 = N:9
   for (const cid of era.getAddedCharacters()) {
     if (cid === 0) continue; // :24
-    const state = era.get(`cflag:${cid}:1`) || 0;
+    const state = chara(cid).invasion.状态;
     if (scope.states.includes(state)) {
       chara(cid).patch.卖春积极性 = level; // :27/:48/:69
     }

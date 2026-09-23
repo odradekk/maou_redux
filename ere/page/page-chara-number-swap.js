@@ -16,20 +16,17 @@
  * NAME 的等价存储＝callname:cid:-1、CALLNAME＝callname:cid:-2（utils/
  * callname-utils.js 文件头）。因此「互换编号」＝把两个 ID 名下的数据互换：
  *
- *   - cflag/talent/ex_talent/base/maxbase/abl/exp/mark/stain/tequip/source/
- *     palam/juel/gotjuel/cstr/tstr —— 复用 chara-soul-transfer.js 的
- *     swap_chara()（该表及范围表见其文件头）；
- *   - callname:cid:-1/-2 —— swap_chara 有意不含 callname（同文件文件头），
- *     本文件显式换回，对应原作「SWAPCHARA 换 NAME/CALLNAME + SAVESTR 手工
- *     换回」的净效果；
- *   - c_relation/c_relation_sub 的**行**（横轴＝角色，RELATION.ERH 的
- *     #DIM SAVEDATA CHARADATA 声明，原作同样被 SWAPCHARA 换行）——swap_chara
- *     的已登记偏离不含这两张表，本文件按行补换（列不动：C_RELATION 的
- *     「他,编号」格原作也不改写，换号后指向的就是换过来的那个人，与原作
- *     可观察行为一致）；对角 NID 与原作一致交由 nid()/relation_
- *     needs_rebuild 的惰性修复（chara-family.js），不在此重建；
- *   - relation（内置相性表，EVENT_ADDICT 写 relation:cid:0 一类的原作
- *     RELATION:cid:0）——同为角色行变量，一并按行换；
+ *   - 全部角色数值表与字符串表 ＋ callname:cid:-1/-2 两槽 ＋
+ *     c_relation/c_relation_sub/relation 的**行** —— 落在角色域
+ *     `chara-soul-transfer.js` 的 swap_chara_numbers()（按「角色数据互换」这一
+ *     架构角色归属 chara/ 层，与 swap_chara() 同处；逐表范围、列不动的理由、
+ *     ex/nowex 与 NO: 的取舍都写在该文件头）。本文件只保留名册页的界面流程。
+ *     对角 NID 与原作一致交由 nid()/relation_needs_rebuild 的惰性修复
+ *     （chara-family.js），不在互换里重建；
+ *   - NO: 没有可换的槽位：ere 的角色 ID 即原作 NO（#21 通例，
+ *     chara-make.js:35「通常角色的 NO:A == cid」等处同款），引擎侧 `no:` 表
+ *     全库只读不写，读点一律 `era.get('no:cid') || cid` 回落 ID——换号把两个
+ *     ID 的数据互换之后，各自的番号就是新 ID，与原作「NO 随数据走」同结果；
  *   - portcflag 不换：移植版自建的扩展表（ADR-0001），原作没有对应物，
  *     SWAPCHARA 无从换起（数据版本标记目前只有写入点、无消费者）。
  *
@@ -43,7 +40,8 @@
  *     插入位」照 issue #21 通例改写为 ID 世界：候选＝已加入 ID（不含 0）过
  *     显示守卫后按 ID 升序切片（page-chara-info.js 四个列表同款）；下一页
  *     守卫 :45 用候选总数（原作按含魔王的 CHARANUM 计，ID 世界等价换成
- *     候选数，不再产生「整页空行」的尾巴页）；
+ *     候选数）。空行补位（:14/:62 的 PRINTL）不镜像，但 `<=` 语义保留：
+ *     候选数是每页行数整数倍时照样能进一页空尾页，与原作一致；
  *   - 角色行从「PRINTFORM 拼编号 + 手输编号」升级为真按钮（#530/#535 名册
  *     同款）：编号由引擎按 showAcc 拼 `[N] `，正文不写编号。原作 INPUT 可
  *     手输任意 1..CHARANUM 的编号（显示守卫不拦选择，标题的「侵攻与迎击中
@@ -51,7 +49,7 @@
  *     的角色选不到——与名册行按钮化同一形态的偏离；
  *   - 确认屏 ELSE（:125-126 → RETURN 0）在 ere 只打印 [4000]/[4001] 的
  *     白名单下不可达，不镜像；函数唯一出口是 [1999]（:50-51 JUMP
- *     CHARA_INFO，名册整屏重进由调用方复位实现）；
+ *     CHARA_INFO）；
  *   - CLEARLINE 局部重绘不镜像（page-chara-info.js 文件头同款先例）：
  *     每轮整屏重绘的 for(;;) 循环；
  *   - [SP] 标记的判定 @SP 定义在 img.ERB:249（S1 #542 判死范围内的纯判定
@@ -62,7 +60,7 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
-const { swap_chara } = require('#/chara/chara-soul-transfer');
+const { swap_chara_numbers } = require('#/chara/chara-soul-transfer');
 const { get_job_name } = require('#/page/page-select-target');
 // :7 #DIM CONST NUM_PAGE = 25（换号页自己的分页宽度，与名册的 24 无关）
 const NUM_PAGE = 25;
@@ -130,54 +128,21 @@ function print_swap_row(cid) {
 }
 
 /**
- * 互换两个 ID 名下的全部角色数据（净效果＝原作 :112-116 的
- * SWAPCHARA + SAVESTR 换回，覆盖范围与依据见文件头「怎么落」段）。
- * @param {number} a 角色 ID（CN:1）
- * @param {number} b 角色 ID（CN:2）
- */
-function swap_chara_numbers(a, b) {
-  swap_chara(a, b);
-  // 姓名（SAVESTR/NAME）与呼び名（CALLNAME）随数据走：swap_chara 不含
-  // callname，显式换两槽即原作「引擎换 NAME/CALLNAME + 手工换回 SAVESTR」
-  for (const slot of [-1, -2]) {
-    const key_a = `callname:${a}:${slot}`;
-    const key_b = `callname:${b}:${slot}`;
-    const val_a = era.get(key_a);
-    const val_b = era.get(key_b);
-    era.set(key_a, val_b ?? '');
-    era.set(key_b, val_a ?? '');
-  }
-  // c_relation/c_relation_sub 的行互换（列不动，见文件头）；relation（内置
-  // 相性表）同为角色行变量一并按行换。列集合＝当前已加入 ID（含魔王 0）；
-  // 空侧补 0 与 swap_var 同语义（chara-soul-transfer.js）
-  const columns = era.getAddedCharacters();
-  for (const table of ['c_relation', 'c_relation_sub', 'relation']) {
-    for (const col of columns) {
-      const key_a = `${table}:${a}:${col}`;
-      const key_b = `${table}:${b}:${col}`;
-      const val_a = era.get(key_a);
-      const val_b = era.get(key_b);
-      if (val_a === undefined && val_b === undefined) continue;
-      era.set(key_a, val_b === undefined ? 0 : val_b);
-      era.set(key_b, val_a === undefined ? 0 : val_a);
-    }
-  }
-}
-
-/**
  * @換號（:1-127）：两屏选择的换号流程。
  *
  * 第一屏选 CN:1（:8-51），第二屏选 CN:2（:57-105，同页码窗口、剃除 CN:1
  * 的行），确认屏 [4000] 是 / [4001] 否（:106-110）。[4000] 互换后 RESTART
- * （:120）＝回到函数头：页码复位（:5 的 #DIM NO_PAGE = 0 重执行）、CN 清零，
- * 重画第一屏；[4001] 回第一屏（:121-122；其后两行 CN 复位是 GOTO 跳过的
+ * （:120）＝回到函数头重画第一屏；NO_PAGE 是**静态局部变量**（:5 无
+ * DYNAMIC，指南 user-defined-variables.md:67-69 明写「函数退出之后静态变量
+ * 的值不会被重置」，:82 又写明 RESTART 连 DYNAMIC 都不重置），所以页码
+ * 既不随 RESTART 归零、也跨次进入沿用——实现里 no_page 就是循环外的一个
+ * 局部变量，RESTART 对应「不回退页码的 continue」；[4001] 回第一屏（:121-122；其后两行 CN 复位是 GOTO 跳过的
  * 死代码）。两屏共用同一页码变量（:12/:60 同一 NO_PAGE，内层翻页
  * :88-99 也改它）。
- * @returns {Promise<void>} 唯一出口 [1999]（:50-51 JUMP CHARA_INFO，
- *   名册整屏重进由调用方复位实现）
+ * @returns {Promise<void>} 唯一出口 [1999]（:50-51 JUMP CHARA_INFO）
  */
 async function chara_number_swap() {
-  let no_page = 0; // :5（RESTART 后同值重起）
+  let no_page = 0; // :5（静态局部变量：RESTART 与再次进入都沿用现值）
   for (;;) {
     const total = swap_candidates().length;
 
@@ -248,16 +213,15 @@ async function chara_number_swap() {
     const confirm = await era.input(); // :110
 
     if (confirm === 4000) {
-      swap_chara_numbers(first, second); // :111-116
+      swap_chara_numbers(first, second); // :112-116
       await era.printAndWait('已完成互换'); // :117
       era_flag.target = -1; // :118
       era_flag.assi = -1; // :119
-      no_page = 0; // :120 RESTART：#DIM NO_PAGE = 0 重执行
-      continue;
+      continue; // :120 RESTART（页码是静态局部变量，不归零）
     }
     // [4001] 回第一屏（:121-122；其后的 CN 复位是死代码）；ELSE → RETURN 0
     // （:125-127）在 ere 白名单下不可达，不镜像（文件头）
   }
 }
 
-module.exports = { chara_number_swap, swap_chara_numbers, swap_candidates };
+module.exports = { chara_number_swap };

@@ -580,22 +580,18 @@ async function chara_info() {
 
     if (result === 1600) {
       // :62-63 CALL 统一卖春积极性（#545 真身：page-uniform-bitch-level.js）。
-      // 被调函数尾 JUMP CHARA_INFO：重进名册＝局部变量回初值（NO_PAGE=0、
-      // SORT_SELECT 经 ELSE 落回 1200、SORT_ACT=0），此处显式复位后重绘
+      // 被调函数尾 JUMP CHARA_INFO：NO_PAGE/SORT_SELECT/SORT_ACT 都是静态
+      // 局部变量（指南 user-defined-variables.md:67-69），重进名册沿用现值，
+      // 页码与排序不归零——continue 重绘即该语义
       await uniform_bitch_level();
-      no_page = 0;
-      sort_select = 1200;
-      sort_act = 0;
       continue;
     }
     if (result === 1700) {
       // :74-75 CALL 換號（#545 真身：page-chara-number-swap.js）。唯一出口
-      // [1999] 結束换号 → JUMP CHARA_INFO（同上复位）；RETURN 0 出口在
-      // 确认屏只打印 [4000]/[4001] 的输入白名单下不可达（该文件文件头）
+      // [1999] 結束换号 → JUMP CHARA_INFO（同上：静态局部变量沿用现值）；
+      // RETURN 0 出口在确认屏只打印 [4000]/[4001] 的输入白名单下不可达
+      // （该文件文件头）
       await chara_number_swap();
-      no_page = 0;
-      sort_select = 1200;
-      sort_act = 0;
       continue;
     }
     if (

@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 74; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#545 +29（M11430-M11458：统一卖春积极性八条、换号十八条、名册分发三条）
+export const COUNT = 76; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与互换十九条、名册分发三条）
 
 export default [
   {
@@ -573,23 +573,23 @@ export default [
   },
   {
     desc: 'M11445 换号互换：姓名槽 callname:-1 不再换回（名字不随人走）',
-    file: 'ere/page/page-chara-number-swap.js',
-    find: '  for (const slot of [-1, -2]) {',
-    replace: '  for (const slot of [-2]) {',
+    file: 'ere/chara/chara-soul-transfer.js',
+    find: "  swap_var('callname', a, b, -1, '');",
+    replace: '  // 变异：姓名槽不换',
     tests: ['page-chara-info'],
     must_mention: '名字换到 1 号位',
   },
   {
     desc: 'M11446 换号互换：呼び名槽 callname:-2 不再换回',
-    file: 'ere/page/page-chara-number-swap.js',
-    find: '  for (const slot of [-1, -2]) {',
-    replace: '  for (const slot of [-1]) {',
+    file: 'ere/chara/chara-soul-transfer.js',
+    find: "  swap_var('callname', a, b, -2, '');",
+    replace: '  // 变异：呼び名槽不换',
     tests: ['page-chara-info'],
     must_mention: '呼び名换到 1 号位',
   },
   {
     desc: 'M11447 换号互换：关系行（c_relation/c_relation_sub/relation）整族不换',
-    file: 'ere/page/page-chara-number-swap.js',
+    file: 'ere/chara/chara-soul-transfer.js',
     find: "  for (const table of ['c_relation', 'c_relation_sub', 'relation']) {",
     replace: '  for (const table of []) {',
     tests: ['page-chara-info'],
@@ -597,10 +597,10 @@ export default [
   },
   {
     desc: 'M11448 换号互换：行换写成了列换（横竖轴颠倒）',
-    file: 'ere/page/page-chara-number-swap.js',
-    find: '      const key_a = `${table}:${a}:${col}`;\n      const key_b = `${table}:${b}:${col}`;',
+    file: 'ere/chara/chara-soul-transfer.js',
+    find: '    for (const col of era.getAddedCharacters()) {\n      swap_var(table, a, b, col);\n    }',
     replace:
-      '      const key_a = `${table}:${col}:${a}`;\n      const key_b = `${table}:${col}:${b}`;',
+      '    for (const col of era.getAddedCharacters()) {\n      const key_a = `${table}:${col}:${a}`;\n      const key_b = `${table}:${col}:${b}`;\n      const val_a = era.get(key_a);\n      era.set(key_a, era.get(key_b) ?? 0);\n      era.set(key_b, val_a ?? 0);\n    }',
     tests: ['page-chara-info'],
     must_mention: 'c_relation 列不动',
   },
@@ -613,12 +613,12 @@ export default [
     must_mention: 'TARGET = -1',
   },
   {
-    desc: 'M11450 换号互换：RESTART 的页码复位被删（互换后停在第 2 页）',
+    desc: 'M11450 换号互换：误加页码复位（NO_PAGE 是静态局部变量，不归零）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      no_page = 0; // :120 RESTART：#DIM NO_PAGE = 0 重执行',
-    replace: '      // 变异：不复位页码',
+    find: '      continue; // :120 RESTART（页码是静态局部变量，不归零）',
+    replace: '      no_page = 0; // 变异：误加复位\n      continue; // :120',
     tests: ['page-chara-info'],
-    must_mention: '互换后重画回第 1 页（RESTART 复位 NO_PAGE）',
+    must_mention: '互换后重画仍在第 2 页',
   },
   {
     desc: 'M11451 换号确认：文案里两个名字对调',
@@ -666,27 +666,46 @@ export default [
     must_mention: '战士职业与 LV5',
   },
   {
-    desc: 'M11456 名册分发：[1600] 流程返回后不复位页码（JUMP 语义丢失）',
+    desc: 'M11456 名册分发：[1600] 误加页码复位（NO_PAGE 是静态局部变量，不归零）',
     file: 'ere/page/page-chara-info.js',
-    find: '      await uniform_bitch_level();\n      no_page = 0;',
-    replace: '      await uniform_bitch_level();',
+    find: '      await uniform_bitch_level();\n      continue;',
+    replace:
+      '      await uniform_bitch_level();\n      no_page = 0; // 变异：误加复位\n      continue;',
     tests: ['page-chara-info'],
-    must_mention: '页码回初值',
+    must_mention: '页码保持第 2 页',
   },
   {
-    desc: 'M11457 名册分发：[1600] 流程返回后不复位排序（JUMP 语义丢失）',
+    desc: 'M11457 名册分发：[1600] 误加排序复位（SORT_SELECT 是静态局部变量）',
     file: 'ere/page/page-chara-info.js',
-    find: '      await uniform_bitch_level();\n      no_page = 0;\n      sort_select = 1200;',
-    replace: '      await uniform_bitch_level();\n      no_page = 0;',
+    find: '      await uniform_bitch_level();\n      continue;',
+    replace:
+      '      await uniform_bitch_level();\n      sort_select = 1200; // 变异：误加复位\n      continue;',
     tests: ['page-chara-info'],
-    must_mention: '排序回编号视图',
+    must_mention: '排序视图保持所持金',
   },
   {
-    desc: 'M11458 名册分发：[1700] 换号出口后不复位页码（JUMP 语义丢失）',
+    desc: 'M11458 名册分发：[1700] 换号出口误加页码复位',
     file: 'ere/page/page-chara-info.js',
-    find: '      await chara_number_swap();\n      no_page = 0;',
-    replace: '      await chara_number_swap();',
+    find: '      await chara_number_swap();\n      continue;',
+    replace:
+      '      await chara_number_swap();\n      no_page = 0; // 变异：误加复位\n      continue;',
     tests: ['page-chara-info'],
-    must_mention: '换号出口后名册回第 1 页',
+    must_mention: '换号出口后名册保持第 2 页',
+  },
+  {
+    desc: 'M11459 换号互换：整支互换调用被删（名字与数据都不动）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      swap_chara_numbers(first, second); // :112-116',
+    replace: '      // 变异：不互换',
+    tests: ['page-chara-info'],
+    must_mention: '名字换到 1 号位',
+  },
+  {
+    desc: 'M11460 换号互换：内置相性表 relation 不在换行表列里',
+    file: 'ere/chara/chara-soul-transfer.js',
+    find: "  for (const table of ['c_relation', 'c_relation_sub', 'relation']) {",
+    replace: "  for (const table of ['c_relation', 'c_relation_sub']) {",
+    tests: ['page-chara-info'],
+    must_mention: '内置相性行互换',
   },
 ];

@@ -1738,9 +1738,9 @@ test('换号：每页 25 行（NUM_PAGE）、页首按上一页不动、末页�
   }
 });
 
-test('换号：[4000] 互换后 RESTART 回第 1 页；[1999] 出口把名册页码回初值', async () => {
+test('换号：互换后 RESTART 停在当前页；[1999] 出口后名册页码也保持（静态局部变量语义）', async () => {
   {
-    // 26 名候选：先翻到第 2 页再完成互换，重画应回第 1 页
+    // 26 名候选：先翻到第 2 页再完成互换，重画应仍在第 2 页
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     for (let cid = 1; cid <= 26; cid += 1)
@@ -1750,7 +1750,8 @@ test('换号：[4000] 互换后 RESTART 回第 1 页；[1999] 出口把名册页
     );
 
     // 第一屏选 1（第 1 页），第二屏 [3001] 翻到第 2 页选 26 再确认：
-    // 互换发生时页码停在第 2 页，重画应回第 1 页（RESTART 复位 NO_PAGE）
+    // 互换发生在第 2 页，RESTART 重画仍在第 2 页（NO_PAGE 是静态局部变量，
+    // 指南 user-defined-variables.md:67-69/:82：函数退出与 RESTART 都不重置）
     fixture.set_inputs(1, 3001, 26, 4000, 1999);
     await chara_number_swap();
 
@@ -1760,13 +1761,18 @@ test('换号：[4000] 互换后 RESTART 回第 1 页；[1999] 出口把名册页
     assert.ok(swap_at >= 0, '已互换');
     const after = fixture.lines_history.slice(swap_at);
     assert.equal(
-      after.some((line) => line.type === 'button' && line.accelerator === 2),
+      after.some((line) => line.type === 'button' && line.accelerator === 26),
       true,
-      '互换后重画回第 1 页（第 2 页只有 26，角色 2 只能在第 1 页出现）',
+      '互换后重画仍在第 2 页（第 26 人还在，页码不归零）',
+    );
+    assert.equal(
+      after.some((line) => line.type === 'button' && line.accelerator === 2),
+      false,
+      '第 2 页上没有角色 2（页码确实没回第 1 页）',
     );
   }
   {
-    // 名册侧重进：第 2 页按 [1700] → 换号 [1999] 出口 → 名册回第 1 页
+    // 名册侧重进：第 2 页按 [1700] → 换号 [1999] 出口 → 名册仍在第 2 页
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
     for (let cid = 1; cid <= 25; cid += 1)
@@ -1782,19 +1788,20 @@ test('换号：[4000] 互换后 RESTART 回第 1 页；[1999] 出口把名册页
       .filter(Boolean);
     assert.equal(
       pages[pages.length - 1],
-      '1',
-      `换号出口后名册回第 1 页（JUMP 语义；实际页序 ${pages.join(',')}）`,
+      '2',
+      `换号出口后名册保持第 2 页（静态局部变量语义；实际页序 ${pages.join(',')}）`,
     );
   }
 });
 
-test('名册重进：[1600] 流程返回后名册页码与排序回初值', async () => {
+test('名册重进：[1600] 流程返回后名册页码保持（静态局部变量语义）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 翻到第 2 页后走 [1600]（选 [2003] 取消）：JUMP 语义应把页码拉回初值
+  // 翻到第 2 页后走 [1600]（选 [2003] 取消）：JUMP 重进名册沿用静态局部变量
+  // （NO_PAGE 不归零），重画仍在第 2 页
   fixture.set_inputs(998, 1600, 2003, 999);
   await chara_info();
 
@@ -1804,12 +1811,12 @@ test('名册重进：[1600] 流程返回后名册页码与排序回初值', asyn
     .filter((line) => line.type === 'text')
     .map((line) => line.text);
   assert.ok(
-    last_texts.some((text) => text.includes('第1页')),
-    `页码回初值（实际：${JSON.stringify(last_texts.slice(0, 3))}）`,
+    last_texts.some((text) => text.includes('第2页')),
+    `页码保持第 2 页（实际：${JSON.stringify(last_texts.slice(0, 3))}）`,
   );
 });
 
-test('名册重进：[1400] 切视图后走 [1600]，排序也回编号视图（JUMP 语义）', async () => {
+test('名册重进：[1400] 切视图后走 [1600]，排序视图也保持（静态局部变量语义）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -1826,12 +1833,12 @@ test('名册重进：[1400] 切视图后走 [1600]，排序也回编号视图（
     .filter((line) => line.type === 'text')
     .map((line) => line.text);
   assert.ok(
-    last_texts.some((text) => text.includes('攻击15/防御20')),
-    `排序回编号视图（实际：${JSON.stringify(last_texts)}）`,
+    last_texts.some((text) => text.includes('所持金:300')),
+    `排序视图保持所持金（SORT_SELECT 是静态局部变量；实际：${JSON.stringify(last_texts)}）`,
   );
   assert.equal(
-    last_texts.some((text) => text.includes('所持金:300')),
+    last_texts.some((text) => text.includes('攻击15/防御20')),
     false,
-    '不再是所持金视图',
+    '没有落回编号视图',
   );
 });

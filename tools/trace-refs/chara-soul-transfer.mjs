@@ -2,6 +2,7 @@
 // issue #391：chara-soul-transfer.js 的锚表
 
 const FUNC2 = 'target/ERB/キャラ関数/CHARA_INFO_FUNC2.ERB';
+const SWAP = 'target/ERB/魔改新增/角色編號交換.ERB';
 
 export const FILES = [
   {
@@ -13,6 +14,12 @@ export const FILES = [
       { src: FUNC2, ref: '140-287', any: [/@PERSONALOCK,\ ARG/] },
       { src: FUNC2, ref: '289-435', any: [/@BODYLOCK,\ ARG/] },
       { src: FUNC2, ref: '438-452', any: [/@SOUL_DISLOCATION\s*$/m] },
+      // #545：swap_chara_numbers 与文件头引的 @換號 名字换回段
+      {
+        src: SWAP,
+        ref: '112-116',
+        any: [/^\t\t\tSWAPCHARA \(CN:1\), \(CN:2\)\s*$/m],
+      },
       { src: FUNC2, ref: '82-87', any: [/^SWAP\ NAME:MASTER,\ NAME:ARG$/m] },
       { src: FUNC2, ref: '99', any: [/^RETURN\ MASTER$/m] },
       { src: FUNC2, ref: '10-11', any: [/^SIF\ RESULT\ !=\ 0$/m] },

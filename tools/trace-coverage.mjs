@@ -133,9 +133,12 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 9; // #545 起降 1（统一卖春积极性.ERB 随真身落地，合并态实测 9；
-// 角色編號交換.ERB 原为部分移植，落真身后转已移植，不进本计数）。此前：#467 并上含 #466/#487 的 master cf3b5d9 实测 10；
-// 先把现役值换成 999 占位再跑 `node tools/trace-check.mjs --coverage`，实测 10；
+// #545 起降 1：统一卖春积极性.ERB 随真身落地（合并态实测 9）；角色編號交換.ERB
+// 原为部分移植，落真身后转已移植，不进本计数。取自重测，不相加也不取一侧。
+export const PENDING_BASELINE = 9;
+// —— 以下为 #467 并上含 #466/#487 的 master cf3b5d9 时的推导记录，保留备查 ——
+// export const PENDING_BASELINE = 10; // 先把现役值换成 999 占位再跑
+// `node tools/trace-check.mjs --coverage`，实测 10；
 // master 侧现役 15（#466 的 23 → 15）− 本票的 5（ABL/ABLUP37.ERB／ABLUP39.ERB／
 // ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB）= 10，与重测一致——数字取自重测，
 // 既不相加也不取一侧。本票还把 ABLUP0～ABLUP100 伞状行整行删除（#466 合并后
