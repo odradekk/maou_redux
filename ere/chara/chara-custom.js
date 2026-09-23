@@ -6,8 +6,8 @@
  *
  * **@CHAR_DEBUG（同文件 :1-15）不移植**：它是 [IF_DEBUG] 的世界观调试面板，
  * docs/stub-registry.md 已判「不移植（调试功能）」，运行时占位留在
- * ere/page/page-chara-info.js:806（CHARA_INFO 的 CASE 99）。本文件因此不导出
- * 它——那一行不改（#393 正在改同一个文件）。
+ * ere/page/page-chara-info.js:890（CHARA_INFO 的 CASE 99；行号随 #542 的
+ * 立绘按钮接线后移，#541 之前写的是 806）。本文件因此不导出它。
  *
  * 调用面（两条外部边，本票只做前者）：
  *   - `char_create(arg)` 是**跨域入口**：SHOP/SHOP_LABO ver1.0.2.ERB:164 的

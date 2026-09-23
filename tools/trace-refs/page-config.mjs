@@ -86,6 +86,17 @@ export const FILES = [
         ref: '288-290',
         any: [/^\s*REDRAW 0\s*$/m],
       },
+      // #542：[26]/[28] 的判死落点——MOD 开关行与立绘开关分支的调用点
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '190',
+        any: [/^\s*PRINTFORM \[26\] MOD开关.*现在：\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '266-271',
+        any: [/^\s*ELSEIF LOCAL == 28\s*$/m, /^\tIF\t 立绘\s*$/m],
+      },
     ],
   },
 ];

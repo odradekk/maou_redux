@@ -717,16 +717,20 @@ test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 5
   );
 });
 
-test('999 落到调试菜单（非购物态；店内的 999 是退出商店，同落这里）', async () => {
+test('999 落到调试菜单的不移植提示（非购物态；店内的 999 是退出商店，同落这里）', async () => {
   // 原作主菜单不印 [999]（DRAW_MAINMENU 的编号表 100-888 无它）——键入式
   // 后门在引擎侧不可达（#130），调试分支经 usershop 直调验证。店内键入 999
   // 的两条路径（:44-46 清 BOUGHT 与 :222 调试菜单）见 usershop 注释与
-  // test/shop-trap.test.js 的 USERSHOP 999 用例
+  // test/shop-trap.test.js 的 USERSHOP 999 用例。DEBUG_MENU_U 自 #542 起
+  // 判不移植（原作者的调试工具，#540 范围决定 3），占位行换成不移植提示
   const fixture = await dispatch(999);
+  const line = history_texts(fixture).find((l) => l.includes('@DEBUG_MENU_U'));
+  assert(line, '提示行必须带原作函数名 @DEBUG_MENU_U（清单行的检索键）');
   assert(
-    history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
-    '999 应占位 @DEBUG_MENU_U（与原作 BOUGHT == -1 时同路径）',
+    line.includes('调试菜单') && line.includes('不在移植范围'),
+    `不移植提示要说清是什么与为何：${line}`,
   );
+  assert.equal(fixture.waits.length, 1, '提示行必须等键（#73 同款）');
 });
 
 test('7788 接通 RELATION_DEBUGPRINT：输出关系矩阵并等待按键', async () => {
@@ -790,8 +794,8 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // 订正的：名单与这份断言一起停在旧状态，所以一直没人发现。
   assert.deepEqual(
     STUBBED_CALLS,
-    ['LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'],
-    '存根名单必须只列仍未接真身的分支（#543 起批量处刑已接真身）',
+    ['LABO', 'SHOW_FLOOR'],
+    '存根名单必须只列仍未接真身的分支（#397 起 INTERCEPT/ABILITY_UP/TAILOR_MAIN 已接真身；#542 起 DEBUG_MENU_U 判不移植；#543 起批量处刑已接真身）',
   );
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
   for (const name of STUBBED_CALLS) {

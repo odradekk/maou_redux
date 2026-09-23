@@ -62,7 +62,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { secret_labo } = require('#/page/page-shop-labo');
 const { batch_execution } = require('#/event/event-execution-batch');
-const { stub_line_wait } = require('#/utils/stub-line');
+const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
 const MAX_CHARANUM = 90;
@@ -87,9 +87,12 @@ const MAX_CHARANUM = 90;
  * 真身（104/105/108 分支，page-intercept.js / page-ability-up.js /
  * page-tailor.js），批量处刑自 #543 起为真身（103 分支，
  * event/event-execution-batch.js），均移出本名单（#515 订正：三个名字
- * 此前与测试一同停在旧状态，见 test/page-shop.test.js 的固定断言）。
+ * 此前与测试一同停在旧状态，见 test/page-shop.test.js 的固定断言）。999
+ * 分支的 DEBUG_MENU_U 自 #542 起判不移植（原作者调试工具），运行时提示行
+ * 不是存根占位，移出本名单；分支结构与汇合路径保留（usershop 的 999 分支
+ * 注释）。
  */
-const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];
+const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR'];
 
 /**
  * @EVENTSHOP（:4-20）：每轮 BEGIN SHOP 进入时执行一次。
@@ -444,8 +447,15 @@ async function usershop(result) {
   } else if (result === 999) {
     // 调试菜单（:222-223）。店内键入 999 时 usershop 开头的购物段（:44）
     // 已经把 BOUGHT 清回 -1 并落到这里（原作同样没有 RETURN）——两条路径
-    // 汇到同一个出口，故不区分。
-    await stub_line_wait('DEBUG_MENU_U', '调试菜单', '随调试票');
+    // 汇到同一个出口，故不区分。DEBUG_MENU_U 随 DEBUG小白娘判不移植
+    // （#542，#540 范围决定 3：原作者的调试工具；原作商店输入 999 进入，
+    // ere 输入只接受已打印按钮，入口本就不可达——#130），分支保留结构
+    // 与不移植提示
+    await not_ported_line_wait(
+      'DEBUG_MENU_U',
+      '调试菜单',
+      '#542 判不移植：原作者的调试工具',
+    );
   }
 
   // :226-227 链外尾检查（SIF，非 ELSEIF）：未被链上分支提前 RETURN 的
