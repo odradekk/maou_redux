@@ -162,8 +162,11 @@ async function seed_scope_b(fixture, { sale = false } = {}) {
   fixture.store.set('global:98', 0);
   // 标题音乐开关关（避免音乐记录噪音；resource:false 下播不播都无声）
   fixture.store.set('global:0', 0);
-  // save00：只有备注、无快照（样本流程不读它——读档画面渲染读备注即够）
-  fixture.store.set('global:saves:0', SAVE00_REMARK);
+  // save00：真实落一份档（备注 + 快照都走 saveData）。样本流程不读它，
+  // 读档画面只渲染备注即够；但 #547 起 @EVENTLOAD 的 LOADGLOBAL 镜像会在
+  // 读档后重扫备注（引擎 listSaveFiles：有备注无文件 → `(FILE LOST) ` 前缀
+  // → 按空槽对待），播种必须给备注配上真文件才不虚构出一个引擎会标丢的槽
+  await fixture.era.saveData(0, SAVE00_REMARK);
 
   // —— save99 的世界（第 7 日午前，温妮调教中）——
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' }); // 魔王

@@ -88,7 +88,14 @@ export const FILES = [
         ref: '1099-1100',
         any: [/SIF SET_VAR:0 == 0 && SET_VAR:1 == 0 && SET_VAR:2 == 1/],
       },
-      { src: BODY, ref: '1110-1163', any: [/PRINT ■ 种族 \[/] },
+      // #547 返工：编辑头拆细——重画首拍空行（:1110-1112 的 PRINTL）单列，
+      // 原区间条目随之收窄
+      { src: BODY, ref: '1110-1112', any: [/PRINT ■ 种族 \[/] },
+      {
+        src: BODY,
+        ref: '1279-1284',
+        any: [/^\tELSEIF RESULT == 101\s*$/m],
+      },
       {
         src: BODY,
         ref: '1130-1162',

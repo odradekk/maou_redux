@@ -165,16 +165,21 @@ test('cycle_adventurer_gender：-1→0→1→2→3→4→-1 六档循环（CONFI
   assert.equal(fixture.store.get('global:3'), -1);
 });
 
-test('冒险者性别不随单档存档走：loadData 后保持现值（GLOBAL 跨档共享语义）', async () => {
+test('冒险者性别不随单档存档走：loadData 不动 global 表，@EVENTLOAD :762 的 loadGlobal 才恢复最近保存值', async () => {
   const fixture = create_era_fixture();
   const era_global = fixture.load_module('era-utils/era-global');
 
   era_global.adventurer_gender = 4;
-  await fixture.era.saveData(0, 'test');
-  // 换档期间玩家经设置页改了全局值
+  await fixture.era.saveData(0, 'test'); // 引擎自动 saveGlobal：global.sav 带 4
+  // 换档期间玩家经设置页改了全局值（[27] 不即时 SAVEGLOBAL，原作同款）
   era_global.adventurer_gender = 1;
   assert.equal(await fixture.era.loadData(0), true);
   // global:* 不在快照里（夹具 snapshot_store 明确跳过 global: 前缀），读档
-  // 不回滚全局值——@EVENTFIRST 才会重置它（ere/event/event-first.js）
+  // 本身不回滚全局值——引擎 loadData 不碰 global 表
   assert.equal(era_global.adventurer_gender, 1);
+  // 原作 @EVENTLOAD 首行 LOADGLOBAL（SYSTEM ver1.0.3.ERB:762，ere 侧由
+  // event/event-load.js 在钩子链首行镜像）：global 表整表换回 global.sav，
+  // 未保存的修改被丢弃（global:3 恢复为最近一次保存的 4）
+  assert.equal(await fixture.era.loadGlobal(), true);
+  assert.equal(era_global.adventurer_gender, 4);
 });

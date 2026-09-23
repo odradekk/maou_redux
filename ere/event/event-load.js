@@ -12,8 +12,10 @@
  * 原作 :769-771 的 BEGIN SHOP 同构）。
  *
  * 原作 :760-778 逐行处置（复核于 #137，别照抄旧清单）：
- *   - :761 LOADGLOBAL——ere 引擎行为（global 表在内存、读档不动它），
- *     不镜像（page-title.js 同款结论）；
+ *   - :762 LOADGLOBAL——#137 曾判「ere 引擎行为（global 表在内存、读档不动
+ *     它），不镜像」，前提是 global 表变量改完都立即 SAVEGLOBAL（global:98/99
+ *     确实如此）；#547 的 global:3（冒險者性別）改完不即时保存，前提失效，
+ *     改为在本链首行镜像 `await era.loadGlobal()`（副作用核对见下）；
  *   - :764 CALL CHARA_NAME_INIT——真身在 chara-name-list.js（#388）：数据已在
  *     yml/NameList.yml，读档后调用是空操作，仅保留调用点可检索；
  *   - :766 CALL EX_TALENTNAME_INIT——非存档的 EX 素质名表初始化，真身在
@@ -67,6 +69,13 @@ const STUBBED_CALLS = [];
 on(
   'EVENTLOAD',
   async () => {
+    // :762 LOADGLOBAL：global 表整表换回 global.sav 的内容（引擎
+    // `this.era.global = n`），丢弃读档前未保存的内存改动——@EVENTFIRST :53
+    // 与设置页 [27] 都不即时 SAVEGLOBAL，读档须按原作恢复最近一次保存值
+    // （#547 验收第 3 条修正 #137 的判断：当时「global 表变量改完都立即
+    // SAVEGLOBAL」的前提被 global:3 打破）。副作用核对过引擎源码：随后
+    // listSaveFiles 重扫备注、saveGlobal 写回同值，不动刚读入的存档数据
+    await era.loadGlobal();
     // :764 角色名初始化，真身见 chara-name-list.js（#388）
     chara_name_init();
     // :766 EX素质名初始化（非存档表，读档后重放；重复调用按原作早退）

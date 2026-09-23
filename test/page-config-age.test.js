@@ -431,6 +431,44 @@ test('RACE_CONFIG 编辑流：[110]（下限 0）与 [111]（上限 1/2）两档
   }
 });
 
+test('RACE_CONFIG 编辑页：和人类一样（DIS_FLAG -1）不打印任何网格（:1214 ELSEIF DIS_FLAG > 1）', async () => {
+  const fixture = create_era_fixture();
+  const { race_config } = load(fixture);
+  seed_race_table(fixture);
+  // 槽 6 霍比特人默认就是「和人类一样」（001）——旧实现进了 else 分支，
+  // 可见按钮就能把 SET_VAR:0 写成 -1、写坏种族年龄表（#547 验收第 1 条）
+  fixture.set_inputs(6, 100, 100);
+  await race_config(always);
+
+  const accelerators = new Set(button_entries(fixture).map(([acc]) => acc));
+  assert.ok(!accelerators.has(110), '[110] 下限按钮不打印');
+  assert.ok(!accelerators.has(21), '上限网格 21 不打印');
+  assert.ok(
+    !fixture.text_lines().some((t) => t.includes('■ 下限')),
+    '「■ 下限」「■ 上限」两组标签都不出现（DIS_FLAG > 1 才有随机档网格）',
+  );
+  // 模式按钮照常——和人类一样档只留四个模式钮与决定/返回
+  for (const key of [101, 102, 103, 104, 999, 100]) {
+    assert.ok(accelerators.has(key), `按钮 ${key}`);
+  }
+});
+
+test('RACE_CONFIG 编辑流：吸血鬼 [101]→[104]→[110]→[999] 保存为 231（[101] 不清 SET_VAR:4/5，:1279-1284）', async () => {
+  const fixture = create_era_fixture();
+  const { race_config } = load(fixture);
+  seed_race_table(fixture);
+  // 槽 2 吸血鬼是随机档 431。[101] 只设 DIS_FLAG 与 SET_VAR:0-3，
+  // sv[4]/sv[5] 保留 3/1 → [110] 后 SET_VAR:4 > 0 成立，切回随机档存 231
+  fixture.set_inputs(2, 101, 104, 110, 999, 100);
+  await race_config(always);
+
+  assert.equal(
+    fixture.store.get('flag:26')[2],
+    231,
+    '下限 0 岁 + 原上限 1000 岁 → cla 2 / deg 3 / num 1（旧实现误存 001）',
+  );
+});
+
 test('RACE_CONFIG 怪癖：[112] 在未选上限时不切算法档（SET_VAR:4 > 0 守卫，:1311-1317）', async () => {
   const fixture = create_era_fixture();
   const { race_config } = load(fixture);
@@ -537,6 +575,26 @@ test('RACE_CONFIG 编辑循环的数字网格与模式按钮（DIS_FLAG 各档�
   assert.ok(grid_of(21).includes('  100 岁'));
   assert.ok(grid_of(25).includes('  500 岁'));
   assert.deepEqual(grid_of(26), [], '26-30 不渲染');
+  // :1215/:1233 两行标签带前导两个全角空格（#547 验收第 6 条）
+  assert.ok(
+    fixture.text_lines().some((t) => t.startsWith('　　■ 下限')),
+    '「■ 下限」带前导两个全角空格',
+  );
+  assert.ok(
+    fixture.text_lines().some((t) => t.startsWith('　　■ 上限')),
+    '「■ 上限」带前导两个全角空格',
+  );
+  // :1111 每次重画编辑头前先出空行（#547 验收第 5 条）
+  const header_rows = fixture.lines
+    .map((l, i) =>
+      l.type === 'text' && l.text.includes('■ 种族 [精灵]') ? i : -1,
+    )
+    .filter((i) => i >= 0);
+  assert.ok(header_rows.length > 0, '编辑头行存在');
+  assert.ok(
+    header_rows.every((i) => fixture.lines[i - 1]?.type === 'br'),
+    '编辑头前一拍是空行（PRINTL）',
+  );
   // 模式按钮与出口
   for (const key of [101, 102, 103, 104, 999, 100]) {
     assert.ok(accelerators.has(key), `按钮 ${key}`);

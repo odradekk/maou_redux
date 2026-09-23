@@ -1679,9 +1679,9 @@ export default [
     must_mention: '存根清单状态词不在三类里',
   },
   {
-    desc: 'M11287 未了结行的源被指到 DUNGEON_BATLLE2 上（该文件必须一直判已移植——#541 第 2 条的源订正把它从欠账里摘出来；#548 起 BEDROOM_BATTLE_MALE 行已实现、不进归因扫描，靶位改挂到仍未了结的 RACE_CONFIG 行）',
+    desc: 'M11287 未了结行的源被指到 DUNGEON_BATLLE2 上（该文件必须一直判已移植——#541 第 2 条的源订正把它从欠账里摘出来；#548 起 BEDROOM_BATTLE_MALE 行、#547 起 RACE_CONFIG 行已实现、不进归因扫描，靶位改挂到仍未了结的 SHOW_BUTTON_EQUIP 行）',
     file: 'docs/stub-registry.md',
-    find: 'キャラ関数/CHARA_BODY.ERB:931-1333',
+    find: '其他/EQUIP.ERB:1074',
     replace: '迷宮/DUNGEON_BATLLE2.ERB',
     tests: ['stub-registry-status'],
     test_name:
@@ -1689,9 +1689,9 @@ export default [
     must_mention: 'DUNGEON_BATLLE2.ERB 必须判已移植',
   },
   {
-    desc: 'M11288 待核行文退回（未了结行的源写回「調教相關/（@EVENTEND 的调用，文件待核）」——归因不到的行多一条，超 #541 归零后的基线；#548 起 CHARADEAD_CHECK 行已实现、不进归因扫描，靶位改挂到仍未了结的 CONFIG_AGE_SETTING 行）',
+    desc: 'M11288 待核行文退回（未了结行的源写回「調教相關/（@EVENTEND 的调用，文件待核）」——归因不到的行多一条，超 #541 归零后的基线；#548 起 CHARADEAD_CHECK 行、#547 起 CONFIG_AGE_SETTING 行已实现、不进归因扫描，靶位改挂到仍未了结的 EQUIP_ST_SHOW 行）',
     file: 'docs/stub-registry.md',
-    find: 'キャラ関数/CHARA_BODY.ERB:853-929',
+    find: '其他/EQUIP.ERB:1030',
     replace: '調教相關/（@EVENTEND 的调用，文件待核）',
     tests: ['trace-check'],
     test_name:

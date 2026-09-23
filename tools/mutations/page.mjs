@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 420; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 425; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -51,7 +51,7 @@ export const COUNT = 420; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身—�
 // page-chara-info-show.js 的献祭选项与 [100] 返回）实测 377；#538 起 +3
 // （M11260-M11262，post_conquest_menu() 两个守卫的边界各挪一格——越界守卫的
 // 上下界与 [5] 拒收的 route_33 上界）实测 380
-//；#547 起 +25（M11550-M11574，page-config-age.js 的 CONFIG_AGE_SETTING/RACE_CONFIG 全量与 page-config.js 的 [15]/[27]/[29]/[30]/状态文案/存根名单——由 test/page-config-age.test.js 与 test/page-config.test.js 守护）
+//；#547 起 +25（M11550-M11574，page-config-age.js 的 CONFIG_AGE_SETTING/RACE_CONFIG 全量与 page-config.js 的 [15]/[27]/[29]/[30]/状态文案/存根名单——由 test/page-config-age.test.js 与 test/page-config.test.js 守护）；返工轮 +5（M11584-M11588：网格门/[101] 清值/空行/全角空格——验收 6 条中的 1、2、5、6）
 
 export default [
   {
@@ -4058,5 +4058,56 @@ export default [
     era.print('@CONFIG_AGE_SETTING 占位\\n');`,
     tests: ['page-config'],
     must_mention: '年龄菜单首行',
+  },
+  // —— #547 返工轮（验收 6 条）：M11584-M11588 守 1:1 复刻修正 ——
+  {
+    desc: 'M11584 编辑页网格门退回无差别 else（和人类一样也打印随机档，#547 返工 1）',
+    file: 'ere/page/page-config-age.js',
+    find: `        } else if (dis_flag > 1) {`,
+    replace: `        } else { // 变异：网格门退回 else（:1214 ELSEIF DIS_FLAG > 1 的门丢失）`,
+    tests: ['page-config-age'],
+    must_mention: '[110] 下限按钮不打印',
+  },
+  {
+    desc: 'M11585 [101] 和人类一样清掉 SET_VAR:4/5（随机档种族 [101] 后误存 001，#547 返工 2）',
+    file: 'ere/page/page-config-age.js',
+    find: `          dis_flag = -1;
+          sv[0] = 0;
+          sv[1] = 0;
+          sv[2] = 1;
+          sv[3] = -1;`,
+    replace: `          dis_flag = -1;
+          sv[0] = 0;
+          sv[1] = 0;
+          sv[2] = 1;
+          sv[3] = -1;
+          sv[4] = -1; // 变异：多清上限两值（原作 :1279-1284 只设 0-3）
+          sv[5] = -1;`,
+    tests: ['page-config-age'],
+    must_mention: '旧实现误存 001',
+  },
+  {
+    desc: 'M11586 编辑头重画前的空行被删（:1111 PRINTL 丢失，#547 返工 5）',
+    file: 'ere/page/page-config-age.js',
+    find: `        era.println(); // :1110-1112 的空行（重画首拍）`,
+    replace: `        // 变异：漏 :1111 的重画前空行`,
+    tests: ['page-config-age'],
+    must_mention: '编辑头前一拍是空行（PRINTL）',
+  },
+  {
+    desc: 'M11587 「■ 下限」丢前导两个全角空格（:1215，#547 返工 6）',
+    file: 'ere/page/page-config-age.js',
+    find: `          era.print('　　■ 下限\\n');`,
+    replace: `          era.print('■ 下限\\n'); // 变异：丢前导全角空格`,
+    tests: ['page-config-age'],
+    must_mention: '「■ 下限」带前导两个全角空格',
+  },
+  {
+    desc: 'M11588 「■ 上限」丢前导两个全角空格（:1233，#547 返工 6）',
+    file: 'ere/page/page-config-age.js',
+    find: `          era.print('　　■ 上限\\n');`,
+    replace: `          era.print('■ 上限\\n'); // 变异：丢前导全角空格`,
+    tests: ['page-config-age'],
+    must_mention: '「■ 上限」带前导两个全角空格',
   },
 ];

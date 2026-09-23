@@ -345,8 +345,10 @@ async function race_config(rand = default_rand) {
       }
 
       edit: for (;;) {
-        // :1110-1163 编辑头：种族名 + 当前档说明 + 17 岁换算预览
+        // :1110-1112 编辑头：重画前空行（DO 首拍的 PRINTL）+ 种族名 + 当前档
+        // 说明 + 17 岁换算预览
         const [edit_desc, edit_age] = edit_texts(sv);
+        era.println(); // :1110-1112 的空行（重画首拍）
         era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}\n`);
         era.print('　 换算人类 17 岁左右 ' + edit_age + '\n');
         era.printButton('和人类一样', 101);
@@ -377,14 +379,14 @@ async function race_config(rand = default_rand) {
               n,
             );
           }
-        } else {
+        } else if (dis_flag > 1) {
           // 随机档：下限三钮 + 上限 21..50 中 %10 ∈ 1-5（:1214-1246）
-          era.print('■ 下限\n');
+          era.print('　　■ 下限\n');
           era.printButton('0 岁', 110);
           era.printButton('上限的1 / 2', 111);
           era.printButton('换算成人类年龄', 112);
           era.println();
-          era.print('■ 上限\n');
+          era.print('　　■ 上限\n');
           for (let l = 0; l < 30; l += 1) {
             if (l % 10 > 4) continue;
             const n = l + 21;
@@ -424,13 +426,13 @@ async function race_config(rand = default_rand) {
         } else if (sub === 100) {
           continue top; // :1276-1277 不保存 SET_VAR 回顶层
         } else if (sub === 101) {
+          // :1279-1284 和人类一样：只设 DIS_FLAG 与 SET_VAR:0-3——sv[4]/sv[5]
+          // 保留现值，随机档种族 [101]→[104]→[110] 才能靠 SET_VAR:4 > 0 切回
           dis_flag = -1;
           sv[0] = 0;
           sv[1] = 0;
           sv[2] = 1;
           sv[3] = -1;
-          sv[4] = -1;
-          sv[5] = -1;
         } else if (sub === 102) {
           dis_flag = 0;
         } else if (sub === 103) {
