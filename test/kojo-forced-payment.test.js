@@ -467,10 +467,20 @@ test('强制肉偿：HEROINE_BITCH 的调用点接真身（占位行消失）', 
   fixture.store.set('abl:31:31', 0);
   fixture.store.set('talent:31:60', 0);
   const bitch = fixture.load_module('kojo/kojo-dungeon-bitch');
-  // draws: RAND:3 → 0（触发）；RAND:4 → 0（档 0）；PLAY 0 → 5、COST 0 → 1000
-  //（本用例没设 ABL:11/ABL:37/EXP:20，走低档）；拍片 1（不拍）；
-  //自慰 RAND:36 → 35（35 > 0，不触发）
-  await bitch.heroine_bitch(31, seq_rand(0, 0, 0, 0, 1, 35));
+  // 抽取序（原作顺序）：RAND:3 → 0（触发）；强制肉偿的 RAND:4 → 0（档 0）、
+  // RAND:10 → 0（PLAY = 5）、RAND:500 → 0（COST = 1000）、RAND:3 → 1（不拍片，
+  // 本用例没设 ABL:11/ABL:37/EXP:20，走低档）；回到 heroine_bitch 的
+  // 自慰判定 RAND:36 → 35（35 > 0，不触发）。
+  // 调用点漏写 await 时（M11427），heroine_bitch 会在强制肉偿停在 :10 的
+  // printAndWait 上时继续跑 :78 的 RAND:36，把 RAND:4 要用的数取走——
+  // 上界序列因此错位，下面这条断言是唯一能拦它的地方。
+  const uppers = [];
+  const draws = [0, 0, 0, 0, 1, 35];
+  const rand = (n) => {
+    uppers.push(n);
+    return draws.shift() ?? 0;
+  };
+  await bitch.heroine_bitch(31, rand);
   const lines = fixture.text_lines();
   assert.ok(
     lines.includes(
@@ -482,6 +492,9 @@ test('强制肉偿：HEROINE_BITCH 的调用点接真身（占位行消失）', 
     !lines.some((l) => l.includes('强制肉偿') && l.includes('债务过高')),
     '占位行已消失',
   );
+  // 顺序断言放最后：门槛不成立（M11420）时上面两条先红，漏 await（M11427）
+  // 时开场行照打、只有这里能拦
+  assert.deepEqual(uppers, [3, 4, 10, 500, 3, 36], '调用点与真身的抽取序');
 });
 
 test('强制肉偿：kojo-dungeon-bitch.js 的 STUBBED_CALLS 已无强制肉偿', () => {

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2321; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +27（M11400-M11426，强制肉偿）
+export const COUNT = 2322; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）
 
 export default [
   {
@@ -21619,5 +21619,14 @@ async function try_kojo_or_stub(
       '  // :105 CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前\n  // 变异：删掉 :105 的空串调用',
     tests: ['kojo-forced-payment'],
     must_mention: '的调用次数',
+  },
+  {
+    desc: 'M11427 强制肉偿的调用点漏写 await（heroine_bitch 不等真身跑完就往下走，:78 的 RAND:36 抢走 RAND:4 的随机数、输出顺序也反了，#544 第 1 轮验收返工）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '    // :77 CALL 强制肉偿(ARG)\n    await forced_payment(arg, rand);',
+    replace:
+      '    // :77 CALL 强制肉偿(ARG)\n    forced_payment(arg, rand); // 变异：漏 await',
+    tests: ['kojo-forced-payment', 'kojo-dungeon-bitch'],
+    must_mention: '调用点与真身的抽取序',
   },
 ];
