@@ -22,7 +22,8 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'stub-registry.md',
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
-  assert.deepEqual(STUBBED_CALLS, ['CONFIG_AGE_SETTING', 'MODLIST']);
+  // MODLIST 随 #542 判不移植离开存根名单（清单同名行改判死终态，行仍在表）
+  assert.deepEqual(STUBBED_CALLS, ['CONFIG_AGE_SETTING']);
   for (const name of STUBBED_CALLS) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
@@ -230,17 +231,60 @@ test('dispatch_config(21)：进入 config_virgin_conceded_setting 子菜单', as
   assert.equal(era_flag.virgin_conceded_mode, 1);
 });
 
-test('dispatch_config(26)：MOD开关（MODLIST）走存根占位并等键', async () => {
+test('dispatch_config(26)：MOD开关按 #542 判不移植，按下打一行不移植提示并等键', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
-  await dispatch_config(26, 1);
-  assert(fixture.text_lines().some((t) => t.includes('@MODLIST')));
+  const page = await dispatch_config(26, 1);
+  assert.equal(page, 1);
+  const line = fixture.text_lines().find((t) => t.includes('@MODLIST'));
+  assert.ok(line, '提示行必须带原作函数名 @MODLIST（可检索，同存根占位形状）');
+  assert.ok(
+    line.includes('MOD 开关菜单') && line.includes('不在移植范围'),
+    `不移植提示要说清是什么与为何：${line}`,
+  );
+  assert.ok(
+    line.includes('docs/stub-registry.md'),
+    '不移植提示与存根占位同款，末尾指向清单',
+  );
+  assert.equal(
+    fixture.waits.length,
+    1,
+    '提示行必须等键（#73 同款：分发期输出不等键会被重绘清掉）',
+  );
+  assert.equal(
+    fixture.var_writes.length,
+    0,
+    '不移植不写任何变量（EX_FLAG:9000 不落地）',
+  );
 });
 
-test('dispatch_config(27-30)：四个 MOD SAVEDATA 未落地变量恒不写入（1:1「设置了也不生效」）', async () => {
+test('dispatch_config(28)：立绘开关按 #542 判不移植，按下打一行不移植提示并等键', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
-  for (const local of [27, 28, 29, 30]) {
+  const page = await dispatch_config(28, 1);
+  assert.equal(page, 1);
+  // [28] 原作只翻立绘开关（CONFIG.ERB:266-271，无函数调用）；提示行锚定
+  // 判不移植的 @更换立绘（魔改新增/img.ERB:168），与清单行同键
+  const line = fixture.text_lines().find((t) => t.includes('@更换立绘'));
+  assert.ok(line, '提示行必须带 @更换立绘（清单行的检索键）');
+  assert.ok(
+    line.includes('立绘系统') && line.includes('不在移植范围'),
+    `不移植提示要说清是什么与为何：${line}`,
+  );
+  assert.equal(fixture.waits.length, 1, '提示行必须等键');
+  assert.equal(
+    fixture.var_writes.length,
+    0,
+    '立绘开关不落地（#542：开关默认关、素材不在仓库）',
+  );
+});
+
+test('dispatch_config(27/29/30)：三个 MOD SAVEDATA 未落地变量恒不写入（1:1「设置了也不生效」）', async () => {
+  // [28] 立绘开关自 #542 起走判不移植的提示分支（见上面 dispatch_config(28)
+  // 的用例），不再是 MOD SAVEDATA 变量，故不在本用例的取值表里
+  const fixture = create_era_fixture();
+  const { dispatch_config } = load(fixture);
+  for (const local of [27, 29, 30]) {
     const page = await dispatch_config(local, 1);
     assert.equal(page, 1);
   }

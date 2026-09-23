@@ -840,7 +840,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：以全部已加入角色 ID 为顺位表打
 
 // —— 未落地调用一律走存根，登记与实现同步 ——
 
-test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在列，三对动作已移出', async () => {
+test('STUBBED_CALLS：装备/调试/统一积极性/换号仍在列，兼职与更换立绘随 #542 判死移出，三对动作已移出', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -855,15 +855,21 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
   // chara-marriage.js），九条均不再是本文件的存根
   for (const name of [
     'SHOW_BUTTON_EQUIP',
-    'PTJ_BUTTON',
     'EQUIP_ST_SHOW',
     'CHAR_DEBUG',
     'RANDOM_SELF_CALL',
-    '更换立绘',
     '统一卖春积极性',
     '换号',
   ]) {
     assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
+  }
+  // PTJ_BUTTON / 更换立绘 自 #542 起是判死终态（打工 MOD 与立绘系统不移植），
+  // 入口提示行不是存根占位，不再进名单；清单同名行仍在函数表（改判不移植）
+  for (const name of ['PTJ_BUTTON', '更换立绘']) {
+    assert.ok(
+      !STUBBED_CALLS.includes(name),
+      `${name} 已判不移植（#542），不应再留在存根名单里`,
+    );
   }
   // SHOW_CHARA_INFO 自 #390 起是真身（ere/page/page-chara-info-show.js），
   // 三对动作按钮与流程自 #393 起是真身——两票各加一批，这里取并集
@@ -885,7 +891,7 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
   }
 
   // 绘制期：改名自 #384、三对动作按钮自 #393、育儿室自 #401 起都是真按钮
-  // （都在判定放行时才渲染）；装备/兼职(sub_page 1/2)仍是 stub_line 占位。
+  // （都在判定放行时才渲染）；装备(sub_page 1/2)仍是 stub_line 占位。
   fixture.set_inputs(100);
   const result = await chara_info_individual(1, [1]);
   assert.equal(result, 0);
@@ -923,6 +929,101 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
       `${stub_name} 的占位行不该再出现`,
     );
   }
+});
+
+// —— #542：PTJ_BUTTON 与更换立绘的判死落点 ——
+
+test('更换立绘按钮（:870-871）：守卫去掉恒关的立绘开关，按钮保留可见——表驱动', async () => {
+  // 原作守卫是 `SIF 立绘 && CFLAG:ARG:1 == 0 && ARG != MASTER`；立绘系统判
+  // 不移植（#542）后开关恒关，照抄守卫按钮永不可见——有意偏离：去掉开关
+  // 条件、保留后两条，玩家能按到 [20] 并看到不移植提示（#540 范围决定 4）
+  // [标签, 角色, CFLAG:1:1, 期望 [20] 是否渲染]
+  const table = [
+    ['奴隶 + 状态 0：渲染', 1, 0, true],
+    ['奴隶 + 状态 2（侵攻中）：不渲染', 1, 2, false],
+    ['魔王（ARG == MASTER）：不渲染', 0, 0, false],
+  ];
+  for (const [label, cid, state, expected] of table) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.store.set('cflag:1:1', state);
+    fixture.set_inputs(100);
+    await fixture
+      .load_module('page/page-chara-info')
+      .chara_info_individual(cid, [1]);
+    const rendered = fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .some((b) => b.rendered === '[20] 更换立绘');
+    assert.equal(rendered, expected, label);
+  }
+});
+
+test('更换立绘按钮（CASE 20）：按下打一行不移植提示并等键', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.set_inputs(20, 100);
+  await fixture
+    .load_module('page/page-chara-info')
+    .chara_info_individual(1, [1]);
+
+  const line = fixture.text_lines().find((t) => t.includes('@更换立绘'));
+  assert.ok(line, '提示行必须带原作函数名 @更换立绘（清单行的检索键）');
+  assert.ok(
+    line.includes('不在移植范围') && line.includes('素材不在仓库'),
+    `不移植提示要说清为何：${line}`,
+  );
+  assert.equal(fixture.waits.length, 1, '提示行必须等键（#73 同款）');
+});
+
+test('卖春积极性按钮（PTJ_BUTTON 默认态）：档位文案随 CFLAG:120 变，按下进真身——表驱动', async () => {
+  // :883 CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
+  // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE = SHOW_BUTTON_BICH_LEVEL(18,ARG)
+  // 的 [18] 卖春积极性按钮；打工变体（SHOW_PTJ_BUTTON_LEVEL）不渲染
+  // [CFLAG:1:120, 期望按钮正文]
+  const table = [
+    [0, '[18] 卖春积极性 - 没有'],
+    [1, '[18] 卖春积极性 - 普通'],
+    [5, '[18] 卖春积极性 - 5等级'],
+  ];
+  for (const [level, expected] of table) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.store.set('cflag:1:120', level);
+    fixture.set_inputs(102, 100); // 翻到 sub_page 1 后退出
+    await fixture
+      .load_module('page/page-chara-info')
+      .chara_info_individual(1, [1]);
+    const rendered = fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((b) => b.rendered);
+    assert.ok(
+      rendered.includes(expected),
+      `sub_page 1 应渲染 [18] 卖春积极性按钮（CFLAG:120 = ${level}）：${rendered}`,
+    );
+    assert.ok(
+      rendered.some((text) => text.startsWith('[18] 卖春积极性')),
+      '[18] 编号只有一个（打工变体不叠加渲染）',
+    );
+  }
+});
+
+test('卖春积极性按钮（CASE 18）：按下进 set_bich_level 真身', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.set_inputs(102, 18, 3, 100); // 翻页 → [18] → 选 3 → 退出
+  await fixture
+    .load_module('page/page-chara-info')
+    .chara_info_individual(1, [1]);
+
+  assert.equal(fixture.store.get('cflag:1:120'), 3);
+  assert.ok(
+    fixture.text_lines().some((t) => t.includes('卖春积极性变为等级3了')),
+    'SET_BICH_LEVEL 真身的回显',
+  );
 });
 
 test('三动作按钮（#393）：[2] 转职 / [3] 魔的诱惑 / [4] 结婚×恋人设定 的渲染随状态变——表驱动', async () => {
