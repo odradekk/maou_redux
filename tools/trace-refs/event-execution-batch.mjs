@@ -49,10 +49,53 @@ export const FILES = [
       },
       {
         src: `${DIR}/處刑改寫.ERB`,
+        ref: '34',
+        any: [
+          /^\s*PRINTFORM \[\{COUNT,3,RIGHT\}\] %SAVESTR:COUNT,12,LEFT% %GET_JOB_NAME\(COUNT\),8,LEFT% LV:\{CFLAG:COUNT:9,4,LEFT\}\s*$/m,
+        ],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
         ref: '34-48',
         any: [
           /^\s*PRINTFORM \[\{COUNT,3,RIGHT\}\] %SAVESTR:COUNT,12,LEFT% %GET_JOB_NAME\(COUNT\),8,LEFT% LV:\{CFLAG:COUNT:9,4,LEFT\}\s*$/m,
         ],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '206',
+        any: [
+          /^\s*PRINTFORM 深爱着你的%SAVESTR:A%不知道自己为什么要被做成肉便器，不停地高叫着你的名字，请求饶恕。\s*$/m,
+        ],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '207',
+        any: [
+          /^\s*PRINTFORML 但%SAVESTR:PLAYER%依然给%SAVESTR:A%烙上了封锁所有力量的封印，\s*$/m,
+        ],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '209',
+        any: [/^\s*PRINTL 作为地下城里怪物的慰问品被使用着，\s*$/m],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '210',
+        any: [
+          /^\s*PRINTW 今后别说重新当勇者，就连看一眼阳光也不可能了吧。\s*$/m,
+        ],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '297',
+        any: [/^\s*SIF TALENT:A:317 == 4 \|\| TALENT:317 == 11\s*$/m],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '299',
+        any: [/^\s*PRINTFORMW 现在的肉便器数量：\{FLAG:83\}\s*$/m],
       },
       {
         src: `${DIR}/處刑改寫.ERB`,
@@ -304,8 +347,18 @@ export const FILES = [
       },
       {
         src: `${DIR}/處刑改寫.ERB`,
+        ref: '7',
+        any: [/^\s*#DIM 可处刑\s*$/m],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
         ref: '8',
         any: [/^\s*#DIM NO_PAGE = 0\s*$/m],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '13',
+        any: [/^\s*可处刑 = 0\s*$/m],
       },
       {
         src: `${DIR}/處刑改寫.ERB`,

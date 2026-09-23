@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 131;
+export const COUNT = 138;
 
 export default [
   {
@@ -676,7 +676,7 @@ export default [
     tests: ['event-execution'],
     must_mention: '按性格处理器分发口上并归档选择的末路',
   },
-  // —— #543（S2）批量处刑与自动处刑（M11340–M11392）——
+  // —— #543（S2）批量处刑与自动处刑（M11340–M11398）——
   {
     desc: 'M11340 收藏剃除扫描：示众台角色不再跳过',
     file: 'ere/event/event-execution-batch.js',
@@ -791,6 +791,17 @@ export default [
       "        if (true) era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
     tests: ['event-execution-batch'],
     must_mention: '[121] 选择处刑方式仅在存在可处刑目标时出现',
+  },
+  // M11354：可处刑的静态语义——原作 :7 的 #DIM 只在 :13（进入函数与
+  // JUMP 批量处刑）清零，GOTO 处刑介面 不清，本条目把它改成每轮重算
+  {
+    desc: 'M11354 可处刑改成每轮重算（原作是静态变量，清标签后 [121] 应仍保留）',
+    file: 'ere/event/event-execution-batch.js',
+    find: '        const added = era.getAddedCharacters();\n        const charanum = added.length; // CHARANUM',
+    replace:
+      '        executable = false; // 变异：每轮重算（原作只在 :13 清零）\n        const added = era.getAddedCharacters();\n        const charanum = added.length; // CHARANUM',
+    tests: ['event-execution-batch'],
+    must_mention: '[121] 出现两次（标记后一次、取消标记后重绘仍显示一次',
   },
   // M11354 编号空缺：下一页守卫的 `<=` → `<` 起初被当作「不可区分」而没立
   // 条目（页宽整数倍处才分得出）。补了 50 人（页宽整数倍）边界用例后，
@@ -1085,9 +1096,9 @@ export default [
   {
     desc: 'M11389 批量处刑：重启（JUMP 批量处刑）时把页号复位',
     file: 'ere/event/event-execution-batch.js',
-    find: '    restart: for (;;) {\n      screen: for (;;) {',
+    find: '      executable = false; // 可处刑 = 0（:13）\n      screen: for (;;) {',
     replace:
-      '    restart: for (;;) {\n      no_page = 0;\n      screen: for (;;) {',
+      '      executable = false; // 可处刑 = 0（:13）\n      no_page = 0;\n      screen: for (;;) {',
     tests: ['event-execution-batch'],
     must_mention: '重启（取消流放）后仍在第 2 页',
   },
@@ -1115,5 +1126,59 @@ export default [
     replace: '  // 变异：漏写家族档',
     tests: ['event-execution-batch'],
     must_mention: '家族档归档（:300-301：CSTR:(FAMILY:2):5）',
+  },
+  // 以下六条由第 1 轮验收的逐行对照补出（列表行的 LV 冒号、:206-209 的
+  // 不等待、:299 的等待、:11 的 CUSTOMDRAWLINE 线、普通 DRAWLINE 的线型、
+  // [121] 后的空行数）
+  {
+    desc: 'M11393 列表行：LV 后的冒号丢失（原作 :34 是 LV:）',
+    file: 'ere/event/event-execution-batch.js',
+    find: ' LV:${get(`cflag:${cid}:9`)}`;',
+    replace: ' LV${get(`cflag:${cid}:9`)}`;',
+    tests: ['event-execution-batch'],
+    must_mention:
+      '等级前缀是「LV:」——page-select-target 没有冒号是它自己原文如此',
+  },
+  {
+    desc: 'M11394 肉便器：:208 的不等待输出改成 printAndWait',
+    file: 'ere/event/event-execution-batch.js',
+    find: '  era.print(`被吸收了全部力量的${she(cid)}，身体变成淫靡的肉块了。`);',
+    replace:
+      '  await era.printAndWait(`被吸收了全部力量的${she(cid)}，身体变成淫靡的肉块了。`);',
+    tests: ['event-execution-batch'],
+    must_mention: '不等待的原作行必须用裸 era.print',
+  },
+  {
+    desc: 'M11395 肉便器：:299 的 PRINTFORMW 改成不等待的 print',
+    file: 'ere/event/event-execution-batch.js',
+    find: '  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`); // :299 PRINTFORMW',
+    replace:
+      '  era.print(`现在的肉便器数量：${game.invasion.肉便器数}`); // :299 PRINTFORMW',
+    tests: ['event-execution-batch'],
+    must_mention: ':299 PRINTFORMW 必须用 printAndWait',
+  },
+  {
+    desc: 'M11396 名单屏：把 :11 的 CUSTOMDRAWLINE 线画回顶部（原作画完即被 CLEARLINE 清掉）',
+    file: 'ere/event/event-execution-batch.js',
+    find: '        // 第 11 行的 CUSTOMDRAWLINE = 画的那条线立刻被第 16 行 CLEARLINE 清掉，不镜像\n        if (',
+    replace: '        era.drawLine({ isSolid: true });\n        if (',
+    tests: ['event-execution-batch'],
+    must_mention: '顶部不再多画 :11 的 CUSTOMDRAWLINE 线',
+  },
+  {
+    desc: 'M11397 名单屏：普通 DRAWLINE 画成实线（isSolid 只对 CUSTOMDRAWLINE 那一类）',
+    file: 'ere/event/event-execution-batch.js',
+    find: '        era.drawLine(); // :52-54',
+    replace: '        era.drawLine({ isSolid: true }); // :52-54',
+    tests: ['event-execution-batch'],
+    must_mention: '普通 DRAWLINE 用默认线型',
+  },
+  {
+    desc: 'M11398 名单屏：[121] 之后少一个空行（:68/:69 两个 PRINTL）',
+    file: 'ere/event/event-execution-batch.js',
+    find: '        era.println(); // PRINTL（:67-69）\n        era.println(); // PRINTL（:68-70）',
+    replace: '        era.println(); // PRINTL（:67-69）',
+    tests: ['event-execution-batch'],
+    must_mention: '[121] 之后是 :68/:69 两个空行',
   },
 ];

@@ -17,6 +17,8 @@
 'use strict';
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -967,6 +969,140 @@ test('翻页位置是函数静态变量：重启与再次进入处刑都保留�
     '再次进入处刑保留上次的页（静态变量，原作 :8）',
   );
   assert.equal(rows(1).length, 1, '再次进入不会退回第 1 页');
+});
+
+test('[121] 的可见性是函数静态变量：清标签后仍保留到整界面重启', async () => {
+  // 原作 #DIM 可处刑（:7）是静态变量：只在进入函数（:13）与 JUMP 批量处刑
+  // （重执行 :11-14）时清零；GOTO 处刑介面（翻页、标签切换、[101] 重绘）
+  // 不清零——本次调用中一旦有角色带过标签，[121] 就一直在
+  const fixture = seed_world(31);
+  fixture.set_inputs(31, 31, 1999); // 打标签 → 取消标签 → 结束
+  const { batch_execution } = load_batch(fixture);
+
+  await batch_execution(seq([0]));
+
+  assert.equal(
+    buttons(fixture).filter((b) => b.accelerator === 121).length,
+    2,
+    '[121] 出现两次（标记后一次、取消标记后重绘仍显示一次——静态变量不清零）',
+  );
+});
+
+test('[121] 后的空行数与原作一致（PRINTLC 自带换行 + :68/:69 两个 PRINTL）', async () => {
+  const fixture = seed_world(31);
+  fixture.store.set('cflag:31:777', 1);
+  fixture.set_inputs(1999);
+  const { batch_execution } = load_batch(fixture);
+
+  await batch_execution(seq([0]));
+
+  const rows = fixture.lines_history;
+  const index = rows.findIndex(
+    (line) => line.type === 'button' && line.accelerator === 121,
+  );
+  assert(index >= 0, '[121] 已打印');
+  assert.deepEqual(
+    rows.slice(index + 1, index + 3).map((line) => line.type),
+    ['br', 'br'],
+    '[121] 之后是 :68/:69 两个空行（printButton 自成一行，PRINTLC 的换行在行尾）',
+  );
+  assert.equal(rows[index + 3].accelerator, 2000, '再下一条是 [2000] 上一页');
+});
+
+test('分隔线：顶部不画 CUSTOMDRAWLINE 线，普通 DRAWLINE 用默认线型', async () => {
+  // 原作 :11 的 `CUSTOMDRAWLINE =` 只画一条线，随即被 :16 的
+  // `CLEARLINE LINECOUNT` 清掉；:21/:24/:53 是普通 DRAWLINE（默认线型）
+  const fixture = seed_world(31);
+  fixture.set_inputs(1999);
+  const { batch_execution } = load_batch(fixture);
+
+  await batch_execution(seq([0]));
+
+  const dividers = fixture.lines_history.filter(
+    (line) => line.type === 'divider',
+  );
+  assert.notEqual(
+    fixture.lines_history[0]?.type,
+    'divider',
+    '顶部不再多画 :11 的 CUSTOMDRAWLINE 线',
+  );
+  assert.equal(dividers.length, 3, '名单屏三条普通分隔线（:21/:24/:53）');
+  assert(
+    dividers.every((line) => line.border === 'dashed'),
+    '普通 DRAWLINE 用默认线型（isSolid 只对 CUSTOMDRAWLINE = 那一类，本屏不镜像）',
+  );
+});
+
+test('列表行的等级带冒号（原作 :34 的 LV:{CFLAG:COUNT:9}）', async () => {
+  const fixture = seed_world(31);
+  fixture.set_inputs(1999);
+  const { batch_execution } = load_batch(fixture);
+
+  await batch_execution(seq([0]));
+
+  const row = buttons(fixture).find((b) => b.accelerator === 31);
+  assert.match(
+    row.text,
+    /LV:4$/,
+    '等级前缀是「LV:」——page-select-target 没有冒号是它自己原文如此，不是先例',
+  );
+});
+
+test('方法 4 正文的等待后缀与原作一致（W 才等；夹具观测不到，按源文锁）', async () => {
+  // 夹具的 printAndWait 内部等待不入 waits（test/fixture.test.js 的既定裁定），
+  // W/L 之别在行为层不可观测——同 test/kojo-text-fidelity.test.js 的 B 锁取法，
+  // 按「ERB 行后缀 ↔ JS 调用」逐条核对
+  const batch_src = fs.readFileSync(
+    path.resolve(__dirname, '..', 'ere', 'event', 'event-execution-batch.js'),
+    'utf8',
+  );
+  const erb = fs
+    .readFileSync(
+      path.resolve(
+        __dirname,
+        '..',
+        'target',
+        'ERB',
+        '魔改新增',
+        '處刑改寫.ERB',
+      ),
+      'utf8',
+    )
+    .split(/\r?\n/);
+  // 原作：:206 PRINTFORM / :207-208 PRINTFORML / :209 PRINTL 都不等待，
+  // :210 PRINTW 等待；:299 PRINTFORMW 等待
+  assert.match(
+    erb[205],
+    /^\s*PRINTFORM 深爱着你的/,
+    ':206 是 PRINTFORM（不等待）',
+  );
+  assert.match(
+    erb[209],
+    /^\s*PRINTW 今后别说重新当勇者/,
+    ':210 是 PRINTW（等待）',
+  );
+  assert.match(
+    erb[298],
+    /^\s*PRINTFORMW 现在的肉便器数量/,
+    ':299 是 PRINTFORMW（等待）',
+  );
+  for (const re of [
+    /era\.print\(\s*`\$\{prelude\}但\$\{chara_callname\(0\)\}依然给/, // :206-207
+    /era\.print\(\s*`被吸收了全部力量的\$\{she\(cid\)\}，身体变成淫靡的肉块了。`/, // :208
+    /era\.print\('作为地下城里怪物的慰问品被使用着，'\)/, // :209
+  ]) {
+    assert.match(batch_src, re, `不等待的原作行必须用裸 era.print：${re}`);
+  }
+  assert.match(
+    batch_src,
+    /await era\.printAndWait\('今后别说重新当勇者，就连看一眼阳光也不可能了吧。'\)/,
+    ':210 PRINTW 必须用 printAndWait',
+  );
+  assert.match(
+    batch_src,
+    /await era\.printAndWait\(`现在的肉便器数量：\$\{game\.invasion\.肉便器数\}`\)/,
+    ':299 PRINTFORMW 必须用 printAndWait',
+  );
 });
 
 test('主菜单 [103]：usershop 接通批量处刑真身', async () => {

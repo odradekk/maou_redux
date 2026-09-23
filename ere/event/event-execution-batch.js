@@ -13,7 +13,11 @@
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - CLEARLINE 局部重绘与补行排版不镜像（ere 控制台是滚动视图，翻页走
- *     整屏重绘——page-select-target.js 的同款先例）；`,N,LEFT/RIGHT` 列宽
+ *     整屏重绘——page-select-target.js 的同款先例）；:11 的
+ *     `CUSTOMDRAWLINE =` 只画一条线、随即被第 16 行的 `CLEARLINE LINECOUNT`
+ *     清掉，同样不镜像；第 21/24/53/91/98 行是普通 `DRAWLINE`，用默认线型
+ *     （`isSolid` 只对 `CUSTOMDRAWLINE` 那一类，本屏不出现）；
+ *     `,N,LEFT/RIGHT` 列宽
  *     填充不复刻（按钮正文被引擎折叠连续空白，PR #30/#53 同款）；
  *   - 列表行渲染为按钮（原作纯文本 + INPUT，实机点不动——PR #53 通则），
  *     快捷键沿用原作编号 = 角色 ID；[SP]（青）与【处刑认可】（红）的
@@ -21,9 +25,11 @@
  *     意图（page-select-target.js 沦陷标签的同款裁定）；由此引擎只回传
  *     已打印编号，原作「键入未显示编号也能切换标签」的隐藏通道不可达；
  *   - 列表显示条件（:33）读 EX_FLAG:9000 位 1，与 [101] 水晶球开关的
- *     位 2（:109-110/:143）不同位：位 1 在 MOD_SWITCH 里是打工开关，
- *     MOD 判死不移植后恒 0（#540 范围决定 2），EX_TALENT:2 的角色因此
- *     不可见——照原作读写、不拆分（该位在原作无 MOD 时同样恒 0）；
+ *     位 2（:109-110/:143）不同位：被隐藏的是带 EX_TALENT:1 的角色
+ *     （`!EX_TALENT:1 || (EX_TALENT:2 && 位 1)`），位 1 是 MOD_SWITCH 的
+ *     打工开关，MOD 判死不移植后恒 0（#540 范围决定 2），所以带
+ *     EX_TALENT:1 的角色一律不可见——照原作读写、不拆分（该位在原作无
+ *     MOD 时同样恒 0）；
  *   - 删除角色后原作「COUNT = 1; TARGET = 0」的重扫依赖 DELCHARA 的序号
  *     重排（每删一人，当轮末位角色被跳过一次）；ere 是稳定角色 ID（#21
  *     扁平化），重扫等价为「从头再扫一遍剩余角色」——序号重排的跳位是
@@ -90,6 +96,14 @@ const NUM_PAGE = 25;
  */
 let no_page = 0;
 
+/**
+ * #DIM 可处刑（:7）：同样是函数静态变量，但清零点是 :13（进入函数与
+ * `JUMP 批量处刑` 重执行 :11-14 时都会跑到），`GOTO 处刑介面`（翻页、切换
+ * 标签、[101] 重绘）不跑 :13——所以本次调用中一旦有非收藏目标带过标签，
+ * [121] 就一直显示到整界面重启为止，不随标签被取消/目标被处刑而消失。
+ */
+let executable = false;
+
 /** 方法界面循环的出口信号（对应原作两个 GOTO 目标）。 */
 const DONE = Symbol('done'); // 回列表（GOTO 处刑介面）
 const RESTART = Symbol('restart'); // 整界面重启（JUMP 批量处刑）
@@ -112,8 +126,8 @@ function sp_chara(cid) {
 }
 
 /**
- * 列表显示条件（:33）：状态 0/7，且非 EX_TALENT:1（EX_TALENT:2 者需
- * EX_FLAG:9000 位 1——见文件头「EX_FLAG 位」节）。
+ * 列表显示条件（:33）：状态 0/7；带 EX_TALENT:1 的角色默认不列出，只有
+ * 同时带 EX_TALENT:2 且 EX_FLAG:9000 位 1 置位时例外（见文件头「EX_FLAG 位」节）。
  * @param {number} cid
  * @returns {boolean}
  */
@@ -134,7 +148,9 @@ function listable(cid) {
  * @returns {string}
  */
 function roster_row(cid) {
-  let row = `${chara_callname(cid)} ${get_job_name(cid)} LV${get(`cflag:${cid}:9`)}`;
+  // LV 后的冒号照原作（:34 `LV:{CFLAG:COUNT:9,4,LEFT}`）；page-select-target
+  // 没有冒号是它自己的原文（SHOP_FUNCTION.ERB）如此，不是先例
+  let row = `${chara_callname(cid)} ${get_job_name(cid)} LV:${get(`cflag:${cid}:9`)}`;
   if (get(`cflag:${cid}:0`) > 0 && cid !== 0) row += ' [售]';
   if (get(`cflag:${cid}:700`)) row += ' [☆]';
   if (get(`talent:${cid}:254`)) row += ' [兵]';
@@ -207,18 +223,21 @@ async function next_tagged(method) {
 async function make_toilet(cid) {
   game.invasion.肉便器数 += 1; // FLAG:83（:192）
   apply_prestige(cid); // EX_FLAG:99（:193-199）
-  const family_id = search_family(cid); // FAMILY = CFLAG:A:605（:200-204）
+  // :200-204：FAMILY = CFLAG:A:605 → FAMILY:1 = % 10 → CALL SEARCH_FAMILY, A
+  // → FAMILY:2 = RESULT。末句 `M = FAMILY:2`（第 204 行）省略：M 在本文件里
+  // 只有这一处写、全库无读（该函数内也没再引用），赋不赋都一样
+  const family_id = search_family(cid); // FAMILY:2（search_family 内部做 % 10）
   const name = chara_callname(cid);
   const prelude = get(`talent:${cid}:85`)
     ? `深爱着你的${name}不知道自己为什么要被做成肉便器，不停地高叫着你的名字，请求饶恕。`
     : '';
-  await era.printAndWait(
+  // :206 PRINTFORM + :207 PRINTFORML 是同一条显示行（PRINTFORM 不换行），
+  // :208/:209 的 PRINTFORML/PRINTL 也不等待——只有 :210 的 PRINTW 等待
+  era.print(
     `${prelude}但${chara_callname(0)}依然给${name}烙上了封锁所有力量的封印，`,
   );
-  await era.printAndWait(
-    `被吸收了全部力量的${she(cid)}，身体变成淫靡的肉块了。`,
-  );
-  await era.printAndWait('作为地下城里怪物的慰问品被使用着，');
+  era.print(`被吸收了全部力量的${she(cid)}，身体变成淫靡的肉块了。`);
+  era.print('作为地下城里怪物的慰问品被使用着，');
   await era.printAndWait('今后别说重新当勇者，就连看一眼阳光也不可能了吧。');
 
   if (get(`talent:${cid}:原种族`) === 1) {
@@ -323,12 +342,15 @@ async function make_toilet(cid) {
   };
   const charm_line = charm_lines[get(`talent:${cid}:312`)];
   if (charm_line) await era.printAndWait(charm_line);
+  // :297 的后半截 `TALENT:317 == 11` 没写角色下标、读的是 TARGET；此处写
+  // ${cid} —— :161 的 TARGET = A 之后到本行没有任何 TARGET 写入点（该分支
+  // 全段无 TARGET），两者等价
   if (get(`talent:${cid}:317`) === 4 || get(`talent:${cid}:317`) === 11) {
     await era.printAndWait(
       `${name}双眼空虚，在重复着谁的名字。也许正在妄想和爱人拥抱吧。`,
     );
   }
-  era.print(`现在的肉便器数量：${game.invasion.肉便器数}`);
+  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`); // :299 PRINTFORMW
   const title = `肉便器${name}`;
   if (family_id >= 0) era.set(`cstr:${family_id}:5`, title); // :302
   era.set('tstr:30', title);
@@ -473,14 +495,14 @@ async function execute_one(cid, method, rand_n) {
  */
 async function method_screen(rand_n) {
   for (;;) {
-    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
+    era.drawLine(); // :90-147 段的 DRAWLINE（默认线型）
     era.print([
       { content: '注意：以下0～4项的处刑' },
       { content: '会让人物永远从列表中消失', color: '#ffff33' },
       { content: '（但可获得勋章或经验）' },
     ]);
     era.print('      开启水晶球的话，则可记录0～6项的处刑影像');
-    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
+    era.drawLine(); // :90-147 段的 DRAWLINE（默认线型）
     [
       '流放出地下城',
       '公开处刑',
@@ -536,11 +558,14 @@ async function batch_execution(rand_n = default_rand) {
   era.beginTrain(0);
   try {
     restart: for (;;) {
+      // :11-14 在 JUMP 批量处刑 时会重跑一遍（可处刑 = 0 与 NO_PAGE 的差别：
+      // 后者不在 :11-14 里，见模块顶部的两个静态量）
+      executable = false; // 可处刑 = 0（:13）
       screen: for (;;) {
         // $处刑介面（:15-73）
         const added = era.getAddedCharacters();
         const charanum = added.length; // CHARANUM
-        era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）
+        // 第 11 行的 CUSTOMDRAWLINE = 画的那条线立刻被第 16 行 CLEARLINE 清掉，不镜像
         if (
           game.event.装饰品数 < 20 && // FLAG:84
           era_flag.day_count < 60 && // DAY
@@ -551,15 +576,14 @@ async function batch_execution(rand_n = default_rand) {
           );
         }
         era.println(); // PRINTL（:19-21）
-        era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
+        era.drawLine(); // :15-73 段的 DRAWLINE（默认线型）
         era.print('请选出处刑对象(可复选)');
         era.print('标签：[售]可卖出  [☆]收藏中  [兵]已士兵化  [SP]特殊角色');
-        era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
+        era.drawLine(); // :15-73 段的 DRAWLINE（默认线型）
         print_roster(added, no_page);
-        era.drawLine({ isSolid: true }); // :52-54
+        era.drawLine(); // :52-54
 
         // 收藏目标带标签 → 播报 + 剃除 + JUMP 批量处刑（:54-65）
-        let executable = false; // 可处刑
         for (const cid of added) {
           if (chara(cid).invasion.状态 === 8) continue;
           if (chara(cid).patch.待处刑标签 && get(`cflag:${cid}:700`)) {
@@ -572,8 +596,10 @@ async function batch_execution(rand_n = default_rand) {
           if (chara(cid).patch.待处刑标签) executable = true;
         }
         if (executable) era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）
-        era.println(); // :67-69
-        era.println(); // :68-70
+        // 第 67 行的 PRINTLC 自带换行、printButton 也自成一行，故 button 之后
+        // 是第 68/69 行的两个空行，再到第 70-72 行的三个页导航按钮
+        era.println(); // PRINTL（:67-69）
+        era.println(); // PRINTL（:68-70）
         era.printButton('上一页', 2000);
         era.printButton('结束处刑', 1999); // 原文「結束处刑」
         era.printButton('下一页', 2001);
