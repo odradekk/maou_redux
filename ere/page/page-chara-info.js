@@ -29,6 +29,14 @@
  *     通例：`[N] 文字`+INPUT 惯用法升级为 `era.printButton`）——上一页/
  *     返回/下一页等原本就是 PRINTLC 按钮，这里额外把角色行本身也做成
  *     按钮，比原作的「肉眼看号、手动敲号」更符合本引擎的点击交互；
+ *     **按钮正文不写编号**：`[N]` 由引擎按 showAcc 拼成 `[N] ` 一层
+ *     （AGENTS.md 硬约束，PR #30 实机撞见 `[0] [0]`；#530 纠正魔王行、
+ *     #535 纠正角色行）。原作的编号是 `[{n,MAX_NUM_LEN}]` 定宽右对齐，
+ *     引擎这条前缀不补齐、正文空白又被折叠成一个空格，故补齐做不到；
+ *     #535 的排版核对结论：引擎多列输出是 el-col 的 24 列 span 网格
+ *     （`config.width` 即跨度，1-24），各格的横向位置由跨度决定、不随
+ *     前一格文本长度变化，所以编号格写成 `[1] `/`[11] ` 只影响本格填空的
+ *     长度，不会带着后列左移；
  *   - HP/MP 双槽（原作 `BARSTR(...,8)` 文本条）保留为纯文字 `HP{cur}/{max}`，
  *     不升级成 `printMultiColumns` 的原生进度条格：一行要同时容纳编号按钮、
  *     状态徽章、姓名等级、攻防或种族性格、双槽、爱慕/淫乱/收藏/组队/归还
@@ -317,6 +325,9 @@ function common_suffix_fragments(cid) {
 
 /**
  * 一名角色的列表行：编号按钮 + 状态/姓名/中段信息 + HP/MP + 尾段标记。
+ *
+ * 编号按钮的正文为空，编号由引擎按 showAcc 拼成 `[N] `（AGENTS.md 硬约束：
+ * 正文自带 `[N]` 会实显成 `[11] [11]`，PR #30；#530 在魔王行、#535 在角色行）。
  * @param {number} cid 角色 ID
  * @param {{content:string,color?:string}} middle_fragment 中段（攻防善恶
  *   或 种族性格）
@@ -332,7 +343,7 @@ function print_chara_row(cid, middle_fragment, suffix_fragments) {
     {
       type: 'button',
       accelerator: cid,
-      content: `[${cid}]`,
+      content: '',
       config: { align: 'left', width: 3 },
     },
     {

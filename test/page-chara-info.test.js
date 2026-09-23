@@ -182,6 +182,78 @@ test('SHOW_CHARA_INFO_LIST：返回已加入角色 ID（不含魔王），渲染
   assert.equal(buttons_with(fixture, 2).length, 1);
 });
 
+test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] 前缀，姓名/等级/攻防同格（#535）', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 11, '乙');
+  fixture.store.set('cflag:1:9', 5);
+  fixture.store.set('cflag:1:13', 15);
+  fixture.store.set('cflag:1:14', 20);
+  fixture.store.set('cflag:1:151', 188);
+  fixture.store.set('cflag:11:9', 7);
+  fixture.store.set('cflag:11:13', 3);
+  fixture.store.set('cflag:11:14', 4);
+  fixture.store.set('cflag:11:151', -12);
+  const { show_chara_info_list } = fixture.load_module('page/page-chara-info');
+
+  show_chara_info_list(0);
+
+  // 角色行的按钮正文为空，编号完全由引擎按 showAcc 拼（AGENTS.md 硬约束，
+  // PR #30）。断言看 rendered（引擎实显文本）且**逐字相等**，不用 includes
+  // 取子串：正文自带 `[N]` 时引擎会再拼一层、实显成 `[11] [11]`，子串判断
+  // 照样成立，抓不住重复前缀（#530 立的写法）。
+  // 不按快捷键筛行——这条用例本身要钉快捷键就是角色号，筛了就成了循环论证：
+  // 魔王行的按钮排在最前，其后两个按钮就是两名角色。
+  const buttons = fixture.lines_history.filter(
+    (line) => line.type === 'button',
+  );
+  assert.equal(buttons.length, 3, '魔王行 ＋ 甲(1) ＋ 乙(11)');
+  const rows = buttons.slice(1);
+  assert.deepEqual(
+    rows.map((line) => line.accelerator),
+    [1, 11],
+    '角色行的按钮带角色号（点得动、也敲得进白名单）',
+  );
+  assert.deepEqual(
+    rows.map((line) => line.rendered),
+    ['[1] ', '[11] '],
+    '编号只有引擎拼的一层前缀；正文若自带 [N] 会实显成 [1] [1]',
+  );
+  assert.deepEqual(
+    rows.map((line) => line.text),
+    ['', ''],
+    '按钮正文不含编号（含不含都要看实显，text 是游戏侧传入的原文）',
+  );
+
+  // 每格的列宽（引擎 24 列网格的 span，夹具记在 grid_width）：3 + 13 + 6 + 2
+  // = 24。这一屏的排版核对（#535 第 4 项）靠它固定——后列的横向位置由跨度
+  // 决定，与前一格的文本长度无关，所以编号格写 `[11] ` 还是 `[1] ` 都不会
+  // 带着后列走（原作的定宽右对齐 `[{n,MAX_NUM_LEN}]` 在引擎里做不到，见
+  // page-chara-info.js 文件头）
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button' || line.type === 'text')
+      .map((line) => line.grid_width),
+    [3, 13, 3, 13, 6, 2, 3, 13, 6, 2],
+    '魔王行的两格 ＋ 两名角色各四格',
+  );
+
+  // 同格的姓名 / 等级 / 攻防善恶：等级地址（cflag:cid:9）与魔王行同款，
+  // #530 的验收在魔王行上撞出过「名字有人守、等级没人守」的空缺（M11210），
+  // 角色行这边一并钉住
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'text' && line.text.includes(' LV'))
+      .map((line) => line.text),
+    [
+      '\u3000\u3000\u3000\u3000\u3000你 LV0',
+      '[可调教] 甲 LV5 攻击15/防御20 善恶值188',
+      '[可调教] 乙 LV7 攻击3/防御4 善恶值-12',
+    ],
+  );
+});
+
 test('SHOW_CHARA_ACT_LIST：act=0 走 COMPARE_CHARA_ACT，按 (状态+11-2)%11 排名（迎击中 rank=1 早于可调教 rank=9）', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -414,13 +486,17 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
   for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  fixture.set_inputs(998, 997, 999); // 下一页 → 上一页 → 返回主菜单
+  fixture.set_inputs(998, 997, 997, 999); // 下一页 → 上一页 ×2 → 返回主菜单
   assert.equal(await chara_info(), 0);
 
-  // 每次绘制以 [998] 收尾，用它把三次绘制切片；角色行按钮的 text 是
-  // `[编号]`（排序表头等按钮的 text 是中文标签）；魔王行的编号格 text 是
-  // 空串（正文不写 [0]，编号由引擎按 showAcc 拼，见 print_master_header），
-  // 两者都被下面这条筛选条件天然滤掉。
+  // 每次绘制以 [998] 收尾，用它把四次绘制切片。角色行的按钮正文自 #535 起
+  // 为空（编号由引擎按 showAcc 拼，见 print_chara_row），旧写法按 text 匹配
+  // `/^\[\d+\]$/` 切不动了——改按快捷键数值筛：角色号是 1..25，排序表头
+  // 1200-1700、翻页 997/998/999 都在这个区间之外。魔王行的编号格快捷键是 0
+  // （正文同为空的按钮），也由这条筛选天然排除。
+  const chara_ids = new Set(
+    Array.from({ length: 25 }, (_, index) => index + 1),
+  );
   const draws = [];
   let start = 0;
   fixture.lines_history.forEach((line, idx) => {
@@ -429,29 +505,39 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
       start = idx + 1;
     }
   });
-  assert.equal(draws.length, 3, '初始 ＋ 下一页 ＋ 上一页');
-  const rows_of = (draw) =>
-    draw
-      .filter((line) => line.type === 'button' && /^\[\d+\]$/.test(line.text))
-      .map((line) => line.text);
+  assert.equal(draws.length, 4, '初始 ＋ 下一页 ＋ 上一页 ×2');
+  const chara_rows = (draw) =>
+    draw.filter(
+      (line) => line.type === 'button' && chara_ids.has(line.accelerator),
+    );
+  const rows_of = (draw) => chara_rows(draw).map((line) => line.accelerator);
 
   assert.equal(
     rows_of(draws[0]).length,
     24,
-    '第 1 页 24 行（魔王行的编号格 text 是空串，不计）',
+    '第 1 页 24 行（魔王行的编号格快捷键是 0，不计）',
   );
-  assert.equal(rows_of(draws[0]).includes('[24]'), true, '第 24 人在第 1 页');
-  assert.equal(
-    rows_of(draws[0]).includes('[25]'),
-    false,
-    '第 25 人不在第 1 页',
-  );
-  assert.deepEqual(rows_of(draws[1]), ['[25]'], '第 2 页只剩第 25 人');
+  assert.equal(rows_of(draws[0]).includes(24), true, '第 24 人在第 1 页');
+  assert.equal(rows_of(draws[0]).includes(25), false, '第 25 人不在第 1 页');
+  assert.deepEqual(rows_of(draws[1]), [25], '第 2 页只剩第 25 人');
   assert.deepEqual(
     rows_of(draws[2]),
     rows_of(draws[0]),
     '翻回第 1 页又是 24 人',
   );
+  assert.deepEqual(
+    rows_of(draws[3]),
+    rows_of(draws[0]),
+    '第 1 页再按「上一页」停在第 1 页（no_page 不落到 0 以下）',
+  );
+  // 整屏路径上的实显也钉一遍（#535）：正文为空，实显恰好是 `[N] ` 一层前缀
+  for (const row of chara_rows(draws[0])) {
+    assert.equal(
+      row.rendered,
+      `[${row.accelerator}] `,
+      '角色行实显的编号只有引擎拼的一层',
+    );
+  }
   assert.equal(
     printed_includes(fixture, '(总计25人)'),
     true,

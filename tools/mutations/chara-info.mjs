@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 37; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）
+export const COUNT = 40; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）
 
 export default [
   {
@@ -355,5 +355,37 @@ export default [
     replace: "LV${era.get('cflag:0:10') || 0}`",
     tests: ['page-chara-info'],
     must_mention: '魔王行的等级取自 cflag:0:9',
+  },
+  {
+    desc: 'M11300 名册角色行的编号按钮正文退回手写 [N]（引擎再拼一层，实显 [11] [11]，#535）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      type: 'button',
+      accelerator: cid,
+      content: '',
+      config: { align: 'left', width: 3 },`,
+    replace: `      type: 'button',
+      accelerator: cid,
+      content: \`[\${cid}]\`,
+      config: { align: 'left', width: 3 },`,
+    tests: ['page-chara-info'],
+    must_mention: '角色行的编号按钮仅由引擎拼一层 [N] 前缀',
+  },
+  {
+    desc: 'M11301 名册角色行的等级地址写错（cflag:cid:9 读成 cflag:cid:10——魔王行同款缺口，#535 顺带补钉）',
+    file: 'ere/page/page-chara-info.js',
+    find: 'LV${era.get(`cflag:${cid}:9`) || 0}`',
+    replace: 'LV${era.get(`cflag:${cid}:10`) || 0}`',
+    tests: ['page-chara-info'],
+    must_mention: '姓名/等级/攻防同格',
+  },
+  {
+    desc: 'M11302 名册角色行的编号按钮快捷键写成 0（角色号进不了白名单，点不动也敲不进，#535）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      accelerator: cid,
+      content: '',`,
+    replace: `      accelerator: 0,
+      content: '',`,
+    tests: ['page-chara-info'],
+    must_mention: '角色行的按钮带角色号（点得动、也敲得进白名单）',
   },
 ];
