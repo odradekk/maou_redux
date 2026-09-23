@@ -30,6 +30,31 @@ function buttons_with(fixture, accelerator) {
   );
 }
 
+/**
+ * 显示宽度：全角按 2 格、半角按 1 格（原作 Emuera 的字符格口径）。
+ * 只覆盖本屏会出现的字符——U+3000 全角空格、U+2015 横线、CJK 汉字与全角
+ * 标点、半角 ASCII；不是通用的 East Asian Width 实现，别拿去量别处的文本。
+ * @param {string} text
+ * @returns {number}
+ */
+function display_width(text) {
+  let width = 0;
+  for (const char of text) {
+    const code = char.codePointAt(0);
+    const wide =
+      code === 0x3000 || // 全角空格（这一屏的列对齐靠它）
+      code === 0x2015 || // ―（SHOW_CHARA_ACT 回落文案里的横线）
+      (code >= 0x2e80 && code <= 0xa4cf) || // CJK 部首～彝文（汉字都在内）
+      (code >= 0xac00 && code <= 0xd7a3) || // 谚文音节
+      (code >= 0xf900 && code <= 0xfaff) || // CJK 兼容表意文字
+      (code >= 0xfe30 && code <= 0xfe4f) || // CJK 兼容符号
+      (code >= 0xff00 && code <= 0xff60) || // 全角 ASCII 变体
+      (code >= 0xffe0 && code <= 0xffe6); // 全角货币符号
+    width += wide ? 2 : 1;
+  }
+  return width;
+}
+
 // —— SHOW_CHARA_ACT ——
 
 test('SHOW_CHARA_ACT：状态码到徽章文本/颜色的映射，未登记状态回落残留字面量——表驱动走完 state 整个维度', () => {
@@ -180,6 +205,131 @@ test('SHOW_CHARA_INFO_LIST：返回已加入角色 ID（不含魔王），渲染
   assert.equal(printed_includes(fixture, '你 LV'), true, '魔王表头');
   assert.equal(buttons_with(fixture, 1).length, 1);
   assert.equal(buttons_with(fixture, 2).length, 1);
+});
+
+test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] 前缀，姓名/等级/攻防同格（#535）', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 11, '乙');
+  // 下标含义（行内同格，原作 CHARA_INFO ver1.0.1.ERB:158-163）：
+  // CFLAG:x:9 等级 / :13 攻击 / :14 防御 / :151 善恶值
+  fixture.store.set('cflag:1:9', 5);
+  fixture.store.set('cflag:1:13', 15);
+  fixture.store.set('cflag:1:14', 20);
+  fixture.store.set('cflag:1:151', 188);
+  fixture.store.set('cflag:11:9', 7);
+  fixture.store.set('cflag:11:13', 3);
+  fixture.store.set('cflag:11:14', 4);
+  fixture.store.set('cflag:11:151', -12);
+  const { show_chara_info_list } = fixture.load_module('page/page-chara-info');
+
+  show_chara_info_list(0);
+
+  // 角色行的按钮正文为空，编号完全由引擎按 showAcc 拼（AGENTS.md 硬约束，
+  // PR #30）。断言看 rendered（引擎实显文本）且**逐字相等**，不用 includes
+  // 取子串：正文自带 `[N]` 时引擎会再拼一层、实显成 `[11] [11]`，子串判断
+  // 照样成立，抓不住重复前缀（#530 立的写法）。
+  // 不按快捷键筛行——这条用例本身要钉快捷键就是角色号，筛了就成了循环论证：
+  // 魔王行的按钮排在最前，其后两个按钮就是两名角色。
+  const buttons = fixture.lines_history.filter(
+    (line) => line.type === 'button',
+  );
+  assert.equal(buttons.length, 3, '魔王行 ＋ 甲(1) ＋ 乙(11)');
+  const rows = buttons.slice(1);
+  assert.deepEqual(
+    rows.map((line) => line.accelerator),
+    [1, 11],
+    '角色行的按钮带角色号（点得动、也敲得进白名单）',
+  );
+  assert.deepEqual(
+    rows.map((line) => line.rendered),
+    ['[1] ', '[11] '],
+    '编号只有引擎拼的一层前缀；正文若自带 [N] 会实显成 [1] [1]',
+  );
+  assert.deepEqual(
+    rows.map((line) => line.text),
+    ['', ''],
+    '按钮正文不含编号（含不含都要看实显，text 是游戏侧传入的原文）',
+  );
+
+  // 每格的列宽（引擎 24 列网格的 span，夹具记在 grid_width）：3 + 13 + 6 + 2
+  // = 24。这一屏的排版核对（#535 第 4 项）靠它固定——后列的横向位置由跨度
+  // 决定，与前一格的文本长度无关，所以编号格写 `[11] ` 还是 `[1] ` 都不会
+  // 带着后列走（原作的定宽右对齐 `[{n,MAX_NUM_LEN}]` 在引擎里做不到，见
+  // page-chara-info.js 文件头）
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button' || line.type === 'text')
+      .map((line) => line.grid_width),
+    [3, 13, 3, 13, 6, 2, 3, 13, 6, 2],
+    '魔王行的两格 ＋ 两名角色各四格',
+  );
+
+  // 角色行的姓名 / 等级 / 攻防善恶同格：等级地址（cflag:cid:9）与魔王行
+  // 同款，#530 的验收在魔王行上撞出过「名字有人守、等级没人守」的空缺
+  // （M11210），角色行这边一并钉住。只取角色行（夹具按多列调用分组，
+  // row > 0）——魔王行自己的等级由 #530 那两个用例守着，不在这里重复。
+  assert.deepEqual(
+    fixture.lines_history
+      .filter(
+        (line) =>
+          line.type === 'text' && line.row > 0 && line.text.includes(' LV'),
+      )
+      .map((line) => line.text),
+    [
+      '[可调教] 甲 LV5 攻击15/防御20 善恶值188',
+      '[可调教] 乙 LV7 攻击3/防御4 善恶值-12',
+    ],
+    '角色行的等级取自 cflag:cid:9（甲 LV5 / 乙 LV7）；地址读成 :10 会变 LV0',
+  );
+});
+
+test('SHOW_CHARA_INFO_LIST：魔王行与角色行的姓名列在格内同宽（全角按 2、半角按 1，#535 引擎实测）', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 11, '乙');
+  const { show_chara_info_list } = fixture.load_module('page/page-chara-info');
+
+  show_chara_info_list(0);
+
+  // 引擎里每格的横向位置由 el-col 的 span 决定，**不随前一格文本长度变化**
+  // （#535 验收在引擎里实测确认），所以「姓名列齐不齐」只取决于姓名格内部
+  // 到姓名为止的显示宽度：魔王行是空档，角色行是状态徽章 + 一个空格。
+  // 实测口径：全角按 2 格、半角按 1 格（原作 Emuera 的字符格）。
+  // 魔王行原来空档 10 格（5 个全角空格），实机上「你」比角色行的名字右一个
+  // 半角字符（原作两行是齐的——golden 目录下的名册基准日志里可以直接数出来），
+  // #535 改成 4 个全角 + 1 个半角＝9 格。
+  const prefix_widths = [
+    { row: 0, name: '你', label: '魔王行' },
+    { row: 1, name: '甲', label: '角色行（1 位数编号）' },
+    { row: 2, name: '乙', label: '角色行（2 位数编号）' },
+  ].map(({ row, name, label }) => {
+    const cell = fixture.lines_history.find(
+      (line) =>
+        line.type === 'text' && line.row === row && line.text.includes(' LV'),
+    );
+    assert.ok(cell, `${label}应有姓名格（row ${row}）`);
+    const name_at = cell.text.indexOf(name);
+    assert.ok(name_at >= 0, `${label}的姓名格里有「${name}」`);
+    return display_width(cell.text.slice(0, name_at));
+  });
+  assert.deepEqual(
+    prefix_widths,
+    [9, 9, 9],
+    '魔王行与角色行的姓名前缀显示宽度相等：魔王行 4 全角 + 1 半角；角色行徽章 8 + 1 半角',
+  );
+
+  // 编号格的实显宽度本来就不等（`[0] ` 4 格 / `[1] ` 4 格 / `[11] ` 5 格），
+  // 姓名列照样齐——这正是「格位置由 span 定、不由前一格文本撑开」的观测面
+  assert.deepEqual(
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] ', '[1] ', '[11] '],
+    '编号格实显宽度不等，但姓名列仍然对齐',
+  );
 });
 
 test('SHOW_CHARA_ACT_LIST：act=0 走 COMPARE_CHARA_ACT，按 (状态+11-2)%11 排名（迎击中 rank=1 早于可调教 rank=9）', () => {
@@ -410,17 +560,20 @@ test('CHARA_INFO：翻页/换排序视图/统一积极性与换号存根/返回�
 
 test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 页，第 25 人只在第 2 页', async () => {
   const fixture = create_era_fixture();
+  // 角色号 1..25：25 人正好跨两页（第 1 页 24 行、第 2 页 1 行）
+  const chara_ids = Array.from({ length: 25 }, (_, index) => index + 1);
   add_chara(fixture, 0, '你');
-  for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
+  for (const cid of chara_ids) add_chara(fixture, cid, `角色${cid}`);
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  fixture.set_inputs(998, 997, 999); // 下一页 → 上一页 → 返回主菜单
+  fixture.set_inputs(998, 997, 997, 999); // 下一页 → 上一页 ×2 → 返回主菜单
   assert.equal(await chara_info(), 0);
 
-  // 每次绘制以 [998] 收尾，用它把三次绘制切片；角色行按钮的 text 是
-  // `[编号]`（排序表头等按钮的 text 是中文标签）；魔王行的编号格 text 是
-  // 空串（正文不写 [0]，编号由引擎按 showAcc 拼，见 print_master_header），
-  // 两者都被下面这条筛选条件天然滤掉。
+  // 每次绘制以 [998] 收尾，用它把四次绘制切片。角色行的按钮正文自 #535 起
+  // 为空（编号由引擎按 showAcc 拼，见 print_chara_row），旧写法按 text 匹配
+  // `/^\[\d+\]$/` 切不动了——改按快捷键数值筛：角色号是 1..25，排序表头
+  // 1200-1700、翻页 997/998/999 都在这个区间之外。魔王行的编号格快捷键是 0
+  // （正文同为空的按钮），也由这条筛选天然排除。
   const draws = [];
   let start = 0;
   fixture.lines_history.forEach((line, idx) => {
@@ -429,29 +582,39 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
       start = idx + 1;
     }
   });
-  assert.equal(draws.length, 3, '初始 ＋ 下一页 ＋ 上一页');
-  const rows_of = (draw) =>
-    draw
-      .filter((line) => line.type === 'button' && /^\[\d+\]$/.test(line.text))
-      .map((line) => line.text);
+  assert.equal(draws.length, 4, '初始 ＋ 下一页 ＋ 上一页 ×2');
+  const chara_rows = (draw) =>
+    draw.filter(
+      (line) => line.type === 'button' && chara_ids.includes(line.accelerator),
+    );
+  const rows_of = (draw) => chara_rows(draw).map((line) => line.accelerator);
 
   assert.equal(
     rows_of(draws[0]).length,
     24,
-    '第 1 页 24 行（魔王行的编号格 text 是空串，不计）',
+    '第 1 页 24 行（魔王行的编号格快捷键是 0，不计）',
   );
-  assert.equal(rows_of(draws[0]).includes('[24]'), true, '第 24 人在第 1 页');
-  assert.equal(
-    rows_of(draws[0]).includes('[25]'),
-    false,
-    '第 25 人不在第 1 页',
-  );
-  assert.deepEqual(rows_of(draws[1]), ['[25]'], '第 2 页只剩第 25 人');
+  assert.equal(rows_of(draws[0]).includes(24), true, '第 24 人在第 1 页');
+  assert.equal(rows_of(draws[0]).includes(25), false, '第 25 人不在第 1 页');
+  assert.deepEqual(rows_of(draws[1]), [25], '第 2 页只剩第 25 人');
   assert.deepEqual(
     rows_of(draws[2]),
     rows_of(draws[0]),
     '翻回第 1 页又是 24 人',
   );
+  assert.deepEqual(
+    rows_of(draws[3]),
+    rows_of(draws[0]),
+    '第 1 页再按「上一页」停在第 1 页（no_page 不落到 0 以下）',
+  );
+  // 整屏路径上的实显也钉一遍（#535）：正文为空，实显恰好是 `[N] ` 一层前缀
+  for (const row of chara_rows(draws[0])) {
+    assert.equal(
+      row.rendered,
+      `[${row.accelerator}] `,
+      '角色行实显的编号只有引擎拼的一层',
+    );
+  }
   assert.equal(
     printed_includes(fixture, '(总计25人)'),
     true,
