@@ -167,6 +167,17 @@ export const FILES = [
         ref: '1094-1099',
         any: [/^\s*IF RESULT == 0 \|\| RESULT == 1\s*$/m],
       },
+      // —— #545：CHARA_INFO 分发 CASE 1600/1700 的两个调用点 ——
+      {
+        src: INFO,
+        ref: '62-63',
+        any: [/^\s*CALL 统一卖春积极性\s*$/m],
+      },
+      {
+        src: INFO,
+        ref: '74-75',
+        any: [/^\s*CALL 換號\s*$/m],
+      },
     ],
   },
 ];

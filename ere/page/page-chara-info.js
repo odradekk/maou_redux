@@ -60,9 +60,10 @@
  *   - `RESULT == 0 && MASTER` 分支（角色行选中处）同理恒假，不需要代码，
  *     仅在注释中说明；
  *   - `CALL 換號` 的 `@換號` 定义在 `target/ERB/魔改新增/角色編號交換.ERB`
- *     （角色排序编号互换 UI，130 行）——不是死引用（先前一版票据记录有误，
- *     #391 勘误：`魔改新增/` 是已被 #329/#101 划出阶段 6 的 MOD 内容，本票
- *     只登记占位、不随本票移植该文件）。
+ *     （130 行换号界面）。先前一版票据记录曾把它当 MOD 内容只登记占位；
+ *     #540 开图后按「魔改新增/ 其余部分照常移植」随 #545 落地真身——
+ *     @換號 见 ere/page/page-chara-number-swap.js（含编号互换在 ere 角色存储
+ *     里的落点核对），@统一卖春积极性 见 ere/page/page-uniform-bitch-level.js。
  */
 
 const era = require('#/era-electron');
@@ -74,6 +75,8 @@ const {
 } = require('#/chara/chara-name-edit');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
+const { uniform_bitch_level } = require('#/page/page-uniform-bitch-level');
+const { chara_number_swap } = require('#/page/page-chara-number-swap');
 const { ability_up_core } = require('#/page/page-ability-up');
 const { tailor_core } = require('#/page/page-tailor');
 const { enemy_compare } = require('#/page/page-dungeon-info2');
@@ -113,8 +116,9 @@ const NUM_PAGE = 24;
  * show_button_child_care / child_care_chara）；#393 起转职 / 魔的诱惑 /
  * 结婚三对按钮与流程换真身（ere/chara/chara-job-change.js、
  * chara-temptation.js、chara-marriage.js），九条从名单移除；#390 起
- * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除。
- * 两票各删一批，合并后四条一并不在。
+ * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除；
+ * #545 起统一卖春积极性 / 换号两支换真身（page-uniform-bitch-level.js、
+ * page-chara-number-swap.js），最后两条也移出。
  */
 const STUBBED_CALLS = [
   'SHOW_BUTTON_EQUIP',
@@ -123,10 +127,7 @@ const STUBBED_CALLS = [
   'CHAR_DEBUG',
   'RANDOM_SELF_CALL',
   '更换立绘',
-  '统一卖春积极性',
-  '换号',
 ];
-
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
@@ -578,21 +579,23 @@ async function chara_info() {
     const result = await era.input();
 
     if (result === 1600) {
-      await stub_line_wait(
-        '统一卖春积极性',
-        '一并调整全部角色的卖春积极性',
-        '随卖春票',
-      );
+      // :62-63 CALL 统一卖春积极性（#545 真身：page-uniform-bitch-level.js）。
+      // 被调函数尾 JUMP CHARA_INFO：重进名册＝局部变量回初值（NO_PAGE=0、
+      // SORT_SELECT 经 ELSE 落回 1200、SORT_ACT=0），此处显式复位后重绘
+      await uniform_bitch_level();
+      no_page = 0;
+      sort_select = 1200;
+      sort_act = 0;
       continue;
     }
     if (result === 1700) {
-      // 换号：@換號 定义在 target/ERB/魔改新增/角色編號交換.ERB（阶段 6 MOD
-      // 内容，已被 #329/#101 划出本票范围，文件头有勘误说明）
-      await stub_line_wait(
-        '换号',
-        '角色排序编号互换',
-        '阶段 6 MOD 范围，随 MOD 票',
-      );
+      // :74-75 CALL 換號（#545 真身：page-chara-number-swap.js）。唯一出口
+      // [1999] 結束换号 → JUMP CHARA_INFO（同上复位）；RETURN 0 出口在
+      // 确认屏只打印 [4000]/[4001] 的输入白名单下不可达（该文件文件头）
+      await chara_number_swap();
+      no_page = 0;
+      sort_select = 1200;
+      sort_act = 0;
       continue;
     }
     if (

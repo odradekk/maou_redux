@@ -536,26 +536,44 @@ test('CHARA_INFO：魔王行的 [0] 是真按钮（名册轮次白名单非空�
   );
 });
 
-test('CHARA_INFO：翻页/换排序视图/统一积极性与换号存根/返回主菜单', async () => {
+test('CHARA_INFO：[1600]/[1700] 分别进两个真身流程，返回后名册整屏重进（#545）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  fixture.set_inputs(1600, 1700, 1300, 999);
+  // 1600 → 统一卖春积极性真身（选 [2003] 取消，不写任何值）→ JUMP 重进
+  // 1700 → 换号真身（[1999] 結束换号）→ JUMP 重进 → 999 返回主菜单
+  fixture.set_inputs(1600, 2003, 1700, 1999, 999);
   const result = await chara_info();
 
   assert.equal(result, 0, '999 返回主菜单');
   assert.equal(
-    printed_includes(fixture, '一并调整全部角色的卖春积极性'),
+    printed_includes(fixture, '统一设置迷宫内角色的"卖春积极性"'),
     true,
-    '1600 走存根',
+    '1600 进统一卖春积极性真身（首页提示语）',
+  );
+  assert.equal(
+    printed_includes(fixture, '已将当前迷宫'),
+    false,
+    '[2003] 取消不写值、不播报设置完成',
+  );
+  assert.equal(
+    printed_includes(fixture, '交换角色的排序编号'),
+    true,
+    '1700 进换号真身（首页提示语）',
   );
   assert.equal(
     printed_includes(fixture, '@换号'),
-    true,
-    '1700 走阶段 6 MOD 范围存根（@换号 定义在 target/ERB/魔改新增/，非死引用）',
+    false,
+    '换号不再是运行时占位（#545 前是存根）',
   );
+  assert.equal(
+    printed_includes(fixture, '一并调整全部角色的卖春积极性'),
+    false,
+    '统一卖春积极性不再是运行时占位',
+  );
+  assert.equal(fixture.store.get('cflag:1:120'), undefined, '未写卖春积极性');
 });
 
 test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 页，第 25 人只在第 2 页', async () => {
@@ -840,7 +858,7 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：以全部已加入角色 ID 为顺位表打
 
 // —— 未落地调用一律走存根，登记与实现同步 ——
 
-test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在列，三对动作已移出', async () => {
+test('STUBBED_CALLS：装备/兼职/调试/立绘仍在列，统一积极性与换号已移出（#545）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
@@ -852,7 +870,8 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
   // （ere/chara/chara-name-edit.js），SHOW_BUTTON_CHILD_CARE / CHILD_CARE_CHARA
   // 自 #401 起是真身（ere/event/event-pregnancy.js），转职 / 魔的诱惑 / 结婚
   // 三对自 #393 起是真身（ere/chara/chara-job-change.js、chara-temptation.js、
-  // chara-marriage.js），九条均不再是本文件的存根
+  // chara-marriage.js），统一卖春积极性 / 换号自 #545 起是真身
+  // （ere/page/page-uniform-bitch-level.js、page-chara-number-swap.js）
   for (const name of [
     'SHOW_BUTTON_EQUIP',
     'PTJ_BUTTON',
@@ -860,8 +879,6 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
     'CHAR_DEBUG',
     'RANDOM_SELF_CALL',
     '更换立绘',
-    '统一卖春积极性',
-    '换号',
   ]) {
     assert.ok(STUBBED_CALLS.includes(name), `${name} 应在存根登记表内`);
   }
@@ -877,13 +894,14 @@ test('STUBBED_CALLS：装备/兼职/调试/立绘/统一积极性/换号仍在�
     'CHARA_INFO_JOB_CHANGE',
     'TEMPTATION',
     'MARRIAGE',
+    '统一卖春积极性',
+    '换号',
   ]) {
     assert.ok(
       !STUBBED_CALLS.includes(name),
       `${name} 已有真身，不应再留在本文件的存根名单里`,
     );
   }
-
   // 绘制期：改名自 #384、三对动作按钮自 #393、育儿室自 #401 起都是真按钮
   // （都在判定放行时才渲染）；装备/兼职(sub_page 1/2)仍是 stub_line 占位。
   fixture.set_inputs(100);
@@ -1176,4 +1194,644 @@ test('三动作接线（#393）：结婚成功后 MARRIAGE 的返回 1 上浮为
 
   assert.equal(result, 1, '个别信息页把 1 上浮给 CHARA_INFO（回合结束）');
   assert.ok(printed_includes(fixture, '举行了结婚典礼'));
+});
+
+// —— #545：#535 验收转来的三处覆盖缺口 ——
+
+/**
+ * 按名册每轮收尾的 [998] 按钮把 lines_history 切成「每次绘制」的切片。
+ * 每轮绘制的收尾固定是 上一页/返回/下一页 三连（print_sort_header_row 之后），
+ * [998] 是最后一枚。
+ */
+function draws_by_998(fixture) {
+  const draws = [];
+  let start = 0;
+  fixture.lines_history.forEach((line, idx) => {
+    if (line.type === 'button' && line.accelerator === 998) {
+      draws.push(fixture.lines_history.slice(start, idx + 1));
+      start = idx + 1;
+    }
+  });
+  if (start < fixture.lines_history.length) {
+    draws.push(fixture.lines_history.slice(start));
+  }
+  return draws;
+}
+
+test('排序表头：[1200]-[1500] 四个快捷键各自切到对应视图——表驱动（#535 转来的覆盖缺口）', async () => {
+  // 四个视图各有一个只在它上面出现的行内标记：1200＝攻防善恶列、
+  // 1300＝[婚:…] 婚姻括号、1400＝所持金列、1500＝借金列。按下快捷键后的
+  // 那次重绘必须出现对应标记——快捷键写错（如 1200 拼成 1201）会当场被
+  // 输入白名单拒收，视图接错则标记缺失
+  const VIEWS = [
+    [1200, '攻击15/防御20'],
+    [1300, '[婚:'],
+    [1400, '所持金:300'],
+    [1500, '借金:200'],
+  ];
+  for (const [accel, marker] of VIEWS) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    // 下标含义（CHARA_INFO ver1.0.1.ERB:158-163 同款）：CFLAG:x:13 攻击 /
+    // :14 防御 / :580 所持金 / :582 借金（负值存储，显示取反）
+    fixture.store.set('cflag:1:13', 15);
+    fixture.store.set('cflag:1:14', 20);
+    fixture.store.set('cflag:1:580', 300);
+    fixture.store.set('cflag:1:582', -200);
+    const { chara_info } = fixture.load_module('page/page-chara-info');
+
+    fixture.set_inputs(accel, 999);
+    await chara_info();
+
+    const draws = draws_by_998(fixture);
+    assert.equal(draws.length, 2, `accel=${accel}：初始 ＋ 切换后各一次绘制`);
+    const texts = draws[1]
+      .filter((line) => line.type === 'text')
+      .map((line) => line.text);
+    assert.ok(
+      texts.some((text) => text.includes(marker)),
+      `accel=${accel} 的重绘应含「${marker}」标记（实际：${JSON.stringify(texts)}）`,
+    );
+    // 表头按钮每轮各一枚（快捷键数值由这批按钮进白名单）
+    assert.equal(
+      buttons_with(fixture, accel).length,
+      2,
+      `accel=${accel}：两次绘制各一枚表头按钮`,
+    );
+  }
+});
+
+test('名单行片段：<爱慕>/<淫乱>/<未陷落> 三分支与收藏 [☆]（#535 转来的覆盖缺口）', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 2, '乙');
+  add_chara(fixture, 3, '丙');
+  // TALENT:85 爱慕 / TALENT:76 淫乱（两分支之外的第三支是 <未陷落>）；
+  // CFLAG:700 收藏（favorite_fragment 的读取地址）
+  fixture.store.set('talent:1:85', 1);
+  fixture.store.set('talent:2:76', 1);
+  fixture.store.set('cflag:3:700', 1);
+  const { show_chara_info_list } = fixture.load_module('page/page-chara-info');
+
+  show_chara_info_list(0);
+
+  // 行尾片段格（love_lewd + favorite + team + return）与姓名格是同一次
+  // 多列调用的两个格，共享 row 号——按行聚合后再断言
+  const row_of = (name) => {
+    const cell = fixture.lines_history.find(
+      (line) =>
+        line.type === 'text' && line.row > 0 && line.text.includes(name),
+    );
+    assert.ok(cell, `应有 ${name} 的行`);
+    return fixture.lines_history
+      .filter((line) => line.row === cell.row && line.type === 'text')
+      .map((line) => line.text)
+      .join('');
+  };
+  assert.ok(row_of('甲').includes('<爱慕>'), '爱慕分支');
+  assert.ok(row_of('乙').includes('<淫乱>'), '淫乱分支');
+  const none = row_of('丙');
+  assert.ok(
+    none.includes('<未陷落>'),
+    `未陷落分支（实际：${JSON.stringify(none)}）`,
+  );
+  assert.ok(none.includes('[\u2606]'), '收藏标记读 cflag:cid:700');
+  assert.equal(
+    row_of('甲').includes('[\u2606]'),
+    false,
+    '未收藏的角色不带 [☆]',
+  );
+});
+
+// —— #545：统一卖春积极性（ere/page/page-uniform-bitch-level.js） ——
+
+test('统一卖春积极性：三个范围各写各的状态，魔王跳过，播报逐字——表驱动', async () => {
+  // [范围按钮, 期望写入 cflag:120 的角色集合, 播报文案（{N} 已代入 3）]
+  const SCOPES = [
+    [
+      2000,
+      [1],
+      '已将当前迷宫侵攻中的勇者（不含以后出现的新勇者），卖春积极性全设置为3了',
+    ],
+    [
+      2001,
+      [2],
+      '已将当前迷宫全迎击中的奴隶（不含以后追加的新奴隶），卖春积极性全设置为3了',
+    ],
+    [
+      2002,
+      [1, 2],
+      '已将当前迷宫所有侵攻与迎击者（不含以后新入迷宫的对象），卖春积极性全设置为3了',
+    ],
+  ];
+  for (const [scope, expected, message] of SCOPES) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    add_chara(fixture, 2, '乙');
+    add_chara(fixture, 3, '丙');
+    add_chara(fixture, 4, '丁');
+    // CFLAG:x:1 状态：2＝侵攻中、3＝迎击中、0＝可调教、7＝苗床；
+    // 魔王也置成侵攻中，验证 SIF COUNT == MASTER 的跳过
+    fixture.store.set('cflag:0:1', 2);
+    fixture.store.set('cflag:1:1', 2);
+    fixture.store.set('cflag:2:1', 3);
+    fixture.store.set('cflag:3:1', 0);
+    fixture.store.set('cflag:4:1', 7);
+    const { uniform_bitch_level } = fixture.load_module(
+      'page/page-uniform-bitch-level',
+    );
+
+    fixture.set_inputs(scope, 3);
+    await uniform_bitch_level();
+
+    for (const cid of [0, 1, 2, 3, 4]) {
+      const hit = expected.includes(cid);
+      assert.equal(
+        fixture.store.get(`cflag:${cid}:120`),
+        hit ? 3 : undefined,
+        `scope=${scope}：角色 ${cid}${hit ? ' 应写入' : ' 不应写入'}`,
+      );
+    }
+    assert.equal(
+      fixture.lines_history.some((line) => line.text === message),
+      true,
+      `scope=${scope}：播报逐字（期望「${message}」）`,
+    );
+  }
+});
+
+test('统一卖春积极性：等级 [0]-[5] 六枚按钮、范围按钮实显与 [2003] 取消', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:1', 2);
+  const { uniform_bitch_level } = fixture.load_module(
+    'page/page-uniform-bitch-level',
+  );
+
+  fixture.set_inputs(2003);
+  await uniform_bitch_level();
+
+  // 四个范围按钮：正文保留原作 [ … ] 标签，编号由引擎拼一层
+  assert.equal(
+    buttons_with(fixture, 2000)[0].rendered,
+    '[2000] [ 全侵攻中的勇者 ]',
+    '范围按钮的实显',
+  );
+  for (const accel of [2000, 2001, 2002, 2003]) {
+    assert.equal(buttons_with(fixture, accel).length, 1, `按钮 ${accel}`);
+  }
+  assert.equal(
+    printed_includes(fixture, '要将积极性设置为多少？'),
+    false,
+    '[2003] 取消：不进等级选择（原作空 ELSE）',
+  );
+  assert.equal(fixture.store.get('cflag:1:120'), undefined, '取消不写值');
+
+  {
+    // 等级屏：六枚按钮的编号同样只由引擎拼一层（正文为空）
+    const fixture2 = create_era_fixture();
+    add_chara(fixture2, 0, '你');
+    add_chara(fixture2, 1, '甲');
+    fixture2.store.set('cflag:1:1', 2);
+    const { uniform_bitch_level: run } = fixture2.load_module(
+      'page/page-uniform-bitch-level',
+    );
+    fixture2.set_inputs(2002, 5);
+    await run();
+    for (const level of [0, 1, 2, 3, 4, 5]) {
+      const button = buttons_with(fixture2, level)[0];
+      assert.ok(button, `等级按钮 ${level} 已打印`);
+      assert.equal(
+        button.rendered,
+        `[${level}] `,
+        `等级按钮 ${level} 的实显只有引擎拼的一层前缀`,
+      );
+    }
+    assert.equal(fixture2.store.get('cflag:1:120'), 5, '写入等级 5');
+  }
+});
+
+// —— #545：换号（ere/page/page-chara-number-swap.js） ——
+
+test('换号：显示守卫表驱动（状态 0/7、近卫排除、后代+铁石心肠放行）与 [SP] 标记', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲'); // 状态 0：列出
+  add_chara(fixture, 2, '乙'); // 状态 2 侵攻中：不列
+  add_chara(fixture, 3, '丙'); // 状态 7 苗床：列出
+  add_chara(fixture, 4, '丁'); // EX_TALENT:1 近卫（无后代）：任何开关下都不列
+  add_chara(fixture, 5, '戊'); // 近卫+后代：铁石心肠关时不列
+  add_chara(fixture, 6, '己'); // 近卫+后代：铁石心肠开时列出
+  add_chara(fixture, 7, '庚'); // 村娘系（TALENT:165）：列出并带 [SP]
+  fixture.store.set('cflag:2:1', 2);
+  fixture.store.set('cflag:3:1', 7);
+  fixture.store.set('ex_talent:4:1', 1);
+  fixture.store.set('ex_talent:5:1', 1);
+  fixture.store.set('ex_talent:5:2', 1);
+  fixture.store.set('ex_talent:6:1', 1);
+  fixture.store.set('ex_talent:6:2', 1);
+  fixture.store.set('talent:7:165', 1);
+  const { chara_number_swap } = fixture.load_module(
+    'page/page-chara-number-swap',
+  );
+
+  // 第一阶段：铁石心肠（EX_FLAG:9000 位 1）关
+  fixture.set_inputs(1999);
+  await chara_number_swap();
+
+  assert.equal(
+    printed_includes(
+      fixture,
+      '交换角色的排序编号(PS:侵攻与迎击中的角色无法换号)',
+    ),
+    true,
+    '第一屏标题（原作提示语）',
+  );
+  for (const [cid, listed] of [
+    [1, true],
+    [2, false],
+    [3, true],
+    [4, false],
+    [5, false],
+    [6, false],
+    [7, true],
+  ]) {
+    assert.equal(
+      buttons_with(fixture, cid).length,
+      listed ? 1 : 0,
+      `铁石心肠关：角色 ${cid} ${listed ? '应列出' : '不应列出'}`,
+    );
+  }
+
+  // 第二阶段：开铁石心肠后，近卫+后代（EX_TALENT:2）放行、纯近卫仍不列
+  fixture.store.set('exflag:9000', 2);
+  fixture.set_inputs(1999);
+  await chara_number_swap();
+
+  assert.equal(
+    buttons_with(fixture, 5).length,
+    1,
+    '铁石心肠开：近卫+后代的角色 5 放行（第一阶段未列出）',
+  );
+  assert.equal(
+    buttons_with(fixture, 6).length,
+    1,
+    '铁石心肠开：近卫+后代的角色 6 放行',
+  );
+  assert.equal(
+    buttons_with(fixture, 4).length,
+    0,
+    '铁石心肠开：纯近卫（无后代）仍不列',
+  );
+  assert.equal(printed_includes(fixture, '[SP]'), true, '[SP] 标记（村娘系）');
+  assert.equal(
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'text' &&
+        line.text.includes('庚') &&
+        line.text.includes('[SP]'),
+    ),
+    true,
+    '[SP] 追加在行尾（同一格）',
+  );
+  assert.equal(
+    buttons_with(fixture, 1999)[0].rendered,
+    '[1999] 结束换号',
+    '結束换号按 #60 归一为简体',
+  );
+});
+
+test('换号：互换后名字/呼び名/数值行/关系行随数据走，列不动，TARGET/ASSI 复位', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  fixture.seed_chara(1, { id: 1, name: '甲', callname: '甲一' });
+  fixture.seed_chara(2, { id: 2, name: '乙', callname: '乙一' });
+  assert.equal(fixture.era.addCharacter(1), true);
+  assert.equal(fixture.era.addCharacter(2), true);
+  // CFLAG:x:9 等级；:601 婚姻压缩数据；TALENT:200 战士（职业列）
+  fixture.store.set('cflag:1:9', 5);
+  fixture.store.set('cflag:2:9', 7);
+  fixture.store.set('cflag:1:601', 900);
+  fixture.store.set('talent:1:200', 1);
+  // 关系表：行（横轴＝自己）应随数据换，列（别人指向自己）不动
+  fixture.store.set('c_relation:1:0', 11);
+  fixture.store.set('c_relation:2:0', 22);
+  fixture.store.set('c_relation:0:1', 101);
+  fixture.store.set('c_relation:0:2', 202);
+  fixture.store.set('c_relation_sub:1:1', 31);
+  fixture.store.set('c_relation_sub:2:1', 32);
+  fixture.store.set('relation:1:0', 51);
+  fixture.store.set('relation:2:0', 52);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 1;
+  era_flag.assi = 1;
+  const { chara_number_swap } = fixture.load_module(
+    'page/page-chara-number-swap',
+  );
+
+  fixture.set_inputs(1, 2, 4000, 1999);
+  await chara_number_swap();
+
+  // 名字（SAVESTR/NAME）与呼び名（CALLNAME）随数据走
+  assert.equal(fixture.store.get('callname:1:-1'), '乙', '名字换到 1 号位');
+  assert.equal(fixture.store.get('callname:2:-1'), '甲');
+  assert.equal(fixture.store.get('callname:1:-2'), '乙一', '呼び名换到 1 号位');
+  assert.equal(fixture.store.get('callname:2:-2'), '甲一');
+  // 数值行互换（等级/婚姻/职业素质）
+  assert.equal(fixture.store.get('cflag:1:9'), 7, '等级随数据走');
+  assert.equal(fixture.store.get('cflag:2:9'), 5);
+  assert.equal(fixture.store.get('cflag:2:601'), 900, '婚姻压缩数据随数据走');
+  assert.equal(fixture.store.get('talent:2:200'), 1, '职业素质随数据走');
+  // 关系行换、列不动
+  assert.equal(fixture.store.get('c_relation:1:0'), 22, 'c_relation 行互换');
+  assert.equal(fixture.store.get('c_relation:2:0'), 11);
+  assert.equal(
+    fixture.store.get('c_relation:0:1'),
+    101,
+    'c_relation 列不动（原作 SWAPCHARA 也不改写指向）',
+  );
+  assert.equal(fixture.store.get('c_relation:0:2'), 202);
+  assert.equal(
+    fixture.store.get('c_relation_sub:1:1'),
+    32,
+    'c_relation_sub 行互换',
+  );
+  assert.equal(fixture.store.get('c_relation_sub:2:1'), 31);
+  assert.equal(fixture.store.get('relation:1:0'), 52, '内置相性行互换');
+  assert.equal(fixture.store.get('relation:2:0'), 51);
+  // TARGET/ASSI 复位（原作 -1，非 ere 惯例的 0）
+  assert.equal(era_flag.target, -1, 'TARGET = -1');
+  assert.equal(era_flag.assi, -1, 'ASSI = -1');
+  // 文案与交互
+  assert.equal(
+    fixture.lines_history.some(
+      (line) => line.text === '甲将与乙交换排序编号，确定吗？',
+    ),
+    true,
+    '确认文案逐字（确认时还是互换前的名字）',
+  );
+  assert.equal(printed_includes(fixture, '已完成互换'), true);
+  // 第二屏（「要跟那个角色换号呢？」到确认文案之间）剃除 CN:1 的行
+  const second_from = fixture.lines_history.findIndex(
+    (line) => line.text === '要跟那个角色换号呢？',
+  );
+  const second_to = fixture.lines_history.findIndex(
+    (line, idx) => idx > second_from && (line.text ?? '').includes('确定吗？'),
+  );
+  assert.ok(second_from >= 0 && second_to > second_from, '第二屏的范围');
+  const second_screen = fixture.lines_history.slice(second_from, second_to);
+  assert.equal(
+    second_screen.some(
+      (line) => line.type === 'button' && line.accelerator === 1,
+    ),
+    false,
+    '第二屏剃除 CN:1 的行',
+  );
+  assert.equal(
+    second_screen.some(
+      (line) => line.type === 'button' && line.accelerator === 2,
+    ),
+    true,
+    '第二屏列出 CN:2 候选',
+  );
+  assert.equal(
+    printed_includes(fixture, ' 甲 战士 LV5'),
+    true,
+    '互换后重画：甲的名字带着战士职业与 LV5 落在 2 号位',
+  );
+});
+
+test('换号：[4001] 否回到第一屏重选，可选对方再确认', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 2, '乙');
+  const { chara_number_swap } = fixture.load_module(
+    'page/page-chara-number-swap',
+  );
+
+  // 第一屏选甲 → 第二屏选乙 → 否 → 第一屏选乙 → 第二屏选甲 → 是 → 重画 → 结束
+  fixture.set_inputs(1, 2, 4001, 2, 1, 4000, 1999);
+  await chara_number_swap();
+
+  assert.equal(
+    printed_includes(fixture, '甲将与乙交换排序编号，确定吗？'),
+    true,
+    '第一次确认',
+  );
+  assert.equal(
+    printed_includes(fixture, '乙将与甲交换排序编号，确定吗？'),
+    true,
+    '否之后重选，第二次确认的名字对调',
+  );
+  assert.equal(fixture.store.get('callname:1:-1'), '乙', '第二次确认才互换');
+  assert.equal(
+    fixture.lines_history.filter((line) => line.text === '已完成互换').length,
+    1,
+    '只互换一次',
+  );
+});
+
+test('换号：每页 25 行（NUM_PAGE）、页首按上一页不动、末页按下一页不动、空尾页可进', async () => {
+  {
+    // 26 名候选：第 1 页 1-25、第 2 页只有 26
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    for (let cid = 1; cid <= 26; cid += 1)
+      add_chara(fixture, cid, `角色${cid}`);
+    const { chara_number_swap } = fixture.load_module(
+      'page/page-chara-number-swap',
+    );
+
+    // 页首按上一页（不动）→ 下一页 → 末页再按下一页（不动）→ 上一页回第 1 页
+    fixture.set_inputs(2000, 2001, 2001, 2000, 1999);
+    await chara_number_swap();
+
+    // 每屏以 [1999] 結束换号 收尾，按它切片：第二屏（页首按上一页后）
+    // 必须仍是第 1 页的 25 行——上一页守卫写坏（no_page 落到 -1）时这一屏空
+    const screens = [];
+    let screen_start = 0;
+    fixture.lines_history.forEach((line, idx) => {
+      if (line.type === 'button' && line.accelerator === 1999) {
+        screens.push(fixture.lines_history.slice(screen_start, idx + 1));
+        screen_start = idx + 1;
+      }
+    });
+    assert.equal(screens.length, 5, '五次绘制（初始 ＋ 四次翻页重画）');
+    assert.equal(
+      screens[1].some(
+        (line) => line.type === 'button' && line.accelerator === 25,
+      ),
+      true,
+      '页首按上一页后仍停在第 1 页（第 25 人还在）',
+    );
+    assert.equal(
+      buttons_with(fixture, 1).length,
+      3,
+      '角色 1 出现在第 1、2、5 次绘制（页首上一页不动、回页后重画）',
+    );
+    assert.equal(
+      buttons_with(fixture, 25).length,
+      3,
+      '第 25 人还在第 1 页（NUM_PAGE=25，名册自己的 24 不影响这里）',
+    );
+    assert.equal(
+      buttons_with(fixture, 26).length,
+      2,
+      '第 26 人只在第 2 页；末页再按下一页不翻页但仍重画（原作 GOTO 在 IF 外）',
+    );
+  }
+  {
+    // 恰好 25 名候选：(0+1)*25 <= 25 成立 → 第 2 页可进，但整页无行
+    //（守卫若误写成 <，这里会停在原地重画 25 行）
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    for (let cid = 1; cid <= 25; cid += 1)
+      add_chara(fixture, cid, `角色${cid}`);
+    const { chara_number_swap } = fixture.load_module(
+      'page/page-chara-number-swap',
+    );
+
+    fixture.set_inputs(2001, 1999);
+    await chara_number_swap();
+
+    assert.equal(buttons_with(fixture, 1).length, 1, '第 2 页没有第 1 人');
+    assert.equal(
+      fixture.lines_history.filter(
+        (line) =>
+          line.text === '交换角色的排序编号(PS:侵攻与迎击中的角色无法换号)',
+      ).length,
+      2,
+      '翻页后整屏重画了一次',
+    );
+  }
+  {
+    // 第二屏的翻页守卫与第一屏共用边界：恰 25 名候选时 [3001] 可进空尾页、
+    // [3000] 回第 1 页后照常选人
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    for (let cid = 1; cid <= 25; cid += 1)
+      add_chara(fixture, cid, `角色${cid}`);
+    const { chara_number_swap } = fixture.load_module(
+      'page/page-chara-number-swap',
+    );
+
+    fixture.set_inputs(1, 3001, 3000, 2, 4001, 1999);
+    await chara_number_swap();
+
+    assert.equal(
+      fixture.lines_history.filter(
+        (line) => line.text === '要跟那个角色换号呢？',
+      ).length,
+      3,
+      '第二屏画了三屏：第 1 页 → [3001] 进空尾页 → [3000] 回第 1 页',
+    );
+    assert.equal(
+      buttons_with(fixture, 2).length,
+      4,
+      '角色 2 出现在第一屏初始 ＋ 两次第 1 页的第二屏 ＋ [4001] 后的第一屏重画（空尾页上没有行）',
+    );
+  }
+});
+
+test('换号：[4000] 互换后 RESTART 回第 1 页；[1999] 出口把名册页码回初值', async () => {
+  {
+    // 26 名候选：先翻到第 2 页再完成互换，重画应回第 1 页
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    for (let cid = 1; cid <= 26; cid += 1)
+      add_chara(fixture, cid, `角色${cid}`);
+    const { chara_number_swap } = fixture.load_module(
+      'page/page-chara-number-swap',
+    );
+
+    // 第一屏选 1（第 1 页），第二屏 [3001] 翻到第 2 页选 26 再确认：
+    // 互换发生时页码停在第 2 页，重画应回第 1 页（RESTART 复位 NO_PAGE）
+    fixture.set_inputs(1, 3001, 26, 4000, 1999);
+    await chara_number_swap();
+
+    const swap_at = fixture.lines_history.findIndex(
+      (line) => line.text === '已完成互换',
+    );
+    assert.ok(swap_at >= 0, '已互换');
+    const after = fixture.lines_history.slice(swap_at);
+    assert.equal(
+      after.some((line) => line.type === 'button' && line.accelerator === 2),
+      true,
+      '互换后重画回第 1 页（第 2 页只有 26，角色 2 只能在第 1 页出现）',
+    );
+  }
+  {
+    // 名册侧重进：第 2 页按 [1700] → 换号 [1999] 出口 → 名册回第 1 页
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    for (let cid = 1; cid <= 25; cid += 1)
+      add_chara(fixture, cid, `角色${cid}`);
+    const { chara_info } = fixture.load_module('page/page-chara-info');
+
+    fixture.set_inputs(998, 1700, 1999, 999);
+    await chara_info();
+
+    const pages = fixture.lines_history
+      .filter((line) => line.type === 'text')
+      .map((line) => (line.text.match(/<第(\d+)页>/) ?? [])[1])
+      .filter(Boolean);
+    assert.equal(
+      pages[pages.length - 1],
+      '1',
+      `换号出口后名册回第 1 页（JUMP 语义；实际页序 ${pages.join(',')}）`,
+    );
+  }
+});
+
+test('名册重进：[1600] 流程返回后名册页码与排序回初值', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
+  const { chara_info } = fixture.load_module('page/page-chara-info');
+
+  // 翻到第 2 页后走 [1600]（选 [2003] 取消）：JUMP 语义应把页码拉回初值
+  fixture.set_inputs(998, 1600, 2003, 999);
+  await chara_info();
+
+  const draws = draws_by_998(fixture);
+  const last = draws[draws.length - 1];
+  const last_texts = last
+    .filter((line) => line.type === 'text')
+    .map((line) => line.text);
+  assert.ok(
+    last_texts.some((text) => text.includes('第1页')),
+    `页码回初值（实际：${JSON.stringify(last_texts.slice(0, 3))}）`,
+  );
+});
+
+test('名册重进：[1400] 切视图后走 [1600]，排序也回编号视图（JUMP 语义）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:580', 300);
+  fixture.store.set('cflag:1:13', 15);
+  fixture.store.set('cflag:1:14', 20);
+  const { chara_info } = fixture.load_module('page/page-chara-info');
+
+  fixture.set_inputs(1400, 1600, 2003, 999);
+  await chara_info();
+
+  const draws = draws_by_998(fixture);
+  const last_texts = draws[draws.length - 1]
+    .filter((line) => line.type === 'text')
+    .map((line) => line.text);
+  assert.ok(
+    last_texts.some((text) => text.includes('攻击15/防御20')),
+    `排序回编号视图（实际：${JSON.stringify(last_texts)}）`,
+  );
+  assert.equal(
+    last_texts.some((text) => text.includes('所持金:300')),
+    false,
+    '不再是所持金视图',
+  );
 });
