@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 49; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 起 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键——均由 test/page-chara-info.test.js 守护）
+export const COUNT = 89; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致
 
 export default [
   {
@@ -432,6 +432,338 @@ export default [
     tests: ['page-chara-info'],
     must_mention: '魔王行的两格 ＋ 两名角色各四格',
   },
+  {
+    desc: 'M11430 统一卖春积极性：侵攻档的状态判据 2 改 3（勇者档去写迎击奴隶）',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: "    scope = { states: [2], message: '侵攻中的勇者（不含以后出现的新勇者）' }; // :26/:31",
+    replace:
+      "    scope = { states: [3], message: '侵攻中的勇者（不含以后出现的新勇者）' }; // :26/:31",
+    tests: ['page-chara-info'],
+    must_mention: 'scope=2000：角色 1 应写入',
+  },
+  {
+    desc: 'M11431 统一卖春积极性：迎击档的状态判据 3 改 2',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: "    scope = { states: [3], message: '全迎击中的奴隶（不含以后追加的新奴隶）' }; // :47/:52",
+    replace:
+      "    scope = { states: [2], message: '全迎击中的奴隶（不含以后追加的新奴隶）' }; // :47/:52",
+    tests: ['page-chara-info'],
+    must_mention: 'scope=2001：角色 1 不应写入',
+  },
+  {
+    desc: 'M11432 统一卖春积极性：全部档丢掉迎击臂（只剩侵攻）',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: '      states: [2, 3],',
+    replace: '      states: [2],',
+    tests: ['page-chara-info'],
+    must_mention: 'scope=2002：角色 2 应写入',
+  },
+  {
+    desc: 'M11433 统一卖春积极性：魔王跳过守卫写坏（COUNT==MASTER 不再 CONTINUE）',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: '    if (cid === 0) continue; // :24',
+    replace: '    if (cid === -1) continue; // :24',
+    tests: ['page-chara-info'],
+    must_mention: 'scope=2000：角色 0 不应写入',
+  },
+  {
+    desc: 'M11434 统一卖春积极性：侵攻档的播报文案换成迎击档的',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: "message: '侵攻中的勇者（不含以后出现的新勇者）'",
+    replace: "message: '全迎击中的奴隶（不含以后追加的新奴隶）'",
+    tests: ['page-chara-info'],
+    must_mention: 'scope=2000：播报逐字',
+  },
+  {
+    desc: 'M11435 统一卖春积极性：等级按钮正文退回手写 [N]（引擎再拼一层）',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: `      accelerator: level,
+      content: '',`,
+    replace: `      accelerator: level,
+      content: \`[\${level}]\`,`,
+    tests: ['page-chara-info'],
+    must_mention: '等级按钮 0 的实显只有引擎拼的一层前缀',
+  },
+  {
+    desc: 'M11436 统一卖春积极性：侵攻档按钮快捷键 2000 撞到 2001（2000 进不了白名单）',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: `      accelerator: 2000,
+      content: '[ 全侵攻中的勇者 ]', // :5`,
+    replace: `      accelerator: 2001,
+      content: '[ 全侵攻中的勇者 ]', // :5`,
+    tests: ['page-chara-info'],
+    must_mention: '输入不合法',
+  },
+  {
+    desc: 'M11437 统一卖春积极性：取消档不再提前返回（[2003] 后照进等级选择）',
+    file: 'ere/page/page-uniform-bitch-level.js',
+    find: `  } else {
+    return;
+  }`,
+    replace: `  } else {
+  }`,
+    tests: ['page-chara-info'],
+    must_mention: '预置输入已耗尽',
+  },
+  {
+    desc: 'M11438 换号显示守卫：苗床（状态 7）不再列出',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      (state === 0 || state === 7) &&',
+    replace: '      state === 0 &&',
+    tests: ['page-chara-info'],
+    must_mention: '铁石心肠关：角色 3 应列出',
+  },
+  {
+    desc: 'M11439 换号显示守卫：近卫（EX_TALENT:1）排除臂被短路',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      (!(era.get(`ex_talent:${cid}:1`) || 0) ||',
+    replace: '      (true ||',
+    tests: ['page-chara-info'],
+    must_mention: '铁石心肠关：角色 4 不应列出',
+  },
+  {
+    desc: 'M11440 换号显示守卫：铁石心肠位 &2 读成 &4（打工位）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '          (era_exflag.mod_switch_bits & 2) !== 0))',
+    replace: '          (era_exflag.mod_switch_bits & 4) !== 0))',
+    tests: ['page-chara-info'],
+    must_mention: '铁石心肠开：近卫+后代的角色 5 放行',
+  },
+  {
+    desc: 'M11441 换号：每页 25 行改成 24 行（第 25 人掉到第 2 页）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: 'const NUM_PAGE = 25;',
+    replace: 'const NUM_PAGE = 24;',
+    tests: ['page-chara-info'],
+    must_mention: '页首按上一页后仍停在第 1 页',
+  },
+  {
+    desc: 'M11442 换号第一屏：下一页守卫 <= 写成 <（恰 25 人时进不了空尾页）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: `    if (first === 2001) {
+      // :44-49 下一页
+      if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;`,
+    replace: `    if (first === 2001) {
+      // :44-49 下一页
+      if ((no_page + 1) * NUM_PAGE < total) no_page += 1;`,
+    tests: ['page-chara-info'],
+    must_mention: '第 2 页没有第 1 人',
+  },
+  {
+    desc: 'M11443 换号第二屏：下一页守卫 <= 写成 <（同一边界）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: `      if (picked === 3001) {
+        // :94-99 下一页
+        if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;`,
+    replace: `      if (picked === 3001) {
+        // :94-99 下一页
+        if ((no_page + 1) * NUM_PAGE < total) no_page += 1;`,
+    tests: ['page-chara-info'],
+    must_mention: '角色 2 出现在第一屏初始',
+  },
+  {
+    desc: 'M11444 换号第一屏：上一页守卫 > 0 写成 >= 0（页首落到 -1、整屏空）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: `      // :38-43 上一页（页首不动，仅重绘）
+      if (no_page > 0) no_page -= 1;`,
+    replace: `      // :38-43 上一页（页首不动，仅重绘）
+      if (no_page >= 0) no_page -= 1;`,
+    tests: ['page-chara-info'],
+    must_mention: '页首按上一页后仍停在第 1 页',
+  },
+  {
+    desc: 'M11445 换号：排序编号只写一侧（b 侧不写，交换不成立）',
+    file: 'ere/chara/chara-portcflag.js',
+    find: '  era.set(`portcflag:${a}:排序编号`, b_number);\n  era.set(`portcflag:${b}:排序编号`, a_number);',
+    replace: '  era.set(`portcflag:${a}:排序编号`, b_number);',
+    tests: ['page-chara-info'],
+    must_mention: '2 号拿到原属 1 号的排序编号',
+  },
+  {
+    desc: 'M11446 换号：先写 a 再读 a（b 被写成自己刚被读走的那个值）',
+    file: 'ere/chara/chara-portcflag.js',
+    find: '  const a_number = sort_number_of(a);\n  const b_number = sort_number_of(b);\n  era.set(`portcflag:${a}:排序编号`, b_number);\n  era.set(`portcflag:${b}:排序编号`, a_number);',
+    replace:
+      '  era.set(`portcflag:${a}:排序编号`, sort_number_of(b));\n  era.set(`portcflag:${b}:排序编号`, sort_number_of(a));',
+    tests: ['page-chara-info'],
+    must_mention: '2 号拿到原属 1 号的排序编号',
+  },
+  {
+    desc: 'M11447 排序编号：未设时不再回落角色 ID（读成 0）',
+    file: 'ere/chara/chara-portcflag.js',
+    find: '  return era.get(`portcflag:${cid}:排序编号`) || cid;',
+    replace: '  return era.get(`portcflag:${cid}:排序编号`) || 0;',
+    tests: ['page-chara-info'],
+    must_mention: '顺位表按排序编号升序（未设的回落角色 ID）',
+  },
+  {
+    desc: 'M11448 换号：交换排序编号改成跨 ID 搬角色数据（返工前旧做法的回归）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      swap_sort_numbers(first, second);',
+    replace:
+      '      era.set(`cflag:${first}:9`, era.get(`cflag:${second}:9`) ?? 0); // 变异：跨 ID 搬数据',
+    tests: ['page-chara-info'],
+    must_mention: '换号不搬角色数据：等级仍属 ID 1',
+  },
+  {
+    desc: 'M11449 换号互换：TARGET 复位写成 0（原作 -1）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      era_flag.target = -1; // :118',
+    replace: '      era_flag.target = 0; // :118',
+    tests: ['page-chara-info'],
+    must_mention: 'TARGET = -1',
+  },
+  {
+    desc: 'M11450 换号：误加页码复位（NO_PAGE 是静态变量，RESTART 不归零）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      continue; // :120 RESTART（页码是静态变量，不归零）',
+    replace: '      no_page = 0; // 变异：误加复位\n      continue; // :120',
+    tests: ['page-chara-info'],
+    must_mention: '互换后重画仍在第 2 页',
+  },
+  {
+    desc: 'M11451 换号确认：文案里两个名字对调',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '    era.print(`${name_of(first)}将与${name_of(second)}交换排序编号，确定吗？`); // :107',
+    replace:
+      '    era.print(`${name_of(second)}将与${name_of(first)}交换排序编号，确定吗？`); // :107',
+    tests: ['page-chara-info'],
+    must_mention: '确认文案逐字',
+  },
+  {
+    desc: 'M11452 换号第二屏：剃除 CN:1 的过滤被删（可跟自己换号）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      const second_ids = swap_candidates()\n        .slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE)\n        .filter((cid) => cid !== first); // :67-69 对象是角色1剃除',
+    replace:
+      '      const second_ids = swap_candidates().slice(\n        no_page * NUM_PAGE,\n        (no_page + 1) * NUM_PAGE,\n      );',
+    tests: ['page-chara-info'],
+    must_mention: '第二屏剃除 CN:1 的行',
+  },
+  {
+    desc: 'M11453 换号行体：[SP] 判定的 TALENT 表丢了村娘 165',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '    [165, 167, 168, 169, 170, 171].some((t) => era.get(`talent:${cid}:${t}`)) ||',
+    replace:
+      '    [167, 168, 169, 170, 171].some((t) => era.get(`talent:${cid}:${t}`)) ||',
+    tests: ['page-chara-info'],
+    must_mention: '[SP] 标记（村娘系）',
+  },
+  {
+    desc: 'M11454 换号行体：职业列被删（GET_JOB_NAME 不再进行文本）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      content: ` ${name_of(cid)} ${get_job_name(cid)} LV:${pad_display(',
+    replace: '      content: ` ${name_of(cid)} LV:${pad_display(',
+    tests: ['page-chara-info'],
+    must_mention: '甲带着自己的职业与等级',
+  },
+  {
+    desc: 'M11455 换号行体：等级地址 cflag:cid:9 读成 :10',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '        String(era.get(`cflag:${cid}:9`) || 0),',
+    replace: '        String(era.get(`cflag:${cid}:10`) || 0),',
+    tests: ['page-chara-info'],
+    must_mention: '甲带着自己的职业与等级',
+  },
+  {
+    desc: 'M11456 名册分发：[1600] 误加页码复位（NO_PAGE 是静态局部变量，不归零）',
+    file: 'ere/page/page-chara-info.js',
+    find: '      await uniform_bitch_level();\n      continue;',
+    replace:
+      '      await uniform_bitch_level();\n      no_page = 0; // 变异：误加复位\n      continue;',
+    tests: ['page-chara-info'],
+    must_mention: '页码保持第 2 页',
+  },
+  {
+    desc: 'M11457 名册分发：[1600] 误加排序复位（SORT_SELECT 是静态局部变量）',
+    file: 'ere/page/page-chara-info.js',
+    find: '      await uniform_bitch_level();\n      continue;',
+    replace:
+      '      await uniform_bitch_level();\n      sort_select = 1200; // 变异：误加复位\n      continue;',
+    tests: ['page-chara-info'],
+    must_mention: '排序视图保持所持金',
+  },
+  {
+    desc: 'M11458 名册分发：[1700] 换号出口误加页码复位',
+    file: 'ere/page/page-chara-info.js',
+    find: '      await chara_number_swap();\n      continue;',
+    replace:
+      '      await chara_number_swap();\n      no_page = 0; // 变异：误加复位\n      continue;',
+    tests: ['page-chara-info'],
+    must_mention: '换号出口后名册保持第 2 页',
+  },
+  {
+    desc: 'M11459 换号：排序编号整支不交换（确认后什么也没换）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      swap_sort_numbers(first, second);\n      await era.printAndWait',
+    replace: '      // 变异：排序编号不交换\n      await era.printAndWait',
+    tests: ['page-chara-info'],
+    must_mention: '1 号拿到原属 2 号的排序编号',
+  },
+  {
+    desc: 'M11460 名册编号视图：排列键退回角色 ID（排序编号不参与排序）',
+    file: 'ere/chara/chara-portcflag.js',
+    find: '  return [...ids].sort(\n    (a, b) => sort_number_of(a) - sort_number_of(b) || a - b,\n  );',
+    replace: '  return [...ids].sort((a, b) => a - b);',
+    tests: ['page-chara-info'],
+    must_mention: '顺位表按排序编号升序（未设的回落角色 ID）',
+  },
+  {
+    desc: 'M11461 名册分发：[1600] 漏 await（名册抢在子流程播报前重绘）',
+    file: 'ere/page/page-chara-info.js',
+    find: '      await uniform_bitch_level();\n      continue;',
+    replace: '      uniform_bitch_level();\n      continue;',
+    tests: ['page-chara-info'],
+    must_mention: '完成播报必须先于名册的下一次重绘',
+  },
+  {
+    desc: 'M11462 名册分发：[1700] 漏 await（名册与换号页抢同一个输入）',
+    file: 'ere/page/page-chara-info.js',
+    find: '      await chara_number_swap();\n      continue;',
+    replace: '      chara_number_swap();\n      continue;',
+    tests: ['page-chara-info'],
+    must_mention: '完成播报必须先于名册的下一次重绘',
+  },
+  {
+    desc: 'M11463 换号页：候选列表退回 ID 序（排序编号不参与排列）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '  return sort_by_number(ids);',
+    replace: '  return ids;',
+    tests: ['page-chara-info'],
+    must_mention: '行序按排序编号',
+  },
+  {
+    desc: 'M11464 换号页：页码跨次进入被复位（提在模块级后又被函数内清掉）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '  swap_page: for (;;) {',
+    replace: '  no_page = 0; // 变异：跨次进入复位\n  swap_page: for (;;) {',
+    tests: ['page-chara-info'],
+    must_mention: '再次进入仍在第 2 页：页码不随函数退出归零（静态变量语义）',
+  },
+  {
+    desc: 'M11465 排序表头：[1200] 编号视图的快捷键写成 1201（白名单拒收，按编号切不回去）',
+    file: 'ere/page/page-chara-info.js',
+    find: "      accelerator: 1200,\n      content: '编号',",
+    replace: "      accelerator: 1201,\n      content: '编号',",
+    tests: ['page-chara-info'],
+    must_mention: 'era.input() 只接受本轮已打印按钮的快捷键',
+  },
+  {
+    desc: 'M11466 名单行片段：未陷落文案改字（<未陷落> → <未堕落>）',
+    file: 'ere/page/page-chara-info.js',
+    find: "  return { content: '<未陷落>', color: '#646464' };",
+    replace: "  return { content: '<未堕落>', color: '#646464' };",
+    tests: ['page-chara-info'],
+    must_mention: '未陷落分支',
+  },
+  {
+    desc: 'M11467 名单行片段：收藏标记的地址 cflag:cid:700 读成 :701',
+    file: 'ere/page/page-chara-info.js',
+    find: "    content: (era.get(`cflag:${cid}:700`) || 0) !== 0 ? '[\\u2606]' : '',",
+    replace:
+      "    content: (era.get(`cflag:${cid}:701`) || 0) !== 0 ? '[\\u2606]' : '',",
+    tests: ['page-chara-info'],
+    must_mention: '收藏标记读 cflag:cid:700',
+  },
   // —— #542：[20] 更换立绘与 [18] 卖春积极性按钮（PTJ_BUTTON 默认态）——
   {
     desc: 'M11315 更换立绘按钮守卫漏「非魔王」臂（ARG != MASTER——魔王行也画出 [20]，#542）',
@@ -473,5 +805,21 @@ export default [
       "      era.printButton('卖春积极性 - ' + bich_level_text(current), 81); // 变异：快捷键错位",
     tests: ['page-chara-info'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
+  },
+  {
+    desc: 'M11468 换号第二屏：取消支路被删（[3002] 落到 CN:2，只剩一名候选时又卡死——#545 第 2 轮返工）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      if (picked === 3002) {\n        // 回第一屏重选 CN:1（原作那条兜底的净效果，见文件头）＝ GOTO 换号页\n        continue swap_page;\n      }\n',
+    replace: '',
+    tests: ['page-chara-info'],
+    must_mention: '取消后回到第一屏重画',
+  },
+  {
+    desc: 'M11469 换号行体：等级列的左对齐宽度 4 改 3（原作 :21/:72 的 ,4,LEFT——#545 第 2 轮返工）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '        String(era.get(`cflag:${cid}:9`) || 0),\n        4,',
+    replace: '        String(era.get(`cflag:${cid}:9`) || 0),\n        3,',
+    tests: ['page-chara-info'],
+    must_mention: '1 位等级补 3 格',
   },
 ];

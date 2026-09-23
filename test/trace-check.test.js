@@ -1611,7 +1611,7 @@ test('移植状态表全绿（真树）：合计恰为 346，真值点与两类�
 
 // —— #542：DEBUG小白娘 / MOD 五文件 / 立绘 img.ERB 的判死落点（#540 范围决定 2–4）——
 
-test('移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现，待移植只剩魔改新增两个', () => {
+test('移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现，待移植只剩 S2 的處刑改寫.ERB', () => {
   const { status, output } = run_tool(['--coverage', '--list']);
   assert.equal(status, 0, `--coverage 应全绿：\n${output}`);
   // RULINGS 表的七条新裁定（依据 #540 范围决定 2–4）：必须压过待移植判定
@@ -1629,9 +1629,8 @@ test('移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现
       `#542 判死的文件必须离开待移植：${rel}\n${output}`,
     );
   }
-  // 合并 S3（#544 把 强制肉偿.ERB 做进 ere/）与 S2（#543 把 處刑改寫.ERB
-  // 做进 ere/event/event-execution-batch.js）后，阶段 6 收口前剩下的待移植
-  // 只剩 S4 的 统一卖春积极性.ERB——该票交付时更新这里
+  // 三票（#544 强制肉偿、#545 统一卖春积极性、#543 處刑改寫）都落地后，
+  // 阶段 6 的待移植已清空（PENDING_BASELINE = 0，#540 终点判据第一条）
   const pending = output
     .split('\n')
     .filter((line) => line.startsWith('待移植 target/'))
@@ -1639,8 +1638,8 @@ test('移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现
     .sort();
   assert.deepEqual(
     pending,
-    ['target/ERB/魔改新增/统一卖春积极性.ERB'].sort(),
-    `待移植必须只剩 S4 的一个文件（PENDING_BASELINE = 1）：\n${output}`,
+    [],
+    `阶段 6 的待移植必须已清空（PENDING_BASELINE = 0）：\n${output}`,
   );
 });
 
@@ -2204,6 +2203,17 @@ test('移植状态表：待移植基线只减不增（全树副本，改小一�
   const m = original.match(/export const PENDING_BASELINE = (\d+);/);
   assert.ok(m, 'PENDING_BASELINE 必须内嵌在工具里——规则不复制到别处');
   const current = Number(m[1]);
+  if (current === 0) {
+    // 阶段 6 的终点（#543+#545 合并后待移植清空）：`current - 1` 不再是合法计数，
+    // 「改小一位必须红」的探针没有语义了——改为钉住终点形态本身
+    const r = run_tool_in(root, ['--coverage']);
+    assert.equal(r.status, 0, `基线为 0 时工具必须全绿：\n${r.output}`);
+    assert.ok(
+      r.output.includes('待移植 0 / 基线 0'),
+      `基线 0 必须对应实测待移植 0（#540 终点判据第一条）：\n${r.output}`,
+    );
+    return;
+  }
   assert.ok(current > 0, '基线必须大于 0（现状冻结，不是空表）');
   try {
     fs.writeFileSync(
