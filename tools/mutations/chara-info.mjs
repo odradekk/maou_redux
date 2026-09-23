@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 87; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）。合并态 45 + 38 + 4 = 87，与 --verify 实核一致
+export const COUNT = 89; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致
 
 export default [
   {
@@ -651,18 +651,16 @@ export default [
   {
     desc: 'M11454 换号行体：职业列被删（GET_JOB_NAME 不再进行文本）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      content: ` ${name_of(cid)} ${get_job_name(cid)} LV${era.get(`cflag:${cid}:9`) || 0}`,',
-    replace:
-      '      content: ` ${name_of(cid)} LV${era.get(`cflag:${cid}:9`) || 0}`,',
+    find: '      content: ` ${name_of(cid)} ${get_job_name(cid)} LV:${pad_display(',
+    replace: '      content: ` ${name_of(cid)} LV:${pad_display(',
     tests: ['page-chara-info'],
     must_mention: '甲带着自己的职业与等级',
   },
   {
     desc: 'M11455 换号行体：等级地址 cflag:cid:9 读成 :10',
     file: 'ere/page/page-chara-number-swap.js',
-    find: '      content: ` ${name_of(cid)} ${get_job_name(cid)} LV${era.get(`cflag:${cid}:9`) || 0}`,',
-    replace:
-      '      content: ` ${name_of(cid)} ${get_job_name(cid)} LV${era.get(`cflag:${cid}:10`) || 0}`,',
+    find: '        String(era.get(`cflag:${cid}:9`) || 0),',
+    replace: '        String(era.get(`cflag:${cid}:10`) || 0),',
     tests: ['page-chara-info'],
     must_mention: '甲带着自己的职业与等级',
   },
@@ -736,9 +734,8 @@ export default [
   {
     desc: 'M11464 换号页：页码跨次进入被复位（提在模块级后又被函数内清掉）',
     file: 'ere/page/page-chara-number-swap.js',
-    find: 'async function chara_number_swap() {\n  for (;;) {',
-    replace:
-      'async function chara_number_swap() {\n  no_page = 0; // 变异：跨次进入复位\n  for (;;) {',
+    find: '  swap_page: for (;;) {',
+    replace: '  no_page = 0; // 变异：跨次进入复位\n  swap_page: for (;;) {',
     tests: ['page-chara-info'],
     must_mention: '再次进入仍在第 2 页：页码不随函数退出归零（静态变量语义）',
   },
@@ -808,5 +805,21 @@ export default [
       "      era.printButton('卖春积极性 - ' + bich_level_text(current), 81); // 变异：快捷键错位",
     tests: ['page-chara-info'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
+  },
+  {
+    desc: 'M11468 换号第二屏：取消支路被删（[3002] 落到 CN:2，只剩一名候选时又卡死——#545 第 2 轮返工）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '      if (picked === 3002) {\n        // 回第一屏重选 CN:1（原作那条兜底的净效果，见文件头）＝ GOTO 换号页\n        continue swap_page;\n      }\n',
+    replace: '',
+    tests: ['page-chara-info'],
+    must_mention: '取消后回到第一屏重画',
+  },
+  {
+    desc: 'M11469 换号行体：等级列的左对齐宽度 4 改 3（原作 :21/:72 的 ,4,LEFT——#545 第 2 轮返工）',
+    file: 'ere/page/page-chara-number-swap.js',
+    find: '        String(era.get(`cflag:${cid}:9`) || 0),\n        4,',
+    replace: '        String(era.get(`cflag:${cid}:9`) || 0),\n        3,',
+    tests: ['page-chara-info'],
+    must_mention: '1 位等级补 3 格',
   },
 ];

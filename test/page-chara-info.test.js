@@ -1755,8 +1755,10 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
     [2, 1],
     '互换后第一屏按排序编号排：乙（排序编号 1）在前',
   );
+  // 行体按原作 `LV:{CFLAG:COUNT:9,4,LEFT}`：冒号 + 等级值左对齐占 4 格
+  // （1 位数补 3 空格，后面才是 [SP] 之类的片段），见 print_swap_row
   assert.equal(
-    printed_includes(fixture, ' 甲 战士 LV5'),
+    printed_includes(fixture, ' 甲 战士 LV:5   '),
     true,
     '行内容仍按身份取：甲带着自己的职业与等级',
   );
@@ -2083,6 +2085,8 @@ test('换号页：候选列表按排序编号升序，编号格显示的仍是�
   fixture.store.set('portcflag:3:排序编号', 1); // 3 号排最前
   fixture.store.set('portcflag:1:排序编号', 5);
   fixture.store.set('portcflag:2:排序编号', 9); // 2 号排最后
+  fixture.store.set('cflag:1:9', 5); // 1 位数 → 补 3 格
+  fixture.store.set('cflag:3:9', 12); // 2 位数 → 补 2 格（左对齐 4 格宽）
   const { chara_number_swap } = fixture.load_module(
     'page/page-chara-number-swap',
   );
@@ -2102,6 +2106,78 @@ test('换号页：候选列表按排序编号升序，编号格显示的仍是�
     rows.map((line) => line.rendered),
     ['[3] ', '[1] ', '[2] '],
     '编号格＝引擎按 showAcc 拼的快捷键（角色 ID）：看到的号与敲的号是同一个',
+  );
+  // 等级列：原作 :21/:72 的 `LV:{CFLAG:COUNT:9,4,LEFT}`——冒号 + 左对齐 4 格
+  const row_text = (name) =>
+    fixture.lines_history.find(
+      (line) =>
+        line.type === 'text' &&
+        line.row > 0 &&
+        (line.text ?? '').includes(name),
+    )?.text ?? '';
+  assert.ok(
+    row_text('角色1').includes(' LV:5   '),
+    `1 位等级补 3 格（实际：${JSON.stringify(row_text('角色1'))}）`,
+  );
+  assert.ok(
+    row_text('角色3').includes(' LV:12  '),
+    `2 位等级补 2 格（左对齐 4 格宽，实际：${JSON.stringify(row_text('角色3'))}）`,
+  );
+});
+
+test('换号第二屏：只剩一名候选时也有出口——[3002] 取消回第一屏，不卡死（#545 第 2 轮返工）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 17, '玛奥');
+  const { chara_number_swap } = fixture.load_module(
+    'page/page-chara-number-swap',
+  );
+
+  // 唯一候选 17 被选中后，第二屏把她本人剃除（:67-69）→ 屏上再没有候选行；
+  // 只剩 [3000]/[3001]/[3002]，而 [3001] 在候选不足一页时只重绘同一屏。
+  // 原作那条「乱输编号也走确认屏 → [4001] 否 → 回第一屏」的兜底在白名单下
+  // 不可达，本轮补出的 [3002] 取消就是这条路上唯一可达的出口
+  fixture.set_inputs(17, 3002, 1999);
+  let thrown = null;
+  try {
+    await chara_number_swap();
+  } catch (error) {
+    thrown = error;
+  }
+
+  const second_headers = text_positions(fixture, '要跟那个角色换号呢？');
+  const headers = text_positions(fixture, '请先选择要变换排序的角色');
+  const second_from = second_headers[0];
+  const second_to = headers.find((idx) => idx > second_from);
+  const second_screen =
+    second_from >= 0 && second_to !== undefined
+      ? fixture.lines_history.slice(second_from, second_to)
+      : [];
+  assert.equal(
+    second_screen.some(
+      (line) => line.type === 'button' && line.accelerator === 17,
+    ),
+    false,
+    '第二屏把她本人剃除：屏上没有候选行（这正是玩家卡死的场景）',
+  );
+  assert.ok(
+    second_to !== undefined && headers.length === 2,
+    `取消后回到第一屏重画（第二屏之后应再画一次第一屏；实际抛错 ${thrown ? thrown.message : '无'}）`,
+  );
+  assert.ok(
+    !printed_includes(fixture, '确定吗？'),
+    '取消直接回第一屏、不进确认屏（漏掉这条支路时 1999 会落到确认屏的白名单外）',
+  );
+  assert.equal(thrown, null, '整条路走完不抛错：没有卡死');
+  assert.equal(
+    fixture.store.get('portcflag:17:排序编号'),
+    undefined,
+    '取消不写排序编号',
+  );
+  assert.equal(
+    buttons_with(fixture, 3002).length,
+    1,
+    '第二屏有一枚 [3002] 取消按钮',
   );
 });
 

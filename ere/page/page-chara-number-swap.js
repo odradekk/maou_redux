@@ -40,6 +40,15 @@
  * **行序**上。
  *
  * 其余移植说明（有意偏离，均注明依据）：
+ *   - **第二屏多一个 [3002] 取消出口**（#545 第 2 轮验收实测到卡死）。原作第二屏
+ *     的 INPUT 能手输任意编号：不在 1..CHARANUM 内的编号**不改** CN:2（停在初值
+ *     0），流程照样走到确认屏，按 [4001] 否即回第一屏——也就是说「乱输也是出口」
+ *     是原作自带的兜底。ere 的输入只回传本轮已打印的按钮，那条路径不可达：只剩
+ *     一名候选时（她被 :67-69 剔出第二屏，页上再没有别的行），屏上只有 [3000]/
+ *     [3001]，而 [3001] 在候选不足一页时只会重绘同一屏——玩家出不去。这里把那条
+ *     兜底的净效果（回第一屏重选）做成一个始终可按的 [3002] 取消，落在 :84/:85
+ *     的按钮区（原作没有这个编号，属实现侧的补足；这不是原作缺陷而是 ere 输入
+ *     模型的差异，故不登记 #14）；
  *   - 序号世界的「位置窗口 + 行数不足补空行」（:12-15/:60-63）与「跳过魔王
  *     插入位」照 issue #21 通例改写为 ID 世界：候选＝已加入 ID（不含 0）过
  *     显示守卫后按排序编号切片（page-chara-info.js 四个列表同款）；下一页
@@ -76,6 +85,7 @@ const {
 } = require('#/chara/chara-portcflag');
 const { get_job_name } = require('#/page/page-select-target');
 const { chara } = require('#/facade/chara');
+const { pad_display } = require('#/utils/display-width');
 // :7 #DIM CONST NUM_PAGE = 25（换号页自己的分页宽度，与名册的 24 无关）
 const NUM_PAGE = 25;
 
@@ -128,11 +138,15 @@ function swap_candidates() {
 }
 
 // :21/:72 行体：编号按钮 + 姓名/职业/等级（职业取 @GET_JOB_NAME 的既有真身
-// page-select-target.js，等级 CFLAG:x:9）
+// page-select-target.js，等级 CFLAG:x:9 按原作 `LV:{CFLAG:COUNT:9,4,LEFT}`
+// 补上冒号、值左对齐占 4 格——`pad_display` 就是 `%,N,LEFT%` 的等价写法）
 function print_swap_row(cid) {
   const fragments = [
     {
-      content: ` ${name_of(cid)} ${get_job_name(cid)} LV${era.get(`cflag:${cid}:9`) || 0}`,
+      content: ` ${name_of(cid)} ${get_job_name(cid)} LV:${pad_display(
+        String(era.get(`cflag:${cid}:9`) || 0),
+        4,
+      )}`,
     },
   ];
   if (is_sp(cid)) fragments.push({ content: '[SP]', color: '#00ffff' });
@@ -164,7 +178,9 @@ function print_swap_row(cid) {
  * @returns {Promise<void>} 唯一出口 [1999]（:50-51 JUMP CHARA_INFO）
  */
 async function chara_number_swap() {
-  for (;;) {
+  // 原文 $换号页：第二屏的 [3002] 取消要回到这里（原作是 GOTO 换号页），
+  // 故外层循环带标号，跳法与 page-ability-up.js 的 restart/menu 同款
+  swap_page: for (;;) {
     const total = swap_candidates().length;
 
     // —— 第一屏（:8-36）——
@@ -210,6 +226,8 @@ async function chara_number_swap() {
       era.println(); // :83
       era.printButton('上一页', 3000); // :84
       era.printButton('下一页', 3001); // :85
+      // [3002] 取消：有意偏离（原作靠「乱输编号也走确认屏」兜底），见文件头
+      era.printButton('取消', 3002);
       const picked = await era.input(); // :86
 
       if (picked === 3000) {
@@ -221,6 +239,10 @@ async function chara_number_swap() {
         // :94-99 下一页
         if ((no_page + 1) * NUM_PAGE <= total) no_page += 1;
         continue;
+      }
+      if (picked === 3002) {
+        // 回第一屏重选 CN:1（原作那条兜底的净效果，见文件头）＝ GOTO 换号页
+        continue swap_page;
       }
       second = picked; // :100-103 CN:2 = RESULT
       break;
