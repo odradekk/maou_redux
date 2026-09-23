@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 126;
+export const COUNT = 131;
 
 export default [
   {
@@ -676,14 +676,14 @@ export default [
     tests: ['event-execution'],
     must_mention: '按性格处理器分发口上并归档选择的末路',
   },
-  // —— #543（S2）批量处刑与自动处刑（M11340–M11387）——
+  // —— #543（S2）批量处刑与自动处刑（M11340–M11392）——
   {
     desc: 'M11340 收藏剃除扫描：示众台角色不再跳过',
     file: 'ere/event/event-execution-batch.js',
     find: '          if (chara(cid).invasion.状态 === 8) continue;',
     replace: '          if (false) continue;',
     tests: ['event-execution-batch'],
-    must_mention: '批量处刑列表：过滤魔王与示众台',
+    must_mention: '复选标签：按钮切换 777 位，收藏目标被自动剃除并重启界面',
   },
   {
     desc: 'M11341 批量处刑列表：每页窗口上界多一位',
@@ -699,7 +699,7 @@ export default [
     find: '    (state === 0 || state === 7) &&',
     replace: '    state === 0 &&',
     tests: ['event-execution-batch'],
-    must_mention: '列表显示条件：状态、EX 素质与 EX_FLAG:9000 位 1 的八种组合',
+    must_mention: '列表显示条件：状态、EX 素质与 EX_FLAG:9000 位 1 的七种组合',
   },
   {
     desc: 'M11343 批量处刑列表：EX_FLAG:9000 位号取成位 2',
@@ -708,7 +708,7 @@ export default [
     replace:
       '      (get(`ex_talent:${cid}:2`) && (era_exflag.mod_switch_bits & 4) !== 0))',
     tests: ['event-execution-batch'],
-    must_mention: '列表显示条件：状态、EX 素质与 EX_FLAG:9000 位 1 的八种组合',
+    must_mention: '列表显示条件：状态、EX 素质与 EX_FLAG:9000 位 1 的七种组合',
   },
   {
     desc: 'M11344 批量处刑列表：[售] 门槛从 > 0 抬到 > 1',
@@ -792,9 +792,9 @@ export default [
     tests: ['event-execution-batch'],
     must_mention: '[121] 选择处刑方式仅在存在可处刑目标时出现',
   },
-  // M11354（下一页守卫放宽）不立条目：`(NO_PAGE+1)*NUM_PAGE <= CHARANUM`
-  // 与 `<` 只在页宽整数倍处不同，而那时下一页本就无行可显——不可区分，
-  // 硬留会变成假拦截。守卫本身由翻页用例的窗口断言守着。
+  // M11354 编号空缺：下一页守卫的 `<=` → `<` 起初被当作「不可区分」而没立
+  // 条目（页宽整数倍处才分得出）。补了 50 人（页宽整数倍）边界用例后，
+  // 这条由 M11391 直接打，编号不再占用。
 
   {
     desc: 'M11355 上一页守卫放宽（页首也能退）',
@@ -1069,5 +1069,51 @@ export default [
     replace: "      '博物馆藏品',",
     tests: ['event-execution-batch'],
     must_mention: '八个处刑方式按钮的编号（原作 CASE 0 TO 7）与文案逐条对齐',
+  },
+  // 以下五条由只读审查的整改补出：NO_PAGE 的静态变量语义（#543 首版按
+  // 「JUMP 重入即复位」实现，与技能指南「静态变量」节相反）、导航按钮文案、
+  // 下一页守卫的页宽整数倍边界、家族归档分支——原先都没有断言或条目。
+  {
+    desc: 'M11388 批量处刑：每次进入处刑都把页号复位（静态变量被当局部变量）',
+    file: 'ere/event/event-execution-batch.js',
+    find: 'async function batch_execution(rand_n = default_rand) {\n  // 处刑会话的调教窗口（文件头「tflag 通道」节）\n  era.beginTrain(0);',
+    replace:
+      'async function batch_execution(rand_n = default_rand) {\n  no_page = 0;\n  // 处刑会话的调教窗口（文件头「tflag 通道」节）\n  era.beginTrain(0);',
+    tests: ['event-execution-batch'],
+    must_mention: '再次进入处刑保留上次的页（静态变量，原作 :8）',
+  },
+  {
+    desc: 'M11389 批量处刑：重启（JUMP 批量处刑）时把页号复位',
+    file: 'ere/event/event-execution-batch.js',
+    find: '    restart: for (;;) {\n      screen: for (;;) {',
+    replace:
+      '    restart: for (;;) {\n      no_page = 0;\n      screen: for (;;) {',
+    tests: ['event-execution-batch'],
+    must_mention: '重启（取消流放）后仍在第 2 页',
+  },
+  {
+    desc: 'M11390 批量处刑：页导航按钮文案写错',
+    file: 'ere/event/event-execution-batch.js',
+    find: "        era.printButton('结束处刑', 1999); // 原文「結束处刑」",
+    replace: "        era.printButton('终止处刑', 1999); // 原文「結束处刑」",
+    tests: ['event-execution-batch'],
+    must_mention: '[1999] 的按钮文案（原作 :70-72）',
+  },
+  {
+    desc: 'M11391 批量处刑：下一页守卫放宽（<= 改 <，页宽整数倍处翻不动页）',
+    file: 'ere/event/event-execution-batch.js',
+    find: '          if ((no_page + 1) * NUM_PAGE <= charanum) no_page += 1;',
+    replace: '          if ((no_page + 1) * NUM_PAGE < charanum) no_page += 1;',
+    tests: ['event-execution-batch'],
+    must_mention:
+      '页宽整数倍（50 人）时 [2001] 翻到空页（原作 :82 的 <= 判据）',
+  },
+  {
+    desc: 'M11392 肉便器：漏写家族档（CSTR:(FAMILY:2):5）',
+    file: 'ere/event/event-execution-batch.js',
+    find: '  if (family_id >= 0) era.set(`cstr:${family_id}:5`, title); // :302',
+    replace: '  // 变异：漏写家族档',
+    tests: ['event-execution-batch'],
+    must_mention: '家族档归档（:300-301：CSTR:(FAMILY:2):5）',
   },
 ];

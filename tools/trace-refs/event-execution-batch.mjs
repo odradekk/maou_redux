@@ -309,6 +309,23 @@ export const FILES = [
       },
       {
         src: `${DIR}/處刑改寫.ERB`,
+        ref: '11-14',
+        any: [
+          /^\s*CUSTOMDRAWLINE =\s*$\n^\s*处刑中 = 0\s*$\n^\s*可处刑 = 0\s*$\n^\s*TFLAG:16 = -1\s*$/m,
+        ],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '12-14',
+        any: [/^\s*处刑中 = 0\s*$\n^\s*可处刑 = 0\s*$\n^\s*TFLAG:16 = -1\s*$/m],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
+        ref: '14',
+        any: [/^\s*TFLAG:16 = -1\s*$/m],
+      },
+      {
+        src: `${DIR}/處刑改寫.ERB`,
         ref: '15-73',
         any: [/^\s*\$处刑介面\s*$/m],
       },

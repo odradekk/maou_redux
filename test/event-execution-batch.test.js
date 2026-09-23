@@ -114,7 +114,7 @@ test('批量处刑列表：过滤魔王与示众台，按条件展示标签与�
   );
 });
 
-test('列表显示条件：状态、EX 素质与 EX_FLAG:9000 位 1 的八种组合', async () => {
+test('列表显示条件：状态、EX 素质与 EX_FLAG:9000 位 1 的七种组合', async () => {
   // 表驱动覆盖 listable（:33）与 print_roster 的跳过支：每行一个世界，
   // 只断言「31 号是否作为按钮列出」
   const cases = [
@@ -853,12 +853,120 @@ test('方法界面：[0]-[7] 八个处刑方式与 [100] 的按钮文案', async
   );
   const stop = buttons(fixture).find((b) => b.accelerator === 100);
   assert.equal(stop.text, '停止', '[100] 停止（原作 :108）');
+  for (const [acc, text] of [
+    [2000, '上一页'],
+    [1999, '结束处刑'],
+    [2001, '下一页'],
+  ]) {
+    assert.equal(
+      buttons(fixture).find((b) => b.accelerator === acc).text,
+      text,
+      `[${acc}] 的按钮文案（原作 :70-72）`,
+    );
+  }
   assert(
     history_texts(fixture).some((line) =>
       line.includes('开启水晶球的话，则可记录0～6项的处刑影像'),
     ),
     '方法界面说明行（:97）',
   );
+});
+
+test('下一页守卫：页宽整数倍（50 人）时把窗口推到空页', async () => {
+  // 原作 :82 的判据是 (NO_PAGE+1)*NUM_PAGE <= CHARANUM（含等号）：50 人的
+  // 世界在第 2 页再按 [2001] 会翻到没有行的第 3 页（`<` 会停在第 2 页）
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  for (let cid = 1; cid <= 49; cid += 1) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  fixture.set_inputs(2001, 2001, 1999);
+  const { batch_execution } = load_batch(fixture);
+
+  await batch_execution(seq([0]));
+
+  assert.equal(
+    buttons(fixture).filter((b) => b.accelerator === 26).length,
+    1,
+    '页宽整数倍（50 人）时 [2001] 翻到空页（原作 :82 的 <= 判据）',
+  );
+});
+
+test('方法 4 肉便器：有家族对手时把末路标题写进 CSTR:<家族>:5', async () => {
+  // TALENT:165（村娘 A）与 TALENT:171（村娘 B）不走压缩家族照，search_family
+  // 直接互找；31 号（温妮，165）与 47 号（艾达，171）构成一对
+  const pair = seed_world(31, 47);
+  pair.store.set('talent:31:165', 1);
+  pair.store.set('talent:47:171', 1);
+  pair.store.set('cflag:31:777', 1);
+  pair.set_inputs(121, 4, 1999);
+  await load_batch(pair).batch_execution(seq([0]));
+  assert.equal(
+    pair.store.get('cstr:47:5'),
+    '肉便器温妮',
+    '家族档归档（:300-301：CSTR:(FAMILY:2):5）',
+  );
+
+  // 反照：没有家族对手时 family_id = -1，家族槽不动
+  const lone = seed_world(31);
+  lone.store.set('cflag:31:777', 1);
+  lone.set_inputs(121, 4, 1999);
+  await load_batch(lone).batch_execution(seq([0]));
+  assert.equal(
+    lone.store.get('cstr:31:5') ?? '',
+    '',
+    '无家族对手时不写 CSTR（:300 的 SIF FAMILY:2 >= 0）',
+  );
+});
+
+test('翻页位置是函数静态变量：重启与再次进入处刑都保留当前页', async () => {
+  // 原作 #DIM NO_PAGE = 0（:8）是静态变量；JUMP 批量处刑 只重执行 :11-14，
+  // 其中只显式重置 处刑中/可处刑/TFLAG:16（技能指南「静态变量」：函数退出
+  // 之后值不会被重置，需要重置的要在函数开头显式初始化）
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
+  fixture.era.addCharacter(0);
+  for (let cid = 1; cid <= 30; cid += 1) {
+    fixture.seed_chara(cid, {
+      id: cid,
+      name: `角色${cid}`,
+      callname: `角色${cid}`,
+    });
+    fixture.era.addCharacter(cid);
+  }
+  const { batch_execution } = load_batch(fixture);
+
+  // 第 2 页（26-30）上标记 30 号 → [121] 走方法 0 → BANISHMENT 里取消
+  // （TFLAG:16 = -1）→ 整界面重启（原作 JUMP 批量处刑）
+  fixture.set_inputs(2001, 30, 121, 0, 100, 1999);
+  await batch_execution(seq([0, 0]));
+  // 名册行按「角色<ID> + 空格」认：方法界面的 [0]-[7] 也有 1 号快捷键
+  const rows = (id) =>
+    buttons(fixture).filter(
+      (b) => b.accelerator === id && b.text.startsWith(`角色${id} `),
+    );
+  assert.equal(
+    rows(30).length,
+    3,
+    '重启（取消流放）后仍在第 2 页：26-30 号画三次（翻页、标记后、重启后）',
+  );
+  assert.equal(rows(1).length, 1, '第 1 页只在开场画过一次');
+
+  // 再次进入处刑：首屏仍是第 2 页（静态变量跨调用保留，原作无重置点）
+  fixture.set_inputs(1999);
+  await batch_execution(seq([0]));
+  assert.equal(
+    rows(30).length,
+    4,
+    '再次进入处刑保留上次的页（静态变量，原作 :8）',
+  );
+  assert.equal(rows(1).length, 1, '再次进入不会退回第 1 页');
 });
 
 test('主菜单 [103]：usershop 接通批量处刑真身', async () => {

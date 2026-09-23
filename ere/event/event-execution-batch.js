@@ -21,8 +21,9 @@
  *     意图（page-select-target.js 沦陷标签的同款裁定）；由此引擎只回传
  *     已打印编号，原作「键入未显示编号也能切换标签」的隐藏通道不可达；
  *   - 列表显示条件（:33）读 EX_FLAG:9000 位 1，与 [101] 水晶球开关的
- *     位 2（:109-110/:143）不同位：位 1 在 MOD_SWITCH 里是打工开关，MOD
- *     判死后恒 0，EX_TALENT:2 的角色因此不可见——照原作读写不拆分（#14）；
+ *     位 2（:109-110/:143）不同位：位 1 在 MOD_SWITCH 里是打工开关，
+ *     MOD 判死不移植后恒 0（#540 范围决定 2），EX_TALENT:2 的角色因此
+ *     不可见——照原作读写、不拆分（该位在原作无 MOD 时同样恒 0）；
  *   - 删除角色后原作「COUNT = 1; TARGET = 0」的重扫依赖 DELCHARA 的序号
  *     重排（每删一人，当轮末位角色被跳过一次）；ere 是稳定角色 ID（#21
  *     扁平化），重扫等价为「从头再扫一遍剩余角色」——序号重排的跳位是
@@ -30,10 +31,15 @@
  *     的同款裁定）。求饶/受限播报在重扫中重复出现，与原作一致；
  *   - 士兵化与固定示众不清处刑标签（原作如此），下轮扫描以「已经士兵化
  *     了」播报跳过——1:1；
- *   - MUSEUM.ERB:46-48 的取消分支条件被注释而取消体仍生效：现行原作里
- *     「博物馆展品」在选完展品后必然取消返回，处理体不可达。ere 的
- *     museum（#347）按条件仍在的显见意图实现（正常处理），本文件直接
- *     复用——原作缺陷登记 #14，不在本票改 museum；
+ *   - MUSEUM.ERB:46-48 的取消分支条件（`;ELSEIF RESULT == 100`）被注释：
+ *     47-48 两行仍属上面那条 `ELSEIF RESULT >= 10 && RESULT != 100` 的分支
+ *     体，而该体第一条就是 `GOTO INPUT_LOOP`，故取消体不可达；0-9 与隐藏的
+ *     100 按「假条件落到 ENDIF 之后」执行，处理体（MUSEUM.ERB:51-1108）可达
+ *     ——ere 的 museum（#347）按处理体实现，与之一致，本文件直接复用（原
+ *     登记 #14 的那条结论说反了，已在 #14 下订正）；
+ *   - NO_PAGE（:8）是函数静态变量：`JUMP 批量处刑` 只重执行 :11-14，只显式
+ *     重置 处刑中/可处刑/TFLAG:16，故翻页位置跨重启与跨调用都保留（见
+ *     NUM_PAGE 下方的模块级 no_page）；
  *   - 处刑会话要 TFLAG:16/510/530/500（口上改写通道）。EraElectron 的
  *     tflag 桶只在 beginTrain/endTrain 之间存在，调教外二段寻址落
  *     「key error in getter/setter」（app.asar 寻址层；test/
@@ -74,6 +80,15 @@ const { chara_callname } = require('#/utils/callname-utils');
 
 // #DIM CONST NUM_PAGE = 25（:10）
 const NUM_PAGE = 25;
+
+/**
+ * #DIM NO_PAGE = 0（:8）：Emuera 的函数静态变量，跨 `JUMP 批量处刑` 与跨
+ * 调用都保留——技能指南 user-defined-variables.md「静态变量」：函数退出之后
+ * 值不会被重置，需要重置的变量要在函数开头显式初始化；原作 JUMP 段（:12-14）
+ * 只显式重置 处刑中/可处刑/TFLAG:16，NO_PAGE 不在其中。故翻页位置在重启
+ * （收藏剃除、0-3 号取消）与再次进入处刑时都保留（1:1，不是遗漏）。
+ */
+let no_page = 0;
 
 /** 方法界面循环的出口信号（对应原作两个 GOTO 目标）。 */
 const DONE = Symbol('done'); // 回列表（GOTO 处刑介面）
@@ -443,7 +458,8 @@ async function execute_one(cid, method, rand_n) {
   // 0-3 号下游的取消信号：TFLAG:16 被置 -1 后 JUMP 回批量处刑（BANISHMENT
   // 等各自的取消支）。只在这一段认它——口上把处分改写成 0-7 之外的值时，
   // 原作走 ELSE → LABEL_EXIT → 待处刑 再入同一目标（死循环，全库无口上
-  // 写此类值），移植照搬不额外设防。
+  // 写此类值），移植照搬不额外设防。:14 的 `TFLAG:16 = -1` 初值无读者
+  // （每次分发前 execute_one 都会写它），未镜像。
   if (result >= 0 && result <= 3 && game.event.犬射精或处刑口上 === -1) {
     return { restart: true, method: -1 };
   }
@@ -457,14 +473,14 @@ async function execute_one(cid, method, rand_n) {
  */
 async function method_screen(rand_n) {
   for (;;) {
-    era.drawLine();
+    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
     era.print([
       { content: '注意：以下0～4项的处刑' },
       { content: '会让人物永远从列表中消失', color: '#ffff33' },
       { content: '（但可获得勋章或经验）' },
     ]);
     era.print('      开启水晶球的话，则可记录0～6项的处刑影像');
-    era.drawLine();
+    era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
     [
       '流放出地下城',
       '公开处刑',
@@ -520,7 +536,6 @@ async function batch_execution(rand_n = default_rand) {
   era.beginTrain(0);
   try {
     restart: for (;;) {
-      let no_page = 0; // NO_PAGE = 0（:8；JUMP 批量处刑 重入即复位）
       screen: for (;;) {
         // $处刑介面（:15-73）
         const added = era.getAddedCharacters();
@@ -536,12 +551,12 @@ async function batch_execution(rand_n = default_rand) {
           );
         }
         era.println(); // PRINTL（:19-21）
-        era.drawLine();
+        era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
         era.print('请选出处刑对象(可复选)');
         era.print('标签：[售]可卖出  [☆]收藏中  [兵]已士兵化  [SP]特殊角色');
-        era.drawLine();
+        era.drawLine({ isSolid: true }); // CUSTOMDRAWLINE =（:11）：会话级线型
         print_roster(added, no_page);
-        era.drawLine(); // :52-54
+        era.drawLine({ isSolid: true }); // :52-54
 
         // 收藏目标带标签 → 播报 + 剃除 + JUMP 批量处刑（:54-65）
         let executable = false; // 可处刑
@@ -596,7 +611,10 @@ async function batch_execution(rand_n = default_rand) {
 /**
  * @自動處刑（:419-433）：回合结算尾部对新人标签（CFLAG:506）的勇者执行
  * 简易处刑。调教过（顺从 ABL:10 ≥ 2）或收藏中的目标免死；原作处刑后
- * 「COUNT = 1; TARGET = 0」重扫，稳定 ID 语义见文件头。
+ * 「COUNT = 1; TARGET = 0」重扫，稳定 ID 语义见文件头。重扫从 0 号位重来
+ * （原作 TARGET = 0 后 += 1 → 从 1 号位续扫），只有魔王本人同时满足新人 ×
+ * 顺从 < 2 × 无收藏时才分得出——CFLAG:506 的写入点都在侵攻中/戒指陷落支
+ * （turnend-settle.js:363-380），魔王不走那些支。
  * @returns {Promise<number>} 0
  */
 async function auto_execution() {
