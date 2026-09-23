@@ -34,18 +34,15 @@
  * 数据作为整体互换编号」。先前一版注释由该手法反推「SWAPCHARA 不覆盖
  * NAME」，方向错了（SAVESTR 与 NAME 在本作共用存储是 ere 侧的巧合，原作里
  * 是两套）；结论不变：swap_chara() 范围表不含 callname，姓名两槽由调用方
- * 显式处理（transferapp 的呼び名互换、swap_chara_numbers 的两槽互换）。
+ * 显式处理（transferapp 的呼び名互换）。
  *
- * swap_chara_numbers()（#545 起）：换号（角色編號交換.ERB @換號）用的
- * 「SWAPCHARA + 姓名换回」完整等价物——swap_chara() 之外再换 callname
- * :-1/-2 两槽与 c_relation/c_relation_sub/relation 的**行**（列不动：
- * C_RELATION:他:编号 这类「指向编号」的值原作也不改写，换号后指向的就是
- * 换过来的那个人）。三张表都不在 swap_chara() 范围表内，故此函数补齐而不
- * 扩大 swap_chara() 的范围（后者的既有调用点 CASE 17 行为不变）。ex/nowex
- * 不换：调教域表（beginTrain 建、endTrain 删，寻址层在表不存在时静默丢弃
- * 写入），名册页的换号在调教之外跑、两张表此时不存在，与原作 SWAPCHARA
- * 换它们的差别不可观察。NO: 不换：ere 无独立存储，角色 ID 即原作 NO
- * （#21 通例，chara-make.js:35 等处同款）。
+ * **换号（角色編號交換.ERB @換號）不走 SWAPCHARA**（#545 返工）：原作用它
+ * 换「编号」，而 ere 的角色 ID 即身份，搬数据会把身份与人拆开（读点如
+ * kojo-k1-confident.js 的 `(no:assi || assi) === 17` 会落到另一个人身上）。
+ * ere 侧的换号只交换移植自建的排序编号——见 ere/page/page-chara-number-swap.js
+ * 文件头与该字段的实现 ere/chara/chara-portcflag.js。先前那版在此实现的
+ * swap_chara_numbers() 随之删除。
+ *
  * 二次互换会互相抵消（原作行为，非移植缺陷，1:1 保留）：TRANSFER_SOUL 先
  * `SWAPCHARA MASTER, ARG` 整表互换 cflag/talent/base/maxbase/abl/ex_talent 等，
  * 随后 CALL TRANSFERAPP 又对同一批字段（CFLAG:9/11-14 等级攻防、婚姻用的
@@ -127,27 +124,6 @@ function swap_chara(a, b) {
   }
   for (const table of STRING_CHARA_TABLES) {
     for (let i = 0; i < 100; i += 1) swap_var(table, a, b, i, '');
-  }
-}
-
-/**
- * 换号用的完整互换（角色編號交換.ERB @換號 :112-116 的等价物，见文件头）：
- * swap_chara() 之外再换姓名两槽与关系表的行。
- * @param {number} a 角色 ID（CN:1）
- * @param {number} b 角色 ID（CN:2）
- */
-function swap_chara_numbers(a, b) {
-  swap_chara(a, b);
-  // 姓名（SAVESTR/NAME）与呼び名（CALLNAME）随数据走：swap_chara 不含
-  // callname，显式换两槽即原作「引擎换 NAME/CALLNAME + 手工换回 SAVESTR」
-  swap_var('callname', a, b, -1, '');
-  swap_var('callname', a, b, -2, '');
-  // c_relation/c_relation_sub 的行互换（列不动，见文件头）；relation（内置
-  // 相性表）同为角色行变量一并按行换。列集合＝当前已加入 ID（含魔王 0）
-  for (const table of ['c_relation', 'c_relation_sub', 'relation']) {
-    for (const col of era.getAddedCharacters()) {
-      swap_var(table, a, b, col);
-    }
   }
 }
 
@@ -390,7 +366,6 @@ function soul_dislocation(cid, rand = default_rand) {
 module.exports = {
   swap_var,
   swap_chara,
-  swap_chara_numbers,
   personalock,
   transferapp,
   bodycheck_maou,

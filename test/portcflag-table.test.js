@@ -110,15 +110,23 @@ function load_chara17_preset(extended_tables) {
 }
 
 engine_test(
-  '名字表：PortCFlag.yml 经引擎装载，数据版本 → id 0，k/t 元数据齐全',
+  '名字表：PortCFlag.yml 经引擎装载，数据版本 → id 0、排序编号 → id 1，k/t 元数据齐全',
   () => {
     const loader = load_portcflag_table();
-    assert.deepEqual(loader.static_data.portcflag, { 数据版本: 0 });
+    assert.deepEqual(loader.static_data.portcflag, {
+      数据版本: 0,
+      排序编号: 1,
+    });
     assert.deepEqual(loader.field_names.portcflag[0], {
       n: '数据版本',
       k: 'data_version',
       t: 'number',
     });
+    assert.deepEqual(
+      loader.field_names.portcflag[1],
+      { n: '排序编号', k: 'sort_number', t: 'number' },
+      '#545 起的第二个字段：名册「编号」视图的排列键',
+    );
     assert.deepEqual(loader.warnings, [], '人工表不应触发序号去重告警');
   },
 );
@@ -139,7 +147,10 @@ engine_test(
       extended_tables: registration,
     });
     assert.equal(adder.add(17), true);
-    assert.deepEqual(adder.data.portcflag[17], { 0: 0 });
+    // 两个字段都落桶：预设行给的 0（数据版本），以及 initCharaTable 按名字表
+    // 补 0 的 1（排序编号，见 PortCFlag.yml）——后者缺省 0 的语义是「未设＝
+    // 回落角色 ID」，读取侧因此一律 `|| 角色 ID`
+    assert.deepEqual(adder.data.portcflag[17], { 0: 0, 1: 0 });
   },
 );
 
@@ -264,8 +275,9 @@ engine_test(
       api.addCharacter(17);
       assert.deepEqual(api.get('portcflag:17:数据版本'), 0);
 
-      // 游戏代码同款写入（具名寻址）
+      // 游戏代码同款写入（具名寻址）：两个字段各写一个非缺省值
       assert.equal(api.set('portcflag:17:数据版本', 7), 7);
+      assert.equal(api.set('portcflag:17:排序编号', 3), 3);
 
       // 存档：真 saveData（JSON.stringify(this.data) 整体序列化）
       assert.equal(await api.saveData(1, '扩展表往返'), true);
@@ -274,7 +286,7 @@ engine_test(
       );
       assert.deepEqual(
         saved.portcflag[17],
-        { 0: 7 },
+        { 0: 7, 1: 3 },
         '存档载荷里必须有扩展表（saveData 序列化整个 data）',
       );
 
@@ -283,6 +295,12 @@ engine_test(
       assert.equal(await api.loadData(1), true);
       assert.equal(api.get('portcflag:17:数据版本'), 7);
       assert.equal(api.get('portcflag:17:0'), 7);
+      assert.equal(
+        api.get('portcflag:17:排序编号'),
+        3,
+        '排序编号（#545 的第二个字段）同样随档往返',
+      );
+      assert.equal(api.get('portcflag:17:1'), 3);
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }

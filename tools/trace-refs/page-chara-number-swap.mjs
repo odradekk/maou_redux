@@ -130,6 +130,12 @@ export const FILES = [
         ref: '112-116',
         any: [/^\t\t\tSWAPCHARA \(CN:1\), \(CN:2\)\s*$/m],
       },
+      // #545 返工：换号页文件头指出「原作靠 :114 的 SWAPCHARA 换编号」
+      {
+        src: SWAP,
+        ref: '114',
+        any: [/^\t\t\tSWAPCHARA \(CN:1\), \(CN:2\)\s*$/m],
+      },
       { src: SWAP, ref: '117', any: [/^\t\t\tPRINTFORMW 已完成互换\s*$/m] },
       { src: SWAP, ref: '118', any: [/^\t\t\tTARGET = -1\s*$/m] },
       { src: SWAP, ref: '119', any: [/^\t\t\tASSI = -1\s*$/m] },

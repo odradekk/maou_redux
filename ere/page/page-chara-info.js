@@ -22,6 +22,11 @@
  *     天然无缺口），不再用 `LIST_HEADER/LIST_FOOTER` 之类的序号算术，
  *     也不需要原作「跳过魔王插入位、行数不足补空行」那套只服务序号世界
  *     的补丁；
+ *   - 「编号」视图的顺序按移植自建的排序编号（#545 返工：number_view_order，
+ *     PORTCFLAG:角色:排序编号，默认＝角色 ID）。原作的编号就是序号/数组
+ *     下标，「换号」靠 SWAPCHARA 搬角色数据来换编号；ere 里 ID 即身份，换号
+ *     只交换排序编号这一个值，行内编号格显示的仍是角色 ID（＝可点击可手输的
+ *     快捷键），细节与该取舍的依据见 page-chara-number-swap.js 文件头；
  *   - REDRAW 0/1、CLEARLINE 局部重绘不镜像（page-dungeon-info2.js/
  *     page-select-target.js 同款先例）：本文件的 CHARA_INFO 与
  *     CHARA_INFO_INDIVIDUAL 都是「每轮整屏重绘」的 `for(;;)` 循环；
@@ -62,8 +67,8 @@
  *   - `CALL 換號` 的 `@換號` 定义在 `target/ERB/魔改新增/角色編號交換.ERB`
  *     （130 行换号界面）。先前一版票据记录曾把它当 MOD 内容只登记占位；
  *     #540 开图后按「魔改新增/ 其余部分照常移植」随 #545 落地真身——
- *     @換號 见 ere/page/page-chara-number-swap.js（含编号互换在 ere 角色存储
- *     里的落点核对），@统一卖春积极性 见 ere/page/page-uniform-bitch-level.js。
+ *     @換號 见 ere/page/page-chara-number-swap.js（含「换号只换排列键」的
+ *     做法与依据），@统一卖春积极性 见 ere/page/page-uniform-bitch-level.js。
  */
 
 const era = require('#/era-electron');
@@ -73,6 +78,7 @@ const {
   chara_info_name_edit,
   show_button_name_edit,
 } = require('#/chara/chara-name-edit');
+const { sort_by_number } = require('#/chara/chara-portcflag');
 const { LOVER_NAMES } = require('#/dungeon/dungeon-lovers');
 const { is_trainable, is_assistable } = require('#/page/page-select-target');
 const { uniform_bitch_level } = require('#/page/page-uniform-bitch-level');
@@ -382,6 +388,19 @@ function added_chara_ids() {
   return era.getAddedCharacters().filter((id) => id !== 0);
 }
 
+/**
+ * 名册「编号」视图的排列顺序：按移植自建的排序编号升序（PORTCFLAG:角色:
+ * 排序编号，未设＝角色 ID）。名册页 [1700] 的换号只交换这个值，所以「换号」
+ * 能看到的净效果就是本视图的行序变化——#545 返工改掉了先前「搬角色数据」
+ * 的做法（那个做法把角色 ID 与人对调，与 issue #21「ID 即身份」的约定冲突）。
+ * 行内编号格显示的仍是角色 ID（引擎按 showAcc 拼的按钮快捷键），两者不同的
+ * 理由见 page-chara-number-swap.js 文件头。
+ * @returns {number[]} 角色 ID 表
+ */
+function number_view_order() {
+  return sort_by_number(added_chara_ids());
+}
+
 function page_slice(ids, no_page) {
   return ids.slice(no_page * NUM_PAGE, (no_page + 1) * NUM_PAGE);
 }
@@ -391,10 +410,11 @@ function page_slice(ids, no_page) {
 /**
  * @param {number} no_page 页码（0 起）
  * @returns {number[]} 本视图的角色 ID 顺序（原作 CHARA_SORT 的 ere 等价，
- *   供 CHARA_INFO_INDIVIDUAL_WAPPED 的前一人/后一人导航复用）
+ *   供 CHARA_INFO_INDIVIDUAL_WAPPED 的前一人/后一人导航复用）；本视图是
+ *   「编号」视图，顺序按排序编号（#545 返工，见 number_view_order）
  */
 function show_chara_info_list(no_page) {
-  const order = added_chara_ids();
+  const order = number_view_order();
   print_master_header();
   for (const cid of page_slice(order, no_page)) {
     print_chara_row(cid, atk_def_fragment(cid), common_suffix_fragments(cid));
@@ -624,7 +644,7 @@ async function chara_info() {
       // 恒 0 常量，逻辑与运算里恒假），无需代码
       const sub_result =
         sort_select === 1200
-          ? await chara_info_individual(result, added_chara_ids())
+          ? await chara_info_individual(result, number_view_order())
           : await chara_info_individual(result, order);
       if (sub_result === 1) {
         return 1;
@@ -637,12 +657,14 @@ async function chara_info() {
 
 /**
  * @CHARA_INFO_INDIVIDUAL_WAPPED（:820-832）：SORT_SELECT==1200 视图下打开
- * 个别信息页的入口——建 1..N 的顺位表（ere 侧用已加入 ID 表，见文件头）。
+ * 个别信息页的入口——原作现建的是 `LOCAL:COUNT = COUNT + 1`（1..CHARANUM）
+ * 的序号顺位表，即「编号」视图那套顺序；ere 侧换成同一套排列键
+ * （number_view_order，按移植自建的排序编号）。
  * @param {number} cid 角色 ID
  * @returns {Promise<number>}
  */
 async function chara_info_individual_wrapped(cid) {
-  return chara_info_individual(cid, added_chara_ids());
+  return chara_info_individual(cid, number_view_order());
 }
 
 // —— @CHARA_INFO_INDIVIDUAL（:833-1100） ——

@@ -7,8 +7,9 @@
  *
  * 调用方：ere/page/page-chara-info.js 的 CHARA_INFO 分发（result === 1600，
  * 源 :62-63 `CALL 统一卖春积极性`）。函数尾 `JUMP CHARA_INFO`（:76）＝重进
- * 名册（NO_PAGE/SORT_SELECT/SORT_ACT 回初值），由调用方在返回后显式复位
- * 实现，本函数只做设置与播报。
+ * 名册；名册侧的 NO_PAGE/SORT_SELECT/SORT_ACT 都是**静态变量**（指南
+ * user-defined-variables.md:67-69），调用处 `continue` 重绘即该语义——
+ * 本函数不碰名册的任何状态，既不写也不复位。
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - 等级输入的 `IF RESULT < 6`（:21/:42/:63）在 ere 输入白名单下不可达

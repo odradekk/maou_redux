@@ -24,6 +24,17 @@ function printed_includes(fixture, substr) {
   return fixture.lines_history.some((line) => line.text?.includes(substr));
 }
 
+/** 文本行出现的位置（lines_history 下标），用于断言「谁先印出来」 */
+function text_positions(fixture, substr) {
+  const found = [];
+  fixture.lines_history.forEach((line, idx) => {
+    if (line.type === 'text' && (line.text ?? '').includes(substr)) {
+      found.push(idx);
+    }
+  });
+  return found;
+}
+
 function buttons_with(fixture, accelerator) {
   return fixture.lines_history.filter(
     (line) => line.type === 'button' && line.accelerator === accelerator,
@@ -842,18 +853,29 @@ test('CHARA_INFO_INDIVIDUAL：case 9 收藏切换仅对非魔王角色生效', a
 // 通过 era.input() 的白名单驱动到——留给接入该跳转的调用方在自己的测试里
 // 覆盖端到端路径。
 
-test('CHARA_INFO_INDIVIDUAL_WAPPED：以全部已加入角色 ID 为顺位表打开个别页', async () => {
+test('CHARA_INFO_INDIVIDUAL_WAPPED：顺位表是全部已加入角色（按排序编号），前一人/后一人照它走（#545 返工）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
-  add_chara(fixture, 1, '甲');
+  for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
+  // 原作这里现建的是 1..CHARANUM 的序号顺位表＝「编号」视图那套顺序；ere 侧
+  // 换成同一套排列键（PORTCFLAG:排序编号）：3 号持最小、1 号持最大 → [3,2,1]
+  fixture.store.set('portcflag:3:排序编号', 1);
+  fixture.store.set('portcflag:1:排序编号', 3);
   const { chara_info_individual_wrapped } = fixture.load_module(
     'page/page-chara-info',
   );
 
-  fixture.set_inputs(100);
-  const result = await chara_info_individual_wrapped(1);
+  // 从 2 号进（顺位表 [3,2,1] 的中间一位）：后一人应到 1 号——按 ID 序
+  // （[1,2,3]）走会到 3 号，两侧答案不同
+  fixture.set_inputs(600, 100);
+  const result = await chara_info_individual_wrapped(2);
 
   assert.equal(result, 0);
+  const nos = fixture.lines_history
+    .filter((line) => line.type === 'text')
+    .map((line) => (line.text.match(/NO\.(\d+)/) ?? [])[1])
+    .filter(Boolean);
+  assert.deepEqual(nos, ['2', '1'], '后一人按排序编号顺位走到 1 号');
 });
 
 // —— 未落地调用一律走存根，登记与实现同步 ——
@@ -1412,6 +1434,11 @@ test('统一卖春积极性：等级 [0]-[5] 六枚按钮、范围按钮实显�
       );
     }
     assert.equal(fixture2.store.get('cflag:1:120'), 5, '写入等级 5');
+    assert.equal(
+      printed_includes(fixture2, '要将积极性设置为多少？'),
+      true,
+      '等级屏提示语逐字（原作 :12/:33/:54 三处同文）',
+    );
   }
 });
 
@@ -1505,27 +1532,24 @@ test('换号：显示守卫表驱动（状态 0/7、近卫排除、后代+铁石
   );
 });
 
-test('换号：互换后名字/呼び名/数值行/关系行随数据走，列不动，TARGET/ASSI 复位', async () => {
+test('换号：只交换排序编号——角色 ID 与角色数据一件不搬，名册排列顺序跟着变（#545 返工）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   fixture.seed_chara(1, { id: 1, name: '甲', callname: '甲一' });
   fixture.seed_chara(2, { id: 2, name: '乙', callname: '乙一' });
   assert.equal(fixture.era.addCharacter(1), true);
   assert.equal(fixture.era.addCharacter(2), true);
-  // CFLAG:x:9 等级；:601 婚姻压缩数据；TALENT:200 战士（职业列）
+  // CFLAG:x:9 等级；:601 婚姻压缩数据；TALENT:200 战士（职业列）；
+  // c_relation 的行与列。旧做法（swap_chara_numbers）会把这些整片搬到对方
+  // 名下——本轮返工后一件都不动，下面逐条钉住「人跟 ID 走」
   fixture.store.set('cflag:1:9', 5);
   fixture.store.set('cflag:2:9', 7);
   fixture.store.set('cflag:1:601', 900);
   fixture.store.set('talent:1:200', 1);
-  // 关系表：行（横轴＝自己）应随数据换，列（别人指向自己）不动
   fixture.store.set('c_relation:1:0', 11);
   fixture.store.set('c_relation:2:0', 22);
   fixture.store.set('c_relation:0:1', 101);
   fixture.store.set('c_relation:0:2', 202);
-  fixture.store.set('c_relation_sub:1:1', 31);
-  fixture.store.set('c_relation_sub:2:1', 32);
-  fixture.store.set('relation:1:0', 51);
-  fixture.store.set('relation:2:0', 52);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 1;
   era_flag.assi = 1;
@@ -1536,34 +1560,39 @@ test('换号：互换后名字/呼び名/数值行/关系行随数据走，列�
   fixture.set_inputs(1, 2, 4000, 1999);
   await chara_number_swap();
 
-  // 名字（SAVESTR/NAME）与呼び名（CALLNAME）随数据走
-  assert.equal(fixture.store.get('callname:1:-1'), '乙', '名字换到 1 号位');
-  assert.equal(fixture.store.get('callname:2:-1'), '甲');
-  assert.equal(fixture.store.get('callname:1:-2'), '乙一', '呼び名换到 1 号位');
-  assert.equal(fixture.store.get('callname:2:-2'), '甲一');
-  // 数值行互换（等级/婚姻/职业素质）
-  assert.equal(fixture.store.get('cflag:1:9'), 7, '等级随数据走');
-  assert.equal(fixture.store.get('cflag:2:9'), 5);
-  assert.equal(fixture.store.get('cflag:2:601'), 900, '婚姻压缩数据随数据走');
-  assert.equal(fixture.store.get('talent:2:200'), 1, '职业素质随数据走');
-  // 关系表：列（别人指向自己）不动——原作 SWAPCHARA 也不改写这类指向值；
-  // 先断列再断行，两条契约的破法（行不换 / 换成了列）各落各的断言
+  // —— 身份不动：名字与呼び名仍归 ID 1/2 ——
+  assert.equal(fixture.store.get('callname:1:-1'), '甲', 'ID 1 还是甲');
+  assert.equal(fixture.store.get('callname:2:-1'), '乙', 'ID 2 还是乙');
+  assert.equal(fixture.store.get('callname:1:-2'), '甲一');
+  assert.equal(fixture.store.get('callname:2:-2'), '乙一');
+  // —— 数据不动：数值行、素质、关系表的行与列都留在原处 ——
   assert.equal(
-    fixture.store.get('c_relation:0:1'),
-    101,
-    'c_relation 列不动（原作 SWAPCHARA 也不改写指向）',
+    fixture.store.get('cflag:1:9'),
+    5,
+    '换号不搬角色数据：等级仍属 ID 1',
   );
+  assert.equal(fixture.store.get('cflag:2:9'), 7);
+  assert.equal(fixture.store.get('cflag:1:601'), 900);
+  assert.equal(
+    fixture.store.get('talent:2:200'),
+    undefined,
+    '职业素质没有跟到 2 号名下',
+  );
+  assert.equal(fixture.store.get('c_relation:1:0'), 11);
+  assert.equal(fixture.store.get('c_relation:2:0'), 22);
+  assert.equal(fixture.store.get('c_relation:0:1'), 101);
   assert.equal(fixture.store.get('c_relation:0:2'), 202);
-  assert.equal(fixture.store.get('c_relation:1:0'), 22, 'c_relation 行互换');
-  assert.equal(fixture.store.get('c_relation:2:0'), 11);
+  // —— 唯一变化：PORTCFLAG:角色:排序编号（移植自建扩展表，ADR-0001）——
   assert.equal(
-    fixture.store.get('c_relation_sub:1:1'),
-    32,
-    'c_relation_sub 行互换',
+    fixture.store.get('portcflag:1:排序编号'),
+    2,
+    '1 号拿到原属 2 号的排序编号',
   );
-  assert.equal(fixture.store.get('c_relation_sub:2:1'), 31);
-  assert.equal(fixture.store.get('relation:1:0'), 52, '内置相性行互换');
-  assert.equal(fixture.store.get('relation:2:0'), 51);
+  assert.equal(
+    fixture.store.get('portcflag:2:排序编号'),
+    1,
+    '2 号拿到原属 1 号的排序编号（对调）',
+  );
   // TARGET/ASSI 复位（原作 -1，非 ere 惯例的 0）
   assert.equal(era_flag.target, -1, 'TARGET = -1');
   assert.equal(era_flag.assi, -1, 'ASSI = -1');
@@ -1599,10 +1628,27 @@ test('换号：互换后名字/呼び名/数值行/关系行随数据走，列�
     true,
     '第二屏列出 CN:2 候选',
   );
+  // 交换后 RESTART 重画的第一屏按新的排列顺序：拿到排序编号 1 的乙排在前
+  const done_at = fixture.lines_history.findIndex(
+    (line) => line.text === '已完成互换',
+  );
+  const row_of_after = fixture.lines_history
+    .slice(done_at)
+    .filter(
+      (line) =>
+        line.type === 'button' &&
+        (line.accelerator === 1 || line.accelerator === 2),
+    )
+    .map((line) => line.accelerator);
+  assert.deepEqual(
+    row_of_after,
+    [2, 1],
+    '互换后第一屏按排序编号排：乙（排序编号 1）在前',
+  );
   assert.equal(
     printed_includes(fixture, ' 甲 战士 LV5'),
     true,
-    '互换后重画：甲的名字带着战士职业与 LV5 落在 2 号位',
+    '行内容仍按身份取：甲带着自己的职业与等级',
   );
 });
 
@@ -1629,7 +1675,11 @@ test('换号：[4001] 否回到第一屏重选，可选对方再确认', async (
     true,
     '否之后重选，第二次确认的名字对调',
   );
-  assert.equal(fixture.store.get('callname:1:-1'), '乙', '第二次确认才互换');
+  assert.equal(
+    fixture.store.get('portcflag:1:排序编号'),
+    2,
+    '第二次确认才交换排序编号',
+  );
   assert.equal(
     fixture.lines_history.filter((line) => line.text === '已完成互换').length,
     1,
@@ -1739,21 +1789,23 @@ test('换号：每页 25 行（NUM_PAGE）、页首按上一页不动、末页�
   }
 });
 
-test('换号：互换后 RESTART 停在当前页；[1999] 出口后名册页码也保持（静态局部变量语义）', async () => {
+test('换号：互换后 RESTART 停在当前页；[1999] 出口后名册页码也保持（静态变量语义）', async () => {
   {
-    // 26 名候选：先翻到第 2 页再完成互换，重画应仍在第 2 页
+    // 27 名候选（第 1 页 1-25、第 2 页 26-27）：在第 2 页内部选两个角色换号
+    // （互换只对调排列键，两人都还在第 2 页），重画应仍在第 2 页
     const fixture = create_era_fixture();
     add_chara(fixture, 0, '你');
-    for (let cid = 1; cid <= 26; cid += 1)
+    for (let cid = 1; cid <= 27; cid += 1)
       add_chara(fixture, cid, `角色${cid}`);
     const { chara_number_swap } = fixture.load_module(
       'page/page-chara-number-swap',
     );
 
-    // 第一屏选 1（第 1 页），第二屏 [3001] 翻到第 2 页选 26 再确认：
-    // 互换发生在第 2 页，RESTART 重画仍在第 2 页（NO_PAGE 是静态局部变量，
-    // 指南 user-defined-variables.md:67-69/:82：函数退出与 RESTART 都不重置）
-    fixture.set_inputs(1, 3001, 26, 4000, 1999);
+    // 第一屏 [2001] 翻到第 2 页选 26；第二屏（同页、剃除 26）选 27；[4000] 确认；
+    // 互换发生在第 2 页，RESTART 重画仍在第 2 页（NO_PAGE 是静态变量，
+    // 指南 user-defined-variables.md:67-69/:82：函数退出与 RESTART 都不重置；
+    // 换号页的实现相应把页码提在模块级，见该文件头）
+    fixture.set_inputs(2001, 26, 27, 4000, 1999);
     await chara_number_swap();
 
     const swap_at = fixture.lines_history.findIndex(
@@ -1765,6 +1817,11 @@ test('换号：互换后 RESTART 停在当前页；[1999] 出口后名册页码�
       after.some((line) => line.type === 'button' && line.accelerator === 26),
       true,
       '互换后重画仍在第 2 页（第 26 人还在，页码不归零）',
+    );
+    assert.equal(
+      after.some((line) => line.type === 'button' && line.accelerator === 27),
+      true,
+      '第 27 人也在（互换只对调两人的排列键）',
     );
     assert.equal(
       after.some((line) => line.type === 'button' && line.accelerator === 2),
@@ -1842,4 +1899,223 @@ test('名册重进：[1400] 切视图后走 [1600]，排序视图也保持（静
     false,
     '没有落回编号视图',
   );
+});
+
+// —— #545 返工：排序编号（名册「编号」视图的排列键） ——
+
+test('排序编号：sort_by_number 按排序编号升序、并列按 ID，与输入顺序无关——#545 返工', () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
+  // 键：3→1；1→2；2→缺省回落 ID＝2。1 与 2 并列在 2，按 ID 决胜。
+  // 入参故意打乱（[2,3,1]）：这里若没有并列决胜、靠稳定排序吃输入顺序，
+  // 会得到 [3,2,1]
+  fixture.store.set('portcflag:3:排序编号', 1);
+  fixture.store.set('portcflag:1:排序编号', 2);
+  const { sort_by_number } = fixture.load_module('chara/chara-portcflag');
+
+  assert.deepEqual(sort_by_number([2, 3, 1]), [3, 1, 2]);
+  assert.deepEqual(sort_by_number([1, 2, 3]), [3, 1, 2], '两种入参同结果');
+  const ids = [2, 3, 1];
+  sort_by_number(ids);
+  assert.deepEqual(ids, [2, 3, 1], '不改入参（返回新数组）');
+});
+
+test('名册「编号」视图按 PORTCFLAG:排序编号 升序（缺省＝角色 ID，并列按 ID）——#545 返工', () => {
+  {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    for (const cid of [1, 2, 3, 4]) add_chara(fixture, cid, `角色${cid}`);
+    // 排序编号是移植自建的排列键（ADR-0001 的 portcflag 扩展表）：缺省 0 =
+    // 未设，回落角色 ID。这里让 4 号持最小、1 号持最大——退回 ID 序（[1,2,3,4]）
+    // 或「未设不回落 ID」（2、3 都读成 0）都会得到另一个顺序
+    fixture.store.set('portcflag:4:排序编号', 1);
+    fixture.store.set('portcflag:1:排序编号', 4);
+    const { show_chara_info_list } = fixture.load_module(
+      'page/page-chara-info',
+    );
+
+    const order = show_chara_info_list(0);
+
+    assert.deepEqual(
+      order,
+      [4, 2, 3, 1],
+      '顺位表按排序编号升序（未设的回落角色 ID）',
+    );
+    assert.deepEqual(
+      fixture.lines_history
+        .filter((line) => line.type === 'button' && line.row > 0)
+        .map((line) => line.accelerator),
+      [4, 2, 3, 1],
+      '屏幕上的行序＝顺位表（编号格里的快捷键仍是角色 ID）',
+    );
+  }
+  {
+    // 并列（两个角色持同一排序编号）时按 ID 升序决胜
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
+    fixture.store.set('portcflag:2:排序编号', 1);
+    fixture.store.set('portcflag:3:排序编号', 1);
+    fixture.store.set('portcflag:1:排序编号', 3);
+    const { show_chara_info_list } = fixture.load_module(
+      'page/page-chara-info',
+    );
+
+    assert.deepEqual(show_chara_info_list(0), [2, 3, 1], '并列按 ID 升序决胜');
+  }
+});
+
+test('换号页：候选列表按排序编号升序，编号格显示的仍是角色 ID——#545 返工', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  for (const cid of [1, 2, 3]) add_chara(fixture, cid, `角色${cid}`);
+  fixture.store.set('portcflag:3:排序编号', 1); // 3 号排最前
+  fixture.store.set('portcflag:1:排序编号', 5);
+  fixture.store.set('portcflag:2:排序编号', 9); // 2 号排最后
+  const { chara_number_swap } = fixture.load_module(
+    'page/page-chara-number-swap',
+  );
+
+  fixture.set_inputs(1999);
+  await chara_number_swap();
+
+  const rows = fixture.lines_history.filter(
+    (line) => line.type === 'button' && [1, 2, 3].includes(line.accelerator),
+  );
+  assert.deepEqual(
+    rows.map((line) => line.accelerator),
+    [3, 1, 2],
+    '行序按排序编号',
+  );
+  assert.deepEqual(
+    rows.map((line) => line.rendered),
+    ['[3] ', '[1] ', '[2] '],
+    '编号格＝引擎按 showAcc 拼的快捷键（角色 ID）：看到的号与敲的号是同一个',
+  );
+});
+
+test('换号页：页码跨次进入沿用（原作 NO_PAGE 是静态变量）——#545 返工', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  for (let cid = 1; cid <= 26; cid += 1) add_chara(fixture, cid, `角色${cid}`);
+  const { chara_number_swap } = fixture.load_module(
+    'page/page-chara-number-swap',
+  );
+
+  fixture.set_inputs(2001, 1999); // 翻到第 2 页后退出
+  await chara_number_swap();
+  fixture.set_inputs(1999); // 再次进入
+  await chara_number_swap();
+
+  const entries = text_positions(fixture, '交换角色的排序编号');
+  // 第一次进入画了两屏（进入时 + [2001] 翻页重画），第二次进入一屏
+  assert.equal(entries.length, 3, '三次绘制，最后一次是第二次进入的第一屏');
+  const second_entry = fixture.lines_history.slice(entries[2]);
+  assert.ok(
+    second_entry.some(
+      (line) => line.type === 'button' && line.accelerator === 26,
+    ),
+    '再次进入仍在第 2 页：页码不随函数退出归零（静态变量语义）',
+  );
+  assert.equal(
+    second_entry.some(
+      (line) => line.type === 'button' && line.accelerator === 1,
+    ),
+    false,
+    '没有落回第 1 页',
+  );
+});
+
+test('换号：排序编号随存档往返（PORTCFLAG 随档走）——#545 返工', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 2, '乙');
+  const { chara_number_swap } = fixture.load_module(
+    'page/page-chara-number-swap',
+  );
+
+  fixture.set_inputs(1, 2, 4000, 1999);
+  await chara_number_swap();
+  assert.equal(fixture.store.get('portcflag:1:排序编号'), 2);
+
+  assert.equal(await fixture.era.saveData(7, '换号往返'), true);
+  // 抹掉现值（等价于另开一局后的空白状态）再读回：快照里没有这一条即红
+  fixture.store.delete('portcflag:1:排序编号');
+  fixture.store.delete('portcflag:2:排序编号');
+  assert.equal(await fixture.era.loadData(7), true);
+  assert.equal(
+    fixture.store.get('portcflag:1:排序编号'),
+    2,
+    '排序编号 2 读回 1 号角色',
+  );
+  assert.equal(fixture.store.get('portcflag:2:排序编号'), 1);
+
+  const { show_chara_info_list } = fixture.load_module('page/page-chara-info');
+  assert.deepEqual(show_chara_info_list(0), [2, 1], '名册顺序随档回来');
+});
+
+// —— #545 返工：子流程返回后名册才继续（漏 await 时两处共用一个输入） ——
+
+test('名册分发：[1600] 子流程返回后名册才继续——漏 await 时名册抢在播报前重绘（#545 返工）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:1', 2); // 侵攻中 → [2000]/[2002] 档命中
+  const { chara_info } = fixture.load_module('page/page-chara-info');
+
+  // 2002（所有侵攻与迎击者）→ 等级 5 → 名册重进 → 999 退出。多留两个输入：
+  // 漏 await 时名册会抢走子流程的那一份，两条流程各消费各的序列不同——队列
+  // 空掉会先炸「预置输入已耗尽」，把真正要看的顺序盖掉
+  fixture.set_inputs(1600, 2002, 5, 999, 5, 999);
+  let thrown = null;
+  let result = null;
+  try {
+    result = await chara_info();
+  } catch (error) {
+    // 漏 await 时名册会抢走子流程的输入（等级 5 不在名册的白名单里，夹具
+    // 当场抛错）。这里只记下，断言放在后面：顺序契约的失败信息比抛错更能说明问题
+    thrown = error;
+  }
+
+  const headers = text_positions(fixture, '请选择一个角色以了解详细信息');
+  const done = text_positions(fixture, '已将当前迷宫');
+  assert.ok(
+    done.length === 1 && done[0] < headers[1],
+    `统一卖春积极性返回后名册才继续：完成播报必须先于名册的下一次重绘（漏 await 时两处抢同一个输入；实际抛错 ${thrown ? thrown.message : '无'}、播报 ${JSON.stringify(done)}、名册表头 ${JSON.stringify(headers)}）`,
+  );
+  assert.equal(thrown, null, '名册与设置流程各消费各的输入，互不打断');
+  assert.equal(result, 0);
+  assert.equal(fixture.store.get('cflag:1:120'), 5, '等级 5 写进 CFLAG:120');
+});
+
+test('名册分发：[1700] 子流程返回后名册才继续——漏 await 时两者抢同一个输入（#545 返工）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  add_chara(fixture, 2, '乙');
+  const { chara_info } = fixture.load_module('page/page-chara-info');
+
+  // 换号三步：选 1 → 选 2 → [4000] 是 → [1999] 退出换号 → 名册 999 退出
+  fixture.set_inputs(1700, 1, 2, 4000, 1999, 999);
+  let thrown = null;
+  let result = null;
+  try {
+    result = await chara_info();
+  } catch (error) {
+    // 漏 await 时名册会抢走换号页的输入（4000 不在名册的白名单里，夹具当场
+    // 抛错）。这里只记下，断言放在后面：顺序契约的失败信息比抛错更能说明问题
+    thrown = error;
+  }
+
+  const headers = text_positions(fixture, '请选择一个角色以了解详细信息');
+  const done = text_positions(fixture, '已完成互换');
+  assert.ok(
+    done.length === 1 && done[0] < headers[1],
+    `换号返回后名册才继续：完成播报必须先于名册的下一次重绘（漏 await 时两处抢同一个输入；实际抛错 ${thrown ? thrown.message : '无'}、播报 ${JSON.stringify(done)}、名册表头 ${JSON.stringify(headers)}）`,
+  );
+  assert.equal(thrown, null, '名册与换号流程各消费各的输入，互不打断');
+  assert.equal(result, 0);
+  assert.equal(fixture.store.get('portcflag:1:排序编号'), 2, '排序编号已交换');
 });
