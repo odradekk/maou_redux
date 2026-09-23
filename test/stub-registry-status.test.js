@@ -335,3 +335,38 @@ test('探针：清单里写一个非标准状态词，--coverage 必须红并报
     fs.rmSync(root, { recursive: true, force: true });
   }
 });
+
+// —— #542：本票判死的八行棘轮 ——
+
+test('真树清单：#542 判死的八行状态格以判死词开头（退回存根/待认领即红）', () => {
+  const lines = fs.readFileSync(REGISTRY, 'utf8').split(/\r?\n/);
+  /** 取某行按未转义 | 拆出的第 n 格（负数从末尾数；正文里的 \| 是字面竖线） */
+  const cell_of = (row, n) =>
+    row
+      .split(/(?<!\\)\|/)
+      .slice(1, -1)
+      .at(n)
+      .trim();
+
+  // [行首定位子串（全表唯一）, 状态格必须以该判死词开头]
+  const ruled = [
+    ['| `MODLIST`/`CONFIG_MODLIST`', '不移植'],
+    ['| `PTJ_BUTTON`', '不移植'],
+    ['| `更换立绘`', '不移植'],
+    ['| `大书库.mp3` 播放/停止点', '不移植'],
+    ['| SETBGMVOLUME（逐曲音量）', '不移植'],
+    ['| MOD_SWITCH 音声设置界面', '不移植'],
+    ['| 背景音乐音量声明默认值 66', '落空'],
+    ['| 999 ', '不移植'],
+  ];
+  for (const [key, prefix] of ruled) {
+    const hits = lines.filter((line) => line.startsWith(key));
+    assert.equal(hits.length, 1, `定位子串必须唯一命中一行：${key}`);
+    const status = cell_of(hits[0], -1);
+    assert.ok(
+      DEAD_MARKERS.some((m) => status.startsWith(m)) &&
+        status.startsWith(prefix),
+      `#542：${key} 的状态格必须以「${prefix}」开头的判死终态，实际：${status.slice(0, 40)}`,
+    );
+  }
+});

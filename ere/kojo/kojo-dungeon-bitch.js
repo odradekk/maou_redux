@@ -1653,16 +1653,28 @@ function fi_culc_bitch(arg, args, args1 = '', rand = default_rand) {
  */
 function show_button_bich_level(num, arg) {
   era.print(`[${num}] 卖春积极性 - `); // :1157
-  const level = era.get(`cflag:${arg}:120`) || 0;
-  if (level === 0) {
-    era.print('没有'); // :1160
-  } else if (level === 1) {
-    era.print('普通'); // :1162
-  } else {
-    era.print(`${level}等级`); // :1164
-  }
+  era.print(bich_level_text(arg)); // :1160-1164 三档
   era.print('  '); // :1167
   return 0; // :1169
+}
+
+/**
+ * 卖春积极性按钮的档位文案（SHOW_BUTTON_BICH_LEVEL 的 :1160-1164 段）。
+ * #542 起另一处在 ere/page/page-chara-info.js——PTJ_BUTTON 的默认态分支
+ * （打工 MOD 判不移植，PTJ.ERB:5 的 ELSE 就是本按钮）按本页通例升级成
+ * printButton，按钮正文共用这份档位文案。
+ * @param {number} arg 角色 ID
+ * @returns {string}
+ */
+function bich_level_text(arg) {
+  const level = era.get(`cflag:${arg}:120`) || 0;
+  if (level === 0) {
+    return '没有'; // :1160
+  }
+  if (level === 1) {
+    return '普通'; // :1162
+  }
+  return `${level}等级`; // :1164
 }
 
 /**
@@ -1710,5 +1722,6 @@ module.exports = {
   fi_try_bitch,
   fi_culc_bitch,
   show_button_bich_level,
+  bich_level_text,
   set_bich_level,
 };

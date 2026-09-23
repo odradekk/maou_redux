@@ -229,8 +229,10 @@ async function maounet() {
       `通信勇者登场时为等级1(现在:${era_flag.communication_hero_level_one & 1 ? 'ON' : 'OFF'})`,
       4,
     );
-    // MAOUNET_MODPRINT 的魔界银行属于 MOD/，不在本票七文件范围；该按钮
-    // 不注册，输入层因此不会把 5 送进本函数。
+    // MAOUNET_MODPRINT 的魔界银行（MOD_SWITCH ver1.0.11.ERB:181-186，守卫
+    // GETBIT(EX_FLAG:9000,0)）随 MOD/ 整目录判不移植（#542，#540 范围
+    // 决定 2）：开关默认关、原作默认态不打印该行，本函数也就不注册 [5]——
+    // 输入层不会把 5 送进本函数。
     era.printButton('返回', 9);
     const result = await era.input();
     if (result === 9) return 0;

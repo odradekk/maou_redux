@@ -60,10 +60,16 @@
  *   - 四个列表的行内彩色片段（爱慕/淫乱/组队/归还/侵攻迎击徽章）用
  *     `{content,color}` 片段数组承载（page-dungeon-info2.js 同款 fragments
  *     写法），颜色为 `SETCOLOR r,g,b` 的十六进制等价；
- *   - 立绘更换按钮 `[20]`（原作守卫含未落地的「立绘」资源开关）不渲染：
- *     该开关随资源票（#69）落地前，条件恒不具备渲染意义，登记为已知空缺；
- *   - `[IF_DEBUG][99] 修改角色[ENDIF]` 调试按钮不渲染：本项目未移植
- *     Emuera 的编译期调试开关概念，直接按「非调试构建」处理；
+ *   - 立绘更换按钮 `[20]`（:870-871）：立绘系统判不移植（#542，#540 范围
+ *     决定 4——开关默认关、素材不在仓库、只增强显示）。原作守卫「立绘开关
+ *     && CFLAG:ARG:1 == 0 && ARG != MASTER」的开关项恒假，照抄则按钮永不可
+ *     见；有意偏离：去掉开关条件保留后两条，按钮可见、按下打不移植提示；
+ *     `:883 CALL PTJ_BUTTON` 同票落判——打工 MOD 不移植，默认态分支
+ *     （[18] 卖春积极性按钮，SHOW_BUTTON_BICH_LEVEL）换真身接线；
+ *   - `[IF_DEBUG][99] 修改角色[ENDIF]` 调试按钮不渲染（分发端 :934 的
+ *     CASE 99 → `CHAR_DEBUG`，docs/stub-registry.md 判「不移植（调试功能）」，
+ *     行号随 #542 订正）：本项目未移植 Emuera 的编译期调试开关概念，直接按
+ *     「非调试构建」处理；
  *   - `CASE 500`（前一人）/`CASE 600`（后一人）原作各含一支
  *     `... && MASTER` 的判据，`MASTER` 是恒为 0 的角色号常量、逻辑与运算
  *     里恒假，两支分支实际不可达——1:1 精简为可达分支，不逐字保留死分支；
@@ -92,7 +98,10 @@ const { ability_up_core } = require('#/page/page-ability-up');
 const { tailor_core } = require('#/page/page-tailor');
 const { enemy_compare } = require('#/page/page-dungeon-info2');
 const { get_look_info } = require('#/chara/look-info');
-const { set_bich_level } = require('#/kojo/kojo-dungeon-bitch');
+const {
+  set_bich_level,
+  bich_level_text,
+} = require('#/kojo/kojo-dungeon-bitch');
 const {
   is_able_to_ability_up,
   is_able_to_cloth,
@@ -117,7 +126,11 @@ const {
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { show_chara_info } = require('#/page/page-chara-info-show');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
+const {
+  stub_line,
+  stub_line_wait,
+  not_ported_line_wait,
+} = require('#/utils/stub-line');
 
 const NUM_PAGE = 24;
 
@@ -127,17 +140,18 @@ const NUM_PAGE = 24;
  * show_button_child_care / child_care_chara）；#393 起转职 / 魔的诱惑 /
  * 结婚三对按钮与流程换真身（ere/chara/chara-job-change.js、
  * chara-temptation.js、chara-marriage.js），九条从名单移除；#390 起
- * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除；
- * #545 起统一卖春积极性 / 换号两支换真身（page-uniform-bitch-level.js、
+ * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除。
+ * 两票各删一批，合并后四条一并不在：#542 起 PTJ_BUTTON（打工 MOD）与更换
+ * 立绘（立绘系统）判不移植——入口提示行不是存根占位，移出名单（PTJ_BUTTON
+ * 的默认态分支＝[18] 卖春积极性按钮，另一支真身见 kojo-dungeon-bitch）；#545
+ * 起统一卖春积极性 / 换号两支换真身（page-uniform-bitch-level.js、
  * page-chara-number-swap.js），最后两条也移出。
  */
 const STUBBED_CALLS = [
   'SHOW_BUTTON_EQUIP',
-  'PTJ_BUTTON',
   'EQUIP_ST_SHOW',
   'CHAR_DEBUG',
   'RANDOM_SELF_CALL',
-  '更换立绘',
 ];
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
@@ -715,12 +729,21 @@ async function chara_info_individual(arg, chara_sort) {
           9,
         );
       }
-      // [20] 更换立绘：守卫含未落地的资源开关，不渲染（文件头）
+      // [20] 更换立绘（:870-871）：原作守卫是「立绘开关 && CFLAG:ARG:1 == 0
+      // && ARG != MASTER」。立绘系统判不移植（#542）后开关恒关，照抄守卫
+      // 按钮永不可见——有意偏离：去掉恒关的开关条件、保留后两条，玩家能
+      // 按到 [20] 并看到不移植提示（#540 范围决定 4）
+      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);
     } else if (sub_page === 1 || sub_page === 2) {
       if (is_trainable(current) === 0) era.printButton('设为目标', 6);
       if (is_assistable(current) === 0) era.printButton('设为助手', 7);
       await stub_line('SHOW_BUTTON_EQUIP', '「装备确认」按钮', '随装备票');
-      await stub_line('PTJ_BUTTON', '兼职按钮', '随兼职票');
+      // :883 CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
+      // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE =
+      // SHOW_BUTTON_BICH_LEVEL(18,ARG) 的 [18] 卖春积极性按钮（档位文案
+      // kojo-dungeon-bitch.js；按本页通例升级 printButton，引擎只送达已打印
+      // 按钮的编号），打工变体（SHOW_PTJ_BUTTON_LEVEL）不渲染
+      era.printButton('卖春积极性 - ' + bich_level_text(current), 18);
       if (is_able_to_cloth(current)) era.printButton('更换服装', 11);
       if (state === 8) era.printButton('解除固定', 12);
       if (state === 3) era.printButton('强行召回', 13);
@@ -888,7 +911,11 @@ async function chara_info_individual(arg, chara_sort) {
         await set_bich_level(current);
         continue;
       case 20:
-        await stub_line_wait('更换立绘', '更换立绘', '随资源票');
+        await not_ported_line_wait(
+          '更换立绘',
+          '更换立绘',
+          '#542 判不移植：立绘系统默认关闭、素材不在仓库',
+        );
         continue;
       case 99:
         await stub_line_wait('CHAR_DEBUG', '角色调试面板', '调试功能，不移植');

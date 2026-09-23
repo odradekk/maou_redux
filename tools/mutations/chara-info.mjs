@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 83; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）
+export const COUNT = 87; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）。合并态 45 + 38 + 4 = 87，与 --verify 实核一致
 
 export default [
   {
@@ -766,5 +766,47 @@ export default [
       "    content: (era.get(`cflag:${cid}:701`) || 0) !== 0 ? '[\\u2606]' : '',",
     tests: ['page-chara-info'],
     must_mention: '收藏标记读 cflag:cid:700',
+  },
+  // —— #542：[20] 更换立绘与 [18] 卖春积极性按钮（PTJ_BUTTON 默认态）——
+  {
+    desc: 'M11315 更换立绘按钮守卫漏「非魔王」臂（ARG != MASTER——魔王行也画出 [20]，#542）',
+    file: 'ere/page/page-chara-info.js',
+    find: "      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);",
+    replace:
+      "      if (state === 0) era.printButton('更换立绘', 20); // 变异：漏掉 ARG != MASTER",
+    tests: ['page-chara-info'],
+    must_mention: '魔王（ARG == MASTER）：不渲染',
+  },
+  {
+    desc: 'M11316 更换立绘按钮守卫漏「状态 0」臂（CFLAG:ARG:1 == 0——侵攻中等占用角色也画 [20]，#542）',
+    file: 'ere/page/page-chara-info.js',
+    find: "      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);",
+    replace:
+      "      if (current !== 0) era.printButton('更换立绘', 20); // 变异：漏掉 CFLAG:1 == 0",
+    tests: ['page-chara-info'],
+    must_mention: '奴隶 + 状态 2（侵攻中）：不渲染',
+  },
+  {
+    desc: 'M11317 CASE 20 的不移植提示退回存根占位（「随资源票」话术——判死终态被读成待办，#542）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      case 20:
+        await not_ported_line_wait(
+          '更换立绘',
+          '更换立绘',
+          '#542 判不移植：立绘系统默认关闭、素材不在仓库',
+        );`,
+    replace: `      case 20:
+        await stub_line_wait('更换立绘', '更换立绘', '随资源票'); // 变异：退回占位话术`,
+    tests: ['page-chara-info'],
+    must_mention: '不移植提示要说清为何',
+  },
+  {
+    desc: 'M11318 卖春积极性按钮快捷键错位（18 改 81——原作编号 [18] 的分发落在白名单外，#542）',
+    file: 'ere/page/page-chara-info.js',
+    find: "      era.printButton('卖春积极性 - ' + bich_level_text(current), 18);",
+    replace:
+      "      era.printButton('卖春积极性 - ' + bich_level_text(current), 81); // 变异：快捷键错位",
+    tests: ['page-chara-info'],
+    must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
 ];
