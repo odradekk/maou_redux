@@ -2834,6 +2834,27 @@ test('auto_ablup：ARG 换目标后还原 TARGET；卖淫影响 0 时跳过 37',
   );
 });
 
+test('auto_ablup：卖淫影响缺省读 modsave:0（#547 存储，无参调用跟随设置页）', async () => {
+  const OTHER = CID + 1;
+  const fixture = create_era_fixture();
+  const { auto_ablup } = seed(fixture);
+  join_slave_chara(fixture, OTHER);
+  fixture.load_module('era-utils/era-flag').target = OTHER;
+  fixture.store.set(`abl:${OTHER}:11`, 1); // 37 的欲望门槛
+  // 珠给足：10（顺从）/11（欲望）先消耗，37 要 2000/3000/1000
+  fixture.store.set(`juel:${OTHER}:4`, 100000);
+  fixture.store.set(`juel:${OTHER}:5`, 100000);
+  fixture.store.set(`juel:${OTHER}:6`, 100000);
+  fixture.store.set(`exp:${OTHER}:74`, 100000);
+  fixture.store.set('modsave:0', 1); // 设置页 [29] 切到正面档
+
+  await auto_ablup(OTHER); // 无参调用：缺省值读 store
+  assert.ok(
+    (fixture.store.get(`abl:${OTHER}:37`) || 0) >= 1,
+    'modsave:0 = 1（正面）→ 37 参与自动提升',
+  );
+});
+
 test('auto_ablup：FLAG:5 位 36 打开时 COUNT > 15 直接 BREAK', async () => {
   const OTHER = CID + 1;
   const fixture = create_era_fixture();

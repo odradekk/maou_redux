@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 238; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+export const COUNT = 239; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
 // page-monster-shop 35 / page-chara-shop 22 / page-shop 3（另有 1 条 #395 的
@@ -14,6 +14,7 @@ export const COUNT = 238; // #396 起 +18（M8086-M8103，system/stronghold/tax.
 // 透传面：每条「把 rand 往下传」的调用点各拿掉一次实参。
 // M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
 // 「回放播种」变异仍未收录）
+//；#547 起 +1（M11582，sale.js 的卖淫影响缺省读 modsave:0——由 test/sale.test.js 守护）
 
 export default [
   {
@@ -1995,5 +1996,13 @@ export default [
     replace: 'return buy_follower({ show: show_shop_chara });',
     tests: ['chara-shop'],
     must_mention: '两个同形出口',
+  },
+  {
+    desc: 'M11582 ESTIMATE_CHARA 的卖淫影响缺省退回常量 0（不读设置页档位，#547）',
+    file: 'ere/system/stronghold/sale.js',
+    find: `  { prostitution_effect = era_modsave.prostitution_effect } = {},`,
+    replace: `  { prostitution_effect = 0 } = {}, // 变异：缺省退回常量`,
+    tests: ['sale'],
+    must_mention: '缺省值读 store（modsave:0 = 1）',
   },
 ];

@@ -50,6 +50,19 @@ const era_global = {
     era.set('global:2', v);
   },
   /**
+   * 冒险者性别（global:3 ↔ GLOBAL:3）
+   * @returns {number}
+   */
+  get adventurer_gender() {
+    return era.get('global:3') || 0;
+  },
+  /**
+   * @param {number} v
+   */
+  set adventurer_gender(v) {
+    era.set('global:3', v);
+  },
+  /**
    * 联系方式开关（global:98 ↔ GLOBAL:98）
    * @returns {number}
    */
@@ -113,6 +126,14 @@ const era_global = {
 //   communication_roster GLOBAL:100 通信勇者记录：原作 GLOBALS:0..99 的字符串
 //       记录在 ere 中合并为 JSON 数组；元素仍保留 MAOUNET.ERB @INPORT_B 的
 //       下划线与斜线分隔格式。源: target/ERB/其他/MAOUNET.ERB。
+//   adventurer_gender   GLOBAL:3 冒险者性别（原文用字「冒險者性別」，键名按
+//       #60 简体化）：新游戏里出现冒险者的性别限制，GLOBAL SAVEDATA
+//       （魔改新增/魔改使用.ERH:2）跨存档共享。@EVENTFIRST 每次开局无条件
+//       重置为 -1（SYSTEM ver1.0.3.ERB:53，ere/event/event-first.js）；
+//       -1=女多男少、0=只有女性、1=只有男性、2=男多女少、3=男女持平、
+//       4=全是扶她（档位文案 CONFIG.ERB:118-134；掷骰 CHARA_MAKE.ERB:259
+//       @CM_GENDER）。设置页 [27] 六档循环（CONFIG.ERB:253-264，
+//       ere/page/page-config.js，#547 落地存储）。
 //
 // 持久化：global 表即公共存档 global.sav 的主体，引擎在每次脚本启动前自动
 // loadGlobal、在特定存档保存/读取等时机自动 saveGlobal。标题页改完开关后应像
@@ -156,6 +177,18 @@ era_global.toggle_contact_info = () => {
 era_global.toggle_greeting = () => {
   era_global.greeting_collapsed = (era_global.greeting_collapsed + 1) % 2;
   return era_global.greeting_collapsed;
+};
+/**
+ * 切换冒险者性别档位（镜像原作设置页 [27] 的 -1→0→1→2→3→4→-1 循环，
+ * SYSTEM/CONFIG.ERB:253-264）。
+ * @returns {number} 切换后的档位
+ */
+era_global.cycle_adventurer_gender = () => {
+  const v = era_global.adventurer_gender;
+  const next =
+    v === -1 ? 0 : v === 0 ? 1 : v === 1 ? 2 : v === 2 ? 3 : v === 3 ? 4 : -1;
+  era_global.adventurer_gender = next;
+  return next;
 };
 
 era_global.seed_title_music_defaults = seed_title_music_defaults;

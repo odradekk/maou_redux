@@ -236,6 +236,29 @@ test('ESTIMATE_CHARA：卖淫影响 2 首次用零，随后沿用 E:74 的旧倍
   assert.equal(result.talent_multipliers[180], 100);
 });
 
+test('ESTIMATE_CHARA：卖淫影响缺省读 modsave:0（#547 存储，无参调用跟随设置页）', () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  fixture.store.set('abl:31:10', 1); // 顺从 +200；欲望 LV0 固有 +10
+  fixture.store.set('abl:31:37', 5); // 负面档 -10000、正面档 +5000
+  fixture.store.set('exp:31:74', 500);
+  const { estimate_chara } = fixture.load_module('system/stronghold/sale');
+
+  // 未设置 = 0（负面）：与显式传 0 同价（abl:37=5 在 0 档扣减、1 档加成）
+  const with_mode = (effect) =>
+    estimate_chara(31, { prostitution_effect: effect });
+  assert.equal(estimate_chara(31).price, with_mode(0).price);
+  assert.notEqual(with_mode(0).price, with_mode(1).price, '两档价格必须可区分');
+
+  // 设置页 [29] 切到 1（正面）：无参调用跟随
+  fixture.store.set('modsave:0', 1);
+  assert.equal(
+    estimate_chara(31).price,
+    with_mode(1).price,
+    '缺省值读 store（modsave:0 = 1）',
+  );
+});
+
 test('ESTIMATE_CHARA：妓女正面倍率与生育经验各档独立生效', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);

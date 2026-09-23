@@ -3,7 +3,8 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 938; // #548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+export const COUNT = 939; // #548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
+//；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）
 
 export default [
   {
@@ -10081,5 +10082,13 @@ export default [
     replace: '    // 变异：漏调 SYOKUSYU_MILK',
     tests: ['com-toy'],
     must_mention: '母乳',
+  },
+  {
+    desc: 'M11583 AUTO_ABLUP 的卖淫影响缺省退回常量 0（不读设置页档位，#547）',
+    file: 'ere/system/train/ablup.js',
+    find: `  { prostitution_effect = era_modsave.prostitution_effect } = {},`,
+    replace: `  { prostitution_effect = 0 } = {}, // 变异：缺省退回常量`,
+    tests: ['ablup'],
+    must_mention: 'modsave:0 = 1（正面）→ 37 参与自动提升',
   },
 ];

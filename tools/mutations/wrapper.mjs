@@ -3,9 +3,10 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 16; // #542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
+export const COUNT = 19; // #542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
 // 话术退回、丢等键、丢 @函数名，均由 test/page-config.test.js 的 dispatch_config(26/28)
 // 用例守护）
+//；#547 起 +3（M11575-M11577，era-modsave/era-global 的两个开关循环与首臂——由 test/era-modsave.test.js 与 test/era-global.test.js 守护）
 
 export default [
   {
@@ -173,5 +174,31 @@ export default [
     replace: '——原作 ${erb_name}，',
     tests: ['page-config'],
     must_mention: '提示行必须带原作函数名 @MODLIST',
+  },
+  {
+    desc: 'M11575 era_modsave 的卖淫影响循环错向（0 → 2，#547）',
+    file: 'ere/era-utils/era-modsave.js',
+    find: `  era_modsave.prostitution_effect = v === 0 ? 1 : v === 1 ? 2 : 0;`,
+    replace: `  era_modsave.prostitution_effect = v === 0 ? 2 : v === 1 ? 2 : 0; // 变异：错向`,
+    tests: ['era-modsave'],
+    must_mention: '0→1→2→0 三档循环',
+  },
+  {
+    desc: 'M11576 era_modsave 的反作弊翻转恒写 1（关不掉检查，#547）',
+    file: 'ere/era-utils/era-modsave.js',
+    find: `  era_modsave.anti_cheat = era_modsave.anti_cheat ? 0 : 1;`,
+    replace: `  era_modsave.anti_cheat = 1; // 变异：恒 1`,
+    tests: ['era-modsave'],
+    must_mention: '0↔1 翻转',
+  },
+  {
+    desc: 'M11577 era_global 的冒险者性别循环首臂断掉（-1 按了不动，#547）',
+    file: 'ere/era-utils/era-global.js',
+    find: `  const next =
+    v === -1 ? 0 : v === 0 ? 1 : v === 1 ? 2 : v === 2 ? 3 : v === 3 ? 4 : -1;`,
+    replace: `  const next =
+    v === -1 ? -1 : v === 0 ? 1 : v === 1 ? 2 : v === 2 ? 3 : v === 3 ? 4 : -1;`,
+    tests: ['era-global'],
+    must_mention: '-1→0→1→2→3→4→-1 六档循环',
   },
 ];

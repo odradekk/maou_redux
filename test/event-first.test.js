@@ -28,8 +28,7 @@ const { preset_gamebase } = require('./helpers/gamebase');
 const { preset_chara_0, preset_chara_17 } = require('./helpers/chara');
 
 // 原作 @EVENTFIRST 直线赋值的完整期望（SYSTEM ver1.0.3.ERB:11-62，按语句
-// 顺序；:42/:53/:56 的不可落地项不在内，见 docs/stub-registry.md）。
-// :11-12 FLAG:26/27 随 #138 落地为数组承载（超安全整数的种族年龄表，
+// 顺序；:42 的不可落地项不在内，见 docs/stub-registry.md）。
 // 逐槽等价性由 test/extalent-table.test.js 用 BigInt 拆原值钉住）。
 // DAY:1/MONEY 走包装层（flag:10001/10004），TARGET 走指针槽（flag:10005）。
 // initial_slave = FLAG:501（#50：first-setting.js 问答的写入，:19 位置）；
@@ -82,6 +81,9 @@ function expected_init_writes(initial_slave) {
     { name: 'flag:35', value: 0 }, // :45 濒死自动结束调教：关
     { name: 'flag:37', value: 1 }, // :47 着衣系统：开
     { name: 'flag:8', value: 7 }, // :50-52 新档翻位 0b111
+    { name: 'global:3', value: -1 }, // :53 冒險者性別 = -1（#547 落 global:3，
+    // GLOBAL SAVEDATA：每次开局无条件重置，设置页 [27] 的用户选择维持到
+    // 下一次新游戏）
     { name: 'flag:10004', value: 10000 }, // :55 MONEY = 10000
     { name: 'exflag:4444', value: 1234 }, // :56 EX_FLAG:4444 = 1234（#401 起播种：
     // @DEBUG_CHECK 按 MONEY == EX_FLAG:4444 + 8766 判「钱被改过」，这份不变量

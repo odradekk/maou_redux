@@ -10,8 +10,9 @@
  *
  * ESTIMATE_CHARA 的 A/B/E/T/O 临时数组改成带语义的返回对象，供后续
  * SALE_CHARA 原样渲染明细；每个百分比仍按原作顺序立即做整数除法，不能
- * 合并倍率。原作自定义 SAVEDATA「卖淫影响」来自阶段 6 的魔改目录，当前
- * 没有运行时槽位，因此由调用方显式传入，缺省值保持 Emuera 初值 0。
+ * 合并倍率。原作自定义 SAVEDATA「卖淫影响」自 #547 落 yml/ModSave.yml id 0
+ * （era_modsave.prostitution_effect）：各入口的参数缺省值读它，显式传参仍
+ * 覆盖（原作各读点直读变量，参数通道只为测试注入保留）。
  *
  * 变量语义：ABL 0-3 = 阴蒂/乳房/私处/肛门感觉，10-17 = 顺从/欲望/
  * 技巧/侍奉技术/露出/话术/侍奉精神/露出癖，20-23 = 抖S/抖M/百合/断背
@@ -39,6 +40,7 @@ const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const era_modsave = require('#/era-utils/era-modsave');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
@@ -276,7 +278,7 @@ function apply_talent_multipliers(
  */
 function estimate_chara(
   cid = era_flag.target,
-  { prostitution_effect = 0 } = {},
+  { prostitution_effect = era_modsave.prostitution_effect } = {},
 ) {
   const ability = (id) => value('abl', cid, id);
   const talent = (id) => value('talent', cid, id);
@@ -445,7 +447,7 @@ function print_sale_details(cid, details, prostitution_effect) {
 /** @SALE_CHARA：显示估价明细并让玩家确认出售。 */
 async function sale_chara(
   cid = era_flag.target,
-  { prostitution_effect = 0, rand } = {},
+  { prostitution_effect = era_modsave.prostitution_effect, rand } = {},
 ) {
   const details = estimate_chara(cid, { prostitution_effect });
   const { price } = details;
@@ -569,7 +571,10 @@ function sale_candidate(cid) {
 }
 
 /** @CHARA_SALE：据点的角色出售列表与完整出售流程。 */
-async function chara_sale({ prostitution_effect = 0, rand } = {}) {
+async function chara_sale({
+  prostitution_effect = era_modsave.prostitution_effect,
+  rand,
+} = {}) {
   for (;;) {
     // 源行 164 RESTART：每完成或取消一单都从函数头重画。
     era.drawLine();

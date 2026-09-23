@@ -128,4 +128,7 @@
 # 再并入 #558（S2 处刑）复测：**81 不变**——该票的测试全走 era-fixture
 # 路径，无 engine-bundle 门控；用例总数涨（6662 = 6581 过 + 81 跳过 + 0 挂，
 # ERE_ENGINE_ASAR=none 实测），跳过数不动。
-81
+# #547（S6 设置页魔改存档变量）：+1（era-modsave.test.js 的引擎门控用例
+# 「ModSave.yml 经引擎装载后 setVar 接受 modsave: 寻址」——扩展普通表路径，
+# resource-media.test.js 的 Audio.yml 同款），81 + 1 = 82。
+82

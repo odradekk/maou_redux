@@ -88,6 +88,7 @@ const WRAPPER_FILES = [
   'ere/era-utils/era-exflag.js',
   'ere/era-utils/era-flag.js',
   'ere/era-utils/era-global.js',
+  'ere/era-utils/era-modsave.js',
   'ere/era-utils/palam-level.js',
   'ere/era-utils/exp-level.js',
   'ere/facade/chara-chara.js',

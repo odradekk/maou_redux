@@ -3,7 +3,8 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 76; // #548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）；#546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）
+export const COUNT = 77; // #548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）；#546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）
+//；#547 起 +1（M11581，chara-make.js 的 CM_GENDER 接通 global:3——由 test/chara-make.test.js 守护）
 
 export default [
   {
@@ -771,5 +772,15 @@ export default [
     replace: '  // 变异：漏写反抗刻印履历补偿',
     tests: ['chara34-mark'],
     must_mention: 'MARK,4,3',
+  },
+  {
+    desc: 'M11581 CM_GENDER 的 SELECTCASE 恒走 0 档（不读 global:3，#547）',
+    file: 'ere/chara/chara-make.js',
+    find: `  // 冒險者性別（原文用字）＝ GLOBAL SAVEDATA（魔改使用.ERH:2，global:3）
+  const adventurer_gender = era_global.adventurer_gender;`,
+    replace: `  // 变异：恒 0 档
+  const adventurer_gender = 0;`,
+    tests: ['chara-make'],
+    must_mention: '六臂按 global:3 冒险者性别分派',
   },
 ];

@@ -15,9 +15,9 @@
  * 步骤，不是独立入口；BODY2 其余未落地段落（@CHAR_BUST_REGENERATE_WAPPED）
  * 不在本票范围。
  *
- * 未移植的残留（#385 登记，见 docs/stub-registry.md）：@CONFIG_AGE_SETTING
- * （:853-929）与它调用的 @RACE_CONFIG（:931-1333）——两段都是配置界面，
- * 调用方属 SYSTEM/CONFIG.ERB 票。@CUP_SIZE 已随 #390 落地（见 cup_size）。
+ * 未移植的残留见 docs/stub-registry.md：@CONFIG_AGE_SETTING（:853-929）与
+ * @RACE_CONFIG（:931-1333）已随 #547 落地为 ere/page/page-config-age.js
+ * （配置界面，调用方属 SYSTEM/CONFIG.ERB）；@CUP_SIZE 已随 #390 落地。
  */
 
 const era = require('#/era-electron');
@@ -710,4 +710,6 @@ module.exports = {
   cup_size,
   human_age_generate,
   race_age_generate,
+  race_config_value,
+  unpack_race_config,
 };
