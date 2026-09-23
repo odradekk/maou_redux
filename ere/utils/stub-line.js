@@ -17,6 +17,11 @@
  *     允许范围外 + CLEARLINE 2 + GOTO」）；ere 侧以 print + waitAnyKey
  *     显式组合（引擎 printAndWait 内部即这两步，app.asar 逐字；夹具对
  *     等待的观测统一走 waitAnyKey 记录，故不走 printAndWait）。
+ *   - not_ported_line_wait（分发期，#542）：判死终态的入口提示。与
+ *     stub_line_wait 同一时机（等键理由同上），语义不同——它不是待办，
+ *     是已裁定不移植的功能被玩家按到时的一行交代（docs/stub-registry.md
+ *     对应行是判死终态）。文案写「不在移植范围」而非「尚未移植」，
+ *     避免读成会补的占位。
  *
  * 运行时占位：一行可见反馈，正文含原作函数名（可检索、可断言——各文件的
  * STUBBED_CALLS 核对测试以「@函数名」出现在占位行为准）。owner 给出时
@@ -59,4 +64,24 @@ async function stub_line_wait(erb_name, note, owner) {
   await era.waitAnyKey();
 }
 
-module.exports = { stub_line, stub_line_wait, stub_text };
+/**
+ * 打一行「不移植」提示并等待读键（分发期，#542）。用于已裁定不移植、但
+ * 按钮保留可见的入口（设置页 [26]/[28]、角色详情 [20]、主菜单 999 后门）
+ * ——被按到时交代一句，不写成「尚未移植」的占位（那是待办的话术）。
+ * @param {string} erb_name 原作函数名（不含 @；判死行的检索键）
+ * @param {string} note 不移植功能的中文说明
+ * @param {string} basis 裁定依据（票号与一句理由）
+ */
+async function not_ported_line_wait(erb_name, note, basis) {
+  era.print(
+    `（${note}不在移植范围——原作 @${erb_name}，${basis}，见 docs/stub-registry.md。）`,
+  );
+  await era.waitAnyKey();
+}
+
+module.exports = {
+  stub_line,
+  stub_line_wait,
+  stub_text,
+  not_ported_line_wait,
+};

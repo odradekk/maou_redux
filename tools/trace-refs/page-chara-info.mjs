@@ -167,6 +167,21 @@ export const FILES = [
         ref: '1094-1099',
         any: [/^\s*IF RESULT == 0 \|\| RESULT == 1\s*$/m],
       },
+      // #542：[20] 更换立绘按钮的原作守卫与 PTJ_BUTTON 调用点（打工 MOD 判
+      // 不移植，[18] 走默认态分支的 SHOW_BUTTON_BICH_LEVEL）
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '870-871',
+        any: [
+          /^SIF 立绘 && CFLAG:ARG:1 == 0 && ARG != MASTER$/m,
+          /^\s*PRINT \[20\] 更换立绘$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '883',
+        any: [/^\s*CALL PTJ_BUTTON\(ARG\)\s*$/m],
+      },
     ],
   },
 ];

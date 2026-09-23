@@ -1609,6 +1609,44 @@ test('移植状态表全绿（真树）：合计恰为 346，真值点与两类�
   assert.equal(status, 0, `--coverage 应全绿（真树移植状态表）：\n${output}`);
 });
 
+// —— #542：DEBUG小白娘 / MOD 五文件 / 立绘 img.ERB 的判死落点（#540 范围决定 2–4）——
+
+test('移植状态表（#542）：DEBUG/MOD/立绘七文件判已判定不实现，待移植只剩魔改新增三个', () => {
+  const { status, output } = run_tool(['--coverage', '--list']);
+  assert.equal(status, 0, `--coverage 应全绿：\n${output}`);
+  // RULINGS 表的七条新裁定（依据 #540 范围决定 2–4）：必须压过待移植判定
+  for (const rel of [
+    'DEBUG小白娘2024ver0.0.14/DEBUG小白娘2024ver0.0.14.ERB',
+    'MOD/PartTimeJob/PTJ.ERB',
+    'MOD/mod开关ver1.0.11/MOD_SWITCH ver1.0.11.ERB',
+    'MOD/一键升级/CHARA_INFO_FUNC.ERB',
+    'MOD/魔界银行 ver 1.0.1/INTEREST.ERB',
+    'MOD/魔界银行 ver 1.0.1/MAKAI_BANK.ERB',
+    '魔改新增/img.ERB',
+  ]) {
+    assert.ok(
+      output.includes(`已判定不实现 target/ERB/${rel}`),
+      `#542 判死的文件必须离开待移植：${rel}\n${output}`,
+    );
+  }
+  // 阶段 6 收口前剩下的待移植恰为 S2/S3/S4 的三个魔改新增文件
+  // （處刑改寫 / 强制肉偿 / 统一卖春积极性）——它们各自的票交付时更新这里
+  const pending = output
+    .split('\n')
+    .filter((line) => line.startsWith('待移植 target/'))
+    .map((line) => line.slice('待移植 '.length))
+    .sort();
+  assert.deepEqual(
+    pending,
+    [
+      'target/ERB/魔改新增/强制肉偿.ERB',
+      'target/ERB/魔改新增/统一卖春积极性.ERB',
+      'target/ERB/魔改新增/處刑改寫.ERB',
+    ].sort(),
+    `待移植必须只剩 S2/S3/S4 的三个文件（PENDING_BASELINE = 3）：\n${output}`,
+  );
+});
+
 /**
  * #501 存根清单过时行普查。
  *
