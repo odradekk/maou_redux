@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 138;
+export const COUNT = 139;
 
 export default [
   {
@@ -676,7 +676,7 @@ export default [
     tests: ['event-execution'],
     must_mention: '按性格处理器分发口上并归档选择的末路',
   },
-  // —— #543（S2）批量处刑与自动处刑（M11340–M11398）——
+  // —— #543（S2）批量处刑与自动处刑（M11340–M11399）——
   {
     desc: 'M11340 收藏剃除扫描：示众台角色不再跳过',
     file: 'ere/event/event-execution-batch.js',
@@ -786,9 +786,9 @@ export default [
   {
     desc: 'M11353 [121] 按钮无条件渲染',
     file: 'ere/event/event-execution-batch.js',
-    find: "        if (executable) era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
+    find: "        if (executable) {\n          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
     replace:
-      "        if (true) era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
+      "        if (true) {\n          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
     tests: ['event-execution-batch'],
     must_mention: '[121] 选择处刑方式仅在存在可处刑目标时出现',
   },
@@ -1096,9 +1096,9 @@ export default [
   {
     desc: 'M11389 批量处刑：重启（JUMP 批量处刑）时把页号复位',
     file: 'ere/event/event-execution-batch.js',
-    find: '      executable = false; // 可处刑 = 0（:13）\n      screen: for (;;) {',
+    find: '      let executable = false; // 可处刑 = 0（:13）\n      screen: for (;;) {',
     replace:
-      '      executable = false; // 可处刑 = 0（:13）\n      no_page = 0;\n      screen: for (;;) {',
+      '      let executable = false; // 可处刑 = 0（:13）\n      no_page = 0;\n      screen: for (;;) {',
     tests: ['event-execution-batch'],
     must_mention: '重启（取消流放）后仍在第 2 页',
   },
@@ -1174,11 +1174,22 @@ export default [
     must_mention: '普通 DRAWLINE 用默认线型',
   },
   {
-    desc: 'M11398 名单屏：[121] 之后少一个空行（:68/:69 两个 PRINTL）',
+    desc: 'M11398 名单屏：[121] 显示时多画一个空行（PRINTLC 不换行，按钮后只该有一个）',
     file: 'ere/event/event-execution-batch.js',
-    find: '        era.println(); // PRINTL（:67-69）\n        era.println(); // PRINTL（:68-70）',
-    replace: '        era.println(); // PRINTL（:67-69）',
+    find: "          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）\n          era.println(); // PRINTL（:67-69）\n        } else {",
+    replace:
+      "          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）\n          era.println(); // PRINTL（:67-69）\n          era.println(); // 变异：多一个空行\n        } else {",
     tests: ['event-execution-batch'],
-    must_mention: '[121] 之后是 :68/:69 两个空行',
+    must_mention: '[121] 之后只有 :69 一个空行，再下一条是 [2000] 上一页',
+  },
+  // M11399：可处刑的复位——初值不回到 0（模块级时代的「漏复位」形态）；
+  // 局部声明让「整行删掉」变成 ReferenceError，可用等价的「初值不复位」钉住
+  {
+    desc: 'M11399 可处刑初值不复位（false → true：进入函数/重启后 [121] 仍显示）',
+    file: 'ere/event/event-execution-batch.js',
+    find: '      let executable = false; // 可处刑 = 0（:13）',
+    replace: '      let executable = true; // 变异：初值不复位',
+    tests: ['event-execution-batch'],
+    must_mention: '再次进入时 可处刑 已复位（:13），不再显示 [121]',
   },
 ];

@@ -44,8 +44,16 @@
  *     ——ere 的 museum（#347）按处理体实现，与之一致，本文件直接复用（原
  *     登记 #14 的那条结论说反了，已在 #14 下订正）；
  *   - NO_PAGE（:8）是函数静态变量：`JUMP 批量处刑` 只重执行 :11-14，只显式
- *     重置 处刑中/可处刑/TFLAG:16，故翻页位置跨重启与跨调用都保留（见
- *     NUM_PAGE 下方的模块级 no_page）；
+ *     重置 处刑中/可处刑/TFLAG:16，NO_PAGE 不在其中，故翻页位置跨重启与跨
+ *     调用都保留（模块级 no_page）；可处刑（:7）的清零点恰在 :13，进入函数
+ *     与 JUMP 都重置、`GOTO 处刑介面` 不清，故落在 restart 循环内的局部量；
+ *   - 第 67 行的 `PRINTLC` 是「左对齐打印」，**不换行**（Emuera 官方文档
+ *     PRINTC 系的例子：连续 `PRINTLC` 打在同一行，只在排满 PRINTCPERLINE
+ *     列时自动换行；技能指南 print-system.md 那句「PRINTLC 还会换行」是错的，
+ *     勘误另开 issue）。故第 68 行的 `PRINTL` 只收 [121] 那一行、第 69 行才是
+ *     一个空行（:67-69）；不显示 [121] 时第 68/69 行是两个空行。ere 的
+ *     `printButton` 自成一行，等价于第 67+68 行合并——于是显示 [121] 时按钮后
+ *     只 `println` 一次；
  *   - 处刑会话要 TFLAG:16/510/530/500（口上改写通道）。EraElectron 的
  *     tflag 桶只在 beginTrain/endTrain 之间存在，调教外二段寻址落
  *     「key error in getter/setter」（app.asar 寻址层；test/
@@ -95,14 +103,6 @@ const NUM_PAGE = 25;
  * （收藏剃除、0-3 号取消）与再次进入处刑时都保留（1:1，不是遗漏）。
  */
 let no_page = 0;
-
-/**
- * #DIM 可处刑（:7）：同样是函数静态变量，但清零点是 :13（进入函数与
- * `JUMP 批量处刑` 重执行 :11-14 时都会跑到），`GOTO 处刑介面`（翻页、切换
- * 标签、[101] 重绘）不跑 :13——所以本次调用中一旦有非收藏目标带过标签，
- * [121] 就一直显示到整界面重启为止，不随标签被取消/目标被处刑而消失。
- */
-let executable = false;
 
 /** 方法界面循环的出口信号（对应原作两个 GOTO 目标）。 */
 const DONE = Symbol('done'); // 回列表（GOTO 处刑介面）
@@ -558,9 +558,12 @@ async function batch_execution(rand_n = default_rand) {
   era.beginTrain(0);
   try {
     restart: for (;;) {
-      // :11-14 在 JUMP 批量处刑 时会重跑一遍（可处刑 = 0 与 NO_PAGE 的差别：
-      // 后者不在 :11-14 里，见模块顶部的两个静态量）
-      executable = false; // 可处刑 = 0（:13）
+      // #DIM 可处刑（:7）：清零点是 :13，进入函数与 `JUMP 批量处刑`
+      // （重执行 :11-14）时都会跑到这里重置；`GOTO 处刑介面`（翻页、切换
+      // 标签、[101] 重绘）不重跑，所以本次调用中一旦有非收藏目标带过标签，
+      // [121] 就一直显示到整界面重启为止。与跨调用保留的 NO_PAGE（:8，
+      // 见模块顶部）不同，它每次进入函数都回到 0，故按函数局部量处理。
+      let executable = false; // 可处刑 = 0（:13）
       screen: for (;;) {
         // $处刑介面（:15-73）
         const added = era.getAddedCharacters();
@@ -595,11 +598,17 @@ async function batch_execution(rand_n = default_rand) {
           }
           if (chara(cid).patch.待处刑标签) executable = true;
         }
-        if (executable) era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）
-        // 第 67 行的 PRINTLC 自带换行、printButton 也自成一行，故 button 之后
-        // 是第 68/69 行的两个空行，再到第 70-72 行的三个页导航按钮
-        era.println(); // PRINTL（:67-69）
-        era.println(); // PRINTL（:68-70）
+        // 第 67 行的 PRINTLC 不换行（左对齐打印），第 68 行的 PRINTL 只收它
+        // 那一行、第 69 行才是一个空行；`printButton` 自成一行（等价第 67+68
+        // 行合并），故显示 [121] 时按钮后只补第 69 行的一个空行；不显示时
+        // 两个 PRINTL 都落成空行（:67-69），再到第 70-72 行的三个页导航按钮
+        if (executable) {
+          era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）
+          era.println(); // PRINTL（:67-69）
+        } else {
+          era.println(); // PRINTL（:67-69）
+          era.println(); // PRINTL（:68-70）
+        }
         era.printButton('上一页', 2000);
         era.printButton('结束处刑', 1999); // 原文「結束处刑」
         era.printButton('下一页', 2001);

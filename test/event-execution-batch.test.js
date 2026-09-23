@@ -988,25 +988,57 @@ test('[121] 的可见性是函数静态变量：清标签后仍保留到整界�
   );
 });
 
-test('[121] 后的空行数与原作一致（PRINTLC 自带换行 + :68/:69 两个 PRINTL）', async () => {
-  const fixture = seed_world(31);
-  fixture.store.set('cflag:31:777', 1);
-  fixture.set_inputs(1999);
-  const { batch_execution } = load_batch(fixture);
-
-  await batch_execution(seq([0]));
-
-  const rows = fixture.lines_history;
-  const index = rows.findIndex(
+test('[121] 后的空行数与原作一致（PRINTLC 不换行：:68 收行、:69 空行）', async () => {
+  // 显示 [121] 时：printButton 自成一行（等价 :67+:68），按钮后只有 :69 的
+  // 一个空行；不显示 [121] 时 :68/:69 两个 PRINTL 都落成空行
+  const shown = seed_world(31);
+  shown.store.set('cflag:31:777', 1);
+  shown.set_inputs(1999);
+  await load_batch(shown).batch_execution(seq([0]));
+  const shown_rows = shown.lines_history;
+  const shown_index = shown_rows.findIndex(
     (line) => line.type === 'button' && line.accelerator === 121,
   );
-  assert(index >= 0, '[121] 已打印');
+  assert(shown_index >= 0, '[121] 已打印');
   assert.deepEqual(
-    rows.slice(index + 1, index + 3).map((line) => line.type),
-    ['br', 'br'],
-    '[121] 之后是 :68/:69 两个空行（printButton 自成一行，PRINTLC 的换行在行尾）',
+    [shown_rows[shown_index + 1].type, shown_rows[shown_index + 2].accelerator],
+    ['br', 2000],
+    '[121] 之后只有 :69 一个空行，再下一条是 [2000] 上一页',
   );
-  assert.equal(rows[index + 3].accelerator, 2000, '再下一条是 [2000] 上一页');
+
+  const hidden = seed_world(31);
+  hidden.set_inputs(1999);
+  await load_batch(hidden).batch_execution(seq([0]));
+  const hidden_rows = hidden.lines_history;
+  const hidden_index = hidden_rows.findIndex(
+    (line) => line.type === 'button' && line.accelerator === 2000,
+  );
+  assert(hidden_index >= 2, '[2000] 已打印');
+  assert.deepEqual(
+    [hidden_rows[hidden_index - 2].type, hidden_rows[hidden_index - 1].type],
+    ['br', 'br'],
+    '没有 [121] 时是 :68/:69 两个空行',
+  );
+});
+
+test('可处刑每次进入函数复位：清标签结束、再进入时 [121] 不显示', async () => {
+  const fixture = seed_world(31);
+  fixture.set_inputs(31, 31, 1999); // 打标签 → 取消标签 → 结束
+  const { batch_execution } = load_batch(fixture);
+  const count_121 = () =>
+    buttons(fixture).filter((b) => b.accelerator === 121).length;
+
+  await batch_execution(seq([0]));
+  const first_round = count_121();
+  assert(first_round > 0, '第一次调用里标记过目标，[121] 出现过');
+
+  fixture.set_inputs(1999); // 再次进入处刑：此时没有任何标签
+  await batch_execution(seq([0]));
+  assert.equal(
+    count_121(),
+    first_round,
+    '再次进入时 可处刑 已复位（:13），不再显示 [121]',
+  );
 });
 
 test('分隔线：顶部不画 CUSTOMDRAWLINE 线，普通 DRAWLINE 用默认线型', async () => {
