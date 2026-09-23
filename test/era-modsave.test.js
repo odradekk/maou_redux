@@ -7,7 +7,7 @@
  * Audio.yml 引擎装载用例（#69）。
  *
  * 覆盖四层：
- *   1. 未初始化读取返回 0（#13 引擎行为 + 包装层 `|| 0` 兜底）；
+ *   1. 未初始化读取返回 0（#13 引擎行为 + 包装层 `|| 0` 缺值处理）；
  *   2. 两个设置页变量的读写、循环/翻转业务方法（CONFIG.ERB:273-285）；
  *   3. 存档语义：modsave:* 随 saveData 落快照、loadData 整体替换后保持
  *      （#DIM SAVEDATA 的 ere 等价物，与 global:* 的跨档共享对照）；
@@ -30,7 +30,7 @@ const {
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 
-test('未初始化读取返回 0 而非 undefined（#13 引擎行为 + 包装层兜底）', () => {
+test('未初始化读取返回 0 而非 undefined（#13 引擎行为 + 包装层缺值处理）', () => {
   const fixture = create_era_fixture();
   const era_modsave = fixture.load_module('era-utils/era-modsave');
 

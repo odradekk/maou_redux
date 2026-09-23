@@ -4,7 +4,7 @@
  * 源: target/ERB/キャラ関数/CHARA_BODY.ERB  @CONFIG_AGE_SETTING（:853-929）、
  *       @RACE_CONFIG（:931-1333）
  *     入口: target/ERB/SYSTEM/CONFIG.ERB:224（设置页 [15]，ere/page/
- *     page-config.js 的 dispatch_config 接线）。
+ *     page-config.js 的 dispatch_config 接入）。
  *
  * 两个函数是 CHARA_BODY.ERB 里仅存的配置界面段（其余都是生成算法，住
  * ere/chara/chara-body.js）；编辑对象是同一张种族年龄表（FLAG:26/27 的数组
@@ -40,14 +40,14 @@
 'use strict';
 
 const era = require('#/era-electron');
-const { game } = require('#/facade/game');
-const { chara } = require('#/facade/chara');
 const {
   char_size_generate,
   race_age_generate,
   race_config_value,
   unpack_race_config,
 } = require('#/chara/chara-body');
+const { game } = require('#/facade/game');
+const { chara } = require('#/facade/chara');
 const { pad_display, pad_left } = require('#/utils/display-width');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -82,7 +82,7 @@ const RACE_NAMES = [
 const RACE_DEFAULT_0 = [11, 115, 431, 325, 15, 232];
 const RACE_DEFAULT_1 = [1, 1];
 
-/** 原作 `IF FLAG:26 == 0` 的未设哨兵：数组承载下未设 = getter 兜底 0 */
+/** 原作 `IF FLAG:26 == 0` 的未设哨兵：数组承载下未设 = getter 缺值按 0 */
 function race_table_unset() {
   return game.chara.种族年龄设定_0 === 0;
 }
