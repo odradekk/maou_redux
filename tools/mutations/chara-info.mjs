@@ -368,7 +368,7 @@ export default [
       content: \`[\${cid}]\`,
       config: { align: 'left', width: 3 },`,
     tests: ['page-chara-info'],
-    must_mention: '角色行的编号按钮仅由引擎拼一层 [N] 前缀',
+    must_mention: '编号只有引擎拼的一层前缀',
   },
   {
     desc: 'M11301 名册角色行的等级地址写错（cflag:cid:9 读成 cflag:cid:10——魔王行同款缺口，#535 顺带补钉）',
@@ -376,7 +376,7 @@ export default [
     find: 'LV${era.get(`cflag:${cid}:9`) || 0}`',
     replace: 'LV${era.get(`cflag:${cid}:10`) || 0}`',
     tests: ['page-chara-info'],
-    must_mention: '姓名/等级/攻防同格',
+    must_mention: '角色行的等级取自 cflag:cid:9',
   },
   {
     desc: 'M11302 名册角色行的编号按钮快捷键写成 0（角色号进不了白名单，点不动也敲不进，#535）',

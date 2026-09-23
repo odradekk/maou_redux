@@ -187,6 +187,8 @@ test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] �
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
   add_chara(fixture, 11, '乙');
+  // 下标含义（行内同格，原作 CHARA_INFO ver1.0.1.ERB:158-163）：
+  // CFLAG:x:9 等级 / :13 攻击 / :14 防御 / :151 善恶值
   fixture.store.set('cflag:1:9', 5);
   fixture.store.set('cflag:1:13', 15);
   fixture.store.set('cflag:1:14', 20);
@@ -239,18 +241,24 @@ test('SHOW_CHARA_INFO_LIST：角色行的编号按钮仅由引擎拼一层 [N] �
     '魔王行的两格 ＋ 两名角色各四格',
   );
 
-  // 同格的姓名 / 等级 / 攻防善恶：等级地址（cflag:cid:9）与魔王行同款，
-  // #530 的验收在魔王行上撞出过「名字有人守、等级没人守」的空缺（M11210），
-  // 角色行这边一并钉住
+  // 角色行的姓名 / 等级 / 攻防善恶同格：等级地址（cflag:cid:9）与魔王行
+  // 同款，#530 的验收在魔王行上撞出过「名字有人守、等级没人守」的空缺
+  // （M11210），角色行这边一并钉住。
+  // **只取角色行**（夹具按多列调用分组，row>0；魔王行是 row 0）：魔王行
+  // 名字格的缩进比角色行多一格，是这一屏既有的排版偏离，是否调整由 #535
+  // 第 4 项的引擎核对定，不在这里当契约钉死（本票未跑 Electron MCP）。
   assert.deepEqual(
     fixture.lines_history
-      .filter((line) => line.type === 'text' && line.text.includes(' LV'))
+      .filter(
+        (line) =>
+          line.type === 'text' && line.row > 0 && line.text.includes(' LV'),
+      )
       .map((line) => line.text),
     [
-      '\u3000\u3000\u3000\u3000\u3000你 LV0',
       '[可调教] 甲 LV5 攻击15/防御20 善恶值188',
       '[可调教] 乙 LV7 攻击3/防御4 善恶值-12',
     ],
+    '角色行的等级取自 cflag:cid:9（甲 LV5 / 乙 LV7）；地址读成 :10 会变 LV0',
   );
 });
 
@@ -482,8 +490,10 @@ test('CHARA_INFO：翻页/换排序视图/统一积极性与换号存根/返回�
 
 test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 页，第 25 人只在第 2 页', async () => {
   const fixture = create_era_fixture();
+  // 角色号 1..25：25 人正好跨两页（第 1 页 24 行、第 2 页 1 行）
+  const chara_ids = Array.from({ length: 25 }, (_, index) => index + 1);
   add_chara(fixture, 0, '你');
-  for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
+  for (const cid of chara_ids) add_chara(fixture, cid, `角色${cid}`);
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
   fixture.set_inputs(998, 997, 997, 999); // 下一页 → 上一页 ×2 → 返回主菜单
@@ -494,9 +504,6 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
   // `/^\[\d+\]$/` 切不动了——改按快捷键数值筛：角色号是 1..25，排序表头
   // 1200-1700、翻页 997/998/999 都在这个区间之外。魔王行的编号格快捷键是 0
   // （正文同为空的按钮），也由这条筛选天然排除。
-  const chara_ids = new Set(
-    Array.from({ length: 25 }, (_, index) => index + 1),
-  );
   const draws = [];
   let start = 0;
   fixture.lines_history.forEach((line, idx) => {
@@ -508,7 +515,7 @@ test('CHARA_INFO：名册每页 24 行（NUM_PAGE）——第 24 人还在第 1 
   assert.equal(draws.length, 4, '初始 ＋ 下一页 ＋ 上一页 ×2');
   const chara_rows = (draw) =>
     draw.filter(
-      (line) => line.type === 'button' && chara_ids.has(line.accelerator),
+      (line) => line.type === 'button' && chara_ids.includes(line.accelerator),
     );
   const rows_of = (draw) => chara_rows(draw).map((line) => line.accelerator);
 
