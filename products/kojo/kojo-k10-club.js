@@ -296,9 +296,9 @@
  *   169. :6590 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   170. :6596 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   171. :6598 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
- *   172. :6766 表达式寻址 ITEM:PBAND → era.get('item:PBAND')——族名直译，语义与归属人工定
- *   173. :6800 表达式寻址 ITEM:PBAND → era.get('item:PBAND')——族名直译，语义与归属人工定
- *   174. :6826 表达式寻址 ITEM:PBAND → era.get('item:PBAND')——族名直译，语义与归属人工定
+ *   172. :6766 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   173. :6800 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+ *   174. :6826 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
  *   175. :6859 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
  *   176. :7110 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
  *   177. :7114 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
@@ -7742,7 +7742,7 @@ async function COLOSSEUM_KOJO_10() {
       if (era.get(`talent:${assi}:121`) == 1 || era.get(`talent:${assi}:122`) == 1) { // :6765
         await era.print(`坚硬的雄性器`); // :6765
       } // :6765
-      if (era.get(`talent:${assi}:121`) != 1 && era.get(`talent:${assi}:122`) != 1 && era.get('item:PBAND') == 1) { // :6767
+      if (era.get(`talent:${assi}:121`) != 1 && era.get(`talent:${assi}:122`) != 1 && era.get('item:4') == 1) { // :6767
         await era.print(`粗大的假阳具`); // :6767
       } // :6767
       await era.printAndWait(`让${target_name}一边舔一边露出了心旷神怡的表情……`); // :6768
@@ -7778,7 +7778,7 @@ async function COLOSSEUM_KOJO_10() {
       if (era.get(`talent:${assi}:121`) == 1 || era.get(`talent:${assi}:122`) == 1) { // :6799
         await era.print(`用坚硬的雄性器`); // :6799
       } // :6799
-      if (era.get(`talent:${assi}:121`) != 1 && era.get(`talent:${assi}:122`) != 1 && era.get('item:PBAND') == 1) { // :6801
+      if (era.get(`talent:${assi}:121`) != 1 && era.get(`talent:${assi}:122`) != 1 && era.get('item:4') == 1) { // :6801
         await era.print(`用粗大的假阳具`); // :6801
       } // :6801
       await era.printAndWait(`${target_name}的肛门被无慈悲的继续蹂躏着。`); // :6802
@@ -7806,7 +7806,7 @@ async function COLOSSEUM_KOJO_10() {
       if (era.get(`talent:${assi}:121`) == 1 || era.get(`talent:${assi}:122`) == 1) { // :6825
         await era.print(`用坚硬的雄性器`); // :6825
       } // :6825
-      if (era.get(`talent:${assi}:121`) != 1 && era.get(`talent:${assi}:122`) != 1 && era.get('item:PBAND') == 1) { // :6827
+      if (era.get(`talent:${assi}:121`) != 1 && era.get(`talent:${assi}:122`) != 1 && era.get('item:4') == 1) { // :6827
         await era.print(`用粗大的假阳具`); // :6827
       } // :6827
       await era.printAndWait(`${target_name}的肛门被无慈悲的继续蹂躏着。`); // :6828
@@ -8504,9 +8504,9 @@ async function GOBI_KOUJO_K10() {
 // 169. :6590 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 170. :6596 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 171. :6598 RAND RAND:2 → rand_n(2)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
-// 172. :6766 表达式寻址 ITEM:PBAND → era.get('item:PBAND')——族名直译，语义与归属人工定
-// 173. :6800 表达式寻址 ITEM:PBAND → era.get('item:PBAND')——族名直译，语义与归属人工定
-// 174. :6826 表达式寻址 ITEM:PBAND → era.get('item:PBAND')——族名直译，语义与归属人工定
+// 172. :6766 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 173. :6800 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
+// 174. :6826 表达式寻址 ITEM:PBAND → era.get('item:4')——PBAND = 4（SYSTEM ver1.0.3.ERB:42），即 4 号假阳具（#552）
 // 175. :6859 RAND RAND:3 → rand_n(3)——随机源需注入（参照 kojo-k5.js 的 rand 参数）
 // 176. :7110 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
 // 177. :7114 插值 未知插值 %SAVESTR:A% —— 保真锁会红，须人工定归一
