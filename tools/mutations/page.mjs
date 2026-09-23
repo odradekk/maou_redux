@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 395; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 425; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -51,6 +51,7 @@ export const COUNT = 395; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身—�
 // page-chara-info-show.js 的献祭选项与 [100] 返回）实测 377；#538 起 +3
 // （M11260-M11262，post_conquest_menu() 两个守卫的边界各挪一格——越界守卫的
 // 上下界与 [5] 拒收的 route_33 上界）实测 380
+//；#547 起 +25（M11550-M11574，page-config-age.js 的 CONFIG_AGE_SETTING/RACE_CONFIG 全量与 page-config.js 的 [15]/[27]/[29]/[30]/状态文案/存根名单——由 test/page-config-age.test.js 与 test/page-config.test.js 守护）；返工轮 +5（M11584-M11588：网格门/[101] 清值/空行/全角空格——验收 6 条中的 1、2、5、6）
 
 export default [
   {
@@ -3654,8 +3655,8 @@ export default [
       'MOD 开关菜单',
       '#542 判不移植：需手动开启、默认全关的 MOD 子系统',
     );
-  } else if (local === 28) {`,
-    replace: `  } else if (local === 28) { // 变异：[26] 分支整段删掉`,
+  } else if (local === 27) {`,
+    replace: `  } else if (local === 27) { // 变异：[26] 分支整段删掉（#547 起 [27] 段紧随其后）`,
     tests: ['page-config'],
     must_mention: '提示行必须带原作函数名 @MODLIST',
   },
@@ -3724,5 +3725,389 @@ export default [
     );`,
     tests: ['page-config'],
     must_mention: '不移植提示要说清是什么与为何',
+  },
+  {
+    desc: 'M11550 CONFIG_AGE_SETTING [9] 详细设定的渲染门用错位（13 → 12，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `    // :865-866 [9] 只在位 13 开时打印（隐藏分支的 ere 不可达性见文件头）
+    if (getbit(v, 13)) {
+      era.printButton('详细设定', 9);
+    }`,
+    replace: `    // 变异：渲染门用位 12
+    if (getbit(v, 12)) {
+      era.printButton('详细设定', 9);
+    }`,
+    tests: ['page-config-age'],
+    must_mention: '位 13 开：[9] 渲染',
+  },
+  {
+    desc: 'M11551 CONFIG_AGE_SETTING [0]-[3] 翻错位（12+result → result，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `    if (result >= 0 && result <= 3) {
+      game.dungeon.游戏设定 = invertbit(v, 12 + result);`,
+    replace: `    if (result >= 0 && result <= 3) {
+      game.dungeon.游戏设定 = invertbit(v, result); // 变异：翻错位`,
+    tests: ['page-config-age'],
+    must_mention: '分别翻 FLAG:5 位 12/13/14/15',
+    test_name:
+      'CONFIG_AGE_SETTING：[0]/[1]/[2]/[3] 分别翻 FLAG:5 位 12/13/14/15',
+  },
+  {
+    desc: 'M11552 CONFIG_AGE_SETTING 退出块的触发门 || 写成 &&（位 12/15 只开其一时不再重算，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `  // :899-929 退出块（DO…LOOP 的 BREAK 之后）
+  const v = game.dungeon.游戏设定;
+  if (getbit(v, 12) || getbit(v, 15)) {`,
+    replace: `  // :899-929 退出块（DO…LOOP 的 BREAK 之后）
+  const v = game.dungeon.游戏设定;
+  if (getbit(v, 12) && getbit(v, 15)) { // 变异：门写反`,
+    tests: ['page-config-age'],
+    must_mention: '村娘Ｂ 年龄 = RAND:5 + 14',
+  },
+  {
+    desc: 'M11553 CONFIG_AGE_SETTING 退出块村娘Ａ年龄区间误用开局生成值（RAND:5+11 → RAND:2+12，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `      if (talent(165)) {
+        age = rand(5) + 11;`,
+    replace: `      if (talent(165)) {
+        age = rand(2) + 12; // 变异：误用开局区间`,
+    tests: ['page-config-age'],
+    must_mention: '位 12 开时为 CFLAG:451==0',
+  },
+  {
+    desc: 'M11554 CONFIG_AGE_SETTING 退出块村娘Ｂ年龄区间误用开局生成值（RAND:5+14 → RAND:2+17，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `      } else if (talent(171)) {
+        age = rand(5) + 14;`,
+    replace: `      } else if (talent(171)) {
+        age = rand(2) + 17; // 变异：误用开局区间`,
+    tests: ['page-config-age'],
+    must_mention: '村娘Ｂ 年龄 = RAND:5 + 14',
+  },
+  {
+    desc: 'M11555 CONFIG_AGE_SETTING 退出块「已生成的跳过」守卫取反（CFLAG:451 ≠ 0 才重算，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `      if (chara(cid).chara.年龄 !== 0) {
+        continue; // :911 已生成的跳过
+      }`,
+    replace: `      if (chara(cid).chara.年龄 === 0) {
+        continue; // 变异：守卫取反
+      }`,
+    tests: ['page-config-age'],
+    must_mention: ':911 CFLAG:451≠0 跳过',
+  },
+  {
+    desc: 'M11556 CONFIG_AGE_SETTING 退出块的魔王跳过守卫挪位（cid === 0 → cid === 1，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `      if (cid === 0) {
+        continue; // :909-910 魔王跳过
+      }`,
+    replace: `      if (cid === 1) {
+        continue; // 变异：守卫挪位
+      }`,
+    tests: ['page-config-age'],
+    must_mention: ':909-910 LCOUNT==0 跳过',
+  },
+  {
+    desc: 'M11557 CONFIG_AGE_SETTING [9] 分支不播种默认表（表未设时进编辑器全是空档，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `    } else if (result === 9) {
+      // :888-894 表未设时先播种默认，再进详细设定
+      if (race_table_unset()) {
+        seed_race_defaults();
+      }
+      await race_config(rand);`,
+    replace: `    } else if (result === 9) {
+      // 变异：不播种默认表
+      await race_config(rand);`,
+    tests: ['page-config-age'],
+    must_mention: ':889-892 先播种',
+  },
+  {
+    desc: 'M11558 RACE_CONFIG [98] 确认分支不写默认表（回默认按钮失效，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `    } else if (result === 98) {
+      // :1035-1048 回默认（确认后直接 RETURN）
+      if (await confirm_reset('全种族的年龄均返回默认值。')) {
+        seed_race_defaults();
+        return 0;
+      }`,
+    replace: `    } else if (result === 98) {
+      // 变异：确认后不写默认
+      if (await confirm_reset('全种族的年龄均返回默认值。')) {
+        return 0;
+      }`,
+    tests: ['page-config-age'],
+    must_mention: ':1043-1044 回默认',
+  },
+  {
+    desc: 'M11559 RACE_CONFIG [99] 的打包挪进确认之后（原作时序：取消也写回编辑态，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `    } else if (result === 99 || result === 100) {
+      // :1049-1083 打包写回（[99]/[100] 共用，先于 [99] 的确认 INPUT）
+      game.chara.种族年龄设定_0 = cla
+        .slice(0, 6)
+        .map((c, i) => c * 100 + deg[i] * 10 + num[i]);
+      game.chara.种族年龄设定_1 = [6, 7].map(
+        (i) => cla[i] * 100 + deg[i] * 10 + num[i],
+      );
+      if (result === 99) {
+        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {`,
+    replace: `    } else if (result === 99 || result === 100) {
+      // 变异：打包挪进确认之后
+      if (result === 99) {
+        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {
+          game.chara.种族年龄设定_0 = cla
+            .slice(0, 6)
+            .map((c, i) => c * 100 + deg[i] * 10 + num[i]);
+          game.chara.种族年龄设定_1 = [6, 7].map(
+            (i) => cla[i] * 100 + deg[i] * 10 + num[i],
+          );`,
+    tests: ['page-config-age'],
+    must_mention: ':1050-1057 在确认 INPUT 之前',
+  },
+  {
+    desc: 'M11560 RACE_CONFIG [110]-[112] 的 SET_VAR:4>0 守卫删除（未选上限也切随机档，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `          sv[3] = sub - 108;
+          if (sv[4] > 0) {
+            sv[0] = dis_flag;
+            sv[1] = -1;
+            sv[2] = -1;
+          }`,
+    replace: `          sv[3] = sub - 108;
+          sv[0] = dis_flag;
+          sv[1] = -1;
+          sv[2] = -1;`,
+    tests: ['page-config-age'],
+    must_mention: '只按了下限、未选上限时不落随机档',
+  },
+  {
+    desc: 'M11561 RACE_CONFIG [999] 决定的保存分档判错（<= 1 → < 1，小数倍档保存成随机三元组，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `        } else if (sub === 999) {
+          // :1319-1329 决定：SET_VAR 写回工作数组，回顶层（不落 FLAG）
+          if (sv[0] <= 1) {`,
+    replace: `        } else if (sub === 999) {
+          // 变异：分档判错
+          if (sv[0] < 1) {`,
+    tests: ['page-config-age'],
+    must_mention: 'cla 1 / deg 0 / num 0',
+  },
+  {
+    desc: 'M11562 RACE_CONFIG 表格 cla 3 档的半上限算错（cap/2 → cap/3，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `  if (cla === 3) {
+    return [
+      \`\${p4(int(cap / 2))} ～ \${p4(cap)} 的随机范围\`,
+      \`\${p4(int(cap / 2))} ～ \${p4(cap)} 岁\`,
+    ];
+  }`,
+    replace: `  if (cla === 3) {
+    return [
+      \`\${p4(int(cap / 3))} ～ \${p4(cap)} 的随机范围\`,
+      \`\${p4(int(cap / 3))} ～ \${p4(cap)} 岁\`,
+    ];
+  }`,
+    tests: ['page-config-age'],
+    must_mention: 'slot 3 = 325 的上限/2～上限档',
+  },
+  {
+    desc: 'M11563 RACE_CONFIG 表格 cla 0 档的年龄区间上界少减一（…+cap-1 → …+cap，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `  if (cla === 0) {
+    return [
+      \`换算成人类年龄的\${p4(cap)} 倍\`,
+      \`\${p4(17 * cap)} ～ \${p4(17 * cap + cap - 1)} 岁\`,
+    ];
+  }`,
+    replace: `  if (cla === 0) {
+    return [
+      \`换算成人类年龄的\${p4(cap)} 倍\`,
+      \`\${p4(17 * cap)} ～ \${p4(17 * cap + cap)} 岁\`,
+    ];
+  }`,
+    tests: ['page-config-age'],
+    must_mention: '换算年龄区间',
+  },
+  {
+    desc: 'M11564 RACE_CONFIG 编辑预览的小数倍档不做整数截断（25.5 岁当 25 岁，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `  if (sv[0] === 1) {
+    return [
+      \`换算成人类年龄的\${pad_left(String(sv[1]), 2)}.\${sv[2]} 倍\`,
+      \`\${p4(int((17 * (sv[1] * 10 + sv[2])) / 10))} 岁\`,
+    ];
+  }`,
+    replace: `  if (sv[0] === 1) {
+    return [
+      \`换算成人类年龄的\${pad_left(String(sv[1]), 2)}.\${sv[2]} 倍\`,
+      \`\${p4((17 * (sv[1] * 10 + sv[2])) / 10)} 岁\`,
+    ];
+  }`,
+    tests: ['page-config-age'],
+    must_mention: '小数倍档的 17 岁换算预览按整数除法截断',
+  },
+  {
+    desc: 'M11565 RACE_CONFIG 顶层种族名表首行写错（精灵 → 矮人族，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `const RACE_NAMES = [
+  '精灵',
+  '狼人',`,
+    replace: `const RACE_NAMES = [
+  '矮人族',
+  '狼人',`,
+    tests: ['page-config-age'],
+    must_mention: '种族名',
+  },
+  {
+    desc: 'M11566 RACE_CONFIG [99] 重算循环不再跳过魔王（CFLAG:0:452 被覆盖，#547）',
+    file: 'ere/page/page-config-age.js',
+    find: `        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {
+          // :1066-1074 按新表重算全体（魔王除外）的种族年龄（CFLAG:452）
+          for (const cid of era.getAllCharacters()) {
+            if (cid === 0) continue;`,
+    replace: `        if (await confirm_reset('全种族的年龄按现在的设定重新计算。')) {
+          // 变异：不跳过魔王
+          for (const cid of era.getAllCharacters()) {`,
+    tests: ['page-config-age'],
+    must_mention: ':1069-1070 魔王跳过',
+  },
+  {
+    desc: 'M11567 设置页 [27] 冒险者性别循环不落地（#547）',
+    file: 'ere/page/page-config.js',
+    find: `  } else if (local === 27) {
+    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（:253-264，GLOBAL 变量）
+    era_global.cycle_adventurer_gender();`,
+    replace: `  } else if (local === 27) {
+    // 变异：不写`,
+    tests: ['page-config'],
+    must_mention: '三个魔改存档变量的切换落地',
+  },
+  {
+    desc: 'M11568 设置页 [29] 卖淫影响循环不落地（#547）',
+    file: 'ere/page/page-config.js',
+    find: `  } else if (local === 29) {
+    // [29] 卖淫影响：0→1→2→0 三档循环（:273-278）
+    era_modsave.cycle_prostitution_effect();`,
+    replace: `  } else if (local === 29) {
+    // 变异：不写`,
+    tests: ['page-config'],
+    must_mention: '三个魔改存档变量的切换落地',
+  },
+  {
+    desc: 'M11569 设置页 [30] 反作弊翻转不落地（#547）',
+    file: 'ere/page/page-config.js',
+    find: `  } else if (local === 30) {
+    // [30] 反作弊：0↔1（:281-285；1 = 关闭 DEBUG_CHECK，可开修改）
+    era_modsave.toggle_anti_cheat();`,
+    replace: `  } else if (local === 30) {
+    // 变异：不写`,
+    tests: ['page-config'],
+    must_mention: '三个魔改存档变量的切换落地',
+  },
+  {
+    desc: 'M11570 冒险者性别状态行的 4 档文案串成 -1 档（全是扶她 → 女多男少，#547）',
+    file: 'ere/page/page-config.js',
+    find: `    case 4:
+      return '全是扶她';`,
+    replace: `    case 4:
+      return '女多男少'; // 变异：串档`,
+    tests: ['page-config'],
+    must_mention: '六档文案（global:3，@EVENTFIRST 开局 -1）',
+    test_name:
+      'adventurer_gender_status_text：六档文案（global:3，@EVENTFIRST 开局 -1）',
+  },
+  {
+    desc: 'M11571 卖淫影响状态行的 1 档文案串成 0 档（正面 → 负面，#547）',
+    file: 'ere/page/page-config.js',
+    find: `  if (era_modsave.prostitution_effect === 1) {
+    return '【正面】让奴隶的售价上升';
+  }`,
+    replace: `  if (era_modsave.prostitution_effect === 1) {
+    return '【负面】让奴隶的售价下降（默认设置）'; // 变异：串档
+  }`,
+    tests: ['page-config'],
+    must_mention: '【正面】让奴隶的售价上升',
+  },
+  {
+    desc: 'M11572 设置页 [30] 状态行取反（OFF ↔ ON，#547）',
+    file: 'ere/page/page-config.js',
+    find: `      '反作弊开关 　　　　 　　 现在：' +
+        (era_modsave.anti_cheat ? 'OFF（可开修改）' : 'ON（不可开修改）'),`,
+    replace: `      '反作弊开关 　　　　 　　 现在：' +
+        (era_modsave.anti_cheat ? 'ON（不可开修改）' : 'OFF（可开修改）'),`,
+    tests: ['page-config'],
+    must_mention: 'OFF 档',
+  },
+  {
+    desc: 'M11573 设置页存根名单退回旧状态（CONFIG_AGE_SETTING 重新列入，#547）',
+    file: 'ere/page/page-config.js',
+    find: `const STUBBED_CALLS = [];`,
+    replace: `const STUBBED_CALLS = ['CONFIG_AGE_SETTING']; // 变异：退回存根`,
+    tests: ['page-config'],
+    must_mention: '存根清单可检索',
+  },
+  {
+    desc: 'M11574 设置页 [15] 分支退回存根占位（不进年龄子菜单，#547）',
+    file: 'ere/page/page-config.js',
+    find: `  } else if (local === 15) {
+    await config_age_setting();`,
+    replace: `  } else if (local === 15) {
+    // 变异：退回占位（打一行字，不进子菜单）
+    era.print('@CONFIG_AGE_SETTING 占位\\n');`,
+    tests: ['page-config'],
+    must_mention: '年龄菜单首行',
+  },
+  // —— #547 返工轮（验收 6 条）：M11584-M11588 守 1:1 复刻修正 ——
+  {
+    desc: 'M11584 编辑页网格门退回无差别 else（和人类一样也打印随机档，#547 返工 1）',
+    file: 'ere/page/page-config-age.js',
+    find: `        } else if (dis_flag > 1) {`,
+    replace: `        } else { // 变异：网格门退回 else（:1214 ELSEIF DIS_FLAG > 1 的门丢失）`,
+    tests: ['page-config-age'],
+    must_mention: '[110] 下限按钮不打印',
+  },
+  {
+    desc: 'M11585 [101] 和人类一样清掉 SET_VAR:4/5（随机档种族 [101] 后误存 001，#547 返工 2）',
+    file: 'ere/page/page-config-age.js',
+    find: `          dis_flag = -1;
+          sv[0] = 0;
+          sv[1] = 0;
+          sv[2] = 1;
+          sv[3] = -1;`,
+    replace: `          dis_flag = -1;
+          sv[0] = 0;
+          sv[1] = 0;
+          sv[2] = 1;
+          sv[3] = -1;
+          sv[4] = -1; // 变异：多清上限两值（原作 :1279-1284 只设 0-3）
+          sv[5] = -1;`,
+    tests: ['page-config-age'],
+    must_mention: '旧实现误存 001',
+  },
+  {
+    desc: 'M11586 编辑头重画前的空行被删（:1111 PRINTL 丢失，#547 返工 5）',
+    file: 'ere/page/page-config-age.js',
+    find: `        era.println(); // :1110-1112 的空行（重画首拍）`,
+    replace: `        // 变异：漏 :1111 的重画前空行`,
+    tests: ['page-config-age'],
+    must_mention: '编辑头前一拍是空行（PRINTL）',
+  },
+  {
+    desc: 'M11587 「■ 下限」丢前导两个全角空格（:1215，#547 返工 6）',
+    file: 'ere/page/page-config-age.js',
+    find: `          era.print('　　■ 下限\\n');`,
+    replace: `          era.print('■ 下限\\n'); // 变异：丢前导全角空格`,
+    tests: ['page-config-age'],
+    must_mention: '「■ 下限」带前导两个全角空格',
+  },
+  {
+    desc: 'M11588 「■ 上限」丢前导两个全角空格（:1233，#547 返工 6）',
+    file: 'ere/page/page-config-age.js',
+    find: `          era.print('　　■ 上限\\n');`,
+    replace: `          era.print('■ 上限\\n'); // 变异：丢前导全角空格`,
+    tests: ['page-config-age'],
+    must_mention: '「■ 上限」带前导两个全角空格',
   },
 ];

@@ -40,6 +40,7 @@ const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const era_global = require('#/era-utils/era-global');
 const { geo_test, db_set } = require('#/dungeon/labo'); // 2D 模式分支（#181 H12）
 const { set_vil } = require('#/dungeon/labo-map');
 
@@ -141,9 +142,11 @@ on('EVENTFIRST', async () => {
   // :50-52 INVERTBIT FLAG:8, 0/1/2 —— 新档 FLAG:8 为 0，翻三位后 = 0b111
   era.set('flag:8', 7);
 
-  // :53 冒險者性別 = -1 —— GLOBAL SAVEDATA，未收录进 Global.yml（#18 刻意
-  // 留给魔改子系统票），写无可写（存根清单）。
-
+  // :53 冒險者性別 = -1 —— GLOBAL SAVEDATA（魔改使用.ERH:2），#547 起落
+  // global:3（era_global.adventurer_gender）：每次开局无条件重置 -1（跨档
+  // 共享，用户经设置页 [27] 改的档位维持到下一次新游戏）；原作此处无
+  // SAVEGLOBAL，持久化交给引擎的自动 saveGlobal 时机，不显式代劳。
+  era_global.adventurer_gender = -1;
   // :55 MONEY = 10000 —— 开局持有金（包装层：flag:10004）
   era_flag.money = 10000;
 

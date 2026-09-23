@@ -70,8 +70,10 @@
  *     文本 `（现名）` 提示：ere 引擎无「按钮点击预填输入框」能力。
  *   - @EVENTLOAD（SYSTEM ver1.0.3.ERB:760-778，读档后引擎回调）**自 #137
  *     起由 ere/event/event-load.js 承载**（本文件 require 装配，emit 点在
- *     load_game 的成功分支）：LOADGLOBAL 是 ere 引擎行为（global 表在内存、
- *     读档不动它）；名字初始化两调用是既有存根（#105 决议）；LASTLOAD_NO
+ *     load_game 的成功分支）：LOADGLOBAL（:762）自 #547 起在该链首行镜像
+ *     （await era.loadGlobal——global:3 不即时 SAVEGLOBAL 打破了 #137 的
+ *     不镜像前提，见 event-load.js 文件头）；名字初始化两调用是既有存根
+ *     （#105 决议）；LASTLOAD_NO
  *     == 999 → MAOUNET 与 1000–1020 → INPORT_B 是跨作品数据交换（ere 读档
  *     界面只放行 0-99，不可达，登记 docs/stub-registry.md，归通信票）；
  *     DATA_FIX 历史补丁体由 ADR-0006 判不移植，三处对新档有语义的行经

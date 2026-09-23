@@ -16,18 +16,21 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const era_global = require('#/era-utils/era-global');
+const era_modsave = require('#/era-utils/era-modsave');
 const { ScreenBlock } = require('#/page/components/screen-block');
+const { config_age_setting } = require('#/page/page-config-age');
 const { get_look_info, KIND } = require('#/chara/look-info');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
-
+const { not_ported_line_wait } = require('#/utils/stub-line');
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个，
  * 测试核对固定，同 page-shop.js/event-first.js 的既有先例）。MODLIST 随
- * #542 判不移植离开本名单——按钮 [26] 保留可见，按下打不移植提示。
+ * #542 判不移植离开本名单；CONFIG_AGE_SETTING 随 #547 落地为
+ * ere/page/page-config-age.js——名单已空，保留导出形状。
  */
-const STUBBED_CALLS = ['CONFIG_AGE_SETTING'];
+const STUBBED_CALLS = [];
 
 /** GETBIT(X, n)：FLAG:5 用到位 32-36，位运算在 JS 里按 32 位截断会溢出，改算术运算 */
 function getbit(v, n) {
@@ -181,23 +184,44 @@ async function config_penis_you_setting() {
 
 /**
  * @冒險者性別顯示（:118-134）：冒险者性别限制的档位文案。冒険者性別
- * （MOD SAVEDATA，魔改新增/魔改使用.ERH:2）本项目无 ere 存储；原作
- * FIRST_SETTING（:53）恒初始化新档为 -1（docs/stub-registry.md
- * 「冒険者性別 = -1」行），故恒显示该档对应文案，不做假状态展示。ere 侧
- * 文本内联进 [27] 按钮行，本函数是唯一文本载体。
+ * （原文用字）= GLOBAL SAVEDATA（魔改使用.ERH:2），#547 落 yml/Global.yml
+ * id 3（era_global.adventurer_gender）：@EVENTFIRST 开局重置 -1，[27] 六档
+ * 循环。ere 侧文本内联进 [27] 按钮行，本函数是唯一文本载体。
  */
 function adventurer_gender_status_text() {
-  return '女多男少';
+  switch (era_global.adventurer_gender) {
+    case -1:
+      return '女多男少';
+    case 0:
+      return '只有女性';
+    case 1:
+      return '只有男性';
+    case 2:
+      return '男多女少';
+    case 3:
+      return '男女持平';
+    case 4:
+      return '全是扶她';
+    default:
+      return '';
+  }
 }
 
 /**
- * @卖淫影响（:136-145）：卖淫对奴隶售价影响的档位文案。卖淫影响
- * （MOD SAVEDATA，魔改新增/魔改使用.ERH:4）本项目无 ere 存储，
- * DIM 默认 0——原作 CASE 0 的「（默认设置）」注释印证 0 即预期常态，
- * 恒显示该档。ere 侧文本内联进 [29] 按钮行，本函数是唯一文本载体。
+ * @卖淫影响（:136-145）：卖淫对奴隶售价影响的档位文案。卖淫影响 =
+ * SAVEDATA（魔改使用.ERH:4），#547 落 yml/ModSave.yml id 0
+ * （era_modsave.prostitution_effect）：0 负面（DIM 无声明默认值，原作
+ * CASE 0 的「（默认设置）」注释印证）、1 正面、2 无影响（CASEELSE）。
+ * ere 侧文本内联进 [29] 按钮行，本函数是唯一文本载体。
  */
 function prostitution_effect_status_text() {
-  return '【负面】让奴隶的售价下降（默认设置）';
+  if (era_modsave.prostitution_effect === 0) {
+    return '【负面】让奴隶的售价下降（默认设置）';
+  }
+  if (era_modsave.prostitution_effect === 1) {
+    return '【正面】让奴隶的售价上升';
+  }
+  return '【无影响】不会影响奴隶售价';
 }
 
 function draw_config_page(page) {
@@ -331,7 +355,11 @@ function draw_config_page(page) {
       '卖淫对奴隶售价的影响　　 现在：' + prostitution_effect_status_text(),
       29,
     );
-    era.printButton('反作弊开关 　　　　 　　 现在：ON（不可开修改）', 30);
+    era.printButton(
+      '反作弊开关 　　　　 　　 现在：' +
+        (era_modsave.anti_cheat ? 'OFF（可开修改）' : 'ON（不可开修改）'),
+      30,
+    );
   }
 }
 
@@ -363,11 +391,7 @@ async function dispatch_config(local, page) {
   } else if (local === 14) {
     game.dungeon.游戏设定 = invertbit(game.dungeon.游戏设定, 11);
   } else if (local === 15) {
-    await stub_line_wait(
-      'CONFIG_AGE_SETTING',
-      '年龄/三围显示开关与种族年龄详细设定',
-      '系统设定',
-    );
+    await config_age_setting();
   } else if (local === 16) {
     game.dungeon.游戏设定 = invertbit(game.dungeon.游戏设定, 32);
   } else if (local === 17) {
@@ -399,6 +423,9 @@ async function dispatch_config(local, page) {
       'MOD 开关菜单',
       '#542 判不移植：需手动开启、默认全关的 MOD 子系统',
     );
+  } else if (local === 27) {
+    // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（:253-264，GLOBAL 变量）
+    era_global.cycle_adventurer_gender();
   } else if (local === 28) {
     // [28] 立绘开关（:266-271 只翻 SAVEDATA 开关，无函数调用）：立绘系统
     // 判不移植（#542，#540 范围决定 4），开关不落地、按下打不移植提示
@@ -407,13 +434,13 @@ async function dispatch_config(local, page) {
       '立绘系统',
       '#542 判不移植：开关默认关、素材不在仓库',
     );
+  } else if (local === 29) {
+    // [29] 卖淫影响：0→1→2→0 三档循环（:273-278）
+    era_modsave.cycle_prostitution_effect();
+  } else if (local === 30) {
+    // [30] 反作弊：0↔1（:281-285；1 = 关闭 DEBUG_CHECK，可开修改）
+    era_modsave.toggle_anti_cheat();
   }
-  // LOCAL==27/29/30：冒険者性別/卖淫影响/反作弊。原作 :253-285 这三支真写
-  // MOD SAVEDATA 变量（冒険者性別 -1→0→…→4 循环、卖淫影响 0→1→2、反作弊
-  // 0/1），其中反作弊有消费者（恒 0 令 DEBUG_CHECK 每回合执行，
-  // docs/stub-registry.md「反作弊」行）；本项目三个变量均无 ere 存储
-  // （#18 刻意不收 Global.yml，#547 落地前三支空转不写——这是有意
-  // 偏离而非原作现状，按钮照常渲染（原作按钮行可见）
   return page;
 }
 

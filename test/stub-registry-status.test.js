@@ -524,8 +524,13 @@ test('真树：ere/ 全部 stub_line 名与 STUBBED_CALLS 字面名都对应存�
       }
     }
   }
-  // 下限随 #540 清零进程逐票下调（#548 后真树剩 8 名；#565 起草时 17 名）
-  assert.ok(entries.length >= 5, '收集面塌了（ere/ 尚未清零，收集器失效即红）');
+  // 下限随 #540 清零进程逐票下调（#547 合并后真树剩 7 名、清单存根行 0；
+  // #548 后 8 名、#565 起草时 17 名）。剩的是对应终态行的占位名，全清后
+  // 本断言随终态清点一并退役
+  assert.ok(
+    entries.length >= 5,
+    '收集面塌了（终态占位名尚未清零，收集器失效即红）',
+  );
   assert.deepEqual(
     check_stub_names(entries, registry_text),
     [],

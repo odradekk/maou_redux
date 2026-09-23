@@ -117,3 +117,24 @@ test('钩子是幂等重放：对已钳过的世界再跑一遍不改变结果',
   assert.equal(fixture.store.get('maxbase:0:1'), 100);
   assert.equal(fixture.store.get('ex_talent:0:200'), 1);
 });
+
+test('LOADGLOBAL 镜像（:762）：钩子链首行恢复 global 表为最近一次保存值（#547 验收第 3 条）', async () => {
+  const fixture = create_era_fixture();
+  const era_global = fixture.load_module('era-utils/era-global');
+  // 最近一次保存时的值是 2（saveData 自动 saveGlobal），之后设置页改到 1 未保存
+  era_global.adventurer_gender = 2;
+  await fixture.era.saveData(0, 'test');
+  era_global.adventurer_gender = 1;
+
+  await run_hook(fixture);
+
+  assert.ok(
+    fixture.calls.some((c) => c.api === 'loadGlobal'),
+    '钩子链必须真的调用 era.loadGlobal（@EVENTLOAD 首行 LOADGLOBAL 的镜像）',
+  );
+  assert.equal(
+    era_global.adventurer_gender,
+    2,
+    'global 表换回 global.sav 内容——未保存的设置页修改被丢弃',
+  );
+});

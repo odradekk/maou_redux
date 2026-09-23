@@ -36,10 +36,9 @@
  *     使同一预设可生成多个稳定 ID 的角色。
  *   - MASTER 恒角色 ID 0（魔王，CONTEXT.md），@CM_ST_ACE 的
  *     CFLAG:MASTER:9 落 cflag:0:9；
- *   - 冒險者性別（魔改使用.ERH:2，GLOBAL SAVEDATA）未入 yml/Global.yml
- *     （该文件头注明确留给魔改子系统票），ere 无寻址通道，按 Emuera 零值
- *     0 落地——@CM_GENDER 的 SELECTCASE 唯一可达臂是 CASE 0；六臂条件
- *     结构 1:1 保留，魔改票落地后改读访问器；
+ *   - 冒險者性別（原文用字，魔改使用.ERH:2 的 GLOBAL SAVEDATA）自 #547 落
+ *     yml/Global.yml id 3：era_global.adventurer_gender（@EVENTFIRST 开局
+ *     重置 -1，设置页 [27] 六档循环），@CM_GENDER 的 SELECTCASE 六臂全可达；
  *   - 赤森奴隶（魔改使用.ERH:12，普通变量非 SAVEDATA）仅在
  *     rand_chara_make() 的战役招募模式内为真（#469 起真身），且该模式下
  *     传给本函数的角色恒是刚 ADDCHARA 的非后代（EX_TALENT:A:2 恒 0，由
@@ -88,6 +87,7 @@ const { wearing_cloth_able } = require('#/system/train/cloth');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
+const era_global = require('#/era-utils/era-global'); // #547：冒險者性別（global:3）
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -386,15 +386,15 @@ async function cm_kj(cid, arg, rand_n) {
 /**
  * @CM_GENDER（:255-294）：性别掷骰。
  *
- * SELECTCASE 冒險者性別（:259）六臂 1:1 保留；该变量未入 yml/Global.yml
- * （魔改票管辖，文件头），Emuera 零值 0 → 唯一可达臂 CASE 0。
+ * SELECTCASE 冒險者性別（:259）六臂 1:1 保留；变量自 #547 起读
+ * era_global.adventurer_gender（global:3，GLOBAL SAVEDATA 跨档共享）。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 async function cm_gender(cid, rand_n) {
-  // 冒險者性別 = 0（魔改使用.ERH:2 的 GLOBAL SAVEDATA，恒缺省；文件头）
-  const adventurer_gender = 0;
+  // 冒險者性別（原文用字）＝ GLOBAL SAVEDATA（魔改使用.ERH:2，global:3）
+  const adventurer_gender = era_global.adventurer_gender;
   switch (adventurer_gender) {
     case -1:
       // :261 女多男少（2%扶他，20%男性）

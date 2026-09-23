@@ -1542,3 +1542,24 @@ test('#401 DEBUG_CHECK 第三段：魔王本人等级超 5000 → 大冲击 GAME
     ':329 GAMEOVER 横幅',
   );
 });
+
+// —— :137-138 反作弊开关（SIF !反作弊 → DEBUG_CHECK，#547 落 modsave:1）——
+
+test('EVENTTURNEND：反作弊 1 时跳过 DEBUG_CHECK（modsave:1，设置页 [30] 可切）', async () => {
+  const { fixture, emit } = setup_turnend();
+  fixture.seed_chara(31, { id: 31, name: '奴隶31', callname: '角色31' });
+  fixture.era.addCharacter(31);
+  // 改钱 + 指定受害者：反作弊开着（0）时 DEBUG_CHECK 第一段会炸宝库、清零、
+  // 炸死角色 31；反作弊 1 时整支跳过，什么都不发生
+  fixture.store.set('flag:10004', 5000);
+  fixture.store.set('flag:1', 31);
+  fixture.store.set('modsave:1', 1);
+
+  assert.equal(await emit('EVENTTURNEND'), 'SHOP');
+  assert.equal(fixture.store.get('flag:10004'), 5000, '不炸宝库');
+  assert.ok(fixture.chara_no.includes(31), '角色 31 不被炸死');
+  assert(
+    !fixture.text_lines().some((line) => line.includes('资金清零了。')),
+    '无爆炸播报',
+  );
+});

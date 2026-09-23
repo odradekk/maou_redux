@@ -415,6 +415,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '762',
+        any: [/^\s*LOADGLOBAL\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
         ref: '954-977',
         any: [/LOCALS = 第\{DAY\+1,2\}日午前/],
       },
