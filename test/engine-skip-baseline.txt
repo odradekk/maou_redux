@@ -122,7 +122,10 @@
 # 永远判不出持有」的依据）。本票的口上分支用例全走 era-fixture 路径，不加数。
 # 两支合并后重测（#548 并入 #552）：79（#435 基线）+ 1（#548 的 chara34-mark）
 # + 1（#552 的 variable-yml）= 81。**实测**：ERE_ENGINE_ASAR=none 跑全库
-# （6625 = 6544 过 + 81 跳过 + 0 挂），node tools/skip-count-check.mjs 与
-# 本基线一致。两边各自把 79 改成 80 是各算各的，合并后既不是 80 也不是
+# （6625 = 6544 过 + 81 跳过 + 0 挂），node tools/skip-count-check.mjs 与本
+# 基线一致。两边各自把 79 改成 80 是各算各的，合并后既不是 80 也不是
 # 80+80，只能实测（merge-conflicts.md 的计数型基线一节）。
+# 再并入 #558（S2 处刑）复测：**81 不变**——该票的测试全走 era-fixture
+# 路径，无 engine-bundle 门控；用例总数涨（6662 = 6581 过 + 81 跳过 + 0 挂，
+# ERE_ENGINE_ASAR=none 实测），跳过数不动。
 81

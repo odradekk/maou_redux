@@ -60,6 +60,7 @@ const { dungeon_after } = require('#/dungeon/dungeon-after');
 const { marriage_day } = require('#/dungeon/marriage-day');
 const { run_benki } = require('#/system/train/benki');
 const { run_seedbed } = require('#/system/train/seedbed');
+const { auto_execution } = require('#/event/event-execution-batch');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -71,9 +72,10 @@ const { run_seedbed } = require('#/system/train/seedbed');
  * dungeon-after.js）；#217（J7）起 BENKI 亦接真身（ere/system/train/
  * benki.js）——四条均从名单移除；#508 起 FORMAT_AUTOTRAIN / AUTOTRAIN
  * 亦接真身（ere/event/event-autotrain.js 的同名函数，调用点原为占位行），
- * 从名单移除。
+ * 从名单移除；#543 起自動處刑亦接真身（ere/event/event-execution-batch.js
+ * 的 auto_execution，FLAG:5 位 3 的开关位）。
  */
-const STUBBED_CALLS = ['自動處刑', 'GET_LOOK_INFO'];
+const STUBBED_CALLS = ['GET_LOOK_INFO'];
 
 /** 原作 RAND:N（0..N-1）的等价物 */
 function rand(n) {
@@ -458,10 +460,13 @@ on('EVENTTURNEND', async () => {
     }
   }
 
-  // :589-609 自动处刑（FLAG:5 & 8 的开关位；EXECUTION_MINI 在原作注释段内，
-  // 登记不占位）。FLAG:5 的位 3 开局为 0（@EVENTFIRST 置 17179934119）
+  // :589-609 自动处刑（FLAG:5 & 8 的开关位，设置页 [3]）——#543 起真身
+  //（ere/event/event-execution-batch.js 的 auto_execution；本段跑在
+  // :250-740 的调教窗口内，口上/装备通道的调教域表都在）。原作注释段里的
+  // EXECUTION_MINI 不登清单（注释不是调用点）。FLAG:5 的位 3 开局为 0
+  //（@EVENTFIRST 置 17179934119）
   if ((era.get('flag:5') || 0) & 8) {
-    stub_line('自動處刑', '自动处刑');
+    await auto_execution();
   }
 
   // :611-617 「战斗日志 SKIP 中断」开关（FLAG:5 位 9）开着则强制等键

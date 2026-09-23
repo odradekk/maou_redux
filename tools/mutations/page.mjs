@@ -3498,7 +3498,7 @@ export default [
   {
     desc: 'M11110 page-shop 存根名单退回旧状态（INTERCEPT/ABILITY_UP/TAILOR_MAIN 自 #397 起已接真身，重新列入即红，#515）',
     file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['批量处刑', 'LABO'];",
+    find: "const STUBBED_CALLS = ['LABO'];",
     replace:
       "const STUBBED_CALLS = [\n  '批量处刑',\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
     tests: ['page-shop'],
@@ -3694,9 +3694,8 @@ export default [
   {
     desc: 'M11321 page-shop 存根名单退回旧状态（DEBUG_MENU_U 已随 #542 判不移植，重新列入即红）',
     file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['批量处刑', 'LABO'];",
-    replace:
-      "const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
+    find: "const STUBBED_CALLS = ['LABO'];",
+    replace: "const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
     tests: ['page-shop'],
     test_name: '存根清单可检索：docs/stub-registry.md 收录这张票全部占位名',
     must_mention: '存根名单必须只列仍未接真身的分支',
