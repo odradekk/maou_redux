@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 67; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）
+export const COUNT = 74; // #383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）；#546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）
 
 export default [
   {
@@ -697,5 +697,62 @@ export default [
           },`,
     tests: ['chara-make'],
     must_mention: '要由引擎拼在按钮正文前',
+  },
+  // —— #546：RANDOM_SELF_CALL 的 MODE 1 自定义输入分支（ere/chara/chara-self-call.js）——
+  {
+    desc: 'M11532 RANDOM_SELF_CALL 的 MODE 判定取反（mode === 1 改 mode === 2——MODE 1 走不进输入段）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '  if (mode === 1) {',
+    replace: '  if (mode === 2) {',
+    tests: ['chara-self-call'],
+    must_mention: 'MODE 1：自由文本',
+  },
+  {
+    desc: 'M11533 MODE 1 的提示行文案改字（随机设定 → 随机选一个）',
+    file: 'ere/chara/chara-self-call.js',
+    find: "    era.print('请输入想设定的第一人称，若不输入择随机设定');",
+    replace: "    era.print('请输入想设定的第一人称，若不输入择随机选一个');",
+    tests: ['chara-self-call'],
+    must_mention: 'MODE 1：自由文本',
+  },
+  {
+    desc: 'M11534 MODE 1 的空输入映射丢（raw !== 0 改 raw !== 1——输入 0 被当自定义文本，一人称变「0」）',
+    file: 'ere/chara/chara-self-call.js',
+    find: "    if (raw !== 0 && raw !== '' && raw != null) {",
+    replace: "    if (raw !== 1 && raw !== '' && raw != null) {",
+    tests: ['chara-self-call'],
+    must_mention: '空输入（引擎把 "" 归一成 0）',
+  },
+  {
+    desc: 'M11535 MODE 1 的档位清零漏写（CFLAG:450 = 0 被删——自定义后档位仍留旧值）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '      era.set(`cstr:${cid}:60`, String(raw));\n      era.set(`cflag:${cid}:450`, 0);',
+    replace: '      era.set(`cstr:${cid}:60`, String(raw));',
+    tests: ['chara-self-call'],
+    must_mention: 'MODE 1：自由文本',
+  },
+  {
+    desc: 'M11536 MODE 1 的一人称写错下标（CSTR:60 改 61）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '      era.set(`cstr:${cid}:60`, String(raw));',
+    replace: '      era.set(`cstr:${cid}:61`, String(raw));',
+    tests: ['chara-self-call'],
+    must_mention: 'MODE 1：自由文本',
+  },
+  {
+    desc: 'M11537 MODE 1 的数字输入不字符串化（String(raw) 改 raw——存进数值，一人称变 8 而非「8」）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '      era.set(`cstr:${cid}:60`, String(raw));',
+    replace: '      era.set(`cstr:${cid}:60`, raw);',
+    tests: ['chara-self-call'],
+    must_mention: '数字文本按引擎归一成数值再字符串化',
+  },
+  {
+    desc: 'M11538 MODE 1 的自定义命中返回值改坏（return 0 改 return 1）',
+    file: 'ere/chara/chara-self-call.js',
+    find: '      era.set(`cflag:${cid}:450`, 0);\n      return 0;',
+    replace: '      era.set(`cflag:${cid}:450`, 0);\n      return 1;',
+    tests: ['chara-self-call'],
+    must_mention: 'MODE 1：自由文本',
   },
 ];

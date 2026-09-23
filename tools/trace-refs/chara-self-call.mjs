@@ -141,6 +141,32 @@ export const FILES = [
         ref: '422-423',
         any: [/^@SELF_CALLNAME, ARGS$/m],
       },
+      // #546：MODE 1 自定义输入分支（:7-23）逐段锚
+      {
+        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
+        ref: '7-8',
+        any: [/^SIF MODE == 0$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
+        ref: '10-12',
+        any: [/^PRINTL 请输入想设定的第一人称，若不输入择随机设定$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
+        ref: '13-14',
+        any: [/^INPUTS$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
+        ref: '15-16',
+        any: [/^IF LOCALS == ""$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/SELF_CALL.ERB',
+        ref: '18-21',
+        any: [/^\s*IF STRLENS\(LOCALS\) > 0$/m],
+      },
     ],
   },
 ];

@@ -139,7 +139,7 @@ async function chara_info_name_edit(arg, reset = 0) {
     chara_name_reset(arg); // :77 CALL CHARA_NAME_RESET(ARG)
     era.print(`${era.get(`callname:${arg}:-2`) ?? ''}恢复了原来的名字……`); // :78
     if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
-      random_self_call(arg); // :82 一人称設定
+      await random_self_call(arg); // :82 一人称設定
     }
     return 0; // :76-85 块的出口
   }
@@ -170,7 +170,7 @@ async function chara_info_name_edit(arg, reset = 0) {
   }
 
   if ((era.get(`cflag:${arg}:450`) || 0) >= 99) {
-    random_self_call(arg); // :106 一人称設定
+    await random_self_call(arg); // :106 一人称設定
   }
   return 0; // :109
 }

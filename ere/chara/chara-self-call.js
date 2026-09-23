@@ -13,14 +13,12 @@
  *       @SET_NICK_SELFCALL（:163-274）@CALC_SELFCALL_FACTOR（:276-396）
  *
  * 移植说明（有意偏离，均注明依据）：
- *
- *   - **MODE=1（自定义输入）分支未建模**（原作 :7-23）：全库唯一调用方
- *     `キャラ関数/CHARA_INFO ver1.0.1.ERB:1062`
- *     `CALL RANDOM_SELF_CALL(ARG,1)` 所在文件未移植（N7/#391），当前没有
- *     任何可达入口能把 mode=1 传进来。`random_self_call` 因此不声明 mode
- *     形参，只实现 :24 起的随机路径（原作 MODE==0 的默认分支）——延续
- *     chara-init.js 在本票之前就已写明的同一条窄路径边界（#118）。CHARA_INFO
- *     落地时如需要，在那张票上补 mode 形参与 INPUTS 交互。
+ *   - **MODE=1（自定义输入）分支自 #546 起落地**（原作 :7-23）：唯一调用方
+ *     `キャラ関数/CHARA_INFO ver1.0.1.ERB:1062` 的 CASE 8（[8] 一人称重设）
+ *     已随角色详情页接线，mode 形参排在 rand 之后（既有调用方都以第二参传
+ *     随机源，chara-custom2/test 同款，不破坏签名）。空输入的语义映射见
+ *     函数体内注释：引擎把 '' 归一成 0 且不受理空提交，原作「不输入择随机
+ *     设定」在 ere 的可达等价物是输入 0。
  *
  *   - **CSVCSTR(NO:ARG,60) 不用 `staticcstr:${cid}:60` 三段寻址**，改读
  *     `era.get('chara:${cid}')`（引擎文档化 API，dev-guides/09-static.md
@@ -535,14 +533,50 @@ function set_nick_selfcall(cid, start = -1, rand = default_rand) {
  * 重试一次（原作 `;RESTART CALL RANDOM_SELF_CALL, ARG`）——重试后必然落进
  * CSV 回落或 <9 直设，递归恒在一次以内终止。
  *
+ * MODE 1（#546，原作 :7-23）：自定义输入分支——两条分割线夹一句提示后等
+ * 玩家输入，非空文本落为一人称并把档位清 0；空输入回落到与 MODE 0 共用的
+ * 随机路径（沿用 :6 读好的档位）。原作的 `$INPUT_LOOP` 标签没有回跳点，
+ * 输入只发生一次，1:1 不建循环。
+ *
+ * **异步化**：MODE 1 要 `await era.input()`（INPUTS 的等价物），整个函数
+ * 因此是 async——MODE 0 路径没有任何等待点，调用方不加 await 也不改变
+ * 执行顺序，但按项目约定（AGENTS.md「异步 API 必须 await」）调用点都写
+ * await。
+ *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} [rand] RAND:N 随机源，贯穿传给两张子表
- * @returns {number} 已设定的一人称档位（原作 RETURN 值）
+ * @param {number} [mode] 0 = 随机（默认，原作 MODE = 0）；1 = 自定义输入
+ * @returns {Promise<number>} 已设定的一人称档位（原作 RETURN 值）
  */
-function random_self_call(cid, rand = default_rand) {
-  // :6 LOCAL = CFLAG:ARG:450（MODE 恒 0，见文件头「有意偏离」条）
+async function random_self_call(cid, rand = default_rand, mode = 0) {
+  // :6 LOCAL = CFLAG:ARG:450（MODE 1 的空输入回落也沿用这个进入时读的档位）
   let local = era.get(`cflag:${cid}:450`) || 0;
 
+  if (mode === 1) {
+    // :7-8 SIF MODE == 0 → GOTO RANDOM（只有 MODE 1 进输入段）
+    // :10-12 $INPUT_LOOP：两条分割线夹一句提示
+    era.drawLine();
+    era.print('请输入想设定的第一人称，若不输入择随机设定');
+    era.drawLine();
+    // :13-14 INPUTS → LOCALS '= RESULTS
+    const raw = await era.input();
+    // :15-16 IF LOCALS == "" → GOTO RANDOM。引擎侧的空输入形态：回传值先经
+    // getNumber 归一（`Number(e); isNaN(t) ? e : t`，app.asar 模块 65——''
+    // 与 "0" 都归一成数值 0，非数字串原样返回），且渲染层根本不受理空提交
+    // （dev-guides/05-interaction.md:124「不会是 undefined 或空字符串''」）。
+    // 原作「不输入择随机设定」在 ere 的可达等价物因此是**输入 0**：按 0
+    // 走随机路径；其余值字符串化落为自定义一人称（chara-name-edit.js 的
+    // INPUTS 同款约定——游戏读到的是归一后的值）
+    if (raw !== 0 && raw !== '' && raw != null) {
+      // :18-21 STRLENS(LOCALS) > 0（ELSE 内的判空，恒真）：写入并清档位
+      era.set(`cstr:${cid}:60`, String(raw));
+      era.set(`cflag:${cid}:450`, 0);
+      return 0;
+    }
+    // 空输入 → 落 $RANDOM（local 已在 :6 读好，等价于重读本档位）
+  }
+
+  // :24 $RANDOM 起为 MODE 0/1 共用的随机路径
   // :25-26 SIF LOCAL >= 200 → LOCAL = -1（CSV 回落档）
   if (local >= 200) {
     local = -1;
@@ -586,7 +620,8 @@ function random_self_call(cid, rand = default_rand) {
     }
   }
 
-  // :63-65 两张表均未命中：清空档位重试
+  // :63-65 两张表均未命中：清空档位重试（原作 CALL RANDOM_SELF_CALL, ARG——
+  // 不带 MODE，恒走随机路径）
   era.set(`cflag:${cid}:450`, -1);
   return random_self_call(cid, rand);
 }
