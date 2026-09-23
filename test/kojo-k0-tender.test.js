@@ -5053,3 +5053,36 @@ test('COLOSSEUM：selectcom 31 + 助手调教 → 助手名插值', async () => 
     'selectcom 31 助手调教应输出愉悦表情',
   );
 });
+
+// —— COLOSSEUM：ITEM:PBAND → item:4（#552；源 :7786/:7819/:7843） ——
+// PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
+// yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND')
+// 在引擎里恒 undefined（test/variable-yml.test.js 的引擎用例），持有假阳具也
+// 判不出——地址写回 item:PBAND 时下列用例必须红。
+test('COLOSSEUM：SELECTCOM 31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接假阳具词', async () => {
+  const cases = [
+    { selectcom: 31, word: '吞咽着假阳具的', tail: '露出了愉悦的表情' },
+    { selectcom: 21, word: '用假阳具', tail: '的阴道' },
+    { selectcom: 27, word: '用假阳具', tail: '的肛门' },
+  ];
+  for (const { selectcom, word, tail } of cases) {
+    const fixture = await setup_k0((f) => {
+      f.store.set('tequip:31:55', 1);
+      join_slave_chara(f, 17, '玛奥');
+      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = selectcom;
+    era_flag.assi = 17;
+    era_flag.assiplay = 1;
+    await speak_k0(fixture);
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(word)),
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「${word}」`,
+    );
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(tail)),
+      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
+    );
+  }
+});

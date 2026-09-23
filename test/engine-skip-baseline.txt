@@ -111,4 +111,8 @@
 # ERE_ENGINE_ASAR=none 实测）。表名/读取键随改名同步
 # （CharaNameList.yml → NameList.yml、charanamelist* → namelist*），上面
 # #388 那行里的旧名按现状改回现名。
-79
+# #552（S9 口上 PBAND 下标）：+1（variable-yml.test.js 的引擎门控用例「item:PBAND
+# 名字表查不到 → 读恒 undefined、写另立键」——引擎侧证据钉住「口上具名地址
+# 永远判不出持有」的依据），现为 80。本票的口上分支用例全走 era-fixture 路径，
+# 不加数。
+80

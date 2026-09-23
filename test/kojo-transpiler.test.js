@@ -219,6 +219,30 @@ test('convert_expr：一维变量 / 单值全局 / RAND / 局部参数', () => {
   assert.ok(n.some((x) => x.kind === '局部参数')); // ARG REVIEW
 });
 
+// #552：口上把原作 `ITEM:PBAND` 当成了字符串具名寻址，直译成
+// era.get('item:PBAND')——Item.yml 没有 PBAND 条目，引擎按名字表翻译不中，
+// 该判定永远读 undefined。PBAND 是系统变量（SYSTEM ver1.0.3.ERB:42 赋 4、
+// 全库不再改写），故转译期就落成 item:4，不再交给复核 agent 定。
+test('convert_expr：ITEM:PBAND → item:4（PBAND = 4，SYSTEM ver1.0.3.ERB:42，#552）', () => {
+  const n = [];
+  assert.equal(convert_expr('ITEM:PBAND == 1', 1, n), "era.get('item:4') == 1");
+  assert.ok(
+    n.some(
+      (x) => x.kind === '表达式寻址' && x.msg.includes("era.get('item:4')"),
+    ),
+    'REVIEW 清单要写出落成后的地址，复核 agent 按它核对',
+  );
+  // 大小写不敏感（源文混用大小写时同样落成常量）
+  const n2 = [];
+  assert.equal(
+    convert_expr('Item:pband == 1', 2, n2),
+    "era.get('item:4') == 1",
+  );
+  // 其余 ITEM 下标照旧走族名直译（只特判 PBAND）
+  const n3 = [];
+  assert.equal(convert_expr('ITEM:53 == 1', 3, n3), "era.get('item:53') == 1");
+});
+
 test('convert_expr：RAND:(expr) 表达式形态 → rand_n(expr)（#184 修的静默漏出）', () => {
   const n = [];
   assert.equal(
