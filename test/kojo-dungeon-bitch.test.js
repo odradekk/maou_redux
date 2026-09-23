@@ -15,7 +15,7 @@
  *   - PROFIT_BITCH 收益结算：场所分档/勇者/客种类/处女溢价/总价；
  *   - SET_BICH_LEVEL 分档（0/1/2-5）；
  *   - DUNGEON_BITCH / HEROINE_BITCH 入口（体力门槛/卖春积极性/强制肉偿
- *     存根/内职）；
+ *     真身/内职）；
  *   - 存根清单核对（docs/stub-registry.md）。
  *
  * 随机源注入：每个函数接受 rand 参数（[0, n) 整数），测试用定值序固定
@@ -580,7 +580,7 @@ test('DUNGEON_WORK：内职收入（潜入中 ÷10；MONEY/EX_FLAG 入账）', (
   assert.equal(f2.store.get('flag:10004'), 14);
 });
 
-test('HEROINE_BITCH：债务过高强制卖春存根（CFLAG:582 < -10000 且非处女且 !RAND:3）', async () => {
+test('HEROINE_BITCH：债务过高强制卖春接真身（CFLAG:582 < -10000 且非处女且 !RAND:3）', async () => {
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);
     f.store.set('base:31:1', 500);
@@ -588,12 +588,18 @@ test('HEROINE_BITCH：债务过高强制卖春存根（CFLAG:582 < -10000 且非
     f.store.set('cflag:31:582', -20000); // 债务高
     f.store.set('talent:31:0', 0); // 非处女
   });
-  // !RAND:3 → RAND:3 = 0 → 触发强制肉偿存根
-  await mod.heroine_bitch(31, seq_rand(0, 0, 0));
+  // !RAND:3 → RAND:3 = 0 → 触发强制肉偿真身（#544）。真身的抽取序见
+  // test/kojo-forced-payment.test.js（:11 档 0、:22 PLAY 0、:23 COST 0、
+  // :88 拍片 1），末尾的 36 是 DUNGEON_BITCH.ERB:78 自慰判定的 RAND:36
+  await mod.heroine_bitch(31, seq_rand(0, 0, 0, 0, 1, 36));
+  const lines = fixture.text_lines();
   assert.ok(
-    fixture
-      .text_lines()
-      .some((l) => l.includes('强制肉偿') && l.includes('债务过高')),
+    lines.some((l) => l.startsWith('由于温妮欠的债务实在太高了')),
+    '强制肉偿真身的开场行',
+  );
+  assert.ok(
+    !lines.some((l) => l.includes('强制肉偿') && l.includes('债务过高')),
+    '占位行已消失',
   );
 });
 
