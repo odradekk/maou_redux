@@ -182,6 +182,13 @@ export const FILES = [
         ref: '883',
         any: [/^\s*CALL PTJ_BUTTON\(ARG\)\s*$/m],
       },
+      // #542：CASE 99 的分发端（文件头 `[IF_DEBUG][99]` 条目指向这里；
+      // 调用落在 CHAR_DEBUG，清单判「不移植（调试功能）」）
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO ver1.0.1.ERB',
+        ref: '934',
+        any: [/^\s*TRYCALL CHAR_DEBUG\(ARG\)\s*$/m],
+      },
     ],
   },
 ];

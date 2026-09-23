@@ -278,10 +278,13 @@ test('dispatch_config(28)：立绘开关按 #542 判不移植，按下打一行�
     '立绘开关不落地（#542：开关默认关、素材不在仓库）',
   );
 });
-test('dispatch_config(27-30)：四个 MOD SAVEDATA 未落地变量恒不写入（1:1「设置了也不生效」）', async () => {
+
+test('dispatch_config(27/29/30)：三个 MOD SAVEDATA 未落地变量恒不写入（1:1「设置了也不生效」）', async () => {
+  // [28] 立绘开关自 #542 起走判不移植的提示分支（见上面 dispatch_config(28)
+  // 的用例），不再是 MOD SAVEDATA 变量，故不在本用例的取值表里
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
-  for (const local of [27, 28, 29, 30]) {
+  for (const local of [27, 29, 30]) {
     const page = await dispatch_config(local, 1);
     assert.equal(page, 1);
   }

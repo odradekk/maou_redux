@@ -3,9 +3,10 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 384; // #542 起 +4（M11313/M11314 page-config 的 [26]/[28] 提示、
-// M11320/M11321 page-shop 的 999 提示与存根名单——由 test/page-config.test.js 与
-// test/page-shop.test.js 守护）；此前 380，其中 #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）
+export const COUNT = 386; // #542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
+// M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
+// 快捷键、M11329 page-config 的提示检索键——由 test/page-config.test.js、
+// test/page-shop.test.js 与 test/page-chara-info.test.js 守护）；此前 380，其中 #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -3623,5 +3624,30 @@ export default [
     tests: ['page-shop'],
     test_name: '存根清单可检索：docs/stub-registry.md 收录这张票全部占位名',
     must_mention: '存根名单必须只列仍未接真身的分支',
+  },
+  {
+    desc: 'M11328 [20] 更换立绘按钮快捷键错位（20 改 21——清单行的编号与引擎分发对不上，#542）',
+    file: 'ere/page/page-chara-info.js',
+    find: "      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);",
+    replace:
+      "      if (state === 0 && current !== 0) era.printButton('更换立绘', 21); // 变异：快捷键错位",
+    tests: ['page-chara-info'],
+    must_mention: '奴隶 + 状态 0：渲染',
+  },
+  {
+    desc: 'M11329 设置页 [28] 的提示文案串成 [26] 的（note 改「MOD 开关菜单」——立绘开关按下却说 MOD，#542）',
+    file: 'ere/page/page-config.js',
+    find: `    await not_ported_line_wait(
+      '更换立绘',
+      '立绘系统',
+      '#542 判不移植：开关默认关、素材不在仓库',
+    );`,
+    replace: `    await not_ported_line_wait(
+      '更换立绘',
+      'MOD 开关菜单',
+      '#542 判不移植：开关默认关、素材不在仓库',
+    );`,
+    tests: ['page-config'],
+    must_mention: '不移植提示要说清是什么与为何',
   },
 ];

@@ -21401,7 +21401,7 @@ async function try_kojo_or_stub(
     replace: `function bich_level_text(arg) {
   const level = era.get(\`cflag:\${arg}:120\`) || 0;
   if (level !== 0) { // 变异：首档判据写反`,
-    tests: ['page-chara-info'],
+    tests: ['page-chara-info', 'kojo-dungeon-bitch'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
   {
@@ -21413,7 +21413,7 @@ async function try_kojo_or_stub(
     replace: `  if (level === 1) {
     return '普通级'; // 变异：第二臂文案写错
   }`,
-    tests: ['page-chara-info'],
+    tests: ['page-chara-info', 'kojo-dungeon-bitch'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
   {
@@ -21421,7 +21421,7 @@ async function try_kojo_or_stub(
     file: 'ere/kojo/kojo-dungeon-bitch.js',
     find: '  return `${level}等级`; // :1164',
     replace: '  return `${level + 1}等级`; // 变异：第三臂数值错位',
-    tests: ['page-chara-info'],
+    tests: ['page-chara-info', 'kojo-dungeon-bitch'],
     must_mention: 'sub_page 1 应渲染 [18] 卖春积极性按钮',
   },
 
