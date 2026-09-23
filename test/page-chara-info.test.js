@@ -1540,8 +1540,9 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
   assert.equal(fixture.era.addCharacter(1), true);
   assert.equal(fixture.era.addCharacter(2), true);
   // CFLAG:x:9 等级；:601 婚姻压缩数据；TALENT:200 战士（职业列）；
-  // c_relation 的行与列。旧做法（swap_chara_numbers）会把这些整片搬到对方
-  // 名下——本轮返工后一件都不动，下面逐条钉住「人跟 ID 走」
+  // c_relation / c_relation_sub / relation 三张关系表的行与列。旧做法
+  // （swap_chara_numbers）会把这些整片搬到对方名下——本轮返工后一件都不动，
+  // 下面逐条钉住「人跟 ID 走」
   fixture.store.set('cflag:1:9', 5);
   fixture.store.set('cflag:2:9', 7);
   fixture.store.set('cflag:1:601', 900);
@@ -1550,6 +1551,10 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
   fixture.store.set('c_relation:2:0', 22);
   fixture.store.set('c_relation:0:1', 101);
   fixture.store.set('c_relation:0:2', 202);
+  fixture.store.set('c_relation_sub:1:1', 31);
+  fixture.store.set('c_relation_sub:2:1', 32);
+  fixture.store.set('relation:1:0', 51);
+  fixture.store.set('relation:2:0', 52);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 1;
   era_flag.assi = 1;
@@ -1582,6 +1587,10 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
   assert.equal(fixture.store.get('c_relation:2:0'), 22);
   assert.equal(fixture.store.get('c_relation:0:1'), 101);
   assert.equal(fixture.store.get('c_relation:0:2'), 202);
+  assert.equal(fixture.store.get('c_relation_sub:1:1'), 31, '家族关系子表不动');
+  assert.equal(fixture.store.get('c_relation_sub:2:1'), 32);
+  assert.equal(fixture.store.get('relation:1:0'), 51, '内置相性表不动');
+  assert.equal(fixture.store.get('relation:2:0'), 52);
   // —— 唯一变化：PORTCFLAG:角色:排序编号（移植自建扩展表，ADR-0001）——
   assert.equal(
     fixture.store.get('portcflag:1:排序编号'),
@@ -1847,19 +1856,19 @@ test('换号：互换后 RESTART 停在当前页；[1999] 出口后名册页码�
     assert.equal(
       pages[pages.length - 1],
       '2',
-      `换号出口后名册保持第 2 页（静态局部变量语义；实际页序 ${pages.join(',')}）`,
+      `换号出口后名册保持第 2 页（同一轮 continue 沿用；实际页序 ${pages.join(',')}）`,
     );
   }
 });
 
-test('名册重进：[1600] 流程返回后名册页码保持（静态局部变量语义）', async () => {
+test('名册重进：[1600] 流程返回后名册页码保持（同一轮 continue 沿用）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   for (let cid = 1; cid <= 25; cid += 1) add_chara(fixture, cid, `角色${cid}`);
   const { chara_info } = fixture.load_module('page/page-chara-info');
 
-  // 翻到第 2 页后走 [1600]（选 [2003] 取消）：JUMP 重进名册沿用静态局部变量
-  // （NO_PAGE 不归零），重画仍在第 2 页
+  // 翻到第 2 页后走 [1600]（选 [2003] 取消）：JUMP 重进名册在原作沿用静态变量
+  // （NO_PAGE 不归零），ere 侧靠同一轮循环的 continue 复现，重画仍在第 2 页
   fixture.set_inputs(998, 1600, 2003, 999);
   await chara_info();
 
@@ -1874,7 +1883,7 @@ test('名册重进：[1600] 流程返回后名册页码保持（静态局部变�
   );
 });
 
-test('名册重进：[1400] 切视图后走 [1600]，排序视图也保持（静态局部变量语义）', async () => {
+test('名册重进：[1400] 切视图后走 [1600]，排序视图也保持（同一轮 continue 沿用）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');

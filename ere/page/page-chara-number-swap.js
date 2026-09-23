@@ -60,6 +60,11 @@
  *   - [SP] 标记的判定 @SP 定义在 img.ERB:249（S1 #542 判死范围内的纯判定
  *     函数，无法引用真身），此处按原定义就地内联：TALENT 165/167-171 或
  *     EX_TALENT 101-104/4。
+ *   - **残留差异：换号只在本页与名册「编号」视图可见。** 名册的状态/所持金/
+ *     借金三个视图各有自己的排序键，域外读点（调教目标、战斗、囚禁播报等）
+ *     也一律按角色 ID 走——原作里 SWAPCHARA 改的是数组下标，这些地方会跟着
+ *     变（并列项的先后也随下标顺序变）。要让换号波及那些地方，得把排序编号
+ *     推到全库读点，那是另一张票的范围；本轮按验收要求只做名册的排列顺序。
  */
 
 const era = require('#/era-electron');
@@ -70,13 +75,14 @@ const {
   swap_sort_numbers,
 } = require('#/chara/chara-portcflag');
 const { get_job_name } = require('#/page/page-select-target');
+const { chara } = require('#/facade/chara');
 // :7 #DIM CONST NUM_PAGE = 25（换号页自己的分页宽度，与名册的 24 无关）
 const NUM_PAGE = 25;
 
 // :5 #DIM NO_PAGE = 0——无 DYNAMIC ⇒ 静态变量：RESTART 与函数退出都不重置
-// （指南 user-defined-variables.md:67-69/:82）。函数内的 let 每次进入都回到
-// 0，并不等价于原作，故提在模块级：翻页状态跨次进入沿用，第 2 页退出后再进
-// [1700] 仍是第 2 页（test/page-chara-info.test.js 有用例钉住）。
+// （指南 user-defined-variables.md:67-69；:82 属 DYNAMIC 一节，不适用）。函数内的
+// let 每次进入都回到 0，并不等价于原作，故提在模块级：翻页状态跨次进入沿用，
+// 第 2 页退出后再进 [1700] 仍是第 2 页（test/page-chara-info.test.js 有用例钉住）。
 let no_page = 0;
 
 function name_of(cid) {
@@ -101,13 +107,15 @@ function is_sp(cid) {
  * 可换号候选：显示守卫（:20/:71）＝状态 0/7（可调教/苗床），且非
  * EX_TALENT:1（近卫），或「后代（EX_TALENT:2）+ 铁石心肠（EX_FLAG:9000
  * 位 1，mod开关 ver1.0.11 的 [1] 开关）」同开。判据与
- * event-execution.js 的处刑候选守卫同源。
+ * event-execution.js 的处刑候选守卫同源；状态一律走 invasion 域门面
+ * （chara(cid).invasion.状态，与统一卖春积极性同款，别处裸读 CFLAG:1 的
+ * 历史写法不在本票改动面内）。
  * @returns {number[]} 已加入角色 ID（不含魔王，:16-18 剔除）按排序编号升序
  */
 function swap_candidates() {
   const ids = era.getAddedCharacters().filter((cid) => {
     if (cid === 0) return false; // :16-18 对象是魔王剃除
-    const state = era.get(`cflag:${cid}:1`) || 0;
+    const state = chara(cid).invasion.状态;
     return (
       (state === 0 || state === 7) &&
       (!(era.get(`ex_talent:${cid}:1`) || 0) ||

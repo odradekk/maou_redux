@@ -27,6 +27,11 @@
  *     下标，「换号」靠 SWAPCHARA 搬角色数据来换编号；ere 里 ID 即身份，换号
  *     只交换排序编号这一个值，行内编号格显示的仍是角色 ID（＝可点击可手输的
  *     快捷键），细节与该取舍的依据见 page-chara-number-swap.js 文件头；
+ *   - 名册自己的 NO_PAGE/SORT_SELECT/SORT_ACT 是本函数的局部变量（原作是
+ *     静态变量）：子流程返回后不归零靠的是「同一轮循环 continue 重绘」，与
+ *     JUMP CHARA_INFO 同效果；但**从名册之外重进**（主菜单 → 名单）会回初值，
+ *     原作不会——#391 起的既有取舍，本票不动它（换号页的 NO_PAGE 是另一个
+ *     函数里的独立静态变量，那个已按原作提到模块级，见该文件头）；
  *   - REDRAW 0/1、CLEARLINE 局部重绘不镜像（page-dungeon-info2.js/
  *     page-select-target.js 同款先例）：本文件的 CHARA_INFO 与
  *     CHARA_INFO_INDIVIDUAL 都是「每轮整屏重绘」的 `for(;;)` 循环；
@@ -600,15 +605,16 @@ async function chara_info() {
 
     if (result === 1600) {
       // :62-63 CALL 统一卖春积极性（#545 真身：page-uniform-bitch-level.js）。
-      // 被调函数尾 JUMP CHARA_INFO：NO_PAGE/SORT_SELECT/SORT_ACT 都是静态
-      // 局部变量（指南 user-defined-variables.md:67-69），重进名册沿用现值，
-      // 页码与排序不归零——continue 重绘即该语义
+      // 被调函数尾 JUMP CHARA_INFO：原作的 NO_PAGE/SORT_SELECT/SORT_ACT 是静态
+      // 变量（指南 user-defined-variables.md:67-69），重进名册沿用现值；本函数里
+      // 它们是局部变量，靠「同一轮循环 continue 重绘」复现该效果——子流程返回后
+      // 页码与排序不归零（从名册之外重进会回初值，见文件头的有意偏离）
       await uniform_bitch_level();
       continue;
     }
     if (result === 1700) {
       // :74-75 CALL 換號（#545 真身：page-chara-number-swap.js）。唯一出口
-      // [1999] 結束换号 → JUMP CHARA_INFO（同上：静态局部变量沿用现值）；
+      // [1999] 結束换号 → JUMP CHARA_INFO（同上：同一轮 continue 沿用现值）；
       // RETURN 0 出口在确认屏只打印 [4000]/[4001] 的输入白名单下不可达
       // （该文件文件头）
       await chara_number_swap();

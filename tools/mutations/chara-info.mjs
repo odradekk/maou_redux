@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 80; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +4（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11445-M11448/M11459/M11460 按「只换排序编号」重写）
+export const COUNT = 83; // #389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）
 
 export default [
   {
@@ -741,5 +741,30 @@ export default [
       'async function chara_number_swap() {\n  no_page = 0; // 变异：跨次进入复位\n  for (;;) {',
     tests: ['page-chara-info'],
     must_mention: '再次进入仍在第 2 页：页码不随函数退出归零（静态变量语义）',
+  },
+  {
+    desc: 'M11465 排序表头：[1200] 编号视图的快捷键写成 1201（白名单拒收，按编号切不回去）',
+    file: 'ere/page/page-chara-info.js',
+    find: "      accelerator: 1200,\n      content: '编号',",
+    replace: "      accelerator: 1201,\n      content: '编号',",
+    tests: ['page-chara-info'],
+    must_mention: 'era.input() 只接受本轮已打印按钮的快捷键',
+  },
+  {
+    desc: 'M11466 名单行片段：未陷落文案改字（<未陷落> → <未堕落>）',
+    file: 'ere/page/page-chara-info.js',
+    find: "  return { content: '<未陷落>', color: '#646464' };",
+    replace: "  return { content: '<未堕落>', color: '#646464' };",
+    tests: ['page-chara-info'],
+    must_mention: '未陷落分支',
+  },
+  {
+    desc: 'M11467 名单行片段：收藏标记的地址 cflag:cid:700 读成 :701',
+    file: 'ere/page/page-chara-info.js',
+    find: "    content: (era.get(`cflag:${cid}:700`) || 0) !== 0 ? '[\\u2606]' : '',",
+    replace:
+      "    content: (era.get(`cflag:${cid}:701`) || 0) !== 0 ? '[\\u2606]' : '',",
+    tests: ['page-chara-info'],
+    must_mention: '收藏标记读 cflag:cid:700',
   },
 ];

@@ -52,7 +52,7 @@
  * 赋值）才是真正发生的净变化。「等级/攻防/婚姻状态随身体留下、只有呼び名与
  * 错位素质跟灵魂走」是否为原作本意无法考证，这里不做修正，只如实保留可观测
  * 效果（SAVESTR 是普通 SAVEDATA 字符串数组、SWAPCHARA 不动它，所以
- * target/ERB/魔改新增/角色編號交換.ERB:111-114 才手工换回；NAME/CALLNAME
+ * target/ERB/魔改新增/角色編號交換.ERB:112-116 才手工换回；NAME/CALLNAME
  * 与覆盖范围见上段）。本文件的 swap_chara() 范围表不含 callname，姓名两槽
  * 由调用方显式处理。
  */
@@ -364,7 +364,6 @@ function soul_dislocation(cid, rand = default_rand) {
 }
 
 module.exports = {
-  swap_var,
   swap_chara,
   personalock,
   transferapp,
