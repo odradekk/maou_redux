@@ -443,15 +443,22 @@ test('作用域外的指令分支：壳占位带原作调用名（代表抽查�
   // 200 自 #136 起是真身存档界面，199 自 #395 起是真身 BEGIN TURNEND
   // 转场（专属用例见下），101 自 #391 起是真身角色信息画面
   // （test/page-chara-info.test.js 独立覆盖），777 自 #463 起是真身设定
-  // 界面（test/page-config.test.js 独立覆盖），均不再走占位
+  // 界面（test/page-config.test.js 独立覆盖），52x 自 #548（S7）起是真身
+  // 阶层信息（test/page-shop-floor.test.js 独立覆盖），均不再走占位
   const fixture = await dispatch(103, 525);
   const texts = history_texts(fixture);
-  for (const name of ['@批量处刑', '@SHOW_FLOOR']) {
-    assert(
-      texts.some((line) => line.includes(name)),
-      `指令壳应占位 ${name}`,
-    );
-  }
+  assert(
+    texts.some((line) => line.includes('@批量处刑')),
+    '指令壳应占位 @批量处刑',
+  );
+  assert(
+    !texts.some((line) => line.includes('@SHOW_FLOOR')),
+    '52x 分支已换真身（第5阶层内容见 test/page-shop-floor.test.js）',
+  );
+  assert(
+    texts.some((line) => line.includes('第5阶层')),
+    '525 → SHOW_FLOOR 5',
+  );
 });
 
 test('777 设定：真身接线到 page-config.js 的 config_menu（#463，不再打存根）', async () => {
@@ -706,13 +713,13 @@ test('110/111 的守卫照原作：不满足时与无效输入同路', async () 
 });
 
 test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 520）', async () => {
-  // 楼层按钮（原作 PRINTBUTTON X+520）随楼层面板票落地，分发直调验证
+  // 楼层按钮（原作 PRINTBUTTON X+520）已由 page-main-menu.js 打印，分发
+  // 直调验证（#548 起为真身，以近卫层内容为证）
   const fixture = await dispatch(520, 531, 530);
   assert.equal(
-    history_texts(fixture).filter((line) => line.includes('@SHOW_FLOOR'))
-      .length,
+    history_texts(fixture).filter((line) => line.includes('近卫兵')).length,
     1,
-    '仅 530 命中（原作 :168 RESULT > 520 && RESULT <= 530）',
+    '仅 530 命中（原作 :168 RESULT > 520 && RESULT <= 530 → SHOW_FLOOR 10）',
   );
 });
 
@@ -789,7 +796,7 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
   // 订正的：名单与这份断言一起停在旧状态，所以一直没人发现。
   assert.deepEqual(
     STUBBED_CALLS,
-    ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'],
+    ['批量处刑', 'LABO', 'DEBUG_MENU_U'],
     '存根名单必须只列仍未接真身的分支（#397 起 INTERCEPT/ABILITY_UP/TAILOR_MAIN 已接真身）',
   );
   // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）

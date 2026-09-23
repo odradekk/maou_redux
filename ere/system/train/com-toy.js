@@ -24,8 +24,8 @@
  * - TEQUIP:11/13–19、STAIN、TFLAG:19、T:0 都属 train，可在本域直写。
  * - EXP:0/1 属 dungeon，统一经 chara(cid).dungeon；EXP:40/41/54 属 train，
  *   经 chara(cid).train。TALENT:190/191 属 dungeon，经其门面写入。
- * - @SYOKUSYU_MILK 真身在 COMF100_触手召喚.ERB，随 #227/J17；本文件仅按
- *   COMF16:216-219 保留运行时存根调用。
+ * - @SYOKUSYU_MILK 真身在 COMF100_触手召喚.ERB（#227/J17 落在
+ *   ere/system/train/com-tentacle.js）；#548 起 COMF16:218 的调用点换真身。
  *
  * 本族没有 COMF_JUMP.ERB 的 @GET_ADV_COM CASE，故无 adv_com_family 注册。
  * TRAIN_MESSAGE_A 原作仅有 10–14；15–19 显式注册无操作，避免分发骨架错误地
@@ -49,10 +49,11 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { PALAMLV } = require('#/era-utils/palam-level');
-const { stub_line } = require('#/utils/stub-line');
+// @SYOKUSYU_MILK 的真身在触手族文件（#227/J17 导出；#548 起调用点换真身）——
+// 族模块只能函数内延迟 require，见 equip_com16 的注释
 
-/** 本文件运行时存根；docs/stub-registry.md 必须同步登记。 */
-const STUBBED_CALLS = ['SYOKUSYU_MILK'];
+/** 运行时存根（#548 起为空——SYOKUSYU_MILK 已换真身）；清单核对测试仍读它。 */
+const STUBBED_CALLS = [];
 
 // —— 读数兜底（未声明下标 undefined → 0，#13） ——
 
@@ -859,7 +860,12 @@ async function equip_com16() {
   same_sex_exp(target, era_flag.player, 1);
   if (tq(target, 90)) {
     era.add('t:0', 1);
-    stub_line('SYOKUSYU_MILK', '触手榨乳处理', '真身随 #227/J17');
+    // @SYOKUSYU_MILK 的真身在触手族文件（#227/J17 导出）。**函数内延迟
+    // require 是硬要求**：com-tentacle 属主启动图的装载责任（main-loop
+    // 显式 require 的族模块），顶层引用会让它的注册变成间接装载——main-loop
+    // 那行被删也照样绿（#288 的守卫守着这一形态，同 kojo-k2/k3 引 com-hardcore）
+    const { syokusyu_milk } = require('#/system/train/com-tentacle');
+    await syokusyu_milk(); // :218 CALL SYOKUSYU_MILK（#548 起真身）
   }
   return 1;
 }

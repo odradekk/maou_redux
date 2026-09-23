@@ -425,6 +425,13 @@ async function k_34_crazylord(rand_n) {
 
   era.addCharacter(34); // :247
   await add_chara_ex(34); // :248
+  // MARK,4,3 预设补偿（#548）：Emuera 的 ADDCHARA 把 Chara34.csv 的
+  // MARK:4 = 3 一并拷入；ere 引擎只按 Mark.yml 名字表建槽（#118），4 号
+  // 无名条目 → 预设被丢（test/extalent-table.test.js 引擎级钉住）。扩名
+  // 条目会给所有角色预建 4 槽，故在加入点直写。反抗刻印履历 = 3 →
+  // @MARK_GOT_CHECK 的三档门（mark:4 <= 0/1/2，source-check.js）全关，
+  // 她不会再获得反抗刻印（test/chara34-mark.test.js 锁行为）。
+  chara(34).system.反抗刻印履历 = 3;
   era_flag.crazylord_entered = 1; // :252
   const a = 34; // :254 A = CHARANUM-1（扁平化：刚加入的 34）
   // :255 SAVESTR:A = %NAME:A% → callname:-1 承载（文件头，写入 no-op）

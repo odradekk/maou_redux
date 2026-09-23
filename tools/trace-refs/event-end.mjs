@@ -197,6 +197,16 @@ export const FILES = [
         ref: '428-429',
         any: [/能力値の上昇はメイン画面で行わせる/, /^BEGIN TURNEND$/m],
       },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '339',
+        any: [/^\s*CALL CHARADEAD_CHECK\s*$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/TRAIN_MAIN.ERB',
+        ref: '372',
+        any: [/^\s*CALL PARTY_CHAR_DEL, A\s*$/m],
+      },
     ],
   },
 ];

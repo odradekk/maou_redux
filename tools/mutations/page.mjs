@@ -3,7 +3,8 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 380; // #396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）；
+export const COUNT = 385; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+// 跳过、设施名表、近卫护卫判据、怪物行对齐）；#396 起 +12（M8104-M8115 段，page-shop-trap.js 与 page-shop.js 接入）；
 // #397 起 +56（M8381-M8436，page-life-list / page-ability-up / page-intercept / page-tailor）
 // #468 起 +14（M9709-M9722，post_conquest_menu() 菜单渲染与派发）；返工第一轮
 // 再 +5（M9723-M9727，[1001] 存根、状态条数值列、天神宫优先级、越界守卫、
@@ -3493,7 +3494,7 @@ export default [
   {
     desc: 'M11110 page-shop 存根名单退回旧状态（INTERCEPT/ABILITY_UP/TAILOR_MAIN 自 #397 起已接真身，重新列入即红，#515）',
     file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
+    find: "const STUBBED_CALLS = ['批量处刑', 'LABO', 'DEBUG_MENU_U'];",
     replace:
       "const STUBBED_CALLS = [\n  '批量处刑',\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
     tests: ['page-shop'],
@@ -3564,5 +3565,47 @@ export default [
     test_name:
       '征服后菜单 [5] 拒收判断条件的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）',
     must_mention: 'route_33 = 500 仍在拒收侧：不得落进天神宫的出兵菜单',
+  },
+  {
+    desc: 'M11480 SHOW_FLOOR 漏 LIMIT 钳制（ARG 直用：0 与 99 不再落到边界层）',
+    file: 'ere/page/page-shop.js',
+    find: '  arg = Math.min(Math.max(arg, 1), 10); // :429 ARG = LIMIT(ARG,1,10)',
+    replace: '  // 变异：漏 LIMIT 钳制',
+    tests: ['page-shop-floor'],
+    must_mention: '钳制',
+  },
+  {
+    desc: 'M11481 SHOW_FLOOR 设施四格多读 +30 段（REPEAT 内 COUNT==3 → 4 的跳过删掉）',
+    file: 'ere/page/page-shop.js',
+    find: '    for (const slot of [0, 10, 20, 40]) {',
+    replace:
+      '    for (const slot of [0, 10, 20, 30, 40]) { // 变异：多读 +30 段',
+    tests: ['page-shop-floor'],
+    must_mention: '+30',
+  },
+  {
+    desc: 'M11482 SHOW_FLOOR 设施名表错（500 商店街的全角尾随空格去掉：合行文本对不上）',
+    file: 'ere/page/page-shop.js',
+    find: "      500: '商店街\\u3000',",
+    replace: "      500: '商店街', // 变异：尾随全角空格删",
+    tests: ['page-shop-floor'],
+    must_mention: '楼层头与设施后缀合一行',
+  },
+  {
+    desc: 'M11483 SHOW_FLOOR 近卫护卫判据取反（EX_TALENT:x:1 非 0 改成 == 0：名单整段空）',
+    file: 'ere/page/page-shop.js',
+    find: '        (era.get(`ex_talent:${cid}:1`) || 0) !== 0',
+    replace: '        (era.get(`ex_talent:${cid}:1`) || 0) === 0',
+    tests: ['page-shop-floor'],
+    must_mention: '护卫行：[名] ——',
+  },
+  {
+    desc: 'M11484 SHOW_FLOOR 怪物行数量对齐反向（padEnd 改 padStart：{N,2,LEFT} 语义变 RIGHT）',
+    file: 'ere/page/page-shop.js',
+    find: '      era.print(`${String(count).padEnd(2)}只${monstername(base_slot + i)}`);',
+    replace:
+      '      era.print(`${String(count).padStart(2)}只${monstername(base_slot + i)}`); // 变异：对齐反向',
+    tests: ['page-shop-floor'],
+    must_mention: '怪物行（数量左对齐两位）',
   },
 ];

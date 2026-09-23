@@ -508,7 +508,8 @@ function draw_have_traps() {
  * @DRAW_DUNGEON_OVERVIEW（:427-577）：地城概况信息面板（FLAG:36 == 4）。
  *
  * 头行读数（迷宫 Lv / 陷阱 Lv / 勇者初期 Lv）+ 逐层的部下/勇者/迎击/设施
- * 一览（每层一枚 [520+n] 按钮，USERSHOP 的 521-530 分支 → SHOW_FLOOR 存根）
+ * 一览（每层一枚 [520+n] 按钮，USERSHOP 的 521-530 分支 → SHOW_FLOOR
+ * 阶层信息，#548 起真身）
  * + 尾部统计行。
  *
  * 原作 → ere 的映射：TEMP/TEMP1 计数桶 → 局部数组；原作的隔层按钮排版

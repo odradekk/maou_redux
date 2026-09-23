@@ -1667,9 +1667,9 @@ export default [
     must_mention: '非法行不计入任何一类',
   },
   {
-    desc: 'M11286 清单行文退回只写去向（SHOW_FLOOR 行的状态格从「存根（…随 #548 S7）」退回「迷宫票」——#541 要根除的形态，退回即非法词）',
+    desc: 'M11286 清单行文退回只写去向（SHOW_FLOOR 行的状态格从「已实现（…；#548）」退回「迷宫票」——#541 要根除的形态，退回即非法词）',
     file: 'docs/stub-registry.md',
-    find: '存根（未接入：RESULT -= 520 → CALL SHOW_FLOOR，ere/page/page-shop.js:428 打占位「SHOW_FLOOR」；随 #548 S7）',
+    find: '已实现（ere/page/page-shop.js show_floor，usershop 52x 分支已接；#548）',
     replace: '迷宫票',
     tests: ['stub-registry-status'],
     test_name:
@@ -1677,9 +1677,9 @@ export default [
     must_mention: '存根清单状态词不在三类里',
   },
   {
-    desc: 'M11287 BEDROOM_BATTLE_MALE 的源退回 DUNGEON_BATLLE2（#541 第 2 条订正的那一处——退回即把该文件拖回部分移植）',
+    desc: 'M11287 未了结行的源被指到 DUNGEON_BATLLE2 上（该文件必须一直判已移植——#541 第 2 条的源订正把它从欠账里摘出来；#548 起 BEDROOM_BATTLE_MALE 行已实现、不进归因扫描，靶位改挂到仍未了结的 RACE_CONFIG 行）',
     file: 'docs/stub-registry.md',
-    find: 'EVENT/ENDING ver 1.0.1.ERB:1042',
+    find: 'キャラ関数/CHARA_BODY.ERB:931-1333',
     replace: '迷宮/DUNGEON_BATLLE2.ERB 系（男魔王寝室战）',
     tests: ['stub-registry-status'],
     test_name:
@@ -1687,9 +1687,9 @@ export default [
     must_mention: 'DUNGEON_BATLLE2.ERB 必须判已移植',
   },
   {
-    desc: 'M11288 待核行文退回（CHARADEAD_CHECK 的源退回「調教相關/（@EVENTEND 的调用，文件待核）」——归因不到的行多一条，超 #541 归零后的基线）',
+    desc: 'M11288 待核行文退回（未了结行的源写回「調教相關/（@EVENTEND 的调用，文件待核）」——归因不到的行多一条，超 #541 归零后的基线；#548 起 CHARADEAD_CHECK 行已实现、不进归因扫描，靶位改挂到仍未了结的 CONFIG_AGE_SETTING 行）',
     file: 'docs/stub-registry.md',
-    find: 'EVENT/EVENT_AFTERTRAIN.ERB:6',
+    find: 'キャラ関数/CHARA_BODY.ERB:853-929',
     replace: '調教相關/（@EVENTEND 的调用，文件待核）',
     tests: ['trace-check'],
     test_name:

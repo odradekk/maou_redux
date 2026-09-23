@@ -49,7 +49,6 @@ const { karma } = require('#/chara/chara-stats');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
@@ -76,8 +75,10 @@ const ex_item_mod = require('#/dungeon/ex-item');
  * ere/dungeon/dungeon-trap.js）；DUNGEON_ROOM 不在此列（#177 真身
  * ere/dungeon/dungeon-room.js）；DUNGEON_TOWN 亦不在此列（#178 真身
  * ere/dungeon/dungeon-town.js，撤到迷宫外的调用点经模块对象 town_mod）。
+ * BEDROOM_BATTLE_MALE 亦不在此列（#548 真身，本文件的
+ * bedroom_battle_male——ENDING ver 1.0.1.ERB 的定义随 S0 订正）。
  */
-const STUBBED_CALLS = ['BEDROOM_BATTLE_MALE'];
+const STUBBED_CALLS = [];
 
 // —— 战役 1「赤蛮咒森」的 DispatchFamily（#469，决议 #7）——
 // 键都是 FLAG:400（当前进行中的战役号）；只有 CAMPAIGN_SET_1 存在，
@@ -104,8 +105,7 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-// —— 存根层（工单 #172 十组中余下的 + 附属；DUNGEON_BITCH 已随 #184 换真身——
-//    真身在 ere/kojo/kojo-dungeon-bitch.js，:718 经模块对象调用；归属见 docs/stub-registry.md）——
+// —— 已换真身的原存根（工单 #172 十组 + 附属，归属见 docs/stub-registry.md）——
 
 // H6（#175）起三处战斗存根换成真身：DUNGEON_SPY / DUNGEON_PARTY_BATTLE /
 // DUNGEON_BATTLE2_PARTY 见 ere/dungeon/dungeon-battle2.js 与
@@ -118,6 +118,8 @@ function default_rand(n) {
 // H9（#178）起 DUNGEON_TOWN 存根换成真身：ere/dungeon/dungeon-town.js
 // （:294 调用点经模块对象引用 town_mod，同款可替换；其余反向引用用函数内
 // 延迟 require 防环）。
+// S7（#548）起 BEDROOM_BATTLE_MALE 存根换成真身（本文件
+// bedroom_battle_male，源 ENDING ver 1.0.1.ERB:1042）。
 
 // @DUNGEON_TOWN（迷宮/DUNGEON_TOWN.ERB）：#178（H9）起为真身
 // ere/dungeon/dungeon-town.js 的 dungeon_town（撤到迷宫外时的城镇事件——
@@ -191,17 +193,36 @@ async function campaign_room(floor) {
 }
 
 /**
- * @BEDROOM_BATTLE_MALE 存根（阶段 5）：男魔王对挑战者的寝室战（冒险者
- * TALENT:122 四分之一概率挑战、且魔王欲望条件满足时，:210）。
+ * @BEDROOM_BATTLE_MALE（ENDING ver 1.0.1.ERB:1042-1064）：男魔王寝室战
+ * （冒险者 TALENT:122 四分之一概率挑战、且魔王欲望条件满足时，:210）。
+ *
+ * MODE 组成（:1048-1053）：TALENT:0:122（魔王男人位）非 0 → +2；
+ * ABL:0:11（欲望）> 8 → 再 +1。CASE 1/2/3 三支文案相同（原作同文三写，
+ * 1:1 归并）；CASE 0 独有「从睡梦中醒了过来」。CASEELSE 无输出（MODE
+ * 只能落在 0-3，不可达）。原作 #DIM SWITCH 死变量（写 0 后全库无读者），
+ * 不落。
+ *
+ * 调用方 :209 的 PRINTFORM 与 MODE 1-3 的输出是同一句「察觉到了气息」
+ * ——源侧即双打印（PRINTFORM 均无换行，视觉上拼成一行；ere 的 print
+ * 一次一行，故为两行），1:1 保留。
+ *
  * @param {number} cid 挑战者（原作 ARG:0）
- * @returns {Promise<number>} 原作 RETURN（存根恒 0）
+ * @returns {Promise<number>} 原作 RETURN 0（函数尾无 RETURN，隐式）
  */
-async function bedroom_battle_male() {
-  await stub_line_wait(
-    'BEDROOM_BATTLE_MALE',
-    '魔王寝室战',
-    '随寝室战票（阶段 5）',
-  );
+async function bedroom_battle_male(cid) {
+  let mode = 0; // :1046 MODE = 0（:1048-1049 的 SIF 恒等写，省）
+  if (era.get('talent:0:122')) {
+    mode = 2; // :1050-1051
+  }
+  if ((era.get('abl:0:11') || 0) > 8) {
+    mode += 1; // :1052-1053
+  }
+  // :1054-1064 SELECTCASE MODE（CASE 1/2/3 同文归并）
+  if (mode === 0) {
+    era.print(`${name_of(0)}从睡梦中醒了过来。`); // :1056
+  } else {
+    era.print(`${name_of(0)}察觉到了${name_of(cid)}的气息。`); // :1058-1062
+  }
   return 0;
 }
 
@@ -1483,6 +1504,7 @@ async function get_down_enemy(arg0) {
 module.exports = {
   STUBBED_CALLS,
   run_dungeon,
+  bedroom_battle_male,
   check_status,
   check_status_one,
   get_junk_item,

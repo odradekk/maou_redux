@@ -8,8 +8,10 @@
  * BEGIN TURNEND 会当场结束本函数（#6 语义：BEGIN 结束当前函数、链继续），
  * 其后的善恶值/时常发情/气力回复/JUEL_CHECK/指针还原按原作一并跳过。
  *
- * 存根（docs/stub-registry.md 函数表）：CHARADEAD_CHECK / SELF_CHECK /
- * AFTERTRAIN_CLOTH / RE_CLOTHED / PARTY_CHAR_DEL / NAME_RESET / KARMA。
+ * 原存根已全部换真身：SELF_CHECK / AFTERTRAIN_CLOTH / RE_CLOTHED /
+ * NAME_RESET / KARMA（各自票）；CHARADEAD_CHECK 与 PARTY_CHAR_DEL 自
+ * #548（S7）起为真身（ere/event/event-aftertrain.js 的 charadead_check
+ * 与 ere/dungeon/dungeon-party.js 的 party_char_del）。
  * MAOU_TENSHIN 自 #400（N16）起为真身（ere/event/event-nextday.js 的
  * event_maou_tenshin，本体源 EVENT_NEXTDAY.ERB:2455-2479）。
  * @JUEL_CHECK（:421 的一次性珠结算）已随 #47 实现
@@ -25,20 +27,21 @@ const { event_maou_tenshin } = require('#/event/event-nextday');
 const { run_juel_check } = require('#/system/train/juel-check');
 const { sell_video } = require('#/system/stronghold/sell-video');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
 // AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身（train 域的
 // ere/system/train/cloth.js——@EVENTEND 在 endTrain 之前发（run_aftertrain
 // 的既有次序），TFLAG:45 的读写落在火车表内，原生成立）
 const { aftertrain_cloth, re_clothed } = require('#/system/train/cloth');
 const { sell_fightmoney, sell_milk } = require('#/system/stronghold/sale');
+// CHARADEAD_CHECK 自 #548（S7）起为真身（同文件的 @EVENTEND :339 调用）
+const { charadead_check, self_check } = require('#/event/event-aftertrain');
+// PARTY_CHAR_DEL 真身（#172）——@EVENTEND :372 死亡删除分支的调用
+const { party_char_del } = require('#/dungeon/dungeon-party');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
+ * 本文件存根化的原作调用名。#548（S7）起名单清空：CHARADEAD_CHECK 与
+ * PARTY_CHAR_DEL 均已换真身。清单核对测试仍读它。
  */
-const { self_check } = require('#/event/event-aftertrain');
-
-const STUBBED_CALLS = ['CHARADEAD_CHECK', 'PARTY_CHAR_DEL'];
+const STUBBED_CALLS = [];
 
 on(
   'EVENTEND',
@@ -70,9 +73,10 @@ on(
     era.set('flag:1', era_flag.target_record);
     era.set('flag:2', era_flag.assi_record);
 
-    // :338-339 調教後に死んでいる可能性をチェック（存根：RESULT 0 = 存活）
-    stub_line('CHARADEAD_CHECK', '死亡检查');
-    const charadead_result = 0; // 存根的 RESULT：0 = 存活（真身落地前恒存活）
+    // :338-339 調教後に死んでいる可能性をチェック（#548 起真身：
+    // ere/event/event-aftertrain.js。RESULT 0 = 存活 / 1 = 已死；魔王自己
+    // 死亡且无候补时在真身内 QUIT，throw 直接炸穿本链）
+    const charadead_result = await charadead_check();
 
     // :341-345 生きていれば調教後行為のチェック（IF RESULT == 0）
     if (charadead_result === 0) {
@@ -110,7 +114,7 @@ on(
       era_flag.target = -1;
       era.set('flag:1', -1);
       era_flag.assi = -1;
-      stub_line('PARTY_CHAR_DEL', '队伍移除');
+      party_char_del(target); // :372 CALL PARTY_CHAR_DEL, A（#548 起真身）
       // DELCHARA：引擎等价物 removeCharacter（从已加入列表除名）
       era.removeCharacter(target);
       await name_reset();
