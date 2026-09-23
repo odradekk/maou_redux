@@ -3493,9 +3493,9 @@ export default [
   {
     desc: 'M11110 page-shop 存根名单退回旧状态（INTERCEPT/ABILITY_UP/TAILOR_MAIN 自 #397 起已接真身，重新列入即红，#515）',
     file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['批量处刑', 'LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
+    find: "const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
     replace:
-      "const STUBBED_CALLS = [\n  '批量处刑',\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
+      "const STUBBED_CALLS = [\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
     tests: ['page-shop'],
     test_name: '存根清单可检索',
     must_mention: '存根名单必须只列仍未接真身的分支',

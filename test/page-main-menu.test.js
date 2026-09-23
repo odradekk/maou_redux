@@ -785,16 +785,17 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
 
 test('分发期输出玩家先看到再被重绘清掉：点未移植入口不留残行', async () => {
   // 102（地下城存根）不印按钮（按钮与真身同票落地的政策），引擎不会送达
-  // （#130）；101 自 #391 起为真身（page-chara-info.js 的 chara_info），
-  // 777 自 #463 起为真身（CONFIG，接入 page-config.js，有自己的分页输入
-  // 循环，不再是单发即等键的简单存根）——已打印的存根分发入口改用 [103]
-  // 处刑（批量处刑，无条件渲染，A > 0 时打按钮），用它驱动同一形态
+  // （#130）；101 自 #391 起为真身（page-chara-info.js 的 chara_info）、
+  // 777 自 #463 起为真身（CONFIG）、103 自 #543 起为真身（批量处刑，
+  // test/event-execution-batch.test.js 独立覆盖）——已打印的存根分发入口
+  // 改用 [521] 阶层信息（SHOW_FLOOR 存根，第 1-9 层按钮无条件渲染），
+  // 用它驱动同一形态
   const stub_round = create_era_fixture();
   stub_round.era.print('上方一');
   stub_round.era.print('上方二');
-  join_chara(stub_round, 31); // 与对照轮同世界，同时满足 103 的 A > 0 守卫
+  join_chara(stub_round, 31); // 与对照轮同世界
   const { run_shop: run_stub } = stub_round.load_module('page/page-shop');
-  stub_round.set_inputs(103, 500);
+  stub_round.set_inputs(504, 521, 500);
   await assert.rejects(() => run_stub(), /预置输入已耗尽/);
   // 对照轮带同一世界：差异只剩「分发是否打存根」这一个变量
   const plain = create_era_fixture();
@@ -802,23 +803,23 @@ test('分发期输出玩家先看到再被重绘清掉：点未移植入口不�
   plain.era.print('上方二');
   join_chara(plain, 31);
   const { run_shop: run_plain } = plain.load_module('page/page-shop');
-  plain.set_inputs(500, 500);
+  plain.set_inputs(504, 500, 500);
   await assert.rejects(() => run_plain(), /预置输入已耗尽/);
 
   // 分发打了存根 → waitAnyKey 等键时屏幕上最新行就是存根（玩家看得到）→
   // 下一轮重绘才清掉。waits.rows_at_wait 是调用瞬间的行数，直接钉住
   // 「看到」发生在「消失」之前（#73 发回的验收项）。
   const waited = stub_round.waits.filter((w) => w.waited);
-  assert.equal(waited.length, 1, '103 分支必须等一次键');
+  assert.equal(waited.length, 1, '521 分支必须等一次键');
   const at_wait = stub_round.lines_history.filter(
     (l) => l.row !== undefined && l.row < waited[0].rows_at_wait,
   );
   assert(
-    at_wait.some((l) => l.text?.includes('批量处刑')),
+    at_wait.some((l) => l.text?.includes('阶层信息')),
     '等键时存根行必须已在屏幕上',
   );
   // 重绘之后才消失：终态与无存根轮逐行同高、屏幕上看不见存根
-  assert(!stub_round.text_lines().some((l) => l.includes('批量处刑')));
+  assert(!stub_round.text_lines().some((l) => l.includes('阶层信息')));
   assert.equal(stub_round.era.getLineCount(), plain.era.getLineCount());
 });
 

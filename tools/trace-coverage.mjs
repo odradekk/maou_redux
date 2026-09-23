@@ -133,7 +133,10 @@ export const DENOMINATOR = 346;
  * 待移植基线（#331 冻结，只减不增）。每张把文件做进 ere/ 的票交付时
  * 显式改小；改大 = 回退已移植内容或证据面失效，必须是有意识的公告。
  */
-export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#487 的 master cf3b5d9）：
+export const PENDING_BASELINE = 9; // #543（S2）实测：處刑改寫.ERB 落真身
+//（ere/event/event-execution-batch.js）后剩 9；改动方式照旧——先换 999 占位
+// 重跑 `node tools/trace-check.mjs --coverage`，数字取自重测。
+// export const PENDING_BASELINE = 10; // 合并态实测（#467 并上含 #466/#487 的 master cf3b5d9）：
 // 先把现役值换成 999 占位再跑 `node tools/trace-check.mjs --coverage`，实测 10；
 // master 侧现役 15（#466 的 23 → 15）− 本票的 5（ABL/ABLUP37.ERB／ABLUP39.ERB／
 // ABLUP40.ERB／ABLUP99.ERB／ABLUP100.ERB）= 10，与重测一致——数字取自重测，
