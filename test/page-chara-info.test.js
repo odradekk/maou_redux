@@ -1546,15 +1546,16 @@ test('换号：互换后名字/呼び名/数值行/关系行随数据走，列�
   assert.equal(fixture.store.get('cflag:2:9'), 5);
   assert.equal(fixture.store.get('cflag:2:601'), 900, '婚姻压缩数据随数据走');
   assert.equal(fixture.store.get('talent:2:200'), 1, '职业素质随数据走');
-  // 关系行换、列不动
-  assert.equal(fixture.store.get('c_relation:1:0'), 22, 'c_relation 行互换');
-  assert.equal(fixture.store.get('c_relation:2:0'), 11);
+  // 关系表：列（别人指向自己）不动——原作 SWAPCHARA 也不改写这类指向值；
+  // 先断列再断行，两条契约的破法（行不换 / 换成了列）各落各的断言
   assert.equal(
     fixture.store.get('c_relation:0:1'),
     101,
     'c_relation 列不动（原作 SWAPCHARA 也不改写指向）',
   );
   assert.equal(fixture.store.get('c_relation:0:2'), 202);
+  assert.equal(fixture.store.get('c_relation:1:0'), 22, 'c_relation 行互换');
+  assert.equal(fixture.store.get('c_relation:2:0'), 11);
   assert.equal(
     fixture.store.get('c_relation_sub:1:1'),
     32,

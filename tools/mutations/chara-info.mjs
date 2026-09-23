@@ -559,7 +559,7 @@ export default [
         // :94-99 下一页
         if ((no_page + 1) * NUM_PAGE < total) no_page += 1;`,
     tests: ['page-chara-info'],
-    must_mention: '第二屏画了三屏',
+    must_mention: '角色 2 出现在第一屏初始',
   },
   {
     desc: 'M11444 换号第一屏：上一页守卫 > 0 写成 >= 0（页首落到 -1、整屏空）',
