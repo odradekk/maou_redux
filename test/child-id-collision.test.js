@@ -12,17 +12,23 @@
  * template_no_of 的反推照常成立。代价是旧档里已有的后代 ID 会被算错，按
  * ADR-0006 同抬存档版本（yml/GameBase.yml 的 0.0.8）。
  *
- * 本文件守两件事：
+ * 本文件守三件事：
  *   1. 静态不变量——扫 ere/ 全部按钮快捷键，「纯数字的固定编号」必须小于
  *      FIRST_CHILD_ID（注释与字符串里的示例不算）；角色预设 ID
  *      （yml/Chara*.yml 的键）同样必须小于它。扫描只认纯数字字面量，
  *      「常量 + 变量」型（chara-family.js 的 `15_000 + 角色 ID`）与变量型
  *      （`accelerator: cid`）不参与——它们的撞号面在完成评论的普查表里
- *      逐页列明；另有「预设 ID × 同屏固定按钮」一类（预设 ID 在 FIRST_CHILD_ID
- *      之下，上面两条覆盖不到）：#586 处理献祭名单页的 [100] 返回 × 预设 100，
- *      守卫见下面那条静态用例；同为预设 100 的还有 cross-save-sharing.js 导出
- *      菜单的 [100] 取消（同型、本票未修，见 #586 的完成评论与后续工单）；
- *   2. 行为——构造一个真后代，它在名册页与批量处刑页都能被选中，同屏的
+ *      逐页列明；
+ *   2. 静态不变量（#593 重建）——「预设 ID × 同屏固定按钮」：预设 ID 在
+ *      FIRST_CHILD_ID 之下，上面那条覆盖不到。核对按**源码结构**取数——
+ *      先按函数圈定屏幕，再按输入边界把函数切成「轮」，然后在**同一轮**里
+ *      扫全部按钮快捷键（字面量、常量、常量数组下标；`printButton` 与
+ *      `printMultiColumns` 的 `accelerator:` 两种写法都算），与预设 ID
+ *      求交集。登记屏幕见 CHARACTER_ROW_SCREENS——献祭名单页（#586）、
+ *      跨存档导出菜单（#593）、批量处刑列表（#593 的 [121] 查证）、换号页
+ *      （`accelerator:` 写法）。覆盖不到的面（角色行由别的模块打、固定编号
+ *      在调用方打印一类）在 #593 的完成评论里列明；
+ *   3. 行为——构造一个真后代，它在名册页与批量处刑页都能被选中，同屏的
  *      固定按钮照常可用。
  */
 
@@ -35,8 +41,9 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-const ERE_DIR = path.resolve(__dirname, '..', 'ere');
-const YML_DIR = path.resolve(__dirname, '..', 'yml');
+const REPO_DIR = path.resolve(__dirname, '..');
+const ERE_DIR = path.join(REPO_DIR, 'ere');
+const YML_DIR = path.join(REPO_DIR, 'yml');
 
 // —— 静态扫描 ——
 
@@ -54,13 +61,14 @@ function ere_sources(dir = ERE_DIR, out = []) {
 }
 
 /**
- * 把字符串字面量与注释抹成等长空白，只留代码骨架。长度保持一致，行号因此
- * 仍是原文件的；注释里的示例（page-tailor.js 文件头有一条 `printButton(…, n)`）
- * 不会被当成真调用。
+ * 把字符串字面量与注释抹成等长空白，只留代码骨架。长度与**换行**都保持一致
+ * （字符串/注释里的换行照原样保留），行号因此仍是原文件的；注释里的示例
+ * （page-tailor.js 文件头有一条 `printButton(…, n)`）不会被当成真调用。
  * @param {string} text 源码
  * @returns {string}
  */
 function code_skeleton(text) {
+  const blank = (c) => (c === '\n' ? '\n' : ' ');
   let out = '';
   let i = 0;
   while (i < text.length) {
@@ -70,14 +78,14 @@ function code_skeleton(text) {
       i += 1;
       while (i < text.length) {
         if (text[i] === '\\') {
-          out += '  ';
+          out += ` ${blank(text[i + 1])}`;
           i += 2;
         } else if (text[i] === c) {
           out += ' ';
           i += 1;
           break;
         } else {
-          out += ' ';
+          out += blank(text[i]);
           i += 1;
         }
       }
@@ -88,7 +96,7 @@ function code_skeleton(text) {
       }
     } else if (c === '/' && text[i + 1] === '*') {
       while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) {
-        out += ' ';
+        out += blank(text[i]);
         i += 1;
       }
       out += '  ';
@@ -101,17 +109,23 @@ function code_skeleton(text) {
   return out;
 }
 
-/** 与 `open` 处的 `(` 配对的 `)` 下标（骨架里没有字符串与注释，直接数括号） */
-function match_paren(skeleton, open) {
+/** 与 `open` 处的括号配对的收尾符下标（骨架里没有字符串与注释，直接数括号） */
+function match_bracket(skeleton, open) {
+  const close = { '(': ')', '[': ']', '{': '}' }[skeleton[open]];
   let depth = 0;
   for (let i = open; i < skeleton.length; i += 1) {
-    if (skeleton[i] === '(') depth += 1;
-    else if (skeleton[i] === ')') {
+    if (skeleton[i] === skeleton[open]) depth += 1;
+    else if (skeleton[i] === close) {
       depth -= 1;
       if (depth === 0) return i;
     }
   }
   return skeleton.length;
+}
+
+/** 与 `open` 处的 `(` 配对的 `)` 下标 */
+function match_paren(skeleton, open) {
+  return match_bracket(skeleton, open);
 }
 
 /** 按顶层逗号切分实参表 */
@@ -137,26 +151,14 @@ function split_args(body) {
 const FIXED_NUMBER = /^\d[\d_]*$/;
 
 /**
- * 扫一段源码里的按钮快捷键，只收纯数字的固定编号：
+ * 一段骨架里出现的全部按钮快捷键表达式（**两种写法都收**）：
  *   - `printButton(<正文>, <快捷键>[, <config>])` 的第 2 个实参
- *   - `printMultiColumns` 按钮格里的 `accelerator: <快捷键>` 字段
- * @param {string} text 源码
- * @returns {{value: number, line: number}[]}
+ *   - `printMultiColumns` / `printInColRows` 按钮格里的 `accelerator: <快捷键>`
+ * @param {string} skeleton 代码骨架（见 code_skeleton）
+ * @returns {{expr: string, at: number}[]} 表达式与其在骨架里的下标
  */
-function fixed_button_numbers(text) {
-  const skeleton = code_skeleton(text);
+function button_expressions(skeleton) {
   const found = [];
-  const line_of = (index) => skeleton.slice(0, index).split('\n').length;
-  const record = (expr, index) => {
-    const value = expr.trim();
-    if (FIXED_NUMBER.test(value)) {
-      found.push({
-        value: Number(value.replace(/_/g, '')),
-        line: line_of(index),
-      });
-    }
-  };
-
   const print_button = /(?<![\w$])printButton\s*\(/g;
   let m;
   while ((m = print_button.exec(skeleton)) !== null) {
@@ -164,14 +166,271 @@ function fixed_button_numbers(text) {
     const args = split_args(
       skeleton.slice(open + 1, match_paren(skeleton, open)),
     );
-    if (args.length >= 2) record(args[1], m.index);
+    if (args.length >= 2) found.push({ expr: args[1], at: m.index });
   }
   const accelerator = /accelerator\s*:\s*([^,}\n]+)/g;
   while ((m = accelerator.exec(skeleton)) !== null) {
-    record(m[1], m.index);
+    found.push({ expr: m[1], at: m.index });
   }
   return found;
 }
+
+/**
+ * 扫一段源码里的按钮快捷键，只收纯数字的固定编号（全局不变量用）。
+ * @param {string} text 源码
+ * @returns {{value: number, line: number}[]}
+ */
+function fixed_button_numbers(text) {
+  const skeleton = code_skeleton(text);
+  const line_of = (index) => skeleton.slice(0, index).split('\n').length;
+  const found = [];
+  for (const { expr, at } of button_expressions(skeleton)) {
+    const value = expr.trim();
+    if (FIXED_NUMBER.test(value)) {
+      found.push({ value: Number(value.replace(/_/g, '')), line: line_of(at) });
+    }
+  }
+  return found;
+}
+
+// —— 同屏固定编号扫描（#593）——
+//
+// 「预设 ID × 同屏固定按钮」一类：角色行以**角色 ID** 作快捷键，预设 ID 又
+// 在 FIRST_CHILD_ID 之下，全局那两条静态守卫都覆盖不到。核对按源码结构取数：
+//   屏幕 = 一个函数（角色行的打印点与被试的固定编号在同一个函数里）；
+//   轮   = 两次 `era.input` 之间的一段——引擎只接受**本轮**打印过的按钮快捷键
+//          （#130，夹具的 input_rules 逐字镜像），所以「同屏」就是同一轮，跨轮
+//          打印的固定编号不吃这个函数里的角色行。等待类调用（waitAnyKey /
+//          printAndWait）是软边界，理由见 body_rounds；
+//   角色行轮 = 这一轮里出现了动态快捷键（解析不出数值的表达式，如 `cid`），
+//          或调用了本文件里会打角色行的函数（如 page-chara-info.js 的
+//          print_chara_row、event-execution-batch.js 的 print_roster）。
+// 取数不认特定写法：字面量、模块级常量、常量数组下标（`1000 + index`）与
+// `accelerator:` 字段都算，页面新增一枚固定按钮不必改核对代码就会被发现。
+
+/** 本地函数调用（过滤到本文件的函数名，避免把 `if (`/`String(` 一类算进来） */
+const LOCAL_CALL = /(?<![\w$.])([A-Za-z_$][\w$]*)\s*\(/g;
+
+function local_calls(skeleton, names) {
+  const found = new Set();
+  LOCAL_CALL.lastIndex = 0;
+  let m;
+  while ((m = LOCAL_CALL.exec(skeleton)) !== null) {
+    if (names.has(m[1])) found.add(m[1]);
+  }
+  return found;
+}
+
+/** `function NAME(…) {…}` 的边界：把「同屏」圈到一个函数 */
+function function_defs(skeleton) {
+  const defs = [];
+  const head = /(?<![\w$])function\s+([A-Za-z_$][\w$]*)\s*\(/g;
+  let m;
+  while ((m = head.exec(skeleton)) !== null) {
+    const open_paren = m.index + m[0].length - 1;
+    const open_brace = skeleton.indexOf(
+      '{',
+      match_bracket(skeleton, open_paren) + 1,
+    );
+    if (open_brace < 0) continue;
+    const close_brace = match_bracket(skeleton, open_brace);
+    defs.push({
+      name: m[1],
+      open: open_brace,
+      close: close_brace,
+      text: skeleton.slice(open_brace, close_brace + 1),
+    });
+  }
+  return defs;
+}
+
+/** 模块级数值常量：`const NAME = 123;`（如 LIST_RETURN、EXPORT_CANCEL） */
+function numeric_constants(skeleton) {
+  const map = new Map();
+  const re = /^const ([A-Za-z_$][\w$]*)\s*=\s*(\d[\d_]*);$/gm;
+  let m;
+  while ((m = re.exec(skeleton)) !== null) {
+    map.set(m[1], Number(m[2].replace(/_/g, '')));
+  }
+  return map;
+}
+
+/** 模块级数组常量：`const NAME = [ … ];` → 元素个数（决定下标变量的取值个数） */
+function array_lengths(skeleton) {
+  const map = new Map();
+  const re = /^const ([A-Za-z_$][\w$]*)\s*=\s*\[/gm;
+  let m;
+  while ((m = re.exec(skeleton)) !== null) {
+    const open = re.lastIndex - 1;
+    const items = split_args(
+      skeleton.slice(open + 1, match_bracket(skeleton, open)),
+    );
+    map.set(m[1], items.length);
+  }
+  return map;
+}
+
+/** 一个文件的扫描上下文：骨架、常量表与函数表，解析一次复用 */
+function scan_context(file_text) {
+  const skeleton = code_skeleton(file_text);
+  return {
+    skeleton,
+    constants: numeric_constants(skeleton),
+    arrays: array_lengths(skeleton),
+    functions: function_defs(skeleton),
+  };
+}
+
+/**
+ * 解析一个快捷键表达式：固定编号 → 数值数组（`1000 + index` 按循环下标展开
+ * 成 1000..1000+n-1）；解析不出 → null，那就是角色 ID 一类**动态编号**。
+ * @param {string} expr 表达式（骨架里的一段）
+ * @param {object} ctx scan_context 的结果
+ * @param {string} scope 找下标变量的范围（本轮的源码）
+ * @returns {number[]|null}
+ */
+function fixed_values_of(expr, ctx, scope) {
+  const value = expr.trim();
+  const shifted = /^(\d[\d_]*)\s*\+\s*([A-Za-z_$][\w$]*)$/.exec(value);
+  if (shifted) {
+    const re = new RegExp(
+      String.raw`\bfor\s*\(\s*const\s*\[\s*${shifted[2]}\s*[\s\S]*?\]\s+of\s+([A-Za-z_$][\w$]*)\s*\.\s*entries\s*\(\s*\)\s*\)`,
+    );
+    const loop = re.exec(scope);
+    const size = loop ? ctx.arrays.get(loop[1]) : undefined;
+    if (size === undefined) return null;
+    const base = Number(shifted[1].replace(/_/g, ''));
+    return Array.from({ length: size }, (_, index) => base + index);
+  }
+  if (FIXED_NUMBER.test(value)) return [Number(value.replace(/_/g, ''))];
+  return ctx.constants.has(value) ? [ctx.constants.get(value)] : null;
+}
+
+/**
+ * 把函数按输入边界切成「轮」；嵌套的 function 定义整段抹空（它的输入不是
+ * 本函数的轮界）。边界分两档：
+ *   - `era.input` 是**硬边界**——玩家做出选择后必然重画，两段不是同屏；
+ *   - `era.waitAnyKey` / `era.printAndWait` 是**软边界**——等待可能只在某些
+ *     分支上执行（如批量处刑里「收藏目标被选中」那条 `continue restart`），
+ *     名单与页脚键仍属同一屏，故两侧的段并成一轮。
+ */
+function body_rounds(def, ctx) {
+  let text = ctx.skeleton.slice(def.open, def.close + 1);
+  for (const other of ctx.functions) {
+    if (other.open <= def.open || other.close >= def.close) continue;
+    const from = other.open - def.open;
+    const to = other.close + 1 - def.open;
+    text = text.slice(0, from) + ' '.repeat(to - from) + text.slice(to);
+  }
+  const groups = [];
+  let from = 0;
+  const edge = /era\s*\.\s*(input|waitAnyKey|printAndWait)\s*\(/g;
+  let m;
+  while ((m = edge.exec(text)) !== null) {
+    if (m[1] === 'input') {
+      groups.push({ text: text.slice(from, m.index), base: def.open + from });
+      from = m.index;
+    }
+  }
+  groups.push({ text: text.slice(from), base: def.open + from });
+  return groups;
+}
+
+/**
+ * 直接打角色行的本地函数：自己就写出动态快捷键（page-chara-info.js 的
+ * print_chara_row、event-execution-batch.js 的 print_roster、换号页的
+ * print_swap_row）。**只认一层**——页面函数经两层以上转手才打到角色行的，
+ * 不在这里认（那类屏幕要单独登记，见 CHARACTER_ROW_SCREENS 的注释）。
+ */
+function row_printers(ctx) {
+  const printers = new Set();
+  for (const def of ctx.functions) {
+    const dynamic = button_expressions(def.text).some(
+      ({ expr }) => fixed_values_of(expr, ctx, def.text) === null,
+    );
+    if (dynamic) printers.add(def.name);
+  }
+  return printers;
+}
+
+/**
+ * 一个登记屏幕的核对结果：同屏（同一轮）里与预设 ID 撞号的固定编号，以及
+ * 命中几轮角色行（0 轮 = 登记项失效，核对必须当场红）。
+ * @param {{file: string, fn: string}} screen 登记项
+ * @param {string} file_text 该文件的源码（探针用例喂改写过的副本）
+ */
+function screen_offenders(screen, file_text, presets) {
+  const ctx = scan_context(file_text);
+  const def = ctx.functions.find((fn) => fn.name === screen.fn);
+  assert.ok(
+    def,
+    `${screen.file} 必须定义 ${screen.fn}（核对的登记项；函数改名时同步更新 CHARACTER_ROW_SCREENS）`,
+  );
+  const printers = row_printers(ctx);
+  const line_of = (index) => ctx.skeleton.slice(0, index).split('\n').length;
+  const offenders = [];
+  let row_rounds = 0;
+  for (const round of body_rounds(def, ctx)) {
+    const fixed = [];
+    let rows = false;
+    for (const { expr, at } of button_expressions(round.text)) {
+      const values = fixed_values_of(expr, ctx, round.text);
+      if (values === null) {
+        rows = true;
+        continue;
+      }
+      for (const value of values) {
+        fixed.push({ value, line: line_of(round.base + at) });
+      }
+    }
+    if (!rows) {
+      rows = [...local_calls(round.text, printers)].length > 0;
+    }
+    if (!rows) continue;
+    row_rounds += 1;
+    for (const { value, line } of fixed) {
+      if (presets.has(value)) {
+        offenders.push(
+          `${screen.file}:${line} 的 [${value}]（${screen.fn} 的同一轮里与角色行同屏——${screen.why}）`,
+        );
+      }
+    }
+  }
+  assert.ok(
+    row_rounds > 0,
+    `${screen.file} 的 ${screen.fn} 必须至少有一轮打角色行（否则本核对静默失效：` +
+      '函数改名、或角色行不再以角色 ID 作快捷键时，登记项要跟着改）',
+  );
+  return { offenders, row_rounds };
+}
+
+/**
+ * 打角色行的屏幕（登记项）。新增这类页面时在这里加一行——核对只保证
+ * 「登记的屏幕里，同一轮的固定编号不与任何预设 ID 撞号」，不登记的页面
+ * 不在扫描面内（覆盖边界见 #593 的完成评论）。
+ */
+const CHARACTER_ROW_SCREENS = [
+  {
+    file: 'ere/page/page-chara-info-show.js',
+    fn: 'sacrifice_flow',
+    why: '献祭名单轮：角色行以角色 ID 作快捷键（#586 的 [100] 返回 × 预设 100）',
+  },
+  {
+    file: 'ere/system/cross-save-sharing.js',
+    fn: 'export_menu',
+    why: '跨存档导出菜单：候选行以角色 ID 作快捷键（[100] 取消 × 预设 100，#593）',
+  },
+  {
+    file: 'ere/event/event-execution-batch.js',
+    fn: 'batch_execution',
+    why: '批量处刑列表：[121] 选择处刑方式与角色行同屏（#593 的 [121] 查证）',
+  },
+  {
+    file: 'ere/page/page-chara-number-swap.js',
+    fn: 'chara_number_swap',
+    why: '换号页两屏：`accelerator:` 写法的角色行（#593 纳入核对）',
+  },
+];
 
 /** chara-pregnancy.js 里声明的 FIRST_CHILD_ID（值即源码字面量，不经运行时） */
 function declared_first_child_id() {
@@ -193,49 +452,13 @@ function preset_ids() {
     .sort((a, b) => a - b);
 }
 
-/** page-chara-info-show.js 里声明的 LIST_RETURN（值即源码字面量，不经运行时） */
-function declared_list_return() {
-  const text = fs.readFileSync(
-    path.join(ERE_DIR, 'page', 'page-chara-info-show.js'),
-    'utf8',
-  );
-  const m = /^const LIST_RETURN = (\d+);$/m.exec(text);
-  assert.ok(m, 'page-chara-info-show.js 必须声明 LIST_RETURN 常量');
-  return Number(m[1]);
-}
-
-/**
- * 献祭名单页名单轮与角色行同屏的全部固定编号：返回（LIST_RETURN）＋六个条件
- * 键。两者都从页面源码解析（条件键取 `result >= 下界 && result <= 上界` 那条
- * 判定），源码改了这里跟着改——手抄的话改了源码这条核对会按旧值继续比对。
- * @returns {number[]}
- */
-function declared_sacrifice_list_fixed_numbers() {
-  const text = fs.readFileSync(
-    path.join(ERE_DIR, 'page', 'page-chara-info-show.js'),
-    'utf8',
-  );
-  const guard = /^ {4}if \(result >= (\d+) && result <= (\d+)\) \{$/m.exec(
-    text,
-  );
-  assert.ok(
-    guard,
-    'page-chara-info-show.js 必须用 `result >= 下界 && result <= 上界` 判定条件键（本核对按它取编号）',
-  );
-  const low = Number(guard[1]);
-  const high = Number(guard[2]);
-  assert.ok(high > low, `条件键区间必须非空（实际 ${low}-${high}）`);
-  const keys = Array.from({ length: high - low + 1 }, (_, i) => low + i);
-  return [declared_list_return(), ...keys];
-}
-
 test('静态：全部固定按钮编号都小于 FIRST_CHILD_ID（撞号的防线，#560）', () => {
   const first_child_id = declared_first_child_id();
   const offenders = [];
   let max = 0;
   let sites = 0;
   for (const file of ere_sources()) {
-    const relative = path.relative(path.resolve(__dirname, '..'), file);
+    const relative = path.relative(REPO_DIR, file);
     for (const { value, line } of fixed_button_numbers(
       fs.readFileSync(file, 'utf8'),
     )) {
@@ -271,23 +494,50 @@ test('静态：角色预设 ID（yml/Chara*.yml）都小于 FIRST_CHILD_ID', () 
   );
 });
 
-test('静态：献祭名单页名单轮的固定编号不与预设 ID 撞号（#586）', () => {
+test('静态：登记屏幕的同屏固定编号不与预设 ID 撞号（#593 重建，替代只认特定写法的旧核对）', () => {
   // 「预设 ID × 同屏固定按钮」这一类：预设 ID 在 FIRST_CHILD_ID 之下，上面两条
-  // 静态守卫都覆盖不到。献祭名单页（page-chara-info-show.js 的 sacrifice_flow）
-  // 的名单轮以**角色 ID** 作角色行快捷键，同屏还有返回与六个条件键——预设 100
-  // 「怪物的女儿」能以 ID 100 加入（生命摇篮的 `CASEELSE` 透传，见该文件
-  // LIST_RETURN 的注释），与原作的 [100] 返回撞号后这个角色选不中（#586，行为
-  // 用例见 test/chara-info-show.test.js）。修法是名单轮的返回改用 [999]
-  // （LIST_RETURN），本用例守「名单轮的固定编号不与任何预设 ID 相交」——改回
-  // 100 或将来新增落在这些编号上的预设都会红。出口轮的 [10]/[100] 不打角色行，
-  // 允许与预设 10/100 同号（那两枚只是菜单选项）。
-  const fixed_numbers = declared_sacrifice_list_fixed_numbers();
+  // 静态守卫都覆盖不到。#586 的旧核对只解析 `LIST_RETURN` 与条件键区间两种
+  // 写法——验收在名单轮新插一枚编号 7（预设 ID）的固定按钮时全绿；新核对按
+  // 「同一轮里打了哪些按钮」取数，两种写法以外的新按钮同样会被发现（探针见
+  // 下一条用例）。改回 [100] 或将来新增落在这些编号上的预设都会红。
   const presets = new Set(preset_ids());
-  const offenders = fixed_numbers.filter((n) => presets.has(n));
+  const offenders = [];
+  for (const screen of CHARACTER_ROW_SCREENS) {
+    const file_text = fs.readFileSync(path.join(REPO_DIR, screen.file), 'utf8');
+    offenders.push(...screen_offenders(screen, file_text, presets).offenders);
+  }
   assert.deepEqual(
     offenders,
     [],
-    `名单轮的固定编号与预设 ID 撞号（这些编号的角色行会被同屏按钮吃掉）：${offenders.join(', ')}`,
+    '同一轮里与角色行同屏的固定编号不得等于预设 ID（这些编号的角色行会被同屏按钮吃掉）：\n' +
+      offenders.join('\n'),
+  );
+});
+
+test('静态探针：名单轮新插一枚编号 7 的按钮会被核对发现（#593 的验收抽样）', () => {
+  // 核对的鉴别力自测：在献祭名单轮的返回按钮旁插一枚 `era.printButton('探针', 7)`
+  // （7 是预设 ID，Chara7.yml 在库），改后的源码必须被同一套扫描判出撞号——
+  // 这正是 #586 验收抽样漏网的那一手。扫描逻辑一旦退化成只认特定写法，本用例红。
+  const screen = CHARACTER_ROW_SCREENS[0];
+  const source = fs.readFileSync(path.join(REPO_DIR, screen.file), 'utf8');
+  const probe = source.replace(
+    "    era.printButton('返回', LIST_RETURN);",
+    "    era.printButton('返回', LIST_RETURN);\n    era.printButton('探针', 7);",
+  );
+  assert.notEqual(
+    probe,
+    source,
+    '探针的锚点必须与源码对上（按钮写法变了就同步改）',
+  );
+  const { offenders } = screen_offenders(screen, probe, new Set(preset_ids()));
+  assert.equal(
+    offenders.length,
+    1,
+    `探针按钮必须恰好判出一条撞号（实际 ${offenders.length}）`,
+  );
+  assert.ok(
+    offenders[0].includes('的 [7]'),
+    `判出的必须是探针那一枚（实报：${offenders[0]}）`,
   );
 });
 

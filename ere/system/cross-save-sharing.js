@@ -22,6 +22,27 @@ const BACKUP_SLOT = 999;
 const SHARE_SLOT_FIRST = 1000;
 const SHARE_SLOT_LAST = 1019;
 
+/**
+ * 导出菜单的两个固定编号（原作 MAOUNET.ERB:52-53 的 `[99] 决定`/`[100] 取消`）。
+ * **#593 起偏离原作**，选点 998/999：
+ *   - 候选行以**角色 ID** 作快捷键（export_menu 的 printButton），而预设 100
+ *     「怪物的女儿」能以 ID 100 加入（加入路径见 #586 的完成评论），原作的
+ *     `[100] 取消` 与 `if (result === 100) return 0` 会把这个角色吃掉；
+ *   - 两个数都大于预设 ID 上界（当前 777，见 yml/Chara777.yml）、小于后代 ID
+ *     段的起点 FIRST_CHILD_ID = 100000（chara-pregnancy.js；#560 的裁定），
+ *     与两类角色 ID 都不同段；
+ *   - 999 同时是全库「返回/退出」类键的通行编号（page-chara-info.js:626、
+ *     sale.js:605、chara-marriage.js:815 与 842、page-ability-up.js:184、
+ *     page-chara-info-show.js 的 LIST_RETURN），998 与它相邻、同属列表页
+ *     997-999 的固定编号带（page-chara-info.js:625-627）。
+ * 原作的 [99] 今天虽未与预设撞号，也一并移出预设区间——预设编号历来零散
+ * 新增（150、201-211、223、777 都是后加的），留在区间内等于把它交给下一位
+ * 加表的人。静态守卫见 test/child-id-collision.test.js 的「登记屏幕的同屏
+ * 固定编号不与预设 ID 撞号」。
+ */
+const EXPORT_DECIDE = 998;
+const EXPORT_CANCEL = 999;
+
 const TABLE_SIZES = [
   ['abl', 110],
   ['base', 100],
@@ -155,13 +176,13 @@ async function export_menu() {
     era.drawLine();
     era.printButton(
       '决定',
-      99,
+      EXPORT_DECIDE,
       selected.length === 0 ? { disabled: true } : undefined,
     );
-    era.printButton('取消', 100);
+    era.printButton('取消', EXPORT_CANCEL);
     const result = await era.input();
-    if (result === 100) return 0;
-    if (result === 99 && selected.length > 0) {
+    if (result === EXPORT_CANCEL) return 0;
+    if (result === EXPORT_DECIDE && selected.length > 0) {
       selected.forEach((cid) => era.print(chara_callname(cid)));
       era.print(`${selected.length}名勇者就可以了吗？`);
       era.printButton('好的', 0);

@@ -46,7 +46,7 @@ const export_candidates = 'MAOUNET：导出候选只显示据点内的非魔王�
 const level_one_toggle = 'MAOUNET：等级一开关连续点击两次回到关闭';
 
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 176;
+export const COUNT = 179; // #593 +3（M11980-M11982：导出菜单的取消/决定键不再落进预设 ID 段）
 
 export default [
   make(
@@ -998,8 +998,8 @@ export default [
     7503,
     '空选择也进入确认页',
     'ere/system/cross-save-sharing.js',
-    'if (result === 99 && selected.length > 0) {',
-    'if (result === 99) {',
+    'if (result === EXPORT_DECIDE && selected.length > 0) {',
+    'if (result === EXPORT_DECIDE) {',
     export_empty,
   ),
   make(
@@ -1177,6 +1177,31 @@ export default [
     'return value ? JSON.parse(value) : [];',
     "return value ? JSON.parse(value) : ['损坏'];",
     transport,
+  ),
+  // —— #593：导出菜单的固定编号不再与预设 ID 撞号 ——
+  make(
+    11980,
+    '导出菜单的取消键退回原作的 100（与预设 100 的候选行撞号复现）',
+    'ere/system/cross-save-sharing.js',
+    'const EXPORT_CANCEL = 999;',
+    'const EXPORT_CANCEL = 100;',
+    '输入不合法！请输入以下值之一',
+  ),
+  make(
+    11981,
+    '导出菜单的决定键退回预设 ID 段内的 99',
+    'ere/system/cross-save-sharing.js',
+    'const EXPORT_DECIDE = 998;',
+    'const EXPORT_DECIDE = 99;',
+    '输入不合法！请输入以下值之一',
+  ),
+  make(
+    11982,
+    '导出菜单的取消判定不跟着常量走（退回 100）',
+    'ere/system/cross-save-sharing.js',
+    'if (result === EXPORT_CANCEL) return 0;',
+    'if (result === 100) return 0;',
+    '输入不合法！请输入以下值之一',
   ),
   make(
     7526,
