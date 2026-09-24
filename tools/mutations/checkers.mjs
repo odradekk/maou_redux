@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 179; // #549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_koujo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+export const COUNT = 190; // #553 起 +11（M11700-M11710：--jobs 下传筛选并按交集切片、还原写入瞬态失败重试与失败报告、并行逐块转发、空选集短路、对照范围与副本数收敛；M11248 的 find 随 finally 体改为 write_restore 同步）；#549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_kojo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
 // SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
 // 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
@@ -1521,9 +1521,9 @@ export default [
     must_mention: '带 $ 转义的残留也必须被认出来',
   },
   {
-    desc: 'M11248 run_one 的 finally 还原被拆（变异写下后不再还原，靶文件留在变异态，工具自报「还原失败（读回不一致）」）（#532）',
+    desc: 'M11248 run_one 的 finally 还原被拆（变异写下后不再还原，靶文件留在变异态，工具自报「还原失败（读回不一致）」）（#532；#553 起 finally 体换成带重试的 write_restore，find 同步）',
     file: 'tools/mutation-check.mjs',
-    find: "  } finally {\n    fs.writeFileSync(full, original, 'utf8');\n  }",
+    find: '  } finally {\n    restore_error = write_restore(full, original, m.file);\n  }',
     replace: '  } finally {\n    // 变异：还原被拆\n  }',
     tests: ['mutation-check'],
     test_name: '拦截路径：变异被拦下退出码 0，且靶文件逐字节还原',
@@ -1548,6 +1548,128 @@ export default [
     must_mention: '标记指向别的 root 时自检必须照常生效',
   },
 
+  // —— #553：--jobs 尊重筛选参数、还原写入重试、并行逐条输出（靶同为 tools/mutation-check.mjs）——
+  {
+    desc: 'M11700 --jobs 丢掉 --ids 等筛选参数（副本各跑整表切片——8 条点名跑成两张半表，S0 验收 25 分钟被超时杀）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: "    filter_args = ['--ids', args.ids_spec ?? [...args.ids].join(',')];",
+    replace: '    filter_args = []; // 变异：--ids 不下传，副本各跑整表切片',
+    tests: ['mutation-check'],
+    test_name:
+      '--jobs 只跑 --ids 点名的条目：点名外的条目在父汇总与子输出里都不出现（#553）',
+    must_mention: '--jobs 必须只跑 --ids 点名的条目',
+  },
+  {
+    desc: 'M11701 --slice 与 --ids 不再取交集（切片被 ids 短路——并行子进程的「筛选 ∩ 切片」分工失效，串行交集档同坏）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: `  if (args.slice) {
+    const [i, k] = args.slice;
+    picked = picked.filter((m) => desc_rank(m.desc) % k === i);
+  }`,
+    replace: `  if (args.slice && !args.ids) { // 变异：ids 在场时切片被短路
+    const [i, k] = args.slice;
+    picked = picked.filter((m) => desc_rank(m.desc) % k === i);
+  }`,
+    tests: ['mutation-check'],
+    test_name:
+      '--slice 与 --ids 取交集：编号先筛、切片再分，串行单跑同样成立（#553）',
+    must_mention: '--slice 与 --ids 取交集：切片被 --ids 短路时会跑全部条目',
+  },
+  {
+    desc: 'M11702 --sample 与 --jobs 同给不再报错（静默跑副本全量——抽样的总量语义没有副本表达，换语义必须有声）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: `  if (args.sample !== undefined) {
+    throw new ArgError(`,
+    replace: `  if (false && args.sample !== undefined) { // 变异：不再报错
+    throw new ArgError(`,
+    tests: ['mutation-check'],
+    test_name: '--sample 与 --jobs 同时给时当场报错退出，不建副本（#553）',
+    must_mention: '同时给 --sample 与 --jobs 必须当场报错',
+  },
+  {
+    desc: 'M11703 还原写入不重试（Windows 瞬态占用一次即弃——#541 一晚三次还原失败即红的那条路）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: 'const RESTORE_WRITE_TRIES = 5;',
+    replace: 'const RESTORE_WRITE_TRIES = 1; // 变异：不重试',
+    tests: ['mutation-check'],
+    test_name:
+      '还原写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且靶文件逐字节还原（#553）',
+    must_mention: '注入两次瞬态失败仍应重试到成功',
+  },
+  {
+    desc: 'M11704 还原失败的报告不点名编号（停在谁的变异态说不清——没法核对 diff）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: "  const which = num === null ? '某条' : `M${num}`;",
+    replace: "  const which = '某条'; // 变异：点名焊死",
+    tests: ['mutation-check'],
+    test_name:
+      '还原写入重试尽仍失败：点名 M 编号与还原命令、停止后续条目、退出码 1（#553）',
+    must_mention: '还原失败必须点名 M 编号',
+  },
+  {
+    desc: 'M11705 还原失败后照跑后续条目（残留被当原文——后面每一条的判定都不可信）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: "    if (r === 'restore-fail') break;",
+    replace: "    if (false && r === 'restore-fail') break; // 变异：照跑后续",
+    tests: ['mutation-check'],
+    test_name:
+      '还原写入重试尽仍失败：点名 M 编号与还原命令、停止后续条目、退出码 1（#553）',
+    must_mention: '还原失败后不得继续跑后续条目',
+  },
+  {
+    desc: 'M11706 并行子进程输出攒到退出才转发（外层超时终止时已完成的结果全部丢失——0 字节日志就是这么来的）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: '          { cwd: copy, on_chunk: (d) => process.stdout.write(d) },',
+    replace: '          { cwd: copy }, // 变异：不逐块转发，攒到子进程退出',
+    tests: ['mutation-check'],
+    test_name:
+      '--jobs 逐条输出：条目结果随完成随转发，不等全部副本结束（#553）',
+    must_mention: '并行模式必须逐条转发子进程输出',
+  },
+  {
+    desc: 'M11707 筛选后 0 条不短路（空选集照建副本白跑对照——git 改动没命中条目时的常态）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: '  if (filtered && selection.length === 0) {',
+    replace:
+      '  if (false && filtered && selection.length === 0) { // 变异：空选集照建副本',
+    tests: ['mutation-check'],
+    test_name: '--jobs 筛选后 0 条：不建副本直接完成（#553）',
+    must_mention: '筛选后 0 条时不建副本直接完成',
+  },
+  {
+    desc: 'M11708 筛选档对照回全量（--jobs --ids 每个副本先白跑一遍全量测试——筛选档没有可用性）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: '            ...(filtered ? control_files : []),',
+    replace: '            // 变异：对照永远全量',
+    tests: ['mutation-check'],
+    test_name:
+      '--jobs 筛选档的对照只跑选中条目的测试面：副本里无关的红测试不拦筛选档（#553）',
+    must_mention: '筛选档的对照只跑选中条目的测试面',
+  },
+  {
+    desc: 'M11709 副本数不按选中条数收敛（1 条点名也建满 K 份副本白拷贝仓库白跑对照）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: `  const jobs = filtered
+    ? Math.max(1, Math.min(args.jobs, selection.length))
+    : args.jobs;`,
+    replace: '  const jobs = args.jobs; // 变异：不按选中条数收敛副本数',
+    tests: ['mutation-check'],
+    test_name:
+      '--jobs 副本数按选中条数收敛：一条编号两个 jobs 只有一个子进程 SUMMARY（#553）',
+    must_mention: '副本数不得超过选中条数',
+  },
+  {
+    desc: 'M11710 还原失败的报告不给还原命令（人只能自己猜怎么回退——提示格式与 #532 启动自检一致是本票要求）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: `  console.log(
+    \`    还原：先 git diff \${m.file} 核对，是残留就 git checkout HEAD -- \${m.file}\`,
+  );`,
+    replace: "  console.log('    （变异：不给还原命令）');",
+    tests: ['mutation-check'],
+    test_name:
+      '还原写入重试尽仍失败：点名 M 编号与还原命令、停止后续条目、退出码 1（#553）',
+    must_mention: '还原失败必须给出可照抄的还原命令',
+  },
   // —— #530：纯文本选项行棘轮（靶在 ere/system/train/com-toy.js 与 tools/plaintext-options.mjs）——
   {
     desc: 'M11207 新增一行纯文本选项（com-toy 的满月确认多打一枚 [2] 行——棘轮的「只许收紧」门必须拦住，#530）',

@@ -82,6 +82,7 @@
 'use strict';
 
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const { spawn, spawnSync } = require('node:child_process');
 const fs = require('node:fs');
 const os = require('node:os');
@@ -707,47 +708,55 @@ test('引擎在场的硬判不被抽样档短路：sample + 依赖引擎的条�
 
 // —— #304：并行模式的输出与计数 ——
 
+/**
+ * 并行档夹具：副本假定自己是一份完整仓库——子进程以 cwd=副本 跑
+ * <副本>/tools/mutation-check.mjs、条目表取默认的 <副本>/tools/mutations，
+ * 所以夹具根要摆成同一形状，工具本体与装载器也得拷进去。
+ */
+function make_jobs_fixture(entries) {
+  const root = make_fixture();
+  fs.mkdirSync(path.join(root, 'tools', 'mutations'), { recursive: true });
+  for (const f of ['mutation-check.mjs', 'load-mutations.mjs']) {
+    fs.copyFileSync(
+      path.join(REPO_ROOT, 'tools', f),
+      path.join(root, 'tools', f),
+    );
+  }
+  fs.writeFileSync(
+    path.join(root, 'tools', 'mutations', 'fx.mjs'),
+    `export const COUNT = ${entries.length};\n` +
+      'export default ' +
+      JSON.stringify(entries) +
+      ';\n',
+    'utf8',
+  );
+  return root;
+}
 test('并行汇总不吞子进程的计数：一片全拦 + 一片判红 → caught 与 red 都如实累加', () => {
   // 旧写法在子进程退出码非 0 时改记「红 +1」并**丢掉整份 caught**——一个
   // 子进程发现一条红，父进程的拦截数就少掉它那一整片。判红的子进程自己
   // 已经把结果报告过了，照它的 SUMMARY 汇总即可。
-  const root = make_fixture();
-  try {
-    // 门 5（#442）只按静态出处核对 must_mention，不管运行期输出——这条
-    // 注释满足门 5 的静态定位，不会被执行到，不影响 T9 要验证的行为：
-    // 这句话确实不出现在任何失败输出里，因此判红（失配）。
-    fs.appendFileSync(
-      path.join(root, 'test', 'calc.test.js'),
-      '// 这句话不会出现在任何失败输出里（must_mention 静态定位占位注释）\n',
-      'utf8',
-    );
-    // 并行模式假定副本就是一份完整仓库：子进程以 cwd=副本 跑
-    // <副本>/tools/mutation-check.mjs，条目表取默认的 <副本>/tools/mutations。
-    // 所以夹具根要摆成同一形状，工具本体也得拷进去。
-    fs.mkdirSync(path.join(root, 'tools', 'mutations'), { recursive: true });
-    for (const f of ['mutation-check.mjs', 'load-mutations.mjs']) {
-      fs.copyFileSync(
-        path.join(REPO_ROOT, 'tools', f),
-        path.join(root, 'tools', f),
-      );
-    }
+  // 并行模式假定副本就是一份完整仓库：子进程以 cwd=副本 跑
+  // <副本>/tools/mutation-check.mjs，条目表取默认的 <副本>/tools/mutations，
+  // 夹具形状由 make_jobs_fixture 摆好（#553 起抽出共用）。
+  const root = make_jobs_fixture([
     // 两条条目：一条能被拦下，一条 must_mention 对不上 → 判红（失配）。
     // --slice 按 sha1(desc) % k 分片，两条 desc 不同即可落到两片或同片，
     // 无论怎么分，父进程的汇总都必须是 caught=1 / red=1。
-    const entries = [
-      { ...GOOD_ENTRY, desc: 'T8 加倍系数改坏（应被拦下）' },
-      {
-        ...GOOD_ENTRY,
-        desc: 'T9 锚对不上（应判红：失配）',
-        must_mention: '这句话不会出现在任何失败输出里',
-      },
-    ];
-    fs.writeFileSync(
-      path.join(root, 'tools', 'mutations', 'fx.mjs'),
-      `export const COUNT = ${entries.length};\n` +
-        'export default ' +
-        JSON.stringify(entries) +
-        ';\n',
+    { ...GOOD_ENTRY, desc: 'T8 加倍系数改坏（应被拦下）' },
+    {
+      ...GOOD_ENTRY,
+      desc: 'T9 锚对不上（应判红：失配）',
+      must_mention: '这句话不会出现在任何失败输出里',
+    },
+  ]);
+  try {
+    // 门 5（#442）只按静态出处核对 must_mention，不管运行期输出——T9 的
+    // 出处就是这行注释：它不会被执行到，这句话也确实不出现在任何失败输出
+    // 里，因此判红（失配）。
+    fs.appendFileSync(
+      path.join(root, 'test', 'calc.test.js'),
+      '// 这句话不会出现在任何失败输出里（must_mention 静态定位占位注释）\n',
       'utf8',
     );
     const { status, output } = run_tool([
@@ -1655,6 +1664,497 @@ test('启动自检认得 replace 里的 $ 转义：整串判定不许换成便�
       output.includes('停在 M9001 的变异态'),
       `应点名 M9001：\n${output}`,
     );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+// —— #553：--jobs 尊重筛选参数、还原写入重试、并行逐条输出 ——
+
+test('--jobs 只跑 --ids 点名的条目：点名外的条目在父汇总与子输出里都不出现（#553）', () => {
+  // #553 前的形态：execute_jobs 给子进程只传 --slice，父进程解析到的
+  // --ids 被静默丢掉——--jobs 2 --ids … 实际是两个副本各跑半张全表，
+  // 2026-09-23 的 S0 验收就是这么在 8 条上跑了 25 分钟后被超时终止的。
+  const root = make_jobs_fixture([
+    { ...GOOD_ENTRY, desc: 'M9101 加倍系数改坏（点名内）' },
+    { ...GOOD_ENTRY, desc: 'M9102 加倍系数改坏（点名内）' },
+    // 点名外的第三条：本身完全合法（跑起来也会被拦下），跑了没有别的
+    // 副作用，所以「跑没跑它」只能从输出与计数看。
+    {
+      ...GOOD_ENTRY,
+      desc: 'M9103 导出被拆（点名外）',
+      find: 'module.exports = { double };',
+      replace: 'const unused = { double };',
+    },
+  ]);
+  try {
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      path.join(root, 'tools', 'mutations'),
+      '--jobs',
+      '2',
+      '--ids',
+      'M9101,M9102',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `点名的两条应全拦，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      !output.includes('M9103'),
+      '--jobs 必须只跑 --ids 点名的条目：M9103 也跑了（筛选没下传时每个副本各跑半张全表）',
+    );
+    const summaries = [
+      ...output.matchAll(/^SUMMARY caught=(\d+) skipped=(\d+) red=(\d+)$/gm),
+    ];
+    const last = summaries[summaries.length - 1];
+    assert.ok(
+      last !== undefined && last[1] === '2' && last[3] === '0',
+      `父进程汇总应为 2 拦 0 红：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--slice 与 --ids 取交集：编号先筛、切片再分，串行单跑同样成立（#553）', () => {
+  const root = make_fixture();
+  try {
+    // 与 select_entries 同款的 desc_rank（sha1 前 12 位十六进制），测试里
+    // 自己算切片归属：奇偶各凑两条（desc 换到命中为止——哈希确定，不赌）。
+    const rank = (desc) =>
+      parseInt(
+        crypto.createHash('sha1').update(desc).digest('hex').slice(0, 12),
+        16,
+      );
+    const descs = [];
+    for (let n = 9111; ; n += 1) {
+      const d = `M${n} 加倍系数改坏（切片交集体 ${n}）`;
+      descs.push(d);
+      const odd = descs.filter((x) => rank(x) % 2 === 1).length;
+      if (odd >= 2 && descs.length - odd >= 2) break;
+    }
+    const ledger = write_ledger(
+      root,
+      descs.map((d) => ({ ...GOOD_ENTRY, desc: d })),
+    );
+    const expected = descs.filter((d) => rank(d) % 2 === 1);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--asar',
+      'none',
+      '--ids',
+      `M9111-M${9110 + descs.length}`,
+      '--slice',
+      '1',
+      '2',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `交集内的条目应全拦，实际退出 ${status}：\n${output}`,
+    );
+    assert.match(
+      output,
+      new RegExp(`拦截 ${expected.length} / 跳过 0 / 红 0`),
+      '--slice 与 --ids 取交集：切片被 --ids 短路时会跑全部条目',
+    );
+    for (const d of descs) {
+      const should_run = rank(d) % 2 === 1;
+      assert.equal(
+        output.includes(d),
+        should_run,
+        `「${d}」${should_run ? '必须跑' : '不得跑'}（编号先筛、切片再分）：\n${output}`,
+      );
+    }
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--sample 与 --jobs 同时给时当场报错退出，不建副本（#553）', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9121 加倍系数改坏' },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--jobs',
+      '2',
+      '--sample',
+      '1',
+      '--seed',
+      'x',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      status,
+      1,
+      '同时给 --sample 与 --jobs 必须当场报错退出 1，实际退出 ' +
+        `${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('--sample 与 --jobs 不能同时用'),
+      '同时给 --sample 与 --jobs 必须当场报错：抽样要的是总量 N 条，副本各自抽样就变成 N×K 条，静默换语义更糟',
+    );
+    assert.doesNotMatch(
+      output,
+      /SUMMARY caught=/,
+      `报错应在建副本之前：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('还原写入遇瞬态占用时重试到成功：注入前两次失败仍全拦且靶文件逐字节还原（#553）', () => {
+  // Windows 上杀毒/索引/未退尽的子进程会短暂占住靶文件（#541 一晚三次，
+  // 都是 UNKNOWN: unknown error, open …）；真实的占用行为造不出来，
+  // 用工具自带的注入钩子确定地制造前几次失败。
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const { status, output } = run_tool(
+      [
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+      ],
+      { MUTATION_CHECK_RESTORE_FAIL_FIRST: '2' },
+    );
+    assert.equal(
+      status,
+      0,
+      `注入两次瞬态失败仍应重试到成功（不重试就是工具缺陷），实际退出 ${status}：\n${output}`,
+    );
+    assert.equal(
+      fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
+      CALC_JS,
+      '重试成功的还原必须逐字节回到原文',
+    );
+    assert.ok(
+      output.includes('还原写入第 1 次失败（UNKNOWN）') &&
+        output.includes('还原写入第 2 次失败（UNKNOWN）'),
+      `重试过程要留痕（偶发占用看不见就永远查不到）：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('还原写入重试尽仍失败：点名 M 编号与还原命令、停止后续条目、退出码 1（#553）', () => {
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9131 加倍系数改坏（应停在它的变异态）' },
+      { ...GOOD_ENTRY, desc: 'M9132 加倍系数改坏（不应跑到）' },
+    ]);
+    const { status, output } = run_tool(
+      [
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+      ],
+      { MUTATION_CHECK_RESTORE_FAIL_FIRST: '99' },
+    );
+    assert.equal(
+      status,
+      1,
+      `还原写不回去必须退 1（带着残留继续跑是假结论），实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('还原写入失败（重试 5 次仍 UNKNOWN）'),
+      `应报出重试尽仍失败：\n${output}`,
+    );
+    assert.ok(
+      output.includes('lib/calc.js 可能停在 M9131 的变异态'),
+      '还原失败必须点名 M 编号：不知道停在哪条的变异态就没法核对 diff',
+    );
+    assert.ok(
+      output.includes(
+        '还原：先 git diff lib/calc.js 核对，是残留就 git checkout HEAD -- lib/calc.js',
+      ),
+      '还原失败必须给出可照抄的还原命令',
+    );
+    assert.ok(
+      !output.includes('M9132'),
+      '还原失败后不得继续跑后续条目：残留态下后面的判定全部不可信',
+    );
+    assert.match(output, /SUMMARY caught=0 skipped=0 red=1/);
+    assert.equal(
+      fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
+      CALC_JS.replace('n * 2', 'n * 3'),
+      '还原失败时靶文件确实停在变异态（这正是要报出来的状态）',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--jobs 逐条输出：条目结果随完成随转发，不等全部副本结束（#553）', async () => {
+  // #553 前的形态：父进程等全部子进程退出才整块转发输出，外层 run-node
+  // 超时终止时日志 0 字节，已完成的条目结果跟着子进程一起消失。两条条目
+  // 的测试一快一慢（1.5s / 3s），无论落在同一副本（先后）还是两个副本
+  // （并行），第一条结果行出现时都还有未完成的条目在跑——它与进程退出
+  // 之间的间隔就是「已完成结果能留在日志里」的余量。
+  const root = make_jobs_fixture([
+    { ...GOOD_ENTRY, desc: 'M9141 加倍系数改坏（快测试体）' },
+    {
+      ...GOOD_ENTRY,
+      desc: 'M9142 加倍系数改坏（慢测试体）',
+      file: 'lib/slow.js',
+      tests: ['slow'],
+      must_mention: '慢加倍',
+    },
+  ]);
+  fs.writeFileSync(
+    path.join(root, 'lib', 'slow.js'),
+    'const double = (n) => n * 2;\nmodule.exports = { double };\n',
+    'utf8',
+  );
+  fs.writeFileSync(
+    path.join(root, 'test', 'slow.test.js'),
+    [
+      "const { test } = require('node:test');",
+      "const assert = require('node:assert/strict');",
+      "const { double } = require('../lib/slow');",
+      "test('慢加倍', () => {",
+      '  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 3000);',
+      '  assert.equal(double(21), 42);',
+      '});',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  fs.writeFileSync(
+    path.join(root, 'test', 'calc.test.js'),
+    [
+      "const { test } = require('node:test');",
+      "const assert = require('node:assert/strict');",
+      "const { double } = require('../lib/calc');",
+      "test('加倍', () => {",
+      '  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 1500);',
+      '  assert.equal(double(21), 42);',
+      '});',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  try {
+    const child = spawn(
+      process.execPath,
+      [
+        TOOL,
+        '--root',
+        root,
+        '--ledger-dir',
+        path.join(root, 'tools', 'mutations'),
+        '--jobs',
+        '2',
+        '--ids',
+        'M9141,M9142',
+        '--asar',
+        'none',
+      ],
+      { cwd: REPO_ROOT, stdio: ['ignore', 'pipe', 'pipe'] },
+    );
+    let output = '';
+    let first_line_at = null;
+    const exited = new Promise((resolve) => {
+      child.on('exit', (code) => resolve(code));
+    });
+    child.stdout.on('data', (d) => {
+      output += d;
+      if (first_line_at === null && output.includes('红=true')) {
+        first_line_at = Date.now();
+      }
+    });
+    child.stderr.on('data', (d) => {
+      output += d;
+    });
+    let timer;
+    const guard = new Promise((resolve) => {
+      timer = setTimeout(() => resolve('timeout'), 60_000);
+    });
+    const code = await Promise.race([exited, guard]);
+    clearTimeout(timer);
+    if (code === 'timeout') {
+      child.kill();
+      assert.fail('60 秒未结束：夹具两条 1.5s/3s 的条目不该跑这么久');
+    }
+    assert.equal(code, 0, `两条都应被拦下：\n${output}`);
+    assert.ok(
+      first_line_at !== null,
+      `并行模式必须逐条转发子进程输出：父进程日志里应看到逐条结果行（红=true）：\n${output}`,
+    );
+    assert.ok(
+      Date.now() - first_line_at >= 600,
+      '并行模式必须逐条转发子进程输出：第一条结果行与进程退出隔了不到 600ms，说明仍是攒到最后整块输出——外层超时终止时已完成的结果会全部丢失',
+    );
+    const summaries = [
+      ...output.matchAll(/^SUMMARY caught=(\d+) skipped=(\d+) red=(\d+)$/gm),
+    ];
+    const last = summaries[summaries.length - 1];
+    assert.ok(
+      last !== undefined && last[1] === '2' && last[3] === '0',
+      `父进程汇总应为 2 拦 0 红：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--jobs 筛选后 0 条：不建副本直接完成（#553）', () => {
+  const root = make_git_fixture();
+  try {
+    // --changed 在真树上算改动文件清单：夹具里加一个与条目无关的改动，
+    // 筛选后就是 0 条。--changed/--base 会被换成 --files 下传（副本里没有
+    // .git，子进程自己算不了）。
+    fs.writeFileSync(
+      path.join(root, 'notes.txt'),
+      '与本票条目无关的改动\n',
+      'utf8',
+    );
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9151 加倍系数改坏' },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--jobs',
+      '2',
+      '--base',
+      'HEAD',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `筛选后 0 条时不建副本直接完成，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('筛选后 0 条，无变异可跑（未建副本）'),
+      '筛选后 0 条时不建副本直接完成：白建副本、白跑对照全是浪费',
+    );
+    assert.match(output, /SUMMARY caught=0 skipped=0 red=0/);
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--jobs 筛选档的对照只跑选中条目的测试面：副本里无关的红测试不拦筛选档（#553）', () => {
+  // 对照运行守的是「判这些变异红绿的那批测试」；不收窄到选中条目的测试
+  // 面，--jobs --ids 每个副本都要先白跑一遍全量——筛选档就没有可用性。
+  // 全量档（未给筛选参数）仍整份对照，#304 用例守的就是那条路。
+  const root = make_jobs_fixture([
+    { ...GOOD_ENTRY, desc: 'M9161 加倍系数改坏' },
+  ]);
+  fs.writeFileSync(
+    path.join(root, 'test', 'broken.test.js'),
+    [
+      "const { test } = require('node:test');",
+      "const assert = require('node:assert/strict');",
+      "test('副本对照不该跑到我', () => {",
+      "  assert.equal(1, 2, '筛选档的对照只跑选中条目的测试面');",
+      '});',
+      '',
+    ].join('\n'),
+    'utf8',
+  );
+  try {
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      path.join(root, 'tools', 'mutations'),
+      '--jobs',
+      '2',
+      '--ids',
+      'M9161',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `筛选档的对照只跑选中条目的测试面，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('SUMMARY caught=1 skipped=0 red=0'),
+      `点名的条目应照常被拦下：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--jobs 副本数按选中条数收敛：一条编号两个 jobs 只有一个子进程 SUMMARY（#553）', () => {
+  const root = make_jobs_fixture([
+    { ...GOOD_ENTRY, desc: 'M9171 加倍系数改坏' },
+    {
+      ...GOOD_ENTRY,
+      desc: 'M9172 导出被拆（不在点名内）',
+      find: 'module.exports = { double };',
+      replace: 'const unused = { double };',
+    },
+  ]);
+  try {
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      path.join(root, 'tools', 'mutations'),
+      '--jobs',
+      '2',
+      '--ids',
+      'M9171',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `点名的条目应被拦下，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('筛选后 1 条，1 个副本'),
+      '副本数不得超过选中条数：多出来的副本只会白拷贝仓库、白跑对照',
+    );
+    const summaries = [
+      ...output.matchAll(/^SUMMARY caught=(\d+) skipped=(\d+) red=(\d+)$/gm),
+    ];
+    assert.equal(
+      summaries.length,
+      2,
+      `一条条目 + 一个副本 = 子进程与父进程各一行 SUMMARY；副本数没收敛会出现第三行（空副本的 0/0/0）：\n${output}`,
+    );
+    assert.ok(output.includes('SUMMARY caught=1 skipped=0 red=0'));
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
   }
