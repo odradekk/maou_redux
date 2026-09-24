@@ -13497,12 +13497,11 @@ async function benki_koujo_k3(rand) {
     if (game.dungeon.肉便器常识改写 === 1) {
       // :8204
       // :8205 PRINTFORM 「请」接 :8206 CALL BENKI_PLAYER_NAME
+      // （三行一支：#599 起名字按插值写，保真锁按 CALL BENKI_PLAYER_NAME 记号核对）
       const player_name_benki =
         require('#/system/train/benki').benki_player_name();
       await era.printAndWait(
-        '「请' +
-          player_name_benki +
-          `大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,
+        `「请${player_name_benki}大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,
       ); // :8207
 
       await era.printAndWait(

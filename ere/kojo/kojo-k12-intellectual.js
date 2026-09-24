@@ -8046,10 +8046,11 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5104
+      // :5107 原作三行一支（前缀 PRINTFORMW 「多亏 + CALL BENKI_PLAYER_NAME
+      // + 本行，见文件头 :5106-5172 段）；名字按 #599 插在 CALL 的位置，
+      // 保真锁按 CALL BENKI_PLAYER_NAME 记号核对
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,
+        `「多亏${benki_player_name()}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,
       ); // :5107
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
@@ -8075,10 +8076,9 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5126
+      // :5129 同型（同段第二处三行一支）；名字按 #599 插值
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」`,
+        `「多亏${benki_player_name()}的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」`,
       ); // :5129
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
@@ -8104,10 +8104,9 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5148
+      // :5151 同型（同段第三处三行一支）；名字按 #599 插值
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」`,
+        `「多亏${benki_player_name()}的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」`,
       ); // :5151
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
@@ -8133,10 +8132,9 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5170
+      // :5173 同型（同段第四处三行一支）；名字按 #599 插值
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,
+        `「多亏${benki_player_name()}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,
       ); // :5173
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
