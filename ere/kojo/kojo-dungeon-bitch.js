@@ -531,10 +531,11 @@ async function fail_message(arg, kyaku, has_kyaku, no_kyaku) {
       '然而，根本没有勇气发出声音，说自己在卖春的这种事情。',
     ); // :312/:325
   } else if (has_kyaku) {
-    era.print(`${kyaku}人群的声音嘈杂着、`); // :314
+    // :314 与 :315 原作是 PRINTFORM（不换行）+ PRINTFORMW，Emuera 里同属一行；
+    // 拼接锚 :314+:315 表达「这一条语句 = 这两行构成的一行输出」（#584）
     await era.printAndWait(
-      `交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,
-    ); // :315
+      `${kyaku}人群的声音嘈杂着、交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,
+    ); // :314+:315
   } else if (no_kyaku) {
     await era.printAndWait('于是、一个对象也没有找到'); // :327
   }
@@ -809,9 +810,8 @@ async function dungeon_animal(arg, rand = default_rand) {
   // :522 PLAY（兽交次数）
   const play = fi_culc_bitch(arg, 'PLAY', 'ANIMAL', rand);
 
-  // :524-528 描写
-  era.print(`${name_of(arg)}无法压抑兽交的欲望`); // :524
-  await era.printAndWait('悄悄寻找着兽穴...'); // :525
+  // :524-528 描写（:524 与 :525 原作 PRINTFORM + PRINTFORMW，同一行——#584）
+  await era.printAndWait(`${name_of(arg)}无法压抑兽交的欲望悄悄寻找着兽穴...`); // :524+:525
   // :526 PRINTFORMW %SAVESTR:ARG%进入了野兽的巢穴…
   await era.printAndWait(
     `${name_of(arg)}进入了野兽的巢穴，像母狗一样趴在地上，扭动着身躯引诱着发情的野兽。在野兽舌头的舔舐润滑后，令人兴奋的喘息和呜咽伴随着野兽的咆哮和肉体的撞击声缭绕在兽穴内，${name_of(arg)}比真正的雌兽还要卖力的摇晃着屁股，逢迎着非人的巨大阳具的刺激。`,

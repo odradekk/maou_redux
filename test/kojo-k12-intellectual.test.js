@@ -915,6 +915,34 @@ test('benki_koujo_k12 FLAG:62==0 常识改写（FLAG:63）合并 CALL 称呼', a
   ]);
 });
 
+test('#584 benki_koujo_k12：「勇者/冒险者」段与后续是同一行（行动 7/9/12 × 常识改写）', async () => {
+  // 原作 :5195/:5197（勇者或冒险者）+ :5199 + :5200 同属一行（PRINTFORM 不换行），
+  // ere 曾拆成多条 era.print（#584）。断言「前缀与主体落在同一行」，不是只查片段
+  const cases = [
+    [7, '毫无抵抗地被洗脑成牝犬家畜肉便器', 1, '冒险者'],
+    [9, '被彻头彻尾地调教并洗脑', 1, '冒险者'],
+    [12, '毫无抵抗的被开发了身体的每个角落', 1, '冒险者'],
+    // TALENT:122 == 0 → 勇者档（原作 IF/ELSEIF 的另一臂）
+    [7, '毫无抵抗地被洗脑成牝犬家畜肉便器', 0, '勇者'],
+  ];
+  for (const [action, tail, male, word] of cases) {
+    const fixture = await setup_k12((f) => {
+      const { game } = f.load_module('facade/game');
+      game.train.肉便器行动 = action;
+      game.dungeon.肉便器常识改写 = 1;
+      f.store.set('talent:20:122', male);
+    });
+    const mod = fixture.load_module('kojo/kojo-k12-intellectual');
+    await mod.benki_koujo_k12();
+    const merged = fixture.text_lines().find((l) => l.includes(tail));
+    assert.ok(merged, `行动 ${action}：整行存在`);
+    assert.ok(
+      merged.includes(word),
+      `行动 ${action}（男人=${male}）：${word} 段必须与后句同一行（#584）`,
+    );
+  }
+});
+
 test('kojo_message_markcng_12 苦痛刻印Lv3 取得（TFLAG:22==3）', async () => {
   const fixture = await setup_k12((f) => {
     const { game } = f.load_module('facade/game');

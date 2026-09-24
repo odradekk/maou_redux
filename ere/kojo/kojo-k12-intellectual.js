@@ -8163,17 +8163,18 @@ async function benki_koujo_k12(rand) {
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5192
       await era.printAndWait(`「大家好、元`); // :5193
-      if (era.get(`talent:${a}:122`) == 0) {
-        // :5194
-        await era.print(`勇者`); // :5195
-      } else if (era.get(`talent:${a}:122`)) {
-        // :5196
-        await era.print(`冒险者`); // :5197
-      } // :5198-5199
-      await era.print(`${target_name}哟♪」`); // :5199
+      // :5194/:5196 原作 IF/ELSEIF 的勇者/冒险者段（:5195/:5197，:5198-5199 ENDIF），
+      // 与 :5199+:5200 同属一行——PRINTFORM 不换行（#584）
+      const hero_word =
+        era.get(`talent:${a}:122`) == 0
+          ? '勇者'
+          : era.get(`talent:${a}:122`)
+            ? '冒险者'
+            : '';
       await era.printAndWait(
-        `「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,
-      ); // :5200
+        hero_word +
+          `${target_name}哟♪」「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,
+      ); // :5195+:5197+:5199+:5200
       await era.printAndWait(
         `「现在正作为对野兽阴茎感兴趣的大变态、在魔王大人手下做『研究』呢♪」`,
       ); // :5201
@@ -8202,17 +8203,18 @@ async function benki_koujo_k12(rand) {
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5222
       await era.printAndWait(`「大家好、元`); // :5223
-      if (era.get(`talent:${a}:122`) == 0) {
-        // :5224
-        await era.print(`勇者`); // :5225
-      } else if (era.get(`talent:${a}:122`)) {
-        // :5226
-        await era.print(`冒险者`); // :5227
-      } // :5228-5229
-      await era.print(`${target_name}哟♪」`); // :5229
+      // :5224/:5226 原作 IF/ELSEIF 的勇者/冒险者段（:5225/:5227，:5228-5229 ENDIF），
+      // 与 :5229+:5230 同属一行——PRINTFORM 不换行（#584）
+      const hero_word =
+        era.get(`talent:${a}:122`) == 0
+          ? '勇者'
+          : era.get(`talent:${a}:122`)
+            ? '冒险者'
+            : '';
       await era.printAndWait(
-        `「${sc(a)}败给了伟大的魔王大人之后…被彻头彻尾地调教并洗脑咯♪」`,
-      ); // :5230
+        hero_word +
+          `${target_name}哟♪」「${sc(a)}败给了伟大的魔王大人之后…被彻头彻尾地调教并洗脑咯♪」`,
+      ); // :5225+:5227+:5229+:5230
       await era.printAndWait(
         `「现在作为喜欢在野外裸体的露出狂、在魔王大人手下做『研究』呢♪」`,
       ); // :5231
@@ -8238,17 +8240,18 @@ async function benki_koujo_k12(rand) {
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5249
       await era.printAndWait(`「大家好、元`); // :5250
-      if (era.get(`talent:${a}:122`) == 0) {
-        // :5251
-        await era.print(`勇者`); // :5252
-      } else if (era.get(`talent:${a}:122`)) {
-        // :5253
-        await era.print(`冒险者`); // :5254
-      } // :5255-5256
-      await era.print(`${target_name}哟♪」`); // :5256
+      // :5251/:5253 原作 IF/ELSEIF 的勇者/冒险者段（:5252/:5254，:5255-5256 ENDIF），
+      // 与 :5256+:5257 同属一行——PRINTFORM 不换行（#584）
+      const hero_word =
+        era.get(`talent:${a}:122`) == 0
+          ? '勇者'
+          : era.get(`talent:${a}:122`)
+            ? '冒险者'
+            : '';
       await era.printAndWait(
-        `「${sc(a)}被伟大的魔王大人打败了之后…毫无抵抗的被开发了身体的每个角落啦♪」`,
-      ); // :5257
+        hero_word +
+          `${target_name}哟♪」「${sc(a)}被伟大的魔王大人打败了之后…毫无抵抗的被开发了身体的每个角落啦♪」`,
+      ); // :5252+:5254+:5256+:5257
       await era.printAndWait(
         `「现在成了除了自慰什么都不会思考的自慰狂、一直一个人做着『研究』哦♪」`,
       ); // :5258

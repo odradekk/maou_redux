@@ -556,6 +556,41 @@ test('SELL_BITCH：完整流程（客循环 → 成功显示 → 经验/金钱/�
   );
 });
 
+test('#584 SELL_BITCH：有客却一个也没买下时，「人群的声音嘈杂着、」与「交涉终了…」是同一行', async () => {
+  // 原作 DUNGEON_BITCH.ERB:314-315 是 PRINTFORM（不换行）+ PRINTFORMW，
+  // Emuera 里同属一行；ere 曾拆成两条 era.print（#584）。
+  // 走到 :314-315 需要：客数 > 0（KYAKU 至少 1）且客循环里全部失败 →
+  // fail_message 的 has_kyaku 支。前三支（善恶值 > 100 / > 50 / > 0）都不成立
+  // → CFLAG:151 取 0。
+  const { fixture, mod } = setup_bitch((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('base:31:1', 500);
+    f.store.set('cflag:31:1', 0); // 奴隶
+    f.store.set('cflag:31:151', 0); // 善恶值 0
+    f.store.set('abl:31:37', 0);
+    f.store.set('exp:31:74', 0);
+  });
+  // 随机源恒取上界减一：KYAKU 的 RAND:6 = 5（善恶 0 → +1 = 6 客）；随后每个客
+  // 的成败判定 RAND:(SEIKOU+SIPPAI) 也取最大 → >= SEIKOU → 客全败
+  await mod.sell_bitch(31, 'DUNGEON', (n) => n - 1);
+  assert.deepEqual(
+    fixture.text_lines(),
+    [`6人群的声音嘈杂着、交涉终了，一个人也没有买下温妮，就这样子离开了`],
+    '两句必须落在同一行（M11940：拆回两条 era.print 时此处红）',
+  );
+});
+
+test('#584 DUNGEON_ANIMAL：:524-525（无法压抑兽交的欲望 + 悄悄寻找着兽穴）是同一行', async () => {
+  // 原作 DUNGEON_BITCH.ERB:524-525 是 PRINTFORM + PRINTFORMW，Emuera 里同属
+  // 一行；ere 曾拆成两条 era.print（#584）
+  const { fixture, mod } = setup_bitch();
+  await mod.dungeon_animal(31, seq_rand(0));
+  assert.ok(
+    fixture.text_lines().includes('温妮无法压抑兽交的欲望悄悄寻找着兽穴...'),
+    'DUNGEON_ANIMAL 首行必须是整行（#584）',
+  );
+});
+
 test('DUNGEON_WORK：内职收入（潜入中 ÷10；MONEY/EX_FLAG 入账）', () => {
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('cflag:31:9', 2); // 等级 2 → (2*20)+100 = 140
