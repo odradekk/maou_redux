@@ -1018,21 +1018,34 @@ test('CHARA_FIRST_XP：自定义输入（997）写下名字与部位', async () 
   assert.equal(fixture.store.get('cflag:1:16'), 301);
   assert.equal(fixture.store.get('cstr:1:4'), '魔王');
   assert.ok(texts(fixture).includes('新建人物初吻对象为青梅竹马。'));
+  assert.ok(
+    texts(fixture).includes('（输入 0 随机生成初吻对象）'),
+    'ere 侧补的输入 0 说明（#567）',
+  );
 });
 
-test('CHARA_FIRST_XP：初吻自定义输入的空串归一成 0（平台差异）', async () => {
+test('CHARA_FIRST_XP：初吻自定义输入 0 走原作的随机生成支（#567：0 视为空输入）', async () => {
   const fixture = setup(1);
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
   const { chara_first_xp } = load(fixture);
-  // 空输入 → getNumber('') = 0 → String(0) = '0'，于是走「名字是 0」这条路，
-  // 还会继续问部位（源 :659 `IF !(LOCAL == -1)` 在此为真）
-  fixture.set_inputs(997, '', 201, 998, 0);
+  // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与 "0" 都是数值 0。
+  // #567 裁定 0 视为空输入：走 :655-657 的「随机生成。」支（LOCAL = -1），
+  // 部位一问随 :659 的 `IF !(LOCAL == -1)` 一并跳过，编码不落盘。
+  // 第三项选 1（初吻=唇 / 初体验=魔王两侧都合法）：A 语义的变异跑完整流程时
+  // 输入序列仍对得上，让这条用例的断言在两种语义下都能给出确定结论。
+  fixture.set_inputs(997, 0, 1, 998, 0);
 
   await chara_first_xp(1);
-  assert.equal(fixture.store.get('cflag:1:16'), 201);
-  assert.equal(fixture.store.get('cstr:1:4'), '魔王');
-  assert.ok(texts(fixture).includes('新建人物初吻对象为0。'));
+  assert.ok(texts(fixture).includes('随机生成。'), ':656 的播报');
+  assert.ok(
+    !texts(fixture).includes('新建人物初吻对象为0。'),
+    '不再把 0 当字面量名字',
+  );
+  assert.ok(!texts(fixture).includes('初吻位置是？'), '部位一问被跳过');
+  // 随机支不落盘：:721-724 的写入被 `kiss !== -1` 拦下，CFLAG:16 保持
+  // CM_NS_EXP（:717）写下的值（同下一条用例的既有写法）
+  assert.notEqual(fixture.store.get('cflag:1:16'), -1);
 });
 
 test('CHARA_FIRST_XP：名字过长（>16）重问', async () => {
@@ -1101,17 +1114,26 @@ test('CHARA_FIRST_XP：初体验 996（随机）不写编码', async () => {
   assert.notEqual(fixture.store.get('cflag:1:15'), -1);
 });
 
-test('CHARA_FIRST_XP：初体验自定义输入的空串被引擎归一成 0（平台差异）', async () => {
+test('CHARA_FIRST_XP：初体验自定义输入 0 走原作的随机生成支（#567：0 视为空输入）', async () => {
   const fixture = setup();
   const { chara_first_xp } = load(fixture);
-  // EraElectron 的 era.input 把回传值按 getNumber 归一（夹具同款），空输入
-  // 到手是 0 → String(0) = '0'，于是「留空将随机生成」在 ere 侧变成「名字
-  // 是 0」——与 chara-name-edit.js:150 的实测注释同一件事。
-  fixture.set_inputs(0, 997, '', 0);
+  // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与 "0" 都是数值 0。
+  // #567 裁定 0 视为空输入：走 :703-705 的「随机生成。」支（LOCAL:1 = -1），
+  // 编码不落盘（:707-711 的 IF 守卫）。
+  fixture.set_inputs(0, 997, 0, 0);
 
   await chara_first_xp(1);
-  assert.equal(fixture.store.get('cflag:1:15'), 997);
-  assert.equal(fixture.store.get('cstr:1:3'), '0');
+  assert.ok(texts(fixture).includes('随机生成。'), ':704 的播报');
+  assert.ok(
+    !texts(fixture).includes('新建人物初体验对象为为0。'),
+    '不再把 0 当字面量名字',
+  );
+  assert.ok(
+    texts(fixture).includes('（输入 0 随机生成初体验对象）'),
+    'ere 侧补的输入 0 说明（#567）',
+  );
+  // 随机支不落盘：:721-724 的写入被 `sex !== -1` 拦下（同 996 支的既有写法）
+  assert.notEqual(fixture.store.get('cflag:1:15'), -1);
 });
 
 // —— @CHAR_CUSTOM（:1-152）——

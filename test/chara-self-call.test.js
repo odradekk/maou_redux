@@ -749,7 +749,11 @@ test('random_self_call MODE 1：输入 0 代替空输入（有意偏离，原作
   fixture.store.set('cflag:1:450', 99); // 落空路径：合适表耗尽 → 绰号表 CASE 0 起试
   fixture.set_inputs(0);
   assert.equal(await load(fixture).random_self_call(1, seq([]), 1), 0);
-  assert.equal(fixture.store.get('cstr:1:60'), '皐月');
+  assert.equal(
+    fixture.store.get('cstr:1:60'),
+    '皐月',
+    '输入 0 走随机路径（不落字面量「0」）',
+  );
   assert.equal(fixture.store.get('cflag:1:450'), 100);
 });
 

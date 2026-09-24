@@ -21,7 +21,7 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 69; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）
+export const COUNT = 75; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -607,5 +607,61 @@ export default [
       "    row += `[${pad_left(String(color_id), 2)}] ${pad_right(ARR_HAIRCOLOR[color_id] ?? '', 8)}`;",
     tests: ['chara-and-hair'],
     must_mention: '每 6 项换行',
+  },
+  // —— #567：自由文本输入的空输入语义统一（0 ＝ 空输入）——
+  // chara-custom 的名字输入与 chara-custom2 的两处自定义输入从 A 翻修到 B，
+  // 提示行各补一句输入 0 的说明；靶与断言见 test/chara-custom.test.js、
+  // test/chara-custom2.test.js 的「输入 0」用例。
+  {
+    desc: 'M11833 char_append 的名字输入改回 A 语义（0 落成名字「0」，:261-264 支不可达）',
+    file: 'ere/chara/chara-custom.js',
+    find: "      const name = input_text(raw); // :251 LOCALS '= RESULTS（0 经共享判据归空串）",
+    replace: "      const name = String(raw ?? ''); // 变异：A 语义",
+    tests: ['chara-custom'],
+    must_mention: '输入 0 不再落成字面量「0」',
+  },
+  {
+    desc: 'M11834 名字提示行的输入 0 说明改坏（玩家看不到「不输入」的替代操作）',
+    file: 'ere/chara/chara-custom.js',
+    find: "      era.print('（输入 0 随机生成名字）');",
+    replace: "      era.print('（输入 0 随机生成）');",
+    tests: ['chara-custom'],
+    must_mention: 'ere 侧补的输入 0 说明（#567）',
+  },
+  {
+    desc: 'M11835 初吻自定义输入改回 A 语义（0 落成名字「0」，部位一问照问）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '        kiss_name = input_text(await era.input()); // :647-648 INPUTS + RESULTS',
+    replace:
+      "        kiss_name = String((await era.input()) ?? ''); // 变异：A 语义",
+    tests: ['chara-custom2'],
+    must_mention: ':656 的播报',
+  },
+  {
+    desc: 'M11836 初体验自定义输入改回 A 语义（0 落成名字「0」，随机支不可达）',
+    file: 'ere/chara/chara-custom2.js',
+    find: '          sex_name = input_text(await era.input()); // :695-696',
+    replace:
+      "          sex_name = String((await era.input()) ?? ''); // 变异：A 语义",
+    tests: ['chara-custom2'],
+    must_mention: ':704 的播报',
+  },
+  {
+    desc: 'M11837 初吻提示行的输入 0 说明改坏（玩家看不到「不输入」的替代操作）',
+    file: 'ere/chara/chara-custom2.js',
+    find: `        // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+        era.print('（输入 0 随机生成初吻对象）');`,
+    replace: `        // 变异：初吻的输入 0 说明删除`,
+    tests: ['chara-custom2'],
+    must_mention: 'ere 侧补的输入 0 说明（#567）',
+  },
+  {
+    desc: 'M11843 初体验提示行的输入 0 说明改坏（同一文案两处各钉一条，删一处不再共享断言）',
+    file: 'ere/chara/chara-custom2.js',
+    find: `          // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+          era.print('（输入 0 随机生成初体验对象）');`,
+    replace: `          // 变异：初体验的输入 0 说明删除`,
+    tests: ['chara-custom2'],
+    must_mention: 'ere 侧补的输入 0 说明（#567）',
   },
 ];

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 85; // #546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 CM_GENDER 接通 global:3——由 test/chara-make.test.js 守护）；#548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#565 起 +2（M11614/M11615，@CM_ST/@CM_ST_ACE 的 ST_UP 接线）+ 审查轮 +2（M11624/M11625，SHOW_CHARA_INFO 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟守卫、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：本票 4 条之外收进 master 的 M11581，按导入实测条目数写回
+export const COUNT = 85; // #546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 CM_GENDER 接通 global:3——由 test/chara-make.test.js 守护）；#548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#565 起 +2（M11614/M11615，@CM_ST/@CM_ST_ACE 的 ST_UP 接线）+ 审查轮 +2（M11624/M11625，SHOW_CHARA_INFO 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟守卫、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：本票 4 条之外收进 master 的 M11581，按导入实测条目数写回；#567 起 M11534 改靶共享判据调用、M11537 随真身搬到 utils/input-text.js（条目数不变）
 
 export default [
   // —— #565 ST_UP 接线（@CM_ST / @CM_ST_ACE） ——
@@ -791,36 +791,36 @@ export default [
     must_mention: 'MODE 1：自由文本',
   },
   {
-    desc: 'M11534 MODE 1 的空输入映射丢（raw !== 0 改 raw !== 1——输入 0 被当自定义文本，一人称变「0」）',
+    desc: 'M11534 MODE 1 的空输入映射丢（共享判据 input_text 改直接 String——输入 0 被当自定义文本，一人称变「0」；#567 起判据收进 utils/input-text.js）',
     file: 'ere/chara/chara-self-call.js',
-    find: '    if (raw !== 0) {',
-    replace: '    if (raw !== 1) {',
+    find: '    const text = input_text(await era.input());',
+    replace: '    const text = String(await era.input());',
     tests: ['chara-self-call'],
-    must_mention: '输入 0 代替空输入（有意偏离',
+    must_mention: '输入 0 走随机路径（不落字面量「0」）',
   },
   {
     desc: 'M11535 MODE 1 的档位清零漏写（CFLAG:450 = 0 被删——自定义后档位仍留旧值）',
     file: 'ere/chara/chara-self-call.js',
-    find: '      era.set(`cstr:${cid}:60`, String(raw));\n      era.set(`cflag:${cid}:450`, 0);',
-    replace: '      era.set(`cstr:${cid}:60`, String(raw));',
+    find: '      era.set(`cstr:${cid}:60`, text);\n      era.set(`cflag:${cid}:450`, 0);',
+    replace: '      era.set(`cstr:${cid}:60`, text);',
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },
   {
     desc: 'M11536 MODE 1 的一人称写错下标（CSTR:60 改 61）',
     file: 'ere/chara/chara-self-call.js',
-    find: '      era.set(`cstr:${cid}:60`, String(raw));',
-    replace: '      era.set(`cstr:${cid}:61`, String(raw));',
+    find: '      era.set(`cstr:${cid}:60`, text);',
+    replace: '      era.set(`cstr:${cid}:61`, text);',
     tests: ['chara-self-call'],
     must_mention: 'MODE 1：自由文本',
   },
   {
-    desc: 'M11537 MODE 1 的数字输入不字符串化（String(raw) 改 raw——存进数值，一人称变 8 而非「8」）',
-    file: 'ere/chara/chara-self-call.js',
-    find: '      era.set(`cstr:${cid}:60`, String(raw));',
-    replace: '      era.set(`cstr:${cid}:60`, raw);',
-    tests: ['chara-self-call'],
-    must_mention: '数字文本按引擎归一成数值再字符串化',
+    desc: 'M11537 输入的字符串化丢失（input_text 的 String(raw) 改直接回 raw——数字输入存成数值，一人称变 8 而非「8」；#567 起转换收进共享判据，条目随真身搬到 utils/input-text.js）',
+    file: 'ere/utils/input-text.js',
+    find: '  return String(raw);',
+    replace: '  return raw;',
+    tests: ['input-text', 'chara-self-call'],
+    must_mention: '非数字串原样、数字字符串化（游戏读到的形态）',
   },
   {
     desc: 'M11538 MODE 1 的自定义命中返回值改坏（return 0 改 return 1）',

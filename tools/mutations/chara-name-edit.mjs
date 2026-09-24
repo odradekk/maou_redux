@@ -6,7 +6,7 @@
 // M7821 原在 chara.mjs（靶是 chara-family.js 里的 nid_get_type），#384 把该函数
 // 收拢到 chara-name.js，条目随真身搬入本分片。
 
-export const COUNT = 71; // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，守卫型用例与 PAIRS 表的补钉）
+export const COUNT = 72; // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，守卫型用例与 PAIRS 表的补钉）；#567 +1（M11832，改名输入的空输入语义）
 
 export default [
   {
@@ -609,5 +609,15 @@ export default [
     replace: ' 155, 122, 157, 122, 82, 143,\n];',
     tests: ['chara-make-inherit'],
     must_mention: '(60,150)',
+  },
+  // —— #567：空输入语义统一（0 ＝ 空输入），改名链由 A 翻修到 B ——
+  {
+    desc: 'M11832 改名输入改回 A 语义（0 落成字面量名字「0」，:100-101 支不可达）',
+    file: 'ere/chara/chara-name-edit.js',
+    find: '    const input = input_text(await era.input());',
+    replace:
+      "    const input = String((await era.input()) ?? ''); // 变异：A 语义",
+    tests: ['chara-name-edit'],
+    must_mention: ':101 的播报（空输入支）',
   },
 ];
