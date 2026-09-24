@@ -170,6 +170,18 @@ export const FILES = [
         ref: '376',
         any: [/^ELSEIF \(BASE:0 < 1 \|\| BASE:1 < 1\) && TARGET == MASTER$/m],
       },
+      // —— #597 空行普查：两处「回到床上做了…」之后的空源码行（229 / 332）
+      //    本身无法做锚（空行没有内容），各按所在切片用紧邻的可鉴别行锚定 ——
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '229-231',
+        any: [/^[ \t]*TFLAG:13 = 4[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_AFTERTRAIN.ERB',
+        ref: '332-333',
+        any: [/^[ \t]*PRINTFORML %EXPNAME:1%＋\{S\}[ \t]*$/m],
+      },
     ],
   },
 ];

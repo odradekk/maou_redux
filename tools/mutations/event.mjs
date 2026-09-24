@@ -3436,36 +3436,36 @@ export default [
   {
     desc: 'M12114 调教后性交的「回到床上做了…」之后补回空行（:229 是空源码行，没有 PRINTL）',
     file: 'ere/event/event-aftertrain.js',
-    find: '  // :229 是空源码行（不是 PRINTL）——:228 的 PRINTFORML 已结束那一行，这里',
+    find: '  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的',
     replace:
-      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :229 是空源码行（不是 PRINTL）——:228 的 PRINTFORML 已结束那一行，这里",
+      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的",
     tests: ['event-aftertrain'],
     must_mention: '性交：这里不补空行',
   },
   {
     desc: 'M12115 调教后肛门性交的同款补回空行（:332 是空源码行）',
     file: 'ere/event/event-aftertrain.js',
-    find: '  // :332 是空源码行（不是 PRINTL）——:331 的 PRINTFORML 已结束那一行，这里',
+    find: '  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML',
     replace:
-      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :332 是空源码行（不是 PRINTL）——:331 的 PRINTFORML 已结束那一行，这里",
+      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML",
     tests: ['event-aftertrain'],
     must_mention: '肛门性交：这里不补空行',
   },
   {
     desc: 'M12116 示众台涂鸦行与总结行之间补回空行（:2128 的 PRINTL 只收 PRINT 串那一行）',
     file: 'ere/event/event-nextday-pillory.js',
-    find: '  // :2128 的 PRINTL 只结束 :2058-2127 那一串 `PRINT 『…』` 拼起来的一行',
+    find: '  // :2128-2129 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来',
     replace:
-      "  era.print(''); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n  // :2128 的 PRINTL 只结束 :2058-2127 那一串 `PRINT 『…』` 拼起来的一行",
+      "  era.print(''); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n  // :2128-2129 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来",
     tests: ['event-nextday'],
     must_mention: '里程碑行与总结行之间不夹空行（:2128 只收尾，#597）',
   },
   {
     desc: 'M12117 安息日仪式播报之后补回空行（:260 是空源码行，没有 PRINTL）',
     file: 'ere/event/event-sabbath.js',
-    find: '  // :260 是空源码行（不是 PRINTL）——:259 的 PRINTFORML 已结束那一行，',
+    find: '  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后',
     replace:
-      "  era.println(); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :260 是空源码行（不是 PRINTL）——:259 的 PRINTFORML 已结束那一行，",
+      '  era.println(); // 变异：照「空源码行＝空行」翻译的旧形态\n  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后',
     tests: ['event-sabbath'],
     must_mention: '整段只有段首那一个空行（:258）',
   },

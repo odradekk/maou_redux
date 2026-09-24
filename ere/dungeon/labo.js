@@ -164,7 +164,7 @@ async function color_output_test() {
     row.push(...c_out(count));
   }
   era.print(row); // 8 格拼一行（文件头：一行归并为一次 print）
-  // :54 的 PRINTL 只结束 :51-53 那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换
+  // :54 的 PRINTL 只结束 :50-55 段里那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换
   // 行），**不是空行**——ere 的 print 一次调用即一行（#597）
   return 0;
 }

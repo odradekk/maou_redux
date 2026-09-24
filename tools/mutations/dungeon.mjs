@@ -2653,9 +2653,9 @@ export default [
   {
     desc: 'M12107 调色测试行尾补回空行（:54 的 PRINTL 只收 8 个 C_OUT 的 PRINT）',
     file: 'ere/dungeon/labo.js',
-    find: '  // :54 的 PRINTL 只结束 :51-53 那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换',
+    find: '  // :54 的 PRINTL 只结束 :50-55 段里那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换',
     replace:
-      '  era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧形态\n  // :54 的 PRINTL 只结束 :51-53 那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换',
+      '  era.println(); // 变异：照「行尾 PRINTL 要再补一条」翻译的旧形态\n  // :54 的 PRINTL 只结束 :50-55 段里那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换',
     tests: ['dungeon-labo'],
     must_mention: ':54 的 PRINTL 不是空行',
   },
@@ -2692,7 +2692,8 @@ export default [
     find: '      era.drawLine(); // :61\n      era.println(); // :62',
     replace: '      era.drawLine(); // :61\n      // 变异：:62 的真空行删除',
     tests: ['dungeon-labo'],
-    must_mention: ':62 的真空行紧随其后、段尾 :75-76 的真空行紧跟（删掉或补多都算错）',
+    must_mention:
+      ':62 的真空行紧随其后、段尾 :75-76 的真空行紧跟（删掉或补多都算错）',
   },
   {
     desc: 'M12112 商店街税入前的 :362 真空行删除（:343 的 PRINTL 已收尾，空行由它来）',

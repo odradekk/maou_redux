@@ -758,8 +758,8 @@ async function love_gas_trap(a, rand_n) {
 
   // :453-454 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
   // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）。
-  // TALENT:60 那支的上一条输出是 :445 的 PRINTL，那支里它确实落在空行上，
-  // 但该支是少数路径，此处按主路径（前面留有未换行的 PRINTFORM）判定
+  // TALENT:60 那支（:440-451）的上一条输出是 445 行的 PRINTL，那支里它确实
+  // 落在空行上，但该支是少数路径，此处按主路径（前面留有未换行的 PRINTFORM）判定
 
   // :457 欲情フラグ（位 9）
   era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) | 512);

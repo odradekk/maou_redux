@@ -1422,9 +1422,9 @@ export default [
   {
     desc: 'M12121 处刑对象列表的表头之后补回空行（:22 的 PRINTL 不是空行，只收 :18）',
     file: 'ere/event/event-execution.js',
-    find: '    // :22 的 PRINTL 只结束 :18 `PRINT 请选择处刑对象` 那一行（PRINT 不换行），',
+    find: '    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
     replace:
-      "    era.println(); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n    // :22 的 PRINTL 只结束 :18 `PRINT 请选择处刑对象` 那一行（PRINT 不换行），",
+      '    era.println(); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
     tests: ['event-execution'],
     must_mention: 'ELSE 支（无实绩提示）：表头之后不补空行',
   },

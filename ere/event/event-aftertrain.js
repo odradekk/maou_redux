@@ -359,8 +359,9 @@ async function aftertrain_sex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  // :229 是空源码行（不是 PRINTL）——:228 的 PRINTFORML 已结束那一行，这里
-  // 不补空行（#597；ere 的 print 自成一行，原作的空源码行不产生输出）
+  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的
+  // PRINTFORML 已结束那一行，空源码行不产生输出，这里不补空行（#597；
+  // ere 的 print 自成一行）
 
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
   leftover_s = s;
@@ -451,8 +452,9 @@ async function aftertrain_analsex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  // :332 是空源码行（不是 PRINTL）——:331 的 PRINTFORML 已结束那一行，这里
-  // 不补空行（#597，与 @AFTERTRAIN_SEX_CHECK :229 同源）
+  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML
+  // 已结束那一行，空源码行不产生输出，这里不补空行（#597，与
+  // @AFTERTRAIN_SEX_CHECK 的 :229-231 同源）
 
   era.print(`A经验＋${s}`);
   era.print(`性交经验＋${s}`);
