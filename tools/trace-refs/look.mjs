@@ -623,487 +623,479 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '9-52',
-        // :9
+        ref: '7-61',
+        // :7-61（头发颜色：11 档 + stick 修改注释）
         any: [
           /^\s*;\(stick修改\)10、11、48注释掉，强制每个人物生成发色，修正人物无发色的问题\s*$/m,
         ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '10-13',
-        // :10
-        any: [/^\s*IF TALENT:TARGET:300 > 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '11-13',
-        // :11
+        ref: '10-12',
+        // :10-12（已设定则整段跳过：TALENT:300 > 0）
         any: [/^\s*;設定済み\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '13-15',
-        // :15
+        // :13-15（Q = RAND:100，随即被 SELECTCASE 的 RAND:100 覆盖）
+        any: [/^\s*Q = RAND:100\s*\n\s*\n\s*; 0- 4 粉髪  5%\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '15-59',
+        // :15-59（发色概率注释表 + SELECTCASE 的 11 档）
         any: [/^\s*; 0- 4 粉髪  5%\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '15-51',
-        // :15
-        any: [/^\s*; 0- 4 粉髪  5%\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '54-71',
-        // :54
-        any: [/^\s*CASE 90 TO 94\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '55',
-        // :55
-        any: [/^\s*;暗金色\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '56-58',
-        // :56
-        any: [/^\s*TALENT:TARGET:300 = 10\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '59-61',
-        // :59
-        any: [/^\s*TALENT:TARGET:300 = 5\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '62-64',
-        // :63
+        ref: '63-83',
+        // :63-83（头发状态 6 档）
         any: [/^\s*;头发状态\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '63-64',
+        // :63-64（头发状态掷点 Q = RAND:12）
+        any: [/^\s*;头发状态\s*\n\s*Q = RAND:12\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '65-67',
-        // :65
-        any: [/^\s*IF Q <= 6\s*$/m],
+        // :65-67（直毛）
+        any: [/^\s*;直毛\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '68-70',
-        // :68
-        any: [/^\s*ELSEIF Q == 7\s*$/m],
+        // :68-70（カール）
+        any: [/^\s*;カール\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '71-73',
-        // :71
-        any: [/^\s*ELSEIF Q == 8\s*$/m],
+        // :71-73（内カール）
+        any: [/^\s*;内カール\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '75-87',
-        // :75
+        ref: '74-76',
+        // :74-76（外カール）
         any: [/^\s*;外カール\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '77',
-        // :77
-        any: [/^\s*ELSEIF Q == 10\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '78-80',
-        // :78
+        ref: '77-79',
+        // :77-79（癖毛）
         any: [/^\s*;癖毛\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '81-83',
-        // :81
+        ref: '80-82',
+        // :80-82（ウェーブ）
         any: [/^\s*;ウェーブ\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '84-87',
-        // :85
+        ref: '85-97',
+        // :85-97（头发长度三档：ボーイッシュ恒短发）
         any: [/^\s*;头发长度　ボーイッシュなら常にショート\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '89-99',
-        // :89
+        ref: '87-88',
+        // :87-88（头发长度掷点 Q = RAND:6）
+        any: [/^\s*Q = RAND:6\s*\n\s*IF Q <= 1 \|\| TALENT:TARGET:135\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '88-90',
+        // :88-90（ショート）
         any: [/^\s*;ショート\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '90-92',
-        // :90
-        any: [/^\s*TALENT:TARGET:302 = 1\s*$/m],
+        ref: '91-93',
+        // :91-93（セミロング）
+        any: [/^\s*;セミロング\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '93-99',
-        // :93
-        any: [/^\s*TALENT:TARGET:302 = 101\s*$/m],
+        ref: '94-96',
+        // :94-96（ロング）
+        any: [/^\s*;ロング\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '101-127',
-        // :102
+        ref: '99-114',
+        // :99-114（头发修剪方式：ELSEIF 3/4 不可达）
+        any: [/^\s*;头发修剪方式\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '101-102',
+        // :101-102（头发修剪方式掷点 Q = RAND:6）
+        any: [/^\s*Q = RAND:6\s*\n\s*IF Q >= 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '102-113',
+        // :102-113（头发修剪方式：Q >= 2 吃掉 ELSEIF 3/4 两支）
         any: [/^\s*IF Q >= 2\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '119-125',
-        // :119
-        any: [/^\s*;4,长束发  5,马尾  6,侧马尾\s*$/m],
+        ref: '116-130',
+        // :116-130（髪型：长度决定可掷范围 + Q += 1）
+        any: [/^\s*;髪型\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '126-127',
-        // :126-127
-        any: [/^\s*ELSE\s*\n\s*Q = RAND:12\s*$/m],
+        ref: '122-128',
+        // :122-128（短 / 半长 / 长三段各掷 RAND:3 / 10 / 12）
+        any: [/^\s*IF TALENT:302 >= 1 && TALENT:302 <= 100\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '129-156',
-        // :130
+        ref: '129-130',
+        // :129-130（Q += 1 后写入 TALENT:304）
         any: [/^\s*TALENT:304 = Q\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '130',
-        // :130
-        any: [/^\s*TALENT:304 = Q\s*$/m],
+        ref: '132-166',
+        // :132-166（目 8 档）
+        any: [/^\s*;目\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '134-136',
-        // :134
-        any: [/^\s*; 0-10 切れ長 11%\s*$/m],
+        ref: '133-134',
+        // :133-134（目掷点 Q = RAND:100）
+        any: [/^\s*Q = RAND:100\s*\n\s*; 0-10 切れ長 11%\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '137-139',
-        // :137
-        any: [/^\s*;26-35 釣り目  5%\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '140-142',
-        // :140
-        any: [/^\s*;46-48 三白眼  3%\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '143-145',
-        // :143
+        ref: '142-144',
+        // :142-144（切れ長）
         any: [/^\s*;切れ長\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '146-148',
-        // :146
+        ref: '145-147',
+        // :145-147（大きい）
         any: [/^\s*;大きい\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '149-151',
-        // :149
+        ref: '148-150',
+        // :148-150（神秘的）
         any: [/^\s*;神秘的\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '152-154',
-        // :152
+        ref: '151-153',
+        // :151-153（釣り目）
         any: [/^\s*;釣り目\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '155-157',
-        // :155
+        ref: '154-156',
+        // :154-156（潤み目）
         any: [/^\s*;潤み目\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '159-179',
-        // :159
-        any: [/^\s*TALENT:TARGET:305 = 8\s*$/m],
+        ref: '157-159',
+        // :157-159（たれ目）
+        any: [/^\s*;たれ目\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '160',
-        // :160
-        any: [/^\s*ELSEIF Q <= 48\s*$/m],
+        ref: '160-162',
+        // :160-162（三白眼）
+        any: [/^\s*;三白眼\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '162-164',
-        // :162
-        any: [/^\s*TALENT:TARGET:305 = 7\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '165-167',
-        // :165
+        ref: '163-165',
+        // :163-165（標準）
         any: [/^\s*TALENT:TARGET:305 = 6\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '168-170',
-        // :168
+        ref: '168-188',
+        // :168-188（瞳色 6 档）
         any: [/^\s*;瞳色\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '171-173',
-        // :171
+        ref: '168-169',
+        // :168-169（瞳色掷点 Q = RAND:100）
+        any: [/^\s*;瞳色\s*\n\s*Q = RAND:100\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '170-172',
+        // :170-172（碧）
         any: [/^\s*;碧\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '174-176',
-        // :174
+        ref: '173-175',
+        // :173-175（ブラウン）
         any: [/^\s*;ブラウン\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '177-179',
-        // :177
+        ref: '176-178',
+        // :176-178（黒）
         any: [/^\s*;黒\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '181-195',
-        // :181
-        any: [/^\s*TALENT:TARGET:306 = 3\s*$/m],
+        ref: '179-181',
+        // :179-181（グレー）
+        any: [/^\s*;グレー\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '182',
-        // :182
-        any: [/^\s*ELSEIF Q <= 98\s*$/m],
+        ref: '182-184',
+        // :182-184（ゴールド）
+        any: [/^\s*;ゴールド\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '184-186',
-        // :184
-        any: [/^\s*TALENT:TARGET:306 = 4\s*$/m],
+        ref: '185-187',
+        // :185-187（クリムゾン）
+        any: [/^\s*;クリムゾン\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '187-189',
-        // :187
-        any: [/^\s*TALENT:TARGET:306 = 5\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '190-192',
-        // :190-191
-        any: [/^\s*;唇\s*\n\s*Q = RAND:6\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '193-195',
-        // :193
+        ref: '190-204',
+        // :190-204（唇 4 档（肉感的起头））
         any: [/^\s*;肉感的\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '197-199',
-        // :197
+        ref: '190-191',
+        // :190-191（唇掷点 Q = RAND:6）
+        any: [/^\s*;唇\s*\n\s*Q = RAND:6\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '192-194',
+        // :192-194（肉感的）
+        any: [/^\s*;肉感的\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '195-197',
+        // :195-197（薄い）
         any: [/^\s*TALENT:TARGET:307 = 2\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '197-207',
-        // :197
-        any: [/^\s*TALENT:TARGET:307 = 2\s*$/m],
+        ref: '198-200',
+        // :198-200（瑞々しい）
+        any: [/^\s*;瑞々しい\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '200-202',
-        // :200
-        any: [/^\s*TALENT:TARGET:307 = 3\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '203-205',
-        // :203
+        ref: '201-203',
+        // :201-203（標準）
         any: [/^\s*TALENT:TARGET:307 = 4\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '206-207',
-        // :206-207
+        // :206-207（体型掷点 Q = RAND:3）
         any: [/^\s*;体型\s*\n\s*Q = RAND:3\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '209-223',
-        // :209
-        any: [/^\s*;丰满\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '210',
-        // :210
+        ref: '206-217',
+        // :206-217（体型 3 档（丰满的起头））
         any: [/^\s*TALENT:TARGET:308 = 300\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '212-214',
-        // :212
+        ref: '208-210',
+        // :208-210（丰满）
+        any: [/^\s*;丰满\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '211-213',
+        // :211-213（骨感）
         any: [/^\s*;骨感\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '215-217',
-        // :216
+        ref: '214-216',
+        // :214-216（標準）
         any: [/^\s*TALENT:TARGET:308 = 150\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '218-220',
-        // :219-220
+        ref: '219-233',
+        // :219-233（乳头 4 档（ピンク的起头））
+        any: [/^\s*TALENT:TARGET:309 = 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '219-220',
+        // :219-220（乳头掷点 Q = RAND:6）
         any: [/^\s*;乳头\s*\n\s*Q = RAND:6\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '221-223',
-        // :222
+        // :221-223（ピンク）
         any: [/^\s*;ピンク\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '225-243',
-        // :225
+        ref: '224-226',
+        // :224-226（褐色）
         any: [/^\s*;褐色\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '226',
-        // :226
-        any: [/^\s*TALENT:TARGET:309 = 2\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '228-230',
-        // :228
+        ref: '227-229',
+        // :227-229（陥没）
         any: [/^\s*;陥没\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '231-233',
-        // :232
+        ref: '230-232',
+        // :230-232（標準）
         any: [/^\s*TALENT:TARGET:309 = 3\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '234-236',
-        // :235-236
+        ref: '235-255',
+        // :235-255（阴毛 6 档（産毛的起头））
+        any: [/^\s*TALENT:TARGET:311 = 20\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '235-236',
+        // :235-236（阴毛掷点 Q = RAND:150）
         any: [/^\s*;陰毛\s*\n\s*Q = RAND:150\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '237-239',
-        // :237
-        any: [/^\s*IF Q <= 20\s*$/m],
+        // :237-239（無）
+        any: [/^\s*;無\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '240-242',
-        // :241
+        // :240-242（産毛）
         any: [/^\s*;産毛\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '243-245',
-        // :243
-        any: [/^\s*ELSEIF Q <= 70\s*$/m],
+        // :243-245（薄い）
+        any: [/^\s*TALENT:TARGET:311 = 50\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '246-247',
-        // :246
-        any: [/^\s*ELSEIF Q <= 100\s*$/m],
+        ref: '246-248',
+        // :246-248（標準）
+        any: [/^\s*TALENT:TARGET:311 = 100\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '249-266',
-        // :249
-        any: [/^\s*ELSEIF Q <= 130\s*$/m],
+        ref: '249-251',
+        // :249-251（濃い）
+        any: [/^\s*;濃い\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '251',
-        // :251
-        any: [/^\s*TALENT:TARGET:311 = 150\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '253-255',
-        // :253
+        ref: '252-254',
+        // :252-254（剛毛）
         any: [/^\s*;剛毛\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '256-258',
-        // :256
+        ref: '256',
+        // :256（阴毛状态同步为生长极限）
         any: [/^\s*TALENT:TARGET:310 = TALENT:TARGET:311\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '259-261',
-        // :259
-        any: [/^\s*;有無にかかわらず設定は入れておく\s*$/m],
+        ref: '258-273',
+        // :258-273（ペニス 4 档（普通的起头））
+        any: [/^\s*TALENT:TARGET:318 = 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '262-264',
-        // :262
+        ref: '259-260',
+        // :259-260（ペニス掷点 Q = RAND:150）
+        any: [/^\s*;有無にかかわらず設定は入れておく\s*\n\s*Q = RAND:150\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '261-263',
+        // :261-263（普通）
         any: [/^\s*;普通\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '266-268',
-        // :266
-        any: [/^\s*TALENT:TARGET:318 = 3\s*$/m],
+        ref: '264-266',
+        // :264-266（包茎）
+        any: [/^\s*;包茎\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '270-302',
-        // :271
+        ref: '267-269',
+        // :267-269（短小包茎）
+        any: [/^\s*;短小包茎\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '270-272',
+        // :270-272（巨根）
         any: [/^\s*;巨根\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '271-272',
-        // :271
-        any: [/^\s*;巨根\s*$/m],
+        ref: '275-277',
+        // :275-277（包茎・短小包茎可能得早泄）
+        any: [/^\s*;包茎・短小包茎は早漏を得ることがあるように\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '276-278',
-        // :276
-        any: [
-          /^\s*SIF \(TALENT:TARGET:318 == 2 \|\| TALENT:TARGET:318 == 3\) && RAND:10 == 0\s*$/m,
-        ],
+        ref: '279-302',
+        // :279-302（魅力点：$CHARMPOINT + 两处 GOTO 重掷）
+        any: [/^\s*\$CHARMPOINT\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '285-292',
-        // :285
-        any: [/^\s*IF \(TALENT:TARGET:109\) && \(Q == 12\)\s*$/m],
+        ref: '280-282',
+        // :280-282（$CHARMPOINT 标号与 Q = RAND:28 + 1）
+        any: [/^\s*\$CHARMPOINT\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '289-291',
-        // :289
-        any: [/^\s*;ELSEIF \(TALENT:TARGET:153\) && \(Q == 13\)\s*$/m],
+        ref: '284-286',
+        // :284-286（贫乳掷到 12 重掷）
+        any: [/^\s*;贫乳は美乳になれない\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '293-300',
+        // :293-300（魅力点 24：扶她机会与重掷）
+        any: [/^\s*;自前のペニス持ちなら追加のふたなり獲得チャンス\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '297-299',
+        // :297-299（成不了扶她就重掷）
+        any: [/^\s*;ふたなりになれなければチャームポイント決め直し\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1113,8 +1105,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '300-302',
-        // :302
+        ref: '302',
+        // :302（TALENT:312 = Q）
         any: [/^\s*TALENT:TARGET:312 = Q\s*$/m],
       },
       {
@@ -1143,8 +1135,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '320-499',
-        // :320
+        ref: '320-487',
+        // :320-487（$RACE 段整体）
         any: [/^\s*\$RACE\s*$/m],
       },
       {
@@ -1199,81 +1191,81 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '368-371',
-        // :368
-        any: [/^\s*ELSEIF \(ARG == 0 && Q <= 159\) \|\| ARG == 1\s*$/m],
+        ref: '368-372',
+        // :368-372（エルフ（善恶值 +20））
+        any: [/^\s*;エルフ\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '372-376',
-        // :373
-        any: [/^\s*ELSEIF \(ARG == 0 && Q <= 169\) \|\| ARG == 2\s*$/m],
+        ref: '373-378',
+        // :373-378（人狼（善恶值 -20））
+        any: [/^\s*TALENT:TARGET:314 = 2\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '377-380',
-        // :377
-        any: [/^\s*;人狼は善恶值が低い\s*$/m],
+        ref: '379-383',
+        // :379-383（吸血鬼（善恶值 -40））
+        any: [/^\s*;吸血鬼\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '381-387',
-        // :381
-        any: [/^\s*TALENT:TARGET:314 = 3\s*$/m],
+        ref: '384-391',
+        // :384-391（无头骑士（暗之能力者机会 + 善恶值 -40））
+        any: [/^\s*;无头骑士\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '388-391',
-        // :389
-        any: [/^\s*TALENT:TARGET:279 = 1\s*$/m],
+        ref: '392-396',
+        // :392-396（ドラゴン（角））
+        any: [/^\s*;ドラゴン\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '392-394',
-        // :392
-        any: [/^\s*ELSEIF \(ARG == 0 && Q <= 197\) \|\| ARG == 5\s*$/m],
+        ref: '397-399',
+        // :397-399（その他指定の種族）
+        any: [/^\s*;その他指定の種族\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '395-401',
-        // :395
-        any: [/^\s*;角\s*$/m],
+        ref: '400-408',
+        // :400-408（天使（光之能力者机会 + 善恶值 +40））
+        any: [/^\s*;天使\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '403-497',
-        // :406
-        any: [/^\s*;天使は善恶值が高い\s*$/m],
+        ref: '409-487',
+        // :409-487（精英一侧：种族 9 + 种族2 特性）
+        any: [/^\s*;精英の場合はこちら\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '404-406',
-        // :406
-        any: [/^\s*;天使は善恶值が高い\s*$/m],
+        ref: '412',
+        // :412（TALENT:319 的读点）
+        any: [/^\s*IF TALENT:319 == 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '406-414',
-        // :406
-        any: [/^\s*;天使は善恶值が高い\s*$/m],
+        ref: '412-420',
+        // :412-420（亜人）
+        any: [/^\s*;亜人\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '411-414',
-        // :411
-        any: [/^\s*TALENT:314 = 9\s*$/m],
+        ref: '416-420',
+        // :416-420（亜人阴毛倾向）
+        any: [/^\s*;亜人は陰毛が剛毛になりやすい\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '415-427',
-        // :415
-        any: [/^\s*TALENT:472 = 1\s*$/m],
+        ref: '421-428',
+        // :421-428（史莱姆（無毛））
+        any: [/^\s*;史莱姆\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '428-434',
-        // :429
-        any: [/^\s*ELSEIF TALENT:319 == 3\s*$/m],
+        ref: '429-434',
+        // :429-434（昆虫（战术））
+        any: [/^\s*;昆虫\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1289,428 +1281,421 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '447-463',
-        // :447
-        any: [/^\s*ELSEIF TALENT:319 == 6\s*$/m],
+        ref: '447-461',
+        // :447-461（妖精）
+        any: [/^\s*;妖精\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '455-457',
-        // :455
-        any: [/^\s*SIF RAND:4 != 0\s*$/m],
+        ref: '454-456',
+        // :454-456（妖精多半幼稚）
+        any: [/^\s*;妖精の大半は幼稚である\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '458-462',
-        // :462
-        any: [/^\s*ELSEIF TALENT:319 == 7\s*$/m],
+        ref: '457-461',
+        // :457-461（妖精阴毛倾向）
+        any: [/^\s*;妖精は陰毛が無毛になりやすい\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '464-465',
-        // :464
-        any: [/^\s*ELSEIF TALENT:319 == 8 \|\| TALENT:319 == 9\s*$/m],
+        ref: '462-463',
+        // :462-463（巨人（无追加设定））
+        any: [/^\s*;巨人\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '466-479',
-        // :466
-        any: [/^\s*TALENT:245 = 1\s*$/m],
+        ref: '464-475',
+        // :464-475（男＆女魔族）
+        any: [/^\s*;男＆女魔族\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '480-487',
-        // :480
-        any: [/^\s*TALENT:255 = 0\s*$/m],
+        ref: '476-486',
+        // :476-486（獣＆馬：恒真臂）
+        any: [/^\s*;獣＆馬\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '485',
-        // :485
-        any: [/^\s*TALENT:479 = 1\s*$/m],
+        ref: '476',
+        // :476（獣＆馬的恒真臂（源写 ELSEIF TALENT:319 == 10 || 12））
+        any: [/^\s*ELSEIF TALENT:319 == 10 \|\| 12\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '506-583',
-        // :506
+        ref: '496-589',
+        // :496-589（$BORN 段整体）
+        any: [/^\s*\$BORN\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '496-498',
+        // :496-498（$BORN 标号与 Q = RAND:21 + 1）
+        any: [/^\s*\$BORN\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '500-502',
+        // :500-502（配下的特别元职业）
+        any: [/^\s*;配下の場合、特別な元職業\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '503-505',
+        // :503-505（不会法术则修道女重掷）
+        any: [/^\s*;法術を知らない場合修道女にはなれない\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '506-558',
+        // :506-558（妓女・物乞い・奴隷支整体）
         any: [/^\s*;妓女・物乞い・奴隷の場合、経験がつく\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '507-508',
-        // :507
-        any: [/^\s*IF Q == 5 \|\| Q == 7 \|\| Q == 20\s*$/m],
+        ref: '508-514',
+        // :508-514（童貞オトコ）
+        any: [/^\s*;童貞オトコの場合\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '510-513',
-        // :510
-        any: [/^\s*LOCAL = RAND:20 \+ 1\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '514-515',
-        // :515
-        any: [/^\s*ELSEIF TALENT:122\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '516-556',
-        // :516
+        ref: '515-521',
+        // :515-521（オトコ）
         any: [/^\s*;オトコの場合\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '518-524',
-        // :522
-        any: [/^\s*ELSEIF TALENT:0 == 1\s*$/m],
+        ref: '522-528',
+        // :522-528（处女）
+        any: [/^\s*;处女の場合\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '525-530',
-        // :529
-        any: [/^\s*ELSEIF RAND:5 == 0\s*$/m],
+        ref: '529-537',
+        // :529-537（非处女且肛交使用）
+        any: [/^\s*;非处女でアナルも使用している\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '531-536',
-        // :531
-        any: [/^\s*LOCAL:0 = RAND:40 \+ 1\s*$/m],
+        ref: '538-544',
+        // :538-544（非处女仅私处）
+        any: [/^\s*;非处女でVのみ\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '537-546',
-        // :537
-        any: [/^\s*EXP:74 \+= EXP:5\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '547-551',
-        // :547
+        ref: '547-552',
+        // :547-552（刺青机会）
         any: [/^\s*;妓女と奴隷は、刺青を入れられていることがある\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '553-559',
-        // :554
-        any: [/^\s*;非处女の場合、生育经验がつくことがある\s*$/m],
+        ref: '549',
+        // :549（LOCAL = RAND:8 + 10）
+        any: [/^\s*LOCAL = RAND:8 \+ 10\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '555',
-        // :555
-        any: [/^\s*SIF TALENT:0 == 0 && RAND:15 == 0 && TALENT:122 == 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '556',
-        // :556
-        any: [/^\s*EXP:60 \+= RAND:3\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '557',
-        // :557
-        any: [/^\s*;そして善恶值が低い\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '561-563',
-        // :561
-        any: [/^\s*CALL karma, TARGET, 30\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '565',
-        // :565
-        any: [/^\s*ELSEIF Q == 6\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '566-571',
-        // :566
-        any: [/^\s*;盗人は善恶值が低い\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '569-571',
-        // :569
-        any: [/^\s*;主婦は経験がつく\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '572-574',
-        // :572
-        any: [/^\s*EXP:5 \+= LOCAL:0\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '575-580',
-        // :576
+        ref: '550',
+        // :550（LOCALS:10 十项候选表）
         any: [
-          /^\s*;子供の数が合わなくなっちゃうのでオミットしてしまいました\s*$/m,
+          /^\s*LOCALS:10 '= "淫乱" , "母猪" , "蛇" , "蜘蛛女郎" , "薔薇" , "肉便器" , "便女" , "阴茎图画" , "性器标志" , "骷髅"\s*$/m,
         ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '583',
-        // :583
+        ref: '551',
+        // :551（CSTR:LOCAL = %LOCALS:LOCAL%）
+        any: [/^\s*CSTR:LOCAL = %LOCALS:LOCAL%\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '554-556',
+        // :554-556（生育经验机会）
+        any: [/^\s*SIF TALENT:0 == 0 && RAND:15 == 0 && TALENT:122 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '557-558',
+        // :557-558（善恶值 -30）
+        any: [/^\s*;そして善恶值が低い\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '559-561',
+        // :559-561（修道女・貴族・巫女・聖女・予言者善恶值 +30）
+        any: [/^\s*;修道女・貴族・巫女・聖女・予言者は善恶值が高い\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '561-564',
+        // :561-564（光之能力者机会）
+        any: [
+          /^\s*CALL karma, TARGET, 30\s*\n\s*;光之能力者になるチャンス\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '565-567',
+        // :565-567（盗人善恶值 -40）
+        any: [/^\s*;盗人は善恶值が低い\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '568-587',
+        // :568-587（主婦支：经验 + 确定子持ち）
+        any: [/^\s*;主婦は経験がつく\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '589',
+        // :589（TALENT:315 = Q）
+        any: [/^\s*TALENT:TARGET:315 = Q\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '592-608',
+        // :592-608（$REASON 段整体）
+        any: [/^\s*\$REASON\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '592-594',
+        // :592-594（$REASON 的 Q = RAND:20 + 1）
+        any: [/^\s*\$REASON\s*\n\s*Q = RAND:20\s*\n\s*Q \+= 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '599',
+        // :599（SIF Q >103 && EX_TALENT:2，源里恒假）
+        any: [/^\s*SIF Q >103 && EX_TALENT:2\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '596-598',
+        // :596-598（配下的特别理由）
+        any: [/^\s*;配下の場合、特別な理由\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '599-600',
+        // :599-600（SIF Q >103 && EX_TALENT:2，源里恒假）
+        any: [/^\s*SIF Q >103 && EX_TALENT:2\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '601-603',
+        // :601-603（運命・啓示・使命・故郷・平和・正義善恶值 +20）
+        any: [/^\s*;運命・啓示・使命・故郷・平和・正義は善恶值が高い\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '604-606',
+        // :604-606（金・自暴自棄・命令善恶值 -20）
+        any: [/^\s*;金・自暴自棄・命令は善恶值が低い\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '582-583',
+        // :582-583（失去处女）
         any: [/^\s*TALENT:0 = 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '585-608',
-        // :585
+        ref: '584-585',
+        // :584-585（失去私处封印）
         any: [/^\s*TALENT:273 = 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '586-587',
-        // :586
-        any: [/^\s*;必ず人妻がつく\s*$/m],
+        // :586-587（必得人妻）
+        any: [/^\s*TALENT:157 = 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '586',
-        // :586
-        any: [/^\s*;必ず人妻がつく\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '589-590',
-        // :589
-        any: [/^\s*TALENT:TARGET:315 = Q\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '591-592',
-        // :591
-        any: [/^\s*;勇者になった理由\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '592-596',
-        // :592
-        any: [/^\s*\$REASON\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '596-598',
-        // :596
-        any: [/^\s*;配下の場合、特別な理由\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '596',
-        // :596
-        any: [/^\s*;配下の場合、特別な理由\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '597-599',
-        // :599
-        any: [/^\s*SIF Q >103 && EX_TALENT:2\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '600',
-        // :600
-        any: [/^\s*Q = 93\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '606-608',
-        // :608
+        ref: '608',
+        // :608（TALENT:316 = Q）
         any: [/^\s*TALENT:TARGET:316 = Q\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '610-624',
-        // :610
-        any: [/^\s*;喜欢的东西\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '611-612',
-        // :611
+        ref: '611-621',
+        // :611-621（$LOVE 段整体）
         any: [/^\s*\$LOVE\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '613-615',
-        // :614
-        any: [
-          /^\s*IF Q == 4 \|\| Q == 8 \|\| Q == 9 \|\| Q == 10 \|\| Q == 11\s*$/m,
-        ],
+        ref: '611-613',
+        // :611-613（$LOVE 的 Q = RAND:20 + 1）
+        any: [/^\s*\$LOVE\s*\n\s*Q = RAND:20\s*\n\s*Q \+= 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '616-618',
-        // :617
-        any: [/^\s*ELSEIF Q == 5 \|\| Q == 13 \|\| Q == 14\s*$/m],
+        ref: '614-616',
+        // :614-616（恋人・家族・使命・故郷・憧れ善恶值 +20）
+        any: [/^\s*;恋人・家族・使命・故郷・憧れは善恶值が高い\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '624',
-        // :624
-        any: [/^\s*;家族構成\s*$/m],
+        ref: '617-619',
+        // :617-619（金・装飾品・宝石善恶值 -20）
+        any: [/^\s*;金・装飾品・宝石は善恶值が低い\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '626-791',
-        // :626
-        any: [/^\s*;            1の位 = 1のとき、家族構成設定あり\s*$/m],
+        ref: '621',
+        // :621（TALENT:317 = Q）
+        any: [/^\s*TALENT:TARGET:317 = Q\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '628-629',
-        // :628
-        any: [/^\s*;          100の位 = 勇者以前に生んだ娘\s*$/m],
+        ref: '641-808',
+        // :645-808（$FAMILY 段整体）
+        any: [/^\s*\$FAMILY\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '629',
-        // :629
-        any: [/^\s*;        1,000の位 = 勇者以前に生んだ息子\s*$/m],
+        ref: '646-647',
+        // :646-647（LOCAL = 0 / MARRY = 0）
+        any: [/^\s*LOCAL = 0\s*\n\s*MARRY = 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '631-662',
-        // :631
-        any: [
-          /^\s*;（0=未婚 1=結婚 2=離婚 3=現在の伴侶と重婚 4=現在の伴侶と契り、離婚を宣言）\s*$/m,
-        ],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '632-633',
-        // :632
-        any: [/^\s*;（5=死別）\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '633-643',
-        // :633
-        any: [/^\s*;      100,000の位 = 姉の数\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '644',
-        // :644
+        ref: '644-682',
+        // :644-682（結婚相手の設定）
         any: [/^\s*;結婚相手の設定\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '646-662',
-        // :647
-        any: [/^\s*MARRY = 0\s*$/m],
+        ref: '641-642',
+        // :641-642（非精英：家族构成个位置 1）
+        any: [/^\s*SIF TALENT:220 == 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '666-736',
-        // :673
-        any: [/^\s*;現在の状況\s*$/m],
+        ref: '650-659',
+        // :650-659（人妻：バツ2）
+        any: [/^\s*LOCAL \+= 30\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '669-679',
-        // :673
-        any: [/^\s*;現在の状況\s*$/m],
+        ref: '660-661',
+        // :660-661（現在の状況…結婚：LOCAL += 10000）
+        any: [/^\s*;現在の状況…結婚\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '680-694',
-        // :684
+        ref: '663-682',
+        // :663-682（離婚または未亡人）
+        any: [/^\s*ELSEIF RAND:20 == 0 && EX_TALENT:TARGET:2 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '684-737',
+        // :684-737（子供の設定：非処女限定）
         any: [/^\s*;子供の設定\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '695-735',
-        // :697
-        any: [/^\s*;ループ抜けの位置が違うので、一人は確定する\s*$/m],
+        ref: '686-700',
+        // :686-700（主婦支：先加后判 break）
+        any: [/^\s*IF TALENT:315 == 21 && TALENT:0 == 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '698-700',
-        // :699-700
-        any: [/^\s*BREAK\s*\n\s*NEXT\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '701',
-        // :701
+        ref: '701-716',
+        // :701-716（结婚经历支：先判后加）
         any: [/^\s*ELSEIF LOCAL >= 10 && TALENT:0 == 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '738-758',
-        // :739
+        ref: '717-736',
+        // :717-736（未婚の母支：娼婦上限 +2）
+        any: [/^\s*ELSEIF RAND:20 == 0 && TALENT:0 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '720',
+        // :720（LOCAL:2 = 2）
+        any: [/^\s*LOCAL:2 = 2\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '721-723',
+        // :721-723（娼婦上限 +2）
+        any: [/^\s*SIF TALENT:315 == 5\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '739-759',
+        // :739-759（兄弟姉妹の設定）
         any: [/^\s*;兄弟姉妹の設定\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '760-790',
-        // :761
+        ref: '761-805',
+        // :761-805（性別の設定：人妻の場合）
         any: [/^\s*;性別の設定（人妻の場合）\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '762-771',
-        // :762
+        ref: '762-775',
+        // :762-775（オトコ）
         any: [/^\s*IF TALENT:122 == 1 && MARRY == 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '768-770',
-        // :768
-        any: [/^\s*ABL:断背气质 = 3\s*$/m],
+        ref: '767-768',
+        // :767-768（BLっ気補正 = 3）
+        any: [/^\s*;BLっ気補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '772-785',
-        // :773
-        any: [/^\s*;男女カップル\s*$/m],
+        ref: '776-791',
+        // :776-791（ふたなり）
+        any: [/^\s*ELSEIF TALENT:121 == 1 && MARRY == 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '779',
-        // :779
-        any: [/^\s*;希少なふたなりのカップル\s*$/m],
+        ref: '780-782',
+        // :780-782（百合气质補正 = 3（希少なふたなり））
+        any: [/^\s*LOCAL \+= 5000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '782-784',
-        // :784
-        any: [/^\s*;ふた男カップル\s*$/m],
+        ref: '788-790',
+        // :788-790（百合气质補正 = 3（ふた女））
+        any: [/^\s*LOCAL \+= 3000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '786-790',
-        // :787
-        any: [/^\s*;ふた女カップル\s*$/m],
+        ref: '792-804',
+        // :792-804（女）
+        any: [/^\s*ELSEIF MARRY == 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '788',
-        // :788
-        any: [/^\s*LOCAL \+= 3000000000\s*$/m],
+        ref: '796-798',
+        // :796-798（百合气质補正 = 3（女女））
+        any: [/^\s*LOCAL \+= 2000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '788-792',
-        // :788
-        any: [/^\s*LOCAL \+= 3000000000\s*$/m],
+        ref: '801-803',
+        // :801-803（百合气质補正 = 3（女ふた））
+        any: [/^\s*LOCAL \+= 1000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '793',
-        // :793
-        any: [/^\s*;女\s*$/m],
+        ref: '807-808',
+        // :807-808（データ反映：TALENT:320 += LOCAL）
+        any: [/^\s*;データ反映\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '808-812',
-        // :808
+        ref: '808-811',
+        // :808-811（函数尾：データ反映 + RETURN 1；裸 RETURN 1 在本文件命中三处，
+        //   切片带上前一句才有鉴别力）
         any: [/^\s*TALENT:TARGET:320 \+= LOCAL\s*$/m],
       },
       {
@@ -1835,15 +1820,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1025-1029',
-        // :1025（上半段的刺青候选表引用，未改）
-        any: [/^\s*PRINT \[体型：\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1277-1279',
-        // :1277-1278（上半段的头发修剪方式引用，未改）
-        any: [/^\s*\s*\n\s*; ELSE\s*$/m],
+        ref: '547-551',
+        // :547-551（刺青候选表（LOCALS:10 十项））
+        any: [
+          /^\s*LOCALS:10 '= "淫乱" , "母猪" , "蛇" , "蜘蛛女郎" , "薔薇" , "肉便器" , "便女" , "阴茎图画" , "性器标志" , "骷髅"\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -2085,8 +2066,20 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '2475-2517',
+        // :2475-2517（経験補正：精饮/侍奉/爱情/被虐四组 >100 / >30）
+        any: [/^\s*IF EXP:精饮绝顶经验 > 100\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '2530-2550',
+        // :2530-2550（経験補正：施虐组与营业爱情组 >100 / >30）
+        any: [/^\s*IF EXP:施虐快乐经验 > 100\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '2519-2528',
-        // :2519-2528（肛门快乐经验一组：源用 >200 / >80，本实现未按此分档）
+        // :2519-2528（肛门快乐经验一组的 >200 / >80 两档）
         any: [/^\s*IF EXP:肛门快乐经验 > 200\s*$/m],
       },
       {
