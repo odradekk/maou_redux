@@ -35,9 +35,13 @@
  *     cid，重新开始等价于原地重画）；
  *   - 序号世界改角色 ID 世界（项目通例）：名单循环遍历
  *     `era.getAddedCharacters()`，打印与接受的都是角色 ID；名单行的快捷键
- *     与同屏的固定编号（六个条件键 [1000]-[1005]、返回 [100]）共存——后代
+ *     与同屏的固定编号（六个条件键 [1000]-[1005]、返回 [999]）共存——后代
  *     ID 因此必须落在固定编号之上（chara-pregnancy.js 的 FIRST_CHILD_ID =
- *     100000，issue #560 的裁定；静态守卫见 test/child-id-collision.test.js）；
+ *     100000，issue #560 的裁定；静态守卫见 test/child-id-collision.test.js），
+ *     而预设 ID 在固定编号**之下**，撞号面只剩「预设 ID × 同屏固定按钮」：
+ *   - **名单轮的 `[100] 返回` 改 [999]（#586）**：预设 100「怪物的女儿」能以
+ *     ID 100 加入，与原作的 [100] 撞号后这个角色选不中。选点与备选修法的
+ *     理由见 LIST_RETURN 的注释；出口轮不打角色行，它的 [100] 保持原作。
  *   - `CALL SHOW_PERSONAL_INFO(ARG)`（:305，CASE 4）全库无定义——不是
  *     「未移植」，是原作 `SELECTCASE ARG:1` 的这一支结构性不可达（全库没有
  *     任何调用点传 `ARG:1 == 4`；`CHARA_INFO ver1.0.1.ERB:948-949` 的翻页
@@ -111,6 +115,37 @@ const LIST_COLORS = new Map([
 const SACRIFICED_COLOR = '#ffc800';
 /** 名单区块补白到 27 行（源 :311-315） */
 const MIN_LINES = 27;
+/**
+ * 名单轮的「返回」编号（源 :127 的 `[100]`）。**#586 起偏离原作**，选点 999：
+ * 预设 ID 上界 777 < 999 < 本页条件键的下界 1000，既避开全部预设 ID，也避开
+ * 后代 ID 段（≥ FIRST_CHILD_ID = 100000）；它同时是项目其余列表页「返回」的
+ * 通用编号，且那些页面同样与角色行同屏（page-chara-info.js:626 的退出名册、
+ * sale.js:605、chara-marriage.js:815 与 842、page-ability-up.js:177）——本页
+ * 只是并入既有惯例，不是新造编号。
+ *
+ * 为什么必须离开 100：名单轮的角色行以**角色 ID** 作快捷键（项目通例，见
+ * 文件头「序号世界改角色 ID 世界」），而预设 100「怪物的女儿」能以 ID 100
+ * 加入——生命摇篮 `char_create`（chara-custom.js）在输入不落进 1-16 /
+ * 21-30 / 37-60 三段时把它原样当预设编号（`SELECTCASE` 的 `CASEELSE`），
+ * 经 `EXISTCSV` 放行（yml/Chara100.yml 在库）后 `era.addCharacter(100)`；
+ * 该轮的输入是自由输入（菜单全是纯文本、之前还有一次 WAIT 清空白名单，
+ * docs/research/plaintext-options.md 的 B 类；原作的 `CASEELSE` 透传 + EXISTCSV
+ * 同样放行，预设来源见 test/chara-outer.test.js:11-16）。死亡苏生的
+ * `resulection()`（page-shop-labo.js）是第二条理论入口（输入 199 → 预设
+ * 100），但它的前置 flag:1099 死亡登记要求该角色先加入过，属二次路径。
+ * 两枚按钮同编号时，`result === 100` 的返回分支先命中，这个角色就选不中
+ * （#586）。
+ *
+ * 为什么不改角色行的编号：给行快捷键加偏移（显示与输入分离）会让**整屏**行的
+ * 编号都变成非 ID 的合成数，与名册/批量处刑/目标选择三页「显示 ID、输入 ID」
+ * 的既有惯例不一致，还要多一层输入映射；固定编号只是本页 UI 的取值，改它
+ * 的代价最小。
+ *
+ * 出口轮（源 :79-80 的两个出口、:84-87 的返回分支）**不打角色行**，它的
+ * `[100]` 保持原作不动。本常量只服务名单轮；静态守卫见
+ * test/child-id-collision.test.js 的「预设 ID × 同屏固定按钮」核对。
+ */
+const LIST_RETURN = 999;
 
 /**
  * @HEXtoDEC（:1765-1822）：`0xRRGGBB` 拆成三段十进制。
@@ -282,14 +317,15 @@ async function sacrifice_flow(cid, background) {
     }
     era.println();
     era.println();
-    // :127 ` [100] 返回 `——真按钮（#530）。**这一轮的白名单非空**：名单行与
-    // 六个条件键都在上面打印过了，纯文本行必然被引擎拒收（夹具当场抛「输入
-    // 不合法」，见 test/chara-info-show.test.js 的 #530 用例）。
-    era.printButton('返回', 100);
+    // :127 ` [100] 返回 ` 的编号 #586 起改 999（LIST_RETURN 的注释）——真按钮
+    // （#530）。**这一轮的白名单非空**：名单行与六个条件键都在上面打印过了，
+    // 纯文本行必然被引擎拒收（夹具当场抛「输入不合法」，见
+    // test/chara-info-show.test.js 的 #530 用例）。
+    era.printButton('返回', LIST_RETURN);
     era.println();
 
     const result = await era.input(); // :129
-    if (result === 100) {
+    if (result === LIST_RETURN) {
       return true; // :131-133 ARG = shadow; RESTART
     }
     if (result >= 1000 && result <= 1005) {

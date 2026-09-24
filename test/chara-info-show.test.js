@@ -2171,11 +2171,14 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
   assert.equal(result, 1, '返回首页（directToHomePage 的返回值形态）');
 });
 
-test('SHOW_CHARA_INFO：祭品名单的 [100] 返回是真按钮（名单轮次白名单非空，#530）', async () => {
+test('SHOW_CHARA_INFO：祭品名单的返回是真按钮（名单轮次白名单非空，#530）', async () => {
   // 名单轮次的白名单本来就非空——名单行自身是按钮（角色号），六个条件键是
-  // 按钮（1000+下标）。此时若 `[100] 返回` 仍是纯文本行，玩家敲 100 会被
+  // 按钮（1000+下标）。此时若「返回」仍是纯文本行，玩家敲它的编号会被
   // 引擎拒收（renderFromButton 按 rule.indexOf 判定），夹具同款抛
   // 「输入不合法」：本用例在修好之前必定红。
+  // 名单轮的返回编号自 #586 起是 [999]（该轮的 [100] 要让给 100 号预设角色，
+  // 见「名单里 100 号角色行可选…」用例）；出口轮不打角色行，它的 [100] 保持
+  // 原作。
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },
   });
@@ -2184,15 +2187,164 @@ test('SHOW_CHARA_INFO：祭品名单的 [100] 返回是真按钮（名单轮次�
   fixture.era.addCharacter(victim);
   fixture.store.set(`cflag:${victim}:1`, 8);
   fixture.store.set('callname:7:-1', '考狄利亚'); // 名单只列同条件的角色
-  // 进名单 → 名单里 [100] 返回 → RESTART 回到「两个出口」→ 再 [100] 返回首页
-  fixture.set_inputs(10, 100, 100);
+  // 进名单 → 名单里 [999] 返回 → RESTART 回到「两个出口」→ 再 [100] 返回首页
+  fixture.set_inputs(10, 999, 100);
   const result = await show_chara_info(7, -1, always, 0x000000);
 
-  assert.equal(result, 1, '[100] 从名单里返回首页');
+  assert.equal(result, 1, '[999] 从名单里返回首页');
   const rendered = button_rendered(fixture);
   assert.ok(
-    rendered.filter((text) => text === '[100] 返回').length >= 2,
-    `两个出口 + 名单各有一枚 [100] 返回（实显：${JSON.stringify(rendered)}）`,
+    rendered.some((text) => text === '[999] 返回'),
+    `名单轮有一枚 [999] 返回（实显：${JSON.stringify(rendered)}）`,
+  );
+  // 出口轮在本流程里被重画两次（名单轮的 RESTART 一次），每次都是 [10] 与
+  // [100] 成对；名单轮两枚都不打——数量不相等即名单轮混进了 [100]
+  assert.equal(
+    rendered.filter((text) => text === '[100] 返回').length,
+    rendered.filter((text) => text === '[10] 查看符合条件的奴隶或勇者').length,
+    `原作的 [100] 返回只留在出口轮（实显：${JSON.stringify(rendered)}）`,
+  );
+  // 名单轮的返回走 RESTART（回到「两个出口」重画），不是直接退到首页：
+  // 出口轮的 [10] 必须在 [999] 之后**再出现一次**（改成 return 1 即红）
+  assert.ok(
+    rendered.lastIndexOf('[10] 查看符合条件的奴隶或勇者') >
+      rendered.indexOf('[999] 返回'),
+    `RESTART 后出口轮重画（实显：${JSON.stringify(rendered)}）`,
+  );
+});
+
+test('SHOW_CHARA_INFO：名单里 100 号角色行可选、返回仍可用（预设 100 × [100] 撞号，#586）', async () => {
+  // 预设 100「怪物的女儿」能以 ID 100 加入：生命摇篮 @CHAR_CREATE 在输入不落进
+  // 1-16 / 21-30 / 37-60 三段时把它原样当预设编号（`CASEELSE`）、经 EXISTCSV
+  // 放行（yml/Chara100.yml 在库），随后 `era.addCharacter(100)`
+  // （chara-custom.js 的 char_append；原作同样如此，见
+  // test/chara-outer.test.js:11-16）。名单轮的角色行以角色 ID 作快捷键，
+  // 而返回按钮原作也是 [100]——修好之前，敲 100 命中的是返回分支，这个角色
+  // 选不中（#586）。本用例在修好之前必定红：喂进去的 100 会走返回而非行。
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  const victim = 100;
+  fixture.seed_chara(victim, {
+    id: victim,
+    name: '怪物的女儿',
+    callname: '怪物的女儿',
+  });
+  assert.equal(
+    fixture.era.addCharacter(victim),
+    true,
+    '预设 100 以 ID 100 加入',
+  );
+  fixture.store.set(`cflag:${victim}:1`, 8); // 可献祭（状态 8）
+  fixture.store.set('callname:7:-1', '考狄利亚'); // 名单只列同条件的角色
+  // 进名单 → 点 100 号行 → [0] 终止 → [999] 返回（名单轮）→ [100] 返回（出口轮）
+  fixture.set_inputs(10, victim, 0, 999, 100);
+  const result = await show_chara_info(7, -1, always, 0x000000);
+
+  assert.equal(result, 1, '两个返回都走通，回到首页');
+  const texts = fixture.text_lines();
+  assert.ok(
+    texts.some((t) => t.includes('确定要将 怪物的女儿 献祭？')),
+    `100 号角色行被选中（实际尾部：${JSON.stringify(texts.slice(-6))}）`,
+  );
+  const rendered = button_rendered(fixture);
+  assert.ok(
+    rendered.some((text) => text.startsWith('[100] 怪物的女儿')),
+    `100 号行要由引擎拼编号（实显：${JSON.stringify(rendered)}）`,
+  );
+  assert.ok(
+    rendered.some((text) => text === '[999] 返回'),
+    `名单轮的返回是 [999]（实显：${JSON.stringify(rendered)}）`,
+  );
+});
+
+test('SHOW_CHARA_INFO：条件键 [1005]/[1000] 两端都切页并按新条件重筛名单（#586 探针补）', async () => {
+  // 六个条件键的编号是 1000 + 下标，两端是 [1000]（种族）与 [1005]（瞳色）。
+  // 9 号与 7 号的「种族」相同（都未设 → 人类），「瞳色」不同（9 号 TALENT:306
+  // = 1 → 蓝色，7 号未设 → ERROR）——切到瞳色页它不再符合条件，切回种族页
+  // 又出现。两端各喂一次，编号基数或任一端的界挪动都会红。
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  const victim = 9;
+  fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+  fixture.era.addCharacter(victim);
+  fixture.store.set(`cflag:${victim}:1`, 8);
+  fixture.store.set('callname:7:-1', '考狄利亚');
+  fixture.store.set(`talent:${victim}:306`, 1);
+  // 进名单 → [1005] 切瞳色页 → [1000] 切回种族页 → [999] 返回 → [100] 返回首页
+  fixture.set_inputs(10, 1005, 1000, 999, 100);
+  const result = await show_chara_info(7, -1, always, 0x000000);
+
+  assert.equal(result, 1);
+  const rendered = button_rendered(fixture);
+  const rows = rendered.filter((text) => text.startsWith('[9] '));
+  assert.equal(
+    rows.length,
+    2,
+    `切页后 9 号不再符合条件、切回来又出现：只在两次「种族页」渲染里成行（实显：${JSON.stringify(rendered)}）`,
+  );
+  assert.ok(
+    rows.every((text) => text.includes('（人类）')),
+    `两次成行都在种族页（内容值 = 人类；实显：${JSON.stringify(rows)}）`,
+  );
+});
+
+test('SHOW_CHARA_INFO：名单里勇者档（状态 2）的行打开贡品信息页（#586 探针补）', async () => {
+  // 源 :140 的 CASE 2：勇者档点开的是贡品信息页（SHOW_CHARA_INFO(…, -2)），
+  // 不是献祭确认，也不是「该状态不可操作」。
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  const victim = 9;
+  fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+  fixture.era.addCharacter(victim);
+  fixture.store.set(`cflag:${victim}:1`, 2); // 勇者
+  fixture.store.set('callname:7:-1', '考狄利亚');
+  fixture.set_inputs(10, victim, 999, 100); // 进名单 → 点勇者行 → 返回 → 返回首页
+  const result = await show_chara_info(7, -1, always, 0x000000);
+
+  assert.equal(result, 1);
+  const texts = fixture.text_lines();
+  // 贡品信息页（-2 臂）自己的可认标志：9 号的标题行 + 刻印行（-1/-2 两臂共有的
+  // 段）——名单页与献祭分支都不会打这两样
+  assert.ok(
+    texts.some((t) => /^NO\.9\s/.test(t)),
+    `打开的是 9 号的贡品信息页（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
+  );
+  assert.ok(
+    texts.some((t) => t.startsWith(' 苦痛:LV')),
+    `-2 臂的刻印行在（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
+  );
+  assert.ok(
+    !texts.some((t) => t.includes('该状态不可操作')),
+    '状态 2 不得落进不可操作分支',
+  );
+});
+
+test('SHOW_CHARA_INFO：名单不列献祭对象自身（源 :98 的 temp != shadow；#586 探针补）', async () => {
+  // 献祭对象自己也在场、条件与自己也相同——若不排除自身，名单里会出现它的行，
+  // 点下去是自献祭。
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  fixture.seed_chara(7, { id: 7, name: '考狄利亚', callname: '考狄利亚' });
+  assert.equal(fixture.era.addCharacter(7), true, '献祭对象自己也在场');
+  const victim = 9;
+  fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+  fixture.era.addCharacter(victim);
+  fixture.store.set(`cflag:${victim}:1`, 8);
+  fixture.set_inputs(10, 999, 100); // 进名单 → [999] 返回 → [100] 返回首页
+  const result = await show_chara_info(7, -1, always, 0x000000);
+
+  assert.equal(result, 1);
+  const accelerators = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.accelerator);
+  assert.ok(accelerators.includes(victim), '名单里照常列出其他角色');
+  assert.ok(
+    !accelerators.includes(7),
+    `献祭对象自身的行不出（实显：${JSON.stringify(button_rendered(fixture))}）`,
   );
 });
 
