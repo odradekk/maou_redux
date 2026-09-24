@@ -159,6 +159,7 @@ async function run_benki(arg, rand_n = default_rand) {
   }
 
   // —— :50-52 空行 + 分隔线 ——
+  // BENKI.ERB:50 的裸 PRINTL 落在函数开头（前一条输出已收行）→ 真空行（#595）
   era.print('');
   era.drawLine();
 
@@ -864,7 +865,8 @@ async function run_benki(arg, rand_n = default_rand) {
       s += `${she(arg)}的嘴里灌满了精液。`;
     }
     era.print(s);
-    era.print(''); // PRINTFORML（空行）
+    // BENKI.ERB:1223 的 PRINTFORML（空内容）只收尾上面那条 PRINTFORM 拼行——
+    // 前一条没有换行，故它不是空行，这里不补 println（#595）
 
     s = `${name_of(arg)}`; //
     if (t(arg, 26) || t(arg, 10)) {
@@ -943,7 +945,8 @@ async function run_benki(arg, rand_n = default_rand) {
   }
 
   // 出口：DRAWLINE + PRINTW（空行等待）+ TARGET 还原
-  era.drawLine();
+  era.drawLine(); // BENKI.ERB:1351
+  // BENKI.ERB:1352 的 PRINTW 空内容落在 DRAWLINE 已收行之后 → 真空行 + 等键（#595）
   era.print('');
   await era.waitAnyKey();
   era_flag.target = target_pool;

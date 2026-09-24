@@ -5468,3 +5468,130 @@ test('ablup100：两道门槛同时不满足（M==2）才点亮能力位——OR
     );
   }
 });
+
+// ———— #595：print 之后多补的空行普查（ABLUPn 的 PRINTL 只收尾拼行） ————
+
+const ABLUP_FUNCTIONS = [
+  'ablup0',
+  'ablup1',
+  'ablup2',
+  'ablup3',
+  'ablup4',
+  'ablup5',
+  'ablup6',
+  'ablup7',
+  'ablup8',
+  'ablup9',
+  'ablup10',
+  'ablup11',
+  'ablup12',
+  'ablup13',
+  'ablup14',
+  'ablup15',
+  'ablup16',
+  'ablup17',
+  'ablup20',
+  'ablup21',
+  'ablup22',
+  'ablup23',
+  'ablup30',
+  'ablup31',
+  'ablup32',
+  'ablup33',
+  'ablup37',
+  'ablup39',
+  'ablup40',
+  'ablup99',
+  'ablup100',
+];
+
+/**
+ * 默认 seed 下直接提前返回、走不到菜单的编号所需的最小额外状态。
+ * 不补这几项，循环用例对它们就是空转（按钮数为 0，空行断言恒真）。
+ */
+const ABLUP_REACH_MENU = {
+  ablup23: { [`talent:${CID}:122`]: 1 }, // :10-11 非男人直接返回
+  ablup99: { [`mark:${CID}:3`]: 1 }, // MARK:3 <= 0 提前返回
+  ablup100: { [`mark:${CID}:10`]: 1 }, // MARK:10 <= 0 直接返回「并没有异界异常反应」
+};
+
+test('#595 ABLUPn：选项按钮与需求行之间没有多补的空行（原作各 PRINTL 只收尾拼行）', async () => {
+  for (const name of ABLUP_FUNCTIONS) {
+    const fixture = create_era_fixture();
+    const mod = seed(fixture);
+    for (const [key, value] of Object.entries(ABLUP_REACH_MENU[name] ?? {})) {
+      fixture.store.set(key, value);
+    }
+    fixture.set_inputs(100);
+    await mod[name](CID);
+    assert.ok(
+      buttons(fixture).length > 0,
+      `${name}：本用例必须真的走到菜单（否则空行断言对该编号空转）`,
+    );
+    const blanks = fixture.lines.filter(
+      (line) =>
+        line.type === 'br' || (line.type === 'text' && line.text === ''),
+    );
+    assert.deepEqual(
+      blanks,
+      [],
+      `${name}：ABLUPn 的按钮/需求行之间不得有空行（原作裸 PRINTL 只收尾 PRINTFORM 拼的行）`,
+    );
+  }
+});
+
+test('#595 ablup0：[0] 选项行与 [100] 停止逐行相邻（golden train-natural:959-960）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup0 } = seed(fixture);
+  fixture.set_inputs(100);
+  await ablup0(CID);
+  const option = buttons(fixture).find((b) => b.accelerator === 0);
+  const exit = buttons(fixture).find((b) => b.accelerator === 100);
+  assert.equal(
+    exit.row - option.row,
+    1,
+    '阴核点数行与停止行逐行相邻（ABLUP0.ERB:69 的 PRINTL 只收尾 :64-68 的拼行）',
+  );
+});
+
+test('#595 ablup2：选项行、经验需求行、停止行逐行相邻（中间不夹空行）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup2 } = seed(fixture);
+  fixture.set_inputs(100);
+  await ablup2(CID);
+  const option = buttons(fixture).find((b) => b.accelerator === 0);
+  const exit = buttons(fixture).find((b) => b.accelerator === 100);
+  // ABLUP2.ERB:51 的 PRINTL 收尾 [0] 行，:53 的 PRINTFORML 是独立经验行，
+  // :55 是 [100]——三行连续，中间没有空行
+  const rows_between = fixture.lines.filter(
+    (line) => line.row > option.row && line.row < exit.row,
+  );
+  assert.deepEqual(
+    rows_between.map((line) => line.type),
+    ['text'],
+    '经验需求行独占一行，前后都不夹空行',
+  );
+  assert.equal(exit.row - option.row, 2);
+});
+
+test('#595 ablup6：三档选项按钮（含条件渲染的 [1]/[2]）逐行相邻', async () => {
+  const fixture = create_era_fixture();
+  const { ablup6 } = seed(fixture);
+  fixture.set_inputs(100);
+  await ablup6(CID);
+  const rendered = buttons(fixture).filter((b) => b.accelerator !== 100);
+  assert.deepEqual(
+    rendered.map((b) => b.accelerator),
+    [0, 1, 2],
+    'lv0 时 B/C 均 > 0，三档全渲染',
+  );
+  for (let i = 1; i < rendered.length; i += 1) {
+    assert.equal(
+      rendered[i].row - rendered[i - 1].row,
+      1,
+      `ABLUP6 的 [${rendered[i - 1].accelerator}] 与 [${rendered[i].accelerator}] 相邻`,
+    );
+  }
+  const exit = buttons(fixture).find((b) => b.accelerator === 100);
+  assert.equal(exit.row - rendered.at(-1).row, 1, '末档与放弃行相邻');
+});

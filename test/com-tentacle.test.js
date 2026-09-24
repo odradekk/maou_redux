@@ -935,3 +935,49 @@ test('主启动图注册触手系：COM100 与 COM_ABLE100 可由主循环侧的
   assert.equal(com_family.has(150), true);
   assert.equal(com_family.has(208), true);
 });
+
+// —— #595：print 之后多补的空行 ——＠COM208 菜单与 TRAIN_MESSAGE_A150 ————
+
+test('#595 COM208 凌辱菜单：菜单行之间没有多补的空行（COMF208:37-43 连续 PRINTL）', async () => {
+  const world = seed_world({ load_colosseum: true });
+  const { fixture } = world;
+  able_on(world);
+  fixture.store.set('tequip:31:55', 1);
+  fixture.store.set('base:31:1', 0);
+  fixture.store.set('maxbase:31:1', 1000);
+  fixture.set_inputs(999);
+  await run_com(world, 208);
+
+  const head = fixture.lines.find(
+    (line) => line.type === 'text' && line.text === '对哪里进行凌辱？',
+  );
+  const exit = fixture.lines
+    .filter((line) => line.type === 'button' && line.accelerator === 999)
+    .at(-1);
+  const rows_between = fixture.lines.filter(
+    (line) => line.row > head.row && line.row < exit.row,
+  );
+  assert.ok(
+    rows_between.every((line) => line.type === 'button'),
+    '菜单行全是按钮（COMF208:37-43 的整行 PRINTL）',
+  );
+  assert.equal(
+    exit.row - head.row,
+    rows_between.length + 1,
+    '菜单头到末个按钮逐行相邻，无空行',
+  );
+});
+
+test('#595 TRAIN_MESSAGE_B150：癖好句自成一行，句尾不再多补一个空串行', async () => {
+  const world = seed_world();
+  world.fixture.store.set('cstr:31:7', '尾巴');
+  await run_b(world, 150);
+  assert.ok(
+    !world.fixture.lines.some(
+      (line) =>
+        (line.type === 'br' || line.type === 'text') &&
+        /^[ \u3000]*$/.test(line.text ?? ''),
+    ),
+    'EVENT_TRAIN_MESSAGE_B:3002 的 PRINTL 只收尾 :2992 的拼行，不得落成独立空串行',
+  );
+});

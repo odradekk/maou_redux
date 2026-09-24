@@ -490,10 +490,11 @@ async function equip_com53() {
   if (chara(cid).train.录像时间 > video_max) {
     era.print('＜魔力耗尽了，录像拍摄将要结束＞');
     era.print('要给水晶球充能吗？');
-    // 原作 PRINTFORM + PRINTL 同行；按钮化是为了与 era.input() 的本轮
-    // 快捷键白名单对接，空行仍保留原作的视觉结构。
+    // 原作 COMF53:172-173 的 PRINTFORM + PRINTL 合成同一行；按钮化是为了与
+    // era.input() 的本轮快捷键白名单对接。
     era.print(`已充能${chara(cid).train.水晶球充能次数}次。充能费用为500G。`);
     era.printButton('充能', 1);
+    // COMF53:175 的裸 PRINTL 落在 COMF53:174 的 [1] 行之后 → 真空行（#595）
     era.println();
     era.printButton('不了', 2);
     const result = await era.input();
