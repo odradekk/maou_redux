@@ -91,8 +91,8 @@ export default [
   make(
     8309,
     '精灵的善恶值 +20 改成 +21',
-    '      // :368-371 エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 20);',
-    '      // :368-371 エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 21);',
+    '      // :368-372 エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 20);',
+    '      // :368-372 エルフ（善恶值が高い）\n      set_t(cid, T_种族, 1);\n      karma(cid, 21);',
     '种族 1 的善恶值增减',
   ),
   make(
@@ -105,15 +105,15 @@ export default [
   make(
     8311,
     '童貞オトコ支的经验上界 +1 改成 +2（验收探针：原用例只查了处女支）',
-    '      // :518-524 童貞オトコの場合\n      const local = rand_n(20) + 1;',
-    '      // :518-524 童貞オトコの場合\n      const local = rand_n(20) + 2;',
+    '      // :508-514 童貞オトコの場合\n      const local = rand_n(20) + 1;',
+    '      // :508-514 童貞オトコの場合\n      const local = rand_n(20) + 2;',
     '肛门经验（童貞オトコ：RAND:20 + 1 = 6）',
   ),
   make(
     8312,
     '主婦（Q=21）的「必得人妻」写错素质下标',
-    '    set_t(cid, T_人妻, 1); // :600 必ず人妻がつく',
-    '    set_t(cid, T_妓女, 1); // :600 必ず人妻がつく',
+    '    set_t(cid, T_人妻, 1); // :586-587 必ず人妻がつく',
+    '    set_t(cid, T_妓女, 1); // :586-587 必ず人妻がつく',
     '必得人妻',
   ),
   make(
@@ -133,8 +133,8 @@ export default [
   make(
     8315,
     'BL 补正（断背气质）的加值 3 改成 2',
-    '      chara(cid).system.断背气质 = 3; // :768-770 BLっ気補正',
-    '      chara(cid).system.断背气质 = 2; // :768-770 BLっ気補正',
+    '      chara(cid).system.断背气质 = 3; // :767-768 BLっ気補正',
+    '      chara(cid).system.断背气质 = 2; // :767-768 BLっ気補正',
     '断背气质（abl:23）',
   ),
 
@@ -274,8 +274,8 @@ export default [
   make(
     8334,
     '处女支的经验掷骰上界 +1 改成 +2（原用例只断 1-40 的区间）',
-    '    } else if (t(cid, T_处女) === 1) {\n      // :531-536 处女の場合\n      const local = rand_n(40) + 1;',
-    '    } else if (t(cid, T_处女) === 1) {\n      // :531-536 处女の場合\n      const local = rand_n(40) + 2;',
+    '    } else if (t(cid, T_处女) === 1) {\n      // :522-528 处女の場合\n      const local = rand_n(40) + 1;',
+    '    } else if (t(cid, T_处女) === 1) {\n      // :522-528 处女の場合\n      const local = rand_n(40) + 2;',
     '肛门经验 = RAND:40 + 1 = 2',
   ),
   make(
