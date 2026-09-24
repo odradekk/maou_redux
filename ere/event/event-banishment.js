@@ -607,7 +607,7 @@ async function banishment(cid, rand_n = default_rand) {
   era_flag.target = cid;
   const family_id = search_family(cid);
   await era.printAndWait('要来点有意思的放逐吗？');
-  era.println();
+  era.println(); // 真空行：20 行的 PRINTW 已收尾（21 行的 PRINTL 落在空行上）
   // 原作 :22-30 是 `PRINTL [0]`…`[4]` 的纯文本选项 + INPUT（PR #53 通则：
   // 升格为按钮，正文不写 [编号] 前缀，引擎按 showAcc 自动拼）。
   // **保留 useRule: false**：原作 :32 的 `;PRINTL [100] 返回` 被注释掉、
@@ -620,7 +620,7 @@ async function banishment(cid, rand_n = default_rand) {
   era.printButton('消去之前的记忆', 2);
   era.printButton('变成小动物后放生', 3);
   era.printButton(`让${she(cid)}回到成为勇者前的生活`, 4);
-  era.println();
+  era.println(); // 真空行：30 行的 PRINTFORML 已收尾（31 行的 PRINTL 落在空行上）
 
   let result;
   for (;;) {

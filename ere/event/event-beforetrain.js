@@ -199,7 +199,7 @@ async function pritrain_message() {
     era.print(
       `${target_name}的第一次调教开始了，把${she(target)}变成棒棒哒性奴隶吧！`,
     );
-    era.print('');
+    era.print(''); // 真空行：34 行的 PRINTFORML 已收尾（35 行的 PRINTL 落在空行上）
 
     if ((era.get('flag:37') || 0) !== 0) {
       pritrain_message_clothed(target);
@@ -209,7 +209,7 @@ async function pritrain_message() {
 
     if (era.get(`talent:${target}:23`)) {
       // 容易好奇/好奇心
-      era.print('');
+      era.print(''); // 真空行：44 行的 PRINTFORML 已收尾（它落在空行上）
       era.print(`然而在${target_name}的眼神最深处却好像流淌着期待的光芒。`);
     }
 

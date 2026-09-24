@@ -25,6 +25,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
+const { assert_one_blank_after } = require('./helpers/blank-lines');
 
 /** 建一个带三档链与日程真身的夹具：魔王 0 在场，调用方按需再入奴隶 */
 function setup_nextday() {
@@ -680,6 +681,20 @@ test('魔族化（EVENT_MAZOKU）：欲望档 × 淫乱的二维表驱动，逐�
     assert(
       texts.some((t) => t.includes(line)),
       `分支关键字：${line}`,
+    );
+    // #597：:485 / :495 的 `PRINTFORML `（空参数）落在上一句 PRINTFORMW 之后
+    // （那一行已结束）——它是**真空行**，末句之后**恰有**一个空行再进 :498
+    // WAIT。:498 的 WAIT 不占行，所以末尾两条是「播报行 + 空行」
+    assert.ok(fixture.lines.length >= 4, '整段演出有输出（否则断言会空过）');
+    const last = fixture.lines[fixture.lines.length - 1];
+    const before_last = fixture.lines[fixture.lines.length - 2];
+    assert.ok(
+      before_last.type === 'text' && before_last.text !== '',
+      ':485/:495 的真空行之前是播报行（不多不少一个空行）',
+    );
+    assert.ok(
+      last.type === 'br' || (last.type === 'text' && last.text === ''),
+      ':485/:495 的真空行在末句之后（末尾恰有一个空行）',
     );
   }
 });
@@ -3042,6 +3057,26 @@ test('示众台（PILLORY）：正字显示与四项里程碑', async () => {
     mtexts.includes('『祝贺！达成了五十！！！』') &&
       mtexts.includes('『正字写太多了，有点恶心』'),
     '里程碑',
+  );
+
+  // #597：源 :2128 的 PRINTL 只结束 :2058-2127 那一串 `PRINT 『…』` 拼起来
+  // 的一行（PRINT 不换行），不是空行——里程碑行与总结行之间不夹空行
+  const summary = milestones.lines.findIndex(
+    (line) =>
+      line.type === 'text' && line.text.includes('被各种侮辱的涂鸦写在身上了'),
+  );
+  assert.ok(summary >= 1, '涂鸦总结行出现，且不是第一行（否则断言会空过）');
+  const prev = milestones.lines[summary - 1];
+  assert.ok(
+    !(prev.type === 'br' || prev.text === ''),
+    '里程碑行与总结行之间不夹空行（:2128 只收尾，#597）',
+  );
+  // #597：源 :2133 的 PRINTL 落在 :2129 那条 PRINTFORML 之后——真空行，
+  // 由公共断言钉住「恰有一个」（删掉即少一行）
+  assert_one_blank_after(
+    milestones,
+    '被各种侮辱的涂鸦写在身上了',
+    '涂鸦总结之后（:2133）',
   );
 
   // 正字除数：8 = 正 + 下（每 5 一笔）；第一档里程碑的边界是 >9

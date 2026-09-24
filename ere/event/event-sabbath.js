@@ -299,9 +299,12 @@ async function sabbath_day(cid, rand = default_rand) {
 
   const user = rand(4); // SABBATH_USER
   const name = chara_callname(cid);
+  // :232-314 的 @SABBATH_DAY：段首的 PRINTL（258 行）落在空行上——上游事件的
+  // 收尾已结束当前行，那一个是**真空行**
   era.println();
+  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后
+  // 不补空行（#597；原作的空源码行不产生输出）
   era.print(`${name}参与了献给无名的淫荡女神的仪式，`);
-  era.println();
 
   if (user === 0 && get('item:22')) {
     // :261-267 兽奸仪式（需持有「野良犬」道具 22）

@@ -23,6 +23,10 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const {
+  assert_one_blank_after,
+  assert_one_blank_before,
+} = require('./helpers/blank-lines');
 
 function seq(values) {
   let index = 0;
@@ -50,6 +54,32 @@ function seed_world() {
     fixture.store.set(`cflag:${cid}:552`, -1);
   }
   return fixture;
+}
+
+/** 断言 `needle` 那一行之前紧邻空行（#597：分条件的真空行） */
+function assert_blank_before(fixture, needle, label) {
+  const index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes(needle),
+  );
+  assert.ok(index >= 1, `${label}：「${needle}」行出现且不在首行`);
+  const prev = fixture.lines[index - 1];
+  assert.ok(
+    prev.type === 'br' || (prev.type === 'text' && prev.text === ''),
+    `${label}：勋章播报之前的空行是真空行`,
+  );
+}
+
+/** 断言 `needle` 那一行之前没有空行（同一处的反方向守卫） */
+function assert_no_blank_before(fixture, needle, label) {
+  const index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes(needle),
+  );
+  assert.ok(index >= 1, `${label}：「${needle}」行出现且不在首行`);
+  const prev = fixture.lines[index - 1];
+  assert.ok(
+    !(prev.type === 'br' || (prev.type === 'text' && prev.text === '')),
+    `${label}：这一支不该有空行`,
+  );
 }
 
 function set_banishment_values(fixture, values) {
@@ -110,6 +140,12 @@ test('EXECUTION_MINI：回收装备、除名角色并结算处刑与勋章经验
   assert.equal(fixture.store.get('flag:80'), 1);
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.equal(fixture.store.get('exp:0:81'), 1);
+  // #597：勋章播报之前的空行是真空行（:438 的 PRINTL 落在上一条 PRINTFORML 之后）
+  assert_one_blank_before(
+    fixture,
+    '得到了用勇者力量形成的勋章',
+    '迷你处刑的勋章行（:438）',
+  );
   assert.equal(fixture.store.get('exflag:99'), 2);
   assert.equal(
     fixture.store.get('callname:47:-2'),
@@ -156,6 +192,26 @@ test('PUBLIC_EXECUTION：魂粉碎保留拼行、录像归档与确定性随机�
   assert.equal(fixture.store.get('exp:0:81'), 1);
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 47]);
+  // #597：第三支（TFLAG:520 == 2）没有空行——原作 :129 的 `PRINTFORMW  ` 只
+  // 收尾 :89-128 那串未换行的 PRINTFORM；空行只属于 :56/:76 两支
+  assert_no_blank_before(fixture, '得到了用勇者力量形成的勋章', '魂粉碎支');
+});
+
+test('#597：公开处刑前两支的勋章空行是真空行（:56 / :76）', async () => {
+  for (const [branch, label] of [
+    [0, '凌辱致死支（:56）'],
+    [1, '淫行悬挂支（:76）'],
+  ]) {
+    const fixture = seed_world();
+    fixture.set_inputs(branch);
+    const { public_execution } = fixture.load_module(
+      'event/event-public-execution',
+    );
+
+    await public_execution(31, seq([0]));
+
+    assert_blank_before(fixture, '得到了用勇者力量形成的勋章', label);
+  }
 });
 
 test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async () => {
@@ -176,6 +232,14 @@ test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async
   assert.deepEqual(observed, [5, 4]);
   assert.equal(fixture.store.get('videoarchive:1'), '肉类温妮');
   assert.equal(fixture.store.get('exp:0:81'), 1);
+  // #597：菜单末项之后的空行是真空行（:25 的 PRINTL 已收尾），删掉即少一行
+  assert_one_blank_after(fixture, '僵尸化', '猎奇菜单末项（:26）');
+  // #597：勋章播报之前的空行也是真空行（:62 的 PRINTFORMW 已收尾）
+  assert_one_blank_before(
+    fixture,
+    '到手的勇者之力以勋章的形式保留下来了',
+    '猎奇结算（:63）',
+  );
 });
 
 test('GROTESQUE：爱慕的食肉刑只打印一次烙印并保留专属结尾', async () => {
@@ -915,6 +979,8 @@ test('EXECUTION：使用稳定角色 ID 选择第二名角色并路由到固定�
   assert.equal(fixture.store.get('cflag:47:1'), 8);
   assert.equal(fixture.store.get('videoarchive:2'), undefined);
   assert(fixture.text_lines().some((line) => line.includes('艾达')));
+  // #597：处置菜单末项之后的空行是真空行（:88 的 PRINTL 已收尾）
+  assert_one_blank_after(fixture, '消除记忆后释放', '处置菜单末项（:89）');
 });
 
 test('EXECUTION：收藏角色不能走除士兵化外的处刑方式', async () => {
@@ -953,6 +1019,34 @@ test('EXECUTION：肉便器支完整结算，录像开关关闭时不额外写�
       .text_lines()
       .includes('作为魅力点的美乳，现在变成一堆丑陋膨胀的肉块了。'),
   );
+});
+
+test('#597：处刑对象列表的表头之后不补空行（:22 的 PRINTL 只收 :18 那一行）', async () => {
+  // 源 :18 `PRINT 请选择处刑对象`（不换行）+ :19-23 的 IF/ELSE：IF 支接
+  // :20 的实绩提示，ELSE 支的 :22 `PRINTL` 只结束 :18 那一行——**不是空
+  // 行**（#597）。两支持续都得钉：只测 IF 支会让 ELSE 支多补的空行逃掉。
+  for (const [label, decorations] of [
+    ['IF 支（有实绩提示）', 0],
+    ['ELSE 支（无实绩提示）', 20],
+  ]) {
+    const fixture = seed_world();
+    fixture.store.set('flag:84', decorations); // 装饰品数 ≥ 20 → ELSE
+    fixture.set_inputs(1, 6);
+    const { execution } = fixture.load_module('event/event-execution');
+
+    await execution(seq([0]));
+
+    const index = fixture.lines.findIndex(
+      (line) => line.type === 'text' && line.text === '请选择处刑对象',
+    );
+    assert.ok(index >= 0, `${label}：表头行出现`);
+    const next = fixture.lines[index + 1];
+    assert.ok(
+      next !== undefined &&
+        !(next.type === 'br' || (next.type === 'text' && next.text === '')),
+      `${label}：表头之后不补空行`,
+    );
+  }
 });
 
 test('EXECUTION：肉便器支正文的等待后缀与原作一致（#561 第 3 条；夹具观测不到，按源文锁）', () => {
@@ -1367,6 +1461,23 @@ test('BANISHMENT：五选一菜单是按钮，未显示的 100 仍可键入（#5
   assert(
     !fixture.text_lines().some((line) => line.startsWith('[0] 就这样流放掉')),
     '选项不再以纯文本出现',
+  );
+});
+
+test('#597：流放画面的两处真空行（原作 :20-21 与 :30-31）', async () => {
+  // 未显示的 100：打印完菜单就返回，两处空行都已落盘（:21 在开场白之后、
+  // :31 在五个按钮之后）——删掉任何一处即少一行
+  const fixture = seed_world();
+  fixture.set_inputs(100);
+  const { banishment } = fixture.load_module('event/event-banishment');
+
+  assert.equal(await banishment(31, seq([0])), 0, '100 走「不执行」出口');
+
+  assert_one_blank_after(fixture, '要来点有意思的放逐吗？', '流放开场（:21）');
+  assert_one_blank_after(
+    fixture,
+    '回到成为勇者前的生活',
+    '流放菜单末项（:31）',
   );
 });
 

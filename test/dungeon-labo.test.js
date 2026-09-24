@@ -51,6 +51,13 @@ function seed_unit(fixture, id, name, place, x, y) {
   fixture.store.set(`cflag:${id}:511`, y);
 }
 
+/** 空行条目（#597）：夹具的 println 落成 br，print('') 落成空文本条目 */
+function blank_rows(fixture) {
+  return fixture.lines.filter(
+    (line) => line.type === 'br' || (line.type === 'text' && line.text === ''),
+  );
+}
+
 // —— 1. 数学函数逐点比对 ——
 
 test('余弦系数表：CASE 1..7 → 4/15/31/50/69/85/96，其余 0（LABO.ERB :256-292）', () => {
@@ -325,6 +332,13 @@ test('GEO_OUTPUT_2：32×32 行输出 + 等键（:6-23）', async () => {
   await labo_map.geo_output_2();
   const texts = fixture.text_lines();
   assert.equal(texts.length, 32, '32 行（y 0..31）');
+  // #597：每行 32 个 CHIP_DRAW 的 `PRINT` 串由 :18 的 PRINTL 收尾，那一行
+  // 不产生空行——ere 的 print(row) 一次调用即一行，再补就每行多一个空行
+  assert.equal(
+    blank_rows(fixture).length,
+    0,
+    ':18 的 PRINTL 只结束本行，不是空行（#597）',
+  );
   assert.equal(texts[0].length, 64, '每行 32 格 × 2 字符（数字＋逗号）');
   assert.ok(
     texts[0].startsWith('@,'),
@@ -518,6 +532,44 @@ test('DUNGEON_MAP：HP < 45% 撤退决议 + 侵攻度写回 + 气力消耗（:19
   );
 });
 
+test('#597：DUNGEON_MAP 的休憩演出以空行收尾（:58/:62 是真空行、不许多补）', async () => {
+  const { fixture, labo_dungeon_map } = setup_labo();
+  seed_unit(fixture, 1, '甲', 2, 10, 10);
+  // 源 :44-48 装備効果(キャンプ)：装饰槽装一件效果 18 的装备 → 休憩位 +1，
+  // 从而走进 :56-63 的休憩演出（存储编号 1018 = 强度 1 × 1000 + 识别号 18）
+  fixture.store.set('cflag:1:551', 1018);
+  fixture.store.set('flag:5', 32); // 战斗日志 ON
+  fixture.store.set('base:1:0', 1000);
+  fixture.store.set('maxbase:1:0', 1000);
+  fixture.store.set('base:1:1', 1000);
+  fixture.store.set('maxbase:1:1', 1000);
+
+  await labo_dungeon_map.dungeon_map(1, rand_max);
+
+  const text_index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes('藏起来休息了'),
+  );
+  assert.ok(text_index >= 0, '休憩播报出现（否则断言会空过）');
+  // 源 :58 的 PRINTL 落在段首（上一条输出已换行）、:62 的 PRINTL 落在
+  // :60 PRINTFORMW 收尾之后——两个都是**真空行**（#597）
+  assert.equal(fixture.lines[0].type, 'br', ':58 的真空行在段首');
+  assert.equal(
+    fixture.lines[text_index - 1].type,
+    'divider',
+    '播报之前是 :59 的分割线（空行与播报之间不再夹行）',
+  );
+  assert.equal(
+    fixture.lines[text_index + 1].type,
+    'divider',
+    '播报之后是 :61 的分割线',
+  );
+  assert.deepEqual(
+    fixture.lines.slice(text_index + 2).map((line) => line.type),
+    ['br', 'br'],
+    ':62 的真空行紧随其后、段尾 :75-76 的真空行紧跟（删掉或补多都算错）',
+  );
+});
+
 // —— 6. 配置函数 ——
 
 test('CONFIG_LABO_MAP_STATUS：FLAG:502 的两种显示（:238-247）', () => {
@@ -525,9 +577,38 @@ test('CONFIG_LABO_MAP_STATUS：FLAG:502 的两种显示（:238-247）', () => {
   fixture.store.set('flag:502', 1);
   labo_dungeon_map.config_labo_map_status();
   assert.equal(fixture.text_lines()[0], '２Ｄ');
+  // #597：:247 的 PRINTL 只结束 :243 的 `PRINT ２Ｄ` 那一行（PRINT 不换行），
+  // 不是空行——ere 的 print 一次调用即一行
+  assert.equal(
+    blank_rows(fixture).length,
+    0,
+    ':247 的 PRINTL 不是空行（#597）',
+  );
   fixture.store.set('flag:502', 0);
   labo_dungeon_map.config_labo_map_status();
   assert.equal(fixture.text_lines()[1], '普通');
+  assert.equal(blank_rows(fixture).length, 0, '第二种显示同样不补空行');
+});
+
+test('#597：COLOR_OUTPUT_TEST / GEO_OUTPUT 的行尾 PRINTL 不产生空行', () => {
+  const palette = setup_labo();
+  palette.labo.color_output_test();
+  assert.equal(
+    palette.fixture.text_lines().length,
+    1,
+    '8 格拼一行（:51-53 的 8 个 C_OUT + :54 收尾）',
+  );
+  assert.equal(blank_rows(palette.fixture).length, 0, ':54 的 PRINTL 不是空行');
+
+  const ground = setup_labo();
+  ground.labo.geo_output();
+  assert.equal(ground.fixture.text_lines().length, 32, '32 行（y 0..31）');
+  assert.equal(
+    ground.fixture.text_lines()[0].length,
+    64,
+    '每行 32 格 × 2 字符（数字＋逗号）',
+  );
+  assert.equal(blank_rows(ground.fixture).length, 0, ':106 的 PRINTL 不是空行');
 });
 
 test('CONFIG_LABO_MAP_SETTING：选 2D 置位 + 顺带初始化地图（:250-270）', async () => {
@@ -579,6 +660,18 @@ test('LABO 菜单：[100] 返回、[007] 打 HEART_R 图、[001] 调色行（:3-
         line.type === 'image' && line.names && line.names[0] === 'HEART_R',
     ),
     '[007] PRINT_IMG "HEART_R"（注册名照抄，image 条目记录）',
+  );
+  // #597：:33 的 PRINTL 只结束 :32 的 PRINT_IMG 那一行（PRINT_IMG 不换行），
+  // 不是空行——ere 的 printImage 自成一行，下一行直接是重绘的菜单
+  const image_index = fixture.lines.findIndex(
+    (line) =>
+      line.type === 'image' && line.names && line.names[0] === 'HEART_R',
+  );
+  const after_image = fixture.lines[image_index + 1];
+  assert.ok(
+    after_image !== undefined &&
+      !(after_image.type === 'br' || after_image.text === ''),
+    '[007] 图片之后不补空行（#597）',
   );
 });
 
