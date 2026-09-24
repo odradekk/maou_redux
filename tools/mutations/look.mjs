@@ -18,7 +18,7 @@ const look = 'ere/chara/look.js';
 const info = 'ere/chara/look-info.js';
 
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 81; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）；+30（M11910-M11939，20 个语尾调用点的情绪档与其分支，含两处条件对调）
+export const COUNT = 84; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）；+30（M11910-M11939，20 个语尾调用点的情绪档与其分支，含两处条件对调）；+3（M11960-M11962，显示面的上界/门槛/心形上限三个字面量——票里点名的 29/31 实测是等价变异，见条目头注）
 
 const make = (id, desc, find, replace, must_mention, extra = {}) => ({
   desc: `M${id} ${desc}`,
@@ -735,4 +735,36 @@ export default [
     tests: ['look'],
     must_mention: '源 :2799 喜好收尾（喜 → 1）',
   },
+
+  // —— #591：显示面的三个字面量（LOVE_SORT_MAX / LOVE_SHOW_MIN / LOVE_HEART_MAX） ——
+  //
+  // 票里点名的是「LOVE_SORT_MAX 改成 29、31」两条，实测**两条都是等价变异**：
+  // 能出文本的项只有 28 个名额（分支表 29 个 id 去掉恒不显示的 50），最坏也只
+  // 排到 rank 27，上界取 [28, 100] 里任何值都逐字同输出；本角色的实测更松——
+  // 「分数 > 3 的下标」23 个（含那个 50），过门槛的项排到 rank 22 就到头，rank 23
+  // 起全是分数 ≤ 3 的下标、必被门槛 continue（25…32 逐个代入排序 + 显示，22 项
+  // 与顺序完全一致，见 #591 完成报告）。于是本票改钉三处 **能观测**的：上界压进
+  // 可观测区（22）、显示门槛（4）、心形上限（5），三条都由 test/look.test.js 的
+  // 「满旋钮角色的显示面上限」拦下。
+  make(
+    11960,
+    'LOVE_SORT_MAX 压进可观测区（30 → 22：末项「丈夫」连计数一起消失）',
+    'const LOVE_SORT_MAX = 30;',
+    'const LOVE_SORT_MAX = 22;',
+    '共21个喜欢的东西',
+  ),
+  make(
+    11961,
+    '显示门槛 LOVE_SHOW_MIN 收紧到 4（分值正好 4 的「丈夫」被挡掉）',
+    'const LOVE_SHOW_MIN = 3;',
+    'const LOVE_SHOW_MIN = 4;',
+    '共21个喜欢的东西',
+  ),
+  make(
+    11962,
+    '心形上限 LOVE_HEART_MAX 收到 5（满分项从 6 个心形掉成 5 个）',
+    'const LOVE_HEART_MAX = 6;',
+    'const LOVE_HEART_MAX = 5;',
+    '人妻♡♡♡♡♡　',
+  ),
 ];

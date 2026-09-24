@@ -1428,8 +1428,10 @@ async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_animal(arg, place) {
   if (place === 'TOWN') {
-    era.print(`${name_of(arg)}`); // :1459 %SAVESTR:ARG%
-    await era.printAndWait('在大家的眼前不知羞耻的进行着兽交表演...'); // :1464
+    // :1459+:1464 原作 PRINTFORM %SAVESTR:ARG% + PRINTFORMW，同一行（#584）
+    await era.printAndWait(
+      `${name_of(arg)}在大家的眼前不知羞耻的进行着兽交表演...`,
+    ); // :1459+:1464
     await era.printAndWait(
       `${name_of(arg)}进入了兽栏，在众人炽热的注目下像母狗一样趴在地上，扭动着身躯引诱着发情的猎犬。在野兽舌头的舔舐润滑后，令人兴奋的喘息和呜咽伴随着野兽的咆哮和肉体的撞击声缭绕在兽栏内，${name_of(arg)}比真正的雌兽还要卖力的摇晃着屁股，逢迎着非人的巨大阳具的刺激。`,
     ); // :1465

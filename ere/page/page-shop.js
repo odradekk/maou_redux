@@ -93,7 +93,8 @@ const MAX_CHARANUM = 90;
  * event/event-execution-batch.js），均移出本名单（#515 订正：三个名字此前
  * 与测试一同停在旧状态，见 test/page-shop.test.js 的固定断言）。999 分支的
  * DEBUG_MENU_U 自 #542 起判不移植（原作者调试工具），运行时提示行不是存根
- * 占位，移出本名单；分支结构与汇合路径保留（usershop 的 999 分支注释）。
+ * 占位，移出本名单；分支结构保留（usershop 的 999 分支注释；#592 起店内
+ * 999 走退出商店的早退，不再与它汇合）。
  */
 const STUBBED_CALLS = ['LABO'];
 
@@ -217,8 +218,16 @@ async function usershop(result) {
   // #395 给 BOUGHT 落了表、#396 接上陷阱商店、#399 接上道具商店，整段自此
   // 三支都是真身——判据与出口 1:1，三支的 **return 形态各不相同**，照原作
   // 逐支还原：
-  //   - 999（:44-46）没有 RETURN：清标志后落到 :222-223 的 999 分支
-  //     →DEBUG_MENU_U（原作如此，玩家退出商店的同时打开调试菜单）；
+  //   - 999（:44-46）没有 RETURN，但函数随后就走到末尾：:45 的 CALL CLEAR_SHOP
+  //     调的是个没有 RETURN 的函数，Emuera 在函数落到末尾时把 RESULT 置 0
+  //     ——`vEvaluator.RESULT = 0; state.Return(0)`（Process.ScriptProc.cs 的
+  //     「（関数終端） or ファイル終端」支，前提 `!state.IsFunctionMethod`：
+  //     CALL 的普通函数都满足；1.821 / 1.824 / EM+EE 三份源码同形，出处与
+  //     行号见 #592 的完成评论）。回到本函数时 RESULT 已是 0，
+  //     :59 起的 ELSEIF 链上没有 0 的去处，:226-227 的 `SIF RESULT == 7788`
+  //     也不成立，出口是 :226-229 的 RETURN 0——玩家回主菜单，**不进调试
+  //     菜单**（旧移植按「CALL 之后 RESULT 不变」错落到 :222-223，#562 实机
+  //     发现）；
   //   - 998/997（:47-54）是 JUMP：跳过去就不再回本函数，故切完即 return；
   //   - BOUGHT >= 0 的其它输入（:55-57）RETURN 0：购物态下主菜单指令全部
   //     失效，只有 997/998/999 三个键有反应。
@@ -228,6 +237,7 @@ async function usershop(result) {
   if (result === 999 && era_flag.bought >= 0) {
     clear_shop(); // :45
     era_flag.bought = -1; // :46
+    return; // :44 支的出口：原作 :226-229 的 RETURN 0（#592）
   } else if (result === 998 && era_flag.bought >= 0) {
     era_flag.bought = 200; // :48
     clear_shop(); // :49
@@ -450,9 +460,9 @@ async function usershop(result) {
       await era.waitAnyKey();
     }
   } else if (result === 999) {
-    // 调试菜单（:222-223）。店内键入 999 时 usershop 开头的购物段（:44）
-    // 已经把 BOUGHT 清回 -1 并落到这里（原作同样没有 RETURN）——两条路径
-    // 汇到同一个出口，故不区分。DEBUG_MENU_U 随 DEBUG小白娘判不移植
+    // 调试菜单（:222-223）。**只有非购物态**的 999 到得了这里：店内的 999
+    // 在上面的购物段就 return 了（#592——原作那条路径经 :45 的 CLEAR_SHOP
+    // 把 RESULT 清成 0，落不进本分支）。DEBUG_MENU_U 随 DEBUG小白娘判不移植
     // （#542，#540 范围决定 3：原作者的调试工具；原作商店输入 999 进入，
     // ere 输入只接受已打印按钮，入口本就不可达——#130），分支保留结构
     // 与不移植提示

@@ -373,6 +373,11 @@ test('LOG_BITCH_ANIMAL：DUNGEON 空 / TOWN 三行固定文', async () => {
     lines.some((l) => l.includes('在大家的眼前不知羞耻的进行着兽交表演...')),
     'TOWN 第一行',
   );
+  // #584：原作 :1459（PRINTFORM %SAVESTR:ARG%）与 :1464（PRINTFORMW …）同一行
+  assert.ok(
+    lines.includes('温妮在大家的眼前不知羞耻的进行着兽交表演...'),
+    'TOWN 首行是名字 + 固定文的整行（#584）',
+  );
 });
 
 test('LOG_BITCH_SELF：空壳（1:1，源所有 CASE 无输出）', async () => {

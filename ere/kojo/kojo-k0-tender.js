@@ -2128,9 +2128,12 @@ async function benki_koujo_k0() {
 
     if (era.get('flag:63') === 1) {
       // :7494
-      await era.print(`「和`); // :7495
+      // :7495+:7497 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7496）→ PRINTFORMW …
+      // 是同一行；这四处调用点**本作未接入**（真身是 ere/system/train/benki.js 的
+      // benki_player_name()，k12 已按 ${benki_player_name()} 接入），合并时保留
+      // 缺字原文与 :7496 引用，接入属另一张工单
       // CALL BENKI_PLAYER_NAME // :7496
-      await era.printAndWait(`来同时用小穴和菊花来做爱了♪」`); // :7497
+      await era.printAndWait(`「和来同时用小穴和菊花来做爱了♪」`); // :7495+:7497
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7498
@@ -2152,9 +2155,9 @@ async function benki_koujo_k0() {
 
     if (era.get('flag:63') === 1) {
       // :7515
-      await era.print(`「和`); // :7516
+      // :7516+:7518 原作 PRINTFORM 「和 → PRINTFORMW …，同一行（#584）
       // CALL BENKI_PLAYER_NAME // :7517
-      await era.printAndWait(`用小穴做爱做到潮如泉涌咯♪」`); // :7518
+      await era.printAndWait(`「和用小穴做爱做到潮如泉涌咯♪」`); // :7516+:7518
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7519
@@ -2176,9 +2179,9 @@ async function benki_koujo_k0() {
 
     if (era.get('flag:63') === 1) {
       // :7536
-      await era.print(`「和`); // :7537
+      // :7537+:7539 原作 PRINTFORM 「和 → PRINTFORMW …，同一行（#584）
       // CALL BENKI_PLAYER_NAME // :7538
-      await era.printAndWait(`用菊花做爱做到湿滑不已咯♪」`); // :7539
+      await era.printAndWait(`「和用菊花做爱做到湿滑不已咯♪」`); // :7537+:7539
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7540
@@ -2200,9 +2203,9 @@ async function benki_koujo_k0() {
 
     if (era.get('flag:63') === 1) {
       // :7557
-      await era.print(`「给予`); // :7558
+      // :7558+:7560 原作 PRINTFORM 「给予 → PRINTFORMW …，同一行（#584）
       // CALL BENKI_PLAYER_NAME // :7559
-      await era.printAndWait(`先生的肉棒大人的『施舍』哦♪」`); // :7560
+      await era.printAndWait(`「给予先生的肉棒大人的『施舍』哦♪」`); // :7558+:7560
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7561
