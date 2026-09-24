@@ -92,8 +92,17 @@ const { test } = require('node:test');
 const REPO_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(REPO_ROOT, 'tools', 'mutation-check.mjs');
 
-/** 跑一遍工具（夹具用例一律 --asar none 固定引擎判定，机器上装没装引擎都不影响） */
+/**
+ * 跑一遍工具（夹具用例一律 --asar none 固定引擎判定，机器上装没装引擎都不影响）。
+ *
+ * 每次调用都给工具一个自己的临时目录（TMPDIR/TMP/TEMP 三处都指过去）：它在
+ * 启动时会清理 %TEMP% 里的陈旧并行副本（#582），拿真临时目录跑就等于让用例
+ * 撞上机器上攒了多少副本——攒得多时那一步会超过下面的 30s 上限，症状与用例
+ * 本身毫无字面关联（CI 的临时目录永远是空的，测不出这一路）。显式传 env 的
+ * 用例（自己做了临时目录隔离的那几条）覆盖这里的默认值。
+ */
 function run_tool(args, env) {
+  const sandbox = fs.mkdtempSync(path.join(os.tmpdir(), 'mutation-tmp-run-'));
   const r = spawnSync(process.execPath, [TOOL, ...args], {
     cwd: REPO_ROOT,
     encoding: 'utf8',
@@ -102,8 +111,11 @@ function run_tool(args, env) {
     // 的夹具规模、更快；30s 留出充足余量（#449 统一默认值）
     timeout: 30_000,
     killSignal: 'SIGKILL',
-    ...(env ? { env: { ...process.env, ...env } } : {}),
+    env: { ...process.env, ...sandbox_env(sandbox), ...(env ?? {}) },
   });
+  // 沙箱随调用走：工具被强杀时它的 finally 没机会跑，副本就留在这里，
+  // 顺手删掉——用例不该往机器的临时目录里留东西。
+  fs.rmSync(sandbox, { recursive: true, force: true });
   return { status: r.status, output: `${r.stdout || ''}${r.stderr || ''}` };
 }
 
@@ -2546,7 +2558,7 @@ test('变异写入遇瞬态占用时重试到成功：注入前两次失败仍�
     assert.ok(
       output.includes('变异写入第 1 次失败（UNKNOWN）') &&
         output.includes('变异写入第 2 次失败（UNKNOWN）'),
-      `变异写入的重试过程要留痕（偶发占用看不见就永远查不到）：\n${output}`,
+      `变异写入的重试过程要记录（偶发占用看不见就永远查不到）：\n${output}`,
     );
     assert.equal(
       fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
@@ -2559,13 +2571,13 @@ test('变异写入遇瞬态占用时重试到成功：注入前两次失败仍�
   }
 });
 
-test('变异写入重试尽仍失败：点名 M 编号与文件、按「未写入」计红、后续条目继续（#582）', () => {
+test('变异写入重试尽仍失败：报出 M 编号与文件、按「未写入」计红、后续条目继续（#582）', () => {
   // 判定是「跳过该条继续」而不是「停止整轮」：可重试的三个码都发生在 open
   // 阶段（#541 实测的 `unknown error, open '…'`），O_TRUNC 在 open 成功之后
-  // 才生效，所以失败 = 一个字节都没写下去，靶文件仍是原文——后面的条目照跑
-  // 判定仍然可信。还原失败不同：那时文件可能正停在变异态，继续跑会把残留
-  // 读成原文，所以那里必须停（#553）。计红是必须的：这一条的「测试拦得住
-  // 吗」根本没验证过。
+  // 才生效，所以 open 阶段失败 = 一个字节都没写下去，靶文件仍是原文（工具
+  // 读回核对过，不是推的）——后面的条目照跑判定仍然可信。还原失败不同：
+  // 那时文件可能正停在变异态，继续跑会把残留读成原文，所以那里必须停
+  // （#553）。计红是必须的：这一条的「测试拦得住吗」根本没验证过。
   const root = make_fixture();
   const tmp = make_tmp_sandbox();
   try {
@@ -2599,7 +2611,7 @@ test('变异写入重试尽仍失败：点名 M 编号与文件、按「未写�
     );
     assert.ok(
       output.includes('M9185 未写入：lib/calc.js'),
-      `未写入的条目必须点名 M 编号与文件：\n${output}`,
+      `未写入的条目必须报出 M 编号与文件：\n${output}`,
     );
     assert.ok(
       output.includes('后续条目继续'),
@@ -2614,6 +2626,63 @@ test('变异写入重试尽仍失败：点名 M 编号与文件、按「未写�
       fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
       CALC_JS,
       '没写下去的条目不许在靶文件上留痕（这正是「继续跑仍然可信」的前提）',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+    fs.rmSync(tmp, { recursive: true, force: true });
+  }
+});
+
+test('变异写入失败但靶文件已不是原文：按残留停下、不跑后续条目（#582 审查轮）', () => {
+  // 「open 阶段失败 ⇒ 一个字节都没写下去」只对 open 阶段成立；write 阶段的
+  // 失败（EIO、磁盘满、Windows 的 UNKNOWN 同样能落在那里）会把文件截断或
+  // 半写。所以判据必须是读回实测，不是推理——注入 DIRTY 形态（抛错前先把
+  // 内容写下去）确定地造出这一态。它不是「跳过本条继续」而是停在残留那条
+  // 路上：后面的条目会把坏文件当原文跑，判定全部不可信。
+  const root = make_fixture();
+  const tmp = make_tmp_sandbox();
+  try {
+    const ledger = write_ledger(root, [
+      {
+        ...GOOD_ENTRY,
+        desc: 'M9188 加倍系数改坏（写入把文件写坏了，本条不执行）',
+      },
+      { ...GOOD_ENTRY, desc: 'M9189 加倍系数改坏（残留态下不许跑到）' },
+    ]);
+    const { status, output } = run_tool(
+      [
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+      ],
+      {
+        ...sandbox_env(tmp),
+        MUTATION_CHECK_MUTATE_FAIL_FIRST: '5:UNKNOWN:DIRTY',
+      },
+    );
+    assert.equal(
+      status,
+      1,
+      `写入失败且文件被写坏时必须退 1（带着坏文件继续跑是假结论），实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('且靶文件已不是原文'),
+      `写入失败后必须读回实测：靶文件已不是原文就得按残留停下，不能报「仍是原文」继续跑：\n${output}`,
+    );
+    assert.ok(
+      !output.includes('M9189'),
+      `靶文件已经不是原文时必须停止整轮，后续条目一条都不跑：\n${output}`,
+    );
+    assert.match(output, /SUMMARY caught=0 skipped=0 red=1/);
+    assert.equal(
+      fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
+      CALC_JS.replace('n * 2', 'n * 3'),
+      '靶文件确实停在写坏的那一态（这正是要报出来的状态）',
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });
@@ -2651,6 +2720,13 @@ test('启动清理陈旧并行副本：超龄且所有者不在才删，活副�
       `mutation-copy-${dead}-fresh-dead`,
       60 * 1000,
     );
+    // 所有者活着（就是本测试进程）但过了硬上限：仍然要删。判据是 PID 会被
+    // 回收——死副本名里的号被某个长驻进程占去之后，探活永远成功。
+    const force_alive = make_copy_dir(
+      tmp,
+      `mutation-copy-${process.pid}-force-alive`,
+      25 * HOUR_MS,
+    );
     const { status, output } = run_tool(
       [
         '--root',
@@ -2687,7 +2763,11 @@ test('启动清理陈旧并行副本：超龄且所有者不在才删，活副�
     );
     assert.ok(
       fs.existsSync(fresh_dead),
-      '刚建好的副本不删（阈值是第二道保险）：跑动中的副本在名字写上去之前、以及强杀后仍在写的孤儿子进程，都靠它',
+      '刚建好的副本不删（阈值是第二道保险）：强杀后仍在写的孤儿子进程靠它挡住——父进程没了，但副本还在被用',
+    );
+    assert.ok(
+      !fs.existsSync(force_alive),
+      '过了硬上限（24 小时）的副本一律删、不再探活：PID 会被回收，死副本的号被长驻进程占去就永远清不掉',
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

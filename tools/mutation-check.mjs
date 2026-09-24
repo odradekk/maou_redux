@@ -83,6 +83,8 @@
 //   不代为还原）。测试用「靶文件置为只读」锁住这条：往里加一次写，Windows
 //   上当场 EPERM、Linux 上是 EACCES。反过来，`--verify` 的绿**不等于**工作
 //   区干净：它照样读工作区，残留态下给的是假结论（下面那条治它）。
+//   只读限定的是工作区与条目表：任何档位（含 --verify）启动时都会清理
+//   %TEMP% 里的陈旧并行副本，见 clean_stale_copies——临时目录不在此列。
 //
 //   **启动自检（任何档位，含 --verify）。** 靶文件若停在「HEAD 内容应用了
 //   某条变异」的残留态（变异被强杀时 finally 不执行），当场点出 M 编号与
@@ -135,15 +137,18 @@
 // **靶文件写入的瞬态失败重试**（#553 还原、#582 变异，同一个 write_with_retry）：
 // Windows 上杀毒扫描、索引服务或尚未退尽的子进程会短暂占住靶文件，
 // writeFileSync 抛 UNKNOWN/EBUSY/EPERM——#541 一晚三次即红，同一批条目之后
-// 逐条单独重跑全部正常，占不住。重试尽仍失败时两个写点的处置相反：
+// 逐条单独重跑全部正常，占不住。重试尽仍失败时两种失败的处置相反：
 // 还原失败说明靶文件可能停在变异态，报出 M 编号与还原命令后**停止**整轮
-// （残留下后续每一条的判定都不可信）；变异写入失败则是 open 阶段就没成，
-// 靶文件仍是原文，按「未写入」计红后**跳过该条继续**（理由见 report_write_failed）。
+// （残留下后续每一条的判定都不可信）；变异写入失败先读回核对——仍是原文
+// （open 阶段就没成）的按「未写入」计红后**跳过该条继续**，文件已被写坏的
+// （write 阶段失败、O_TRUNC 已生效）按残留处理、同样停止整轮。
+// 两个方向的理由见 report_write_failed 与 run_one 里的读回那一段。
 //
 // **并行副本的启动清理**（#582）：--jobs 的副本目录在 finally 里删，外层
 // `run-node` 超时用 `taskkill /T /F` 结束进程树时 finally 不执行，
 // %TEMP%\mutation-copy-* 会累积（#553 时本机 34 个）。启动时清掉「超过
-// COPY_STALE_MS 且所有者进程已不在」的旧副本，判据与取舍见 clean_stale_copies。
+// COPY_STALE_MS 且所有者进程已不在」的旧副本（年龄过 COPY_FORCE_STALE_MS
+// 的一律清），判据与取舍见 clean_stale_copies。
 
 import { spawn, spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
@@ -236,12 +241,32 @@ const COPY_DENY = new Set([
 const COPY_PREFIX = 'mutation-copy-';
 
 /**
- * 副本闲置多久算陈旧（clean_stale_copies 的年龄判据）。本机 `--jobs 2` 全量
+ * 从副本目录名里取创建者 PID（make_copy 写进去的那个）；旧格式（没有 PID）
+ * 取不到 → null，只能按年龄判。**前缀必须与 COPY_PREFIX 同源**：写死一遍
+ * 的话，前缀一改这里就静默失配、清理退化成只看年龄——正是「绝不删活副本」
+ * 要防的那种失效。
+ */
+const COPY_OWNER_RE = new RegExp(`^${COPY_PREFIX}(\\d+)-`);
+
+/**
+ * 副本多久没用算陈旧（clean_stale_copies 的年龄判据）。本机 `--jobs 2` 全量
  * 约 80 分钟，3 小时给了约两倍余量：慢机器上的长任务副本不能被误删。年龄
- * 判据真正兜的是两类「探不到主」的副本——老版本留下的（名字里没有 PID）、
+ * 判据真正管的是两类「探不到主」的副本——老版本留下的（名字里没有 PID）、
  * 以及父进程被强杀后仍在写的孤儿子进程。
+ *
+ * 注意年龄取的是副本根目录的 mtime，而运行期间的写入都落在子目录里，所以
+ * 它实际上是「创建至今」（日志与注释都按这个说，不写「闲置」）。
  */
 const COPY_STALE_MS = 3 * 60 * 60 * 1000;
+
+/**
+ * 硬上限：过了这个年龄不再探活，一律删（24 小时，约 7 倍于本机全量运行时长）。
+ * 为什么需要它：PID 会被回收，死副本名里的号一旦被某个长驻进程占去，
+ * process.kill(pid, 0) 就永远成功，那份副本成了永远清不掉的残留——本票要治
+ * 的累积在这些目录上回到原样。代价是一份真跑了 24 小时的副本会被误删，而
+ * 那不是本工具的正常形态（外层总有限时）。
+ */
+const COPY_FORCE_STALE_MS = 24 * 60 * 60 * 1000;
 
 // —— 参数 ——
 
@@ -867,10 +892,21 @@ const WRITE_RETRY_CODES = new Set(['UNKNOWN', 'EBUSY', 'EPERM']);
  * **变异与还原各一份预算**（#582）：混在一个计数器里，测试就没法只让变异
  * 写入失败（还原跟着一起失败会把结论带偏），也没法在一条预算用尽之后让
  * 后面的条目照常写下去（「跳过本条、后续继续」正是这样判的）。
+ *
+ * 第三种写法 `N:CODE:DIRTY`（#582 审查轮）在抛错前**先把内容写下去**，模拟
+ * 「open 成功之后才失败」——那一形态下 O_TRUNC 已经生效，靶文件被清空或
+ * 半写；写入失败后「仍是原文」的读回实测分支只有它能走到（注入点在
+ * writeFileSync 之前抛，正常形态测不到）。
  */
 function fail_budget(env_name) {
-  const spec = /^(\d+)(?::([A-Z]+))?$/.exec(process.env[env_name] || '');
-  return { left: spec ? Number(spec[1]) : 0, code: spec?.[2] ?? 'UNKNOWN' };
+  const spec = /^(\d+)(?::([A-Z]+))?(?::(DIRTY))?$/.exec(
+    process.env[env_name] || '',
+  );
+  return {
+    left: spec ? Number(spec[1]) : 0,
+    code: spec?.[2] ?? 'UNKNOWN',
+    dirty: spec?.[3] !== undefined,
+  };
 }
 const RESTORE_FAIL_FIRST_ENV = 'MUTATION_CHECK_RESTORE_FAIL_FIRST';
 const MUTATE_FAIL_FIRST_ENV = 'MUTATION_CHECK_MUTATE_FAIL_FIRST';
@@ -901,6 +937,8 @@ function write_with_retry(full, content, rel, budget, label) {
     try {
       if (budget.left > 0) {
         budget.left -= 1;
+        // DIRTY：先把内容写下去再抛，模拟「open 成功之后才失败」（见 fail_budget）
+        if (budget.dirty) fs.writeFileSync(full, content, 'utf8');
         throw Object.assign(
           new Error(`${budget.code}: unknown error (注入), open '${full}'`),
           { code: budget.code },
@@ -959,17 +997,23 @@ function report_dirty_target(root, m, original, headline) {
 }
 
 /**
- * 变异写入重试尽仍失败的统一报告（#582）：点名条目（M 编号）、文件与错误码，
+ * 变异写入重试尽仍失败的统一报告（#582）：报出条目（M 编号）、文件与错误码，
  * 并说明处置——按「未写入」计红、跳过本条、后续条目继续。
  *
  * **为什么是「跳过并继续」而不是像还原失败那样停止整轮**：可重试的三个码
- * （UNKNOWN/EBUSY/EPERM）都是 open 阶段失败——#541 实测的那次就是
+ * （UNKNOWN/EBUSY/EPERM）都发生在 open 阶段——#541 实测的那次就是
  * `unknown error, open '…'`，而 O_TRUNC 在 open 成功之后才生效，因此
- * 「写入失败」= 一个字节都没写下去，靶文件仍是原文，后续每一条的判定仍然
- * 可信；为一次瞬态占用丢掉整轮（本机全量串行约 80 分钟）不划算。还原失败
- * 恰恰相反：那时文件可能正停在变异态，继续跑会把残留读成原文，所以那边
- * 必须停（#553）。计红是必须的——这一条的「测试拦得住吗」根本没验证过，
+ * 「open 阶段失败」= 一个字节都没写下去，靶文件仍是原文，后续每一条的判定
+ * 仍然可信；为一次瞬态占用丢掉整轮（本机全量串行约 80 分钟）不划算。还原
+ * 失败恰恰相反：那时文件可能正停在变异态，继续跑会把残留读成原文，所以
+ * 那边必须停（#553）。计红是必须的——这一条的「测试拦得住吗」根本没验证过，
  * 含糊放行就成了一次安静的误报通过。
+ *
+ * **这句「仍是原文」是读回实测的，不是推出来的**（#582 审查轮）：write 阶段
+ * 的失败（EIO、UNKNOWN 一类同样能出现在 open 之后）会留下截断或半写的文件，
+ * 那时再报「仍是原文」就是反的，后面的条目还会把它当原文跑。所以调用方先
+ * 读回比对，只有逐字节等于 original 才走这一份报告；不是原文的那一支按
+ * 还原失败处理（见 run_one）。
  */
 function report_write_failed(m, error) {
   const which = entry_label(m);
@@ -978,7 +1022,7 @@ function report_write_failed(m, error) {
       `（尝试 ${error.tries} 次仍 ${error.error.code}），本条按「未写入」计红`,
   );
   console.log(
-    `    ${which} 未写入：${m.file} 仍是原文；跳过本条，后续条目继续`,
+    `    ${which} 未写入：${m.file} 仍是原文（已读回核对）；跳过本条，后续条目继续`,
   );
 }
 
@@ -1025,8 +1069,8 @@ function run_one(root, m) {
     return 'find-mismatch';
   }
   // 变异写入也走重试（#582）：失败处置与还原相反，见 report_write_failed。
-  // 这一步排在 active_restore 之前——写不下去时靶文件还是原文，没有可还原
-  // 的东西，SIGINT 兜底不该把这条记成「正在变异」。
+  // 这一步排在 active_restore 之前——open 阶段写不下去时靶文件还是原文，
+  // 没有可还原的东西，SIGINT 处理器不该把这条记成「正在变异」。
   const write_error = write_with_retry(
     full,
     apply_mutation(original, m),
@@ -1035,6 +1079,19 @@ function run_one(root, m) {
     '变异写入',
   );
   if (write_error) {
+    // 「仍是原文」必须实测（审查轮）：open 成功之后才失败的写（EIO、磁盘满、
+    // Windows 的 UNKNOWN 都可能落在 write 阶段）会把文件截断或半写，那时
+    // 继续跑等于拿坏文件当原文。读回比对与还原那一侧同一标准——不一致就按
+    // 残留处理：报出还原办法并停止整轮（后续判定都不可信）。
+    if (fs.readFileSync(full, 'utf8') !== original) {
+      report_dirty_target(
+        root,
+        m,
+        original,
+        `变异写入失败（尝试 ${write_error.tries} 次仍 ${write_error.error.code}）且靶文件已不是原文`,
+      );
+      return 'restore-fail';
+    }
     report_write_failed(m, write_error);
     return 'write-fail';
   }
@@ -1339,19 +1396,24 @@ function make_copy(root) {
  * %TEMP%\mutation-copy-* 就此累积（#553 时本机 34 个）。
  *
  * **两条判据都满足才删**（缺一条都会误删别人的活副本）：
- *   - **年龄**超过 COPY_STALE_MS：兜住两类探不到主的副本——老版本留下的
+ *   - **年龄**超过 COPY_STALE_MS：覆盖两类探不到主的副本——老版本留下的
  *     （名字里没有 PID，无从探活）与父进程被强杀后仍在写的孤儿子进程
  *     （父进程没了，但副本还在被用）。
  *   - **所有者不在**：目录名里的 PID 用 process.kill(pid, 0) 探活。本机
  *     常有多个 agent 同时跑（AGENTS.md 的并发上限说明），另一个 agent 的
  *     `--jobs` 长任务副本可能已经超过年龄阈值，但它有主，绝不能删。
  *
+ * 两条之外还有一条**硬上限**：年龄超过 COPY_FORCE_STALE_MS 一律删，不再探活。
+ * 理由是 PID 会被回收——死副本的号一旦被某个长驻进程占去，探活永远成功，
+ * 它就成了永远清不掉的残留，正是本票要治的那件事（22 小时余量远超任何一次
+ * 真实运行，见该常量的注释）。
+ *
  * 探活返回 EPERM 视为活着（Windows 上探不动不等于不存在），宁可漏删。
  * 删除失败只报不抛：副本里的文件正被占住时 rmSync 会抛，那不该拦住本次
  * 变异运行——报出目录，人可以手工删。
  *
  * 每次启动都清（含 --verify 与副本内的子进程）：它只动临时目录里的副本，
- * 不碰工作区的任何一个字节。
+ * 不碰工作区的任何一个字节（--verify 的「只读」限定的是工作区与条目表）。
  */
 function clean_stale_copies() {
   let names;
@@ -1372,13 +1434,16 @@ function clean_stale_copies() {
       continue; // 刚被另一个实例删掉，或不是目录
     }
     if (age < COPY_STALE_MS) continue;
-    const owner = /^mutation-copy-(\d+)-/.exec(name);
-    if (owner !== null) {
-      try {
-        process.kill(Number(owner[1]), 0);
-        continue; // 所有者进程还在跑
-      } catch (e) {
-        if (e?.code === 'EPERM') continue; // 存在但探不动，按活着处理
+    const owner = COPY_OWNER_RE.exec(name);
+    if (age < COPY_FORCE_STALE_MS) {
+      const owner = COPY_OWNER_RE.exec(name);
+      if (owner !== null) {
+        try {
+          process.kill(Number(owner[1]), 0);
+          continue; // 所有者进程还在跑
+        } catch (e) {
+          if (e?.code === 'EPERM') continue; // 存在但探不动，按活着处理
+        }
       }
     }
     try {
@@ -1390,7 +1455,7 @@ function clean_stale_copies() {
       });
       console.log(
         `⚠ 清理陈旧并行副本：${dir}` +
-          `（闲置 ${Math.round(age / 60000)} 分钟，超过 ${COPY_STALE_MS / 60000} 分钟且所有者进程已不在）`,
+          `（已有 ${Math.round(age / 60000)} 分钟，超过 ${COPY_STALE_MS / 60000} 分钟且所有者进程已不在${age >= COPY_FORCE_STALE_MS ? '，或超过硬上限' : ''}）`,
       );
     } catch (e) {
       console.log(
@@ -1402,6 +1467,7 @@ function clean_stale_copies() {
 }
 
 const SUMMARY_RE = /^SUMMARY caught=(\d+) skipped=(\d+) red=(\d+)$/m;
+
 async function execute_jobs(args, entries) {
   // --sample 与 --jobs 互斥（#553）：抽样要的是「总量 N 条」，副本各自抽样
   // 会变成 N×K 条；而父进程选出的样本（含无 M 编号的老条目）没有能经 CLI
