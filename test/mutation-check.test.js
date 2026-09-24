@@ -709,12 +709,11 @@ test('引擎在场的硬判不被抽样档短路：sample + 依赖引擎的条�
 // —— #304：并行模式的输出与计数 ——
 
 /**
- * 并行档夹具：副本假定自己是一份完整仓库——子进程以 cwd=副本 跑
- * <副本>/tools/mutation-check.mjs、条目表取默认的 <副本>/tools/mutations，
- * 所以夹具根要摆成同一形状，工具本体与装载器也得拷进去。
+ * 副本要能自跑：子进程以 cwd=副本 跑 <副本>/tools/mutation-check.mjs，所以
+ * 夹具根得摆成同一形状，工具本体与装载器都要拷进去（make_jobs_fixture 与
+ * 需要并行档的 git 夹具共用）。
  */
-function make_jobs_fixture(entries) {
-  const root = make_fixture();
+function copy_tools_into(root) {
   fs.mkdirSync(path.join(root, 'tools', 'mutations'), { recursive: true });
   for (const f of ['mutation-check.mjs', 'load-mutations.mjs']) {
     fs.copyFileSync(
@@ -722,6 +721,12 @@ function make_jobs_fixture(entries) {
       path.join(root, 'tools', f),
     );
   }
+}
+
+/** 并行档夹具：完整仓库形状（见 copy_tools_into）+ 摆在 tools/mutations 的条目表 */
+function make_jobs_fixture(entries) {
+  const root = make_fixture();
+  copy_tools_into(root);
   fs.writeFileSync(
     path.join(root, 'tools', 'mutations', 'fx.mjs'),
     `export const COUNT = ${entries.length};\n` +
@@ -1180,44 +1185,47 @@ function snapshot_tree(root) {
 }
 
 /**
+ * 夹具里的 git 命令：`-c` 覆盖逐条写给需要的地方——全局 config 里的
+ * user/签名/换行转换都不能影响夹具的确定性（CI 与各人本机的 git 配置不同）。
+ * 子进程调用一律带 timeout（test/child-process-timeout-check.test.js 守着：
+ * #449 那次挂死就是一处裸 spawnSync 卡住了整份测试文件的退出）。
+ */
+function git_in(root, ...args) {
+  return spawnSync(
+    'git',
+    [
+      '-c',
+      'user.email=fixture@example.com',
+      '-c',
+      'user.name=fixture',
+      '-c',
+      'commit.gpgsign=false',
+      '-c',
+      'core.autocrlf=false',
+      ...args,
+    ],
+    {
+      cwd: root,
+      encoding: 'utf8',
+      timeout: 30_000,
+      killSignal: 'SIGKILL',
+    },
+  );
+}
+
+/**
  * git 夹具仓库：启动自检要读 HEAD 才有东西可比。临时目录里的普通夹具不是
  * git 仓库，自检在那里一律跳过（并行副本同款——COPY_DENY 把 .git 排除在
  * 副本外）。
- *
- * `-c` 覆盖逐条写给需要的地方：全局 config 里的 user/签名/换行转换都不能
- * 影响夹具的确定性（CI 与各人本机的 git 配置不同）。子进程调用一律带
- * timeout（test/child-process-timeout-check.test.js 守着：#449 那次挂死
- * 就是一处裸 spawnSync 卡住了整份测试文件的退出）。
  */
 function make_git_fixture() {
   const root = make_fixture();
-  const git = (...args) =>
-    spawnSync(
-      'git',
-      [
-        '-c',
-        'user.email=fixture@example.com',
-        '-c',
-        'user.name=fixture',
-        '-c',
-        'commit.gpgsign=false',
-        '-c',
-        'core.autocrlf=false',
-        ...args,
-      ],
-      {
-        cwd: root,
-        encoding: 'utf8',
-        timeout: 30_000,
-        killSignal: 'SIGKILL',
-      },
-    );
   for (const a of [
     ['init', '-q'],
     ['add', '-A'],
     ['commit', '-q', '-m', 'init'],
   ]) {
-    const r = git(...a);
+    const r = git_in(root, ...a);
     assert.equal(r.status, 0, `夹具仓库 ${a.join(' ')} 失败：${r.stderr}`);
   }
   return root;
@@ -2331,6 +2339,94 @@ test('--jobs 筛选档的对照只跑选中条目的测试面：副本里无关�
     assert.ok(
       output.includes('SUMMARY caught=1 skipped=0 red=0'),
       `点名的条目应照常被拦下：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--jobs 的 --changed 筛选下传副本：清单外条目在子输出与汇总里都不出现（#553）', () => {
+  // --changed/--base 在真树上算出的清单必须折算成 --files 下传（副本里没有
+  // .git，子进程自己算不了）。这一支没有别的防线：退化成「清单不下传」时
+  // 每个副本又各跑整表切片，正是本票要根除的形态（#553 需求审查确认的缺口）。
+  const root = make_git_fixture();
+  try {
+    // 清单外的靶：文件与测试都在，跑起来也会被拦下——没有别的副作用，所以
+    // 「跑没跑它」只能从输出与汇总看。它必须先入库：--changed 的清单把未
+    // 跟踪文件也收进来（changed_files 里带着 ls-files --others）。
+    fs.writeFileSync(
+      path.join(root, 'lib', 'other.js'),
+      'const triple = (n) => n * 3;\nmodule.exports = { triple };\n',
+      'utf8',
+    );
+    fs.writeFileSync(
+      path.join(root, 'test', 'other.test.js'),
+      [
+        "const { test } = require('node:test');",
+        "const assert = require('node:assert/strict');",
+        "const { triple } = require('../lib/other');",
+        "test('三倍', () => {",
+        '  assert.equal(triple(21), 63);',
+        '});',
+        '',
+      ].join('\n'),
+      'utf8',
+    );
+    assert.equal(git_in(root, 'add', '-A').status, 0, '夹具 git add 失败');
+    assert.equal(
+      git_in(root, 'commit', '-q', '-m', 'other').status,
+      0,
+      '夹具 git commit 失败',
+    );
+    // 并行档要在副本里自跑，工具本体得拷进去（未被 --changed 收进清单：
+    // 它没有条目打；真跑起来也会被各自的条目判定拦下）
+    copy_tools_into(root);
+    // 清单内：改动一个已提交的靶文件，--base HEAD 才算得出非空清单
+    fs.writeFileSync(
+      path.join(root, 'lib', 'calc.js'),
+      CALC_JS + '// 本次改动\n',
+      'utf8',
+    );
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9211 加倍系数改坏（清单内）' },
+      {
+        ...GOOD_ENTRY,
+        desc: 'M9212 三倍系数改坏（清单外）',
+        file: 'lib/other.js',
+        find: 'n * 3',
+        replace: 'n * 4',
+        tests: ['other'],
+        must_mention: '三倍',
+      },
+    ]);
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--jobs',
+      '2',
+      '--base',
+      'HEAD',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      status,
+      0,
+      `清单内的条目应被拦下，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      !output.includes('M9212'),
+      '--jobs 的 --changed 筛选必须下传副本：点名的清单只含 lib/calc.js，M9212 也跑了（退化成副本各跑整表切片）',
+    );
+    assert.ok(
+      output.includes('筛选后 1 条，1 个副本'),
+      `副本数与对照范围按筛选收敛：\n${output}`,
+    );
+    assert.ok(
+      output.includes('SUMMARY caught=1 skipped=0 red=0'),
+      `只跑清单内那一条：\n${output}`,
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 196; // #553 起 +17（M11700-M11716：--jobs 下传筛选并按交集切片、还原写入瞬态失败重试与失败报告、并行逐块转发、空选集短路、对照范围与副本数收敛；审查轮 +6：M11711 --slice 与 --jobs 互斥、M11712 --files 零匹配看切片前、M11713/M11714 还原建议按 git 状态分三支、M11715 三个可重试码、M11716 空选集提示，M11710 的 find 随还原建议改指新分支；M11248 的 find 随 finally 体改为 write_restore 同步）；#549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_kojo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+export const COUNT = 197; // #553 起 +18（M11700-M11717：--jobs 下传筛选并按交集切片、还原写入瞬态失败重试与失败报告、并行逐块转发、空选集短路、对照范围与副本数收敛；审查轮 +6：M11711 --slice 与 --jobs 互斥、M11712 --files 零匹配看切片前、M11713/M11714 还原建议按 git 状态分三支、M11715 三个可重试码、M11716 空选集提示、M11717 --jobs 的 --files/--changed 清单下传，M11710 的 find 随还原建议改指新分支；M11248 的 find 随 finally 体改为 write_restore 同步）；#549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_kojo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
 // SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
 // 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
@@ -1742,6 +1742,22 @@ export default [
     test_name:
       '--files 与 --slice：空片是正常分工不报错，拼错文件名带 --slice 也必报错（#553）',
     must_mention: '分到空片要明确说「本轮 0 条」',
+  },
+  {
+    desc: 'M11717 --jobs 的 --changed/--files 清单不下传副本（子进程又各跑整表切片——副本里没有 .git，这一支的退化形态正是本票要根除的那个）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: `  } else if (args.files || args.base) {
+    const files = [...new Set(selection.map((m) => m.file))];
+    filter_args = ['--files', files.join(',')];
+  }`,
+    replace: `  } else if (false && (args.files || args.base)) { // 变异：清单不下传
+    const files = [...new Set(selection.map((m) => m.file))];
+    filter_args = ['--files', files.join(',')];
+  }`,
+    tests: ['mutation-check'],
+    test_name:
+      '--jobs 的 --changed 筛选下传副本：清单外条目在子输出与汇总里都不出现（#553）',
+    must_mention: '--jobs 的 --changed 筛选必须下传副本',
   },
   // —— #530：纯文本选项行棘轮（靶在 ere/system/train/com-toy.js 与 tools/plaintext-options.mjs）——
   {
