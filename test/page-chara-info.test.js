@@ -710,6 +710,44 @@ test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1
   );
 });
 
+test('CHARA_INFO：直调内层的视图里转职返回 2（防御支）也不结束本回合——2 在内层被消化成页内重画（#606 返工）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:1', 2); // 侵攻中的勇者：转职档位 = 2
+  const { chara_info } = fixture.load_module('page/page-chara-info');
+
+  // 转职的 2 来自原作 CHARA_JOB_CHANGE.ERB:55-57（侵攻中的勇者，RETURN 2，
+  // 无输出直接返回）；CHARA_INFO ver1.0.1.ERB:1094-1099 的收尾写明
+  // 「2なら再入力」——2 在内层就被消化成页内重画，不会上浮给名册，名册
+  // :100 的 IF RESULT == 1 收到的只会是其后 [100] 的 0。ere 侧该档位不渲染
+  // [2] 按钮、编号进不了输入白名单（#129），故按夹具头注的既有手法（test
+  // 里「被调方返回 2（防御支）」同款）就地替换 era.input 把 2 喂进去。
+  // 序列：[1300] 切状态视图 → 选 1 → 个别页喂 2（转职防御支）→ [100]
+  // 返回名册 → [999] 退出
+  const answers = [1300, 1, 2, 100, 999];
+  fixture.era.input = async () => answers.shift();
+  const result = await chara_info();
+
+  assert.deepEqual(answers, [], '五个输入全被消费（2 若上浮会错位）');
+  assert.equal(
+    result,
+    0,
+    '转职返回 2 不结束本回合：名册结束回合的判断只认 1，2 也被内层消化',
+  );
+  assert.equal(
+    buttons_with(fixture, 100).length,
+    2,
+    '个别页重画了一次（2 在页内被消化，不是弹回名册）——[100] 按钮两轮各一枚',
+  );
+  const headers = text_positions(fixture, '请选择一个角色以了解详细信息');
+  assert.equal(
+    headers.length,
+    3,
+    '名册只画三次：初始 + 1300 切换 + [100] 返回',
+  );
+});
+
 test('CHARA_INFO：切到非 1200 视图（[1300]）直调内层——结婚成功的 1 仍然上浮，本回合结束（#606）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
