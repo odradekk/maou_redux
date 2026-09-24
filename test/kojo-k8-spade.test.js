@@ -3022,7 +3022,7 @@ test('SELECTCOM 87 穿环，初めて·それ以外·P=8（阴茎，TALENT:121�
   ]);
 });
 
-test('SELECTCOM 87 穿环，初めて·爱慕·P=16（舌先，源作用 PRINTFORM 不等待，此实现仍逐条 await）已装', async () => {
+test('SELECTCOM 87 穿环，初めて·爱慕·P=16（舌先）已装：:5233+:5234 是一行，输出一条（#600）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('talent:31:85', 1);
     f.store.set('cflag:31:7', 16);
@@ -3031,8 +3031,20 @@ test('SELECTCOM 87 穿环，初めて·爱慕·P=16（舌先，源作用 PRINTFO
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '银黑桃想着第一次在身上打孔的疼痛痛而皱着眉。',
-    '「啊啊…如果和你舌吻的话…会变得很舒服吧…？」',
-    '银黑桃为了展示环而伸出了舌头………',
+    '「啊啊…如果和你舌吻的话…会变得很舒服吧…？」银黑桃为了展示环而伸出了舌头………',
+  ]);
+});
+
+test('SELECTCOM 87 穿环，初めて·爱慕·P=32（唇）已装：:5237+:5238 是一行，输出一条（#600）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:7', 32);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 32;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而皱着眉。',
+    '「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」银黑桃一边害羞的笑着，一边闭上眼撅起了嘴………',
   ]);
 });
 
@@ -3077,6 +3089,36 @@ test('SELECTCOM 87 穿环，二回目以降·淫乱·P=64（鼻穴）已装：CF
     '银黑桃鼻子上的环闪着光………',
   ]);
   assert.equal(fixture.store.get('cflag:31:348'), 4, 'CFLAG:348 推进到 4');
+});
+
+test('SELECTCOM 87 穿环，二回目以降·爱慕·P=16（舌先）已装：:5374+:5375 是一行，输出一条（#600）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:348', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:7', 16);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 16;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而皱着眉。',
+    '「啊啊…如果和你舌吻的话…会变得很舒服吧…？」银黑桃为了展示环而伸出了舌头………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:348'), 3, 'CFLAG:348 推进到 3');
+});
+
+test('SELECTCOM 87 穿环，二回目以降·爱慕·P=32（唇）已装：:5378+:5379 是一行，输出一条（#600）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:348', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:7', 32);
+  }, 87);
+  fixture.load_module('system/train/piercing-state').piercing_state.p = 32;
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '银黑桃想着第一次在身上打孔的疼痛痛而皱着眉。',
+    '「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」银黑桃一边害羞的笑着，一边闭上眼撅起了嘴………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:348'), 3, 'CFLAG:348 推进到 3');
 });
 
 test('SELECTCOM 87 穿环，二回目以降·助手在场：不打印任何文本、CFLAG:348 不推进', async () => {

@@ -24638,6 +24638,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '4654',
+        any: [/\t\t\t\t\tPRINTFORM 以及自慰时妄想的内容/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4655',
         any: [/开始愉快的说了起来……/],
       },
@@ -24881,6 +24886,11 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4712-4713',
         any: [/\t\t\t\tSIF ABL:31 >= 3/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '4713',
+        any: [/\t\t\t\t\tPRINTFORM 以及自慰时妄想的内容/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',

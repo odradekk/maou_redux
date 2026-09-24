@@ -9149,15 +9149,15 @@ async function kojo_message_com_8(rand) {
               await era.printAndWait(`${target_name}阴蒂上的环发着光………`); // :5229
             }
           } else if (P == 16) {
-            await era.print(`「啊啊…如果和你舌吻的话…会变得很舒服吧…？」`); // :5233
-            await era.print(`${target_name}为了展示环而伸出了舌头………`); // :5234
+            // :5233+:5234 原作是两条无后缀 PRINTFORM，同属一行（#600）
+            await era.print(
+              `「啊啊…如果和你舌吻的话…会变得很舒服吧…？」${target_name}为了展示环而伸出了舌头………`,
+            ); // :5233+:5234
           } else if (P == 32) {
+            // :5237+:5238 同上（#600）
             await era.print(
-              `「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」`,
-            ); // :5237
-            await era.print(
-              `${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,
-            ); // :5238
+              `「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,
+            ); // :5237+:5238
           } else if (P == 64) {
             await era.printAndWait(
               `「这样总觉得有点害羞呢…嗯？可爱？是这样吗」`,
@@ -9310,13 +9310,15 @@ async function kojo_message_com_8(rand) {
             await era.printAndWait(`${target_name}阴蒂上的环发着光………`); // :5370
           }
         } else if (P == 16) {
-          await era.print(`「啊啊…如果和你舌吻的话…会变得很舒服吧…？」`); // :5374
-          await era.print(`${target_name}为了展示环而伸出了舌头………`); // :5375
-        } else if (P == 32) {
-          await era.print(`「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」`); // :5378
+          // :5374+:5375 原作是两条无后缀 PRINTFORM，同属一行（#600）
           await era.print(
-            `${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,
-          ); // :5379
+            `「啊啊…如果和你舌吻的话…会变得很舒服吧…？」${target_name}为了展示环而伸出了舌头………`,
+          ); // :5374+:5375
+        } else if (P == 32) {
+          // :5378+:5379 同上（#600）
+          await era.print(
+            `「啊啊、总觉环好奇怪…必须要和你接吻来确认状况呢」${target_name}一边害羞的笑着，一边闭上眼撅起了嘴………`,
+          ); // :5378+:5379
         } else if (P == 64) {
           await era.printAndWait(`「这样总觉得有点害羞呢…嗯？可爱？是这样吗」`); // :5382
           await era.printAndWait(`${target_name}鼻子上的环发着光………`); // :5383

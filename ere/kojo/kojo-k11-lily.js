@@ -24718,9 +24718,11 @@ async function gohoubi_request_koujo_k11() {
   if (request === 0) {
     await era.printAndWait(`${name}要求了金钱`); // :12912
   } else if (request >= 1 && request <= 3) {
-    await era.print(`${name}提出了和`); // :12915
-    await era.print(['', '狗', '猪', '马'][request]); // :12916-12922
-    await era.printAndWait(`进行兽交的请求`); // :12923
+    // :12915 + IF/ELSEIF 的兽名分档（:12916-12922）+ :12923 原作是一整行：
+    // 两条无后缀 PRINTFORM 不换行，末行 PRINTFORMW 才收行。兽名提到语句外，
+    // 免得它落进模板字面量被保真锁当成插值记号（#600）
+    const animal = ['', '狗', '猪', '马'][request];
+    await era.printAndWait(`${name}提出了和` + animal + `进行兽交的请求`); // :12915+:12917+:12919+:12921+:12923
   } else if (request === 4) {
     await era.printAndWait(`${name}要求了归还的吻`); // :12926
   } else if (request === 5) {

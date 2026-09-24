@@ -237,6 +237,91 @@ test('LOG_TRY_BITCH：DUNGEON 卖春指示（CFLAG:500 == 1）分支「遵照命
   );
 });
 
+test('#600 LOG_TRY_BITCH：:14..:47 的各分支片段同属一行，输出一条', async () => {
+  // 原作 :14「%FS_BITCH("LOOKS", ARG)%」+ 分支片段（:21/:23/:25/:28/:31/:32/:34/
+  // :39/:42/:44）+ :47 的 PRINTFORMW 收行是一整行：无后缀 PRINTFORM 不换行。
+  // 各分支的判据提到语句外当取值、片段文本留在输出语句里（保真锁按序核对）
+  // LOOKS 前缀本身随素质变（ABL:37 卖淫中毒 → 「卖身寻欢的」、TALENT:85 →
+  // 「背叛的」），逐例钉死整行
+  const cases = [
+    [
+      'DUNGEON 勇者·无中毒/无债务',
+      'DUNGEON',
+      { 'cflag:31:1': 2 },
+      '黑发的人类的温妮在空闲的时间，考虑着出卖肉体的事。',
+    ],
+    [
+      'DUNGEON 勇者·淫乱',
+      'DUNGEON',
+      { 'cflag:31:1': 2, 'talent:31:76': 1 },
+      '黑发的好色的人类的温妮无法压抑自己的性欲，考虑着出卖肉体的事。',
+    ],
+    [
+      'DUNGEON 勇者·负债',
+      'DUNGEON',
+      { 'cflag:31:1': 2, 'cflag:31:580': -6000 },
+      '黑发的人类的温妮对于借款只减少了一点点感到不满，考虑着出卖肉体的事。',
+    ],
+    [
+      'DUNGEON 瞒着同伴偷偷的',
+      'DUNGEON',
+      { 'cflag:31:1': 3, 'cflag:31:533': 2 },
+      '黑发的人类的温妮瞒着同伴偷偷的考虑着出卖肉体的事。',
+    ],
+    [
+      'DUNGEON 卖春指示·被强迫',
+      'DUNGEON',
+      { 'cflag:31:500': 1, 'talent:31:85': 1 },
+      '黑发的背叛的人类的温妮被强迫遵照命令，考虑着出卖肉体的事。',
+    ],
+    [
+      'DUNGEON 卖春指示·未被强迫',
+      'DUNGEON',
+      { 'cflag:31:500': 1 },
+      '黑发的人类的温妮遵照命令，考虑着出卖肉体的事。',
+    ],
+    [
+      'DUNGEON それ以外',
+      'DUNGEON',
+      {},
+      '黑发的人类的温妮无法压抑自己的性欲，考虑着出卖肉体的事。',
+    ],
+    [
+      'TOWN 淫乱',
+      'TOWN',
+      { 'talent:31:76': 1 },
+      '黑发的好色的人类的温妮无法压抑自己的性欲，考虑着出卖肉体的事。',
+    ],
+    [
+      'TOWN 负债',
+      'TOWN',
+      { 'cflag:31:580': -6000 },
+      '黑发的人类的温妮由于高额的债务，不由得开始考虑着出卖肉体的事。',
+    ],
+    [
+      'TOWN それ以外',
+      'TOWN',
+      {},
+      '黑发的人类的温妮冒险资金花光了，考虑着出卖肉体的事。',
+    ],
+  ];
+  for (const [name, place, stores, line] of cases) {
+    const { fixture, mod } = setup_log((f) => {
+      f.store.set('cflag:31:1', 0);
+      f.store.set('cflag:31:500', 0);
+      f.store.set('cflag:31:580', 0);
+      f.store.set('cflag:31:581', 0);
+      f.store.set('cflag:31:582', 0);
+      f.store.set('abl:31:37', 0);
+      f.store.set('talent:31:76', 0);
+      for (const [key, value] of Object.entries(stores))
+        f.store.set(key, value);
+    });
+    await mod.log_try_bitch(31, place);
+    assert.deepEqual(fixture.text_lines(), [line], name);
+  }
+});
+
 test('LOG_TRY_BITCH 与 FI_TRY_BITCH 互不混同：LOG 只输出不改状态、FI 只返回不输出', async () => {
   const { fixture, mod } = setup_log((f) => {
     f.store.set('cflag:31:1', 0);
@@ -247,13 +332,14 @@ test('LOG_TRY_BITCH 与 FI_TRY_BITCH 互不混同：LOG 只输出不改状态、
     f.store.set('cflag:31:581', 0);
     f.store.set('cflag:31:582', 0);
   });
-  // LOG_TRY_BITCH：三行文本逐字钉死（随机源已钉死，取值是确定的；原来只查
-  // 「有输出」，把整段文本放掉了）。首行是 FS_BITCH 的 LOOKS 分档——
-  // #389 起它的 GET_LOOK_INFO 真身在 ere/chara/look-info.js
+  // LOG_TRY_BITCH：整行文本逐字钉死（随机源已钉死，取值是确定的；原来只查
+  // 「有输出」，把整段文本放掉了）。首段是 FS_BITCH 的 LOOKS 分档——
+  // #389 起它的 GET_LOOK_INFO 真身在 ere/chara/look-info.js。
+  // #600 起 :14..:47 是同一行（无后缀 PRINTFORM 不换行），输出恰好一条
   await mod.log_try_bitch(31, 'DUNGEON');
   assert.deepEqual(
     fixture.text_lines(),
-    ['黑发的人类的温妮', '无法压抑自己的性欲，', '考虑着出卖肉体的事。'],
+    ['黑发的人类的温妮无法压抑自己的性欲，考虑着出卖肉体的事。'],
     'LOG_TRY_BITCH 的整段输出',
   );
 
