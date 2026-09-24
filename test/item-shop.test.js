@@ -276,6 +276,39 @@ function item_shop_world(seed = {}) {
   });
 }
 
+/**
+ * 页脚 [999] 返回键所在的行号（页脚空行断言的取证面）。
+ *
+ * 原作 :78-80 是两个 `PRINTLC` 跟一个 `PRINTL`：`PRINTLC` 不换行（按
+ * CONTEXT.md「输出 API 与原作的对应」），那个 `PRINTL` 只结束它所在的那一行。
+ * ere 的 `printButton` 自成一行（＝ `PRINTLC` + 收尾的 `PRINTL`），故页脚
+ * 按钮之后不应再出现空行。
+ * @param {object} fixture 夹具
+ * @returns {number} 行号
+ */
+function footer_row(fixture) {
+  return fixture.lines.find(
+    (line) => line.type === 'button' && line.accelerator === 999,
+  ).row;
+}
+
+test('ITEM_SHOP：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换行，:80 的 PRINTL 只收那一行）', async () => {
+  const fixture = item_shop_world();
+  const { item_shop } = fixture.load_module('page/page-item-shop');
+  await item_shop();
+
+  // 原作 :78-80 是两个 PRINTLC 加一个 PRINTL。PRINTLC 按「PRINTCの文字数」
+  // 补空格后打在同一行、**不换行**（语义与勘误见 CONTEXT.md「输出 API 与
+  // 原作的对应」），那个 PRINTL 只结束它所在的那一行，不产生空行。ere 的
+  // printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条
+  // 就是多出来的空行。
+  assert.deepEqual(
+    fixture.lines.filter((line) => line.row > footer_row(fixture)),
+    [],
+    '道具商店页脚按钮之后不应有空行',
+  );
+});
+
 test('ITEM_SHOP：头行 1:1（标题/日期/所持金/技巧Lv/两段一览标题）与三处性判据', async () => {
   const fixture = item_shop_world();
   const { item_shop } = fixture.load_module('page/page-item-shop');
@@ -290,7 +323,6 @@ test('ITEM_SHOP：头行 1:1（标题/日期/所持金/技巧Lv/两段一览标�
     '[调教道具一览]', // 空持有 → 一段一行都没有
     '[消耗型调教道具一览]',
     '《请输入要购买的道具的编号》',
-    '',
   ]);
 
   // :78-79 的两个键是按钮（正文不写 [编号] 前缀；引擎拼出 `[998] - 陷阱`）
@@ -322,7 +354,8 @@ test('ITEM_SHOP：头行 1:1（标题/日期/所持金/技巧Lv/两段一览标�
     );
   }
 
-  // :78-79 PRINTLC（居中 + 换行）→ setAlign 包一次、随后还原
+  // :78-79 两个 PRINTLC（左对齐补位、不换行，见 CONTEXT.md「输出 API 与原作
+  // 的对应」）以 setAlign 包一次近似排版、随后还原
   assert.deepEqual(
     fixture.calls
       .filter((call) => call.api === 'setAlign')

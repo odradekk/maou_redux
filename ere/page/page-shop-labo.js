@@ -261,10 +261,14 @@ function draw_pick(intro, no_page, mode, cancel) {
   }
   era.drawLine(); // DRAWLINE
   life_list(no_page, mode, NUM_PAGE); // CALL LIFE_LIST(NO_PAGE,,NUM_PAGE)
+  // 页脚三个 PRINTLC（`[1000] - 上一页` / `[999] - 返  回` / `[1001] - 下一页`）
+  // 打在同一行，紧随的 PRINTL（:45）只结束它们那一行——PRINTLC 左对齐补位、
+  // **不换行**，故不产生空行。ere 的 printButton 自成一行（＝ PRINTLC +
+  // 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md「输出 API 与原作
+  // 的对应」）。
   era.printButton('- 上一页', 1000); // PRINTLC [1000] - 上一页
   era.printButton(`- ${cancel}`, 999); // PRINTLC [999] - 返  回
   era.printButton('- 下一页', 1001); // PRINTLC [1001] - 下一页
-  era.print(''); // PRINTL
 }
 
 /**
@@ -1825,7 +1829,9 @@ async function evilapp() {
   era.printButton('- 恶魔的尾巴', 3); // :2869
   era.printButton('- 恶魔的眼睛', 4); // :2870
   era.printButton('- 返  回', 999); // :2871 PRINTLC
-  era.print(''); // :2872 PRINTL
+  // :2872 的 PRINTL 只结束 [999] 那一行（PRINTLC 不换行，见 CONTEXT.md
+  // 「输出 API 与原作的对应」）；ere 的 printButton 自成一行（＝ PRINTLC +
+  // 收尾的 PRINTL），不再补空行。
   const result = await era.input(); // :2874
   if (result === 999) {
     return 0; // :2876-2877
@@ -2836,10 +2842,13 @@ async function secret_labo(rand = default_rand) {
       labo_page4(); // :32-33
     }
     era.drawLine(); // :36-41 DRAWLINE
+    // :42 起的三个 PRINTLC 页脚键打在同一行，紧随的 PRINTL 只结束那一行——
+    // PRINTLC 左对齐补位、**不换行**，故不产生空行。ere 的 printButton
+    // 自成一行（＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见
+    // CONTEXT.md「输出 API 与原作的对应」）。
     era.printButton('- 前一页', 997); // :42 PRINTLC  [997] - 前一页
     era.printButton('- 返回', 999); // :43 PRINTLC  [999] - 返回
     era.printButton('- 后一页', 998); // :44 PRINTLC  [998] - 后一页
-    era.print(''); // :45 PRINTL
 
     // $INPUT_LOOP（:48-196）
     const result = await era.input(); // :49 INPUT

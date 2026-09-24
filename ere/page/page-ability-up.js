@@ -108,7 +108,10 @@ function draw_menu_header() {
   const dim = cflag(0, 9) < 20; // :50 SIF CFLAG:0:9 < 20
   menu_button('奴隶一览', MENU_SLAVE, dim); // :52（UNICODE(0x258c) 由助手拼）
   menu_button('勇者一览', MENU_ENEMY, dim); // :53
-  era.print(''); // :56 PRINTL
+  // :56 的 PRINTL 只结束 :52 / :53 那两个 PRINTBUTTON 所在的行（按钮自成
+  // 一行，见 CONTEXT.md「输出 API 与原作的对应」）；golden 的
+  // sale-natural-log:88-93 里按钮行与 :61-63 的分割线逐行相邻，故这里不补
+  // 空行（#562）
   era.drawLine(); // :61-63 DRAWLINE + SETFONT
   era.print('要提高谁的能力值？'); // :63
   era.drawLine(); // :64-66（DRAWLINE + SIF 灰显 + 两个 PRINTBUTTON）
@@ -173,10 +176,13 @@ function draw_list(select_menu, no_page) {
     // :88-89 SIF SELECT_MENU == 998 → NUM_PAGE--（配对还原，见函数头）
   }
   era.drawLine(); // :91-93（DRAWLINE + 三个 PRINTLC 页脚键）
+  // :92 起的三个 PRINTLC 打在同一行，:96 的 PRINTL（写作 `PRINTL  `）只结束
+  // 那一行——PRINTLC 左对齐补位、**不换行**，故不产生空行。ere 的 printButton
+  // 自成一行（＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见
+  // CONTEXT.md「输出 API 与原作的对应」）。
   era.printButton('- 上一页', 1000); // :92 PRINTLC
   era.printButton('- 返  回', 999); // :93（原作的 `-` 是正文的一部分）
   era.printButton('- 下一页', 1001); // :94
-  era.print(''); // :96 PRINTL
   return { menu, page_size, max_page };
 }
 

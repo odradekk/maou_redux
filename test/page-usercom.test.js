@@ -51,6 +51,57 @@ test('子菜单按钮组全挂载：默认态 9 个按钮，守卫组不出现',
   ]);
 });
 
+test('子菜单按钮组：PRINTLC 串不换行——按钮之间、页脚之后与方格之后都没有多出的空行', async () => {
+  // 两条渲染臂都走一遍：自定义菜单（GETBIT(FLAG:5,34) = 1）与内建列表
+  for (const advanced of [false, true]) {
+    const label = advanced ? '自定义菜单臂' : '内建列表臂';
+    const fixture = create_era_fixture();
+    seed_flag5(fixture, advanced);
+    const { emit } = load_page(fixture);
+
+    await emit('SHOW_USERCOM');
+
+    // 原作 :17-91 是一串 PRINTC（三列排版），:85-86 与 :91-92 各是一个
+    // PRINTC 跟一个 PRINTL：PRINTC 不换行（语义与勘误见 CONTEXT.md「输出 API
+    // 与原作的对应」），那两个 PRINTL 只结束各自所在的那一行，不产生空行——
+    // train-natural-log:115-118 里网格行与 [990]/[999] 逐行相邻，就是这条的
+    // 直接证据。ere 的 printButton 自成一行（＝ PRINTC + 收尾的 PRINTL），
+    // 按钮之间与页脚之后都不应再补空行。
+    const divider = fixture.lines.find((line) => line.type === 'divider');
+    const rows = fixture.lines
+      .filter((line) => line.type === 'button' && line.row > divider.row)
+      .map((line) => line.row);
+    assert.deepEqual(
+      rows,
+      Array.from({ length: rows.length }, (_, i) => rows[0] + i),
+      `${label}：子菜单按钮逐行相邻，按钮之间不夹空行`,
+    );
+    // 方格与分割线之间恰有一个空行：:217（循环后的 PRINTL）只结束方格最后
+    // 那一行，空行来自下一段的 :14 PRINTL（train-natural-log:108-114）。
+    // 多一个（照「PRINTLC 自带换行」翻译的 :217）或少一个都是错的。
+    assert.equal(
+      fixture.lines.filter(
+        (line) =>
+          line.row < divider.row &&
+          (line.type === 'br' || (line.type === 'text' && line.text === '')),
+      ).length,
+      1,
+      `${label}：COM 菜单与分割线之间恰有一个空行（:14 的 PRINTL）`,
+    );
+    const footer = fixture.lines.find(
+      (line) => line.type === 'button' && line.accelerator === 999,
+    );
+    assert.ok(
+      !fixture.lines.some(
+        (line) =>
+          line.row === footer.row + 1 &&
+          ((line.type === 'text' && line.text === '') || line.type === 'br'),
+      ),
+      `${label}：子菜单页脚按钮之后不应有空行`,
+    );
+  }
+});
+
 test('守卫组：ASSI>0 且 ASSI:1>0 时交代助手[102]出现', async () => {
   const fixture = create_era_fixture();
   seed_flag5(fixture, false);

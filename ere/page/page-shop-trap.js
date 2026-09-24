@@ -18,8 +18,10 @@
  * 布局映射（原作 → ere）：
  *   - :10 `CUSTOMDRAWLINE =` 的 `=` 线以 era.drawLine({isSolid: true})
  *     近似（page-select-target.js:271 / page-save-load.js:345 先例）；
- *   - :68-69 `PRINTLC`（居中 + 换行）以 setAlign('center') 包一次 era.print
- *     近似，随后还原 'left'（page-main-menu.js:149-174 的 ALIGNMENT 先例）；
+ *   - :68-69 两个 `PRINTLC`（左对齐补位、**不换行**——正确语义与技能指南的
+ *     勘误见 CONTEXT.md「输出 API 与原作的对应」）以 setAlign('center') 包
+ *     一次 era.print 近似排版，随后还原 'left'（page-main-menu.js:149-174
+ *     的 ALIGNMENT 先例）；
  *   - :23-26/:39-41 的 SETCOLORBYNAME LightSalmon … RESETCOLOR 以片段自带
  *     color 承载（equip-print.js:32 先例，CSS 色名直通渲染层）；
  *   - 引擎每次 print 调用即一行：原作不换行的 PRINT/PRINTV/PRINTFORM 串
@@ -237,11 +239,14 @@ async function item_shop_trap() {
   // 编号，纯文本的 997/999 就再也键入不进了——#130 的输入通道语义）
   era.print('《请输入要购买陷阱的编号》');
   era.drawLine({ isSolid: true }); // :65-70 段的 DRAWLINE
-  era.setAlign('center'); // :68-69 PRINTLC（居中 + 换行）
+  // :68-69 两个 PRINTLC 打在同一行，紧随的 PRINTL 只结束那一行——PRINTLC
+  // 左对齐补位、**不换行**，故不产生空行。ere 的 printButton 自成一行
+  // （＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md
+  // 「输出 API 与原作的对应」）。
+  era.setAlign('center'); // :68-69 PRINTLC（排版近似：见 CONTEXT.md）
   era.printButton('- 普通物品', 997);
   era.printButton('- 返回', 999);
   era.setAlign('left');
-  era.print(''); // 尾行（:65-70 的最后一个 PRINTL）
 
   return 0;
 }

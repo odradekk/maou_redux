@@ -174,9 +174,11 @@ export const FILES = [
         any: [new RegExp('^\\s*PRINTLC \\[998\\] - 陷阱\\s*$', 'm')],
       },
       {
-        src: 'target/ERB/SHOP/SHOP_TRAP.ERB',
+        // #562 订正：`:80` 是 SHOP_ITEM.ERB 的收尾 PRINTL（两个 PRINTLC 之后），
+        // 不是 SHOP_TRAP 的 ITEMSALES（原绑定挂错了源）
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
         ref: '80',
-        any: [new RegExp('^\\s*ITEMSALES:63 = 1\\s*$', 'm')],
+        any: [new RegExp('^\\s*PRINTL\\s*$', 'm')],
       },
       {
         src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
