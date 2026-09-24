@@ -11,7 +11,7 @@
  * （源 CHARA_MAKE.ERB:864 的 `CALL LOOK_SET, ARG`）；@LOOK_INFO 的两个调用点
  * 在 CHARA_INFO_SHOW ver1.1.2.ERB:233/:295，#390 的靶——本票只把函数做成
  * 可被调用的形状（`await look_info(cid)` 走 era.print 逐行输出），不去改那个
- * 文件。LOOK_INFO_LOVE 由 LOOK_INFO 尾段无条件调用（源 :1656-1660）。
+ * 文件。LOOK_INFO_LOVE 由 LOOK_INFO 尾段无条件调用（源 :1662-1664）。
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - **TARGET 换手显式传参**（#5 决议第六条）：源的 `TARGET = A` / `SWAP`
@@ -926,12 +926,12 @@ function love_like_base(cid) {
       return { printed: text, matched: true }; // :2819 起 `PRINTFORM …` + `LOCAL++`
     }
   }
-  return { printed: '', matched: false }; // :2881-2885 RETURN LOCAL（未被覆盖 → 0）
+  return { printed: '', matched: false }; // :2881 RETURN LOCAL（未被覆盖 → 0）
 }
 
 /** SETCOLORBYNAME LightSalmon 的 ere 等价物（LOOK.ERB:859 起全篇的高亮色） */
 const LIGHT_SALMON = 'LightSalmon';
-/** SETCOLORBYNAME LightGreen 的 ere 等价物（:1557-1559 借金行） */
+/** SETCOLORBYNAME LightGreen 的 ere 等价物（:1599-1601 借金行） */
 const LIGHT_GREEN = 'LightGreen';
 
 /**
@@ -939,7 +939,7 @@ const LIGHT_GREEN = 'LightGreen';
  * 文字是一个彩色片段（page-shop-trap.js / page-dungeon-info2.js 的
  * `{content,color}` 数组先例）。一次 era.print = 源里一条 PRINTL 行。
  *
- * **一处有意偏离（行合并）**：源 :915-978 的「头发颜色と性質」与「头发长度・
+ * **一处有意偏离（行合并）**：源 :911-976 的「头发颜色と性質」与「头发长度・
  * カット・髪型」两块之间没有 PRINTL，在 Emuera 里落在同一行；本实现按块各出
  * 一行。理由有二：引擎每次 era.print 即一行（page-shop-trap.js 头注的同一
  * 约束），而两块之间在口上视角还夹着 `CALL GOBI_KOUJO`（异步整行输出），
@@ -985,7 +985,7 @@ class Spans {
 /** 素质下标（LOOK_INFO / LOOK_INFO_LOVE 专用的一批；与文件上半同名的各自定义） */
 const T_服从 = 85; // 爱慕
 const T_淫乱_T = 76;
-const T_低姿态 = 17; // 源 :1488 的 TALENT:17
+const T_低姿态 = 17; // 源 :1519 的 TALENT:17
 const T_冒渎者 = 282;
 const T_法术 = 242; // 法术（上半 $BORN 的修道女判定与 $RACE 之外都读它）
 const T_咒术 = 250;
@@ -1048,12 +1048,12 @@ const M_屈服刻印 = 2;
 const M_快乐刻印 = 1;
 const M_反抗刻印 = 3;
 
-/** 种族（TALENT:314）里「高洁」「恶」「堕落」三组（源 :1755-1757 / :1777-1783 / :1790-1792） */
+/** 种族（TALENT:314）里「高洁」「恶」「堕落」三组（源 :1753-1767 / :1769-1781 / :1798-1810） */
 const RACES_NOBLE = [1, 6];
 const RACES_EVIL = [3, 4];
 const RACES_FALLEN = [7, 8, 9];
 
-/** 喜欢的东西的档位（LOVE_ID → MAIN_LOVE 下标；源 :1674-1712 的注释表） */
+/** 喜欢的东西的档位（LOVE_ID → MAIN_LOVE 下标；源 :1677-1712 的注释表） */
 const LOVE = {
   喜欢的东西: 0,
   你: 1,
@@ -1086,13 +1086,13 @@ const LOVE = {
   狂王: 62,
 };
 
-/** LOVE_SORT 的长度（源 :2620 `WHILE LOVE_COUNT < 30` 与 :2723 的 `FOR … 30`） */
+/** LOVE_SORT 的长度（源 :2637 `WHILE LOVE_COUNT < 30` 与 :2671 的 `FOR … 30`） */
 const LOVE_SORT_MAX = 30;
-/** 显示门槛（源 :2711 `SIF MAIN_LOVE:LOVE_ID <= 3 CONTINUE`） */
+/** 显示门槛（源 :2677-2678 `SIF MAIN_LOVE:LOVE_ID <= 3 CONTINUE`） */
 const LOVE_SHOW_MIN = 3;
-/** 心形上限（源 :2743 `SIF HEART > 6`） */
+/** 心形上限（源 :2779 `SIF HEART > 6`） */
 const LOVE_HEART_MAX = 6;
-/** 每行几个（源 :2755 `IF LOVE_NUM % 6 == 0`） */
+/** 每行几个（源 :2791 `IF LOVE_NUM % 6 == 0`） */
 const LOVE_PER_ROW = 6;
 
 /** ABL 读数 */
@@ -1132,7 +1132,7 @@ const csv_name = (cid) => era.get(`callname:${cid}:-1`) ?? '';
  * 每个「块」一次 era.print（见 Spans 头注的行合并说明）。
  *
  * @param {number} cid 角色 ID（源 TARGET）
- * @returns {Promise<number>} 源 :1656-1660 `RETURN 1`
+ * @returns {Promise<number>} 源 :1662-1664（尾段 CALL LOOK_INFO_LOVE + `RETURN 1`）
  */
 async function look_info(cid) {
   // :829-832 LOCALS / LOCALS:1..3（LOCALS 是函数局部，天然为空）
@@ -1194,7 +1194,7 @@ async function look_info(cid) {
     // :892-894 PRINTL（口上视角的收尾换行；默认视角没有）
     era.println();
   } else {
-    // :894-903 默认视角
+    // :894-909 默认视角
     const s = new Spans();
     s.add(`[${loc0}`);
     if (loc1.length > 0) s.add(`·${loc1}`);
@@ -1202,13 +1202,13 @@ async function look_info(cid) {
     s.add(']');
     era.print(s.take());
     if (loc3.length > 0) {
-      era.print(`[原种族：${loc3}]`); // :905-907
+      era.print(`[原种族：${loc3}]`); // :907-908
     }
   }
 
   const kojo = kojo_view();
 
-  // :915-941 头发颜色と性質
+  // :911-936 头发颜色と性質
   if (t(cid, T_头发颜色) && t(cid, T_头发状态)) {
     const s = new Spans();
     if (kojo) {
@@ -1224,14 +1224,14 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :944-978 头发长度・カット・髪型
+  // :939-976 头发长度・カット・髪型
   if (t(cid, T_头发长度) && t(cid, T_头发修剪方式) && t(cid, T_发型)) {
     const s = new Spans();
     const male = t(cid, T_男人) !== 0;
     if (kojo) {
       s.add('「留着').hl(get_look_info(cid, '头发长度')).add('头发，');
       s.hl(get_look_info(cid, '头发修剪方式')).add('式的');
-      // :962-966 男性去除髮型顯示（口上视角同样只跳过名字本身）
+      // :961-966 男性去除髮型顯示（口上视角同样只跳过名字本身）
       if (!male) {
         s.hl(get_look_info(cid, '发型'));
       }
@@ -1248,7 +1248,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :981-1021 その他の外見（目・瞳色・唇）
+  // :978-1018 その他の外見（目・瞳色・唇）
   if (t(cid, T_目) && t(cid, T_瞳色) && t(cid, T_唇)) {
     const s = new Spans();
     if (kojo) {
@@ -1266,7 +1266,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1022-1080 体型・乳头・阴毛・阴茎
+  // :1019-1078 体型・乳头・阴毛・阴茎
   if (t(cid, T_体型) && t(cid, T_乳头) && t(cid, T_阴毛状态)) {
     const s = new Spans();
     if (kojo) {
@@ -1276,7 +1276,7 @@ async function look_info(cid) {
       s.add('下面的毛毛……').hl(get_look_info(cid, '阴毛状态'));
       s.add(await gobi_koujo(4));
       if (t(cid, T_扶她) || t(cid, T_男人)) {
-        // :1064-1076 ペニス（扶她・男人のみ）
+        // :1056-1071 ペニス（扶她・男人のみ）
         s.add('小鸡鸡是……').hl(get_look_info(cid, '阴茎的状态'));
         s.add(await gobi_koujo(2));
       }
@@ -1293,7 +1293,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1081-1103 魅力点・癖
+  // :1079-1111 魅力点・癖
   if (t(cid, T_魅力点) && t(cid, T_癖)) {
     const s = new Spans();
     if (kojo) {
@@ -1310,9 +1310,9 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  family_print_info(cid); // :1103-1107 CALL FAMILY_PRINT_INFO(TARGET)
+  family_print_info(cid); // :1113 CALL FAMILY_PRINT_INFO(TARGET)
 
-  // :1310-1340 + :1342-1367 成为勇者之前（四路前缀 + 取值 + 语尾）
+  // :1345-1380 + :1382-1408 成为勇者之前（四路前缀 + 取值 + 语尾）
   await look_info_block(
     cid,
     kojo,
@@ -1329,7 +1329,7 @@ async function look_info(cid) {
     look_info_job_gobi(t(cid, T_成为勇者前的生活)),
   );
 
-  // :1370-1400 + :1402-1430 成为勇者的契机
+  // :1411-1446 + :1448-1475 成为勇者的契机
   await look_info_block(
     cid,
     kojo,
@@ -1346,7 +1346,7 @@ async function look_info(cid) {
     look_info_reason_gobi(t(cid, T_成为勇者的契机)),
   );
 
-  // :1435-1508 信仰（巫女・聖女・法術・咒术持ち、且非魔王）
+  // :1478-1550 信仰（巫女・聖女・法術・咒术持ち、且非魔王）
   if (
     (t(cid, T_法术) === 1 ||
       t(cid, T_咒术) === 1 ||
@@ -1383,7 +1383,7 @@ async function look_info(cid) {
       }
       era.print(s.take());
 
-      // :1487-1507 堕落した場合、以前の信仰を冒涜する（プライド低い・冒涜者のみ）
+      // :1517-1548 堕落した場合、以前の信仰を冒涜する（プライド低い・冒涜者のみ）
       if (
         (t(cid, T_服从) === 1 || cflag_of(cid, 0) !== 0) &&
         (t(cid, T_低姿态) || t(cid, T_冒渎者))
@@ -1412,7 +1412,7 @@ async function look_info(cid) {
     }
   }
 
-  // :1511-1532 妊娠适性（同族不育）
+  // :1553-1573 妊娠适性（同族不育）
   if (t(cid, T_妊娠适性)) {
     const s = new Spans();
     if (kojo) {
@@ -1425,7 +1425,7 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1534-1562 所持金・借金
+  // :1575-1611 所持金・借金
   {
     const money = cflag_of(cid, 580); // CFLAG:580 所持金
     const debt = cflag_of(cid, 582); // CFLAG:582 借金（负值）
@@ -1447,11 +1447,11 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  // :1564-1617 常识改变系
+  // :1613-1658 常识改变系
   if (t(cid, 281) > 0 || t(cid, 283) > 0) {
     const s = new Spans();
     s.add(kojo ? '「肉便器经过洗脑之后、' : '[常识改变：');
-    let flag = 0; // LOCAL（源 :1572-1576 的「LOCALは連続に使う」）
+    let flag = 0; // LOCAL（源 :1620-1621 的「LOCALは連続に使う」）
     if (t(cid, 281) > 0) {
       s.add(kojo ? '战斗' : '【战斗】 ');
       s.hl(get_look_info(cid, '常识改变【战斗】'));
@@ -1477,13 +1477,13 @@ async function look_info(cid) {
     era.print(s.take());
   }
 
-  await look_info_love(cid); // :1620-1622 CALL LOOK_INFO_LOVE
+  await look_info_love(cid); // :1662 CALL LOOK_INFO_LOVE
 
-  return 1; // :1656-1660
+  return 1; // :1662-1664（CALL LOOK_INFO_LOVE + RETURN 1）
 }
 
 /**
- * LOOK_INFO 两段「来历」块的共用形状（源 :1342-1367 与 :1402-1430）：
+ * LOOK_INFO 两段「来历」块的共用形状（源 :1345-1408 与 :1411-1475）：
  * 前缀 + 取值 + 语尾口上 + 收尾符，落在同一条输出行上。
  * @param {number} cid 角色 ID
  * @param {boolean} kojo 是否口上视角
@@ -1508,7 +1508,7 @@ async function look_info_block(cid, kojo, prefix, value, gobi) {
 }
 
 /**
- * 前职业（TALENT:315）决定的口上档位（源 :1348-1365）。
+ * 前职业（TALENT:315）决定的口上档位（源 :1384-1404）。
  * @param {number} value TALENT:315
  * @returns {number} GOBI_KOUJO 档位
  */
@@ -1521,7 +1521,7 @@ function look_info_job_gobi(value) {
 }
 
 /**
- * 成为勇者的契机（TALENT:316）决定的口上档位（源 :1407-1428）。
+ * 成为勇者的契机（TALENT:316）决定的口上档位（源 :1450-1470）。
  * @param {number} value TALENT:316
  * @returns {number} GOBI_KOUJO 档位
  */
@@ -1534,7 +1534,7 @@ function look_info_reason_gobi(value) {
 }
 
 /**
- * @LOOK_INFO_LOVE 的评分半（源 :1714-2594）：① 素质/能力/经验/刻印逐项给
+ * @LOOK_INFO_LOVE 的评分半（源 :1714-2603）：① 素质/能力/经验/刻印逐项给
  * MAIN_LOVE 打分；② 相互作用修正先落在 LOVE_POOL、再统一加上。
  *
  * **拆成两半是有意的（#389）**：源的返回值是常量 1，分值表在函数外无法
@@ -1545,21 +1545,21 @@ function look_info_reason_gobi(value) {
  * 逐字搬移函数边界）。返回值语义与源一致的地方：调用方不看返回值。
  *
  * @param {number} cid 角色 ID（源 TARGET）
- * @returns {number[]} MAIN_LOVE:0..99（源 :2594 之后的表）
+ * @returns {number[]} MAIN_LOVE:0..99（源 :2600-2603 修正值适用后的表）
  */
 function love_score(cid) {
   const like = t(cid, T_喜欢的东西); // 源全篇多处读 TALENT:317
-  const main = new Array(100).fill(0); // MAIN_LOVE（源 :1727-1732 的初始化循环）
+  const main = new Array(100).fill(0); // MAIN_LOVE（源 :1737-1742 的初始化循环）
   const pool = new Array(100).fill(0); // LOVE_POOL
 
-  main[LOVE.喜欢的东西] = 15; // :1750 初期値（最初から好き）
+  main[LOVE.喜欢的东西] = 15; // :1744-1746 初期値（最初から好き）
 
   const race = t(cid, T_种族);
   const job = t(cid, T_成为勇者前的生活);
   const reason = t(cid, T_成为勇者的契机);
   const fall = cflag_of(cid, 0); // CFLAG:0 陥落度合い
 
-  // :1755-1793 种族補正
+  // :1753-1811 种族補正
   if (RACES_NOBLE.includes(race)) {
     main[LOVE.世界] += 1;
     main[LOVE.性交] -= 1;
@@ -1588,7 +1588,7 @@ function love_score(cid) {
     main[LOVE.恋人] -= 1;
   }
 
-  // :1797-1852 元の職業補正
+  // :1813-1877 元の職業補正
   if (job === 2 || job === 12) {
     main[LOVE.世界] += 3;
     main[LOVE.自慰] -= 1;
@@ -1615,7 +1615,7 @@ function love_score(cid) {
     main[LOVE.夫] += 2;
   }
 
-  // :1856-1869 理由補正
+  // :1879-1898 理由補正
   if (reason === 2 || reason === 11) {
     main[LOVE.世界] -= 1;
     main[LOVE.卖淫] += 1;
@@ -1624,7 +1624,7 @@ function love_score(cid) {
     main[LOVE.奉仕] += 1;
   }
 
-  // :1901-1933 喜欢的东西補正
+  // :1900-1947 喜欢的东西補正
   if (like === 4) {
     main[LOVE.恋人] += 3;
   } else if (like === 5) {
@@ -1643,7 +1643,7 @@ function love_score(cid) {
     main[LOVE.獣姦] += 1;
   }
 
-  // :1937-1962 陥落度合い
+  // :1949-1978 陥落度合い
   if (fall === 1) {
     main[LOVE.你] += 1;
     main[LOVE.世界] -= 1;
@@ -1658,7 +1658,7 @@ function love_score(cid) {
     main[LOVE.コンプレックス] -= 1;
   }
 
-  // :1964-2233 素質による補正（各素質が独立に効く。源の重複条件二箇所は 1:1 保留）
+  // :1980-2374 素質による補正（各素質が独立に効く。源の重複条件二箇所は 1:1 保留）
   if (t(cid, T_淫乱_T)) {
     main[LOVE.你] -= 1;
     main[LOVE.世界] -= 5;
@@ -1736,7 +1736,7 @@ function love_score(cid) {
     main[LOVE.野良犬] += 1;
     main[LOVE.獣姦] += 1;
   }
-  // :2213-2217 双性恋——源与上一段同写 `IF TALENT:80`（原文如此，1:1 保留）
+  // :2167-2171 双性恋——源与上一段同写 `IF TALENT:80`（原文如此，1:1 保留）
   if (t(cid, T_倒错的)) {
     main[LOVE.同性愛] += 1;
   }
@@ -1757,7 +1757,7 @@ function love_score(cid) {
   if (t(cid, T_早泄) && (t(cid, T_扶她) || t(cid, T_男人))) {
     main[LOVE.自ペニス] -= 1;
   }
-  // :2288-2292 牝犬——源同样写 `IF TALENT:124`（原文如此，1:1 保留）
+  // :2263-2269 牝犬——源同样写 `IF TALENT:124`（原文如此，1:1 保留）
   if (t(cid, T_动物耳朵)) {
     main[LOVE.野良犬] += 3;
     main[LOVE.獣姦] += 3;
@@ -1788,7 +1788,7 @@ function love_score(cid) {
     main[LOVE.狂王] += 30;
   }
 
-  // :2437-2485 能力による補正（前半四行は無条件）
+  // :2376-2470 能力による補正（前半四行は無条件）
   main[LOVE.C性感] += abl_of(cid, 0);
   main[LOVE.B性感] += abl_of(cid, 1);
   main[LOVE.V性感] += abl_of(cid, 2);
@@ -1816,7 +1816,9 @@ function love_score(cid) {
   main[LOVE.卖淫] += abl_of(cid, 37) * 3;
   main[LOVE.獣姦] += abl_of(cid, 39) * 3;
 
-  // :2490-2543 経験補正（7 组同构：>100 → +3 / >30 → +2 / >0 → +1）
+  // :2472-2550 経験補正（三档：>100 → +3 / >30 → +2 / >0 → +1）
+  // 已知偏差（随本票报告，待另票修正）：源 :2519-2528 的肛门快乐经验 一组用 >200 / >80，
+  // 本实现统一按上面的三档处理；本票不动行为
   for (const [exp_idx, target] of [
     [E_精饮绝顶经验, LOVE.精液],
     [E_侍奉快乐经验, LOVE.奉仕],
@@ -1832,15 +1834,15 @@ function love_score(cid) {
     else if (v > 0) main[target] += 1;
   }
 
-  // :2546-2548 新しい夫ボーナス / 恋人ボーナス
+  // :2552-2555 新しい夫ボーナス / 恋人ボーナス
   main[LOVE.新夫] += Math.trunc(cflag_of(cid, 602) / 3);
   main[LOVE.恋人] += Math.trunc(cflag_of(cid, 607) / 3);
 
-  // :2550-2558 刻印
+  // :2557-2565 刻印
   main[LOVE.コンプレックス] += mark_of(cid, M_快乐刻印) * 3;
   main[LOVE.你] -= mark_of(cid, M_反抗刻印) * 5;
 
-  // :2570-2588 相互作用
+  // :2567-2597 相互作用
   if (main[LOVE.母]) pool[LOVE.母] += main[LOVE.コンプレックス];
   if (main[LOVE.父]) pool[LOVE.父] += main[LOVE.コンプレックス];
   if (main[LOVE.少女]) pool[LOVE.少女] += main[LOVE.コンプレックス];
@@ -1853,7 +1855,7 @@ function love_score(cid) {
   pool[LOVE.野良犬] += Math.trunc(main[LOVE.獣姦] / 2); // 獣姦好きは野良犬も好き
   pool[LOVE.夫] -= Math.trunc(main[LOVE.新夫] / 3); // 新しい夫の方がいいの…
 
-  for (let i = 0; i < 100; i += 1) main[i] += pool[i]; // :2591-2594 修正値適用
+  for (let i = 0; i < 100; i += 1) main[i] += pool[i]; // :2600-2603 修正値適用
 
   return main;
 }
@@ -1861,18 +1863,18 @@ function love_score(cid) {
 /**
  * @LOOK_INFO_LOVE（:1667-2810）：喜欢的东西的评分、排序与显示。
  *
- * 评分在 love_score（见其头注）；本函数接 :2602 起的 ③ 排序（降序取前 30、
+ * 评分在 love_score（见其头注）；本函数接 :2618 起的 ③ 排序（降序取前 30、
  * 同值按添字序）与 ④ 显示（每项心形数 = 分值/5 - 1，封顶 6）。
  *
  * @param {number} cid 角色 ID（源 TARGET）
- * @returns {Promise<number>} 源 :2802-2804 `RETURN 1`
+ * @returns {Promise<number>} 源 :2806-2808（计数行 + `RETURN 1`）
  */
 async function look_info_love(cid) {
   const lover = cflag_of(cid, 606); // :1735 LOVER = CFLAG:606 的读取点移到显示侧
   const main = love_score(cid);
   const sort = new Array(100).fill(0); // LOVE_SORT
 
-  // :2602-2641 ソート（降順に最大 30 件。同値は添字順）
+  // :2618-2667 ソート（降順に最大 30 件。同値は添字順）
   let top = -9999; // LOCAL
   for (let i = 0; i < 100; i += 1) {
     if (top < main[i]) top = main[i];
@@ -1892,24 +1894,24 @@ async function look_info_love(cid) {
     top = next_top;
     next_top = -9999;
     guard += 1;
-    if (guard > 100) break; // :2636-2637 SIF LOCAL:1 > 100 BREAK
+    if (guard > 100) break; // :2662-2665 SIF LOCAL:1 > 100 BREAK
   }
 
-  // :2650-2654 各種表示の前置き
-  era.print(kojo_view() ? '「喜欢的东西是……' : '[喜欢的东西]'); // :2652/:2652-2656 PRINTL
+  // :2606-2616 各種表示の前置き
+  era.print(kojo_view() ? '「喜欢的东西是……' : '[喜欢的东西]'); // :2612-2616 PRINTL（两种视角的引子）
 
-  // :2673-2777 本体
+  // :2671-2795 本体
   const s = new Spans();
   s.add('　');
   let shown = 0; // LOVE_NUM
   const lover_names = require('#/dungeon/dungeon-lovers').LOVER_NAMES;
   for (let rank = 0; rank < LOVE_SORT_MAX; rank += 1) {
     const id = sort[rank]; // LOVE_ID = LOVE_SORT:LOVE_COUNT
-    if (main[id] <= LOVE_SHOW_MIN) continue; // :2711
+    if (main[id] <= LOVE_SHOW_MIN) continue; // :2677-2678
     let text = null;
     if (id === 0) {
       const base = love_like_base(cid);
-      if (!base.matched) continue; // :2713-2715 SIF RESULT == 0 CONTINUE
+      if (!base.matched) continue; // :2681-2682 SIF RESULT == 0 CONTINUE
       text = base.printed;
     } else if (id === 1) {
       text = '魔王大人';
@@ -1922,7 +1924,7 @@ async function look_info_love(cid) {
     } else if (id === 10) {
       text = t(cid, T_男人) ? '被玩弄阴茎' : '被弄阴蒂';
     } else if (id === 11) {
-      if (t(cid, T_男人)) continue; // :2720 `ELSEIF LOVE_ID == 11 && !TALENT:男人`
+      if (t(cid, T_男人)) continue; // :2697 `ELSEIF LOVE_ID == 11 && !TALENT:男人`
       text = '被弄小穴';
     } else if (id === 12) {
       text = '被弄菊穴';
@@ -1951,7 +1953,7 @@ async function look_info_love(cid) {
     } else if (id === 41) {
       text = t(cid, T_男人) ? '现在的伴侣' : '现在的丈夫';
     } else if (id === 42) {
-      // :2738-2747 恋人（四支）
+      // :2731-2742 恋人（四支）
       if (lover === 0 && t(cid, T_男人)) {
         text = '将来的伴侣';
       } else if (lover === 0) {
@@ -1963,7 +1965,7 @@ async function look_info_love(cid) {
         text = `恋人的${name === '' ? '' : name.padEnd(14, '　')}`;
       }
     } else if (id === 50) {
-      continue; // :2748-2749 コンプレックスは強化ソースなので表示はしない
+      continue; // :2743-2745 コンプレックスは強化ソースなので表示はしない
     } else if (id === 51) {
       text = main[LOVE.コンプレックス] > 6 ? '人妻' : '妈妈';
     } else if (id === 52) {
@@ -1979,15 +1981,15 @@ async function look_info_love(cid) {
     } else if (id === 62) {
       text = '狂王大人';
     } else {
-      continue; // :2750 ELSE CONTINUE
+      continue; // :2772-2773 ELSE CONTINUE
     }
     s.add(text);
-    // :2740-2746 5 個ごとに金红桃が一つずつ増える（上限 6 個）
+    // :2776-2780 5 個ごとに金红桃が一つずつ増える（上限 6 個）
     let hearts = Math.trunc(main[id] / 5) - 1;
     if (hearts > LOVE_HEART_MAX) hearts = LOVE_HEART_MAX;
     if (hearts > 0) s.add(heart(hearts));
-    s.add('　'); // :2750 間の空白
-    shown += 1; // :2753 好きな数を増やす
+    s.add('　'); // :2784-2785 間の空白
+    shown += 1; // :2787-2788 好きな数を増やす
     if (shown % LOVE_PER_ROW === 0) {
       // :2791-2793 改行：PRINTL「 」（行末补一个空格）后换行，新行以全角空格开头。
       // 原先写成 era.print(s.take()) + era.println()——era.println 是**多打一个空行**，
@@ -2008,7 +2010,7 @@ async function look_info_love(cid) {
   era.print(s.take());
   era.print(`[共${shown}个喜欢的东西]`); // :2806 PRINTFORML
 
-  return 1; // :2802-2804
+  return 1; // :2806-2808（计数行之后的 RETURN 1）
 }
 
 module.exports = {

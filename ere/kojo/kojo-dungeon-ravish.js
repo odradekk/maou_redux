@@ -2154,11 +2154,10 @@ async function man_ryou(arg, mon_num, rand) {
     } else {
       await era.print('【母猪】'); // :1557
     }
-    await era.print('之类的话。'); // :1560
-
+    // :1560+:1562 原作 PRINTFORM + PRINTFORMW，同一行（#584）
     await era.printAndWait(
-      '络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',
-    ); // :1562
+      '之类的话。络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',
+    ); // :1560+:1562
     await era.printAndWait(
       `当被最后一人抱着的时候，${arg_name}已经失去了任何表情，成为全身的穴都流出着精液的下流便器了。`,
     ); // :1563

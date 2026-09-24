@@ -451,16 +451,37 @@ async function run_shop_with_bought(bought, ...inputs) {
 // test/page-shop.test.js 的 show_shop 用例覆盖（那里是商店轮自身的行为靶）；
 // 本文件覆盖陷阱商店本体与 usershop 侧的 USERSHOP:50 调用点。
 
-test('USERSHOP 999：购物态下清购物标志并落到调试菜单（原作无 RETURN，:44-46 → :222）', async () => {
+test('USERSHOP 999：购物态下清购物标志与在售位后直接结束（#592：CLEAR_SHOP 把 RESULT 清 0）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   const { usershop } = fixture.load_module('page/page-shop');
   era_flag.bought = 54;
+  fixture.store.set('itemsales:60', 1); // 陷阱商店点亮的在售位（:45 CALL CLEAR_SHOP 的对象）
   await usershop(999);
   assert.equal(era_flag.bought, -1, '999 退出商店');
+  assert.equal(
+    fixture.store.get('itemsales:60'),
+    0,
+    ':45 CALL CLEAR_SHOP 必须清在售位（0-299 全段）',
+  );
   assert(
-    history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
-    '原作 :44-46 的 999 分支没有 RETURN，落到 :222 的 DEBUG_MENU_U',
+    !history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
+    '店内 999 不得落到 :222 的 DEBUG_MENU_U（:45 的 CLEAR_SHOP 无 RETURN，RESULT 被清 0）',
+  );
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    0,
+    '退出商店不等键',
+  );
+
+  // 边界：BOUGHT == 0（刚买 0 号商品）也在购物态内（:44 判据是 >= 0），同样退出
+  const zero = create_era_fixture();
+  zero.load_module('era-utils/era-flag').bought = 0;
+  await zero.load_module('page/page-shop').usershop(999);
+  assert.equal(
+    zero.load_module('era-utils/era-flag').bought,
+    -1,
+    'BOUGHT == 0 仍在购物态（>= 0 的下界）',
   );
 
   // 非购物态：999 走原路径（不改 BOUGHT，仍是调试菜单）
@@ -482,6 +503,10 @@ test('USERSHOP 999 后回主菜单：下一轮 @SHOW_SHOP 重画主菜单（回�
       (line) => line.type === 'button' && line.accelerator === 496,
     ),
     '退出商店后主菜单必须重画（否则玩家被困在商店里）',
+  );
+  assert(
+    !history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
+    '整轮里不得出现调试菜单提示（#592：店内 999 就是退出商店）',
   );
 });
 

@@ -268,12 +268,12 @@ test('强制肉偿：债务未抵完时累加（CFLAG:582 += COST）', async () 
   // draws：[档 0, PLAY 0, COST 0, 拍片 1]，低档 PLAY=5、COST=1000
   await mod.forced_payment(31, seq_rand(0, 0, 0, 1));
   assert.equal(DEBT(fixture), -19000);
-  assert.ok(
-    fixture.text_lines().includes('被强制用肉体偿债的温妮抵销了'),
-    '结算行首片',
+  // #584：原作五句 PRINTFORM/PRINTFORMW 是同一行——结算行必须整行出现
+  assert.equal(
+    fixture.text_lines().find((l) => l.includes('抵销了')),
+    '被强制用肉体偿债的温妮抵销了1000点的债务，当前欠金变为-19000点……',
+    '结算行（#584 起是同一行）',
   );
-  assert.ok(fixture.text_lines().includes('点的债务，当前欠金变为'));
-  assert.ok(fixture.text_lines().includes('-19000'));
 });
 
 test('强制肉偿：债务被抵完时清零（CFLAG:582 = 0）', async () => {
@@ -281,7 +281,10 @@ test('强制肉偿：债务被抵完时清零（CFLAG:582 = 0）', async () => {
   const { fixture, mod } = setup(with_debt(-100));
   await mod.forced_payment(31, seq_rand(0, 0, 0, 1));
   assert.equal(DEBT(fixture), 0);
-  assert.ok(fixture.text_lines().includes('0'));
+  assert.ok(
+    fixture.text_lines().some((l) => l.includes('当前欠金变为0点')),
+    '结算行（#584 起是同一行）',
+  );
 });
 
 test('强制肉偿：恰好抵完（CFLAG:582 + COST == 0）也清零', async () => {
@@ -302,8 +305,13 @@ test('强制肉偿：!RAND:3 才拍片，EXP:50/70 各 +1', async () => {
   assert.ok(
     fixture.text_lines().includes('温妮用肉体还债的过程被人拍下来了！'),
   );
-  assert.ok(fixture.text_lines().includes('这部淫荡煽情的影像以'));
-  assert.ok(fixture.text_lines().includes('的金额，被人买下收藏了'));
+  // #584：显示片酬与前后文是同一行（原作 PRINTFORM + PRINTFORMW）
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((l) => l.includes('这部淫荡煽情的影像以333的金额，被人买下收藏了')),
+    '拍片结算行同一行',
+  );
 
   // 不拍片：RAND:3 = 1
   const { fixture: f2, mod: m2 } = setup(with_debt(-20000));
@@ -322,18 +330,31 @@ test('强制肉偿：片酬分两次求值——显示取第一次、入账取�
   const { fixture, mod } = setup(with_debt(-20000));
   await mod.forced_payment(31, seq_rand(0, 0, 0, 0, 5, 7));
   const lines = fixture.text_lines();
-  // 显示值 = COST*1/3 + 5 = 333 + 5 = 338
-  assert.ok(lines.includes('338'), '显示片酬');
+  // 显示值 = COST*1/3 + 5 = 333 + 5 = 338（#584 起与前后文同一行）
+  assert.ok(
+    lines.some((l) =>
+      l.includes('这部淫荡煽情的影像以338的金额，被人买下收藏了'),
+    ),
+    '显示片酬（同一行）',
+  );
   // 入账 = 333 + 7 = 340；先抵债到 -19000，再加片酬 → -18660
   assert.equal(DEBT(fixture), -20000 + 1000 + 340);
-  assert.ok(lines.includes('-18660'), '片酬后的欠金');
+  assert.ok(
+    lines.some((l) => l.includes('当前欠金变为-18660点')),
+    '片酬后的欠金（同一行）',
+  );
 });
 
 test('强制肉偿：片酬的 COST*1/3 是向零截断的整数除法', async () => {
   // 低档 COST = 5*100 + 0 + 500 = 1000 → 1000/3 = 333（截断），两处 RAND:100 都取 0
   const { fixture, mod } = setup(with_debt(-20000));
   await mod.forced_payment(31, seq_rand(0, 0, 0, 0, 0, 0));
-  assert.ok(fixture.text_lines().includes('333'), '片酬 333');
+  assert.ok(
+    fixture
+      .text_lines()
+      .some((l) => l.includes('这部淫荡煽情的影像以333的金额')),
+    '片酬 333（#584 起与前后文同一行）',
+  );
   assert.equal(DEBT(fixture), -20000 + 1000 + 333);
 });
 

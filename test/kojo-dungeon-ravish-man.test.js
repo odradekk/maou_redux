@@ -88,6 +88,13 @@ test('兽人凌辱（RAND:5 == 0）：口交三选一 + 恐怖点数 + 初吻', 
   assert.equal(result, 0);
   const lines = fixture.text_lines();
   assert.ok(lines.some((l) => l.includes('恐怖点数+50')));
+  // #584：原作 :71-72 是 PRINTFORM + PRINTFORML，同一行——整行相等即断言
+  assert.ok(
+    lines.includes(
+      '带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+50',
+    ),
+    '反抗的：恐怖点数与前置描写同一行（#584）',
+  );
   assert.ok(lines.some((l) => l.includes('口交经验+5')));
   // 数值副作用
   assert.equal(fixture.store.get('juel:31:10'), 50); // 恐怖
@@ -158,8 +165,33 @@ test('男人凌辱：肉便器分支（RAND:5 != 0 且 RAND:4 == 0）', async ()
   const lines = fixture.text_lines();
   assert.ok(lines.some((l) => l.includes('肉便器')));
   assert.ok(lines.some((l) => l.includes('【最喜欢阴茎】')));
+  // #584：:802（PRINTFORM 之类的话。）与 :804（PRINTFORMW 络绎不绝的…）同一行
+  assert.ok(
+    lines.includes(
+      '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
+    ),
+    '肉便器收尾行必须是整行（#584）',
+  );
   assert.equal(fixture.store.get('exp:31:1'), 5);
   assert.equal(fixture.store.get('exp:31:22'), 5);
+});
+
+test('#584 兽人凌辱：素直（TALENT:13）行的耻情点数与前置描写同一行', async () => {
+  // 原作 :76（PRINTFORM）+:77（PRINTFORML 耻情点数+{MON_NUM * 10}）是同一行
+  const fixture = await setup_ravish((f) => {
+    f.store.set('talent:31:13', 1); // 素直（TALENT:11 反抗的未置位）
+  });
+  const mod = fixture_module(fixture);
+  await mod.orc_ryou_man(31, 5, seq_rand(0, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes(
+        '迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+50',
+      ),
+    '素直：耻情点数与前置描写同一行（#584）',
+  );
+  assert.equal(fixture.store.get('juel:31:8'), 50); // 耻情
 });
 
 test('人狼分支（TALENT:314 == 2）：欲情点数', async () => {

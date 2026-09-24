@@ -177,15 +177,17 @@ async function orc_ryou_man(arg, mon_num, rand) {
       // :68-88 初见的畏惧反应
       if (t(11)) {
         // :69-73 反抗的
-        await era.print(`带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，`); // :71
-        await era.print(`恐怖点数+${mon_num * 10}`); // :72
+        // :71 与 :72 原作 PRINTFORM + PRINTFORML，同一行（#584）
+        await era.print(
+          `带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+${mon_num * 10}`,
+        ); // :71+:72
         era.add(`juel:${arg}:10`, mon_num * 10); // :73 JUEL:ARG:10 恐怖
       } else if (t(13)) {
         // :74-78 素直
+        // :76 与 :77 原作 PRINTFORM + PRINTFORML，同一行（#584）
         await era.print(
-          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，`,
-        ); // :76
-        await era.print(`耻情点数+${mon_num * 10}`); // :77
+          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,
+        ); // :76+:77
         era.add(`juel:${arg}:8`, mon_num * 10); // :78 JUEL:ARG:8 耻情
       } else if (t(14)) {
         await era.print('提心吊胆地'); // :81 大人しい
@@ -1092,11 +1094,10 @@ async function man_ryou_man(arg, mon_num, rand) {
     } else {
       await era.print('【母猪】'); // :799
     }
-    await era.print('之类的话。'); // :802
-
+    // :802+:804 原作 PRINTFORM + PRINTFORMW，同一行（#584）
     await era.printAndWait(
-      '络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
-    ); // :804
+      '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
+    ); // :802+:804
     await era.printAndWait(
       `当被最后一人抱着的时候，${arg_name}已经失去了任何表情，成为全身的穴都流出着精液的下流便器了。`,
     ); // :805

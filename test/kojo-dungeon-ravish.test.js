@@ -122,6 +122,21 @@ test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾
   );
 });
 
+test('#584 男人凌辱（女性版）：肉便器收尾行「之类的话。」与「络绎不绝…」是同一行', async () => {
+  const fixture = await setup_ravish();
+  const mod = fixture_module(fixture);
+  // 畏怖档 pick = 1；第 2 掷 rand_n(5)=1 不中口交；第 3 掷 rand_n(4)=0 → 肉便器支
+  await mod.man_ryou(31, 5, seq_rand(1, 1, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes(
+        '之类的话。络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',
+      ),
+    '肉便器收尾行必须是整行（#584：:1560 + :1562 同一行）',
+  );
+});
+
 test('RYOUZYOKU 主框架：选择[1]不要凌辱 → 直接返回 0', async () => {
   const fixture = await setup_ravish();
   const mod = fixture_module(fixture);
