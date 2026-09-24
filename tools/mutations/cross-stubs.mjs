@@ -1,6 +1,6 @@
 // issue #333：阶段 5a 段 0 的九个跨域前置函数。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 40;
+export const COUNT = 42;
 
 export default [
   {
@@ -329,5 +329,24 @@ export default [
     replace: ': `「${chara_callname(family_id)}……我来救你了！」`; // :8093',
     tests: ['cross-stubs'],
     must_mention: '慈爱来袭口上会找到家人并按关系称呼',
+  },
+  // —— #596：print 之后多补的空行普查（角色家族调试/输出） ——
+  {
+    desc: 'M12081 关系调试表每行之后补回空行（:298 的 PRINTL 只结束那一串 PRINTFORM 拼出的行）',
+    file: 'ere/chara/chara-family.js',
+    find: '    era.print(parts);\n    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行',
+    replace:
+      '    era.print(parts);\n    era.println(); // 变异：多补一条空行\n    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行',
+    tests: ['chara-family'],
+    must_mention: '两行相邻，没有空行',
+  },
+  {
+    desc: 'M12082 家族信息行之后补回空行（RELATION_FAMILY :422-423 的 !LINEISEMPTY → PRINTL 只收尾那一行）',
+    file: 'ere/chara/chara-family.js',
+    find: '  // RELATION_FAMILY.ERB:422-423 的',
+    replace:
+      '  if (displayed > 0) era.println(); // 变异：多补一条空行\n  // RELATION_FAMILY.ERB:422-423 的',
+    tests: ['chara-family'],
+    must_mention: '家族片段行逐段相邻，没有空行',
   },
 ];

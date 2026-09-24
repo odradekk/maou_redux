@@ -72,7 +72,6 @@ function show_juel(cid) {
  * @param {number} cid 调教目标（原作隐式 TARGET）
  */
 async function show_ablup_select(cid) {
-  let u = 0; // :30 U = 0（本行条目计数）
   for (let count = 0; count < 40; count += 1) {
     // :31 REPEAT 40 —— 编号空间的空洞整组跳过（:32-41）
     if (count >= 4 && count <= 9) continue; // :32-33（4 局部感觉只在癖好行出现）
@@ -100,13 +99,10 @@ async function show_ablup_select(cid) {
       count,
       lost ? { color: GRAY } : undefined,
     );
-    u += 1; // :80
-    if (u % 4 === 0) {
-      era.println(); // :81-83 每 4 条换行
-    }
-  }
-  if (u % 4 !== 0) {
-    era.println(); // :85-86 末行不足 4 条也收行
+    // :80-86 的 U 计数与两处 PRINTL（每 4 条换行、末行不足 4 也收行）只服务
+    // 原作「一行 4 格」的字符终端排版：两个 PRINTL 都只结束所在的按钮行，
+    // 不产生空行。ere 的按钮各自成行，收行由引擎负责，故不再计数也不补空行
+    // （train-natural-log:945-951 里五行按钮逐行相邻，即此形态）。
   }
 
   // :88-91 [99] 反抗刻印（:89 CALL DECIDE_ABLUP99 + :90-91 的 `*`）
@@ -129,10 +125,10 @@ async function show_ablup_select(cid) {
     );
   }
   // :102-108 [IF_DEBUG] 的 [100] 异界综合征行——调试编译块，不移植
-  era.println(); // :109
+  // （:109 的 PRINTL 只结束 [99]（原作还带 [100]）所在的那一行，不产生空行：
+  // train-natural-log:951-952 里 [99] 行与尾部分割线相邻）
   era.drawLine(); // :110 CUSTOMDRAWLINE ‥
   era.printButton('- 能力值提高结束', 999); // :111（[999] 前缀由引擎拼）
-  era.println();
 }
 
 module.exports = { show_ablup_select, show_juel };

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 457; // #606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 472; // #596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4414,5 +4414,139 @@ export default [
       '        if (job_result) return job_result; // 变异：truthy，2 外泄',
     tests: ['page-chara-info'],
     must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
+  },
+  // —— #596：print 之后多补的空行普查（画面侧） ——
+  {
+    desc: 'M12070 能力值提升页的按钮行之间补回空行（:81-83 的 PRINTL 只收行，golden 里五行按钮逐行相邻）',
+    file: 'ere/page/page-ablup.js',
+    find: "    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';",
+    replace:
+      "    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';\n    era.println(); // 变异：多补一条空行",
+    tests: ['juel-check'],
+    must_mention: '按钮行之间不夹空行',
+  },
+  {
+    desc: 'M12071 能力值提升页 [999] 之后补回空行（:109/:111 只收行）',
+    file: 'ere/page/page-ablup.js',
+    find: "  era.printButton('- 能力值提高结束', 999); // :111（[999] 前缀由引擎拼）",
+    replace:
+      "  era.printButton('- 能力值提高结束', 999); // :111（[999] 前缀由引擎拼）\n  era.println(); // 变异：多补一条空行",
+    tests: ['juel-check'],
+    must_mention: '按钮行之间不夹空行',
+  },
+  {
+    desc: 'M12072 保有珠一览末尾的真空行删除（:26 那一个是真行——空行由它来，不是 :23 的收行）',
+    file: 'ere/page/page-ablup.js',
+    find: '  era.println(); // :26 PRINTL（末组恰为 4 项时补一空行）\n  era.drawLine();',
+    replace: '  era.drawLine(); // 变异：:26 的真空行删除',
+    tests: ['juel-check'],
+    must_mention: '末行后有空行',
+  },
+  {
+    desc: 'M12073 个别信息页操作按钮之后补回空行（:907 的 PRINTL 只收那一串 PRINT 拼出的按钮行）',
+    file: 'ere/page/page-chara-info.js',
+    find: "    era.drawLine();\n    era.printButton('前页', 101);",
+    replace:
+      "    era.print(''); // 变异：:907 只收行，不是空行\n    era.drawLine();\n    era.printButton('前页', 101);",
+    tests: ['page-chara-info'],
+    must_mention: '操作按钮行的下一行就是页脚分割线，中间不夹空行',
+  },
+  {
+    desc: 'M12074 标题画面致辞按钮之后补回空行（:67/:72 的 PRINTL 只结束按钮所在行）',
+    file: 'ere/page/page-title.js',
+    find: "  era.printButton(era_global.greeting_collapsed === 0 ? '<<' : '>>', 9);",
+    replace:
+      "  era.printButton(era_global.greeting_collapsed === 0 ? '<<' : '>>', 9);\n  era.println(); // 变异：多补一条空行",
+    tests: ['page-title'],
+    must_mention: '致辞按钮行与信息行之间不夹空行',
+  },
+  {
+    desc: 'M12075 标题画面联系按钮之后补回空行（:86-87 的 PRINTFORML 只结束上一行）',
+    file: 'ere/page/page-title.js',
+    find: '  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+    replace:
+      '  era.println(); // 变异：多补一条空行\n  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+    tests: ['page-title'],
+    must_mention: '联系按钮行与分割线之间不夹空行',
+  },
+  {
+    desc: 'M12076 服饰店现状行与追问行之间补回空行（:74 是空白源码行，不产生输出）',
+    file: 'ere/page/page-tailor.js',
+    find: '    era.print(`要让${chara_callname(arg)}穿上什么？`); // :75',
+    replace:
+      "    era.print(''); // 变异：多补一条空行\n    era.print(`要让${chara_callname(arg)}穿上什么？`); // :75",
+    tests: ['page-tailor'],
+    must_mention: ':72 所持金 → :73 现状行 → :75 追问行',
+  },
+  {
+    desc: 'M12077 献祭出口轮两枚按钮之间补回第二个空行（:80 的首个换行只收 [10] 那一行）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: "  era.println();\n  era.printButton('返回', 100);",
+    replace:
+      "  era.println();\n  era.println(); // 变异：多补一条空行\n  era.printButton('返回', 100);",
+    tests: ['chara-info-show'],
+    must_mention: '三个真空行',
+  },
+  {
+    desc: 'M12078 献祭名单轮 [999] 返回之后补回空行（:127 的返回文本之后没有 PRINTL）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: "    era.printButton('返回', LIST_RETURN);\n    // :127 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行",
+    replace:
+      "    era.printButton('返回', LIST_RETURN);\n    era.println(); // 变异：多补一条空行\n    // :127 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行",
+    tests: ['chara-info-show'],
+    must_mention: ':127 的返回文本之后不补空行',
+  },
+  {
+    desc: 'M12079 献祭出口轮 [10] 之前的两个真空行删掉一个（:79 的两个换行都是真行）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: "  era.println();\n  era.println();\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+    replace:
+      "  era.println(); // 变异：少一个真空行\n  era.printButton('查看符合条件的奴隶或勇者', 10);",
+    tests: ['chara-info-show'],
+    must_mention: '三个真空行',
+  },
+  {
+    desc: 'M12080 能力值提升页 [99] 行与尾部分割线之间补回空行（:109 只结束 [40] 中毒行那一行）',
+    file: 'ere/page/page-ablup.js',
+    find: "  era.drawLine(); // :110 CUSTOMDRAWLINE ‥\n  era.printButton('- 能力值提高结束', 999);",
+    replace:
+      "  era.println(); // 变异：多补一条空行\n  era.drawLine(); // :110 CUSTOMDRAWLINE ‥\n  era.printButton('- 能力值提高结束', 999);",
+    tests: ['juel-check'],
+    must_mention: '按钮行之间不夹空行',
+  },
+  {
+    desc: 'M12087 角色状态块的一人称段之后补回空行（:395-396 的 PRINTL 只收行）',
+    file: 'ere/page/components/chara-info-title.js',
+    find: '  // :395-396 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是',
+    replace:
+      '  if (is_not_master) era.println(); // 变异：多补一条空行\n  // :395-396 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是',
+    tests: ['chara-info-show'],
+    must_mention: '零空行（三处 PRINTL 只收行）',
+  },
+  {
+    desc: 'M12088 角色状态块的体重行之后补回空行（:405-408 的 PRINTL 只收行）',
+    file: 'ere/page/components/chara-info-title.js',
+    find: '  // :405-408 的 PRINTL 同理（只收体重行/LIFE_BAR 行）',
+    replace:
+      '  era.println(); // 变异：多补一条空行\n  // :405-408 的 PRINTL 同理（只收体重行/LIFE_BAR 行）',
+    tests: ['chara-info-show'],
+    must_mention: '零空行（三处 PRINTL 只收行）',
+  },
+  {
+    desc: 'M12089 角色状态块的臀围行之后补回空行（:416-419 的 PRINTL 只收行）',
+    file: 'ere/page/components/chara-info-title.js',
+    find: '  // :416-419 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）\n}',
+    replace:
+      '  era.println(); // 变异：多补一条空行\n  // :416-419 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）\n}',
+    tests: ['chara-info-show'],
+    must_mention: '零空行（三处 PRINTL 只收行）',
+  },
+  {
+    desc: 'M12090 个别信息页无操作按钮的子页把 :907 的真空行删掉（那一支落在空行上）',
+    file: 'ere/page/page-chara-info.js',
+    find: '    if (era.getLineCount() === button_anchor) {\n      era.println();\n    }',
+    replace: '    // 变异：无按钮子页的真空行删掉',
+    tests: ['page-chara-info'],
+    must_mention: '无按钮子页里 :907 的空行在补白之后',
   },
 ];

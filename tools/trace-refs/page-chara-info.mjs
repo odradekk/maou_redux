@@ -234,10 +234,49 @@ export const FILES = [
         ref: '829',
         any: [/^\s*CALL CHARA_INFO_INDIVIDUAL\(ARG, LOCAL\)\s*$/m],
       },
+      // #596：:907 的 PRINTL 只结束那一串 `SIF … PRINT [n]` 拼出的按钮行
+      {
+        src: INFO,
+        ref: '907',
+        any: [/^\s*PRINTL\s*$/m],
+      },
+      // #596：:858-884 是操作按钮块（sub_page 0 的六个 CALL + [10]/[9]/[20]、
+      // sub_page 1/2 的 [6]/[7]/SHOW_BUTTON_EQUIP/PTJ_BUTTON）
+      {
+        src: INFO,
+        ref: '858-884',
+        any: [
+          /^\s*CALL SHOW_BUTTON_NAME_EDIT\(0,ARG,0\)/m,
+          /^\s*CALL PTJ_BUTTON\(ARG\)/m,
+        ],
+      },
     ],
   },
 ];
 
 export const LOG_REFS = [];
 
-export const SAMPLE_LOG_REFS = {};
+export const SAMPLE_LOG_REFS = {
+  'train-upgrade': [
+    {
+      js: 'ere/page/page-chara-info.js',
+      refs: [
+        // #596：个别信息页的操作按钮行与页脚分割线逐行相邻
+        {
+          ref: '171-172',
+          any: [/提升能力/, /^-+$/m],
+        },
+      ],
+    },
+    {
+      js: 'test/page-chara-info.test.js',
+      refs: [
+        // #596：同上——按钮行 → 页脚分割线 → [101] 前页，四行相邻
+        {
+          ref: '171-172',
+          any: [/提升能力/, /^-+$/m],
+        },
+      ],
+    },
+  ],
+};

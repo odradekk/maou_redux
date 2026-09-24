@@ -71,6 +71,63 @@ test('首屏：标题、版本行、作者、年份、展开名单、信息行�
   assert(buttons.every((b) => !/^\s*\[\d+\]/.test(b.text)));
 });
 
+test('空行普查（#596）：致辞按钮行与信息行相邻、联系按钮行与分割线相邻', async () => {
+  // 原作 :67/:72（按钮 9 所在行）与 :86（按钮 8 所在行）的 PRINTL/PRINTFORML
+  // 都只结束所在的那一行，不产生空行：mainmenu-natural-log:30-33 里
+  // 「…※ <<」「…※」「版本推进出问题 >>」与分割线四行逐行相邻。
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  const run_title_page = fixture.load_module('page/page-title');
+
+  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+
+  const row_of = (predicate) => {
+    const line = fixture.lines.find(predicate);
+    assert.ok(line, `找不到目标行：${predicate}`);
+    return line.row;
+  };
+  const button_9 = row_of((l) => l.type === 'button' && l.accelerator === 9);
+  const info = row_of(
+    (l) =>
+      l.type === 'text' &&
+      l.text === '※未经允许，任何人不得引用、修改再打包或进行商业用途※',
+  );
+  const contact = row_of(
+    (l) => l.type === 'text' && l.text === '版本推进出问题 ',
+  );
+  const button_8 = row_of((l) => l.type === 'button' && l.accelerator === 8);
+  const divider = row_of((l) => l.type === 'divider' && l.row > contact);
+
+  assert.equal(info, button_9 + 1, '致辞按钮行与信息行之间不夹空行');
+  assert.equal(
+    contact,
+    info + 1,
+    '信息行与联系行之间不夹空行（:76/:80 只收行）',
+  );
+  assert.equal(button_8, contact + 1, '联系行与按钮行同屏逐行相邻');
+  assert.equal(divider, button_8 + 1, '联系按钮行与分割线之间不夹空行（:86）');
+  // 致辞之前的空行（两种形态都算：println 落 br、print('') 落 text 空串）只有
+  // 三处——:26/:27 那两个（图片缺席时也照打）与 :41 那一个；致辞串自带的空行
+  // 属屏幕下半段，不在此断言范围
+  const greeting_start = row_of(
+    (l) =>
+      l.type === 'text' &&
+      l.text.startsWith('※本版本由Delicious基于谦悟制作的0.60EX制作'),
+  );
+  const top_divider = row_of((l) => l.type === 'divider');
+  const year = row_of((l) => l.type === 'text' && l.text === '(2011 - 2024！)');
+  const is_blank = (line) =>
+    line.type === 'br' || (line.type === 'text' && line.text === '');
+  assert.deepEqual(
+    fixture.lines
+      .filter(is_blank)
+      .map((line) => line.row)
+      .filter((row) => row < greeting_start),
+    [top_divider + 1, top_divider + 2, year + 1],
+    '致辞之前只有三个空行：:26/:27 与 :41',
+  );
+});
+
 test('版本行直读【版本代号】自静态表，不自算、不硬编码（#135）', async () => {
   const fixture = create_era_fixture();
   // versionName 换值 + version 设成自算式会算出别的结果的值：证明显示

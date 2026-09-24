@@ -270,7 +270,9 @@ async function sacrifice_flow(cid, background) {
   era.println();
   era.println();
   era.printButton('查看符合条件的奴隶或勇者', 10); // 原作 `[ 10]` 的补位交给引擎排版
-  era.println();
+  // :80 的第二句 `PRINTS "\n"*2 + " [100] 返回 "`：首个 \n 只结束 [10] 那一行
+  // （ere 的 printButton 自成一行），余下的一个是真空白；两枚按钮之间只有
+  // 一个空行，:80 末尾的返回文本之后没有 PRINTL
   era.println();
   era.printButton('返回', 100);
   const choice = await era.input(); // :82 INPUT
@@ -309,7 +311,8 @@ async function sacrifice_flow(cid, background) {
     era.println();
     era.println();
     era.print('切换条件类型：');
-    era.println();
+    // :119 文本尾的两个换行里，首个只收文本行（ere 的 print 自成一行），
+    // 余下的一个才是真空行
     era.println();
     // :120-126 六个条件按钮（编号即 kind 下标 + 1000）
     for (const [index, kind] of SACRIFICE_KINDS.entries()) {
@@ -322,7 +325,7 @@ async function sacrifice_flow(cid, background) {
     // 纯文本行必然被引擎拒收（夹具当场抛「输入不合法」，见
     // test/chara-info-show.test.js 的 #530 用例）。
     era.printButton('返回', LIST_RETURN);
-    era.println();
+    // :127 的返回文本之后没有 PRINTL（原作停在 INPUT），不补空行
 
     const result = await era.input(); // :129
     if (result === LIST_RETURN) {
