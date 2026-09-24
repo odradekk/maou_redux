@@ -50,12 +50,12 @@ function disp_width(text) {
 
 /** `{A,N}`：右对齐补位 */
 function pad_left(text, width) {
-  return ' '.repeat(Math.max(0, width - disp_width(text))) + text;
+  return '\u00A0'.repeat(Math.max(0, width - disp_width(text))) + text; // #577：补位 NBSP
 }
 
 /** `%S,N,LEFT%`：左对齐补位 */
 function pad_right(text, width) {
-  return text + ' '.repeat(Math.max(0, width - disp_width(text)));
+  return text + '\u00A0'.repeat(Math.max(0, width - disp_width(text))); // #577：补位 NBSP
 }
 
 function load(fixture) {

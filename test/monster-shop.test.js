@@ -51,13 +51,13 @@ function display_width(text) {
 /** 左对齐补到 width 显示宽（`%str,N,LEFT%` 的形态） */
 function pad_left(text, width) {
   const pad = width - display_width(text);
-  return pad > 0 ? text + ' '.repeat(pad) : text;
+  return pad > 0 ? text + '\u00A0'.repeat(pad) : text; // #577：补位 NBSP
 }
 
 /** 右对齐补到 width 显示宽（`%n,N,RIGHT%` 的形态） */
 function pad_right(text, width) {
   const pad = width - display_width(text);
-  return pad > 0 ? ' '.repeat(pad) + text : text;
+  return pad > 0 ? '\u00A0'.repeat(pad) + text : text; // #577：补位 NBSP
 }
 
 /**
@@ -538,7 +538,7 @@ test('SELECT_MONSTER：商品一览的四个判据——价格非 0、两个种�
   assert(list_line, '在售的 202 应出场');
   assert(list_line.includes('[202]'), ':238 的 [编号] 字段');
   assert(
-    list_line.includes('最低等级：' + '15'.padStart(5)),
+    list_line.includes('最低等级：' + '\u00A0'.repeat(3) + '15'),
     ':238 的右对齐等级字段',
   );
   assert(list_line.includes('精英蚁怪'), '同为档内的 203 与 202 同行');

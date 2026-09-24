@@ -1992,7 +1992,7 @@ test('换号：只交换排序编号——角色 ID 与角色数据一件不搬�
   // 行体按原作 `LV:{CFLAG:COUNT:9,4,LEFT}`：冒号 + 等级值左对齐占 4 格
   // （1 位数补 3 空格，后面才是 [SP] 之类的片段），见 print_swap_row
   assert.equal(
-    printed_includes(fixture, ' 甲 战士 LV:5   '),
+    printed_includes(fixture, ' 甲 战士 LV:5\u00A0\u00A0\u00A0'),
     true,
     '行内容仍按身份取：甲带着自己的职业与等级',
   );
@@ -2350,11 +2350,11 @@ test('换号页：候选列表按排序编号升序，编号格显示的仍是�
         (line.text ?? '').includes(name),
     )?.text ?? '';
   assert.ok(
-    row_text('角色1').includes(' LV:5   '),
+    row_text('角色1').includes(' LV:5\u00A0\u00A0\u00A0'),
     `1 位等级补 3 格（实际：${JSON.stringify(row_text('角色1'))}）`,
   );
   assert.ok(
-    row_text('角色3').includes(' LV:12  '),
+    row_text('角色3').includes(' LV:12\u00A0\u00A0'),
     `2 位等级补 2 格（左对齐 4 格宽，实际：${JSON.stringify(row_text('角色3'))}）`,
   );
 });

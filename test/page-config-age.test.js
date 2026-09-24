@@ -279,19 +279,23 @@ test('RACE_CONFIG 顶层：默认表下八个种族行的档位文案', async ()
     '种族名',
   );
   assert.ok(
-    texts_of(fixture, 0).some((t) => t.includes('换算成人类年龄的  10 倍')),
+    texts_of(fixture, 0).some((t) =>
+      t.includes('换算成人类年龄的\u00A0\u00A010 倍'),
+    ),
     '整数倍档文案',
   );
   assert.ok(
-    texts_of(fixture, 0).some((t) => t.includes(' 170 ～  179 岁')),
+    texts_of(fixture, 0).some((t) => t.includes('\u00A0170 ～ \u00A0179 岁')),
     '换算年龄区间',
   );
   // 槽 1 = 115（小数倍 1.5）
   assert.ok(
-    texts_of(fixture, 1).some((t) => t.includes('换算成人类年龄的 1.5 倍')),
+    texts_of(fixture, 1).some((t) =>
+      t.includes('换算成人类年龄的\u00A01.5 倍'),
+    ),
   );
   assert.ok(
-    texts_of(fixture, 1).some((t) => t.includes('  25 岁')),
+    texts_of(fixture, 1).some((t) => t.includes('\u00A0\u00A025 岁')),
     '17×1.5 截断为 25',
   );
   // 槽 2 = 431（年龄～上限）
@@ -301,14 +305,20 @@ test('RACE_CONFIG 顶层：默认表下八个种族行的档位文案', async ()
   assert.ok(texts_of(fixture, 2).some((t) => t.includes('　17 ～ 1000 岁')));
   // 槽 3 = 325（上限/2～上限）
   assert.ok(
-    texts_of(fixture, 3).some((t) => t.includes(' 250 ～  500 的随机范围')),
+    texts_of(fixture, 3).some((t) =>
+      t.includes('\u00A0250 ～ \u00A0500 的随机范围'),
+    ),
     'slot 3 = 325 的上限/2～上限档',
   );
   // 槽 4 = 015（整数倍 5×10^1）
   assert.ok(
-    texts_of(fixture, 4).some((t) => t.includes('换算成人类年龄的  50 倍')),
+    texts_of(fixture, 4).some((t) =>
+      t.includes('换算成人类年龄的\u00A0\u00A050 倍'),
+    ),
   );
-  assert.ok(texts_of(fixture, 4).some((t) => t.includes(' 850 ～  899 岁')));
+  assert.ok(
+    texts_of(fixture, 4).some((t) => t.includes('\u00A0850 ～ \u00A0899 岁')),
+  );
   // 槽 5 = 232（0～上限）
   assert.ok(
     texts_of(fixture, 5).some((t) => t.includes('　 0 ～ 2000 的随机范围')),
@@ -559,12 +569,12 @@ test('RACE_CONFIG 编辑循环的数字网格与模式按钮（DIS_FLAG 各档�
   const grid_of = (accelerator) =>
     texts_of(fixture, accelerator).filter((t) => /^\s*\d+\s*[倍岁]$/.test(t));
   // 整数倍网格（DIS_FLAG 0）：值 2..4、9、12..14、19…（%10 ∈ 0-3 ∪ 9）
-  assert.ok(grid_of(2).includes('    2 倍'));
-  assert.ok(grid_of(5).includes('    5 倍'));
-  assert.ok(grid_of(11).includes('   10 倍'));
-  assert.ok(grid_of(12).includes('   20 倍'));
-  assert.ok(grid_of(24).includes('  400 倍'));
-  assert.ok(grid_of(31).includes(' 1000 倍'));
+  assert.ok(grid_of(2).includes('\u00A0\u00A0\u00A0\u00A02 倍'));
+  assert.ok(grid_of(5).includes('\u00A0\u00A0\u00A0\u00A05 倍'));
+  assert.ok(grid_of(11).includes('\u00A0\u00A0\u00A010 倍'));
+  assert.ok(grid_of(12).includes('\u00A0\u00A0\u00A020 倍'));
+  assert.ok(grid_of(24).includes('\u00A0\u00A0400 倍'));
+  assert.ok(grid_of(31).includes('\u00A01000 倍'));
   // 6..10/16..20/26..30 不进整数倍网格（%10 ∈ 4-8 被跳过）
   assert.deepEqual(grid_of(6), [], '6 不渲染');
   assert.deepEqual(grid_of(10), [], '10 不渲染（%10 == 0，仅小数档可用）');
@@ -572,8 +582,8 @@ test('RACE_CONFIG 编辑循环的数字网格与模式按钮（DIS_FLAG 各档�
   assert.ok(texts_of(fixture, 110).some((t) => t.includes('0 岁')));
   assert.ok(texts_of(fixture, 111).some((t) => t.includes('上限的1 / 2')));
   assert.ok(texts_of(fixture, 112).some((t) => t.includes('换算成人类年龄')));
-  assert.ok(grid_of(21).includes('  100 岁'));
-  assert.ok(grid_of(25).includes('  500 岁'));
+  assert.ok(grid_of(21).includes('\u00A0\u00A0100 岁'));
+  assert.ok(grid_of(25).includes('\u00A0\u00A0500 岁'));
   assert.deepEqual(grid_of(26), [], '26-30 不渲染');
   // :1215/:1233 两行标签带前导两个全角空格（#547 验收第 6 条）
   assert.ok(
@@ -633,7 +643,7 @@ test('RACE_CONFIG 编辑循环的档位说明行（当前设定与 17 岁换算�
     '种族编辑头',
   );
   assert.ok(
-    lines.some((line) => line.includes('换算成人类年龄的  10 倍')),
+    lines.some((line) => line.includes('换算成人类年龄的\u00A0\u00A010 倍')),
     '当前档说明（槽 011 → 10 倍）',
   );
   assert.ok(
@@ -641,7 +651,7 @@ test('RACE_CONFIG 编辑循环的档位说明行（当前设定与 17 岁换算�
     '17 岁换算预览行',
   );
   assert.ok(
-    lines.some((line) => line.includes(' 170 ～  179 岁')),
+    lines.some((line) => line.includes('\u00A0170 ～ \u00A0179 岁')),
     '预览年龄区间',
   );
 });
@@ -656,11 +666,11 @@ test('RACE_CONFIG 编辑循环的小数倍档预览（17×1.5 的整数截断，
 
   const lines = fixture.text_lines();
   assert.ok(
-    lines.some((line) => line.includes('换算成人类年龄的 1.5 倍')),
+    lines.some((line) => line.includes('换算成人类年龄的\u00A01.5 倍')),
     '当前档说明（小数倍）',
   );
   assert.ok(
-    lines.some((line) => line.includes('  25 岁')),
+    lines.some((line) => line.includes('\u00A0\u00A025 岁')),
     '小数倍档的 17 岁换算预览按整数除法截断',
   );
 });

@@ -310,7 +310,7 @@ test('自动存档（#137/ADR-0006）：EVENT_NEWDAY 入口写 99 号槽，备�
   assert.equal(saves.length, 1, '入口恰好存一次');
   assert.match(
     saves[0].args[1],
-    /^自动 \d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第 7日午前/,
+    /^自动 \d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第\u00A07日午前/,
     '备注 = 「自动」前缀 + %GETTIMES()% + @SAVEINFO 正文（#104 决议第三节）',
   );
   assert.equal(

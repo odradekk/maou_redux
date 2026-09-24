@@ -204,9 +204,9 @@ export default [
   {
     desc: 'M53 参数行的缺段空格错一（DOWN 缺段 7 改 8）',
     file: 'ere/event/source-check.js',
-    find: "          (d > 0 ? `-${figure_indent_2(d)}${d}` : ' '.repeat(7)) +",
+    find: '          (d > 0 ? `-${figure_indent_2(d)}${d}` : NBSP.repeat(7)) +',
     replace:
-      "          (d > 0 ? `-${figure_indent_2(d)}${d}` : ' '.repeat(8)) +",
+      '          (d > 0 ? `-${figure_indent_2(d)}${d}` : NBSP.repeat(8)) +',
     tests: ['source-check'],
     must_mention: '黄金样本',
   },

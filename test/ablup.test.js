@@ -1758,7 +1758,11 @@ test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个半角空格+全�
   fixture.set_inputs(100);
   await ablup14(CID);
   assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
-  assert.ok(fixture.text_lines().includes('      性交经验　3/3'));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0性交经验　3/3'),
+  );
 });
 
 test('ablup14：issue #14 缺陷——DECIDE 的技巧门槛误比较 ABL:12<5（应比较 ABL:14<5），Lv6 时无渲染文案却仍可能被判能力不足', async () => {
@@ -1837,8 +1841,16 @@ test('ablup15：Lv0 梯子字面值，EXP 行字面量" or"仅出现在第一行
   fixture.set_inputs(100);
   await ablup15(CID);
   assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
-  assert.ok(fixture.text_lines().includes('      调教会话经验　3/3 or'));
-  assert.ok(fixture.text_lines().includes('      卖淫经验　0/5'));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0调教会话经验　3/3 or'),
+  );
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0卖淫经验　0/5'),
+  );
 });
 
 test('ablup15：bit2 需要两条经验轨道同时不足才命中——任一达标即可免', async () => {

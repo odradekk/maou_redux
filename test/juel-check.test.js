@@ -95,7 +95,7 @@ const ROW_CASES = [
     row: 0,
     desc: '阴核（基础行）：梯子 200 + EX:0 绝顶加成 ×1000',
     seed: { palam: { 0: 9999 }, ex: { 0: 1 }, juel: { 0: 2279 } },
-    line: '阴核点数：(    2279 +     1200)            =     3479|',
+    line: '阴核点数：(\u00A0\u00A0\u00A0\u00A02279 + \u00A0\u00A0\u00A0\u00A01200)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A03479|',
     juel_key: 0,
     juel_now: 3479,
   },
@@ -103,7 +103,7 @@ const ROW_CASES = [
     row: 1,
     desc: '私处（基础行）：梯子 1 + EX:1 ×1000 ×2',
     seed: { palam: { 1: 250 }, ex: { 1: 2 }, juel: { 1: 5 } },
-    line: '私处点数：(       5 +     2001)            =     2006|',
+    line: '私处点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A05 + \u00A0\u00A0\u00A0\u00A02001)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A02006|',
     juel_key: 1,
     juel_now: 2006,
   },
@@ -111,7 +111,7 @@ const ROW_CASES = [
     row: 2,
     desc: '肛门（基础行）：梯子 2、无绝顶加成',
     seed: { palam: { 2: 499 } },
-    line: '肛门点数：(       0 +        2)            =        2|',
+    line: '肛门点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A02)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A02|',
     juel_key: 2,
     juel_now: 2,
   },
@@ -119,7 +119,7 @@ const ROW_CASES = [
     row: 3,
     desc: '乳房（基础行，juel 14）：梯子 100 + EX:3 ×1000 ×3',
     seed: { palam: { 14: 5999 }, ex: { 3: 3 }, juel: { 14: 40 } },
-    line: '乳房点数：(      40 +     3100)            =     3140|',
+    line: '乳房点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A040 + \u00A0\u00A0\u00A0\u00A03100)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A03140|',
     juel_key: 14,
     juel_now: 3140,
   },
@@ -127,7 +127,7 @@ const ROW_CASES = [
     row: 4,
     desc: '恭顺（抵消行，juel 4）：池空 → 抵消 0',
     seed: { palam: { 4: 1499 } },
-    line: '恭顺点数：(       0 +       10) -        0 =       10|',
+    line: '恭顺点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A010) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A010|',
     juel_key: 4,
     juel_now: 10,
   },
@@ -135,7 +135,7 @@ const ROW_CASES = [
     row: 5,
     desc: '欲情（抵消行，juel 5）：梯子 20',
     seed: { palam: { 5: 2999 } },
-    line: '欲情点数：(       0 +       20) -        0 =       20|',
+    line: '欲情点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020|',
     juel_key: 5,
     juel_now: 20,
   },
@@ -143,7 +143,7 @@ const ROW_CASES = [
     row: 6,
     desc: '屈服（抵消行，juel 6）：梯子 1',
     seed: { palam: { 6: 299 } },
-    line: '屈服点数：(       0 +        1) -        0 =        1|',
+    line: '屈服点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A01) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A01|',
     juel_key: 6,
     juel_now: 1,
   },
@@ -151,7 +151,7 @@ const ROW_CASES = [
     row: 7,
     desc: '习得（基础行，juel 7）：梯子 0（PALAM < 100）→ 原值不动',
     seed: { palam: { 7: 99 }, juel: { 7: 3 } },
-    line: '习得点数：(       3 +        0)            =        3|',
+    line: '习得点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A03 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A03|',
     juel_key: 7,
     juel_now: 3,
   },
@@ -159,7 +159,7 @@ const ROW_CASES = [
     row: 8,
     desc: '耻情（抵消行，juel 8）：梯子顶格 12000',
     seed: { palam: { 8: 250000 } },
-    line: '耻情点数：(       0 +    12000) -        0 =    12000|',
+    line: '耻情点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A012000) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A012000|',
     juel_key: 8,
     juel_now: 12000,
   },
@@ -167,7 +167,7 @@ const ROW_CASES = [
     row: 9,
     desc: '苦痛（抵消行，juel 9）：梯子 2000',
     seed: { palam: { 9: 59999 } },
-    line: '苦痛点数：(       0 +     2000) -        0 =     2000|',
+    line: '苦痛点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A02000) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A02000|',
     juel_key: 9,
     juel_now: 2000,
   },
@@ -175,7 +175,7 @@ const ROW_CASES = [
     row: 10,
     desc: '恐怖（抵消行，juel 10）：梯子 3000',
     seed: { palam: { 10: 99999 } },
-    line: '恐怖点数：(       0 +     3000) -        0 =     3000|',
+    line: '恐怖点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A03000) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A03000|',
     juel_key: 10,
     juel_now: 3000,
   },
@@ -183,7 +183,7 @@ const ROW_CASES = [
     row: 11,
     desc: '否定（抵消行，juel 100）：反感+不快+抑郁汇入（100+1+2）',
     seed: { palam: { 11: 3000, 12: 100, 13: 499 }, juel: { 100: 5 } },
-    line: '否定点数：(       5 +      103) -        0 =      108|',
+    line: '否定点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A05 + \u00A0\u00A0\u00A0\u00A0\u00A0103) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A0\u00A0108|',
     juel_key: 100,
     juel_now: 108,
     header: '调教结果：否定点数108个抵消。',
@@ -192,7 +192,7 @@ const ROW_CASES = [
     row: 12,
     desc: '癖好（基础行，juel 15）：未定制癖好名显示「癖好」',
     seed: { palam: { 15: 1500 }, juel: { 15: 7 } },
-    line: '癖好点数：(       7 +       20)            =       27|',
+    line: '癖好点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A07 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A027|',
     juel_key: 15,
     juel_now: 27,
   },
@@ -236,7 +236,7 @@ test('结算表第 12 行：CSTR:7 定制癖好名替换「癖好」标签', () 
 
   assert.equal(
     fixture.text_lines()[1 + 12],
-    '足交点数：(       0 +       20)            =       20|',
+    '足交点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020|',
   );
 });
 
@@ -564,19 +564,19 @@ test('黄金样本 :237-253：结算表头与 13 行逐字一致（否定点数 
   mod.juel_check_main(31, () => picks[pick_index++ % picks.length]);
   assert.deepEqual(fixture.text_lines().slice(0, 15), [
     '调教结果：否定点数208个抵消。',
-    '阴核点数：(    2279 +     1200)            =     3479|',
-    '私处点数：(       0 +        0)            =        0|',
-    '肛门点数：(       0 +        0)            =        0|',
-    '乳房点数：(       0 +        0)            =        0|',
-    '恭顺点数：(       0 +        0) -        0 =        0|',
-    '欲情点数：(       0 +       20) -       20 =        0|',
-    '屈服点数：(       0 +        1) -        1 =        0|',
-    '习得点数：(       3 +        1)            =        4|',
-    '耻情点数：(       0 +       20) -       20 =        0|',
-    '苦痛点数：(       0 +        0) -        0 =        0|',
-    '恐怖点数：(       0 +        0) -        0 =        0|',
-    '否定点数：(     108 +      100) -       41 =      167|',
-    '癖好点数：(       0 +        0)            =        0|',
+    '阴核点数：(\u00A0\u00A0\u00A0\u00A02279 + \u00A0\u00A0\u00A0\u00A01200)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A03479|',
+    '私处点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '肛门点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '乳房点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '恭顺点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '欲情点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '屈服点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A01) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A01 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '习得点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A03 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A01)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A04|',
+    '耻情点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A020 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '苦痛点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '恐怖点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 = \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
+    '否定点数：(\u00A0\u00A0\u00A0\u00A0\u00A0108 + \u00A0\u00A0\u00A0\u00A0\u00A0100) - \u00A0\u00A0\u00A0\u00A0\u00A0\u00A041 = \u00A0\u00A0\u00A0\u00A0\u00A0167|',
+    '癖好点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
     '以上的点数变化了。',
   ]);
   // 相殺后的账面（SHOW_JUEL 的读数源）
@@ -594,7 +594,7 @@ test('黄金样本 :255-256：SHOW_INFO_EXP 的经验行与等级行逐字一致
   show_info_exp(31);
 
   assert.deepEqual(fixture.text_lines(), [
-    '　绝顶经验:     3',
+    '\u3000绝顶经验:\u00A0\u00A0\u00A0\u00A0\u00A03',
     '　温妮当前是Lv1，战斗经验值总计0点，本级经验：0/20',
   ]);
 });
@@ -612,8 +612,8 @@ test('SHOW_INFO_EXP：四个经验一行的换行与 8 宽名字列、残行收�
   // 名字列：私处经验（8 显示宽）不补空格；每个格子自带全角引导空格
   //（原作每个 PRINTFORM 都以全角空格开头）；LV 公式行照常殿后
   assert.deepEqual(fixture.text_lines(), [
-    '　私处经验:    10　肛门经验:    11　绝顶经验:    12　射精经验:    13',
-    '　性交经验:    15',
+    '\u3000私处经验:\u00A0\u00A0\u00A0\u00A010\u3000肛门经验:\u00A0\u00A0\u00A0\u00A011\u3000绝顶经验:\u00A0\u00A0\u00A0\u00A012\u3000射精经验:\u00A0\u00A0\u00A0\u00A013',
+    '\u3000性交经验:\u00A0\u00A0\u00A0\u00A015',
     '　温妮当前是Lv1，战斗经验值总计0点，本级经验：0/20',
   ]);
 });
@@ -644,9 +644,9 @@ test('黄金样本 :258-260：SHOW_JUEL 三行逐字一致（样本的结算后�
 
   // 末项恰为 4 的倍数 → PRINTL 补一空行（br），随后是尾部分隔线
   assert.deepEqual(fixture.text_lines(), [
-    ' 阴核点数：  3479 私处点数：     0 肛门点数：     0 乳房点数：     0',
-    ' 恭顺点数：     0 欲情点数：     0 屈服点数：     0 习得点数：     4',
-    ' 耻情点数：     0 苦痛点数：     0 恐怖点数：     0 否定点数：   167',
+    ' 阴核点数：\u00A0\u00A03479 私处点数：\u00A0\u00A0\u00A0\u00A0\u00A00 肛门点数：\u00A0\u00A0\u00A0\u00A0\u00A00 乳房点数：\u00A0\u00A0\u00A0\u00A0\u00A00',
+    ' 恭顺点数：\u00A0\u00A0\u00A0\u00A0\u00A00 欲情点数：\u00A0\u00A0\u00A0\u00A0\u00A00 屈服点数：\u00A0\u00A0\u00A0\u00A0\u00A00 习得点数：\u00A0\u00A0\u00A0\u00A0\u00A04',
+    ' 耻情点数：\u00A0\u00A0\u00A0\u00A0\u00A00 苦痛点数：\u00A0\u00A0\u00A0\u00A0\u00A00 恐怖点数：\u00A0\u00A0\u00A0\u00A0\u00A00 否定点数：\u00A0\u00A0\u00A0167',
   ]);
   assert.equal(fixture.lines.at(-2).type, 'br', '末行后有空行（:26 PRINTL）');
   assert.equal(fixture.lines.at(-1).type, 'divider', '尾部点线（:27）');
@@ -661,7 +661,7 @@ test('SHOW_JUEL：男人（TALENT:122）第 0 项显示「阴茎」', () => {
 
   show_juel(31);
 
-  assert.ok(fixture.text_lines()[0].startsWith(' 阴茎点数：  3479'));
+  assert.ok(fixture.text_lines()[0].startsWith(' 阴茎点数：\u00A0\u00A03479'));
 });
 
 test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别过滤与 [999]', async () => {

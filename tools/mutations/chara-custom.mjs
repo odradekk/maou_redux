@@ -85,9 +85,9 @@ export default [
   {
     desc: 'M8768 素质名补位宽度 10 改 11',
     file: 'ere/chara/chara-and-hair.js',
-    find: '`[${pad_left(String(i), 2)}] ${pad_right(talentname(talent_id), 10)}`',
+    find: '`[${pad_left(String(i), 2)}] ${pad_display(talentname(talent_id), 10)}`',
     replace:
-      '`[${pad_left(String(i), 2)}] ${pad_right(talentname(talent_id), 11)}`',
+      '`[${pad_left(String(i), 2)}] ${pad_display(talentname(talent_id), 11)}`',
     tests: ['chara-and-hair'],
     must_mention: 'N160',
   },
@@ -585,26 +585,26 @@ export default [
   {
     desc: 'M9007 预设名字的字段宽 14 改 15（列表整行错位）',
     file: 'ere/chara/chara-custom.js',
-    find: '${pad_right(csv_name(preset), 14)}`;',
-    replace: '${pad_right(csv_name(preset), 15)}`;',
+    find: '${pad_display(csv_name(preset), 14)}`;',
+    replace: '${pad_display(csv_name(preset), 15)}`;',
     tests: ['chara-custom'],
     must_mention: '勇者段每行 4 格',
   },
   {
     desc: 'M9008 显示编号的补位宽 2 改 3（`[ 1]` 变 `[  1]`）',
     file: 'ere/chara/chara-custom.js',
-    find: '    current += `[${pad_left(String(label), 2)}] ${pad_right(csv_name(preset), 14)}`;',
+    find: '    current += `[${pad_left(String(label), 2)}] ${pad_display(csv_name(preset), 14)}`;',
     replace:
-      '    current += `[${pad_left(String(label), 3)}] ${pad_right(csv_name(preset), 14)}`;',
+      '    current += `[${pad_left(String(label), 3)}] ${pad_display(csv_name(preset), 14)}`;',
     tests: ['chara-custom'],
     must_mention: '勇者段每行 4 格',
   },
   {
     desc: 'M9009 发色名的字段宽 7 改 8（列表整行错位）',
     file: 'ere/chara/chara-and-hair.js',
-    find: "    row += `[${pad_left(String(color_id), 2)}] ${pad_right(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;",
+    find: "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;",
     replace:
-      "    row += `[${pad_left(String(color_id), 2)}] ${pad_right(ARR_HAIRCOLOR[color_id] ?? '', 8)}`;",
+      "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 8)}`;",
     tests: ['chara-and-hair'],
     must_mention: '每 6 项换行',
   },
@@ -715,7 +715,7 @@ export default [
   {
     desc: 'M12014 CHAR_APPEND 的性别选项改成按钮（源是 PRINTFORMW，WAIT 会把按钮整批禁用）',
     file: 'ere/chara/chara-custom.js',
-    find: "    era.print('[1] 男性      [2] 女性      [3] 扶她'); // :240",
+    find: "    era.print(\n      '[1] 男性\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0[2] 女性\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0[3] 扶她',\n    ); // :240",
     replace:
       "    era.printButton('男性', 1);\n    era.printButton('女性', 2);\n    era.printButton('扶她', 3); // 变异",
     tests: ['chara-custom'],

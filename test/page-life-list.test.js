@@ -81,7 +81,7 @@ function squeeze(s) {
 }
 
 /** 定宽填充的 F(n 个空格) 写法，读用例时看得出字段宽 */
-const SP = (n) => ' '.repeat(n);
+const SP = (n) => '\u00A0'.repeat(n); // #577：对齐补位 NBSP 化后的期望形态
 
 // —— @LIFE_LIST：表头三档（:23-32）——
 
@@ -125,7 +125,7 @@ test('LIFE_LIST：字段宽随数据变化（名字字段 = 最长名 + 8，等�
   );
   assert.equal(
     row_text(fixture, 2),
-    `菲娅${SP(8)} ${SP(8)} LV${SP(2)}0<未沦陷>${SP(5)}`,
+    `菲娅${SP(8)}  ${SP(7)} LV${SP(2)}0<未沦陷>${SP(5)}`,
     '等级 0 在宽 3 的字段里右对齐补 2 空格',
   );
 });
@@ -202,7 +202,7 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
     // 前段定宽（名字 12 / 职业 8 / 等级右对齐 1）与行尾都逐字比对
     assert.equal(
       row_text(fixture, 1),
-      `玛奥${SP(8)} ${SP(8)} LV0${tail}`,
+      `玛奥${SP(8)}  ${SP(7)} LV0${tail}`,
       label,
     );
   }
@@ -256,12 +256,12 @@ test('LIFE_LIST：无 ☆ 时留 5 空格占位、有 ☆ 时占位消失（:62-
   life_list(0, 1, 20);
   assert.equal(
     row_text(fixture, 1),
-    `玛奥${SP(8)} ${SP(8)} LV0<未沦陷>${SP(5)}`,
+    `玛奥${SP(8)}  ${SP(7)} LV0<未沦陷>${SP(5)}`,
     '1 号无 ☆：5 空格占位',
   );
   assert.equal(
     row_text(fixture, 2),
-    `菲娅${SP(8)} ${SP(8)} LV0<未沦陷> [☆]`,
+    `菲娅${SP(8)}  ${SP(7)} LV0<未沦陷> [☆]`,
     '2 号有 ☆：占位被 [☆] 顶掉',
   );
 });
@@ -307,7 +307,7 @@ test('LIFE_LIST_ITEM：定宽字段逐字比对（编号宽 2 / 名字 12 / 职�
   assert.equal(button_of(fixture, 2).rendered, '[2]', '编号进按钮格');
   assert.equal(
     row_text(fixture, 2),
-    `菲娅${SP(8)} ${SP(8)} LV${SP(3)}8<淫  乱> [☆][可被卖]`,
+    `菲娅${SP(8)}  ${SP(7)} LV${SP(3)}8<淫  乱> [☆][可被卖]`,
     '名字补到 12、职业补到 8、等级右对齐 4',
   );
 });
@@ -321,7 +321,7 @@ test('LIFE_LIST_ITEM：0 号（魔王）不出「可被卖 / 可作为助手」'
   life_list_item(0);
   assert.equal(
     row_text(fixture, 0),
-    `你${SP(10)} ${SP(8)} LV${SP(3)}0<未沦陷>${SP(5)}`,
+    `你${SP(10)}  ${SP(7)} LV${SP(3)}0<未沦陷>${SP(5)}`,
     '魔王不出可卖/助手标签（:121/:123 的 ARG != 0）',
   );
 });
@@ -339,7 +339,7 @@ test('LIFE_LIST_ITEM_E：调教回数 / 种族性格 / 性别三列（:216-244�
     row_text(fixture, 1),
     // 种族性格字段宽 20 按显示宽度填充：`[狼人 - 不明]` 显示宽 13 → 补 7
     // 性别行照原作 PRINT 的两格字面量：男/女 前各两格（:239/:243），扶她无
-    `玛奥${SP(8)} ${SP(8)} LV${SP(3)}3  调教回数:5${SP(2)} [狼人 - 不明]${SP(7)}<未沦陷>  <女>`,
+    `玛奥${SP(8)}  ${SP(7)} LV${SP(3)}3${SP(2)}调教回数:5${SP(2)} [狼人 - 不明]${SP(7)}<未沦陷>${SP(2)}<女>`,
   );
 });
 
@@ -399,7 +399,7 @@ test('LIFE_LIST_ITEM_E：☆ 无前导空格、无 ☆ 时不补占位（:246-24
   const { life_list_item_e } = fixture.load_module('page/page-life-list');
   life_list_item_e(1);
   assert.ok(
-    row_text(fixture, 1).endsWith('<未沦陷>  <女>'),
+    row_text(fixture, 1).endsWith(`<未沦陷>${SP(2)}<女>`),
     `E 版无 ☆ 支不打占位空格，实得 ${JSON.stringify(row_text(fixture, 1))}`,
   );
   // 有 ☆：E 版的 PRINT [☆]（:248）没有前导空格，与 :63/:117 的两个旧版不同

@@ -116,7 +116,7 @@ export default [
   {
     desc: 'M12 PRINT_PALAM 条后数值丢失（outContent 空——语义值载体没了，比对未解释）',
     file: 'ere/page/page-train.js',
-    find: "      outContent: String(value).padStart(PALAM_VALUE_WIDTH, ' '),",
+    find: '      outContent: pad_left(String(value), PALAM_VALUE_WIDTH),',
     replace: "      outContent: '', // 变异：数值丢失",
     tests: ['page-train', 'compare-first-turn'],
     must_mention: '条后数值',
@@ -143,9 +143,9 @@ export default [
   {
     desc: 'M35 SHOW_JUEL 数值列：右对齐宽 6 改 5',
     file: 'ere/page/page-ablup.js',
-    find: '    row += ` ${name}点数：${String(value).padStart(6)}`; // {JUEL,6,RIGHT}',
+    find: '    row += ` ${name}点数：${pad_left(String(value), 6)}`; // {JUEL,6,RIGHT}',
     replace:
-      '    row += ` ${name}点数：${String(value).padStart(5)}`; // {JUEL,6,RIGHT}',
+      '    row += ` ${name}点数：${pad_left(String(value), 5)}`; // {JUEL,6,RIGHT}',
     tests: ['juel-check'],
     must_mention: 'SHOW_JUEL 三行',
   },
@@ -1448,25 +1448,26 @@ export default [
   {
     desc: 'M8395 LIFE_LIST_ITEM_E 调教回数字段宽（3 → 2）',
     file: 'ere/page/page-life-list.js',
-    find: '`  调教回数:${pad_display_left(String(cflag(arg, 10)), 3)}` +',
-    replace: '`  调教回数:${pad_display_left(String(cflag(arg, 10)), 2)}` +',
+    find: '`\\u00A0\\u00A0调教回数:${pad_display(String(cflag(arg, 10)), 3)}` +',
+    replace:
+      '`\\u00A0\\u00A0调教回数:${pad_display(String(cflag(arg, 10)), 2)}` +',
     tests: ['page-life-list'],
     must_mention: '调教回数 / 种族性格 / 性别三列',
   },
   {
     desc: 'M8396 LIFE_LIST_ITEM_E 种族性格字段宽（20 → 19）',
     file: 'ere/page/page-life-list.js',
-    find: '` ${pad_display_left(look, 20)}`,',
-    replace: '` ${pad_display_left(look, 19)}`,',
+    find: '` ${pad_display(look, 20)}`,',
+    replace: '` ${pad_display(look, 19)}`,',
     tests: ['page-life-list'],
     must_mention: '调教回数 / 种族性格 / 性别三列',
   },
   {
     desc: 'M8397 LIFE_LIST_ITEM_E 性别主判据错位（122 → 121）',
     file: 'ere/page/page-life-list.js',
-    find: "  const gender = talent(arg, 122)\n    ? { content: '  <男>' }\n    : talent(arg, 121)",
+    find: "  const gender = talent(arg, 122)\n    ? { content: '\\u00A0\\u00A0<男>' }\n    : talent(arg, 121)",
     replace:
-      "  const gender = talent(arg, 121)\n    ? { content: '  <男>' }\n    : talent(arg, 122)",
+      "  const gender = talent(arg, 121)\n    ? { content: '\\u00A0\\u00A0<男>' }\n    : talent(arg, 122)",
     tests: ['page-life-list'],
     must_mention: '性别三态表驱动',
   },
@@ -1620,9 +1621,9 @@ export default [
   {
     desc: 'M8408 ABILITY_UP 魔王行的名字字段宽（12 → 13）',
     file: 'ere/page/page-ability-up.js',
-    find: "            `${pad_display_left(chara_callname(0), 12)}${' '.repeat(8)} ` +",
+    find: '            `${pad_display(chara_callname(0), 12)}${NBSP.repeat(8)} ` +',
     replace:
-      "            `${pad_display_left(chara_callname(0), 13)}${' '.repeat(8)} ` +",
+      '            `${pad_display(chara_callname(0), 13)}${NBSP.repeat(8)} ` +',
     tests: ['page-ability-up'],
     must_mention: '魔王行的名字与等级按定宽渲染',
   },
@@ -2281,8 +2282,8 @@ export default [
   {
     desc: 'M10730 {值,N} 定宽少一列（padStart(width) 改 width - 1，#502）',
     file: 'ere/page/page-invasion.js',
-    find: '  return String(value).padStart(width);',
-    replace: '  return String(value).padStart(width - 1); // 变异：宽度少一列',
+    find: '  return pad_left(String(value), width);',
+    replace: '  return pad_left(String(value), width - 1); // 变异：宽度少一列',
     tests: ['page-invasion'],
     must_mention: '顶栏：库存 7-3=4、已投放 3 各补到 3 位',
   },
@@ -3603,9 +3604,9 @@ export default [
   {
     desc: 'M11484 SHOW_FLOOR 怪物行数量对齐反向（padEnd 改 padStart：{N,2,LEFT} 语义变 RIGHT）',
     file: 'ere/page/page-shop.js',
-    find: '      era.print(`${String(count).padEnd(2)}只${monstername(base_slot + i)}`);',
+    find: '        `${pad_display(String(count), 2)}只${monstername(base_slot + i)}`,',
     replace:
-      '      era.print(`${String(count).padStart(2)}只${monstername(base_slot + i)}`); // 变异：对齐反向',
+      '        `${String(count).padStart(2)}只${monstername(base_slot + i)}`, // 变异：对齐反向',
     tests: ['page-shop-floor'],
     must_mention: '怪物行（数量左对齐两位）',
   },
@@ -3620,7 +3621,7 @@ export default [
   {
     desc: 'M11491 护卫行编号丢宽度（[{COUNT,2}] 的右对齐改成 [{COUNT}]，个位编号不再补空格）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: "            content: `[${String(cid).padStart(2, ' ')}]`,",
+    find: '            content: `[${pad_left(String(cid), 2)}]`,',
     replace: '            content: `[${cid}]`, // 变异：丢宽度',
     tests: ['page-dungeon-info'],
     must_mention: '宽度 2 右对齐的编号',
