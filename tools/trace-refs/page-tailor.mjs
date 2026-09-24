@@ -1082,6 +1082,14 @@ export const FILES = [
         ],
       },
       {
+        // #612：灰字行照写原作的假编号与「- 」（裸行号引用 :1032 单列一条）
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '1032',
+        any: [
+          /^\s*PRINTL\ \ \[\-\-\-\]\ \-\ 未开放（30级后才能装备强化）\s*$/m,
+        ],
+      },
+      {
         src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
         ref: '1040',
         any: [/^\s*PRINTL\ \ \[999\]\ \-\ 返回\s*$/m],

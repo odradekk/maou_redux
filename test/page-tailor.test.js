@@ -263,6 +263,20 @@ test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- �
     rendered_in(held).includes('[300] - 剑 (2)'),
     'SHOP_TAILOR.ERB:1027',
   );
+
+  // 戒指页的灰字行（原作 :1032 `PRINTL  [---] - 未开放（30级后才能装备强化）`）：
+  // 假编号与前缀照写，武器页那处（:1164）的断言在 EQUIP_MAGIC_WEAPON 用例里
+  const ring_low = tailor_fixture({
+    'item:300': 1,
+    'itemname:300': '剑',
+    'cflag:0:9': 29,
+  });
+  await run_core(ring_low, [7, 1, 999, 999, 999, 999]);
+  assert.ok(
+    texts(ring_low.lines).includes('[---] - 未开放（30级后才能装备强化）'),
+    'SHOP_TAILOR.ERB:1032',
+  );
+  assert.ok(!accs(ring_low.lines).includes(997), '等级不够时没有强化键');
 });
 
 test('TAILOR_CASUAL：两件整表驱动（含男性 S = 3 的门槛）', async () => {
@@ -507,7 +521,7 @@ test('TAILOR_CORE：钱不够时子菜单直接劝退（100 / 1000 / 30000 三�
   }
   // 黑市：钱够 1000（普通装备）但不够 30000（黑市）→ 点进黑市被劝退
   const special = tailor_fixture({ 'flag:10004': 2000 });
-  await run_core(special, [1, 996, 999, 999, 999]);
+  await run_core(special, [1, 996, 999, 999]);
   assert.ok(texts(special.lines).includes('钱不够！'), '黑市 30000 档');
 });
 
@@ -923,8 +937,10 @@ test('EQUIP_MAGIC_WEAPON：等级门的灰显与「取下」', async () => {
   const low = tailor_fixture({ 'cflag:1:550': 40, 'cflag:0:9': 29 });
   {
     const added = await run_core(low, [8, 999, 999]);
+    // #612：灰字行照写原作的假编号与前缀（SHOP_TAILOR.ERB:1164 逐字）
     assert.ok(
-      texts(added).some((t) => t.includes('未开放（30级后才能装备强化）')),
+      texts(added).includes('[---] - 未开放（30级后才能装备强化）'),
+      'SHOP_TAILOR.ERB:1163-1165 的灰显行写 `[---] - 未开放（30级后才能装备强化）`',
     );
     assert.ok(!accs(added).includes(997), '没有强化键');
     assert.ok(accs(added).includes(998), '有取下键');

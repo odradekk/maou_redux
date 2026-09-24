@@ -30,6 +30,8 @@
  *     只贡献占位符，不贡献字面量——否则 `'palamname:4'` 这类键名会污染骨架。
  *   - `[ N]` 定宽补位、`[N] - ` 后的空格数不在判定面内（编号由引擎渲染）。
  *     `▌` 等装饰前缀照旧参与骨架比对。
+ *   - 判定前先把注释整段挖空：文件头注释里的示例调用（`era.printButton('- 名字', n)`）
+ *     不是真按钮，不挖掉会让按钮总数虚高、还被当成真按钮报出来。
  *
  * 判定面之外、必须人工核的两类（报告里各列一节，**别把「缺 0」当成全库结论**）：
  *   - **动态编号选项**：原作 `[{D}] - %ITEMNAME:D%` 这类括号里不是纯数字的，
@@ -38,8 +40,6 @@
  *   - **骨架还原不出的按钮**：正文来自数据表/数组/函数的裸实参
  *     （`era.printButton(item_name(i), i)`），工具既拼不出骨架、也无从判断
  *     该不该有 `- `。这类只能回原作逐屏核。
- *   - 注释尽量不参与：文件头注释里的示例调用（`era.printButton('- 名字', n)`）
- *     先整段挖掉再收集按钮，否则按钮总数虚高、还会把示例当成真按钮报出来。
  *
  * 用法：
  *   node tools/button-dash-scan.mjs            # 打印配对结论
@@ -264,6 +264,9 @@ export function scan_erb_options(root = REPO) {
           file: rel,
           line: index + 1,
           mark: inner,
+          // 整段匹配原文照存：打印时原样出，别按 `[标记] - 正文` 重组——`[{L_I,2}] ----`
+          // 这种四连破折号会被重组出并不存在的分隔符（列表 12 条里的那条假象）
+          whole: mark[0].trim(),
           text: mark[2].trim(),
         });
       }
@@ -1064,7 +1067,8 @@ export function format_survey(result) {
     `── 动态编号选项（${result.dynamic.length}，括号里不是纯数字——工具配不上，需人工核）──`,
   );
   for (const d of result.dynamic) {
-    lines.push(`  ${d.file}:${d.line}  [${d.mark}] - ${d.text.slice(0, 70)}`);
+    // 原样打印整段（不重组 `[标记] - 正文`，见 dynamic.push 处的注释）
+    lines.push(`  ${d.file}:${d.line}  ${d.whole.slice(0, 90)}`);
   }
   lines.push(
     '',
