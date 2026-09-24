@@ -4,8 +4,10 @@
  *
  * 源: 无对应源（引擎语法层的等价物，不是某个 ERB 函数）。语义出自 Emuera
  *     的 FORM 语法（emuera-basic-agent-guide 的 core-concepts/expressions.md
- *     「FORM 语法中的位数和对齐」）：**全角算 2 列、半角 1 列，位数不足补
- *     半角空格，`%,N%` 默认右对齐、`%,N,LEFT%` 左对齐**。
+ *     「FORM 语法中的位数和对齐」）：**全角算 2 列、半角 1 列，`%,N%` 默认
+ *     右对齐、`%,N,LEFT%` 左对齐**。Emuera 位数不足补半角空格；#577 起
+ *     补位字符改为 NBSP（U+00A0）——引擎渲染层合并连续半角空格，空格补位
+ *     的列对齐在实机失效（见下方 NBSP 的注释）。
  *
  * 三个函数的先例在 ere/page/page-info-exp.js（#47 的经验一览），#390 的角色
  * 信息显示链有五个消费方（标题行 / 状态块 / 素质 / 能力 / 交友），照项目
@@ -31,23 +33,37 @@ function display_width(text) {
 }
 
 /**
- * `%,N,LEFT%`：按显示宽度**右补**空格（左对齐）。
+ * 不换行空格（U+00A0）：对齐补位专用字符。引擎渲染层对文本行没有
+ * white-space 设置，连续的半角空格（U+0020）按浏览器默认规则合并成一个，
+ * 按空格补齐的列对齐在实机全部失效；U+00A0 不被合并，且在引擎等宽字体
+ * （EraMono SC）里占 1 个半角宽，与本量尺一致（#577，实测依据见 issue
+ * 的决定评论）。源码里一律引用本常量或写 '\u00A0' 转义，不写裸字符——
+ * ESLint 的 no-irregular-whitespace 会拦裸字符，prettier 也可能吃掉它。
+ * 注意：printButton 的正文另有一层 `/\s+/g → ' '` 合并（引擎渲染层
+ * getButtonObject），JS 的 \s 连 U+00A0/U+3000 一起合并——按钮正文里的
+ * 对齐不能用 NBSP，那类位置按 #577 的普查表登记为已知差异。
+ * @type {string}
+ */
+const NBSP = '\u00A0';
+
+/**
+ * `%,N,LEFT%`：按显示宽度**右补** NBSP（左对齐）。
  * @param {string} text
  * @param {number} width 目标显示宽度
  * @returns {string}
  */
 function pad_display(text, width) {
-  return text + ' '.repeat(Math.max(0, width - display_width(text)));
+  return text + NBSP.repeat(Math.max(0, width - display_width(text)));
 }
 
 /**
- * `%,N%`（默认对齐）：按显示宽度**左补**空格（右对齐）。
+ * `%,N%`（默认对齐）：按显示宽度**左补** NBSP（右对齐）。
  * @param {string} text
  * @param {number} width 目标显示宽度
  * @returns {string}
  */
 function pad_left(text, width) {
-  return ' '.repeat(Math.max(0, width - display_width(text))) + text;
+  return NBSP.repeat(Math.max(0, width - display_width(text))) + text;
 }
 
 /**
@@ -72,4 +88,10 @@ function slice_display(text, width) {
   return out;
 }
 
-module.exports = { display_width, pad_display, pad_left, slice_display };
+module.exports = {
+  NBSP,
+  display_width,
+  pad_display,
+  pad_left,
+  slice_display,
+};
