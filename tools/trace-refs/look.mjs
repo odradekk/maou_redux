@@ -1775,177 +1775,195 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '894-903',
-        // :895
+        ref: '894-909',
+        // :894-909（默认视角的 ELSE 支）
         any: [/^\s*PRINT \[\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '905-907',
-        // :907
-        any: [/^\s*SIF STRLENS\(LOCALS:3\) > 0\s*$/m],
+        ref: '907-908',
+        // :907-908（原种族行）
+        any: [/^\s*PRINTFORML \[原种族：%LOCALS:3%\]\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '915-941',
-        // :917
-        any: [/^\s*PRINT \[发色：\s*$/m],
+        ref: '911-936',
+        // :911（头发颜色と性質）
+        any: [/^\s*;头发颜色と性質\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '915-978',
-        // :917
-        any: [/^\s*PRINT \[发色：\s*$/m],
+        ref: '911-976',
+        // :911-976（两块合起来，行合并说明的引用）
+        any: [/^\s*;头发长度・カット・髪型\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '944-978',
-        // :945
+        ref: '939-976',
+        // :939（头发长度・カット・髪型）
         any: [/^\s*PRINT \[头发长度：\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '962-966',
-        // :963
-        any: [/^\s*PRINT \]\[发型：\s*$/m],
+        ref: '961-966',
+        // :961-966（男性去除髮型顯示的两处守卫）
+        any: [/^\s*;男性去除髮型顯示\(避免顯示雙馬尾之類的奇怪髮型\)\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '981-1021',
-        // :981
-        any: [/^\s*PRINT 「我的\s*$/m],
+        ref: '978-1018',
+        // :978（その他の外見）
+        any: [/^\s*;その他の外見\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1022-1080',
-        // :1025
-        any: [/^\s*PRINT \[体型：\s*$/m],
+        ref: '1019-1078',
+        // :1019（体型・乳头・阴毛・阴茎）
+        any: [/^\s*IF TALENT:308 && TALENT:309 && TALENT:310\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '1056-1071',
+        // :1056（ペニス，扶她・男人のみ）
+        any: [/^\s*IF TALENT:121 \|\| TALENT:122\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '1079-1111',
+        // :1079（魅力点・癖）
+        any: [/^\s*IF TALENT:312 && TALENT:313\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '1025-1029',
-        // :1025
+        // :1025（上半段的刺青候选表引用，未改）
         any: [/^\s*PRINT \[体型：\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1064-1076',
-        // :1065
-        any: [/^\s*PRINTFORM %GET_LOOK_INFO\(TARGET, "阴茎的状态"\)%\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1081-1103',
-        // :1085
-        any: [/^\s*PRINT \[魅力点：\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1103-1107',
-        // :1103
-        any: [/^\s*PRINT 是我的习惯\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '1277-1279',
-        // :1277-1278
+        // :1277-1278（上半段的头发修剪方式引用，未改）
         any: [/^\s*\s*\n\s*; ELSE\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1310-1340',
-        // :1337-1339
-        any: [/^\s*; ENDIF\s*\n\s*; ENDIF\s*\n\s*; ENDIF\s*$/m],
+        ref: '1113',
+        // :1113（CALL FAMILY_PRINT_INFO(TARGET)）
+        any: [/^\s*CALL FAMILY_PRINT_INFO\(TARGET\)\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1342-1367',
-        // :1343
-        any: [/^\s*; \[ENDIF\]\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1348-1365',
-        // :1350
+        ref: '1345-1380',
+        // :1345（成为勇者之前的前缀四路）
         any: [/^\s*PRINT \[来到据点之前：\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1370-1400',
-        // :1371
-        any: [/^\s*PRINT \[成为冒险者之前：\s*$/m],
+        ref: '1382-1408',
+        // :1382（取值 + 前职业语尾）
+        any: [
+          /^\s*IF TALENT:315 == 8 \|\| TALENT:315 == 12 \|\| TALENT:315 == 19\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1402-1430',
-        // :1413
-        any: [/^\s*PRINT 「回应召唤是因为\s*$/m],
+        ref: '1411-1446',
+        // :1411（成为勇者的契机的前缀四路）
+        any: [/^\s*PRINT \[回应召唤的理由：\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1407-1428',
-        // :1413
-        any: [/^\s*PRINT 「回应召唤是因为\s*$/m],
+        ref: '1448-1475',
+        // :1448（取值 + 契机语尾）
+        any: [
+          /^\s*IF TALENT:316 == 3 \|\| TALENT:316 == 7 \|\| TALENT:316 == 16 \|\| TALENT:316 == 17\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1435-1508',
-        // :1437
-        any: [/^\s*PRINT \[成为冒险者的契机：\s*$/m],
+        ref: '1345-1408',
+        // :1345-1408（来历块一：前缀 + 取值 + 语尾）
+        any: [/^\s*PRINT \[成为勇者之前：\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1487-1507',
-        // :1488
-        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+        ref: '1411-1475',
+        // :1411-1475（来历块二：前缀 + 取值 + 语尾）
+        any: [/^\s*PRINT \[成为勇者的契机：\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1488',
-        // :1488
-        any: [/^\s*IF TALENT:85 == 1\s*$/m],
+        ref: '1384-1404',
+        // :1384（前职业语尾的五档）
+        any: [/^\s*CALL GOBI_KOUJO, 2\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1511-1532',
-        // :1513
-        any: [/^\s*PRINTFORML （信仰値：\{CFLAG:152\}）」\s*$/m],
+        ref: '1450-1470',
+        // :1450（契机语尾的五档）
+        any: [/^\s*CALL GOBI_KOUJO, 4\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1534-1562',
-        // :1534
-        any: [/^\s*PRINTFORM 丰饶的大地女神是是用乳头自慰的母牛！\s*$/m],
+        ref: '1478-1550',
+        // :1478（信仰，巫女・聖女・法术/咒术）
+        any: [/^\s*;信仰。巫女、聖女、法术・咒术持ちは信仰を持っている\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1557-1559',
-        // :1557
-        any: [/^\s*PRINTFORM 不能正常的怀孕\s*$/m],
+        ref: '1517-1548',
+        // :1517（堕落者的弃教行）
+        any: [/^\s*;堕落した場合、以前の信仰を冒涜する\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1564-1617',
-        // :1568
-        any: [/^\s*PRINTFORM 」\s*$/m],
+        ref: '1519',
+        // :1519（TALENT:17 低姿态的判断）
+        any: [
+          /^\s*IF \(TALENT:85 == 1 \|\| CFLAG:0 != 0\) && \(TALENT:17 \|\| TALENT:282\)\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1572-1576',
-        // :1576
+        ref: '1553-1573',
+        // :1553（妊娠适性）
+        any: [/^\s*IF TALENT:TARGET:158\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '1575-1611',
+        // :1575（所持金・借金）
         any: [/^\s*PRINT 「身上的钱么……\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1620-1622',
-        // :1620
+        ref: '1599-1601',
+        // :1599（借金行的 LightGreen）
+        any: [/^\s*SETCOLORBYNAME LightGreen\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '1613-1658',
+        // :1613（常识改变系）
+        any: [/^\s*;常识改变系\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '1620-1621',
+        // :1620（LOCALは連続に使う）
         any: [/^\s*;LOCALは連続に使う\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1656-1660',
-        // :1660
-        any: [/^\s*;好きなものは別関数\s*$/m],
+        ref: '1662',
+        // :1662（CALL LOOK_INFO_LOVE）
+        any: [/^\s*CALL LOOK_INFO_LOVE\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '1662-1664',
+        // :1662-1664（尾段：无条件调用 + RETURN 1）
+        any: [/^\s*CALL LOOK_INFO_LOVE\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1955,21 +1973,17 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1674-1712',
-        // :1674
-        any: [/^\s*#DIM HEART\s*$/m],
+        ref: '1677-1712',
+        // :1677（MAIN_LOVE 下标注释表）
+        any: [
+          /^\s*;MAIN_LOVE:0  = デフォで喜欢的东西。TALENT:317への愛情度\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1714-2594',
-        // :1715
+        ref: '1714-2603',
+        // :1714-2603（评分半：从仕様说明到修正值适用）
         any: [/^\s*;仕様について\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1727-1732',
-        // :1727
-        any: [/^\s*;表示されるのは上位30個までとなっている\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1979,239 +1993,245 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1750',
-        // :1750
-        any: [/^\s*;設定での処理\s*$/m],
+        ref: '1737-1742',
+        // :1737（初期化循环）
+        any: [/^\s*;初期化\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1755-1793',
-        // :1755
-        any: [/^\s*;エルフ・天使\s*$/m],
+        ref: '1744-1746',
+        // :1744（初期値）
+        any: [/^\s*;初期値\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1755-1757',
-        // :1755
-        any: [/^\s*;エルフ・天使\s*$/m],
+        ref: '1753-1811',
+        // :1753（种族補正）
+        any: [/^\s*IF TALENT:314 == 1 \|\| TALENT:314 == 6\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1777-1783',
-        // :1783
-        any: [/^\s*ELSEIF TALENT:314 == 2\s*$/m],
+        ref: '1753-1767',
+        // :1753-1767（高洁：精灵/天使）
+        any: [/^\s*;一般的に高潔な种族\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1790-1792',
-        // :1792
-        any: [/^\s*MAIN_LOVE:41 \+= 1\s*$/m],
+        ref: '1769-1781',
+        // :1769-1781（恶：吸血鬼/无头骑士）
+        any: [/^\s*ELSEIF TALENT:314 == 3 \|\| TALENT:314 == 4\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1797-1852',
-        // :1798
+        ref: '1798-1810',
+        // :1798-1810（堕落：魔族/暗精灵/堕天使）
         any: [
           /^\s*ELSEIF \(TALENT:314 == 9 \|\| TALENT:314 == 8 \|\| TALENT:314 == 7\)\s*$/m,
         ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1856-1869',
-        // :1865
-        any: [/^\s*MAIN_LOVE:21 -= 2\s*$/m],
+        ref: '1813-1877',
+        // :1813（元の職業補正）
+        any: [/^\s*;元の職業補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1901-1933',
-        // :1901
-        any: [/^\s*IF TALENT:317 == 4\s*$/m],
+        ref: '1879-1898',
+        // :1879（理由補正）
+        any: [/^\s*;理由補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1937-1962',
-        // :1940
-        any: [/^\s*;かわいい動物\s*$/m],
+        ref: '1900-1947',
+        // :1900（喜欢的东西補正）
+        any: [/^\s*;喜欢的东西補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '1964-2233',
-        // :1968
-        any: [/^\s*MAIN_LOVE:50 \+= 2\s*$/m],
+        ref: '1949-1978',
+        // :1949（陥落度合い）
+        any: [/^\s*;陥落度合い\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2213-2217',
-        // :2215
-        any: [/^\s*;A鈍感\s*$/m],
+        ref: '1980-2374',
+        // :1980（素質による補正）
+        any: [/^\s*;素質による補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2288-2292',
-        // :2290
-        any: [/^\s*IF TALENT:143\s*$/m],
+        ref: '2167-2171',
+        // :2167-2171（双性恋，与倒錯的同条件重复）
+        any: [/^\s*;双性恋\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2437-2485',
-        // :2438
-        any: [/^\s*MAIN_LOVE:33 \+= ABL:21\s*$/m],
+        ref: '2263-2269',
+        // :2263-2269（牝犬，与动物耳朵同条件）
+        any: [/^\s*;牝犬\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2490-2543',
-        // :2491
-        any: [/^\s*MAIN_LOVE:30 \+= 2\s*$/m],
+        ref: '2376-2470',
+        // :2376（能力による補正）
+        any: [/^\s*;能力による補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2546-2548',
-        // :2547
-        any: [/^\s*ELSEIF EXP:营业爱情经验 > 0\s*$/m],
+        ref: '2472-2550',
+        // :2472（経験補正）
+        any: [/^\s*;経験補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2550-2558',
-        // :2552
+        ref: '2519-2528',
+        // :2519-2528（肛门快乐经验一组：源用 >200 / >80，本实现未按此分档）
+        any: [/^\s*IF EXP:肛门快乐经验 > 200\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '2552-2555',
+        // :2552（新しい夫ボーナス / 恋人ボーナス）
         any: [/^\s*;新しい夫ボーナス\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2570-2588',
-        // :2571
-        any: [/^\s*;コンプレックスがこじれる\s*$/m],
+        ref: '2557-2565',
+        // :2557（刻印）
+        any: [/^\s*;刻印\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2591-2594',
-        // :2593
-        any: [/^\s*;獣姦好きは野良犬も好き\s*$/m],
+        ref: '2567-2597',
+        // :2567（相互作用）
+        any: [/^\s*;相互作用\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2594',
-        // :2594
-        any: [/^\s*LOVE_POOL:60 \+= MAIN_LOVE:61 \/ 2\s*$/m],
+        ref: '2600-2603',
+        // :2600（修正値適用）
+        any: [/^\s*;修正値適用\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2602',
-        // :2602
-        any: [/^\s*MAIN_LOVE:LOVE_ID \+= LOVE_POOL:LOVE_ID\s*$/m],
+        ref: '2606-2616',
+        // :2606（各種表示の前置き）
+        any: [/^\s*;各種表示\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2602-2641',
-        // :2602
-        any: [/^\s*MAIN_LOVE:LOVE_ID \+= LOVE_POOL:LOVE_ID\s*$/m],
+        ref: '2612-2616',
+        // :2612（引子的两条 PRINTL）
+        any: [/^\s*PRINTL 「喜欢的东西是……\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2620',
-        // :2620
-        any: [/^\s*LOCAL = -9999\s*$/m],
+        ref: '2618',
+        // :2618（ソート的开始）
+        any: [/^\s*;ソート\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2636-2637',
-        // :2636
-        any: [/^\s*;30位までソート\s*$/m],
+        ref: '2618-2667',
+        // :2618-2667（ソート整体）
+        any: [/^\s*LOCAL:1 = 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2650-2654',
-        // :2651
-        any: [/^\s*;现在の最大値ではない、现在の最大値の次に大きい数記憶\s*$/m],
+        ref: '2637',
+        // :2637（WHILE LOVE_COUNT < 30）
+        any: [/^\s*WHILE LOVE_COUNT < 30\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2652-2656',
-        // :2652
-        any: [/^\s*LOCAL:2 = MAIN_LOVE:LOVE_ID\s*$/m],
+        ref: '2662-2665',
+        // :2662-2665（無限ループ避け）
+        any: [/^\s*SIF LOCAL:1 > 100\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2652',
-        // :2652
-        any: [/^\s*LOCAL:2 = MAIN_LOVE:LOVE_ID\s*$/m],
+        ref: '2671',
+        // :2671（FOR LOVE_COUNT, 0, 30）
+        any: [/^\s*FOR LOVE_COUNT, 0, 30\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2673-2777',
-        // :2673
+        ref: '2671-2795',
+        // :2671-2795（显示循环本体）
         any: [/^\s*;順位からIDを取り出す\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2711',
-        // :2711
-        any: [/^\s*ELSEIF LOVE_ID == 31\s*$/m],
+        ref: '2677-2678',
+        // :2677-2678（显示门槛，SIF 3 以下 CONTINUE）
+        any: [/^\s*SIF MAIN_LOVE:LOVE_ID <= 3\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2713-2715',
-        // :2713
-        any: [/^\s*ELSEIF LOVE_ID == 32 && TALENT:男人\s*$/m],
+        ref: '2681-2682',
+        // :2681-2682（LOVE_LIKE_BASE 未命中则 CONTINUE）
+        any: [/^\s*SIF RESULT == 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2720',
-        // :2720
-        any: [/^\s*PRINTFORM 虐待别人\s*$/m],
+        ref: '2697',
+        // :2697（id 11 对男人不显示）
+        any: [/^\s*ELSEIF LOVE_ID == 11 && !TALENT:男人\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2723',
-        // :2723
-        any: [/^\s*ELSEIF LOVE_ID == 40  && TALENT:男人\s*$/m],
+        ref: '2731-2742',
+        // :2731-2742（恋人 42 的四支）
+        any: [/^\s*ELSEIF LOVE_ID == 42\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2738-2747',
-        // :2738
-        any: [/^\s*PRINTFORM 恋人\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2740-2746',
-        // :2740
-        any: [/^\s*PRINT 恋人的\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2743',
-        // :2743
+        ref: '2743-2745',
+        // :2743-2745（id 50 恒不显示）
         any: [/^\s*ELSEIF LOVE_ID == 50\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2748-2749',
-        // :2748
-        any: [/^\s*ELSEIF LOVE_ID == 51\s*$/m],
+        ref: '2772-2773',
+        // :2772-2773（ELSE CONTINUE）
+        any: [/^\s*ELSE\s*\n\s*CONTINUE\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2750',
-        // :2750
-        any: [/^\s*ELSEIF LOVE_ID == 52 && MAIN_LOVE:50 > 6\s*$/m],
+        ref: '2779',
+        // :2779（心形上限 SIF HEART > 6）
+        any: [/^\s*SIF HEART > 6\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2753',
-        // :2753
-        any: [/^\s*PRINTFORM 爸爸\s*$/m],
+        ref: '2791',
+        // :2791（每行几个 IF LOVE_NUM % 6 == 0）
+        any: [/^\s*IF LOVE_NUM % 6 == 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2755',
-        // :2755
-        any: [/^\s*PRINTFORM 萝莉的小穴\s*$/m],
+        ref: '2776-2780',
+        // :2776-2780（5 個ごとに金红桃，上限 6）
+        any: [/^\s*;5個ごとに金红桃が一つずつ増える\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '2791-2793',
         // :2791-2793（#570 返工：每 6 项换行的 PRINTL + 新行开头的「　」）
         any: [/^\s*IF LOVE_NUM % 6 == 0\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '2784-2785',
+        // :2784-2785（間の空白）
+        any: [/^\s*;間の空白\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '2787-2788',
+        // :2787-2788（好きな数を増やす）
+        any: [/^\s*;好きな数を増やす\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -2233,9 +2253,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2802-2804',
-        // :2802-2803
-        any: [/^\s*ELSE\s*\n\s*PRINTL\s*$/m],
+        ref: '2806-2808',
+        // :2806-2808（计数行 + RETURN 1）
+        any: [
+          /^\s*PRINTFORML \[共\{LOVE_NUM\}个喜欢的东西\]\s*\n\s*\n\s*RETURN 1\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -2269,8 +2291,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2881-2885',
-        // :2881
+        ref: '2881',
+        // :2881（RETURN LOCAL：未被覆盖 → 0）
         any: [/^\s*RETURN LOCAL\s*$/m],
       },
       {
