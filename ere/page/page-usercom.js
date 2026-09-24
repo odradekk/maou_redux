@@ -163,7 +163,10 @@ async function show_commenu() {
     const adv = await get_adv_com(id); // :209 CALL GET_ADV_COM, L_I
     era.printButton(command_button_label(adv, id), com_index(id));
   }
-  era.println(); // :216 循环后的 PRINTL
+  // :216 循环后的 PRINTL 只结束方格最后那一行（PRINTC 系不换行，见
+  // CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里不补空行——
+  // golden 里方格与分割线之间只有一个空行（train-natural-log:108-114），
+  // 那一个来自下一段的 :14 PRINTL。
 }
 
 /**
@@ -254,14 +257,18 @@ on('SHOW_USERCOM', async (usable = []) => {
           : undefined,
     );
   }
-  era.println(); // :86 PRINTL
+  // :85 起的四个 PRINTC（[990] 调教菜单登录 / [991] 表示 / [992] 实行 /
+  // [999] 调教结束）与 :86、:92 的两个 PRINTL：PRINTC 不换行，那两个 PRINTL
+  // 只结束各自所在的那一行，不产生空行——golden 的 train-natural-log:115-118
+  // 里网格行与 [990]/[999] 逐行相邻。ere 的 printButton 自成一行（＝ PRINTC
+  // + 收尾的 PRINTL），按钮之间与页脚之后都不再补空行（语义与勘误见
+  // CONTEXT.md「输出 API 与原作的对应」）。
   era.printButton('调教菜单登录', 990); // :85（ENDIF 后无条件，缩进无语义）
   if (game_train.指令菜单长度 > 0) {
     era.printButton('调教菜单表示', 991); // :88
     era.printButton('调教菜单实行', 992); // :89
   }
   era.printButton('调教结束', 999); // :91（正文不带 [999] 前缀，引擎自动拼）
-  era.println(); // :92 PRINTL
   // :93-100 PREVCOM > -1 → CALL P_C（置 TSTR:90）→ ＜上次的调教指令：…＞
   // （名字来自 TSTR:90：静态名 → 定制名 → 全角空格的三级回落，见 p_c）
   if (era_flag.prevcom > -1) {

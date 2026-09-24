@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 77; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）
+export const COUNT = 80; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +3（M11866-M11868：PRINTLC 页脚不产生空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -574,5 +574,29 @@ export default [
     '  const results = input_text(await era.input({ useRule: false })); // :4131 INPUTS',
     "  const results = String((await era.input({ useRule: false })) ?? ''); // 变异：A 语义",
     '输入 0 落成空串',
+  ),
+  // —— #562：PRINTLC 系不换行（收尾的 PRINTL 只结束按钮那一行，不产生空行） ——
+  // 三条各补回一处空行：按钮自成一行（＝ PRINTLC + 收尾的 PRINTL），多补
+  // 一条就是多出来的空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
+  make(
+    11866,
+    '选人画面页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    "  era.printButton('- 下一页', 1001); // PRINTLC [1001] - 下一页\n}",
+    "  era.printButton('- 下一页', 1001); // PRINTLC [1001] - 下一页\n  era.print(''); // 变异：页脚之后多补空行\n}",
+    '实验室选人画面页脚按钮之后不应有空行',
+  ),
+  make(
+    11867,
+    'EVILAPP 页脚补回空行（同上，:2872 的 PRINTL 只收 [999] 那一行）',
+    "  era.printButton('- 返  回', 999); // :2871 PRINTLC",
+    "  era.printButton('- 返  回', 999); // :2871 PRINTLC\n  era.print(''); // 变异：页脚之后多补空行",
+    '恶魔体征改造页脚按钮之后不应有空行',
+  ),
+  make(
+    11868,
+    '秘密实验室页脚补回空行（同上，:45 的 PRINTL 只收 [998] 那一行）',
+    "    era.printButton('- 后一页', 998); // :44 PRINTLC  [998] - 后一页",
+    "    era.printButton('- 后一页', 998); // :44 PRINTLC  [998] - 后一页\n    era.print(''); // 变异：页脚之后多补空行",
+    '秘密实验室页脚按钮之后不应有空行',
   ),
 ];

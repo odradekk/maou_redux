@@ -21,7 +21,7 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 75; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）
+export const COUNT = 76; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -663,5 +663,16 @@ export default [
     replace: `          // 变异：初体验的输入 0 说明删除`,
     tests: ['chara-custom2'],
     must_mention: 'ere 侧补的输入 0 说明（#567）',
+  },
+  {
+    // #562：PRINTLC 不换行，页脚四个按钮那一行由 :45 的 PRINTL 收尾后即入
+    // INPUT（见 CONTEXT.md「输出 API 与原作的对应」）
+    desc: 'M11865 角色定制页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    file: 'ere/chara/chara-custom2.js',
+    find: "    era.printButton('后一页', 998); // :44",
+    replace:
+      "    era.printButton('后一页', 998); // :44\n    era.println(); // 变异：页脚之后多补空行",
+    tests: ['chara-custom2'],
+    must_mention: '角色定制页脚按钮之后不应有空行',
   },
 ];
