@@ -1303,7 +1303,7 @@ test('MAOUNET：导出菜单里 100 号角色能被选中、取消照常可用�
   assert.equal(
     fixture.era.getAddedCharacters().includes(100),
     true,
-    '预设 100 以 ID 100 加入',
+    '夹具已把 100 号角色加入（以预设 100 的 ID 加入，加入路径见上）',
   );
   // 0 进导出菜单 → 100 选中 100 号角色行 → 998 决定 → 1 不要 → 999 取消 → 9 退出
   fixture.set_inputs(0, 100, 998, 1, 999, 9);

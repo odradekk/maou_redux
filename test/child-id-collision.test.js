@@ -123,11 +123,6 @@ function match_bracket(skeleton, open) {
   return skeleton.length;
 }
 
-/** 与 `open` 处的 `(` 配对的 `)` 下标 */
-function match_paren(skeleton, open) {
-  return match_bracket(skeleton, open);
-}
-
 /** 按顶层逗号切分实参表 */
 function split_args(body) {
   const args = [];
@@ -164,7 +159,7 @@ function button_expressions(skeleton) {
   while ((m = print_button.exec(skeleton)) !== null) {
     const open = m.index + m[0].length - 1;
     const args = split_args(
-      skeleton.slice(open + 1, match_paren(skeleton, open)),
+      skeleton.slice(open + 1, match_bracket(skeleton, open)),
     );
     if (args.length >= 2) found.push({ expr: args[1], at: m.index });
   }
@@ -255,17 +250,72 @@ function numeric_constants(skeleton) {
   return map;
 }
 
+/**
+ * 按顶层逗号切分**原文**（跳过字符串、模板串与注释）。数数组元素必须用原文：
+ * 骨架把元素抹成空白后，末尾的空元素与「结尾逗号」长得一样（`['甲','乙']` 与
+ * `['甲','乙',]` 的骨架同形）。
+ * @param {string} text
+ * @returns {string[]} 顶层分段；结尾空段（结尾逗号或空数组）已去掉
+ */
+function split_top_level(text) {
+  const parts = [];
+  let current = '';
+  let depth = 0;
+  let i = 0;
+  while (i < text.length) {
+    const c = text[i];
+    if (c === "'" || c === '"' || c === '`') {
+      current += c;
+      i += 1;
+      while (i < text.length) {
+        if (text[i] === '\\') {
+          current += text[i] + (text[i + 1] ?? '');
+          i += 2;
+        } else if (text[i] === c) {
+          current += c;
+          i += 1;
+          break;
+        } else {
+          current += text[i];
+          i += 1;
+        }
+      }
+    } else if (c === '/' && text[i + 1] === '/') {
+      while (i < text.length && text[i] !== '\n') i += 1;
+    } else if (c === '/' && text[i + 1] === '*') {
+      i += 2;
+      while (i < text.length && !(text[i] === '*' && text[i + 1] === '/'))
+        i += 1;
+      i += 2;
+    } else if (c === ',') {
+      if (depth === 0) {
+        parts.push(current);
+        current = '';
+      } else {
+        current += c;
+      }
+      i += 1;
+    } else {
+      if (c === '(' || c === '[' || c === '{') depth += 1;
+      else if (c === ')' || c === ']' || c === '}') depth -= 1;
+      current += c;
+      i += 1;
+    }
+  }
+  parts.push(current);
+  if (parts[parts.length - 1].trim() === '') parts.pop();
+  return parts;
+}
+
 /** 模块级数组常量：`const NAME = [ … ];` → 元素个数（决定下标变量的取值个数） */
-function array_lengths(skeleton) {
+function array_lengths(skeleton, file_text) {
   const map = new Map();
   const re = /^const ([A-Za-z_$][\w$]*)\s*=\s*\[/gm;
   let m;
   while ((m = re.exec(skeleton)) !== null) {
     const open = re.lastIndex - 1;
-    const items = split_args(
-      skeleton.slice(open + 1, match_bracket(skeleton, open)),
-    );
-    map.set(m[1], items.length);
+    const close = match_bracket(skeleton, open);
+    map.set(m[1], split_top_level(file_text.slice(open + 1, close)).length);
   }
   return map;
 }
@@ -276,7 +326,7 @@ function scan_context(file_text) {
   return {
     skeleton,
     constants: numeric_constants(skeleton),
-    arrays: array_lengths(skeleton),
+    arrays: array_lengths(skeleton, file_text),
     functions: function_defs(skeleton),
   };
 }
@@ -293,6 +343,7 @@ function fixed_values_of(expr, ctx, scope) {
   const value = expr.trim();
   const shifted = /^(\d[\d_]*)\s*\+\s*([A-Za-z_$][\w$]*)$/.exec(value);
   if (shifted) {
+    // 下标名来自源码里的合法标识符（`[\w$]`），拼进正则没有注入面
     const re = new RegExp(
       String.raw`\bfor\s*\(\s*const\s*\[\s*${shifted[2]}\s*[\s\S]*?\]\s+of\s+([A-Za-z_$][\w$]*)\s*\.\s*entries\s*\(\s*\)\s*\)`,
     );
@@ -312,7 +363,10 @@ function fixed_values_of(expr, ctx, scope) {
  *   - `era.input` 是**硬边界**——玩家做出选择后必然重画，两段不是同屏；
  *   - `era.waitAnyKey` / `era.printAndWait` 是**软边界**——等待可能只在某些
  *     分支上执行（如批量处刑里「收藏目标被选中」那条 `continue restart`），
- *     名单与页脚键仍属同一屏，故两侧的段并成一轮。
+ *     名单与页脚键仍属同一屏，故两侧的段不切。
+ * 另外，**尾段与首段按一轮算**（screen_offenders 里合并）：`era.clear` 只删
+ * 行、不清引擎的输入白名单（夹具 input_rules 的注释逐字镜像），`for(;;)` 屏
+ * 在尾段打的按钮会一直留到下一轮——只按线性位置切轮会漏掉这一种。
  */
 function body_rounds(def, ctx) {
   let text = ctx.skeleton.slice(def.open, def.close + 1);
@@ -324,13 +378,12 @@ function body_rounds(def, ctx) {
   }
   const groups = [];
   let from = 0;
-  const edge = /era\s*\.\s*(input|waitAnyKey|printAndWait)\s*\(/g;
+  // 只切 `era.input`：等待类调用是软边界（理由见上面的 doc）
+  const edge = /(?<![\w$.])era\s*\.\s*input\s*\(/g;
   let m;
   while ((m = edge.exec(text)) !== null) {
-    if (m[1] === 'input') {
-      groups.push({ text: text.slice(from, m.index), base: def.open + from });
-      from = m.index;
-    }
+    groups.push({ text: text.slice(from, m.index), base: def.open + from });
+    from = m.index;
   }
   groups.push({ text: text.slice(from), base: def.open + from });
   return groups;
@@ -368,9 +421,7 @@ function screen_offenders(screen, file_text, presets) {
   );
   const printers = row_printers(ctx);
   const line_of = (index) => ctx.skeleton.slice(0, index).split('\n').length;
-  const offenders = [];
-  let row_rounds = 0;
-  for (const round of body_rounds(def, ctx)) {
+  const rounds = body_rounds(def, ctx).map((round) => {
     const fixed = [];
     let rows = false;
     for (const { expr, at } of button_expressions(round.text)) {
@@ -384,8 +435,22 @@ function screen_offenders(screen, file_text, presets) {
       }
     }
     if (!rows) {
-      rows = [...local_calls(round.text, printers)].length > 0;
+      rows = local_calls(round.text, printers).size > 0;
     }
+    return { fixed, rows };
+  });
+  // 尾段与首段并成一轮：`for(;;)` 屏在尾段打的按钮留到下一轮（era.clear 不清
+  // 输入白名单），线性切轮会把它们当成两屏
+  if (rounds.length > 1) {
+    rounds[0] = {
+      fixed: [...rounds[0].fixed, ...rounds[rounds.length - 1].fixed],
+      rows: rounds[0].rows || rounds[rounds.length - 1].rows,
+    };
+    rounds.pop();
+  }
+  const offenders = [];
+  let row_rounds = 0;
+  for (const { fixed, rows } of rounds) {
     if (!rows) continue;
     row_rounds += 1;
     for (const { value, line } of fixed) {
@@ -520,9 +585,10 @@ test('静态探针：名单轮新插一枚编号 7 的按钮会被核对发现�
   // 这正是 #586 验收抽样漏网的那一手。扫描逻辑一旦退化成只认特定写法，本用例红。
   const screen = CHARACTER_ROW_SCREENS[0];
   const source = fs.readFileSync(path.join(REPO_DIR, screen.file), 'utf8');
+  const probe_line = "    era.printButton('探针', 7);";
   const probe = source.replace(
     "    era.printButton('返回', LIST_RETURN);",
-    "    era.printButton('返回', LIST_RETURN);\n    era.printButton('探针', 7);",
+    `    era.printButton('返回', LIST_RETURN);\n${probe_line}`,
   );
   assert.notEqual(
     probe,
@@ -535,9 +601,112 @@ test('静态探针：名单轮新插一枚编号 7 的按钮会被核对发现�
     1,
     `探针按钮必须恰好判出一条撞号（实际 ${offenders.length}）`,
   );
+  // 行号也要指对（骨架的换行保留是这条的前提：块注释里的换行被抹掉时，
+  // 报出的行号会整片偏小——探针插在名单轮里，报出的必须是那一行的行号）
+  const expected_line = probe
+    .slice(0, probe.indexOf(probe_line))
+    .split('\n').length;
   assert.ok(
-    offenders[0].includes('的 [7]'),
-    `判出的必须是探针那一枚（实报：${offenders[0]}）`,
+    offenders[0].includes(`:${expected_line} 的 [7]`),
+    `判出的必须是探针那一枚、行号要对上（实报：${offenders[0]}）`,
+  );
+});
+
+test('静态自测：扫描器的四种取值形态与硬/软边界', () => {
+  // 核对取数的形态自测（#593 探针）：字面量、模块级常量、常量数组下标
+  // （`2000 + index` 展开）都要能解析成固定编号，`cid` 一类变量要判成动态；
+  // 硬边界（era.input）切开两轮，软边界（waitAnyKey）不切。
+  const source = [
+    "const LIST = ['甲', '乙', '丙'];",
+    'const TAILED = [',
+    "  '丁',",
+    "  '戊',", // prettier 的 trailingComma 会写成这样——元素个数不得多算一个
+    '];',
+    'const RETURN_KEY = 999;',
+    'async function probe(cid) {',
+    '  for (const [index] of LIST.entries()) {',
+    '    era.printButton(LIST[index], 2000 + index);',
+    '  }',
+    '  for (const [slot] of TAILED.entries()) {',
+    '    era.printButton(TAILED[slot], 4000 + slot);',
+    '  }',
+    '  era.printButton(cid, 777);',
+    '  era.printButton(RETURN_KEY, 1);',
+    '  await era.waitAnyKey();',
+    "  era.printButton('软边界之后', 2);",
+    '  await era.input();',
+    "  era.printButton('硬边界之后', 3);",
+    '}',
+  ].join('\n');
+  const ctx = scan_context(source);
+  const values = (expr, scope) => fixed_values_of(expr, ctx, scope);
+  assert.deepEqual(
+    values('2000 + index', ctx.skeleton),
+    [2000, 2001, 2002],
+    '常量数组下标的 `基数 + 下标` 要展开成逐个编号',
+  );
+  assert.deepEqual(
+    values('4000 + slot', ctx.skeleton),
+    [4000, 4001],
+    '带结尾逗号的数组不得多算一个元素',
+  );
+  assert.deepEqual(values('RETURN_KEY', ctx.skeleton), [999], '模块级常量');
+  assert.deepEqual(values('12', ctx.skeleton), [12], '字面量');
+  assert.equal(values('cid', ctx.skeleton), null, '变量是动态编号');
+  assert.equal(
+    values('3000 + unknown_index', ctx.skeleton),
+    null,
+    '下标变量不在常量数组循环里时不得当成固定编号',
+  );
+
+  const def = ctx.functions.find((fn) => fn.name === 'probe');
+  const rounds = body_rounds(def, ctx);
+  assert.equal(rounds.length, 2, '硬边界（era.input）切出两轮');
+  const exprs_of = (round) =>
+    button_expressions(round.text).map(({ expr }) => expr.trim());
+  assert.deepEqual(
+    exprs_of(rounds[0]),
+    ['2000 + index', '4000 + slot', '777', '1', '2'],
+    '软边界（waitAnyKey）不切轮：它两侧的按钮仍在同一轮',
+  );
+  assert.deepEqual(
+    exprs_of(rounds[1]),
+    ['3'],
+    '硬边界之后的按钮落在下一轮（不与前面的角色行同屏）',
+  );
+});
+
+test('静态自测：for(;;) 屏的尾段按钮与下一轮同屏（era.clear 不清输入白名单）', () => {
+  // 验收/审查都点过的一种漏网：`for(;;)` 屏在尾段（最后一次 era.input 之后、
+  // 下一次循环之前）打的按钮，引擎侧与下一轮的角色行同属一个输入白名单，
+  // 只按线性位置切轮会把它当成另一屏。核对必须当场发现尾段的预设 ID 编号。
+  const source = [
+    'async function probe() {',
+    '  for (;;) {',
+    '    for (const cid of era.getAddedCharacters()) {',
+    '      era.printButton(`行${cid}`, cid);',
+    '    }',
+    "    era.printButton('决定', 998);",
+    '    await era.input();',
+    '    await era.clear(2);',
+    "    era.printButton('尾段', 7);",
+    '  }',
+    '}',
+  ].join('\n');
+  const { offenders, row_rounds } = screen_offenders(
+    { file: '探针来源', fn: 'probe', why: '自测' },
+    source,
+    new Set([7]),
+  );
+  assert.equal(row_rounds, 1, '首段与尾段并成一轮');
+  assert.equal(
+    offenders.length,
+    1,
+    `尾段的 [7] 必须被发现（实报：${offenders.join('；')}）`,
+  );
+  assert.ok(
+    offenders[0].includes(':9 的 [7]'),
+    `判出的必须是尾段那一枚、行号要对上（实报：${offenders[0]}）`,
   );
 });
 
