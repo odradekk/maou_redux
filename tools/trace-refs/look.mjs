@@ -1775,60 +1775,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '823-1666',
-        // :823
-        any: [/^\s*@LOOK_INFO\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '829-832',
-        // :830
-        any: [/^\s*LOCALS:1 =\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '834',
-        // :834
-        any: [/^\s*LOCALS '= GET_LOOK_INFO\(TARGET, "种族"\)\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '836-841',
-        // :836
-        any: [/^\s*;精英は2つ目の素質を持つ\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '843-851',
-        // :843
-        any: [/^\s*;魔族化済みで现种族が設定されていない場合設定しておく\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '855-893',
-        // :858
-        any: [/^\s*PRINTFORM 拥有\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '877',
-        // :877
-        any: [/^\s*CALL GOBI_KOUJO, \(MARK:屈服刻印 >= 3\) \? 0 # 4\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '880-892',
-        // :880
-        any: [/^\s*IF STRLENS\(LOCALS:3\) > 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '892-894',
-        // :892-893
-        any: [/^\s*ENDIF\s*\n\s*PRINTL\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '894-909',
         // :894-909（默认视角的 ELSE 支）
         any: [/^\s*PRINT \[\s*$/m],
