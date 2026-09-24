@@ -697,7 +697,8 @@ async function run_benki(arg, rand_n = default_rand) {
     // 这一行收尾，不再起始下一条穴句行
     era.print(`${benki_player_name()}${name_of(arg)}`);
 
-    s = ''; // :892-941 的穴句行（角色名已在上一行）
+    s = ''; // :892-941 段的穴句（角色名已在上一行；其后的様子件按原状另起一行——
+    // 原作里它与穴句同属一条显示行，已登记、另票处理）
     if (menu[1] >= 3 && menu[2] >= 3) {
       s += '能用上的穴全用上了，';
       play += menu[1] + menu[2]; // A&Vボーナス
@@ -920,10 +921,11 @@ async function run_benki(arg, rand_n = default_rand) {
       play = 1; // 最低一人
     }
 
-    era.print(`${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。`); //
-
-    // 噂（一般）
-    era.print(general_rumor(arg, play));
+    // :1287 是 PRINTFORM（不换行）——共处理句、:1288 的 CALL、:1289 的「的性欲。」
+    // 与 :1292-1305 传闻的 PRINTFORML 同属一条显示行（#615：此前拆成两行）
+    era.print(
+      `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,
+    );
 
     // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
     era_flag.target = arg;

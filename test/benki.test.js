@@ -559,3 +559,26 @@ test('#615 同性爱分派清算：一共处理句与「的性欲。+ 传闻」�
   );
   assert.ok(!rows.includes('女淫魔的性欲。'), '「的性欲。」不单独占一行');
 });
+
+test('#615 一般分派清算：共处理句与「的性欲。+ 传闻」同属一行（:1287-1289）', async () => {
+  const { fixture, mod } = setup_benki();
+  await mod.run_benki(31, seq_rand(0)); // 默认走一般分派（フェラ便器，flag:64 = 3 魔族男性）
+
+  const rows = fixture.lines.map((line) => line.text);
+  const clear = rows.findIndex((t) =>
+    /^温妮共处理了\d+个魔族男性的性欲。/.test(t ?? ''),
+  );
+  assert.ok(
+    clear >= 0,
+    `:1287 是 PRINTFORM（不换行），清算与传闻同属一行（实际 ${JSON.stringify(rows)}）`,
+  );
+  const prefix = rows[clear].match(/^温妮共处理了\d+个魔族男性的性欲。/)[0];
+  assert.ok(
+    rows[clear].length > prefix.length,
+    ':1292-1305 传闻的 PRINTFORML 收同一行（#615：此前拆成两行）',
+  );
+  assert.ok(
+    !rows.includes('温妮的行为不为人知。'),
+    '传闻不单独占一行',
+  );
+});

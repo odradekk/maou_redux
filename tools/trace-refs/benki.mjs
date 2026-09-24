@@ -297,6 +297,30 @@ export const FILES = [
           /^\t;処理数に応じて噂が広がる\n\tIF PLAY > 30\n\t\tPRINTFORML %SAVESTR:\(ARG:0\)%是个喜欢强奸女人的女勇者/m,
         ],
       },
+      // #615：一般分派清算——:1287 是 PRINTFORM（不换行），与 CALL、:1289 的
+      // 「的性欲。」和 :1292-1305 的传闻同属一条显示行
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1287',
+        any: [/^\tPRINTFORM %SAVESTR:\(ARG:0\)%共处理了\{PLAY\}个$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1288',
+        any: [/^\tCALL BENKI_PLAYER_NAME$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1289',
+        any: [/^\tPRINTFORM 的性欲。$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1292-1305',
+        any: [
+          /^\tIF PLAY > 30\n\t\tPRINTFORML %SAVESTR:\(ARG:0\)%向魔族谄媚的传闻传到了故乡，被乡里鄙视了。/m,
+        ],
+      },
     ],
   },
 ];
