@@ -9,6 +9,66 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '184',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[0\\] 收下她吧  \\[1\\] 另外挑选\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '211-214',
+        any: [
+          new RegExp(
+            '^\\s*PRINTFORML \\[0\\] 性格 ：  %TALENTNAME:PERSONAL%\\s*$\\s*^\\s*PRINTFORML \\[1\\] 发色 ：  %GET_LOOK_INFO\\(A,"头发颜色"\\)%\\s*$\\s*^\\s*DRAWLINE\\s*$\\s*^\\s*PRINTL \\[100\\] 决定\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '220-222',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[0\\] - 慈愛　　\\[1\\] - 自信家　\\[2\\] - 懦弱\\s*$\\s*^\\s*PRINTL \\[3\\] - 高贵　　\\[4\\] - 冷静　　\\[5\\] - 恶女\\s*$\\s*^\\s*PRINTL \\[6\\] - 智慧　　\\[7\\] - 庇护者\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '251-252',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[1\\] 金发  \\[2\\]栗发  \\[3\\]黒发  \\[4\\]红发  \\[5\\]银发\\s*$\\s*^\\s*PRINTL \\[6\\] 青发  \\[7\\]绿发  \\[8\\]紫发  \\[9\\]白发  \\[10\\]暗金发\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '280',
+        any: [
+          new RegExp(
+            '^\\s*PRINTFORML \\[0\\] 就是她了  \\[1\\] 再换一个  \\[2\\] %LOCALS:30%\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
+        ref: '224-226',
+        any: [
+          new RegExp(
+            '^\\s*IF RESULT >= 8\\s*$\\s*^\\s*PERSONAL = 160\\s*$\\s*^\\s*GOTO INPUT_LOOP_2\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/ENDING ver 1.0.1.ERB',
         ref: '6-40',
         any: [/^@ENDING_1$/m],
       },

@@ -11,6 +11,16 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
+        ref: '101',
+        any: [new RegExp('^\\s*PRINTL \\[0\\] - 好的\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
+        ref: '102',
+        any: [new RegExp('^\\s*PRINTL \\[1\\] - 不要\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_ITEM.ERB',
         ref: '17-80',
         any: [new RegExp('^\\s*@ITEM_SHOP\\s*$', 'm')],
       },

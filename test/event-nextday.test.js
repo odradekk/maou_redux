@@ -442,6 +442,17 @@ function setup_chara_events() {
   return fixture;
 }
 
+/**
+ * 按钮条目的引擎实显文本（「[快捷键] 正文」，showAcc 默认为真；#572）。
+ * 断言按钮化必须看这里——只看 text 会漏掉正文里手写的 [N] 前缀
+ * （AGENTS.md 硬约束，PR #30 实机撞见）。
+ */
+function button_rendered(fixture) {
+  return fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+}
+
 test('扶她化（EVENT_FUTA_F）：选 [0] 得【扶她】+【童贞】，【肉芽诅咒】清零', async () => {
   const fixture = setup_chara_events();
   fixture.store.set('talentname:121', '扶她');
@@ -457,9 +468,11 @@ test('扶她化（EVENT_FUTA_F）：选 [0] 得【扶她】+【童贞】，【�
   const texts = fixture.text_lines();
   assert(texts.includes('（呃…这是什么？）'), '开场白');
   assert(texts.includes('温妮要【扶她】化吗？'), '询问行取 TALENTNAME:121');
-  assert(
-    texts.includes('[0] - 好的') && texts.includes('[1] - 不要'),
-    '选项行',
+  // #572：两行选项已是按钮（正文不带 [N]，引擎按 showAcc 拼）
+  assert.deepEqual(
+    button_rendered(fixture),
+    ['[0] - 好的', '[1] - 不要'],
+    '选项（正文的「- 」是原作文本，源 :371-372）',
   );
   assert(texts.includes('温妮获得了【扶她】。'), '获得播报');
 });
@@ -487,23 +500,18 @@ test('扶她化（EVENT_FUTA_F）：选 [1] 只清【肉芽诅咒】，不给【
   assert(fixture.text_lines().includes('温妮失去了【肉芽诅咒】。'), '失去播报');
 });
 
-test('扶她化（EVENT_FUTA_F）：[0]/[1] 之外的输入回到 INPUT 循环重问', async () => {
+test('扶她化（EVENT_FUTA_F）：[0]/[1] 之外的输入由引擎拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「其余值 GOTO INPUT_LOOP 重问」——按钮化后白名单就是 0/1，
+  // 2/7 这类值在引擎那头被拒收、不回传游戏，重问支结构性不可达
+  // （1:1 保留，page-ability-up.js 文件头同款登记）。
   const fixture = setup_chara_events();
   fixture.store.set('talentname:121', '扶她');
   const { event_futa_f } = fixture.load_module('event/event-nextday');
 
-  fixture.set_inputs(2, 7, 1);
-  await event_futa_f(31);
-
-  assert.equal(
-    fixture.text_lines().filter((t) => t === '温妮要【扶她】化吗？').length,
-    3,
-    '每次非法输入都要重新询问（原作 GOTO INPUT_LOOP）',
-  );
-  assert.equal(
-    fixture.inputs_consumed.filter((c) => c.api === 'input').length,
-    3,
-    '三次输入都被消费',
+  fixture.set_inputs(2);
+  await assert.rejects(
+    () => event_futa_f(31),
+    /输入不合法！请输入以下值之一：0, 1/,
   );
 });
 
@@ -2206,18 +2214,23 @@ test('处女献上（OFFERVIRGIN_CHECK）：拒绝支清掉贞操带并落下一
   );
 });
 
-test('处女献上（OFFERVIRGIN_CHECK）：[1] 之外的输入回到 INPUT 循环重问', async () => {
+test('处女献上（OFFERVIRGIN_CHECK）：[1] 之外的输入由引擎拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「其余值 GOTO INPUT_LOOP 重印询问行」——按钮化后白名单就是
+  // 0/1，3/5 这类值被引擎拒收，重印支结构性不可达（1:1 保留）。
   const fixture = setup_chara_events();
   seed_virgin_offer(fixture);
-  fixture.set_inputs(3, 5, 1);
+  fixture.set_inputs(3);
   const { offervirgin_check } = fixture.load_module('event/event-nextday');
 
-  await offervirgin_check(() => 2);
-
-  assert.equal(
-    fixture.text_lines().filter((t) => t === '要夺取温妮的处女吗？').length,
-    3,
-    '每次非法输入都重印询问行',
+  await assert.rejects(
+    () => offervirgin_check(() => 2),
+    /输入不合法！请输入以下值之一：0, 1/,
+  );
+  // #572 审查返工：两枚按钮逐个钉住（源 :944-945 的正文含「- 」，行首另有一个空格）
+  assert.deepEqual(
+    button_rendered(fixture),
+    ['[0] - 等你很久了！', '[1] - 继续等着吧你……'],
+    ':944-945 的选项按钮',
   );
 });
 
@@ -2261,6 +2274,12 @@ test('处女献上（OFFERVIRGIN_CHECK）：安全套两问（持有道具才问
   assert.equal(with_condom.store.get('item:24'), 1, '安全套 -1');
   const with_texts = with_condom.text_lines();
   assert(with_texts.includes('要使用安全套吗？'), '持有道具才问');
+  // #572 审查返工：两枚按钮逐个钉住（源 :969-970）
+  assert.deepEqual(
+    button_rendered(with_condom).slice(-2),
+    ['[0] - 安全第一！', '[1] - 中出最高！'],
+    ':969-970 的选项按钮',
+  );
   // 套上之后不走膣内射精链（原作 :1010 的 `IF TEQUIP:35 == 0`）——
   // 连 :1011 的 CFLAG:101 = 30 都在同一个 `if (condom === 0)` 分支里，
   // 戴套时整段不执行，CFLAG:101 保持从未写过

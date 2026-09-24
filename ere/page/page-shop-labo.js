@@ -39,12 +39,18 @@
  *    TATOO/AMNESIA/RESULECTION/TRANS_SPECIALTALENT/GIVEN_HUMAN_LIFE/
  *    BOUGT_TENTACLES/肉棒改造）各自单写。
  *
- * 3. **输入一律按钮化，自由输入用 `useRule: false`**：原作 `PRINTL [n] - …`
- *    之类的固定选项在 ere 侧是 `era.printButton(…, n)`（PR #53 通则，
- *    page-tailor.js 先例）；需要玩家敲任意数字/字符串的输入（SUMMON_SLAVE 的
- *    收录编号 150-199、ST_UP_LABO 的强化次数 1-D、TATOO 的刺青文字）保留正文
- *    为普通文本并用 `era.input({ useRule: false })`（page-infrastructure.js
- *    先例）——打了按钮就把输入集锁死在按钮上，自由输入进不去。
+ * 3. **固定选项按钮化；需要自由输入的用 `useRule: false`**：原作
+ *    `PRINTL [n] - …` 之类的固定选项在 ere 侧是 `era.printButton(…, n)`
+ *    （PR #53 通则，page-tailor.js 先例；**正文里的 `- ` 照写**，它是原作文本
+ *    的一部分，见 page-ability-up.js:184）；需要玩家敲任意数字/字符串的输入
+ *    （SUMMON_SLAVE 的收录编号 150-199、ST_UP_LABO 的强化次数 1-D、TATOO 的
+ *    刺青文字）保留正文为普通文本并用 `era.input({ useRule: false })`——那一轮
+ *    的有效取值是**没显示出来的**编号或文字，按钮集给不出。`useRule: false`
+ *    只跳过校验、不封锁按钮，与按钮并存是既定做法（event-museum.js:83-85 的
+ *    先例即「按钮 + 自由输入」；引擎依据见 tools/engine-contract-facts.mjs 的
+ *    `input-userule-false-keeps-buttons`）。**它不能反过来读成「打了按钮自由
+ *    输入就进不去」**——那是 #530 的旧推断，#572 已纠正（详见
+ *    docs/research/plaintext-options.md 第二节 C 类）。
  *    随之而来的结构性不可达：按钮化之后「输入不在按钮集里」的兜底支
  *    （各 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`）在实机上不可达，1:1 保留
  *    不补用例（page-ability-up.js 文件头同款登记）。

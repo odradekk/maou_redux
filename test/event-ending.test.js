@@ -77,6 +77,17 @@ function history_texts(fixture) {
     .map((line) => line.text);
 }
 
+/**
+ * 按钮条目的引擎实显文本（「[快捷键] 正文」，showAcc 默认为真；#572）。
+ * 断言按钮化必须看这里——只看 text 会漏掉正文里手写的 [N] 前缀
+ * （AGENTS.md 硬约束，PR #30 实机撞见）。
+ */
+function button_rendered(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+}
+
 test('【验收 1】FLAG:81 满 10000：ENDING_1 演出一次、菲娅入队并初始化、FLAG:82 = 1、威望 +10', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
@@ -361,10 +372,13 @@ test('ENDING_3/4/5：横幅 + CHAR_GIFT(arg) 收下预设角色 → 领域 flag 
       `${c.name}：LOCALS:10 的 %CSVNAME% 拼串`,
     );
     assert(texts.includes(c.ask), `${c.name}：LOCALS:20 的询问`);
-    assert(
-      texts.includes('[0] 收下她吧  [1] 另外挑选'),
-      `${c.name}：:184 选项`,
-    );
+    // #572：:184 的两项已是按钮（正文不带 [N]，引擎按 showAcc 拼）
+    for (const option of ['[0] 收下她吧', '[1] 另外挑选']) {
+      assert(
+        button_rendered(fixture).includes(option),
+        `${c.name}：:184 选项 ${option}`,
+      );
+    }
     assert(
       texts.includes('*****************************************'),
       `${c.name}：:177/:179 的分隔行`,
@@ -420,18 +434,29 @@ test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色�
     'CHAR_MAKE 按 PERSONAL=161 生成',
   );
   const texts = history_texts(fixture);
+  const buttons = button_rendered(fixture);
   assert(texts.includes('请设定偏好的性格和发色。'), ':210');
+  // #572：主菜单三项与两个子菜单都改成按钮，实显文本由引擎按 showAcc 拼
+  // （正文里的连续空白折成一个空格，故 `性格 ：  自信家` 实显为 `性格 ： 自信家`）
   assert(
-    texts.includes('[0] 性格 ：  自信家'),
-    ':211 的 %TALENTNAME:PERSONAL%',
+    buttons.includes('[0] 性格 ： 自信家'),
+    `:211 的 %TALENTNAME:PERSONAL%（实显：${JSON.stringify(buttons)}）`,
   );
-  assert(texts.includes('[1] 发色 ：  金发'), ':212 的 %GET_LOOK_INFO 默认色');
-  assert(texts.includes('[100] 决定'), ':214');
+  assert(buttons.includes('[1] 发色 ： 金发'), ':212 的 %GET_LOOK_INFO 默认色');
+  assert(buttons.includes('[100] 决定'), ':214');
   assert(texts.includes('请选择偏好的性格。'), ':219');
-  assert(
-    texts.includes('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　'),
-    ':220 性格菜单',
-  );
+  for (const option of [
+    '[0] - 慈爱',
+    '[1] - 自信家',
+    '[2] - 懦弱',
+    '[3] - 高贵',
+    '[4] - 冷静',
+    '[5] - 恶女',
+    '[6] - 智慧',
+    '[7] - 庇护者',
+  ]) {
+    assert(buttons.includes(option), `:220-222 性格菜单 ${option}`);
+  }
   // :275 取的是 `%SAVESTR:A%`——角色的称呼，而 A 刚经 CHAR_MAKE 生成
   // （:264-266）。生成链里的命名段（CHARA_MAKE.ERB:18-20 →
   // @CHARA_NAME_RANDOM_DEFINE，**#384 起为真身**）会把 ADDCHARA 从预设拷来的
@@ -442,7 +467,9 @@ test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色�
     texts.includes('精灵族挑选少女佳奈美作为贡品………'),
     ':275（ARG 1 的 LOCALS:40）',
   );
-  assert(texts.includes('[0] 就是她了  [1] 再换一个  [2] 去要圣女'), ':280');
+  for (const option of ['[0] 就是她了', '[1] 再换一个', '[2] 去要圣女']) {
+    assert(buttons.includes(option), `:280 终局询问 ${option}`);
+  }
 });
 
 test('CHAR_GIFT 子菜单边界：性格取 0 档（慈爱）、发色取 10 档（暗金发）', async () => {
@@ -461,13 +488,40 @@ test('CHAR_GIFT 子菜单边界：性格取 0 档（慈爱）、发色取 10 档
     10,
     '发色 10 档 → TALENT:300',
   );
-  const texts = history_texts(fixture);
-  assert(texts.includes('[0] 性格 ：  慈爱'), '性格标签随 PERSONAL 变');
-  assert(texts.includes('[1] 发色 ：  暗金发'), '发色标签随 TALENT:300 变');
-  assert(
-    texts.includes('[6] 青发  [7]绿发  [8]紫发  [9]白发  [10]暗金发'),
-    '发色菜单逐字（:251-252）',
-  );
+  const buttons = button_rendered(fixture);
+  assert(buttons.includes('[0] 性格 ： 慈爱'), '性格标签随 PERSONAL 变');
+  assert(buttons.includes('[1] 发色 ： 暗金发'), '发色标签随 TALENT:300 变');
+  for (const option of [
+    '[1] 金发',
+    '[2] 栗发',
+    '[3] 黑发',
+    '[4] 红发',
+    '[5] 银发',
+    '[6] 青发',
+    '[7] 绿发',
+    '[8] 紫发',
+    '[9] 白发',
+    '[10] 暗金发',
+  ]) {
+    assert(buttons.includes(option), `:251-252 发色菜单 ${option}`);
+  }
+});
+
+test('CHAR_GIFT 发色子菜单：未显示的 11 号色仍可键入（#572：保留 useRule: false）', async () => {
+  // 原作 :254 的条件是 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`——11 号
+  // 发色界面上不显示却仍被受理，收紧白名单会锁死它，故消费点保留
+  // `useRule: false`（先例 event-museum.js:83-85）。本用例走真实 input 路径
+  // 把这条路径钉住：改回默认白名单即红。
+  const fixture = create_era_fixture();
+  fixture.seed_chara(31, { name: '琼', callname: '琼' });
+  fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
+  const { char_gift } = fixture.load_module('event/event-ending');
+  // 另外挑选(1) → 发色([1]) → 11 → 决定(100) → 收下(0)
+  fixture.set_inputs(1, 1, 11, 100, 0);
+  await char_gift(1, seq([4])); // RAND(1, 17) → 角色 5
+
+  assert.equal(fixture.store.get('talent:5:300'), 11, '11 号色落盘');
+  assert.equal(fixture.store.get('cflag:5:1'), 0, 'CHAR_MAKE 后清状态位');
 });
 
 test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素质 × >= 130）各自回起始档', async () => {
@@ -505,42 +559,36 @@ test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素�
   }
 });
 
-test('CHAR_GIFT 子菜单的越界输入：性格 >= 8 与 < 0 都落回 160（慈爱）', async () => {
+test('CHAR_GIFT 子菜单的越界输入：引擎当场拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「性格 >= 8 与 < 0 都落回 160（慈爱）」——按钮化后白名单就是
+  // 那八档，越界值在引擎那头被拒收、不回传游戏，该支结构性不可达
+  // （1:1 保留，page-ability-up.js 文件头同款登记）。
   for (const picked of [8, -1]) {
     const fixture = create_era_fixture();
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
     fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
     fixture.store.set('talentname:160', '慈爱');
     const { char_gift } = fixture.load_module('event/event-ending');
-    // 另外挑选(1) → 性格([0]) → 越界值 → 仍回菜单 → 决定(100) → 收下(0)
-    fixture.set_inputs(1, 0, picked, 100, 0);
-    await char_gift(1, seq([4]));
-    assert.equal(
-      fixture.store.get('talent:5:160'),
-      1,
-      `性格输入 ${picked} 落回 160（慈爱）`,
-    );
-    assert(
-      history_texts(fixture).includes('[0] 性格 ：  慈爱'),
-      `性格输入 ${picked} 后的回显`,
+    fixture.set_inputs(1, 0, picked);
+    await assert.rejects(
+      () => char_gift(1, seq([4])),
+      /输入不合法！请输入以下值之一：0, 1, 2, 3, 4, 5, 6, 7/,
+      `性格输入 ${picked} 被引擎拒收`,
     );
   }
 });
 
-test('CHAR_GIFT 主菜单的越界输入：非 0/1/100 的键回菜单重画（:260-261）', async () => {
+test('CHAR_GIFT 主菜单的越界输入：引擎当场拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「非 0/1/100 的键回菜单重画（:260-261）」——按钮化后越界值
+  // 被引擎拒收，重画支结构性不可达（1:1 保留）。
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
   const { char_gift } = fixture.load_module('event/event-ending');
-  // 另外挑选(1) → 越界键 7 → 回菜单 → 决定(100) → 收下(0)
-  fixture.set_inputs(1, 7, 100, 0);
-  await char_gift(1, seq([4]));
-  assert.equal(fixture.store.get('cflag:5:1'), 0, 'CHAR_MAKE 后清状态位');
-  assert.equal(
-    history_texts(fixture).filter((t) => t === '请设定偏好的性格和发色。')
-      .length,
-    2,
-    '越界键导致菜单重画一次（同一提示出现两次）',
+  fixture.set_inputs(1, 7);
+  await assert.rejects(
+    () => char_gift(1, seq([4])),
+    /输入不合法！请输入以下值之一：0, 1, 100/,
   );
 });
 
@@ -560,10 +608,9 @@ test('CHAR_GIFT 终局 [2]「去要圣女」：退掉随机角色、回到预设
     '随机角色 5 在 [2] 支里被退掉（PARTY_CHAR_DEL + DELCHARA）',
   );
   assert.equal(
-    history_texts(fixture).filter((t) => t === '[0] 收下她吧  [1] 另外挑选')
-      .length,
+    button_rendered(fixture).filter((t) => t === '[0] 收下她吧').length,
     2,
-    '预设询问出现两次（loop 0 回到起点）',
+    '预设询问出现两次（loop 0 回到起点；#572 起是按钮）',
   );
 });
 

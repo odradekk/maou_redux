@@ -3,6 +3,11 @@
  *
  * 源: target/ERB/處刑相關/EXECUTION.ERB
  *     @EXECUTION（:2-372）/@EXECUTION_MINI（:375-446）
+ *
+ * 移植说明（有意偏离，注明依据）：
+ *   - 处置菜单（源 :79-92 的 [0]-[7]/[100]/[101]）升格为 `era.printButton`
+ *     （PR #53 通则，正文不写 [编号]）；候选人列表（源 :32 的 `[NN] 名字 …`
+ *     拼行，行号即输入值）**保持纯文本**——先例与理由见 :50 处的注释（#572）。
  */
 
 'use strict';
@@ -93,6 +98,12 @@ function print_candidates(candidates) {
 }
 
 function print_methods(cid) {
+  // 源 :79-92 的 `PRINTL [0]`…`[7]`、`PRINT [100] 停止`、`PRINTL [101] 水晶球记录`
+  // 是纯文本选项 + INPUT，按 PR #53 通则升格为按钮（正文不写 [编号] 前缀，
+  // 引擎按 showAcc 自动拼）。
+  // 收藏列表里的 0-4（CFLAG:700）源是灰字，仍是可选项——守卫在 :339 按取值
+  // 拒绝，故按钮只给灰色、**不设 disabled**（disabled 的编号不进输入集，
+  // 会把守卫文案那条路变成不可达）。
   [
     '流放出地下城',
     '公开处刑',
@@ -103,20 +114,17 @@ function print_methods(cid) {
     '固定示众',
     '消除记忆后释放',
   ].forEach((label, index) => {
-    era.print(
-      index <= 4 && get(`cflag:${cid}:700`)
-        ? [{ content: `[${index}] ${label}`, color: '#646464' }]
-        : `[${index}] ${label}`,
-    );
+    if (index <= 4 && get(`cflag:${cid}:700`)) {
+      era.printButton(label, index, { color: '#646464' });
+    } else {
+      era.printButton(label, index);
+    }
   });
   era.println();
-  era.print('[100] 停止');
-  era.print([
-    {
-      content: '[101] 水晶球记录',
-      color: era_exflag.mod_switch_bits & 4 ? '#ffffff' : '#646464',
-    },
-  ]);
+  era.printButton('停止', 100);
+  era.printButton('水晶球记录', 101, {
+    color: era_exflag.mod_switch_bits & 4 ? '#ffffff' : '#646464',
+  });
 }
 
 async function call_execution_kojo(cid, result, rand_n) {
@@ -311,6 +319,11 @@ async function execution(rand_n = default_rand) {
     print_candidates(candidates);
     if (candidates.length === 0) return 0;
     era.drawLine();
+    // :50 的 `[100] 返回` 保持纯文本：本轮的编号是上面那些候选人行的
+    // `[NN]`（print_candidates 的拼行，行号即输入值），单给这行打按钮会把
+    // 白名单收成 100、候选人编号当场被拒收——整轮按钮化要先重排候选人列表
+    // （多列对齐），留给后续按界面过（#572 的分类表、docs/research/
+    // plaintext-options.md §6）。与 page-dungeon-info2.js 的怪物行同类。
     era.print('[100] 返回');
     let selected;
     do {
@@ -326,7 +339,9 @@ async function execution(rand_n = default_rand) {
       print_methods(cid);
       let result;
       do {
-        result = await era.input({ useRule: false });
+        // 处置菜单的编号（0-7、100、101）全在按钮上，白名单即本轮的按钮集，
+        // 不再关掉校验（#572）。
+        result = await era.input();
       } while (result < 0 || (result >= 8 && result !== 100 && result !== 101));
       if (result === 101) {
         era_exflag.mod_switch_bits ^= 4;

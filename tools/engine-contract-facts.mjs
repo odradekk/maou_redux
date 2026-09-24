@@ -87,4 +87,29 @@ export const ENGINE_FACTS = [
     ],
     rule: null, // 只锚事实；判据的消费点（input_text）无静态可判的调用点规则
   },
+  {
+    // #572：选按钮化站点时逐处判断的两条渲染层事实。夹具不镜像 valCount
+    //（按钮条目只记 config.disabled，不做时序禁用），收录理由是实现决策真的
+    // 依赖它——dungeon-after 的「WAIT 在菜单之前 ⇒ 按钮照常可点」与
+    // chara-custom、page-dungeon-info2 的「WAIT 夹在选项与 INPUT 之间 ⇒
+    // 按钮整批点不动」都按这条判。
+    id: 'button-valcount-disables-earlier',
+    desc: '早先打印的按钮会被禁用：getButtonObject 记 valCount = buttonValCount，模板按 `line.valCount < buttonValCount` 置 disabled；buttonValCount 在任何一次成功回传后 +1（returnFromButton 在 disableBefore 为真时自增，waitAnyKey 内部就是一次 input({any:true})）——故「WAIT 夹在选项与 INPUT 之间」的界面里，选项按钮整批点不动',
+    mirror:
+      '（夹具不镜像时序禁用：按钮条目只记 config.disabled，见 make_button_entry）',
+    anchors: [
+      'valCount: buttonValCount.value,',
+      ':disabled="!!line.disabled || line.valCount < buttonValCount"',
+    ],
+    rule: null,
+  },
+  {
+    // #572 的 C 类修正：useRule 只关校验分支，不封锁按钮。
+    id: 'input-userule-false-keeps-buttons',
+    desc: 'useRule: false 只跳过校验：returnFromButton 整段校验包在 `if (inputParam.value[useRule])` 里，关掉后点按钮与键入都直接回传——按钮与自由输入可并存（#572 的「按钮 + useRule: false」处置据此，先例 event-museum.js:83-85）',
+    mirror:
+      'test/helpers/era-fixture.js era.input 的 `if (config?.useRule !== false)` 分支（#130）',
+    anchors: ["if (inputParam.value['useRule']) {"],
+    rule: null,
+  },
 ];

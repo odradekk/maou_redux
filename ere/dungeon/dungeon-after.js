@@ -11,10 +11,18 @@
  *   - 原作经全局 A 传角色（CFLAG:A:1 / SAVESTR:A / EXP:A:N），ere 侧显式
  *     传参 cid（#5 决议第六条）；RESULT（INPUT 的输入值）改局部变量；
  *   - SAVESTR:A → name_of（CONTEXT.md「称呼」：本作 SAVESTR:x = 名前）；
- *   - 奖惩两臂的选项菜单是**纯文本 + 自由输入**（原作 PRINTL [n] + INPUT
- *     循环），不改按钮——多轮 WAIT 的界面里按钮不留在 rule（#180 查实的
- *     引擎行为，见 page-dungeon-info2.js 的 print_subordinates 注释），键盘键入 [n]
- *     全程可达，1:1 于 Emuera 的键盘交互；
+ *   - 奖惩两臂的选项菜单（源 :27-29 的三行、:331-339 的九项）自 #572 起
+ *     升格为 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀）。
+ *     **#180 的纯文本先例不适用于此处**：那一条针对的是「WAIT 夹在选项
+ *     之间」的界面（page-dungeon-info2.js 的逐层 WAIT），按钮会在后续回传
+ *     时被清出白名单/禁用；本文件两处的 WAIT 都在菜单**之前**
+ *     （@GOHOUBI 的 :24/:25、@OSIOKI 的 :328/:329；菜单在 :27-29 与
+ *     :331-339，紧跟着就是 :31/:341 的 INPUT），选项打印后紧接
+ *     `input_choice`，中途没有
+ *     成功回传，按钮照常可点（引擎 app.asar 的 returnFromButton /
+ *     getButtonObject 与 valCount 三处机制，逐字见 #180、#572 的核对）。
+ *     随之「越界值重问」支在实机上不可达，1:1 保留不补用例
+ *     （page-ability-up.js 文件头同款登记）；
  *   - ABL/EXP 走门面（chara 域：顺从/欲望/私处感觉/肛门感觉/露出癖/抖M
  *     气质；dungeon 域：私处/肛门/绝顶/性交/自慰/调教自慰/精液/口交/私处
  *     扩张/肛门扩张/兽奸/药物经验）；EXP:23（爱情）/EXP:81（勋章）无门面
@@ -64,6 +72,10 @@ function name_of(cid) {
 
 /**
  * INPUT 循环（原作 $INPUT_LOOP：RESULT < 0 或 >= 上界时 GOTO 重输）。
+ *
+ * #572 起两个调用点的选项都打成了按钮，白名单＝按钮集，越界值由引擎
+ * 拒收（弹「输入不合法」），`while` 那支在实机上不可达——1:1 保留结构
+ * 与文案，不补用例（page-ability-up.js 文件头同款登记）。
  *
  * @param {number} upper 合法输入的上界（GOHOUBI 3 / OSIOKI 9）
  * @returns {Promise<number>} 合法的选择值
@@ -146,11 +158,11 @@ async function gohoubi(cid) {
   era.print(`请赐予${name}奖励。`);
   await era.waitAnyKey();
 
-  // :27-29 选项菜单——纯文本 + 自由输入（文件头）
-  era.print('[0] 这是你应份的');
-  era.print('[1] 授予勋章');
-  era.print('[2] 赐予承诺的东西');
-  // :30-36 $INPUT_LOOP
+  // :27-29 选项菜单——三行选项升格为按钮（理由见文件头，#572）
+  era.printButton('这是你应份的', 0);
+  era.printButton('授予勋章', 1);
+  era.printButton('赐予承诺的东西', 2);
+  // :30-36 $INPUT_LOOP（白名单＝上面三枚按钮，越界值由引擎拒收）
   const result = await input_choice(3);
 
   // :40-62 LOCAL:10 = 顺从档位（点数增量）
@@ -535,14 +547,19 @@ async function osioski(cid) {
   era.print(`要处罚${name}吗？`);
   await era.waitAnyKey();
 
-  // :331-339 选项菜单——三行拼行（PRINT 不换行 / PRINTL 换行；行尾全角
-  // 空格照抄排版）。纯文本 + 自由输入（文件头）
-  era.print('[0] 什么也不做\u3000 [1] 低压电椅刑\u3000 [2] 当街自慰刑\u3000');
-  era.print(
-    '[3] 当街脱粪刑\u3000 [4] 鞭刑\u3000\u3000\u3000\u3000[5] 小便器刑\u3000\u3000',
-  );
-  era.print('[6] 打扫厕所刑\u3000 [7] 不给吃饭刑\u3000 [8] 媚药放置刑\u3000');
-  // :340-346 $INPUT_LOOP
+  // :331-339 选项菜单（源是 PRINT/PRINTL 三行拼行的纯文本，升格为按钮后
+  // 按按钮平铺逐行渲染——CONTEXT.md 的记名排版差异；行尾用于列对齐的
+  // 全角空格随之失去意义，不保留）
+  era.printButton('什么也不做', 0);
+  era.printButton('低压电椅刑', 1);
+  era.printButton('当街自慰刑', 2);
+  era.printButton('当街脱粪刑', 3);
+  era.printButton('鞭刑', 4);
+  era.printButton('小便器刑', 5);
+  era.printButton('打扫厕所刑', 6);
+  era.printButton('不给吃饭刑', 7);
+  era.printButton('媚药放置刑', 8);
+  // :340-346 $INPUT_LOOP（白名单＝上面九枚按钮）
   const result = await input_choice(9);
 
   // :353-401 档位表：LOCAL:10 顺从（欲情）/ LOCAL:11 欲望（苦痛・屈服）

@@ -2,6 +2,19 @@
  * @file 设施与设备查看页（issue #348）。
  *
  * 源: target/ERB/處刑相關/INFRASTRUCTURE.ERB  @INFRASTRUCTURE（:2-385）
+ *
+ * 移植说明（有意偏离，注明依据）：
+ *   - **四个菜单的编号选项升格为按钮**（#572）：主菜单（源 :46/:54/:56-68/
+ *     :70/:72）、牧场设定（:255-267 与 :269 的 [999]）、播种者的四选
+ *     （:277-280）、录像架翻页（:361-363）都改 `era.printButton`
+ *     （PR #53 通则，正文不写 [编号] 前缀）；消费点随之不再传
+ *     `useRule: false`（白名单＝本轮的按钮集）。原作「越界/低编号继续或
+ *     返回」的兜底臂在实机上不可达，1:1 保留（page-ability-up.js 同款）。
+ *   - **记名差异（排版）**（#572）：主菜单的展品行原作是 `[ 0]`–`[12]`
+ *     右对齐（`String(index).padStart(2)` 复刻），按钮化后编号由引擎按
+ *     showAcc 拼成 `[0] `——十三行不再对齐；录像架翻页的三条 `PRINTLC`
+ *     （:361-363）原作同行居中，按钮化后各占一行。两者都按 CONTEXT.md
+ *     的记名差异条款登记，不再逐字复刻排版。
  */
 
 'use strict';
@@ -183,19 +196,22 @@ function print_menu() {
   era.println();
   era.print('[==人=类=牧=场==]');
   era.println();
-  era.print('[51] 看看肉便器的样子');
+  // 选项自 #572 起升格为按钮（PR #53 通则，正文不写 [编号] 前缀，引擎按
+  // showAcc 自动拼）。本屏的菜单只打印一次、消费一次（原作各分支 RETURN 0），
+  // 按钮不会被后续回传禁用；白名单＝本轮的按钮集（0-12/50/51/99/100）。
+  era.printButton('看看肉便器的样子', 51);
   era.print('＿＿＿＿＿＿');
   era.print('＼ 博 物 馆 ／');
   era.print('  ￣￣￣￣￣');
-  era.print('[50] 看看全部展品的样子');
+  era.printButton('看看全部展品的样子', 50);
   era.println();
   for (const [index, [, name]] of EXHIBITS) {
-    era.print(`[${String(index).padStart(2)}] 看看${name}的状态`);
+    era.printButton(`看看${name}的状态`, index);
   }
   era.println();
-  era.print('[99] 看看已拍的影像水晶球');
+  era.printButton('看看已拍的影像水晶球', 99);
   era.drawLine();
-  era.print('[100] 返回');
+  era.printButton('返回', 100);
 }
 
 async function show_exhibit(result) {
@@ -247,23 +263,28 @@ async function show_farm() {
       '地下城的便所里，散发着酸臭。充斥着崩坏的呻吟和悲鸣……',
     );
     era.print('各种设定');
-    era.print(`[0] 播种者  现在：${seed_name()}`);
-    era.print(
-      `[1] 人类牧场记录  现在：${get('flag:614') & 1 ? '不显示' : '显示'}`,
+    // :255-267 的四项（播种者/人类牧场记录/卖掉产出的孩子）与 :269 的
+    // [999] 返回 → 按钮（PR #53 通则，#572）
+    era.printButton(`播种者  现在：${seed_name()}`, 0);
+    era.printButton(
+      `人类牧场记录  现在：${get('flag:614') & 1 ? '不显示' : '显示'}`,
+      1,
     );
-    era.print(
-      `[2] 卖掉产出的孩子  现在：${get('flag:614') & 2 ? '出售' : '不出售'}`,
+    era.printButton(
+      `卖掉产出的孩子  现在：${get('flag:614') & 2 ? '出售' : '不出售'}`,
+      2,
     );
-    era.print('[999]返回');
-    const result = await era.input({ useRule: false });
+    era.printButton('返回', 999);
+    const result = await era.input();
     if (result === 999) return;
     if (result === 0) {
       era.print('请选择播种者');
-      era.print('[0] 怪物');
-      era.print('[1] 俘虏的中年');
-      era.print('[2] 俘虏的少年');
-      era.print('[3] 扶她淫魔');
-      let selected = await era.input({ useRule: false });
+      // :277-280 的四项 → 按钮（同上）
+      era.printButton('怪物', 0);
+      era.printButton('俘虏的中年', 1);
+      era.printButton('俘虏的少年', 2);
+      era.printButton('扶她淫魔', 3);
+      let selected = await era.input();
       if (selected < 1 || selected > 3) selected = 0;
       await era.printAndWait(
         `播种者设为${['怪物', '俘虏的中年', '俘虏的少年', '扶她淫魔'][selected]}了`,
@@ -307,10 +328,11 @@ async function show_video_shelf() {
       era.println();
     }
     era.drawLine();
-    era.print('[1000] - 上一页');
-    era.print('[999] - 离  开');
-    era.print('[1001] - 下一页');
-    const result = await era.input({ useRule: false });
+    // :361-363 的三项 → 按钮（PR #53 通则，#572）
+    era.printButton('- 上一页', 1000); // :361（正文的 `- ` 是原作文本）
+    era.printButton('- 离  开', 999); // :362
+    era.printButton('- 下一页', 1001); // :363
+    const result = await era.input();
     if (result === 999) return;
     previous_page = no_page;
     if (result === 1000 && no_page > 0) {
@@ -332,7 +354,7 @@ async function infrastructure(selectable_count) {
   }
   print_menu();
   for (;;) {
-    const result = await era.input({ useRule: false });
+    const result = await era.input();
     if (result < 0) continue;
     if (EXHIBITS.has(result)) await show_exhibit(result);
     else if (result === 50) {

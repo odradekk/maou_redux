@@ -2,6 +2,12 @@
  * @file 流放处刑（issue #348）。
  *
  * 源: target/ERB/處刑相關/BANISHMENT.ERB  @BANISHMENT（:2-949）
+ *
+ * 移植说明（有意偏离，注明依据）：
+ *   - @BANISHMENT 的五选一菜单（源 :22-30）升格为 `era.printButton`
+ *     （PR #53 通则，正文不写 [编号]）；消费点保留 `useRule: false`——
+ *     源 :32 的 `[100] 返回` 被注释掉却仍被 :41 受理，收紧白名单会锁死
+ *     这条未显示路径（#572）。逐处说明见函数内注释。
  */
 
 'use strict';
@@ -602,15 +608,23 @@ async function banishment(cid, rand_n = default_rand) {
   const family_id = search_family(cid);
   await era.printAndWait('要来点有意思的放逐吗？');
   era.println();
-  era.print('[0] 就这样流放掉');
-  era.print('[1] 施予男性化的诅咒');
-  era.print('[2] 消去之前的记忆');
-  era.print(`[3] 变成小动物后放生`);
-  era.print(`[4] 让${she(cid)}回到成为勇者前的生活`);
+  // 原作 :22-30 是 `PRINTL [0]`…`[4]` 的纯文本选项 + INPUT（PR #53 通则：
+  // 升格为按钮，正文不写 [编号] 前缀，引擎按 showAcc 自动拼）。
+  // **保留 useRule: false**：原作 :32 的 `;PRINTL [100] 返回` 被注释掉、
+  // 界面上不显示，但 :41 的 `ELSEIF RESULT == 100` 仍受理它（TFLAG:16 = -1
+  // → JUMP 批量处刑，本移植落成下面的 return 0）——收紧白名单会把这条
+  // 未显示路径锁死，故沿用「按钮 + 自由输入」的既有处置
+  // （先例：ere/event/event-museum.js:83-85）。
+  era.printButton('就这样流放掉', 0);
+  era.printButton('施予男性化的诅咒', 1);
+  era.printButton('消去之前的记忆', 2);
+  era.printButton('变成小动物后放生', 3);
+  era.printButton(`让${she(cid)}回到成为勇者前的生活`, 4);
   era.println();
 
   let result;
   for (;;) {
+    // 0-4 可点可键入，100（未显示）只能键入；其余值走原作的重问循环。
     result = await era.input({ useRule: false });
     if (result < 0 || (result >= 5 && result !== 100)) continue;
     // 原作 :27 的 ELSEIF RESULT == 1 缺少 TALENT:A:122 条件，导致女性也
