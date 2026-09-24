@@ -24,10 +24,10 @@
  *      先按函数圈定屏幕，再按输入边界把函数切成「轮」，然后在**同一轮**里
  *      扫全部按钮快捷键（字面量、常量、常量数组下标；`printButton` 与
  *      `printMultiColumns` 的 `accelerator:` 两种写法都算），与预设 ID
- *      求交集。登记屏幕见 CHARACTER_ROW_SCREENS——献祭名单页（#586）、
- *      跨存档导出菜单（#593）、批量处刑列表（#593 的 [121] 查证）、换号页
- *      （`accelerator:` 写法）。覆盖不到的面（角色行由别的模块打、固定编号
- *      在调用方打印一类）在 #593 的完成评论里列明；
+ *      求交集。登记屏幕见 CHARACTER_ROW_SCREENS（七个：献祭名单页 #586、
+ *      导出菜单 #593、批量处刑列表 #593 的 [121] 查证、换号页、目标选择页的
+ *      两屏、出售选人页）。覆盖不到的面（角色行由别的模块打、动态编号不是
+ *      角色 ID 一类）在 #593 的完成评论里列明；
  *   3. 行为——构造一个真后代，它在名册页与批量处刑页都能被选中，同屏的
  *      固定按钮照常可用。
  */
@@ -364,9 +364,9 @@ function fixed_values_of(expr, ctx, scope) {
  *   - `era.waitAnyKey` / `era.printAndWait` 是**软边界**——等待可能只在某些
  *     分支上执行（如批量处刑里「收藏目标被选中」那条 `continue restart`），
  *     名单与页脚键仍属同一屏，故两侧的段不切。
- * 另外，**尾段与首段按一轮算**（screen_offenders 里合并）：`era.clear` 只删
- * 行、不清引擎的输入白名单（夹具 input_rules 的注释逐字镜像），`for(;;)` 屏
- * 在尾段打的按钮会一直留到下一轮——只按线性位置切轮会漏掉这一种。
+ * 另有一处回边：尾段（最后一次 `era.input` 之后）在 `for(;;)` 屏里会先跑到
+ * 循环头，与**循环头所在的那一轮**同属一个输入白名单（`era.clear` 只删行、
+ * 不清白名单，夹具 input_rules 的注释逐字镜像）——合并由 screen_offenders 做。
  */
 function body_rounds(def, ctx) {
   let text = ctx.skeleton.slice(def.open, def.close + 1);
@@ -387,6 +387,30 @@ function body_rounds(def, ctx) {
   }
   groups.push({ text: text.slice(from), base: def.open + from });
   return groups;
+}
+
+/** 循环头（`for (;;)` / `while (true)`）：尾段的回边落在哪一轮由它决定 */
+const LOOP_HEAD = /(?<![\w$])(?:for\s*\(\s*;\s*;\s*\)|while\s*\(\s*true\s*\))/g;
+
+/**
+ * 循环头落在第几轮。尾段并进的是**它**而不是第 0 轮——`sacrifice_flow` 的
+ * 第 0 轮是退出口（在循环之前），名单轮的 `for(;;)` 头落在第 1 轮，无条件并进
+ * 第 0 轮会把尾段的按钮配错屏（漏报）。函数里没有循环（没有回边）时返回 -1。
+ * @param {object} def 函数定义
+ * @param {object} ctx 扫描上下文
+ * @param {{text: string, base: number}[]} rounds 轮（body_rounds 的结果）
+ */
+function loop_head_round(def, ctx, rounds) {
+  let last = null;
+  let m;
+  LOOP_HEAD.lastIndex = 0;
+  const body = ctx.skeleton.slice(def.open, def.close + 1);
+  while ((m = LOOP_HEAD.exec(body)) !== null) last = m;
+  if (!last) return -1;
+  const at = def.open + last.index;
+  return rounds.findIndex(
+    (round) => at >= round.base && at < round.base + round.text.length,
+  );
 }
 
 /**
@@ -421,7 +445,8 @@ function screen_offenders(screen, file_text, presets) {
   );
   const printers = row_printers(ctx);
   const line_of = (index) => ctx.skeleton.slice(0, index).split('\n').length;
-  const rounds = body_rounds(def, ctx).map((round) => {
+  const raw = body_rounds(def, ctx);
+  const rounds = raw.map((round) => {
     const fixed = [];
     let rows = false;
     for (const { expr, at } of button_expressions(round.text)) {
@@ -439,14 +464,20 @@ function screen_offenders(screen, file_text, presets) {
     }
     return { fixed, rows };
   });
-  // 尾段与首段并成一轮：`for(;;)` 屏在尾段打的按钮留到下一轮（era.clear 不清
-  // 输入白名单），线性切轮会把它们当成两屏
+  // 尾段并进**循环头所在的那一轮**（回边）：`for(;;)` 屏在尾段打的按钮会留到
+  // 下一轮（era.clear 不清输入白名单），只按线性位置切轮会漏掉这一种。不并进
+  // 第 0 轮——那第 0 轮可能是循环之前的退出口（sacrifice_flow 就是这样），
+  // 并错了屏等于换一种漏报。没有循环（没有回边）时不合并。
   if (rounds.length > 1) {
-    rounds[0] = {
-      fixed: [...rounds[0].fixed, ...rounds[rounds.length - 1].fixed],
-      rows: rounds[0].rows || rounds[rounds.length - 1].rows,
-    };
-    rounds.pop();
+    const tail = rounds[rounds.length - 1];
+    const head = loop_head_round(def, ctx, raw);
+    if (head >= 0 && head !== rounds.length - 1) {
+      rounds[head] = {
+        fixed: [...rounds[head].fixed, ...tail.fixed],
+        rows: rounds[head].rows || tail.rows,
+      };
+      rounds.pop();
+    }
   }
   const offenders = [];
   let row_rounds = 0;
@@ -472,7 +503,11 @@ function screen_offenders(screen, file_text, presets) {
 /**
  * 打角色行的屏幕（登记项）。新增这类页面时在这里加一行——核对只保证
  * 「登记的屏幕里，同一轮的固定编号不与任何预设 ID 撞号」，不登记的页面
- * 不在扫描面内（覆盖边界见 #593 的完成评论）。
+ * 不在扫描面内。判定能不能登记：角色行与固定编号都在**这一个函数**里
+ * （行可以由本文件的直接打行函数打，如 show_list_trainable），且同屏没有
+ * 「有意同号」的固定按钮（名册的 [0] 魔王行表头就是有意同号，要配套允许项
+ * 才能登记）。跨模块的（固定编号在调用方、行在被调方）不在本表能覆盖的
+ * 范围里，见 #593 完成评论的边界一节。
  */
 const CHARACTER_ROW_SCREENS = [
   {
@@ -494,6 +529,21 @@ const CHARACTER_ROW_SCREENS = [
     file: 'ere/page/page-chara-number-swap.js',
     fn: 'chara_number_swap',
     why: '换号页两屏：`accelerator:` 写法的角色行（#593 纳入核对）',
+  },
+  {
+    file: 'ere/page/page-select-target.js',
+    fn: 'select_target',
+    why: '调教目标选择页：角色行（show_list_trainable）与 [999]-[1002] 同屏',
+  },
+  {
+    file: 'ere/page/page-select-target.js',
+    fn: 'select_assi',
+    why: '助手选择页：同 select_target（show_list_assistable 的角色行）',
+  },
+  {
+    file: 'ere/system/stronghold/sale.js',
+    fn: 'chara_sale',
+    why: '出售选人页：角色行与 [999] 返回同屏（该屏 input 用 useRule: false，撞号面相同）',
   },
 ];
 
@@ -706,6 +756,43 @@ test('静态自测：for(;;) 屏的尾段按钮与下一轮同屏（era.clear �
   );
   assert.ok(
     offenders[0].includes(':9 的 [7]'),
+    `判出的必须是尾段那一枚、行号要对上（实报：${offenders[0]}）`,
+  );
+});
+
+test('静态自测：尾段并进循环头那一轮，不退出口（sacrifice_flow 的形状）', () => {
+  // 献祭名单页的形状：第 0 轮是**循环之前**的退出口（打 [10]/[100]），名单轮的
+  // `for(;;)` 头落在第 1 轮。尾段必须并进第 1 轮——并进第 0 轮等于把尾段的按钮
+  // 配到退出口那一屏上，名单轮的角色行看不到它（漏报）。本用例在无条件并进
+  // 第 0 轮的实现下必定红。
+  const source = [
+    'async function probe() {',
+    "  era.printButton('退出口', 150);",
+    '  const choice = await era.input();',
+    '  for (;;) {',
+    '    for (const cid of era.getAddedCharacters()) {',
+    '      era.printButton(`行${cid}`, cid);',
+    '    }',
+    "    era.printButton('返回', 999);",
+    '    await era.input();',
+    '    await era.clear(2);',
+    "    era.printButton('尾段', 7);",
+    '  }',
+    '}',
+  ].join('\n');
+  const { offenders, row_rounds } = screen_offenders(
+    { file: '探针来源', fn: 'probe', why: '自测' },
+    source,
+    new Set([7, 150]),
+  );
+  assert.equal(row_rounds, 1, '只有名单轮算角色行轮（循环之前的退出口不算）');
+  assert.equal(
+    offenders.length,
+    1,
+    `尾段的 [7] 必须并进循环头那一轮（实报：${offenders.join('；')}）`,
+  );
+  assert.ok(
+    offenders[0].includes(':11 的 [7]'),
     `判出的必须是尾段那一枚、行号要对上（实报：${offenders[0]}）`,
   );
 });
