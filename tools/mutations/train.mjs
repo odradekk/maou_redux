@@ -4621,7 +4621,9 @@ export default [
     find: 'for (const id of [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 208]) {',
     replace: 'for (const id of []) { // 变异：显式无操作注册删',
     tests: ['com-tentacle'],
-    must_mention: '显式无操作压掉分发骨架占位行',
+    // #549 全量变异更新：守卫仍在（红=true），守护用例随 #565 改名后旧
+    // must_mention 失配——改取现行用例标题（注册 100-109/150/208：…全部进族）
+    must_mention: '全部进族；EQUIP 100/108 进链',
   },
   {
     desc: 'M1544 主启动图删 K2 口上注册（#233）',

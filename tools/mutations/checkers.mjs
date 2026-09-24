@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 178; // #547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+export const COUNT = 179; // #549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_koujo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
 // SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
 // 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
@@ -88,7 +88,7 @@ export default [
   {
     desc: 'M11637 收集器的 try_kojo 写法失明（第二实参名收不到）',
     file: 'tools/trace-coverage.mjs',
-    find: '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
+    find: '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,(?:\\s*\\/\\/[^\\n]*)?\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
     replace: `    /never_try_kojo_(\s*)/gs, // 变异：try_kojo 名收集失明`,
     tests: ['stub-registry-status'],
     must_mention: '第二实参名也收',
@@ -100,6 +100,15 @@ export default [
     replace: '    // 变异：try_kojo 名也按 stub_line 规则判',
     tests: ['stub-registry-status'],
     must_mention: '不得按 stub_line 规则红',
+  },
+  {
+    desc: 'M11643 try_kojo 收集器对 family 实参后的行尾注释失明（attack_koujo_b 的锚名漏收，#549）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,(?:\\s*\\/\\/[^\\n]*)?\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
+    replace:
+      '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs, // 变异：行尾注释形态失明',
+    tests: ['stub-registry-status'],
+    must_mention: 'family 实参带行尾注释的调用点，锚名也要收进核对',
   },
   // —— #513：内联 :N 的源绑定（trace-check）——
   {

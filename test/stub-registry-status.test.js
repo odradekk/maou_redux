@@ -463,6 +463,25 @@ test('收集器：try_kojo_or_stub 的第二实参名也收（多行调用形态
   assert.deepEqual(collect_try_kojo_names(source), ['ATTACK_KOUJO_B']);
 });
 
+test('收集器：family 实参后的行尾注释不挡锚名（attack_koujo_b 形态，#549）', () => {
+  // 真树里 attack_koujo_b 的调用把 TRYCALLFORM 拼名式写在 family 实参后
+  // （ere/kojo/kojo-system.js），#565 落地时收集器没覆盖这种形态、该锚名
+  // 一直没进核对——#549 全量变异的 M8946 红暴露失明
+  const source = [
+    'const x = await try_kojo_or_stub(',
+    '  dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}',
+    "  'ATTACK_KOUJO_B',",
+    "  '攻击口上（B 侧）',",
+    '  cid,',
+    ');',
+  ].join('\n');
+  assert.deepEqual(
+    collect_try_kojo_names(source),
+    ['ATTACK_KOUJO_B'],
+    'family 实参带行尾注释的调用点，锚名也要收进核对',
+  );
+});
+
 test('核对分流：try_kojo 名字找到清单行即放行（「已实现」不红），缺行红（#565 返工）', () => {
   const text = sample_registry([
     [
