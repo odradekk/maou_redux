@@ -22,7 +22,9 @@
  *   B. W/L 变体：ERB 的 PRINTFORMW → printAndWait、PRINTFORML → print，
  *      按行锚逐语句配对；
  *   C. 插值槽位序：ERB 行内的 %...% / {…} / \@...\@ 记号序列与 JS 同语句的
- *      ${...} 序列各自归一后逐项相等（#232 扩：ERB 三元 \@ 也是插值槽）；
+ *      ${...} 序列各自归一后逐项相等（#232 扩：ERB 三元 \@ 也是插值槽；
+ *      #570/#599 再扩：`CALL GOBI_KOUJO` / `CALL BENKI_PLAYER_NAME` 记号行
+ *      与 JS 的 ${gobi_*} / ${benki_player_name()} 配对，见下文「记号行」）；
  *   D. 字面量片段双向：ERB 片段（按 %...% 切开）⊂ JS 语句文本，JS 字面量
  *      片段（按 ${...} 切开）⊂ ERB 行文本——防手抄错漏。**#60 起归一**：
  *      ERB 侧先经 tools/lang-table.js 归一（繁/日 → 简，词级优先）再比对，
@@ -47,11 +49,28 @@
  *     对应形态，只能合并成一条语句）。锚必须列全
  *     [首行, 末行] 区间内的每一行 PRINT——漏列即 bind_error，堵住「合并语句
  *     悄悄吞掉没列的行」；中段必须是不带 W/L 的 PRINTFORM（自带换行会把
- *     一行拆成两行），末行的 W/L 决定 printAndWait/print。行间的
- *     `CALL GOBI_KOUJO` 块各计一个 GOBI 记号，与 JS 侧的 `${gobi_*}` 配对
- *     （见 JS_TOKEN_RULES）。B/C/D 三道锁对拼接语句照常生效：B 认末行，
- *     C 把各行的插值记号按序拼起来，D 双向且**按序**核对（不再只看片段
- *     是否出现在某一行里）。
+ *     一行拆成两行），末行的 W/L 决定 printAndWait/print。B/C/D 三道锁对
+ *     拼接语句照常生效：B 认末行，C 把各行的插值记号按序拼起来，D 双向且
+ *     **按序**核对（不再只看片段是否出现在某一行里）。
+ *
+ * 记号行（#570 引入 GOBI，#599 扩到 BENKI_PLAYER_NAME）：源里的一句
+ * `CALL <真身>`（MARKER_CALL_RULES 登记），真身把文本插进当前输出行——
+ * `CALL GOBI_KOUJO` 返语尾（JS 侧 `${gobi_*}`）、`CALL BENKI_PLAYER_NAME`
+ * 返对象名（JS 侧 `${benki_player_name()}` / K3 的局部名，见 JS_TOKEN_RULES）。
+ * 记号行的位置决定它的归属：**上一条 PRINT 行与本条 PRINT 行之间的 CALL
+ * 算后一条**——拼接锚的各行之间如此（原有的 GOBI 语义），单行锚的首行
+ * 上方也如此（#599：K12 的「PRINTFORMW 前缀 + CALL 名字 + PRINTFORMW 续行」
+ * 在原作是两行，名字落在那一条续行语句的首行；不收这一段就会出现
+ * 「JS 有 ${…}、ERB 侧没有」的假绿）。上边界取最近的 PRINT 系行或
+ * `@函数` 行（分支行不是边界，见 upper_bound_line）。
+ * IF/ELSE 两支各写一句同记号 CALL（只走一支）时并成一个记号。
+ * 表里没有的 CALL（SELL_MATURO_K0 一类自带输出的真身）不是记号：它们的
+ * 输出是独立语句，由自己的锚覆盖。
+ *   - **带 W/L 的前缀行不许被吞（#599 锁 A 的后置检查）**：锚上方有记号行
+ *     而上一条 PRINT 行自带 W/L 时（原作在那里已经换行/等待），那条 PRINT
+ *     行必须有**自己的语句**。否则「W/L 前缀 + CALL + 续行」被并成一条输出
+ *     （K12 四处 #243 起的形态）时：锁 B 看不见没列进语句的前缀行、锁 C 还能
+ *     对上记号——两行并一行就成了假绿。#599 的审查就是靠这条抓出 K12 的。
  *
  * 已知边界（防误用）：
  *   - 模块 → 源文件取自文件头的「源: target/…ERB」（追溯注释，项目约定）；
@@ -228,6 +247,8 @@ const ERB_TOKEN_RULES = [
   //   collect_span_tokens 从源行（IF/ELSE 间的一句 CALL）生成，与 JS 侧
   //   ${gobi_*} 配对；写成归一条目是为了两侧共用同一张表、同一套比对 ——
   [/^GOBI$/, 'GOBI'],
+  // —— #599：同上，CALL BENKI_PLAYER_NAME（对象名）的插入点记号 ——
+  [/^BENKI_PLAYER_NAME$/, 'BENKI_PLAYER_NAME'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -353,6 +374,10 @@ const JS_TOKEN_RULES = [
   // —— #570：迷宫凌辱『猪…』整段一行的语尾插值（与 ERB 的 CALL GOBI_KOUJO 配对） ——
   [/^gobi_pig$/, 'GOBI'],
   [/^gobi_pig2$/, 'GOBI'],
+  // —— #599：CALL BENKI_PLAYER_NAME 的对象名插值（K0/K12 的闭包名、
+  //   K3 的局部名，同一个记号） ——
+  [/^benki_player_name\(\)$/, 'BENKI_PLAYER_NAME'],
+  [/^player_name_benki$/, 'BENKI_PLAYER_NAME'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
@@ -710,26 +735,85 @@ function bind_anchor(stmt, lines) {
 }
 
 /**
- * 拼接锚的 ERB 记号序列（#570）：各 PRINT 行的插值记号按序排；两行 PRINT
- * 之间的 `CALL GOBI_KOUJO` 块（原作 IF/ELSE 两分支各一句、只走一支）汇成
- * 一个 GOBI 记号——与 JS 侧 `${gobi_*}` 配对的插入点。
+ * 记号行表（#570 引入 GOBI，#599 扩到 BENKI_PLAYER_NAME）：源里的一句
+ * `CALL <真身>`，真身把文本插进当前输出行（GOBI_KOUJO 返语尾、BENKI_PLAYER_NAME
+ * 返对象名），JS 侧要照着位置插 `${…}`。表里没有的 CALL（SELL_MATURO_K0 一类
+ * 自带输出的真身）不算记号——它们的输出是独立语句，由自己的锚覆盖。
+ */
+const MARKER_CALL_RULES = [
+  [/^\s*CALL\s+GOBI_KOUJO\b/i, 'GOBI'],
+  [/^\s*CALL\s+BENKI_PLAYER_NAME\b/i, 'BENKI_PLAYER_NAME'],
+];
+
+/**
+ * 行区间 [lo, hi] 里的记号行 → 记号名序列。连续的同名记号只计一个：原作
+ * IF/ELSE 两支各写一句 `CALL GOBI_KOUJO, 1` / `CALL GOBI_KOUJO, 5`（只走
+ * 一支），并进同一条 JS 输出时是一个 `${gobi_*}`（#570 的既有语义）。
  *
  * @param {string[]} erb_lines 源文件全文按行
- * @param {object[]} prints 拼接锚列出的 PRINT 行（行号升序）
- * @returns {string[]} 原始记号文本（GOBI 是字面标记，不是 %…%）
+ * @param {number} lo 起始行号（含，1 起）
+ * @param {number} hi 结束行号（含）
+ * @returns {string[]} 记号名（'GOBI' / 'BENKI_PLAYER_NAME'）
+ */
+function collect_gap_markers(erb_lines, lo, hi) {
+  const out = [];
+  for (let i = lo; i <= hi; i += 1) {
+    const line = erb_lines[i - 1] ?? '';
+    for (const [re, name] of MARKER_CALL_RULES) {
+      if (re.test(line)) {
+        if (out[out.length - 1] !== name) {
+          out.push(name);
+        }
+        break;
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * 语句「上方」的结构边界：往上找到最近的 PRINT 系行或 `@函数` 声明行——
+ * 记号行只算这条线以下、语句首行以上的区间。**口径就是这两类行**：跨函数
+ * （`@`）当然不算；分支行（`IF`/`ELSEIF`/`ELSE`/`ENDIF`）**不是**边界，
+ * 所以「某分支末尾的 CALL 紧接下一分支的首个 PRINT 行、中间没有 PRINT 行」
+ * 这种排布会把记号算给后一条语句（当前语料没有这种排布；#599 审查指出，
+ * 真出现时在此处加分支边界——注意别把 GOBI 的 IF/ELSE 两支拆成两个记号）。
+ *
+ * @param {string[]} erb_lines 源文件全文按行
+ * @param {number} line_no 开始往上找的行号
+ * @returns {number} 边界行号（0 = 文件开头）
+ */
+function upper_bound_line(erb_lines, line_no) {
+  for (let i = line_no; i >= 1; i -= 1) {
+    const line = erb_lines[i - 1] ?? '';
+    if (/^\s*@/.test(line) || PRINTFORM_RE.test(line)) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+/**
+ * 绑定的 PRINT 行的 ERB 记号序列（#570 拼接锚；#599 起单行锚也走这里）：
+ * 首行上方、行间、行内的记号按序拼接——
+ *   - **行间与首行上方**的记号行（CALL GOBI_KOUJO / CALL BENKI_PLAYER_NAME，
+ *     见 MARKER_CALL_RULES）各计一个记号，是 `${gobi_*}` /
+ *     `${benki_player_name()}` 的插入点。单行锚也要收上方这一段：#599 起
+ *     K12 的「PRINTFORMW 前缀 + CALL 名字 + PRINTFORMW 续行」在原作是两行，
+ *     名字落在续行语句的首行（前缀行有自己的语句），插入点（CALL 行）在锚的
+ *     上方——不收就会「JS 有 ${…}、ERB 侧没有」，锁 C 红。
+ *   - 各 PRINT 行自己的 %…% / {…} / \@…\@ 按序跟上（原 collect_span_tokens
+ *     的既有语义）。
+ *
+ * @param {string[]} erb_lines 源文件全文按行
+ * @param {object[]} prints 本语句的 PRINT 行（行号升序）
+ * @returns {string[]} 原始记号文本（记号名是字面标记，不是 %…%）
  */
 function collect_span_tokens(erb_lines, prints) {
   const tokens = [];
-  let prev = prints[0].line_no - 1;
+  let prev = upper_bound_line(erb_lines, prints[0].line_no - 1);
   for (const p of prints) {
-    let in_gobi = false; // 行间的一段 CALL 块只计一个记号（IF/ELSE 分支合并）
-    for (let i = prev + 1; i < p.line_no; i += 1) {
-      const line = erb_lines[i - 1] ?? '';
-      if (!in_gobi && /^\s*CALL\s+GOBI_KOUJO\b/i.test(line)) {
-        tokens.push('GOBI');
-        in_gobi = true;
-      }
-    }
+    tokens.push(...collect_gap_markers(erb_lines, prev + 1, p.line_no - 1));
     for (const m of p.arg.matchAll(
       /%([^%]+)%|{([^}]+)}|\\@((?:(?!\\@)[\s\S])*?)\\@/g,
     )) {
@@ -823,11 +907,52 @@ const MODULES = (() => {
       );
       if (hit) {
         stmt.prints = [hit];
+        // #599：单行锚也要收「上方记号行」——K12 的「PRINTFORMW 前缀（自带
+        // 换行/等待）+ CALL 名字 + 续行」里，名字的插入点在锚的上方
+        //（见 collect_span_tokens；前缀行自己另有语句，锁 A 的后置检查守着）
+        stmt.span_tokens = collect_span_tokens(entry.erb_lines, [hit]);
       } else if (stmt.binding.via === '尾锚') {
         stmt.bind_error = `尾锚 :${stmt.binding.label} 在 ${entry.erb_rel} 不是 PRINT 系行`;
       } else {
         // 前置注释是结构注释（窗口内无 PRINTFORM 行），不绑定
         stmt.binding = null;
+      }
+    }
+    // #599：带 W/L 的前缀行不许被吞——某条语句的锚上方有记号行、而上一条
+    // PRINT 行自带 W/L（原作在那里已经换行/等待）时，那条 PRINT 行必须有
+    // 自己的语句。否则「前缀行 + CALL + 续行」被并成一条输出（K12 四处
+    // #243 起的形态），锁 B 看不见未列出的前缀行、锁 C 还能对上记号，
+    // 两行并一行就成了假绿（#599 审查实测）。
+    if (entry.erb_lines) {
+      const anchored = new Set();
+      for (const stmt of entry.statements) {
+        for (const p of stmt.prints ?? []) {
+          anchored.add(p.line_no);
+        }
+      }
+      for (const stmt of entry.statements) {
+        if (!stmt.prints || stmt.bind_error) {
+          continue;
+        }
+        const first = stmt.prints[0].line_no;
+        const bound = upper_bound_line(entry.erb_lines, first - 1);
+        if (bound < 1 || anchored.has(bound)) {
+          continue;
+        }
+        if (
+          collect_gap_markers(entry.erb_lines, bound + 1, first - 1).length ===
+          0
+        ) {
+          continue;
+        }
+        const match = (entry.erb_lines[bound - 1] ?? '').match(PRINTFORM_RE);
+        const variant = match ? (match[1] || match[3] || '').toUpperCase() : '';
+        if (variant) {
+          stmt.bind_error =
+            `锚 :${stmt.binding.label} 上方有 CALL 记号行，` +
+            `而上方那条 PRINTFORM${variant} :${bound} 没有自己的语句——` +
+            `它自带换行/等待，并进本语句会吞掉一行`;
+        }
       }
     }
     out.push(entry);
@@ -956,19 +1081,14 @@ test('插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔
       const where = where_of(mod, stmt);
       // #184 扩：ERB 的 %…% 与 {…} 都是插值记号（口上文件只有 %…%；
       // DUNGEON_BITCH 等带文本状态机用 {…} 做显示插值，如 {PLAY}、{LOCAL}）。
-      // #570 拼接锚：各行的记号按序拼接，行间 CALL GOBI_KOUJO 计 GOBI 记号
-      //（IIFE 里预计算，见 collect_span_tokens），与 JS 侧 ${gobi_*} 配对。
+      // #570 拼接锚 / #599 单行锚：记号行（CALL GOBI_KOUJO / CALL
+      // BENKI_PLAYER_NAME）与各 PRINT 行的记号按序拼接（IIFE 里预算在
+      // stmt.span_tokens，见 collect_span_tokens），与 JS 侧 ${…} 配对。
       const multi = stmt.prints.length > 1;
       if (!multi && stmt.prints[0].variant === 'DATA') {
         continue; // #184：PRINTDATA 随机文本结构不参与槽位序比对
       }
-      const erb_tokens = multi
-        ? stmt.span_tokens
-        : [
-            ...stmt.prints[0].arg.matchAll(
-              /%([^%]+)%|{([^}]+)}|\\@((?:(?!\\@)[\s\S])*?)\\@/g,
-            ),
-          ].map((m) => m[1] ?? m[2] ?? m[3]);
+      const erb_tokens = stmt.span_tokens ?? [];
       const js_tokens = [];
       for (const s of stmt.strings) {
         if (s.quote === '`') {
