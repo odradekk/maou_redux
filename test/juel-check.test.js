@@ -825,3 +825,21 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     'juel-check 的存根名单清空（ABLUP 缺号回落仍由 STUBBED_ABLUP_NAMES 驱动）',
   );
 });
+
+// ———— #595：结算表头的收尾空行 ————
+
+test('#595 调教结果表头与表格首行之间不夹空行（:655 的 PRINTL 只收尾拼行）', () => {
+  const fixture = create_era_fixture();
+  const mod = seed_world(fixture);
+
+  mod.juel_check_main(31, () => 0);
+
+  const header = fixture.lines.find((l) => l.text?.startsWith('调教结果：'));
+  assert.ok(header, '结算表头在场');
+  const next = fixture.lines.find((l) => l.row === header.row + 1);
+  assert.equal(
+    next?.type,
+    'divider',
+    '表头之后直接是 :656 的点线，不补空行（TRAIN_MAIN.ERB:655 只收尾 :652-654 的 PRINTFORM 链）',
+  );
+});

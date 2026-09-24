@@ -1091,3 +1091,61 @@ test('导出面：arena_slave_point / arena_assi_point / com_after_arena 在场�
   assert.equal(fixture.store.get('tflag:401'), 1);
   void arena_assi_point; // 导出面在场（COM201 的用例覆盖其行为）
 });
+
+// —— #595：凌辱菜单的按钮行逐行相邻（原作是连续 PRINTL，无空行） ————
+
+test('#595 COM201/202/207 凌辱菜单：菜单行之间没有多补的空行', async () => {
+  // COM201：男助手（TALENT:122）→ 全项显示；陷落进菜单后放过
+  const world201 = seed_colosseum_world({ assi: true });
+  world201.fixture.store.set('tequip:31:55', 1);
+  world201.fixture.store.set('base:31:1', 0);
+  world201.fixture.store.set('maxbase:32:1', 1000);
+  world201.fixture.store.set('base:32:1', 1000);
+  world201.fixture.store.set('cflag:32:13', 100);
+  world201.fixture.store.set('cflag:32:14', 100);
+  world201.fixture.store.set('talent:32:122', 1);
+  world201.era_flag.assiplay = 1;
+  world201.era_flag.player = 32;
+  world201.era_flag.selectcom = 201;
+  world201.fixture.set_inputs(999);
+  await world201.com_family.call(201);
+
+  // COM202 与 COM207：默认世界陷落进菜单后放过
+  const run_menu = async (com) => {
+    const world = seed_colosseum_world();
+    world.fixture.store.set('tequip:31:55', 1);
+    world.era_flag.selectcom = com;
+    world.fixture.set_inputs(999);
+    await world.com_family.call(com);
+    return world.fixture;
+  };
+  const fixture202 = await run_menu(202);
+  const fixture207 = await run_menu(207);
+
+  for (const [fixture, header] of [
+    [world201.fixture, '对哪里进行凌辱？'],
+    [fixture202, '对哪里进行凌辱？'],
+    [fixture207, '把粘液灌到哪里？？'],
+  ]) {
+    const head = fixture.lines.find(
+      (line) => line.type === 'text' && line.text === header,
+    );
+    const exit = fixture.lines
+      .filter((line) => line.type === 'button' && line.accelerator === 999)
+      .at(-1);
+    assert.ok(head, `${header} 在场`);
+    const rows_between = fixture.lines.filter(
+      (line) => line.row > head.row && line.row < exit.row,
+    );
+    assert.deepEqual(
+      rows_between.map((line) => line.type),
+      rows_between.map(() => 'button'),
+      `${header}：菜单行全是按钮（COMF201:65-73 / COMF202:53-59 / COMF207:47-52 的连续 PRINTL）`,
+    );
+    assert.equal(
+      exit.row - head.row,
+      rows_between.length + 1,
+      `${header}：末个按钮与菜单头之间无空行`,
+    );
+  }
+});

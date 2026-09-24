@@ -310,6 +310,14 @@ test('@EQUIP_COM53：充能先注册按钮，成功时双扣资金，选择停�
       ['不了', 2],
     ],
   );
+  // #595：COMF53:175 的裸 PRINTL 落在 :174 的 [1] 行之后 → 真空行（保留）
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.row > buttons[0].row && line.row < buttons[1].row)
+      .map((line) => [line.type, line.text]),
+    [['br', '']],
+    '充能按钮与不了按钮之间恰有一个空行',
+  );
   assert.equal(fixture.store.get('cflag:31:499'), 1);
   assert.equal(fixture.store.get('flag:10004'), 500);
   assert.equal(fixture.store.get('exflag:4444'), 500);

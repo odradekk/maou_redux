@@ -316,6 +316,17 @@ test('COMSEQ_TRAIN：预检查有不可用条目 → 整体拒绝，零执行', 
   assert.ok(
     fixture.text_lines().some((t) => t.includes('所登录的指令目前无法实行')),
   );
+  // #595：COM_REGISTER.ERB:234 的 PRINTL 整行自成一行——其后不补空行
+  const not_runnable = fixture.lines.find((l) =>
+    l.text?.includes('所登录的指令目前无法实行'),
+  );
+  assert.deepEqual(
+    fixture.lines
+      .filter((l) => l.row === not_runnable.row + 1)
+      .map((l) => [l.type, l.text]),
+    [],
+    ':234 之后不得补空行（该行已是整行 PRINTL）',
+  );
   assert.equal(fixture.store.get('tflag:224'), 0, ':233 拒绝路径复位旗标');
   assert.equal(
     fixture.load_module('era-utils/era-flag').prevcom,

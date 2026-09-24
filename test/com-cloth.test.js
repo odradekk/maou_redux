@@ -566,6 +566,12 @@ test('@COM111：内裤撕碎（L:6，CFLAG:43 = -3）与全裸收尾', async () 
   const lines = text_lines(fixture);
   assert.ok(lines.includes('温妮的内裤被撕碎了。'));
   assert.ok(lines.includes('（已经全裸，撕无可撕）'), ':160 的收尾行');
+  // #595：COMF111:161 的裸 PRINTL 落在 :160 已收行之后 → 真空行
+  assert.equal(
+    lines[lines.indexOf('（已经全裸，撕无可撕）') + 1],
+    '',
+    '全裸收尾行之后是 COMF111:161 的真空行（其后才等键）',
+  );
   assert.equal(fixture.store.get('cflag:31:40'), 0);
   assert.equal(fixture.store.get('cflag:31:43'), -3);
 });
@@ -646,7 +652,18 @@ test('@COM110 [9]：COM111 返回 0（19 返回）→ COM110 重绘菜单；返�
     2,
     'COM111 返回 0 → COM110 重绘（[9] 前后各一次 + 重绘）…实际：初次 + 返回后重绘',
   );
-  assert.ok(lines.includes(''), 'COM110 重绘前有空行（:320）');
+  assert.equal(
+    lines[lines.lastIndexOf('穿脱衣服') - 1],
+    '',
+    'COM110 重绘前有空行（:321）',
+  );
+  // #595：COMF110:313 的裸 PRINTL 落在 COM110 菜单已收行之后 → 真空行，
+  // 紧接 COM111 的菜单头
+  assert.equal(
+    lines[lines.indexOf('撕破衣服') - 1],
+    '',
+    'COM111 菜单之前是 COMF110:313 的真空行',
+  );
 
   const quit = seed_world(15, 5);
   quit.fixture.set_inputs(9, 100);

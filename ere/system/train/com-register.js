@@ -313,8 +313,7 @@ async function comseq_train() {
     pending = await run_calltrain(sequence); // :230 CALLTRAIN FLAG:550
   } else {
     game_train.索求口上抑制 = 0; // :233 不可实行 → 旗标复位
-    era.print('所登录的指令目前无法实行'); // :234 PRINTL
-    era.println();
+    era.print('所登录的指令目前无法实行'); // :234 PRINTL（整行自成一行，不补空行——#595）
   }
   era_flag.prevcom = prevcom_saved; // :236 PREVCOM 恢复
   return pending;

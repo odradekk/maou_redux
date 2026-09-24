@@ -243,15 +243,16 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       era.print('  [1] - 不要'); // :260
       const result = await era.input(); // :261
       if (result === 0) {
-        // :263 换上新的尿布（PRINTFORM，不收行——:269 空行后另有输出）
+        // :263 换上新的尿布（PRINTFORM 不收行；:269 的裸 PRINTL 只收尾它）
         era.print(`（为${name}换上了新的尿布）`);
         era_flag.money -= 50; // :264 MONEY
         era_exflag.legit_money -= 50; // :265 EX_FLAG:4444
         era.set(`cflag:${cid}:47`, 0); // :266
         set_mask(mask() - 16); // :267
         if (talent(cid, 135) === 0) {
-          // :268-271 未熟以外：空行 + 耻情点数＋500（PALAMNAME:8 = 耻情）
-          era.print(''); // :269 PRINTL（空行）
+          // :268-271 未熟以外：耻情点数＋500（PALAMNAME:8 = 耻情）；
+          // FUNC_CLOTH.ERB:269 的裸 PRINTL 只收尾 :263 的 PRINTFORM，
+          // 不是空行——这里不补 println（#595）
           era.print(`${era.get('palamname:8') ?? ''}点数＋500`);
           const juel8 = era.get(`juel:${cid}:8`) || 0; // JUEL:8
           era.set(`juel:${cid}:8`, juel8 + 500);

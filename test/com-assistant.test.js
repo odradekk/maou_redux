@@ -273,10 +273,13 @@ test('@COM60-73：骨架标题行与返回 1', async () => {
     world.fixture.set_inputs(1);
     const result = await run_com(world, Number(id));
     assert.equal(result, 1, `COM${id}`);
-    assert.ok(
-      world.fixture.text_lines().includes(title),
-      `COM${id} 标题「${title}」`,
-    );
+    // COM64 的标题与部位后缀同行（COMF64:79 的 PRINT ３Ｐ 不收行，:81/83/85/87
+    // 的 PRINTL 收尾同一行——#595 合成一次 print），其余标题各自独占一行
+    const ok =
+      id === '64'
+        ? world.fixture.text_lines().some((line) => line.startsWith(title))
+        : world.fixture.text_lines().includes(title);
+    assert.ok(ok, `COM${id} 标题「${title}」`);
   }
 });
 
@@ -428,7 +431,10 @@ test('COM64：升格路径按本次/上次指令分配部位并回填 SELECTCOM'
   assert.equal(era_flag.selectcom, 64);
   assert.equal(fixture.store.get('tflag:40'), 1);
   assert.equal(fixture.store.get('tflag:41'), 2);
-  assert.ok(fixture.text_lines().includes('・私处和肛门一起插'));
+  assert.ok(
+    fixture.text_lines().includes('３Ｐ・私处和肛门一起插'),
+    'COMF64:79 的 PRINT ３Ｐ 与 :81 的 PRINTL 后缀同行（#595）',
+  );
 });
 
 test('COM65：助手处女选「不要」则取消回合', async () => {
@@ -518,4 +524,80 @@ test('COM69：有亲族打前缀，无亲族静默', async () => {
     '目标是 PLAYER 的亲族则出前缀',
   );
   assert.ok(kin.fixture.text_lines().includes('六九式'));
+});
+
+// ———— #595：print 之后多补的空行普查 ————
+
+test('#595 COM64：四个部位后缀都与「３Ｐ」同行，且不落纯空白行', async () => {
+  // COMF64:79 的 `PRINT ３Ｐ` 不收行，:81/83/85/87 的 PRINTL 收尾同一行——
+  // ere 侧合成一次 print（#595）
+  for (const [selectcom, prevcom, suffix] of [
+    [20, 27, '・私处和肛门一起插'], // (1,2)
+    [20, 31, '・性交同时口交'], // (1,3)
+    [27, 31, '・肛交同时口交'], // (2,3)
+    [26, 26, '　'], // 0/0 → ELSE：全角空格后缀仍在同一行
+  ]) {
+    const world = seed_world();
+    const { fixture, era_flag } = world;
+    // 不走 run_com（它会把 selectcom 置成 64 而绕开升格路径）——直接调族，
+    // 与「升格抵达时显式回填 SELECTCOM」同一入口
+    era_flag.selectcom = selectcom;
+    era_flag.prevcom = prevcom;
+    assert.equal(await world.com_family.call(64), 1);
+    assert.ok(
+      fixture.text_lines().includes(`３Ｐ${suffix}`),
+      `selectcom=${selectcom}、prevcom=${prevcom}：３Ｐ 与「${suffix}」同行`,
+    );
+    const blanks = fixture.lines.filter(
+      (line) =>
+        (line.type === 'br' || line.type === 'text') &&
+        /^[ \u3000]*$/.test(line.text ?? ''),
+    );
+    assert.deepEqual(
+      blanks,
+      [],
+      `selectcom=${selectcom}、prevcom=${prevcom}：３Ｐ 行不接受独立空行/纯空白行`,
+    );
+  }
+});
+
+test('#595 COM73：>100 时剪发菜单之后恰有一个真空行，≤100 时一个都没有', async () => {
+  // COMF73:132 的裸 PRINTL 落在空行上；:69-70 的 SIF 在短发时 GOTO
+  // $INPUT_LOOP_HAIRSET，把它整条跳过（#595）
+  const long = seed_world();
+  long.fixture.store.set(`talent:${TARGET}:302`, 300); // 头发长度 > 100
+  long.fixture.set_inputs(2, 1); // 剪发菜单选「不剪」→ 发型菜单选「自然」
+  assert.equal(await run_com(long, 73), 1);
+  const menu = long.fixture.lines.findIndex(
+    (line) =>
+      line.type === 'text' && line.text === '把温妮的头发弄成什么样子？',
+  );
+  assert.ok(menu > 0, '发型菜单在场');
+  assert.equal(
+    long.fixture.lines[menu - 1].text,
+    '',
+    '菜单之前是 COMF73:132 的真空行',
+  );
+  assert.ok(
+    !long.fixture.lines.some(
+      (line) =>
+        (line.type === 'br' || line.type === 'text') &&
+        /^[ \u3000]*$/.test(line.text ?? '') &&
+        line !== long.fixture.lines[menu - 1],
+    ),
+    '剪发流程里除 :132 外没有别的空行',
+  );
+
+  const short = seed_world(); // 默认 TALENT:302 = 1（短发）→ 跳过剪发菜单与真空行
+  short.fixture.set_inputs(1);
+  assert.equal(await run_com(short, 73), 1);
+  const short_menu = short.fixture.lines.findIndex(
+    (line) =>
+      line.type === 'text' && line.text === '把温妮的头发弄成什么样子？',
+  );
+  assert.ok(short_menu > 0, '短发时发型菜单仍在场');
+  assert.ok(
+    !/^[ \u3000]*$/.test(short.fixture.lines[short_menu - 1].text ?? ''),
+    '短发时菜单之前没有空行（:69-70 的 GOTO 跳过 :132）',
+  );
 });
