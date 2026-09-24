@@ -697,8 +697,9 @@ async function chara_info() {
  * （number_view_order，按移植自建的排序编号）。
  * 原作在 :829 的 CALL 之后没有 RETURN，直接落到函数末尾；Emuera 对普通函数
  * state.Return(0)`）。本包装入口因此恒回 0：内层返回 1 的操作只有结婚
- * （@MARRIAGE 的两个出口——婚礼完成 :450-451、ENTER_LOVER 成功 :71-74；
- * 转职最高返回 2，诱惑的 RETURN 1 被注释）。名册 1200 视图走此入口时结婚
+ * （@MARRIAGE 的两个出口——婚礼完成 CHARA_MARRIAGE.ERB:450-451、
+ * ENTER_LOVER 成功 CHARA_MARRIAGE.ERB:71-74；转职最高返回 2，诱惑的
+ * RETURN 1 被注释）。名册 1200 视图走此入口时结婚
  * 不结束本回合、回到人物列表；主菜单 498/499 名字按钮的调用点不读返回值
  * （回到主菜单）——原作自身的缺陷（#14 已登记），照搬不修。
  * @param {number} cid 角色 ID
