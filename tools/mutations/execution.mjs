@@ -1417,6 +1417,5 @@ export default [
     replace: "era.printButton('选择处刑方式', 150); // SIF 可处刑（:66-67）",
     tests: ['child-id-collision'],
     must_mention: '同一轮里与角色行同屏的固定编号不得等于预设 ID',
-
   },
 ];
