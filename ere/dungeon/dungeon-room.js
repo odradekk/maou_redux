@@ -540,7 +540,7 @@ async function dungeon_shop_day(extra, rand_n) {
     income *= 2; // :360
   }
 
-  era.println(); // :362 PRINTL
+  era.println(); // :362 PRINTL 真空行：343/346/351/355/359 行的威望行已收尾
   era.print(`从商店街征收了今天的税金。（现金收入+${income}）`); // :363
   await era.waitAnyKey();
 

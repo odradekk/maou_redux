@@ -2048,12 +2048,23 @@ osioski_koujo_family.register(0, osioski_koujo_k0);
 /**
  * @BENKI_KOUJO_K0（K0 慈爱）：肉便器配信口上（:7415-7634，FLAG:62 分档 0-10 × FLAG:63/素质）。
  *
+ * 常识改写四支（FLAG:62 = 3/4/5/6）的首句在原作由三行拼成一行输出：
+ * 前三处是 PRINTFORM 「和…（:7495/:7516/:7537）、第四处是 PRINTFORM 「给予（:7558），
+ * 接 CALL BENKI_PLAYER_NAME（:7496/:7517/:7538/:7559，对象名）、
+ * 再 PRINTFORMW 收尾。ere 一次 era.printAndWait 输出整行，名字按
+ * ${benki_player_name()} 插进 CALL 的位置（#599；真身 ere/system/train/benki.js，
+ * K12 同款延迟 require）。
+ *
  * @returns {Promise<number>} 0（RETURN 0）
  */
 async function benki_koujo_k0() {
   /* eslint-disable no-irregular-whitespace -- 原文全角空格（BENKI 台词，多行模板内无法逐行 disable） */
   const target = era_flag.target;
   const sc = () => self_call(target); // %SELF_CALL(TARGET)%
+  // CALL BENKI_PLAYER_NAME（:7496/:7517/:7538/:7559）：对象名真身，延迟
+  // require 是 K12/K3 同款（防顶层漏装遮蔽），名字表只有一份
+  const benki_player_name = () =>
+    require('#/system/train/benki').benki_player_name();
 
   if (era.get('flag:62') === 0) {
     // :7435
@@ -2129,11 +2140,11 @@ async function benki_koujo_k0() {
     if (era.get('flag:63') === 1) {
       // :7494
       // :7495+:7497 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7496）→ PRINTFORMW …
-      // 是同一行；这四处调用点**本作未接入**（真身是 ere/system/train/benki.js 的
-      // benki_player_name()，k12 已按 ${benki_player_name()} 接入），合并时保留
-      // 缺字原文与 :7496 引用，接入属另一张工单
-      // CALL BENKI_PLAYER_NAME // :7496
-      await era.printAndWait(`「和来同时用小穴和菊花来做爱了♪」`); // :7495+:7497
+      // 三行同属一行输出。名字按 #599 接上：${benki_player_name()} 插在
+      // :7496 的位置（拼接锚）
+      await era.printAndWait(
+        `「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`,
+      ); // :7495+:7497
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7498
@@ -2155,9 +2166,11 @@ async function benki_koujo_k0() {
 
     if (era.get('flag:63') === 1) {
       // :7515
-      // :7516+:7518 原作 PRINTFORM 「和 → PRINTFORMW …，同一行（#584）
-      // CALL BENKI_PLAYER_NAME // :7517
-      await era.printAndWait(`「和用小穴做爱做到潮如泉涌咯♪」`); // :7516+:7518
+      // :7516+:7518 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7517）→
+      // PRINTFORMW …，三行同属一行输出；名字按 #599 接上
+      await era.printAndWait(
+        `「和${benki_player_name()}用小穴做爱做到潮如泉涌咯♪」`,
+      ); // :7516+:7518
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7519
@@ -2179,9 +2192,11 @@ async function benki_koujo_k0() {
 
     if (era.get('flag:63') === 1) {
       // :7536
-      // :7537+:7539 原作 PRINTFORM 「和 → PRINTFORMW …，同一行（#584）
-      // CALL BENKI_PLAYER_NAME // :7538
-      await era.printAndWait(`「和用菊花做爱做到湿滑不已咯♪」`); // :7537+:7539
+      // :7537+:7539 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7538）→
+      // PRINTFORMW …，三行同属一行输出；名字按 #599 接上
+      await era.printAndWait(
+        `「和${benki_player_name()}用菊花做爱做到湿滑不已咯♪」`,
+      ); // :7537+:7539
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7540
@@ -2203,9 +2218,11 @@ async function benki_koujo_k0() {
 
     if (era.get('flag:63') === 1) {
       // :7557
-      // :7558+:7560 原作 PRINTFORM 「给予 → PRINTFORMW …，同一行（#584）
-      // CALL BENKI_PLAYER_NAME // :7559
-      await era.printAndWait(`「给予先生的肉棒大人的『施舍』哦♪」`); // :7558+:7560
+      // :7558+:7560 原作 PRINTFORM 「给予 → CALL BENKI_PLAYER_NAME（:7559）→
+      // PRINTFORMW …，三行同属一行输出；名字按 #599 接上
+      await era.printAndWait(
+        `「给予${benki_player_name()}先生的肉棒大人的『施舍』哦♪」`,
+      ); // :7558+:7560
       await era.printAndWait(
         `「这份『施舍』可是被进行了肉便器洗脑的${sc()}的新『工作』，这可是可以体验到爱的完美体验哦♪」`,
       ); // :7561

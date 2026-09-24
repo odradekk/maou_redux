@@ -71,6 +71,9 @@ async function public_execution(cid, rand_n = default_rand) {
     if (get(`talent:${cid}:85`)) {
       await era.printAndWait(`${name}的尸体，作为祭品被怪物郑重地奉献给你了。`);
     }
+    // :2-194 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的
+    // PRINTFORMW 之后（那一行已结束）——真空行（#597）
+    era.println();
     fate = '凌辱致死';
   } else if (result === 1) {
     const prelude = get(`talent:${cid}:85`)
@@ -91,6 +94,9 @@ async function public_execution(cid, rand_n = default_rand) {
         `${name}的尸体，被悬挂示众三天之后，${chara_callname(0)}亲自将${she(cid)}火化了。`,
       );
     }
+    // :2-194 的淫行悬挂支：空 `PRINTFORML`（原作 76 行）落在 75 行的
+    // PRINTFORMW 之后（那一行已结束）——真空行（#597）
+    era.println();
     fate = '淫行悬挂';
   } else {
     await era.printAndWait(
@@ -123,7 +129,8 @@ async function public_execution(cid, rand_n = default_rand) {
   }
 
   chara(0).event.勋章经验 += 1;
-  era.println();
+  // :2-194 的魂粉碎支没有空行：129 行的 `PRINTFORMW  ` 只收尾 89-128 行那串
+  // 未换行的 `PRINTFORM`；前两支的空行各写在上面两支的末尾（#597）
   era.print('得到了用勇者力量形成的勋章');
   era.print('勋章经验+1');
   if (family_id >= 0) era.set(`cstr:${family_id}:5`, fate);

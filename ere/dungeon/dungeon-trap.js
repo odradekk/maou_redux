@@ -492,10 +492,8 @@ async function pit_trap(a, rand_n) {
     chara(a).dungeon.气力 -= 10;
   }
 
-  // :259-260
-  if (show) {
-    era.println();
-  }
+  // :259-260 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）
 
   return 0;
 }
@@ -625,8 +623,11 @@ async function teleport_trap(a, rand_n, ctx) {
     chara(a).dungeon.气力 -= diff;
   }
 
-  // :351-352
-  if (show) {
+  // :351-352 的 PRINTL：**只在 FLAG:85 > 0 那支里是真空行**——那支的上一条
+  // 原作输出是 347 行的 PRINTFORML（已结束当前行），它落上去就是空行；
+  // FLAG:85 == 0 时它只收尾 334/341 行那串未换行的 `PRINTFORM`，
+  // 不产生空行（#597）
+  if (diff > 0 && show) {
     era.println();
   }
 
@@ -692,10 +693,8 @@ async function one_way_trap(a, rand_n, ctx) {
     chara(a).dungeon.气力 -= 10;
   }
 
-  // :400-401
-  if (show) {
-    era.println();
-  }
+  // :400-401 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）
 
   return 0;
 }
@@ -749,7 +748,8 @@ async function love_gas_trap(a, rand_n) {
   }
 
   // :440-451 容易自慰（TALENT:60）
-  if ((era.get(`talent:${a}:60`) || 0) === 1) {
+  const self_masturbation = (era.get(`talent:${a}:60`) || 0) === 1;
+  if (self_masturbation) {
     if (show) {
       era.print(`${name}身不由己地开始自慰了。`);
       era.print('自慰经验+1');
@@ -762,8 +762,10 @@ async function love_gas_trap(a, rand_n) {
     era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + 20);
   }
 
-  // :453-454
-  if (show) {
+  // :453-454 的 PRINTL：**只在 TALENT:60 那支里是真空行**——那支的
+  // 445 行 `PRINTL 阴核点数+10` 已结束当前行；其余路径下它只收尾
+  // 427/436 行那串未换行的 `PRINTFORM`，不产生空行（#597）
+  if (self_masturbation && show) {
     era.println();
   }
 
@@ -1381,10 +1383,8 @@ async function net_trap(a) {
     chara(a).dungeon.体力 -= local;
   }
 
-  // :915-916
-  if (show) {
-    era.println();
-  }
+  // :915-916 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）
 
   return 0;
 }
@@ -1897,10 +1897,9 @@ async function love_bug_trap(a, rand_n) {
   }
   chara(a).dungeon.体力 -= dice;
 
-  // :1276-1277
-  if (show) {
-    era.println();
-  }
+  // :1276-1277 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行
+  // （PRINTFORM 不换行），**不是空行**——ere 侧每段各自一次 print，
+  // 故不补空行（#597）
 
   // :1279 PLAYER = 0——不落变量、注释留痕（读者面见文件头：本体不读、
   // 三连第三站的结算读）

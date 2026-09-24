@@ -4966,7 +4966,9 @@ test('BENKI_KOUJO：FLAG:62=0 + FLAG:63=1 → 施舍工作台词', async () => {
 
 test('#584 BENKI_KOUJO：施舍首次台词「和…」与后续是同一行（FLAG:62 = 3/4/5/6）', async () => {
   // 原作 :7495-:7497 等四处同型：PRINTFORM 「和 + PRINTFORMW …，Emuera 里
-  // 同属一行；ere 曾拆成两条 era.print（#584）。整行相等即「同一行」的断言
+  // 同属一行；ere 曾拆成两条 era.print（#584）。整行相等即「同一行」的断言。
+  // #599：名字位置固定成空串（FLAG:64 = -2，相手無し档），本测试只守整行
+  // 合并，名字的插值由下面两条 #599 用例覆盖
   const cases = [
     [3, '「和来同时用小穴和菊花来做爱了♪」'],
     [4, '「和用小穴做爱做到潮如泉涌咯♪」'],
@@ -4977,6 +4979,7 @@ test('#584 BENKI_KOUJO：施舍首次台词「和…」与后续是同一行（F
     const fixture = await setup_k0((f) => {
       f.store.set('flag:62', level);
       f.store.set('flag:63', 1);
+      f.store.set('flag:64', -2); // 相手無し：名字为空串
     });
     const { benki_koujo } = fixture.load_module('kojo/kojo-system');
     await benki_koujo(31);
@@ -4985,6 +4988,67 @@ test('#584 BENKI_KOUJO：施舍首次台词「和…」与后续是同一行（F
       `FLAG:62=${level} 的首次台词必须是整行（#584）`,
     );
   }
+});
+
+test('#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名', async () => {
+  // 原作 :7495-:7497 / :7516-:7518 / :7537-:7539 / :7558-:7560 四处：
+  // PRINTFORM 「和 + CALL BENKI_PLAYER_NAME（:7496 等）+ PRINTFORMW …，
+  // 三行同属一行输出。#584 合并整行时这一段没接（#599），台词缺对象名。
+  // 名字真身 ere/system/train/benki.js 的 benki_player_name()，同 K12 的
+  // 延迟 require 接法；表驱动四处都断言，不能只抽一句
+  const cases = [
+    [3, '「和{name}来同时用小穴和菊花来做爱了♪」'],
+    [4, '「和{name}用小穴做爱做到潮如泉涌咯♪」'],
+    [5, '「和{name}用菊花做爱做到湿滑不已咯♪」'],
+    [6, '「给予{name}先生的肉棒大人的『施舍』哦♪」'],
+  ];
+  for (const [level, tpl] of cases) {
+    const fixture = await setup_k0((f) => {
+      f.store.set('flag:62', level);
+      f.store.set('flag:63', 1);
+      f.store.set('flag:64', 2); // 大型犬
+    });
+    const { benki_koujo } = fixture.load_module('kojo/kojo-system');
+    await benki_koujo(31);
+    assert.ok(
+      fixture.text_lines().includes(tpl.replace('{name}', '大型犬')),
+      `FLAG:62=${level} 的首句必须带上 FLAG:64 的对象名（#599）`,
+    );
+  }
+});
+
+test('#599 BENKI_KOUJO：FLAG:64 无名字档 + 未设定档 → 分别空串与眷属档（原作 IF/ELSEIF 链 1:1）', async () => {
+  // 原作 BENKI.ERB @BENKI_PLAYER_NAME（:1656-1681）是 IF FLAG:64 == … /
+  // ELSEIF 链，覆盖 0-9 且**无 ELSE**：-2（相手無し）一类无对应档不输出
+  // 任何字（空串）。FLAG:64 未设定时 era.get 返回 undefined（issue #13），
+  // 真身 flag64() 的 `|| 0` 兜成 0 → 落到 0 档「居住在地下城深渊中散发着
+  // 恶臭的肮脏眷属」（不是空串——工单里「未定 → 空串」指的是无对应档）
+  const no_name = await setup_k0((f) => {
+    f.store.set('flag:62', 4);
+    f.store.set('flag:63', 1);
+    f.store.set('flag:64', -2);
+  });
+  const { benki_koujo } = no_name.load_module('kojo/kojo-system');
+  await benki_koujo(31);
+  assert.ok(
+    no_name.text_lines().includes('「和用小穴做爱做到潮如泉涌咯♪」'),
+    'FLAG:64 = -2（无对应档）时名字为空串，与原作一致（#599）',
+  );
+
+  const unset = await setup_k0((f) => {
+    f.store.set('flag:62', 4);
+    f.store.set('flag:63', 1);
+  });
+  const benki_koujo_unset = unset.load_module('kojo/kojo-system').benki_koujo;
+  await benki_koujo_unset(31);
+  assert.ok(
+    unset
+      .text_lines()
+      .includes(
+        '「和居住在地下城深渊中散发着恶臭的肮脏眷属用小穴做爱做到潮如泉涌咯♪」',
+      ),
+    'FLAG:64 未设定读回 0 → 0 档名字（#599）',
+  );
 });
 
 test('VICTORY：素质分档 + 体力比判定', async () => {

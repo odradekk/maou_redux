@@ -527,10 +527,12 @@ async function pillory(rand = default_rand) {
   if (cflag(661) > 29) era.print('『突破三十！！』');
   if (cflag(661) > 49) era.print('『祝贺！达成了五十！！！』');
   if (cflag(661) > 99) era.print('『正字写太多了，有点恶心』');
-  era.print(''); // :2128-2129 PRINTL + 涂鸦总结行
+  // :2128-2129 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来
+  // 的一行（PRINT 不换行），**不是空行**（#597）。ere 侧每段涂鸦各自一次
+  // print，「同一条涂鸦行被拆成多行」是既有记名差异（不在本票范围）
   era.print(`${name}被各种侮辱的涂鸦写在身上了……`); // :2129
   await era.waitAnyKey(); // :2131 WAIT
-  era.print(''); // :2129-2133（涂鸦总结 + WAIT + PRINTL）
+  era.print(''); // :2129-2133 真空行：2129 行的 PRINTFORML 已收尾（2133 行的 PRINTL 落在空行上）
 
   // :2135-2310 侵犯叙述（兽奸 / A&V / A / 其余四支）
   const user_name = BEAST_USERS[user] ?? BEAST_USERS[4];

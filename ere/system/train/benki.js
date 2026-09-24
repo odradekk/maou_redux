@@ -1390,7 +1390,7 @@ async function get_exp_benki_menu(arg0, arg1) {
  *
  * 原作以 PRINT 拼进行内文案；ere 侧返回名字串由调用点拼行（同
  * name_benki_menu / GET_CLOTHTYPE 先例）。FLAG:64 未定（-2 或无对应）时
- * 返回空串（原作 SELECTCASE 无 ELSE——不输出）。
+ * 返回空串（原作 IF/ELSEIF 链无 ELSE——不输出）。
  *
  * @returns {string} 对象名
  */

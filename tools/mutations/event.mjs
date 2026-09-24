@@ -3,7 +3,10 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 373; // #615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
+export const COUNT = 383; // #615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+// 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
+// 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
+// #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
 // 接线；M11478/M11479 的靶位在返工轮搬去 chara.mjs——补偿写在 @CHARA_EX_34 里，随靶文件分片）；#565 起 +5（M11610-M11613，开局随机奴隶接线的四条；M11626 审查轮补 CHARA_NAME_DEFINE 实参错掷）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // 合并 #547 时两侧 362/361 调和为 366：本票 5 条之外收进 master 的 M11578-M11580/M11589，按导入实测条目数写回
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
@@ -3428,6 +3431,97 @@ export default [
     replace: "      era.print('[0] - 安全第一！'); // 变异",
     tests: ['event-nextday'],
     must_mention: '输入不合法！请输入以下值之一：',
+  },
+  // —— #597：收尾的 PRINTL 只结束上一行、空源码行不产生输出（语义见
+  //    CONTEXT.md「输出 API 与原作的对应」）。四条各把空行补回去
+  //    （旧形态），三条守真空行不许删 ——
+  {
+    desc: 'M12114 调教后性交的「回到床上做了…」之后补回空行（:229 是空源码行，没有 PRINTL）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的',
+    replace:
+      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的",
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_sex_check：这里不补空行',
+  },
+  {
+    desc: 'M12115 调教后肛门性交的同款补回空行（:332 是空源码行）',
+    file: 'ere/event/event-aftertrain.js',
+    find: '  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML',
+    replace:
+      "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML",
+    tests: ['event-aftertrain'],
+    must_mention: 'aftertrain_analsex_check：这里不补空行',
+  },
+  {
+    desc: 'M12116 示众台涂鸦行与总结行之间补回空行（:2128 的 PRINTL 只收 PRINT 串那一行）',
+    file: 'ere/event/event-nextday-pillory.js',
+    find: '  // :2128-2129 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来',
+    replace:
+      "  era.print(''); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n  // :2128-2129 的 PRINTL 只结束上面 :2120-2127 那一串 `PRINT 『…』` 拼起来",
+    tests: ['event-nextday'],
+    must_mention: '里程碑行与总结行之间不夹空行（:2128 只收尾，#597）',
+  },
+  {
+    desc: 'M12117 安息日仪式播报之后补回空行（:260 是空源码行，没有 PRINTL）',
+    file: 'ere/event/event-sabbath.js',
+    find: '  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后',
+    replace:
+      '  era.println(); // 变异：照「空源码行＝空行」翻译的旧形态\n  // 259 行的 PRINTFORML 之后是空源码行（260 行没有 PRINTL），故仪式播报之后',
+    tests: ['event-sabbath'],
+    must_mention: '整段只有段首那一个空行（:258）',
+  },
+  {
+    desc: 'M12118 魔族化 152 支的 :485 真空行删除（:484 的 PRINTFORMW 已收尾，空行由它来）',
+    file: 'ere/event/event-nextday.js',
+    find: "    era.print(''); // :484-485 PRINTFORML（空行）",
+    replace: '    // 变异：:485 的真空行删除',
+    tests: ['event-nextday'],
+    must_mention: ':485/:495 的真空行在末句之后（末尾恰有一个空行）',
+  },
+  {
+    desc: 'M12119 魔族化 140 支的 :495 真空行删除（:494 的 PRINTFORMW 已收尾，空行由它来）',
+    file: 'ere/event/event-nextday.js',
+    find: "    era.print(''); // :494-495 PRINTFORML（空行）",
+    replace: '    // 变异：:495 的真空行删除',
+    tests: ['event-nextday'],
+    must_mention: ':485/:495 的真空行在末句之后（末尾恰有一个空行）',
+  },
+  {
+    desc: 'M12120 取得疯狂播报之后的 :58 真空行删除（:57 的 PRINTFORML 已收尾，空行由它来）',
+    file: 'ere/event/event-addict.js',
+    find: '    era.println(); // 真空行：58 行的 PRINTL 落在上面三条 PRINTFORML 之后\n    set_talent(cid, 123, 1);',
+    replace: '    // 变异：:58 的真空行删除\n    set_talent(cid, 123, 1);',
+    tests: ['event-addict'],
+    must_mention: ':58 的真空行紧跟取得播报',
+  },
+  // —— #597 返工：容易被误删的真空行（这一批的代表处；同类分组成员见
+  //    issue 的返工评论）——
+  {
+    desc: 'M12128 初调教开场的 :35 真空行删除（:34 的 PRINTFORML 已收尾，空行由它来）',
+    file: 'ere/event/event-beforetrain.js',
+    find: "    era.print(''); // 真空行：34 行的 PRINTFORML 已收尾（35 行的 PRINTL 落在空行上）",
+    replace: '    // 变异：初调教开场的真空行删除',
+    tests: ['event-beforetrain'],
+    must_mention: '初调教开场（:35）：这一行之后是真空行（不许删）',
+  },
+  {
+    desc: 'M12129 禁断症状结算的收尾 :290 真空行删除（候选函数的 PRINTFORMW 已收尾）',
+    file: 'ere/event/event-addict.js',
+    find: '  era.println(); // 真空行：候选函数的收尾 PRINTFORMW 已结束那一行',
+    replace: '  // 变异：禁断症状结算的收尾真空行删除',
+    tests: ['event-addict'],
+    must_mention: 'W < 5 废人支的收尾（:290）：末尾是真空行（不许删）',
+  },
+  {
+    // E 类（角色信息展示前后成对的两个真空行）的代表处：:98 的空行先让出一行、
+    // :159 再让一行，`show_chara_info` 之后 :161 收尾；只删其中一个即少一行
+    desc: 'M12270 角色信息之前的 :159 真空行删除（E 类代表——:98/:159 成对，删一个即少一行）',
+    file: 'ere/event/enter-enemy.js',
+    find: '    era.println(); // 真空行：85/90 行已收尾（159 行的 PRINTL 落在空行上）',
+    replace: '    // 变异：角色信息之前的真空行删除',
+    tests: ['enter-enemy'],
+    must_mention: ':98 与 :159 两个真空行都在（角色信息之前）',
   },
   // —— #615：print 正文的尾换行（first-setting.js 的狂王性别一问） ——
   {

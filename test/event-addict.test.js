@@ -10,6 +10,10 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
+const {
+  assert_one_blank_after,
+  assert_trailing_blank,
+} = require('./helpers/blank-lines');
 
 function seq(values) {
   let index = 0;
@@ -175,6 +179,17 @@ test('APHRODISIAC_ADDICT：取得疯狂——普通门槛 40', async () => {
 
   assert.equal(fixture.store.get('talent:31:123'), 1);
   assert(fixture.text_lines().includes('琼获得了【疯狂】。'));
+  // #597：源 :57 的 PRINTFORML 之后 :58 的 `PRINTL ` 落在已换行的那一行上
+  // ——它是**真空行**，末句之后恰有一个空行；删掉即少一行（本用例的守卫）
+  const acquired = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes('获得了【疯狂】。'),
+  );
+  assert.ok(acquired >= 0, '取得播报行出现（否则断言会空过）');
+  const next = fixture.lines[acquired + 1];
+  assert.ok(
+    next !== undefined && next.type === 'br',
+    ':58 的真空行紧跟取得播报',
+  );
 });
 
 test('APHRODISIAC_ADDICT：TALENT:72 时取得疯狂门槛降到 30', async () => {
@@ -198,6 +213,8 @@ test('APHRODISIAC_ADDICT：取得废人——普通门槛 100', async () => {
 
   assert.equal(fixture.store.get('talent:31:9'), 1);
   assert(fixture.text_lines().includes('琼的精神变成【崩坏】了。'));
+  // #597：67 行的 PRINTL 落在上面三条 PRINTFORML 之后（那一行已结束）——真空行
+  assert_one_blank_after(fixture, '的精神变成【崩坏】了。', '取得废人（:67）');
 });
 
 test('APHRODISIAC_ADDICT：TALENT:72 时取得废人门槛降到 75', async () => {
@@ -377,6 +394,9 @@ test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（TALENT:9 判据，T
     1,
     '生效素质是 19（原作 bug，逐字保留）',
   );
+  // #597：290 行的 PRINTL 落在候选函数自己的 PRINTFORMW 之后——真空行，
+  // 且它是整段演出的收尾（删掉即少一行）
+  assert_trailing_blank(fixture, 'W < 5 废人支的收尾（:290）');
 });
 
 test('SUFFER_FROM_WITHDRAWAL：W < 5 但已是废人（TALENT:9）时改选疯狂', async () => {

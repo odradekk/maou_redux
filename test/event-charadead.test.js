@@ -29,6 +29,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const { assert_one_blank_after } = require('./helpers/blank-lines');
 
 function text_lines(fixture) {
   return fixture.lines_history
@@ -233,6 +234,8 @@ test('奴隶死亡：RETURN 1、事件码 999、死亡旗、杀害数（:59-92�
   assert.equal(fixture.store.get('tflag:13'), 999, '死亡口上事件码');
   // :66 TEMP 恒 0 → !TEMP 恒真，「X死掉了……」（ELSEIF 不可达，#14 登记）
   assert(texts.includes('温妮死掉了……'));
+  // #597：:74 的 PRINTL 落在 :69 的 PRINTFORML 之后（那一行已结束）——真空行
+  assert_one_blank_after(fixture, '温妮死掉了……', '奴隶死亡（:74）');
   assert.equal(fixture.store.get('base:31:0'), -1);
   assert.equal(fixture.store.get('flag:1030'), -2, 'FLAG:(31+999) = -2');
   assert.equal(fixture.store.get('flag:31'), 1);

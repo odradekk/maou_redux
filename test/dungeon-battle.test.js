@@ -564,6 +564,19 @@ test('DUNGEON_SPY：背叛成立时勇者陷落（CFLAG:1 = 0、party_del、赏�
   assert.equal(fixture.store.get('cflag:2:530') ?? 0, 0, '队长行动完了复位');
   assert.equal(fixture.store.get('cflag:2:533') ?? 0, 0, '队长记忆复位');
   assert.equal(fixture.store.get('cflag:1:533') ?? 0, 0, '奴隶的队长记忆复位');
+  // #597：:1158 的 PRINTL 落在 :1150 的 PRINTFORMW 之后（那一行已结束）——
+  // 它是**真空行**，「XX被抓住了……」与「要让XX回来吗？」之间恰有一个空行
+  const lines = fixture.lines;
+  const ask = lines.findIndex(
+    (line) => line.type === 'text' && line.text.startsWith('要让'),
+  );
+  assert.ok(ask >= 2, '「要让…回来吗？」行出现且不在首两行');
+  assert.equal(lines[ask - 1].type, 'br', ':1158 的真空行在提问行之前');
+  assert.equal(
+    lines[ask - 2].type,
+    'text',
+    '空行之前是被抓住播报（不多不少一个空行）',
+  );
 });
 
 // —— MONSTER_ATTACK 的 off-by-one 缺陷钉（#14；#116 先例）——
