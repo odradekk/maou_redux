@@ -30,6 +30,12 @@
  *   - @ENEMY_EXIST2 尾部 :632 的 `IF X == 10` 读的是调用方（@DUNGEON_INFO2
  *     部下一览 :454）设置的全局 X——与实参同一个值（原作笔误式全局读，
  *     行为无差），ere 侧参数化 floor；
+ *   - @ENEMY_EXIST2 的 MAX_NAME_LEN 补齐（:551/:569/:627/:637）按原作移植：
+ *     静态保留 + 显示宽度计（全角 2 格，STRLENS 同尺），见 max_name_len
+ *     的声明注释。勇者行/护卫行是普通文本行（era.print），字符串层不经
+ *     printButton 的正文合并；实机上 HTML 默认换行规则仍会折叠连续半角
+ *     空格、列对齐不成立——全项目共有的表现层差异（page-invasion.js 文件
+ *     头同款结论，#535 实测；比对工具两侧同款归一化），不在本票处理；
  *   - KAI_LIST = RESULT（:439）是死写（全库零读者），省略。
  */
 
@@ -43,6 +49,9 @@ const {
   monster_setup,
   monstername,
 } = require('#/dungeon/monster-data');
+// MAX_NAME_LEN 的量尺与 `%,N,LEFT%` 等价物（#/utils/display-width，#390
+// 提取为公共模块）
+const { display_width, pad_display } = require('#/utils/display-width');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -64,6 +73,18 @@ const COLOR_INTERCEPT = 'rgb(100, 255, 255)';
 const COLOR_INVASION = 'rgb(255, 100, 100)';
 // :240-241 SETCOLOR 255,255,0（@ENEMY_EXIST 同款家族色，部下名黄）
 const COLOR_SUBORDINATE = 'rgb(255, 255, 0)';
+
+/**
+ * @ENEMY_EXIST2 的 `#DIM MAX_NAME_LEN = 0`（:551）：Emuera 函数级静态量，
+ * 初值只在程序开始时生效一次，跨调用保留；:569 `MAX(STRLENS(…),
+ * MAX_NAME_LEN)` 只增不减——一次游戏中见过的最长名字（按显示宽度，全角
+ * 2 格）一直决定之后所有调用的补齐宽度，勇者行（:627）与护卫行
+ * （:637）共用。ere 用模块级变量实现即得同语义（模块只加载一次）。
+ * **读档或回标题时 Emuera 是否清空这类静态量未核实**（#563；与 #565 对
+ * CHAR_MAKE.ERB 静态量的处理一致），ere 按「不清」落地——测试夹具逐用例
+ * purge_ere_cache，两边的差异只出现在跨存档的长会话里，且只影响排版。
+ */
+let max_name_len = 0;
 
 /** FLAG:N 读：未声明下标 undefined → 0 兜底（#13） */
 function flag_get(i) {
@@ -169,9 +190,9 @@ function enemy_compare(a, b) {
  * @returns {Promise<void>}
  */
 async function enemy_exist2(floor, x_is_10 = floor === 10) {
-  // :553-554 VARSET LOCAL + L_LEN = 0（插入排序的缓冲区与长度）
+  // :553-554 VARSET LOCAL + L_LEN = 0（插入排序的缓冲区与长度）；MAX_NAME_LEN
+  // 不在此复位——原作 :551 的静态量跨调用保留，见 max_name_len 的声明注释
   const sorted = [];
-  let max_name_len = 0;
   // :595 / :629-630 调用方的行已落，本函数先落一个空行（见 JSDoc）
   era.println();
   // :557-580 筛选并排序
@@ -199,7 +220,9 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
       continue;
     }
     const name = name_of(cid);
-    max_name_len = Math.max(name.length, max_name_len);
+    // :569 MAX_NAME_LEN = MAX(STRLENS(SAVESTR:L_CHAR), MAX_NAME_LEN)——
+    // STRLENS 按 Shift-JIS 字节计（全角 2），display_width 同尺（#563）
+    max_name_len = Math.max(display_width(name), max_name_len);
     // :571-579 插入排序（enemy_compare < 0 插前）
     let inserted = false;
     for (let i = 0; i < sorted.length; i += 1) {
@@ -260,7 +283,7 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
     }
     // :627 %SAVESTR:L_CHAR,MAX_NAME_LEN,LEFT%（名字对齐到最长名）
     row_fragments.push({
-      content: `${name_of(cid).padEnd(max_name_len, ' ')}\u3000`,
+      content: `${pad_display(name_of(cid), max_name_len)}\u3000`,
       ...(body_color ? { color: body_color } : {}),
     });
   }
@@ -284,7 +307,7 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
             color: COLOR_SUBORDINATE,
           },
           // :637 %SAVESTR:COUNT,MAX_NAME_LEN,LEFT%
-          { content: name_of(cid).padEnd(max_name_len, ' ') },
+          { content: pad_display(name_of(cid), max_name_len) },
         ];
         // :638-641 TALENT:200-211 的素质名依次追加
         for (let t = 200; t < 212; t += 1) {
