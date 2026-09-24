@@ -12869,37 +12869,35 @@ async function osioki_koujo_k8(rand, cid, choice) {
  * @param {number} [arg_0] 原作 ARG:0（情绪编号）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  */
-async function gobi_koujo_k8(arg_0, rand) {
+function gobi_koujo_k8(arg_0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
   if (arg_0 == 1) {
     // :7922 喜んで誇らしげに
-    await era.print(`什么啊♪`); // :7923
+    return `什么啊♪`; // :7923
   } else if (arg_0 == 2) {
     // :7925 怒って
-    await era.print(`哼！`); // :7926
+    return `哼！`; // :7926
   } else if (arg_0 == 3) {
     // :7928 悲しんで
-    await era.print(`唉……。`); // :7929
+    return `唉……。`; // :7929
   } else if (arg_0 == 4) {
     // :7931 恥ずかしそうに
-    await era.print(`嗯……。`); // :7932
+    return `嗯……。`; // :7932
   } else if (arg_0 == 5) {
     // :7934 情けなさそうに
-    await era.print(`啊……啊……。`); // :7935
+    return `啊……啊……。`; // :7935
   } else {
     // :7937-7938 デフォルト（含 ARG:0 == 0）
     if (rand_n(3) == 0) {
-      await era.print(`啊。`); // :7940
+      return `啊。`; // :7940
     } else if (rand_n(2) == 0) {
       // :7941 源作与上一支同文，1:1 保真
-      await era.print(`啊。`); // :7942
+      return `啊。`; // :7942
     } else {
-      await era.print(`什么啊。`); // :7944
+      return `什么啊。`; // :7944
     }
   }
-
-  return 0;
 }
 
 // 注册进惩罚族与语尾族（TRYCALLFORM OSIOKI_KOUJO_K8 / GOBI_KOUJO_K8 的等价物）

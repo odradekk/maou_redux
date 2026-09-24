@@ -1109,9 +1109,16 @@ function kojo_view() {
   return ((era.get('flag:5') || 0) & 2048) !== 0;
 }
 
-/** `CALL GOBI_KOUJO, x`（语尾口上；真身在 kojo-system，未落地的档打占位行） */
+/**
+ * `CALL GOBI_KOUJO, x`（语尾口上）：返回语尾文字，由调用方拼进当前行
+ * （原作 GOBI 不换行 PRINT、接在前后 PRINT 之间；#570）。真身在
+ * kojo-system，未落地的性格返回空串。
+ *
+ * @param {number} arg0 情绪档位
+ * @returns {Promise<string>} 语尾文字（空串 = 落空）
+ */
 async function gobi_koujo(arg0) {
-  await require('#/kojo/kojo-system').gobi_koujo(arg0);
+  return require('#/kojo/kojo-system').gobi_koujo(arg0);
 }
 
 /** `%CSVNAME(NO:TARGET)%`：角色预设的「名前」（callname -1 槽，chara-name.js 先例） */
@@ -1166,7 +1173,7 @@ async function look_info(cid) {
     if (loc2.length > 0) s.add(`·${loc2}`);
     if (cid === 0) s.add('肉体');
     s.add(`的${chara_callname(cid)}`);
-    await gobi_koujo(gobi_mark); // :877
+    s.add(await gobi_koujo(gobi_mark)); // :877
     s.add('」');
     era.print(s.take());
 
@@ -1176,10 +1183,10 @@ async function look_info(cid) {
       t3.add('「成为魔族前的种族：');
       if (t(cid, T_原种族_T) === 9) {
         t3.add('不明');
-        await gobi_koujo(t(cid, T_服从) || t(cid, T_淫乱_T) ? 0 : 3);
+        t3.add(await gobi_koujo(t(cid, T_服从) || t(cid, T_淫乱_T) ? 0 : 3));
       } else {
         t3.hl(loc3);
-        await gobi_koujo(mark_rank >= 3 ? 0 : 2);
+        t3.add(await gobi_koujo(mark_rank >= 3 ? 0 : 2));
       }
       t3.add('」');
       era.print(t3.take());
@@ -1207,7 +1214,7 @@ async function look_info(cid) {
     if (kojo) {
       s.add('「头发是').hl(get_look_info(cid, '头发颜色')).add('的');
       s.hl(get_look_info(cid, '头发状态'));
-      await gobi_koujo(1);
+      s.add(await gobi_koujo(1));
       s.add('」');
     } else {
       s.add(`[发色：${get_look_info(cid, '头发颜色')}`);
@@ -1228,7 +1235,7 @@ async function look_info(cid) {
       if (!male) {
         s.hl(get_look_info(cid, '发型'));
       }
-      await gobi_koujo(0);
+      s.add(await gobi_koujo(0));
       s.add('」');
     } else {
       s.add(`[头发长度：${get_look_info(cid, '头发长度')}`);
@@ -1248,7 +1255,7 @@ async function look_info(cid) {
       s.add('「我的').hl(get_look_info(cid, '目')).add('是');
       s.hl(get_look_info(cid, '瞳色')).add('的，嘴唇是');
       s.hl(get_look_info(cid, '唇'));
-      await gobi_koujo(1);
+      s.add(await gobi_koujo(1));
       s.add('」');
     } else {
       s.add(`[眼形：${get_look_info(cid, '目')}`);
@@ -1265,13 +1272,13 @@ async function look_info(cid) {
     if (kojo) {
       s.add('「').hl(get_look_info(cid, '体型')).add('的体型……');
       s.add('乳头嘛……').hl(get_look_info(cid, '乳头'));
-      await gobi_koujo(0);
+      s.add(await gobi_koujo(0));
       s.add('下面的毛毛……').hl(get_look_info(cid, '阴毛状态'));
-      await gobi_koujo(4);
+      s.add(await gobi_koujo(4));
       if (t(cid, T_扶她) || t(cid, T_男人)) {
         // :1064-1076 ペニス（扶她・男人のみ）
         s.add('小鸡鸡是……').hl(get_look_info(cid, '阴茎的状态'));
-        await gobi_koujo(2);
+        s.add(await gobi_koujo(2));
       }
       s.add('」');
     } else {
@@ -1291,9 +1298,9 @@ async function look_info(cid) {
     const s = new Spans();
     if (kojo) {
       s.add('「').hl(get_look_info(cid, '魅力点')).add('是我的魅力点');
-      await gobi_koujo(0);
+      s.add(await gobi_koujo(0));
       s.hl(get_look_info(cid, '癖')).add('是我的习惯');
-      await gobi_koujo(0);
+      s.add(await gobi_koujo(0));
       s.add('」');
     } else {
       s.add(`[魅力点：${get_look_info(cid, '魅力点')}`);
@@ -1369,7 +1376,7 @@ async function look_info(cid) {
       }
       s.hl(god);
       if (kojo) {
-        await gobi_koujo(1);
+        s.add(await gobi_koujo(1));
         s.add(`（信仰值：${faith}）」`);
       } else {
         s.add(`（信仰值：${faith}）]`);
@@ -1395,7 +1402,7 @@ async function look_info(cid) {
         }
         b.hl(blasphemy);
         if (kojo) {
-          await gobi_koujo(1);
+          b.add(await gobi_koujo(1));
           b.add('」');
         } else {
           b.add('是这样吧]');
@@ -1410,7 +1417,7 @@ async function look_info(cid) {
     const s = new Spans();
     if (kojo) {
       s.add(`「${self_call(cid)}`).hl('不能正常的怀孕');
-      await gobi_koujo(5);
+      s.add(await gobi_koujo(5));
       s.add('」');
     } else {
       s.add('[妊娠适性：').hl('只能异种族').add(']');
@@ -1426,15 +1433,15 @@ async function look_info(cid) {
     s.add(kojo ? '「身上的钱么……' : '[所持金：');
     if (money <= 0) {
       s.add('身无分文');
-      if (kojo) await gobi_koujo(5);
+      if (kojo) s.add(await gobi_koujo(5));
     } else {
       s.add(String(money));
-      if (kojo) await gobi_koujo(0);
+      if (kojo) s.add(await gobi_koujo(0));
     }
     if (debt < 0) {
       s.add(kojo ? '欠债……' : '][借金：');
       s.color(String(0 - debt), LIGHT_GREEN);
-      if (kojo) await gobi_koujo(5);
+      if (kojo) s.add(await gobi_koujo(5));
     }
     s.add(kojo ? '」' : ']');
     era.print(s.take());
@@ -1462,7 +1469,7 @@ async function look_info(cid) {
     }
     if (kojo) {
       s.add(`方面完全被改变了，真是可怜的${self_call(cid)}`);
-      await gobi_koujo(1);
+      s.add(await gobi_koujo(1));
       s.add('」');
     } else {
       s.add(']');
@@ -1490,7 +1497,7 @@ async function look_info_block(cid, kojo, prefix, value, gobi) {
   if (kojo) {
     s.add(`「${prefix[0]}`);
     s.hl(value);
-    await gobi_koujo(gobi);
+    s.add(await gobi_koujo(gobi));
     s.add('」');
   } else {
     s.add(prefix[1]);
@@ -1992,8 +1999,7 @@ async function look_info_love(cid) {
 
   // :2770-2777 收尾
   if (kojo_view()) {
-    await gobi_koujo(1); // 喜び
-    era.print('」 '); // :2772-2774 PRINTL
+    era.print(`${await gobi_koujo(1)}」 `); // :2772-2774（:2799 喜び语尾 + PRINTL 」 同行，#570）
   } else {
     era.print(' '); // :2776 PRINTL
   }

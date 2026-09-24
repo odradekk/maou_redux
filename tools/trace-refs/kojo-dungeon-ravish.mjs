@@ -1296,8 +1296,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '705',
-        any: [/JUEL:ARG:5 \+= MON_NUM \* 10/],
+        ref: '712',
+        any: [/CALL GOBI_KOUJO, 1/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '715',
+        any: [/CALL GOBI_KOUJO, 5/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -1306,8 +1311,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '714',
-        any: [/;情けない/],
+        ref: '722',
+        any: [/CALL GOBI_KOUJO, 1/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '725',
+        any: [/CALL GOBI_KOUJO, 5/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',

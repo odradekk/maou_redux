@@ -13610,41 +13610,41 @@ async function osioski_koujo_k1(cid, choice) {
 }
 
 // @GOBI_KOUJO_K1, ARG:0 // :8246
-async function gobi_koujo_k1(arg0, rand) {
+function gobi_koujo_k1(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
   if (arg0 === 1) {
     // :8249
 
-    await era.print(`哎哟♪`); // :8251
+    return `哎哟♪`; // :8251
   } else if (arg0 === 2) {
     // :8252
 
-    await era.print(`哎呦！`); // :8254
+    return `哎呦！`; // :8254
   } else if (arg0 === 3) {
     // :8255
 
-    await era.print(`哎……。`); // :8257
+    return `哎……。`; // :8257
   } else if (arg0 === 4) {
     // :8258
 
-    await era.print(`哎哟……什么、不好！？`); // :8260
+    return `哎哟……什么、不好！？`; // :8260
   } else if (arg0 === 5) {
     // :8261
 
-    await era.print(`这样的事……。`); // :8263
+    return `这样的事……。`; // :8263
   } else {
     // :8263-8264
 
     if (rand_n(3) === 0) {
       // :8267
-      await era.print(`哈。`); // :8268
+      return `哈。`; // :8268
     } else if (rand_n(2) === 0) {
       // :8269
-      await era.print(`哎呦。`); // :8270
+      return `哎呦。`; // :8270
     } else {
       // :8270-8271
-      await era.print(`的哇。`); // :8272
+      return `的哇。`; // :8272
     } // :8272-8273
   } // :8272-8274
 }

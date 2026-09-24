@@ -822,18 +822,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
-        ref: '309-312',
-        any: [/IF TALENT:ARG:17/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
         ref: '312',
         any: [/CALL GOBI_KOUJO, 1/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
-        ref: '313-316',
-        any: [/ELSE/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
@@ -844,11 +834,6 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
         ref: '317',
         any: [/PRINTFORM 还自称冒险者……简直傻了/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
-        ref: '319-326',
-        any: [/IF TALENT:ARG:17/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',

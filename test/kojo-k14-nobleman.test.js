@@ -558,16 +558,15 @@ test('GOHOUBI_REQUEST CFLAG:504==4：接吻奖励台词（%SAVESTR:A% 渲染）'
   );
 });
 
-test('GOBI 语尾 ARG:0==1（得意）：哦~♪', async () => {
+test('GOBI 语尾 ARG:0==1（得意）：哦~♪（返回文字，#570）', async () => {
   const fixture = await setup_k14();
   const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
-  await gobi_koujo_k14(1, () => 0);
-  assert.deepEqual(fixture.text_lines(), ['哦~♪'], 'GOBI 得意档语尾原文');
+  assert.equal(await gobi_koujo_k14(1, () => 0), '哦~♪', 'GOBI 得意档语尾原文');
+  assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
 });
 
-test('GOBI 语尾 ARG:0==0 随机三选（rand=0 → 啦。）', async () => {
+test('GOBI 语尾 ARG:0==0 随机三选（rand=0 → 啦。）（返回文字）', async () => {
   const fixture = await setup_k14();
   const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');
-  await gobi_koujo_k14(0, () => 0);
-  assert.deepEqual(fixture.text_lines(), ['啦。'], 'GOBI 默认档首支原文');
+  assert.equal(await gobi_koujo_k14(0, () => 0), '啦。', 'GOBI 默认档首支原文');
 });

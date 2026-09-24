@@ -36,6 +36,19 @@
  * 纯注释（如 K3 的 `// :925`、`// :1062-1063 …`），且仅当该行号窗口在源
  * 文件里确有 PRINTFORM 行时才绑定——结构性注释（`// :936 ;;ランダム…`）
  * 的窗口没有 PRINTFORM 行，不会误绑。
+ *   - **拼接锚（#570）**：尾锚写成 `:a+:b+:c`（每个行号都带 `:`——trace-check
+ *     按 `:N` 逐个校验在场，见 tools/trace-check.mjs 的「js 里必须仍写着这条
+ *     :N」）时，一条 JS 语句对应这几行构成的一行输出（原作
+ *     `PRINTFORM 猪 → CALL GOBI_KOUJO → PRINTFORMW`：前面的 PRINTFORM 不换行，
+ *     在 Emuera 里同属一行；ere 一次 era.print 即一行，「插入后再续写」没有
+ *     对应形态，只能合并成一条语句）。锚必须列全
+ *     [首行, 末行] 区间内的每一行 PRINT——漏列即 bind_error，堵住「合并语句
+ *     悄悄吞掉没列的行」；中段必须是不带 W/L 的 PRINTFORM（自带换行会把
+ *     一行拆成两行），末行的 W/L 决定 printAndWait/print。行间的
+ *     `CALL GOBI_KOUJO` 块各计一个 GOBI 记号，与 JS 侧的 `${gobi_*}` 配对
+ *     （见 JS_TOKEN_RULES）。B/C/D 三道锁对拼接语句照常生效：B 认末行，
+ *     C 把各行的插值记号按序拼起来，D 双向且**按序**核对（不再只看片段
+ *     是否出现在某一行里）。
  *
  * 已知边界（防误用）：
  *   - 模块 → 源文件取自文件头的「源: target/…ERB」（追溯注释，项目约定）；
@@ -208,6 +221,10 @@ const ERB_TOKEN_RULES = [
   [/^EXPNAME:1$/, 'EXPNAME1'],
   [/^PALAMNAME:2$/, 'PALAMNAME2'],
   [/^PALAMNAME:7$/, 'PALAMNAME7'],
+  // —— #570：拼接锚里 CALL GOBI_KOUJO 的插入点记号。它不来自 %…% 文本——
+  //   collect_span_tokens 从源行（IF/ELSE 间的一句 CALL）生成，与 JS 侧
+  //   ${gobi_*} 配对；写成归一条目是为了两侧共用同一张表、同一套比对 ——
+  [/^GOBI$/, 'GOBI'],
 ];
 
 const JS_TOKEN_RULES = [
@@ -330,6 +347,9 @@ const JS_TOKEN_RULES = [
   [/^expname\(1\)$/, 'EXPNAME1'],
   [/^palamname\(2\)$/, 'PALAMNAME2'],
   [/^palamname\(7\)$/, 'PALAMNAME7'],
+  // —— #570：迷宫凌辱『猪…』整段一行的语尾插值（与 ERB 的 CALL GOBI_KOUJO 配对） ——
+  [/^gobi_pig$/, 'GOBI'],
+  [/^gobi_pig2$/, 'GOBI'],
 ];
 
 /** ERB %…% 记号 → 归一名；未知记号返回 undefined（锁 C 报出） */
@@ -548,7 +568,7 @@ function scan_print_statements(text) {
           strings: [],
           trailing: '',
           binding: null,
-          printform: null,
+          prints: null,
           bind_error: null,
         };
         depth = 1;
@@ -605,8 +625,38 @@ function parse_source_erb(js_text) {
   return match ? match[1] : null;
 }
 
-/** 语句的锚绑定：尾锚优先；否则前一行纯注释锚（窗口内有 PRINTFORM 才算） */
+/** 语句的位置标签（错误信息用）：拼接锚列出全部行，单行绑定保持原格式 */
+function where_of(mod, stmt) {
+  return stmt.prints.length > 1
+    ? `${mod.name} :${stmt.binding.label}（拼接 ERB :${stmt.prints.map((p) => p.line_no).join('+')}）`
+    : `${mod.name} :${stmt.binding.label}（ERB :${stmt.prints[0].line_no}）`;
+}
+
+/** 片段按序出现在 hay 里吗：返回第一条失败片段的下标，全部命中返回 -1 */
+function first_unordered(segs, hay) {
+  let cursor = 0;
+  for (let i = 0; i < segs.length; i += 1) {
+    const idx = hay.indexOf(segs[i], cursor);
+    if (idx < 0) {
+      return i;
+    }
+    cursor = idx + segs[i].length;
+  }
+  return -1;
+}
+
+/** 语句的锚绑定：尾锚优先；否则前一行纯注释锚（窗口内有 PRINTFORM 才算）。
+ *  尾锚两种形态：单行/窗口（`:N`、`:N-M`）与**拼接锚**（`:a+:b+:c`，#570——
+ *  一条 JS 语句依次输出这几行 PRINT，见文件头）。 */
 function bind_anchor(stmt, lines) {
+  const span = stmt.trailing.match(/\/\/\s*:(\d+(?:\+:\d+)+)/);
+  if (span) {
+    return {
+      span: span[1].split(/\+:/).map(Number),
+      label: span[1],
+      via: '尾锚',
+    };
+  }
   const trailing = stmt.trailing.match(/\/\/\s*:(\d+)(?:-(\d+))?/);
   if (trailing) {
     const a = Number(trailing[1]);
@@ -633,6 +683,37 @@ function bind_anchor(stmt, lines) {
     }
   }
   return null;
+}
+
+/**
+ * 拼接锚的 ERB 记号序列（#570）：各 PRINT 行的插值记号按序排；两行 PRINT
+ * 之间的 `CALL GOBI_KOUJO` 块（原作 IF/ELSE 两分支各一句、只走一支）汇成
+ * 一个 GOBI 记号——与 JS 侧 `${gobi_*}` 配对的插入点。
+ *
+ * @param {string[]} erb_lines 源文件全文按行
+ * @param {object[]} prints 拼接锚列出的 PRINT 行（行号升序）
+ * @returns {string[]} 原始记号文本（GOBI 是字面标记，不是 %…%）
+ */
+function collect_span_tokens(erb_lines, prints) {
+  const tokens = [];
+  let prev = prints[0].line_no - 1;
+  for (const p of prints) {
+    let in_gobi = false; // 行间的一段 CALL 块只计一个记号（IF/ELSE 分支合并）
+    for (let i = prev + 1; i < p.line_no; i += 1) {
+      const line = erb_lines[i - 1] ?? '';
+      if (!in_gobi && /^\s*CALL\s+GOBI_KOUJO\b/i.test(line)) {
+        tokens.push('GOBI');
+        in_gobi = true;
+      }
+    }
+    for (const m of p.arg.matchAll(
+      /%([^%]+)%|{([^}]+)}|\\@((?:(?!\\@)[\s\S])*?)\\@/g,
+    )) {
+      tokens.push(m[1] ?? m[2] ?? m[3]);
+    }
+    prev = p.line_no;
+  }
+  return tokens;
 }
 
 // —— 模块清单与扫描结果（require 期一次算好，四道锁共用） ——
@@ -675,13 +756,49 @@ const MODULES = (() => {
         stmt.bind_error = '模块无源文件可探（见上一条）';
         continue;
       }
+      if (stmt.binding.span) {
+        // 拼接锚（#570）：列出的每一行都必须是不换行链上的一环，且区间内
+        // 不得漏列 PRINT 行——「整段由本语句输出」才是这个锚的声明
+        const refs = stmt.binding.span;
+        const first = refs[0];
+        const last = refs[refs.length - 1];
+        const hits = [];
+        for (let i = first; i <= last; i += 1) {
+          const match = entry.erb_lines[i - 1]?.match(PRINTFORM_RE);
+          if (!match) {
+            if (refs.includes(i)) {
+              stmt.bind_error = `拼接锚 :${stmt.binding.label} 的 :${i} 不是 PRINT 系行`;
+              break;
+            } else {
+              continue; // 区间内的非输出行（IF/CALL/注释）不参与
+            }
+          }
+          if (!refs.includes(i)) {
+            stmt.bind_error = `拼接锚 :${stmt.binding.label} 漏列区间内的 PRINT 行 :${i}`;
+            break;
+          }
+          hits.push({
+            line_no: i,
+            variant: (match[1] || match[3] || '').toUpperCase() || undefined,
+            arg: match[2] ?? match[4] ?? '',
+          });
+        }
+        if (!stmt.bind_error && hits.length !== refs.length) {
+          stmt.bind_error = `拼接锚 :${stmt.binding.label} 的行号必须升序、互不相同`;
+        }
+        if (!stmt.bind_error) {
+          stmt.prints = hits;
+          stmt.span_tokens = collect_span_tokens(entry.erb_lines, hits);
+        }
+        continue;
+      }
       const hit = find_printform(
         entry.erb_lines,
         stmt.binding.n,
         stmt.binding.m,
       );
       if (hit) {
-        stmt.printform = hit;
+        stmt.prints = [hit];
       } else if (stmt.binding.via === '尾锚') {
         stmt.bind_error = `尾锚 :${stmt.binding.label} 在 ${entry.erb_rel} 不是 PRINT 系行`;
       } else {
@@ -749,21 +866,34 @@ test('W/L 变体逐行：PRINTFORMW → printAndWait、PRINTFORML → print', ()
   let line_prints = 0;
   for (const mod of MODULES) {
     for (const stmt of mod.statements) {
-      if (!stmt.printform) {
+      if (!stmt.prints) {
         continue;
       }
+      const where = where_of(mod, stmt);
       if (stmt.kind === 'wait') {
         waits += 1;
       } else {
         line_prints += 1;
       }
-      if (stmt.printform.variant === 'DATA') {
+      // 拼接锚（#570）：中段必须无 W/L（自带换行会把一行拆成两行），
+      // 末行的 W/L 才是这条语句的换行/等待形态
+      if (stmt.prints.length > 1) {
+        for (const p of stmt.prints.slice(0, -1)) {
+          if (p.variant !== undefined) {
+            problems.push(
+              `${where}: 拼接中段 :${p.line_no} 是 PRINTFORM${p.variant}（自带换行/等待），并进同一条 JS 输出会多出一行`,
+            );
+          }
+        }
+      }
+      const last = stmt.prints[stmt.prints.length - 1];
+      if (last.variant === 'DATA') {
         continue; // #184：PRINTDATA 随机文本结构不参与 W/L 判定
       }
-      const expected = stmt.printform.variant === 'W' ? 'wait' : 'line';
+      const expected = last.variant === 'W' ? 'wait' : 'line';
       if (stmt.kind !== expected) {
         problems.push(
-          `${mod.name} :${stmt.binding.label}（ERB :${stmt.printform.line_no}）: 原作是 PRINTFORM${stmt.printform.variant}，JS 用了 ${stmt.kind === 'wait' ? 'printAndWait' : 'print'}`,
+          `${where}: 原作是 PRINTFORM${last.variant}，JS 用了 ${stmt.kind === 'wait' ? 'printAndWait' : 'print'}`,
         );
       }
     }
@@ -788,20 +918,25 @@ test('插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔
   let token_pairs = 0;
   for (const mod of MODULES) {
     for (const stmt of mod.statements) {
-      if (!stmt.printform) {
+      if (!stmt.prints) {
         continue;
       }
-      const where = `${mod.name} :${stmt.binding.label}（ERB :${stmt.printform.line_no}）`;
+      const where = where_of(mod, stmt);
       // #184 扩：ERB 的 %…% 与 {…} 都是插值记号（口上文件只有 %…%；
-      // DUNGEON_BITCH 等带文本状态机用 {…} 做显示插值，如 {PLAY}、{LOCAL}）
-      if (stmt.printform.variant === 'DATA') {
+      // DUNGEON_BITCH 等带文本状态机用 {…} 做显示插值，如 {PLAY}、{LOCAL}）。
+      // #570 拼接锚：各行的记号按序拼接，行间 CALL GOBI_KOUJO 计 GOBI 记号
+      //（IIFE 里预计算，见 collect_span_tokens），与 JS 侧 ${gobi_*} 配对。
+      const multi = stmt.prints.length > 1;
+      if (!multi && stmt.prints[0].variant === 'DATA') {
         continue; // #184：PRINTDATA 随机文本结构不参与槽位序比对
       }
-      const erb_tokens = [
-        ...stmt.printform.arg.matchAll(
-          /%([^%]+)%|{([^}]+)}|\\@((?:(?!\\@)[\s\S])*?)\\@/g,
-        ),
-      ].map((m) => m[1] ?? m[2] ?? m[3]);
+      const erb_tokens = multi
+        ? stmt.span_tokens
+        : [
+            ...stmt.prints[0].arg.matchAll(
+              /%([^%]+)%|{([^}]+)}|\\@((?:(?!\\@)[\s\S])*?)\\@/g,
+            ),
+          ].map((m) => m[1] ?? m[2] ?? m[3]);
       const js_tokens = [];
       for (const s of stmt.strings) {
         if (s.quote === '`') {
@@ -864,17 +999,67 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
   let normalized_hits = 0;
   for (const mod of MODULES) {
     for (const stmt of mod.statements) {
-      if (!stmt.printform) {
+      if (!stmt.prints) {
         continue;
       }
-      const where = `${mod.name} :${stmt.binding.label}（ERB :${stmt.printform.line_no}）`;
-      if (stmt.printform.variant === 'DATA') {
+      const where = where_of(mod, stmt);
+      if (stmt.prints[0].variant === 'DATA') {
         continue; // #184：PRINTDATA 随机候选集由「随机文本候选」专项对核
+      }
+      if (stmt.prints.length > 1) {
+        // 拼接锚（#570）：ERB 侧是各行的拼接，两个方向都**按序**核对——
+        // 只看「片段出现在某一行里」漏得掉行序/片段序颠倒，这里用游标扫。
+        const segs = [];
+        let erb_concat = '';
+        for (const p of stmt.prints) {
+          const arg = to_simplified(p.arg);
+          if (arg !== p.arg) {
+            normalized_hits += 1;
+          }
+          erb_concat += arg;
+          for (const seg of arg.split(
+            /%[^%]+%|{[^}]+}|\\@(?:(?!\\@)[\s\S])*\\@/,
+          )) {
+            if (seg.trim().length >= SEGMENT_MIN) {
+              segs.push(seg.trimEnd());
+            }
+          }
+        }
+        erb_checked += segs.length;
+        const js_raw = stmt.raw.replace(/\$\{\s*'\\u3000'\s*\}/g, '\u3000');
+        const js_raw_unescaped = js_raw.replace(/\\(.)/g, '$1');
+        const misses = [js_raw, js_raw_unescaped].map((hay) =>
+          first_unordered(segs, hay),
+        );
+        if (misses.every((idx) => idx >= 0)) {
+          problems.push(
+            `${where}: ERB 拼接片段（归一后）未按序见于 JS：「${segs[Math.min(...misses)]}」`,
+          );
+        }
+        let cursor = 0;
+        for (const s of stmt.strings) {
+          const parts =
+            s.quote === '`' ? s.content.split(/\$\{[^}]*\}/) : [s.content];
+          for (const part of parts) {
+            if (part.trim().length >= SEGMENT_MIN) {
+              js_checked += 1;
+              const idx = erb_concat.indexOf(part, cursor);
+              if (idx < 0) {
+                problems.push(
+                  `${where}: JS 片段未按序见于 ERB（归一后）：「${part}」`,
+                );
+              } else {
+                cursor = idx + part.length;
+              }
+            }
+          }
+        }
+        continue;
       }
       // ERB 侧归一（繁/日 → 简，词级优先；tools/lang-table.js 唯一真相源）。
       // JS 侧不归一——它必须本来就是简体（忘了转换在这里红，见文件头）。
-      const erb_arg = to_simplified(stmt.printform.arg);
-      if (erb_arg !== stmt.printform.arg) {
+      const erb_arg = to_simplified(stmt.prints[0].arg);
+      if (erb_arg !== stmt.prints[0].arg) {
         normalized_hits += 1;
       }
       // 正向：ERB 字面量片段（按 %…% 与 {…} 切开、归一后）⊂ JS 语句原文

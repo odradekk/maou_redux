@@ -16,6 +16,8 @@
 'use strict';
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -2500,6 +2502,7 @@ function capture_gobi(fixture) {
   const calls = [];
   kojo.gobi_koujo = async (arg0) => {
     calls.push(arg0);
+    return ''; // #570 起契约：入口返回语尾文字（空串 = 落空），look 据此拼行
   };
   return {
     calls,
@@ -2597,6 +2600,99 @@ test('LOOK_INFO 的语尾档位：序列本身（首行/所持金/喜好收尾�
     calls,
     [4, 0, 0, 0, 1],
     '首行档（屈服刻印 < 3 → 4）、前职业（学生 → 0）、契机（运命 → 0）、所持金（100 → 0）、喜好收尾（1）',
+  );
+});
+
+/**
+ * 语尾世界底座：口上视角 + 指定性格（era_flag.target 指到被显示角色——
+ * @GOBI_KOUJO 读当前 TARGET，游戏侧由 SHOW_CHARA_INFO 换手指到）。
+ * @param {number} talent_idx 性格素质下标（160-179）
+ * @returns {object} info_world 的 api
+ */
+function gobi_world(talent_idx) {
+  const w = info_world();
+  const cid = w.run(0, always);
+  if (talent_idx !== undefined) {
+    w.set_talent(cid, talent_idx, 1);
+  }
+  w.fixture.store.set('flag:5', 2048); // 口上视角
+  w.fixture.store.set(`callname:${cid}:-1`, '阿名');
+  w.fixture.load_module('era-utils/era-flag').target = cid;
+  return { w, cid };
+}
+
+test('LOOK_INFO：语尾口上拼进「」之内、与台词同一行（#570）', async () => {
+  const { w, cid } = gobi_world(164); // K4 冷徹
+  w.fixture.load_module('kojo/kojo-k4-stoic');
+  const lines = await w.info(cid);
+  // 两条断言的先后是有意的：断言抛出即中止本条用例，先断「不单独成行」
+  //（包装层复辟的 M11768 走这条），再断「拼在「」之内」（丢掉语尾的
+  // M11766 走这条）——顺序反了会让后一条把前一条的失败挡在门外。
+  assert.ok(
+    !lines.some((l) => l === '吧……算是……。'),
+    '语尾自成一行（出现在台词行之外）即回归 #570 的原始症状',
+  );
+  assert.ok(
+    lines.includes('「人类的阿名吧……算是……。」'),
+    '首行语尾在「」之内（源 :875-878 PRINTFORM → CALL GOBI_KOUJO → PRINT 」 一行；mark < 3 → 档 4）',
+  );
+});
+
+test('LOOK_INFO：原作语尾落空的性格不多出空内容（K11 两侧同缺，#570）', async () => {
+  const { w, cid } = gobi_world(171); // K11 リリィ：原作没有 GOBI_KOUJO_K11
+  // 族里先装两个别的性格——族表空时任何编号都落空，测不出「K11 缺号」这件事
+  w.fixture.load_module('kojo/kojo-k0-tender');
+  w.fixture.load_module('kojo/kojo-k4-stoic');
+  const lines = await w.info(cid);
+  assert.ok(
+    lines.includes('「人类的阿名」'),
+    'TRYCALLFORM 落空 → 空串，首行照常结束',
+  );
+  assert.ok(
+    !lines.some((l) => l === ''),
+    '落空不得产生空行（era.print 空串会转成 println 空行）',
+  );
+  assert.ok(
+    lines.filter((l) => l === '「」').length === 0,
+    '落空不得产生只有引号的空台词行',
+  );
+});
+
+test('LOOK_INFO_LOVE 收尾：喜び语尾接在 」 之前、同一行（源 :2797-2801）', async () => {
+  const { w, cid } = gobi_world(164); // K4 冷徹
+  w.fixture.load_module('kojo/kojo-k4-stoic');
+  const lines = await w.info(cid);
+  assert.ok(
+    lines.includes('哦～♪」 '),
+    '收尾行 = 语尾 + 」 （源 :2799 CALL GOBI_KOUJO, 1 → :2801 PRINTL 」 同行）',
+  );
+});
+
+/**
+ * 语尾调用点必须消费返回值（#570）：`gobi_koujo(...)` 的文字要进 `add(...)`、
+ * 模板串或变量，裸调用（`await gobi_koujo(...);`）就是把语尾丢掉——症状与
+ * #570 相同（语尾凭空消失），只是不再自成一行。look.js 的 20 个调用点里只有
+ * 首行与 LOVE 收尾有整行断言（上面两条），其余靠这道结构化检查守。
+ */
+test('LOOK_INFO 语尾调用点：返回值必须被消费（#570 行内拼接的前提）', () => {
+  const src = fs.readFileSync(
+    path.join(__dirname, '..', 'ere', 'chara', 'look.js'),
+    'utf8',
+  );
+  const bare = src
+    .split(/\r?\n/)
+    .filter((l) => /^\s*await\s+gobi_koujo\(/.test(l))
+    .map((l) => l.trim());
+  assert.deepEqual(
+    bare,
+    [],
+    `裸调用 gobi_koujo 会丢掉语尾文字（#570 的原始症状的变体）：\n  ${bare.join('\n  ')}`,
+  );
+  // 扫描未退化：调用点数量对不上说明上面的行首匹配失效了
+  const calls = [...src.matchAll(/gobi_koujo\(/g)].length;
+  assert.ok(
+    calls >= 20,
+    `look.js 里 gobi_koujo( 只匹配到 ${calls} 处（20 个调用点 + 包装层两处），扫描八成失效了`,
   );
 });
 

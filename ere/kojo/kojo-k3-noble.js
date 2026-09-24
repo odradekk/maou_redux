@@ -14376,39 +14376,37 @@ async function osioski_koujo_k3(rand, cid, choice) {
     await era.printAndWait(`「啊呜呃嗯啊～不要啊～」`); // :8970
   }
 }
-
-async function gobi_koujo_k3(rand, arg_0 = 0) {
+// #570 起返回语尾文字、不打印（原作 PRINT 不换行，由调用方拼进同一行）。
+// 形参序修正为 (arg_0, rand)：#403 起曾写反成 (rand, arg_0 = 0)，族实参
+// [arg0, rand] 反接后真调用即 TypeError（登记在 docs/stub-registry.md 的
+// GOBI_KOUJO 行，随本票修正）。
+function gobi_koujo_k3(arg_0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
   if (arg_0 === 1) {
     // :8977
-
-    era.print(`的噢~♪`); // :8979
+    return `的噢~♪`; // :8979
   } else if (arg_0 === 2) {
     // :8980
-
-    era.print(`的啊！`); // :8982
+    return `的啊！`; // :8982
   } else if (arg_0 === 3) {
     // :8983
-
-    era.print(`来着……。`); // :8985
+    return `来着……。`; // :8985
   } else if (arg_0 === 4) {
     // :8986
-
-    era.print(`来的……呢~。`); // :8988
+    return `来的……呢~。`; // :8988
   } else if (arg_0 === 5) {
     // :8989
-
-    era.print(`的噢……呜~。`); // :8991
+    return `的噢……呜~。`; // :8991
   } else {
     if (rand_n(3) === 0) {
       // :8995
-      era.print(`的说。`); // :8996
+      return `的说。`; // :8996
     } else if (rand_n(2) === 0) {
       // :8997
-      era.print(`噢。`); // :8998
+      return `噢。`; // :8998
     } else {
-      era.print(`噢。`); // :9000
+      return `噢。`; // :9000
     }
   }
 }

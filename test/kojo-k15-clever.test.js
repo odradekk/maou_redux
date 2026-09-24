@@ -2244,8 +2244,9 @@ test('ENTERENEMY それ以外；GOHOUBI_REQUEST 赏金；AFTER 勋章；OSIOKI �
 test('GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW', async () => {
   const gobi = await setup_k15();
   const { gobi_koujo_family } = gobi.load_module('kojo/kojo-system');
-  await gobi_koujo_family.call(KEY, { args: [1, () => 0] });
-  assert.deepEqual(gobi.text_lines(), ['♪']);
+  const text = await gobi_koujo_family.call(KEY, { args: [1, () => 0] });
+  assert.equal(text, '♪', '语尾返回文字（#570）');
+  assert.deepEqual(gobi.text_lines(), [], '语尾真身不得自行打印');
 
   const exe = await setup_k15();
   const { game } = exe.load_module('facade/game');

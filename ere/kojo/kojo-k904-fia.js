@@ -11268,42 +11268,42 @@ async function osioki_koujo_k904(rand, cid, choice) {
 }
 
 // @gobi_koujo_k904, ARG:0 // :6693
-async function gobi_koujo_k904(arg0, rand) {
+function gobi_koujo_k904(arg0, rand) {
   const target = era_flag.target;
   const sc = (cid = target) => self_call(cid);
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   if (arg0 == 1) {
     // :6696
 
-    await era.print(`，诶嘿嘿～♪`); // :6698
+    return `，诶嘿嘿～♪`; // :6698
   } else if (arg0 == 2) {
     // :6699
 
-    await era.print(`，呜～～${sc()}要咬人了的说～～`); // :6701
+    return `，呜～～${sc()}要咬人了的说～～`; // :6701
   } else if (arg0 == 3) {
     // :6702
 
-    await era.print(`哈呜呜……`); // :6704
+    return `哈呜呜……`; // :6704
   } else if (arg0 == 4) {
     // :6705
 
-    await era.print(`呜……\\/\\/\\/\\/`); // :6707
+    return `呜……\\/\\/\\/\\/`; // :6707
   } else if (arg0 == 5) {
     // :6708
 
-    await era.print(''); // :6710-6711
+    return ''; // :6710-6711
   } else {
     // :6711-6712
 
     if (rand_n(3) == 0) {
       // :6714
-      await era.print(''); // :6715-6716
+      return ''; // :6715-6716
     } else if (rand_n(2) == 0) {
       // :6716
-      await era.print(''); // :6717-6718
+      return ''; // :6717-6718
     } else {
       // :6718-6719
-      await era.print(''); // :6719-6720
+      return ''; // :6719-6720
     } // :6720-6721
   } // :6720-6721
 }

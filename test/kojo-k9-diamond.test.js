@@ -488,11 +488,12 @@ test('GOHOUBI_AFTER_KOUJO_K9 / OSIOKI_KOUJO_K9：choice 显式形参', async () 
   assert.deepEqual(fixture.text_lines().slice(before), ['「真、真是失礼了」']);
 });
 
-test('GOBI_KOUJO_K9：ARG:0 取语尾编号', async () => {
+test('GOBI_KOUJO_K9：ARG:0 取语尾编号（返回文字，#570）', async () => {
   const fixture = await setup_k9();
   const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
-  await gobi_koujo_family.call(9, { args: [3, () => 0] });
-  assert.deepEqual(fixture.text_lines(), ['来的……。']);
+  const text = await gobi_koujo_family.call(9, { args: [3, () => 0] });
+  assert.equal(text, '来的……。');
+  assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
 });
 
 test('BENKI_KOUJO_K9：门面 game.train.肉便器行动 判据', async () => {

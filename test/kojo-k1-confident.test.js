@@ -332,11 +332,11 @@ test('ENTERENEMY_KOUJO：默认支真身', async () => {
   );
 });
 
-test('GOBI_KOUJO：ARG=1 喜悦语尾', async () => {
+test('GOBI_KOUJO：ARG=1 喜悦语尾（返回文字，#570）', async () => {
   const fixture = await setup_k1();
   const { gobi_koujo } = fixture.load_module('kojo/kojo-system');
-  await gobi_koujo(1);
-  assert.deepEqual(fixture.text_lines(), ['哎哟♪'], '哎哟♪');
+  assert.equal(await gobi_koujo(1), '哎哟♪', '哎哟♪');
+  assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
 });
 
 test('DUNGEON_VICTORY：默认开场真身', async () => {

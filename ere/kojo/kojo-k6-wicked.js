@@ -14384,41 +14384,41 @@ async function osioki_koujo_k6(cid, choice, rand) {
 
 // @GOBI_KOUJO_K6, ARG:0 // :7972
 
-async function gobi_koujo_k6(arg_0, rand) {
+function gobi_koujo_k6(arg_0, rand) {
   const { rand_n } = bind_ctx(rand);
 
   if (arg_0 === 1) {
     // :7975
 
-    await era.print(`的哟♪`); // :7977
+    return `的哟♪`; // :7977
   } else if (arg_0 === 2) {
     // :7978
 
-    await era.print(`啊！`); // :7980
+    return `啊！`; // :7980
   } else if (arg_0 === 3) {
     // :7981
 
-    await era.print(`来着……。`); // :7983
+    return `来着……。`; // :7983
   } else if (arg_0 === 4) {
     // :7984
 
-    await era.print(`啦……。`); // :7986
+    return `啦……。`; // :7986
   } else if (arg_0 === 5) {
     // :7987
 
-    await era.print(`呢……。`); // :7989
+    return `呢……。`; // :7989
   } else {
     // :7989-7990
 
     if (rand_n(3) === 0) {
       // :7993
-      await era.print(`啊。`); // :7994
+      return `啊。`; // :7994
     } else if (rand_n(2) === 0) {
       // :7995
-      await era.print(`呢。`); // :7996
+      return `呢。`; // :7996
     } else {
       // :7996-7997
-      await era.print(`的说。`); // :7998
+      return `的说。`; // :7998
     } // :7998-7999
   } // :7998-8000
 }

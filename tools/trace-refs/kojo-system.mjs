@@ -167,6 +167,12 @@ export const FILES = [
         ref: '417-427',
         any: [/^@GROTESQUE_KOUJO$/m],
       },
+      {
+        src: 'target/ERB/EVENT/EVENT_K.ERB',
+        ref: '504-521',
+        // #570：@GOBI_KOUJO 本体（语尾口上分派）
+        any: [/^@GOBI_KOUJO, ARG:0$/m],
+      },
     ],
   },
 ];

@@ -6337,26 +6337,26 @@ async function osioski_koujo_k4() {
  * @param {number} arg_0 原作 ARG:0
  * @param {(n: number) => number} [rand] RAND:N 随机源
  */
-async function gobi_koujo_k4(arg_0, rand) {
+function gobi_koujo_k4(arg_0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
   if (arg_0 == 1) {
-    await era.print(`哦～♪`); // :5434
+    return `哦～♪`; // :5434
   } else if (arg_0 == 2) {
-    await era.print(`哦！`); // :5437
+    return `哦！`; // :5437
   } else if (arg_0 == 3) {
-    await era.print(`啦……。`); // :5440
+    return `啦……。`; // :5440
   } else if (arg_0 == 4) {
-    await era.print(`吧……算是……。`); // :5443
+    return `吧……算是……。`; // :5443
   } else if (arg_0 == 5) {
-    await era.print(`什么的……。`); // :5446
+    return `什么的……。`; // :5446
   } else {
     if (rand_n(3) == 0) {
-      await era.print(`呢。`); // :5451
+      return `呢。`; // :5451
     } else if (rand_n(2) == 0) {
-      await era.print(`嘛。`); // :5453
+      return `嘛。`; // :5453
     } else {
-      await era.print(`啦。`); // :5455
+      return `啦。`; // :5455
     }
   }
 }

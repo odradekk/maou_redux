@@ -465,7 +465,7 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'gobi_koujo_family',
     flag_guard: false,
-    missing: 'stub',
+    missing: 'silent',
     call: ['arg0', 'rand'],
     handler: ['arg0', 'rand'],
   },
@@ -896,8 +896,19 @@ async function enterenemy_koujo(cid, rand) {
   return result;
 }
 
+/**
+ * @GOBI_KOUJO（:504-521）：语尾口上。原作各 K 真身用**不换行 PRINT** 把语尾
+ * 写进调用方的当前行（LOOK.ERB:875-878 的 PRINTFORM → CALL → PRINT 」 同行）；
+ * ere 引擎一次 era.print 即一行，「插入后再续写」没有对应形态，#570 起真身
+ * 改为返回语尾文字、由调用方拼进行内（look.js / 迷宫凌辱两侧）。
+ *
+ * @param {number} arg0 情绪档位（0 默认 / 1 喜 / 2 怒 / 3 悲 / 4 恥 / 5 情けない）
+ * @param {(n: number) => number} [rand] RAND:N 的随机源（默认支三选一用）
+ * @returns {Promise<string>} 语尾文字；未命中（TRYCALLFORM 落空，如 K11
+ *   原作就没有语尾函数）返回空串——调用方的行照常结束
+ */
 async function gobi_koujo(arg0, rand) {
-  return try_kojo_or_stub(
+  const text = await try_kojo_or_stub(
     gobi_koujo_family,
     'GOBI_KOUJO',
     '语尾口上',
@@ -905,6 +916,7 @@ async function gobi_koujo(arg0, rand) {
     -1,
     [arg0, rand],
   );
+  return typeof text === 'string' ? text : '';
 }
 
 module.exports = {

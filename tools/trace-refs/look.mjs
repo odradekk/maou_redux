@@ -2227,6 +2227,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
+        ref: '2799',
+        // :2799（#570：喜び语尾，收尾行的语尾出处）
+        any: [/^\s*CALL GOBI_KOUJO, 1\s*$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '2776',
         // :2776
         any: [/^\s*;5個ごとに金红桃が一つずつ増える\s*$/m],

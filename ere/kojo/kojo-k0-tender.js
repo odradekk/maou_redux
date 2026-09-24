@@ -2523,43 +2523,42 @@ async function dungeon_attack_k0(_cid, rand) {
 /**
  * @GOBI_KOUJO_K0（K0 慈爱）：语尾口上（:8301-8329，ARG:0 分档 0-5）。
  *
- * @returns {Promise<number>} 0（RETURN 0）
+ * #570 起返回语尾文字、不打印（原作 PRINT 不换行，由调用方拼进同一行）；
+ * rand 形参对齐族实参 [arg0, rand]（默认支三选一可注入）。
+ *
+ * @param {number} arg_0 情绪档位
+ * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
+ * @returns {string} 语尾文字
  */
-async function gobi_koujo_k0(arg_0) {
-  const rand_n = (n) => Math.floor(Math.random() * n); // 语尾随机，无注入
+function gobi_koujo_k0(arg_0, rand) {
+  const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
   if (arg_0 === 1) {
     // :8304
-
-    await era.print(`♪`); // :8306
+    return `♪`; // :8306
   } else if (arg_0 === 2) {
     // :8307
-
-    await era.print(`！`); // :8309
+    return `！`; // :8309
   } else if (arg_0 === 3) {
     // :8310
-
-    await era.print(`……。`); // :8312
+    return `……。`; // :8312
   } else if (arg_0 === 4) {
     // :8313
-
-    await era.print(`……。`); // :8315
+    return `……。`; // :8315
   } else if (arg_0 === 5) {
     // :8316
-
-    await era.print(`……呜呜。`); // :8318
+    return `……呜呜。`; // :8318
   } else {
     // :8318-8319
-
     if (rand_n(3) === 0) {
       // :8322
-      await era.print(`。`); // :8323
+      return `。`; // :8323
     } else if (rand_n(2) === 0) {
       // :8324
-      await era.print(`哟。`); // :8325
+      return `哟。`; // :8325
     } else {
       // :8325-8326
-      await era.print(`呢。`); // :8327
+      return `呢。`; // :8327
     } // :8327-8328
   } // :8327-8329
 }

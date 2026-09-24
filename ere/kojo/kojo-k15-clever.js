@@ -9050,33 +9050,33 @@ async function osioki_koujo_k15(rand, cid, choice) {
 }
 
 // @gobi_koujo_k15, ARG:0 // :6335
-async function gobi_koujo_k15(arg0, rand) {
+function gobi_koujo_k15(arg0, rand) {
   void rand;
 
   if (arg0 == 1) {
     // :6338
 
-    await era.print(`♪`); // :6340
+    return `♪`; // :6340
   } else if (arg0 == 2) {
     // :6341
 
-    await era.print(`！`); // :6343
+    return `！`; // :6343
   } else if (arg0 == 3) {
     // :6344
 
-    await era.print(`……。`); // :6346
+    return `……。`; // :6346
   } else if (arg0 == 4) {
     // :6347
 
-    await era.print(`……。`); // :6349
+    return `……。`; // :6349
   } else if (arg0 == 5) {
     // :6350
 
-    await era.print(`……。`); // :6352
+    return `……。`; // :6352
   } else {
     // :6352-6354
 
-    await era.print(`。`); // :6356
+    return `。`; // :6356
   } // :6356-6357
 }
 

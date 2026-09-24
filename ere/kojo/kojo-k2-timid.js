@@ -11221,38 +11221,38 @@ async function osioki_koujo_k2(cid, choice, rand) {
 }
 
 // @GOBI_KOUJO_K2, ARG:0 // :7157
-async function gobi_koujo_k2(arg_0, rand) {
+function gobi_koujo_k2(arg_0, rand) {
   const { rand_n } = bind_ctx(rand);
 
   if (arg_0 === 1) {
     // :7160
 
-    await era.print(`啊～`); // :7162
+    return `啊～`; // :7162
   } else if (arg_0 === 2) {
     // :7163
 
-    await era.print(`哟！`); // :7165
+    return `哟！`; // :7165
   } else if (arg_0 === 3) {
     // :7166
 
-    await era.print(`啊……。`); // :7168
+    return `啊……。`; // :7168
   } else if (arg_0 === 4) {
     // :7169
 
-    await era.print(`啊啊……。`); // :7171
+    return `啊啊……。`; // :7171
   } else if (arg_0 === 5) {
     // :7172
 
-    await era.print(`呼……唔唔。`); // :7174
+    return `呼……唔唔。`; // :7174
   } else {
     if (rand_n(3) === 0) {
       // :7178
-      await era.print(`唔。`); // :7179
+      return `唔。`; // :7179
     } else if (rand_n(2) === 0) {
       // :7180
-      await era.print(`什么啊。`); // :7181
+      return `什么啊。`; // :7181
     } else {
-      await era.print(`什么啊。`); // :7183
+      return `什么啊。`; // :7183
     }
   }
 }

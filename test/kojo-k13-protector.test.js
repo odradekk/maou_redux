@@ -801,11 +801,12 @@ test('GOHOUBI_AFTER_KOUJO_K13：choice 参数传递（0 失望 / 1 保存）', a
   );
 });
 
-test('GOBI_KOUJO_K13：ARG:0==1 取语尾', async () => {
+test('GOBI_KOUJO_K13：ARG:0==1 取语尾（返回文字，#570）', async () => {
   const fixture = await setup_k13();
   const { gobi_koujo_family } = fixture.load_module('kojo/kojo-system');
-  await gobi_koujo_family.call(13, { args: [1, seq_rand(0)] });
-  assert.deepEqual(fixture.text_lines(), ['嗯♪'], 'GOBI ARG:0==1');
+  const text = await gobi_koujo_family.call(13, { args: [1, seq_rand(0)] });
+  assert.equal(text, '嗯♪', 'GOBI ARG:0==1');
+  assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
 });
 
 test('BENKI_KOUJO_K13：肉便器行动==0 默认档', async () => {

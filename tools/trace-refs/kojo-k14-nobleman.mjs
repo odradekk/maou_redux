@@ -21166,13 +21166,6 @@ export const FILES = [
         ref: '5937-5939',
         any: [/^\s*PRINTFORM 的啦。\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$/m],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
-        ref: '5937-5941',
-        any: [
-          /^\s*PRINTFORM 的啦。\s*$\n^\s*ENDIF\s*$\n^\s*ENDIF\s*$\n^\s*RETURN 0\s*$/m,
-        ],
-      },
     ],
   },
 ];
