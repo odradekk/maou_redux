@@ -2028,8 +2028,10 @@ test('--slice 与 --jobs 同时给时当场报错退出，不静默丢外层切�
 
 test('--files 与 --slice：空片是正常分工不报错，拼错文件名带 --slice 也必报错（#553）', () => {
   // 并行子进程带着 --slice（分摊不是筛选），分到空片是正常分工；但文件名
-  // 拼错与切片无关，带不带 --slice 都该报——判断若改看切片后的选集，拼错
-  // 的文件在「恰好分到空片」时会被静默放行，而空片的子进程被误报成写错。
+  // 拼错与切片无关，带不带 --slice 都该报。切片是对筛选结果的再过滤，
+  // 「拼错的文件恰好分到空片被静默放行」不可能发生——判断若改看切片后的
+  // 选集，被误伤的恰好是合法的 `--files` 分到空片那一路（空片的子进程被
+  // 报成写错文件名）。有区分力的是下面第一条断言。
   const root = make_fixture();
   try {
     const desc = 'M9191 加倍系数改坏（空片是分工不是写错）';
@@ -2061,6 +2063,10 @@ test('--files 与 --slice：空片是正常分工不报错，拼错文件名带 
     assert.ok(
       !empty.output.includes('没有命中任何变异条目'),
       '空片不是写错文件名：--files 命中的条目只是落在别的片里',
+    );
+    assert.ok(
+      empty.output.includes('本轮 0 条'),
+      `分到空片要明确说「本轮 0 条」，不能被汇总行读成「全部被拦截」：\n${empty.output}`,
     );
 
     const typo = run_tool([
@@ -2198,8 +2204,10 @@ test('--jobs 逐条输出：条目结果随完成随转发，不等全部副本�
     );
     let output = '';
     let first_line_at = null;
+    // 等 'close' 不等 'exit'：'exit' 触发时 stdio 可能还开着，下面的
+    // 「最后一行 SUMMARY 是父进程的」断言会依赖还没读完的输出（审查发现 7）。
     const exited = new Promise((resolve) => {
-      child.on('exit', (code) => resolve(code));
+      child.on('close', (code) => resolve(code));
     });
     child.stdout.on('data', (d) => {
       output += d;

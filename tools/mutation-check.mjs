@@ -909,12 +909,14 @@ function report_dirty_target(root, m, original, headline) {
   } else if (head === null) {
     console.log(
       `    还原：${m.file} 不在 git 管理下（并行模式的隔离副本或临时夹具）——` +
-        `若是副本，主工作树没有被改动；其余情况按该条条目把 replace 换回 find`,
+        `若是副本，主工作树没有被改动；其余情况把该条条目的 replace 换回 find` +
+        `（replace 里的 $ 会被 String.replace 展开，以原文为准），只回退这次变异`,
     );
   } else {
     console.log(
       `    还原：${m.file} 变异前就有未提交改动，git checkout 会连它一起删掉——` +
-        `先 git diff 核对，再按该条条目把 replace 换回 find（只回退这次变异）`,
+        `先 git diff 核对，再把该条条目的 replace 换回 find（只回退这次变异；` +
+        `带 $ 的条目以 diff 为准，replace 里的 $ 会被 String.replace 展开）`,
     );
   }
 }
@@ -1129,7 +1131,14 @@ function select_entries(entries, args) {
  */
 async function execute(entries, args) {
   const tally = { caught: 0, skipped: 0, red: 0 };
-  for (const m of select_entries(entries, args)) {
+  const picked = select_entries(entries, args);
+  // 空选集不是「全拦」（#553 审查轮发现 3）：汇总行那句「全部变异被测试
+  // 拦截，无误报通过」在 0 条上会被读成「都验证过了」——`--files` 恰好分到
+  // 空片、`--ids ''` 两条路都到这里。空片是合法分工（不报错），但要说清。
+  if (picked.length === 0) {
+    console.log('⚠ 本轮 0 条：筛选/切片后没有可跑的条目（不是「全部被拦截」）');
+  }
+  for (const m of picked) {
     await new Promise((resolve) => setImmediate(resolve));
     const r = run_one(args.root, m);
     if (r === 'caught') tally.caught += 1;
