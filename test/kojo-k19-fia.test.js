@@ -471,10 +471,13 @@ test('非调教族：NTR、处刑与语尾均注册并执行关键状态', async
   game.event.犬射精或处刑口上 = 4;
   await system.exucution_koujo_family.call(KEY, { args: [] });
   const before = fixture.text_lines().length;
-  await system.gobi_koujo_family.call(KEY, { args: [1, () => 0] });
+  const gobi_text = await system.gobi_koujo_family.call(KEY, {
+    args: [1, () => 0],
+  });
+  assert.equal(gobi_text, '，诶嘿嘿～♪', '语尾返回文字（#570）');
   assert.equal(
     fixture.text_lines().length,
-    before + 1,
-    '语尾族 ARG:0==1 输出一行',
+    before,
+    '语尾真身不打印（行内拼接由调用方做）',
   );
 });

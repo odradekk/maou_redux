@@ -13148,41 +13148,41 @@ async function osioki_koujo_k10(rand, cid, choice) {
  * @GOBI_KOUJO_K10（:7275-7303）：语尾口上。arg0 按心情（1=得意/2=怒/
  * 3=悲/4=羞/5=丢脸）取语尾片段，默认随机三选一（皆为句号，原作如此）。
  */
-async function gobi_koujo_k10(arg0, rand) {
+function gobi_koujo_k10(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
   if (arg0 == 1) {
     // :7278
 
-    await era.print(`所以呢♪`); // :7280
+    return `所以呢♪`; // :7280
   } else if (arg0 == 2) {
     // :7281
 
-    await era.print(`哟！`); // :7283
+    return `哟！`; // :7283
   } else if (arg0 == 3) {
     // :7284
 
-    await era.print(`怎么这样……。`); // :7286
+    return `怎么这样……。`; // :7286
   } else if (arg0 == 4) {
     // :7287
 
-    await era.print(`……。`); // :7289
+    return `……。`; // :7289
   } else if (arg0 == 5) {
     // :7290
 
-    await era.print(`……。`); // :7292
+    return `……。`; // :7292
   } else {
     // :7293-7294
 
     if (rand_n(3) == 0) {
       // :7296
-      await era.print(`。`); // :7297
+      return `。`; // :7297
     } else if (rand_n(2) == 0) {
       // :7298
-      await era.print(`。`); // :7299
+      return `。`; // :7299
     } else {
       // :7300-7301
-      await era.print(`。`); // :7301
+      return `。`; // :7301
     } // :7301-7303
   } // :7301-7305
 }

@@ -4988,11 +4988,11 @@ test('ATTACK：CFLAG:1==2 + 强气素质 → 爱的火焰', async () => {
   );
 });
 
-test('GOBI：arg_0=1 → ♪ 语尾', async () => {
+test('GOBI：arg_0=1 → 返回 ♪ 语尾文字（#570：真身不打印）', async () => {
   const fixture = await setup_k0();
   const { gobi_koujo } = fixture.load_module('kojo/kojo-system');
-  await gobi_koujo(1);
-  assert.ok(fixture.text_lines().some((l) => l.includes('♪')));
+  assert.equal(await gobi_koujo(1), '♪');
+  assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
 });
 
 test('ENTERENEMY：献身（TALENT:21）→ 我是不会输的', async () => {

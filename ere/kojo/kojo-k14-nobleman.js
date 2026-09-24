@@ -8017,45 +8017,43 @@ async function osioski_koujo_k14(rand, cid, choice) {
  * @GOBI_KOUJO_K14（:5911-5944）：语尾口上（PRINTFORM 输出行尾语气词）。
  * ARG:0 分档：1 得意/2 愤怒/3 悲伤/4 害羞/5 狼狈，其余（含 0）随机三选。
  */
-async function gobi_koujo_k14(arg, rand) {
+function gobi_koujo_k14(arg, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
   if (arg == 1) {
     // :5914
 
-    await era.print(`哦~♪`); // :5916
+    return `哦~♪`; // :5916
   } else if (arg == 2) {
     // :5917
 
-    await era.print(`哦！`); // :5919
+    return `哦！`; // :5919
   } else if (arg == 3) {
     // :5920
 
-    await era.print(`啦……。`); // :5922
+    return `啦……。`; // :5922
   } else if (arg == 4) {
     // :5923
 
-    await era.print(`什么的……。`); // :5925
+    return `什么的……。`; // :5925
   } else if (arg == 5) {
     // :5926
 
-    await era.print(`什么啊……。`); // :5928
+    return `什么啊……。`; // :5928
   } else {
     // :5928-5929
 
     if (rand_n(3) == 0) {
       // :5932
-      await era.print(`啦。`); // :5933
+      return `啦。`; // :5933
     } else if (rand_n(2) == 0) {
       // :5934
-      await era.print(`嘛。`); // :5935
+      return `嘛。`; // :5935
     } else {
       // :5935-5936
-      await era.print(`的啦。`); // :5937
+      return `的啦。`; // :5937
     } // :5937-5938
   } // :5937-5939
-
-  return 0; // :5937-5941
 }
 
 // —— 家族注册（key 14；随 main-loop require 生效）——

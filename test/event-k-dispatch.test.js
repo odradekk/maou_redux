@@ -533,8 +533,10 @@ test('22 行逐条驱动：注册 handler 后按 LOCAL-100 命中，实参形状
     );
     assert.equal(
       result,
-      0,
-      `${row.entry}：返回值 0（TRYCALLFORM 不读，但契约是 0）`,
+      row.entry === 'gobi_koujo' ? '' : 0,
+      // #570：gobi_koujo 转交真身返回值并归一为字符串（mock 返回 0 → 空串）；
+      // 其余入口契约仍是 0（TRYCALLFORM 不读）
+      `${row.entry}：返回值`,
     );
   }
 });
@@ -568,7 +570,11 @@ test('存在判定与源一致：原件同段有 `SIF FLAG:LOCAL == 0` 的入口
         `${row.entry}：原件同段没有存在判定 → 照常派发`,
       );
     }
-    assert.equal(result, 0, `${row.entry}：返回值 0`);
+    assert.equal(
+      result,
+      row.entry === 'gobi_koujo' ? '' : 0, // #570：语尾未命中返回空串
+      `${row.entry}：返回值`,
+    );
   }
 });
 
@@ -702,10 +708,13 @@ test('缺席语义：未命中一律静默（原作 TRYCALLFORM 落空，#565 �
     );
     const lines = fixture.text_lines();
 
+    // #570 起 GOBI_KOUJO 的未命中值是空串（调用方拿它拼行，0 会被拼进
+    // 台词）；其余入口仍是 TRYCALL 落空的 RESULT 0
+    const missing_value = row.entry === 'gobi_koujo' ? '' : 0;
     assert.equal(
       result,
-      0,
-      `${row.entry}：缺 handler 时返回值 0（TRYCALL 落空的 RESULT）`,
+      missing_value,
+      `${row.entry}：缺 handler 时返回 ${JSON.stringify(missing_value)}（TRYCALL 落空）`,
     );
     // 表里的 missing/stub_wait 字段自 #565 返工起只作历史文档（未命中统一
     // 静默），行为面不再区分两态

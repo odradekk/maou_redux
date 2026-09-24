@@ -14175,46 +14175,49 @@ async function osioki_koujo_k9(rand, cid, choice) {
 /**
  * @gobi_koujo_k9（:7585-7613）：语尾口上。ARG:0 取 1-5 五档固定语尾，
  * 其余随机三选一。
+ *
+ * #570 起返回语尾文字、不打印（原作 PRINT 不换行，由调用方拼进同一行）。
+ *
  * @param {number} arg0 语尾编号（原作 ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @returns {Promise<number>} undefined（源无 RETURN）
+ * @returns {string} 语尾文字
  */
-async function gobi_koujo_k9(arg0, rand) {
+function gobi_koujo_k9(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const arg_0 = arg0; // 原作 ARG:0 → JS 形参 arg0，再 alias 为 arg_0
 
   if (arg_0 == 1) {
     // :7588
 
-    await era.print(`的噢${heart(1)}`); // :7590
+    return `的噢${heart(1)}`; // :7590
   } else if (arg_0 == 2) {
     // :7591
 
-    await era.print(`来的哦！`); // :7593
+    return `来的哦！`; // :7593
   } else if (arg_0 == 3) {
     // :7594
 
-    await era.print(`来的……。`); // :7596
+    return `来的……。`; // :7596
   } else if (arg_0 == 4) {
     // :7597
 
-    await era.print(`来的呢……。`); // :7599
+    return `来的呢……。`; // :7599
   } else if (arg_0 == 5) {
     // :7600
 
-    await era.print(`来的……呜呜。`); // :7602
+    return `来的……呜呜。`; // :7602
   } else {
     // :7602-7603
 
     if (rand_n(3) == 0) {
       // :7605-7606
-      await era.print(`来的。`); // :7607
+      return `来的。`; // :7607
     } else if (rand_n(2) == 0) {
       // :7607-7608
-      await era.print(`来的哦。`); // :7609
+      return `来的哦。`; // :7609
     } else {
       // :7609-7610
-      await era.print(`的噢~。`); // :7611
+      return `的噢~。`; // :7611
     } // :7611-7612
   } // :7611-7613
 }

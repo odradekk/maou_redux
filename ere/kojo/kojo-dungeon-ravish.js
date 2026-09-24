@@ -65,9 +65,10 @@
  *     写（#71 门面规则），但门面 getter 的 `|| 0` 会吞 -1（未经历）判据，
  *     读用裸寻址 `era.get('cflag:${arg}:16') ?? 0`，写走门面
  *     `chara(arg).train.初吻对象 = 995`（#183 同款处置）。
- *   - **`CALL GOBI_KOUJO` 落存根**：语尾口上分派（EVENT_K.ERB 的 @GOBI_KOUJO），
- *     全库多处调用、未移植（#183 首次消费，登记 stub-registry）。分支
- *     TALENT:17（プライド低い）→ 1 / 否则 5，结构 1:1 保留。
+ *   - **`CALL GOBI_KOUJO` 真身接通（#570）**：语尾口上分派（EVENT_K.ERB 的
+ *     @GOBI_KOUJO）返回语尾文字——原作『猪…』整段是一行（PRINTFORM 夹两处
+ *     GOBI 后 PRINTFORMW 收尾），ere 一次 print 即一行，故拼成整串一次
+ *     printAndWait。分支 TALENT:17（プライド低い）→ 1 / 否则 5，1:1 保留。
  *   - **`Y += 10` / `Y = 10` 是死代码**：Y 是原作全局单字母变量（100000
  *     维），全库无初始化、函数内也无读取者（#183 同款：MAN 版 :862/:868，
  *     本文件 :1622/:1628/:2378）。ere 侧无单字母变量通道，注释保留不落
@@ -1035,20 +1036,19 @@ async function orc_ryou(arg, mon_num, rand) {
       era.add(`juel:${arg}:5`, mon_num * 10); // :586 JUEL:ARG:5 欲情
     }
 
-    await era.print('『猪'); // :708
-    if (era.get(`talent:${arg}:17`)) {
-      await require('#/kojo/kojo-system').gobi_koujo(1); // :705 CALL GOBI_KOUJO, 1
-    } else {
-      await require('#/kojo/kojo-system').gobi_koujo(5); // :708 CALL GOBI_KOUJO, 5
-    }
-    await era.print('还自称冒险者……简直傻了'); // :717
-
-    if (era.get(`talent:${arg}:17`)) {
-      await require('#/kojo/kojo-system').gobi_koujo(1); // :714 CALL GOBI_KOUJO, 1
-    } else {
-      await require('#/kojo/kojo-system').gobi_koujo(5); // :717 CALL GOBI_KOUJO, 5
-    }
-    await era.printAndWait('　噗噗，噗嘻！』'); // :728
+    // 源 :708 起『猪…』整段是一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
+    // 收尾）；语尾按 #570 返回文字、拼进同一行，一次 printAndWait 输出。
+    // 尾锚 :708+:717+:728 是拼接锚（一语句对应一行的多段 PRINT），语义见
+    // test/kojo-text-fidelity.test.js 头注
+    const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
+      era.get(`talent:${arg}:17`) ? 1 : 5,
+    ); // :712/:715（プライド低い → 喜び、否则情けない）
+    const gobi_pig2 = await require('#/kojo/kojo-system').gobi_koujo(
+      era.get(`talent:${arg}:17`) ? 1 : 5,
+    ); // :722/:725
+    await era.printAndWait(
+      `『猪${gobi_pig}还自称冒险者……简直傻了${gobi_pig2}${'\u3000'}噗噗，噗嘻！』`,
+    ); // :708+:717+:728
 
     if (era.get(`talent:${arg}:17`)) {
       // :721-726 プライド低い

@@ -4901,7 +4901,7 @@ test('OSIOKI：6-9 档各单行（6/7 源作用 PRINTW）', async () => {
   }
 });
 
-test('GOBI：五档情绪各一句', async () => {
+test('GOBI：五档情绪各一句（返回文字，#570）', async () => {
   const expected = [
     [1, '什么啊♪'],
     [2, '哼！'],
@@ -4909,33 +4909,34 @@ test('GOBI：五档情绪各一句', async () => {
     [4, '嗯……。'],
     [5, '啊……啊……。'],
   ];
-  for (const [arg_0, line] of expected) {
+  for (const [arg_0, text] of expected) {
     const fixture = await setup_k8();
-    await speak_gobi_k8(fixture, arg_0);
-    assert.deepEqual(fixture.text_lines(), [line], `ARG:0 == ${arg_0}`);
+    assert.equal(
+      await speak_gobi_k8(fixture, arg_0),
+      text,
+      `ARG:0 == ${arg_0}`,
+    );
+    assert.deepEqual(fixture.text_lines(), [], '语尾真身不得自行打印');
   }
 });
 
-test('GOBI：默认支（含 ARG:0==0）三选一，前两支源作同文', async () => {
+test('GOBI：默认支（含 ARG:0==0）三选一，前两支源作同文（返回文字）', async () => {
   const first = await setup_k8();
-  await speak_gobi_k8(first, 0, () => 0);
-  assert.deepEqual(first.text_lines(), ['啊。'], 'RAND:3==0');
+  assert.equal(await speak_gobi_k8(first, 0, () => 0), '啊。', 'RAND:3==0');
 
   const second = await setup_k8();
   // RAND:3 非 0、RAND:2 为 0 → 第二支（源作与第一支同文）
   let call = 0;
-  await speak_gobi_k8(second, 0, () => (call++ === 0 ? 1 : 0));
-  assert.deepEqual(
-    second.text_lines(),
-    ['啊。'],
+  assert.equal(
+    await speak_gobi_k8(second, 0, () => (call++ === 0 ? 1 : 0)),
+    '啊。',
     '默认支第二支与第一支同文（源作如此）',
   );
 
   const third = await setup_k8();
-  await speak_gobi_k8(third, 99, () => 1);
-  assert.deepEqual(
-    third.text_lines(),
-    ['什么啊。'],
+  assert.equal(
+    await speak_gobi_k8(third, 99, () => 1),
+    '什么啊。',
     'ARG:0 不在 1-5 内也走默认支',
   );
 });

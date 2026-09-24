@@ -14399,31 +14399,34 @@ async function osioki_koujo_k7(cid, choice) {
 /**
  * @GOBI_KOUJO_K7（:8858-8890）：语尾口上。ARG:0 取 1-5 五档固定语尾，
  * 其余随机三选一。
+ *
+ * #570 起返回语尾文字、不打印（原作 PRINT 不换行，由调用方拼进同一行）。
+ *
  * @param {number} arg0 语尾编号（原作 ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @returns {Promise<number>} undefined（源无 RETURN）
+ * @returns {string} 语尾文字
  */
-async function gobi_koujo_k7(arg0, rand) {
+function gobi_koujo_k7(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const arg_0 = arg0;
 
   if (arg_0 == 1) {
-    await era.print(`哇~${heart(1)}`); // :8863
+    return `哇~${heart(1)}`; // :8863
   } else if (arg_0 == 2) {
-    await era.print(`什么啊！`); // :8866
+    return `什么啊！`; // :8866
   } else if (arg_0 == 3) {
-    await era.print(`哦……。`); // :8869
+    return `哦……。`; // :8869
   } else if (arg_0 == 4) {
-    await era.print(`真是……唉。`); // :8872
+    return `真是……唉。`; // :8872
   } else if (arg_0 == 5) {
-    await era.print(`唉……。`); // :8875
+    return `唉……。`; // :8875
   } else {
     if (rand_n(3) == 0) {
-      await era.print(`哦。`); // :8880
+      return `哦。`; // :8880
     } else if (rand_n(2) == 0) {
-      await era.print(`啊。`); // :8882
+      return `啊。`; // :8882
     } else {
-      await era.print(`没办法了。`); // :8884
+      return `没办法了。`; // :8884
     }
   }
 }

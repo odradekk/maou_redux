@@ -98,6 +98,30 @@ test('13 个函数（12 怪物 + PC_RYOU）分派：各自可调用、输出非�
   }
 });
 
+test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾（源 :708-:728，#570）', async () => {
+  const fixture = await setup_ravish((f) => {
+    f.store.set('talent:31:17', 1); // プライド低い → 语尾档 1（喜び）
+    f.store.set('talent:31:163', 1); // K3 高貴
+  });
+  fixture.load_module('kojo/kojo-k3-noble');
+  fixture.load_module('era-utils/era-flag').target = 31;
+  const mod = fixture_module(fixture);
+  // orc（女版）畏怖阶段口上先消费 1 掷（c131=0 → 初见档 pick），分支链同
+  // 男版：第 2 掷 rand_n(5)=1 不中口交、第 3 掷 rand_n(4)=1 不中全穴、
+  // 第 4 掷 rand_n(3)=0 中屈辱
+  await mod.orc_ryou(31, 5, seq_rand(2, 1, 1, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('『猪的噢~♪还自称冒险者……简直傻了的噢~♪　噗噗，噗嘻！』'),
+    '源 :708-:728 的整段在 ere 是一行（语尾两处都拼进『猪』行）',
+  );
+  assert.ok(
+    !fixture.text_lines().some((l) => l === '的噢~♪'),
+    '语尾不得单独成行（#570 的原始症状）',
+  );
+});
+
 test('RYOUZYOKU 主框架：选择[1]不要凌辱 → 直接返回 0', async () => {
   const fixture = await setup_ravish();
   const mod = fixture_module(fixture);

@@ -418,21 +418,19 @@ test('NTR_KOUJO P == 1（处女丧失）：素质分档 + CFLAG:650/651 推进',
   assert.equal(fixture.store.get('cflag:31:651'), 1, 'CFLAG:651');
 });
 
-test('GOBI_KOUJO ARG:0 == 1-5 各支与 0 随机三选一', async () => {
+test('GOBI_KOUJO ARG:0 == 1-5 各支与 0 随机三选一（返回文字，#570）', async () => {
   const a1 = await setup_k6();
   const mod1 = a1.load_module('kojo/kojo-k6-wicked');
-  await mod1.gobi_koujo_k6(1);
-  assert.deepEqual(a1.text_lines(), ['的哟♪']);
+  assert.equal(await mod1.gobi_koujo_k6(1), '的哟♪');
+  assert.deepEqual(a1.text_lines(), [], '语尾真身不得自行打印');
 
   const a5 = await setup_k6();
   const mod5 = a5.load_module('kojo/kojo-k6-wicked');
-  await mod5.gobi_koujo_k6(5);
-  assert.deepEqual(a5.text_lines(), ['呢……。']);
+  assert.equal(await mod5.gobi_koujo_k6(5), '呢……。');
 
   const a0 = await setup_k6();
   const mod0 = a0.load_module('kojo/kojo-k6-wicked');
-  await mod0.gobi_koujo_k6(0, seq_rand(0));
-  assert.deepEqual(a0.text_lines(), ['啊。']);
+  assert.equal(await mod0.gobi_koujo_k6(0, seq_rand(0)), '啊。');
 });
 
 test('GOHOUBI_AFTER choice == 0 支出力', async () => {

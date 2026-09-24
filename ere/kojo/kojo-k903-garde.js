@@ -9516,40 +9516,40 @@ async function osioki_koujo_k903(rand, cid, choice) {
 }
 
 // @gobi_koujo_k903, ARG:0 // :6002
-async function gobi_koujo_k903(arg0, rand = default_rand) {
+function gobi_koujo_k903(arg0, rand = default_rand) {
   const rand_n = rand;
   if (arg0 == 1) {
     // :6005
 
-    await era.print(`哦～♪`); // :6007
+    return `哦～♪`; // :6007
   } else if (arg0 == 2) {
     // :6008
 
-    await era.print(`哦！`); // :6010
+    return `哦！`; // :6010
   } else if (arg0 == 3) {
     // :6011
 
-    await era.print(`啦……。`); // :6013
+    return `啦……。`; // :6013
   } else if (arg0 == 4) {
     // :6014
 
-    await era.print(`吧……算是……。`); // :6016
+    return `吧……算是……。`; // :6016
   } else if (arg0 == 5) {
     // :6017
 
-    await era.print(`什么的……。`); // :6019
+    return `什么的……。`; // :6019
   } else {
     // :6020-6021
 
     if (rand_n(3) == 0) {
       // :6023
-      await era.print(`呢。`); // :6024
+      return `呢。`; // :6024
     } else if (rand_n(2) == 0) {
       // :6025
-      await era.print(`嘛。`); // :6026
+      return `嘛。`; // :6026
     } else {
       // :6027-6028
-      await era.print(`啦。`); // :6028
+      return `啦。`; // :6028
     } // :6028-6029
   } // :6028-6030
 }

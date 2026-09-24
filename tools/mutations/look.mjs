@@ -18,7 +18,7 @@ const look = 'ere/chara/look.js';
 const info = 'ere/chara/look-info.js';
 
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 45;
+export const COUNT = 51; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）
 
 const make = (id, desc, find, replace, must_mention, extra = {}) => ({
   desc: `M${id} ${desc}`,
@@ -377,5 +377,65 @@ export default [
     replace: "      if (false) return '婚史保密';",
     tests: ['look'],
     must_mention: '保密/无两档',
+  },
+  {
+    desc: 'M11766 LOOK_INFO 首行丢弃语尾（#570：语尾须拼进「」之内）',
+    file: look,
+    find: '    s.add(await gobi_koujo(gobi_mark)); // :877',
+    replace: "    s.add(''); // :877 变异：丢弃语尾",
+    tests: ['look'],
+    must_mention: '首行语尾在「」之内',
+  },
+  {
+    desc: 'M11767 LOOK_INFO_LOVE 收尾丢弃语尾（#570：喜び语尾接在物品行末）',
+    file: look,
+    find: '    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行',
+    replace: "    s.add('」 '); // 变异：丢弃语尾",
+    tests: ['look'],
+    must_mention: '最后一项物品与「♪」 」同一行',
+  },
+  {
+    desc: 'M11768 LOOK_INFO 语尾包装层自行打印（#570 原始症状复辟：语尾单独成行）',
+    file: look,
+    find: `async function gobi_koujo(arg0) {
+  return require('#/kojo/kojo-system').gobi_koujo(arg0);
+}`,
+    replace: `async function gobi_koujo(arg0) {
+  // 变异：自行打印（#570 前的旧形态），不再交给调用方拼行
+  era.print(await require('#/kojo/kojo-system').gobi_koujo(arg0));
+  return '';
+}`,
+    tests: ['look'],
+    must_mention: '语尾自成一行',
+  },
+  {
+    desc: 'M11774 LOOK_INFO 语尾调用点丢返回值（裸 await，语尾不进行内；#570 结构化检查）',
+    file: look,
+    find: '    s.add(await gobi_koujo(gobi_mark)); // :877',
+    replace:
+      '    // 变异：丢返回值（裸调用）\n    await gobi_koujo(gobi_mark); // :877',
+    tests: ['look'],
+    must_mention: '裸调用 gobi_koujo 会丢掉语尾文字',
+  },
+  {
+    desc: 'M11775 LOOK_INFO_LOVE 每 6 项换行多出空行（era.println 复辟；#570 返工）',
+    file: look,
+    find: `      s.add(' ');
+      era.print(s.take());
+      s.add('　');`,
+    replace: `      s.add(' ');
+      era.print(s.take());
+      era.println(); // 变异：多一个空行
+      s.add('　');`,
+    tests: ['look'],
+    must_mention: '物品行之间不得出现空行',
+  },
+  {
+    desc: 'M11776 LOOK_INFO_LOVE 收尾另起一行（#570 返工：原作接在物品行末）',
+    file: look,
+    find: '    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行',
+    replace: '    era.print(`${await gobi_koujo(1)}」 `); // 变异：另起一行',
+    tests: ['look'],
+    must_mention: '语尾不得另起一行',
   },
 ];

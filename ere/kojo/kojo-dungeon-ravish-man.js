@@ -38,10 +38,11 @@
  *     写（#71 门面规则），但门面 getter 的 `|| 0` 会吞 -1（未经历）判据，
  *     读用裸寻址 `era.get('cflag:${arg}:16')`，写走门面
  *     `chara(arg).train.初吻对象 = 995`。
- *   - **`CALL GOBI_KOUJO` 落存根**：语尾口上分派（EVENT_K.ERB 的 @GOBI_KOUJO），
- *     全库多处调用、未移植（docs/stub-registry.md 无登记——本文件首次
- *     消费，随语尾口上票）。TALENT:17（プライド低い）→ 1（喜んで誇らし
- *     げに）、否则 5（情けなさそうに），分支结构 1:1 保留。
+ *   - **`CALL GOBI_KOUJO` 真身接通（#570）**：语尾口上分派（EVENT_K.ERB 的
+ *     @GOBI_KOUJO）返回语尾文字——原作『猪…』整段是一行（PRINTFORM 夹两处
+ *     GOBI 后 PRINTFORMW 收尾），ere 一次 print 即一行，故拼成整串一次
+ *     printAndWait。TALENT:17（プライド低い）→ 1（喜んで誇らしげに）、
+ *     否则 5（情けなさそうに），分支结构 1:1 保留。
  *   - **`Y += 10`（:862/:868）是死代码**：Y 是原作全局单字母变量（100000
  *     维），全库无初始化、函数内也无读取者（与 H13 的
  *     DUNGEON_RYOUZYOKU.ERB 的 Y += 10 同款）。ere 侧无单字母变量通道，
@@ -422,23 +423,19 @@ async function orc_ryou_man(arg, mon_num, rand) {
       era.add(`juel:${arg}:5`, mon_num * 10); // :305 JUEL:ARG:5 欲情
     }
 
-    await era.print('『猪'); // :308
-    if (t(17)) {
-      // :309-312 プライド低い → 喜び
-      await require('#/kojo/kojo-system').gobi_koujo(1); // :312 CALL GOBI_KOUJO, 1
-    } else {
-      // :313-316 情けない
-      await require('#/kojo/kojo-system').gobi_koujo(5); // :315 CALL GOBI_KOUJO, 5
-    }
-    await era.print('还自称冒险者……简直傻了'); // :317
-
-    if (t(17)) {
-      // :319-326
-      await require('#/kojo/kojo-system').gobi_koujo(1); // :322 CALL GOBI_KOUJO, 1
-    } else {
-      await require('#/kojo/kojo-system').gobi_koujo(5); // :325 CALL GOBI_KOUJO, 5
-    }
-    await era.printAndWait('　噗噗，噗嘻！』'); // :328
+    // 源 :308 起『猪…』整段是一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
+    // 收尾）；语尾按 #570 返回文字、拼进同一行，一次 printAndWait 输出。
+    // 尾锚 :308+:317+:328 是拼接锚（一语句对应一行的多段 PRINT），语义见
+    // test/kojo-text-fidelity.test.js 头注
+    const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
+      t(17) ? 1 : 5,
+    ); // :312/:315（プライド低い → 喜び、否则情けない）
+    const gobi_pig2 = await require('#/kojo/kojo-system').gobi_koujo(
+      t(17) ? 1 : 5,
+    ); // :322/:325
+    await era.printAndWait(
+      `『猪${gobi_pig}还自称冒险者……简直傻了${gobi_pig2}${'\u3000'}噗噗，噗嘻！』`,
+    ); // :308+:317+:328
 
     if (t(17)) {
       // :330-335 プライド低い

@@ -188,12 +188,37 @@ test('食脑魔凌辱（RAND:2 == 0）：支配精神 + 异常经验', async () 
   assert.equal(fixture.store.get('exp:31:1'), 50); // 肛门经验 * 10
 });
 
-test('GOBI_KOUJO 分发：语尾口上经 kojo-system（K 实现随口上票）', async () => {
-  const fixture = await setup_ravish((f) => f.store.set('talent:31:17', 1));
+test('GOBI_KOUJO 行内拼接：『猪…』整段一行收语尾（源 :308-:328，#570）', async () => {
+  // K3 高貴真身（talent 163 → 族内 3）；era_flag.target 指到被凌辱者——
+  // @GOBI_KOUJO 读当前 TARGET。talent 17（プライド低い）→ 语尾档 1（喜び）
+  const fixture = await setup_ravish((f) => {
+    f.store.set('talent:31:17', 1);
+    f.store.set('talent:31:163', 1);
+  });
+  fixture.load_module('kojo/kojo-k3-noble');
+  fixture.load_module('era-utils/era-flag').target = 31;
   const mod = fixture_module(fixture);
-  // orc：rand_n(5)=2 不中口交、rand_n(4)=1 不中全穴、rand_n(3)=0 中屈辱；
-  // 屈辱内 rand_n(3)（落書き）取 ?? 0。未注册性格 → TRYCALL 落空静默。
+  // orc：rand_n(5)=2 不中口交、rand_n(4)=1 不中全穴、rand_n(3)=0 中屈辱
   await mod.orc_ryou_man(31, 5, seq_rand(2, 1, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('『猪的噢~♪还自称冒险者……简直傻了的噢~♪　噗噗，噗嘻！』'),
+    'PRINTFORM → GOBI → PRINTFORM → GOBI → PRINTFORMW 的整段在 ere 是一行',
+  );
+  assert.ok(
+    !fixture.text_lines().some((l) => l === '的噢~♪'),
+    '语尾不得单独成行（#570 的原始症状）',
+  );
+
+  // 未注册性格 → TRYCALL 落空空串，行照常结束、不多空行
+  const miss = await setup_ravish((f) => f.store.set('talent:31:17', 1));
+  const mod_miss = fixture_module(miss);
+  await mod_miss.orc_ryou_man(31, 5, seq_rand(2, 1, 0));
+  assert.ok(
+    miss.text_lines().includes('『猪还自称冒险者……简直傻了　噗噗，噗嘻！』'),
+    '语尾落空 → 空串，整段行照常输出',
+  );
 });
 
 test('存根清单可检索：docs/stub-registry.md 收录 GOBI_KOUJO', async () => {

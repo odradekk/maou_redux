@@ -655,21 +655,19 @@ test('NTR_KOUJO P == 1（处女丧失）：素质分档 + CFLAG:650/651 推进',
 
 // —— 非调教口上：GOBI（ARG:0 分档） ——
 
-test('GOBI_KOUJO ARG:0 == 1-5 各支与 0 随机三选一', async () => {
+test('GOBI_KOUJO ARG:0 == 1-5 各支与 0 随机三选一（返回文字，#570）', async () => {
   const a1 = await setup_k4();
   const mod1 = a1.load_module('kojo/kojo-k4-stoic');
-  await mod1.gobi_koujo_k4(1);
-  assert.deepEqual(a1.text_lines(), ['哦～♪']);
+  assert.equal(await mod1.gobi_koujo_k4(1), '哦～♪');
+  assert.deepEqual(a1.text_lines(), [], '语尾真身不得自行打印');
 
   const a2 = await setup_k4();
   const mod2 = a2.load_module('kojo/kojo-k4-stoic');
-  await mod2.gobi_koujo_k4(5);
-  assert.deepEqual(a2.text_lines(), ['什么的……。']);
+  assert.equal(await mod2.gobi_koujo_k4(5), '什么的……。');
 
   const a0 = await setup_k4();
   const mod3 = a0.load_module('kojo/kojo-k4-stoic');
-  await mod3.gobi_koujo_k4(0, seq_rand(0));
-  assert.deepEqual(a0.text_lines(), ['呢。']);
+  assert.equal(await mod3.gobi_koujo_k4(0, seq_rand(0)), '呢。');
 });
 
 // —— 非调教口上：GOHOUBI_REQUEST / OSIOKI 入口守卫 ——

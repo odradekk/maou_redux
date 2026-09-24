@@ -7681,40 +7681,40 @@ async function osioki_koujo_k12(rand, cid, choice) {
 }
 
 // @GOBI_KOUJO_K12（:5927-5957）：语尾口上（gobi family，ARG:0 → arg0 参数）。
-async function gobi_koujo_k12(arg0, rand) {
+function gobi_koujo_k12(arg0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   if (arg0 == 1) {
     // :5930
 
-    await era.print(`的哟♪`); // :5932
+    return `的哟♪`; // :5932
   } else if (arg0 == 2) {
     // :5933
 
-    await era.print(`的呢！`); // :5935
+    return `的呢！`; // :5935
   } else if (arg0 == 3) {
     // :5936
 
-    await era.print(`的哟……。`); // :5938
+    return `的哟……。`; // :5938
   } else if (arg0 == 4) {
     // :5939
 
-    await era.print(`的样子……呢。`); // :5941
+    return `的样子……呢。`; // :5941
   } else if (arg0 == 5) {
     // :5942
 
-    await era.print(`的哟……。`); // :5944
+    return `的哟……。`; // :5944
   } else {
     // :5945-5946
 
     if (rand_n(3) == 0) {
       // :5948
-      await era.print(`的哟。`); // :5949
+      return `的哟。`; // :5949
     } else if (rand_n(2) == 0) {
       // :5950
-      await era.print(`的样子哦。`); // :5951
+      return `的样子哦。`; // :5951
     } else {
       // :5952-5953
-      await era.print(`什么的。`); // :5953
+      return `什么的。`; // :5953
     }
   }
 }

@@ -415,16 +415,15 @@ test('NTR_KOUJO P == 1：村娘档 + CFLAG:650/651', async () => {
   assert.equal(fixture.store.get('cflag:17:651'), 1);
 });
 
-test('GOBI ARG:0 == 1 与 0 随机三选一', async () => {
+test('GOBI ARG:0 == 1 与 0 随机三选一（返回文字，#570）', async () => {
   const a1 = await setup_k5();
   const mod1 = a1.load_module('kojo/kojo-k5-mao');
-  await mod1.gobi_koujo_k5(1);
-  assert.deepEqual(a1.text_lines(), ['的噢~♪']);
+  assert.equal(await mod1.gobi_koujo_k5(1), '的噢~♪');
+  assert.deepEqual(a1.text_lines(), [], '语尾真身不得自行打印');
 
   const a0 = await setup_k5();
   const mod3 = a0.load_module('kojo/kojo-k5-mao');
-  await mod3.gobi_koujo_k5(0, seq_rand(0));
-  assert.deepEqual(a0.text_lines(), ['来着。']);
+  assert.equal(await mod3.gobi_koujo_k5(0, seq_rand(0)), '来着。');
 });
 
 test('GOHOUBI_REQUEST 钱奖赏 + GOHOUBI_AFTER choice==0 + OSIOKI choice==0', async () => {
