@@ -2203,27 +2203,21 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2755-2758',
-        // :2755
-        any: [/^\s*PRINTFORM 萝莉的小穴\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '2755',
         // :2755
         any: [/^\s*PRINTFORM 萝莉的小穴\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2770-2777',
-        // :2770
-        any: [/^\s*ELSEIF LOVE_ID == 62\s*$/m],
+        ref: '2791-2793',
+        // :2791-2793（#570 返工：每 6 项换行的 PRINTL + 新行开头的「　」）
+        any: [/^\s*IF LOVE_NUM % 6 == 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2772-2774',
-        // :2772-2773
-        any: [/^\s*ELSE\s*\n\s*CONTINUE\s*$/m],
+        ref: '2797-2804',
+        // :2797-2804（#570 返工：收尾块——语尾与「」 」接在最后一项的同一行）
+        any: [/^\s*IF FLAG:5 & 2048\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -2233,15 +2227,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2776',
-        // :2776
-        any: [/^\s*;5個ごとに金红桃が一つずつ増える\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '2779',
-        // :2779
-        any: [/^\s*SIF HEART > 6\s*$/m],
+        ref: '2806',
+        // :2806（#570 返工：收尾计数行）
+        any: [/^\s*PRINTFORML \[共\{LOVE_NUM\}个喜欢的东西\]\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',

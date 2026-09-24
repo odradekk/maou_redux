@@ -2658,13 +2658,24 @@ test('LOOK_INFO：原作语尾落空的性格不多出空内容（K11 两侧同�
   );
 });
 
-test('LOOK_INFO_LOVE 收尾：喜び语尾接在 」 之前、同一行（源 :2797-2801）', async () => {
+test('LOOK_INFO_LOVE 收尾：喜び语尾接在最后一项物品的同一行（源 :2797-2804）', async () => {
   const { w, cid } = gobi_world(164); // K4 冷徹
   w.fixture.load_module('kojo/kojo-k4-stoic');
   const lines = await w.info(cid);
+  // 原作 :2799 CALL GOBI_KOUJO, 1 + :2801 PRINTL 」 ：语尾与「」 」接在最后一项物品
+  // 之后（#570 返工：引擎实测原先语尾另起一行、跑到物品行外）
+  const rows = lines.slice(lines.indexOf('「喜欢的东西是……') + 1);
+  const item_rows = rows.filter((l) => !l.startsWith('[共'));
+  const last = item_rows[item_rows.length - 1];
+  // 断言顺序是有意的：每条断言对应一个变异条目，前一条抛出会挡住后一条
+  // （M11776 走「不另起一行」、M11767 走「同一行」）
   assert.ok(
-    lines.includes('哦～♪」 '),
-    '收尾行 = 语尾 + 」 （源 :2799 CALL GOBI_KOUJO, 1 → :2801 PRINTL 」 同行）',
+    !lines.includes('哦～♪」 '),
+    '语尾不得另起一行（#570 返工要修的症状）',
+  );
+  assert.ok(
+    last !== undefined && last.endsWith('哦～♪」 '),
+    `最后一项物品与「♪」 」同一行（实际：${JSON.stringify(last)}）`,
   );
 });
 
@@ -3516,7 +3527,8 @@ test('look_info_love：显示行的排序、心形数与「共 N 个」计数', 
 test('look_info_love：满桌角色的整屏输出（排序 × 心形 × 每行 6 个 × 计数）', async () => {
   // 把能越过 3 分门槛的素质/能力全点亮，让显示面一次走满：本用例同时钉住
   // ① 降序排序（同值按添字序）② 心形数 = 分值/5-1 ③ 每行 6 个（LOVE_PER_ROW）
-  // ④ 收尾计数。任何一处改动（换行位置、排序、心形、名字）都会红。
+  // ④ 收尾计数 ⑤ 每行末尾的 PRINTL 空格（:2792/:2803）只接在行尾、不多一行
+  //（#570 返工）。任何一处改动（换行位置、排序、心形、名字、行尾空格）都会红。
   //
   // 已知盲区：LOVE_SORT_MAX（30）在本用例的世界里只有压到 15 才会红（验收实测：
   // 15 红、20 全绿）。原因不是「显示面最多 28 项」，是这个世界喂出的得分项本身
@@ -3538,13 +3550,20 @@ test('look_info_love：满桌角色的整屏输出（排序 × 心形 × 每行 
     w.set_abl(idx, 5);
   }
   await w.mod.look_info_love(w.cid);
+  // 每 6 项换行只换行（:2792 PRINTL 的空格接在行尾），不多出空行：
+  // 夹具把 era.println() 记成 br 行（text_lines 过滤掉它们），这里直接看全量行。
+  // 先查空行——放 deepEqual 之后会被它抢先抛出、这层就看不见了（M11775）。
+  assert.deepEqual(
+    w.fixture.lines.filter((row) => row.type === 'br'),
+    [],
+    '物品行之间不得出现空行（era.println 曾是空行来源，#570 返工）',
+  );
   assert.deepEqual(w.fixture.text_lines(), [
     '[喜欢的东西]',
-    '　做爱♡♡♡♡♡　人妻♡♡♡♡♡　中年大叔♡♡♡♡♡　萝莉的小穴♡♡♡♡♡　正太的阴茎♡♡♡♡♡　狂王大人♡♡♡♡♡　',
-    '　精液♡♡♡♡　断背行为♡♡♡♡　卖淫♡♡♡　和野兽交配♡♡♡　露出身体♡♡♡　被人虐待♡♡　',
-    '　虐待别人♡♡　甜食♡♡　野狗大人♡♡　被弄乳房♡　被玩弄阴茎♡　被弄菊穴♡　',
-    '　伴侣　',
-    ' ',
+    '　做爱♡♡♡♡♡　人妻♡♡♡♡♡　中年大叔♡♡♡♡♡　萝莉的小穴♡♡♡♡♡　正太的阴茎♡♡♡♡♡　狂王大人♡♡♡♡♡　 ',
+    '　精液♡♡♡♡　断背行为♡♡♡♡　卖淫♡♡♡　和野兽交配♡♡♡　露出身体♡♡♡　被人虐待♡♡　 ',
+    '　虐待别人♡♡　甜食♡♡　野狗大人♡♡　被弄乳房♡　被玩弄阴茎♡　被弄菊穴♡　 ',
+    '　伴侣　 ',
     '[共19个喜欢的东西]',
   ]);
 });
@@ -3669,13 +3688,20 @@ test('look_info_love：心形数 = 分值/5 - 1（含封顶 6）', async () => {
   );
 });
 
-test('look_info_love：口上视角的收尾（引子与」）', async () => {
+test('look_info_love：口上视角的收尾（引子与」 接在物品行末）', async () => {
   const w = love_world();
   w.fixture.store.set('flag:5', 2048);
   await w.mod.look_info_love(w.cid);
   const lines = w.fixture.text_lines();
   assert.ok(lines.includes('「喜欢的东西是……'));
-  assert.ok(lines.includes('」 '), '口上收尾（源 :2773）');
+  // 无口上模块时语尾为空串，但「」 」仍接在物品行末（源 :2797-2804）
+  const rows = lines.slice(lines.indexOf('「喜欢的东西是……') + 1);
+  const last = rows.filter((l) => !l.startsWith('[共')).pop();
+  assert.ok(!lines.includes('」 '), '「」 」不得另起一行（#570 返工）');
+  assert.ok(
+    last !== undefined && last.endsWith('」 '),
+    `口上收尾的「」 」接在物品行末（源 :2797-2804；实际：${JSON.stringify(last)}）`,
+  );
 });
 
 test('look_info_love：返回 1（源 :2803 RETURN 1）', async () => {

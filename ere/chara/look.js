@@ -1989,21 +1989,24 @@ async function look_info_love(cid) {
     s.add('　'); // :2750 間の空白
     shown += 1; // :2753 好きな数を増やす
     if (shown % LOVE_PER_ROW === 0) {
-      // :2755-2758 改行
+      // :2791-2793 改行：PRINTL「 」（行末补一个空格）后换行，新行以全角空格开头。
+      // 原先写成 era.print(s.take()) + era.println()——era.println 是**多打一个空行**，
+      // 原作只是换行（#570 返工）。
+      s.add(' ');
       era.print(s.take());
-      era.println();
       s.add('　');
     }
   }
-  if (s.filled) era.print(s.take());
-
-  // :2770-2777 收尾
+  // :2797-2804 收尾：语尾与「」 」接在最后一项的同一个输出行上（#570 返工——原先
+  // 单开一行，引擎实测语尾跑到物品行外；只有刚好满 6 项换行时，它才落在新行的
+  // 全角空格后面，这里由 s 的当前状态自然承接）
   if (kojo_view()) {
-    era.print(`${await gobi_koujo(1)}」 `); // :2772-2774（:2799 喜び语尾 + PRINTL 」 同行，#570）
+    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行
   } else {
-    era.print(' '); // :2776 PRINTL
+    s.add(' '); // PRINTL：物品行末尾补一个空格后换行
   }
-  era.print(`[共${shown}个喜欢的东西]`); // :2779 PRINTFORML
+  era.print(s.take());
+  era.print(`[共${shown}个喜欢的东西]`); // :2806 PRINTFORML
 
   return 1; // :2802-2804
 }
