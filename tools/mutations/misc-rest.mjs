@@ -44,9 +44,11 @@ const import_rules = 'MAOUNET：导入菜单只接受 0..19 并尝试对应的 1
 const menu_routes = 'MAOUNET：通信菜单的导出、导入、等级上限与等级一分支均可达';
 const export_candidates = 'MAOUNET：导出候选只显示据点内的非魔王角色';
 const level_one_toggle = 'MAOUNET：等级一开关连续点击两次回到关闭';
+const export_select_100 =
+  'MAOUNET：导出菜单里 100 号角色能被选中、取消照常可用（预设 100 × [100] 取消，#593）';
 
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 176;
+export const COUNT = 180; // #593 +4（M11980-M11982、M11987：导出菜单的取消/决定键不再落进预设 ID 段，全由 100 号角色那条用例盯住）
 
 export default [
   make(
@@ -998,8 +1000,8 @@ export default [
     7503,
     '空选择也进入确认页',
     'ere/system/cross-save-sharing.js',
-    'if (result === 99 && selected.length > 0) {',
-    'if (result === 99) {',
+    'if (result === EXPORT_DECIDE && selected.length > 0) {',
+    'if (result === EXPORT_DECIDE) {',
     export_empty,
   ),
   make(
@@ -1178,6 +1180,46 @@ export default [
     "return value ? JSON.parse(value) : ['损坏'];",
     transport,
   ),
+  // —— #593：导出菜单的固定编号不再与预设 ID 撞号。四条都由
+  // test/misc-rest.test.js 的「100 号角色能被选中、取消照常可用」用例盯住
+  // （test_name 让快路直指它；M11987 更是只有它能发现——既有用例不碰 100 号）。
+  {
+    desc: 'M11980 导出菜单的取消键退回原作的 100（与预设 100 的候选行撞号复现）',
+    file: 'ere/system/cross-save-sharing.js',
+    find: 'const EXPORT_CANCEL = 999;',
+    replace: 'const EXPORT_CANCEL = 100;',
+    tests: ['misc-rest'],
+    test_name: '100 号角色能被选中',
+    must_mention: export_select_100,
+  },
+  {
+    desc: 'M11981 导出菜单的决定键退回预设 ID 段内的 99',
+    file: 'ere/system/cross-save-sharing.js',
+    find: 'const EXPORT_DECIDE = 998;',
+    replace: 'const EXPORT_DECIDE = 99;',
+    tests: ['misc-rest'],
+    test_name: '100 号角色能被选中',
+    must_mention: export_select_100,
+  },
+  {
+    desc: 'M11982 导出菜单的取消判定不跟着常量走（退回 100）',
+    file: 'ere/system/cross-save-sharing.js',
+    find: 'if (result === EXPORT_CANCEL) return 0;',
+    replace: 'if (result === 100) return 0;',
+    tests: ['misc-rest'],
+    test_name: '100 号角色能被选中',
+    must_mention: export_select_100,
+  },
+  {
+    desc: 'M11987 导出候选排除预设 100 的角色（只有 #593 的 100 号用例会红）',
+    file: 'ere/system/cross-save-sharing.js',
+    find: 'if (cid === 0 || chara(cid).invasion.状态 !== 0) continue;',
+    replace:
+      'if (cid === 0 || cid === 100 || chara(cid).invasion.状态 !== 0) continue;',
+    tests: ['misc-rest'],
+    test_name: '100 号角色能被选中',
+    must_mention: export_select_100,
+  },
   make(
     7526,
     'CHARA_EX 守卫下界下移',

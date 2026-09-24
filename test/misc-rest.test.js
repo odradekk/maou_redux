@@ -1266,7 +1266,9 @@ test('MAOUNET：导出只保留去重后的前五名并生成角色唯一标记'
 test('MAOUNET：空选择时决定键不进入确认页', async () => {
   const { fixture, net } = setup_communication([0, 17]);
   fixture.store.set('cflag:17:1', 2);
-  const inputs = [0, 0, 17, 99, 100, 9];
+  // 导出菜单：0/17 打不进选中（魔王被滤、17 号是侵攻中），998 决定键空选择不放行，
+  // 999 取消退回通信菜单
+  const inputs = [0, 0, 17, 998, 999, 9];
   fixture.era.input = async () => {
     assert(inputs.length > 0, '菜单不得额外索要输入');
     return inputs.shift();
@@ -1281,7 +1283,7 @@ test('MAOUNET：空选择时决定键不进入确认页', async () => {
 test('MAOUNET：导出候选只显示据点内的非魔王角色', async () => {
   const { fixture, net } = setup_communication([0, 17, 18]);
   fixture.store.set('cflag:18:1', 2);
-  fixture.set_inputs(0, 100, 9);
+  fixture.set_inputs(0, 999, 9);
 
   assert.equal(await net.maounet(), 0);
   assert.deepEqual(
@@ -1292,9 +1294,55 @@ test('MAOUNET：导出候选只显示据点内的非魔王角色', async () => {
   );
 });
 
+test('MAOUNET：导出菜单里 100 号角色能被选中、取消照常可用（预设 100 × [100] 取消，#593）', async () => {
+  // 预设 100「怪物的女儿」能以 ID 100 加入（生命摇篮 @CHAR_CREATE 的 CASEELSE
+  // 透传，见 #586 的完成评论）；候选行以**角色 ID** 作快捷键，而原作取消键也是
+  // [100]——修好之前敲 100 命中的是取消分支，这个角色永远选不中（#593）。
+  // 本用例在修好之前必定红：100 会退出菜单而不是选中。
+  const { fixture, net } = setup_communication([0, 17, 100]);
+  assert.equal(
+    fixture.era.getAddedCharacters().includes(100),
+    true,
+    '夹具已把 100 号角色加入（以预设 100 的 ID 加入，加入路径见上）',
+  );
+  // 0 进导出菜单 → 100 选中 100 号角色行 → 998 决定 → 1 不要 → 999 取消 → 9 退出
+  fixture.set_inputs(0, 100, 998, 1, 999, 9);
+
+  assert.equal(await net.maounet(), 0);
+  assert.ok(
+    fixture.lines_history.some(
+      (line) => line.type === 'text' && line.text.includes('1名勇者就可以了吗'),
+    ),
+    `100 号角色行被选中（实际尾部：${JSON.stringify(
+      fixture.lines_history.slice(-8).map((line) => line.text),
+    )}）`,
+  );
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(
+    rendered.some((text) => text.startsWith('[100] 角色100')),
+    `100 号行要由引擎拼编号（实显：${JSON.stringify(rendered.slice(-8))}）`,
+  );
+  assert.ok(
+    rendered.includes('[999] 取消'),
+    `取消键在 [999]（实显：${JSON.stringify(rendered.slice(-8))}）`,
+  );
+  assert.ok(
+    rendered.includes('[998] 决定'),
+    `决定键在 [998]（实显：${JSON.stringify(rendered.slice(-8))}）`,
+  );
+  assert.ok(
+    !fixture.calls.some(
+      ({ api, args }) => api === 'saveData' && args[0] === 1000,
+    ),
+    '取消后不写出共享档',
+  );
+});
+
 test('MAOUNET：导出菜单覆盖选中、取消选中、五人上限与两层确认', async () => {
   const full = setup_communication([0, 17, 18, 19, 20, 21, 22]);
-  full.fixture.set_inputs(0, 17, 18, 19, 20, 21, 22, 17, 99, 1, 100, 9);
+  full.fixture.set_inputs(0, 17, 18, 19, 20, 21, 22, 17, 998, 1, 999, 9);
   assert.equal(await full.net.maounet(), 0);
   assert(
     full.fixture.lines_history.some((line) =>
@@ -1306,7 +1354,7 @@ test('MAOUNET：导出菜单覆盖选中、取消选中、五人上限与两层�
   );
 
   const reject_name = setup_communication([17]);
-  reject_name.fixture.set_inputs(0, 17, 99, 0, '队名', 1, 100, 9);
+  reject_name.fixture.set_inputs(0, 17, 998, 0, '队名', 1, 999, 9);
   assert.equal(await reject_name.net.maounet(), 0);
   assert(
     !reject_name.fixture.calls.some(
@@ -1315,7 +1363,7 @@ test('MAOUNET：导出菜单覆盖选中、取消选中、五人上限与两层�
   );
 
   const accept = setup_communication([17]);
-  accept.fixture.set_inputs(0, 17, 99, 0, '队名', 0, 9);
+  accept.fixture.set_inputs(0, 17, 998, 0, '队名', 0, 9);
   assert.equal(await accept.net.maounet(), 0);
   assert(
     accept.fixture.calls.some(
@@ -1366,14 +1414,14 @@ test('MAOUNET：导入菜单只接受 0..19 并尝试对应的 1000..1019 档', 
 
 test('MAOUNET：通信菜单的导出、导入、等级上限与等级一分支均可达', async () => {
   const fixture = create_era_fixture();
-  fixture.set_inputs(0, 100, 1, 99, 3, -1, 4, 9);
+  fixture.set_inputs(0, 999, 1, 99, 3, -1, 4, 9);
   const { maounet } = fixture.load_module('system/cross-save-sharing');
   assert.equal(await maounet(), 0);
   assert.equal(fixture.store.get('flag:76'), -1);
   assert.equal(fixture.store.get('flag:77'), 1);
   assert.deepEqual(
     fixture.inputs_consumed.map(({ value }) => value),
-    [0, 100, 1, 99, 3, -1, 4, 9],
+    [0, 999, 1, 99, 3, -1, 4, 9],
   );
 });
 
