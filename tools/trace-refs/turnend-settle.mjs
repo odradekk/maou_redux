@@ -268,6 +268,16 @@ export const FILES = [
         ref: '713-714',
         any: [/SIF FLAG:400 > 0/],
       },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '540',
+        any: [/PRINTFORM %GET_LOOK_INFO\(A,"发色\(颜色\)"\)%的/],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '564',
+        any: [/PRINTFORM %GET_LOOK_INFO\(A,"发色\(颜色\)"\)%的/],
+      },
     ],
   },
 ];

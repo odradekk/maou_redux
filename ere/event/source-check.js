@@ -117,13 +117,11 @@ const MASTER = 0;
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个；名单
- * 变动必须同步清单。
+ * 变动必须同步清单。KOJO_MESSAGE_PALAMCNG / KOJO_MESSAGE_MARKCNG（kojo-
+ * system.js 的分发入口）与 EQUIP_COM（本文件内的真身段）均已实现，
+ * #565 清出名单，名单自此清空。
  */
-const STUBBED_CALLS = [
-  'KOJO_MESSAGE_PALAMCNG',
-  'KOJO_MESSAGE_MARKCNG',
-  'EQUIP_COM',
-];
+const STUBBED_CALLS = [];
 
 // —— 结算上下文：目标 / 调教者的变量读写助手 ——
 

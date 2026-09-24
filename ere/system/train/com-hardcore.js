@@ -95,10 +95,11 @@ const {
 } = require('#/page/page-clothtype');
 
 /**
- * 本族升格规则能命中的、但尚未由追加与高级族实现的目标（COM80 的 CASE 80 →
- * 64，3P，属 J15 助手族）。命中后以占位 + RETURN 1 保持 JUMPFORM 语义。
+ * 本族升格能命中的 COM64（CASE 80 → 64，3P，属 J15 助手族）已由 #225
+ * 落地，占位回落不再触发，名单清空（#565）；回落作为 JUMPFORM 防御网
+ * 保留（占位 + RETURN 1 语义见 com-sex.js 同款注释）。
  */
-const STUBBED_CALLS = ['COM64'];
+const STUBBED_CALLS = [];
 
 // —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 兜底） ——
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;

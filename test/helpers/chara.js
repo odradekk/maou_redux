@@ -17,12 +17,28 @@ const CHARA_0_SHAPE = { id: 0, name: '你', callname: '你' };
 // 用引擎代码比对固定，两层不重复。
 const CHARA_17_SHAPE = { id: 17, name: '玛奥', callname: '玛奥' };
 
+// yml/Chara1.yml 装载后的最小形状（#565：初期奴隶选「随机」且 rand ≡ 0 时
+// RAND(1,17) 掷中勇者位 1，@RAND_CHARA_MAKE 真身要 ADDCHARA 1——同 #35 的
+// 引擎守卫，预设先种才能加入）。基礎/素質预设不进夹具，理由同上。
+const CHARA_1_SHAPE = { id: 1, name: '战士', callname: '战士' };
+
 /**
  * 往夹具预置角色 0（魔王）。
  * @param fixture create_era_fixture() 的返回值
  */
 function preset_chara_0(fixture) {
   fixture.seed_chara(0, CHARA_0_SHAPE);
+  // 两层预置（同 preset_chara_17）：CSVCALLNAME 读 store 的静态表层，
+  // 缺了这层时 CHARA_NAME_DEFINE 的 csv_callname(0) 取到空串
+  fixture.store.set('chara:0', CHARA_0_SHAPE);
+}
+
+/**
+ * 往夹具预置角色 1（勇者位 1「战士」，#565 的随机初期奴隶落点）。
+ * @param fixture create_era_fixture() 的返回值
+ */
+function preset_chara_1(fixture) {
+  fixture.seed_chara(1, CHARA_1_SHAPE);
 }
 
 /**
@@ -30,6 +46,8 @@ function preset_chara_0(fixture) {
  * @param fixture create_era_fixture() 的返回值
  */
 function preset_chara_17(fixture) {
+  // 单层即够：称呼由 addCharacter 直写；静态表层（CSVCALLNAME 的
+  // era.get('chara:17')）自 #565 按原作实参走 0 分支后无读者
   fixture.seed_chara(17, CHARA_17_SHAPE);
 }
 
@@ -50,4 +68,9 @@ function join_slave_chara(fixture, id = 31, name = `奴隶${id}`) {
   fixture.era.addCharacter(id);
 }
 
-module.exports = { preset_chara_0, preset_chara_17, join_slave_chara };
+module.exports = {
+  preset_chara_0,
+  preset_chara_1,
+  preset_chara_17,
+  join_slave_chara,
+};

@@ -3,10 +3,42 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 939; // #548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加
-//；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）
+export const COUNT = 940; // #547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
+  // —— #565 已实现函数的存根调用点接线 ——
+  {
+    desc: 'M11616 juel-check 的 CHECK_SPECIALSKIL 接线删除（收尾三查缺一）',
+    file: 'ere/system/train/juel-check.js',
+    find: '  await check_specialskil(target, 1);',
+    replace: '  // 变异：特殊技能获得检查接线删除',
+    tests: ['juel-check'],
+    must_mention: 'CHECK_SPECIALSKIL 真身必须真的被调到',
+  },
+  {
+    desc: 'M11617 com-caress 的 :746 守卫删除（紧缚/失神仍出爱抚反应）',
+    file: 'ere/system/train/com-caress.js',
+    find: `  if (era.get(\`tequip:\${target}:44\`) || (era.get('tflag:899') || 0) > 1) {\n    return;\n  }`,
+    replace: '  // 变异：守卫删除（原作 :746 条件不满足时零输出）',
+    tests: ['train-message'],
+    must_mention: 'TEQUIP:44（紧缚）时不得输出爱抚反应',
+  },
+  {
+    desc: 'M11621 com-sm 的 STUBBED_CALLS 复辟 COM132（已实现名重进名单）',
+    file: 'ere/system/train/com-sm.js',
+    find: 'const STUBBED_CALLS = [];',
+    replace: "const STUBBED_CALLS = ['COM132']; // 变异：已实现名复辟",
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
+  },
+  {
+    desc: 'M11622 com-sex 的 STUBBED_CALLS 复辟 COM64（已实现名重进名单）',
+    file: 'ere/system/train/com-sex.js',
+    find: 'const STUBBED_CALLS = [];',
+    replace: "const STUBBED_CALLS = ['COM64']; // 变异：已实现名复辟",
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
+  },
   {
     desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
     file: 'ere/system/train/train-loop.js',
@@ -472,38 +504,33 @@ export default [
     must_mention: '高级 COM = 分发空间 − 可直选空间',
   },
   {
-    desc: 'M751 TRAIN_MESSAGE_B 的缺失分支静默（default 占位行删——族票落地前无声无息）',
+    desc: 'M751 TRAIN_MESSAGE_B 的缺号回落复辟占位行（#565 起缺号 = 原作零输出）',
     file: 'ere/system/train/train-message.js',
-    find: `  const branch = await train_message_b_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
+    find: `  await train_message_b_family.call(era_flag.selectcom, {
+    args: [rand_source()],
+  });`,
+    replace: `  const branch = await train_message_b_family.call(era_flag.selectcom, {
     args: [rand_source()],
   });
-  if (branch === BRANCH_MISSING) {
-    stub_line(
-      'TRAIN_MESSAGE_B',
-      \`指令 \${era_flag.selectcom} 的情景描写\`,
-      '随各自指令票',
-    );
+  if (branch === 0) {
+    // 变异：占位行复辟（缺号的 whenMissing 缺省值是 0）
+    era.print('（情景描写尚未移植，此处为占位——原作 @TRAIN_MESSAGE_B，见 docs/stub-registry.md。）');
   }`,
-    replace: `  const branch = await train_message_b_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
-  });
-  // 变异：缺失分支静默`,
-    tests: ['train-message', 'com-dispatch'],
-    must_mention: '缺失分支必须落可检索的占位行',
+    tests: ['train-message'],
+    must_mention: '未装载的号不得再出占位行',
   },
   {
     desc: 'M752 TRAIN_MESSAGE_A 分发的空间外抛错被吞（越界 SELECTCOM 静默回落）',
     file: 'ere/system/train/train-message.js',
-    find: `  const branch = await train_message_a_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
+    find: `  // 同 B：#402 收口后空间全数有主，缺失语义按原作归为零输出（#565）
+  await train_message_a_family.call(era_flag.selectcom, {
     args: [rand_source()],
   });`,
     replace: `  if (!train_message_a_family.declared.has(era_flag.selectcom)) {
     return; // 变异：空间外静默
   }
-  const branch = await train_message_a_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
+  await train_message_a_family.call(era_flag.selectcom, {
+    args: [rand_source()],
   });`,
     tests: ['com-dispatch'],
     must_mention: '空间外显式抛错',
@@ -2867,9 +2894,9 @@ export default [
   {
     desc: 'M920 B 分发的 rand 注入改恒 0（rand(3) === 0 永真）',
     file: 'ere/system/train/train-message.js',
-    find: '  const branch = await train_message_b_family.call(era_flag.selectcom, {\n    whenMissing: BRANCH_MISSING,\n    args: [rand_source()],\n  });',
+    find: '  await train_message_b_family.call(era_flag.selectcom, {\n    args: [rand_source()],\n  });',
     replace:
-      '  const branch = await train_message_b_family.call(era_flag.selectcom, {\n    whenMissing: BRANCH_MISSING,\n    args: [() => 0],\n  });',
+      '  await train_message_b_family.call(era_flag.selectcom, {\n    args: [() => 0],\n  });',
     tests: ['com-caress'],
     must_mention: 'rand(3)==0 走阴茎支',
   },
@@ -3418,14 +3445,6 @@ export default [
       "train_message_b_family.register(90, async () => era.print('变异：90 不应有输出'));",
     tests: ['com-hardcore'],
     must_mention: '真实无输出',
-  },
-  {
-    desc: 'M1248 TRAIN_MESSAGE_A81-89 显式无操作批量注册删除（#226）',
-    file: 'ere/system/train/com-hardcore.js',
-    find: 'for (const id of [81, 82, 83, 84, 85, 87, 88, 89]) {\n  train_message_a_family.register(id, async () => 0); // 源侧无专属分支\n}',
-    replace: '// 变异：81-89 的显式无操作批量注册删除',
-    tests: ['com-hardcore'],
-    must_mention: '显式无操作',
   },
   {
     desc: 'M1249 主启动图删重度调教系注册（COM80/COM_ABLE80 不进实际运行图）（#226）',
@@ -4900,24 +4919,6 @@ export default [
     replace: '  if (palam(target, 5) >= PALAMLV[3]) {',
     tests: ['train-message'],
     must_mention: '放置 PLAY（指令 55）：欲情四档逐档取件',
-  },
-  {
-    desc: 'M8147 B 源侧无分支的 55/110/111 空注册删（占位行回来了）',
-    file: 'ere/system/train/train-message.js',
-    find: 'for (const id of [55, 110, 111]) {\n  train_message_b_family.register(id, async () => {});\n}',
-    replace:
-      'for (const id of []) {\n  train_message_b_family.register(id, async () => {});\n}',
-    tests: ['train-message'],
-    must_mention: 'B 指令 55：源侧无分支',
-  },
-  {
-    desc: 'M8148 A 源侧无分支的 43-49/110/111 空注册删（占位行回来了）',
-    file: 'ere/system/train/train-message.js',
-    find: 'for (const id of [43, 44, 45, 46, 47, 48, 49, 110, 111]) {\n  train_message_a_family.register(id, async () => {});\n}',
-    replace:
-      'for (const id of [43, 44, 45, 46, 47, 48, 49]) {\n  train_message_a_family.register(id, async () => {});\n}',
-    tests: ['train-message', 'com-sm'],
-    must_mention: 'A 指令 110：源侧无分支',
   },
   {
     desc: 'M8149 A 性交射精链：抽出/插着分界的 PALAMLV[4] 抬到 [5]',

@@ -3,8 +3,9 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 361; // #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
-// 接线；M11478/M11479 的靶位在返工轮搬去 chara.mjs——补偿写在 @CHARA_EX_34 里，随靶文件分片）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+export const COUNT = 366; // #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
+// 接线；M11478/M11479 的靶位在返工轮搬去 chara.mjs——补偿写在 @CHARA_EX_34 里，随靶文件分片）；#565 起 +5（M11610-M11613，开局随机奴隶接线的四条；M11626 审查轮补 CHARA_NAME_DEFINE 实参错掷）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
+// 合并 #547 时两侧 362/361 调和为 366：本票 5 条之外收进 master 的 M11578-M11580/M11589，按导入实测条目数写回
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
 // 号段见 #461 完成报告）；#463 起 +9（M10209-M10217，first-setting.js 全量新增）；
 // #502 起 +4（M10744-M10747，SENGEN_VIDEO_DE 的骰点与两段清零、EVENT_TURNEND
@@ -13,6 +14,48 @@ export const COUNT = 361; // #547 起 +3+1（M11578-M11580，返工轮加 M11589
 //；#547 起 +3（M11578-M11580，event-first 的冒险者性别播种与 event-turnend 的反作弊闸门——由 test/event-first.test.js 与 test/event-turnend.test.js 守护）；返工轮 +1（M11589：event-load 的 LOADGLOBAL 镜像——验收第 3 条）
 
 export default [
+  // —— #565 已实现函数的存根调用点接线 ——
+  {
+    desc: 'M11610 event-first 的 CHARA_NAME_DEFINE 接线删除（魔王称呼不落地）',
+    file: 'ere/event/event-first.js',
+    find: '    chara_name_define(0);',
+    replace: '    // 变异：称呼定义接线删除',
+    tests: ['event-first'],
+    must_mention: 'callname:0:-1',
+  },
+  {
+    desc: 'M11611 event-first 的 RAND_CHARA_MAKE 接线删除（随机奴隶不生成）',
+    file: 'ere/event/event-first.js',
+    find: '  const rand_n = (n) => Math.floor(Math.random() * n);\n  await rand_chara_make(rand_n, () => char_make_inport(1, rand_n));',
+    replace:
+      '  const rand_n = (n) => Math.floor(Math.random() * n);\n  // 变异：随机奴隶生成接线删除（rand_n 不再被消费，夹具输入面随之错位）',
+    tests: ['event-first'],
+    must_mention: '随机奴隶经 @RAND_CHARA_MAKE 真身生成',
+  },
+  {
+    desc: 'M11612 头发生长播报缺发色段（GET_LOOK_INFO 接线旁路）',
+    file: 'ere/system/turnend-settle.js',
+    find: `          \`\${name}\${beauty}\${get_look_info(cid, '发色(颜色)')}的\${\n            hair === 51 ? '头发半长，到肩膀了。' : '头发很长，长发及腰。'\n          }\`,`,
+    replace: `          \`\${name}\${beauty}\${\n            hair === 51 ? '头发半长，到肩膀了。' : '头发很长，长发及腰。'\n          }\`,`,
+    tests: ['event-turnend'],
+    must_mention: '头发半长播报必须含',
+  },
+  {
+    desc: 'M11613 阴毛播报缺发色段（GET_LOOK_INFO 接线旁路）',
+    file: 'ere/system/turnend-settle.js',
+    find: `          \`\${name}\${charm ?? ''}的阴阜上，\${get_look_info(cid, '发色(颜色)')}的\${state_word}\`,`,
+    replace: `          \`\${name}\${charm ?? ''}的阴阜上，\${state_word}\`,`,
+    tests: ['event-turnend'],
+    must_mention: '阴毛播报必须按原作拼成单行',
+  },
+  {
+    desc: 'M11626 CHARA_NAME_DEFINE 实参错掷 17（省略参数误当 TARGET）',
+    file: 'ere/event/event-first.js',
+    find: '    chara_name_define(0);',
+    replace: '    chara_name_define(17); // 变异：实参错掷',
+    tests: ['event-first'],
+    must_mention: 'callname:0:-1',
+  },
   {
     desc: 'M4 EVENTCOMEND 目标死亡分支：FLAG:35 判据取反',
     file: 'ere/event/event-comend.js',
@@ -3163,7 +3206,7 @@ export default [
     find: 'chara(0).train.初吻对象 = -1; // :784',
     replace: 'chara(0).train.初吻对象 = 1; // :784',
     tests: ['event-first'],
-    must_mention: '问答选 0 后与原作开局值逐项一致',
+    must_mention: '开局直线赋值逐项一致',
   },
   // —— #502：SENGEN_VIDEO_DE（侵略/INVASION.ERB:1269-1281）与宣言数真读 ——
   {

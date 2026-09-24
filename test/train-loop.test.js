@@ -18,7 +18,11 @@ const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
+const {
+  join_slave_chara,
+  preset_chara_0,
+  preset_chara_1,
+} = require('./helpers/chara');
 const { preset_gamebase } = require('./helpers/gamebase');
 
 // 世界底座：魔王 + 奴隶 31、目标 31、火车表已开。直接驱动 run_train
@@ -387,6 +391,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   preset_chara_0(fixture);
+  preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
   // 初期奴隶由 #50 落地；本用例按工单事实 #12 在测试里播种：EVENTFIRST 链
   // 的 LATER 档追加处理器（#6 语义：BEGIN 后链继续），等价「开局就有奴隶 31」
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
@@ -401,18 +406,29 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   on('EVENTFIRST', async () => fixture.era.addCharacter(31), TIER.LATER);
 
   // FIRST_SETTING 五问（#463）夹在标题与开场叙事之间：魔王性别选 1=女性
-  // （跳过肉棒尺寸一问）、狂王性别选 2=扶她、初期奴隶选 0=随机（随机路径
-  // 仍是 RAND_CHARA_MAKE 存根，奴隶由上面的 LATER 处理器播种——本用例要的
-  // 是「开局就有奴隶 31」，不走村娘，那会引入角色 17 与另一串读键）、地下
-  // 城模式选 0=普通（#181）。末尾两枚：999 = 调教菜单退出、999 =
+  // （跳过肉棒尺寸一问）、狂王性别选 2=扶她、初期奴隶选 0=随机、地下城
+  // 模式选 0=普通（#181）。#565 起随机路径走 RAND_CHARA_MAKE 真身：形象
+  // 确认 [100] 進む + 收下 [2]（rand ≡ 0 掷勇者位 1，preset_chara_1 已种），
+  // 随机奴隶顺路入列——选目标输入 31 不受影响，温妮仍由 LATER 档处理器
+  // 播种。末尾四枚：菜单 100、选人 31、999 = 调教菜单退出、999 =
   // @JUEL_CHECK 交互循环退出（#47）
-  fixture.set_inputs(1, 1, 2, 0, 0, 100, 31, 999, 999);
+  fixture.set_inputs(1, 1, 2, 0, 0, 100, 2, 100, 31, 999, 999);
   const main = fixture.load_module('main');
 
-  // 标题(1) → FIRST → SHOP → 100 → SELECT_TARGET(31) → TRAIN 一回合
-  //（SHOW_STATUS + 菜单）→ 999 → AFTERTRAIN（@EVENTEND + @JUEL_CHECK）
-  // → TURNEND → SHOP 重绘 → 下一次 input 队列已空，抛「预置输入已耗尽」到站
-  await assert.rejects(() => main(), /预置输入已耗尽/);
+  // 标题(1) → FIRST（五问 + 随机奴隶生成）→ SHOP → 100 → SELECT_TARGET(31)
+  // → TRAIN 一回合（SHOW_STATUS + 菜单）→ 999 → AFTERTRAIN（@EVENTEND +
+  // @JUEL_CHECK）→ TURNEND → SHOP 重绘 → 下一次 input 队列已空，抛
+  // 「预置输入已耗尽」到站
+  fixture.override_math_random(() => 0);
+  let err;
+  try {
+    await main();
+  } catch (e) {
+    err = e;
+  } finally {
+    fixture.restore_math_random();
+  }
+  assert.match(String(err), /预置输入已耗尽/);
 
   // 消费序列：标题(1) → 初期奴隶问答(0，#50) → 地下城模式问答(0，#181)
   // → 开场叙事读键 ×7
@@ -425,6 +441,12 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     { api: 'input', value: 0 }, // 初期奴隶（随机）
     { api: 'input', value: 0 }, // #181 地下城模式（普通）
     ...Array.from({ length: 7 }, () => ({ api: 'waitAnyKey' })),
+    // RAND_CHARA_MAKE 真身（#565）：形象确认 [100] → SHOW_CHARA_INFO 走
+    // -2 贡品页（:150 原作实参；#565 订正，整页无读键）→ 收下 [2] →
+    // 收下播报读键
+    { api: 'input', value: 100 },
+    { api: 'input', value: 2 },
+    { api: 'waitAnyKey' },
     { api: 'input', value: 100 },
     { api: 'input', value: 31 },
     { api: 'waitAnyKey' },

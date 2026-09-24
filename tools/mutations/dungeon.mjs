@@ -1073,13 +1073,12 @@ export default [
     must_mention: '一半经验给魔王',
   },
   {
-    desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根',
+    desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根（#565 起名单为空，改由存根名核对拦截）',
     file: 'ere/dungeon/dungeon-battle.js',
-    find: "const STUBBED_CALLS = ['ATTACK_KOUJO', 'VICTORY_KOUJO'];",
-    replace:
-      "const STUBBED_CALLS = ['MAGIC', 'ATTACK_KOUJO', 'VICTORY_KOUJO']; // 变异：真身倒退为存根登记",
-    tests: ['dungeon-magic'],
-    must_mention: '不再登记为存根',
+    find: 'const STUBBED_CALLS = [];',
+    replace: "const STUBBED_CALLS = ['MAGIC']; // 变异：真身倒退为存根登记",
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
   },
   {
     desc: 'M6744 决斗的无参 MAGIC 被擅自传成 X:1 战斗类型',
@@ -1880,13 +1879,12 @@ export default [
     must_mention: 'INFO2：部下状态总览',
   },
   {
-    desc: 'M6881 城镇陈旧 MONSTER_PLAY 存根登记复辟',
+    desc: 'M6881 城镇陈旧 MONSTER_PLAY 存根登记复辟（#565 起名单清空）',
     file: 'ere/dungeon/dungeon-town.js',
-    find: "const STUBBED_CALLS = [\n  'SHOW_LIST_TRAINABLE',",
-    replace:
-      "const STUBBED_CALLS = [\n  'MONSTER_PLAY', // 变异：陈旧登记复辟\n  'SHOW_LIST_TRAINABLE',",
-    tests: ['monster-play'],
-    must_mention: '三处旧调用方均已清除',
+    find: 'const STUBBED_CALLS = []; // #565：四名全数落地（CHARADEAD_CHECK 随 #548），名单清空',
+    replace: "const STUBBED_CALLS = ['MONSTER_PLAY']; // 变异：陈旧登记复辟",
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
   },
   {
     desc: 'M6882 结婚日主函数整体删除',

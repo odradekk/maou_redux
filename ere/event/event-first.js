@@ -28,12 +28,14 @@
 
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
-const { stub_line } = require('#/utils/stub-line');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { first_setting } = require('#/event/first-setting');
 const { add_chara_ex, ex_talentname_init } = require('#/chara/chara-ex');
 const { chara_name_init } = require('#/chara/chara-name-list');
+const { chara_name_define } = require('#/chara/chara-name'); // #565 起接线
 const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起真身
+const { rand_chara_make } = require('#/chara/chara-make'); // #565 起接线
+const { char_make_inport } = require('#/chara/char-make'); // 转发层（#494 同款注入）
 const { init_portcflag } = require('#/chara/chara-portcflag');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
@@ -44,9 +46,11 @@ const { set_vil } = require('#/dungeon/labo-map');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）——后续票据此认领工作；名单变动必须同步清单。
+ * 核对固定）。#565 起 RAND_CHARA_MAKE（随机分支 :203）与 CHARA_NAME_DEFINE
+ * （村娘分支 :111）均接真身，名单清空；名字 ↔ 清单状态的机械核对在
+ * tools/trace-coverage.mjs 的 check_stub_names（随 --coverage 跑）。
  */
-const STUBBED_CALLS = ['RAND_CHARA_MAKE', 'CHARA_NAME_DEFINE'];
+const STUBBED_CALLS = [];
 
 // 注册在模块顶层（往注册表塞函数，不碰 era.*——引擎允许；era.* 只在处理器
 // 函数体内调用，#6 的两条硬规则之二）。普通档：原作 @EVENTFIRST 的其他
@@ -246,9 +250,15 @@ on('EVENTFIRST', async () => {
     // 防御」减半的是 13/14，两组各 15）；16 未定状态位（-1 = 未设定，迷宫
     // 代码在 -1 时临时改写 995，FIRST_SETTING 对魔王同置 -1）；450 一人称
     // （自称）编号（SELF_CALL.ERB 一个人称設定，31 = 表内编号）。
-    era.set('cflag:17:420', 1);
-    // :111 CALL CHARA_NAME_DEFINE —— 角色称呼定义（存根，随开局设置票）
-    stub_line('CHARA_NAME_DEFINE', '角色称呼定义');
+    era.set('cflag:17:420', 1); // :110 玛奥专属标记
+    // :111 CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/chara/chara-name.js）：
+    // 省略的数值参数按 0 处理（技能手册：不做 TARGET 代入），L_A = 0 = 魔王
+    // （cid 0 与原作 NO:0 同值）——走特殊角色分支，把魔王的称呼重写为预设
+    // 值（与 addCharacter 装预设时的直写同值，:78 的 CHARA_NAME_INIT 只建
+    // 名字表、不碰称呼）、NID 写回 10000、关系称呼重建一次。村娘（cid 17）
+    // 的命名不经此调用：其称呼同样来自 addCharacter 的预设直写，NID 维持
+    // 原作同款的不写（原作同样没给村娘定 NID）
+    chara_name_define(0);
     era.set('cflag:17:9', 1);
     era.set('cflag:17:1', 0);
     era.set('cflag:17:11', 15);
@@ -350,14 +360,20 @@ on('EVENTFIRST', async () => {
   era.print('……');
   era.print('………');
 
-  // :203 CALL RAND_CHARA_MAKE —— 随机角色生成（初始奴隶=随机，存根）
+  // :203 CALL RAND_CHARA_MAKE（#565 起真身 ere/chara/chara-make.js）。
+  // 原作 CALL 无实参、返回值（RETURN CHARANUM-1）此处不读（:205 起只判
+  // 丽塔启动！）。开局是普通路径（非战役招募）：campaign_slave 缺省 false，
+  // 勇者位照原作 RAND(1,17) 掷——掷中已占用的位就落 :188-191 的「勇者没有
+  // 出现」失败文案，不重掷。完整流程含 :57 的 CHAR_MAKE_INPORT 异国判定与
+  // 形象确认（INPUT_LOOP_12）、收下确认（:151-186）的人工交互。
   //
-  // 落地时必须把 `char_make_inport` 传进 rand_chara_make（转发层
-  // ere/chara/char-make.js 的实现）：原作 `@RAND_CHARA_MAKE` 体内的
-  // `CALL CHAR_MAKE_INPORT`（CHAR_MAKE.ERB:57）在开局与战役招募两条路径上
-  // 都会跑，缺省回落（chara-make.js 的 `char_make_inport ?? (() => 0)`）会让
-  // 异国判定静默不跑——#494 修的就是战役那一处。
-  stub_line('RAND_CHARA_MAKE', '随机角色生成');
+  // `char_make_inport` 必须从转发层 ere/chara/char-make.js 作参数注入（真身
+  // 反向 require 转发层会成环，见 chara-make.js 文件头）；ARG:0 缺省 1 =
+  // RAND(1) 恒 0，异国判定恒真身跑（开局 FLAG:76 = 0，真身首行即 RETURN 0 =
+  // 非异国，page-campaign.js:171 的战役招募同款传法）。rand_n 缺省均匀随机
+  // （#117 决议：ere 无全局 RAND 序列，测试经 override_math_random 注入）。
+  const rand_n = (n) => Math.floor(Math.random() * n);
+  await rand_chara_make(rand_n, () => char_make_inport(1, rand_n));
 
   // :205-215 IF 丽塔启动！ == 1 —— 丽塔块（ADDCHARA 223 + ADDCHARA_EX +
   // SAVESTR:2/CSTR:1 + CHARA_NAME_DEFINE + CHAR_BODY_GENERATE_WAPPED）。

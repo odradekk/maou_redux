@@ -53,10 +53,13 @@ const { monster_name, e_get } = require('#/dungeon/monster-data');
 const { stub_line } = require('#/utils/stub-line');
 
 /**
- * 本族升格规则能命中的、但尚未由追加与高级族实现的目标。命中后必须以
- * 占位 + RETURN 1 保持 JUMPFORM 语义，不能混成 COM 缺失或本回合取消。
+ * 本族升格规则能命中的目标（COM64 / COM120 / COM121 / COM130 /
+ * COM134）已全部由 #225/#229 落地注册，jump_to_advanced 的占位回落对
+ * 它们不再触发，名单自此清空（#565）。回落本身保留：它是 JUMPFORM
+ * 语义的防御网（占位 + RETURN 1，不混成 COM 缺失或本回合取消），升格
+ * 表将来扩目标而未落地时仍由它兜住。
  */
-const STUBBED_CALLS = ['COM64', 'COM120', 'COM121', 'COM130', 'COM134'];
+const STUBBED_CALLS = [];
 
 // —— 读取与写入：未声明序号均按原项目约定兜底为 0 ——
 const get = (name) => era.get(name) || 0;

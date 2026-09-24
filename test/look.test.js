@@ -2600,7 +2600,7 @@ test('LOOK_INFO 的语尾档位：序列本身（首行/所持金/喜好收尾�
   );
 });
 
-test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，且带语尾口上占位行', async () => {
+test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，语尾未命中静默', async () => {
   const w = info_world();
   const cid = w.run(0, always);
   w.fixture.store.set('flag:5', 2048);
@@ -2616,8 +2616,8 @@ test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，且带语�
     '喜好段的口上引子（源 :2652）',
   );
   assert.ok(
-    lines.some((l) => l.includes('语尾口上尚未移植')),
-    'GOBI_KOUJO 的占位行（该族未移植，登记在 kojo-system）',
+    !lines.some((l) => l.includes('语尾口上尚未移植')),
+    'GOBI_KOUJO 未命中静默（原作 TRYCALLFORM 落空，#565 返工；真缺口由 kojo-family-coverage 拦）',
   );
 
   // 口上视角的阴茎块与默认视角是两段代码（源 :1064-1076 与 :1030-1040），

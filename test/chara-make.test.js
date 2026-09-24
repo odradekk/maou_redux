@@ -12,8 +12,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -689,39 +687,63 @@ test('cm_look：LOOK_SET 真身落盘 + 白虎 5%（:860-872）', async () => {
 
 // —— @CM_ST / @CM_ST_ACE（:875-894）——
 
-test('cm_st：FLAG:60 = 0 不掷 ST_UP；体力气力回满（:877-883）', async () => {
+test('cm_st：FLAG:60 = 0 不升 ST_UP；体力气力回满（:877-883）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('maxbase:3:0', 500);
   fixture.store.set('maxbase:3:1', 300);
   const { cm_st } = load(fixture);
-  await cm_st(3);
+  await cm_st(3, never);
   assert.equal(fixture.store.get('base:3:0'), 500, 'BASE = MAXBASE');
   assert.equal(fixture.store.get('base:3:1'), 300, 'BASE = MAXBASE');
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@ST_UP')),
-    'FLAG:60 = 0：不逐级',
-  );
+  // FLAG:60 = 0：不逐级（等级与上限都停在原值）
+  assert.equal(fixture.store.get('cflag:3:9') ?? 0, 0, '不升 ST_UP（等级）');
+  assert.equal(fixture.store.get('maxbase:3:0'), 500, '不升 ST_UP（体力上限）');
 });
 
-test('cm_st：FLAG:60 = 2 且非派遣 → 两行 ST_UP 占位', async () => {
+test('cm_st：FLAG:60 = 2 且非派遣 → 逐级 CALL ST_UP 两次（:878-880，#565 接真身）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:60', 2);
+  fixture.store.set('flag:402', 0); // 非派遣
   const { cm_st } = load(fixture);
-  await cm_st(3);
-  const count = stub_texts(fixture).filter((line) =>
-    line.includes('@ST_UP'),
-  ).length;
-  assert.equal(count, 2, 'REPEAT FLAG:60 次占位');
+  await cm_st(3, never);
+  // never → rand(2) 恒 1（防御臂）：每级等级 +1、攻 +1、防 +1（基础）+1
+  // （掷骰臂）、体力/气力上限各 +10。两级合计：
+  assert.equal(fixture.store.get('cflag:3:9'), 2, 'REPEAT FLAG:60 次：等级 2');
+  assert.equal(
+    fixture.store.get('cflag:3:13'),
+    2,
+    '基础攻击每级 +1（掷骰落防臂不再加攻）',
+  );
+  assert.equal(
+    fixture.store.get('cflag:3:14'),
+    4,
+    '基础防御每级 +1，掷骰 rand(2)=1 再 +1',
+  );
+  assert.equal(fixture.store.get('maxbase:3:0'), 20, '体力上限每级 +10');
+  assert.equal(fixture.store.get('maxbase:3:1'), 20, '气力上限每级 +10');
+  // 尾部 BASE = MAXBASE（:882-883）在升级后取新上限
+  assert.equal(fixture.store.get('base:3:0'), 20);
+  assert.equal(fixture.store.get('base:3:1'), 20);
 });
 
-test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级', async () => {
+test('cm_st：派遣中（FLAG:402 != 0）不逐级（:877 的第二条件）', async () => {
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:60', 3);
+  fixture.store.set('flag:402', 1); // 派遣奴隶标志（RAND_CHARA_MAKE :139 置 1）
+  const { cm_st } = load(fixture);
+  await cm_st(3, never);
+  assert.equal(fixture.store.get('cflag:3:9') ?? 0, 0, 'FLAG:402 != 0：不逐级');
+});
+
+test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级（#565 接真身）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:60', 1);
   fixture.store.set('cflag:0:9', 2); // 魔王等级 2（不 > 2）
   const { cm_st_ace } = load(fixture);
   await cm_st_ace(3, never);
-  assert(
-    !stub_texts(fixture).some((line) => line.includes('@ST_UP')),
+  assert.equal(
+    fixture.store.get('cflag:3:9') ?? 0,
+    0,
     '魔王等级 2 不 > 2：不逐级',
   );
 
@@ -729,11 +751,12 @@ test('cm_st_ace：魔王等级 <= 2 不掷；> 2 按六成（±两成）逐级',
   fixture2.store.set('flag:60', 1);
   fixture2.store.set('cflag:0:9', 10);
   const { cm_st_ace: ace2 } = load(fixture2);
-  await ace2(4, never); // rand(10) = 1 → (10*6 + 1*2) / 10 = 6 次
-  const count = stub_texts(fixture2).filter((line) =>
-    line.includes('@ST_UP'),
-  ).length;
-  assert.equal(count, 6, '(60 + 2) / 10 = 6 次逐级');
+  await ace2(4, never); // rand(10) = 1 → (10*6 + 1*2) / 10 = 6 次逐级
+  assert.equal(fixture2.store.get('cflag:4:9'), 6, '(60 + 2) / 10 = 6 次逐级');
+  // never → rand(2) 恒 1：每级攻 +1、防 +2
+  assert.equal(fixture2.store.get('cflag:4:13'), 6);
+  assert.equal(fixture2.store.get('cflag:4:14'), 12);
+  assert.equal(fixture2.store.get('maxbase:4:0'), 60, '体力上限每级 +10');
 });
 
 // —— @CM_FAMILY_TALENT（:896-1042）——
@@ -1431,16 +1454,161 @@ test('campaign_slave 缺省（false）：确认对话的两个选项经 printBut
   );
 });
 
+// —— 形象确认的三按钮化与 #DIM 静态语义（#565 返工第 1/5 条）——
+
+/** rand_chara_make 的输入桩：按序取值，耗尽后回落 100（進む） */
+function scripted_input(answers) {
+  let asked = 0;
+  return () => Promise.resolve(answers[asked++] ?? 100);
+}
+
+test('形象确认 [0]/[1]/[100] 三按钮：正文带当前性格与发色名（引擎实机可点）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99); // 避让随机命名重掷
+  fixture.store.set('talentname:160', '慈爱');
+  fixture.era.input = scripted_input([100, 2]);
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0, // 掷勇者位 1；性格 rand 补设落表 0（慈爱）；发色 rand 补设落 11（粉发）
+    () => Promise.resolve(0),
+  );
+  assert.equal(result, 1);
+  const buttons = fixture.lines.filter((l) => l.type === 'button');
+  const btn0 = buttons.find((b) => b.accelerator === 0);
+  const btn1 = buttons.find((b) => b.accelerator === 1);
+  const btn100 = buttons.find((b) => b.accelerator === 100);
+  assert(btn0, '[0] 改印象必须是按钮——纯文本行在实机敲不进（验收第 1 条实测）');
+  assert(btn1, '[1] 改发色必须是按钮');
+  assert(btn100, '[100] 進む必须是按钮');
+  assert.equal(
+    btn0.rendered,
+    '[0] 印象 ： 慈爱',
+    '印象按钮正文带上当前性格名（原作 :81 PRINTFORM [0] 印象 ： + SHOW 的名字）',
+  );
+  assert.equal(
+    btn1.rendered,
+    '[1] 发色 ： 粉发',
+    '发色按钮正文带上当前发色名（ARR_HAIRCOLOR 直取，不经会打印的 show_*）',
+  );
+  assert.match(
+    btn100.rendered,
+    /^\[100\] 你发动了魔王真眼/,
+    ':104 的魔王真眼行保持按钮',
+  );
+});
+
+test('形象确认先输 0 改印象、再输 100 继续（三输入面都要真的能走）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99);
+  fixture.store.set('talentname:160', '慈爱');
+  fixture.store.set('talentname:162', '测试性格162');
+  // 0（改印象）→ choose_charasteristic 的表格输入 2（表内序号 2）→ 回循环
+  // 100（進む）→ SHOW_CHARA_INFO（-2 贡品页无读键）→ 收下 2
+  fixture.era.input = scripted_input([0, 2, 100, 2]);
+  const { rand_chara_make } = load(fixture);
+  const result = await rand_chara_make(
+    () => 0,
+    () => Promise.resolve(0),
+  );
+  assert.equal(result, 1);
+  assert.equal(
+    fixture.store.get('talent:1:162') ?? 0,
+    1,
+    '改印象真的落地（choose_charasteristic 设表内序号 2 = talent 162）',
+  );
+  const texts = fixture.lines
+    .filter((l) => l.type === 'text')
+    .map((l) => l.text);
+  assert(texts.includes('什么样的态度呢……'), ':110 改印象的提示行');
+  // 回循环后按钮重画，[0] 的正文是改后的性格
+  const btn0_after = fixture.lines
+    .filter((l) => l.type === 'button' && l.accelerator === 0)
+    .at(-1);
+  assert.equal(
+    btn0_after.rendered,
+    '[0] 印象 ： 测试性格162',
+    '改印象回循环后，[0] 按钮正文带新性格名',
+  );
+});
+
+test('character/haircolor/xingge 跨调用保留（原作 #DIM 静态，:66-72 沿用上次选择）', async () => {
+  const fixture = create_era_fixture();
+  fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
+  fixture.era.addCharacter(0);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.seed_chara(2, { id: 2, name: '勇者2', callname: '勇者2' });
+  fixture.store.set('cflag:1:6', 99);
+  fixture.store.set('cflag:2:6', 99);
+  fixture.store.set('talentname:162', '测试性格162');
+  const { rand_chara_make } = load(fixture);
+  // 第一次：位 1（rand 0），改印象选表内序号 2，发色 rand 补设落 11（粉发）
+  fixture.era.input = scripted_input([0, 2, 100, 2]);
+  assert.equal(
+    await rand_chara_make(
+      () => 0,
+      () => Promise.resolve(0),
+    ),
+    1,
+  );
+  // 第二次：位 2（首掷 1），直接 100 继续——:66-72 应把上次的 character=2
+  // 与 haircolor=11 预设给新角色（旧实现每次清零，只会落 0 / 不落）
+  fixture.era.input = scripted_input([100, 2]);
+  assert.equal(
+    await rand_chara_make(
+      (n) => (n === 16 ? 1 : 0),
+      () => Promise.resolve(0),
+    ),
+    2,
+  );
+  const last = fixture.lines
+    .filter(
+      (l) =>
+        l.type === 'button' &&
+        l.accelerator === 0 &&
+        l.rendered.includes('印象 ：'),
+    )
+    .at(-1);
+  assert.equal(
+    last.rendered,
+    '[0] 印象 ： 测试性格162',
+    ':66 IF CHARACTER != -1 → SET_CHARASTERISTIC(新角色, 上次的选择)',
+  );
+  const last_color = fixture.lines
+    .filter(
+      (l) =>
+        l.type === 'button' &&
+        l.accelerator === 1 &&
+        l.rendered.includes('发色 ：'),
+    )
+    .at(-1);
+  assert.equal(
+    last_color.rendered,
+    '[1] 发色 ： 粉发',
+    ':70 IF HAIRCOLOR > 0 → SET_HAIRCOLOR(新角色, 上次的发色)',
+  );
+  assert.equal(
+    fixture.store.get('talent:2:162') ?? 0,
+    1,
+    '第二次招募的新角色被预设成上次选择的性格',
+  );
+});
+
 // —— 存根清单核对（与 event-first.test.js 同款）——
 test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = load(fixture);
   const { STUBBED_CALLS: FORWARD_STUBS } = load_forward(fixture);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
+  // #565 起 ST_UP 已接线（cm_st / cm_st_ace），两份名单都清空；名字与清单
+  // 状态的机械核对在 test/stub-registry-status.test.js 与 --coverage。
+  assert.deepEqual(
+    [STUBBED_CALLS, FORWARD_STUBS],
+    [[], []],
+    'chara-make 实现层与转发层均无存根化调用（#565）',
   );
-  for (const name of [...STUBBED_CALLS, ...FORWARD_STUBS]) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });

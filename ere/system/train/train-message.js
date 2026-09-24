@@ -21,8 +21,9 @@
  * （com-<族>.js）：族票把该族的 TRAIN_MESSAGE 分支注册进
  * train_message_b_family / train_message_a_family——声明空间 = 121 段
  * 分发空间（SELECTCOM 经升格可取高级 COM 号，高级号的分支同样在这两张
- * 表里）。缺失（族票未落地）→ 存根占位行；空间外 → 显式抛错（SELECTCOM
- * 只会是 121 之一，越界即引擎对接 bug，不静默回落）。
+ * 表里）。空间外 → 显式抛错（SELECTCOM 只会是 121 之一，越界即引擎对接
+ * bug，不静默回落）；空间内的缺号 #45 起走存根占位行，#402 收口后全数
+ * 有主，#565 起按原作语义归为零输出（无分支的号什么都不打印）。
  * **两张表同住本文件**：A 与 B 是同一套指令号分发的两半，分发骨架、公共头
  * 与公共段都在一处，不另立第二份分发逻辑。
  *
@@ -64,14 +65,13 @@ const {
   clothtype_main2_text,
   clothtype_special_text,
 } = require('#/page/page-clothtype');
-const { stub_line } = require('#/utils/stub-line');
 const { game } = require('#/facade/game');
 
 /**
  * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
  * 变动必须同步清单。
  */
-const STUBBED_CALLS = ['TRAIN_MESSAGE_B', 'TRAIN_MESSAGE_A'];
+const STUBBED_CALLS = []; // #565：A/B 全量收口后缺号回落删除，两名字移出
 
 /**
  * @TRAIN_MESSAGE_B 的分支族（SELECTCOM → 情景描写）。族票在 com-<族>.js
@@ -90,8 +90,8 @@ const train_message_a_family = new DispatchFamily(
   DECLARED_COM_IDS,
 );
 
-// 分支缺失的哨兵：族票未落地的指令走存根占位行（#45 起的既有行为）
-const BRANCH_MISSING = Symbol('TRAIN_MESSAGE_BRANCH_MISSING');
+// 分支缺失的哨兵：#45 起缺号走占位行；#402 收口后空间全数有主，缺号语义
+// 按原作归为零输出（#565 删占位回落），哨兵随之退役。
 
 /** RAND:N 随机源（缺省均匀随机；get_adv_com 同款注入形状，#219 起） */
 const rand_source = () => (n) => Math.floor(Math.random() * n);
@@ -953,18 +953,11 @@ async function train_message_b() {
   // 近似，记名差异见 issue #45）
   era.drawLine();
 
-  const branch = await train_message_b_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
+  // #402 收口后声明空间全数有主（实现或显式无操作），族内缺失不再可能
+  // 发生；即使发生，原作对无分支的号也是零输出，这里不落占位行（#565）。
+  await train_message_b_family.call(era_flag.selectcom, {
     args: [rand_source()],
   });
-  if (branch === BRANCH_MISSING) {
-    stub_line(
-      'TRAIN_MESSAGE_B',
-      `指令 ${era_flag.selectcom} 的情景描写`,
-      '随各自指令票',
-    );
-  }
-
   // TFLAG:31 = 本次调教处女丧失：连续插入分支临时置 2，公共尾部归一回
   // 1；其余遗留值清零。FLAG:6 的早退在函数开头，不能越过它执行本段。
   // 源: EVENT_TRAIN_MESSAGE_B.ERB :3041-3046
@@ -974,8 +967,7 @@ async function train_message_b() {
 
 /**
  * @TRAIN_MESSAGE_A（:15-）。公共头（省略设定 + 点线）后先跑**公共段**
- * （:31-741，见文件头），再按 SELECTCOM 分发（:746-1351）；缺失分支落
- * 存根占位行，空间外显式抛错。
+ * （:31-741，见文件头），再按 SELECTCOM 分发（:746-1351）；空间外显式抛错。
  *
  * @returns {Promise<void>}
  */
@@ -1109,24 +1101,18 @@ async function train_message_a() {
   emit_incontinence(); // :611-677 失禁与放尿（TFLAG:899 / TFLAG:29 × 衣着）
   emit_virginity_and_cleanup(); // :682-741 处女丧失三处 + 近亲链 + 口交清洁
 
-  const branch = await train_message_a_family.call(era_flag.selectcom, {
-    whenMissing: BRANCH_MISSING,
+  // 同 B：#402 收口后空间全数有主，缺失语义按原作归为零输出（#565）
+  await train_message_a_family.call(era_flag.selectcom, {
     args: [rand_source()],
   });
-  if (branch === BRANCH_MISSING) {
-    stub_line(
-      'TRAIN_MESSAGE_A',
-      `指令 ${era_flag.selectcom} 的参数反应`,
-      '随各自指令票',
-    );
-  }
 }
 
 // —— 源侧无对应分支的指令号：显式空 handler ——
 //
-// 注册它们的唯一目的是让「缺失 = 族票未落地 → 占位行」的语义对这些号保持
-// 精确：源侧链对它们落空（零输出），落占位行反而是错的。先例见 com-caress.js
-// 的 A 4/6/7/8/9 与 com-toy.js 的 A 15-19。
+// 注册它们的唯一目的是让「源侧无分支 = 零输出」的语义对这些号保持精确
+// （缺号回落自 #565 起即零输出，显式注册让「没注册」与「注册为空」可区分：
+// 前者是漏接，后者是源侧本来就没有）。先例见 com-caress.js 的 A 4/6/7/8/9
+// 与 com-toy.js 的 A 15-19。
 //   - B：55（源侧 :1953-1980 从 54 直跳 56——原作不调用 B，见
 //     docs/stub-registry.md 的 `TRAIN_MESSAGE_B` 行）、110/111（:2608-2622
 //     从 109 直跳 120）；

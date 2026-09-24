@@ -24,14 +24,18 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
-const { preset_chara_0 } = require('./helpers/chara');
+const { preset_chara_0, preset_chara_1 } = require('./helpers/chara');
 
 test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染主菜单', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
-  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
+  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）；#565 起随机
+  // 路径走 @RAND_CHARA_MAKE 真身，rand ≡ 0 掷中勇者位 1，预设同要先种
   preset_chara_0(fixture);
-  fixture.set_inputs(1, 1, 2, 0, 0);
+  preset_chara_1(fixture);
+  // 标题(1) + 五问(1/2/0/0) + RAND_CHARA_MAKE 两处输入：形象确认 [100]
+  // 進む、收下确认 [2]
+  fixture.set_inputs(1, 1, 2, 0, 0, 100, 2);
   const main = fixture.load_module('main');
 
   // 流程：标题画面（消费输入 1，resetData + 加入角色 0，BEGIN FIRST 信号
@@ -39,14 +43,25 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
   // 全量实现）——魔王性别选女性（消费输入 1，跳过肉棒尺寸一问）、狂王性别
   // 选扶她（消费输入 2）、初期奴隶问答（消费输入 0 选随机，#50）、地下城
   // 模式问答（消费输入 0 选普通，#181）、真身完成初始化、开场叙事与随机
-  // 路径读键共 7 次、begin(SHOP)（事件路径，链内信号由 emit 捕获暂存）→
-  // 主循环进入 SHOP（#23 已接入）：绘制主菜单 → era.input() 队列已空，抛
-  // 「预置输入已耗尽」上抛终止。初始化细节的逐项断言在
-  // test/event-first.test.js，此处证主循环的转场接驳与到站画面。
-  await assert.rejects(() => main(), /预置输入已耗尽/);
+  // 路径读键、@RAND_CHARA_MAKE 真身（#565：形象确认 [100] → 角色信息页
+  // 两读键 → 收下确认 [2] → 收下播报读键）、begin(SHOP)（事件路径，链内
+  // 信号由 emit 捕获暂存）→ 主循环进入 SHOP（#23 已接入）：绘制主菜单 →
+  // era.input() 队列已空，抛「预置输入耗尽」上抛终止。初始化细节的逐项
+  // 断言在 test/event-first.test.js，此处证主循环的转场接驳与到站画面。
+  fixture.override_math_random(() => 0);
+  let err;
+  try {
+    await main();
+  } catch (e) {
+    err = e;
+  } finally {
+    fixture.restore_math_random();
+  }
+  assert.match(String(err), /预置输入已耗尽/);
 
-  // 标题与五问各恰消费一次输入；此后至报错为止只有叙事读键（主菜单的
-  // input 在取数前抛错，不记入已消费）
+  // 标题与五问各恰消费一次输入；叙事读键 7 次后进入 @RAND_CHARA_MAKE 真身
+  // （#565）：形象确认 [100] → 角色信息页（-2 贡品页无读键）→ 收下确认
+  // [2] → 收下播报读键（:186）。主菜单的 input 在取数前抛错，不记入已消费。
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 }, // 标题「新的猎物」
     { api: 'input', value: 1 }, // 魔王性别「女性」（跳过肉棒尺寸一问）
@@ -54,8 +69,12 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
     { api: 'input', value: 0 }, // 初期奴隶（随机）
     { api: 'input', value: 0 }, // #181 地下城模式（普通）
     ...Array.from({ length: 7 }, () => ({ api: 'waitAnyKey' })),
+    { api: 'input', value: 100 }, // 形象确认：進む（RAND_CHARA_MAKE :107）
+    // SHOW_CHARA_INFO 走 -2 贡品页（:150 原作实参；#565 订正）：整页无
+    // 等待键，身体数据与外貌直接铺完
+    { api: 'input', value: 2 }, // 收下确认（:158）
+    { api: 'waitAnyKey' }, // 收下播报（:186）
   ]);
-
   // 到站证据一：主菜单已渲染——状态行数值取自真实变量（初始化产出 +
   // @SHOW_SHOP 的日期钳制：开局即「第 0 年 1 月 1 日（第 1 日）」），六个
   // 入口齐备（细节断言在 test/page-main-menu.test.js）
@@ -74,8 +93,17 @@ test('端到端：标题选「新的猎物」→ FIRST 初始化 → SHOP 渲染
     );
   }
 
-  // 到站证据二：初始化流程的占位仍在（FIRST 确实跑完才进的 SHOP）
-  assert(texts.some((line) => line.includes('@RAND_CHARA_MAKE')));
+  // 到站证据二：随机路径已走 @RAND_CHARA_MAKE 真身（#565）——初始奴隶
+  // 已生成并入列（rand ≡ 0 掷勇者位 1）、收下播报可见，占位行不得再出现
+  assert(
+    texts.some((line) => line.includes('冒险者佳奈美被囚禁在了地牢里！')),
+    '随机初始奴隶的收下播报必须在场（@RAND_CHARA_MAKE 真身）',
+  );
+  assert(
+    !texts.some((line) => line.includes('@RAND_CHARA_MAKE')),
+    '随机角色生成已接真身，占位行不得再出现',
+  );
+  assert.deepEqual(fixture.chara_no, [0, 1], '魔王与生成的初始奴隶都在列');
   // 到站证据三：标题只画过转场前的那一次（FIRST 之后没有回标题重绘）
   assert.equal(
     texts.filter((line) => line === '伪Ver0.0.0立绘版').length,
@@ -113,9 +141,11 @@ test('端到端：读档分支（旧的奴隶）进真身读档界面，返回�
 test('链内后写信号胜出后进入真实 SHOP 渲染（#22 守卫用例随 #23 改制）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
-  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）
+  // 严格夹具：角色 0 要有预设才加得进（#35 镜像的引擎守卫）；#565 起随机
+  // 路径走 @RAND_CHARA_MAKE 真身，rand ≡ 0 掷中勇者位 1，预设同要先种
   preset_chara_0(fixture);
-  fixture.set_inputs(1, 1, 2, 0, 0);
+  preset_chara_1(fixture);
+  fixture.set_inputs(1, 1, 2, 0, 0, 100, 2);
   const { on, TIER } = fixture.load_module('system/event/registry');
   const { begin, STATE } = fixture.load_module('system/flow/begin-signal');
   // 真身出口本就 begin(SHOP)；再追加一个 LATER 档处理器重复 begin(SHOP)，
@@ -125,7 +155,16 @@ test('链内后写信号胜出后进入真实 SHOP 渲染（#22 守卫用例随 
   on('EVENTFIRST', async () => begin(STATE.SHOP), TIER.LATER);
   const main = fixture.load_module('main');
 
-  await assert.rejects(() => main(), /预置输入已耗尽/);
+  fixture.override_math_random(() => 0);
+  let err;
+  try {
+    await main();
+  } catch (e) {
+    err = e;
+  } finally {
+    fixture.restore_math_random();
+  }
+  assert.match(String(err), /预置输入已耗尽/);
   assert.equal(
     fixture.text_lines().filter((line) => line.includes('所持金')).length,
     1,

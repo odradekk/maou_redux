@@ -62,8 +62,11 @@ const { read_train_name } = require('#/system/train/train-name');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { stub_line } = require('#/utils/stub-line');
 
-/** CASE 21 升格可能命中、但尚未由助手族落地的目标。 */
-const STUBBED_CALLS = ['COM64'];
+/**
+ * CASE 21 升格能命中的 COM64 已由 #225 落地（com_family 注册在案），
+ * 占位回落不再触发，名单清空（#565）；回落作为 JUMPFORM 防御网保留。
+ */
+const STUBBED_CALLS = [];
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);

@@ -7,9 +7,8 @@
  *     @CHECK_SPECIALSKIL_BODYSHIFT（:740-752）
  *
  * 调用点 EVENT_TURNEND.ERB:20、調教相關/TRAIN_MAIN.ERB:544（`ere/system/
- * train/juel-check.js` 内已有的 `stub_line('CHECK_SPECIALSKIL', …)`）都在
- * #400/#401 范围内，本票只落函数真身，签名定死为
- * `check_specialskil(cid, seiin = 0)`（原作 `@CHECK_SPECIALSKIL, SEIIN = 0`
+ * train/juel-check.js` 的调用点自 #565 起接真身）都在
+ * #400/#401 范围内，签名定死为
  * 的默认参数写法逐字对应），不改任何调用点。
  *
  * 移植说明：

@@ -25,7 +25,11 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
-const { preset_chara_0, preset_chara_17 } = require('./helpers/chara');
+const {
+  preset_chara_0,
+  preset_chara_1,
+  preset_chara_17,
+} = require('./helpers/chara');
 
 // 原作 @EVENTFIRST 直线赋值的完整期望（SYSTEM ver1.0.3.ERB:11-62，按语句
 // 顺序；:42 的不可落地项不在内，见 docs/stub-registry.md）。
@@ -100,6 +104,23 @@ function expected_init_writes(initial_slave) {
       { name: 'portcflag:17:数据版本', value: 1 },
       { name: 'flag:10005', value: 17 }, // :107 TARGET = 1（序号）→ 角色 ID 17
       { name: 'cflag:17:420', value: 1 }, // :110 玛奥专属标记
+      // :111 CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/chara/
+      // chara-name.js）：省略数值参数按 0 处理（无 TARGET 代入），L_A = 0 =
+      // 魔王，落特殊角色分支（:153-162）——两槽称呼取预设呼び名（addCharacter
+      // 已写过同值，这里按原作再写一次）、NID = 10000；村娘（17）不经此调用
+      { name: 'callname:0:-1', value: '你' },
+      { name: 'callname:0:-2', value: '你' },
+      { name: 'cflag:0:6', value: 10000 },
+      // :160 CALL RELATION_RENAME_REBUILD(L_A)（RELATION.ERB:52）真身：
+      // needs_rebuild(0) 的 nid() 副作用先写一次 NID，核对不过（对角
+      // c_relation 未初始化）→ @RELATION_REBUILD（:135-194）逐加入角色修
+      // 复对角：角色 0 与 17 各「写 NID + 写 c_relation 对角」——村娘的
+      // NID（10017）由这一步落，与原作同源（原作同样不经 :111 给村娘定名）
+      { name: 'cflag:0:6', value: 10000 },
+      { name: 'cflag:0:6', value: 10000 },
+      { name: 'c_relation:0:0', value: 10000 },
+      { name: 'cflag:17:6', value: 10017 },
+      { name: 'c_relation:17:17', value: 10017 },
       { name: 'cflag:17:9', value: 1 }, // :112 等级
       { name: 'cflag:17:1', value: 0 }, // :113 解除占用（可调教的关键一步）
       { name: 'cflag:17:11', value: 15 }, // :114-117 战斗数值
@@ -108,6 +129,11 @@ function expected_init_writes(initial_slave) {
       { name: 'cflag:17:14', value: 15 },
       { name: 'cflag:17:16', value: -1 }, // :118 未定状态位
       { name: 'cflag:17:450', value: 31 }, // :119 一人称（自称）编号
+      // CHAR_BODY_GENERATE_WAPPED 链内的 relation 核对（needs_rebuild() 无参
+      // 形态的 nid() 副作用：两名角色的 NID 各重写一次、值不变，核对通过
+      // 不再重建）——上一次重建已把对角修好，这两笔是纯副作用写
+      { name: 'cflag:0:6', value: 10000 },
+      { name: 'cflag:17:6', value: 10017 },
       // :121 CALL CHAR_BODY_GENERATE_WAPPED, 1（#385 起真身）：FLAG:5 的位
       // 12/15 在 :31 已开（17179934119），故身体数据真的生成。写入顺序是
       // CHAR_SIZE_GENERATE 先落胸围分量（CFLAG:458/459），再由
@@ -307,9 +333,11 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
     'FIRST_SETTING 已全量实现，不得再出现存根占位行',
   );
   assert(
-    texts.some((line) => line.includes('@CHARA_NAME_DEFINE')),
-    '存根 CHARA_NAME_DEFINE 必须打印含函数名的占位行（村娘分支内，#50 起可达）',
+    !texts.some((line) => line.includes('@CHARA_NAME_DEFINE')),
+    '称呼定义已落真身（#565 接线），不得再出现存根占位行',
   );
+  // 真身的可观察效果：NID 落 10000 + 17（特殊角色分支 :159 的「定义 NID」）
+  assert.equal(fixture.store.get('cflag:17:6'), 10017);
   // #385 起 CHAR_BODY_GENERATE_WAPPED 是真身（ere/chara/chara-body.js）：
   // 判据从占位行改为 CFLAG:17:451-457 的落盘（本用例不注入随机源，只断言
   // 写入发生；逐值与全量写入断言在下方两条「初始化写入」用例里）
@@ -406,38 +434,96 @@ test('端到端：新的猎物 → 初期奴隶选村娘 → 初始化 → 转�
   assert.deepEqual(writes[zero_start + 401], { name: 'flag:10002', value: 1 });
 });
 
-test('初始化写入（随机）：问答选 0 后与原作开局值逐项一致（全量断言）', async () => {
+test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一致；随机奴隶经 @RAND_CHARA_MAKE 真身生成（#565）', async () => {
   const fixture = create_era_fixture();
+  // rand ≡ 0 → RAND(1,17) 取 1：勇者位 1 的预设必须先种（严格夹具，#35）
+  preset_chara_0(fixture);
+  preset_chara_1(fixture);
   const { STUBBED_CALLS } = fixture.load_module('event/event-first');
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  // 四次问答（emit 直调不经标题与搬运，只消费五问中的四问）：魔王性别
-  // 「女性」（跳过肉棒尺寸）+ 狂王性别「扶她」+ 初期奴隶「随机」+
-  // 地下城模式「普通」（#181 的第二问）
-  fixture.set_inputs(1, 2, 0, 0);
-  const pending = await emit('EVENTFIRST');
+  // 标题步骤的等价物（emit 直调不经标题）：先加角色 0，原作语境的
+  //「魔王在列」成立——RAND_CHARA_MAKE 的占位判定与收下播报都读已加入列表
+  fixture.era.addCharacter(0);
+  // 四次问答（魔王性别「女性」跳过肉棒尺寸 + 狂王性别「扶她」+ 初期奴隶
+  // 「随机」+ 地下城模式「普通」）+ RAND_CHARA_MAKE 的两处输入：形象确认
+  // 选 [100] 進む（首轮性格/发色随机补设后直接收）、收下确认选 [2]
+  fixture.set_inputs(1, 2, 0, 0, 100, 2);
+  fixture.override_math_random(() => 0);
+  let pending;
+  try {
+    pending = await emit('EVENTFIRST');
+  } finally {
+    fixture.restore_math_random();
+  }
 
   // 出口：随机路径的共用出口 :231 BEGIN SHOP
   assert.equal(pending, STATE.SHOP);
-  // #136 返工的独立锚（放 deepEqual 之前：变异删初始化时此处先红，带点名
-  // 消息）：存读档指针槽（flag:10018-10028）初值 -1——登记进 Flag.yml 后
-  // 引擎会为已声明序号补 0（fillData/resetData），显式初始化是哨兵 -1 的
-  // 唯一保证
+  // #136 返工的独立锚（放前缀断言之前：变异删初始化时此处先红）
   assert(
     Array.from({ length: 11 }, (_, k) => `flag:${10018 + k}`).every((name) =>
       fixture.var_writes.some((w) => w.name === name && w.value === -1),
     ),
     '11 个存读档指针槽必须初始化为 -1（登记后 fillData 补 0 会冒充 0 号槽）',
   );
-  assert.deepEqual(fixture.var_writes, expected_init_writes(0));
-  // 存根清单核对用的导出（FIRST_SETTING 自 #463 起全量实现、不再存根化，
-  // 村娘分支的 CHARA_NAME_DEFINE 自 #50 起在可达路径上）
-  assert.deepEqual(STUBBED_CALLS, ['RAND_CHARA_MAKE', 'CHARA_NAME_DEFINE']);
+  // :203 之前的直线赋值逐项一致（全量前缀断言：:11-:62 的原作开局值不被
+  // 接线改动）。:203 起进入 RAND_CHARA_MAKE 真身（换人循环、形象确认、
+  // CHAR_MAKE 管线），其写入由 test/chara-make.test.js 各段锁，此处锁
+  // 「真的进了那段」与链尾的原作语义（见下）。
+  const prefix = expected_init_writes(0);
+  assert.deepEqual(
+    fixture.var_writes.slice(0, prefix.length),
+    prefix,
+    '随机路径的直线赋值必须与村娘路径共用同一前缀（:11-:62）',
+  );
+  const texts = fixture.text_lines();
+  assert(
+    !texts.some((line) => line.includes('@RAND_CHARA_MAKE')),
+    '随机角色生成已接真身，不得再出现占位行',
+  );
+  // 生成的奴隶真的入列：勇者位 1（rand ≡ 0 掷 1）+ 魔王 0
+  assert.deepEqual(fixture.chara_no, [0, 1]);
+  // 形象确认循环与收下确认的可见文本（非战役招募文案，:76 的普通版）。
+  // [100] 是 :103-104 的原作正文、继续确认的唯一入口——**必须按钮化**
+  // （PR #53 通则：EraElectron 的 input 只收本轮按钮快捷键，纯文本前缀行
+  // 实机敲不进 100，形象确认会卡死；审查 #565 起钮住）。断言看 rendered
+  assert(texts.includes('呃……面前的勇者，是这个形象的……'));
+  // （引擎拼 [快捷键] 前缀后的实际显示）
+  const proceed_btn = fixture.lines.find(
+    (l) => l.type === 'button' && l.accelerator === 100,
+  );
+  assert(proceed_btn, '形象确认必须有 [100] 進む按钮');
+  assert.match(
+    proceed_btn.rendered,
+    /^\[100\] 你发动了魔王真眼，深入探究更进一步的详细素质……/,
+    '[100] 按钮的渲染文本必须与原作 PRINTL 行一致',
+  );
+  assert(texts.includes('解开你封印的，真的是这样的对象吗…？'));
+  // SHOW_CHARA_INFO（-2 贡品页）按原作 :25-26/:320-321 临时把 TARGET 换成
+  // 被显示的角色：语尾口上按新角色取，不得回退到打 @GOBI_KOUJO 占位
+  // （#565 返工第 2 条引擎实测：换 TARGET 前 -2 页会打 13 行语尾占位）
+  assert(
+    !texts.some((t) => t.includes('@GOBI_KOUJO')),
+    '形象确认的 -2 贡品页不得打语尾占位（TARGET 临时换 + 未命中静默）',
+  );
+  // :172-186 收下播报（rand ≡ 0 → 非异国，无「异国的」前缀）与读键收尾
+  assert(texts.includes('冒险者佳奈美被囚禁在了地牢里！'));
+  // :182 FLAG:402 用过的标志归位、:184 TARGET = FLAG:1（开局 0）
+  assert.equal(fixture.store.get('flag:402'), 0);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(era_flag.target, 0, ':184 TARGET = FLAG:1（开局默认 0）');
+  // 存根清单核对用的导出（RAND_CHARA_MAKE 已接线，本文件存根名单清空）
+  assert.deepEqual(STUBBED_CALLS, []);
 });
 
 test('初始化写入（村娘）：CFLAG 一组 1:1 落在角色 ID 17 上（全量断言）', async () => {
   const fixture = create_era_fixture();
+  // 两层预置（#565 起 CHARA_NAME_DEFINE 真身读 chara:17 静态表取 CSVCALLNAME，
+  // 单喂 addCharacter 守卫层会把称呼写成空串）；严格夹具下村娘也真的入列
+  preset_chara_0(fixture);
+  preset_chara_17(fixture);
+  fixture.era.addCharacter(0); // 标题步骤的等价物
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
@@ -496,6 +582,8 @@ test('【#50 验收】村娘分支的写入落在角色 ID 17 而非已加入序
 
 test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达，#130）', async () => {
   const fixture = create_era_fixture();
+  preset_chara_0(fixture);
+  preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
   fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
@@ -503,9 +591,16 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
   // 原作用例曾先喂 9（越界）验证重问。问答每轮重印按钮，引擎的 input()
   // 只送达已打印按钮的快捷键，越界值在渲染层被弹回——重问分支是引擎死
   // 路径，此处只走有效输入。魔王性别选男性（0）以同时覆盖肉棒尺寸一问
-  // （0 = 普通阴茎），狂王性别选男性（0）
-  fixture.set_inputs(0, 0, 0, 0, 0); // 男性 + 普通阴茎 + 男性 + 随机 + 普通
-  const pending = await emit('EVENTFIRST');
+  // （0 = 普通阴茎），狂王性别选男性（0）。随机路径选 0 后接
+  // RAND_CHARA_MAKE 的形象确认 [100] 与收下 [2]（#565）
+  fixture.set_inputs(0, 0, 0, 0, 0, 100, 2);
+  fixture.override_math_random(() => 0);
+  let pending;
+  try {
+    pending = await emit('EVENTFIRST');
+  } finally {
+    fixture.restore_math_random();
+  }
 
   assert.deepEqual(
     fixture.inputs_consumed.filter((e) => e.api === 'input'),
@@ -515,10 +610,17 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
       { api: 'input', value: 0 }, // 狂王性别「男性」
       { api: 'input', value: 0 }, // 初期奴隶「随机」
       { api: 'input', value: 0 }, // 地下城模式「普通」
+      { api: 'input', value: 100 }, // 形象确认：進む（RAND_CHARA_MAKE :107）
+      { api: 'input', value: 2 }, // 收下确认（:158）
     ],
   );
+  // 五问的按钮都是 0 号快捷键；形象确认的 [0] 改印象按钮同号（#565 返工
+  // 第 1 条），按正文排除
   const question_rounds = fixture.lines.filter(
-    (line) => line.type === 'button' && line.accelerator === 0,
+    (line) =>
+      line.type === 'button' &&
+      line.accelerator === 0 &&
+      !line.rendered.includes('印象 ：'),
   );
   assert.equal(question_rounds.length, 5, '五问各渲染一轮');
   assert.equal(fixture.store.get('flag:501'), 0);
@@ -575,9 +677,10 @@ test('era-flag 包装层：月份/所持金的底层寻址钉在 yml/Flag.yml �
 test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('event/event-first');
-  // first-setting.js 自 #463 起五问全量实现，不再导出 STUBBED_CALLS
-  // （无存根可核对——FIRST_SETTING 整体已从存根清单的运行时占位转已实现，
-  // 见 docs/stub-registry.md 对应行）
+  // #565 起 RAND_CHARA_MAKE / CHARA_NAME_DEFINE 均已接线，本文件存根名单
+  // 清空——「名字 ↔ 清单状态」的机械核对由 test/stub-registry-status.test.js
+  // 与 tools/trace-check.mjs --coverage 承担，此处只剩历史检索锚。
+  assert.deepEqual(STUBBED_CALLS, []);
   const registry_path = path.resolve(
     __dirname,
     '..',
@@ -586,10 +689,6 @@ test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用'
   );
   const registry = fs.readFileSync(registry_path, 'utf8');
 
-  // 存根名单必须在清单里（删清单行或删存根不同步，都会在这里红）
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
   // 工单指出的优先项 + 既有存根（page-title 的读档）也必须可检索
   for (const name of ['PARTY_UNITE', 'SYSTEM_LOADGAME']) {
     assert(registry.includes(name), `存根清单缺少 ${name}`);

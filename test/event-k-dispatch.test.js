@@ -172,14 +172,15 @@ test('@ATTACK_KOUJO_B（:327/:335-336）：TARGET 置为 B 侧对象、分发 DU
   );
 });
 
-test('@ATTACK_KOUJO_B：缺席目标打占位行（原作的调用方侵略/ARCANA_BATTLE.ERB 未移植）', async () => {
+test('@ATTACK_KOUJO_B：缺席目标静默（原作 TRYCALLFORM 落空，#565 返工）', async () => {
   const fixture = setup_kojo();
   seed_noble(fixture); // 高貴 163 → 键 3，不注册 handler
   const { attack_koujo_b } = fixture.load_module('kojo/kojo-system');
   await attack_koujo_b(17, always);
-  assert.ok(
-    fixture.text_lines().some((t) => t.includes('@ATTACK_KOUJO_B')),
-    '占位行带原作函数名（可检索、登记在 docs/stub-registry.md）',
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '未命中静默（原作 TRYCALLFORM 落空；真缺口由 kojo-family-coverage 的集合比对拦）',
   );
 });
 
@@ -255,15 +256,16 @@ test('@GOHOUBI_REQUEST_KOUJO（:451-463）：签名 (cid) 由 #397 冻结，函�
   assert.equal(era_flag.target, 5, '返回后 TARGET 还原（:463 SWAP）');
 });
 
-test('@GOHOUBI_REQUEST_KOUJO：缺席目标打占位行（原 dispatch 恒空转不许静默吞掉）', async () => {
+test('@GOHOUBI_REQUEST_KOUJO：缺席目标静默（原作 TRYCALLFORM 落空，#565 返工）', async () => {
   const fixture = setup_kojo(); // 无性格素质 → 键 -1
   const { gohoubi_request_koujo } = fixture.load_module(
     'kojo/kojo-dungeon-after',
   );
   assert.equal(await gohoubi_request_koujo(17), 0);
-  assert.ok(
-    fixture.text_lines().some((t) => t.includes('@GOHOUBI_REQUEST_KOUJO')),
-    '存根行带原作函数名（登记在 docs/stub-registry.md）',
+  assert.deepEqual(
+    fixture.text_lines(),
+    [],
+    '未命中静默（「原 dispatch 恒空转不许静默吞掉」的旧占位语义随 #565 返工取消；真缺口由 kojo-family-coverage 拦）',
   );
 });
 
@@ -686,17 +688,15 @@ test('守卫集与源一致：表的 flag_guard 与原件各入口函数体段�
   }
 });
 
-test('缺席语义两态：silent 行不打任何输出，stub 行打带 @原名 的占位行', async () => {
+test('缺席语义：未命中一律静默（原作 TRYCALLFORM 落空，#565 返工统一）', async () => {
   for (const row of table_rows()) {
     const fixture = create_era_fixture();
     const era_flag = fixture.load_module('era-utils/era-flag');
     era_flag.target = 17;
     fixture.store.set('flag:7', 2);
-    seed_noble(fixture, 17); // 有性格编号、但族里没注册 handler
+    seed_noble(fixture); // 有性格编号、但族里没注册 handler
 
     const mod = fixture.load_module(row.module);
-    const before_inputs = fixture.inputs_consumed.length;
-    fixture.set_inputs(...Array(4).fill(0)); // stub_line_wait 的等键（victory/attack 族）
     const result = await mod[row.entry](
       ...row.call.map((name) => arg_value(name, { cid: 17, rand: always })),
     );
@@ -707,22 +707,13 @@ test('缺席语义两态：silent 行不打任何输出，stub 行打带 @原名
       0,
       `${row.entry}：缺 handler 时返回值 0（TRYCALL 落空的 RESULT）`,
     );
-    if (row.missing === 'stub') {
-      assert.ok(
-        lines.some((t) => t.includes(`@${row.entry.toUpperCase()}`)),
-        `${row.entry}：占位行带 @原名（登记在 docs/stub-registry.md）`,
-      );
-      const waited =
-        fixture.inputs_consumed.length - before_inputs > 0 ||
-        fixture.calls.some((c) => c.api === 'waitAnyKey');
-      assert.equal(
-        waited,
-        row.stub_wait === true,
-        `${row.entry}：占位行后的等键语义（#73：分发期要等键，绘制期不等）`,
-      );
-    } else {
-      assert.deepEqual(lines, [], `${row.entry}：TRYCALL 落空静默`);
-    }
+    // 表里的 missing/stub_wait 字段自 #565 返工起只作历史文档（未命中统一
+    // 静默），行为面不再区分两态
+    assert.deepEqual(
+      lines,
+      [],
+      `${row.entry}：未命中静默（原作 TRYCALLFORM 落空）`,
+    );
   }
 });
 

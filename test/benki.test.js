@@ -229,7 +229,7 @@ test('GET_EXP_BENKI_MENU：手淫（30）→ 无经验行、习得/屈服点数'
 
 // —— @BENKI 的行动分派与结算 ——
 
-test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KOUJO 占位行 + 珠/经验结算', async () => {
+test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KOUJO 静默 + 珠/经验结算', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0));
   const lines = fixture.text_lines();
@@ -243,11 +243,16 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KO
     lines.some((l) => l.includes('任魔族男性将阴茎塞入了口中')),
     '第二段演出',
   );
-  // 本夹具不加载口上模块：try_kojo_or_stub 对未注册性格打占位行
-  // （22 份里目前只落地 5 份；1:1 TRYCALL 静默等全落地后再收）
-  // 一般分派走公共段 :591 + 一般段 :1310 两处 CALL
+  // 本夹具不加载口上模块：try_kojo_or_stub 未命中**静默**（原作 TRYCALLFORM
+  // 落空语义，#565 返工第 4 条）——一般分派走公共段 :591 + 一般段 :1310
+  // 两处 CALL，都不得出声；「原作有 ere 无」的真缺口由
+  // test/kojo-family-coverage.test.js 的定义集合比对拦
   const stub_count = lines.filter((l) => l.includes('@BENKI_KOUJO')).length;
-  assert.equal(stub_count, 2, '未注册性格打 @BENKI_KOUJO 占位行');
+  assert.equal(
+    stub_count,
+    0,
+    '未注册性格静默（原作 TRYCALLFORM 落空，不打占位）',
+  );
   // flag:62 = 6（フェラ便器）、flag:64 = 3（魔族男性）
 
   assert.equal(flag_of(fixture, 62), 6);

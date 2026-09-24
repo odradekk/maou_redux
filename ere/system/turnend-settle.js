@@ -42,7 +42,7 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { kyoten_event } = require('#/page/page-invasion');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
-const { stub_line } = require('#/utils/stub-line');
+const { get_look_info } = require('#/chara/look-info'); // #565 起接线（式中函数，纯取值）
 const { chara_callname } = require('#/utils/callname-utils');
 const { run_event_newday } = require('#/event/event-nextday');
 const { equip_check } = require('#/system/equip/equip-check');
@@ -73,9 +73,11 @@ const { auto_execution } = require('#/event/event-execution-batch');
  * benki.js）——四条均从名单移除；#508 起 FORMAT_AUTOTRAIN / AUTOTRAIN
  * 亦接真身（ere/event/event-autotrain.js 的同名函数，调用点原为占位行），
  * 从名单移除；#543 起自動處刑亦接真身（ere/event/event-execution-batch.js
- * 的 auto_execution，FLAG:5 位 3 的开关位）。
+ * 的 auto_execution，FLAG:5 位 3 的开关位）；#565 起 GET_LOOK_INFO（头发生长
+ * :540/:564 两处播报的发色段）接真身（ere/chara/look-info.js 的式中函数），
+ * 名单自此清空。
  */
-const STUBBED_CALLS = ['GET_LOOK_INFO'];
+const STUBBED_CALLS = [];
 
 /** 原作 RAND:N（0..N-1）的等价物 */
 function rand(n) {
@@ -406,8 +408,10 @@ on('EVENTTURNEND', async () => {
       chara(cid).chara.好感度 -= rand(100);
     }
 
-    // :530-547 头发生长（eraWIZ 流用改変）：长到 51/201 时播报。发色一段
-    // 的 GET_LOOK_INFO 未移植（占位行随播报），「的」随之缺省避免叠字
+    // :530-547 头发生长（eraWIZ 流用改変）：长到 51/201 时播报。发色一段的
+    // %GET_LOOK_INFO(A,"发色(颜色)")% 自 #565 起接真身（LOOK.ERB:2894-2921
+    // 的形容词表，「红色」形），「的」随之按原作补回——PRINTFORM + SIF +
+    // PRINTFORM + PRINTL 拼成一行
     if ((era.get(`talent:${cid}:302`) || 0) <= 201) {
       chara(cid).chara.头发长度 += 1;
       const hair = chara(cid).chara.头发长度;
@@ -415,9 +419,8 @@ on('EVENTTURNEND', async () => {
         const name = era.get(`callname:${cid}:-1`) ?? '';
         const beauty =
           (era.get(`talent:${cid}:312`) || 0) === 22 ? '美丽的' : '';
-        stub_line('GET_LOOK_INFO', '发色信息');
         era.print(
-          `${name}${beauty}${
+          `${name}${beauty}${get_look_info(cid, '发色(颜色)')}的${
             hair === 51 ? '头发半长，到肩膀了。' : '头发很长，长发及腰。'
           }`,
         );
@@ -449,9 +452,11 @@ on('EVENTTURNEND', async () => {
           151: '刚毛长出来了。',
           201: '森林复苏了。',
         }[growth];
-        stub_line('GET_LOOK_INFO', '发色信息'); // 毛色判定同上缺省
-        era.print(`${name}${charm ?? ''}的阴阜上，`);
-        era.print(state_word);
+        // :564 的 %GET_LOOK_INFO(A,"发色(颜色)")%的（毛色按发色判定，同上）；
+        // 原作 PRINT/PRINTFORM 到 PRINTL 才换行，整句拼成一行
+        era.print(
+          `${name}${charm ?? ''}的阴阜上，${get_look_info(cid, '发色(颜色)')}的${state_word}`,
+        );
         if (chara(cid).chara.阴毛状态 >= (era.get(`talent:${cid}:311`) || 0)) {
           // 长满即钳到目标值（行 578-580）
           chara(cid).chara.阴毛状态 = era.get(`talent:${cid}:311`) || 0;

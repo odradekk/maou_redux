@@ -3,10 +3,11 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 169; // #547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+export const COUNT = 178; // #547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
 // SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
-// 将来再登记存根行时随票补回同型条目）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
+// 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
+// 合并 #547 时两侧 178/169 调和为 176：本票 178 收进 master 的 -2，按导入实测条目数写回
 // 背景音乐音量三行退回存根，M11330：RULINGS 路径悬空——由 test/trace-check.test.js 的 #542 用例与
 // test/stub-registry-status.test.js 的八行棘轮守护）；此前 166 = 合并态实测（#532 与 #530 两侧条目全留；
 // 按 merge-conflicts.md，计数型基线不取任一侧、也不相加，占位 999 跑出实测 146 再写回——并入前本票 144、
@@ -24,6 +25,82 @@ export const COUNT = 169; // #547 返工：-2（M11287/M11288 删除——靶类
 // M10901/M10902 两条清单行条目的 find 同步到新行文）
 
 export default [
+  // —— #565 存根名 ↔ 清单状态核对 ——
+  {
+    desc: 'M11618 check_stub_names 放行已实现行（核对失明）',
+    file: 'tools/trace-coverage.mjs',
+    find: "    const kinds = statuses.map((s) => classify_status(s));\n    if (!kinds.some((k) => k === 'pending' || k === 'dead')) {",
+    replace:
+      '    const kinds = statuses.map((s) => classify_status(s));\n    if (true) {',
+    tests: ['stub-registry-status'],
+    must_mention: '已实现行、缺行都红',
+  },
+  {
+    desc: 'M11619 收集器的注释过滤删除（jsdoc 引用字样误报回归）',
+    file: 'tools/trace-coverage.mjs',
+    // #565 返工起 try_kojo 收集器同款行出现两次，find 扩到正则行消歧义
+    find: '  for (const m of text.matchAll(\n    /stub_line(?:_wait)?\\(\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,\n  )) {\n    if (!in_comment(m.index)) names.add(m[2]);',
+    replace:
+      '  for (const m of text.matchAll(\n    /stub_line(?:_wait)?\\(\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,\n  )) {\n    names.add(m[2]);',
+    tests: ['stub-registry-status'],
+    must_mention: 'jsdoc 里引用的字样不计',
+  },
+  {
+    desc: 'M11620 @USERSHOP 行的 CALL 名提取删除（按编号登记的行对不上号）',
+    file: 'tools/trace-coverage.mjs',
+    find: "      if (is_usershop) {\n        for (const m of (cells[1] ?? '').matchAll(/CALL ([A-Za-z0-9_]+)/g)) {\n          put(m[1], status);\n        }\n      } else {",
+    replace: '      if (!is_usershop) {',
+    tests: ['stub-registry-status'],
+    must_mention: '已实现函数的调用点不得再打占位',
+  },
+  {
+    desc: 'M11627 名单解析的注释剥离删除（元素带注释即坏形，已实现名漏出）',
+    file: 'tools/trace-coverage.mjs',
+    find: "    .map((line) => line.replace(/\\/\\/[^\\n]*/, ''))",
+    replace: '    // 变异：注释不剥，带注释的元素直接进 errors',
+    tests: ['stub-registry-status'],
+    must_mention: '元素前的注释剥掉再认',
+  },
+  {
+    desc: 'M11628 名单坏形静默（errors 归零，解析不了的元素无人报）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    else if (trimmed.length > 0) errors.push(trimmed);',
+    replace: '    // 变异：坏形静默跳过',
+    tests: ['stub-registry-status'],
+    must_mention: '解析不了的元素必须进 errors',
+  },
+  {
+    desc: 'M11629 收集器正则退回单引号（无插值模板串名漏收）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    /stub_line(?:_wait)?\\(\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
+    replace: "    /stub_line(?:_wait)?\\(\\s*'([A-Za-z0-9_]+)'/gs,",
+    tests: ['stub-registry-status'],
+    must_mention: '无插值模板串的 stub_line 名也要收',
+  },
+  {
+    desc: 'M11630 冲突标记的行中形态识别删除（行尾尾巴重新失明）',
+    file: 'tools/conflict-marker-check.mjs',
+    find: '    if (INLINE_END_RE.test(line) || INLINE_START_RE.test(line)) {',
+    replace: '    if (false) {',
+    tests: ['conflict-marker-check'],
+    must_mention: '行中标记必须红',
+  },
+  {
+    desc: 'M11637 收集器的 try_kojo 写法失明（第二实参名收不到）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
+    replace: `    /never_try_kojo_(\s*)/gs, // 变异：try_kojo 名收集失明`,
+    tests: ['stub-registry-status'],
+    must_mention: '第二实参名也收',
+  },
+  {
+    desc: 'M11638 核对分流的 try_kojo 放行回退（已实现行误按 stub_line 规则红）',
+    file: 'tools/trace-coverage.mjs',
+    find: `    if (via === 'try_kojo') {\n      continue; // 找到行即放行（族集合的缺口由 kojo-family-coverage 拦）\n    }`,
+    replace: '    // 变异：try_kojo 名也按 stub_line 规则判',
+    tests: ['stub-registry-status'],
+    must_mention: '不得按 stub_line 规则红',
+  },
   // —— #513：内联 :N 的源绑定（trace-check）——
   {
     desc: 'M11060 B 侧源绑定失守（表侧错挂 src 不再点名——A 侧兜底拦下但 Y.ERB 断言必须红）',

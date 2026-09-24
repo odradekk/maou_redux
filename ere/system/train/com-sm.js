@@ -91,9 +91,10 @@ const { clothtype_special_text } = require('#/page/page-clothtype');
 
 /**
  * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
- * 变动必须同步清单。
+ * 变动必须同步清单。COM132（@COM40 的升格目标）已由 #229 落地，
+ * jump_to_advanced 直调真身，#565 起从名单移除，名单自此清空。
  */
-const STUBBED_CALLS = ['COM132'];
+const STUBBED_CALLS = [];
 
 // —— 读数兜底（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——
 

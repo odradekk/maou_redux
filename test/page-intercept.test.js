@@ -336,8 +336,8 @@ test('INTERCEPT：出击决定写入状态与扣款，并调 @GOHOUBI_REQUEST', 
   // @GOHOUBI_REQUEST：爱慕（TALENT:85）→ WISH = RAND:3 + 4 = 7（rand 恒 3）
   assert.equal(fixture.store.get('cflag:1:504'), 7, 'CFLAG:504 = WISH');
   assert.ok(
-    texts(added).some((t) => t.includes('@GOHOUBI_REQUEST_KOUJO')),
-    '口上侧占位行（#403 起函数体是真分发；角色 1 无性格素质 → 键 -1 → 存根）',
+    !texts(added).some((t) => t.includes('@GOHOUBI_REQUEST_KOUJO')),
+    '口上侧未命中静默（角色 1 无性格素质 → 键 -1；原作 TRYCALLFORM 落空，#565 返工）',
   );
 });
 
@@ -662,13 +662,10 @@ test('GOHOUBI_REQUEST_KOUJO：调用面（签名）由 #397 冻结，函数体�
   assert.equal(typeof gohoubi_request_koujo, 'function');
   assert.equal(gohoubi_request_koujo.length, 1, '只有一个形参 cid');
 
-  // 缺目标（无性格素质 → 键 -1）：缺席语义仍是占位行（名册未全落地前债可见）
+  // 缺目标（无性格素质 → 键 -1）：缺席语义是静默（原作 TRYCALLFORM 落空，
+  // #565 返工；真缺口由 test/kojo-family-coverage.test.js 的集合比对拦）
   assert.equal(await gohoubi_request_koujo(3), 0);
-  assert.ok(
-    fixture.text_lines().some((t) => t.includes('@GOHOUBI_REQUEST_KOUJO')),
-    '存根行带原作函数名',
-  );
-
+  assert.deepEqual(fixture.text_lines(), [], '未命中静默，不打存根行');
   // 有目标且已注册：真分发，K 侧收 cid（#403 落的体）
   fixture.store.set('talent:3:163', 1); // 高貴 163 → LOCAL 103 → 键 3
   const seen = [];
