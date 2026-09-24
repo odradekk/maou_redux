@@ -7,6 +7,36 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '21-22',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[0\\] - 旁观凌辱\\s*$\\s*^\\s*PRINTL \\[1\\] - 不要凌辱\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '2358-2359',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[0\\] - 旁观凌辱\\s*$\\s*^\\s*PRINTL \\[1\\] - 不要凌辱\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '2358',
+        any: [new RegExp('^\\s*PRINTL \\[0\\] - 旁观凌辱\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '2359',
+        any: [new RegExp('^\\s*PRINTL \\[1\\] - 不要凌辱\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '1-7',
         any: [/@RYOUZYOKU,ARG/],
       },
@@ -4778,11 +4808,6 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '2359-2365',
         any: [/PRINTL \[1\] - 不要凌辱/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '2360-2366',
-        any: [/\$INPUT_LOOP/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',

@@ -8,6 +8,36 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '24',
+        any: [new RegExp('^\\s*REND\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '25',
+        any: [new RegExp('^\\s*PRINTFORMW 请赐予%SAVESTR:A%奖励。\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '328',
+        any: [new RegExp('^\\s*;吸血鬼の場合ボーナス\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '329',
+        any: [new RegExp('^\\s*SIF TALENT:A:314 == 3\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '31',
+        any: [new RegExp('^\\s*FLAG:5 = 17179934119\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '341',
+        any: [new RegExp('^\\s*CFLAG:A:4 = 0\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
         ref: '302',
         any: [/^\s*CALL DUNGEON_AFTER$/m],
       },

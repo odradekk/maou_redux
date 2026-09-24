@@ -884,8 +884,13 @@ test('120 召唤：CHARANUM < MAX_CHARANUM 时进真身怪物商店（#399 接�
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   const texts = history_texts(fixture);
   assert(
-    texts.includes('[1]召唤魔物从者'),
-    '120 应进 page/page-monster-shop.js 的入口菜单',
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'button' &&
+        line.rendered === '[1] 召唤魔物从者' &&
+        line.accelerator === 1,
+    ),
+    '120 应进 page/page-monster-shop.js 的入口菜单（#572 起是按钮）',
   );
   assert(
     !texts.some((line) => line.includes('@MONSTER_SHOP')),

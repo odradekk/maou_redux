@@ -7,6 +7,38 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB',
+        ref: '618-623',
+        any: [
+          new RegExp(
+            '^\\s*PRINT \\[1\\] 唇\\s*$\\s*^\\s*SIF TALENT:MASTER:121 \\|\\| TALENT:MASTER:122\\s*$\\s*^\\s*PRINT \\[201\\] 阴茎\\s*$\\s*^\\s*SIF !TALENT:MASTER:122\\s*$\\s*^\\s*PRINT \\[301\\] 私处\\s*$\\s*^\\s*PRINT \\[401\\] 肛门\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB',
+        ref: '619',
+        any: [
+          new RegExp(
+            '^\\s*SIF TALENT:MASTER:121 \\|\\| TALENT:MASTER:122\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB',
+        ref: '621',
+        any: [new RegExp('^\\s*SIF !TALENT:MASTER:122\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB',
+        ref: '625',
+        any: [
+          new RegExp('^\\s*IF GROUPMATCH\\(RESULT,1,201,301,401\\)\\s*$', 'm'),
+        ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_CUSTOM2 ver1.0.1.ERB',
         ref: '1-152',
         any: [/^[ \t]*﻿@CHAR_CUSTOM, ARG , ARG:1[ \t]*$/m],
       },
