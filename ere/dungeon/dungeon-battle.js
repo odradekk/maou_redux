@@ -371,7 +371,7 @@ function skill_extra_bonus(arg0, rand) {
       (chara(arg0).dungeon.攻击力 * (100 + local)) / 100,
     );
     const def_up = Math.floor((era.get(`cflag:${arg0}:9`) || 0) / 5) + 10;
-    out += `  防御力+${def_up}！]`;
+    out += ` 防御力+${def_up}！]`;
     chara(arg0).dungeon.防御力 += def_up;
   }
 

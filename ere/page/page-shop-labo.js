@@ -2834,7 +2834,7 @@ async function secret_labo(rand = default_rand) {
     era.print('《可以对奴隶进行肉体和精神的魔改》'); // :14
     era.drawLine(); // :9-15 DRAWLINE
     era.print(
-      `${era_flag.day_count + 1}日${era_flag.time === 0 ? '  午前' : '  午后'}`,
+      `${era_flag.day_count + 1}日${era_flag.time === 0 ? ' 午前' : ' 午后'}`,
     ); // :16-22（PRINTV DAY+1 / PRINT 日 / PRINTL）
     era.print(`所持金：${era_flag.money}点`); // :24
     era.drawLine(); // :19-25 DRAWLINE

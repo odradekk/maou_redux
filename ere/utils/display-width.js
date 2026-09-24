@@ -37,11 +37,14 @@ function display_width(text) {
  * white-space 设置，连续的半角空格（U+0020）按浏览器默认规则合并成一个，
  * 按空格补齐的列对齐在实机全部失效；U+00A0 不被合并，且在引擎等宽字体
  * （EraMono SC）里占 1 个半角宽，与本量尺一致（#577，实测依据见 issue
- * 的决定评论）。源码里一律引用本常量或写 '\u00A0' 转义，不写裸字符——
- * ESLint 的 no-irregular-whitespace 会拦裸字符，prettier 也可能吃掉它。
- * 注意：printButton 的正文另有一层 `/\s+/g → ' '` 合并（引擎渲染层
- * getButtonObject），JS 的 \s 连 U+00A0/U+3000 一起合并——按钮正文里的
- * 对齐不能用 NBSP，那类位置按 #577 的普查表登记为已知差异。
+ * 的决定评论）。源码里（含测试与注释）一律引用本常量或写 '\u00A0' 转义，
+ * 不写裸字符：裸 U+00A0 在模板字面量与注释里会被 ESLint 的
+ * no-irregular-whitespace 拦下（普通字符串字面量按该规则缺省放行，所以这条
+ * 约定靠人守），prettier 也可能把它折叠掉。
+ * 注意：按钮正文另有一层 `/\s+/g → ' '` 合并（引擎渲染层的按钮行构造器
+ * P(e)，`printMultiColumns` 的按钮格同走它），JS 的 \s 连 U+00A0/U+3000
+ * 一起合并——按钮正文里的对齐不能用 NBSP，那类位置按 #577 的普查表登记为
+ * 已知差异（见 CONTEXT.md 的「输出 API 与原作的对应」）。
  * @type {string}
  */
 const NBSP = '\u00A0';

@@ -1750,7 +1750,7 @@ test('ablup14：已达最高级；组合上限溢出两行提示', async () => {
   assert.ok(capped.text_lines().includes('侍奉技术(5)＋性交技术(5)上限为10'));
 });
 
-test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个半角空格+全角空格对齐', async () => {
+test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个 NBSP+全角空格对齐', async () => {
   const fixture = create_era_fixture();
   const { ablup14 } = seed(fixture);
   fixture.store.set(`abl:${CID}:12`, 1); // 满足 Lv5 前的技巧门槛，隔离 bit4

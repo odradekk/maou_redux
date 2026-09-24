@@ -217,7 +217,7 @@ export default [
     file: 'ere/system/train/juel-check.js',
     find: '      { content: `)${NBSP.repeat(12)}= ` }, // :687 PRINT ) + 12 空格 + "= "',
     replace:
-      '      { content: \')          = \' }, // :687 PRINT ) + 12 空格 + "= "',
+      '      { content: `)${NBSP.repeat(10)}= ` }, // 变异：少 2 格（只改格数）',
     tests: ['juel-check'],
     must_mention: '结算表第 0 行',
   },
@@ -8054,7 +8054,7 @@ export default [
     replace:
       "era.print(`${NBSP.repeat(5)}${era.get('expname:5')}　${exp5}/${b}`); // :50",
     tests: ['ablup'],
-    must_mention: 'EXP 门槛行前导 6 个半角空格',
+    must_mention: 'EXP 门槛行前导 6 个 NBSP',
   },
   {
     desc: 'M9932 ablup14：成功购买写入等级改为 +2',
@@ -8121,7 +8121,7 @@ export default [
     file: 'ere/system/train/ablup.js',
     find: "era.print(`${NBSP.repeat(6)}${era.get('expname:73')}　${exp73}/${b} or`); // :45",
     replace:
-      "era.print(`      ${era.get('expname:73')}　${exp73}/${b}`); // :45",
+      "era.print(`${NBSP.repeat(6)}${era.get('expname:73')}　${exp73}/${b}`); // 变异：丢 or",
     tests: ['ablup'],
     must_mention: 'EXP 行字面量" or"仅出现在第一行',
   },

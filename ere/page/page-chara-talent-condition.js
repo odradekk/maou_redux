@@ -33,11 +33,11 @@
 const era = require('#/era-electron');
 const { EXPLV } = require('#/era-utils/exp-level');
 const {
+  NBSP,
   display_width,
   pad_display,
   pad_left,
   slice_display,
-  NBSP,
 } = require('#/utils/display-width');
 
 /** `@STC_PRINTC` 的缺省列宽（源 :414 `ARG = 15`） */

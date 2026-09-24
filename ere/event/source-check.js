@@ -83,10 +83,10 @@
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
-const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { train_message_a } = require('#/system/train/train-message');
 const {
   passout_check,

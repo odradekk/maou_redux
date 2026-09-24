@@ -34,7 +34,7 @@ const { life_bar, vital_bar } = require('#/page/components/chara-bars');
 const { char_body_generate_wapped, cup_size } = require('#/chara/chara-body');
 const { self_call } = require('#/kojo/kojo-text');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
-const { pad_display, pad_left } = require('#/utils/display-width');
+const { NBSP, pad_display, pad_left } = require('#/utils/display-width');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
 
@@ -169,7 +169,7 @@ async function show_block(cid) {
     if (talent(cid, TALENT_MAN) === 0) {
       bust.push({ content: pad_display(`(${cup_size(cid)})`, 7) }); // :379/:382
     } else {
-      bust.push({ content: '\u00A0'.repeat(7) }); // :384（男性不显示罩杯，8 空格减分隔符 = 7）
+      bust.push({ content: NBSP.repeat(7) }); // :384（男性不显示罩杯，8 空格减分隔符 = 7）
     }
     era.print(bust);
   }

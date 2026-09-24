@@ -64,7 +64,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
-const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * 本文件存根化的原作调用名：无——@CHAR_CREATE 与 @CHAR_APPEND 全部落地，
@@ -292,9 +292,7 @@ async function char_append(arg, mode, rand = default_rand) {
     // 按钮的 valCount 推高（引擎 app.asar 的 getButtonObject 按
     // `line.valCount < buttonValCount` 禁用早先的按钮），按钮化后会点不动。
     // 纯文本 + 本轮无按钮 = 引擎的自由输入通道，键入 1/2/3 照常。
-    era.print(
-      '[1] 男性\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[2] 女性\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[3] 扶她',
-    ); // :240
+    era.print(`[1] 男性${NBSP.repeat(6)}[2] 女性${NBSP.repeat(6)}[3] 扶她`); // :240
     await era.waitAnyKey(); // :240 PRINTFORMW 的 WAIT
     const gender = await era.input(); // :103-272
     if (gender === 1) {

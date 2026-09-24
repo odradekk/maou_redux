@@ -139,12 +139,14 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
   const CASES = [
     // [用例名, 预置, 期望的行尾]
     ['未沦陷', {}, `<未沦陷>${SP(5)}`],
-    ['爱慕', { 'talent:1:85': 1 }, `<爱  慕>${SP(5)}`],
-    ['淫乱', { 'talent:1:76': 1 }, `<淫  乱>${SP(5)}`],
+    // 爱慕/淫乱标签的两格内补位是 NBSP（#577）：它们把标签补到 `<未沦陷>`
+    // 的 8 列，后面的 [☆] 一族才同列
+    ['爱慕', { 'talent:1:85': 1 }, `<爱${SP(2)}慕>${SP(5)}`],
+    ['淫乱', { 'talent:1:76': 1 }, `<淫${SP(2)}乱>${SP(5)}`],
     [
       '爱慕优先于淫乱',
       { 'talent:1:85': 1, 'talent:1:76': 1 },
-      `<爱  慕>${SP(5)}`,
+      `<爱${SP(2)}慕>${SP(5)}`,
     ],
     ['☆ 顶掉占位空格', { 'cflag:1:700': 1 }, '<未沦陷> [☆]'],
     ['可被卖', { 'cflag:1:0': 1, 'base:1:0': 1 }, `<未沦陷>${SP(5)}[可被卖]`],
@@ -178,7 +180,7 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
         'talent:1:192': 1,
         'talent:1:342': 1,
       },
-      '<爱  慕> [☆][可被卖][可作为助手][虫寄生][妊娠]',
+      '<爱\u00A0\u00A0慕> [☆][可被卖][可作为助手][虫寄生][妊娠]',
     ],
     [
       '全标签叠加（派遣态）',
@@ -189,7 +191,7 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
         'talent:1:342': 1,
         'cflag:1:1': 12,
       },
-      '<爱  慕> [☆][虫寄生][妊娠][派遣]',
+      '<爱\u00A0\u00A0慕> [☆][虫寄生][妊娠][派遣]',
     ],
   ];
   for (const [label, seed, tail] of CASES) {
@@ -230,7 +232,10 @@ test('LIFE_LIST：标签配色（爱慕/淫乱红、未沦陷灰、妊娠绿、�
   const pregnant = row_fragments(fixture, 1).find((f) =>
     f.content.includes('[妊娠]'),
   );
-  assert.deepEqual(tags[0], { content: '<爱  慕>', color: '#ff6464' });
+  assert.deepEqual(tags[0], {
+    content: '<爱\u00A0\u00A0慕>',
+    color: '#ff6464',
+  });
   assert.equal(pregnant.color, '#64ff64', '[妊娠] 是 SETCOLOR 100,255,100');
   assert.deepEqual(
     row_fragments(fixture, 1).find((f) => f.content.includes('[派遣]')),
@@ -307,7 +312,7 @@ test('LIFE_LIST_ITEM：定宽字段逐字比对（编号宽 2 / 名字 12 / 职�
   assert.equal(button_of(fixture, 2).rendered, '[2]', '编号进按钮格');
   assert.equal(
     row_text(fixture, 2),
-    `菲娅${SP(8)}  ${SP(7)} LV${SP(3)}8<淫  乱> [☆][可被卖]`,
+    `菲娅${SP(8)}  ${SP(7)} LV${SP(3)}8<淫${SP(2)}乱> [☆][可被卖]`,
     '名字补到 12、职业补到 8、等级右对齐 4',
   );
 });

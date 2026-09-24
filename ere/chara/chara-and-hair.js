@@ -25,7 +25,8 @@
  *     `PRINTFORM`（不是 `PRINTBUTTON`），点击不是入口、按键才是——按 page
  *     的 PR #53 通则只把「按钮化过的项」升级为 `era.printButton`，这里保持
  *     文本行。`[N]` 编号写在正文里（原作如此），不经引擎的 showAcc 补位。
- *   - **补位按显示宽度**（全角 2 / 半角 1，左对齐补半角空格）：源 :103 的
+ *   - **补位按显示宽度**（全角 2 / 半角 1，左对齐补 NBSP——#577 起补位字符
+ *     是 U+00A0，见 ere/utils/display-width.js）：源 :103 的
  *     `[{LOCAL:0,2}] %TALENTNAME:TALENT_ID, 10, LEFT%` 与 :219 的
  *     `[{COLOR_ID,2}] %ARR_HAIRCOLOR:COLOR_ID, 7, LEFT%` 是 Emuera 的
  *     FORM 位数语法（expressions.md「FORM 语法中的位数和对齐」）。

@@ -141,7 +141,7 @@ test('CHAR_CREATE：勇者段每行 4 格、精英段每行 5 格（补位宽度
   assert.ok(hero_row, '勇者首行含 1-4');
   assert.ok(!hero_row.includes('预设5'), '第 5 个换行');
   // 行内每格 = `[` + 编号右对齐宽 2 + `] ` + 名字左对齐宽 14（显示宽度：
-  // '预设1' 宽 5 → 补 9 个半角空格）
+  // '预设1' 宽 5 → 补 9 个 NBSP，#577 起补位字符是 U+00A0）
   assert.equal(
     hero_row,
     '[\u00A01] 预设1\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[\u00A02] 预设2\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[\u00A03] 预设3\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[\u00A04] 预设4\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0',

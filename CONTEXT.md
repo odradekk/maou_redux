@@ -154,7 +154,7 @@
 **对齐补位用 U+00A0（不换行空格），不用半角空格（#577）。** 引擎渲染层对文本行没有 `white-space` 设置，连续半角空格按浏览器默认规则合并成一个——`%v,N,LEFT%` / `{n,N}` 的空格补位在实机上全部失效。对齐补位一律走 `#/utils/display-width` 的 `pad_display` / `pad_left`（补位字符 U+00A0，源码以 `\u00A0` 转义或 `NBSP` 常量书写，不写裸字符）；引擎等宽字体下 U+00A0 占 1 个半角宽，与原作的列宽口径一致。两条边界：
 
 - 只为分隔而写的单个半角空格不动；行尾与整行空白不动。
-- **按钮正文不能靠 NBSP 对齐。** 渲染层的按钮行构造器（`app.asar` 的 `js/app.*.js`，构造 `lineType.button` 的 `function P(e)`）会把正文预处理成 `(showAcc ? '[acc] 正文' : '[正文]').split('\n').map(s => s.replace(/\s+/g, ' '))`，JS 的 `\s` 连 U+00A0、U+3000 一起匹配：按钮正文里的**任何**空白补位都被引擎自己压成一个半角空格（#577 之前用半角空格补位也是同一结果，实机表现不变）。这类位置按 #577 的普查表登记为已知差异：存档槽位的备注（`page-save-load.js` 的 `build_save_info` 经 `printButton` 渲染）、种族年龄配置页的档位按钮（`page-config-age.js`）、实验室与设置页的整列按钮正文（`page-shop-labo.js` / `page-config.js`）。
+- **按钮正文不能靠 NBSP 对齐。** 渲染层的按钮行构造器（`app.asar` 的 `js/app.*.js`，构造 `lineType.button` 的 `function P(e)`）会把正文预处理成 `(!1 !== showAcc ? '[' + acc + '] ' + content : '[' + content + ']').split('\n').map(s => s.replace(/\s+/g, ' '))`——`showAcc` **缺省为真**（只有显式传 `false` 才不拼编号前缀，与本节上一条「编号由引擎拼」同源），而 JS 的 `\s` 连 U+00A0、U+3000 一起匹配：按钮正文里的**任何**空白补位都被引擎自己压成一个半角空格（#577 之前用半角空格补位也是同一结果，实机表现不变）。**`printMultiColumns` 里的按钮格走同一条构造器**（多列按格的 `type` 派发），同样不能靠 NBSP 对齐；text / progress / divider / image 格不经过它。这类位置**整体**登记为已知差异、不逐处列举：按钮正文里手写的空白（存档槽位的备注 `page-save-load.js`、种族年龄配置页的档位按钮 `page-config-age.js`、实验室与设置页的价格列 `page-shop-labo.js` / `page-config.js` 等）一律不动——改也白改。`#577` 的普查表（逐文件的原写法与处理）见该 issue 的完成评论。
 
 ## 三条容易误解的语义
 

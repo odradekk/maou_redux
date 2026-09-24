@@ -1331,9 +1331,9 @@ export default [
     must_mention: '购物态下的其它输入一律 RETURN 0',
   },
   {
-    desc: 'M8381 LIFE_LIST 爱慕标签正文多一个空格',
+    desc: 'M8381 LIFE_LIST 爱慕标签正文丢两格补位（标签列塌一格）',
     file: 'ere/page/page-life-list.js',
-    find: "return { content: '<爱  慕>', color: COLOR_LOVE };",
+    find: "return { content: '<爱\\u00A0\\u00A0慕>', color: COLOR_LOVE };",
     replace: "return { content: '<爱慕>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
     must_mention: '行尾标签按判据逐维驱动',
@@ -1341,9 +1341,9 @@ export default [
   {
     desc: 'M8382 LIFE_LIST 淫乱标签判据错位（76 → 78）',
     file: 'ere/page/page-life-list.js',
-    find: "if (talent(cid, 76) !== 0) return { content: '<淫  乱>', color: COLOR_LOVE };",
+    find: "  if (talent(cid, 76) !== 0)\n    return { content: '<淫\\u00A0\\u00A0乱>', color: COLOR_LOVE };",
     replace:
-      "if (talent(cid, 78) !== 0) return { content: '<淫  乱>', color: COLOR_LOVE };",
+      "  if (talent(cid, 78) !== 0)\n    return { content: '<淫\\u00A0\\u00A0乱>', color: COLOR_LOVE };",
     tests: ['page-life-list'],
     must_mention: '行尾标签按判据逐维驱动',
   },
@@ -3602,7 +3602,7 @@ export default [
     must_mention: '护卫行：[名] ——',
   },
   {
-    desc: 'M11484 SHOW_FLOOR 怪物行数量对齐反向（padEnd 改 padStart：{N,2,LEFT} 语义变 RIGHT）',
+    desc: 'M11484 SHOW_FLOOR 怪物行数量改回半角空格右对齐（{N,2,LEFT} 的语义变 RIGHT——#577 前的旧写法）',
     file: 'ere/page/page-shop.js',
     find: '        `${pad_display(String(count), 2)}只${monstername(base_slot + i)}`,',
     replace:

@@ -217,7 +217,10 @@ test('LABO_PAGE1：条目编号与价格逐个钉住（页 0）', async () => {
     texts(added).includes('所持金：100000000点'),
     '所持金行读 era_flag.money（flag:10004）',
   );
-  assert.ok(texts(added).includes('1日  午前'), '日期行（DAY+1 与 TIME==0）');
+  // 源 :16-22 是 PRINTV DAY+1 + PRINT 日 + PRINTL  午前：内容一个半角空格。
+  // 同族的 page-item-shop / page-chara-shop / page-tailor / page-shop-trap
+  // 四处都写 1 格；本处原先多写一格，随 #577 的普查一并改正
+  assert.ok(texts(added).includes('1日 午前'), '日期行（DAY+1 与 TIME==0）');
 });
 
 test('SECRET_LABO：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行，:45 的 PRINTL 只收那一行）', async () => {

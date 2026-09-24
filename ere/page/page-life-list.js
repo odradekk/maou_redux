@@ -168,8 +168,12 @@ function pad_blank_rows(filled, num_page) {
  * @returns {{content: string, color: string}}
  */
 function love_fragment(cid) {
-  if (talent(cid, 85) !== 0) return { content: '<爱  慕>', color: COLOR_LOVE };
-  if (talent(cid, 76) !== 0) return { content: '<淫  乱>', color: COLOR_LOVE };
+  // 源里的 `PRINT <爱  慕>`：两个空格把标签补到 `<未沦陷>` 的 8 列，后面的
+  // [☆] 一族才与未沦陷行同列——列对齐补位，#577 起用 NBSP（行号见函数头）
+  if (talent(cid, 85) !== 0)
+    return { content: '<爱\u00A0\u00A0慕>', color: COLOR_LOVE };
+  if (talent(cid, 76) !== 0)
+    return { content: '<淫\u00A0\u00A0乱>', color: COLOR_LOVE };
   return { content: '<未沦陷>', color: COLOR_COLD };
 }
 

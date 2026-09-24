@@ -55,7 +55,6 @@ const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
 const { check_sellassiable } = require('#/system/stronghold/sale');
-const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { yokubo_up_check } = require('#/system/train/ability-check');
 const {
   ABLUP_IDS,
@@ -63,6 +62,7 @@ const {
   STUBBED_ABLUP_NAMES,
 } = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
+const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { stub_line } = require('#/utils/stub-line');
 
 /**

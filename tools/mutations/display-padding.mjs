@@ -82,7 +82,9 @@ export default [
     find: '  if (n < 100000) {\n    s += NBSP;\n  }',
     replace: "  if (n < 100000) {\n    s += ' '; // 变异：回退\n  }",
     tests: ['source-check'],
-    must_mention: '黄金样本比对',
+    // 黄金块比对（:107-118）把 U+00A0 归一回空格，拦不住这条；红的是
+    // :395-403 的 e2e 断言（「阴核 0+5」那行的 5 格 NBSP），故指它
+    must_mention: '参数变动行（阴核 0+5）',
   },
   {
     desc: 'M12218 SHOW_INFO_MARK 刻印行的 3 格列间隙退回半角空格（:1004-1008）',

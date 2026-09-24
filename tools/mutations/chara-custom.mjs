@@ -715,7 +715,7 @@ export default [
   {
     desc: 'M12014 CHAR_APPEND 的性别选项改成按钮（源是 PRINTFORMW，WAIT 会把按钮整批禁用）',
     file: 'ere/chara/chara-custom.js',
-    find: "    era.print(\n      '[1] 男性\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0[2] 女性\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0\\u00A0[3] 扶她',\n    ); // :240",
+    find: '    era.print(`[1] 男性${NBSP.repeat(6)}[2] 女性${NBSP.repeat(6)}[3] 扶她`); // :240',
     replace:
       "    era.printButton('男性', 1);\n    era.printButton('女性', 2);\n    era.printButton('扶她', 3); // 变异",
     tests: ['chara-custom'],
