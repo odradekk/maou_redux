@@ -106,10 +106,25 @@ test('空行普查（#596）：致辞按钮行与信息行相邻、联系按钮�
   );
   assert.equal(button_8, contact + 1, '联系行与按钮行同屏逐行相邻');
   assert.equal(divider, button_8 + 1, '联系按钮行与分割线之间不夹空行（:86）');
-  assert.equal(
-    fixture.lines.filter((line) => line.type === 'br').length,
-    3,
-    '全屏只有三个真空行：标题图之后 :26/:27 两个、年份行之后 :38 一个',
+  // 致辞之前的空行（两种形态都算：println 落 br、print('') 落 text 空串）只有
+  // 三处——:26/:27 那两个（图片缺席时也照打）与 :41 那一个；致辞串自带的空行
+  // 属屏幕下半段，不在此断言范围
+  const greeting_start = row_of(
+    (l) =>
+      l.type === 'text' &&
+      l.text.startsWith('※本版本由Delicious基于谦悟制作的0.60EX制作'),
+  );
+  const top_divider = row_of((l) => l.type === 'divider');
+  const year = row_of((l) => l.type === 'text' && l.text === '(2011 - 2024！)');
+  const is_blank = (line) =>
+    line.type === 'br' || (line.type === 'text' && line.text === '');
+  assert.deepEqual(
+    fixture.lines
+      .filter(is_blank)
+      .map((line) => line.row)
+      .filter((row) => row < greeting_start),
+    [top_divider + 1, top_divider + 2, year + 1],
+    '致辞之前只有三个空行：:26/:27 与 :41',
   );
 });
 

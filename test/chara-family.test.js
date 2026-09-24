@@ -380,9 +380,13 @@ test('家族信息输出父母、手足和子女按钮，并区分显示数与�
     ),
   );
   // RELATION_FAMILY.ERB:422-423 的 `SIF !LINEISEMPTY() → PRINTL` 只结束那一行
-  // （有内容才收尾），不产生空行（#596）
+  // （有内容才收尾），不产生空行（#596）。空行的两种形态都算：
+  // println 落 br、print('') 落 text 空串
   assert.equal(
-    fixture.lines_history.filter((entry) => entry.type === 'br').length,
+    fixture.lines_history.filter(
+      (entry) =>
+        entry.type === 'br' || (entry.type === 'text' && entry.text === ''),
+    ).length,
     0,
     '家族片段行逐段相邻，没有空行',
   );

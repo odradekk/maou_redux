@@ -122,7 +122,7 @@ function draw_title_screen() {
   if (gamebase.year) {
     era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]);
   }
-  era.println(); // 原作 :38 PRINTL
+  era.println(); // 原作 :41 PRINTL（:38 是作者行、:39-40 年份行，空行由 :41 出）
 
   // 原作 :39-86 致辞段：GLOBAL:99 == 0 展开、非 0 折叠（读值走包装层，#18）
   const greeting_lines =

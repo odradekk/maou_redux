@@ -224,6 +224,43 @@ test('SHOW_BLOCK：一人称行 = 自称宽 26 左对齐 + [8] 一人称重设�
   assert.equal(buttons[0].rendered, '[8] 一人称重设 ');
 });
 
+test('SHOW_BLOCK：三处收行 PRINTL 只结束所在行，全程零空行（#596）', async () => {
+  // 原作 :395-396/:405-408/:416-419 的 PRINTL 都只结束上一行（一人称/身高行、
+  // 体重行/LIFE_BAR 的未收行、臀围行/VITAL_BAR 的未收行），不产生空行。
+  // 魔王臂里 :395 的守卫不成立、:408/:419 落在两条 bar 的未收行上——三种
+  // 组合都不该多出空行。
+  const cases = [
+    [7, bit(15), '非魔王 + 三围开'],
+    [7, 0, '非魔王 + 三围关'],
+    [0, bit(15), '魔王'],
+  ];
+  for (const [cid, flag5, label] of cases) {
+    const { fixture, show_block } = block_fixture(flag5);
+    await show_block(cid);
+    // 空行的两种形态都算（println 落 br、print('') 落 text 空串）
+    assert.equal(
+      fixture.lines.filter(
+        (line) =>
+          line.type === 'br' || (line.type === 'text' && line.text === ''),
+      ).length,
+      0,
+      `${label}：SHOW_BLOCK 零空行（三处 PRINTL 只收行）`,
+    );
+  }
+  // 段落逐行相邻：一人称 → [8] → 身高 → 体力条 → 体重 → 气力条 → 臀围
+  const { fixture, show_block } = block_fixture(bit(15));
+  fixture.store.set('maxbase:7:0', 1000);
+  fixture.store.set('base:7:0', 800);
+  fixture.store.set('maxbase:7:1', 500);
+  fixture.store.set('base:7:1', 400);
+  await show_block(7);
+  assert.deepEqual(
+    fixture.lines.map((line) => line.type),
+    ['text', 'button', 'text', 'progress', 'text', 'progress', 'text'],
+    '段落序列（:395-396/:405-408/:416-419 三处都不插空行）',
+  );
+});
+
 test('SHOW_BLOCK：魔王（cid 0）不打印一人称行与 [8] 按钮（:373 的 ARG != MASTER）', async () => {
   const { fixture, show_block } = block_fixture();
   await show_block(0);
@@ -2220,10 +2257,10 @@ test('SHOW_CHARA_INFO：名单轮的 [999] 返回之后不补空行（#596）', 
   );
   assert.ok(back, '名单轮有一枚 [999] 返回');
   const at = fixture.lines.indexOf(back);
-  assert.notEqual(
-    fixture.lines[at + 1]?.type,
-    'br',
-    ':127 的返回文本之后不补空行',
+  const next = fixture.lines[at + 1];
+  assert.ok(
+    !(next?.type === 'br' || (next?.type === 'text' && next.text === '')),
+    ":127 的返回文本之后不补空行（println 与 print('') 两种形态都不许）",
   );
 });
 

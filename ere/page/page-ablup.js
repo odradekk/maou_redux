@@ -125,7 +125,7 @@ async function show_ablup_select(cid) {
     );
   }
   // :102-108 [IF_DEBUG] 的 [100] 异界综合征行——调试编译块，不移植
-  // （:109 的 PRINTL 只结束 [40] 中毒行那一行，不产生空行：
+  // （:109 的 PRINTL 只结束 [99]（原作还带 [100]）所在的那一行，不产生空行：
   // train-natural-log:951-952 里 [99] 行与尾部分割线相邻）
   era.drawLine(); // :110 CUSTOMDRAWLINE ‥
   era.printButton('- 能力值提高结束', 999); // :111（[999] 前缀由引擎拼）

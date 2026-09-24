@@ -319,7 +319,13 @@ export const FILES = [
         ref: '118',
         any: [/^[ \t]*CALL CHOOSE_HAIRCOLOR\(ID_OF_NEWCHARA\)[ \t]*$/m],
       },
-      // #596：发色列表的收尾 PRINTL 只结束残行那一行
+      // #596：性格/发色列表的收尾 PRINTL 只结束残行那一行（两句同 ref 不同 src：
+      // :112 在本文件、:227 在同目录的 CHOOSE_HAIRCOLOR）
+      {
+        src: 'target/ERB/キャラ関数/FUNC_CHARA_AND_HAIR.ERB',
+        ref: '112',
+        any: [/^\s*PRINTL\s*$/m],
+      },
       {
         src: 'target/ERB/キャラ関数/FUNC_CHARA_AND_HAIR.ERB',
         ref: '227',

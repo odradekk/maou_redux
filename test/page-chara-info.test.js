@@ -795,6 +795,29 @@ test('CHARA_INFO_INDIVIDUAL：操作按钮行与页脚分割线之间不夹空�
   );
 });
 
+test('CHARA_INFO_INDIVIDUAL：无操作按钮的子页保留 :907 的真空行（#596）', async () => {
+  // sub_page 3 在原作两支 IF/ELSEIF 都不命中（一个按钮都不打），:907 的 PRINTL
+  // 因此落在已收行的空行上 = 真空行；有按钮的子页里它只收行（上一条用例）。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  const { chara_info_individual } = fixture.load_module('page/page-chara-info');
+  fixture.set_inputs(102, 102, 102, 100); // 后页 ×3 → sub_page 3
+  await chara_info_individual(1, [1]);
+
+  const footer = fixture.lines.filter((line) => line.type === 'divider').at(-1);
+  const at = fixture.lines.indexOf(footer);
+  // 分割线之前连续两个空行：页尾补白（MIN_LINES）那一个 + :907 落在空行上的
+  // 那一个。把无按钮分支的 println 删掉后这里只剩一个（本用例的失败点）
+  const blank_forms = (index) =>
+    fixture.lines[index].type === 'br' ||
+    (fixture.lines[index].type === 'text' && fixture.lines[index].text === '');
+  assert.ok(
+    blank_forms(at - 1) && blank_forms(at - 2),
+    "无按钮子页里 :907 的空行在补白之后（println 与 print('') 两种形态都算）",
+  );
+});
+
 test('CHARA_INFO_INDIVIDUAL：前页/后页在 0..3 间夹紧', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -815,6 +838,7 @@ test('CHARA_INFO_INDIVIDUAL：前一人/后一人按 chara_sort 顺位导航，�
   add_chara(fixture, 1, '甲');
   add_chara(fixture, 2, '乙');
   const { chara_info_individual } = fixture.load_module('page/page-chara-info');
+
   // 从甲(1)开始：后一人 → 乙(2，此时已是末位，按钮不再画出）；
   // 前一人 → 回到甲(1)；再前一人 → 到魔王(0)（l_indx===0 特例）；
   // 魔王行 l_indx=-1 同样满足「后一人」判据（#391 修正，见文件头），

@@ -240,6 +240,16 @@ export const FILES = [
         ref: '907',
         any: [/^\s*PRINTL\s*$/m],
       },
+      // #596：:858-884 是操作按钮块（sub_page 0 的六个 CALL + [10]/[9]/[20]、
+      // sub_page 1/2 的 [6]/[7]/SHOW_BUTTON_EQUIP/PTJ_BUTTON）
+      {
+        src: INFO,
+        ref: '858-884',
+        any: [
+          /^\s*CALL SHOW_BUTTON_NAME_EDIT\(0,ARG,0\)/m,
+          /^\s*CALL PTJ_BUTTON\(ARG\)/m,
+        ],
+      },
     ],
   },
 ];

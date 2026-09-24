@@ -85,6 +85,27 @@ export const FILES = [
         ref: '86-87',
         any: [/^\s*PRINTFORML\nDRAWLINE\s*$/m],
       },
+      // #596 复核：作者/年份行之后的真空行来自 :41 的 PRINTL（旧注释写 :38，
+      // 那一行是 PRINTFORML 作者行）
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '41',
+        any: [/^\s*PRINTL\s*$/m],
+      },
+      // 同处的作者行与年份行（:41 的解释引用了它们）
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '38',
+        any: [/^PRINTFORML %GAMEBASE_AUTHOR%/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '39-40',
+        any: [
+          /^SIF STRLENS\(GAMEBASE_YEAR\) > 0\s*$/m,
+          /^\s*PRINTFORML \(%GAMEBASE_YEAR%\)/m,
+        ],
+      },
     ],
   },
 ];

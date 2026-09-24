@@ -430,7 +430,9 @@ function print_arr_group(arr, val, idx) {
   flush();
   era.setColor(''); // :184-231 RESETCOLOR（原作的字符色复位）
   // :231 的 PRINTL 只结束最后一格行（行首 :198 的 PRINTV "  " 起头、按钮逐格
-  // 续拼），不产生空行——ere 的 printMultiColumns 自成一行
+  // 续拼），不产生空行——ere 的 printMultiColumns 自成一行。空表或 :207-208
+  // 早退时原作剩下的是一条两空格行（本文件不搬运行首缩进，见文件头），ere
+  // 侧零输出，属同一条记名排版差异
 }
 
 /**

@@ -140,7 +140,10 @@ function size_str(cid, index) {
  * @returns {Promise<void>}
  */
 async function show_block(cid) {
-  const is_not_master = cid !== 0; // :370-373/:374-377/:395/:400/:411 的 (ARG != MASTER || MASTER)
+  // :370-373/:374-377/:395/:400/:411 的 (ARG != MASTER || MASTER) 守卫。打印
+  // 段用得到它；:395/:400/:411 三处只守 PRINTL 的收行（#596 起不镜像——ere
+  // 的 print 自成一行，收行由引擎负责）
+  const is_not_master = cid !== 0;
   const show_size = getbit(BIT_SIZE) && is_not_master;
 
   if (is_not_master) {
@@ -175,10 +178,8 @@ async function show_block(cid) {
   if (quest_guard(cid)) {
     await quest_now()(cid, '名前', 1);
   }
-
-  if (is_not_master) {
-    era.println(); // :395-396
-  }
+  // :395-396 的 PRINTL 只结束上一行（非魔王时是一人称/身高行、魔王时是
+  // LIFE_BAR 留下的未收行），不产生空行
 
   // :399 CALL LIFE_BAR, ARG, 1（原作末尾免改行，见文件头的逐行说明）
   life_bar(cid);
@@ -189,7 +190,7 @@ async function show_block(cid) {
   if (quest_guard(cid)) {
     await quest_now()(cid, '名前', 2); // :405-406
   }
-  era.println(); // :405-408
+  // :405-408 的 PRINTL 同理（只收体重行/LIFE_BAR 行）
 
   // :410 CALL VITAL_BAR, ARG, 1
   vital_bar(cid);
@@ -200,7 +201,7 @@ async function show_block(cid) {
   if (quest_guard(cid)) {
     await quest_now()(cid, '名前', 3); // :416-417
   }
-  era.println(); // :416-419
+  // :416-419 的 PRINTL 同理（只收臀围行/VITAL_BAR 行）
 }
 
 /**

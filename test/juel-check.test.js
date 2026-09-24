@@ -691,8 +691,11 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
   assert.equal(buttons.at(-1).rendered, '[999] - 能力值提高结束');
   // :81-86 的两处 PRINTL（每 4 条换行、末行不足 4 也收行）与 :109/:111 同款，
   // 都只结束所在的按钮行，不产生空行：train-natural-log:945-953 里五行能力
-  // 按钮、[99] 行、尾部分割线与 [999] 行全部逐行相邻（#596）
-  const br_count = fixture.lines.filter((line) => line.type === 'br').length;
+  // 按钮、[99] 行、尾部分割线与 [999] 行全部逐行相邻（#596）。
+  // 空行的两种形态都算（println 落 br、print('') 落 text 空串）
+  const blank_line = (line) =>
+    line.type === 'br' || (line.type === 'text' && line.text === '');
+  const br_count = fixture.lines.filter(blank_line).length;
   assert.equal(br_count, 0, '按钮行之间不夹空行');
   assert.deepEqual(
     fixture.lines.map((line) => line.type),

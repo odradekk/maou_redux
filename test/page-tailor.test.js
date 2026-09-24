@@ -138,7 +138,10 @@ test('TAILOR_CORE：现状行与追问行之间不夹空行（#596）', async ()
   );
   assert.ok(texts(added)[2].includes('穿上什么？'), '第 3 个文本行是追问行');
   assert.equal(
-    added.filter((line) => line.type === 'br').length,
+    added.filter(
+      (line) =>
+        line.type === 'br' || (line.type === 'text' && line.text === ''),
+    ).length,
     0,
     'TAILOR_CORE 主菜单零空行',
   );

@@ -735,6 +735,9 @@ async function chara_info_individual(arg, chara_sort) {
     const mp = era.get(`base:${current}:1`) || 0;
     const max_mp = era.get(`maxbase:${current}:1`) || 0;
 
+    // 操作按钮块（:858-884）：sub_page 0-2 各按守卫出一批按钮、sub_page 3 零按钮。
+    // 记下行数差判断这一轮有没有打过按钮（块内只有 printButton，见 #596）
+    const button_anchor = era.getLineCount();
     if (sub_page === 0) {
       // :858-859 两个改名按钮（#384 落真身：ere/chara/chara-name-edit.js）
       show_button_name_edit(0, current);
@@ -781,10 +784,12 @@ async function chara_info_individual(arg, chara_sort) {
     }
     // sub_page === 3：原作两支 IF/ELSEIF 都不命中，无操作按钮
 
-    // :907 的 PRINTL 只结束上一行（该行是上面那串 `SIF … PRINT [n] …` 拼出的
-    // 按钮行，ere 的 printButton 各自成行），不产生空行——train-upgrade-log:171-172
-    // 里按钮行与分割线逐行相邻。无操作按钮的子页在原作会多一个空行（:907 落在
-    // 空行上），那属于「无按钮」这一分支的副作用，不在此处补
+    // :907 的 PRINTL：打过按钮时只结束那一行（train-upgrade-log:171-172 里按钮
+    // 行与分割线逐行相邻）；一个按钮都没打时它落在已收行的空行上 = 真空行
+    // （sub_page 3，以及所有守卫都不放行的角色页）
+    if (era.getLineCount() === button_anchor) {
+      era.println();
+    }
     era.drawLine();
     era.printButton('前页', 101);
     era.printButton('返回', 100);
