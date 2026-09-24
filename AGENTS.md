@@ -250,7 +250,7 @@ erauma 的 `ere/` 分层可直接借鉴：`data/`（静态数据）、`event/`�
 
 ### ERA Basic（ERB）语法与 API
 
-读取 `target/` 中的 ERB 前，查阅 `emuera-basic-agent-guide` 技能，按文档确认语法与 API。正文位于 `.agents/skills/emuera-basic-agent-guide/`，**属于持续同步的外部材料，必须保持逐字不变**。ante 按 `.claude` → `.agents` → `.ante` 的顺序发现项目技能，同名技能以后者为准；Claude Code 使用 `.claude/skills/` 下的转发文件，采用转发文件的原因见其注释。
+读取 `target/` 中的 ERB 前，查阅 `emuera-basic-agent-guide` 技能，按文档确认语法与 API。正文位于 `.agents/skills/emuera-basic-agent-guide/`，**属于持续同步的外部材料，必须保持逐字不变**。该技能对 `PRINTC` / `PRINTLC` 的说明有误（不是居中打印、也不换行），正确语义与 ere 侧的对应写法见 `CONTEXT.md` 的「输出 API 与原作的对应」；不向上游报告前不改本地副本。ante 按 `.claude` → `.agents` → `.ante` 的顺序发现项目技能，同名技能以后者为准；Claude Code 使用 `.claude/skills/` 下的转发文件，采用转发文件的原因见其注释。
 
 ### 工单流程
 

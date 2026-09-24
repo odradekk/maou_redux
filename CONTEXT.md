@@ -140,6 +140,17 @@
 
 **「行（Row）」是引擎的编程行，不是显示行。** 一次 `printMultiColumns` 无论输出几个格子都只占一个 Row，`clear(1)` 会把它们一起清除；而一段长文本自然换行成三个显示行时仍只是一个 Row。画面组件的行数指的是 Row 数。
 
+## 输出 API 与原作的对应
+
+**`PRINTC` / `PRINTLC` 不是居中打印，也不换行。** 按 Emuera 官方文档（PRINTC 系）：两者都把文本补到配置「PRINTCの文字数」（初始值 25）指定的宽度再打印；`C` 是右对齐（左侧补半角空格），`LC` 是左对齐。**只有同一行排满「PRINTCを並べる数」（初始值 3，`PRINTCPERLINE()`）个项目时才自动换行**；名字里的 `L` 表示左对齐，不表示换行（换行仍由 `PRINTL` 负责——后缀表的 `K` 是 `FORCEKANA`、`D` 是忽略 `SETCOLOR`，所以 `PRINTLCD` 是「左对齐补位 + 默认色」）。
+
+**引擎的 `printButton` 自成一行，等价于原作的一个 `PRINTLC`（或 `PRINTBUTTON`）加上结束那一行的 `PRINTL`。** 由此两条推论：
+
+- 原作「若干 `PRINTLC` 串 + 一个收尾的 `PRINTL`」在 ere 侧只需要按钮，**不再补空行**；只有原作另写的独立 `PRINTL`（真正的空行）才译成 `era.println()` / `era.print('')`。多补一条就是多出来的空行（#562）。
+- 原作一行里排多个 `PRINTLC`（中间没有 `PRINTL`）时，ere 侧按按钮平铺逐行渲染，这是**记名差异**（排版），不为此改引擎用法；少数界面还会用 `era.setAlign('center')` 或 `printButton` 的 `align` 近似原作的列感，同样是记名差异（`ere/page/page-item-shop.js` 与 `page-shop-trap.js` 的页脚就是这种写法）。
+
+技能指南（`.agents/skills/emuera-basic-agent-guide/`，逐字同步的外部材料）把 `PRINTC` / `PRINTLC` 写成「居中打印」且「`PRINTLC` 还会换行」，与引擎行为不符；不改本地副本，一律以本节为准。
+
 ## 三条容易误解的语义
 
 **转场不是立即跳转。** 发出转场后，当前函数立刻结束，但事件链**继续跑完剩余的处理器**；期间若再次发出，后者覆盖前者，最后一个生效；整条链退出后才真正切换状态。按「立即跳转」实现会静默跳过大段结算逻辑。

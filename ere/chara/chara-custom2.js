@@ -18,8 +18,9 @@
  *   - **TARGET 换手显式化**：源 :1-153 的 `SWAP TARGET, ARG` 把指针换到被定制
  *     的角色上、:1-153/:1-153/:1-153 换回来（#5 决议第六条）。ere 侧全部以 cid 形参
  *     承载，SWAP 消解；唯一需要指针的地方是 `chara(cid).*` 门面，本身就带 cid。
- *   - **页脚四个 `PRINTLC` 升级为按钮**：源 :38-44 是居中文本 `[997] 前一页`
- *     一类，配 :1-153 的 `INPUT` 收编号——列排版文本 + INPUT 的通则（PR #53）
+ *   - **页脚四个 `PRINTLC` 升级为按钮**：源 :38-44 是列排版文本 `[997] 前一页`
+ *     一类（左对齐补位、**不换行**，见 CONTEXT.md「输出 API 与原作的对应」），
+ *     配 :1-153 的 `INPUT` 收编号——列排版文本 + INPUT 的通则（PR #53）
  *     升级为 `era.printButton`，正文不写 `[编号]`（引擎 showAcc 自动补）。
  *   - **素质格用 `printMultiColumns`，每行 6 格**：源 :455-483 的
  *     `SIF LOCAL % 6 == 0 PRINT` / `PRINTBUTTON` / `SIF LOCAL % 6 == 0 PRINTL`
@@ -1023,14 +1024,17 @@ async function char_custom(cid, mode, rand = default_rand) {
       }
     }
 
-    era.drawLine(); // :1-153
+    era.drawLine(); // 页脚段之前的 DRAWLINE
+    // :38-44 页脚四键是四个 PRINTLC 串（模式 1 少一个），紧随的 PRINTL 只结束
+    // 它们所在的那一行——PRINTLC 左对齐补位、**不换行**，那个 PRINTL 因此不产生
+    // 空行。ere 的 printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），
+    // 不再补空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
     era.printButton('前一页', 997); // :38 PRINTLC
     era.printButton('确定', 999); // :39
     if (mode === 0) {
       era.printButton('取消', 996); // :41-42
     }
     era.printButton('后一页', 998); // :44
-    era.println(); // :1-153
 
     // :47 $INPUT_LOOP
     for (;;) {

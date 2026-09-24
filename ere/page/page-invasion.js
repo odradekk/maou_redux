@@ -2666,7 +2666,8 @@ async function pick_hero(state, rejected) {
         era.print('');
       }
     }
-    // :512-515 三个按钮（PRINTLC 居中 → printButton，引擎自动拼 [编号]）
+    // :512-515 三个按钮（PRINTLC 左对齐补位、不换行 → printButton，引擎自动
+    // 拼 [编号]；语义见 CONTEXT.md「输出 API 与原作的对应」）
     era.drawLine();
     era.printButton('上一页', 1000);
     era.printButton('返  回', 999);

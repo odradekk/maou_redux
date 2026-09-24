@@ -110,6 +110,21 @@ const all_text = (lines) =>
   [...texts(lines), ...button_texts(lines)].join('\n');
 
 /**
+ * 最后一个按钮所在的行号（页脚空行断言的取证面：页脚是本屏最后打印的一组）。
+ *
+ * 原作本文件的页脚一律是「若干 `PRINTLC` 串 + 一个 `PRINTL`」：`PRINTLC`
+ * 不换行（按 CONTEXT.md「输出 API 与原作的对应」），那个 `PRINTL` 只结束
+ * 它所在的那一行。ere 的 `printButton` 自成一行（＝ `PRINTLC` + 收尾的
+ * `PRINTL`），故页脚按钮之后不应再出现空行。
+ * @param {object[]} lines 输出行
+ * @returns {number} 行号
+ */
+function last_button_row(lines) {
+  const buttons = lines.filter((line) => line.type === 'button');
+  return buttons[buttons.length - 1].row;
+}
+
+/**
  * 跑一次导出的函数并收集本次新增的输出。
  * @param {object} fixture 夹具
  * @param {string} name 导出名
@@ -205,6 +220,21 @@ test('LABO_PAGE1：条目编号与价格逐个钉住（页 0）', async () => {
   assert.ok(texts(added).includes('1日  午前'), '日期行（DAY+1 与 TIME==0）');
 });
 
+test('SECRET_LABO：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行，:45 的 PRINTL 只收那一行）', async () => {
+  const fixture = make_fixture({ seed: { 'exp:0:81': 0 } });
+  const { added } = await run_labo(fixture, [999]);
+
+  // 每页 $DRAW_PAGE 的页脚（:41-45）是三个 PRINTLC 加一个 PRINTL：PRINTLC
+  // 不换行（见 CONTEXT.md「输出 API 与原作的对应」），那个 PRINTL 只结束它
+  // 所在的那一行，不产生空行。ere 的 printButton 自成一行（＝ PRINTLC +
+  // 收尾的 PRINTL），页脚之后再补一条就是多出来的空行。
+  assert.deepEqual(
+    added.filter((line) => line.row > last_button_row(added)),
+    [],
+    '秘密实验室页脚按钮之后不应有空行',
+  );
+});
+
 test('SECRET_LABO：前/后页与 4 页循环（997 退一页、998 进一页）', async () => {
   const fixture = make_fixture({ seed: { 'exp:0:81': 0 } });
   // 后翻一页 → 页 1；再前翻一页 → 页 0；再前翻（P=0 时退到 3）→ 页 3
@@ -261,6 +291,23 @@ test('LABO_PAGE4：洗脑四项的按钮正文价格（8000 与 10000 两个档�
     accs(added).filter((a) => a >= 70 && a <= 74),
     [70, 71, 72, 73, 74],
     '战斗段五项',
+  );
+  // :272 的 PRINTL 是独立的一行（:271 `PRINTL [74] - 赋予魔法耐性` 整行自成
+  // 一行，不是 PRINTLC 串）——所以 [74] 与「□洗脑」之间恰有一个真空行。
+  // 它不属于 #562 修的那一类（PRINTLC 收尾 PRINTL 不多补空行），删掉即错。
+  const magic_row = button_of(added, 74).row;
+  const wash = added.find(
+    (line) => line.type === 'text' && line.text.startsWith('□洗脑'),
+  );
+  assert.equal(
+    added.filter(
+      (line) =>
+        line.row > magic_row &&
+        line.row < wash.row &&
+        (line.type === 'br' || (line.type === 'text' && line.text === '')),
+    ).length,
+    1,
+    ':272 的独立 PRINTL 仍是一个真空行',
   );
 });
 
@@ -565,6 +612,21 @@ test('MODIFY 族：选人画面的三个页脚键与提示行在场（以母乳�
     button_texts(asked.added).slice(-2),
     ['[0] - 好的', '[1] - 不要'],
     '确认键的正文',
+  );
+});
+
+test('选人画面：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行，收尾的 PRINTL 只收那一行）', async () => {
+  const fixture = make_fixture({ seed: {} });
+  const { added } = await run(fixture, 'modify_bonyu', [999], {});
+
+  // 选人骨架（本文件第 1 条移植说明）的页脚是三个 PRINTLC 加一个 PRINTL：
+  // PRINTLC 不换行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」），
+  // 那个 PRINTL 只结束它所在的那一行，不产生空行。ere 的 printButton 自成
+  // 一行（＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条就是多出来的空行。
+  assert.deepEqual(
+    added.filter((line) => line.row > last_button_row(added)),
+    [],
+    '实验室选人画面页脚按钮之后不应有空行',
   );
 });
 
@@ -1570,6 +1632,21 @@ test('EVILAPP：四项分发整表（1-4 → 各自界面，999 返回）', asyn
   }
   const back = make_fixture({ seed: {} });
   assert.equal((await run(back, 'evilapp', [999], {})).ret, 0);
+});
+
+test('EVILAPP：页脚 PRINTLC 之后没有空行（PRINTLC 不换行，:2872 的 PRINTL 只收那一行）', async () => {
+  const fixture = make_fixture({ seed: {} });
+  const { added } = await run(fixture, 'evilapp', [999], {});
+
+  // 原作 :2867-2872 是四个 PRINTL 项 + 一个 PRINTLC（[999] - 返  回）+ 一个
+  // PRINTL：PRINTLC 不换行（见 CONTEXT.md「输出 API 与原作的对应」），那个
+  // PRINTL 只结束它所在的那一行，不产生空行。ere 的 printButton 自成一行
+  // （＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条就是多出来的空行。
+  assert.deepEqual(
+    added.filter((line) => line.row > last_button_row(added)),
+    [],
+    '恶魔体征改造页脚按钮之后不应有空行',
+  );
 });
 
 test('DEMON_REBIRTH：类型表整表 + 等级门 + 附加素质 + 随机上界 3/7', async () => {

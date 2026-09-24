@@ -1,6 +1,7 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 239; // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
+export const COUNT = 240; // #562 起 +1（M11864：道具商店页脚不产生空行）；
+// #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
 // page-monster-shop 35 / page-chara-shop 22 / page-shop 3（另有 1 条 #395 的
@@ -2004,5 +2005,16 @@ export default [
     replace: `  { prostitution_effect = 0 } = {}, // 变异：缺省退回常量`,
     tests: ['sale'],
     must_mention: '缺省值读 store（modsave:0 = 1）',
+  },
+  {
+    // #562：PRINTLC 不换行，:80 的 PRINTL 只结束两个按钮那一行（见 CONTEXT.md
+    // 「输出 API 与原作的对应」）
+    desc: 'M11864 道具商店页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    file: 'ere/page/page-item-shop.js',
+    find: "  era.setAlign('left');\n\n  return 0;\n}",
+    replace:
+      "  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行\n\n  return 0;\n}",
+    tests: ['item-shop'],
+    must_mention: '道具商店页脚按钮之后不应有空行',
   },
 ];

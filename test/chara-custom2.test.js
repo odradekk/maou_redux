@@ -1167,6 +1167,30 @@ test('CHAR_CUSTOM：页眉显示设定与价格，页脚四键（模式 0 有取
   assert.deepEqual(fixture.era.getAddedCharacters(), [], '取消删掉了角色');
 });
 
+/** 最后一个按钮所在的行号（页脚空行断言的取证面：页脚是本屏最后打印的一组） */
+function last_button_row(fixture) {
+  const buttons = fixture.lines.filter((line) => line.type === 'button');
+  return buttons[buttons.length - 1].row;
+}
+
+test('CHAR_CUSTOM：页脚四个 PRINTLC 之后没有空行（PRINTLC 不换行，:45 的 PRINTL 只收那一行）', async () => {
+  const fixture = setup();
+  const { char_custom } = load(fixture);
+  fixture.set_inputs(996); // 取消：只画一屏就走
+
+  await char_custom(1, 0);
+  // 原作 :38-45 是四个 PRINTLC（模式 0；模式 1 三个）加一个 PRINTL：
+  // PRINTLC 按「PRINTCの文字数」补空格后打在同一行、**不换行**（语义与勘误
+  // 见 CONTEXT.md「输出 API 与原作的对应」），那个 PRINTL 只结束它所在的那
+  // 一行，不产生空行。ere 的 printButton 自成一行（＝ PRINTLC + 收尾的
+  // PRINTL），页脚之后再补一条就是多出来的空行。
+  assert.deepEqual(
+    fixture.lines.filter((line) => line.row > last_button_row(fixture)),
+    [],
+    '角色定制页脚按钮之后不应有空行',
+  );
+});
+
 test('CHAR_CUSTOM：模式 1 无取消键、页眉不显示价格', async () => {
   const fixture = setup();
   const { char_custom } = load(fixture);
@@ -1388,8 +1412,9 @@ test('CHAR_CUSTOM：页高 27 行（补行到固定高度）', async () => {
 
   await char_custom(1, 0);
   // 「27 行」从清屏锚点起算：drawLine + 页眉 + drawLine + 内容 + 补行 = 27；
-  // 之后才是页脚（drawLine + 四枚按钮 + PRINTL）
-  assert.equal(fixture.lines.length, 27 + 1 + 4 + 1, '页体恒 27 行（含补行）');
+  // 之后才是页脚（drawLine + 四枚按钮）——四个 PRINTLC 串之后的 PRINTL 只
+  // 收尾，不产生空行，故不计一行（见 CONTEXT.md「输出 API 与原作的对应」）
+  assert.equal(fixture.lines.length, 27 + 1 + 4, '页体恒 27 行（含补行）');
 });
 
 test('CHAR_CUSTOM：第 3 页仍是素质页（点 205 能落到职业上）', async () => {

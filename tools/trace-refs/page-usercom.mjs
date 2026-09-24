@@ -287,7 +287,12 @@ export const FILES = [
         ref: '209-214',
         any: [/^\tCALL GET_ADV_COM, L_I$/m, /IF RESULT == 64 && L_I != 64/],
       },
-      { src: 'target/ERB/調教相關/USERCOM.ERB', ref: '216', any: [/^NEXT$/m] },
+      // #562：方格最后一行由循环后那条 PRINTL 收尾（:216 是 NEXT）
+      {
+        src: 'target/ERB/調教相關/USERCOM.ERB',
+        ref: '217',
+        any: [/^\s*PRINTL\s*$/m],
+      },
     ],
   },
 ];
