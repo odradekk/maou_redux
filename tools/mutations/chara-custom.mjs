@@ -635,7 +635,9 @@ export default [
     replace:
       "        kiss_name = String((await era.input()) ?? ''); // 变异：A 语义",
     tests: ['chara-custom2'],
-    must_mention: ':656 的播报',
+    // #572 起选项是按钮：A 语义下部位一问照问、输入序列错位，由引擎的按钮
+    // 白名单当场拒收（断言走不到「:656 的播报」），变异仍被判红。
+    must_mention: '输入不合法！请输入以下值之一：',
   },
   {
     desc: 'M11836 初体验自定义输入改回 A 语义（0 落成名字「0」，随机支不可达）',
@@ -691,7 +693,7 @@ export default [
     find: "      era.printButton('唇', 1); // :618",
     replace: "      era.print('[1] 唇 '); // 变异",
     tests: ['chara-custom2'],
-    must_mention: '输入不合法！请输入以下值之一：',
+    must_mention: ':619-620 的 [201] 不显示',
   },
   {
     desc: 'M12012 CHARA_FIRST_XP 的确认退回纯文本行',
