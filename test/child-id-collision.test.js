@@ -18,7 +18,10 @@
  *      （yml/Chara*.yml 的键）同样必须小于它。扫描只认纯数字字面量，
  *      「常量 + 变量」型（chara-family.js 的 `15_000 + 角色 ID`）与变量型
  *      （`accelerator: cid`）不参与——它们的撞号面在完成评论的普查表里
- *      逐页列明；
+ *      逐页列明；另有「预设 ID × 同屏固定按钮」一类（预设 ID 在 FIRST_CHILD_ID
+ *      之下，上面两条覆盖不到）：#586 处理献祭名单页的 [100] 返回 × 预设 100，
+ *      守卫见下面那条静态用例；同为预设 100 的还有 cross-save-sharing.js 导出
+ *      菜单的 [100] 取消（同型、本票未修，见 #586 的完成评论与后续工单）；
  *   2. 行为——构造一个真后代，它在名册页与批量处刑页都能被选中，同屏的
  *      固定按钮照常可用。
  */
@@ -181,6 +184,51 @@ function declared_first_child_id() {
   return Number(m[1]);
 }
 
+/** yml/Chara*.yml 的编号集（升序） */
+function preset_ids() {
+  return fs
+    .readdirSync(YML_DIR)
+    .filter((name) => /^Chara\d+\.yml$/.test(name))
+    .map((name) => Number(/^Chara(\d+)\.yml$/.exec(name)[1]))
+    .sort((a, b) => a - b);
+}
+
+/** page-chara-info-show.js 里声明的 LIST_RETURN（值即源码字面量，不经运行时） */
+function declared_list_return() {
+  const text = fs.readFileSync(
+    path.join(ERE_DIR, 'page', 'page-chara-info-show.js'),
+    'utf8',
+  );
+  const m = /^const LIST_RETURN = (\d+);$/m.exec(text);
+  assert.ok(m, 'page-chara-info-show.js 必须声明 LIST_RETURN 常量');
+  return Number(m[1]);
+}
+
+/**
+ * 献祭名单页名单轮与角色行同屏的全部固定编号：返回（LIST_RETURN）＋六个条件
+ * 键。两者都从页面源码解析（条件键取 `result >= 下界 && result <= 上界` 那条
+ * 判定），源码改了这里跟着改——手抄的话改了源码这条核对会按旧值继续比对。
+ * @returns {number[]}
+ */
+function declared_sacrifice_list_fixed_numbers() {
+  const text = fs.readFileSync(
+    path.join(ERE_DIR, 'page', 'page-chara-info-show.js'),
+    'utf8',
+  );
+  const guard = /^ {4}if \(result >= (\d+) && result <= (\d+)\) \{$/m.exec(
+    text,
+  );
+  assert.ok(
+    guard,
+    'page-chara-info-show.js 必须用 `result >= 下界 && result <= 上界` 判定条件键（本核对按它取编号）',
+  );
+  const low = Number(guard[1]);
+  const high = Number(guard[2]);
+  assert.ok(high > low, `条件键区间必须非空（实际 ${low}-${high}）`);
+  const keys = Array.from({ length: high - low + 1 }, (_, i) => low + i);
+  return [declared_list_return(), ...keys];
+}
+
 test('静态：全部固定按钮编号都小于 FIRST_CHILD_ID（撞号的防线，#560）', () => {
   const first_child_id = declared_first_child_id();
   const offenders = [];
@@ -214,16 +262,32 @@ test('静态：全部固定按钮编号都小于 FIRST_CHILD_ID（撞号的防�
 
 test('静态：角色预设 ID（yml/Chara*.yml）都小于 FIRST_CHILD_ID', () => {
   const first_child_id = declared_first_child_id();
-  const presets = fs
-    .readdirSync(YML_DIR)
-    .filter((name) => /^Chara\d+\.yml$/.test(name))
-    .map((name) => Number(/^Chara(\d+)\.yml$/.exec(name)[1]))
-    .sort((a, b) => a - b);
+  const presets = preset_ids();
   assert.ok(presets.length > 30, `预设表数量异常：${presets.length}`);
   assert.ok(
     presets[presets.length - 1] < first_child_id,
     `预设 ID 上限 ${presets[presets.length - 1]}（Chara${presets[presets.length - 1]}.yml）` +
       ` 不得达到 FIRST_CHILD_ID = ${first_child_id}`,
+  );
+});
+
+test('静态：献祭名单页名单轮的固定编号不与预设 ID 撞号（#586）', () => {
+  // 「预设 ID × 同屏固定按钮」这一类：预设 ID 在 FIRST_CHILD_ID 之下，上面两条
+  // 静态守卫都覆盖不到。献祭名单页（page-chara-info-show.js 的 sacrifice_flow）
+  // 的名单轮以**角色 ID** 作角色行快捷键，同屏还有返回与六个条件键——预设 100
+  // 「怪物的女儿」能以 ID 100 加入（生命摇篮的 `CASEELSE` 透传，见该文件
+  // LIST_RETURN 的注释），与原作的 [100] 返回撞号后这个角色选不中（#586，行为
+  // 用例见 test/chara-info-show.test.js）。修法是名单轮的返回改用 [999]
+  // （LIST_RETURN），本用例守「名单轮的固定编号不与任何预设 ID 相交」——改回
+  // 100 或将来新增落在这些编号上的预设都会红。出口轮的 [10]/[100] 不打角色行，
+  // 允许与预设 10/100 同号（那两枚只是菜单选项）。
+  const fixed_numbers = declared_sacrifice_list_fixed_numbers();
+  const presets = new Set(preset_ids());
+  const offenders = fixed_numbers.filter((n) => presets.has(n));
+  assert.deepEqual(
+    offenders,
+    [],
+    `名单轮的固定编号与预设 ID 撞号（这些编号的角色行会被同屏按钮吃掉）：${offenders.join(', ')}`,
   );
 });
 

@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 64; // #565 返工 +1（M11633：TARGET 换手删除——语尾回退按调用方取）；#390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
+export const COUNT = 73; // #586 +9（M11900-M11902：献祭名单轮的返回编号——撞号复现、打印与判定各自的错位；M11903-M11906、M11907-M11908：十个探针暴露的覆盖缺口——条件键两端、编号基数、勇者档、自身排除、RESTART）；#565 返工 +1（M11633：TARGET 换手删除——语尾回退按调用方取）；#390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
 const TALENTS = 'ere/page/components/chara-talents.js';
@@ -581,5 +581,89 @@ export default [
     '    era.print(`一人称：${pad_display(self_call(cid), 26)}`);',
     '    era.print(`一人称：${pad_display(self_call(cid), 24)}`);',
     '[8] 一人称重设真按钮',
+  ),
+  // —— #586：献祭名单轮的返回编号（预设 100 × 原作的 [100] 撞号） ——
+  make(
+    11900,
+    'SHOW_CHARA_INFO：名单轮的返回编号退回原作的 100（与预设 100 的角色行撞号复现）',
+    MAIN,
+    'const LIST_RETURN = 999;',
+    'const LIST_RETURN = 100;',
+    '名单轮的固定编号与预设 ID 撞号',
+    ['chara-info-show', 'child-id-collision'],
+  ),
+  make(
+    11901,
+    'SHOW_CHARA_INFO：名单轮的返回按钮打回原作的 100（判定仍按 LIST_RETURN，敲 999 被拒收）',
+    MAIN,
+    "    era.printButton('返回', LIST_RETURN);",
+    "    era.printButton('返回', 100);",
+    '输入不合法',
+  ),
+  make(
+    11902,
+    'SHOW_CHARA_INFO：名单轮的返回判定退回 100（打印是 999，敲 999 落进名单循环）',
+    MAIN,
+    `    if (result === LIST_RETURN) {
+      return true; // :131-133 ARG = shadow; RESTART
+    }`,
+    `    if (result === 100) {
+      return true; // :131-133 ARG = shadow; RESTART
+    }`,
+    '输入不合法！请输入以下值之一',
+  ),
+  // —— #586 的十个探针暴露的覆盖缺口（条件键两端与编号基数、勇者档、自身排除、
+  // RESTART），补齐用例后一并入表 ——
+  make(
+    11903,
+    'SHOW_CHARA_INFO：条件键上界挪一格（1005 → 1004——最后一档瞳色切不过去）',
+    MAIN,
+    'if (result >= 1000 && result <= 1005) {',
+    'if (result >= 1000 && result <= 1004) {',
+    '切页后 9 号不再符合条件',
+  ),
+  make(
+    11907,
+    'SHOW_CHARA_INFO：条件键下界挪一格（1000 → 1001——第一档种族切不回去）',
+    MAIN,
+    'if (result >= 1000 && result <= 1005) {',
+    'if (result >= 1001 && result <= 1005) {',
+    '切页后 9 号不再符合条件',
+  ),
+  make(
+    11908,
+    'SHOW_CHARA_INFO：条件键的编号基数挪一格（1000 + index → 1001 + index）',
+    MAIN,
+    '      era.printButton(kind, 1000 + index);',
+    '      era.printButton(kind, 1001 + index);',
+    '输入不合法！请输入以下值之一',
+  ),
+  make(
+    11904,
+    'SHOW_CHARA_INFO：勇者档编号改错（STATE_HERO 2 → 3——勇者行不再打开贡品信息页）',
+    MAIN,
+    'if (picked_state === STATE_HERO) {',
+    'if (picked_state === 3) {',
+    '打开的是 9 号的贡品信息页',
+  ),
+  make(
+    11905,
+    'SHOW_CHARA_INFO：名单不再排除献祭对象自身（源 :98 的 temp != shadow 去掉）',
+    MAIN,
+    `      if (
+        id === shadow ||`,
+    `      if (
+        false || // 变异：不排除献祭对象自身`,
+    '献祭对象自身的行不出',
+  ),
+  make(
+    11906,
+    'SHOW_CHARA_INFO：名单轮的返回从 RESTART 改成直接退到首页（出口轮不再重画）',
+    MAIN,
+    `      const restart = await sacrifice_flow(cid, background); // :33-214
+      if (restart) continue; // RESTART`,
+    `      const restart = await sacrifice_flow(cid, background); // :33-214
+      if (restart) return 1; // 变异：RESTART 改成直接退到首页`,
+    'RESTART 后出口轮重画',
   ),
 ];
