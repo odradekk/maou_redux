@@ -45,6 +45,10 @@
  *     endTrain 删除）：TFLAG:13/14 走 game.train 的调教外通道，TEQUIP:35
  *     （安全套）改函数内局部，PALAM:5 的两条 SIF 在引擎里恒不命中——
  *     OFFERVIRGIN_CHECK 的 JSDoc 逐条记了这三处。
+ *   - 三处 `[0] - 好的 / [1] - 不要` 式选项（:371-372、:944-945、:969-970）
+ *     升格为 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；#572）。
+ *     随之「其余值 GOTO INPUT_LOOP」的重问支在实机上不可达（引擎按白名单
+ *     拒收），1:1 保留不补用例（page-ability-up.js 文件头同款登记）。
  */
 const era = require('#/era-electron');
 const { karma, faith } = require('#/chara/chara-stats');
@@ -125,8 +129,9 @@ async function event_futa_f(cid) {
   era.print('（呃…这是什么？）'); // :368
   for (;;) {
     era.print(`${name}要【${talent_name(121)}】化吗？`); // :370
-    era.print('[0] - 好的'); // :371
-    era.print('[1] - 不要'); // :372
+    // :371-372 的两行选项 → 按钮（PR #53 通则，#572）
+    era.printButton('- 好的', 0); // :371（正文的 `- ` 是原作文本）
+    era.printButton('- 不要', 1); // :372
     const result = await era.input(); // :373
     if (result === 0) {
       // :375-378
@@ -559,8 +564,9 @@ async function offervirgin_check(rand = default_rand) {
   let answer;
   for (;;) {
     era.print(`要夺取${name}的处女吗？`); // :943
-    era.print('[0] - 等你很久了！'); // :944
-    era.print('[1] - 继续等着吧你……'); // :945
+    // :944-945 的两行选项 → 按钮（PR #53 通则，#572）
+    era.printButton('- 等你很久了！', 0); // :944
+    era.printButton('- 继续等着吧你……', 1); // :945
     answer = await era.input(); // :946
     if (answer === 1 || answer === 0) break;
     // :963-964 ELSEIF RESULT != 0 → GOTO INPUT_LOOP_01
@@ -592,8 +598,9 @@ async function offervirgin_check(rand = default_rand) {
     // :966-978 安全套二问
     for (;;) {
       era.print('要使用安全套吗？'); // :968
-      era.print('[0] - 安全第一！'); // :969
-      era.print('[1] - 中出最高！'); // :970
+      // :969-970 的两行选项 → 按钮（PR #53 通则，#572）
+      era.printButton('- 安全第一！', 0); // :969
+      era.printButton('- 中出最高！', 1); // :970
       const answer_condom = await era.input(); // :971
       if (answer_condom === 1) break; // :975-976 ELSEIF RESULT != 1 → 重问
       if (answer_condom === 0) {

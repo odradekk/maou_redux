@@ -75,6 +75,11 @@
  *     变量（DUNGEON.ERB 的 X *= 2 同款处置）。
  *   - **`WAIT` → `await era.waitAnyKey()`**（PRINTW 的等待语义，#73；
  *     enter-enemy.js:86 先例）。
+ *   - **旁观凌辱 / 不要凌辱的选择项改 `era.printButton`**（#572，PR #53
+ *     通则）：正文不写 [编号]（引擎按 showAcc 拼）、原文的「- 」照写；
+ *     两处各两枚——主框架 :21-22 与 @PC_RYOU :2358-2359。原作的
+ *     `RESULT < 0 || RESULT >= 2 → GOTO INPUT_LOOP` 随白名单收紧（0/1）
+ *     在实机上不可达，1:1 保留结构、不补用例（page-ability-up.js 同款）。
  *   - **`VIRGIN`（#DIM :3）是死变量**：声明并赋值（VIRGIN = TALENT:ARG:0）
  *     后全文件无读取，注释保留不落变量（与 #183 的 Y 同款判定）。
  *   - **`RAND:n` → rand_n(n)**（#117：随机源注入，缺省均匀随机）。
@@ -270,9 +275,10 @@ async function ryouzyoku(arg, rand) {
   show_data(arg); // :18（#390 真身）
   await era.print(''); // :19 PRINTL
 
-  // :21-29 选择循环：旁观凌辱 / 不要凌辱
-  await era.print('[0] - 旁观凌辱'); // :21
-  await era.print('[1] - 不要凌辱'); // :22
+  // :21-29 选择循环：旁观凌辱 / 不要凌辱（#572：升格为按钮，正文不写 [编号]，
+  // 引擎按 showAcc 拼；「- 」是原文的一部分）
+  era.printButton('- 旁观凌辱', 0); // :21
+  era.printButton('- 不要凌辱', 1); // :22
   for (;;) {
     const result = await era.input(); // :24 INPUT
     if (result < 0 || result >= 2) {
@@ -3145,9 +3151,10 @@ async function pc_ryou(arg0, arg1, rand) {
   // PRINTL 空格行并入占位注释，不单独输出）
   await era.print(''); // :2357 PRINTL
 
-  // :2360-2366 选择循环：旁观凌辱 / 不要凌辱
-  await era.print('[0] - 旁观凌辱'); // :21
-  await era.print('[1] - 不要凌辱'); // :22
+  // :2358-2359 选择循环：旁观凌辱 / 不要凌辱（#572：升格为按钮；行锚订正为
+  // PC_RYOU 段自己的两行——此前误写成主框架的 :21/:22，文本相同故锁没红）
+  era.printButton('- 旁观凌辱', 0); // :2358
+  era.printButton('- 不要凌辱', 1); // :2359
   for (;;) {
     const result = await era.input(); // :2364 INPUT
     if (result < 0 || result >= 2) {

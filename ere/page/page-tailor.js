@@ -1212,7 +1212,8 @@ async function tailor_core(arg) {
     era.print(
       `${chara_callname(arg)}现在${get_clothtype_main2(arg, '身穿')}。`,
     ); // :73 %GET_CLOTHTYPE_MAIN2(TARGET,"身穿")%
-    era.print(''); // :73-75（夹在目标现状行与追问行之间的空行）
+    // :73-75 是两条 PRINTFORML 逐行相邻（中间那行是空白源码行，不含 PRINTL），
+    // 原作这里没有空行
     era.print(`要让${chara_callname(arg)}穿上什么？`); // :75
     era.drawLine(); // :76-78（DRAWLINE + 日常服饰项）
     era.printButton(`日常服饰（${CASUAL_PRICE}点）`, 0); // :78

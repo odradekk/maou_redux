@@ -689,10 +689,22 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
   assert.equal(buttons[0].rendered, '[0] 阴蒂感觉 - LV 3');
   assert.equal(buttons.at(-2).rendered, '[99] 反抗刻印 - LV 1');
   assert.equal(buttons.at(-1).rendered, '[999] - 能力值提高结束');
-  // 4 列换行：21 条能力（5 行 × 4 + 残行 1）→ 6 次 br，[99] 行与 [999]
-  // 行各 1 次 → 共 8
-  const br_count = fixture.lines.filter((line) => line.type === 'br').length;
-  assert.equal(br_count, 8);
+  // :81-86 的两处 PRINTL（每 4 条换行、末行不足 4 也收行）与 :109/:111 同款，
+  // 都只结束所在的按钮行，不产生空行：train-natural-log:945-953 里五行能力
+  // 按钮、[99] 行、尾部分割线与 [999] 行全部逐行相邻（#596）。
+  // 空行的两种形态都算（println 落 br、print('') 落 text 空串）
+  const blank_line = (line) =>
+    line.type === 'br' || (line.type === 'text' && line.text === '');
+  const br_count = fixture.lines.filter(blank_line).length;
+  assert.equal(br_count, 0, '按钮行之间不夹空行');
+  assert.deepEqual(
+    fixture.lines.map((line) => line.type),
+    Array.from({ length: buttons.length - 1 }, () => 'button').concat([
+      'divider', // :110 CUSTOMDRAWLINE ‥（夹在 [99] 行与 [999] 行之间）
+      'button', // :111 [999] - 能力值提高结束
+    ]),
+    '按钮逐行相邻，[99] 行与尾部分割线、[999] 行之间都没有空行',
+  );
 });
 
 test('SHOW_ABLUP_SELECT：男无 私处感觉/百合气质/百合中毒，第 0 项改「阴茎感觉」', async () => {
@@ -823,5 +835,23 @@ test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位�
     STUBBED_CALLS,
     [],
     'juel-check 的存根名单清空（ABLUP 缺号回落仍由 STUBBED_ABLUP_NAMES 驱动）',
+  );
+});
+
+// ———— #595：结算表头的收尾空行 ————
+
+test('#595 调教结果表头与表格首行之间不夹空行（:655 的 PRINTL 只收尾拼行）', () => {
+  const fixture = create_era_fixture();
+  const mod = seed_world(fixture);
+
+  mod.juel_check_main(31, () => 0);
+
+  const header = fixture.lines.find((l) => l.text?.startsWith('调教结果：'));
+  assert.ok(header, '结算表头在场');
+  const next = fixture.lines.find((l) => l.row === header.row + 1);
+  assert.equal(
+    next?.type,
+    'divider',
+    '表头之后直接是 :656 的点线，不补空行（TRAIN_MAIN.ERB:655 只收尾 :652-654 的 PRINTFORM 链）',
   );
 });

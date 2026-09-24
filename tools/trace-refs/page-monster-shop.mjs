@@ -11,6 +11,16 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/SHOP/SHOP_MONSTER.ERB',
+        ref: '97-101',
+        any: [
+          new RegExp(
+            '^\\s*PRINTFORML \\[1\\]兽人类　　　　\\[2\\]史莱姆类　　　\\[3\\]昆虫类\\s*$\\s*^\\s*PRINTFORML \\[4\\]植物类　　　　\\[5\\]触手类　　　　\\[6\\]妖精类\\s*$\\s*^\\s*PRINTFORML \\[7\\]巨人类　　　　\\[8\\]魔人类　　　　\\[9\\]魔兽类\\s*$\\s*^\\s*DRAWLINE\\s*$\\s*^\\s*PRINTFORML \\[999\\] 返回\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_MONSTER.ERB',
         ref: '16-18',
         any: [new RegExp('^\\s*;アイテム購入・売却処理画面\\s*$', 'm')],
       },
@@ -174,26 +184,6 @@ export const FILES = [
         any: [
           new RegExp(
             '^\\s*PRINTFORML \\[1\\]兽人类　　　　\\[2\\]史莱姆类　　　\\[3\\]昆虫类\\s*$',
-            'm',
-          ),
-        ],
-      },
-      {
-        src: 'target/ERB/SHOP/SHOP_MONSTER.ERB',
-        ref: '98',
-        any: [
-          new RegExp(
-            '^\\s*PRINTFORML \\[4\\]植物类　　　　\\[5\\]触手类　　　　\\[6\\]妖精类\\s*$',
-            'm',
-          ),
-        ],
-      },
-      {
-        src: 'target/ERB/SHOP/SHOP_MONSTER.ERB',
-        ref: '99',
-        any: [
-          new RegExp(
-            '^\\s*PRINTFORML \\[7\\]巨人类　　　　\\[8\\]魔人类　　　　\\[9\\]魔兽类\\s*$',
             'm',
           ),
         ],

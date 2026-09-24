@@ -349,6 +349,46 @@ test('失神中无新触发（895 = 0）：依然未醒来', async () => {
   assert.deepEqual(fixture.text_lines(), ['', '温妮依然未醒来。']);
 });
 
+test('#595 895 = 3/4/6 三档：台词行之后的真空行都在（:255/:260/:266）', async () => {
+  // PASSOUT.ERB:254/:259/:265 的台词 PRINTFORML 已收行 → 紧随的空内容
+  // PRINTFORML 是真空行，其后才是叙述行（#595）
+  const cases = [
+    [
+      3,
+      [
+        '「不行了～～～～！！！…放、放过……我……吧」',
+        '',
+        '…温妮当场倒下，因为过于强烈的恐惧失去了意识',
+      ],
+    ],
+    [
+      4,
+      [
+        '「噢哈啊啊啊啊啊啊啊！！…放、放过……我……吧」',
+        '',
+        '…温妮全身抽搐，当场倒下了，',
+        '被快感和痛楚同时冲击，失去了意识。',
+      ],
+    ],
+    [
+      6,
+      [
+        '「不行了～～～～！！！…放、放过……我……吧」',
+        '',
+        '…温妮全身抽搐，当场倒下了，',
+        '受不了无法忍耐的痛楚和恐惧，失去了意识。',
+      ],
+    ],
+  ];
+  for (const [flag, expected] of cases) {
+    const { fixture, passout } = seed_world();
+    fixture.store.set('tflag:895', flag);
+    fixture.store.set('tflag:899', 1);
+    await passout.passout_text();
+    assert.deepEqual(fixture.text_lines(), expected, `895 = ${flag}`);
+  }
+});
+
 test('恢复分支：896/897/898 全 3 → 恢复文案 + PASSOUT_MESSAGE（CFLAG:99 = 0）', async () => {
   const { fixture, passout } = seed_world();
   await recover_with(fixture, passout, (f) => f.store.set('tflag:871', 1));

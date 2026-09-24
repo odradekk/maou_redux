@@ -144,7 +144,13 @@ test('RYOUZYOKU 主框架：选择[1]不要凌辱 → 直接返回 0', async () 
   const result = await mod.ryouzyoku(31, seq_rand(0));
   assert.equal(result, 0);
   assert.ok(fixture.text_lines().some((l) => l.includes('将被凌辱')));
-  assert.ok(fixture.text_lines().some((l) => l.includes('不要凌辱')));
+  // #572：两枚选项是按钮（源 :21-22，正文含「- 」；引擎按 showAcc 拼 [N]）
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] - 旁观凌辱', '[1] - 不要凌辱'],
+  );
 });
 
 test('RYOUZYOKU 主框架：选择[0]旁观 → 走凌辱畏怖记忆 + 分派（无怪物列时跳过）', async () => {
@@ -224,7 +230,13 @@ test('PC_RYOU：选择[1]不要凌辱 → 直接返回 0', async () => {
   fixture.era.input = async () => 1;
   const result = await mod.pc_ryou(0, 31, seq_rand(0));
   assert.equal(result, 0);
-  assert.ok(fixture.text_lines().some((l) => l.includes('不要凌辱')));
+  // #572：选项是按钮（源 :2358-2359；行锚此前误写成主框架的 :21/:22，已订正）
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] - 旁观凌辱', '[1] - 不要凌辱'],
+  );
 });
 
 test('PC_RYOU：素手时装剑（CFLAG:550 = 40），触手武器（识别号 49）分支 + 处女丧失', async () => {

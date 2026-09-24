@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2387; // #599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2390; // #599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -22065,6 +22065,16 @@ async function try_kojo_or_stub(
     tests: ['kojo-text-fidelity'],
     must_mention: '漏列区间内的 PRINT 行 :717',
   },
+  // —— #572：K10 初调教两处二选一的按钮化 ——
+  {
+    desc: 'M12035 K10 初调教的选项退回纯文本行（引擎里点不动）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find: "      era.printButton('- 直不起来。', 0); // :96（「- 」是原作正文）\n      era.printButton('- 就是这样才好。', 1); // :97",
+    replace:
+      "      era.print('[0] - 直不起来。'); // 变异\n      era.print('[1] - 就是这样才好。'); // 变异",
+    tests: ['kojo-k10-club'],
+    must_mention: '两处二选一是按钮',
+  },
   {
     desc: 'M11940 卖春失败（有客）行拆回两条（#584：:314+:315 的同一行被拆）',
     file: 'ere/kojo/kojo-dungeon-bitch.js',
@@ -22269,6 +22279,23 @@ async function try_kojo_or_stub(
       "    await era.printAndWait('的金额，被人买下收藏了'); // :94（变异：拆回）",
     tests: ['kojo-forced-payment'],
     must_mention: '拍片结算行同一行',
+  },
+  // —— #572：迷宫凌辱两处选择项（旁观/不要）的按钮化 ——
+  {
+    desc: 'M12018 迷宫凌辱主框架的旁观/不要选择项退回纯文本行',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: "  era.printButton('- 旁观凌辱', 0); // :21",
+    replace: "  era.print('[0] - 旁观凌辱'); // 变异",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '不要凌辱',
+  },
+  {
+    desc: 'M12019 @PC_RYOU 的旁观/不要选择项退回纯文本行',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: "  era.printButton('- 旁观凌辱', 0); // :2358",
+    replace: "  era.print('[0] - 旁观凌辱'); // 变异",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: 'PC_RYOU',
   },
 
   // —— #599：肉便器口上 BENKI_PLAYER_NAME 接入（M12130-M12139） ——

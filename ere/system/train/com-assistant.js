@@ -530,9 +530,12 @@ async function hairset() {
       }
       break;
     }
+    // COMF73:132 的裸 PRINTL 落在空行上 → 真空行；它在 COMF73:70 的 GOTO 目标
+    // ($INPUT_LOOP_HAIRSET) 之前，短发（TALENT:302 ≤ 100）时被整条跳过，
+    // 所以只能放在这条 >100 分支里（#595）
+    era.print('');
   }
 
-  era.print('');
   for (;;) {
     era.print(`把${t_name}的头发弄成什么样子？`);
     era.printButton('自然', 1);
@@ -1323,18 +1326,21 @@ async function com64() {
     if ((await confirm_lost_virgin()) === 0) return 0;
     if (!(await confirm_condom())) return 0;
   }
-  era.print('３Ｐ');
   const t40 = era.get('tflag:40') || 0;
   const t41 = era.get('tflag:41') || 0;
+  // COMF64:79 的 `PRINT ３Ｐ` 不收行，COMF64:81/83/85/87 的 PRINTL 收尾同一行——
+  // 四种后缀与「３Ｐ」同处一行，故这里合成一次 print（#595）
+  let suffix;
   if ((t40 === 1 && t41 === 2) || (t40 === 2 && t41 === 1)) {
-    era.print('・私处和肛门一起插');
+    suffix = '・私处和肛门一起插';
   } else if ((t40 === 1 && t41 === 3) || (t40 === 3 && t41 === 1)) {
-    era.print('・性交同时口交');
+    suffix = '・性交同时口交';
   } else if ((t40 === 2 && t41 === 3) || (t40 === 3 && t41 === 2)) {
-    era.print('・肛交同时口交');
+    suffix = '・肛交同时口交';
   } else {
-    era.print('　');
+    suffix = '　';
   }
+  era.print(`３Ｐ${suffix}`);
   era_flag.selectcom = 64;
   await train_message_b();
   if (site_used(1)) era.set('tflag:19', 1);
@@ -2524,11 +2530,12 @@ train_message_b_family.register(64, async () => {
     }
     return '';
   };
-  if (era_flag.assiplay) {
-    era.print(site('master', t40, true) + site('assi', t41, false));
-  } else {
-    era.print(site('assi', t41, true) + site('master', t40, false));
-  }
+  // EVENT_TRAIN_MESSAGE_B:2099-2129：两侧部位各自命中才各打一句；TFLAG:40/41
+  // 都为 0（没升格到任何部位）时原作零输出——不可无条件 print（多一个空行，见 #595）
+  const text = era_flag.assiplay
+    ? site('master', t40, true) + site('assi', t41, false)
+    : site('assi', t41, true) + site('master', t40, false);
+  if (text) era.print(text);
   return 0;
 });
 

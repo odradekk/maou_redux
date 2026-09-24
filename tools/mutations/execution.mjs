@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 154; // #549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
+export const COUNT = 165; // #572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
 export default [
   {
@@ -1327,5 +1327,95 @@ export default [
     replace: '  era.print(`现在的肉便器数量：${game.invasion.肉便器数}`);',
     tests: ['event-execution'],
     must_mention: ':255 PRINTFORMW 必须用 printAndWait',
+  },
+  // —— #572：处刑与设施菜单的选项按钮化（引擎里点得动）——
+  {
+    desc: 'M11990 流放五选一退回纯文本行（引擎里点不动，PR #53 通则失效）',
+    file: 'ere/event/event-banishment.js',
+    find: "  era.printButton('就这样流放掉', 0);",
+    replace: "  era.print('[0] 就这样流放掉');",
+    tests: ['event-execution'],
+    must_mention: '五选一菜单是按钮',
+  },
+  {
+    desc: 'M11991 流放消费点去掉 useRule: false（原作受理的未显示 100 被锁死）',
+    file: 'ere/event/event-banishment.js',
+    find: '    result = await era.input({ useRule: false });',
+    replace: '    result = await era.input(); // 变异：收紧白名单',
+    tests: ['event-execution'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M11992 公开处刑三选一退回纯文本行（同上）',
+    file: 'ere/event/event-public-execution.js',
+    find: "  era.printButton('凌辱刑', 0);",
+    replace: "  era.print('[0] 凌辱刑');",
+    tests: ['event-execution'],
+    must_mention: '三选一菜单是按钮',
+  },
+  {
+    desc: 'M11993 公开处刑消费点去掉 useRule: false（未显示的 100 被锁死）',
+    file: 'ere/event/event-public-execution.js',
+    find: '    result = await era.input({ useRule: false });',
+    replace: '    result = await era.input(); // 变异：收紧白名单',
+    tests: ['event-execution'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M11994 处置菜单退回纯文本行（[0]-[7] 点不动）',
+    file: 'ere/event/event-execution.js',
+    find: '      era.printButton(label, index);\n    }',
+    replace: "      era.print('[' + index + '] ' + label); // 变异\n    }",
+    tests: ['event-execution'],
+    must_mention: '处置菜单',
+  },
+  {
+    desc: 'M11995 候选人轮的 [100] 返回改成按钮（白名单会把候选人编号锁死）',
+    file: 'ere/event/event-execution.js',
+    find: "    era.print('[100] 返回');\n    let selected;",
+    replace:
+      "    era.printButton('返回', 100); // 变异：列表轮打了按钮\n    let selected;",
+    tests: ['event-execution'],
+    must_mention: '候选人轮的 [100] 返回保持纯文本',
+  },
+  {
+    desc: 'M11996 设施主菜单退回纯文本行（展品行点不动）',
+    file: 'ere/page/page-infrastructure.js',
+    find: "  era.printButton('看看全部展品的样子', 50);",
+    replace: "  era.print('[50] 看看全部展品的样子'); // 变异",
+    tests: ['event-execution'],
+    must_mention: '设施菜单',
+  },
+  {
+    desc: 'M11997 播种者四选退回纯文本行（四个编号点不动）',
+    file: 'ere/page/page-infrastructure.js',
+    find: "      era.printButton('俘虏的中年', 1);",
+    replace: "      era.print('[1] 俘虏的中年'); // 变异",
+    tests: ['event-execution'],
+    must_mention: '设施菜单',
+  },
+  {
+    desc: 'M11998 牧场设定菜单的 [999] 返回退回纯文本行（白名单收成 0/1/2，999 被拒收）',
+    file: 'ere/page/page-infrastructure.js',
+    find: "    era.printButton('返回', 999);",
+    replace: "    era.print('[999] 返回'); // 变异",
+    tests: ['event-execution'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M11999 录像架翻页退回纯文本行（三条 PRINTLC 选项点不动）',
+    file: 'ere/page/page-infrastructure.js',
+    find: "    era.printButton('- 下一页', 1001); // :363",
+    replace: "    era.print('[1001] - 下一页'); // 变异",
+    tests: ['event-execution'],
+    must_mention: '录像架',
+  },
+  {
+    desc: 'M11985 批量处刑的选择处刑方式退回预设 ID 段内的 [150]',
+    file: 'ere/event/event-execution-batch.js',
+    find: "era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
+    replace: "era.printButton('选择处刑方式', 150); // SIF 可处刑（:66-67）",
+    tests: ['child-id-collision'],
+    must_mention: '同一轮里与角色行同屏的固定编号不得等于预设 ID',
   },
 ];

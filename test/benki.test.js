@@ -433,3 +433,50 @@ test('存根清单可检索：benki.js 的 STUBBED_CALLS 已空（BENKI_KOUJO �
     assert(registry.includes(name), `存根清单缺少 ${name}`);
   }
 });
+
+// —— #595：空行普查（BENKI.ERB 对照） ————
+
+test('#595 run_benki：入口空行＋分割线（:50-51）与收尾空行（:1352 PRINTW）', async () => {
+  const { fixture, mod } = setup_benki();
+  await mod.run_benki(31, seq_rand(0));
+  // :50 的 PRINTL 落在已收行的空行上（调用方输出均以换行收尾）→ 真空行；
+  // 其后紧跟 :51 的 DRAWLINE
+  assert.equal(
+    fixture.lines[0].type,
+    'text',
+    'BENKI.ERB:50 的真空行在场（函数开头）',
+  );
+  assert.equal(fixture.lines[0].text, '', 'BENKI.ERB:50 的真空行');
+  assert.equal(fixture.lines[1].type, 'divider', ':51 DRAWLINE 紧随');
+
+  // :1351 DRAWLINE 之后的 :1352 PRINTW（空内容）——真空行 + 等键
+  const last = fixture.lines.at(-1);
+  assert.equal(last.type, 'text', 'BENKI.ERB:1352 的真空行在场（收尾）');
+  assert.equal(last.text, '', 'BENKI.ERB:1352 的真空行');
+  assert.equal(
+    fixture.waits.at(-1)?.rows_at_wait,
+    last.row + 1,
+    '空行之后立即等键（PRINTW）',
+  );
+});
+
+test('#595 一般便器演出：灌满句与名字句逐行相邻（:1223 的 PRINTFORML 只收尾）', async () => {
+  const { fixture, mod } = setup_benki();
+  await mod.run_benki(31, seq_rand(0));
+  const filled = fixture.lines.find((line) =>
+    line.text?.includes('的嘴里灌满了精液。'),
+  );
+  assert.ok(filled, '一般分派的灌满句在场');
+  const next = fixture.lines
+    .filter((line) => line.row === filled.row + 1)
+    .at(-1);
+  assert.equal(
+    next?.type,
+    'text',
+    'BENKI.ERB:1223 的 PRINTFORML 只收尾 :1221 的拼行，不落空行',
+  );
+  assert.ok(
+    next?.text.startsWith('温妮'),
+    `下一行是 :1224 起的名字句（实际：${next?.text}）`,
+  );
+});

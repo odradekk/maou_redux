@@ -224,6 +224,43 @@ test('SHOW_BLOCK：一人称行 = 自称宽 26 左对齐 + [8] 一人称重设�
   assert.equal(buttons[0].rendered, '[8] 一人称重设 ');
 });
 
+test('SHOW_BLOCK：三处收行 PRINTL 只结束所在行，全程零空行（#596）', async () => {
+  // 原作 :395-396/:405-408/:416-419 的 PRINTL 都只结束上一行（一人称/身高行、
+  // 体重行/LIFE_BAR 的未收行、臀围行/VITAL_BAR 的未收行），不产生空行。
+  // 魔王臂里 :395 的守卫不成立、:408/:419 落在两条 bar 的未收行上——三种
+  // 组合都不该多出空行。
+  const cases = [
+    [7, bit(15), '非魔王 + 三围开'],
+    [7, 0, '非魔王 + 三围关'],
+    [0, bit(15), '魔王'],
+  ];
+  for (const [cid, flag5, label] of cases) {
+    const { fixture, show_block } = block_fixture(flag5);
+    await show_block(cid);
+    // 空行的两种形态都算（println 落 br、print('') 落 text 空串）
+    assert.equal(
+      fixture.lines.filter(
+        (line) =>
+          line.type === 'br' || (line.type === 'text' && line.text === ''),
+      ).length,
+      0,
+      `${label}：SHOW_BLOCK 零空行（三处 PRINTL 只收行）`,
+    );
+  }
+  // 段落逐行相邻：一人称 → [8] → 身高 → 体力条 → 体重 → 气力条 → 臀围
+  const { fixture, show_block } = block_fixture(bit(15));
+  fixture.store.set('maxbase:7:0', 1000);
+  fixture.store.set('base:7:0', 800);
+  fixture.store.set('maxbase:7:1', 500);
+  fixture.store.set('base:7:1', 400);
+  await show_block(7);
+  assert.deepEqual(
+    fixture.lines.map((line) => line.type),
+    ['text', 'button', 'text', 'progress', 'text', 'progress', 'text'],
+    '段落序列（:395-396/:405-408/:416-419 三处都不插空行）',
+  );
+});
+
 test('SHOW_BLOCK：魔王（cid 0）不打印一人称行与 [8] 按钮（:373 的 ARG != MASTER）', async () => {
   const { fixture, show_block } = block_fixture();
   await show_block(0);
@@ -2169,6 +2206,62 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
     '出口不是纯文本行',
   );
   assert.equal(result, 1, '返回首页（directToHomePage 的返回值形态）');
+});
+
+test('SHOW_CHARA_INFO：出口轮的空行按原作（#596）——[10] 之前两行、两钮之间一行、返回之后没有', async () => {
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 }, // 合计 10 < 30：未满，走两个出口
+  });
+  fixture.set_inputs(100);
+  await show_chara_info(7, -1, always, 0x000000);
+
+  // 原作 :79-80 是两句 `PRINTS "\n"*2 + 按钮文本`：第一句的两个换行落在
+  // 上一行（:41 合计行）已收尾之后 = 两个真空行；第二句的首个换行只结束
+  // [10] 那一行（ere 的 printButton 自成一行），余下一个是真空行；
+  // :127 的返回文本之后停在 INPUT，没有 PRINTL
+  const row_of = (accelerator) => {
+    const line = fixture.lines.find(
+      (entry) => entry.type === 'button' && entry.accelerator === accelerator,
+    );
+    assert.ok(line, `找不到 [${accelerator}] 按钮`);
+    return line.row;
+  };
+  const pick = row_of(10);
+  const back = row_of(100);
+  assert.deepEqual(
+    fixture.lines
+      .filter((entry) => entry.type === 'br')
+      .map((entry) => entry.row),
+    [pick - 2, pick - 1, pick + 1],
+    '三个真空行：[10] 之前两个、两枚按钮之间一个',
+  );
+  assert.equal(back, pick + 2, '[100] 紧跟 [10] 之后的那一个空行');
+  assert.equal(
+    fixture.lines.at(-1).row,
+    back,
+    ':127 的返回文本之后不补空行（下一行就是 INPUT）',
+  );
+});
+
+test('SHOW_CHARA_INFO：名单轮的 [999] 返回之后不补空行（#596）', async () => {
+  // 原作 :127 的 `PRINTS "\n"*2 + " [100] 返回 "` 是名单轮的收尾：返回文本
+  // 之后直接 `$SacrificeListInputReacquisition` + INPUT，没有 PRINTL。
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  fixture.set_inputs(10, 999, 100); // 进名单 → 名单轮 [999] → 出口轮 [100]
+  await show_chara_info(7, -1, always, 0x000000);
+
+  const back = fixture.lines.find(
+    (entry) => entry.type === 'button' && entry.accelerator === 999,
+  );
+  assert.ok(back, '名单轮有一枚 [999] 返回');
+  const at = fixture.lines.indexOf(back);
+  const next = fixture.lines[at + 1];
+  assert.ok(
+    !(next?.type === 'br' || (next?.type === 'text' && next.text === '')),
+    ":127 的返回文本之后不补空行（println 与 print('') 两种形态都不许）",
+  );
 });
 
 test('SHOW_CHARA_INFO：祭品名单的返回是真按钮（名单轮次白名单非空，#530）', async () => {

@@ -97,25 +97,32 @@ test('SHOW_SHOP_CHARA：头行 1:1（标题/说明/日期/所持金与勋章）�
 
 // —— @CHARA_SIM_SHOP（:11-128） ——
 
-test('CHARA_SIM_SHOP：性别选择 —— 999 清在售位退出；4 与 0 打回重问', async () => {
-  const fixture = await run_chara_shop({ 'itemsales:202': 1 }, 4, 0, 999);
+test('CHARA_SIM_SHOP：性别菜单是按钮 —— 999 清在售位退出（#572）', async () => {
+  const fixture = await run_chara_shop({ 'itemsales:202': 1 }, 999);
+  // #572：三档性别与返回都是按钮（正文不带 [N]，引擎按 showAcc 拼；
+  // 行尾用于列对齐的全角空格不再需要）
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[1] 男性', '[2] 女性', '[3] 扶她', '[999] 返回'],
+    ':30 的性别菜单与 :36 的返回',
+  );
   const texts = history_texts(fixture);
-  assert.equal(
-    texts.filter((line) => line === '请选择要召唤的勇者的性别').length,
-    3,
-    '两次无效输入各重开一轮（共三轮）',
-  );
-  // :30 的菜单行按整行钉住（两处全角空格各 4 个）
-  assert(
-    texts.includes(
-      '[1]男性\u3000\u3000\u3000\u3000[2]女性\u3000\u3000\u3000\u3000[3]扶她',
-    ),
-    ':30 的性别菜单行',
-  );
   assert.equal(fixture.store.get('itemsales:202'), 0, ':41 CALL CLEAR_SHOP');
   assert(
     !texts.some((line) => line.includes('回应了你的召唤')),
     '999 直接退出，不进召唤段',
+  );
+
+  // 旧行为是「4 与 0 打回重问」——按钮化后白名单就是 1/2/3/999，越界值由
+  // 引擎拒收、不回传游戏，重问支结构性不可达（1:1 保留，不补用例）
+  const rejected = chara_world({ 'itemsales:202': 1 });
+  rejected.set_inputs(4);
+  const { chara_sim_shop } = rejected.load_module('page/page-chara-shop');
+  await assert.rejects(
+    () => chara_sim_shop(rand0),
+    /输入不合法！请输入以下值之一：1, 2, 3, 999/,
   );
 });
 
@@ -220,6 +227,25 @@ test('CHARA_IKAI_COST：勋章 = L_I % 10000 / 5（截断、下限 3），金钱
   ]) {
     assert.deepEqual(chara_ikai_cost(l_i), [c, d], `L_I = ${l_i}`);
   }
+});
+
+// —— #572：选项按钮化 ——
+
+test('CHARA_SIM_SHOP：召唤确认的两项是按钮（#572）', async () => {
+  const fixture = await run_chara_shop({ 'flag:10004': 100000 }, 1, 0);
+  const male = (fixture.store.get('talent:211:122') || 0) !== 0;
+  const buttons = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.deepEqual(
+    buttons.slice(-2),
+    [`[0] 就是${male ? '他' : '她'}了`, '[1] 再换一个（花费1500）'],
+    ':90-96 的两项（正文不带 [N]）',
+  );
+  assert(
+    !history_texts(fixture).some((line) => line.includes('[0] 就是')),
+    '确认行不再以纯文本出现（纯文本的编号在实机上点不动）',
+  );
 });
 
 // —— @CHAR_IKAI_APPEND（:435-449） ——

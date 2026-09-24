@@ -7,6 +7,16 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH.ERB',
+        ref: '1188-1192',
+        any: [
+          new RegExp(
+            '^\\s*PRINTW 卖春积极性变成没有了\\s*$\\s*^\\s*ELSEIF RESULT == 1\\s*$\\s*^\\s*PRINTW 卖春积极性变成普通了\\s*$\\s*^\\s*ELSE\\s*$\\s*^\\s*PRINTFORMW 卖春积极性变为等级\\{RESULT\\}了\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_BITCH.ERB',
         ref: '3-50',
         any: [/^\s*@DUNGEON_BITCH\(ARG\)/m],
       },

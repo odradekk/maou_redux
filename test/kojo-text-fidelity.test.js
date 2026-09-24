@@ -15,7 +15,10 @@
  *
  * 五道锁（每道一个 test，跨模块聚合失败、逐条列明位置）：
  *   A. 锚覆盖：kojo 模块里每个 era.print* 调用都被捕获且绑定了 // :N 行锚
- *      ——无锚的口上输出不可追溯，锁 B/C/D 对它无从谈起；
+ *      ——无锚的口上输出不可追溯，锁 B/C/D 对它无从谈起。捕获面是
+ *      print / printAndWait / **printButton**（#572 起：口上的 `PRINTL [N] - …`
+ *      选项转成按钮，正文不写编号，锁 D 比对前先把行首 `[N] - ` 剥掉）；
+ *      其余 print 族（println…）记录但不捕获，锁 A 会报出——扩展须有意识；
  *   B. W/L 变体：ERB 的 PRINTFORMW → printAndWait、PRINTFORML → print，
  *      按行锚逐语句配对；
  *   C. 插值槽位序：ERB 行内的 %...% / {…} / \@...\@ 记号序列与 JS 同语句的
@@ -460,8 +463,10 @@ function norm_js_token(raw) {
  * 扫描一个 js 模块的 era.print* 调用语句（字符串/注释感知）。
  *
  * 字符串内容不透明（含模板字面量：${} 里的括号不参与配对）；行注释与块
- * 注释跳过（注释里的 era.print 不算调用）。捕获 print 与 printAndWait
- * 两种，其余 print 族（println/printButton…）记录但不捕获——锁 A 会报出。
+ * 注释跳过（注释里的 era.print 不算调用）。捕获 print、printAndWait 与
+ * printButton 三种（后者 kind = 'button'，#572 的选项按钮化；正文与源行
+ * 的差异只在行首 `[N] - `，由锁 D 的 strip_button_marker 抹平），其余
+ * print 族（println…）记录但不捕获——锁 A 会报出。
  *
  * @param {string} text 模块全文
  * @returns {{statements: object[], print_calls: object[], lines: string[],
@@ -584,11 +589,20 @@ function scan_print_statements(text) {
     if (call) {
       const call_line = line_of(i);
       print_calls.push({ offset: i, call: call[1], line: call_line });
-      if (call[1] === 'era.printAndWait(' || call[1] === 'era.print(') {
+      if (
+        call[1] === 'era.printAndWait(' ||
+        call[1] === 'era.print(' ||
+        call[1] === 'era.printButton('
+      ) {
         stmt = {
           start_offset: i,
           start_line: call_line,
-          kind: call[1] === 'era.printAndWait(' ? 'wait' : 'line',
+          kind:
+            call[1] === 'era.printAndWait('
+              ? 'wait'
+              : call[1] === 'era.printButton('
+                ? 'button'
+                : 'line',
           raw: call[1],
           strings: [],
           trailing: '',
@@ -668,6 +682,16 @@ function first_unordered(segs, hay) {
     cursor = idx + segs[i].length;
   }
   return -1;
+}
+
+/**
+ * 按钮语句的 ERB 侧去编号前缀（#572）：`PRINTL [0] - 直不起来。` 转成按钮后
+ * 正文只写 `- 直不起来。`——**只去掉 `[N] ` 这个引擎前缀，`- ` 与其余文字是
+ * 原作文本的一部分，照写**（page-ability-up.js:184 的既有口径）。只认行首
+ * 形态——句中出现的 `[N]` 是正文的一部分，不动。
+ */
+function strip_button_marker(text) {
+  return text.replace(/^\s*\[\s*\d+\s*\]\s*/, '');
 }
 
 /** 语句的锚绑定：尾锚优先；否则前一行纯注释锚（窗口内有 PRINTFORM 才算）。
@@ -956,9 +980,13 @@ test('锚覆盖：ere/kojo 每个 era.print* 调用都绑定到源文件的 PRIN
     problems.push(...mod.errors.map((e) => `${mod.name}: ${e}`));
     const captured = new Set(mod.statements.map((s) => s.start_offset));
     for (const call of mod.scan.print_calls) {
-      if (call.call !== 'era.print(' && call.call !== 'era.printAndWait(') {
+      if (
+        call.call !== 'era.print(' &&
+        call.call !== 'era.printAndWait(' &&
+        call.call !== 'era.printButton('
+      ) {
         problems.push(
-          `${mod.name}:${call.line}: 未覆盖的输出 API「${call.call.slice(0, -1)}」——本锁只认 print/printAndWait，扩展须有意识`,
+          `${mod.name}:${call.line}: 未覆盖的输出 API「${call.call.slice(0, -1)}」——本锁只认 print/printAndWait/printButton，扩展须有意识`,
         );
       } else if (!captured.has(call.offset)) {
         problems.push(
@@ -1016,9 +1044,13 @@ test('W/L 变体逐行：PRINTFORMW → printAndWait、PRINTFORML → print', ()
         continue; // #184：PRINTDATA 随机文本结构不参与 W/L 判定
       }
       const expected = last.variant === 'W' ? 'wait' : 'line';
-      if (stmt.kind !== expected) {
+      // #572：按钮自成一行（引擎的 printButton 每次输出一枚、占一行），
+      // 语义与 print 同；W 变体的选项按钮化不在本票范围——真出现时这里
+      // 仍会红（expected 'wait' vs actual 'line'），须有意识处理。
+      const actual = stmt.kind === 'button' ? 'line' : stmt.kind;
+      if (actual !== expected) {
         problems.push(
-          `${where}: 原作是 PRINTFORM${last.variant}，JS 用了 ${stmt.kind === 'wait' ? 'printAndWait' : 'print'}`,
+          `${where}: 原作是 PRINTFORM${last.variant}，JS 用了 ${stmt.kind === 'wait' ? 'printAndWait' : stmt.kind === 'button' ? 'printButton' : 'print'}`,
         );
       }
     }
@@ -1131,9 +1163,16 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
         // 只看「片段出现在某一行里」漏得掉行序/片段序颠倒，这里用游标扫。
         const segs = [];
         let erb_concat = '';
+        let first = true;
         for (const p of stmt.prints) {
-          const arg = to_simplified(p.arg);
-          if (arg !== p.arg) {
+          // 按钮语句（#572）：行首的 `[N] - ` 由引擎按 showAcc 拼，只剥首行
+          const src =
+            first && stmt.kind === 'button'
+              ? strip_button_marker(p.arg)
+              : p.arg;
+          first = false;
+          const arg = to_simplified(src);
+          if (arg !== src) {
             normalized_hits += 1;
           }
           erb_concat += arg;
@@ -1178,10 +1217,14 @@ test('字面量片段双向：ERB 片段（归一后）在 JS 语句里、JS 片
       }
       // ERB 侧归一（繁/日 → 简，词级优先；tools/lang-table.js 唯一真相源）。
       // JS 侧不归一——它必须本来就是简体（忘了转换在这里红，见文件头）。
-      const erb_arg = to_simplified(stmt.prints[0].arg);
-      if (erb_arg !== stmt.prints[0].arg) {
+      // 按钮语句（#572）先把行首的 `[N] - ` 去掉再比：编号由引擎拼。
+      const raw_arg = stmt.prints[0].arg;
+      if (to_simplified(raw_arg) !== raw_arg) {
         normalized_hits += 1;
       }
+      const erb_arg = to_simplified(
+        stmt.kind === 'button' ? strip_button_marker(raw_arg) : raw_arg,
+      );
       // 正向：ERB 字面量片段（按 %…% 与 {…} 切开、归一后）⊂ JS 语句原文
       //（#184 扩：{…} 是 ERB 的显示插值，与 %…% 同属插值记号）
       for (const seg of erb_arg.split(

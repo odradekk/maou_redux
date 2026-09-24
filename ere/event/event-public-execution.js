@@ -28,17 +28,22 @@ function default_rand(n) {
 async function public_execution(cid, rand_n = default_rand) {
   if (cid === 0) return 0;
   const family_id = search_family(cid);
-  era.print('[0] 凌辱刑');
-  era.print('[1] 绞刑');
-  era.print('[2] 魂粉碎');
-  era.println();
+  // 原作 :19-21 是 `PRINTFORML [0]`…`[2]` 的纯文本选项、:22 的空行、:26 的
+  // INPUT（PR #53 通则：升格为按钮，正文不写 [编号] 前缀，引擎按 showAcc
+  // 自动拼）。
+  era.printButton('凌辱刑', 0);
+  era.printButton('绞刑', 1);
+  era.printButton('魂粉碎', 2);
+  era.println(); // :22 的空行（PRINTFORML  的尾随空格）
 
   let result;
   do {
+    // 保留 useRule: false 以留住 :23 被注释掉的 `[100] 算了`（见下）。
     result = await era.input({ useRule: false });
   } while (result < 0 || (result >= 3 && result !== 100));
-  // 源中 100 的按钮被注释，但自由输入仍可达并跳回批量处刑；ere 没有该
-  // 魔改入口，本函数以“不执行”返回表达同一出口。
+  // :23 的 `;PRINTFORML [100] 算了` 被注释掉、界面上不显示，但 :31-33 的
+  // `ELSEIF RESULT == 100` 仍受理它（原作置 TFLAG:16 = -1 后 JUMP 批量处刑；
+  // ere 没有该魔改入口，本函数以「不执行」返回表达同一出口）。
   if (result === 100) {
     game.event.犬射精或处刑口上 = -1;
     return 0;

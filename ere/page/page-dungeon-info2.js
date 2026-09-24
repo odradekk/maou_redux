@@ -386,7 +386,9 @@ async function print_subordinates(kai_result) {
     r -= 1;
   }
   era.drawLine();
-  // :468 PRINTL [999] 返回——同上，纯文本（不打按钮，保住自由输入通道）
+  // :468 PRINTL [999] 返回——同上，纯文本（不打按钮，保住自由输入通道）。
+  // #572 复核维持：本轮若打这枚按钮，白名单会被收成 999，上面那些怪物行的
+  // 编号（100-199）当场被拒收；按钮化必须与怪物行整轮一起做。
   era.print('[999] 返回');
   // :469 INPUT
   return era.input();

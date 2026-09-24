@@ -114,10 +114,12 @@ test('PRINT_ARR_GROUP：超宽首项先冲空行——row.length 为 0 的 flush
   print_arr_group(['甲'.repeat(50)], 0, 7);
 
   assert.deepEqual(accelerators(fixture), [700], '按钮恰好一枚');
+  // :198 的 PRINTV "  " 起头、按钮逐格续拼，:231 的 PRINTL 只收那一行——
+  // 只有 1 个按钮行，末尾不再补空行（#596）
   assert.equal(
     fixture.era.getLineCount(),
-    2,
-    '按钮行 + 末尾 PRINTL，没有多余的空行',
+    1,
+    '按钮行恰好一行，末尾 PRINTL 不生空行',
   );
 });
 

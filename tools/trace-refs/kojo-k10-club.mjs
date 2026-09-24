@@ -18,6 +18,26 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
+        ref: '96-97',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[0\\] - 直不起来。\\s*$\\s*^\\s*PRINTL \\[1\\] - 就是这样才好。\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
+        ref: '124-125',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[0\\] - 直不起来。\\s*$\\s*^\\s*PRINTL \\[1\\] - 就是这样才赞！\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
         ref: '62-67',
         any: [
           /^\s*@EVENTTRAIN\s*$\s*^\s*#PRI\s*$\s*^\s*FLAG:110 = 1\s*$\s*^\s*SIF FLAG:7 == 0\s*$\s*^\s*FLAG:7 = 2\s*$/m,

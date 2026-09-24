@@ -12,6 +12,36 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/EVENT/EVENT_NEXTDAY.ERB',
+        ref: '371-372',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL \\[0\\] - 好的\\s*$\\s*^\\s*PRINTL \\[1\\] - 不要\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_NEXTDAY.ERB',
+        ref: '944-945',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL  \\[0\\] - 等你很久了！\\s*$\\s*^\\s*PRINTL  \\[1\\] - 继续等着吧你……\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_NEXTDAY.ERB',
+        ref: '969-970',
+        any: [
+          new RegExp(
+            '^\\s*PRINTL  \\[0\\] - 安全第一！\\s*$\\s*^\\s*PRINTL  \\[1\\] - 中出最高！\\s*$',
+            'm',
+          ),
+        ],
+      },
+      {
+        src: 'target/ERB/EVENT/EVENT_NEXTDAY.ERB',
         ref: '3',
         any: [/;=================================================/],
       },

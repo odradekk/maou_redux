@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 240; // #562 起 +1（M11864：道具商店页脚不产生空行）；
+export const COUNT = 248; // #562 起 +1（M11864：道具商店页脚不产生空行）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -1656,17 +1656,9 @@ export default [
     tests: ['monster-shop'],
     must_mention: '祭品行与可选行的排版字面量',
   },
-  {
-    // 菜单行的全角空格（:30）也算「改了玩家那边就不对」的字面量：本条取
-    // 异界召唤的性别行做代表，怪物商店的 :71 与 :97-99 四行由各自的整行断言
-    // 守（test/monster-shop.test.js），号段 M8940 是本票最后一号
-    desc: 'M8940 异界召唤的性别菜单行少一个全角空格（:30 的四格 → 三格）',
-    file: 'ere/page/page-chara-shop.js',
-    find: "'[1]男性\\u3000\\u3000\\u3000\\u3000[2]女性",
-    replace: "'[1]男性\\u3000\\u3000\\u3000[2]女性",
-    tests: ['chara-shop'],
-    must_mention: '性别选择',
-  },
+  // M8940（异界召唤的性别菜单行少一个全角空格，:30）随 #572 的按钮化删除：
+  // 那一行成了 printButton（引擎把正文里的连续空白折成一个空格），排版字面量
+  // 不再存在，等价守卫换成 #572 的 M12025（菜单行退回纯文本即红）。
   // —— #399 验收返工（第三轮）：范围端点 ——
   // 「幅度和边界是两回事」：这一组每条只把端点挪一到两格。挪一格但数据里没有
   // 商品/角色落在那一格的，是等价变异（不建条目），理由写进相邻条目的注释；
@@ -2016,5 +2008,78 @@ export default [
       "  era.setAlign('left');\n  era.print(''); // 变异：页脚之后多补空行\n\n  return 0;\n}",
     tests: ['item-shop'],
     must_mention: '道具商店页脚按钮之后不应有空行',
+  },
+  // —— #572：商店三家的菜单按钮化（列表轮的有意保留一并钉住）——
+  {
+    desc: 'M12020 怪物商店入口菜单退回纯文本行（[1]/[999] 点不动）',
+    file: 'ere/page/page-monster-shop.js',
+    find: "  era.printButton('召唤魔物从者', 1);",
+    replace: "  era.print('[1]召唤魔物从者'); // 变异",
+    tests: ['monster-shop'],
+    must_mention: '入口菜单是按钮',
+  },
+  {
+    desc: 'M12021 怪物商店性别菜单退回纯文本行',
+    file: 'ere/page/page-monster-shop.js',
+    find: "    era.printButton('男性', 1);",
+    replace: "    era.print('[1]男性 [2]女性 [3]扶她'); // 变异",
+    tests: ['monster-shop'],
+    must_mention: '性别菜单是按钮',
+  },
+  {
+    desc: 'M12022 怪物商店种族菜单退回纯文本行',
+    file: 'ere/page/page-monster-shop.js',
+    find: "    era.printButton('史莱姆类', 2);",
+    replace: "    era.print('[2]史莱姆类'); // 变异",
+    tests: ['monster-shop'],
+    must_mention: '种族菜单是按钮',
+  },
+  {
+    desc: 'M12023 怪物商店召唤确认退回纯文本行',
+    file: 'ere/page/page-monster-shop.js',
+    find: "    era.printButton('再换一个（花费1500）', 1);",
+    replace: "    era.print('[1] 再换一个（花费1500）'); // 变异",
+    tests: ['monster-shop'],
+    must_mention: '召唤确认处只认 0/1',
+  },
+  {
+    desc: 'M12024 商品一览轮的 [999] 返回改成按钮（白名单会把商品编号锁死）',
+    file: 'ere/page/page-monster-shop.js',
+    find: "    era.print('[999] 返回'); // :250",
+    replace: "    era.printButton('返回', 999); // 变异：列表轮打了按钮",
+    tests: ['monster-shop'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12025 异界勇者性别菜单退回纯文本行',
+    file: 'ere/page/page-chara-shop.js',
+    find: "    era.printButton('扶她', 3);",
+    replace: "    era.print('[3]扶她'); // 变异",
+    tests: ['chara-shop'],
+    must_mention: ':30 的性别菜单与 :36 的返回',
+  },
+  {
+    desc: 'M12026 异界勇者召唤确认退回纯文本行',
+    file: 'ere/page/page-chara-shop.js',
+    find: "    era.printButton('再换一个（花费1500）', 1);",
+    replace: "    era.print('[1] 再换一个（花费1500）'); // 变异",
+    tests: ['chara-shop'],
+    must_mention: ':90-96 的两项',
+  },
+  {
+    desc: 'M12027 异界勇者列表轮的 [999] 返回改成按钮（同上，列表轮不打按钮）',
+    file: 'ere/page/page-chara-shop.js',
+    find: "    era.print('[999] 返回'); // :389",
+    replace: "    era.printButton('返回', 999); // 变异：列表轮打了按钮",
+    tests: ['chara-shop'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12028 道具商店购买确认退回纯文本行',
+    file: 'ere/page/page-item-shop.js',
+    find: "    era.printButton('- 好的', 0);",
+    replace: "    era.print('[0] - 好的'); // 变异",
+    tests: ['item-shop'],
+    must_mention: '确认支：两项是按钮',
   },
 ];

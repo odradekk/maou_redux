@@ -377,8 +377,9 @@ function juel_check_main(cid, rng) {
   const cancelled_total = era.get('tflag:58') || 0;
   era.print(
     `调教结果：${cancelled_total > 0 ? `否定点数${cancelled_total}个抵消。` : ''}`,
-  ); // :652-654（无抵消时只有前缀，:655 PRINTL 空串收行）
-  era.println(); // :655
+  ); // :652-654（无抵消时只有前缀）
+  // :655 的 PRINTL（空串）只收尾上面那条 PRINTFORM 链——前一条没有换行，
+  // 故它不是空行，这里不补 println（#595）
   era.drawLine(); // :656 CUSTOMDRAWLINE ‥
 
   // :658-735 结算表 13 行

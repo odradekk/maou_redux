@@ -725,12 +725,13 @@ test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 5
   );
 });
 
-test('999 落到调试菜单的不移植提示（非购物态；店内的 999 是退出商店，同落这里）', async () => {
+test('非购物态的 999 落到调试菜单的不移植提示', async () => {
   // 原作主菜单不印 [999]（DRAW_MAINMENU 的编号表 100-888 无它）——键入式
-  // 后门在引擎侧不可达（#130），调试分支经 usershop 直调验证。店内键入 999
-  // 的两条路径（:44-46 清 BOUGHT 与 :222 调试菜单）见 usershop 注释与
-  // test/shop-trap.test.js 的 USERSHOP 999 用例。DEBUG_MENU_U 自 #542 起
-  // 判不移植（原作者的调试工具，#540 范围决定 3），占位行换成不移植提示
+  // 后门在引擎侧不可达（#130），调试分支经 usershop 直调验证。**只有**非
+  // 购物态的 999 到得了这个分支：店内的 999 走 :44-46 的退出商店，原作那
+  // 条路径经 CLEAR_SHOP 把 RESULT 清成 0，落不到 :222（#592，见下一条用例
+  // 与 test/shop-trap.test.js 的 USERSHOP 999 用例）。DEBUG_MENU_U 自 #542
+  // 起判不移植（原作者的调试工具，#540 范围决定 3），占位行换成不移植提示
   const fixture = await dispatch(999);
   const line = history_texts(fixture).find((l) => l.includes('@DEBUG_MENU_U'));
   assert(line, '提示行必须带原作函数名 @DEBUG_MENU_U（清单行的检索键）');
@@ -739,6 +740,36 @@ test('999 落到调试菜单的不移植提示（非购物态；店内的 999 �
     `不移植提示要说清是什么与为何：${line}`,
   );
   assert.equal(fixture.waits.length, 1, '提示行必须等键（#73 同款）');
+});
+
+test('店内 999 退出商店：清标志后直接结束，不打调试菜单提示、不等键（#592）', async () => {
+  // #562 验收在引擎里实测的缺陷：退出商店会多一行「调试菜单不在移植范围」
+  // 并要求按键。原作 :44-46 确实没有 RETURN，但 :45 的 CALL CLEAR_SHOP 调
+  // 的是个没有 RETURN 的函数——Emuera 在函数落到末尾时把 RESULT 置 0
+  // （出处见 page-shop.js 购物段的段首注释），回到 @USERSHOP 时 RESULT 已是 0，
+  // :59-224 的链上没有 0 的去处，:226 的 `SIF RESULT == 7788` 也不成立，
+  // 出口是 :229 的 RETURN 0（回主菜单）
+  const fixture = create_shop_fixture();
+  fixture.set_inputs(107, 999); // 107 进道具商店，999 退出
+  const { run_shop } = fixture.load_module('page/page-shop');
+  await assert.rejects(() => run_shop(), /预置输入已耗尽/);
+
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(era_flag.bought, -1, '999 退出商店（:46）');
+  assert(
+    !history_texts(fixture).some((line) => line.includes('@DEBUG_MENU_U')),
+    '店内 999 不得落到 :222 的调试菜单提示（CLEAR_SHOP 已把 RESULT 清 0）',
+  );
+  assert.equal(
+    fixture.waits.filter((w) => w.waited).length,
+    0,
+    '退出商店不得等待按键（等键是提示行的行为）',
+  );
+  assert.equal(
+    rounds_drawn(fixture),
+    2,
+    '退出后回主菜单重绘一次（首轮 + 退出轮）',
+  );
 });
 
 test('7788 接通 RELATION_DEBUGPRINT：输出关系矩阵并等待按键', async () => {
@@ -853,8 +884,13 @@ test('120 召唤：CHARANUM < MAX_CHARANUM 时进真身怪物商店（#399 接�
   await assert.rejects(() => run_shop(), /预置输入已耗尽/);
   const texts = history_texts(fixture);
   assert(
-    texts.includes('[1]召唤魔物从者'),
-    '120 应进 page/page-monster-shop.js 的入口菜单',
+    fixture.lines_history.some(
+      (line) =>
+        line.type === 'button' &&
+        line.rendered === '[1] 召唤魔物从者' &&
+        line.accelerator === 1,
+    ),
+    '120 应进 page/page-monster-shop.js 的入口菜单（#572 起是按钮）',
   );
   assert(
     !texts.some((line) => line.includes('@MONSTER_SHOP')),

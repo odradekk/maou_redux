@@ -708,15 +708,31 @@ test('确认支：不要（1）时退货退钱，并从 TFLAG:15 的暂存值重
   );
 });
 
-test('确认支：非法输入（非 0/1）重问一次后才认账', async () => {
+test('确认支：非法输入（非 0/1）由引擎拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「非 0/1 重问一次」——按钮化后白名单就是 0/1，7 这类值被引擎
+  // 拒收、不回传游戏，重问支结构性不可达（1:1 保留，不补用例）。
   const fixture = buy_world();
   const { purchase } = fixture.load_module('page/page-item-shop');
-  fixture.set_inputs(7, 0); // 7 非法 → 重问 → 0 成交
-  assert.equal(await purchase(0), 1);
+  fixture.set_inputs(7);
+  await assert.rejects(() => purchase(0), /输入不合法！请输入以下值之一：0, 1/);
   assert.equal(
     history_texts(fixture).filter((l) => l.includes('确定购买')).length,
-    2,
-    '两次提示（第一次被非法输入打回）',
+    1,
+    '只问过一次（拒收发生在确认处）',
+  );
+});
+
+test('确认支：两项是按钮（#572）——[0] 好的 / [1] 不要', async () => {
+  const fixture = buy_world();
+  const { purchase } = fixture.load_module('page/page-item-shop');
+  fixture.set_inputs(1);
+  assert.equal(await purchase(0), 0, '[1] 不要');
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] - 好的', '[1] - 不要'],
+    ':99-113 的两项（正文不带 [N]）',
   );
 });
 

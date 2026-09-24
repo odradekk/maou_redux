@@ -246,9 +246,11 @@ async function choose_charasteristic(cid = -1, per_line = 3) {
     }
   }
   if (row.length > 0) {
-    era.print(row); // :112 之前先收残行（源里残行由 :112 的 PRINTL 收尾）
+    era.print(row); // :112 的 PRINTL 只收残行那一行，不产生空行
+  } else {
+    // 整行恰满时 :112 的 PRINTL 落在空行上——这一支才是真空行
+    era.println();
   }
-  era.println(); // :112
 
   for (;;) {
     const result = await era.input(); // :84-126
@@ -347,9 +349,11 @@ async function choose_haircolor(cid = -1, per_line = 6) {
     }
   }
   if (row.length > 0) {
-    era.print(row);
+    era.print(row); // :227 的 PRINTL 只收残行那一行，不产生空行
+  } else {
+    // 整行恰满时 :227 的 PRINTL 落在空行上——这一支才是真空行
+    era.println();
   }
-  era.println(); // :207-236
 
   for (;;) {
     const result = await era.input(); // :207-236

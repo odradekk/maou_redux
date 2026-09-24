@@ -120,6 +120,33 @@ test('LIFE_LIST_TAILOR：行渲染三态（穿着/内衣/全裸）+ 特别服装
   );
 });
 
+test('TAILOR_CORE：现状行与追问行之间不夹空行（#596）', async () => {
+  // 原作 :73 与 :75 是两条 PRINTFORML，:74 只是一行空白源码（不产生输出）：
+  // 现状行与追问行逐行相邻
+  const fixture = tailor_fixture();
+  const added = await run_core(fixture, [999]);
+  assert.deepEqual(
+    added
+      .slice(1, 4)
+      .map((line) => (line.type === 'text' ? line.text : `<${line.type}>`)),
+    ['所持金：10000000点', '玛奥现在全裸身穿。', '要让玛奥穿上什么？'],
+    ':72 所持金 → :73 现状行 → :75 追问行，中间零空行',
+  );
+  assert.ok(
+    texts(added)[1].includes('现在'),
+    `第 2 个文本行是现状行（实得：${JSON.stringify(texts(added))}）`,
+  );
+  assert.ok(texts(added)[2].includes('穿上什么？'), '第 3 个文本行是追问行');
+  assert.equal(
+    added.filter(
+      (line) =>
+        line.type === 'br' || (line.type === 'text' && line.text === ''),
+    ).length,
+    0,
+    'TAILOR_CORE 主菜单零空行',
+  );
+});
+
 test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5）', async () => {
   const plain = tailor_fixture();
   {

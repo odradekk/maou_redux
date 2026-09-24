@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 284; // #548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
+export const COUNT = 286; // #548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判据、欲望门槛、睡着分支文案；M11489：挑战臂漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
 // M9838 与 #462 撞号后改）；#469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
 // dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
@@ -2565,5 +2565,22 @@ export default [
     replace: "                    '', // 变异：漏掉函数返回的后半句",
     tests: ['dungeon-bedroom'],
     must_mention: '两句拼成同一行',
+  },
+  // —— #572：迷宫战果结算奖惩菜单的选项按钮化 ——
+  {
+    desc: 'M12030 奖赏三选退回纯文本行（引擎里点不动）',
+    file: 'ere/dungeon/dungeon-after.js',
+    find: "  era.printButton('授予勋章', 1);",
+    replace: "  era.print('[1] 授予勋章'); // 变异",
+    tests: ['dungeon-after'],
+    must_mention: '白名单＝三枚按钮',
+  },
+  {
+    desc: 'M12031 惩罚九选退回纯文本行（同上）',
+    file: 'ere/dungeon/dungeon-after.js',
+    find: "  era.printButton('低压电椅刑', 1);",
+    replace: "  era.print('[1] 低压电椅刑'); // 变异",
+    tests: ['dungeon-after'],
+    must_mention: '白名单＝九枚按钮',
   },
 ];

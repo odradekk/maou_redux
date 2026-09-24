@@ -7,6 +7,11 @@ export const FILES = [
     refs: [
       {
         src: 'target/ERB/キャラ関数/CHARA_CUSTOM ver1.0.1.ERB',
+        ref: '241',
+        any: [new RegExp('^\\s*INPUT\\s*$', 'm')],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_CUSTOM ver1.0.1.ERB',
         ref: '1-15',
         any: [/^[ \t]*﻿@CHAR_DEBUG\(ARG\)[ \t]*$/m],
       },

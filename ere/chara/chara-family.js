@@ -319,7 +319,7 @@ async function relation_debugprint() {
       parts.push(part);
     }
     era.print(parts);
-    era.println();
+    // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行
   }
   await era.waitAnyKey();
 }
@@ -751,7 +751,9 @@ function family_print_info(cid) {
     }
     era.print(']');
   }
-  if (displayed > 0) era.println();
+  // RELATION_FAMILY.ERB:422-423 的 `SIF !LINEISEMPTY() → PRINTL` 只结束上面
+  // 那行（有内容才收尾、空行上不动），不产生空行：打印过的片段由各自的
+  // print / printButton 自成一行承接
   return { displayed, total };
 }
 
