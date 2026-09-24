@@ -1057,6 +1057,101 @@ test('campaign_trap()：FLAG:400 = 1 但战役 1 未注册时走 whenMissing 原
   assert.equal(await campaign_trap(301), 0, 'whenMissing 原作预置值 0');
 });
 
+// —— #597：陷阱段收尾的 PRINTL 只结束上一行，不是空行 ——
+//
+// 六个陷阱段（:259-260 落穴 / :351-352 瞬移 / :400-401 单向 / :453-454
+// 催情气体 / :915-916 蜘蛛网 / :1276-1277 爱虫）尾部各有一个
+// `SIF FLAG:5 & 32` + `PRINTL  `。它前面那条原作输出是**不换行**的
+// `PRINTFORM` 串，所以那个 PRINTL 只是把那一行收尾——ere 侧每段
+// `era.print` 自成一行，再补 `era.println()` 就是多出来的空行（#597；
+// 语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
+
+/** 空行条目：夹具的 println 落成 br，print('') 落成空文本条目 */
+function blank_entries(fixture) {
+  return fixture.lines.filter(
+    (line) => line.type === 'br' || (line.type === 'text' && line.text === ''),
+  );
+}
+
+/** 断言 `needle` 那一行之后不紧跟空行（该行是最后一行也算通过） */
+function assert_no_blank_after(fixture, needle, label) {
+  const index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes(needle),
+  );
+  assert.ok(index >= 0, `${label}：演出里出现「${needle}」（否则断言会空过）`);
+  const next = fixture.lines[index + 1];
+  assert.ok(
+    next === undefined ||
+      !(next.type === 'br' || (next.type === 'text' && next.text === '')),
+    `${label}：收尾的 PRINTL 不是空行`,
+  );
+}
+
+test('#597：六个陷阱段收尾的 PRINTL 不产生空行（战斗日志 ON）', async () => {
+  const CASES = [
+    [
+      '落穴（:259-260）',
+      'pit_trap',
+      (mod) => mod.pit_trap(1, seq(50, 39)),
+      '受到40点伤害！',
+    ],
+    [
+      '瞬移（:351-352）',
+      'teleport_trap',
+      (mod) => mod.teleport_trap(1, seq(50, 77), { d20: 50 }),
+      '被传送走了！',
+    ],
+    [
+      '单向通行（:400-401）',
+      'one_way_trap',
+      (mod) => mod.one_way_trap(1, seq(0), { d20: 40 }),
+      '心急如焚',
+    ],
+    [
+      '催情气体（:453-454）',
+      'love_gas_trap',
+      (mod) => mod.love_gas_trap(1, seq(5)),
+      '气息慌乱了',
+    ],
+    [
+      '蜘蛛网（:915-916）',
+      'net_trap',
+      (mod) => mod.net_trap(1),
+      '消耗了相当的精力',
+    ],
+    [
+      '爱虫（:1276-1277）',
+      'love_bug_trap',
+      async (mod, fixture) => {
+        // :1283 的 COM0_AUTO 真身要开调教域（#508），同 LOVE_BUG 主用例
+        fixture.load_module('event/source-check');
+        fixture.era.beginTrain(0, 1);
+        await mod.love_bug_trap(1, seq(10, 39));
+      },
+      '受到40点伤害！',
+    ],
+  ];
+  for (const [label, fn_name, run, needle] of CASES) {
+    const fixture = setup_world();
+    fixture.store.set('flag:5', 32); // 战斗日志 ON（FLAG:5 位 32）
+    const mod = load(fixture);
+    assert.equal(typeof mod[fn_name], 'function', `${label}：${fn_name} 存在`);
+    await run(mod, fixture);
+    assert_no_blank_after(fixture, needle, label);
+  }
+
+  // 落穴段整场演出只有 PRINTFORM 串，通篇不应出现空行（更宽的守卫：
+  // 除了收尾那一处，别处多补也会被这条抓到）
+  const fixture = setup_world();
+  fixture.store.set('flag:5', 32);
+  await load(fixture).pit_trap(1, seq(50, 39));
+  assert.equal(
+    blank_entries(fixture).length,
+    0,
+    '落穴段演出通篇无空行（含 :259-260 那一处）',
+  );
+});
+
 // —— 存根清单核对（dungeon-battle.test.js 同款）——
 
 test('本文件无运行时存根：STUBBED_CALLS 已空，且四行在 docs/stub-registry.md 记为已实现', () => {

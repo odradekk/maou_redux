@@ -681,6 +681,15 @@ test('魔族化（EVENT_MAZOKU）：欲望档 × 淫乱的二维表驱动，逐�
       texts.some((t) => t.includes(line)),
       `分支关键字：${line}`,
     );
+    // #597：:485 / :495 的 `PRINTFORML `（空参数）落在上一句 PRINTFORMW 之后
+    // （那一行已结束）——它是**真空行**，末句之后恰有一个空行再进 :498 WAIT。
+    // :498 的 WAIT 不占行，所以末尾那一个条目就是它
+    assert.ok(fixture.lines.length >= 4, '整段演出有输出（否则断言会空过）');
+    const last = fixture.lines[fixture.lines.length - 1];
+    assert.ok(
+      last.type === 'br' || (last.type === 'text' && last.text === ''),
+      ':485/:495 的真空行在末句之后（末尾恰有一个空行）',
+    );
   }
 });
 
@@ -3042,6 +3051,19 @@ test('示众台（PILLORY）：正字显示与四项里程碑', async () => {
     mtexts.includes('『祝贺！达成了五十！！！』') &&
       mtexts.includes('『正字写太多了，有点恶心』'),
     '里程碑',
+  );
+
+  // #597：源 :2128 的 PRINTL 只结束 :2058-2127 那一串 `PRINT 『…』` 拼起来
+  // 的一行（PRINT 不换行），不是空行——里程碑行与总结行之间不夹空行
+  const summary = milestones.lines.findIndex(
+    (line) =>
+      line.type === 'text' && line.text.includes('被各种侮辱的涂鸦写在身上了'),
+  );
+  assert.ok(summary >= 1, '涂鸦总结行出现，且不是第一行（否则断言会空过）');
+  const prev = milestones.lines[summary - 1];
+  assert.ok(
+    !(prev.type === 'br' || prev.text === ''),
+    '里程碑行与总结行之间不夹空行（:2128 只收尾，#597）',
   );
 
   // 正字除数：8 = 正 + 下（每 5 一笔）；第一档里程碑的边界是 >9

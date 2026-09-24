@@ -175,6 +175,17 @@ test('APHRODISIAC_ADDICT：取得疯狂——普通门槛 40', async () => {
 
   assert.equal(fixture.store.get('talent:31:123'), 1);
   assert(fixture.text_lines().includes('琼获得了【疯狂】。'));
+  // #597：源 :57 的 PRINTFORML 之后 :58 的 `PRINTL ` 落在已换行的那一行上
+  // ——它是**真空行**，末句之后恰有一个空行；删掉即少一行（本用例的守卫）
+  const acquired = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes('获得了【疯狂】。'),
+  );
+  assert.ok(acquired >= 0, '取得播报行出现（否则断言会空过）');
+  const next = fixture.lines[acquired + 1];
+  assert.ok(
+    next !== undefined && next.type === 'br',
+    ':58 的真空行紧跟取得播报',
+  );
 });
 
 test('APHRODISIAC_ADDICT：TALENT:72 时取得疯狂门槛降到 30', async () => {

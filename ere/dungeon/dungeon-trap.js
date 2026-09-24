@@ -492,10 +492,8 @@ async function pit_trap(a, rand_n) {
     chara(a).dungeon.气力 -= 10;
   }
 
-  // :259-260
-  if (show) {
-    era.println();
-  }
+  // :259-260 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）
 
   return 0;
 }
@@ -625,10 +623,8 @@ async function teleport_trap(a, rand_n, ctx) {
     chara(a).dungeon.气力 -= diff;
   }
 
-  // :351-352
-  if (show) {
-    era.println();
-  }
+  // :351-352 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）
 
   return 0;
 }
@@ -692,10 +688,8 @@ async function one_way_trap(a, rand_n, ctx) {
     chara(a).dungeon.气力 -= 10;
   }
 
-  // :400-401
-  if (show) {
-    era.println();
-  }
+  // :400-401 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）
 
   return 0;
 }
@@ -762,10 +756,10 @@ async function love_gas_trap(a, rand_n) {
     era.set(`juel:${a}:5`, (era.get(`juel:${a}:5`) || 0) + 20);
   }
 
-  // :453-454
-  if (show) {
-    era.println();
-  }
+  // :453-454 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）。
+  // TALENT:60 那支的上一条输出是 :445 的 PRINTL，那支里它确实落在空行上，
+  // 但该支是少数路径，此处按主路径（前面留有未换行的 PRINTFORM）判定
 
   // :457 欲情フラグ（位 9）
   era.set(`cflag:${a}:503`, (era.get(`cflag:${a}:503`) || 0) | 512);
@@ -1381,10 +1375,8 @@ async function net_trap(a) {
     chara(a).dungeon.体力 -= local;
   }
 
-  // :915-916
-  if (show) {
-    era.println();
-  }
+  // :915-916 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM
+  // 不换行），**不是空行**——ere 侧每段各自一次 print，故不补空行（#597）
 
   return 0;
 }
@@ -1897,10 +1889,9 @@ async function love_bug_trap(a, rand_n) {
   }
   chara(a).dungeon.体力 -= dice;
 
-  // :1276-1277
-  if (show) {
-    era.println();
-  }
+  // :1276-1277 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行
+  // （PRINTFORM 不换行），**不是空行**——ere 侧每段各自一次 print，
+  // 故不补空行（#597）
 
   // :1279 PLAYER = 0——不落变量、注释留痕（读者面见文件头：本体不读、
   // 三连第三站的结算读）

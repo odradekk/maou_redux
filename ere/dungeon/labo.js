@@ -164,7 +164,8 @@ async function color_output_test() {
     row.push(...c_out(count));
   }
   era.print(row); // 8 格拼一行（文件头：一行归并为一次 print）
-  era.println(); // :54 PRINTL
+  // :54 的 PRINTL 只结束 :51-53 那 8 个 C_OUT 的 `PRINT` 串（PRINT 不换
+  // 行），**不是空行**——ere 的 print 一次调用即一行（#597）
   return 0;
 }
 
@@ -179,8 +180,9 @@ function geo_output() {
     for (let x = 0; x < 32; x += 1) {
       row.push(...c_out(idiv(da_get(y, x), 32))); // LOCAL:2 = DA:(y):(x)/32
     }
+    // :106 的 PRINTL 只结束这一行的 32 个 C_OUT `PRINT` 串（PRINT 不换
+    // 行），**不是空行**——ere 的 print 一次调用即一行，别再补（#597）
     era.print(row);
-    era.println(); // :106 行尾 PRINTL
   }
 }
 
@@ -368,7 +370,8 @@ async function labo(rand) {
       da_clear(); // :30
     } else if (result === 7) {
       era.printImage('HEART_R'); // :32 PRINT_IMG "HEART_R"（注册名照抄，res/img.csv）
-      era.println(); // :33 PRINTL
+      // :33 的 PRINTL 只结束 :32 的 PRINT_IMG 那一行（PRINT_IMG 不换行），
+      // **不是空行**——ere 的 printImage 自成一行（#597）
     } else if (result === 8) {
       await u_face(); // :35
     }

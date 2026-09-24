@@ -955,6 +955,34 @@ test('EXECUTION：肉便器支完整结算，录像开关关闭时不额外写�
   );
 });
 
+test('#597：处刑对象列表的表头之后不补空行（:22 的 PRINTL 只收 :18 那一行）', async () => {
+  // 源 :18 `PRINT 请选择处刑对象`（不换行）+ :19-23 的 IF/ELSE：IF 支接
+  // :20 的实绩提示，ELSE 支的 :22 `PRINTL` 只结束 :18 那一行——**不是空
+  // 行**（#597）。两支持续都得钉：只测 IF 支会让 ELSE 支多补的空行逃掉。
+  for (const [label, decorations] of [
+    ['IF 支（有实绩提示）', 0],
+    ['ELSE 支（无实绩提示）', 20],
+  ]) {
+    const fixture = seed_world();
+    fixture.store.set('flag:84', decorations); // 装饰品数 ≥ 20 → ELSE
+    fixture.set_inputs(1, 6);
+    const { execution } = fixture.load_module('event/event-execution');
+
+    await execution(seq([0]));
+
+    const index = fixture.lines.findIndex(
+      (line) => line.type === 'text' && line.text === '请选择处刑对象',
+    );
+    assert.ok(index >= 0, `${label}：表头行出现`);
+    const next = fixture.lines[index + 1];
+    assert.ok(
+      next !== undefined &&
+        !(next.type === 'br' || (next.type === 'text' && next.text === '')),
+      `${label}：表头之后不补空行`,
+    );
+  }
+});
+
 test('EXECUTION：肉便器支正文的等待后缀与原作一致（#561 第 3 条；夹具观测不到，按源文锁）', () => {
   // 夹具的 printAndWait 内部等待不入 waits（test/fixture.test.js 的既定裁定），
   // W/L 之别在行为层不可观测——同 event-execution-batch.test.js 的「方法 4 正文

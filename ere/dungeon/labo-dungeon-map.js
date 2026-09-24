@@ -395,7 +395,8 @@ function config_labo_map_status() {
   } else {
     era.print('普通'); // :245（FLAG:502 == 0）
   }
-  era.println(); // :247 PRINTL
+  // :247 的 PRINTL 只结束 :243/:245 的 `PRINT ２Ｄ` / `PRINT 普通` 那一行
+  // （PRINT 不换行），**不是空行**——ere 的 print 一次调用即一行（#597）
 }
 
 /**

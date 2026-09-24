@@ -86,7 +86,10 @@ function print_candidates(candidates) {
       `<${60 - era_flag.day_count}天以内再展出${20 - game.event.装饰品数}名勇者到博物馆将解锁实绩！>`,
     );
   } else {
-    era.println();
+    // :22 的 PRINTL 只结束 :18 `PRINT 请选择处刑对象` 那一行（PRINT 不换行），
+    // **不是空行**——ere 的 print 自成一行，这里什么都不补（#597）。
+    // IF 支的 :20 PRINTFORML 与 :18 在原作是同一行的拼接，ere 侧拆成两个
+    // print，是既有记名差异（不在本票范围）
   }
   era.drawLine();
   candidates.forEach((cid, index) => {

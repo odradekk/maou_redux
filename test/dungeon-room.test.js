@@ -285,6 +285,22 @@ test('日结算·SHOP_DAY：威望五档——岌岌可危归零、动荡不安 
   await dungeon_shop_day(0, zero);
   assert.equal(fixture.store.get('flag:10004'), 0, '岌岌可危 → 税入 0（:344）');
   assert(text_lines(fixture).includes('威望值是【岌岌可危】'), ':343 播报');
+  // #597：:362 的 PRINTL 落在 :343 的 PRINTL 之后（那一行已结束）——它是
+  // **真空行**，税入播报前恰有一个空行；删掉即少一行（本用例的守卫）
+  {
+    const lines = fixture.lines;
+    const tax = lines.findIndex(
+      (line) =>
+        line.type === 'text' && line.text.includes('从商店街征收了今天的税金'),
+    );
+    assert.ok(tax >= 1, '税入播报行出现在首行之后（否则断言会空过）');
+    assert.equal(lines[tax - 1].type, 'br', ':362 的真空行在税入行之前');
+    assert.equal(
+      lines[tax - 2].type,
+      'text',
+      '空行之前是威望行（不多不少一个）',
+    );
+  }
 
   // 威望 30（(20, 40] 档）：×3/10 → 15
   fixture.store.set('exflag:99', 30);

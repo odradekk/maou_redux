@@ -293,6 +293,49 @@ test('AFTERTRAIN: aftertrain_analsex_check A感觉分档与性交中毒', async 
   assert.equal(fixture.store.get('exp:17:1'), 3); // 肛门经验
 });
 
+// —— #597：调教后性交的「回到床上做了…」之后不补空行 ——
+
+/**
+ * 断言 `needle` 那一行之后不紧跟空行（该行是最后一行也算通过）。
+ * 夹具的 println 落成 br、print('') 落成空文本条目。
+ */
+function assert_no_blank_after(fixture, needle, label) {
+  const index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes(needle),
+  );
+  assert.ok(index >= 0, `${label}：演出里出现「${needle}」（否则断言会空过）`);
+  const next = fixture.lines[index + 1];
+  assert.ok(
+    next === undefined ||
+      !(next.type === 'br' || (next.type === 'text' && next.text === '')),
+    `${label}：这里不补空行`,
+  );
+}
+
+test('#597：aftertrain_sex_check 的「回到床上做了…」之后不补空行（:229 是空源码行）', async () => {
+  const { fixture } = seed_aftertrain_world();
+  const { aftertrain_sex_check } = fixture.load_module(
+    'event/event-aftertrain',
+  );
+  satisfy_sex_gates(fixture, { abl_index: 2, abl_value: 4 });
+  assert.equal(await aftertrain_sex_check(), 1, '走完结算');
+  // 源 :228 的 PRINTFORML 已结束那一行，:229 只是空源码行、没有 PRINTL；
+  // 下一行是 :231-232 的口上或 :234 的经验播报，中间不夹空行（#597）
+  assert_no_blank_after(fixture, '回到床上做了', '性交');
+});
+
+test('#597：aftertrain_analsex_check 的「回到床上做了…」之后不补空行（:332 是空源码行）', async () => {
+  const { fixture } = seed_aftertrain_world();
+  const { aftertrain_analsex_check } = fixture.load_module(
+    'event/event-aftertrain',
+  );
+  satisfy_sex_gates(fixture, { abl_index: 3, abl_value: 4 });
+  assert.equal(await aftertrain_analsex_check(), 1, '走完结算');
+  // 源 :331 的 PRINTFORML 已结束那一行，:332 只是空源码行；下一行是
+  // :333 的 A 经验播报（#597）
+  assert_no_blank_after(fixture, '回到床上做了', '肛门性交');
+});
+
 test('AFTERTRAIN: aftertrain_lesbiansex_check 百合性交', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
