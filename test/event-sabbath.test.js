@@ -457,3 +457,33 @@ test('SABBATH_DAY：user=3 直接落到默认题材', async () => {
       .includes('献上了淫荡的雕像，信徒的少年在那上面喷上了精液……'),
   );
 });
+
+test('#597：SABBATH_DAY 的仪式播报旁不补空行（:258 是真空行、:260 不是 PRINTL）', async () => {
+  const fixture = seed_world();
+  const { sabbath_day } = fixture.load_module('event/event-sabbath');
+  seed_sabbath_day_ready(fixture);
+
+  await sabbath_day(31, seq([3, 1]));
+
+  // 空行条目：夹具的 println 落成 br，print('') 落成空文本条目
+  const blanks = fixture.lines.filter(
+    (line) => line.type === 'br' || (line.type === 'text' && line.text === ''),
+  );
+  // 源 :258 的 `PRINTL  ` 落在段首、上一行已被上游事件收尾——那一个是真空行
+  assert.equal(blanks.length, 1, '整段只有段首那一个空行（:258）');
+  assert.equal(blanks[0].row, 0, '空行就是第一行');
+  // 源 :259 PRINTFORML 之后的 :260 是**空源码行**、没有 PRINTL，故仪式播报
+  // 之后紧接题材文案，中间不夹空行（#597）
+  const index = fixture.lines.findIndex(
+    (line) =>
+      line.type === 'text' &&
+      line.text.includes('参与了献给无名的淫荡女神的仪式'),
+  );
+  assert.ok(index >= 0, '仪式播报行出现（否则断言会空过）');
+  const next = fixture.lines[index + 1];
+  assert.ok(
+    next !== undefined &&
+      !(next.type === 'br' || (next.type === 'text' && next.text === '')),
+    '仪式播报之后不补空行',
+  );
+});

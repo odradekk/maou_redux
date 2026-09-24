@@ -1,6 +1,8 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 165; // #572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
+export const COUNT = 170; // #597 起 +5（M12121：处刑对象列表表头之后的 :22 PRINTL 不是空行；
+// M12124/M12125：公开处刑的勋章空行只属于 :56/:76 两支——第三支补回与第一支删除都算错；
+// M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
 export default [
   {
@@ -1417,5 +1419,51 @@ export default [
     replace: "era.printButton('选择处刑方式', 150); // SIF 可处刑（:66-67）",
     tests: ['child-id-collision'],
     must_mention: '同一轮里与角色行同屏的固定编号不得等于预设 ID',
+  },
+  // —— #597：:22 的 PRINTL 只结束 :18 的 `PRINT 请选择处刑对象` 那一行 ——
+  {
+    desc: 'M12121 处刑对象列表的表头之后补回空行（:22 的 PRINTL 不是空行，只收 :18）',
+    file: 'ere/event/event-execution.js',
+    find: '    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
+    replace:
+      '    era.println(); // 变异：照「PRINTL 要再补一条」翻译的旧形态\n    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行',
+    tests: ['event-execution'],
+    must_mention: 'ELSE 支（无实绩提示）：表头之后不补空行',
+  },
+  // —— #597：公开处刑的勋章空行只属于 :56/:76 两支（:129 只收尾） ——
+  {
+    desc: 'M12124 魂粉碎支补回空行（把 :56/:76 的真空行挪回共用尾部＝旧形态）',
+    file: 'ere/event/event-public-execution.js',
+    find: '  chara(0).event.勋章经验 += 1;\n',
+    replace:
+      '  chara(0).event.勋章经验 += 1;\n  era.println(); // 变异：共用尾部补回空行\n',
+    tests: ['event-execution'],
+    must_mention: '魂粉碎支：这一支不该有空行',
+  },
+  {
+    desc: 'M12125 凌辱致死支的 :56 真空行删除（:55 的 PRINTFORMW 已收尾，空行由它来）',
+    file: 'ere/event/event-public-execution.js',
+    find: "    // :2-194 的凌辱致死支：空 `PRINTFORML`（原作 56 行）落在 55 行的\n    // PRINTFORMW 之后（那一行已结束）——真空行（#597）\n    era.println();\n    fate = '凌辱致死';\n",
+    replace: "    // 变异：:56 的真空行删除\n    fate = '凌辱致死';\n",
+    tests: ['event-execution'],
+    must_mention: '凌辱致死支（:56）：勋章播报之前的空行是真空行',
+  },
+  // —— #597 返工：容易被误删的真空行（这一批的代表处；同类分组成员见
+  //    issue 的返工评论）——
+  {
+    desc: 'M12126 流放开场的 :21 真空行删除（:20 的 PRINTW 已收尾，空行由它来）',
+    file: 'ere/event/event-banishment.js',
+    find: '  era.println(); // 真空行：20 行的 PRINTW 已收尾（21 行的 PRINTL 落在空行上）',
+    replace: '  // 变异：流放开场的真空行删除',
+    tests: ['event-execution'],
+    must_mention: '流放开场（:21）：这一行之后是真空行（不许删）',
+  },
+  {
+    desc: 'M12127 处置菜单末项之后的 :89 真空行删除（:88 的 PRINTL 已收尾，空行由它来）',
+    file: 'ere/event/event-execution.js',
+    find: '  era.println(); // 真空行：88 行的 PRINTL 已收尾（89 行的 PRINTL 落在空行上）',
+    replace: '  // 变异：处置菜单末项之后的真空行删除',
+    tests: ['event-execution'],
+    must_mention: '处置菜单末项（:89）：这一行之后是真空行（不许删）',
   },
 ];

@@ -25,6 +25,11 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const {
+  is_blank,
+  assert_one_blank_before,
+  assert_trailing_blank,
+} = require('./helpers/blank-lines');
 
 /** 所有掷骰恒 0（RAND:N == 0） */
 const zero = () => 0;
@@ -115,6 +120,32 @@ test('通常来袭：勇者入队、CFLAG:1 = 2、演出行与星框、初期座
     karma >= 0 && karma <= 199,
     `善恶值在 CM_KIND 值域内（实测 ${karma}，钳制无假阳性）`,
   );
+});
+
+test('#597：显示角色信息时前后各一个真空行（原作 :159 / :161）', async () => {
+  const fixture = setup_world();
+  fixture.store.set('flag:8', 2); // GETBIT(FLAG:8, 1)：开局设置位图 2
+  const { enter_enemy } = load(fixture);
+
+  await enter_enemy(0, zero);
+
+  // 星框最后一行（:85 的 PRINTL）之后是 :98 与 :159 两个真空行，再接
+  // show_chara_info 的第一条输出（:160 自带收尾）；:161 的 PRINTL 落在角色
+  // 信息之后，是整段演出的收尾。三处删掉任何一处都会少行。
+  const frame = fixture.lines.findLastIndex(
+    (line) => line.type === 'text' && line.text.startsWith('*****'),
+  );
+  assert.ok(frame >= 0, '星框行出现（否则断言会空过）');
+  assert.deepEqual(
+    fixture.lines.slice(frame + 1, frame + 3).map((line) => is_blank(line)),
+    [true, true],
+    ':98 与 :159 两个真空行都在（角色信息之前）',
+  );
+  assert.ok(
+    !is_blank(fixture.lines[frame + 3]),
+    '两个空行之后接角色信息，不多不少',
+  );
+  assert_trailing_blank(fixture, '角色信息之后（:161）');
 });
 
 test('冒险者前缀：TALENT:122（男人位）非 0 时演出写「冒险者」', async () => {
@@ -442,6 +473,12 @@ test('K_11_LILY 出场：CFLAG:1 = 2、FLAG:223、初期装备、再起点不写
     text_lines(fixture).includes('村娘莉莉开始了地下城的攻略！'),
     '村娘演出行',
   );
+  // #597：:215 的 PRINTL 落在 :214 的 PRINTW 之后（那一行已结束）——真空行
+  assert_one_blank_before(
+    fixture,
+    '村娘莉莉开始了地下城的攻略！',
+    'K_11 开场（:215）',
+  );
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, 0, 'TARGET 还原到 MASTER（FLAG:1 = 0）');
 });
@@ -574,6 +611,17 @@ test('K_34 出场：CFLAG:1 = 2、508 = 3、性别设定、随机名、座標、
   assert(
     texts.includes('狂王的替身葵希罗'),
     '替身演出行（PRINT 狂王的替身 + PRINTL 葵希罗 归并）',
+  );
+  // #597：:285 的空 `PRINTW` 与 :286 的 `PRINTL` 是相邻的**两个**真空行
+  // （:285 自己就让出一行、:286 再让一行）——删掉 :286 那一处即少一行
+  const crazylord = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes('狂王的替身葵希罗'),
+  );
+  assert.ok(crazylord >= 2, '替身演出行出现（否则断言会空过）');
+  assert.deepEqual(
+    fixture.lines.slice(crazylord - 2, crazylord).map((line) => is_blank(line)),
+    [true, true],
+    ':285 与 :286 两个真空行都在（替身演出之前）',
   );
   assert(texts.includes('开始了地下城的攻略！'), '开始攻略行');
   assert(

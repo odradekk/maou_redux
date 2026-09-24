@@ -113,7 +113,7 @@ async function grotesque(cid, rand_n = default_rand) {
     '死灵化',
     '僵尸化',
   ].forEach((label, index) => era.print(`[${index}] ${label}`));
-  era.println();
+  era.println(); // 真空行：25 行的 PRINTL 已收尾（26 行的 PRINTL 落在空行上）
   let result;
   do {
     result = await era.input({ useRule: false });
@@ -148,7 +148,7 @@ async function grotesque(cid, rand_n = default_rand) {
       await era.printAndWait(format_line(line, name));
     }
   }
-  era.println();
+  era.println(); // 真空行：62 行的 PRINTFORMW 已收尾（63 行的 PRINTL 落在空行上）
   era.print('到手的勇者之力以勋章的形式保留下来了');
   era.print('勋章经验+1');
   chara(0).event.勋章经验 += 1;

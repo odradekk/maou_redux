@@ -360,7 +360,7 @@ async function dungeon_map(a, rand) {
       era.drawLine(); // :59
       era.printAndWait(`${name_of(a)}藏起来休息了`); // :60 PRINTFORMW（简体归一：來→来）
       era.drawLine(); // :61
-      era.println(); // :62
+      era.println(); // :62 真空行：60 行的 PRINTFORMW 已收尾
     }
     // 第二臂（:64）条件与第一臂字面相同——原作复制粘贴产物，逻辑不可达，
     // 1:1 保留（check_status 的不可达分支先例）；该规则判的正是这类重复
@@ -395,7 +395,8 @@ function config_labo_map_status() {
   } else {
     era.print('普通'); // :245（FLAG:502 == 0）
   }
-  era.println(); // :247 PRINTL
+  // :247 的 PRINTL 只结束 :243/:245 的 `PRINT ２Ｄ` / `PRINT 普通` 那一行
+  // （PRINT 不换行），**不是空行**——ere 的 print 一次调用即一行（#597）
 }
 
 /**
