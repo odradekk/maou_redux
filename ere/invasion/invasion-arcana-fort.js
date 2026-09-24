@@ -297,7 +297,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     });
     era.drawLine();
     era.printButton('- 上一页', 1000); // :193 / :290
-    era.printButton('- 返  回', 999); // :194 / :291
+    era.printButton('- 返 回', 999); // :194 / :291 PRINTLC（原作两个空格，引擎折叠成一个）
     era.printButton('- 下一页', 1001); // :195 / :292
 
     const result = await era.input();

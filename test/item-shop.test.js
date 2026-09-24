@@ -1405,8 +1405,8 @@ test('#612 TECHNIQUE_OF_MASTER：确认两键的正文照写原作的「- 」', 
   const rendered = fixture.lines
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
-  assert.ok(rendered.includes('[0] - 好的'), 'SHOP_ITEM.ERB:101');
-  assert.ok(rendered.includes('[1] - 不要'), 'SHOP_ITEM.ERB:102');
+  assert.ok(rendered.includes('[0] - 好的'), 'SHOP_ITEM.ERB:752');
+  assert.ok(rendered.includes('[1] - 不要'), 'SHOP_ITEM.ERB:753');
 });
 
 test('复数购买：越界后的重画提示不带 D/2 那一段（源 :481-487 与首次不同形）', async () => {

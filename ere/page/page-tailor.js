@@ -575,9 +575,9 @@ async function tailor_normal(cid) {
     }
     era.drawLine();
     era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
-    era.printButton('服装黑市', 996); // SHOP_TAILOR.ERB:384
-    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:384
-    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:384
+    era.printButton('服装黑市', 996); // SHOP_TAILOR.ERB:385（同上）
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:386（同上）
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:387
     const result = await era.input();
     const item = NORMAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -630,9 +630,9 @@ async function tailor_normal_special(cid) {
       era.printButton(item.label, item.n);
     }
     era.drawLine();
-    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
-    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:384
-    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:384
+    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:628（原文此处无「- 」）
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:629（同上）
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:630
     const result = await era.input();
     const item = SPECIAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -670,9 +670,9 @@ async function tailor_accessory(cid) {
       era.printButton(`${item.label}（${item.c}点）`, item.n);
     }
     era.drawLine();
-    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
-    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:384
-    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:384
+    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:1355（原文此处无「- 」）
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:1356（同上）
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:1357
     const result = await era.input();
     const item = ACCESSORY_ITEMS.find((entry) => entry.n === result);
     if (item) {

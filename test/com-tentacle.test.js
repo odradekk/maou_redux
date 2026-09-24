@@ -524,7 +524,7 @@ test('@COM208：気力有余 → COM_AFTER_ARENA 胜利收场，不进凌辱菜�
   assert.ok(fixture.text_lines().includes('触手'));
   assert.ok(fixture.text_lines().includes('斗技胜利经验+1'));
   assert.equal(fixture.store.get('tflag:400'), 208);
-  assert.ok(!printed_buttons(fixture).includes('0:嘴巴'), '胜利不进菜单');
+  assert.ok(!printed_buttons(fixture).includes('0:- 嘴巴'), '胜利不进菜单');
 });
 
 test('@COM208：陷落后菜单；JUMP COM31 未落地 → COM_MISSING；SELECTCOM 改写为 31', async () => {
@@ -595,7 +595,10 @@ test('@COM208：男人不显示私处；999 暂时放过 → RETURN 1', async ()
   man.fixture.store.set('talent:31:122', 1);
   man.fixture.set_inputs(999);
   assert.equal(await run_com(man, 208), 1, '暂时放过 RETURN 1');
-  assert.ok(!printed_buttons(man.fixture).includes('2:私处'), '男人不显示私处');
+  assert.ok(
+    !printed_buttons(man.fixture).includes('2:- 私处'),
+    '男人不显示私处',
+  );
 });
 
 test('@COM208：战斗点低于 10×魔王等级 → 追加伤害；否则打倒文本', async () => {

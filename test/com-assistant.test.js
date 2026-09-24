@@ -496,11 +496,11 @@ test('#612 COM73：剪发菜单与发型菜单的按钮正文照写原作的「-
   const rendered = fixture.lines
     .filter((line) => line.type === 'button')
     .map((button) => button.rendered);
-  // COMF73.ERB:78-81 与 :135-148 的分隔符是三个/两个连写破折号，1:1 照写
+  // COMF73_髪型を弄る.ERB:78-81 与 :135-148 的分隔符是三个/两个连写破折号，1:1 照写
   assert.deepEqual(
     rendered.slice(0, 3),
     ['[0] ---适当剪一下', '[1] ---大刀阔斧地剪', '[2] ---不剪'],
-    '剪发菜单三项的分隔符是原作的三个连写破折号（COMF73.ERB:78-81）',
+    '剪发菜单三项的分隔符是原作的三个连写破折号（COMF73_髪型を弄る.ERB:78-81）',
   );
   assert.ok(rendered.includes('[1] ---自然'), '发型菜单第一项');
   assert.ok(rendered.includes('[10] --侧束发'), '长度 >100 的款式');

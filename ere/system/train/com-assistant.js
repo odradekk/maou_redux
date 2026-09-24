@@ -491,7 +491,7 @@ async function hairset() {
         era.print('现在[半长]');
       } else {
         era.print('现在[长]');
-        // 分隔符是原作的三个连写破折号（COMF73.ERB:78 `PRINTL [0]---适当剪一下`）
+        // 分隔符是原作的三个连写破折号（COMF73_髪型を弄る.ERB:78 `PRINTL [0]---适当剪一下`）
         era.printButton('---适当剪一下', 0);
       }
       era.printButton('---大刀阔斧地剪', 1); // COMF73_髪型を弄る.ERB:80
@@ -512,7 +512,7 @@ async function hairset() {
       }
       if (l) {
         era.print('剪成什么样子呢？');
-        // 分隔符照写原作的 `---`（COMF73.ERB:99-103）
+        // 分隔符照写原作的 `---`（COMF73_髪型を弄る.ERB:99-103）
         era.printButton('---还是不剪了', 0);
         era.printButton('---自然的样子', 1);
         era.printButton('---剪齐整', 2);
@@ -540,7 +540,7 @@ async function hairset() {
 
   for (;;) {
     era.print(`把${t_name}的头发弄成什么样子？`);
-    // 分隔符照写原作：1-9 是 `---`，10-12 是 `--`（COMF73.ERB:135-148 的
+    // 分隔符照写原作：1-9 是 `---`，10-12 是 `--`（COMF73_髪型を弄る.ERB:135-148 的
     // 对齐写法，不是笔误——原文那几行就是两个破折号）
     era.printButton('---自然', 1);
     era.printButton('---中分', 2);
