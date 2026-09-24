@@ -995,6 +995,33 @@ test('动态后代作为母亲时可反推出原始预设模板', async () => {
   assert.equal(child, 100001);
 });
 
+test('后代 ID 与模板号互推：区间内任意一位都算同一模板（#560 的区间结构）', () => {
+  // 直接钉住 template_no_of 的换算式：区间起点、区间**内**（第 99 位）与
+  // 下一个区间的首位分别对应什么——只断言区间起点时，除号或区间宽度写错
+  // 都可能照样绿（0 / 任何数都是 0）
+  const { FIRST_CHILD_ID, template_no_of } = create_era_fixture().load_module(
+    'chara/chara-pregnancy',
+  );
+  assert.equal(template_no_of(0), 0, '魔王');
+  assert.equal(template_no_of(31), 31, '普通角色的 NO 就是角色 ID');
+  assert.equal(template_no_of(FIRST_CHILD_ID), 1, '模板 1 的区间起点');
+  assert.equal(
+    template_no_of(FIRST_CHILD_ID + 99),
+    1,
+    '模板 1 的区间末位仍在同一模板',
+  );
+  assert.equal(
+    template_no_of(FIRST_CHILD_ID + 100),
+    2,
+    '下一个区间的首位是模板 2',
+  );
+  assert.equal(
+    template_no_of(FIRST_CHILD_ID + 209 * 100),
+    210,
+    '模板 210（来源预设的序号上界）',
+  );
+});
+
 test('后代命名依次采用父亲、母亲和自动名字类型', () => {
   const cases = [
     { mother: 1, father: 2, nid: 500, first_bound: 5 },
