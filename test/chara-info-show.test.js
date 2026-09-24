@@ -2788,6 +2788,29 @@ test('SHOW_APPEARACE：编号 1 的角色照样显名（NO 判据的两侧）', 
   );
 });
 
+test('SHOW_CHARA_INFO：献祭后代时死亡标记按来源模板号落位（#561 第 2 条）', async () => {
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  // 后代形状的被献祭者：ID 落在 FIRST_CHILD_ID 段（模板 1 的 100000-100099），
+  // template_no_of 拆出模板 1——与真后代走同一条寻址（不必跑生育流程）
+  const victim = 100000;
+  fixture.seed_chara(1, { id: 1, name: '后代模板', callname: '后代模板' });
+  fixture.seed_chara(victim, { id: victim, name: '候补', callname: '候补' });
+  assert.equal(fixture.era.addCharacter([victim, 1]), true);
+  fixture.store.set(`cflag:${victim}:1`, 8);
+  fixture.set_inputs(10, victim, 1); // 进名单 → 点 victim → [1] 献祭
+  await show_chara_info(7, -1, always, 0x000000).catch(() => {});
+
+  assert.equal(fixture.store.get('flag:200'), 1, '模板 1 → FLAG:200');
+  assert.equal(
+    fixture.store.get('flag:100199'),
+    undefined,
+    '不按角色 ID 直加（100000 + 199 = 100199）',
+  );
+  assert(!fixture.era.getAddedCharacters().includes(victim), '被献祭者除名');
+});
+
 test('SHOW_CHARA_INFO：献祭成功后对应的分项计数 +100', async () => {
   const { fixture, show_chara_info } = main_fixture({
     cflags: { 1: 11, 800: 10 },

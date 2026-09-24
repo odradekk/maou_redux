@@ -24,6 +24,10 @@
  *     SETCOLOR 不复刻——按钮无法只染标签本身，整按钮染色会曲解原作
  *     意图（page-select-target.js 沦陷标签的同款裁定）；由此引擎只回传
  *     已打印编号，原作「键入未显示编号也能切换标签」的隐藏通道不可达；
+ *   - 快捷键 = 角色 ID 的列表行与固定编号的 [121]/[1999]-[2001] 同屏：
+ *     后代 ID 必须落在固定编号之上才不撞号（chara-pregnancy.js 的
+ *     FIRST_CHILD_ID = 100000，issue #560 的裁定；静态守卫见
+ *     test/child-id-collision.test.js）；
  *   - 列表显示条件（:33）读 EX_FLAG:9000 位 1，与 [101] 水晶球开关的
  *     位 2（:109-110/:143）不同位：被隐藏的是带 EX_TALENT:1 的角色
  *     （`!EX_TALENT:1 || (EX_TALENT:2 && 位 1)`），位 1 是 MOD_SWITCH 的
@@ -78,6 +82,7 @@ const { get_job_name } = require('#/page/page-select-target');
 const { banishment } = require('#/event/event-banishment');
 const {
   apply_prestige,
+  archive_slot_of,
   dispose_character,
   get,
   release_equipment,
@@ -216,7 +221,8 @@ async function next_tagged(method) {
  * $进行处刑 的 4 号分支（:191-304）：做成肉便器。与旧 @EXECUTION 的同段
  * （event-execution.js 的 make_toilet）三处不同：本作改写版用 SHE(A) 代
  * 硬编码「她」（:208/:234 等）、C 敏感段按扶她/男人分支阴茎文案（:246-252）、
- * SUISEI_STR:A 归档末路标题（:303）。结尾接公共结算（:361-394 的装备
+ * SUISEI_STR:A 按书架槽位记标题（:303；槽位 = 该角色在角色数组里的下标，
+ * event-execution-common.js 的 archive_slot_of）。结尾接公共结算（:361-394 的装备
  * 回收 + 除名 + 经验），经验文案用本文件的写法（:405-406）。
  * @param {number} cid
  */
@@ -354,7 +360,7 @@ async function make_toilet(cid) {
   const title = `肉便器${name}`;
   if (family_id >= 0) era.set(`cstr:${family_id}:5`, title); // :302
   era.set('tstr:30', title);
-  era.set(`videoarchive:${cid}`, title); // SUISEI_STR:A（:303）
+  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:303）
   video_maturo(cid);
   return dispose_character(cid, {
     experience_message: (experience) =>
@@ -364,7 +370,7 @@ async function make_toilet(cid) {
 
 /**
  * 5 号分支：士兵化（:305-318）。与旧 @EXECUTION 的差异：意识残存句改写、
- * 战力变化带具体数值、可迎击播报、SUISEI_STR 归档。不除名（GOTO
+ * 战力变化带具体数值、可迎击播报、SUISEI_STR 按槽位记标题。不除名（GOTO
  * LABEL_EXIT，公共结算被跳过）。
  * @param {number} cid
  */
@@ -384,7 +390,7 @@ async function keep_as_soldier(cid) {
   const title = `魔王傀儡${name}`;
   era.set(`cstr:${cid}:30`, title); // CSTR:30（:313，无下标 = TARGET）
   era.set('tstr:30', title);
-  era.set(`videoarchive:${cid}`, title); // SUISEI_STR:A（:315-317）
+  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:315-317）
   video_maturo2(cid);
 }
 
@@ -407,7 +413,7 @@ async function keep_on_display(cid) {
   const title = `魔族公厕${name}`;
   era.set(`cstr:${cid}:30`, title);
   era.set('tstr:30', title);
-  era.set(`videoarchive:${cid}`, title); // SUISEI_STR:A（:332）
+  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:332）
   video_maturo2(cid);
 }
 

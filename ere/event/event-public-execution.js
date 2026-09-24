@@ -122,7 +122,9 @@ async function public_execution(cid, rand_n = default_rand) {
   era.print('得到了用勇者力量形成的勋章');
   era.print('勋章经验+1');
   if (family_id >= 0) era.set(`cstr:${family_id}:5`, fate);
-  // SUISEI_STR:A 是逐角色末路记录；VIDEO_MATURO 另按开关写录像书架。
+  // SUISEI_STR:A 是「按书架槽位」记标题（A = 该角色在角色数组里的下标，
+  // event-execution-common.js 的 archive_slot_of）；VIDEO_MATURO 另按开关
+  // 把同一标题追加进首个空槽。
   archive_fate(cid, fate);
   return dispose_character(cid, {
     experience_message: (experience) =>

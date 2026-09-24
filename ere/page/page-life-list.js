@@ -81,6 +81,11 @@
  *    翻页真正翻页；**原作的第三个参数 LIST_POS 随之不再是本函数的输入**，
  *    签名去掉它（调用方都是 ERB 侧——42 个 SHOP_LABO 调用点与 @ABILITY_UP
  *    ——JS 忽略多余实参，接入时按新签名即可）。
+ *
+ * 8. **编号按钮的快捷键 = 角色 ID**（第 1 条），与调用方同屏的固定编号
+ *    （[997]-[999] 等翻页/返回键）共存——后代 ID 因此必须落在固定编号之上
+ *    （chara-pregnancy.js 的 FIRST_CHILD_ID = 100000，issue #560 的裁定；
+ *    静态守卫见 test/child-id-collision.test.js）。
  */
 
 'use strict';

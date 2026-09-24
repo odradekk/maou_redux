@@ -1,5 +1,11 @@
 /**
  * @file 博物馆处刑 @MUSEUM 的行为测试（issue #347，阶段 5a L16）。
+ *
+ * #561 第 1 条起：录像书架（SUISEI_STR）的槽位是**调用时该角色在已加入列表
+ * 中的位置**，不是角色 ID。本文件的 seed_world() 是 [0, 31]，所以槽位 1 =
+ * 31 号；两连发的用例（先处刑 31、再处刑 32）里 31 已被除名，列表变成
+ * [0, 32]，第二次写的是**同一个槽位 1**（与原作 DELCHARA 之后数组前移、
+ * 下一个角色按下标覆写同构）。下文的 `videoarchive:N` 一律按这条读。
  */
 
 'use strict';
@@ -47,7 +53,7 @@ test('MUSEUM：家具化后记录展品、结算封印经验并除名角色', as
   assert.equal(fixture.store.get('flag:84'), 1, '装饰品总数 +1');
   assert.equal(fixture.store.get('flag:608'), 1, '家具数 +1');
   assert.equal(
-    fixture.store.get('videoarchive:31'),
+    fixture.store.get('videoarchive:1'),
     '人形桌子温妮',
     'SUISEI_STR:A 保存展品名与角色名',
   );
@@ -79,7 +85,7 @@ test('MUSEUM：拒绝范围外输入，直到选中有效展品', async () => {
   await museum(31, seq([0]));
 
   assert.equal(fixture.store.get('flag:608'), 1);
-  assert.equal(fixture.store.get('videoarchive:31'), '人形桌子温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '人形桌子温妮');
 });
 
 test('MUSEUM：保留原作隐藏输入 100 的无分类处刑路径', async () => {
@@ -90,7 +96,7 @@ test('MUSEUM：保留原作隐藏输入 100 的无分类处刑路径', async () 
   await museum(31, seq([0]));
 
   assert.equal(fixture.store.get('flag:84'), undefined, '不增加任何展品分类');
-  assert.equal(fixture.store.get('videoarchive:31'), '温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '温妮');
   assert.deepEqual(fixture.era.getAddedCharacters(), [0], '仍执行公共处刑尾段');
 });
 
@@ -105,7 +111,34 @@ test('MUSEUM：隐藏输入 100 继承原作 MATURO 静态残值', async () => {
   fixture.set_inputs(100);
   await museum(32, seq([0]));
 
-  assert.equal(fixture.store.get('videoarchive:32'), '人形桌子妹妹');
+  // 槽位取「调用时」的角色在列表中的位置：31 被除名后列表是 [0, 32]，
+  // 故 32 号写槽位 1（把它前一次记在 31 号槽位的标题盖掉）——与原作
+  // DELCHARA 之后数组前移、下一个角色按下标覆写同一槽位同构
+  assert.equal(fixture.store.get('videoarchive:1'), '人形桌子妹妹');
+  assert.equal(fixture.store.get('videoarchive:2'), undefined);
+});
+
+test('MUSEUM：处刑后代时死亡标记按来源模板号落位（#561 第 2 条）', async () => {
+  const fixture = seed_world();
+  // 后代形状的角色：ID 落在 FIRST_CHILD_ID 段（模板 1 的 100000-100099），
+  // template_no_of 拆出模板 1——与真后代走同一条寻址（不必跑生育流程）
+  const victim = 100000;
+  fixture.seed_chara(1, { id: 1, name: '后代模板', callname: '后代模板' });
+  assert.equal(fixture.era.addCharacter([victim, 1]), true);
+  for (const slot of [550, 551, 552]) {
+    fixture.store.set(`cflag:${victim}:${slot}`, -1);
+  }
+  fixture.set_inputs(8);
+  const { museum } = fixture.load_module('event/event-museum');
+
+  await museum(victim, seq([0]));
+
+  assert.equal(fixture.store.get('flag:200'), 1, '模板 1 → FLAG:200');
+  assert.equal(
+    fixture.store.get('flag:100199'),
+    undefined,
+    '不按角色 ID 直加（100000 + 199 = 100199）',
+  );
 });
 
 test('MUSEUM：按角色性格分发口上并透传确定性随机源', async () => {
@@ -177,7 +210,7 @@ test('MUSEUM：十类展品各写正确名称与分类计数', async (t) => {
       await museum(31, seq([0]));
 
       assert.equal(fixture.store.get(`flag:${counter}`), 1);
-      assert.equal(fixture.store.get('videoarchive:31'), title);
+      assert.equal(fixture.store.get('videoarchive:1'), title);
     });
   }
 });
@@ -199,7 +232,7 @@ test('MUSEUM：原作 ELSEIF 会重新掷 RAND', async () => {
 
   await museum(31, seq([2, 1]));
 
-  assert.equal(fixture.store.get('videoarchive:31'), '大理石像温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '大理石像温妮');
 });
 
 test('MUSEUM：反抗刻印 3 与反抗素质进入叛逆口上', async () => {
@@ -217,7 +250,7 @@ test('MUSEUM：反抗刻印 3 与反抗素质进入叛逆口上', async () => {
       .text_lines()
       .some((line) => line.includes('散发出稍有空隙就会马上袭击过来的气氛')),
   );
-  assert.equal(fixture.store.get('videoarchive:31'), '射精叛逆石膏像温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '射精叛逆石膏像温妮');
 });
 
 test('MUSEUM：保留原作 LOCALS 跨调用残值', async () => {
@@ -232,8 +265,9 @@ test('MUSEUM：保留原作 LOCALS 跨调用残值', async () => {
   fixture.set_inputs(7);
   await museum(32, seq([0]));
 
+  // 槽位取「调用时」的列表位置（31 除名后 [0, 32] → 槽位 1，覆写前一次）
   assert.equal(
-    fixture.store.get('videoarchive:32'),
+    fixture.store.get('videoarchive:1'),
     '妊娠蛋白石雕像妹妹',
     '宝石支没有重置 LOCALS，会继承前一次处刑的前缀',
   );

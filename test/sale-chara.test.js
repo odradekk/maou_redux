@@ -287,6 +287,25 @@ test('KILL_TARGET：经队伍门面除名，清除指向被售角色的历史指
   );
 });
 
+test('KILL_TARGET：后代的死亡标记按来源模板号落位（#561 第 2 条）', async () => {
+  const fixture = create_era_fixture();
+  seed_world(fixture);
+  // 后代形状的角色：ID 落在 FIRST_CHILD_ID 段（模板 1 的 100000-100099），
+  // template_no_of 拆出模板 1——与真后代走同一条寻址（不必跑生育流程）
+  fixture.seed_chara(1, { name: '后代模板' });
+  assert.equal(fixture.era.addCharacter([100000, 1]), true);
+
+  const { kill_target } = fixture.load_module('system/stronghold/sale');
+  assert.equal(await kill_target(100000), 0);
+
+  assert.equal(fixture.store.get('flag:200'), 1, '模板 1 → FLAG:200');
+  assert.equal(
+    fixture.store.get('flag:100199'),
+    undefined,
+    '不按角色 ID 直加（100000 + 199 = 100199）',
+  );
+});
+
 test('CHARA_SALE：确认出售后连续重画，退出时恢复上次调教对象', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);

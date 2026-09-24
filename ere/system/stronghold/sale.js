@@ -34,6 +34,7 @@ const era = require('#/era-electron');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { remember_sale_price } = require('#/event/event-aftertrain');
 const { name_reset } = require('#/chara/char-make');
+const { template_no_of } = require('#/chara/chara-pregnancy');
 const { get_look_info } = require('#/chara/look-info');
 const { self_kojo } = require('#/kojo/kojo-system');
 const { game } = require('#/facade/game');
@@ -546,7 +547,9 @@ async function long_good_bye(cid = era_flag.target) {
 
 /** @KILL_TARGET：把已售角色从队伍和已加入角色中除名。 */
 async function kill_target(cid = era_flag.target) {
-  era.set(`flag:${cid + 199}`, 1);
+  // FLAG:(NO:TARGET + 199) = 对应勇者已经处刑（SELL_CHARA.ERB:170）。普通
+  // 角色的 NO 就是角色 ID；后代的原作 NO 是来源模板号，经 template_no_of 换算。
+  era.set(`flag:${template_no_of(cid) + 199}`, 1);
   party_char_del(cid);
   era.removeCharacter(cid);
 

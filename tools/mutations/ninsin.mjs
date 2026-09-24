@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #346 妊娠、育儿与怪物召唤。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 70;
+export const COUNT = 72; // #560 起 +2（M11780/M11781：后代 ID 区间与模板号反推）
 
 export default [
   {
@@ -103,8 +103,8 @@ export default [
   {
     desc: 'M7192 动态后代保留区起点漂移',
     file: 'ere/chara/chara-pregnancy.js',
-    find: 'const FIRST_CHILD_ID = 1000;',
-    replace: 'const FIRST_CHILD_ID = 1001;',
+    find: 'const FIRST_CHILD_ID = 100000;',
+    replace: 'const FIRST_CHILD_ID = 100001;',
     tests: ['chara-pregnancy'],
     must_mention: '同一预设连续生成两个后代不覆盖',
   },
@@ -573,5 +573,23 @@ export default [
     replace: '  const chance = chara(cid).stronghold.排卵诱发剂 ? 9 : 5;',
     tests: ['chara-pregnancy'],
     must_mention: '诱发剂 11／自然 5 的随机上界',
+  },
+  // —— #560（与 #561 同票）：后代 ID 区间抬到固定按钮编号之上（M11780 起） ——
+  {
+    desc: 'M11780 后代保留区起点退回旧的 1000 段（撞进页面固定按钮编号）',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: 'const FIRST_CHILD_ID = 100000;',
+    replace: 'const FIRST_CHILD_ID = 1000;',
+    tests: ['child-id-collision'],
+    must_mention: '固定按钮编号必须小于 FIRST_CHILD_ID = ',
+  },
+  {
+    desc: 'M11781 后代模板号反推改用旧的 1000 起点',
+    file: 'ere/chara/chara-pregnancy.js',
+    find: '  return Math.trunc((cid - FIRST_CHILD_ID) / CHILD_ID_BLOCK_SIZE) + 1;',
+    replace: '  return Math.trunc((cid - 1000) / CHILD_ID_BLOCK_SIZE) + 1;',
+    tests: ['event-execution-batch'],
+    must_mention:
+      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
   },
 ];
