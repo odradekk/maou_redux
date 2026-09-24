@@ -305,8 +305,13 @@ async function char_append(arg, mode, rand = default_rand) {
     era.print('请问登陆的角色是什么性别呢？'); // :238 PRINTFORMW
     await era.waitAnyKey();
     era.drawLine(); // :103-272
+    // :240 的性别选项**保持纯文本**（#572 复核）：源是 `PRINTFORMW [1] 男性…`
+    // ——PRINTFORMW 自带 WAIT，:241 的 INPUT 在它之后，中间那次成功回传会把
+    // 按钮的 valCount 推高（引擎 app.asar 的 getButtonObject 按
+    // `line.valCount < buttonValCount` 禁用早先的按钮），按钮化后会点不动。
+    // 纯文本 + 本轮无按钮 = 引擎的自由输入通道，键入 1/2/3 照常。
     era.print('[1] 男性      [2] 女性      [3] 扶她'); // :240
-    await era.waitAnyKey();
+    await era.waitAnyKey(); // :240 PRINTFORMW 的 WAIT
     const gender = await era.input(); // :103-272
     if (gender === 1) {
       era.set(`talent:${cid}:122`, 1); // :242-243 男人

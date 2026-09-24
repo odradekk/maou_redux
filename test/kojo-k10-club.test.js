@@ -612,3 +612,26 @@ test('COLOSSEUM_KOJO_10：持假阳具判定只认 item:4——未持有（item:
     'item:4 未置 1 → 拼接行不出现',
   );
 });
+
+// —— #572：初調教的两处二选一按钮化 ——
+
+test('初調教的两处二选一是按钮（#572）：[0] 直不起来。/[1] 就是这样才好。', async () => {
+  const fixture = await setup_k10((f) => f.store.set('talent:20:314', 9));
+  fixture.set_inputs(1);
+
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+
+  const buttons = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.deepEqual(
+    buttons,
+    ['[0] - 直不起来。', '[1] - 就是这样才好。'],
+    '正文不带 [N]，引擎按 showAcc 拼',
+  );
+  assert.ok(
+    !fixture.text_lines().includes('[0] - 直不起来。'),
+    '选项不再以纯文本出现（纯文本编号在实机上点不动）',
+  );
+});

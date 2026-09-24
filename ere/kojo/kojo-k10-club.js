@@ -157,8 +157,9 @@ on('EVENTTRAIN', async () => {
       await era.printAndWait(
         `「………话说回来，你应该知道了吧、我可是扶她哟？即使这样也想要抱我吗？」`,
       ); // :95
-      await era.print(`[0] - 直不起来。`); // :96
-      await era.print(`[1] - 就是这样才好。`); // :97
+      // :96-97 的两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+      era.printButton('- 直不起来。', 0); // :96（「- 」是原作正文）
+      era.printButton('- 就是这样才好。', 1); // :97
       let result0;
       for (;;) {
         result0 = await era.input(); // :98-99 $INPUT_LOOP / INPUT
@@ -209,8 +210,9 @@ on('EVENTTRAIN', async () => {
         `${target_name}接二连三的抛出的条件，让${player_name}的头开始痛了起来。于是${target_name}撅起了嘴再一次发问道。`,
       ); // :122
       await era.printAndWait(`「所以说、我这样的身体你真的直的起来嘛？」`); // :123
-      await era.print(`[0] - 直不起来。`); // :124
-      await era.print(`[1] - 就是这样才赞！`); // :125
+      // :124-125 的两项 → 按钮（同上）
+      era.printButton('- 直不起来。', 0); // :124
+      era.printButton('- 就是这样才赞！', 1); // :125
       let result1;
       for (;;) {
         result1 = await era.input(); // :126-127 $INPUT_LOOP1 / INPUT

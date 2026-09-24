@@ -243,17 +243,28 @@ test('GOHOUBI [2] 饮尿档（504=8）：魔王非扶她非男人 → 秘裂', a
   );
 });
 
-test('GOHOUBI 菜单输入循环：负值与 >= 3 重输，0 终过', async () => {
+test('GOHOUBI 菜单是按钮（#572）：白名单＝三枚按钮，越界输入由引擎拒收', async () => {
   const fixture = setup_world();
-  fixture.set_inputs(-1, 9, 0);
+  fixture.set_inputs(0);
   const { gohoubi } = load(fixture);
   await gohoubi(1);
-  const inputs = fixture.inputs_consumed.filter((i) => i.api === 'input');
-  assert.equal(inputs.length, 3, '三次 input');
-  assert.equal(
-    fixture.store.get('juel:1:100'),
-    300,
-    '第三次输入 0 生效（应份的否定点数 LV5×60）',
+  const buttons = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.deepEqual(buttons, [
+    '[0] 这是你应份的',
+    '[1] 授予勋章',
+    '[2] 赐予承诺的东西',
+  ]);
+
+  // 旧行为是「RESULT < 0 或 >= 3 落回 $INPUT_LOOP 重问」——按钮化后白名单
+  // 就是上面三枚，引擎当场拒收（重问支在实机上不可达，1:1 保留）
+  const rejected = setup_world();
+  rejected.set_inputs(9);
+  const { gohoubi: gohoubi2 } = load(rejected);
+  await assert.rejects(
+    () => gohoubi2(1),
+    /输入不合法！请输入以下值之一：0, 1, 2/,
   );
 });
 
@@ -331,17 +342,35 @@ test('OSIOKI [8] 媚药放置刑：药物经验 +10、三系点数', async () =>
   assert(text_lines(fixture).some((l) => l.includes('你走出了房间')));
 });
 
-test('OSIOKI 菜单输入循环：>= 9 重输，8 终过', async () => {
+test('OSIOKI 菜单是按钮（#572）：白名单＝九枚按钮，越界输入由引擎拒收', async () => {
   const fixture = setup_world();
-  fixture.set_inputs(12, 8);
+  fixture.set_inputs(8);
   const { osioski } = load(fixture);
   await osioski(1);
-  const inputs = fixture.inputs_consumed.filter((i) => i.api === 'input');
-  assert.equal(inputs.length, 2, '两次 input');
-  assert.equal(
-    fixture.store.get('exp:1:57'),
-    10,
-    '第二次输入 8 生效（媚药放置的药物经验）',
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    [
+      '[0] 什么也不做',
+      '[1] 低压电椅刑',
+      '[2] 当街自慰刑',
+      '[3] 当街脱粪刑',
+      '[4] 鞭刑',
+      '[5] 小便器刑',
+      '[6] 打扫厕所刑',
+      '[7] 不给吃饭刑',
+      '[8] 媚药放置刑',
+    ],
+    '九档全在按钮上（正文不带 [N]，行尾对齐用的全角空格不再需要）',
+  );
+
+  const rejected = setup_world();
+  rejected.set_inputs(12);
+  const { osioski: osioski2 } = load(rejected);
+  await assert.rejects(
+    () => osioski2(1),
+    /输入不合法！请输入以下值之一：0, 1, 2, 3, 4, 5, 6, 7, 8/,
   );
 });
 

@@ -55,6 +55,14 @@
  *     空输入、走 :644-670 / :692-706 段内的「随机生成。」支；两处提示行后各
  *     补一句「（输入 0 随机生成）」——有意偏离 1:1 文案，判据与依据见
  *     ere/utils/input-text.js。
+ *   - **选项升格为按钮**（#572）：@CHARA_FIRST_XP 的六处选项行
+ *     （:612/:620-623/:634/:661/:683/:790）与 @CHAR_CUSTOM 的最终确认
+ *     （:87）改 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀）。
+ *     随之「输入错误，请重新开始」等越界兜底支在实机上不可达，1:1 保留
+ *     不补用例——逐处说明见 chara_first_xp 的 JSDoc 与各处注释。
+ *     **一处例外**：初吻部位一问（:618-623）保留 `useRule: false`——那四的
+ *     显示是有条件的（:619/:621 的 SIF）、受理是无条件的（:625），
+ *     收紧白名单会锁死「未显示但原作照收」的 201/301（见该处注释）。
  */
 
 'use strict';
@@ -713,10 +721,17 @@ const DOG_POSITIONS = [1, 2, 3];
  * @CHARA_FIRST_XP（:596-794）：初吻与初体验的对象、部位、名称的问卷。
  *
  * 选择项在源里是**列排版文本 + `INPUT`**（:612/:620-623 一类），不是
- * `PRINTBUTTON`——按 page/page-life-list.js 的 @SELECT_YES_NO 先例保持文本
- * 行（升格成按钮会把「输入错误，请重新开始」这些校验支变成不可达：EraElectron
- * 的输入集就是已打印按钮的快捷键集，夹具同款拒收——见夹具 era.input 的
- * 按钮白名单校验）。
+ * `PRINTBUTTON`——#572 起按 PR #53 通则升格为按钮（正文不写 [编号] 前缀，
+ * 引擎按 showAcc 自动拼）。此前的处置是「保持文本行，免得
+ * 「输入错误，请重新开始」这些校验支变成不可达」（page-life-list.js 的
+ * @SELECT_YES_NO 先例）：改为按钮后白名单就是显示出来的编号，越界输入由
+ * 引擎当场拒收（弹「输入不合法」）——那些兜底支因此结构性不可达，1:1
+ * 保留结构不补用例（page-ability-up.js 文件头同款登记）。**例外一处**：初吻
+ * 部位一问（:618-623）保留 `useRule: false`——那四个编号的显示是有条件的、
+ * 受理是无条件的（:625），属「原作允许输入未显示编号」，按 #572 的要求
+ * 保住路径并写明出处。免费文本支
+ * （:647-648/:695-696 的 `INPUTS` 与 :612/:683 的 `[997] 自定义输入`）
+ * 不受影响：它们是各自独立的 `era.input()`，与按钮轮不共用白名单。
  *
  * @param {number} cid 角色 ID（源 ARG）
  * @param {(n: number) => number} [rand] 源 :751 `RAND:2` 的随机源
@@ -741,24 +756,37 @@ async function chara_first_xp(cid, rand = default_rand) {
 
     era.print('设定初体验'); // :610
     era.print('初吻对象是？'); // :611
-    era.print(
-      '[0] 不明 [1] 魔王 [993] 狂王 [994] 怪物 [995] 野狗 [999] 触手 [996] 随机 [997] 自定义输入 [998] 无',
-    ); // :612
+    // :612 的九项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+    era.printButton('不明', 0);
+    era.printButton('魔王', 1);
+    era.printButton('狂王', 993);
+    era.printButton('怪物', 994);
+    era.printButton('野狗', 995);
+    era.printButton('触手', 999);
+    era.printButton('随机', 996);
+    era.printButton('自定义输入', 997);
+    era.printButton('无', 998);
     kiss = await era.input(); // :596-794
 
     // :615 SELECTCASE LOCAL
     if (kiss === 1) {
       // :616-631 魔王：先问部位
       era.print('初吻位置是？'); // :596-794
-      era.print('[1] 唇 '); // :618
+      // :618-623 的四行选项 → 按钮（PR #53 通则，正文不写 [编号]；#572）。
+      // **保留 useRule: false**（#572 审查返工）：显示是条件的（:619/:621 的
+      // SIF），受理是无条件的（:625 `IF GROUPMATCH(RESULT,1,201,301,401)`）
+      // ——女性魔王键入 201、男性魔王键入 301，原作照收且落盘编码与部位词
+      // 都不同。收紧白名单会把这两条路径锁死，故与流放/公开处刑的 100、
+      // ENDING 发色的 11 同款处置（先例 event-museum.js:83-85）。
+      era.printButton('唇', 1); // :618
       if (talent(0, T_扶她) || talent(0, T_男人)) {
-        era.print('[201] 阴茎'); // :619-620（魔王的性别决定选项）
+        era.printButton('阴茎', 201); // :619-620（魔王的性别决定选项）
       }
       if (!talent(0, T_男人)) {
-        era.print('[301] 私处'); // :621-622
+        era.printButton('私处', 301); // :621-622
       }
-      era.print('[401] 肛门'); // :623
-      const position = await era.input(); // :596-794
+      era.printButton('肛门', 401); // :623
+      const position = await era.input({ useRule: false }); // :596-794
       if (groupmatch(position, KISS_POSITIONS)) {
         kiss_name = chara_callname(0); // :596-794 %SAVESTR:MASTER%
         kiss = position; // :596-794
@@ -769,7 +797,9 @@ async function chara_first_xp(cid, rand = default_rand) {
     } else if (kiss === 995) {
       // :632-641 野狗：部位码加到 995 上（996/997/998）
       era.print('初吻位置是？'); // :596-794
-      era.print('[1] 肛门 [2] 阴茎 [3] 嘴'); // :634
+      era.printButton('肛门', 1); // :634
+      era.printButton('阴茎', 2); // :634
+      era.printButton('嘴', 3); // :634
       const position = await era.input(); // :596-794
       if (groupmatch(position, DOG_POSITIONS)) {
         kiss += position; // :637 LOCAL += RESULT
@@ -799,7 +829,11 @@ async function chara_first_xp(cid, rand = default_rand) {
         }
         if (kiss !== -1) {
           era.print('初吻位置是？'); // :596-794
-          era.print('[1] 唇 [201] 阴茎 [301] 私处 [401] 肛门'); // :661
+          // :661 的四项 → 按钮（同上）
+          era.printButton('唇', 1);
+          era.printButton('阴茎', 201);
+          era.printButton('私处', 301);
+          era.printButton('肛门', 401);
           const position = await era.input(); // :596-794
           if (groupmatch(position, KISS_POSITIONS)) {
             kiss_name = chara_callname(0); // :596-794
@@ -829,9 +863,16 @@ async function chara_first_xp(cid, rand = default_rand) {
     // :681-715 初体验对象：只对非処女问
     if (!talent(cid, 0)) {
       era.print('初体验对象是？'); // :682
-      era.print(
-        '[1] 魔王 [101] 蠕虫 [102] 触手生物 [103] 野狗 [104] 怪物 [105] 狂王 [996] 随机 [997] 自定义输入 [998] 无',
-      ); // :683
+      // :683 的九项 → 按钮（同上）
+      era.printButton('魔王', 1);
+      era.printButton('蠕虫', 101);
+      era.printButton('触手生物', 102);
+      era.printButton('野狗', 103);
+      era.printButton('怪物', 104);
+      era.printButton('狂王', 105);
+      era.printButton('随机', 996);
+      era.printButton('自定义输入', 997);
+      era.printButton('无', 998);
       sex = await era.input(); // :684-685
       if (sex === 1) {
         // :596-794 魔王
@@ -953,7 +994,9 @@ async function chara_first_xp(cid, rand = default_rand) {
     }
 
     era.print('这样就可以了吗？'); // :789
-    era.print('[0] 好的 [1] 还是改一下吧'); // :790
+    // :790 的两项 → 按钮（同上）
+    era.printButton('好的', 0);
+    era.printButton('还是改一下吧', 1);
     const answer = await era.input(); // :596-794
     if (answer === 1) {
       continue xp_loop; // :596-794 GOTO LOOP2
@@ -1075,7 +1118,9 @@ async function char_custom(cid, mode, rand = default_rand) {
           }
           price = chara_cost(cid); // :1-153 再次检查价格
           era.print(`${chara_callname(cid)}的最终价格是${price}点，可以吗？`); // :86
-          era.print('[1] 好，就是这样了！  [2] 我还想再修改一下。 '); // :87
+          // :87 的两项 → 按钮（同上）
+          era.printButton('好，就是这样了！', 1);
+          era.printButton('我还想再修改一下。', 2);
 
           // :1-153 $LOOP
           for (;;) {

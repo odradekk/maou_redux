@@ -578,3 +578,18 @@ test('存根清单可检索：docs/stub-registry.md 收录 SYOKUSYU_MILK', () =>
   assert.deepEqual(mod.STUBBED_CALLS, []);
   assert.ok(registry.includes('`SYOKUSYU_MILK`'), '登记表的历史行仍在');
 });
+
+test('满月确认的两项是按钮（#572）', async () => {
+  const moon = seed_world();
+  moon.era_flag.date = 15; // 满月（与上一组用例同款）
+  moon.fixture.set_inputs(1);
+  assert.equal(await run_com(moon, 11), 0, '取消满月');
+
+  assert.deepEqual(
+    moon.fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] 好的', '[1] 算了'],
+    '正文不带 [N]；[0] 继续、[1] 取消',
+  );
+});

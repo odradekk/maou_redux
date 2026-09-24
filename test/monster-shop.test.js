@@ -25,6 +25,17 @@ function history_texts(fixture) {
     .map((line) => line.text);
 }
 
+/**
+ * 按钮条目的引擎实显文本（「[快捷键] 正文」，showAcc 默认为真；#572）。
+ * 断言按钮化必须看这里——只看 text 会漏掉正文里手写的 [N] 前缀
+ * （AGENTS.md 硬约束，PR #30 实机撞见）。
+ */
+function button_rendered(fixture) {
+  return fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+}
+
 // —— 排版助手（原作 %…,N,LEFT/RIGHT% 的显示宽度填充）——
 // 本屏的三个排版字面量（名字宽、等级/数量字段宽、每行几格）在下面每一格里
 // 各写一份：它们改了玩家那边就不对，用例按整格字符串钉住。
@@ -177,16 +188,22 @@ test('SHOW_SHOP_MONSTER：日期行两态（TIME 0 午前 / 1 午后）', () => 
 
 // —— @MONSTER_SHOP（:18-173） ——
 
-test('MONSTER_SHOP：入口菜单 —— [1] 召唤 / [999] 返回；999 清在售位并退出', async () => {
+test('MONSTER_SHOP：入口菜单是按钮 —— [1] 召唤 / [999] 返回；999 清在售位并退出', async () => {
   const fixture = monster_world({ 'itemsales:202': 1 });
   fixture.set_inputs(999);
   const { monster_shop } = fixture.load_module('page/page-monster-shop');
   assert.equal(await monster_shop(rand0), 0);
-  const texts = history_texts(fixture);
-  assert(texts.includes('[1]召唤魔物从者'));
-  assert(texts.includes('[999] 返回'));
+  // #572：两枚按钮的实显文本由引擎按 showAcc 拼（正文不带 [N]）
+  assert.deepEqual(button_rendered(fixture), [
+    '[1] 召唤魔物从者',
+    '[999] 返回',
+  ]);
   assert(
-    !texts.includes('请选择要召唤的魔物从者的性别'),
+    !history_texts(fixture).includes('[1]召唤魔物从者'),
+    '选项不再以纯文本行出现（纯文本的编号在实机上敲不进去）',
+  );
+  assert(
+    !history_texts(fixture).includes('请选择要召唤的魔物从者的性别'),
     '999 应直接退出，不进性别选择',
   );
   assert.equal(fixture.store.get('itemsales:202'), 0, ':40 CALL CLEAR_SHOP');
@@ -223,56 +240,76 @@ test('MONSTER_SHOP：从者数达上限（TALENT:220 计 30）时拒绝召唤', 
   }
 });
 
-test('MONSTER_SHOP：性别选择的无效输入打回（> 3 与 0）', async () => {
-  // 4 → 打回；0 → 打回；再给 2 才成立（随后在种族选择处退出）
-  const fixture = await run_monster_shop({}, 1, 4, 0, 2, 999);
-  const texts = history_texts(fixture);
-  assert.equal(
-    texts.filter((line) => line === '请选择要召唤的魔物从者的性别').length,
-    3,
-    '两次无效输入各重开一轮（共三轮）',
+test('MONSTER_SHOP：性别菜单是按钮，越界输入由引擎拒收（#572）', async () => {
+  // 1 → 入口；2 → 性别成立（随后在种族选择处 999 退出）
+  const ok = await run_monster_shop({}, 1, 2, 999);
+  // 前两枚是入口菜单，接着是性别菜单的四枚（种族菜单的十枚在更后面）
+  assert.deepEqual(
+    button_rendered(ok).slice(2, 6),
+    ['[1] 男性', '[2] 女性', '[3] 扶她', '[999] 返回'],
+    ':71 的三个选项与 :73 的返回都是按钮（正文不带 [N]，空白按引擎折叠）',
   );
-  // :71 的菜单行按整行钉住（三处全角空格的个数 4/3/[3] 前无空格）
-  assert(
-    texts.includes(
-      '[1]男性\u3000\u3000\u3000\u3000[2]女性\u3000\u3000\u3000[3]扶她',
-    ),
-    ':71 的性别菜单行',
+
+  // 4 不在本轮白名单（1/2/3/999）里：引擎当场拒收，不再有「打回重开一轮」
+  const rejected = monster_world({});
+  rejected.set_inputs(1, 4);
+  const { monster_shop } = rejected.load_module('page/page-monster-shop');
+  await assert.rejects(
+    () => monster_shop(rand0),
+    /输入不合法！请输入以下值之一：1, 2, 3, 999/,
   );
 });
 
-test('MONSTER_SHOP：种族选择的无效输入打回（> 9 与选择失败）', async () => {
-  // 10 → 打回；2（亚人，无祭品 → SELECT_MONSTER 返回 0）→ 打回；再 999 退出
-  const fixture = await run_monster_shop({}, 1, 1, 10, 1, 202, 999);
-  const texts = history_texts(fixture);
+test('MONSTER_SHOP：种族菜单是按钮，越界输入由引擎拒收（#572）', async () => {
+  const ok = await run_monster_shop({}, 1, 1, 999);
+  assert.deepEqual(
+    button_rendered(ok).slice(-10),
+    [
+      '[1] 兽人类',
+      '[2] 史莱姆类',
+      '[3] 昆虫类',
+      '[4] 植物类',
+      '[5] 触手类',
+      '[6] 妖精类',
+      '[7] 巨人类',
+      '[8] 魔人类',
+      '[9] 魔兽类',
+      '[999] 返回',
+    ],
+    ':97-101 的九档与返回都是按钮（正文不带 [N]）',
+  );
+
+  // 10 不在本轮白名单（1-9/999）里：引擎当场拒收
+  const rejected = monster_world({});
+  rejected.set_inputs(1, 1, 10);
+  const { monster_shop } = rejected.load_module('page/page-monster-shop');
+  await assert.rejects(
+    () => monster_shop(rand0),
+    /输入不合法！请输入以下值之一：1, 2, 3, 4, 5, 6, 7, 8, 9, 999/,
+  );
+});
+
+test('MONSTER_SHOP：种族选择失败（SELECT_MONSTER 返回 0）回到种族菜单重画', async () => {
+  // 种族 1 → 商品一览（本世界无在售位）→ 202 被守卫打回 → 999 退出 → 外层
+  // 重画一轮种族菜单 → 再 999 退出。这是 select_monster 返回 0 的 continue 支。
+  const fixture = await run_monster_shop({}, 1, 1, 1, 202, 999, 999);
   assert(
-    texts.includes('没有能作为祭品的怪物'),
-    '无祭品时 SELECT_MONSTER 的早退报文',
+    history_texts(fixture).filter(
+      (line) => line === '　请选择魔物从者的种类',
+    ).length >= 2,
+    '选择失败后回到种族菜单（重画）',
   );
-  assert.equal(
-    texts.filter((line) => line === '　请选择魔物从者的种类').length,
-    3,
-    '两次打回 + 第三次（999 前那一轮）',
-  );
-  // :97-99 的九宫格按整行钉住（全角空格 4/3/4 各不相同）
-  for (const line of [
-    '[1]兽人类\u3000\u3000\u3000\u3000[2]史莱姆类\u3000\u3000\u3000[3]昆虫类',
-    '[4]植物类\u3000\u3000\u3000\u3000[5]触手类\u3000\u3000\u3000\u3000[6]妖精类',
-    '[7]巨人类\u3000\u3000\u3000\u3000[8]魔人类\u3000\u3000\u3000\u3000[9]魔兽类',
-  ]) {
-    assert(texts.includes(line), `:97-99 的种族菜单行：${line.slice(0, 8)}…`);
-  }
 });
 
 test('MONSTER_SHOP：种族选择里 999 清在售位并退出', async () => {
   const fixture = await run_monster_shop({ 'itemsales:202': 1 }, 1, 1, 999);
   assert.equal(fixture.store.get('itemsales:202'), 0, ':107 CALL CLEAR_SHOP');
-  // 三个屏各印一次 [999] 返回（入口 :37、性别 :73、种族 :101）——按次数钉
-  // 住，删/改任意一屏的那一行都会红
+  // 三个屏各有一枚 [999] 返回按钮（入口 :37、性别 :73、种族 :101）——按次数
+  // 钉住，删/改任意一屏的那一枚都会红（#572 起是按钮，实显文本与原行同文）
   assert.equal(
-    history_texts(fixture).filter((line) => line === '[999] 返回').length,
+    button_rendered(fixture).filter((line) => line === '[999] 返回').length,
     3,
-    '入口/性别/种族三屏各自的返回行',
+    '入口/性别/种族三屏各自的返回按钮',
   );
   assert(
     !history_texts(fixture).some((line) => line.includes('回应了你的召唤')),
@@ -314,7 +351,7 @@ test('MONSTER_SHOP：召唤成功——入队、性别素质、生成、确认�
   // 覆写过它，故按终值断言（原作同序）
   const male = (fixture.store.get('talent:202:122') || 0) !== 0;
   assert(
-    texts.some((line) => line.includes(`[0] 就是${male ? '他' : '她'}了`)),
+    button_rendered(fixture).includes(`[0] 就是${male ? '他' : '她'}了`),
     `性别词随 TALENT:122 走（当前 ${male ? '男' : '非男'}）`,
   );
   // :349-350 结账：最低等级 15 × 135 的钱 + 三只祭品
@@ -348,8 +385,8 @@ test('MONSTER_SHOP：扶她档写 TALENT:121（与男性档互斥）', async () 
     '扶她档不写男性素质',
   );
   assert(
-    history_texts(fixture).some((line) => line.includes('[0] 就是')),
-    ':149-155 的召唤确认行',
+    button_rendered(fixture).some((line) => line.startsWith('[0] 就是')),
+    ':149-155 的召唤确认按钮',
   );
 });
 
@@ -397,22 +434,24 @@ test('MONSTER_SHOP：再换一个（[1]）——钱够则退人扣 1500 重来�
   }
 });
 
-test('MONSTER_SHOP：召唤确认处的 999（非 0/1）也落到函数尾返回', async () => {
-  const fixture = await run_monster_shop(
-    { 'item:101': 3 },
-    1,
-    1,
-    1,
-    202,
-    101,
-    101,
-    101,
-    0,
-    7,
+test('MONSTER_SHOP：召唤确认处只认 0/1，越界输入由引擎拒收（#572）', async () => {
+  // 旧行为是「其余输入落到函数尾返回」（源 :172-173 只认 1，别的都返回）——
+  // 按钮化后白名单是 0/1，7 在引擎那头就被拒收，不再回传游戏。
+  const fixture = monster_world({ 'item:101': 3 });
+  fixture.set_inputs(1, 1, 1, 202, 101, 101, 101, 0, 7);
+  const { monster_shop } = fixture.load_module('page/page-monster-shop');
+  await assert.rejects(
+    () => monster_shop(rand0),
+    /输入不合法！请输入以下值之一：0, 1/,
   );
   assert(
     fixture.era.getAddedCharacters().includes(202),
-    '其余输入同样返回 0（角色已入队）',
+    '拒收发生在确认处，角色已在队（与旧用例同一时点）',
+  );
+  assert(
+    button_rendered(fixture).includes('[0] 就是她了') ||
+      button_rendered(fixture).includes('[0] 就是他了'),
+    '确认处的两枚按钮已打印',
   );
 });
 
@@ -832,19 +871,19 @@ test('BUY_MONSTER：祭品行与可选行的排版字面量（名补 22/20、数
   assert_has_line(texts, sacrifice_cell('兽人', 6, 1), '第三件另起一行');
 });
 
-test('BUY_MONSTER：确认处只认 0/1——其余值落回祭品选择，不扣钱不扣货', async () => {
-  // 挑够祭品后键入 5（源 :345-357 的两支只认 0/1，其余值由 :394 的
-  // $INPUT_LOOP_1 回到祭品选择的输入），随后 0 成交
-  const { fixture } = await run_buy({ 'item:101': 3 }, 101, 101, 101, 5, 0);
-  const era_flag = fixture.load_module('era-utils/era-flag');
-  assert.equal(era_flag.money, 10000 - 15 * 135, '只在 0 上成交一次');
-  assert.equal(fixture.store.get('item:101'), 0, '祭品也只在成交时扣');
-  assert(
-    history_texts(fixture).filter((line) =>
-      line.includes('请选择满足最低等级要求的怪物作为祭品'),
-    ).length >= 1,
-    '5 之后回到祭品选择的画面（重画一轮）',
+test('BUY_MONSTER：确认处只认 0/1，越界输入由引擎拒收（#572）', async () => {
+  // 挑够祭品后键入 5：本轮白名单是 0/1，引擎当场拒收（旧行为是落回祭品
+  // 选择的输入重画，那条路径在实机上不可达）——钱与祭品都不动。
+  const fixture = monster_world({ 'item:101': 3 });
+  fixture.set_inputs(202, 101, 101, 101, 5);
+  const { select_monster } = fixture.load_module('page/page-monster-shop');
+  await assert.rejects(
+    () => select_monster(1, rand0),
+    /输入不合法！请输入以下值之一：0, 1/,
   );
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(era_flag.money, 10000, '未成交，钱不动');
+  assert.equal(fixture.store.get('item:101'), 3, '未成交，祭品不动');
 });
 
 test('SELECT_MONSTER：名录的编号段端点——201（首个在册）与 210（末个在册）都出场', async () => {

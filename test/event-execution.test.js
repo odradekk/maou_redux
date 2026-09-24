@@ -1334,3 +1334,136 @@ test('处刑口上：K2 与 K4 注册四种处刑处理器', () => {
     assert.equal(family.has(4), true);
   }
 });
+
+// —— #572：菜单选项按钮化（引擎里点得动；纯文本的 [N] 行点不动也敲不进） ——
+//
+// 断言看夹具的按钮条目（type === 'button'，rendered = 引擎实显文本）：
+// 正文一律不带 [N] 前缀（引擎按 showAcc 自动拼，手写会显示成 `[1] [1] …`，
+// AGENTS.md 硬约束、PR #30 实机撞见）。流放与公开处刑两处**保留
+// useRule: false**：原作的 `[100] 返回` 被注释掉却仍被受理（BANISHMENT.ERB:32
+// / PUBLIC_EXECUTION 同款），收紧白名单会锁死这条未显示路径。
+
+/** 按钮条目的引擎实显文本（`[快捷键] 正文`，showAcc 默认为真） */
+function button_rendered(fixture) {
+  return fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+}
+
+test('BANISHMENT：五选一菜单是按钮，未显示的 100 仍可键入（#572）', async () => {
+  const fixture = seed_world();
+  fixture.set_inputs(100);
+  const { banishment } = fixture.load_module('event/event-banishment');
+
+  assert.equal(await banishment(31, seq([0])), 0, '100 走「不执行」出口');
+
+  assert.deepEqual(button_rendered(fixture), [
+    '[0] 就这样流放掉',
+    '[1] 施予男性化的诅咒',
+    '[2] 消去之前的记忆',
+    '[3] 变成小动物后放生',
+    '[4] 让她回到成为勇者前的生活',
+  ]);
+  assert(
+    !fixture
+      .text_lines()
+      .some((line) => line.startsWith('[0] 就这样流放掉')),
+    '选项不再以纯文本出现',
+  );
+});
+
+test('PUBLIC_EXECUTION：三选一菜单是按钮，未显示的 100 仍可键入（#572）', async () => {
+  const fixture = seed_world();
+  fixture.set_inputs(100);
+  const { public_execution } = fixture.load_module(
+    'event/event-public-execution',
+  );
+
+  assert.equal(await public_execution(31, seq([0])), 0, '100 走「不执行」出口');
+
+  assert.deepEqual(button_rendered(fixture), [
+    '[0] 凌辱刑',
+    '[1] 绞刑',
+    '[2] 魂粉碎',
+  ]);
+});
+
+test('EXECUTION：处置菜单是按钮、候选人行保持纯文本（#572）', async () => {
+  const fixture = seed_world();
+  fixture.set_inputs(1, 6); // 选 47 号 → [6] 固定示众
+  const { execution } = fixture.load_module('event/event-execution');
+
+  await execution(seq([0]));
+
+  const buttons = button_rendered(fixture);
+  for (const option of [
+    '[0] 流放出地下城',
+    '[1] 公开处刑',
+    '[2] 博物馆展品',
+    '[3] 施行猎奇向处刑',
+    '[4] 做成肉便器',
+    '[5] 士兵化',
+    '[6] 固定示众',
+    '[7] 消除记忆后释放',
+    '[100] 停止',
+    '[101] 水晶球记录',
+  ]) {
+    assert(buttons.includes(option), `处置菜单 ${option}`);
+  }
+  // 候选人列表保持纯文本：单给它上面的 [100] 打按钮，白名单会收成 100、
+  // 候选人编号当场被拒收（整轮按钮化要先重排多列拼行）
+  assert(
+    fixture.text_lines().some((line) => /^\[\s*0\] \S/.test(line)),
+    '候选人行仍是纯文本行（行首编号才是输入值）',
+  );
+  assert(
+    fixture.text_lines().includes('[100] 返回'),
+    '候选人轮的 [100] 返回保持纯文本',
+  );
+});
+
+test('INFRASTRUCTURE：主菜单、牧场设定与播种者四选都是按钮（#572）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('flag:600', 1); // 石像数量
+  fixture.store.set('flag:83', 1); // 肉便器数量
+  fixture.set_inputs(51, 0, 0, 999); // 主菜单 → 牧场 → 播种者 → 设定菜单返回
+  const { infrastructure } = fixture.load_module('page/page-infrastructure');
+
+  await infrastructure(2);
+
+  const buttons = button_rendered(fixture);
+  for (const option of [
+    '[51] 看看肉便器的样子',
+    '[50] 看看全部展品的样子',
+    '[0] 看看石像的状态',
+    '[99] 看看已拍的影像水晶球',
+    '[100] 返回',
+    '[0] 播种者 现在：怪物',
+    '[1] 人类牧场记录 现在：显示',
+    '[2] 卖掉产出的孩子 现在：不出售',
+    '[999] 返回',
+    '[1] 俘虏的中年',
+    '[2] 俘虏的少年',
+    '[3] 扶她淫魔',
+  ]) {
+    assert(buttons.includes(option), `设施菜单 ${option}`);
+  }
+});
+
+test('INFRASTRUCTURE：录像架的翻页三枚是按钮（#572）', async () => {
+  const fixture = seed_world();
+  fixture.store.set('videoarchive:0', '旧片');
+  fixture.set_inputs(99, 1001, 999); // 录像架 → 下一页 → 离开
+  const { infrastructure } = fixture.load_module('page/page-infrastructure');
+
+  await infrastructure(2);
+
+  const buttons = button_rendered(fixture);
+  for (const option of [
+    '[1000] - 上一页',
+    '[999] - 离 开',
+    '[1001] - 下一页',
+  ]) {
+    assert(buttons.includes(option), `录像架 ${option}`);
+  }
+});

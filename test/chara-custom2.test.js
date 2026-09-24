@@ -958,6 +958,21 @@ test('CHARA_FIRST_XP：野狗（995）把部位码加到编码上', async () => 
     await chara_first_xp(1);
     assert.equal(fixture.store.get('cflag:1:16'), code);
     assert.ok(texts(fixture).includes(expected), `部位 ${position}`);
+    if (position === 1) {
+      // #572 审查返工：按钮条目逐个钉住（正文不带 [N]，引擎按 showAcc 拼）。
+      // 按正文筛出野狗那三枚（对象菜单不含这三个词）。
+      assert.deepEqual(
+        buttons(fixture)
+          .filter((b) => ['肛门', '阴茎', '嘴'].includes(b.text))
+          .map((b) => [b.acc, b.text]),
+        [
+          [1, '肛门'],
+          [2, '阴茎'],
+          [3, '嘴'],
+        ],
+        ':634 的三枚按钮',
+      );
+    }
   }
 });
 
@@ -965,12 +980,16 @@ test('CHARA_FIRST_XP：魔王（1）按部位编码与部位词，名字取魔�
   const fixture = setup(1);
   fixture.seed_chara(0, { id: 0, name: '魔王', callname: '魔王' });
   fixture.era.addCharacter(0);
+  // #572 审查返工：部位菜单的显示是有条件的（源 :619/:621 的 SIF），**受理是
+  // 无条件的**（:625 `GROUPMATCH(RESULT,1,201,301,401)`）——女性魔王键入 201
+  // 原作照收。所以消费点保留了 `useRule: false`，本用例就在「魔王不是扶她/
+  // 男人」的世界里直接键入未显示的 201（改回默认白名单即红）。
   const { chara_first_xp } = load(fixture);
   // [部位输入, 期望编码, 期望部位词]——部位词链的四个区间字面量（<100 / <300
   // / <400 / <500）各取一端
   const table = [
     [1, 1, '魔王的唇]'],
-    [201, 201, '魔王的阴茎]'],
+    [201, 201, '魔王的阴茎]'], // 未显示（魔王非扶她非男人）但原作受理
     [301, 301, '魔王的私处]'], // <400 档
     [401, 401, '魔王的肛门]'],
   ];
@@ -984,6 +1003,39 @@ test('CHARA_FIRST_XP：魔王（1）按部位编码与部位词，名字取魔�
       texts(fixture).includes(`[初吻对象：${tail}`),
       `部位 ${position} 的回显：${texts(fixture).join(' / ')}`,
     );
+    // #572：四个选项都是按钮，实显文本由引擎按 showAcc 拼（正文不带 [N]）。
+    // 按正文筛出这一问的三枚（对象菜单不含这三个词）。
+    if (position === 1) {
+      // 初吻对象菜单（源 :612）的九枚也一并钉住（本轮的按钮前九枚就是它）
+      assert.deepEqual(
+        buttons(fixture)
+          .slice(0, 9)
+          .map((b) => [b.acc, b.text]),
+        [
+          [0, '不明'],
+          [1, '魔王'],
+          [993, '狂王'],
+          [994, '怪物'],
+          [995, '野狗'],
+          [999, '触手'],
+          [996, '随机'],
+          [997, '自定义输入'],
+          [998, '无'],
+        ],
+        ':612 的九枚对象按钮',
+      );
+      assert.deepEqual(
+        buttons(fixture)
+          .filter((b) => ['唇', '私处', '肛门'].includes(b.text))
+          .map((b) => [b.acc, b.text]),
+        [
+          [1, '唇'],
+          [301, '私处'],
+          [401, '肛门'],
+        ],
+        '魔王非扶她非男人 → :619-620 的 [201] 不显示，其余三枚照常',
+      );
+    }
   }
 });
 
@@ -1022,6 +1074,22 @@ test('CHARA_FIRST_XP：自定义输入（997）写下名字与部位', async () 
     texts(fixture).includes('（输入 0 随机生成初吻对象）'),
     'ere 侧补的输入 0 说明（#567）',
   );
+  // #572 审查返工：997 支路的部位一问（源 :661）四枚按钮与 612 支路同集
+  for (const [acc, text] of [
+    [1, '唇'],
+    [201, '阴茎'],
+    [301, '私处'],
+    [401, '肛门'],
+  ]) {
+    assert.ok(
+      buttons(fixture).some((b) => b.acc === acc && b.text === text),
+      `:661 的按钮 [${acc}] ${text}`,
+    );
+  }
+  assert.ok(
+    buttons(fixture).every((b) => !b.text.startsWith('[')),
+    '按钮正文不许自带 [N] 前缀（引擎会再拼一层，PR #30）',
+  );
 });
 
 test('CHARA_FIRST_XP：初吻自定义输入 0 走原作的随机生成支（#567：0 视为空输入）', async () => {
@@ -1032,9 +1100,9 @@ test('CHARA_FIRST_XP：初吻自定义输入 0 走原作的随机生成支（#56
   // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与 "0" 都是数值 0。
   // #567 裁定 0 视为空输入：走 :655-657 的「随机生成。」支（LOCAL = -1），
   // 部位一问随 :659 的 `IF !(LOCAL == -1)` 一并跳过，编码不落盘。
-  // 第三项选 1（初吻=唇 / 初体验=魔王两侧都合法）：A 语义的变异跑完整流程时
-  // 输入序列仍对得上，让这条用例的断言在两种语义下都能给出确定结论。
-  fixture.set_inputs(997, 0, 1, 998, 0);
+  // 第三项 1 是接着的初体验对象一问（[1] 魔王，两侧都合法），末项 0 是
+  // #572 起按钮化的最终确认（[0] 好的）。
+  fixture.set_inputs(997, 0, 1, 0);
 
   await chara_first_xp(1);
   assert.ok(texts(fixture).includes('随机生成。'), ':656 的播报');
@@ -1067,14 +1135,22 @@ test('CHARA_FIRST_XP：名字过长（>16）重问', async () => {
   assert.equal(fixture.store.get('cflag:1:16'), 401);
 });
 
-test('CHARA_FIRST_XP：非法输入 → 「输入错误，请重新开始」并重来', async () => {
+test('CHARA_FIRST_XP：非法输入由引擎拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「非菜单值 → 输入错误，请重新开始」——按钮化后白名单就是本轮
+  // 打印的按钮集，77 这类值在引擎那头被拒收、不回传游戏，「输入错误」支
+  // 结构性不可达（1:1 保留，page-ability-up.js 文件头同款登记）。
   const fixture = setup();
-  fixture.set_inputs(77, 0, 998, 0); // 先给非法值，再走正常流程
+  fixture.set_inputs(77);
   const { chara_first_xp } = load(fixture);
 
-  await chara_first_xp(1);
-  assert.equal(fixture.inputs_consumed.length, 4, '非法输入不消耗流程');
-  assert.ok(texts(fixture).includes('输入错误，请重新开始。'));
+  await assert.rejects(
+    () => chara_first_xp(1),
+    /输入不合法！请输入以下值之一：0, 1, 993, 994, 995, 999, 996, 997, 998/,
+  );
+  assert.ok(
+    !texts(fixture).includes('输入错误，请重新开始。'),
+    '越界输入进不了「输入错误」支',
+  );
 });
 
 test('CHARA_FIRST_XP：确认时输入 1 → 重来问卷', async () => {
@@ -1087,6 +1163,15 @@ test('CHARA_FIRST_XP：确认时输入 1 → 重来问卷', async () => {
     texts(fixture).filter((t) => t === '初吻对象是？').length,
     2,
     '问卷跑了两轮',
+  );
+  // #572 审查返工：确认一问（源 :790）的两枚按钮逐个钉住
+  assert.deepEqual(
+    buttons(fixture).slice(-2).map((b) => [b.acc, b.text]),
+    [
+      [0, '好的'],
+      [1, '还是改一下吧'],
+    ],
+    ':790 的 [0]/[1] 按钮（正文不带 [N]）',
   );
 });
 
@@ -1101,6 +1186,27 @@ test('CHARA_FIRST_XP：初体验自定义输入（997）写下名字', async () 
   assert.equal(fixture.store.get('cstr:1:3'), '初恋');
   assert.ok(texts(fixture).includes('新建人物初体验对象为为初恋。'));
   assert.ok(texts(fixture).includes('[初体验对象：初恋]'));
+  // #572 审查返工：初体验对象一问（源 :683）的九枚按钮
+  for (const [acc, text] of [
+    [1, '魔王'],
+    [101, '蠕虫'],
+    [102, '触手生物'],
+    [103, '野狗'],
+    [104, '怪物'],
+    [105, '狂王'],
+    [996, '随机'],
+    [997, '自定义输入'],
+    [998, '无'],
+  ]) {
+    assert.ok(
+      buttons(fixture).some((b) => b.acc === acc && b.text === text),
+      `:683 的按钮 [${acc}] ${text}`,
+    );
+  }
+  assert.ok(
+    buttons(fixture).every((b) => !b.text.startsWith('[')),
+    '按钮正文不许自带 [N] 前缀（引擎会再拼一层，PR #30）',
+  );
 });
 
 test('CHARA_FIRST_XP：初体验 996（随机）不写编码', async () => {
@@ -1311,7 +1417,9 @@ test('CHAR_CUSTOM：钱不够则退回重画（不扣款）', async () => {
   assert.equal(fixture.store.get('flag:10004'), 1, '未扣款');
 });
 
-test('CHAR_CUSTOM：最终确认的其余输入回到 $LOOP 重问', async () => {
+test('CHAR_CUSTOM：最终确认的越界输入由引擎拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「其余输入回到 $LOOP 重问」——按钮化后白名单就是 1/2，7 这类值
+  // 被引擎拒收、不回传游戏，重问支结构性不可达（1:1 保留）。
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   fixture.store.set('talent:1:205', 1);
@@ -1322,13 +1430,25 @@ test('CHAR_CUSTOM：最终确认的其余输入回到 $LOOP 重问', async () =>
   }
   fixture.store.set('flag:42', 1000000);
   const { char_custom } = load(fixture);
-  fixture.set_inputs(999, 998, 998, 0, 7, 2, 996); // 7 = 非法，重问；2 = 再改一下
+  fixture.set_inputs(999, 998, 998, 0, 7);
 
-  await char_custom(1, 0);
+  await assert.rejects(
+    () => char_custom(1, 0),
+    /输入不合法！请输入以下值之一：1, 2/,
+  );
   assert.equal(
     texts_history(fixture).filter((t) => t.includes('的最终价格是')).length,
     1,
-    '只问过一次最终价格',
+    '只问过一次最终价格（拒收就发生在最终确认处）',
+  );
+  // #572 审查返工：最终确认（源 :87）的两枚按钮逐个钉住
+  assert.deepEqual(
+    buttons(fixture).slice(-2).map((b) => [b.acc, b.text]),
+    [
+      [1, '好，就是这样了！'],
+      [2, '我还想再修改一下。'],
+    ],
+    ':87 的 [1]/[2] 按钮（正文不带 [N]）',
   );
 });
 

@@ -28,9 +28,15 @@
  *     quit 抛出，不是某个 flag 变 1；
  *   - [0]/[1] 选项改 printButton（原作 PRINTL [0] - … + INPUT）：引擎
  *     showAcc 自动拼 [快捷键] 正文，按钮正文不写 [编号] 前缀（PR #30
- *     实机教训，工单「两个容易做错的点」之二）；原作「 - 」分隔随引擎
- *     渲染公式成为「 」，与 page-invasion 的菜单同一先例；ENDING_2 的
+ *     实机教训，工单「两个容易做错的点」之二），但**正文里的 `- ` 照写**
+ *     ——它是原作文本的一部分（page-ability-up.js:184 同款），渲染即
+ *     `[0] - …`，与原件逐字一致；ENDING_2 的
  *     INPUT 无按钮（原作亦无选项，纯确认），era.input() 直收；
+ *     **#572 起覆盖 CHAR_GIFT 的全部菜单**（源 :184/:211-214/:220-222/
+ *     :251-252/:280 五处），唯一**有独立结果**的例外是发色子菜单——源
+ *     :254 的 `RESULT == 11` 受理未显示的编号，消费点保留 `useRule: false`
+ *     （源 :224-226 的 `RESULT >= 8 → PERSONAL = 160` 同样受理未显示编号，
+ *     但与 [0] 慈爱同值、玩法上零影响，按钮化后不可达，1:1 保留结构）；
  *   - $INPUT_LOOP 的无效输入只重问不重画（原作 :31-37 的 GOTO）；
  *   - `CALL ADDCHARA_EX, CHARANUM-1` → add_chara_ex(35)（ere 以角色号
  *     直接寻址，#21）；`A = CHARANUM-1` 是原作的全局传参媒介，ere 显式
@@ -298,7 +304,8 @@ async function char_gift(arg, rand = default_rand) {
       await show_chara_info(a, -2);
       // :183-185 询问
       era.print(ask);
-      era.print('[0] 收下她吧  [1] 另外挑选');
+      era.printButton('收下她吧', 0);
+      era.printButton('另外挑选', 1);
       const result = await era.input();
       if (result === 0) {
         // :183-188 询问与「收下预设角色」支（原作 RETURN 无值）
@@ -335,18 +342,29 @@ async function char_gift(arg, rand = default_rand) {
     era.clear(era.getLineCount() - line_count_2);
     era.print('请设定偏好的性格和发色。'); // :210
     // :211-212 %TALENTNAME:PERSONAL% 与 %GET_LOOK_INFO(A,"头发颜色")%
-    era.print(`[0] 性格 ：  ${era.get(`talentname:${personal}`) ?? ''}`);
-    era.print(`[1] 发色 ：  ${get_look_info(a, '头发颜色')}`);
+    // 源是 PRINTFORML 纯文本选项（PR #53 通则升格按钮，正文不写 [编号]）。
+    era.printButton(
+      `性格 ：  ${era.get(`talentname:${personal}`) ?? ''}`,
+      0,
+    );
+    era.printButton(`发色 ：  ${get_look_info(a, '头发颜色')}`, 1);
     era.drawLine(); // :210-214 菜单块（PRINTL 三行 + DRAWLINE + 决定行）
-    era.print('[100] 决定'); // :214
+    era.printButton('决定', 100); // :214
     const result = await era.input(); // 菜单的 INPUT（见 :210-216）
 
     if (result === 0) {
-      // :218-247 性格子菜单
+      // :218-247 性格子菜单（源 :220-222 的三行 PRINTL 选项）。正文里的
+      // `- ` 是原作文本的一部分（编号只是引擎按 showAcc 拼的前缀），#572
+      // 审查返工：不能丢。
       era.print('请选择偏好的性格。');
-      era.print('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　');
-      era.print('[3] - 高贵　　[4] - 冷静　　[5] - 恶女　　');
-      era.print('[6] - 智慧　　[7] - 庇护者　');
+      era.printButton('- 慈爱', 0);
+      era.printButton('- 自信家', 1);
+      era.printButton('- 懦弱', 2);
+      era.printButton('- 高贵', 3);
+      era.printButton('- 冷静', 4);
+      era.printButton('- 恶女', 5);
+      era.printButton('- 智慧', 6);
+      era.printButton('- 庇护者', 7);
       const picked = await era.input();
       if (picked >= 8) {
         personal = 160; // :225
@@ -359,11 +377,22 @@ async function char_gift(arg, rand = default_rand) {
     }
 
     if (result === 1) {
-      // :249-258 发色子菜单
+      // :249-258 发色子菜单（源 :251-252 的两行 PRINTL 选项）
       era.print('请选择发色。');
-      era.print('[1] 金发  [2]栗发  [3]黑发  [4]红发  [5]银发  ');
-      era.print('[6] 青发  [7]绿发  [8]紫发  [9]白发  [10]暗金发');
-      const picked = await era.input();
+      era.printButton('金发', 1);
+      era.printButton('栗发', 2);
+      era.printButton('黑发', 3);
+      era.printButton('红发', 4);
+      era.printButton('银发', 5);
+      era.printButton('青发', 6);
+      era.printButton('绿发', 7);
+      era.printButton('紫发', 8);
+      era.printButton('白发', 9);
+      era.printButton('暗金发', 10);
+      // 源 :254 的 `RESULT == 11` 受理一个界面上不显示的编号（11 号发色），
+      // 收紧白名单会锁死它——保留 useRule: false 留住这条路径（#572；
+      // 先例：ere/event/event-museum.js:83-85）。
+      const picked = await era.input({ useRule: false });
       // :254 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`：该层运算符序列是
       // 「`&&` … `||`」，`||` 之后没有 `&&`，左折叠与 C 式分组得到同一棵树——
       // 两种读法在一切取值上同值，故按显式括号保留结构（#517）
@@ -405,9 +434,11 @@ async function char_gift(arg, rand = default_rand) {
     await era.waitAnyKey();
     // :278 CALL SHOW_CHARA_INFO, A, -2（同上，#390 真身）
     await show_chara_info(a, -2);
-    // :279-281 询问
+    // :279-281 询问（源 :280 的 PRINTFORML 纯文本选项 → 按钮）
     era.print('要收下这名少女作为贡品吗？');
-    era.print(`[0] 就是她了  [1] 再换一个  [2] ${pick}`);
+    era.printButton('就是她了', 0);
+    era.printButton('再换一个', 1);
+    era.printButton(pick, 2);
     const final_result = await era.input();
     if (final_result === 0) {
       return 0; // :283-284 收下
