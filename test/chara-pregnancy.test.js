@@ -827,8 +827,8 @@ test('同一预设连续生成两个后代不覆盖，种族字段使用 319/321
     (n) => (n === 789 ? 1 : 0), // 组合名那一掷拨到 1（RAND:789 → 4501，不与 4500 撞）
   );
 
-  assert.equal(first, 1000);
-  assert.equal(second, 1001);
+  assert.equal(first, 100000);
+  assert.equal(second, 100001);
   assert.ok(fixture.era.getAddedCharacters().includes(first));
   assert.ok(fixture.era.getAddedCharacters().includes(second));
   assert.equal(fixture.store.get(`talent:${first}:319`), 7);
@@ -853,42 +853,42 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
       mother: 0,
       father: -4,
       rolls: new Array(300).fill(0),
-      child: 1000,
+      child: 100000,
       level: 1,
     },
     {
       mother: 1,
       father: 0,
       rolls: [2, ...new Array(300).fill(0)],
-      child: 1000,
+      child: 100000,
       level: 7,
     },
     {
       mother: 201,
       father: 0,
       rolls: new Array(300).fill(0),
-      child: 21000,
+      child: 120000,
       level: 7,
     },
     {
       mother: 17,
       father: 0,
       rolls: new Array(300).fill(0),
-      child: 1000,
+      child: 100000,
       level: 7,
     },
     {
       mother: 2,
       father: 0,
       rolls: new Array(300).fill(0),
-      child: 1100,
+      child: 100100,
       level: 4,
     },
     {
       mother: 0,
       father: -2,
       rolls: [1, ...new Array(300).fill(0)],
-      child: 21000,
+      child: 120000,
       level: 7,
     },
   ];
@@ -902,7 +902,7 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
         fixture.store.set(`cflag:${spec.mother}:9`, 10);
       }
     }
-    fixture.seed_chara(spec.child === 21000 ? 201 : 1, { name: '后代模板' });
+    fixture.seed_chara(spec.child === 120000 ? 201 : 1, { name: '后代模板' });
     if (spec.father !== -4) fixture.store.set('cflag:0:9', 10);
 
     const child = await fixture
@@ -931,10 +931,17 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
 
 test('普通后代生成覆盖普通、精英、随机模板及父亲有无的等级路径', async () => {
   const cases = [
-    { mother: 1, father: -4, child: 1000, source: 1, first_roll: 5, level: 8 },
-    { mother: 201, father: 2, child: 21000, source: 201, level: 10 },
-    { mother: 17, father: -1, child: 1000, source: 1, level: 7 },
-    { mother: 2, father: 0, child: 1100, source: 2, level: 1 },
+    {
+      mother: 1,
+      father: -4,
+      child: 100000,
+      source: 1,
+      first_roll: 5,
+      level: 8,
+    },
+    { mother: 201, father: 2, child: 120000, source: 201, level: 10 },
+    { mother: 17, father: -1, child: 100000, source: 1, level: 7 },
+    { mother: 2, father: 0, child: 100100, source: 2, level: 1 },
   ];
   for (const spec of cases) {
     const fixture = create_era_fixture();
@@ -976,14 +983,16 @@ test('普通后代生成覆盖普通、精英、随机模板及父亲有无的�
 test('动态后代作为母亲时可反推出原始预设模板', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(1, { name: '后代模板' });
-  fixture.seed_chara(1000, { name: '动态母亲' });
-  assert.equal(fixture.era.addCharacter(1000), true);
+  // 「动态母亲」的 ID 必须是真后代 ID 的形状（FIRST_CHILD_ID 段，模板 1），
+  // template_no_of 才拆得出 1；孩子因 100000 被母亲占着而顺延到 100001。
+  fixture.seed_chara(100000, { name: '动态母亲' });
+  assert.equal(fixture.era.addCharacter(100000), true);
 
   const child = await fixture
     .load_module('chara/chara-pregnancy')
-    .gb_add_slave(1000, -1, seq(new Array(200).fill(0)));
+    .gb_add_slave(100000, -1, seq(new Array(200).fill(0)));
 
-  assert.equal(child, 1001);
+  assert.equal(child, 100001);
 });
 
 test('后代命名依次采用父亲、母亲和自动名字类型', () => {
@@ -996,7 +1005,7 @@ test('后代命名依次采用父亲、母亲和自动名字类型', () => {
     const fixture = create_era_fixture();
     add_chara(fixture, 1);
     add_chara(fixture, 2);
-    add_chara(fixture, 1000);
+    add_chara(fixture, 100000);
     fixture.store.set(
       `cflag:${spec.father > 0 ? spec.father : spec.mother}:6`,
       spec.nid,
@@ -1004,7 +1013,7 @@ test('后代命名依次采用父亲、母亲和自动名字类型', () => {
     const bounds = [];
     fixture
       .load_module('chara/chara-pregnancy')
-      .gb_define_name(1000, spec.mother, spec.father, (n) => {
+      .gb_define_name(100000, spec.mother, spec.father, (n) => {
         bounds.push(n);
         return 0;
       });
@@ -1288,7 +1297,7 @@ test('直接生产分派覆盖角色上限的魔王与普通角色、近卫、�
     await guard
       .load_module('chara/chara-pregnancy')
       .ninsin_give_birth(0, seq(new Array(200).fill(0))),
-    1000,
+    100000,
   );
 });
 
@@ -1344,7 +1353,7 @@ test('育儿结束生成孩子后，母亲与孩子都离开育儿室状态并�
   await child_care_depart(1, seq(new Array(300).fill(0)));
 
   assert.equal(fixture.store.get('cflag:1:1'), 0, '母亲状态归零');
-  assert.equal(fixture.store.get('cflag:1000:1'), 0, '孩子状态归零');
+  assert.equal(fixture.store.get('cflag:100000:1'), 0, '孩子状态归零');
   assert.equal(fixture.store.get('talent:1:154'), 0, '母亲结束育儿');
   assert.equal(
     fixture.store.get('maxbase:1:0'),

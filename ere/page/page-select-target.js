@@ -31,6 +31,10 @@
  *     必复刻（同 page-dungeon-info2.js 的库存按钮先例）；沦陷标签保留
  *     原作方括号/尖括号记号但不复刻 SETCOLOR（按钮无法给正文局部染色，
  *     整按钮染色会曲解原作「只染标签本身」的意图，不如不染）；
+ *   - 列表行的快捷键 = 角色 ID（上条），与同屏的固定编号 [1000] 上一页 /
+ *     [999] 返回 / [1001] 下一页 / [1002] 其它共存——后代 ID 因此必须落在
+ *     固定编号之上（chara-pregnancy.js 的 FIRST_CHILD_ID = 100000，issue
+ *     #560 的裁定；静态守卫见 test/child-id-collision.test.js）；
  *   - @SELECT_ASSI 与 @SELECT_TARGET 同构，仅 NUM_PAGE（13 非 26）、判据
  *     （IS_ASSISTABLE）、两个特殊入口的返回码不同：[1002]「我自己上阵」
  *     显式置 ASSI=-1 后 RETURN 0（明确选择「无助手」，非取消）；[999]
