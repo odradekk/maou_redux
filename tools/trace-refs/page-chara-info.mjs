@@ -217,6 +217,23 @@ export const FILES = [
         ref: '934',
         any: [/^\s*TRYCALL CHAR_DEBUG\(ARG\)\s*$/m],
       },
+      // #606：名册分发 1200 分支走包装入口（原作 IF/ELSE 两支）与其后的判据
+      {
+        src: INFO,
+        ref: '95-99',
+        any: [/^\s*CALL CHARA_INFO_INDIVIDUAL_WAPPED\(RESULT\)\s*$/m],
+      },
+      {
+        src: INFO,
+        ref: '100',
+        any: [/^\tIF RESULT == 1$/m],
+      },
+      // #606：包装函数 :829 的 CALL 之后无 RETURN（RESULT 被清 0，见 #592）
+      {
+        src: INFO,
+        ref: '829',
+        any: [/^\s*CALL CHARA_INFO_INDIVIDUAL\(ARG, LOCAL\)\s*$/m],
+      },
     ],
   },
 ];
