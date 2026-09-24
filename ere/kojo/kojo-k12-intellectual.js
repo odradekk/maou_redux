@@ -47,7 +47,8 @@
  * SELL_MATURO_K0（:4743，成熟出售口上，随 #338 接通真身，K1/K3/K4/K6/
  * K9/K10 同款）直接调用；BENKI_PLAYER_NAME（:5106-5172 四处，真身
  * ere/system/train/benki.js 的 benki_player_name()，延迟 require 防
- * 顶层漏装遮蔽，K3 的延迟 require 同款先例）。
+ * 顶层漏装遮蔽，K3 的延迟 require 同款先例）。四处的前缀行是 PRINTFORMW
+ * （自带换行与等待），名字与后文属新的一行，故按原作拆成两条输出（#599）。
  */
 
 'use strict';
@@ -8046,10 +8047,13 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5104
+      // :5105 前缀是 PRINTFORMW（自带换行与等待：本行到此为止），接着的 CALL
+      // BENKI_PLAYER_NAME（名字）与 :5107 的后文落在**新的一行**——拆成两条
+      // 语句按原作两行输出（同句式的 K0/K3 前缀是 PRINTFORM，那才是同一行）；
+      // 名字按 #599 用插值接在 CALL 的位置
+      await era.printAndWait(`「多亏`); // :5105
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,
+        `${benki_player_name()}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,
       ); // :5107
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
@@ -8075,10 +8079,10 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5126
+      // :5127 同型的第二处（前缀 PRINTFORMW + CALL + 后续）；名字按 #599 插值
+      await era.printAndWait(`「多亏`); // :5127
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」`,
+        `${benki_player_name()}的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」`,
       ); // :5129
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
@@ -8104,10 +8108,10 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5148
+      // :5149 同型的第三处（前缀 PRINTFORMW + CALL + 后续）；名字按 #599 插值
+      await era.printAndWait(`「多亏`); // :5149
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」`,
+        `${benki_player_name()}的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」`,
       ); // :5151
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,
@@ -8133,10 +8137,10 @@ async function benki_koujo_k12(rand) {
 
     if (game.dungeon.肉便器常识改写 == 1) {
       // :5170
+      // :5171 同型的第四处（前缀 PRINTFORMW + CALL + 后续）；名字按 #599 插值
+      await era.printAndWait(`「多亏`); // :5171
       await era.printAndWait(
-        '「多亏' +
-          benki_player_name() +
-          `的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,
+        `${benki_player_name()}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,
       ); // :5173
       await era.printAndWait(
         `「虽然被魔王大人做了肉便器洗脑、但是拜托${sc(a)}新的『研究』的魔王大人真是太温柔了呢♪」`,

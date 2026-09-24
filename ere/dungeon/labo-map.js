@@ -203,8 +203,9 @@ async function geo_output_2() {
     for (let x = 0; x < 32; x += 1) {
       row.push(...chip_draw(x, y)); // P:0/P:1 → 显式传参
     }
+    // :18 的 PRINTL 只结束这一行的 32 个 CHIP_DRAW `PRINT` 串（PRINT 不换
+    // 行），**不是空行**——ere 的 print 一次调用即一行，别再补（#597）
     era.print(row);
-    era.println(); // :18 行尾 PRINTL
   }
   // SETFONT（:21）——复原同样无通道，跳过
 

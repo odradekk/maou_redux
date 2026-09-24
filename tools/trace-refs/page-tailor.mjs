@@ -170,10 +170,13 @@ export const FILES = [
         ],
       },
       {
+        // #596：:73-75 是两条 PRINTFORML 逐行相邻（中间那行是空白源码行，
+        // 不含 PRINTL）——:74 不单独引用（空行锚无鉴别力，#298）
         src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
         ref: '73-75',
         any: [
           /^\s*PRINTFORML\ %SAVESTR:TARGET%现在%GET_CLOTHTYPE_MAIN2\(TARGET,"身穿"\)%。\s*$/m,
+          /^\s*PRINTFORML\ 要让%SAVESTR:TARGET%穿上什么？\s*$/m,
         ],
       },
       {

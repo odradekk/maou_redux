@@ -144,10 +144,12 @@ test('关系调试表按五字符列逐行输出、标色，并在打印后等�
   const first = fixture.lines_history.find((entry) => entry.type === 'text');
   assert.equal(first.content[0].color, 'rgb(100, 255, 255)');
   assert.equal(first.content[1].color, 'gray');
-  assert.equal(
-    fixture.lines_history.filter((entry) => entry.type === 'br').length,
-    2,
-    '原作 PRINTL：每个角色一行',
+  // 原作 :298 的 PRINTL 只结束本行（行内是一串 PRINTFORM），不产生空行：
+  // 两行调试表逐行相邻，中间没有 br（#596）
+  assert.deepEqual(
+    fixture.lines_history.map((entry) => entry.type),
+    ['text', 'text'],
+    '两行相邻，没有空行',
   );
   assert.equal(fixture.waits.at(-1).waited, true);
 });
@@ -377,6 +379,17 @@ test('家族信息输出父母、手足和子女按钮，并区分显示数与�
     fixture.lines_history.some(
       (entry) => entry.type === 'text' && entry.text === '等',
     ),
+  );
+  // RELATION_FAMILY.ERB:422-423 的 `SIF !LINEISEMPTY() → PRINTL` 只结束那一行
+  // （有内容才收尾），不产生空行（#596）。空行的两种形态都算：
+  // println 落 br、print('') 落 text 空串
+  assert.equal(
+    fixture.lines_history.filter(
+      (entry) =>
+        entry.type === 'br' || (entry.type === 'text' && entry.text === ''),
+    ).length,
+    0,
+    '家族片段行逐段相邻，没有空行',
   );
 });
 

@@ -1000,7 +1000,7 @@ async function dungeon_spy(arg0, rand) {
       chara(leader).invasion.回城标志 = 0; // CFLAG:507（门面）
       chara(leader).invasion.状态 = 0;
       party_del(leader);
-      era.println();
+      era.println(); // 真空行：1150 行的 PRINTFORMW 已收尾（1158 行的 PRINTL 落在空行上）
       // :1159-1162 要让其回来吗
       era.print(`要让${name_of(arg0)}`);
       if (enemy !== 0 && (era.get(`cflag:${enemy}:500`) || 0) === 4) {

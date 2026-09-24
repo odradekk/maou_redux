@@ -156,7 +156,7 @@ async function offer_release_seal(cid) {
   const name = chara_callname(cid);
   await era.printAndWait(`${name}的【${talent_name(273)}】的力量消失了……`);
   await era.printAndWait('如果是现在的话，可以解开封印。要解开封印吗？');
-  era.println();
+  era.println(); // 真空行：109 行的 PRINTFORMW 已收尾（110 行的 PRINTL 落在空行上）
   for (;;) {
     era.print(' [0] - 保留封印');
     era.print(' [1] - 解开封印');

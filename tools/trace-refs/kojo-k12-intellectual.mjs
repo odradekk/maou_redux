@@ -17604,6 +17604,28 @@ export const FILES = [
         any: [/^\s*IF FLAG:63 == 1\s*$/m],
       },
       {
+        // #599：前缀行是 PRINTFORMW（自带换行/等待），名字与后文属新的一行，
+        // 故 JS 里这条前缀有自己的语句（四处前缀行各自一条 ref）
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5105',
+        any: [/^\s*PRINTFORMW 「多亏\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5127',
+        any: [/^\s*PRINTFORMW 「多亏\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5149',
+        any: [/^\s*PRINTFORMW 「多亏\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
+        ref: '5171',
+        any: [/^\s*PRINTFORMW 「多亏\s*$/m],
+      },
+      {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '5106-5172',
         any: [/^\s*CALL BENKI_PLAYER_NAME\s*$/m],

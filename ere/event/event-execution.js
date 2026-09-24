@@ -87,7 +87,10 @@ function print_candidates(candidates) {
       `<${60 - era_flag.day_count}天以内再展出${20 - game.event.装饰品数}名勇者到博物馆将解锁实绩！>`,
     );
   } else {
-    era.println();
+    // :18-23 的 IF/ELSE：ELSE 支的 PRINTL（22 行）只结束 18 行
+    // `PRINT 请选择处刑对象` 那一行（PRINT 不换行），**不是空行**——ere 的
+    // print 自成一行，这里什么都不补（#597）。IF 支的实绩提示（20 行）在原作
+    // 与 18 行同属一行，ere 侧拆成两个 print，是既有记名差异（不在本票范围）
   }
   era.drawLine();
   candidates.forEach((cid, index) => {
@@ -121,7 +124,7 @@ function print_methods(cid) {
       era.printButton(label, index);
     }
   });
-  era.println();
+  era.println(); // 真空行：88 行的 PRINTL 已收尾（89 行的 PRINTL 落在空行上）
   era.printButton('停止', 100);
   era.printButton('水晶球记录', 101, {
     color: era_exflag.mod_switch_bits & 4 ? '#ffffff' : '#646464',

@@ -264,7 +264,7 @@ async function charadead_check() {
   era.println(); // PRINTL（空行）
   // :68-75 TEMP 恒 0 → 恒走第一支（ELSEIF 不可达，见 JSDoc）
   era.print(`${chara_name(target)}死掉了……`);
-  era.println();
+  era.println(); // 真空行：69、71-72 行的 PRINTFORML 已收尾（74 行的 PRINTL 落在空行上）
   era.drawLine();
   // :76 BASE:0 = -1（意图 1:1；引擎把 base 钳到 0，★死亡★ 显示不出来——
   // 见文件头「移植说明」的这处偏离）
@@ -359,7 +359,9 @@ async function aftertrain_sex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  era.print('');
+  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的
+  // PRINTFORML 已结束那一行，空源码行不产生输出，这里不补空行（#597；
+  // ere 的 print 自成一行）
 
   // 源 :231-232：TFLAG:13 = 4; CALL SELF_KOJO（在 PRINTFORML %EXPNAME:0% 之前）
   leftover_s = s;
@@ -450,7 +452,9 @@ async function aftertrain_analsex_check() {
   era.drawLine();
   era.print(`${master_name}和${target_name}抑制不住无法冷却的兴奋，`);
   era.print(`回到床上做了${s}次…`);
-  era.print('');
+  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML
+  // 已结束那一行，空源码行不产生输出，这里不补空行（#597，与
+  // @AFTERTRAIN_SEX_CHECK 的 :229-231 同源）
 
   era.print(`A经验＋${s}`);
   era.print(`性交经验＋${s}`);

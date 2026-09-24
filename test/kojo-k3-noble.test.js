@@ -987,6 +987,25 @@ test('BENKI_KOUJO：肉便器行动 0 常识改写真身', async () => {
   );
 });
 
+test('#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 的对象名', async () => {
+  // 原作 :8205-:8207 三行一支：PRINTFORM 「请 + CALL BENKI_PLAYER_NAME（:8206）
+  // + PRINTFORMW …（含 %SELF_CALL(A)% 与心形）。三行同属一行（前缀不带 W/L），
+  // #599 起用拼接锚 + ${} 插值，与 K0 四处同型
+  const fixture = await setup_k3((f) => {
+    f.store.set('flag:62', 6);
+    f.store.set('flag:63', 1);
+    f.store.set('flag:64', 2); // 大型犬
+  });
+  const { benki_koujo } = fixture.load_module('kojo/kojo-system');
+  await benki_koujo();
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('「请大型犬大人的大鸡巴、用我的嘴巴肉穴做做『施舍』吧♡」'),
+    '行动 6 的首句必须带上 FLAG:64 的对象名（#599）',
+  );
+});
+
 // —— 存根清单核对 ——
 
 test('SELL_MATURO_K0 已从存根清单移除', async () => {

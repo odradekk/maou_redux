@@ -768,6 +768,56 @@ test('CHARA_INFO：切到非 1200 视图（[1300]）直调内层——结婚成�
 
 // —— CHARA_INFO_INDIVIDUAL：分页与换人导航 ——
 
+test('CHARA_INFO_INDIVIDUAL：操作按钮行与页脚分割线之间不夹空行（#596）', async () => {
+  // 原作 :907 的 PRINTL 只结束那一串 `SIF … PRINT [n] …` 拼出的按钮行
+  // （train-upgrade-log:171-172 里按钮行与分割线逐行相邻），不产生空行。
+  // ere 的按钮各自成行，收行由引擎负责。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  const { chara_info_individual } = fixture.load_module('page/page-chara-info');
+  fixture.set_inputs(100);
+  await chara_info_individual(1, [1]);
+
+  const buttons = fixture.lines.filter((line) => line.type === 'button');
+  assert.ok(buttons.length > 0, '个别页至少有一枚页脚按钮');
+  const footer = fixture.lines.filter((line) => line.type === 'divider').at(-1);
+  const at = fixture.lines.indexOf(footer);
+  assert.equal(
+    fixture.lines[at - 1].type,
+    'button',
+    '操作按钮行的下一行就是页脚分割线，中间不夹空行（:907 只收行）',
+  );
+  assert.deepEqual(
+    fixture.lines.slice(at - 2, at + 2).map((line) => line.type),
+    ['button', 'button', 'divider', 'button'],
+    '按钮行 → 页脚分割线 → [101] 前页，四行逐行相邻、零空行（#596）',
+  );
+});
+
+test('CHARA_INFO_INDIVIDUAL：无操作按钮的子页保留 :907 的真空行（#596）', async () => {
+  // sub_page 3 在原作两支 IF/ELSEIF 都不命中（一个按钮都不打），:907 的 PRINTL
+  // 因此落在已收行的空行上 = 真空行；有按钮的子页里它只收行（上一条用例）。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  const { chara_info_individual } = fixture.load_module('page/page-chara-info');
+  fixture.set_inputs(102, 102, 102, 100); // 后页 ×3 → sub_page 3
+  await chara_info_individual(1, [1]);
+
+  const footer = fixture.lines.filter((line) => line.type === 'divider').at(-1);
+  const at = fixture.lines.indexOf(footer);
+  // 分割线之前连续两个空行：页尾补白（MIN_LINES）那一个 + :907 落在空行上的
+  // 那一个。把无按钮分支的 println 删掉后这里只剩一个（本用例的失败点）
+  const blank_forms = (index) =>
+    fixture.lines[index].type === 'br' ||
+    (fixture.lines[index].type === 'text' && fixture.lines[index].text === '');
+  assert.ok(
+    blank_forms(at - 1) && blank_forms(at - 2),
+    "无按钮子页里 :907 的空行在补白之后（println 与 print('') 两种形态都算）",
+  );
+});
+
 test('CHARA_INFO_INDIVIDUAL：前页/后页在 0..3 间夹紧', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');

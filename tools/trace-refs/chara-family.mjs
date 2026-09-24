@@ -32,6 +32,12 @@ export const FILES = [
         ref: '169',
         any: [/^\tCALL RELATION_RENAME_REBUILD\(L_A\)\r?$/m],
       },
+      // #596：关系调试表每行的收尾 PRINTL 只结束那一串 PRINTFORM 拼出的行
+      {
+        src: 'target/ERB/關係設置/RELATION.ERB',
+        ref: '298',
+        any: [/^\s*PRINTL\s*$/m],
+      },
     ],
   },
 ];

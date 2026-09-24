@@ -80,7 +80,6 @@ export const FILES = [
           /^PRINTL \[999\] - 能力值提高结束\s*$/m,
         ],
       },
-      { src: 'target/ERB/ABL/ABL.ERB', ref: '30', any: [/^U = 0\s*$/m] },
       { src: 'target/ERB/ABL/ABL.ERB', ref: '31', any: [/^REPEAT 40\s*$/m] },
       {
         src: 'target/ERB/ABL/ABL.ERB',
@@ -127,16 +126,16 @@ export const FILES = [
         ref: '78',
         any: [/^\s*CALL DECIDE_ABLUP\s*$/m],
       },
-      { src: 'target/ERB/ABL/ABL.ERB', ref: '80', any: [/^\s*U \+= 1\s*$/m] },
+      // #596：U 计数与两处 PRINTL（每 4 条换行、末行不足 4 也收行）只服务
+      // 原作「一行 4 格」的排版，两个 PRINTL 都只收行、不产生空行
       {
         src: 'target/ERB/ABL/ABL.ERB',
-        ref: '81-83',
-        any: [/^\s*IF U % 4 == 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/ABL/ABL.ERB',
-        ref: '85-86',
-        any: [/^REND \s*$/m, /^SIF U % 4 != 0\s*$/m],
+        ref: '80-86',
+        any: [
+          /^\s*U \+= 1\s*$/m,
+          /^\s*IF U % 4 == 0\s*$/m,
+          /^SIF U % 4 != 0\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/ABL/ABL.ERB',
@@ -179,4 +178,22 @@ export const FILES = [
 
 export const LOG_REFS = [];
 
-export const SAMPLE_LOG_REFS = {};
+export const SAMPLE_LOG_REFS = {
+  'train-natural': [
+    {
+      js: 'ere/page/page-ablup.js',
+      refs: [
+        // #596：能力值列表逐行相邻（:81-86 的两处 PRINTL 都只收行）
+        {
+          ref: '945-951',
+          any: [/阴蒂感觉 - LV 4/, /反抗刻印 - LV 1/],
+        },
+        // #596：:109 只结束 [40] 中毒行，[99] 行与尾部分割线相邻
+        {
+          ref: '951-952',
+          any: [/反抗刻印 - LV 1/],
+        },
+      ],
+    },
+  ],
+};

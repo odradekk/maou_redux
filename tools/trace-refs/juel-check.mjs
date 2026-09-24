@@ -382,4 +382,17 @@ export const FILES = [
 
 export const LOG_REFS = [];
 
-export const SAMPLE_LOG_REFS = {};
+export const SAMPLE_LOG_REFS = {
+  'train-natural': [
+    {
+      js: 'test/juel-check.test.js',
+      refs: [
+        // #596：能力值列表的按钮逐行相邻、[99] 行与分割线、[999] 行都不夹空行
+        {
+          ref: '945-953',
+          any: [/阴蒂感觉 - LV 4/, /能力值提高结束/],
+        },
+      ],
+    },
+  ],
+};

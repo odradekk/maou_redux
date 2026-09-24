@@ -10,6 +10,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
+const { assert_one_blank_after } = require('./helpers/blank-lines');
 
 /** 建好世界并开始调教（step2 的 forced_semen_liking 依赖 TFLAG，仅调教中可寻址） */
 function seed_world() {
@@ -1471,4 +1472,32 @@ test('blind_faith：已持有妄信时不重复触发', async () => {
   await check_specialskil(31);
 
   assert.deepEqual(fixture.text_lines(), []);
+});
+
+test('#597：解封询问之后的空行是真空行（原作 :110）', async () => {
+  // 【贞操封印】在【淫乱】觉醒那一支的尾部被解封询问：原作 :110 用一个独立
+  // PRINTL 让出空行，再接 [0]/[1] 两个选项——删掉它即少一行
+  const fixture = seed_world();
+  fixture.set_inputs(0); // [0] - 保留封印
+  set_talentname(fixture, 76, '淫乱');
+  fixture.store.set('talent:31:273', 1);
+  set_talentname(fixture, 273, '贞操封印');
+  fixture.store.set('cflag:31:2', 1500);
+  fixture.store.set('abl:31:11', 3);
+  fixture.store.set('abl:31:0', 3);
+  fixture.store.set('abl:31:1', 3);
+  fixture.store.set('abl:31:2', 2);
+  fixture.store.set('abl:31:3', 2); // 合计 10（淫乱觉醒的门槛）
+  fixture.store.set('exp:31:50', 3);
+  fixture.store.set('mark:31:1', 3);
+  fixture.store.set('mark:31:2', 3);
+  const { check_specialskil } = fixture.load_module('event/get-specialtalent');
+
+  await check_specialskil(31);
+
+  assert_one_blank_after(
+    fixture,
+    '如果是现在的话，可以解开封印。要解开封印吗？',
+    '解封询问（:110）',
+  );
 });

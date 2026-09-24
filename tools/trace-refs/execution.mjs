@@ -102,6 +102,18 @@ export const FILES = [
         ref: '375-446',
         any: [/^@EXECUTION_MINI\(ARGS = ""\)$/m],
       },
+      // #597 空行普查：处刑对象列表的 IF/ELSE（18-23 行）——ELSE 支的 PRINTL
+      // 只收 18 行的 `PRINT 请选择处刑对象`，整段一起锚定（单独锚 PRINTL 会弱）
+      {
+        src: `${DIR}/EXECUTION.ERB`,
+        ref: '18-23',
+        any: [
+          new RegExp(
+            '^\\s*PRINT 请选择处刑对象\\s*$\\s*^\\s*IF FLAG:84 < 20 && DAY < 60\\s*$\\s*^\\s*PRINTFORML <\\{60 - DAY\\}天以内再展出\\{20 - FLAG:84\\}名勇者到博物館将解锁实绩！>\\s*$\\s*^\\s*ELSE\\s*$\\s*^\\s*PRINTL\\s*$\\s*^\\s*ENDIF\\s*$',
+            'm',
+          ),
+        ],
+      },
     ],
   },
   {

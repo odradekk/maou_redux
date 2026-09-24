@@ -133,7 +133,7 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     era.print(`${name}的样子有点奇怪……`);
     era.print(`${name}随着媚药的过量使用，人也变得暴躁了。`);
     era.print(`${name}获得了【${era.get('talentname:123') || ''}】。`);
-    era.println();
+    era.println(); // 真空行：58 行的 PRINTL 落在上面三条 PRINTFORML 之后
     set_talent(cid, 123, 1);
   }
 
@@ -146,7 +146,7 @@ async function aphrodisiac_addict(cid, rand = default_rand) {
     era.print(`${name}的样子有点奇怪……`);
     era.print(`${name}随着媚药的过量使用，完全变成了废人。`);
     era.print(`${name}的精神变成【${era.get('talentname:9') || ''}】了。`);
-    era.println();
+    era.println(); // 真空行：67 行的 PRINTL 落在上面三条 PRINTFORML 之后
     set_talent(cid, 9, 1);
   }
 }
@@ -481,7 +481,7 @@ async function suffer_from_withdrawal(cid, u, v, rand = default_rand) {
     // :287-288 W >= 30：无候选可选，纯占位换行
     era.println();
   }
-  era.println();
+  era.println(); // 真空行：候选函数的收尾 PRINTFORMW 已结束那一行
 }
 
 module.exports = {

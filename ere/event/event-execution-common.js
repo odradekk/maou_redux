@@ -120,7 +120,7 @@ async function dispose_character(
   chara(0).dungeon.战斗经验 += experience;
   if (medal) {
     chara(0).event.勋章经验 += 1;
-    era.println();
+    era.println(); // 真空行：438 行的 PRINTL 落在上一条 PRINTFORML 之后
     era.print('得到了用勇者力量形成的勋章');
     era.print('勋章经验+1');
   }
