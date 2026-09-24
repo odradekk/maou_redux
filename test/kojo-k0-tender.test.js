@@ -4964,6 +4964,29 @@ test('BENKI_KOUJO：FLAG:62=0 + FLAG:63=1 → 施舍工作台词', async () => {
   );
 });
 
+test('#584 BENKI_KOUJO：施舍首次台词「和…」与后续是同一行（FLAG:62 = 3/4/5/6）', async () => {
+  // 原作 :7495-:7497 等四处同型：PRINTFORM 「和 + PRINTFORMW …，Emuera 里
+  // 同属一行；ere 曾拆成两条 era.print（#584）。整行相等即「同一行」的断言
+  const cases = [
+    [3, '「和来同时用小穴和菊花来做爱了♪」'],
+    [4, '「和用小穴做爱做到潮如泉涌咯♪」'],
+    [5, '「和用菊花做爱做到湿滑不已咯♪」'],
+    [6, '「给予先生的肉棒大人的『施舍』哦♪」'],
+  ];
+  for (const [level, line] of cases) {
+    const fixture = await setup_k0((f) => {
+      f.store.set('flag:62', level);
+      f.store.set('flag:63', 1);
+    });
+    const { benki_koujo } = fixture.load_module('kojo/kojo-system');
+    await benki_koujo(31);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `FLAG:62=${level} 的首次台词必须是整行（#584）`,
+    );
+  }
+});
+
 test('VICTORY：素质分档 + 体力比判定', async () => {
   const fixture = await setup_k0((f) => {
     f.store.set('base:31:0', 200);

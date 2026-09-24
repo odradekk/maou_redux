@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2364; // #570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2377; // #584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -22064,5 +22064,207 @@ async function try_kojo_or_stub(
     replace: '    ); // :708+:728 变异：漏列 :717',
     tests: ['kojo-text-fidelity'],
     must_mention: '漏列区间内的 PRINT 行 :717',
+  },
+  {
+    desc: 'M11940 卖春失败（有客）行拆回两条（#584：:314+:315 的同一行被拆）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `${kyaku}人群的声音嘈杂着、交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,\n' +
+      '    ); // :314+:315',
+    replace:
+      '    era.print(`${kyaku}人群的声音嘈杂着、`); // :314（变异：拆回）\n' +
+      '    await era.printAndWait(\n' +
+      '      `交涉终了，一个人也没有买下${name_of(arg)}，就这样子离开了`,\n' +
+      '    ); // :315（变异：拆回）',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: '两句必须落在同一行',
+  },
+  {
+    desc: 'M11941 兽奸描写首行拆回两条（#584：:524+:525 的同一行被拆）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find: '  await era.printAndWait(`${name_of(arg)}无法压抑兽交的欲望悄悄寻找着兽穴...`); // :524+:525',
+    replace:
+      '  era.print(`${name_of(arg)}无法压抑兽交的欲望`); // :524（变异：拆回）\n' +
+      "  await era.printAndWait('悄悄寻找着兽穴...'); // :525（变异：拆回）",
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: 'DUNGEON_ANIMAL 首行必须是整行',
+  },
+  {
+    desc: 'M11942 强制肉偿结算行拆回两条（#584：:78+…+:86 的同一行被拆）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find:
+      '  await era.printAndWait(\n' +
+      '    `被强制用肉体偿债的${name_of(arg)}抵销了${cost}点的债务，当前欠金变为${debt_of(arg)}点……`,\n' +
+      '  ); // :78+:80+:82+:84+:86',
+    replace:
+      '  era.print(`被强制用肉体偿债的${name_of(arg)}抵销了`); // :78（变异：拆回）\n' +
+      '  await era.printAndWait(\n' +
+      '    `${cost}点的债务，当前欠金变为${debt_of(arg)}点……`,\n' +
+      '  ); // :80+:82+:84+:86（变异：拆回）',
+    tests: ['kojo-forced-payment'],
+    must_mention: '结算行（#584 起是同一行）',
+  },
+  {
+    desc: 'M11943 BENKI 施舍首次台词拆回两条（#584：:7495+:7497 的同一行被拆）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '      await era.printAndWait(`「和来同时用小穴和菊花来做爱了♪」`); // :7495+:7497',
+    replace:
+      '      await era.print(`「和`); // :7495（变异：拆回）\n' +
+      '      await era.printAndWait(`来同时用小穴和菊花来做爱了♪」`); // :7497（变异：拆回）',
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次台词必须是整行',
+  },
+  {
+    desc: 'M11944 K12 肉便器常识改写丢「勇者/冒险者」段（#584：前缀段不再拼进同一行）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find:
+      '      const hero_word =\n' +
+      '        era.get(`talent:${a}:122`) == 0\n' +
+      "          ? '勇者'\n" +
+      '          : era.get(`talent:${a}:122`)\n' +
+      "            ? '冒险者'\n" +
+      "            : '';\n" +
+      '      await era.printAndWait(\n' +
+      '        hero_word +\n' +
+      '          `${target_name}哟♪」「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,\n' +
+      '      ); // :5195+:5197+:5199+:5200',
+    replace:
+      "      const hero_word = ''; // 变异：丢勇者/冒险者段\n" +
+      '      await era.printAndWait(\n' +
+      '        hero_word +\n' +
+      '          `${target_name}哟♪」「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,\n' +
+      '      ); // :5195+:5197+:5199+:5200',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '段必须与后句同一行',
+  },
+  {
+    desc: 'M11945 兽交卖春首行拆回两条（#584：:1459+:1464 的同一行被拆）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `${name_of(arg)}在大家的眼前不知羞耻的进行着兽交表演...`,\n' +
+      '    ); // :1459+:1464',
+    replace:
+      '    era.print(`${name_of(arg)}`); // :1459（变异：拆回）\n' +
+      "    await era.printAndWait('在大家的眼前不知羞耻的进行着兽交表演...'); // :1464（变异：拆回）",
+    tests: ['kojo-dungeon-bitch-log'],
+    must_mention: 'TOWN 首行是名字 + 固定文的整行',
+  },
+  {
+    desc: 'M11946 男子迷宫凌辱「反抗的」行拆回两条（#584：:71+:72 的同一行被拆）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '        await era.print(\n' +
+      '          `带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，恐怖点数+${mon_num * 10}`,\n' +
+      '        ); // :71+:72',
+    replace:
+      '        await era.print(`带着反抗的目光看着它们，其中一只兽人对他怒喝了一声，`); // :71（变异：拆回）\n' +
+      '        await era.print(`恐怖点数+${mon_num * 10}`); // :72（变异：拆回）',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '反抗的：恐怖点数与前置描写同一行',
+  },
+  {
+    desc: 'M11947 拼接锚漏列末行（#584：:96+:98+:100 缩成 :96+:98，末段不再收行）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find: '    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`); // :96+:98+:100',
+    replace:
+      '    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`); // :96+:98',
+    tests: ['kojo-text-fidelity'],
+    must_mention: 'JS 用了 printAndWait',
+  },
+  {
+    desc: 'M11948 女性版肉便器收尾行拆回两条（#584：:1560+:1562 的同一行被拆）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '    // :1560+:1562 原作 PRINTFORM + PRINTFORMW，同一行（#584）\n' +
+      '    await era.printAndWait(\n' +
+      "      '之类的话。络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',\n" +
+      '    ); // :1560+:1562',
+    replace:
+      "    await era.print('之类的话。'); // :1560（变异：拆回）\n" +
+      '    await era.printAndWait(\n' +
+      "      '络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',\n" +
+      '    ); // :1562（变异：拆回）',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '肉便器收尾行必须是整行',
+  },
+  {
+    desc: 'M11949 男版肉便器收尾行拆回两条（#584：:802+:804 的同一行被拆）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '    // :802+:804 原作 PRINTFORM + PRINTFORMW，同一行（#584）\n' +
+      '    await era.printAndWait(\n' +
+      "      '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',\n" +
+      '    ); // :802+:804',
+    replace:
+      "    await era.print('之类的话。'); // :802（变异：拆回）\n" +
+      '    await era.printAndWait(\n' +
+      "      '络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',\n" +
+      '    ); // :804（变异：拆回）',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '肉便器收尾行必须是整行',
+  },
+  {
+    desc: 'M11950 男版「素直」行拆回两条（#584：:76+:77 的同一行被拆）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '        // :76 与 :77 原作 PRINTFORM + PRINTFORML，同一行（#584）\n' +
+      '        await era.print(\n' +
+      '          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n' +
+      '        ); // :76+:77',
+    replace:
+      '        await era.print(\n' +
+      '          `迫于兽人的威胁，他衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，`,\n' +
+      '        ); // :76（变异：拆回）\n' +
+      '        await era.print(`耻情点数+${mon_num * 10}`); // :77（变异：拆回）',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '素直：耻情点数与前置描写同一行',
+  },
+  {
+    desc: 'M11951 K12 勇者/冒险者两档写反（#584：hero_word 的两臂互换）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
+    find:
+      '      const hero_word =\n' +
+      '        era.get(`talent:${a}:122`) == 0\n' +
+      "          ? '勇者'\n" +
+      '          : era.get(`talent:${a}:122`)\n' +
+      "            ? '冒险者'\n" +
+      "            : '';\n" +
+      '      await era.printAndWait(\n' +
+      '        hero_word +\n' +
+      '          `${target_name}哟♪」「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,\n' +
+      '      ); // :5195+:5197+:5199+:5200',
+    replace:
+      '      const hero_word =\n' +
+      '        era.get(`talent:${a}:122`) == 0\n' +
+      "          ? '冒险者'\n" +
+      '          : era.get(`talent:${a}:122`)\n' +
+      "            ? '勇者'\n" +
+      "            : ''; // 变异：两档写反\n" +
+      '      await era.printAndWait(\n' +
+      '        hero_word +\n' +
+      '          `${target_name}哟♪」「${sc(a)}败给了伟大的魔王大人之后…毫无抵抗地被洗脑成牝犬家畜肉便器啦♪」`,\n' +
+      '      ); // :5195+:5197+:5199+:5200',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '段必须与后句同一行',
+  },
+  {
+    desc: 'M11952 强制肉偿拍片结算行拆回两条（#584：:90+:92+:94 的同一行被拆）',
+    file: 'ere/kojo/kojo-forced-payment.js',
+    find:
+      '    // :92 显示值：片酬第一次求值（RAND:100 第一次取）\n' +
+      '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n' +
+      '    await era.printAndWait(\n' +
+      '      `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,\n' +
+      '    ); // :90+:92+:94',
+    replace:
+      "    era.print('这部淫荡煽情的影像以'); // :90（变异：拆回）\n" +
+      '    // :92 显示值：片酬第一次求值（RAND:100 第一次取）\n' +
+      '    const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);\n' +
+      '    era.print(`${shown_price}`); // :92（变异：拆回）\n' +
+      "    await era.printAndWait('的金额，被人买下收藏了'); // :94（变异：拆回）",
+    tests: ['kojo-forced-payment'],
+    must_mention: '拍片结算行同一行',
   },
 ];

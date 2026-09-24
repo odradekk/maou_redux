@@ -230,25 +230,25 @@ async function forced_payment(arg, rand = default_rand) {
     chara(arg).patch.借款 += cost; // :76
   }
 
-  era.print(`被强制用肉体偿债的${name_of(arg)}抵销了`); // :78
-  era.print(`${cost}`); // :80 SETCOLORBYNAME SkyBlue（:79）
-  era.print('点的债务，当前欠金变为'); // :82
-  era.print(`${debt_of(arg)}`); // :84 SETCOLORBYNAME LightSalmon（:83）
-  await era.printAndWait('点……'); // :86
+  // :78-86 结算行：原作五条 PRINTFORM/PRINTFORMW 拼成一行（#584；
+  // 中间行 :79 SETCOLORBYNAME SkyBlue / :83 LightSalmon 的染色本作未建模）
+  await era.printAndWait(
+    `被强制用肉体偿债的${name_of(arg)}抵销了${cost}点的债务，当前欠金变为${debt_of(arg)}点……`,
+  ); // :78+:80+:82+:84+:86
 
   // :88-104 1/3 机率被拍片纪录，增加还债的金额
   if (!rand_n(3)) {
     await era.printAndWait(`${name_of(arg)}用肉体还债的过程被人拍下来了！`); // :89
-    era.print('这部淫荡煽情的影像以'); // :90
+    // :90-94 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:91 SkyBlue 染色未建模）
     // :92 显示值：片酬第一次求值（RAND:100 第一次取）
     const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);
-    era.print(`${shown_price}`); // :92 SETCOLORBYNAME SkyBlue（:91）
-    await era.printAndWait('的金额，被人买下收藏了'); // :94
+    await era.printAndWait(
+      `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,
+    ); // :90+:92+:94
     // :95 入账值：片酬第二次求值（RAND:100 再取一次，原作如此——#14）
     chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(100);
-    era.print('当前欠金变为'); // :96
-    era.print(`${debt_of(arg)}`); // :98 SETCOLORBYNAME LightSalmon（:97）
-    await era.printAndWait('点……'); // :100
+    // :96-100 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:97 LightSalmon 染色未建模）
+    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`); // :96+:98+:100
     era.print(`${name_of(arg)}的${expname(50)}，${expname(70)} 经验值上升了 1`); // :101
     chara(arg).dungeon.异常经验 += 1; // :102 EXP:ARG:50
     chara(arg).train.拍摄经验 += 1; // :103 EXP:ARG:70（train 域）
