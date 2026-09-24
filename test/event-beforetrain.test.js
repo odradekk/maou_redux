@@ -17,6 +17,33 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_gamebase } = require('./helpers/gamebase');
+const {
+  assert_one_blank_after,
+  assert_one_blank_before,
+} = require('./helpers/blank-lines');
+
+test('#597：初调教叙述的两处真空行（原作 :35 与 :44）', async () => {
+  // 初调教开场（:34 的 PRINTFORML 之后）与「好奇心」那一句之前，原作各有一个
+  // 独立 PRINTL；两处都是真空行，删掉即少一行
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  fixture.seed_chara(0, { name: '魔王', callname: '魔王' });
+  fixture.seed_chara(17, { name: '玛奥', callname: '玛奥' });
+  fixture.era.addCharacter(0);
+  fixture.era.addCharacter(17);
+  fixture.era.beginTrain(0, 17);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 17;
+  era_flag.player = 0;
+  era_flag.assi = -1;
+  fixture.store.set('talent:17:23', 1); // 好奇心
+  const { pritrain_message } = fixture.load_module('event/event-beforetrain');
+
+  await pritrain_message();
+
+  assert_one_blank_after(fixture, '的第一次调教开始了', '初调教开场（:35）');
+  assert_one_blank_before(fixture, '的眼神最深处', '好奇心那一句之前（:44）');
+});
 
 /**
  * 世界底座：预置魔王 0、奴隶 17（+ 可选助手 1），开调教域，指好指针。

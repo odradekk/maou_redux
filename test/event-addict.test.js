@@ -10,6 +10,10 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
+const {
+  assert_one_blank_after,
+  assert_trailing_blank,
+} = require('./helpers/blank-lines');
 
 function seq(values) {
   let index = 0;
@@ -209,6 +213,8 @@ test('APHRODISIAC_ADDICT：取得废人——普通门槛 100', async () => {
 
   assert.equal(fixture.store.get('talent:31:9'), 1);
   assert(fixture.text_lines().includes('琼的精神变成【崩坏】了。'));
+  // #597：67 行的 PRINTL 落在上面三条 PRINTFORML 之后（那一行已结束）——真空行
+  assert_one_blank_after(fixture, '的精神变成【崩坏】了。', '取得废人（:67）');
 });
 
 test('APHRODISIAC_ADDICT：TALENT:72 时取得废人门槛降到 75', async () => {
@@ -388,6 +394,9 @@ test('SUFFER_FROM_WITHDRAWAL：W < 5 时优先取得废人（TALENT:9 判据，T
     1,
     '生效素质是 19（原作 bug，逐字保留）',
   );
+  // #597：290 行的 PRINTL 落在候选函数自己的 PRINTFORMW 之后——真空行，
+  // 且它是整段演出的收尾（删掉即少一行）
+  assert_trailing_blank(fixture, 'W < 5 废人支的收尾（:290）');
 });
 
 test('SUFFER_FROM_WITHDRAWAL：W < 5 但已是废人（TALENT:9）时改选疯狂', async () => {

@@ -23,6 +23,10 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
+const {
+  assert_one_blank_after,
+  assert_one_blank_before,
+} = require('./helpers/blank-lines');
 
 function seq(values) {
   let index = 0;
@@ -136,6 +140,12 @@ test('EXECUTION_MINI：回收装备、除名角色并结算处刑与勋章经验
   assert.equal(fixture.store.get('flag:80'), 1);
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.equal(fixture.store.get('exp:0:81'), 1);
+  // #597：勋章播报之前的空行是真空行（:438 的 PRINTL 落在上一条 PRINTFORML 之后）
+  assert_one_blank_before(
+    fixture,
+    '得到了用勇者力量形成的勋章',
+    '迷你处刑的勋章行（:438）',
+  );
   assert.equal(fixture.store.get('exflag:99'), 2);
   assert.equal(
     fixture.store.get('callname:47:-2'),
@@ -222,6 +232,14 @@ test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async
   assert.deepEqual(observed, [5, 4]);
   assert.equal(fixture.store.get('videoarchive:1'), '肉类温妮');
   assert.equal(fixture.store.get('exp:0:81'), 1);
+  // #597：菜单末项之后的空行是真空行（:25 的 PRINTL 已收尾），删掉即少一行
+  assert_one_blank_after(fixture, '僵尸化', '猎奇菜单末项（:26）');
+  // #597：勋章播报之前的空行也是真空行（:62 的 PRINTFORMW 已收尾）
+  assert_one_blank_before(
+    fixture,
+    '到手的勇者之力以勋章的形式保留下来了',
+    '猎奇结算（:63）',
+  );
 });
 
 test('GROTESQUE：爱慕的食肉刑只打印一次烙印并保留专属结尾', async () => {
@@ -961,6 +979,8 @@ test('EXECUTION：使用稳定角色 ID 选择第二名角色并路由到固定�
   assert.equal(fixture.store.get('cflag:47:1'), 8);
   assert.equal(fixture.store.get('videoarchive:2'), undefined);
   assert(fixture.text_lines().some((line) => line.includes('艾达')));
+  // #597：处置菜单末项之后的空行是真空行（:88 的 PRINTL 已收尾）
+  assert_one_blank_after(fixture, '消除记忆后释放', '处置菜单末项（:89）');
 });
 
 test('EXECUTION：收藏角色不能走除士兵化外的处刑方式', async () => {
@@ -1441,6 +1461,23 @@ test('BANISHMENT：五选一菜单是按钮，未显示的 100 仍可键入（#5
   assert(
     !fixture.text_lines().some((line) => line.startsWith('[0] 就这样流放掉')),
     '选项不再以纯文本出现',
+  );
+});
+
+test('#597：流放画面的两处真空行（原作 :20-21 与 :30-31）', async () => {
+  // 未显示的 100：打印完菜单就返回，两处空行都已落盘（:21 在开场白之后、
+  // :31 在五个按钮之后）——删掉任何一处即少一行
+  const fixture = seed_world();
+  fixture.set_inputs(100);
+  const { banishment } = fixture.load_module('event/event-banishment');
+
+  assert.equal(await banishment(31, seq([0])), 0, '100 走「不执行」出口');
+
+  assert_one_blank_after(fixture, '要来点有意思的放逐吗？', '流放开场（:21）');
+  assert_one_blank_after(
+    fixture,
+    '回到成为勇者前的生活',
+    '流放菜单末项（:31）',
   );
 });
 

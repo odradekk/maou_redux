@@ -25,6 +25,7 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
+const { assert_one_blank_after } = require('./helpers/blank-lines');
 
 /** 建一个带三档链与日程真身的夹具：魔王 0 在场，调用方按需再入奴隶 */
 function setup_nextday() {
@@ -3069,6 +3070,13 @@ test('示众台（PILLORY）：正字显示与四项里程碑', async () => {
   assert.ok(
     !(prev.type === 'br' || prev.text === ''),
     '里程碑行与总结行之间不夹空行（:2128 只收尾，#597）',
+  );
+  // #597：源 :2133 的 PRINTL 落在 :2129 那条 PRINTFORML 之后——真空行，
+  // 由公共断言钉住「恰有一个」（删掉即少一行）
+  assert_one_blank_after(
+    milestones,
+    '被各种侮辱的涂鸦写在身上了',
+    '涂鸦总结之后（:2133）',
   );
 
   // 正字除数：8 = 正 + 下（每 5 一笔）；第一档里程碑的边界是 >9
