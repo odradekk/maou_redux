@@ -163,7 +163,7 @@ async function show_commenu() {
     const adv = await get_adv_com(id); // :209 CALL GET_ADV_COM, L_I
     era.printButton(command_button_label(adv, id), com_index(id));
   }
-  // :216 循环后的 PRINTL 只结束方格最后那一行（PRINTC 系不换行，见
+  // :217 循环后的 PRINTL 只结束方格最后那一行（PRINTC 系不换行，见
   // CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里不补空行——
   // golden 里方格与分割线之间只有一个空行（train-natural-log:108-114），
   // 那一个来自下一段的 :14 PRINTL。

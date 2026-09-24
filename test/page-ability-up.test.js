@@ -175,6 +175,18 @@ test('ABILITY_UP：表头按钮文案与等级门灰显（CFLAG:0:9 < 20 → #bb
     assert.equal(button_of(draw, 997).text, '▌勇者一览');
     assert.equal(button_of(draw, 997).color, undefined);
     assert.ok(texts(draw).includes('要提高谁的能力值？'), '标题行（:63）');
+    // :52-53 两个 PRINTBUTTON 那一行由 :56 的 PRINTL 收尾（按钮自成一行，
+    // 见 CONTEXT.md「输出 API 与原作的对应」）：它与 :61 的 DRAWLINE 之间
+    // 不夹空行——golden 的 sale-natural-log:88-93 为证（按钮行、分割线、
+    // 标题行逐行相邻）
+    const header_button_row = button_of(draw, 997).row;
+    assert.deepEqual(
+      draw
+        .filter((line) => line.row === header_button_row + 1)
+        .map((line) => line.type),
+      ['divider'],
+      '表头按钮之后紧接分割线，不夹空行',
+    );
   }
 
   // 门槛的边界：19 调暗、20 放行（SIF CFLAG:0:9 < 20）
@@ -299,12 +311,13 @@ test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）'
   // 998 档：魔王行（1）+ 奴隶行（n）算进 L_LCOUNT，补到 NUM_PAGE + 1 = 24 行
   const two = four_chara();
   const draw = split_draws((await run(two, [999])).added)[0];
-  // 空行 = 表头 PRINTL + 补行（页脚三个 PRINTLC 串之后的 PRINTL 只收尾，
-  // 不产生空行——见 CONTEXT.md「输出 API 与原作的对应」）；补行数由
-  // L_LCOUNT 与 NUM_PAGE(+1) 算出——改动补行上下界这里立刻变数
+  // 空行 = 表头那条 PRINTL 已随 #562 去掉（:56 只收尾两个 PRINTBUTTON 那一
+  // 行）→ 只剩补行；页脚三个 PRINTLC 串之后的 PRINTL 同样只收尾，不产生空行
+  // （见 CONTEXT.md「输出 API 与原作的对应」）；补行数由 L_LCOUNT 与
+  // NUM_PAGE(+1) 算出——改动补行上下界这里立刻变数
   assert.equal(
     draw.filter((l) => l.type === 'text' && l.text === '').length,
-    22,
+    21,
     '2 名奴隶（1 + 2 = 3 行）时的空行数',
   );
   // 997 档：每页 24 行，1 名敌人 → 补 23 行
@@ -312,7 +325,7 @@ test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）'
   const draw2 = split_draws((await run(enemy, [997, 999])).added)[1];
   assert.equal(
     draw2.filter((l) => l.type === 'text' && l.text === '').length,
-    24,
+    23,
     '1 名敌人（1 行）时的空行数',
   );
   // 边界的**两侧**：998 档 l_lcount 恰好等于 NUM_PAGE（23）时仍要补 1 行
@@ -326,12 +339,12 @@ test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）'
     full_page.store.set(`cflag:${cid}:1`, 0);
   }
   const draw3 = split_draws((await run(full_page, [999])).added)[0];
-  // 这一份切段不含页脚之后的行（split_draws 在 [1001] 处收段），故只有
-  // 表头 PRINTL 与补行两个空行——页脚的 PRINTL 不产生空行
+  // 这一份切段不含页脚之后的行（split_draws 在 [1001] 处收段），表头那条又
+  // 已随 #562 去掉，故只有补行一个空行
   assert.equal(
     draw3.filter((l) => l.type === 'text' && l.text === '').length,
-    2,
-    '1 + 22 = 23 行（= NUM_PAGE）时仍补 1 行，加表头 PRINTL 共 2 空行',
+    1,
+    '1 + 22 = 23 行（= NUM_PAGE）时仍补 1 行，共 1 空行',
   );
 });
 

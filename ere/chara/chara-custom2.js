@@ -1024,7 +1024,7 @@ async function char_custom(cid, mode, rand = default_rand) {
       }
     }
 
-    era.drawLine(); // :38-44 页脚段之前的 DRAWLINE
+    era.drawLine(); // 页脚段之前的 DRAWLINE
     // :38-44 页脚四键是四个 PRINTLC 串（模式 1 少一个），紧随的 PRINTL 只结束
     // 它们所在的那一行——PRINTLC 左对齐补位、**不换行**，那个 PRINTL 因此不产生
     // 空行。ere 的 printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），

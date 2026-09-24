@@ -64,5 +64,25 @@ export const SAMPLE_LOG_REFS = {
         },
       ],
     },
+    // #562：能力提升画面的表头证据——两个 PRINTBUTTON 一行（:52-53 由 :56 的
+    // PRINTL 收尾），与 :61 的分割线、:63 的标题行逐行相邻，中间没有空行
+    {
+      js: 'ere/page/page-ability-up.js',
+      refs: [
+        {
+          ref: '88-93',
+          any: [/▌奴隶一览/],
+        },
+      ],
+    },
+    {
+      js: 'test/page-ability-up.test.js',
+      refs: [
+        {
+          ref: '88-93',
+          any: [/▌奴隶一览/],
+        },
+      ],
+    },
   ],
 };

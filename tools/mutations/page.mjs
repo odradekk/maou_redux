@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 441; // #562 起 +6（M11860-M11863/M11869/M11870：PRINTLC 页脚与子菜单按钮之间不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 442; // #562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4245,9 +4245,9 @@ export default [
   {
     desc: 'M11869 方格之后补回空行（:217 的 PRINTL 只收方格最后那一行，golden 里方格与分割线之间只有一个空行）',
     file: 'ere/page/page-usercom.js',
-    find: '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  // :216 循环后的',
+    find: '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  // :217 循环后的',
     replace:
-      '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  era.println(); // 变异：方格之后多补空行\n  // :216 循环后的',
+      '    era.printButton(command_button_label(adv, id), com_index(id));\n  }\n  era.println(); // 变异：方格之后多补空行\n  // :217 循环后的',
     tests: ['page-usercom'],
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
@@ -4258,5 +4258,14 @@ export default [
     replace: '  era.drawLine(); // 变异：:14 的真空行删除',
     tests: ['page-usercom'],
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
+  },
+  {
+    desc: 'M11873 能力值提升表头补回空行（:56 的 PRINTL 只收尾那两个 PRINTBUTTON，golden 里按钮行与分割线相邻）',
+    file: 'ere/page/page-ability-up.js',
+    find: "  menu_button('勇者一览', MENU_ENEMY, dim); // :53",
+    replace:
+      "  menu_button('勇者一览', MENU_ENEMY, dim); // :53\n  era.print(''); // 变异：表头之后多补空行",
+    tests: ['page-ability-up'],
+    must_mention: '表头按钮之后紧接分割线，不夹空行',
   },
 ];

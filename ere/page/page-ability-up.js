@@ -108,7 +108,10 @@ function draw_menu_header() {
   const dim = cflag(0, 9) < 20; // :50 SIF CFLAG:0:9 < 20
   menu_button('奴隶一览', MENU_SLAVE, dim); // :52（UNICODE(0x258c) 由助手拼）
   menu_button('勇者一览', MENU_ENEMY, dim); // :53
-  era.print(''); // :56 PRINTL
+  // :56 的 PRINTL 只结束 :52 / :53 那两个 PRINTBUTTON 所在的行（按钮自成
+  // 一行，见 CONTEXT.md「输出 API 与原作的对应」）；golden 的
+  // sale-natural-log:88-93 里按钮行与 :61-63 的分割线逐行相邻，故这里不补
+  // 空行（#562）
   era.drawLine(); // :61-63 DRAWLINE + SETFONT
   era.print('要提高谁的能力值？'); // :63
   era.drawLine(); // :64-66（DRAWLINE + SIF 灰显 + 两个 PRINTBUTTON）

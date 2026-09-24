@@ -123,7 +123,9 @@ async function comseq_show() {
     }
     count += 1;
   }
-  era.println(); // :155 PRINTL（行的收尾换行）
+  // :155 的 PRINTL 只结束 @COMSEQ_SHOW 拼出的那一行（:126-155）——ere 侧每个
+  // print 已经自成一行，补 println 只会多一个空行（#562；「原作一行 / ere 多
+  // 行」的排版差异是既有的记名差异，不在这里消解）
 }
 
 /**
@@ -153,11 +155,10 @@ async function comseq_register() {
     era.drawLine(); // :35
     await comseq_show(); // :36
     era.drawLine(); // :37
-    // :38 PRINTFORML（era 侧 print + println，era.println 不带参数）
+    // :38 PRINTFORML（整行自成一行；era.println 不带参数，这里不需要再补）
     era.print(`选择第${local0 + 1}个指令:`);
-    era.println();
     await print_comlist(); // :39
-    era.println(); // :40
+    era.println(); // :40（这一条是真空行——:39 的方格已由自己的 PRINTL 收尾）
     // :41-51 出口按钮（守卫与文案逐字；按钮正文不带 [编号] 前缀）
     if (game_train.指令菜单长度 > 0) {
       era.printButton('重置菜单', 998); // :41-42
@@ -170,12 +171,13 @@ async function comseq_register() {
     } else {
       era.printButton('保存并返回', 1000); // :50
     }
-    era.println(); // :52
+    // :52 的 PRINTL 只结束 :41-51 那串 PRINTC 出口键所在的行（PRINTC 系不
+    // 换行，见 CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里
+    // 不补空行（#562）。
     era.drawLine(); // :53
   });
 
-  era.print('调教菜单登录'); // :26 PRINTL
-  era.println();
+  era.print('调教菜单登录'); // :26 PRINTL（整行自成一行，不再补换行——#562）
 
   for (;;) {
     await block.redraw(); // :31-33 清锚点重画（REDRAW 0/1 不镜像）

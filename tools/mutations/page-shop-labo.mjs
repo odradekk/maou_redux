@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 80; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +3（M11866-M11868：PRINTLC 页脚不产生空行）
+export const COUNT = 81; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）；#562 +4（M11866-M11868 页脚不产生空行、M11872 :272 的真空行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -598,5 +598,13 @@ export default [
     "    era.printButton('- 后一页', 998); // :44 PRINTLC  [998] - 后一页",
     "    era.printButton('- 后一页', 998); // :44 PRINTLC  [998] - 后一页\n    era.print(''); // 变异：页脚之后多补空行",
     '秘密实验室页脚按钮之后不应有空行',
+  ),
+  // 反方向的一条：:272 的 PRINTL 是独立真空行（:271 是整行 PRINTL），删掉即错
+  make(
+    11872,
+    'LABO_PAGE4 的真空行删除（:272 的 PRINTL 是独立的一行，不是收尾）',
+    "  era.print(''); // :272 PRINTL",
+    '  // 变异：:272 的真空行删除',
+    ':272 的独立 PRINTL 仍是一个真空行',
   ),
 ];

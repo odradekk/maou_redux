@@ -147,7 +147,7 @@
 **引擎的 `printButton` 自成一行，等价于原作的一个 `PRINTLC`（或 `PRINTBUTTON`）加上结束那一行的 `PRINTL`。** 由此两条推论：
 
 - 原作「若干 `PRINTLC` 串 + 一个收尾的 `PRINTL`」在 ere 侧只需要按钮，**不再补空行**；只有原作另写的独立 `PRINTL`（真正的空行）才译成 `era.println()` / `era.print('')`。多补一条就是多出来的空行（#562）。
-- 原作一行里排多个 `PRINTLC`（中间没有 `PRINTL`）时，ere 侧按按钮平铺逐行渲染，这是**记名差异**（排版），不为此改引擎用法。
+- 原作一行里排多个 `PRINTLC`（中间没有 `PRINTL`）时，ere 侧按按钮平铺逐行渲染，这是**记名差异**（排版），不为此改引擎用法；少数界面还会用 `era.setAlign('center')` 或 `printButton` 的 `align` 近似原作的列感，同样是记名差异（`ere/page/page-item-shop.js` 与 `page-shop-trap.js` 的页脚就是这种写法）。
 
 技能指南（`.agents/skills/emuera-basic-agent-guide/`，逐字同步的外部材料）把 `PRINTC` / `PRINTLC` 写成「居中打印」且「`PRINTLC` 还会换行」，与引擎行为不符；不改本地副本，一律以本节为准。
 
