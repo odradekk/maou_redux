@@ -9,8 +9,10 @@
 const era = require('#/era-electron');
 const { name_reset } = require('#/chara/char-make');
 const { search_family } = require('#/chara/chara-family');
+const { template_no_of } = require('#/chara/chara-pregnancy');
 const { museum_koujo } = require('#/kojo/kojo-system');
 const { party_char_del } = require('#/dungeon/dungeon-party');
+const { archive_slot_of } = require('#/event/event-execution-common');
 const { equip_get } = require('#/system/equip/equip-lookup');
 const { video_maturo } = require('#/system/stronghold/sell-video');
 const { chara } = require('#/facade/chara');
@@ -1471,9 +1473,10 @@ async function museum(a, rand_n = default_rand) {
   }
 
   const archive_title = `${maturo}${chara_callname(a)}`;
-  // TSTR:30 = VIDEO_MATURO 的一次性标题；VideoArchive = 角色末路标题表。
+  // TSTR:30 = VIDEO_MATURO 的一次性标题；SUISEI_STR 是录像书架，槽位取角色
+  // 在已加入列表中的位置（event-execution-common.js 的 archive_slot_of）。
   era.set('tstr:30', archive_title);
-  era.set(`videoarchive:${a}`, archive_title);
+  era.set(`videoarchive:${archive_slot_of(a)}`, archive_title);
   video_maturo(a);
 
   const target_chara = chara(a);
@@ -1487,8 +1490,9 @@ async function museum(a, rand_n = default_rand) {
   }
 
   lv = target_chara.chara.等级;
-  // FLAG:(角色 ID + 199) = 对应勇者已经处刑。
-  era.set(`flag:${a + 199}`, 1);
+  // FLAG:(NO:A + 199) = 对应勇者已经处刑（MUSEUM.ERB:1053）。普通角色的 NO
+  // 就是角色 ID；后代的原作 NO 是来源模板号，故经 template_no_of 换算。
+  era.set(`flag:${template_no_of(a) + 199}`, 1);
 
   // FLAG:1/2 = 上次调教目标/助手；被删角色本身需清空。原作第 1062-1066 行
   // 的注册号重排依赖 DELCHARA 后编号前移，ere 的角色 ID 稳定，故不移植。

@@ -12,6 +12,12 @@
  *
  * 随机源：处刑改写本体不掷随机；方法 0-3 的下游（BANISHMENT 等）要——
  * 一律传 seq([...]) 确定性随机源（#344 的教训）。
+ *
+ * #561 第 1/2 条起：处刑归档的两处寻址各按自己的口径换算——录像书架
+ * （SUISEI_STR）的槽位是**角色在已加入列表中的位置**（`archive_slot_of`），
+ * `FLAG:(NO + 199)` 的 NO 对后代取**来源模板号**（`template_no_of`）。本文件
+ * 的 seed_world(31) 是 [0, 31]，故槽位 1 = 31 号；seed_world(17, 47, 52) 是
+ * [0, 17, 47, 52]，故槽位 2 = 47 号。下文的 `videoarchive:N` 一律按这条读。
  */
 
 'use strict';
@@ -437,9 +443,9 @@ test('方法 4 做成肉便器：计数、威望、录像归档、除名与经�
     '非精英无特殊 EX 素质 → 威望 +2',
   );
   assert.equal(
-    fixture.store.get('videoarchive:31'),
+    fixture.store.get('videoarchive:1'),
     '肉便器温妮',
-    'SUISEI_STR:A 归档末路标题（:303）',
+    'SUISEI_STR:A 归档末路标题（:303，槽位 = 列表位置）',
   );
   assert.equal(fixture.store.get('tstr:30'), '', 'VIDEO_MATURO 消费 TSTR:30');
   assert.equal(
@@ -471,6 +477,47 @@ test('方法 4 做成肉便器：计数、威望、录像归档、除名与经�
   );
 });
 
+test('处刑归档的槽位与 NO（#561）：后代按列表位置写书架、按模板号写 FLAG', async () => {
+  const fixture = seed_world(31);
+  // 真后代（EX_TALENT:2，批量处刑列表可见）：来源模板 1，ID 从 FIRST_CHILD_ID 起
+  fixture.seed_chara(1, { id: 1, name: '后代模板', callname: '后代模板' });
+  const child = await fixture
+    .load_module('chara/chara-pregnancy')
+    .gb_add_slave(31, -4, seq(new Array(300).fill(0)));
+  assert.equal(child, 100000, '后代 ID 从 FIRST_CHILD_ID 起（#560）');
+  assert.deepEqual(
+    fixture.era.getAddedCharacters(),
+    [0, 31, child],
+    '后代排在已加入列表末位（列表位置 2）',
+  );
+  fixture.store.set(`cflag:${child}:777`, 1); // 处刑标签
+  fixture.set_inputs(121, 4, 1999);
+
+  await load_batch(fixture).batch_execution(seq([0]));
+
+  const name = fixture.store.get(`callname:${child}:-1`);
+  assert.equal(
+    fixture.store.get('videoarchive:2'),
+    `肉便器${name}`,
+    'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（:303 的 A = 角色下标）',
+  );
+  assert.equal(
+    fixture.store.get(`videoarchive:${child}`),
+    undefined,
+    '不按角色 ID 写书架——后代 ID 已在 20000 格书架之外，写了也进不了书架',
+  );
+  assert.equal(
+    fixture.store.get('flag:200'),
+    1,
+    'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+  );
+  assert.equal(
+    fixture.store.get(`flag:${child + 199}`),
+    undefined,
+    '不按角色 ID 直加写 FLAG（那会落到 100199 以上的别处下标）',
+  );
+});
+
 test('方法 5 士兵化：战力减半、刻印与称号，不除名；受限目标逐个播报跳过', async () => {
   // NO ∈ [17,40] 的角色不受洗脑（#348 起 cid ≙ NO），17 号受限、47/52 可执行
   const fixture = seed_world(17, 47, 52);
@@ -496,7 +543,11 @@ test('方法 5 士兵化：战力减半、刻印与称号，不除名；受限�
   );
   assert.equal(fixture.store.get('cstr:47:30'), `魔王傀儡${name}`);
   assert.equal(fixture.store.get('tstr:30'), '', 'VIDEO_MATURO2 消费 TSTR:30');
-  assert.equal(fixture.store.get('videoarchive:47'), `魔王傀儡${name}`);
+  assert.equal(
+    fixture.store.get('videoarchive:2'),
+    `魔王傀儡${name}`,
+    'SUISEI_STR 槽位 = 角色在已加入列表中的位置（#561）',
+  );
   assert.equal(
     fixture.store.get('videoarchive:0'),
     `魔王傀儡${name}`,
@@ -547,7 +598,11 @@ test('方法 6 固定示众：状态切 8、公厕称号，不除名', async () 
 
   assert.equal(fixture.store.get('cflag:31:1'), 8, 'CFLAG:1 = 8（示众台）');
   assert.equal(fixture.store.get('cstr:31:30'), '魔族公厕温妮');
-  assert.equal(fixture.store.get('videoarchive:31'), '魔族公厕温妮');
+  assert.equal(
+    fixture.store.get('videoarchive:1'),
+    '魔族公厕温妮',
+    'SUISEI_STR 槽位 = 角色在已加入列表中的位置（#561）',
+  );
   assert.equal(
     fixture.store.get('videoarchive:0'),
     '魔族公厕温妮',

@@ -11,6 +11,7 @@
 
 const era = require('#/era-electron');
 const { name_reset } = require('#/chara/char-make');
+const { template_no_of } = require('#/chara/chara-pregnancy');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { equip_get } = require('#/system/equip/equip-lookup');
 const { video_maturo } = require('#/system/stronghold/sell-video');
@@ -39,11 +40,30 @@ function apply_prestige(cid) {
   }
 }
 
+/**
+ * SUISEI_STR（录像书架）的写入槽位（issue #561 第 1 条）：原作
+ * `SUISEI_STR:A = …` 按**书架槽位**寻址（书架本体见 售卻相關/SELL_VIDEO.ERB
+ * 的 @VIDEO_SHELF），A 是该角色在角色数组里的下标——处刑入口的
+ * `A = COUNT` 取自 `REPEAT CHARANUM`（处刑相关/EXECUTION.ERB:65-73），既不是
+ * ere 的角色 ID，也不是「逐角色末路记录」。
+ *
+ * ere 里同构的量是 `era.getAddedCharacters()` 的下标（引擎与夹具都按角色号
+ * 升序返回，见 test/helpers/era-fixture.js 的「角色列表的顺序语义」段）。
+ * 这同时保证槽位恒落在 [0, CHARANUM) 内：写 `videoarchive:<角色 ID>` 会让
+ * 后代（ID ≥ FIRST_CHILD_ID）落到 20000 格的书架之外，书架里看不到。
+ * @param {number} cid 角色 ID
+ * @returns {number} 书架槽位
+ */
+function archive_slot_of(cid) {
+  return era.getAddedCharacters().indexOf(cid);
+}
+
 function archive_fate(cid, fate) {
   const title = `${fate}${chara_callname(cid)}`;
-  // TSTR:30 = VIDEO_MATURO 的一次性标题；VideoArchive = 角色末路标题表。
+  // TSTR:30 = VIDEO_MATURO 的一次性标题；SUISEI_STR 是录像书架，槽位取角色
+  // 在已加入列表中的位置（archive_slot_of 的注释）。
   era.set('tstr:30', title);
-  era.set(`videoarchive:${cid}`, title);
+  era.set(`videoarchive:${archive_slot_of(cid)}`, title);
   video_maturo(cid);
 }
 
@@ -73,8 +93,11 @@ async function dispose_character(
   if (equipment) release_equipment(cid);
 
   const level = target_chara.chara.等级;
-  // FLAG:(角色 ID + 199) = 对应勇者已经处刑。
-  era.set(`flag:${cid + 199}`, 1);
+  // FLAG:(NO:A + 199) = 对应勇者已经处刑（@EXECUTION 各支尾部的
+  // `X = NO:A + 199; FLAG:X = 1`）。普通角色的 NO 就是角色 ID；后代的原作
+  // NO 是来源模板号（chara-pregnancy.js 的 template_no_of），故经它换算——
+  // 直加角色 ID 会写到 100199 以上的别处下标。
+  era.set(`flag:${template_no_of(cid) + 199}`, 1);
 
   // 原作后续的“注册号大于被删号则减一”依赖 DELCHARA 重排；ere 使用稳定
   // 角色 ID，故只清掉真正指向被删角色的槽位（#21 扁平化裁定）。
@@ -110,6 +133,7 @@ async function dispose_character(
 module.exports = {
   apply_prestige,
   archive_fate,
+  archive_slot_of,
   dispose_character,
   get,
   release_equipment,

@@ -21,6 +21,7 @@
 const era = require('#/era-electron');
 const { karma } = require('#/chara/chara-stats');
 const { name_reset } = require('#/chara/char-make');
+const { template_no_of } = require('#/chara/chara-pregnancy');
 const { on, TIER } = require('#/system/event/registry');
 const { begin, STATE } = require('#/system/flow/begin-signal');
 const { event_maou_tenshin } = require('#/event/event-nextday');
@@ -107,10 +108,10 @@ on(
     const target_stamina = era.get(`base:${target}:0`) || 0;
     const target_willpower = era.get(`base:${target}:1`) || 0;
     if (target_stamina < 1 && target !== 0) {
-      // :365-373 角色削除処理：FLAG:NO+199 = 1（死亡标记；原作 X = NO:A +
-      // 199 的 NO 是 CSV 番号，ere 角色 ID 即 NO，故 target 直加）、指针
-      // 清空、除名（:373 DELCHARA）
-      era.set(`flag:${target + 199}`, 1);
+      // :365-373 角色削除処理：FLAG:(NO:A + 199) = 1（死亡标记）。普通角色的
+      // NO 就是角色 ID；后代的原作 NO 是来源模板号（chara-pregnancy.js 的
+      // template_no_of），故经它换算。随后清指针、除名（:373 DELCHARA）
+      era.set(`flag:${template_no_of(target) + 199}`, 1);
       era_flag.target = -1;
       era.set('flag:1', -1);
       era_flag.assi = -1;

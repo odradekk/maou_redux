@@ -5,11 +5,19 @@
  * （cid / 处分编号 / 随机源）由本文件的「入口实参位置锁」用例守着——
  * 入口族内部收对参数，调用点传错一样是玩家侧失声（#403 验收反馈实测
  * execution 与 public-execution 两处的第二三实参对调未被拦住）。
+ *
+ * #561 第 1 条起：录像书架（SUISEI_STR）的槽位是**角色在已加入列表中的
+ * 位置**，不是角色 ID。本文件的 seed_world() 是 [0, 31, 47]，所以槽位 1 =
+ * 31 号、槽位 2 = 47 号（槽位 0 是魔王，处刑路径永远不写）。下文的
+ * `videoarchive:N` 一律按这条读；规则本身的用例见
+ * test/event-execution-batch.test.js 的「槽位 = 列表位置」一条。
  */
 
 'use strict';
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -63,7 +71,7 @@ async function evaluate_ordinary_fate(values) {
   fixture.set_inputs(0);
   const { banishment } = fixture.load_module('event/event-banishment');
   await banishment(31, seq([0]));
-  const fate = fixture.store.get('videoarchive:31').replace(/温妮$/, '');
+  const fate = fixture.store.get('videoarchive:1').replace(/温妮$/, '');
   return { fate, lines: fixture.text_lines() };
 }
 
@@ -142,7 +150,7 @@ test('PUBLIC_EXECUTION：魂粉碎保留拼行、录像归档与确定性随机�
       ),
     '连续 PRINTFORM 必须合为同一行',
   );
-  assert.equal(fixture.store.get('videoarchive:31'), '淫魔的使魔温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '淫魔的使魔温妮');
   assert.equal(fixture.store.get('exp:0:81'), 1);
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 47]);
@@ -164,7 +172,7 @@ test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async
   await grotesque(31, seq([4]));
 
   assert.deepEqual(observed, [5, 4]);
-  assert.equal(fixture.store.get('videoarchive:31'), '肉类温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '肉类温妮');
   assert.equal(fixture.store.get('exp:0:81'), 1);
 });
 
@@ -206,7 +214,7 @@ test('处分函数直调：口上观察到传入角色，而不是调用前残�
   await public_execution(47, seq([0]));
 
   assert.equal(observed_target, 47);
-  assert.equal(fixture.store.get('videoarchive:47'), '凌辱致死艾达');
+  assert.equal(fixture.store.get('videoarchive:2'), '凌辱致死艾达');
 });
 
 test('BANISHMENT：选项 1 对女性也会被原作校验拒绝，再接受普通流放', async () => {
@@ -221,7 +229,7 @@ test('BANISHMENT：选项 1 对女性也会被原作校验拒绝，再接受普�
     [1, 0],
   );
   assert(fixture.text_lines().includes('温妮已经是男性了。换个手段吧。'));
-  assert.equal(fixture.store.get('videoarchive:31'), '下落不明温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '下落不明温妮');
 });
 
 test('BANISHMENT：小动物分支逐次重掷，连续输出仍在同一行', async () => {
@@ -236,7 +244,7 @@ test('BANISHMENT：小动物分支逐次重掷，连续输出仍在同一行', a
       .text_lines()
       .some((line) => line.includes('随后你将她变成了一条狗的样子。')),
   );
-  assert.equal(fixture.store.get('videoarchive:31'), '汪？温妮');
+  assert.equal(fixture.store.get('videoarchive:1'), '汪？温妮');
 });
 
 test('BANISHMENT：肉便器旧业的末路优先级与守墓人标题逐支落盘', async () => {
@@ -248,7 +256,7 @@ test('BANISHMENT：肉便器旧业的末路优先级与守墓人标题逐支落�
     'event/event-banishment',
   );
   await banish_fetish(31, seq([0]));
-  assert.equal(fetish.store.get('videoarchive:31'), '肉体改造发烧友温妮');
+  assert.equal(fetish.store.get('videoarchive:1'), '肉体改造发烧友温妮');
 
   const gravekeeper = seed_world();
   gravekeeper.store.set('talent:31:315', 10);
@@ -257,7 +265,7 @@ test('BANISHMENT：肉便器旧业的末路优先级与守墓人标题逐支落�
     'event/event-banishment',
   );
   await banish_gravekeeper(31, seq([0]));
-  assert.equal(gravekeeper.store.get('videoarchive:31'), '守墓人温妮');
+  assert.equal(gravekeeper.store.get('videoarchive:1'), '守墓人温妮');
 });
 
 test('BANISHMENT：家庭末路以亲属位组合文案，不泄漏 undefined', async () => {
@@ -797,7 +805,7 @@ test('BANISHMENT：动物末路逐支重掷并覆盖马犬鸟兔羊狐猫', asyn
     let calls = 0;
     await banishment(31, () => rolls[calls++]);
     assert.equal(
-      fixture.store.get('videoarchive:31'),
+      fixture.store.get('videoarchive:1'),
       `${expected}温妮`,
       animal,
     );
@@ -903,7 +911,7 @@ test('EXECUTION：使用稳定角色 ID 选择第二名角色并路由到固定�
 
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 31, 47]);
   assert.equal(fixture.store.get('cflag:47:1'), 8);
-  assert.equal(fixture.store.get('videoarchive:47'), undefined);
+  assert.equal(fixture.store.get('videoarchive:2'), undefined);
   assert(fixture.text_lines().some((line) => line.includes('艾达')));
 });
 
@@ -930,13 +938,85 @@ test('EXECUTION：肉便器支完整结算，录像开关关闭时不额外写�
   await execution(seq([0]));
 
   assert.equal(fixture.store.get('flag:83'), 1);
-  assert.equal(fixture.store.get('videoarchive:0'), undefined);
-  assert.equal(fixture.store.get('videoarchive:31'), undefined);
+  // 「不额外写书架」按**全槽位**断言：只盯 0/31 两个槽位时，任何别的槽位
+  // （例如按角色 ID 直加的 31，或 #561 起的列表位置 1）写进去都看不见
+  assert.deepEqual(
+    [...fixture.store.keys()].filter((key) => key.startsWith('videoarchive:')),
+    [],
+    '录像开关关闭时不写书架（任何槽位）',
+  );
   assert.equal(fixture.store.get('tstr:30'), '');
   assert(
     fixture
       .text_lines()
       .includes('作为魅力点的美乳，现在变成一堆丑陋膨胀的肉块了。'),
+  );
+});
+
+test('EXECUTION：肉便器支正文的等待后缀与原作一致（#561 第 3 条；夹具观测不到，按源文锁）', () => {
+  // 夹具的 printAndWait 内部等待不入 waits（test/fixture.test.js 的既定裁定），
+  // W/L 之别在行为层不可观测——同 event-execution-batch.test.js 的「方法 4 正文
+  // 的等待后缀」取法，按「ERB 行后缀 ↔ JS 调用」逐条核对
+  const src = fs.readFileSync(
+    path.resolve(__dirname, '..', 'ere', 'event', 'event-execution.js'),
+    'utf8',
+  );
+  const erb = fs
+    .readFileSync(
+      path.resolve(
+        __dirname,
+        '..',
+        'target',
+        'ERB',
+        '處刑相關',
+        'EXECUTION.ERB',
+      ),
+      'utf8',
+    )
+    .split(/\r?\n/);
+  // 原作 :165-167 三条都不等待，只有 :168 的 PRINTW 等待；:255 的
+  // PRINTFORMW 等待（新文件 event-execution-batch.js 的 :206-210/:299 同款）
+  assert.match(
+    erb[164],
+    /^\s*PRINTFORML 但%SAVESTR:PLAYER%依然给/,
+    ':165 是 PRINTFORML（不等待）',
+  );
+  assert.match(
+    erb[165],
+    /^\s*PRINTL 被吸收了全部力量的她/,
+    ':166 是 PRINTL（不等待）',
+  );
+  assert.match(
+    erb[166],
+    /^\s*PRINTL 作为地下城里怪物的慰问品被使用着/,
+    ':167 是 PRINTL（不等待）',
+  );
+  assert.match(
+    erb[167],
+    /^\s*PRINTW 今后别说重新当勇者/,
+    ':168 是 PRINTW（等待）',
+  );
+  assert.match(
+    erb[254],
+    /^\s*PRINTFORMW 现在的肉便器数量/,
+    ':255 是 PRINTFORMW（等待）',
+  );
+  for (const re of [
+    /era\.print\(\s*`\$\{prelude\}但\$\{chara_callname\(0\)\}依然给/, // :165
+    /era\.print\('被吸收了全部力量的她，身体变成淫靡的肉块了。'\)/, // :166
+    /era\.print\('作为地下城里怪物的慰问品被使用着，'\)/, // :167
+  ]) {
+    assert.match(src, re, `不等待的原作行必须用裸 era.print：${re}`);
+  }
+  assert.match(
+    src,
+    /await era\.printAndWait\('今后别说重新当勇者，就连看一眼阳光也不可能了吧。'\)/,
+    ':168 PRINTW 必须用 printAndWait',
+  );
+  assert.match(
+    src,
+    /await era\.printAndWait\(`现在的肉便器数量：\$\{game\.invasion\.肉便器数\}`\)/,
+    ':255 PRINTFORMW 必须用 printAndWait',
   );
 });
 

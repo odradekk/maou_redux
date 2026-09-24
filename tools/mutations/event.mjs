@@ -785,8 +785,8 @@ export default [
   {
     desc: 'M6944 MUSEUM 录像标题：SUISEI_STR:A 丢失展品名',
     file: 'ere/event/event-museum.js',
-    find: '  era.set(`videoarchive:${a}`, archive_title);',
-    replace: "  era.set(`videoarchive:${a}`, '');",
+    find: '  era.set(`videoarchive:${archive_slot_of(a)}`, archive_title);',
+    replace: "  era.set(`videoarchive:${archive_slot_of(a)}`, '');",
     tests: ['event-museum'],
     must_mention: '家具化后记录展品',
   },

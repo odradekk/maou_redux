@@ -178,11 +178,14 @@ async function make_toilet(cid) {
   const prelude = get(`talent:${cid}:85`)
     ? `${name}不知道自己为什么要被做成肉便器，不停地高叫着你的名字，请求饶恕。`
     : '';
-  await era.printAndWait(
+  // EXECUTION.ERB 肉便器段的三条 `PRINTFORM`/`PRINTFORML`/`PRINTL` 都不等待
+  // （它们合成第一轮输出），只有收尾的 `PRINTW` 等待（#561 第 3 条；新文件
+  // event-execution-batch.js 的肉便器段同款）
+  era.print(
     `${prelude}但${chara_callname(0)}依然给${name}烙上了封锁所有力量的封印，`,
   );
-  await era.printAndWait('被吸收了全部力量的她，身体变成淫靡的肉块了。');
-  await era.printAndWait('作为地下城里怪物的慰问品被使用着，');
+  era.print('被吸收了全部力量的她，身体变成淫靡的肉块了。');
+  era.print('作为地下城里怪物的慰问品被使用着，');
   await era.printAndWait('今后别说重新当勇者，就连看一眼阳光也不可能了吧。');
 
   if (get(`talent:${cid}:原种族`) === 1) {
@@ -286,7 +289,9 @@ async function make_toilet(cid) {
       `${name}双眼空虚，在重复着谁的名字。也许正在妄想和爱人拥抱吧。`,
     );
   }
-  era.print(`现在的肉便器数量：${game.invasion.肉便器数}`);
+  // 原文这一行是 PRINTFORMW（等待）；#561 第 3 条（新文件
+  // event-execution-batch.js 的同名一行同款）
+  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`);
   const title = `肉便器${name}`;
   if (family_id >= 0) era.set(`cstr:${family_id}:5`, title);
   era.set('tstr:30', title);

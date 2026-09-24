@@ -812,8 +812,8 @@ export default [
   {
     desc: 'M6820 KILL_TARGET 勇者入场标志偏一位',
     file: 'ere/system/stronghold/sale.js',
-    find: '  era.set(`flag:${cid + 199}`, 1);',
-    replace: '  era.set(`flag:${cid + 200}`, 1);',
+    find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
+    replace: '  era.set(`flag:${template_no_of(cid) + 200}`, 1);',
     tests: ['sale-chara'],
     must_mention: '经队伍门面除名',
   },
