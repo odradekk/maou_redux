@@ -266,6 +266,29 @@ test('COMSEQ_REGISTER：每轮重画带「选择第N个指令:」行', async () 
     ['button'],
     '「选择第N个指令」行之后紧接方格按钮，不夹空行',
   );
+  // :40 的 PRINTL 是**真空行**（:39 的方格由 @COMSEQSUB_PRINT_COMLIST 自己在
+  // :177-178 收尾），所以 :38-:41 的顺序是「提示行 → 方格按钮 → 恰好一个
+  // 空行 → 出口键」——删掉这一行（少了空行）或再补一条（多出空行）都要红
+  const exit_row = fixture.lines.find(
+    (line) =>
+      line.type === 'button' && [998, 999, 1000].includes(line.accelerator),
+  ).row;
+  const blanks = fixture.lines.filter(
+    (line) =>
+      line.row > prompt_row &&
+      line.row < exit_row &&
+      (line.type === 'br' || (line.type === 'text' && line.text === '')),
+  );
+  assert.equal(
+    blanks.length,
+    1,
+    '方格与出口键之间恰有一个空行（:40 的 PRINTL）',
+  );
+  assert.equal(
+    blanks[0].row,
+    exit_row - 1,
+    '空行紧邻出口键（方格之后、出口键之前）',
+  );
 });
 
 // —— @COMSEQ_TRAIN 与 CALLTRAIN 等价（:207-237 / :230） ——
