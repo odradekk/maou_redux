@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 372; // #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
+export const COUNT = 373; // #615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
 // 接线；M11478/M11479 的靶位在返工轮搬去 chara.mjs——补偿写在 @CHARA_EX_34 里，随靶文件分片）；#565 起 +5（M11610-M11613，开局随机奴隶接线的四条；M11626 审查轮补 CHARA_NAME_DEFINE 实参错掷）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // 合并 #547 时两侧 362/361 调和为 366：本票 5 条之外收进 master 的 M11578-M11580/M11589，按导入实测条目数写回
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
@@ -3428,5 +3428,15 @@ export default [
     replace: "      era.print('[0] - 安全第一！'); // 变异",
     tests: ['event-nextday'],
     must_mention: '输入不合法！请输入以下值之一：',
+  },
+  // —— #615：print 正文的尾换行（first-setting.js 的狂王性别一问） ——
+  {
+    desc: 'M12249 狂王性别一问补回尾换行（SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）',
+    file: 'ere/event/first-setting.js',
+    find: "  era.print(\n    '狂王是支配这个地区的领主\\n继承了曾经封印你的勇者的血统，打算把你再次封印',\n  );",
+    replace:
+      "  era.print(\n    '狂王是支配这个地区的领主\\n继承了曾经封印你的勇者的血统，打算把你再次封印\\n',\n  ); // 变异：尾换行",
+    tests: ['event-first'],
+    must_mention: '两行一次 print、无尾换行',
   },
 ];

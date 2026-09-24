@@ -249,12 +249,23 @@ export const FILES = [
           /		CFLAG:shadow:1 = 0\n		CFLAG:shadow:700 = 1\n		CFLAG:shadow:820 = 666666\n		WAIT/,
         ],
       },
+      // #615：完全召唤横幅两行与前后空行（:63-68 的 PRINTS 拼行、:76 的 "\n"*2）
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
-        ref: '73-76',
+        ref: '65',
+        any: [/^\t\tPRINTS "-"\*16 \+ "\\s"\*2 \+ "\\n"\*2$/m],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
+        ref: '66-68',
         any: [
-          /		CFLAG:shadow:700 = 1\n		CFLAG:shadow:820 = 666666\n		WAIT\n		PRINTS "\\n"\*2/,
+          /^\t\tPRINTS "-"\*16\n\t\tPRINTS "< 完 全 召 唤 >"\n\t\tPRINTS "-"\*16 \+ "\\s"\*2 \+ "\\n"$/m,
         ],
+      },
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
+        ref: '76',
+        any: [/^\t\tPRINTS "\\n"\*2$/m],
       },
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',

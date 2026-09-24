@@ -111,8 +111,10 @@ async function ask_penis_size() {
  * @returns {Promise<number>} 玩家的选择（0 男性/1 女性/2 扶她）
  */
 async function ask_kuangwang_sex() {
+  // :902/:903 是两条 PRINTL（两行一次 print 的内部 \n）；末尾不再补 \n——
+  // print 已经收行，多写一个只会多出空行（#615）
   era.print(
-    '狂王是支配这个地区的领主\n继承了曾经封印你的勇者的血统，打算把你再次封印\n',
+    '狂王是支配这个地区的领主\n继承了曾经封印你的勇者的血统，打算把你再次封印',
   );
   for (;;) {
     era.printButton('男性', 0);

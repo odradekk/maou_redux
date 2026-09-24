@@ -687,11 +687,17 @@ async function run_benki(arg, rand_n = default_rand) {
       s += '主动地'; // 献身的ボーナス
       play += 1;
     }
+    // :887 的 PRINTFORML 自带换行——上面这条拼行到此收尾（#615：此前把
+    // :888 的 CALL 也并进同一行，少了一次换行）
     s += '作为侍奉用便器在地下城里服侍着'; //
-    s += benki_player_name(); //
     era.print(s);
 
-    s = `${name_of(arg)}`; //
+    // :888 CALL BENKI_PLAYER_NAME 落在新行行首，与 :890 的
+    // `PRINTFORML %SAVESTR:(ARG:0)%` 拼成同一条显示行：#615 起角色名随
+    // 这一行收尾，不再起始下一条穴句行
+    era.print(`${benki_player_name()}${name_of(arg)}`);
+
+    s = ''; // :892-941 的穴句行（角色名已在上一行）
     if (menu[1] >= 3 && menu[2] >= 3) {
       s += '能用上的穴全用上了，';
       play += menu[1] + menu[2]; // A&Vボーナス
@@ -730,12 +736,13 @@ async function run_benki(arg, rand_n = default_rand) {
       play = 1; // 最低一人
     }
 
-    era.print(
-      `${name_of(arg)}共处理了${play}个底层${benki_player_name()}的性欲。`,
-    ); //
+    // :951 的 PRINTFORML 自带换行——清算首行到此收尾（#615：此前把 :952 的
+    // CALL 与 :953 并进了同一行，少了一次换行）
+    era.print(`${name_of(arg)}共处理了${play}个底层`);
 
-    // 噂（奉仕）
-    era.print(service_rumor(arg, play));
+    // :952 CALL + :953 `PRINTFORM 的性欲。` + :956-978 传闻的 PRINTFORML
+    // ——同一条显示行（传闻接在「的性欲。」之后）
+    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);
 
     // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
     era_flag.target = arg;
@@ -814,12 +821,12 @@ async function run_benki(arg, rand_n = default_rand) {
       play = 1; // 最低一人
     }
 
-    era.print(
-      `${name_of(arg)}一共处理了${play}个${benki_player_name()}的性欲。`,
-    ); //
+    // :1105 的 PRINTFORML 自带换行——清算首行到此收尾（#615，同奉仕分派）
+    era.print(`${name_of(arg)}一共处理了${play}个`);
 
-    // 噂（同性爱）
-    era.print(lesbian_rumor(arg, play));
+    // :1106 CALL + :1107 `PRINTFORM 的性欲。` + :1109-1132 传闻的 PRINTFORML
+    // ——同一条显示行
+    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);
 
     // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
     era_flag.target = arg;

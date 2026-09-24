@@ -128,6 +128,37 @@ export const FILES = [
       { src: BODY, ref: '1295-1317', any: [/^\tELSEIF RESULT == 111\s*$/m] },
       { src: BODY, ref: '1297-1317', any: [/^\tELSEIF RESULT == 111\s*$/m] },
       { src: BODY, ref: '1319-1329', any: [/^\tELSEIF RESULT == 999\s*$/m] },
+      // #615：print 正文的换行语义（表头、确认页、编辑头两行、随机档两标签）
+      {
+        src: BODY,
+        ref: '972',
+        any: [
+          /^PRINTFORM 　　 种族　　　　设定　　　　　　　　　　　　　　　$/m,
+        ],
+      },
+      { src: BODY, ref: '974', any: [/^PRINTFORML 相当于人类17岁的年龄$/m] },
+      {
+        src: BODY,
+        ref: '1036',
+        any: [/^\tPRINTL 全种族的年龄均返回默认值。$/m],
+      },
+      { src: BODY, ref: '1037', any: [/^\tPRINTL 确认吗？$/m] },
+      { src: BODY, ref: '1038', any: [/^\tPRINTL $/m] },
+      {
+        src: BODY,
+        ref: '1131-1143',
+        any: [
+          /^\t\tPRINTFORML 和人类一样\n\tELSEIF SET_VAR:0 == 0\n\t\tPRINTFORML 换算成人类年龄的\{SET_VAR:2 \* POWER\(10, SET_VAR:1\), 4\} 倍/m,
+        ],
+      },
+      {
+        src: BODY,
+        ref: '1146-1162',
+        any: [/^\tPRINT 　 换算人类 17 岁左右 $/m],
+      },
+      { src: BODY, ref: '1215', any: [/^\t\tPRINTL 　　■ 下限$/m] },
+      { src: BODY, ref: '1232', any: [/^\t\tPRINTL $/m] },
+      { src: BODY, ref: '1233', any: [/^\t\tPRINTL 　　■ 上限$/m] },
     ],
   },
 ];

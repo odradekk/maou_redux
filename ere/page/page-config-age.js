@@ -173,9 +173,11 @@ function edit_texts(sv) {
 
 /** [98]/[99] 共用的确认页（:1036-1041/:1060-1065），返回是否确认 */
 async function confirm_reset(prompt) {
-  era.print(`${prompt}\n`);
-  era.print('确认吗？\n');
-  era.println();
+  // 三行各是一次 print（:1036/:1037 的 PRINTL 与 :1038 的空 PRINTL）——正文里
+  // 不自带 `\n`：era.print 已经自成一行，再写尾换行只会多出一个显示行（#615）
+  era.print(prompt);
+  era.print('确认吗？');
+  era.println(); // :1038 的 PRINTL：真空行（上一行已由 :1037 收行）
   era.printButton('好的', 0);
   era.printButton('呃……年龄这个问题是个大事啊……让我再想想……', 1);
   return (await era.input()) === 0;
@@ -293,8 +295,10 @@ async function race_config(rand = default_rand) {
   top: for (;;) {
     // :972-1022 表头与八种族行（[n] 前缀由引擎加，正文 = 种族名 + 36 列
     // 左对齐的档位说明 + 换算年龄；cla≥5 的行保留前一行的文案，见文件头）
+    // 表头是 :972 的 PRINTFORM 与 :974 的 PRINTFORML 拼出的一条显示行，
+    // ere 一次 print 落行即可，正文不带尾换行（#615）
     era.print(
-      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄\n',
+      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄',
     );
     let desc = '';
     let age = '';
@@ -346,11 +350,12 @@ async function race_config(rand = default_rand) {
 
       edit: for (;;) {
         // :1110-1112 编辑头：重画前空行（DO 首拍的 PRINTL）+ 种族名 + 当前档
-        // 说明 + 17 岁换算预览
+        // 说明 + 17 岁换算预览。说明与预览各是一条显示行（:1131-1143 与
+        // :1146-1162 各自的收尾 PRINTFORML），两条 print 都不带尾换行（#615）
         const [edit_desc, edit_age] = edit_texts(sv);
         era.println(); // :1110-1112 的空行（重画首拍）
-        era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}\n`);
-        era.print('　 换算人类 17 岁左右 ' + edit_age + '\n');
+        era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}`);
+        era.print('　 换算人类 17 岁左右 ' + edit_age);
         era.printButton('和人类一样', 101);
         era.printButton('换算成人类年龄的整数倍', 102);
         era.printButton('换算成人类年龄的小数倍', 103);
@@ -381,12 +386,13 @@ async function race_config(rand = default_rand) {
           }
         } else if (dis_flag > 1) {
           // 随机档：下限三钮 + 上限 21..50 中 %10 ∈ 1-5（:1214-1246）
-          era.print('　　■ 下限\n');
+          // :1215/:1233 各是一条 PRINTL 收行的标签行，正文不带尾换行（#615）
+          era.print('　　■ 下限');
           era.printButton('0 岁', 110);
           era.printButton('上限的1 / 2', 111);
           era.printButton('换算成人类年龄', 112);
-          era.println();
-          era.print('　　■ 上限\n');
+          era.println(); // :1232 的 PRINTL：真空行
+          era.print('　　■ 上限');
           for (let l = 0; l < 30; l += 1) {
             if (l % 10 > 4) continue;
             const n = l + 21;

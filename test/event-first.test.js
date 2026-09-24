@@ -240,6 +240,22 @@ test('ask_kuangwang_sex：0-2 写 game.system.狂王性别（:900-908），走�
   );
 });
 
+test('#615 ask_kuangwang_sex：两行正文一次 print（内部 \\n），不带尾换行', async () => {
+  const fixture = create_era_fixture();
+  const { ask_kuangwang_sex } = fixture.load_module('event/first-setting');
+  fixture.set_inputs(2);
+  await ask_kuangwang_sex();
+
+  // SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL（两行）；ere 用一次 print 的
+  // 内部 \n 表达这两行，末尾不再补 \n（多补会多出一个空行，#615）
+  assert.equal(
+    fixture.text_lines()[0],
+    '狂王是支配这个地区的领主\n继承了曾经封印你的勇者的血统，打算把你再次封印',
+    '两行一次 print、无尾换行',
+  );
+  assert.equal(fixture.lines[1].type, 'button', ':904 的按钮行紧随其下');
+});
+
 test('first_setting：魔王性别选女性（1）跳过肉棒尺寸一问（:800 IF MAOUSEX != 1）', async () => {
   const fixture = create_era_fixture();
   const { first_setting } = fixture.load_module('event/first-setting');

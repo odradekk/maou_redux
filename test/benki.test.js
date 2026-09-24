@@ -480,3 +480,82 @@ test('#595 一般便器演出：灌满句与名字句逐行相邻（:1223 的 PR
     `下一行是 :1224 起的名字句（实际：${next?.text}）`,
   );
 });
+
+// —— #615：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 必须落行 ————
+//
+// 原作 :887 / :951 / :1105 三处都是 `PRINTFORML`（自带换行），CALL 的输出因此
+// 落在下一条显示行的行首。ere 曾把 CALL 前后的输出并进同一次 era.print，
+// 少了一次换行（#599 审查发现、#615 修正）。行数用 lines 的行序断言，
+// 不用 text_lines 的片段包含——后者对「并进同一行」是假绿。
+
+test('#615 奉仕分派：对象名自成一行，角色名随该行收尾（:887-890）', async () => {
+  const { fixture, mod } = setup_benki();
+  fixture.store.set('abl:31:16', 3); // 侍奉精神 3 → 奉仕分派（flag:64 = 0）
+  await mod.run_benki(31, seq_rand(0));
+
+  const rows = fixture.lines.map((line) => line.text);
+  const served = rows.findIndex((t) =>
+    t?.endsWith('作为侍奉用便器在地下城里服侍着'),
+  );
+  assert.ok(served >= 0, `:887 的收行句在场（实际 ${JSON.stringify(rows)}）`);
+  assert.equal(
+    rows[served + 1],
+    '居住在地下城深渊中散发着恶臭的肮脏眷属温妮',
+    ':888 的 CALL 落在下一行行首，:890 的 %SAVESTR% 收同一行',
+  );
+  assert.ok(
+    rows[served + 2]?.startsWith('用嘴和手'),
+    ':892 起的穴句行不再带角色名（名字在上一行尾）',
+  );
+});
+
+test('#615 奉仕分派清算：共处理句与「的性欲。+ 传闻」分两行（:951-953）', async () => {
+  const { fixture, mod } = setup_benki();
+  fixture.store.set('abl:31:16', 3);
+  fixture.store.set('abl:31:10', 30); // 顺从
+  fixture.store.set('abl:31:11', 30); // 欲望 → PLAY > 30，出故乡档传闻
+  await mod.run_benki(31, seq_rand(0));
+
+  const rows = fixture.lines.map((line) => line.text);
+  const clear = rows.findIndex((t) => /^温妮共处理了\d+个底层$/.test(t ?? ''));
+  assert.ok(
+    clear >= 0,
+    `:951 的 PRINTFORML 自成一行（实际 ${JSON.stringify(rows)}）`,
+  );
+  const name_row = rows[clear + 1];
+  assert.ok(
+    name_row?.startsWith('居住在地下城深渊中散发着恶臭的肮脏眷属的性欲。'),
+    ':952-953 的 CALL 与「的性欲。」落在下一行行首',
+  );
+  assert.ok(
+    name_row.length > '居住在地下城深渊中散发着恶臭的肮脏眷属的性欲。'.length,
+    ':956-978 的传闻 PRINTFORML 收同一行（接在「的性欲。」之后）',
+  );
+  assert.ok(
+    !rows.includes('居住在地下城深渊中散发着恶臭的肮脏眷属的性欲。'),
+    '「的性欲。」不单独占一行',
+  );
+});
+
+test('#615 同性爱分派清算：一共处理句与「的性欲。+ 传闻」分两行（:1105-1107）', async () => {
+  const { fixture, mod } = setup_benki();
+  fixture.store.set('abl:31:33', 3); // 百合中毒 3 → 同性爱分派（flag:64 = 9 女淫魔）
+  await mod.run_benki(31, seq_rand(0));
+
+  const rows = fixture.lines.map((line) => line.text);
+  const clear = rows.findIndex((t) => /^温妮一共处理了\d+个$/.test(t ?? ''));
+  assert.ok(
+    clear >= 0,
+    `:1105 的 PRINTFORML 自成一行（实际 ${JSON.stringify(rows)}）`,
+  );
+  const name_row = rows[clear + 1];
+  assert.ok(
+    name_row?.startsWith('女淫魔的性欲。'),
+    ':1106-1107 的 CALL 与「的性欲。」落在下一行行首',
+  );
+  assert.ok(
+    name_row.length > '女淫魔的性欲。'.length,
+    ':1109-1132 的传闻 PRINTFORML 收同一行',
+  );
+  assert.ok(!rows.includes('女淫魔的性欲。'), '「的性欲。」不单独占一行');
+});

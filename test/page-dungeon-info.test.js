@@ -274,6 +274,49 @@ test('ENEMY_EXIST2：宽度按本层全部筛出角色取最长——迎击中�
   );
 });
 
+// —— #615：空行落在原作的分支上（DUNGEON_INFO2.ERB:595 / :629-630）——
+
+test('#615 ENEMY_EXIST2：名单为空时只有一个空行（改由尾部 :630 落）', async () => {
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  // 两位角色都不在第 3 层 → 名单为空：:595 不执行，空行来自尾部 :630 的 PRINTL
+  await enemy_exist2(3);
+
+  assert.deepEqual(
+    fixture.lines.map((l) => l.type),
+    ['br'],
+    '名单为空只有 :630 的一个空行（不多不少）',
+  );
+});
+
+test('#615 ENEMY_EXIST2：名单为空但有护卫时，空行在护卫行之前', async () => {
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  fixture.store.set('ex_talent:2:1', 1); // 勇者乙是护卫
+  await enemy_exist2(3, true); // X == 10：1-9 层也追加护卫名单
+
+  assert.deepEqual(
+    fixture.lines.map((l) => l.type),
+    ['br', 'text'],
+    ':630 的空行 + 护卫行（与有队伍时 :595 的位置一致）',
+  );
+  assert.ok(fixture.text_lines()[0].includes('[护卫中]'));
+});
+
+test('#615 ENEMY_EXIST2：有队伍时首行空行来自 :595、队伍行紧随', async () => {
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  seed_invasion_party(fixture);
+  await enemy_exist2(3);
+
+  assert.deepEqual(
+    fixture.lines.map((l) => l.type),
+    ['br', 'text'],
+    ':595 的首行空行 + 队伍行（末行由 :630 的 PRINTL 收尾，不再多空行）',
+  );
+  assert.ok(fixture.text_lines()[0].startsWith('[侵攻中]'));
+});
+
 // —— @DUNGEON_INFO2 主界面 ——
 
 test('INFO2：三标签页切换按钮在白名单内，陷阱列显示「无」', async () => {
