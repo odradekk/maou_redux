@@ -55,11 +55,12 @@
 //   node tools/mutation-check.mjs --sample 12 --seed N   抽样执行（本地想快速看一眼时用；CI 自 #302 起跑全量）
 //   node tools/mutation-check.mjs --jobs 4               隔离副本并行全量（CI 的 master 档 / SOP 的 T4 阶段闸）
 //   --jobs K 与筛选参数同给时：--ids/--files/--changed 会下传给副本子进程，
-//                             只在筛选结果内切片——--slice 与任何筛选取交集
-//                             （单独给 --slice 仍是全表切片，行为不变）；
-//                             副本数与对照运行也按筛选收敛（#553）。--sample
-//                             与 --jobs 互斥：抽样要的总量没有副本表达，同时
-//                             给当场报错，不静默换语义
+//                             副本数与对照运行按筛选收敛（#553）；串行档下
+//                             --slice 与任何筛选取交集（单独给 --slice 仍是
+//                             全表切片，行为不变）。--sample 与 --slice 同
+//                             --jobs 互斥：抽样的总量、外层的切片都没有副本
+//                             表达（副本自按 --slice i k 分摊），同时给当场
+//                             报错，不静默换语义、不静默跑整表
 //   --changed / --base <ref>  按 git 改动过滤条目的 file:（默认基线 origin/master）
 //   --files a.js,b.js         显式给靶文件列表（不走 git；测试夹具与诊断用）
 //   --ids M4246,M4250-M4260   只跑点名的 M 编号（agent 内环用：证明**刚加的**
@@ -827,13 +828,18 @@ const RESTORE_RETRY_DELAYS_MS = [200, 400, 800, 1600];
 const RESTORE_RETRY_CODES = new Set(['UNKNOWN', 'EBUSY', 'EPERM']);
 
 /**
- * 测试钩子（#553）：前 N 次还原写入确定性抛 UNKNOWN。真实的文件占用
- * 造不出来（不该让测试依赖 Windows 的占用行为），注入失败次数才能确定地
- * 走到「重试后成功」与「重试尽仍失败」两条分支。计数按进程内的还原写入
- * 累计；仅测试设置，真实运行不碰。
+ * 测试钩子（#553）：前 N 次还原写入确定性抛指定错误码（`N` 或 `N:CODE`，
+ * 默认 UNKNOWN）。真实的文件占用造不出来（不该让测试依赖 Windows 的占用
+ * 行为），注入失败次数才能确定地走到「重试后成功」与「重试尽仍失败」
+ * 两条分支；错误码可指定，三个可重试码才都能被测到（审查发现 6）。计数
+ * 按进程内的还原写入累计；仅测试设置，真实运行不碰。
  */
 const RESTORE_FAIL_FIRST_ENV = 'MUTATION_CHECK_RESTORE_FAIL_FIRST';
-let restore_fail_budget = Number(process.env[RESTORE_FAIL_FIRST_ENV] || 0);
+const fail_spec = /^(\d+)(?::([A-Z]+))?$/.exec(
+  process.env[RESTORE_FAIL_FIRST_ENV] || '',
+);
+let restore_fail_budget = fail_spec ? Number(fail_spec[1]) : 0;
+const restore_fail_code = fail_spec?.[2] ?? 'UNKNOWN';
 
 /** 同步等待 ms 毫秒（Atomics.wait 在主线程上除等待外无副作用）。 */
 function sync_sleep(ms) {
@@ -843,19 +849,23 @@ function sync_sleep(ms) {
 /**
  * 写回靶文件原文，瞬态失败按 RESTORE_RETRY_DELAYS_MS 重试。
  *
- * @returns {undefined|Error} 成功返回 undefined；重试尽仍失败（或失败
- *   不属可重试码）返回最后一次错误。不抛——调用方要先把 M 编号与还原
- *   命令报清楚再决定退出。
+ * @returns {undefined|{error: Error, tries: number}} 成功返回 undefined；
+ *   失败返回最后一次错误与实际尝试次数（不属可重试码时就是 1 次）。
+ *   不抛——调用方要先把 M 编号与还原命令报清楚再决定退出。
  */
 function write_restore(full, original, rel) {
   let last;
+  let tries = 0;
   for (let attempt = 1; attempt <= RESTORE_WRITE_TRIES; attempt += 1) {
+    tries = attempt;
     try {
       if (restore_fail_budget > 0) {
         restore_fail_budget -= 1;
         throw Object.assign(
-          new Error(`UNKNOWN: unknown error (注入), open '${full}'`),
-          { code: 'UNKNOWN' },
+          new Error(
+            `${restore_fail_code}: unknown error (注入), open '${full}'`,
+          ),
+          { code: restore_fail_code },
         );
       }
       fs.writeFileSync(full, original, 'utf8');
@@ -863,7 +873,7 @@ function write_restore(full, original, rel) {
     } catch (e) {
       last = e;
       if (!RESTORE_RETRY_CODES.has(e.code) || attempt === RESTORE_WRITE_TRIES) {
-        return e;
+        return { error: e, tries };
       }
       console.log(
         `⚠ 还原写入第 ${attempt} 次失败（${e.code}），` +
@@ -872,35 +882,57 @@ function write_restore(full, original, rel) {
       sync_sleep(RESTORE_RETRY_DELAYS_MS[attempt - 1]);
     }
   }
-  return last;
+  return { error: last, tries };
 }
 
 /**
- * 靶文件可能停在变异态时的统一报告（#553）：点名条目与可照抄的还原命令，
- * 提示格式与 #532 启动自检一致；打印后由 execute 停止后续条目。
+ * 靶文件可能停在变异态时的统一报告（#553）：点名条目与按 git 状态给出的
+ * 还原建议，首两行的格式与 #532 启动自检一致；打印后由 execute 停止后续
+ * 条目。
+ *
+ * 还原建议分三种（审查发现 2）：`git checkout HEAD --` 只在「变异前的原文
+ * 恰等于 HEAD 内容」时才无损——否则会连未提交改动一起删掉（同一张票既改
+ * 靶文件又跑它的变异条目是常态，这种残留还落在 #536 记录的自检盲区里，
+ * 这份报告是用户唯一能看到的提示）。非 git 根（并行模式的隔离副本、临时
+ * 夹具）取不到 HEAD，另给一套说法。
  */
-function report_dirty_target(m, headline) {
+function report_dirty_target(root, m, original, headline) {
   const num = extract_m_number(m.desc);
   const which = num === null ? '某条' : `M${num}`;
   console.log(`✗ [${stable_id(m.desc)}] ${m.desc} — ${headline}`);
   console.log(`    ${m.file} 可能停在 ${which} 的变异态，后续条目不再执行`);
-  console.log(
-    `    还原：先 git diff ${m.file} 核对，是残留就 git checkout HEAD -- ${m.file}`,
-  );
+  const head = git_head_content(root, m.file);
+  if (head !== null && head === original) {
+    console.log(
+      `    还原：先 git diff ${m.file} 核对，是残留就 git checkout HEAD -- ${m.file}`,
+    );
+  } else if (head === null) {
+    console.log(
+      `    还原：${m.file} 不在 git 管理下（并行模式的隔离副本或临时夹具）——` +
+        `若是副本，主工作树没有被改动；其余情况按该条条目把 replace 换回 find`,
+    );
+  } else {
+    console.log(
+      `    还原：${m.file} 变异前就有未提交改动，git checkout 会连它一起删掉——` +
+        `先 git diff 核对，再按该条条目把 replace 换回 find（只回退这次变异）`,
+    );
+  }
 }
 
-let active_restore = null; // { full, original, rel }：SIGINT 兜底还原
+let active_restore = null; // { root, full, original, m }：SIGINT 兜底还原
 process.on('SIGINT', () => {
   if (active_restore) {
-    const e = write_restore(
+    const r = write_restore(
       active_restore.full,
       active_restore.original,
-      active_restore.rel,
+      active_restore.m.file,
     );
-    if (e) {
-      console.error(
-        `✗ 中断时还原失败（${e.code}）：${active_restore.rel} 可能停在变异态，` +
-          `还原：git checkout HEAD -- ${active_restore.rel}`,
+    if (r) {
+      report_dirty_target(
+        active_restore.root,
+        active_restore.m,
+        active_restore.original,
+        `中断时还原失败（尝试 ${r.tries} 次仍 ${r.error.code}）`,
       );
     }
   }
@@ -927,7 +959,7 @@ function run_one(root, m) {
     );
     return 'find-mismatch';
   }
-  active_restore = { full, original, rel: m.file };
+  active_restore = { root, full, original, m };
   let failed_as_expected = false;
   let output = '';
   let restore_error;
@@ -973,17 +1005,19 @@ function run_one(root, m) {
   }
   if (restore_error) {
     // 还原写不回去：靶文件停在变异态，残留下后面每一条的判定都不可信，
-    // 报出 M 编号与还原命令后由 execute 停止（#553）。此前这里直接把
+    // 报出 M 编号与还原建议后由 execute 停止（#553）。此前这里直接把
     // 异常抛出去：栈打到顶层、剩余条目全部不跑，还原命令只能自己猜。
     report_dirty_target(
+      root,
       m,
-      `还原写入失败（重试 ${RESTORE_WRITE_TRIES} 次仍 ${restore_error.code}）`,
+      original,
+      `还原写入失败（尝试 ${restore_error.tries} 次仍 ${restore_error.error.code}）`,
     );
     active_restore = null;
     return 'restore-fail';
   }
   if (fs.readFileSync(full, 'utf8') !== original) {
-    report_dirty_target(m, '还原失败（读回不一致）');
+    report_dirty_target(root, m, original, '还原失败（读回不一致）');
     active_restore = null;
     return 'restore-fail';
   }
@@ -1211,6 +1245,15 @@ async function execute_jobs(args, entries) {
         '副本各自抽样会变成 N×K 条。快速抽查请用串行 --sample',
     );
   }
+  // --slice 与 --jobs 同样互斥（审查发现 1）：--jobs 自带切片分工（副本按
+  // --slice i k 分摊），外层再给 --slice 只会被静默丢掉——CI 上复现某个红
+  // 分片时很自然会写 `--slice 3 8 --jobs 2`，那会跑完整表而不是那一片。
+  if (args.slice !== undefined) {
+    throw new ArgError(
+      '✗ --slice 与 --jobs 不能同时用：--jobs 的副本自己按 --slice i k 分摊，' +
+        '外层 --slice 会被丢掉。单跑某一片请用串行 --slice i k',
+    );
+  }
   // 父进程先把筛选选一遍（#553 前筛选参数不进副本，--jobs K --ids … 实际
   // 跑整表切片）：缺号/git 失败趁建副本之前报；副本数按选中条数收敛；
   // 筛选档对照运行跑哪些测试文件也由它决定。切片在这里剥掉——它属于
@@ -1224,19 +1267,16 @@ async function execute_jobs(args, entries) {
   const jobs = filtered
     ? Math.max(1, Math.min(args.jobs, selection.length))
     : args.jobs;
-  // 子进程继承父进程的筛选：--changed/--base 在真树上算出文件清单后以
-  // --files 下传（副本里没有 .git，子进程自己算不了；清单几十个文件在
-  // 命令行上限内）。--slice 与筛选在 select_entries 尾部取交集，每个副本
+  // 子进程继承父进程的筛选：--changed/--base 的文件清单取自 selection（真树
+  // 上算过一次，副本里没有 .git、子进程自己算不了；只传有条目的文件，几十
+  // 个在命令行上限内）。--slice 与筛选在 select_entries 尾部取交集，每个副本
   // 只跑自己那一片。--asar 不下传：副本经 ~/.era-engine 自行定位，与父
   // 进程的默认路径一致（#304 同款约定）。
   let filter_args = [];
-  // （find 写作 !== undefined 而非真值判断：`if (args.ids) {` 这一行形
-  // 状被 M3700 钉在 select_entries 里，这里再来一份会让它的 find 出现
-  // 两次、门 2 当场拦下整张表。）
   if (args.ids !== undefined) {
     filter_args = ['--ids', args.ids_spec ?? [...args.ids].join(',')];
   } else if (args.files || args.base) {
-    const files = args.files ?? [...changed_files(args.root, args.base)];
+    const files = [...new Set(selection.map((m) => m.file))];
     filter_args = ['--files', files.join(',')];
   }
   if (filtered) {
@@ -1346,7 +1386,15 @@ async function execute_jobs(args, entries) {
     return tally;
   } finally {
     for (const copy of copies) {
-      fs.rmSync(copy, { recursive: true, force: true });
+      // maxRetries：副本里被占住的文件（正是本票治的那类 Windows 占用）会让
+      // 无重试的 rmSync 在 finally 里抛错——覆盖已算好的汇总、剩下的副本也
+      // 不再清理（审查发现 8）。
+      fs.rmSync(copy, {
+        recursive: true,
+        force: true,
+        maxRetries: 10,
+        retryDelay: 200,
+      });
     }
   }
 }
@@ -1526,12 +1574,12 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  // --files 零匹配要当场报错，但并行模式的子进程带着 --slice：切片分空
-  // （这一片恰好没有选中条目）是正常分工，不是写错文件名（#553）。
+  // --files 零匹配要当场报错；判断看**切片前**的筛选结果（审查发现 4）：
+  // 文件名拼错时无论带不带 --slice 都要报，而并行子进程带着的 --slice 只是
+  // 分摊（父进程已确认清单选得中条目），分到空片是正常分工不是写错。
   if (
     args.files &&
-    args.slice === undefined &&
-    select_entries(entries, args).length === 0
+    select_entries(entries, { ...args, slice: undefined }).length === 0
   ) {
     throw new ArgError(
       `✗ --files 没有命中任何变异条目：${args.files.join(', ')}`,

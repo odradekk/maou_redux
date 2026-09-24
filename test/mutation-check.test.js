@@ -1886,18 +1886,18 @@ test('还原写入重试尽仍失败：点名 M 编号与还原命令、停止�
       `还原写不回去必须退 1（带着残留继续跑是假结论），实际退出 ${status}：\n${output}`,
     );
     assert.ok(
-      output.includes('还原写入失败（重试 5 次仍 UNKNOWN）'),
-      `应报出重试尽仍失败：\n${output}`,
+      output.includes('还原写入失败（尝试 5 次仍 UNKNOWN）'),
+      `应报出重试尽仍失败与实际尝试次数：\n${output}`,
     );
     assert.ok(
       output.includes('lib/calc.js 可能停在 M9131 的变异态'),
       '还原失败必须点名 M 编号：不知道停在哪条的变异态就没法核对 diff',
     );
+    // 非 git 根（夹具、并行副本）取不到 HEAD，给的是「不在 git 管理下」那套
+    // 说法；git 树上的两种建议见下一条用例。
     assert.ok(
-      output.includes(
-        '还原：先 git diff lib/calc.js 核对，是残留就 git checkout HEAD -- lib/calc.js',
-      ),
-      '还原失败必须给出可照抄的还原命令',
+      output.includes('不在 git 管理下（并行模式的隔离副本或临时夹具）'),
+      `非 git 根不能推荐 git checkout——那条命令在这里根本跑不了：\n${output}`,
     );
     assert.ok(
       !output.includes('M9132'),
@@ -1908,6 +1908,221 @@ test('还原写入重试尽仍失败：点名 M 编号与还原命令、停止�
       fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
       CALC_JS.replace('n * 2', 'n * 3'),
       '还原失败时靶文件确实停在变异态（这正是要报出来的状态）',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('还原失败报告按 git 状态给建议：干净树给 git checkout，脏树警告别连未提交改动一起删（#553）', () => {
+  // `git checkout HEAD -- <文件>` 只在「变异前的原文恰等于 HEAD 内容」时才
+  // 无损。同一张票既改靶文件、又跑打它的变异条目是常态（SOP §2 的内环），
+  // 这时还原失败留下的残留是「工作树内容 + 变异」，恰落在 #536 记录的自检
+  // 盲区里——这份报告是用户唯一能看到的提示，说错方向就是把人引去删掉
+  // 自己没提交的改动。
+  const root = make_git_fixture();
+  try {
+    const ledger = write_ledger(root, [
+      { ...GOOD_ENTRY, desc: 'M9181 加倍系数改坏（还原失败：干净树）' },
+    ]);
+    const clean = run_tool(
+      [
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+      ],
+      { MUTATION_CHECK_RESTORE_FAIL_FIRST: '99' },
+    );
+    assert.equal(clean.status, 1, `还原失败必须退 1：\n${clean.output}`);
+    assert.ok(
+      clean.output.includes(
+        '还原：先 git diff lib/calc.js 核对，是残留就 git checkout HEAD -- lib/calc.js',
+      ),
+      '还原失败必须给出可照抄的还原命令',
+    );
+
+    // 脏树：变异前先落一笔未提交改动（HEAD 内容 ≠ 变异前的原文）
+    fs.writeFileSync(
+      path.join(root, 'lib', 'calc.js'),
+      CALC_JS + '// 未提交的本地改动\n',
+      'utf8',
+    );
+    const dirty = run_tool(
+      [
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+        '--ids',
+        'M9181',
+      ],
+      { MUTATION_CHECK_RESTORE_FAIL_FIRST: '99' },
+    );
+    assert.equal(
+      dirty.status,
+      1,
+      `脏树上还原失败也必须退 1：\n${dirty.output}`,
+    );
+    assert.ok(
+      dirty.output.includes('lib/calc.js 变异前就有未提交改动'),
+      `脏树必须点明变异前就有未提交改动：\n${dirty.output}`,
+    );
+    assert.ok(
+      !dirty.output.includes('git checkout HEAD -- lib/calc.js'),
+      '脏树上推荐 git checkout 会连未提交改动一起删掉，必须换一套说法',
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--slice 与 --jobs 同时给时当场报错退出，不静默丢外层切片（#553）', () => {
+  // CI 上复现某个红分片时很自然会写 `--slice 3 8 --jobs 2`；--jobs 自带切片
+  // 分工（副本按 --slice i k 分摊），外层再给只会被静默丢掉，跑完整表而
+  // 不是那一片。夹具用 make_jobs_fixture：静默放行时副本能正常跑完（退出
+  // 0），状态断言才真的在判「有没有报错」，不会因副本缺 tools/ 而碰巧变红。
+  const root = make_jobs_fixture([
+    { ...GOOD_ENTRY, desc: 'M9122 加倍系数改坏（切片与 jobs 互斥）' },
+  ]);
+  try {
+    const { status, output } = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      path.join(root, 'tools', 'mutations'),
+      '--jobs',
+      '2',
+      '--slice',
+      '0',
+      '2',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      status,
+      1,
+      `--slice 与 --jobs 同时给必须当场报错退出 1，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('--slice 与 --jobs 不能同时用'),
+      '同时给 --slice 与 --jobs 必须当场报错：外层切片会被副本分工静默丢掉，跑完整表',
+    );
+    assert.doesNotMatch(
+      output,
+      /SUMMARY caught=/,
+      `报错应在建副本之前：\n${output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('--files 与 --slice：空片是正常分工不报错，拼错文件名带 --slice 也必报错（#553）', () => {
+  // 并行子进程带着 --slice（分摊不是筛选），分到空片是正常分工；但文件名
+  // 拼错与切片无关，带不带 --slice 都该报——判断若改看切片后的选集，拼错
+  // 的文件在「恰好分到空片」时会被静默放行，而空片的子进程被误报成写错。
+  const root = make_fixture();
+  try {
+    const desc = 'M9191 加倍系数改坏（空片是分工不是写错）';
+    const ledger = write_ledger(root, [{ ...GOOD_ENTRY, desc }]);
+    const rank = (d) =>
+      parseInt(
+        crypto.createHash('sha1').update(d).digest('hex').slice(0, 12),
+        16,
+      );
+    const empty_slice = String(1 - (rank(desc) % 2)); // 没有条目的那一片
+    const empty = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--files',
+      'lib/calc.js',
+      '--slice',
+      empty_slice,
+      '2',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      empty.status,
+      0,
+      `分到空片是正常分工，不该报错，实际退出 ${empty.status}：\n${empty.output}`,
+    );
+    assert.ok(
+      !empty.output.includes('没有命中任何变异条目'),
+      '空片不是写错文件名：--files 命中的条目只是落在别的片里',
+    );
+
+    const typo = run_tool([
+      '--root',
+      root,
+      '--ledger-dir',
+      ledger,
+      '--files',
+      'lib/nonexistent.js',
+      '--slice',
+      empty_slice,
+      '2',
+      '--asar',
+      'none',
+    ]);
+    assert.equal(
+      typo.status,
+      1,
+      `--files 零匹配带 --slice 也必须当场报错，实际退出 ${typo.status}：\n${typo.output}`,
+    );
+    assert.ok(
+      typo.output.includes('--files 没有命中任何变异条目'),
+      `零匹配报错要看清的是切片前的筛选结果：\n${typo.output}`,
+    );
+  } finally {
+    fs.rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('还原写入的瞬态失败重试认全三个可重试码：注入 EPERM 同样重试到成功（#553）', () => {
+  // 真实占用抛的码不固定（UNKNOWN/EBUSY/EPERM，#541 三次都是 UNKNOWN 只是
+  // 观测样本），注入钩子要能指定码，三个码才都测得动。
+  const root = make_fixture();
+  try {
+    const ledger = write_ledger(root, [GOOD_ENTRY]);
+    const { status, output } = run_tool(
+      [
+        '--root',
+        root,
+        '--ledger-dir',
+        ledger,
+        '--asar',
+        'none',
+        '--skip-baseline',
+        '0',
+      ],
+      { MUTATION_CHECK_RESTORE_FAIL_FIRST: '2:EPERM' },
+    );
+    assert.equal(
+      status,
+      0,
+      `注入两次 EPERM 仍应重试到成功，实际退出 ${status}：\n${output}`,
+    );
+    assert.ok(
+      output.includes('还原写入第 1 次失败（EPERM）') &&
+        output.includes('还原写入第 2 次失败（EPERM）'),
+      `EPERM 必须走重试路径（只认 UNKNOWN 就漏掉它）：\n${output}`,
+    );
+    assert.equal(
+      fs.readFileSync(path.join(root, 'lib', 'calc.js'), 'utf8'),
+      CALC_JS,
+      '重试成功的还原必须逐字节回到原文',
     );
   } finally {
     fs.rmSync(root, { recursive: true, force: true });

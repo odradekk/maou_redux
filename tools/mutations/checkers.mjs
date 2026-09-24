@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 190; // #553 起 +11（M11700-M11710：--jobs 下传筛选并按交集切片、还原写入瞬态失败重试与失败报告、并行逐块转发、空选集短路、对照范围与副本数收敛；M11248 的 find 随 finally 体改为 write_restore 同步）；#549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_kojo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+export const COUNT = 195; // #553 起 +16（M11700-M11715：--jobs 下传筛选并按交集切片、还原写入瞬态失败重试与失败报告、并行逐块转发、空选集短路、对照范围与副本数收敛；审查轮 +5：M11711 --slice 与 --jobs 互斥、M11712 --files 零匹配看切片前、M11713/M11714 还原建议按 git 状态分三支、M11715 三个可重试码，M11710 的 find 随还原建议改指新分支；M11248 的 find 随 finally 体改为 write_restore 同步）；#549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_kojo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
 // SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
 // 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
@@ -1661,14 +1661,73 @@ export default [
   {
     desc: 'M11710 还原失败的报告不给还原命令（人只能自己猜怎么回退——提示格式与 #532 启动自检一致是本票要求）（#553）',
     file: 'tools/mutation-check.mjs',
-    find: `  console.log(
-    \`    还原：先 git diff \${m.file} 核对，是残留就 git checkout HEAD -- \${m.file}\`,
-  );`,
-    replace: "  console.log('    （变异：不给还原命令）');",
+    find: `  if (head !== null && head === original) {
+    console.log(
+      \`    还原：先 git diff \${m.file} 核对，是残留就 git checkout HEAD -- \${m.file}\`,
+    );`,
+    replace: `  if (head !== null && head === original) {
+    console.log('    （变异：不给还原命令）');`,
     tests: ['mutation-check'],
     test_name:
-      '还原写入重试尽仍失败：点名 M 编号与还原命令、停止后续条目、退出码 1（#553）',
+      '还原失败报告按 git 状态给建议：干净树给 git checkout，脏树警告别连未提交改动一起删（#553）',
     must_mention: '还原失败必须给出可照抄的还原命令',
+  },
+  {
+    desc: 'M11711 --slice 与 --jobs 互斥被拆（外层切片被副本分工静默丢掉——`--slice i k --jobs 2` 跑成整张表）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: `  if (args.slice !== undefined) {
+    throw new ArgError(
+      '✗ --slice 与 --jobs 不能同时用：--jobs 的副本自己按 --slice i k 分摊，' +`,
+    replace: `  if (false && args.slice !== undefined) { // 变异：不再报错
+    throw new ArgError(
+      '✗ --slice 与 --jobs 不能同时用：--jobs 的副本自己按 --slice i k 分摊，' +`,
+    tests: ['mutation-check'],
+    test_name:
+      '--slice 与 --jobs 同时给时当场报错退出，不静默丢外层切片（#553）',
+    must_mention: '必须当场报错退出 1，实际退出',
+  },
+  {
+    desc: 'M11712 --files 零匹配判断回看切片后的选集（空片子进程被误报成写错、拼错的文件名恰好分到空片就被静默放行——子进程分摊与写错文件名同形）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: '    select_entries(entries, { ...args, slice: undefined }).length === 0',
+    replace:
+      '    select_entries(entries, args).length === 0 // 变异：看切片后的选集',
+    tests: ['mutation-check'],
+    test_name:
+      '--files 与 --slice：空片是正常分工不报错，拼错文件名带 --slice 也必报错（#553）',
+    must_mention: '分到空片是正常分工，不该报错',
+  },
+  {
+    desc: 'M11713 还原建议不看「变异前原文是否等于 HEAD」（脏树上也推荐 git checkout——会连未提交改动一起删掉，正落在 #536 的自检盲区里）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: '  if (head !== null && head === original) {',
+    replace: '  if (head !== null) { // 变异：HEAD 里取得到就给 checkout',
+    tests: ['mutation-check'],
+    test_name:
+      '还原失败报告按 git 状态给建议：干净树给 git checkout，脏树警告别连未提交改动一起删（#553）',
+    must_mention: '脏树必须点明变异前就有未提交改动',
+  },
+  {
+    desc: 'M11714 非 git 根取不到 HEAD 时不另给说法（折进脏树分支——夹具与并行副本上推荐 git checkout，那条命令在这里跑不了）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: '  } else if (head === null) {',
+    replace:
+      '  } else if (false && head === null) { // 变异：非 git 根也给 git 建议',
+    tests: ['mutation-check'],
+    test_name:
+      '还原写入重试尽仍失败：点名 M 编号与还原建议、停止后续条目、退出码 1（#553）',
+    must_mention: '非 git 根不能推荐 git checkout',
+  },
+  {
+    desc: 'M11715 还原写入的瞬态失败只认 UNKNOWN 一个码（EPERM/EBUSY 一次即弃——真实占用抛的码不固定，只认观测样本就漏）（#553）',
+    file: 'tools/mutation-check.mjs',
+    find: "const RESTORE_RETRY_CODES = new Set(['UNKNOWN', 'EBUSY', 'EPERM']);",
+    replace:
+      "const RESTORE_RETRY_CODES = new Set(['UNKNOWN']); // 变异：只认 UNKNOWN",
+    tests: ['mutation-check'],
+    test_name:
+      '还原写入的瞬态失败重试认全三个可重试码：注入 EPERM 同样重试到成功（#553）',
+    must_mention: '注入两次 EPERM 仍应重试到成功',
   },
   // —— #530：纯文本选项行棘轮（靶在 ere/system/train/com-toy.js 与 tools/plaintext-options.mjs）——
   {
