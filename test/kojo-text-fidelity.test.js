@@ -56,13 +56,18 @@
  * 返对象名（JS 侧 `${benki_player_name()}` / K3 的局部名，见 JS_TOKEN_RULES）。
  * 记号行的位置决定它的归属：**上一条 PRINT 行与本条 PRINT 行之间的 CALL
  * 算后一条**——拼接锚的各行之间如此（原有的 GOBI 语义），单行锚的首行
- * 上方也如此（#599：K12/K3 的「PRINTFORMW 前缀 + CALL 名字 + PRINTFORMW
- * 续行」在原作是一行，JS 合并成一条语句只能锚在续行上，名字的插入点即
- * 落在锚的上方；不收这一段就会出现「JS 有 ${…}、ERB 侧没有」的假绿）。
- * 上边界取最近的 PRINT 系行或 `@函数` 行，跨语句/跨函数的 CALL 不算。
+ * 上方也如此（#599：K12 的「PRINTFORMW 前缀 + CALL 名字 + PRINTFORMW 续行」
+ * 在原作是两行，名字落在那一条续行语句的首行；不收这一段就会出现
+ * 「JS 有 ${…}、ERB 侧没有」的假绿）。上边界取最近的 PRINT 系行或
+ * `@函数` 行（分支行不是边界，见 upper_bound_line）。
  * IF/ELSE 两支各写一句同记号 CALL（只走一支）时并成一个记号。
  * 表里没有的 CALL（SELL_MATURO_K0 一类自带输出的真身）不是记号：它们的
  * 输出是独立语句，由自己的锚覆盖。
+ *   - **带 W/L 的前缀行不许被吞（#599 锁 A 的后置检查）**：锚上方有记号行
+ *     而上一条 PRINT 行自带 W/L 时（原作在那里已经换行/等待），那条 PRINT
+ *     行必须有**自己的语句**。否则「W/L 前缀 + CALL + 续行」被并成一条输出
+ *     （K12 四处 #243 起的形态）时：锁 B 看不见没列进语句的前缀行、锁 C 还能
+ *     对上记号——两行并一行就成了假绿。#599 的审查就是靠这条抓出 K12 的。
  *
  * 已知边界（防误用）：
  *   - 模块 → 源文件取自文件头的「源: target/…ERB」（追溯注释，项目约定）；
@@ -744,8 +749,11 @@ function collect_gap_markers(erb_lines, lo, hi) {
 
 /**
  * 语句「上方」的结构边界：往上找到最近的 PRINT 系行或 `@函数` 声明行——
- * 记号行只算这条线以下、语句首行以上的区间（跨函数/跨语句的 CALL 不算本
- * 语句的插入点）。
+ * 记号行只算这条线以下、语句首行以上的区间。**口径就是这两类行**：跨函数
+ * （`@`）当然不算；分支行（`IF`/`ELSEIF`/`ELSE`/`ENDIF`）**不是**边界，
+ * 所以「某分支末尾的 CALL 紧接下一分支的首个 PRINT 行、中间没有 PRINT 行」
+ * 这种排布会把记号算给后一条语句（当前语料没有这种排布；#599 审查指出，
+ * 真出现时在此处加分支边界——注意别把 GOBI 的 IF/ELSE 两支拆成两个记号）。
  *
  * @param {string[]} erb_lines 源文件全文按行
  * @param {number} line_no 开始往上找的行号
@@ -767,8 +775,8 @@ function upper_bound_line(erb_lines, line_no) {
  *   - **行间与首行上方**的记号行（CALL GOBI_KOUJO / CALL BENKI_PLAYER_NAME，
  *     见 MARKER_CALL_RULES）各计一个记号，是 `${gobi_*}` /
  *     `${benki_player_name()}` 的插入点。单行锚也要收上方这一段：#599 起
- *     K12/K3 的「PRINTFORMW 前缀 + CALL 名字 + PRINTFORMW 续行」在原作是
- *     一行，JS 合并成一条语句锚在续行上，名字的插入点（CALL 行）落在锚的
+ *     K12 的「PRINTFORMW 前缀 + CALL 名字 + PRINTFORMW 续行」在原作是两行，
+ *     名字落在续行语句的首行（前缀行有自己的语句），插入点（CALL 行）在锚的
  *     上方——不收就会「JS 有 ${…}、ERB 侧没有」，锁 C 红。
  *   - 各 PRINT 行自己的 %…% / {…} / \@…\@ 按序跟上（原 collect_span_tokens
  *     的既有语义）。
@@ -875,14 +883,52 @@ const MODULES = (() => {
       );
       if (hit) {
         stmt.prints = [hit];
-        // #599：单行锚也要收「上方记号行」——前缀行 + CALL 名字 + 续行的
-        // 一行输出合并成一条语句时，名字的插入点在锚的上方（见 collect_span_tokens）
+        // #599：单行锚也要收「上方记号行」——K12 的「PRINTFORMW 前缀（自带
+        // 换行/等待）+ CALL 名字 + 续行」里，名字的插入点在锚的上方
+        //（见 collect_span_tokens；前缀行自己另有语句，锁 A 的后置检查守着）
         stmt.span_tokens = collect_span_tokens(entry.erb_lines, [hit]);
       } else if (stmt.binding.via === '尾锚') {
         stmt.bind_error = `尾锚 :${stmt.binding.label} 在 ${entry.erb_rel} 不是 PRINT 系行`;
       } else {
         // 前置注释是结构注释（窗口内无 PRINTFORM 行），不绑定
         stmt.binding = null;
+      }
+    }
+    // #599：带 W/L 的前缀行不许被吞——某条语句的锚上方有记号行、而上一条
+    // PRINT 行自带 W/L（原作在那里已经换行/等待）时，那条 PRINT 行必须有
+    // 自己的语句。否则「前缀行 + CALL + 续行」被并成一条输出（K12 四处
+    // #243 起的形态），锁 B 看不见未列出的前缀行、锁 C 还能对上记号，
+    // 两行并一行就成了假绿（#599 审查实测）。
+    if (entry.erb_lines) {
+      const anchored = new Set();
+      for (const stmt of entry.statements) {
+        for (const p of stmt.prints ?? []) {
+          anchored.add(p.line_no);
+        }
+      }
+      for (const stmt of entry.statements) {
+        if (!stmt.prints || stmt.bind_error) {
+          continue;
+        }
+        const first = stmt.prints[0].line_no;
+        const bound = upper_bound_line(entry.erb_lines, first - 1);
+        if (bound < 1 || anchored.has(bound)) {
+          continue;
+        }
+        if (
+          collect_gap_markers(entry.erb_lines, bound + 1, first - 1).length ===
+          0
+        ) {
+          continue;
+        }
+        const match = (entry.erb_lines[bound - 1] ?? '').match(PRINTFORM_RE);
+        const variant = match ? (match[1] || match[3] || '').toUpperCase() : '';
+        if (variant) {
+          stmt.bind_error =
+            `锚 :${stmt.binding.label} 上方有 CALL 记号行，` +
+            `而上方那条 PRINTFORM${variant} :${bound} 没有自己的语句——` +
+            `它自带换行/等待，并进本语句会吞掉一行`;
+        }
       }
     }
     out.push(entry);

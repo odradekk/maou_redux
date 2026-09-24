@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2387; // #599 起 +10（M12130-M12139：肉便器四处名字接入——丢名字×7、换调用×1、保真锁记号表/单行锚/合并语义各×1）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2387; // #599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -22109,9 +22109,6 @@ async function try_kojo_or_stub(
     desc: 'M11943 BENKI 施舍首次台词拆回两条（#584：:7495+:7497 的同一行被拆；#599 起名字已接上，find 同步）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find:
-      '      // :7495+:7497 原作 PRINTFORM 「和 → CALL BENKI_PLAYER_NAME（:7496）→ PRINTFORMW …\n' +
-      '      // 三行同属一行输出。名字按 #599 接上：${benki_player_name()} 插在\n' +
-      '      // :7496 的位置（拼接锚）\n' +
       '      await era.printAndWait(\n' +
       '        `「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`,\n' +
       '      ); // :7495+:7497',
@@ -22274,11 +22271,13 @@ async function try_kojo_or_stub(
     must_mention: '拍片结算行同一行',
   },
 
-  // —— #599：肉便器口上四处 BENKI_PLAYER_NAME 接入（M12130-M12139） ——
-  // 三行一支（PRINTFORM/PRINTFORMW 前缀 + CALL BENKI_PLAYER_NAME + 续行）合并
-  // 成一条 era.printAndWait 后，名字位置必须插 ${benki_player_name()}：
-  // 行为测试守「名字出现在整行里」，保真锁（kojo-text-fidelity）守「插的是
-  // 那个记号、位置对」——两侧各钉几条。
+  // —— #599：肉便器口上 BENKI_PLAYER_NAME 接入（M12130-M12139） ——
+  // K0 四处（:7495+:7497 / :7516+:7518 / :7537+:7539 / :7558+:7560）三行一支
+  // 合并成一条 era.printAndWait 后，名字位置必须插 ${benki_player_name()}；
+  // K12 四处的原作是两行（前缀 PRINTFORMW 自带换行/等待），拆成两条语句、
+  // 名字插在续行语句首位；K3 一处与 K0 同型，用拼接锚。行为测试守「名字出现
+  // 在整行里」，保真锁（kojo-text-fidelity）守「插的是那个记号、位置对、
+  // 该拆的行没被并」——两侧各钉几条。
   {
     desc: 'M12130 K0 施舍首句（:7495+:7497）名字删除（缺对象名，与原作三行一支不符）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
@@ -22293,7 +22292,7 @@ async function try_kojo_or_stub(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12131 K0 施舍首句（:7495+:7497）名字换成别的调用（保真锁记住号：benki_player_name() → sc()）（#599）',
+    desc: 'M12131 K0 施舍首句（:7495+:7497）名字换成别的调用（保真锁认记号：benki_player_name() → sc()）（#599）',
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '`「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`',
     replace: '`「和${sc()}来同时用小穴和菊花来做爱了♪」`',
@@ -22341,31 +22340,33 @@ async function try_kojo_or_stub(
       '#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12135 K12 交配实验首句（:5107）名字删除（与 K0 同型的丢名字）（#599）',
+    desc: 'M12135 K12 交配实验续行（:5107）名字删除（与 K0 同型的丢名字）（#599）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find:
+      '      await era.printAndWait(`「多亏`); // :5105\n' +
       '      await era.printAndWait(\n' +
-      '        `「多亏${benki_player_name()}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,\n' +
+      '        `${benki_player_name()}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,\n' +
       '      ); // :5107',
     replace:
+      '      await era.printAndWait(`「多亏`); // :5105\n' +
       '      await era.printAndWait(\n' +
-      '        `「多亏的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,\n' +
+      '        `的帮助、使用肛门和性器的『交配实验』得以进行咯♪」`,\n' +
       '      ); // :5107（变异：丢名字）',
     tests: ['kojo-k12-intellectual'],
     must_mention:
       '#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名',
   },
   {
-    desc: 'M12136 K3 口交施舍首句（:8207）名字删除（K3 从拼接改成插值后同受本锁）（#599）',
+    desc: 'M12136 K3 口交施舍首句（:8205+:8207）名字删除（K3 用拼接锚后同受本锁）（#599）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find:
       '      await era.printAndWait(\n' +
       '        `「请${player_name_benki}大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,\n' +
-      '      ); // :8207',
+      '      ); // :8205+:8207',
     replace:
       '      await era.printAndWait(\n' +
       '        `「请大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,\n' +
-      '      ); // :8207（变异：丢名字）',
+      '      ); // :8205+:8207（变异：丢名字）',
     tests: ['kojo-k3-noble'],
     must_mention:
       '#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 的对象名',
@@ -22387,24 +22388,29 @@ async function try_kojo_or_stub(
     must_mention: '槽位序不一致',
   },
   {
-    desc: 'M12138 保真锁单行锚不收「上方记号行」（K12/K3 的 CALL 名字落在锚上方，不收即假绿）（#599）',
+    desc: 'M12138 保真锁不收「上方记号行」（单行锚只看自己那行——K12 续行的名字记号落空）（#599）',
     file: 'test/kojo-text-fidelity.test.js',
-    find: '        stmt.span_tokens = collect_span_tokens(entry.erb_lines, [hit]);',
-    replace: '        // 变异：单行锚不收上方记号行',
+    find: '  let prev = upper_bound_line(erb_lines, prints[0].line_no - 1);',
+    replace: '  let prev = prints[0].line_no - 1; // 变异：不收上方记号行',
     tests: ['kojo-text-fidelity'],
     test_name: '插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔）',
     must_mention: '槽位序不一致',
   },
   {
-    desc: 'M12139 保真锁连续同记号不再合并（GOBI 的 IF/ELSE 两支各计一个——#570 既有语义被拆）（#599）',
-    file: 'test/kojo-text-fidelity.test.js',
+    desc: 'M12139 K12 两行并回一行（:5171+:5173 的前缀行被吞——锁 A 的「带 W/L 前缀行不许被吞」抓）（#599）',
+    file: 'ere/kojo/kojo-k12-intellectual.js',
     find:
-      '        if (out[out.length - 1] !== name) {\n' +
-      '          out.push(name);\n' +
-      '        }',
-    replace: '        out.push(name); // 变异：连续同记号不再合并',
+      '      await era.printAndWait(`「多亏`); // :5171\n' +
+      '      await era.printAndWait(\n' +
+      '        `${benki_player_name()}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,\n' +
+      '      ); // :5173',
+    replace:
+      '      await era.printAndWait(\n' +
+      '        `「多亏${benki_player_name()}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,\n' +
+      '      ); // :5173（变异：两行并一行，前缀行被吞）',
     tests: ['kojo-text-fidelity'],
-    test_name: '插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔）',
-    must_mention: '槽位序不一致',
+    test_name:
+      '锚覆盖：ere/kojo 每个 era.print* 调用都绑定到源文件的 PRINTFORM 行',
+    must_mention: '并进本语句会吞掉一行',
   },
 ];

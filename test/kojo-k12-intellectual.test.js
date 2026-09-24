@@ -916,15 +916,16 @@ test('benki_koujo_k12 FLAG:62==0 常识改写（FLAG:63）合并 CALL 称呼', a
 });
 
 test('#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 的对象名', async () => {
-  // 原作 :5105-:5107 等四处：PRINTFORMW 「多亏 + CALL BENKI_PLAYER_NAME +
-  // PRINTFORMW …，名字由真身 benki_player_name() 返回。K12 原本用字符串拼接，
-  // #599 统一成 ${benki_player_name()} 插值（保真锁按 CALL BENKI_PLAYER_NAME
-  // 记号核对，拼接写法锁不住缺名字）
+  // 原作 :5105-:5107 等四处：PRINTFORMW 「多亏（自带换行与等待）→ CALL
+  // BENKI_PLAYER_NAME → PRINTFORMW 后续，名字与后续是**第二行**。K12 自
+  // #243 起把两行并成一条输出（少一行、少一次等待），#599 按原作拆回两条
+  // 语句；名字由真身 benki_player_name() 返回，用 ${} 插值接上（保真锁按
+  // CALL BENKI_PLAYER_NAME 记号核对）
   const cases = [
-    [3, '「多亏{name}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」'],
-    [4, '「多亏{name}的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」'],
-    [5, '「多亏{name}的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」'],
-    [6, '「多亏{name}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」'],
+    [3, '{name}的帮助、使用肛门和性器的『交配实验』得以进行咯♪」'],
+    [4, '{name}的帮助、几乎让性器松弛的『交配实验』得以进行咯♪」'],
+    [5, '{name}的帮助、几乎让肛门松弛的『交配实验』得以进行咯♪」'],
+    [6, '{name}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」'],
   ];
   for (const [action, tpl] of cases) {
     const fixture = await setup_k12((f) => {
@@ -935,9 +936,10 @@ test('#599 benki_koujo_k12：行动 3/4/5/6 的首句在名字位置插 FLAG:64 
     });
     const mod = fixture.load_module('kojo/kojo-k12-intellectual');
     await mod.benki_koujo_k12();
-    assert.ok(
-      fixture.text_lines().includes(tpl.replace('{name}', '大型犬')),
-      `行动 ${action} 的首句必须带上 FLAG:64 的对象名（#599）`,
+    assert.deepEqual(
+      fixture.text_lines().slice(0, 2),
+      ['「多亏', tpl.replace('{name}', '大型犬')],
+      `行动 ${action}：前缀行与「名字 + 后文」行分属两行，且名字是 FLAG:64 的对象名（#599）`,
     );
   }
 });

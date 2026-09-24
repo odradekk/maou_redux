@@ -2048,10 +2048,12 @@ osioski_koujo_family.register(0, osioski_koujo_k0);
 /**
  * @BENKI_KOUJO_K0（K0 慈爱）：肉便器配信口上（:7415-7634，FLAG:62 分档 0-10 × FLAG:63/素质）。
  *
- * 常识改変四支（FLAG:62 = 3/4/5/6）的首句在原作由三行拼成一行输出：
- * PRINTFORM 「和 + CALL BENKI_PLAYER_NAME（:7496/:7517/:7538/:7559，对象名）
- * + PRINTFORMW …。ere 一次 era.printAndWait 输出整行，名字按 ${benki_player_name()}
- * 插进 CALL 的位置（#599；真身 ere/system/train/benki.js，K12 同款延迟 require）。
+ * 常识改写四支（FLAG:62 = 3/4/5/6）的首句在原作由三行拼成一行输出：
+ * 前三处是 PRINTFORM 「和…（:7495/:7516/:7537）、第四处是 PRINTFORM 「给予（:7558），
+ * 接 CALL BENKI_PLAYER_NAME（:7496/:7517/:7538/:7559，对象名）、
+ * 再 PRINTFORMW 收尾。ere 一次 era.printAndWait 输出整行，名字按
+ * ${benki_player_name()} 插进 CALL 的位置（#599；真身 ere/system/train/benki.js，
+ * K12 同款延迟 require）。
  *
  * @returns {Promise<number>} 0（RETURN 0）
  */

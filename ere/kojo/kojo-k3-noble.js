@@ -13496,13 +13496,14 @@ async function benki_koujo_k3(rand) {
 
     if (game.dungeon.肉便器常识改写 === 1) {
       // :8204
-      // :8205 PRINTFORM 「请」接 :8206 CALL BENKI_PLAYER_NAME
-      // （三行一支：#599 起名字按插值写，保真锁按 CALL BENKI_PLAYER_NAME 记号核对）
+      // :8205+:8207 原作 PRINTFORM 「请 → CALL BENKI_PLAYER_NAME（:8206，名字）
+      // → PRINTFORMW …，三行同属一行输出（与 K0 四处同型）；名字按 #599
+      // 用插值接在 CALL 的位置，拼接锚让前缀行也进锁 B/D
       const player_name_benki =
         require('#/system/train/benki').benki_player_name();
       await era.printAndWait(
         `「请${player_name_benki}大人的大鸡巴、用${self_call(a)}的嘴巴肉穴做做『施舍』吧${heart(1)}」`,
-      ); // :8207
+      ); // :8205+:8207
 
       await era.printAndWait(
         `「常识改变？…说的什么啊…${self_call(a)}可是『出名的见到大鸡巴就想吸一口』哦？」`,

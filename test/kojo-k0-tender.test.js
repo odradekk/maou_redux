@@ -5017,11 +5017,12 @@ test('#599 BENKI_KOUJO：FLAG:62 = 3/4/5/6 的首句在名字位置插 FLAG:64 �
   }
 });
 
-test('#599 BENKI_KOUJO：FLAG:64 无名字档 + 未设定档 → 分别空串与眷属档（原作 SELECTCASE 1:1）', async () => {
-  // 原作 BENKI.ERB @BENKI_PLAYER_NAME（:1656-1681）SELECTCASE 覆盖 0-9，
-  // 无 ELSE：-2（相手無し）一类无对应档不输出任何字。FLAG:64 未设定时
-  // era.get 读回 0 → 落到 0 档「居住在地下城深渊中散发着恶臭的肮脏眷属」
-  // （不是空串——工单里「未定 → 空串」指的是无对应档）
+test('#599 BENKI_KOUJO：FLAG:64 无名字档 + 未设定档 → 分别空串与眷属档（原作 IF/ELSEIF 链 1:1）', async () => {
+  // 原作 BENKI.ERB @BENKI_PLAYER_NAME（:1656-1681）是 IF FLAG:64 == … /
+  // ELSEIF 链，覆盖 0-9 且**无 ELSE**：-2（相手無し）一类无对应档不输出
+  // 任何字（空串）。FLAG:64 未设定时 era.get 返回 undefined（issue #13），
+  // 真身 flag64() 的 `|| 0` 兜成 0 → 落到 0 档「居住在地下城深渊中散发着
+  // 恶臭的肮脏眷属」（不是空串——工单里「未定 → 空串」指的是无对应档）
   const no_name = await setup_k0((f) => {
     f.store.set('flag:62', 4);
     f.store.set('flag:63', 1);
