@@ -279,6 +279,29 @@ test('CHAR_APPEND：默认路径问性别与名字（模式 0）', async () => {
   assert.ok(texts(fixture, true).includes('新建人物今后被称呼为莉塔。'));
 });
 
+test('CHAR_APPEND：名字输入 0 走原作的随机名分支（#567：0 视为空输入）', async () => {
+  const fixture = setup();
+  seed_presets(fixture, [5]);
+  const { char_append } = load(fixture);
+  // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与 "0" 到手都是数值 0，
+  // 按 #567 的裁定视为空输入、走原作 :261-264 的随机名支
+  fixture.set_inputs(1, 0, 996); // 男性、空输入、CHAR_CUSTOM 取消
+
+  await char_append(5, 0);
+  const name = fixture.store.get('callname:5:-1');
+  assert.notEqual(name, '0', '输入 0 不再落成字面量「0」');
+  assert.ok(name, '随机名已写入（真身由 CHARA_NAME_RANDOM_DEFINE 掷出）');
+  assert.equal(fixture.store.get('callname:5:-2'), name, '两条名字键同值');
+  assert.ok(
+    texts(fixture, true).includes(`新建人物今后被称呼为${name}。`),
+    ':263 的随机名播报',
+  );
+  assert.ok(
+    texts(fixture, true).includes('（输入 0 随机生成名字）'),
+    'ere 侧补的输入 0 说明（#567）',
+  );
+});
+
 test('CHAR_APPEND：性别三档（1 男 / 3 扶她 / 2 女不写）', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);

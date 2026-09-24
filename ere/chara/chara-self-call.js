@@ -17,10 +17,11 @@
  *     `キャラ関数/CHARA_INFO ver1.0.1.ERB:1062` 的 CASE 8（[8] 一人称重设）
  *     已随角色详情页接线，mode 形参排在 rand 之后（既有调用方都以第二参传
  *     随机源，chara-custom2/test 同款，不破坏签名）。空输入的语义映射见
- *     函数体内注释：引擎把 '' 归一成 0 且不受理空提交，原作「不输入择随机
- *     设定」在 ere 的可达等价物是输入 0；提示行后因此**补了一句 ere 侧说明
- *     「（输入 0 随机设定）」**——有意偏离 1:1 文案（第 1 轮验收要求，
- *     空输入语义的 A/B 分歧统一见 #567）。
+ *     函数体内注释：引擎把 '' 与 "0" 都归一成数值 0 且不受理空提交，原作
+ *     「不输入择随机设定」在 ere 的可达等价物是输入 0；提示行后因此**补了
+ *     一句 ere 侧说明「（输入 0 随机设定）」**——有意偏离 1:1 文案（第 1 轮
+ *     验收要求）。判据自 #567 起统一收在 ere/utils/input-text.js（全库的
+ *     空输入语义裁定与普查清单见该票）。
  *
  *   - **CSVCSTR(NO:ARG,60) 不用 `staticcstr:${cid}:60` 三段寻址**，改读
  *     `era.get('chara:${cid}')`（引擎文档化 API，dev-guides/09-static.md
@@ -76,6 +77,7 @@ const era = require('#/era-electron');
 const { nid_get_type } = require('#/chara/chara-name');
 const { get_look_info } = require('#/chara/look-info');
 const { chara_callname } = require('#/utils/callname-utils');
+const { input_text } = require('#/utils/input-text');
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序固定分支 */
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -567,18 +569,14 @@ async function random_self_call(cid, rand = default_rand, mode = 0) {
     era.print('（输入 0 随机设定）');
     era.drawLine();
     // :13-14 INPUTS → LOCALS '= RESULTS
-    const raw = await era.input();
-    // :15-16 IF LOCALS == "" → GOTO RANDOM。引擎侧的空输入形态：回传值先经
-    // getNumber 归一（`Number(e); isNaN(t) ? e : t`，app.asar 模块 65——''
-    // 与 "0" 都归一成数值 0，非数字串原样返回），且渲染层根本不受理空提交
-    // （dev-guides/05-interaction.md:124「不会是 undefined 或空字符串''」）。
-    // 原作「不输入择随机设定」在 ere 的可达等价物因此是**输入 0**：按 0
-    // 走随机路径；其余值字符串化落为自定义一人称（chara-name-edit.js 的
-    // INPUTS 同款约定——游戏读到的是归一后的值）。'' 与 "0" 到手都已是
-    // 数值 0，判空只写 raw !== 0 一道；其余不存在的手输形态见上注
-    if (raw !== 0) {
+    const text = input_text(await era.input());
+    // :15-16 IF LOCALS == "" → GOTO RANDOM。空输入在引擎里的形态就是数值 0
+    // （getNumber 把 '' 与 "0" 都归一成 0，且渲染层不受理空提交），#567 起由
+    // 共享判据统一还原（两条依据的完整注记见 ere/utils/input-text.js）：
+    // 空串落 $RANDOM 的随机路径，其余值字符串化落为自定义一人称
+    if (text !== '') {
       // :18-21 STRLENS(LOCALS) > 0（ELSE 内的判空，恒真）：写入并清档位
-      era.set(`cstr:${cid}:60`, String(raw));
+      era.set(`cstr:${cid}:60`, text);
       era.set(`cflag:${cid}:450`, 0);
       return 0;
     }
