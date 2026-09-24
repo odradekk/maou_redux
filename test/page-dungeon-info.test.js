@@ -194,6 +194,61 @@ test('ENEMY_EXIST2：护卫名单看原作的全局 X，不是实参（#548 订�
   );
 });
 
+test('ENEMY_EXIST2：名字补齐按显示宽度计，全角 2 格（STRLENS 计法，#563）', async () => {
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  seed_invasion_party(fixture);
+  // 队员名换成两字全角（4 列）；第三人是另一队、半角名（2 列）
+  fixture.store.set('callname:2:-1', '阿乙');
+  fixture.seed_chara(3, { id: 3, name: 'AI', callname: 'AI' });
+  fixture.era.addCharacter(3);
+  fixture.store.set('cflag:3:1', 3);
+  fixture.store.set('cflag:3:501', 3);
+  fixture.store.set('cflag:3:533', 3);
+
+  await enemy_exist2(3);
+
+  const texts = fixture.text_lines();
+  // 本层最长名 = 勇者甲（3 字全角 = 6 列）：阿乙补 2 个半角空格、AI 补 4 个
+  assert.equal(
+    texts.find((t) => t.includes('阿乙')),
+    '[侵攻中]\u3000勇者甲\u3000阿乙  \u3000',
+    '同队行：队员名按显示宽度右补半角空格（全角算 2 格，不是字符数）',
+  );
+  assert.equal(
+    texts.find((t) => t.includes('AI')),
+    '[迎击中]\u3000AI    \u3000',
+    '半角名也补到与全角名相同的显示宽度',
+  );
+});
+
+test('ENEMY_EXIST2：MAX_NAME_LEN 跨调用只增不减——先长后短，宽度不回落（#563）', async () => {
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  seed_invasion_party(fixture);
+  // 第一轮：队长 6 字全角名（12 列），队员 3 字（6 列）
+  fixture.store.set('callname:1:-1', '超长名字测试');
+
+  await enemy_exist2(3);
+  assert.equal(
+    fixture.text_lines().find((t) => t.includes('勇者乙')),
+    '[侵攻中]\u3000超长名字测试\u3000勇者乙      \u3000',
+    '第一轮：队员名补到 12 列（6 字全角名）',
+  );
+
+  // 第二轮：本层不再有勇者行（CFLAG:1 归 0），勇者乙改当护卫——护卫行
+  //（:637）与勇者行（:627）用同一个静态宽度
+  fixture.store.set('cflag:1:1', 0);
+  fixture.store.set('cflag:2:1', 0);
+  fixture.store.set('ex_talent:2:1', 1);
+  await enemy_exist2(3, true);
+  assert.equal(
+    fixture.text_lines().find((t) => t.includes('[护卫中]')),
+    '[护卫中]\u3000[ 2]勇者乙      ',
+    '第二轮：护卫行仍按第一轮的 12 列补齐（静态宽度不回落）',
+  );
+});
+
 // —— @DUNGEON_INFO2 主界面 ——
 
 test('INFO2：三标签页切换按钮在白名单内，陷阱列显示「无」', async () => {
