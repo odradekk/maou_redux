@@ -249,6 +249,31 @@ test('ENEMY_EXIST2：MAX_NAME_LEN 跨调用只增不减——先长后短，宽�
   );
 });
 
+test('ENEMY_EXIST2：宽度按本层全部筛出角色取最长——迎击中的长名也决定勇者行宽度（#563 返工 1）', async () => {
+  const fixture = setup_world();
+  const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
+  seed_invasion_party(fixture);
+  // 迎击中的另一队（12 列），侵攻队两人都只有 6 列——原作 :569 的 MAX 对
+  // 每一个筛出的角色（侵攻/迎击/奴隶）更新 MAX_NAME_LEN，不是只对侵攻中
+  fixture.seed_chara(3, {
+    id: 3,
+    name: '超长迎击名字',
+    callname: '超长迎击名字',
+  });
+  fixture.era.addCharacter(3);
+  fixture.store.set('cflag:3:1', 3);
+  fixture.store.set('cflag:3:501', 3);
+  fixture.store.set('cflag:3:533', 3);
+
+  await enemy_exist2(3);
+
+  assert.equal(
+    fixture.text_lines().find((t) => t.includes('[侵攻中]')),
+    '[侵攻中]\u3000勇者甲      \u3000勇者乙      \u3000',
+    '勇者行按迎击者的长名补齐（宽度来自全部筛出角色，非仅侵攻中）',
+  );
+});
+
 // —— @DUNGEON_INFO2 主界面 ——
 
 test('INFO2：三标签页切换按钮在白名单内，陷阱列显示「无」', async () => {

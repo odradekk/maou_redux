@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 433; // #563 起 +7（M11720-M11726：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 434; // #563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4180,5 +4180,17 @@ export default [
       "          { content: name_of(cid).padEnd(max_name_len, ' ') }, // 变异：按字符数补",
     tests: ['page-dungeon-info'],
     must_mention: '第二轮：护卫行仍按第一轮的 12 列补齐',
+  },
+  {
+    desc: 'M11727 MAX_NAME_LEN 只按侵攻中的角色更新（:569 的 MAX 本应对每一个筛出角色执行，迎击/奴隶的长名被忽略）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '    max_name_len = Math.max(display_width(name), max_name_len);',
+    replace: `    if (cflag_get(cid, 1) === 2) {
+      // 变异：宽度只按侵攻中的角色更新
+      max_name_len = Math.max(display_width(name), max_name_len);
+    }`,
+    tests: ['page-dungeon-info'],
+    must_mention:
+      '勇者行按迎击者的长名补齐（宽度来自全部筛出角色，非仅侵攻中）',
   },
 ];
