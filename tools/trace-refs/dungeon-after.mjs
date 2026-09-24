@@ -7,34 +7,28 @@ export const FILES = [
     js: 'ere/dungeon/dungeon-after.js',
     refs: [
       {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '24',
-        any: [new RegExp('^\\s*REND\\s*$', 'm')],
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '24-25',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:A%打倒了勇者，凯旋而归，来到你的身边，$/m,
+        ],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
-        ref: '25',
-        any: [new RegExp('^\\s*PRINTFORMW 请赐予%SAVESTR:A%奖励。\\s*$', 'm')],
+        ref: '328-329',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:A%没有发现勇者（或者是输了），失败而归$/m,
+        ],
       },
       {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '328',
-        any: [new RegExp('^\\s*;吸血鬼の場合ボーナス\\s*$', 'm')],
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '27-31',
+        any: [/^\s*PRINTL \[0\] 这是你应份的$/m],
       },
       {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '329',
-        any: [new RegExp('^\\s*SIF TALENT:A:314 == 3\\s*$', 'm')],
-      },
-      {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '31',
-        any: [new RegExp('^\\s*FLAG:5 = 17179934119\\s*$', 'm')],
-      },
-      {
-        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
-        ref: '341',
-        any: [new RegExp('^\\s*CFLAG:A:4 = 0\\s*$', 'm')],
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '331-341',
+        any: [/^\s*PRINT \[0\] 什么也不做/m],
       },
       {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
