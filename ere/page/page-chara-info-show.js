@@ -9,10 +9,13 @@
  *
  * 六个页码臂（`ARG:1`）：
  *   -2 贡品时 / -1 调教时 / 0 首页 / 1 状态 / 2 外观 / 3 素质条件 / 4 自我介绍。
- * 显式 cid 形参承载原作的 ARG + TARGET 换出换入（:25-26 与 :320-321 的
- * `TARGET = LOCAAL` / `A = LOCAL:1` 一边进一边出、进出等值）——调用方的
- * `TARGET` 在进入前就已等于 `ARG`（SHOW_CHARA_INFO 的两个 `-2` 调用点与
- * enter-enemy 的 `-1` 调用点都在调用前设好），故 ere 侧不必真的换手。
+ * **进入即换 TARGET、退出即恢复**（源 :25-26 的 `TARGET = ARG` 与 :320-321 的
+ * `TARGET = LOCAL:1`）：@LOOK_INFO 等被调段按 TARGET 取语尾口上，不换的话
+ * 调用方（如开局形象确认的 -2 页）会拿魔王的口上编号打出一排语尾占位、
+ * 战役路径则会沿用上一次调教对象的口上（#565 返工第 2 条引擎实测）；
+ * 换手用 try/finally，献祭分支的 continue/return 也走恢复。
+ * 显式 cid 形参承载原作的 ARG（:25-26 与 :320-321 的进出等值——
+ * LOCAL:1 存的正是进入时的 TARGET）。
  *
  * 有意偏离（各条注明依据）：
  *   - `L_LCOUNT = LINECOUNT` / 末尾「不足 27 行补空行」按 `era.getLineCount()`
@@ -371,6 +374,22 @@ async function show_chara_info(
   rand = default_rand,
   background = 0x000000,
 ) {
+  // :25-26 TARGET = ARG / LOCAL:1 = TARGET——被调段（LOOK_INFO 的语尾等）
+  // 按 TARGET 取口上；:320-321 退出恢复。try/finally 覆盖全部出口
+  const target_pool = era_flag.target;
+  era_flag.target = cid;
+  try {
+    return await show_chara_info_body(cid, page, rand, background);
+  } finally {
+    era_flag.target = target_pool;
+  }
+}
+
+/**
+ * show_chara_info 的主体（原 @SHOW_CHARA_INFO 函数体直译）——TARGET
+ * 换手在包装层（:25-26 换入 / :320-321 换出），函数体不碰 era_flag.target。
+ */
+async function show_chara_info_body(cid, page, rand, background) {
   for (;;) {
     const line_count = era.getLineCount(); // :19-22 L_LCOUNT = LINECOUNT
     show_info_title(cid, rand); // :28

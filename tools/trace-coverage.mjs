@@ -800,6 +800,26 @@ export function collect_stub_line_names(text) {
 }
 
 /**
+ * 收集 `try_kojo_or_stub(族, '名字'` 的第二实参名（#565 返工第 4 条）：
+ * 该通道未命中时静默（原作 TRYCALLFORM 落空），不打占位——名字不进
+ * `stub_line` 收集面就会彻底失联。实参名在调用点第二位，调用是多行
+ * 形态（kojo-system.js / kojo-dungeon-after.js 的既有写法）。
+ * @param {string} text 源文本
+ * @returns {string[]}
+ */
+export function collect_try_kojo_names(text) {
+  const spans = js_comment_spans(text);
+  const in_comment = (i) => spans.some(([a, b]) => i >= a && i < b);
+  const names = new Set();
+  for (const m of text.matchAll(
+    /try_kojo_or_stub\(\s*[A-Za-z_$][\w$]*\s*,\s*(['"`])([A-Za-z0-9_]+)\1/gs,
+  )) {
+    if (!in_comment(m.index)) names.add(m[2]);
+  }
+  return [...names];
+}
+
+/**
  * 解析 `const STUBBED_CALLS = [...]` 数组：字面名与 spread 标识符分开收
  * （spread 静态求不了值——`[...STUBBED_ABLUP_NAMES]` 是 ABLUP_IDS 与
  * ABLUP_HANDLERS 的差集，由测试侧经夹具取运行时名单核对）。
@@ -872,25 +892,37 @@ export function index_registry_names(text) {
 }
 
 /**
- * 核对：代码里的存根名，对应的清单行必须是「存根」或不实现类终态，
- * 不能是「已实现」——#540 终点判据第 2 条只看清单，函数落了真身、调用点
- * 还在打占位的话，覆盖统计看不见（#565 的直接成因）。「至少一行命中且
- * 非『已实现』」即放行：同名多行（如 RANDOM_SELF_CALL 的实现行 + 调用点
- * 存根行、DUNGEON_BATTLE 的判死行 + 实现行）以未了结/终态的那行为准。
- * @param {{ file: string, name: string }[]} entries 代码侧收集的名字
+ * 核对：代码里的存根名与清单行的对应关系，按通道分流（#565 返工第 4 条）：
+ *   - `via: 'stub_line'`（缺省）：打占位的名字，对应的清单行必须是「存根」
+ *     或不实现类终态，不能是「已实现」——#540 终点判据第 2 条只看清单，
+ *     函数落了真身、调用点还在打占位的话，覆盖统计看不见（#565 的直接
+ *     成因）。「至少一行命中且非『已实现』」即放行：同名多行（如
+ *     RANDOM_SELF_CALL 的实现行 + 调用点存根行、DUNGEON_BATTLE 的判死行 +
+ *     实现行）以未了结/终态的那行为准。
+ *   - `via: 'try_kojo'`：`try_kojo_or_stub` 的名字——未命中静默、不占位，
+ *     不适用「必须是存根/终态」（这类族的行多为「已实现」）；只要求名字
+ *     **能找到清单行**（缺行即红：口上族的核对锚失联）。真缺口（原作有
+ *     ere 无）由 test/kojo-family-coverage.test.js 的定义集合比对拦住。
+ * @param {{ file: string, name: string, via?: 'stub_line' | 'try_kojo' }[]} entries
+ *   代码侧收集的名字
  * @param {string} registry_text docs/stub-registry.md 全文
  * @returns {string[]} 失败消息（空 = 全部合规）
  */
 export function check_stub_names(entries, registry_text) {
   const index = index_registry_names(registry_text);
   const failures = [];
-  for (const { file, name } of entries) {
+  for (const { file, name, via = 'stub_line' } of entries) {
     const statuses = index.get(name);
     if (statuses === undefined) {
       failures.push(
-        `✗ 存根名无清单行：${file} 的「${name}」在 docs/stub-registry.md 四张表里找不到对应行（首格反引号名或 @USERSHOP 的 CALL 名）——打占位的名字必须登记`,
+        via === 'try_kojo'
+          ? `✗ 口上核对锚失联：${file} 的 try_kojo_or_stub 名字「${name}」在 docs/stub-registry.md 四张表里找不到对应行——该通道未命中即静默，没有清单行就没有任何机械核对`
+          : `✗ 存根名无清单行：${file} 的「${name}」在 docs/stub-registry.md 四张表里找不到对应行（首格反引号名或 @USERSHOP 的 CALL 名）——打占位的名字必须登记`,
       );
       continue;
+    }
+    if (via === 'try_kojo') {
+      continue; // 找到行即放行（族集合的缺口由 kojo-family-coverage 拦）
     }
     const kinds = statuses.map((s) => classify_status(s));
     if (!kinds.some((k) => k === 'pending' || k === 'dead')) {
@@ -1074,16 +1106,33 @@ export async function run_coverage({ repo, only = [], list = false }) {
   // #565：代码里的存根名 ↔ 清单状态。stub_line 调用的字面名与
   // STUBBED_CALLS 的字面项都要对应「存根/终态」行（spread 名单静态求不了
   // 值，由 test/stub-registry-status.test.js 经夹具取运行时名单补核对）。
-  const stub_name_entries = new Map(); // `${file}::${name}` → {file, name}
+  // try_kojo_or_stub 的名字单走「找到清单行即可」的通道（未命中静默、
+  // 不打占位，#565 返工第 4 条；族集合缺口由 kojo-family-coverage 拦）。
+  const stub_name_entries = new Map(); // `${via}::${file}::${name}` → entry
   for (const rel of list_ere_js(repo)) {
     const text = fs.readFileSync(path.join(repo, rel), 'utf8');
     for (const name of collect_stub_line_names(text)) {
-      stub_name_entries.set(`${rel}::${name}`, { file: rel, name });
+      stub_name_entries.set(`s::${rel}::${name}`, {
+        file: rel,
+        name,
+        via: 'stub_line',
+      });
+    }
+    for (const name of collect_try_kojo_names(text)) {
+      stub_name_entries.set(`k::${rel}::${name}`, {
+        file: rel,
+        name,
+        via: 'try_kojo',
+      });
     }
     const stubbed = parse_stubbed_calls(text);
     if (stubbed !== null) {
       for (const name of stubbed.literals) {
-        stub_name_entries.set(`${rel}::${name}`, { file: rel, name });
+        stub_name_entries.set(`s::${rel}::${name}`, {
+          file: rel,
+          name,
+          via: 'stub_line',
+        });
       }
       // 名单解析不了的元素直接红：静默跳过等于名单坏形时守卫失明
       // （#565 审查的反例——元素前加注释就能让已实现名漏出）
@@ -1173,7 +1222,7 @@ export async function run_coverage({ repo, only = [], list = false }) {
   console.log(
     `存根名核对（#565，代码侧收集 ${stub_name_entries.size} 名）：${
       stub_name_failures.length === 0
-        ? '全部对应「存根/终态」行'
+        ? 'stub_line 名对应「存根/终态」行、try_kojo 名都有清单行'
         : `${stub_name_failures.length} 项失守`
     }`,
   );

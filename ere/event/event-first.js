@@ -254,9 +254,10 @@ on('EVENTFIRST', async () => {
     // :111 CALL CHARA_NAME_DEFINE（无实参；#565 起真身 ere/chara/chara-name.js）：
     // 省略的数值参数按 0 处理（技能手册：不做 TARGET 代入），L_A = 0 = 魔王
     // （cid 0 与原作 NO:0 同值）——走特殊角色分支，把魔王的称呼重写为预设
-    // 值（与 :78 CHARA_NAME_INIT 的产物相同）、NID 写回 10000、关系称呼重建
-    // 一次。村娘（cid 17）的命名不经此调用：其称呼由 addCharacter 装预设时
-    // 落地，NID 维持原作同款的不写（原作同样没给村娘定 NID）
+    // 值（与 addCharacter 装预设时的直写同值，:78 的 CHARA_NAME_INIT 只建
+    // 名字表、不碰称呼）、NID 写回 10000、关系称呼重建一次。村娘（cid 17）
+    // 的命名不经此调用：其称呼同样来自 addCharacter 的预设直写，NID 维持
+    // 原作同款的不写（原作同样没给村娘定 NID）
     chara_name_define(0);
     era.set('cflag:17:9', 1);
     era.set('cflag:17:1', 0);

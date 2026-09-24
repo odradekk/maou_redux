@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 63; // #390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
+export const COUNT = 64; // #565 返工 +1（M11633：TARGET 换手删除——语尾回退按调用方取）；#390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
 const TALENTS = 'ere/page/components/chara-talents.js';
@@ -39,6 +39,22 @@ const make = (id, desc, file, find, replace, must_mention, tests) => ({
 });
 
 export default [
+  // —— #565 返工：SHOW_CHARA_INFO 的 TARGET 换手 ——
+  make(
+    11633,
+    'show_chara_info 的 TARGET 换手删除（语尾按调用方而非被显示角色取）',
+    MAIN,
+    `  const target_pool = era_flag.target;
+  era_flag.target = cid;
+  try {
+    return await show_chara_info_body(cid, page, rand, background);
+  } finally {
+    era_flag.target = target_pool;
+  }`,
+    `  return await show_chara_info_body(cid, page, rand, background); // 变异：TARGET 不换手`,
+    '语尾按被显示角色',
+    ['kojo-family-coverage'],
+  ),
   make(
     8701,
     'CUP_SIZE：CAL_VAR ≤ 1 的档位由 1 放宽到 2',

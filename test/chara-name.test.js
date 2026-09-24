@@ -939,11 +939,15 @@ test('rand_chara_make：挑中空位——新建、加 EX、CHAR_MAKE 收尾并�
     ':139 派遣奴隶标志置 1（等级 1 生成）',
   );
   assert.equal(fixture.store.get('flag:402'), 0, ':182 派遣标志归位');
-  // :126-130 的搬迁读的是 FLAG:1 / FLAG:2（「上一次的调教对象 / 助手」）——
-  // 种进去的 FLAG:1 恰好是新角色的角色号，故 :127-128 命中并清空；
-  // 末尾 :184-185 再把 FLAG 原样赋回 TARGET / ASSI 指针槽
-  assert.equal(fixture.store.get('flag:1'), -1, ':128 等于新角色 → 清空');
-  assert.equal(fixture.store.get('flag:10005'), -1, ':184 TARGET = FLAG:1');
+  // :126-135 的搬迁是**原作恒空操作**（@ADDCHARA_EX 首行 TARGET = ARG、新角色
+  // 总在登记序末尾，等于/大于都不可能成立；#565 返工第 3 条 1:1 保留为不做）
+  // ——FLAG:1 原样保留，:184-185 的复位把它赋回 TARGET 指针槽
+  assert.equal(
+    fixture.store.get('flag:1'),
+    2,
+    ':127-135 原作恒空操作 → FLAG:1 不动',
+  );
+  assert.equal(fixture.store.get('flag:10005'), 2, ':184 TARGET = FLAG:1');
   // :173-178 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
   // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
   const recruit_name = fixture.store.get('callname:2:-1');
@@ -1192,7 +1196,7 @@ test('rand_chara_make：:159 换人支删除刚加的角色并回到 :50 重挑'
   assert.equal(result, 1, '返回重挑后的角色号');
 });
 
-test('rand_chara_make：TARGET/ASSI 搬迁——等于新角色则清空、大于则前移', async () => {
+test('rand_chara_make：TARGET/ASSI 复位——:127-135 原作恒空操作，FLAG:1/2 原样保留（#565 返工）', async () => {
   const fixture = create_era_fixture();
   seed_hero(fixture, 3);
   seed_hero(fixture, 9);
@@ -1201,10 +1205,20 @@ test('rand_chara_make：TARGET/ASSI 搬迁——等于新角色则清空、大�
   fixture.store.set('flag:2', 5); // 助手编号在新角色之后
   answer_sequence(fixture, [100, 2]);
   await load_rand(fixture)(seq_capture([2]), not_overseas);
-  assert.equal(fixture.store.get('flag:2'), 4, ':134 大于新角色 → 前移一格');
-  assert.equal(fixture.store.get('flag:1'), -1, ':128 等于新角色 → 清空');
+  // 原作 :127-135 四行恒不成立（@ADDCHARA_EX 首行 TARGET = ARG、新角色总在
+  // 登记序末尾）——旧移植按角色号比较并 -=1，会把 5 改成 4、3 清成 -1
+  assert.equal(
+    fixture.store.get('flag:2'),
+    5,
+    ':134 原作恒空操作 → FLAG:2 不前移',
+  );
+  assert.equal(
+    fixture.store.get('flag:1'),
+    3,
+    ':128 原作恒空操作 → FLAG:1 不清空',
+  );
   // :136-137 与 :184-185 都写同一对值（原作如此，重复是 1:1 保留的），故只断
-  // 终值。两条都是「搬迁后的 FLAG:1/2 → TARGET/ASSI 指针槽」这条链的出口
-  assert.equal(fixture.store.get('flag:10005'), -1, ':184 TARGET = FLAG:1');
-  assert.equal(fixture.store.get('flag:10006'), 4, ':185 ASSI = FLAG:2');
+  // 终值。两条都是「FLAG:1/2 → TARGET/ASSI 指针槽」这条链的出口
+  assert.equal(fixture.store.get('flag:10005'), 3, ':184 TARGET = FLAG:1');
+  assert.equal(fixture.store.get('flag:10006'), 5, ':185 ASSI = FLAG:2');
 });

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 81; // #546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 CM_GENDER 接通 global:3——由 test/chara-make.test.js 守护）；#548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#565 起 +2（M11614/M11615，@CM_ST/@CM_ST_ACE 的 ST_UP 接线）+ 审查轮 +2（M11624/M11625，SHOW_CHARA_INFO 页码与 [100] 進む按钮）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：本票 4 条之外收进 master 的 M11581，按导入实测条目数写回
+export const COUNT = 85; // #546 起 +7（M11532-M11538，RANDOM_SELF_CALL 的 MODE 1 分支）；#547 起 +1（M11581，chara-make.js 的 CM_GENDER 接通 global:3——由 test/chara-make.test.js 守护）；#548 返工轮 +2（M11478/M11479 的靶位从 enter-enemy.js 搬到 @CHARA_EX_34——补偿写在所有加入路径都过的 ADDCHARA_EX 里）；#565 起 +2（M11614/M11615，@CM_ST/@CM_ST_ACE 的 ST_UP 接线）+ 审查轮 +2（M11624/M11625，SHOW_CHARA_INFO 页码与 [100] 進む按钮）+ 返工轮 +4（M11631/M11632/M11634/M11635：印象/发色按钮、FLAG 复辟守卫、#DIM 静态语义）；#383 起 +18（M7808-M7825）；#384 起 -2（M6538 的目标代码被改写、M7821 的目标搬到 chara-name.js）；#487 起 +10（M10600-M10609）；#483 起 +4（M10610-M10613）；#494 起 +7（M10614-M10619、M10623）；#530 起 +4（M11200-M11203，招募确认对话的选项是按钮、编号与正文前缀各一条）。合并 #547 时两侧 80/77 调和为 81：本票 4 条之外收进 master 的 M11581，按导入实测条目数写回
 
 export default [
   // —— #565 ST_UP 接线（@CM_ST / @CM_ST_ACE） ——
@@ -14,6 +14,46 @@ export default [
     replace: '      // 变异：ST_UP 调用删除',
     tests: ['chara-make'],
     must_mention: 'REPEAT FLAG:60 次：等级 2',
+  },
+  {
+    desc: 'M11631 形象确认的 [0] 改印象按钮退回纯文本（实机敲不进 0，性格钉死表 0 项）',
+    file: 'ere/chara/chara-make.js',
+    find: `          era.printButton(
+            \`印象 ： \${
+              character >= 0
+                ? talentname(GENERAL_CHARASTERISTICS[character])
+                : ''
+            }\`,
+            0,
+          );`,
+    replace: `          era.print('印象 ： '); // 变异：按钮退回纯文本`,
+    tests: ['chara-make'],
+    must_mention: '[0] 改印象必须是按钮',
+  },
+  {
+    desc: 'M11632 形象确认的 [1] 改发色按钮退回纯文本（实机敲不进 1）',
+    file: 'ere/chara/chara-make.js',
+    find: `          era.printButton(\`发色 ： \${ARR_HAIRCOLOR[haircolor] ?? ''}\`, 1);`,
+    replace: `          era.print('发色 ： '); // 变异：按钮退回纯文本`,
+    tests: ['chara-make'],
+    must_mention: '发色按钮正文带上当前发色名',
+  },
+  {
+    desc: 'M11634 FLAG:1/2 的角色号调整复辟（:127-135 原作恒空操作被写活）',
+    file: 'ere/chara/chara-make.js',
+    find: `        era_flag.target = game.event.上次调教对象; // :136 TARGET = FLAG:1`,
+    replace: `        if (game.event.上次调教对象 > newchara) game.event.上次调教对象 -= 1; // 变异：调整复辟
+        era_flag.target = game.event.上次调教对象; // :136 TARGET = FLAG:1`,
+    tests: ['page-campaign'],
+    must_mention: 'FLAG:1 不被改写',
+  },
+  {
+    desc: 'M11635 character 的跨调用沿用删（#DIM 静态语义丢失，下次招募不预设）',
+    file: 'ere/chara/chara-make.js',
+    find: `        if (character !== -1) {`,
+    replace: `        if (false) { // 变异：上次选择不沿用`,
+    tests: ['chara-make'],
+    must_mention: 'SET_CHARASTERISTIC(新角色, 上次的选择)',
   },
   {
     desc: 'M11615 cm_st_ace 的逐级 ST_UP 调用删除（精英初始等级不升）',

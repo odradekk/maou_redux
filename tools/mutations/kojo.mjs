@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2335; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）
+export const COUNT = 2334; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -1382,15 +1382,28 @@ export default [
     find: '  if (id >= 0 && family.has(id)) {',
     replace: '  if (false) { // 变异：已注册也打占位',
     tests: ['kojo-k3-noble', 'benki'],
-    must_mention: 'K3 真身不打占位行',
+    // #565 返工起未命中静默，红的形态是「K3 真身台词消失」而非「打占位行」
+    must_mention: 'K3 肉便器常识改写真台词',
   },
+  // M1730 已删（#565 返工）：try_kojo_or_stub 未命中静默成为**正确语义**
+  // （原作 TRYCALLFORM 落空），它的「未注册打占位」前提反转；守卫转由
+  // M11636 与 test/kojo-family-coverage.test.js 承担。
   {
-    desc: 'M1730 try_kojo_or_stub 未注册不再打占位（stub_line 删）（#234）',
+    desc: 'M11636 try_kojo_or_stub 未命中复辟占位（静默语义丢失，一档一占位刷屏）',
     file: 'ere/kojo/kojo-system.js',
-    find: '    stub_line(stub_name, stub_desc, stub_ticket);',
-    replace: '    /* 变异：未注册静默 */',
-    tests: ['benki'],
-    must_mention: '未注册性格打 @BENKI_KOUJO 占位行',
+    find: `  const id = kojo_handler_id(arg);
+  if (id >= 0 && family.has(id)) {
+    return family.call(id, { whenMissing: 0, args: extra_args });
+  }
+  return 0;`,
+    replace: `  const id = kojo_handler_id(arg);
+  if (id >= 0 && family.has(id)) {
+    return family.call(id, { whenMissing: 0, args: extra_args });
+  }
+  require('#/utils/stub-line').stub_line(stub_name, stub_desc, stub_ticket); // 变异：占位复辟
+  return 0;`,
+    tests: ['kojo-family-coverage'],
+    must_mention: '窗口外不得有任何输出',
   },
   {
     desc: 'M1540 K2 首次状态推进写错（CFLAG:301 = 1 改 2）（#233）',
@@ -20836,16 +20849,9 @@ on('EVENTEND', eventend_kojo_903);`,
     tests: ['event-k-dispatch'],
     must_mention: 'handler 实参逐条对上',
   },
-  {
-    desc: 'M8956 try_kojo_or_stub 缺 handler 时也当命中（占位行消失、静默吞债）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `  const id = kojo_handler_id(arg);
-  if (id >= 0 && family.has(id)) {`,
-    replace: `  const id = kojo_handler_id(arg);
-  if (id >= 0) {`,
-    tests: ['event-k-dispatch'],
-    must_mention: '占位行带 @原名',
-  },
+  // M8956 已删（#565 返工）：缺 handler 时也当命中（whenMissing 0）与静默
+  // 返回 0 行为等价——占位语义取消后「静默吞债」不再是可观察错误，真缺口
+  // 由 test/kojo-family-coverage.test.js 的定义集合比对拦。
   {
     desc: 'M8957 GOHOUBI_REQUEST 族内实参丢 cid（K7 读不到 CFLAG:504）',
     file: 'ere/kojo/kojo-dungeon-after.js',
@@ -21200,10 +21206,13 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M8994 try_kojo_or_stub 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
     file: 'ere/kojo/kojo-system.js',
+    // #565 返工起 jsdoc 改写（静默语义）+ 函数体首行加 void 标注——
+    // find 同步到新文本，变异仍是「缺省哨兵改 0」
     find: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
  * @param {any[]} [extra_args=[]] 透传给 handler 的实参
- * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
- * @returns {Promise<any>} handler 的返回值，或存根分支的 0
+ * @param {boolean} [wait=false] 兼容形参：占位时代区分 stub_line_wait；静默
+ *   后无行为差异，保留签名不动调用点
+ * @returns {Promise<any>} handler 的返回值，或未命中的 0
  */
 async function try_kojo_or_stub(
   family,
@@ -21213,8 +21222,9 @@ async function try_kojo_or_stub(
   arg = -1,`,
     replace: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
  * @param {any[]} [extra_args=[]] 透传给 handler 的实参
- * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
- * @returns {Promise<any>} handler 的返回值，或存根分支的 0
+ * @param {boolean} [wait=false] 兼容形参：占位时代区分 stub_line_wait；静默
+ *   后无行为差异，保留签名不动调用点
+ * @returns {Promise<any>} handler 的返回值，或未命中的 0
  */
 async function try_kojo_or_stub(
   family,

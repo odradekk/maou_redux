@@ -70,10 +70,12 @@ const { look_set } = require('#/chara/look'); // #389 起真身（源 キャラ�
 const { chara_first_exp } = require('#/chara/chara-first-exp'); // #394 起真身
 const {
   GENERAL_CHARASTERISTICS,
-  show_charasteristic,
+  ARR_HAIRCOLOR,
+  talentname,
+  talent,
+  charasteristic_index,
   set_random_charasteristic,
   set_charasteristic,
-  show_haircolor,
   set_random_haircolor,
   set_haircolor,
   choose_charasteristic,
@@ -1742,17 +1744,22 @@ function pick_free_hero_slot(rand_n) {
  *   16 位占满的 :191 分支与「算了，不选了」（:169-171）给 0——战役招募下
  *   16 位全满同样落前者（候选表为空，见 pick_free_hero_slot）
  */
+
+/**
+ * @RAND_CHARA_MAKE 的三个 #DIM 静态私有量（源 :47-48 的 `#DIM HAIRCOLOR`、
+ * `#DIM CHARACTER` 与 :49 的 `#DIM XINGGE`，Emuera 静态声明：跨调用保留）。
+ * 同一次游玩的下一次招募沿用上一次的选择（:66-72 的两个守卫正以此为基础：
+ * CHARACTER != -1 → SET_CHARASTERISTIC、HAIRCOLOR > 0 → SET_HAIRCOLOR）。
+ * **读档或回标题时 Emuera 是否清空静态私有量未核实**（#565 返工第 5 条）；
+ * ere 侧按「不清」落地——模块加载即初值 0，与原作同一次进程内的行为一致。
+ */
+let haircolor = 0; // :47-48 HAIRCOLOR（:88/:100 回写）
+let character = 0; // :47-48 CHARACTER（:88 回写；-1 = 未定义）
+let xingge = 0; // :49 XINGGE——:90 写入，:141 传给 CHAR_MAKE
+
 async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
   const inport_check = char_make_inport ?? (() => Promise.resolve(0));
-
-  // :47-48 LOCALS：HAIRCOLOR / CHARACTER——Emuera 整型局部量初值 0，
-  // 且是**跨 :50 / :75 两层循环携带**的（:88 把 SHOW_CHARASTERISTIC 的回值
-  // 写回 CHARACTER，:100 同款写回 HAIRCOLOR）。
-  let haircolor = 0;
-  let character = 0;
-  let xingge = 0; // :49 XINGGE——:90 写入，:141 传给 CHAR_MAKE
-
   // :50 $INPUT_LOOP_11 —— 换人重挑的循环入口
   for (;;) {
     // 名字用 chara_id 而非 chara：后者是本文件顶部 import 的 chara 门面
@@ -1819,16 +1826,17 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
           } else {
             era.print('呃……面前的勇者，是这个形象的……');
           }
-          era.print('[0] 印象 ： '); // :81
-
-          // :83-90 性格：显示 →（未定义则随机补设 → 再显示）→ 回写
-          // CHARACTER，并由 CHARACTER 查 ID_OF_GENERAL_CHARASTERISTICS
-          // 得 XINGGE
-          let shown = show_charasteristic(newchara); // :83 CALL SHOW_CHARASTERISTIC
+          // :81/:83-90 性格：[0] 行**按钮化**（PR #53 通则：era 的 input 只收本轮
+          // 打印过的按钮快捷键；纯文本 `[N] ` 行在实机敲不进——#565 返工第 1
+          // 条引擎实测「只收 100」）。原作 :83-90 是 PRINTFORM [0] 印象 ： +
+          // SHOW 的名字拼一行，按钮正文照拼：名字经 charasteristic_index 查询 +
+          // talentname 直取，不经会打印的 show_*（printButton 独占一行，名字
+          // 必须进正文）。:91 的 PRINTL 由按钮行的行尾承接，不再补空 print
+          let shown = charasteristic_index(newchara); // :83 CALL SHOW_CHARASTERISTIC
           if (shown === -1) {
-            // :84-87 未定义则随机补设再显示
+            // :84-87 未定义则随机补设再查
             set_random_charasteristic(newchara, rand_n); // :85
-            shown = show_charasteristic(newchara); // :86
+            shown = charasteristic_index(newchara); // :86
           }
           character = shown; // :88
           // :90 XINGGE = ID_OF_GENERAL_CHARASTERISTICS:CHARACTER —— 表在
@@ -1836,27 +1844,28 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
           // （表外）时按「无指定」落地
           xingge =
             character >= 0 ? (GENERAL_CHARASTERISTICS[character] ?? -1) : -1;
-          era.print(''); // :91 PRINTL
+          era.printButton(
+            `印象 ： ${
+              character >= 0
+                ? talentname(GENERAL_CHARASTERISTICS[character])
+                : ''
+            }`,
+            0,
+          );
 
-          // :93-100 发色：与性格同构
-          era.print('[1] 发色 ： ');
-          let shown_color = show_haircolor(newchara); // :95 CALL SHOW_HAIRCOLOR
-          if (shown_color === 0) {
-            // :96-99 未定义则随机补设再显示
+          // :93-100 发色：与性格同构（talent 直取 ARR_HAIRCOLOR，不经会打印
+          // 的 show_haircolor；:101 的 PRINTL 由按钮行尾承接）
+          if (talent(newchara, 300) === 0) {
+            // :96-99 未定义（0 号空串）则随机补设
             set_random_haircolor(newchara, rand_n); // :97
-            shown_color = show_haircolor(newchara); // :98
           }
-          haircolor = shown_color; // :100
-          era.print(''); // :101 PRINTL
+          haircolor = talent(newchara, 300); // :95/:98/:100 回写当前发色
+          era.printButton(`发色 ： ${ARR_HAIRCOLOR[haircolor] ?? ''}`, 1);
 
-          // :103-104 分隔线 + 魔王真眼。**按钮化（PR #53 通则）**：原作
-          // PRINTL [100] … + INPUT 在 Emuera 里玩家可敲任意数，EraElectron 的
-          // input 只收本轮按钮快捷键（#130/#530）——纯文本前缀行在实机敲不进
-          // 100，形象确认会整个卡死。正文不写 [100] 前缀，引擎按 showAcc 自拼
-          // （审查 #565 发现：前版漏了这行的前缀，实机更无从继续）。同循环的
-          // [0]/[1] 行是 #530 起的既有基线债（值文本由 show_* 打印、进不了
-          // 独占一行的按钮），随其票升级
-          era.drawLine();
+          // :103-104 分隔线 + 魔王真眼，[100] 同为按钮（三个输入面一个不缺）。
+          // 正文不写 [100] 前缀，引擎按 showAcc 自拼。此前版本只有 [100]
+          // 是按钮、[0]/[1] 是纯文本——引擎 useRule 生效后实机只收 100（验收
+          // 第 1 条实测），性格被钉死在表 0 项；三条一起按钮化才完整
           era.printButton(
             '你发动了魔王真眼，深入探究更进一步的详细素质……',
             100,
@@ -1881,19 +1890,14 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
           // :123-124 其余输入 → 回到 $INPUT_LOOP_12
         }
 
-        // :126-135 上一次的助手 / 调教对象就是这位 → 清空；排在这位之后的
-        // 编号一律前移一格。**动的是 FLAG:1 / FLAG:2**（「上一次的调教对象」，
-        // event-end.js:68-69 的同款槽位），不是 era_flag.target（那是引擎
-        // flag:10005、TARGET 全局指针本身）——:136-137 才是把前者赋给后者。
-        // 跨域写走 game 域门面（#71；属主域是 event）。
-        if (game.event.上次调教对象 === newchara) game.event.上次调教对象 = -1;
-        if (game.event.上次助手 === newchara) game.event.上次助手 = -1;
-        if (game.event.上次调教对象 > newchara) {
-          game.event.上次调教对象 -= 1;
-        }
-        if (game.event.上次助手 > newchara) {
-          game.event.上次助手 -= 1;
-        }
+        // :126-135 前回目标/助手的下标前移——**原作恒空操作，1:1 保留为不
+        // 做**：@ADDCHARA_EX 的第一行就是 `TARGET = ARG`（其他/EXCOM.ERB:6），
+        // 新角色又总在登记序末尾，`FLAG:1/FLAG:2 == TARGET` 与 `> TARGET` 都
+        // 不可能成立。旧移植按角色号比较并 -=1，会把指着村娘（17）的
+        // FLAG:1/2 改成 16（#565 返工第 3 条探针实测）；ere 的角色号也不是
+        // 登记序，调整本身无对应语义。动的是 FLAG:1/FLAG:2（「上一次的
+        // 调教对象」，event-end.js:68-69 的同款槽位），跨域写走 game 域门面
+        // （#71；属主域是 event）。
         era_flag.target = game.event.上次调教对象; // :136 TARGET = FLAG:1
         era_flag.assi = game.event.上次助手; // :137 ASSI = FLAG:2
 

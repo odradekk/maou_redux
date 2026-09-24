@@ -66,7 +66,6 @@ const { on, TIER } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
-const { stub_line, stub_line_wait } = require('#/utils/stub-line');
 
 // @EVENTSHOP #PRI（:12-15）：口上总开关默认开。SIF FLAG:7 == 0 只补 0——
 // 玩家关掉（-1）不自开，1（少量模式）不改
@@ -606,20 +605,30 @@ async function self_kojo(rand, q, outside_train = false) {
 }
 
 /**
- * 已注册则走真身，否则打存根。未落地性格的占位行因此可见；对应口上
- * 模块 register 后自动换真身。原作 TRYCALLFORM 落空静默，全性格落地
- * 后再收占位。族与存根名由调用点给——kojo-dungeon-after.js 的
- * gohoubi_request_koujo 也用它（同一条缺席策略只实现一次）。
+ * 已注册则走真身，**未命中静默**（#565 返工第 4 条起，原作 TRYCALLFORM
+ * 落空的 RESULT 0 语义——此前打占位行，把「原作本来就没有」（如 K11 没有语
+ * 尾函数）与「ID 在口上窗口外」（如魔王的 -2 确认页）也吵成一条占位）。
+ *
+ * 「原作有对应函数而 ere 没移植」的真缺口因此不再有运行时提示，改由
+ * test/kojo-family-coverage.test.js 的静态核对拦住：扫 target/ERB/口上 的
+ * `@…_K{n}` 定义集合与各族注册集合双向比对，缺口即红；确属不移植的按
+ * 那份测试的说明在 docs/stub-registry.md 登记存根行。stub_name 等参数保留
+ * 作核对锚（check_stub_names 经 try_kojo_or_stub(族, '名字' 的写法收集，
+ * test/stub-registry-status.test.js），不是死参数。
+ *
+ * 族与存根名由调用点给——kojo-dungeon-after.js 的 gohoubi_request_koujo
+ * 也用它（同一条缺席策略只实现一次）。
  *
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
  *   目标分发族
- * @param {string} stub_name 原作函数名（占位行文案用）
- * @param {string} stub_desc 未移植内容的中文说明
- * @param {string} stub_ticket 归属说明
+ * @param {string} stub_name 原作函数名（静态核对的锚，见上）
+ * @param {string} stub_desc 未移植内容的中文说明（同上，随测试与清单核对保留）
+ * @param {string} stub_ticket 归属说明（同上）
  * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
  * @param {any[]} [extra_args=[]] 透传给 handler 的实参
- * @param {boolean} [wait=false] true 用 stub_line_wait（分发期），否则 stub_line
- * @returns {Promise<any>} handler 的返回值，或存根分支的 0
+ * @param {boolean} [wait=false] 兼容形参：占位时代区分 stub_line_wait；静默
+ *   后无行为差异，保留签名不动调用点
+ * @returns {Promise<any>} handler 的返回值，或未命中的 0
  */
 async function try_kojo_or_stub(
   family,
@@ -630,14 +639,13 @@ async function try_kojo_or_stub(
   extra_args = [],
   wait = false,
 ) {
+  void stub_name;
+  void stub_desc;
+  void stub_ticket;
+  void wait;
   const id = kojo_handler_id(arg);
   if (id >= 0 && family.has(id)) {
     return family.call(id, { whenMissing: 0, args: extra_args });
-  }
-  if (wait) {
-    await stub_line_wait(stub_name, stub_desc, stub_ticket);
-  } else {
-    stub_line(stub_name, stub_desc, stub_ticket);
   }
   return 0;
 }

@@ -22,7 +22,6 @@
 export default {
   'ere/chara/chara-custom.js': 2,
   'ere/chara/chara-custom2.js': 10,
-  'ere/chara/chara-make.js': 2,
   'ere/dungeon/dungeon-after.js': 6,
   'ere/dungeon/dungeon-battle2.js': 2,
   'ere/event/event-addict.js': 2,

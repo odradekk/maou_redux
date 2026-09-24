@@ -3,10 +3,10 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 176; // #547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+export const COUNT = 178; // #547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
 // SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
-// 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
+// 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
 // 合并 #547 时两侧 178/169 调和为 176：本票 178 收进 master 的 -2，按导入实测条目数写回
 // 背景音乐音量三行退回存根，M11330：RULINGS 路径悬空——由 test/trace-check.test.js 的 #542 用例与
 // test/stub-registry-status.test.js 的八行棘轮守护）；此前 166 = 合并态实测（#532 与 #530 两侧条目全留；
@@ -38,8 +38,10 @@ export default [
   {
     desc: 'M11619 收集器的注释过滤删除（jsdoc 引用字样误报回归）',
     file: 'tools/trace-coverage.mjs',
-    find: '    if (!in_comment(m.index)) names.add(m[2]);',
-    replace: '    names.add(m[2]);',
+    // #565 返工起 try_kojo 收集器同款行出现两次，find 扩到正则行消歧义
+    find: '  for (const m of text.matchAll(\n    /stub_line(?:_wait)?\\(\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,\n  )) {\n    if (!in_comment(m.index)) names.add(m[2]);',
+    replace:
+      '  for (const m of text.matchAll(\n    /stub_line(?:_wait)?\\(\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,\n  )) {\n    names.add(m[2]);',
     tests: ['stub-registry-status'],
     must_mention: 'jsdoc 里引用的字样不计',
   },
@@ -82,6 +84,22 @@ export default [
     replace: '    if (false) {',
     tests: ['conflict-marker-check'],
     must_mention: '行中标记必须红',
+  },
+  {
+    desc: 'M11637 收集器的 try_kojo 写法失明（第二实参名收不到）',
+    file: 'tools/trace-coverage.mjs',
+    find: '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
+    replace: `    /never_try_kojo_(\s*)/gs, // 变异：try_kojo 名收集失明`,
+    tests: ['stub-registry-status'],
+    must_mention: '第二实参名也收',
+  },
+  {
+    desc: 'M11638 核对分流的 try_kojo 放行回退（已实现行误按 stub_line 规则红）',
+    file: 'tools/trace-coverage.mjs',
+    find: `    if (via === 'try_kojo') {\n      continue; // 找到行即放行（族集合的缺口由 kojo-family-coverage 拦）\n    }`,
+    replace: '    // 变异：try_kojo 名也按 stub_line 规则判',
+    tests: ['stub-registry-status'],
+    must_mention: '不得按 stub_line 规则红',
   },
   // —— #513：内联 :N 的源绑定（trace-check）——
   {

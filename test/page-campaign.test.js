@@ -427,3 +427,33 @@ test('派遣：成功派遣写入状态位与四个楼层/进度 CFLAG', async (
   assert.equal(fixture.store.get('cflag:1:521'), 1, ':122 存档点重置');
   assert.ok(texts(fixture.lines_history).some((t) => t.includes('派遣了')));
 });
+
+test('招募不动 FLAG:1/FLAG:2（:127-135 原作恒空操作的 1:1，#565 返工第 3 条）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '魔王');
+  add_chara(fixture, 9, '勇者9'); // 编制不连号
+  fixture.store.set('base:0:1', 200);
+  fixture.store.set('flag:400', 1);
+  // 上一次的调教对象/助手都指着 17（村娘）：原作 :62 的 @ADDCHARA_EX 第一行
+  // 就是 TARGET = ARG、新角色又总在登记序末尾，:127-135 的四行恒不成立，
+  // 只有 :136-137 的复位生效——按角色号比较并 -=1 的写法会把 17 改成 16
+  fixture.store.set('flag:1', 17);
+  fixture.store.set('flag:2', 17);
+  fixture.seed_chara(1, { id: 1, name: '勇者1', callname: '勇者1' });
+  fixture.store.set('cflag:1:6', 99);
+  fixture.era.input = ((answers) => {
+    let i = 0;
+    return () => Promise.resolve(answers[i++] ?? 999);
+  })([1, 100, 2]);
+  const { campaign_menu } = load(fixture);
+  await campaign_menu(() => 0);
+  assert.equal(
+    fixture.store.get('flag:1'),
+    17,
+    'FLAG:1 不被改写（空操作的 1:1）',
+  );
+  assert.equal(fixture.store.get('flag:2'), 17, 'FLAG:2 不被改写');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  assert.equal(era_flag.target, 17, ':136 TARGET 复位为 FLAG:1');
+  assert.equal(era_flag.assi, 17, ':137 ASSI 复位为 FLAG:2');
+});

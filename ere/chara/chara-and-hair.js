@@ -138,11 +138,26 @@ function pad_right(text, width) {
  */
 function show_charasteristic(cid = -1) {
   const chara_id = cid < 0 ? target_cid() : cid; // :7-27
+  const i = charasteristic_index(chara_id);
+  if (i >= 0) {
+    era.print(talentname(GENERAL_CHARASTERISTICS[i])); // :19 PRINTFORM（不换行，见文件头）
+    return i; // :20-21
+  }
+  return -1; // :23
+}
+
+/**
+ * 当前性格的表内序号（只查不打印）。show_charasteristic 的查询半段
+ * （:7-27 的遍历）；形象确认按钮要先把名字拼进正文再打印（#565 返工
+ * 第 1 条），不能借会打印的 show_*。
+ * @param {number} cid 角色 ID
+ * @returns {number} 表内序号；未定义（无点亮性格）为 -1
+ */
+function charasteristic_index(cid) {
   for (let i = 0; i < GENERAL_CHARASTERISTICS.length; i += 1) {
     const talent_id = GENERAL_CHARASTERISTICS[i]; // :7-27
-    if (talent(chara_id, talent_id)) {
-      era.print(talentname(talent_id)); // :19 PRINTFORM（不换行，见文件头）
-      return i; // :20-21
+    if (talent(cid, talent_id)) {
+      return i;
     }
   }
   return -1; // :23
@@ -353,6 +368,10 @@ module.exports = {
   set_personality: set_talent,
   GENERAL_CHARASTERISTICS,
   ARR_HAIRCOLOR,
+  /** talent 名与读数（形象确认按钮拼正文用，#565 返工） */
+  talentname,
+  talent,
+  charasteristic_index,
   show_charasteristic,
   set_random_charasteristic,
   set_charasteristic,

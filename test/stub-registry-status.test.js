@@ -29,6 +29,7 @@ const {
   check_stub_names,
   classify_status,
   collect_stub_line_names,
+  collect_try_kojo_names,
   is_group_title_row,
   list_ere_js,
   parse_registry_tables,
@@ -449,6 +450,61 @@ test('收集器：无插值模板串的 stub_line 名也要收（#565 审查）'
   assert.deepEqual(collect_stub_line_names(source), ['CHECK_SPECIALSKIL']);
 });
 
+test('收集器：try_kojo_or_stub 的第二实参名也收（多行调用形态，#565 返工）', () => {
+  const source = [
+    'const x = await try_kojo_or_stub(',
+    '  dungeon_attack_family,',
+    "  'ATTACK_KOUJO_B',",
+    "  '攻击口上（B 侧）',",
+    '  cid,',
+    ');',
+    "// jsdoc 里的 try_kojo_or_stub(fam, 'GOBI_KOUJO' 字样不计",
+  ].join('\n');
+  assert.deepEqual(collect_try_kojo_names(source), ['ATTACK_KOUJO_B']);
+});
+
+test('核对分流：try_kojo 名字找到清单行即放行（「已实现」不红），缺行红（#565 返工）', () => {
+  const text = sample_registry([
+    [
+      '函数级存根',
+      [
+        ['`ATTACK_KOUJO`', '源A', '已实现（ere/kojo/kojo-system.js 的族分发）'],
+        ['`GOBI_KOUJO`', '源B', '已实现（ere/chara/look.js 的语尾段）'],
+      ],
+    ],
+  ]);
+  const entries = [
+    { file: 'ere/kojo/kojo-system.js', name: 'ATTACK_KOUJO', via: 'try_kojo' },
+    { file: 'ere/kojo/kojo-system.js', name: 'GOBI_KOUJO', via: 'try_kojo' },
+  ];
+  assert.deepEqual(
+    check_stub_names(entries, text),
+    [],
+    'try_kojo 通道不打占位，「已实现」行是正常状态，不得按 stub_line 规则红',
+  );
+  assert.ok(
+    check_stub_names(
+      [
+        {
+          file: 'ere/kojo/kojo-system.js',
+          name: 'GHOST_KOUJO',
+          via: 'try_kojo',
+        },
+      ],
+      text,
+    ).some((m) => m.includes('口上核对锚失联') && m.includes('GHOST_KOUJO')),
+    'try_kojo 名字缺清单行必须红（失联后该通道没有任何机械核对）',
+  );
+  // 同名在 stub_line 通道仍是原规则（已实现 → 红）
+  assert.ok(
+    check_stub_names(
+      [{ file: 'ere/kojo/kojo-system.js', name: 'ATTACK_KOUJO' }],
+      text,
+    ).some((m) => m.includes('已实现函数仍在打占位')),
+    'stub_line 通道规则不变（回归护栏）',
+  );
+});
+
 test('核对：名字必须对应「存根/终态」行——已实现行、缺行都红（合成样本，#565）', () => {
   const text = sample_registry([
     [
@@ -503,13 +559,16 @@ test('核对：名字必须对应「存根/终态」行——已实现行、缺�
   // stub_line 名（模板与字面都是 ASCII），无需为它造条目
 });
 
-test('真树：ere/ 全部 stub_line 名与 STUBBED_CALLS 字面名都对应存根/终态行（现状对照，#565）', () => {
+test('真树：ere/ 全部 stub_line 名与 STUBBED_CALLS 字面名都对应存根/终态行；try_kojo 名都有清单行（现状对照，#565）', () => {
   const registry_text = fs.readFileSync(REGISTRY, 'utf8');
   const entries = [];
   for (const rel of list_ere_js(REPO_ROOT)) {
     const text = fs.readFileSync(path.join(REPO_ROOT, rel), 'utf8');
     for (const name of collect_stub_line_names(text)) {
       entries.push({ file: rel, name });
+    }
+    for (const name of collect_try_kojo_names(text)) {
+      entries.push({ file: rel, name, via: 'try_kojo' });
     }
     const stubbed = parse_stubbed_calls(text);
     const bad_items = stubbed?.errors ?? [];

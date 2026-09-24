@@ -442,7 +442,7 @@ async function run_juel_check() {
     // 其余输入无分支命中 → :549 GOTO INPUT_LOOP_1（重绘再来）
   }
 
-  // $LABEL_EXIT :541-546：收尾三查（欲情变化检查已接真身，余下一处占位）
+  // $LABEL_EXIT :541-546：收尾三查，全数真身（CHECK_SPECIALSKIL 自 #565 接线）
   yokubo_up_check(target); // :542
   await check_sellassiable(target); // :543
   // :544 CALL CHECK_SPECIALSKIL, 1（#565 起真身 ere/event/get-specialtalent.js；

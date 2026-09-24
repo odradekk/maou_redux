@@ -500,6 +500,13 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
     '[100] 按钮的渲染文本必须与原作 PRINTL 行一致',
   );
   assert(texts.includes('解开你封印的，真的是这样的对象吗…？'));
+  // SHOW_CHARA_INFO（-2 贡品页）按原作 :25-26/:320-321 临时把 TARGET 换成
+  // 被显示的角色：语尾口上按新角色取，不得回退到打 @GOBI_KOUJO 占位
+  // （#565 返工第 2 条引擎实测：换 TARGET 前 -2 页会打 13 行语尾占位）
+  assert(
+    !texts.some((t) => t.includes('@GOBI_KOUJO')),
+    '形象确认的 -2 贡品页不得打语尾占位（TARGET 临时换 + 未命中静默）',
+  );
   // :172-186 收下播报（rand ≡ 0 → 非异国，无「异国的」前缀）与读键收尾
   assert(texts.includes('冒险者佳奈美被囚禁在了地牢里！'));
   // :182 FLAG:402 用过的标志归位、:184 TARGET = FLAG:1（开局 0）
@@ -607,8 +614,13 @@ test('初期奴隶问答：玩家选择生效（无效输入引擎侧不可达�
       { api: 'input', value: 2 }, // 收下确认（:158）
     ],
   );
+  // 五问的按钮都是 0 号快捷键；形象确认的 [0] 改印象按钮同号（#565 返工
+  // 第 1 条），按正文排除
   const question_rounds = fixture.lines.filter(
-    (line) => line.type === 'button' && line.accelerator === 0,
+    (line) =>
+      line.type === 'button' &&
+      line.accelerator === 0 &&
+      !line.rendered.includes('印象 ：'),
   );
   assert.equal(question_rounds.length, 5, '五问各渲染一轮');
   assert.equal(fixture.store.get('flag:501'), 0);

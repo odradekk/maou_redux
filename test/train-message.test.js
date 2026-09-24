@@ -1978,3 +1978,32 @@ test('A 绝顶子链：逆强奸/逆肛交/口交 × 普通与大量六支', asy
     ['温妮背脊夸张地向后仰、全身哆嗦着、颤动到了极点。'],
   );
 });
+
+// —— 注册完整性的棘轮（#565 返工第 6 条：缺号零输出后，漏注册不再有占位兜底）——
+
+test('A/B 两族装载全部 com-*.js 后 missing() 为空（声明空间全数有主）', () => {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  const fixture = create_era_fixture();
+  // TRAIN_MESSAGE_A/B 的注册散布在全部 com-*.js 族模块里（分支 0 在
+  // com-caress、80-89 在 com-hardcore……），装载循环与 main-loop 同源；
+  // 不装载就断言会把「还没注册」误判成「漏注册」
+  const dir = path.join(__dirname, '..', 'ere', 'system', 'train');
+  for (const name of fs
+    .readdirSync(dir)
+    .filter((n) => n.startsWith('com-') && n.endsWith('.js'))) {
+    fixture.load_module(`system/train/${name.replace(/\.js$/, '')}`);
+  }
+  const { train_message_a_family, train_message_b_family } =
+    fixture.load_module('system/train/train-message');
+  assert.deepEqual(
+    train_message_a_family.missing(),
+    [],
+    'A 族漏注册：缺号已按原作归为零输出，漏掉的指令会静默吞掉整段消息',
+  );
+  assert.deepEqual(
+    train_message_b_family.missing(),
+    [],
+    'B 族漏注册：同上（源侧无分支的号是显式空注册，不占 missing）',
+  );
+});

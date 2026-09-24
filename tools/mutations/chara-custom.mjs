@@ -110,9 +110,11 @@ export default [
   {
     desc: 'M8771 SHOW_CHARASTERISTIC 的首位命中序号改错（返回表内序号 +1）',
     file: 'ere/chara/chara-and-hair.js',
-    find: '      era.print(talentname(talent_id)); // :19 PRINTFORM（不换行，见文件头）\n      return i; // :20-21',
+    // #565 返工起 SHOW 的查询半段抽成 charasteristic_index（按钮拼正文要
+    // 只查不打印），变异靶随之挪到 index 的命中返回
+    find: 'function charasteristic_index(cid) {\n  for (let i = 0; i < GENERAL_CHARASTERISTICS.length; i += 1) {\n    const talent_id = GENERAL_CHARASTERISTICS[i]; // :7-27\n    if (talent(cid, talent_id)) {\n      return i;',
     replace:
-      '      era.print(talentname(talent_id)); // :19 PRINTFORM（不换行，见文件头）\n      return i + 1; // :20-21',
+      'function charasteristic_index(cid) {\n  for (let i = 0; i < GENERAL_CHARASTERISTICS.length; i += 1) {\n    const talent_id = GENERAL_CHARASTERISTICS[i]; // :7-27\n    if (talent(cid, talent_id)) {\n      return i + 1; // 变异：命中序号 +1',
     tests: ['chara-and-hair'],
     must_mention: '首位命中是表内第 2 项',
   },
