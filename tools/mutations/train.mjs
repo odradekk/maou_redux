@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 940; // #547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 945; // #562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -10093,5 +10093,56 @@ export default [
     replace: `  { prostitution_effect = 0 } = {}, // 变异：缺省退回常量`,
     tests: ['ablup'],
     must_mention: 'modsave:0 = 1（正面）→ 37 参与自动提升',
+  },
+  {
+    // #562：出口键是 :41-51 那串 PRINTC，:52 的 PRINTL 只结束那一行——
+    // 按钮自成一行，补回空行即多一行（见 CONTEXT.md「输出 API 与原作的对应」）
+    desc: 'M11871 调教菜单登记面出口键之后补回空行（照「PRINTL 要再补一条」翻译的旧形态）',
+    file: 'ere/system/train/com-register.js',
+    find: '    // :52 的 PRINTL 只结束 :41-51 那串 PRINTC 出口键所在的行（PRINTC 系不\n    // 换行，见 CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里\n    // 不补空行（#562）。\n    era.drawLine(); // :53',
+    replace:
+      '    era.println(); // 变异：出口键之后多补空行\n    era.drawLine(); // :53',
+    tests: ['com-register'],
+    must_mention: '出口键之后紧接分割线，不夹空行',
+  },
+  {
+    // #562：:155 的 PRINTL 只收尾 @COMSEQ_SHOW 拼出的那一行；ere 的每个 print
+    // 已自成一行，补 println 即多一个空行
+    desc: 'M11874 COMSEQ_SHOW 收尾补回空行（照「PRINTL 收尾换行」翻译的旧形态）',
+    file: 'ere/system/train/com-register.js',
+    find: '  // :155 的 PRINTL 只结束 @COMSEQ_SHOW 拼出的那一行（:126-155）——ere 侧每个',
+    replace:
+      '  era.println(); // 变异：收尾之后多补空行\n  // :155 的 PRINTL 只结束 @COMSEQ_SHOW 拼出的那一行（:126-155）——ere 侧每个',
+    tests: ['com-register'],
+    must_mention: ':155 的 PRINTL 不产生空行',
+  },
+  {
+    desc: 'M11875 登记面提示行之后补回空行（:38 的 PRINTFORML 整行自成一行，:39 的方格紧随）',
+    file: 'ere/system/train/com-register.js',
+    find: '    era.print(`选择第${local0 + 1}个指令:`);\n    await print_comlist(); // :39',
+    replace:
+      '    era.print(`选择第${local0 + 1}个指令:`);\n    era.println(); // 变异：提示行之后多补空行\n    await print_comlist(); // :39',
+    tests: ['com-register'],
+    must_mention: '「选择第N个指令」行之后紧接方格按钮，不夹空行',
+  },
+  {
+    desc: 'M11876 登记面标题行之后补回空行（:26 的 PRINTL 整行自成一行，:35 的分割线紧随）',
+    file: 'ere/system/train/com-register.js',
+    find: "  era.print('调教菜单登录'); // :26 PRINTL（整行自成一行，不再补换行——#562）",
+    replace:
+      "  era.print('调教菜单登录'); // :26 PRINTL（整行自成一行，不再补换行——#562）\n  era.println(); // 变异：标题行之后多补空行",
+    tests: ['com-register'],
+    must_mention: '标题行之后紧接分割线，不夹空行',
+  },
+  {
+    // #562 返工：:40 的 PRINTL 落在空行上（:39 的方格已由 @COMSEQSUB_PRINT_
+    // COMLIST 自己的 :177-178 收尾）——这一条是真空行，删掉即少一行；反方向
+    // （多补一行）由同一条「恰有一个空行」的断言守
+    desc: 'M11877 登记面 :40 的真空行删除（它不是收尾——方格已由自己的 PRINTL 收尾）',
+    file: 'ere/system/train/com-register.js',
+    find: '    era.println(); // :40（这一条是真空行——:39 的方格已由自己的 PRINTL 收尾）',
+    replace: '    // 变异：:40 的真空行删除',
+    tests: ['com-register'],
+    must_mention: '方格与出口键之间恰有一个空行',
   },
 ];

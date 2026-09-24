@@ -463,11 +463,14 @@ async function item_shop() {
   // :75-80 提示行
   era.print('《请输入要购买的道具的编号》');
   era.drawLine({ isSolid: true }); // :77
-  era.setAlign('center'); // :78-79 PRINTLC（居中 + 换行）
+  // :78-79 两个 PRINTLC 打在同一行，:80 的 PRINTL 只结束那一行——PRINTLC
+  // 左对齐补位、**不换行**，故不产生空行。ere 的 printButton 自成一行
+  // （＝ PRINTLC + 收尾的 PRINTL），不再补空行（语义与勘误见 CONTEXT.md
+  // 「输出 API 与原作的对应」）。
+  era.setAlign('center'); // :78-79 PRINTLC（排版近似：见 CONTEXT.md）
   era.printButton('- 陷阱', 998, { align: 'center' });
   era.printButton('- 返回', 999, { align: 'center' });
   era.setAlign('left');
-  era.print(''); // :80 的 PRINTL
 
   return 0;
 }

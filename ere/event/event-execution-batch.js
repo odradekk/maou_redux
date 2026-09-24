@@ -53,11 +53,11 @@
  *     与 JUMP 都重置、`GOTO 处刑介面` 不清，故落在 restart 循环内的局部量；
  *   - 第 67 行的 `PRINTLC` 是「左对齐打印」，**不换行**（Emuera 官方文档
  *     PRINTC 系的例子：连续 `PRINTLC` 打在同一行，只在排满 PRINTCPERLINE
- *     列时自动换行；技能指南 print-system.md 那句「PRINTLC 还会换行」是错的，
- *     勘误另开 issue）。故第 68 行的 `PRINTL` 只收 [121] 那一行、第 69 行才是
- *     一个空行（:67-69）；不显示 [121] 时第 68/69 行是两个空行。ere 的
- *     `printButton` 自成一行，等价于第 67+68 行合并——于是显示 [121] 时按钮后
- *     只 `println` 一次；
+ *     列时自动换行；技能指南 print-system.md 那句「PRINTLC 还会换行」是错的
+ *     ——勘误与正确语义见 CONTEXT.md「输出 API 与原作的对应」，#562）。故第
+ *     68 行的 `PRINTL` 只收 [121] 那一行、第 69 行才是一个空行（:67-69）；
+ *     不显示 [121] 时第 68/69 行是两个空行。ere 的 `printButton` 自成一行，
+ *     等价于第 67+68 行合并——于是显示 [121] 时按钮后只 `println` 一次；
  *   - 处刑会话要 TFLAG:16/510/530/500（口上改写通道）。EraElectron 的
  *     tflag 桶只在 beginTrain/endTrain 之间存在，调教外二段寻址落
  *     「key error in getter/setter」（app.asar 寻址层；test/

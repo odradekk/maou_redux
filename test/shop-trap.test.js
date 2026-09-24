@@ -145,6 +145,22 @@ async function run_item_shop_trap(seed = {}) {
   return fixture;
 }
 
+/**
+ * 页脚 [999] 返回键所在的行号（页脚空行断言的取证面）。
+ *
+ * 原作 :68-70 是两个 `PRINTLC` 跟一个 `PRINTL`：`PRINTLC` 不换行（按
+ * CONTEXT.md「输出 API 与原作的对应」），那个 `PRINTL` 只结束它所在的那一行。
+ * ere 的 `printButton` 自成一行（＝ `PRINTLC` + 收尾的 `PRINTL`），故页脚
+ * 按钮之后不应再出现空行。
+ * @param {object} fixture 夹具
+ * @returns {number} 行号
+ */
+function footer_row(fixture) {
+  return fixture.lines.find(
+    (line) => line.type === 'button' && line.accelerator === 999,
+  ).row;
+}
+
 /** 取两个标签行之间的文本行（两段网格的取证面） */
 function rows_between(fixture, start_label, end_label) {
   const lines = fixture.text_lines();
@@ -183,7 +199,6 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
     '[陷阱]',
     '[戒指]',
     '《请输入要购买陷阱的编号》',
-    '',
   ]);
 
   // :68-69 的两个键是按钮（正文不写 [编号] 前缀；引擎拼出 `[997] - 普通物品`）
@@ -203,7 +218,8 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
   assert.equal(dividers.length, 3);
   assert(dividers.every((line) => line.border === 'solid'));
 
-  // :68-69 PRINTLC（居中 + 换行）→ setAlign 包一次、随后还原 'left'
+  // :68-69 两个 PRINTLC（左对齐补位、不换行，见 CONTEXT.md「输出 API 与原作
+  // 的对应」）以 setAlign 包一次近似排版、随后还原 'left'
   assert.deepEqual(
     fixture.calls
       .filter((call) => call.api === 'setAlign')
@@ -223,6 +239,26 @@ test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
       `${text} 应着 LightSalmon`,
     );
   }
+});
+
+test('ITEM_SHOP_TRAP：页脚两个 PRINTLC 之后没有空行（PRINTLC 不换行，:70 的 PRINTL 只收那一行）', async () => {
+  const fixture = await run_item_shop_trap({
+    'flag:10000': 6, // DAY:0
+    'flag:10002': 7, // DAY:2
+    'flag:10003': 0, // TIME = 0（午前）
+    'flag:10004': 1234, // MONEY
+    'flag:85': 3, // FLAG:85
+  });
+  // 原作 :68-70 是两个 PRINTLC 加一个 PRINTL。PRINTLC 按「PRINTCの文字数」
+  // 补空格后打在同一行、**不换行**（语义与勘误见 CONTEXT.md「输出 API 与
+  // 原作的对应」），那个 PRINTL 只结束它所在的那一行，不产生空行。ere 的
+  // printButton 自成一行（＝ PRINTLC + 收尾的 PRINTL），页脚之后再补一条
+  // 就是多出来的空行。
+  assert.deepEqual(
+    fixture.lines.filter((line) => line.row > footer_row(fixture)),
+    [],
+    '陷阱商店页脚按钮之后不应有空行',
+  );
 });
 
 test('ITEM_SHOP_TRAP：日期行两态（TIME 0 午前 / 1 午后）与日号 = DAY:0 + 1', async () => {

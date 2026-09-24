@@ -41,7 +41,9 @@ test('COMSEQ_SHOW：名字串 + 「 → 」分隔 + 收尾换行（静态名表�
   await mod.comseq_show();
 
   assert.equal(fixture.text_lines().join(''), '已登录指令：爱抚 → 接吻');
-  assert.equal(fixture.lines.at(-1).type, 'br', ':155 PRINTL 收尾');
+  // :155 的 PRINTL 只收尾那一行；ere 的每个 print 已经自成一行，故行末不再
+  // 补空行（#562）——多一个 br 就是多出来的空行
+  assert.notEqual(fixture.lines.at(-1).type, 'br', ':155 的 PRINTL 不产生空行');
 });
 
 test('COMSEQ_SHOW：连续同指令折叠 ×n（:138-151）', async () => {
@@ -148,6 +150,30 @@ test('COMSEQ_REGISTER：登记一条后保存并返回（槽位/长度/旗标终
   assert.equal(fixture.store.get('tflag:204'), 0, ':120 完成后清 TFLAG:204');
   assert.ok(fixture.text_lines().some((t) => t.includes('调教菜单登录完毕')));
   assert.equal(fixture.waits.at(-1)?.waited, true, ':119 PRINTW 等键');
+  // :41-51 是一串 PRINTC 出口键，:52 的 PRINTL 只结束它们所在的行（PRINTC 系
+  // 不换行，见 CONTEXT.md「输出 API 与原作的对应」）：ere 的 printButton 自成
+  // 一行，出口键之后紧接 :53 的 DRAWLINE，中间不夹空行（#562）
+  const exit_button = fixture.lines
+    .filter((line) => line.type === 'button' && line.accelerator === 1000)
+    .at(-1);
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.row === exit_button.row + 1)
+      .map((line) => line.type),
+    ['divider'],
+    '出口键之后紧接分割线，不夹空行',
+  );
+  // :26 的 PRINTL 整行自成一行，紧随的是 :35 的分割线——同样不夹空行（#562）
+  const title_row = fixture.lines.find(
+    (line) => line.type === 'text' && line.text === '调教菜单登录',
+  ).row;
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.row === title_row + 1)
+      .map((line) => line.type),
+    ['divider'],
+    '标题行之后紧接分割线，不夹空行',
+  );
 });
 
 test('COMSEQ_REGISTER：首步取消（1000）→ 原菜单不动', async () => {
@@ -228,6 +254,41 @@ test('COMSEQ_REGISTER：每轮重画带「选择第N个指令:」行', async () 
 
   const prompts = history_texts(fixture).filter((t) => t.includes('个指令:'));
   assert.deepEqual(prompts, ['选择第1个指令:', '选择第2个指令:']);
+  // :38 的 PRINTFORML 整行自成一行（era.print 已是一行），紧随的是 :39 方格
+  // 的第一个按钮——中间不夹空行（#562）
+  const prompt_row = fixture.lines.find(
+    (line) => line.type === 'text' && line.text.startsWith('选择第'),
+  ).row;
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.row === prompt_row + 1)
+      .map((line) => line.type),
+    ['button'],
+    '「选择第N个指令」行之后紧接方格按钮，不夹空行',
+  );
+  // :40 的 PRINTL 是**真空行**（:39 的方格由 @COMSEQSUB_PRINT_COMLIST 自己在
+  // :177-178 收尾），所以 :38-:41 的顺序是「提示行 → 方格按钮 → 恰好一个
+  // 空行 → 出口键」——删掉这一行（少了空行）或再补一条（多出空行）都要红
+  const exit_row = fixture.lines.find(
+    (line) =>
+      line.type === 'button' && [998, 999, 1000].includes(line.accelerator),
+  ).row;
+  const blanks = fixture.lines.filter(
+    (line) =>
+      line.row > prompt_row &&
+      line.row < exit_row &&
+      (line.type === 'br' || (line.type === 'text' && line.text === '')),
+  );
+  assert.equal(
+    blanks.length,
+    1,
+    '方格与出口键之间恰有一个空行（:40 的 PRINTL）',
+  );
+  assert.equal(
+    blanks[0].row,
+    exit_row - 1,
+    '空行紧邻出口键（方格之后、出口键之前）',
+  );
 });
 
 // —— @COMSEQ_TRAIN 与 CALLTRAIN 等价（:207-237 / :230） ——

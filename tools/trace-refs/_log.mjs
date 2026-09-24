@@ -211,6 +211,27 @@ export const SAMPLE_LOG_REFS = {
       js: 'tools/mutations/pipeline.mjs',
       refs: [{ ref: '169', any: [/顺从LV1\(4\)/] }],
     },
+    {
+      // #562：子菜单按钮组的排版证据——PRINTLC 系不换行，网格行与
+      // [990]/[999] 逐行相邻，页脚之后没有空行（正确语义见 CONTEXT.md
+      // 「输出 API 与原作的对应」）
+      js: 'test/page-usercom.test.js',
+      refs: [
+        { ref: '115-118', any: [/能力表示\[100\]/, /调教菜单登录\[990\]/] },
+        // 方格与分割线之间只有一个空行（:217 的 PRINTL 只收尾方格那一行，
+        // 空行来自下一段的 :14 PRINTL）
+        { ref: '108-114', any: [/交谈\[\s+55\]/] },
+      ],
+    },
+    {
+      js: 'ere/page/page-usercom.js',
+      refs: [
+        { ref: '115-118', any: [/能力表示\[100\]/, /调教菜单登录\[990\]/] },
+        // 方格与分割线之间只有一个空行（:217 的 PRINTL 只收尾方格那一行，
+        // 空行来自下一段的 :14 PRINTL）
+        { ref: '108-114', any: [/交谈\[\s+55\]/] },
+      ],
+    },
   ],
   'train-upgrade': [
     // #213：升格标签的实证（8 号格名字已是 COM84、编号仍是 8）
