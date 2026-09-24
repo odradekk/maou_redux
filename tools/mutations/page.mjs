@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 448; // #593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 457; // #606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4317,5 +4317,102 @@ export default [
     replace: '      accelerator: 100,',
     tests: ['child-id-collision'],
     must_mention: '必须至少有一轮打角色行',
+  },
+  // —— #606：CHARA_INFO_INDIVIDUAL_WAPPED 无 RETURN，RESULT 被清 0（包装入口恒回 0） ——
+  {
+    desc: 'M12200 包装入口改回透传内层返回值（#606 的旧写法复原：原作 :829 的 CALL 后无 RETURN，Emuera 把 RESULT 置 0）',
+    file: 'ere/page/page-chara-info.js',
+    find: `async function chara_info_individual_wrapped(cid) {
+  await chara_info_individual(cid, number_view_order());
+  return 0;
+}`,
+    replace: `async function chara_info_individual_wrapped(cid) {
+  return chara_info_individual(cid, number_view_order()); // 变异：透传内层返回值
+}`,
+    tests: ['page-chara-info'],
+    must_mention: '内层返回 1 也被清 0',
+  },
+  {
+    desc: 'M12201 包装入口恒回 0 改成恒回 1（1200 视图下任何收尾都结束本回合）',
+    file: 'ere/page/page-chara-info.js',
+    find: `  await chara_info_individual(cid, number_view_order());
+  return 0;`,
+    replace: `  await chara_info_individual(cid, number_view_order());
+  return 1; // 变异：恒回 1`,
+    tests: ['page-chara-info'],
+    must_mention: '「返回」回名册、[999] 退出',
+  },
+  {
+    desc: 'M12202 名册 1200 分支绕开包装直调内层（修复前的内联形态，吞 1 语义丢失）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        sort_select === 1200
+          ? await chara_info_individual_wrapped(result)`,
+    replace: `        sort_select === 1200
+          ? await chara_info_individual(result, number_view_order()) // 变异：绕开包装直调内层`,
+    tests: ['page-chara-info'],
+    must_mention: '婚礼之后名册重绘（初始一次 + 回列表一次）',
+  },
+  {
+    desc: 'M12203 名册两支分发都走包装入口（直调内层那条路的 1 也被吞，1300 视图不再结束本回合）',
+    file: 'ere/page/page-chara-info.js',
+    find: `          ? await chara_info_individual_wrapped(result)
+          : await chara_info_individual(result, order);`,
+    replace: `          ? await chara_info_individual_wrapped(result)
+          : await chara_info_individual_wrapped(result); // 变异：两支都走包装`,
+    tests: ['page-chara-info'],
+    must_mention: '直接调内层的视图：返回 1 结束本回合',
+  },
+  {
+    desc: 'M12204 名册删掉「内层返回 1 就结束本回合」的上浮（任何视图都不结束）',
+    file: 'ere/page/page-chara-info.js',
+    find: `      if (sub_result === 1) {
+        return 1;
+      }
+      continue;`,
+    replace: `      continue; // 变异：1 不再上浮`,
+    tests: ['page-chara-info'],
+    must_mention: '直接调内层的视图：返回 1 结束本回合',
+  },
+  {
+    desc: 'M12205 名册上浮判据错位（sub_result === 1 改 === 2，1 不再结束本回合）',
+    file: 'ere/page/page-chara-info.js',
+    find: '      if (sub_result === 1) {',
+    replace: '      if (sub_result === 2) { // 变异：判据错位',
+    tests: ['page-chara-info'],
+    must_mention: '直接调内层的视图：返回 1 结束本回合',
+  },
+  // —— #606 返工：转职 2 档不结束本回合 ——
+  // 验收要求守卫「名册判断改成 >= 1 / if (sub_result) 要被发现」。实测（本轮
+  // 实验 A/B）：名册行 sub_result 恒 ∈ {0,1}（转职/诱惑/结婚的 2 被内层
+  // :1094-1099 的守卫消化成页内重画，永不上浮），>= 1 与 truthy 在名册行
+  // 与 === 1 语义等价、任何用例都发现不了。两条写法因此钉在唯一有语义
+  // 差别的位置——内层 case 2 的守卫（守卫一破，2 直达名册，那种放宽的
+  // 判断即会误结束回合）；另配一条纯删守卫。
+  {
+    desc: 'M12206 转职 2 档的守卫删除（job_result 直返——2 外泄直达名册，#606 返工）',
+    file: 'ere/page/page-chara-info.js',
+    find: `        if (job_result !== 2) return job_result; // :1094-1097 的收尾
+        continue;`,
+    replace: '        return job_result; // 变异：守卫删除，2 外泄直达名册',
+    tests: ['page-chara-info'],
+    must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
+  },
+  {
+    desc: 'M12207 守卫写成 >= 1（2 也外泄、0 变页内重画——>= 1 放在唯一有语义差别的位置，名册行本身等价，#606 返工）',
+    file: 'ere/page/page-chara-info.js',
+    find: '        if (job_result !== 2) return job_result; // :1094-1097 的收尾',
+    replace:
+      '        if (job_result >= 1) return job_result; // 变异：>= 1，2 外泄',
+    tests: ['page-chara-info'],
+    must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
+  },
+  {
+    desc: 'M12208 守卫写成 truthy（if (job_result)——同 M12207 的真值形态，#606 返工）',
+    file: 'ere/page/page-chara-info.js',
+    find: '        if (job_result !== 2) return job_result; // :1094-1097 的收尾',
+    replace:
+      '        if (job_result) return job_result; // 变异：truthy，2 外泄',
+    tests: ['page-chara-info'],
+    must_mention: '个别页重画了一次（2 在页内被消化，不是弹回名册）',
   },
 ];
