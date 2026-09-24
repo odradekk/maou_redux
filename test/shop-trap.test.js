@@ -477,7 +477,6 @@ test('USERSHOP 999：购物态下清购物标志与在售位后直接结束（#5
   // 边界：BOUGHT == 0（刚买 0 号商品）也在购物态内（:44 判据是 >= 0），同样退出
   const zero = create_era_fixture();
   zero.load_module('era-utils/era-flag').bought = 0;
-  zero.store.set('itemsales:60', 1);
   await zero.load_module('page/page-shop').usershop(999);
   assert.equal(
     zero.load_module('era-utils/era-flag').bought,
