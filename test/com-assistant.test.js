@@ -274,12 +274,13 @@ test('@COM60-73：骨架标题行与返回 1', async () => {
     const result = await run_com(world, Number(id));
     assert.equal(result, 1, `COM${id}`);
     // COM64 的标题与部位后缀同行（COMF64:79 的 PRINT ３Ｐ 不收行，:81/83/85/87
-    // 的 PRINTL 收尾同一行——#595 合成一次 print），其余标题各自独占一行
-    const ok =
-      id === '64'
-        ? world.fixture.text_lines().some((line) => line.startsWith(title))
-        : world.fixture.text_lines().includes(title);
-    assert.ok(ok, `COM${id} 标题「${title}」`);
+    // 的 PRINTL 收尾同一行——#595 合成一次 print）；本用例的种子（ASSIPLAY=0）
+    // 走 :81 的「私处和肛门」支，故期望串是完整的标题+后缀
+    const expected = id === '64' ? `${title}・私处和肛门一起插` : title;
+    assert.ok(
+      world.fixture.text_lines().includes(expected),
+      `COM${id} 标题「${expected}」`,
+    );
   }
 });
 

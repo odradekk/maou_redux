@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 972; // #595 起 +26（M12040-M12065：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 976; // #595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -10362,6 +10362,38 @@ export default [
     replace: '      // 变异：:280 的真空行删除',
     tests: ['passout'],
     must_mention: '温妮依然未醒来',
+  },
+  {
+    desc: 'M12066 COMF111 :166 的真空行删除（撕破分支已收行，它是真行）',
+    file: 'ere/system/train/com-cloth.js',
+    find: "    era.print(''); // COMF111:166 的真空行（撕破分支输出已收行——#595）",
+    replace: '    // 变异：:166 的真空行删除',
+    tests: ['com-cloth'],
+    must_mention: 'COM111:166 的真空行',
+  },
+  {
+    desc: 'M12067 PASSOUT :255 的真空行删除（895 = 3 档，:254 台词行已收行）',
+    file: 'ere/system/train/passout.js',
+    find: "      // PASSOUT.ERB:255 的 PRINTFORML（空内容）落在 PASSOUT.ERB:254 已收行之后 → 真空行（#595）\n      era.print('');",
+    replace: '      // 变异：:255 的真空行删除',
+    tests: ['passout'],
+    must_mention: '…温妮当场倒下，因为过于强烈的恐惧失去了意识',
+  },
+  {
+    desc: 'M12068 ABLUP10 条件渲染的 [2] 之后补回空行（:66 是裸 PRINTL）',
+    file: 'ere/system/train/ablup.js',
+    find: '      // ABLUP10.ERB:66 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '      era.println(); // 变异：[2] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
+  },
+  {
+    desc: 'M12069 ABLUP32 条件渲染的 [1] 之后补回空行（:72 是裸 PRINTL）',
+    file: 'ere/system/train/ablup.js',
+    find: '    // ABLUP32.ERB:72 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '    era.println(); // 变异：[1] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   // —— #572：满月确认的按钮化 ——
   {

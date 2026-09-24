@@ -511,6 +511,17 @@ test('@COM111：两截上撕破（L:3，位 4 消 + CFLAG:45 = -3）', async () 
   );
   assert.equal(fixture.store.get('cflag:31:40'), 15 - UPPER);
   assert.equal(fixture.store.get('cflag:31:45'), -3, '废弃态 -3（:126）');
+  // #595：COMF111:166 的裸 PRINTL 落在撕破分支已收行之后 → 真空行（重绘前）
+  assert.equal(
+    lines.filter((l) => l === '撕破衣服').length,
+    2,
+    '撕破后重绘菜单',
+  );
+  assert.equal(
+    lines[lines.lastIndexOf('撕破衣服') - 1],
+    '',
+    'COM111:166 的真空行',
+  );
 });
 
 test('@COM111：两截下撕破的裙型措辞与双位消（L:4，位 8/16 + CFLAG:46）', async () => {

@@ -974,7 +974,9 @@ test('#595 TRAIN_MESSAGE_B150：癖好句自成一行，句尾不再多补一个
   await run_b(world, 150);
   assert.ok(
     !world.fixture.lines.some(
-      (line) => line.type === 'text' && /^[ \u3000]+$/.test(line.text),
+      (line) =>
+        (line.type === 'br' || line.type === 'text') &&
+        /^[ \u3000]*$/.test(line.text ?? ''),
     ),
     'EVENT_TRAIN_MESSAGE_B:3002 的 PRINTL 只收尾 :2992 的拼行，不得落成独立空串行',
   );
