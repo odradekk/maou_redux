@@ -44,11 +44,16 @@ function apply_prestige(cid) {
  * SUISEI_STR（录像书架）的写入槽位（issue #561 第 1 条）：原作
  * `SUISEI_STR:A = …` 按**书架槽位**寻址（书架本体见 售卻相關/SELL_VIDEO.ERB
  * 的 @VIDEO_SHELF），A 是该角色在角色数组里的下标——处刑入口的
- * `A = COUNT` 取自 `REPEAT CHARANUM`（处刑相关/EXECUTION.ERB:65-73），既不是
+ * `A = COUNT` 取自 `REPEAT CHARANUM`（處刑相關/EXECUTION.ERB:65-73），既不是
  * ere 的角色 ID，也不是「逐角色末路记录」。
  *
- * ere 里同构的量是 `era.getAddedCharacters()` 的下标（引擎与夹具都按角色号
- * 升序返回，见 test/helpers/era-fixture.js 的「角色列表的顺序语义」段）。
+ * ere 里用 `era.getAddedCharacters()` 的下标代位（引擎与夹具都按角色号升序
+ * 返回，见 test/helpers/era-fixture.js 的「角色列表的顺序语义」段）。这是
+ * **代位而非同构**：原作的下标是数组的插入序（ADDNUM 序，后加入的排在后面），
+ * ere 是**角色号升序**——两者在「插入序 ≠ 角色号序」（例如先有 31 号、之后
+ * 才加入 1 号）时给出的槽位不同，影响的只是书架内的相对顺序与覆写落点，
+ * 不越界也不丢条目（登记 #14）。除名造成的下标前移两边同构。
+ *
  * 这同时保证槽位恒落在 [0, CHARANUM) 内：写 `videoarchive:<角色 ID>` 会让
  * 后代（ID ≥ FIRST_CHILD_ID）落到 20000 格的书架之外，书架里看不到。
  * @param {number} cid 角色 ID

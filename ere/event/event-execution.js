@@ -178,9 +178,9 @@ async function make_toilet(cid) {
   const prelude = get(`talent:${cid}:85`)
     ? `${name}不知道自己为什么要被做成肉便器，不停地高叫着你的名字，请求饶恕。`
     : '';
-  // EXECUTION.ERB 肉便器段的三条 `PRINTFORM`/`PRINTFORML`/`PRINTL` 都不等待
-  // （它们合成第一轮输出），只有收尾的 `PRINTW` 等待（#561 第 3 条；新文件
-  // event-execution-batch.js 的肉便器段同款）
+  // 原作肉便器段的四条输出语句里，条件行 `PRINTFORM` 与其后的 `PRINTFORML`、
+  // 两条 `PRINTL` 都不等待（前几条合成本轮输出），只有收尾的 `PRINTW` 等待。
+  // #561 第 3 条；新文件 event-execution-batch.js 的肉便器段同款
   era.print(
     `${prelude}但${chara_callname(0)}依然给${name}烙上了封锁所有力量的封印，`,
   );

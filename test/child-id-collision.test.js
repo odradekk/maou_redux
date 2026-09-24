@@ -230,22 +230,32 @@ test('静态：角色预设 ID（yml/Chara*.yml）都小于 FIRST_CHILD_ID', () 
 // —— 行为 ——
 
 /**
- * 世界：魔王 + 温妮（31）+ 一个真后代。后代走 gb_add_slave（来源模板 1），
- * 与 chara-pregnancy.test.js 的构造方式一致——EX_TALENT:2 落盘，ID 由
- * FIRST_CHILD_ID 起。
+ * 世界：魔王 + 温妮（31）+ 一个真后代。后代走 gb_add_slave，与
+ * chara-pregnancy.test.js 的构造方式一致——EX_TALENT:2 落盘，ID 由
+ * FIRST_CHILD_ID 段分配。
+ *
+ * `template` 是来源预设号，决定后代落在哪个 100 位区间：断言「与固定按钮
+ * 不撞号」的用例要挑**旧常量下正好撞号**的那一档（模板 3 → 旧 ID 1200 撞
+ * 名册排序表头 [1200]；模板 11 → 旧 ID 2000 撞批量处刑 [2000] 上一页），
+ * 否则把 FIRST_CHILD_ID 改回 1000 这些用例照样绿，守不住「撞号」这件事。
+ * @param {number} template 来源预设号（须在 1-16 内，且本函数会 seed 它）
  */
-async function seed_world_with_child() {
+async function seed_world_with_child(template = 1) {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
-  fixture.seed_chara(1, { id: 1, name: '后代模板', callname: '后代模板' });
+  fixture.seed_chara(template, {
+    id: template,
+    name: `后代模板${template}`,
+    callname: `后代模板${template}`,
+  });
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.store.set('talent:31:314', 5); // 种族（后代继承用）
   fixture.store.set('cflag:31:9', 4); // 等级
   const child = await fixture
     .load_module('chara/chara-pregnancy')
-    .gb_add_slave(31, -4, () => 0);
+    .gb_add_slave(template, -4, () => 0);
   return { fixture, child };
 }
 
@@ -260,7 +270,7 @@ function accelerators(fixture) {
 test('后代不在固定按钮区间内：FIRST_CHILD_ID 起分配，与同屏编号不撞', async () => {
   const { fixture, child } = await seed_world_with_child();
 
-  assert.equal(child, declared_first_child_id());
+  assert.equal(child, declared_first_child_id(), '模板 1 的后代落在区间起点');
   assert.ok(
     fixture.era.getAddedCharacters().includes(child),
     '后代进入已加入角色列表',
@@ -273,10 +283,13 @@ test('后代不在固定按钮区间内：FIRST_CHILD_ID 起分配，与同屏�
 });
 
 test('名册页：后代行是可点的按钮，排序表头/翻页/返回照常可用（#560）', async () => {
-  const { fixture, child } = await seed_world_with_child();
+  // 模板 3：旧常量（1000）下这个后代的 ID 是 1200，正撞名册排序表头
+  // [1200]——改回旧常量时本用例必须红
+  const { fixture, child } = await seed_world_with_child(3);
+  assert.equal(child, declared_first_child_id() + 2 * 100, '模板 3 的区间');
   const { chara_info } = fixture.load_module('page/page-chara-info');
-  // 后代行 → 返回，再 [999] 退出名册（后代 ID 必须是合法输入，否则夹具当场抛）
-  fixture.set_inputs(child, 100, 999);
+  // 后代行 → 个别信息页（[500] 前一人）→ 返回，再 [999] 退出名册
+  fixture.set_inputs(child, 500, 100, 999);
 
   const result = await chara_info();
 
@@ -284,6 +297,10 @@ test('名册页：后代行是可点的按钮，排序表头/翻页/返回照常
   assert.ok(
     accelerators(fixture).includes(child),
     `后代 ${child} 的行必须是按钮（快捷键 = 后代 ID）`,
+  );
+  assert.ok(
+    accelerators(fixture).includes(500),
+    '输入后代 ID 后进的是该角色的个别信息页——[500] 前一人只在那一页渲染',
   );
   for (const fixed of [1200, 1300, 1400, 1500, 1600, 1700, 997, 998, 999]) {
     assert.ok(
@@ -294,7 +311,10 @@ test('名册页：后代行是可点的按钮，排序表头/翻页/返回照常
 });
 
 test('批量处刑页：后代能被选中切标签，[121]/[100]/[1999] 照常可用（#560）', async () => {
-  const { fixture, child } = await seed_world_with_child();
+  // 模板 11：旧常量（1000）下这个后代的 ID 是 2000，正撞批量处刑的
+  // [2000] 上一页——改回旧常量时「选中切标签」会落到翻页分支、本用例必红
+  const { fixture, child } = await seed_world_with_child(11);
+  assert.equal(child, declared_first_child_id() + 10 * 100, '模板 11 的区间');
   const { batch_execution } = fixture.load_module(
     'event/event-execution-batch',
   );

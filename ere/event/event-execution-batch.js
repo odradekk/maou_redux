@@ -221,7 +221,8 @@ async function next_tagged(method) {
  * $进行处刑 的 4 号分支（:191-304）：做成肉便器。与旧 @EXECUTION 的同段
  * （event-execution.js 的 make_toilet）三处不同：本作改写版用 SHE(A) 代
  * 硬编码「她」（:208/:234 等）、C 敏感段按扶她/男人分支阴茎文案（:246-252）、
- * SUISEI_STR:A 归档末路标题（:303）。结尾接公共结算（:361-394 的装备
+ * SUISEI_STR:A 按书架槽位记标题（:303；槽位 = 该角色在角色数组里的下标，
+ * event-execution-common.js 的 archive_slot_of）。结尾接公共结算（:361-394 的装备
  * 回收 + 除名 + 经验），经验文案用本文件的写法（:405-406）。
  * @param {number} cid
  */
@@ -369,7 +370,7 @@ async function make_toilet(cid) {
 
 /**
  * 5 号分支：士兵化（:305-318）。与旧 @EXECUTION 的差异：意识残存句改写、
- * 战力变化带具体数值、可迎击播报、SUISEI_STR 归档。不除名（GOTO
+ * 战力变化带具体数值、可迎击播报、SUISEI_STR 按槽位记标题。不除名（GOTO
  * LABEL_EXIT，公共结算被跳过）。
  * @param {number} cid
  */

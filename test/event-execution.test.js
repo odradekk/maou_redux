@@ -8,9 +8,11 @@
  *
  * #561 第 1 条起：录像书架（SUISEI_STR）的槽位是**角色在已加入列表中的
  * 位置**，不是角色 ID。本文件的 seed_world() 是 [0, 31, 47]，所以槽位 1 =
- * 31 号、槽位 2 = 47 号（槽位 0 是魔王，处刑路径永远不写）。下文的
- * `videoarchive:N` 一律按这条读；规则本身的用例见
- * test/event-execution-batch.test.js 的「槽位 = 列表位置」一条。
+ * 31 号、槽位 2 = 47 号。下文的 `videoarchive:N` 一律按这条读；规则本身的
+ * 用例见 test/event-execution-batch.test.js 的「槽位 = 列表位置」一条。
+ * 注意「按位置写」只是一路写点：`VIDEO_MATURO` 另有「首个空槽」写点
+ * （录像开关打开时），它照旧可能写 0（同族断言见 event-execution-batch.test.js
+ * 的 `videoarchive:0`）。
  */
 
 'use strict';
