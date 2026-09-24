@@ -1816,21 +1816,21 @@ function love_score(cid) {
   main[LOVE.卖淫] += abl_of(cid, 37) * 3;
   main[LOVE.獣姦] += abl_of(cid, 39) * 3;
 
-  // :2472-2550 経験補正（三档：>100 → +3 / >30 → +2 / >0 → +1）
-  // 已知偏差（随本票报告，待另票修正）：源 :2519-2528 的肛门快乐经验 一组用 >200 / >80，
-  // 本实现统一按上面的三档处理；本票不动行为
-  for (const [exp_idx, target] of [
-    [E_精饮绝顶经验, LOVE.精液],
-    [E_侍奉快乐经验, LOVE.奉仕],
-    [E_爱情经验, LOVE.你],
-    [E_被虐快乐经验, LOVE.受虐],
-    [E_肛门快乐经验, LOVE.A性感],
-    [E_施虐快乐经验, LOVE.施虐],
-    [E_营业爱情经验, LOVE.卖淫],
+  // :2472-2550 経験補正：每组自带两个档位（第 3/4 列），>0 → +1 七组共用。
+  // 肛门快乐经验（:2519-2528）单独用 >200 / >80，其余六组（:2475-2517、
+  // :2530-2550）用 >100 / >30——源逐组写死，不是一处常量。
+  for (const [exp_idx, target, hi, mid] of [
+    [E_精饮绝顶经验, LOVE.精液, 100, 30],
+    [E_侍奉快乐经验, LOVE.奉仕, 100, 30],
+    [E_爱情经验, LOVE.你, 100, 30],
+    [E_被虐快乐经验, LOVE.受虐, 100, 30],
+    [E_肛门快乐经验, LOVE.A性感, 200, 80],
+    [E_施虐快乐经验, LOVE.施虐, 100, 30],
+    [E_营业爱情经验, LOVE.卖淫, 100, 30],
   ]) {
     const v = exp_of(cid, exp_idx);
-    if (v > 100) main[target] += 3;
-    else if (v > 30) main[target] += 2;
+    if (v > hi) main[target] += 3;
+    else if (v > mid) main[target] += 2;
     else if (v > 0) main[target] += 1;
   }
 
