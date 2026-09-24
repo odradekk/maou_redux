@@ -441,11 +441,12 @@ export default [
 
   // —— #583：20 个语尾调用点各自传的情绪档（`CALL GOBI_KOUJO, <档>`） ——
   //
-  // 靶是 test/look.test.js 的「语尾档位表」：语尾族里装假处理函数返回
-  // `〈档〉` 标记，按构造出的状态断言**整行**的标记序列——只断「行里有某
-  // 档」会被同一行的另一个同档标记顶过去，档位写错照样绿（#570 抽样把
-  // :1277 的 4 改成 0 时全绿，正是这个形状）。每条 must_mention 是那一行
-  // 用例名/断言消息里的档位说明，逐字取自表里的 note。
+  // 这一批打在 ere/chara/look.js 的语尾实参上，守它们的是 test/look.test.js
+  // 的「语尾档位表」：语尾族里装假处理函数返回 `〈档〉` 标记，按构造出的
+  // 状态断言**整行**的标记序列——只断「行里有某档」会被同一行的另一个同档
+  // 标记顶过去，档位写错照样绿（#570 抽样把 :1277 的 4 改成 0 时全绿，正是
+  // 这个形状）。每条 must_mention 是那一行用例名/断言消息里的档位说明，
+  // 逐字取自表里的 note。
   {
     desc: 'M11910 LOOK_INFO 首行语尾档位门槛 >= 3 收到 > 3（屈服刻印 3 落回 4）',
     file: look,
@@ -523,20 +524,22 @@ export default [
     must_mention: '源 :1013 眼/瞳/唇（喜 → 1）',
   },
   {
-    desc: 'M11918 LOOK_INFO 体型的语尾档 0 改成 1（默认 → 喜）',
+    desc: 'M11918 LOOK_INFO 乳头的语尾档 0 改成 1（默认 → 喜）',
     file: look,
     find: `      s.add('乳头嘛……').hl(get_look_info(cid, '乳头'));
       s.add(await gobi_koujo(0));`,
     replace: `      s.add('乳头嘛……').hl(get_look_info(cid, '乳头'));
       s.add(await gobi_koujo(1));`,
     tests: ['look'],
-    must_mention: '源 :1042 体型（默认 → 0）',
+    must_mention: '源 :1042 乳头（默认 → 0）',
   },
   {
     desc: 'M11919 LOOK_INFO 阴毛的语尾档 4 改成 0（害羞 → 默认；#570 抽样的逃逸形态）',
     file: look,
-    find: '      s.add(await gobi_koujo(4));',
-    replace: '      s.add(await gobi_koujo(0));',
+    find: `      s.add('下面的毛毛……').hl(get_look_info(cid, '阴毛状态'));
+      s.add(await gobi_koujo(4));`,
+    replace: `      s.add('下面的毛毛……').hl(get_look_info(cid, '阴毛状态'));
+      s.add(await gobi_koujo(0));`,
     tests: ['look'],
     must_mention: '源 :1054 阴毛（害羞 → 4）',
   },
@@ -598,12 +601,14 @@ export default [
     must_mention: '源 :1392 前职业妓女・奴隷（恥ずかしい → 4）',
   },
   {
-    desc: 'M11926 LOOK_INFO 前职业盗人的语尾档 2 改成 0',
+    desc: 'M11926 LOOK_INFO 前职业表默认支的语尾档 0 改成 1（学生等落到喜び）',
     file: look,
-    find: '  if (value === 6) return 2; // 盗人は逆切れ',
-    replace: '  if (value === 6) return 0; // 变异：不再逆切れ',
+    find: `  if (value === 7 || value === 9) return 5; // 物乞い・貧民は情けなくなる
+  return 0;`,
+    replace: `  if (value === 7 || value === 9) return 5; // 物乞い・貧民は情けなくなる
+  return 1; // 变异：默认支不再默认`,
     tests: ['look'],
-    must_mention: '源 :1396 前职业盗人（逆切れ → 2）',
+    must_mention: '源 :1403 前职业默认（学生 → 0）',
   },
   {
     desc: 'M11927 LOOK_INFO 前职业物乞い・貧民的语尾档 5 改成 0',
@@ -632,12 +637,14 @@ export default [
     must_mention: '源 :1458 契机罪・仕方なく（恥ずかしい → 4）',
   },
   {
-    desc: 'M11930 LOOK_INFO 契机復讐的语尾档 2 改成 0',
+    desc: 'M11930 LOOK_INFO 契机表默认支的语尾档 0 改成 1（運命等落到喜び）',
     file: look,
-    find: '  if (value === 8) return 2; // 復讐',
-    replace: '  if (value === 8) return 0; // 变异：不再逆切れ',
+    find: `  if (value === 2 || value === 13) return 5; // 金のため・命令
+  return 0;`,
+    replace: `  if (value === 2 || value === 13) return 5; // 金のため・命令
+  return 1; // 变异：默认支不再默认`,
     tests: ['look'],
-    must_mention: '源 :1462 契机復讐（逆切れ → 2）',
+    must_mention: '源 :1469 契机默认（運命 → 0）',
   },
   {
     desc: 'M11931 LOOK_INFO 契机金のため・命令的语尾档 5 改成 0',

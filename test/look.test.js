@@ -2708,8 +2708,11 @@ test('LOOK_INFO 语尾调用点：返回值必须被消费（#570 行内拼接�
 });
 
 /**
- * 语尾档位表的底座（#583）：口上视角 + 性格 K4（语尾族键 4）+ 外观/经历素质
- * 逐项清零——只有行内 setup 打开的那一块开口，目标行因此唯一可寻。
+ * 语尾档位表的夹具（#583）：口上视角 + 性格 K4（语尾族键 4）+ 外观素质
+ * （300-314）逐项清零——只有行内 setup 打开的那一块开口，目标行因此唯一
+ * 可寻。315/316（成为勇者前的生活 / 成为勇者的契机）由 `look_set(cid, 0,
+ * always)` 的掷骰给出（全 0 掷 → 学生 / 運命，都落默认档），要别的分支时由
+ * 行内 setup 覆盖。
  *
  * 语尾族里装的是**返回带档位标记的假处理函数**（`〈4〉`）。这比 #570 那套
  * 「替换导出、只记实参」强在标记真的流进了台词行：后者看不见「哪一句拿了
@@ -2726,7 +2729,8 @@ function gobi_tier_world() {
     .gobi_koujo_family.register(4, async (arg0) => `〈${arg0}〉`);
   const cid = 800;
   mod.look_set(cid, 0, always);
-  // LOOK_SET 掷出来的外观（300-314）与经历（315/316 另有行级 setup）素质清零
+  // LOOK_SET 掷出来的外观（300-314）与其它干扰素质逐项清零（315/316 除外，
+  // 见上面夹具说明：它们要留下掷骰结果给「默认支」用）
   for (const idx of [
     300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 312, 313, 314, 17,
     76, 85, 121, 122, 158, 220, 242, 250, 281, 282, 283, 321, 322,
@@ -2790,7 +2794,7 @@ const GOBI_TIER_ROWS = [
     pick: '「人类的阿名',
     seq: [0],
     at: 0,
-    setup: (w) => w.set_mark(2, 3),
+    setup: (w) => w.set_mark(2, 3), // MARK:2 屈服刻印 = 3
   },
   // —— 原种族块（源 :880-892）——
   {
@@ -2839,8 +2843,8 @@ const GOBI_TIER_ROWS = [
     seq: [2],
     at: 0,
     setup: (w) => {
-      w.set_talent(314, 9);
-      w.set_mark(2, 2);
+      w.set_talent(314, 9); // 种族 = 魔族 → 走 loc3 块
+      w.set_mark(2, 2); // MARK:2 屈服刻印 = 2（< 3）
     },
   },
   {
@@ -2851,9 +2855,9 @@ const GOBI_TIER_ROWS = [
     seq: [0],
     at: 0,
     setup: (w) => {
-      w.set_talent(314, 9);
+      w.set_talent(314, 9); // 种族 = 魔族 → 走 loc3 块
       w.set_talent(321, 1); // 原种族 = 精灵 → 走已登记表名支
-      w.set_mark(2, 3);
+      w.set_mark(2, 3); // MARK:2 屈服刻印 = 3
     },
   },
   // —— 头发（源 :915-978）——
@@ -2877,9 +2881,9 @@ const GOBI_TIER_ROWS = [
     seq: [0],
     at: 0,
     setup: (w) => {
-      w.set_talent(302, 1);
-      w.set_talent(303, 1);
-      w.set_talent(304, 1);
+      w.set_talent(302, 1); // 头发长度
+      w.set_talent(303, 1); // 头发修剪方式
+      w.set_talent(304, 1); // 发型
     },
   },
   // —— 眼・瞳・唇（源 :981-1021）——
@@ -2891,23 +2895,23 @@ const GOBI_TIER_ROWS = [
     seq: [1],
     at: 0,
     setup: (w) => {
-      w.set_talent(305, 1);
-      w.set_talent(306, 1);
-      w.set_talent(307, 1);
+      w.set_talent(305, 1); // 目
+      w.set_talent(306, 1); // 瞳色
+      w.set_talent(307, 1); // 唇
     },
   },
   // —— 体型块（源 :1022-1080，一行三处）——
   {
     src: 1042,
     site: 'look.js:1275',
-    note: '源 :1042 体型（默认 → 0）',
+    note: '源 :1042 乳头（默认 → 0）',
     pick: '的体型……',
     seq: [0, 4, 2],
     at: 0,
     setup: (w) => {
-      w.set_talent(308, 1);
-      w.set_talent(309, 1);
-      w.set_talent(310, 1);
+      w.set_talent(308, 1); // 体型
+      w.set_talent(309, 1); // 乳头
+      w.set_talent(310, 1); // 阴毛状态
       w.set_talent(121, 1); // 扶她 → 同行还有阴茎一处
     },
   },
@@ -2919,10 +2923,10 @@ const GOBI_TIER_ROWS = [
     seq: [0, 4, 2],
     at: 1,
     setup: (w) => {
-      w.set_talent(308, 1);
-      w.set_talent(309, 1);
-      w.set_talent(310, 1);
-      w.set_talent(121, 1);
+      w.set_talent(308, 1); // 体型
+      w.set_talent(309, 1); // 乳头
+      w.set_talent(310, 1); // 阴毛状态
+      w.set_talent(121, 1); // 扶她 → 同行还有阴茎一处
     },
   },
   {
@@ -2933,10 +2937,10 @@ const GOBI_TIER_ROWS = [
     seq: [0, 4, 2],
     at: 2,
     setup: (w) => {
-      w.set_talent(308, 1);
-      w.set_talent(309, 1);
-      w.set_talent(310, 1);
-      w.set_talent(121, 1);
+      w.set_talent(308, 1); // 体型
+      w.set_talent(309, 1); // 乳头
+      w.set_talent(310, 1); // 阴毛状态
+      w.set_talent(121, 1); // 扶她 → 阴茎行开口
     },
   },
   // —— 魅力点・癖（源 :1079-1111，一行两处）——
@@ -2948,8 +2952,8 @@ const GOBI_TIER_ROWS = [
     seq: [0, 0],
     at: 0,
     setup: (w) => {
-      w.set_talent(312, 1);
-      w.set_talent(313, 1);
+      w.set_talent(312, 1); // 魅力点
+      w.set_talent(313, 1); // 癖
     },
   },
   {
@@ -2960,8 +2964,8 @@ const GOBI_TIER_ROWS = [
     seq: [0, 0],
     at: 1,
     setup: (w) => {
-      w.set_talent(312, 1);
-      w.set_talent(313, 1);
+      w.set_talent(312, 1); // 魅力点
+      w.set_talent(313, 1); // 癖
     },
   },
   // —— 来历两块的前职业支（源 :1384-1404，五个分支一个包装调用点）——
@@ -2972,7 +2976,7 @@ const GOBI_TIER_ROWS = [
     pick: '「来据点之前我是',
     seq: [1],
     at: 0,
-    setup: (w) => w.set_talent(315, 8),
+    setup: (w) => w.set_talent(315, 8), // 成为勇者前的生活 = 贵族 → 喜び支
   },
   {
     src: 1392,
@@ -2981,7 +2985,7 @@ const GOBI_TIER_ROWS = [
     pick: '「来据点之前我是',
     seq: [4],
     at: 0,
-    setup: (w) => w.set_talent(315, 5),
+    setup: (w) => w.set_talent(315, 5), // = 妓女 → 害羞支
   },
   {
     src: 1396,
@@ -2990,7 +2994,7 @@ const GOBI_TIER_ROWS = [
     pick: '「来据点之前我是',
     seq: [2],
     at: 0,
-    setup: (w) => w.set_talent(315, 6),
+    setup: (w) => w.set_talent(315, 6), // = 盗人 → 怒り支
   },
   {
     src: 1400,
@@ -2999,7 +3003,7 @@ const GOBI_TIER_ROWS = [
     pick: '「来据点之前我是',
     seq: [5],
     at: 0,
-    setup: (w) => w.set_talent(315, 7),
+    setup: (w) => w.set_talent(315, 7), // = 物乞い → 情けない支
   },
   {
     src: 1403,
@@ -3008,6 +3012,7 @@ const GOBI_TIER_ROWS = [
     pick: '「来据点之前我是',
     seq: [0],
     at: 0,
+    setup: (w) => w.set_talent(315, 1), // = 学生 → 默认支
   },
   // —— 来历两块的契机支（源 :1450-1471）——
   {
@@ -3017,7 +3022,7 @@ const GOBI_TIER_ROWS = [
     pick: '「回应召唤是因为',
     seq: [1],
     at: 0,
-    setup: (w) => w.set_talent(316, 3),
+    setup: (w) => w.set_talent(316, 3), // 成为勇者的契机 = 啓示 → 喜び支
   },
   {
     src: 1458,
@@ -3026,7 +3031,7 @@ const GOBI_TIER_ROWS = [
     pick: '「回应召唤是因为',
     seq: [4],
     at: 0,
-    setup: (w) => w.set_talent(316, 10),
+    setup: (w) => w.set_talent(316, 10), // = 罪 → 害羞支
   },
   {
     src: 1462,
@@ -3035,7 +3040,7 @@ const GOBI_TIER_ROWS = [
     pick: '「回应召唤是因为',
     seq: [2],
     at: 0,
-    setup: (w) => w.set_talent(316, 8),
+    setup: (w) => w.set_talent(316, 8), // = 復讐 → 怒り支
   },
   {
     src: 1466,
@@ -3044,7 +3049,7 @@ const GOBI_TIER_ROWS = [
     pick: '「回应召唤是因为',
     seq: [5],
     at: 0,
-    setup: (w) => w.set_talent(316, 2),
+    setup: (w) => w.set_talent(316, 2), // = 金のため → 情けない支
   },
   {
     src: 1469,
@@ -3053,6 +3058,7 @@ const GOBI_TIER_ROWS = [
     pick: '「回应召唤是因为',
     seq: [0],
     at: 0,
+    setup: (w) => w.set_talent(316, 1), // = 運命 → 默认支
   },
   // —— 信仰与弃教（源 :1478-1548）——
   {
@@ -3089,7 +3095,7 @@ const GOBI_TIER_ROWS = [
     pick: '「我不能正常的怀孕',
     seq: [5],
     at: 0,
-    setup: (w) => w.set_talent(158, 1),
+    setup: (w) => w.set_talent(158, 1), // 妊娠适性（同族不育）
   },
   // —— 所持金・借金（源 :1575-1605）——
   {
@@ -3099,7 +3105,7 @@ const GOBI_TIER_ROWS = [
     pick: '身无分文',
     seq: [5],
     at: 0,
-    setup: (w) => w.set_cflag(580, 0),
+    setup: (w) => w.set_cflag(580, 0), // CFLAG:580 所持金 = 0
   },
   {
     src: 1590,
@@ -3116,7 +3122,7 @@ const GOBI_TIER_ROWS = [
     pick: '欠债',
     seq: [0, 5],
     at: 1,
-    setup: (w) => w.set_cflag(582, -50),
+    setup: (w) => w.set_cflag(582, -50), // CFLAG:582 借金（负值）
   },
   // —— 常识改变（源 :1613-1658）——
   {
@@ -3126,7 +3132,7 @@ const GOBI_TIER_ROWS = [
     pick: '方面完全被改变了',
     seq: [1],
     at: 0,
-    setup: (w) => w.set_talent(281, 1),
+    setup: (w) => w.set_talent(281, 1), // 常识改变【战斗】
   },
   // —— 喜欢的东西收尾（源 :2797-2804）——
   {
@@ -3154,14 +3160,52 @@ for (const row of GOBI_TIER_ROWS) {
       `${row.note}（${row.site}）的选择子「${row.pick}」应命中恰好一行，实际 ${hit.length} 行`,
     );
     const marks = [...hit[0].matchAll(GOBI_MARK_RE)].map((m) => Number(m[1]));
+    // 先断本行对应的那一档（消息里点名是这一行的第几个语尾），再断整条序列：
+    // 前一条只在本档错时给出精确位置，后一条顾全同行其它调用点的错位
+    assert.equal(
+      marks[row.at],
+      row.seq[row.at],
+      `${row.note}（${row.site}）第 ${row.at + 1} 个语尾应为 ${row.seq[row.at]}，` +
+        `实际 ${marks[row.at]}（整行 [${marks}]，台词：${hit[0]}）`,
+    );
     assert.deepEqual(
       marks,
       row.seq,
-      `${row.note}（${row.site}）：第 ${row.at + 1} 个语尾应为 ${row.seq[row.at]}；` +
-        `整行期望 [${row.seq}]，实际 [${marks}]（台词：${hit[0]}）`,
+      `${row.note}（${row.site}）：整行语尾档位序列（台词：${hit[0]}）`,
     );
   });
 }
+
+/**
+ * 表里的「原作行号 → 期望档位」不是手抄的：逐行回读原作 LOOK.ERB 的
+ * `CALL GOBI_KOUJO` 实参核对（三元式的两支都算合法取值）。行号漂了、
+ * 档位抄错，这条当场红——`src` 因此是断言的一部分，不是装饰。
+ */
+test('LOOK_INFO 语尾档位表：原作行号与期望档位对得上（回读 LOOK.ERB）', () => {
+  const erb = fs
+    .readFileSync(
+      path.join(__dirname, '..', 'target', 'ERB', 'キャラ関数', 'LOOK.ERB'),
+      'utf8',
+    )
+    .split(/\r?\n/);
+  for (const row of GOBI_TIER_ROWS) {
+    const line = erb[row.src - 1] ?? '';
+    const at = line.indexOf('CALL GOBI_KOUJO');
+    assert.notEqual(
+      at,
+      -1,
+      `源 :${row.src}（${row.note}）在 LOOK.ERB 里不是 CALL GOBI_KOUJO 行：${line.trim()}`,
+    );
+    const arg = line.slice(at + 'CALL GOBI_KOUJO'.length);
+    const allowed = arg.includes('?')
+      ? new Set([...arg.matchAll(/\b(\d)\b/g)].map((m) => Number(m[1])))
+      : new Set([Number(/^\s*,\s*(\d)/.exec(arg)?.[1])]);
+    assert.ok(
+      allowed.has(row.seq[row.at]),
+      `源 :${row.src}（${row.note}）表里期望 ${row.seq[row.at]}，原作实参是「${arg.trim()}」`,
+    );
+  }
+});
 
 test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，语尾未命中静默', async () => {
   const w = info_world();
