@@ -221,8 +221,9 @@ async function usershop(result) {
   //   - 999（:44-46）没有 RETURN，但函数随后就走到末尾：:45 的 CALL CLEAR_SHOP
   //     调的是个没有 RETURN 的函数，Emuera 在函数落到末尾时把 RESULT 置 0
   //     ——`vEvaluator.RESULT = 0; state.Return(0)`（Process.ScriptProc.cs 的
-  //     「（関数終端） or ファイル終端」支；1.821 / 1.824 / EM+EE 三份源码
-  //     同形，出处与行号见 #592 的完成评论）。回到本函数时 RESULT 已是 0，
+  //     「（関数終端） or ファイル終端」支，前提 `!state.IsFunctionMethod`：
+  //     CALL 的普通函数都满足；1.821 / 1.824 / EM+EE 三份源码同形，出处与
+  //     行号见 #592 的完成评论）。回到本函数时 RESULT 已是 0，
   //     :59 起的 ELSEIF 链上没有 0 的去处，:226-227 的 `SIF RESULT == 7788`
   //     也不成立，出口是 :226-229 的 RETURN 0——玩家回主菜单，**不进调试
   //     菜单**（旧移植按「CALL 之后 RESULT 不变」错落到 :222-223，#562 实机
