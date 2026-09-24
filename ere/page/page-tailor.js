@@ -28,8 +28,11 @@
  *    （覆盖面标准），也让 42/43/27 条的字面量逐个可钉。
  *
  * 3. **子菜单的选项一律按钮化**（PR #53 通则）：原作的 `[n] - 名字` 纯文本
- *    改成 `era.printButton(名字, n)`；翻页键 [997]/[998]、黑市 [996]、返回
- *    [999] 同。价格与顺从档**印在按钮正文里**（原作是把价格写在名字后的
+ *    改成 `era.printButton('- 名字', n)`——**正文里的 `- ` 照写**，它是原作文本
+ *    的一部分（编号由引擎按 showAcc 拼，正文不写 [n]；#612 全库普查的口径，
+ *    与 page-shop-labo.js 文件头同款）。数据表驱动的四张表在调用点拼 `- `
+ *    （表里的 label 另有文本行用途，不加前缀）；翻页键 [997]/[998]、黑市
+ *    [996]、返回 [999] 同。价格与顺从档**印在按钮正文里**（原作是把价格写在名字后的
  *    括号里、顺从档不显示——见 :78-88 的主菜单才写价格；此处照原作：
  *    价格只在主菜单与装备品/黑市表里出现，普通装备表只写名字）。
  *
@@ -537,7 +540,7 @@ async function tailor_casual(cid) {
     era.print(`所持金：${era_flag.money}点`); // :273
     era.drawLine();
     for (const item of CASUAL_ITEMS) {
-      era.printButton(item.label, item.n); // :276-277
+      era.printButton(`- ${item.label}`, item.n); // :276-277
     }
     era.drawLine();
     era.printButton('- 返回', 999); // :279
@@ -571,7 +574,7 @@ async function tailor_normal(cid) {
     era.drawLine();
     for (const item of NORMAL_ITEMS) {
       if (item.page !== page) continue;
-      era.printButton(item.label, item.n);
+      era.printButton(`- ${item.label}`, item.n); // :328 起（表驱动，前缀在调用点拼）
     }
     era.drawLine();
     era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
@@ -627,7 +630,7 @@ async function tailor_normal_special(cid) {
     era.drawLine();
     for (const item of SPECIAL_ITEMS) {
       if (item.page !== page) continue;
-      era.printButton(item.label, item.n);
+      era.printButton(`- ${item.label}`, item.n); // :1320 起（表驱动，前缀在调用点拼）
     }
     era.drawLine();
     era.printButton('下一页', 997); // SHOP_TAILOR.ERB:628（原文此处无「- 」）
@@ -667,7 +670,7 @@ async function tailor_accessory(cid) {
     era.drawLine();
     for (const item of ACCESSORY_ITEMS) {
       if (item.page !== page) continue;
-      era.printButton(`${item.label}（${item.c}点）`, item.n);
+      era.printButton(`- ${item.label}（${item.c}点）`, item.n); // :571 起（表驱动）
     }
     era.drawLine();
     era.printButton('下一页', 997); // SHOP_TAILOR.ERB:1355（原文此处无「- 」）
@@ -815,7 +818,7 @@ async function pick_enhance_amount() {
 async function pick_weapon_prefix() {
   era.print('可以设定强化的前缀'); // :1253
   for (let index = 0; index <= WEAPON_PREFIX_MAX; index += 1) {
-    era.printButton(WEAPON_PREFIXES[index], index); // :1254-1263
+    era.printButton(`- ${WEAPON_PREFIXES[index]}`, index); // :1254-1263（表驱动）
   }
   era.printButton('- 返回', 999); // :1265
   const result = await era.input(); // :1267
@@ -909,9 +912,10 @@ async function pick_ring(cid, slot) {
     for (let index = 0; index < EQUIP_ITEM_COUNT; index += 1) {
       const item_no = EQUIP_ITEM_BASE + index; // X = COUNT + 300
       if ((era.get(`item:${item_no}`) || 0) > 0) {
-        // 正文不写 [编号]：引擎 showAcc 自动拼 `[300] …`（PR #30，AGENTS.md）
+        // 正文不写 [编号]：引擎 showAcc 自动拼 `[300] …`（PR #30，AGENTS.md）；
+        // `- ` 照写（原作 :1027/:1156 `[{X}] - %ITEMNAME:X% ({ITEM:X})`）
         era.printButton(
-          `${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,
+          `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,
           item_no,
         );
       }
@@ -996,9 +1000,10 @@ async function equip_magic_weapon(cid) {
         (era.get(`item:${item_no}`) || 0) > 0 &&
         item_no !== WEAPON_TENTACLE_ID
       ) {
-        // 正文不写 [编号]：引擎 showAcc 自动拼 `[300] …`（PR #30，AGENTS.md）
+        // 正文不写 [编号]：引擎 showAcc 自动拼 `[300] …`（PR #30，AGENTS.md）；
+        // `- ` 照写（原作 :1027/:1156 `[{X}] - %ITEMNAME:X% ({ITEM:X})`）
         era.printButton(
-          `${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,
+          `- ${era.get(`itemname:${item_no}`) ?? ''} (${era.get(`item:${item_no}`)})`,
           item_no,
         ); // :1156
       }

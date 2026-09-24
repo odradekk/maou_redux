@@ -1599,6 +1599,29 @@ export const FILES = [
         ref: '1370-1375',
         any: [/^\s*T\ =\ 0\s*$/m],
       },
+      // —— #612：数据表驱动的调用点补回「- 」（工具配对不上，人工核原作行）——
+      {
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '328',
+        any: [/^\s*PRINTL\ \ \[1\]\ \-\ 护胸＆裙甲\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '571',
+        any: [/^\s*PRINTL\ \ \[1\]\ \-\ 围裙（10000点）\s*$/m],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '1027',
+        any: [
+          /^\s*PRINTFORML\ \ \[\{X\}\]\ \-\ %ITEMNAME:X%\ \(\{ITEM:X\}\)\s*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/SHOP/SHOP_TAILOR.ERB',
+        ref: '1320',
+        any: [/^\s*PRINTL\ \ \[1\]\ \-\ 高中制服\s*$/m],
+      },
     ],
   },
 ];

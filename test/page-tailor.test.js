@@ -201,6 +201,70 @@ test('#612 TAILOR_CORE 主菜单：按钮正文照写原作的「- 」（含价�
   }
 });
 
+test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- 」', async () => {
+  const rendered_in = (fixture) =>
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered);
+
+  // 日常服饰 2 件（原作 :276-277）
+  const casual = tailor_fixture();
+  await run_core(casual, [0, 999, 999]);
+  const casual_out = rendered_in(casual);
+  assert.ok(casual_out.includes('[1] - 日常着装・裙子'), 'SHOP_TAILOR.ERB:276');
+  assert.ok(casual_out.includes('[2] - 日常着装・裤子'), 'SHOP_TAILOR.ERB:277');
+
+  // 普通装备 42 件（原作 :328 起，表驱动、前缀在调用点拼）
+  const normal = tailor_fixture();
+  await run_core(normal, [1, 999, 999]);
+  const normal_out = rendered_in(normal);
+  assert.ok(normal_out.includes('[1] - 护胸＆裙甲'), 'SHOP_TAILOR.ERB:328');
+  assert.ok(normal_out.includes('[2] - 童装（女孩用）'), 'SHOP_TAILOR.ERB:329');
+
+  // 黑市特殊服 27 件（原作 :1320 起）
+  const special = tailor_fixture({ 'flag:10004': 100000 });
+  await run_core(special, [1, 996, 999, 999, 999]);
+  assert.ok(
+    rendered_in(special).includes('[1] - 高中制服'),
+    'SHOP_TAILOR.ERB:1320',
+  );
+
+  // 装备品 43 件（原作 :571 起，价格印在正文里）
+  const accessory = tailor_fixture();
+  await run_core(accessory, [2, 999, 999, 999]);
+  assert.ok(
+    rendered_in(accessory).includes('[1] - 围裙（10000点）'),
+    'SHOP_TAILOR.ERB:571',
+  );
+
+  // 强化前缀 10 档（原作 :1254-1263）
+  const prefix = tailor_fixture({
+    'item:341': 1,
+    'itemname:341': '剑',
+    'cflag:0:9': 30,
+    'cflag:1:550': -1,
+  });
+  await run_core(prefix, [8, 341, 1, 0, 999, 999, 999, 999]);
+  const prefix_out = rendered_in(prefix);
+  assert.ok(prefix_out.includes('[0] - 无'), 'SHOP_TAILOR.ERB:1254');
+  assert.ok(prefix_out.includes('[9] - 暗黑'), 'SHOP_TAILOR.ERB:1263');
+  // 武器页的持有行是同一句（:1156），与 :1027 那两个调用点互为孪生
+  assert.ok(prefix_out.includes('[341] - 剑 (1)'), 'SHOP_TAILOR.ERB:1156');
+
+  // 持有装备品行（原作 :1027 `[{X}] - %ITEMNAME:X% ({ITEM:X})`）
+  const held = tailor_fixture({
+    'item:300': 2,
+    'itemname:300': '剑',
+    'cflag:0:9': 30,
+    'cflag:1:551': -1,
+  });
+  await run_core(held, [7, 1, 999, 999, 999, 999]);
+  assert.ok(
+    rendered_in(held).includes('[300] - 剑 (2)'),
+    'SHOP_TAILOR.ERB:1027',
+  );
+});
+
 test('TAILOR_CASUAL：两件整表驱动（含男性 S = 3 的门槛）', async () => {
   const { CASUAL_ITEMS } = tailor_fixture().load_module('page/page-tailor');
   for (const item of CASUAL_ITEMS) {
@@ -334,7 +398,7 @@ test('TAILOR_ACCESSORY：43 件整表驱动（价格随件、CFLAG:42 = R）', a
     );
     // 装备品表的行以显示编号（1-43）为快捷键，正文=名字+价格（编号由引擎拼）
     const item = page.lines.find(
-      (l) => l.type === 'button' && l.text.startsWith('围裙'),
+      (l) => l.type === 'button' && l.text.startsWith('- 围裙'),
     );
     assert.ok(item, '装备品行走按钮格');
     assert.equal(item.rendered, `[1] ${item.text}`, '正文里没有第二个 [1]');
@@ -443,7 +507,7 @@ test('TAILOR_CORE：钱不够时子菜单直接劝退（100 / 1000 / 30000 三�
   }
   // 黑市：钱够 1000（普通装备）但不够 30000（黑市）→ 点进黑市被劝退
   const special = tailor_fixture({ 'flag:10004': 2000 });
-  await run_core(special, [1, 996, 999, 999]);
+  await run_core(special, [1, 996, 999, 999, 999]);
   assert.ok(texts(special.lines).includes('钱不够！'), '黑市 30000 档');
 });
 

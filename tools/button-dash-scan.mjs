@@ -31,6 +31,16 @@
  *   - `[ N]` 定宽补位、`[N] - ` 后的空格数不在判定面内（编号由引擎渲染）。
  *     `▌` 等装饰前缀照旧参与骨架比对。
  *
+ * 判定面之外、必须人工核的两类（报告里各列一节，**别把「缺 0」当成全库结论**）：
+ *   - **动态编号选项**：原作 `[{D}] - %ITEMNAME:D%` 这类括号里不是纯数字的，
+ *     取不到配对的编号，配对判据整个失效——`[{X}] - %ITEMNAME:X% ({ITEM:X})`
+ *     的持有装备行就是一例（#612 人工核出它缺 `- `）。
+ *   - **骨架还原不出的按钮**：正文来自数据表/数组/函数的裸实参
+ *     （`era.printButton(item_name(i), i)`），工具既拼不出骨架、也无从判断
+ *     该不该有 `- `。这类只能回原作逐屏核。
+ *   - 注释尽量不参与：文件头注释里的示例调用（`era.printButton('- 名字', n)`）
+ *     先整段挖掉再收集按钮，否则按钮总数虚高、还会把示例当成真按钮报出来。
+ *
  * 用法：
  *   node tools/button-dash-scan.mjs            # 打印配对结论
  *   node tools/button-dash-scan.mjs --json     # 机器可读（同一份数据）
@@ -134,6 +144,16 @@ const PRINT_CONTINUES_RE =
   /^(?:PRINT|PRINTS|PRINTV|PRINTFORM|PRINTC|PRINTPLAIN|PRINTPLAINFORM|PRINTFORMC)$/;
 /** 编号点：`[0]`、`[ 0]`、`[1000]`。一行可能并排好几个 */
 const ERB_NUM_MARK_RE = /\[\s*(\d+)\s*\]/g;
+/**
+ * **动态编号**选项：括号里不是纯数字（`[{X}] - %ITEMNAME:X%`、
+ * `[%CSTR:7%] - …`），编号由插值给出，配对时拿不到数值键。这类行单独列一节
+ * 交人工核（#612 审查指出：它们既不进配对、也不进「原作有选项没配上按钮」
+ * 表，会整类隐身——SHOP_TAILOR.ERB:1027/:1156 与 SHOP_LABO:2594 就是这么
+ * 漏掉的）。**注意**：`[\@ FLAG_B ? - # 0 \@] 阴茎感觉` 这种「破折号在
+ * 括号内」的行不会被这条命中（括号后没有 `- `），它属于反向错误，靠
+ * 「骨架还原不出的按钮」那一节人工核。
+ */
+const ERB_DYNAMIC_OPTION_RE = /\[\s*([^\]\n]{1,40})\]\s*-\s*(\S[^\n]*)/g;
 /** 编号点之后的「分隔符」：破折号串 + 可选空白（`- `、`---`、`----`） */
 const ERB_SEPARATOR_RE = /^\s*(-*)\s*/;
 
@@ -195,6 +215,7 @@ export function split_erb_options(body) {
  */
 export function scan_erb_options(root = REPO) {
   const options = [];
+  const dynamic = [];
   const skipped = [];
   for (const full of walk(path.join(root, ERB_ROOT), '.ERB')) {
     const rel = path.relative(root, full).split(path.sep).join('/');
@@ -232,6 +253,20 @@ export function scan_erb_options(root = REPO) {
         }
         return;
       }
+      // 动态编号选项（括号里不是纯数字）单独收一节：它们配不上对，但正文里
+      // 一样可能有 `- `，不点出来就会整类隐身
+      for (const mark of statement[2].matchAll(ERB_DYNAMIC_OPTION_RE)) {
+        const inner = mark[1].trim();
+        if (/^\d+$/.test(inner) || inner === '') {
+          continue;
+        }
+        dynamic.push({
+          file: rel,
+          line: index + 1,
+          mark: inner,
+          text: mark[2].trim(),
+        });
+      }
       if (!PRINT_CONTINUES_RE.test(statement[1])) {
         if (pending === null) {
           pending = { line: index + 1, op: statement[1], body: '' };
@@ -248,7 +283,7 @@ export function scan_erb_options(root = REPO) {
     flush();
   }
   const sort = (a, b) => a.file.localeCompare(b.file) || a.line - b.line;
-  return { options: options.sort(sort), skipped };
+  return { options: options.sort(sort), dynamic: dynamic.sort(sort), skipped };
 }
 
 /**
@@ -471,8 +506,9 @@ export function scan_ere_buttons(root = REPO) {
   for (const full of walk(path.join(root, ERE_ROOT), '.js')) {
     const rel = path.relative(root, full).split(path.sep).join('/');
     const text = fs.readFileSync(full, 'utf8');
+    const code = blank_comments(text); // 注释里的示例调用不算按钮
     const lines = text.split(/\r?\n/);
-    for (const call of find_calls(text, 'printButton')) {
+    for (const call of find_calls(code, 'printButton')) {
       const args = split_args(call.args);
       buttons.push(
         make_button(
@@ -486,7 +522,7 @@ export function scan_ere_buttons(root = REPO) {
         ),
       );
     }
-    for (const call of find_calls(text, 'printMultiColumns')) {
+    for (const call of find_calls(code, 'printMultiColumns')) {
       for (const cell of split_array_items(call.args)) {
         if (!/type\s*:\s*['"]button['"]/.test(cell)) {
           continue;
@@ -611,6 +647,48 @@ function assignments_of(text, name) {
     }
   }
   return out;
+}
+
+/**
+ * 把注释内容换成等长空白（偏移不变）：文件头的示例代码（如
+ * `era.printButton('- 名字', n)` 的口径说明）不是真调用，不能收进按钮表。
+ */
+function blank_comments(text) {
+  const out = text.split('');
+  let i = 0;
+  let in_str = null;
+  while (i < text.length) {
+    const ch = text[i];
+    if (in_str) {
+      if (ch === '\\') i += 1;
+      else if (ch === in_str) in_str = null;
+      i += 1;
+      continue;
+    }
+    if (ch === "'" || ch === '"' || ch === '`') {
+      in_str = ch;
+      i += 1;
+      continue;
+    }
+    if (ch === '/' && text[i + 1] === '/') {
+      while (i < text.length && text[i] !== '\n') {
+        out[i] = ' ';
+        i += 1;
+      }
+      continue;
+    }
+    if (ch === '/' && text[i + 1] === '*') {
+      const close = text.indexOf('*/', i + 2);
+      const end = close < 0 ? text.length : close + 2;
+      while (i < end) {
+        if (text[i] !== '\n') out[i] = ' ';
+        i += 1;
+      }
+      continue;
+    }
+    i += 1;
+  }
+  return out.join('');
 }
 
 /** 找 `era.<name>(` 调用，返回实参原文（字符串/注释感知） */
@@ -758,7 +836,7 @@ export async function load_trace_refs() {
  * @returns {Promise<object>}
  */
 export async function survey(root = REPO) {
-  const { options, skipped } = scan_erb_options(root);
+  const { options, dynamic, skipped } = scan_erb_options(root);
   const buttons = scan_ere_buttons(root);
   const trace_refs = await load_trace_refs();
 
@@ -837,12 +915,19 @@ export async function survey(root = REPO) {
 
   const paired_options = new Set(paired.map((p) => p.option));
   const paired_buttons = new Set(paired.map((p) => p.button));
+  // 骨架还原不出的按钮（正文来自数据表字段、数组下标或函数返回值）：工具判不了
+  // 它们该不该带分隔符，**单列一节**交人工核——不列出来就等于把它们算进
+  // 「配对成功/一致」里，#612 审查实测：`printButton(item.label, n)` 一类
+  // 有 124 枚缺分隔符、还有 1 枚反向多写，都藏在这个桶里。
+  const unresolved_buttons = buttons.filter((b) => b.core === '');
   return {
     options,
+    dynamic,
     buttons,
     skipped,
     paired,
     review,
+    unresolved_buttons,
     unmatched_options: options.filter((o) => !paired_options.has(o)),
     unmatched_buttons: buttons.filter((b) => !paired_buttons.has(b)),
   };
@@ -889,6 +974,10 @@ export function format_survey(result) {
       `配对结论存疑 ${result.review.length} 处；` +
       `原作侧无对应按钮 ${result.unmatched_options.length} 处；ere 按钮未配上原作 ${result.unmatched_buttons.length} 处` +
       `（其中写了破折号 ${reversed.length} 处，需人工看是否是原作没写的）`,
+    `**判定面外、需人工核的两类**：动态编号选项 ${result.dynamic.length} 处、` +
+      `骨架还原不出的按钮 ${result.unresolved_buttons.length} 处` +
+      `——上面那个「缺 0」只覆盖配对成功的那 ${result.paired.length} 处，` +
+      `这两类不看就不是全库结论`,
   ];
   if (result.skipped.length > 0) {
     lines.push(`跳过（非 UTF-8，未扫）：${result.skipped.join('、')}`);
@@ -969,6 +1058,20 @@ export function format_survey(result) {
   );
   for (const b of reversed) {
     lines.push(`  ${b.file}:${b.line}  ${b.arg.slice(0, 110)}`);
+  }
+  lines.push(
+    '',
+    `── 动态编号选项（${result.dynamic.length}，括号里不是纯数字——工具配不上，需人工核）──`,
+  );
+  for (const d of result.dynamic) {
+    lines.push(`  ${d.file}:${d.line}  [${d.mark}] - ${d.text.slice(0, 70)}`);
+  }
+  lines.push(
+    '',
+    `── 骨架还原不出的按钮（${result.unresolved_buttons.length}，正文来自数据表/数组/函数——需人工核）──`,
+  );
+  for (const b of result.unresolved_buttons) {
+    lines.push(`  ${b.file}:${b.line}  ${b.arg.slice(0, 90)}`);
   }
   lines.push(
     '',
