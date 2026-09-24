@@ -664,6 +664,19 @@ export const FILES = [
         ref: '636',
         any: [/^\s*PRINTFORM \[\{COUNT,2\}\]$/m],
       },
+      // —— #563：ENEMY_EXIST2 的 MAX_NAME_LEN 静态量与只增不减的写入行 ——
+      {
+        src: 'target/ERB/迷宮/DUNGEON_INFO2.ERB',
+        ref: '551',
+        any: [/^\s*#DIM MAX_NAME_LEN = 0$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_INFO2.ERB',
+        ref: '569',
+        any: [
+          /^\s*MAX_NAME_LEN = MAX\(STRLENS\(SAVESTR:L_CHAR\), MAX_NAME_LEN\)$/m,
+        ],
+      },
     ],
   },
 ];

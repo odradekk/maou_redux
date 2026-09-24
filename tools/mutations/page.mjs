@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 426; // #549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 434; // #563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4119,5 +4119,78 @@ export default [
         (getbit(v5, 4) ? 'ON' : 'OFF'),`,
     tests: ['event-auto-execution-e2e'],
     must_mention: '开启后重绘为 ON',
+  },
+  // —— #563：ENEMY_EXIST2 的名字对齐宽度（静态保留 + 全角 2 格计宽，M11720 起）——
+  {
+    desc: 'M11720 MAX_NAME_LEN 计宽退回字符数（display_width → name.length，全角名只算一半宽）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '    max_name_len = Math.max(display_width(name), max_name_len);',
+    replace:
+      '    max_name_len = Math.max(name.length, max_name_len); // 变异：按字符数计宽',
+    tests: ['page-dungeon-info'],
+    must_mention: '全角算 2 格，不是字符数',
+  },
+  {
+    desc: 'M11721 MAX_NAME_LEN 失去静态保留（函数开头复位成局部量，先长后短时宽度回落）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  const sorted = [];',
+    replace:
+      '  max_name_len = 0; // 变异：每次调用复位，丢原作 #DIM 静态语义\n  const sorted = [];',
+    tests: ['page-dungeon-info'],
+    must_mention: '静态宽度不回落',
+  },
+  {
+    desc: 'M11722 MAX_NAME_LEN 的只增不减被拆（Math.max 改直接覆盖，最后一名顶掉更长的名）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '    max_name_len = Math.max(display_width(name), max_name_len);',
+    replace: '    max_name_len = display_width(name); // 变异：覆盖而非取最大',
+    tests: ['page-dungeon-info'],
+    must_mention: '第一轮：队员名补到 12 列',
+  },
+  {
+    desc: 'M11723 勇者行的名字补齐删除（:627 %SAVESTR,MAX_NAME_LEN,LEFT% 丢填充）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '      content: `${pad_display(name_of(cid), max_name_len)}\\u3000`,',
+    replace: '      content: `${name_of(cid)}\\u3000`, // 变异：勇者行不补齐',
+    tests: ['page-dungeon-info'],
+    must_mention: '同队行：队员名按显示宽度右补半角空格',
+  },
+  {
+    desc: 'M11724 护卫行的名字补齐删除（:637 %SAVESTR,MAX_NAME_LEN,LEFT% 丢填充）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '          { content: pad_display(name_of(cid), max_name_len) },',
+    replace: '          { content: name_of(cid) }, // 变异：护卫行不补齐',
+    tests: ['page-dungeon-info'],
+    must_mention: '静态宽度不回落',
+  },
+  {
+    desc: 'M11725 勇者行补齐退回按字符数（pad_display → padEnd，全角名的填充只到一半）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '      content: `${pad_display(name_of(cid), max_name_len)}\\u3000`,',
+    replace:
+      "      content: `${name_of(cid).padEnd(max_name_len, ' ')}\\u3000`, // 变异：按字符数补",
+    tests: ['page-dungeon-info'],
+    must_mention: '全角算 2 格，不是字符数',
+  },
+  {
+    desc: 'M11726 护卫行补齐退回按字符数（pad_display → padEnd，全角名的填充只到一半）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '          { content: pad_display(name_of(cid), max_name_len) },',
+    replace:
+      "          { content: name_of(cid).padEnd(max_name_len, ' ') }, // 变异：按字符数补",
+    tests: ['page-dungeon-info'],
+    must_mention: '第二轮：护卫行仍按第一轮的 12 列补齐',
+  },
+  {
+    desc: 'M11727 MAX_NAME_LEN 只按侵攻中的角色更新（:569 的 MAX 本应对每一个筛出角色执行，迎击/奴隶的长名被忽略）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '    max_name_len = Math.max(display_width(name), max_name_len);',
+    replace: `    if (cflag_get(cid, 1) === 2) {
+      // 变异：宽度只按侵攻中的角色更新
+      max_name_len = Math.max(display_width(name), max_name_len);
+    }`,
+    tests: ['page-dungeon-info'],
+    must_mention:
+      '勇者行按迎击者的长名补齐（宽度来自全部筛出角色，非仅侵攻中）',
   },
 ];
