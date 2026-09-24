@@ -577,8 +577,5 @@ test('#615 一般分派清算：共处理句与「的性欲。+ 传闻」同属�
     rows[clear].length > prefix.length,
     ':1292-1305 传闻的 PRINTFORML 收同一行（#615：此前拆成两行）',
   );
-  assert.ok(
-    !rows.includes('温妮的行为不为人知。'),
-    '传闻不单独占一行',
-  );
+  assert.ok(!rows.includes('温妮的行为不为人知。'), '传闻不单独占一行');
 });

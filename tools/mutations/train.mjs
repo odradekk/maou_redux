@@ -10425,7 +10425,7 @@ export default [
   {
     desc: 'M12262 奉仕分派：角色名挪回穴句行行首（:892-941 那条显示行不再带角色名）',
     file: 'ere/system/train/benki.js',
-    find: '    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = \'\';',
+    find: "    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = '';",
     replace:
       '    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = `${name_of(arg)}`; // 变异：角色名挪回穴句行',
     tests: ['benki'],
