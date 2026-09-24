@@ -68,6 +68,12 @@
  *     后由 DRAW_PAGE 重画，等价（反馈行经 waitAnyKey 读键，可见性不损失）。
  *   - PRINTBUTTON（现名, CSTR:MASTER:99）（点击把现名预填进输入框）→ 纯
  *     文本 `（现名）` 提示：ere 引擎无「按钮点击预填输入框」能力。
+ *   - **故事命名的空输入（:200 `INPUTS`）按 #567 的裁定处理**：0 视为空输入、
+ *     走 :207-209 的消名支；提示行**不补**输入 0 的说明——原作文案
+ *     「请输入一个名称故事：」不含「不输入」字样，1:1 保留。判断依据见
+ *     ere/utils/input-text.js。**#151 的旧结论（消名分支真机双重不可达，
+ *     登记为引擎换代失效）随本票作废**：0 就是「不输入」在引擎上的归一形态，
+ *     按 #567 的「有原作空输入分支的一律 B」裁定恢复可达。
  *   - @EVENTLOAD（SYSTEM ver1.0.3.ERB:760-778，读档后引擎回调）**自 #137
  *     起由 ere/event/event-load.js 承载**（本文件 require 装配，emit 点在
  *     load_game 的成功分支）：LOADGLOBAL（:762）自 #547 起在该链首行镜像
@@ -96,6 +102,7 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
+const { input_text } = require('#/utils/input-text');
 
 /**
  * 分页步长：原作 SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
@@ -302,9 +309,10 @@ async function set_story_name(anchor) {
     era.print(`（${current}）`);
   }
   era.println(); // :198 PRINTL
-  // :200 INPUTS——era.input() 会把可数值化的输入转 Number，String 化收文本
-  const raw = await era.input();
-  const name = String(raw ?? '');
+  // :200 INPUTS——引擎把回传值按 getNumber 归一（'' 与 "0" 都成数值 0），
+  // 按 #567 的裁定 0 视为空输入，经共享判据还原成空串后落 :207-209 的消名支
+  // （判断依据见 ere/utils/input-text.js；文件头的 #151 作废说明同源）
+  const name = input_text(await era.input());
   if (name.length > 32) {
     // :201-203 存储截断到 32 字符，**显示原串**（原作如此——CSTR 存
     // SUBSTRING(RESULTS,0,32)，PRINTFORMW 打印的是未截断的 RESULTS）

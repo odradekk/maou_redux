@@ -1224,12 +1224,16 @@ test('TATOO_SET_OFF：部位菜单 + 自由文字（刻印与消去两支）', a
     all_text(first.added).includes('胸上雕刻了『爱』的刺青'),
     '刻印文案',
   );
-  // 消去：留空 → 清空
+  assert.ok(
+    all_text(first.added).includes('（输入 0 消去刺青）'),
+    'ere 侧补的输入 0 说明（#567）',
+  );
+  // 消去：输入 0（引擎归一后的空输入形态）→ 清空
   const erase = make_fixture({ seed: { 'cstr:1:11': '爱' } });
-  const second = await run(erase, 'tatoo_set_off', [1, 11, '', 0], {});
+  const second = await run(erase, 'tatoo_set_off', [1, 11, 0, 0], {});
   assert.equal(second.ret, 1);
-  // 空输入在引擎里到手是数字 0，input_text 还原成空串（模块内的登记）
-  assert.equal(erase.store.get('cstr:1:11'), '');
+  // 0 在引擎里就是空输入到手的样子，input_text 还原成空串（utils/input-text.js）
+  assert.equal(erase.store.get('cstr:1:11'), '', '输入 0 落成空串');
   assert.ok(all_text(second.added).includes('胸的刺青消去了'), '消去文案');
   // 部位表的按钮是 10-17 八个
   assert.deepEqual(
@@ -1755,11 +1759,15 @@ test('SET_FREE_TRAIN：写入 CSTR:7 与两项 ABL + 两档提示', async () => 
   assert.equal(set.store.get('abl:1:40'), 0);
   assert.equal(set.store.get('juel:1:15'), 0);
   assert.ok(all_text(added).includes('屁股调教设定完毕。'));
-  // 留空 → 重置提示
+  assert.ok(
+    all_text(added).includes('（输入 0 重置）'),
+    'ere 侧补的输入 0 说明（#567）',
+  );
+  // 输入 0（引擎归一后的空输入形态）→ 重置提示
   const reset = make_fixture({ seed: { 'cstr:1:7': '旧内容' } });
-  const second = await run(reset, 'set_free_train', [1, 0, ''], {});
+  const second = await run(reset, 'set_free_train', [1, 0, 0], {});
   assert.equal(second.ret, 1);
-  assert.equal(reset.store.get('cstr:1:7'), '');
+  assert.equal(reset.store.get('cstr:1:7'), '', '输入 0 落成空串');
   assert.ok(all_text(second.added).includes('调教成果将被重置。'));
   assert.ok(all_text(second.added).includes('自由局部调教重置完毕。'));
 });

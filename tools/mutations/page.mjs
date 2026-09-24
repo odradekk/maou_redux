@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 434; // #563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 435; // #567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4192,5 +4192,15 @@ export default [
     tests: ['page-dungeon-info'],
     must_mention:
       '勇者行按迎击者的长名补齐（宽度来自全部筛出角色，非仅侵攻中）',
+  },
+  // —— #567：故事命名的空输入语义（0 ＝ 空输入，消名支恢复可达） ——
+  {
+    desc: 'M11838 故事命名改回 A 语义（输入 0 落成故事名「0」，:207-209 消名支不可达）',
+    file: 'ere/page/page-save-load.js',
+    find: '  const name = input_text(await era.input());',
+    replace:
+      "  const name = String((await era.input()) ?? ''); // 变异：A 语义",
+    tests: ['page-save-load'],
+    must_mention: 'CSTR:MASTER:99 被清空',
   },
 ];

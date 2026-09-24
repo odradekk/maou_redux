@@ -48,6 +48,10 @@
  *    随之而来的结构性不可达：按钮化之后「输入不在按钮集里」的兜底支
  *    （各 `ELSE GOTO INPUT_LOOP` / `ELSE RETURN 0`）在实机上不可达，1:1 保留
  *    不补用例（page-ability-up.js 文件头同款登记）。
+ *    **两处自由文字输入（刺青 :1864、自由局部调教 :4131）的 0 ＝ 空输入**
+ *    （#567）：原作靠「留空」表达消去/重置，ere 侧经共享判据
+ *    `#/utils/input-text` 把引擎归一后的 0 还原成空串（引擎把 `''` 与 `"0"`
+ *    都归一成 0，判据与依据见该模块文件头），两处提示后各补一句输入 0 的说明。
  *
  * 4. **段落跳转（GOTO）用循环标签复刻**，`CLEARLINE`（局部重绘）不镜像
  *    （ere 是滚动视图，page-ability-up.js / page-tailor.js 同款），`PRINTW`
@@ -156,6 +160,7 @@ const {
   chara_name,
   chara_nickname,
 } = require('#/utils/callname-utils');
+const { input_text } = require('#/utils/input-text');
 
 /** MASTER 常量（Emuera 内置，恒 0） */
 const MASTER = 0;
@@ -196,24 +201,6 @@ const item_price = (id) => era.get(`itemprice:${id}`) || 0;
 const savestr = (cid) => chara_callname(cid);
 /** `%GET_LOOK_INFO(cid, "头发颜色")%` */
 const hair_color_name = (cid) => get_look_info(cid, KIND.HAIR_COLOR);
-
-/**
- * `INPUTS` 的等价物（自由文字输入）。
- *
- * 引擎在回传前把输入按 getNumber 归一（app.asar 模块 65 与 183，夹具
- * era-fixture.js 的 get_number 逐字镜像）：**空输入到手是数字 0**，不是空串
- * （chara-name-edit.js:150 同款登记）。本文件的两处自由文字输入（刺青、自由
- * 局部调教）在原作里靠「留空」表达消去/重置，故此处把 0 还原成空串——否则
- * 那两条分支在引擎里永远到不了。代价：玩家不能把刺青/调教项取名为「0」。
- * @param {unknown} raw era.input 的回传值
- * @returns {string} 玩家输入的文本（空输入 = 空串）
- */
-function input_text(raw) {
-  if (raw === undefined || raw === null || raw === 0) {
-    return '';
-  }
-  return String(raw);
-}
 
 /** 开局设置位图（FLAG:5；era-utils 里没有具名读法，既有消费者一律直读） */
 const settings_bitmap = () => era.get('flag:5') || 0;
@@ -1115,6 +1102,8 @@ async function tatoo_set_off() {
     era.print('现在雕刻的刺青是：没有'); // :1860-1862
   }
 
+  // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+  era.print('（输入 0 消去刺青）');
   const results = input_text(await era.input({ useRule: false })); // :1864 INPUTS
   if (results !== '') {
     era.print(`在${TATOO_NAME[select]}雕刻『${results}』刺青吗？`); // :1867
@@ -2456,6 +2445,8 @@ async function set_free_train() {
   }
   era.print('请输入新的自由局部调教项目。'); // :4128
   era.print('发送空白将会重置。'); // :4129
+  // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+  era.print('（输入 0 重置）');
   const results = input_text(await era.input({ useRule: false })); // :4131 INPUTS
   chara(local).stronghold.自由调教内容 = results; // :4132 CSTR:LOCAL:7 = %RESULTS%
   chara(local).train.局部感觉 = 0; // :4133 ABL:LOCAL:4 = 0
