@@ -637,9 +637,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '13',
-        // :13（Q = RAND:100，随即被 SELECTCASE 的 RAND:100 覆盖）
-        any: [/^\s*Q = RAND:100\s*$/m],
+        ref: '13-15',
+        // :13-15（Q = RAND:100，随即被 SELECTCASE 的 RAND:100 覆盖）
+        any: [/^\s*Q = RAND:100\s*\n\s*\n\s*; 0- 4 粉髪  5%\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -655,9 +655,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '64',
-        // :64（Q = RAND:12）
-        any: [/^\s*Q = RAND:12\s*$/m],
+        ref: '63-64',
+        // :63-64（头发状态掷点 Q = RAND:12）
+        any: [/^\s*;头发状态\s*\n\s*Q = RAND:12\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -703,9 +703,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '87',
-        // :87（Q = RAND:6）
-        any: [/^\s*Q = RAND:6\s*$/m],
+        ref: '87-88',
+        // :87-88（头发长度掷点 Q = RAND:6）
+        any: [/^\s*Q = RAND:6\s*\n\s*IF Q <= 1 \|\| TALENT:TARGET:135\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -733,9 +733,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '101',
-        // :101（Q = RAND:6）
-        any: [/^\s*Q = RAND:6\s*$/m],
+        ref: '101-102',
+        // :101-102（头发修剪方式掷点 Q = RAND:6）
+        any: [/^\s*Q = RAND:6\s*\n\s*IF Q >= 2\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -759,7 +759,7 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '129-130',
         // :129-130（Q += 1 后写入 TALENT:304）
-        any: [/^\s*Q \+= 1\s*$/m],
+        any: [/^\s*TALENT:304 = Q\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -769,9 +769,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '133',
-        // :133（Q = RAND:100）
-        any: [/^\s*Q = RAND:100\s*$/m],
+        ref: '133-134',
+        // :133-134（目掷点 Q = RAND:100）
+        any: [/^\s*Q = RAND:100\s*\n\s*; 0-10 切れ長 11%\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -819,7 +819,7 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '163-165',
         // :163-165（標準）
-        any: [/^\s*;標準\s*$/m],
+        any: [/^\s*TALENT:TARGET:305 = 6\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -829,9 +829,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '169',
-        // :169（Q = RAND:100）
-        any: [/^\s*Q = RAND:100\s*$/m],
+        ref: '168-169',
+        // :168-169（瞳色掷点 Q = RAND:100）
+        any: [/^\s*;瞳色\s*\n\s*Q = RAND:100\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -872,14 +872,14 @@ export const FILES = [
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '190-204',
-        // :190-204（唇 4 档）
-        any: [/^\s*;唇\s*$/m],
+        // :190-204（唇 4 档（肉感的起头））
+        any: [/^\s*;肉感的\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '191',
-        // :191（Q = RAND:6）
-        any: [/^\s*Q = RAND:6\s*$/m],
+        ref: '190-191',
+        // :190-191（唇掷点 Q = RAND:6）
+        any: [/^\s*;唇\s*\n\s*Q = RAND:6\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -891,7 +891,7 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '195-197',
         // :195-197（薄い）
-        any: [/^\s*;薄い\s*$/m],
+        any: [/^\s*TALENT:TARGET:307 = 2\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -903,19 +903,19 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '201-203',
         // :201-203（標準）
-        any: [/^\s*;標準\s*$/m],
+        any: [/^\s*TALENT:TARGET:307 = 4\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '207-208',
-        // :207-208（Q = RAND:3）
-        any: [/^\s*Q = RAND:3\s*$/m],
+        ref: '206-207',
+        // :206-207（体型掷点 Q = RAND:3）
+        any: [/^\s*;体型\s*\n\s*Q = RAND:3\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '206-217',
-        // :206-217（体型 3 档）
-        any: [/^\s*;体型\s*$/m],
+        // :206-217（体型 3 档（丰满的起头））
+        any: [/^\s*TALENT:TARGET:308 = 300\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -933,19 +933,19 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '214-216',
         // :214-216（標準）
-        any: [/^\s*;標準\s*$/m],
+        any: [/^\s*TALENT:TARGET:308 = 150\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '219-233',
-        // :219-233（乳头 4 档）
-        any: [/^\s*;乳头\s*$/m],
+        // :219-233（乳头 4 档（ピンク的起头））
+        any: [/^\s*TALENT:TARGET:309 = 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '220-221',
-        // :220-221（Q = RAND:6）
-        any: [/^\s*Q = RAND:6\s*$/m],
+        ref: '219-220',
+        // :219-220（乳头掷点 Q = RAND:6）
+        any: [/^\s*;乳头\s*\n\s*Q = RAND:6\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -969,19 +969,19 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '230-232',
         // :230-232（標準）
-        any: [/^\s*;標準\s*$/m],
+        any: [/^\s*TALENT:TARGET:309 = 3\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '235-255',
-        // :235-255（阴毛 6 档）
-        any: [/^\s*;陰毛\s*$/m],
+        // :235-255（阴毛 6 档（産毛的起头））
+        any: [/^\s*TALENT:TARGET:311 = 20\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '236',
-        // :236（Q = RAND:150）
-        any: [/^\s*Q = RAND:150\s*$/m],
+        ref: '235-236',
+        // :235-236（阴毛掷点 Q = RAND:150）
+        any: [/^\s*;陰毛\s*\n\s*Q = RAND:150\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -999,13 +999,13 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '243-245',
         // :243-245（薄い）
-        any: [/^\s*;薄い\s*$/m],
+        any: [/^\s*TALENT:TARGET:311 = 50\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '246-248',
         // :246-248（標準）
-        any: [/^\s*;標準\s*$/m],
+        any: [/^\s*TALENT:TARGET:311 = 100\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1028,14 +1028,14 @@ export const FILES = [
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '258-273',
-        // :258-273（ペニス 4 档）
-        any: [/^\s*;ペニス\s*$/m],
+        // :258-273（ペニス 4 档（普通的起头））
+        any: [/^\s*TALENT:TARGET:318 = 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '260',
-        // :260（Q = RAND:150）
-        any: [/^\s*Q = RAND:150\s*$/m],
+        ref: '259-260',
+        // :259-260（ペニス掷点 Q = RAND:150）
+        any: [/^\s*;有無にかかわらず設定は入れておく\s*\n\s*Q = RAND:150\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1199,7 +1199,7 @@ export const FILES = [
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '373-378',
         // :373-378（人狼（善恶值 -20））
-        any: [/^\s*;人狼\s*$/m],
+        any: [/^\s*TALENT:TARGET:314 = 2\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1427,9 +1427,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '562-564',
-        // :562-564（光之能力者机会）
-        any: [/^\s*;光之能力者になるチャンス\s*$/m],
+        ref: '561-564',
+        // :561-564（光之能力者机会）
+        any: [
+          /^\s*CALL karma, TARGET, 30\s*\n\s*;光之能力者になるチャンス\s*$/m,
+        ],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1457,9 +1459,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '593-594',
-        // :593-594（Q = RAND:20 + 1）
-        any: [/^\s*Q = RAND:20\s*$/m],
+        ref: '592-594',
+        // :592-594（$REASON 的 Q = RAND:20 + 1）
+        any: [/^\s*\$REASON\s*\n\s*Q = RAND:20\s*\n\s*Q \+= 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1523,9 +1525,9 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '612-613',
-        // :612-613（Q = RAND:20 + 1）
-        any: [/^\s*Q = RAND:20\s*$/m],
+        ref: '611-613',
+        // :611-613（$LOVE 的 Q = RAND:20 + 1）
+        any: [/^\s*\$LOVE\s*\n\s*Q = RAND:20\s*\n\s*Q \+= 1\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1547,21 +1549,15 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '645-808',
+        ref: '641-808',
         // :645-808（$FAMILY 段整体）
         any: [/^\s*\$FAMILY\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '646',
-        // :646（LOCAL = 0）
-        any: [/^\s*LOCAL = 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '647',
-        // :647（MARRY = 0）
-        any: [/^\s*MARRY = 0\s*$/m],
+        ref: '646-647',
+        // :646-647（LOCAL = 0 / MARRY = 0）
+        any: [/^\s*LOCAL = 0\s*\n\s*MARRY = 0\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1578,8 +1574,8 @@ export const FILES = [
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '650-659',
-        // :650-659（人妻：バツ2 / バツ1 / 初婚）
-        any: [/^\s*IF RAND:20 == 0\s*$/m],
+        // :650-659（人妻：バツ2）
+        any: [/^\s*LOCAL \+= 30\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1661,15 +1657,15 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '781-782',
-        // :781-782（百合气质補正 = 3：希少なふたなり）
-        any: [/^\s*;百合气质補正\s*$/m],
+        ref: '780-782',
+        // :780-782（百合气质補正 = 3（希少なふたなり））
+        any: [/^\s*LOCAL \+= 5000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '789-790',
-        // :789-790（百合气质補正 = 3：ふた女）
-        any: [/^\s*;百合气质補正\s*$/m],
+        ref: '788-790',
+        // :788-790（百合气质補正 = 3（ふた女））
+        any: [/^\s*LOCAL \+= 3000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -1679,15 +1675,15 @@ export const FILES = [
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '797-798',
-        // :797-798（百合气质補正 = 3：女女）
-        any: [/^\s*;百合气质補正\s*$/m],
+        ref: '796-798',
+        // :796-798（百合气质補正 = 3（女女））
+        any: [/^\s*LOCAL \+= 2000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
-        ref: '802-803',
-        // :802-803（百合气质補正 = 3：女ふた）
-        any: [/^\s*;百合气质補正\s*$/m],
+        ref: '801-803',
+        // :801-803（百合气质補正 = 3（女ふた））
+        any: [/^\s*LOCAL \+= 1000000000\s*\n\s*;百合气质補正\s*$/m],
       },
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
@@ -2071,7 +2067,7 @@ export const FILES = [
       {
         src: 'target/ERB/キャラ関数/LOOK.ERB',
         ref: '2475-2517',
-        // :2475-2517（経験補正：六组 >100 / >30 的共通档位）
+        // :2475-2517（経験補正：精饮/侍奉/爱情/被虐四组 >100 / >30）
         any: [/^\s*IF EXP:精饮绝顶经验 > 100\s*$/m],
       },
       {

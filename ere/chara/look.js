@@ -33,7 +33,7 @@
  *
  *   - :476 `ELSEIF TALENT:319 == 10 || 12`——`|| 12` 是恒真常量，该臂等价
  *     于 ELSE；保留原写法，注释说明。
- *   - :599 `IF Q > 103 && EX_TALENT:2`——Q 只可能是 1-20 或 90-93，该判定
+ *   - :599 `SIF Q >103 && EX_TALENT:2`——Q 只可能是 1-20 或 90-93，该判定
  *     恒假；保留原写法（改写成常量会让它的变异失去意义）。
  *   - :102-113 `IF Q >= 2` 吞掉了随后的 `ELSEIF Q == 3` / `ELSEIF Q == 4`
  *     两支（头发修剪方式：2 齐剪 / 3 层剪 不可达）；按 page-chara-info.js
@@ -172,7 +172,7 @@ function look_set(cid, arg, rand = default_rand) {
   if (t(cid, T_头发颜色) > 0) {
     // :10-12 設定済み（stick 修改：不再按 rand 重掷）
   } else {
-    rand_n(100); // :13 Q = RAND:100 —— 源里随即被 SELECTCASE 的 RAND:100 覆盖，此掷不参与判定（1:1 保留，它仍消费一个随机数）
+    rand_n(100); // :13-15 Q = RAND:100 —— 源里随即被 SELECTCASE 的 RAND:100 覆盖，此掷不参与判定（1:1 保留，它仍消费一个随机数）
     // :15-59 0-4 粉髪 5% / 5-14 紫髪 10% / 15-20 白发 6% / 21-30 青髪 10%
     //        31-40 緑髪 10% / 41-50 栗毛 10% / 51-60 金色 10% / 61-79 黒髪 19%
     //        80-89 赤毛 10% / 90-94 暗金色 5% / 95-99 銀髪 5%
@@ -205,7 +205,7 @@ function look_set(cid, arg, rand = default_rand) {
   }
 
   // —— 头发状态（:63-83）——
-  const q_state = rand_n(12); // :64 Q = RAND:12
+  const q_state = rand_n(12); // :63-64 Q = RAND:12
   set_t(
     cid,
     T_头发状态,
@@ -223,7 +223,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
 
   // —— 头发长度（:85-97）ボーイッシュ（未熟 135）なら常にショート ——
-  const q_hair_len = rand_n(6); // :87
+  const q_hair_len = rand_n(6); // :87-88
   set_t(
     cid,
     T_头发长度,
@@ -235,7 +235,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
 
   // —— 头发修剪方式（:99-114）——
-  const q_cut = rand_n(6); // :101
+  const q_cut = rand_n(6); // :101-102
   // 源 :102-113 是 `IF Q >= 2 → 1` 后接 `ELSEIF Q == 3 → 2` / `ELSEIF Q == 4 → 3`：
   // 前一支把 2..5 全吃掉，2 齐剪与 3 层剪**不可达**（page-chara-info.js 先例，
   // 精简为可达形状：Q >= 2 → 1 基本剪法，否则 → 4 碎发）
@@ -254,7 +254,7 @@ function look_set(cid, arg, rand = default_rand) {
   set_t(cid, T_发型, q_style + 1); // :129-130 Q += 1
 
   // —— 目（:132-166）——
-  const q_eye = rand_n(100); // :133
+  const q_eye = rand_n(100); // :133-134
   set_t(
     cid,
     T_目,
@@ -276,7 +276,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
 
   // —— 瞳色（:168-188）——
-  const q_eye_color = rand_n(100); // :169
+  const q_eye_color = rand_n(100); // :168-169
   set_t(
     cid,
     T_瞳色,
@@ -294,7 +294,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
 
   // —— 唇（:190-204）——
-  const q_lip = rand_n(6); // :191
+  const q_lip = rand_n(6); // :190-191
   set_t(
     cid,
     T_唇,
@@ -308,7 +308,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
 
   // —— 体型（:206-217）——
-  const q_body = rand_n(3); // :207-208
+  const q_body = rand_n(3); // :206-207
   set_t(
     cid,
     T_体型,
@@ -320,7 +320,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
 
   // —— 乳头（:219-233）——
-  const q_nipple = rand_n(6); // :220-221
+  const q_nipple = rand_n(6); // :219-220
   set_t(
     cid,
     T_乳头,
@@ -334,7 +334,7 @@ function look_set(cid, arg, rand = default_rand) {
   );
 
   // —— 陰毛（:235-255）——
-  const q_pubic = rand_n(150); // :236
+  const q_pubic = rand_n(150); // :235-236
   set_t(
     cid,
     T_阴毛生长极限,
@@ -353,7 +353,7 @@ function look_set(cid, arg, rand = default_rand) {
   set_t(cid, T_阴毛状态, t(cid, T_阴毛生长极限)); // :256
 
   // —— ペニス（:258-273）有無にかかわらず設定は入れておく ——
-  const q_penis = rand_n(150); // :260
+  const q_penis = rand_n(150); // :259-260
   const boyish = t(cid, T_未熟);
   set_t(
     cid,
@@ -410,7 +410,7 @@ function look_set(cid, arg, rand = default_rand) {
   born_set(cid, rand_n); // :496-589 $BORN
   reason_set(cid, rand_n); // :592-608 $REASON
   love_set(cid, rand_n); // :611-621 $LOVE
-  family_set(cid, rand_n); // :645-808 $FAMILY
+  family_set(cid, rand_n); // :641-808 $FAMILY
 
   return 1; // :808-811 RETURN 1
 }
@@ -676,7 +676,7 @@ function born_set(cid, rand_n) {
   } else if (q === 2 || q === 8 || q === 11 || q === 12 || q === 13) {
     // :559-561 修道女・貴族・巫女・聖女・予言者は善恶值が高い
     karma(cid, 30);
-    // :562-564 光之能力者になるチャンス
+    // :561-564 光之能力者になるチャンス
     if (rand_n(40) === 0) {
       set_t(cid, T_光之能力者, 1);
     }
@@ -702,12 +702,12 @@ function born_set(cid, rand_n) {
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function reason_set(cid, rand_n) {
-  let q = rand_n(20) + 1; // :593-594
+  let q = rand_n(20) + 1; // :592-594
   // :596-598 配下の場合、特別な理由
   if (t(cid, T_精英) === 1 || ex_t(cid, 2)) {
     q = 90 + rand_n(4);
   }
-  // :599-600 `SIF Q > 103 && EX_TALENT:2 → Q = 93`：Q 只可能是 1-20 或
+  // :599-600 `SIF Q >103 && EX_TALENT:2 → Q = 93`：Q 只可能是 1-20 或
   // 90-93，此判定在两个赋值点之后**恒假**（1:1 保留原写法，见文件头）
   if (q > 103 && ex_t(cid, 2)) {
     q = 93;
@@ -729,7 +729,7 @@ function reason_set(cid, rand_n) {
  * @param {(n: number) => number} rand_n RAND:N 随机源
  */
 function love_set(cid, rand_n) {
-  const q = rand_n(20) + 1; // :612-613
+  const q = rand_n(20) + 1; // :611-613
   if (q === 4 || q === 8 || q === 9 || q === 10 || q === 11) {
     // :614-616 恋人・家族・使命・故郷・憧れは善恶值が高い
     karma(cid, 20);
@@ -741,7 +741,8 @@ function love_set(cid, rand_n) {
 }
 
 /**
- * 源 `$FAMILY` 段（:645-808）：家族构成码（TALENT:320）的生成。
+ * 源 `$FAMILY` 段（:641-808）：家族构成码（TALENT:320）的生成（段标签 `$FAMILY`
+ * 在区间内，前面 :641-642 的非精英判定与家族构成置 1 也属本段）。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
@@ -752,8 +753,8 @@ function family_set(cid, rand_n) {
     set_t(cid, T_家族构成, 1);
   }
 
-  let local = 0; // :646 LOCAL = 0
-  let marry = 0; // :647 MARRY = 0
+  let local = 0; // :646-647 LOCAL = 0 / MARRY = 0
+  let marry = 0;
 
   // :644-682 結婚相手の設定
   if (t(cid, T_人妻) === 1) {
@@ -844,21 +845,21 @@ function family_set(cid, rand_n) {
     // :776-791 ふたなり
     if (rand_n(10) === 0) {
       local += 5000000000; // 希少なふたなりのカップル
-      chara(cid).chara.百合气质 = 3; // :781-782 百合气质補正
+      chara(cid).chara.百合气质 = 3; // :780-782 百合气质補正
     } else if (rand_n(2) === 0) {
       local += 4000000000; // ふた男カップル
     } else {
       local += 3000000000; // ふた女カップル
-      chara(cid).chara.百合气质 = 3; // :789-790
+      chara(cid).chara.百合气质 = 3; // :788-790
     }
   } else if (marry === 1) {
     // :792-804 女
     if (rand_n(20) === 0) {
       local += 2000000000; // 女女カップル
-      chara(cid).chara.百合气质 = 3; // :797-798
+      chara(cid).chara.百合气质 = 3; // :796-798
     } else if (rand_n(8) === 0) {
       local += 1000000000; // 女ふたカップル
-      chara(cid).chara.百合气质 = 3; // :802-803
+      chara(cid).chara.百合气质 = 3; // :801-803
     }
   }
 
