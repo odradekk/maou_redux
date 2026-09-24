@@ -1365,9 +1365,7 @@ test('BANISHMENT：五选一菜单是按钮，未显示的 100 仍可键入（#5
     '[4] 让她回到成为勇者前的生活',
   ]);
   assert(
-    !fixture
-      .text_lines()
-      .some((line) => line.startsWith('[0] 就这样流放掉')),
+    !fixture.text_lines().some((line) => line.startsWith('[0] 就这样流放掉')),
     '选项不再以纯文本出现',
   );
 });

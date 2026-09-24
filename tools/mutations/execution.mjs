@@ -1364,7 +1364,7 @@ export default [
   {
     desc: 'M11994 处置菜单退回纯文本行（[0]-[7] 点不动）',
     file: 'ere/event/event-execution.js',
-    find: "      era.printButton(label, index);\n    }",
+    find: '      era.printButton(label, index);\n    }',
     replace: "      era.print('[' + index + '] ' + label); // 变异\n    }",
     tests: ['event-execution'],
     must_mention: '处置菜单',
@@ -1373,7 +1373,8 @@ export default [
     desc: 'M11995 候选人轮的 [100] 返回改成按钮（白名单会把候选人编号锁死）',
     file: 'ere/event/event-execution.js',
     find: "    era.print('[100] 返回');\n    let selected;",
-    replace: "    era.printButton('返回', 100); // 变异：列表轮打了按钮\n    let selected;",
+    replace:
+      "    era.printButton('返回', 100); // 变异：列表轮打了按钮\n    let selected;",
     tests: ['event-execution'],
     must_mention: '候选人轮的 [100] 返回保持纯文本',
   },

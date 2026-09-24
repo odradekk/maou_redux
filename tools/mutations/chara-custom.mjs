@@ -680,7 +680,8 @@ export default [
     desc: 'M12010 CHARA_FIRST_XP 的初吻对象菜单退回纯文本行',
     file: 'ere/chara/chara-custom2.js',
     find: "    era.printButton('不明', 0);",
-    replace: "    era.print('[0] 不明 [1] 魔王 [993] 狂王 [994] 怪物 [995] 野狗 [999] 触手'); // 变异",
+    replace:
+      "    era.print('[0] 不明 [1] 魔王 [993] 狂王 [994] 怪物 [995] 野狗 [999] 触手'); // 变异",
     tests: ['chara-custom2'],
     must_mention: '输入不合法！请输入以下值之一：',
   },
@@ -704,7 +705,8 @@ export default [
     desc: 'M12013 CHAR_CUSTOM 最终确认退回纯文本行（1/2 两档点不动）',
     file: 'ere/chara/chara-custom2.js',
     find: "          era.printButton('好，就是这样了！', 1);",
-    replace: "          era.print('[1] 好，就是这样了！  [2] 我还想再修改一下。 '); // 变异",
+    replace:
+      "          era.print('[1] 好，就是这样了！  [2] 我还想再修改一下。 '); // 变异",
     tests: ['chara-custom2'],
     must_mention: '输入不合法！请输入以下值之一：',
   },
@@ -712,7 +714,8 @@ export default [
     desc: 'M12014 CHAR_APPEND 的性别选项改成按钮（源是 PRINTFORMW，WAIT 会把按钮整批禁用）',
     file: 'ere/chara/chara-custom.js',
     find: "    era.print('[1] 男性      [2] 女性      [3] 扶她'); // :240",
-    replace: "    era.printButton('男性', 1);\n    era.printButton('女性', 2);\n    era.printButton('扶她', 3); // 变异",
+    replace:
+      "    era.printButton('男性', 1);\n    era.printButton('女性', 2);\n    era.printButton('扶她', 3); // 变异",
     tests: ['chara-custom'],
     must_mention: '性别选项仍是纯文本行',
   },
@@ -736,7 +739,8 @@ export default [
     desc: 'M12017 CHARA_FIRST_XP 的初体验对象菜单退回纯文本行',
     file: 'ere/chara/chara-custom2.js',
     find: "      era.printButton('自定义输入', 997);\n      era.printButton('无', 998);\n      sex = await era.input();",
-    replace: "      era.print('[997] 自定义输入');\n      era.print('[998] 无'); // 变异\n      sex = await era.input();",
+    replace:
+      "      era.print('[997] 自定义输入');\n      era.print('[998] 无'); // 变异\n      sex = await era.input();",
     tests: ['chara-custom2'],
     must_mention: '输入不合法！请输入以下值之一：',
   },

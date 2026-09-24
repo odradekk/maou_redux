@@ -40,6 +40,16 @@
  * 口上正文经 tools/lang-normalize.js 离线归一为简体（issue #60，对 1:1 的
  * 有意偏离——源文件汉化本身繁简混用）。保真锁（test/kojo-text-fidelity
  * .test.js 锁 D）对 ERB 侧应用同一张表归一后比对。
+ *
+ * == #572 复核：@SET_BICH_LEVEL 的裸编号行保持纯文本 ==
+ *
+ * 源 :1176 是 `PRINTL [0] [1] [2] [3] [4] [5]`——六枚**没有正文**的裸快捷键
+ * （等级 0-5，选中的等级由 :1188-1192 的播报补述）。按钮化要走两条路之一：
+ * 拆成六条语句（保真锁 A/D 的「一条 JS 语句 ↔ 一行 PRINT」绑定不成立）或改用
+ * 多列网格按钮（`printMultiColumns`/`printInColRows` 的按钮格，本项目尚无
+ * 先例、须先在引擎里核渲染）。本票按「其他」保留纯文本：该轮没有按钮＝引擎
+ * 的自由输入通道，玩家键入 0-5 照常可达，丢的只是「点得动」；留给后续按
+ * 界面统一处理（docs/research/plaintext-options.md 第六节）。
  */
 
 const era = require('#/era-electron');

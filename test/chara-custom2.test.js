@@ -1166,7 +1166,9 @@ test('CHARA_FIRST_XP：确认时输入 1 → 重来问卷', async () => {
   );
   // #572 审查返工：确认一问（源 :790）的两枚按钮逐个钉住
   assert.deepEqual(
-    buttons(fixture).slice(-2).map((b) => [b.acc, b.text]),
+    buttons(fixture)
+      .slice(-2)
+      .map((b) => [b.acc, b.text]),
     [
       [0, '好的'],
       [1, '还是改一下吧'],
@@ -1443,7 +1445,9 @@ test('CHAR_CUSTOM：最终确认的越界输入由引擎拒收（#572：选项�
   );
   // #572 审查返工：最终确认（源 :87）的两枚按钮逐个钉住
   assert.deepEqual(
-    buttons(fixture).slice(-2).map((b) => [b.acc, b.text]),
+    buttons(fixture)
+      .slice(-2)
+      .map((b) => [b.acc, b.text]),
     [
       [1, '好，就是这样了！'],
       [2, '我还想再修改一下。'],

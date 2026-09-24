@@ -294,9 +294,8 @@ test('MONSTER_SHOP：种族选择失败（SELECT_MONSTER 返回 0）回到种族
   // 重画一轮种族菜单 → 再 999 退出。这是 select_monster 返回 0 的 continue 支。
   const fixture = await run_monster_shop({}, 1, 1, 1, 202, 999, 999);
   assert(
-    history_texts(fixture).filter(
-      (line) => line === '　请选择魔物从者的种类',
-    ).length >= 2,
+    history_texts(fixture).filter((line) => line === '　请选择魔物从者的种类')
+      .length >= 2,
     '选择失败后回到种族菜单（重画）',
   );
 });

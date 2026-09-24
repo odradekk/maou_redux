@@ -3384,7 +3384,8 @@ export default [
     desc: 'M12001 CHAR_GIFT 性格子菜单退回纯文本行（八档点不动）',
     file: 'ere/event/event-ending.js',
     find: "      era.printButton('- 慈爱', 0);",
-    replace: "      era.print('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　'); // 变异",
+    replace:
+      "      era.print('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　'); // 变异",
     tests: ['event-ending'],
     must_mention: '性格菜单',
   },

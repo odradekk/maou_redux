@@ -27,7 +27,6 @@ export default {
   'ere/event/event-grotesque.js': 1,
   'ere/event/get-specialtalent.js': 2,
   'ere/kojo/kojo-dungeon-bitch.js': 2,
-  'ere/kojo/kojo-dungeon-ravish.js': 4,
   'ere/page/page-chara-shop.js': 1,
   'ere/page/page-dungeon-info2.js': 2,
   'ere/page/page-life-list.js': 1,

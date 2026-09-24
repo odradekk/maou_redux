@@ -343,10 +343,7 @@ async function char_gift(arg, rand = default_rand) {
     era.print('请设定偏好的性格和发色。'); // :210
     // :211-212 %TALENTNAME:PERSONAL% 与 %GET_LOOK_INFO(A,"头发颜色")%
     // 源是 PRINTFORML 纯文本选项（PR #53 通则升格按钮，正文不写 [编号]）。
-    era.printButton(
-      `性格 ：  ${era.get(`talentname:${personal}`) ?? ''}`,
-      0,
-    );
+    era.printButton(`性格 ：  ${era.get(`talentname:${personal}`) ?? ''}`, 0);
     era.printButton(`发色 ：  ${get_look_info(a, '头发颜色')}`, 1);
     era.drawLine(); // :210-214 菜单块（PRINTL 三行 + DRAWLINE + 决定行）
     era.printButton('决定', 100); // :214

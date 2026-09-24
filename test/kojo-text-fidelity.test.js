@@ -661,12 +661,12 @@ function first_unordered(segs, hay) {
 
 /**
  * 按钮语句的 ERB 侧去编号前缀（#572）：`PRINTL [0] - 直不起来。` 转成按钮后
- * 正文只写 `直不起来。`（编号由引擎按 showAcc 拼 `[编号] `，AGENTS.md 硬约束），
- * 故定位子串比对前先把行首的 `[N]` 与可选的分隔符去掉。只认行首形态——
- * 句中出现的 `[N]` 是正文的一部分，不动。
+ * 正文只写 `- 直不起来。`——**只去掉 `[N] ` 这个引擎前缀，`- ` 与其余文字是
+ * 原作文本的一部分，照写**（page-ability-up.js:184 的既有口径）。只认行首
+ * 形态——句中出现的 `[N]` 是正文的一部分，不动。
  */
 function strip_button_marker(text) {
-  return text.replace(/^\s*\[\s*\d+\s*\]\s*-?\s*/, '');
+  return text.replace(/^\s*\[\s*\d+\s*\]\s*/, '');
 }
 
 /** 语句的锚绑定：尾锚优先；否则前一行纯注释锚（窗口内有 PRINTFORM 才算）。

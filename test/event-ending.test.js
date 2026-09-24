@@ -442,10 +442,7 @@ test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色�
     buttons.includes('[0] 性格 ： 自信家'),
     `:211 的 %TALENTNAME:PERSONAL%（实显：${JSON.stringify(buttons)}）`,
   );
-  assert(
-    buttons.includes('[1] 发色 ： 金发'),
-    ':212 的 %GET_LOOK_INFO 默认色',
-  );
+  assert(buttons.includes('[1] 发色 ： 金发'), ':212 的 %GET_LOOK_INFO 默认色');
   assert(buttons.includes('[100] 决定'), ':214');
   assert(texts.includes('请选择偏好的性格。'), ':219');
   for (const option of [
