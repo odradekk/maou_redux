@@ -30,7 +30,9 @@
  *   - 名册自己的 NO_PAGE/SORT_SELECT/SORT_ACT 是本函数的局部变量（原作是
  *     静态变量）：子流程返回后不归零靠的是「同一轮循环 continue 重绘」，与
  *     JUMP CHARA_INFO 同效果；但**从名册之外重进**（主菜单 → 名单）会回初值，
- *     原作不会——#391 起的既有取舍，本票不动它（换号页的 NO_PAGE 是另一个
+ *     原作不会——#391 起的既有取舍，本票不动它（#606 起这一差异还决定结婚
+ *     是否结束本回合：1200 视图走包装入口恒回 0，原作停在上次的非 1200 视图
+ *     时才结束，见 chara_info_individual_wrapped；换号页的 NO_PAGE 是另一个
  *     函数里的独立静态变量，那个已按原作提到模块级，见该文件头）；
  *   - REDRAW 0/1、CLEARLINE 局部重绘不镜像（page-dungeon-info2.js/
  *     page-select-target.js 同款先例）：本文件的 CHARA_INFO 与
@@ -673,9 +675,11 @@ async function chara_info() {
       // :91-94 CASE 0 TO CHARANUM-1（改写为 ID 语义：0=魔王或已加入
       // 角色）。`SIF RESULT==0 && MASTER: RESULT=MASTER` 恒假（MASTER 是
       // 恒 0 常量，逻辑与运算里恒假），无需代码
+      // :95-99 SORT_SELECT==1200 走包装入口（恒回 0，见该函数注释——
+      // 原作缺陷，#606 起照搬）；其余视图直调内层，返回值直达 :100 的判据
       const sub_result =
         sort_select === 1200
-          ? await chara_info_individual(result, number_view_order())
+          ? await chara_info_individual_wrapped(result)
           : await chara_info_individual(result, order);
       if (sub_result === 1) {
         return 1;
@@ -691,11 +695,19 @@ async function chara_info() {
  * 个别信息页的入口——原作现建的是 `LOCAL:COUNT = COUNT + 1`（1..CHARANUM）
  * 的序号顺位表，即「编号」视图那套顺序；ere 侧换成同一套排列键
  * （number_view_order，按移植自建的排序编号）。
+ * 原作在 :829 的 CALL 之后没有 RETURN，直接落到函数末尾；Emuera 对普通函数
+ * state.Return(0)`）。本包装入口因此恒回 0：内层返回 1 的操作只有结婚
+ * （@MARRIAGE 的两个出口——婚礼完成 CHARA_MARRIAGE.ERB:450-451、
+ * ENTER_LOVER 成功 CHARA_MARRIAGE.ERB:71-74；转职最高返回 2，诱惑的
+ * RETURN 1 被注释）。名册 1200 视图走此入口时结婚
+ * 不结束本回合、回到人物列表；主菜单 498/499 名字按钮的调用点不读返回值
+ * （回到主菜单）——原作自身的缺陷（#14 已登记），照搬不修。
  * @param {number} cid 角色 ID
- * @returns {Promise<number>}
+ * @returns {Promise<number>} 恒 0（原作 RESULT 被清 0，不是透传内层返回值）
  */
 async function chara_info_individual_wrapped(cid) {
-  return chara_info_individual(cid, number_view_order());
+  await chara_info_individual(cid, number_view_order());
+  return 0;
 }
 
 // —— @CHARA_INFO_INDIVIDUAL（:833-1100） ——

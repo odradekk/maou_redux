@@ -7,6 +7,30 @@ export const FILES = [
     js: 'ere/dungeon/dungeon-after.js',
     refs: [
       {
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '24-25',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:A%打倒了勇者，凯旋而归，来到你的身边，$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '328-329',
+        any: [
+          /^\s*PRINTFORMW %SAVESTR:A%没有发现勇者（或者是输了），失败而归$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '27-31',
+        any: [/^\s*PRINTL \[0\] 这是你应份的$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_AFTER.ERB',
+        ref: '331-341',
+        any: [/^\s*PRINT \[0\] 什么也不做/m],
+      },
+      {
         src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
         ref: '302',
         any: [/^\s*CALL DUNGEON_AFTER$/m],

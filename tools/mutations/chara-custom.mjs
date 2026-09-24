@@ -21,7 +21,7 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 76; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）
+export const COUNT = 84; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -635,7 +635,9 @@ export default [
     replace:
       "        kiss_name = String((await era.input()) ?? ''); // 变异：A 语义",
     tests: ['chara-custom2'],
-    must_mention: ':656 的播报',
+    // #572 起选项是按钮：A 语义下部位一问照问、输入序列错位，由引擎的按钮
+    // 白名单当场拒收（断言走不到「:656 的播报」），变异仍被判红。
+    must_mention: '输入不合法！请输入以下值之一：',
   },
   {
     desc: 'M11836 初体验自定义输入改回 A 语义（0 落成名字「0」，随机支不可达）',
@@ -674,5 +676,74 @@ export default [
       "    era.printButton('后一页', 998); // :44\n    era.println(); // 变异：页脚之后多补空行",
     tests: ['chara-custom2'],
     must_mention: '角色定制页脚按钮之后不应有空行',
+  },
+  // —— #572：角色定制菜单的选项按钮化与「保持纯文本」两处 ——
+  {
+    desc: 'M12010 CHARA_FIRST_XP 的初吻对象菜单退回纯文本行',
+    file: 'ere/chara/chara-custom2.js',
+    find: "    era.printButton('不明', 0);",
+    replace:
+      "    era.print('[0] 不明 [1] 魔王 [993] 狂王 [994] 怪物 [995] 野狗 [999] 触手'); // 变异",
+    tests: ['chara-custom2'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12011 CHARA_FIRST_XP 的部位菜单退回纯文本行（四个区间都点不动）',
+    file: 'ere/chara/chara-custom2.js',
+    find: "      era.printButton('唇', 1); // :618",
+    replace: "      era.print('[1] 唇 '); // 变异",
+    tests: ['chara-custom2'],
+    must_mention: ':619-620 的 [201] 不显示',
+  },
+  {
+    desc: 'M12012 CHARA_FIRST_XP 的确认退回纯文本行',
+    file: 'ere/chara/chara-custom2.js',
+    find: "    era.printButton('还是改一下吧', 1);",
+    replace: "    era.print('[0] 好的 [1] 还是改一下吧'); // 变异",
+    tests: ['chara-custom2'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12013 CHAR_CUSTOM 最终确认退回纯文本行（1/2 两档点不动）',
+    file: 'ere/chara/chara-custom2.js',
+    find: "          era.printButton('好，就是这样了！', 1);",
+    replace:
+      "          era.print('[1] 好，就是这样了！  [2] 我还想再修改一下。 '); // 变异",
+    tests: ['chara-custom2'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12014 CHAR_APPEND 的性别选项改成按钮（源是 PRINTFORMW，WAIT 会把按钮整批禁用）',
+    file: 'ere/chara/chara-custom.js',
+    find: "    era.print('[1] 男性      [2] 女性      [3] 扶她'); // :240",
+    replace:
+      "    era.printButton('男性', 1);\n    era.printButton('女性', 2);\n    era.printButton('扶她', 3); // 变异",
+    tests: ['chara-custom'],
+    must_mention: '性别选项仍是纯文本行',
+  },
+  {
+    desc: 'M12015 CHARA_FIRST_XP 的野狗部位菜单退回纯文本行',
+    file: 'ere/chara/chara-custom2.js',
+    find: "      era.printButton('嘴', 3); // :634",
+    replace: "      era.print('[3] 嘴'); // 变异",
+    tests: ['chara-custom2'],
+    must_mention: ':634 的三枚按钮',
+  },
+  {
+    desc: 'M12016 CHARA_FIRST_XP 的 997 支路部位菜单退回纯文本行',
+    file: 'ere/chara/chara-custom2.js',
+    find: "          era.printButton('私处', 301);\n          era.printButton('肛门', 401);",
+    replace: "          era.print('[301] 私处 [401] 肛门'); // 变异",
+    tests: ['chara-custom2'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12017 CHARA_FIRST_XP 的初体验对象菜单退回纯文本行',
+    file: 'ere/chara/chara-custom2.js',
+    find: "      era.printButton('自定义输入', 997);\n      era.printButton('无', 998);\n      sex = await era.input();",
+    replace:
+      "      era.print('[997] 自定义输入');\n      era.print('[998] 无'); // 变异\n      sex = await era.input();",
+    tests: ['chara-custom2'],
+    must_mention: '输入不合法！请输入以下值之一：',
   },
 ];

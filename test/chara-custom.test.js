@@ -302,6 +302,27 @@ test('CHAR_APPEND：名字输入 0 走原作的随机名分支（#567：0 视为
   );
 });
 
+test('CHAR_APPEND：性别选项保持纯文本（#572 复核：原文 PRINTFORMW 的 WAIT 夹在 INPUT 前）', async () => {
+  const fixture = setup();
+  seed_presets(fixture, [5]);
+  const { char_append } = load(fixture);
+  fixture.set_inputs(1, '莉塔', 996);
+
+  await char_append(5, 0);
+  assert.ok(
+    fixture.lines_history.some(
+      (line) => line.type === 'text' && line.text.includes('[1] 男性'),
+    ),
+    '性别选项仍是纯文本行（该轮无按钮＝引擎的自由输入通道）',
+  );
+  assert.equal(
+    fixture.lines_history.filter((line) => line.type === 'button').length,
+    0,
+    '本轮不打按钮：源 :240 是 PRINTFORMW（自带 WAIT），中间那次成功回传' +
+      '会把 valCount 推高、把按钮整批禁用',
+  );
+});
+
 test('CHAR_APPEND：性别三档（1 男 / 3 扶她 / 2 女不写）', async () => {
   const fixture = setup();
   seed_presets(fixture, [5]);

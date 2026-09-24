@@ -40,6 +40,10 @@
  *     原作靠 Emuera 的单字母全局量传参，ere 侧改形参 ＋ 返回值
  *     （trap_price 的同款处置，#5 决议第六条）。同理 `CALL CHARA_IKAI_COST`
  *     之后调用方直接读 `C`/`D`（:413/:417/:422-424）也改成读返回值。
+ *   - **选项升格为按钮**（#572）：性别三选一与返回（:30/:36）、确认召唤的
+ *     `[0]/[1]`（:90-96）改 `era.printButton`（PR #53 通则，正文不写
+ *     [编号]）；异界勇者列表轮（:389 的 `[999] 返回`）**保持纯文本**——
+ *     本轮的有效编号是格行的 `[编号]`，打按钮会把它们锁死（理由见该处注释）。
  */
 
 'use strict';
@@ -248,6 +252,9 @@ async function char_ikai_create(rand) {
     }
 
     era.drawLine({ isSolid: true }); // :386-388
+    // :389 的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面那些
+    // 勇者行的 `[编号]`（格行拼行，编号即输入值），单给这行打按钮会把
+    // 白名单收成 999、异界勇者的编号当场被拒收。整轮按钮化要先重排格行。
     era.print('[999] 返回'); // :389
 
     // :391 INPUT 1（默认值 1）：只有「空回传」按默认值 1 处理——显式键入的
@@ -319,12 +326,14 @@ async function chara_sim_shop(rand) {
   for (;;) {
     show_shop_chara(); // :27
     era.print('请选择要召唤的勇者的性别'); // :29
-    era.print(
-      '[1]男性\u3000\u3000\u3000\u3000[2]女性\u3000\u3000\u3000\u3000[3]扶她',
-    ); // :30
+    // :30 的 `[1]男性…` 是列排版纯文本选项 → 与 :36 的返回一并升格为按钮
+    // （PR #53 通则，正文不写 [编号]；#572）
+    era.printButton('男性', 1);
+    era.printButton('女性', 2);
+    era.printButton('扶她', 3);
     // :31-34 [IF_DEBUG] 的 [99] 强行召唤不移植（文件头）
     era.drawLine({ isSolid: true }); // :35
-    era.print('[999] 返回'); // :36
+    era.printButton('返回', 999); // :36
     const result = await era.input();
     if (result === 999) {
       clear_shop(); // :41
@@ -373,7 +382,9 @@ async function chara_sim_shop(rand) {
     era.print(''); // :88
     era.print(''); // :89
     const gender_word = talent(a, MALE_TALENT) !== 0 ? '他' : '她';
-    era.print(`[0] 就是${gender_word}了  [1] 再换一个（花费1500）`); // :90-96
+    // :90-96 的两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+    era.printButton(`就是${gender_word}了`, 0);
+    era.printButton('再换一个（花费1500）', 1);
 
     const result = await era.input();
     if (result === 1) {

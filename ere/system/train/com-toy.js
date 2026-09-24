@@ -165,7 +165,9 @@ function tentacle_stain(cid, tequip_index, stain_index) {
 /** 满月确认：原作 INPUT 0 继续、非 0 取消。 */
 async function confirm_full_moon() {
   era.print('*满月是蠕虫的产卵期，要继续吗？*');
-  era.print('[0] 好的 [1] 算了');
+  // 两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+  era.printButton('好的', 0);
+  era.printButton('算了', 1);
   return (await era.input()) === 0;
 }
 

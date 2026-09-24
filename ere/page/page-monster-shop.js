@@ -34,6 +34,12 @@
  *    （utils/stub-line.js 文件头的说明）；CLEARLINE（:82/:111 的「表示外の
  *    数字なら戻す」）在 ere 侧没有对应动作——本屏幕的重绘由商店轮的循环
  *    承担，局部清行不镜像（page-ability-up.js 同款）。
+ * 6. **选项升格为按钮**（#572）：入口菜单（:30-37）、性别（:71/:73）、
+ *    种族（:97-101）、召唤确认（:149-155）与成交确认（:344）改
+ *    `era.printButton`（PR #53 通则，正文不写 [编号] 前缀；第 3 条的列排版
+ *    因此变成「一按钮一行」的记名差异，见 CONTEXT.md）。两处商品/祭品
+ *    一览轮的 `[999] 返回` **保持纯文本**——同轮的有效编号是那些格行的
+ *    编号，打按钮会把它们锁死（理由见各处注释）。
  */
 
 'use strict';
@@ -175,17 +181,17 @@ async function monster_shop(rand) {
   shop_state.race2 = 0;
   shop_state.chosen = 0;
 
-  // :30-37 入口菜单。**本系列屏一律印纯文本**（原作是键入式编号）：引擎
-  // 在「本轮没印过按钮」时放行自由输入（fixture 的 rule 语义，与 dev-guides
-  // 05-interaction 的取名出口同源），而印了按钮就会把输入集收紧到那批编号
-  // ——头行里没有的选择项（性别 1-3、种族 1-9）就再也键入不进了。这与
-  // page-item-shop.js 把 [998]/[999] 印成按钮是同一判据的两侧：那边同时
-  // 印商品按钮，这边一个按钮都不印。
+  // :30-37 入口菜单。**#572 起整轮按钮化**：此前「本系列屏一律印纯文本」
+  // 的理由是「打了按钮就把输入集收紧到那批编号、头行里没有的选项（性别
+  // 1-3、种族 1-9）再也键入不进」——那只在**同轮只打一部分按钮**时成立；
+  // 同轮的每个选项都升格按钮后，白名单恰是显示出来的编号，点击与键入都通。
+  // 本轮「其余值」（原作没有 ELSE、顺着落进 :48）的兜底臂随之不可达，
+  // 1:1 保留不补用例（page-ability-up.js 文件头同款登记）。
   era.drawLine({ isSolid: true });
-  era.print('[1]召唤魔物从者');
+  era.printButton('召唤魔物从者', 1);
   // :32-35 [IF DEBUG] 的 [2]召唤异界勇者不移植（文件头第 2 条）
   era.drawLine({ isSolid: true });
-  era.print('[999] 返回');
+  era.printButton('返回', 999);
   const entry = await era.input();
   if (entry === 999) {
     clear_shop(); // :40
@@ -213,11 +219,12 @@ async function monster_shop(rand) {
   for (;;) {
     show_shop_monster(); // :68
     era.print('请选择要召唤的魔物从者的性别'); // :70
-    era.print(
-      '[1]男性\u3000\u3000\u3000\u3000[2]女性\u3000\u3000\u3000[3]扶她',
-    ); // :71
+    // :71 的列排版纯文本选项 → 与 :73 的返回一并升格为按钮（#572）
+    era.printButton('男性', 1);
+    era.printButton('女性', 2);
+    era.printButton('扶她', 3);
     era.drawLine({ isSolid: true }); // :70-72
-    era.print('[999] 返回'); // :73
+    era.printButton('返回', 999); // :73
     const result = await era.input();
     if (result === 999) {
       clear_shop(); // :78
@@ -236,17 +243,18 @@ async function monster_shop(rand) {
   // :91-117 种族选择
   for (;;) {
     show_shop_monster(); // :93
-    era.print(
-      '[1]兽人类\u3000\u3000\u3000\u3000[2]史莱姆类\u3000\u3000\u3000[3]昆虫类',
-    ); // :97
-    era.print(
-      '[4]植物类\u3000\u3000\u3000\u3000[5]触手类\u3000\u3000\u3000\u3000[6]妖精类',
-    ); // :98
-    era.print(
-      '[7]巨人类\u3000\u3000\u3000\u3000[8]魔人类\u3000\u3000\u3000\u3000[9]魔兽类',
-    ); // :99
+    // :97-99 三行列排版纯文本选项 → 与 :101 的返回一并升格为按钮（#572）
+    era.printButton('兽人类', 1);
+    era.printButton('史莱姆类', 2);
+    era.printButton('昆虫类', 3);
+    era.printButton('植物类', 4);
+    era.printButton('触手类', 5);
+    era.printButton('妖精类', 6);
+    era.printButton('巨人类', 7);
+    era.printButton('魔人类', 8);
+    era.printButton('魔兽类', 9);
     era.drawLine({ isSolid: true }); // :97-100
-    era.print('[999] 返回'); // :101
+    era.printButton('返回', 999); // :101
     era.print('\u3000请选择魔物从者的种类'); // :102
     const result = await era.input();
     if (result === 999) {
@@ -291,9 +299,10 @@ async function monster_shop(rand) {
     era.print(`确定要召唤${chara_callname(a)}么？`); // :146
     era.print(''); // :147
     era.print(''); // :148
-    // :149-155 [0] 就是 他/她 了  [1] 再换一个（花费1500）
+    // :149-155 [0] 就是 他/她 了  [1] 再换一个（花费1500）→ 按钮（#572）
     const gender_word = talent(a, 122) !== 0 ? '他' : '她';
-    era.print(`[0] 就是${gender_word}了  [1] 再换一个（花费1500）`);
+    era.printButton(`就是${gender_word}了`, 0);
+    era.printButton('再换一个（花费1500）', 1);
 
     const result = await era.input();
     if (result !== 1) {
@@ -386,6 +395,9 @@ async function select_follower({ arg0, show, guard, rand }) {
     }
 
     era.drawLine({ isSolid: true }); // :238-249
+    // :250 的 [999] 返回保持纯文本（#572）：本轮的有效编号是上面商品行的
+    // 「[编号]」格行（拼行，编号即输入值 100-199），单给这行打按钮会把
+    // 白名单收成 999、商品编号当场被拒收。整轮按钮化要先重排格行。
     era.print('[999] 返回'); // :250
     era.print(shown === 0 ? '没有能召唤的魔物从者' : '请选择要召唤的魔物从者'); // :251-255
 
@@ -498,7 +510,9 @@ async function buy_follower({ show, rand }) {
       era.print(
         `要以这些怪物为代价，加上${item_price(target) * SACRIFICE_RATE}点金钱，来召唤${item_name(target)}吗？`,
       ); // :343
-      era.print('[0] 好的  [1] 不要'); // :344
+      // :344 的两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
+      era.printButton('好的', 0);
+      era.printButton('不要', 1);
 
       const result = await era.input();
       if (result === 1) {
@@ -554,6 +568,7 @@ async function buy_follower({ show, rand }) {
       era.print(row); // :387-388
     }
     era.drawLine({ isSolid: true }); // :389
+    // :390 的 [999] 返回同上（祭品行轮的编号 100-199 是纯文本选项）。
     era.print('[999] 返回'); // :390
     era.print(''); // :391
 

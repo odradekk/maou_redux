@@ -1887,11 +1887,10 @@ export default [
   },
   // —— #530：纯文本选项行棘轮（靶在 ere/system/train/com-toy.js 与 tools/plaintext-options.mjs）——
   {
-    desc: 'M11207 新增一行纯文本选项（com-toy 的满月确认多打一枚 [2] 行——棘轮的「只许收紧」门必须拦住，#530）',
+    desc: 'M11207 新增一行纯文本选项（com-toy 的满月确认多打一枚 [2] 行——棘轮的「只许收紧」门必须拦住，#530；靶行随 #572 的按钮化同步改写）',
     file: 'ere/system/train/com-toy.js',
-    find: "  era.print('[0] 好的 [1] 算了');",
-    replace: `  era.print('[0] 好的 [1] 算了');
-  era.print('[2] 再看一下'); // 变异：新增纯文本选项行`,
+    find: "  era.printButton('好的', 0);\n  era.printButton('算了', 1);",
+    replace: `  era.printButton('好的', 0);\n  era.printButton('算了', 1);\n  era.print('[2] 再看一下'); // 变异：新增纯文本选项行`,
     tests: ['plaintext-option'],
     must_mention: '新增了纯文本选项行',
   },

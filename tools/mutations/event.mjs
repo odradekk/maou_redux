@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 366; // #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
+export const COUNT = 372; // #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
 // 接线；M11478/M11479 的靶位在返工轮搬去 chara.mjs——补偿写在 @CHARA_EX_34 里，随靶文件分片）；#565 起 +5（M11610-M11613，开局随机奴隶接线的四条；M11626 审查轮补 CHARA_NAME_DEFINE 实参错掷）；#400（N16）+22（おねしょ）+17（犬の散歩）+20（处女献上）+15（夜这い）+13（示众台）+11（M8680-M8690 随机上界；M8501 起整体 +100，避开 #401 号段）；
 // 合并 #547 时两侧 362/361 调和为 366：本票 5 条之外收进 master 的 M11578-M11580/M11589，按导入实测条目数写回
 // #461 并入 master：+2（避孕套判定 M9880/M9881，原 M9836/M9837 与 #462 撞号后改，
@@ -1814,19 +1814,9 @@ export default [
     tests: ['event-nextday'],
     must_mention: '【肉芽诅咒】清零',
   },
-  {
-    desc: 'M8444 FUTA_F 非法输入：不再回到 INPUT 循环（首轮即结束）',
-    file: 'ere/event/event-nextday.js',
-    find: `    // :382-383 ELSE → GOTO INPUT_LOOP（重印询问行，不消耗其它状态）
-  }
-  await era.waitAnyKey(); // :386`,
-    replace: `    // 变异：非法输入直接退出，不重问
-    break;
-  }
-  await era.waitAnyKey(); // :386`,
-    tests: ['event-nextday'],
-    must_mention: '回到 INPUT 循环重问',
-  },
+  // M8444（FUTA_F 非法输入不再回到 INPUT 循环）随 #572 的按钮化删除：
+  // 白名单＝本轮按钮（0/1），越界输入进不了函数，这条兜底支结构性不可达、
+  // 变异不再可观测；对应的行为守卫换成 M12004（选项退回纯文本即红）。
   {
     desc: 'M8445 MORASI：【漏尿癖】写成 0（该给 1）',
     file: 'ere/event/event-nextday.js',
@@ -3380,5 +3370,63 @@ export default [
     replace: `    // 变异：漏 :762 的 LOADGLOBAL 镜像`,
     tests: ['event-load'],
     must_mention: '钩子链必须真的调用 era.loadGlobal',
+  },
+  // —— #572：结局与日循环菜单的选项按钮化 ——
+  {
+    desc: 'M12000 CHAR_GIFT 的 [0]/[1] 收下询问退回纯文本行',
+    file: 'ere/event/event-ending.js',
+    find: "      era.printButton('收下她吧', 0);",
+    replace: "      era.print('[0] 收下她吧  [1] 另外挑选'); // 变异",
+    tests: ['event-ending'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12001 CHAR_GIFT 性格子菜单退回纯文本行（八档点不动）',
+    file: 'ere/event/event-ending.js',
+    find: "      era.printButton('- 慈爱', 0);",
+    replace:
+      "      era.print('[0] - 慈爱　　[1] - 自信家　[2] - 懦弱　　'); // 变异",
+    tests: ['event-ending'],
+    must_mention: '性格菜单',
+  },
+  {
+    desc: 'M12002 CHAR_GIFT 发色子菜单去掉 useRule: false（原作受理的 11 号色被锁死）',
+    file: 'ere/event/event-ending.js',
+    find: '      const picked = await era.input({ useRule: false });',
+    replace: '      const picked = await era.input(); // 变异：收紧白名单',
+    tests: ['event-ending'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12003 CHAR_GIFT 终局三项退回纯文本行',
+    file: 'ere/event/event-ending.js',
+    find: "    era.printButton('再换一个', 1);",
+    replace: "    era.print('[1] 再换一个'); // 变异",
+    tests: ['event-ending'],
+    must_mention: ':280 终局询问',
+  },
+  {
+    desc: 'M12004 扶她化确认的两项退回纯文本行',
+    file: 'ere/event/event-nextday.js',
+    find: "    era.printButton('- 好的', 0);",
+    replace: "    era.print('[0] - 好的'); // 变异",
+    tests: ['event-nextday'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12005 处女献上确认的两项退回纯文本行',
+    file: 'ere/event/event-nextday.js',
+    find: "    era.printButton('- 等你很久了！', 0); // :944",
+    replace: "    era.print('[0] - 等你很久了！'); // 变异",
+    tests: ['event-nextday'],
+    must_mention: '输入不合法！请输入以下值之一：',
+  },
+  {
+    desc: 'M12006 安全套确认的两项退回纯文本行',
+    file: 'ere/event/event-nextday.js',
+    find: "      era.printButton('- 安全第一！', 0); // :969",
+    replace: "      era.print('[0] - 安全第一！'); // 变异",
+    tests: ['event-nextday'],
+    must_mention: '输入不合法！请输入以下值之一：',
   },
 ];

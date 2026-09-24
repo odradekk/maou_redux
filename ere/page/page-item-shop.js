@@ -621,11 +621,12 @@ async function event_buy(bought) {
     return 1;
   }
 
-  // :99-113 購入確認（0 好的 / 1 不要，其余重问）
+  // :99-113 購入確認（0 好的 / 1 不要，其余重问；#572 起两项升格为按钮，
+  // 「其余」由引擎按白名单拒收，重问支不可达——1:1 保留）
   for (;;) {
     era.print(`确定购买${item_name(bought)}？`);
-    era.print('[0] - 好的');
-    era.print('[1] - 不要');
+    era.printButton('- 好的', 0); // :101（正文的 `- ` 是原作文本）
+    era.printButton('- 不要', 1); // :102
     const result = await era.input();
     if (result === 1) {
       // :105-110 取消：退还货与钱、重建记账不变量（TFLAG:15 的暂存值）
