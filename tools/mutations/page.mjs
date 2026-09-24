@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 425; // #548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 426; // #549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4109,5 +4109,15 @@ export default [
     replace: `          era.print('■ 上限\\n'); // 变异：丢前导全角空格`,
     tests: ['page-config-age'],
     must_mention: '「■ 上限」带前导两个全角空格',
+  },
+  // —— #549（S8）自动处刑端到端（M11640 起）——
+  {
+    desc: 'M11640 设置页 [3] 状态行读位错（位 3 → 位 4，#549 e2e 唯一守卫）',
+    file: 'ere/page/page-config.js',
+    find: `      '勇者自动处刑机能　　　　　现在：' + (getbit(v5, 3) ? 'ON' : 'OFF'),`,
+    replace: `      '勇者自动处刑机能　　　　　现在：' + // 变异：读位错
+        (getbit(v5, 4) ? 'ON' : 'OFF'),`,
+    tests: ['event-auto-execution-e2e'],
+    must_mention: '开启后重绘为 ON',
   },
 ];

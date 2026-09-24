@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 140;
+export const COUNT = 142; // #549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）
 
 export default [
   {
@@ -1203,5 +1203,22 @@ export default [
             continue screen; // 变异：JUMP 当 GOTO`,
     tests: ['event-execution-batch'],
     must_mention: 'JUMP 批量处刑 之后 可处刑 已复位（:13），不再显示 [121]',
+  },
+  // —— #549（S8）自动处刑端到端（M11641 起）——
+  {
+    desc: 'M11641 自動處刑1：漏「继续处刑」播报（#549 e2e 唯一守卫）',
+    file: 'ere/event/event-execution-batch.js',
+    find: `  await era.printAndWait('继续处刑');`,
+    replace: `  // 变异：漏继续处刑播报`,
+    tests: ['event-auto-execution-e2e'],
+    must_mention: '自動處刑1 的继续播报（与烙印句同源）',
+  },
+  {
+    desc: 'M11642 流放：非 4 号支漏发勋章（#549 e2e 唯一守卫）',
+    file: 'ere/event/event-banishment.js',
+    find: `  if (result !== 4) {`,
+    replace: `  if (result === 4) { // 变异：非 4 号漏发勋章`,
+    tests: ['event-auto-execution-e2e'],
+    must_mention: '流放结算发勋章（BANISHMENT 非 4 号支）',
   },
 ];

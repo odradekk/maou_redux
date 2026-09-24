@@ -811,8 +811,12 @@ export function collect_try_kojo_names(text) {
   const spans = js_comment_spans(text);
   const in_comment = (i) => spans.some(([a, b]) => i >= a && i < b);
   const names = new Set();
+  // family 实参后允许一行行尾注释：kojo-system.js 的 attack_koujo_b 把
+  // TRYCALLFORM 拼名式写在 `dungeon_attack_family, // …` 后，#565 落地时
+  // 没覆盖这种形态、该锚名一直没进核对——#549 全量变异的 M8946 红
+  // （锚名改坏无人发现）暴露失明
   for (const m of text.matchAll(
-    /try_kojo_or_stub\(\s*[A-Za-z_$][\w$]*\s*,\s*(['"`])([A-Za-z0-9_]+)\1/gs,
+    /try_kojo_or_stub\(\s*[A-Za-z_$][\w$]*\s*,(?:\s*\/\/[^\n]*)?\s*(['"`])([A-Za-z0-9_]+)\1/gs,
   )) {
     if (!in_comment(m.index)) names.add(m[2]);
   }

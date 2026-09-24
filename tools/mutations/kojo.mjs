@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2334; // #389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2333; // #549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -20740,16 +20740,17 @@ on('EVENTEND', eventend_kojo_903);`,
     must_mention: '返回后 TARGET 还原',
   },
   {
-    desc: 'M8946 ATTACK_KOUJO_B 占位行丢原作函数名（可检索性断）',
+    // #549 重锚：原条目打「占位行丢原名」，#565 返工把未命中统一成静默后
+    // 占位行为已不存在、事件分发测试不再红。锚名（stub_name）如今唯一的
+    // 机器消费是 check_stub_names 的清单行核对——改成无清单行的名字直接红
+    desc: 'M8946 ATTACK_KOUJO_B 核对锚名改成无清单行的名字（#549 重锚：静默化后锚名仅剩清单核对一道机器检查）',
     file: 'ere/kojo/kojo-system.js',
     find: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
-    'ATTACK_KOUJO_B',
-    '攻击口上（B 侧）',`,
+    'ATTACK_KOUJO_B',`,
     replace: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
-    'ATTACK_KOUJO',
-    '攻击口上（B 侧）',`,
-    tests: ['event-k-dispatch'],
-    must_mention: '占位行带 @原名',
+    'ATTACK_KOUJO_BX', // 变异：核对锚失联`,
+    tests: ['stub-registry-status'],
+    must_mention: '口上核对锚失联',
   },
   {
     desc: 'M8947 ATTACK_KOUJO_B 随机源错传 cid（handler 收 [cid]）',
@@ -20876,16 +20877,17 @@ on('EVENTEND', eventend_kojo_903);`,
     must_mention: '返回后 TARGET 还原',
   },
   {
-    desc: 'M8959 GOHOUBI_REQUEST 占位行丢原作函数名',
+    // #549 重锚：同 M8946——「占位行丢原名」的前提随 #565 静默化消失，
+    // 改打「锚名与清单失联」（GOHOUBI_REQUEST 自身另有已实现行，改名成它
+    // 恰好绕过核对，所以变异值取无行的名字）
+    desc: 'M8959 GOHOUBI_REQUEST_KOUJO 核对锚名改成无清单行的名字（#549 重锚）',
     file: 'ere/kojo/kojo-dungeon-after.js',
     find: `    gohoubi_request_koujo_family,
-    'GOHOUBI_REQUEST_KOUJO',
-    '奖赏请求口上',`,
+    'GOHOUBI_REQUEST_KOUJO',`,
     replace: `    gohoubi_request_koujo_family,
-    'GOHOUBI_REQUEST',
-    '奖赏请求口上',`,
-    tests: ['event-k-dispatch'],
-    must_mention: '占位行带 @原名',
+    'GOHOUBI_REQUEST_KOUJO_X', // 变异：核对锚失联`,
+    tests: ['stub-registry-status'],
+    must_mention: '口上核对锚失联',
   },
   {
     desc: 'M8960 PALAMCNG 存在判定丢 EX 臂（EX 性格的口上永久静默）',
@@ -21027,18 +21029,10 @@ on('EVENTEND', eventend_kojo_903);`,
     tests: ['event-k-dispatch'],
     must_mention: 'handler 实参逐条对上',
   },
-  {
-    desc: 'M8971 分发表：BENKI 行缺席语义写反（stub 改 silent，占位行不再期待）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `    family: 'benki_koujo_family',
-    flag_guard: false,
-    missing: 'stub',`,
-    replace: `    family: 'benki_koujo_family',
-    flag_guard: false,
-    missing: 'silent',`,
-    tests: ['event-k-dispatch'],
-    must_mention: 'TRYCALL 落空静默',
-  },
+  // M8971：删除（#549 全量变异查出红）——#565 返工把未命中统一成静默后，
+  // 分发表里的 missing 字段只作历史文档（event-k-dispatch.test.js 注释明言
+  // 「行为面不再区分两态」），'stub' 改 'silent' 无行为差异。与 #565 删
+  // M1730/M8956（「未注册打占位」已是错的行为）同一前提、同一处置。
   {
     desc: 'M8972 分发表：入口名错字（benki_koujo 改 benki_koujo_）',
     file: 'ere/kojo/kojo-system.js',
