@@ -319,9 +319,10 @@ function getbit(bits, n) {
 /**
  * @LOG_TRY_BITCH（:8-49）：卖春直前の文章（还没开始、正否回数不明）。
  *
- * 首行输出 %FS_BITCH("LOOKS", ARG)%（本人描写），随后按场所（DUNGEON/
- * 其他=TOWN）与角色状态分档输出「无法压抑自己的性欲，」等前缀，末行
- * 「考虑着出卖肉体的事。」（PRINTFORMW = 换行等待）。
+ * :14..:47 **是一整行**（#600）：首段是 %FS_BITCH("LOOKS", ARG)%（本人描写），
+ * 中段按场所（DUNGEON/其他=TOWN）与角色状态拼「无法压抑自己的性欲，」等片段，
+ * 末段「考虑着出卖肉体的事。」是 PRINTFORMW（换行等待）——所以整函数只输出
+ * 一条 `printAndWait`，片段由分支取值表达式在两段之间拼出。
  *
  * 注意与 H15 的 @FI_TRY_BITCH（玩法抽选，返回玩法号）**不同函数**：
  * 本函数只输出文本、不改状态、无返回值；FI_TRY_BITCH 只返回玩法号、
@@ -339,7 +340,7 @@ async function log_try_bitch(arg, place) {
   const cflag1 = era.get(`cflag:${arg}:1`) || 0;
   const horny =
     (era.get(`abl:${arg}:37`) || 0) >= 1 ||
-    (era.get(`talent:${arg}:76`) || 0) > 0;
+    (era.get(`talent:${arg}:76`) || 0) !== 0;
   const in_debt =
     (era.get(`cflag:${arg}:580`) || 0) +
       (era.get(`cflag:${arg}:581`) || 0) +
@@ -349,7 +350,7 @@ async function log_try_bitch(arg, place) {
   const ordered = (era.get(`cflag:${arg}:500`) || 0) === 1;
   const in_dungeon = place === 'DUNGEON';
   const forced =
-    (era.get(`talent:${arg}:85`) || 0) > 0 &&
+    (era.get(`talent:${arg}:85`) || 0) !== 0 &&
     !(era.get(`talent:${arg}:180`) || era.get(`talent:${arg}:181`));
   await era.printAndWait(
     `${fs_bitch('LOOKS', arg)}` +

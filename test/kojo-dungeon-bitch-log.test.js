@@ -22,6 +22,15 @@
  *   - 存根清单核对（kojo-dungeon-bitch.js 的 STUBBED_CALLS 已删前六项）。
  *
  * 随机源注入：与 kojo-dungeon-bitch.js 同款 seq_rand。
+ *
+ * 注意 LOG_TRY_BITCH 的整行断言（#600）：该函数没有 rand 形参，首段的
+ * %FS_BITCH("LOOKS", ARG)% 走模块级 default_rand，而 LOOKS 的 35 条
+ * `overwrite(cond, …)` 都是「条件成立且 RAND:2 == 0 才改写」——**只要夹具
+ * 触碰了那些条件里的素质（TALENT:253/255/244/310/313/312/315/204/99/100/256/
+ * 21/22/35/15/16/17/12/10/26/23/25/73、ABL:30/31/32/33/37、CFLAG:509），
+ * 整行就会有一半概率翻红**。现有用例只置 cflag:1/500/533/580 与
+ * talent:76/85、abl:37=0（「好色的/背叛的」来自 :262-266 的无随机追加），
+ * 因此是确定性的；往这些用例里补新素质时要一并给 LOOKS 钉随机源。
  */
 
 const assert = require('node:assert/strict');
