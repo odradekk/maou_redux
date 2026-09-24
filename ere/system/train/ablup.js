@@ -218,7 +218,7 @@ async function ablup0(cid) {
 
     const label = talent(122) ? '阴茎' : era.get('palamname:0'); // :63-67
     era.printButton(`${label}点数×${juel}/${a} ……${get_ablup_state(i)}`, 0); // :64-69
-    era.println();
+    // ABLUP0.ERB:69 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('停止', 100); // :71
 
     const result = await era.input(); // :74
@@ -351,7 +351,7 @@ async function ablup1(cid) {
       `${era.get('palamname:14')}点数×${juel}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :45-47
-    era.println();
+    // ABLUP1.ERB:47 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('停止', 100); // :49
 
     const result = await era.input(); // :52
@@ -528,7 +528,7 @@ async function ablup2(cid) {
       `${era.get('palamname:1')}点数×${juel}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :49-51
-    era.println();
+    // ABLUP2.ERB:51 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`      ${era.get('expname:0')}　　${exp}/${b}`); // :52-53
     era.printButton('停止', 100); // :55
 
@@ -694,7 +694,7 @@ async function ablup3(cid) {
       `${era.get('palamname:2')}点数×${juel}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :47-48
-    era.println();
+    // ABLUP3.ERB:49 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`      ${era.get('expname:1')}　　${exp}/${b}`); // :50
     era.printButton('停止', 100); // :52
 
@@ -788,7 +788,7 @@ async function ablup4(cid) {
       if (i & 2) status += '经验不足';
     }
     era.printButton(`${era.get('palamname:15')}点数×${a}……${status}`, 0); // :11-24（无 JUEL 现值，只显示需求 A，与 ABLUP0-3 不同）
-    era.println();
+    // ABLUP4.ERB:24 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('放弃', 100); // :26
 
     const result = await era.input(); // :29
@@ -876,7 +876,7 @@ async function ablup5(cid) {
       `${era.get('palamname:2')}点数×${a}、${era.get('expname:1')}${b}以上……${status}`, // :54-70（无 JUEL 现值，只显示需求 A）
       0,
     );
-    era.println();
+    // ABLUP5.ERB:71 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('放弃', 100); // :73
 
     const result = await era.input(); // :76
@@ -1009,7 +1009,7 @@ async function ablup6(cid) {
     }
     option0 += `……${status_text(i)}`; // :123-134
     era.printButton(option0, 0);
-    era.println();
+    // ABLUP6.ERB:135 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
 
     const juel4 = era.get(`juel:${cid}:4`) || 0;
     const exp21 = era.get(`exp:${cid}:21`) || 0;
@@ -1021,7 +1021,7 @@ async function ablup6(cid) {
       if (d > 0) option1 += `、${era.get('expname:21')}${d}以上`; // :149-154
       option1 += `……${status_text(j)}`; // :155-166
       era.printButton(option1, 1);
-      era.println();
+      // ABLUP6.ERB:167 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     } else {
       j = 256; // :168-170 本档没有恭顺选项，[1] 不渲染
     }
@@ -1033,7 +1033,7 @@ async function ablup6(cid) {
 
       const option2 = `${era.get('palamname:7')}点数×${c}、${era.get('expname:2')}1以上……${status_text(k)}`; // :180-199
       era.printButton(option2, 2);
-      era.println();
+      // ABLUP6.ERB:200 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     } else {
       k = 256; // :201-203 本档没有习得选项，[2] 不渲染
     }
@@ -1149,7 +1149,7 @@ async function ablup7(cid) {
       `${era.get('palamname:8')}点数×${a}、${exp_line}……${status}`, // :81-107
       0,
     );
-    era.println();
+    // ABLUP7.ERB:108 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('放弃', 100); // :111
 
     const result = await era.input(); // :114
@@ -1286,7 +1286,7 @@ async function ablup8(cid) {
       if (c > 0) option0 += `、${era.get('expname:30')}${c}以上`; // :123-128
       option0 += `……${status_text(i)}`; // :129-140
       era.printButton(option0, 0);
-      era.println();
+      // ABLUP8.ERB:141 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     }
     // b===0 时 [0] 不渲染，原作对应位置没有 ELSE 哨兵（见文件头缺陷说明）
 
@@ -1302,7 +1302,7 @@ async function ablup8(cid) {
       if (c > 0) option1 += `、${era.get('expname:30')}${c}以上`; // :166-171
       option1 += `、${era.get('expname:2')}1以上……${status_text(j)}`; // :172-187
       era.printButton(option1, 1);
-      era.println();
+      // ABLUP8.ERB:188 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     } else {
       j = 256; // :189-191
     }
@@ -1433,7 +1433,7 @@ async function ablup9(cid) {
     if (c > 0) option0 += `、${era.get('palamname:6')}点数×${c}`; // :101-106
     option0 += `、${era.get('expname:40')}${b}以上……${status_text(i)}`; // :107-123
     era.printButton(option0, 0);
-    era.println();
+    // ABLUP9.ERB:123 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
 
     const juel0 = era.get(`juel:${cid}:0`) || 0;
     if (d > 0) {
@@ -1442,7 +1442,7 @@ async function ablup9(cid) {
 
       const option1 = `${era.get('palamname:0')}点数×${d}、${era.get('expname:40')}${b}以上……${status_text(j)}`; // :133-153
       era.printButton(option1, 1);
-      era.println();
+      // ABLUP9.ERB:153 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     } else {
       j = 256; // :154-156
     }
@@ -1707,26 +1707,26 @@ async function ablup10(cid) {
         `${era.get('palamname:10')}点数×${juel10}/${a} ……${get_ablup_state(i)}`,
         0,
       ); // :50-54
-      era.println();
+      // ABLUP10.ERB:54 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     }
     era.printButton(
       `${era.get('palamname:4')}点数×${juel4}/${b} ……${get_ablup_state(j)}`,
       1,
     ); // :57-60（恒渲染，无 IF 包裹）
-    era.println();
+    // ABLUP10.ERB:60 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     if (c > 0) {
       era.printButton(
         `${era.get('palamname:5')}点数×${juel5}/${c} ……${get_ablup_state(k)}`,
         2,
       ); // :62-66
-      era.println();
+      // ABLUP10.ERB:66 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     }
     if (d > 0) {
       era.printButton(
         `${era.get('palamname:6')}点数×${juel6}/${d} ……${get_ablup_state(l)}`,
         3,
       ); // :69-73
-      era.println();
+      // ABLUP10.ERB:73 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     }
     era.printButton('停止', 100); // :76
 
@@ -1875,7 +1875,7 @@ async function ablup11(cid, mode) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${status_text(i)}`,
       0,
     ); // :39-49
-    era.println();
+    // ABLUP11.ERB:49 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('停止', 100); // :51
 
     const result = await era.input(); // :53
@@ -2013,7 +2013,7 @@ async function ablup12(cid, mode) {
       `${era.get('palamname:7')}点数×${juel7}/${a} ……${status_text(i)}`,
       0,
     ); // :36-48
-    era.println();
+    // ABLUP12.ERB:48 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('停止', 100); // :50
 
     const result = await era.input(); // :52
@@ -2152,7 +2152,7 @@ async function ablup13(cid, mode) {
       `${era.get('palamname:7')}点数×${juel7}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :48-50
-    era.println();
+    // ABLUP13.ERB:50 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('停止', 100); // :51
 
     const result = await era.input(); // :53
@@ -2357,7 +2357,7 @@ async function ablup14(cid, mode) {
       `${era.get('palamname:7')}点数×${juel7}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :47-49
-    era.println();
+    // ABLUP14.ERB:49 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`      ${era.get('expname:5')}　${exp5}/${b}`); // :50
     era.printButton('停止', 100); // :52
 
@@ -2600,7 +2600,7 @@ async function ablup15(cid, mode) {
       `${era.get('palamname:7')}点数×${juel7}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :42-44
-    era.println();
+    // ABLUP15.ERB:44 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`      ${era.get('expname:73')}　${exp73}/${b} or`); // :45
     era.print(`      ${era.get('expname:74')}　${exp74}/${c}`); // :46
     era.printButton('停止', 100); // :48
@@ -2976,7 +2976,7 @@ async function ablup16(cid, mode) {
       `${era.get('palamname:6')}点数×${juel6}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :55-57（恒渲染）
-    era.println();
+    // ABLUP16.ERB:57 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     if (e > 0) {
       era.print(`　　　${era.get('expname:2')}　${exp2}/${e}`); // :59
       era.print(`　　　${era.get('expname:20')}　${exp20}/${e}`); // :60
@@ -2986,7 +2986,7 @@ async function ablup16(cid, mode) {
         `${era.get('palamname:4')}点数×${juel4}/${b} ……${get_ablup_state(j)}`,
         1,
       ); // :65-67
-      era.println();
+      // ABLUP16.ERB:67 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
       if (d > 0) {
         era.print(`　　　${era.get('expname:21')}　${exp21}/${d}`); // :69
       }
@@ -2996,7 +2996,7 @@ async function ablup16(cid, mode) {
         `${era.get('palamname:7')}点数×${juel7}/${c} ……${get_ablup_state(k)}`,
         2,
       ); // :74-76
-      era.println();
+      // ABLUP16.ERB:76 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
       era.print(`　　　${era.get('expname:2')}　${exp2}/1`); // :77（分母固定为 1，非变量）
     }
     era.printButton('停止', 100); // :80
@@ -3174,7 +3174,7 @@ async function ablup17(cid, mode) {
       `${era.get('palamname:8')}点数×${juel8}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :53-55
-    era.println();
+    // ABLUP17.ERB:55 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     if (c > 0) {
       era.print(`　　　${era.get('expname:2')}　${exp2}/${c}`); // :57-58（仅 Lv0→1）
     }
@@ -3419,7 +3419,7 @@ async function ablup20(cid) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${state_text(i)}`,
       0,
     ); // :47-57（内联状态链）
-    era.println();
+    // ABLUP20.ERB:58 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     if (b > 0) {
       era.print(`　　　${era.get('expname:33')}　${exp33}/${b}`); // :60-61
     }
@@ -3784,7 +3784,7 @@ async function ablup21(cid) {
         `${era.get('palamname:9')}点数×${juel9}/${a} ……${get_ablup_state(i)}`,
         0,
       ); // :57-59
-      era.println();
+      // ABLUP21.ERB:60 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
       era.print(`　　　${era.get('palamname:5')}点数×${juel5}/${b}`); // :61-62
       if (c > 0) {
         era.print(`　　　${era.get('expname:30')}　${exp30}/${c}`); // :64-65
@@ -3795,7 +3795,7 @@ async function ablup21(cid) {
         `${era.get('palamname:9')}点数×${juel9}/${d} ……${get_ablup_state(j)}`,
         1,
       ); // :68-70
-      era.println();
+      // ABLUP21.ERB:71 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
       era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${e}`); // :72-73
       if (c > 0) {
         era.print(`　　　${era.get('expname:30')}　${exp30}/${c}`); // :75-76
@@ -4055,7 +4055,7 @@ async function ablup22(cid) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :53-55（恒渲染）
-    era.println();
+    // ABLUP22.ERB:55 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     if (c > 0) {
       era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${c}`); // :56-57
     }
@@ -4065,7 +4065,7 @@ async function ablup22(cid) {
         `${era.get('palamname:0')}点数×${juel0}/${d} ……${get_ablup_state(j)}`,
         1,
       ); // :61-64
-      era.println();
+      // ABLUP22.ERB:64 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
       era.print(`　　　${era.get('expname:40')}　${exp40}/${b}`); // :65
     }
     era.printButton('停止', 100); // :68
@@ -4298,7 +4298,7 @@ async function ablup23(cid) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :50-52（恒渲染）
-    era.println();
+    // ABLUP23.ERB:52 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     if (c > 0) {
       era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${c}`); // :53-54
     }
@@ -4308,7 +4308,7 @@ async function ablup23(cid) {
         `${era.get('palamname:2')}点数×${juel2}/${d} ……${get_ablup_state(j)}`,
         1,
       ); // :59-62
-      era.println();
+      // ABLUP23.ERB:62 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
       era.print(`　　　${era.get('expname:41')}　${exp41}/${b}`); // :64
     }
     era.printButton('停止', 100); // :67
@@ -4589,14 +4589,14 @@ async function ablup30(cid) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :53-55（恒渲染）
-    era.println();
+    // ABLUP30.ERB:55 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b}`); // :56
     era.print(`　　　${era.get('expname:5')}　${exp5}/${c}`); // :57
     era.printButton(
       `${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,
       1,
     ); // :60-62（恒渲染，无 256 分支）
-    era.println();
+    // ABLUP30.ERB:62 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b * 3}`); // :63
     era.print(`　　　${era.get('expname:5')}　${exp5}/${Math.floor(c / 2)}`); // :64
     era.printButton('停止', 100); // :66
@@ -4819,7 +4819,7 @@ async function ablup31(cid) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :66-68（恒渲染）
-    era.println();
+    // ABLUP31.ERB:68 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:0')}点数×${juel0}/${b}`); // :69
     era.print(`　　　${era.get('palamname:8')}点数×${juel8}/${c}`); // :70
     era.print(`　　　${era.get('expname:10')}　${exp10}/${d}`); // :71
@@ -4827,7 +4827,7 @@ async function ablup31(cid) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(j)}`,
       1,
     ); // :74-76（恒渲染，与 [0] 同分母）
-    era.println();
+    // ABLUP31.ERB:76 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:0')}点数×${juel0}/${b}`); // :77
     era.print(`　　　${era.get('palamname:8')}点数×${juel8}/${c}`); // :78
     era.print(`　　　${era.get('expname:11')}　${exp11}/${e}`); // :79
@@ -5121,14 +5121,14 @@ async function ablup32(cid) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :63-65（恒渲染）
-    era.println();
+    // ABLUP32.ERB:65 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b}`); // :66
     era.print(`　　　${era.get('expname:20')}　${exp20}/${c}`); // :67
     era.printButton(
       `${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,
       1,
     ); // :70-72（恒渲染，无 256 分支）
-    era.println();
+    // ABLUP32.ERB:72 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b * 3}`); // :73
     era.print(`　　　${era.get('expname:20')}　${exp20}/${Math.floor(c / 2)}`); // :74
     era.printButton('停止', 100); // :76
@@ -5434,7 +5434,7 @@ async function ablup33(cid) {
       `${era.get('palamname:0')}点数×${juel0}/${b} ……${get_ablup_state(i)}`,
       0,
     ); // :57-59
-    era.println();
+    // ABLUP33.ERB:59 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:5')}点数×${juel5}/${a}`); // :60
     era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${a}`); // :61（分母同为 A）
     era.print(`　　　${era.get('expname:40')}　${exp40}/${c}`); // :62
@@ -5765,7 +5765,7 @@ async function ablup37(cid, mode) {
       `${era.get('palamname:4')}点数×${juel4}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :49-50
-    era.println();
+    // ABLUP37.ERB:51 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:5')}点数×${juel5}/${b}`); // :52
     era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${c}`); // :53
     era.print(`${era.get('expname:74')}　${exp74}/${d}`); // :54
@@ -5979,7 +5979,7 @@ async function ablup39(cid, mode) {
       `${era.get('palamname:5')}点数×${juel5}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :51-52
-    era.println();
+    // ABLUP39.ERB:53 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.print(`　　　${era.get('palamname:6')}点数×${juel6}/${b}`); // :54
     era.print(`${era.get('expname:56')}　${exp56}/${c}`); // :55
     era.printButton('停止', 100); // :56
@@ -6095,7 +6095,7 @@ async function ablup40(cid, mode) {
       `${era.get('palamname:15')}点数×${juel15}/${a} ……${state}`,
       0,
     ); // :27-37
-    era.println();
+    // ABLUP40.ERB:38 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('放弃', 100); // :39
 
     const result = await era.input(); // :41
@@ -6174,7 +6174,7 @@ async function ablup99(cid, mode) {
       `${era.get('palamname:6')}点数×${juel6}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :50-51
-    era.println();
+    // ABLUP99.ERB:52 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('停止', 100); // :54
 
     const result = await era.input(); // :56
@@ -6261,7 +6261,7 @@ async function ablup100(cid) {
       `${era.get('expname:99')}点数×${exp99}/${a} ……${get_ablup_state(i)}`,
       0,
     ); // :34-35
-    era.println();
+    // ABLUP100.ERB:36 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
     era.printButton('停止', 100); // :38
 
     const result = await era.input(); // :40

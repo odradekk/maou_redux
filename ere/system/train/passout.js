@@ -345,6 +345,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「噢哈啊啊啊啊啊啊啊！！…啊啊……哈……喔…♪」');
       }
+      // PASSOUT.ERB:244 的 PRINTFORML（空内容）落在 PASSOUT.ERB:243 已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…绝顶的快感令${name_of(cid)}全身抽搐，当场倒下了，`);
       era.print('因为过于强烈的刺激失去了意识。');
@@ -353,6 +354,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「不行了～～～～！！！…放、放过……我……吧」');
       }
+      // PASSOUT.ERB:250 的 PRINTFORML（空内容）落在 PASSOUT.ERB:249 已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}当场倒下，因为过于强烈的痛楚失去了意识。`);
     } else if (tflag(895) === 3) {
@@ -360,6 +362,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「不行了～～～～！！！…放、放过……我……吧」');
       }
+      // PASSOUT.ERB:255 的 PRINTFORML（空内容）落在 PASSOUT.ERB:254 已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}当场倒下，因为过于强烈的恐惧失去了意识`);
     } else if (tflag(895) === 4) {
@@ -367,6 +370,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「噢哈啊啊啊啊啊啊啊！！…放、放过……我……吧」');
       }
+      // PASSOUT.ERB:260 的 PRINTFORML（空内容）落在 PASSOUT.ERB:259 已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}全身抽搐，当场倒下了，`);
       era.print('被快感和痛楚同时冲击，失去了意识。');
@@ -375,6 +379,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「不行了～～～～！！！…放、放过……我……吧」');
       }
+      // PASSOUT.ERB:266 的 PRINTFORML（空内容）落在 PASSOUT.ERB:265 已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}全身抽搐，当场倒下了，`);
       era.print('受不了无法忍耐的痛楚和恐惧，失去了意识。');
@@ -387,6 +392,7 @@ async function passout_text() {
       }
       // :275-278 原作注释掉的 TFLAG:200 = 12 / CALL SELF_KOJO——头注
     } else {
+      // PASSOUT.ERB:280 的 PRINTFORML（空内容）落在分支外已收行之后 → 真空行（#595）
       era.print('');
       era.print(`${name_of(cid)}依然未醒来。`);
     }

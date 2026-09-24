@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 946; // #562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 976; // #595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -1827,6 +1827,7 @@ export default [
     file: 'ere/system/train/com-cloth.js',
     find: `    if (worn(target) === 0) {
       era.print('（已经全裸，撕无可撕）');
+      // COMF111:161 的裸 PRINTL 落在 COMF111:160 已收行之后 → 真空行（#595）
       era.print('');
       await era.waitAnyKey();
       return 0;
@@ -10144,6 +10145,255 @@ export default [
     replace: '    // 变异：:40 的真空行删除',
     tests: ['com-register'],
     must_mention: '方格与出口键之间恰有一个空行',
+  },
+  // —— #595 调教系统空行普查：多补的（补回空行方向） ——
+  {
+    desc: 'M12040 ABLUP0 选项行之后补回空行（:69 的 PRINTL 只收尾 :64-68 拼行）',
+    file: 'ere/system/train/ablup.js',
+    find: '    // ABLUP0.ERB:69 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '    era.println(); // 变异：选项行之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
+  },
+  {
+    desc: 'M12041 ABLUP6 [0] 之后补回空行（:135 是裸 PRINTL，只收尾拼行）',
+    file: 'ere/system/train/ablup.js',
+    find: '    // ABLUP6.ERB:135 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
+  },
+  {
+    desc: 'M12042 ABLUP16 [0] 之后补回空行（:57 是裸 PRINTL，只收尾拼行）',
+    file: 'ere/system/train/ablup.js',
+    find: '    // ABLUP16.ERB:57 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
+  },
+  {
+    desc: 'M12043 ABLUP17 [0] 之后补回空行（:55 是裸 PRINTL，只收尾拼行）',
+    file: 'ere/system/train/ablup.js',
+    find: '    // ABLUP17.ERB:55 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
+  },
+  {
+    desc: 'M12044 ABLUP100 [0] 之后补回空行（:36 是裸 PRINTL，只收尾拼行）',
+    file: 'ere/system/train/ablup.js',
+    find: '    // ABLUP100.ERB:36 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
+  },
+  {
+    desc: 'M12045 BENKI 灌满句之后补回空行（:1223 的 PRINTFORML 只收尾拼行）',
+    file: 'ere/system/train/benki.js',
+    find: '    // BENKI.ERB:1223 的 PRINTFORML（空内容）只收尾上面那条 PRINTFORM 拼行——\n    // 前一条没有换行，故它不是空行，这里不补 println（#595）',
+    replace: "    era.print(''); // 变异：灌满句之后补回空行",
+    tests: ['benki'],
+    must_mention: '下一行是 :1224 起的名字句',
+  },
+  {
+    desc: 'M12048 FUNC_CLOTH 尿布句之后补回空行（:269 的 PRINTL 只收尾 :263 拼行）',
+    file: 'ere/system/train/cloth.js',
+    find: '          // FUNC_CLOTH.ERB:269 的裸 PRINTL 只收尾 :263 的 PRINTFORM，\n          // 不是空行——这里不补 println（#595）',
+    replace: "          era.print(''); // 变异：尿布句之后补回空行",
+    tests: ['cloth-func'],
+    must_mention: '下一行是 :270 的点数句',
+  },
+  {
+    desc: 'M12049 COM201 菜单 [0] 之后补回空行（:67 是整行 PRINTL）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "      era.printButton('嘴巴', 0); // :66-67 [0]",
+    replace:
+      "      era.printButton('嘴巴', 0); // :66-67 [0]\n      era.println(); // 变异：[0] 之后补回空行",
+    tests: ['com-colosseum'],
+    must_mention: '菜单行全是按钮',
+  },
+  {
+    desc: 'M12050 COM202-206 菜单 [1] 之后补回空行（:55 是整行 PRINTL）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    era.printButton('胸部', 1); // :55 [1]（无条件）",
+    replace:
+      "    era.printButton('胸部', 1); // :55 [1]（无条件）\n    era.println(); // 变异：[1] 之后补回空行",
+    tests: ['com-colosseum'],
+    must_mention: '菜单行全是按钮',
+  },
+  {
+    desc: 'M12051 COM207 菜单 [2] 之后补回空行（:51 是整行 PRINTL）',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "    era.printButton('肛门', 2); // :51",
+    replace:
+      "    era.printButton('肛门', 2); // :51\n    era.println(); // 变异：[2] 之后补回空行",
+    tests: ['com-colosseum'],
+    must_mention: '菜单行全是按钮',
+  },
+  {
+    desc: 'M12052 COM_REGISTER「无法实行」行之后补回空行（:234 是整行 PRINTL）',
+    file: 'ere/system/train/com-register.js',
+    find: "    era.print('所登录的指令目前无法实行'); // :234 PRINTL（整行自成一行，不补空行——#595）",
+    replace:
+      "    era.print('所登录的指令目前无法实行'); // :234 PRINTL\n    era.println(); // 变异：无法实行行之后补回空行",
+    tests: ['com-register'],
+    must_mention: ':234 之后不得补空行',
+  },
+  {
+    desc: 'M12053 COM208 菜单 [0] 之后补回空行（:38 是整行 PRINTL）',
+    file: 'ere/system/train/com-tentacle.js',
+    find: "    era.printButton('嘴巴', 0); // :38",
+    replace:
+      "    era.printButton('嘴巴', 0); // :38\n    era.println(); // 变异：[0] 之后补回空行",
+    tests: ['com-tentacle'],
+    must_mention: '菜单行全是按钮',
+  },
+  {
+    desc: 'M12054 B150 句尾补回空行（:3002 的裸 PRINTL 只收尾 :2992-3000 拼行）',
+    file: 'ere/system/train/com-tentacle.js',
+    find: '  // EVENT_TRAIN_MESSAGE_B:3002 的裸 PRINTL 只收尾上面那条拼行（前一条没有\n  // 换行）——不是空行，这里不补 print（#595）',
+    replace: "  era.print(' '); // 变异：句尾补回空行",
+    tests: ['com-tentacle'],
+    must_mention: 'EVENT_TRAIN_MESSAGE_B:3002 的 PRINTL 只收尾',
+  },
+  {
+    desc: 'M12055 结算表头之后补回空行（:655 的 PRINTL 只收尾 :652-654 拼行）',
+    file: 'ere/system/train/juel-check.js',
+    find: '  // :655 的 PRINTL（空串）只收尾上面那条 PRINTFORM 链——前一条没有换行，\n  // 故它不是空行，这里不补 println（#595）',
+    replace: '  era.println(); // 变异：结算表头之后补回空行',
+    tests: ['juel-check'],
+    must_mention: '表头之后直接是 :656 的点线',
+  },
+  {
+    desc: 'M12056 COM64「３Ｐ」拆回两行（:79 的 PRINT 与 :81-87 的 PRINTL 本是一行）',
+    file: 'ere/system/train/com-assistant.js',
+    find: '  era.print(`３Ｐ${suffix}`);',
+    replace: "  era.print('３Ｐ');\n  era.print(suffix); // 变异：拆回两行",
+    tests: ['com-assistant'],
+    must_mention: 'COMF64:79 的 PRINT ３Ｐ 与 :81 的 PRINTL 后缀同行',
+  },
+  {
+    desc: 'M12057 B64 拼串为空也照印（原作 :2114-2129 零输出支不落行）',
+    file: 'ere/system/train/com-assistant.js',
+    find: "  const text = era_flag.assiplay\n    ? site('master', t40, true) + site('assi', t41, false)\n    : site('assi', t41, true) + site('master', t40, false);\n  if (text) era.print(text);",
+    replace:
+      "  era.print(\n    era_flag.assiplay\n      ? site('master', t40, true) + site('assi', t41, false)\n      : site('assi', t41, true) + site('master', t40, false),\n  ); // 变异：无条件 print（零输出支也落一行）",
+    tests: ['com-assistant'],
+    must_mention: '３Ｐ 行不接受独立空行/纯空白行',
+  },
+  {
+    desc: 'M12058 COM73 :132 的真空行移出 >100 分支（短发路径本应跳过它）',
+    file: 'ere/system/train/com-assistant.js',
+    find: "    // COMF73:132 的裸 PRINTL 落在空行上 → 真空行；它在 COMF73:70 的 GOTO 目标\n    // ($INPUT_LOOP_HAIRSET) 之前，短发（TALENT:302 ≤ 100）时被整条跳过，\n    // 所以只能放在这条 >100 分支里（#595）\n    era.print('');\n  }\n\n  for (;;) {\n    era.print(`把${t_name}的头发弄成什么样子？`);",
+    replace:
+      "  }\n  era.print(''); // 变异：真空行移出 >100 分支（短发也落空行）\n  for (;;) {\n    era.print(`把${t_name}的头发弄成什么样子？`);",
+    tests: ['com-assistant'],
+    must_mention: '短发时菜单之前没有空行',
+  },
+  {
+    desc: 'M12059 COM73 :132 的真空行删除（它是真行，删掉即少一行）',
+    file: 'ere/system/train/com-assistant.js',
+    find: "    // COMF73:132 的裸 PRINTL 落在空行上 → 真空行；它在 COMF73:70 的 GOTO 目标\n    // ($INPUT_LOOP_HAIRSET) 之前，短发（TALENT:302 ≤ 100）时被整条跳过，\n    // 所以只能放在这条 >100 分支里（#595）\n    era.print('');",
+    replace: '    // 变异：:132 的真空行删除',
+    tests: ['com-assistant'],
+    must_mention: '菜单之前是 COMF73:132 的真空行',
+  },
+  // —— #595：真空行保留（删掉空行方向） ——
+  {
+    desc: 'M12046 BENKI :50 的真空行删除（函数开头的裸 PRINTL 是真行）',
+    file: 'ere/system/train/benki.js',
+    find: "  // BENKI.ERB:50 的裸 PRINTL 落在函数开头（前一条输出已收行）→ 真空行（#595）\n  era.print('');",
+    replace: '  // 变异：:50 的真空行删除',
+    tests: ['benki'],
+    must_mention: 'BENKI.ERB:50 的真空行在场',
+  },
+  {
+    desc: 'M12047 BENKI :1352 的真空行删除（PRINTW 空内容落在 DRAWLINE 收行之后）',
+    file: 'ere/system/train/benki.js',
+    find: "  // BENKI.ERB:1352 的 PRINTW 空内容落在 DRAWLINE 已收行之后 → 真空行 + 等键（#595）\n  era.print('');",
+    replace: '  // 变异：:1352 的真空行删除',
+    tests: ['benki'],
+    must_mention: 'BENKI.ERB:1352 的真空行在场',
+  },
+  {
+    desc: 'M12060 COMF111 :161 的真空行删除（:160 的 PRINTL 已收行）',
+    file: 'ere/system/train/com-cloth.js',
+    find: "      // COMF111:161 的裸 PRINTL 落在 COMF111:160 已收行之后 → 真空行（#595）\n      era.print('');",
+    replace: '      // 变异：:161 的真空行删除',
+    tests: ['com-cloth'],
+    must_mention: 'COMF111:161 的真空行',
+  },
+  {
+    desc: 'M12061 COMF110 :313 的真空行删除（菜单已收行，它是真行）',
+    file: 'ere/system/train/com-cloth.js',
+    find: "      // :312-316 移动到撕破衣服；COMF110:313 的裸 PRINTL 落在菜单已收行\n      // 之后 → 真空行（#595）\n      era.print('');",
+    replace: '      // 变异：:313 的真空行删除',
+    tests: ['com-cloth'],
+    must_mention: 'COMF110:313 的真空行',
+  },
+  {
+    desc: 'M12062 COMF110 :321 的真空行删除（各分支输出已收行，它是真行）',
+    file: 'ere/system/train/com-cloth.js',
+    find: "    era.print(''); // COMF110:321 的真空行（各分支输出已收行——#595）",
+    replace: '    // 变异：:321 的真空行删除',
+    tests: ['com-cloth'],
+    must_mention: 'COM110 重绘前有空行',
+  },
+  {
+    desc: 'M12063 COMF53 :175 的真空行删除（:174 的 [1] 行已收行，它是真行）',
+    file: 'ere/system/train/com-special.js',
+    find: '    // COMF53:175 的裸 PRINTL 落在 COMF53:174 的 [1] 行之后 → 真空行（#595）\n    era.println();',
+    replace: '    // 变异：:175 的真空行删除',
+    tests: ['com-special'],
+    must_mention: '充能按钮与不了按钮之间恰有一个空行',
+  },
+  {
+    desc: 'M12064 PASSOUT :244 的真空行删除（:243 的 PRINTFORML 已收行）',
+    file: 'ere/system/train/passout.js',
+    find: "      // PASSOUT.ERB:244 的 PRINTFORML（空内容）落在 PASSOUT.ERB:243 已收行之后 → 真空行（#595）\n      era.print('');",
+    replace: '      // 变异：:244 的真空行删除',
+    tests: ['passout'],
+    must_mention: '绝顶的快感令温妮全身抽搐',
+  },
+  {
+    desc: 'M12065 PASSOUT :280 的真空行删除（分支外的裸 PRINTFORML）',
+    file: 'ere/system/train/passout.js',
+    find: "      // PASSOUT.ERB:280 的 PRINTFORML（空内容）落在分支外已收行之后 → 真空行（#595）\n      era.print('');",
+    replace: '      // 变异：:280 的真空行删除',
+    tests: ['passout'],
+    must_mention: '温妮依然未醒来',
+  },
+  {
+    desc: 'M12066 COMF111 :166 的真空行删除（撕破分支已收行，它是真行）',
+    file: 'ere/system/train/com-cloth.js',
+    find: "    era.print(''); // COMF111:166 的真空行（撕破分支输出已收行——#595）",
+    replace: '    // 变异：:166 的真空行删除',
+    tests: ['com-cloth'],
+    must_mention: 'COM111:166 的真空行',
+  },
+  {
+    desc: 'M12067 PASSOUT :255 的真空行删除（895 = 3 档，:254 台词行已收行）',
+    file: 'ere/system/train/passout.js',
+    find: "      // PASSOUT.ERB:255 的 PRINTFORML（空内容）落在 PASSOUT.ERB:254 已收行之后 → 真空行（#595）\n      era.print('');",
+    replace: '      // 变异：:255 的真空行删除',
+    tests: ['passout'],
+    must_mention: '…温妮当场倒下，因为过于强烈的恐惧失去了意识',
+  },
+  {
+    desc: 'M12068 ABLUP10 条件渲染的 [2] 之后补回空行（:66 是裸 PRINTL）',
+    file: 'ere/system/train/ablup.js',
+    find: '      // ABLUP10.ERB:66 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '      era.println(); // 变异：[2] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
+  },
+  {
+    desc: 'M12069 ABLUP32 条件渲染的 [1] 之后补回空行（:72 是裸 PRINTL）',
+    file: 'ere/system/train/ablup.js',
+    find: '    // ABLUP32.ERB:72 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
+    replace: '    era.println(); // 变异：[1] 之后补回空行',
+    tests: ['ablup'],
+    must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   // —— #572：满月确认的按钮化 ——
   {

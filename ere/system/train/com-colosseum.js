@@ -332,23 +332,20 @@ async function com201(rand = default_rand) {
     (!era.get(`talent:${target}:135`) ||
       (era.get(`talent:${era_flag.assi}:83`) || 0) === 1);
   for (;;) {
+    // COMF201:65-73 的菜单项全是整行 PRINTL（各自收行）——按钮化的选项
+    // 自成一行，相互之间不补空行（#595）
     era.print('对哪里进行凌辱？'); // :65
     if (penetrator) {
       era.printButton('嘴巴', 0); // :66-67 [0]
-      era.println();
     }
     era.printButton('胸部', 1); // :68 [1]（无条件）
-    era.println();
     if (can_vagina) {
       era.printButton('私处', 2); // :69-70 [2]
-      era.println();
     }
     if (penetrator) {
       era.printButton('肛门', 3); // :71-72 [3]
-      era.println();
     }
     era.printButton('暂时放过', 999); // :73 [999]
-    era.println();
     const result = await era.input(); // :75
 
     if (result === 0 && penetrator) {
@@ -528,19 +525,16 @@ async function monster_insult_menu(cfg, rand) {
     !era.get(`talent:${target}:273`) &&
     (era.get(`cflag:${target}:42`) || 0) !== 79;
   for (;;) {
+    // COMF202:53-59（202-206 五体同构）的菜单项全是整行 PRINTL——
+    // 按钮之间不补空行（#595）
     era.print('对哪里进行凌辱？'); // :53
     era.printButton('嘴巴', 0); // :54 [0]（无条件）
-    era.println();
     era.printButton('胸部', 1); // :55 [1]（无条件）
-    era.println();
     if (show_vagina) {
       era.printButton('私处', 2); // :56-57 [2]
-      era.println();
     }
     era.printButton('肛门', 3); // :58 [3]（无条件）
-    era.println();
     era.printButton('暂时放过', 999); // :59 [999]
-    era.println();
     const result = await era.input(); // :61
 
     if (result === 0) {
@@ -888,17 +882,14 @@ async function com207() {
 
   // —— 凌辱菜单（:46-79；全部 JUMP COM51 = 尾调用）——
   for (;;) {
+    // COMF207:47-52 的菜单项全是整行 PRINTL——按钮之间不补空行（#595）
     era.print('把粘液灌到哪里？？'); // :47
     era.printButton('嘴巴', 0); // :48
-    era.println();
     if (!(era.get(`talent:${target}:122`) || 0)) {
       era.printButton('私处', 1); // :49-50（男人不显示）
-      era.println();
     }
     era.printButton('肛门', 2); // :51
-    era.println();
     era.printButton('暂时放过', 999); // :52
-    era.println();
     const result = await era.input(); // :54
 
     if (result === 0) {

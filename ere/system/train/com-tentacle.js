@@ -419,19 +419,15 @@ async function com208(rand = default_rand) {
   }
 
   for (;;) {
+    // COMF208:37-43 的菜单项全是整行 PRINTL——按钮之间不补空行（#595）
     era.print('对哪里进行凌辱？'); // :37
     era.printButton('嘴巴', 0); // :38
-    era.println();
     era.printButton('胸部', 1); // :39
-    era.println();
     if (tal(target, 122) === 0) {
       era.printButton('私处', 2); // :40-41
-      era.println();
     }
     era.printButton('肛门', 3); // :42
-    era.println();
     era.printButton('暂时放过', 999); // :43
-    era.println();
     const result = await era.input(); // :45
 
     if (result === 0) {
@@ -679,8 +675,9 @@ train_message_b_family.register(150, async () => {
   } else {
     tail = `${f}调教开始了…`;
   }
-  era.print(`${player_name()}向${tail}`);
-  era.print(' '); // :3002 PRINTL 空行
+  era.print(`${player_name()}向${tail}`); // EVENT_TRAIN_MESSAGE_B:2992-3000 的 PRINTFORM 链
+  // EVENT_TRAIN_MESSAGE_B:3002 的裸 PRINTL 只收尾上面那条拼行（前一条没有
+  // 换行）——不是空行，这里不补 print（#595）
 });
 
 train_message_a_family.register(150, async () => {

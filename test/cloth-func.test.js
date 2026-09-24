@@ -761,3 +761,35 @@ test('TRAIN_MESSAGE_B 爱抚分支：触手/兽奸装备支与魔兽双行形态
     '身体行紧随其后另起（PRINTL 收行）',
   );
 });
+
+// —— #595：尿布换新的空行普查（FUNC_CLOTH.ERB 对照） ————
+
+test('#595 换上新尿布：尿布句与耻情点数句逐行相邻（:269 的 PRINTL 只收尾 :263 拼行）', async () => {
+  const { fixture, cloth } = seed_train_world();
+  fixture.store.set('flag:37', 1);
+  fixture.store.set('cflag:31:42', 69);
+  fixture.store.set('cflag:31:47', 0);
+  fixture.store.set('cflag:31:40', SPECIAL);
+  fixture.store.set('tflag:45', 16);
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.money = 100;
+  fixture.store.set('palamname:8', '耻情');
+  fixture.set_inputs(0); // [0] 好的
+  await cloth.aftertrain_cloth(31);
+  const diaper = fixture.lines.find((line) =>
+    line.text?.includes('换上了新的尿布）'),
+  );
+  assert.ok(diaper, '尿布句在场');
+  const next = fixture.lines
+    .filter((line) => line.row === diaper.row + 1)
+    .at(-1);
+  assert.equal(
+    next?.type,
+    'text',
+    'FUNC_CLOTH.ERB:269 的 PRINTL 只收尾 :263 的 PRINTFORM，中间无空行',
+  );
+  assert.ok(
+    next?.text.includes('耻情点数＋500'),
+    `下一行是 :270 的点数句（实际：${next?.text}）`,
+  );
+});

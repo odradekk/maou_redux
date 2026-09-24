@@ -742,7 +742,8 @@ async function com110() {
         return 0;
       }
     } else if (result === 9 && worn(target) !== 0) {
-      // :312-316 移动到撕破衣服
+      // :312-316 移动到撕破衣服；COMF110:313 的裸 PRINTL 落在菜单已收行
+      // 之后 → 真空行（#595）
       era.print('');
       const ripped = await com111();
       if (ripped === 1) {
@@ -753,7 +754,7 @@ async function com110() {
       return 0;
     }
 
-    era.print(''); // :321
+    era.print(''); // COMF110:321 的真空行（各分支输出已收行——#595）
     // GOTO INPUT_LOOP（:323）
   }
 }
@@ -901,12 +902,13 @@ async function com111() {
     // :159-165 撕完全裸 → 收尾退出
     if (worn(target) === 0) {
       era.print('（已经全裸，撕无可撕）');
+      // COMF111:161 的裸 PRINTL 落在 COMF111:160 已收行之后 → 真空行（#595）
       era.print('');
       await era.waitAnyKey();
       return 0;
     }
 
-    era.print(''); // :166
+    era.print(''); // COMF111:166 的真空行（撕破分支输出已收行——#595）
     // GOTO INPUT_LOOP（:168）
   }
 }
