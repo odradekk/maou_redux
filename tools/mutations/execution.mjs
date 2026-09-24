@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 164; // #549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
+export const COUNT = 165; // #572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
 export default [
   {
@@ -1409,5 +1409,14 @@ export default [
     replace: "    era.print('[1001] - 下一页'); // 变异",
     tests: ['event-execution'],
     must_mention: '录像架',
+  },
+  {
+    desc: 'M11985 批量处刑的选择处刑方式退回预设 ID 段内的 [150]',
+    file: 'ere/event/event-execution-batch.js',
+    find: "era.printButton('选择处刑方式', 121); // SIF 可处刑（:66-67）",
+    replace: "era.printButton('选择处刑方式', 150); // SIF 可处刑（:66-67）",
+    tests: ['child-id-collision'],
+    must_mention: '同一轮里与角色行同屏的固定编号不得等于预设 ID',
+
   },
 ];

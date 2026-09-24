@@ -2,7 +2,8 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 73; // #586 +9（M11900-M11902：献祭名单轮的返回编号——撞号复现、打印与判定各自的错位；M11903-M11906、M11907-M11908：十个探针暴露的覆盖缺口——条件键两端、编号基数、勇者档、自身排除、RESTART）；#565 返工 +1（M11633：TARGET 换手删除——语尾回退按调用方取）；#390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
+export const COUNT = 76; // #593 +3（M11983/M11984：同屏固定编号核对——条件键基数进预设段、名单轮插 [7] 探针；M11988：尾段并错轮的漏报，靶文件是核对自己）；#586 +9（M11900-M11902：献祭名单轮的返回编号——撞号复现、打印与判定各自的错位；M11903-M11906、M11907-M11908：十个探针暴露的覆盖缺口——条件键两端、编号基数、勇者档、自身排除、RESTART）；#565 返工 +1（M11633：TARGET 换手删除——语尾回退按调用方取）；#390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
+// M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
 const TALENTS = 'ere/page/components/chara-talents.js';
@@ -589,7 +590,7 @@ export default [
     MAIN,
     'const LIST_RETURN = 999;',
     'const LIST_RETURN = 100;',
-    '名单轮的固定编号与预设 ID 撞号',
+    '同一轮里与角色行同屏的固定编号不得等于预设 ID',
     ['chara-info-show', 'child-id-collision'],
   ),
   make(
@@ -666,4 +667,38 @@ export default [
       if (restart) return 1; // 变异：RESTART 改成直接退到首页`,
     'RESTART 后出口轮重画',
   ),
+  // —— #593：同屏固定编号核对的鉴别力（不认特定写法、`A + index` 展开、登记项失效） ——
+  make(
+    11983,
+    'SHOW_CHARA_INFO：条件键编号基数挪进预设 ID 段（1000 + index → 100 + index，只被静态核对盯住）',
+    MAIN,
+    '      era.printButton(kind, 1000 + index);',
+    '      era.printButton(kind, 100 + index);',
+    '同一轮里与角色行同屏的固定编号不得等于预设 ID',
+    ['child-id-collision'],
+  ),
+  make(
+    11984,
+    'SHOW_CHARA_INFO：名单轮新插一枚编号 7（预设 ID）的固定按钮（#593 的验收抽样）',
+    MAIN,
+    "    era.printButton('返回', LIST_RETURN);",
+    "    era.printButton('返回', LIST_RETURN);\n    era.printButton('探针', 7);",
+    '同一轮里与角色行同屏的固定编号不得等于预设 ID',
+    ['child-id-collision'],
+  ),
+  // 靶文件是核对自己（test/child-id-collision.test.js）：回边并错轮 = 漏报
+  {
+    desc: 'M11988 同屏核对：尾段无条件并进第 0 轮（sacrifice_flow 形状的尾段漏报）',
+    file: 'test/child-id-collision.test.js',
+    find: `      rounds[head] = {
+        fixed: [...rounds[head].fixed, ...tail.fixed],
+        rows: rounds[head].rows || tail.rows,
+      };`,
+    replace: `      rounds[0] = {
+        fixed: [...rounds[0].fixed, ...tail.fixed],
+        rows: rounds[0].rows || tail.rows,
+      };`,
+    tests: ['child-id-collision'],
+    must_mention: '尾段的 [7] 必须并进循环头那一轮',
+  },
 ];

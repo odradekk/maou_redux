@@ -120,7 +120,7 @@ const MIN_LINES = 27;
  * 预设 ID 上界 777 < 999 < 本页条件键的下界 1000，既避开全部预设 ID，也避开
  * 后代 ID 段（≥ FIRST_CHILD_ID = 100000）；它同时是项目其余列表页「返回」的
  * 通用编号，且那些页面同样与角色行同屏（page-chara-info.js:626 的退出名册、
- * sale.js:605、chara-marriage.js:815 与 842、page-ability-up.js:177）——本页
+ * sale.js:605、chara-marriage.js:815 与 842、page-ability-up.js:184）——本页
  * 只是并入既有惯例，不是新造编号。
  *
  * 为什么必须离开 100：名单轮的角色行以**角色 ID** 作快捷键（项目通例，见
