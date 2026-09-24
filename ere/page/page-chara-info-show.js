@@ -34,7 +34,10 @@
  *   - `ARG = shadow; RESTART` 用外层 `for(;;)` 承载（`shadow` 就是进入时的
  *     cid，重新开始等价于原地重画）；
  *   - 序号世界改角色 ID 世界（项目通例）：名单循环遍历
- *     `era.getAddedCharacters()`，打印与接受的都是角色 ID；
+ *     `era.getAddedCharacters()`，打印与接受的都是角色 ID；名单行的快捷键
+ *     与同屏的固定编号（六个条件键 [1000]-[1005]、返回 [100]）共存——后代
+ *     ID 因此必须落在固定编号之上（chara-pregnancy.js 的 FIRST_CHILD_ID =
+ *     100000，issue #560 的裁定；静态守卫见 test/child-id-collision.test.js）；
  *   - `CALL SHOW_PERSONAL_INFO(ARG)`（:305，CASE 4）全库无定义——不是
  *     「未移植」，是原作 `SELECTCASE ARG:1` 的这一支结构性不可达（全库没有
  *     任何调用点传 `ARG:1 == 4`；`CHARA_INFO ver1.0.1.ERB:948-949` 的翻页
@@ -64,6 +67,7 @@ const {
 } = require('#/page/components/chara-appearance');
 const { show_talent_condition } = require('#/page/page-chara-talent-condition');
 const { get_job_name } = require('#/page/page-select-target');
+const { template_no_of } = require('#/chara/chara-pregnancy');
 const { look_info } = require('#/chara/look');
 const { get_look_info } = require('#/chara/look-info');
 const { party_char_del } = require('#/dungeon/dungeon-party');
@@ -346,7 +350,9 @@ function sacrifice_chara(shadow, target_id, page) {
     equip_get({ 存储编号: cflag(target_id, slot) });
     era.set(`cflag:${target_id}:${slot}`, -1);
   }
-  era.set(`flag:${199 + target_id}`, 1); // :172-173 X = NO:A + 199; FLAG:X = 1
+  // :172-173 X = NO:A + 199; FLAG:X = 1。普通角色的 NO 就是角色 ID；后代的
+  // 原作 NO 是来源模板号（chara-pregnancy.js 的 template_no_of），故经它换算。
+  era.set(`flag:${template_no_of(target_id) + 199}`, 1);
   // :174-181 前回目标/助手（FLAG:1/FLAG:2）的下标前移——ID 世界不适用
   era_flag.target = era.get('flag:1') || 0; // :182 TARGET = FLAG:1
   party_char_del(target_id); // :184 CALL PARTY_CHAR_DEL, A

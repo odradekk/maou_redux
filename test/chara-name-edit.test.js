@@ -222,28 +222,32 @@ test('chara_info_name_edit：改名成功——两个名字键都更新为输入
   );
 });
 
-test('chara_info_name_edit：引擎归一后的零截输入按原文落名（:100 的守卫形状）', async () => {
-  // 引擎的 input 回传经 getNumber 归一，`''` 与 `'0'` 都到手为数字 0
-  // （夹具同款），故读到的字符串是 '0'、长度 1，走改名支——这一点与
-  // 原作一致（原作 INPUTS 的 RESULTS 也是归一后的形状）。
-  // :100 的零长支因此要靠**真正没有回传值**的情形触发；移植侧以
-  // `undefined → ''` 承接（引擎空回传的等价物），下面直接调私有分支。
+test('chara_info_name_edit：输入 0 走原作的零长分支（#567：0 视为空输入，名字不变更）', async () => {
+  // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与字面量 "0" 到手都是
+  // 数值 0。#567 的裁定——原作有「不输入」分支的自由文本输入一律按 B 处理：
+  // 0 视为空输入、走原作 :100-101「名字没有变更」支。代价是玩家不能把名字
+  // 设成字面量「0」（有意取舍，判据与依据见 ere/utils/input-text.js）。
   const fixture = create_era_fixture();
   add_chara(fixture, 3, '旧名');
   fixture.store.set('cflag:3:1', 0);
-  fixture.set_inputs('0');
+  fixture.set_inputs(0);
   const { chara_info_name_edit } = load(fixture);
+
   assert.equal(await chara_info_name_edit(3), 0);
-  assert.equal(fixture.store.get('callname:3:-2'), '0', '零截输入按原文落名');
+  assert(
+    texts(fixture).includes('旧名的名字没有变更。'),
+    ':101 的播报（空输入支）',
+  );
+  assert.equal(fixture.store.get('callname:3:-1'), '旧名', '姓名键不动');
+  assert.equal(fixture.store.get('callname:3:-2'), '旧名', '称呼键不动');
 });
 
 test('chara_info_name_edit：零长输入落「名字没有变更」支（:100-101，不写任何键）', async () => {
-  // :92 SELECTCASE STRLENS(LOCALS) 的 CASEELSE。引擎把回传值先过 getNumber
-  // 归一（夹具逐字镜像）：空串与 null 都成 0、非数字串原样——所以正常的
-  // 空输入到手是 `'0'`（长度 1，走落地支，见上一条）。真正落进零长支的只有
-  // 「压根没有回传值」的形态（`Number(undefined)` = NaN → 原样回传），移植侧
-  // 以 `undefined/null → ''` 承接。没有这条用例时，`strlens(input) > 0`
-  // 这半个判据（落地 vs 不动）无人守。
+  // :92 SELECTCASE STRLENS(LOCALS) 的 CASEELSE。归一路径见上一条（引擎归一
+  // 后的 0），本例补的是「压根没有回传值」的缺值形态：`Number(undefined)`
+  // = NaN → 原样回传，真机上渲染层拦住空提交、不会出现，夹具留作形态覆盖，
+  // 移植侧以 `undefined/null → ''` 承接（utils/input-text.js）。没有这条
+  // 用例时，`strlens(input) > 0` 这半个判据（落地 vs 不动）无人守。
   const fixture = create_era_fixture();
   add_chara(fixture, 3, '旧名');
   fixture.store.set('cflag:3:1', 0);

@@ -390,31 +390,25 @@ test('故事命名：超过 32 字符存储截断、显示保留原串（原作 
   );
 });
 
-test('故事命名：空输入经引擎归一成 0；原作消名分支真机不可达（#151 勘误）', async () => {
+test('故事命名：输入 0 走原作的消名分支（#567：0 视为空输入）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('cstr:0:99', '旧名');
   const { save_game } = load_page(fixture);
-  // 预置 '' 保留：它是钉住「夹具放行空输入」这一形态的活判据（引擎
-  // 渲染层 returnFromInput 对非 any 输入有非空守卫——app.vue 原始源码
-  // `if (!inputParam.value['any'] && !inputParam.value['val']) return`，
-  // 空输入根本不会送达主进程；#130 的白名单镜像未含这条空守卫）。
-  // 主进程侧 getNumber('') === 0（#151），String 化得 '0'——真机上玩家
-  // 的空输入要么被渲染层拦下，要么归一成 0，原作 :207-209 的「空输入＝
-  // 消名」在 EraElectron 上不可达（消名功能已随引擎换代失效，登记 #151）
-  fixture.set_inputs(200, '', 100);
+  // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与字面量 "0" 到手都是
+  // 数值 0；渲染层又不受理空提交（app.vue 的 returnFromInput 空守卫，
+  // dev-guides/05-interaction.md:124），0 因此是「不输入」的唯一可达形态。
+  // #567 裁定 0 视为空输入，原作 :207-209 的消名分支由此恢复可达
+  // （#151 曾记为真机不可达，本票按新裁定翻修断言）。
+  fixture.set_inputs(200, 0, 100);
   await save_game();
-  assert.equal(
-    fixture.store.get('cstr:0:99'),
-    '0',
-    '空输入按引擎主进程语义归一成 0、String 化为 "0" 入库',
+  assert.equal(fixture.store.get('cstr:0:99'), '', 'CSTR:MASTER:99 被清空');
+  assert(
+    history_texts(fixture).some((t) => t === '消去了故事的名字'),
+    ':209 的播报',
   );
   assert(
-    history_texts(fixture).some((t) => t === '将故事命名为『0』'),
-    '空输入走到命名分支（不再是消名）',
-  );
-  assert(
-    !history_texts(fixture).some((t) => t === '消去了故事的名字'),
-    '消名分支不可达（真机同此——渲染层空守卫 + getNumber("")===0）',
+    !history_texts(fixture).some((t) => t === '将故事命名为『0』'),
+    '不再把 0 当字面量故事名',
   );
   assert(
     history_texts(fixture).some((t) => t.includes('（旧名）')),

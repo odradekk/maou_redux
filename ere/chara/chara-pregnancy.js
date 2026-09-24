@@ -6,9 +6,10 @@
  * 移植说明：
  *   - MASTER 恒为角色 ID 0；SAVESTR 读 callname:id:-1。
  *   - RAND:N 经 rand 参数逐层透传；测试可注入确定性序列。
- *   - 生产的复制角色用 addCharacter([新 ID, 预设 ID])。动态 ID 从 1000
- *     起按预设编号各保留 100 位，令存档中的 ID 可反推出原作 NO；这既避免
- *     覆盖预设角色，也让同一预设连续生子和多代生育保留模板身份。
+ *   - 生产的复制角色用 addCharacter([新 ID, 预设 ID])。动态 ID 从 100000
+ *     起（见 FIRST_CHILD_ID 的注释）按预设编号各保留 100 位，令存档中的 ID
+ *     可反推出原作 NO；这既避免覆盖预设角色，也让同一预设连续生子和多代
+ *     生育保留模板身份。
  *   - 原作调教外借 TFLAG:13 传 SELF_KOJO 事件码，走 game.train 的调用链
  *     临时值，不伪造调教期。
  *   - 三处 JUMP 都是不返回的尾调用：GB_DEFINE_NAME 与 CHILD_CARE_BEGIN
@@ -43,7 +44,24 @@ const { ntr_child_birth } = require('#/system/ntr');
 const era_flag = require('#/era-utils/era-flag');
 
 const MAX_CHARANUM = 90;
-const FIRST_CHILD_ID = 1000;
+/**
+ * 后代 ID 区间的起点：必须在**全部页面固定按钮编号之上**（issue #560）。
+ *
+ * 列表页把角色 ID 直接当按钮快捷键（#530/#535 的名册、#543 的批量处刑页、
+ * #395 的目标选择页），同屏还有固定编号的功能按钮；后代 ID 落进那些区间就
+ * 会撞号——点角色行触发的是功能按钮，这个角色反而选不中。
+ *
+ * 固定编号的字面量上限是 4001——名册表头 1200-1500、[1600] 一并积极性（它的
+ * 页内另有 [2002]/[2003]）、[1700] 换号（页内另有 [1999]-[2001]/
+ * [3000]-[3002]/[4000]-[4001]）、批量处刑 [1999]-[2001]、com-register
+ * [998]-[1000]、目标选择 [1000]-[1002]……；**计算型**的另有「常量 + 角色 ID」
+ * （家族行按钮 15_000 + 角色 ID）与 `idx * 100 + i` 一类，前者按「角色 ID 的
+ * 可达集合（预设 ≤ 777 ∪ 后代 [100000, 121099]）」算过不会落进固定编号区间，
+ * 但静态检查只扫纯数字字面量，这两类靠人工普查（见 #560 的完成评论）。
+ * 两者之间留出余量后起点取 100000。test/child-id-collision.test.js 的静态检查
+ * 守「固定编号 < FIRST_CHILD_ID」，改小即红。撞号清单与选点依据见 #560。
+ */
+const FIRST_CHILD_ID = 100000;
 const CHILD_ID_BLOCK_SIZE = 100;
 const STUBBED_CALLS = [];
 
@@ -794,6 +812,8 @@ async function ninsin_main(rand = default_rand) {
 module.exports = {
   STUBBED_CALLS,
   MAX_CHARANUM,
+  FIRST_CHILD_ID,
+  template_no_of,
   ninsin_main,
   ninsin_aware,
   preg_talent_get,

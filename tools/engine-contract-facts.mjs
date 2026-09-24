@@ -72,4 +72,19 @@ export const ENGINE_FACTS = [
     anchors: ['safeUndefinedCheck(data.config.useRule, true)'],
     rule: null, // 只锚默认值；「何时该显式传 false」无静态可判的调用点规则
   },
+  {
+    // #567：空输入语义的判据第二条（第一条 getNumber 归一由
+    // test/fixture.test.js 的引擎用例直接断言）。夹具输入段的注释早已引用这条
+    // 守卫（#130 的白名单镜像未含它），#567 把它升格成「0 即空输入」全库裁定
+    // 的支柱之一，故进表锚定——引擎升版改掉它，这条判据会静默失效。
+    id: 'input-empty-submit-guard',
+    desc: "input 的渲染层不受理空提交：returnFromInput 对非 any 输入有空守卫——`!inputParam.value['any'] && !inputParam.value['val']` 为真时直接 return，普通 input() 下玩家根本交不出空串（#567 空输入判据的第二条依据）",
+    mirror:
+      'test/helpers/era-fixture.js 输入段的注释（#130 白名单镜像未含这条守卫）+ ere/utils/input-text.js 文件头的「引擎事实 2」',
+    anchors: [
+      `function returnFromInput() {
+  if (!inputParam.value['any'] && !inputParam.value['val']) {`,
+    ],
+    rule: null, // 只锚事实；判据的消费点（input_text）无静态可判的调用点规则
+  },
 ];

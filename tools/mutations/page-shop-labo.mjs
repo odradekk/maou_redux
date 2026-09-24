@@ -24,7 +24,7 @@ const make = (id, desc, find, replace, must_mention) => ({
 });
 
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 73;
+export const COUNT = 77; // #567 起 +4（M11840-M11842/M11844：刺青与自由局部调教的两处自由输入与提示行）
 
 export default [
   // —— 价格：MODIFY 族整表（每条的价格字面量各一） ——
@@ -545,5 +545,34 @@ export default [
     '    if ((cflag(cid, 451) < 18 || long_lived) && cflag(cid, 452) < 18) {',
     '    if (cflag(cid, 451) < 18 || (long_lived && cflag(cid, 452) < 18)) {',
     '年龄 17 但种族年龄 30 → 不拦',
+  ),
+  // —— #567：自由文字输入的空输入语义（0 ＝ 空输入）与输入 0 说明 ——
+  make(
+    11840,
+    '刺青的自由输入改回 A 语义（0 落成刺青文字「0」，消去支不可达）',
+    '  const results = input_text(await era.input({ useRule: false })); // :1864 INPUTS',
+    "  const results = String((await era.input({ useRule: false })) ?? ''); // 变异：A 语义",
+    '输入 0 落成空串',
+  ),
+  make(
+    11841,
+    '刺青提示行的输入 0 说明改坏（玩家看不到「不输入」的替代操作）',
+    "  era.print('（输入 0 消去刺青）');",
+    "  era.print('（输入 0 消去）');",
+    'ere 侧补的输入 0 说明（#567）',
+  ),
+  make(
+    11842,
+    '自由局部调教提示行的输入 0 说明改坏（同上）',
+    "  era.print('（输入 0 重置）');",
+    "  era.print('（输入 0 重置调教）');",
+    'ere 侧补的输入 0 说明（#567）',
+  ),
+  make(
+    11844,
+    '自由局部调教的自由输入改回 A 语义（0 落成调教项「0」，重置支不可达）',
+    '  const results = input_text(await era.input({ useRule: false })); // :4131 INPUTS',
+    "  const results = String((await era.input({ useRule: false })) ?? ''); // 变异：A 语义",
+    '输入 0 落成空串',
   ),
 ];

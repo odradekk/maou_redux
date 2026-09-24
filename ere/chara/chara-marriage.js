@@ -33,7 +33,10 @@
  *   - **`LIFE_LIST(NO_PAGE, 2)`（:202）用 #397 的真身**
  *     （ere/page/page-life-list.js 的 `life_list`）：MODE 2 只画列表、不画
  *     表头，与原作 :28-29 的空分支一致；编号按钮的 accelerator 就是角色
- *     ID（#21 的 ID 世界改写），因此 `RESULT` 直接与角色 ID 比较。
+ *     ID（#21 的 ID 世界改写），因此 `RESULT` 直接与角色 ID 比较。该页同屏
+ *     还有固定编号 [999]-[1001]（`slave_sub_menu`），后代 ID 因此必须落在
+ *     固定编号之上（chara-pregnancy.js 的 `FIRST_CHILD_ID` = 100000，issue
+ *     #560 的裁定；静态守见 test/child-id-collision.test.js）。
  *
  *   - **`CHARA_ID_OUTPUT`（:314/:319）用 #332 的真身**
  *     （ere/chara/chara-stats.js 的 `chara_id_output`）。

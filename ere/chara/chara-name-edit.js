@@ -37,11 +37,16 @@
  *   - **`RETURNF 2`（:65）保留**：那是「侵攻中的勇者不该看到按钮、但输入
  *     仍能到达」的防御分支，返回值被调用点忽略（原作的 CHARA_INFO 读
  *     RESULT:1）。
+ *
+ *   - **空输入的语义（:90 `INPUTS`）**：引擎不受理空提交、又把 `''` 与 `"0"`
+ *     都归一成数值 0，「不输入」在 ere 里只能以输入 0 表达。#567 统一裁定
+ *     0 视为空输入（判据见 ere/utils/input-text.js），名字不变更支因此可达。
  */
 
 const era = require('#/era-electron');
 const { chara_name_reset } = require('#/chara/chara-name');
 const { random_self_call } = require('#/chara/chara-self-call');
+const { input_text } = require('#/utils/input-text');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -147,11 +152,11 @@ async function chara_info_name_edit(arg, reset = 0) {
   // :87-102 [改名]
   for (;;) {
     era.print(`${era.get(`callname:${arg}:-2`) ?? ''}的新名字是？`); // :89
-    // :90 INPUTS —— 引擎把回传值按 getNumber 归一（'' → 0），游戏读到的
-    // 是归一后的值（夹具同款）。故这里的字符串化是「还原引擎交给游戏的
-    // 那个值」，不是把空串还原成空串。
-    const raw = await era.input();
-    const input = raw === undefined || raw === null ? '' : String(raw);
+    // :90 INPUTS —— 引擎把回传值按 getNumber 归一（'' 与 "0" 都成数值 0，
+    // 夹具同款），且不受理空提交；按 #567 的裁定 0 视为空输入，经共享判据
+    // 还原成空串后落 :100-101 的「名字没有变更」支（两条依据的完整注记见
+    // ere/utils/input-text.js）。
+    const input = input_text(await era.input());
     if (strlens(input) > 16) {
       // :93-95 名字太长
       era.print('名字太长，请使用全角八字以下的名字。');

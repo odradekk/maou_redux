@@ -50,6 +50,10 @@
  *     `TRYCALL`，真身在 `ere/chara/chara-body.js` 的
  *     `char_bust_regenerate_wapped`（对应 CHARA_BODY2.ERB:2-14），随
  *     `rand` 形参一并从 `char_custom_talent_deal` 传入。
+ *   - **空输入（:647-648 / :695-696 的 `INPUTS`）按 #567 的裁定处理**：0 视为
+ *     空输入、走 :644-670 / :692-706 段内的「随机生成。」支；两处提示行后各
+ *     补一句「（输入 0 随机生成）」——有意偏离 1:1 文案，判据与依据见
+ *     ere/utils/input-text.js。
  */
 
 'use strict';
@@ -72,6 +76,7 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { input_text } = require('#/utils/input-text');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -704,16 +709,6 @@ const KISS_POSITIONS = [1, 201, 301, 401];
 const DOG_POSITIONS = [1, 2, 3];
 
 /**
- * `INPUTS` 的等价物：引擎把可数值化的输入转 Number（chara-name-edit.js:150
- * 的实测注释），本函数把它还原成游戏侧读到的字符串。
- * @param {*} raw era.input() 的回传值
- * @returns {string}
- */
-function input_string(raw) {
-  return raw === undefined || raw === null ? '' : String(raw);
-}
-
-/**
  * @CHARA_FIRST_XP（:596-794）：初吻与初体验的对象、部位、名称的问卷。
  *
  * 选择项在源里是**列排版文本 + `INPUT`**（:612/:620-623 一类），不是
@@ -787,7 +782,9 @@ async function chara_first_xp(cid, rand = default_rand) {
       // :644-670 自定义输入：$LOOP3 覆盖「名字」与「部位」两步
       kiss_input: for (;;) {
         era.print('输入初吻对象（留空将会随机生成）：'); // :646
-        kiss_name = input_string(await era.input()); // :647-648 INPUTS + RESULTS
+        // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+        era.print('（输入 0 随机生成初吻对象）');
+        kiss_name = input_text(await era.input()); // :647-648 INPUTS + RESULTS
         const length = strlens(kiss_name); // :649
         if (length > 16) {
           era.print(`太长，请使用全角八字以下。`); // :596-794
@@ -847,7 +844,9 @@ async function chara_first_xp(cid, rand = default_rand) {
         // :692-706 自定义输入（$LOOP4，只重问名字）
         for (;;) {
           era.print('输入初体验对象（留空将会随机生成）：'); // :694
-          sex_name = input_string(await era.input()); // :695-696
+          // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+          era.print('（输入 0 随机生成初体验对象）');
+          sex_name = input_text(await era.input()); // :695-696
           const length = strlens(sex_name); // :697
           if (length > 16) {
             era.print('太长，请使用全角八字以下。'); // :596-794

@@ -108,6 +108,33 @@ test('录像出售接线：EVENTEND 在调教表销毁前结算有效录像', as
   assert(!fixture.text_lines().some((line) => line.includes('@SELL_VIDEO')));
 });
 
+test('死亡删除分支：后代的死亡标记按来源模板号落位（#561 第 2 条）', async () => {
+  const fixture = create_era_fixture();
+  const era_flag = seed_world(fixture);
+  // 后代形状的角色：ID 落在 FIRST_CHILD_ID 段（模板 1 的 100000-100099），
+  // template_no_of 拆出模板 1——与真后代走同一条寻址（不必跑生育流程）
+  fixture.seed_chara(1, { name: '后代模板' });
+  assert.equal(fixture.era.addCharacter([100000, 1]), true);
+  era_flag.target = 100000;
+  era_flag.target_record = 100000;
+  era_flag.target_backup = 100000; // :321 TARGET = T:11 的暂存值
+  fixture.store.set('base:100000:0', 0); // 死亡（体力 < 1 且非魔王）
+  fixture.set_inputs(999);
+
+  const pending = await run_eventend(fixture);
+
+  assert.equal(pending, 'TURNEND');
+  assert(
+    fixture.var_writes.some((w) => w.name === 'flag:200' && w.value === 1),
+    'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+  );
+  assert(
+    !fixture.var_writes.some((w) => w.name === 'flag:100199'),
+    '不按角色 ID 直加（100000 + 199 = 100199）',
+  );
+  assert(!fixture.era.getAddedCharacters().includes(100000));
+});
+
 test('失神旗标：TFLAG:860 = 1 → FLAG:7 = 1 并清零', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);

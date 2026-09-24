@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 142; // #549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）
+export const COUNT = 154; // #549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
 export default [
   {
@@ -1220,5 +1220,112 @@ export default [
     replace: `  if (result === 4) { // 变异：非 4 号漏发勋章`,
     tests: ['event-auto-execution-e2e'],
     must_mention: '流放结算发勋章（BANISHMENT 非 4 号支）',
+  },
+  // —— #561（与 #560 同票）：处刑归档的槽位/NO 寻址与旧文件的等待次数
+  //    （M11782 起）。两处寻址各按自己的口径：SUISEI_STR 的槽位 = 角色在
+  //    已加入列表中的位置（archive_slot_of），FLAG:(NO+199) 对后代取来源
+  //    模板号（template_no_of）——每一对「按角色 ID 直加」的变异都要红。
+  {
+    desc: 'M11782 SUISEI_STR 槽位回退成角色 ID',
+    file: 'ere/event/event-execution-common.js',
+    find: '  return era.getAddedCharacters().indexOf(cid);',
+    replace: '  return cid;',
+    tests: ['event-execution-batch'],
+    must_mention:
+      'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（:303 的 A = 角色下标）',
+  },
+  {
+    desc: 'M11783 处刑済 FLAG 回退成角色 ID 直加（后代写到 100199 以上）',
+    file: 'ere/event/event-execution-common.js',
+    find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
+    replace: '  era.set(`flag:${cid + 199}`, 1);',
+    tests: ['event-execution-batch'],
+    must_mention:
+      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+  },
+  {
+    desc: 'M11784 肉便器归档槽位回退成角色 ID',
+    file: 'ere/event/event-execution-batch.js',
+    find: '  era.set(`videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:303）',
+    replace: '  era.set(`videoarchive:${cid}`, title); // SUISEI_STR:A（:303）',
+    tests: ['event-execution-batch'],
+    must_mention:
+      'SUISEI_STR 的槽位 = 角色在已加入列表中的位置（:303 的 A = 角色下标）',
+  },
+  {
+    desc: 'M11785 士兵化归档槽位回退成角色 ID',
+    file: 'ere/event/event-execution-batch.js',
+    find: 'videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:315-317）',
+    replace: 'videoarchive:${cid}`, title); // SUISEI_STR:A（:315-317）',
+    tests: ['event-execution-batch'],
+    test_name: '方法 5 士兵化',
+    must_mention: 'SUISEI_STR 槽位 = 角色在已加入列表中的位置（#561）',
+  },
+  {
+    desc: 'M11786 固定示众归档槽位回退成角色 ID',
+    file: 'ere/event/event-execution-batch.js',
+    find: 'videoarchive:${archive_slot_of(cid)}`, title); // SUISEI_STR:A（:332）',
+    replace: 'videoarchive:${cid}`, title); // SUISEI_STR:A（:332）',
+    tests: ['event-execution-batch'],
+    test_name: '方法 6 固定示众：状态切 8',
+    must_mention: 'SUISEI_STR 槽位 = 角色在已加入列表中的位置（#561）',
+  },
+  {
+    desc: 'M11787 博物馆归档槽位回退成角色 ID',
+    file: 'ere/event/event-museum.js',
+    find: '  era.set(`videoarchive:${archive_slot_of(a)}`, archive_title);',
+    replace: '  era.set(`videoarchive:${a}`, archive_title);',
+    tests: ['event-museum'],
+    must_mention: 'SUISEI_STR:A 保存展品名与角色名',
+  },
+  {
+    desc: 'M11788 博物馆处刑済 FLAG 回退成角色 ID 直加',
+    file: 'ere/event/event-museum.js',
+    find: '  era.set(`flag:${template_no_of(a) + 199}`, 1);',
+    replace: '  era.set(`flag:${a + 199}`, 1);',
+    tests: ['event-museum'],
+    must_mention: '模板 1 → FLAG:200',
+  },
+  {
+    desc: 'M11789 献祭后代时处刑済 FLAG 回退成角色 ID 直加',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '  era.set(`flag:${template_no_of(target_id) + 199}`, 1);',
+    replace: '  era.set(`flag:${target_id + 199}`, 1);',
+    tests: ['chara-info-show'],
+    must_mention: '模板 1 → FLAG:200',
+  },
+  {
+    desc: 'M11790 出售除名时处刑済 FLAG 回退成角色 ID 直加',
+    file: 'ere/system/stronghold/sale.js',
+    find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
+    replace: '  era.set(`flag:${cid + 199}`, 1);',
+    tests: ['sale-chara'],
+    must_mention: '模板 1 → FLAG:200',
+  },
+  {
+    desc: 'M11791 调教后死亡时处刑済 FLAG 回退成角色 ID 直加',
+    file: 'ere/event/event-end.js',
+    find: '      era.set(`flag:${template_no_of(target) + 199}`, 1);',
+    replace: '      era.set(`flag:${target + 199}`, 1);',
+    tests: ['event-end'],
+    must_mention:
+      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+  },
+  {
+    desc: 'M11792 肉便器 :166 的不等待输出改成 printAndWait',
+    file: 'ere/event/event-execution.js',
+    find: "  era.print('被吸收了全部力量的她，身体变成淫靡的肉块了。');",
+    replace:
+      "  await era.printAndWait('被吸收了全部力量的她，身体变成淫靡的肉块了。');",
+    tests: ['event-execution'],
+    must_mention: '不等待的原作行必须用裸 era.print：',
+  },
+  {
+    desc: 'M11793 肉便器 :255 的 PRINTFORMW 改成不等待的 print',
+    file: 'ere/event/event-execution.js',
+    find: '  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`);',
+    replace: '  era.print(`现在的肉便器数量：${game.invasion.肉便器数}`);',
+    tests: ['event-execution'],
+    must_mention: ':255 PRINTFORMW 必须用 printAndWait',
   },
 ];

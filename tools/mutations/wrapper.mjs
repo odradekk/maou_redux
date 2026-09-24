@@ -3,10 +3,11 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 19; // #542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
+export const COUNT = 21; // #542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
 // 话术退回、丢等键、丢 @函数名，均由 test/page-config.test.js 的 dispatch_config(26/28)
 // 用例守护）
 //；#547 起 +3（M11575-M11577，era-modsave/era-global 的两个开关循环与首臂——由 test/era-modsave.test.js 与 test/era-global.test.js 守护）
+//；#567 起 +2（M11830/M11831，utils/input-text 的空输入判据——由 test/input-text.test.js 守护）
 
 export default [
   {
@@ -200,5 +201,22 @@ export default [
     v === -1 ? -1 : v === 0 ? 1 : v === 1 ? 2 : v === 2 ? 3 : v === 3 ? 4 : -1;`,
     tests: ['era-global'],
     must_mention: '-1→0→1→2→3→4→-1 六档循环',
+  },
+  // —— #567：自由文本输入的空输入判据（0 ＝ 空输入），靶 ere/utils/input-text.js ——
+  {
+    desc: 'M11830 判空漏掉 0（引擎归一后的空输入形态不再还原，全库回到 A 语义）',
+    file: 'ere/utils/input-text.js',
+    find: '  if (raw === undefined || raw === null || raw === 0) {',
+    replace: '  if (raw === undefined || raw === null) {',
+    tests: ['input-text'],
+    must_mention: '0 = 空串与 "0" 的共同归一形态',
+  },
+  {
+    desc: 'M11831 判空只认 0（undefined/null 的缺值形态漏给 String，字面量「undefined」落库）',
+    file: 'ere/utils/input-text.js',
+    find: '  if (raw === undefined || raw === null || raw === 0) {',
+    replace: '  if (raw === 0) {',
+    tests: ['input-text'],
+    must_mention: 'undefined / null 的缺值形态也归空串',
   },
 ];

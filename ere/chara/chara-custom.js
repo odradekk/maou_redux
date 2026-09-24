@@ -43,6 +43,9 @@
  *     与 TALENT/CSTR 的 chara 属主下标域内裸寻址（#70 读全部放行）。
  *   - **随机源提成 `rand` 形参**（chara-init.js 先例）：源 :103-272/:103-272/:103-272/:103-272
  *     四处 `RAND:80`。
+ *   - **空输入（:249 `INPUTS`）按 #567 的裁定处理**：0 视为空输入、走
+ *     :263 的随机名支（CASEELSE）；提示行后补一句「（输入 0 随机生成名字）」
+ *     ——有意偏离 1:1 文案，判据与依据见 ere/utils/input-text.js。
  */
 
 'use strict';
@@ -60,6 +63,7 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { input_text } = require('#/utils/input-text');
 
 /**
  * 本文件存根化的原作调用名：无——@CHAR_CREATE 与 @CHAR_APPEND 全部落地，
@@ -315,9 +319,11 @@ async function char_append(arg, mode, rand = default_rand) {
     // :103-272 $INPUT_LOOP
     for (;;) {
       era.print('新建人物的名字是？（不输入将随机生成名字）'); // :248
+      // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
+      era.print('（输入 0 随机生成名字）');
       const raw = await era.input(); // :249 INPUTS
       chara_name_random_define(cid, -1, rand); // :103-272（先掷一个随机名打底）
-      const name = raw === undefined || raw === null ? '' : String(raw); // :251
+      const name = input_text(raw); // :251 LOCALS '= RESULTS（0 经共享判据归空串）
       const length = strlens(name);
       if (length > NAME_MAX_LENGTH) {
         era.print('名字太长，请使用全角八字以下的名字。'); // :254 PRINTFORMW
