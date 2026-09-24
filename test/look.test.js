@@ -2707,6 +2707,462 @@ test('LOOK_INFO 语尾调用点：返回值必须被消费（#570 行内拼接�
   );
 });
 
+/**
+ * 语尾档位表的底座（#583）：口上视角 + 性格 K4（语尾族键 4）+ 外观/经历素质
+ * 逐项清零——只有行内 setup 打开的那一块开口，目标行因此唯一可寻。
+ *
+ * 语尾族里装的是**返回带档位标记的假处理函数**（`〈4〉`）。这比 #570 那套
+ * 「替换导出、只记实参」强在标记真的流进了台词行：后者看不见「哪一句拿了
+ * 哪一档、有没有拼进行内」——把 `look.js:1277` 的 4 改成 0 全绿，正是从那个
+ * 缝里溜过抽样验收的。
+ * @returns {object} { fixture, cid, set_talent, set_cflag, set_mark, info }
+ */
+function gobi_tier_world() {
+  const fixture = create_era_fixture();
+  const mod = fixture.load_module('chara/look');
+  // 素质 164（性格 K4 冷徹）→ GET_KOJO_NUM = 104 → 语尾族键 4
+  fixture
+    .load_module('kojo/kojo-system')
+    .gobi_koujo_family.register(4, async (arg0) => `〈${arg0}〉`);
+  const cid = 800;
+  mod.look_set(cid, 0, always);
+  // LOOK_SET 掷出来的外观（300-314）与经历（315/316 另有行级 setup）素质清零
+  for (const idx of [
+    300, 301, 302, 303, 304, 305, 306, 307, 308, 309, 310, 312, 313, 314, 17,
+    76, 85, 121, 122, 158, 220, 242, 250, 281, 282, 283, 321, 322,
+  ]) {
+    fixture.store.set(`talent:${cid}:${idx}`, 0);
+  }
+  fixture.store.set(`talent:${cid}:164`, 1); // 性格 K4 冷徹 → 语尾族键 4（见上）
+  fixture.store.set(`cflag:${cid}:580`, 100); // 所持金 100（源 :1586 的「> 0」支）
+  fixture.store.set(`callname:${cid}:-1`, '阿名');
+  fixture.store.set('flag:5', 2048); // 口上视角
+  fixture.load_module('era-utils/era-flag').target = cid; // GOBI_KOUJO 读当前 TARGET
+  return {
+    fixture,
+    cid,
+    set_talent(idx, value) {
+      fixture.store.set(`talent:${cid}:${idx}`, value);
+    },
+    set_cflag(idx, value) {
+      fixture.store.set(`cflag:${cid}:${idx}`, value);
+    },
+    set_mark(idx, value) {
+      fixture.store.set(`mark:${cid}:${idx}`, value);
+    },
+    async info() {
+      await mod.look_info(cid);
+      return fixture.text_lines();
+    },
+  };
+}
+
+/**
+ * 语尾档位表（#583）：一行一个 `gobi_koujo` 调用点。
+ *
+ * 列：
+ *   - `src`   原作 LOOK.ERB 里 `CALL GOBI_KOUJO` 的行号
+ *   - `site`  look.js 的调用点（两个「来历」块共用 look_info_block 的那一处）
+ *   - `note`  断言消息里的说明（也是对应变异条目 must_mention 的出处）
+ *   - `pick`  目标台词行的选择子（必须唯一命中一行）
+ *   - `seq`   该行**完整**的期望档位序列；`at` 是本次调用点在这条序列里的位置
+ *   - `setup` 构造条件（在底座上打开对应那一块）
+ *
+ * **断整条序列、不只断自己那一档**：体型块一行三处、魅力点块与所持金块
+ * 各一行两处，只查「行里有没有 `〈0〉`」会被同行的另一个同档标记顶过去——
+ * 档位写错照样绿（#570 抽样把 `:1277` 的 4 改成 0 时全绿，正是这个形状）。
+ * `seq` 也顺带钉住标记个数：漏调、多调一处都会让序列对不上。
+ */
+const GOBI_TIER_ROWS = [
+  // —— 首行（源 :875-878）——
+  {
+    src: 877,
+    site: 'look.js:1176',
+    note: '源 :877 首行（屈服刻印 < 3 → 4）',
+    pick: '「人类的阿名',
+    seq: [4],
+    at: 0,
+  },
+  {
+    src: 877,
+    site: 'look.js:1176',
+    note: '源 :877 首行（屈服刻印 >= 3 → 0）',
+    pick: '「人类的阿名',
+    seq: [0],
+    at: 0,
+    setup: (w) => w.set_mark(2, 3),
+  },
+  // —— 原种族块（源 :880-892）——
+  {
+    src: 884,
+    site: 'look.js:1186',
+    note: '源 :884 原种族不明（爱慕 → 0）',
+    pick: '「成为魔族前的种族：不明',
+    seq: [0],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(314, 9); // 种族 = 魔族 → 走 loc3 块
+      w.set_talent(321, 9); // 原种族 = 魔族 → 走「不明」支
+      w.set_talent(85, 1); // 爱慕（TALENT:85）
+    },
+  },
+  {
+    src: 884,
+    site: 'look.js:1186',
+    note: '源 :884 原种族不明（淫乱 → 0）',
+    pick: '「成为魔族前的种族：不明',
+    seq: [0],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(314, 9);
+      w.set_talent(321, 9);
+      w.set_talent(76, 1); // 淫乱（TALENT:76，`爱慕 || 淫乱` 的另一支）
+    },
+  },
+  {
+    src: 884,
+    site: 'look.js:1186',
+    note: '源 :884 原种族不明（非爱慕非淫乱 → 3）',
+    pick: '「成为魔族前的种族：不明',
+    seq: [3],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(314, 9);
+      w.set_talent(321, 9);
+    },
+  },
+  {
+    src: 889,
+    site: 'look.js:1189',
+    note: '源 :889 原种族已知（屈服刻印 < 3 → 2）',
+    pick: '「成为魔族前的种族：',
+    seq: [2],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(314, 9);
+      w.set_mark(2, 2);
+    },
+  },
+  {
+    src: 889,
+    site: 'look.js:1189',
+    note: '源 :889 原种族已知（屈服刻印 >= 3 → 0）',
+    pick: '「成为魔族前的种族：',
+    seq: [0],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(314, 9);
+      w.set_talent(321, 1); // 原种族 = 精灵 → 走已登记表名支
+      w.set_mark(2, 3);
+    },
+  },
+  // —— 头发（源 :915-978）——
+  {
+    src: 931,
+    site: 'look.js:1217',
+    note: '源 :931 发色与性质（喜 → 1）',
+    pick: '「头发是',
+    seq: [1],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(300, 1); // 头发颜色
+      w.set_talent(301, 1); // 头发状态
+    },
+  },
+  {
+    src: 971,
+    site: 'look.js:1238',
+    note: '源 :971 头发长度・修剪・发型（默认 → 0）',
+    pick: '「留着',
+    seq: [0],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(302, 1);
+      w.set_talent(303, 1);
+      w.set_talent(304, 1);
+    },
+  },
+  // —— 眼・瞳・唇（源 :981-1021）——
+  {
+    src: 1013,
+    site: 'look.js:1258',
+    note: '源 :1013 眼/瞳/唇（喜 → 1）',
+    pick: '「我的',
+    seq: [1],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(305, 1);
+      w.set_talent(306, 1);
+      w.set_talent(307, 1);
+    },
+  },
+  // —— 体型块（源 :1022-1080，一行三处）——
+  {
+    src: 1042,
+    site: 'look.js:1275',
+    note: '源 :1042 体型（默认 → 0）',
+    pick: '的体型……',
+    seq: [0, 4, 2],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(308, 1);
+      w.set_talent(309, 1);
+      w.set_talent(310, 1);
+      w.set_talent(121, 1); // 扶她 → 同行还有阴茎一处
+    },
+  },
+  {
+    src: 1054,
+    site: 'look.js:1277',
+    note: '源 :1054 阴毛（害羞 → 4）',
+    pick: '的体型……',
+    seq: [0, 4, 2],
+    at: 1,
+    setup: (w) => {
+      w.set_talent(308, 1);
+      w.set_talent(309, 1);
+      w.set_talent(310, 1);
+      w.set_talent(121, 1);
+    },
+  },
+  {
+    src: 1069,
+    site: 'look.js:1281',
+    note: '源 :1069 阴茎（怒 → 2）',
+    pick: '的体型……',
+    seq: [0, 4, 2],
+    at: 2,
+    setup: (w) => {
+      w.set_talent(308, 1);
+      w.set_talent(309, 1);
+      w.set_talent(310, 1);
+      w.set_talent(121, 1);
+    },
+  },
+  // —— 魅力点・癖（源 :1079-1111，一行两处）——
+  {
+    src: 1093,
+    site: 'look.js:1301',
+    note: '源 :1093 魅力点（默认 → 0）',
+    pick: '是我的魅力点',
+    seq: [0, 0],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(312, 1);
+      w.set_talent(313, 1);
+    },
+  },
+  {
+    src: 1105,
+    site: 'look.js:1303',
+    note: '源 :1105 癖（默认 → 0）',
+    pick: '是我的魅力点',
+    seq: [0, 0],
+    at: 1,
+    setup: (w) => {
+      w.set_talent(312, 1);
+      w.set_talent(313, 1);
+    },
+  },
+  // —— 来历两块的前职业支（源 :1384-1404，五个分支一个包装调用点）——
+  {
+    src: 1388,
+    site: 'look.js:1500',
+    note: '源 :1388 前职业贵族・聖女・軍人（誇らしい → 1）',
+    pick: '「来据点之前我是',
+    seq: [1],
+    at: 0,
+    setup: (w) => w.set_talent(315, 8),
+  },
+  {
+    src: 1392,
+    site: 'look.js:1500',
+    note: '源 :1392 前职业妓女・奴隷（恥ずかしい → 4）',
+    pick: '「来据点之前我是',
+    seq: [4],
+    at: 0,
+    setup: (w) => w.set_talent(315, 5),
+  },
+  {
+    src: 1396,
+    site: 'look.js:1500',
+    note: '源 :1396 前职业盗人（逆切れ → 2）',
+    pick: '「来据点之前我是',
+    seq: [2],
+    at: 0,
+    setup: (w) => w.set_talent(315, 6),
+  },
+  {
+    src: 1400,
+    site: 'look.js:1500',
+    note: '源 :1400 前职业物乞い・貧民（情けない → 5）',
+    pick: '「来据点之前我是',
+    seq: [5],
+    at: 0,
+    setup: (w) => w.set_talent(315, 7),
+  },
+  {
+    src: 1403,
+    site: 'look.js:1500',
+    note: '源 :1403 前职业默认（学生 → 0）',
+    pick: '「来据点之前我是',
+    seq: [0],
+    at: 0,
+  },
+  // —— 来历两块的契机支（源 :1450-1471）——
+  {
+    src: 1454,
+    site: 'look.js:1500',
+    note: '源 :1454 契机啓示・故郷・平和・正義（誇らしい → 1）',
+    pick: '「回应召唤是因为',
+    seq: [1],
+    at: 0,
+    setup: (w) => w.set_talent(316, 3),
+  },
+  {
+    src: 1458,
+    site: 'look.js:1500',
+    note: '源 :1458 契机罪・仕方なく（恥ずかしい → 4）',
+    pick: '「回应召唤是因为',
+    seq: [4],
+    at: 0,
+    setup: (w) => w.set_talent(316, 10),
+  },
+  {
+    src: 1462,
+    site: 'look.js:1500',
+    note: '源 :1462 契机復讐（逆切れ → 2）',
+    pick: '「回应召唤是因为',
+    seq: [2],
+    at: 0,
+    setup: (w) => w.set_talent(316, 8),
+  },
+  {
+    src: 1466,
+    site: 'look.js:1500',
+    note: '源 :1466 契机金のため・命令（情けない → 5）',
+    pick: '「回应召唤是因为',
+    seq: [5],
+    at: 0,
+    setup: (w) => w.set_talent(316, 2),
+  },
+  {
+    src: 1469,
+    site: 'look.js:1500',
+    note: '源 :1469 契机默认（運命 → 0）',
+    pick: '「回应召唤是因为',
+    seq: [0],
+    at: 0,
+  },
+  // —— 信仰与弃教（源 :1478-1548）——
+  {
+    src: 1511,
+    site: 'look.js:1379',
+    note: '源 :1511 信仰（喜 → 1）',
+    pick: '「信仰着',
+    seq: [1],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(242, 1); // 法术 → 信仰块条件
+      w.set_cflag(152, 10); // 信仰值 >= 10
+    },
+  },
+  {
+    src: 1542,
+    site: 'look.js:1405',
+    note: '源 :1542 弃教（喜 → 1）',
+    pick: '婊子肉便器',
+    seq: [1],
+    at: 0,
+    setup: (w) => {
+      w.set_talent(242, 1);
+      w.set_cflag(152, 10);
+      w.set_talent(85, 1); // 爱慕 → 堕落者
+      w.set_talent(17, 1); // 低姿态
+    },
+  },
+  // —— 妊娠适性（源 :1553-1573）——
+  {
+    src: 1567,
+    site: 'look.js:1420',
+    note: '源 :1567 妊娠适性（情けない → 5）',
+    pick: '「我不能正常的怀孕',
+    seq: [5],
+    at: 0,
+    setup: (w) => w.set_talent(158, 1),
+  },
+  // —— 所持金・借金（源 :1575-1605）——
+  {
+    src: 1585,
+    site: 'look.js:1436',
+    note: '源 :1585 身无分文（情けない → 5）',
+    pick: '身无分文',
+    seq: [5],
+    at: 0,
+    setup: (w) => w.set_cflag(580, 0),
+  },
+  {
+    src: 1590,
+    site: 'look.js:1439',
+    note: '源 :1590 所持金 > 0（默认 → 0）',
+    pick: '「身上的钱么……100',
+    seq: [0],
+    at: 0,
+  },
+  {
+    src: 1604,
+    site: 'look.js:1444',
+    note: '源 :1604 欠债（情けない → 5）',
+    pick: '欠债',
+    seq: [0, 5],
+    at: 1,
+    setup: (w) => w.set_cflag(582, -50),
+  },
+  // —— 常识改变（源 :1613-1658）——
+  {
+    src: 1653,
+    site: 'look.js:1472',
+    note: '源 :1653 常识改变（喜 → 1）',
+    pick: '方面完全被改变了',
+    seq: [1],
+    at: 0,
+    setup: (w) => w.set_talent(281, 1),
+  },
+  // —— 喜欢的东西收尾（源 :2797-2804）——
+  {
+    src: 2799,
+    site: 'look.js:2004',
+    note: '源 :2799 喜好收尾（喜 → 1）',
+    pick: '甜食',
+    seq: [1],
+    at: 0,
+  },
+];
+
+/** 语尾标记：`〈档位〉` */
+const GOBI_MARK_RE = /〈(\d)〉/g;
+
+for (const row of GOBI_TIER_ROWS) {
+  test(`LOOK_INFO 语尾档位 ${row.note}`, async () => {
+    const w = gobi_tier_world();
+    if (row.setup) row.setup(w);
+    const lines = await w.info();
+    const hit = lines.filter((l) => l.includes(row.pick));
+    assert.equal(
+      hit.length,
+      1,
+      `${row.note}（${row.site}）的选择子「${row.pick}」应命中恰好一行，实际 ${hit.length} 行`,
+    );
+    const marks = [...hit[0].matchAll(GOBI_MARK_RE)].map((m) => Number(m[1]));
+    assert.deepEqual(
+      marks,
+      row.seq,
+      `${row.note}（${row.site}）：第 ${row.at + 1} 个语尾应为 ${row.seq[row.at]}；` +
+        `整行期望 [${row.seq}]，实际 [${marks}]（台词：${hit[0]}）`,
+    );
+  });
+}
+
 test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，语尾未命中静默', async () => {
   const w = info_world();
   const cid = w.run(0, always);

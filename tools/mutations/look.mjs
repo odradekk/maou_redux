@@ -18,7 +18,7 @@ const look = 'ere/chara/look.js';
 const info = 'ere/chara/look-info.js';
 
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 51; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）
+export const COUNT = 81; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）；+30（M11910-M11939，20 个语尾调用点的情绪档与其分支，含两处条件对调）
 
 const make = (id, desc, find, replace, must_mention, extra = {}) => ({
   desc: `M${id} ${desc}`,
@@ -437,5 +437,295 @@ export default [
     replace: '    era.print(`${await gobi_koujo(1)}」 `); // 变异：另起一行',
     tests: ['look'],
     must_mention: '语尾不得另起一行',
+  },
+
+  // —— #583：20 个语尾调用点各自传的情绪档（`CALL GOBI_KOUJO, <档>`） ——
+  //
+  // 靶是 test/look.test.js 的「语尾档位表」：语尾族里装假处理函数返回
+  // `〈档〉` 标记，按构造出的状态断言**整行**的标记序列——只断「行里有某
+  // 档」会被同一行的另一个同档标记顶过去，档位写错照样绿（#570 抽样把
+  // :1277 的 4 改成 0 时全绿，正是这个形状）。每条 must_mention 是那一行
+  // 用例名/断言消息里的档位说明，逐字取自表里的 note。
+  {
+    desc: 'M11910 LOOK_INFO 首行语尾档位门槛 >= 3 收到 > 3（屈服刻印 3 落回 4）',
+    file: look,
+    find: '  const gobi_mark = mark_rank >= 3 ? 0 : 4; // (MARK:屈服刻印 >= 3) ? 0 # 4',
+    replace: '  const gobi_mark = mark_rank > 3 ? 0 : 4; // 变异：门槛收到 > 3',
+    tests: ['look'],
+    must_mention: '源 :877 首行（屈服刻印 >= 3 → 0）',
+  },
+  {
+    desc: 'M11911 LOOK_INFO 原种族不明的语尾两支对调（爱慕/淫乱 → 3，其余 → 0）',
+    file: look,
+    find: '        t3.add(await gobi_koujo(t(cid, T_服从) || t(cid, T_淫乱_T) ? 0 : 3));',
+    replace:
+      '        t3.add(await gobi_koujo(t(cid, T_服从) || t(cid, T_淫乱_T) ? 3 : 0));',
+    tests: ['look'],
+    must_mention: '源 :884 原种族不明（爱慕 → 0）',
+  },
+  {
+    desc: 'M11912 LOOK_INFO 原种族不明的选档 || 改 &&（单侧命中就落到 3）',
+    file: look,
+    find: '        t3.add(await gobi_koujo(t(cid, T_服从) || t(cid, T_淫乱_T) ? 0 : 3));',
+    replace:
+      '        t3.add(await gobi_koujo(t(cid, T_服从) && t(cid, T_淫乱_T) ? 0 : 3));',
+    tests: ['look'],
+    must_mention: '源 :884 原种族不明（爱慕 → 0）',
+  },
+  {
+    desc: 'M11913 LOOK_INFO 原种族已知的语尾两支对调（屈服刻印 >= 3 → 2，其余 → 0）',
+    file: look,
+    find: '        t3.add(await gobi_koujo(mark_rank >= 3 ? 0 : 2));',
+    replace: '        t3.add(await gobi_koujo(mark_rank >= 3 ? 2 : 0));',
+    tests: ['look'],
+    must_mention: '源 :889 原种族已知（屈服刻印 < 3 → 2）',
+  },
+  {
+    desc: 'M11914 LOOK_INFO 原种族已知的语尾门槛 >= 3 收到 > 3（屈服刻印 3 落回 2）',
+    file: look,
+    find: '        t3.add(await gobi_koujo(mark_rank >= 3 ? 0 : 2));',
+    replace: '        t3.add(await gobi_koujo(mark_rank > 3 ? 0 : 2));',
+    tests: ['look'],
+    must_mention: '源 :889 原种族已知（屈服刻印 >= 3 → 0）',
+  },
+  {
+    desc: 'M11915 LOOK_INFO 发色与性质的语尾档 1 改成 0（喜 → 默认）',
+    file: look,
+    find: `      s.hl(get_look_info(cid, '头发状态'));
+      s.add(await gobi_koujo(1));`,
+    replace: `      s.hl(get_look_info(cid, '头发状态'));
+      s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :931 发色与性质（喜 → 1）',
+  },
+  {
+    desc: 'M11916 LOOK_INFO 头发长度・修剪・发型的语尾档 0 改成 1（默认 → 喜）',
+    file: look,
+    find: `      s.add(await gobi_koujo(0));
+      s.add('」');
+    } else {
+      s.add(\`[头发长度：\${get_look_info(cid, '头发长度')}\`);`,
+    replace: `      s.add(await gobi_koujo(1));
+      s.add('」');
+    } else {
+      s.add(\`[头发长度：\${get_look_info(cid, '头发长度')}\`);`,
+    tests: ['look'],
+    must_mention: '源 :971 头发长度・修剪・发型（默认 → 0）',
+  },
+  {
+    desc: 'M11917 LOOK_INFO 眼・瞳・唇的语尾档 1 改成 0（喜 → 默认）',
+    file: look,
+    find: `      s.hl(get_look_info(cid, '唇'));
+      s.add(await gobi_koujo(1));`,
+    replace: `      s.hl(get_look_info(cid, '唇'));
+      s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1013 眼/瞳/唇（喜 → 1）',
+  },
+  {
+    desc: 'M11918 LOOK_INFO 体型的语尾档 0 改成 1（默认 → 喜）',
+    file: look,
+    find: `      s.add('乳头嘛……').hl(get_look_info(cid, '乳头'));
+      s.add(await gobi_koujo(0));`,
+    replace: `      s.add('乳头嘛……').hl(get_look_info(cid, '乳头'));
+      s.add(await gobi_koujo(1));`,
+    tests: ['look'],
+    must_mention: '源 :1042 体型（默认 → 0）',
+  },
+  {
+    desc: 'M11919 LOOK_INFO 阴毛的语尾档 4 改成 0（害羞 → 默认；#570 抽样的逃逸形态）',
+    file: look,
+    find: '      s.add(await gobi_koujo(4));',
+    replace: '      s.add(await gobi_koujo(0));',
+    tests: ['look'],
+    must_mention: '源 :1054 阴毛（害羞 → 4）',
+  },
+  {
+    desc: 'M11920 LOOK_INFO 阴茎的语尾档 2 改成 0（怒 → 默认）',
+    file: look,
+    find: `        s.add('小鸡鸡是……').hl(get_look_info(cid, '阴茎的状态'));
+        s.add(await gobi_koujo(2));`,
+    replace: `        s.add('小鸡鸡是……').hl(get_look_info(cid, '阴茎的状态'));
+        s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1069 阴茎（怒 → 2）',
+  },
+  {
+    desc: 'M11921 LOOK_INFO 魅力点的语尾档 0 改成 1（默认 → 喜）',
+    file: look,
+    find: `      s.add(await gobi_koujo(0));
+      s.hl(get_look_info(cid, '癖')).add('是我的习惯');`,
+    replace: `      s.add(await gobi_koujo(1));
+      s.hl(get_look_info(cid, '癖')).add('是我的习惯');`,
+    tests: ['look'],
+    must_mention: '源 :1093 魅力点（默认 → 0）',
+  },
+  {
+    desc: 'M11922 LOOK_INFO 癖的语尾档 0 改成 1（默认 → 喜）',
+    file: look,
+    find: `      s.hl(get_look_info(cid, '癖')).add('是我的习惯');
+      s.add(await gobi_koujo(0));`,
+    replace: `      s.hl(get_look_info(cid, '癖')).add('是我的习惯');
+      s.add(await gobi_koujo(1));`,
+    tests: ['look'],
+    must_mention: '源 :1105 癖（默认 → 0）',
+  },
+  {
+    desc: 'M11923 LOOK_INFO 来历两块的语尾档一律传 0（丢掉前职业/契机算出的档）',
+    file: look,
+    find: `    s.hl(value);
+    s.add(await gobi_koujo(gobi));`,
+    replace: `    s.hl(value);
+    s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1388 前职业贵族・聖女・軍人（誇らしい → 1）',
+  },
+  {
+    desc: 'M11924 LOOK_INFO 前职业贵族・聖女・軍人的语尾档 1 改成 0',
+    file: look,
+    find: '  if (value === 8 || value === 12 || value === 19) return 1; // 貴族・聖女・軍人は誇らしい',
+    replace:
+      '  if (value === 8 || value === 12 || value === 19) return 0; // 变异：不再喜び',
+    tests: ['look'],
+    must_mention: '源 :1388 前职业贵族・聖女・軍人（誇らしい → 1）',
+  },
+  {
+    desc: 'M11925 LOOK_INFO 前职业妓女・奴隷的语尾档 4 改成 0',
+    file: look,
+    find: '  if (value === 5 || value === 20) return 4; // 妓女・奴隷は恥ずかしい',
+    replace: '  if (value === 5 || value === 20) return 0; // 变异：不再害羞',
+    tests: ['look'],
+    must_mention: '源 :1392 前职业妓女・奴隷（恥ずかしい → 4）',
+  },
+  {
+    desc: 'M11926 LOOK_INFO 前职业盗人的语尾档 2 改成 0',
+    file: look,
+    find: '  if (value === 6) return 2; // 盗人は逆切れ',
+    replace: '  if (value === 6) return 0; // 变异：不再逆切れ',
+    tests: ['look'],
+    must_mention: '源 :1396 前职业盗人（逆切れ → 2）',
+  },
+  {
+    desc: 'M11927 LOOK_INFO 前职业物乞い・貧民的语尾档 5 改成 0',
+    file: look,
+    find: '  if (value === 7 || value === 9) return 5; // 物乞い・貧民は情けなくなる',
+    replace:
+      '  if (value === 7 || value === 9) return 0; // 变异：不再情けない',
+    tests: ['look'],
+    must_mention: '源 :1400 前职业物乞い・貧民（情けない → 5）',
+  },
+  {
+    desc: 'M11928 LOOK_INFO 契机啓示・故郷・平和・正義的语尾档 1 改成 0',
+    file: look,
+    find: '  if (value === 3 || value === 7 || value === 16 || value === 17) return 1; // 啓示・故郷・平和・正義',
+    replace:
+      '  if (value === 3 || value === 7 || value === 16 || value === 17) return 0; // 变异：不再喜び',
+    tests: ['look'],
+    must_mention: '源 :1454 契机啓示・故郷・平和・正義（誇らしい → 1）',
+  },
+  {
+    desc: 'M11929 LOOK_INFO 契机罪・仕方なく的语尾档 4 改成 0',
+    file: look,
+    find: '  if (value === 10 || value === 14) return 4; // 罪・仕方なく',
+    replace: '  if (value === 10 || value === 14) return 0; // 变异：不再害羞',
+    tests: ['look'],
+    must_mention: '源 :1458 契机罪・仕方なく（恥ずかしい → 4）',
+  },
+  {
+    desc: 'M11930 LOOK_INFO 契机復讐的语尾档 2 改成 0',
+    file: look,
+    find: '  if (value === 8) return 2; // 復讐',
+    replace: '  if (value === 8) return 0; // 变异：不再逆切れ',
+    tests: ['look'],
+    must_mention: '源 :1462 契机復讐（逆切れ → 2）',
+  },
+  {
+    desc: 'M11931 LOOK_INFO 契机金のため・命令的语尾档 5 改成 0',
+    file: look,
+    find: '  if (value === 2 || value === 13) return 5; // 金のため・命令',
+    replace:
+      '  if (value === 2 || value === 13) return 0; // 变异：不再情けない',
+    tests: ['look'],
+    must_mention: '源 :1466 契机金のため・命令（情けない → 5）',
+  },
+  {
+    desc: 'M11932 LOOK_INFO 信仰的语尾档 1 改成 0（喜 → 默认）',
+    file: look,
+    find: `      if (kojo) {
+        s.add(await gobi_koujo(1));
+        s.add(\`（信仰值：\${faith}）」\`);`,
+    replace: `      if (kojo) {
+        s.add(await gobi_koujo(0));
+        s.add(\`（信仰值：\${faith}）」\`);`,
+    tests: ['look'],
+    must_mention: '源 :1511 信仰（喜 → 1）',
+  },
+  {
+    desc: 'M11933 LOOK_INFO 弃教的语尾档 1 改成 0（喜 → 默认）',
+    file: look,
+    find: `        if (kojo) {
+          b.add(await gobi_koujo(1));`,
+    replace: `        if (kojo) {
+          b.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1542 弃教（喜 → 1）',
+  },
+  {
+    desc: 'M11934 LOOK_INFO 妊娠适性的语尾档 5 改成 0（情けない → 默认）',
+    file: look,
+    find: `      s.add(\`「\${self_call(cid)}\`).hl('不能正常的怀孕');
+      s.add(await gobi_koujo(5));`,
+    replace: `      s.add(\`「\${self_call(cid)}\`).hl('不能正常的怀孕');
+      s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1567 妊娠适性（情けない → 5）',
+  },
+  {
+    desc: 'M11935 LOOK_INFO 身无分文的语尾档 5 改成 0（情けない → 默认）',
+    file: look,
+    find: `      s.add('身无分文');
+      if (kojo) s.add(await gobi_koujo(5));`,
+    replace: `      s.add('身无分文');
+      if (kojo) s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1585 身无分文（情けない → 5）',
+  },
+  {
+    desc: 'M11936 LOOK_INFO 所持金 > 0 的语尾档 0 改成 5（默认 → 情けない）',
+    file: look,
+    find: `      s.add(String(money));
+      if (kojo) s.add(await gobi_koujo(0));`,
+    replace: `      s.add(String(money));
+      if (kojo) s.add(await gobi_koujo(5));`,
+    tests: ['look'],
+    must_mention: '源 :1590 所持金 > 0（默认 → 0）',
+  },
+  {
+    desc: 'M11937 LOOK_INFO 欠债的语尾档 5 改成 0（情けない → 默认）',
+    file: look,
+    find: `      s.color(String(0 - debt), LIGHT_GREEN);
+      if (kojo) s.add(await gobi_koujo(5));`,
+    replace: `      s.color(String(0 - debt), LIGHT_GREEN);
+      if (kojo) s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1604 欠债（情けない → 5）',
+  },
+  {
+    desc: 'M11938 LOOK_INFO 常识改变的语尾档 1 改成 0（喜 → 默认）',
+    file: look,
+    find: `      s.add(\`方面完全被改变了，真是可怜的\${self_call(cid)}\`);
+      s.add(await gobi_koujo(1));`,
+    replace: `      s.add(\`方面完全被改变了，真是可怜的\${self_call(cid)}\`);
+      s.add(await gobi_koujo(0));`,
+    tests: ['look'],
+    must_mention: '源 :1653 常识改变（喜 → 1）',
+  },
+  {
+    desc: 'M11939 LOOK_INFO_LOVE 喜好收尾的语尾档 1 改成 0（喜 → 默认）',
+    file: look,
+    find: '    s.add(`${await gobi_koujo(1)}」 `); // :2799 喜び语尾 + PRINTL 」 同一行',
+    replace: '    s.add(`${await gobi_koujo(0)}」 `); // 变异：收尾档 1 → 0',
+    tests: ['look'],
+    must_mention: '源 :2799 喜好收尾（喜 → 1）',
   },
 ];
