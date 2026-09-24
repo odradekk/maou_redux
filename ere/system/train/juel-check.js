@@ -77,6 +77,7 @@ const { show_info_exp } = require('#/page/page-info-exp');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
 const era_flag = require('#/era-utils/era-flag');
 const { stub_line } = require('#/utils/stub-line');
+const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * ABLUPxx 是 @JUEL_CHECK 输入分发的全部目标（:463-539）。ABLUP_IDS 是
@@ -181,7 +182,7 @@ const LIGHT_SALMON = '#ffa07a';
  * @param {number} n
  * @returns {string}
  */
-const figure_indent = (n) => String(n).padStart(8);
+const figure_indent = (n) => pad_left(String(n), 8);
 
 /**
  * :559-585 参数值 → 獲得珠的梯子判定。
@@ -286,7 +287,7 @@ function render_settlement_row(cid, row) {
       { content: figure_indent(now - got), color: SKY_BLUE }, // :676-679
       { content: ' + ' }, // :681 PRINT  + （本行为纯文本、不着色）
       { content: figure_indent(got), color: SKY_BLUE }, // :682-685
-      { content: ')            = ' }, // :687 PRINT ) + 12 空格 + "= "
+      { content: `)${NBSP.repeat(12)}= ` }, // :687 PRINT ) + 12 空格 + "= "
       { content: figure_indent(now), color: SKY_BLUE }, // :688-691
       { content: '|' }, // :728 PRINTL |
     ]);

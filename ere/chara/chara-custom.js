@@ -64,6 +64,7 @@ const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
+const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * 本文件存根化的原作调用名：无——@CHAR_CREATE 与 @CHAR_APPEND 全部落地，
@@ -80,25 +81,6 @@ const HERO_COLUMNS = 4;
 const ELITE_COLUMNS = 5;
 /** 名字长度上限（源 :253 `CASE IS > 16`） */
 const NAME_MAX_LENGTH = 16;
-
-/** 显示宽度（全角 2 / 半角 1） */
-function disp_width(text) {
-  let width = 0;
-  for (const ch of text) {
-    width += ch.codePointAt(0) > 0xff ? 2 : 1;
-  }
-  return width;
-}
-
-/** `{A,N}`：右对齐补位 */
-function pad_left(text, width) {
-  return ' '.repeat(Math.max(0, width - disp_width(text))) + text;
-}
-
-/** `%S,N,LEFT%`：左对齐补位 */
-function pad_right(text, width) {
-  return text + ' '.repeat(Math.max(0, width - disp_width(text)));
-}
 
 /** `EXISTCSV(n)`：预设编号在库（= 引擎 staticData.chara 的键集） */
 function exist_csv(index) {
@@ -132,7 +114,7 @@ function build_rows(entries, columns) {
   const rows = [];
   let current = '';
   entries.forEach(([label, preset], i) => {
-    current += `[${pad_left(String(label), 2)}] ${pad_right(csv_name(preset), 14)}`;
+    current += `[${pad_left(String(label), 2)}] ${pad_display(csv_name(preset), 14)}`;
     if ((i + 1) % columns === 0) {
       rows.push(current);
       current = '';
@@ -310,7 +292,9 @@ async function char_append(arg, mode, rand = default_rand) {
     // 按钮的 valCount 推高（引擎 app.asar 的 getButtonObject 按
     // `line.valCount < buttonValCount` 禁用早先的按钮），按钮化后会点不动。
     // 纯文本 + 本轮无按钮 = 引擎的自由输入通道，键入 1/2/3 照常。
-    era.print('[1] 男性      [2] 女性      [3] 扶她'); // :240
+    era.print(
+      '[1] 男性\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[2] 女性\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0[3] 扶她',
+    ); // :240
     await era.waitAnyKey(); // :240 PRINTFORMW 的 WAIT
     const gender = await era.input(); // :103-272
     if (gender === 1) {

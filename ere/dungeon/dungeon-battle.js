@@ -42,6 +42,7 @@
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
+const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { chara } = require('#/facade/chara');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { emit } = require('#/system/event/registry');
@@ -239,7 +240,7 @@ function monster_list() {
     } else {
       // :438-440 %MONSTERNAME(ID)%（改造前缀 + 名 + 兵种）
       era.print(
-        ` ${String(num).padStart(2)}只${monstername(id)} LV${lv} ${atk}/${def}`,
+        ` ${pad_left(String(num), 2)}只${monstername(id)} LV${lv} ${atk}/${def}`,
       );
     }
   }

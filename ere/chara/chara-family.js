@@ -17,6 +17,7 @@
 'use strict';
 
 const era = require('#/era-electron');
+const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 const STUBBED_CALLS = [];
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -307,13 +308,13 @@ async function relation_debugprint() {
   for (const cid of added) {
     const parts = [
       {
-        content: String(`${cid}>`).padEnd(5, ' '),
+        content: pad_display(String(`${cid}>`), 5),
         color: 'rgb(100, 255, 255)',
       },
     ];
     for (const other of added) {
       const value = r_get(cid, other);
-      const part = { content: String(value).padEnd(5, ' ') };
+      const part = { content: pad_display(String(value), 5) };
       if (value === 0) part.color = 'gray';
       if (value === -1) part.color = 'rgb(255, 100, 100)';
       parts.push(part);

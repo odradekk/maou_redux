@@ -394,7 +394,7 @@ async function run_dungeon(arg0, rand) {
       }
       await era.waitAnyKey(); // :146 WAIT
       era.print('----------------------'); // :148
-      era.print(`   ${mapc}深处`); // :149 PRINTFORML（全角空格缩进）
+      era.print(`\u00A0\u00A0\u00A0${mapc}深处`); // :149 PRINTFORML（内容空格 3，#577 起 NBSP）
       era.print('----------------------'); // :150
       era.print(`第${floor}阶层`); // :152 PRINTFORM
     }

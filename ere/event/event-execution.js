@@ -24,6 +24,7 @@ const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { banishment } = require('#/event/event-banishment');
 const {
   apply_prestige,
@@ -90,7 +91,7 @@ function print_candidates(candidates) {
   }
   era.drawLine();
   candidates.forEach((cid, index) => {
-    let line = `[${String(index).padStart(2)}] ${chara_callname(cid).padEnd(12)} ${job_name(cid).padEnd(6)} LV${String(get(`cflag:${cid}:9`)).padStart(3)}`;
+    let line = `[${pad_left(String(index), 2)}] ${pad_display(chara_callname(cid), 12)} ${pad_display(job_name(cid), 6)} LV${pad_left(String(get(`cflag:${cid}:9`)), 3)}`;
     if (get(`cflag:${cid}:700`)) line += ' [☆]';
     if (get(`cflag:${cid}:0`) > 0) line += ' [可卖掉]';
     era.print(line);
