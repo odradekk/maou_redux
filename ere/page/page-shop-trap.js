@@ -40,6 +40,7 @@ const era = require('#/era-electron');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 const { print_shopitem, snapshot_money } = require('#/page/page-item-shop');
+const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** SETCOLORBYNAME LightSalmon 的 ere 等价物（:23/:39） */
 const LIGHT_SALMON = 'LightSalmon';
@@ -72,25 +73,6 @@ const SALES_WORM_BASE = [56]; // SIF TALENT:MASTER:328 == 0
 const SALES_WORM_EXTRA = [65, 79, 80]; // TALENT:MASTER:328 == 1
 const SALES_RING = [91];
 const SALES_LEVEL_TRAP = [55];
-
-/**
- * 显示宽度（全角 2 / 半角 1），原作 %…,16,LEFT% 的填充判定标准。
- * 与 page-main-menu.js / page-save-load.js / page-info-exp.js 的同名助手
- * 同形——本仓库这块按文件各留一份（`ere/utils/` 只收跨域工具），不抽公共
- * 模块。
- */
-function display_width(s) {
-  return [...s].reduce(
-    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-}
-
-/** 左对齐补空格到指定显示宽度（%str,width,LEFT% 的形态） */
-function pad_display_left(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
-}
 
 /** %ITEMNAME:id%（Item.yml 登记名） */
 function item_name(id) {
@@ -171,7 +153,7 @@ function item_grid_rows({ start, end }) {
     if (count === 0) {
       continue;
     }
-    row += `[${pad_display_left(`${item_name(id)}(x${count})`, CELL_WIDTH)}]`;
+    row += `[${pad_display(`${item_name(id)}(x${count})`, CELL_WIDTH)}]`;
     column += 1;
     if (column % COLUMNS === 0) {
       rows.push(row);

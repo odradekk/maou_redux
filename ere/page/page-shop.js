@@ -66,6 +66,7 @@ const { item_name, monstername } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
 const { batch_execution } = require('#/event/event-execution-batch');
 const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
+const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
 const MAX_CHARANUM = 90;
@@ -583,7 +584,9 @@ async function show_floor(arg) {
   for (let i = 0; i < 10; i += 1) {
     const count = era.get(`item:${base_slot + i}`) || 0;
     if (count > 0) {
-      era.print(`${String(count).padEnd(2)}只${monstername(base_slot + i)}`);
+      era.print(
+        `${pad_display(String(count), 2)}只${monstername(base_slot + i)}`,
+      );
     }
   }
   // :500 无参 PRINTW＝先落一个空行再等键（同 kojo-dungeon-ravish.js:923）

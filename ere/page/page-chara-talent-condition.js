@@ -37,6 +37,7 @@ const {
   pad_display,
   pad_left,
   slice_display,
+  NBSP,
 } = require('#/utils/display-width');
 
 /** `@STC_PRINTC` 的缺省列宽（源 :414 `ARG = 15`） */
@@ -164,7 +165,7 @@ function exp_label(index) {
 function stc_printc(row, text, color, width = STC_PRINT_WIDTH) {
   const pad = width - (display_width(text) % width); // :415
   // :416-417 SIF LOCAL == ARG → LOCAL = 0（长度整好整除时不补）
-  put(row, text + ' '.repeat(pad === width ? 0 : pad), color);
+  put(row, text + NBSP.repeat(pad === width ? 0 : pad), color);
 }
 
 /**

@@ -78,7 +78,7 @@ const { party_char_del } = require('#/dungeon/dungeon-party');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
-const { pad_display, pad_left } = require('#/utils/display-width');
+const { NBSP, pad_display, pad_left } = require('#/utils/display-width');
 const { stub_line } = require('#/utils/stub-line');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -233,10 +233,10 @@ async function sacrifice_flow(cid, background) {
     await era.printAndWait('————此刻正是献祭完成之时！');
     era.println();
     era.println();
-    await era.printAndWait(`${' '.repeat(16)}向这伟力的降临献上喝彩！`);
+    await era.printAndWait(`${NBSP.repeat(16)}向这伟力的降临献上喝彩！`);
     era.println();
     era.println();
-    await era.printAndWait(`${' '.repeat(32)}为至高无双的魔王尽瘁效忠！`);
+    await era.printAndWait(`${NBSP.repeat(32)}为至高无双的魔王尽瘁效忠！`);
     era.println();
     era.println();
     era.println();

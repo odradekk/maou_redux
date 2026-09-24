@@ -93,6 +93,12 @@
 const era = require('#/era-electron');
 const { get_look_info } = require('#/chara/look-info'); // #389 起的全量真身
 const { chara_callname } = require('#/utils/callname-utils');
+const {
+  NBSP,
+  display_width,
+  pad_display,
+  pad_left,
+} = require('#/utils/display-width'); // #577：对齐补位 NBSP 化（中央模块）
 
 /** SETCOLOR 255,100,100（:48/:52）——爱慕/淫乱标签 */
 const COLOR_LOVE = '#ff6464';
@@ -102,31 +108,6 @@ const COLOR_COLD = '#646464';
 const COLOR_PREGNANT = '#64ff64';
 /** SETCOLOR 100,200,100（:82/:136/:270）——派遣标签 */
 const COLOR_DISPATCH = '#64c864';
-
-/**
- * 显示宽度（全角 2 / 半角 1），原作 `%…,N,LEFT%` 填充判定标准。
- * 与 page-shop-trap.js / page-main-menu.js / page-info-exp.js 的同名助手
- * 同形——本仓库这块按文件各留一份（`ere/utils/` 只收跨域工具），不抽公共
- * 模块。
- */
-function display_width(s) {
-  return [...s].reduce(
-    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-}
-
-/** 左对齐补空格到指定显示宽度（`%str,width,LEFT%` 的形态） */
-function pad_display_left(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
-}
-
-/** 右对齐补空格到指定显示宽度（`%n,width,RIGHT%` 的形态） */
-function pad_display_right(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? ' '.repeat(pad) + s : s;
-}
 
 /** 已加入角色里除魔王（0 号）以外的 ID（升序）——`FOR COUNT, 1, CHARANUM` 的改写 */
 function slave_ids() {
@@ -247,7 +228,7 @@ function tail_fragments(
   if (cflag(cid, 700) !== 0) {
     fragments.push({ content: favorite_space ? ' [☆]' : '[☆]' }); // :63/:117/:248
   } else if (favorite_pad) {
-    fragments.push({ content: ' '.repeat(5) });
+    fragments.push({ content: NBSP.repeat(5) });
   }
   // :67-68 / :121-122 可被卖（CFLAG:1 == 0 且 CFLAG:0 > 0 且 非魔王 且 活着）
   if (
@@ -302,9 +283,9 @@ function base_field_text(cid, name_width, lv_width) {
   // 先例——那里是为 dungeon ↔ dungeon-battle 的环）。
   const { get_job_name } = require('#/page/page-select-target');
   return (
-    `${pad_display_left(chara_callname(cid), name_width)} ` +
-    `${pad_display_left(get_job_name(cid), 8)} ` +
-    `LV${pad_display_right(String(cflag(cid, 9)), lv_width)}`
+    `${pad_display(chara_callname(cid), name_width)} ` +
+    `${pad_display(get_job_name(cid), 8)} ` +
+    `LV${pad_left(String(cflag(cid, 9)), lv_width)}`
   );
 }
 
@@ -339,7 +320,7 @@ function life_list(no_page = 0, mode = 1, num_page = 20) {
       0,
       [
         {
-          content: `${pad_display_left('你（可强化地下城）', name_width)}LV${pad_display_right(String(cflag(0, 9)), lv_width)}`,
+          content: `${pad_display('你（可强化地下城）', name_width)}LV${pad_left(String(cflag(0, 9)), lv_width)}`,
         },
       ],
       num_width,
@@ -353,8 +334,8 @@ function life_list(no_page = 0, mode = 1, num_page = 20) {
       [
         {
           content:
-            `${pad_display_left(chara_callname(0), name_width)}` +
-            `${' '.repeat(8)} LV${pad_display_right(String(cflag(0, 9)), lv_width)}`,
+            `${pad_display(chara_callname(0), name_width)}` +
+            `${NBSP.repeat(8)} LV${pad_left(String(cflag(0, 9)), lv_width)}`,
         },
       ],
       num_width,
@@ -411,10 +392,10 @@ function life_list_item_e(arg) {
   // :237-244 PRINT 的空格是字面量：男/女 前各两格（与「扶她」两字等宽，
   // 保证后面的标签列对齐）
   const gender = talent(arg, 122)
-    ? { content: '  <男>' }
+    ? { content: '\u00A0\u00A0<男>' }
     : talent(arg, 121)
       ? { content: '<扶她>' }
-      : { content: '  <女>' };
+      : { content: '\u00A0\u00A0<女>' };
   // :219 种族・性格（GET_LOOK_INFO 的式中函数，真身在 ere/chara/look-info.js；
   // #389 落地前它是 kojo-dungeon-bitch-log.js 里的子集，那份已随 #389 并入）
   const look = `[${get_look_info(arg, '种族')} - ${get_look_info(arg, '性格')}]`;
@@ -424,8 +405,8 @@ function life_list_item_e(arg) {
       {
         content:
           `${base_field_text(arg, 12, 4)}` +
-          `  调教回数:${pad_display_left(String(cflag(arg, 10)), 3)}` +
-          ` ${pad_display_left(look, 20)}`,
+          `\u00A0\u00A0调教回数:${pad_display(String(cflag(arg, 10)), 3)}` +
+          ` ${pad_display(look, 20)}`,
       },
       ...tail_fragments(arg, {
         favorite_pad: false,
@@ -549,7 +530,7 @@ function max_page_salave(num_page) {
  */
 async function select_yes_no() {
   for (;;) {
-    era.print('  [0] 是的   [1] 不要');
+    era.print('\u00A0\u00A0[0] 是的\u00A0\u00A0\u00A0[1] 不要');
     const result = await era.input();
     if (result === 0 || result === 1) return result;
   }
@@ -563,8 +544,6 @@ module.exports = {
   life_list_salave,
   max_page_enemy,
   max_page_salave,
-  pad_display_left,
-  pad_display_right,
   print_row,
   select_yes_no,
 };

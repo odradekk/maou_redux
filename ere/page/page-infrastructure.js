@@ -202,7 +202,7 @@ function print_menu() {
   era.printButton('看看肉便器的样子', 51);
   era.print('＿＿＿＿＿＿');
   era.print('＼ 博 物 馆 ／');
-  era.print('  ￣￣￣￣￣');
+  era.print('\u00A0\u00A0￣￣￣￣￣');
   era.printButton('看看全部展品的样子', 50);
   era.println();
   for (const [index, [, name]] of EXHIBITS) {

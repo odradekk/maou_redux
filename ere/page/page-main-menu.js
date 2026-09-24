@@ -32,6 +32,7 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
+const { NBSP, pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 // 本文件曾经存根化的原作调用名：DRAW_HAVEITEMS/DRAW_HAVETRAPS/指令面板段
 // 均随 #395 转真身，清单归零。留空数组而非删除导出——
@@ -385,30 +386,6 @@ function draw_main_menu() {
   era.drawLine({ isSolid: true });
 }
 
-/**
- * 显示宽度（全角 2 / 半角 1）。原作 %str,width,LEFT% 按此口径计算填充（Emuera 显示
- * 宽度，同 page-save-load.js 的同名助手）。
- * @param {string} s
- * @returns {number}
- */
-function display_width(s) {
-  return [...s].reduce(
-    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-}
-
-/**
- * 左对齐补空格到指定显示宽度（%str,width,LEFT% 的形态，本文件仅用于物品名）。
- * @param {string} s
- * @param {number} width
- * @returns {string}
- */
-function pad_display_left(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
-}
-
 /** %ITEMNAME:id%（Item.yml 登记名） */
 function item_name(id) {
   return era.get(`itemname:${id}`) ?? '';
@@ -437,9 +414,9 @@ function append_item_slot(state, id) {
     return;
   }
   if (state.column === 0) {
-    state.line += '  ';
+    state.line += NBSP.repeat(2);
   }
-  state.line += `${FULL_WIDTH_SPACE}${pad_display_left(`${item_name(id)}(${count})`, 18)}`;
+  state.line += `${FULL_WIDTH_SPACE}${pad_display(`${item_name(id)}(${count})`, 18)}`;
   state.column += 1;
 }
 
