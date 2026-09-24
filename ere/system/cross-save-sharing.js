@@ -168,6 +168,9 @@ async function export_menu() {
       era.printButton('不要', 1);
       if ((await era.input()) === 0) {
         era.print('请输入队伍名');
+        // 原作 MAOUNET.ERB 的队伍名 INPUTS 没有空输入分支（直接落地），
+        // 按 #567「没有空输入分支的地方不动」保持原样：0 在这里仍是字面量
+        // 文本，不接共享判据——例外理由见 ere/utils/input-text.js 文件头。
         const team_name = String(await era.input({ useRule: false }));
         era.print(`「${team_name}」这个队伍名可以吗？`);
         era.printButton('好的', 0);
