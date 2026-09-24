@@ -173,11 +173,11 @@ function edit_texts(sv) {
 
 /** [98]/[99] 共用的确认页（:1036-1041/:1060-1065），返回是否确认 */
 async function confirm_reset(prompt) {
-  // 三行各是一次 print（:1036/:1037 的 PRINTL 与 :1038 的空 PRINTL）——正文里
+  // :1036-1041 的三条 PRINTL（正文 / 确认吗？ / 空行）各是一次 print——正文里
   // 不自带 `\n`：era.print 已经自成一行，再写尾换行只会多出一个显示行（#615）
   era.print(prompt);
   era.print('确认吗？');
-  era.println(); // :1038 的 PRINTL：真空行（上一行已由 :1037 收行）
+  era.println(); // 第三条 PRINTL：真空行（上一行已由第二条收行）
   era.printButton('好的', 0);
   era.printButton('呃……年龄这个问题是个大事啊……让我再想想……', 1);
   return (await era.input()) === 0;
@@ -295,8 +295,9 @@ async function race_config(rand = default_rand) {
   top: for (;;) {
     // :972-1022 表头与八种族行（[n] 前缀由引擎加，正文 = 种族名 + 36 列
     // 左对齐的档位说明 + 换算年龄；cla≥5 的行保留前一行的文案，见文件头）
-    // 表头是 :972 的 PRINTFORM 与 :974 的 PRINTFORML 拼出的一条显示行，
-    // ere 一次 print 落行即可，正文不带尾换行（#615）
+    // 表头是 :972 的 PRINTFORM 与 :974 的 PRINTFORML 拼出的一条显示行（中间夹的
+    // SETCOLOR/RESETCOLOR 只给后一段上色，颜色不镜像见文件头），ere 一次 print
+    // 落行即可，正文不带尾换行（#615）
     era.print(
       '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄',
     );
@@ -351,7 +352,8 @@ async function race_config(rand = default_rand) {
       edit: for (;;) {
         // :1110-1112 编辑头：重画前空行（DO 首拍的 PRINTL）+ 种族名 + 当前档
         // 说明 + 17 岁换算预览。说明与预览各是一条显示行（:1131-1143 与
-        // :1146-1162 各自的收尾 PRINTFORML），两条 print 都不带尾换行（#615）
+        // :1146-1162 各自的收尾 PRINTFORML；预览行前的 SETCOLOR 同理不镜像），
+        // 两条 print 都不带尾换行（#615）
         const [edit_desc, edit_age] = edit_texts(sv);
         era.println(); // :1110-1112 的空行（重画首拍）
         era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}`);
@@ -391,7 +393,7 @@ async function race_config(rand = default_rand) {
           era.printButton('0 岁', 110);
           era.printButton('上限的1 / 2', 111);
           era.printButton('换算成人类年龄', 112);
-          era.println(); // :1232 的 PRINTL：真空行
+          era.println(); // :1214-1246 段中间那条 PRINTL：真空行（下限三钮与上限标签之间）
           era.print('　　■ 上限');
           for (let l = 0; l < 30; l += 1) {
             if (l % 10 > 4) continue;

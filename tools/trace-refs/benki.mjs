@@ -177,11 +177,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
-        ref: '992-1021',
-        any: [/^\s*JUEL:\(ARG:0\):5 \+= PLAY\*10$/m],
-      },
-      {
-        src: 'target/ERB/調教相關/BENKI.ERB',
         ref: '1059-1185',
         any: [/在精囊被掏空之前/],
       },

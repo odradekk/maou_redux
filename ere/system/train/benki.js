@@ -1034,7 +1034,8 @@ function beast_rumor(cid, play) {
 }
 
 /**
- * 奉仕便器的噂（BENKI.ERB:992-1021）。
+ * 奉仕便器的噂（BENKI.ERB:956-978 的 PRINTFORML 分支；#615 订正——原记的区间
+ * 是珠结算段，与传闻无关）。
  * @param {number} cid 角色 ID
  * @param {number} play 人数
  * @returns {string}
@@ -1064,7 +1065,8 @@ function service_rumor(cid, play) {
 }
 
 /**
- * 同性爱便器的噂（BENKI.ERB:1168-1192）。
+ * 同性爱便器的噂（BENKI.ERB:1109-1132 的 PRINTFORML 分支；#615 订正——原记的
+ * 区间是同性爱分派的穴句段，与传闻无关）。
  * @param {number} cid 角色 ID
  * @param {number} play 人数
  * @returns {string}

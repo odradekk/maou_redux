@@ -242,12 +242,11 @@ export const FILES = [
         ref: '74',
         any: [/		CFLAG:shadow:820 = 666666/],
       },
+      // #615：:75 是那三处赋值之后的 WAIT，js 注释从 :72-75 收窄到 :75
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
-        ref: '72-75',
-        any: [
-          /		CFLAG:shadow:1 = 0\n		CFLAG:shadow:700 = 1\n		CFLAG:shadow:820 = 666666\n		WAIT/,
-        ],
+        ref: '75',
+        any: [/^\t\tWAIT$/m],
       },
       // #615：完全召唤横幅两行与前后空行（:63-68 的 PRINTS 拼行、:76 的 "\n"*2）
       {

@@ -3525,12 +3525,12 @@ export default [
   },
   // —— #615：print 正文的尾换行（first-setting.js 的狂王性别一问） ——
   {
-    desc: 'M12249 狂王性别一问补回尾换行（SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）',
+    desc: 'M12249 狂王性别一问的两条 PRINTL 并回一次 print（内部 \\n——显示行数同、Row 数少一个）',
     file: 'ere/event/first-setting.js',
-    find: "  era.print(\n    '狂王是支配这个地区的领主\\n继承了曾经封印你的勇者的血统，打算把你再次封印',\n  );",
+    find: "  era.print('狂王是支配这个地区的领主'); // :902\n  era.print('继承了曾经封印你的勇者的血统，打算把你再次封印'); // :903",
     replace:
-      "  era.print(\n    '狂王是支配这个地区的领主\\n继承了曾经封印你的勇者的血统，打算把你再次封印\\n',\n  ); // 变异：尾换行",
+      "  era.print(\n    '狂王是支配这个地区的领主\\n继承了曾经封印你的勇者的血统，打算把你再次封印',\n  ); // 变异：#615 之前的并法",
     tests: ['event-first'],
-    must_mention: '两行一次 print、无尾换行',
+    must_mention: ':902 的首行',
   },
 ];

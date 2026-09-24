@@ -262,7 +262,7 @@ async function sacrifice_flow(cid, background) {
     chara(shadow).invasion.状态 = 0; // :72
     chara(shadow).chara.收藏 = 1; // :73
     chara(shadow).chara.寿命 = 666666; // :74
-    await era.waitAnyKey(); // :72-75
+    await era.waitAnyKey(); // :75 WAIT（三处赋值已在上方三行各自标注）
     era.println(); // :76 的第一个 \n
     era.println(); // :76 的第二个 \n
     return true; // :77 RESTART（外层重画）
