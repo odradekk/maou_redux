@@ -240,6 +240,26 @@ test('门选择：已攻占的门渲染为 [*] 文本占位，[0] 被引擎拒�
   assert(texts.includes('要向哪个堡垒派遣刺客呢？必须打倒圣灵骑士才算胜利。'));
 });
 
+test('#612 门菜单：四门与撤退的按钮正文照写原作的「- 」', async () => {
+  const fixture = stage_zero_world(); // 四门全在
+  fixture.reset_inputs(4); // 撤退
+  const mod = fixture.load_module('invasion/invasion-arcana-fort');
+  assert.equal(await mod.arcana_fort(knob()), 0);
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((button) => button.rendered),
+    [
+      '[0] - 东方堡垒',
+      '[1] - 西方堡垒',
+      '[2] - 南方堡垒',
+      '[3] - 北方堡垒',
+      '[4] - 撤退',
+    ],
+    'ARCANA_FORT.ERB:83-103 的分隔符照写',
+  );
+});
+
 test('勇者列表为空（stage≠0 且无候选）：*没有可以攻击的勇士* → RETURN 0', async () => {
   const fixture = stage_zero_world();
   fixture.reset_inputs(0);

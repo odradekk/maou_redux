@@ -115,8 +115,8 @@ async function ending_1() {
   // :27 询问
   era.print('人间界已经陷落了，不过世上还有很多其它地方，要继续游戏吗？');
   // :29-30 [0] 继续 / [1] 退出（printButton 的偏离说明见文件头）
-  era.printButton('世界这么大，我想再去看看！', 0);
-  era.printButton('我……已经……不想做魔王了……', 1);
+  era.printButton('- 世界这么大，我想再去看看！', 0);
+  era.printButton('- 我……已经……不想做魔王了……', 1);
 
   // :31-37 $INPUT_LOOP：选 1 → QUIT；非 0 的其它值重问
   for (;;) {

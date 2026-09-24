@@ -133,7 +133,11 @@ const BASELINE = {
   // 【#467 后重测】能力提升画面的 `*` 可提升标记开始按 @DECIDE_ABLUPn 渲染
   // （本样本的 flag:5 同样只置了 bit34，AUTO_ABLUP 分支不进样本）：matched
   // 163→164、stub 129→127，unexplained 保持 0。数字取自重跑。
-  'sale-natural': { matched: 164, version: 2, stub: 127, unexplained: 0 },
+  // 【#612 后重测】能力值提高画面的按钮正文补回原作的「- 」分隔符（本票的
+  // golden 判据之一）：该屏的 `[999] - 能力值提高结束` 与升级屏的
+  // `[0] - …点数×…`、`[100] - 停止` 由「与能力值列表条目错位配对的 stub
+  // 半边」转为逐字匹配——matched 164→166、stub 127→123，unexplained 保持 0。
+  'sale-natural': { matched: 166, version: 2, stub: 123, unexplained: 0 },
 };
 
 for (const [name, expected] of Object.entries(BASELINE)) {

@@ -354,6 +354,25 @@ test('COM24：确认菜单只接受两个按钮值；无效键在引擎输入层
   );
 });
 
+test('#612 COM24 逆侵犯的处女确认：两键正文照写原作的「- 」', async () => {
+  const world = seed_world();
+  world.fixture.store.set('talent:31:122', 1);
+  world.fixture.store.set('talent:0:0', 1); // 调教者是处女 → 进确认菜单
+  world.fixture.store.set('abl:31:10', 10);
+  world.fixture.store.set('abl:31:16', 10);
+  world.fixture.store.set('abl:31:20', 10);
+  world.fixture.store.set('talent:31:63', 1);
+  world.fixture.set_inputs(1);
+  assert.equal(await run_com(world, 24), 0, '[1] 不好 → RETURN 0（:198-200）');
+  assert.deepEqual(
+    world.fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((button) => button.rendered),
+    ['[0] - 好的', '[1] - 不好'],
+    'COM24 处女确认两键带「- 」（COMF24_逆レイプ.ERB:197-198）',
+  );
+});
+
 test('升格到未实现目标：输出占位并按 JUMPFORM 返回 1', async () => {
   const world = seed_world();
   world.era_flag.prevcom = 64;

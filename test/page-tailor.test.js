@@ -165,8 +165,8 @@ test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5�
     await run_core(diapered, [999]);
     assert.ok(accs(diapered.lines).includes(4), '穿着尿布 → 有 [4]');
     assert.ok(
-      button_with(diapered.lines, '替换尿布（50点）'),
-      '尿布价格 50 印在按钮正文里',
+      button_with(diapered.lines, '- 替换尿布（50点）'),
+      '尿布价格 50 印在按钮正文里（正文带原作的「- 」）',
     );
   }
   const chastity = tailor_fixture({
@@ -178,6 +178,26 @@ test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5�
   {
     await run_core(chastity, [999]);
     assert.ok(accs(chastity.lines).includes(5), '贞操带 + 有钥匙 → 有 [5]');
+  }
+});
+
+test('#612 TAILOR_CORE 主菜单：按钮正文照写原作的「- 」（含价格插值的四项）', async () => {
+  const fixture = tailor_fixture({ 'cflag:1:42': 69, 'cflag:1:40': 0 });
+  await run_core(fixture, [999]);
+  const rendered = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  for (const expected of [
+    '[0] - 日常服饰（100点）', // :78（原作写死价格，移植侧是插值——判据见 tools/button-dash-scan.mjs）
+    '[1] - 普通装备（1000点）', // :79
+    '[2] - 其它', // :80
+    '[3] - 替换内衣（5点）', // :81
+    '[4] - 替换尿布（50点）', // :82-83
+    '[7] - 魔法装备', // :87
+    '[8] - 武器', // :88
+    '[999] - 返回', // :90
+  ]) {
+    assert.ok(rendered.includes(expected), `${expected}（SHOP_TAILOR.ERB）`);
   }
 });
 
@@ -545,6 +565,12 @@ test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', asyn
     texts(drop.lines).some((t) => t.includes('再也没人知道了')),
     '演出台词',
   );
+  // #612：确认两键的正文照写原作（SHOP_TAILOR.ERB:915-916）
+  const rendered = drop.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(rendered.includes('[0] - 丢掉！'));
+  assert.ok(rendered.includes('[1] - 不丢。'));
   const keep = tailor_fixture(KEY_GATE);
   await run_core(keep, [5, 1, 999]);
   assert.equal(keep.store.get('cflag:1:49') ?? 0, 0, '不丢 → 不写');
@@ -686,6 +712,31 @@ test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有�
   const ids2 = accs(draw2);
   assert.ok(ids2.includes(997) && ids2.includes(998), '有装备才给两键');
   assert.ok(ids2.includes(300), 'item:300 > 0 → 列出该行');
+  // #612：装饰槽与两键的正文（SHOP_TAILOR.ERB:991/:1000、:1035/:1039/:1040）
+  const rendered = full.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(
+    full.lines.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 1 &&
+        line.text.startsWith('- 装饰A　:'),
+    ),
+    '装饰A 行带「- 」（SHOP_TAILOR.ERB:991）',
+  );
+  assert.ok(
+    full.lines.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 2 &&
+        line.text.startsWith('- 装饰B　:'),
+    ),
+    '装饰B 行带「- 」（SHOP_TAILOR.ERB:1000）',
+  );
+  assert.ok(rendered.includes('[997] - 装备强化'));
+  assert.ok(rendered.includes('[998] - 取下'));
+  assert.ok(rendered.includes('[999] - 返回'));
 });
 
 test('EQUIP_MAGIC_ITEM：强化的两笔支出（所持金与跨域消费）一起动', async () => {
@@ -774,6 +825,12 @@ test('EQUIP_MAGIC_WEAPON：空手时不给强化/取下（w:0 <= -1）', async (
     texts(added).some((t) => t.includes('空手')),
     '显示「武器　: 空手」',
   );
+  // #612：空手页仍有的两键（SHOP_TAILOR.ERB:1150-1151 的 [340] - 剑、:1171-1172）
+  const rendered = added
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(rendered.includes('[340] - 剑'));
+  assert.ok(rendered.includes('[999] - 返回'));
 });
 
 test('EQUIP_MAGIC_WEAPON：武器段只列 341-359（360 不在段内）', async () => {

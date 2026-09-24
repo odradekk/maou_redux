@@ -212,24 +212,24 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
   if ((stage & 1) !== 0) {
     era.print('[*] - 东方堡垒（已攻占）');
   } else {
-    era.printButton('东方堡垒', 0);
+    era.printButton('- 东方堡垒', 0); // ARCANA_FORT.ERB:83
   }
   if ((stage & 4) !== 0) {
     era.print('[*] - 西方堡垒（已攻占）');
   } else {
-    era.printButton('西方堡垒', 1);
+    era.printButton('- 西方堡垒', 1); // ARCANA_FORT.ERB:89
   }
   if ((stage & 2) !== 0) {
     era.print('[*] - 南方堡垒（已攻占）');
   } else {
-    era.printButton('南方堡垒', 2);
+    era.printButton('- 南方堡垒', 2); // ARCANA_FORT.ERB:95
   }
   if ((stage & 8) !== 0) {
     era.print('[*] - 北方堡垒（已攻占）');
   } else {
-    era.printButton('北方堡垒', 3);
+    era.printButton('- 北方堡垒', 3); // ARCANA_FORT.ERB:101
   }
-  era.printButton('撤退', 4);
+  era.printButton('- 撤退', 4); // ARCANA_FORT.ERB:103
 
   // $INPUT_LOOP :105-125（GOTO 重问不重画）
   let tmp_arcana = -1;
@@ -297,7 +297,7 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
     });
     era.drawLine();
     era.printButton('- 上一页', 1000); // :193 / :290
-    era.printButton('返  回', 999); // :194 / :291
+    era.printButton('- 返  回', 999); // :194 / :291
     era.printButton('- 下一页', 1001); // :195 / :292
 
     const result = await era.input();

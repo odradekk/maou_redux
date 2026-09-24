@@ -540,7 +540,7 @@ async function tailor_casual(cid) {
       era.printButton(item.label, item.n); // :276-277
     }
     era.drawLine();
-    era.printButton('返回', 999); // :279
+    era.printButton('- 返回', 999); // :279
     const result = await era.input(); // :281
     const item = CASUAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -574,10 +574,10 @@ async function tailor_normal(cid) {
       era.printButton(item.label, item.n);
     }
     era.drawLine();
-    era.printButton('下一页', 997);
-    era.printButton('服装黑市', 996);
-    era.printButton('上一页', 998);
-    era.printButton('返回', 999);
+    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
+    era.printButton('服装黑市', 996); // SHOP_TAILOR.ERB:384
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:384
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:384
     const result = await era.input();
     const item = NORMAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -630,9 +630,9 @@ async function tailor_normal_special(cid) {
       era.printButton(item.label, item.n);
     }
     era.drawLine();
-    era.printButton('下一页', 997);
-    era.printButton('上一页', 998);
-    era.printButton('返回', 999);
+    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:384
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:384
     const result = await era.input();
     const item = SPECIAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -670,9 +670,9 @@ async function tailor_accessory(cid) {
       era.printButton(`${item.label}（${item.c}点）`, item.n);
     }
     era.drawLine();
-    era.printButton('下一页', 997);
-    era.printButton('上一页', 998);
-    era.printButton('返回', 999);
+    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:384（原文此处无「- 」）
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:384
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:384
     const result = await era.input();
     const item = ACCESSORY_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -736,8 +736,8 @@ async function chastity_key() {
     era.print(
       `当真当真要把${chara_callname(era_flag.target)}贞操带的钥匙丢掉吗？`,
     ); // :914
-    era.printButton('丢掉！', 0); // :915
-    era.printButton('不丢。', 1); // :916
+    era.printButton('- 丢掉！', 0); // :915
+    era.printButton('- 不丢。', 1); // :916
     const result = await era.input(); // :917
     if (result === 0) {
       era.print(`${chara_callname(era_flag.target)}呆若木鸡地看着前方，`); // :919
@@ -791,7 +791,7 @@ async function pick_enhance_amount() {
     for (const amount of [...new Set([0, 1, 2, 4, 6, 8, max_amount])]) {
       era.printButton(String(amount), amount);
     }
-    era.printButton('不装备', 999); // :1074
+    era.printButton('- 不装备', 999); // :1074
     const result = await era.input(); // :1076
     if (result === 999) {
       return null; // :1078-1079
@@ -817,7 +817,7 @@ async function pick_weapon_prefix() {
   for (let index = 0; index <= WEAPON_PREFIX_MAX; index += 1) {
     era.printButton(WEAPON_PREFIXES[index], index); // :1254-1263
   }
-  era.printButton('返回', 999); // :1265
+  era.printButton('- 返回', 999); // :1265
   const result = await era.input(); // :1267
   if (result === 999) {
     return null; // :1269-1270
@@ -870,18 +870,18 @@ async function equip_magic_item(cid) {
       const w = { 存储编号: cflag(cid, slot) }; // :990/:999 W:0 = CFLAG:…
       const label = result_id === 1 ? '装饰A' : '装饰B';
       if (w.存储编号 <= -1) {
-        era.printButton(`${label}　: 无`, result_id); // :992-993
+        era.printButton(`- ${label}　: 无`, result_id); // :992-993
       } else {
         era.printButton(
           [
-            { content: `${label}　: ` },
+            { content: `- ${label}　: ` }, // SHOP_TAILOR.ERB:991/1000
             ...equip_ring_spans(w), // :995 CALL PRINT_EQUIPTYPE_RING
           ],
           result_id,
         );
       }
     }
-    era.printButton('返回', 999); // :1008
+    era.printButton('- 返回', 999); // :1008
     const result = await era.input(); // :1010
     if (result === 999) {
       return { a: 0, c: 0, r: 0, s: 0 }; // :1012-1013
@@ -920,12 +920,12 @@ async function pick_ring(cid, slot) {
     if (cflag(0, 9) < ENHANCE_LEVEL) {
       era.print([{ content: '未开放（30级后才能装备强化）', color: GRAY }]);
     } else if (cflag(cid, slot) >= 0) {
-      era.printButton('装备强化', 997);
+      era.printButton('- 装备强化', 997); // SHOP_TAILOR.ERB:1035
     }
     if (cflag(cid, slot) >= 0) {
-      era.printButton('取下', 998);
+      era.printButton('- 取下', 998); // SHOP_TAILOR.ERB:1039
     }
-    era.printButton('返回', 999); // :1040
+    era.printButton('- 返回', 999); // :1040
 
     const result = await era.input(); // :1042
     let enhance_type = 0; // :1044 EQUIPTYPE = 0
@@ -989,7 +989,7 @@ async function equip_magic_weapon(cid) {
     } else {
       era.print([{ content: '武器　: ' }, ...equip_weapon_spans(current)]); // :1146-1148
     }
-    era.printButton('剑', SWORD_ITEM); // :1151（[340]）
+    era.printButton('- 剑', SWORD_ITEM); // :1151（[340]）
     for (let index = 0; index < WEAPON_ITEM_COUNT; index += 1) {
       const item_no = WEAPON_ITEM_START + index; // X = COUNT + 341
       if (
@@ -1004,17 +1004,17 @@ async function equip_magic_weapon(cid) {
       }
     }
     if ((era.get(`item:${WEAPON_TENTACLE_ITEM}`) || 0) > 0) {
-      era.printButton('武器化触手', WEAPON_TENTACLE_RESULT); // :1159-1160（[990]）
+      era.printButton('- 武器化触手', WEAPON_TENTACLE_RESULT); // :1159-1160（[990]）
     }
     if (cflag(0, 9) < ENHANCE_LEVEL) {
       era.print([{ content: '未开放（30级后才能装备强化）', color: GRAY }]); // :1163-1165
     } else if (current.存储编号 >= 0) {
-      era.printButton('装备强化', 997); // :1166-1168
+      era.printButton('- 装备强化', 997); // :1166-1168
     }
     if (current.存储编号 >= 0) {
-      era.printButton('取下', 998); // :1170-1171
+      era.printButton('- 取下', 998); // :1170-1171
     }
-    era.printButton('返回', 999); // :1172
+    era.printButton('- 返回', 999); // :1172
 
     const result = await era.input(); // :1174
     let enhance_type = 0; // :1176 EQUIPTYPE = 0
@@ -1216,17 +1216,17 @@ async function tailor_core(arg) {
     // 原作这里没有空行
     era.print(`要让${chara_callname(arg)}穿上什么？`); // :75
     era.drawLine(); // :76-78（DRAWLINE + 日常服饰项）
-    era.printButton(`日常服饰（${CASUAL_PRICE}点）`, 0); // :78
-    era.printButton(`普通装备（${NORMAL_PRICE}点）`, 1); // :79
-    era.printButton('其它', 2); // :80
-    era.printButton(`替换内衣（${UNDERWARE_PRICE}点）`, 3); // :81
+    era.printButton(`- 日常服饰（${CASUAL_PRICE}点）`, 0); // :78
+    era.printButton(`- 普通装备（${NORMAL_PRICE}点）`, 1); // :79
+    era.printButton('- 其它', 2); // :80
+    era.printButton(`- 替换内衣（${UNDERWARE_PRICE}点）`, 3); // :81
     // 原作的 `CFLAG:42` / `TALENT:0` 是单参形态 = **TARGET 的**读数
     // （TAILOR_CORE :63 已置 TARGET = ARG）
     if (
       cflag(arg, 42) === 69 &&
       ((cflag(arg, 40) & 64) === 0 || cflag(arg, 47) > 0)
     ) {
-      era.printButton(`替换尿布（${DIAPER_PRICE}点）`, 4); // :82-83
+      era.printButton(`- 替换尿布（${DIAPER_PRICE}点）`, 4); // :82-83
     }
     if (
       cflag(arg, 42) === 79 &&
@@ -1234,12 +1234,12 @@ async function tailor_core(arg) {
       cflag(arg, 49) === 0 &&
       talent(arg, 0) !== 0
     ) {
-      era.printButton('扔掉贞操带的钥匙', 5); // :84-85（TALENT:0 = 処女，为真才给）
+      era.printButton('- 扔掉贞操带的钥匙', 5); // :84-85（TALENT:0 = 処女，为真才给）
     }
-    era.printButton('魔法装备', 7); // :87
-    era.printButton('武器', 8); // :88
+    era.printButton('- 魔法装备', 7); // :87
+    era.printButton('- 武器', 8); // :88
     era.drawLine();
-    era.printButton('返回', 999); // :90
+    era.printButton('- 返回', 999); // :90
 
     const result = await era.input(); // :92
 
@@ -1319,8 +1319,8 @@ async function tailor_core(arg) {
 async function confirm_tear(prompt) {
   for (;;) {
     era.print(prompt);
-    era.printButton('强行套上', 0);
-    era.printButton('作罢', 1);
+    era.printButton('- 强行套上', 0); // SHOP_TAILOR.ERB:133
+    era.printButton('- 作罢', 1); // SHOP_TAILOR.ERB:134
     const result = await era.input();
     if (result === 0) {
       return true; // F = 1/2
@@ -1352,7 +1352,7 @@ async function tailor_main() {
     era.drawLine(); // :35-36（DRAWLINE + LIFE_LIST_TAILOR）
     life_list_tailor(); // :36 CALL LIFE_LIST_TAILOR
     era.drawLine(); // :37 CUSTOMDRAWLINE ‥
-    era.printButton('返回', 999); // :38
+    era.printButton('- 返回', 999); // :38
 
     const result = await era.input(); // :40
     if (result === 999) {

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 472; // #596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 480; // #596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段；#612 起 +8（M12296-M12303：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的 rendered 断言必须红）
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -1819,18 +1819,18 @@ export default [
   {
     desc: 'M9712 圣灵骑士堡垒按钮文案互换（FLAG:92 == 15，INVASION.ERB:68-72）',
     file: 'ere/page/page-invasion.js',
-    find: "    era_flag.arcana_fort_stage === 15\n      ? '巡视圣灵骑士的卖春堡垒（已征服）'\n      : '攻略圣灵骑士的堡垒',",
+    find: "    era_flag.arcana_fort_stage === 15\n      ? '- 巡视圣灵骑士的卖春堡垒（已征服）' // INVASION.ERB:69\n      : '- 攻略圣灵骑士的堡垒', // INVASION.ERB:71",
     replace:
-      "    era_flag.arcana_fort_stage === 15\n      ? '攻略圣灵骑士的堡垒'\n      : '巡视圣灵骑士的卖春堡垒（已征服）', // 变异：标签互换",
+      "    era_flag.arcana_fort_stage === 15\n      ? '- 攻略圣灵骑士的堡垒' // INVASION.ERB:69（变异：标签互换）\n      : '- 巡视圣灵骑士的卖春堡垒（已征服）', // INVASION.ERB:71",
     tests: ['page-invasion'],
     must_mention: '的 [4] 按钮文案',
   },
   {
     desc: 'M9713 天神宫已征服门槛挪走（shrine_stage >= 4 改 > 4，INVASION.ERB:73-76）',
     file: 'ere/page/page-invasion.js',
-    find: "  if (era_exflag.shrine_stage >= 4) {\n    era.printButton('巡视淫乱意志的神宫（已征服）', 5);\n  } else if (era_exflag.shrine_stage >= 1) {",
+    find: "  if (era_exflag.shrine_stage >= 4) {\n    era.printButton('- 巡视淫乱意志的神宫（已征服）', 5); // INVASION.ERB:74\n  } else if (era_exflag.shrine_stage >= 1) {",
     replace:
-      "  if (era_exflag.shrine_stage > 4) {\n    era.printButton('巡视淫乱意志的神宫（已征服）', 5);\n  } else if (era_exflag.shrine_stage >= 1) {",
+      "  if (era_exflag.shrine_stage > 4) {\n    era.printButton('- 巡视淫乱意志的神宫（已征服）', 5); // INVASION.ERB:74（变异：门槛挪走）\n  } else if (era_exflag.shrine_stage >= 1) {",
     tests: ['page-invasion'],
     must_mention: '[5] 按钮文案',
   },
@@ -4548,5 +4548,72 @@ export default [
     replace: '    // 变异：无按钮子页的真空行删掉',
     tests: ['page-chara-info'],
     must_mention: '无按钮子页里 :907 的空行在补白之后',
+  },
+
+  // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
+  {
+    desc: 'M12296 设施确认的 [0] 好的丢掉「- 」（同一行并排两个选项的原作形态）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: "era.printButton('- 好的', 0); // DUNGEON_INFO2.ERB:180 [0]",
+    replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
+    tests: ['page-dungeon-info'],
+    must_mention: '原作 :180 的 [0] - 好的',
+  },
+  {
+    desc: 'M12297 设定子菜单的 [0] 解除陷阱丢掉「- 」',
+    file: 'ere/page/page-dungeon-setup.js',
+    find: "era.printButton('- 解除陷阱', 0);",
+    replace: "era.printButton('解除陷阱', 0); // 变异：丢掉「- 」",
+    tests: ['page-dungeon-setup'],
+    must_mention: 'DUNGEON_SETUP.ERB:176-177',
+  },
+  {
+    desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
+    file: 'ere/page/page-intercept.js',
+    find: "era.printButton('- 返 回', 999); // :347 PRINTLC（原作两个空格，引擎折叠成一个）",
+    replace: "era.printButton('返 回', 999); // 变异：丢掉「- 」",
+    tests: ['page-intercept'],
+    must_mention: 'SHOP_2.ERB:346-348',
+  },
+  {
+    desc: 'M12299 征服后菜单的 [999] 退出丢掉「- 」',
+    file: 'ere/page/page-invasion.js',
+    find: "era.printButton('- 退出', 999); // INVASION.ERB:82",
+    replace: "era.printButton('退出', 999); // INVASION.ERB:82（变异：丢掉「- 」）",
+    tests: ['page-invasion'],
+    must_mention: 'INVASION.ERB',
+  },
+  {
+    desc: 'M12300 征服后菜单 [1] 的未征服分支丢掉「- 」（三元分支只改一支）',
+    file: 'ere/page/page-invasion.js',
+    find: "? '- 巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54",
+    replace: "? '巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54（变异：丢掉「- 」）",
+    tests: ['page-invasion'],
+    must_mention: 'INVASION.ERB',
+  },
+  {
+    desc: 'M12301 技巧等级道具买光确认的 [0] 丢掉「- 」',
+    file: 'ere/page/page-item-shop.js',
+    find: "era.printButton('- 好的', 0); // SHOP_ITEM.ERB:101",
+    replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
+    tests: ['item-shop'],
+    must_mention: 'SHOP_ITEM.ERB:101',
+  },
+  {
+    desc: 'M12302 换装铺主菜单的 [0] 丢掉「- 」（原作写死数字、移植侧是插值的那一项）',
+    file: 'ere/page/page-tailor.js',
+    find: 'era.printButton(`- 日常服饰（${CASUAL_PRICE}点）`, 0); // :78',
+    replace:
+      'era.printButton(`日常服饰（${CASUAL_PRICE}点）`, 0); // 变异：丢掉「- 」',
+    tests: ['page-tailor'],
+    must_mention: 'SHOP_TAILOR.ERB',
+  },
+  {
+    desc: 'M12303 换装铺主菜单的 [7] 魔法装备丢掉「- 」',
+    file: 'ere/page/page-tailor.js',
+    find: "era.printButton('- 魔法装备', 7); // :87",
+    replace: "era.printButton('魔法装备', 7); // 变异：丢掉「- 」",
+    tests: ['page-tailor'],
+    must_mention: 'SHOP_TAILOR.ERB',
   },
 ];

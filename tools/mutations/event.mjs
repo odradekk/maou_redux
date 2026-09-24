@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 382; // #597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 383; // #597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日；#612 起 +1（M12304-M12304：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的 rendered 断言必须红）
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
@@ -3522,5 +3522,16 @@ export default [
     replace: '    // 变异：角色信息之前的真空行删除',
     tests: ['enter-enemy'],
     must_mention: ':98 与 :159 两个真空行都在（角色信息之前）',
+  },
+
+  // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
+  {
+    desc: 'M12304 ENDING_1 的 [0] 继续丢掉「- 」',
+    file: 'ere/event/event-ending.js',
+    find: "era.printButton('- 世界这么大，我想再去看看！', 0);",
+    replace:
+      "era.printButton('世界这么大，我想再去看看！', 0); // 变异：丢掉「- 」",
+    tests: ['event-ending'],
+    must_mention: '正文带原作的「- 」（ENDING ver 1.0.1.ERB:29）',
   },
 ];

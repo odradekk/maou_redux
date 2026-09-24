@@ -540,11 +540,28 @@ test('@COM208：陷落后菜单；JUMP COM31 未落地 → COM_MISSING；SELECTC
   assert.equal(result, world.COM_MISSING, 'COM31 未落地');
   assert.equal(world.era_flag.selectcom, 31, 'JUMP 前改写 SELECTCOM');
   const buttons = printed_buttons(fixture);
-  assert.ok(buttons.includes('0:嘴巴'));
-  assert.ok(buttons.includes('1:胸部'));
-  assert.ok(buttons.includes('2:私处'));
-  assert.ok(buttons.includes('3:肛门'));
+  assert.ok(buttons.includes('0:- 嘴巴'));
+  assert.ok(buttons.includes('1:- 胸部'));
+  assert.ok(buttons.includes('2:- 私处'));
+  assert.ok(buttons.includes('3:- 肛门'));
   assert.ok(buttons.includes('999:暂时放过'));
+});
+
+test('#612 @COM208 凌辱菜单：四部位带「- 」、[999] 无分隔符', async () => {
+  const world = seed_world({ load_colosseum: true });
+  able_on(world);
+  world.fixture.store.set('tequip:31:55', 1);
+  world.fixture.store.set('base:31:1', 0);
+  world.fixture.store.set('maxbase:31:1', 1000);
+  world.fixture.set_inputs(999);
+  assert.equal(await run_com(world, 208), 1);
+  assert.deepEqual(
+    world.fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((button) => button.rendered),
+    ['[0] - 嘴巴', '[1] - 胸部', '[2] - 私处', '[3] - 肛门', '[999] 暂时放过'],
+    'COMF208_触手.ERB:38-43 的分隔符照写',
+  );
 });
 
 test('@COM208：JUMP COM5 落地（胸爱抚已注册）返回子指令结果', async () => {

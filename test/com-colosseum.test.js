@@ -507,10 +507,10 @@ test('@COM201 凌辱菜单：选项按调教者条件显示；胸爱抚支不查
   fixture.set_inputs(1); // 胸爱抚（无条件项）
   assert.equal(await com_family.call(201), 1, ':83-88 无結果検査 → RETURN 1');
   const buttons = printed_buttons(fixture);
-  assert.ok(buttons.includes('1:胸部'));
-  assert.ok(!buttons.includes('0:嘴巴'), '无插入手段不显示嘴巴');
-  assert.ok(!buttons.includes('2:私处'));
-  assert.ok(!buttons.includes('3:肛门'));
+  assert.ok(buttons.includes('1:- 胸部'));
+  assert.ok(!buttons.includes('0:- 嘴巴'), '无插入手段不显示嘴巴');
+  assert.ok(!buttons.includes('2:- 私处'));
+  assert.ok(!buttons.includes('3:- 肛门'));
   // 收入：LOSEBASE:0（开战 200；気力 0 支无追加）× 5 + rand(0)（whenMissing
   // 的 RESULT = 0 → RAND:0 恒 0）→ 1000
   assert.equal(
@@ -526,7 +526,7 @@ test('@COM201 凌辱菜单：选项按调教者条件显示；胸爱抚支不查
   const r = await com_family.call(201);
   assert.equal(r, 0, ':79-80 口交実行不可 → RETURN 0');
   assert.ok(fixture.text_lines().includes('＜助手・口交＞'));
-  assert.ok(printed_buttons(fixture).includes('0:嘴巴'));
+  assert.ok(printed_buttons(fixture).includes('0:- 嘴巴'));
 });
 
 test('@COM201 假阳具持有者（ITEM:PBAND == 1）可插入；收入吃 rand', async () => {
@@ -975,10 +975,10 @@ test('@COM207 私处支：男人目标 RETURN 0；按钮不显示', async () => 
   assert.equal(await com_family.call(207), 1, '菜单仍可达（999 空支）');
   const buttons = printed_buttons(fixture);
   assert.ok(
-    !buttons.includes('1:私处'),
+    !buttons.includes('1:- 私处'),
     ':53-54 男人不显示私处项（引擎层拒收代位 :65-66 的双保险）',
   );
-  assert.ok(buttons.includes('0:嘴巴'));
+  assert.ok(buttons.includes('0:- 嘴巴'));
 });
 
 // —— SHOW_EQUIP_2 的死斗场臂（page-train 就地实现，#230） ——
@@ -1148,4 +1148,55 @@ test('#595 COM201/202/207 凌辱菜单：菜单行之间没有多补的空行', 
       `${header}：末个按钮与菜单头之间无空行`,
     );
   }
+});
+
+// —— #612：凌辱菜单的按钮正文照写原作的「- 」分隔符 ————
+
+test('#612 COM201/202/207 凌辱菜单：四部位带「- 」、[999] 无分隔符', async () => {
+  // COM201：男助手 → [0]/[1]/[2]/[3] 全显示（COMF201.ERB:66-73）
+  const world201 = seed_colosseum_world({ assi: true });
+  world201.fixture.store.set('tequip:31:55', 1);
+  world201.fixture.store.set('base:31:1', 0);
+  world201.fixture.store.set('maxbase:32:1', 1000);
+  world201.fixture.store.set('base:32:1', 1000);
+  world201.fixture.store.set('cflag:32:13', 100);
+  world201.fixture.store.set('cflag:32:14', 100);
+  world201.fixture.store.set('talent:32:122', 1);
+  world201.era_flag.assiplay = 1;
+  world201.era_flag.player = 32;
+  world201.era_flag.selectcom = 201;
+  world201.fixture.set_inputs(999);
+  await world201.com_family.call(201);
+
+  const run_menu = async (com) => {
+    const world = seed_colosseum_world();
+    world.fixture.store.set('tequip:31:55', 1);
+    world.era_flag.selectcom = com;
+    world.fixture.set_inputs(999);
+    await world.com_family.call(com);
+    return world.fixture;
+  };
+  const fixture202 = await run_menu(202);
+  const fixture207 = await run_menu(207);
+
+  const rendered = (fixture) =>
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((button) => button.rendered);
+
+  assert.deepEqual(
+    rendered(world201.fixture),
+    ['[0] - 嘴巴', '[1] - 胸部', '[2] - 私处', '[3] - 肛门', '[999] 暂时放过'],
+    'COM201 四部位带「- 」、[999] 不带（COMF201.ERB:66-73）',
+  );
+  assert.deepEqual(
+    rendered(fixture202),
+    ['[0] - 嘴巴', '[1] - 胸部', '[2] - 私处', '[3] - 肛门', '[999] 暂时放过'],
+    'COM202 四部位带「- 」、[999] 不带（COMF202.ERB:53-59）',
+  );
+  assert.deepEqual(
+    rendered(fixture207),
+    ['[0] - 嘴巴', '[1] - 私处', '[2] - 肛门', '[999] 暂时放过'],
+    'COM207 三部位带「- 」、[999] 不带（COMF207.ERB:47-52）',
+  );
 });

@@ -491,10 +491,11 @@ async function hairset() {
         era.print('现在[半长]');
       } else {
         era.print('现在[长]');
-        era.printButton('适当剪一下', 0);
+        // 分隔符是原作的三个连写破折号（COMF73.ERB:78 `PRINTL [0]---适当剪一下`）
+        era.printButton('---适当剪一下', 0);
       }
-      era.printButton('大刀阔斧地剪', 1);
-      era.printButton('不剪', 2);
+      era.printButton('---大刀阔斧地剪', 1); // COMF73_髪型を弄る.ERB:80
+      era.printButton('---不剪', 2); // COMF73_髪型を弄る.ERB:81
       const result = await era.input();
       let l = 0;
       if (result === 0 && chara(target).chara.头发长度 >= 201) {
@@ -511,11 +512,12 @@ async function hairset() {
       }
       if (l) {
         era.print('剪成什么样子呢？');
-        era.printButton('还是不剪了', 0);
-        era.printButton('自然的样子', 1);
-        era.printButton('剪齐整', 2);
-        era.printButton('强调层次', 3);
-        era.printButton('强调蓬松感', 4);
+        // 分隔符照写原作的 `---`（COMF73.ERB:99-103）
+        era.printButton('---还是不剪了', 0);
+        era.printButton('---自然的样子', 1);
+        era.printButton('---剪齐整', 2);
+        era.printButton('---强调层次', 3);
+        era.printButton('---强调蓬松感', 4);
         const c = await era.input();
         if (c >= 1 && c <= 4) {
           cut = 1;
@@ -538,20 +540,22 @@ async function hairset() {
 
   for (;;) {
     era.print(`把${t_name}的头发弄成什么样子？`);
-    era.printButton('自然', 1);
-    era.printButton('中分', 2);
-    era.printButton('不均分', 3);
+    // 分隔符照写原作：1-9 是 `---`，10-12 是 `--`（COMF73.ERB:135-148 的
+    // 对齐写法，不是笔误——原文那几行就是两个破折号）
+    era.printButton('---自然', 1);
+    era.printButton('---中分', 2);
+    era.printButton('---不均分', 3);
     if (chara(target).chara.头发长度 >= 101) {
-      era.printButton('长束发', 4);
-      era.printButton('马尾', 5);
-      era.printButton('侧马尾', 6);
-      era.printButton('垂发辫', 7);
-      era.printButton('双马尾', 8);
-      era.printButton('顶束发', 9);
-      era.printButton('侧束发', 10);
+      era.printButton('---长束发', 4);
+      era.printButton('---马尾', 5);
+      era.printButton('---侧马尾', 6);
+      era.printButton('---垂发辫', 7);
+      era.printButton('---双马尾', 8);
+      era.printButton('---顶束发', 9);
+      era.printButton('--侧束发', 10);
       if (chara(target).chara.头发长度 >= 201) {
-        era.printButton('鱼骨辫', 11);
-        era.printButton('卷发', 12);
+        era.printButton('--鱼骨辫', 11);
+        era.printButton('--卷发', 12);
       }
     }
     era.print(`现在的发型：${HAIR_STYLES[chara(target).chara.发型] || ''}`);
@@ -1603,8 +1607,8 @@ async function com65() {
     era.print(
       `${chara_callname(player)}的处女，让${chara_callname(target)}夺走好吗？`,
     );
-    era.printButton('好', 0);
-    era.printButton('不要', 1);
+    era.printButton('- 好', 0); // COMF65_助手を犯させる.ERB:195
+    era.printButton('- 不要', 1); // COMF65_助手を犯させる.ERB:196
     if ((await era.input()) === 1) return 0;
   }
   if (!(await confirm_condom2())) return 0;

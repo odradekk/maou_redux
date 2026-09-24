@@ -538,8 +538,8 @@ async function dungeon_info2() {
           era.print(`\u3000在 ${dialogue[1]} 个阶层修建 通路`);
           era.print('\u3000\u3000合计花费\u3000    0p ，确认执行吗？');
         }
-        era.printButton('好的', 0);
-        era.printButton('不要', 1);
+        era.printButton('- 好的', 0); // DUNGEON_INFO2.ERB:180 [0]
+        era.printButton('- 不要', 1); // DUNGEON_INFO2.ERB:180 [1]（同行并排两个选项）
       } else if (dialogue[1] === -1) {
         era.print([
           { content: '\u3000\u3000* 还没有选择对象！！ *', color: COLOR_DIM },

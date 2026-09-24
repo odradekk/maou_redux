@@ -390,6 +390,20 @@ test('INFO2 设施路：选择层 + 设施 → 确认对话 → 确认执行（�
   );
 });
 
+test('#612 INFO2 设施确认：两键正文照写原作的「- 」（DUNGEON_INFO2.ERB:180）', async () => {
+  const fixture = setup_world();
+  const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');
+  fixture.store.set('flag:10004', 50000);
+  fixture.store.set('exflag:4444', 50000);
+  fixture.set_inputs(901, 110, 500, 0, 999);
+  await dungeon_info2();
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(rendered.includes('[0] - 好的'), '原作 :180 的 [0] - 好的');
+  assert.ok(rendered.includes('[1] - 不要'), '原作 :180 的 [1] - 不要');
+});
+
 test('INFO2 设施路：钱不够 → 提示「钱不够」且不写槽', async () => {
   const fixture = setup_world();
   const { dungeon_info2 } = load(fixture, 'page/page-dungeon-info2');

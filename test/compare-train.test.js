@@ -186,7 +186,13 @@ const BASELINE = {
   // 「紧缚/失神中的爱抚反应」占位——每份样本恰含一行，两态再各少 1 条
   // （natural 256→255、upgrade 189→188）；matched 与 unexplained 不动。
   // 数字取自重跑，不做算术加总。
-  'train-natural': { matched: 1120, version: 0, stub: 255, unexplained: 0 },
+  // 【#612 后重测】ablup.js 的按钮正文补回原作的「- 」分隔符（本票的
+  // golden 判据正是 train-natural-log:959-960）：两处升级屏的 `[0] - 阴核
+  // 点数×…` 与 `[100] - 停止` 从「改判成跨画面编号错位的 stub 半边」转为
+  // 逐字匹配——natural matched 1120→1122、stub 255→251（两条按钮各一对，
+  // 计 2 匹配 + 4 存根）；upgrade 的升级屏正文与之同形但对侧本就配不上，
+  // 四数不动。unexplained 保持 0，数字取自重跑。
+  'train-natural': { matched: 1122, version: 0, stub: 251, unexplained: 0 },
   'train-upgrade': { matched: 263, version: 0, stub: 188, unexplained: 0 },
 };
 
