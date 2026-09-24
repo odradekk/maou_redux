@@ -3432,7 +3432,7 @@ export default [
   },
   // —— #597：收尾的 PRINTL 只结束上一行、空源码行不产生输出（语义见
   //    CONTEXT.md「输出 API 与原作的对应」）。四条各把空行补回去
-  //    （旧形态），两条守真空行不许删 ——
+  //    （旧形态），三条守真空行不许删 ——
   {
     desc: 'M12114 调教后性交的「回到床上做了…」之后补回空行（:229 是空源码行，没有 PRINTL）',
     file: 'ere/event/event-aftertrain.js',
@@ -3440,7 +3440,7 @@ export default [
     replace:
       "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :229-231 段（229 行是空源码行、231 行是 TFLAG:13 = 4）：228 行的",
     tests: ['event-aftertrain'],
-    must_mention: '性交：这里不补空行',
+    must_mention: 'aftertrain_sex_check：这里不补空行',
   },
   {
     desc: 'M12115 调教后肛门性交的同款补回空行（:332 是空源码行）',
@@ -3449,7 +3449,7 @@ export default [
     replace:
       "  era.print(''); // 变异：照「空源码行＝空行」翻译的旧形态\n  // :332-333（332 行是空源码行、333 行是 A 经验播报）：331 行的 PRINTFORML",
     tests: ['event-aftertrain'],
-    must_mention: '肛门性交：这里不补空行',
+    must_mention: 'aftertrain_analsex_check：这里不补空行',
   },
   {
     desc: 'M12116 示众台涂鸦行与总结行之间补回空行（:2128 的 PRINTL 只收 PRINT 串那一行）',
@@ -3488,7 +3488,7 @@ export default [
   {
     desc: 'M12120 取得疯狂播报之后的 :58 真空行删除（:57 的 PRINTFORML 已收尾，空行由它来）',
     file: 'ere/event/event-addict.js',
-    find: '    era.println();\n    set_talent(cid, 123, 1);',
+    find: '    era.println(); // 真空行：58 行的 PRINTL 落在上面三条 PRINTFORML 之后\n    set_talent(cid, 123, 1);',
     replace: '    // 变异：:58 的真空行删除\n    set_talent(cid, 123, 1);',
     tests: ['event-addict'],
     must_mention: ':58 的真空行紧跟取得播报',

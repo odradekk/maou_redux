@@ -304,9 +304,9 @@ async function enter_enemy(arg0 = 0, rand) {
   // :158-162 GETBIT(FLAG:8,1) 时显示角色信息（FLAG:8 = 开局设置位图 2）
   const settings2 = era.get('flag:8') || 0;
   if (((settings2 >> 1) & 1) !== 0) {
-    era.println();
+    era.println(); // 真空行：85/90 行已收尾（159 行的 PRINTL 落在空行上）
     await show_chara_info(arg0, -1, rand); // :160（#390 真身）
-    era.println();
+    era.println(); // 真空行：160 行的 show_chara_info 自带收尾（161 行的 PRINTL 落在空行上）
   }
 
   return 1; // :164
@@ -377,7 +377,7 @@ async function k_11_lily(rand_n = (n) => Math.floor(Math.random() * n)) {
     '又过了半年，姐姐终于下定了决心，前往魔王的地下城。一只手拿着提灯，另一只手握着勇者丢弃的旧剑。',
   ); // :214 PRINTW
   await era.waitAnyKey();
-  era.println(); // :215
+  era.println(); // :215 真空行：214 行的 PRINTW 已收尾
   era.print(`村娘${name}开始了地下城的攻略！`); // :216-218
   era.print('*****************************************'); // :219
   await enterenemy_koujo(a); // :220
@@ -467,7 +467,7 @@ async function k_34_crazylord(rand_n) {
   ); // :284
   era.print(''); // :285 PRINTW（空）
   await era.waitAnyKey();
-  era.println(); // :286
+  era.println(); // :286 真空行：285 行的 PRINTW 已收尾
   era.print(`狂王的替身${name}`); // :287-288 PRINT 狂王的替身 + PRINTL 葵希罗
   era.print('开始了地下城的攻略！'); // :289
   era.print(

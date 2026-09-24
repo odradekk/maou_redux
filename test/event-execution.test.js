@@ -52,6 +52,32 @@ function seed_world() {
   return fixture;
 }
 
+/** 断言 `needle` 那一行之前紧邻空行（#597：分条件的真空行） */
+function assert_blank_before(fixture, needle, label) {
+  const index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes(needle),
+  );
+  assert.ok(index >= 1, `${label}：「${needle}」行出现且不在首行`);
+  const prev = fixture.lines[index - 1];
+  assert.ok(
+    prev.type === 'br' || (prev.type === 'text' && prev.text === ''),
+    `${label}：勋章播报之前的空行是真空行`,
+  );
+}
+
+/** 断言 `needle` 那一行之前没有空行（同一处的反方向守卫） */
+function assert_no_blank_before(fixture, needle, label) {
+  const index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes(needle),
+  );
+  assert.ok(index >= 1, `${label}：「${needle}」行出现且不在首行`);
+  const prev = fixture.lines[index - 1];
+  assert.ok(
+    !(prev.type === 'br' || (prev.type === 'text' && prev.text === '')),
+    `${label}：这一支不该有空行`,
+  );
+}
+
 function set_banishment_values(fixture, values) {
   for (const [address, value] of Object.entries(values)) {
     fixture.store.set(address.replace(':', ':31:'), value);
@@ -156,6 +182,26 @@ test('PUBLIC_EXECUTION：魂粉碎保留拼行、录像归档与确定性随机�
   assert.equal(fixture.store.get('exp:0:81'), 1);
   assert.equal(fixture.store.get('exp:0:80'), 250);
   assert.deepEqual(fixture.era.getAddedCharacters(), [0, 47]);
+  // #597：第三支（TFLAG:520 == 2）没有空行——原作 :129 的 `PRINTFORMW  ` 只
+  // 收尾 :89-128 那串未换行的 PRINTFORM；空行只属于 :56/:76 两支
+  assert_no_blank_before(fixture, '得到了用勇者力量形成的勋章', '魂粉碎支');
+});
+
+test('#597：公开处刑前两支的勋章空行是真空行（:56 / :76）', async () => {
+  for (const [branch, label] of [
+    [0, '凌辱致死支（:56）'],
+    [1, '淫行悬挂支（:76）'],
+  ]) {
+    const fixture = seed_world();
+    fixture.set_inputs(branch);
+    const { public_execution } = fixture.load_module(
+      'event/event-public-execution',
+    );
+
+    await public_execution(31, seq([0]));
+
+    assert_blank_before(fixture, '得到了用勇者力量形成的勋章', label);
+  }
 });
 
 test('GROTESQUE：按性格处理器分发口上并归档选择的末路', async () => {

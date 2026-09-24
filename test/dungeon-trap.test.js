@@ -1073,6 +1073,20 @@ function blank_entries(fixture) {
   );
 }
 
+/** 断言 `needle` 那一行之后**紧跟**一个空行（分条件的真空行，反方向守卫） */
+function assert_blank_after(fixture, needle, label) {
+  const index = fixture.lines.findIndex(
+    (line) => line.type === 'text' && line.text.includes(needle),
+  );
+  assert.ok(index >= 0, `${label}：演出里出现「${needle}」（否则断言会空过）`);
+  const next = fixture.lines[index + 1];
+  assert.ok(
+    next !== undefined &&
+      (next.type === 'br' || (next.type === 'text' && next.text === '')),
+    `${label}：那一支里的收尾 PRINTL 是真空行`,
+  );
+}
+
 /** 断言 `needle` 那一行之后不紧跟空行（该行是最后一行也算通过） */
 function assert_no_blank_after(fixture, needle, label) {
   const index = fixture.lines.findIndex(
@@ -1150,6 +1164,32 @@ test('#597：六个陷阱段收尾的 PRINTL 不产生空行（战斗日志 ON�
     0,
     '落穴段演出通篇无空行（含 :259-260 那一处）',
   );
+});
+
+/**
+ * 但有两段的收尾 PRINTL 是**分条件**的真空行——原作在那一支里前一条输出
+ * 已经换过行（瞬移的 :347 PRINTFORML、催情气体的 :445 PRINTL），落上去就是
+ * 空行；条件不成立时它只收尾未换行的 PRINTFORM，不产生空行（#597）。
+ * 这两条必须成对钉住：无条件补空行与删除分支空行都要红。
+ */
+test('#597：瞬移/催情气体的收尾 PRINTL 只在对应分支里是真空行', async () => {
+  // 瞬移：FLAG:85 > 0（陷阱等级，道具商店买一次就 ≥ 1）
+  const teleport = setup_world();
+  teleport.store.set('flag:5', 32);
+  teleport.store.set('flag:85', 30);
+  await load(teleport).teleport_trap(1, seq(50, 77), { d20: 50 });
+  assert_blank_after(
+    teleport,
+    '被突然地瞬间移动弄得头昏脑胀',
+    '瞬移（FLAG:85 > 0）',
+  );
+
+  // 催情气体：TALENT:60（容易自慰）
+  const gas = setup_world();
+  gas.store.set('flag:5', 32);
+  gas.store.set('talent:1:60', 1);
+  await load(gas).love_gas_trap(1, seq(5));
+  assert_blank_after(gas, '阴核点数+10', '催情气体（TALENT:60）');
 });
 
 // —— 存根清单核对（dungeon-battle.test.js 同款）——

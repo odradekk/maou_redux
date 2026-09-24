@@ -264,7 +264,7 @@ async function charadead_check() {
   era.println(); // PRINTL（空行）
   // :68-75 TEMP 恒 0 → 恒走第一支（ELSEIF 不可达，见 JSDoc）
   era.print(`${chara_name(target)}死掉了……`);
-  era.println();
+  era.println(); // 真空行：69、71-72 行的 PRINTFORML 已收尾（74 行的 PRINTL 落在空行上）
   era.drawLine();
   // :76 BASE:0 = -1（意图 1:1；引擎把 base 钳到 0，★死亡★ 显示不出来——
   // 见文件头「移植说明」的这处偏离）

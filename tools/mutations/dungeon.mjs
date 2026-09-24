@@ -3,8 +3,9 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 300; // #597 起 +14（M12100-M12113：陷阱/2D 地图/商店街/背叛提问
-// 的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
+export const COUNT = 302; // #597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+// 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
+// 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判据、欲望门槛、睡着分支文案；M11489：挑战臂漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
 // M9838 与 #462 撞号后改）；#469 起 +8（M10116-M10123，dungeon.js/dungeon-room.js/
 // dungeon-trap.js/dungeon-battle.js 的战役分发器：剧情推进条件、进度
@@ -2597,11 +2598,11 @@ export default [
     must_mention: '落穴（:259-260）：收尾的 PRINTL 不是空行',
   },
   {
-    desc: 'M12101 瞬移段收尾补回空行（:351-352 的 PRINTL 只收 :334/:341 那串 PRINTFORM）',
+    desc: 'M12101 瞬移段收尾无条件补空行（去掉 FLAG:85 > 0 条件——主路径多出一个空行）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: '  // :351-352 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
+    find: '  if (diff > 0 && show) {\n    era.println();',
     replace:
-      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧形态\n  // :351-352 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
+      '  if (show) {\n    era.println(); // 变异：真空行改成无条件（条件分支丢掉）',
     tests: ['dungeon-trap'],
     must_mention: '瞬移（:351-352）：收尾的 PRINTL 不是空行',
   },
@@ -2615,11 +2616,11 @@ export default [
     must_mention: '单向通行（:400-401）：收尾的 PRINTL 不是空行',
   },
   {
-    desc: 'M12103 催情气体段收尾补回空行（:453-454 的 PRINTL 只收 :427/:436 那串 PRINTFORM）',
+    desc: 'M12103 催情气体收尾无条件补空行（去掉 TALENT:60 条件——主路径多出一个空行）',
     file: 'ere/dungeon/dungeon-trap.js',
-    find: '  // :453-454 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
+    find: '  if (self_masturbation && show) {\n    era.println();',
     replace:
-      '  era.println(); // 变异：照「收尾 PRINTL 再补一条」翻译的旧形态\n  // :453-454 的 PRINTL 只结束上面那串 `PRINTFORM` 拼起来的一行（PRINTFORM',
+      '  if (show) {\n    era.println(); // 变异：真空行改成无条件（条件分支丢掉）',
     tests: ['dungeon-trap'],
     must_mention: '催情气体（:453-454）：收尾的 PRINTL 不是空行',
   },
@@ -2689,7 +2690,7 @@ export default [
   {
     desc: 'M12111 休憩演出的 :62 真空行删除（:60 PRINTFORMW 已收尾，空行由它来）',
     file: 'ere/dungeon/labo-dungeon-map.js',
-    find: '      era.drawLine(); // :61\n      era.println(); // :62',
+    find: '      era.drawLine(); // :61\n      era.println(); // :62 真空行：60 行的 PRINTFORMW 已收尾',
     replace: '      era.drawLine(); // :61\n      // 变异：:62 的真空行删除',
     tests: ['dungeon-labo'],
     must_mention:
@@ -2698,7 +2699,7 @@ export default [
   {
     desc: 'M12112 商店街税入前的 :362 真空行删除（:343 的 PRINTL 已收尾，空行由它来）',
     file: 'ere/dungeon/dungeon-room.js',
-    find: '  era.println(); // :362 PRINTL',
+    find: '  era.println(); // :362 PRINTL 真空行：343/346/351/355/359 行的威望行已收尾',
     replace: '  // 变异：:362 的真空行删除',
     tests: ['dungeon-room'],
     must_mention: ':362 的真空行在税入行之前',
@@ -2706,9 +2707,25 @@ export default [
   {
     desc: 'M12113 背叛提问前的 :1158 真空行删除（:1150 的 PRINTFORMW 已收尾）',
     file: 'ere/dungeon/dungeon-battle2.js',
-    find: '      party_del(leader);\n      era.println();',
+    find: '      party_del(leader);\n      era.println(); // 真空行：1150 行的 PRINTFORMW 已收尾（1158 行的 PRINTL 落在空行上）',
     replace: '      party_del(leader);\n      // 变异：:1158 的真空行删除',
     tests: ['dungeon-battle'],
     must_mention: ':1158 的真空行在提问行之前',
+  },
+  {
+    desc: 'M12122 瞬移段 FLAG:85 > 0 支的真空行删除（347 行的 PRINTFORML 已收尾）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '  if (diff > 0 && show) {\n    era.println();\n  }',
+    replace: '  // 变异：FLAG:85 > 0 支的真空行删除',
+    tests: ['dungeon-trap'],
+    must_mention: '瞬移（FLAG:85 > 0）：那一支里的收尾 PRINTL 是真空行',
+  },
+  {
+    desc: 'M12123 催情气体 TALENT:60 支的真空行删除（445 行的 PRINTL 已收尾）',
+    file: 'ere/dungeon/dungeon-trap.js',
+    find: '  if (self_masturbation && show) {\n    era.println();\n  }',
+    replace: '  // 变异：TALENT:60 支的真空行删除',
+    tests: ['dungeon-trap'],
+    must_mention: '催情气体（TALENT:60）：那一支里的收尾 PRINTL 是真空行',
   },
 ];

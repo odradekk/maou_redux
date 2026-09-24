@@ -532,7 +532,7 @@ async function pillory(rand = default_rand) {
   // print，「同一条涂鸦行被拆成多行」是既有记名差异（不在本票范围）
   era.print(`${name}被各种侮辱的涂鸦写在身上了……`); // :2129
   await era.waitAnyKey(); // :2131 WAIT
-  era.print(''); // :2129-2133（涂鸦总结 + WAIT + PRINTL）
+  era.print(''); // :2129-2133 真空行：2129 行的 PRINTFORML 已收尾（2133 行的 PRINTL 落在空行上）
 
   // :2135-2310 侵犯叙述（兽奸 / A&V / A / 其余四支）
   const user_name = BEAST_USERS[user] ?? BEAST_USERS[4];

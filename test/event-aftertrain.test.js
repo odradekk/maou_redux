@@ -321,7 +321,7 @@ test('#597：aftertrain_sex_check 的「回到床上做了…」之后不补空�
   assert.equal(await aftertrain_sex_check(), 1, '走完结算');
   // 源 :228 的 PRINTFORML 已结束那一行，:229 只是空源码行、没有 PRINTL；
   // 下一行是 :231-232 的口上或 :234 的经验播报，中间不夹空行（#597）
-  assert_no_blank_after(fixture, '回到床上做了', '性交');
+  assert_no_blank_after(fixture, '回到床上做了', 'aftertrain_sex_check');
 });
 
 test('#597：aftertrain_analsex_check 的「回到床上做了…」之后不补空行（:332 是空源码行）', async () => {
@@ -333,7 +333,7 @@ test('#597：aftertrain_analsex_check 的「回到床上做了…」之后不补
   assert.equal(await aftertrain_analsex_check(), 1, '走完结算');
   // 源 :331 的 PRINTFORML 已结束那一行，:332 只是空源码行；下一行是
   // :333 的 A 经验播报（#597）
-  assert_no_blank_after(fixture, '回到床上做了', '肛门性交');
+  assert_no_blank_after(fixture, '回到床上做了', 'aftertrain_analsex_check');
 });
 
 test('AFTERTRAIN: aftertrain_lesbiansex_check 百合性交', async () => {

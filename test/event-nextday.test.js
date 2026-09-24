@@ -682,10 +682,15 @@ test('魔族化（EVENT_MAZOKU）：欲望档 × 淫乱的二维表驱动，逐�
       `分支关键字：${line}`,
     );
     // #597：:485 / :495 的 `PRINTFORML `（空参数）落在上一句 PRINTFORMW 之后
-    // （那一行已结束）——它是**真空行**，末句之后恰有一个空行再进 :498 WAIT。
-    // :498 的 WAIT 不占行，所以末尾那一个条目就是它
+    // （那一行已结束）——它是**真空行**，末句之后**恰有**一个空行再进 :498
+    // WAIT。:498 的 WAIT 不占行，所以末尾两条是「播报行 + 空行」
     assert.ok(fixture.lines.length >= 4, '整段演出有输出（否则断言会空过）');
     const last = fixture.lines[fixture.lines.length - 1];
+    const before_last = fixture.lines[fixture.lines.length - 2];
+    assert.ok(
+      before_last.type === 'text' && before_last.text !== '',
+      ':485/:495 的真空行之前是播报行（不多不少一个空行）',
+    );
     assert.ok(
       last.type === 'br' || (last.type === 'text' && last.text === ''),
       ':485/:495 的真空行在末句之后（末尾恰有一个空行）',

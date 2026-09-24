@@ -123,7 +123,7 @@ function print_methods(cid) {
       era.printButton(label, index);
     }
   });
-  era.println();
+  era.println(); // 真空行：88 行的 PRINTL 已收尾（89 行的 PRINTL 落在空行上）
   era.printButton('停止', 100);
   era.printButton('水晶球记录', 101, {
     color: era_exflag.mod_switch_bits & 4 ? '#ffffff' : '#646464',
