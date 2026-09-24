@@ -319,6 +319,12 @@ export const FILES = [
         ref: '118',
         any: [/^[ \t]*CALL CHOOSE_HAIRCOLOR\(ID_OF_NEWCHARA\)[ \t]*$/m],
       },
+      // #596：发色列表的收尾 PRINTL 只结束残行那一行
+      {
+        src: 'target/ERB/キャラ関数/FUNC_CHARA_AND_HAIR.ERB',
+        ref: '227',
+        any: [/^\s*PRINTL\s*$/m],
+      },
     ],
   },
 ];

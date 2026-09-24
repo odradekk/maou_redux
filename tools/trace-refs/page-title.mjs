@@ -47,10 +47,75 @@ export const FILES = [
         ref: '110',
         any: [/^\s*RESTART\s*$/m],
       },
+      // #596：致辞按钮之后的 PRINTL 只结束按钮所在行（展开 :67 / 折叠 :72）
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '67',
+        any: [/^\s*PRINTL\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '72',
+        any: [/^\s*PRINTL\s*$/m],
+      },
+      // #596：信息行的行尾由 :76/:80 的 PRINTFORML 收掉（不是空行）
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '74',
+        any: [/^PRINTFORM %GAMEBASE_INFO%/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '76',
+        any: [/^\s*PRINTFORML\s*$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '77',
+        any: [/^\s*PRINTFORM 版本推进出问题/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '81',
+        any: [/^\s*PRINTFORM 群里@Delicious或者小窗/m],
+      },
+      // #596：:86-87 的 PRINTFORML 只结束联系按钮那一行、DRAWLINE 紧随其后
+      {
+        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
+        ref: '86-87',
+        any: [/^\s*PRINTFORML\nDRAWLINE\s*$/m],
+      },
     ],
   },
 ];
 
 export const LOG_REFS = [];
 
-export const SAMPLE_LOG_REFS = {};
+export const SAMPLE_LOG_REFS = {
+  'mainmenu-natural': [
+    {
+      js: 'ere/page/page-title.js',
+      refs: [
+        // #596：致辞按钮行与信息行相邻、联系按钮行与分割线相邻
+        {
+          ref: '30-31',
+          any: [/感谢群内所有人的测试与指导/],
+        },
+        {
+          ref: '32-33',
+          any: [/版本推进出问题/],
+        },
+      ],
+    },
+    {
+      js: 'test/page-title.test.js',
+      refs: [
+        // #596：同上，一行段覆盖两处相邻
+        {
+          ref: '30-33',
+          any: [/版本推进出问题/],
+        },
+      ],
+    },
+  ],
+};

@@ -135,10 +135,11 @@ function draw_title_screen() {
   // 原作 PRINTBUTTON " <<" 的前置空格不移植：引擎渲染时会把按钮文本里的连续
   // 空白折叠成一个空格（见下方 printButton 的前缀说明），留了也无效。
   era.printButton(era_global.greeting_collapsed === 0 ? '<<' : '>>', 9);
-  era.println(); // 原作 :73/:80 按钮后的 PRINTL
+  // 原作 :67/:72 的 PRINTL 只结束按钮所在行（按钮与致辞末行同行），不产生
+  // 空行：mainmenu-natural-log:30-31 里按钮行与下一行信息行逐行相邻
 
-  // 原作 :73 PRINTFORM %GAMEBASE_INFO% 不换行、由联系段的 PRINTFORML 补行尾；
-  // ere 的每次 print 独占一行（dev-guides/06-output.md），两行布局等效
+  // 原作 :74 PRINTFORM %GAMEBASE_INFO% 不换行、行尾由 :76/:80 的 PRINTFORML
+  // 收掉；ere 的每次 print 独占一行（dev-guides/06-output.md），两行布局等效
   era.print(gamebase.info);
   // 原作 :74-81 联系方式段：GLOBAL:98 == 0 显示「版本推进出问题 」、非 0 显示
   // 联系方式，按钮 8 切换。前者的尾部空格照原作（这是普通文本行，不受按钮的
@@ -151,8 +152,11 @@ function draw_title_screen() {
     era.printButton('<<', 8);
   }
 
-  era.println(); // 原作 :84 PRINTFORML（空行）
-  era.drawLine(); // 原作 :86 DRAWLINE
+  // 原作 :86-87 的 PRINTFORML 同样只结束上一行（:77/:81 的 PRINTFORM + 按钮 8
+  // 拼出的行），不产生空行：mainmenu-natural-log:32-33 里「版本推进出问题 」
+  // 行与分割线逐行相邻。:74 的 PRINTFORM 的收行在 :76/:80 的 PRINTFORML，
+  // ere 侧由 print 自成一行承接，两处都不补空行
+  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）
   // 原作 :89-90 [0]/[1] 原为纯文本 + INPUT 收数字；ere 侧改为可点按钮（可点可
   // 键入），accelerator 沿用原作编号。
   //

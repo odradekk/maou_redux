@@ -689,10 +689,19 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
   assert.equal(buttons[0].rendered, '[0] 阴蒂感觉 - LV 3');
   assert.equal(buttons.at(-2).rendered, '[99] 反抗刻印 - LV 1');
   assert.equal(buttons.at(-1).rendered, '[999] - 能力值提高结束');
-  // 4 列换行：21 条能力（5 行 × 4 + 残行 1）→ 6 次 br，[99] 行与 [999]
-  // 行各 1 次 → 共 8
+  // :81-86 的两处 PRINTL（每 4 条换行、末行不足 4 也收行）与 :109/:111 同款，
+  // 都只结束所在的按钮行，不产生空行：train-natural-log:945-953 里五行能力
+  // 按钮、[99] 行、尾部分割线与 [999] 行全部逐行相邻（#596）
   const br_count = fixture.lines.filter((line) => line.type === 'br').length;
-  assert.equal(br_count, 8);
+  assert.equal(br_count, 0, '按钮行之间不夹空行');
+  assert.deepEqual(
+    fixture.lines.map((line) => line.type),
+    Array.from({ length: buttons.length - 1 }, () => 'button').concat([
+      'divider', // :110 CUSTOMDRAWLINE ‥（夹在 [99] 行与 [999] 行之间）
+      'button', // :111 [999] - 能力值提高结束
+    ]),
+    '按钮逐行相邻，[99] 行与尾部分割线、[999] 行之间都没有空行',
+  );
 });
 
 test('SHOW_ABLUP_SELECT：男无 私处感觉/百合气质/百合中毒，第 0 项改「阴茎感觉」', async () => {

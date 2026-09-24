@@ -268,6 +268,13 @@ export const FILES = [
           /		PRINTS "\\n"\*2 \+ " \[ 10\] 查看符合条件的奴隶或勇者 "\n		PRINTS "\\n"\*2 \+ " \[100\] 返回 "/,
         ],
       },
+      // #596：:80 的首个换行只结束 [10] 那一行，余下一个才是真空行；
+      // 返回文本之后没有 PRINTL
+      {
+        src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
+        ref: '80',
+        any: [/PRINTS "\\n"\*2 \+ " \[100\] 返回 "/],
+      },
       {
         src: 'target/ERB/キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB',
         ref: '82',

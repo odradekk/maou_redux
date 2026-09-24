@@ -257,6 +257,7 @@ test('CHOOSE_CHARASTERISTIC：列表跳过 174，每 3 项换行；输入越界�
       charasteristic_row(7, 'N173'),
       charasteristic_row(9, 'N175'),
     ].join(''),
+    // 9 项 % 3 = 0：没有残行，:112 的 PRINTL 落在空行上 = 真空行（#596）
     '\n',
   ]);
   assert.equal(fixture.store.get('talent:1:162'), 1, '输入 2 → 表内第 2 项');
@@ -271,13 +272,14 @@ test('CHOOSE_CHARASTERISTIC：换行位置按每行 N 项（实参可换）', as
   fixture.set_inputs(0);
 
   await choose_charasteristic(1, 2);
+  // 9 项 % 2 = 1：末行是残行，:112 的 PRINTL 只收它，不产生空行（#596）。
+  // 残行为空的那一支才留空行，见上一条「每 3 项换行」用例
   assert.deepEqual(rows(fixture), [
     [charasteristic_row(0, 'N160'), charasteristic_row(1, 'N161')].join(''),
     [charasteristic_row(2, 'N162'), charasteristic_row(3, 'N163')].join(''),
     [charasteristic_row(4, 'N164'), charasteristic_row(5, 'N166')].join(''),
     [charasteristic_row(6, 'N172'), charasteristic_row(7, 'N173')].join(''),
     charasteristic_row(9, 'N175'),
-    '\n',
   ]);
 });
 
@@ -380,7 +382,6 @@ test('CHOOSE_HAIRCOLOR：列出 1-11 号，每 6 项换行；输入越界重问'
   assert.deepEqual(rows(fixture), [
     items.slice(0, 6).join(''), // 一行 6 格（源 :223-225 的 `% (ARG:1) == 0`）
     items.slice(6).join(''),
-    '\n',
   ]);
   assert.equal(fixture.store.get('talent:1:300'), 5);
   assert.equal(fixture.inputs_consumed.length, 3);
@@ -404,11 +405,11 @@ test('CHOOSE_HAIRCOLOR：每行 N 项可换（实参）', async () => {
   const items = HAIRCOLORS.slice(1).map((name, i) =>
     haircolor_row(i + 1, name),
   );
+  // 11 项 % 4 = 3：末行残行由 :227 的 PRINTL 收尾，不产生空行（#596）
   assert.deepEqual(rows(fixture), [
     items.slice(0, 4).join(''),
     items.slice(4, 8).join(''),
     items.slice(8).join(''),
-    '\n',
   ]);
 });
 

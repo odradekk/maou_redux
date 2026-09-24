@@ -21,7 +21,7 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 84; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）
+export const COUNT = 88; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -745,5 +745,41 @@ export default [
       "      era.print('[997] 自定义输入');\n      era.print('[998] 无'); // 变异\n      sex = await era.input();",
     tests: ['chara-custom2'],
     must_mention: '输入不合法！请输入以下值之一：',
+  },
+  // —— #596：print 之后多补的空行普查（性格/发色列表与外观分组） ——
+  {
+    desc: 'M12083 性格列表残行之后补回空行（:112 的 PRINTL 只收残行那一行）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '  if (row.length > 0) {\n    era.print(row); // :112 的 PRINTL 只收残行那一行，不产生空行',
+    replace:
+      '  if (row.length > 0) {\n    era.print(row); // :112 的 PRINTL 只收残行那一行，不产生空行\n    era.println(); // 变异：多补一条空行',
+    tests: ['chara-and-hair'],
+    must_mention: '换行位置按每行 N 项',
+  },
+  {
+    desc: 'M12084 性格列表整行恰满时的真空行删除（:112 落在空行上——那一个是真行）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '    // 整行恰满时 :112 的 PRINTL 落在空行上——这一支才是真空行\n    era.println();',
+    replace: '    // 变异：整行恰满时的真空行删除',
+    tests: ['chara-and-hair'],
+    must_mention: '每 3 项换行',
+  },
+  {
+    desc: 'M12085 发色列表残行之后补回空行（:227 的 PRINTL 只收残行那一行）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '  if (row.length > 0) {\n    era.print(row); // :227 的 PRINTL 只收残行那一行，不产生空行',
+    replace:
+      '  if (row.length > 0) {\n    era.print(row); // :227 的 PRINTL 只收残行那一行，不产生空行\n    era.println(); // 变异：多补一条空行',
+    tests: ['chara-and-hair'],
+    must_mention: '每行 N 项可换',
+  },
+  {
+    desc: 'M12086 外观分组末尾补回空行（:231 的 PRINTL 只结束那一格行——行首由 :198 的 PRINTV "  " 起头）',
+    file: 'ere/chara/chara-custom3.js',
+    find: "  era.setColor(''); // :184-231 RESETCOLOR（原作的字符色复位）",
+    replace:
+      "  era.println(); // 变异：多补一条空行\n  era.setColor(''); // :184-231 RESETCOLOR（原作的字符色复位）",
+    tests: ['chara-custom3'],
+    must_mention: '按钮行恰好一行，末尾 PRINTL 不生空行',
   },
 ];

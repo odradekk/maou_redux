@@ -781,7 +781,10 @@ async function chara_info_individual(arg, chara_sort) {
     }
     // sub_page === 3：原作两支 IF/ELSEIF 都不命中，无操作按钮
 
-    era.print('');
+    // :907 的 PRINTL 只结束上一行（该行是上面那串 `SIF … PRINT [n] …` 拼出的
+    // 按钮行，ere 的 printButton 各自成行），不产生空行——train-upgrade-log:171-172
+    // 里按钮行与分割线逐行相邻。无操作按钮的子页在原作会多一个空行（:907 落在
+    // 空行上），那属于「无按钮」这一分支的副作用，不在此处补
     era.drawLine();
     era.printButton('前页', 101);
     era.printButton('返回', 100);

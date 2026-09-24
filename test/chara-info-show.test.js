@@ -2171,6 +2171,62 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
   assert.equal(result, 1, '返回首页（directToHomePage 的返回值形态）');
 });
 
+test('SHOW_CHARA_INFO：出口轮的空行按原作（#596）——[10] 之前两行、两钮之间一行、返回之后没有', async () => {
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 }, // 合计 10 < 30：未满，走两个出口
+  });
+  fixture.set_inputs(100);
+  await show_chara_info(7, -1, always, 0x000000);
+
+  // 原作 :79-80 是两句 `PRINTS "\n"*2 + 按钮文本`：第一句的两个换行落在
+  // 上一行（:41 合计行）已收尾之后 = 两个真空行；第二句的首个换行只结束
+  // [10] 那一行（ere 的 printButton 自成一行），余下一个是真空行；
+  // :127 的返回文本之后停在 INPUT，没有 PRINTL
+  const row_of = (accelerator) => {
+    const line = fixture.lines.find(
+      (entry) => entry.type === 'button' && entry.accelerator === accelerator,
+    );
+    assert.ok(line, `找不到 [${accelerator}] 按钮`);
+    return line.row;
+  };
+  const pick = row_of(10);
+  const back = row_of(100);
+  assert.deepEqual(
+    fixture.lines
+      .filter((entry) => entry.type === 'br')
+      .map((entry) => entry.row),
+    [pick - 2, pick - 1, pick + 1],
+    '三个真空行：[10] 之前两个、两枚按钮之间一个',
+  );
+  assert.equal(back, pick + 2, '[100] 紧跟 [10] 之后的那一个空行');
+  assert.equal(
+    fixture.lines.at(-1).row,
+    back,
+    ':127 的返回文本之后不补空行（下一行就是 INPUT）',
+  );
+});
+
+test('SHOW_CHARA_INFO：名单轮的 [999] 返回之后不补空行（#596）', async () => {
+  // 原作 :127 的 `PRINTS "\n"*2 + " [100] 返回 "` 是名单轮的收尾：返回文本
+  // 之后直接 `$SacrificeListInputReacquisition` + INPUT，没有 PRINTL。
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 10 },
+  });
+  fixture.set_inputs(10, 999, 100); // 进名单 → 名单轮 [999] → 出口轮 [100]
+  await show_chara_info(7, -1, always, 0x000000);
+
+  const back = fixture.lines.find(
+    (entry) => entry.type === 'button' && entry.accelerator === 999,
+  );
+  assert.ok(back, '名单轮有一枚 [999] 返回');
+  const at = fixture.lines.indexOf(back);
+  assert.notEqual(
+    fixture.lines[at + 1]?.type,
+    'br',
+    ':127 的返回文本之后不补空行',
+  );
+});
+
 test('SHOW_CHARA_INFO：祭品名单的返回是真按钮（名单轮次白名单非空，#530）', async () => {
   // 名单轮次的白名单本来就非空——名单行自身是按钮（角色号），六个条件键是
   // 按钮（1000+下标）。此时若「返回」仍是纯文本行，玩家敲它的编号会被

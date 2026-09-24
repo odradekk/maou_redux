@@ -768,6 +768,33 @@ test('CHARA_INFO：切到非 1200 视图（[1300]）直调内层——结婚成�
 
 // —— CHARA_INFO_INDIVIDUAL：分页与换人导航 ——
 
+test('CHARA_INFO_INDIVIDUAL：操作按钮行与页脚分割线之间不夹空行（#596）', async () => {
+  // 原作 :907 的 PRINTL 只结束那一串 `SIF … PRINT [n] …` 拼出的按钮行
+  // （train-upgrade-log:171-172 里按钮行与分割线逐行相邻），不产生空行。
+  // ere 的按钮各自成行，收行由引擎负责。
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  const { chara_info_individual } = fixture.load_module('page/page-chara-info');
+  fixture.set_inputs(100);
+  await chara_info_individual(1, [1]);
+
+  const buttons = fixture.lines.filter((line) => line.type === 'button');
+  assert.ok(buttons.length > 0, '个别页至少有一枚页脚按钮');
+  const footer = fixture.lines.filter((line) => line.type === 'divider').at(-1);
+  const at = fixture.lines.indexOf(footer);
+  assert.equal(
+    fixture.lines[at - 1].type,
+    'button',
+    '操作按钮行的下一行就是页脚分割线，中间不夹空行（:907 只收行）',
+  );
+  assert.deepEqual(
+    fixture.lines.slice(at - 2, at + 2).map((line) => line.type),
+    ['button', 'button', 'divider', 'button'],
+    '按钮行 → 页脚分割线 → [101] 前页，四行逐行相邻、零空行（#596）',
+  );
+});
+
 test('CHARA_INFO_INDIVIDUAL：前页/后页在 0..3 间夹紧', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -788,7 +815,6 @@ test('CHARA_INFO_INDIVIDUAL：前一人/后一人按 chara_sort 顺位导航，�
   add_chara(fixture, 1, '甲');
   add_chara(fixture, 2, '乙');
   const { chara_info_individual } = fixture.load_module('page/page-chara-info');
-
   // 从甲(1)开始：后一人 → 乙(2，此时已是末位，按钮不再画出）；
   // 前一人 → 回到甲(1)；再前一人 → 到魔王(0)（l_indx===0 特例）；
   // 魔王行 l_indx=-1 同样满足「后一人」判据（#391 修正，见文件头），

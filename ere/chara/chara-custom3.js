@@ -429,7 +429,8 @@ function print_arr_group(arr, val, idx) {
   }
   flush();
   era.setColor(''); // :184-231 RESETCOLOR（原作的字符色复位）
-  era.println(); // :184-231 PRINTL
+  // :231 的 PRINTL 只结束最后一格行（行首 :198 的 PRINTV "  " 起头、按钮逐格
+  // 续拼），不产生空行——ere 的 printMultiColumns 自成一行
 }
 
 /**
