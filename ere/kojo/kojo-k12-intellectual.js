@@ -7456,18 +7456,18 @@ async function gohoubi_request_koujo_k12(rand) {
   ) {
     // :5745
 
-    await era.print(`${chara_callname(a)}提出了与`); // :5747
-    if (chara(a).stronghold.要求奖赏 == 1) {
-      // :5748
-      await era.print(`狗`); // :5749
-    } else if (chara(a).stronghold.要求奖赏 == 2) {
-      // :5750
-      await era.print(`猪`); // :5751
-    } else if (chara(a).stronghold.要求奖赏 == 3) {
-      // :5752
-      await era.print(`马`); // :5753
-    } // :5754-5755
-    await era.printAndWait(`交尾的要求`); // :5755
+    // :5747+:5749+:5751+:5753+:5755 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档的判据（:5748/:5750/:5752）提到
+    // 语句外当取值、文本留在输出语句里（保真锁按序核对 ERB 片段，#625）
+    const beast_word =
+      chara(a).stronghold.要求奖赏 == 1
+        ? '狗'
+        : chara(a).stronghold.要求奖赏 == 2
+          ? '猪'
+          : '马';
+    await era.printAndWait(
+      `${chara_callname(a)}提出了与` + beast_word + `交尾的要求`,
+    ); // :5747+:5749+:5751+:5753+:5755
     await era.printAndWait(`「想要继续进行异种交配实验」`); // :5756
   } else if (chara(a).stronghold.要求奖赏 == 4) {
     // :5757

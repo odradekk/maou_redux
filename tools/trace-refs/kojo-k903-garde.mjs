@@ -8525,7 +8525,12 @@ const refs = [
   ['5388', '^\\s*IF ASSI > 0 && ASSIPLAY\\s*$'],
   ['5389', '^\\s*PRINTFORMW 「啊…唔……唔唔………就……就在这里吗？…咳……！」\\s*$'],
   ['5390', '^\\s*PRINTFORM %SAVESTR:ASSI%把\\s*$'],
+  ['5391', '^\\s*SIF TALENT:ASSI:121 == 1 \\|\\| TALENT:ASSI:122 == 1\\s*$'],
   ['5392', '^\\s*PRINT 阴茎\\s*$'],
+  [
+    '5393',
+    '^\\s*SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1\\s*$',
+  ],
   ['5394', '^\\s*PRINT 假阳具\\s*$'],
   [
     '5395',
@@ -8590,6 +8595,7 @@ const refs = [
   ['5421', '^\\s*IF ASSI > 0 && ASSIPLAY\\s*$'],
   ['5422', '^\\s*PRINTFORMW 「啊…！唔……啊啊啊！…好深………弄的好深啦……！」\\s*$'],
   ['5423', '^\\s*PRINTFORM %SAVESTR:ASSI%听到悲鸣，更加兴奋了，继续用\\s*$'],
+  ['5424', '^\\s*SIF TALENT:ASSI:121 == 1 \\|\\| TALENT:ASSI:122 == 1\\s*$'],
   ['5425', '^\\s*PRINT 阴茎\\s*$'],
   ['5427', '^\\s*PRINT 假阳具\\s*$'],
   ['5428', '^\\s*PRINTFORMW 毫不留情地蹂躏着%SAVESTR:TARGET%的私处……\\s*$'],
@@ -8624,6 +8630,7 @@ const refs = [
     '^\\s*PRINTFORMW 「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」\\s*$',
   ],
   ['5447', '^\\s*PRINTFORM %SAVESTR:ASSI%听到悲鸣，更加兴奋了，继续用\\s*$'],
+  ['5448', '^\\s*SIF TALENT:ASSI:121 == 1 \\|\\| TALENT:ASSI:122 == 1\\s*$'],
   ['5449', '^\\s*PRINT 阴茎\\s*$'],
   ['5451', '^\\s*PRINT 假阳具\\s*$'],
   ['5452', '^\\s*PRINTFORMW 毫不留情地蹂躏着%SAVESTR:TARGET%的肛门……\\s*$'],
@@ -8966,7 +8973,6 @@ const refs = [
   ['5703', '^\\s*PRINT 公猪\\s*$'],
   ['5704', '^\\s*ELSEIF Y == 3\\s*$'],
   ['5705', '^\\s*PRINT 雄马\\s*$'],
-  ['5705-5706', '^\\s*PRINT 雄马\\s*$\\s*^\\s*ENDIF\\s*$'],
   ['5707', '^\\s*PRINTFORMW 好好地玩・一・玩吧♪」\\s*$'],
   ['5708', '^\\s*ELSEIF CFLAG:A:504 == 4\\s*$'],
   [

@@ -21198,6 +21198,11 @@ export const FILES = [
       },
       {
         src: SRC,
+        ref: '4341',
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+ABL:31[ \t]+>=[ \t]+3[ \t]*$/m],
+      },
+      {
+        src: SRC,
         ref: '4342',
         any: [
           /^(?:\uFEFF)?[ \t]*PRINTFORM[ \t]+[ \t]+还有手淫时妄想的内容[ \t]*$/m,
@@ -21441,13 +21446,6 @@ export const FILES = [
         src: SRC,
         ref: '4379',
         any: [/^(?:\uFEFF)?[ \t]*PRINT[ \t]+痛苦的[ \t]*$/m],
-      },
-      {
-        src: SRC,
-        ref: '4380-4381',
-        any: [
-          /^(?:\uFEFF)?[ \t]*ENDIF[ \t]*$\r?\n^(?:\uFEFF)?[ \t]*PRINTFORML[ \t]+呼吸声，一边努力回应着%SAVESTR:MASTER%……[ \t]*$/m,
-        ],
       },
       {
         src: SRC,
@@ -21855,34 +21853,13 @@ export const FILES = [
       },
       {
         src: SRC,
-        ref: '4447',
-        any: [
-          /^(?:\uFEFF)?[ \t]*IF[ \t]+TEQUIP:11[ \t]+\|\|[ \t]+TEQUIP:13[ \t]+\|\|[ \t]+TEQUIP:14[ \t]+\|\|[ \t]+TEQUIP:15[ \t]+\|\|[ \t]+TEQUIP:16[ \t]+\|\|[ \t]+TEQUIP:17[ \t]*$/m,
-        ],
-      },
-      {
-        src: SRC,
         ref: '4448',
         any: [/^(?:\uFEFF)?[ \t]*PRINT[ \t]+快乐的[ \t]*$/m],
       },
       {
         src: SRC,
-        ref: '4449',
-        any: [
-          /^(?:\uFEFF)?[ \t]*ELSEIF[ \t]+TEQUIP:44[ \t]+\|\|[ \t]+TEQUIP:49[ \t]*$/m,
-        ],
-      },
-      {
-        src: SRC,
         ref: '4450',
         any: [/^(?:\uFEFF)?[ \t]*PRINT[ \t]+痛苦的[ \t]*$/m],
-      },
-      {
-        src: SRC,
-        ref: '4451-4452',
-        any: [
-          /^(?:\uFEFF)?[ \t]*ENDIF[ \t]*$\r?\n^(?:\uFEFF)?[ \t]*PRINTFORML[ \t]+呼吸声，一边努力回应着%SAVESTR:MASTER%……[ \t]*$/m,
-        ],
       },
       {
         src: SRC,
@@ -29115,8 +29092,22 @@ export const FILES = [
       },
       {
         src: SRC,
+        ref: '6161',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: SRC,
         ref: '6162',
         any: [/^(?:\uFEFF)?[ \t]*PRINT[ \t]+阴茎[ \t]*$/m],
+      },
+      {
+        src: SRC,
+        ref: '6163',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+!=[ \t]+1[ \t]+&&[ \t]+TALENT:ASSI:122[ \t]+!=[ \t]+1[ \t]+&&[ \t]+ITEM:PBAND[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
       },
       {
         src: SRC,
@@ -29268,6 +29259,13 @@ export const FILES = [
       },
       {
         src: SRC,
+        ref: '6194',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: SRC,
         ref: '6195',
         any: [/^(?:\uFEFF)?[ \t]*PRINT[ \t]+肉棒[ \t]*$/m],
       },
@@ -29363,6 +29361,13 @@ export const FILES = [
         ref: '6217',
         any: [
           /^(?:\uFEFF)?[ \t]*PRINTFORM[ \t]+%SAVESTR:ASSI%一边听着悲鸣，一边用[ \t]*$/m,
+        ],
+      },
+      {
+        src: SRC,
+        ref: '6218',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
         ],
       },
       {
@@ -30550,15 +30555,8 @@ export const FILES = [
       },
       {
         src: SRC,
-        ref: '6525-6526',
-        any: [
-          /^(?:\uFEFF)?[ \t]*PRINTFORM[ \t]*$\r?\n^(?:\uFEFF)?[ \t]*IF[ \t]+CFLAG:A:504[ \t]+==[ \t]+1[ \t]*$/m,
-        ],
-      },
-      {
-        src: SRC,
-        ref: '6526',
-        any: [/^(?:\uFEFF)?[ \t]*IF[ \t]+CFLAG:A:504[ \t]+==[ \t]+1[ \t]*$/m],
+        ref: '6525',
+        any: [/^\s*PRINTFORM\s*$/m],
       },
       {
         src: SRC,
@@ -30567,34 +30565,13 @@ export const FILES = [
       },
       {
         src: SRC,
-        ref: '6528',
-        any: [
-          /^(?:\uFEFF)?[ \t]*ELSEIF[ \t]+CFLAG:A:504[ \t]+==[ \t]+2[ \t]*$/m,
-        ],
-      },
-      {
-        src: SRC,
         ref: '6529',
         any: [/^(?:\uFEFF)?[ \t]*PRINT[ \t]+豚[ \t]*$/m],
       },
       {
         src: SRC,
-        ref: '6530',
-        any: [
-          /^(?:\uFEFF)?[ \t]*ELSEIF[ \t]+CFLAG:A:504[ \t]+==[ \t]+3[ \t]*$/m,
-        ],
-      },
-      {
-        src: SRC,
         ref: '6531',
         any: [/^(?:\uFEFF)?[ \t]*PRINT[ \t]+馬[ \t]*$/m],
-      },
-      {
-        src: SRC,
-        ref: '6532-6533',
-        any: [
-          /^(?:\uFEFF)?[ \t]*ENDIF[ \t]*$\r?\n^(?:\uFEFF)?[ \t]*PRINTFORMW[ \t]*$/m,
-        ],
       },
       {
         src: SRC,

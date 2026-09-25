@@ -1930,18 +1930,19 @@ async function colosseum_kojo_15() {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       // :5841
       await era.printAndWait(`「不…唔……唔唔……嗯……啊……不！呜！」`); // :5842
-      await era.print(`${assi_name}粗暴地拉起${target_name}的头发，得意地用`); // :5843
-      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
-        await era.print(`阴茎`); // :5845
-      } // :5845
-      if (
-        era0(`talent:${assi}:121`) != 1 &&
-        era0(`talent:${assi}:122`) != 1 &&
-        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        await era.print(`假阳具`); // :5847
-      } // :5847
-      await era.printAndWait(`侵犯着对方的口腔……`); // :5848
+      // :5843+:5845+:5847+:5848 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+      // 不换行，末行 PRINTFORMW 才收行。:5844/:5846 两条 SIF 互斥（TALENT:121/
+      // 122 的「有」与「无」）——判据提到语句外当取值，文本留在输出语句里（#625）
+      const assi_has_penis =
+        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;
+      // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4
+      //（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+      const assi_has_toy = era0('item:4') == 1;
+      await era.printAndWait(
+        `${assi_name}粗暴地拉起${target_name}的头发，得意地用` +
+          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +
+          `侵犯着对方的口腔……`,
+      ); // :5843+:5845+:5847+:5848
     } else {
       // :5848-5850
       await era.printAndWait(`「不…唔……唔唔……嗯……啊……不！呜！」`); // :5850
@@ -2630,11 +2631,17 @@ async function kojo_message_com_15(rand) {
         await era.printAndWait(
           `「是不是没人想跟你接吻，所以只能用强迫的手段？真是卑劣！」`,
         ); // :757
-        await era.print(`${target_name}`); // :758
-        if (!era0(`tequip:${target}:44`)) {
-          await era.print(`像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，`); // :760
-        } // :760
-        await era.printAndWait(`恼怒地说着挑衅着话语……`); // :761
+        // :758+:760+:761 原作是一整行：无后缀 PRINTFORM 连续不换行，末行
+        // PRINTFORMW 才收行。:759 的 SIF !TEQUIP:44 只护住 :760 那一段——
+        // 判据提到语句外当取值，文本留在输出语句里（#625）
+        const wiped = !era0(`tequip:${target}:44`);
+        await era.printAndWait(
+          `${target_name}` +
+            (wiped
+              ? '像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，'
+              : '') +
+            `恼怒地说着挑衅着话语……`,
+        ); // :758+:760+:761
       } // :761-762
       kojo.接吻 = 1; // :761-764
       return 0; // :761-766
@@ -8733,18 +8740,18 @@ async function gohoubi_request_koujo_k15(rand) {
   ) {
     // :6138
 
-    await era.print(`「迎击成功的话，请让${sc()}跟`); // :6140
-    if (chara(a).stronghold.要求奖赏 == 1) {
-      // :6141
-      await era.print(`狗`); // :6142
-    } else if (chara(a).stronghold.要求奖赏 == 2) {
-      // :6143
-      await era.print(`猪`); // :6144
-    } else if (chara(a).stronghold.要求奖赏 == 3) {
-      // :6145
-      await era.print(`马`); // :6146
-    } // :6146-6148
-    await era.printAndWait(`进行交配好吗？」`); // :6148
+    // :6140+:6142+:6144+:6146+:6148 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档的判据（:6141/:6143/:6145）提到
+    // 语句外当取值、文本留在输出语句里（#625）
+    const beast_word =
+      chara(a).stronghold.要求奖赏 == 1
+        ? '狗'
+        : chara(a).stronghold.要求奖赏 == 2
+          ? '猪'
+          : '马';
+    await era.printAndWait(
+      `「迎击成功的话，请让${sc()}跟` + beast_word + `进行交配好吗？」`,
+    ); // :6140+:6142+:6144+:6146+:6148
   } else if (chara(a).stronghold.要求奖赏 == 4) {
     // :6149
 

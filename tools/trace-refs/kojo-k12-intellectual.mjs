@@ -19856,11 +19856,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K12_知的.ERB',
-        ref: '5754-5755',
-        any: [/^\s*PRINTFORMW 交尾的要求\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K12_知的.ERB',
         ref: '5755',
         any: [/^\s*PRINTFORMW 交尾的要求\s*$/m],
       },
