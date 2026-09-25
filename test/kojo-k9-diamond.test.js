@@ -620,10 +620,9 @@ test('#623 口塞初回：爱慕与それ以外两支的首段并入整行（:41
         0,
         `${item.label}：前缀不得单独成行`,
       );
-      assert.ok(
-        lines.includes(
-          gagged ? item.merged : `${prefix}的眼神看着你………`,
-        ),
+      assert.equal(
+        line_with(fixture, prefix),
+        gagged ? item.merged : `${prefix}的眼神看着你………`,
         `${item.label}：${gagged ? 'TRUE' : 'ELSE'} 支整行`,
       );
       assert.equal(
