@@ -524,22 +524,30 @@ test('原作缺陷：两处重复 TALENT:74，露出狂分支误读 TALENT:83', 
   );
 });
 
-test('GOHOUBI_REQUEST 保留 Y=0：奖励 2 不补公猪或雄马', async () => {
-  const fixture = await setup_k903();
-  const { chara } = fixture.load_module('facade/chara');
-  chara(CID).stronghold.要求奖赏 = 2;
-  const { gohoubi_request_koujo_family } = fixture.load_module(
-    'kojo/kojo-dungeon-after',
-  );
-  await gohoubi_request_koujo_family.call(KEY, { args: [] });
-  assert.equal(
-    fixture.text_lines().some((line) => line.includes('公猪')),
-    false,
-  );
-  assert.equal(
-    fixture.text_lines().some((line) => line.includes('雄马')),
-    false,
-  );
+test('#625 GOHOUBI_REQUEST：保留 Y=0，兽名与前后文同一行（要求奖赏 1/2/3）', async () => {
+  // 原作 :5699（PRINTFORM）+ :5701/:5703/:5705（IF/ELSEIF 三档）+ :5707
+  // （PRINTFORMW 收行）**是一整行**（#625）。后两档读的是从未赋值的 public
+  // static Y（清洁调用时 = 0），所以要求奖赏 2/3 不补「公猪」「雄马」——
+  // 整行只有前段与收行，源缺陷 1:1 保留
+  const cases = [
+    [1, '狗狗'],
+    [2, ''],
+    [3, ''],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k903();
+    const { chara } = fixture.load_module('facade/chara');
+    chara(CID).stronghold.要求奖赏 = req;
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(KEY, { args: [] });
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`「魔王大人，你懂得的吧…让本宫和${beast}好好地玩・一・玩吧♪」`],
+      `要求奖赏 ${req}：兽名与前后文落在同一行，Y=0 时不补公猪/雄马（#625）`,
+    );
+  }
 });
 
 test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模板空槽', async () => {
@@ -584,48 +592,51 @@ test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模�
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下面三档必须红。助手用嘉德自己（同本文件
 // 死斗场先例）：TALENT:121/122 均未置位，121/122 门不成立，判定只看假阳具位。
-test('COLOSSEUM_KOJO_903 SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三种 selectcom × 三档）', async () => {
+  // 原作 :5390+:5392+:5394+:5395、:5423+:5425+:5427+:5428、:5447+:5449+
+  // :5451+:5452 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
+  // 收行），ere 侧曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
   const cases = [
     {
       selectcom: 31,
-      lines: [
-        '「啊…唔……唔唔………就……就在这里吗？…咳……！」',
-        '嘉德把',
-        '假阳具',
-        '粗暴地塞入嘉德的嘴里，露出了心满意足的神情……',
-      ],
+      quote: '「啊…唔……唔唔………就……就在这里吗？…咳……！」',
+      head: '嘉德把',
+      tail: '粗暴地塞入嘉德的嘴里，露出了心满意足的神情……',
     },
     {
       selectcom: 21,
-      lines: [
-        '「啊…！唔……啊啊啊！…好深………弄的好深啦……！」',
-        '嘉德听到悲鸣，更加兴奋了，继续用',
-        '假阳具',
-        '毫不留情地蹂躏着嘉德的私处……',
-      ],
+      quote: '「啊…！唔……啊啊啊！…好深………弄的好深啦……！」',
+      head: '嘉德听到悲鸣，更加兴奋了，继续用',
+      tail: '毫不留情地蹂躏着嘉德的私处……',
     },
     {
       selectcom: 27,
-      lines: [
-        '「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」',
-        '嘉德听到悲鸣，更加兴奋了，继续用',
-        '假阳具',
-        '毫不留情地蹂躏着嘉德的肛门……',
-      ],
+      quote: '「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」',
+      head: '嘉德听到悲鸣，更加兴奋了，继续用',
+      tail: '毫不留情地蹂躏着嘉德的肛门……',
     },
   ];
-  for (const { selectcom, lines } of cases) {
-    const fixture = await setup_k903((f, era_flag) => {
-      f.store.set(`tequip:${CID}:55`, 1);
-      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
-      era_flag.assi = CID;
-      era_flag.assiplay = 1;
-    }, selectcom);
-    await speak(fixture);
-    assert.deepEqual(
-      fixture.text_lines(),
-      lines,
-      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阳具」`,
-    );
+  const tiers = [
+    { weapon: '阴茎', seed: (f) => f.store.set(`talent:${CID}:121`, 1) },
+    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // 原作 ITEM:PBAND
+    { weapon: '', seed: undefined },
+  ];
+  for (const { selectcom, quote, head, tail } of cases) {
+    for (const { weapon, seed } of tiers) {
+      const fixture = await setup_k903((f, era_flag) => {
+        f.store.set(`tequip:${CID}:55`, 1);
+        era_flag.assi = CID;
+        era_flag.assiplay = 1;
+        if (seed) {
+          seed(f);
+        }
+      }, selectcom);
+      await speak(fixture);
+      assert.deepEqual(
+        fixture.text_lines(),
+        [quote, `${head}${weapon}${tail}`],
+        `selectcom ${selectcom}（武器档「${weapon}」）：武器名与前后文落在同一行（#625）`,
+      );
+    }
   }
 });
