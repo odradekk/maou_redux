@@ -24200,6 +24200,13 @@ export const FILES = [
         any: [/出来的地方也/],
       },
       {
+        // #624：:4480 是 ELSE、:4481 才是 PRINT 行——拼接锚（:4475+:4477+…）
+        // 里用得到单独的行号
+        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
+        ref: '4481',
+        any: [/出来的地方也/],
+      },
+      {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4483',
         any: [/\t\t\tIF RAND:2 == 0/m],

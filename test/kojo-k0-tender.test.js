@@ -4936,8 +4936,10 @@ test('GOHOUBI_REQUEST：CFLAG:504==1 与犬做爱请求', async () => {
   era_flag.target = 31;
   await gohoubi_request_koujo_family.call(0, { args: [31] });
   assert.ok(
-    fixture.text_lines().some((l) => /犬/.test(l)),
-    '应含与犬做爱请求',
+    fixture
+      .text_lines()
+      .includes('「要是我打倒勇者的话…可以奖励我与犬做爱吗…？」'),
+    `:8133..:8141 是一整行（动物名与收行段合成一条）；实际：${JSON.stringify(fixture.text_lines())}`,
   );
 });
 
@@ -5261,7 +5263,63 @@ test('#624 交谈：:4674..:4682 的「…一边竭力按捺住…」是一整�
   }
 });
 
-// :4733..:4741（通常会話支，源 :4727 的 ELSE）与 :8133..:8141（奖励请求口上
-// gohoubi_request_koujo_k0）两处的整行合并没有对应变异条目：本夹具只走到
-// :4674..:4682（撮影支），另一支与奖励请求口上不在本模块的导出/SELECTCOM
-// 分派里（本票范围外）——见 #624 完成评论。
+test('#624 交谈二回目：:4733..:4741 的「…一边竭力按捺住…」是一整行', async () => {
+  // :4727 的 ELSE（通常会話）支：交谈二回目以降（CFLAG:357 == 1）且未插着不拔，
+  // PALAM:4/5 达 PALAMLV[4] 时由 :4732 的判据进 :4733。装备分档同 :4674 支
+  const cases = [
+    [{}, '自己的'],
+    [{ 'tequip:31:11': 1 }, '快乐的'],
+    [{ 'tequip:31:44': 1 }, '痛苦的'],
+  ];
+  for (const [seed, word] of cases) {
+    const fixture = await setup_k0((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('cflag:31:357', 1); // 交谈二回目以降
+      f.store.set('palam:31:4', 10000); // PALAMLV[4]
+      f.store.set('palam:31:5', 10000);
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(key, value);
+      }
+    });
+    await speak_k0(fixture);
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(`琼一边竭力按捺住${word}声音，一边回应着你。`),
+      `${JSON.stringify(seed)} → :4733..:4741 是一整行；实际：${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#624 灌肠+肛塞脱着：:4475..:4484 的「主人…那…」是一整行', async () => {
+  // 抽数序同原作：三选一（:4476/:4478）先、收行二选一（:4483）后
+  const cases = [
+    {
+      rand: seq_rand(0, 0),
+      lines: ['「主人…我那排泄的地方也请您好好地观赏……」'],
+      why: '三选一 = 排泄的地方也、收行 = 观赏（:4475+:4477+:4484 合成一条）',
+    },
+    {
+      rand: seq_rand(1, 0, 0),
+      lines: ['「主人…我那肮脏的地方也请您好好地观赏……」'],
+      why: '三选一 = 肮脏的地方也、收行 = 观赏',
+    },
+    {
+      rand: seq_rand(0, 1),
+      lines: ['「主人…我那排泄的地方也', '请您好好地疼爱……」'],
+      why: '疼爱支的收行跨不过 :4484 的 PRINTFORMW，只能前缀+三选一一条、收行一条',
+    },
+  ];
+  for (const { rand, lines, why } of cases) {
+    const fixture = await setup_k0((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 46; // 灌肠+肛塞脱着（TEQUIP:46 == 0）
+      f.store.set('talent:31:85', 1); // 愛（:4472 支；:4429 的淫乱支不命中）
+      f.store.set('abl:31:3', 3); // A感覚 Lv3
+      f.store.set('abl:31:21', 3); // マゾっ気 Lv3
+    });
+    await speak_k0(fixture, rand);
+    assert.deepEqual(fixture.text_lines(), lines, why);
+  }
+});
