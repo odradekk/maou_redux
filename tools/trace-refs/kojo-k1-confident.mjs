@@ -19134,11 +19134,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '4797-4798',
-        any: [/PRINT 痛苦的/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '4799',
         any: [/声音、一边拼命地回应着%SAVESTR:PLAYER%。/],
       },
@@ -19568,11 +19563,6 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '4883',
-        any: [/PRINT 痛苦的/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '4883-4884',
         any: [/PRINT 痛苦的/],
       },
       {
@@ -25284,27 +25274,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6342',
-        any: [/IF CFLAG:TARGET:601 == 900/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6344',
         any: [/PRINT 狗的妻子/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6344-6345',
-        any: [/PRINT 狗的妻子/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6346',
-        any: [/PRINT 母狗/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6346-6347',
         any: [/PRINT 母狗/],
       },
       {
@@ -25333,18 +25308,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6352',
-        any: [/IF TALENT:成为勇者前的生活 == 1/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6354',
         any: [/PRINT 同班同学的大家/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6355',
-        any: [/ELSEIF TALENT:成为勇者前的生活 == 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
@@ -25353,20 +25318,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6358',
-        any: [
-          /ELSEIF TALENT:成为勇者前的生活 == 15 \|\| TALENT:成为勇者前的生活 == 18/,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6360',
         any: [/在%SELF_CALL\(TARGET\)%的店里消费过的客人/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6361',
-        any: [/ELSEIF TALENT:成为勇者前的生活 == 19/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
@@ -25375,27 +25328,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6364',
-        any: [/ELSEIF TALENT:成为勇者前的生活 == 21/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6366',
         any: [/PRINT 最重要的你/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6366-6367',
-        any: [/PRINT 最重要的你/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6369',
-        any: [/PRINT 爸爸、妈妈/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6369-6370',
         any: [/PRINT 爸爸、妈妈/],
       },
       {
@@ -25533,27 +25471,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6404',
-        any: [/IF CFLAG:TARGET:601 == 900/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6406',
         any: [/PRINT 狗的妻子/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6406-6407',
-        any: [/PRINT 狗的妻子/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6408',
-        any: [/PRINT 母狗/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6408-6409',
         any: [/PRINT 母狗/],
       },
       {
@@ -25582,18 +25505,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6414',
-        any: [/IF TALENT:成为勇者前的生活 == 1/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6416',
         any: [/PRINT 同班同学的大家/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6417',
-        any: [/ELSEIF TALENT:成为勇者前的生活 == 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
@@ -25602,20 +25515,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6420',
-        any: [
-          /ELSEIF TALENT:成为勇者前的生活 == 15 \|\| TALENT:成为勇者前的生活 == 18/,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6422',
         any: [/在%SELF_CALL\(TARGET\)%的店里消费过的客人/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6423',
-        any: [/ELSEIF TALENT:成为勇者前的生活 == 19/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
@@ -25624,27 +25525,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6426',
-        any: [/ELSEIF TALENT:成为勇者前的生活 == 21/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6428',
         any: [/PRINT 最重要的你/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6428-6429',
-        any: [/PRINT 最重要的你/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '6431',
-        any: [/PRINT 爸爸、妈妈/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '6431-6432',
         any: [/PRINT 爸爸、妈妈/],
       },
       {
@@ -30975,18 +30861,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '8076',
-        any: [/IF CFLAG:A:504 == 1/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '8077',
         any: [/PRINT 狗/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '8078',
-        any: [/ELSEIF CFLAG:A:504 == 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
@@ -30995,17 +30871,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '8080',
-        any: [/ELSEIF CFLAG:A:504 == 3/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
         ref: '8081',
-        any: [/PRINT 马/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K1_自信家.ERB',
-        ref: '8081-8082',
         any: [/PRINT 马/],
       },
       {
