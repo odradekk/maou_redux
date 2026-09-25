@@ -612,37 +612,25 @@ async function self_kojo(rand, q, outside_train = false) {
  * 「原作有对应函数而 ere 没移植」的真缺口因此不再有运行时提示，改由
  * test/kojo-family-coverage.test.js 的静态核对拦住：扫 target/ERB/口上 的
  * `@…_K{n}` 定义集合与各族注册集合双向比对，缺口即红；确属不移植的按
- * 那份测试的说明在 docs/stub-registry.md 登记存根行。stub_name 等参数保留
- * 作核对锚（check_stub_names 经 try_kojo_or_stub(族, '名字' 的写法收集，
+ * 那份测试的说明在 docs/stub-registry.md 登记存根行。stub_name 保留作核对
+ * 锚（check_stub_names 经 try_kojo(族, '名字' 的写法收集，
  * test/stub-registry-status.test.js），不是死参数。
  *
  * 族与存根名由调用点给——kojo-dungeon-after.js 的 gohoubi_request_koujo
  * 也用它（同一条缺席策略只实现一次）。
  *
+ * #585：占位语义取消后，原来的 stub_desc / stub_ticket / wait 三个形参只剩
+ * `void` 压着，随改名一并删除（函数名的 or_stub 后缀已名不副实）。
+ *
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
  *   目标分发族
  * @param {string} stub_name 原作函数名（静态核对的锚，见上）
- * @param {string} stub_desc 未移植内容的中文说明（同上，随测试与清单核对保留）
- * @param {string} stub_ticket 归属说明（同上）
  * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
  * @param {any[]} [extra_args=[]] 透传给 handler 的实参
- * @param {boolean} [wait=false] 兼容形参：占位时代区分 stub_line_wait；静默
- *   后无行为差异，保留签名不动调用点
  * @returns {Promise<any>} handler 的返回值，或未命中的 0
  */
-async function try_kojo_or_stub(
-  family,
-  stub_name,
-  stub_desc,
-  stub_ticket,
-  arg = -1,
-  extra_args = [],
-  wait = false,
-) {
+async function try_kojo(family, stub_name, arg = -1, extra_args = []) {
   void stub_name;
-  void stub_desc;
-  void stub_ticket;
-  void wait;
   const id = kojo_handler_id(arg);
   if (id >= 0 && family.has(id)) {
     return family.call(id, { whenMissing: 0, args: extra_args });
@@ -664,28 +652,18 @@ async function kojo_message_palamcng(rand) {
   ) {
     return 0;
   }
-  return try_kojo_or_stub(
-    kojo_message_palamcng_family,
-    'KOJO_MESSAGE_PALAMCNG',
-    '参数变动口上',
-    '随口上票 #46',
-    -1,
-    [rand],
-  );
+  return try_kojo(kojo_message_palamcng_family, 'KOJO_MESSAGE_PALAMCNG', -1, [
+    rand,
+  ]);
 }
 
 async function kojo_message_markcng(rand) {
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
   }
-  return try_kojo_or_stub(
-    kojo_message_markcng_family,
-    'KOJO_MESSAGE_MARKCNG',
-    '刻印取得口上',
-    '随口上票 #46',
-    -1,
-    [rand],
-  );
+  return try_kojo(kojo_message_markcng_family, 'KOJO_MESSAGE_MARKCNG', -1, [
+    rand,
+  ]);
 }
 
 /**
@@ -717,14 +695,7 @@ async function kojo_event_com() {
 }
 
 async function benki_koujo(rand) {
-  return try_kojo_or_stub(
-    benki_koujo_family,
-    'BENKI_KOUJO',
-    '肉便器口上',
-    '随口上票',
-    -1,
-    [rand],
-  );
+  return try_kojo(benki_koujo_family, 'BENKI_KOUJO', -1, [rand]);
 }
 
 async function victory_koujo(cid, rand) {
@@ -732,14 +703,11 @@ async function victory_koujo(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid;
   }
-  const result = await try_kojo_or_stub(
+  const result = await try_kojo(
     dungeon_victory_family,
     'VICTORY_KOUJO',
-    '胜利口上',
-    '随口上票',
     cid ?? -1,
     [rand],
-    true,
   );
   era_flag.target = target_pool;
   return result;
@@ -750,14 +718,11 @@ async function attack_koujo(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid;
   }
-  const result = await try_kojo_or_stub(
+  const result = await try_kojo(
     dungeon_attack_family,
     'ATTACK_KOUJO',
-    '攻击口上',
-    '随口上票',
     cid ?? -1,
     [rand],
-    true,
   );
   era_flag.target = target_pool;
   return result;
@@ -777,9 +742,9 @@ async function attack_koujo(cid, rand) {
  * 域、随侵略票落真身。本入口照 22 条分发表先行落地（表是 #403 的交付面），
  * 接入时调用方传 `B` 的取值即可，不改本签名。
  *
- * 守卫集照原作（:325-337 无守卫）；缺席语义取占位行——与同族 @ATTACK_KOUJO
- * 一致（存根可见，登记在 docs/stub-registry.md）。TARGET 暂存/还原按同族
- * 既有约定（原作不还原，ere 侧不留跨调用指针残留）。
+ * 守卫集照原作（:325-337 无守卫）；缺席语义取静默——与同族 @ATTACK_KOUJO
+ * 一致（#565 返工第 4 条起：try_kojo 未命中不打占位）。TARGET 暂存/还原按
+ * 同族既有约定（原作不还原，ere 侧不留跨调用指针残留）。
  *
  * @param {number} cid B 侧角色号（原作全局 B）
  * @param {(n: number) => number} [rand] RAND:N 的随机源
@@ -790,14 +755,11 @@ async function attack_koujo_b(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid; // TARGET = B（:325-337 段）
   }
-  const result = await try_kojo_or_stub(
+  const result = await try_kojo(
     dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
     'ATTACK_KOUJO_B',
-    '攻击口上（B 侧）',
-    '随口上票',
     cid ?? -1,
     [rand],
-    true,
   );
   era_flag.target = target_pool;
   return result;
@@ -884,11 +846,9 @@ async function ntr_koujo(p, rand) {
 async function enterenemy_koujo(cid, rand) {
   const target_pool = era_flag.target;
   era_flag.target = cid;
-  const result = await try_kojo_or_stub(
+  const result = await try_kojo(
     enterenemy_koujo_family,
     'ENTERENEMY_KOUJO',
-    '来袭口上',
-    '随 #107 口上票',
     cid,
     [rand],
   );
@@ -908,14 +868,10 @@ async function enterenemy_koujo(cid, rand) {
  *   原作就没有语尾函数）返回空串——调用方的行照常结束
  */
 async function gobi_koujo(arg0, rand) {
-  const text = await try_kojo_or_stub(
-    gobi_koujo_family,
-    'GOBI_KOUJO',
-    '语尾口上',
-    '随语尾口上票',
-    -1,
-    [arg0, rand],
-  );
+  const text = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', -1, [
+    arg0,
+    rand,
+  ]);
   return typeof text === 'string' ? text : '';
 }
 
@@ -958,7 +914,7 @@ module.exports = {
   grotesque_koujo_family,
   enterenemy_koujo,
   enterenemy_koujo_family,
-  try_kojo_or_stub,
+  try_kojo,
   gobi_koujo,
   gobi_koujo_family,
 };

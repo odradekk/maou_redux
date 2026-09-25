@@ -27,7 +27,7 @@
  *   2. 全库（`ere/` 全体 `.js`，不只 `kojo/`）有 `<family>.call(` 调用点的族
  *      ——相对第 1 条今天**没有增量**（`_family.call(` 只出现在 kojo-system.js
  *      与 kojo-dungeon-after.js，涉及的族都在表内）。留着它是给将来不进分发表
- *      的族兜底，不是当前覆盖面的来源；把族当参数传的写法（`try_kojo_or_stub`、
+ *      的族兜底，不是当前覆盖面的来源；把族当参数传的写法（`try_kojo`、
  *      `dispatch_execution_koujo`）本条也认不出来，同样靠第 1 条覆盖。
  * 于是 `dog_kojo_family` / `colosseum_kojo_family` 自然落在范围外：原作这两族
  * 是文件内直接 `CALL DOG_KOJO_N` / `CALL COLOSSEUM_KOJO_N`（全库扫过，无一处

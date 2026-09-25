@@ -1377,7 +1377,7 @@ export default [
     must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
   },
   {
-    desc: 'M1729 try_kojo_or_stub 已注册仍打占位（family.has 恒 false）（#234）',
+    desc: 'M1729 try_kojo 已注册仍打占位（family.has 恒 false）（#234）',
     file: 'ere/kojo/kojo-system.js',
     find: '  if (id >= 0 && family.has(id)) {',
     replace: '  if (false) { // 变异：已注册也打占位',
@@ -1385,11 +1385,11 @@ export default [
     // #565 返工起未命中静默，红的形态是「K3 真身台词消失」而非「打占位行」
     must_mention: 'K3 肉便器常识改写真台词',
   },
-  // M1730 已删（#565 返工）：try_kojo_or_stub 未命中静默成为**正确语义**
+  // M1730 已删（#565 返工）：try_kojo 未命中静默成为**正确语义**
   // （原作 TRYCALLFORM 落空），它的「未注册打占位」前提反转；守卫转由
   // M11636 与 test/kojo-family-coverage.test.js 承担。
   {
-    desc: 'M11636 try_kojo_or_stub 未命中复辟占位（静默语义丢失，一档一占位刷屏）',
+    desc: 'M11636 try_kojo 未命中复辟占位（静默语义丢失，一档一占位刷屏）',
     file: 'ere/kojo/kojo-system.js',
     find: `  const id = kojo_handler_id(arg);
   if (id >= 0 && family.has(id)) {
@@ -1400,7 +1400,7 @@ export default [
   if (id >= 0 && family.has(id)) {
     return family.call(id, { whenMissing: 0, args: extra_args });
   }
-  require('#/utils/stub-line').stub_line(stub_name, stub_desc, stub_ticket); // 变异：占位复辟
+  require('#/utils/stub-line').stub_line(stub_name, '未移植内容'); // 变异：占位复辟
   return 0;`,
     tests: ['kojo-family-coverage'],
     must_mention: '窗口外不得有任何输出',
@@ -20718,8 +20718,8 @@ on('EVENTEND', eventend_kojo_903);`,
   {
     desc: 'M8945 ATTACK_KOUJO_B 不还原 TARGET（指针跨调用残留）',
     file: 'ere/kojo/kojo-system.js',
+    // #585 起 try_kojo 的 wait 形参已删，尾段少一行 `true,`
     find: `    [rand],
-    true,
   );
   era_flag.target = target_pool;
   return result;
@@ -20728,7 +20728,6 @@ on('EVENTEND', eventend_kojo_903);`,
 /**
  * 处刑首五族`,
     replace: `    [rand],
-    true,
   );
   return result; // 变异：不还原 TARGET
 }
@@ -20755,13 +20754,9 @@ on('EVENTEND', eventend_kojo_903);`,
     desc: 'M8947 ATTACK_KOUJO_B 随机源错传 cid（handler 收 [cid]）',
     file: 'ere/kojo/kojo-system.js',
     find: `    'ATTACK_KOUJO_B',
-    '攻击口上（B 侧）',
-    '随口上票',
     cid ?? -1,
     [rand],`,
     replace: `    'ATTACK_KOUJO_B',
-    '攻击口上（B 侧）',
-    '随口上票',
     cid ?? -1,
     [cid],`,
     tests: ['event-k-dispatch'],
@@ -20842,7 +20837,7 @@ on('EVENTEND', eventend_kojo_903);`,
     must_mention: 'handler 实参逐条对上',
   },
   {
-    desc: 'M8955 try_kojo_or_stub 丢弃实参（handler 收不到 rand/cid）',
+    desc: 'M8955 try_kojo 丢弃实参（handler 收不到 rand/cid）',
     file: 'ere/kojo/kojo-system.js',
     find: '    return family.call(id, { whenMissing: 0, args: extra_args });',
     replace: '    return family.call(id, { whenMissing: 0, args: [] });',
@@ -20855,12 +20850,11 @@ on('EVENTEND', eventend_kojo_903);`,
   {
     desc: 'M8957 GOHOUBI_REQUEST 族内实参丢 cid（K7 读不到 CFLAG:504）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    find: `    '随口上票',
+    // #585 起调用收成四参（family / 锚名 / arg / extra_args），find 随新文本
+    find: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, [
     cid,
-    [cid],`,
-    replace: `    '随口上票',
-    cid,
-    [],`,
+  ]);`,
+    replace: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, []);`,
     tests: ['event-k-dispatch'],
     must_mention: 'K 侧收 cid',
   },
@@ -20881,10 +20875,8 @@ on('EVENTEND', eventend_kojo_903);`,
     // 恰好绕过核对，所以变异值取无行的名字）
     desc: 'M8959 GOHOUBI_REQUEST_KOUJO 核对锚名改成无清单行的名字（#549 重锚）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    find: `    gohoubi_request_koujo_family,
-    'GOHOUBI_REQUEST_KOUJO',`,
-    replace: `    gohoubi_request_koujo_family,
-    'GOHOUBI_REQUEST_KOUJO_X', // 变异：核对锚失联`,
+    find: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, [`,
+    replace: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO_X', cid, [`,
     tests: ['stub-registry-status'],
     must_mention: '口上核对锚失联',
   },
@@ -20931,7 +20923,7 @@ on('EVENTEND', eventend_kojo_903);`,
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
   }
-  return try_kojo_or_stub(`,
+  return try_kojo(`,
     replace: `async function kojo_message_markcng(rand) {
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
@@ -20939,7 +20931,7 @@ on('EVENTEND', eventend_kojo_903);`,
   if ((era.get(\`flag:\${get_kojo_num()}\`) || 0) === 0) {
     return 0; // 变异：凭空加一道存在判定
   }
-  return try_kojo_or_stub(`,
+  return try_kojo(`,
     tests: ['event-k-dispatch'],
     must_mention: '没有存在判定这道闸',
   },
@@ -21197,39 +21189,18 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '缺省 → 当前 TARGET',
   },
   {
-    desc: 'M8994 try_kojo_or_stub 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
+    desc: 'M8994 try_kojo 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
     file: 'ere/kojo/kojo-system.js',
-    // #565 返工起 jsdoc 改写（静默语义）+ 函数体首行加 void 标注——
+    // #585 起签名收成一行四参（stub_desc/stub_ticket/wait 已删）——
     // find 同步到新文本，变异仍是「缺省哨兵改 0」
-    find: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
- * @param {any[]} [extra_args=[]] 透传给 handler 的实参
- * @param {boolean} [wait=false] 兼容形参：占位时代区分 stub_line_wait；静默
- *   后无行为差异，保留签名不动调用点
- * @returns {Promise<any>} handler 的返回值，或未命中的 0
- */
-async function try_kojo_or_stub(
-  family,
-  stub_name,
-  stub_desc,
-  stub_ticket,
-  arg = -1,`,
-    replace: ` * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
- * @param {any[]} [extra_args=[]] 透传给 handler 的实参
- * @param {boolean} [wait=false] 兼容形参：占位时代区分 stub_line_wait；静默
- *   后无行为差异，保留签名不动调用点
- * @returns {Promise<any>} handler 的返回值，或未命中的 0
- */
-async function try_kojo_or_stub(
-  family,
-  stub_name,
-  stub_desc,
-  stub_ticket,
-  arg = 0, // 变异：缺省哨兵改 0`,
+    find: 'async function try_kojo(family, stub_name, arg = -1, extra_args = []) {',
+    replace:
+      'async function try_kojo(family, stub_name, arg = 0, extra_args = []) { // 变异：缺省哨兵改 0',
     tests: ['kojo-system'],
     must_mention: '缺省与 -1 都吃 TARGET',
   },
   {
-    desc: 'M8995 落空值写错：try_kojo_or_stub 的 whenMissing 0 改 1',
+    desc: 'M8995 落空值写错：try_kojo 的 whenMissing 0 改 1',
     file: 'ere/kojo/kojo-system.js',
     find: '    return family.call(id, { whenMissing: 0, args: extra_args });',
     replace:
@@ -21805,23 +21776,15 @@ async function try_kojo_or_stub(
   {
     desc: 'M11741 语尾分发入口：丢弃真身返回值、恒给空串（#570 转交被吞）',
     file: 'ere/kojo/kojo-system.js',
-    find: `  const text = await try_kojo_or_stub(
-    gobi_koujo_family,
-    'GOBI_KOUJO',
-    '语尾口上',
-    '随语尾口上票',
-    -1,
-    [arg0, rand],
-  );
+    find: `  const text = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', -1, [
+    arg0,
+    rand,
+  ]);
   return typeof text === 'string' ? text : '';`,
-    replace: `  const text = await try_kojo_or_stub(
-    gobi_koujo_family,
-    'GOBI_KOUJO',
-    '语尾口上',
-    '随语尾口上票',
-    -1,
-    [arg0, rand],
-  );
+    replace: `  const text = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', -1, [
+    arg0,
+    rand,
+  ]);
   void text; // 变异：吞掉真身返回值
   return '';`,
     tests: ['kojo-gobi'],

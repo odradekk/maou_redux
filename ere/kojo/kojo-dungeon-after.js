@@ -58,7 +58,7 @@ const era_flag = require('#/era-utils/era-flag');
 const {
   get_kojo_num,
   in_kojo_window,
-  try_kojo_or_stub,
+  try_kojo,
 } = require('#/kojo/kojo-system');
 const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 
@@ -131,9 +131,9 @@ async function gohoubi_after_koujo(cid, choice) {
  * 没有回落），其余 `(rand)` 签名的实现一律 `void rand`、改读
  * `era_flag.target`（本入口已置好），所以 cid 恒作首参安全。
  *
- * 缺席语义 = 占位行：无性格编号（键 -1）或该性格未注册 handler 时打存根，
- * 与原分发层同款（存根可见，登记在 docs/stub-registry.md）——名册未全落地
- * 时的债务由占位行显形，不静默吞掉。
+ * 缺席语义 = 静默（#565 返工第 4 条起，原作 TRYCALLFORM 落空语义）：无性格
+ * 编号（键 -1）或该性格未注册 handler 时返回 0，不打占位行——与
+ * kojo-system.js 的 try_kojo 同一条缺席策略。
  *
  * @param {number} cid 派遣对象（原作全局 A）
  * @returns {Promise<number>} 0（调用方不读）
@@ -141,14 +141,9 @@ async function gohoubi_after_koujo(cid, choice) {
 async function gohoubi_request_koujo(cid) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
-  await try_kojo_or_stub(
-    gohoubi_request_koujo_family,
-    'GOHOUBI_REQUEST_KOUJO',
-    '奖赏请求口上',
-    '随口上票',
+  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, [
     cid,
-    [cid],
-  );
+  ]);
   era_flag.target = target_pool; // SWAP 还原（:450-463 段）
   return 0;
 }

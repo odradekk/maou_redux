@@ -22,6 +22,8 @@
  */
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -242,14 +244,24 @@ test('kojo_handler_id：-1 哨兵与合法 0 各站一侧，空间外一律 -1',
   assert.equal(kojo_handler_id(99), -1, '无素质的合法角色号 → 空间外哨兵 -1');
 });
 
-test('try_kojo_or_stub：arg 缺省 -1 吃当前 TARGET，显式 0 读它自己', async () => {
+test('try_kojo：arg 缺省 -1 吃当前 TARGET，显式 0 读它自己（#585 只剩 family + 锚名两参）', async () => {
   const fixture = create_era_fixture();
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 17;
   fixture.store.set('talent:17:163', 1); // TARGET → 键 3
   fixture.store.set('talent:0:160', 1); // 0 号 → 键 0
-  const { try_kojo_or_stub, benki_koujo_family } =
-    fixture.load_module('kojo/kojo-system');
+  const mod = fixture.load_module('kojo/kojo-system');
+  const { try_kojo, benki_koujo_family } = mod;
+  assert.equal(
+    mod.try_kojo_or_stub,
+    undefined,
+    '#585 旧名 try_kojo_or_stub 不再导出（or_stub 已名不副实）',
+  );
+  assert.equal(
+    try_kojo.length,
+    2,
+    '常设形参只有 family 与 stub_name（arg/extra_args 带缺省，stub_desc/stub_ticket/wait 已删）',
+  );
   const seen = [];
   benki_koujo_family.register(0, async () => {
     seen.push('k0');
@@ -260,23 +272,39 @@ test('try_kojo_or_stub：arg 缺省 -1 吃当前 TARGET，显式 0 读它自己'
     return 0;
   });
 
-  assert.equal(
-    await try_kojo_or_stub(benki_koujo_family, 'X', '说明', '票'),
-    0,
-  );
-  assert.equal(
-    await try_kojo_or_stub(benki_koujo_family, 'X', '说明', '票', -1),
-    0,
-  );
-  assert.equal(
-    await try_kojo_or_stub(benki_koujo_family, 'X', '说明', '票', 0),
-    0,
-  );
+  assert.equal(await try_kojo(benki_koujo_family, 'X'), 0);
+  assert.equal(await try_kojo(benki_koujo_family, 'X', -1), 0);
+  assert.equal(await try_kojo(benki_koujo_family, 'X', 0), 0);
   assert.deepEqual(
     seen,
     ['k3', 'k3', 'k0'],
     '缺省与 -1 都吃 TARGET（键 3）；显式 0 读它自己（键 0）',
   );
+});
+
+test('改名完整性：ere/ 与 tools/ 里不残留旧名（#585）', () => {
+  // 纯文本核对：代码（ere/ 的调用点）与工具（tools/trace-coverage.mjs 的
+  // 收集器正则、tools/mutations/ 的 find 串）两边都得跟着改名，漏一处就
+  // 是「调用不存在的名字」或「收集器静默失明」。本用例的断言里出现的旧名
+  // 在 test/ 下，不在扫描范围内。
+  const repo = path.resolve(__dirname, '..');
+  const found = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+      } else if (/\.(?:js|mjs)$/.test(entry.name)) {
+        if (fs.readFileSync(full, 'utf8').includes('try_kojo_or_stub')) {
+          found.push(path.relative(repo, full).replace(/\\/g, '/'));
+        }
+      }
+    }
+  };
+  for (const dir of ['ere', 'tools']) {
+    walk(path.join(repo, dir));
+  }
+  assert.deepEqual(found, [], '旧名残留（#585 改成 try_kojo）');
 });
 
 // —— 事件链挂接（#PRI / #LATER 语义） ——

@@ -88,7 +88,7 @@ export default [
   {
     desc: 'M11637 收集器的 try_kojo 写法失明（第二实参名收不到）',
     file: 'tools/trace-coverage.mjs',
-    find: '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,(?:\\s*\\/\\/[^\\n]*)?\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
+    find: '    /try_kojo\\(\\s*[A-Za-z_$][\\w$]*\\s*,(?:\\s*\\/\\/[^\\n]*)?\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
     replace: `    /never_try_kojo_(\s*)/gs, // 变异：try_kojo 名收集失明`,
     tests: ['stub-registry-status'],
     must_mention: '第二实参名也收',
@@ -104,9 +104,9 @@ export default [
   {
     desc: 'M11643 try_kojo 收集器对 family 实参后的行尾注释失明（attack_koujo_b 的锚名漏收，#549）',
     file: 'tools/trace-coverage.mjs',
-    find: '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,(?:\\s*\\/\\/[^\\n]*)?\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
+    find: '    /try_kojo\\(\\s*[A-Za-z_$][\\w$]*\\s*,(?:\\s*\\/\\/[^\\n]*)?\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs,',
     replace:
-      '    /try_kojo_or_stub\\(\\s*[A-Za-z_$][\\w$]*\\s*,\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs, // 变异：行尾注释形态失明',
+      '    /try_kojo\\(\\s*[A-Za-z_$][\\w$]*\\s*,\\s*([\'"`])([A-Za-z0-9_]+)\\1/gs, // 变异：行尾注释形态失明',
     tests: ['stub-registry-status'],
     must_mention: 'family 实参带行尾注释的调用点，锚名也要收进核对',
   },
