@@ -22965,9 +22965,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12813 K4 褒美请求·兽名（:5259..:5267）拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find:
-      '    await era.printAndWait(\n' +
-      '      `「拜托了…让我和` + beast_word + `交配吧……！」`,\n' +
-      '    ); // :5259+:5261+:5263+:5265+:5267',
+      '    await era.printAndWait(`「拜托了…让我和` + beast_word + `交配吧……！」`); // :5259+:5261+:5263+:5265+:5267',
     replace:
       '    await era.print(`「拜托了…让我和`); // 变异：拆回\n' +
       '    await era.print(beast_word); // 变异：拆回\n' +
