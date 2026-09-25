@@ -30,6 +30,7 @@
  */
 
 const era = require('#/era-electron');
+const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 // 条宽（纯表现；< 24 的硬约束见文件头，与 page-train 参数条同取 16）
 const BASE_BAR_WIDTH = 16;
@@ -53,7 +54,7 @@ function print_base_bar(
   { value_width = 0, suffix = '' } = {},
 ) {
   const shown = Math.max(cur, 0);
-  const value = String(shown).padStart(value_width, ' ');
+  const value = pad_left(String(shown), value_width);
   era.printMultiColumns([
     {
       type: 'progress',

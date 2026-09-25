@@ -25,7 +25,8 @@
  *     `PRINTFORM`（不是 `PRINTBUTTON`），点击不是入口、按键才是——按 page
  *     的 PR #53 通则只把「按钮化过的项」升级为 `era.printButton`，这里保持
  *     文本行。`[N]` 编号写在正文里（原作如此），不经引擎的 showAcc 补位。
- *   - **补位按显示宽度**（全角 2 / 半角 1，左对齐补半角空格）：源 :103 的
+ *   - **补位按显示宽度**（全角 2 / 半角 1，左对齐补 NBSP——#577 起补位字符
+ *     是 U+00A0，见 ere/utils/display-width.js）：源 :103 的
  *     `[{LOCAL:0,2}] %TALENTNAME:TALENT_ID, 10, LEFT%` 与 :219 的
  *     `[{COLOR_ID,2}] %ARR_HAIRCOLOR:COLOR_ID, 7, LEFT%` 是 Emuera 的
  *     FORM 位数语法（expressions.md「FORM 语法中的位数和对齐」）。
@@ -44,6 +45,7 @@
 const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
+const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * 本文件存根化的原作调用名：无——9 个函数全部落地，调用的只有引擎 API。
@@ -108,25 +110,6 @@ function set_talent(cid, index, value) {
   } else {
     era.set(`talent:${cid}:${index}`, value);
   }
-}
-
-/** 显示宽度（全角 2 / 半角 1） */
-function disp_width(text) {
-  let width = 0;
-  for (const ch of text) {
-    width += ch.codePointAt(0) > 0xff ? 2 : 1;
-  }
-  return width;
-}
-
-/** `{A,N}`：右对齐补位（默认对齐） */
-function pad_left(text, width) {
-  return ' '.repeat(Math.max(0, width - disp_width(text))) + text;
-}
-
-/** `%S,N,LEFT%`：左对齐补位 */
-function pad_right(text, width) {
-  return text + ' '.repeat(Math.max(0, width - disp_width(text)));
 }
 
 /**
@@ -238,7 +221,7 @@ async function choose_charasteristic(cid = -1, per_line = 3) {
     // :103 每格是 `[{i,2}] %名,10,LEFT%`；源一行放 N 格（`SIF (LOCAL:1) %
     // (ARG:1) == 0 PRINTL` 才断行），故拼成整行再输出——引擎的「一次 print
     // 即一行」口径见 look.js 文件头的「PRINT 合流」条
-    row += `[${pad_left(String(i), 2)}] ${pad_right(talentname(talent_id), 10)}`;
+    row += `[${pad_left(String(i), 2)}] ${pad_display(talentname(talent_id), 10)}`;
     count += 1; // :84-126
     if (count % per_line === 0) {
       era.print(row); // :84-126 PRINTL（本行满 N 格）
@@ -341,7 +324,7 @@ async function choose_haircolor(cid = -1, per_line = 6) {
   const size = 12; // :217
   for (let color_id = 1; color_id < size; color_id += 1) {
     // :219 每格是 `[{COLOR_ID,2}] %名,7,LEFT%`，一行 N 格（同 :103 的收行法）
-    row += `[${pad_left(String(color_id), 2)}] ${pad_right(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;
+    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;
     count += 1; // :207-236
     if (count % per_line === 0) {
       era.print(row); // :207-236 PRINTL

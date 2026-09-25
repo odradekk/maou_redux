@@ -49,6 +49,13 @@
  *     升格为可点按钮；ere 引擎的 input() 只送达 printButton 的快捷键，故
  *     存在槽一律 printButton（正文=备注，编号前缀由引擎 showAcc 拼）。
  *     编号宽度 `{L_I,2}`（右对齐宽 2）无引擎对应——`[N]` 的拼法归渲染层。
+ *   - **备注里的空白补位在实机上不成立（已知差异，#577 普查登记）：** 引擎
+ *     渲染层的按钮行构造器对正文做 `/\s+/g → ' '`（JS 的 `\s` 连 U+00A0 一起
+ *     匹配，见 CONTEXT.md 的「输出 API 与原作的对应」），`build_save_info`
+ *     的 `pad_display` / `pad_left` / NBSP 补位会被压成一格——#577 之前用半角
+ *     空格补位也是同一结果，实机表现不变。要真正对齐得把槽位行改成
+ *     `printMultiColumns` 的「按钮格 + 文本格」（page-life-list.js 的
+ *     print_row 形态），不在本票范围。
  *   - 空槽的可达性按界面分化：存档界面空槽是**灰色按钮**（原作 CASE 0 TO 98
  *     对空槽照存，键盘数字在 ere 引擎不可达，必须按钮化）；读档/删除界面
  *     空槽是灰色纯文本（原作 CHKDATA 拦下 = 无效输入，不可选即等价）。
@@ -103,6 +110,7 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { input_text } = require('#/utils/input-text');
+const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * 分页步长：原作 SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
@@ -121,41 +129,6 @@ const AUTOSAVE_SLOT = 99;
  */
 function has_valid_save(comment) {
   return comment !== undefined && !comment.startsWith('(FILE LOST) ');
-}
-
-/**
- * 显示宽度（全角 2 / 半角 1）。原作 PUTFORM 的 %str,width% 与 {n,width,RIGHT}
- * 按半角列宽对齐（Emuera 显示宽度），此处同口径计算填充。
- * @param {string} s
- * @returns {number}
- */
-function display_width(s) {
-  return [...s].reduce(
-    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-}
-
-/**
- * 左对齐补空格到指定显示宽度（%str,width% 无第三参的形态）。
- * @param {string} s
- * @param {number} width
- * @returns {string}
- */
-function pad_display_left(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
-}
-
-/**
- * 右对齐补空格到指定显示宽度（{n,width,RIGHT} / %str,width,RIGHT% 的形态）。
- * @param {string} s
- * @param {number} width
- * @returns {string}
- */
-function pad_display_right(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? ' '.repeat(pad) + s : s;
 }
 
 /**
@@ -258,8 +231,8 @@ function build_save_info() {
   // :955-958 IF TIME == 0 → 第{DAY+1,2}日午前 ELSE 第{DAY+1,2}日午后；
   // %LOCALS,11%（宽 11 左对齐）
   const day_half = era_flag.time === 0 ? '午前' : '午后';
-  let text = pad_display_left(
-    `第${pad_display_right(String(era_flag.day_count + 1), 2)}日${day_half}`,
+  let text = pad_display(
+    `第${pad_left(String(era_flag.day_count + 1), 2)}日${day_half}`,
     11,
   );
   // :960-963 指针改写副作用（见函数头注释）
@@ -270,15 +243,15 @@ function build_save_info() {
     era_flag.assi = era.get('flag:2') || 0;
   }
   // :966 PUTFORM LV{CFLAG:MASTER:9,4,RIGHT}（魔王等级，右对齐宽 4）
-  text += `LV${pad_display_right(String(era.get('cflag:0:9') || 0), 4)}`;
+  text += `LV${pad_left(String(era.get('cflag:0:9') || 0), 4)}`;
   // :968-972 TARGET >= 1 → ` 正在调教:%SAVESTR:TARGET,14,LEFT% `（首尾各一
   // 半角空格）；ELSE → %"",24%（24 个空格）
   if (era_flag.target >= 1) {
     // SAVESTR:TARGET → callname（#5 决议，见文件头映射表）
     const target_name = String(era.get(`callname:${era_flag.target}`) ?? '');
-    text += ` 正在调教:${pad_display_left(target_name, 14)} `;
+    text += ` 正在调教:${pad_display(target_name, 14)} `;
   } else {
-    text += ' '.repeat(24);
+    text += NBSP.repeat(24);
   }
   // :974-975 SIF STRLENS(CSTR:MASTER:99) > 0 → 『%CSTR:MASTER:99%』
   const story = chara(0).system.故事名;

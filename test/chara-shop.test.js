@@ -38,7 +38,7 @@ function ikai_cell(id, name, coins, money) {
   );
   return (
     ` [${String(id).padStart(2)}] ` +
-    `${name}${' '.repeat(Math.max(0, 14 - shown))}` +
+    `${name}${'\u00A0'.repeat(Math.max(0, 14 - shown))}` +
     `(${coins}勋章&${money}金)`
   );
 }

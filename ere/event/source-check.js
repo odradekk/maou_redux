@@ -83,6 +83,7 @@
 const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
+const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
@@ -2907,23 +2908,24 @@ function pain_damage_check_up() {
 
 // —— 显示（@SHOW_SOURCE / @PALAM_UP_CHECK / 条 / @PALAM_MESSAGE） ——
 
-// @FIGURE_INDENT_2（:2513-2520）：N 逐档补空格（每小一档一个空格）
+// @FIGURE_INDENT_2（:2513-2520）：N 逐档补位（每小一档一格；#577 起补 NBSP，
+// 原作的半角空格在引擎里会被合并，算式列对不齐）
 function figure_indent_2(n) {
   let s = '';
   if (n < 100000) {
-    s += ' ';
+    s += NBSP;
   }
   if (n < 10000) {
-    s += ' ';
+    s += NBSP;
   }
   if (n < 1000) {
-    s += ' ';
+    s += NBSP;
   }
   if (n < 100) {
-    s += ' ';
+    s += NBSP;
   }
   if (n < 10) {
-    s += ' ';
+    s += NBSP;
   }
   return s;
 }
@@ -3125,8 +3127,8 @@ function palam_up_check() {
         name +
           figure_indent_2(old) +
           old +
-          (u > 0 ? `+${figure_indent_2(u)}${u}` : ' '.repeat(7)) +
-          (d > 0 ? `-${figure_indent_2(d)}${d}` : ' '.repeat(7)) +
+          (u > 0 ? `+${figure_indent_2(u)}${u}` : NBSP.repeat(7)) +
+          (d > 0 ? `-${figure_indent_2(d)}${d}` : NBSP.repeat(7)) +
           `=${figure_indent_2(post)}${post}` +
           palam_message(upid),
       );

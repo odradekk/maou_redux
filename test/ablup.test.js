@@ -1750,15 +1750,27 @@ test('ablup14：已达最高级；组合上限溢出两行提示', async () => {
   assert.ok(capped.text_lines().includes('侍奉技术(5)＋性交技术(5)上限为10'));
 });
 
-test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个半角空格+全角空格对齐', async () => {
+test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个 NBSP+全角空格对齐', async () => {
   const fixture = create_era_fixture();
   const { ablup14 } = seed(fixture);
   fixture.store.set(`abl:${CID}:12`, 1); // 满足 Lv5 前的技巧门槛，隔离 bit4
   fixture.store.set(`exp:${CID}:5`, 3); // 满足性交经验门槛，隔离 bit2
   fixture.set_inputs(100);
   await ablup14(CID);
+  // #577：门槛行的 6 格前导补位（`NBSP.repeat(6)`）与名称列都得是 NBSP——
+  // 退回半角空格会留下连续半角空格，实机合并后整行错位。放在整行 includes
+  // 之前：补位字符退回半角时，先红的是这条（点名补位而非整行包含）
+  const exp_row = fixture.text_lines().find((t) => t.includes('性交经验'));
+  assert.ok(
+    exp_row?.startsWith('\u00A0'.repeat(6)) && !/ {2,}/.test(exp_row),
+    `EXP 门槛行的 6 格前导须是 NBSP、不得出现连续半角空格（实得 ${JSON.stringify(exp_row)}）`,
+  );
   assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
-  assert.ok(fixture.text_lines().includes('      性交经验　3/3'));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0性交经验　3/3'),
+  );
 });
 
 test('ablup14：issue #14 缺陷——DECIDE 的技巧门槛误比较 ABL:12<5（应比较 ABL:14<5），Lv6 时无渲染文案却仍可能被判能力不足', async () => {
@@ -1837,8 +1849,16 @@ test('ablup15：Lv0 梯子字面值，EXP 行字面量" or"仅出现在第一行
   fixture.set_inputs(100);
   await ablup15(CID);
   assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
-  assert.ok(fixture.text_lines().includes('      调教会话经验　3/3 or'));
-  assert.ok(fixture.text_lines().includes('      卖淫经验　0/5'));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0调教会话经验　3/3 or'),
+  );
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0卖淫经验　0/5'),
+  );
 });
 
 test('ablup15：bit2 需要两条经验轨道同时不足才命中——任一达标即可免', async () => {

@@ -1737,11 +1737,15 @@ test('SENGEN_VIDEO 顶栏与选项：库存/已投放/流行行按 {值,N} 定�
   const texts = history_texts(fixture);
   // {STOCK,3} / {EX_FLAG:9011,3} 右对齐补半角空格；两处 \t\t 照抄原作
   assert(
-    texts.includes('可用于投放的水晶球  4部\t\t已投放  3部'),
+    texts.includes(
+      '可用于投放的水晶球\u00A0\u00A04部\t\t已投放\u00A0\u00A03部',
+    ),
     '顶栏：库存 7-3=4、已投放 3 各补到 3 位（:1076）',
   );
   assert(
-    texts.includes('        正流行的有  5部\t\t 4天后将过时'),
+    texts.includes(
+      '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0正流行的有\u00A0\u00A05部\t\t\u00A04天后将过时',
+    ),
     '流行行：9 空格缩进 + 流行度 3 位 + 剩余天数 2 位（:1078）',
   );
   const accelerators = fixture.lines_history
@@ -2108,7 +2112,9 @@ test('SENGEN_VIDEO 的库存来源真读 EX_FLAG:9010/9011（售卻相關的写�
   const fixture = make_video_world({ stock: 1, deployed: 1 });
   assert.equal(await run_sengen_video(fixture, [999]), 0);
   assert(
-    history_texts(fixture).includes('可用于投放的水晶球  0部\t\t已投放  1部'),
+    history_texts(fixture).includes(
+      '可用于投放的水晶球\u00A0\u00A00部\t\t已投放\u00A0\u00A01部',
+    ),
     'stock 0：顶栏打 0、选项区走无库存分支',
   );
   assert(history_texts(fixture).includes('当前没有可以用于投放的水晶球'));

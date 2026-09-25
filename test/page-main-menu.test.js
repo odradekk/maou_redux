@@ -592,6 +592,15 @@ test('DRAW_HAVEITEMS：技巧 Lv + 知识标签 + 两段道具网格 + 装饰的
     texts.some((l) => l.includes('???(5)')),
     '300-339 网格应画出持有道具',
   );
+  // #577：行首两格补位（`NBSP.repeat(2)`）与 18 列字段的补位都得是 NBSP——
+  // 退回半角空格会被引擎合并，5 列网格整体错位。行尾那两格半角空格是原作的
+  // 行尾空白（属 #577 普查的「行尾空白不动」，见 draw_have_items 的注释）
+  const item_row = texts.find((l) => l.includes('振动宝石(2)'));
+  assert.match(
+    item_row,
+    /^\u00A0\u00A0\u3000振动宝石\(2\)\u00A0{7} {2}$/,
+    `道具行的列补位须是 NBSP（实得 ${JSON.stringify(item_row)}）`,
+  );
 });
 
 test('DRAW_HAVEITEMS：5 个一行，第 6 个换行', () => {

@@ -76,7 +76,11 @@ function normalize_ts(text) {
 // 编号在括号内右对齐（`[ 0]` 带前导空白）；灰条的编号位是 `---`（≥2 个）。
 const BRACKET_CELL_RE = /\[\s*(\d+)\s*\]([^[]*)|\[\s*(-{2,})\s*\]([^[]*)/g;
 
-/** 全角空格 → 半角、连续空白压成单个空格、去首尾（文本条目的比对形态） */
+/**
+ * 全角空格 → 半角、连续空白压成单个空格、去首尾（文本条目的比对形态）。
+ * `\s` 覆盖 U+00A0：ere 侧 #577 起对齐补位用 NBSP，黄金日志里是普通空格，
+ * 两侧在这里归一成同一形态（test/compare-normalize.test.js 钉住）。
+ */
 function compress_ws(text) {
   return text
     .replace(/\u3000/g, ' ')
@@ -86,6 +90,9 @@ function compress_ws(text) {
 
 /**
  * 分类单行（两侧共用：ere 侧 print 出的组合串与黄金样本同构）。
+ *
+ * 行内的空白判定一律走 `\s`（覆盖 U+00A0）：#577 起 ere 侧的对齐补位是 NBSP，
+ * 黄金侧是普通空格，两侧必须同构——下面的 `\s` 与 trim 都按这个前提写。
  *
  * @param {string} raw_line 行原文（不去 CR/BOM 由调用方处理）
  * @param {number} [line_no] 源行号（证据用）

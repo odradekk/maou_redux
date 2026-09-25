@@ -54,6 +54,7 @@ const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show');
 const { clear_shop } = require('#/page/page-item-shop');
 const { chara_callname } = require('#/utils/callname-utils');
+const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） */
 const STUBBED_CALLS = [];
@@ -98,30 +99,6 @@ const shop_state = { race: 0, race2: 0, chosen: 0 };
 /** TALENT 读数兜底（#13：未声明下标读回 undefined） */
 function talent(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
-}
-
-/**
- * 显示宽度（全角 2 / 半角 1），原作 `%…,N,LEFT/RIGHT%` 的填充判定标准。
- * 与 page-shop-trap.js / page-life-list.js 的同名助手同形（本仓库这块按
- * 文件各留一份）。
- */
-function display_width(s) {
-  return [...s].reduce(
-    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-}
-
-/** 左对齐补空格到指定显示宽度（`%str,width,LEFT%` 的形态） */
-function pad_display_left(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
-}
-
-/** 右对齐补空格到指定显示宽度（`%n,width,RIGHT%` 的形态） */
-function pad_display_right(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? ' '.repeat(pad) + s : s;
 }
 
 /** %ITEMNAME:id%（Item.yml 登记名） */
@@ -377,9 +354,9 @@ async function select_follower({ arg0, show, guard, rand }) {
       // :238 名字字段与「最低等级：」之间有一个半角空格（在 %…,22,LEFT% 之后，
       // 是实参里的字面量，不是命令分隔符）
       row +=
-        `[${pad_display_left(String(id), 3)}] ` +
-        `${pad_display_left(item_name(id), NAME_WIDTH)} ` +
-        `最低等级：${pad_display_right(String(item_price(id)), LEVEL_WIDTH)}\u3000\u3000`;
+        `[${pad_display(String(id), 3)}] ` +
+        `${pad_display(item_name(id), NAME_WIDTH)} ` +
+        `最低等级：${pad_left(String(item_price(id)), LEVEL_WIDTH)}\u3000\u3000`;
       era.set(`itemsales:${id}`, 1); // :240 購入可能フラグ
       shown += 1;
       if (shown % COLUMNS === 0) {
@@ -554,9 +531,9 @@ async function buy_follower({ show, rand }) {
       // :381-382 两行 PRINTFORM 拼一格；格尾是实参里的制表符（不是全角空格，
       // 与祭品行的 `只` + 两个 U+3000 不同源），照抄成 \t
       row +=
-        `[${pad_display_left(String(id), 3)}] ` +
-        `${pad_display_left(item_name(id), PICK_NAME_WIDTH)} ` +
-        `LV:${info.level} ${pad_display_right(String(info.stock), PICK_COUNT_WIDTH)} ` +
+        `[${pad_display(String(id), 3)}] ` +
+        `${pad_display(item_name(id), PICK_NAME_WIDTH)} ` +
+        `LV:${info.level} ${pad_left(String(info.stock), PICK_COUNT_WIDTH)} ` +
         `- ${info.picked} 只\t`;
       columns += 1;
       if (columns % COLUMNS === 0) {
@@ -608,8 +585,8 @@ function sacrifice_rows(offering) {
       continue;
     }
     row +=
-      `${pad_display_left(item_name(id), SACRIFICE_NAME_WIDTH)} ` +
-      `LV:${info.level} ${pad_display_right(String(info.picked), SACRIFICE_COUNT_WIDTH)}只\u3000\u3000`;
+      `${pad_display(item_name(id), SACRIFICE_NAME_WIDTH)} ` +
+      `LV:${info.level} ${pad_left(String(info.picked), SACRIFICE_COUNT_WIDTH)}只\u3000\u3000`;
     columns += 1;
     if (columns % COLUMNS === 0) {
       rows.push(row);

@@ -239,8 +239,10 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     // :255-284 オムツの場合の特殊処理（换新 / 洗涤的选择）
     for (;;) {
       era.print(`花费50p为${name}换尿布吗？`); // :258 PRINTFORML
-      era.print('  [0] - 好的'); // :259
-      era.print('  [1] - 不要'); // :260
+      // :259/:260 原作 `PRINTL  [0] - 好的`：命令名后第一格是分隔符，内容
+      // 一格里那一个半角空格照全项目 `[n] - …` 一族写成半角（#577 的普查口径）
+      era.print(' [0] - 好的'); // :259
+      era.print(' [1] - 不要'); // :260
       const result = await era.input(); // :261
       if (result === 0) {
         // :263 换上新的尿布（PRINTFORM 不收行；:269 的裸 PRINTL 只收尾它）

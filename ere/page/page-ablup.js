@@ -20,6 +20,7 @@
 
 const era = require('#/era-electron');
 const { decide_ablup } = require('#/system/train/ablup');
+const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 // 感觉缺失（[―] 灰显）的判定：能力 0-3 → TALENT:101/107/103/105 的第 1
 // 位（& 2）。名前：阴蒂/乳房/私处/肛门钝感（yml/Talent.yml）
@@ -52,7 +53,7 @@ function show_juel(cid) {
         ? '阴茎'
         : era.get(`palamname:${idx}`);
     const value = era.get(`juel:${cid}:${idx}`) || 0;
-    row += ` ${name}点数：${String(value).padStart(6)}`; // {JUEL,6,RIGHT}
+    row += ` ${name}点数：${pad_left(String(value), 6)}`; // {JUEL,6,RIGHT}
     if ((count + 1) % 4 === 0) {
       // :21-24 改行（每 4 项）
       era.print(row);

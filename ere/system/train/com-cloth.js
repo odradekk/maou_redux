@@ -548,7 +548,7 @@ async function com110() {
     }
     if (w[0]) {
       era.print(
-        `   [0] - ${clothtype_special_text(target)}${
+        `\u00A0\u00A0\u00A0[0] - ${clothtype_special_text(target)}${
           special_type(target) >= 51 ? '装上' : '穿起'
         }`,
       );
@@ -557,13 +557,15 @@ async function com110() {
       era.print(` [1] - ${clothtype_main2_text(target)}脱掉`);
     }
     if (w[1]) {
-      era.print(`   [1] - ${clothtype_main2_text(target)}穿起`);
+      era.print(`\u00A0\u00A0\u00A0[1] - ${clothtype_main2_text(target)}穿起`);
     }
     if (t[2]) {
       era.print(` [1] - ${clothtype_main2_text(target)}上半身脱掉`);
     }
     if (w[2]) {
-      era.print(`   [1] - ${clothtype_main2_text(target)}上半身穿起`);
+      era.print(
+        `\u00A0\u00A0\u00A0[1] - ${clothtype_main2_text(target)}上半身穿起`,
+      );
     }
     if (t[3]) {
       era.print(
@@ -574,7 +576,7 @@ async function com110() {
     }
     if (w[3]) {
       era.print(
-        `   [2] - ${clothtype_main2_text(target)}${
+        `\u00A0\u00A0\u00A0[2] - ${clothtype_main2_text(target)}${
           is_skirt(target) ? '的裙子穿起' : '下半身穿起'
         }`,
       );
@@ -583,13 +585,13 @@ async function com110() {
       era.print(' [3] - 解开胸罩');
     }
     if (w[4]) {
-      era.print('   [3] - 穿上胸罩');
+      era.print('\u00A0\u00A0\u00A0[3] - 穿上胸罩');
     }
     if (t[5]) {
       era.print(' [4] - 脱掉内裤');
     }
     if (w[5]) {
-      era.print('   [4] - 穿上内裤');
+      era.print('\u00A0\u00A0\u00A0[4] - 穿上内裤');
     }
     if (worn(target) !== 0) {
       era.print(' [7] - 全部扒光');

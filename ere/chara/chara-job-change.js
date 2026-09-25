@@ -63,6 +63,7 @@ const { monster_name } = require('#/dungeon/monster-data');
 const { monsterplay_list } = require('#/dungeon/monster-play');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
+const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -421,7 +422,7 @@ async function job_change_benki(arg) {
       },
       {
         type: 'text',
-        content: `  -  ${get_look_info(arg, KIND.COMMON_SENSE_BATTLE)}`, // :239-240
+        content: `${NBSP.repeat(2)}-${NBSP.repeat(2)}${get_look_info(arg, KIND.COMMON_SENSE_BATTLE)}`, // :239-240
         config: { align: 'left', width: 8 },
       },
     ]);
@@ -434,7 +435,7 @@ async function job_change_benki(arg) {
       },
       {
         type: 'text',
-        content: `  -  ${get_look_info(arg, KIND.COMMON_SENSE_DAILY)}`, // :242-243
+        content: `${NBSP.repeat(2)}-${NBSP.repeat(2)}${get_look_info(arg, KIND.COMMON_SENSE_DAILY)}`, // :242-243
         config: { align: 'left', width: 8 },
       },
     ]);

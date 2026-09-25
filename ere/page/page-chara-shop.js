@@ -64,6 +64,7 @@ const {
   shop_state,
 } = require('#/page/page-monster-shop');
 const { chara_callname } = require('#/utils/callname-utils');
+const { pad_display, pad_left } = require('#/utils/display-width'); // #577：补位 NBSP 化
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） */
 const STUBBED_CALLS = [];
@@ -99,26 +100,6 @@ const COLUMNS = 5;
 /** TALENT 读数兜底（#13） */
 function talent(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
-}
-
-/** 显示宽度（全角 2 / 半角 1），原作 `%…,N,LEFT%` 的填充判定标准 */
-function display_width(s) {
-  return [...s].reduce(
-    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-}
-
-/** 左对齐补空格到指定显示宽度（`%str,width,LEFT%` 的形态） */
-function pad_display_left(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
-}
-
-/** 右对齐补空格到指定显示宽度（`%n,width,RIGHT%` 的形态） */
-function pad_display_right(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? ' '.repeat(pad) + s : s;
 }
 
 /** CSVCALLNAME/CSVNAME 的等价物：预设里的「名前」（chara-name.js 先例） */
@@ -238,8 +219,8 @@ async function char_ikai_create(rand) {
       // 的行首空格、`PRINTL  ` 的单空格行都是同一条规则的旁证），故格首有一个
       // 半角空格
       row +=
-        ` [${pad_display_right(String(l_i), NUM_WIDTH)}] ` +
-        `${pad_display_left(csv_name(l_i), NAME_WIDTH)}` +
+        ` [${pad_left(String(l_i), NUM_WIDTH)}] ` +
+        `${pad_display(csv_name(l_i), NAME_WIDTH)}` +
         `(${coins}勋章&${money}金)`;
       columns += 1;
       if (columns % COLUMNS === 0) {
