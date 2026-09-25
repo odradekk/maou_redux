@@ -38,6 +38,7 @@ const {
   show_equip_2,
 } = require('#/page/components/chara-equip-status');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
+const { pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 // PRINT_CLOTHTYPE 自 #215（J5）起为真身（ere/page/page-clothtype.js 的
 // 串构造：SHOW_STATUS 的【…】包裹段消费）
 const { clothtype_text } = require('#/page/page-clothtype');
@@ -100,7 +101,7 @@ function print_palam(cid) {
       type: 'progress',
       percentage,
       inContent: name,
-      outContent: String(value).padStart(PALAM_VALUE_WIDTH, ' '),
+      outContent: pad_left(String(value), PALAM_VALUE_WIDTH),
       config: { barWidth: PALAM_PROGRESS_BAR_WIDTH },
     };
   });
@@ -124,23 +125,25 @@ function print_ex_counters(cid) {
       era.get(`talent:${cid}:122`) || era.get(`talent:${cid}:121`)
         ? '阴茎'
         : '阴蒂';
-    parts.push(`[${organ}绝顶：${ex[0]}次]  `);
+    parts.push(`[${organ}绝顶：${ex[0]}次]\u00A0\u00A0`);
   }
   // :104-105 EX:1 私处
   if (ex[1] > 0) {
-    parts.push(`[私处绝顶：${ex[1]}次]  `);
+    parts.push(`[私处绝顶：${ex[1]}次]\u00A0\u00A0`);
   }
   // :106-107 EX:2 肛门
   if (ex[2] > 0) {
-    parts.push(`[肛门绝顶：${ex[2]}次]  `);
+    parts.push(`[肛门绝顶：${ex[2]}次]\u00A0\u00A0`);
   }
   // :108-109 EX:3 乳房
   if (ex[3] > 0) {
-    parts.push(`[乳房绝顶：${ex[3]}次]  `);
+    parts.push(`[乳房绝顶：${ex[3]}次]\u00A0\u00A0`);
   }
   // :110-111 EX:4（%CSTR:7% = 癖好名，未落表读空）
   if (ex[4] > 0) {
-    parts.push(`[${era.get(`cstr:${cid}:7`) ?? ''}绝顶：${ex[4]}次]  `);
+    parts.push(
+      `[${era.get(`cstr:${cid}:7`) ?? ''}绝顶：${ex[4]}次]\u00A0\u00A0`,
+    );
   }
   // :112-122 EX:5：阴茎侧「射精（喷乳）」（TALENT:130 母乳体质）/「射精」，
   // 否则「喷乳」
@@ -148,11 +151,11 @@ function print_ex_counters(cid) {
     if (era.get(`talent:${cid}:122`) || era.get(`talent:${cid}:121`)) {
       parts.push(
         era.get(`talent:${cid}:130`)
-          ? `[射精(喷乳)：${ex[5]}次]  `
-          : `[射精：${ex[5]}次]  `,
+          ? `[射精(喷乳)：${ex[5]}次]\u00A0\u00A0`
+          : `[射精：${ex[5]}次]\u00A0\u00A0`,
       );
     } else {
-      parts.push(`[喷乳：${ex[5]}次]  `);
+      parts.push(`[喷乳：${ex[5]}次]\u00A0\u00A0`);
     }
   }
   if (parts.length > 0) {
@@ -203,7 +206,9 @@ async function draw_status_screen(target) {
 
   // :69-82 %SAVESTR:TARGET% 调教中   调教者:（助手调教=粉色助手名+（助手），
   // 否则浅蓝的主人姓名；无助手参与时再补「  助手:名」；行尾三个空格照原作）
-  const header = [{ content: `${chara_callname(target)} 调教中   调教者:` }];
+  const header = [
+    { content: `${chara_callname(target)} 调教中\u00A0\u00A0\u00A0调教者:` },
+  ];
   if (era_flag.assiplay !== 0) {
     // SETCOLOR 0xFF1493 → #ff1493（片段 color 直通渲染层，CSS 色串）
     header.push({ content: chara_callname(era_flag.assi), color: '#ff1493' });
@@ -213,7 +218,9 @@ async function draw_status_screen(target) {
     header.push({ content: chara_name(0), color: '#87cefa' });
   }
   if (era_flag.assi > 0 && era_flag.assiplay === 0) {
-    header.push({ content: `  助手:${chara_callname(era_flag.assi)}` });
+    header.push({
+      content: `\u00A0\u00A0助手:${chara_callname(era_flag.assi)}`,
+    });
   }
   header.push({ content: '   ' }); // :82 PRINT（行尾三空格）
   era.print(header);

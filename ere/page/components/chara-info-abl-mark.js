@@ -29,7 +29,7 @@
  */
 
 const era = require('#/era-electron');
-const { pad_display } = require('#/utils/display-width');
+const { NBSP, pad_display } = require('#/utils/display-width');
 
 /** 素质编号（yml/Talent.yml 的名字表；原件以名字寻址，此处用编号 + 注释） */
 const TALENT_FUTA = 121; // 扶她
@@ -123,9 +123,9 @@ function show_info_abl(cid) {
         ? '阴茎感觉'
         : (era.get(`ablname:${abl}`) ?? '');
     // :963/:965 两个前导空格（命令名后的第一个空格是分隔符，见文件头）
-    row += `  ${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;
+    row += `${NBSP.repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;
     // :969 CALL DECIDE_ABLUP：可提升标记未移植（见文件头），按结果 0 补 2 空格
-    row += '  ';
+    row += NBSP.repeat(2);
 
     element_count += 1; // :972
     if (element_count % 4 === 0) {
@@ -147,9 +147,10 @@ function show_info_mark(cid) {
   for (const [index, mark_id] of MARKS.entries()) {
     const level = era.get(`mark:${cid}:${mark_id}`) || 0;
     // :1002/:1004/:1006/:1008 PRINTFORM 的间距：首项 1 个前导空格、
-    // 其余 4 个「快乐:」之间 3 个（命令后的第一个空格是分隔符，见文件头）
+    // 其余 4 个「快乐:」之间 3 个（命令后的第一个空格是分隔符，见文件头）。
+    // 首项那 1 格同样计入四枚刻印的列对齐，故一并用 NBSP（#577）
     fragments.push({
-      content: `${index === 0 ? ' ' : '   '}${MARK_LABELS[index]}:LV${level} `,
+      content: `${NBSP.repeat(index === 0 ? 1 : 3)}${MARK_LABELS[index]}:LV${level} `,
     });
     // :1003/:1005/:1007/:1009 BAR MARK:n, 3, 3
     fragments.push({

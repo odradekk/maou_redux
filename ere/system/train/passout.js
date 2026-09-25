@@ -562,7 +562,7 @@ async function passout_message() {
     await era.waitAnyKey();
   } else if (tflag(867) < 0 || tflag(877) < 0) {
     // :405-427 插入系装备（蠕虫/肛珠）
-    era.print('  不知什么时候，');
+    era.print(' 不知什么时候，');
     if (tequip(cid, 11) === 1) {
       if (tequip(cid, 13) === 1) {
         era.print('两穴都被蠕虫，');

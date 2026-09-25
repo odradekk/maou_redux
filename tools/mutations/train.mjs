@@ -215,17 +215,17 @@ export default [
   {
     desc: 'M33 基础行格式：) 与 = 之间的 12 空格少 2 格',
     file: 'ere/system/train/juel-check.js',
-    find: '      { content: \')            = \' }, // :687 PRINT ) + 12 空格 + "= "',
+    find: '      { content: `)${NBSP.repeat(12)}= ` }, // :687 PRINT ) + 12 空格 + "= "',
     replace:
-      '      { content: \')          = \' }, // :687 PRINT ) + 12 空格 + "= "',
+      '      { content: `)${NBSP.repeat(10)}= ` }, // 变异：少 2 格（只改格数）',
     tests: ['juel-check'],
     must_mention: '结算表第 0 行',
   },
   {
     desc: 'M34 FIGURE_INDENT：8 位右对齐改 7 位',
     file: 'ere/system/train/juel-check.js',
-    find: 'const figure_indent = (n) => String(n).padStart(8);',
-    replace: 'const figure_indent = (n) => String(n).padStart(7);',
+    find: 'const figure_indent = (n) => pad_left(String(n), 8);',
+    replace: 'const figure_indent = (n) => pad_left(String(n), 7);',
     tests: ['juel-check'],
     must_mention: '结算表第 0 行',
   },
@@ -8050,10 +8050,11 @@ export default [
   {
     desc: 'M9931 ablup14：EXP 门槛行前导空格丢失一格',
     file: 'ere/system/train/ablup.js',
-    find: "era.print(`      ${era.get('expname:5')}　${exp5}/${b}`); // :50",
-    replace: "era.print(`     ${era.get('expname:5')}　${exp5}/${b}`); // :50",
+    find: "era.print(`${NBSP.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`); // :50",
+    replace:
+      "era.print(`${NBSP.repeat(5)}${era.get('expname:5')}　${exp5}/${b}`); // :50",
     tests: ['ablup'],
-    must_mention: 'EXP 门槛行前导 6 个半角空格',
+    must_mention: 'EXP 门槛行前导 6 个 NBSP',
   },
   {
     desc: 'M9932 ablup14：成功购买写入等级改为 +2',
@@ -8118,9 +8119,9 @@ export default [
   {
     desc: 'M9938 ablup15：EXP 行字面量" or"丢失',
     file: 'ere/system/train/ablup.js',
-    find: "era.print(`      ${era.get('expname:73')}　${exp73}/${b} or`); // :45",
+    find: "era.print(`${NBSP.repeat(6)}${era.get('expname:73')}　${exp73}/${b} or`); // :45",
     replace:
-      "era.print(`      ${era.get('expname:73')}　${exp73}/${b}`); // :45",
+      "era.print(`${NBSP.repeat(6)}${era.get('expname:73')}　${exp73}/${b}`); // 变异：丢 or",
     tests: ['ablup'],
     must_mention: 'EXP 行字面量" or"仅出现在第一行',
   },

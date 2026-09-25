@@ -76,7 +76,7 @@ test('第 1 阶层：楼层头 + 设施后缀合行、设施四格、怪物库�
   // :478-486 设施四格（有格命中才出行 + 分隔线）
   assert(texts.includes('[落穴]'), '设施四格的 [道具名] 行');
   // :495 怪物库存：{5,2,LEFT} = "5 " + 只 + 名
-  assert(texts.includes('5 只史莱姆'), '怪物行（数量左对齐两位）');
+  assert(texts.includes('5\u00A0只史莱姆'), '怪物行（数量左对齐两位）');
   // 空行三处（#548 起）：@ENEMY_EXIST2 的首行空行（:595 / :630）+ :489 的
   // PRINTL——两处走 era.println（夹具记为 'br' 行）；:500 的无参 PRINTW 走
   // printAndWait('')（'text' 空行，读键按夹具契约不入 inputs_consumed）
@@ -113,7 +113,7 @@ test('护卫行的编号是宽度 2 的右对齐（原作 [{COUNT,2}]）', async
   await show_floor_via_usershop(fixture, 521);
 
   assert(
-    text_lines(fixture).includes('[护卫中]\u3000[ 7]贝尔'),
+    text_lines(fixture).includes('[护卫中]\u3000[\u00A07]贝尔'),
     '个位编号补前导空格（右对齐），不是 [7]',
   );
 });
@@ -200,7 +200,7 @@ test('近卫层（ARG = 10）：护卫名单一行一人 + 素质名拼接，怪
     !texts.some((line) => line.includes('迎击中') || line.includes('侵攻中')),
     '近卫层不走 ENEMY_EXIST2（GOTO MONSTERDATA 直接跳过）',
   );
-  assert(texts.includes('2 只近卫'), '怪物库存读 190-199 段');
+  assert(texts.includes('2\u00A0只近卫'), '怪物库存读 190-199 段');
 });
 
 test('LIMIT 钳制：0 与 99 都按边界层显示（源 :429 ARG = LIMIT(ARG,1,10)）', async () => {

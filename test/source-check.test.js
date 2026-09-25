@@ -109,7 +109,12 @@ test('黄金样本比对：第一次爱抚的结算块 15 行逐字节一致（�
   const start = texts.indexOf('‥'.repeat(39));
   assert.ok(start >= 0, '39 点线必须在输出里');
   const block = texts.slice(start, start + GOLDEN_BLOCK.length);
-  assert.deepEqual(block, GOLDEN_BLOCK);
+  // #577：ere 侧的对齐补位是 U+00A0（引擎合并半角空格），黄金日志是普通
+  // 空格——比对面把 NBSP 归一回空格（tools/compare 的 compress_ws 同款语义）
+  assert.deepEqual(
+    block.map((t) => t.replaceAll('\u00A0', ' ')),
+    GOLDEN_BLOCK,
+  );
 
   // 结算终态：体力/气力与样本下一帧一致（1445 / 360），delta 已清零
   assert.equal(fixture.store.get('base:31:0'), 1445);
@@ -238,8 +243,8 @@ test('露出的三路：欲情（露出癖）、耻情（衰减）、反感（�
       .some(
         (l) =>
           l.startsWith('润滑') &&
-          l.includes('+   182') &&
-          l.includes('=   182'),
+          l.includes('+\u00A0\u00A0\u00A0182') &&
+          l.includes('=\u00A0\u00A0\u00A0182'),
       ),
     '润滑行（0 + 182）',
   );
@@ -390,7 +395,10 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
     texts.includes('阴核(10)乳房(7)情爱(50)性行动(60)不洁(30)露出(100)　'),
   );
   assert(
-    texts.some((l) => l.startsWith('阴核') && l.includes('+     5')),
+    texts.some(
+      (l) =>
+        l.startsWith('阴核') && l.includes('+\u00A0\u00A0\u00A0\u00A0\u00A05'),
+    ), // #577：figure_indent_2(5) 的 NBSP×5
     '参数变动行（阴核 0+5）',
   );
   // 指令按钮是按钮不是死文本（PR #53 通则）

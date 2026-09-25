@@ -51,7 +51,11 @@ const {
 } = require('#/dungeon/monster-data');
 // MAX_NAME_LEN 的量尺与 `%,N,LEFT%` 等价物（#/utils/display-width，#390
 // 提取为公共模块）
-const { display_width, pad_display } = require('#/utils/display-width');
+const {
+  display_width,
+  pad_display,
+  pad_left,
+} = require('#/utils/display-width');
 
 /**
  * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
@@ -310,7 +314,7 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
           { content: '[护卫中]\u3000', color: COLOR_SUBORDINATE },
           // :636 [{COUNT,2}]——宽度 2 的右对齐（Emuera 的 {n,w} 缺省右对齐）
           {
-            content: `[${String(cid).padStart(2, ' ')}]`,
+            content: `[${pad_left(String(cid), 2)}]`,
             color: COLOR_SUBORDINATE,
           },
           // :637 %SAVESTR:COUNT,MAX_NAME_LEN,LEFT%
@@ -543,7 +547,9 @@ async function dungeon_info2() {
           );
         } else {
           era.print(`\u3000在 ${dialogue[1]} 个阶层修建 通路`);
-          era.print('\u3000\u3000合计花费\u3000    0p ，确认执行吗？');
+          era.print(
+            '\u3000\u3000合计花费\u3000\u00A0\u00A0\u00A0\u00A00p ，确认执行吗？',
+          );
         }
         era.printButton('- 好的', 0); // DUNGEON_INFO2.ERB:180 [0]
         era.printButton('- 不要', 1); // DUNGEON_INFO2.ERB:180 [1]（同行并排两个选项）

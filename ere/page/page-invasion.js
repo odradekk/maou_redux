@@ -173,6 +173,7 @@ const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { chara } = require('#/facade/chara');
 const { stub_line_wait } = require('#/utils/stub-line');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
+const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
@@ -375,7 +376,7 @@ async function number_input() {
  * @returns {string}
  */
 function pad_number(value, width) {
-  return String(value).padStart(width);
+  return pad_left(String(value), width);
 }
 
 // @KYOTEN_EVENT 的星号横幅（INVASION_EVENT.ERB:16-22 等十处，逐字抄自原作，
@@ -1978,7 +1979,7 @@ async function sengen_video(rand = default_rand) {
     // :1077-1081 两者都非零才显示流行中的数量与剩余天数
     if (era_exflag.crystal_ball_popularity && era_exflag.crystal_ball_expire) {
       era.print(
-        `        正流行的有${pad_number(
+        `${NBSP.repeat(8)}正流行的有${pad_number(
           era_exflag.crystal_ball_popularity,
           3,
         )}部\t\t${pad_number(era_exflag.crystal_ball_expire, 2)}天后将过时`,

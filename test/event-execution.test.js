@@ -1525,6 +1525,16 @@ test('EXECUTION：处置菜单是按钮、候选人行保持纯文本（#572）'
     fixture.text_lines().some((line) => /^\[\s*0\] \S/.test(line)),
     '候选人行仍是纯文本行（行首编号才是输入值）',
   );
+  // 整行逐字钉住：编号右对齐 2 / 名字左对齐 12 / 职业左对齐 6 / 等级右对齐 3
+  // （源 :32-33 的 %…,N% 规格），列补位是 NBSP（#577）——退回半角空格的话
+  // 这些格子会被引擎合并成一格，整行错位，本断言当场红。职业列为空时
+  // job_name 给一个半角空格，故名字与职业之间是「分隔空格 + 那个半角空格」
+  const rows = fixture.text_lines().filter((line) => /^\[\s*\d+\]/.test(line));
+  assert.deepEqual(rows, [
+    '[\u00A00] 温妮\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0  \u00A0\u00A0\u00A0\u00A0\u00A0 LV\u00A0\u00A04',
+    '[\u00A01] 艾达\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0  \u00A0\u00A0\u00A0\u00A0\u00A0 LV\u00A0\u00A02',
+    '[100] 返回',
+  ]);
   assert(
     fixture.text_lines().includes('[100] 返回'),
     '候选人轮的 [100] 返回保持纯文本',

@@ -65,6 +65,7 @@ const { chara } = require('#/facade/chara');
 const { item_detox } = require('#/system/equip/item-detox');
 const { life_list } = require('#/page/page-life-list');
 const { chara_callname } = require('#/utils/callname-utils');
+const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /**
  * 金额单位（target/CSV/_replace.csv 的「お金の単位」= `pts.`、「位置」=「後」，
@@ -278,24 +279,6 @@ function saleitem_check() {
   era.set(`itemsales:${EXP_ITEM}`, 1);
 }
 
-/**
- * 显示宽度（全角 2 / 半角 1），原作 `%…,N,LEFT%` 的填充判定标准。
- * 与 page-shop-trap.js / page-life-list.js / page-main-menu.js 的同名助手
- * 同形——本仓库这块按文件各留一份（`ere/utils/` 只收跨域工具）。
- */
-function display_width(s) {
-  return [...s].reduce(
-    (width, ch) => width + (ch.charCodeAt(0) > 0xff ? 2 : 1),
-    0,
-  );
-}
-
-/** 左对齐补空格到指定显示宽度（%str,width,LEFT% 的形态） */
-function pad_display_left(s, width) {
-  const pad = width - display_width(s);
-  return pad > 0 ? s + ' '.repeat(pad) : s;
-}
-
 /** %ITEMNAME:id%（Item.yml 登记名） */
 function item_name(id) {
   return era.get(`itemname:${id}`) ?? '';
@@ -332,7 +315,7 @@ function item_grid_rows(start, end, text, width, skip = []) {
     if (count === 0) {
       continue;
     }
-    row += `[${pad_display_left(text(id), width)}]`;
+    row += `[${pad_display(text(id), width)}]`;
     column += 1;
     if (column % GRID_COLUMNS === 0) {
       rows.push(row);

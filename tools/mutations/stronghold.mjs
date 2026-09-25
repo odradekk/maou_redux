@@ -1452,9 +1452,9 @@ export default [
   {
     desc: 'M8915 商品一览的编号字段宽错一位（3 → 5）',
     file: 'ere/page/page-monster-shop.js',
-    find: '        `[${pad_display_left(String(id), 3)}] ` +\n        `${pad_display_left(item_name(id), NAME_WIDTH)} ` +',
+    find: '        `[${pad_display(String(id), 3)}] ` +\n        `${pad_display(item_name(id), NAME_WIDTH)} ` +',
     replace:
-      '        `[${pad_display_left(String(id), 5)}] ` +\n        `${pad_display_left(item_name(id), NAME_WIDTH)} ` +',
+      '        `[${pad_display(String(id), 5)}] ` +\n        `${pad_display(item_name(id), NAME_WIDTH)} ` +',
     tests: ['monster-shop'],
     must_mention: '商品一览的排版字面量',
   },
@@ -1600,9 +1600,9 @@ export default [
   {
     desc: 'M8933 怪物商店可选行的编号字段宽错一位（3 → 5）',
     file: 'ere/page/page-monster-shop.js',
-    find: '        `[${pad_display_left(String(id), 3)}] ` +\n        `${pad_display_left(item_name(id), PICK_NAME_WIDTH)} ` +',
+    find: '        `[${pad_display(String(id), 3)}] ` +\n        `${pad_display(item_name(id), PICK_NAME_WIDTH)} ` +',
     replace:
-      '        `[${pad_display_left(String(id), 5)}] ` +\n        `${pad_display_left(item_name(id), PICK_NAME_WIDTH)} ` +',
+      '        `[${pad_display(String(id), 5)}] ` +\n        `${pad_display(item_name(id), PICK_NAME_WIDTH)} ` +',
     tests: ['monster-shop'],
     must_mention: '祭品行与可选行的排版字面量',
   },
@@ -1637,16 +1637,16 @@ export default [
   {
     desc: 'M8937 异界一览的格首少一个前导空格（PRINTFORM 的第二个空格）',
     file: 'ere/page/page-chara-shop.js',
-    find: '        ` [${pad_display_right(String(l_i), NUM_WIDTH)}] ` +',
-    replace: '        `[${pad_display_right(String(l_i), NUM_WIDTH)}] ` +',
+    find: '        ` [${pad_left(String(l_i), NUM_WIDTH)}] ` +',
+    replace: '        `[${pad_left(String(l_i), NUM_WIDTH)}] ` +',
     tests: ['chara-shop'],
     must_mention: '一览的排版字面量',
   },
   {
     desc: 'M8938 商品一览的名字字段后少一个半角空格（回到旧写法）',
     file: 'ere/page/page-monster-shop.js',
-    find: '`${pad_display_left(item_name(id), NAME_WIDTH)} ` +',
-    replace: '`${pad_display_left(item_name(id), NAME_WIDTH)}` +',
+    find: '`${pad_display(item_name(id), NAME_WIDTH)} ` +',
+    replace: '`${pad_display(item_name(id), NAME_WIDTH)}` +',
     tests: ['monster-shop'],
     must_mention: '商品一览的排版字面量',
   },

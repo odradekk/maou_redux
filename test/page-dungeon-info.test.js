@@ -162,7 +162,7 @@ test('ENEMY_EXIST2：近卫层（floor 10）追加护卫中名单（EX_TALENT + 
   assert.ok(guard_line, `近卫层应有护卫行，实际 ${texts}`);
   assert.ok(guard_line.includes('勇者乙'));
   assert.ok(
-    guard_line.includes('[ 2]'),
+    guard_line.includes('[\u00A02]'),
     '护卫行含宽度 2 右对齐的编号（原文 :636 的 {COUNT,2}）',
   );
   assert.ok(guard_line.includes('剑术'), '护卫行含 TALENTNAME 素质名');
@@ -212,12 +212,12 @@ test('ENEMY_EXIST2：名字补齐按显示宽度计，全角 2 格（STRLENS 计
   // 本层最长名 = 勇者甲（3 字全角 = 6 列）：阿乙补 2 个半角空格、AI 补 4 个
   assert.equal(
     texts.find((t) => t.includes('阿乙')),
-    '[侵攻中]\u3000勇者甲\u3000阿乙  \u3000',
+    '[侵攻中]\u3000勇者甲\u3000阿乙\u00A0\u00A0\u3000',
     '同队行：队员名按显示宽度右补半角空格（全角算 2 格，不是字符数）',
   );
   assert.equal(
     texts.find((t) => t.includes('AI')),
-    '[迎击中]\u3000AI    \u3000',
+    '[迎击中]\u3000AI\u00A0\u00A0\u00A0\u00A0\u3000',
     '半角名也补到与全角名相同的显示宽度',
   );
 });
@@ -232,7 +232,7 @@ test('ENEMY_EXIST2：MAX_NAME_LEN 跨调用只增不减——先长后短，宽�
   await enemy_exist2(3);
   assert.equal(
     fixture.text_lines().find((t) => t.includes('勇者乙')),
-    '[侵攻中]\u3000超长名字测试\u3000勇者乙      \u3000',
+    '[侵攻中]\u3000超长名字测试\u3000勇者乙\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u3000',
     '第一轮：队员名补到 12 列（6 字全角名）',
   );
 
@@ -244,7 +244,7 @@ test('ENEMY_EXIST2：MAX_NAME_LEN 跨调用只增不减——先长后短，宽�
   await enemy_exist2(3, true);
   assert.equal(
     fixture.text_lines().find((t) => t.includes('[护卫中]')),
-    '[护卫中]\u3000[ 2]勇者乙      ',
+    '[护卫中]\u3000[\u00A02]勇者乙\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0',
     '第二轮：护卫行仍按第一轮的 12 列补齐（静态宽度不回落）',
   );
 });
@@ -269,7 +269,7 @@ test('ENEMY_EXIST2：宽度按本层全部筛出角色取最长——迎击中�
 
   assert.equal(
     fixture.text_lines().find((t) => t.includes('[侵攻中]')),
-    '[侵攻中]\u3000勇者甲      \u3000勇者乙      \u3000',
+    '[侵攻中]\u3000勇者甲\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u3000勇者乙\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u3000',
     '勇者行按迎击者的长名补齐（宽度来自全部筛出角色，非仅侵攻中）',
   );
 });

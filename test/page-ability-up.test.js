@@ -213,7 +213,7 @@ test('ABILITY_UP：魔王行的名字与等级按定宽渲染（名字 12 / 8 �
     .join('');
   assert.equal(
     row_text,
-    `你${' '.repeat(10)}${' '.repeat(8)} LV${' '.repeat(3)}7`,
+    `你${'\u00A0'.repeat(10)}${'\u00A0'.repeat(8)} LV${'\u00A0'.repeat(3)}7`,
   );
   assert.ok(row, '魔王行与编号按钮同 row');
 });

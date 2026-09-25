@@ -139,7 +139,8 @@ test('关系调试表按五字符列逐行输出、标色，并在打印后等�
   const texts = fixture.lines_history
     .filter((entry) => entry.type === 'text')
     .map((entry) => entry.text);
-  assert.match(texts[0], /^1>[ ]{3}0[ ]{4}5[ ]{4}$/);
+  // #577：补位 NBSP（关系矩阵的五字符列）
+  assert.match(texts[0], /^1>\u00A0{3}0\u00A0{4}5\u00A0{4}$/);
   const first = fixture.lines_history.find((entry) => entry.type === 'text');
   assert.equal(first.content[0].color, 'rgb(100, 255, 255)');
   assert.equal(first.content[1].color, 'gray');
