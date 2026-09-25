@@ -514,6 +514,20 @@ test('SELECTCOM 56 交谈·二回目·无摄像·装备档：:4879+:4881+:4883+:
   ]);
 });
 
+test('SELECTCOM 56 交谈·二回目·无摄像·痛苦装备（TEQUIP:44）：拼「痛苦的」（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`cflag:${CID}:357`, 1);
+    f.store.set(`tequip:${CID}:44`, 1);
+    f.store.set(`palam:${CID}:4`, 10000);
+    f.store.set(`palam:${CID}:5`, 10000);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `你让${NAME}一边发出着痛苦的声音、一边拼命地回应着你。`,
+  ]);
+});
+
 test('DOG 兽奸会話·初めて·视频·牝犬：:6341..:6348 与 :6351..:6371 各是一行（#622）', async () => {
   const fixture = await setup_k1(
     dog_seed((f) => {
@@ -562,7 +576,49 @@ test('DOG 兽奸会話·二回目·视频·牝犬：:6403..:6410 与 :6413..:643
   assert.equal(lines[2], `「现在是优秀的狗的妻子、快乐的作为家畜生活着♡」`);
   assert.equal(
     lines[5],
-    `「在最后我的店里消费过的客人、我成为了这样的变态母狗……对不起啊♡」`,
+    `「在最后在我的店里消费过的客人、我成为了这样的变态母狗……对不起啊♡」`,
+  );
+});
+
+test('DOG 兽奸会話·初めて·视频·牝犬的「在最后」：其余四档各自成句（#622）', async () => {
+  const cases = [
+    [2, '修道院的大家'],
+    [19, '部下的大家'],
+    [21, '最重要的你'],
+    [0, '爸爸、妈妈'],
+  ];
+  for (const [life, who] of cases) {
+    const fixture = await setup_k1(
+      dog_seed((f) => {
+        f.store.set(`tequip:${CID}:53`, 1);
+        f.store.set(`talent:${CID}:136`, 1);
+        f.store.set(`cflag:${CID}:601`, 900);
+        f.store.set(`talent:${CID}:成为勇者前的生活`, life);
+      }),
+    );
+    await speak_k1(fixture);
+    assert.equal(
+      fixture.text_lines()[6],
+      `「在最后${who}、我成为了这样的变态母狗……对不起啊♡」`,
+      `成为勇者前的生活 == ${life}`,
+    );
+  }
+});
+
+test('DOG 兽奸会話·二回目·视频·牝犬的「在最后」：另一档（最重要的你）（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`cflag:${CID}:357`, 1);
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:136`, 1);
+      f.store.set(`cflag:${CID}:601`, 900);
+      f.store.set(`talent:${CID}:成为勇者前的生活`, 21);
+    }),
+  );
+  await speak_k1(fixture);
+  assert.equal(
+    fixture.text_lines()[5],
+    `「在最后最重要的你、我成为了这样的变态母狗……对不起啊♡」`,
   );
 });
 
@@ -658,6 +714,40 @@ test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（2回目）：:7106+:710
       .text_lines()
       .includes(`「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`),
     '同一行里拼出名字（2回目以降）',
+  );
+});
+
+test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（1回目）：非首支也拼前缀（第二支「哈娜？」）（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set(`talent:${CID}:136`, 1);
+    f.store.set(`cflag:${CID}:102`, 5);
+    f.store.set(`cflag:${CID}:601`, 90);
+  });
+  // RAND:2 非 0 → ELSE 支；RAND:9 非 0、RAND:8 == 0 → 第二支「哈娜？」
+  await speak_self_kojo_k1(fixture, seq_rand(1, 1, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…哈娜？」'),
+    '非首支也带前缀（漏拼前缀会红）',
+  );
+});
+
+test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（2回目）：非首支也拼前缀（第二支「哈娜？」）（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set(`cflag:${CID}:271`, 1);
+    f.store.set(`talent:${CID}:136`, 1);
+    f.store.set(`cflag:${CID}:102`, 5);
+    f.store.set(`cflag:${CID}:601`, 90);
+  });
+  await speak_self_kojo_k1(fixture, seq_rand(1, 1, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…哈娜？」'),
+    '非首支也带前缀（2回目以降，漏拼前缀会红）',
   );
 });
 

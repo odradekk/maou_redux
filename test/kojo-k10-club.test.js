@@ -601,6 +601,46 @@ test('COLOSSEUM_KOJO_10：SC31/21/27 助手无 121/122 且持假阳具（item:4�
   }
 });
 
+test('COLOSSEUM_KOJO_10：SC31/21/27 助手持阴茎（TALENT:ASSI:121）→ 同一行里拼「坚硬的雄性器」（#622）', async () => {
+  const cases = [
+    {
+      selectcom: 31,
+      open: '「哈噗…唔…嗯～…嗯～…嗯呼…还要再舔吗…嗯～…咕噜…啾」',
+      line: '玛奥坚硬的雄性器让白梅花一边舔一边露出了心旷神怡的表情……',
+    },
+    {
+      selectcom: 21,
+      open: '「呀～！请住手～求你了～…啊啊～…啊～！」',
+      line: '玛奥听着白梅花的悲鸣用坚硬的雄性器白梅花的肛门被无慈悲的继续蹂躏着。',
+    },
+    {
+      selectcom: 27,
+      open: '「屁股那～…哈啊～明明讨要那些肮脏的东西…啊～…哈啊～…噫～…屁股要坏掉了！」',
+      line: '玛奥听着白梅花的悲鸣用坚硬的雄性器白梅花的肛门被无慈悲的继续蹂躏着。',
+    },
+  ];
+  for (const { selectcom, open, line } of cases) {
+    const fixture = await setup_k10((f) => {
+      join_slave_chara(f, 17, '玛奥');
+      f.store.set('talent:17:121', 1); // 助手持阴茎
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 17;
+      era_flag.assiplay = 1;
+    }, selectcom);
+    const mod = fixture.load_module('kojo/kojo-k10-club');
+    await mod.colosseum_kojo_10();
+    const lines = fixture.text_lines();
+    assert.ok(
+      lines.some((l) => l === open),
+      `selectcom ${selectcom} 分支开场白「${open}」`,
+    );
+    assert.ok(
+      lines.some((l) => l === line),
+      `selectcom ${selectcom} 持阴茎 → 整行「${line}」`,
+    );
+  }
+});
+
 test('COLOSSEUM_KOJO_10：持假阳具判定只认 item:4——未持有（item:4 缺席）时该行不出现', async () => {
   const fixture = await setup_k10((f) => {
     join_slave_chara(f, 17, '玛奥');
@@ -778,6 +818,19 @@ test('SELECTCOM==56 交谈·二回目·无摄像·装备档：:4229+:4231+:4233+
   await speak_k10(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '在和你会话的过程中，白梅花带着快乐的语调拼命地回应着。',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·二回目·无摄像·痛苦装备（TEQUIP:44）：拼「带着痛苦的语调」（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('cflag:20:357', 1);
+    f.store.set('tequip:20:44', 1);
+    f.store.set('palam:20:4', 10000);
+    f.store.set('palam:20:5', 10000);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '在和你会话的过程中，白梅花带着痛苦的语调拼命地回应着。',
   ]);
 });
 

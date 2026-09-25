@@ -10965,7 +10965,7 @@ async function dog_kojo_1(rand) {
                 : former_life === 2
                   ? `修道院的大家`
                   : former_life === 15 || former_life === 18
-                    ? `${sc()}的店里消费过的客人`
+                    ? `在${sc()}的店里消费过的客人`
                     : former_life === 19
                       ? `部下的大家`
                       : former_life === 21
@@ -11050,7 +11050,7 @@ async function dog_kojo_1(rand) {
                 : former_life === 2
                   ? `修道院的大家`
                   : former_life === 15 || former_life === 18
-                    ? `${sc()}的店里消费过的客人`
+                    ? `在${sc()}的店里消费过的客人`
                     : former_life === 19
                       ? `部下的大家`
                       : former_life === 21

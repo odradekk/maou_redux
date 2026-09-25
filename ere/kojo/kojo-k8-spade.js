@@ -7799,8 +7799,9 @@ async function kojo_message_com_8(rand) {
         `「我舒服起来之后一直都很吵呢…没办法呢……${heart(1)}」`,
       ); // :4382
       // :4383+:4385 原作是一整行：无后缀 PRINTFORM 与 IF 首支的 PRINTW 同属一行（#622）。
-      // 另一支 (:4387) 与首支互斥、自带收行，只能自己成句——前缀用语句外的值，
-      // 首支那句自带完整行（拼接锚的槽位序要含 %SAVESTR:TARGET%）
+      // 另一支 (:4387) 与首支互斥、自带收行，只能自己成句。前缀「X自己戴上了口枷」
+      // 因此在两处各写一次，是有意的：首支那句要自带完整行（拼接锚的槽位序要含
+      // %SAVESTR:TARGET%），而 :4387 的 ERB 记号集是空集，改成 ${} 槽位会判成多一个记号
       const mouth_gag_word = `${target_name}自己戴上了口枷`;
       if (era0(`tequip:${target}:43`)) {
         await era.printAndWait(
@@ -12142,8 +12143,9 @@ async function colosseum_kojo_8() {
  *
  * 多处 `PRINT 狂王的巨根` / `PRINT 特大号的按摩棒` 由 FLAG:500（狂王性别）
  * 二选一：0·2 扶她走巨根，其余走按摩棒。这些是 Emuera 的 bare PRINT，
- * 不换行不等待，与接续的 PRINTFORMW 在原作里拼成一整句；本移植按既有
- * 惯例（本文件 :4372 起口塞段同款）拆成 era.print + era.printAndWait。
+ * 不换行不等待，与接续的 PRINTFORMW 在原作里拼成一整句；本移植按 #622 的
+ * 做法合并成一条输出（二选一提成取值三元并进输出语句，锚用拼接锚）——
+ * 本文件 :4372 起的口塞段同款处理。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  * @param {number} [p_arg] P（NTR 演出编号，#214 决议：Emuera 单字母全局改显式传参）

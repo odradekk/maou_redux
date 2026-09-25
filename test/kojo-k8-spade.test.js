@@ -4581,16 +4581,35 @@ test('NTR：P==1 陥落済支走巨根（FLAG:500==0），:7460+:7462+:7464 是�
   assert.equal(fixture.store.get('cflag:31:651'), 1, 'NTR_651 CFLAG:651');
 });
 
+test('NTR：P==1 陥落済支 + FLAG:500==1 走按摩棒，:7460+:7462+:7464 的另一支（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('flag:500', 1); // 非扶她 → 按摩棒
+  });
+  await speak_ntr_k8(fixture, 1);
+  const lines = fixture.text_lines();
+  assert.equal(
+    lines[2],
+    '然后、特大号的按摩棒慢慢的插进了银黑桃的秘裂。在镜头下银黑桃还不知道男人的蜜壶被插进了深处。',
+  );
+  assert.equal(
+    lines[3],
+    '从蜜裂留到屁股上的破瓜之血。在屈辱和疼痛下，即使是刚强的银黑桃也只能流下眼泪。',
+  );
+});
+
 test('NTR：P==1 それ以外支且 FLAG:500==1 走按摩棒，:7468..:7474 是一行（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('flag:500', 1);
   });
   await speak_ntr_k8(fixture, 1);
   assert.deepEqual(
-    fixture.text_lines().slice(0, 2),
+    fixture.text_lines(),
     [
       '还是处女的银黑桃的秘裂被特大号的按摩棒深深的插了进去。破瓜之血从秘裂里流了出来。',
       '「啊嗯…多疑的狂王大人这样也明白了吧？我没有背叛、还是纯洁的…啊…啊啊！」',
+      '狂王默默地笑着一边嘲弄银黑桃，一边动了起来。',
+      '「再、再继续的话…啊啊啊！快停下！啊、啊啊啊——！」',
     ],
     'FLAG:500==1 走按摩棒',
   );
@@ -4658,16 +4677,16 @@ test('NTR：P==4 それ以外支末行源作无省略号（1:1 保真），:7532
     f.store.set('flag:500', 0);
   });
   await speak_ntr_k8(fixture, 4);
-  const lines = fixture.text_lines();
-  assert.equal(
-    lines[1],
-    '狂王的巨根不停的侵犯着银黑桃的蜜壶、银黑桃发出了逞强的声音。',
-    'P==4 それ以外支的武器名与收行同属一行',
-  );
-  assert.equal(
-    lines[lines.length - 1],
-    '水晶球录下了好几个银黑桃被狂王抱着不停绝顶的画面',
-    'P==4 それ以外末行源作无省略号',
+  assert.deepEqual(
+    fixture.text_lines(),
+    [
+      '「啊啊…嗯…嗯啊…啊啊…再继续的话…我已经…嗯…啊啊——！」',
+      '狂王的巨根不停的侵犯着银黑桃的蜜壶、银黑桃发出了逞强的声音。',
+      '「啊…嗯…啊啊…狂王大人…啊啊嗯…恩…啊嗯…啊啊！」',
+      // :7538 源作此行末尾无「………」（同段另一支 :7528 有），1:1 保真不补
+      '水晶球录下了好几个银黑桃被狂王抱着不停绝顶的画面',
+    ],
+    'P==4 それ以外末行源作无省略号（武器名与收行同属一行）',
   );
   assert.equal(fixture.store.get('cflag:31:654'), 1, 'NTR_654 CFLAG:654');
 });

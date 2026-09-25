@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2463; // #622 起 +57（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2467; // #622 起 +61（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -14033,12 +14033,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR 再捕获 CFLAG:650',
   },
   {
-    desc: 'M1981 K8 NTR 狂王性别判定漏掉扶她的 2（0 || 2 改只判 0，#239）',
+    desc: 'M1981 K8 NTR 狂王性别判定漏掉扶她的 2（0 || 2 改只判 0，#239；#622 起靶在拼接语句上）',
     file: 'ere/kojo/kojo-k8-spade.js',
     find: '  const futa = () => game.system.狂王性别 == 0 || game.system.狂王性别 == 2;',
     replace: '  const futa = () => game.system.狂王性别 == 0;',
     tests: ['kojo-k8-spade'],
-    must_mention: 'NTR：P==2 陥落済支六行 + CFLAG:652',
+    must_mention: 'NTR：P==2 陥落済支',
   },
   {
     desc: 'M1982 K8 NTR P==1 それ以外支的按摩棒串成巨根（#239；#622 起靶在同一条输出的取值三元上）',
@@ -14259,7 +14259,7 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     replace:
       'ntr_koujo_family.register(8, (p_arg) => ntr_koujo_k8(undefined, p_arg));',
     tests: ['kojo-k8-spade'],
-    must_mention: 'NTR：P==1 陥落済支走巨根（FLAG:500==0），记 CFLAG:651',
+    must_mention: 'NTR：P==1 陥落済支走巨根',
   },
 
   // —— #231 J21 口上·K0 慈爱（M1600-M1649 + M1790-M2015；撞号条目并入 M2420-M2599） ——
@@ -22805,7 +22805,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "        await era.print(['白', '赤', '黑', '青'][rand_n(4)]); // 变异：拆回\n" +
       '        await era.printAndWait(`的样子。`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
-    must_mention: 'メイド服',
+    must_mention: ':671+:678 是一行',
   },
   {
     desc: 'M12503 K8 口塞·淫乱＋受虐狂Lv5以上（:4383+:4385）拆回两条（#622）',
@@ -23362,7 +23362,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '                : former_life === 2\n' +
       '                  ? `修道院的大家`\n' +
       '                  : former_life === 15 || former_life === 18\n' +
-      '                    ? `${sc()}的店里消费过的客人`\n' +
+      '                    ? `在${sc()}的店里消费过的客人`\n' +
       '                    : former_life === 19\n' +
       '                      ? `部下的大家`\n' +
       '                      : former_life === 21\n' +
@@ -23422,7 +23422,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '                : former_life === 2\n' +
       '                  ? `修道院的大家`\n' +
       '                  : former_life === 15 || former_life === 18\n' +
-      '                    ? `${sc()}的店里消费过的客人`\n' +
+      '                    ? `在${sc()}的店里消费过的客人`\n' +
       '                    : former_life === 19\n' +
       '                      ? `部下的大家`\n' +
       '                      : former_life === 21\n' +
@@ -23876,5 +23876,91 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    await era.printAndWait(`交尾试试看♪」`); // 变异：拆回',
     tests: ['kojo-k10-club'],
     must_mention: ':7101..:7109 是一行',
+  },
+  {
+    desc: 'M12557 K1 交谈·二回目·无摄像·装备两档写反（快乐 ↔ 痛苦，#622：换档变异，钉档位映射）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.print(\n' +
+      '              chat_prefix +\n' +
+      '                `${target_name}一边发出着` +\n' +
+      "                (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n" +
+      '                `声音、一边拼命地回应着${player_name}。`,\n' +
+      '            ); // :4879+:4881+:4883+:4885',
+    replace:
+      '            await era.print(\n' +
+      '              chat_prefix +\n' +
+      '                `${target_name}一边发出着` +\n' +
+      "                (equip_pleasure ? `痛苦的` : equip_pain ? `快乐的` : '') +\n" +
+      '                `声音、一边拼命地回应着${player_name}。`,\n' +
+      '            ); // :4879+:4881+:4883+:4885（变异：两档写反）',
+    tests: ['kojo-k1-confident'],
+    must_mention: '一边发出着痛苦的声音',
+  },
+  {
+    desc: 'M12558 K10 交谈·二回目·无摄像·语调两档写反（快乐 ↔ 痛苦，#622：换档变异，钉档位映射）',
+    file: 'ere/kojo/kojo-k10-club.js',
+    find:
+      '            chat_prefix +\n' +
+      '              `会话的过程中，${target_name}` +\n' +
+      '              (equip_pleasure\n' +
+      '                ? `带着快乐的语调`\n' +
+      '                : equip_pain\n' +
+      '                  ? `带着痛苦的语调`\n' +
+      "                  : '') +\n" +
+      '              `拼命地回应着。`,\n' +
+      '          ); // :4229+:4231+:4233+:4235',
+    replace:
+      '            chat_prefix +\n' +
+      '              `会话的过程中，${target_name}` +\n' +
+      '              (equip_pleasure\n' +
+      '                ? `带着痛苦的语调`\n' +
+      '                : equip_pain\n' +
+      '                  ? `带着快乐的语调`\n' +
+      "                  : '') +\n" +
+      '              `拼命地回应着。`,\n' +
+      '          ); // :4229+:4231+:4233+:4235（变异：两档写反）',
+    tests: ['kojo-k10-club'],
+    must_mention: '带着痛苦的语调',
+  },
+  {
+    desc: 'M12559 K1 妊娠発覚 1回目·狗名链第二支漏拼前缀（#622：非首支必须自己带前缀）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.printAndWait(\n' +
+      '              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n' +
+      '            ); // :7040+:7042\n' +
+      '          } else if (rand_n(8) === 0) {\n' +
+      '            // :7043\n' +
+      '            await era.printAndWait(dog_name_prefix + `哈娜？」`); // :7044',
+    replace:
+      '            await era.printAndWait(\n' +
+      '              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n' +
+      '            ); // :7040+:7042\n' +
+      '          } else if (rand_n(8) === 0) {\n' +
+      '            // :7043\n' +
+      '            await era.printAndWait(`哈娜？」`); // :7044（变异：漏拼前缀）',
+    tests: ['kojo-k1-confident'],
+    must_mention: '非首支也带前缀（漏拼前缀会红）',
+  },
+  {
+    desc: 'M12560 K1 妊娠発覚 2回目以降·狗名链第二支漏拼前缀（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.printAndWait(\n' +
+      '              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n' +
+      '            ); // :7106+:7108\n' +
+      '          } else if (rand_n(8) === 0) {\n' +
+      '            // :7109\n' +
+      '            await era.printAndWait(dog_name_prefix + `哈娜？」`); // :7110',
+    replace:
+      '            await era.printAndWait(\n' +
+      '              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n' +
+      '            ); // :7106+:7108\n' +
+      '          } else if (rand_n(8) === 0) {\n' +
+      '            // :7109\n' +
+      '            await era.printAndWait(`哈娜？」`); // :7110（变异：漏拼前缀）',
+    tests: ['kojo-k1-confident'],
+    must_mention: '非首支也带前缀（2回目以降，漏拼前缀会红）',
   },
 ];
