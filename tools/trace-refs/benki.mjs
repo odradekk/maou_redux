@@ -177,11 +177,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
-        ref: '992-1021',
-        any: [/^\s*JUEL:\(ARG:0\):5 \+= PLAY\*10$/m],
-      },
-      {
-        src: 'target/ERB/調教相關/BENKI.ERB',
         ref: '1059-1185',
         any: [/在精囊被掏空之前/],
       },
@@ -234,6 +229,97 @@ export const FILES = [
         src: 'target/ERB/調教相關/BENKI.ERB',
         ref: '1656-1681',
         any: [/^@BENKI_PLAYER_NAME$/m],
+      },
+      // #615：CALL BENKI_PLAYER_NAME 前后的显示行（奉仕分派与两处清算）
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '887',
+        any: [/^\tPRINTFORML 作为侍奉用便器在地下城里服侍着$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '888',
+        any: [/^\tCALL BENKI_PLAYER_NAME$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '890',
+        any: [/^\tPRINTFORML %SAVESTR:\(ARG:0\)%$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '892-941',
+        any: [
+          /^\tIF BENKI_MENU:1 >= 3 && BENKI_MENU:2 >= 3\n\t\t;A&Vソース3以上で両穴プレイ\n\t\tPRINTFORM 能用上的穴全用上了，/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '951',
+        any: [/^\tPRINTFORML %SAVESTR:\(ARG:0\)%共处理了\{PLAY\}个底层$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '952',
+        any: [/^\tCALL BENKI_PLAYER_NAME$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '953',
+        any: [/^\tPRINTFORM 的性欲。$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '956-978',
+        any: [
+          /^\tIF PLAY > 30\n\t\tIF TALENT:\(ARG:0\):122\n\t\tPRINTFORML %SAVESTR:\(ARG:0\)%拥有肮脏欲望和差劲眼光的传闻扩散到了故乡，以无论多脏的东西会乐意给予性施舍的圣者而闻名。/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1105',
+        any: [/^\tPRINTFORML %SAVESTR:\(ARG:0\)%一共处理了\{PLAY\}个$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1106',
+        any: [/^\tCALL BENKI_PLAYER_NAME$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1107',
+        any: [/^\tPRINTFORM 的性欲。$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1109-1132',
+        any: [
+          /^\t;処理数に応じて噂が広がる\n\tIF PLAY > 30\n\t\tPRINTFORML %SAVESTR:\(ARG:0\)%是个喜欢强奸女人的女勇者/m,
+        ],
+      },
+      // #615：一般分派清算——:1287 是 PRINTFORM（不换行），与 CALL、:1289 的
+      // 「的性欲。」和 :1292-1305 的传闻同属一条显示行
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1287',
+        any: [/^\tPRINTFORM %SAVESTR:\(ARG:0\)%共处理了\{PLAY\}个$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1288',
+        any: [/^\tCALL BENKI_PLAYER_NAME$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1289',
+        any: [/^\tPRINTFORM 的性欲。$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1292-1305',
+        any: [
+          /^\tIF PLAY > 30\n\t\tPRINTFORML %SAVESTR:\(ARG:0\)%向魔族谄媚的传闻传到了故乡，被乡里鄙视了。/m,
+        ],
       },
     ],
   },

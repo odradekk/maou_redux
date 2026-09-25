@@ -108,6 +108,36 @@ test('config_penis_you_setting：999 直接返回，不改状态；非 0-4/999 �
   assert.equal(chara(0).chara.阴茎的状态, before);
 });
 
+// —— #615：print 正文不带尾换行（CONTEXT.md「输出 API 与原作的对应」）——
+
+test('#615 config_penis_you_setting：标题行不带尾换行，紧接 [0] 按钮行', async () => {
+  const fixture = create_era_fixture();
+  const { config_penis_you_setting } = load(fixture);
+  fixture.set_inputs(999);
+  await config_penis_you_setting();
+
+  const lines = fixture.lines;
+  assert.equal(
+    lines[0].text,
+    '魔王的兵器是如意金箍棒，可大也可小！！',
+    'CONFIG.ERB:88 的 PRINTFORML 自成一行，正文不带尾换行（多写 \\n 会多一个空行）',
+  );
+  assert.equal(lines[1].type, 'button', ':90 的 [0] 按钮行紧随其下');
+  assert.equal(lines[1].accelerator, 0);
+});
+
+test('#615 config_penis_you_setting：回显行不带尾换行（:103 PRINT + :105 PRINTW）', async () => {
+  const fixture = create_era_fixture();
+  const { config_penis_you_setting } = load(fixture);
+  fixture.set_inputs(1);
+  await config_penis_you_setting();
+
+  assert.ok(
+    fixture.text_lines().includes('你的鸡鸡状态：《巨根》'),
+    `回显是一行（PRINT + PRINTW），实际 ${JSON.stringify(fixture.text_lines())}`,
+  );
+});
+
 test('adventurer_gender_status_text：六档文案（global:3，@EVENTFIRST 开局 -1）', () => {
   const fixture = create_era_fixture();
   const { adventurer_gender_status_text } = load(fixture);

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 472; // #596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 489; // #615 起 +17（M12240-M12248：print 正文的尾换行——[98]/[99] 确认页两行、RACE_CONFIG 表头/编辑头两行/随机档两个标签、兵器标题与鸡鸡状态回显；M12250-M12253/M12269：完全召唤横幅两行、之间的真空行与 :76 的两个空行、首段短横线与尾随两空格；M12254-M12256：ENEMY_EXIST2 首行空行与空名单分支）；#596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -3628,8 +3628,8 @@ export default [
   {
     desc: 'M11492 ENEMY_EXIST2 的首行空行删掉（原作 :595/:630 的 PRINTL，两个调用方都受影响，#548/#180）',
     file: 'ere/page/page-dungeon-info2.js',
-    find: '  // :595 / :629-630 调用方的行已落，本函数先落一个空行（见 JSDoc）\n  era.println();',
-    replace: '  // 变异：漏掉首行空行',
+    find: '  if (sorted.length > 0) {\n    era.println();\n  }',
+    replace: '  // 变异：漏掉首行空行（:595 的 PRINTL）',
     tests: ['page-dungeon-info'],
     must_mention: '开头的空行',
   },
@@ -4093,16 +4093,16 @@ export default [
   {
     desc: 'M11587 「■ 下限」丢前导两个全角空格（:1215，#547 返工 6）',
     file: 'ere/page/page-config-age.js',
-    find: `          era.print('　　■ 下限\\n');`,
-    replace: `          era.print('■ 下限\\n'); // 变异：丢前导全角空格`,
+    find: `          era.print('　　■ 下限');`,
+    replace: `          era.print('■ 下限'); // 变异：丢前导全角空格`,
     tests: ['page-config-age'],
     must_mention: '「■ 下限」带前导两个全角空格',
   },
   {
     desc: 'M11588 「■ 上限」丢前导两个全角空格（:1233，#547 返工 6）',
     file: 'ere/page/page-config-age.js',
-    find: `          era.print('　　■ 上限\\n');`,
-    replace: `          era.print('■ 上限\\n'); // 变异：丢前导全角空格`,
+    find: `          era.print('　　■ 上限');`,
+    replace: `          era.print('■ 上限'); // 变异：丢前导全角空格`,
     tests: ['page-config-age'],
     must_mention: '「■ 上限」带前导两个全角空格',
   },
@@ -4548,5 +4548,154 @@ export default [
     replace: '    // 变异：无按钮子页的真空行删掉',
     tests: ['page-chara-info'],
     must_mention: '无按钮子页里 :907 的空行在补白之后',
+  },
+  // —— #615：print 正文的尾换行（page-config-age.js 的 7 处） ——
+  {
+    desc: 'M12240 [98]/[99] 确认页首行补回尾换行（print 自成一行，尾换行多出一个显示行）',
+    file: 'ere/page/page-config-age.js',
+    find: "  era.print(prompt);\n  era.print('确认吗？');",
+    replace:
+      "  era.print(`${prompt}\\n`); // 变异：尾换行\n  era.print('确认吗？');",
+    tests: ['page-config-age'],
+    must_mention: ':1036 的正文不带尾换行',
+  },
+  {
+    desc: 'M12241 [98]/[99] 确认页询问行补回尾换行（:1037 的 PRINTL 只收行）',
+    file: 'ere/page/page-config-age.js',
+    find: "  era.print('确认吗？');",
+    replace: "  era.print('确认吗？\\n'); // 变异：尾换行",
+    tests: ['page-config-age'],
+    must_mention: ':1037 的行紧随其后',
+  },
+  {
+    desc: 'M12242 RACE_CONFIG 表头补回尾换行（:972-974 是 PRINTFORM + PRINTFORML 的同一行）',
+    file: 'ere/page/page-config-age.js',
+    find: "      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄',",
+    replace:
+      "      '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄\\n', // 变异：尾换行",
+    tests: ['page-config-age'],
+    must_mention: ':972-974 的 PRINTFORM + PRINTFORML 是一条显示行',
+  },
+  {
+    desc: 'M12243 编辑头档位说明行补回尾换行（:1131-1143 的收尾 PRINTFORML）',
+    file: 'ere/page/page-config-age.js',
+    find: '        era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}`);',
+    replace:
+      '        era.print(`■ 种族 [${RACE_NAMES[result]}] 的年龄设定：${edit_desc}\\n`); // 变异：尾换行',
+    tests: ['page-config-age'],
+    must_mention: '档位说明行不带尾换行',
+  },
+  {
+    desc: 'M12244 编辑头 17 岁预览行补回尾换行（:1146-1162 的收尾 PRINTFORML）',
+    file: 'ere/page/page-config-age.js',
+    find: "        era.print('　 换算人类 17 岁左右 ' + edit_age);",
+    replace:
+      "        era.print('　 换算人类 17 岁左右 ' + edit_age + '\\n'); // 变异：尾换行",
+    tests: ['page-config-age'],
+    must_mention: '预览行不带尾换行',
+  },
+  {
+    desc: 'M12245 随机档「■ 下限」标签补回尾换行（:1215 的 PRINTL 自成一行）',
+    file: 'ere/page/page-config-age.js',
+    find: "          era.print('　　■ 下限');",
+    replace: "          era.print('　　■ 下限\\n'); // 变异：尾换行",
+    tests: ['page-config-age'],
+    must_mention: ':1215 的 PRINTL 自成一行',
+  },
+  {
+    desc: 'M12246 随机档「■ 上限」标签补回尾换行（:1233 的 PRINTL 自成一行）',
+    file: 'ere/page/page-config-age.js',
+    find: "          era.print('　　■ 上限');",
+    replace: "          era.print('　　■ 上限\\n'); // 变异：尾换行",
+    tests: ['page-config-age'],
+    must_mention: ':1233 的 PRINTL 自成一行',
+  },
+  {
+    desc: 'M12247 兵器标题行补回两个尾换行（CONFIG.ERB:88 的 PRINTFORML 自成一行）',
+    file: 'ere/page/page-config.js',
+    find: "  era.print('魔王的兵器是如意金箍棒，可大也可小！！');",
+    replace:
+      "  era.print('魔王的兵器是如意金箍棒，可大也可小！！\\n\\n'); // 变异：尾换行造空行",
+    tests: ['page-config'],
+    must_mention: '正文不带尾换行（多写',
+  },
+  {
+    desc: 'M12248 鸡鸡状态回显补回尾换行（:103 PRINT + :105 PRINTW 是一条显示行）',
+    file: 'ere/page/page-config.js',
+    find: '    await era.printAndWait(`你的鸡鸡状态：${PENIS_LABELS[result]}`);',
+    replace:
+      '    await era.printAndWait(`你的鸡鸡状态：${PENIS_LABELS[result]}\\n`); // 变异：尾换行',
+    tests: ['page-config'],
+    must_mention: '回显是一行（PRINT + PRINTW）',
+  },
+  // —— #615：完全召唤横幅两行 + 前后空行数（CHARA_INFO_SHOW:63-68 / :76） ——
+  {
+    desc: 'M12250 两行横幅之间的真空行删掉（:65 的第二个 \\n 落空行）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '    era.println(); // :65 的第二个 \\n：横幅之间的真空行',
+    replace: '    // 变异：横幅之间的真空行删掉',
+    tests: ['chara-info-show'],
+    must_mention: ':65 的第二个 \\n',
+  },
+  {
+    desc: 'M12251 横幅第二行拆回三段（:66-68 是同一显示行）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '    era.print(`${dashes()}< 完 全 召 唤 >${dashes()}  `);',
+    replace:
+      "    era.print(dashes()); // 变异：拆回三段\n    era.print('< 完 全 召 唤 >');\n    era.print(`${dashes()}  `);",
+    tests: ['chara-info-show'],
+    must_mention: '横幅第二行（不再被拆成三段）',
+  },
+  {
+    desc: 'M12252 横幅第一行的首段短横线删掉（:63-65 拼接的开头那一段）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,',
+    replace:
+      '      `魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `, // 变异：首段短横线没了',
+    tests: ['chara-info-show'],
+    must_mention: '横幅第一行',
+  },
+  {
+    desc: 'M12269 横幅第一行的尾随两个空格删掉（:65 的 "\\s"*2 是原作拼行的一部分）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,',
+    replace:
+      '      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}`, // 变异：尾随两个空格没了',
+    tests: ['chara-info-show'],
+    must_mention: '横幅第一行',
+  },
+  {
+    desc: 'M12253 :76 的两个空行只留一个（RESTART 之前是 \\n*2）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '    era.println(); // :76 的第一个 \\n\n    era.println(); // :76 的第二个 \\n',
+    replace: '    era.println(); // 变异：:76 的两个 \\n 只留一个',
+    tests: ['chara-info-show'],
+    must_mention: ':76 的第二个 \\n',
+  },
+  // —— #615：ENEMY_EXIST2 的空行落在原作的分支上（:595 与 :629-630） ——
+  {
+    desc: 'M12254 首行空行改回无条件（名单为空时 :595 与 :630 各落一个空行）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  if (sorted.length > 0) {\n    era.println();\n  }',
+    replace:
+      '  if (sorted.length >= 0) { // 变异：恒真\n    era.println();\n  }',
+    tests: ['page-dungeon-info', 'page-shop-floor'],
+    must_mention: '名单为空只有 :630 的一个空行',
+  },
+  {
+    desc: 'M12255 名单为空时尾部的空行删掉（:630 的 PRINTL）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  } else {\n    // 名单为空：:595 未执行，这一条 PRINTL 落出那个空行\n    era.println();\n  }',
+    replace: '  }',
+    tests: ['page-dungeon-info', 'page-shop-floor'],
+    must_mention: '名单为空只有 :630 的一个空行',
+  },
+  {
+    desc: 'M12256 首行空行的条件反转（有队伍时不落 :595 的空行、空名单反而落两个）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  if (sorted.length > 0) {',
+    replace: '  if (sorted.length === 0) { // 变异：条件反转',
+    tests: ['page-dungeon-info'],
+    must_mention: ':595 的首行空行 + 队伍行',
   },
 ];

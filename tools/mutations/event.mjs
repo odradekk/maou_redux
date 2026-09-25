@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 382; // #597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 383; // #615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #547 起 +3+1（M11578-M11580，返工轮加 M11589 的 LOADGLOBAL 镜像）；#548 起 +8（M11470-M11477：CHARADEAD_CHECK 真身与 @EVENTEND
@@ -3522,5 +3522,15 @@ export default [
     replace: '    // 变异：角色信息之前的真空行删除',
     tests: ['enter-enemy'],
     must_mention: ':98 与 :159 两个真空行都在（角色信息之前）',
+  },
+  // —— #615：print 正文的尾换行（first-setting.js 的狂王性别一问） ——
+  {
+    desc: 'M12249 狂王性别一问的两条 PRINTL 并回一次 print（内部 \\n——显示行数同、Row 数少一个）',
+    file: 'ere/event/first-setting.js',
+    find: "  era.print('狂王是支配这个地区的领主'); // :902\n  era.print('继承了曾经封印你的勇者的血统，打算把你再次封印'); // :903",
+    replace:
+      "  era.print(\n    '狂王是支配这个地区的领主\\n继承了曾经封印你的勇者的血统，打算把你再次封印',\n  ); // 变异：#615 之前的并法",
+    tests: ['event-first'],
+    must_mention: ':902 的首行',
   },
 ];
