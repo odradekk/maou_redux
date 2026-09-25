@@ -19599,13 +19599,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
-        ref: '4174-4193',
-        any: [
-          /^\s*PRINTFORML 会话的过程中，%SAVESTR:TARGET%扭动着腰呢喃着充满爱意的话语。\s*$\s*^\s*ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60\s*$\s*^\s*PRINTFORML 会话的过程中，%SAVESTR:TARGET%扭动着腰叫嚷着淫猥的话语。\s*$\s*^\s*ELSEIF \(PALAM:4 >= PALAMLV:4 \|\| ABL:10 >= 5 \|\| TALENT:85\) && PALAM:5 >= PALAMLV:4\s*$\s*^\s*PRINTFORM 会话的过程中，%SAVESTR:TARGET%\s*$\s*^\s*IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17\s*$\s*^\s*PRINT 带着快乐的语调\s*$\s*^\s*ELSEIF TEQUIP:44 \|\| TEQUIP:49\s*$/m,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
         ref: '4175',
         any: [
           /^\s*ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60\s*$/m,
@@ -19887,13 +19880,6 @@ export const FILES = [
         ref: '4225',
         any: [
           /^\s*PRINTFORML 会话的过程中，%SAVESTR:TARGET%扭动着腰呢喃着充满爱意的话语。\s*$/m,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
-        ref: '4225-4244',
-        any: [
-          /^\s*PRINTFORML 会话的过程中，%SAVESTR:TARGET%扭动着腰呢喃着充满爱意的话语。\s*$\s*^\s*ELSEIF PALAM:5 >= PALAMLV:4 && \(TALENT:76 \|\| ABL:11 >= 5\) && TFLAG:60\s*$\s*^\s*PRINTFORML 会话的过程中，%SAVESTR:TARGET%扭动着腰叫嚷着淫猥的话语。\s*$\s*^\s*ELSEIF \(PALAM:4 >= PALAMLV:4 \|\| ABL:10 >= 5 \|\| TALENT:85\) && PALAM:5 >= PALAMLV:4\s*$\s*^\s*PRINTFORM 会话的过程中，%SAVESTR:TARGET%\s*$\s*^\s*IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17\s*$\s*^\s*PRINT 带着快乐的语调\s*$\s*^\s*ELSEIF TEQUIP:44 \|\| TEQUIP:49\s*$/m,
         ],
       },
       {
@@ -31822,18 +31808,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
-        ref: '7102',
-        any: [/^\s*IF CFLAG:A:504 == 1\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
         ref: '7103',
         any: [/^\s*PRINT 犬\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
-        ref: '7104',
-        any: [/^\s*ELSEIF CFLAG:A:504 == 2\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
@@ -31842,18 +31818,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
-        ref: '7106',
-        any: [/^\s*ELSEIF CFLAG:A:504 == 3\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
         ref: '7107',
         any: [/^\s*PRINT 馬\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
-        ref: '7108-7109',
-        any: [/^\s*ENDIF\s*$\s*^\s*PRINTFORMW 交尾试试看♪」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K10_クラブ.ERB',
