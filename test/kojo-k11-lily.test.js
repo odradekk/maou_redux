@@ -8463,11 +8463,6 @@ function line_with(fixture, fragment) {
   return fixture.text_lines().find((l) => l.includes(fragment));
 }
 
-/** 含该片段的行下标（找不到返回 -1） */
-function index_of(fixture, fragment) {
-  return fixture.text_lines().findIndex((l) => l.includes(fragment));
-}
-
 test('#623 COM56 初回录像：自我介绍整行合并（:6842+:6844+:6845）', async () => {
   const cases = [
     {
@@ -8523,13 +8518,15 @@ test('#623 COM56 二回目录像：自我介绍整行合并（:6929+:6931+:6932�
   }
 });
 
-// 助手玛奥通常交谈的首支与后续支：:6865 的「面对%SAVESTR:PLAYER%」与首支
-// :6867 的 PRINTFORML 同属一行；其余 ELSEIF 支各自另起一行，前缀仍单独输出。
+// 助手玛奥通常交谈的四族（初回/二回目 × 助手/非助手）：:6865/:6893/:6952/:6980
+// 的 PRINTFORM 前缀提到语句外（const line_head），六支各写 `line_head + 支文本`，
+// 玩家在任何一支路径上都看到一整行（#623 返工）。
 for (const [label, assistant] of [
   ['助手玛奥', true],
   ['非助手', false],
 ]) {
-  test(`#623 COM56 初回通常（${label}）：首支并入前缀整行、其余支保留前缀行`, async () => {
+  test(`#623 COM56 初回通常（${label}）：三支各自并入 :6865/:6893 前缀整行`, async () => {
+    const head = assistant ? '面对你' : '你';
     const seed = (f, era_flag) => {
       f.store.set('palamlv:2', 100);
       f.store.set('palamlv:4', 200);
@@ -8540,69 +8537,122 @@ for (const [label, assistant] of [
         era_flag.assiplay = 1;
       }
     };
-    const first = setup_lily((f, era_flag) => {
-      seed(f, era_flag);
-      f.store.set(`palam:${LILY}:5`, 200);
-      f.store.set(`talent:${LILY}:85`, 1);
-      f.store.set('tflag:60', 1);
-    }, 56);
-    await speak_com11(first, seq_rand());
-    assert.equal(
-      line_with(
-        first,
-        assistant ? '的语言调戏、莉莉扭着腰' : '的语言挑逗、莉莉扭着腰',
-      ),
-      assistant
-        ? '面对你的语言调戏、莉莉扭着腰，边自慰边发出一声声享受的娇喘。'
-        : '你的语言挑逗、莉莉扭着腰，边自慰边诉说着对你的爱慕。',
-      `${label}：首支与 :6865/:6893 前缀合成一行`,
-    );
-
-    const second = setup_lily((f, era_flag) => {
-      seed(f, era_flag);
-      f.store.set(`palam:${LILY}:5`, 200);
-      f.store.set(`talent:${LILY}:76`, 1);
-      f.store.set(`abl:${LILY}:11`, 5);
-      f.store.set('tflag:60', 1);
-    }, 56);
-    await speak_com11(second, seq_rand());
-    const idx = index_of(
-      second,
-      assistant ? '边侵犯边用语言调戏' : '的语言挑逗、莉莉弯着腰',
-    );
-    assert.ok(idx >= 1, `${label}：第二支有输出`);
-    assert.equal(
-      second.text_lines()[idx - 1],
-      assistant ? '面对你' : '你',
-      `${label}：其余支的 :6865/:6893 前缀仍单独成行`,
-    );
+    const cases = [
+      {
+        label: '首支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:85 || 顺从 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:85`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '的语言调戏、莉莉扭着腰，边自慰边发出一声声享受的娇喘。'
+          : '的语言挑逗、莉莉扭着腰，边自慰边诉说着对你的爱慕。',
+      },
+      {
+        label: '第二支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:76 || 欲望 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:76`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '边侵犯边用语言调戏、莉莉弯着腰，不顾廉耻地边娇喘边大声说着'
+          : '的语言挑逗、莉莉弯着腰，不顾廉耻地边娇喘边大声说着',
+      },
+      {
+        label: '第四支',
+        // PALAM:4 >= PALAMLV:4 || TALENT:85 || 顺从 >= 5（PALAM:5 落档避开前三支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 200),
+        tail: assistant
+          ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
+          : '的语言挑逗、莉莉有些害羞地应答着',
+      },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        seed(f, era_flag);
+        item.seed(f);
+      }, 56);
+      await speak_com11(fixture, seq_rand());
+      assert.equal(
+        line_with(fixture, item.tail.slice(0, 10)),
+        head + item.tail,
+        `${label} ${item.label}：与 :6865/:6893 前缀合成一行`,
+      );
+      assert.equal(
+        fixture.text_lines().filter((l) => l === head).length,
+        0,
+        `${label} ${item.label}：前缀不得再单独成行`,
+      );
+    }
   });
 
-  test(`#623 COM56 二回目通常（${label}）：首支并入前缀整行`, async () => {
-    const fixture = setup_lily((f, era_flag) => {
+  test(`#623 COM56 二回目通常（${label}）：三支各自并入 :6952/:6980 前缀整行`, async () => {
+    const head = '面对你';
+    const seed = (f, era_flag) => {
       f.store.set(`cflag:${LILY}:357`, 9);
       f.store.set('palamlv:4', 200);
-      f.store.set(`palam:${LILY}:5`, 200);
-      f.store.set(`talent:${LILY}:85`, 1);
-      f.store.set('tflag:60', 1);
       if (assistant) {
         preset_chara_17(f);
         f.era.addCharacter(MAO);
         era_flag.assi = MAO;
         era_flag.assiplay = 1;
       }
-    }, 56);
-    await speak_com11(fixture, seq_rand());
-    assert.equal(
-      line_with(
-        fixture,
-        assistant ? '的语言调戏、莉莉扭着腰' : '的语言挑逗、莉莉扭着腰',
-      ),
-      assistant
-        ? '面对你的语言调戏、莉莉扭着腰，边自慰边发出一声声享受的娇喘。'
-        : '面对你的语言挑逗、莉莉扭着腰，边自慰边诉说着对你的爱慕。',
-      `${label}：二回目首支整行`,
-    );
+    };
+    const cases = [
+      {
+        label: '首支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:85 || 顺从 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:85`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '的语言调戏、莉莉扭着腰，边自慰边发出一声声享受的娇喘。'
+          : '的语言挑逗、莉莉扭着腰，边自慰边诉说着对你的爱慕。',
+      },
+      {
+        label: '第二支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:76 || 欲望 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:76`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '的语言调戏、莉莉弯着腰，不顾廉耻地边娇喘边大声说着'
+          : '的语言挑逗、莉莉弯着腰，不顾廉耻地边娇喘边大声说着',
+      },
+      {
+        label: '第四支',
+        // PALAM:4 >= PALAMLV:4 || TALENT:85 || 顺从 >= 5（PALAM:5 落档避开前三支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 200),
+        tail: assistant
+          ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
+          : '的语言挑逗、莉莉有些害羞地应答着',
+      },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        seed(f, era_flag);
+        item.seed(f);
+      }, 56);
+      await speak_com11(fixture, seq_rand());
+      assert.equal(
+        line_with(fixture, item.tail.slice(0, 10)),
+        head + item.tail,
+        `${label} ${item.label}：与 :6952/:6980 前缀合成一行`,
+      );
+      assert.equal(
+        fixture.text_lines().filter((l) => l === head).length,
+        0,
+        `${label} ${item.label}：前缀不得再单独成行`,
+      );
+    }
   });
 }
 
@@ -8652,18 +8702,16 @@ for (const [label, assistant] of [
           }
         }, 56);
         await speak_com11(fixture, seq_rand());
-        const line = line_with(fixture, '的语言调戏，莉莉');
+        const head = assistant || replay ? '面对你' : '你';
         assert.equal(
-          line,
-          `的语言调戏，莉莉${item.expected}${tail}`,
+          line_with(fixture, '的语言调戏，莉莉'),
+          `${head}的语言调戏，莉莉${item.expected}${tail}`,
           `${label} ${phase} tequip=${item.tequip}：插入段并入整行`,
         );
-        // 其余支的 :6865/:6893/:6952/:6980 前缀仍单独成行（保真锁的拼接锚
-        // 只容一个末行，其余支的末行自带换行，前缀无法并进那几支——见完成报告）
         assert.equal(
-          fixture.text_lines()[fixture.text_lines().indexOf(line) - 1],
-          assistant || replay ? '面对你' : '你',
-          `${label} ${phase} tequip=${item.tequip}：前缀仍单独成行`,
+          fixture.text_lines().filter((l) => l === head).length,
+          0,
+          `${label} ${phase} tequip=${item.tequip}：前缀不得再单独成行`,
         );
       }
     }
@@ -8690,6 +8738,12 @@ test('#623 NTR P=1：狂王插入处女一段整行合并（:12609+:12611+:12613
       expected:
         '双手被抓住的莉莉拼命挣扎着，但狂王只是哈哈大笑着用双腿之间的巨根径直插入了莉莉的蜜穴之中。',
     },
+    {
+      seed: () => {},
+      flag500: 1,
+      expected:
+        '双手被抓住的莉莉拼命挣扎着，但狂王只是哈哈大笑着用粗大的假阳具径直插入了莉莉的蜜穴之中。',
+    },
   ];
   for (const item of cases) {
     const fixture = setup_lily((f) => {
@@ -8710,17 +8764,30 @@ test('#623 NTR P=2：肛门插入两段整行合并（:12638+… / :12655+…）
   const cases = [
     {
       seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 2,
       expected:
         '莉莉被狂王的巨根撑开肛门，径直插了进去。在狂王的持续侵犯下，莉莉不住地呻吟了起来。',
     },
     {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 1,
+      expected:
+        '莉莉被粗大的假阳具撑开肛门，径直插了进去。在狂王的持续侵犯下，莉莉不住地呻吟了起来。',
+    },
+    {
       seed: () => {},
+      flag500: 2,
       expected: '莉莉的肛门被狂王的巨根撑开了肛门，插了进去。',
+    },
+    {
+      seed: () => {},
+      flag500: 1,
+      expected: '莉莉的肛门被粗大的假阳具撑开了肛门，插了进去。',
     },
   ];
   for (const item of cases) {
     const fixture = setup_lily((f) => {
-      f.store.set('flag:500', 2);
+      f.store.set('flag:500', item.flag500);
       item.seed(f);
     });
     const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
@@ -8730,7 +8797,7 @@ test('#623 NTR P=2：肛门插入两段整行合并（:12638+… / :12655+…）
         ? line_with(fixture, '的肛门被')
         : line_with(fixture, '撑开肛门，径直插了进去'),
       item.expected,
-      item.seed.toString(),
+      `FLAG:500=${item.flag500} ${item.seed.toString()}`,
     );
   }
 });
@@ -8739,25 +8806,38 @@ test('#623 NTR P=4：V プレイ两段整行合并（:12683+… / :12700+…）'
   const cases = [
     {
       seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 2,
       expected:
         '狂王的巨根持续地侵犯着莉莉的蜜穴，莉莉感受着交媾的快感，发出了甘甜的娇喘。',
     },
     {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 1,
+      expected:
+        '粗大的假阳具持续地侵犯着莉莉的蜜穴，莉莉感受着交媾的快感，发出了甘甜的娇喘。',
+    },
+    {
       seed: () => {},
+      flag500: 2,
       expected: '狂王的巨根持续地侵犯着莉莉的蜜穴，莉莉不住地呻吟着。',
+    },
+    {
+      seed: () => {},
+      flag500: 1,
+      expected: '粗大的假阳具持续地侵犯着莉莉的蜜穴，莉莉不住地呻吟着。',
     },
   ];
   for (const item of cases) {
     const fixture = setup_lily((f) => {
-      f.store.set('flag:500', 2);
+      f.store.set('flag:500', item.flag500);
       item.seed(f);
     });
     const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
     await ntr_koujo_family.call(11, { args: [seq_rand(), 4] });
     assert.equal(
-      line_with(fixture, '狂王的巨根持续地侵犯着'),
+      line_with(fixture, '持续地侵犯着莉莉的蜜穴'),
       item.expected,
-      item.seed.toString(),
+      `FLAG:500=${item.flag500} ${item.seed.toString()}`,
     );
   }
 });
