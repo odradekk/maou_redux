@@ -182,18 +182,18 @@ const gobi_koujo_family = new DispatchFamily(
  *   - family   入口分发用的族（DispatchFamily 的导出名）
  *   - flag_guard 该入口有无 FLAG:7 总开关守卫（true = 关掉口上时不派发）。
  *              由测试对着原件各函数体段现场核对（不是抄来的声明）
- *   - missing  缺席语义：'silent' = TRYCALL 落空静默（多数族）；
- *              'stub' = 打占位行（存根可见，登记在 docs/stub-registry.md）
- *   - stub_wait 只有 stub 行有意义：true = 占位行后等键（stub_line_wait，
- *              分发期输出不被重绘清掉的 #73 约定），缺省 false
  *   - call     调用入口时的实参名（驱动方按名取值）
  *   - handler  handler 应收到的实参名（逐条对照实现，是实参契约的锁）
+ *
+ * **缺席语义不进表**：#565 返工起未命中一律静默（try_kojo 的返回 0、族调用的
+ * whenMissing，原作 TRYCALLFORM 落空的等价物），各行没有差别。「原作有对应
+ * 函数而 ere 没移植」的真缺口由 test/kojo-family-coverage.test.js 静态核对拦住。
  *
  * 实参名 → 驱动方取值：cid = 目标角色号；event_no = 事件编号（K0 旧签名
  * 收它）；choice = 奖赏/惩罚选择序号；arg0 = @GOBI_KOUJO 的情绪编号；
  * q = @SELF_KOJO 的自慰妄想对象；rand = 注入的确定性随机源。
  *
- * 表内的行为分支（守卫、TARGET 语义、两态缺席）在
+ * 表内的行为分支（守卫、TARGET 语义、缺席静默）在
  * test/event-k-dispatch.test.js 里逐条钉住——本表只管「谁在哪一行派发到
  * 哪个族」这一件事。
  */
@@ -206,7 +206,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'kojo_message_com_family',
     flag_guard: true,
-    missing: 'silent',
     call: ['rand'],
     handler: ['rand'],
   },
@@ -218,7 +217,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'kojo_message_palamcng_family',
     flag_guard: true,
-    missing: 'stub',
     call: ['rand'],
     handler: ['rand'],
   },
@@ -230,7 +228,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'kojo_message_markcng_family',
     flag_guard: true,
-    missing: 'stub',
     call: ['rand'],
     handler: ['rand'],
   },
@@ -243,7 +240,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'kojo_event_com_family',
     flag_guard: false,
-    missing: 'silent',
     call: [],
     handler: [],
   },
@@ -255,7 +251,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'self_kojo_family',
     flag_guard: true,
-    missing: 'silent',
     call: ['rand', 'q'],
     handler: ['rand', 'q'],
   },
@@ -267,7 +262,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-dungeon-ravish',
     family: 'ryouzyoku_kojo_family',
     flag_guard: false,
-    missing: 'silent',
     call: [],
     handler: [],
   },
@@ -279,7 +273,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-dungeon-ravish',
     family: 'ryouzyoku_after_kojo_family',
     flag_guard: false,
-    missing: 'silent',
     call: [],
     handler: [],
   },
@@ -291,10 +284,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'benki_koujo_family',
     flag_guard: false,
-    // #585：try_kojo 通道未命中静默（#565 返工第 4 条），与登记表
-    // BENKI_KOUJO 行的说法对齐；其余仍标 'stub' 的行是 #565 遗留的历史
-    // 声明，本票不改
-    missing: 'silent',
     call: ['rand'],
     handler: ['rand'],
   },
@@ -306,8 +295,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'dungeon_victory_family',
     flag_guard: false,
-    stub_wait: true,
-    missing: 'stub',
     call: ['cid', 'rand'],
     handler: ['rand'],
   },
@@ -319,8 +306,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'dungeon_attack_family',
     flag_guard: false,
-    stub_wait: true,
-    missing: 'stub',
     call: ['cid', 'rand'],
     handler: ['rand'],
   },
@@ -335,8 +320,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'dungeon_attack_family',
     flag_guard: false,
-    stub_wait: true,
-    missing: 'stub',
     call: ['cid', 'rand'],
     handler: ['rand'],
   },
@@ -348,7 +331,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'ntr_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['choice', 'rand'],
     handler: ['rand', 'choice'],
   },
@@ -360,7 +342,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'exucution_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['cid', 'event_no', 'rand'],
     handler: ['rand'],
   },
@@ -372,7 +353,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'museum_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['cid', 'event_no', 'rand'],
     handler: ['rand'],
   },
@@ -384,7 +364,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'banishment_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['cid', 'event_no', 'rand'],
     handler: ['rand'],
   },
@@ -396,7 +375,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'public_exucution_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['cid', 'event_no', 'rand'],
     handler: ['rand'],
   },
@@ -408,7 +386,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'grotesque_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['cid', 'event_no', 'rand'],
     handler: ['rand'],
   },
@@ -420,7 +397,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'enterenemy_koujo_family',
     flag_guard: false,
-    missing: 'stub',
     call: ['cid', 'rand'],
     handler: ['rand'],
   },
@@ -432,7 +408,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-dungeon-after',
     family: 'gohoubi_request_koujo_family',
     flag_guard: false,
-    missing: 'stub',
     call: ['cid'],
     handler: ['cid'],
   },
@@ -444,7 +419,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-dungeon-after',
     family: 'gohoubi_after_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['cid', 'choice'],
     handler: ['cid', 'choice'],
   },
@@ -456,7 +430,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-dungeon-after',
     family: 'osioski_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['cid', 'choice'],
     handler: ['cid', 'choice'],
   },
@@ -468,7 +441,6 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'gobi_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['arg0', 'rand'],
     handler: ['arg0', 'rand'],
   },

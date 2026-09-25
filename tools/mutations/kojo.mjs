@@ -21021,9 +21021,10 @@ on('EVENTEND', eventend_kojo_903);`,
     must_mention: 'handler 实参逐条对上',
   },
   // M8971：删除（#549 全量变异查出红）——#565 返工把未命中统一成静默后，
-  // 分发表里的 missing 字段只作历史文档（event-k-dispatch.test.js 注释明言
+  // 分发表里的 missing 字段只作历史文档（event-k-dispatch.test.js 曾注明
   // 「行为面不再区分两态」），'stub' 改 'silent' 无行为差异。与 #565 删
-  // M1730/M8956（「未注册打占位」已是错的行为）同一前提、同一处置。
+  // M1730/M8956（「未注册打占位」已是错的行为）同一前提、同一处置；#630 起
+  // 该字段与 stub_wait 已连同表注从分发表删除。
   {
     desc: 'M8972 分发表：入口名错字（benki_koujo 改 benki_koujo_）',
     file: 'ere/kojo/kojo-system.js',
@@ -21069,7 +21070,6 @@ on('EVENTEND', eventend_kojo_903);`,
     module: 'kojo/kojo-system',
     family: 'gobi_koujo_family',
     flag_guard: false,
-    missing: 'silent',
     call: ['arg0', 'rand'],
     handler: ['arg0', 'rand'],
   },

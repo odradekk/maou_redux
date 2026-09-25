@@ -12,8 +12,7 @@
  *     LOCAL - 100；EX_TALENT 101-800 → LOCAL 1001-1700 → 键 901-1600）；
  *   - 各入口的守卫集与 TARGET 语义逐条对照原作的 :N（有无 FLAG:7 守卫、
  *     有无存在判定、是否 TARGET = A / B / ARG:0 并还原）；
- *   - 缺席语义两态：静默（TRYCALL 落空）与占位行（存根可见，登记在
- *     docs/stub-registry.md）——两态都是既定设计，逐条钉住；
+ *   - 缺席语义：未命中一律静默（原作 TRYCALL 落空；#565 返工统一）——逐条钉住；
  *   - :218 的 KOJO_EVENT_COM 恒空转（全库 0 个 @KOJO_EVENT_COM_* 定义，
  *     #14 登记）与 :325 的 ATTACK_KOUJO_B（调用方侵略/ARCANA_BATTLE.ERB
  *     未移植）；
@@ -506,7 +505,7 @@ async function drive_row(row, { key = 3, seed = () => {} } = {}) {
     target_during = era_flag.target;
     return 0;
   });
-  fixture.set_inputs(...Array(4).fill(0)); // 占位行的等键（wait 族）备料
+  fixture.set_inputs(...Array(4).fill(0)); // 预置输入：入口里若有等键调用也不会卡住
   const ctx = { cid, rand };
   const result = await entry(...row.call.map((name) => arg_value(name, ctx)));
   return { fixture, era_flag, mod, seen, target_during, rand, cid, result };
@@ -631,7 +630,7 @@ test('族 call 的落空值契约：22 行都在 options 里声明 whenMissing =
     };
     family.register(3, async () => 0);
 
-    fixture.set_inputs(...Array(4).fill(0)); // 占位行的等键备料
+    fixture.set_inputs(...Array(4).fill(0)); // 预置输入：入口里若有等键调用也不会卡住
     const ctx = { cid, rand };
     await mod[row.entry](...row.call.map((name) => arg_value(name, ctx)));
 
@@ -716,8 +715,7 @@ test('缺席语义：未命中一律静默（原作 TRYCALLFORM 落空，#565 �
       missing_value,
       `${row.entry}：缺 handler 时返回 ${JSON.stringify(missing_value)}（TRYCALL 落空）`,
     );
-    // 表里的 missing/stub_wait 字段自 #565 返工起只作历史文档（未命中统一
-    // 静默），行为面不再区分两态
+    // 未命中一律静默（#565 返工），各入口没有差别
     assert.deepEqual(
       lines,
       [],

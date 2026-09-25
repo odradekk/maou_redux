@@ -172,7 +172,7 @@ async function source_check_auto() {
 
 /**
  * @ATTACK_KOUJO（EVENT_K.ERB:311）：攻击时的口上台词。分发层在
- * kojo-system.js；未注册性格仍打占位行。
+ * kojo-system.js；未注册性格静默（try_kojo，原作 TRYCALLFORM 落空）。
  * @param {number} [cid] 攻击者（原作 ARG:0）
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
@@ -182,7 +182,7 @@ async function attack_koujo(cid) {
 
 /**
  * @VICTORY_KOUJO（EVENT_K.ERB:294）：胜利时的口上台词。分发层在
- * kojo-system.js；未注册性格仍打占位行。
+ * kojo-system.js；未注册性格静默（try_kojo，原作 TRYCALLFORM 落空）。
  * @param {number} [cid] 胜者（原作全局 A = ATKER）
  * @returns {Promise<void>} 原作无 RESULT 消费
  */
