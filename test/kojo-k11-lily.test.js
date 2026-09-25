@@ -8525,7 +8525,7 @@ for (const [label, assistant] of [
   ['助手玛奥', true],
   ['非助手', false],
 ]) {
-  test(`#623 COM56 初回通常（${label}）：三支各自并入 :6865/:6893 前缀整行`, async () => {
+  test(`#623 COM56 初回通常（${label}）：五支各自并入 :6865/:6893 前缀整行`, async () => {
     const head = assistant ? '面对你' : '你';
     const seed = (f, era_flag) => {
       f.store.set('palamlv:2', 100);
@@ -8570,6 +8570,22 @@ for (const [label, assistant] of [
           ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
           : '的语言挑逗、莉莉有些害羞地应答着',
       },
+      {
+        label: '第五支',
+        // PALAM:4 >= PALAMLV:2 || 顺从 >= 3（PALAM:4 落档避开第四支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 100),
+        tail: assistant
+          ? '的语言调戏、莉莉小声地回答着'
+          : '的语言挑逗、莉莉结结巴巴地回答着',
+      },
+      {
+        label: '第六支',
+        // ELSE：其余条件全不成立
+        seed: () => {},
+        tail: assistant
+          ? '的语言羞辱，莉莉只是红着脸，低着头听着…'
+          : '的语言挑逗、莉莉听清楚了吗…',
+      },
     ];
     for (const item of cases) {
       const fixture = setup_lily((f, era_flag) => {
@@ -8590,10 +8606,11 @@ for (const [label, assistant] of [
     }
   });
 
-  test(`#623 COM56 二回目通常（${label}）：三支各自并入 :6952/:6980 前缀整行`, async () => {
+  test(`#623 COM56 二回目通常（${label}）：五支各自并入 :6952/:6980 前缀整行`, async () => {
     const head = '面对你';
     const seed = (f, era_flag) => {
       f.store.set(`cflag:${LILY}:357`, 9);
+      f.store.set('palamlv:2', 100);
       f.store.set('palamlv:4', 200);
       if (assistant) {
         preset_chara_17(f);
@@ -8634,6 +8651,22 @@ for (const [label, assistant] of [
         tail: assistant
           ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
           : '的语言挑逗、莉莉有些害羞地应答着',
+      },
+      {
+        label: '第五支',
+        // PALAM:4 >= PALAMLV:2 || 顺从 >= 3（PALAM:4 落档避开第四支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 100),
+        tail: assistant
+          ? '的语言调戏、莉莉小声地回答着'
+          : '的语言挑逗、莉莉结结巴巴地回答着',
+      },
+      {
+        label: '第六支',
+        // ELSE：其余条件全不成立
+        seed: () => {},
+        tail: assistant
+          ? '的语言羞辱，莉莉只是红着脸，低着头听着…'
+          : '的语言挑逗、莉莉听清楚了吗…',
       },
     ];
     for (const item of cases) {
