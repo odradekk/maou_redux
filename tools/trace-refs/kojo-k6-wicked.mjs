@@ -19085,11 +19085,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
-        ref: '4352-4353',
-        any: [/PRINT 带着痛苦的语调/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
         ref: '4354',
         any: [/PRINTFORML 拼命地回应着。/],
       },
@@ -19434,11 +19429,6 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
         ref: '4424',
-        any: [/PRINT 带着痛苦的语调/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
-        ref: '4424-4425',
         any: [/PRINT 带着痛苦的语调/],
       },
       {
@@ -32426,18 +32416,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
-        ref: '7805',
-        any: [/IF CFLAG:A:504 == 1/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
         ref: '7806',
         any: [/PRINT 狗/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
-        ref: '7807',
-        any: [/ELSEIF CFLAG:A:504 == 2/],
       },
       {
         src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
@@ -32446,17 +32426,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
-        ref: '7809',
-        any: [/ELSEIF CFLAG:A:504 == 3/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
         ref: '7810',
-        any: [/PRINT 马/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K6_悪女.ERB',
-        ref: '7810-7811',
         any: [/PRINT 马/],
       },
       {
