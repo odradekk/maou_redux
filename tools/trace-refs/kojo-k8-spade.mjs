@@ -17188,9 +17188,23 @@ export const FILES = [
         any: [/PRINTFORM 刚和她交谈了几句、%SAVESTR:TARGET%就一边发出着/],
       },
       {
+        // #622：与 :4707 逐字同文的平行复现（快感装备判据，注释放到语句外当条件）
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4656',
+        any: [
+          /IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/,
+        ],
+      },
+      {
         src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
         ref: '4657',
         any: [/PRINT 快乐的/],
+      },
+      {
+        // #622：与 :4709 逐字同文的平行复现（痛苦装备判据）
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4658',
+        any: [/ELSEIF TEQUIP:44 \|\| TEQUIP:49/],
       },
       {
         src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
@@ -17345,9 +17359,23 @@ export const FILES = [
         any: [/PRINTFORM 刚和她交谈了几句、%SAVESTR:TARGET%就一边发出着/],
       },
       {
+        // #622：与 :4656 逐字同文的平行复现（快感装备判据，注释放到语句外当条件）
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4707',
+        any: [
+          /IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/,
+        ],
+      },
+      {
         src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
         ref: '4708',
         any: [/PRINT 快乐的/],
+      },
+      {
+        // #622：与 :4658 逐字同文的平行复现（痛苦装备判据）
+        src: 'target/ERB/口上/EVENT_K8_スペード.ERB',
+        ref: '4709',
+        any: [/ELSEIF TEQUIP:44 \|\| TEQUIP:49/],
       },
       {
         src: 'target/ERB/口上/EVENT_K8_スペード.ERB',

@@ -1131,19 +1131,24 @@ async function k7_kojo2() {
     await era.printAndWait(
       `${target_name}看到${player_name}的身影，害怕的抱紧自己的身体向后退着、直到碰到墙壁才缓缓站起来。`,
     ); // :638
-    await era.print(`${player_name}慢慢的靠近了${target_name}`); // :639
+    // :639+:641 原作是一整行：无后缀 PRINTFORM :639 不换行，:641 的 PRINTW 才收行；
+    // ELSEIF 两支（:643/:645）是同一行的另两支。前缀提到语句外共用——各支自己的
+    // 语句只列本支行号，前缀留在里面会被保真锁 C 当成多出来的插值记号（#621）
+    const approach_front_639 = `${player_name}慢慢的靠近了${target_name}`; // :639
     if (
       era0(`talent:${target}:302`) >= 1 &&
       era0(`talent:${target}:302`) <= 100
     ) {
-      await era.printAndWait(`抓过她的金发嗅着。`); // :641
+      await era.printAndWait(
+        `${player_name}慢慢的靠近了${target_name}抓过她的金发嗅着。`,
+      ); // :639+:641
     } else if (
       era0(`talent:${target}:302`) >= 101 &&
       era0(`talent:${target}:302`) <= 200
     ) {
-      await era.printAndWait(`抓过她长顺的金发嗅着。`); // :643
+      await era.printAndWait(approach_front_639 + `抓过她长顺的金发嗅着。`); // :643
     } else if (era0(`talent:${target}:302`) >= 201) {
-      await era.printAndWait(`抓过她的金色短发嗅着。`); // :645
+      await era.printAndWait(approach_front_639 + `抓过她的金色短发嗅着。`); // :645
     }
     await era.printAndWait(
       `${target_name}被做了这样的事，也只能闭着眼睛默默忍受着。然后${player_name}把她推到。`,
@@ -9121,29 +9126,41 @@ async function kojo_message_com_7(rand) {
     if (era0(`cflag:${target}:346`) == 0) {
       if (era0(`talent:${target}:76`) == 1) {
         await era.printAndWait(`「不想听见我的喘息声吗…？ 啊…嗯…嗯咕………」`); // :5104
-        await era.print(`${target_name}因为嘴被塞住而稍稍不满的`); // :5105
+        // :5105+:5107 原作是一整行：无后缀 PRINTFORM :5105 不换行，:5107 的 PRINTW
+        // 才收行；ELSE 支 :5109 是同一行的另一支，前缀提到语句外共用（#621）
+        const mouth_front_5105 = `${target_name}因为嘴被塞住而稍稍不满的`; // :5105
         if (era0(`tequip:${target}:43`)) {
-          await era.printAndWait(`动了起来………`); // :5107
+          await era.printAndWait(
+            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,
+          ); // :5105+:5107
         } else {
-          await era.printAndWait(`用眼睛凝视着${player_name}………`); // :5109
+          await era.printAndWait(
+            mouth_front_5105 + `用眼睛凝视着${player_name}………`,
+          ); // :5109
         }
       } else if (era0(`talent:${target}:85`) == 1) {
         await era.printAndWait(`「啊啊…请更多的拘束我吧…嗯…嗯咕…嗯呼呼…♪」`); // :5113
-        await era.print(`${target_name}好像期待着什么就那样`); // :5114
+        // :5114+:5116 同型（ELSE 支 :5118）
+        const mouth_front_5114 = `${target_name}好像期待着什么就那样`; // :5114
         if (era0(`tequip:${target}:43`)) {
-          await era.printAndWait(`动了起来………`); // :5116
+          await era.printAndWait(
+            `${target_name}好像期待着什么就那样动了起来………`,
+          ); // :5114+:5116
         } else {
-          await era.printAndWait(`用眼睛凝视着${player_name}………`); // :5118
+          await era.printAndWait(
+            mouth_front_5114 + `用眼睛凝视着${player_name}………`,
+          ); // :5118
         }
       } else {
         await era.printAndWait(
           `「不、不要啊…这个好像其他人也用过…嗯！嗯咕………！」`,
         ); // :5122
-        await era.print(`${target_name}的嘴被口枷塞住，`); // :5123
+        // :5123+:5125 同型（ELSE 支 :5127）
+        const mouth_front_5123 = `${target_name}的嘴被口枷塞住，`; // :5123
         if (era0(`tequip:${target}:43`)) {
-          await era.printAndWait(`左右摇着头………`); // :5125
+          await era.printAndWait(`${target_name}的嘴被口枷塞住，左右摇着头………`); // :5123+:5125
         } else {
-          await era.printAndWait(`瞪着${player_name}………`); // :5127
+          await era.printAndWait(mouth_front_5123 + `瞪着${player_name}………`); // :5127
         }
       }
       // CFLAG:TARGET:346  = 1（变量语义：CFLAG 族，TARGET:346） // :5130
@@ -9181,11 +9198,16 @@ async function kojo_message_com_7(rand) {
         (era0(`cflag:${target}:346`) <= 6 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(`「虽然我的喘息声音可能确实有点大…嗯咕………」`); // :5146
-        await era.print(`${target_name}因为嘴被塞住而稍稍不满的`); // :5147
+        // :5147+:5149 同型（ELSE 支 :5151）
+        const mouth_front_5147 = `${target_name}因为嘴被塞住而稍稍不满的`; // :5147
         if (era0(`tequip:${target}:43`)) {
-          await era.printAndWait(`动了起来………`); // :5149
+          await era.printAndWait(
+            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,
+          ); // :5147+:5149
         } else {
-          await era.printAndWait(`用眼睛凝视着${player_name}………`); // :5151
+          await era.printAndWait(
+            mouth_front_5147 + `用眼睛凝视着${player_name}………`,
+          ); // :5151
         }
         // CFLAG:TARGET:346  = 7（变量语义：CFLAG 族，TARGET:346） // :5153
         era.set(`cflag:${target}:346`, 7); // :5153
@@ -9220,11 +9242,16 @@ async function kojo_message_com_7(rand) {
         (era0(`cflag:${target}:346`) <= 3 || era0('flag:7') == 2)
       ) {
         await era.printAndWait(`「啊啊…我的嘴被塞住了♪………嗯…嗯咕…♪」`); // :5166
-        await era.print(`${target_name}好像期待着什么就那样`); // :5167
+        // :5167+:5169 同型（ELSE 支 :5171）
+        const mouth_front_5167 = `${target_name}好像期待着什么就那样`; // :5167
         if (era0(`tequip:${target}:43`)) {
-          await era.printAndWait(`动了起来………`); // :5169
+          await era.printAndWait(
+            `${target_name}好像期待着什么就那样动了起来………`,
+          ); // :5167+:5169
         } else {
-          await era.printAndWait(`用眼睛凝视着${player_name}………`); // :5171
+          await era.printAndWait(
+            mouth_front_5167 + `用眼睛凝视着${player_name}………`,
+          ); // :5171
         }
         // CFLAG:TARGET:346  = 4（变量语义：CFLAG 族，TARGET:346） // :5173
         era.set(`cflag:${target}:346`, 4); // :5173
@@ -9240,11 +9267,12 @@ async function kojo_message_com_7(rand) {
         era.set(`cflag:${target}:346`, 3); // :5178
       } else if (era0(`cflag:${target}:346`) <= 1 || era0('flag:7') == 2) {
         await era.printAndWait(`「啊咕…嗯…嗯咕…嗯…嗯嗯！」`); // :5181
-        await era.print(`${target_name}的嘴被口枷塞住`); // :5182
+        // :5182+:5184 同型（ELSE 支 :5186）
+        const mouth_front_5182 = `${target_name}的嘴被口枷塞住`; // :5182
         if (era0(`tequip:${target}:43`)) {
-          await era.printAndWait(`左右摇着头………`); // :5184
+          await era.printAndWait(`${target_name}的嘴被口枷塞住左右摇着头………`); // :5182+:5184
         } else {
-          await era.printAndWait(`瞪着${player_name}………`); // :5186
+          await era.printAndWait(mouth_front_5182 + `瞪着${player_name}………`); // :5186
         }
         // CFLAG:TARGET:346  = 2（变量语义：CFLAG 族，TARGET:346） // :5188
         era.set(`cflag:${target}:346`, 2); // :5188
@@ -9562,11 +9590,14 @@ async function kojo_message_com_7(rand) {
       } else if (era0(`tequip:${target}:53`) == 1) {
         await era.print(`${player_name}催促${target_name}进行自我介绍、`); // :5390
         if (era0(`talent:${target}:89`) || era0(`abl:${target}:17`) >= 5) {
-          await era.print(`${target_name}把自己的本名和至今为止的性体验`); // :5392
-          if (era0(`abl:${target}:31`) >= 3) {
-            await era.print(`、甚至连自慰时妄想的内容都`); // :5394
-          }
-          await era.print(`高兴地讲了出来……`); // :5395
+          // :5392+:5394+:5395 原作是一整行：无后缀 PRINTFORM 连续不换行，:5395 的
+          // PRINTFORML 才收行；:5394 的 SIF ABL:31 >= 3 判据提到语句外取值（#621）
+          const recall_dirty = era0(`abl:${target}:31`) >= 3;
+          await era.print(
+            `${target_name}把自己的本名和至今为止的性体验` +
+              (recall_dirty ? `、甚至连自慰时妄想的内容都` : '') + // :5394
+              `高兴地讲了出来……`,
+          ); // :5392+:5394+:5395
           await era.print(
             `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,
           ); // :5396
@@ -9592,55 +9623,68 @@ async function kojo_message_com_7(rand) {
           await era.print(`${target_name}头扭向一边什么都不说`); // :5405
         }
       } else {
-        await era.print(`被${player_name}`); // :5408
+        // :5408+:5410 原作是一整行：无后缀 PRINTFORM :5408 不换行，各支的
+        // PRINTFORML 才收行；第三支 :5414+:5416+:5418+:5420 也同属这一行。前缀提到
+        // 语句外共用——各支自己的语句只列本支行号，前缀留在里面会被保真锁 C
+        // 当成多出来的插值记号（#621）
+        const talk_front_5408 = `被${player_name}`; // :5408
         if (
           era0(`palam:${target}:5`) >= era0('palamlv:4') &&
           (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
           era0('tflag:60')
         ) {
-          await era.print(`搭着话、${target_name}摇着腰说出了爱的话语`); // :5410
+          await era.print(
+            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,
+          ); // :5408+:5410
         } else if (
           era0(`palam:${target}:5`) >= era0('palamlv:4') &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
           era0('tflag:60')
         ) {
-          await era.print(`搭着话、${target_name}摇着腰说出了下流的话语`); // :5412
+          await era.print(
+            talk_front_5408 + `搭着话、${target_name}摇着腰说出了下流的话语`,
+          ); // :5412
         } else if (
           (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
             era0(`abl:${target}:10`) >= 5 ||
             era0(`talent:${target}:85`)) &&
           era0(`palam:${target}:5`) >= era0('palamlv:4')
         ) {
-          await era.print(`搭着话、${target_name}一边发出`); // :5414
-          if (
+          // :5414+:5416+:5418+:5420 也同属一行：两档语调的判据提到语句外取值（#621）
+          const excited_5415 =
             era0(`tequip:${target}:11`) ||
             era0(`tequip:${target}:13`) ||
             era0(`tequip:${target}:14`) ||
             era0(`tequip:${target}:15`) ||
             era0(`tequip:${target}:16`) ||
-            era0(`tequip:${target}:17`)
-          ) {
-            await era.print(`快乐的`); // :5416
-          } else if (
-            era0(`tequip:${target}:44`) ||
-            era0(`tequip:${target}:49`)
-          ) {
-            await era.print(`痛苦的`); // :5418
-          }
-          await era.print(`的声音、一边拼死的回着话`); // :5420
+            era0(`tequip:${target}:17`);
+          const painful_5417 =
+            era0(`tequip:${target}:44`) || era0(`tequip:${target}:49`);
+          await era.print(
+            talk_front_5408 +
+              `搭着话、${target_name}一边发出` +
+              (excited_5415 ? `快乐的` : painful_5417 ? `痛苦的` : '') +
+              `的声音、一边拼死的回着话`,
+          ); // :5414+:5416+:5418+:5420
         } else if (
           era0(`palam:${target}:4`) >= era0('palamlv:4') ||
           era0(`talent:${target}:85`) ||
           era0(`abl:${target}:10`) >= 5
         ) {
-          await era.print(`搭着话、${target_name}融洽的回着话`); // :5422
+          await era.print(
+            talk_front_5408 + `搭着话、${target_name}融洽的回着话`,
+          ); // :5422
         } else if (
           era0(`palam:${target}:4`) >= era0('palamlv:2') ||
           era0(`abl:${target}:10`) >= 3
         ) {
-          await era.print(`搭着话、${target_name}断断续续的回着话`); // :5424
+          await era.print(
+            talk_front_5408 + `搭着话、${target_name}断断续续的回着话`,
+          ); // :5424
         } else {
-          await era.print(`搭着话、但是${target_name}好像没有认真听…`); // :5426
+          await era.print(
+            talk_front_5408 + `搭着话、但是${target_name}好像没有认真听…`,
+          ); // :5426
         }
       }
       // CFLAG:357  = 1（变量语义：CFLAG 族，357） // :5429
@@ -9716,11 +9760,13 @@ async function kojo_message_com_7(rand) {
           rand_n(3) == 0 &&
           (era0(`talent:${target}:89`) || era0(`abl:${target}:17`) >= 5)
         ) {
-          await era.print(`${target_name}把自己的本名和至今为止的性体验`); // :5469
-          if (era0(`abl:${target}:31`) >= 3) {
-            await era.print(`、甚至连自慰时妄想的内容都`); // :5471
-          }
-          await era.print(`高兴地讲了出来……`); // :5472
+          // :5469+:5471+:5472 同型（SIF ABL:31 >= 3 的判据提到语句外取值；#621）
+          const recall_dirty_5470 = era0(`abl:${target}:31`) >= 3;
+          await era.print(
+            `${target_name}把自己的本名和至今为止的性体验` +
+              (recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') + // :5471
+              `高兴地讲了出来……`,
+          ); // :5469+:5471+:5472
           await era.print(
             `一想到这个水晶球很快就会送往狂王大人的身边股间就湿了……`,
           ); // :5473
@@ -9746,55 +9792,66 @@ async function kojo_message_com_7(rand) {
           await era.print(`${target_name}头扭向一边什么都不说`); // :5482
         }
       } else {
-        await era.print(`被${player_name}`); // :5485
+        // :5485+:5487 同 :5408 那处一整行：前缀提到语句外共用，
+        // 第三支 :5491+:5493+:5495+:5497 下面合成一条（#621）
+        const talk_front_5485 = `被${player_name}`; // :5485
         if (
           era0(`palam:${target}:5`) >= era0('palamlv:4') &&
           (era0(`talent:${target}:85`) || era0(`abl:${target}:10`) >= 5) &&
           era0('tflag:60')
         ) {
-          await era.print(`搭着话、${target_name}摇着腰说出了爱的话语`); // :5487
+          await era.print(
+            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,
+          ); // :5485+:5487
         } else if (
           era0(`palam:${target}:5`) >= era0('palamlv:4') &&
           (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
           era0('tflag:60')
         ) {
-          await era.print(`搭着话、${target_name}摇着腰说出了下流的话语`); // :5489
+          await era.print(
+            talk_front_5485 + `搭着话、${target_name}摇着腰说出了下流的话语`,
+          ); // :5489
         } else if (
           (era0(`palam:${target}:4`) >= era0('palamlv:4') ||
             era0(`abl:${target}:10`) >= 5 ||
             era0(`talent:${target}:85`)) &&
           era0(`palam:${target}:5`) >= era0('palamlv:4')
         ) {
-          await era.print(`搭着话、${target_name}一边发出`); // :5491
-          if (
+          // :5491+:5493+:5495+:5497 也同属一行：两档语调的判据提到语句外取值（#621）
+          const excited_5492 =
             era0(`tequip:${target}:11`) ||
             era0(`tequip:${target}:13`) ||
             era0(`tequip:${target}:14`) ||
             era0(`tequip:${target}:15`) ||
             era0(`tequip:${target}:16`) ||
-            era0(`tequip:${target}:17`)
-          ) {
-            await era.print(`快乐的`); // :5493
-          } else if (
-            era0(`tequip:${target}:44`) ||
-            era0(`tequip:${target}:49`)
-          ) {
-            await era.print(`痛苦的`); // :5495
-          }
-          await era.print(`声音、一边拼死的回着话`); // :5497
+            era0(`tequip:${target}:17`);
+          const painful_5494 =
+            era0(`tequip:${target}:44`) || era0(`tequip:${target}:49`);
+          await era.print(
+            talk_front_5485 +
+              `搭着话、${target_name}一边发出` +
+              (excited_5492 ? `快乐的` : painful_5494 ? `痛苦的` : '') +
+              `声音、一边拼死的回着话`,
+          ); // :5491+:5493+:5495+:5497
         } else if (
           era0(`palam:${target}:4`) >= era0('palamlv:4') ||
           era0(`talent:${target}:85`) ||
           era0(`abl:${target}:10`) >= 5
         ) {
-          await era.print(`搭着话、${target_name}融洽的回着话`); // :5499
+          await era.print(
+            talk_front_5485 + `搭着话、${target_name}融洽的回着话`,
+          ); // :5499
         } else if (
           era0(`palam:${target}:4`) >= era0('palamlv:2') ||
           era0(`abl:${target}:10`) >= 3
         ) {
-          await era.print(`搭着话、${target_name}断断续续的回着话`); // :5501
+          await era.print(
+            talk_front_5485 + `搭着话、${target_name}断断续续的回着话`,
+          ); // :5501
         } else {
-          await era.print(`搭着话、但是${target_name}好像没有认真听…`); // :5503
+          await era.print(
+            talk_front_5485 + `搭着话、但是${target_name}好像没有认真听…`,
+          ); // :5503
         }
       }
       return 0;
@@ -13299,12 +13356,17 @@ async function dungeon_ryouzyoku_after_k7() {
     await era.printAndWait(
       `「哦唔！ 因为我的处女是再生处女膜的假货而不出手是什么意思！？」`,
     ); // :8000
-    await era.print(`作为代替`); // :8001
-
-    if (era0(`exp:${target}:1`) > 20) {
+    // :8001+:8004 原作是一整行：无后缀 PRINT :8001 不换行，:8004 的 PRINTFORMW 才
+    // 收行。EXP:1 不满档时原作把「作为代替」悬空留给下一句 PRINT，移植里仍让它
+    // 自成一行——两支都只输出一次，把 else 支写在前面是为了让 :8001+:8004 的合成
+    // 语句留在后面（普查按组内最后覆盖的那条语句判定，#621）
+    const anal_exp_8003 = era0(`exp:${target}:1`) > 20;
+    if (!anal_exp_8003) {
+      await era.print(`作为代替`); // :8001
+    } else {
       await era.printAndWait(
-        `${target_name}的肛门被彻底侵犯，逆流出了分不清是精液还是粘液的液体。`,
-      ); // :8004
+        `作为代替${target_name}的肛门被彻底侵犯，逆流出了分不清是精液还是粘液的液体。`,
+      ); // :8001+:8004
       await era.printAndWait(`「啊嗯…只侵犯肛门…你们真的很喜欢这种玩法呢………」`); // :8005
     }
 
@@ -13610,18 +13672,18 @@ async function colosseum_kojo_7() {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「哈啊…哈啊…嗯…嗯唔…嗯啾…嗯咕…嗯啾啾…」`); // :8252
       await era.printAndWait(`「绝…绝饶不了你…嗯咕！？」`); // :8253
-      await era.print(`${assi_name}因为`); // :8254
-      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
-        await era.print(`肉棒`); // :8256
-      }
-      if (
-        era0(`talent:${assi}:121`) != 1 &&
-        era0(`talent:${assi}:122`) != 1 &&
-        era0('item:4') == 1
-      ) {
-        await era.print(`假阴茎`); // :8258
-      }
-      await era.printAndWait(`被${target_name}舔着而露出了心旷神怡的额表情……`); // :8259
+      // :8254+:8256+:8258+:8259 原作是一整行：两条无后缀 PRINT 连续不换行，
+      // :8259 的 PRINTFORMW 才收行；两条 SIF 的判据提到语句外取值，片段文本留在
+      // 输出语句里（#621）
+      const assi_has_penis_8255 =
+        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;
+      const assi_dildo_8257 = !assi_has_penis_8255 && era0('item:4') == 1;
+      await era.printAndWait(
+        `${assi_name}因为` +
+          (assi_has_penis_8255 ? `肉棒` : '') + // :8256
+          (assi_dildo_8257 ? `假阴茎` : '') + // :8258
+          `被${target_name}舔着而露出了心旷神怡的额表情……`,
+      ); // :8254+:8256+:8258+:8259
     } else {
       await era.printAndWait(`「嗯…好臭…好臭…嗯咕…啾………」`); // :8261
       await era.printAndWait(
@@ -13651,18 +13713,16 @@ async function colosseum_kojo_7() {
   if (era_flag.selectcom == 21) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊啊——！咦…咦——！我、我…这样…啊啊——！」`); // :8288
-      await era.print(`${assi_name}一边听着${target_name}的悲鸣一边用`); // :8289
-      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
-        await era.print(`肉棒`); // :8291
-      }
-      if (
-        era0(`talent:${assi}:121`) != 1 &&
-        era0(`talent:${assi}:122`) != 1 &&
-        era0('item:4') == 1
-      ) {
-        await era.print(`假阴茎`); // :8293
-      }
-      await era.printAndWait(`继续毫不留情的蹂躏着${target_name}的小穴。`); // :8294
+      // :8289+:8291+:8293+:8294 同型（两档助手性器；#621）
+      const assi_has_penis_8290 =
+        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;
+      const assi_dildo_8292 = !assi_has_penis_8290 && era0('item:4') == 1;
+      await era.printAndWait(
+        `${assi_name}一边听着${target_name}的悲鸣一边用` +
+          (assi_has_penis_8290 ? `肉棒` : '') + // :8291
+          (assi_dildo_8292 ? `假阴茎` : '') + // :8293
+          `继续毫不留情的蹂躏着${target_name}的小穴。`,
+      ); // :8289+:8291+:8293+:8294
       await era.printAndWait(`随着${target_name}发出的悲鸣，观众们沸腾着………`); // :8295
     } else if (era0('tflag:400') == 206) {
       await era.printAndWait(
@@ -13687,18 +13747,16 @@ async function colosseum_kojo_7() {
       await era.printAndWait(
         `「啊哦…啊啊…如果你有人类的心的话…就稍微温柔一点…啊啊啊…咦…啊咕！」`,
       ); // :8315
-      await era.print(`${assi_name}一边听着${target_name}的悲鸣一边用`); // :8316
-      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
-        await era.print(`肉棒`); // :8318
-      }
-      if (
-        era0(`talent:${assi}:121`) != 1 &&
-        era0(`talent:${assi}:122`) != 1 &&
-        era0('item:4') == 1
-      ) {
-        await era.print(`假阴茎`); // :8320
-      }
-      await era.printAndWait(`继续毫不留情的蹂躏着${target_name}的小穴。`); // :8321
+      // :8316+:8318+:8320+:8321 同型（两档助手性器；#621）
+      const assi_has_penis_8317 =
+        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;
+      const assi_dildo_8319 = !assi_has_penis_8317 && era0('item:4') == 1;
+      await era.printAndWait(
+        `${assi_name}一边听着${target_name}的悲鸣一边用` +
+          (assi_has_penis_8317 ? `肉棒` : '') + // :8318
+          (assi_dildo_8319 ? `假阴茎` : '') + // :8320
+          `继续毫不留情的蹂躏着${target_name}的小穴。`,
+      ); // :8316+:8318+:8320+:8321
       await era.printAndWait(`随着${target_name}发出的悲鸣，观众们沸腾着………`); // :8322
     } else if (era0('tflag:400') == 206) {
       await era.printAndWait(
@@ -13756,14 +13814,14 @@ async function ntr_koujo_k7(rand, P) {
       await era.printAndWait(
         `${target_name}被分开着双腿绑住了脚腕，在她身边能看见吊起她的狂王。`,
       ); // :8360
-      if (era0('flag:500') == 1) {
-        await era.print(`然后、狂王的巨根`); // :8362
-      } else {
-        await era.print(`然后、特大号按摩棒`); // :8364
-      }
+      // :8362+:8364+:8366 原作是一整行：两条互斥的无后缀 PRINT（狂王的巨根 /
+      // 特大号按摩棒 :8362/:8364）与 :8366 的 PRINTFORMW 收行段同属一行；FLAG:500
+      // 的判据提到语句外取值（#621）
+      const king_penis_8361 = era0('flag:500') == 1;
       await era.printAndWait(
-        `慢慢的插进了${target_name}的秘裂。在镜头里能看见${target_name}的蜜壶被深深的贯穿了。`,
-      ); // :8366
+        (king_penis_8361 ? `然后、狂王的巨根` : `然后、特大号按摩棒`) + // :8362/:8364
+          `慢慢的插进了${target_name}的秘裂。在镜头里能看见${target_name}的蜜壶被深深的贯穿了。`,
+      ); // :8362+:8364+:8366
       await era.printAndWait(
         `「本来应该献给魔王大人的处女被夺走了…对不起…对不起…啊啊——！」`,
       ); // :8367
@@ -13781,14 +13839,12 @@ async function ntr_koujo_k7(rand, P) {
       await era.printAndWait(
         `「唔呵呵、那个魔王在考虑什么啊…啊嗯…把我的处女膜再生了…啊啊…再次被狂王大人夺走我的处女好幸福啊♪」`,
       ); // :8373
-      if (era0('flag:500') == 1) {
-        await era.print(`狂王的巨根`); // :8375
-      } else {
-        await era.print(`特大号按摩棒`); // :8377
-      }
+      // :8375+:8377+:8379 同型（两条互斥的性器名 + :8379 收行；#621）
+      const king_penis_8374 = era0('flag:500') == 1;
       await era.printAndWait(
-        `深深的插入了${target_name}的蜜壶、破瓜之血顺着大腿流了下来………`,
-      ); // :8379
+        (king_penis_8374 ? `狂王的巨根` : `特大号按摩棒`) + // :8375/:8377
+          `深深的插入了${target_name}的蜜壶、破瓜之血顺着大腿流了下来………`,
+      ); // :8375+:8377+:8379
     }
     // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :8381
     era.set(`cflag:${target}:651`, 1); // :8381
@@ -13799,13 +13855,13 @@ async function ntr_koujo_k7(rand, P) {
       ); // :8385
 
       if (era0(`abl:${target}:3`) >= 3) {
-        await era.print(`${target_name}被开发了的肛门轻易地吞下了`); // :8388
-        if (era0('flag:500') == 1) {
-          await era.print(`狂王的巨根`); // :8390
-        } else {
-          await era.print(`特大号按摩棒`); // :8392
-        }
-        await era.printAndWait(`、${target_name}开始发出了呻吟声。`); // :8394
+        // :8388+:8390+:8392+:8394 同型（无后缀 PRINT 连写，:8394 的 PRINTFORMW 收行）
+        const king_penis_8389 = era0('flag:500') == 1;
+        await era.printAndWait(
+          `${target_name}被开发了的肛门轻易地吞下了` +
+            (king_penis_8389 ? `狂王的巨根` : `特大号按摩棒`) + // :8390/:8392
+            `、${target_name}开始发出了呻吟声。`,
+        ); // :8388+:8390+:8392+:8394
         await era.printAndWait(
           `「啊啊…哈啊哈啊…啊嗯…啊啊…不、不行啊…啊啊…明明…不能有感觉…啊咦！」`,
         ); // :8395
@@ -13813,13 +13869,13 @@ async function ntr_koujo_k7(rand, P) {
           `水晶球的影像收录了${target_name}的肛门被用各种各样的体位侵犯直到绝顶………`,
         ); // :8396
       } else {
-        await era.print(`${target_name}的肛门吞下了`); // :8398
-        if (era0('flag:500') == 1) {
-          await era.print(`狂王的巨根`); // :8400
-        } else {
-          await era.print(`特大号按摩棒`); // :8402
-        }
-        await era.printAndWait(`、${target_name}因为强烈的苦痛而悲鸣着。`); // :8404
+        // :8398+:8400+:8402+:8404 同型（:8404 的 PRINTFORMW 收行）
+        const king_penis_8399 = era0('flag:500') == 1;
+        await era.printAndWait(
+          `${target_name}的肛门吞下了` +
+            (king_penis_8399 ? `狂王的巨根` : `特大号按摩棒`) + // :8400/:8402
+            `、${target_name}因为强烈的苦痛而悲鸣着。`,
+        ); // :8398+:8400+:8402+:8404
         await era.printAndWait(`「啊啊——…快停下…快停下啊…狂王…大人！」`); // :8405
         await era.printAndWait(
           `水晶球的影像收录了${target_name}的肛门被用各种各样的体位侵犯直到气绝………`,
@@ -13829,14 +13885,12 @@ async function ntr_koujo_k7(rand, P) {
       await era.printAndWait(
         `「呼哇啊啊啊…啊嗯…啊啊嗯…被狂王大人侵犯肛门好棒啊…♪」`,
       ); // :8409
-      if (era0('flag:500') == 1) {
-        await era.print(`狂王的巨根`); // :8411
-      } else {
-        await era.print(`特大号按摩棒`); // :8413
-      }
+      // :8411+:8413+:8415 同型（:8415 的 PRINTFORMW 收行）
+      const king_penis_8410 = era0('flag:500') == 1;
       await era.printAndWait(
-        `插进了${target_name}的肛门、${target_name}发出娇喘取悦着狂王………`,
-      ); // :8415
+        (king_penis_8410 ? `狂王的巨根` : `特大号按摩棒`) + // :8411/:8413
+          `插进了${target_name}的肛门、${target_name}发出娇喘取悦着狂王………`,
+      ); // :8411+:8413+:8415
     }
     // CFLAG:652  = 1（变量语义：CFLAG 族，652） // :8417
     era.set(`cflag:${target}:652`, 1); // :8417
@@ -13873,17 +13927,14 @@ async function ntr_koujo_k7(rand, P) {
       await era.printAndWait(
         `「嗯吼哦哦哦哦哦${heart(1)} 小穴小穴好舒服啊${heart(1)}」`,
       ); // :8436
-      await era.print(
-        `虽然因为完全变成性爱狂的${target_name}而困惑着，但还是用`,
-      ); // :8437
-      if (era0('flag:500') == 1) {
-        await era.print(`他的巨根`); // :8439
-      } else {
-        await era.print(`特大号按摩棒`); // :8441
-      }
+      // :8437+:8439+:8441+:8443 原作是一整行：无后缀 PRINT 连写，:8443 的
+      // PRINTFORMW 收行（#621）
+      const king_penis_8438 = era0('flag:500') == 1;
       await era.printAndWait(
-        `不停地侵犯着${target_name}的蜜壶。然后随着抽送${target_name}发出着野兽一样的呻吟声。`,
-      ); // :8443
+        `虽然因为完全变成性爱狂的${target_name}而困惑着，但还是用` +
+          (king_penis_8438 ? `他的巨根` : `特大号按摩棒`) + // :8439/:8441
+          `不停地侵犯着${target_name}的蜜壶。然后随着抽送${target_name}发出着野兽一样的呻吟声。`,
+      ); // :8437+:8439+:8441+:8443
       await era.printAndWait(
         `「哦哦哦哦吼…继续…继续侵犯我吧狂王大人啊啊——${heart(1)} 啊啊————${heart(1)}」`,
       ); // :8444
@@ -13894,14 +13945,12 @@ async function ntr_koujo_k7(rand, P) {
       await era.printAndWait(
         `「啊啊…嗯…哈啊…这么…温柔的抱我抱我什么的优…我…已经…啊…啊啊！」`,
       ); // :8448
-      if (era0('flag:500') == 1) {
-        await era.print(`狂王的巨根`); // :8450
-      } else {
-        await era.print(`特大号按摩棒`); // :8452
-      }
+      // :8450+:8452+:8454 同型（:8454 的 PRINTFORMW 收行）
+      const king_penis_8449 = era0('flag:500') == 1;
       await era.printAndWait(
-        `不停的侵犯着${target_name}的蜜壶、${target_name}发出了甜美的呻吟。`,
-      ); // :8454
+        (king_penis_8449 ? `狂王的巨根` : `特大号按摩棒`) + // :8450/:8452
+          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了甜美的呻吟。`,
+      ); // :8450+:8452+:8454
       await era.printAndWait(
         `「哈…啊…啊啊…我…啊嗯是的…我就这样每天被魔王大人…啊嗯啊啊啊——${heart(1)}」`,
       ); // :8455
@@ -13912,14 +13961,12 @@ async function ntr_koujo_k7(rand, P) {
       await era.printAndWait(
         `「啊嗯啊…太、太激烈了啊、啊嗯啊…啊…呼哇啊啊啊………」`,
       ); // :8458
-      if (era0('flag:500') == 1) {
-        await era.print(`狂王的巨根`); // :8460
-      } else {
-        await era.print(`特大号按摩棒`); // :8462
-      }
+      // :8460+:8462+:8464 同型（:8464 的 PRINTFORMW 收行）
+      const king_penis_8459 = era0('flag:500') == 1;
       await era.printAndWait(
-        `不停地侵犯着${target_name}的蜜穴、${target_name}呻吟着。`,
-      ); // :8464
+        (king_penis_8459 ? `狂王的巨根` : `特大号按摩棒`) + // :8460/:8462
+          `不停地侵犯着${target_name}的蜜穴、${target_name}呻吟着。`,
+      ); // :8460+:8462+:8464
       await era.printAndWait(
         `「啊啊用狂王大人的爱…把污秽的我净化吧…啊啊嗯啊哈啊啊啊」`,
       ); // :8465
@@ -14221,15 +14268,18 @@ async function gohoubi_request_koujo_k7(cid) {
     era0(`cflag:${cid}:504`) == 2 ||
     era0(`cflag:${cid}:504`) == 3
   ) {
-    await era.print(`「奖励？　我想尝试和`); // :8680
-    if (era0(`cflag:${cid}:504`) == 1) {
-      await era.print(`犬`); // :8682
-    } else if (era0(`cflag:${cid}:504`) == 2) {
-      await era.print(`豚`); // :8684
-    } else if (era0(`cflag:${cid}:504`) == 3) {
-      await era.print(`马`); // :8686
-    }
-    await era.printAndWait(`性交看看」`); // :8688
+    // :8680+:8682+:8684+:8686+:8688 原作是一整行：三条无后缀 PRINT 互斥
+    //（犬/豚/马），:8688 的 PRINTFORMW 才收行；档位判据提到语句外取值（#621）
+    const beast_kind_8680 = era0(`cflag:${cid}:504`);
+    await era.printAndWait(
+      `「奖励？　我想尝试和` +
+        (beast_kind_8680 == 1
+          ? `犬` // :8682
+          : beast_kind_8680 == 2
+            ? `豚` // :8684
+            : `马`) + // :8686
+        `性交看看」`,
+    ); // :8680+:8682+:8684+:8686+:8688
     await era.printAndWait(`${cid_name}要求了兽奸的奖励`); // :8689
   } else if (era0(`cflag:${cid}:504`) == 4) {
     await era.printAndWait(`「和我接吻的约定、我就有动力了哦」`); // :8692

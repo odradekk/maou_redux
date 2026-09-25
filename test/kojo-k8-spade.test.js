@@ -223,6 +223,52 @@ test('爱慕（无处女）：CFLAG:201 推进到 7', async () => {
   assert.equal(fixture.store.get('cflag:31:201'), 7);
 });
 
+test('爱慕+魔族化（调教前从魔族，CFLAG:370 == 1）：:278+:279 是一行，全裸档拼前缀（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:314', 9);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:201', 7);
+    f.store.set('cflag:31:370', 1);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  const lines = fixture.text_lines();
+  assert.equal(lines[0], '全裸的银黑桃单膝跪地，好像是在等待着你。');
+  assert.equal(lines[1], '然后银黑桃战战兢兢的开口了。');
+  assert.equal(fixture.store.get('cflag:31:201'), 8);
+});
+
+test('爱慕+魔族化（调教前从魔族）：着衣状态非 0 时不拼「全裸的」（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:314', 9);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:201', 7);
+    f.store.set('cflag:31:370', 1);
+    f.store.set('cflag:31:40', 209);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  assert.equal(fixture.text_lines()[0], '银黑桃单膝跪地，好像是在等待着你。');
+});
+
+test('爱慕+魔族化（调教后从魔族，CFLAG:370 == 2）：:301+:302 是一行（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:314', 9);
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:201', 7);
+    f.store.set('cflag:31:370', 2);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  const lines = fixture.text_lines();
+  assert.equal(lines[0], '全裸的银黑桃单膝跪地，好像是在等待着你。');
+  // :305 与 :282 同位置不同文（源作此处无句号），用来区分走的是 :299-320 那一支
+  assert.equal(
+    lines[3],
+    '一边瞟视这里一边用战战兢兢的语调说这话的，好像不是平时刚强而充满自信的那个人一样',
+  );
+});
+
 test('崩坏（TALENT:9 == 1，CFLAG:201 < 9）：推进到 9', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('talent:31:9', 1);
@@ -298,6 +344,33 @@ test('K8_KOJO2 屈服刻印Lv0（MARK:2 == 0）：经助手无路径触发', asy
     '「嘛、也许能代替按摩吧」',
     '银黑桃非常轻松的样子………',
   ]);
+});
+
+test('K8_KOJO2 メイド服：:671+:678 是一行，随机色夹在句中（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:37', 1); // FLAG:37 着衣系统非 0
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:201', 5); // 跳过 EVENTTRAIN 的淫乱支（要求 < 5）
+    f.store.set('mark:31:2', 4); // 避开屈服刻印 Lv0-Lv3 各支
+    f.store.set('cflag:31:40', 28); // CFLAG:40 着衣状态 & 28
+    f.store.set('cflag:31:41', 209); // CFLAG:41 上衣类型 == 209（メイド服）
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTTRAIN');
+  const lines = fixture.text_lines();
+  assert.equal(
+    lines[0],
+    '银黑桃的女仆服有着膝下20cm的裙子，因为里面加入了钢丝，裙子被漂亮的撑了起来。',
+  );
+  assert.match(
+    lines[2],
+    /^银黑桃把裙子卷了起来露出内衣。今日的内衣的颜色是[白赤黑青]的样子。$/,
+    'PRINTDATA 的四色之一夹在同一行里，整行只有一条输出',
+  );
+  assert.equal(
+    lines[3],
+    '被卷起来的裙子里面飘出了淫靡的气味。被你看着内衣就很兴奋的样子。',
+  );
 });
 
 // —— @EVENTEND：调教终了分档 ——
@@ -2475,7 +2548,7 @@ test('SELECTCOM 45 口塞·開始時，初めて（TEQUIP:45 已装）：CFLAG:3
   assert.equal(fixture.store.get('cflag:31:346'), 1, 'CFLAG:346 推进到 1');
 });
 
-test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上，眼罩已戴：拼接嘴的缝隙台词，CFLAG:346 推进到 9', async () => {
+test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上，眼罩已戴：:4383+:4385 是一行，输出一条（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('tequip:31:45', 1);
     f.store.set('cflag:31:346', 1);
@@ -2486,13 +2559,12 @@ test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '「我舒服起来之后一直都很吵呢…没办法呢……♡」',
-    '银黑桃自己戴上了口枷',
-    '嘴的缝隙里，漏出了灼热的吐息………',
+    '银黑桃自己戴上了口枷嘴的缝隙里，漏出了灼热的吐息………',
   ]);
   assert.equal(fixture.store.get('cflag:31:346'), 9, 'CFLAG:346 推进到 9');
 });
 
-test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上，眼罩未戴：拼接眼神快融化了台词', async () => {
+test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気Lv5以上，眼罩未戴：另一支 (:4387) 也接在本行前缀后', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('tequip:31:45', 1);
     f.store.set('cflag:31:346', 1);
@@ -2502,8 +2574,7 @@ test('SELECTCOM 45 口塞·開始時，二回目以降·淫乱＋受虐狂っ気
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '「我舒服起来之后一直都很吵呢…没办法呢……♡」',
-    '银黑桃自己戴上了口枷',
-    '眼神快融化了………',
+    '银黑桃自己戴上了口枷眼神快融化了………',
   ]);
 });
 
@@ -2517,12 +2588,11 @@ test('SELECTCOM 45 口塞·開始時，二回目以降·爱＋受虐狂っ気Lv5
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '「啊嗯…恩…嗯咕………！」',
-    '银黑桃被按上了口塞',
-    '眼神快融化………',
+    '银黑桃被按上了口塞眼神快融化………',
   ]);
 });
 
-test('SELECTCOM 45 口塞·開始時，二回目以降·受虐狂っ気Lv3以上，眼罩已戴：拼接嘴的缝隙台词，CFLAG:346 推进到 3', async () => {
+test('SELECTCOM 45 口塞·開始時，二回目以降·受虐狂っ気Lv3以上，眼罩已戴：:4443+:4445 是一行，CFLAG:346 推进到 3', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('tequip:31:45', 1);
     f.store.set('cflag:31:346', 1);
@@ -2532,8 +2602,7 @@ test('SELECTCOM 45 口塞·開始時，二回目以降·受虐狂っ気Lv3以上
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '「嗯啊…被装上口枷的话，总觉得脑袋都要变成傻瓜了………」',
-    '银黑桃被按上了口塞',
-    '嘴的缝隙里，漏出了灼热的吐息………',
+    '银黑桃被按上了口塞嘴的缝隙里，漏出了灼热的吐息………',
   ]);
   assert.equal(fixture.store.get('cflag:31:346'), 3, 'CFLAG:346 推进到 3');
 });
@@ -2549,6 +2618,48 @@ test('SELECTCOM 45 口塞·開始時，二回目以降·それ以外：CFLAG:346
     '银黑桃被口塞堵住的嘴的缝隙里，漏出了声音………',
   ]);
   assert.equal(fixture.store.get('cflag:31:346'), 2, 'CFLAG:346 推进到 2');
+});
+
+test('SELECTCOM 45 口塞·開始時，二回目以降·中间五档：各档的前缀与「嘴的缝隙」都是一行（#622）', async () => {
+  const cases = [
+    [
+      '淫乱＋受虐狂っ気Lv3以上（:4393+:4395）',
+      { 'talent:31:76': 1, 'abl:31:21': 3 },
+      '银黑桃被按上了口塞嘴的缝隙里，漏出了灼热的吐息………',
+    ],
+    [
+      '淫乱（:4403+:4405）',
+      { 'talent:31:76': 1 },
+      '银黑桃被戴上了口塞嘴的缝隙里，漏出了灼热的吐息………',
+    ],
+    [
+      '爱＋受虐狂っ気Lv5以上（:4413+:4415）',
+      { 'talent:31:85': 1, 'abl:31:21': 5 },
+      '银黑桃被按上了口塞嘴的缝隙里，漏出了灼热的吐息………',
+    ],
+    [
+      '爱＋受虐狂っ気Lv3以上（:4423+:4425）',
+      { 'talent:31:85': 1, 'abl:31:21': 3 },
+      '银黑桃被按上了口塞嘴的缝隙里，漏出了灼热的吐息………',
+    ],
+    [
+      '爱慕（:4433+:4435）',
+      { 'talent:31:85': 1 },
+      '银黑桃被按上了口塞嘴的缝隙里，漏出了灼热的吐息………',
+    ],
+  ];
+  for (const [label, seed, expected] of cases) {
+    const fixture = await setup_k8((f) => {
+      f.store.set('tequip:31:45', 1);
+      f.store.set('cflag:31:346', 1);
+      f.store.set('tequip:31:43', 1); // 眼罩已戴 → 走「嘴的缝隙」那一支
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(key, value);
+      }
+    }, 45);
+    await speak_k8(fixture);
+    assert.equal(fixture.text_lines()[1], expected, label);
+  }
 });
 
 test('SELECTCOM 45 口塞·終了時（TEQUIP:45 已取下）·淫乱：CFLAG:386 推进到 3', async () => {
@@ -2704,18 +2815,68 @@ test('SELECTCOM 55 放置PLAY，二回目以降·淫乱＋欲情Lv3以上：CFLA
   assert.equal(fixture.store.get('cflag:31:356'), 6, 'CFLAG:356 推进到 6');
 });
 
-test('SELECTCOM 56 交谈，初めて·无摄像·それ以外：CFLAG:357 推进到 1', async () => {
+test('SELECTCOM 56 交谈，初めて·无摄像·快乐装备未装：:4649+:4655..:4661 是一行，输出一条（#622）', async () => {
   const fixture = await setup_k8(undefined, 56);
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '你',
-    '刚和她交谈了几句、银黑桃就一边发出着',
-    '声音，一边拼命忍耐着的回着话',
+    '你刚和她交谈了几句、银黑桃就一边发出着声音，一边拼命忍耐着的回着话',
   ]);
   assert.equal(fixture.store.get('cflag:31:357'), 1, 'CFLAG:357 推进到 1');
 });
 
-test('SELECTCOM 56 交谈，初めて·视频自我介绍·TALENT:89：TFLAG:32 写入位 2', async () => {
+test('SELECTCOM 56 交谈，初めて·无摄像·痛苦装备（TEQUIP:44）：拼「痛苦的」（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:44', 1);
+    f.store.set('tequip:31:11', 0); // 快感装备优先级更高，此处不装
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你刚和她交谈了几句、银黑桃就一边发出着痛苦的声音，一边拼命忍耐着的回着话',
+  ]);
+});
+
+test('SELECTCOM 56 交谈，初めて·无摄像·求爱档（PALAM:5 + 插着不拔 + 爱慕）：:4649+:4651 是一行（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:85', 1);
+    f.store.set('palam:31:5', 100);
+    f.store.set('palamlv:4', 50);
+    f.store.set('tflag:60', 1);
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你刚和她交谈了几句、银黑桃就一边晃着腰一边说出了求爱的话语',
+  ]);
+});
+
+test('SELECTCOM 56 交谈，二回目以降·无摄像·求爱档：:4700+:4702 是一行（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:357', 1);
+    f.store.set('talent:31:85', 1);
+    f.store.set('palam:31:5', 100);
+    f.store.set('palamlv:4', 50);
+    f.store.set('tflag:60', 1);
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你刚和她交谈了几句、银黑桃就一边晃着腰一边说出了求爱的话语',
+  ]);
+});
+
+test('SELECTCOM 56 交谈，二回目以降·无摄像·それ以外档：:4700+:4718 各支都带前缀（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:357', 1);
+    f.store.set('palam:31:4', 100);
+    f.store.set('palamlv:2', 50);
+    f.store.set('palamlv:4', 200); // 抬高 Lv4 门槛：落到 ABL:10 >= 3 支
+    f.store.set('abl:31:10', 3);
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你刚和她交谈了几句、银黑桃一点点的回起话来',
+  ]);
+});
+
+test('SELECTCOM 56 交谈，初めて·视频自我介绍·TALENT:89：:4633+:4635+:4636 是一行，TFLAG:32 写入位 2（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('tequip:31:53', 1);
     f.store.set('talent:31:89', 1);
@@ -2724,12 +2885,24 @@ test('SELECTCOM 56 交谈，初めて·视频自我介绍·TALENT:89：TFLAG:32 
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
     '你催促着银黑桃进行自我介绍、',
-    '银黑桃把自己的本名和至今为止的性经验',
-    '甚至自慰时妄想的内容都',
-    '微笑的娓娓道来……',
+    '银黑桃把自己的本名和至今为止的性经验甚至自慰时妄想的内容都微笑的娓娓道来……',
     '只是期待着把水晶球的内容送到狂王那里去，股间就开始湿了……',
   ]);
   assert.equal(fixture.store.get('tflag:32'), 2, 'TFLAG:32 写入位 2');
+});
+
+test('SELECTCOM 56 交谈，初めて·视频自我介绍·TALENT:89 但 ABL:31 < 3：SIF 那一段不拼进来（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('tequip:31:53', 1);
+    f.store.set('talent:31:89', 1);
+    f.store.set('abl:31:31', 2);
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你催促着银黑桃进行自我介绍、',
+    '银黑桃把自己的本名和至今为止的性经验微笑的娓娓道来……',
+    '只是期待着把水晶球的内容送到狂王那里去，股间就开始湿了……',
+  ]);
 });
 
 test('SELECTCOM 56 交谈，二回目以降·视频·淫乱＋PALAMLV4＋插着不拔：源作误写"晃着要"应为"晃着腰"，1:1 保真', async () => {
@@ -2748,7 +2921,50 @@ test('SELECTCOM 56 交谈，二回目以降·视频·淫乱＋PALAMLV4＋插着�
   ]);
 });
 
-test('SELECTCOM 56 交谈，二回目以降·无摄像·TEQUIP:11：拼接"快乐的"', async () => {
+test('SELECTCOM 56 交谈，二回目以降·视频·TALENT:89（RAND:3==0）：:4684+:4686+:4687 是一行（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:357', 1);
+    f.store.set('tequip:31:53', 1);
+    f.store.set('talent:31:89', 1);
+    f.store.set('abl:31:31', 3);
+  }, 56);
+  await speak_k8(fixture, seq_rand(0));
+  assert.deepEqual(fixture.text_lines(), [
+    '你催促着银黑桃进行自我介绍、',
+    '银黑桃把自己的本命和至今为止的性经验、甚至自慰时妄想的内容都一边微笑一边喋喋不休的讲着……',
+    '只是期待着把水晶球的内容送到狂王那里去，股间就开始湿了……',
+  ]);
+});
+
+test('SELECTCOM 56 交谈，二回目以降·视频·TALENT:89（RAND:3==0）但 ABL:31 < 3：SIF 段不拼（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:357', 1);
+    f.store.set('tequip:31:53', 1);
+    f.store.set('talent:31:89', 1);
+    f.store.set('abl:31:31', 2);
+  }, 56);
+  await speak_k8(fixture, seq_rand(0));
+  assert.equal(
+    fixture.text_lines()[1],
+    '银黑桃把自己的本命和至今为止的性经验一边微笑一边喋喋不休的讲着……',
+  );
+});
+
+test('SELECTCOM 56 交谈，二回目以降·无摄像·快乐装备未装：:4700+:4706..:4712 是一行（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:357', 1);
+    f.store.set('palam:31:4', 100);
+    f.store.set('palamlv:4', 50);
+    f.store.set('palam:31:5', 100);
+    f.store.set('tequip:31:44', 1); // 痛苦装备
+  }, 56);
+  await speak_k8(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你刚和她交谈了几句、银黑桃就一边发出着痛苦的声音、一边拼命忍耐着的回着话',
+  ]);
+});
+
+test('SELECTCOM 56 交谈，二回目以降·无摄像·TEQUIP:11：:4700+:4706..:4712 是一行，拼「快乐的」（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:357', 1);
     f.store.set('palam:31:4', 100);
@@ -2758,10 +2974,7 @@ test('SELECTCOM 56 交谈，二回目以降·无摄像·TEQUIP:11：拼接"快�
   }, 56);
   await speak_k8(fixture);
   assert.deepEqual(fixture.text_lines(), [
-    '你',
-    '刚和她交谈了几句、银黑桃就一边发出着',
-    '快乐的',
-    '声音、一边拼命忍耐着的回着话',
+    '你刚和她交谈了几句、银黑桃就一边发出着快乐的声音、一边拼命忍耐着的回着话',
   ]);
 });
 
@@ -3332,7 +3545,7 @@ test('COLOSSEUM_KOJO_8 SC56 交谈 气力充足·助手在场', async () => {
   ]);
 });
 
-test('COLOSSEUM_KOJO_8 SC31 口交 助手在场·持阴茎（TALENT:121）：拼接"阴茎"', async () => {
+test('COLOSSEUM_KOJO_8 SC31 口交 助手在场·持阴茎（TALENT:121）：:7351+:7353+:7355+:7356 是一行（#622）', async () => {
   const fixture = await setup_k8((f, ef) => {
     f.store.set('talent:5:121', 1);
     join_slave_chara(f, 5, '奴隶5');
@@ -3344,9 +3557,7 @@ test('COLOSSEUM_KOJO_8 SC31 口交 助手在场·持阴茎（TALENT:121）：拼
   await colosseum_kojo_8();
   assert.deepEqual(fixture.text_lines(), [
     '「啊嗯…恩咕…咕…会好好舔的所以不要用暴力…嗯嗯嗯！」',
-    '奴隶5因为',
-    '阴茎',
-    '被银黑桃舔着而露出了心旷神怡的表情……',
+    '奴隶5因为阴茎被银黑桃舔着而露出了心旷神怡的表情……',
   ]);
 });
 
@@ -3418,7 +3629,7 @@ test('COLOSSEUM_KOJO_8 SC21 背后位 普通怪物（非巨魔、无助手）', 
   ]);
 });
 
-test('COLOSSEUM_KOJO_8 SC27 背后位アナル 助手在场·无阴茎无假阴茎：不拼接部位词', async () => {
+test('COLOSSEUM_KOJO_8 SC27 背后位アナル 助手在场·无阴茎无假阴茎：:7413..:7418 是一行，不拼部位词（#622）', async () => {
   const fixture = await setup_k8((f, ef) => {
     join_slave_chara(f, 5, '奴隶5');
     ef.selectcom = 27;
@@ -3429,8 +3640,24 @@ test('COLOSSEUM_KOJO_8 SC27 背后位アナル 助手在场·无阴茎无假阴�
   await colosseum_kojo_8();
   assert.deepEqual(fixture.text_lines(), [
     '「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」',
-    '奴隶5一边听着银黑桃的悲鸣。一边用',
-    '一般毫不留情的继续蹂躏着银黑桃的肛门。',
+    '奴隶5一边听着银黑桃的悲鸣。一边用一般毫不留情的继续蹂躏着银黑桃的肛门。',
+    '随着银黑桃发出悲鸣，观众沸腾了起来………',
+  ]);
+});
+
+test('COLOSSEUM_KOJO_8 SC21 背后位 助手在场·持阴茎：:7386..:7391 是一行（#622）', async () => {
+  const fixture = await setup_k8((f, ef) => {
+    f.store.set('talent:5:121', 1);
+    join_slave_chara(f, 5, '奴隶5');
+    ef.selectcom = 21;
+    ef.assi = 5;
+    ef.assiplay = 1;
+  });
+  const { colosseum_kojo_8 } = fixture.load_module('kojo/kojo-k8-spade');
+  await colosseum_kojo_8();
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…咕…你故意这么激烈…嗯…啊啊…好、好痛…再温柔一点…啊啊——！」',
+    '奴隶5一边听着银黑桃的悲鸣用阴茎毫不留情的蹂躏着银黑桃的腔内。',
     '随着银黑桃发出悲鸣，观众沸腾了起来………',
   ]);
 });
@@ -3451,24 +3678,20 @@ test('COLOSSEUM_KOJO_8 SC51 媚药史莱姆：单行台词', async () => {
 // 的 `PBAND,1000` 只是给它扩容），4 号 = 假阳具；yml/Item.yml 名字表无 PBAND 条目，
 // era.get('item:PBAND') 在引擎里恒 undefined（test/variable-yml.test.js 的引擎
 // 用例），地址写回 item:PBAND 时下面三档必须红。
-test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阴茎」', async () => {
+test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 同一行里拼「假阴茎」（#622）', async () => {
   const cases = [
     {
       selectcom: 31,
       lines: [
         '「啊嗯…恩咕…咕…会好好舔的所以不要用暴力…嗯嗯嗯！」',
-        '奴隶5因为',
-        '假阴茎',
-        '被银黑桃舔着而露出了心旷神怡的表情……',
+        '奴隶5因为假阴茎被银黑桃舔着而露出了心旷神怡的表情……',
       ],
     },
     {
       selectcom: 21,
       lines: [
         '「嗯…咕…你故意这么激烈…嗯…啊啊…好、好痛…再温柔一点…啊啊——！」',
-        '奴隶5一边听着银黑桃的悲鸣用',
-        '假阴茎',
-        '毫不留情的蹂躏着银黑桃的腔内。',
+        '奴隶5一边听着银黑桃的悲鸣用假阴茎毫不留情的蹂躏着银黑桃的腔内。',
         '随着银黑桃发出悲鸣，观众沸腾了起来………',
       ],
     },
@@ -3476,9 +3699,7 @@ test('COLOSSEUM_KOJO_8 SC31/21/27 助手无 121/122 且持假阳具（item:4）�
       selectcom: 27,
       lines: [
         '「求、求你…啊咕…饶了我吧…啊啊…嗯…牙啊啊啊啊啊！」',
-        '奴隶5一边听着银黑桃的悲鸣。一边用',
-        '假阴茎',
-        '一般毫不留情的继续蹂躏着银黑桃的肛门。',
+        '奴隶5一边听着银黑桃的悲鸣。一边用假阴茎一般毫不留情的继续蹂躏着银黑桃的肛门。',
         '随着银黑桃发出悲鸣，观众沸腾了起来………',
       ],
     },
@@ -4344,7 +4565,7 @@ test('NTR：入口无条件补 CFLAG:650（NTR 再捕获位）', async () => {
   assert.deepEqual(fixture.text_lines(), [], 'P 不在 1-7/20 内时整段静默');
 });
 
-test('NTR：P==1 陥落済支走巨根（FLAG:500==0），记 CFLAG:651', async () => {
+test('NTR：P==1 陥落済支走巨根（FLAG:500==0），:7460+:7462+:7464 是一行（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('talent:31:76', 1);
     f.store.set('flag:500', 0);
@@ -4353,31 +4574,48 @@ test('NTR：P==1 陥落済支走巨根（FLAG:500==0），记 CFLAG:651', async 
   assert.deepEqual(fixture.text_lines(), [
     '「狂王…我不能把我的处女给你…咕…呜…不、不要…我已经找到了新的主君了…」',
     '说着强气的台词的银黑桃被狂王捆住，束缚着自由、两只脚被大大的分开着。',
-    '然后、狂王的巨根',
-    '慢慢的插进了银黑桃的秘裂。在镜头下银黑桃还不知道男人的蜜壶被插进了深处。',
+    '然后、狂王的巨根慢慢的插进了银黑桃的秘裂。在镜头下银黑桃还不知道男人的蜜壶被插进了深处。',
     '从蜜裂留到屁股上的破瓜之血。在屈辱和疼痛下，即使是刚强的银黑桃也只能流下眼泪。',
     '「对不起…对不起………」',
   ]);
   assert.equal(fixture.store.get('cflag:31:651'), 1, 'NTR_651 CFLAG:651');
 });
 
-test('NTR：P==1 それ以外支且 FLAG:500==1 走按摩棒', async () => {
+test('NTR：P==1 陥落済支 + FLAG:500==1 走按摩棒，:7460+:7462+:7464 的另一支（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('flag:500', 1); // 非扶她 → 按摩棒
+  });
+  await speak_ntr_k8(fixture, 1);
+  const lines = fixture.text_lines();
+  assert.equal(
+    lines[2],
+    '然后、特大号的按摩棒慢慢的插进了银黑桃的秘裂。在镜头下银黑桃还不知道男人的蜜壶被插进了深处。',
+  );
+  assert.equal(
+    lines[3],
+    '从蜜裂留到屁股上的破瓜之血。在屈辱和疼痛下，即使是刚强的银黑桃也只能流下眼泪。',
+  );
+});
+
+test('NTR：P==1 それ以外支且 FLAG:500==1 走按摩棒，:7468..:7474 是一行（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('flag:500', 1);
   });
   await speak_ntr_k8(fixture, 1);
   assert.deepEqual(
-    fixture.text_lines().slice(0, 3),
+    fixture.text_lines(),
     [
-      '还是处女的银黑桃的秘裂被',
-      '特大号的按摩棒',
-      '深深的插了进去。破瓜之血从秘裂里流了出来。',
+      '还是处女的银黑桃的秘裂被特大号的按摩棒深深的插了进去。破瓜之血从秘裂里流了出来。',
+      '「啊嗯…多疑的狂王大人这样也明白了吧？我没有背叛、还是纯洁的…啊…啊啊！」',
+      '狂王默默地笑着一边嘲弄银黑桃，一边动了起来。',
+      '「再、再继续的话…啊啊啊！快停下！啊、啊啊啊——！」',
     ],
     'FLAG:500==1 走按摩棒',
   );
 });
 
-test('NTR：P==2 陥落済支六行 + CFLAG:652', async () => {
+test('NTR：P==2 陥落済支 + CFLAG:652，:7488+:7490+:7492 是一行（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('talent:31:85', 1);
     f.store.set('flag:500', 2); // 0·2 同为扶她
@@ -4388,8 +4626,19 @@ test('NTR：P==2 陥落済支六行 + CFLAG:652', async () => {
     '狂王从后边把银黑桃绑起来，从后面有条不紊的插进了肛门。',
     '大概是好几次灌肠和扩张的原因，银黑桃通红的充着血的肛门缠了回去。',
     '「啊…嗯、太大了…这、这个…啊啊…啊…啊啊啊——！」',
-    '狂王的巨根',
-    '在银黑桃的肛门里转动着、银黑桃露出了喘息的声音………',
+    '狂王的巨根在银黑桃的肛门里转动着、银黑桃露出了喘息的声音………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:652'), 1, 'NTR_652 CFLAG:652');
+});
+
+test('NTR：P==2 それ以外支 + CFLAG:652，:7496+:7498+:7500 是一行（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('flag:500', 1); // 非扶她 → 按摩棒
+  });
+  await speak_ntr_k8(fixture, 2);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊啊！对我…对我做这么过分的事什么的！狂王大人你疯了！？啊…不要啊！」',
+    '特大号的按摩棒在银黑桃的肛门里转动着、银黑桃露出了喘息的声音………',
   ]);
   assert.equal(fixture.store.get('cflag:31:652'), 1, 'NTR_652 CFLAG:652');
 });
@@ -4407,29 +4656,49 @@ test('NTR：P==3 兽奸秀 TALENT:136 优先于淫乱/爱慕', async () => {
   assert.equal(fixture.store.get('cflag:31:653'), 1, 'NTR_653 CFLAG:653');
 });
 
-test('NTR：P==4 それ以外支末行源作无省略号（1:1 保真）', async () => {
+test('NTR：P==4 淫乱支 + CFLAG:654，:7521+:7523+:7525 是一行（#622）', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('talent:31:76', 1);
+    f.store.set('flag:500', 0);
+  });
+  await speak_ntr_k8(fixture, 4);
+  assert.deepEqual(fixture.text_lines(), [
+    '「嗯…啊嗯…啊啊…狂王大人…继续侵犯我的…小穴…啊…嗯…嗯——！」',
+    '狂王的巨根不停的侵犯着银黑桃的蜜壶、银黑桃发出了野兽一样的喘息。',
+    '「啊啊…我要去了…要去了…啊啊…继续，继续插进来…啊啊…啊啊啊啊啊啊♡」',
+    '银黑桃一边从秘裂里流出了爱液，一边抱着狂王不停的亲吻着。',
+    '水晶球录下了好几个银黑桃被狂王抱着不停绝顶的画面………',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:654'), 1, 'NTR_654 CFLAG:654');
+});
+
+test('NTR：P==4 それ以外支末行源作无省略号（1:1 保真），:7532+:7534+:7536 是一行（#622）', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('flag:500', 0);
   });
   await speak_ntr_k8(fixture, 4);
-  const lines = fixture.text_lines();
-  assert.equal(
-    lines[lines.length - 1],
-    '水晶球录下了好几个银黑桃被狂王抱着不停绝顶的画面',
-    'P==4 それ以外末行源作无省略号',
+  assert.deepEqual(
+    fixture.text_lines(),
+    [
+      '「啊啊…嗯…嗯啊…啊啊…再继续的话…我已经…嗯…啊啊——！」',
+      '狂王的巨根不停的侵犯着银黑桃的蜜壶、银黑桃发出了逞强的声音。',
+      '「啊…嗯…啊啊…狂王大人…啊啊嗯…恩…啊嗯…啊啊！」',
+      // :7538 源作此行末尾无「………」（同段另一支 :7528 有），1:1 保真不补
+      '水晶球录下了好几个银黑桃被狂王抱着不停绝顶的画面',
+    ],
+    'P==4 それ以外末行源作无省略号（武器名与收行同属一行）',
   );
   assert.equal(fixture.store.get('cflag:31:654'), 1, 'NTR_654 CFLAG:654');
 });
 
-test('NTR：P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具，1:1 保真）', async () => {
+test('NTR：P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具，1:1 保真）：:7549+:7551+:7553 是一行（#622）', async () => {
   const zero = await setup_k8((f) => {
     f.store.set('flag:500', 0);
   });
   await speak_ntr_k8(zero, 5);
   assert.deepEqual(zero.text_lines(), [
     '「啊啊…好舒服啊…给我…给我更多阴茎！啊啊…嗯…好深…好棒♪」',
-    '银黑桃的蜜裂和肛门被',
-    '阴茎搅动着、精液不停的溢了出来………',
+    '银黑桃的蜜裂和肛门被阴茎搅动着、精液不停的溢了出来………',
   ]);
   assert.equal(zero.store.get('cflag:31:655'), 1, 'NTR_655 CFLAG:655');
 
@@ -4438,8 +4707,8 @@ test('NTR：P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具�
   });
   await speak_ntr_k8(two, 5);
   assert.equal(
-    two.text_lines()[2],
-    '假阳具搅动着、爱液不停的溢了出来………',
+    two.text_lines()[1],
+    '银黑桃的蜜裂和肛门被假阳具搅动着、爱液不停的溢了出来………',
     'FLAG:500==2 在本支走假阳具（与同函数其余各处的 0 或 2 判定不同）',
   );
 });
@@ -4675,7 +4944,7 @@ test('GOHOUBI_REQUEST：CFLAG:504==0 要钱两行', async () => {
   ]);
 });
 
-test('GOHOUBI_REQUEST：兽奸三档只换中间那个兽名（犬/猪/马）', async () => {
+test('GOHOUBI_REQUEST：兽奸三档只换中间那个兽名（犬/猪/马），:7744..:7752 是一行（#622）', async () => {
   for (const [lv, beast] of [
     [1, '犬'],
     [2, '猪'],
@@ -4687,7 +4956,7 @@ test('GOHOUBI_REQUEST：兽奸三档只换中间那个兽名（犬/猪/马）', 
     await speak_gohoubi_request_k8(fixture);
     assert.deepEqual(
       fixture.text_lines(),
-      ['「我呢，想要和', beast, '交尾的那种♡」', '银黑桃要求兽奸作为报酬。'],
+      [`「我呢，想要和${beast}交尾的那种♡」`, '银黑桃要求兽奸作为报酬。'],
       `CFLAG:504==${lv} 兽奸要求`,
     );
   }
