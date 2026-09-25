@@ -12926,6 +12926,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
+        ref: '3916',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+ABL:31[ \t]+>=[ \t]+3[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
         ref: '3917',
         any: [/PRINTFORM 还有一个人手淫的时候想着谁之类的/],
       },
@@ -13437,20 +13444,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
-        ref: '4025',
-        any: [
-          /IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
         ref: '4026',
         any: [/PRINT 快乐的/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
-        ref: '4027',
-        any: [/ELSEIF TEQUIP:44 \|\| TEQUIP:49/],
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
@@ -20682,8 +20677,22 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
+        ref: '6675',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
         ref: '6676',
         any: [/PRINT 阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
+        ref: '6677',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+!=[ \t]+1[ \t]+&&[ \t]+TALENT:ASSI:122[ \t]+!=[ \t]+1[ \t]+&&[ \t]+ITEM:PBAND[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
@@ -20763,6 +20772,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
+        ref: '6708',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
         ref: '6709',
         any: [/PRINT 阴茎/],
       },
@@ -20824,6 +20840,13 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
         ref: '6731',
         any: [/PRINTFORM %SAVESTR:ASSI%仔细聆听传来的悲鸣，用/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
+        ref: '6732',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',

@@ -481,3 +481,208 @@ test('非调教族：NTR、处刑与语尾均注册并执行关键状态', async
     '语尾真身不打印（行内拼接由调用方做）',
   );
 });
+
+// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+
+test('#625 交谈·自我介绍：名字与后续是同一行（:4340 / :4410 两处 × ABL:31 两档）', async () => {
+  // 原作 :4340（PRINTFORM）+ :4342（SIF ABL:31 >= 3 只护这一段）+ :4343
+  // （PRINTFORMW 收行）**是一整行**，:4410+:4412+:4413 是二次以后的同型行；
+  // ere 侧曾各拆成三条 era.print（#625）
+  const cases = [
+    [0, 0],
+    [0, 3],
+    [1, 0],
+    [1, 3],
+  ];
+  for (const [talked, abl31] of cases) {
+    const fixture = await setup_k19((f) => {
+      f.store.set(`tequip:${CID}:53`, 1); // 摄影中
+      f.store.set(`abl:${CID}:17`, 5); // :4339 的 (TALENT:89 || ABL:17 >= 5)
+      f.store.set(`abl:${CID}:31`, abl31);
+      if (talked) {
+        f.load_module('facade/chara').chara(CID).kojo.交谈 = 1; // 二次以后
+      }
+    }, 56);
+    await speak_k19(fixture);
+    const merged = fixture.text_lines().find((l) => l.startsWith('于是'));
+    assert.ok(merged, `交谈${talked ? '二次' : '首次'}：自我介绍必须出声`);
+    assert.ok(
+      merged.endsWith('之类的介绍了出来……') &&
+        (abl31 >= 3
+          ? merged ===
+            '于是菲娅将自己的名字、喜欢的H的方式还有手淫时妄想的内容之类的介绍了出来……'
+          : merged === '于是菲娅将自己的名字、喜欢的H的方式之类的介绍了出来……'),
+      `交谈${talked ? '二次' : '首次'}（ABL:31==${abl31}）：名字段与后文落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（:4375 / :4446 两处 × 两档）', async () => {
+  // 原作 :4375+:4377+:4379+:4381（无 ELSE，两档都不满足时中间为空）与
+  // :4446+:4448+:4450+:4452 各是一整行，末行 PRINTFORML 收行；ere 侧曾各拆成
+  // 四条 era.print（#625）。:4446 那一处还在 :4440 的 PLAYER 前缀行之后，
+  // 行首要带前缀
+  const cases = [
+    { talked: 0, tequip: 11, prefix: '' },
+    { talked: 0, tequip: 44, prefix: '' },
+    { talked: 1, tequip: 11, prefix: '你' },
+    { talked: 1, tequip: 44, prefix: '你' },
+  ];
+  for (const { talked, tequip, prefix } of cases) {
+    const fixture = await setup_k19((f) => {
+      f.store.set(`palam:${CID}:5`, 10000); // >= PALAMLV[4]
+      f.store.set(`palam:${CID}:4`, 10000);
+      f.store.set(`tequip:${CID}:${tequip}`, 1);
+      if (talked) {
+        f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;
+      }
+    }, 56);
+    await speak_k19(fixture);
+    const word = tequip === 11 ? '快乐的' : '痛苦的';
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`${prefix}菲娅一边压抑着${word}呼吸声，一边努力回应着你……`],
+      `交谈${talked ? '二次' : '首次'}（${word}档）：工具档与前后文落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 交谈·PLAYER 前缀行与各互斥尾段同属一行（:4440 与 :4442/:4444/:4455/:4458/:4461/:4464）', async () => {
+  // 原作 :4440 的 `PRINTFORM %SAVESTR:PLAYER%` 不换行，随后的 IF/ELSEIF 各支
+  // 用自己的 PRINTFORML 收行——整条链每一支都是「前缀 + 尾段」的一行。ere 侧
+  // 曾把前缀单独打成一行（#625）。各支各断言整行
+  const cases = [
+    {
+      name: ':4442 爱慕+插着不拔',
+      seed: (f) => {
+        f.store.set(`palam:${CID}:5`, 10000);
+        f.store.set(`talent:${CID}:85`, 1);
+        f.load_module('facade/game').game.event.插着不拔 = 1;
+      },
+      line: '你菲娅一边与你说着话，一边对着你露出了重要的地方。',
+    },
+    {
+      name: ':4444 淫乱+插着不拔',
+      seed: (f) => {
+        f.store.set(`palam:${CID}:5`, 10000);
+        f.store.set(`talent:${CID}:76`, 1);
+        f.load_module('facade/game').game.event.插着不拔 = 1;
+      },
+      line: '你菲娅开心的朝着你撒着娇，对着你说着色色的话语。',
+    },
+    {
+      name: ':4455 淫乱（无插着不拔、欲情低）',
+      seed: (f) => f.store.set(`talent:${CID}:76`, 1),
+      line: '你菲娅一边这么说着，一边对着你露出了重要的地方。',
+    },
+    {
+      name: ':4458 欲情LV4 但欲情5 未达标',
+      seed: (f) => f.store.set(`palam:${CID}:4`, 10000),
+      line: '你菲娅开心的朝着你撒着娇，说着色色的话语。',
+    },
+    {
+      name: ':4461 技巧Lv3',
+      seed: (f) => f.store.set(`abl:${CID}:10`, 3),
+      line: '你菲娅大口大口的喘着气，小小的身体因为快感而像触电一样痉挛个不停。',
+    },
+    {
+      name: ':4464 都不满足',
+      seed: () => {},
+      line: '你菲娅乖巧的低着头听着。',
+    },
+  ];
+  for (const { name, seed, line } of cases) {
+    const fixture = await setup_k19((f) => {
+      seed(f);
+      f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;
+    }, 56);
+    await speak_k19(fixture);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${name}：PLAYER 前缀与尾段落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 COLOSSEUM_KOJO_19：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
+  // 原作 :6160+:6162+:6164+:6165、:6193+:6195+:6197+:6198、:6217+:6219+
+  // :6221+:6222 各是一整行（无后缀 PRINT 不换行，末行 PRINTFORMW 收行），
+  // ere 侧曾把每行拆成四条 era.print（#625）。助手臂在 KOJO_MESSAGE_COM 的
+  // ASSI 守卫之后、运行时不带助手才可达，直接调真身覆盖（同 K2/K4/K903）
+  const cases = [
+    {
+      selectcom: 31,
+      quote: '「啊唔…我、我会好好舔的…不要做很痛的事……嗯咕……」',
+      head: '玛奥因为',
+      tail: '被菲娅含住而露出了快乐的的表情……',
+      weapon_penis: '阴茎',
+    },
+    {
+      selectcom: 21,
+      quote: '「不要不要…太过分了…不要了啊…啊啊！」',
+      head: '玛奥一边听着悲鸣，一边用',
+      tail: '毫不留情的继续蹂躏着菲娅的腔内……',
+      weapon_penis: '肉棒',
+    },
+    {
+      selectcom: 27,
+      quote: '「不要不要…不是插进哪里啊…不要了啊…啊啊！」',
+      head: '玛奥一边听着悲鸣，一边用',
+      tail: '毫不留情的继续蹂躏着菲娅的肛门……',
+      weapon_penis: '肉棒',
+    },
+  ];
+  for (const { selectcom, quote, head, tail, weapon_penis } of cases) {
+    const tiers = [
+      { weapon: weapon_penis, seed: (f) => f.store.set('talent:17:121', 1) },
+      { weapon: '假阴茎', seed: (f) => f.store.set('item:4', 1) },
+      { weapon: '', seed: undefined },
+    ];
+    for (const { weapon, seed } of tiers) {
+      const fixture = await setup_k19((f, era_flag) => {
+        join_slave_chara(f, 17, '玛奥');
+        f.store.set(`tequip:${CID}:55`, 1); // 死斗场
+        era_flag.assi = 17;
+        era_flag.assiplay = 1;
+        if (seed) {
+          seed(f);
+        }
+      }, selectcom);
+      const { colosseum_kojo_19 } = fixture.load_module('kojo/kojo-k19-fia');
+      await colosseum_kojo_19();
+      assert.ok(
+        fixture.text_lines().includes(quote),
+        `selectcom ${selectcom}：开场白仍在`,
+      );
+      assert.ok(
+        fixture.text_lines().includes(`${head}${weapon}${tail}`),
+        `selectcom ${selectcom}（武器档「${weapon}」）：武器名与前后文落在同一行（#625）`,
+      );
+    }
+  }
+});
+
+test('#625 GOHOUBI_REQUEST：空首尾夹着的兽名单独成行（CFLAG:504 三档）', async () => {
+  // 原作 :6525（PRINTFORM 空串）+ :6527/:6529/:6531（IF/ELSEIF 三档兽名）
+  // + :6533（PRINTFORMW 空串）**是一整行**，内容只有兽名；ere 侧曾拆成
+  // 三条 era.print（前后两条还是空行）（#625）
+  const cases = [
+    [1, '犬'],
+    [2, '豚'],
+    [3, '马'],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k19((f) => {
+      f.load_module('facade/chara').chara(CID).stronghold.要求奖赏 = req;
+    });
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(KEY, { args: [CID] });
+    assert.deepEqual(
+      fixture.text_lines(),
+      [beast],
+      `CFLAG:504==${req}：空首尾不再各占一行（#625）`,
+    );
+  }
+});
