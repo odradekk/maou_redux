@@ -85,7 +85,7 @@ npm run format:check     # Prettier，只检查格式
 | ----------------- | ------------------------------------------------------------------------------------------------------ |
 | 每次完成一项改动  | 对应测试文件 ＋ `mutation-check --ids <本轮新加的编号>`                                                |
 | 开 PR 前          | `npm test` ＋ `npm run lint` ＋ `npm run format:check`                                                 |
-| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）＋ 九份输出比对样本；master 另跑无引擎全库与锚点质量全文量       |
+| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）＋ 九份输出比对样本 ＋ 锚点质量全文量；master 另跑无引擎全库     |
 | 阶段结束          | 给阶段收尾 PR 打 `phase-acceptance` 标签，在 CI 跑全量变异测试；引擎实际运行在本机用 Electron MCP 验收 |
 
 曾有按改动文件选择测试的选择器（#256），实测最多省一半时间，#452 撤掉：本地和 CI 只有 `npm test` 一个入口，PR 的 CI 通过即全库通过。
@@ -123,8 +123,8 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 | ---------------- | ------------ | -------------------------------------------------------------------------------------- |
 | PR / master push | `engine`     | Linux 全库 `npm run test:ci`，带引擎，跳过数必须为 0；九份输出比对样本不得有未解释差异 |
 | PR / master push | `windows`    | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0                            |
-| PR / master push | `static`     | ESLint、Prettier、默认范围的锚点质量检查                                               |
-| master push      | `engineless` | Linux 全库 `npm run test:ci`，无引擎，跳过数与基线比较；锚点质量全文量                 |
+| PR / master push | `static`     | ESLint、Prettier、锚点质量全文量（含已冻结文件，#626）                                 |
+| master push      | `engineless` | Linux 全库 `npm run test:ci`，无引擎，跳过数与基线比较                                 |
 
 PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任务只在 master push 跑，用于发现引擎缺失时的退化。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
 
