@@ -4,8 +4,8 @@
 # 单个任务 5 分钟内跑完。曾按改动面选测试（#256），实测最多省一半时间，
 # 却让「PR 绿不等于全库绿」成为要额外解释的注意事项，#452 撤掉。现在：
 #
-#   pull_request   → engine / windows / static   与 master push 同一套全库检查
-#   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线；锚点质量全文量
+#   pull_request   → engine / windows / static   与 master push 同一套全库检查（static 含锚点质量全文量，#626）
+#   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线
 #
 # 九份输出比对样本随 engine 任务跑（每份约 1 秒），任一样本有未解释差异即红。
 # 全量变异在 mutation.yml，只对打了 `phase-acceptance` 标签的阶段收尾 PR 跑。
