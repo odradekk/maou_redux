@@ -286,12 +286,13 @@ async function k4_kojo2() {
   if (era0(`mark:${target}:3`) == 3 && era0('flag:7') == 2) {
     era.drawLine();
     await era.printAndWait(`「你这肮脏可悲的生物……」`); // :240
-    await era.print(`${target_name}`); // :241
-
-    if (era0(`cflag:${target}:42`) == 83) {
-      await era.print(`眼镜下`); // :244
-    }
-    await era.printAndWait(`的目光异常冰冷…`); // :245
+    // :241+:244+:245 原作是一整行：无后缀 PRINTFORM 连续不换行，末行
+    // PRINTFORMW 才收行。:243 的 SIF CFLAG:42 == 83 只护住 :244 那一段——
+    // 判据提到语句外当取值，文本留在输出语句里（#625）
+    const glasses = era0(`cflag:${target}:42`) == 83; // 眼鏡
+    await era.printAndWait(
+      `${target_name}` + (glasses ? '眼镜下' : '') + `的目光异常冰冷…`,
+    ); // :241+:244+:245
     return 1;
   } else if (era0(`mark:${target}:2`) == 0 && era0('flag:7') == 2) {
     era.drawLine();
@@ -5768,6 +5769,14 @@ async function colosseum_kojo_4() {
   const assi_name = chara_callname(era_flag.assi); // %SAVESTR:ASSI%
   const master_name = chara_name(0); // %NAME:MASTER%
   const assi = era_flag.assi;
+  // 死斗场 SC31/21/27 三处同型的武器名（源 :4953-:4956、:4986-:4989、
+  // :5010-:5013）：TALENT:ASSI:121/122 有则「阴茎」，否则持假阳具时补
+  // 「假阳具」，两段都不出时为空串。
+  // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4
+  //（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+  const assi_has_penis =
+    era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;
+  const assi_has_toy = era0('item:4') == 1;
 
   if (era_flag.selectcom == 55) {
     if (era0(`base:${target}:1`) <= 0) {
@@ -5812,20 +5821,14 @@ async function colosseum_kojo_4() {
   if (era_flag.selectcom == 31) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊…唔……唔唔………就……就在这里吗？…咳……！」`); // :4951
-      await era.print(`${assi_name}把`); // :4952
-      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
-        await era.print(`阴茎`); // :4954
-      }
-      if (
-        era0(`talent:${assi}:121`) != 1 &&
-        era0(`talent:${assi}:122`) != 1 &&
-        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        await era.print(`假阳具`); // :4956
-      }
+      // :4952+:4954+:4956+:4957 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+      // 不换行，末行 PRINTFORMW 才收行。:4953/:4955 两条 SIF 互斥——判据提到
+      // 语句外当取值（assi_has_penis/assi_has_toy），文本留在输出语句里（#625）
       await era.printAndWait(
-        `粗暴地塞入${target_name}的嘴里，露出了心满意足的神情……`,
-      ); // :4957
+        `${assi_name}把` +
+          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +
+          `粗暴地塞入${target_name}的嘴里，露出了心满意足的神情……`,
+      ); // :4952+:4954+:4956+:4957
     } else {
       await era.printAndWait(
         `「啊………会……会好好地舔的啦…………所以……所以……不要再做其它过分的事啦……呃……唔…………唔唔…………咳……」`,
@@ -5853,18 +5856,12 @@ async function colosseum_kojo_4() {
   if (era_flag.selectcom == 21) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「啊…！唔……啊啊啊！…好深………弄的好深啦……！」`); // :4984
-      await era.print(`${assi_name}听到悲鸣，更加兴奋了，继续用`); // :4985
-      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
-        await era.print(`阴茎`); // :4987
-      }
-      if (
-        era0(`talent:${assi}:121`) != 1 &&
-        era0(`talent:${assi}:122`) != 1 &&
-        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        await era.print(`假阳具`); // :4989
-      }
-      await era.printAndWait(`毫不留情地蹂躏着${target_name}的私处……`); // :4990
+      // :4985+:4987+:4989+:4990 同 :4952 组的一整行（#625）
+      await era.printAndWait(
+        `${assi_name}听到悲鸣，更加兴奋了，继续用` +
+          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +
+          `毫不留情地蹂躏着${target_name}的私处……`,
+      ); // :4985+:4987+:4989+:4990
     } else if (era0('tflag:400') == 206) {
       await era.printAndWait(`「死………死………要…死掉了……」`); // :4993
       await era.printAndWait(
@@ -5880,18 +5877,12 @@ async function colosseum_kojo_4() {
   if (era_flag.selectcom == 27) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       await era.printAndWait(`「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」`); // :5008
-      await era.print(`${assi_name}听到悲鸣，更加兴奋了，继续用`); // :5009
-      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {
-        await era.print(`阴茎`); // :5011
-      }
-      if (
-        era0(`talent:${assi}:121`) != 1 &&
-        era0(`talent:${assi}:122`) != 1 &&
-        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        await era.print(`假阳具`); // :5013
-      }
-      await era.printAndWait(`毫不留情地蹂躏着${target_name}的肛门……`); // :5014
+      // :5009+:5011+:5013+:5014 同 :4952 组的一整行（#625）
+      await era.printAndWait(
+        `${assi_name}听到悲鸣，更加兴奋了，继续用` +
+          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +
+          `毫不留情地蹂躏着${target_name}的肛门……`,
+      ); // :5009+:5011+:5013+:5014
     } else if (era0('tflag:400') == 206) {
       await era.printAndWait(`「死………死………要…死掉了……」`); // :5017
       await era.printAndWait(
@@ -6163,15 +6154,13 @@ async function gohoubi_request_koujo_k4() {
     era0(`cflag:${a}:504`) == 2 ||
     era0(`cflag:${a}:504`) == 3
   ) {
-    await era.print(`「拜托了…让我和`); // :5259
-    if (era0(`cflag:${a}:504`) == 1) {
-      await era.print(`狗`); // :5261
-    } else if (Y == 2) {
-      await era.print(`猪`); // :5263
-    } else if (Y == 3) {
-      await era.print(`马`); // :5265
-    }
-    await era.printAndWait(`交配吧……！」`); // :5267
+    // :5259+:5261+:5263+:5265+:5267 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档（:5260/:5262/:5264）里后两档读
+    // 的是恒 0 的 Y（源缺陷，见函数头注）——判据提到语句外当取值、文本留在
+    // 输出语句里（#625）
+    const beast_word =
+      era0(`cflag:${a}:504`) == 1 ? '狗' : Y == 2 ? '猪' : Y == 3 ? '马' : '';
+    await era.printAndWait(`「拜托了…让我和` + beast_word + `交配吧……！」`); // :5259+:5261+:5263+:5265+:5267
   } else if (era0(`cflag:${a}:504`) == 4) {
     await era.printAndWait(`「嘻嘻！…魔王大人要和我来个很长很长的湿吻哦～」`); // :5270
   } else if (era0(`cflag:${a}:504`) == 5) {
