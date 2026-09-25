@@ -222,7 +222,7 @@ git -C D:/Code/era worktree list                                    # 无当前�
 
 在路线图 #101 的阶段决策 issue 关闭前完成一次，不要求每张实施工单重复：
 
-1. **全量变异测试**：开阶段收尾 PR（承载阶段本来要做的文档改动，如 `docs/stub-registry.md` 状态、AGENTS.md「当前状态」；没有改动就用空提交），打 `phase-acceptance` 标签，`mutation.yml` 分 8 片在 CI 运行。合格线是每片退出码 0，汇总任务的 job summary 给出「拦截 / 跳过 / 红」合计，把数字写进 #101。本机也可 `node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2`，约 80 分钟。
+1. **全量变异测试**：开阶段收尾 PR（承载阶段本来要做的文档改动，如 `docs/stub-registry.md` 状态、AGENTS.md「当前状态」；没有改动就用空提交），打 `phase-acceptance` 标签，`mutation.yml` 分 12 片在 CI 运行。合格线是每片退出码 0，汇总任务的 job summary 给出「拦截 / 跳过 / 红」合计，把数字写进 #101。本机也可 `node tools/run-node.mjs --timeout 14400 -- tools/mutation-check.mjs --jobs 2`，但 7154 条时实测约 3.7 小时，优先走 CI。
 2. **引擎实际运行**：在主工作目录用 Electron MCP 工具（`launch_game`、`click`、`type`、`read_text`、`screenshot`、`get_errors`）走完该阶段的端到端流程。从新游戏开始；按 ADR-0006，旧存档因版本过低被拒绝属预期。临时设置的状态不得提交。列出验收路径前先用 `rg -n stub_line_wait ere/page/page-shop.js` 确认入口已实现。
 3. **九份输出比对样本**：已随每次 PR 与 master push 的 `engine` 任务运行，阶段验收只需核对 master 最近一次运行为绿。
 
