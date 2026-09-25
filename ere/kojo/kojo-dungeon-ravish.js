@@ -273,7 +273,9 @@ async function ryouzyoku(arg, rand) {
   // :14-17 立绘（CALL CHA_IMG2(ARG)，未移植——见文件头）
   // :18 CALL SHOW_DATA(ARG)（#390 真身）
   show_data(arg); // :18（#390 真身）
-  await era.print(''); // :19 PRINTL
+  // :16 是 `IF 立绘` 分支里的空 PRINT（未移植），不带后缀不换行，与 :19 的
+  // PRINTL 同属一行——合起来仍是空行（#624）
+  await era.print(''); // :16+:19 PRINTL
 
   // :21-29 选择循环：旁观凌辱 / 不要凌辱（#572：升格为按钮，正文不写 [编号]，
   // 引擎按 showAcc 拼；「- 」是原文的一部分）
@@ -630,53 +632,54 @@ async function orc_ryou(arg, mon_num, rand) {
       await era.printAndWait(`${arg_name}耷拉着头，`); // :299
     }
 
-    await era.print('四肢着地趴在地上，'); // :302
-
-    // :304-308 阴毛状态
-    if ((era.get(`talent:${arg}:阴毛状态`) || 0) > 200) {
-      await era.print('硬毛露了出来'); // :305
-    } else if ((era.get(`talent:${arg}:阴毛状态`) || 0) > 150) {
-      await era.print('隐约看见了阴毛'); // :307
-    }
-
-    // :310-318 魅力点（屁股）
-    if ((era.get(`talent:${arg}:魅力点`) || 0) === 14) {
-      await era.print('美丽的屁股从后露了出来'); // :312 ヒップライン
-    } else if ((era.get(`talent:${arg}:魅力点`) || 0) === 23) {
-      await era.print('大的屁股从后露了出来'); // :315 大きな尻
-    } else {
-      await era.print('屁股从后露了出来'); // :317
-    }
-
-    // :320-326 PRINTDATA 阴茎五选一
+    // :302..:328 原作是一整行：:302「四肢着地趴在地上，」、:305/:307 的阴毛
+    // 分档、:312/:315/:317 的屁股分档、PRINTDATA 的随机词条（:320-326）与
+    // :328 的 PRINTL 收行都不换行。判据提到语句外当取值、片段文本留在输出
+    // 语句里（#624）
+    const pubic = era.get(`talent:${arg}:阴毛状态`) || 0;
+    const charm = era.get(`talent:${arg}:魅力点`) || 0;
+    const cock = pick(
+      ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
+      rand_n,
+    ); // :321-325 PRINTDATA
     await era.print(
-      pick(
-        ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
-        rand_n,
-      ),
-    ); // :321-325
+      '四肢着地趴在地上，' +
+        (pubic > 200 ? '硬毛露了出来' : pubic > 150 ? '隐约看见了阴毛' : '') +
+        (charm === 14
+          ? '美丽的屁股从后露了出来'
+          : charm === 23
+            ? '大的屁股从后露了出来'
+            : '屁股从后露了出来') +
+        cock +
+        '便插了进去，',
+    ); // :302+:305+:307+:312+:315+:317+:328
 
-    await era.print('便插了进去，'); // :328
-    await era.print('脸上'); // :330
+    // :330 的「脸上」是这一行的前缀：:335 与其余分档（:339/:347/:351/:358/:363/
+    // :368/:370）各自与它合一条输出——前缀提到语句外共用、锚只写该分支自己的
+    // 行号（#624；只并第一支的话其余分支上玩家仍看到两行）
+    const face_front = '脸上'; // :330
+    const shy = (era.get(`talent:${arg}:35`) || 0) !== 0;
+    if (c131 > 5 && shy) {
+      await era.print(`脸上流露着沉浸在了羞耻与情欲之中的神色……`); // :330+:335
+    }
 
     // :331-374 畏怖阶段分档
     if (c131 > 5) {
-      if (era.get(`talent:${arg}:35`)) {
-        await era.print('流露着沉浸在了羞耻与情欲之中的神色……'); // :335 恥じらい
+      if (shy) {
         await era.print(`耻情点数+${mon_num * 12}`); // :336
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
       } else {
-        await era.print('的神情为屈服的喜悦与口水所浸染……'); // :339
+        await era.print(face_front + '的神情为屈服的喜悦与口水所浸染……'); // :339
         await era.print(`屈服点数+${mon_num * 12}`); // :340
         era.add(`juel:${arg}:6`, mon_num * 10); // :341 JUEL:ARG:6 屈服
       }
     } else if (c131 > 2) {
       if (era.get(`talent:${arg}:35`)) {
-        await era.print('流露着在羞耻与快乐间彷徨的神色……'); // :347 恥じらい
+        await era.print(face_front + '流露着在羞耻与快乐间彷徨的神色……'); // :347 恥じらい
         await era.print(`耻情点数+${mon_num * 12}`); // :336
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
       } else {
-        await era.print('隐约露出了屈服的喜悦……'); // :351
+        await era.print(face_front + '隐约露出了屈服的喜悦……'); // :351
         await era.print(`屈服点数+${mon_num * 12}`); // :340
         era.add(`juel:${arg}:6`, mon_num * 10); // :341 JUEL:ARG:6 屈服
       }
@@ -688,17 +691,17 @@ async function orc_ryou(arg, mon_num, rand) {
         (era.get(`talent:${arg}:45`) || 0) === 0
       ) {
         // :356-360 大人しい・悲観的・涙もろい（且不泣かない）
-        await era.print('被眼泪浸湿了……'); // :358
+        await era.print(face_front + '被眼泪浸湿了……'); // :358
         await era.print(`恐怖点数+${mon_num * 10}`); // :359
         era.add(`juel:${arg}:10`, mon_num * 10); // :360 JUEL:ARG:10 恐怖
       } else if (era.get(`talent:${arg}:35`)) {
-        await era.print('浸染着羞耻的神色……'); // :363 恥じらい
+        await era.print(face_front + '浸染着羞耻的神色……'); // :363 恥じらい
         await era.print(`耻情点数+${mon_num * 10}`); // :364
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
       } else if (era.get(`talent:${arg}:11`)) {
-        await era.print('的表情因愤怒而扭曲……'); // :368 反抗的
+        await era.print(face_front + '的表情因愤怒而扭曲……'); // :368 反抗的
       } else {
-        await era.print('染上了绝望的神色……'); // :370
+        await era.print(face_front + '染上了绝望的神色……'); // :370
         await era.print(`屈服点数+${mon_num * 10}`); // :371
         era.add(`juel:${arg}:6`, mon_num * 10); // :341 JUEL:ARG:6 屈服
       }
@@ -745,18 +748,15 @@ async function orc_ryou(arg, mon_num, rand) {
       mon_num *= 2; // :406 舌使いボーナス
     }
 
-    if ((era.get(`talent:${arg}:种族`) || 0) === 4) {
-      await era.print('无头骑士的'); // :410
-    }
-
-    await era.print(`${arg_name}`); // :412
-
-    if ((era.get(`talent:${arg}:种族`) || 0) === 4) {
-      await era.print('身体被固定住了，只剩下脑袋来像飞机杯似的'); // :415
-    } else {
-      await era.print('全裸地'); // :417
-    }
-    await era.printAndWait('侍奉着兽人们的阴茎。'); // :419
+    // :410..:419 原作是一整行：种族 == 4 的 SIF 前缀（:410）、:412 的名字、
+    // :415/:417 的种族分档都不换行，到末段 :419 的 PRINTFORMW 才收行（#624）
+    const headless = (era.get(`talent:${arg}:种族`) || 0) === 4;
+    await era.printAndWait(
+      (headless ? '无头骑士的' : '') +
+        `${arg_name}` +
+        (headless ? '身体被固定住了，只剩下脑袋来像飞机杯似的' : '全裸地') +
+        '侍奉着兽人们的阴茎。',
+    ); // :410+:412+:415+:417+:419
     await era.printAndWait(
       `只要喝掉所有${mon_num}只兽人的精液的话，它们就答应不侵犯她的下体………`,
     ); // :420
@@ -796,57 +796,98 @@ async function orc_ryou(arg, mon_num, rand) {
         await era.print(`恐怖点数+${mon_num * 10}`); // :359
         era.add(`juel:${arg}:10`, mon_num * 10); // :360 JUEL:ARG:10 恐怖
       } else if (era.get(`talent:${arg}:13`)) {
+        // :470+:471 原作 PRINTFORM + PRINTFORML，同一行（#584）
         await era.print(
-          '迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，',
-        ); // :470 素直
-        await era.print(`耻情点数+${mon_num * 10}`); // :364
+          `迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,
+        ); // :470+:471
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
-      } else if (era.get(`talent:${arg}:14`)) {
-        await era.print('提心吊胆地'); // :475 大人しい
-      } else if (era.get(`talent:${arg}:17`)) {
-        await era.print('嘿嘿媚笑着'); // :478 プライド低い
-      } else if (era.get(`talent:${arg}:35`)) {
-        await era.print('不敢直视肉棒而闭上了眼睛'); // :481 恥じらい
-      } else if (era.get(`talent:${arg}:0`)) {
-        await era.print('为了守住自己处女的'); // :438 処女
       }
+      // :475/:478/:481/:484（大人しい・プライド低い・恥じらい・処女）的初见分档
+      // 文本已并进下面 :475..:498 的整行语句（前缀当取值表达式），此处不再单独
+      // 输出——否则同一段会先自占一行、又出现在合并行里（#624 审查发现）
     }
 
-    await era.print(`${arg_name}把`); // :488
+    // :488-496 PRINTDATA（:489-495 的五个候选）——原作的随机词条夹在这一行
+    // 中间，提到语句外当取值（#624）
+    const cock = pick(
+      ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
+      rand_n,
+    ); // :489-495 PRINTDATA
 
-    // :488-496 PRINTDATA 阴茎五选一
-    await era.print(
-      pick(
-        ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
-        rand_n,
-      ),
-    ); // :489-495
-
-    await era.print('含了下去，'); // :498
-
+    // :475..:502 与 :509..:524 在原作里是同一行的两段互斥收行：:475/:478/
+    // :481/:484 的初见分档、:488 的 `%SAVESTR:ARG%把`、上面的随机词条与 :498
+    // 的「含了下去，」都不换行；TALENT:52 命中时由 :502 的 PRINTW 收行，其余
+    // 分支由 :509..:521 的分档片段接 :524 的 PRINTL 收行。
+    // 两条收行互斥，且拼接锚的区间不得跳过中间的 :502（它自带 W，也不能当拼接
+    // 中段），所以 :475..:498 的前半段在两条路径上各写一次（#624）
+    const quiet = era.get(`talent:${arg}:14`) || 0;
+    const proud = era.get(`talent:${arg}:17`) || 0;
+    const ashamed = era.get(`talent:${arg}:35`) || 0;
+    const maiden = era.get(`talent:${arg}:0`) || 0;
+    const indifferent = era.get(`talent:${arg}:21`) || 0;
+    const vulgar = era.get(`talent:${arg}:36`) || 0;
+    const quick = era.get(`talent:${arg}:50`) || 0;
+    const smelly = era.get(`talent:${arg}:62`) || 0;
+    const devoted = era.get(`talent:${arg}:63`) || 0;
+    // :475/:478/:481/:484 的初见分档 + :488/:498 的前半段：链上的 TALENT:52 支
+    // 照旧把文本写在语句里（拼接锚 :475+:478+:481+:484+:488+:498+:502 要按行
+    // 核对文本）；其余分支用这个语句外的前缀常量 + 自己的分档与收行合成一条
+    //（#624，同 kojo-k7-heart.js 的 talk_front_5485 写法）
+    const tongue_front_475 =
+      (quiet
+        ? '提心吊胆地'
+        : proud
+          ? '嘿嘿媚笑着'
+          : ashamed
+            ? '不敢直视肉棒而闭上了眼睛'
+            : maiden
+              ? '为了守住自己处女的'
+              : '') +
+      `${arg_name}把` +
+      cock +
+      '含了下去，'; // :475+:478+:481+:484+:488+:498
+    //
+    // :499-505 舌使い：TALENT:52 时由 :502 的 PRINTW 收行
     if (era.get(`talent:${arg}:52`)) {
-      // :499-505 舌使い
-      await era.printAndWait('『呃……这家伙，简直就是经验丰富的妓女嘛～』'); // :403
+      await era.printAndWait(
+        (quiet
+          ? '提心吊胆地'
+          : proud
+            ? '嘿嘿媚笑着'
+            : ashamed
+              ? '不敢直视肉棒而闭上了眼睛'
+              : maiden
+                ? '为了守住自己处女的'
+                : '') +
+          `${arg_name}把` +
+          cock +
+          '含了下去，『呃……这家伙，简直就是经验丰富的妓女嘛～』',
+      ); // :475+:478+:481+:484+:488+:498+:502
       await era.printAndWait(
         `${arg_name}拼命地用舌头侍奉着，展现出天赋般的好技术。`,
       ); // :503
       await era.printAndWait(
         `兽人抵受不住她那灵活的舌头，射在${arg_name}的嘴里了。`,
       ); // :504
-      mon_num *= 2; // :504 舌使いボーナス
-    } else if (era.get(`talent:${arg}:21`)) {
-      await era.print('像工作一样地奉仕着，'); // :509 無関心
-    } else if (era.get(`talent:${arg}:36`)) {
-      await era.print('不禁发出了粗俗的声音，'); // :512 恥薄い
-    } else if (era.get(`talent:${arg}:50`)) {
-      await era.print('很快地抓住了奉仕的诀窍，'); // :515 習得早い
-    } else if (era.get(`talent:${arg}:62`)) {
-      await era.print('忍受着腥臭味，'); // :518 汚臭敏感
-    } else if (era.get(`talent:${arg}:63`)) {
-      await era.print('拼命地用舌头奉仕着，'); // :521 献身的
+      mon_num *= 2; // :506 舌使いボーナス
+      await era.print('奉仕持续了下去……'); // :524
+    } else {
+      await era.print(
+        tongue_front_475 +
+          (indifferent
+            ? '像工作一样地奉仕着，'
+            : vulgar
+              ? '不禁发出了粗俗的声音，'
+              : quick
+                ? '很快地抓住了奉仕的诀窍，'
+                : smelly
+                  ? '忍受着腥臭味，'
+                  : devoted
+                    ? '拼命地用舌头奉仕着，'
+                    : '') +
+          '奉仕持续了下去……',
+      ); // :509+:512+:515+:518+:521+:524
     }
-
-    await era.print('奉仕持续了下去……'); // :524
 
     await era.print(`口交经验+${mon_num}`); // :526
     await era.print(`精液经验+${mon_num}`); // :270
@@ -880,33 +921,29 @@ async function orc_ryou(arg, mon_num, rand) {
       `${arg_name}的脸和性器都用精液化上了妆。兽人们看着她这样子，开怀大笑。`,
     ); // :547
 
-    await era.print('兽人的'); // :549
-
-    // :546-552 PRINTDATA 阴茎五选一
+    // :549..:572 原作是一整行：:549 的「兽人的」、PRINTDATA 的随机词条
+    // （:552-556）、:559 与 :562..:570 的部位分档都不换行，末段 :572 的 PRINTL
+    // 收行（本身无文本）（#624）
+    const cock = pick(
+      ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
+      rand_n,
+    ); // :552-556 PRINTDATA
+    const glasses = (era.get(`cflag:${arg}:42`) || 0) === 83;
+    const charm = era.get(`talent:${arg}:魅力点`) || 0;
     await era.print(
-      pick(
-        ['阴茎', '脏污的阴茎', '带肉刺的阴茎', '巨根', '蘑菇似的阴茎'],
-        rand_n,
-      ),
-    ); // :552-556
-
-    await era.print(
-      `插进了${arg_name}的喉咙深处，射精的同时喷溅出来的精液在${arg_name}的`,
-    ); // :559
-
-    // :556-568 魅力点/眼镜分档
-    if ((era.get(`cflag:${arg}:42`) || 0) === 83) {
-      await era.print('眼镜上飞撒着……'); // :562
-    } else if ((era.get(`talent:${arg}:魅力点`) || 0) === 2) {
-      await era.print('可爱的眼睛上飞撒着……'); // :564
-    } else if ((era.get(`talent:${arg}:魅力点`) || 0) === 3) {
-      await era.print('漂亮的鼻子里喷了出来……'); // :566
-    } else if ((era.get(`talent:${arg}:魅力点`) || 0) === 22) {
-      await era.print('光鲜亮丽的头发上飞撒着……'); // :568
-    } else {
-      await era.print('脸上飞撒着……'); // :570
-    }
-    await era.print(''); // :572 PRINTL
+      '兽人的' +
+        cock +
+        `插进了${arg_name}的喉咙深处，射精的同时喷溅出来的精液在${arg_name}的` +
+        (glasses
+          ? '眼镜上飞撒着……'
+          : charm === 2
+            ? '可爱的眼睛上飞撒着……'
+            : charm === 3
+              ? '漂亮的鼻子里喷了出来……'
+              : charm === 22
+                ? '光鲜亮丽的头发上飞撒着……'
+                : '脸上飞撒着……'),
+    ); // :549+:559+:562+:564+:566+:568+:570+:572
 
     if (era.get(`talent:${arg}:12`)) {
       // :569-574 刚强
@@ -929,47 +966,58 @@ async function orc_ryou(arg, mon_num, rand) {
 
     await era.printAndWait(''); // :594 PRINTW（空行等待）
 
-    await era.print(`兽人们把润滑液涂在了${arg_name}的`); // :595
+    // :595..:613 原作是一整行：:595 的「兽人们把润滑液涂在了…的」与
+    // :598..:610 的部位分档都不换行，末段 :613 的 PRINTL 收行（#624）
+    const charm_b = era.get(`talent:${arg}:魅力点`) || 0;
+    const pubic = era.get(`talent:${arg}:阴毛状态`) || 0;
+    const nimble = era.get(`talent:${arg}:125`) || 0;
+    const muscular = era.get(`talent:${arg}:248`) || 0;
+    await era.print(
+      `兽人们把润滑液涂在了${arg_name}的` +
+        (charm_b === 21
+          ? '漂亮的'
+          : charm_b === 14
+            ? '漂亮的屁股的缝隙中的'
+            : charm_b === 23
+              ? '大的屁股的缝隙中的'
+              : nimble
+                ? '无毛额'
+                : muscular
+                  ? '肌肉明显的两腿间的'
+                  : pubic > 200
+                    ? '从阴阜到肛门都被茂密的阴毛所覆盖的'
+                    : pubic > 150
+                      ? '长着茂盛的阴毛的'
+                      : '') +
+        '性器和肛门上',
+    ); // :595+:598+:600+:602+:604+:606+:608+:610+:613
 
-    // :592-608 魅力点/体型分档
-    if ((era.get(`talent:${arg}:魅力点`) || 0) === 21) {
-      await era.print('漂亮的'); // :598
-    } else if ((era.get(`talent:${arg}:魅力点`) || 0) === 14) {
-      await era.print('漂亮的屁股的缝隙中的'); // :600
-    } else if ((era.get(`talent:${arg}:魅力点`) || 0) === 23) {
-      await era.print('大的屁股的缝隙中的'); // :602
-    } else if (era.get(`talent:${arg}:125`)) {
-      await era.print('无毛额'); // :604 白虎
-    } else if (era.get(`talent:${arg}:248`)) {
-      await era.print('肌肉明显的两腿间的'); // :606 筋肉質
-    } else if ((era.get(`talent:${arg}:阴毛状态`) || 0) > 200) {
-      await era.print('从阴阜到肛门都被茂密的阴毛所覆盖的'); // :608
-    } else if ((era.get(`talent:${arg}:阴毛状态`) || 0) > 150) {
-      await era.print('长着茂盛的阴毛的'); // :610
-    }
-
-    await era.print('性器和肛门上'); // :613
-    await era.print(`在${arg_name}的`); // :614
-
-    if (era.get(`talent:${arg}:99`)) {
-      await era.print('魁梧的身体上'); // :618 魁梧
-    } else if (era.get(`talent:${arg}:100`)) {
-      await era.print('娇小的身体上'); // :621 娇小
-    } else if (era.get(`talent:${arg}:115`)) {
-      await era.print('松松垮垮的身体上'); // :624 肥満
-    } else if (era.get(`talent:${arg}:248`)) {
-      await era.print('紧致的身体上'); // :627 筋肉質
-    } else if (era.get(`talent:${arg}:256`)) {
-      await era.print('窈窕的身体上'); // :630 虚弱
-    } else if ((era.get(`talent:${arg}:体型`) || 0) <= 100) {
-      await era.print('纤细的身体上'); // :632
-    } else if ((era.get(`talent:${arg}:体型`) || 0) > 200) {
-      await era.print('肉感的身体上'); // :634
-    } else {
-      await era.print('身体上'); // :636
-    }
-
-    await era.print('像要挤爆她似的激烈地持续侵犯着……'); // :639
+    // :614..:639 原作是一整行：:614 的「在…的」与 :618..:636 的体型分档都不
+    // 换行，末段 :639 的 PRINTL 收行（#624）
+    const burly = era.get(`talent:${arg}:99`) || 0;
+    const petite = era.get(`talent:${arg}:100`) || 0;
+    const fat = era.get(`talent:${arg}:115`) || 0;
+    const frail = era.get(`talent:${arg}:256`) || 0;
+    const build = era.get(`talent:${arg}:体型`) || 0;
+    await era.print(
+      `在${arg_name}的` +
+        (burly
+          ? '魁梧的身体上'
+          : petite
+            ? '娇小的身体上'
+            : fat
+              ? '松松垮垮的身体上'
+              : muscular
+                ? '紧致的身体上'
+                : frail
+                  ? '窈窕的身体上'
+                  : build <= 100
+                    ? '纤细的身体上'
+                    : build > 200
+                      ? '肉感的身体上'
+                      : '身体上') +
+        '像要挤爆她似的激烈地持续侵犯着……',
+    ); // :614+:618+:621+:624+:627+:630+:632+:634+:636+:639
 
     await era.printAndWait(
       '她用空洞的眼神望向地下城那阴暗的天花板，眼里完全失去了焦点。',
@@ -1003,21 +1051,29 @@ async function orc_ryou(arg, mon_num, rand) {
       ),
     ); // :663-665 PRINTDATAW
 
-    await era.print(`${arg_name}全裸地四肢着地趴在地下、`); // :668
-
-    if (era.get(`talent:${arg}:10`) || era.get(`talent:${arg}:14`)) {
-      await era.print('浑身颤抖着、'); // :672 臆病・大人しい
-    } else if (era.get(`talent:${arg}:11`)) {
-      await era.print('怒目圆睁着、'); // :675 反抗的
-    } else if (era.get(`talent:${arg}:13`)) {
-      await era.print('拼命服从着、'); // :678 素直
-    } else if (era.get(`talent:${arg}:17`)) {
-      await era.print('拼命献媚着、'); // :681 プライド低い
-    } else if (era.get(`talent:${arg}:35`)) {
-      await era.print('羞红了脸、'); // :684 恥じらい
-    }
-
-    await era.printAndWait('屈辱地模仿猪叫……'); // :687
+    // :668..:687 原作是一整行：:668 的「…全裸地四肢着地趴在地下、」与
+    // :672..:684 的素质分档都不换行，末段 :687 的 PRINTW 才收行（#624）
+    const timid = era.get(`talent:${arg}:10`) || 0;
+    const quiet = era.get(`talent:${arg}:14`) || 0;
+    const rebel = era.get(`talent:${arg}:11`) || 0;
+    const honest = era.get(`talent:${arg}:13`) || 0;
+    const proud = era.get(`talent:${arg}:17`) || 0;
+    const ashamed = era.get(`talent:${arg}:35`) || 0;
+    await era.printAndWait(
+      `${arg_name}全裸地四肢着地趴在地下、` +
+        (timid || quiet
+          ? '浑身颤抖着、'
+          : rebel
+            ? '怒目圆睁着、'
+            : honest
+              ? '拼命服从着、'
+              : proud
+                ? '拼命献媚着、'
+                : ashamed
+                  ? '羞红了脸、'
+                  : '') +
+        '屈辱地模仿猪叫……',
+    ); // :668+:672+:675+:678+:681+:684+:687
 
     await era.printAndWait(
       `${mon_num}只兽人看到这个情形都笑了。完全没有了光辉冒险者的样子，就是一只惨叫的猪而已。`,
@@ -2125,45 +2181,39 @@ async function man_ryou(arg, mon_num, rand) {
       `${arg_name}被强行宣布为肉便器，全身都被写满了淫秽的话语。`,
     ); // :1511
 
-    await era.print(`${arg_name}的身上，被写着`); // :1514
-    if (era.get(`talent:${arg}:0`)) {
-      await era.print('【处女开通纪念】'); // :1517 处女
-    } else {
-      await era.print('【最喜欢阴茎】'); // :1519
-    }
-    if (era.get(`talent:${arg}:22`) || era.get(`talent:${arg}:21`)) {
-      await era.print('【性冷淡便器】'); // :1524 感情淡薄・冷漠
-    }
-    if (era.get(`talent:${arg}:24`) || era.get(`talent:${arg}:30`)) {
-      await era.print('【千金小姐便器出道】'); // :1529 保守的・看重贞操
-    }
-    if (era.get(`talent:${arg}:42`)) {
-      await era.print('【又粘又湿】'); // :1534 容易湿
-    }
-    if (era.get(`talent:${arg}:70`) || era.get(`talent:${arg}:73`)) {
-      await era.print('【愉悦的脸】'); // :1539 接受快感・容易陷落
-    }
-    if (
+    // :1514..:1562 原作是一整行：:1514 的「…的身上，被写着」、落書各追加档
+    // （:1517/:1519 处女二选一、:1524/:1529/:1534/:1539/:1544/:1549）、
+    // 末尾三选一（:1553/:1555/:1557）与 :1560 的「之类的话。」都不换行，
+    // 到 :1562 的 PRINTFORMW 才收行。判据提到语句外当取值、片段文本留在输出
+    // 语句里；末尾三选一的 RAND 抽数留在语句内惰性求值（#624，与 #600 的
+    // 男版肉便器行同款）
+    const dull = era.get(`talent:${arg}:22`) || era.get(`talent:${arg}:21`);
+    const modest = era.get(`talent:${arg}:24`) || era.get(`talent:${arg}:30`);
+    const wet = era.get(`talent:${arg}:42`);
+    const pleased = era.get(`talent:${arg}:70`) || era.get(`talent:${arg}:73`);
+    const milky =
       era.get(`talent:${arg}:110`) ||
       era.get(`talent:${arg}:114`) ||
-      era.get(`talent:${arg}:119`)
-    ) {
-      await era.print('【乳牛】'); // :1544 巨乳・爆乳・超乳
-    }
-    if (era.get(`talent:${arg}:121`) || era.get(`talent:${arg}:122`)) {
-      await era.print('【有鸡鸡的奴隶】'); // :1549 扶她・男人
-    }
-    if (rand_n(3) === 0) {
-      await era.print('【操我】'); // :1553
-    } else if (rand_n(2) === 0) {
-      await era.print('【肛门免费】'); // :1555
-    } else {
-      await era.print('【母猪】'); // :1557
-    }
-    // :1560+:1562 原作 PRINTFORM + PRINTFORMW，同一行（#584）
+      era.get(`talent:${arg}:119`);
+    const has_penis =
+      era.get(`talent:${arg}:121`) || era.get(`talent:${arg}:122`);
+    const virgin = era.get(`talent:${arg}:0`);
     await era.printAndWait(
-      '之类的话。络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',
-    ); // :1560+:1562
+      `${arg_name}的身上，被写着` +
+        (virgin ? '【处女开通纪念】' : '【最喜欢阴茎】') +
+        (dull ? '【性冷淡便器】' : '') +
+        (modest ? '【千金小姐便器出道】' : '') +
+        (wet ? '【又粘又湿】' : '') +
+        (pleased ? '【愉悦的脸】' : '') +
+        (milky ? '【乳牛】' : '') +
+        (has_penis ? '【有鸡鸡的奴隶】' : '') +
+        (rand_n(3) === 0
+          ? '【操我】'
+          : rand_n(2) === 0
+            ? '【肛门免费】'
+            : '【母猪】') +
+        '之类的话。络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',
+    ); // :1514+:1517+:1519+:1524+:1529+:1534+:1539+:1544+:1549+:1553+:1555+:1557+:1560+:1562
     await era.printAndWait(
       `当被最后一人抱着的时候，${arg_name}已经失去了任何表情，成为全身的穴都流出着精液的下流便器了。`,
     ); // :1563
@@ -2338,20 +2388,22 @@ async function girl_ryou(arg, mon_num, rand) {
       // :1691-1727 一人
       await era.printAndWait('『独占你了！难道这是第一次？』'); // :1690
       await era.printAndWait(`${arg_name}被魔界的女人口交着，`); // :1691
-      await era.print(`紫色的长舌头，在${arg_name}的`); // :1692
+      // :1692..:1706 原作是一整行：:1692 的「紫色的长舌头，在…的」与
+      // :1694..:1704 的阴茎分档都不换行，末段 :1706 的 PRINTFORMW 才收行（#624）
       const p318 = era.get(`talent:${arg}:318`) || 0; // :1694 阴茎分档
-      if (p318 === 1) {
-        await era.print('巨根'); // :1694
-      } else if (p318 === 2) {
-        await era.print('短小包茎'); // :1696
-      } else if (p318 === 3) {
-        await era.print('包茎'); // :1698
-      } else if (p318 === 4) {
-        await era.print('马阴茎'); // :1701 自然発生はしない
-      } else {
-        await era.print('阴茎'); // :1704 0もしくはイレギュラー
-      }
-      await era.printAndWait('上舔舐着，吸取着精气。'); // :1706
+      await era.printAndWait(
+        `紫色的长舌头，在${arg_name}的` +
+          (p318 === 1
+            ? '巨根'
+            : p318 === 2
+              ? '短小包茎'
+              : p318 === 3
+                ? '包茎'
+                : p318 === 4
+                  ? '马阴茎'
+                  : '阴茎') +
+          '上舔舐着，吸取着精气。',
+      ); // :1692+:1694+:1696+:1698+:1701+:1704+:1706
       if (p318 === 1) {
         await era.printAndWait('『好大，下巴都要脱落了♪』'); // :1708
       } else if (p318 === 2) {
@@ -2377,20 +2429,22 @@ async function girl_ryou(arg, mon_num, rand) {
         '『大家一起来帮他含，一下就射的话，就要好好处罚你喔！』',
       ); // :1731
       await era.printAndWait(`${arg_name}被魔界的女人口交着，`); // :1691
-      await era.print(`紫色的长舌头，在${arg_name}的`); // :1692
+      // :1733..:1747 与上一个分支同型：:1733 的「紫色的长舌头，在…的」与
+      // :1735..:1745 的阴茎分档都不换行，末段 :1747 的 PRINTFORMW 才收行（#624）
       const p318b = era.get(`talent:${arg}:318`) || 0; // :1735 阴茎分档
-      if (p318b === 1) {
-        await era.print('巨根'); // :1735
-      } else if (p318b === 2) {
-        await era.print('短小包茎'); // :1696
-      } else if (p318b === 3) {
-        await era.print('包茎'); // :1739
-      } else if (p318b === 4) {
-        await era.print('马阴茎'); // :1742 自然発生はしない
-      } else {
-        await era.print('阴茎'); // :1745 0もしくはイレギュラー
-      }
-      await era.printAndWait('上舔舐着，吸取着精气。'); // :1706
+      await era.printAndWait(
+        `紫色的长舌头，在${arg_name}的` +
+          (p318b === 1
+            ? '巨根'
+            : p318b === 2
+              ? '短小包茎'
+              : p318b === 3
+                ? '包茎'
+                : p318b === 4
+                  ? '马阴茎'
+                  : '阴茎') +
+          '上舔舐着，吸取着精气。',
+      ); // :1733+:1735+:1737+:1739+:1742+:1745+:1747
       if (p318b === 1) {
         await era.printAndWait('『好大，下巴都要脱落了♪』'); // :1708
       } else if (p318b === 2) {
@@ -2440,20 +2494,22 @@ async function girl_ryou(arg, mon_num, rand) {
       // :1788-1814 喂奶
       await era.printAndWait('『胸部，味道好吗？舔个没完呢～』'); // :1803
       await era.printAndWait(`${arg_name}被魔界的女性一边喂奶，一边被撸着。`); // :1804
-      await era.print(`紫色的手，温柔地在${arg_name}的`); // :1805
+      // :1805..:1819 与上面两支同型：:1805 的「紫色的手，温柔地在…的」与
+      // :1807..:1817 的阴茎分档都不换行，末段 :1819 的 PRINTFORMW 才收行（#624）
       const p318d = era.get(`talent:${arg}:318`) || 0; // :1809 阴茎分档
-      if (p318d === 1) {
-        await era.print('巨根'); // :1807
-      } else if (p318d === 2) {
-        await era.print('短小包茎'); // :1696
-      } else if (p318d === 3) {
-        await era.print('包茎'); // :1811
-      } else if (p318d === 4) {
-        await era.print('马阴茎'); // :1814 自然発生はしない
-      } else {
-        await era.print('阴茎'); // :1817 0もしくはイレギュラー
-      }
-      await era.printAndWait('上爱抚着。'); // :1819
+      await era.printAndWait(
+        `紫色的手，温柔地在${arg_name}的` +
+          (p318d === 1
+            ? '巨根'
+            : p318d === 2
+              ? '短小包茎'
+              : p318d === 3
+                ? '包茎'
+                : p318d === 4
+                  ? '马阴茎'
+                  : '阴茎') +
+          '上爱抚着。',
+      ); // :1805+:1807+:1809+:1811+:1814+:1817+:1819
       if (p318d === 1) {
         await era.printAndWait('『好大啊……来享受快乐吧♪』'); // :1821
       } else if (p318d === 2) {
@@ -2537,13 +2593,14 @@ async function girl_ryou(arg, mon_num, rand) {
           '『真是较真。这样的孩子反而容易觉醒后面的快感呢～』',
         ); // :1887
       } else {
-        await era.print('『这边的穴'); // :1889
-        if (rand_n(2) === 0) {
-          await era.print('才有的'); // :1872
-        } else {
-          await era.print('也有的'); // :1874
-        }
-        await era.printAndWait('个中滋味 好好感・受・吧』'); // :1895
+        // :1889..:1895 原作是一整行：:1889 的「『这边的穴」与 RAND:2 的
+        // :1891/:1893 二选一都不换行，末段 :1895 的 PRINTW 才收行。
+        // RAND 抽数有状态，留在语句内惰性求值（#624）
+        await era.printAndWait(
+          '『这边的穴' +
+            (rand_n(2) === 0 ? '才有的' : '也有的') +
+            '个中滋味 好好感・受・吧』',
+        ); // :1889+:1891+:1893+:1895
       }
       await era.printAndWait(
         `${arg_name}的纯洁被神圣力量保护着，不过没能防住肛门。`,
@@ -3348,15 +3405,14 @@ async function pc_ryou(arg0, arg1, rand) {
     } else if (rand_n(6) === 0 && !era.get(`talent:${arg1}:122`)) {
       // :2514-2544 巨型假阳具
       await era.printAndWait(`${winner_name}拿来小臂般粗的巨型假阳具。`); // :2516
-      await era.print(`${loser_name}的`); // :2517
-      if (era.get(`talent:${arg1}:122`)) {
-        await era.print('后穴'); // :2519
-      } else {
-        await era.print('前后两穴都'); // :2521
-      }
+      // :2517..:2523 原作是一整行：:2517 的「…的」与 :2519/:2521 的二选一
+      // 都不换行，末段 :2523 的 PRINTFORMW 才收行（#624）
+      const loser_is_man = era.get(`talent:${arg1}:122`);
       await era.printAndWait(
-        `被巨型假阳具插入了，${winner_name}用手抚摸着入口周边。`,
-      ); // :2523
+        `${loser_name}的` +
+          (loser_is_man ? '后穴' : '前后两穴都') +
+          `被巨型假阳具插入了，${winner_name}用手抚摸着入口周边。`,
+      ); // :2517+:2519+:2521+:2523
       await era.printAndWait(
         `被污物及爱液弄脏了的巨型假阳具，${loser_name}还被要求用舌头漂亮地清洁干净。`,
       ); // :2524
@@ -3520,15 +3576,11 @@ async function pc_ryou(arg0, arg1, rand) {
         await era.print(
           `${loser_name}谦卑地用狗一样的神态舔舐着${winner_name}的`,
         ); // :2644
-        if (
-          era.get(`talent:${arg0}:121`) === 1 ||
-          era.get(`talent:${arg0}:122`)
-        ) {
-          await era.print('阴茎'); // :2646
-        } else {
-          await era.print('私处'); // :2648
-        }
-        await era.printAndWait('。'); // :2650
+        // :2646..:2650 原作是一整行：:2646/:2648 的阴茎/私处二选一与 :2650 的
+        // 「。」（PRINTFORMW）都不换行（#624）
+        const winner_has_cock =
+          era.get(`talent:${arg0}:121`) === 1 || era.get(`talent:${arg0}:122`);
+        await era.printAndWait((winner_has_cock ? '阴茎' : '私处') + '。'); // :2646+:2648+:2650
       }
 
       await era.print('耻情点数+150'); // :2653
@@ -3557,12 +3609,20 @@ async function pc_ryou(arg0, arg1, rand) {
       await era.printAndWait(`${winner_name}用绳子将${loser_name}紧紧捆住`); // :2672
       if (rand_n(3) === 0) {
         // :2663-2681 鞭打/蜡烛
-        await era.print(`向伏在地上的${loser_name}的背上`); // :2674
-        if (rand_n(2) === 0) {
-          await era.printAndWait('用鞭子不停地抽打着、'); // :2676
+        // :2674 与 :2676/:2679 是同一行的两段互斥收行（RAND:2）：两条收行都自带
+        // W，拼接锚的区间又绕不过中间的 :2677（自带 W）。链上的鞭子支照旧把
+        // :2674 写在语句里（拼接锚 :2674+:2676 要按行核对文本）；蜡烛支用语句外
+        // 的前缀常量 + 自己的收行 :2679 合成一条（#624，同 kojo-k7-heart.js 的
+        // talk_front_5485 写法）。RAND 抽数有状态，提到语句外只抽一次（#624）
+        const whip = rand_n(2) === 0;
+        const back_2674 = `向伏在地上的${loser_name}的背上`; // :2674
+        if (whip) {
+          await era.printAndWait(
+            `向伏在地上的${loser_name}的背上用鞭子不停地抽打着、`,
+          ); // :2674+:2676
           await era.printAndWait(`在${loser_name}的背上留下了数道血痕`); // :2677
         } else {
-          await era.printAndWait('将点燃的蜡烛倾倒了上去'); // :2679
+          await era.printAndWait(back_2674 + '将点燃的蜡烛倾倒了上去'); // :2679
           await era.printAndWait(
             `过热的刺痛让${loser_name}的身体不住地抽搐着、身上更是被滴上了更多的蜡`,
           ); // :2680

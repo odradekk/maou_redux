@@ -461,38 +461,30 @@ async function log_after_bitch(arg, check, rand = default_rand) {
  */
 async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  era.print(`${name_of(arg)}`); // :386 %SAVESTR:ARG%
-  // :385-397 手淫经验分档
-  switch (era.get(`abl:${arg}:13`) || 0) {
-    case 0:
-      era.print('公式般地揉搓着肉棒，一脸厌恶地'); // :389
-      break;
-    case 1:
-      era.print('面对眼前的肉棒，垂下了双眼害羞地'); // :391
-      break;
-    case 2:
-      era.print('看着客人的肉棒，一脸不开心的'); // :393
-      break;
-    case 3:
-    case 4:
-      era.print('一边看着客人的反应，一边'); // :395
-      break;
-    case 5:
-    case 6:
-      era.print('看着客人勃起时的反应，很高兴的'); // :397
-      break;
-    case 7:
-    case 8:
-      era.print('不时微笑着'); // :399
-      break;
-    case 9:
-    case 10:
-      era.print('娴熟的说着隐晦的淫词'); // :401
-      break;
-    default:
-      break;
-  }
-  await era.printAndWait('进行着手交卖春...'); // :403
+  // :386..:403 原作是一整行：开场 `%SAVESTR:ARG%`（:386）与手淫经验分档文案
+  // （SELECTCASE + 无后缀 PRINTFORM，:389/:391/:393/:395/:397/:399/:401）
+  // 都不换行，到末段 :403 的 PRINTFORMW 才收行。档位判据提到语句外当取值、
+  // 片段文本留在输出语句里（#624）
+  const abl13 = era.get(`abl:${arg}:13`) || 0;
+  await era.printAndWait(
+    `${name_of(arg)}` +
+      (abl13 === 0
+        ? '公式般地揉搓着肉棒，一脸厌恶地'
+        : abl13 === 1
+          ? '面对眼前的肉棒，垂下了双眼害羞地'
+          : abl13 === 2
+            ? '看着客人的肉棒，一脸不开心的'
+            : abl13 === 3 || abl13 === 4
+              ? '一边看着客人的反应，一边'
+              : abl13 === 5 || abl13 === 6
+                ? '看着客人勃起时的反应，很高兴的'
+                : abl13 === 7 || abl13 === 8
+                  ? '不时微笑着'
+                  : abl13 === 9 || abl13 === 10
+                    ? '娴熟的说着隐晦的淫词'
+                    : '') +
+      '进行着手交卖春...',
+  ); // :386+:389+:391+:393+:395+:397+:399+:401+:403
 
   if (place === 'DUNGEON') {
     // :401-476 地下城客
@@ -607,36 +599,27 @@ async function log_bitch_hand(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  era.print(`${name_of(arg)}`); // :559 %SAVESTR:ARG%
-  // :560-572 口交经验分档
-  switch (era.get(`abl:${arg}:32`) || 0) {
-    case 0:
-      era.print('看着顶到鼻尖的肉棒，脸色发青的'); // :562
-      break;
-    case 1:
-    case 2:
-      era.print('艰难的适应着肉棒的气味和味道'); // :564
-      break;
-    case 3:
-    case 4:
-      era.print('发出“呷浦呷浦”的下流声音'); // :566
-      break;
-    case 5:
-    case 6:
-      era.print('愉悦的享受着肉棒的味道'); // :568
-      break;
-    case 7:
-    case 8:
-      era.print('带着轻松愉快的表情'); // :570
-      break;
-    case 9:
-    case 10:
-      era.print('用积极又不太过冒犯的态度'); // :572
-      break;
-    default:
-      break;
-  }
-  await era.printAndWait('进行着收费口交...'); // :574
+  // :559..:574 原作是一整行：开场 `%SAVESTR:ARG%`（:559）与口交经验分档文案
+  // （:562/:564/:566/:568/:570/:572）都不换行，到末段 :574 的 PRINTFORMW
+  // 才收行（#624）
+  const abl32 = era.get(`abl:${arg}:32`) || 0;
+  await era.printAndWait(
+    `${name_of(arg)}` +
+      (abl32 === 0
+        ? '看着顶到鼻尖的肉棒，脸色发青的'
+        : abl32 === 1 || abl32 === 2
+          ? '艰难的适应着肉棒的气味和味道'
+          : abl32 === 3 || abl32 === 4
+            ? '发出“呷浦呷浦”的下流声音'
+            : abl32 === 5 || abl32 === 6
+              ? '愉悦的享受着肉棒的味道'
+              : abl32 === 7 || abl32 === 8
+                ? '带着轻松愉快的表情'
+                : abl32 === 9 || abl32 === 10
+                  ? '用积极又不太过冒犯的态度'
+                  : '') +
+      '进行着收费口交...',
+  ); // :559+:562+:564+:566+:568+:570+:572+:574
   await era.printAndWait(
     `${name_of(arg)}跪在地上将客人的阳具吞入口中，用舌头仔细地舔舐着。`,
   ); // :575
@@ -739,36 +722,27 @@ async function log_bitch_oral(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  era.print(`${name_of(arg)}`); // :729 %SAVESTR:ARG%
-  // :729-741 百合经验分档
-  switch (era.get(`abl:${arg}:33`) || 0) {
-    case 0:
-      era.print('“明明知道不会插进来的”这样喃喃自语着'); // :732
-      break;
-    case 1:
-    case 2:
-      era.print('一点点兴奋了起来'); // :734
-      break;
-    case 3:
-    case 4:
-      era.print('用发出黏着水声的小穴'); // :736
-      break;
-    case 5:
-    case 6:
-      era.print('毫不掩饰自己的兴奋'); // :738
-      break;
-    case 7:
-    case 8:
-      era.print('呼喊着不成体统的话语'); // :740
-      break;
-    case 9:
-    case 10:
-      era.print('忘记了时间，一次又一次的和客人缠绵着'); // :742
-      break;
-    default:
-      break;
-  }
-  await era.printAndWait('进行着百合卖春...'); // :744
+  // :729..:744 原作是一整行：开场 `%SAVESTR:ARG%`（:729）与百合经验分档文案
+  // （:732/:734/:736/:738/:740/:742）都不换行，到末段 :744 的 PRINTFORMW
+  // 才收行（#624）
+  const abl33 = era.get(`abl:${arg}:33`) || 0;
+  await era.printAndWait(
+    `${name_of(arg)}` +
+      (abl33 === 0
+        ? '“明明知道不会插进来的”这样喃喃自语着'
+        : abl33 === 1 || abl33 === 2
+          ? '一点点兴奋了起来'
+          : abl33 === 3 || abl33 === 4
+            ? '用发出黏着水声的小穴'
+            : abl33 === 5 || abl33 === 6
+              ? '毫不掩饰自己的兴奋'
+              : abl33 === 7 || abl33 === 8
+                ? '呼喊着不成体统的话语'
+                : abl33 === 9 || abl33 === 10
+                  ? '忘记了时间，一次又一次的和客人缠绵着'
+                  : '') +
+      '进行着百合卖春...',
+  ); // :729+:732+:734+:736+:738+:740+:742+:744
   await era.printAndWait(
     `${name_of(arg)}跪在地上，用舌头仔细地舔舐着魔女的阴蒂，头突然被用手紧紧的按住，魔女按着她的头前后摇晃着摩擦起来，在高潮的尖叫中潮吹，爱液溅在${name_of(arg)}的唇舌和脸上…`,
   ); // :745
@@ -935,38 +909,29 @@ async function log_bitch_les(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  era.print(`${name_of(arg)}`); // :943 %SAVESTR:ARG%
-  // :943-955 肛门经验分档
-  switch (era.get(`abl:${arg}:3`) || 0) {
-    case 0:
-      era.print('拼命忍耐着痛苦'); // :1185 // :946
-      break;
-    case 1:
-      era.print('用经验不多的肠道'); // :948
-      break;
-    case 2:
-      era.print('因为快乐露出了破绽，依然'); // :950
-      break;
-    case 3:
-    case 4:
-      era.print('用充分开发后的尻穴'); // :952
-      break;
-    case 5:
-    case 6:
-      era.print('紧锁着不知道用了多少次，已经变成了不逊于小穴的性器'); // :954
-      break;
-    case 7:
-    case 8:
-      era.print('不停地摆动着屁股'); // :956
-      break;
-    case 9:
-    case 10:
-      era.print('完完全全地沉溺在了H的快感之中'); // :958
-      break;
-    default:
-      break;
-  }
-  await era.printAndWait('进行着肛交卖春...'); // :960
+  // :943..:960 原作是一整行：开场 `%SAVESTR:ARG%`（:943）与肛门经验分档文案
+  // （:946/:948/:950/:952/:954/:956/:958）都不换行，到末段 :960 的
+  // PRINTFORMW 才收行（#624）
+  const abl3 = era.get(`abl:${arg}:3`) || 0;
+  await era.printAndWait(
+    `${name_of(arg)}` +
+      (abl3 === 0
+        ? '拼命忍耐着痛苦'
+        : abl3 === 1
+          ? '用经验不多的肠道'
+          : abl3 === 2
+            ? '因为快乐露出了破绽，依然'
+            : abl3 === 3 || abl3 === 4
+              ? '用充分开发后的尻穴'
+              : abl3 === 5 || abl3 === 6
+                ? '紧锁着不知道用了多少次，已经变成了不逊于小穴的性器'
+                : abl3 === 7 || abl3 === 8
+                  ? '不停地摆动着屁股'
+                  : abl3 === 9 || abl3 === 10
+                    ? '完完全全地沉溺在了H的快感之中'
+                    : '') +
+      '进行着肛交卖春...',
+  ); // :943+:946+:948+:950+:952+:954+:956+:958+:960
   await era.printAndWait(`${name_of(arg)}跪伏在床上，像母狗一样摇动着屁股…`); // :961
 
   if (place === 'DUNGEON') {
@@ -1161,48 +1126,37 @@ async function log_bitch_anal(arg, place, kyaku, rand = default_rand) {
  */
 async function log_bitch_sex(arg, place, kyaku, rand = default_rand) {
   const rand_n = rand;
-  era.print(`${name_of(arg)}`); // :1182 %SAVESTR:ARG%
-  // :1181-1196 性交经验分档
-  switch (era.get(`abl:${arg}:2`) || 0) {
-    case 0:
-      era.print('拼命忍耐着痛苦'); // :1185
-      break;
-    case 1:
-      era.print('用经验不多的阴道'); // :1187 // :1187
-      break;
-    case 2:
-      era.print('沉浸在快乐之中'); // :1189
-      break;
-    case 3:
-    case 4:
-      era.print('用已经完完全全的开发了小穴'); // :1191
-      break;
-    case 5:
-    case 6:
-      era.print('用饱经疼爱经验丰富的小穴'); // :1193
-      break;
-    case 7:
-    case 8:
-      // :1187-1190 IF RAND:2 == 1 && ABL:14 >= 3
-      if (rand_n(2) === 1 && (era.get(`abl:${arg}:14`) || 0) >= 3) {
-        era.print('上下摆动着那迷人的腰'); // :1196
-      } else {
-        era.print('不知道是第几次高潮了'); // :1198
-      }
-      break;
-    case 9:
-    case 10:
-      // :1192-1195 IF RAND:2 == 1 && ABL:14 >= 5
-      if (rand_n(2) === 1 && (era.get(`abl:${arg}:14`) || 0) >= 5) {
-        era.print('用像要扭断一样的气势挥动着腰'); // :1202
-      } else {
-        era.print('比起客人那边更疯狂的高潮着'); // :1204
-      }
-      break;
-    default:
-      break;
-  }
-  await era.printAndWait('进行着性交卖春'); // :1207
+  // :1182..:1207 原作是一整行：开场 `%SAVESTR:ARG%`（:1182）与性交经验分档
+  // 文案（:1185/:1187/:1189/:1191/:1193，以及 7-8/9-10 档内 IF/ELSE 的
+  // :1196/:1198、:1202/:1204）都不换行，到末段 :1207 的 PRINTFORMW 才收行。
+  // 档内 IF 的 `RAND:2` 有状态、只在命中该档时才抽取，所以留在档位判据里
+  // 惰性求值；ABL:14 是纯读，提到语句外当取值（语句内再写 `era.get` 会引入
+  // 嵌套模板的 `${arg}` 槽位，保真锁 C/D 按字面量槽位核对时误判为插值）（#624）
+  const abl2 = era.get(`abl:${arg}:2`) || 0;
+  const abl14 = era.get(`abl:${arg}:14`) || 0;
+  await era.printAndWait(
+    `${name_of(arg)}` +
+      (abl2 === 0
+        ? '拼命忍耐着痛苦'
+        : abl2 === 1
+          ? '用经验不多的阴道'
+          : abl2 === 2
+            ? '沉浸在快乐之中'
+            : abl2 === 3 || abl2 === 4
+              ? '用已经完完全全的开发了小穴'
+              : abl2 === 5 || abl2 === 6
+                ? '用饱经疼爱经验丰富的小穴'
+                : abl2 === 7 || abl2 === 8
+                  ? rand_n(2) === 1 && abl14 >= 3
+                    ? '上下摆动着那迷人的腰'
+                    : '不知道是第几次高潮了'
+                  : abl2 === 9 || abl2 === 10
+                    ? rand_n(2) === 1 && abl14 >= 5
+                      ? '用像要扭断一样的气势挥动着腰'
+                      : '比起客人那边更疯狂的高潮着'
+                    : '') +
+      '进行着性交卖春',
+  ); // :1182+:1185+:1187+:1189+:1191+:1193+:1196+:1198+:1202+:1204+:1207
 
   if (place === 'DUNGEON') {
     // :1201-1408 地下城客
