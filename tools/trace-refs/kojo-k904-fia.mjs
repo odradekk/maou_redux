@@ -21199,9 +21199,7 @@ export const FILES = [
       {
         src: SRC,
         ref: '4341',
-        any: [
-          /^(?:\uFEFF)?[ \t]*SIF[ \t]+ABL:31[ \t]+>=[ \t]+3[ \t]*$/m,
-        ],
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+ABL:31[ \t]+>=[ \t]+3[ \t]*$/m],
       },
       {
         src: SRC,

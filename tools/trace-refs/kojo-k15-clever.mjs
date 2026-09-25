@@ -2888,9 +2888,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
         ref: '759',
-        any: [
-          /^(?:\uFEFF)?[ \t]*SIF[ \t]+!TEQUIP:44[ \t]*$/m,
-        ],
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+!TEQUIP:44[ \t]*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',

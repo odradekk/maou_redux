@@ -207,9 +207,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
         ref: '243',
-        any: [
-          /^(?:\uFEFF)?[ \t]*SIF[ \t]+CFLAG:42[ \t]+==[ \t]+83[ \t]*$/m,
-        ],
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+CFLAG:42[ \t]+==[ \t]+83[ \t]*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
@@ -6014,9 +6012,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
         ref: '5260',
-        any: [
-          /^(?:\uFEFF)?[ \t]*IF[ \t]+CFLAG:A:504[ \t]+==[ \t]+1[ \t]*$/m,
-        ],
+        any: [/^(?:\uFEFF)?[ \t]*IF[ \t]+CFLAG:A:504[ \t]+==[ \t]+1[ \t]*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',

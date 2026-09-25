@@ -19165,9 +19165,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5562',
-        any: [
-          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:157[ \t]*$/m,
-        ],
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:157[ \t]*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
@@ -19309,9 +19307,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5594',
-        any: [
-          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:157[ \t]*$/m,
-        ],
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:157[ \t]*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',

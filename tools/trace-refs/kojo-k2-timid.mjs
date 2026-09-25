@@ -12927,9 +12927,7 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',
         ref: '3916',
-        any: [
-          /^(?:\uFEFF)?[ \t]*SIF[ \t]+ABL:31[ \t]+>=[ \t]+3[ \t]*$/m,
-        ],
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+ABL:31[ \t]+>=[ \t]+3[ \t]*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K2_気弱.ERB',

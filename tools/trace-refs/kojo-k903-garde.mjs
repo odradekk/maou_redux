@@ -8527,7 +8527,10 @@ const refs = [
   ['5390', '^\\s*PRINTFORM %SAVESTR:ASSI%把\\s*$'],
   ['5391', '^\\s*SIF TALENT:ASSI:121 == 1 \\|\\| TALENT:ASSI:122 == 1\\s*$'],
   ['5392', '^\\s*PRINT 阴茎\\s*$'],
-  ['5393', '^\\s*SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1\\s*$'],
+  [
+    '5393',
+    '^\\s*SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1\\s*$',
+  ],
   ['5394', '^\\s*PRINT 假阳具\\s*$'],
   [
     '5395',
