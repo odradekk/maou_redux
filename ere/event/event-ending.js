@@ -287,7 +287,7 @@ async function char_gift(arg, rand = default_rand) {
   for (;;) {
     if (state === 0) {
       // :170 CLEARLINE LINECOUNT-L_LINECOUNT:0
-      era.clear(era.getLineCount() - line_count_0);
+      await era.clear(era.getLineCount() - line_count_0);
       // :171-175 添加预设角色 + ADDCHARA_EX + CHAR_INIT
       era.addCharacter(no_chara);
       await add_chara_ex(no_chara);
@@ -339,7 +339,7 @@ async function char_gift(arg, rand = default_rand) {
 
     // state === 2：$INPUT_LOOP_2（:208-262）
     // :209 CLEARLINE LINECOUNT-L_LINECOUNT:2
-    era.clear(era.getLineCount() - line_count_2);
+    await era.clear(era.getLineCount() - line_count_2);
     era.print('请设定偏好的性格和发色。'); // :210
     // :211-212 %TALENTNAME:PERSONAL% 与 %GET_LOOK_INFO(A,"头发颜色")%
     // 源是 PRINTFORML 纯文本选项（PR #53 通则升格按钮，正文不写 [编号]）。

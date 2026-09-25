@@ -358,7 +358,7 @@ async function dungeon_map(a, rand) {
     if ((era.get('flag:5') || 0) & 32) {
       era.println(); // :58 PRINTL（空行）
       era.drawLine(); // :59
-      era.printAndWait(`${name_of(a)}藏起来休息了`); // :60 PRINTFORMW（简体归一：來→来）
+      await era.printAndWait(`${name_of(a)}藏起来休息了`); // :60 PRINTFORMW（简体归一：來→来）
       era.drawLine(); // :61
       era.println(); // :62 真空行：60 行的 PRINTFORMW 已收尾
     }
@@ -369,7 +369,7 @@ async function dungeon_map(a, rand) {
     if ((era.get('flag:5') || 0) & 32) {
       era.println();
       era.drawLine();
-      era.printAndWait(`${name_of(a)}在安全的地方扎营，休息了`); // :68（简体归一：紮營→扎营）
+      await era.printAndWait(`${name_of(a)}在安全的地方扎营，休息了`); // :68（简体归一：紮營→扎营）
       era.drawLine();
       era.println();
     }
