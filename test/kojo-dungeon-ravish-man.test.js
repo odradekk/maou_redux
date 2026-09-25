@@ -345,3 +345,208 @@ test('同名函数断言：*_ryou_man 与 H13 的 *_ryou 名字区分', async ()
     );
   }
 });
+
+// —— #624：兽人凌辱里七处「原作同一行被拆开」合回一条输出 ——
+//
+// 七处的共同形状：`PRINTFORM`/`PRINT`（无 L/W 后缀）连续不换行，中间夹 IF/
+// SELECTCASE 的分档片段，末段才带 W/L 收行。判据提到语句外当取值、片段文本
+// 留在输出语句里，锚写成拼接锚 `:a+:b+…`。
+// **断言一律钉整行**：旧的 `.some(includes(片段))` 在「拆回多条」时照样绿。
+//
+// 分派用 rand 定值序（RAND:n 按函数内出现序消费）：
+//   口交支    ：rand_n(5) = 0 → pick3 → pick5
+//   全穴奉仕支：rand_n(5) ≠ 0、rand_n(4) = 0 → pick3 → pick5
+//   屈辱プレイ：rand_n(5) ≠ 0、rand_n(4) ≠ 0、rand_n(3) = 0 → pick3
+
+test('#624 兽人凌辱·口交：:22..:31 的无头骑士前缀、名字与种族分档同属一行', async () => {
+  const cases = [
+    [
+      4,
+      '无头骑士的冒险者身体被固定住了，只剩下脑袋来像飞机杯似的侍奉着兽人们的阴茎。',
+    ],
+    [0, '冒险者全裸地侍奉着兽人们的阴茎。'],
+  ];
+  for (const [race, line] of cases) {
+    const fixture = await setup_ravish((f) => {
+      f.store.set('talent:31:种族', race);
+    });
+    const mod = fixture_module(fixture);
+    await mod.orc_ryou_man(31, 5, seq_rand(0, 0, 0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `种族 = ${race} → 整行「${line}」`,
+    );
+  }
+});
+
+test('#624 兽人凌辱·口交：:81..:105 与 :112..:127 两条收行路径各自成整行', async () => {
+  // TALENT:52（舌使い）命中：:81/:84/:87 的初见分档 + :91 + 随机词条 + :101
+  // + :105 的 PRINTW 收行，随后 :106/:107/:127
+  const t52 = await setup_ravish((f) => {
+    f.store.set('talent:31:14', 1); // 大人しい → 「提心吊胆地」
+    f.store.set('talent:31:52', 1); // 舌使い
+  });
+  const mod_t52 = fixture_module(t52);
+  await mod_t52.orc_ryou_man(31, 5, seq_rand(0, 0, 0));
+  const lines_t52 = t52.text_lines();
+  assert.ok(
+    lines_t52.includes(
+      '提心吊胆地冒险者把阴茎含了下去，『呃……这家伙，简直就是经验丰富的娼妓嘛～』',
+    ),
+    'TALENT:52 支：:81..:105 是一整行',
+  );
+  assert.ok(
+    lines_t52.includes('冒险者拼命地用舌头侍奉着，展现出天赋般的好技术。'),
+    ':106 自占一行',
+  );
+  assert.ok(
+    lines_t52.includes('兽人抵受不住他那灵活的舌头，射在冒险者的嘴里了。'),
+    ':107 自占一行',
+  );
+  assert.ok(lines_t52.includes('奉仕持续了下去……'), ':127 自占一行');
+
+  // 其余支：:81/:84/:87 的初见分档 + :91 + 随机词条 + :101 是前半段，
+  // :112..:124 的分档片段接 :127 的 PRINTL 收行。两条分档链互相独立
+  //（前缀看 TALENT:14/17/35，尾段看 TALENT:21/36/50/62/63）
+  const cases = [
+    [[14], '提心吊胆地', ''],
+    [[17], '嘿嘿媚笑着', ''],
+    [[35], '不敢直视肉棒而闭上了眼睛', ''],
+    [[], '', ''],
+    [[21], '', '像工作一样地奉仕着，'],
+    [[36], '', '不禁发出了粗俗的声音，'],
+    [[50], '', '很快地抓住了奉仕的诀窍，'],
+    [[62], '', '忍受着腥臭味，'],
+    [[63], '', '拼命地用舌头奉仕着，'],
+    [[14, 21], '提心吊胆地', '像工作一样地奉仕着，'],
+  ];
+  for (const [talents, prefix, tail] of cases) {
+    const fixture = await setup_ravish((f) => {
+      for (const id of talents) {
+        f.store.set(`talent:31:${id}`, 1);
+      }
+    });
+    const mod = fixture_module(fixture);
+    await mod.orc_ryou_man(31, 5, seq_rand(0, 0, 0));
+    const lines = fixture.text_lines();
+    assert.ok(
+      lines.includes(`${prefix}冒险者把阴茎含了下去，`),
+      `TALENT ${JSON.stringify(talents)} → 前半段整行`,
+    );
+    assert.ok(
+      lines.includes(`${tail}奉仕持续了下去……`),
+      `TALENT ${JSON.stringify(talents)} → 后半段整行`,
+    );
+  }
+});
+
+test('#624 兽人凌辱·全穴奉仕：:152..:175 的随机词条与部位分档同属一行', async () => {
+  const cases = [
+    [{ cflag42: 83 }, '眼镜上飞撒着……'],
+    [{ 魅力点: 2 }, '可爱的眼睛上飞撒着……'],
+    [{ 魅力点: 3 }, '漂亮的鼻子里喷了出来……'],
+    [{ 魅力点: 22 }, '光鲜亮丽的头发上飞撒着……'],
+    [{ 魅力点: 1 }, '脸上飞撒着……'],
+    [{}, '脸上飞撒着……'],
+  ];
+  for (const [seed, tail] of cases) {
+    const fixture = await setup_ravish((f) => {
+      if (seed.cflag42 !== undefined) {
+        f.store.set('cflag:31:42', seed.cflag42);
+      }
+      if (seed.魅力点 !== undefined) {
+        f.store.set('talent:31:魅力点', seed.魅力点);
+      }
+    });
+    const mod = fixture_module(fixture);
+    await mod.orc_ryou_man(31, 5, seq_rand(1, 0, 0, 0));
+    const line =
+      '兽人的阴茎插进了冒险者的喉咙深处，射精的同时喷溅出来的精液在冒险者的' +
+      tail;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${JSON.stringify(seed)} → 整行「${line}」`,
+    );
+  }
+});
+
+test('#624 兽人凌辱·全穴奉仕：:198..:216 的润滑液与部位分档同属一行', async () => {
+  const cases = [
+    [{ 魅力点: 21 }, '漂亮的'],
+    [{ 魅力点: 14 }, '漂亮的屁股的缝隙中的'],
+    [{ 魅力点: 23 }, '大的屁股的缝隙中的'],
+    [{ 125: 1 }, '无毛额'],
+    [{ 248: 1 }, '肌肉明显的两腿间的'],
+    [{ 阴毛状态: 201 }, '从阴阜到肛门都被茂密的阴毛所覆盖的'],
+    [{ 阴毛状态: 151 }, '长着茂盛的阴毛的'],
+    [{}, ''],
+  ];
+  for (const [seed, part] of cases) {
+    const fixture = await setup_ravish((f) => {
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(`talent:31:${key}`, value);
+      }
+    });
+    const mod = fixture_module(fixture);
+    await mod.orc_ryou_man(31, 5, seq_rand(1, 0, 0, 0));
+    const line = `兽人们把润滑液涂在了冒险者的${part}性器和肛门上`;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${JSON.stringify(seed)} → 整行「${line}」`,
+    );
+  }
+});
+
+test('#624 兽人凌辱·全穴奉仕：:217..:242 的体型分档与收行同属一行', async () => {
+  const cases = [
+    [{ 99: 1 }, '魁梧的身体上'],
+    [{ 100: 1 }, '娇小的身体上'],
+    [{ 115: 1 }, '松松垮垮的身体上'],
+    [{ 248: 1 }, '紧致的身体上'],
+    [{ 256: 1 }, '窈窕的身体上'],
+    [{ 体型: 100 }, '纤细的身体上'],
+    [{ 体型: 0 }, '纤细的身体上'], // 未置位也走 `<= 100`
+    [{ 体型: 201 }, '肉感的身体上'],
+    [{ 体型: 150 }, '身体上'],
+  ];
+  for (const [seed, part] of cases) {
+    const fixture = await setup_ravish((f) => {
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(`talent:31:${key}`, value);
+      }
+    });
+    const mod = fixture_module(fixture);
+    await mod.orc_ryou_man(31, 5, seq_rand(1, 0, 0, 0));
+    const line = `在冒险者的${part}像要挤爆他似的激烈地持续侵犯着……`;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${JSON.stringify(seed)} → 整行「${line}」`,
+    );
+  }
+});
+
+test('#624 兽人凌辱·屈辱プレイ：:268..:287 的素质分档与猪叫同属一行', async () => {
+  const cases = [
+    [{ 10: 1 }, '浑身颤抖着、'],
+    [{ 14: 1 }, '浑身颤抖着、'],
+    [{ 11: 1 }, '怒目圆睁着、'],
+    [{ 13: 1 }, '拼命服从着、'],
+    [{ 17: 1 }, '拼命献媚着、'],
+    [{ 35: 1 }, '羞红了脸、'],
+    [{}, ''],
+  ];
+  for (const [seed, part] of cases) {
+    const fixture = await setup_ravish((f) => {
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(`talent:31:${key}`, value);
+      }
+    });
+    const mod = fixture_module(fixture);
+    await mod.orc_ryou_man(31, 5, seq_rand(2, 1, 0, 0));
+    const line = `冒险者全裸地四肢着地趴在地下、${part}屈辱地模仿猪叫……`;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${JSON.stringify(seed)} → 整行「${line}」`,
+    );
+  }
+});
