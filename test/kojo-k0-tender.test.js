@@ -4053,9 +4053,7 @@ test('交谈首次：淫乱推进到 1 / 录像自白写 TFLAG:32 |= 2', async (
   await speak_k0(video, seq_rand(0));
   assert.deepEqual(video.text_lines(), [
     '你让琼做个自我介绍。',
-    '于是琼就将自己的本名、至今为止的性体验',
-    '以及自慰时妄想的内容',
-    '开始愉快的说了起来……',
+    '于是琼就将自己的本名、至今为止的性体验以及自慰时妄想的内容开始愉快的说了起来……',
     '单是想到这个水晶球会流传到故乡认识的人手里，琼两腿之间就变的湿润起来了……',
   ]);
   assert.equal(
@@ -4092,6 +4090,32 @@ test('交谈二次：不写 CFLAG / 插着不拔情话 / 沉默', async () => {
   ]);
   assert.equal(silent.store.get('tflag:32'), undefined, '沉默支不写 TFLAG:32');
   assert.equal(silent.store.get('cflag:31:357'), 1, '交谈二次沉默也不写 CFLAG');
+});
+
+test('交谈二次·录像自白：:4711+:4713+:4714 的无后缀 PRINTFORM 是一行，输出一条（#600）', async () => {
+  const cases = [
+    [
+      3,
+      '于是琼就将自己的本名、至今为止的性体验以及自慰时妄想的内容开始愉快的说了起来……',
+    ],
+    [0, '于是琼就将自己的本名、至今为止的性体验开始愉快的说了起来……'],
+  ];
+  for (const [abl31, line] of cases) {
+    const fixture = await setup_k0((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('cflag:31:357', 1); // 交谈二回目
+      f.store.set('tequip:31:53', 1); // 录像中
+      f.store.set('talent:31:89', 1); // RAND:3==0 的自白支
+      f.store.set('abl:31:31', abl31);
+    });
+    await speak_k0(fixture, seq_rand(0));
+    assert.deepEqual(
+      fixture.text_lines().slice(0, 2),
+      ['你让琼作个自我介绍。', line],
+      `ABL:31 = ${abl31}`,
+    );
+  }
 });
 
 test('乳夹口交首次：淫乱，推进到 1 / 巨乳 SIF', async () => {

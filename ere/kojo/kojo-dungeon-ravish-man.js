@@ -1069,35 +1069,30 @@ async function man_ryou_man(arg, mon_num, rand) {
       `${arg_name}被强行宣布为肉便器，全身都被写满了淫秽的话语。`,
     ); // :764
 
-    await era.print(`${arg_name}的身上，被写着`); // :767
-    await era.print('【最喜欢阴茎】'); // :768
-
-    if (era.get(`talent:${arg}:22`) || era.get(`talent:${arg}:21`)) {
-      await era.print('【性冷淡便器】'); // :771 感情淡薄・冷漠
-    }
-    if (era.get(`talent:${arg}:24`) || era.get(`talent:${arg}:30`)) {
-      await era.print('【看似忠贞的便器出道】'); // :776 保守的・看重贞操
-    }
-    if (era.get(`talent:${arg}:42`)) {
-      await era.print('【又粘又湿】'); // :781 容易湿
-    }
-    if (era.get(`talent:${arg}:70`) || era.get(`talent:${arg}:73`)) {
-      await era.print('【愉悦的脸】'); // :786 接受快感・容易陷落
-    }
-    if (era.get(`talent:${arg}:121`) || era.get(`talent:${arg}:122`)) {
-      await era.print('【有鸡鸡的奴隶】'); // :791 扶他・男人
-    }
-    if (rand_n(3) === 0) {
-      await era.print('【操我】'); // :795
-    } else if (rand_n(2) === 0) {
-      await era.print('【肛门免费】'); // :797
-    } else {
-      await era.print('【母猪】'); // :799
-    }
-    // :802+:804 原作 PRINTFORM + PRINTFORMW，同一行（#584）
+    // :767..:804 原作是一整行：无后缀 PRINT 连续不换行，末行 PRINTFORMW 才收行。
+    // 落書的追加档与末尾三选一都在行内，各 IF 的判据提到语句外当取值、
+    // 文本留在输出语句里（保真锁按序核对 ERB 片段，#600）
+    const cold = era.get(`talent:${arg}:22`) || era.get(`talent:${arg}:21`); // 感情淡薄・冷漠
+    const modest = era.get(`talent:${arg}:24`) || era.get(`talent:${arg}:30`); // 保守的・看重贞操
+    const wet = era.get(`talent:${arg}:42`); // 容易湿
+    const pleased = era.get(`talent:${arg}:70`) || era.get(`talent:${arg}:73`); // 接受快感・容易陷落
+    const has_penis =
+      era.get(`talent:${arg}:121`) || era.get(`talent:${arg}:122`); // 扶他・男人
     await era.printAndWait(
-      '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
-    ); // :802+:804
+      `${arg_name}的身上，被写着` +
+        '【最喜欢阴茎】' +
+        (cold ? '【性冷淡便器】' : '') +
+        (modest ? '【看似忠贞的便器出道】' : '') +
+        (wet ? '【又粘又湿】' : '') +
+        (pleased ? '【愉悦的脸】' : '') +
+        (has_penis ? '【有鸡鸡的奴隶】' : '') +
+        (rand_n(3) === 0
+          ? '【操我】'
+          : rand_n(2) === 0
+            ? '【肛门免费】'
+            : '【母猪】') +
+        '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
+    ); // :767+:768+:771+:776+:781+:786+:791+:795+:797+:799+:802+:804
     await era.printAndWait(
       `当被最后一人抱着的时候，${arg_name}已经失去了任何表情，成为全身的穴都流出着精液的下流便器了。`,
     ); // :805

@@ -1006,6 +1006,147 @@ test('#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 �
   );
 });
 
+// —— SELECTCOM 7 / 56：被拆开的同一行输出（#600）——
+//
+// 原作的无后缀 PRINTFORM/PRINT 不换行，一行会一直续到下一个带 W/L 的 PRINT。
+// 下列五处原来各占一条 era.print，本票按拼接锚合并成一条（锚里列全区间内的
+// PRINT 行，条件/分支的判据提到语句外当取值）。
+
+test('SELECTCOM 7 录像展示：:1640..:1656 的五段 SIF 后缀与收行同属一行（#600）', async () => {
+  // 原作 :1640 以全角空格开头「只要是魔王大人的命令来的话、%SELF_CALL(TARGET)%一定会在这里…用这个」
+  // 后接五条 SIF（:1643 魔王大人专用 / :1646 淫乱 / :1649 牝犬 / :1652 贪欲 /
+  // :1655 处女），末行 :1656 PRINTFORML 收行。五段各自可有可无，文本顺序固定
+  const head = '\u3000只要是魔王大人的命令来的话、我一定会在这里…用这个';
+  const tail = '小穴来、给今天看到的大家侍奉也说不定呢。';
+  const cases = [
+    [{ 85: 1 }, ['魔王大人专用']],
+    [{ 76: 1, 85: 1 }, ['魔王大人专用', '淫乱']],
+    [{ 85: 1, 136: 1 }, ['魔王大人专用', '牝犬']],
+    [{ 85: 1, 271: 1 }, ['魔王大人专用', '贪欲']],
+    [{ 85: 1, 0: 1 }, ['魔王大人专用', '处女']],
+    [{ 76: 1 }, ['淫乱']],
+  ];
+  for (const [talents, words] of cases) {
+    const fixture = await setup_k3((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 7;
+      f.store.set('cflag:31:308', 1); // 非初回
+      f.store.set('tequip:31:53', 1); // 录像中
+      for (const [id, value] of Object.entries(talents)) {
+        f.store.set(`talent:31:${id}`, value);
+      }
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    const line = `${head}${words.join('')}${tail}`;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `TALENT ${JSON.stringify(talents)} → 整行「${line}」`,
+    );
+  }
+});
+
+test('SELECTCOM 56 初回·录像自白：:4995+:4997+:4998 是一行，输出一条（#600）', async () => {
+  const cases = [
+    [
+      3,
+      '温妮将自己的本名、接下来要进行的性体验还有手淫时妄想的内容之类的兴高采烈地说个不停……',
+    ],
+    [0, '温妮将自己的本名、接下来要进行的性体验之类的兴高采烈地说个不停……'],
+  ];
+  for (const [abl31, line] of cases) {
+    const fixture = await setup_k3((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('tequip:31:53', 1);
+      f.store.set('talent:31:89', 1); // RAND:3==0 的自白支
+      f.store.set('abl:31:31', abl31);
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `ABL:31 = ${abl31} → 整行「${line}」`,
+    );
+  }
+});
+
+test('SELECTCOM 56 初回·通常：:5032+:5034|:5036+:5038 是一行，输出一条（#600）', async () => {
+  const cases = [
+    [{ 'tequip:31:11': 1 }, '欢喜的'],
+    [{ 'tequip:31:44': 1 }, '苦痛的'],
+    [{}, ''],
+  ];
+  for (const [tequip, word] of cases) {
+    const fixture = await setup_k3((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('tequip:31:53', 0);
+      f.store.set('talent:31:85', 1);
+      f.store.set('palam:31:4', 10000);
+      f.store.set('palam:31:5', 10000);
+      for (const [key, value] of Object.entries(tequip))
+        f.store.set(key, value);
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    const line = `你向其搭话后，温妮发出了${word}叫声，拼命地向你回话了。`;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `TEQUIP ${JSON.stringify(tequip)} → 整行「${line}」`,
+    );
+  }
+});
+
+test('SELECTCOM 56 二次·录像自白：:5067+:5069+:5070 是一行，输出一条（#600）', async () => {
+  const cases = [
+    [
+      3,
+      '温妮将自己的本名、接下来要进行的性体验还有手淫时妄想的内容之类的兴高采烈地说个不停……',
+    ],
+    [0, '温妮将自己的本名、接下来要进行的性体验之类的兴高采烈地说个不停……'],
+  ];
+  for (const [abl31, line] of cases) {
+    const fixture = await setup_k3((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('cflag:31:357', 1); // 二回目以降
+      f.store.set('tequip:31:53', 1);
+      f.store.set('talent:31:89', 1);
+      f.store.set('abl:31:31', abl31);
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `ABL:31 = ${abl31} → 整行「${line}」`,
+    );
+  }
+});
+
+test('SELECTCOM 56 二次·通常：:5104+:5106|:5108+:5110 是一行，输出一条（#600）', async () => {
+  const cases = [
+    [{ 'tequip:31:13': 1 }, '欢喜的'],
+    [{ 'tequip:31:49': 1 }, '苦痛的'],
+    [{}, ''],
+  ];
+  for (const [tequip, word] of cases) {
+    const fixture = await setup_k3((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('cflag:31:357', 1);
+      f.store.set('tequip:31:53', 0);
+      f.store.set('talent:31:85', 1);
+      f.store.set('palam:31:4', 10000);
+      f.store.set('palam:31:5', 10000);
+      for (const [key, value] of Object.entries(tequip))
+        f.store.set(key, value);
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    const line = `你向其搭话后，温妮发出了${word}叫声，拼命地向你回话了。`;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `TEQUIP ${JSON.stringify(tequip)} → 整行「${line}」`,
+    );
+  }
+});
+
 // —— 存根清单核对 ——
 
 test('SELL_MATURO_K0 已从存根清单移除', async () => {

@@ -319,9 +319,10 @@ function getbit(bits, n) {
 /**
  * @LOG_TRY_BITCH（:8-49）：卖春直前の文章（还没开始、正否回数不明）。
  *
- * 首行输出 %FS_BITCH("LOOKS", ARG)%（本人描写），随后按场所（DUNGEON/
- * 其他=TOWN）与角色状态分档输出「无法压抑自己的性欲，」等前缀，末行
- * 「考虑着出卖肉体的事。」（PRINTFORMW = 换行等待）。
+ * :14..:47 **是一整行**（#600）：首段是 %FS_BITCH("LOOKS", ARG)%（本人描写），
+ * 中段按场所（DUNGEON/其他=TOWN）与角色状态拼「无法压抑自己的性欲，」等片段，
+ * 末段「考虑着出卖肉体的事。」是 PRINTFORMW（换行等待）——所以整函数只输出
+ * 一条 `printAndWait`，片段由分支取值表达式在两段之间拼出。
  *
  * 注意与 H15 的 @FI_TRY_BITCH（玩法抽选，返回玩法号）**不同函数**：
  * 本函数只输出文本、不改状态、无返回值；FI_TRY_BITCH 只返回玩法号、
@@ -332,69 +333,46 @@ function getbit(bits, n) {
  * @returns {Promise<void>}
  */
 async function log_try_bitch(arg, place) {
-  era.print(`${fs_bitch('LOOKS', arg)}`); // :14 %FS_BITCH("LOOKS", ARG)%
-  if (place === 'DUNGEON') {
-    // :16-35 侵入中
-    if ((era.get(`cflag:${arg}:1`) || 0) === 2) {
-      // :18-26 侵攻中的勇者
-      if (
-        (era.get(`abl:${arg}:37`) || 0) >= 1 ||
-        era.get(`talent:${arg}:76`) ||
-        0
-      ) {
-        era.print('无法压抑自己的性欲，'); // :21
-      } else if (
-        (era.get(`cflag:${arg}:580`) || 0) +
-          (era.get(`cflag:${arg}:581`) || 0) +
-          (era.get(`cflag:${arg}:582`) || 0) <
-        -5000
-      ) {
-        era.print('对于借款只减少了一点点感到不满，'); // :23
-      } else {
-        era.print('在空闲的时间，'); // :25
-      }
-    } else if (
-      (era.get(`cflag:${arg}:1`) || 0) === 3 &&
-      (era.get(`cflag:${arg}:533`) || 0) > 1
-    ) {
-      era.print('瞒着同伴偷偷的'); // :28
-    } else if ((era.get(`cflag:${arg}:500`) || 0) === 1) {
-      // :29-32 卖春指示
-      if (
-        (era.get(`talent:${arg}:85`) || 0) &&
-        !(
-          era.get(`talent:${arg}:180`) ||
-          0 ||
-          era.get(`talent:${arg}:181`) ||
-          0
-        )
-      ) {
-        era.print('被强迫'); // :31
-      }
-      era.print('遵照命令，'); // :32
-    } else {
-      era.print('无法压抑自己的性欲，'); // :34
-    }
-  } else {
-    // :36-46 卖淫中毒か淫乱
-    if (
-      (era.get(`abl:${arg}:37`) || 0) >= 1 ||
-      era.get(`talent:${arg}:76`) ||
-      0
-    ) {
-      era.print('无法压抑自己的性欲，'); // :39
-    } else if (
-      (era.get(`cflag:${arg}:580`) || 0) +
-        (era.get(`cflag:${arg}:581`) || 0) +
-        (era.get(`cflag:${arg}:582`) || 0) <
-      -5000
-    ) {
-      era.print('由于高额的债务，不由得开始'); // :42
-    } else {
-      era.print('冒险资金花光了，'); // :44
-    }
-  }
-  await era.printAndWait('考虑着出卖肉体的事。'); // :47
+  // :14..:47 原作是一整行：无后缀 PRINTFORM 连续不换行，末行 PRINTFORMW 才收行。
+  // 各分支都是这一行上的片段——DUNGEON 的 :16-35 侵入中链（:18-26 侵攻中的勇者、
+  // :29-32 卖春指示）与 TOWN 的 :36-46 卖淫中毒か淫乱——判据提到语句外当取值、
+  // 片段文本留在输出语句里（保真锁按序核对 ERB 片段，#600）
+  const cflag1 = era.get(`cflag:${arg}:1`) || 0;
+  const horny =
+    (era.get(`abl:${arg}:37`) || 0) >= 1 ||
+    (era.get(`talent:${arg}:76`) || 0) !== 0;
+  const in_debt =
+    (era.get(`cflag:${arg}:580`) || 0) +
+      (era.get(`cflag:${arg}:581`) || 0) +
+      (era.get(`cflag:${arg}:582`) || 0) <
+    -5000;
+  const sneaking = cflag1 === 3 && (era.get(`cflag:${arg}:533`) || 0) > 1;
+  const ordered = (era.get(`cflag:${arg}:500`) || 0) === 1;
+  const in_dungeon = place === 'DUNGEON';
+  const forced =
+    (era.get(`talent:${arg}:85`) || 0) !== 0 &&
+    !(era.get(`talent:${arg}:180`) || era.get(`talent:${arg}:181`));
+  await era.printAndWait(
+    `${fs_bitch('LOOKS', arg)}` +
+      (in_dungeon
+        ? cflag1 === 2
+          ? horny
+            ? '无法压抑自己的性欲，'
+            : in_debt
+              ? '对于借款只减少了一点点感到不满，'
+              : '在空闲的时间，'
+          : sneaking
+            ? '瞒着同伴偷偷的'
+            : ordered
+              ? (forced ? '被强迫' : '') + '遵照命令，'
+              : '无法压抑自己的性欲，'
+        : horny
+          ? '无法压抑自己的性欲，'
+          : in_debt
+            ? '由于高额的债务，不由得开始'
+            : '冒险资金花光了，') +
+      '考虑着出卖肉体的事。',
+  ); // :14+:21+:23+:25+:28+:31+:32+:34+:39+:42+:44+:47
 }
 
 /**
