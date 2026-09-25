@@ -4691,15 +4691,14 @@ test('NTR：P==4 それ以外支末行源作无省略号（1:1 保真），:7532
   assert.equal(fixture.store.get('cflag:31:654'), 1, 'NTR_654 CFLAG:654');
 });
 
-test('NTR：P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具，1:1 保真）', async () => {
+test('NTR：P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具，1:1 保真）：:7549+:7551+:7553 是一行（#622）', async () => {
   const zero = await setup_k8((f) => {
     f.store.set('flag:500', 0);
   });
   await speak_ntr_k8(zero, 5);
   assert.deepEqual(zero.text_lines(), [
     '「啊啊…好舒服啊…给我…给我更多阴茎！啊啊…嗯…好深…好棒♪」',
-    '银黑桃的蜜裂和肛门被',
-    '阴茎搅动着、精液不停的溢了出来………',
+    '银黑桃的蜜裂和肛门被阴茎搅动着、精液不停的溢了出来………',
   ]);
   assert.equal(zero.store.get('cflag:31:655'), 1, 'NTR_655 CFLAG:655');
 
@@ -4708,8 +4707,8 @@ test('NTR：P==5 それ以外支只判 FLAG:500 == 0（扶她的 2 走假阳具�
   });
   await speak_ntr_k8(two, 5);
   assert.equal(
-    two.text_lines()[2],
-    '假阳具搅动着、爱液不停的溢了出来………',
+    two.text_lines()[1],
+    '银黑桃的蜜裂和肛门被假阳具搅动着、爱液不停的溢了出来………',
     'FLAG:500==2 在本支走假阳具（与同函数其余各处的 0 或 2 判定不同）',
   );
 });

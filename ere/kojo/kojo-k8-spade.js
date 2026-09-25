@@ -12310,13 +12310,15 @@ async function ntr_koujo_k8(rand, p_arg = 0) {
       await era.printAndWait(
         `「啊啊…好舒服啊…给我…给我更多阴茎！啊啊…嗯…好深…好棒♪」`,
       ); // :7548
-      await era.print(`${target_name}的蜜裂和肛门被`); // :7549
+      // :7549+:7551+:7553 原作是一整行：无后缀 PRINTFORM + IF/ELSE 的 PRINT
+      // （互斥两支，各支自带收尾，块后没有共同的收行语句）（#622 补查）。
       // :7550 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同），1:1 保真
-      if (game.system.狂王性别 == 0) {
-        await era.print(`阴茎搅动着、精液不停的溢了出来………`); // :7551
-      } else {
-        await era.print(`假阳具搅动着、爱液不停的溢了出来………`); // :7553
-      }
+      await era.print(
+        `${target_name}的蜜裂和肛门被` +
+          (game.system.狂王性别 == 0
+            ? `阴茎搅动着、精液不停的溢了出来………`
+            : `假阳具搅动着、爱液不停的溢了出来………`),
+      ); // :7549+:7551+:7553
     }
     kojo.NTR_655 = 1; // :7556 CFLAG:655 = 1
   } else if (p == 6) {
