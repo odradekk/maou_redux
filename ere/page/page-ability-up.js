@@ -49,8 +49,6 @@ const {
   life_list_salave,
   max_page_enemy,
   max_page_salave,
-  pad_display_left,
-  pad_display_right,
   print_row,
 } = require('#/page/page-life-list');
 const { show_ablup_select, show_juel } = require('#/page/page-ablup');
@@ -64,6 +62,7 @@ const {
   STUBBED_ABLUP_NAMES,
 } = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
+const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 const { stub_line } = require('#/utils/stub-line');
 
 /**
@@ -155,8 +154,8 @@ function draw_list(select_menu, no_page) {
       [
         {
           content:
-            `${pad_display_left(chara_callname(0), 12)}${' '.repeat(8)} ` +
-            `LV${pad_display_right(String(cflag(0, 9)), 4)}`,
+            `${pad_display(chara_callname(0), 12)}${NBSP.repeat(8)} ` +
+            `LV${pad_left(String(cflag(0, 9)), 4)}`,
         },
       ],
       4,

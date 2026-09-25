@@ -243,7 +243,7 @@ function cell(text, width) {
     (sum, ch) => sum + (ch.charCodeAt(0) > 0xff ? 2 : 1),
     0,
   );
-  return `[${text}${' '.repeat(Math.max(0, width - shown))}]`;
+  return `[${text}${'\u00A0'.repeat(Math.max(0, width - shown))}]`; // #577：补位 NBSP
 }
 
 /** 全量行史的文本行（含被重绘清掉的；「发生过什么」的取证面，同 page-shop） */

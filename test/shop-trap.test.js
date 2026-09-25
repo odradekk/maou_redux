@@ -180,7 +180,7 @@ function cell(name, count) {
     (sum, ch) => sum + (ch.charCodeAt(0) > 0xff ? 2 : 1),
     0,
   );
-  return `[${text}${' '.repeat(Math.max(0, 16 - width))}]`;
+  return `[${text}${'\u00A0'.repeat(Math.max(0, 16 - width))}]`; // #577：补位 NBSP
 }
 
 test('ITEM_SHOP_TRAP：头行与提示行 1:1，分隔线三处', async () => {
@@ -312,7 +312,7 @@ test('ITEM_SHOP_TRAP：陷阱网格 60-91、戒指网格 300-320，5 格一行',
   const trap_rows = rows_between(fixture, '[陷阱]', '[戒指]');
   assert.deepEqual(trap_rows, [
     [
-      '[落穴(x3)        ]',
+      '[落穴(x3)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0]',
       cell('射箭陷阱', 1),
       cell('传送陷阱', 1),
       cell('单向通行陷阱', 2),

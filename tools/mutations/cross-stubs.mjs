@@ -130,8 +130,9 @@ export default [
   {
     desc: 'M6577 SELECT_YES_NO 提示选项改错',
     file: 'ere/page/page-life-list.js',
-    find: "    era.print('  [0] 是的   [1] 不要');",
-    replace: "    era.print('  [0] 不要   [1] 是的');",
+    find: "    era.print('\\u00A0\\u00A0[0] 是的\\u00A0\\u00A0\\u00A0[1] 不要');",
+    replace:
+      "    era.print('\\u00A0\\u00A0[0] 不要\\u00A0\\u00A0\\u00A0[1] 是的');",
     tests: ['cross-stubs'],
     must_mention: '非法输入重问',
   },

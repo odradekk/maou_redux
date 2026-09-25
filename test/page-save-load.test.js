@@ -46,14 +46,21 @@ function seed_save(fixture, slot, comment) {
 
 test('LIST_DATA：存在槽 = 备注按钮，空槽按视角分化（存=灰按钮 / 读=灰文本）', () => {
   const fixture = create_era_fixture();
-  seed_save(fixture, 0, '2026/01/01 00:00:00 第 1日午前 LV   1');
+  seed_save(
+    fixture,
+    0,
+    '2026/01/01 00:00:00 第\u00A01日午前 LV\u00A0\u00A0\u00A01',
+  );
   const { list_data } = load_page(fixture);
 
   list_data(0, 3, true); // 存档视角
   let entries = buttons(fixture);
   assert.equal(entries.length, 3, '存档视角：空槽也是按钮（原作可对空槽存档）');
   assert.equal(entries[0].accelerator, 0);
-  assert.equal(entries[0].text, '2026/01/01 00:00:00 第 1日午前 LV   1');
+  assert.equal(
+    entries[0].text,
+    '2026/01/01 00:00:00 第\u00A01日午前 LV\u00A0\u00A0\u00A01',
+  );
   assert.equal(entries[0].color, undefined, '无高亮的槽不着色');
   assert.equal(entries[1].accelerator, 1);
   assert.equal(entries[1].text, '----');
@@ -182,7 +189,7 @@ test('SAVEINFO：日期时段/LV/正在调教段/24 空格/故事名逐段拼接
 
   assert.equal(
     build_save_info(),
-    '第 1日午前 LV   5 正在调教:玛奥           『魔王城物语』',
+    '第\u00A01日午前\u00A0LV\u00A0\u00A0\u00A05 正在调教:玛奥\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0 『魔王城物语』',
   );
   // 第 1日午前 = 显示宽 10 → 补 1 空格到 11；LV 右对齐宽 4；
   // 「 正在调教:」+ 玛奥（宽 4）左对齐宽 14 → 补 10 空格，再补段尾 1 空格
@@ -193,7 +200,7 @@ test('SAVEINFO：日期时段/LV/正在调教段/24 空格/故事名逐段拼接
   fixture2.store.set('flag:10003', 1); // 午后
   fixture2.store.set('cflag:0:9', 100);
   const { build_save_info: build2 } = load_page(fixture2);
-  assert.equal(build2(), '第10日午后 LV 100' + ' '.repeat(24));
+  assert.equal(build2(), '第10日午后\u00A0LV\u00A0100' + '\u00A0'.repeat(24));
 });
 
 test('SAVEINFO 副作用：SIF FLAG:1/FLAG:2 >= 0 改写 TARGET/ASSI 指针', () => {
@@ -227,7 +234,7 @@ test('SAVEGAME：空槽直接存（无覆盖确认），备注 = 时间戳 + SAV
   assert.equal(call.args[0], 3, '存进玩家选的 3 号槽');
   assert.match(
     call.args[1],
-    /^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第 1日午前/,
+    /^\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2} 第\u00A01日午前/,
     '备注前缀 = GETTIMES() 的 YYYY/MM/DD HH:MM:SS + SAVEINFO 正文',
   );
   assert(

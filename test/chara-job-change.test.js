@@ -411,8 +411,14 @@ test('JOB_CHANGE_BENKI：菜单两行各带当前取值（GET_LOOK_INFO 的两 k
   const cell_texts = fixture.lines_history
     .filter((line) => line.type === 'text')
     .map((line) => line.text);
-  assert.ok(cell_texts.includes('  -  奉侍战斗'), '战斗常识的当前取值');
-  assert.ok(cell_texts.includes('  -  公众便器'), '日常常识的当前取值');
+  assert.ok(
+    cell_texts.includes('\u00A0\u00A0-\u00A0\u00A0奉侍战斗'),
+    '战斗常识的当前取值',
+  );
+  assert.ok(
+    cell_texts.includes('\u00A0\u00A0-\u00A0\u00A0公众便器'),
+    '日常常识的当前取值',
+  );
 });
 
 test('JOB_CHANGE_BENKI：[0] 战斗常识三档循环；[1] 日常常识六档循环且没养狗时跳过兽奸档', async () => {

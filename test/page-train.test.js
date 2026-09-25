@@ -109,22 +109,22 @@ test('PRINT_PALAM：16 格原生进度条——条内名、条后数值与样本
   assert.deepEqual(
     progress.map((l) => [l.text, l.out]),
     [
-      ['阴核', ' 5540'],
-      ['私处', '    0'],
-      ['肛门', '    0'],
-      ['润滑', ' 2915'],
-      ['恭顺', '    7'],
-      ['欲情', ' 2425'],
-      ['屈服', '  100'],
-      ['习得', '  238'],
-      ['耻情', ' 1724'],
-      ['苦痛', '    0'],
-      ['恐怖', '    0'],
-      ['反感', ' 3429'],
-      ['不快', '    0'],
-      ['抑郁', '   24'],
-      ['乳房', '   49'],
-      ['局部', '    0'],
+      ['阴核', '\u00A05540'],
+      ['私处', '\u00A0\u00A0\u00A0\u00A00'],
+      ['肛门', '\u00A0\u00A0\u00A0\u00A00'],
+      ['润滑', '\u00A02915'],
+      ['恭顺', '\u00A0\u00A0\u00A0\u00A07'],
+      ['欲情', '\u00A02425'],
+      ['屈服', '\u00A0\u00A0100'],
+      ['习得', '\u00A0\u00A0238'],
+      ['耻情', '\u00A01724'],
+      ['苦痛', '\u00A0\u00A0\u00A0\u00A00'],
+      ['恐怖', '\u00A0\u00A0\u00A0\u00A00'],
+      ['反感', '\u00A03429'],
+      ['不快', '\u00A0\u00A0\u00A0\u00A00'],
+      ['抑郁', '\u00A0\u00A0\u00A024'],
+      ['乳房', '\u00A0\u00A0\u00A049'],
+      ['局部', '\u00A0\u00A0\u00A0\u00A00'],
     ],
   );
   // 表现：percentage＝100×值/下一等级阈值（手算基线：LV0/100、LV1/500、
@@ -222,7 +222,7 @@ test('@SHOW_STATUS：日期行/目标行/绝顶静默/参数条/存根/清除点
     (line) => line.type === 'text' && line.text.includes('调教中'),
   );
   assert(header, '必须渲染目标行');
-  assert(header.text.startsWith('温妮 调教中   调教者:'));
+  assert(header.text.startsWith('温妮 调教中\u00A0\u00A0\u00A0调教者:'));
   assert(header.text.endsWith('你   '));
   // 主人姓名片段带浅蓝（SETCOLOR 0x87CEFA）
   assert(
@@ -500,13 +500,32 @@ test('LIFE_BAR/VITAL_BAR：数值宽 4、(cur/max) 语义值、濒死/死亡/气
   assert.equal(life.percentage, (100 * 1445) / 2000);
   assert.ok(life.out_visible, '语义值（条后文字）必须真实渲染（barWidth<24）');
   const vital = find_bar(fixture, '气力');
-  assert.equal(vital.out, '( 360/2000)', 'VITAL 数值右对齐宽 4（{BASE:1,4}）');
+  assert.equal(
+    vital.out,
+    '(\u00A0360/2000)',
+    'VITAL 数值右对齐宽 4（{BASE:1,4}）',
+  );
 
   // 濒死（< 500）/死亡（< 0，按 0 渲染）/气力０（<= 0）缀标（:1159-1163/:1198）
   const cases = [
-    { base: 'base:31:0', val: 400, label: '体力', out: '( 400/2000)★濒死★' },
-    { base: 'base:31:0', val: -5, label: '体力', out: '(   0/2000)★死亡★' },
-    { base: 'base:31:1', val: 0, label: '气力', out: '(   0/2000)★气力０★' },
+    {
+      base: 'base:31:0',
+      val: 400,
+      label: '体力',
+      out: '(\u00A0400/2000)★濒死★',
+    },
+    {
+      base: 'base:31:0',
+      val: -5,
+      label: '体力',
+      out: '(\u00A0\u00A0\u00A00/2000)★死亡★',
+    },
+    {
+      base: 'base:31:1',
+      val: 0,
+      label: '气力',
+      out: '(\u00A0\u00A0\u00A00/2000)★气力０★',
+    },
   ];
   for (const c of cases) {
     const f2 = create_era_fixture();

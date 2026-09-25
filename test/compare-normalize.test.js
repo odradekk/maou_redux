@@ -13,6 +13,7 @@ const { test } = require('node:test');
 
 const {
   classify_line,
+  compress_ws,
   fixture_stream,
   golden_stream,
   line_stats,
@@ -468,4 +469,49 @@ test('progress 基础条：非 `(数字/数字)` 开头的括号形态不当基�
     Number.isNaN(stream[0].val),
     '落回 val-only 分支（Number("(abc/def)")=NaN）',
   );
+});
+
+// —— #577：对齐补位改 U+00A0 后，两侧空白归一必须把 NBSP 当空格 ——
+
+test('compress_ws 把 U+00A0 当空格压缩（golden 是普通空格，照常可比）', () => {
+  assert.equal(compress_ws('A\u00A0\u00A0B'), 'A B');
+  assert.equal(compress_ws(' A\u00A0B '), 'A B');
+  // 与等价的半角空格串归一结果一致——两侧同构的保证
+  assert.equal(compress_ws('A\u00A0\u00A0B'), compress_ws('A  B'));
+});
+
+test('classify_line：NBSP 补位的算式行/网格行与半角空格版分类一致（#577）', () => {
+  // ere 侧参数变动的算式行（figure_indent / FIGURE_INDENT_2 的补位改 NBSP 后）
+  const nbsp = classify_line(
+    '阴核\u00A0\u00A05240+\u00A0\u00A0300\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= 5540',
+  );
+  assert.equal(nbsp.kind, 'calc');
+  assert.equal(nbsp.from, 5240);
+  assert.equal(nbsp.add, 300);
+  assert.equal(nbsp.to, 5540);
+  // 网格行的列间隙换成 NBSP 后照旧拆条
+  const grid = classify_line(
+    '爱抚[  0]\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0舔阴[  1]',
+  );
+  assert.equal(grid.kind, 'group');
+  assert.deepEqual(
+    grid.items.map((i) => [i.kind, i.key, i.val]),
+    [
+      ['menu', '爱抚', 0],
+      ['menu', '舔阴', 1],
+    ],
+  );
+});
+
+test('ere 侧按钮正文含 NBSP 时 menu 键与空格版一致（#577 两侧同构）', () => {
+  const stream = fixture_stream([
+    {
+      type: 'button',
+      text: '\u00A0[0] 是的\u00A0\u00A0\u00A0[1] 不要',
+      accelerator: 0,
+    },
+    { type: 'button', text: '  [0] 是的   [1] 不要', accelerator: 0 },
+  ]);
+  assert.equal(stream[0].key, stream[1].key);
+  assert.equal(stream[0].key, '[0] 是的 [1] 不要');
 });

@@ -78,7 +78,7 @@ test('SHOW_INFO_TITLE：等号线 + 编号/名字/年龄行的逐字形态', () 
   // 五个全角空格、年龄右对齐 48
   assert.equal(
     text_at(fixture, 1),
-    `NO.7   考狄利亚    \u3000\u3000\u3000\u3000\u3000${' '.repeat(43)}16 岁`,
+    `NO.7\u00A0\u00A0 考狄利亚\u00A0\u00A0\u00A0\u00A0\u3000\u3000\u3000\u3000\u3000${'\u00A0'.repeat(43)}16 岁`,
   );
 });
 
@@ -96,7 +96,7 @@ test('SHOW_INFO_TITLE：爱慕优先于淫乱，两者都不命中时补五个�
     show_info_title(7, always);
     assert.equal(
       text_at(fixture, 1),
-      `NO.7   考狄利亚    ${fragment}${' '.repeat(43)}16 岁`,
+      `NO.7\u00A0\u00A0 考狄利亚\u00A0\u00A0\u00A0\u00A0${fragment}${'\u00A0'.repeat(43)}16 岁`,
       label,
     );
     const colored = fixture.lines[1].content.filter(
@@ -126,12 +126,16 @@ test('SHOW_INFO_TITLE：85 与 76 同设时爱慕胜出（IF/ELSEIF 顺序）', 
 test('SHOW_INFO_TITLE：FLAG:5 位 12/13/14/15 的四种年龄串组合（表驱动）', () => {
   // [FLAG:5 位组合, 期望年龄串（已右对齐到 48）, 说明]
   const cases = [
-    [0, ' '.repeat(48), '位 12 关：年龄串为空 → 48 空格'],
-    [bit(12), `${' '.repeat(43)}16 岁`, '位 12 开：人类年龄'],
-    [bit(12) | bit(13), `${' '.repeat(43)}30 岁`, '位 13 开：改用种族年龄'],
+    [0, '\u00A0'.repeat(48), '位 12 关：年龄串为空 → 48 空格'],
+    [bit(12), `${'\u00A0'.repeat(43)}16 岁`, '位 12 开：人类年龄'],
+    [
+      bit(12) | bit(13),
+      `${'\u00A0'.repeat(43)}30 岁`,
+      '位 13 开：改用种族年龄',
+    ],
     [
       bit(12) | bit(13) | bit(14),
-      `${' '.repeat(26)}30 岁 (换算人类 16 岁)`,
+      `${'\u00A0'.repeat(26)}30 岁 (换算人类\u00A016 岁)`,
       '位 14 也开且两者不同：追加换算人类',
     ],
   ];
@@ -154,7 +158,7 @@ test('SHOW_INFO_TITLE：位 14 开但两年龄相同时不追加换算（第三�
   show_info_title(7, always);
   assert.equal(
     text_at(fixture, 1),
-    `NO.7   考狄利亚    \u3000\u3000\u3000\u3000\u3000${' '.repeat(43)}16 岁`,
+    `NO.7\u00A0\u00A0 考狄利亚\u00A0\u00A0\u00A0\u00A0\u3000\u3000\u3000\u3000\u3000${'\u00A0'.repeat(43)}16 岁`,
   );
 });
 
@@ -164,8 +168,8 @@ test('SHOW_INFO_TITLE：TALENT:292 魔王之影追加寿命倒计时', () => {
   fixture.store.set('cflag:7:820', 7); // CFLAG:820 寿命剩余天数
   fixture.store.set('talent:7:292', 1);
   show_info_title(7, always);
-  // {CFLAG:820, 3} 右对齐宽 3 → "  7"
-  assert.match(text_at(fixture, 1), /16 岁 \[寿命还有 {2}7 天\]$/);
+  // {CFLAG:820, 3} 右对齐宽 3 → "\u00A0\u00A07"
+  assert.match(text_at(fixture, 1), /16 岁 \[寿命还有\u00A0{2}7 天\]$/);
 });
 
 test('SHOW_INFO_TITLE：魔王（cid 0）不显示年龄行但编号行照出', () => {
@@ -173,9 +177,9 @@ test('SHOW_INFO_TITLE：魔王（cid 0）不显示年龄行但编号行照出', 
   fixture.store.set('cflag:0:451', 999);
   show_info_title(0, always);
   const line = text_at(fixture, 1);
-  assert.match(line, /^NO.0 {2}/);
+  assert.match(line, /^NO.0\u00A0{2}/);
   assert.doesNotMatch(line, /岁/);
-  assert.equal(line.slice(-48), ' '.repeat(48));
+  assert.equal(line.slice(-48), '\u00A0'.repeat(48));
 });
 
 test('SHOW_INFO_TITLE：CFLAG:451 缺失时现调 CHAR_BODY_GENERATE_WAPPED 补生成', () => {
@@ -216,7 +220,7 @@ test('SHOW_BLOCK：一人称行 = 自称宽 26 左对齐 + [8] 一人称重设�
   // 原作 :374-375 是 PRINTPLAINFORM + PRINTFORM 的同一行文字提示；ere 的
   // input 只接受已打印按钮的快捷键（#129），[8] 升级为真按钮才能点进
   // RANDOM_SELF_CALL 的 MODE 1——按钮自成一行（项目通例，见 #384 先例）
-  assert.equal(text_at(fixture, 0), `一人称：${'人家' + ' '.repeat(22)}`);
+  assert.equal(text_at(fixture, 0), `一人称：${'人家' + '\u00A0'.repeat(22)}`);
   const buttons = fixture.lines.filter(
     (line) => line.type === 'button' && line.accelerator === 8,
   );
@@ -296,8 +300,8 @@ test('SHOW_BLOCK：三围行只在 FLAG:5 位 15 且非魔王时出现（两侧�
 test('SHOW_BLOCK：身高/胸围行与罩杯括号，男性位改补 8 空格', () => {
   // [TALENT:122, 行尾, 说明]；身高 160.0 → 下胸围 689，胸围 800 → CAL_VAR 4 → A
   const cases = [
-    [0, '(A)    ', '女性：罩杯括号补到 7 列'],
-    [1, '       ', 'TALENT:122 男人：整段空格（8 格减命令分隔符）'],
+    [0, '(A)\u00A0\u00A0\u00A0\u00A0', '女性：罩杯括号补到 7 列'],
+    [1, '\u00A0'.repeat(7), 'TALENT:122 男人：整段空格（8 格减命令分隔符）'],
   ];
   return (async () => {
     for (const [man, tail, label] of cases) {
@@ -308,7 +312,7 @@ test('SHOW_BLOCK：身高/胸围行与罩杯括号，男性位改补 8 空格', 
       await show_block(7);
       assert.equal(
         text_at(fixture, 2), // 0 一人称行、1 [8] 按钮（#546 起真按钮）
-        `  身高 160.0 cm\u3000B  80.0 cm${tail}`,
+        `\u00A0\u00A0身高 160.0 cm\u3000B \u00A080.0 cm${tail}`,
         label,
       );
     }
@@ -326,8 +330,11 @@ test('SHOW_BLOCK：体力条后接体重/腰围行、气力条后接臀围行', 
   fixture.store.set('cflag:7:457', 900);
   return show_block(7).then(() => {
     const texts = fixture.text_lines();
-    assert(texts.includes('体重  45.0 kg　W  88.0 cm'), '体力条后的体重行');
-    assert(texts.includes(' H  90.0 cm'), '气力条后的臀围行');
+    assert(
+      texts.includes('体重 \u00A045.0 kg　W \u00A088.0 cm'),
+      '体力条后的体重行',
+    );
+    assert(texts.includes(' H \u00A090.0 cm'), '气力条后的臀围行');
     // 两条 progress 行（体力/气力）都在
     assert.equal(fixture.lines.filter((l) => l.type === 'progress').length, 2);
   });
@@ -857,7 +864,7 @@ function abl_fixture({ talents = {}, abls = {}, marks = {} } = {}) {
 /** 一条能力行的期望文本（名字宽 8 左对齐、等级宽 2 左对齐、标记位 2 空格） */
 function abl_line(name, level) {
   const lv = String(level);
-  return `  ${name}${' '.repeat(8 - name.length * 2)} - LV${lv}${' '.repeat(2 - lv.length + 2)}`;
+  return `\u00A0\u00A0${name}${'\u00A0'.repeat(8 - name.length * 2)} - LV${lv}${'\u00A0'.repeat(2 - lv.length + 2)}`;
 }
 
 test('SHOW_INFO_ABL：黄金样本 train-upgrade 的能力行逐字复现', () => {
@@ -865,7 +872,17 @@ test('SHOW_INFO_ABL：黄金样本 train-upgrade 的能力行逐字复现', () =
   // 2 个前导空格 + 名字宽 8 + " - LV" + 等级宽 2 + 2 个标记位空格
   const { fixture, show_info_abl } = abl_fixture({ abls: { 12: 3 } });
   show_info_abl(7);
-  assert.deepEqual(fixture.text_lines(), ['  技巧     - LV3   ']);
+  // #577：这一行的四段补位（前导 2 / 名字列宽 8 / 等级列宽 2 / 标记位 2）
+  // 都得是 NBSP——退回半角空格会留下连续半角空格，引擎合并后整行错位。
+  // 放在逐字比对之前：补位字符退回半角时，先红的是这条（点名补位而非整行 diff）
+  const abl_row = fixture.text_lines()[0];
+  assert.ok(
+    !/ {2,}/.test(abl_row),
+    `能力行的列补位须是 NBSP、不得出现连续半角空格（实得 ${JSON.stringify(abl_row)}）`,
+  );
+  assert.deepEqual(fixture.text_lines(), [
+    '\u00A0\u00A0技巧\u00A0\u00A0\u00A0\u00A0 - LV3\u00A0\u00A0\u00A0',
+  ]);
 });
 
 test('SHOW_INFO_ABL：零值能力不出、每 4 项收行、末组不足 4 也收行', () => {
@@ -954,11 +971,17 @@ test('SHOW_INFO_ABL：男体与扶她下阴蒂感觉（ABL:0）改名阴茎感�
 test('SHOW_INFO_ABL：等级宽 2 左对齐（两位数不截断、一位数补 1 空格）', () => {
   const one = abl_fixture({ abls: { 12: 3 } });
   one.show_info_abl(7);
-  assert.equal(one.fixture.text_lines()[0], '  技巧     - LV3   ');
+  assert.equal(
+    one.fixture.text_lines()[0],
+    '\u00A0\u00A0技巧\u00A0\u00A0\u00A0\u00A0 - LV3\u00A0\u00A0\u00A0',
+  );
 
   const ten = abl_fixture({ abls: { 12: 12 } });
   ten.show_info_abl(7);
-  assert.equal(ten.fixture.text_lines()[0], '  技巧     - LV12  ');
+  assert.equal(
+    ten.fixture.text_lines()[0],
+    '\u00A0\u00A0技巧\u00A0\u00A0\u00A0\u00A0 - LV12\u00A0\u00A0',
+  );
 });
 
 test('SHOW_INFO_MARK：黄金样本 train-upgrade 的四枚刻印行逐字复现', () => {
@@ -967,7 +990,7 @@ test('SHOW_INFO_MARK：黄金样本 train-upgrade 的四枚刻印行逐字复现
   const { fixture, show_info_mark } = abl_fixture();
   show_info_mark(7);
   assert.deepEqual(fixture.text_lines(), [
-    ' 苦痛:LV0 [...]   快乐:LV0 [...]   屈服:LV0 [...]   反抗:LV0 [...]',
+    '\u00A0苦痛:LV0 [...]\u00A0\u00A0\u00A0快乐:LV0 [...]\u00A0\u00A0\u00A0屈服:LV0 [...]\u00A0\u00A0\u00A0反抗:LV0 [...]',
   ]);
 });
 
@@ -985,7 +1008,7 @@ test('SHOW_INFO_MARK：等级取自 MARK:0-3，条的填充随等级变化', () 
     const { fixture, show_info_mark } = abl_fixture({ marks: { 0: level } });
     show_info_mark(7);
     assert(
-      fixture.text_lines()[0].startsWith(` 苦痛:LV${level} [${bar}]`),
+      fixture.text_lines()[0].startsWith(`\u00A0苦痛:LV${level} [${bar}]`),
       `${label}（实际：${fixture.text_lines()[0]}）`,
     );
   }
@@ -999,7 +1022,7 @@ test('SHOW_INFO_MARK：四枚刻印各自独立取值，顺序是 苦痛/快乐/
   show_info_mark(7);
   assert.equal(
     fixture.text_lines()[0],
-    ' 苦痛:LV1 [*..]   快乐:LV2 [**.]   屈服:LV3 [***]   反抗:LV0 [...]',
+    '\u00A0苦痛:LV1 [*..]\u00A0\u00A0\u00A0快乐:LV2 [**.]\u00A0\u00A0\u00A0屈服:LV3 [***]\u00A0\u00A0\u00A0反抗:LV0 [...]',
   );
 });
 
@@ -1824,26 +1847,26 @@ test('SHOW_TALENT_CONDITION：黄金样本 daycycle-max 的 20 行逐字复现',
   const { fixture, show_talent_condition } = condition_fixture();
   show_talent_condition(7);
   assert.deepEqual(fixture.text_lines(), [
-    '爱慕条件： [好感度 100%]  [顺从   Lv3]   [侍奉精神 Lv3] [屈服刻印 Lv3] [侍奉快乐 200] [反抗刻印]  ',
-    '淫乱条件： [好感度 100%]  [欲望   Lv3]   [四点感觉Lv10] [快乐刻印 Lv3] [屈服刻印 Lv3] [异常经验   3] [反抗刻印]  ',
-    '擅用舌头： [技巧   Lv5]   [侍奉技术 Lv5] [口交经验1000] ',
-    '施虐狂  ： [抖S气质 Lv4]  [技巧   Lv4]   [施虐快乐 300] ',
-    '受虐狂  ： [抖M气质 Lv4]  [露出癖 Lv2]   [被虐快乐 300] ',
-    '露出狂  ： [露出癖 Lv4]   [抖M气质 Lv2]  [调教自慰|放尿经验|喷奶经验 200]',
-    '牝犬条件： [欲望   Lv5]   [兽奸中毒 Lv3] [兽奸经验 300] ',
-    '自慰狂  ： [阴蒂感觉 Lv4] [调教自慰 100] [绝顶经验 100] ',
-    '弄乳狂  ： [乳房感觉 Lv4] [喷奶经验 100] [绝顶经验 100] ',
-    '性爱狂  ： [私处感觉 Lv4] [私处经验 300] [绝顶经验 100] ',
-    '尻穴狂  ： [肛门感觉 Lv4] [肛门快乐 300] [绝顶经验 100] ',
-    '淫核条件： [阴蒂感觉 Lv5] [调教自慰 100] [绝顶经验 300] ',
-    '淫乳条件： [乳房感觉 Lv5] [喷奶经验 100] [绝顶经验 300] ',
-    '淫壶条件： [私处感觉 Lv5] [私处经验 300] [绝顶经验 300] ',
-    '淫肛条件： [肛门感觉 Lv5] [肛门快乐 300] [绝顶经验 300] ',
-    '性豪条件： [淫核素质]  [淫乳素质]  [淫壶素质]  [淫肛素质]  ',
-    '时常发情： [润滑积蓄 700] [欲情积蓄2250] ',
-    '喜欢精液： [饮精绝顶  50]',
-    '妓女条件： [技巧   Lv1]   [欲望   Lv2]   [卖淫经验 100] [反抗刻印]  ',
-    '盲从条件： 【[爱慕素质]  [勋章经验   5] [顺从   Lv4]   】【[淫乱素质]  [勋章经验  10] [顺从   Lv5]   】[反抗刻印]  ',
+    '爱慕条件： [好感度 100%]\u00A0\u00A0[顺从\u00A0\u00A0 Lv3]\u00A0\u00A0\u00A0[侍奉精神 Lv3]\u00A0[屈服刻印 Lv3]\u00A0[侍奉快乐\u00A0200]\u00A0[反抗刻印]\u00A0\u00A0',
+    '淫乱条件： [好感度 100%]\u00A0\u00A0[欲望\u00A0\u00A0 Lv3]\u00A0\u00A0\u00A0[四点感觉Lv10]\u00A0[快乐刻印 Lv3]\u00A0[屈服刻印 Lv3]\u00A0[异常经验\u00A0\u00A0\u00A03]\u00A0[反抗刻印]\u00A0\u00A0',
+    '擅用舌头： [技巧\u00A0\u00A0 Lv5]\u00A0\u00A0\u00A0[侍奉技术 Lv5]\u00A0[口交经验1000]\u00A0',
+    '施虐狂\u00A0\u00A0： [抖S气质 Lv4]\u00A0\u00A0[技巧\u00A0\u00A0 Lv4]\u00A0\u00A0\u00A0[施虐快乐\u00A0300]\u00A0',
+    '受虐狂\u00A0\u00A0： [抖M气质 Lv4]\u00A0\u00A0[露出癖 Lv2]\u00A0\u00A0\u00A0[被虐快乐\u00A0300]\u00A0',
+    '露出狂\u00A0\u00A0： [露出癖 Lv4]\u00A0\u00A0\u00A0[抖M气质 Lv2]\u00A0\u00A0[调教自慰|放尿经验|喷奶经验\u00A0200]',
+    '牝犬条件： [欲望\u00A0\u00A0 Lv5]\u00A0\u00A0\u00A0[兽奸中毒 Lv3]\u00A0[兽奸经验\u00A0300]\u00A0',
+    '自慰狂\u00A0\u00A0： [阴蒂感觉 Lv4]\u00A0[调教自慰\u00A0100]\u00A0[绝顶经验\u00A0100]\u00A0',
+    '弄乳狂\u00A0\u00A0： [乳房感觉 Lv4]\u00A0[喷奶经验\u00A0100]\u00A0[绝顶经验\u00A0100]\u00A0',
+    '性爱狂\u00A0\u00A0： [私处感觉 Lv4]\u00A0[私处经验\u00A0300]\u00A0[绝顶经验\u00A0100]\u00A0',
+    '尻穴狂\u00A0\u00A0： [肛门感觉 Lv4]\u00A0[肛门快乐\u00A0300]\u00A0[绝顶经验\u00A0100]\u00A0',
+    '淫核条件： [阴蒂感觉 Lv5]\u00A0[调教自慰\u00A0100]\u00A0[绝顶经验\u00A0300]\u00A0',
+    '淫乳条件： [乳房感觉 Lv5]\u00A0[喷奶经验\u00A0100]\u00A0[绝顶经验\u00A0300]\u00A0',
+    '淫壶条件： [私处感觉 Lv5]\u00A0[私处经验\u00A0300]\u00A0[绝顶经验\u00A0300]\u00A0',
+    '淫肛条件： [肛门感觉 Lv5]\u00A0[肛门快乐\u00A0300]\u00A0[绝顶经验\u00A0300]\u00A0',
+    '性豪条件： [淫核素质]\u00A0\u00A0[淫乳素质]\u00A0\u00A0[淫壶素质]\u00A0\u00A0[淫肛素质]\u00A0\u00A0',
+    '时常发情： [润滑积蓄 700]\u00A0[欲情积蓄2250]\u00A0',
+    '喜欢精液： [饮精绝顶\u00A0\u00A050]',
+    '妓女条件： [技巧\u00A0\u00A0 Lv1]\u00A0\u00A0\u00A0[欲望\u00A0\u00A0 Lv2]\u00A0\u00A0\u00A0[卖淫经验\u00A0100]\u00A0[反抗刻印]\u00A0\u00A0',
+    '盲从条件： 【[爱慕素质]\u00A0\u00A0[勋章经验\u00A0\u00A0\u00A05]\u00A0[顺从\u00A0\u00A0 Lv4]\u00A0\u00A0\u00A0】【[淫乱素质]\u00A0\u00A0[勋章经验\u00A0\u00A010]\u00A0[顺从\u00A0\u00A0 Lv5]\u00A0\u00A0\u00A0】[反抗刻印]\u00A0\u00A0',
   ]);
 });
 
@@ -1907,11 +1930,11 @@ test('SHOW_TALENT_CONDITION：性感素质的四档需求随已得数上浮（�
     show_talent_condition(7);
     const line = fixture.text_lines().find((t) => t.startsWith('自慰狂'));
     assert(
-      line.includes(`[调教自慰${String(need).padStart(4)}]`),
+      line.includes(`[调教自慰${String(need).padStart(4, '\u00A0')}]`),
       `${label} 第一档（实际：${line}）`,
     );
     assert(
-      line.includes(`[绝顶经验${String(need2).padStart(4)}]`),
+      line.includes(`[绝顶经验${String(need2).padStart(4, '\u00A0')}]`),
       `${label} 第二档（实际：${line}）`,
     );
   }
@@ -1975,10 +1998,10 @@ test('SHOW_TALENT_CONDITION：强化素质与时常发情两组受 FLAG:73 / FLA
 test('SHOW_TALENT_CONDITION：妓女/倾城两臂与元妓女（TALENT:315 == 5）', () => {
   // [TALENT:180, TALENT:315, 行首, 期望需求, 说明]
   const cases = [
-    [0, 0, '妓女条件：', '[卖淫经验 100]', '未得 妓女：普通档'],
-    [0, 5, '妓女条件：', '[卖淫经验  80]', '元妓女走 80'],
-    [1, 0, '倾城条件：', '[卖淫经验 200]', '已得 妓女：倾城普通档'],
-    [1, 5, '倾城条件：', '[卖淫经验 160]', '倾城元妓女档'],
+    [0, 0, '妓女条件：', '[卖淫经验\u00A0100]', '未得 妓女：普通档'],
+    [0, 5, '妓女条件：', '[卖淫经验\u00A0\u00A080]', '元妓女走 80'],
+    [1, 0, '倾城条件：', '[卖淫经验\u00A0200]', '已得 妓女：倾城普通档'],
+    [1, 5, '倾城条件：', '[卖淫经验\u00A0160]', '倾城元妓女档'],
   ];
   for (const [prostitute, exp, head, need, label] of cases) {
     const { fixture, show_talent_condition } = condition_fixture({
@@ -2070,7 +2093,7 @@ test('SHOW_TALENT_CONDITION：性豪条件列四枚强化素质', () => {
   const line = fixture.text_lines().find((t) => t.startsWith('性豪条件：'));
   assert.equal(
     line,
-    '性豪条件： [淫核素质]  [淫乳素质]  [淫壶素质]  [淫肛素质]  ',
+    '性豪条件： [淫核素质]\u00A0\u00A0[淫乳素质]\u00A0\u00A0[淫壶素质]\u00A0\u00A0[淫肛素质]\u00A0\u00A0',
   );
 });
 
@@ -2108,7 +2131,7 @@ test('SHOW_CHARA_INFO：五个页码臂各自的段组合（表驱动）', async
       '一人称：',
       '贡品时：素质行在、无人称行（-2 臂无 SHOW_BLOCK）',
     ],
-    [-1, ' 苦痛:LV', '一人称：', '调教时：刻印行在、无人称行'],
+    [-1, '\u00A0苦痛:LV', '一人称：', '调教时：刻印行在、无人称行'],
     [
       0,
       '一人称：',
@@ -2206,6 +2229,23 @@ test('SHOW_CHARA_INFO：献祭完成分支（CFLAG:1 == 11）走近三十项与�
     '出口不是纯文本行',
   );
   assert.equal(result, 1, '返回首页（directToHomePage 的返回值形态）');
+});
+
+test('SHOW_CHARA_INFO：献祭完成演出（合计 ≥ 30）的两句前导补位是 NBSP（#577）', async () => {
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 15, 801: 15 }, // 合计 30：满，走 :48-77 的演出
+  });
+  fixture.set_inputs(100);
+  await show_chara_info(7, -1, always, 0x000000);
+  const lines = fixture.text_lines();
+  assert.ok(
+    lines.includes('\u00A0'.repeat(16) + '向这伟力的降临献上喝彩！'),
+    '第二句的 16 格前导（PRINTS "\\s"*16 的内容空格，#577 起 NBSP）',
+  );
+  assert.ok(
+    lines.includes('\u00A0'.repeat(32) + '为至高无双的魔王尽瘁效忠！'),
+    '第三句的 32 格前导（同为内容空格）',
+  );
 });
 
 test('SHOW_CHARA_INFO：出口轮的空行按原作（#596）——[10] 之前两行、两钮之间一行、返回之后没有', async () => {
@@ -2406,7 +2446,7 @@ test('SHOW_CHARA_INFO：名单里勇者档（状态 2）的行打开贡品信息
     `打开的是 9 号的贡品信息页（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
   );
   assert.ok(
-    texts.some((t) => t.startsWith(' 苦痛:LV')),
+    texts.some((t) => t.startsWith('\u00A0苦痛:LV')),
     `-2 臂的刻印行在（实际尾部：${JSON.stringify(texts.slice(-8))}）`,
   );
   assert.ok(
@@ -2606,7 +2646,7 @@ test('STC_LAB_TAL：「条件」二字的补字阈值是 4 字节（表驱动边
     [85, '爱慕条件： ', '爱慕 = 4 字节（含上沿）→ 补'],
     [76, '淫乱条件： ', '淫乱 = 4 字节（含上沿）→ 补'],
     [52, '擅用舌头： ', '擅用舌头 = 8 字节 → 不补'],
-    [83, '施虐狂  ： ', '施虐狂 = 6 字节 → 不补（名字列补到 8）'],
+    [83, '施虐狂\u00A0\u00A0： ', '施虐狂 = 6 字节 → 不补（名字列补到 8）'],
   ];
   for (const [id, label, note] of cases) {
     const { stc_lab_tal } = condition_fixture();
@@ -2617,9 +2657,9 @@ test('STC_LAB_TAL：「条件」二字的补字阈值是 4 字节（表驱动边
 test('STC_SAY_TAL：名字 4 字节以下补「素质」并补到 12 列', () => {
   // [素质编号, 期望文本, 说明]
   const cases = [
-    [85, '[爱慕素质]  ', '爱慕（4 字节）→ 补「素质」，再补到 12'],
-    [76, '[淫乱素质]  ', '淫乱（4 字节）→ 同上'],
-    [52, '[擅用舌头]  ', '擅用舌头（8 字节）→ 不补，补到 12'],
+    [85, '[爱慕素质]\u00A0\u00A0', '爱慕（4 字节）→ 补「素质」，再补到 12'],
+    [76, '[淫乱素质]\u00A0\u00A0', '淫乱（4 字节）→ 同上'],
+    [52, '[擅用舌头]\u00A0\u00A0', '擅用舌头（8 字节）→ 不补，补到 12'],
   ];
   for (const [id, expected, note] of cases) {
     const { stc_say_tal } = condition_fixture();
@@ -2634,12 +2674,12 @@ test('STC_SAY_MARK：刻印名的宽度判据是 6（短名补位、长名原样
   fixture.store.set('markname:9', '苦痛'); // 4 字节 ≤ 6 → 右补到 6
   assert.equal(
     stc_run(stc_say_mark, 7, [9, 3])[0].content,
-    '[苦痛   Lv3]   ',
+    '[苦痛\u00A0\u00A0 Lv3]\u00A0\u00A0\u00A0',
     '短名按 6 列补位；整段再补到 15（源 :489 用的是 STC_PRINTC 缺省列宽）',
   );
   assert.equal(
     stc_run(stc_say_mark, 7, [2, 3])[0].content,
-    '[屈服刻印 Lv3] ',
+    '[屈服刻印 Lv3]\u00A0',
     '8 字节的真名超宽不截（14 字节 → 补 1，yml/Mark.yml 的 2 号）',
   );
 });
@@ -2720,25 +2760,25 @@ test('STC_SAYSUM_EXP：三项之和的判据与标签拼接（两侧都站）', 
     [
       { 11: 100, 31: 60, 54: 40 },
       'White',
-      '[调教自慰|放尿经验|喷奶经验 200]',
+      '[调教自慰|放尿经验|喷奶经验\u00A0200]',
       '和恰好 200 ≥ 200',
     ],
     [
       { 11: 100, 31: 60, 54: 39 },
       'Gray',
-      '[调教自慰|放尿经验|喷奶经验 200]',
+      '[调教自慰|放尿经验|喷奶经验\u00A0200]',
       '和 199 差一点',
     ],
     [
       { 11: 201 },
       'White',
-      '[调教自慰 200]',
+      '[调教自慰\u00A0200]',
       '后两项为 0 时不入标签（也不入和）',
     ],
   ];
   for (const [exps, color, label, note] of cases) {
     const fx = condition_fixture({ exps });
-    const tail = label === '[调教自慰 200]' ? [0, 0] : [31, 54];
+    const tail = label === '[调教自慰\u00A0200]' ? [0, 0] : [31, 54];
     const frag = stc_run(fx.stc_saysum_exp, 7, [200, 11, ...tail])[0];
     assert.equal(frag.color, color, `${note}（色）`);
     assert.equal(frag.content, label, `${note}（标签）`);
@@ -2754,7 +2794,7 @@ test('STC_SAY_ABCV：四级感觉之和的判据（两侧都站）', () => {
     const fx = condition_fixture({ abls });
     const frag = stc_run(fx.stc_say_abcv, 7, [10])[0];
     assert.equal(frag.color, color, note);
-    assert.equal(frag.content, '[四点感觉Lv10] ');
+    assert.equal(frag.content, '[四点感觉Lv10]\u00A0');
   }
 });
 
@@ -2780,18 +2820,18 @@ test('STC_SAY_EXP：经验名按 8 字节截断（全角 4 字），整段补到
   const long = condition_fixture({ exps: { 11: 100 } });
   assert.equal(
     stc_run(long.stc_say_exp, 7, [11, 100])[0].content,
-    '[调教自慰 100] ',
+    '[调教自慰\u00A0100]\u00A0',
     '长名截到 8 字节（14 字节 → 补 1 空格）',
   );
   assert.equal(
     stc_run(long.stc_say_exp, 7, [11, 1000])[0].content,
-    '[调教自慰1000] '.replace('[调教自慰1000]', '[调教自慰1000]'),
+    '[调教自慰1000]\u00A0'.replace('[调教自慰1000]', '[调教自慰1000]'),
     '需求值右对齐宽 4',
   );
   const short = condition_fixture({ exps: { 22: 1000 } });
   assert.equal(
     stc_run(short.stc_say_exp, 7, [22, 1000])[0].content,
-    '[口交经验1000] ',
+    '[口交经验1000]\u00A0',
     '恰好 8 字节的名字不截',
   );
 });
@@ -2821,12 +2861,16 @@ test('PAD_DISPLAY / PAD_LEFT：按显示宽度补位，超宽不截断', () => {
   );
   assert.equal(
     pad_display('技巧', 8),
-    '技巧    ',
+    '技巧\u00A0\u00A0\u00A0\u00A0',
     '左对齐补到 8 列（4 + 4 空格）',
   );
   assert.equal(pad_display('技巧', 2), '技巧', '已超宽不截断');
-  assert.equal(pad_left('技巧', 8), '    技巧', '右对齐补到 8 列');
-  assert.equal(pad_left('7', 3), '  7', '数字右对齐');
+  assert.equal(
+    pad_left('技巧', 8),
+    '\u00A0\u00A0\u00A0\u00A0技巧',
+    '右对齐补到 8 列',
+  );
+  assert.equal(pad_left('7', 3), '\u00A0\u00A07', '数字右对齐');
 });
 
 test('SLICE_DISPLAY：按字节截断，不切半全角字', () => {
@@ -2862,7 +2906,7 @@ test('STC_LAB_TAL：「条件」补字的阈值在 4 与 5 之间（宽度 5 的
   fixture.store.set('talentname:900', 'AAA级'); // 宽 5（3 个半角 + 1 个全角）
   assert.equal(
     stc_run(stc_lab_tal, 7, [900])[0].content,
-    'AAA级   ： ',
+    'AAA级\u00A0\u00A0\u00A0： ',
     '宽 5 > 4 → 不补「条件」',
   );
   fixture.store.set('talentname:901', 'AA级'); // 宽 4
@@ -2947,18 +2991,25 @@ test('SHOW_TALENT_CONDITION：性爱狂第二档的 sexskill_3（私处经验 30
   show_talent_condition(7);
   const line = fixture.text_lines().find((t) => t.startsWith('性爱狂'));
   assert(
-    line.includes('[私处感觉 Lv5]') && line.includes('[私处经验 350]'),
+    line.includes('[私处感觉 Lv5]') && line.includes('[私处经验\u00A0350]'),
     `sexskill_3 = 300 + 50 * 1（实际：${line}）`,
   );
-  assert(line.includes('[绝顶经验 110]'), `sexskill_2 同档（实际：${line}）`);
+  assert(
+    line.includes('[绝顶经验\u00A0110]'),
+    `sexskill_2 同档（实际：${line}）`,
+  );
 });
 
 test('SHOW_TALENT_CONDITION：尻穴狂第二档走 sexskill_3（两侧都站）', () => {
   const cases = [
-    [{ talents: { 75: 1 } }, '[肛门快乐 350]', 'sexskill_count = 1 → 300 + 50'],
+    [
+      { talents: { 75: 1 } },
+      '[肛门快乐\u00A0350]',
+      'sexskill_count = 1 → 300 + 50',
+    ],
     [
       { talents: { 75: 1, 78: 1 } },
-      '[肛门快乐 400]',
+      '[肛门快乐\u00A0400]',
       'sexskill_count = 2 → 300 + 100',
     ],
   ];

@@ -170,8 +170,8 @@ test('SELECT_YES_NO：非法输入重问，直到返回 0 或 1', async () => {
     [7, 1],
   );
   assert.deepEqual(text_lines(fixture), [
-    '  [0] 是的   [1] 不要',
-    '  [0] 是的   [1] 不要',
+    '\u00A0\u00A0[0] 是的\u00A0\u00A0\u00A0[1] 不要',
+    '\u00A0\u00A0[0] 是的\u00A0\u00A0\u00A0[1] 不要',
   ]);
 });
 

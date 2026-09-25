@@ -18,7 +18,11 @@
 
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
-const { pad_display, slice_display } = require('#/utils/display-width');
+const {
+  pad_display,
+  pad_left,
+  slice_display,
+} = require('#/utils/display-width');
 
 /**
  * 初吻括号（:1058-1090）：CFLAG:16 的值域分支。返回空串 = 无此行。
@@ -129,7 +133,7 @@ function show_info_exp(cid) {
     // {EXP,6,RIGHT}（\u3000 = 全角空格；模板字面量里的全角空白会触发
     // no-irregular-whitespace，以转义书写）
     const name = era.get(`expname:${id}`) ?? '';
-    row += `\u3000${pad_display(slice_display(name, 8), 8)}:${String(value).padStart(6)}`;
+    row += `\u3000${pad_display(slice_display(name, 8), 8)}:${pad_left(String(value), 6)}`;
     shown += 1; // :1036 U += 1
     if (shown % 4 === 0) {
       // :1037-1039 每 4 项换行

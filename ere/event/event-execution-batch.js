@@ -96,6 +96,7 @@ const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 const { chara_callname } = require('#/utils/callname-utils');
+const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 // #DIM CONST NUM_PAGE = 25（:10）
 const NUM_PAGE = 25;
@@ -507,7 +508,7 @@ async function method_screen(rand_n) {
       { content: '会让人物永远从列表中消失', color: '#ffff33' },
       { content: '（但可获得勋章或经验）' },
     ]);
-    era.print('      开启水晶球的话，则可记录0～6项的处刑影像');
+    era.print(`${NBSP.repeat(6)}开启水晶球的话，则可记录0～6项的处刑影像`);
     era.drawLine(); // :90-147 段的 DRAWLINE（默认线型）
     [
       '流放出地下城',
@@ -587,7 +588,9 @@ async function batch_execution(rand_n = default_rand) {
         era.println(); // PRINTL（:19-21）
         era.drawLine(); // :15-73 段的 DRAWLINE（默认线型）
         era.print('请选出处刑对象(可复选)');
-        era.print('标签：[售]可卖出  [☆]收藏中  [兵]已士兵化  [SP]特殊角色');
+        era.print(
+          '标签：[售]可卖出\u00A0\u00A0[☆]收藏中\u00A0\u00A0[兵]已士兵化\u00A0\u00A0[SP]特殊角色',
+        );
         era.drawLine(); // :15-73 段的 DRAWLINE（默认线型）
         print_roster(added, no_page);
         era.drawLine(); // :52-54

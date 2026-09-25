@@ -9,8 +9,9 @@
  * 被测量的是三处：素质表（talent:cid:160..175 与 300）的写入、屏幕上的按钮
  * 与文本、以及随机上界（分母）——上界单独钉（`rand(n)` 捕获实参 n）。
  *
- * 补位断言用显示宽度（全角算 2、半角算 1，半角空格填充）——原作
- * `{A,N}` / `%S,N,LEFT%` 的语义（expressions.md「FORM 语法中的位数和对齐」）。
+ * 补位断言用显示宽度（全角算 2、半角算 1，NBSP 填充——#577 起对齐补位字符
+ * 是 U+00A0）——原作 `{A,N}` / `%S,N,LEFT%` 的语义（expressions.md「FORM
+ * 语法中的位数和对齐」）。
  */
 
 'use strict';
@@ -50,12 +51,12 @@ function disp_width(text) {
 
 /** `{A,N}`：右对齐补位 */
 function pad_left(text, width) {
-  return ' '.repeat(Math.max(0, width - disp_width(text))) + text;
+  return '\u00A0'.repeat(Math.max(0, width - disp_width(text))) + text; // #577：补位 NBSP
 }
 
 /** `%S,N,LEFT%`：左对齐补位 */
 function pad_right(text, width) {
-  return text + ' '.repeat(Math.max(0, width - disp_width(text)));
+  return text + '\u00A0'.repeat(Math.max(0, width - disp_width(text))); // #577：补位 NBSP
 }
 
 function load(fixture) {

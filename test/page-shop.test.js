@@ -783,7 +783,8 @@ test('7788 接通 RELATION_DEBUGPRINT：输出关系矩阵并等待按键', asyn
 
   assert.ok(
     fixture.lines_history.some(
-      (line) => line.type === 'text' && /^1>[ ]{3}0[ ]{4}$/.test(line.text),
+      (line) =>
+        line.type === 'text' && /^1>\u00A0{3}0\u00A0{4}$/.test(line.text), // #577：补位 NBSP
     ),
     '调试后门必须打印关系矩阵',
   );

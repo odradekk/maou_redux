@@ -63,7 +63,8 @@ const GAMEBASE = {
 };
 
 // save00 / save99 的存档备注（读档画面列表行逐字，含尾随空格——@SAVEINFO
-// 的 pad_display_left(名,14)；mainmenu-natural-log:40 与 mainmenu-natural-log:61）
+// 的 pad_display(名,14)；mainmenu-natural-log:40 与 mainmenu-natural-log:61。
+// 这里的半角空格是黄金日志的逐字转抄，不随 ere 侧的 NBSP 改）
 const SAVE00_REMARK =
   '2024/12/23 12:08:10  第 2日午前 LV   0 正在调教:温妮           ';
 const SAVE99_REMARK =

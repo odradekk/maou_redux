@@ -69,6 +69,7 @@ const {
   yokubo_up_check,
 } = require('#/system/train/ability-check');
 const { chara_callname } = require('#/utils/callname-utils');
+const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** TIMES X, m：整数乘小数后截断（math-etc.md；source-check.js 等同款） */
 const times = (v, m) => Math.floor(v * m);
@@ -529,7 +530,7 @@ async function ablup2(cid) {
       0,
     ); // :49-51
     // ABLUP2.ERB:51 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
-    era.print(`      ${era.get('expname:0')}　　${exp}/${b}`); // :52-53
+    era.print(`${NBSP.repeat(6)}${era.get('expname:0')}　　${exp}/${b}`); // :52-53
     era.printButton('停止', 100); // :55
 
     const result = await era.input(); // :57
@@ -695,7 +696,7 @@ async function ablup3(cid) {
       0,
     ); // :47-48
     // ABLUP3.ERB:49 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
-    era.print(`      ${era.get('expname:1')}　　${exp}/${b}`); // :50
+    era.print(`${NBSP.repeat(6)}${era.get('expname:1')}　　${exp}/${b}`); // :50
     era.printButton('停止', 100); // :52
 
     const result = await era.input(); // :55
@@ -2358,7 +2359,7 @@ async function ablup14(cid, mode) {
       0,
     ); // :47-49
     // ABLUP14.ERB:49 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
-    era.print(`      ${era.get('expname:5')}　${exp5}/${b}`); // :50
+    era.print(`${NBSP.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`); // :50
     era.printButton('停止', 100); // :52
 
     const result = await era.input(); // :54
@@ -2601,8 +2602,8 @@ async function ablup15(cid, mode) {
       0,
     ); // :42-44
     // ABLUP15.ERB:44 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）
-    era.print(`      ${era.get('expname:73')}　${exp73}/${b} or`); // :45
-    era.print(`      ${era.get('expname:74')}　${exp74}/${c}`); // :46
+    era.print(`${NBSP.repeat(6)}${era.get('expname:73')}　${exp73}/${b} or`); // :45
+    era.print(`${NBSP.repeat(6)}${era.get('expname:74')}　${exp74}/${c}`); // :46
     era.printButton('停止', 100); // :48
 
     const result = await era.input(); // :50
