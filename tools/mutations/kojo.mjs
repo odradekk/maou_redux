@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2420; // #625 起 +14（M12800-M12813：K12/K14/K15/K903/K4 的褒美请求、口上拼接与死斗场武器名合并成整行）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2428; // #625 起 +22（M12800-M12821：K12/K14/K15/K903/K4/K2 的褒美请求、口上拼接与死斗场武器名合并成整行）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -22964,13 +22964,199 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12813 K4 褒美请求·兽名（:5259..:5267）拆回三条（#625：兽名与前后文又各占一行）',
     file: 'ere/kojo/kojo-k4-stoic.js',
-    find:
-      '    await era.printAndWait(`「拜托了…让我和` + beast_word + `交配吧……！」`); // :5259+:5261+:5263+:5265+:5267',
+    find: '    await era.printAndWait(`「拜托了…让我和` + beast_word + `交配吧……！」`); // :5259+:5261+:5263+:5265+:5267',
     replace:
       '    await era.print(`「拜托了…让我和`); // 变异：拆回\n' +
       '    await era.print(beast_word); // 变异：拆回\n' +
       '    await era.printAndWait(`交配吧……！」`); // 变异：拆回',
     tests: ['kojo-k4-stoic'],
+    must_mention: '兽名与前后文落在同一行',
+  },
+  {
+    desc: 'M12814 K2 交谈首次·自我介绍（:3915+:3917+:3918）拆回三条（#625：自白段又占一行）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n' +
+      '          await era.print(\n' +
+      '            `于是${target_name}将自己的本名、之前的性体验` +\n' +
+      "              (masturbation_note ? '还有一个人手淫的时候想着谁之类的' : '') +\n" +
+      '              `面带微笑的说了出来……`,\n' +
+      '          ); // :3915+:3917+:3918',
+    replace:
+      '          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n' +
+      '          await era.print(`于是${target_name}将自己的本名、之前的性体验`); // 变异：拆回\n' +
+      '          if (masturbation_note) {\n' +
+      "            await era.print('还有一个人手淫的时候想着谁之类的'); // 变异：拆回\n" +
+      '          }\n' +
+      '          await era.print(`面带微笑的说了出来……`); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
+    must_mention: '本名段与后文落在同一行',
+  },
+  {
+    desc: 'M12815 K2 交谈二次·自我介绍（:3988+:3990+:3991）拆回三条（#625）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n' +
+      '          await era.print(\n' +
+      '            `于是${target_name}将自己的本名、之前的性体验` +\n' +
+      "              (masturbation_note ? '还有一个人手淫的时候想着谁之类的' : '') +\n" +
+      '              `面带微笑的说了出来……`,\n' +
+      '          ); // :3988+:3990+:3991',
+    replace:
+      '          const masturbation_note = (era.get(`abl:${target}:31`) || 0) >= 3;\n' +
+      '          await era.print(`于是${target_name}将自己的本名、之前的性体验`); // 变异：拆回\n' +
+      '          if (masturbation_note) {\n' +
+      "            await era.print('还有一个人手淫的时候想着谁之类的'); // 变异：拆回\n" +
+      '          }\n' +
+      '          await era.print(`面带微笑的说了出来……`); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
+    must_mention: '本名段与后文落在同一行',
+  },
+  {
+    desc: 'M12816 K2 交谈首次·按捺住声音（:3951..:3959）拆回五条（#625：工具档又占一行）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}一边竭力按捺住` +\n' +
+      '              (overwhelmed_by_tool\n' +
+      "                ? '快乐的'\n" +
+      '                : overwhelmed_by_pain\n' +
+      "                  ? '痛苦的'\n" +
+      "                  : '自己的') +\n" +
+      '              `声音，一边努力地回应着${player_name}。`,\n' +
+      '          ); // :3951+:3953+:3955+:3957+:3959',
+    replace:
+      '          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n' +
+      '          if (overwhelmed_by_tool) {\n' +
+      '            await era.print(`快乐的`); // 变异：拆回\n' +
+      '          } else if (overwhelmed_by_pain) {\n' +
+      '            await era.print(`痛苦的`); // 变异：拆回\n' +
+      '          } else {\n' +
+      '            await era.print(`自己的`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
+    must_mention: '工具档与前后文落在同一行',
+  },
+  {
+    desc: 'M12817 K2 交谈二次·按捺住声音（:4024..:4032）拆回五条（#625）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '          // :4024+:4026+:4028+:4030+:4032 同 :3951 组的一整行（#625）\n' +
+      '          const overwhelmed_by_tool =\n' +
+      '            era.get(`tequip:${target}:11`) ||\n' +
+      '            era.get(`tequip:${target}:13`) ||\n' +
+      '            era.get(`tequip:${target}:14`) ||\n' +
+      '            era.get(`tequip:${target}:15`) ||\n' +
+      '            era.get(`tequip:${target}:16`) ||\n' +
+      '            era.get(`tequip:${target}:17`);\n' +
+      '          const overwhelmed_by_pain =\n' +
+      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n' +
+      '          await era.print(\n' +
+      '            `${target_name}一边竭力按捺住` +\n' +
+      '              (overwhelmed_by_tool\n' +
+      "                ? '快乐的'\n" +
+      '                : overwhelmed_by_pain\n' +
+      "                  ? '痛苦的'\n" +
+      "                  : '自己的') +\n" +
+      '              `声音，一边努力地回应着${player_name}。`,\n' +
+      '          ); // :4024+:4026+:4028+:4030+:4032',
+    replace:
+      '          const overwhelmed_by_tool =\n' +
+      '            era.get(`tequip:${target}:11`) ||\n' +
+      '            era.get(`tequip:${target}:13`) ||\n' +
+      '            era.get(`tequip:${target}:14`) ||\n' +
+      '            era.get(`tequip:${target}:15`) ||\n' +
+      '            era.get(`tequip:${target}:16`) ||\n' +
+      '            era.get(`tequip:${target}:17`);\n' +
+      '          const overwhelmed_by_pain =\n' +
+      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);\n' +
+      '          await era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n' +
+      '          if (overwhelmed_by_tool) {\n' +
+      '            await era.print(`快乐的`); // 变异：拆回\n' +
+      '          } else if (overwhelmed_by_pain) {\n' +
+      '            await era.print(`痛苦的`); // 变异：拆回\n' +
+      '          } else {\n' +
+      '            await era.print(`自己的`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`声音，一边努力地回应着${player_name}。`); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
+    must_mention: '工具档与前后文落在同一行',
+  },
+  {
+    desc: 'M12818 K2 死斗场 SC31·武器名（:6674..:6679）拆回四条（#625：武器名又占一行）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}把` +\n' +
+      "          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n" +
+      '          `塞入${target_name}的口中，她一脸愉悦的吞吐着肉棒……`,\n' +
+      '      ); // :6674+:6676+:6678+:6679',
+    replace:
+      '      await era.print(`${assi_name}把`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`阴茎`); // 变异：拆回\n' +
+      '      } else if (assi_has_toy) {\n' +
+      '        await era.print(`假阳具`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(\n' +
+      '        `塞入${target_name}的口中，她一脸愉悦的吞吐着肉棒……`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
+    must_mention: '武器名与前后文落在同一行',
+  },
+  {
+    desc: 'M12819 K2 死斗场 SC21·武器名（:6707..:6712）拆回四条（#625）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}仔细聆听传来的悲鸣，用` +\n' +
+      "          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n" +
+      '          `将${target_name}的小穴无情地蹂躏着……`,\n' +
+      '      ); // :6707+:6709+:6711+:6712',
+    replace:
+      '      await era.print(`${assi_name}仔细聆听传来的悲鸣，用`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`阴茎`); // 变异：拆回\n' +
+      '      } else if (assi_has_toy) {\n' +
+      '        await era.print(`假阳具`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`将${target_name}的小穴无情地蹂躏着……`); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
+    must_mention: '武器名与前后文落在同一行',
+  },
+  {
+    desc: 'M12820 K2 死斗场 SC27·武器名（:6731..:6736）拆回四条（#625）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}仔细聆听传来的悲鸣，用` +\n' +
+      "          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n" +
+      '          `将${target_name}的肛门无情地蹂躏着……`,\n' +
+      '      ); // :6731+:6733+:6735+:6736',
+    replace:
+      '      await era.print(`${assi_name}仔细聆听传来的悲鸣，用`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`阴茎`); // 变异：拆回\n' +
+      '      } else if (assi_has_toy) {\n' +
+      '        await era.print(`假阳具`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`将${target_name}的肛门无情地蹂躏着……`); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
+    must_mention: '武器名与前后文落在同一行',
+  },
+  {
+    desc: 'M12821 K2 褒美请求·兽名（:6984..:6992）拆回三条（#625：兽名与前后文又各占一行）',
+    file: 'ere/kojo/kojo-k2-timid.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `「那个…回来的话…能让` + beast_word + `来和我…做…吗」`,\n' +
+      '    ); // :6984+:6986+:6988+:6990+:6992',
+    replace:
+      '    await era.print(`「那个…回来的话…能让`); // 变异：拆回\n' +
+      '    await era.print(beast_word); // 变异：拆回\n' +
+      '    await era.printAndWait(`来和我…做…吗」`); // 变异：拆回',
+    tests: ['kojo-k2-timid'],
     must_mention: '兽名与前后文落在同一行',
   },
 ];
