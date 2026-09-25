@@ -421,12 +421,12 @@ async function com208(rand = default_rand) {
   for (;;) {
     // COMF208:37-43 的菜单项全是整行 PRINTL——按钮之间不补空行（#595）
     era.print('对哪里进行凌辱？'); // :37
-    era.printButton('嘴巴', 0); // :38
-    era.printButton('胸部', 1); // :39
+    era.printButton('- 嘴巴', 0); // :38
+    era.printButton('- 胸部', 1); // :39
     if (tal(target, 122) === 0) {
-      era.printButton('私处', 2); // :40-41
+      era.printButton('- 私处', 2); // :40-41
     }
-    era.printButton('肛门', 3); // :42
+    era.printButton('- 肛门', 3); // :42
     era.printButton('暂时放过', 999); // :43
     const result = await era.input(); // :45
 

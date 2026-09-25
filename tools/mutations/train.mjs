@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 986; // #615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 1002; // #615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -3955,8 +3955,8 @@ export default [
   {
     desc: 'M1416 COM73 发型按钮手写编号前缀（#225）',
     file: 'ere/system/train/com-assistant.js',
-    find: "    era.printButton('自然', 1);",
-    replace: "    era.printButton('[1] 自然', 1); // 变异：手写编号前缀",
+    find: "    era.printButton('---自然', 1);",
+    replace: "    era.printButton('[1] ---自然', 1); // 变异：手写编号前缀",
     tests: ['com-assistant'],
     must_mention: '按钮无手写编号前缀',
   },
@@ -4495,9 +4495,9 @@ export default [
   {
     desc: 'M1354 COM208 男人仍显示私处按钮（#227）',
     file: 'ere/system/train/com-tentacle.js',
-    find: "    if (tal(target, 122) === 0) {\n      era.printButton('私处', 2); // :40-41",
+    find: "    if (tal(target, 122) === 0) {\n      era.printButton('- 私处', 2); // :40-41",
     replace:
-      "    if (true) {\n      era.printButton('私处', 2); // 变异：男人仍显示私处",
+      "    if (true) {\n      era.printButton('- 私处', 2); // 变异：男人仍显示私处",
     tests: ['com-tentacle'],
     must_mention: '男人不显示私处',
   },
@@ -6733,11 +6733,11 @@ export default [
     find: `      if (i & 1) status += '点数不足 ';
       if (i & 2) status += '经验不足';
     }
-    era.printButton(\`\${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
+    era.printButton(\`- \${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
     replace: `      if (i & 1) status += '点数不足';
       if (i & 2) status += '经验不足';
     }
-    era.printButton(\`\${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
+    era.printButton(\`- \${era.get('palamname:15')}点数×\${a}……\${status}\`, 0);`,
     tests: ['ablup'],
     must_mention: 'ablup4：状态文案手写拼接',
   },
@@ -8817,9 +8817,9 @@ export default [
   {
     desc: 'M10435 ablup23：[1] 轨按钮误用阴核点数（PALAMNAME:0 → 需为 2 肛门）',
     file: 'ere/system/train/ablup.js',
-    find: "        `${era.get('palamname:2')}点数×${juel2}/${d} ……${get_ablup_state(j)}`,",
+    find: "        `- ${era.get('palamname:2')}点数×${juel2}/${d} ……${get_ablup_state(j)}`,",
     replace:
-      "        `${era.get('palamname:0')}点数×${juel2}/${d} ……${get_ablup_state(j)}`,",
+      "        `- ${era.get('palamname:0')}点数×${juel2}/${d} ……${get_ablup_state(j)}`,",
     tests: ['ablup'],
     must_mention: '肛门点数×0/1000 ……点数不足 经验不足 ',
   },
@@ -8892,9 +8892,9 @@ export default [
   {
     desc: 'M10443 ablup30：[1] 轨三倍点数改为两倍',
     file: 'ere/system/train/ablup.js',
-    find: "      `${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,\n      1,\n    ); // :60-62（恒渲染，无 256 分支）",
+    find: "      `- ${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,\n      1,\n    ); // :60-62（恒渲染，无 256 分支）",
     replace:
-      "      `${era.get('palamname:5')}点数×${juel5}/${a * 2} ……${get_ablup_state(j)}`,\n      1,\n    ); // :60-62（恒渲染，无 256 分支）",
+      "      `- ${era.get('palamname:5')}点数×${juel5}/${a * 2} ……${get_ablup_state(j)}`,\n      1,\n    ); // :60-62（恒渲染，无 256 分支）",
     tests: ['ablup'],
     must_mention: '欲情点数×0/9000 ……点数不足 经验不足 能力不足',
   },
@@ -10207,27 +10207,27 @@ export default [
   {
     desc: 'M12049 COM201 菜单 [0] 之后补回空行（:67 是整行 PRINTL）',
     file: 'ere/system/train/com-colosseum.js',
-    find: "      era.printButton('嘴巴', 0); // :66-67 [0]",
+    find: "      era.printButton('- 嘴巴', 0); // :66-67 [0]",
     replace:
-      "      era.printButton('嘴巴', 0); // :66-67 [0]\n      era.println(); // 变异：[0] 之后补回空行",
+      "      era.printButton('- 嘴巴', 0); // :66-67 [0]\n      era.println(); // 变异：[0] 之后补回空行",
     tests: ['com-colosseum'],
     must_mention: '菜单行全是按钮',
   },
   {
     desc: 'M12050 COM202-206 菜单 [1] 之后补回空行（:55 是整行 PRINTL）',
     file: 'ere/system/train/com-colosseum.js',
-    find: "    era.printButton('胸部', 1); // :55 [1]（无条件）",
+    find: "    era.printButton('- 胸部', 1); // :55 [1]（无条件）",
     replace:
-      "    era.printButton('胸部', 1); // :55 [1]（无条件）\n    era.println(); // 变异：[1] 之后补回空行",
+      "    era.printButton('- 胸部', 1); // :55 [1]（无条件）\n    era.println(); // 变异：[1] 之后补回空行",
     tests: ['com-colosseum'],
     must_mention: '菜单行全是按钮',
   },
   {
     desc: 'M12051 COM207 菜单 [2] 之后补回空行（:51 是整行 PRINTL）',
     file: 'ere/system/train/com-colosseum.js',
-    find: "    era.printButton('肛门', 2); // :51",
+    find: "    era.printButton('- 肛门', 2); // :51",
     replace:
-      "    era.printButton('肛门', 2); // :51\n    era.println(); // 变异：[2] 之后补回空行",
+      "    era.printButton('- 肛门', 2); // :51\n    era.println(); // 变异：[2] 之后补回空行",
     tests: ['com-colosseum'],
     must_mention: '菜单行全是按钮',
   },
@@ -10243,9 +10243,9 @@ export default [
   {
     desc: 'M12053 COM208 菜单 [0] 之后补回空行（:38 是整行 PRINTL）',
     file: 'ere/system/train/com-tentacle.js',
-    find: "    era.printButton('嘴巴', 0); // :38",
+    find: "    era.printButton('- 嘴巴', 0); // :38",
     replace:
-      "    era.printButton('嘴巴', 0); // :38\n    era.println(); // 变异：[0] 之后补回空行",
+      "    era.printButton('- 嘴巴', 0); // :38\n    era.println(); // 变异：[0] 之后补回空行",
     tests: ['com-tentacle'],
     must_mention: '菜单行全是按钮',
   },
@@ -10405,6 +10405,139 @@ export default [
     tests: ['com-toy'],
     must_mention: '满月确认的两项是按钮',
   },
+
+  // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
+  {
+    desc: 'M12280 ablup0 的需求行按钮正文丢掉「- 」（引擎拼的编号与正文之间少分隔符）',
+    file: 'ere/system/train/ablup.js',
+    find: 'era.printButton(`- ${label}点数×${juel}/${a} ……${get_ablup_state(i)}`, 0); // :64-69',
+    replace:
+      'era.printButton(`${label}点数×${juel}/${a} ……${get_ablup_state(i)}`, 0); // 变异：丢掉「- 」',
+    tests: ['ablup'],
+    must_mention: '原作的「- 」是正文的一部分',
+  },
+  {
+    desc: 'M12281 ablup0 的 [100] 停止键丢掉「- 」',
+    file: 'ere/system/train/ablup.js',
+    find: "era.printButton('- 停止', 100); // :71",
+    replace: "era.printButton('停止', 100); // 变异：丢掉「- 」",
+    tests: ['ablup'],
+    must_mention: '原作的「- 」是正文的一部分',
+  },
+  {
+    desc: 'M12282 ablup4 的 [100] 放弃键丢掉「- 」',
+    file: 'ere/system/train/ablup.js',
+    find: "era.printButton('- 放弃', 100); // :26",
+    replace: "era.printButton('放弃', 100); // 变异：丢掉「- 」",
+    tests: ['ablup'],
+    must_mention: '原作各 PRINTL [N] - 正文',
+  },
+  {
+    desc: 'M12283 ablup6 的选项0 串首丢掉「- 」（PRINT [0] - 后接多行拼行的形态）',
+    file: 'ere/system/train/ablup.js',
+    find: "let option0 = `- ${era.get('palamname:6')}点数×${a}`; // :109-112",
+    replace:
+      "let option0 = `${era.get('palamname:6')}点数×${a}`; // 变异：丢掉「- 」",
+    tests: ['ablup'],
+    must_mention: '原作各 PRINTL [N] - 正文',
+  },
+  {
+    desc: 'M12284 ablup6 的选项2 串首丢掉「- 」（模板串内联形态）',
+    file: 'ere/system/train/ablup.js',
+    find: "const option2 = `- ${era.get('palamname:7')}点数×${c}、",
+    replace: "const option2 = `${era.get('palamname:7')}点数×${c}、",
+    tests: ['ablup'],
+    must_mention: '原作各 PRINTL [N] - 正文',
+  },
+  {
+    desc: 'M12285 COM73 剪发菜单丢掉原作的「---」（三个连写破折号）',
+    file: 'ere/system/train/com-assistant.js',
+    find: "era.printButton('---适当剪一下', 0);",
+    replace: "era.printButton('适当剪一下', 0); // 变异：丢掉「---」",
+    tests: ['com-assistant'],
+    must_mention: '剪发菜单三项的分隔符是原作的三个连写破折号',
+  },
+  {
+    desc: 'M12286 COM73 发型菜单丢掉原作的「---」（[1] 自然那一项）',
+    file: 'ere/system/train/com-assistant.js',
+    find: "era.printButton('---自然', 1);",
+    replace: "era.printButton('自然', 1); // 变异：丢掉「---」",
+    tests: ['com-assistant'],
+    must_mention: '发型菜单第一项',
+  },
+  {
+    desc: 'M12287 COM65 处女确认的 [0] 丢掉「- 」',
+    file: 'ere/system/train/com-assistant.js',
+    find: "era.printButton('- 好', 0); // COMF65_助手を犯させる.ERB:195",
+    replace: "era.printButton('好', 0); // 变异：丢掉「- 」",
+    tests: ['com-assistant'],
+    must_mention: 'COM65 处女确认两键带「- 」',
+  },
+  {
+    desc: 'M12288 COM201 凌辱菜单的 [0] 嘴巴丢掉「- 」',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "era.printButton('- 嘴巴', 0); // :66-67 [0]",
+    replace: "era.printButton('嘴巴', 0); // 变异：丢掉「- 」",
+    tests: ['com-colosseum'],
+    must_mention: 'COM201 四部位带「- 」',
+  },
+  {
+    desc: 'M12289 COM201 凌辱菜单的 [3] 肛门丢掉「- 」',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "era.printButton('- 肛门', 3); // :71-72 [3]",
+    replace: "era.printButton('肛门', 3); // 变异：丢掉「- 」",
+    tests: ['com-colosseum'],
+    must_mention: 'COM201 四部位带「- 」',
+  },
+  {
+    desc: 'M12290 COM207 凌辱菜单的 [1] 私处丢掉「- 」',
+    file: 'ere/system/train/com-colosseum.js',
+    find: "era.printButton('- 私处', 1); // :49-50（男人不显示）",
+    replace: "era.printButton('私处', 1); // 变异：丢掉「- 」",
+    tests: ['com-colosseum'],
+    must_mention: 'COM207 三部位带「- 」',
+  },
+  {
+    desc: 'M12291 避孕套每次问的 [0] 戴丢掉「- 」',
+    file: 'ere/system/train/com-condom.js',
+    find: "era.printButton('- 戴', 0); // :62",
+    replace: "era.printButton('戴', 0); // 变异：丢掉「- 」",
+    tests: ['com-condom'],
+    must_mention: '主人位四键带「- 」',
+  },
+  {
+    desc: 'M12292 避孕套无套三键的 [0] 丢掉「- 」',
+    file: 'ere/system/train/com-condom.js',
+    find: "era.printButton('- 好的(下次也继续确认)', 0); // :121",
+    replace: "era.printButton('好的(下次也继续确认)', 0); // 变异：丢掉「- 」",
+    tests: ['com-condom'],
+    must_mention: '无套三键带「- 」',
+  },
+  {
+    desc: 'M12293 COM208 凌辱菜单的 [0] 嘴巴丢掉「- 」',
+    file: 'ere/system/train/com-tentacle.js',
+    find: "era.printButton('- 嘴巴', 0); // :38",
+    replace: "era.printButton('嘴巴', 0); // 变异：丢掉「- 」",
+    tests: ['com-tentacle'],
+    must_mention: 'COMF208_触手.ERB:38-43 的分隔符照写',
+  },
+  {
+    desc: 'M12294 COM24 逆侵犯处女确认的 [0] 丢掉「- 」',
+    file: 'ere/system/train/com-sex.js',
+    find: "era.printButton('- 好的', 0); // COMF24_逆レイプ.ERB:197",
+    replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
+    tests: ['com-sex'],
+    must_mention: 'COM24 处女确认两键带「- 」',
+  },
+  {
+    desc: 'M12295 阴道性交处女确认的 [0] 丢掉「- 」',
+    file: 'ere/system/train/com-vaginasex.js',
+    find: "era.printButton('- 来吧女人', 0); // :11",
+    replace: "era.printButton('来吧女人', 0); // 变异：丢掉「- 」",
+    tests: ['com-vaginasex'],
+    must_mention: '处女确认两键带「- 」',
+  },
+
   // —— #615：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 必须落行（BENKI.ERB:887/:951/:1105） ——
   {
     desc: 'M12260 奉仕分派：对象名并回首行（:887 的 PRINTFORML 少了换行，#615 之前的写法）',

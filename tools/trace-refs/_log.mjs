@@ -189,7 +189,11 @@ export const SAMPLE_LOG_REFS = {
     },
     {
       js: 'test/compare-train.test.js',
-      refs: [{ ref: '923-925', any: [/屈服点数：\(/] }],
+      refs: [
+        { ref: '923-925', any: [/屈服点数：\(/] },
+        // #612：升级屏按钮正文的「- 」判据（本票的中心证据）
+        { ref: '959-960', any: [/阴核点数×5859\/20000/, /^\[100\] - 停止$/] },
+      ],
     },
     {
       js: 'tools/compare/rules.js',

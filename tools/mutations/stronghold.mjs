@@ -1,6 +1,6 @@
 // issue #336：调教录像出售、水晶录像书架及两个事件宿主接线。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 248; // #562 起 +1（M11864：道具商店页脚不产生空行）；
+export const COUNT = 249; // #562 起 +1（M11864：道具商店页脚不产生空行）；
 // #396 起 +18（M8086-M8103，system/stronghold/tax.js）；
 // #397 起 +4（M8437-M8440，stronghold/gohoubi-request）；
 // #399 起 +98（M8881-M8918、M8919-M8940 与 M9101-M9138）：page-item-shop 36 /
@@ -16,6 +16,8 @@ export const COUNT = 248; // #562 起 +1（M11864：道具商店页脚不产生�
 // M8915 上一轮按「与 page.mjs 的 M8114 同款」跳过，现挂排版条目，那条
 // 「回放播种」变异仍未收录）
 //；#547 起 +1（M11582，sale.js 的卖淫影响缺省读 modsave:0——由 test/sale.test.js 守护）
+// #612 起 +1（M12306：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
+// rendered 断言必须红）
 
 export default [
   {
@@ -2081,5 +2083,15 @@ export default [
     replace: "    era.print('[0] - 好的'); // 变异",
     tests: ['item-shop'],
     must_mention: '确认支：两项是按钮',
+  },
+
+  // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
+  {
+    desc: 'M12306 出售确认的 [0] 好的丢掉「- 」',
+    file: 'ere/system/stronghold/sale.js',
+    find: "era.printButton('- 好的', 0); // SELL_CHARA.ERB:422",
+    replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
+    tests: ['sale-chara'],
+    must_mention: '出售确认两键带「- 」',
   },
 ];

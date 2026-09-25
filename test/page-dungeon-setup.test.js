@@ -100,6 +100,28 @@ test('INFO：楼层设定 [0] 解除陷阱清三列，[1] 取下宝物', async (
   assert.equal(fixture2.store.get('flag:341'), -1, '宝物取下写 -1');
 });
 
+test('#612 INFO 设定子菜单：五个按钮的正文照写原作的「- 」', async () => {
+  const fixture = setup_world();
+  const { dungeon_info } = load(fixture, 'page/page-dungeon-setup');
+  fixture.set_inputs(1, 998, 100); // 第 2 层 → 设定子菜单 → 停止 → 退出
+  await dungeon_info();
+  const rendered = fixture.lines_history
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  for (const expected of [
+    '[0] - 解除陷阱',
+    '[1] - 取下宝物',
+    '[2] - 进行设施的设定',
+    '[998] - 停止',
+    '[999] - 结束地下城的设定',
+  ]) {
+    assert.ok(
+      rendered.includes(expected),
+      `${expected}（DUNGEON_SETUP.ERB:176-177）`,
+    );
+  }
+});
+
 test('INFO：设定陷阱（60）列指定 A/B/C/全部', async () => {
   const fixture = setup_world();
   const { dungeon_info } = load(fixture, 'page/page-dungeon-setup');

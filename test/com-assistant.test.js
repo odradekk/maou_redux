@@ -449,6 +449,14 @@ test('COM65：助手处女选「不要」则取消回合', async () => {
     fixture.text_lines().some((line) => line.includes('处女，让')),
     '应询问是否夺走助手处女',
   );
+  // #612：两键正文照写原作（COMF65_助手を犯させる.ERB:195-196）
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] - 好', '[1] - 不要'],
+    'COM65 处女确认两键带「- 」',
+  );
 });
 
 test('COM72：刮后阴毛状态置 1，且本体不调 TRAIN_MESSAGE_B', async () => {
@@ -474,9 +482,29 @@ test('COM73：短发跳过剪发；发型不变时保持原样；按钮无手写
   assert.ok(fixture.text_lines().some((line) => line.includes('发型保持原样')));
   const buttons = fixture.lines.filter((line) => line.type === 'button');
   assert.ok(
-    buttons.some((line) => line.accelerator === 1 && line.text === '自然'),
+    buttons.some((line) => line.accelerator === 1 && line.text === '---自然'),
   );
   assert.ok(buttons.every((line) => !/\[\d+\]/.test(line.text)));
+});
+
+test('#612 COM73：剪发菜单与发型菜单的按钮正文照写原作的「---」「--」', async () => {
+  const world = seed_world();
+  const { fixture } = world;
+  fixture.store.set(`talent:${TARGET}:302`, 300); // 长发：剪发与发型两个菜单都出现
+  fixture.set_inputs(2, 1); // 剪发菜单选「不剪」→ 发型菜单选「自然」
+  assert.equal(await run_com(world, 73), 1);
+  const rendered = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((button) => button.rendered);
+  // COMF73_髪型を弄る.ERB:78-81 与 :135-148 的分隔符是三个/两个连写破折号，1:1 照写
+  assert.deepEqual(
+    rendered.slice(0, 3),
+    ['[0] ---适当剪一下', '[1] ---大刀阔斧地剪', '[2] ---不剪'],
+    '剪发菜单三项的分隔符是原作的三个连写破折号（COMF73_髪型を弄る.ERB:78-81）',
+  );
+  assert.ok(rendered.includes('[1] ---自然'), '发型菜单第一项');
+  assert.ok(rendered.includes('[10] --侧束发'), '长度 >100 的款式');
+  assert.ok(rendered.includes('[12] --卷发'), '长度 >200 的款式');
 });
 
 test('A62/A68/A69：射精旗打开后走源侧反应文', async () => {

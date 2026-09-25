@@ -3383,6 +3383,13 @@ export const FILES = [
         any: [/^\s*SIF FLAG:C <= -2\s*$/m],
       },
       {
+        // #612：苏生名单的正文前缀行（按钮正文补「- 」时新引的行号，
+        // 区间条目 2593-2594 满足不了裸引用 `:2594` 的登记要求）
+        src: 'target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB',
+        ref: '2594',
+        any: [/^\s*PRINTFORML\ \ \[\{D\}\]\ \-\ %ITEMNAME:D%\s*$/m],
+      },
+      {
         src: 'target/ERB/SHOP/SHOP_LABO ver1.0.2.ERB',
         ref: '2597',
         any: [/^\s*PRINTL  \[999\] - 取消\s*$/m],

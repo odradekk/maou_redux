@@ -2404,21 +2404,23 @@ async function post_conquest_menu(rand = default_rand) {
   }
   era.drawLine();
   era.print('地面上已被你征服了，你指挥着你的军队准备进攻其他领土………');
-  era.printButton('巡视地上的魔界领土（已征服）', 0);
+  era.printButton('- 巡视地上的魔界领土（已征服）', 0); // INVASION.ERB:52
   era.printButton(
     era_flag.elf_realm_conquered >= 1
-      ? '巡视黑暗精灵的领土（已征服）'
-      : '入侵精灵族的领域',
+      ? '- 巡视黑暗精灵的领土（已征服）' // INVASION.ERB:54
+      : '- 入侵精灵族的领域', // INVASION.ERB:56
     1,
   );
   era.printButton(
     era_flag.dragon_realm_conquered >= 1
-      ? '巡视混沌龙之山（已征服）'
-      : '入侵龙之山脉',
+      ? '- 巡视混沌龙之山（已征服）' // INVASION.ERB:59
+      : '- 入侵龙之山脉', // INVASION.ERB:61
     2,
   );
   era.printButton(
-    era_flag.heaven_conquered >= 1 ? '巡视堕天使的淫界（已征服）' : '入侵天界',
+    era_flag.heaven_conquered >= 1
+      ? '- 巡视堕天使的淫界（已征服）' // INVASION.ERB:64
+      : '- 入侵天界', // INVASION.ERB:66
     3,
   );
   // FLAG:92（arcana_fort_stage）是位掩码，不是线性阶段数：&1 东 &2 南
@@ -2426,20 +2428,20 @@ async function post_conquest_menu(rand = default_rand) {
   // 15 = 四门全破；这里只判「是否全部攻陷」，不代表推进到第几关
   era.printButton(
     era_flag.arcana_fort_stage === 15
-      ? '巡视圣灵骑士的卖春堡垒（已征服）'
-      : '攻略圣灵骑士的堡垒',
+      ? '- 巡视圣灵骑士的卖春堡垒（已征服）' // INVASION.ERB:69
+      : '- 攻略圣灵骑士的堡垒', // INVASION.ERB:71
     4,
   );
   if (era_exflag.shrine_stage >= 4) {
-    era.printButton('巡视淫乱意志的神宫（已征服）', 5);
+    era.printButton('- 巡视淫乱意志的神宫（已征服）', 5); // INVASION.ERB:74
   } else if (era_exflag.shrine_stage >= 1) {
-    era.printButton('天神宫广场', 5);
+    era.printButton('- 天神宫广场', 5); // INVASION.ERB:76
   } else if (route_33_open) {
-    era.printButton('攻略天神宫', 5);
+    era.printButton('- 攻略天神宫', 5); // INVASION.ERB:78
   }
-  era.printButton('向着世界之外', 9);
+  era.printButton('- 向着世界之外', 9); // INVASION.ERB:80（原文作「向著」，#60 归一为简体）
   era.drawLine();
-  era.printButton('退出', 999);
+  era.printButton('- 退出', 999); // INVASION.ERB:82
   // :83 [1000] 的分子/分母走具名门面（#502 起；此前的「无门面、直读」注释
   // 已过时，era-exflag.js 的 crystal_ball_deployed/stock 早已备好）
   era.printButton(
@@ -2670,9 +2672,9 @@ async function pick_hero(state, rejected) {
     // :512-515 三个按钮（PRINTLC 左对齐补位、不换行 → printButton，引擎自动
     // 拼 [编号]；语义见 CONTEXT.md「输出 API 与原作的对应」）
     era.drawLine();
-    era.printButton('上一页', 1000);
-    era.printButton('返  回', 999);
-    era.printButton('下一页', 1001);
+    era.printButton('- 上一页', 1000); // INVASION.ERB:513 PRINTLC
+    era.printButton('- 返 回', 999); // INVASION.ERB:514 PRINTLC（原作两个空格，引擎折叠成一个）
+    era.printButton('- 下一页', 1001); // INVASION.ERB:515 PRINTLC
 
     const result = await number_input(); // :517 INPUT
 
@@ -2990,17 +2992,20 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
     if (mon_num < MONSTER_THRESHOLD) {
       era.print('[-] - 怪物数量不足。至少需要600只');
     } else {
-      era.printButton('使用现有怪物的一半去进攻（资金·俘虏）', 0);
+      era.printButton('- 使用现有怪物的一半去进攻（资金·俘虏）', 0); // INVASION.ERB:176
     }
-    era.printButton('使用魔王的魔力（经验值）', 1);
+    era.printButton('- 使用魔王的魔力（经验值）', 1); // INVASION.ERB:178
     if (mon_num < MONSTER_THRESHOLD) {
       era.print('[-] - 怪物数量不足。至少需要600只');
     } else {
-      era.printButton('派遣勇者带三分之一的怪物去进攻（资金·经验值·俘虏）', 2);
+      era.printButton(
+        '- 派遣勇者带三分之一的怪物去进攻（资金·经验值·俘虏）',
+        2,
+      ); // INVASION.ERB:182
     }
-    era.printButton('派遣勇者前去掠夺资金（资金·经验值）', 3);
+    era.printButton('- 派遣勇者前去掠夺资金（资金·经验值）', 3); // INVASION.ERB:184
     era.drawLine();
-    era.printButton('返回', 999);
+    era.printButton('- 返回', 999); // INVASION.ERB:186
 
     // $INPUT_LOOP :188-200：无效输入重问不重画（GOTO INPUT_LOOP，见文件头）
     for (;;) {

@@ -156,6 +156,23 @@ test('INTERCEPT：列表只出可派遣者，页脚三键与返回', async () =>
   assert.ok(texts(added).includes('派遣谁前去迎击勇者？'));
 });
 
+test('#612 INTERCEPT：列表页脚三键的正文照写原作的「- 」', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_dispatchable(fixture, 1, '玛奥');
+  const { added } = await run_intercept(fixture, [999]);
+  const rendered = added
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  for (const expected of [
+    '[1000] - 上一页',
+    '[999] - 返 回',
+    '[1001] - 下一页',
+  ]) {
+    assert.ok(rendered.includes(expected), `${expected}（SHOP_2.ERB:346-348）`);
+  }
+});
+
 test('INTERCEPT：翻页按命中序号（NUM_PAGE = 26）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');

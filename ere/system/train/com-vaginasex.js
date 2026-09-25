@@ -396,8 +396,8 @@ async function confirm_lost_virgin() {
   const cid = era_flag.target;
   if (tal(cid, 0)) {
     era.print(`夺取${name_of(cid)}的处女吗？`); // :10
-    era.printButton('来吧女人', 0); // :11
-    era.printButton('让她继续做女孩', 1); // :12
+    era.printButton('- 来吧女人', 0); // :11
+    era.printButton('- 让她继续做女孩', 1); // :12
     for (;;) {
       const result = await era.input(); // :13
       if (result === 1) {

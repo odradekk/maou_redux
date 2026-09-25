@@ -1087,8 +1087,8 @@ async function technique_of_master(f) {
   const remaining = f - (era.get('flag:33') || 0);
   era.print(`为了提高技巧LV，需要 ${remaining} 个。`);
   era.print('买光剩余的吗？');
-  era.printButton('好的', 0);
-  era.printButton('不要', 1);
+  era.printButton('- 好的', 0); // SHOP_ITEM.ERB:752
+  era.printButton('- 不要', 1); // SHOP_ITEM.ERB:753
   for (;;) {
     const result = await era.input();
     if (result === 0) {

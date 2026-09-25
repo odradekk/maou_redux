@@ -750,11 +750,16 @@ function classify_scope_train(entry, side, context) {
         reason: `ere 侧多出的方格屏重绘带的按钮组条目（${entry.key}，与 [999] 同屏——归因同上一条）`,
       };
     }
-    // golden 的 ABLUP 文本菜单行（`- 停止`、`- 阴核点数×…点数不足`）
+    // golden 的 ABLUP 文本菜单行（`- 阴核点数×…点数不足`）
+    // #612 后此条只剩一种消费者：需求行里的点数对不上（golden 5859 / ere
+    // 4859）——参数增量来自未移植指令（COM 族存根不结算），**分隔符本身已
+    // 对齐**（ere 侧同样渲染 `- 阴核点数×…`）。原来还兜着 `- 停止` 一类的
+    // 菜单行，那些在 #612 补回「- 」后逐字匹配，不再进这里。
     if (side === 'golden' && entry.key.startsWith('- ')) {
       return {
         category: 'stub',
-        reason: '能力提升画面的文本菜单行（@ABLUPn 反馈与 [100] 停止键未移植）',
+        reason:
+          '能力提升画面的需求行：点数现值来自未移植指令（COM 族存根不结算），编号与「- 」已对齐',
       };
     }
     // 【#274 拆除】此处原是「升格指令标签：@GET_ADV_COM 未移植」——
@@ -975,16 +980,12 @@ function classify_scope_b(entry, side, context) {
             '能力值列表的 [100] 异界综合征行来自原作的 [IF_DEBUG] 调试块（page-ablup.js 文件头：调试编译块不移植），ere 侧不渲染',
         };
       }
-      if (
-        entry.kind === 'menu' &&
-        ['好的', '不要', '- 好的', '- 不要'].includes(entry.key)
-      ) {
-        return {
-          category: 'stub',
-          reason:
-            '出售确认按钮：Emuera 的正文含「-」且可同行，ere 由 printButton 统一渲染快捷键（引擎交互形态差）',
-        };
-      }
+      // 【#612 拆除】此处原是「出售确认按钮：Emuera 的正文含「-」且可同行，
+      // ere 由 printButton 统一渲染快捷键」——一屏 `好的/不要` 的豁免。
+      // sale.js 的按钮正文补回原作的「- 」后（SELL_CHARA.ERB:422-423），
+      // 两侧的 menu 条目逐字相同、直接配对，规则永不命中（九份样本实测
+      // 0 消费者）。**不保留**：它按 `好的/不要` 四个字面量兜底，留着会把
+      // 将来同类界面的缺分隔符差异静默算成「已解释」。
       if (
         entry.kind === 'menu' &&
         /^温妮 \[评价额:14,430点\]$/.test(entry.key)
