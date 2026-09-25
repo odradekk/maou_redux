@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2433; // #621 起 +27（M12400-M12426：口上剩余拆行 A 组 K6 的 27 组「拆回多条」）
+export const COUNT = 2459; // #621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -23116,5 +23116,423 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-k6-wicked'],
     must_mention:
       '#621 迎击奖励请求：动物名与收行段合成一条输出（:7806+:7808+:7810+:7812）',
+  },
+  {
+    desc: 'M12427 K7 屈服刻印Lv3·靠近分档（:639+:641）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${player_name}慢慢的靠近了${target_name}抓过她的金发嗅着。`,\n' +
+      '      ); // :639+:641\n',
+    replace:
+      '      await era.printAndWait(`${player_name}慢慢的靠近了`); // 变异：拆回\n' +
+      '      await era.printAndWait(`${target_name}抓过她的金发嗅着。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention: '#621 屈服刻印Lv3 的靠近分档（:639 组）：三支各合成一条输出',
+  },
+  {
+    desc: 'M12428 K7 口塞初回·淫乱（:5105+:5107）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,\n' +
+      '          ); // :5105+:5107\n',
+    replace:
+      '          await era.printAndWait(`${target_name}因为`); // 变异：拆回\n' +
+      '          await era.printAndWait(`嘴被塞住而稍稍不满的动了起来………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出',
+  },
+  {
+    desc: 'M12429 K7 口塞初回·爱慕（:5114+:5116）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `${target_name}好像期待着什么就那样动了起来………`,\n' +
+      '          ); // :5114+:5116\n',
+    replace:
+      '          await era.printAndWait(`${target_name}好`); // 变异：拆回\n' +
+      '          await era.printAndWait(`像期待着什么就那样动了起来………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出',
+  },
+  {
+    desc: 'M12430 K7 口塞初回·それ以外（:5123+:5125）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '          await era.printAndWait(`${target_name}的嘴被口枷塞住，左右摇着头………`); // :5123+:5125\n',
+    replace:
+      '          await era.printAndWait(`${target_name}的`); // 变异：拆回\n' +
+      '          await era.printAndWait(`嘴被口枷塞住，左右摇着头………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出',
+  },
+  {
+    desc: 'M12431 K7 口塞二回目·淫乱（:5147+:5149）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `${target_name}因为嘴被塞住而稍稍不满的动了起来………`,\n' +
+      '          ); // :5147+:5149\n',
+    replace:
+      '          await era.printAndWait(`${target_name}因为`); // 变异：拆回\n' +
+      '          await era.printAndWait(`嘴被塞住而稍稍不满的动了起来………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出',
+  },
+  {
+    desc: 'M12432 K7 口塞二回目·爱慕（:5167+:5169）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `${target_name}好像期待着什么就那样动了起来………`,\n' +
+      '          ); // :5167+:5169\n',
+    replace:
+      '          await era.printAndWait(`${target_name}好`); // 变异：拆回\n' +
+      '          await era.printAndWait(`像期待着什么就那样动了起来………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出',
+  },
+  {
+    desc: 'M12433 K7 口塞二回目·それ以外（:5182+:5184）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find: '          await era.printAndWait(`${target_name}的嘴被口枷塞住左右摇着头………`); // :5182+:5184\n',
+    replace:
+      '          await era.printAndWait(`${target_name}`); // 变异：拆回\n' +
+      '          await era.printAndWait(`的嘴被口枷塞住左右摇着头………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出',
+  },
+  {
+    desc: 'M12434 K7 交谈初回·爱意（:5408+:5410）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.print(\n' +
+      '            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,\n' +
+      '          ); // :5408+:5410\n',
+    replace:
+      '          await era.print(`被${player_name}搭着话、`); // 变异：拆回\n' +
+      '          await era.print(`${target_name}摇着腰说出了爱的话语`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+  },
+  {
+    desc: 'M12435 K7 交谈二回目·爱意（:5485+:5487）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.print(\n' +
+      '            `被${player_name}搭着话、${target_name}摇着腰说出了爱的话语`,\n' +
+      '          ); // :5485+:5487\n',
+    replace:
+      '          await era.print(`被${player_name}搭着话、`); // 变异：拆回\n' +
+      '          await era.print(`${target_name}摇着腰说出了爱的话语`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+  },
+  {
+    desc: 'M12436 K7 迷宫凌辱·「作为代替」（:8001+:8004）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `作为代替${target_name}的肛门被彻底侵犯，逆流出了分不清是精液还是粘液的液体。`,\n' +
+      '      ); // :8001+:8004\n',
+    replace:
+      '      await era.printAndWait(`作为代替${target_name}的肛门被`); // 变异：拆回\n' +
+      '      await era.printAndWait(`彻底侵犯，逆流出了分不清是精液还是粘液的液体。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 迷宫凌辱「作为代替」（:8001+:8004）：前缀与收行段合成一条输出',
+  },
+  {
+    desc: 'M12437 K7 录像自我介绍初回（SIF ABL:31）（:5392+:5394+:5395）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}把自己的本名和至今为止的性体验` +\n' +
+      "              (recall_dirty ? `、甚至连自慰时妄想的内容都` : '') + // :5394\n" +
+      '              `高兴地讲了出来……`,\n' +
+      '          ); // :5392+:5394+:5395\n',
+    replace:
+      '          await era.print(`${target_name}把自己的本名和至今为止的性体验`); // 变异：拆回\n' +
+      "          await era.print((recall_dirty ? `、甚至连自慰时妄想的内容都` : '') + // :5394\n" +
+      '              `高兴地讲了出来……`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:5392/:5469 组）',
+  },
+  {
+    desc: 'M12438 K7 录像自我介绍二回目（SIF ABL:31）（:5469+:5471+:5472）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}把自己的本名和至今为止的性体验` +\n' +
+      "              (recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') + // :5471\n" +
+      '              `高兴地讲了出来……`,\n' +
+      '          ); // :5469+:5471+:5472\n',
+    replace:
+      '          await era.print(`${target_name}把自己的本名和至今为止的性体验`); // 变异：拆回\n' +
+      "          await era.print((recall_dirty_5470 ? `、甚至连自慰时妄想的内容都` : '') + // :5471\n" +
+      '              `高兴地讲了出来……`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:5392/:5469 组）',
+  },
+  {
+    desc: 'M12439 K7 死斗场口交（助手性器两档）（:8254+:8256+:8258+:8259）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}因为` +\n' +
+      "          (assi_has_penis_8255 ? `肉棒` : '') + // :8256\n" +
+      "          (assi_dildo_8257 ? `假阴茎` : '') + // :8258\n" +
+      '          `被${target_name}舔着而露出了心旷神怡的额表情……`,\n' +
+      '      ); // :8254+:8256+:8258+:8259\n',
+    replace:
+      '      await era.printAndWait(`${assi_name}因为`); // 变异：拆回\n' +
+      "      await era.printAndWait((assi_has_penis_8255 ? `肉棒` : '') + // :8256\n" +
+      "          (assi_dildo_8257 ? `假阴茎` : '') + // :8258\n" +
+      '          `被${target_name}舔着而露出了心旷神怡的额表情……`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）',
+  },
+  {
+    desc: 'M12440 K7 死斗场正常位（助手性器两档）（:8289+:8291+:8293+:8294）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n' +
+      "          (assi_has_penis_8290 ? `肉棒` : '') + // :8291\n" +
+      "          (assi_dildo_8292 ? `假阴茎` : '') + // :8293\n" +
+      '          `继续毫不留情的蹂躏着${target_name}的小穴。`,\n' +
+      '      ); // :8289+:8291+:8293+:8294\n',
+    replace:
+      '      await era.printAndWait(`${assi_name}一边听着${target_name}的悲鸣一边用`); // 变异：拆回\n' +
+      "      await era.printAndWait((assi_has_penis_8290 ? `肉棒` : '') + // :8291\n" +
+      "          (assi_dildo_8292 ? `假阴茎` : '') + // :8293\n" +
+      '          `继续毫不留情的蹂躏着${target_name}的小穴。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）',
+  },
+  {
+    desc: 'M12441 K7 死斗场后背位アナル（助手性器两档）（:8316+:8318+:8320+:8321）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n' +
+      "          (assi_has_penis_8317 ? `肉棒` : '') + // :8318\n" +
+      "          (assi_dildo_8319 ? `假阴茎` : '') + // :8320\n" +
+      '          `继续毫不留情的蹂躏着${target_name}的小穴。`,\n' +
+      '      ); // :8316+:8318+:8320+:8321\n',
+    replace:
+      '      await era.printAndWait(`${assi_name}一边听着${target_name}的悲鸣一边用`); // 变异：拆回\n' +
+      "      await era.printAndWait((assi_has_penis_8317 ? `肉棒` : '') + // :8318\n" +
+      "          (assi_dildo_8319 ? `假阴茎` : '') + // :8320\n" +
+      '          `继续毫不留情的蹂躏着${target_name}的小穴。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）',
+  },
+  {
+    desc: 'M12442 K7 交谈初回·语调三档（:5414+:5416+:5418+:5420）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.print(\n' +
+      '            talk_front_5408 +\n' +
+      '              `搭着话、${target_name}一边发出` +\n' +
+      "              (excited_5415 ? `快乐的` : painful_5417 ? `痛苦的` : '') +\n" +
+      '              `的声音、一边拼死的回着话`,\n' +
+      '          ); // :5414+:5416+:5418+:5420\n',
+    replace:
+      '          await era.print(talk_front_5408); // 变异：拆回\n' +
+      '          await era.print(`搭着话、${target_name}一边发出` +\n' +
+      "              (excited_5415 ? `快乐的` : painful_5417 ? `痛苦的` : '') +\n" +
+      '              `的声音、一边拼死的回着话`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+  },
+  {
+    desc: 'M12443 K7 交谈二回目·语调三档（:5491+:5493+:5495+:5497）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '          await era.print(\n' +
+      '            talk_front_5485 +\n' +
+      '              `搭着话、${target_name}一边发出` +\n' +
+      "              (excited_5492 ? `快乐的` : painful_5494 ? `痛苦的` : '') +\n" +
+      '              `声音、一边拼死的回着话`,\n' +
+      '          ); // :5491+:5493+:5495+:5497\n',
+    replace:
+      '          await era.print(talk_front_5485); // 变异：拆回\n' +
+      '          await era.print(`搭着话、${target_name}一边发出` +\n' +
+      "              (excited_5492 ? `快乐的` : painful_5494 ? `痛苦的` : '') +\n" +
+      '              `声音、一边拼死的回着话`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出',
+  },
+  {
+    desc: 'M12444 K7 NTR·P1 插进秘裂（:8362+:8364+:8366）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (king_penis_8361 ? `然后、狂王的巨根` : `然后、特大号按摩棒`) + // :8362/:8364\n' +
+      '          `慢慢的插进了${target_name}的秘裂。在镜头里能看见${target_name}的蜜壶被深深的贯穿了。`,\n' +
+      '      ); // :8362+:8364+:8366\n',
+    replace:
+      '      await era.printAndWait((king_penis_8361 ? `然后、狂王的巨根` : `然后、特大号按摩棒`)); // 变异：拆回\n' +
+      '      await era.printAndWait(// :8362/:8364\n' +
+      '          `慢慢的插进了${target_name}的秘裂。在镜头里能看见${target_name}的蜜壶被深深的贯穿了。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12445 K7 NTR·P1 それ以外（:8375+:8377+:8379）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (king_penis_8374 ? `狂王的巨根` : `特大号按摩棒`) + // :8375/:8377\n' +
+      '          `深深的插入了${target_name}的蜜壶、破瓜之血顺着大腿流了下来………`,\n' +
+      '      ); // :8375+:8377+:8379\n',
+    replace:
+      '      await era.printAndWait((king_penis_8374 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n' +
+      '      await era.printAndWait(// :8375/:8377\n' +
+      '          `深深的插入了${target_name}的蜜壶、破瓜之血顺着大腿流了下来………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12446 K7 NTR·P2 肛门吞下（肛开Lv3）（:8388+:8390+:8392+:8394）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}被开发了的肛门轻易地吞下了` +\n' +
+      '            (king_penis_8389 ? `狂王的巨根` : `特大号按摩棒`) + // :8390/:8392\n' +
+      '            `、${target_name}开始发出了呻吟声。`,\n' +
+      '        ); // :8388+:8390+:8392+:8394\n',
+    replace:
+      '        await era.printAndWait(`${target_name}被开发了的肛门轻易地吞下了`); // 变异：拆回\n' +
+      '        await era.printAndWait((king_penis_8389 ? `狂王的巨根` : `特大号按摩棒`) + // :8390/:8392\n' +
+      '            `、${target_name}开始发出了呻吟声。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12447 K7 NTR·P2 肛门吞下（苦痛）（:8398+:8400+:8402+:8404）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}的肛门吞下了` +\n' +
+      '            (king_penis_8399 ? `狂王的巨根` : `特大号按摩棒`) + // :8400/:8402\n' +
+      '            `、${target_name}因为强烈的苦痛而悲鸣着。`,\n' +
+      '        ); // :8398+:8400+:8402+:8404\n',
+    replace:
+      '        await era.printAndWait(`${target_name}的肛门吞下了`); // 变异：拆回\n' +
+      '        await era.printAndWait((king_penis_8399 ? `狂王的巨根` : `特大号按摩棒`) + // :8400/:8402\n' +
+      '            `、${target_name}因为强烈的苦痛而悲鸣着。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12448 K7 NTR·P2 それ以外（:8411+:8413+:8415）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (king_penis_8410 ? `狂王的巨根` : `特大号按摩棒`) + // :8411/:8413\n' +
+      '          `插进了${target_name}的肛门、${target_name}发出娇喘取悦着狂王………`,\n' +
+      '      ); // :8411+:8413+:8415\n',
+    replace:
+      '      await era.printAndWait((king_penis_8410 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n' +
+      '      await era.printAndWait(// :8411/:8413\n' +
+      '          `插进了${target_name}的肛门、${target_name}发出娇喘取悦着狂王………`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12449 K7 NTR·P4 性爱狂（:8437+:8439+:8441+:8443）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `虽然因为完全变成性爱狂的${target_name}而困惑着，但还是用` +\n' +
+      '          (king_penis_8438 ? `他的巨根` : `特大号按摩棒`) + // :8439/:8441\n' +
+      '          `不停地侵犯着${target_name}的蜜壶。然后随着抽送${target_name}发出着野兽一样的呻吟声。`,\n' +
+      '      ); // :8437+:8439+:8441+:8443\n',
+    replace:
+      '      await era.printAndWait(`虽然因为完全变成性爱狂的${target_name}而困惑着，但还是用`); // 变异：拆回\n' +
+      '      await era.printAndWait((king_penis_8438 ? `他的巨根` : `特大号按摩棒`) + // :8439/:8441\n' +
+      '          `不停地侵犯着${target_name}的蜜壶。然后随着抽送${target_name}发出着野兽一样的呻吟声。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12450 K7 NTR·P4 爱慕（:8450+:8452+:8454）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (king_penis_8449 ? `狂王的巨根` : `特大号按摩棒`) + // :8450/:8452\n' +
+      '          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了甜美的呻吟。`,\n' +
+      '      ); // :8450+:8452+:8454\n',
+    replace:
+      '      await era.printAndWait((king_penis_8449 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n' +
+      '      await era.printAndWait(// :8450/:8452\n' +
+      '          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了甜美的呻吟。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12451 K7 NTR·P4 それ以外（:8460+:8462+:8464）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (king_penis_8459 ? `狂王的巨根` : `特大号按摩棒`) + // :8460/:8462\n' +
+      '          `不停地侵犯着${target_name}的蜜穴、${target_name}呻吟着。`,\n' +
+      '      ); // :8460+:8462+:8464\n',
+    replace:
+      '      await era.printAndWait((king_penis_8459 ? `狂王的巨根` : `特大号按摩棒`)); // 变异：拆回\n' +
+      '      await era.printAndWait(// :8460/:8462\n' +
+      '          `不停地侵犯着${target_name}的蜜穴、${target_name}呻吟着。`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）',
+  },
+  {
+    desc: 'M12452 K7 迎击奖励请求·动物名三档（:8680+:8682+:8684+:8686+:8688）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k7-heart.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `「奖励？　我想尝试和` +\n' +
+      '        (beast_kind_8680 == 1\n' +
+      '          ? `犬` // :8682\n' +
+      '          : beast_kind_8680 == 2\n' +
+      '            ? `豚` // :8684\n' +
+      '            : `马`) + // :8686\n' +
+      '        `性交看看」`,\n' +
+      '    ); // :8680+:8682+:8684+:8686+:8688\n',
+    replace:
+      '    await era.printAndWait(`「奖励？　我想尝试和`); // 变异：拆回\n' +
+      '    await era.printAndWait((beast_kind_8680 == 1\n' +
+      '          ? `犬` // :8682\n' +
+      '          : beast_kind_8680 == 2\n' +
+      '            ? `豚` // :8684\n' +
+      '            : `马`) + // :8686\n' +
+      '        `性交看看」`); // 变异：拆回\n',
+    tests: ['kojo-k7-heart'],
+    must_mention:
+      '#621 迎击奖励请求：动物名与收行段合成一条输出（:8680+:8682+:8684+:8686+:8688）',
   },
 ];

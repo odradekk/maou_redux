@@ -682,3 +682,440 @@ test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION / GROTESQUE_KOUJO_K7：注册且
   await grotesque_koujo_family.call(7, { args: [] });
   assert.deepEqual(fixture.text_lines().slice(before), ['']); // 源无文本，PRINTFORMW 仍记空行
 });
+
+// —— #621：普查二类清单（26 组）合并后的整行断言 ——
+// 源里一条输出由「无后缀 PRINTFORM 前缀 + 各互斥支的收行段」拼成，移植早期
+// 按段各打一行；本票把同一条输出的各段合成一句 era.print*（拼接锚 // :a+:b）。
+// 这里逐组断言整行文本，覆盖该行的各分支组合（判据两档 × 互斥支各一支）。
+
+test('#621 屈服刻印Lv3 的靠近分档（:639 组）：三支各合成一条输出', async () => {
+  const cases = [
+    { talent302: 1, line: '你慢慢的靠近了金红桃抓过她的金发嗅着。' },
+    { talent302: 101, line: '你慢慢的靠近了金红桃抓过她长顺的金发嗅着。' },
+    { talent302: 201, line: '你慢慢的靠近了金红桃抓过她的金色短发嗅着。' },
+  ];
+  for (const { talent302, line } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('mark:20:2', 3);
+      f.store.set('talent:20:302', talent302);
+    });
+    const { k7_kojo2 } = fixture.load_module('kojo/kojo-k7-heart');
+    await k7_kojo2();
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `TALENT:302 = ${talent302}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 口塞初回三档（:5105/:5114/:5123 组）：前缀与收行段合成一条输出', async () => {
+  const cases = [
+    {
+      label: '淫乱＋眼罩',
+      seed: (f) => {
+        f.store.set('talent:20:76', 1);
+        f.store.set('tequip:20:43', 1);
+      },
+      line: '金红桃因为嘴被塞住而稍稍不满的动了起来………',
+    },
+    {
+      label: '淫乱＋无眼罩（ELSE 支 :5109）',
+      seed: (f) => f.store.set('talent:20:76', 1),
+      line: '金红桃因为嘴被塞住而稍稍不满的用眼睛凝视着你………',
+    },
+    {
+      label: '爱慕＋眼罩',
+      seed: (f) => {
+        f.store.set('talent:20:85', 1);
+        f.store.set('tequip:20:43', 1);
+      },
+      line: '金红桃好像期待着什么就那样动了起来………',
+    },
+    {
+      label: '爱慕＋无眼罩（ELSE 支 :5118）',
+      seed: (f) => f.store.set('talent:20:85', 1),
+      line: '金红桃好像期待着什么就那样用眼睛凝视着你………',
+    },
+    {
+      label: 'それ以外＋眼罩',
+      seed: (f) => f.store.set('tequip:20:43', 1),
+      line: '金红桃的嘴被口枷塞住，左右摇着头………',
+    },
+    {
+      label: 'それ以外＋无眼罩（ELSE 支 :5127）',
+      seed: () => {},
+      line: '金红桃的嘴被口枷塞住，瞪着你………',
+    },
+  ];
+  for (const { label, seed, line } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('tequip:20:45', 1);
+      seed(f);
+    }, 45);
+    await speak_k7(fixture, () => 0);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 口塞二回目三档（:5147/:5167/:5182 组）：前缀与收行段合成一条输出', async () => {
+  const cases = [
+    {
+      label: '淫乱＋眼罩（:5147+:5149）',
+      seed: (f) => {
+        f.store.set('talent:20:76', 1);
+        f.store.set('cflag:20:346', 5);
+        f.store.set('tequip:20:43', 1);
+      },
+      line: '金红桃因为嘴被塞住而稍稍不满的动了起来………',
+    },
+    {
+      label: '淫乱＋无眼罩（ELSE 支 :5151）',
+      seed: (f) => {
+        f.store.set('talent:20:76', 1);
+        f.store.set('cflag:20:346', 5);
+      },
+      line: '金红桃因为嘴被塞住而稍稍不满的用眼睛凝视着你………',
+    },
+    {
+      label: '爱慕＋眼罩（:5167+:5169）',
+      seed: (f) => {
+        f.store.set('talent:20:85', 1);
+        f.store.set('cflag:20:346', 3);
+        f.store.set('tequip:20:43', 1);
+      },
+      line: '金红桃好像期待着什么就那样动了起来………',
+    },
+    {
+      label: 'それ以外＋眼罩（:5182+:5184）',
+      seed: (f) => {
+        f.store.set('cflag:20:346', 1);
+        f.store.set('tequip:20:43', 1);
+      },
+      line: '金红桃的嘴被口枷塞住左右摇着头………',
+    },
+    {
+      label: 'それ以外＋无眼罩（ELSE 支 :5186）',
+      seed: (f) => f.store.set('cflag:20:346', 1),
+      line: '金红桃的嘴被口枷塞住瞪着你………',
+    },
+  ];
+  for (const { label, seed, line } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('tequip:20:45', 1);
+      seed(f);
+    }, 45);
+    await speak_k7(fixture, () => 0);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:5392/:5469 组）', async () => {
+  const cases = [
+    { label: '含自慰妄想（初回 :5392+:5394+:5395）', cflag: 0, dirty: 1 },
+    { label: '不含（初回）', cflag: 0, dirty: 0 },
+    { label: '含自慰妄想（二回目 :5469+:5471+:5472）', cflag: 1, dirty: 1 },
+    { label: '不含（二回目）', cflag: 1, dirty: 0 },
+  ];
+  for (const { label, cflag, dirty } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('tequip:20:53', 1);
+      f.store.set('cflag:20:357', cflag);
+      f.store.set('abl:20:17', 5); // TALENT:89 || ABL:17 >= 5
+      f.store.set('abl:20:31', dirty ? 3 : 0); // SIF ABL:31 >= 3
+    }, 56);
+    await speak_k7(fixture, () => 0);
+    const line =
+      '金红桃把自己的本名和至今为止的性体验' +
+      (dirty ? '、甚至连自慰时妄想的内容都' : '') +
+      '高兴地讲了出来……';
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 交谈・通常会話七支（:5408/:5485 两组）：前缀与各支收行段合成一条输出', async () => {
+  // 两处链各支全覆盖；源读 store 的 PALAMLV，故每例显式给阈值
+  const cases = [
+    {
+      label: '初回（:5408 组）・爱意',
+      cflag: 0,
+      seed: { 'palam:20:5': 10000, 'talent:20:85': 1, 'tflag:60': 1 },
+      line: '被你搭着话、金红桃摇着腰说出了爱的话语',
+    },
+    {
+      label: '初回（:5408 组）・淫猥',
+      cflag: 0,
+      seed: { 'palam:20:5': 10000, 'talent:20:76': 1, 'tflag:60': 1 },
+      line: '被你搭着话、金红桃摇着腰说出了下流的话语',
+    },
+    {
+      label: '初回（:5408 组）・语调・快乐',
+      cflag: 0,
+      seed: { 'palam:20:5': 10000, 'palam:20:4': 10000, 'tequip:20:11': 1 },
+      line: '被你搭着话、金红桃一边发出快乐的的声音、一边拼死的回着话',
+    },
+    {
+      label: '初回（:5408 组）・语调・痛苦',
+      cflag: 0,
+      seed: { 'palam:20:5': 10000, 'palam:20:4': 10000, 'tequip:20:44': 1 },
+      line: '被你搭着话、金红桃一边发出痛苦的的声音、一边拼死的回着话',
+    },
+    {
+      label: '初回（:5408 组）・语调・无档',
+      cflag: 0,
+      seed: { 'palam:20:5': 10000, 'palam:20:4': 10000 },
+      line: '被你搭着话、金红桃一边发出的声音、一边拼死的回着话',
+    },
+    {
+      label: '初回（:5408 组）・融洽',
+      cflag: 0,
+      seed: { 'palam:20:4': 10000 },
+      line: '被你搭着话、金红桃融洽的回着话',
+    },
+    {
+      label: '初回（:5408 组）・断断续续',
+      cflag: 0,
+      seed: { 'palam:20:4': 600 },
+      line: '被你搭着话、金红桃断断续续的回着话',
+    },
+    {
+      label: '初回（:5408 组）・それ以外',
+      cflag: 0,
+      seed: {},
+      line: '被你搭着话、但是金红桃好像没有认真听…',
+    },
+    {
+      label: '二回目（:5485 组）・爱意',
+      cflag: 1,
+      seed: { 'palam:20:5': 10000, 'talent:20:85': 1, 'tflag:60': 1 },
+      line: '被你搭着话、金红桃摇着腰说出了爱的话语',
+    },
+    {
+      label: '二回目（:5485 组）・淫猥',
+      cflag: 1,
+      seed: { 'palam:20:5': 10000, 'talent:20:76': 1, 'tflag:60': 1 },
+      line: '被你搭着话、金红桃摇着腰说出了下流的话语',
+    },
+    {
+      label: '二回目（:5485 组）・语调・快乐',
+      cflag: 1,
+      seed: { 'palam:20:5': 10000, 'palam:20:4': 10000, 'tequip:20:11': 1 },
+      line: '被你搭着话、金红桃一边发出快乐的声音、一边拼死的回着话',
+    },
+    {
+      label: '二回目（:5485 组）・语调・无档',
+      cflag: 1,
+      seed: { 'palam:20:5': 10000, 'palam:20:4': 10000 },
+      line: '被你搭着话、金红桃一边发出声音、一边拼死的回着话',
+    },
+    {
+      label: '二回目（:5485 组）・融洽',
+      cflag: 1,
+      seed: { 'palam:20:4': 10000 },
+      line: '被你搭着话、金红桃融洽的回着话',
+    },
+    {
+      label: '二回目（:5485 组）・断断续续',
+      cflag: 1,
+      seed: { 'palam:20:4': 600 },
+      line: '被你搭着话、金红桃断断续续的回着话',
+    },
+    {
+      label: '二回目（:5485 组）・それ以外',
+      cflag: 1,
+      seed: {},
+      line: '被你搭着话、但是金红桃好像没有认真听…',
+    },
+  ];
+  for (const { label, cflag, seed, line } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('palamlv:4', 10000);
+      f.store.set('palamlv:2', 500);
+      f.store.set('cflag:20:357', cflag);
+      for (const [key, value] of Object.entries(seed)) f.store.set(key, value);
+    }, 56);
+    await speak_k7(fixture, () => 0);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 迷宫凌辱「作为代替」（:8001+:8004）：前缀与收行段合成一条输出', async () => {
+  const cases = [
+    {
+      exp1: 30,
+      line: '作为代替金红桃的肛门被彻底侵犯，逆流出了分不清是精液还是粘液的液体。',
+    },
+    { exp1: 0, line: '作为代替' },
+  ];
+  for (const { exp1, line } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('talent:20:0', 1); // 处女支
+      f.store.set('exp:20:1', exp1);
+    });
+    const { ryouzyoku_after_kojo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-ravish',
+    );
+    await ryouzyoku_after_kojo_family.call(7, { args: [] });
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `EXP:1 = ${exp1}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 COLOSSEUM_KOJO_7 三处：性器名与收行段合成一条输出（:8254/:8289/:8316）', async () => {
+  const cases = [
+    {
+      selectcom: 31,
+      line: '玛奥因为假阴茎被金红桃舔着而露出了心旷神怡的额表情……',
+    },
+    {
+      selectcom: 21,
+      line: '玛奥一边听着金红桃的悲鸣一边用假阴茎继续毫不留情的蹂躏着金红桃的小穴。',
+    },
+    {
+      selectcom: 27,
+      line: '玛奥一边听着金红桃的悲鸣一边用假阴茎继续毫不留情的蹂躏着金红桃的小穴。',
+    },
+    // 助手有阴茎（TALENT:121）时走「肉棒」支——#621 合成后同一行里换词
+    {
+      selectcom: 31,
+      assi_penis: 1,
+      line: '玛奥因为肉棒被金红桃舔着而露出了心旷神怡的额表情……',
+    },
+    {
+      selectcom: 21,
+      assi_penis: 1,
+      line: '玛奥一边听着金红桃的悲鸣一边用肉棒继续毫不留情的蹂躏着金红桃的小穴。',
+    },
+    {
+      selectcom: 27,
+      assi_penis: 1,
+      line: '玛奥一边听着金红桃的悲鸣一边用肉棒继续毫不留情的蹂躏着金红桃的小穴。',
+    },
+  ];
+  for (const { selectcom, assi_penis, line } of cases) {
+    const fixture = await setup_k7((f) => {
+      join_slave_chara(f, 21, '玛奥');
+      f.store.set('tequip:20:55', 1);
+    }, selectcom);
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.assi = 21;
+    fixture.store.set('talent:21:121', assi_penis ? 1 : 0);
+    fixture.store.set('talent:21:122', 0);
+    fixture.store.set('item:4', 1); // PBAND
+    era_flag.assiplay = 1;
+    const { colosseum_kojo_7 } = fixture.load_module('kojo/kojo-k7-heart');
+    await colosseum_kojo_7();
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `selectcom ${selectcom}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 NTR_KOUJO_K7 八组：性器名与收行段合成一条输出（:8362 起）', async () => {
+  const cases = [
+    {
+      label: 'P1・爱慕・狂王巨根（:8362+:8366）',
+      p: 1,
+      king: 1,
+      seed: (f) => f.store.set('talent:20:85', 1),
+      line: '然后、狂王的巨根慢慢的插进了金红桃的秘裂。在镜头里能看见金红桃的蜜壶被深深的贯穿了。',
+    },
+    {
+      label: 'P1・それ以外・按摩棒（:8375+:8379）',
+      p: 1,
+      king: 0,
+      seed: () => {},
+      line: '特大号按摩棒深深的插入了金红桃的蜜壶、破瓜之血顺着大腿流了下来………',
+    },
+    {
+      label: 'P2・肛开Lv3・巨根（:8388+:8394）',
+      p: 2,
+      king: 1,
+      seed: (f) => {
+        f.store.set('talent:20:85', 1);
+        f.store.set('abl:20:3', 3);
+      },
+      line: '金红桃被开发了的肛门轻易地吞下了狂王的巨根、金红桃开始发出了呻吟声。',
+    },
+    {
+      label: 'P2・肛开Lv3未満・按摩棒（:8398+:8404）',
+      p: 2,
+      king: 0,
+      seed: (f) => f.store.set('talent:20:85', 1),
+      line: '金红桃的肛门吞下了特大号按摩棒、金红桃因为强烈的苦痛而悲鸣着。',
+    },
+    {
+      label: 'P2・それ以外（:8411+:8415）',
+      p: 2,
+      king: 0,
+      seed: () => {},
+      line: '特大号按摩棒插进了金红桃的肛门、金红桃发出娇喘取悦着狂王………',
+    },
+    {
+      label: 'P4・淫乱・巨根（:8437+:8443）',
+      p: 4,
+      king: 1,
+      seed: (f) => f.store.set('talent:20:75', 1),
+      line: '虽然因为完全变成性爱狂的金红桃而困惑着，但还是用他的巨根不停地侵犯着金红桃的蜜壶。然后随着抽送金红桃发出着野兽一样的呻吟声。',
+    },
+    {
+      label: 'P4・爱慕・巨根（:8450+:8454）',
+      p: 4,
+      king: 1,
+      seed: (f) => f.store.set('talent:20:85', 1),
+      line: '狂王的巨根不停的侵犯着金红桃的蜜壶、金红桃发出了甜美的呻吟。',
+    },
+    {
+      label: 'P4・それ以外・巨根（:8460+:8464）',
+      p: 4,
+      king: 1,
+      seed: () => {},
+      line: '狂王的巨根不停地侵犯着金红桃的蜜穴、金红桃呻吟着。',
+    },
+  ];
+  for (const { label, p, king, seed, line } of cases) {
+    const fixture = await setup_k7((f) => {
+      f.store.set('flag:500', king);
+      seed(f);
+    });
+    const { ntr_koujo_k7 } = fixture.load_module('kojo/kojo-k7-heart');
+    await ntr_koujo_k7(() => 0, p);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 迎击奖励请求：动物名与收行段合成一条输出（:8680+:8682+:8684+:8686+:8688）', async () => {
+  const cases = [
+    { kind: 1, line: '「奖励？　我想尝试和犬性交看看」' },
+    { kind: 2, line: '「奖励？　我想尝试和豚性交看看」' },
+    { kind: 3, line: '「奖励？　我想尝试和马性交看看」' },
+  ];
+  for (const { kind, line } of cases) {
+    const fixture = await setup_k7();
+    const { gohoubi_request_koujo_k7 } =
+      fixture.load_module('kojo/kojo-k7-heart');
+    fixture.store.set('cflag:20:504', kind);
+    await gohoubi_request_koujo_k7(20);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `档位 ${kind}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
