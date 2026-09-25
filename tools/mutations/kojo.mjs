@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2408; // #625 起 +2（M12800/M12801：K12/K14 褒美请求的兽名与前后文合并成整行）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2411; // #625 起 +5（M12800-M12804：K12/K14/K15 的褒美请求与两处口上拼接合并成整行）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -21743,12 +21743,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11608 K15 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k15-clever.js',
-    find: `        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        await era.print(\`假阳具\`); // :5847`,
-    replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
-      ) {
-        await era.print(\`假阳具\`); // :5847`,
+    find: `      // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4
+      //（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
+      const assi_has_toy = era0('item:4') == 1;`,
+    replace: `      const assi_has_toy = era0('item:PBAND') == 1; // 变异：回退字符串具名寻址（#552）`,
     tests: ['kojo-k15-clever'],
     must_mention: 'item:4（原作 ITEM:PBAND）→ 假阳具',
   },
@@ -22749,6 +22747,60 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    await era.print(beast_word); // 变异：拆回\n' +
       '    await era.printAndWait(`进行交配的奖励。`); // 变异：拆回',
     tests: ['kojo-k14-nobleman'],
+    must_mention: '兽名与前后文落在同一行',
+  },
+  {
+    desc: 'M12802 K15 接吻初吻·擦嘴段（:758+:760+:761）拆回三条（#625：擦嘴段又占一行）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}` +\n' +
+      '            (wiped\n' +
+      "              ? '像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，'\n" +
+      "              : '') +\n" +
+      '            `恼怒地说着挑衅着话语……`,\n' +
+      '        ); // :758+:760+:761',
+    replace:
+      '        await era.print(`${target_name}`); // 变异：拆回\n' +
+      '        if (wiped) {\n' +
+      "          await era.print('像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，'); // 变异：拆回\n" +
+      '        }\n' +
+      '        await era.printAndWait(`恼怒地说着挑衅着话语……`); // 变异：拆回',
+    tests: ['kojo-k15-clever'],
+    must_mention: '擦嘴段与挑衅段落在同一行',
+  },
+  {
+    desc: 'M12803 K15 死斗场口交·武器名（:5843..:5848）拆回三条（#625：武器名又占一行）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}粗暴地拉起${target_name}的头发，得意地用` +\n' +
+      "          (assi_has_penis ? '阴茎' : assi_has_toy ? '假阳具' : '') +\n" +
+      '          `侵犯着对方的口腔……`,\n' +
+      '      ); // :5843+:5845+:5847+:5848',
+    replace:
+      '      await era.print(`${assi_name}粗暴地拉起${target_name}的头发，得意地用`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`阴茎`); // 变异：拆回\n' +
+      '      } else if (assi_has_toy) {\n' +
+      '        await era.print(`假阳具`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`侵犯着对方的口腔……`); // 变异：拆回',
+    tests: ['kojo-k15-clever'],
+    must_mention: '武器名与前后文落在同一行',
+  },
+  {
+    desc: 'M12804 K15 褒美请求·兽名（:6140..:6148）拆回三条（#625：兽名与前后文又各占一行）',
+    file: 'ere/kojo/kojo-k15-clever.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `「迎击成功的话，请让${sc()}跟` + beast_word + `进行交配好吗？」`,\n' +
+      '    ); // :6140+:6142+:6144+:6146+:6148',
+    replace:
+      '    await era.print(`「迎击成功的话，请让${sc()}跟`); // 变异：拆回\n' +
+      '    await era.print(beast_word); // 变异：拆回\n' +
+      '    await era.printAndWait(`进行交配好吗？」`); // 变异：拆回',
+    tests: ['kojo-k15-clever'],
     must_mention: '兽名与前后文落在同一行',
   },
 ];

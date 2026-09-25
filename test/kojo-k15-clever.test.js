@@ -1861,12 +1861,10 @@ test('死斗场口交 PRINT 拼接 + 假阳具持有位；背后位巨魔 TFLAG:
   }, 31);
   await speak_k15(assi, seq_rand(0));
   assert.ok(
-    assi.text_lines().some((l) => l === '假阳具'),
-    '死斗场口交助手无 121/122 + item:4（原作 ITEM:PBAND）→ 假阳具',
-  );
-  assert.ok(
-    assi.text_lines().some((l) => l.includes('侵犯着对方的口腔')),
-    'PRINTFORM 拼接尾',
+    assi
+      .text_lines()
+      .includes('伶俐粗暴地拉起伶俐的头发，得意地用假阳具侵犯着对方的口腔……'),
+    '死斗场口交助手无 121/122 + item:4（原作 ITEM:PBAND）→ 假阳具，且与前后文同一行（#625）',
   );
 
   const troll = await setup_k15((f) => {
@@ -2254,4 +2252,85 @@ test('GOBI ARG:0==1 语尾；EXUCUTION TFLAG:16==4 空 PRINTFORMW', async () => 
   const exe_sys = exe.load_module('kojo/kojo-system');
   await exe_sys.exucution_koujo_family.call(KEY, { args: [] });
   assert.ok(exe.text_lines().includes(''), 'EXUCUTION 空 PRINTFORMW');
+});
+
+// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+
+test('#625 接吻初吻それ以外：擦嘴段与挑衅段是同一行（TEQUIP:44 两档）', async () => {
+  // 原作 :758（PRINTFORM）+ :760（SIF !TEQUIP:44 只护这一段）+ :761
+  // （PRINTFORMW 收行）**是一整行**——无后缀 PRINTFORM 连续不换行。ere 侧曾
+  // 拆成三条 era.print（#625）。断言整行文本，不是只查片段
+  const cases = [
+    [
+      0,
+      '伶俐像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，恼怒地说着挑衅着话语……',
+    ],
+    [1, '伶俐恼怒地说着挑衅着话语……'],
+  ];
+  for (const [gagged, line] of cases) {
+    const fixture = await setup_k15((f) => {
+      f.store.set('tflag:13', 1);
+      if (gagged) {
+        f.store.set(`tequip:${CID}:44`, 1);
+      }
+    }, 6);
+    await speak_k15(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `TEQUIP:44==${gagged}：擦嘴段与挑衅段落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 死斗场口交：武器名与前后文是同一行（阴茎 / 假阳具 / 两段都不出）', async () => {
+  // 原作 :5843（PRINTFORM）+ :5845/:5847（两条互斥 SIF 各护一段）+:5848
+  // （PRINTFORMW 收行）**是一整行**（#625）。三档各断言整行
+  const cases = [
+    ['阴茎', (f) => f.store.set(`talent:${CID}:121`, 1)],
+    ['假阳具', (f) => f.store.set('item:4', 1)],
+    ['', undefined],
+  ];
+  for (const [weapon, seed] of cases) {
+    const fixture = await setup_k15((f, era_flag) => {
+      f.store.set(`tequip:${CID}:55`, 1);
+      era_flag.assi = CID;
+      era_flag.assiplay = 1;
+      if (seed) {
+        seed(f);
+      }
+    }, 31);
+    await speak_k15(fixture, seq_rand(0));
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(
+          `伶俐粗暴地拉起伶俐的头发，得意地用${weapon}侵犯着对方的口腔……`,
+        ),
+      `武器档「${weapon}」：武器名与前后文落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 gohoubi_request_koujo_k15：兽名与前后文是同一行（CFLAG:504 三档）', async () => {
+  // 原作 :6140（PRINTFORM）+ :6142/:6144/:6146（IF/ELSEIF 三档兽名）
+  // + :6148（PRINTFORMW 收行）**是一整行**（#625）
+  const cases = [
+    [1, '狗'],
+    [2, '猪'],
+    [3, '马'],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k15((f) => {
+      f.store.set(`cflag:${CID}:504`, req);
+    });
+    const { gohoubi_request_koujo_k15 } = fixture.load_module(
+      'kojo/kojo-k15-clever',
+    );
+    await gohoubi_request_koujo_k15(() => 0);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`「迎击成功的话，请让我跟${beast}进行交配好吗？」`],
+      `CFLAG:504==${req}：兽名与前后文落在同一行（#625）`,
+    );
+  }
 });
