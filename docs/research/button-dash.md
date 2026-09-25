@@ -112,13 +112,13 @@ node tools/button-dash-scan.mjs --json   # 机器可读（同一份数据）
 | `ere/page/page-shop-labo.js:1086` | `` `${label} - 『…』` ``：破折号在正文中段（原作 `[{N}] %NAME% - 『%CSTR%』`）——**不改**                      |
 | `ere/page/page-shop-labo.js:1660` | `` `- ${itemname(idx)}` ``：苏生名单（原作 `SHOP_LABO:2594 [{D}] - %ITEMNAME:D%`）——**本票补上**              |
 | `ere/page/page-shop-labo.js:2699` | 同 1086 的中段形态（`[0] - 普通`…`[999] - 我再想想`）——**不改**                                               |
-| `ere/page/page-tailor.js:544`     | `` `- ${item.label}` ``：日常服饰表（原作 `SHOP_TAILOR.ERB:276-277`）——**本票补上**                           |
-| `ere/page/page-tailor.js:578`     | `` `- ${item.label}` ``：普通装备 42 件（原作 `:328` 起）——**本票补上**                                       |
-| `ere/page/page-tailor.js:634`     | `` `- ${item.label}` ``：黑市特殊服 27 件（原作 `:1320` 起）——**本票补上**                                    |
-| `ere/page/page-tailor.js:674`     | `` `- ${item.label}（${item.c}点）` ``：装备品 43 件（原作 `:571` 起）——**本票补上**                          |
-| `ere/page/page-tailor.js:822`     | `` `- ${WEAPON_PREFIXES[index]}` ``：强化前缀 10 档（原作 `:1254-1263`）——**本票补上**                        |
-| `ere/page/page-tailor.js:918`     | `` `- ${…itemname…} (${…item…})` ``：戒指页的持有行（原作 `:1027`，括号型动态编号）——**本票补上**             |
-| `ere/page/page-tailor.js:1010`    | 同上一处（武器页，原作 `:1156`；两处原文逐字相同）——**本票补上**                                              |
+| `ere/page/page-tailor.js:545`     | `` `- ${item.label}` ``：日常服饰表（原作 `SHOP_TAILOR.ERB:276-277`）——**本票补上**                           |
+| `ere/page/page-tailor.js:579`     | `` `- ${item.label}` ``：普通装备 42 件（原作 `:328` 起）——**本票补上**                                       |
+| `ere/page/page-tailor.js:635`     | `` `- ${item.label}` ``：黑市特殊服 27 件（原作 `:1320` 起）——**本票补上**                                    |
+| `ere/page/page-tailor.js:675`     | `` `- ${item.label}（${item.c}点）` ``：装备品 43 件（原作 `:571` 起）——**本票补上**                          |
+| `ere/page/page-tailor.js:823`     | `` `- ${WEAPON_PREFIXES[index]}` ``：强化前缀 10 档（原作 `:1254-1263`）——**本票补上**                        |
+| `ere/page/page-tailor.js:919`     | `` `- ${…itemname…} (${…item…})` ``：戒指页的持有行（原作 `:1027`，括号型动态编号）——**本票补上**             |
+| `ere/page/page-tailor.js:1011`    | 同上一处（武器页，原作 `:1156`；两处原文逐字相同）——**本票补上**                                              |
 | `ere/system/train/ablup.js:1035`  | `option2` 的值跨函数复用，工具还原不出骨架；本票已按其原作 `PRINT [2] - ` 补上——**已修**                      |
 
 **反向也要查**：工具只报「配不上」，配得上的那一侧还得防「多写」。本票由此改掉
@@ -154,7 +154,7 @@ node tools/button-dash-scan.mjs --json   # 机器可读（同一份数据）
 | `ARCANA_FORT.ERB:81/87/93/99` `[*] - 东方堡垒（已攻占）`…          | `invasion-arcana-fort.js:213`                          | 已照写 `[*]` 与 `- `——**不改**                                         |
 | `INVASION.ERB:174/180` `[-] - 怪物数量不足。至少需要600只`         | `page-invasion.js:2992`                                | 同上——**不改**                                                         |
 | `SHOP_LABO:2594` `[{D}] - %ITEMNAME:D%`                            | `page-shop-labo.js:1660`                               | 缺 `- `——**本票补上**                                                  |
-| `SHOP_TAILOR.ERB:1027/1156` `[{X}] - %ITEMNAME:X% ({ITEM:X})`      | `page-tailor.js:918/1010`                              | 缺 `- `——**本票补上**                                                  |
+| `SHOP_TAILOR.ERB:1027/1156` `[{X}] - %ITEMNAME:X% ({ITEM:X})`      | `page-tailor.js:919/1011`                              | 缺 `- `——**本票补上**                                                  |
 | `SHOP_TAILOR.ERB:1032/1164` `[---] - 未开放（30级后才能装备强化）` | `page-tailor.js` 的 `pick_ring` / `equip_magic_weapon` | 缺假编号前缀——**本票补上**                                             |
 | `SYSTEM_DATA.ERB:317` `[{L_I,2}] ----`                             | `page-save-load.js:206`                                | 整串 `----` 是空槽正文，编号由引擎按按钮快捷键拼——**不改**（3.1 已记） |
 
@@ -189,13 +189,13 @@ node tools/button-dash-scan.mjs --json   # 机器可读（同一份数据）
 
 | 位置                              |   枚数 | 原作                                              |
 | --------------------------------- | -----: | ------------------------------------------------- |
-| `ere/page/page-tailor.js:544`     |      2 | `SHOP_TAILOR.ERB:276-277` 日常服饰                |
-| `ere/page/page-tailor.js:578`     |     42 | `:328` 起 普通装备（5 页）                        |
-| `ere/page/page-tailor.js:634`     |     27 | `:1320` 起 黑市特殊服（3 页）                     |
-| `ere/page/page-tailor.js:674`     |     43 | `:571` 起 装备品（价格印在正文里）                |
-| `ere/page/page-tailor.js:822`     |     10 | `:1254-1263` 强化前缀 10 档                       |
-| `ere/page/page-tailor.js:918`     | 随存档 | `:1027` 戒指页的持有行                            |
-| `ere/page/page-tailor.js:1010`    | 随存档 | `:1156` 武器页的持有行（与 `:1027` 原文逐字相同） |
+| `ere/page/page-tailor.js:545`     |      2 | `SHOP_TAILOR.ERB:276-277` 日常服饰                |
+| `ere/page/page-tailor.js:579`     |     42 | `:328` 起 普通装备（5 页）                        |
+| `ere/page/page-tailor.js:635`     |     27 | `:1320` 起 黑市特殊服（3 页）                     |
+| `ere/page/page-tailor.js:675`     |     43 | `:571` 起 装备品（价格印在正文里）                |
+| `ere/page/page-tailor.js:823`     |     10 | `:1254-1263` 强化前缀 10 档                       |
+| `ere/page/page-tailor.js:919`     | 随存档 | `:1027` 戒指页的持有行                            |
+| `ere/page/page-tailor.js:1011`    | 随存档 | `:1156` 武器页的持有行（与 `:1027` 原文逐字相同） |
 | `ere/page/page-shop-labo.js:1660` |   ≤100 | `SHOP_LABO:2593-2594` 苏生名单                    |
 
 同页的**灰字行**也是这族：原作 `:1032`/`:1164` 写
@@ -247,9 +247,9 @@ node tools/button-dash-scan.mjs --json   # 机器可读（同一份数据）
 
 | 位置                                   | 原作                                                                 |
 | -------------------------------------- | -------------------------------------------------------------------- |
-| `page-tailor.js:581/637/677`（下一页） | `SHOP_TAILOR.ERB:384/1355/628` `[997] 下一页`（三处页脚都没有 `- `） |
-| `page-tailor.js:582`（服装黑市）       | `SHOP_TAILOR.ERB:385` `[996] 服装黑市`（同上；另两处页脚没有这一项） |
-| `page-tailor.js:583/638/678`（上一页） | `SHOP_TAILOR.ERB:386/1356/629` `[998] 上一页`（同上）                |
+| `page-tailor.js:582/638/678`（下一页） | `SHOP_TAILOR.ERB:384/1355/628` `[997] 下一页`（三处页脚都没有 `- `） |
+| `page-tailor.js:583`（服装黑市）       | `SHOP_TAILOR.ERB:385` `[996] 服装黑市`（同上；另两处页脚没有这一项） |
+| `page-tailor.js:584/639/679`（上一页） | `SHOP_TAILOR.ERB:386/1356/629` `[998] 上一页`（同上）                |
 
 三处页脚的原文行号容易记反，按函数归属认：`:384-387` 在 `@TAILOR_NORMAL`（:308 起）、
 `:628-630` 在 `@TAILOR_ACCESSORY`（:556 起）、`:1355-1357` 在 `@TAILOR_NORMAL_SPECIAL`
