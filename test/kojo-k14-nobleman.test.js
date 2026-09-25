@@ -558,6 +558,31 @@ test('GOHOUBI_REQUEST CFLAG:504==4：接吻奖励台词（%SAVESTR:A% 渲染）'
   );
 });
 
+test('#625 GOHOUBI_REQUEST CFLAG:504 1/2/3：兽名与前后文是同一行', async () => {
+  // 原作 :5738（PRINTFORM 前缀）+ :5740/:5742/:5744（IF/ELSEIF 三档兽名）
+  // + :5746（PRINTFORMW 收行）**是一整行**（无后缀 PRINT 不换行），ere 侧曾
+  // 拆成五条 era.print（#625）。断言整行文本，不是只查片段
+  const cases = [
+    [1, '狗'],
+    [2, '猪'],
+    [3, '马'],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k14((f) => {
+      f.store.set('cflag:20:504', req);
+    });
+    const { gohoubi_request_koujo_k14 } = fixture.load_module(
+      'kojo/kojo-k14-nobleman',
+    );
+    await gohoubi_request_koujo_k14(() => 0);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`貴公子提出了想要和${beast}进行交配的奖励。`],
+      `CFLAG:504==${req}：兽名与前后文落在同一行（#625）`,
+    );
+  }
+});
+
 test('GOBI 语尾 ARG:0==1（得意）：哦~♪（返回文字，#570）', async () => {
   const fixture = await setup_k14();
   const { gobi_koujo_k14 } = fixture.load_module('kojo/kojo-k14-nobleman');

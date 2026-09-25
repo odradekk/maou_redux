@@ -2887,6 +2887,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '759',
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+!TEQUIP:44[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
         ref: '760',
         any: [
           /^\s*PRINTFORM 像擦拭什么脏东西那样，用力地用手模擦着自己的嘴唇，\s*$/m,
@@ -21845,8 +21850,22 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5844',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
         ref: '5845',
         any: [/^\s*PRINT 阴茎\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
+        ref: '5846',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+!=[ \t]+1[ \t]+&&[ \t]+TALENT:ASSI:122[ \t]+!=[ \t]+1[ \t]+&&[ \t]+ITEM:PBAND[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
@@ -22998,13 +23017,6 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
         ref: '6146',
         any: [/^\s*PRINT 馬\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',
-        ref: '6146-6148',
-        any: [
-          /^\s*PRINT 馬\s*$\s*^\s*ENDIF\s*$\s*^\s*PRINTFORMW 进行交配好吗？」\s*$/m,
-        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K15_伶俐.ERB',

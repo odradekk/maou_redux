@@ -471,8 +471,12 @@ test('六九式初回·淫乱（TALENT:76）：调教者无 121/122 且 item:4 �
   era_flag.selectcom = 69;
   await speak_k5(fixture, seq_rand(0));
   assert.ok(
-    fixture.text_lines().some((l) => l.includes('大鸡巴')),
-    '六九式初回·淫乱：调教者无 121/122 且持假阳具（item:4）→ 拼接「大鸡巴」',
+    fixture
+      .text_lines()
+      .includes(
+        '「啊嗯~…更加地…玩弄那里嘛~…那样的话我就会好好地吸主人的大鸡巴的啦~♡」',
+      ),
+    '六九式初回·淫乱：调教者无 121/122 且持假阳具（item:4）→ 整行拼接「大鸡巴」（#625）',
   );
   assert.equal(fixture.store.get('cflag:17:364'), 1, '六九式初回 → 1');
 });
@@ -486,9 +490,11 @@ test('六九式初回·爱慕（TALENT:85）：调教者无 121/122 且 item:4�
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.selectcom = 69;
   await speak_k5(fixture, seq_rand(0));
+  const merged = fixture.text_lines().find((l) => l.startsWith('玛奥吮吸起'));
+  assert.ok(merged, '六九式初回·爱慕：:5201 组必须出声');
   assert.ok(
-    fixture.text_lines().some((l) => l === '假阳具'),
-    '六九式初回·爱慕：持假阳具（item:4）且 RAND:3 == 0 → 拼接「假阳具」',
+    merged.includes('的假阳具，而') && merged.endsWith('继续着口腔侍奉。'),
+    '六九式初回·爱慕：持假阳具（item:4）且 RAND:3 == 0 → 整行拼接「假阳具」（#625）',
   );
 });
 
@@ -502,22 +508,33 @@ test('六九式二回目·爱慕（CFLAG:364 == 1）：同条件复现「假阳�
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.selectcom = 69;
   await speak_k5(fixture, seq_rand(0));
+  const merged = fixture.text_lines().find((l) => l.startsWith('玛奥吮吸起'));
+  assert.ok(merged, '六九式二回目·爱慕：:5233 组必须出声');
   assert.ok(
-    fixture.text_lines().some((l) => l === '假阳具'),
-    '六九式二回目·爱慕：持假阳具（item:4）且 RAND:3 == 0 → 拼接「假阳具」',
+    merged.includes('的假阳具，而') && merged.endsWith('继续着口腔侍奉。'),
+    '六九式二回目·爱慕：持假阳具（item:4）且 RAND:3 == 0 → 整行拼接「假阳具」（#625）',
   );
   assert.equal(fixture.store.get('cflag:17:364'), 4, '二回目爱慕档推进到 4');
 });
 
-test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行拼接「假阳具」', async () => {
   // K5 的 COM 头部助手跳过在死斗场岔之前（:772-773 先于 :787），assiplay 下
   // 到不了真身——与 K8 同款直接驱动 colosseum_kojo_5（原作死代码路径，1:1 保留）
   const cases = [
-    { selectcom: 31, tail: '露出心旷神怡的表情' },
-    { selectcom: 21, tail: '的阴道' },
-    { selectcom: 27, tail: '的肛门' },
+    {
+      selectcom: 31,
+      line: '舔着奴隶5的假阳具玛奥露出心旷神怡的表情……',
+    },
+    {
+      selectcom: 21,
+      line: '奴隶5一边听着哀嚎假阳具继续毫不留情地蹂躏着玛奥的阴道……',
+    },
+    {
+      selectcom: 27,
+      line: '奴隶5一边听着哀嚎假阳具继续毫不留情地蹂躏着玛奥的肛门……',
+    },
   ];
-  for (const { selectcom, tail } of cases) {
+  for (const { selectcom, line } of cases) {
     const fixture = await setup_k5((f) => {
       join_slave_chara(f, 5, '奴隶5');
       f.store.set('item:4', 1); // 原作 ITEM:PBAND
@@ -529,12 +546,213 @@ test('COLOSSEUM_KOJO_5：SC31/21/27 助手无 121/122 且持假阳具（item:4�
     const mod = fixture.load_module('kojo/kojo-k5-mao');
     await mod.colosseum_kojo_5(seq_rand(0));
     assert.ok(
-      fixture.text_lines().some((l) => l === '假阳具'),
-      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阳具」`,
+      fixture.text_lines().includes(line),
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 武器名与前后文落在同一行（#625）`,
     );
+  }
+});
+
+// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+
+test('#625 交谈·自我介绍：名字段与后续同一行（:4795 / :4841 两处 × ABL:31 两档）', async () => {
+  // 原作 :4795（PRINTFORM）+ :4797（SIF ABL:31 >= 3 只护这一段）+ :4798
+  // （PRINTFORML 收行）是一整行，:4841+ 是二次以后的同型行（#625）
+  const cases = [
+    [0, 0],
+    [0, 3],
+    [1, 0],
+    [1, 3],
+  ];
+  for (const [talked, abl31] of cases) {
+    const fixture = await setup_k5((f) => {
+      f.store.set(`tequip:17:53`, 1); // 摄影中
+      f.store.set('abl:17:17', 5); // :4794 的 (TALENT:89 || ABL:17 >= 5)
+      f.store.set('abl:17:31', abl31);
+      if (talked) {
+        f.load_module('facade/chara').chara(17).kojo.交谈 = 1;
+      }
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    await speak_k5(fixture, seq_rand(0));
     assert.ok(
-      fixture.text_lines().some((l) => l.includes(tail)),
-      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
+      fixture
+        .text_lines()
+        .includes(
+          `玛奥将自己的本名和接下来要进行的性体验${abl31 >= 3 ? '、甚至是连自慰时妄想的事情' : ''}十分欣喜地全部说了出来……`,
+        ),
+      `交谈${talked ? '二次' : '首次'}（ABL:31==${abl31}）：名字段与后文落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 交谈·发出了…的声音：工具档与前后文同一行（:4818 / :4864 两处 × 两档）', async () => {
+  const cases = [
+    { talked: 0, tequip: 11 },
+    { talked: 0, tequip: 44 },
+    { talked: 0, tequip: 0 }, // 两档都不满足 → 中间为空串
+    { talked: 1, tequip: 11 },
+    { talked: 1, tequip: 44 },
+    { talked: 1, tequip: 0 },
+  ];
+  for (const { talked, tequip } of cases) {
+    const fixture = await setup_k5((f) => {
+      f.store.set('palam:17:5', 10000); // >= PALAMLV[4]
+      f.store.set('palam:17:4', 10000);
+      if (tequip) {
+        f.store.set(`tequip:17:${tequip}`, 1);
+      }
+      if (talked) {
+        f.load_module('facade/chara').chara(17).kojo.交谈 = 1;
+      }
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    await speak_k5(fixture, seq_rand(0));
+    const word = tequip === 11 ? '快乐的' : tequip === 44 ? '痛苦的' : '';
+    const line = talked
+      ? `你向少女搭话后，玛奥发出了${word}的声音、拼命地向着你说了起来`
+      : `你向少女搭话后、玛奥发出了${word}的声音、拼命地向着你说了起来`;
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `交谈${talked ? '二次' : '首次'}（${word}档）：前缀与工具档、前后文落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支）', async () => {
+  // :4812/:4858 的 `PRINTFORM %SAVESTR:PLAYER%` 是各自那条链上各互斥分支共同的
+  // 前缀行：前缀提到语句外当局部量，各支都拼同一份前缀——玩家在**每一支**上
+  // 都只看一行（#625）
+  const cases = [
+    {
+      talked: 0,
+      seed: { palam5: 10000, talent85: 1, not_pulled: 1 },
+      line: '你向少女搭话后、玛奥晃动着腰部说起了充满爱意的话语',
+    },
+    {
+      talked: 0,
+      seed: { palam5: 10000, talent76: 1, not_pulled: 1 },
+      line: '你向少女搭话后、玛奥一边晃着腰一边不停地说着下流的话语',
+    },
+    {
+      talked: 0,
+      seed: { palam4: 10000 },
+      line: '你向少女搭话后、玛奥如同打发无聊一样发起了牢骚',
+    },
+    {
+      talked: 0,
+      seed: {},
+      line: '你向少女搭话后、玛奥根本没有听进耳朵里的样子…',
+    },
+    {
+      talked: 0,
+      seed: { palam4: 500 },
+      line: '你向少女搭话后、玛奥一点一点地说起了话',
+    },
+    {
+      talked: 1,
+      seed: { palam5: 10000, talent85: 1, not_pulled: 1 },
+      line: '你向少女搭话后，玛奥晃动着腰部说起了充满爱意的话语',
+    },
+    {
+      talked: 1,
+      seed: { palam5: 10000, talent76: 1, not_pulled: 1 },
+      line: '你向少女搭话后，玛奥一边晃着腰一边不停地说着下流的话语',
+    },
+    {
+      talked: 1,
+      seed: { palam4: 10000 },
+      line: '你向少女搭话后，玛奥如同打发无聊一样发起了牢骚',
+    },
+    {
+      talked: 1,
+      seed: {},
+      line: '你向少女搭话后，玛奥根本没有听进耳朵里的样子…',
+    },
+    {
+      talked: 1,
+      seed: { palam4: 500 },
+      line: '你向少女搭话后，玛奥十分胆怯地说起了话',
+    },
+  ];
+  for (const { talked, seed, line } of cases) {
+    const fixture = await setup_k5((f) => {
+      if (seed.palam5) {
+        f.store.set('palam:17:5', seed.palam5);
+      }
+      if (seed.palam4) {
+        f.store.set('palam:17:4', seed.palam4);
+      }
+      if (seed.talent85) {
+        f.store.set('talent:17:85', 1);
+      }
+      if (seed.talent76) {
+        f.store.set('talent:17:76', 1);
+      }
+      if (seed.not_pulled) {
+        f.load_module('facade/game').game.event.插着不拔 = 1;
+      }
+      if (talked) {
+        f.load_module('facade/chara').chara(17).kojo.交谈 = 1;
+      }
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    await speak_k5(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `交谈${talked ? '二次' : '首次'}：前缀与分支文本落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 百合 PLAY·前缀行并入两条互斥终点（:6150+:6152 / :6154）', async () => {
+  // :6150 的 `PRINTFORM %SAVESTR:ASSI%看着那样的少女、感到很满意` 与 :6152/:6154
+  // 两条互斥 PRINTFORMW 终点同属一行（#625）；该链在 SELF_KOJO（:6129 起的
+  // 「初吻与自我口上」段），不在 COM 的助手守卫之后
+  const cases = [
+    [0, '直到天黑一直都在玩弄着少女………'],
+    [1, '整个晚上都在玩弄着少女………'],
+  ];
+  for (const [time, tail] of cases) {
+    const fixture = await setup_k5((f) => {
+      join_slave_chara(f, 5, '奴隶5');
+      f.store.set('talent:17:85', 1); // 爱慕档 → :6137 分支
+      f.store.set('cflag:17:262', 3); // 百合 PLAY < 4
+      f.load_module('facade/game').game.train.初吻与自我口上 = 2; // :6129 入口
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 5;
+      era_flag.time = time;
+    });
+    const mod = fixture.load_module('kojo/kojo-k5-mao');
+    await mod.self_kojo_k5(seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(`奴隶5看着那样的少女、感到很满意${tail}`),
+      `TIME==${time}：前缀与收行落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 GOHOUBI_REQUEST_KOUJO_K5：兽名与前后文同一行（CFLAG:504 三档）', async () => {
+  const cases = [
+    [1, '犬'],
+    [2, '豚'],
+    [3, '马'],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k5((f) => {
+      f.load_module('facade/chara').chara(17).stronghold.要求奖赏 = req;
+    });
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(5, { args: [] });
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(`「如果打倒勇者姐姐的话请给我奖赏、好想和${beast}做爱啊♪」`),
+      `CFLAG:504==${req}：兽名与前后文落在同一行（#625）`,
     );
   }
 });
