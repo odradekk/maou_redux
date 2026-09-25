@@ -2,7 +2,7 @@
 // 字符改 U+00A0，中央实现在 ere/utils/display-width.js）。字段与运行方式见
 // tools/mutation-check.mjs 头注释；find 在靶文件里必须恰出现一次。
 /** 本分片条数（门 1）：增删条目必须同步改它 */
-export const COUNT = 12;
+export const COUNT = 17;
 
 const WIDTH = 'ere/utils/display-width.js';
 const TRAIN = 'ere/page/page-train.js';
@@ -13,6 +13,8 @@ const SAVE_LOAD = 'ere/page/page-save-load.js';
 const INFO_SHOW = 'ere/page/page-chara-info-show.js';
 const JUEL = 'ere/system/train/juel-check.js';
 const COM_CLOTH = 'ere/system/train/com-cloth.js';
+const MAIN_MENU = 'ere/page/page-main-menu.js';
+const ABLUP = 'ere/system/train/ablup.js';
 
 export default [
   {
@@ -119,5 +121,49 @@ export default [
     replace: "    era.print('   [3] - 穿上胸罩'); // 变异：回退",
     tests: ['com-cloth'],
     must_mention: '穿上胸罩',
+  },
+  // —— 验收第 1 轮返工：五个「主 agent 要核对的画面」各一条「补位退回半角空格」——
+  {
+    desc: 'M12222 主菜单持有道具行的行首两格补位退回半角空格（DRAW_HAVEITEMS 的 5 列网格）',
+    file: MAIN_MENU,
+    find: '    state.line += NBSP.repeat(2);',
+    replace: "    state.line += '  '; // 变异：回退半角空格",
+    tests: ['page-main-menu'],
+    must_mention: '道具行的列补位须是 NBSP',
+  },
+  {
+    desc: 'M12223 名册爱慕标签的两格内补位退回半角空格（LIFE_LIST :49/:53，标签列塌一格）',
+    file: LIFE_LIST,
+    find: "    return { content: '<爱\\u00A0\\u00A0慕>', color: COLOR_LOVE };",
+    replace:
+      "    return { content: '<爱  慕>', color: COLOR_LOVE }; // 变异：回退半角空格",
+    tests: ['page-life-list'],
+    must_mention: '爱慕标签的两格内补位须是 NBSP',
+  },
+  {
+    desc: 'M12224 能力行的前导 2 格补位退回半角空格（SHOW_INFO_ABL 的 %…,8,LEFT% 行）',
+    file: ABLMARK,
+    find: '    row += `${NBSP.repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`;',
+    replace:
+      '    row += `${" ".repeat(2)}${pad_display(name, 8)} - LV${pad_display(String(level), 2)}`; // 变异：回退',
+    tests: ['chara-info-show'],
+    must_mention: '能力行的列补位须是 NBSP',
+  },
+  {
+    desc: 'M12225 结算表 `)` 与 `=` 之间的 12 格补位退回半角空格（JUEL_CHECK :687）',
+    file: JUEL,
+    find: '      { content: `)${NBSP.repeat(12)}= ` }, // :687 PRINT ) + 12 空格 + "= "',
+    replace: '      { content: `)${" ".repeat(12)}= ` }, // 变异：回退半角空格',
+    tests: ['juel-check'],
+    must_mention: '结算表行的列补位须是 NBSP',
+  },
+  {
+    desc: 'M12226 ablup14 的 EXP 门槛行 6 格前导退回半角空格（ABLUP14 :50）',
+    file: ABLUP,
+    find: "    era.print(`${NBSP.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`); // :50",
+    replace:
+      "    era.print(`${' '.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`); // 变异：回退",
+    tests: ['ablup'],
+    must_mention: 'EXP 门槛行的 6 格前导须是 NBSP',
   },
 ];

@@ -562,6 +562,15 @@ test('黄金样本 :237-253：结算表头与 13 行逐字一致（否定点数 
   let pick_index = 0;
 
   mod.juel_check_main(31, () => picks[pick_index++ % picks.length]);
+  // #577：13 行算式列的补位（`figure_indent` 的右对齐 8 格、`)` 与 `=` 之间
+  // 的 12 格）都得是 NBSP——退回半角空格会留下连续半角空格，实机合并后错位。
+  // 放在逐字比对之前：补位字符退回半角时，先红的是这条（点名补位而非整行 diff）
+  for (const line of fixture.text_lines().slice(0, 15)) {
+    assert.ok(
+      !/ {2,}/.test(line),
+      `结算表行的列补位须是 NBSP、不得出现连续半角空格（实得 ${JSON.stringify(line)}）`,
+    );
+  }
   assert.deepEqual(fixture.text_lines().slice(0, 15), [
     '调教结果：否定点数208个抵消。',
     '阴核点数：(\u00A0\u00A0\u00A0\u00A02279 + \u00A0\u00A0\u00A0\u00A01200)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A03479|',

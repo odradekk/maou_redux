@@ -1757,6 +1757,14 @@ test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个 NBSP+全角空�
   fixture.store.set(`exp:${CID}:5`, 3); // 满足性交经验门槛，隔离 bit2
   fixture.set_inputs(100);
   await ablup14(CID);
+  // #577：门槛行的 6 格前导补位（`NBSP.repeat(6)`）与名称列都得是 NBSP——
+  // 退回半角空格会留下连续半角空格，实机合并后整行错位。放在整行 includes
+  // 之前：补位字符退回半角时，先红的是这条（点名补位而非整行包含）
+  const exp_row = fixture.text_lines().find((t) => t.includes('性交经验'));
+  assert.ok(
+    exp_row?.startsWith('\u00A0'.repeat(6)) && !/ {2,}/.test(exp_row),
+    `EXP 门槛行的 6 格前导须是 NBSP、不得出现连续半角空格（实得 ${JSON.stringify(exp_row)}）`,
+  );
   assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
   assert.ok(
     fixture

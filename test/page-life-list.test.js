@@ -210,6 +210,30 @@ test('LIFE_LIST：行尾标签按判据逐维驱动（沦陷 × ☆ × 可被卖
   }
 });
 
+test('LIFE_LIST：爱慕/淫乱标签的两格内补位是 NBSP（#577 实机对齐的前置）', () => {
+  // 源里这两格（`PRINT <爱  慕>`）把标签补到 `<未沦陷>` 的 8 列，后面的
+  // [☆] 一族才与未沦陷行同列；退回半角空格会被引擎合并成一格，整段左移
+  const fixture = three_chara();
+  fixture.store.set('talent:1:85', 1); // 爱慕
+  fixture.store.set('talent:1:192', 1); // 虫寄生
+  const { life_list } = fixture.load_module('page/page-life-list');
+  life_list(0, 1, 20);
+  const row = row_text(fixture, 1);
+  assert.ok(
+    row.includes('<爱\u00A0\u00A0慕>') && !/<爱 {2}慕>/.test(row),
+    `爱慕标签的两格内补位须是 NBSP（实得 ${JSON.stringify(row)}）`,
+  );
+
+  const yinluan = three_chara();
+  yinluan.store.set('talent:2:76', 1); // 淫乱
+  yinluan.load_module('page/page-life-list').life_list(0, 1, 20);
+  const row2 = row_text(yinluan, 2);
+  assert.ok(
+    row2.includes('<淫\u00A0\u00A0乱>') && !/<淫 {2}乱>/.test(row2),
+    `淫乱标签的两格内补位须是 NBSP（实得 ${JSON.stringify(row2)}）`,
+  );
+});
+
 test('LIFE_LIST：濒死（BASE:0 == 0）不出「可被卖 / 可作为助手」', () => {
   const fixture = three_chara();
   fixture.store.set('cflag:1:0', 2);

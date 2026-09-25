@@ -872,6 +872,14 @@ test('SHOW_INFO_ABL：黄金样本 train-upgrade 的能力行逐字复现', () =
   // 2 个前导空格 + 名字宽 8 + " - LV" + 等级宽 2 + 2 个标记位空格
   const { fixture, show_info_abl } = abl_fixture({ abls: { 12: 3 } });
   show_info_abl(7);
+  // #577：这一行的四段补位（前导 2 / 名字列宽 8 / 等级列宽 2 / 标记位 2）
+  // 都得是 NBSP——退回半角空格会留下连续半角空格，引擎合并后整行错位。
+  // 放在逐字比对之前：补位字符退回半角时，先红的是这条（点名补位而非整行 diff）
+  const abl_row = fixture.text_lines()[0];
+  assert.ok(
+    !/ {2,}/.test(abl_row),
+    `能力行的列补位须是 NBSP、不得出现连续半角空格（实得 ${JSON.stringify(abl_row)}）`,
+  );
   assert.deepEqual(fixture.text_lines(), [
     '\u00A0\u00A0技巧\u00A0\u00A0\u00A0\u00A0 - LV3\u00A0\u00A0\u00A0',
   ]);
