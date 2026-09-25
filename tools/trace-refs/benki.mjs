@@ -248,7 +248,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
-        ref: '892-941',
+        ref: '892-920',
         any: [
           /^\tIF BENKI_MENU:1 >= 3 && BENKI_MENU:2 >= 3\n\t\t;A&Vソース3以上で両穴プレイ\n\t\tPRINTFORM 能用上的穴全用上了，/m,
         ],
@@ -319,6 +319,67 @@ export const FILES = [
         ref: '1292-1305',
         any: [
           /^\tIF PLAY > 30\n\t\tPRINTFORML %SAVESTR:\(ARG:0\)%向魔族谄媚的传闻传到了故乡，被乡里鄙视了。/m,
+        ],
+      },
+      // #620：「奴隷の様子」四个分派都与前一句同属一条显示行（原作是
+      // PRINTFORM 拼行 + 様子的 PRINTFORML 收尾，ere 曾拆成两行）
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '741-763',
+        any: [
+          /^\tPRINTFORM %SAVESTR:\(ARG:0\)%\n\t\n\tIF BENKI_MENU:1 >= 3 && BENKI_MENU:2 >= 3\n\t\t;A&Vソース3以上で両穴プレイ\n\t\tPRINTFORM 的子宫和直肠，灌满了魔兽的精液，/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '765-776',
+        any: [
+          /^\t;奴隷の様子\n\tIF TALENT:\(ARG:0\):崩坏\n\t\t;崩坏\n\t\tPRINTFORML 浮现出被玩坏的痴笑。\n\tELSEIF TALENT:\(ARG:0\):牝犬/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '922-941',
+        any: [
+          /^\t;奴隷の様子\n\tIF FLAG:63 == 1\n\t\t;常識改変\n\t\tPRINTFORML 一如平常的面带微笑地交欢着……\n\tELSEIF TALENT:\(ARG:0\):崩坏\n\t\t;崩坏\n\t\tPRINTFORML 浮现出被玩坏的痴笑。/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '932',
+        any: [/^\t\tCALL BENKI_PLAYER_NAME$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '937',
+        any: [/^\t\tCALL BENKI_PLAYER_NAME$/m],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1054-1078',
+        any: [
+          /^\tSIF TALENT:\(ARG:0\):扶她\n\t\tPRINTFORM 双性人的\n\t\n\tPRINTFORM %SAVESTR:\(ARG:0\)%\n\t\n\tIF TALENT:\(ARG:0\):扶她 && TALENT:\(ARG:0\):萝莉控/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1080-1094',
+        any: [
+          /^\t;奴隷の様子\n\tIF FLAG:63 == 1\n\t\t;常識改変\n\t\tPRINTFORML 一如平常的面带微笑地交欢着……\n\tELSEIF TALENT:\(ARG:0\):崩坏\n\t\t;崩坏\n\t\tPRINTFORML 浮现出被玩坏的痴笑……/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1224-1232',
+        any: [
+          /^\tPRINTFORM %SAVESTR:\(ARG:0\)%\n\t\n\t;胆怯・悲观的\n\tSIF TALENT:\(ARG:0\):悲观的 \|\| TALENT:\(ARG:0\):胆怯\n\t\tPRINTFORM 最初是恐惧，之后就\n\t\n\t;看轻贞操\n\tSIF TALENT:\(ARG:0\):看轻贞操\n\t\tPRINTFORM 主动分开双腿，/m,
+        ],
+      },
+      {
+        src: 'target/ERB/調教相關/BENKI.ERB',
+        ref: '1236-1260',
+        any: [
+          /^\tIF FLAG:63 == 1\n\t\t;常識改変\n\t\tPRINTFORML 像家常便饭似的一边聊着天一边交欢着……/m,
         ],
       },
     ],
