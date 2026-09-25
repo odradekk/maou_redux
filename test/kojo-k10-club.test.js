@@ -236,6 +236,14 @@ async function speak_k10(fixture, rand) {
   return kojo_message_com_family.call(10, { args: [rand] });
 }
 
+// RAND:N 定值序：draws 依次被消费，越界取模
+const seq_rand =
+  (...draws) =>
+  (n) => {
+    const value = draws.shift() ?? 0;
+    return value % n;
+  };
+
 test('SELECTCOM==0（爱抚）初回：MARK:2>=2 分档，推进到 1', async () => {
   const fixture = await setup_k10((f) => {
     f.store.set('mark:20:2', 2);
@@ -553,25 +561,25 @@ test('MUSEUM_KOUJO_K10：TFLAG:500 八档，第一档有台词', async () => {
 // 的开场白，避免两支互相冒充。
 // K10 的 COM 头部助手跳过在死斗场岔之前，assiplay 下到不了真身——直接驱动
 // colosseum_kojo_10（与 test/kojo-k8-spade.test.js 的 COLOSSEUM 段同款）。
-test('COLOSSEUM_KOJO_10：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+test('COLOSSEUM_KOJO_10：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 同一行里拼「假阳具」（#622）', async () => {
   const cases = [
     {
       selectcom: 31,
       open: '「哈噗…唔…嗯～…嗯～…嗯呼…还要再舔吗…嗯～…咕噜…啾」',
-      word: '粗大的假阳具',
+      line: '玛奥粗大的假阳具让白梅花一边舔一边露出了心旷神怡的表情……',
     },
     {
       selectcom: 21,
       open: '「呀～！请住手～求你了～…啊啊～…啊～！」',
-      word: '用粗大的假阳具',
+      line: '玛奥听着白梅花的悲鸣用粗大的假阳具白梅花的肛门被无慈悲的继续蹂躏着。',
     },
     {
       selectcom: 27,
       open: '「屁股那～…哈啊～明明讨要那些肮脏的东西…啊～…哈啊～…噫～…屁股要坏掉了！」',
-      word: '用粗大的假阳具',
+      line: '玛奥听着白梅花的悲鸣用粗大的假阳具白梅花的肛门被无慈悲的继续蹂躏着。',
     },
   ];
-  for (const { selectcom, open, word } of cases) {
+  for (const { selectcom, open, line } of cases) {
     const fixture = await setup_k10((f) => {
       join_slave_chara(f, 17, '玛奥');
       f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
@@ -587,8 +595,8 @@ test('COLOSSEUM_KOJO_10：SC31/21/27 助手无 121/122 且持假阳具（item:4�
       `selectcom ${selectcom} 分支开场白「${open}」`,
     );
     assert.ok(
-      lines.some((l) => l === word),
-      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「${word}」`,
+      lines.some((l) => l === line),
+      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 整行「${line}」`,
     );
   }
 });
@@ -614,6 +622,180 @@ test('COLOSSEUM_KOJO_10：持假阳具判定只认 item:4——未持有（item:
 });
 
 // —— #572：初調教的两处二选一按钮化 ——
+
+// —— #622：拆行合并后的整行断言（每组一处，覆盖该行的各分支组合） ——
+
+async function speak_gohoubi_request_k10(fixture, cid = 20) {
+  const { gohoubi_request_koujo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  return gohoubi_request_koujo_family.call(10, { args: [cid] });
+}
+
+test('SELECTCOM==2（肛门爱抚）二回目·淫乱·TEQUIP:13：:1044+:1046 是一行（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('cflag:20:303', 1);
+    f.store.set('tequip:20:13', 1);
+    f.store.set('talent:20:76', 1);
+  }, 2);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯～、啊啊～♡ 更多的…摸那里…伸、伸进去…♡」',
+  ]);
+});
+
+test('SELECTCOM==2（肛门爱抚）二回目·爱慕：另一支也接在本行前缀后（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('cflag:20:303', 1);
+    f.store.set('tequip:20:13', 1);
+    f.store.set('talent:20:85', 1);
+  }, 2);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯～、啊啊～♡唔.. 这、这里…好厉害………♡」',
+  ]);
+});
+
+test('SELECTCOM==2（肛门爱抚）二回目·それ以外：第三支同样接前缀（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('cflag:20:303', 1);
+    f.store.set('tequip:20:13', 1);
+  }, 2);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '「啊嗯～、啊啊～、这样欺负那里的话..不、不行了…啊～…啊啊～………」',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·初めて·视频·TALENT:89：:4156+:4158+:4159 是一行（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('tequip:20:53', 1);
+    f.store.set('talent:20:89', 1);
+    f.store.set('abl:20:31', 3);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '你催促白梅花进行自我介绍。',
+    '白梅花将自己的本名、至今为止的性经验甚至自慰时想的什么都微笑地讲了出来……',
+    '似乎在期待着被狂王看到自己现在的样子，白梅花的股间也开始湿润了……',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·初めて·视频·TALENT:89 但 ABL:31 < 3：SIF 段不拼（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('tequip:20:53', 1);
+    f.store.set('talent:20:89', 1);
+    f.store.set('abl:20:31', 2);
+  }, 56);
+  await speak_k10(fixture);
+  assert.equal(
+    fixture.text_lines()[1],
+    '白梅花将自己的本名、至今为止的性经验都微笑地讲了出来……',
+  );
+});
+
+test('SELECTCOM==56 交谈·初めて·无摄像·求爱档：:4172+:4174 是一行（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('talent:20:85', 1);
+    f.store.set('palam:20:5', 10000); // PALAMLV[4]
+    f.store.set('tflag:60', 1);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '在和你会话的过程中，白梅花扭动着腰呢喃着充满爱意的话语。',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·初めて·无摄像·装备档：:4178+:4180+:4182+:4184 是一行（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('tequip:20:11', 1); // 快感装备
+    f.store.set('palam:20:4', 10000);
+    f.store.set('palam:20:5', 10000);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '在和你会话的过程中，白梅花带着快乐的语调拼命地回应着。',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·初めて·无摄像·痛苦装备（TEQUIP:44）：拼「带着痛苦的语调」（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('tequip:20:44', 1);
+    f.store.set('palam:20:4', 10000);
+    f.store.set('palam:20:5', 10000);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '在和你会话的过程中，白梅花带着痛苦的语调拼命地回应着。',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·初めて·无摄像·それ以外档：:4172..:4191 各支都带前缀（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('abl:20:10', 3);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '在和你会话的过程中，白梅花时不时会给出一些回应。',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·二回目·视频·TALENT:89（RAND:3==0）：:4207+:4209+:4210 是一行（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('cflag:20:357', 1);
+    f.store.set('tequip:20:53', 1);
+    f.store.set('talent:20:89', 1);
+    f.store.set('abl:20:31', 3);
+  }, 56);
+  await speak_k10(fixture, seq_rand(0));
+  assert.deepEqual(fixture.text_lines(), [
+    '你催促白梅花进行自我介绍。',
+    '白梅花将自己的本名、至今为止的性经验甚至手淫时想到的什么都微笑地讲了出来……',
+    '似乎在期待着被狂王看到自己现在的样子，白梅花的股间也开始湿润了……',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·二回目·无摄像·求爱档：:4223+:4225 是一行（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('cflag:20:357', 1);
+    f.store.set('talent:20:85', 1);
+    f.store.set('palam:20:5', 10000);
+    f.store.set('tflag:60', 1);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '在和你会话的过程中，白梅花扭动着腰呢喃着充满爱意的话语。',
+  ]);
+});
+
+test('SELECTCOM==56 交谈·二回目·无摄像·装备档：:4229+:4231+:4233+:4235 是一行（#622）', async () => {
+  const fixture = await setup_k10((f) => {
+    f.store.set('cflag:20:357', 1);
+    f.store.set('tequip:20:11', 1);
+    f.store.set('palam:20:4', 10000);
+    f.store.set('palam:20:5', 10000);
+  }, 56);
+  await speak_k10(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    '在和你会话的过程中，白梅花带着快乐的语调拼命地回应着。',
+  ]);
+});
+
+test('GOHOUBI_REQUEST_KOUJO_K10 兽奸要求：:7101..:7109 是一行，兽名三档（#622）', async () => {
+  for (const [lv, beast] of [
+    [1, '犬'],
+    [2, '猪'],
+    [3, '马'],
+  ]) {
+    const fixture = await setup_k10((f) => f.store.set('cflag:20:504', lv));
+    await speak_gohoubi_request_k10(fixture);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`「人家想和${beast}交尾试试看♪」`, '白梅花提出了想要关爱动物的奖励。'],
+      `CFLAG:504==${lv} 兽奸要求`,
+    );
+  }
+});
 
 test('初調教的两处二选一是按钮（#572）：[0] 直不起来。/[1] 就是这样才好。', async () => {
   const fixture = await setup_k10((f) => f.store.set('talent:20:314', 9));
