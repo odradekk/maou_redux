@@ -339,20 +339,24 @@ export const FILES = [
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
-        ref: '922-941',
+        ref: '922-940',
         any: [
           /^\t;奴隷の様子\n\tIF FLAG:63 == 1\n\t\t;常識改変\n\t\tPRINTFORML 一如平常的面带微笑地交欢着……\n\tELSEIF TALENT:\(ARG:0\):崩坏\n\t\t;崩坏\n\t\tPRINTFORML 浮现出被玩坏的痴笑。/m,
         ],
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
-        ref: '932',
-        any: [/^\t\tCALL BENKI_PLAYER_NAME$/m],
+        ref: '931-933',
+        any: [
+          /^\t\tPRINTFORM 对底层\n\t\tCALL BENKI_PLAYER_NAME\n\t\tPRINTFORML 勃起的阴茎报以勉励式的温柔微笑。/m,
+        ],
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
-        ref: '937',
-        any: [/^\t\tCALL BENKI_PLAYER_NAME$/m],
+        ref: '936-938',
+        any: [
+          /^\t\tPRINTFORM 对底层\n\t\tCALL BENKI_PLAYER_NAME\n\t\tPRINTFORML 温柔地微笑着。/m,
+        ],
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
@@ -377,7 +381,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/調教相關/BENKI.ERB',
-        ref: '1236-1260',
+        ref: '1235-1260',
         any: [
           /^\tIF FLAG:63 == 1\n\t\t;常識改変\n\t\tPRINTFORML 像家常便饭似的一边聊着天一边交欢着……/m,
         ],

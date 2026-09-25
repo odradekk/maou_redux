@@ -714,9 +714,9 @@ async function run_benki(arg, rand_n = default_rand) {
       play += 1;
     }
     s += '阴茎温柔地包裹在内，'; //
-    // 奴隷の様子（:922-941）——上面 :892-920 的穴句是 PRINTFORM 拼行，由
+    // 奴隷の様子（:922-940）——上面 :892-920 的穴句是 PRINTFORM 拼行，由
     // 様子的 PRINTFORML 收尾：同一条显示行（#620：此前様子另起一行；
-    // :932/:937 的 CALL 输出也落在这一行里）
+    // :931-933/:936-938 两组「对底层 + CALL + 文案」也收在这一行里）
     s +=
       flag63() === 1
         ? '一如平常的面带微笑地交欢着……' // 常識改変
@@ -727,7 +727,7 @@ async function run_benki(arg, rand_n = default_rand) {
             : exp(arg, 21) > 50
               ? `对底层${benki_player_name()}温柔地微笑着。` // 侍奉快乐经验50超
               : '看起来很不自在。'; //
-    era.print(s); // :892-920+:922-941
+    era.print(s); // :892-920+:922-940
 
     play += menu[0]; // 奉仕ボーナス
     if (play < 1) {
@@ -879,7 +879,7 @@ async function run_benki(arg, rand_n = default_rand) {
     if (t(arg, 31)) {
       s += '主动分开双腿，'; // 看轻贞操
     }
-    // 奴隷の様子（:1236-1260，常識改変/崩坏/淫乱/爱慕/精液経験）——上面
+    // 奴隷の様子（:1235-1260，常識改変/崩坏/淫乱/爱慕/精液経験）——上面
     // :1224-1232 的名字句是 PRINTFORM 拼行，由様子的 PRINTFORML 收尾：
     // 同一条显示行（#620：此前様子另起一行）
     s +=
@@ -902,7 +902,7 @@ async function run_benki(arg, rand_n = default_rand) {
                       : exp(arg, 20) > 50
                         ? '不断重复着谢罪的话语……' // 精液経験50超
                         : '两眼无神地看着远方……'; //
-    era.print(s); // :1224-1232+:1236-1260
+    era.print(s); // :1224-1232+:1235-1260
 
     if (menu[1] >= 3 && menu[2] >= 3) {
       play += menu[1] + menu[2]; // A&Vボーナス
