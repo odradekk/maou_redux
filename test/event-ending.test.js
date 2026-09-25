@@ -133,18 +133,18 @@ test('【验收 1】FLAG:81 满 10000：ENDING_1 演出一次、菲娅入队并�
       (line) =>
         line.type === 'button' &&
         line.accelerator === 0 &&
-        line.rendered === '[0] 世界这么大，我想再去看看！',
+        line.rendered === '[0] - 世界这么大，我想再去看看！',
     ),
-    '[0] 按钮由引擎拼快捷键前缀',
+    '[0] 按钮由引擎拼快捷键前缀，正文带原作的「- 」（ENDING ver 1.0.1.ERB:29）',
   );
   assert(
     fixture.lines_history.some(
       (line) =>
         line.type === 'button' &&
         line.accelerator === 1 &&
-        line.rendered === '[1] 我……已经……不想做魔王了……',
+        line.rendered === '[1] - 我……已经……不想做魔王了……',
     ),
-    '[1] 按钮由引擎拼快捷键前缀',
+    '[1] 按钮由引擎拼快捷键前缀，正文带原作的「- 」（ENDING ver 1.0.1.ERB:30）',
   );
 });
 

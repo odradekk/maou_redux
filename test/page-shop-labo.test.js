@@ -1442,6 +1442,15 @@ test('BLOCK_FEELING：部位维度表驱动（四部位 × 钝感位与 ABL 两�
   const { added } = await run(male, 'block_feeling', [1, 999], {});
   assert.ok(!all_text(added).includes('私处感觉'), '男性不画私处部位行');
   assert.ok(all_text(added).includes('阴茎感觉'), '男性第一行是阴茎感觉');
+  // #612 反向普查：下面这行里的 `-` 在方括号**内**（`\@ FLAG_B ? - # 0 \@`
+  // 三元式的真分支），是编号替身而不是分隔符——正文不能写成 `- 阴茎感觉`
+  // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格
+  // 原作 :2140 渲染的是 `　[0] 阴茎感觉`（编号后紧跟正文，无「- 」）
+  assert.deepEqual(
+    button_texts(added).filter((text) => text.includes('感觉')),
+    ['[0] 阴茎感觉', '[2] 肛门感觉', '[3] 乳房感觉'],
+    '未封锁部位按 `[编号] 部位名` 渲染，正文不带「- 」（:2140/:2156/:2162）',
+  );
 });
 
 test('BRAIN_WASHING：四档「费用 × 素质」整表 + 三守卫', async () => {
@@ -1586,11 +1595,18 @@ test('RESULECTION：三道前置（勋章 / 人数 30 / 人数 10 与 FLAG:5）�
   // 显示名的 ITEM 编号 = COUNT + 100，即 RESULT）
   const revive = make_fixture({ seed: { 'exp:0:81': 5, 'flag:1099': -2 } });
   revive.seed_chara(100, { id: 100, name: '亡者', callname: '亡者' });
+  revive.store.set('itemname:199', '亡者'); // 名单正文的名字来自 ITEMNAME:D（D = COUNT + 100）
   const third = await run(revive, 'resulection', [0, 199], {});
   assert.equal(third.ret, 1);
   assert.equal(revive.store.get('flag:1099'), -1, '购买标记 FLAG:C = -1');
   assert.equal(revive.store.get('exp:0:81'), 0, '勋章清零');
   assert.ok(all_text(third.added).includes('被从彼岸召唤回来了'), '复活文案');
+  // #612：名单正文带原作的「- 」（:2593-2594 `PRINTFORML  [{D}] - %ITEMNAME:D%`）
+  assert.deepEqual(
+    button_texts(third.added).filter((text) => text.includes('亡者')),
+    ['[199] - 亡者'],
+    '苏生名单按 `[编号] - 名字` 渲染',
+  );
   // 确认处取消
   const cancel = make_fixture({ seed: { 'exp:0:81': 5, 'flag:1000': -2 } });
   assert.equal((await run(cancel, 'resulection', [1], {})).ret, 0);

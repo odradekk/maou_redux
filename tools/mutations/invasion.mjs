@@ -1,11 +1,13 @@
 // issue #470（Q13 侵略残余·3）：ARCANA_BATTLE / ARCANA_FORT /
 // INVASION_RYOUZYOKU 的变异条目与 GROUP_BATTLE 判死登记的守护。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 49; // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
+export const COUNT = 50; // #470：首批 M10300-M10317（ARCANA_BATTLE 17 条 +
 // 1 条 dungeon-battle2.js 攻击演出解码修复的回退守护）+ 第二批
 // M10318-M10345（ARCANA_FORT 15 条 + INVASION_RYOUZYOKU 13 条；
 // GROUP_BATTLE 判死无代码可变异，只有 RULINGS 登记的守护）+ 第三批
 // M10346-M10348（独立审查整改后补钉的三条：拼名、FLAG:500 档、FLAG:60 循环）
+// #612 起 +1（M12305：按钮正文补回原作的「- 」分隔符——补回点被改回时
+// 对应的 rendered 断言必须红）；
 
 export default [
   {
@@ -410,5 +412,15 @@ export default [
     replace: 'for (let i = 0; i < 1; i += 1) {',
     tests: ['invasion-arcana-fort'],
     must_mention: '黑方片 105 → 107 级',
+  },
+
+  // —— #612：按钮正文的「- 」分隔符（全库普查，来源 #595 验收）——
+  {
+    desc: 'M12305 圣灵骑士堡垒的 [0] 东方堡垒丢掉「- 」',
+    file: 'ere/invasion/invasion-arcana-fort.js',
+    find: "era.printButton('- 东方堡垒', 0); // ARCANA_FORT.ERB:83",
+    replace: "era.printButton('东方堡垒', 0); // 变异：丢掉「- 」",
+    tests: ['invasion-arcana-fort'],
+    must_mention: 'ARCANA_FORT.ERB:83-103 的分隔符照写',
   },
 ];

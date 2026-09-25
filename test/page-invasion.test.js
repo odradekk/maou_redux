@@ -303,7 +303,7 @@ test('无兵力门槛：0 只怪物也能走 [1]；[0]/[2] 不可达（引擎侧
       (line) =>
         line.type === 'button' &&
         line.accelerator === 1 &&
-        line.rendered === '[1] 使用魔王的魔力（经验值）',
+        line.rendered === '[1] - 使用魔王的魔力（经验值）',
     ),
     '[1] 按钮正文 = 使用魔王的魔力（经验值），无 [编号] 前缀',
   );
@@ -341,9 +341,9 @@ test('[0] 的 600 只门槛：不足时是 [-] 文本占位，够则渲染为按
     monster.lines_history.some(
       (line) =>
         line.type === 'button' &&
-        line.rendered === '[0] 使用现有怪物的一半去进攻（资金·俘虏）',
+        line.rendered === '[0] - 使用现有怪物的一半去进攻（资金·俘虏）',
     ),
-    '怪物 ≥ 600 时 [0] 渲染为按钮',
+    '怪物 ≥ 600 时 [0] 渲染为按钮（正文带原作的「- 」，INVASION.ERB:176）',
   );
 });
 
@@ -501,6 +501,52 @@ test('[0] 结算段 5% 抓捕：命中调 GET_ENEMY，人数上限早退才有�
     ),
     '5% 抓捕未命中（rand(100) = 5）',
   );
+});
+
+test('#612 征服后菜单：七个按钮的正文照写原作的「- 」', async () => {
+  const fixture = create_era_fixture();
+  make_world(fixture, { fallen: 1 }); // FLAG:82 != 0 → @INVASION 的征服后菜单
+  fixture.store.set('exflag:2810', 501); // route_33 开窗（:45 区间）→ [5] 才渲染
+  assert.equal(await run_post_conquest(fixture, [999]), 0);
+  const rendered = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  for (const expected of [
+    '[0] - 巡视地上的魔界领土（已征服）', // :52
+    '[1] - 入侵精灵族的领域', // :56（未征服支）
+    '[2] - 入侵龙之山脉', // :61
+    '[3] - 入侵天界', // :66
+    '[4] - 攻略圣灵骑士的堡垒', // :71
+    '[5] - 攻略天神宫', // :78
+    '[9] - 向着世界之外', // :80（原文作「向著」）
+    '[999] - 退出', // :82
+  ]) {
+    assert.ok(rendered.includes(expected), `${expected}（INVASION.ERB）`);
+  }
+
+  // 已征服支：四个区域的标签整支换掉（:54/:59/:64/:69/:74），三元两边都要钉
+  const won = create_era_fixture();
+  make_world(won, { fallen: 1 });
+  won.store.set('flag:87', 1); // 精灵领域已征服
+  won.store.set('flag:89', 1); // 龙之山脉已征服
+  won.store.set('flag:91', 1); // 天界已征服
+  won.store.set('flag:92', 15); // 四门全破
+  won.store.set('exflag:102', 4); // shrine_stage >= 4 → 神宫已征服支（:74）
+  assert.equal(await run_post_conquest(won, [999]), 0);
+  const won_rendered = won.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  for (const expected of [
+    '[1] - 巡视黑暗精灵的领土（已征服）', // :54
+    '[2] - 巡视混沌龙之山（已征服）', // :59
+    '[3] - 巡视堕天使的淫界（已征服）', // :64
+    '[4] - 巡视圣灵骑士的卖春堡垒（已征服）', // :69
+  ]) {
+    assert.ok(
+      won_rendered.includes(expected),
+      `${expected}（INVASION.ERB 已征服支）`,
+    );
+  }
 });
 
 test('[0] 已征服的人间界（经征服后菜单的 [0]）：强制征收 + 100000 封顶', async () => {
@@ -2668,7 +2714,7 @@ test('[2] 勇者出兵：怪物消耗三分之一、勇者补正、结果段（:
       (line) =>
         line.type === 'button' &&
         line.rendered ===
-          '[2] 派遣勇者带三分之一的怪物去进攻（资金·经验值·俘虏）',
+          '[2] - 派遣勇者带三分之一的怪物去进攻（资金·经验值·俘虏）',
     ),
     '怪物 ≥ 600 时 [2] 渲染为按钮',
   );

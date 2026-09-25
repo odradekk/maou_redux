@@ -100,13 +100,13 @@ test('ablup0：按钮文案区分男人（阴茎点数）与其余（PALAMNAME:0
   set_talents(male, { 122: 1 });
   male.set_inputs(100);
   await ablup0_male(CID);
-  assert.ok(buttons(male)[0].text.startsWith('阴茎点数×0/1 ……'));
+  assert.ok(buttons(male)[0].text.startsWith('- 阴茎点数×0/1 ……'));
 
   const female = create_era_fixture();
   const { ablup0: ablup0_female } = seed(female);
   female.set_inputs(100);
   await ablup0_female(CID);
-  assert.ok(buttons(female)[0].text.startsWith('阴核点数×0/1 ……'));
+  assert.ok(buttons(female)[0].text.startsWith('- 阴核点数×0/1 ……'));
 });
 
 test('ablup0：Lv0-4 梯子字面值（无需自慰狂，不带折扣）', async () => {
@@ -648,7 +648,7 @@ test('ablup4：Lv0-4 梯子字面值，戒备森严仅在 Lv3(×2.00)/Lv4(×3.00
     set_talents(fixture, talents);
     fixture.set_inputs(100);
     await ablup4(CID);
-    assert.equal(buttons(fixture)[0].text, `局部点数×${expected}……点数不足 `);
+    assert.equal(buttons(fixture)[0].text, `- 局部点数×${expected}……点数不足 `);
   }
 });
 
@@ -792,10 +792,10 @@ test('ablup6：Lv0 梯子字面值，三个选项各自的按钮文案', async (
   assert.equal(b.length, 4); // [0][1][2][100]
   assert.equal(
     b[0].text,
-    '屈服点数×100、绝顶经验1以上、精液经验1以上……点数不足 ',
+    '- 屈服点数×100、绝顶经验1以上、精液经验1以上……点数不足 ',
   );
-  assert.equal(b[1].text, '恭顺点数×20、侍奉快乐经验1以上……点数不足 ');
-  assert.equal(b[2].text, '习得点数×100、绝顶经验1以上……点数不足 ');
+  assert.equal(b[1].text, '- 恭顺点数×20、侍奉快乐经验1以上……点数不足 ');
+  assert.equal(b[2].text, '- 习得点数×100、绝顶经验1以上……点数不足 ');
 });
 
 test('ablup6：倒错的×0.75 同时折扣 A/B/C/D，唯独不动 E；D 在 Lv0/1 会被折扣到 0 从而隐藏经验门槛文案', async () => {
@@ -810,10 +810,10 @@ test('ablup6：倒错的×0.75 同时折扣 A/B/C/D，唯独不动 E；D 在 Lv0
   const b = buttons(fixture);
   assert.equal(
     b[0].text,
-    '屈服点数×75、绝顶经验1以上、精液经验1以上……点数不足 ',
+    '- 屈服点数×75、绝顶经验1以上、精液经验1以上……点数不足 ',
   );
-  assert.equal(b[1].text, '恭顺点数×15……点数不足 '); // D=0（1*0.75 截断），经验门槛文案消失
-  assert.equal(b[2].text, '习得点数×75、绝顶经验1以上……点数不足 ');
+  assert.equal(b[1].text, '- 恭顺点数×15……点数不足 '); // D=0（1*0.75 截断），经验门槛文案消失
+  assert.equal(b[2].text, '- 习得点数×75、绝顶经验1以上……点数不足 ');
 });
 
 test('ablup6：戒备森严在 Lv3/4 对 A/B/D 三级加成（C 已是 0，E 不受影响）', async () => {
@@ -830,9 +830,9 @@ test('ablup6：戒备森严在 Lv3/4 对 A/B/D 三级加成（C 已是 0，E 不
   const b = buttons(fixture);
   assert.equal(
     b[0].text,
-    '屈服点数×20000、绝顶经验10以上、精液经验10以上……点数不足 ',
+    '- 屈服点数×20000、绝顶经验10以上、精液经验10以上……点数不足 ',
   );
-  assert.equal(b[1].text, '恭顺点数×4000、侍奉快乐经验40以上……点数不足 ');
+  assert.equal(b[1].text, '- 恭顺点数×4000、侍奉快乐经验40以上……点数不足 ');
 });
 
 test('ablup6：顺从门槛（ABL:0）不足时三个选项同时计为能力不足，文案始终显示', async () => {
@@ -999,6 +999,7 @@ test('ablup7：Lv0-4 梯子字面值，戒备森严仅在 Lv3(×2.00)/Lv4(×3.00
     set_talents(fixture, talents);
     fixture.set_inputs(100);
     await ablup7(CID);
+    assert.match(buttons(fixture)[0].rendered, /^\[\d+\] - 耻情点数×/);
     assert.ok(buttons(fixture)[0].text.includes(`点数×${expected}、`));
   }
 });
@@ -1017,6 +1018,7 @@ test('ablup7：双重折扣缺陷——倒错的单独生效×0.375；目立ち�
     set_talents(fixture, talents);
     fixture.set_inputs(100);
     await ablup7(CID);
+    assert.match(buttons(fixture)[0].rendered, /^\[\d+\] - 耻情点数×/);
     assert.ok(
       buttons(fixture)[0].text.includes(`点数×${expected}、`),
       `talent ${JSON.stringify(talents)}：期望 A=${expected}，实际 ${buttons(fixture)[0].text}`,
@@ -1119,10 +1121,10 @@ test('ablup8：Lv0 梯子字面值——两个选项都渲染（C=0 时经验门
   await ablup8(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '苦痛点数×100、欲情点数×100……点数不足 ');
+  assert.equal(b[0].text, '- 苦痛点数×100、欲情点数×100……点数不足 ');
   assert.equal(
     b[1].text,
-    '苦痛点数×100、屈服点数×100、绝顶经验1以上……点数不足 ',
+    '- 苦痛点数×100、屈服点数×100、绝顶经验1以上……点数不足 ',
   );
 });
 
@@ -1135,10 +1137,10 @@ test('ablup8：Lv1 梯子字面值', async () => {
   fixture.set_inputs(100);
   await ablup8(CID);
   const b = buttons(fixture);
-  assert.equal(b[0].text, '苦痛点数×500、欲情点数×500……点数不足 ');
+  assert.equal(b[0].text, '- 苦痛点数×500、欲情点数×500……点数不足 ');
   assert.equal(
     b[1].text,
-    '苦痛点数×500、屈服点数×300、绝顶经验1以上……点数不足 ',
+    '- 苦痛点数×500、屈服点数×300、绝顶经验1以上……点数不足 ',
   );
 });
 
@@ -1152,8 +1154,11 @@ test('ablup8：开放×0.50 先于倒错的×0.75，五个变量同步（C 在 L
   await ablup8(CID);
   const b = buttons(fixture);
   // 100*0.50=50，再*0.75=37（floor）
-  assert.equal(b[0].text, '苦痛点数×37、欲情点数×37……点数不足 ');
-  assert.equal(b[1].text, '苦痛点数×37、屈服点数×37、绝顶经验1以上……点数不足 ');
+  assert.equal(b[0].text, '- 苦痛点数×37、欲情点数×37……点数不足 ');
+  assert.equal(
+    b[1].text,
+    '- 苦痛点数×37、屈服点数×37、绝顶经验1以上……点数不足 ',
+  );
 });
 
 test('ablup8：Lv3 起选项0（B=0）不再渲染，选项1 的被虐快乐经验门槛开始出现', async () => {
@@ -1170,7 +1175,7 @@ test('ablup8：Lv3 起选项0（B=0）不再渲染，选项1 的被虐快乐经�
   assert.equal(b.length, 2); // 只有 [1][100]，无 [0]
   assert.equal(
     b[0].text,
-    '苦痛点数×3000、屈服点数×6000、被虐快乐经验10以上、绝顶经验1以上……点数不足 ',
+    '- 苦痛点数×3000、屈服点数×6000、被虐快乐经验10以上、绝顶经验1以上……点数不足 ',
   );
 });
 
@@ -1296,8 +1301,8 @@ test('ablup9：Lv0 梯子字面值——选项0 始终渲染（C=0 时不显示�
   await ablup9(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '欲情点数×200、百合经验50以上……点数不足 ');
-  assert.equal(b[1].text, '阴核点数×1000、百合经验50以上……点数不足 ');
+  assert.equal(b[0].text, '- 欲情点数×200、百合经验50以上……点数不足 ');
+  assert.equal(b[1].text, '- 阴核点数×1000、百合经验50以上……点数不足 ');
 });
 
 test('ablup9：Lv1 梯子字面值', async () => {
@@ -1308,8 +1313,8 @@ test('ablup9：Lv1 梯子字面值', async () => {
   fixture.set_inputs(100);
   await ablup9(CID);
   const b = buttons(fixture);
-  assert.equal(b[0].text, '欲情点数×1000、百合经验200以上……点数不足 ');
-  assert.equal(b[1].text, '阴核点数×5000、百合经验200以上……点数不足 ');
+  assert.equal(b[0].text, '- 欲情点数×1000、百合经验200以上……点数不足 ');
+  assert.equal(b[1].text, '- 阴核点数×5000、百合经验200以上……点数不足 ');
 });
 
 test('ablup9：Lv2 起选项0 显示屈服点数门槛（C>0），选项1（D=0）不再渲染', async () => {
@@ -1323,7 +1328,7 @@ test('ablup9：Lv2 起选项0 显示屈服点数门槛（C>0），选项1（D=0�
   assert.equal(b.length, 2); // 只有 [0][100]
   assert.equal(
     b[0].text,
-    '欲情点数×3000、屈服点数×1000、百合经验500以上……点数不足 ',
+    '- 欲情点数×3000、屈服点数×1000、百合经验500以上……点数不足 ',
   );
 });
 
@@ -1336,8 +1341,8 @@ test('ablup9：双性恋×0.25 先于倒错的×0.75，四个变量同步折扣'
   await ablup9(CID);
   const b = buttons(fixture);
   // 200*0.25=50，再*0.75=37（floor）；50*0.25=12，再*0.75=9（floor）；1000*0.25=250，再*0.75=187（floor）
-  assert.equal(b[0].text, '欲情点数×37、百合经验9以上……点数不足 ');
-  assert.equal(b[1].text, '阴核点数×187、百合经验9以上……点数不足 ');
+  assert.equal(b[0].text, '- 欲情点数×37、百合经验9以上……点数不足 ');
+  assert.equal(b[1].text, '- 阴核点数×187、百合经验9以上……点数不足 ');
 });
 
 test('ablup9：Lv3/4 异常经验门槛，双性恋(TALENT:81)可跳过（同一素质兼顾折扣与跳过）', async () => {
@@ -1438,10 +1443,10 @@ test('ablup10：Lv0 梯子字面值，四个选项全部渲染（B 恒渲染，�
   await ablup10(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 5); // [0][1][2][3][100]
-  assert.equal(b[0].text, '恐怖点数×0/10 ……点数不足 ');
-  assert.equal(b[1].text, '恭顺点数×0/10 ……点数不足 ');
-  assert.equal(b[2].text, '欲情点数×0/300 ……点数不足 ');
-  assert.equal(b[3].text, '屈服点数×0/200 ……点数不足 ');
+  assert.equal(b[0].text, '- 恐怖点数×0/10 ……点数不足 ');
+  assert.equal(b[1].text, '- 恭顺点数×0/10 ……点数不足 ');
+  assert.equal(b[2].text, '- 欲情点数×0/300 ……点数不足 ');
+  assert.equal(b[3].text, '- 屈服点数×0/200 ……点数不足 ');
 });
 
 test('ablup10：Lv3 起 C=0，选项2 结构上不可能被选中（K=256 隐藏哨兵）', async () => {
@@ -1459,10 +1464,10 @@ test('ablup10：反抗心 A×2.00/B×1.50/C×1.20/D×1.50 同时生效（Lv0）'
   fixture.set_inputs(100);
   await ablup10(CID);
   const b = buttons(fixture);
-  assert.equal(b[0].text, '恐怖点数×0/20 ……点数不足 ');
-  assert.equal(b[1].text, '恭顺点数×0/15 ……点数不足 ');
-  assert.equal(b[2].text, '欲情点数×0/360 ……点数不足 ');
-  assert.equal(b[3].text, '屈服点数×0/300 ……点数不足 ');
+  assert.equal(b[0].text, '- 恐怖点数×0/20 ……点数不足 ');
+  assert.equal(b[1].text, '- 恭顺点数×0/15 ……点数不足 ');
+  assert.equal(b[2].text, '- 欲情点数×0/360 ……点数不足 ');
+  assert.equal(b[3].text, '- 屈服点数×0/300 ……点数不足 ');
 });
 
 test('ablup10：Lv4→5 异常经验门槛（E=1），六项素质任一命中可免', async () => {
@@ -1538,7 +1543,7 @@ test('ablup11：Lv0 梯子字面值与手写状态文案（点数不足带尾随
   await ablup11(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [0][100]
-  assert.equal(b[0].text, '欲情点数×0/5 ……点数不足 ');
+  assert.equal(b[0].text, '- 欲情点数×0/5 ……点数不足 ');
 });
 
 test('ablup11：看重贞操×1.50（Lv2），Lv4→5 异常经验门槛（E=1）可被开放跳过', async () => {
@@ -1548,7 +1553,7 @@ test('ablup11：看重贞操×1.50（Lv2），Lv4→5 异常经验门槛（E=1�
   set_talents(fixture, { 30: 1 });
   fixture.set_inputs(100);
   await ablup11(CID);
-  assert.equal(buttons(fixture)[0].text, '欲情点数×0/1500 ……点数不足 ');
+  assert.equal(buttons(fixture)[0].text, '- 欲情点数×0/1500 ……点数不足 ');
 
   const gated = create_era_fixture();
   const { ablup11: a2 } = seed(gated);
@@ -1604,7 +1609,7 @@ test('ablup12：issue #14 缺陷——技巧+话术组合上限突破价足够�
   fixture.store.set(`juel:${CID}:7`, 64000); // 恰好达到 8²×1000，越过入口拦截
   fixture.set_inputs(0);
   await ablup12(CID);
-  assert.equal(buttons(fixture)[0].text, '习得点数×64000/0 ……ＯＫ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×64000/0 ……ＯＫ');
   assert.equal(fixture.store.get(`abl:${CID}:12`), 9);
   assert.equal(fixture.store.get(`juel:${CID}:7`), 64000); // 未被扣珠
 });
@@ -1619,7 +1624,7 @@ test('ablup12：非自我训练（cid≠MASTER）时不显示金钱提示、不�
       .text_lines()
       .includes('魔王通过这种方式提升技巧仍然需要金钱5000点'),
   );
-  assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×0/1 ……点数不足 ');
 });
 
 test('ablup12：自我训练（cid===MASTER）时额外收金钱与 EX_FLAG:4444，各 5000', async () => {
@@ -1718,7 +1723,7 @@ test('ablup13：组合上限触发后 A 改用 TEMP²×500，侍奉精神分级�
   fixture.set_inputs(100);
   await ablup13(CID);
   // TEMP=5，A=5*5*500=12500，×0.95(侍奉精神<6)=11875(floor)
-  assert.equal(buttons(fixture)[0].text, '习得点数×1000000/11875 ……ＯＫ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×1000000/11875 ……ＯＫ');
 });
 
 test('ablup13：成功购买写入 abl:cid:13（同域直接 era.add），显示变为LV', async () => {
@@ -1765,7 +1770,7 @@ test('ablup14：Lv0 梯子字面值，EXP 门槛行前导 6 个 NBSP+全角空�
     exp_row?.startsWith('\u00A0'.repeat(6)) && !/ {2,}/.test(exp_row),
     `EXP 门槛行的 6 格前导须是 NBSP、不得出现连续半角空格（实得 ${JSON.stringify(exp_row)}）`,
   );
-  assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×0/1 ……点数不足 ');
   assert.ok(
     fixture
       .text_lines()
@@ -1796,7 +1801,7 @@ test('ablup14：性交中毒(ABL:30)分级折扣——<6 档 A×0.95/B×0.95', a
   fixture.set_inputs(100);
   await ablup14(CID);
   // 1500*0.95=1425(floor)
-  assert.equal(buttons(fixture)[0].text, '习得点数×0/1425 ……点数不足 ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×0/1425 ……点数不足 ');
 });
 
 test('ablup14：成功购买写入 abl:cid:14，显示变为LV', async () => {
@@ -1837,7 +1842,7 @@ test('ablup15：issue #14 缺陷——技巧+话术组合上限突破价足够�
   fixture.store.set(`juel:${CID}:7`, 49000); // 恰好达到 7²×1000，越过入口拦截
   fixture.set_inputs(0);
   await ablup15(CID);
-  assert.equal(buttons(fixture)[0].text, '习得点数×49000/0 ……ＯＫ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×49000/0 ……ＯＫ');
   assert.equal(fixture.store.get(`abl:${CID}:15`), 8);
   assert.equal(fixture.store.get(`juel:${CID}:7`), 49000); // 未被扣珠
 });
@@ -1848,7 +1853,7 @@ test('ablup15：Lv0 梯子字面值，EXP 行字面量" or"仅出现在第一行
   fixture.store.set(`exp:${CID}:73`, 3); // 满足调教会话经验门槛，隔离 bit2
   fixture.set_inputs(100);
   await ablup15(CID);
-  assert.equal(buttons(fixture)[0].text, '习得点数×0/1 ……点数不足 ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×0/1 ……点数不足 ');
   assert.ok(
     fixture
       .text_lines()
@@ -1869,7 +1874,7 @@ test('ablup15：bit2 需要两条经验轨道同时不足才命中——任一�
   fixture.store.set(`exp:${CID}:74`, 0); // C=5，不达标
   fixture.set_inputs(100);
   await ablup15(CID);
-  assert.equal(buttons(fixture)[0].text, '习得点数×1/1 ……ＯＫ');
+  assert.equal(buttons(fixture)[0].text, '- 习得点数×1/1 ……ＯＫ');
 });
 
 test('ablup15：成功购买写入 abl:cid:15，显示变为LV', async () => {
@@ -1920,7 +1925,7 @@ test('ablup16：Lv0 梯子字面值，三个选项皆渲染，选项0 恒渲染�
   await ablup16(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 4); // [0][1][2][100]
-  assert.equal(b[0].text, '屈服点数×100/100 ……ＯＫ');
+  assert.equal(b[0].text, '- 屈服点数×100/100 ……ＯＫ');
   assert.ok(fixture.text_lines().includes('　　　绝顶经验　1/1'));
   assert.ok(fixture.text_lines().includes('　　　精液经验　1/1'));
 });
@@ -2107,12 +2112,12 @@ test('ablup37：Lv0 梯子（A=2000/B=3000/C=1000/D=50）与需求行文案', as
   await ablup37(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [0] [100]
-  assert.equal(b[0].text, '恭顺点数×0/2000 ……点数不足 ');
+  assert.equal(b[0].text, '- 恭顺点数×0/2000 ……点数不足 ');
   assert.ok(fixture.text_lines().includes('欲望LV1以上(现在LV1)且'));
   assert.ok(fixture.text_lines().includes('　　　欲情点数×0/3000'));
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/1000'));
   assert.ok(fixture.text_lines().includes('卖淫经验　50/50'));
-  assert.equal(b[1].text, '停止');
+  assert.equal(b[1].text, '- 停止');
   // lv0 无需异常经验，F 行不渲染
   assert.ok(!fixture.text_lines().some((t) => t.includes('异常经验')));
 });
@@ -2212,7 +2217,7 @@ test('ablup37：淫乱的 B 轨 ×0.50（其余 ×0.80）——原作不对称�
   fixture.store.set(`exp:${CID}:74`, 40); // 卖淫经验达标（50×0.8），隔离出点数位
   fixture.set_inputs(100);
   await ablup37(CID);
-  assert.equal(buttons(fixture)[0].text, '恭顺点数×0/1600 ……点数不足 '); // 2000*0.8
+  assert.equal(buttons(fixture)[0].text, '- 恭顺点数×0/1600 ……点数不足 '); // 2000*0.8
   assert.ok(fixture.text_lines().includes('　　　欲情点数×0/1500')); // 3000*0.5
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/800')); // 1000*0.8
   assert.ok(fixture.text_lines().includes('卖淫经验　40/40')); // 50*0.8
@@ -2333,7 +2338,7 @@ test('ablup39：三重上限时 A/B 覆盖为 lv²×4000（梯子作废；合计
     await ablup39(CID);
     assert.equal(
       buttons(fixture)[0].text,
-      '欲情点数×4000/4000 ……ＯＫ',
+      '- 欲情点数×4000/4000 ……ＯＫ',
       `三中毒合计 ${abl32 + abl33 + 1}`,
     );
   }
@@ -2372,7 +2377,7 @@ test('ablup39：Lv0 梯子与需求行（A=B=2000/C=30，无 F 行）', async ()
   await ablup39(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2);
-  assert.equal(b[0].text, '欲情点数×0/2000 ……点数不足 ');
+  assert.equal(b[0].text, '- 欲情点数×0/2000 ……点数不足 ');
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/2000'));
   assert.ok(fixture.text_lines().includes('兽奸经验　30/30'));
   assert.ok(!fixture.text_lines().some((t) => t.includes('异常经验')));
@@ -2389,7 +2394,7 @@ test('ablup39：戒备森严读 ABL:37（卖淫中毒）——原作复制粘贴
   fixture.store.set(`exp:${CID}:56`, 250); // 兽奸经验达标（100×2.5），隔离出点数位
   fixture.set_inputs(100);
   await ablup39(CID);
-  assert.equal(buttons(fixture)[0].text, '欲情点数×0/12500 ……点数不足 '); // 5000*2.5
+  assert.equal(buttons(fixture)[0].text, '- 欲情点数×0/12500 ……点数不足 '); // 5000*2.5
   assert.ok(fixture.text_lines().includes('兽奸经验　250/250')); // 100*2.5
 });
 
@@ -2448,7 +2453,7 @@ test('ablup39：克制 A/B×2.5、C×1.5；爱慕 A/B×1.8、C×1.5', async () =
   restraint.store.set(`exp:${CID}:56`, 45); // 兽奸经验达标（30×1.5）
   restraint.set_inputs(100);
   await a1(CID);
-  assert.equal(buttons(restraint)[0].text, '欲情点数×0/5000 ……点数不足 '); // 2000*2.5
+  assert.equal(buttons(restraint)[0].text, '- 欲情点数×0/5000 ……点数不足 '); // 2000*2.5
   assert.ok(restraint.text_lines().includes('兽奸经验　45/45')); // 30*1.5
 
   const love = create_era_fixture();
@@ -2458,7 +2463,7 @@ test('ablup39：克制 A/B×2.5、C×1.5；爱慕 A/B×1.8、C×1.5', async () =
   love.store.set(`exp:${CID}:56`, 45);
   love.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(love)[0].text, '欲情点数×0/3600 ……点数不足 '); // 2000*1.8
+  assert.equal(buttons(love)[0].text, '- 欲情点数×0/3600 ……点数不足 '); // 2000*1.8
   assert.ok(love.text_lines().includes('兽奸经验　45/45')); // 30*1.5
 });
 
@@ -2506,8 +2511,8 @@ test('ablup40：内联状态文案（非 GET_ABLUP_STATE）与「放弃」按钮
   await ablup40(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2);
-  assert.equal(b[0].text, '局部点数×2000/2000 ……ＯＫ');
-  assert.equal(b[1].text, '放弃');
+  assert.equal(b[0].text, '- 局部点数×2000/2000 ……ＯＫ');
+  assert.equal(b[1].text, '- 放弃');
 
   const lack = create_era_fixture();
   const { ablup40: a2 } = seed(lack);
@@ -2516,7 +2521,7 @@ test('ablup40：内联状态文案（非 GET_ABLUP_STATE）与「放弃」按钮
   lack.set_inputs(100);
   await a2(CID);
   // i = 点数（JUEL:15=0 < 10000）| 经验（F=3 > EXP:50=0）；能力位 3<3 为假不亮
-  assert.equal(buttons(lack)[0].text, '局部点数×0/10000 ……点数不足 经验不足');
+  assert.equal(buttons(lack)[0].text, '- 局部点数×0/10000 ……点数不足 经验不足');
 });
 
 test('ablup40：Lv2 起需要异常经验（F=lv+1），异常经验行无「且」尾', async () => {
@@ -2598,7 +2603,7 @@ test('ablup99：Lv1 需求（A=5000，B=3）与两行门槛文案', async () => 
   assert.ok(fixture.text_lines().includes('顺从LV3以上(现在LV0)必要'));
   assert.equal(
     buttons(fixture)[0].text,
-    '屈服点数×0/5000 ……点数不足 经验不足 能力不足',
+    '- 屈服点数×0/5000 ……点数不足 经验不足 能力不足',
   );
 });
 
@@ -2680,7 +2685,7 @@ test('ablup100：Lv1 需求行（A=2000，感觉门槛 mark10+5、战斗门槛 1
   );
   // C=0 时 C-5 为负，感觉门槛数值上恒过（显示与判定脱节，原作照抄）；只剩
   // 战斗门槛不满足（M=1 不点亮能力位）与异界经验不足 → 只有经验位
-  assert.equal(buttons(fixture)[0].text, '异界经验点数×0/2000 ……经验不足 ');
+  assert.equal(buttons(fixture)[0].text, '- 异界经验点数×0/2000 ……经验不足 ');
 });
 
 test('ablup100：M==1（只差一项）不点亮能力位——两条件是 OR 关系', async () => {
@@ -2779,7 +2784,7 @@ test('decide_ablup37：组合门槛 ABL:37+ABL:38>=10 是 DECIDE 独有的', asy
   assert.equal(await decide_ablup(CID, 37), 0, 'DECIDE_ABLUP37 :95-96');
   fixture.set_inputs(100);
   await ablup37(CID); // 主流程没有这条门槛（文件头登记）
-  assert.equal(buttons(fixture)[0].text, '恭顺点数×5000/5000 ……ＯＫ');
+  assert.equal(buttons(fixture)[0].text, '- 恭顺点数×5000/5000 ……ＯＫ');
 });
 
 test('auto_ablup_core：连升到不能升为止，info 控制等级行', async () => {
@@ -2976,7 +2981,7 @@ test('ablup20：Lv0 梯子字面值与内联状态文案（bit2 无空格、bit4
   await ablup20(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [0][100]
-  assert.equal(b[0].text, '欲情点数×0/100 ……点数不足 经验不足能力不足 ');
+  assert.equal(b[0].text, '- 欲情点数×0/100 ……点数不足 经验不足能力不足 ');
 });
 
 test('ablup20：欲望门槛行与施虐快乐经验行；异常经验行用全角括号（其余 ABLUP 文件均为半角）', async () => {
@@ -3033,7 +3038,7 @@ test('ablup20：素质修正——胆怯只乘 A(×1.50)，施虐狂 A/B 同乘(
   timid.set_inputs(100);
   await a1(CID);
   // A=100×1.5(胆怯)×0.9(反抗心)=135；B=5×0.9=4（floor）
-  assert.equal(buttons(timid)[0].text, '欲情点数×0/135 ……点数不足 经验不足');
+  assert.equal(buttons(timid)[0].text, '- 欲情点数×0/135 ……点数不足 经验不足');
   assert.ok(timid.text_lines().includes('　　　施虐快乐经验　0/4'));
 
   const sadist = create_era_fixture();
@@ -3043,7 +3048,7 @@ test('ablup20：素质修正——胆怯只乘 A(×1.50)，施虐狂 A/B 同乘(
   sadist.store.set(`juel:${CID}:5`, 50);
   sadist.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(sadist)[0].text, '欲情点数×50/50 ……经验不足'); // exp:33=0 < 2
+  assert.equal(buttons(sadist)[0].text, '- 欲情点数×50/50 ……经验不足'); // exp:33=0 < 2
   assert.ok(sadist.text_lines().includes('　　　施虐快乐经验　0/2'));
 });
 
@@ -3102,8 +3107,8 @@ test('ablup21：Lv0 梯子字面值，双轨道皆渲染；[1] 轨带绝顶经�
   await ablup21(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '苦痛点数×0/100 ……点数不足 能力不足');
-  assert.equal(b[1].text, '苦痛点数×0/100 ……点数不足 经验不足 能力不足'); // [1] 轨含绝顶经验 G=1 的 bit2
+  assert.equal(b[0].text, '- 苦痛点数×0/100 ……点数不足 能力不足');
+  assert.equal(b[1].text, '- 苦痛点数×0/100 ……点数不足 经验不足 能力不足'); // [1] 轨含绝顶经验 G=1 的 bit2
   assert.ok(fixture.text_lines().includes('　　　欲情点数×0/100'));
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/100'));
   assert.ok(fixture.text_lines().includes('　　　绝顶经验　0/1'));
@@ -3119,7 +3124,7 @@ test('ablup21：Lv3 起苦痛+欲情轨道隐藏（B=0 → I=256），只剩 [1]
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [1][100]
   assert.equal(b[0].accelerator, 1);
-  assert.equal(b[0].text, '苦痛点数×0/2800 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 苦痛点数×0/2800 ……点数不足 经验不足 ');
   assert.ok(!fixture.text_lines().some((t) => t.includes('欲情点数')));
 
   const rejected = create_era_fixture();
@@ -3163,7 +3168,7 @@ test('ablup21：素质修正五元组——受虐狂×0.50 全乘、开放×0.60
   maso.store.set(`abl:${CID}:11`, 1);
   maso.set_inputs(100);
   await a1(CID);
-  assert.equal(buttons(maso)[0].text, '苦痛点数×0/50 ……点数不足 ');
+  assert.equal(buttons(maso)[0].text, '- 苦痛点数×0/50 ……点数不足 ');
   assert.ok(maso.text_lines().includes('　　　欲情点数×0/50'));
 
   const open = create_era_fixture();
@@ -3172,7 +3177,7 @@ test('ablup21：素质修正五元组——受虐狂×0.50 全乘、开放×0.60
   open.store.set(`abl:${CID}:11`, 1);
   open.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(open)[0].text, '苦痛点数×0/60 ……点数不足 ');
+  assert.equal(buttons(open)[0].text, '- 苦痛点数×0/60 ……点数不足 ');
   assert.ok(open.text_lines().includes('　　　屈服点数×0/60'));
 });
 
@@ -3225,7 +3230,7 @@ test('ablup21：Lv3 戒备森严 C/D/E ×1.50（30→45、2800→4200、6000→9
   await ablup21(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [1][100]（B=0，[0] 轨隐藏）
-  assert.equal(b[0].text, '苦痛点数×0/4200 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 苦痛点数×0/4200 ……点数不足 经验不足 ');
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/9000'));
   assert.ok(fixture.text_lines().includes('　　　被虐快乐经验　0/45'));
 });
@@ -3239,7 +3244,7 @@ test('ablup21：Lv4 梯子字面值（D=4300/E=12000/被虐快乐 80）与戒备
   await a1(CID);
   const b = buttons(plain);
   assert.equal(b.length, 2); // [1][100]（B=0，[0] 轨隐藏）
-  assert.equal(b[0].text, '苦痛点数×0/4300 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 苦痛点数×0/4300 ……点数不足 经验不足 ');
   assert.ok(plain.text_lines().includes('　　　屈服点数×0/12000'));
   assert.ok(plain.text_lines().includes('　　　被虐快乐经验　0/80'));
 
@@ -3253,7 +3258,7 @@ test('ablup21：Lv4 梯子字面值（D=4300/E=12000/被虐快乐 80）与戒备
   await a2(CID);
   assert.equal(
     buttons(guarded)[0].text,
-    '苦痛点数×0/8600 ……点数不足 经验不足 ',
+    '- 苦痛点数×0/8600 ……点数不足 经验不足 ',
   );
   assert.ok(guarded.text_lines().includes('　　　屈服点数×0/24000'));
   assert.ok(guarded.text_lines().includes('　　　被虐快乐经验　0/160'));
@@ -3301,8 +3306,8 @@ test('ablup22：Lv0 梯子字面值，双轨皆渲染；屈服行 C=0 不显示'
   await ablup22(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '欲情点数×0/200 ……点数不足 经验不足 能力不足');
-  assert.equal(b[1].text, '阴核点数×0/1000 ……点数不足 经验不足 能力不足');
+  assert.equal(b[0].text, '- 欲情点数×0/200 ……点数不足 经验不足 能力不足');
+  assert.equal(b[1].text, '- 阴核点数×0/1000 ……点数不足 经验不足 能力不足');
   assert.ok(fixture.text_lines().includes('　　　百合经验　0/50'));
   assert.ok(!fixture.text_lines().some((t) => t.includes('屈服点数')));
 });
@@ -3315,7 +3320,7 @@ test('ablup22：Lv2 起阴核轨道隐藏（D=0 → J=256）且屈服行出现�
   await ablup22(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [0][100]
-  assert.equal(b[0].text, '欲情点数×0/3000 ……点数不足 经验不足 能力不足');
+  assert.equal(b[0].text, '- 欲情点数×0/3000 ……点数不足 经验不足 能力不足');
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/1000'));
 
   const rejected = create_era_fixture();
@@ -3348,8 +3353,8 @@ test('ablup22：素质修正——双性恋×0.50 四元组、男人婆×2.00（
   bi.store.set(`abl:${CID}:11`, 1);
   bi.set_inputs(100);
   await a1(CID);
-  assert.equal(buttons(bi)[0].text, '欲情点数×0/100 ……点数不足 经验不足 ');
-  assert.equal(buttons(bi)[1].text, '阴核点数×0/500 ……点数不足 经验不足 ');
+  assert.equal(buttons(bi)[0].text, '- 欲情点数×0/100 ……点数不足 经验不足 ');
+  assert.equal(buttons(bi)[1].text, '- 阴核点数×0/500 ……点数不足 经验不足 ');
 
   const macho = create_era_fixture();
   const { ablup22: a2 } = seed(macho);
@@ -3357,7 +3362,7 @@ test('ablup22：素质修正——双性恋×0.50 四元组、男人婆×2.00（
   macho.store.set(`abl:${CID}:11`, 1);
   macho.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(macho)[0].text, '欲情点数×0/400 ……点数不足 经验不足 ');
+  assert.equal(buttons(macho)[0].text, '- 欲情点数×0/400 ……点数不足 经验不足 ');
 
   const hater = create_era_fixture();
   const { ablup22: a3 } = seed(hater);
@@ -3365,8 +3370,8 @@ test('ablup22：素质修正——双性恋×0.50 四元组、男人婆×2.00（
   hater.store.set(`abl:${CID}:11`, 1);
   hater.set_inputs(100);
   await a3(CID);
-  assert.equal(buttons(hater)[0].text, '欲情点数×0/100 ……点数不足 经验不足 ');
-  assert.equal(buttons(hater)[1].text, '阴核点数×0/500 ……点数不足 经验不足 ');
+  assert.equal(buttons(hater)[0].text, '- 欲情点数×0/100 ……点数不足 经验不足 ');
+  assert.equal(buttons(hater)[1].text, '- 阴核点数×0/500 ……点数不足 经验不足 ');
 });
 
 test('ablup22：坦率（TALENT:13）×0.95 四元组（A/B/C/D 同步）', async () => {
@@ -3376,8 +3381,8 @@ test('ablup22：坦率（TALENT:13）×0.95 四元组（A/B/C/D 同步）', asyn
   fixture.set_inputs(100);
   await ablup22(CID);
   const b = buttons(fixture);
-  assert.equal(b[0].text, '欲情点数×0/190 ……点数不足 经验不足 能力不足');
-  assert.equal(b[1].text, '阴核点数×0/950 ……点数不足 经验不足 能力不足');
+  assert.equal(b[0].text, '- 欲情点数×0/190 ……点数不足 经验不足 能力不足');
+  assert.equal(b[1].text, '- 阴核点数×0/950 ……点数不足 经验不足 能力不足');
   assert.ok(fixture.text_lines().includes('　　　百合经验　0/47'));
 });
 
@@ -3449,8 +3454,8 @@ test('ablup23：Lv0 梯子字面值；[1] 用肛门点数；无欲望门槛行',
   await ablup23(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '欲情点数×0/200 ……点数不足 经验不足 ');
-  assert.equal(b[1].text, '肛门点数×0/1000 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 欲情点数×0/200 ……点数不足 经验不足 ');
+  assert.equal(b[1].text, '- 肛门点数×0/1000 ……点数不足 经验不足 ');
   // Lv0 双轨各打一行断背经验：按条数断言，单看「包含」会被另一条轨道掩盖
   assert.equal(
     fixture.text_lines().filter((t) => t === '　　　断背经验　0/50').length,
@@ -3467,7 +3472,7 @@ test('ablup23：讨厌男人×3.00（与 ABLUP22 的×0.50 相反）；Lv3 异�
   hater.store.set(`exp:${CID}:41`, 50);
   hater.set_inputs(100);
   await a1(CID);
-  assert.equal(buttons(hater)[0].text, '欲情点数×0/600 ……点数不足 经验不足 ');
+  assert.equal(buttons(hater)[0].text, '- 欲情点数×0/600 ……点数不足 经验不足 ');
 
   const lv3 = create_era_fixture();
   const { ablup23: a2 } = seed(lv3);
@@ -3484,8 +3489,14 @@ test('ablup23：献身的（TALENT:63）×0.95 四元组', async () => {
   set_talents(fixture, { 122: 1, 63: 1 }); // 男人 + 献身的
   fixture.set_inputs(100);
   await ablup23(CID);
-  assert.equal(buttons(fixture)[0].text, '欲情点数×0/190 ……点数不足 经验不足 ');
-  assert.equal(buttons(fixture)[1].text, '肛门点数×0/950 ……点数不足 经验不足 ');
+  assert.equal(
+    buttons(fixture)[0].text,
+    '- 欲情点数×0/190 ……点数不足 经验不足 ',
+  );
+  assert.equal(
+    buttons(fixture)[1].text,
+    '- 肛门点数×0/950 ……点数不足 经验不足 ',
+  );
 });
 
 test('ablup23：Lv2 起肛门轨道隐藏；两条购买路径各自扣对应珠、写入 chara(cid).system.断背气质', async () => {
@@ -3528,7 +3539,7 @@ test('ablup23：Lv4 戒备森严 A/B/C ×2.00（20000→40000、800→1600、500
   await ablup23(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [0][100]（D=0，[1] 轨隐藏）
-  assert.equal(b[0].text, '欲情点数×0/40000 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 欲情点数×0/40000 ……点数不足 经验不足 ');
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/10000'));
   assert.ok(fixture.text_lines().includes('　　　断背经验　0/1600'));
 });
@@ -3589,7 +3600,7 @@ test('ablup30：合计 10-19 且珠够时放行（DECIDE 里 >=20 才 RETURN）�
   assert.equal(buttons(fixture).length, 3); // [0][1][100]，未被上限拦截
   // 豁免素质中的淫乱 ×0.8 与接受快感 ×0.9 都在修正表：A=70000×0.72=50400
   assert.equal(
-    buttons(fixture)[0].text.startsWith('欲情点数×7500/50400'),
+    buttons(fixture)[0].text.startsWith('- 欲情点数×7500/50400'),
     true,
   );
 });
@@ -3601,8 +3612,8 @@ test('ablup30：Lv0 梯子字面值；[1] 三倍点数+半经验（A*3/B*3/C/2�
   await ablup30(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '欲情点数×0/3000 ……点数不足 经验不足 能力不足');
-  assert.equal(b[1].text, '欲情点数×0/9000 ……点数不足 经验不足 能力不足');
+  assert.equal(b[0].text, '- 欲情点数×0/3000 ……点数不足 经验不足 能力不足');
+  assert.equal(b[1].text, '- 欲情点数×0/9000 ……点数不足 经验不足 能力不足');
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/10000'));
   assert.ok(fixture.text_lines().includes('　　　性交经验　0/10'));
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/30000'));
@@ -3625,7 +3636,10 @@ test('ablup30：Lv2→3 异常经验门槛 F=lv-1，开放可免；素质修正�
   fallen.store.set(`abl:${CID}:16`, 1);
   fallen.set_inputs(100);
   await a1(CID);
-  assert.equal(buttons(fallen)[0].text, '欲情点数×0/1500 ……点数不足 经验不足 ');
+  assert.equal(
+    buttons(fallen)[0].text,
+    '- 欲情点数×0/1500 ……点数不足 经验不足 ',
+  );
 
   const broken = create_era_fixture();
   const { ablup30: a2 } = seed(broken);
@@ -3633,7 +3647,10 @@ test('ablup30：Lv2→3 异常经验门槛 F=lv-1，开放可免；素质修正�
   broken.store.set(`abl:${CID}:16`, 1);
   broken.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(broken)[0].text, '欲情点数×0/2400 ……点数不足 经验不足 ');
+  assert.equal(
+    buttons(broken)[0].text,
+    '- 欲情点数×0/2400 ……点数不足 经验不足 ',
+  );
 });
 
 test('ablup30：两条购买路径各自扣对应珠、era.add 写入 abl:30', async () => {
@@ -3755,8 +3772,8 @@ test('ablup31：阴蒂感觉门槛（ABL:0）不足时两条轨道同时计能�
   await ablup31(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '欲情点数×0/3000 ……点数不足 经验不足 能力不足');
-  assert.equal(b[1].text, '欲情点数×0/3000 ……点数不足 经验不足 能力不足');
+  assert.equal(b[0].text, '- 欲情点数×0/3000 ……点数不足 经验不足 能力不足');
+  assert.equal(b[1].text, '- 欲情点数×0/3000 ……点数不足 经验不足 能力不足');
 });
 
 test('ablup31：门槛两行（露出癖+阴蒂感觉），半角括号异常行只在 Lv2', async () => {
@@ -3779,8 +3796,8 @@ test('ablup31：门槛两行（露出癖+阴蒂感觉），半角括号异常行
   await a2(CID);
   assert.ok(lv2.text_lines().includes('异常经验1以上(现在0)且'));
   // Lv2 梯子字面值：A=12000/B=50000/C=6000/D=500/E=60
-  assert.equal(buttons(lv2)[0].text, '欲情点数×0/12000 ……点数不足 经验不足 ');
-  assert.equal(buttons(lv2)[1].text, '欲情点数×0/12000 ……点数不足 经验不足 ');
+  assert.equal(buttons(lv2)[0].text, '- 欲情点数×0/12000 ……点数不足 经验不足 ');
+  assert.equal(buttons(lv2)[1].text, '- 欲情点数×0/12000 ……点数不足 经验不足 ');
   assert.ok(lv2.text_lines().includes('　　　阴核点数×0/50000'));
   assert.ok(lv2.text_lines().includes('　　　耻情点数×0/6000'));
   assert.ok(lv2.text_lines().includes('　　　自慰经验　0/500'));
@@ -3805,8 +3822,8 @@ test('ablup31：Lv0 梯子字面值，双轨道同点数、不同经验行；容
   await ablup31(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '欲情点数×0/3000 ……点数不足 经验不足 ');
-  assert.equal(b[1].text, '欲情点数×0/3000 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 欲情点数×0/3000 ……点数不足 经验不足 ');
+  assert.equal(b[1].text, '- 欲情点数×0/3000 ……点数不足 经验不足 ');
   assert.ok(fixture.text_lines().includes('　　　阴核点数×0/10000'));
   assert.ok(fixture.text_lines().includes('　　　耻情点数×0/1000'));
   assert.ok(fixture.text_lines().includes('　　　自慰经验　0/100'));
@@ -3819,7 +3836,7 @@ test('ablup31：Lv0 梯子字面值，双轨道同点数、不同经验行；容
   easy.store.set(`abl:${CID}:0`, 1);
   easy.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(easy)[0].text, '欲情点数×0/750 ……点数不足 经验不足 ');
+  assert.equal(buttons(easy)[0].text, '- 欲情点数×0/750 ……点数不足 经验不足 ');
   assert.ok(easy.text_lines().includes('　　　自慰经验　0/25'));
 });
 
@@ -3912,7 +3929,7 @@ test('ablup32：合计≥10 且珠够时 A/B 覆盖为 32²×4000/19000（梯子
   fixture.set_inputs(100);
   await ablup32(CID);
   assert.equal(
-    buttons(fixture)[0].text.startsWith('欲情点数×162500/100000'),
+    buttons(fixture)[0].text.startsWith('- 欲情点数×162500/100000'),
     true,
   );
 
@@ -3927,7 +3944,7 @@ test('ablup32：合计≥10 且珠够时 A/B 覆盖为 32²×4000/19000（梯子
   guarded.set_inputs(100);
   await a2(CID);
   assert.equal(
-    buttons(guarded)[0].text.startsWith('欲情点数×162500/250000'),
+    buttons(guarded)[0].text.startsWith('- 欲情点数×162500/250000'),
     true,
   );
 });
@@ -3942,7 +3959,7 @@ test('ablup32：无淫乱查侍奉精神、有淫乱改查欲望（渲染行与�
   // 判定侧也是「无淫乱查侍奉精神」：ABL:16=0 < lv+1=1 → 能力不足
   assert.equal(
     buttons(fixture)[0].text,
-    '欲情点数×0/3000 ……点数不足 经验不足 能力不足',
+    '- 欲情点数×0/3000 ……点数不足 经验不足 能力不足',
   );
 
   const satisfied = create_era_fixture();
@@ -3952,7 +3969,7 @@ test('ablup32：无淫乱查侍奉精神、有淫乱改查欲望（渲染行与�
   await a3(CID);
   assert.equal(
     buttons(satisfied)[0].text,
-    '欲情点数×0/3000 ……点数不足 经验不足 ',
+    '- 欲情点数×0/3000 ……点数不足 经验不足 ',
   );
 
   const lewd = create_era_fixture();
@@ -3973,8 +3990,8 @@ test('ablup32：Lv0 梯子字面值；[1] 三倍点数+半经验；Lv2 异常经
   await ablup32(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 3); // [0][1][100]
-  assert.equal(b[0].text, '欲情点数×0/3000 ……点数不足 经验不足 ');
-  assert.equal(b[1].text, '欲情点数×0/9000 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 欲情点数×0/3000 ……点数不足 经验不足 ');
+  assert.equal(b[1].text, '- 欲情点数×0/9000 ……点数不足 经验不足 ');
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/10000'));
   assert.ok(fixture.text_lines().includes('　　　精液经验　0/10'));
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/30000'));
@@ -3996,7 +4013,10 @@ test('ablup32：素质修正——反感污臭×2.00 / 喜欢精液×0.50（喜�
   hater.store.set(`abl:${CID}:16`, 1);
   hater.set_inputs(100);
   await a1(CID);
-  assert.equal(buttons(hater)[0].text, '欲情点数×0/6000 ……点数不足 经验不足 ');
+  assert.equal(
+    buttons(hater)[0].text,
+    '- 欲情点数×0/6000 ……点数不足 经验不足 ',
+  );
 
   const lover = create_era_fixture();
   const { ablup32: a2 } = seed(lover);
@@ -4004,7 +4024,10 @@ test('ablup32：素质修正——反感污臭×2.00 / 喜欢精液×0.50（喜�
   lover.store.set(`abl:${CID}:16`, 1);
   lover.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(lover)[0].text, '欲情点数×0/1500 ……点数不足 经验不足 ');
+  assert.equal(
+    buttons(lover)[0].text,
+    '- 欲情点数×0/1500 ……点数不足 经验不足 ',
+  );
 });
 
 test('ablup32：两条购买路径各自扣对应珠、era.add 写入 abl:32', async () => {
@@ -4118,7 +4141,7 @@ test('ablup33：Lv0 梯子字面值；欲情/屈服需求同为 A；百合气质
   await ablup33(CID);
   const b = buttons(fixture);
   assert.equal(b.length, 2); // [0][100]
-  assert.equal(b[0].text, '阴核点数×0/5000 ……点数不足 经验不足 ');
+  assert.equal(b[0].text, '- 阴核点数×0/5000 ……点数不足 经验不足 ');
   assert.ok(fixture.text_lines().includes('　　　欲情点数×0/1200'));
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/1200'));
   assert.ok(fixture.text_lines().includes('　　　百合经验　0/300'));
@@ -4132,7 +4155,7 @@ test('ablup33：Lv0 梯子字面值；欲情/屈服需求同为 A；百合气质
   await a3(CID);
   assert.equal(
     buttons(conservative)[0].text,
-    '阴核点数×0/7500 ……点数不足 经验不足 ',
+    '- 阴核点数×0/7500 ……点数不足 经验不足 ',
   );
   assert.ok(conservative.text_lines().includes('　　　欲情点数×0/1800'));
   assert.ok(conservative.text_lines().includes('　　　百合经验　0/450'));
@@ -4143,7 +4166,10 @@ test('ablup33：Lv0 梯子字面值；欲情/屈服需求同为 A；百合气质
   rebel.store.set(`abl:${CID}:22`, 1);
   rebel.set_inputs(100);
   await a4(CID);
-  assert.equal(buttons(rebel)[0].text, '阴核点数×0/7500 ……点数不足 经验不足 ');
+  assert.equal(
+    buttons(rebel)[0].text,
+    '- 阴核点数×0/7500 ……点数不足 经验不足 ',
+  );
   assert.ok(rebel.text_lines().includes('　　　欲情点数×0/1800'));
   assert.ok(rebel.text_lines().includes('　　　百合经验　0/450'));
 
@@ -4167,7 +4193,7 @@ test('ablup33：合计≥10 且珠够时 A/B 覆盖为 33²×4000/10000；素质
   await ablup33(CID);
   // B = 覆盖值 5²×10000=250000，再经讨厌男人 ×0.50 → 125000（覆盖先于素质修正）
   assert.equal(
-    buttons(fixture)[0].text.startsWith('阴核点数×999999/125000'),
+    buttons(fixture)[0].text.startsWith('- 阴核点数×999999/125000'),
     true,
   );
 
@@ -4177,7 +4203,10 @@ test('ablup33：合计≥10 且珠够时 A/B 覆盖为 33²×4000/10000；素质
   macho.store.set(`abl:${CID}:22`, 1);
   macho.set_inputs(100);
   await a1(CID);
-  assert.equal(buttons(macho)[0].text, '阴核点数×0/10000 ……点数不足 经验不足 '); // 5000×2
+  assert.equal(
+    buttons(macho)[0].text,
+    '- 阴核点数×0/10000 ……点数不足 经验不足 ',
+  ); // 5000×2
 
   const hater = create_era_fixture();
   const { ablup33: a2 } = seed(hater);
@@ -4185,7 +4214,10 @@ test('ablup33：合计≥10 且珠够时 A/B 覆盖为 33²×4000/10000；素质
   hater.store.set(`abl:${CID}:22`, 1);
   hater.set_inputs(100);
   await a2(CID);
-  assert.equal(buttons(hater)[0].text, '阴核点数×0/2500 ……点数不足 经验不足 '); // 5000×0.5
+  assert.equal(
+    buttons(hater)[0].text,
+    '- 阴核点数×0/2500 ……点数不足 经验不足 ',
+  ); // 5000×0.5
 });
 
 test('ablup33：Lv4 梯子字面值（A=30000/B=70000/C=2100）', async () => {
@@ -4197,7 +4229,7 @@ test('ablup33：Lv4 梯子字面值（A=30000/B=70000/C=2100）', async () => {
   await ablup33(CID);
   assert.equal(
     buttons(fixture)[0].text,
-    '阴核点数×0/70000 ……点数不足 经验不足 ',
+    '- 阴核点数×0/70000 ……点数不足 经验不足 ',
   );
   assert.ok(fixture.text_lines().includes('　　　欲情点数×0/30000'));
   assert.ok(fixture.text_lines().includes('　　　屈服点数×0/30000')); // 欲情/屈服同源 A
@@ -5614,4 +5646,40 @@ test('#595 ablup6：三档选项按钮（含条件渲染的 [1]/[2]）逐行相�
   }
   const exit = buttons(fixture).find((b) => b.accelerator === 100);
   assert.equal(exit.row - rendered.at(-1).row, 1, '末档与放弃行相邻');
+});
+
+test('#612 ablup0：渲染后的正文与 golden 样本逐字一致（train-natural:959-960）', async () => {
+  const fixture = create_era_fixture();
+  const { ablup0 } = seed(fixture);
+  // golden 的现场：阴蒂感觉 LV4（需求 20000）、阴核点数 5859 → 点数不足
+  fixture.store.set(`abl:${CID}:0`, 4);
+  fixture.store.set(`juel:${CID}:0`, 5859);
+  fixture.set_inputs(100);
+  await ablup0(CID);
+  assert.deepEqual(
+    buttons(fixture).map((b) => b.rendered),
+    ['[0] - 阴核点数×5859/20000 ……点数不足 ', '[100] - 停止'],
+    '原作的「- 」是正文的一部分，引擎按 showAcc 另外拼 [编号]（ABLUP0.ERB:64-71）',
+  );
+});
+
+test('#612 ABLUPn：每枚按钮的渲染正文都是「[编号] - 正文」', async () => {
+  for (const name of ABLUP_FUNCTIONS) {
+    const fixture = create_era_fixture();
+    const mod = seed(fixture);
+    for (const [key, value] of Object.entries(ABLUP_REACH_MENU[name] ?? {})) {
+      fixture.store.set(key, value);
+    }
+    fixture.set_inputs(100);
+    await mod[name](CID);
+    const rendered = buttons(fixture).map((b) => b.rendered);
+    assert.ok(rendered.length > 0, `${name}：本用例必须真的走到菜单`);
+    for (const text of rendered) {
+      assert.match(
+        text,
+        /^\[\d+\] - /,
+        `${name}：原作各 PRINTL [N] - 正文 的「- 」要照写，实得 ${text}`,
+      );
+    }
+  }
 });

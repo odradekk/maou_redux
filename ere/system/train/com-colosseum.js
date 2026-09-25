@@ -336,14 +336,14 @@ async function com201(rand = default_rand) {
     // 自成一行，相互之间不补空行（#595）
     era.print('对哪里进行凌辱？'); // :65
     if (penetrator) {
-      era.printButton('嘴巴', 0); // :66-67 [0]
+      era.printButton('- 嘴巴', 0); // :66-67 [0]
     }
-    era.printButton('胸部', 1); // :68 [1]（无条件）
+    era.printButton('- 胸部', 1); // :68 [1]（无条件）
     if (can_vagina) {
-      era.printButton('私处', 2); // :69-70 [2]
+      era.printButton('- 私处', 2); // :69-70 [2]
     }
     if (penetrator) {
-      era.printButton('肛门', 3); // :71-72 [3]
+      era.printButton('- 肛门', 3); // :71-72 [3]
     }
     era.printButton('暂时放过', 999); // :73 [999]
     const result = await era.input(); // :75
@@ -528,12 +528,12 @@ async function monster_insult_menu(cfg, rand) {
     // COMF202:53-59（202-206 五体同构）的菜单项全是整行 PRINTL——
     // 按钮之间不补空行（#595）
     era.print('对哪里进行凌辱？'); // :53
-    era.printButton('嘴巴', 0); // :54 [0]（无条件）
-    era.printButton('胸部', 1); // :55 [1]（无条件）
+    era.printButton('- 嘴巴', 0); // :54 [0]（无条件）
+    era.printButton('- 胸部', 1); // :55 [1]（无条件）
     if (show_vagina) {
-      era.printButton('私处', 2); // :56-57 [2]
+      era.printButton('- 私处', 2); // :56-57 [2]
     }
-    era.printButton('肛门', 3); // :58 [3]（无条件）
+    era.printButton('- 肛门', 3); // :58 [3]（无条件）
     era.printButton('暂时放过', 999); // :59 [999]
     const result = await era.input(); // :61
 
@@ -884,11 +884,11 @@ async function com207() {
   for (;;) {
     // COMF207:47-52 的菜单项全是整行 PRINTL——按钮之间不补空行（#595）
     era.print('把粘液灌到哪里？？'); // :47
-    era.printButton('嘴巴', 0); // :48
+    era.printButton('- 嘴巴', 0); // :48
     if (!(era.get(`talent:${target}:122`) || 0)) {
-      era.printButton('私处', 1); // :49-50（男人不显示）
+      era.printButton('- 私处', 1); // :49-50（男人不显示）
     }
-    era.printButton('肛门', 2); // :51
+    era.printButton('- 肛门', 2); // :51
     era.printButton('暂时放过', 999); // :52
     const result = await era.input(); // :54
 

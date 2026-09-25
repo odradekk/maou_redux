@@ -1397,6 +1397,18 @@ test('TECHNIQUE_OF_MASTER：凑齐剩余件数（钱够与不够两侧）', asyn
   }
 });
 
+test('#612 TECHNIQUE_OF_MASTER：确认两键的正文照写原作的「- 」', async () => {
+  const fixture = buy_world({ 'abl:0:12': 3, 'flag:10004': 20000 });
+  fixture.set_inputs(1);
+  const { technique_of_master } = fixture.load_module('page/page-item-shop');
+  assert.equal(await technique_of_master(4), 0);
+  const rendered = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(rendered.includes('[0] - 好的'), 'SHOP_ITEM.ERB:752');
+  assert.ok(rendered.includes('[1] - 不要'), 'SHOP_ITEM.ERB:753');
+});
+
 test('复数购买：越界后的重画提示不带 D/2 那一段（源 :481-487 与首次不同形）', async () => {
   // 首次提示带 D/2（:450-463），越界后的重画不带（:485-487 直接从 [20] 接 D）
   const { fixture } = await run_purchase(

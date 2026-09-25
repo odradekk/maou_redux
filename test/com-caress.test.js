@@ -588,8 +588,8 @@ test('@COM8：CONFIRM_LOST_VIRGIN 真身（#216 接线）选 0 放行；源与 T
     '处女时打确认问句（真身，com-vaginasex.js）',
   );
   assert(
-    fixture.lines.some((e) => e.type === 'button' && e.text === '来吧女人'),
-    '确认按钮 [0]（printButton 记录为 button 条目）',
+    fixture.lines.some((e) => e.type === 'button' && e.text === '- 来吧女人'),
+    '确认按钮 [0]（printButton 记录为 button 条目；正文带原作的「- 」）',
   );
   // 250 ×0.2 ×0.1 = 5；欲情未种 < LV1 → ×0.50 → 2
   assert.equal(fixture.store.get('source:31:1'), 2);

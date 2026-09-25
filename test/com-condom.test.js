@@ -45,6 +45,72 @@ function arm_player(fixture) {
   fixture.store.set('talent:0:122', 1);
 }
 
+/** 已渲染的按钮正文（`[编号] 正文`），#612 用 */
+function rendered_buttons(fixture) {
+  return fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((button) => button.rendered);
+}
+
+// —— #612：按钮正文照写原作的「- 」分隔符 ——
+
+test('#612 COM_CONDOM：四组确认菜单的按钮正文都带「- 」', async () => {
+  // 每次确认且有套：主人位 [0]戴 [1]不戴 [2]今后都直接 [3]今后都戴（:67-70）
+  const master = seed_world();
+  arm_player(master.fixture);
+  master.fixture.store.set('item:24', 1);
+  master.fixture.set_inputs(1);
+  await master.condom.confirm_condom();
+  assert.deepEqual(
+    rendered_buttons(master.fixture),
+    [
+      '[0] - 戴',
+      '[1] - 不戴',
+      '[2] - 今后都直接来，来个痛快',
+      '[3] - 今后都戴套',
+    ],
+    '主人位四键带「- 」（COMF_CONDOM.ERB:70-78）',
+  );
+
+  // 助手位：同一位置的「使用/不使用」两个标签（:72-73）
+  const assi = seed_world();
+  arm_player(assi.fixture);
+  assi.fixture.store.set('item:24', 1);
+  assi.era_flag.assiplay = 1;
+  assi.fixture.set_inputs(1);
+  await assi.condom.confirm_condom();
+  assert.deepEqual(rendered_buttons(assi.fixture), [
+    '[0] - 使用',
+    '[1] - 不使用',
+    '[2] - 今后都直接来，来个痛快',
+    '[3] - 今后都戴套',
+  ]);
+
+  // 设定 1 + 无套 + 主人技巧 Lv5：三键（:121-123）
+  const second = seed_world();
+  arm_player(second.fixture);
+  second.fixture.store.set('cflag:31:61', 1);
+  second.fixture.store.set('abl:0:12', 5);
+  second.fixture.set_inputs(2);
+  await second.condom.confirm_condom();
+  assert.deepEqual(
+    rendered_buttons(second.fixture),
+    ['[0] - 好的(下次也继续确认)', '[1] - 好的(今后都直接来)', '[2] - 不要'],
+    '无套三键带「- 」（COMF_CONDOM.ERB:132-134）',
+  );
+
+  // CONFIRM2 的有套两键（:169-170）
+  const bare = seed_world();
+  bare.fixture.store.set('talent:31:122', 1); // 对象侧的男性器
+  bare.fixture.store.set('item:24', 2);
+  bare.fixture.set_inputs(1);
+  await bare.condom.confirm_condom2();
+  assert.deepEqual(rendered_buttons(bare.fixture), [
+    '[0] - 用',
+    '[1] - 这次直接来',
+  ]);
+});
+
 // —— @CONDOM_SETTINGS ——
 
 test('TARGET < 1（魔王自己是对象）→ RETURN 1，不开画面', async () => {
@@ -236,9 +302,9 @@ test('设定 1 + 无套 + 主人技巧 Lv5：三键问（[2] 拒绝 → RETURN 0
     .filter((line) => line.type === 'button')
     .map((b) => [b.accelerator, b.text]);
   assert.deepEqual(buttons, [
-    [0, '好的(下次也继续确认)'],
-    [1, '好的(今后都直接来)'],
-    [2, '不要'],
+    [0, '- 好的(下次也继续确认)'],
+    [1, '- 好的(今后都直接来)'],
+    [2, '- 不要'],
   ]);
 });
 
