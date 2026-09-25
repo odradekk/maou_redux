@@ -1009,9 +1009,11 @@ test('#625 背后位二回目·把…弄乱：尾段与前后文同一行（:167
     await kojo_message_com_family.call(13, {
       args: [seq_rand(0, 1, 1, 1, last)],
     });
+    const merged = fixture.text_lines().find((l) => l.endsWith(`${word}♡♡♡」`));
+    assert.ok(merged, `末尾抽取 ${last}：:1675 组必须出声`);
     assert.ok(
-      fixture.text_lines().includes(`把我${word}♡♡♡」`),
-      `末尾抽取 ${last}：把…段与收行落在同一行（#625）`,
+      merged.startsWith('「哈啊…请您'),
+      `末尾抽取 ${last}：前缀与把…段、收行落在同一行（#625）`,
     );
   }
 });
@@ -1067,9 +1069,11 @@ test('#625 NTR_KOUJO_K13 それ以外支：:5547..:5570 三处整行（武器名
 });
 
 test('#625 NTR_KOUJO_K13 P==4：:5593+:5595+:5596 是一行（TALENT:157 两档）', async () => {
+  // :5593 的参数末尾是全角空格 U+3000（#183 只把半角空白当分隔符），合并后
+  // 它是行中可见字符，按项目约定保留
   const cases = [
-    [0, '「昂♡比魔王大人♡♡♡」'],
-    [1, '「昂♡比那个人、比魔王大人♡♡♡」'],
+    [0, '「昂♡　比魔王大人♡♡♡」'],
+    [1, '「昂♡　比那个人、比魔王大人♡♡♡」'],
   ];
   for (const [hymen, line] of cases) {
     const fixture = await setup_k13((f) => {
@@ -1083,6 +1087,83 @@ test('#625 NTR_KOUJO_K13 P==4：:5593+:5595+:5596 是一行（TALENT:157 两档�
     assert.ok(
       fixture.text_lines().includes(line),
       `TALENT:157==${hymen}：:5593 组是一行（#625）`,
+    );
+  }
+});
+
+test('#625 背后位·哈啊…请您：前缀行并入各支（:1656..:1670 整段与另两支）', async () => {
+  // :1656 的 `PRINT 「哈啊…请您` 是 :1658/:1660 动作、:1662 心形与各自收行
+  // 尾段共同的前缀行：前缀提到语句外当局部量，各支都拼同一份前缀（#625）
+  const cases = [
+    // 抽签：:1655=0 → :1657 动作 → :1663 rand_n(3)
+    { draws: [0, 0, 0], expect: '「哈啊…请您抽插我的时候♡」' },
+    { draws: [0, 1, 0], expect: '「哈啊…请您侵犯我的时候♡」' },
+    // :1663≠0 → :1667=0 → :1669=0（普查那一组的收行）
+    {
+      draws: [0, 0, 1, 0, 0],
+      expect: '「哈啊…请您抽插我的时候♡……再激烈一点…才好啊♡♡♡」',
+    },
+    // :1669≠0（同 :1656 那一行的另一支）
+    {
+      draws: [0, 0, 1, 0, 1],
+      expect: '「哈啊…请您抽插我的时候♡……再激烈一点…更喜欢…♡♡♡」',
+    },
+  ];
+  for (const { draws, expect } of cases) {
+    const fixture = await setup_k13((f) => {
+      f.store.set('mark:31:2', 3);
+      f.store.set('abl:31:2', 3);
+      f.store.set('talent:31:157', 1);
+      f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
+    }, 21);
+    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    await kojo_message_com_family.call(13, { args: [seq_rand(...draws)] });
+    assert.ok(
+      fixture.text_lines().includes(expect),
+      `抽取 ${JSON.stringify(draws)}：前缀与整段落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 背后位·有感觉了什么的：前缀行并入三条互斥终点（:1709..:1715）', async () => {
+  const cases = [
+    // 抽签：:1706 rand_n(3)≠0 → :1708 rand_n(2)=0 → :1710 rand_n(3) 或 :1712 rand_n(2)
+    { draws: [1, 0, 0], expect: '「有感觉了什么的……」' },
+    { draws: [1, 0, 1, 0], expect: '「有感觉了什么的……怎么可能……」' },
+    { draws: [1, 0, 1, 1], expect: '「有感觉了什么的……啊啊♡」' },
+  ];
+  for (const { draws, expect } of cases) {
+    const fixture = await setup_k13((f) => {
+      f.store.set('mark:31:2', 3);
+      f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
+    }, 21);
+    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    await kojo_message_com_family.call(13, { args: [seq_rand(...draws)] });
+    assert.ok(
+      fixture.text_lines().includes(expect),
+      `抽取 ${JSON.stringify(draws)}：前缀与收行落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 背后位·这副模样／好羞耻：两处抽签的行拼成一条（:1719..:1727）', async () => {
+  const cases = [
+    // 抽签：:1706≠0 → :1708≠0 → :1718 头部 → :1724 收尾
+    { draws: [1, 1, 0, 0], expect: '「这副模样……好羞耻……啊啊♡♡♡」' },
+    { draws: [1, 1, 0, 1], expect: '「这副模样……好羞耻……」' },
+    { draws: [1, 1, 1, 0], expect: '「好羞耻……啊啊♡♡♡」' },
+    { draws: [1, 1, 1, 1], expect: '「好羞耻……」' },
+  ];
+  for (const { draws, expect } of cases) {
+    const fixture = await setup_k13((f) => {
+      f.store.set('mark:31:2', 3);
+      f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
+    }, 21);
+    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    await kojo_message_com_family.call(13, { args: [seq_rand(...draws)] });
+    assert.ok(
+      fixture.text_lines().includes(expect),
+      `抽取 ${JSON.stringify(draws)}：头部与收尾落在同一行（#625）`,
     );
   }
 });

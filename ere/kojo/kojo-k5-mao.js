@@ -9222,7 +9222,12 @@ async function kojo_message_com_5(rand) {
           await era.printAndWait(`「姐姐救救我吧…好想快点回到村子里去啊………」`); // :4809
         }
       } else {
-        await era.print(`${player_name}`); // :4812
+        // :4812 的 `PRINTFORM %SAVESTR:PLAYER%` 是下面各互斥分支共同的前缀行
+        // （无后缀不换行，各支的 PRINTFORML 才收行）。前缀提到语句外当局部量、
+        // 各支语句拼同一份前缀，玩家在每一支上都只看一行；前缀行归第一支的
+        // 拼接锚（普查的「前缀 + 文本序第一支」组要能清），其余各支只锚自己的
+        // 行号（#625，同 k7 的 talk_front 写法）
+        const maid_front = `${player_name}`; // :4812
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:85`) ||
@@ -9231,8 +9236,8 @@ async function kojo_message_com_5(rand) {
         ) {
           // :4813
           await era.print(
-            `向少女搭话后、${target_name}晃动着腰部说起了充满爱意的话语`,
-          ); // :4814
+            `${player_name}向少女搭话后、${target_name}晃动着腰部说起了充满爱意的话语`,
+          ); // :4812+:4814
         } else if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) ||
@@ -9241,7 +9246,8 @@ async function kojo_message_com_5(rand) {
         ) {
           // :4815
           await era.print(
-            `向少女搭话后、${target_name}一边晃着腰一边不停地说着下流的话语`,
+            maid_front +
+              `向少女搭话后、${target_name}一边晃着腰一边不停地说着下流的话语`,
           ); // :4816
         } else if (
           (era.get(`palam:${target}:4`) >= PALAMLV[4] ||
@@ -9250,9 +9256,8 @@ async function kojo_message_com_5(rand) {
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
           // :4817
-          // :4818+:4820+:4822+:4824 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-          // 不换行，末行 PRINTFORML 才收行。:4819/:4821 的工具档互斥且无
-          // ELSE——判据提到语句外当取值，文本留在输出语句里（#625）
+          // :4818+:4820+:4822+:4824 同属 :4812 那一行的另一支：工具档两档互斥
+          // 且无 ELSE——判据提到语句外当取值，文本留在输出语句里（#625）
           const overwhelmed_by_tool =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -9263,7 +9268,8 @@ async function kojo_message_com_5(rand) {
           const overwhelmed_by_pain =
             era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);
           await era.print(
-            `向少女搭话后、${target_name}发出了` +
+            maid_front +
+              `向少女搭话后、${target_name}发出了` +
               (overwhelmed_by_tool
                 ? `快乐的`
                 : overwhelmed_by_pain
@@ -9278,17 +9284,21 @@ async function kojo_message_com_5(rand) {
         ) {
           // :4825
           await era.print(
-            `向少女搭话后、${target_name}如同打发无聊一样发起了牢骚`,
+            maid_front +
+              `向少女搭话后、${target_name}如同打发无聊一样发起了牢骚`,
           ); // :4826
         } else if (
           era.get(`palam:${target}:4`) >= PALAMLV[2] ||
           era.get(`abl:${target}:10`) >= 3
         ) {
           // :4827
-          await era.print(`向少女搭话后、${target_name}一点一点地说起了话`); // :4828
+          await era.print(
+            maid_front + `向少女搭话后、${target_name}一点一点地说起了话`,
+          ); // :4828
         } else {
           await era.print(
-            `向少女搭话后、${target_name}根本没有听进耳朵里的样子…`,
+            maid_front +
+              `向少女搭话后、${target_name}根本没有听进耳朵里的样子…`,
           ); // :4830
         }
       }
@@ -9340,7 +9350,8 @@ async function kojo_message_com_5(rand) {
           await era.printAndWait(`「姐姐救救我吧…好想快点回到村子里去啊………」`); // :4855
         }
       } else {
-        await era.print(`${player_name}`); // :4858
+        // :4858 同 :4812：前缀行 + 各互斥分支的收行尾段（#625）
+        const maid_front_4858 = `${player_name}`; // :4858
         if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:85`) ||
@@ -9349,8 +9360,8 @@ async function kojo_message_com_5(rand) {
         ) {
           // :4859
           await era.print(
-            `向少女搭话后，${target_name}晃动着腰部说起了充满爱意的话语`,
-          ); // :4860
+            `${player_name}向少女搭话后，${target_name}晃动着腰部说起了充满爱意的话语`,
+          ); // :4858+:4860
         } else if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) ||
@@ -9359,7 +9370,8 @@ async function kojo_message_com_5(rand) {
         ) {
           // :4861
           await era.print(
-            `向少女搭话后，${target_name}一边晃着腰一边不停地说着下流的话语`,
+            maid_front_4858 +
+              `向少女搭话后，${target_name}一边晃着腰一边不停地说着下流的话语`,
           ); // :4862
         } else if (
           (era.get(`palam:${target}:4`) >= PALAMLV[4] ||
@@ -9368,7 +9380,7 @@ async function kojo_message_com_5(rand) {
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
           // :4863
-          // :4864+:4866+:4868+:4870 同 :4818 组的一整行（#625）
+          // :4864+:4866+:4868+:4870 同属 :4858 那一行的另一支（#625）
           const overwhelmed_by_tool =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
@@ -9379,7 +9391,8 @@ async function kojo_message_com_5(rand) {
           const overwhelmed_by_pain =
             era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`);
           await era.print(
-            `向少女搭话后，${target_name}发出了` +
+            maid_front_4858 +
+              `向少女搭话后，${target_name}发出了` +
               (overwhelmed_by_tool
                 ? `快乐的`
                 : overwhelmed_by_pain
@@ -9394,17 +9407,21 @@ async function kojo_message_com_5(rand) {
         ) {
           // :4871
           await era.print(
-            `向少女搭话后，${target_name}如同打发无聊一样发起了牢骚`,
+            maid_front_4858 +
+              `向少女搭话后，${target_name}如同打发无聊一样发起了牢骚`,
           ); // :4872
         } else if (
           era.get(`palam:${target}:4`) >= PALAMLV[2] ||
           era.get(`abl:${target}:10`) >= 3
         ) {
           // :4873
-          await era.print(`向少女搭话后，${target_name}十分胆怯地说起了话`); // :4874
+          await era.print(
+            maid_front_4858 + `向少女搭话后，${target_name}十分胆怯地说起了话`,
+          ); // :4874
         } else {
           await era.print(
-            `向少女搭话后，${target_name}根本没有听进耳朵里的样子…`,
+            maid_front_4858 +
+              `向少女搭话后，${target_name}根本没有听进耳朵里的样子…`,
           ); // :4876
         }
       }
@@ -11548,12 +11565,18 @@ async function self_kojo_k5(rand) {
           `少女一边被${assi_name}玩弄着一边拼命忍住不发出呻吟。`,
         ); // :6148
         await era.printAndWait(`「呜…咕…呜啊…啊啊…」`); // :6149
-        await era.print(`${assi_name}看着那样的少女、感到很满意`); // :6150
+        // :6150 的 `PRINTFORM %SAVESTR:ASSI%看着那样的少女、感到很满意` 与
+        // :6152/:6154 两条互斥 PRINTFORMW 终点同属一行：前缀提到语句外当局部量，
+        // 两支各自拼同一份前缀，只锚自己那一支的行号（#625）
+        const assi_front_6150 = `${assi_name}看着那样的少女、感到很满意`; // :6150
         if (era_flag.time === 0) {
           // :6151
-          await era.printAndWait(`直到天黑一直都在玩弄着少女………`); // :6152
+          await era.printAndWait(
+            `${assi_name}看着那样的少女、感到很满意` +
+              `直到天黑一直都在玩弄着少女………`,
+          ); // :6150+:6152
         } else {
-          await era.printAndWait(`整个晚上都在玩弄着少女………`); // :6154
+          await era.printAndWait(assi_front_6150 + `整个晚上都在玩弄着少女………`); // :6154
         }
       }
       // CFLAG:262  = 4（变量语义：CFLAG 族，262） // :6157

@@ -5177,17 +5177,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1658-1659',
-        any: [/^\s*PRINT\ 抽插%SELF_CALL\(TARGET\)%的时候\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1660',
-        any: [/^\s*PRINT\ 侵犯%SELF_CALL\(TARGET\)%的时候\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1660-1661',
         any: [/^\s*PRINT\ 侵犯%SELF_CALL\(TARGET\)%的时候\s*$/m],
       },
       {
@@ -5203,11 +5193,6 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1664',
-        any: [/^\s*PRINT\ 」\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1664-1665',
         any: [/^\s*PRINT\ 」\s*$/m],
       },
       {
@@ -5278,11 +5263,6 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1679-1682',
-        any: [/^\s*PRINT\ 插得更加乱七八糟\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1679-1683',
         any: [/^\s*PRINT\ 插得更加乱七八糟\s*$/m],
       },
       {
@@ -5448,17 +5428,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1719-1720',
-        any: [/^\s*PRINT\ 「这副模样……\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1721',
-        any: [/^\s*PRINT\ 「\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1721-1722',
         any: [/^\s*PRINT\ 「\s*$/m],
       },
       {
@@ -5478,18 +5448,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1725-1726',
-        any: [/^\s*PRINTFORMW\ 啊啊%UNICODE\(0x2661\)\ \*3%」\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1727',
         any: [/^\s*PRINTW\ 」\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1725-1728',
-        any: [/^\s*PRINTFORMW\ 啊啊%UNICODE\(0x2661\)\ \*3%」\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',

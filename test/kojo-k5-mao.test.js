@@ -590,14 +590,18 @@ test('#625 交谈·发出了…的声音：工具档与前后文同一行（:481
   const cases = [
     { talked: 0, tequip: 11 },
     { talked: 0, tequip: 44 },
+    { talked: 0, tequip: 0 }, // 两档都不满足 → 中间为空串
     { talked: 1, tequip: 11 },
     { talked: 1, tequip: 44 },
+    { talked: 1, tequip: 0 },
   ];
   for (const { talked, tequip } of cases) {
     const fixture = await setup_k5((f) => {
       f.store.set('palam:17:5', 10000); // >= PALAMLV[4]
       f.store.set('palam:17:4', 10000);
-      f.store.set(`tequip:17:${tequip}`, 1);
+      if (tequip) {
+        f.store.set(`tequip:17:${tequip}`, 1);
+      }
       if (talked) {
         f.load_module('facade/chara').chara(17).kojo.交谈 = 1;
       }
@@ -605,13 +609,104 @@ test('#625 交谈·发出了…的声音：工具档与前后文同一行（:481
     const era_flag = fixture.load_module('era-utils/era-flag');
     era_flag.selectcom = 56;
     await speak_k5(fixture, seq_rand(0));
-    const word = tequip === 11 ? '快乐的' : '痛苦的';
+    const word = tequip === 11 ? '快乐的' : tequip === 44 ? '痛苦的' : '';
     const line = talked
-      ? `向少女搭话后，玛奥发出了${word}的声音、拼命地向着你说了起来`
-      : `向少女搭话后、玛奥发出了${word}的声音、拼命地向着你说了起来`;
+      ? `你向少女搭话后，玛奥发出了${word}的声音、拼命地向着你说了起来`
+      : `你向少女搭话后、玛奥发出了${word}的声音、拼命地向着你说了起来`;
     assert.ok(
       fixture.text_lines().includes(line),
-      `交谈${talked ? '二次' : '首次'}（${word}档）：工具档与前后文落在同一行（#625）`,
+      `交谈${talked ? '二次' : '首次'}（${word}档）：前缀与工具档、前后文落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支）', async () => {
+  // :4812/:4858 的 `PRINTFORM %SAVESTR:PLAYER%` 是各自那条链上各互斥分支共同的
+  // 前缀行：前缀提到语句外当局部量，各支都拼同一份前缀——玩家在**每一支**上
+  // 都只看一行（#625）
+  const cases = [
+    {
+      talked: 0,
+      seed: { palam5: 10000, talent85: 1, not_pulled: 1 },
+      line: '你向少女搭话后、玛奥晃动着腰部说起了充满爱意的话语',
+    },
+    {
+      talked: 0,
+      seed: {},
+      line: '你向少女搭话后、玛奥根本没有听进耳朵里的样子…',
+    },
+    {
+      talked: 0,
+      seed: { palam4: 500 },
+      line: '你向少女搭话后、玛奥一点一点地说起了话',
+    },
+    {
+      talked: 1,
+      seed: { palam5: 10000, talent85: 1, not_pulled: 1 },
+      line: '你向少女搭话后，玛奥晃动着腰部说起了充满爱意的话语',
+    },
+    {
+      talked: 1,
+      seed: {},
+      line: '你向少女搭话后，玛奥根本没有听进耳朵里的样子…',
+    },
+    {
+      talked: 1,
+      seed: { palam4: 500 },
+      line: '你向少女搭话后，玛奥十分胆怯地说起了话',
+    },
+  ];
+  for (const { talked, seed, line } of cases) {
+    const fixture = await setup_k5((f) => {
+      if (seed.palam5) {
+        f.store.set('palam:17:5', seed.palam5);
+      }
+      if (seed.palam4) {
+        f.store.set('palam:17:4', seed.palam4);
+      }
+      if (seed.talent85) {
+        f.store.set('talent:17:85', 1);
+      }
+      if (seed.not_pulled) {
+        f.load_module('facade/game').game.event.插着不拔 = 1;
+      }
+      if (talked) {
+        f.load_module('facade/chara').chara(17).kojo.交谈 = 1;
+      }
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    await speak_k5(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `交谈${talked ? '二次' : '首次'}：前缀与分支文本落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 百合 PLAY·前缀行并入两条互斥终点（:6150+:6152 / :6154）', async () => {
+  // :6150 的 `PRINTFORM %SAVESTR:ASSI%看着那样的少女、感到很满意` 与 :6152/:6154
+  // 两条互斥 PRINTFORMW 终点同属一行（#625）；该链在 SELF_KOJO（:6129 起的
+  // 「初吻与自我口上」段），不在 COM 的助手守卫之后
+  const cases = [
+    [0, '直到天黑一直都在玩弄着少女………'],
+    [1, '整个晚上都在玩弄着少女………'],
+  ];
+  for (const [time, tail] of cases) {
+    const fixture = await setup_k5((f) => {
+      join_slave_chara(f, 5, '奴隶5');
+      f.store.set('talent:17:85', 1); // 爱慕档 → :6137 分支
+      f.store.set('cflag:17:262', 3); // 百合 PLAY < 4
+      f.load_module('facade/game').game.train.初吻与自我口上 = 2; // :6129 入口
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 5;
+      era_flag.time = time;
+    });
+    const mod = fixture.load_module('kojo/kojo-k5-mao');
+    await mod.self_kojo_k5(seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(`奴隶5看着那样的少女、感到很满意${tail}`),
+      `TIME==${time}：前缀与收行落在同一行（#625）`,
     );
   }
 });

@@ -525,24 +525,28 @@ test('#625 交谈·压抑着呼吸声：工具档与前后文同一行（:4375 /
   const cases = [
     { talked: 0, tequip: 11, prefix: '' },
     { talked: 0, tequip: 44, prefix: '' },
+    { talked: 0, tequip: 0, prefix: '' }, // 两档都不满足 → 中间为空串
     { talked: 1, tequip: 11, prefix: '你' },
     { talked: 1, tequip: 44, prefix: '你' },
+    { talked: 1, tequip: 0, prefix: '你' },
   ];
   for (const { talked, tequip, prefix } of cases) {
     const fixture = await setup_k19((f) => {
       f.store.set(`palam:${CID}:5`, 10000); // >= PALAMLV[4]
       f.store.set(`palam:${CID}:4`, 10000);
-      f.store.set(`tequip:${CID}:${tequip}`, 1);
+      if (tequip) {
+        f.store.set(`tequip:${CID}:${tequip}`, 1);
+      }
       if (talked) {
         f.load_module('facade/chara').chara(CID).kojo.交谈 = 1;
       }
     }, 56);
     await speak_k19(fixture);
-    const word = tequip === 11 ? '快乐的' : '痛苦的';
+    const word = tequip === 11 ? '快乐的' : tequip === 44 ? '痛苦的' : '';
     assert.deepEqual(
       fixture.text_lines(),
       [`${prefix}菲娅一边压抑着${word}呼吸声，一边努力回应着你……`],
-      `交谈${talked ? '二次' : '首次'}（${word}档）：工具档与前后文落在同一行（#625）`,
+      `交谈${talked ? '二次' : '首次'}（${word || '空'}档）：工具档与前后文落在同一行（#625）`,
     );
   }
 });

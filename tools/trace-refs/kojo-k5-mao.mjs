@@ -17216,20 +17216,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '4819',
-        any: [
-          /IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '4820',
         any: [/PRINT 快乐的/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '4821',
-        any: [/ELSEIF TEQUIP:44 \|\| TEQUIP:49/],
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',

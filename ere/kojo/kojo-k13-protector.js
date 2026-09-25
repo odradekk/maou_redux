@@ -2011,42 +2011,59 @@ async function kojo_message_com_13(rand) {
 
           if (rand_n(2) == 0) {
             // :1655
-            await era.print(`「哈啊…请您`); // :1656
-            if (rand_n(2) == 0) {
-              // :1657
-              await era.print(`抽插${sc()}的时候`); // :1658
-            } else {
-              // :1658-1659
-              await era.print(`侵犯${sc()}的时候`); // :1660
-            } // :1660-1661
-            await era.print(`${heart(1)}`); // :1662
+            // :1656 的 `PRINT 「哈啊…请您` 是下面各支共同的前缀行（无后缀不换行），
+            // 与 :1658/:1660 的动作、:1662 的心形、以及各自的收行尾段同属一行。
+            // 前缀与各支的长片段提到语句外当局部量，收行行只锚自己那一支的行号；
+            // 归给普查那一组（:1656..:1670）的那一支把区间内的字面量留在语句里
+            // （#625，同 k7 的 talk_front 写法）
+            const moan_front = `「哈啊…请您`; // :1656
+            const act_is_insert = rand_n(2) == 0; // :1657 动作抽签（顺序第 2，同原作）
+            const moan_act = act_is_insert
+              ? `抽插${sc()}的时候`
+              : `侵犯${sc()}的时候`; // :1658/:1660
+            const moan_pat = `${heart(1)}`; // :1662
+            const moan_hot = `再激烈一点…`; // :1668
             if (rand_n(3) == 0) {
               // :1663
-              await era.print(`」`); // :1664
-            } else {
-              // :1664-1665
-              await era.print(`……`); // :1666
+              await era.print(moan_front + moan_act + moan_pat + `」`); // :1664
+            } else if (rand_n(2) == 0) {
+              // :1667
               if (rand_n(2) == 0) {
-                // :1667
-                await era.print(`再激烈一点…`); // :1668
-                if (rand_n(2) == 0) {
-                  // :1669
-                  await era.printAndWait(`才好啊${heart(3)}」`); // :1670
-                } else {
-                  // :1670-1671
-                  await era.printAndWait(`更喜欢…${heart(3)}」`); // :1672
-                } // :1672-1673
-              } else {
-                // :1674-1675
-                // :1675+:1677+:1679+:1681 原作是一整行：无后缀 PRINT 连续
-                // 不换行，末行 PRINTFORMW 才收行（#625）
+                // :1669
                 await era.printAndWait(
+                  `「哈啊…请您` +
+                    (act_is_insert
+                      ? `抽插${sc()}的时候`
+                      : `侵犯${sc()}的时候`) +
+                    `${heart(1)}` +
+                    `……` +
+                    `再激烈一点…` +
+                    `才好啊${heart(3)}」`,
+                ); // :1656+:1658+:1660+:1662+:1664+:1666+:1668+:1670
+              } else {
+                // :1670-1671
+                await era.printAndWait(
+                  moan_front +
+                    moan_act +
+                    moan_pat +
+                    `……` +
+                    moan_hot +
+                    `更喜欢…${heart(3)}」`,
+                ); // :1672
+              } // :1672-1673
+            } else {
+              // :1674-1675
+              // :1675+:1677+:1679+:1681 同属 :1656 那一行的另一支（#625）
+              await era.printAndWait(
+                moan_front +
+                  moan_act +
+                  moan_pat +
+                  `……` +
                   `把${sc()}` +
-                    (rand_n(2) == 0 ? `弄得乱七八糟的` : `插得更加乱七八糟`) +
-                    `${heart(3)}」`,
-                ); // :1675+:1677+:1679+:1681
-              } // :1679-1682
-            } // :1679-1683
+                  (rand_n(2) == 0 ? `弄得乱七八糟的` : `插得更加乱七八糟`) +
+                  `${heart(3)}」`,
+              ); // :1675+:1677+:1679+:1681
+            } // :1679-1682
           } else if (rand_n(2) == 0) {
             // :1684
             await era.print(`「别……」`); // :1685
@@ -2082,34 +2099,34 @@ async function kojo_message_com_13(rand) {
           await era.printAndWait(`「真的……像狗一样……」`); // :1707
         } else if (rand_n(2) == 0) {
           // :1708
-          await era.print(`「有感觉了什么的……`); // :1709
+          // :1709 的 `PRINT 「有感觉了什么的……` 是三条互斥 PRINTW 终点共同的
+          // 前缀行（无后缀不换行）：前缀提到语句外当局部量，各支只锚自己那一支
+          // 的行号；前缀行归第一支的拼接锚（普查的「前缀 + 文本序第一支」组要能
+          // 清）（#625）
+          const moan_front_1709 = `「有感觉了什么的……`; // :1709
           if (rand_n(3) == 0) {
             // :1710
-            await era.printAndWait(`」`); // :1711
+            await era.printAndWait(`「有感觉了什么的……」`); // :1709+:1711
           } else if (rand_n(2) == 0) {
             // :1712
-            await era.printAndWait(`怎么可能……」`); // :1713
+            await era.printAndWait(moan_front_1709 + `怎么可能……」`); // :1713
           } else {
             // :1713-1714
-            await era.printAndWait(`啊啊${heart(1)}」`); // :1715
+            await era.printAndWait(moan_front_1709 + `啊啊${heart(1)}」`); // :1715
           } // :1715-1716
         } else {
           // :1715-1717
-          if (rand_n(3) == 0) {
-            // :1718
-            await era.print(`「这副模样……`); // :1719
-          } else {
-            // :1719-1720
-            await era.print(`「`); // :1721
-          } // :1721-1722
-          await era.print(`好羞耻……`); // :1723
-          if (rand_n(3) == 0) {
-            // :1724
-            await era.printAndWait(`啊啊${heart(3)}」`); // :1725
-          } else {
-            // :1725-1726
-            await era.printAndWait(`」`); // :1727
-          } // :1725-1728
+          // :1719/:1721 是两条互斥的前缀行，与 :1723 的正文和 :1725/:1727 两条
+          // 互斥收行尾段同属一行。两处抽签（:1718 与 :1724）按原作先后一次抽完，
+          // 前缀与尾段提到语句外当局部量，整行归普查那一组（:1719..:1725）的
+          // 拼接锚，字面量留在输出语句里（#625）
+          const shame_if = rand_n(3) == 0; // :1718 头部抽签
+          const shame_heart = rand_n(3) == 0; // :1724 收尾抽签
+          await era.printAndWait(
+            (shame_if ? `「这副模样……` : `「`) +
+              `好羞耻……` +
+              (shame_heart ? `啊啊${heart(3)}」` : `」`),
+          ); // :1719+:1721+:1723+:1725
         } // :1725-1729
         // CFLAG:322  = 3（变量语义：CFLAG 族，322） // :1730
         kojo.背后位 = 3; // :1730
@@ -7368,7 +7385,7 @@ async function ntr_koujo_k13(rand, P) {
       // 提到语句外当取值，文本留在输出语句里（#625）
       const has_hymen = era0(`talent:${target}:157`);
       await era.print(
-        `「昂${heart(1)}` +
+        `「昂${heart(1)}　` +
           (has_hymen ? `比那个人、` : '') +
           `比魔王大人${heart(3)}」`,
       ); // :5593+:5595+:5596
