@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2406; // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2432; // #622 起 +26（M12500-M12525：K8 的 26 处「原作同一行被拆」的合并点各一条「拆回多条」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -13397,11 +13397,18 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '推进到 2',
   },
   {
-    desc: 'M1906 K8 SELECTCOM 45 口塞開始時 TEQUIP:43 分岔丢失（首档恒不进已戴分支，#239）',
+    desc: 'M1906 K8 SELECTCOM 45 口塞開始時 TEQUIP:43 分岔丢失（首档恒不进已戴分支，#239；#622 起靶在拼接语句上）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '      await era.print(`${target_name}自己戴上了口枷`); // :4383\n      if (era0(`tequip:${target}:43`)) {\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4385',
+    find:
+      '      if (era0(`tequip:${target}:43`)) {\n' +
+      '        await era.printAndWait(\n' +
+      '          `${target_name}自己戴上了口枷` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4383+:4385',
     replace:
-      '      await era.print(`${target_name}自己戴上了口枷`); // :4383\n      if (false) {\n        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // :4385',
+      '      if (false) {\n' +
+      '        await era.printAndWait(\n' +
+      '          `${target_name}自己戴上了口枷` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4383+:4385（变异：首档判定删除）',
     tests: ['kojo-k8-spade'],
     must_mention: '嘴的缝隙里',
   },
@@ -13595,11 +13602,18 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '咕…输给你了',
   },
   {
-    desc: 'M1930 K8 COLOSSEUM_KOJO_8 SC31 口交 阴茎判定失效（TALENT:121/122 改 == 9，#239）',
+    desc: 'M1930 K8 COLOSSEUM_KOJO_8 SC31 口交 阴茎判定失效（TALENT:121/122 改 == 9，#239；#622 起靶在语句外的取值变量上）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '      if (era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1) {\n        await era.print(`阴茎`); // :7353',
+    find:
+      '      // :7351+:7353+:7355+:7356 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n' +
+      '      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里\n' +
+      '      const assi_has_penis =\n' +
+      '        era0(`talent:${assi}:121`) == 1 || era0(`talent:${assi}:122`) == 1;',
     replace:
-      '      if (era0(`talent:${assi}:121`) == 9 || era0(`talent:${assi}:122`) == 9) {\n        await era.print(`阴茎`); // :7353（变异）',
+      '      // :7351+:7353+:7355+:7356 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT\n' +
+      '      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里\n' +
+      '      const assi_has_penis =\n' +
+      '        era0(`talent:${assi}:121`) == 9 || era0(`talent:${assi}:122`) == 9; // 变异：判定失效',
     tests: ['kojo-k8-spade'],
     must_mention: '阴茎',
   },
@@ -14027,10 +14041,14 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'NTR：P==2 陥落済支六行 + CFLAG:652',
   },
   {
-    desc: 'M1982 K8 NTR P==1 それ以外支的按摩棒串成巨根（#239）',
+    desc: 'M1982 K8 NTR P==1 それ以外支的按摩棒串成巨根（#239；#622 起靶在同一条输出的取值三元上）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '        await era.print(`特大号的按摩棒`); // :7472',
-    replace: '        await era.print(`狂王的巨根`); // :7472（变异：串支）',
+    find:
+      '          (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n' +
+      '          `深深的插了进去。破瓜之血从秘裂里流了出来。`,',
+    replace:
+      '          (futa() ? `特大号的按摩棒` : `狂王的巨根`) +\n' +
+      '          `深深的插了进去。破瓜之血从秘裂里流了出来。`, // 变异：串支',
     tests: ['kojo-k8-spade'],
     must_mention: 'FLAG:500==1 走按摩棒',
   },
@@ -14136,10 +14154,11 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: 'CFLAG:504==3 兽奸要求',
   },
   {
-    desc: 'M1995 K8 GOHOUBI_REQUEST 兽名串档（猪 → 犬，#239）',
+    desc: 'M1995 K8 GOHOUBI_REQUEST 兽名串档（猪 → 犬，#239；#622 起靶在同一条输出的取值三元上）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: '      await era.print(`猪`); // :7748',
-    replace: '      await era.print(`犬`); // :7748（变异：串档）',
+    find: "        (gohoubi == 1 ? `犬` : gohoubi == 2 ? `猪` : gohoubi == 3 ? `马` : '') +",
+    replace:
+      "        (gohoubi == 1 ? `犬` : gohoubi == 2 ? `犬` : gohoubi == 3 ? `马` : '') + // 变异：串档",
     tests: ['kojo-k8-spade'],
     must_mention: 'CFLAG:504==2 兽奸要求',
   },
@@ -21715,16 +21734,24 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '拼接「假阳具」',
   },
   {
-    desc: 'M11606 K8 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    desc: 'M11606 K8 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552；#622 起靶在语句外的取值变量上）',
     file: 'ere/kojo/kojo-k8-spade.js',
-    find: `        era0(\`talent:\${assi}:122\`) != 1 &&
-        era0('item:4') == 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        await era.print(\`假阴茎\`); // :7355`,
-    replace: `        era0(\`talent:\${assi}:122\`) != 1 &&
-        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址（#552）
-      ) {
-        await era.print(\`假阴茎\`); // :7355`,
+    find: `      // :7351+:7353+:7355+:7356 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT
+      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里
+      const assi_has_penis =
+        era0(\`talent:\${assi}:121\`) == 1 || era0(\`talent:\${assi}:122\`) == 1;
+      const assi_has_strap =
+        era0(\`talent:\${assi}:121\`) != 1 &&
+        era0(\`talent:\${assi}:122\`) != 1 &&
+        era0('item:4') == 1;`,
+    replace: `      // :7351+:7353+:7355+:7356 原作是一整行：无后缀 PRINTFORM + 两条 SIF 的 PRINT
+      // + 收行的 PRINTFORMW（#622）。SIF 判据提到语句外当条件、文本留在输出语句里
+      const assi_has_penis =
+        era0(\`talent:\${assi}:121\`) == 1 || era0(\`talent:\${assi}:122\`) == 1;
+      const assi_has_strap =
+        era0(\`talent:\${assi}:121\`) != 1 &&
+        era0(\`talent:\${assi}:122\`) != 1 &&
+        era0('item:PBAND') == 1; // 变异：回退字符串具名寻址（#552）`,
     tests: ['kojo-k8-spade'],
     must_mention: '拼接「假阴茎」',
   },
@@ -22718,5 +22745,467 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '  era.print(level); // 变异：拆回',
     tests: ['kojo-dungeon-bitch'],
     must_mention: 'SHOW_BUTTON_BICH_LEVEL',
+  },
+  // —— #622：口上剩余拆行第 B 组（kojo-k8-spade.js 26 处「原作同一行被拆」的
+  // 合并点，各配一条「拆回多条」变异；每组一条，M12500-M12525。整行文本断言见
+  // test/kojo-k8-spade.test.js 同名用例） ——
+  {
+    desc: 'M12500 K8 爱慕+魔族化·调教前从魔族（:278+:279）拆回两条（#622：SIF 的「全裸的」又占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      "          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n" +
+      '            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n' +
+      '        ); // :278+:279',
+    replace:
+      '        if (chara(target).train.着衣状态 == 0) {\n' +
+      '          await era.print(`全裸的`); // 变异：拆回\n' +
+      '        }\n' +
+      '        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: '爱慕+魔族化（调教前从魔族',
+  },
+  {
+    desc: 'M12501 K8 爱慕+魔族化·调教后从魔族（:301+:302）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      "          (chara(target).train.着衣状态 == 0 ? `全裸的` : '') +\n" +
+      '            `${target_name}单膝跪地，好像是在等待着${player_name}。`,\n' +
+      '        ); // :301+:302',
+    replace:
+      '        if (chara(target).train.着衣状态 == 0) {\n' +
+      '          await era.print(`全裸的`); // 变异：拆回\n' +
+      '        }\n' +
+      '        await era.printAndWait(`${target_name}单膝跪地，好像是在等待着${player_name}。`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: '爱慕+魔族化（调教后从魔族',
+  },
+  {
+    desc: 'M12502 K8 二回目·メイド服的内衣色（:671+:678）拆回三条（#622：PRINTDATA 的随机色又占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}把裙子卷了起来露出内衣。今日的内衣的颜色是` +\n' +
+      "            ['白', '赤', '黑', '青'][rand_n(4)] +\n" +
+      '            `的样子。`,\n' +
+      '        ); // :671+:678',
+    replace:
+      '        await era.print(`${target_name}把裙子卷了起来露出内衣。今日的内衣的颜色是`); // 变异：拆回\n' +
+      "        await era.print(['白', '赤', '黑', '青'][rand_n(4)]); // 变异：拆回\n" +
+      '        await era.printAndWait(`的样子。`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: 'メイド服',
+  },
+  {
+    desc: 'M12503 K8 口塞·淫乱＋受虐狂Lv5以上（:4383+:4385）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}自己戴上了口枷` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4383+:4385',
+    replace:
+      '        await era.print(`${target_name}自己戴上了口枷`); // 变异：拆回\n' +
+      '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: '眼罩已戴：:4383+:4385 是一行',
+  },
+  {
+    desc: 'M12504 K8 口塞·淫乱＋受虐狂Lv3以上（:4393+:4395）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4393+:4395',
+    replace:
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n' +
+      '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4393+:4395',
+  },
+  {
+    desc: 'M12505 K8 口塞·淫乱（:4403+:4405）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}被戴上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4403+:4405',
+    replace:
+      '        await era.print(`${target_name}被戴上了口塞`); // 变异：拆回\n' +
+      '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4403+:4405',
+  },
+  {
+    desc: 'M12506 K8 口塞·爱＋受虐狂Lv5以上（:4413+:4415）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4413+:4415',
+    replace:
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n' +
+      '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4413+:4415',
+  },
+  {
+    desc: 'M12507 K8 口塞·爱＋受虐狂Lv3以上（:4423+:4425）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4423+:4425',
+    replace:
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n' +
+      '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4423+:4425',
+  },
+  {
+    desc: 'M12508 K8 口塞·爱慕（:4433+:4435）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4433+:4435',
+    replace:
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n' +
+      '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4433+:4435',
+  },
+  {
+    desc: 'M12509 K8 口塞·受虐狂Lv3以上（:4443+:4445）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,\n' +
+      '        ); // :4443+:4445',
+    replace:
+      '        await era.print(`${target_name}被按上了口塞`); // 变异：拆回\n' +
+      '        await era.printAndWait(`嘴的缝隙里，漏出了灼热的吐息………`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4443+:4445',
+  },
+  {
+    desc: 'M12510 K8 交谈·初めて·求爱档（:4649+:4651）拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '          await era.print(\n' +
+      '            `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n' +
+      '          ); // :4649+:4651',
+    replace:
+      '          await era.print(`${player_name}`); // 变异：拆回\n' +
+      '          await era.print(\n' +
+      '            `刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n' +
+      '          ); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4649+:4651 是一行',
+  },
+  {
+    desc: 'M12511 K8 交谈·二回目·求爱档（:4700+:4702）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.print(\n' +
+      '          `${player_name}刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n' +
+      '        ); // :4700+:4702',
+    replace:
+      '        await era.print(`${player_name}`); // 变异：拆回\n' +
+      '        await era.print(\n' +
+      '          `刚和她交谈了几句、${target_name}就一边晃着腰一边说出了求爱的话语`,\n' +
+      '        ); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4700+:4702 是一行',
+  },
+  {
+    desc: 'M12512 K8 交谈·初めて·视频自我介绍（:4633+:4635+:4636）拆回三条（#622：SIF 段又占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}把自己的本名和至今为止的性经验` +\n' +
+      "              (masturbation ? `甚至自慰时妄想的内容都` : '') +\n" +
+      '              `微笑的娓娓道来……`,\n' +
+      '          ); // :4633+:4635+:4636',
+    replace:
+      '          await era.print(`${target_name}把自己的本名和至今为止的性经验`); // 变异：拆回\n' +
+      '          if (masturbation) {\n' +
+      '            await era.print(`甚至自慰时妄想的内容都`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`微笑的娓娓道来……`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4633+:4635+:4636 是一行',
+  },
+  {
+    desc: 'M12513 K8 交谈·二回目·视频自我介绍（:4684+:4686+:4687）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.print(\n' +
+      '          `${target_name}把自己的本命和至今为止的性经验` +\n' +
+      "            (masturbation ? `、甚至自慰时妄想的内容都` : '') +\n" +
+      '            `一边微笑一边喋喋不休的讲着……`,\n' +
+      '        ); // :4684+:4686+:4687',
+    replace:
+      '        await era.print(`${target_name}把自己的本命和至今为止的性经验`); // 变异：拆回\n' +
+      '        if (masturbation) {\n' +
+      '          await era.print(`、甚至自慰时妄想的内容都`); // 变异：拆回\n' +
+      '        }\n' +
+      '        await era.print(`一边微笑一边喋喋不休的讲着……`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4684+:4686+:4687 是一行',
+  },
+  {
+    desc: 'M12514 K8 交谈·初めて·装备档（:4655+:4657+:4659+:4661）拆回多条（#622：快乐/痛苦又各占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '          await era.print(\n' +
+      '            talk_prefix +\n' +
+      '              `刚和她交谈了几句、${target_name}就一边发出着` +\n' +
+      "              (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n" +
+      '              `声音，一边拼命忍耐着的回着话`,\n' +
+      '          ); // :4655+:4657+:4659+:4661',
+    replace:
+      '          await era.print(\n' +
+      '            talk_prefix + `刚和她交谈了几句、${target_name}就一边发出着`,\n' +
+      '          ); // 变异：拆回\n' +
+      '          if (equip_pleasure) {\n' +
+      '            await era.print(`快乐的`); // 变异：拆回\n' +
+      '          } else if (equip_pain) {\n' +
+      '            await era.print(`痛苦的`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`声音，一边拼命忍耐着的回着话`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4649+:4655..:4661 是一行',
+  },
+  {
+    desc: 'M12515 K8 交谈·二回目·装备档（:4706+:4708+:4710+:4712）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '        await era.print(\n' +
+      '          talk_prefix +\n' +
+      '            `刚和她交谈了几句、${target_name}就一边发出着` +\n' +
+      "            (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n" +
+      '            `声音、一边拼命忍耐着的回着话`,\n' +
+      '        ); // :4706+:4708+:4710+:4712',
+    replace:
+      '        await era.print(\n' +
+      '          talk_prefix + `刚和她交谈了几句、${target_name}就一边发出着`,\n' +
+      '        ); // 变异：拆回\n' +
+      '        if (equip_pleasure) {\n' +
+      '          await era.print(`快乐的`); // 变异：拆回\n' +
+      '        } else if (equip_pain) {\n' +
+      '          await era.print(`痛苦的`); // 变异：拆回\n' +
+      '        }\n' +
+      '        await era.print(`声音、一边拼命忍耐着的回着话`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':4700+:4706..:4712 是一行',
+  },
+  {
+    desc: 'M12516 K8 死斗场·SC31 助手（:7351+:7353+:7355+:7356）拆回多条（#622：部位词又各占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}因为` +\n' +
+      "          (assi_has_penis ? `阴茎` : '') +\n" +
+      "          (assi_has_strap ? `假阴茎` : '') +\n" +
+      '          `被${target_name}舔着而露出了心旷神怡的表情……`,\n' +
+      '      ); // :7351+:7353+:7355+:7356',
+    replace:
+      '      await era.print(`${assi_name}因为`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`阴茎`); // 变异：拆回\n' +
+      '      }\n' +
+      '      if (assi_has_strap) {\n' +
+      '        await era.print(`假阴茎`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`被${target_name}舔着而露出了心旷神怡的表情……`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7351+:7353+:7355+:7356 是一行',
+  },
+  {
+    desc: 'M12517 K8 死斗场·SC21 助手（:7386+:7388+:7390+:7391）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着${target_name}的悲鸣用` +\n' +
+      "          (assi_has_penis ? `阴茎` : '') +\n" +
+      "          (assi_has_strap ? `假阴茎` : '') +\n" +
+      '          `毫不留情的蹂躏着${target_name}的腔内。`,\n' +
+      '      ); // :7386+:7388+:7390+:7391',
+    replace:
+      '      await era.print(`${assi_name}一边听着${target_name}的悲鸣用`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`阴茎`); // 变异：拆回\n' +
+      '      }\n' +
+      '      if (assi_has_strap) {\n' +
+      '        await era.print(`假阴茎`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`毫不留情的蹂躏着${target_name}的腔内。`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7386..:7391 是一行',
+  },
+  {
+    desc: 'M12518 K8 死斗场·SC27 助手（:7413+:7415+:7417+:7418）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着${target_name}的悲鸣。一边用` +\n' +
+      "          (assi_has_penis ? `阴茎` : '') +\n" +
+      "          (assi_has_strap ? `假阴茎` : '') +\n" +
+      '          `一般毫不留情的继续蹂躏着${target_name}的肛门。`,\n' +
+      '      ); // :7413+:7415+:7417+:7418',
+    replace:
+      '      await era.print(`${assi_name}一边听着${target_name}的悲鸣。一边用`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`阴茎`); // 变异：拆回\n' +
+      '      }\n' +
+      '      if (assi_has_strap) {\n' +
+      '        await era.print(`假阴茎`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`一般毫不留情的继续蹂躏着${target_name}的肛门。`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7413..:7418 是一行',
+  },
+  {
+    desc: 'M12519 K8 NTR·P==1 陥落済（:7460+:7462+:7464）拆回两条（#622：武器名又占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (futa() ? `然后、狂王的巨根` : `然后、特大号的按摩棒`) +\n' +
+      '          `慢慢的插进了${target_name}的秘裂。在镜头下${target_name}还不知道男人的蜜壶被插进了深处。`,\n' +
+      '      ); // :7460+:7462+:7464',
+    replace:
+      '      if (futa()) {\n' +
+      '        await era.print(`然后、狂王的巨根`); // 变异：拆回\n' +
+      '      } else {\n' +
+      '        await era.print(`然后、特大号的按摩棒`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(\n' +
+      '        `慢慢的插进了${target_name}的秘裂。在镜头下${target_name}还不知道男人的蜜壶被插进了深处。`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7460+:7462+:7464 是一行',
+  },
+  {
+    desc: 'M12520 K8 NTR·P==1 それ以外（:7468+:7470+:7472+:7474）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `还是处女的${target_name}的秘裂被` +\n' +
+      '          (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n' +
+      '          `深深的插了进去。破瓜之血从秘裂里流了出来。`,\n' +
+      '      ); // :7468+:7470+:7472+:7474',
+    replace:
+      '      await era.print(`还是处女的${target_name}的秘裂被`); // 变异：拆回\n' +
+      '      if (futa()) {\n' +
+      '        await era.print(`狂王的巨根`); // 变异：拆回\n' +
+      '      } else {\n' +
+      '        await era.print(`特大号的按摩棒`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`深深的插了进去。破瓜之血从秘裂里流了出来。`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7468..:7474 是一行',
+  },
+  {
+    desc: 'M12521 K8 NTR·P==2 陥落済（:7488+:7490+:7492）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n' +
+      '          `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n' +
+      '      ); // :7488+:7490+:7492',
+    replace:
+      '      if (futa()) {\n' +
+      '        await era.print(`狂王的巨根`); // 变异：拆回\n' +
+      '      } else {\n' +
+      '        await era.print(`特大号的按摩棒`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(\n' +
+      '        `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7488+:7490+:7492 是一行',
+  },
+  {
+    desc: 'M12522 K8 NTR·P==2 それ以外（:7496+:7498+:7500）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n' +
+      '          `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n' +
+      '      ); // :7496+:7498+:7500',
+    replace:
+      '      if (futa()) {\n' +
+      '        await era.print(`狂王的巨根`); // 变异：拆回\n' +
+      '      } else {\n' +
+      '        await era.print(`特大号的按摩棒`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(\n' +
+      '        `在${target_name}的肛门里转动着、${target_name}露出了喘息的声音………`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7496+:7498+:7500 是一行',
+  },
+  {
+    desc: 'M12523 K8 NTR·P==4 淫乱（:7521+:7523+:7525）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n' +
+      '          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了野兽一样的喘息。`,\n' +
+      '      ); // :7521+:7523+:7525',
+    replace:
+      '      if (futa()) {\n' +
+      '        await era.print(`狂王的巨根`); // 变异：拆回\n' +
+      '      } else {\n' +
+      '        await era.print(`特大号的按摩棒`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(\n' +
+      '        `不停的侵犯着${target_name}的蜜壶、${target_name}发出了野兽一样的喘息。`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7521+:7523+:7525 是一行',
+  },
+  {
+    desc: 'M12524 K8 NTR·P==4 それ以外（:7532+:7534+:7536）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        (futa() ? `狂王的巨根` : `特大号的按摩棒`) +\n' +
+      '          `不停的侵犯着${target_name}的蜜壶、${target_name}发出了逞强的声音。`,\n' +
+      '      ); // :7532+:7534+:7536',
+    replace:
+      '      if (futa()) {\n' +
+      '        await era.print(`狂王的巨根`); // 变异：拆回\n' +
+      '      } else {\n' +
+      '        await era.print(`特大号的按摩棒`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(\n' +
+      '        `不停的侵犯着${target_name}的蜜壶、${target_name}发出了逞强的声音。`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7532+:7534+:7536 是一行',
+  },
+  {
+    desc: 'M12525 K8 迎击奖赏·兽奸要求（:7744..:7752）拆回多条（#622：兽名又占一行）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `「我呢，想要和` +\n' +
+      "        (gohoubi == 1 ? `犬` : gohoubi == 2 ? `猪` : gohoubi == 3 ? `马` : '') +\n" +
+      '        `交尾的那种${heart(1)}」`,\n' +
+      '    ); // :7744+:7746+:7748+:7750+:7752',
+    replace:
+      '    await era.print(`「我呢，想要和`); // 变异：拆回\n' +
+      '    if (gohoubi == 1) {\n' +
+      '      await era.print(`犬`); // 变异：拆回\n' +
+      '    } else if (gohoubi == 2) {\n' +
+      '      await era.print(`猪`); // 变异：拆回\n' +
+      '    } else if (gohoubi == 3) {\n' +
+      '      await era.print(`马`); // 变异：拆回\n' +
+      '    }\n' +
+      '    await era.printAndWait(`交尾的那种${heart(1)}」`); // 变异：拆回',
+    tests: ['kojo-k8-spade'],
+    must_mention: ':7744..:7752 是一行',
   },
 ];
