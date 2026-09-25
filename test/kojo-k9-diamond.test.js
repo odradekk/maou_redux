@@ -734,32 +734,67 @@ test('#623 交谈录像：自我介绍整行合并（:4424+:4426+:4427 / :4475+:
   }
 });
 
-test('#623 交谈：首支与第三支并入整行，其余支前缀单独一行（:4440+:4442 / :4446.. / :4491+:4493 / :4497..）', async () => {
+test('#623 交谈：六支各自并入前缀整行（:4440+:4442 / :4446.. / :4491+:4493 / :4497..）', async () => {
   for (const replay of [false, true]) {
-    // PALAMLV[4] 是内建常量 10000（era-utils/palam-level）
-    const seed_base = (f) => {
-      if (replay) f.store.set('cflag:20:357', 9);
-      f.store.set('palam:20:4', 10000);
-      f.store.set('palam:20:5', 10000);
-      f.store.set('tflag:60', 1);
-    };
-    // 首支：欲情 >= PALAMLV:4 && (TALENT:85 || ABL:10 >= 5) && 插着不拔
-    const first = await setup_k9((f) => {
-      seed_base(f);
-      f.store.set('talent:20:85', 1);
-    }, 56);
-    await speak_k9(first, () => 0);
-    assert.ok(
-      first
-        .text_lines()
-        .includes('你向她搭话后、黑方片晃动着腰部继续说着充满爱意的话语'),
-      `${replay ? '二回目' : '初回'} 首支：并入 :4440/:4491 前缀的整行`,
-    );
-    assert.equal(
-      first.text_lines().filter((l) => l === '你向她').length,
-      0,
-      '首支并入后前缀不得再单独成行',
-    );
+    const phase = replay ? '二回目' : '初回';
+    // PALAMLV[4] 是内建常量 10000、PALAMLV[2] = 500（era-utils/palam-level）；
+    // :4440 / :4491 的无后缀 PRINTFORM 前缀提到语句外，六支都拼它（#623）
+    const merge_cases = [
+      {
+        // 首支：PALAM:5 >= PALAMLV:4 && (TALENT:85 || ABL:10 >= 5) && TFLAG:60
+        label: '首支',
+        seed: (f) => {
+          f.store.set('palam:20:5', 10000);
+          f.store.set('tflag:60', 1);
+          f.store.set('talent:20:85', 1);
+        },
+        expected: '你向她搭话后、黑方片晃动着腰部继续说着充满爱意的话语',
+      },
+      {
+        // 第二支：PALAM:5 >= PALAMLV:4 && (TALENT:76 || ABL:11 >= 5) && TFLAG:60
+        label: '第二支',
+        seed: (f) => {
+          f.store.set('palam:20:5', 10000);
+          f.store.set('tflag:60', 1);
+          f.store.set('talent:20:76', 1);
+        },
+        expected: '你向她搭话后、黑方片晃动着腰继续说着卑劣的话语',
+      },
+      {
+        // 第四支：PALAM:4 >= PALAMLV:4 || TALENT:85 || ABL:10 >= 5
+        label: '第四支',
+        seed: (f) => f.store.set('palam:20:4', 10000),
+        expected: '你向她搭话后、黑方片如同打发无聊地一样喋喋不休地回起话来了',
+      },
+      {
+        // 第五支：PALAM:4 >= PALAMLV:2 || ABL:10 >= 3
+        label: '第五支',
+        seed: (f) => f.store.set('palam:20:4', 500),
+        expected: '你向她搭话后、黑方片一点一点地说起话来了，',
+      },
+      {
+        // 第六支（ELSE）：其余条件全不成立
+        label: '第六支',
+        seed: () => {},
+        expected: '你向她搭话后、然而黑方片完全没有听进去的样子…',
+      },
+    ];
+    for (const item of merge_cases) {
+      const fixture = await setup_k9((f) => {
+        if (replay) f.store.set('cflag:20:357', 9);
+        item.seed(f);
+      }, 56);
+      await speak_k9(fixture, () => 0);
+      assert.ok(
+        fixture.text_lines().includes(item.expected),
+        `${phase} ${item.label}：并入 :4440/:4491 前缀的整行`,
+      );
+      assert.equal(
+        fixture.text_lines().filter((l) => l === '你向她').length,
+        0,
+        `${phase} ${item.label}：前缀不得再单独成行`,
+      );
+    }
 
     // 第三支：PALAM:4 >= PALAMLV:4 && PALAM:5 >= PALAMLV:4，两互斥插入段三档
     const cases = [
@@ -769,7 +804,9 @@ test('#623 交谈：首支与第三支并入整行，其余支前缀单独一行
     ];
     for (const item of cases) {
       const fixture = await setup_k9((f) => {
-        seed_base(f);
+        if (replay) f.store.set('cflag:20:357', 9);
+        f.store.set('palam:20:4', 10000);
+        f.store.set('palam:20:5', 10000);
         f.store.set('tflag:60', 0);
         if (item.tequip !== undefined)
           f.store.set(`tequip:20:${item.tequip}`, 1);
@@ -779,14 +816,14 @@ test('#623 交谈：首支与第三支并入整行，其余支前缀单独一行
         fixture
           .text_lines()
           .includes(
-            `搭话后、黑方片就发出了${item.word}娇喘声，拼命地回起话来了。`,
+            `你向她搭话后、黑方片就发出了${item.word}娇喘声，拼命地回起话来了。`,
           ),
-        `${replay ? '二回目' : '初回'} tequip=${item.tequip}：第三支并入整行`,
+        `${phase} tequip=${item.tequip}：第三支并入整行`,
       );
       assert.equal(
         fixture.text_lines().filter((l) => l === '你向她').length,
-        1,
-        '第三支的 :4440/:4491 前缀仍单独一行',
+        0,
+        `${phase} tequip=${item.tequip}：前缀不得再单独成行`,
       );
     }
   }

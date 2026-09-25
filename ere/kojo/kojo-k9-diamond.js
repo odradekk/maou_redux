@@ -8485,7 +8485,7 @@ async function kojo_message_com_9(rand) {
       } else {
         // :4153-4162
         await era.printAndWait(`「这是什么啊…嗯唔~…嗯~…嗯呜~~！」`); // :4154
-        // :4155+:4157 与 :4146+:4148 同型（ELSE 支 :4159 保持前缀单独一行，#623）
+        // :4155+:4157 与 :4146+:4148 同型（两支都拼前缀，#623）
         // :4155 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -8513,7 +8513,7 @@ async function kojo_message_com_9(rand) {
         await era.printAndWait(
           `「啊啊…是要做要发出很大声悲鸣的事情对吧…${heart(1)} 嗯噗…嗯~………」`,
         ); // :4168
-        // :4169+:4171 与初回 :4146+:4148 同型（ELSE 支 :4173 保持前缀单独一行，#623）
+        // :4169+:4171 与初回 :4146+:4148 同型（两支都拼前缀，#623）
         // :4169 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -8536,7 +8536,7 @@ async function kojo_message_com_9(rand) {
         await era.printAndWait(
           `「啊啊…是要做要发出很大声悲鸣的事情对吧…${heart(1)} 嗯噗…嗯~………」`,
         ); // :4178
-        // :4179+:4181 与 :4146+:4148 同型（ELSE 支 :4183 保持前缀单独一行，#623）
+        // :4179+:4181 与 :4146+:4148 同型（两支都拼前缀，#623）
         // :4179 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -8568,7 +8568,7 @@ async function kojo_message_com_9(rand) {
       ) {
         // :4192
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`); // :4193
-        // :4194+:4196 与 :4146+:4148 同型（ELSE 支 :4198 保持前缀单独一行，#623）
+        // :4194+:4196 与 :4146+:4148 同型（两支都拼前缀，#623）
         // :4194 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -8589,7 +8589,7 @@ async function kojo_message_com_9(rand) {
       ) {
         // :4202
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`); // :4203
-        // :4204+:4206 与 :4146+:4148 同型（ELSE 支 :4208 保持前缀单独一行，#623）
+        // :4204+:4206 与 :4146+:4148 同型（两支都拼前缀，#623）
         // :4204 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -8609,7 +8609,7 @@ async function kojo_message_com_9(rand) {
       ) {
         // :4212
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`); // :4213
-        // :4214+:4216 与 :4146+:4148 同型（ELSE 支 :4218 保持前缀单独一行，#623）
+        // :4214+:4216 与 :4146+:4148 同型（两支都拼前缀，#623）
         // :4214 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -8629,7 +8629,7 @@ async function kojo_message_com_9(rand) {
       ) {
         // :4222
         await era.printAndWait(`「哈啊…哈啊…要被束缚起来了呀………♪」`); // :4223
-        // :4224+:4226 与 :4146+:4148 同型（ELSE 支 :4228 保持前缀单独一行，#623）
+        // :4224+:4226 与 :4146+:4148 同型（两支都拼前缀，#623）
         // :4224 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -8646,7 +8646,7 @@ async function kojo_message_com_9(rand) {
       } else if (kojo.口塞 <= 1 || game.kojo.口上开关 == 2) {
         // :4232
         await era.printAndWait(`「这是什么啊…嗯唔~…嗯~…嗯呜~~！」`); // :4233
-        // :4234+:4236 与 :4146+:4148 同型（ELSE 支 :4238 保持前缀单独一行，#623）
+        // :4234+:4236 与 :4146+:4148 同型（两支都拼前缀，#623）
         // :4234 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
         // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
@@ -9026,22 +9026,21 @@ async function kojo_message_com_9(rand) {
         } // :4438-4440
       } else {
         // :4439-4440
-        // :4440+:4442 原作是一整行：:4440 的 PRINTFORM 不换行、:4442 的
-        // PRINTFORML 收行。其余 ELSEIF 支与 :4440 同属一行，但那几支的末行
-        // 自带换行，拼接锚只容一个末行——本票只并把普查指出的首支（#623）
+        // :4440+:4442 原作是一整行：:4440 的 PRINTFORM 不换行，六支的
+        // PRINTFORML 各自收行。前缀提到语句外共用——各支语句只列本支行号，
+        // 前缀留在里面会被保真锁 C 当成多出来的插值记号（#623）
         const spoke_first =
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:85`) ||
             era.get(`abl:${target}:10`) >= 5) &&
           game.event.插着不拔;
-        if (!spoke_first) {
-          await era.print(`${player_name}向她`); // :4440
-        }
+        const line_head = `${player_name}向她`; // :4440
         if (spoke_first) {
           // :4440-4441
           await era.print(
-            `${player_name}向她搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,
-          ); // :4440+:4442
+            line_head +
+              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,
+          ); // :4442
         } else if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) ||
@@ -9049,7 +9048,9 @@ async function kojo_message_com_9(rand) {
           game.event.插着不拔
         ) {
           // :4440-4443
-          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // :4444
+          await era.print(
+            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,
+          ); // :4444
         } else if (
           (era.get(`palam:${target}:4`) >= PALAMLV[4] ||
             era.get(`abl:${target}:10`) >= 5 ||
@@ -9070,7 +9071,8 @@ async function kojo_message_com_9(rand) {
           const painful =
             era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`); // :4440-4449
           await era.print(
-            `搭话后、${target_name}就发出了` +
+            line_head +
+              `搭话后、${target_name}就发出了` +
               (excited ? '快乐的' : painful ? '苦痛的' : '') +
               `娇喘声，拼命地回起话来了。`,
           ); // :4446+:4448+:4450+:4452
@@ -9081,17 +9083,22 @@ async function kojo_message_com_9(rand) {
         ) {
           // :4440-4453
           await era.print(
-            `搭话后、${target_name}如同打发无聊地一样喋喋不休地回起话来了`,
+            line_head +
+              `搭话后、${target_name}如同打发无聊地一样喋喋不休地回起话来了`,
           ); // :4454
         } else if (
           era.get(`palam:${target}:4`) >= PALAMLV[2] ||
           era.get(`abl:${target}:10`) >= 3
         ) {
           // :4455-4467
-          await era.print(`搭话后、${target_name}一点一点地说起话来了，`); // :4456
+          await era.print(
+            line_head + `搭话后、${target_name}一点一点地说起话来了，`,
+          ); // :4456
         } else {
           // :4457-4467
-          await era.print(`搭话后、然而${target_name}完全没有听进去的样子…`); // :4458
+          await era.print(
+            line_head + `搭话后、然而${target_name}完全没有听进去的样子…`,
+          ); // :4458
         } // :4459-4467
       } // :4460-4467
       // CFLAG:357  = 1（变量语义：CFLAG 族，357） // :4461-4467
@@ -9164,21 +9171,20 @@ async function kojo_message_com_9(rand) {
         } // :4489-4491
       } else {
         // :4490-4491
-        // :4491+:4493 与初回 :4440+:4442 同型：首支并入前缀，其余支保持
-        // :4491 前缀单独一行（末行自带换行、拼接锚只容一个末行，#623）
+        // :4491+:4493 与初回 :4440+:4442 同型：六支的 PRINTFORML 各自收行，
+        // 前缀提到语句外共用（#623）
         const spoke_first =
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:85`) ||
             era.get(`abl:${target}:10`) >= 5) &&
           game.event.插着不拔;
-        if (!spoke_first) {
-          await era.print(`${master_name}向她`); // :4491
-        }
+        const line_head = `${master_name}向她`; // :4491
         if (spoke_first) {
           // :4491-4492
           await era.print(
-            `${master_name}向她搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,
-          ); // :4491+:4493
+            line_head +
+              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,
+          ); // :4493
         } else if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) ||
@@ -9186,7 +9192,9 @@ async function kojo_message_com_9(rand) {
           game.event.插着不拔
         ) {
           // :4491-4494
-          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // :4495
+          await era.print(
+            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,
+          ); // :4495
         } else if (
           (era.get(`palam:${target}:4`) >= PALAMLV[4] ||
             era.get(`abl:${target}:10`) >= 5 ||
@@ -9206,7 +9214,8 @@ async function kojo_message_com_9(rand) {
           const painful =
             era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`); // :4491-4500
           await era.print(
-            `搭话后、${target_name}就发出了` +
+            line_head +
+              `搭话后、${target_name}就发出了` +
               (excited ? '快乐的' : painful ? '苦痛的' : '') +
               `娇喘声，拼命地回起话来了。`,
           ); // :4497+:4499+:4501+:4503
@@ -9217,17 +9226,22 @@ async function kojo_message_com_9(rand) {
         ) {
           // :4491-4504
           await era.print(
-            `搭话后、${target_name}如同打发无聊地一样喋喋不休地回起话来了`,
+            line_head +
+              `搭话后、${target_name}如同打发无聊地一样喋喋不休地回起话来了`,
           ); // :4505
         } else if (
           era.get(`palam:${target}:4`) >= PALAMLV[2] ||
           era.get(`abl:${target}:10`) >= 3
         ) {
           // :4506-4517
-          await era.print(`搭话后、${target_name}一点一点地说起话来了，`); // :4507
+          await era.print(
+            line_head + `搭话后、${target_name}一点一点地说起话来了，`,
+          ); // :4507
         } else {
           // :4508-4517
-          await era.print(`搭话后、然而${target_name}完全没有听进去的样子…`); // :4509
+          await era.print(
+            line_head + `搭话后、然而${target_name}完全没有听进去的样子…`,
+          ); // :4509
         } // :4510-4517
       } // :4511-4517
       return 0; // :4512-4517
