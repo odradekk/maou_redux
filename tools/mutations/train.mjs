@@ -8037,7 +8037,7 @@ export default [
     find: 'if (lv === 0) [a, b] = [1, 3];',
     replace: 'if (lv === 0) [a, b] = [2, 3];',
     tests: ['ablup'],
-    must_mention: 'EXP 门槛行前导 6 个半角空格',
+    must_mention: 'EXP 门槛行前导 6 个 NBSP+全角空格对齐',
   },
   {
     desc: 'M9930 ablup14：技巧门槛误比较 ABL:12 被"修正"为 ABL:14',
