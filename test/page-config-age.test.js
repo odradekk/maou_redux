@@ -737,7 +737,8 @@ test('#615 RACE_CONFIG 编辑头：两行正文各自成行，重画首拍是真
   assert.ok(desc, '编辑头说明行在场');
   assert.equal(
     desc.text,
-    '■ 种族 [精灵] 的年龄设定：换算成人类年龄的  10 倍',
+    // #577：宽度 4 的档位字段（`pad_left(String(cap), 4)`）补位是 NBSP
+    '■ 种族 [精灵] 的年龄设定：换算成人类年龄的\u00A0\u00A010 倍',
     '档位说明行不带尾换行',
   );
   assert.equal(lines[lines.indexOf(desc) - 1].type, 'br', ':1111 的重画首拍');
@@ -749,7 +750,9 @@ test('#615 RACE_CONFIG 编辑头：两行正文各自成行，重画首拍是真
   );
   assert.equal(
     preview.text,
-    '　 换算人类 17 岁左右  170 ～  179 岁',
+    // #577：两个年龄字段（`p4` 的宽 4 右对齐）补位是 NBSP；「左右」后的
+    // 那一格是拼接字面量里的分隔空格，不动
+    '　 换算人类 17 岁左右 \u00A0170 ～ \u00A0179 岁',
     '预览行不带尾换行',
   );
   assert.equal(
