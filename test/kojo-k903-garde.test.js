@@ -524,7 +524,7 @@ test('原作缺陷：两处重复 TALENT:74，露出狂分支误读 TALENT:83', 
   );
 });
 
-test('#625 GOHOUBI_REQUEST：保留 Y=0，兽名与前后文同一行（要求奖赏 1/2/3）', async () => {
+test('#625 GOHOUBI_REQUEST 保留 Y=0、兽名与前后文同一行（要求奖赏 1/2/3）', async () => {
   // 原作 :5699（PRINTFORM）+ :5701/:5703/:5705（IF/ELSEIF 三档）+ :5707
   // （PRINTFORMW 收行）**是一整行**（#625）。后两档读的是从未赋值的 public
   // static Y（清洁调用时 = 0），所以要求奖赏 2/3 不补「公猪」「雄马」——
