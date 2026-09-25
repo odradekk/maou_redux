@@ -481,29 +481,664 @@ test('SELL_MATURO_K0 已从存根清单移除', async () => {
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
 // K6 的 COM 头部助手跳过在死斗场岔之前，assiplay 下到不了真身——直接驱动
 // colosseum_kojo_6（与 test/kojo-k8-spade.test.js 的 COLOSSEUM 段同款）。
-test('COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+test('COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」', async () => {
   const cases = [
-    { selectcom: 31, tail: '她吞吐着' },
-    { selectcom: 21, tail: '的阴道' },
-    { selectcom: 27, tail: '鲜嫩的肛门' },
+    {
+      selectcom: 31,
+      line: '玛奥将假阳具塞入悪女的口中。她吞吐着，脸上带有几分愉悦的表情……',
+    },
+    {
+      selectcom: 21,
+      line: '玛奥边听着惨叫边用假阳具毫不留情地蹂躏着悪女的阴道……',
+    },
+    {
+      selectcom: 27,
+      line: '玛奥边听着惨叫边用假阳具蹂躏着悪女那鲜嫩的肛门……',
+    },
+    // 助手有阴茎（TALENT:121）时走「阴茎」支——#621 合成后同一行里换词
+    {
+      selectcom: 31,
+      assi_penis: 1,
+      line: '玛奥将阴茎塞入悪女的口中。她吞吐着，脸上带有几分愉悦的表情……',
+    },
+    {
+      selectcom: 21,
+      assi_penis: 1,
+      line: '玛奥边听着惨叫边用阴茎毫不留情地蹂躏着悪女的阴道……',
+    },
+    {
+      selectcom: 27,
+      assi_penis: 1,
+      line: '玛奥边听着惨叫边用阴茎蹂躏着悪女那鲜嫩的肛门……',
+    },
   ];
-  for (const { selectcom, tail } of cases) {
+  for (const { selectcom, assi_penis, line } of cases) {
     const fixture = await setup_k6((f) => {
       join_slave_chara(f, 17, '玛奥');
       f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
+      if (assi_penis) f.store.set('talent:17:121', 1);
       const era_flag = f.load_module('era-utils/era-flag');
       era_flag.assi = 17;
       era_flag.assiplay = 1;
     }, selectcom);
     const mod = fixture.load_module('kojo/kojo-k6-wicked');
     await mod.colosseum_kojo_6(seq_rand(0));
+    // #621：性器名与前后段合成一条输出（原先是三条），断言整行
+    const shape = assi_penis ? '助手有 121' : '助手无 121/122 且 item:4 == 1';
     assert.ok(
-      fixture.text_lines().some((l) => l === '假阳具'),
-      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阳具」`,
+      fixture.text_lines().includes(line),
+      `selectcom ${selectcom} ${shape} → 整行「${line}」：${JSON.stringify(fixture.text_lines())}`,
+    );
+    if (!assi_penis) {
+      assert.ok(
+        !fixture.text_lines().includes('假阳具'),
+        `selectcom ${selectcom} 拼接后性器名不再自成一行（#621）`,
+      );
+    }
+  }
+});
+
+// —— #621：普查二类清单（27 组）合并后的整行断言 ——
+// 源里一条输出由「无后缀 PRINTFORM 前缀 + 各互斥支的收行段」拼成，移植早期
+// 按段各打一行；本票把同一条输出的各段合成一句 era.print*（拼接锚 // :a+:b）。
+// 这里逐组断言整行文本，覆盖该行的各分支组合（判据两档 × 互斥支各一支）。
+
+test('#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）', async () => {
+  const cases = [
+    {
+      label: '淫乱＋眼罩',
+      seed: (f) => {
+        f.store.set('talent:31:76', 1);
+        f.store.set('tequip:31:43', 1);
+      },
+      line: '配合地戴上口塞的悪女带着期待地晃动着………',
+    },
+    {
+      label: '淫乱＋无眼罩（ELSE 支 :3957）',
+      seed: (f) => f.store.set('talent:31:76', 1),
+      line: '配合地戴上口塞的悪女带着期待你………',
+    },
+    {
+      label: '爱慕＋眼罩',
+      seed: (f) => {
+        f.store.set('talent:31:85', 1);
+        f.store.set('tequip:31:43', 1);
+      },
+      line: '配合地戴上口塞的悪女带着温柔的眼神晃动着………',
+    },
+    {
+      label: '爱慕＋无眼罩（ELSE 支 :3966）',
+      seed: (f) => f.store.set('talent:31:85', 1),
+      line: '配合地戴上口塞的悪女带着温柔的眼神看着你………',
+    },
+    {
+      label: 'それ以外＋眼罩',
+      seed: (f) => f.store.set('tequip:31:43', 1),
+      line: '戴上口塞的悪女左右摇着头………',
+    },
+    {
+      label: 'それ以外＋无眼罩（ELSE 支 :3975）',
+      seed: () => {},
+      line: '戴上口塞的悪女瞪着你………',
+    },
+  ];
+  for (const { label, seed, line } of cases) {
+    const fixture = await setup_k6((f) => {
+      f.store.set('tequip:31:45', 1);
+      seed(f);
+    }, 45);
+    await speak_k6(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）', async () => {
+  const cases = [
+    {
+      label: '淫乱＋受虐狂Lv5＋眼罩',
+      seed: (f) => {
+        f.store.set('talent:31:76', 1);
+        f.store.set('abl:31:21', 5);
+        f.store.set('cflag:31:346', 9);
+        f.store.set('tequip:31:43', 1);
+      },
+      line: '配合地戴上口塞的悪女粗重急促地喘息着………',
+    },
+    {
+      label: '淫乱＋受虐狂Lv5＋无眼罩（ELSE 支 :3989）',
+      seed: (f) => {
+        f.store.set('talent:31:76', 1);
+        f.store.set('abl:31:21', 5);
+        f.store.set('cflag:31:346', 9);
+      },
+      line: '配合地戴上口塞的悪女粗重急促地喘息着，眼中闪耀着畅快淋漓的神色………',
+    },
+    {
+      label: '淫乱（:4000+:4002）',
+      seed: (f) => {
+        f.store.set('talent:31:76', 1);
+        f.store.set('cflag:31:346', 7);
+        f.store.set('tequip:31:43', 1);
+      },
+      line: '配合地戴上口塞的悪女带着期待地晃动着………',
+    },
+    {
+      label: '受虐狂Lv3＋眼罩（:4025+:4027）',
+      seed: (f) => {
+        f.store.set('abl:31:21', 3);
+        f.store.set('cflag:31:346', 3);
+        f.store.set('tequip:31:43', 1);
+      },
+      line: '悪女习以为常地被口塞塞住嘴眼色朦胧………',
+    },
+    {
+      label: '受虐狂Lv3＋无眼罩（ELSE 支 :4029）',
+      seed: (f) => {
+        f.store.set('abl:31:21', 3);
+        f.store.set('cflag:31:346', 3);
+      },
+      line: '悪女习以为常地被口塞塞住嘴看着你………',
+    },
+    {
+      label: 'それ以外＋眼罩（:4035+:4037）',
+      seed: (f) => {
+        f.store.set('cflag:31:346', 1);
+        f.store.set('tequip:31:43', 1);
+      },
+      line: '戴上口塞的悪女左右摇着头………',
+    },
+    {
+      label: 'それ以外＋无眼罩（ELSE 支 :4039）',
+      seed: (f) => f.store.set('cflag:31:346', 1),
+      line: '戴上口塞的悪女瞪着你………',
+    },
+  ];
+  for (const { label, seed, line } of cases) {
+    const fixture = await setup_k6((f) => {
+      f.store.set('tequip:31:45', 1);
+      seed(f);
+    }, 45);
+    await speak_k6(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:4311/:4383 组）', async () => {
+  const cases = [
+    { label: '含自慰妄想（初回 :4311+:4313+:4314）', cflag: 0, dirty: 1 },
+    { label: '不含（初回）', cflag: 0, dirty: 0 },
+    { label: '含自慰妄想（二回目 :4383+:4385+:4386）', cflag: 1, dirty: 1 },
+    { label: '不含（二回目）', cflag: 1, dirty: 0 },
+  ];
+  for (const { label, cflag, dirty } of cases) {
+    const fixture = await setup_k6((f) => {
+      f.store.set('tequip:31:53', 1);
+      f.store.set('cflag:31:357', cflag);
+      f.store.set('abl:31:17', 5); // RAND:3 == 0 支的 TALENT:89 || ABL:17 >= 5
+      f.store.set('abl:31:31', dirty ? 3 : 0); // SIF ABL:31 >= 3
+    }, 56);
+    await speak_k6(fixture, seq_rand(0));
+    // 二回目那处（:4383）的名字在句首，与初回（:4311）词序不同（源 1:1）
+    const line =
+      (cflag === 0
+        ? '面带微笑的悪女介绍了自己的本名和性经验'
+        : '悪女面带微笑地介绍了自己的本名和性经验') +
+      (dirty ? '，甚至还有手淫的时候想到的内容' : '') +
+      '……';
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）', async () => {
+  // 两处链各七支（爱意 / 淫猥 / 语调三档 / 想要做爱 / 融洽 / 断断续续 / それ以外）
+  const cases = [
+    {
+      label: '初回（:4342 组）・爱意',
+      cflag: 0,
+      seed: { 'palam:31:5': 10000, 'talent:31:85': 1, 'tflag:60': 1 },
+      line: '在和你会话的过程中，悪女呢喃着充满爱意的话语。',
+    },
+    {
+      label: '初回（:4342 组）・淫猥',
+      cflag: 0,
+      seed: { 'palam:31:5': 10000, 'talent:31:76': 1, 'tflag:60': 1 },
+      line: '在和你会话的过程中，悪女扭动着腰叫嚷着淫猥的话语。',
+    },
+    {
+      label: '初回（:4342 组）・语调・快乐',
+      cflag: 0,
+      seed: { 'palam:31:5': 10000, 'palam:31:4': 10000, 'tequip:31:11': 1 },
+      line: '在和你会话的过程中，悪女带着快乐的语调拼命地回应着。',
+    },
+    {
+      label: '初回（:4342 组）・语调・痛苦',
+      cflag: 0,
+      seed: { 'palam:31:5': 10000, 'palam:31:4': 10000, 'tequip:31:44': 1 },
+      line: '在和你会话的过程中，悪女带着痛苦的语调拼命地回应着。',
+    },
+    {
+      label: '初回（:4342 组）・语调・无档',
+      cflag: 0,
+      seed: { 'palam:31:5': 10000, 'palam:31:4': 10000 },
+      line: '在和你会话的过程中，悪女拼命地回应着。',
+    },
+    {
+      label: '初回（:4342 组）・想要做爱',
+      cflag: 0,
+      seed: { 'talent:31:76': 1 },
+      line: '在和你会话的过程中，悪女一副想要做爱胜过说话的样子。',
+    },
+    {
+      label: '初回（:4342 组）・融洽',
+      cflag: 0,
+      seed: { 'palam:31:4': 10000 },
+      line: '在和你会话的过程中，悪女交谈还算融洽的样子。',
+    },
+    {
+      label: '初回（:4342 组）・断断续续',
+      cflag: 0,
+      seed: { 'palam:31:4': 600 },
+      line: '在和你会话的过程中，悪女时不时会给出一些回应。',
+    },
+    {
+      label: '初回（:4342 组）・それ以外',
+      cflag: 0,
+      seed: {},
+      line: '在和你会话的过程中，悪女一副心不在焉的样子…',
+    },
+    {
+      label: '二回目（:4414 组）・爱意',
+      cflag: 1,
+      seed: { 'palam:31:5': 10000, 'talent:31:85': 1, 'tflag:60': 1 },
+      line: '在和你会话的过程中，悪女呢喃着充满爱意的话语',
+    },
+    {
+      label: '二回目（:4414 组）・淫猥',
+      cflag: 1,
+      seed: { 'palam:31:5': 10000, 'talent:31:76': 1, 'tflag:60': 1 },
+      line: '在和你会话的过程中，悪女扭动着腰叫嚷着淫猥的话语',
+    },
+    {
+      label: '二回目（:4414 组）・语调・快乐',
+      cflag: 1,
+      seed: { 'palam:31:5': 10000, 'palam:31:4': 10000, 'tequip:31:11': 1 },
+      line: '在和你会话的过程中，悪女带着快乐的语调拼命地回应着。',
+    },
+    {
+      label: '二回目（:4414 组）・语调・无档',
+      cflag: 1,
+      seed: { 'palam:31:5': 10000, 'palam:31:4': 10000 },
+      line: '在和你会话的过程中，悪女拼命地回应着。',
+    },
+    {
+      label: '二回目（:4414 组）・想要做爱',
+      cflag: 1,
+      seed: { 'talent:31:76': 1 },
+      line: '在和你会话的过程中，悪女露出一副想要做爱胜过说话的样子。',
+    },
+    {
+      label: '二回目（:4414 组）・融洽',
+      cflag: 1,
+      seed: { 'palam:31:4': 10000 },
+      line: '在和你会话的过程中，与悪女的交谈还算融洽的样子。',
+    },
+    {
+      label: '二回目（:4414 组）・断断续续',
+      cflag: 1,
+      seed: { 'palam:31:4': 600 },
+      line: '在和你会话的过程中，悪女时不时会给出一些回应',
+    },
+    {
+      label: '二回目（:4414 组）・それ以外',
+      cflag: 1,
+      seed: {},
+      line: '在和你会话的过程中，悪女只是认真地听着…',
+    },
+  ];
+  for (const { label, cflag, seed, line } of cases) {
+    const fixture = await setup_k6((f) => {
+      f.store.set('cflag:31:357', cflag);
+      for (const [key, value] of Object.entries(seed)) f.store.set(key, value);
+    }, 56);
+    await speak_k6(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）', async () => {
+  // 八条链各四支（两穴 / 私处 / 肛门 / 无装备）：32 支全覆盖，逐支断言整行
+  const cases = [
+    {
+      label: '淫乱・初回・两穴',
+      cflag: 0,
+      talent: ['talent:31:76'],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女含住你的阴茎显得十分兴奋，用手摆弄着插入私处和肛门的蠕虫，激烈地抽插着……',
+    },
+    {
+      label: '淫乱・初回・私处',
+      cflag: 0,
+      talent: ['talent:31:76'],
+      tequip: ['tequip:31:11'],
+      line: '悪女含住你的阴茎显得十分兴奋，用手摆弄着插入私处的蠕虫，激烈地抽插着……',
+    },
+    {
+      label: '淫乱・初回・肛门',
+      cflag: 0,
+      talent: ['talent:31:76'],
+      tequip: ['tequip:31:13'],
+      line: '悪女含住你的阴茎显得十分兴奋，用手摆弄着插入肛门的蠕虫，激烈地抽插着……',
+    },
+    {
+      label: '淫乱・初回・无装备',
+      cflag: 0,
+      talent: ['talent:31:76'],
+      tequip: [],
+      line: '悪女含住你的阴茎显得十分兴奋，自慰仍在继续着………',
+    },
+    {
+      label: '爱慕・初回・两穴',
+      cflag: 0,
+      talent: ['talent:31:85'],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女用舌头纠缠着你的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: '爱慕・初回・私处',
+      cflag: 0,
+      talent: ['talent:31:85'],
+      tequip: ['tequip:31:11'],
+      line: '悪女用舌头纠缠着你的阴茎，小穴里的壶虫蠕动着，自慰激烈的继续………',
+    },
+    {
+      label: '爱慕・初回・肛门',
+      cflag: 0,
+      talent: ['talent:31:85'],
+      tequip: ['tequip:31:13'],
+      line: '悪女用舌头纠缠着你的阴茎，肛门里的肛门虫蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: '爱慕・初回・无装备',
+      cflag: 0,
+      talent: ['talent:31:85'],
+      tequip: [],
+      line: '悪女用舌头纠缠着你的阴茎，自慰仍在继续着………',
+    },
+    {
+      label: '侍奉Lv3・初回・两穴',
+      cflag: 0,
+      talent: ['abl:31:16'],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………',
+    },
+    {
+      label: '侍奉Lv3・初回・私处',
+      cflag: 0,
+      talent: ['abl:31:16'],
+      tequip: ['tequip:31:11'],
+      line: '悪女被命令用口服侍你的阴茎，小穴里的壶虫蠕动着，自慰仍在继续………',
+    },
+    {
+      label: '侍奉Lv3・初回・肛门',
+      cflag: 0,
+      talent: ['abl:31:16'],
+      tequip: ['tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，肛门里的肛门虫蠕动着，自慰仍在继续………',
+    },
+    {
+      label: '侍奉Lv3・初回・无装备',
+      cflag: 0,
+      talent: ['abl:31:16'],
+      tequip: [],
+      line: '悪女被命令用口服侍你的阴茎，自慰仍在继续着………',
+    },
+    {
+      label: 'それ以外・初回・两穴',
+      cflag: 0,
+      talent: [],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………',
+    },
+    {
+      label: 'それ以外・初回・私处',
+      cflag: 0,
+      talent: [],
+      tequip: ['tequip:31:11'],
+      line: '悪女被命令用口服侍你的阴茎，小穴里的壶虫蠕动着，自慰仍在继续………',
+    },
+    {
+      label: 'それ以外・初回・肛门',
+      cflag: 0,
+      talent: [],
+      tequip: ['tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，肛门里的肛门虫蠕动着，自慰仍在继续………',
+    },
+    {
+      label: 'それ以外・初回・无装备',
+      cflag: 0,
+      talent: [],
+      tequip: [],
+      line: '悪女被命令用口服侍你的阴茎，自慰仍在继续着………',
+    },
+    {
+      label: '淫乱・二回目・两穴',
+      cflag: 1,
+      talent: ['talent:31:76'],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女含住你的阴茎显得十分兴奋，两穴里的蠕虫蠕动着蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: '淫乱・二回目・私处',
+      cflag: 1,
+      talent: ['talent:31:76'],
+      tequip: ['tequip:31:11'],
+      line: '悪女含住你的阴茎显得十分兴奋，小穴里的壶虫蠕动着，自慰激烈的继续………',
+    },
+    {
+      label: '淫乱・二回目・肛门',
+      cflag: 1,
+      talent: ['talent:31:76'],
+      tequip: ['tequip:31:13'],
+      line: '悪女含住你的阴茎显得十分兴奋，肛门里的肛门虫蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: '淫乱・二回目・无装备',
+      cflag: 1,
+      talent: ['talent:31:76'],
+      tequip: [],
+      line: '悪女含住你的阴茎显得十分兴奋，自慰仍在继续着………',
+    },
+    {
+      label: '爱慕・二回目・两穴',
+      cflag: 1,
+      talent: ['talent:31:85'],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女用舌头纠缠着你的阴茎，任两穴里的蠕虫蠕动着，摇动着纤腰………',
+    },
+    {
+      label: '爱慕・二回目・私处',
+      cflag: 1,
+      talent: ['talent:31:85'],
+      tequip: ['tequip:31:11'],
+      line: '悪女用舌头纠缠着你的阴茎，任私处的蠕虫蠕动，摇动着纤腰………',
+    },
+    {
+      label: '爱慕・二回目・肛门',
+      cflag: 1,
+      talent: ['talent:31:85'],
+      tequip: ['tequip:31:13'],
+      line: '悪女用舌头纠缠着你的阴茎，任肛门里的肛门虫蠕动，摇动着纤腰………',
+    },
+    {
+      label: '爱慕・二回目・无装备',
+      cflag: 1,
+      talent: ['talent:31:85'],
+      tequip: [],
+      line: '悪女用舌头纠缠着你的阴茎，继续用手指在阴唇上抚摸着。',
+    },
+    {
+      label: '侍奉Lv3・二回目・两穴',
+      cflag: 1,
+      talent: ['abl:31:16'],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: '侍奉Lv3・二回目・私处',
+      cflag: 1,
+      talent: ['abl:31:16'],
+      tequip: ['tequip:31:11'],
+      line: '悪女被命令用口服侍你的阴茎，小穴里的壶虫蠕动着，自慰激烈的继续………',
+    },
+    {
+      label: '侍奉Lv3・二回目・肛门',
+      cflag: 1,
+      talent: ['abl:31:16'],
+      tequip: ['tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，肛门里的肛门虫蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: '侍奉Lv3・二回目・无装备',
+      cflag: 1,
+      talent: ['abl:31:16'],
+      tequip: [],
+      line: '悪女被命令用口服侍你的阴茎，自慰仍在继续着………',
+    },
+    {
+      label: 'それ以外・二回目・两穴',
+      cflag: 1,
+      talent: [],
+      tequip: ['tequip:31:11', 'tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: 'それ以外・二回目・私处',
+      cflag: 1,
+      talent: [],
+      tequip: ['tequip:31:11'],
+      line: '悪女被命令用口服侍你的阴茎，小穴里的壶虫蠕动着，自慰激烈的继续………',
+    },
+    {
+      label: 'それ以外・二回目・肛门',
+      cflag: 1,
+      talent: [],
+      tequip: ['tequip:31:13'],
+      line: '悪女被命令用口服侍你的阴茎，肛门里的肛门虫蠕动着，自慰激烈地继续………',
+    },
+    {
+      label: 'それ以外・二回目・无装备',
+      cflag: 1,
+      talent: [],
+      tequip: [],
+      line: '悪女被命令用口服侍你的阴茎，自慰仍在继续着………',
+    },
+  ];
+  for (const { label, cflag, talent, tequip, line } of cases) {
+    const fixture = await setup_k6((f) => {
+      f.store.set('cflag:31:361', cflag);
+      for (const key of talent)
+        f.store.set(key, key.startsWith('abl:') ? 3 : 1);
+      for (const key of tequip) f.store.set(key, 1);
+    }, 125);
+    await speak_k6(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（:6516/:6526 组）', async () => {
+  const cases = [
+    {
+      label: '爱慕＋黄昏（:6516+:6518）',
+      seed: (f) => {
+        f.store.set('talent:31:85', 1);
+        f.store.set('cflag:31:262', 4);
+      },
+      time: 0,
+      line: '玛奥苦笑着和悪女以女人间特有的方式纠缠在一起，直到黄昏………',
+    },
+    {
+      label: '爱慕＋夜幕（ELSE 支 :6520）',
+      seed: (f) => {
+        f.store.set('talent:31:85', 1);
+        f.store.set('cflag:31:262', 4);
+      },
+      time: 1,
+      line: '玛奥苦笑着和悪女以女人间特有的方式纠缠在一起，直到夜幕渐深………',
+    },
+    {
+      label: '百合中毒Lv3＋黄昏（:6526+:6528）',
+      seed: (f) => {
+        f.store.set('abl:31:33', 3);
+        f.store.set('cflag:31:262', 3);
+      },
+      time: 0,
+      line: '尝到百合滋味的悪女嬉笑着和玛奥纠缠着，直到黄昏………',
+    },
+    {
+      label: '百合中毒Lv3＋夜幕（ELSE 支 :6530）',
+      seed: (f) => {
+        f.store.set('abl:31:33', 3);
+        f.store.set('cflag:31:262', 3);
+      },
+      time: 1,
+      line: '尝到百合滋味的悪女嬉笑着和玛奥纠缠着，直到夜幕渐深………',
+    },
+  ];
+  for (const { label, seed, time, line } of cases) {
+    const fixture = await setup_k6((f) => {
+      join_slave_chara(f, 17, '玛奥');
+      // 百合PLAY 段在 @SELF_KOJO_K6 的「初吻与自我口上 == 2」里（TFLAG:13 == 2）
+      f.store.set('tflag:13', 2);
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 17;
+      era_flag.assiplay = 1;
+      seed(f);
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.time = time;
+    const mod = fixture.load_module('kojo/kojo-k6-wicked');
+    await mod.self_kojo_k6(seq_rand(0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${label}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#621 迎击奖励请求：动物名与收行段合成一条输出（:7806+:7808+:7810+:7812）', async () => {
+  // :7804 是 PRINTFORMW（自带换行），本组从 :7806 起——合成后是独立的一行
+  const cases = [
+    { kind: 1, line: '狗性交啦♪」' },
+    { kind: 2, line: '猪性交啦♪」' },
+    { kind: 3, line: '马性交啦♪」' },
+  ];
+  for (const { kind, line } of cases) {
+    const fixture = await setup_k6();
+    const mod = fixture.load_module('kojo/kojo-k6-wicked');
+    fixture.store.set('cflag:31:504', kind);
+    await mod.gohoubi_request_koujo_k6(31);
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `档位 ${kind}：整行「${line}」——${JSON.stringify(fixture.text_lines())}`,
     );
     assert.ok(
-      fixture.text_lines().some((l) => l.includes(tail)),
-      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
+      fixture.text_lines().includes('「我想和…'),
+      `档位 ${kind}：:7804 的 PRINTFORMW 仍自成一行——${JSON.stringify(fixture.text_lines())}`,
     );
   }
 });

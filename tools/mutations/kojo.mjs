@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2406; // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2433; // #621 起 +27（M12400-M12426：口上剩余拆行 A 组 K6 的 27 组「拆回多条」）
 
 export default [
   {
@@ -2504,12 +2504,8 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M2028 K7 COLOSSEUM ITEM:4 回退成 ITEM:PBAND 具名寻址（#238）',
     file: 'ere/kojo/kojo-k7-heart.js',
-    find: `        era0('item:4') == 1
-      ) {
-        await era.print(\`假阴茎\`); // :8258`,
-    replace: `        era0('item:PBAND') == 1 // 变异：回退字符串具名寻址
-      ) {
-        await era.print(\`假阴茎\`); // :8258`,
+    find: `      const assi_dildo_8257 = !assi_has_penis_8255 && era0('item:4') == 1;`,
+    replace: `      const assi_dildo_8257 = !assi_has_penis_8255 && era0('item:PBAND') == 1; // 变异：回退字符串具名寻址`,
     tests: ['kojo-k7-heart'],
     must_mention: '非字符串具名寻址',
   },
@@ -21703,16 +21699,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11605 K6 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k6-wicked.js',
-    find: `        (era.get(\`talent:\${assi}:122\`) || 0) !== 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        // :7495`,
-    replace: `        (era.get(\`talent:\${assi}:122\`) || 0) !== 1 &&
-        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
-      ) {
-        // :7495`,
+    find: `      const assi_dildo_7495 = !assi_has_penis_7493 && era.get('item:4') === 1; // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）`,
+    replace: `      const assi_dildo_7495 = !assi_has_penis_7493 && era.get('item:PBAND') === 1; // 变异：回退字符串具名寻址（#552）`,
     tests: ['kojo-k6-wicked'],
-    must_mention: '拼接「假阳具」',
+    must_mention: '助手无 121/122 且 item:4 == 1',
   },
   {
     desc: 'M11606 K8 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
@@ -22718,5 +22708,413 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '  era.print(level); // 变异：拆回',
     tests: ['kojo-dungeon-bitch'],
     must_mention: 'SHOW_BUTTON_BICH_LEVEL',
+  },
+
+  // —— #621：口上剩余拆行 A 组（K6/K7 共 53 组）的「拆回多条」变异 ——
+  // 每组一条：把合成后的那一条 era.print* 又拆成两条，对应测试的整行断言必须红
+  // （条目按工单 #621 的组序编号 M12400-M12452）
+  {
+    desc: 'M12400 K6 口塞初回·淫乱（:3953+:3955）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '          await era.print(`配合地戴上口塞的${target_name}带着期待地晃动着………`); // :3953+:3955\n',
+    replace:
+      '          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n' +
+      '          await era.print(`带着期待地晃动着………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）',
+  },
+  {
+    desc: 'M12401 K6 口塞初回·爱慕（:3962+:3964）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `配合地戴上口塞的${target_name}带着温柔的眼神晃动着………`,\n' +
+      '          ); // :3962+:3964\n',
+    replace:
+      '          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n' +
+      '          await era.print(`带着温柔的眼神晃动着………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）',
+  },
+  {
+    desc: 'M12402 K6 口塞初回·それ以外（:3971+:3973）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '          await era.print(`戴上口塞的${target_name}左右摇着头………`); // :3971+:3973\n',
+    replace:
+      '          await era.print(`戴上口塞的${target_name}`); // 变异：拆回\n' +
+      '          await era.print(`左右摇着头………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口塞初回三档：前缀与收行段合成一条输出（:3953/:3962/:3971 组）',
+  },
+  {
+    desc: 'M12403 K6 口塞二回目·淫乱受虐狂Lv5（:3985+:3987）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '          await era.print(`配合地戴上口塞的${target_name}粗重急促地喘息着………`); // :3985+:3987\n',
+    replace:
+      '          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n' +
+      '          await era.print(`粗重急促地喘息着………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+  },
+  {
+    desc: 'M12404 K6 口塞二回目·淫乱（:4000+:4002）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '          await era.print(`配合地戴上口塞的${target_name}带着期待地晃动着………`); // :4000+:4002\n',
+    replace:
+      '          await era.print(`配合地戴上口塞的${target_name}`); // 变异：拆回\n' +
+      '          await era.print(`带着期待地晃动着………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+  },
+  {
+    desc: 'M12405 K6 口塞二回目·受虐狂Lv3（:4025+:4027）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '          await era.print(`${target_name}习以为常地被口塞塞住嘴眼色朦胧………`); // :4025+:4027\n',
+    replace:
+      '          await era.print(`${target_name}习以`); // 变异：拆回\n' +
+      '          await era.print(`为常地被口塞塞住嘴眼色朦胧………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+  },
+  {
+    desc: 'M12406 K6 口塞二回目·それ以外（:4035+:4037）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '          await era.print(`戴上口塞的${target_name}左右摇着头………`); // :4035+:4037\n',
+    replace:
+      '          await era.print(`戴上口塞的${target_name}`); // 变异：拆回\n' +
+      '          await era.print(`左右摇着头………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口塞二回目四档：前缀与收行段合成一条输出（:3985/:4000/:4025/:4035 组）',
+  },
+  {
+    desc: 'M12407 K6 交谈初回·爱意（:4342+:4344）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `在和${player_name}会话的过程中，${target_name}呢喃着充满爱意的话语。`,\n' +
+      '          ); // :4342+:4344\n',
+    replace:
+      '          await era.print(`在和${player_name}会话的过程中，`); // 变异：拆回\n' +
+      '          await era.print(`${target_name}呢喃着充满爱意的话语。`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+  },
+  {
+    desc: 'M12408 K6 交谈二回目·爱意（:4414+:4416）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `在和${player_name}会话的过程中，${target_name}呢喃着充满爱意的话语`,\n' +
+      '          ); // :4414+:4416\n',
+    replace:
+      '          await era.print(`在和${player_name}会话的过程中，`); // 变异：拆回\n' +
+      '          await era.print(`${target_name}呢喃着充满爱意的话语`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+  },
+  {
+    desc: 'M12409 K6 口交时自慰初回·淫乱（:4594+:4596）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}含住${player_name}的阴茎显得十分兴奋，用手摆弄着插入私处和肛门的蠕虫，激烈地抽插着……`,\n' +
+      '          ); // :4594+:4596\n',
+    replace:
+      '          await era.print(`${target_name}含住${player_name}的阴`); // 变异：拆回\n' +
+      '          await era.print(`茎显得十分兴奋，用手摆弄着插入私处和肛门的蠕虫，激烈地抽插着……`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12410 K6 口交时自慰初回·爱慕（:4607+:4609）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}用舌头纠缠着${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n' +
+      '          ); // :4607+:4609\n',
+    replace:
+      '          await era.print(`${target_name}用舌头纠缠着${player_name}`); // 变异：拆回\n' +
+      '          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12411 K6 口交时自慰初回·侍奉Lv3（:4620+:4622）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`,\n' +
+      '          ); // :4620+:4622\n',
+    replace:
+      '          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n' +
+      '          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12412 K6 口交时自慰初回·それ以外（:4633+:4635）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`,\n' +
+      '          ); // :4633+:4635\n',
+    replace:
+      '          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n' +
+      '          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰仍在继续………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12413 K6 口交时自慰二回目·淫乱（:4651+:4653）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}含住${player_name}的阴茎显得十分兴奋，两穴里的蠕虫蠕动着蠕动着，自慰激烈地继续………`,\n' +
+      '          ); // :4651+:4653\n',
+    replace:
+      '          await era.print(`${target_name}含住${player_name}的`); // 变异：拆回\n' +
+      '          await era.print(`阴茎显得十分兴奋，两穴里的蠕虫蠕动着蠕动着，自慰激烈地继续………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12414 K6 口交时自慰二回目·爱慕（:4667+:4669）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}用舌头纠缠着${player_name}的阴茎，任两穴里的蠕虫蠕动着，摇动着纤腰………`,\n' +
+      '          ); // :4667+:4669\n',
+    replace:
+      '          await era.print(`${target_name}用舌头纠缠着${player_name}`); // 变异：拆回\n' +
+      '          await era.print(`的阴茎，任两穴里的蠕虫蠕动着，摇动着纤腰………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12415 K6 口交时自慰二回目·侍奉Lv3（:4683+:4685）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n' +
+      '          ); // :4683+:4685\n',
+    replace:
+      '          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n' +
+      '          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12416 K6 口交时自慰二回目·それ以外（:4699+:4701）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}被命令用口服侍${player_name}的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`,\n' +
+      '          ); // :4699+:4701\n',
+    replace:
+      '          await era.print(`${target_name}被命令用口服侍${player_name}`); // 变异：拆回\n' +
+      '          await era.print(`的阴茎，两穴里的蠕虫蠕动着，自慰激烈地继续………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 口交时自慰八组：前缀与各支收行段合成一条输出（:4594 至 :4699）',
+  },
+  {
+    desc: 'M12417 K6 百合PLAY·爱慕（:6516+:6518）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${assi_name}苦笑着和${target_name}以女人间特有的方式纠缠在一起，直到黄昏………`,\n' +
+      '        ); // :6516+:6518\n',
+    replace:
+      '        await era.printAndWait(`${assi_name}苦笑着和${target_name}`); // 变异：拆回\n' +
+      '        await era.printAndWait(`以女人间特有的方式纠缠在一起，直到黄昏………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（:6516/:6526 组）',
+  },
+  {
+    desc: 'M12418 K6 百合PLAY·百合中毒Lv3（:6526+:6528）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `尝到百合滋味的${target_name}嬉笑着和${assi_name}纠缠着，直到黄昏………`,\n' +
+      '        ); // :6526+:6528\n',
+    replace:
+      '        await era.printAndWait(`尝到百合滋味的${target_name}嬉笑着`); // 变异：拆回\n' +
+      '        await era.printAndWait(`和${assi_name}纠缠着，直到黄昏………`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 百合PLAY 两处：前缀与「直到黄昏/夜幕渐深」合成一条输出（:6516/:6526 组）',
+  },
+  {
+    desc: 'M12419 K6 录像自我介绍初回（SIF ABL:31）（:4311+:4313+:4314）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `面带微笑的${target_name}介绍了自己的本名和性经验` +\n' +
+      "              (dirty_exp ? `，甚至还有手淫的时候想到的内容` : '') +\n" +
+      '              `……`,\n' +
+      '          ); // :4311+:4313+:4314\n',
+    replace:
+      '          await era.print(`面带微笑的${target_name}介绍了自己的本名和性经验`); // 变异：拆回\n' +
+      "          await era.print((dirty_exp ? `，甚至还有手淫的时候想到的内容` : '') +\n" +
+      '              `……`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:4311/:4383 组）',
+  },
+  {
+    desc: 'M12420 K6 录像自我介绍二回目（SIF ABL:31）（:4383+:4385+:4386）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}面带微笑地介绍了自己的本名和性经验` +\n' +
+      "              (dirty_exp_4384 ? `，甚至还有手淫的时候想到的内容` : '') +\n" +
+      '              `……`,\n' +
+      '          ); // :4383+:4385+:4386\n',
+    replace:
+      '          await era.print(`${target_name}面带微笑地介绍了自己的本名和性经验`); // 变异：拆回\n' +
+      "          await era.print((dirty_exp_4384 ? `，甚至还有手淫的时候想到的内容` : '') +\n" +
+      '              `……`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 录像自我介绍（SIF ABL:31）：前缀与收行段合成一条输出（:4311/:4383 组）',
+  },
+  {
+    desc: 'M12421 K6 死斗场口交（助手性器两档）（:7491+:7493+:7495+:7496）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}将` +\n' +
+      "          (assi_has_penis_7493 ? `阴茎` : '') + // :7493\n" +
+      "          (assi_dildo_7495 ? `假阳具` : '') + // :7495\n" +
+      '          `塞入${target_name}的口中。她吞吐着，脸上带有几分愉悦的表情……`,\n' +
+      '      ); // :7491+:7493+:7495+:7496\n',
+    replace:
+      '      await era.printAndWait(`${assi_name}将`); // 变异：拆回\n' +
+      "      await era.printAndWait((assi_has_penis_7493 ? `阴茎` : '') + // :7493\n" +
+      "          (assi_dildo_7495 ? `假阳具` : '') + // :7495\n" +
+      '          `塞入${target_name}的口中。她吞吐着，脸上带有几分愉悦的表情……`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
+  },
+  {
+    desc: 'M12422 K6 死斗场后背位（助手性器两档）（:7524+:7526+:7528+:7529）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}边听着惨叫边用` +\n' +
+      "          (assi_has_penis_7526 ? `阴茎` : '') + // :7526\n" +
+      "          (assi_dildo_7528 ? `假阳具` : '') + // :7528\n" +
+      '          `毫不留情地蹂躏着${target_name}的阴道……`,\n' +
+      '      ); // :7524+:7526+:7528+:7529\n',
+    replace:
+      '      await era.printAndWait(`${assi_name}边听着惨叫边用`); // 变异：拆回\n' +
+      "      await era.printAndWait((assi_has_penis_7526 ? `阴茎` : '') + // :7526\n" +
+      "          (assi_dildo_7528 ? `假阳具` : '') + // :7528\n" +
+      '          `毫不留情地蹂躏着${target_name}的阴道……`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
+  },
+  {
+    desc: 'M12423 K6 死斗场后背位アナル（助手性器两档）（:7548+:7550+:7552+:7553）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}边听着惨叫边用` +\n' +
+      "          (assi_has_penis_7550 ? `阴茎` : '') + // :7550\n" +
+      "          (assi_dildo_7552 ? `假阳具` : '') + // :7552\n" +
+      '          `蹂躏着${target_name}那鲜嫩的肛门……`,\n' +
+      '      ); // :7548+:7550+:7552+:7553\n',
+    replace:
+      '      await era.printAndWait(`${assi_name}边听着惨叫边用`); // 变异：拆回\n' +
+      "      await era.printAndWait((assi_has_penis_7550 ? `阴茎` : '') + // :7550\n" +
+      "          (assi_dildo_7552 ? `假阳具` : '') + // :7552\n" +
+      '          `蹂躏着${target_name}那鲜嫩的肛门……`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      'COLOSSEUM_KOJO_6：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 整行含「假阳具」',
+  },
+  {
+    desc: 'M12424 K6 交谈初回·语调三档（:4348+:4350+:4352+:4354）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            talk_front_4342 +\n' +
+      '              `会话的过程中，${target_name}` +\n' +
+      '              (excited_4349\n' +
+      '                ? `带着快乐的语调`\n' +
+      '                : painful_4351\n' +
+      '                  ? `带着痛苦的语调`\n' +
+      "                  : '') +\n" +
+      '              `拼命地回应着。`,\n' +
+      '          ); // :4348+:4350+:4352+:4354\n',
+    replace:
+      '          await era.print(talk_front_4342); // 变异：拆回\n' +
+      '          await era.print(`会话的过程中，${target_name}` +\n' +
+      '              (excited_4349\n' +
+      '                ? `带着快乐的语调`\n' +
+      '                : painful_4351\n' +
+      '                  ? `带着痛苦的语调`\n' +
+      "                  : '') +\n" +
+      '              `拼命地回应着。`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+  },
+  {
+    desc: 'M12425 K6 交谈二回目·语调三档（:4420+:4422+:4424+:4426）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find:
+      '          await era.print(\n' +
+      '            talk_front_4414 +\n' +
+      '              `会话的过程中，${target_name}` +\n' +
+      '              (excited_4421\n' +
+      '                ? `带着快乐的语调`\n' +
+      '                : painful_4423\n' +
+      '                  ? `带着痛苦的语调`\n' +
+      "                  : '') +\n" +
+      '              `拼命地回应着。`,\n' +
+      '          ); // :4420+:4422+:4424+:4426\n',
+    replace:
+      '          await era.print(talk_front_4414); // 变异：拆回\n' +
+      '          await era.print(`会话的过程中，${target_name}` +\n' +
+      '              (excited_4421\n' +
+      '                ? `带着快乐的语调`\n' +
+      '                : painful_4423\n' +
+      '                  ? `带着痛苦的语调`\n' +
+      "                  : '') +\n" +
+      '              `拼命地回应着。`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 交谈・通常会話七支：前缀与各支收行段合成一条输出（:4342/:4414 两组）',
+  },
+  {
+    desc: 'M12426 K6 迎击奖励请求·动物名三档（:7806+:7808+:7810+:7812）拆回多条（#621）',
+    file: 'ere/kojo/kojo-k6-wicked.js',
+    find: '    await era.printAndWait(request_animal_7812 + `性交啦♪」`); // :7806+:7808+:7810+:7812\n',
+    replace:
+      '    await era.printAndWait(request_animal_7812); // 变异：拆回\n' +
+      '    await era.printAndWait(`性交啦♪」`); // 变异：拆回\n',
+    tests: ['kojo-k6-wicked'],
+    must_mention:
+      '#621 迎击奖励请求：动物名与收行段合成一条输出（:7806+:7808+:7810+:7812）',
   },
 ];
