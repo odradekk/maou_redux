@@ -5234,6 +5234,65 @@ test('COLOSSEUM：SELECTCOM 31/21/27 助手无 121/122 且持假阳具（item:4�
   }
 });
 
+// #624 验收返工：上面那条只覆盖假阳具一档（item:4），「用肉棒」写成「用假阳具」
+// 没有用例发现——这里补有阴茎档（助手 TALENT:121 / 122），并加「不得出现假阳具词」
+// 的负向守卫（换档写反时整行断言与守卫都会红）。
+test('COLOSSEUM：SELECTCOM 31/21/27 助手有阴茎（TALENT:121/122）→ 拼接肉棒词', async () => {
+  const cases = [
+    {
+      seed: { 'talent:17:121': 1 }, // 扶她（TALENT:121）
+      selectcom: 31,
+      word: '吞咽着肉棒的',
+      tail: '露出了愉悦的表情',
+      line: '玛奥让吞咽着肉棒的琼露出了愉悦的表情……', // #624：:7782..:7787 一整行
+    },
+    {
+      seed: { 'talent:17:122': 1 }, // 男人（TALENT:122）
+      selectcom: 21,
+      word: '用肉棒',
+      tail: '的阴道',
+      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的阴道……', // #624：:7815..:7820
+    },
+    {
+      seed: { 'talent:17:121': 1 },
+      selectcom: 27,
+      word: '用肉棒',
+      tail: '的肛门',
+      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的肛门……', // #624：:7839..:7844
+    },
+  ];
+  for (const { seed, selectcom, word, tail, line } of cases) {
+    const fixture = await setup_k0((f) => {
+      f.store.set('tequip:31:55', 1);
+      join_slave_chara(f, 17, '玛奥');
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(key, value);
+      }
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = selectcom;
+    era_flag.assi = 17;
+    era_flag.assiplay = 1;
+    await speak_k0(fixture);
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(word)),
+      `${selectcom}：肉棒词（助手有 121/122 档）`,
+    );
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${selectcom} → 整行「${line}」`,
+    );
+    assert.ok(
+      !fixture.text_lines().some((l) => l.includes('假阳具')),
+      `${selectcom}：有阴茎时不得出现假阳具词（换档写反即红）`,
+    );
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(tail)),
+      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
+    );
+  }
+});
+
 // —— #624：两处「原作同一行被拆开」合回一条输出 ——
 
 test('#624 交谈：:4674..:4682 的「…一边竭力按捺住…」是一整行', async () => {
