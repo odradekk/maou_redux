@@ -1,7 +1,7 @@
 /**
  * @file 口上分发族的「原作有、ere 有」双向核对（#565 返工第 4 条）。
  *
- * 背景：`try_kojo_or_stub` 未命中时**静默**（原作 TRYCALLFORM 落空语义），
+ * 背景：`try_kojo` 未命中时**静默**（原作 TRYCALLFORM 落空语义），
  * 不再打占位——「原作有对应函数而 ere 没移植」的真缺口从此没有运行时
  * 提示，必须靠静态核对拦住。本文件扫 `target/ERB/口上` 的 `@…_K{n}` /
  * `@…_{n}` 定义集合，与夹具装载全部口上模块后各族的注册集合（
@@ -141,23 +141,17 @@ test('口上九族：原作 @…_K{n} 定义集合与 ere 注册集合双向一�
   }
 });
 
-test('try_kojo_or_stub 未命中静默（原作 TRYCALLFORM 落空语义，不打占位）', async () => {
+test('try_kojo 未命中静默（原作 TRYCALLFORM 落空语义，不打占位）', async () => {
   const fixture = create_era_fixture();
   for (const n of fs.readdirSync(KOJO_DIR).filter((n) => n.endsWith('.js'))) {
     fixture.load_module(`kojo/${n.replace(/\.js$/, '')}`);
   }
-  const { try_kojo_or_stub, dungeon_attack_family } =
+  const { try_kojo, dungeon_attack_family } =
     fixture.load_module('kojo/kojo-system');
   const before = fixture.lines_history.length;
 
   // 窗口外（target = 0 魔王，无口上性格）→ kojo_handler_id = -1 → 静默
-  const a = await try_kojo_or_stub(
-    dungeon_attack_family,
-    'ATTACK_KOUJO',
-    '攻击口上',
-    '测试',
-    0,
-  );
+  const a = await try_kojo(dungeon_attack_family, 'ATTACK_KOUJO', 0);
   assert.equal(a, 0, '未命中返回 0（原作 TRYCALLFORM 落空的 RESULT 语义）');
   assert.equal(
     fixture.lines_history.length,
@@ -170,13 +164,7 @@ test('try_kojo_or_stub 未命中静默（原作 TRYCALLFORM 落空语义，不�
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.store.set('talent:31:171', 1); // K11（COUNT 171 − 60 = 111 → 族内 11）
-  const b = await try_kojo_or_stub(
-    gobi_koujo_family,
-    'GOBI_KOUJO',
-    '语尾口上',
-    '测试',
-    31,
-  );
+  const b = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', 31);
   assert.equal(b, 0);
   assert.equal(
     fixture.lines_history.length,

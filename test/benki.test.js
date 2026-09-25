@@ -243,7 +243,7 @@ test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KO
     lines.some((l) => l.includes('任魔族男性将阴茎塞入了口中')),
     '第二段演出',
   );
-  // 本夹具不加载口上模块：try_kojo_or_stub 未命中**静默**（原作 TRYCALLFORM
+  // 本夹具不加载口上模块：try_kojo 未命中**静默**（原作 TRYCALLFORM
   // 落空语义，#565 返工第 4 条）——一般分派走公共段 :591 + 一般段 :1310
   // 两处 CALL，都不得出声；「原作有 ere 无」的真缺口由
   // test/kojo-family-coverage.test.js 的定义集合比对拦
