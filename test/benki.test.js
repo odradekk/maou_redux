@@ -579,3 +579,375 @@ test('#615 一般分派清算：共处理句与「的性欲。+ 传闻」同属�
   );
   assert.ok(!rows.includes('温妮的行为不为人知。'), '传闻不单独占一行');
 });
+
+// —— #620：「奴隷の様子」与前一句同属一条显示行 ————
+//
+// 四个分派的様子块（:765-776、:922-940、:1080-1094、:1235-1260）在原作里都是
+// PRINTFORML——它收尾的是前面名字句/穴句的 PRINTFORM 拼行，整条显示行只换行
+// 一次。ere 曾让様子另起一条 print（多一行）。断言用**整行文本**（前缀分支 ×
+// 様子分支的表驱动交叉）＋反向的「様子不单独占一行」：片段包含对「拆成两行」
+// 是假绿，整行相等才拦得住（#615 同款教训）。
+
+/** 断言某条 text 行整行等于 text，且様子句 yousu 没有单独占一行——
+ * 「既并回整行、又多打一条様子行」也要拦（失败时只列尾段相同的候选行） */
+function assert_whole_line(lines, text, label, yousu) {
+  const tail = text.slice(-8);
+  const near = lines.filter((l) => l.includes(tail));
+  assert.ok(
+    lines.includes(text),
+    `${label}：整行在场 → ${text}（尾段「${tail}」的候选行：${JSON.stringify(near)}）`,
+  );
+  assert.ok(
+    !lines.includes(yousu),
+    `${label}：様子不单独占一行 → ${yousu}（尾段候选行：${JSON.stringify(near)}）`,
+  );
+}
+
+test('#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行（:741-763 + :765-776）', async () => {
+  // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
+  const SPOT = '#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行';
+  // 穴句 :743-763 的四条分支（BENKI_MENU:1/2 的组合）
+  const holes = [
+    {
+      label: 'A&V',
+      seed: (f) => {
+        f.store.set('abl:31:2', 3); // V感覚 3
+        f.store.set('abl:31:3', 3); // A感覚 3
+      },
+      text: '的子宫和直肠，灌满了魔兽的精液，',
+    },
+    {
+      label: 'V',
+      seed: (f) => f.store.set('abl:31:2', 3),
+      text: '的子宫，灌满了魔兽的精液，',
+    },
+    {
+      label: 'A',
+      seed: (f) => f.store.set('abl:31:3', 3),
+      text: '的直肠，灌满了魔兽的精液，',
+    },
+    { label: '奉仕', seed: () => {}, text: '不断摩擦着魔兽的阴茎，' },
+  ];
+  // 様子 :765-776 的四条分支；每行自带分派触发（menu:4 >= 3）——「默认」行
+  // 用原作 :163-164 的「兽奸经验 > 50」抬高 menu:4，不碰様子自己的三条条件
+  const yousu_list = [
+    {
+      label: '崩坏',
+      seed: (f) => {
+        f.store.set('abl:31:39', 3); // 兽奸中毒 3 → menu:4 = 3
+        f.store.set('talent:31:9', 1);
+      },
+      text: '浮现出被玩坏的痴笑。',
+    },
+    {
+      label: '牝犬',
+      seed: (f) => f.store.set('talent:31:136', 1), // 牝犬 → menu:4 += 3
+      text: '高兴地摇着屁股。',
+    },
+    {
+      label: '兽奸中毒',
+      seed: (f) => f.store.set('abl:31:39', 3),
+      text: '沉醉在与魔兽交配的快感之中。',
+    },
+    {
+      label: '默认',
+      seed: (f) => f.store.set('exp:31:56', 51), // 兽奸经验 > 50 → menu:4 += 3
+      text: '看起来很不自在。',
+    },
+  ];
+
+  for (const hole of holes) {
+    for (const yousu of yousu_list) {
+      const { fixture, mod } = setup_benki((f) => {
+        hole.seed(f);
+        yousu.seed(f);
+      });
+      await mod.run_benki(31, seq_rand(0));
+      assert_whole_line(
+        fixture.text_lines(),
+        `温妮${hole.text}${yousu.text}`,
+        `${SPOT}（${hole.label} + ${yousu.label}）`,
+        yousu.text,
+      );
+    }
+  }
+});
+
+test('#620 奉仕分派：穴句 + 様子同属一条显示行（:892-920 + :922-940）', async () => {
+  // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
+  const SPOT = '#620 奉仕分派：穴句 + 様子同属一条显示行';
+  // 穴句 :892-920 的四条分支（角色名已在上一行的 :890 收尾）
+  const holes = [
+    {
+      label: 'A&V',
+      seed: (f) => {
+        f.store.set('abl:31:2', 3);
+        f.store.set('abl:31:3', 3);
+      },
+      text: '能用上的穴全用上了，',
+    },
+    {
+      label: 'V',
+      seed: (f) => f.store.set('abl:31:2', 3),
+      text: '用私处',
+    },
+    {
+      label: 'A',
+      seed: (f) => f.store.set('abl:31:3', 3),
+      text: '用菊花',
+    },
+    {
+      label: '奉仕',
+      seed: (f) => f.store.set('abl:31:16', 3), // 侍奉精神 3 → menu:0 = 3
+      text: '用嘴和手',
+    },
+  ];
+  // 様子 :922-940 的五条分支；常識改変行不需要压 menu:0——外层已置
+  // abl:31:16 = 3，t283 再加 3 仍落奉仕分派（演出分派顺序 menu:4 → menu:0
+  // → menu:3 → else，见 ere/system/train/benki.js 的分派链）
+  const yousu_list = [
+    {
+      label: '常識改変',
+      seed: (f) => f.store.set('talent:31:283', 1), // FLAG:63 = 1
+      text: '一如平常的面带微笑地交欢着……',
+    },
+    {
+      label: '崩坏',
+      seed: (f) => f.store.set('talent:31:9', 1),
+      text: '浮现出被玩坏的痴笑。',
+    },
+    {
+      // :932/:937 的 CALL BENKI_PLAYER_NAME 也落在这一行里（FLAG:64 = 0）
+      label: '侍奉快乐>100',
+      seed: (f) => f.store.set('exp:31:21', 101),
+      text: '对底层居住在地下城深渊中散发着恶臭的肮脏眷属勃起的阴茎报以勉励式的温柔微笑。',
+    },
+    {
+      label: '侍奉快乐>50',
+      seed: (f) => f.store.set('exp:31:21', 51),
+      text: '对底层居住在地下城深渊中散发着恶臭的肮脏眷属温柔地微笑着。',
+    },
+    {
+      label: '默认',
+      seed: () => {},
+      text: '看起来很不自在。',
+    },
+  ];
+
+  for (const hole of holes) {
+    for (const yousu of yousu_list) {
+      const { fixture, mod } = setup_benki((f) => {
+        f.store.set('abl:31:16', 3); // 侍奉精神 3 → menu:0 = 3 → 奉仕分派
+        hole.seed(f);
+        yousu.seed(f);
+      });
+      await mod.run_benki(31, seq_rand(0));
+      assert_whole_line(
+        fixture.text_lines(),
+        `${hole.text}将底层种族阴茎温柔地包裹在内，${yousu.text}`,
+        `${SPOT}（${hole.label} + ${yousu.label}）`,
+        yousu.text,
+      );
+    }
+  }
+
+  // 反感污臭（原作 :914-918）夹在 :912 的「将底层种族」与 :920 的「阴茎温柔地
+  // 包裹在内，」之间——与五条様子分支照样各属同一条显示行（前缀组合补齐）
+  for (const yousu of yousu_list) {
+    const { fixture, mod } = setup_benki((f) => {
+      f.store.set('abl:31:16', 3); // 侍奉精神 3 → menu:0 = 3 → 奉仕分派
+      f.store.set('talent:31:62', 1); // 反感污臭
+      yousu.seed(f);
+    });
+    await mod.run_benki(31, seq_rand(0));
+    assert_whole_line(
+      fixture.text_lines(),
+      `用嘴和手将底层种族满是污垢的肮脏的阴茎温柔地包裹在内，${yousu.text}`,
+      `${SPOT}（反感污臭 + ${yousu.label}）`,
+      yousu.text,
+    );
+  }
+});
+
+test('#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行（:1054-1078 + :1080-1094）', async () => {
+  // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
+  const SPOT = '#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行';
+  // 名字句 :1054-1078 的四条组合（扶她 → 前缀「双性人的」+ 条件句尾巴）
+  const names = [
+    {
+      label: '扶她+萝莉控',
+      seed: (f) => {
+        f.store.set('talent:31:121', 1); // 扶她
+        f.store.set('talent:31:142', 1); // 萝莉控
+      },
+      text: '双性人的温妮在精囊被掏空之前，都在和年轻淫魔扭动着腰。',
+    },
+    {
+      label: '扶她',
+      seed: (f) => f.store.set('talent:31:121', 1),
+      text: '双性人的温妮在精囊被掏空之前，不停被吸取着精液。',
+    },
+    {
+      label: '萝莉控',
+      seed: (f) => f.store.set('talent:31:142', 1), // FLAG:64 = 7 奴隶少女
+      text: '温妮被年幼的奴隶少女诱惑了，',
+    },
+    { label: '默认', seed: () => {}, text: '温妮被女淫魔诱惑了，' },
+  ];
+  // 様子 :1080-1094 的五条分支；常識改変行用 t151「绝不侍奉」把 menu:0 打回 0
+  // ——t283 会让 menu:0 += 3，而演出分派顺序是 menu:4 → menu:0 → menu:3 →
+  // else，不压住就改走奉仕分派（实测：去掉 t151 后本用例红，实际行落在奉仕的
+  // 「用嘴和手将底层种族阴茎温柔地包裹在内，…」上）
+  const yousu_list = [
+    {
+      label: '常識改変',
+      seed: (f) => {
+        f.store.set('talent:31:283', 1);
+        f.store.set('talent:31:151', 1); // 绝不侍奉
+      },
+      text: '一如平常的面带微笑地交欢着……',
+    },
+    {
+      label: '崩坏',
+      seed: (f) => f.store.set('talent:31:9', 1),
+      text: '浮现出被玩坏的痴笑……',
+    },
+    {
+      label: '百合>1000',
+      seed: (f) => f.store.set('exp:31:40', 1001),
+      text: '快乐得快要晕过去了……',
+    },
+    {
+      label: '百合>500',
+      seed: (f) => f.store.set('exp:31:40', 501),
+      text: '沉醉在这种缠绵之中……',
+    },
+    {
+      label: '默认',
+      seed: () => {},
+      text: '看起来很不自在……',
+    },
+  ];
+
+  for (const name of names) {
+    for (const yousu of yousu_list) {
+      const { fixture, mod } = setup_benki((f) => {
+        f.store.set('abl:31:33', 3); // 百合中毒 3 → menu:3 = 3 → 同性爱分派
+        name.seed(f);
+        yousu.seed(f);
+      });
+      await mod.run_benki(31, seq_rand(0));
+      assert_whole_line(
+        fixture.text_lines(),
+        `${name.text}${yousu.text}`,
+        `${SPOT}（${name.label} + ${yousu.label}）`,
+        yousu.text,
+      );
+    }
+  }
+});
+
+test('#620 通常分派：名字句 + 様子同属一条显示行（:1224-1232 + :1235-1260）', async () => {
+  // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
+  const SPOT = '#620 通常分派：名字句 + 様子同属一条显示行';
+  // 名字句 :1224-1232 的前缀组合（:1227 悲観的/胆怯、:1231 看轻贞操）
+  const names = [
+    { label: '无前缀', seed: () => {}, text: '温妮' },
+    {
+      label: '悲観的',
+      seed: (f) => f.store.set('talent:31:26', 1),
+      text: '温妮最初是恐惧，之后就',
+    },
+    {
+      label: '胆怯',
+      seed: (f) => f.store.set('talent:31:10', 1),
+      text: '温妮最初是恐惧，之后就',
+    },
+    {
+      label: '看轻贞操',
+      seed: (f) => f.store.set('talent:31:31', 1),
+      text: '温妮主动分开双腿，',
+    },
+    {
+      label: '悲観的+看轻贞操',
+      seed: (f) => {
+        f.store.set('talent:31:26', 1);
+        f.store.set('talent:31:31', 1);
+      },
+      text: '温妮最初是恐惧，之后就主动分开双腿，',
+    },
+  ];
+  // 様子 :1235-1260 的十分支；常識改変行同同性爱——t151「绝不侍奉」把 menu:0
+  // 打回 0（t283 会让 menu:0 += 3 → 奉仕分派抢在通常之前）
+  const yousu_list = [
+    {
+      label: '常識改変',
+      seed: (f) => {
+        f.store.set('talent:31:283', 1);
+        f.store.set('talent:31:151', 1);
+      },
+      text: '像家常便饭似的一边聊着天一边交欢着……',
+    },
+    {
+      label: '崩坏',
+      seed: (f) => f.store.set('talent:31:9', 1),
+      text: '浮现出被玩坏的痴笑……',
+    },
+    {
+      label: '淫乱',
+      seed: (f) => f.store.set('talent:31:76', 1),
+      text: '带着淫乱的表情，发出野兽般的娇喘……',
+    },
+    {
+      label: '爱慕',
+      seed: (f) => f.store.set('talent:31:85', 1),
+      text: '泪流满面地在嘴里叨念着你的名字……',
+    },
+    {
+      label: '精液>1000',
+      seed: (f) => f.store.set('exp:31:20', 1001),
+      text: '带着谦卑的微笑央求着精液……',
+    },
+    {
+      label: '精液>500',
+      seed: (f) => f.store.set('exp:31:20', 501),
+      text: '带着谦卑的表情不时吐露着淫语……',
+    },
+    {
+      label: '精液>250',
+      seed: (f) => f.store.set('exp:31:20', 251),
+      text: '带着生硬的笑容做着V字手势，乞求着原谅……',
+    },
+    {
+      label: '精液>100',
+      seed: (f) => f.store.set('exp:31:20', 101),
+      text: '带着生硬的笑容被强行做着V字手势……',
+    },
+    {
+      label: '精液>50',
+      seed: (f) => f.store.set('exp:31:20', 51),
+      text: '不断重复着谢罪的话语……',
+    },
+    {
+      label: '默认',
+      seed: () => {},
+      text: '两眼无神地看着远方……',
+    },
+  ];
+
+  for (const name of names) {
+    for (const yousu of yousu_list) {
+      const { fixture, mod } = setup_benki((f) => {
+        name.seed(f);
+        yousu.seed(f);
+      });
+      await mod.run_benki(31, seq_rand(0));
+      assert_whole_line(
+        fixture.text_lines(),
+        `${name.text}${yousu.text}`,
+        `${SPOT}（${name.label} + ${yousu.label}）`,
+        yousu.text,
+      );
+    }
+  }
+});
