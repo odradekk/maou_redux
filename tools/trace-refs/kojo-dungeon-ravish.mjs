@@ -97,6 +97,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '16',
+        any: [/^\s*PRINT\s*$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '19',
         any: [/PRINTL/],
       },
@@ -539,11 +544,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '304-308',
-        any: [/PRINT 硬毛露了出来/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '305',
         any: [/PRINT 硬毛露了出来/],
       },
@@ -551,11 +551,6 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '307',
         any: [/PRINT 隐约看见了阴毛/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '310-318',
-        any: [/PRINT 美丽的屁股从后露了出来/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -866,6 +861,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '471',
+        any: [/^\s*PRINTFORML 耻情点数\+{MON_NUM \* 10}$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '475',
         any: [/PRINTFORM 提心吊胆地/],
       },
@@ -878,6 +878,11 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '481',
         any: [/PRINTFORM 不敢直视肉棒而闭上了眼睛/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '484',
+        any: [/^\s*PRINTFORM 为了守住自己处女的$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -906,6 +911,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '502',
+        any: [/PRINTW 『呃……这家伙，简直就是经验丰富的妓女嘛～』/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '503',
         any: [/PRINTFORMW %SAVESTR:ARG%拼命地用舌头侍奉着，展现出天赋般/],
       },
@@ -913,6 +923,11 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '504',
         any: [/PRINTFORMW 兽人抵受不住她那灵活的舌头，射在%SAVESTR:ARG%/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '506',
+        any: [/^\s*MON_NUM \*= 2$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -993,13 +1008,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '546-552',
-        any: [
-          /PRINTW 她用空洞的眼神望向地下城那阴暗的天花板，眼里完全失去了焦点。/,
-        ],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '547',
         any: [/PRINTFORMW %SAVESTR:ARG%的脸和性器都用精液化上了妆。兽人/],
       },
@@ -1012,11 +1020,6 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '552-556',
         any: [/DATAFORM 阴茎/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '556-568',
-        any: [/PRINTFORM 插进了%SAVESTR:ARG%的喉咙深处，射精的同时喷溅出/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -1094,11 +1097,6 @@ export const FILES = [
         any: [
           /PRINTW 她用空洞的眼神望向地下城那阴暗的天花板，眼里完全失去了焦点。/,
         ],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '592-608',
-        any: [/PRINTW/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -3590,8 +3588,18 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '1733',
+        any: [/^\s*PRINTFORM 紫色的长舌头，在%SAVESTR:ARG%的$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '1735',
         any: [/PRINT 巨根/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '1737',
+        any: [/^\s*PRINT 短小包茎$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -3607,6 +3615,11 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '1745',
         any: [/PRINT 阴茎/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '1747',
+        any: [/^\s*PRINTFORMW 上舔舐着，吸取着精气。$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -3802,13 +3815,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '1872',
-        any: [/DATAFORM 『在你坏掉之前可不会停哦』/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '1874',
-        any: [/DATAFORM 『这就让你的身体变得再也不需要男人吧』/],
+        ref: '1883-1885',
+        any: [/IF TALENT:ARG:273/],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
@@ -3829,6 +3837,16 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '1889',
         any: [/PRINT 『这边的穴/],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '1891',
+        any: [/^\s*PRINT 才有的$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
+        ref: '1893',
+        any: [/^\s*PRINT 也有的$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
