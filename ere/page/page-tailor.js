@@ -30,7 +30,8 @@
  * 3. **子菜单的选项一律按钮化**（PR #53 通则）：原作的 `[n] - 名字` 纯文本
  *    改成 `era.printButton('- 名字', n)`——**正文里的 `- ` 照写**，它是原作文本
  *    的一部分（编号由引擎按 showAcc 拼，正文不写 [n]；#612 全库普查的口径，
- *    与 page-shop-labo.js 文件头同款）。数据表驱动的四张表的 label 是数据字段，
+ *    与 page-shop-labo.js 文件头同款）。数据表驱动的几处（四张物品表 ＋
+ *    强化前缀表 ＋ 戒指页/武器页两个持有行）的 label 是数据字段，
  *    渲染前缀留在调用点拼（这样每条按钮各有一个可打的调用点）；翻页键
  *    [997]/[998]、黑市 [996]、返回 [999] 同。`[---] - 未开放…` 这类灰字行也照写
  *    原作的假编号（:1032/:1164）。价格与顺从档**印在按钮正文里**（原作是把价格写在名字后的
@@ -634,9 +635,9 @@ async function tailor_normal_special(cid) {
       era.printButton(`- ${item.label}`, item.n); // :1320 起（表驱动，前缀在调用点拼）
     }
     era.drawLine();
-    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:628（原文此处无「- 」）
-    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:629（同上）
-    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:630
+    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:1355（原文此处无「- 」）
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:1356（同上）
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:1357
     const result = await era.input();
     const item = SPECIAL_ITEMS.find((entry) => entry.n === result);
     if (item) {
@@ -674,9 +675,9 @@ async function tailor_accessory(cid) {
       era.printButton(`- ${item.label}（${item.c}点）`, item.n); // :571 起（表驱动）
     }
     era.drawLine();
-    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:1355（原文此处无「- 」）
-    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:1356（同上）
-    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:1357
+    era.printButton('下一页', 997); // SHOP_TAILOR.ERB:628（原文此处无「- 」）
+    era.printButton('上一页', 998); // SHOP_TAILOR.ERB:629（同上）
+    era.printButton('- 返回', 999); // SHOP_TAILOR.ERB:630
     const result = await era.input();
     const item = ACCESSORY_ITEMS.find((entry) => entry.n === result);
     if (item) {
