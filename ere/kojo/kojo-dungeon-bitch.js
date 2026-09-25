@@ -349,10 +349,16 @@ async function sell_bitch(arg, place, rand = default_rand) {
             man[5],
           );
         }
-        // :205+:212 原作是一整行：:205 的 %SAVESTR:ARG% 与（GIRL && MAN 时的）
-        // :212 都不换行，:212 的 PRINTFORML 收行。不是 GIRL && MAN 时 :212 不
-        // 执行、行继续到 :217——那种形状被 :212 的 L 挡住，无法并成一条（#624）
-        era.print(`${name_of(arg)}` + (girl[0] && man[0] ? `${locals}、` : '')); // :205+:212
+        // :205 的 %SAVESTR:ARG% 是这一行的前缀：
+        // - GIRL && MAN 时它与 :212 合成一条（:212 的 PRINTFORML 收行）；
+        // - 其余情况 :212 不执行、行继续到 :217，此时前缀并进 :217 那条
+        //   （前缀提到语句外共用、锚写该分支自己的行号，见 #624；只并第一支的话
+        //   其余分支上玩家仍看到两行）
+        // 前缀是「内联在 :205+:212 的拼接锚语句里」（锁 C 要求 ARGNAME、LOCALS
+        // 两个槽位按序出现），其余分支用 name_of(arg) 直接调用（不是模板槽位）。
+        if (girl[0] && man[0]) {
+          era.print(`${name_of(arg)}${locals}、`); // :205+:212
+        }
         if (girl[0]) {
           locals = fs_log_bitch(
             'DUNGEON_GIRL',
@@ -363,10 +369,10 @@ async function sell_bitch(arg, place, rand = default_rand) {
             girl[5],
           ); // :215
         }
-        // :213+:217 原作是一整行：:213 的「于是」（同样只在 GIRL && MAN 时输出）
-        // 与 :217 的「以%LOCALS%为对手」都不换行（#624）
+        // :213+:217 原作是一整行：:213 的「于是」（只在 GIRL && MAN 时输出，
+        // 那时前缀已由上面那条收行）与 :217 的「以%LOCALS%为对手」都不换行（#624）
         await era.print(
-          (girl[0] && man[0] ? '于是' : '') + `以${locals}为对手`,
+          (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
         ); // :213+:217
 
         locals = fs_log_bitch(
@@ -380,10 +386,13 @@ async function sell_bitch(arg, place, rand = default_rand) {
         await era.printAndWait(`${locals}进行着`); // :220
       } else {
         // :222-244 街中
-        era.print(`${name_of(arg)}`); // :223
+        // :223 的 %SAVESTR:ARG% 是这一行的前缀，两条路径各并一次：
+        // - PLAY == PLAY:6 时与 :226 合成一条（拼接锚）；
+        // - 其余情况行继续，前缀并进 :232（GIRL && MAN）或 :237 那一条（锚写该
+        //   分支自己的行号，见 #624；只并第一支的话其余分支上仍看到两行）
         locals = ''; // :224
         if (play[0] === play[6]) {
-          await era.printAndWait(`进行了${play[6]}次兽交秀。`); // :226
+          await era.printAndWait(`${name_of(arg)}进行了${play[6]}次兽交秀。`); // :223+:226
         } else {
           if (man[0]) {
             locals = fs_log_bitch(
@@ -396,10 +405,8 @@ async function sell_bitch(arg, place, rand = default_rand) {
             ); // :229
           }
           if (girl[0] && man[0]) {
-            await era.print(`${locals}、`); // :232
+            era.print(name_of(arg) + `${locals}、`); // :232
           }
-          // :233+:237 原作是一整行：:233 的「于是」（同样只在 GIRL && MAN 时输出）
-          // 与 :237 的「以%LOCALS%为对手」都不换行（#624）
           if (girl[0]) {
             locals = fs_log_bitch(
               'TOWN_GIRL',
@@ -410,8 +417,10 @@ async function sell_bitch(arg, place, rand = default_rand) {
               girl[5],
             ); // :235
           }
+          // :233+:237 原作是一整行：:233 的「于是」（只在 GIRL && MAN 时输出，
+          // 那时前缀已由上面那条收行）与 :237 的「以%LOCALS%为对手」都不换行（#624）
           await era.print(
-            (girl[0] && man[0] ? '于是' : '') + `以${locals}为对手`,
+            (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
           ); // :233+:237
 
           locals = fs_log_bitch(

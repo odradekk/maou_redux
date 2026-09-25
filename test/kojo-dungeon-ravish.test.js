@@ -621,15 +621,32 @@ test('#624 兽人凌辱·单只：:330+:335 的「脸上」与恥じらい分档
     'TALENT:35 → :330+:335 是一整行',
   );
 
-  // 其余分档（:339）夹在 :336 的 PRINTFORML 之后，只并 :335 那一条
-  const without_shy = await setup_ravish((f) => f.store.set('cflag:31:131', 6));
-  await fixture_module(without_shy).orc_ryou(31, 1, seq_rand(0, 0, 0));
-  const lines = without_shy.text_lines();
-  assert.ok(lines.includes('脸上'), '其余分档：「脸上」仍单独一行');
-  assert.ok(
-    lines.includes('的神情为屈服的喜悦与口水所浸染……'),
-    '其余分档：:339 的文本自占一行',
-  );
+  // 其余分档各自与 :330 的「脸上」合成一条（前缀提到语句外共用，锚写该分支
+  // 自己的行号——只并第一支的话其余分支上玩家仍看到两行，#624）
+  const cases = [
+    [{ 'cflag:31:131': 6 }, '脸上的神情为屈服的喜悦与口水所浸染……'],
+    [
+      { 'cflag:31:131': 3, 'talent:31:35': 1 },
+      '脸上流露着在羞耻与快乐间彷徨的神色……',
+    ],
+    [{ 'cflag:31:131': 3 }, '脸上隐约露出了屈服的喜悦……'],
+    [{ 'cflag:31:131': 0, 'talent:31:14': 1 }, '脸上被眼泪浸湿了……'],
+    [{ 'cflag:31:131': 0, 'talent:31:35': 1 }, '脸上浸染着羞耻的神色……'],
+    [{ 'cflag:31:131': 0, 'talent:31:11': 1 }, '脸上的表情因愤怒而扭曲……'],
+    [{ 'cflag:31:131': 0 }, '脸上染上了绝望的神色……'],
+  ];
+  for (const [seed, line] of cases) {
+    const fixture = await setup_ravish((f) => {
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(key, value);
+      }
+    });
+    await fixture_module(fixture).orc_ryou(31, 1, seq_rand(0, 0, 0));
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${JSON.stringify(seed)} → 整行「${line}」`,
+    );
+  }
 });
 
 test('#624 兽人凌辱·口交：:410..:419 的种族分档与名字同属一行', async () => {

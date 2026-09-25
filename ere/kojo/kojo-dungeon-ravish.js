@@ -654,13 +654,14 @@ async function orc_ryou(arg, mon_num, rand) {
         '便插了进去，',
     ); // :302+:305+:307+:312+:315+:317+:328
 
-    // :330 的「脸上」与 :335 的恥じらい分档同属一行。其余分档（:339/:347/…）
-    // 夹在 :336/:340/… 的 PRINTFORML 之后，拼接锚的区间绕不过那些自带 L 的
-    // 行，因此只能把第一个分档并进来（#624）
+    // :330 的「脸上」是这一行的前缀：:335 与其余分档（:339/:347/:351/:358/:363/
+    // :368/:370）各自与它合一条输出——前缀提到语句外共用、锚只写该分支自己的
+    // 行号（#624；只并第一支的话其余分支上玩家仍看到两行）
+    const face_front = '脸上'; // :330
     const shy = (era.get(`talent:${arg}:35`) || 0) !== 0;
-    await era.print(
-      '脸上' + (c131 > 5 && shy ? '流露着沉浸在了羞耻与情欲之中的神色……' : ''),
-    ); // :330+:335
+    if (c131 > 5 && shy) {
+      await era.print(`脸上流露着沉浸在了羞耻与情欲之中的神色……`); // :330+:335
+    }
 
     // :331-374 畏怖阶段分档
     if (c131 > 5) {
@@ -668,17 +669,17 @@ async function orc_ryou(arg, mon_num, rand) {
         await era.print(`耻情点数+${mon_num * 12}`); // :336
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
       } else {
-        await era.print('的神情为屈服的喜悦与口水所浸染……'); // :339
+        await era.print(face_front + '的神情为屈服的喜悦与口水所浸染……'); // :339
         await era.print(`屈服点数+${mon_num * 12}`); // :340
         era.add(`juel:${arg}:6`, mon_num * 10); // :341 JUEL:ARG:6 屈服
       }
     } else if (c131 > 2) {
       if (era.get(`talent:${arg}:35`)) {
-        await era.print('流露着在羞耻与快乐间彷徨的神色……'); // :347 恥じらい
+        await era.print(face_front + '流露着在羞耻与快乐间彷徨的神色……'); // :347 恥じらい
         await era.print(`耻情点数+${mon_num * 12}`); // :336
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
       } else {
-        await era.print('隐约露出了屈服的喜悦……'); // :351
+        await era.print(face_front + '隐约露出了屈服的喜悦……'); // :351
         await era.print(`屈服点数+${mon_num * 12}`); // :340
         era.add(`juel:${arg}:6`, mon_num * 10); // :341 JUEL:ARG:6 屈服
       }
@@ -690,17 +691,17 @@ async function orc_ryou(arg, mon_num, rand) {
         (era.get(`talent:${arg}:45`) || 0) === 0
       ) {
         // :356-360 大人しい・悲観的・涙もろい（且不泣かない）
-        await era.print('被眼泪浸湿了……'); // :358
+        await era.print(face_front + '被眼泪浸湿了……'); // :358
         await era.print(`恐怖点数+${mon_num * 10}`); // :359
         era.add(`juel:${arg}:10`, mon_num * 10); // :360 JUEL:ARG:10 恐怖
       } else if (era.get(`talent:${arg}:35`)) {
-        await era.print('浸染着羞耻的神色……'); // :363 恥じらい
+        await era.print(face_front + '浸染着羞耻的神色……'); // :363 恥じらい
         await era.print(`耻情点数+${mon_num * 10}`); // :364
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
       } else if (era.get(`talent:${arg}:11`)) {
-        await era.print('的表情因愤怒而扭曲……'); // :368 反抗的
+        await era.print(face_front + '的表情因愤怒而扭曲……'); // :368 反抗的
       } else {
-        await era.print('染上了绝望的神色……'); // :370
+        await era.print(face_front + '染上了绝望的神色……'); // :370
         await era.print(`屈服点数+${mon_num * 10}`); // :371
         era.add(`juel:${arg}:6`, mon_num * 10); // :341 JUEL:ARG:6 屈服
       }
