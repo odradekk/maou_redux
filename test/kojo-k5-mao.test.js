@@ -632,6 +632,16 @@ test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支�
     },
     {
       talked: 0,
+      seed: { palam5: 10000, talent76: 1, not_pulled: 1 },
+      line: '你向少女搭话后、玛奥一边晃着腰一边不停地说着下流的话语',
+    },
+    {
+      talked: 0,
+      seed: { palam4: 10000 },
+      line: '你向少女搭话后、玛奥如同打发无聊一样发起了牢骚',
+    },
+    {
+      talked: 0,
       seed: {},
       line: '你向少女搭话后、玛奥根本没有听进耳朵里的样子…',
     },
@@ -644,6 +654,16 @@ test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支�
       talked: 1,
       seed: { palam5: 10000, talent85: 1, not_pulled: 1 },
       line: '你向少女搭话后，玛奥晃动着腰部说起了充满爱意的话语',
+    },
+    {
+      talked: 1,
+      seed: { palam5: 10000, talent76: 1, not_pulled: 1 },
+      line: '你向少女搭话后，玛奥一边晃着腰一边不停地说着下流的话语',
+    },
+    {
+      talked: 1,
+      seed: { palam4: 10000 },
+      line: '你向少女搭话后，玛奥如同打发无聊一样发起了牢骚',
     },
     {
       talked: 1,
@@ -666,6 +686,9 @@ test('#625 交谈·前缀行并入各互斥分支（:4812/:4858 两处的六支�
       }
       if (seed.talent85) {
         f.store.set('talent:17:85', 1);
+      }
+      if (seed.talent76) {
+        f.store.set('talent:17:76', 1);
       }
       if (seed.not_pulled) {
         f.load_module('facade/game').game.event.插着不拔 = 1;
