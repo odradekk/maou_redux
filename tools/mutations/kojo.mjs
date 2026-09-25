@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2573; // #623 起 +52（M12600-M12651：K11 莉莉 16 处 + K9 黑方片 19 处 + K3 温妮 17 处「原作同一行被拆」的合并点各一条「拆回多条」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2582; // #623 起 +61（M12600-M12651：K11 莉莉 16 处 + K9 黑方片 19 处 + K3 温妮 17 处「原作同一行被拆」的合并点各一条「拆回多条」；返工 +9：M12652-M12660——8 族首支以外的分支各一条拆回 + :4810 前缀行尾全角空格丢字）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -22781,18 +22781,15 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目录像',
   },
   {
-    desc: 'M12602 K11 初回交谈·助手玛奥首支（:6865+:6867）拆回两条（#623）',
+    desc: 'M12602 K11 初回交谈·助手玛奥首支（:6867）拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
-      '          if (faced_first) {\n' +
-      '            // :6866\n' +
       '            await era.print(\n' +
-      '              `面对${player_name}的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n' +
-      '            ); // :6865+:6867',
+      '              line_head +\n' +
+      '                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n' +
+      '            ); // :6867',
     replace:
-      '          if (faced_first) {\n' +
-      '            // :6866\n' +
-      '            await era.print(`面对${player_name}`); // 变异：拆回\n' +
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(\n' +
       '              `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n' +
       '            ); // 变异：拆回',
@@ -22800,18 +22797,15 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12603 K11 初回交谈·非助手首支（:6893+:6895）拆回两条（#623）',
+    desc: 'M12603 K11 初回交谈·非助手首支（:6895）拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
-      '          if (faced_first) {\n' +
-      '            // :6894\n' +
       '            await era.print(\n' +
-      '              `${player_name}的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n' +
-      '            ); // :6893+:6895',
+      '              line_head +\n' +
+      '                `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n' +
+      '            ); // :6895',
     replace:
-      '          if (faced_first) {\n' +
-      '            // :6894\n' +
-      '            await era.print(`${player_name}`); // 变异：拆回\n' +
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(\n' +
       '              `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n' +
       '            ); // 变异：拆回',
@@ -22819,18 +22813,15 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 初回通常（',
   },
   {
-    desc: 'M12604 K11 二回目交谈·助手玛奥首支（:6952+:6954）拆回两条（#623）',
+    desc: 'M12604 K11 二回目交谈·助手玛奥首支（:6954）拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
-      '          if (faced_first) {\n' +
-      '            // :6953\n' +
       '            await era.print(\n' +
-      '              `面对${player_name}的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n' +
-      '            ); // :6952+:6954',
+      '              line_head +\n' +
+      '                `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n' +
+      '            ); // :6954',
     replace:
-      '          if (faced_first) {\n' +
-      '            // :6953\n' +
-      '            await era.print(`面对${player_name}`); // 变异：拆回\n' +
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(\n' +
       '              `的语言调戏、${target_name}扭着腰，边自慰边发出一声声享受的娇喘。`,\n' +
       '            ); // 变异：拆回',
@@ -22838,18 +22829,15 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 COM56 二回目通常（',
   },
   {
-    desc: 'M12605 K11 二回目交谈·非助手首支（:6980+:6982）拆回两条（#623）',
+    desc: 'M12605 K11 二回目交谈·非助手首支（:6982）拆回两条（#623）',
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
-      '          if (faced_first) {\n' +
-      '            // :6981\n' +
       '            await era.print(\n' +
-      '              `面对${player_name}的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n' +
-      '            ); // :6980+:6982',
+      '              line_head +\n' +
+      '                `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n' +
+      '            ); // :6982',
     replace:
-      '          if (faced_first) {\n' +
-      '            // :6981\n' +
-      '            await era.print(`面对${player_name}`); // 变异：拆回\n' +
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(\n' +
       '              `的语言挑逗、${target_name}扭着腰，边自慰边诉说着对你的爱慕。`,\n' +
       '            ); // 变异：拆回',
@@ -22861,11 +22849,13 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
       '            await era.print(\n' +
-      '              `的语言调戏，${target_name}` +\n' +
+      '              line_head +\n' +
+      '                `的语言调戏，${target_name}` +\n' +
       "                (excited ? '却乐在其中' : painful ? '无比痛苦' : '') +\n" +
       '                `地回应着。`,\n' +
       '            ); // :6873+:6875+:6877+:6879',
     replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n' +
       '            if (excited) {\n' +
       "              await era.print('却乐在其中'); // 变异：拆回\n" +
@@ -22881,11 +22871,13 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
       '            await era.print(\n' +
-      '              `的语言调戏，${target_name}` +\n' +
+      '              line_head +\n' +
+      '                `的语言调戏，${target_name}` +\n' +
       "                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n" +
       '                `地努力回答着`,\n' +
       '            ); // :6901+:6903+:6905+:6907',
     replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n' +
       '            if (excited) {\n' +
       "              await era.print('乐在其中'); // 变异：拆回\n" +
@@ -22901,11 +22893,13 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
       '            await era.print(\n' +
-      '              `的语言调戏，${target_name}` +\n' +
+      '              line_head +\n' +
+      '                `的语言调戏，${target_name}` +\n' +
       "                (excited ? '害羞' : painful ? '无比痛苦' : '') +\n" +
       '                `地回应着`,\n' +
       '            ); // :6960+:6962+:6964+:6966',
     replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n' +
       '            if (excited) {\n' +
       "              await era.print('害羞'); // 变异：拆回\n" +
@@ -22921,11 +22915,13 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k11-lily.js',
     find:
       '            await era.print(\n' +
-      '              `的语言调戏，${target_name}` +\n' +
+      '              line_head +\n' +
+      '                `的语言调戏，${target_name}` +\n' +
       "                (excited ? '乐在其中' : painful ? '无比痛苦' : '') +\n" +
       '                `地努力回答着`,\n' +
       '            ); // :6988+:6990+:6992+:6994',
     replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
       '            await era.print(`的语言调戏，${target_name}`); // 变异：拆回\n' +
       '            if (excited) {\n' +
       "              await era.print('乐在其中'); // 变异：拆回\n" +
@@ -23167,28 +23163,31 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈录像',
   },
   {
-    desc: 'M12626 K9 交谈初回·首支（:4440+:4442）拆回两条（#623）',
+    desc: 'M12626 K9 交谈初回·首支（:4442）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
       '          await era.print(\n' +
-      '            `${player_name}向她搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n' +
-      '          ); // :4440+:4442',
+      '            line_head +\n' +
+      '              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n' +
+      '          ); // :4442',
     replace:
-      '          await era.print(`${player_name}向她`); // 变异：拆回\n' +
+      '          await era.print(line_head); // 变异：拆回\n' +
       '          await era.print(`搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
-    must_mention: '#623 交谈：首支与第三支',
+    must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
     desc: 'M12627 K9 交谈初回·第三支插入段整行（:4446+:4448+:4450+:4452）拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
       '          await era.print(\n' +
-      '            `搭话后、${target_name}就发出了` +\n' +
+      '            line_head +\n' +
+      '              `搭话后、${target_name}就发出了` +\n' +
       "              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n" +
       '              `娇喘声，拼命地回起话来了。`,\n' +
       '          ); // :4446+:4448+:4450+:4452',
     replace:
+      '          await era.print(line_head); // 变异：拆回\n' +
       '          await era.print(`搭话后、${target_name}就发出了`); // 变异：拆回\n' +
       '          if (excited) {\n' +
       "            await era.print('快乐的'); // 变异：拆回\n" +
@@ -23197,7 +23196,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.print(`娇喘声，拼命地回起话来了。`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
-    must_mention: '#623 交谈：首支与第三支',
+    must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
     desc: 'M12628 K9 交谈二回目·自我介绍整行（:4475+:4477+:4478）拆回多条（#623）',
@@ -23218,28 +23217,31 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 交谈录像',
   },
   {
-    desc: 'M12629 K9 交谈二回目·首支（:4491+:4493）拆回两条（#623）',
+    desc: 'M12629 K9 交谈二回目·首支（:4493）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
       '          await era.print(\n' +
-      '            `${master_name}向她搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n' +
-      '          ); // :4491+:4493',
+      '            line_head +\n' +
+      '              `搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`,\n' +
+      '          ); // :4493',
     replace:
-      '          await era.print(`${master_name}向她`); // 变异：拆回\n' +
+      '          await era.print(line_head); // 变异：拆回\n' +
       '          await era.print(`搭话后、${target_name}晃动着腰部继续说着充满爱意的话语`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
-    must_mention: '#623 交谈：首支与第三支',
+    must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
     desc: 'M12630 K9 交谈二回目·第三支插入段整行（:4497+:4499+:4501+:4503）拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
       '          await era.print(\n' +
-      '            `搭话后、${target_name}就发出了` +\n' +
+      '            line_head +\n' +
+      '              `搭话后、${target_name}就发出了` +\n' +
       "              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n" +
       '              `娇喘声，拼命地回起话来了。`,\n' +
       '          ); // :4497+:4499+:4501+:4503',
     replace:
+      '          await era.print(line_head); // 变异：拆回\n' +
       '          await era.print(`搭话后、${target_name}就发出了`); // 变异：拆回\n' +
       '          if (excited) {\n' +
       "            await era.print('快乐的'); // 变异：拆回\n" +
@@ -23248,7 +23250,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '          }\n' +
       '          await era.print(`娇喘声，拼命地回起话来了。`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
-    must_mention: '#623 交谈：首支与第三支',
+    must_mention: '#623 交谈：六支各自并入前缀整行',
   },
   {
     desc: 'M12631 K9 死斗场·口交器具名整行（:7085+:7087+:7089+:7090）拆回多条（#623）',
@@ -23390,28 +23392,25 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '#623 强制排泄·最深部遭遇三档整行',
   },
   {
-    desc: 'M12638 K3 强制排泄·两穴支首段（:4775+:4777）拆回两条（#623：前缀又占一行）',
+    desc: 'M12638 K3 强制排泄·两穴支首段（:4777）拆回两条（#623：前缀又占一行）',
     file: 'ere/kojo/kojo-k3-noble.js',
-    find:
-      '            await era.printAndWait(\n' +
-      "              `「不、骗人的吧！${'\\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动着……竟然…」`,\n" +
-      '            ); // :4775+:4777',
+    find: '            await era.printAndWait(line_head + `着……竟然…」`); // :4777',
     replace:
-      "            await era.print(`「不、骗人的吧！${'\\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`); // 变异：拆回\n" +
+      '            await era.printAndWait(line_head); // 变异：拆回\n' +
       '            await era.printAndWait(`着……竟然…」`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
   {
-    desc: 'M12639 K3 强制排泄·屈辱支首段（:4810+:4812）拆回两条（#623）',
+    desc: 'M12639 K3 强制排泄·屈辱支首段（:4812）拆回两条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find:
       '              await era.printAndWait(\n' +
-      "                `「原、原谅我…啊啊啊啊！！${'\\u3000'}又要…出来了、出…快停下来啊……！！」`,\n" +
-      '              ); // :4810+:4812',
+      '                line_head + `又要…出来了、出…快停下来啊……！！」`,\n' +
+      '              ); // :4812',
     replace:
-      '              await era.print(`「原、原谅我…啊啊啊啊！！`); // 变异：拆回\n' +
-      "              await era.printAndWait(`${'\\u3000'}又要…出来了、出…快停下来啊……！！」`); // 变异：拆回",
+      '              await era.printAndWait(line_head); // 变异：拆回\n' +
+      '              await era.printAndWait(`又要…出来了、出…快停下来啊……！！」`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
@@ -23612,6 +23611,134 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    await era.printAndWait(`交配想得受不了了~…！」`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 奖赏请求·野兽名整行',
+  },
+
+  // —— #623 返工：8 族（K11 四族各 6 支 / K9 两族各 6 支 / K3 两族各 3 支）的
+  // 无后缀 PRINTFORM 前缀提为语句外局部量 line_head 后，「首支以外」的分支也
+  // 拼前缀（M12652-M12659：每族一条拆回，覆盖非首支；整行断言见三份测试的同名
+  // 用例）；M12660 钉住 :4810 前缀行尾全角空格（审查建议 11） ——
+  {
+    desc: 'M12652 K11 初回交谈·助手玛奥第二支（:6870）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find:
+      '            await era.print(\n' +
+      '              line_head +\n' +
+      '                `边侵犯边用语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // :6870',
+    replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
+      '            await era.print(\n' +
+      '              `边侵犯边用语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // 变异：拆回',
+    tests: ['kojo-k11-lily'],
+    must_mention: '#623 COM56 初回通常（',
+  },
+  {
+    desc: 'M12653 K11 初回交谈·非助手第二支（:6898）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find:
+      '            await era.print(\n' +
+      '              line_head +\n' +
+      '                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // :6898',
+    replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
+      '            await era.print(\n' +
+      '              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // 变异：拆回',
+    tests: ['kojo-k11-lily'],
+    must_mention: '#623 COM56 初回通常（',
+  },
+  {
+    desc: 'M12654 K11 二回目交谈·助手玛奥第二支（:6957）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find:
+      '            await era.print(\n' +
+      '              line_head +\n' +
+      '                `的语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // :6957',
+    replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
+      '            await era.print(\n' +
+      '              `的语言调戏、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // 变异：拆回',
+    tests: ['kojo-k11-lily'],
+    must_mention: '#623 COM56 二回目通常（',
+  },
+  {
+    desc: 'M12655 K11 二回目交谈·非助手第二支（:6985）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k11-lily.js',
+    find:
+      '            await era.print(\n' +
+      '              line_head +\n' +
+      '                `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // :6985',
+    replace:
+      '            await era.print(line_head); // 变异：拆回\n' +
+      '            await era.print(\n' +
+      '              `的语言挑逗、${target_name}弯着腰，不顾廉耻地边娇喘边大声说着`,\n' +
+      '            ); // 变异：拆回',
+    tests: ['kojo-k11-lily'],
+    must_mention: '#623 COM56 二回目通常（',
+  },
+  {
+    desc: 'M12656 K9 交谈初回·第二支（:4444）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find:
+      '          await era.print(\n' +
+      '            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n' +
+      '          ); // :4444',
+    replace:
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // 变异：拆回',
+    tests: ['kojo-k9-diamond'],
+    must_mention: '#623 交谈：六支各自并入前缀整行',
+  },
+  {
+    desc: 'M12657 K9 交谈二回目·第二支（:4495）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k9-diamond.js',
+    find:
+      '          await era.print(\n' +
+      '            line_head + `搭话后、${target_name}晃动着腰继续说着卑劣的话语`,\n' +
+      '          ); // :4495',
+    replace:
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.print(`搭话后、${target_name}晃动着腰继续说着卑劣的话语`); // 变异：拆回',
+    tests: ['kojo-k9-diamond'],
+    must_mention: '#623 交谈：六支各自并入前缀整行',
+  },
+  {
+    desc: 'M12658 K3 强制排泄·两穴支 ELSEIF（:4779）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: '            await era.printAndWait(line_head + `着……唔！」`); // :4779',
+    replace:
+      '            await era.printAndWait(line_head); // 变异：拆回\n' +
+      '            await era.printAndWait(`着……唔！」`); // 变异：拆回',
+    tests: ['kojo-k3-noble'],
+    must_mention: '#623 强制排泄·两穴与屈辱支的整行',
+  },
+  {
+    desc: 'M12659 K3 强制排泄·屈辱支 ELSEIF（:4814）拆回两条（#623 返工：非首支也拼前缀）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find:
+      '              await era.printAndWait(\n' +
+      '                line_head +\n' +
+      "                  `请、请怜悯下…！${'\\u3000'}啊？${'\\u3000'}啊啊、不要啊啊……」`,\n" +
+      '              ); // :4814',
+    replace:
+      '              await era.printAndWait(line_head); // 变异：拆回\n' +
+      "              await era.printAndWait(`请、请怜悯下…！${'\\u3000'}啊？${'\\u3000'}啊啊、不要啊啊……」`); // 变异：拆回",
+    tests: ['kojo-k3-noble'],
+    must_mention: '#623 强制排泄·两穴与屈辱支的整行',
+  },
+  {
+    desc: 'M12660 K3 强制排泄·屈辱支前缀丢行尾全角空格（:4810，审查建议 11）',
+    file: 'ere/kojo/kojo-k3-noble.js',
+    find: "            const line_head = `「原、原谅我…啊啊啊啊！！${'\\u3000'}`; // :4810",
+    replace:
+      '            const line_head = `「原、原谅我…啊啊啊啊！！`; // 变异：丢行尾全角空格',
+    tests: ['kojo-k3-noble'],
+    must_mention: '含前缀行尾全角空格',
   },
   // —— #622：口上剩余拆行第 B 组（kojo-k8-spade.js 26 处「原作同一行被拆」的
   // 合并点，各配一条「拆回多条」变异；每组一条，M12500-M12525。整行文本断言见
