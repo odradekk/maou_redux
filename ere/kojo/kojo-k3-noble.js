@@ -6709,20 +6709,19 @@ async function kojo_message_com_3(rand) {
           era.get(`talent:${target}:成为勇者前的生活`) === 20
         ) {
           // :4567
-          if (era.get(`talent:${target}:成为勇者前的生活`) === 5) {
-            // :4568
-            era.print(`「从娼妇`); // :4569
-          } else if (era.get(`talent:${target}:成为勇者前的生活`) === 7) {
-            // :4570
-            era.print(`「从乞丐`); // :4571
-          } else if (era.get(`talent:${target}:成为勇者前的生活`) === 9) {
-            // :4572
-            era.print(`「从贫民`); // :4573
-          } else if (era.get(`talent:${target}:成为勇者前的生活`) === 20) {
-            // :4574
-            era.print(`「从奴隶`); // :4575
-          }
-          await era.printAndWait(`成为了勇者，就能摆脱以前的生活…才对的啊…」`); // :4577
+          // :4569+:4571+:4573+:4575+:4577 原作是一整行：无后缀 PRINTFORM 链，
+          // :4569/:4571/:4573/:4575 是四选一的出身（:4568/:4570/:4572/:4574 的
+          // IF 链），:4577 的 PRINTFORMW 收行（#623）
+          const former_life = era.get(`talent:${target}:成为勇者前的生活`);
+          await era.printAndWait(
+            (former_life === 5
+              ? `「从娼妇`
+              : former_life === 7
+                ? `「从乞丐`
+                : former_life === 9
+                  ? `「从贫民`
+                  : `「从奴隶`) + `成为了勇者，就能摆脱以前的生活…才对的啊…」`,
+          ); // :4569+:4571+:4573+:4575+:4577
           await era.printAndWait(
             `「${scf()}、${sc()}，怎么就落到这个地步…呢…」`,
           ); // :4578
@@ -6751,21 +6750,23 @@ async function kojo_message_com_3(rand) {
           era.get(`talent:${target}:成为勇者前的生活`) === 20
         ) {
           // :4588
-          era.print(`「不、不要啊！${'\u3000'}这这这、这样子的、比`); // :4589
-          if (era.get(`talent:${target}:成为勇者前的生活`) === 5) {
-            // :4590
-            era.print(`娼妇`); // :4591
-          } else if (era.get(`talent:${target}:成为勇者前的生活`) === 7) {
-            // :4592
-            era.print(`乞丐`); // :4593
-          } else if (era.get(`talent:${target}:成为勇者前的生活`) === 9) {
-            // :4594
-            era.print(`贫民`); // :4595
-          } else if (era.get(`talent:${target}:成为勇者前的生活`) === 20) {
-            // :4596
-            era.print(`奴隶`); // :4597
-          }
-          await era.printAndWait(`还不如的待遇！！」`); // :4599
+          // :4589+:4591+:4593+:4595+:4597+:4599 原作是一整行（与
+          // :4569+:4571+:4573+:4575+:4577 同型，:4590/:4592/:4594/:4596 的
+          // IF 链），:4599 的 PRINTFORMW 收行（#623）
+          const former_life = era.get(`talent:${target}:成为勇者前的生活`);
+          const origin_word =
+            former_life === 5
+              ? `娼妇`
+              : former_life === 7
+                ? `乞丐`
+                : former_life === 9
+                  ? `贫民`
+                  : `奴隶`;
+          await era.printAndWait(
+            `「不、不要啊！${'\u3000'}这这这、这样子的、比` +
+              origin_word +
+              `还不如的待遇！！」`,
+          ); // :4589+:4591+:4593+:4595+:4597+:4599
           await era.printAndWait(
             `「${scf()}、${sc()}，都成为勇者…成为勇者摆脱这些了啊…呀、呀啊啊啊！？」`,
           ); // :4600
@@ -6867,21 +6868,18 @@ async function kojo_message_com_3(rand) {
               // :4651
               if (rand_n(3) === 0) {
                 // :4652
-                era.print(
-                  `「…哈、啊哈${black_heart(1)}${'\u3000'}一想到${sc()}拉出来的东西、要是让探索中的勇者`,
-                ); // :4653
-                if (rand_n(3) === 0) {
-                  // :4654
-                  era.print(`找到`); // :4655
-                } else if (rand_n(2) === 0) {
-                  // :4656
-                  era.print(`一不小心捡到`); // :4657
-                } else {
-                  era.print(`无意中踩到`); // :4659
-                }
+                // :4653+:4655+:4657+:4659+:4661 原作是一整行：无后缀
+                // PRINTFORM 链，:4655/:4657/:4659 是三选一的遭遇
+                // （:4654/:4656 的 RAND 链，抽签顺序照原作），:4661 收行（#623）
                 await era.printAndWait(
-                  `了的话…吼吼噢噢噢噢${black_heart(1)}」`,
-                ); // :4661
+                  `「…哈、啊哈${black_heart(1)}${'\u3000'}一想到${sc()}拉出来的东西、要是让探索中的勇者` +
+                    (rand_n(3) === 0
+                      ? `找到`
+                      : rand_n(2) === 0
+                        ? `一不小心捡到`
+                        : `无意中踩到`) +
+                    `了的话…吼吼噢噢噢噢${black_heart(1)}」`,
+                ); // :4653+:4655+:4657+:4659+:4661
                 await era.printAndWait(
                   `「实在是…非常的、令人兴奋不已啊${black_heart(1)}」`,
                 ); // :4662
@@ -7088,12 +7086,20 @@ async function kojo_message_com_3(rand) {
             ); // :4771
           }
         } else {
-          era.print(
-            `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`,
-          ); // :4775
-          if (rand_n(3) === 0) {
+          // :4775+:4777 原作是一整行：:4775 的 PRINTFORM 不换行、:4777 的
+          // PRINTFORMW 收行。ELSEIF/ELSE 支（:4779/:4781）自带等待，前缀只能
+          // 单独一行（抽签顺序照原作，#623）
+          const crying_out = rand_n(3) === 0;
+          if (!crying_out) {
+            era.print(
+              `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`,
+            ); // :4775
+          }
+          if (crying_out) {
             // :4776
-            await era.printAndWait(`着……竟然…」`); // :4777
+            await era.printAndWait(
+              `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动着……竟然…」`,
+            ); // :4775+:4777
           } else if (rand_n(2) === 0) {
             // :4778
             await era.printAndWait(`着……唔！」`); // :4779
@@ -7147,10 +7153,18 @@ async function kojo_message_com_3(rand) {
             // :4806
             await era.printAndWait(`「呜呜…别看啊、至少…请不要拍、啊……」`); // :4807
           } else {
-            era.print(`「原、原谅我…啊啊啊啊！！`); // :4810
-            if (rand_n(3) === 0) {
+            // :4810+:4812 原作是一整行：:4810 的 PRINTFORM 不换行、:4812 的
+            // PRINTFORMW 收行。ELSEIF/ELSE 支（:4814/:4816）自带等待，前缀
+            // 只能单独一行（抽签顺序照原作，#623）
+            const birth_shown = rand_n(3) === 0;
+            if (!birth_shown) {
+              era.print(`「原、原谅我…啊啊啊啊！！`); // :4810
+            }
+            if (birth_shown) {
               // :4811
-              await era.printAndWait(`又要…出来了、出…快停下来啊……！！」`); // :4812
+              await era.printAndWait(
+                `「原、原谅我…啊啊啊啊！！${'\u3000'}又要…出来了、出…快停下来啊……！！」`,
+              ); // :4810+:4812
             } else if (rand_n(2) === 0) {
               // :4813
               await era.printAndWait(
@@ -7553,9 +7567,12 @@ async function kojo_message_com_3(rand) {
           game.event.插着不拔
         ) {
           // :5027
+          // :5026+:5028 原作是一整行：:5026 的 PRINTFORM 不换行、:5028 的
+          // PRINTFORML 收行（前缀与支文本本来就在同一条语句里，只是锚漏了
+          // :5026——#623 按各支的末行各记各的，其余支仍是各自的行）
           era.print(
-            player_name + `向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,
-          ); // :5028
+            `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,
+          ); // :5026+:5028
         } else if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) ||
@@ -7729,9 +7746,10 @@ async function kojo_message_com_3(rand) {
           game.event.插着不拔
         ) {
           // :5099
+          // :5098+:5100 与 :5026+:5028 同型（二回目，锚漏了 :5098，#623）
           era.print(
-            player_name + `向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,
-          ); // :5100
+            `${player_name}向其搭话后，${target_name}摇晃着腰说起了恋慕的话语`,
+          ); // :5098+:5100
         } else if (
           era.get(`palam:${target}:5`) >= PALAMLV[4] &&
           (era.get(`talent:${target}:76`) ||
@@ -10621,14 +10639,14 @@ async function dog_kojo_3(rand) {
         } else {
           era.print(`「嗯~…好像要融化掉了一样啊~${heart(1)}」`); // :6029
         }
-        era.print(`${target_name}`); // :6031
-        if (rand_n(2) === 0) {
-          // :6032
-          era.print(`一脸陶醉的表情`); // :6033
-        } else {
-          era.print(`专心地`); // :6035
-        }
-        await era.printAndWait(`和野狗用舌头缠绕在一起了。`); // :6037
+        // :6031+:6033+:6035+:6037 原作是一整行：无后缀 PRINTFORM 链，
+        // :6033/:6035 是 RAND:2 二选一的插入段（:6032 的 IF，抽签照原作），
+        // :6037 的 PRINTFORMW 收行（#623）
+        await era.printAndWait(
+          `${target_name}` +
+            (rand_n(2) === 0 ? `一脸陶醉的表情` : `专心地`) +
+            `和野狗用舌头缠绕在一起了。`,
+        ); // :6031+:6033+:6035+:6037
         // CFLAG:307  = 6（变量语义：CFLAG 族，307） // :6038
         kojo.接吻 = 6; // :6038
       } else if (
@@ -11097,56 +11115,44 @@ async function dog_kojo_3(rand) {
 
           if (local_9 > 0) {
             // :6716
-            era.print(`「${sc()}是有`); // :6717
-            if (local_5 && local_6 && local_7 && local_8) {
-              // :6718
-              era.print(`姐姐，哥哥，弟弟，妹妹`); // :6719
-            } else if (local_5 && local_6 && local_7) {
-              // :6720
-              era.print(`姐姐，哥哥，妹妹`); // :6721
-            } else if (local_5 && local_6 && local_8) {
-              // :6722
-              era.print(`姐姐，哥哥，弟弟`); // :6723
-            } else if (local_5 && local_7 && local_8) {
-              // :6724
-              era.print(`姐姐，弟弟，妹妹`); // :6725
-            } else if (local_6 && local_7 && local_8) {
-              // :6726
-              era.print(`哥哥，弟弟，妹妹`); // :6727
-            } else if (local_5 && local_6) {
-              // :6728
-              era.print(`姐姐和哥哥`); // :6729
-            } else if (local_5 && local_8) {
-              // :6730
-              era.print(`姐姐和弟弟`); // :6731
-            } else if (local_5 && local_7) {
-              // :6732
-              era.print(`姐姐和妹妹`); // :6733
-            } else if (local_6 && local_8) {
-              // :6734
-              era.print(`哥哥和弟弟`); // :6735
-            } else if (local_6 && local_7) {
-              // :6736
-              era.print(`哥哥和妹妹`); // :6737
-            } else if (local_7 && local_8) {
-              // :6738
-              era.print(`弟弟和妹妹`); // :6739
-            } else if (local_5) {
-              // :6740
-              era.print(`姐姐`); // :6741
-            } else if (local_6) {
-              // :6742
-              era.print(`哥哥`); // :6743
-            } else if (local_7) {
-              // :6744
-              era.print(`妹妹`); // :6745
-            } else if (local_8) {
-              // :6746
-              era.print(`弟弟`); // :6747
-            } else {
-              era.print(`兄弟姐妹`); // :6749
-            }
-            await era.printAndWait(`的♪」`); // :6751
+            // :6717+:6719+:6721+:6723+:6725+:6727+:6729+:6731+:6733+:6735+:6737+:6739+:6741+:6743+:6745+:6747+:6749+:6751 原作是一整行：无后缀 PRINTFORM/PRINT 链，
+            // :6718/:6720/:6722/:6724/:6726/:6728/:6730/:6732/:6734/:6736/:6738/:6740/:6742/:6744/:6746 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // :6751 的 PRINTFORMW 收行（#623）
+            await era.printAndWait(
+              `「${sc()}是有` +
+                (local_5 && local_6 && local_7 && local_8
+                  ? `姐姐，哥哥，弟弟，妹妹`
+                  : local_5 && local_6 && local_7
+                    ? `姐姐，哥哥，妹妹`
+                    : local_5 && local_6 && local_8
+                      ? `姐姐，哥哥，弟弟`
+                      : local_5 && local_7 && local_8
+                        ? `姐姐，弟弟，妹妹`
+                        : local_6 && local_7 && local_8
+                          ? `哥哥，弟弟，妹妹`
+                          : local_5 && local_6
+                            ? `姐姐和哥哥`
+                            : local_5 && local_8
+                              ? `姐姐和弟弟`
+                              : local_5 && local_7
+                                ? `姐姐和妹妹`
+                                : local_6 && local_8
+                                  ? `哥哥和弟弟`
+                                  : local_6 && local_7
+                                    ? `哥哥和妹妹`
+                                    : local_7 && local_8
+                                      ? `弟弟和妹妹`
+                                      : local_5
+                                        ? `姐姐`
+                                        : local_6
+                                          ? `哥哥`
+                                          : local_7
+                                            ? `妹妹`
+                                            : local_8
+                                              ? `弟弟`
+                                              : `兄弟姐妹`) +
+                `的♪」`,
+            ); // :6717+:6719+:6721+:6723+:6725+:6727+:6729+:6731+:6733+:6735+:6737+:6739+:6741+:6743+:6745+:6747+:6749+:6751
 
             if (local_5 && local_6) {
               // :6753
@@ -11240,56 +11246,44 @@ async function dog_kojo_3(rand) {
 
           if (local_9 > 0) {
             // :6795
-            era.print(`「${sc()}是有`); // :6796
-            if (local_5 && local_6 && local_7 && local_8) {
-              // :6797
-              era.print(`姐姐，哥哥，弟弟，妹妹`); // :6798
-            } else if (local_5 && local_6 && local_7) {
-              // :6799
-              era.print(`姐姐，哥哥，妹妹`); // :6800
-            } else if (local_5 && local_6 && local_8) {
-              // :6801
-              era.print(`姐姐，哥哥，弟弟`); // :6802
-            } else if (local_5 && local_7 && local_8) {
-              // :6803
-              era.print(`姐姐，弟弟，妹妹`); // :6804
-            } else if (local_6 && local_7 && local_8) {
-              // :6805
-              era.print(`哥哥，弟弟，妹妹`); // :6806
-            } else if (local_5 && local_6) {
-              // :6807
-              era.print(`姐姐和哥哥`); // :6808
-            } else if (local_5 && local_8) {
-              // :6809
-              era.print(`姐姐和弟弟`); // :6810
-            } else if (local_5 && local_7) {
-              // :6811
-              era.print(`姐姐和妹妹`); // :6812
-            } else if (local_6 && local_8) {
-              // :6813
-              era.print(`哥哥和弟弟`); // :6814
-            } else if (local_6 && local_7) {
-              // :6815
-              era.print(`哥哥和妹妹`); // :6816
-            } else if (local_7 && local_8) {
-              // :6817
-              era.print(`弟弟和妹妹`); // :6818
-            } else if (local_5) {
-              // :6819
-              era.print(`姐姐`); // :6820
-            } else if (local_6) {
-              // :6821
-              era.print(`哥哥`); // :6822
-            } else if (local_7) {
-              // :6823
-              era.print(`妹妹`); // :6824
-            } else if (local_8) {
-              // :6825
-              era.print(`弟弟`); // :6826
-            } else {
-              era.print(`兄弟姐妹`); // :6828
-            }
-            await era.printAndWait(`的♪」`); // :6830
+            // :6796+:6798+:6800+:6802+:6804+:6806+:6808+:6810+:6812+:6814+:6816+:6818+:6820+:6822+:6824+:6826+:6828+:6830 原作是一整行：无后缀 PRINTFORM/PRINT 链，
+            // :6797/:6799/:6801/:6803/:6805/:6807/:6809/:6811/:6813/:6815/:6817/:6819/:6821/:6823/:6825 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // :6830 的 PRINTFORMW 收行（#623）
+            await era.printAndWait(
+              `「${sc()}是有` +
+                (local_5 && local_6 && local_7 && local_8
+                  ? `姐姐，哥哥，弟弟，妹妹`
+                  : local_5 && local_6 && local_7
+                    ? `姐姐，哥哥，妹妹`
+                    : local_5 && local_6 && local_8
+                      ? `姐姐，哥哥，弟弟`
+                      : local_5 && local_7 && local_8
+                        ? `姐姐，弟弟，妹妹`
+                        : local_6 && local_7 && local_8
+                          ? `哥哥，弟弟，妹妹`
+                          : local_5 && local_6
+                            ? `姐姐和哥哥`
+                            : local_5 && local_8
+                              ? `姐姐和弟弟`
+                              : local_5 && local_7
+                                ? `姐姐和妹妹`
+                                : local_6 && local_8
+                                  ? `哥哥和弟弟`
+                                  : local_6 && local_7
+                                    ? `哥哥和妹妹`
+                                    : local_7 && local_8
+                                      ? `弟弟和妹妹`
+                                      : local_5
+                                        ? `姐姐`
+                                        : local_6
+                                          ? `哥哥`
+                                          : local_7
+                                            ? `妹妹`
+                                            : local_8
+                                              ? `弟弟`
+                                              : `兄弟姐妹`) +
+                `的♪」`,
+            ); // :6796+:6798+:6800+:6802+:6804+:6806+:6808+:6810+:6812+:6814+:6816+:6818+:6820+:6822+:6824+:6826+:6828+:6830
 
             if (local_5 && local_6) {
               // :6832
@@ -11426,56 +11420,44 @@ async function dog_kojo_3(rand) {
 
           if (local_9 > 0) {
             // :6899
-            era.print(`「${sc()}是有`); // :6900
-            if (local_5 && local_6 && local_7 && local_8) {
-              // :6901
-              era.print(`姐姐，哥哥，弟弟，妹妹`); // :6902
-            } else if (local_5 && local_6 && local_7) {
-              // :6903
-              era.print(`姐姐，哥哥，妹妹`); // :6904
-            } else if (local_5 && local_6 && local_8) {
-              // :6905
-              era.print(`姐姐，哥哥，弟弟`); // :6906
-            } else if (local_5 && local_7 && local_8) {
-              // :6907
-              era.print(`姐姐，弟弟，妹妹`); // :6908
-            } else if (local_6 && local_7 && local_8) {
-              // :6909
-              era.print(`哥哥，弟弟，妹妹`); // :6910
-            } else if (local_5 && local_6) {
-              // :6911
-              era.print(`姐姐和哥哥`); // :6912
-            } else if (local_5 && local_8) {
-              // :6913
-              era.print(`姐姐和弟弟`); // :6914
-            } else if (local_5 && local_7) {
-              // :6915
-              era.print(`姐姐和妹妹`); // :6916
-            } else if (local_6 && local_8) {
-              // :6917
-              era.print(`哥哥和弟弟`); // :6918
-            } else if (local_6 && local_7) {
-              // :6919
-              era.print(`哥哥和妹妹`); // :6920
-            } else if (local_7 && local_8) {
-              // :6921
-              era.print(`弟弟和妹妹`); // :6922
-            } else if (local_5) {
-              // :6923
-              era.print(`姐姐`); // :6924
-            } else if (local_6) {
-              // :6925
-              era.print(`哥哥`); // :6926
-            } else if (local_7) {
-              // :6927
-              era.print(`妹妹`); // :6928
-            } else if (local_8) {
-              // :6929
-              era.print(`弟弟`); // :6930
-            } else {
-              era.print(`兄弟姐妹`); // :6932
-            }
-            await era.printAndWait(`的♪」`); // :6934
+            // :6900+:6902+:6904+:6906+:6908+:6910+:6912+:6914+:6916+:6918+:6920+:6922+:6924+:6926+:6928+:6930+:6932+:6934 原作是一整行：无后缀 PRINTFORM/PRINT 链，
+            // :6901/:6903/:6905/:6907/:6909/:6911/:6913/:6915/:6917/:6919/:6921/:6923/:6925/:6927/:6929 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // :6934 的 PRINTFORMW 收行（#623）
+            await era.printAndWait(
+              `「${sc()}是有` +
+                (local_5 && local_6 && local_7 && local_8
+                  ? `姐姐，哥哥，弟弟，妹妹`
+                  : local_5 && local_6 && local_7
+                    ? `姐姐，哥哥，妹妹`
+                    : local_5 && local_6 && local_8
+                      ? `姐姐，哥哥，弟弟`
+                      : local_5 && local_7 && local_8
+                        ? `姐姐，弟弟，妹妹`
+                        : local_6 && local_7 && local_8
+                          ? `哥哥，弟弟，妹妹`
+                          : local_5 && local_6
+                            ? `姐姐和哥哥`
+                            : local_5 && local_8
+                              ? `姐姐和弟弟`
+                              : local_5 && local_7
+                                ? `姐姐和妹妹`
+                                : local_6 && local_8
+                                  ? `哥哥和弟弟`
+                                  : local_6 && local_7
+                                    ? `哥哥和妹妹`
+                                    : local_7 && local_8
+                                      ? `弟弟和妹妹`
+                                      : local_5
+                                        ? `姐姐`
+                                        : local_6
+                                          ? `哥哥`
+                                          : local_7
+                                            ? `妹妹`
+                                            : local_8
+                                              ? `弟弟`
+                                              : `兄弟姐妹`) +
+                `的♪」`,
+            ); // :6900+:6902+:6904+:6906+:6908+:6910+:6912+:6914+:6916+:6918+:6920+:6922+:6924+:6926+:6928+:6930+:6932+:6934
 
             if (local_5 && local_6) {
               // :6936
@@ -11575,56 +11557,44 @@ async function dog_kojo_3(rand) {
 
           if (local_9 > 0) {
             // :6981
-            era.print(`「${sc()}是有`); // :6982
-            if (local_5 && local_6 && local_7 && local_8) {
-              // :6983
-              era.print(`姐姐，哥哥，弟弟，妹妹`); // :6984
-            } else if (local_5 && local_6 && local_7) {
-              // :6985
-              era.print(`姐姐，哥哥，妹妹`); // :6986
-            } else if (local_5 && local_6 && local_8) {
-              // :6987
-              era.print(`姐姐，哥哥，弟弟`); // :6988
-            } else if (local_5 && local_7 && local_8) {
-              // :6989
-              era.print(`姐姐，弟弟，妹妹`); // :6990
-            } else if (local_6 && local_7 && local_8) {
-              // :6991
-              era.print(`哥哥，弟弟，妹妹`); // :6992
-            } else if (local_5 && local_6) {
-              // :6993
-              era.print(`姐姐和哥哥`); // :6994
-            } else if (local_5 && local_8) {
-              // :6995
-              era.print(`姐姐和弟弟`); // :6996
-            } else if (local_5 && local_7) {
-              // :6997
-              era.print(`姐姐和妹妹`); // :6998
-            } else if (local_6 && local_8) {
-              // :6999
-              era.print(`哥哥和弟弟`); // :7000
-            } else if (local_6 && local_7) {
-              // :7001
-              era.print(`哥哥和妹妹`); // :7002
-            } else if (local_7 && local_8) {
-              // :7003
-              era.print(`弟弟和妹妹`); // :7004
-            } else if (local_5) {
-              // :7005
-              era.print(`姐姐`); // :7006
-            } else if (local_6) {
-              // :7007
-              era.print(`哥哥`); // :7008
-            } else if (local_7) {
-              // :7009
-              era.print(`妹妹`); // :7010
-            } else if (local_8) {
-              // :7011
-              era.print(`弟弟`); // :7012
-            } else {
-              era.print(`兄弟姐妹`); // :7014
-            }
-            await era.printAndWait(`的♪」`); // :7016
+            // :6982+:6984+:6986+:6988+:6990+:6992+:6994+:6996+:6998+:7000+:7002+:7004+:7006+:7008+:7010+:7012+:7014+:7016 原作是一整行：无后缀 PRINTFORM/PRINT 链，
+            // :6983/:6985/:6987/:6989/:6991/:6993/:6995/:6997/:6999/:7001/:7003/:7005/:7007/:7009/:7011 是 15 支兄弟姊妹称呼的 IF/ELSEIF（末支 ELSE 兜底），
+            // :7016 的 PRINTFORMW 收行（#623）
+            await era.printAndWait(
+              `「${sc()}是有` +
+                (local_5 && local_6 && local_7 && local_8
+                  ? `姐姐，哥哥，弟弟，妹妹`
+                  : local_5 && local_6 && local_7
+                    ? `姐姐，哥哥，妹妹`
+                    : local_5 && local_6 && local_8
+                      ? `姐姐，哥哥，弟弟`
+                      : local_5 && local_7 && local_8
+                        ? `姐姐，弟弟，妹妹`
+                        : local_6 && local_7 && local_8
+                          ? `哥哥，弟弟，妹妹`
+                          : local_5 && local_6
+                            ? `姐姐和哥哥`
+                            : local_5 && local_8
+                              ? `姐姐和弟弟`
+                              : local_5 && local_7
+                                ? `姐姐和妹妹`
+                                : local_6 && local_8
+                                  ? `哥哥和弟弟`
+                                  : local_6 && local_7
+                                    ? `哥哥和妹妹`
+                                    : local_7 && local_8
+                                      ? `弟弟和妹妹`
+                                      : local_5
+                                        ? `姐姐`
+                                        : local_6
+                                          ? `哥哥`
+                                          : local_7
+                                            ? `妹妹`
+                                            : local_8
+                                              ? `弟弟`
+                                              : `兄弟姐妹`) +
+                `的♪」`,
+            ); // :6982+:6984+:6986+:6988+:6990+:6992+:6994+:6996+:6998+:7000+:7002+:7004+:7006+:7008+:7010+:7012+:7014+:7016
 
             if (local_5 && local_6) {
               // :7018
@@ -11789,23 +11759,20 @@ async function colosseum_kojo_3(rand) {
       await era.printAndWait(
         `「啊哼嗯…嗯呜…再、再这样做的话…呜噗嗯！？嗯噗嗯嗯噗嗯……！」`,
       ); // :8491
-      era.print(`${assi_name}用`); // :8492
-      if (
+      // :8492+:8494+:8496+:8497 原作是一整行：无后缀 PRINTFORM 链，
+      // :8494/:8496 是两个 SIF 插入段（可都为假），:8497 的 PRINTFORMW 收行（#623）
+      const assi_penis =
         era.get(`talent:${assi}:121`) === 1 ||
-        era.get(`talent:${assi}:122`) === 1
-      ) {
-        // :8494
-        era.print(`大鸡巴`); // :8494
-      } // :8494
-      if (
+        era.get(`talent:${assi}:122`) === 1; // :8494
+      const assi_band =
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1
-      ) {
-        // :8496
-        era.print(`假阳具`); // :8496
-      } // :8496
-      await era.printAndWait(`让${target_name}吸着，露出了愉悦的表情……`); // :8497
+        era.get('item:4') === 1; // :8496
+      await era.printAndWait(
+        `${assi_name}用` +
+          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +
+          `让${target_name}吸着，露出了愉悦的表情……`,
+      ); // :8492+:8494+:8496+:8497
     } else {
       await era.printAndWait(
         `「啊啊…这，这么臭的东西…嗯呜…嗯噗…嗯啾…噗噜呸……」`,
@@ -11845,23 +11812,19 @@ async function colosseum_kojo_3(rand) {
       await era.printAndWait(
         `「啊啊~！不，不行的啊…这样…强行做这样的…啊啊啊啊！」`,
       ); // :8524
-      era.print(`${assi_name}一边听着悲鸣一边用`); // :8525
-      if (
+      // :8525+:8527+:8529+:8530 与 :8492+:8494+:8496+:8497 同型（#623）
+      const assi_penis =
         era.get(`talent:${assi}:121`) === 1 ||
-        era.get(`talent:${assi}:122`) === 1
-      ) {
-        // :8527
-        era.print(`大鸡巴`); // :8527
-      } // :8527
-      if (
+        era.get(`talent:${assi}:122`) === 1; // :8527
+      const assi_band =
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1
-      ) {
-        // :8529
-        era.print(`假阳具`); // :8529
-      } // :8529
-      await era.printAndWait(`将${target_name}的小穴毫不留情地侵犯着……`); // :8530
+        era.get('item:4') === 1; // :8529
+      await era.printAndWait(
+        `${assi_name}一边听着悲鸣一边用` +
+          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +
+          `将${target_name}的小穴毫不留情地侵犯着……`,
+      ); // :8525+:8527+:8529+:8530
     } else if (game.train.死斗场敌种 === 206) {
       // :8532
       await era.printAndWait(`「噶啊…呃哈啊…呃啊啊…呜啊啊啊……」`); // :8533
@@ -11881,23 +11844,19 @@ async function colosseum_kojo_3(rand) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
       // :8547
       await era.printAndWait(`「啊啊~！啊~啊啊~！屁股…要坏掉了啊~…~！」`); // :8548
-      era.print(`${assi_name}一边听着悲鸣一边用`); // :8549
-      if (
+      // :8549+:8551+:8553+:8554 与 :8492+:8494+:8496+:8497 同型（#623）
+      const assi_penis =
         era.get(`talent:${assi}:121`) === 1 ||
-        era.get(`talent:${assi}:122`) === 1
-      ) {
-        // :8551
-        era.print(`大鸡巴`); // :8551
-      } // :8551
-      if (
+        era.get(`talent:${assi}:122`) === 1; // :8551
+      const assi_band =
         era.get(`talent:${assi}:121`) !== 1 &&
         era.get(`talent:${assi}:122`) !== 1 &&
-        era.get('item:4') === 1
-      ) {
-        // :8553
-        era.print(`假阳具`); // :8553
-      } // :8553
-      await era.printAndWait(`将${target_name}的肛穴毫不留情地侵犯着……`); // :8554
+        era.get('item:4') === 1; // :8553
+      await era.printAndWait(
+        `${assi_name}一边听着悲鸣一边用` +
+          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +
+          `将${target_name}的肛穴毫不留情地侵犯着……`,
+      ); // :8549+:8551+:8553+:8554
     } else if (game.train.死斗场敌种 === 206) {
       // :8556
       await era.printAndWait(`「呃啊…呃哈啊…呜呃…呜呃呃呃……」`); // :8557
@@ -12394,14 +12353,15 @@ async function kojo_message_palamcng_3(rand) {
         era.get(`talent:${target}:191`) === 1
       ) {
         // :7382
-        era.print(`「啊啊~…我的`); // :7383
-        if (rand_n(2) === 0) {
-          // :7384
-          era.print(`两个小穴`); // :7385
-        } else {
-          era.print(`小穴还有屁股`); // :7387
-        }
-        await era.printAndWait(`都要生出来、要生出来了啊~……啊啊~！！」`); // :7389
+        // :7383+:7385+:7387+:7389 原作是一整行：无后缀 PRINTFORM 链，
+        // :7385/:7387 是 RAND:2 二选一的插入段（:7384 的 IF，抽签照原作），
+        // :7389 的 PRINTFORMW 收行（#623）
+        const both_holes = rand_n(2) === 0;
+        await era.printAndWait(
+          `「啊啊~…我的` +
+            (both_holes ? `两个小穴` : `小穴还有屁股`) +
+            `都要生出来、要生出来了啊~……啊啊~！！」`,
+        ); // :7383+:7385+:7387+:7389
       } else if (era.get(`talent:${target}:190`) === 1) {
         // :7391
         if (rand_n(1) === 0) {
@@ -14117,18 +14077,20 @@ async function gohoubi_request_koujo_k3(rand) {
   ) {
     // :8801
 
-    era.print(`「${self_call(a)}…这场战斗完后想要跟…`); // :8803
-    if (chara(a).stronghold.要求奖赏 === 1) {
-      // :8804
-      era.print(`狗`); // :8805
-    } else if (chara(a).stronghold.要求奖赏 === 2) {
-      // :8806
-      era.print(`猪`); // :8807
-    } else if (chara(a).stronghold.要求奖赏 === 3) {
-      // :8808
-      era.print(`马`); // :8809
-    }
-    await era.printAndWait(`交配想得受不了了~…！」`); // :8811
+    // :8803+:8805+:8807+:8809+:8811 原作是一整行：无后缀 PRINTFORM 链，
+    // :8805/:8807/:8809 是三选一的野兽名（:8804/:8806/:8808 的 IF 链），
+    // :8811 的 PRINTFORMW 收行（#623）
+    const beast =
+      chara(a).stronghold.要求奖赏 === 1
+        ? `狗`
+        : chara(a).stronghold.要求奖赏 === 2
+          ? `猪`
+          : `马`;
+    await era.printAndWait(
+      `「${self_call(a)}…这场战斗完后想要跟…` +
+        beast +
+        `交配想得受不了了~…！」`,
+    ); // :8803+:8805+:8807+:8809+:8811
   } else if (chara(a).stronghold.要求奖赏 === 4) {
     // :8812
 

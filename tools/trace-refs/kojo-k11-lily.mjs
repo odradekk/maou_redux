@@ -20346,6 +20346,7 @@ export const FILES = [
           '6842',
           'PRINTFORM %SAVESTR:TARGET%介绍了自己的名字和迄今为止的性经验',
         ],
+        ['6843', 'SIF ABL:31 >= 3'],
         ['6844', 'PRINTFORM 、自慰的时候幻想的内容和对象也说出来了'],
         ['6845', 'PRINTFORML 说得自己都兴奋起来了……'],
         [
@@ -20456,6 +20457,7 @@ export const FILES = [
           '6929',
           'PRINTFORM %SAVESTR:TARGET%介绍了自己的名字和迄今为止的性经验',
         ],
+        ['6930', 'SIF ABL:31 >= 3'],
         ['6931', 'PRINTFORM 、自慰的时候幻想的内容和对象也说出来了'],
         ['6932', 'PRINTFORML 说得自己都兴奋起来了……'],
         [
@@ -32513,6 +32515,7 @@ export const FILES = [
           '12609',
           'PRINTFORM 双手被抓住的%SAVESTR:TARGET%拼命挣扎着，但狂王只是哈哈大笑着用',
         ],
+        ['12610', 'IF FLAG:500 == 0 || FLAG:500 == 2'],
         ['12611', 'PRINT 双腿之间的巨根'],
         ['12613', 'PRINT 粗大的假阳具'],
         [

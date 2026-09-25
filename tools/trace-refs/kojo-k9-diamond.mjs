@@ -26271,6 +26271,11 @@ export const FILES = [
       }, // PRINTFORM %SAVESTR:TARGET%将自己的本名、接下来要进行的性体验
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '4425',
+        any: [new RegExp('SIF ABL:31 >= 3')],
+      }, // SIF ABL:31 >= 3（#623 把插入段的判据提到语句外）
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '4426',
         any: [new RegExp('PRINTFORM  还有手淫时妄想的内容')],
       }, // PRINTFORM  还有手淫时妄想的内容
@@ -26599,6 +26604,11 @@ export const FILES = [
           ),
         ],
       }, // PRINTFORM %SAVESTR:TARGET%将自己的本名、接下来要进行的性体验
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '4476',
+        any: [new RegExp('SIF ABL:31 >= 3')],
+      }, // SIF ABL:31 >= 3（#623 把插入段的判据提到语句外）
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '4477',
@@ -39296,9 +39306,25 @@ export const FILES = [
       }, // PRINTFORM %SAVESTR:ASSI%看着%SAVESTR:TARGET%舔着
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '7086',
+        any: [
+          new RegExp('SIF TALENT:ASSI:121 == 1 \\|\\| TALENT:ASSI:122 == 1'),
+        ],
+      }, // SIF TALENT:ASSI:121 == 1 || TALENT:ASSI:122 == 1（#623 提到语句外）
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '7087',
         any: [new RegExp('PRINT 阴茎')],
       }, // PRINT 阴茎
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '7088',
+        any: [
+          new RegExp(
+            'SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1',
+          ),
+        ],
+      }, // SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1（#623 提到语句外）
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '7089',
@@ -39484,9 +39510,25 @@ export const FILES = [
       }, // PRINTFORM %SAVESTR:ASSI%听着%SAVESTR:TARGET%的悲鸣继续用
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '7120',
+        any: [
+          new RegExp('SIF TALENT:ASSI:121 == 1 \\|\\| TALENT:ASSI:122 == 1'),
+        ],
+      }, // SIF TALENT:ASSI:121 == 1 || TALENT:ASSI:122 == 1（#623 提到语句外）
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '7121',
         any: [new RegExp('PRINT 阴茎')],
       }, // PRINT 阴茎
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '7122',
+        any: [
+          new RegExp(
+            'SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1',
+          ),
+        ],
+      }, // SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1（#623 提到语句外）
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '7123',
@@ -39611,9 +39653,25 @@ export const FILES = [
       }, // PRINTFORM %SAVESTR:ASSI%一边听着%SAVESTR:TARGET%的悲鸣一边用
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '7145',
+        any: [
+          new RegExp('SIF TALENT:ASSI:121 == 1 \\|\\| TALENT:ASSI:122 == 1'),
+        ],
+      }, // SIF TALENT:ASSI:121 == 1 || TALENT:ASSI:122 == 1（#623 提到语句外）
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '7146',
         any: [new RegExp('PRINT 阴茎')],
       }, // PRINT 阴茎
+      {
+        src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
+        ref: '7147',
+        any: [
+          new RegExp(
+            'SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1',
+          ),
+        ],
+      }, // SIF TALENT:ASSI:121 != 1 && TALENT:ASSI:122 != 1 && ITEM:PBAND == 1（#623 提到语句外）
       {
         src: 'target/ERB/口上/EVENT_K9_ダイヤ.ERB',
         ref: '7148',
