@@ -7249,17 +7249,17 @@ async function ntr_koujo_k13(rand, P) {
       await era.print(
         `被弄成牝犬一样的姿势的${sc()}说着毅然决然的话语拒绝服从、`,
       ); // :5517
-      await era.print(`狂王毫不介意${sc()}的话、邪笑了起来、`); // :5518
-      await era.print(`将`); // :5519
-
-      if (game.system.狂王性别 == 0 || game.system.狂王性别 == 2) {
-        // :5521
-        await era.print(`胯下的巨根`); // :5522
-      } else {
-        // :5523-5524
-        await era.print(`极粗的假阳具`); // :5524
-      } // :5524-5525
-      await era.print(`刺穿了`); // :5526
+      // :5518+:5519+:5522+:5524+:5526 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+      // 不换行（后面的 PRINTW 才收行）。武器名两档的判据（:5521 与 ELSE 支
+      // :5523-5524，块尾 :5524-5525）提到语句外、文本留在输出语句里——保真锁
+      // 按序核对 ERB 片段（#600）
+      const king_has_penis =
+        game.system.狂王性别 == 0 || game.system.狂王性别 == 2;
+      await era.print(
+        `狂王毫不介意${sc()}的话、邪笑了起来、将` +
+          (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +
+          `刺穿了`,
+      ); // :5518+:5519+:5522+:5524+:5526
 
       if (era0(`talent:${target}:157`) && era0(`exp:${target}:60`) >= 1) {
         // :5528

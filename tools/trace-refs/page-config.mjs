@@ -103,6 +103,22 @@ export const FILES = [
         ref: '266-271',
         any: [/^\s*ELSEIF LOCAL == 28\s*$/m, /^\tIF\t 立绘\s*$/m],
       },
+      // #615：兵器标题与鸡鸡状态回显的换行语义（print 自成一行）
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '88',
+        any: [/^PRINTFORML 魔王的兵器是如意金箍棒，可大也可小！！$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '103',
+        any: [/^\tPRINT 你的鸡鸡状态：$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/CONFIG.ERB',
+        ref: '105',
+        any: [/^\t\tPRINTW 《巨根》$/m],
+      },
     ],
   },
 ];

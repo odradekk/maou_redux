@@ -523,6 +523,28 @@ test('SET_BICH_LEVEL：输入分档（0/1/2-5）写入 CFLAG:120', async () => {
   assert.equal(f5.store.get('cflag:31:120'), undefined);
 });
 
+test('#600 SHOW_BUTTON_BICH_LEVEL：:1157..:1167 是一行，输出一条（末段空参数不加文本）', async () => {
+  // 原作 :1157「[%NUM%] 卖春积极性 - 」+ IF/ELSEIF/ELSE 三档（:1160/:1162/:1164）
+  // + :1167 的 `PRINT  `（关键字后只有空白 → 参数为空，不输出字符）同属一行。
+  // ere 侧合并成一条 era.print，:1167 只进锚、不加文本
+  const cases = [
+    [0, '没有'],
+    [1, '普通'],
+    [3, '3等级'],
+  ];
+  for (const [level, word] of cases) {
+    const { fixture, mod } = setup_bitch((f) =>
+      f.store.set('cflag:31:120', level),
+    );
+    mod.show_button_bich_level(5, 31);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`[5] 卖春积极性 - ${word}`],
+      `CFLAG:120 = ${level}`,
+    );
+  }
+});
+
 test('SELL_BITCH：完整流程（客循环 → 成功显示 → 经验/金钱/善恶值）', async () => {
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('base:31:0', 500);

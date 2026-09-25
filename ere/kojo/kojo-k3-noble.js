@@ -1465,35 +1465,23 @@ async function kojo_message_com_3(rand) {
             ); // :1637
           }
         }
+        // :1640..:1656 原作是一整行：无后缀 PRINTFORM 五段 SIF 后缀连续不换行，
+        // 末行 PRINTFORML 才收行（#600）。五条 SIF 的判据提到语句外当条件、
+        // 文本留在输出语句里（保真锁按序核对 ERB 片段）
+        const devoted = era.get(`talent:${target}:85`) === 1; // 爱慕
+        const lewd = era.get(`talent:${target}:76`) === 1; // 淫乱
+        const female_dog = era.get(`talent:${target}:136`) === 1; // 牝犬
+        const greedy = era.get(`talent:${target}:271`) === 1; // 时常发情
+        const virgin = era.get(`talent:${target}:0`) === 1; // 处女
         era.print(
-          `${'\u3000'}只要是魔王大人的命令来的话、${sc()}一定会在这里…用这个`,
-        ); // :1640
-
-        if (era.get(`talent:${target}:85`) === 1) {
-          // :1643
-          era.print(`魔王大人专用`); // :1643
-        } // :1643
-
-        if (era.get(`talent:${target}:76`) === 1) {
-          // :1646
-          era.print(`淫乱`); // :1646
-        } // :1646
-
-        if (era.get(`talent:${target}:136`) === 1) {
-          // :1649
-          era.print(`牝犬`); // :1649
-        } // :1649
-
-        if (era.get(`talent:${target}:271`) === 1) {
-          // :1652
-          era.print(`贪欲`); // :1652
-        } // :1652
-
-        if (era.get(`talent:${target}:0`) === 1) {
-          // :1655
-          era.print(`处女`); // :1655
-        } // :1655
-        era.print(`小穴来、给今天看到的大家侍奉也说不定呢。`); // :1656
+          `${'\u3000'}只要是魔王大人的命令来的话、${sc()}一定会在这里…用这个` +
+            (devoted ? '魔王大人专用' : '') +
+            (lewd ? '淫乱' : '') +
+            (female_dog ? '牝犬' : '') +
+            (greedy ? '贪欲' : '') +
+            (virgin ? '处女' : '') +
+            `小穴来、给今天看到的大家侍奉也说不定呢。`,
+        ); // :1640+:1643+:1646+:1649+:1652+:1655+:1656
         era.print(
           `当然，不管那是、在野外垂死的最底层居民也好、还是满身污臭的亚人也好……`,
         ); // :1657
@@ -7496,12 +7484,13 @@ async function kojo_message_com_3(rand) {
           (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
         ) {
           // :4994
-          era.print(`${target_name}将自己的本名、接下来要进行的性体验`); // :4995
-          if (era.get(`abl:${target}:31`) >= 3) {
-            // :4997
-            era.print(`还有手淫时妄想的内容`); // :4997
-          } // :4997
-          era.print(`之类的兴高采烈地说个不停……`); // :4998
+          // :4995+:4997+:4998 原作是一整行（#600）
+          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
+          era.print(
+            `${target_name}将自己的本名、接下来要进行的性体验` +
+              (masturbation ? '还有手淫时妄想的内容' : '') +
+              `之类的兴高采烈地说个不停……`,
+          ); // :4995+:4997+:4998
           era.print(
             `${target_name}只是因为想象着水晶球在故乡传播开的画面股间就湿润了……`,
           ); // :4999
@@ -7585,25 +7574,23 @@ async function kojo_message_com_3(rand) {
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
           // :5031
-          era.print(player_name + `向其搭话后，${target_name}发出了`); // :5032
-          if (
+          // :5032..:5038 原作是一整行：中段 IF/ELSEIF 二选一（:5034/:5036），
+          // 都不中时那一截就是空的，末行 PRINTFORML 收行（#600）
+          const excited =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
             era.get(`tequip:${target}:14`) ||
             era.get(`tequip:${target}:15`) ||
             era.get(`tequip:${target}:16`) ||
-            era.get(`tequip:${target}:17`)
-          ) {
-            // :5033
-            era.print(`欢喜的`); // :5034
-          } else if (
-            era.get(`tequip:${target}:44`) ||
-            era.get(`tequip:${target}:49`)
-          ) {
-            // :5035
-            era.print(`苦痛的`); // :5036
-          }
-          era.print(`叫声，拼命地向你回话了。`); // :5038
+            era.get(`tequip:${target}:17`); // :5033
+          const painful =
+            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`); // :5035
+          era.print(
+            player_name +
+              `向其搭话后，${target_name}发出了` +
+              (excited ? '欢喜的' : painful ? '苦痛的' : '') +
+              `叫声，拼命地向你回话了。`,
+          ); // :5032+:5034+:5036+:5038
         } else if (era.get(`talent:${target}:76`) === 1) {
           // :5040
           era.print(
@@ -7673,12 +7660,13 @@ async function kojo_message_com_3(rand) {
           (era.get(`talent:${target}:89`) || era.get(`abl:${target}:17`) >= 5)
         ) {
           // :5066
-          era.print(`${target_name}将自己的本名、接下来要进行的性体验`); // :5067
-          if (era.get(`abl:${target}:31`) >= 3) {
-            // :5069
-            era.print(`还有手淫时妄想的内容`); // :5069
-          } // :5069
-          era.print(`之类的兴高采烈地说个不停……`); // :5070
+          // :5067+:5069+:5070 与 :4995+:4997+:4998 同型（#600）
+          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
+          era.print(
+            `${target_name}将自己的本名、接下来要进行的性体验` +
+              (masturbation ? '还有手淫时妄想的内容' : '') +
+              `之类的兴高采烈地说个不停……`,
+          ); // :5067+:5069+:5070
           era.print(
             `${target_name}只是因为想象到水晶球在故乡传播开的样子股间就湿润了……`,
           ); // :5071
@@ -7762,25 +7750,22 @@ async function kojo_message_com_3(rand) {
           era.get(`palam:${target}:5`) >= PALAMLV[4]
         ) {
           // :5103
-          era.print(player_name + `向其搭话后，${target_name}发出了`); // :5104
-          if (
+          // :5104..:5110 与 :5032..:5038 同型（#600）
+          const excited =
             era.get(`tequip:${target}:11`) ||
             era.get(`tequip:${target}:13`) ||
             era.get(`tequip:${target}:14`) ||
             era.get(`tequip:${target}:15`) ||
             era.get(`tequip:${target}:16`) ||
-            era.get(`tequip:${target}:17`)
-          ) {
-            // :5105
-            era.print(`欢喜的`); // :5106
-          } else if (
-            era.get(`tequip:${target}:44`) ||
-            era.get(`tequip:${target}:49`)
-          ) {
-            // :5107
-            era.print(`苦痛的`); // :5108
-          }
-          era.print(`叫声，拼命地向你回话了。`); // :5110
+            era.get(`tequip:${target}:17`); // :5105
+          const painful =
+            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`); // :5107
+          era.print(
+            player_name +
+              `向其搭话后，${target_name}发出了` +
+              (excited ? '欢喜的' : painful ? '苦痛的' : '') +
+              `叫声，拼命地向你回话了。`,
+          ); // :5104+:5106+:5108+:5110
         } else if (era.get(`talent:${target}:76`) === 1) {
           // :5112
           era.print(

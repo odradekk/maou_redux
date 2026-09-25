@@ -1662,9 +1662,11 @@ function fi_culc_bitch(arg, args, args1 = '', rand = default_rand) {
  * @param {number} arg 角色 ID
  */
 function show_button_bich_level(num, arg) {
-  era.print(`[${num}] 卖春积极性 - `); // :1157
-  era.print(bich_level_text(arg)); // :1160-1164 三档
-  era.print('  '); // :1167
+  // :1157+:1160+:1162+:1164+:1167 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+  // 不换行，档位文案由 IF/ELSEIF/ELSE 三档拼进来。末段 :1167 的 `PRINT  `
+  // 关键字后只有空白，参数为空（不输出字符），因此只进锚、不加文本（#600）
+  const level = bich_level_text(arg); // :1160-1164 三档
+  era.print(`[${num}] 卖春积极性 - ${level}`); // :1157+:1160+:1162+:1164+:1167
   return 0; // :1169
 }
 

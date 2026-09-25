@@ -851,6 +851,38 @@ test('NTR_KOUJO_K13：P==1 爱慕臂首次经 CFLAG:650/651 标记', async () =>
   assert.equal(fixture.store.get('cflag:31:651'), 1, 'NTR P==1 记位 CFLAG:651');
 });
 
+test('NTR_KOUJO_K13：:5518..:5526 的连续无后缀 PRINT 是一行，输出一条（#600）', async () => {
+  // 原作 :5518「狂王毫不介意%SELF_CALL(TARGET)%的话、邪笑了起来、」+:5519「将」
+  // + IF/ELSE 的武器名（:5522/:5524）+ :5526「刺穿了」同属一行：无后缀
+  // PRINTFORM/PRINT 连续不换行（后面 :5529/:5531 的 PRINTW 才收行）。
+  // 武器名提到语句外当判据，文本留在输出语句里（保真锁按序核对片段，#600）
+  const cases = [
+    [0, '胯下的巨根'],
+    [2, '胯下的巨根'],
+    [1, '极粗的假阳具'],
+  ];
+  for (const [king_sex, weapon] of cases) {
+    const fixture = await setup_k13((f) => {
+      f.store.set('talent:31:85', 1);
+    });
+    const { game } = fixture.load_module('facade/game');
+    game.system.狂王性别 = king_sex;
+    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await ntr_koujo_family.call(13, { args: [seq_rand(0), 1] });
+    const lines = fixture.text_lines();
+    const at = lines.findIndex((l) => l.startsWith('狂王毫不介意'));
+    assert.ok(at >= 0, `狂王性别 ${king_sex}：定位到 :5518 行`);
+    assert.deepEqual(
+      lines.slice(at, at + 2),
+      [
+        `狂王毫不介意我的话、邪笑了起来、将${weapon}刺穿了`,
+        '尚未经人事的小穴、蛮横地抽插着。',
+      ],
+      `狂王性别 ${king_sex}`,
+    );
+  }
+});
+
 test('EXUCUTION / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K13：有台词档', async () => {
   const fixture = await setup_k13();
   const { game } = fixture.load_module('facade/game');

@@ -245,12 +245,16 @@ async function sacrifice_flow(cid, background) {
     color_judgment_wor_b(dec);
     era.setColor(`rgb(${dec[1]},${dec[2]},${dec[3]})`); // :60 SETCOLOR
     era.setAlign('center'); // :62 ALIGNMENT CENTER
+    // :63-65 横幅第一行：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16` +
+    // `"\s"*2`（尾随两个空格照抄）+ `"\n"*2`——头一个 \n 收行，第二个是
+    // 两行横幅之间的真空行（#615）
     era.print(
-      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}`,
-    ); // :63-65
-    era.print(dashes());
-    era.print('< 完 全 召 唤 >');
-    era.print(`${dashes()}  `);
+      `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,
+    );
+    era.println(); // :65 的第二个 \n：横幅之间的真空行
+    // :66-68 横幅第二行：`"-"*16` + `< 完 全 召 唤 >` + `"-"*16 + "\s"*2`——
+    // 三段是同一显示行（#615：此前被拆成三行）
+    era.print(`${dashes()}< 完 全 召 唤 >${dashes()}  `);
     era.setAlign('left'); // :69 ALIGNMENT LEFT
     era.setColor(); // :71 RESETCOLOR
     // 三处跨域写一律走属主域门面（#71 裁定；属主见 ownership/cflag-ownership.yml
@@ -258,8 +262,9 @@ async function sacrifice_flow(cid, background) {
     chara(shadow).invasion.状态 = 0; // :72
     chara(shadow).chara.收藏 = 1; // :73
     chara(shadow).chara.寿命 = 666666; // :74
-    await era.waitAnyKey(); // :72-75
-    era.println(); // :73-76
+    await era.waitAnyKey(); // :75 WAIT（三处赋值已在上方三行各自标注）
+    era.println(); // :76 的第一个 \n
+    era.println(); // :76 的第二个 \n
     return true; // :77 RESTART（外层重画）
   }
 

@@ -99,6 +99,17 @@ export const FILES = [
         ref: '1-2',
         any: [/^\s*@QUE2MK\s*$/m],
       },
+      // #615：狂王性别一问的两行正文（两条 PRINTL）
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '902',
+        any: [/^\tPRINTL 狂王是支配这个地区的领主$/m],
+      },
+      {
+        src: 'target/ERB/SYSTEM/SYSTEM ver1.0.3.ERB',
+        ref: '903',
+        any: [/^\tPRINTL 继承了曾经封印你的勇者的血统，打算把你再次封印$/m],
+      },
     ],
   },
 ];

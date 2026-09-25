@@ -2492,10 +2492,51 @@ test('SHOW_CHARA_INFO：献祭满足时走「完全召唤」演出并清零状�
     `演出首句（实际前几句：${JSON.stringify(texts.slice(0, 3))}）`,
   );
   assert(texts.some((t) => t.includes('魔王之影 『 考狄利亚 』')));
-  assert(texts.includes('< 完 全 召 唤 >'));
+  // #615 起横幅第二行与两串 `"-"*16` 同占一行（原作 :66-68）
+  assert(texts.some((t) => t.includes('< 完 全 召 唤 >')));
   assert.equal(fixture.store.get('cflag:7:1'), 0, '状态位清零');
   assert.equal(fixture.store.get('cflag:7:700'), 1, '收藏位置 1');
   assert.equal(fixture.store.get('cflag:7:820'), 666666, '影の寿命置满');
+});
+
+test('#615 SHOW_CHARA_INFO：完全召唤横幅两行、之间一个真空行、之后两个真空行', async () => {
+  const { fixture, show_chara_info } = main_fixture({
+    cflags: { 1: 11, 800: 30 },
+  });
+  await show_chara_info(7, -1, always, 0x000000).catch(() => {});
+
+  const lines = fixture.lines;
+  const banner1 = lines.findIndex(
+    (l) => l.type === 'text' && l.text.includes('魔王之影 『 考狄利亚 』'),
+  );
+  assert.ok(banner1 >= 0, '横幅第一行在场');
+  // :63-65：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16 + "\s"*2 + "\n"*2`
+  // —— 一次 print 一行（自带 2 个尾随空格），末尾第二个 \n 是真空行
+  assert.equal(
+    lines[banner1].text,
+    `${'-'.repeat(16)} 魔王之影 『 考狄利亚 』 ${'-'.repeat(16)}  `,
+    '横幅第一行',
+  );
+  assert.equal(
+    lines[banner1 + 1].type,
+    'br',
+    ':65 的第二个 \\n：两行横幅之间的真空行',
+  );
+  // :66-68：`"-"*16` + `< 完 全 召 唤 >` + `"-"*16 + "\s"*2 + "\n"` —— 第二行
+  assert.equal(
+    lines[banner1 + 2].text,
+    `${'-'.repeat(16)}< 完 全 召 唤 >${'-'.repeat(16)}  `,
+    '横幅第二行（不再被拆成三段）',
+  );
+  // :75 WAIT → :76 `PRINTS "\n"*2`：第二行横幅之后的两个真空行（横幅票补一个）
+  assert.equal(lines[banner1 + 3].type, 'br', ':76 的第一个 \\n');
+  assert.equal(lines[banner1 + 4].type, 'br', ':76 的第二个 \\n');
+  // 演出到此为止（:77 RESTART → 外层 for(;;) 重画一屏，下一行是新一屏的行）
+  assert.notEqual(
+    lines[banner1 + 5]?.type,
+    'br',
+    ':76 的两个空行之后直接进下一次重画',
+  );
 });
 
 test('HEXtoDEC：六位十六进制按 ×15 合成三段（原作自身的进制笔误，1:1）', () => {

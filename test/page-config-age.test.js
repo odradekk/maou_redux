@@ -674,3 +674,110 @@ test('RACE_CONFIG 编辑循环的小数倍档预览（17×1.5 的整数截断，
     '小数倍档的 17 岁换算预览按整数除法截断',
   );
 });
+
+// —— #615：print 正文不带尾换行（CONTEXT.md「输出 API 与原作的对应」）——
+//
+// `era.print` 自成一行：正文里再写 `\n` 只会多出一个显示行（引擎手册 06-output
+// 的「在字符串中输出 '\n' 可将文本分割为两行」）。本文件内所有 `...\n` 的尾换行
+// 都是这类多补，原作对应处一律是 `PRINTFORM(L)` 收尾，故按行拆开断言。
+
+test('#615 RACE_CONFIG [98]：确认页两行正文不相连、真空行与按钮位置正确', async () => {
+  const fixture = create_era_fixture();
+  const { race_config } = load(fixture);
+  fixture.set_inputs(98, 0);
+  await race_config(always);
+
+  const lines = fixture.lines;
+  const idx = lines.findIndex((l) => l.text === '全种族的年龄均返回默认值。');
+  assert.ok(
+    idx >= 0,
+    `:1036 的正文不带尾换行，实际 ${JSON.stringify(fixture.text_lines())}`,
+  );
+  assert.equal(lines[idx + 1].text, '确认吗？', ':1037 的行紧随其后');
+  assert.equal(lines[idx + 2].type, 'br', ':1038 的 PRINTL 是真空行');
+  assert.equal(lines[idx + 3].type, 'button', ':1039 的按钮行不再多空一行');
+  assert.equal(lines[idx + 3].accelerator, 0);
+});
+
+test('#615 RACE_CONFIG 顶层：表头行不带尾换行，紧接八种族按钮行', async () => {
+  const fixture = create_era_fixture();
+  const { race_config } = load(fixture);
+  seed_race_table(fixture);
+  fixture.set_inputs(100);
+  await race_config(always);
+
+  const lines = fixture.lines;
+  const header = lines.find(
+    (l) => l.type === 'text' && l.text.includes('相当于人类17岁的年龄'),
+  );
+  assert.ok(header, '表头行在场');
+  assert.equal(
+    header.text,
+    '　　 种族　　　　设定　　　　　　　　　　　　　　　相当于人类17岁的年龄',
+    ':972-974 的 PRINTFORM + PRINTFORML 是一条显示行，不再自带尾换行',
+  );
+  assert.equal(
+    lines[lines.indexOf(header) + 1].type,
+    'button',
+    '八种族按钮行紧随表头（:978 起）',
+  );
+});
+
+test('#615 RACE_CONFIG 编辑头：两行正文各自成行，重画首拍是真空行', async () => {
+  const fixture = create_era_fixture();
+  const { race_config } = load(fixture);
+  seed_race_table(fixture);
+  fixture.set_inputs(0, 100, 100);
+  await race_config(always);
+
+  const lines = fixture.lines;
+  const desc = lines.find(
+    (l) => l.type === 'text' && l.text.startsWith('■ 种族 [精灵] 的年龄设定：'),
+  );
+  assert.ok(desc, '编辑头说明行在场');
+  assert.equal(
+    desc.text,
+    '■ 种族 [精灵] 的年龄设定：换算成人类年龄的  10 倍',
+    '档位说明行不带尾换行',
+  );
+  assert.equal(lines[lines.indexOf(desc) - 1].type, 'br', ':1111 的重画首拍');
+  const preview = lines[lines.indexOf(desc) + 1];
+  assert.equal(
+    preview.type,
+    'text',
+    '预览行紧随说明行（:1146-1161 是同一行的拼接）',
+  );
+  assert.equal(
+    preview.text,
+    '　 换算人类 17 岁左右  170 ～  179 岁',
+    '预览行不带尾换行',
+  );
+  assert.equal(
+    lines[lines.indexOf(preview) + 1].type,
+    'button',
+    '预览行之后直接是 [101] 按钮行',
+  );
+});
+
+test('#615 RACE_CONFIG 随机档：■ 下限 / ■ 上限 两行标签不带尾换行', async () => {
+  const fixture = create_era_fixture();
+  const { race_config } = load(fixture);
+  seed_race_table(fixture);
+  fixture.set_inputs(0, 104, 100, 100);
+  await race_config(always);
+
+  const lines = fixture.lines;
+  const lower = lines.find(
+    (l) => l.type === 'text' && l.text.startsWith('　　■ 下限'),
+  );
+  const upper = lines.find(
+    (l) => l.type === 'text' && l.text.startsWith('　　■ 上限'),
+  );
+  assert.equal(lower?.text, '　　■ 下限', ':1215 的 PRINTL 自成一行');
+  assert.equal(upper?.text, '　　■ 上限', ':1233 的 PRINTL 自成一行');
+  // 下限标签 → 三个下限按钮 → 真空行（:1232 PRINTL）→ 上限标签
+  const lower_idx = lines.indexOf(lower);
+  assert.equal(lines[lower_idx + 1].type, 'button', '[110] 紧随下限标签');
+  assert.equal(lines[lower_idx + 4].type, 'br', ':1232 的 PRINTL 是真空行');
+  assert.equal(lines[lower_idx + 5], upper, '上限标签紧随真空行');
+});

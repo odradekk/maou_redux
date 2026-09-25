@@ -128,6 +128,31 @@ export const FILES = [
       { src: BODY, ref: '1295-1317', any: [/^\tELSEIF RESULT == 111\s*$/m] },
       { src: BODY, ref: '1297-1317', any: [/^\tELSEIF RESULT == 111\s*$/m] },
       { src: BODY, ref: '1319-1329', any: [/^\tELSEIF RESULT == 999\s*$/m] },
+      // #615：print 正文的换行语义（表头、编辑头两行、随机档两个标签）。
+      // 确认页与随机档中部的真空行改引已登记的 :1036-1041 / :1214-1246 区间——
+      // 单行的 :1038 / :1232 是裸 PRINTL，锚不出可辨内容（#615 审查第 3 条）
+      {
+        src: BODY,
+        ref: '972',
+        any: [
+          /^PRINTFORM 　　 种族　　　　设定　　　　　　　　　　　　　　　$/m,
+        ],
+      },
+      { src: BODY, ref: '974', any: [/^PRINTFORML 相当于人类17岁的年龄$/m] },
+      {
+        src: BODY,
+        ref: '1131-1143',
+        any: [
+          /^\t\tPRINTFORML 和人类一样\n\tELSEIF SET_VAR:0 == 0\n\t\tPRINTFORML 换算成人类年龄的\{SET_VAR:2 \* POWER\(10, SET_VAR:1\), 4\} 倍/m,
+        ],
+      },
+      {
+        src: BODY,
+        ref: '1146-1162',
+        any: [/^\tPRINT 　 换算人类 17 岁左右 $/m],
+      },
+      { src: BODY, ref: '1215', any: [/^\t\tPRINTL 　　■ 下限$/m] },
+      { src: BODY, ref: '1233', any: [/^\t\tPRINTL 　　■ 上限$/m] },
     ],
   },
 ];

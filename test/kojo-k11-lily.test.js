@@ -6833,6 +6833,29 @@ test('GOHOUBI_REQUEST：十种要求按 CFLAG:504 输出角色名与内容', asy
   }
 });
 
+test('GOHOUBI_REQUEST：兽交要求（CFLAG:504 = 1..3）的 :12915..:12923 是一行，输出一条（#600）', async () => {
+  // 原作 :12915「%SAVESTR:A%提出了和」+ IF/ELSEIF 的兽名（:12917/:12919/:12921）
+  // + :12923「进行兽交的请求」同属一行（无后缀 PRINTFORM 不换行），末行 PRINTFORMW 收行
+  for (const [request, animal] of [
+    [1, '狗'],
+    [2, '猪'],
+    [3, '马'],
+  ]) {
+    const fixture = setup_lily((f) =>
+      f.store.set(`cflag:${LILY}:504`, request),
+    );
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(11, { args: [] });
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`莉莉提出了和${animal}进行兽交的请求`],
+      `要求 ${request}（${animal}）`,
+    );
+  }
+});
+
 test('GOHOUBI_AFTER 与 OSIOKI：choice 透传并保留原作空输出', async () => {
   const fixture = setup_lily((f) => f.store.set(`cflag:${LILY}:504`, 5));
   const { gohoubi_after_koujo_family, osioski_koujo_family } =

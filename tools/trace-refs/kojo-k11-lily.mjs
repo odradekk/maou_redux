@@ -28833,6 +28833,9 @@ export const FILES = [
         ['12903', 'PRINTFORMW 「我的妹妹玛奥可能就在这个洞穴里！」'],
         ['12912', 'PRINTFORMW %SAVESTR:A%要求了金钱'],
         ['12915', 'PRINTFORM %SAVESTR:A%提出了和'],
+        ['12917', 'PRINT 狗'],
+        ['12919', 'PRINT 猪'],
+        ['12921', 'PRINT 马'],
         ['12923', 'PRINTFORMW 进行兽交的请求'],
       ].map(([ref, line]) => exact_line(ref, line)),
       ...[
