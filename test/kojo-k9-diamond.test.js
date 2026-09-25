@@ -580,3 +580,324 @@ test('EXUCUTION / MUSEUM / BANISHMENT / PUBLIC_EXUCUTION_KOUJO_K9：注册且可
     'GROTESQUE 分支路由错位（源无文本，PRINTFORMW 仍记空行）',
   );
 });
+
+// —— #623 拆行合并：原作同一行输出合成一条 era.print（整行断言） ——
+
+/** 含该片段的第一行（合并后整行断言用；找不到返回 undefined） */
+function line_with(fixture, fragment) {
+  return fixture.text_lines().find((l) => l.includes(fragment));
+}
+
+test('#623 口塞初回：爱慕与それ以外两支的首段并入整行（:4146+:4148 / :4155+:4157）', async () => {
+  const cases = [
+    {
+      label: '爱慕（TALENT:85）',
+      seed: (f) => f.store.set('talent:20:85', 1),
+      prefix: '黑方片好像在期待着什么',
+      merged: '黑方片好像在期待着什么的样子………',
+    },
+    {
+      label: 'それ以外',
+      seed: () => {},
+      prefix: '黑方片抗议的',
+      merged: '黑方片抗议的左右甩起了脑袋………',
+    },
+  ];
+  for (const item of cases) {
+    for (const gagged of [true, false]) {
+      const fixture = await setup_k9((f) => {
+        f.store.set('tequip:20:45', 1);
+        if (gagged) f.store.set('tequip:20:43', 1);
+        item.seed(f);
+      }, 45);
+      await speak_k9(fixture);
+      const lines = fixture.text_lines();
+      const prefix = item.prefix;
+      // 两支都拼前缀（#623：前缀提为局部量 line_head，各支拼接）——
+      // 所以无论走哪一支，整行都成立、前缀都不再单独占一行
+      assert.equal(
+        lines.filter((l) => l === prefix).length,
+        0,
+        `${item.label}：前缀不得单独成行`,
+      );
+      assert.equal(
+        line_with(fixture, prefix),
+        gagged ? item.merged : `${prefix}的眼神看着你………`,
+        `${item.label}：${gagged ? 'TRUE' : 'ELSE'} 支整行`,
+      );
+      assert.equal(
+        fixture.store.get('cflag:20:346'),
+        1,
+        `${item.label}：口塞计数推进到 1`,
+      );
+    }
+  }
+});
+
+test('#623 口塞二回目：七档首段并入整行（:4169..:4236）', async () => {
+  const cases = [
+    {
+      label: '淫乱＋受虐狂Lv5',
+      talent: 76,
+      abl21: 5,
+      merged: '黑方片好像在期待着什么的样子………',
+      cflag: 9,
+    },
+    {
+      label: '淫乱＋受虐狂Lv3',
+      talent: 76,
+      abl21: 3,
+      merged: '黑方片好像在期待着什么的样子………',
+      cflag: 8,
+    },
+    {
+      label: '爱慕＋受虐狂Lv5',
+      talent: 85,
+      abl21: 5,
+      merged: '黑方片好像在期待着什么的样子……………',
+      cflag: 6,
+    },
+    {
+      label: '爱慕＋受虐狂Lv3',
+      talent: 85,
+      abl21: 3,
+      merged: '黑方片好像在期待着什么的样子………',
+      cflag: 5,
+    },
+    {
+      label: '爱慕',
+      talent: 85,
+      abl21: 0,
+      merged: '黑方片好像在期待着什么的样子………',
+      cflag: 4,
+    },
+    {
+      label: '受虐狂Lv3',
+      abl21: 3,
+      merged: '黑方片好像在期待着什么的样子…………',
+      cflag: 3,
+    },
+    {
+      label: 'それ以外',
+      abl21: 0,
+      merged: '黑方片抗议的左右甩起了脑袋………',
+      cflag: 2,
+    },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k9((f) => {
+      f.store.set('tequip:20:45', 1);
+      f.store.set('tequip:20:43', 1);
+      f.store.set('cflag:20:346', 1); // 非 0 → 二回目 arm
+      if (item.talent) f.store.set(`talent:20:${item.talent}`, 1);
+      f.store.set('abl:20:21', item.abl21);
+    }, 45);
+    await speak_k9(fixture);
+    assert.ok(
+      fixture.text_lines().includes(item.merged),
+      `${item.label}：首段并入整行`,
+    );
+    assert.equal(
+      fixture.store.get('cflag:20:346'),
+      item.cflag,
+      `${item.label}：口塞计数`,
+    );
+  }
+});
+
+test('#623 交谈录像：自我介绍整行合并（:4424+:4426+:4427 / :4475+:4477+:4478）', async () => {
+  for (const replay of [false, true]) {
+    const cases = [
+      {
+        abl31: 3,
+        merged:
+          '黑方片将自己的本名、接下来要进行的性体验还有手淫时妄想的内容十分兴奋地说了出来……',
+      },
+      {
+        abl31: 0,
+        merged: '黑方片将自己的本名、接下来要进行的性体验十分兴奋地说了出来……',
+      },
+    ];
+    for (const item of cases) {
+      const fixture = await setup_k9((f) => {
+        if (replay) f.store.set('cflag:20:357', 9);
+        f.store.set('tequip:20:53', 1);
+        f.store.set('talent:20:89', 1);
+        f.store.set(`abl:20:31`, item.abl31);
+      }, 56);
+      await speak_k9(fixture, () => 0);
+      assert.ok(
+        fixture.text_lines().includes(item.merged),
+        `${replay ? '二回目' : '初回'} 自慰中毒 ${item.abl31}：整行`,
+      );
+    }
+  }
+});
+
+test('#623 交谈：六支各自并入前缀整行（:4440+:4442 / :4446.. / :4491+:4493 / :4497..）', async () => {
+  for (const replay of [false, true]) {
+    const phase = replay ? '二回目' : '初回';
+    // PALAMLV[4] 是内建常量 10000、PALAMLV[2] = 500（era-utils/palam-level）；
+    // :4440 / :4491 的无后缀 PRINTFORM 前缀提到语句外，六支都拼它（#623）
+    const merge_cases = [
+      {
+        // 首支：PALAM:5 >= PALAMLV:4 && (TALENT:85 || ABL:10 >= 5) && TFLAG:60
+        label: '首支',
+        seed: (f) => {
+          f.store.set('palam:20:5', 10000);
+          f.store.set('tflag:60', 1);
+          f.store.set('talent:20:85', 1);
+        },
+        expected: '你向她搭话后、黑方片晃动着腰部继续说着充满爱意的话语',
+      },
+      {
+        // 第二支：PALAM:5 >= PALAMLV:4 && (TALENT:76 || ABL:11 >= 5) && TFLAG:60
+        label: '第二支',
+        seed: (f) => {
+          f.store.set('palam:20:5', 10000);
+          f.store.set('tflag:60', 1);
+          f.store.set('talent:20:76', 1);
+        },
+        expected: '你向她搭话后、黑方片晃动着腰继续说着卑劣的话语',
+      },
+      {
+        // 第四支：PALAM:4 >= PALAMLV:4 || TALENT:85 || ABL:10 >= 5
+        label: '第四支',
+        seed: (f) => f.store.set('palam:20:4', 10000),
+        expected: '你向她搭话后、黑方片如同打发无聊地一样喋喋不休地回起话来了',
+      },
+      {
+        // 第五支：PALAM:4 >= PALAMLV:2 || ABL:10 >= 3
+        label: '第五支',
+        seed: (f) => f.store.set('palam:20:4', 500),
+        expected: '你向她搭话后、黑方片一点一点地说起话来了，',
+      },
+      {
+        // 第六支（ELSE）：其余条件全不成立
+        label: '第六支',
+        seed: () => {},
+        expected: '你向她搭话后、然而黑方片完全没有听进去的样子…',
+      },
+    ];
+    for (const item of merge_cases) {
+      const fixture = await setup_k9((f) => {
+        if (replay) f.store.set('cflag:20:357', 9);
+        item.seed(f);
+      }, 56);
+      await speak_k9(fixture, () => 0);
+      assert.ok(
+        fixture.text_lines().includes(item.expected),
+        `${phase} ${item.label}：并入 :4440/:4491 前缀的整行`,
+      );
+      assert.equal(
+        fixture.text_lines().filter((l) => l === '你向她').length,
+        0,
+        `${phase} ${item.label}：前缀不得再单独成行`,
+      );
+    }
+
+    // 第三支：PALAM:4 >= PALAMLV:4 && PALAM:5 >= PALAMLV:4，两互斥插入段三档
+    const cases = [
+      { tequip: 11, word: '快乐的' },
+      { tequip: 44, word: '苦痛的' },
+      { tequip: undefined, word: '' },
+    ];
+    for (const item of cases) {
+      const fixture = await setup_k9((f) => {
+        if (replay) f.store.set('cflag:20:357', 9);
+        f.store.set('palam:20:4', 10000);
+        f.store.set('palam:20:5', 10000);
+        f.store.set('tflag:60', 0);
+        if (item.tequip !== undefined)
+          f.store.set(`tequip:20:${item.tequip}`, 1);
+      }, 56);
+      await speak_k9(fixture, () => 0);
+      assert.ok(
+        fixture
+          .text_lines()
+          .includes(
+            `你向她搭话后、黑方片就发出了${item.word}娇喘声，拼命地回起话来了。`,
+          ),
+        `${phase} tequip=${item.tequip}：第三支并入整行`,
+      );
+      assert.equal(
+        fixture.text_lines().filter((l) => l === '你向她').length,
+        0,
+        `${phase} tequip=${item.tequip}：前缀不得再单独成行`,
+      );
+    }
+  }
+});
+
+test('#623 死斗场：助手器具名并入整行（:7085.. / :7119.. / :7144..）', async () => {
+  const groups = [
+    {
+      selectcom: 31,
+      head: '看着黑方片舔着',
+      tail: '露出了十分愉悦的表情……',
+    },
+    {
+      selectcom: 21,
+      head: '听着黑方片的悲鸣继续用',
+      tail: '来毫不留情地蹂蹑的黑方片的小穴。',
+    },
+    {
+      selectcom: 27,
+      head: '一边听着黑方片的悲鸣一边用',
+      tail: '毫不留情地继续蹂蹑黑方片的屁眼。',
+    },
+  ];
+  const cases = [
+    { label: '性器', penis: 1, band: 0, word: '阴茎' },
+    { label: '假阴茎', penis: 0, band: 1, word: '假阴茎' },
+    { label: '两者皆无', penis: 0, band: 0, word: '' },
+  ];
+  for (const group of groups) {
+    for (const item of cases) {
+      const fixture = await setup_k9((f) => {
+        f.store.set('tequip:20:55', 1);
+        f.store.set('talent:21:121', item.penis);
+        f.store.set('talent:21:122', 0);
+        f.store.set('item:4', item.band); // PBAND
+      }, group.selectcom);
+      fixture.seed_chara(21, { id: 21, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(21);
+      const era_flag = fixture.load_module('era-utils/era-flag');
+      era_flag.assi = 21;
+      era_flag.assiplay = 1;
+      const { colosseum_kojo_9 } = fixture.load_module('kojo/kojo-k9-diamond');
+      await colosseum_kojo_9();
+      assert.ok(
+        fixture
+          .text_lines()
+          .includes(`玛奥${group.head}${item.word}${group.tail}`),
+        `SELECTCOM==${group.selectcom} ${item.label}：并入整行`,
+      );
+    }
+  }
+});
+
+test('#623 奖赏请求：野兽名并入整行（:7414+:7416+:7418+:7420+:7422）', async () => {
+  const cases = [
+    { 要求: 1, beast: '狗' },
+    { 要求: 2, beast: '猪' },
+    { 要求: 3, beast: '马' },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k9((f) => {
+      f.store.set('cflag:20:504', item.要求);
+    });
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(9, { args: [20, undefined] });
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(
+          `「呐~魔王大人、我想和${item.beast}交尾试一试呢~、能不能事先帮我准备好呢~？」`,
+        ),
+      `要求奖赏=${item.要求}：野兽名并入整行`,
+    );
+  }
+});

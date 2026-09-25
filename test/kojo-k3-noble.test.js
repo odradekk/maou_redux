@@ -1147,6 +1147,354 @@ test('SELECTCOM 56 二次·通常：:5104+:5106|:5108+:5110 是一行，输出�
   }
 });
 
+// —— #623 拆行合并：原作同一行输出合成一条 era.print（整行断言） ——
+
+/** 含该片段的第一行（合并后整行断言用；找不到返回 undefined） */
+function line_with(fixture, fragment) {
+  return fixture.text_lines().find((l) => l.includes(fragment));
+}
+
+test('#623 强制排泄·出身两支的整行（:4569.. / :4589..）', async () => {
+  const origins = [
+    [5, '娼妇'],
+    [7, '乞丐'],
+    [9, '贫民'],
+    [20, '奴隶'],
+  ];
+  // ABL:3/21 两支齐备 → :4566 支（:4569 组）
+  for (const [life, word] of origins) {
+    const fixture = await setup_k3((f) => {
+      f.load_module('era-utils/era-flag').selectcom = 46;
+      f.store.set('tequip:31:46', 0);
+      f.store.set('abl:31:3', 3);
+      f.store.set('abl:31:21', 3);
+      f.store.set('talent:31:成为勇者前的生活', life);
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(`「从${word}成为了勇者，就能摆脱以前的生活…才对的啊…」`),
+      `出身 ${life} → :4569 组整行`,
+    );
+  }
+  // 两支都不备 → ELSE 支（:4589 组）
+  for (const [life, word] of origins) {
+    const fixture = await setup_k3((f) => {
+      f.load_module('era-utils/era-flag').selectcom = 46;
+      f.store.set('tequip:31:46', 0);
+      f.store.set('talent:31:成为勇者前的生活', life);
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(
+          `「不、不要啊！${'\u3000'}这这这、这样子的、比${word}还不如的待遇！！」`,
+        ),
+      `出身 ${life} → :4589 组整行`,
+    );
+  }
+});
+
+test('#623 强制排泄·最深部遭遇三档整行（:4653+:4655+:4657+:4659+:4661）', async () => {
+  // 抽签序（照原作）：:4634/:4639/:4644 三次 RAND:2 → :4652 的 RAND:3 入场签
+  // → 整行里的 :4654 RAND:3（:4656 RAND:2）
+  const cases = [
+    { draws: [1, 1, 1, 0, 0], word: '找到' },
+    { draws: [1, 1, 1, 0, 1, 0], word: '一不小心捡到' },
+    { draws: [1, 1, 1, 0, 1, 1], word: '无意中踩到' },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k3((f) => {
+      f.load_module('era-utils/era-flag').selectcom = 46;
+      f.store.set('tequip:31:46', 0);
+      f.store.set('cflag:31:387', 1);
+      f.store.set('talent:31:76', 1);
+      f.store.set('abl:31:3', 3);
+      f.store.set('abl:31:21', 3);
+      f.store.set('tequip:31:54', 1);
+      f.store.set('cflag:0:1', 2);
+      f.store.set('cflag:0:501', 9);
+      f.store.set('abl:31:17', 5);
+    });
+    await speak_k3(fixture, seq_rand(...item.draws));
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(
+          `「…哈、啊哈❤${'\u3000'}一想到我拉出来的东西、要是让探索中的勇者${item.word}了的话…吼吼噢噢噢噢❤」`,
+        ),
+      `抽签 ${item.draws.join(',')} → 整行`,
+    );
+  }
+});
+
+test('#623 强制排泄·两穴与屈辱支的整行（:4775+:4777 / :4810+:4812）', async () => {
+  // 两穴支：tequip:54 未开、ABL:3/21 齐备（:4765 的 ELSE）。RAND:3 定
+  // crying_out、RAND:2 定后两支；三支都拼 :4775 前缀（#623）
+  const two_seed = (f) => {
+    f.load_module('era-utils/era-flag').selectcom = 46;
+    f.store.set('tequip:31:46', 0);
+    f.store.set('cflag:31:387', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+  };
+  const prefix_4775 =
+    '「不、骗人的吧！\u3000像这样子动着…慢慢排出来、菊穴、还蠕动';
+  const two_cases = [
+    { label: 'RAND:3==0 首支', draws: [0], tail: '着……竟然…」' },
+    { label: 'ELSEIF 支', draws: [1, 0], tail: '着……唔！」' },
+    { label: 'ELSE 支', draws: [1, 1], tail: '着…明明不可以的……」' },
+  ];
+  for (const item of two_cases) {
+    const fixture = await setup_k3(two_seed);
+    await speak_k3(fixture, seq_rand(...item.draws));
+    assert.ok(
+      fixture.text_lines().includes(prefix_4775 + item.tail),
+      `:4775 ${item.label}整行`,
+    );
+    assert.equal(
+      fixture.text_lines().filter((l) => l === prefix_4775).length,
+      0,
+      `:4775 ${item.label}：前缀不得再单独成行`,
+    );
+  }
+
+  // 屈辱支：MARK:2 == 3 且 CFLAG:387 <= 1（:4786 支）的 ELSE（:4809）；
+  // :4810 的 PRINTFORM 行尾带全角空格，三支都拼（审查建议 11）
+  const shame_seed = (f) => {
+    f.load_module('era-utils/era-flag').selectcom = 46;
+    f.store.set('tequip:31:46', 0);
+    f.store.set('cflag:31:387', 1);
+    f.store.set('mark:31:2', 3);
+  };
+  const prefix_4810 = '「原、原谅我…啊啊啊啊！！\u3000';
+  const shame_cases = [
+    {
+      label: 'RAND:3==0 首支',
+      draws: [0],
+      tail: '又要…出来了、出…快停下来啊……！！」',
+    },
+    {
+      label: 'ELSEIF 支',
+      draws: [1, 0],
+      tail: '请、请怜悯下…！\u3000啊？\u3000啊啊、不要啊啊……」',
+    },
+    {
+      label: 'ELSE 支',
+      draws: [1, 1],
+      tail: '不要…请原俩…啊啊啊！\u3000啊啊啊……」」',
+    },
+  ];
+  for (const item of shame_cases) {
+    const fixture = await setup_k3(shame_seed);
+    await speak_k3(fixture, seq_rand(...item.draws));
+    assert.ok(
+      fixture.text_lines().includes(prefix_4810 + item.tail),
+      `:4810 ${item.label}整行（含前缀行尾全角空格）`,
+    );
+    assert.equal(
+      fixture.text_lines().filter((l) => l === '「原、原谅我…啊啊啊啊！！')
+        .length,
+      0,
+      `:4810 ${item.label}：前缀不得再单独成行（丢掉行尾全角空格也会在此露头）`,
+    );
+  }
+});
+
+test('#623 交谈·搭话首支整行（:5026+:5028 / :5098+:5100）', async () => {
+  for (const [phase, replay] of [
+    ['初回', false],
+    ['二回目', true],
+  ]) {
+    const fixture = await setup_k3((f) => {
+      f.load_module('era-utils/era-flag').selectcom = 56;
+      f.store.set('cflag:31:357', replay ? 9 : 0);
+      f.store.set('tequip:31:53', 0);
+      f.store.set('talent:31:85', 1);
+      f.store.set('palam:31:5', 10000);
+      f.store.set('tflag:60', 1);
+    });
+    await speak_k3(fixture, seq_rand(0, 0));
+    assert.equal(
+      line_with(fixture, '向其搭话后，温妮摇晃着腰说起了恋慕的话语'),
+      '你向其搭话后，温妮摇晃着腰说起了恋慕的话语',
+      `${phase}：:5026/:5098 前缀与支文本同属一条语句`,
+    );
+  }
+});
+
+test('#623 兽奸接吻·舌头缠绕整行（:6031+:6033+:6035+:6037）', async () => {
+  const cases = [
+    { draw: 0, word: '一脸陶醉的表情' },
+    { draw: 1, word: '专心地' },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k3((f) => {
+      f.load_module('era-utils/era-flag').selectcom = 6;
+      f.store.set('tequip:31:89', 1);
+      f.store.set('cflag:31:307', 6);
+      f.store.set('talent:31:136', 1);
+    });
+    // 前一个 RAND:2（:6026 支）先消费一次抽签
+    await speak_k3(fixture, seq_rand(0, item.draw, 0));
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(`温妮${item.word}和野狗用舌头缠绕在一起了。`),
+      `RAND:2 = ${item.draw} → 整行`,
+    );
+  }
+});
+
+test('#623 兽奸录像·孩子称呼整行（:6717+… / :6796+… / :6900+… / :6982+…）', async () => {
+  const WORDS = [
+    [111100000, '姐姐，哥哥，弟弟，妹妹'],
+    [11100000, '姐姐，哥哥，妹妹'],
+    [101100000, '姐姐，哥哥，弟弟'],
+    [110100000, '姐姐，弟弟，妹妹'],
+    [111000000, '哥哥，弟弟，妹妹'],
+    [1100000, '姐姐和哥哥'],
+    [100100000, '姐姐和弟弟'],
+    [10100000, '姐姐和妹妹'],
+    [101000000, '哥哥和弟弟'],
+    [11000000, '哥哥和妹妹'],
+    [110000000, '弟弟和妹妹'],
+    [100000, '姐姐'],
+    [1000000, '哥哥'],
+    [10000000, '妹妹'],
+    [100000000, '弟弟'],
+  ];
+  const sites = [
+    { label: '初回·牝犬+结婚对象900', replay: false, mate: 900, family: null },
+    { label: '初回·牝犬', replay: false, mate: 0, family: null },
+    { label: '二回目·牝犬+结婚对象900', replay: true, mate: 900, family: null },
+    { label: '二回目·牝犬', replay: true, mate: 0, family: null },
+  ];
+  for (const site of sites) {
+    const cases = site.family ?? WORDS;
+    for (const [family, word] of cases) {
+      const fixture = await setup_k3((f) => {
+        f.load_module('era-utils/era-flag').selectcom = 56;
+        f.store.set('tequip:31:89', 1);
+        f.store.set('tequip:31:53', 1);
+        f.store.set('talent:31:136', 1);
+        f.store.set('talent:31:320', family);
+        f.store.set('cflag:31:601', site.mate);
+        if (site.replay) f.store.set('cflag:31:357', 6);
+      });
+      await speak_k3(fixture, seq_rand(0, 0));
+      assert.ok(
+        fixture.text_lines().includes(`「我是有${word}的♪」`),
+        `${site.label} family=${family} → 整行「我是有${word}的♪」`,
+      );
+    }
+  }
+});
+
+test('#623 排卵·両穴整行（:7383+:7385+:7387+:7389）', async () => {
+  const cases = [
+    { draw: 0, word: '两个小穴' },
+    { draw: 1, word: '小穴还有屁股' },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k3((f) => {
+      f.load_module('era-utils/era-flag').selectcom = 46;
+      f.store.set('abl:31:3', 0);
+      f.store.set('talent:31:190', 1);
+      f.store.set('talent:31:191', 1);
+      f.store.set('cflag:31:230', 1);
+      f.store.set('nowex:31:0', 1);
+      f.store.set('cflag:31:224', 1);
+    });
+    const { kojo_message_palamcng_family } =
+      fixture.load_module('kojo/kojo-system');
+    await kojo_message_palamcng_family.call(3, {
+      args: [seq_rand(item.draw), 31, 0],
+    });
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(
+          `「啊啊~…我的${item.word}都要生出来、要生出来了啊~……啊啊~！！」`,
+        ),
+      `RAND:2 = ${item.draw} → 整行`,
+    );
+  }
+});
+
+test('#623 死斗场·助手器具名整行（:8492.. / :8525.. / :8549..）', async () => {
+  const groups = [
+    { selectcom: 31, head: '用', tail: '让温妮吸着，露出了愉悦的表情……' },
+    {
+      selectcom: 21,
+      head: '一边听着悲鸣一边用',
+      tail: '将温妮的小穴毫不留情地侵犯着……',
+    },
+    {
+      selectcom: 27,
+      head: '一边听着悲鸣一边用',
+      tail: '将温妮的肛穴毫不留情地侵犯着……',
+    },
+  ];
+  const cases = [
+    { label: '性器', penis: 1, band: 0, word: '大鸡巴' },
+    { label: '假阳具', penis: 0, band: 1, word: '假阳具' },
+    { label: '两者皆无', penis: 0, band: 0, word: '' },
+  ];
+  for (const group of groups) {
+    for (const item of cases) {
+      const fixture = await setup_k3((f) => {
+        f.load_module('era-utils/era-flag').selectcom = group.selectcom;
+        f.store.set('tequip:31:55', 1);
+        f.store.set('base:31:1', 100);
+        f.store.set('talent:21:121', item.penis);
+        f.store.set('talent:21:122', 0);
+        f.store.set('item:4', item.band);
+      });
+      fixture.seed_chara(21, { id: 21, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(21);
+      const era_flag = fixture.load_module('era-utils/era-flag');
+      era_flag.assi = 21;
+      era_flag.assiplay = 1;
+      await fixture.load_module('kojo/kojo-k3-noble').colosseum_kojo_3();
+      assert.ok(
+        fixture
+          .text_lines()
+          .includes(`玛奥${group.head}${item.word}${group.tail}`),
+        `SELECTCOM==${group.selectcom} ${item.label}：并入整行`,
+      );
+    }
+  }
+});
+
+test('#623 奖赏请求·野兽名整行（:8803+:8805+:8807+:8809+:8811）', async () => {
+  const cases = [
+    { 要求: 1, beast: '狗' },
+    { 要求: 2, beast: '猪' },
+    { 要求: 3, beast: '马' },
+  ];
+  for (const item of cases) {
+    const fixture = await setup_k3((f) => {
+      f.load_module('era-utils/era-flag').selectcom = 51;
+      f.store.set('cflag:31:504', item.要求);
+    });
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(3, { args: [31, undefined] });
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(
+          `「我…这场战斗完后想要跟…${item.beast}交配想得受不了了~…！」`,
+        ),
+      `要求奖赏=${item.要求}：野兽名并入整行`,
+    );
+  }
+});
+
 // —— 存根清单核对 ——
 
 test('SELL_MATURO_K0 已从存根清单移除', async () => {

@@ -8455,3 +8455,422 @@ for (const [label, assistant] of [
     }
   });
 }
+
+// —— #623 拆行合并：原作同一行输出合成一条 era.print（整行断言） ——
+
+/** 含该片段的第一行（合并后整行断言用；找不到返回 undefined） */
+function line_with(fixture, fragment) {
+  return fixture.text_lines().find((l) => l.includes(fragment));
+}
+
+test('#623 COM56 初回录像：自我介绍整行合并（:6842+:6844+:6845）', async () => {
+  const cases = [
+    {
+      masturbation: 3,
+      expected:
+        '莉莉介绍了自己的名字和迄今为止的性经验、自慰的时候幻想的内容和对象也说出来了说得自己都兴奋起来了……',
+    },
+    {
+      masturbation: 0,
+      expected: '莉莉介绍了自己的名字和迄今为止的性经验说得自己都兴奋起来了……',
+    },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:53`, 1);
+      f.store.set(`talent:${LILY}:89`, 1);
+      f.store.set(`abl:${LILY}:31`, item.masturbation);
+    }, 56);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      line_with(fixture, '介绍了自己的名字和迄今为止的性经验'),
+      item.expected,
+      `自慰中毒 ${item.masturbation}`,
+    );
+  }
+});
+
+test('#623 COM56 二回目录像：自我介绍整行合并（:6929+:6931+:6932）', async () => {
+  const cases = [
+    {
+      masturbation: 3,
+      expected:
+        '莉莉介绍了自己的名字和迄今为止的性经验、自慰的时候幻想的内容和对象也说出来了说得自己都兴奋起来了……',
+    },
+    {
+      masturbation: 0,
+      expected: '莉莉介绍了自己的名字和迄今为止的性经验说得自己都兴奋起来了……',
+    },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`cflag:${LILY}:357`, 9);
+      f.store.set(`tequip:${LILY}:53`, 1);
+      f.store.set(`talent:${LILY}:89`, 1);
+      f.store.set(`abl:${LILY}:31`, item.masturbation);
+    }, 56);
+    await speak_com11(fixture, seq_rand());
+    assert.equal(
+      line_with(fixture, '介绍了自己的名字和迄今为止的性经验'),
+      item.expected,
+      `自慰中毒 ${item.masturbation}`,
+    );
+  }
+});
+
+// 助手玛奥通常交谈的四族（初回/二回目 × 助手/非助手）：:6865/:6893/:6952/:6980
+// 的 PRINTFORM 前缀提到语句外（const line_head），六支各写 `line_head + 支文本`，
+// 玩家在任何一支路径上都看到一整行（#623 返工）。
+for (const [label, assistant] of [
+  ['助手玛奥', true],
+  ['非助手', false],
+]) {
+  test(`#623 COM56 初回通常（${label}）：五支各自并入 :6865/:6893 前缀整行`, async () => {
+    const head = assistant ? '面对你' : '你';
+    const seed = (f, era_flag) => {
+      f.store.set('palamlv:2', 100);
+      f.store.set('palamlv:4', 200);
+      if (assistant) {
+        preset_chara_17(f);
+        f.era.addCharacter(MAO);
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+    };
+    const cases = [
+      {
+        label: '首支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:85 || 顺从 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:85`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '的语言调戏、莉莉扭着腰，边自慰边发出一声声享受的娇喘。'
+          : '的语言挑逗、莉莉扭着腰，边自慰边诉说着对你的爱慕。',
+      },
+      {
+        label: '第二支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:76 || 欲望 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:76`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '边侵犯边用语言调戏、莉莉弯着腰，不顾廉耻地边娇喘边大声说着'
+          : '的语言挑逗、莉莉弯着腰，不顾廉耻地边娇喘边大声说着',
+      },
+      {
+        label: '第四支',
+        // PALAM:4 >= PALAMLV:4 || TALENT:85 || 顺从 >= 5（PALAM:5 落档避开前三支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 200),
+        tail: assistant
+          ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
+          : '的语言挑逗、莉莉有些害羞地应答着',
+      },
+      {
+        label: '第五支',
+        // PALAM:4 >= PALAMLV:2 || 顺从 >= 3（PALAM:4 落档避开第四支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 100),
+        tail: assistant
+          ? '的语言调戏、莉莉小声地回答着'
+          : '的语言挑逗、莉莉结结巴巴地回答着',
+      },
+      {
+        label: '第六支',
+        // ELSE：其余条件全不成立
+        seed: () => {},
+        tail: assistant
+          ? '的语言羞辱，莉莉只是红着脸，低着头听着…'
+          : '的语言挑逗、莉莉听清楚了吗…',
+      },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        seed(f, era_flag);
+        item.seed(f);
+      }, 56);
+      await speak_com11(fixture, seq_rand());
+      assert.equal(
+        line_with(fixture, item.tail.slice(0, 10)),
+        head + item.tail,
+        `${label} ${item.label}：与 :6865/:6893 前缀合成一行`,
+      );
+      assert.equal(
+        fixture.text_lines().filter((l) => l === head).length,
+        0,
+        `${label} ${item.label}：前缀不得再单独成行`,
+      );
+    }
+  });
+
+  test(`#623 COM56 二回目通常（${label}）：五支各自并入 :6952/:6980 前缀整行`, async () => {
+    const head = '面对你';
+    const seed = (f, era_flag) => {
+      f.store.set(`cflag:${LILY}:357`, 9);
+      f.store.set('palamlv:2', 100);
+      f.store.set('palamlv:4', 200);
+      if (assistant) {
+        preset_chara_17(f);
+        f.era.addCharacter(MAO);
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+    };
+    const cases = [
+      {
+        label: '首支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:85 || 顺从 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:85`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '的语言调戏、莉莉扭着腰，边自慰边发出一声声享受的娇喘。'
+          : '的语言挑逗、莉莉扭着腰，边自慰边诉说着对你的爱慕。',
+      },
+      {
+        label: '第二支',
+        // PALAM:5 >= PALAMLV:4 && (TALENT:76 || 欲望 >= 5) && TFLAG:60
+        seed: (f) => {
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:76`, 1);
+          f.store.set('tflag:60', 1);
+        },
+        tail: assistant
+          ? '的语言调戏、莉莉弯着腰，不顾廉耻地边娇喘边大声说着'
+          : '的语言挑逗、莉莉弯着腰，不顾廉耻地边娇喘边大声说着',
+      },
+      {
+        label: '第四支',
+        // PALAM:4 >= PALAMLV:4 || TALENT:85 || 顺从 >= 5（PALAM:5 落档避开前三支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 200),
+        tail: assistant
+          ? '的语言调戏、莉莉一点也不生气，看来姐妹关系已经很融洽了。'
+          : '的语言挑逗、莉莉有些害羞地应答着',
+      },
+      {
+        label: '第五支',
+        // PALAM:4 >= PALAMLV:2 || 顺从 >= 3（PALAM:4 落档避开第四支）
+        seed: (f) => f.store.set(`palam:${LILY}:4`, 100),
+        tail: assistant
+          ? '的语言调戏、莉莉小声地回答着'
+          : '的语言挑逗、莉莉结结巴巴地回答着',
+      },
+      {
+        label: '第六支',
+        // ELSE：其余条件全不成立
+        seed: () => {},
+        tail: assistant
+          ? '的语言羞辱，莉莉只是红着脸，低着头听着…'
+          : '的语言挑逗、莉莉听清楚了吗…',
+      },
+    ];
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        seed(f, era_flag);
+        item.seed(f);
+      }, 56);
+      await speak_com11(fixture, seq_rand());
+      assert.equal(
+        line_with(fixture, item.tail.slice(0, 10)),
+        head + item.tail,
+        `${label} ${item.label}：与 :6952/:6980 前缀合成一行`,
+      );
+      assert.equal(
+        fixture.text_lines().filter((l) => l === head).length,
+        0,
+        `${label} ${item.label}：前缀不得再单独成行`,
+      );
+    }
+  });
+}
+
+// :6873+:6875+:6877+:6879（初回助手）/ :6901+:6903+:6905+:6907（初回非助手）/
+// :6960+:6962+:6964+:6966（二回目助手）/ :6988+:6990+:6992+:6994（二回目非助手）：
+// 无后缀 PRINTFORM 链 + 两个互斥插入段，末行 PRINTFORML 收行。
+for (const [label, assistant] of [
+  ['助手玛奥', true],
+  ['非助手', false],
+]) {
+  test(`#623 COM56 ${label}：语言调戏插入段并入整行（三档）`, async () => {
+    // 初回（:6873 / :6901）与二回目（:6960 / :6988）两段同型，各自的插入段
+    // 首档文案不同（初回助手「却乐在其中」、二回目助手「害羞」）。
+    for (const [phase, replay, lively, tail] of [
+      [
+        '初回',
+        false,
+        assistant ? '却乐在其中' : '乐在其中',
+        assistant ? '地回应着。' : '地努力回答着',
+      ],
+      [
+        '二回目',
+        true,
+        assistant ? '害羞' : '乐在其中',
+        assistant ? '地回应着' : '地努力回答着',
+      ],
+    ]) {
+      const cases = [
+        { tequip: 11, expected: lively },
+        { tequip: 44, expected: '无比痛苦' },
+        { tequip: undefined, expected: '' },
+      ];
+      for (const item of cases) {
+        const fixture = setup_lily((f, era_flag) => {
+          if (replay) f.store.set(`cflag:${LILY}:357`, 9);
+          f.store.set('palamlv:4', 200);
+          f.store.set(`palam:${LILY}:4`, 200);
+          f.store.set(`palam:${LILY}:5`, 200);
+          f.store.set(`talent:${LILY}:85`, 1);
+          if (item.tequip !== undefined)
+            f.store.set(`tequip:${LILY}:${item.tequip}`, 1);
+          if (assistant) {
+            preset_chara_17(f);
+            f.era.addCharacter(MAO);
+            era_flag.assi = MAO;
+            era_flag.assiplay = 1;
+          }
+        }, 56);
+        await speak_com11(fixture, seq_rand());
+        const head = assistant || replay ? '面对你' : '你';
+        assert.equal(
+          line_with(fixture, '的语言调戏，莉莉'),
+          `${head}的语言调戏，莉莉${item.expected}${tail}`,
+          `${label} ${phase} tequip=${item.tequip}：插入段并入整行`,
+        );
+        assert.equal(
+          fixture.text_lines().filter((l) => l === head).length,
+          0,
+          `${label} ${phase} tequip=${item.tequip}：前缀不得再单独成行`,
+        );
+      }
+    }
+  });
+}
+
+test('#623 NTR P=1：狂王插入处女一段整行合并（:12609+:12611+:12613+:12615）', async () => {
+  const cases = [
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 2,
+      expected:
+        '双手被抓住的莉莉拼命挣扎着，但狂王只是哈哈大笑着用双腿之间的巨根径直插入了莉莉的处女蜜穴之中。',
+    },
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 1,
+      expected:
+        '双手被抓住的莉莉拼命挣扎着，但狂王只是哈哈大笑着用粗大的假阳具径直插入了莉莉的处女蜜穴之中。',
+    },
+    {
+      seed: () => {},
+      flag500: 2,
+      expected:
+        '双手被抓住的莉莉拼命挣扎着，但狂王只是哈哈大笑着用双腿之间的巨根径直插入了莉莉的蜜穴之中。',
+    },
+    {
+      seed: () => {},
+      flag500: 1,
+      expected:
+        '双手被抓住的莉莉拼命挣扎着，但狂王只是哈哈大笑着用粗大的假阳具径直插入了莉莉的蜜穴之中。',
+    },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:500', item.flag500);
+      item.seed(f);
+    });
+    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await ntr_koujo_family.call(11, { args: [seq_rand(), 1] });
+    assert.equal(
+      line_with(fixture, '拼命挣扎着，但狂王只是哈哈大笑着用'),
+      item.expected,
+      `FLAG:500=${item.flag500}`,
+    );
+  }
+});
+
+test('#623 NTR P=2：肛门插入两段整行合并（:12638+… / :12655+…）', async () => {
+  const cases = [
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 2,
+      expected:
+        '莉莉被狂王的巨根撑开肛门，径直插了进去。在狂王的持续侵犯下，莉莉不住地呻吟了起来。',
+    },
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 1,
+      expected:
+        '莉莉被粗大的假阳具撑开肛门，径直插了进去。在狂王的持续侵犯下，莉莉不住地呻吟了起来。',
+    },
+    {
+      seed: () => {},
+      flag500: 2,
+      expected: '莉莉的肛门被狂王的巨根撑开了肛门，插了进去。',
+    },
+    {
+      seed: () => {},
+      flag500: 1,
+      expected: '莉莉的肛门被粗大的假阳具撑开了肛门，插了进去。',
+    },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:500', item.flag500);
+      item.seed(f);
+    });
+    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await ntr_koujo_family.call(11, { args: [seq_rand(), 2] });
+    assert.equal(
+      item.expected.includes('的肛门被')
+        ? line_with(fixture, '的肛门被')
+        : line_with(fixture, '撑开肛门，径直插了进去'),
+      item.expected,
+      `FLAG:500=${item.flag500} ${item.seed.toString()}`,
+    );
+  }
+});
+
+test('#623 NTR P=4：V プレイ两段整行合并（:12683+… / :12700+…）', async () => {
+  const cases = [
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 2,
+      expected:
+        '狂王的巨根持续地侵犯着莉莉的蜜穴，莉莉感受着交媾的快感，发出了甘甜的娇喘。',
+    },
+    {
+      seed: (f) => f.store.set(`talent:${LILY}:76`, 1),
+      flag500: 1,
+      expected:
+        '粗大的假阳具持续地侵犯着莉莉的蜜穴，莉莉感受着交媾的快感，发出了甘甜的娇喘。',
+    },
+    {
+      seed: () => {},
+      flag500: 2,
+      expected: '狂王的巨根持续地侵犯着莉莉的蜜穴，莉莉不住地呻吟着。',
+    },
+    {
+      seed: () => {},
+      flag500: 1,
+      expected: '粗大的假阳具持续地侵犯着莉莉的蜜穴，莉莉不住地呻吟着。',
+    },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set('flag:500', item.flag500);
+      item.seed(f);
+    });
+    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await ntr_koujo_family.call(11, { args: [seq_rand(), 4] });
+    assert.equal(
+      line_with(fixture, '持续地侵犯着莉莉的蜜穴'),
+      item.expected,
+      `FLAG:500=${item.flag500} ${item.seed.toString()}`,
+    );
+  }
+});

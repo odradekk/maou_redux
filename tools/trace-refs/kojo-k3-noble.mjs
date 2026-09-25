@@ -14732,6 +14732,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K3_高貴.ERB',
+        ref: '5026',
+        any: [/PRINTFORM\ %SAVESTR:PLAYER%/],
+      }, // #623：交谈前缀（与 :5098 同文，平行复现）
+      {
+        src: 'target/ERB/口上/EVENT_K3_高貴.ERB',
         ref: '5027',
         any: [
           /IF\ PALAM:5\ >=\ PALAMLV:4\ \&\&\ \(TALENT:85\ \|\|\ ABL:10\ >=\ 5\)\ \&\&\ TFLAG:60/,
@@ -15066,6 +15071,11 @@ export const FILES = [
         ref: '5095',
         any: [/PRINTFORMW\ %SAVESTR:TARGET%岔开了视线什么都没说。/],
       },
+      {
+        src: 'target/ERB/口上/EVENT_K3_高貴.ERB',
+        ref: '5098',
+        any: [/PRINTFORM\ %SAVESTR:PLAYER%/],
+      }, // #623：交谈前缀（与 :5026 同文，平行复现）
       {
         src: 'target/ERB/口上/EVENT_K3_高貴.ERB',
         ref: '5099',
