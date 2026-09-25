@@ -13598,7 +13598,7 @@ async function colosseum_kojo_6(rand) {
       await era.printAndWait(
         `「啊啊啊…已经…已经不能再应付更多的肉棒了…会痛的啊……哇啊…呜咕噜…！」`,
       ); // :7490
-      // :7491+:7496 原作是一整行：三条无后缀 PRINTFORM/PRINT 连续不换行，:7496 的
+      // :7491+:7493+:7495+:7496 原作是一整行：三条无后缀 PRINTFORM/PRINT 连续不换行，:7496 的
       // PRINTFORMW 才收行。两条 SIF（助手有阴茎 / 持假阳具）的判据提到语句外取值，
       // 片段文本留在输出语句里（#621）
       const assi_has_penis_7493 =
@@ -13646,7 +13646,7 @@ async function colosseum_kojo_6(rand) {
       await era.printAndWait(
         `「你、你怎么能这样对我啊…不要…这样激烈的话…啊啊啊啊…饶、饶了我吧！！～！」`,
       ); // :7523
-      // :7524+:7529 同型（三条无后缀连写，:7529 的 PRINTFORMW 收行；#621）
+      // :7524+:7526+:7528+:7529 同型（三条无后缀连写，:7529 的 PRINTFORMW 收行；#621）
       const assi_has_penis_7526 =
         (era.get(`talent:${assi}:121`) || 0) === 1 ||
         (era.get(`talent:${assi}:122`) || 0) === 1;
@@ -13681,7 +13681,7 @@ async function colosseum_kojo_6(rand) {
       await era.printAndWait(
         `「你、你怎么能这样对我啊…不要…这样侵犯我的屁股的话…啊啊啊啊…这样下去屁股会坏掉的啊！」`,
       ); // :7547
-      // :7548+:7553 同型（三条无后缀连写，:7553 的 PRINTFORMW 收行；#621）
+      // :7548+:7550+:7552+:7553 同型（三条无后缀连写，:7553 的 PRINTFORMW 收行；#621）
       const assi_has_penis_7550 =
         (era.get(`talent:${assi}:121`) || 0) === 1 ||
         (era.get(`talent:${assi}:122`) || 0) === 1;
