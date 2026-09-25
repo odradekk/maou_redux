@@ -78,8 +78,10 @@ jobs:
           cache: npm
       - name: 安装依赖
         run: npm ci
-      - name: 锚点质量（默认范围只量未冻结文件，PR 新加的引用都在这里）
-        run: node tools/trace-check.mjs --anchor-quality
+      # 全文量（含已冻结文件）并核对总基线。PR 也跑：只量未冻结文件时，改了
+      # 已冻结文件锚表的 PR 要等 master push 才暴露（#572 → #610，#626）。
+      - name: 锚点质量全文量（弱锚点只减不增，核对总基线）
+        run: node tools/trace-check.mjs --anchor-quality --all
       - name: ESLint（零警告，与本地三项自检同一标准）
         run: npx eslint . --max-warnings 0
       - name: Prettier（格式比对）
@@ -104,7 +106,4 @@ jobs:
         run: npm run test:ci
       - name: 跳过数检查（引擎缺失的代价必须是看得见的数字）
         run: node tools/skip-count-check.mjs test-report.tap
-      # 默认路径只量未冻结文件；`--all` 是唯一重算存量并核对总基线的地方，
-      # 所以它必须有一个自动执行点。
-      - name: 锚点质量全文量（弱锚点只减不增，核对总基线）
-        run: node tools/trace-check.mjs --anchor-quality --all
+      # 锚点质量全文量自 #626 起在 static 任务里跑（PR 与 master push 都覆盖）。
