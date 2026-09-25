@@ -20468,11 +20468,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
-        ref: '5744-5745',
-        any: [/^\s*PRINT 马\s*$\n^\s*ENDIF\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K14_貴公子.ERB',
         ref: '5746',
         any: [/^\s*PRINTFORMW 进行交配的奖励。\s*$/m],
       },

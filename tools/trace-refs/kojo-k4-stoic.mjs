@@ -206,6 +206,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
+        ref: '243',
+        any: [/^(?:\uFEFF)?[ \t]*SIF[ \t]+CFLAG:42[ \t]+==[ \t]+83[ \t]*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
         ref: '244',
         any: [/PRINTFORM 眼镜下/],
       },
@@ -5497,8 +5502,22 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
+        ref: '4953',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
         ref: '4954',
         any: [/PRINT 阴茎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
+        ref: '4955',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+!=[ \t]+1[ \t]+&&[ \t]+TALENT:ASSI:122[ \t]+!=[ \t]+1[ \t]+&&[ \t]+ITEM:PBAND[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
@@ -5560,6 +5579,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
+        ref: '4986',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
         ref: '4987',
         any: [/PRINT 阴茎/],
       },
@@ -5604,6 +5630,13 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
         ref: '5009',
         any: [/PRINTFORM %SAVESTR:ASSI%听到悲鸣，更加兴奋了，继续用/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
+        ref: '5010',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
@@ -5975,6 +6008,11 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
         ref: '5259',
         any: [/PRINTFORM 「拜托了…让我和/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',
+        ref: '5260',
+        any: [/^(?:\uFEFF)?[ \t]*IF[ \t]+CFLAG:A:504[ \t]+==[ \t]+1[ \t]*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K4_冷徹.ERB',

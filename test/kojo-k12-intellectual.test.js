@@ -972,6 +972,31 @@ test('#584 benki_koujo_k12：「勇者/冒险者」段与后续是同一行（�
   }
 });
 
+test('#625 gohoubi_request_koujo_k12：兽名与前后文是同一行（CFLAG:504 三档）', async () => {
+  // 原作 :5747（PRINTFORM）+ :5749/:5751/:5753（IF/ELSEIF 三档兽名）
+  // + :5755（PRINTFORMW 收行）**是一整行**——无后缀 PRINTFORM/PRINT 连续不换行。
+  // ere 曾拆成五条 era.print（#625）。断言整行文本（不是只查片段）
+  const cases = [
+    [1, '狗'],
+    [2, '猪'],
+    [3, '马'],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k12((f) => {
+      f.store.set('cflag:20:504', req);
+    });
+    const { gohoubi_request_koujo_k12 } = fixture.load_module(
+      'kojo/kojo-k12-intellectual',
+    );
+    await gohoubi_request_koujo_k12(() => 0);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`智慧提出了与${beast}交尾的要求`, '「想要继续进行异种交配实验」'],
+      `CFLAG:504==${req}：兽名与前后文落在同一行（#625）`,
+    );
+  }
+});
+
 test('kojo_message_markcng_12 苦痛刻印Lv3 取得（TFLAG:22==3）', async () => {
   const fixture = await setup_k12((f) => {
     const { game } = f.load_module('facade/game');

@@ -205,18 +205,29 @@ test('初調教屈服刻印分档（各 Lv 一次）：CFLAG:201 2 → 3 → 4 �
 });
 
 test('K4_KOJO2 二回目以降（ASSI < 0 → :168-169）：反抗刻印Lv3 支', async () => {
-  // CFLAG:201 已到顶（6）且 ASSI < 0 → K4_KOJO2；反抗刻印Lv3 + FLAG:7 == 2
-  const fixture = await setup_k4((f) => {
-    f.store.set('cflag:31:201', 6);
-    f.store.set('mark:31:3', 3);
-  });
-  const { emit } = fixture.load_module('system/event/registry');
-  await emit('EVENTTRAIN');
-  assert.deepEqual(fixture.text_lines(), [
-    '「你这肮脏可悲的生物……」',
-    '冷徹',
-    '的目光异常冰冷…',
-  ]);
+  // CFLAG:201 已到顶（6）且 ASSI < 0 → K4_KOJO2；反抗刻印Lv3 + FLAG:7 == 2。
+  // :241+:244+:245（:243 的 SIF CFLAG:42 == 83 只护住 :244 那一段）是一整行
+  // （#625），眼镜档两臂各断言整行
+  const cases = [
+    [0, '冷徹的目光异常冰冷…'],
+    [83, '冷徹眼镜下的目光异常冰冷…'],
+  ];
+  for (const [eye, merged] of cases) {
+    const fixture = await setup_k4((f) => {
+      f.store.set('cflag:31:201', 6);
+      f.store.set('mark:31:3', 3);
+      if (eye) {
+        f.store.set('cflag:31:42', eye);
+      }
+    });
+    const { emit } = fixture.load_module('system/event/registry');
+    await emit('EVENTTRAIN');
+    assert.deepEqual(
+      fixture.text_lines(),
+      ['「你这肮脏可悲的生物……」', merged],
+      `CFLAG:42==${eye}：眼镜段与后半句落在同一行（#625）`,
+    );
+  }
 });
 
 test('@EVENTEND 调教终了分档（MARK:3 / TALENT:76/85 / BASE:0）', async () => {
@@ -682,6 +693,27 @@ test('GOHOUBI_REQUEST（发情请求）：TFLAG:18 == 1 支出力', async () => 
   );
 });
 
+test('#625 GOHOUBI_REQUEST：保留 Y=0，兽名与前后文同一行（CFLAG:504 1/2/3）', async () => {
+  // 原作 :5259（PRINTFORM）+ :5261/:5263/:5265（IF/ELSEIF 三档）+ :5267
+  // （PRINTFORMW 收行）**是一整行**（#625）。后两档读恒 0 的 Y（源缺陷，见
+  // 函数头注），所以 CFLAG:504 2/3 不补「猪」「马」——整行只有前段与收行
+  const cases = [
+    [1, '狗'],
+    [2, ''],
+    [3, ''],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k4((f) => f.store.set('cflag:31:504', req));
+    const mod = fixture.load_module('kojo/kojo-k4-stoic');
+    await mod.gohoubi_request_koujo_k4();
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`「拜托了…让我和${beast}交配吧……！」`],
+      `CFLAG:504==${req}：兽名与前后文落在同一行，Y=0 时不补猪/马（#625）`,
+    );
+  }
+});
+
 // —— 存根清单核对 ——
 
 test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', async () => {
@@ -703,29 +735,53 @@ test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', asyn
 // PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4，4 号 = 假阳具）；
 // yml/Item.yml 名字表无 PBAND 条目，era.get('item:PBAND') 恒
 // undefined（test/variable-yml.test.js 的引擎用例），地址写回时下列用例必须红。
-test('COLOSSEUM_KOJO_4：SC31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接「假阳具」', async () => {
+test('#625 COLOSSEUM_KOJO_4：SC31/21/27 武器名与前后文同一行（三种 selectcom × 三档）', async () => {
+  // 原作 :4952+:4954+:4956+:4957、:4985+:4987+:4989+:4990、:5009+:5011+
+  // :5013+:5014 各是一整行（无后缀 PRINTFORM/PRINT 不换行，末行 PRINTFORMW
+  // 收行），ere 侧曾把每行拆成四条 era.print（#625）。三档助手武器各断言整行
   const cases = [
-    { selectcom: 31, tail: '粗暴地塞入' },
-    { selectcom: 21, tail: '的私处' },
-    { selectcom: 27, tail: '的肛门' },
+    {
+      selectcom: 31,
+      quote: '「啊…唔……唔唔………就……就在这里吗？…咳……！」',
+      head: '玛奥把',
+      tail: '粗暴地塞入冷徹的嘴里，露出了心满意足的神情……',
+    },
+    {
+      selectcom: 21,
+      quote: '「啊…！唔……啊啊啊！…好深………弄的好深啦……！」',
+      head: '玛奥听到悲鸣，更加兴奋了，继续用',
+      tail: '毫不留情地蹂躏着冷徹的私处……',
+    },
+    {
+      selectcom: 27,
+      quote: '「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」',
+      head: '玛奥听到悲鸣，更加兴奋了，继续用',
+      tail: '毫不留情地蹂躏着冷徹的肛门……',
+    },
   ];
-  for (const { selectcom, tail } of cases) {
-    const fixture = await setup_k4((f) => {
-      f.store.set('tequip:31:55', 1);
-      join_slave_chara(f, 17, '玛奥');
-      f.store.set('item:4', 1); // 原作 ITEM:PBAND（助手持有假阳具）
-      const era_flag = f.load_module('era-utils/era-flag');
-      era_flag.assi = 17;
-      era_flag.assiplay = 1;
-    }, selectcom);
-    await speak_k4(fixture, seq_rand(0));
-    assert.ok(
-      fixture.text_lines().some((l) => l === '假阳具'),
-      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「假阳具」`,
-    );
-    assert.ok(
-      fixture.text_lines().some((l) => l.includes(tail)),
-      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
-    );
+  const tiers = [
+    { weapon: '阴茎', seed: (f) => f.store.set('talent:17:121', 1) },
+    { weapon: '假阳具', seed: (f) => f.store.set('item:4', 1) }, // 原作 ITEM:PBAND
+    { weapon: '', seed: undefined },
+  ];
+  for (const { selectcom, quote, head, tail } of cases) {
+    for (const { weapon, seed } of tiers) {
+      const fixture = await setup_k4((f) => {
+        f.store.set('tequip:31:55', 1);
+        join_slave_chara(f, 17, '玛奥');
+        const era_flag = f.load_module('era-utils/era-flag');
+        era_flag.assi = 17;
+        era_flag.assiplay = 1;
+        if (seed) {
+          seed(f);
+        }
+      }, selectcom);
+      await speak_k4(fixture, seq_rand(0));
+      assert.deepEqual(
+        fixture.text_lines(),
+        [quote, `${head}${weapon}${tail}`],
+        `selectcom ${selectcom}（武器档「${weapon}」）：武器名与前后文落在同一行（#625）`,
+      );
+    }
   }
 });
