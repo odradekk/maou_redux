@@ -156,6 +156,37 @@ function create_era_fixture() {
   // 哪一行」的直接证据（#73：分发期输出必须在重绘前被玩家看到）
   const waits = [];
 
+  // —— 等待重叠检测（#557）——
+  // 引擎里 input()/waitAnyKey()/printAndWait(=print+waitAnyKey) 的等待是对
+  // 渲染层的 IPC 往返：上一次等待没回来又发下一次，画面上就是两处同时等
+  // 同一个输入（先重绘、提示后到，AGENTS.md「极难排查」的时序错乱）。夹具
+  // 的等待原本立即 resolve，调用方漏写 await 时后续代码照样顺序拿到预置
+  // 输入，重叠不可观察——#544/#545/#542 三处漏 await 的变异曾全部逃过测试。
+  // 这里给每个真的等待留一个窗口：进入时置标记，清除推迟到宏任务边界
+  //（setImmediate）；标记还在时新的等待开始即抛错。窗口跨整个微任务链：
+  // 漏写 await 的代码路径（含外层函数漏 await 内层等待、自身立即 resolve 的
+  // 包装形态）只要在宏任务边界前发起下一次等待，都会撞上；正常 await 的
+  // 调用方要等 settle 的 promise resolve 才恢复，而 resolve 在清除之后，
+  // 顺序等待不误伤。已 await 调用的记录面（waits / inputs_consumed / 行数 /
+  // allowWait）仍在同步段完成（#91 契约测试逐步比对的轨迹不动）。
+  // clear 不另开窗口：它内部的强制等键走 waitAnyKey 自己的窗口（自己套
+  // 自己不算重叠），非快进态的 clear 本就不等待任何输入。
+  let pending_wait = null; // 当前未完成的等待的 API 名（重叠报错指认用）
+  const begin_wait = (api) => {
+    if (pending_wait) {
+      throw new Error(
+        `测试夹具：${api}() 在上一次等待（${pending_wait}()）完成前开始——两处同时等待同一个输入，疑似漏写 await`,
+      );
+    }
+    pending_wait = api;
+  };
+  const settle_wait = () =>
+    new Promise((resolve) => {
+      setImmediate(() => {
+        pending_wait = null;
+        resolve();
+      });
+    });
   // 一次输出调用的全部条目共用当前 Row 号，调用尾计数 +1。
   // 返回值 = 引擎 addTotalLines() 的结果：输出后的行数。
   // addTotalLines 的副作用 allowWait=!0 一并镜像（任何输出都置位——引擎
@@ -259,10 +290,14 @@ function create_era_fixture() {
   // —— 输出 ——
   era.print = (content) => push_row([make_text_entry(content)]);
   // 引擎 printAndWait = print + await waitAnyKey()（app.asar 逐字），print
-  // 刚置位 allowWait → 必等键 → 任何一次回传都清空合法输入集（#130）
+  // 刚置位 allowWait → 必等键 → 任何一次回传都清空合法输入集（#130）。
+  // 内部等待自 #557 起占重叠窗口（同引擎的 IPC 往返），但观测面维持既定
+  // 契约：不进 waits / inputs_consumed（见上「已查实、有意不镜像的分歧」）
   era.printAndWait = async (content) => {
+    begin_wait('printAndWait');
     const returned = push_row([make_text_entry(content)]);
     input_rules.length = 0;
+    await settle_wait();
     return returned;
   };
   era.println = () => push_row([{ type: 'br', text: '' }]);
@@ -890,45 +925,57 @@ function create_era_fixture() {
     return isNaN(num) ? val : num;
   };
   era.input = async (config) => {
-    const value = take_input();
-    // —— 按钮白名单校验（#130）：镜像引擎渲染层 returnFromButton 的拒收 ——
-    // 引擎（app.vue，两处逐字）：useRule 默认开（safeUndefinedCheck 兜底
-    // true）；config.rule（字符串）先把合法集合换成 RegExp（showInput），
-    // 判据 !rule.test(val.toString())，文案「输入不合法！输入规范：…」；
-    // 数组分支（按钮快捷键）非空才设限，判据 rule.indexOf(Number(val))
-    // === -1，文案「输入不合法！请输入以下值之一：a, b, c」——拒收即弹
-    // 错且**不回传**，游戏逻辑拿不到该值。夹具同款抛错：喂进引擎永远不会
-    // 送达的输入（如 #129 的 [109]、PR #53 的 [100]）当场红，不再靠人开
-    // 引擎发现。集合为空（本轮没打印过按钮）＝自由输入不设限——引擎对
-    // 取名等场景的原生出口（dev-guides/05-interaction.md），不是豁免通道
-    if (config?.useRule !== false) {
-      if (config?.rule) {
-        if (!new RegExp(`^${config.rule}$`).test(String(value))) {
+    // 重叠检测的窗口先行（#557）：上一次等待没完成就到这，是漏写 await 的
+    // 形态，当场抛；窗口未清前不消费预置输入
+    begin_wait('input');
+    let result;
+    try {
+      const value = take_input();
+      // —— 按钮白名单校验（#130）：镜像引擎渲染层 returnFromButton 的拒收 ——
+      // 引擎（app.vue，两处逐字）：useRule 默认开（safeUndefinedCheck 兜底
+      // true）；config.rule（字符串）先把合法集合换成 RegExp（showInput），
+      // 判据 !rule.test(val.toString())，文案「输入不合法！输入规范：…」；
+      // 数组分支（按钮快捷键）非空才设限，判据 rule.indexOf(Number(val))
+      // === -1，文案「输入不合法！请输入以下值之一：a, b, c」——拒收即弹
+      // 错且**不回传**，游戏逻辑拿不到该值。夹具同款抛错：喂进引擎永远不会
+      // 送达的输入（如 #129 的 [109]、PR #53 的 [100]）当场红，不再靠人开
+      // 引擎发现。集合为空（本轮没打印过按钮）＝自由输入不设限——引擎对
+      // 取名等场景的原生出口（dev-guides/05-interaction.md），不是豁免通道
+      if (config?.useRule !== false) {
+        if (config?.rule) {
+          if (!new RegExp(`^${config.rule}$`).test(String(value))) {
+            throw new Error(
+              `测试夹具：输入不合法！输入规范：${config.rule}（era.input() 的 config.rule 校验，引擎同款）`,
+            );
+          }
+        } else if (
+          input_rules.length > 0 &&
+          !input_rules.includes(Number(value))
+        ) {
           throw new Error(
-            `测试夹具：输入不合法！输入规范：${config.rule}（era.input() 的 config.rule 校验，引擎同款）`,
+            `测试夹具：输入不合法！请输入以下值之一：${input_rules.join(', ')}（era.input() 只接受本轮已打印按钮的快捷键；本轮＝上一次输入之后，引擎同款校验）`,
           );
         }
-      } else if (
-        input_rules.length > 0 &&
-        !input_rules.includes(Number(value))
-      ) {
-        throw new Error(
-          `测试夹具：输入不合法！请输入以下值之一：${input_rules.join(', ')}（era.input() 只接受本轮已打印按钮的快捷键；本轮＝上一次输入之后，引擎同款校验）`,
-        );
       }
+      // 引擎：任何一次成功回传都把 rule 清空（returnFromButton 成功路径的
+      // rule=[]）——上一轮按钮对下一次 input 不再有约束力。inputs_consumed
+      // 也在此刻记录：校验通过＝游戏真的收到了这个值
+      input_rules.length = 0;
+      // 归一后的值才是游戏真收到的（引擎 resolve 的是 i＝getNumber(val)）：
+      // 记录与回传都用它
+      result = get_number(value);
+      inputs_consumed.push({ api: 'input', value: result });
+      if (input_echo_adds_row(config)) {
+        total_rows += 1; // this.print(回显值)：+1 Row
+        allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
+      }
+    } catch (err) {
+      // 校验/耗尽抛错是给调用方的真实错误，不能把重叠窗口留在那，让后续
+      // 等待看到连锁的「重叠」报错（#557）
+      pending_wait = null;
+      throw err;
     }
-    // 引擎：任何一次成功回传都把 rule 清空（returnFromButton 成功路径的
-    // rule=[]）——上一轮按钮对下一次 input 不再有约束力。inputs_consumed
-    // 也在此刻记录：校验通过＝游戏真的收到了这个值
-    input_rules.length = 0;
-    // 归一后的值才是游戏真收到的（引擎 resolve 的是 i＝getNumber(val)）：
-    // 记录与回传都用它
-    const result = get_number(value);
-    inputs_consumed.push({ api: 'input', value: result });
-    if (input_echo_adds_row(config)) {
-      total_rows += 1; // this.print(回显值)：+1 Row
-      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
-    }
+    await settle_wait();
     return result;
   };
   // 引擎 waitAnyKey(e) 的逐字镜像：((allowWait || e) && (allowWait = !1,
@@ -936,17 +983,22 @@ function create_era_fixture() {
   // 「等待」在本桩里的可观测面：waited=true 时记 inputs_consumed 一条
   // {api:'waitAnyKey'}（与既有取证兼容），全部调用（含跳过的）进 waits
   // 观测记录。不取输入队列（既定桩策略）；不占 Row（input({any:true}) 的
-  // e.any 命中回显短路，见上方注释）。
+  // e.any 命中回显短路，见上方注释）。真等的重叠窗口自 #557 起：引擎条件式
+  // 短路（没等）不占窗口，等了才占——clear 的内部强制等键走的就是这里的
+  // 窗口，外层 clear 不另设标记，自己套自己不算重叠。
   era.waitAnyKey = async (force) => {
     const waited = allow_wait || Boolean(force);
     allow_wait = false;
     waits.push({ waited, rows_at_wait: total_rows, forced: Boolean(force) });
-    if (waited) {
-      // 引擎：等待＝input({any:true,useRule:false}) 真回传一次，returnFromButton
-      // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
-      input_rules.length = 0;
-      inputs_consumed.push({ api: 'waitAnyKey' });
+    if (!waited) {
+      return undefined; // 引擎条件式短路：没等，没有等待就没有窗口
     }
+    begin_wait('waitAnyKey');
+    // 引擎：等待＝input({any:true,useRule:false}) 真回传一次，returnFromButton
+    // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
+    input_rules.length = 0;
+    inputs_consumed.push({ api: 'waitAnyKey' });
+    await settle_wait();
   };
 
   // —— 角色：addCharacter 有专门实现，不再是只记录的空壳（issue #35）——

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 42;
+export const COUNT = 48; // #557 +6（M12350-M12355：等待重叠检测——守卫拆解/窗口立即清除/三 API 各自不占窗口/错误路径连锁）
 
 export default [
   // —— #565 ——
@@ -117,11 +117,11 @@ export default [
   {
     desc: 'M107 input 回显计行删除（组件重绘差一行的主路径缺陷回归）',
     file: 'test/helpers/era-fixture.js',
-    find: `    if (input_echo_adds_row(config)) {
-      total_rows += 1; // this.print(回显值)：+1 Row
-      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
-    }`,
-    replace: '    // 变异：回显不计行',
+    find: `      if (input_echo_adds_row(config)) {
+        total_rows += 1; // this.print(回显值)：+1 Row
+        allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）
+      }`,
+    replace: '      // 变异：回显不计行',
     tests: ['fixture'],
     must_mention: '组件首行残留',
   },
@@ -212,9 +212,9 @@ export default [
     // 侧也在场的「回显计一行」，两侧环境都能报出，无弱化。
     desc: 'M170 夹具 input 回显不计行不置位（#68 形态：Row 记账错位）',
     file: 'test/helpers/era-fixture.js',
-    find: `      total_rows += 1; // this.print(回显值)：+1 Row
-      allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）`,
-    replace: `      // 变异：回显不计行不置位`,
+    find: `        total_rows += 1; // this.print(回显值)：+1 Row
+        allow_wait = true; // 回显经 print → addTotalLines：同样置位（逐字）`,
+    replace: `        // 变异：回显不计行不置位`,
     tests: ['engine-contract', 'fixture'],
     must_mention: '回显计一行',
   },
@@ -427,8 +427,8 @@ export default [
     // '3abc'/null）能抓到，'abc' 与数字预置两侧同值不红（各守各的行为）。
     desc: 'M293 夹具 input 回传的 getNumber 归一被拆（预置什么回什么——#151 前的真实写法，字符串预置与真机当场分岔）',
     file: 'test/helpers/era-fixture.js',
-    find: `    const result = get_number(value);`,
-    replace: `    const result = value; // 变异：归一被拆（#151 前的写法）`,
+    find: `      result = get_number(value);`,
+    replace: `      result = value; // 变异：归一被拆（#151 前的写法）`,
     tests: ['fixture'],
     must_mention: '字符串预置的输入必须归一成数值',
   },
@@ -537,5 +537,101 @@ export default [
     // 变异下开关用例第一条断言（勇者入队）先红，第二条不再执行——
     // must_mention 取先红断言的消息（M275 先例）
     must_mention: '开关短路了 :93 的调用——勇者没有入队',
+  },
+  // —— #557：等待重叠检测（input / waitAnyKey / printAndWait 的漏写 await 守卫）——
+  {
+    desc: 'M12350 夹具重叠守卫被拆（上一次等待未完成也不再抛错——#557 要防的复发形态）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    if (pending_wait) {
+      throw new Error(
+        \`测试夹具：\${api}() 在上一次等待（\${pending_wait}()）完成前开始——两处同时等待同一个输入，疑似漏写 await\`,
+      );
+    }`,
+    replace: `    if (false && pending_wait) {
+      // 变异：重叠守卫被拆
+      throw new Error(
+        \`测试夹具：\${api}() 在上一次等待（\${pending_wait}()）完成前开始——两处同时等待同一个输入，疑似漏写 await\`,
+      );
+    }`,
+    tests: ['fixture'],
+    must_mention: '漏写 await',
+  },
+  {
+    desc: 'M12351 夹具等待窗口立即清除（settle_wait 不等宏任务边界——重叠不可观察，#544/#545/#542 三票变异的逃逸形态）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  const settle_wait = () =>
+    new Promise((resolve) => {
+      setImmediate(() => {
+        pending_wait = null;
+        resolve();
+      });
+    });`,
+    replace: `  const settle_wait = () =>
+    new Promise((resolve) => {
+      pending_wait = null; // 变异：窗口立即清除，重叠不可观察
+      resolve();
+    });`,
+    tests: ['fixture'],
+    must_mention: '漏写 await',
+  },
+  {
+    desc: 'M12352 夹具 printAndWait 不占重叠窗口（内部等待立即完成——漏写 await 的后续照样拿到预置输入）',
+    file: 'test/helpers/era-fixture.js',
+    find: `  era.printAndWait = async (content) => {
+    begin_wait('printAndWait');
+    const returned = push_row([make_text_entry(content)]);
+    input_rules.length = 0;
+    await settle_wait();
+    return returned;
+  };`,
+    replace: `  era.printAndWait = async (content) => {
+    // 变异：内部等待不占窗口
+    const returned = push_row([make_text_entry(content)]);
+    input_rules.length = 0;
+    return returned;
+  };`,
+    tests: ['fixture'],
+    must_mention: '漏写 await',
+  },
+  {
+    desc: 'M12353 夹具 waitAnyKey 真等不占重叠窗口（含清屏前强制等键——快进态 clear 的守卫一并消失）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    begin_wait('waitAnyKey');
+    // 引擎：等待＝input({any:true,useRule:false}) 真回传一次，returnFromButton
+    // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
+    input_rules.length = 0;
+    inputs_consumed.push({ api: 'waitAnyKey' });
+    await settle_wait();
+  };`,
+    replace: `    // 变异：真等不占窗口
+    // 引擎：等待＝input({any:true,useRule:false}) 真回传一次，returnFromButton
+    // 成功路径同样清空 rule——waitAnyKey 之前打印的按钮不再约束后续 input
+    input_rules.length = 0;
+    inputs_consumed.push({ api: 'waitAnyKey' });
+  };`,
+    tests: ['fixture'],
+    must_mention: '漏写 await',
+  },
+  {
+    desc: 'M12354 夹具 input 不占重叠窗口（等待立即完成——漏写 await 的 input 后续照样顺序取值）',
+    file: 'test/helpers/era-fixture.js',
+    find: `    begin_wait('input');
+    let result;`,
+    replace: `    // 变异：input 不占窗口
+    let result;`,
+    tests: ['fixture'],
+    must_mention: '漏写 await',
+  },
+  {
+    desc: 'M12355 夹具 input 错误路径不清重叠窗口（耗尽/拒收之后连锁报重叠，真实错误被误导）',
+    file: 'test/helpers/era-fixture.js',
+    find: `      // 校验/耗尽抛错是给调用方的真实错误，不能把重叠窗口留在那，让后续
+      // 等待看到连锁的「重叠」报错（#557）
+      pending_wait = null;
+      throw err;`,
+    replace: `      // 变异：错误路径不清窗口
+      throw err;`,
+    tests: ['fixture'],
+    must_mention: '疑似漏写 await',
   },
 ];
