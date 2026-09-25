@@ -333,7 +333,7 @@ async function intercept(rand = default_rand) {
     }
     era.drawLine(); // :345-346（DRAWLINE + 上一页键）
     era.printButton('- 上一页', 1000); // :346 PRINTLC
-    era.printButton('返  回', 999); // :347
+    era.printButton('- 返 回', 999); // :347 PRINTLC（原作两个空格，引擎折叠成一个）
     era.printButton('- 下一页', 1001); // :348
 
     // $INPUT_LOOP_2（:351-408）

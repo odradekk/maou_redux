@@ -165,8 +165,8 @@ test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5�
     await run_core(diapered, [999]);
     assert.ok(accs(diapered.lines).includes(4), '穿着尿布 → 有 [4]');
     assert.ok(
-      button_with(diapered.lines, '替换尿布（50点）'),
-      '尿布价格 50 印在按钮正文里',
+      button_with(diapered.lines, '- 替换尿布（50点）'),
+      '尿布价格 50 印在按钮正文里（正文带原作的「- 」）',
     );
   }
   const chastity = tailor_fixture({
@@ -179,6 +179,104 @@ test('TAILOR_CORE：主菜单选项与条件门（尿布 4 / 贞操带钥匙 5�
     await run_core(chastity, [999]);
     assert.ok(accs(chastity.lines).includes(5), '贞操带 + 有钥匙 → 有 [5]');
   }
+});
+
+test('#612 TAILOR_CORE 主菜单：按钮正文照写原作的「- 」（含价格插值的四项）', async () => {
+  const fixture = tailor_fixture({ 'cflag:1:42': 69, 'cflag:1:40': 0 });
+  await run_core(fixture, [999]);
+  const rendered = fixture.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  for (const expected of [
+    '[0] - 日常服饰（100点）', // :78（原作写死价格，移植侧是插值——判据见 tools/button-dash-scan.mjs）
+    '[1] - 普通装备（1000点）', // :79
+    '[2] - 其它', // :80
+    '[3] - 替换内衣（5点）', // :81
+    '[4] - 替换尿布（50点）', // :82-83
+    '[7] - 魔法装备', // :87
+    '[8] - 武器', // :88
+    '[999] - 返回', // :90
+  ]) {
+    assert.ok(rendered.includes(expected), `${expected}（SHOP_TAILOR.ERB）`);
+  }
+});
+
+test('#612 换装铺：数据表驱动的菜单与两个持有列表也带「- 」', async () => {
+  const rendered_in = (fixture) =>
+    fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered);
+
+  // 日常服饰 2 件（原作 :276-277）
+  const casual = tailor_fixture();
+  await run_core(casual, [0, 999, 999]);
+  const casual_out = rendered_in(casual);
+  assert.ok(casual_out.includes('[1] - 日常着装・裙子'), 'SHOP_TAILOR.ERB:276');
+  assert.ok(casual_out.includes('[2] - 日常着装・裤子'), 'SHOP_TAILOR.ERB:277');
+
+  // 普通装备 42 件（原作 :328 起，表驱动、前缀在调用点拼）
+  const normal = tailor_fixture();
+  await run_core(normal, [1, 999, 999]);
+  const normal_out = rendered_in(normal);
+  assert.ok(normal_out.includes('[1] - 护胸＆裙甲'), 'SHOP_TAILOR.ERB:328');
+  assert.ok(normal_out.includes('[2] - 童装（女孩用）'), 'SHOP_TAILOR.ERB:329');
+
+  // 黑市特殊服 27 件（原作 :1320 起）
+  const special = tailor_fixture({ 'flag:10004': 100000 });
+  await run_core(special, [1, 996, 999, 999, 999]);
+  assert.ok(
+    rendered_in(special).includes('[1] - 高中制服'),
+    'SHOP_TAILOR.ERB:1320',
+  );
+
+  // 装备品 43 件（原作 :571 起，价格印在正文里）
+  const accessory = tailor_fixture();
+  await run_core(accessory, [2, 999, 999, 999]);
+  assert.ok(
+    rendered_in(accessory).includes('[1] - 围裙（10000点）'),
+    'SHOP_TAILOR.ERB:571',
+  );
+
+  // 强化前缀 10 档（原作 :1254-1263）
+  const prefix = tailor_fixture({
+    'item:341': 1,
+    'itemname:341': '剑',
+    'cflag:0:9': 30,
+    'cflag:1:550': -1,
+  });
+  await run_core(prefix, [8, 341, 1, 0, 999, 999, 999, 999]);
+  const prefix_out = rendered_in(prefix);
+  assert.ok(prefix_out.includes('[0] - 无'), 'SHOP_TAILOR.ERB:1254');
+  assert.ok(prefix_out.includes('[9] - 暗黑'), 'SHOP_TAILOR.ERB:1263');
+  // 武器页的持有行是同一句（:1156），与 :1027 那两个调用点互为孪生
+  assert.ok(prefix_out.includes('[341] - 剑 (1)'), 'SHOP_TAILOR.ERB:1156');
+
+  // 持有装备品行（原作 :1027 `[{X}] - %ITEMNAME:X% ({ITEM:X})`）
+  const held = tailor_fixture({
+    'item:300': 2,
+    'itemname:300': '剑',
+    'cflag:0:9': 30,
+    'cflag:1:551': -1,
+  });
+  await run_core(held, [7, 1, 999, 999, 999, 999]);
+  assert.ok(
+    rendered_in(held).includes('[300] - 剑 (2)'),
+    'SHOP_TAILOR.ERB:1027',
+  );
+
+  // 戒指页的灰字行（原作 :1032 `PRINTL  [---] - 未开放（30级后才能装备强化）`）：
+  // 假编号与前缀照写，武器页那处（:1164）的断言在 EQUIP_MAGIC_WEAPON 用例里
+  const ring_low = tailor_fixture({
+    'item:300': 1,
+    'itemname:300': '剑',
+    'cflag:0:9': 29,
+  });
+  await run_core(ring_low, [7, 1, 999, 999, 999, 999]);
+  assert.ok(
+    texts(ring_low.lines).includes('[---] - 未开放（30级后才能装备强化）'),
+    'SHOP_TAILOR.ERB:1032',
+  );
+  assert.ok(!accs(ring_low.lines).includes(997), '等级不够时没有强化键');
 });
 
 test('TAILOR_CASUAL：两件整表驱动（含男性 S = 3 的门槛）', async () => {
@@ -314,7 +412,7 @@ test('TAILOR_ACCESSORY：43 件整表驱动（价格随件、CFLAG:42 = R）', a
     );
     // 装备品表的行以显示编号（1-43）为快捷键，正文=名字+价格（编号由引擎拼）
     const item = page.lines.find(
-      (l) => l.type === 'button' && l.text.startsWith('围裙'),
+      (l) => l.type === 'button' && l.text.startsWith('- 围裙'),
     );
     assert.ok(item, '装备品行走按钮格');
     assert.equal(item.rendered, `[1] ${item.text}`, '正文里没有第二个 [1]');
@@ -545,6 +643,12 @@ test('CHASTITY_KEY：丢掉钥匙写 CFLAG:49 = 1；选「不丢」不写', asyn
     texts(drop.lines).some((t) => t.includes('再也没人知道了')),
     '演出台词',
   );
+  // #612：确认两键的正文照写原作（SHOP_TAILOR.ERB:915-916）
+  const rendered = drop.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(rendered.includes('[0] - 丢掉！'));
+  assert.ok(rendered.includes('[1] - 不丢。'));
   const keep = tailor_fixture(KEY_GATE);
   await run_core(keep, [5, 1, 999]);
   assert.equal(keep.store.get('cflag:1:49') ?? 0, 0, '不丢 → 不写');
@@ -686,6 +790,31 @@ test('EQUIP_MAGIC_ITEM：装备槽判据（>= 0 才给强化/取下）与持有�
   const ids2 = accs(draw2);
   assert.ok(ids2.includes(997) && ids2.includes(998), '有装备才给两键');
   assert.ok(ids2.includes(300), 'item:300 > 0 → 列出该行');
+  // #612：装饰槽与两键的正文（SHOP_TAILOR.ERB:991/:1000、:1035/:1039/:1040）
+  const rendered = full.lines
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(
+    full.lines.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 1 &&
+        line.text.startsWith('- 装饰A　:'),
+    ),
+    '装饰A 行带「- 」（SHOP_TAILOR.ERB:991）',
+  );
+  assert.ok(
+    full.lines.some(
+      (line) =>
+        line.type === 'button' &&
+        line.accelerator === 2 &&
+        line.text.startsWith('- 装饰B　:'),
+    ),
+    '装饰B 行带「- 」（SHOP_TAILOR.ERB:1000）',
+  );
+  assert.ok(rendered.includes('[997] - 装备强化'));
+  assert.ok(rendered.includes('[998] - 取下'));
+  assert.ok(rendered.includes('[999] - 返回'));
 });
 
 test('EQUIP_MAGIC_ITEM：强化的两笔支出（所持金与跨域消费）一起动', async () => {
@@ -774,6 +903,12 @@ test('EQUIP_MAGIC_WEAPON：空手时不给强化/取下（w:0 <= -1）', async (
     texts(added).some((t) => t.includes('空手')),
     '显示「武器　: 空手」',
   );
+  // #612：空手页仍有的两键（SHOP_TAILOR.ERB:1150-1151 的 [340] - 剑、:1171-1172）
+  const rendered = added
+    .filter((line) => line.type === 'button')
+    .map((line) => line.rendered);
+  assert.ok(rendered.includes('[340] - 剑'));
+  assert.ok(rendered.includes('[999] - 返回'));
 });
 
 test('EQUIP_MAGIC_WEAPON：武器段只列 341-359（360 不在段内）', async () => {
@@ -802,8 +937,10 @@ test('EQUIP_MAGIC_WEAPON：等级门的灰显与「取下」', async () => {
   const low = tailor_fixture({ 'cflag:1:550': 40, 'cflag:0:9': 29 });
   {
     const added = await run_core(low, [8, 999, 999]);
+    // #612：灰字行照写原作的假编号与前缀（SHOP_TAILOR.ERB:1164 逐字）
     assert.ok(
-      texts(added).some((t) => t.includes('未开放（30级后才能装备强化）')),
+      texts(added).includes('[---] - 未开放（30级后才能装备强化）'),
+      'SHOP_TAILOR.ERB:1163-1165 的灰显行写 `[---] - 未开放（30级后才能装备强化）`',
     );
     assert.ok(!accs(added).includes(997), '没有强化键');
     assert.ok(accs(added).includes(998), '有取下键');

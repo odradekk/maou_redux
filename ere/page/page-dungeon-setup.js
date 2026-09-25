@@ -579,11 +579,12 @@ async function dungeon_info() {
           era.printButton(`${item_name(i)}（${item_count(i)}）`, i);
         }
       }
-      era.printButton('解除陷阱', 0);
-      era.printButton('取下宝物', 1);
-      era.printButton('进行设施的设定', 2);
-      era.printButton('停止', 998);
-      era.printButton('结束地下城的设定', 999);
+      // DUNGEON_SETUP.ERB:176-177 一行并排三个、下一行两个，分隔符照写
+      era.printButton('- 解除陷阱', 0);
+      era.printButton('- 取下宝物', 1);
+      era.printButton('- 进行设施的设定', 2);
+      era.printButton('- 停止', 998);
+      era.printButton('- 结束地下城的设定', 999);
     });
     // $INPUT_LOOP_2（:179-231）
     let done = false;

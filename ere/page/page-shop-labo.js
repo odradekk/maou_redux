@@ -1328,7 +1328,10 @@ async function block_feeling() {
           // 把编号原样留着，于是「点已封锁部位」变成可达——这里照原作打文本行
           era.print(`　[-] ${label}　已经封锁`);
         } else {
-          era.printButton(`- ${label}`, pid);
+          // 未封锁时原作渲染的是 `　[0] 阴茎感觉`：那个 `-` 在方括号**内**，
+          // 是 `\@ FLAG_B ? - # 0 \@` 三元式的真分支（编号替身），**不是分隔符**
+          // ——正文不能再写 `- `（#612 反向普查改正）
+          era.printButton(label, pid);
         }
       }
       era.print(''); // :2165 PRINTL
@@ -1653,7 +1656,8 @@ async function resulection() {
       const c = count + 1000;
       const idx = count + 100;
       if ((era.get(`flag:${c}`) || 0) <= -2) {
-        era.printButton(itemname(idx), idx); // :2593-2594
+        // 正文带原作的「- 」（:2594 `PRINTFORML  [{D}] - %ITEMNAME:D%`，#612）
+        era.printButton(`- ${itemname(idx)}`, idx); // :2593-2594
       }
     }
     era.printButton('- 取消', 999); // :2597

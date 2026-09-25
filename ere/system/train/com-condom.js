@@ -125,15 +125,15 @@ async function confirm_condom() {
     if ((era.get(`cflag:${cid}:61`) || 0) === 0 && game.train.安全套) {
       if (!era_flag.assiplay) {
         era.print('要戴套吗？'); // :61
-        era.printButton('戴', 0); // :62
-        era.printButton('不戴', 1); // :63
+        era.printButton('- 戴', 0); // :62
+        era.printButton('- 不戴', 1); // :63
       } else {
         era.print('让使用安全套吗？'); // :65
-        era.printButton('使用', 0); // :66
-        era.printButton('不使用', 1); // :67
+        era.printButton('- 使用', 0); // :66
+        era.printButton('- 不使用', 1); // :67
       }
-      era.printButton('今后都直接来，来个痛快', 2); // :69
-      era.printButton('今后都戴套', 3); // :70
+      era.printButton('- 今后都直接来，来个痛快', 2); // :69
+      era.printButton('- 今后都戴套', 3); // :70
       const result = await era.input(); // :73
       if (result === 0) {
         game.train.安全套 -= 1; // :76
@@ -180,9 +180,9 @@ async function confirm_condom() {
         era.print(
           `没有安全套，直接来。${era_flag.assiplay ? '让吗？' : '来吗？'}`,
         );
-        era.printButton('好的(下次也继续确认)', 0); // :121
-        era.printButton('好的(今后都直接来)', 1); // :122
-        era.printButton('不要', 2); // :123
+        era.printButton('- 好的(下次也继续确认)', 0); // :121
+        era.printButton('- 好的(今后都直接来)', 1); // :122
+        era.printButton('- 不要', 2); // :123
         const result = await era.input(); // :126
         if (result === 0) {
           return 1; // :128
@@ -224,9 +224,9 @@ async function confirm_condom2() {
       (era.get(`cflag:${MASTER}:61`) || 0) !== 2
     ) {
       // :167（主人的 CFLAG:61——注意是 MASTER 行不是 TARGET 行）
-      era.print(`${name_of(cid)}使用安全套吗？`);
-      era.printButton('用', 0); // :168
-      era.printButton('这次直接来', 1); // :169
+      era.print(`${name_of(cid)}使用安全套吗？`); // :168
+      era.printButton('- 用', 0); // :169
+      era.printButton('- 这次直接来', 1); // :170
       const result = await era.input(); // :170
       if (result === 0) {
         era.print(`${name_of(cid)}戴着套`); // :172

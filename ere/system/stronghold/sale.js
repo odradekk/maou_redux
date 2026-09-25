@@ -456,8 +456,8 @@ async function sale_chara(
   print_sale_details(cid, details, prostitution_effect);
   era.print(`${name}能卖出${price}点的样子。`);
   era.print(`把${name}卖掉吗？`);
-  era.printButton('好的', 0);
-  era.printButton('不要', 1);
+  era.printButton('- 好的', 0); // SELL_CHARA.ERB:422
+  era.printButton('- 不要', 1); // SELL_CHARA.ERB:423
 
   for (;;) {
     const result = await era.input();

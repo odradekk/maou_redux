@@ -150,6 +150,14 @@ test('SALE_CHARA：取消后不结算并返回 -1', async () => {
   assert.equal(await sale_chara(31, { rand: seq([0]) }), -1);
   assert.equal(era_flag.money, 100);
   assert.equal(fixture.store.get('exflag:4444'), undefined);
+  // #612：确认两键的正文照写原作（SELL_CHARA.ERB:422-423）
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((line) => line.rendered),
+    ['[0] - 好的', '[1] - 不要'],
+    '出售确认两键带「- 」（SELL_CHARA.ERB:422-423）',
+  );
 });
 
 test('SALE_CHARA：精英或近卫出售会扣除威望', async () => {

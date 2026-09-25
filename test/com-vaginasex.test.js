@@ -78,6 +78,20 @@ test('处女 + [0] 来吧女人 → RETURN 1；[1] 让她继续做女孩 → RET
   }
 });
 
+test('#612 处女确认：两键正文照写原作的「- 」（COMF_VAGINASEX.ERB:10-11）', async () => {
+  const { fixture, vs } = seed_world();
+  fixture.store.set('talent:31:0', 1);
+  fixture.set_inputs(0);
+  assert.equal(await vs.confirm_lost_virgin(), 1);
+  assert.deepEqual(
+    fixture.lines
+      .filter((line) => line.type === 'button')
+      .map((button) => button.rendered),
+    ['[0] - 来吧女人', '[1] - 让她继续做女孩'],
+    '处女确认两键带「- 」（COMF_VAGINASEX.ERB:10-11）',
+  );
+});
+
 // —— @COM_EJAC_PLAYER_SEX ——
 
 test('兽奸（tequip:89）→ 早退，ゲージ不动', async () => {

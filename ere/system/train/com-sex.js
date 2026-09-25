@@ -603,8 +603,8 @@ async function confirm_reverse_virgin() {
   const player = era_flag.player;
   if (!tal(player, 0)) return await confirm_condom2();
   era.print(`${player_name()}的处女，要让${target_name()}夺走吗？`);
-  era.printButton('好的', 0);
-  era.printButton('不好', 1);
+  era.printButton('- 好的', 0); // COMF24_逆レイプ.ERB:197
+  era.printButton('- 不好', 1); // COMF24_逆レイプ.ERB:198
   // 非 0/1 的键入值在 ere 的按钮白名单处被拒收，不会到达这里。
   // 原作 CLEARLINE 1 只清该输入回显；有效输入不走这条分支。
   if ((await era.input()) === 1) return 0;
