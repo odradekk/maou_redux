@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 992; // #595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940；#612 起 +16（M12280-M12295：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的 rendered 断言必须红）
+export const COUNT = 1002; // #615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -10535,5 +10535,96 @@ export default [
     replace: "era.printButton('来吧女人', 0); // 变异：丢掉「- 」",
     tests: ['com-vaginasex'],
     must_mention: '处女确认两键带「- 」',
+  },
+
+  // —— #615：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 必须落行（BENKI.ERB:887/:951/:1105） ——
+  {
+    desc: 'M12260 奉仕分派：对象名并回首行（:887 的 PRINTFORML 少了换行，#615 之前的写法）',
+    file: 'ere/system/train/benki.js',
+    find: "    s += '作为侍奉用便器在地下城里服侍着'; //\n    era.print(s);",
+    replace:
+      "    s += '作为侍奉用便器在地下城里服侍着' + benki_player_name(); // 变异：CALL 并回上一行\n    era.print(s);",
+    tests: ['benki'],
+    must_mention: ':887 的收行句在场',
+  },
+  {
+    desc: 'M12261 奉仕分派：对象名丢了角色名（:890 的 %SAVESTR:(ARG:0)% 是同一行尾）',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(`${benki_player_name()}${name_of(arg)}`);',
+    replace: '    era.print(`${benki_player_name()}`); // 变异：角色名没了',
+    tests: ['benki'],
+    must_mention: ':888 的 CALL 落在下一行行首',
+  },
+  {
+    desc: 'M12262 奉仕分派：角色名挪回穴句行行首（:892-941 那条显示行不再带角色名）',
+    file: 'ere/system/train/benki.js',
+    find: "    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = '';",
+    replace:
+      '    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = `${name_of(arg)}`; // 变异：角色名挪回穴句行',
+    tests: ['benki'],
+    must_mention: ':892 起的穴句行不再带角色名',
+  },
+  {
+    desc: 'M12263 奉仕清算：共处理句并回首行（:951 的 PRINTFORML），传闻也并回去',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(`${name_of(arg)}共处理了${play}个底层`);',
+    replace:
+      '    era.print(`${name_of(arg)}共处理了${play}个底层${benki_player_name()}的性欲。${service_rumor(arg, play)}`); // 变异：并回一行',
+    tests: ['benki'],
+    must_mention: ':951 的 PRINTFORML 自成一行',
+  },
+  {
+    desc: 'M12264 奉仕清算：对象名与「的性欲。」拆开（:952-953 的 CALL 在行首）',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);',
+    replace:
+      '    era.print(`${benki_player_name()}`); // 变异：对象名独占一行\n    era.print(`的性欲。${service_rumor(arg, play)}`);',
+    tests: ['benki'],
+    must_mention: ':952-953 的 CALL 与「的性欲。」落在下一行行首',
+  },
+  {
+    desc: 'M12265 奉仕清算：传闻拆出独立一行（:956-978 的 PRINTFORML 与的性欲句同一行）',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);',
+    replace:
+      '    era.print(`${benki_player_name()}的性欲。`); // 变异：传闻拆出\n    era.print(service_rumor(arg, play));',
+    tests: ['benki'],
+    must_mention: ':956-978 的传闻 PRINTFORML 收同一行',
+  },
+  {
+    desc: 'M12266 同性爱清算：共处理句并回首行（:1105 的 PRINTFORML），传闻也并回去',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(`${name_of(arg)}一共处理了${play}个`);',
+    replace:
+      '    era.print(`${name_of(arg)}一共处理了${play}个${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`); // 变异：并回一行',
+    tests: ['benki'],
+    must_mention: ':1105 的 PRINTFORML 自成一行',
+  },
+  {
+    desc: 'M12267 同性爱清算：对象名与「的性欲。」拆开（:1106-1107 的 CALL 在行首）',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);',
+    replace:
+      '    era.print(`${benki_player_name()}`); // 变异：对象名独占一行\n    era.print(`的性欲。${lesbian_rumor(arg, play)}`);',
+    tests: ['benki'],
+    must_mention: ':1106-1107 的 CALL 与「的性欲。」落在下一行行首',
+  },
+  {
+    desc: 'M12268 同性爱清算：传闻拆出独立一行（:1109-1132 的 PRINTFORML 与的性欲句同一行）',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);',
+    replace:
+      '    era.print(`${benki_player_name()}的性欲。`); // 变异：传闻拆出\n    era.print(lesbian_rumor(arg, play));',
+    tests: ['benki'],
+    must_mention: ':1109-1132 的传闻 PRINTFORML 收同一行',
+  },
+  {
+    desc: 'M12257 一般分派清算：共处理句与传闻拆回两行（:1287 是 PRINTFORM，原作同属一行）',
+    file: 'ere/system/train/benki.js',
+    find: '    era.print(\n      `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,\n    );',
+    replace:
+      '    era.print(`${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。`); // 变异：拆两行\n    era.print(general_rumor(arg, play));',
+    tests: ['benki'],
+    must_mention: ':1292-1305 传闻的 PRINTFORML 收同一行',
   },
 ];

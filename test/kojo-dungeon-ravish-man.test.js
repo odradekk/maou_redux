@@ -164,16 +164,48 @@ test('男人凌辱：肉便器分支（RAND:5 != 0 且 RAND:4 == 0）', async ()
   await mod.man_ryou_man(31, 5, seq_rand(1, 1, 0));
   const lines = fixture.text_lines();
   assert.ok(lines.some((l) => l.includes('肉便器')));
-  assert.ok(lines.some((l) => l.includes('【最喜欢阴茎】')));
-  // #584：:802（PRINTFORM 之类的话。）与 :804（PRINTFORMW 络绎不绝的…）同一行
+  // #600：:767..:804（含 :802 PRINTFORM + :804 PRINTFORMW 的收尾）整段一行。
+  // #584 只合了 :802+:804 两段，此处按整行断言（详见下一个用例）
   assert.ok(
     lines.includes(
-      '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
+      '冒险者的身上，被写着【最喜欢阴茎】【操我】之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。',
     ),
-    '肉便器收尾行必须是整行（#584）',
+    '肉便器行必须是整行（#600）',
   );
   assert.equal(fixture.store.get('exp:31:1'), 5);
   assert.equal(fixture.store.get('exp:31:22'), 5);
+});
+
+test('#600 男人凌辱·肉便器：:767..:804 的装身写文与收尾同属一行', async () => {
+  // 原作 :767「%SAVESTR:ARG%的身上，被写着」+ :768「【最喜欢阴茎】」
+  // + IF 追加的落書（:771/:776/:781/:786/:791）+ IF/ELSEIF 三选一（:795/:797/:799）
+  // + :802（PRINTFORM）+ :804（PRINTFORMW 收行）都是一行：无后缀 PRINT 不换行。
+  // 各 IF 是追加片段（不是互斥分支），整段的判断条件提到语句外当取值
+  // 末尾三选一由 rand_n(3) → rand_n(2) 决定（前三个 draw 是畏怖 pick、口交判定、
+  // 中肉便器的 RAND:4 == 0），三档各钉一例
+  const cases = [
+    [{}, [1, 1, 0], '【操我】'],
+    [{}, [1, 1, 0, 1, 0], '【肛门免费】'],
+    [{}, [1, 1, 0, 1, 1], '【母猪】'],
+    [{ 42: 1, 70: 1 }, [1, 1, 0], '【又粘又湿】【愉悦的脸】【操我】'],
+    [{ 22: 1, 121: 1 }, [1, 1, 0], '【性冷淡便器】【有鸡鸡的奴隶】【操我】'],
+  ];
+  for (const [talents, draws, marks] of cases) {
+    const fixture = await setup_ravish((f) => {
+      for (const [id, value] of Object.entries(talents)) {
+        f.store.set(`talent:31:${id}`, value);
+      }
+    });
+    const mod = fixture_module(fixture);
+    await mod.man_ryou_man(31, 5, seq_rand(...draws));
+    const line =
+      `冒险者的身上，被写着【最喜欢阴茎】${marks}` +
+      '之类的话。络绎不绝的魔族男人，将嘴巴、肛门等等地方都侵犯了，精液流得到处都是。';
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `TALENT ${JSON.stringify(talents)} / RAND ${draws} → 整行「${line}」`,
+    );
+  }
 });
 
 test('#584 兽人凌辱：素直（TALENT:13）行的耻情点数与前置描写同一行', async () => {

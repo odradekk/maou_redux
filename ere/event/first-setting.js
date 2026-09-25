@@ -111,9 +111,10 @@ async function ask_penis_size() {
  * @returns {Promise<number>} 玩家的选择（0 男性/1 女性/2 扶她）
  */
 async function ask_kuangwang_sex() {
-  era.print(
-    '狂王是支配这个地区的领主\n继承了曾经封印你的勇者的血统，打算把你再次封印\n',
-  );
+  // :902/:903 是两条 PRINTL（两行两 Row）；一次 print 一条，不用内部 \n 并成
+  // 一行——那样显示行数虽同、引擎行计数只有 1（CONTEXT.md 的 Row 定义，#615）
+  era.print('狂王是支配这个地区的领主'); // :902
+  era.print('继承了曾经封印你的勇者的血统，打算把你再次封印'); // :903
   for (;;) {
     era.printButton('男性', 0);
     era.printButton('女性', 1);

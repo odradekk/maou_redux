@@ -4,8 +4,8 @@
 # 单个任务 5 分钟内跑完。曾按改动面选测试（#256），实测最多省一半时间，
 # 却让「PR 绿不等于全库绿」成为要额外解释的注意事项，#452 撤掉。现在：
 #
-#   pull_request   → engine / windows / static   与 master push 同一套全库检查
-#   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线；锚点质量全文量
+#   pull_request   → engine / windows / static   与 master push 同一套全库检查（static 含锚点质量全文量，#626）
+#   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线
 #
 # 九份输出比对样本随 engine 任务跑（每份约 1 秒），任一样本有未解释差异即红。
 # 全量变异在 mutation.yml，只对打了 `phase-acceptance` 标签的阶段收尾 PR 跑。
@@ -78,8 +78,10 @@ jobs:
           cache: npm
       - name: 安装依赖
         run: npm ci
-      - name: 锚点质量（默认范围只量未冻结文件，PR 新加的引用都在这里）
-        run: node tools/trace-check.mjs --anchor-quality
+      # 全文量（含已冻结文件）并核对总基线。PR 也跑：只量未冻结文件时，改了
+      # 已冻结文件锚表的 PR 要等 master push 才暴露（#572 → #610，#626）。
+      - name: 锚点质量全文量（弱锚点只减不增，核对总基线）
+        run: node tools/trace-check.mjs --anchor-quality --all
       - name: ESLint（零警告，与本地三项自检同一标准）
         run: npx eslint . --max-warnings 0
       - name: Prettier（格式比对）
@@ -104,7 +106,4 @@ jobs:
         run: npm run test:ci
       - name: 跳过数检查（引擎缺失的代价必须是看得见的数字）
         run: node tools/skip-count-check.mjs test-report.tap
-      # 默认路径只量未冻结文件；`--all` 是唯一重算存量并核对总基线的地方，
-      # 所以它必须有一个自动执行点。
-      - name: 锚点质量全文量（弱锚点只减不增，核对总基线）
-        run: node tools/trace-check.mjs --anchor-quality --all
+      # 锚点质量全文量自 #626 起在 static 任务里跑（PR 与 master push 都覆盖）。

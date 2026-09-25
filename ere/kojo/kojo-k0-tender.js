@@ -12470,12 +12470,15 @@ async function kojo_message_com_0(rand) {
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
           // :4651
-          era.print(`于是${target_name}就将自己的本名、至今为止的性体验`); // :4652
-          if ((era.get(`abl:${target}:31`) || 0) >= 3) {
-            // :4653-4654
-            era.print(`以及自慰时妄想的内容`); // :4653-4654
-          }
-          era.print(`开始愉快的说了起来……`); // :4655
+          // :4652+:4654+:4655 原作是一整行：无后缀 PRINTFORM 连续不换行，
+          // 末行 PRINTFORML 才收行（#600）。SIF（:4653-4654）的判据提到语句外
+          // 当条件、文本留在输出语句里（保真锁按序核对 ERB 片段）
+          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
+          era.print(
+            `于是${target_name}就将自己的本名、至今为止的性体验` +
+              (masturbation ? '以及自慰时妄想的内容' : '') +
+              `开始愉快的说了起来……`,
+          ); // :4652+:4654+:4655
           era.print(
             `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,
           ); // :4656
@@ -12607,12 +12610,13 @@ async function kojo_message_com_0(rand) {
             (era.get(`abl:${target}:17`) || 0) >= 5)
         ) {
           // :4710
-          era.print(`于是${target_name}就将自己的本名、至今为止的性体验`); // :4711
-          if ((era.get(`abl:${target}:31`) || 0) >= 3) {
-            // :4712-4713
-            era.print(`以及自慰时妄想的内容`); // :4712-4713
-          }
-          era.print(`开始愉快的说了起来……`); // :4714
+          // :4711+:4713+:4714 与 :4652+:4654+:4655 同型（SIF 的锚是 :4712-4713，#600）
+          const masturbation = (era.get(`abl:${target}:31`) || 0) >= 3;
+          era.print(
+            `于是${target_name}就将自己的本名、至今为止的性体验` +
+              (masturbation ? '以及自慰时妄想的内容' : '') +
+              `开始愉快的说了起来……`,
+          ); // :4711+:4713+:4714
           era.print(
             `单是想到这个水晶球会流传到故乡认识的人手里，${target_name}两腿之间就变的湿润起来了……`,
           ); // :4715

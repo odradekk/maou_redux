@@ -173,8 +173,9 @@ function enemy_compare(a, b) {
  *
  * 首行空行（:595 / :629-630）：调用方进入本函数时行已经落了（SHOW_FLOOR 与
  * DUNGEON_INFO2 的 $PRINT 段都在 CALL 前 DRAWLINE/PRINTL），所以第一支队伍
- * 前的 `PRINTL`（:595）落出一个空行；没有队伍时由尾部的 `PRINTL`（:629-630）
- * 落出同一个空行。此处固定先落一个空行（#180 补）。
+ * 前的 `PRINTL`（:595）落出一个空行；没有队伍时 :595 不执行，同一个空行由
+ * 尾部的 `PRINTL`（:629-630）落出。#615 起按这两个分支分开写（此前固定先落
+ * 一个空行，两处的行数相同但代码结构与原作对不上）。
  *
  * **护卫名单（:632-645）的判定是全局 `X == 10`，不是参数**（#548 订正，
  * #14 登记）：@DUNGEON_INFO2 的调用点（:445-454 的 `CALL ENEMY_EXIST2(X)`）
@@ -193,8 +194,6 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
   // :553-554 VARSET LOCAL + L_LEN = 0（插入排序的缓冲区与长度）；MAX_NAME_LEN
   // 不在此复位——原作 :551 的静态量跨调用保留，见 max_name_len 的声明注释
   const sorted = [];
-  // :595 / :629-630 调用方的行已落，本函数先落一个空行（见 JSDoc）
-  era.println();
   // :557-580 筛选并排序
   for (const cid of era.getAddedCharacters()) {
     // 原作 FOR L_CHAR, 1, CHARANUM 从 1 起（0 = 魔王不在其列）
@@ -240,6 +239,11 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
   // PRINTL」把一队收在一行，ere 的 print 一次一行，按队归并片段数组
   let last_char = 0;
   let row_fragments = null;
+  // :595 第一支队伍前的 PRINTL：调用方的行已落，这一条落出的是空行。
+  // 名单为空时 :595 不执行，同一个空行改由尾部 :629-630 落（见 JSDoc）
+  if (sorted.length > 0) {
+    era.println();
+  }
   for (const cid of sorted) {
     // :584 L_LAST = CFLAG:L_CHAR:533（用上一轮角色的队长，再更新 L_CHAR）
     const last_team = cflag_get(last_char, 533);
@@ -290,6 +294,9 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
   // :629-630 最后一支队伍的结尾换行 + RESETCOLOR（ere 的片段色不残留，免）
   if (row_fragments !== null) {
     era.print(row_fragments);
+  } else {
+    // 名单为空：:595 未执行，这一条 PRINTL 落出那个空行
+    era.println();
   }
   // :632-645 护卫名单：原作的判据是全局 X == 10（见 JSDoc，不是 floor == 10）
   if (x_is_10) {
