@@ -17408,20 +17408,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '4865',
-        any: [
-          /IF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '4866',
         any: [/PRINT 快乐的/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '4867',
-        any: [/ELSEIF TEQUIP:44 \|\| TEQUIP:49/],
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
@@ -18681,13 +18669,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '5191',
-        any: [
-          /IF TALENT:PLAYER:122 \|\| TALENT:PLAYER:121 \|\| \(TALENT:PLAYER:122 == 0 && ITEM:PBAND == 1\)/,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '5192',
         any: [/PRINT 大鸡巴/],
       },
@@ -18727,20 +18708,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '5202',
-        any: [/IF TALENT:PLAYER:122 \|\| TALENT:PLAYER:121/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '5203',
         any: [/PRINT 阴茎/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '5204',
-        any: [
-          /ELSEIF TALENT:PLAYER:122 == 0 && ITEM:PBAND == 1 && RAND:3 == 0/,
-        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
@@ -18854,20 +18823,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '5234',
-        any: [/IF TALENT:PLAYER:122 \|\| TALENT:PLAYER:121/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '5235',
         any: [/PRINT 阴茎/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '5236',
-        any: [
-          /ELSEIF TALENT:PLAYER:122 == 0 && ITEM:PBAND == 1 && RAND:3 == 0/,
-        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
@@ -25363,6 +25320,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
+        ref: '7275',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '7276',
         any: [/PRINT 陰莖/],
       },
@@ -25438,6 +25402,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
+        ref: '7308',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '7309',
         any: [/PRINT 陰莖/],
       },
@@ -25497,6 +25468,13 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '7331',
         any: [/PRINTFORM %SAVESTR:ASSI%一邊聽著哀嚎/],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
+        ref: '7332',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:ASSI:121[ \t]+==[ \t]+1[ \t]+\|\|[ \t]+TALENT:ASSI:122[ \t]+==[ \t]+1[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
@@ -26185,28 +26163,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '7575',
-        any: [/IF CFLAG:A:504 == 1/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '7576',
         any: [/PRINT 犬/],
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '7577',
-        any: [/ELSEIF CFLAG:A:504 == 2/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
         ref: '7578',
         any: [/PRINT 豚/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K5_マオ.ERB',
-        ref: '7579',
-        any: [/ELSEIF CFLAG:A:504 == 3/],
       },
       {
         src: 'target/ERB/口上/EVENT_K5_マオ.ERB',

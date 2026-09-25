@@ -1877,18 +1877,18 @@ async function kojo_message_com_13(rand) {
             await era.printAndWait(`(根本无法和主人相提并论嘛……老公的那根……）`); // :1560
           } else {
             // :1561-1564
-            await era.print(`「亲爱的…请原谅……`); // :1562
-            if (rand_n(3) == 0) {
-              // :1563
-              await era.print(`啊啊啊…`); // :1564
-            } else if (rand_n(2) == 0) {
-              // :1565
-              await era.print(`不行…`); // :1566
-            } else {
-              // :1566-1567
-              await era.print(`噫噫…`); // :1568
-            } // :1568-1569
-            await era.printAndWait(`${heart(3)}」`); // :1570
+            // :1562+:1564+:1566+:1568+:1570 原作是一整行：无后缀 PRINT 连续
+            // 不换行，末行 PRINTFORMW 才收行。三档 RAND 互斥——写成取值表达式
+            // （惰性求值，抽签顺序与次数同原作），文本留在输出语句里（#625）
+            await era.printAndWait(
+              `「亲爱的…请原谅……` +
+                (rand_n(3) == 0
+                  ? `啊啊啊…`
+                  : rand_n(2) == 0
+                    ? `不行…`
+                    : `噫噫…`) +
+                `${heart(3)}」`,
+            ); // :1562+:1564+:1566+:1568+:1570
           } // :1571-1573
         } else {
           // :1572-1573
@@ -2038,15 +2038,13 @@ async function kojo_message_com_13(rand) {
                 } // :1672-1673
               } else {
                 // :1674-1675
-                await era.print(`把${sc()}`); // :1675
-                if (rand_n(2) == 0) {
-                  // :1676
-                  await era.print(`弄得乱七八糟的`); // :1677
-                } else {
-                  // :1677-1678
-                  await era.print(`插得更加乱七八糟`); // :1679
-                } // :1679-1680
-                await era.printAndWait(`${heart(3)}」`); // :1681
+                // :1675+:1677+:1679+:1681 原作是一整行：无后缀 PRINT 连续
+                // 不换行，末行 PRINTFORMW 才收行（#625）
+                await era.printAndWait(
+                  `把${sc()}` +
+                    (rand_n(2) == 0 ? `弄得乱七八糟的` : `插得更加乱七八糟`) +
+                    `${heart(3)}」`,
+                ); // :1675+:1677+:1679+:1681
               } // :1679-1682
             } // :1679-1683
           } else if (rand_n(2) == 0) {
@@ -2057,18 +2055,16 @@ async function kojo_message_com_13(rand) {
             await era.printAndWait(`(根本无法和主人相提并论嘛……老公的那根……）`); // :1688
           } else {
             // :1689-1692
-            await era.print(`「亲爱的…请原谅……`); // :1690
-            if (rand_n(3) == 0) {
-              // :1691
-              await era.print(`啊啊啊啊啊`); // :1692
-            } else if (rand_n(2) == 0) {
-              // :1693
-              await era.print(`不行`); // :1694
-            } else {
-              // :1694-1695
-              await era.print(`噫噫`); // :1696
-            } // :1696-1697
-            await era.printAndWait(`${heart(3)}」`); // :1698
+            // :1690+:1692+:1694+:1696+:1698 同 :1562 组的一整行（#625）
+            await era.printAndWait(
+              `「亲爱的…请原谅……` +
+                (rand_n(3) == 0
+                  ? `啊啊啊啊啊`
+                  : rand_n(2) == 0
+                    ? `不行`
+                    : `噫噫`) +
+                `${heart(3)}」`,
+            ); // :1690+:1692+:1694+:1696+:1698
           } // :1699-1701
         } else {
           // :1700-1701
@@ -7255,18 +7251,27 @@ async function ntr_koujo_k13(rand, P) {
       // 按序核对 ERB 片段（#600）
       const king_has_penis =
         game.system.狂王性别 == 0 || game.system.狂王性别 == 2;
-      await era.print(
+      // #625：:5529/:5531 是这一行的两条互斥 PRINTW 终点。前缀段归 :5529 支的
+      // 拼接锚（:5518+:5519+:5522+:5524+:5526+:5529），:5531 支改用同一个前缀
+      // 变量——保真锁按锚逐条核对片段，非前缀行的语句里不能再写那些字面量
+      const rape_prefix =
         `狂王毫不介意${sc()}的话、邪笑了起来、将` +
-          (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +
-          `刺穿了`,
-      ); // :5518+:5519+:5522+:5524+:5526
+        (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +
+        `刺穿了`;
 
       if (era0(`talent:${target}:157`) && era0(`exp:${target}:60`) >= 1) {
         // :5528
-        await era.printAndWait(`由魔王再生的处女膜。`); // :5529
+        await era.printAndWait(
+          `狂王毫不介意${sc()}的话、邪笑了起来、将` +
+            (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +
+            `刺穿了` +
+            `由魔王再生的处女膜。`,
+        ); // :5518+:5519+:5522+:5524+:5526+:5529
       } else {
         // :5529-5530
-        await era.printAndWait(`尚未经人事的小穴、蛮横地抽插着。`); // :5531
+        await era.printAndWait(
+          rape_prefix + `尚未经人事的小穴、蛮横地抽插着。`,
+        ); // :5531
       } // :5531-5532
       if (era0(`talent:${target}:157`)) {
         // :5533
@@ -7297,38 +7302,35 @@ async function ntr_koujo_k13(rand, P) {
       await era.print(`「${sc()}是……被魔王威胁了才服从了的」`); // :5544
       await era.printAndWait(`「还请、求您发发慈悲……」`); // :5545
       await era.print(`${sc()}俯身在地上、向狂王乞求着饶恕。`); // :5546
-      await era.print(`狂王冷笑了一番、蹂躏了一番${sc()}的屁股、将`); // :5547
+      // :5547+:5550+:5552+:5554 原作是一整行：无后缀 PRINT 连续不换行，末行
+      // PRINTL 才收行。武器名两档的判据（:5549）提到语句外当取值、文本留在
+      // 输出语句里（#625）
+      const king_has_penis =
+        game.system.狂王性别 == 0 || game.system.狂王性别 == 2;
+      await era.print(
+        `狂王冷笑了一番、蹂躏了一番${sc()}的屁股、将` +
+          (king_has_penis ? `胯下的巨根` : `取出的极粗假阳具`) +
+          `一口气刺穿了`,
+      ); // :5547+:5550+:5552+:5554
 
-      if (game.system.狂王性别 == 0 || game.system.狂王性别 == 2) {
-        // :5549
-        await era.print(`胯下的巨根`); // :5550
-      } else {
-        // :5551-5552
-        await era.print(`取出的极粗假阳具`); // :5552
-      } // :5552-5553
-      await era.print(`一口气刺穿了`); // :5554
-
-      if (era0(`talent:${target}:157`) && era0(`exp:${target}:60`) >= 1) {
-        // :5556
-        await era.print(`由魔王再生的处女膜、`); // :5557
-      } else {
-        // :5557-5558
-        await era.print(`尚未经人事的小穴、蛮横地抽插着、`); // :5559
-      } // :5559-5560
-      await era.print(`纯洁的赤印将地板染红了。`); // :5561
-      if (era0(`talent:${target}:157`)) {
-        // :5563
-        await era.print(`（老公……抱歉……最终还是……）`); // :5563
-      } // :5563
-      await era.print(`不仅无视了伴随着呜咽声求饶的${sc()}、狂王还愉快地将`); // :5564
-      if (game.system.狂王性别 == 0 || game.system.狂王性别 == 2) {
-        // :5565
-        await era.print(`腰`); // :5566
-      } else {
-        // :5566-5567
-        await era.print(`极粗假阳具`); // :5568
-      } // :5568-5569
-      await era.printAndWait(`与${a_name}亲密接触的模样记录在了水晶球中。`); // :5570
+      // :5557+:5559+:5561 原作是一整行：:5556 的 IF 两支互斥（ELSE 支），
+      // 末行 PRINTL 收行——判据提到语句外当取值、文本留在输出语句里（#625）
+      const regen_hymen =
+        era0(`talent:${target}:157`) && era0(`exp:${target}:60`) >= 1;
+      await era.print(
+        (regen_hymen
+          ? `由魔王再生的处女膜、`
+          : `尚未经人事的小穴、蛮横地抽插着、`) + `纯洁的赤印将地板染红了。`,
+      ); // :5557+:5559+:5561
+      // :5563+:5564+:5566+:5568+:5570 原作是一整行：:5562 的 SIF TALENT:157
+      // 只护住 :5563 那一段，武器名两档互斥（#625）
+      const has_hymen = era0(`talent:${target}:157`);
+      await era.printAndWait(
+        (has_hymen ? `（老公……抱歉……最终还是……）` : '') +
+          `不仅无视了伴随着呜咽声求饶的${sc()}、狂王还愉快地将` +
+          (king_has_penis ? `腰` : `极粗假阳具`) +
+          `与${a_name}亲密接触的模样记录在了水晶球中。`,
+      ); // :5563+:5564+:5566+:5568+:5570
     } // :5570-5571
     // CFLAG:651  = 1（变量语义：CFLAG 族，651） // :5572
     kojo.NTR_651 = 1; // :5572
@@ -7361,12 +7363,15 @@ async function ntr_koujo_k13(rand, P) {
     // :5591
     if (era0(`talent:${target}:76`) || era0(`talent:${target}:85`)) {
       // :5592
-      await era.print(`「昂${heart(1)}`); // :5593
-      if (era0(`talent:${target}:157`)) {
-        // :5595
-        await era.print(`比那个人、`); // :5595
-      } // :5595
-      await era.print(`比魔王大人${heart(3)}」`); // :5596
+      // :5593+:5595+:5596 原作是一整行：无后缀 PRINTFORM 连续不换行，末行
+      // PRINTFORML 才收行。:5594 的 SIF TALENT:157 只护住 :5595 那一段——判据
+      // 提到语句外当取值，文本留在输出语句里（#625）
+      const has_hymen = era0(`talent:${target}:157`);
+      await era.print(
+        `「昂${heart(1)}` +
+          (has_hymen ? `比那个人、` : '') +
+          `比魔王大人${heart(3)}」`,
+      ); // :5593+:5595+:5596
       await era.printAndWait(
         `「还要粗、还要硬……啊啊啊${heart(1)}　好棒啊${heart(3)}」`,
       ); // :5597
@@ -7614,18 +7619,16 @@ async function gohoubi_request_koujo_k13(rand) {
   ) {
     // :5788
 
-    await era.print(`${a_name}要求奖励与`); // :5790
-    if (chara(a).stronghold.要求奖赏 == 1) {
-      // :5791
-      await era.print(`犬`); // :5792
-    } else if (chara(a).stronghold.要求奖赏 == 2) {
-      // :5793
-      await era.print(`豚`); // :5794
-    } else if (chara(a).stronghold.要求奖赏 == 3) {
-      // :5795
-      await era.print(`马`); // :5796
-    } // :5796-5797
-    await era.printAndWait(`交尾`); // :5798
+    // :5790+:5792+:5794+:5796+:5798 原作是一整行：无后缀 PRINTFORM/PRINT 连续
+    // 不换行，末行 PRINTFORMW 才收行。兽名三档的判据（:5791/:5793/:5795）提到
+    // 语句外当取值、文本留在输出语句里（#625）
+    const beast_word =
+      chara(a).stronghold.要求奖赏 == 1
+        ? '犬'
+        : chara(a).stronghold.要求奖赏 == 2
+          ? '豚'
+          : '马';
+    await era.printAndWait(`${a_name}要求奖励与` + beast_word + `交尾`); // :5790+:5792+:5794+:5796+:5798
     await era.printAndWait(`「呵呵、野兽的鸡巴 真是期待啊♪」`); // :5799
   } else if (chara(a).stronghold.要求奖赏 == 4) {
     // :5800

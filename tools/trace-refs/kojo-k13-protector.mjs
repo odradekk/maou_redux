@@ -4808,18 +4808,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1563',
-        any: [/^\s*IF\ RAND:3\ ==\ 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1564',
         any: [/^\s*PRINT\ 啊啊啊…\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1565',
-        any: [/^\s*ELSEIF\ RAND:2\ ==\ 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
@@ -4828,17 +4818,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1566-1567',
-        any: [/^\s*PRINT\ 不行…\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1568',
-        any: [/^\s*PRINT\ 噫噫…\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1568-1569',
         any: [/^\s*PRINT\ 噫噫…\s*$/m],
       },
       {
@@ -5282,27 +5262,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1676',
-        any: [/^\s*IF\ RAND:2\ ==\ 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1677',
         any: [/^\s*PRINT\ 弄得乱七八糟的\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1677-1678',
-        any: [/^\s*PRINT\ 弄得乱七八糟的\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1679',
-        any: [/^\s*PRINT\ 插得更加乱七八糟\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1679-1680',
         any: [/^\s*PRINT\ 插得更加乱七八糟\s*$/m],
       },
       {
@@ -5361,18 +5326,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1691',
-        any: [/^\s*IF\ RAND:3\ ==\ 0\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1692',
         any: [/^\s*PRINT\ ああっ啊啊啊\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1693',
-        any: [/^\s*ELSEIF\ RAND:2\ ==\ 0\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
@@ -5381,17 +5336,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1694-1695',
-        any: [/^\s*PRINT\ 不行\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '1696',
-        any: [/^\s*PRINT\ 噫噫\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '1696-1697',
         any: [/^\s*PRINT\ 噫噫\s*$/m],
       },
       {
@@ -19189,17 +19134,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5551-5552',
-        any: [/^\s*PRINT\ 取出的极粗假阳具\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5552',
-        any: [/^\s*PRINT\ 取出的极粗假阳具\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5552-5553',
         any: [/^\s*PRINT\ 取出的极粗假阳具\s*$/m],
       },
       {
@@ -19219,23 +19154,20 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5557-5558',
-        any: [/^\s*PRINT\ 由魔王再生的处女膜、\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5559',
-        any: [/^\s*PRINT\ 尚未经人事的小穴、蛮横地抽插着、\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5559-5560',
         any: [/^\s*PRINT\ 尚未经人事的小穴、蛮横地抽插着、\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5561',
         any: [/^\s*PRINTL\ 纯洁的赤印将地板染红了。\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
+        ref: '5562',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:157[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
@@ -19251,27 +19183,12 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5565',
-        any: [/^\s*IF\ FLAG:500\ ==\ 0\ \|\|\ FLAG:500\ ==\ 2\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5566',
         any: [/^\s*PRINT\ 腰\s*$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5566-5567',
-        any: [/^\s*PRINT\ 腰\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5568',
-        any: [/^\s*PRINT\ 极粗假阳具\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5568-5569',
         any: [/^\s*PRINT\ 极粗假阳具\s*$/m],
       },
       {
@@ -19388,6 +19305,13 @@ export const FILES = [
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5593',
         any: [/^\s*PRINTFORM\ 「昂%UNICODE\(0x2661\)\ \*1%\s*$/m],
+      },
+      {
+        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
+        ref: '5594',
+        any: [
+          /^(?:\uFEFF)?[ \t]*SIF[ \t]+TALENT:157[ \t]*$/m,
+        ],
       },
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
@@ -20083,11 +20007,6 @@ export const FILES = [
       {
         src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
         ref: '5796',
-        any: [/^\s*PRINT\ 马\s*$/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K13_庇護者.ERB',
-        ref: '5796-5797',
         any: [/^\s*PRINT\ 马\s*$/m],
       },
       {

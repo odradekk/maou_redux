@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2446; // #625 起 +40（M12800-M12839：K12/K14/K15/K903/K4/K2/K19/K904 的褒美请求、口上拼接与死斗场武器名合并成整行）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2466; // #625 起 +60（M12800-M12859：K12/K14/K15/K903/K4/K2/K19/K904/K13/K5 的褒美请求、口上拼接与死斗场武器名合并成整行）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -21691,16 +21691,13 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: '拼接「大鸡巴」',
   },
   {
-    desc: 'M11604 K5 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
+    desc: 'M11604 K5 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552；#625 起判据提为 assi_has_toy，改钉变量版）',
     file: 'ere/kojo/kojo-k5-mao.js',
-    find: `        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        // :7278`,
-    replace: `        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
-      ) {
-        // :7278`,
+    find: "  const assi_has_toy = era.get('item:4') === 1;",
+    replace:
+      "  const assi_has_toy = era.get('item:PBAND') === 1; // 变异：回退字符串具名寻址（#552）",
     tests: ['kojo-k5-mao'],
-    must_mention: '拼接「假阳具」',
+    must_mention: '武器名与前后文落在同一行',
   },
   {
     desc: 'M11605 K6 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
@@ -22480,25 +22477,20 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention: 'GOHOUBI_REQUEST：兽交要求',
   },
   {
-    desc: 'M12145 K13 NTR·武器名与刺穿（:5518..:5526）拆回五条（#600）',
+    desc: 'M12145 K13 NTR·前缀段（:5518..:5526）在 :5531 支拆回两条（#600；#625 起前缀提为变量，改钉变量版）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find:
-      '      await era.print(\n' +
+      '      const rape_prefix =\n' +
       '        `狂王毫不介意${sc()}的话、邪笑了起来、将` +\n' +
-      "          (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +\n" +
-      '          `刺穿了`,\n' +
-      '      ); // :5518+:5519+:5522+:5524+:5526',
+      "        (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +\n" +
+      '        `刺穿了`;',
     replace:
-      '      await era.print(`狂王毫不介意${sc()}的话、邪笑了起来、`); // 变异：拆回\n' +
-      '      await era.print(`将`); // 变异：拆回\n' +
-      '      if (king_has_penis) {\n' +
-      '        await era.print(`胯下的巨根`); // 变异：拆回\n' +
-      '      } else {\n' +
-      '        await era.print(`极粗的假阳具`); // 变异：拆回\n' +
-      '      }\n' +
-      '      await era.print(`刺穿了`); // 变异：拆回',
+      '      const rape_prefix =\n' +
+      '        `狂王毫不介意${sc()}的话、邪笑了起来、将` +\n' +
+      "        (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +\n" +
+      '        `刺穿了` + `\\n`; // 变异：拆回',
     tests: ['kojo-k13-protector'],
-    must_mention: 'NTR_KOUJO_K13：:5518..:5526',
+    must_mention: '前缀段与收行同属一行',
   },
   {
     desc: 'M12146 K0 交谈首次·录像自白（:4652+:4654+:4655）拆回多条（#600）',
@@ -23436,5 +23428,387 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "    await era.print(''); // 变异：拆回\n    await era.print(beast_word); // 变异：拆回\n    await era.printAndWait(''); // 变异：拆回",
     tests: ['kojo-k904-fia'],
     must_mention: '空首尾不再各占一行',
+  },
+  {
+    desc: 'M12840 K13 正常位恳求·三档（:1562..:1570）拆回多条（#625：恳求段又占一行）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '            await era.printAndWait(\n' +
+      '              `「亲爱的…请原谅……` +\n' +
+      '                (rand_n(3) == 0\n' +
+      '                  ? `啊啊啊…`\n' +
+      '                  : rand_n(2) == 0\n' +
+      '                    ? `不行…`\n' +
+      '                    : `噫噫…`) +\n' +
+      '                `${heart(3)}」`,\n' +
+      '            ); // :1562+:1564+:1566+:1568+:1570',
+    replace:
+      '            await era.print(`「亲爱的…请原谅……`); // 变异：拆回\n' +
+      '            if (rand_n(3) == 0) {\n' +
+      '              await era.print(`啊啊啊…`); // 变异：拆回\n' +
+      '            } else if (rand_n(2) == 0) {\n' +
+      '              await era.print(`不行…`); // 变异：拆回\n' +
+      '            } else {\n' +
+      '              await era.print(`噫噫…`); // 变异：拆回\n' +
+      '            }\n' +
+      '            await era.printAndWait(`${heart(3)}」`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: '恳求段与收行落在同一行',
+  },
+  {
+    desc: 'M12841 K13 背后位·把…弄乱（:1675..:1681）拆回三条（#625：把…段又占一行）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '                await era.printAndWait(\n' +
+      '                  `把${sc()}` +\n' +
+      '                    (rand_n(2) == 0 ? `弄得乱七八糟的` : `插得更加乱七八糟`) +\n' +
+      '                    `${heart(3)}」`,\n' +
+      '                ); // :1675+:1677+:1679+:1681',
+    replace:
+      '                await era.print(`把${sc()}`); // 变异：拆回\n' +
+      '                await era.print(\n' +
+      '                  rand_n(2) == 0 ? `弄得乱七八糟的` : `插得更加乱七八糟`,\n' +
+      '                ); // 变异：拆回\n' +
+      '                await era.printAndWait(`${heart(3)}」`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: '把…段与收行落在同一行',
+  },
+  {
+    desc: 'M12842 K13 背后位恳求·三档（:1690..:1698）拆回多条（#625）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '            await era.printAndWait(\n' +
+      '              `「亲爱的…请原谅……` +\n' +
+      '                (rand_n(3) == 0\n' +
+      '                  ? `啊啊啊啊啊`\n' +
+      '                  : rand_n(2) == 0\n' +
+      '                    ? `不行`\n' +
+      '                    : `噫噫`) +\n' +
+      '                `${heart(3)}」`,\n' +
+      '            ); // :1690+:1692+:1694+:1696+:1698',
+    replace:
+      '            await era.print(`「亲爱的…请原谅……`); // 变异：拆回\n' +
+      '            if (rand_n(3) == 0) {\n' +
+      '              await era.print(`啊啊啊啊啊`); // 变异：拆回\n' +
+      '            } else if (rand_n(2) == 0) {\n' +
+      '              await era.print(`不行`); // 变异：拆回\n' +
+      '            } else {\n' +
+      '              await era.print(`噫噫`); // 变异：拆回\n' +
+      '            }\n' +
+      '            await era.printAndWait(`${heart(3)}」`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: '恳求段与收行落在同一行',
+  },
+  {
+    desc: 'M12843 K13 NTR·前缀与再生处女膜（:5518..:5529）拆回两条（#625）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `狂王毫不介意${sc()}的话、邪笑了起来、将` +\n' +
+      "            (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +\n" +
+      '            `刺穿了` +\n' +
+      '            `由魔王再生的处女膜。`,\n' +
+      '        ); // :5518+:5519+:5522+:5524+:5526+:5529',
+    replace:
+      '        await era.print(\n' +
+      '          `狂王毫不介意${sc()}的话、邪笑了起来、将` +\n' +
+      "            (king_has_penis ? '胯下的巨根' : '极粗的假阳具') +\n" +
+      '            `刺穿了`,\n' +
+      '        ); // 变异：拆回\n' +
+      '        await era.printAndWait(`由魔王再生的处女膜。`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: '前缀段与收行同属一行',
+  },
+  {
+    desc: 'M12844 K13 NTR·冷笑与一口气刺穿（:5547..:5554）拆回三条（#625：武器名又占一行）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '      await era.print(\n' +
+      '        `狂王冷笑了一番、蹂躏了一番${sc()}的屁股、将` +\n' +
+      '          (king_has_penis ? `胯下的巨根` : `取出的极粗假阳具`) +\n' +
+      '          `一口气刺穿了`,\n' +
+      '      ); // :5547+:5550+:5552+:5554',
+    replace:
+      '      await era.print(`狂王冷笑了一番、蹂躏了一番${sc()}的屁股、将`); // 变异：拆回\n' +
+      '      await era.print(king_has_penis ? `胯下的巨根` : `取出的极粗假阳具`); // 变异：拆回\n' +
+      '      await era.print(`一口气刺穿了`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: ':5547 组是一行',
+  },
+  {
+    desc: 'M12845 K13 NTR·处女膜段与赤印（:5557+:5559+:5561）拆回两条（#625）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '      await era.print(\n' +
+      '        (regen_hymen\n' +
+      '          ? `由魔王再生的处女膜、`\n' +
+      '          : `尚未经人事的小穴、蛮横地抽插着、`) + `纯洁的赤印将地板染红了。`,\n' +
+      '      ); // :5557+:5559+:5561',
+    replace:
+      '      await era.print(\n' +
+      '        regen_hymen\n' +
+      '          ? `由魔王再生的处女膜、`\n' +
+      '          : `尚未经人事的小穴、蛮横地抽插着、`,\n' +
+      '      ); // 变异：拆回\n' +
+      '      await era.print(`纯洁的赤印将地板染红了。`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: ':5557 组是一行',
+  },
+  {
+    desc: 'M12846 K13 NTR·亲密接触整行（:5563..:5570）拆回多条（#625）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '      await era.printAndWait(\n' +
+      "        (has_hymen ? `（老公……抱歉……最终还是……）` : '') +\n" +
+      '          `不仅无视了伴随着呜咽声求饶的${sc()}、狂王还愉快地将` +\n' +
+      '          (king_has_penis ? `腰` : `极粗假阳具`) +\n' +
+      '          `与${a_name}亲密接触的模样记录在了水晶球中。`,\n' +
+      '      ); // :5563+:5564+:5566+:5568+:5570',
+    replace:
+      "      await era.print(has_hymen ? `（老公……抱歉……最终还是……）` : ''); // 变异：拆回\n" +
+      '      await era.print(`不仅无视了伴随着呜咽声求饶的${sc()}、狂王还愉快地将`); // 变异：拆回\n' +
+      '      await era.print(king_has_penis ? `腰` : `极粗假阳具`); // 变异：拆回\n' +
+      '      await era.printAndWait(`与${a_name}亲密接触的模样记录在了水晶球中。`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: ':5563 组是一行',
+  },
+  {
+    desc: 'M12847 K13 NTR P==4·昂与比魔王大人（:5593+:5595+:5596）拆回三条（#625）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find:
+      '      await era.print(\n' +
+      '        `「昂${heart(1)}` +\n' +
+      "          (has_hymen ? `比那个人、` : '') +\n" +
+      '          `比魔王大人${heart(3)}」`,\n' +
+      '      ); // :5593+:5595+:5596',
+    replace:
+      '      await era.print(`「昂${heart(1)}`); // 变异：拆回\n' +
+      "      await era.print(has_hymen ? `比那个人、` : ''); // 变异：拆回\n" +
+      '      await era.print(`比魔王大人${heart(3)}」`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: ':5593 组是一行',
+  },
+  {
+    desc: 'M12848 K13 褒美请求·兽名（:5790..:5798）拆回三条（#625：兽名与前后文又各占一行）',
+    file: 'ere/kojo/kojo-k13-protector.js',
+    find: '    await era.printAndWait(`${a_name}要求奖励与` + beast_word + `交尾`); // :5790+:5792+:5794+:5796+:5798',
+    replace:
+      '    await era.print(`${a_name}要求奖励与`); // 变异：拆回\n' +
+      '    await era.print(beast_word); // 变异：拆回\n' +
+      '    await era.printAndWait(`交尾`); // 变异：拆回',
+    tests: ['kojo-k13-protector'],
+    must_mention: '兽名与前后文落在同一行',
+  },
+  {
+    desc: 'M12849 K5 交谈·自我介绍（:4795+:4797+:4798）拆回三条（#625：自白段又占一行）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n' +
+      '          await era.print(\n' +
+      '            `${target_name}将自己的本名和接下来要进行的性体验` +\n' +
+      "              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n" +
+      '              `十分欣喜地全部说了出来……`,\n' +
+      '          ); // :4795+:4797+:4798',
+    replace:
+      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n' +
+      '          await era.print(`${target_name}将自己的本名和接下来要进行的性体验`); // 变异：拆回\n' +
+      '          if (masturbation_note) {\n' +
+      '            await era.print(`、甚至是连自慰时妄想的事情`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`十分欣喜地全部说了出来……`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '名字段与后文落在同一行',
+  },
+  {
+    desc: 'M12850 K5 交谈二次·自我介绍（:4841+:4843+:4844）拆回三条（#625）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n' +
+      '          await era.print(\n' +
+      '            `${target_name}将自己的本名和接下来要进行的性体验` +\n' +
+      "              (masturbation_note ? `、甚至是连自慰时妄想的事情` : '') +\n" +
+      '              `十分欣喜地全部说了出来……`,\n' +
+      '          ); // :4841+:4843+:4844',
+    replace:
+      '          const masturbation_note = era.get(`abl:${target}:31`) >= 3;\n' +
+      '          await era.print(`${target_name}将自己的本名和接下来要进行的性体验`); // 变异：拆回\n' +
+      '          if (masturbation_note) {\n' +
+      '            await era.print(`、甚至是连自慰时妄想的事情`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`十分欣喜地全部说了出来……`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '名字段与后文落在同一行',
+  },
+  {
+    desc: 'M12851 K5 交谈·发出了…的声音（:4818..:4824）拆回三条（#625：工具档又占一行）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '          await era.print(\n' +
+      '            `向少女搭话后、${target_name}发出了` +\n' +
+      '              (overwhelmed_by_tool\n' +
+      '                ? `快乐的`\n' +
+      '                : overwhelmed_by_pain\n' +
+      '                  ? `痛苦的`\n' +
+      "                  : '') +\n" +
+      '              `的声音、拼命地向着${player_name}说了起来`,\n' +
+      '          ); // :4818+:4820+:4822+:4824',
+    replace:
+      '          await era.print(`向少女搭话后、${target_name}发出了`); // 变异：拆回\n' +
+      '          await era.print(overwhelmed_by_tool ? `快乐的` : overwhelmed_by_pain ? `痛苦的` : ``); // 变异：拆回\n' +
+      '          await era.print(`的声音、拼命地向着${player_name}说了起来`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '工具档与前后文落在同一行',
+  },
+  {
+    desc: 'M12852 K5 交谈二次·发出了…的声音（:4864..:4870）拆回三条（#625）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '          await era.print(\n' +
+      '            `向少女搭话后，${target_name}发出了` +\n' +
+      '              (overwhelmed_by_tool\n' +
+      '                ? `快乐的`\n' +
+      '                : overwhelmed_by_pain\n' +
+      '                  ? `痛苦的`\n' +
+      "                  : '') +\n" +
+      '              `的声音、拼命地向着${player_name}说了起来`,\n' +
+      '          ); // :4864+:4866+:4868+:4870',
+    replace:
+      '          await era.print(`向少女搭话后，${target_name}发出了`); // 变异：拆回\n' +
+      '          await era.print(overwhelmed_by_tool ? `快乐的` : overwhelmed_by_pain ? `痛苦的` : ``); // 变异：拆回\n' +
+      '          await era.print(`的声音、拼命地向着${player_name}说了起来`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '工具档与前后文落在同一行',
+  },
+  {
+    desc: 'M12853 K5 六九式初回·淫乱（:5190..:5196）拆回三条（#625：武器名又占一行）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `「啊嗯~…更加地…玩弄那里嘛~…那样的话我就会好好地吸主人的` +\n' +
+      '            (player_has_penis ? `大鸡巴` : `花蕾`) +\n' +
+      '            `的啦~${heart(1)}」`,\n' +
+      '        ); // :5190+:5192+:5194+:5196',
+    replace:
+      '        await era.print(\n' +
+      '          `「啊嗯~…更加地…玩弄那里嘛~…那样的话我就会好好地吸主人的`,\n' +
+      '        ); // 变异：拆回\n' +
+      '        await era.print(player_has_penis ? `大鸡巴` : `花蕾`); // 变异：拆回\n' +
+      '        await era.printAndWait(`的啦~${heart(1)}」`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '整行拼接「假阳具」',
+  },
+  {
+    desc: 'M12854 K5 六九式初回·爱慕（:5201..:5209）拆回四条（#625）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}吮吸起${player_name}的` +\n' +
+      '            (player_has_penis\n' +
+      '              ? `阴茎`\n' +
+      '              : player_has_toy && rand_n(3) === 0\n' +
+      '                ? `假阳具`\n' +
+      '                : `阴唇`) +\n' +
+      '            `，而${player_name}也没有停下来继续着口腔侍奉。`,\n' +
+      '        ); // :5201+:5203+:5205+:5207+:5209',
+    replace:
+      '        await era.print(`${target_name}吮吸起${player_name}的`); // 变异：拆回\n' +
+      '        await era.print(\n' +
+      '          player_has_penis\n' +
+      '            ? `阴茎`\n' +
+      '            : player_has_toy && rand_n(3) === 0\n' +
+      '              ? `假阳具`\n' +
+      '              : `阴唇`,\n' +
+      '        ); // 变异：拆回\n' +
+      '        await era.printAndWait(`，而${player_name}也没有停下来继续着口腔侍奉。`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '整行拼接「假阳具」',
+  },
+  {
+    desc: 'M12855 K5 六九式二回目·爱慕（:5233..:5241）拆回四条（#625）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          `${target_name}吮吸起${player_name}的` +\n' +
+      '            (player_has_penis\n' +
+      '              ? `阴茎`\n' +
+      '              : player_has_toy && rand_n(3) === 0\n' +
+      '                ? `假阳具`\n' +
+      '                : `阴唇`) +\n' +
+      '            `，而${player_name}也没有停下来继续着口腔侍奉。`,\n' +
+      '        ); // :5233+:5235+:5237+:5239+:5241',
+    replace:
+      '        await era.print(`${target_name}吮吸起${player_name}的`); // 变异：拆回\n' +
+      '        await era.print(\n' +
+      '          player_has_penis\n' +
+      '            ? `阴茎`\n' +
+      '            : player_has_toy && rand_n(3) === 0\n' +
+      '              ? `假阳具`\n' +
+      '              : `阴唇`,\n' +
+      '        ); // 变异：拆回\n' +
+      '        await era.printAndWait(`，而${player_name}也没有停下来继续着口腔侍奉。`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '整行拼接「假阳具」',
+  },
+  {
+    desc: 'M12856 K5 死斗场 SC31·武器名（:7274..:7279）拆回三条（#625：武器名又占一行）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `舔着${assi_name}的` +\n' +
+      "          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n" +
+      '          `${target_name}露出心旷神怡的表情……`,\n' +
+      '      ); // :7274+:7276+:7278+:7279',
+    replace:
+      '      await era.print(`舔着${assi_name}的`); // 变异：拆回\n' +
+      '      await era.print(assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : ``); // 变异：拆回\n' +
+      '      await era.printAndWait(`${target_name}露出心旷神怡的表情……`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '武器名与前后文落在同一行',
+  },
+  {
+    desc: 'M12857 K5 死斗场 SC21·武器名（:7307..:7312）拆回三条（#625）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着哀嚎` +\n' +
+      "          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n" +
+      '          `继续毫不留情地蹂躏着${target_name}的阴道……`,\n' +
+      '      ); // :7307+:7309+:7311+:7312',
+    replace:
+      '      await era.print(`${assi_name}一边听着哀嚎`); // 变异：拆回\n' +
+      '      await era.print(assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : ``); // 变异：拆回\n' +
+      '      await era.printAndWait(`继续毫不留情地蹂躏着${target_name}的阴道……`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '武器名与前后文落在同一行',
+  },
+  {
+    desc: 'M12858 K5 死斗场 SC27·武器名（:7331..:7336）拆回三条（#625）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着哀嚎` +\n' +
+      "          (assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : '') +\n" +
+      '          `继续毫不留情地蹂躏着${target_name}的肛门……`,\n' +
+      '      ); // :7331+:7333+:7335+:7336',
+    replace:
+      '      await era.print(`${assi_name}一边听着哀嚎`); // 变异：拆回\n' +
+      '      await era.print(assi_has_penis ? `阴茎` : assi_has_toy ? `假阳具` : ``); // 变异：拆回\n' +
+      '      await era.printAndWait(`继续毫不留情地蹂躏着${target_name}的肛门……`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '武器名与前后文落在同一行',
+  },
+  {
+    desc: 'M12859 K5 褒美请求·兽名（:7574..:7582）拆回三条（#625：兽名与前后文又各占一行）',
+    file: 'ere/kojo/kojo-k5-mao.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `「如果打倒勇者姐姐的话请给我奖赏、好想和` + beast_word + `做爱啊♪」`,\n' +
+      '    ); // :7574+:7576+:7578+:7580+:7582',
+    replace:
+      '    await era.print(`「如果打倒勇者姐姐的话请给我奖赏、好想和`); // 变异：拆回\n' +
+      '    await era.print(beast_word); // 变异：拆回\n' +
+      '    await era.printAndWait(`做爱啊♪」`); // 变异：拆回',
+    tests: ['kojo-k5-mao'],
+    must_mention: '兽名与前后文落在同一行',
   },
 ];

@@ -851,19 +851,25 @@ test('NTR_KOUJO_K13：P==1 爱慕臂首次经 CFLAG:650/651 标记', async () =>
   assert.equal(fixture.store.get('cflag:31:651'), 1, 'NTR P==1 记位 CFLAG:651');
 });
 
-test('NTR_KOUJO_K13：:5518..:5526 的连续无后缀 PRINT 是一行，输出一条（#600）', async () => {
+test('NTR_KOUJO_K13：:5518..:5531 的连续无后缀 PRINT 是一行，输出一条（#600/#625）', async () => {
   // 原作 :5518「狂王毫不介意%SELF_CALL(TARGET)%的话、邪笑了起来、」+:5519「将」
   // + IF/ELSE 的武器名（:5522/:5524）+ :5526「刺穿了」同属一行：无后缀
-  // PRINTFORM/PRINT 连续不换行（后面 :5529/:5531 的 PRINTW 才收行）。
-  // 武器名提到语句外当判据，文本留在输出语句里（保真锁按序核对片段，#600）
+  // PRINTFORM/PRINT 连续不换行，:5529/:5531 的 PRINTW 才收行——**两臂各自
+  // 与前面的前缀段同属一行**（#625 把 #600 停在 :5526 的那一段接上了终点）。
+  // 武器名提到语句外当判据，文本留在输出语句里（保真锁按序核对片段）
   const cases = [
-    [0, '胯下的巨根'],
-    [2, '胯下的巨根'],
-    [1, '极粗的假阳具'],
+    [0, '胯下的巨根', 0, '尚未经人事的小穴、蛮横地抽插着。'],
+    [2, '胯下的巨根', 0, '尚未经人事的小穴、蛮横地抽插着。'],
+    [1, '极粗的假阳具', 0, '尚未经人事的小穴、蛮横地抽插着。'],
+    [1, '极粗的假阳具', 1, '由魔王再生的处女膜。'],
   ];
-  for (const [king_sex, weapon] of cases) {
+  for (const [king_sex, weapon, hymen, end] of cases) {
     const fixture = await setup_k13((f) => {
       f.store.set('talent:31:85', 1);
+      if (hymen) {
+        f.store.set('talent:31:157', 1);
+        f.store.set('exp:31:60', 1);
+      }
     });
     const { game } = fixture.load_module('facade/game');
     game.system.狂王性别 = king_sex;
@@ -872,13 +878,10 @@ test('NTR_KOUJO_K13：:5518..:5526 的连续无后缀 PRINT 是一行，输出�
     const lines = fixture.text_lines();
     const at = lines.findIndex((l) => l.startsWith('狂王毫不介意'));
     assert.ok(at >= 0, `狂王性别 ${king_sex}：定位到 :5518 行`);
-    assert.deepEqual(
-      lines.slice(at, at + 2),
-      [
-        `狂王毫不介意我的话、邪笑了起来、将${weapon}刺穿了`,
-        '尚未经人事的小穴、蛮横地抽插着。',
-      ],
-      `狂王性别 ${king_sex}`,
+    assert.equal(
+      lines[at],
+      `狂王毫不介意我的话、邪笑了起来、将${weapon}刺穿了${end}`,
+      `狂王性别 ${king_sex}（再生=${hymen}）：前缀段与收行同属一行`,
     );
   }
 });
@@ -930,4 +933,177 @@ test('MUSEUM_KOUJO_K13：TFLAG:500==3 有台词', async () => {
     ['「啊啦啊啦、我的这副样子被看到的话…真是很困扰呢」'],
     'MUSEUM 档 3',
   );
+});
+
+// —— #625：原作同一行被拆成多条 era.print 的合并点 ——
+
+test('#625 正常位二回目·恳求三档：尾段与前后文同一行（:1562+:1564+:1566+:1568+:1570）', async () => {
+  // 原作 :1562 的 PRINT 与 :1564/:1566/:1568 三档 + :1570 的 PRINTFORMW
+  // 是一整行（无后缀 PRINT 不换行），ere 侧曾拆成三条 era.print（#625）
+  const draws = [
+    [1, 1, 0, '啊啊啊…'],
+    [1, 1, 1, 0, '不行…'],
+    [1, 1, 1, 1, '噫噫…'],
+  ];
+  for (const spec of draws) {
+    const word = spec[spec.length - 1];
+    const seq = spec.slice(0, -1);
+    const fixture = await setup_k13((f) => {
+      f.store.set('mark:31:2', 3);
+      f.store.set('abl:31:2', 3);
+      f.store.set('talent:31:157', 1);
+      f.load_module('facade/chara').chara(31).kojo.正常位 = 2;
+    }, 20);
+    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    await kojo_message_com_family.call(13, {
+      args: [seq_rand(...seq)],
+    });
+    assert.ok(
+      fixture.text_lines().includes(`「亲爱的…请原谅……${word}♡♡♡」`),
+      `抽取 ${JSON.stringify(seq)}：恳求段与收行落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 背后位二回目·恳求三档：尾段与前后文同一行（:1690+:1692+:1694+:1696+:1698）', async () => {
+  const draws = [
+    [1, 1, 0, '啊啊啊啊啊'],
+    [1, 1, 1, 0, '不行'],
+    [1, 1, 1, 1, '噫噫'],
+  ];
+  for (const spec of draws) {
+    const word = spec[spec.length - 1];
+    const seq = spec.slice(0, -1);
+    const fixture = await setup_k13((f) => {
+      f.store.set('mark:31:2', 3);
+      f.store.set('abl:31:2', 3);
+      f.store.set('talent:31:157', 1);
+      f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
+    }, 21);
+    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    await kojo_message_com_family.call(13, {
+      args: [seq_rand(...seq)],
+    });
+    assert.ok(
+      fixture.text_lines().includes(`「亲爱的…请原谅……${word}♡♡♡」`),
+      `抽取 ${JSON.stringify(seq)}：恳求段与收行落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 背后位二回目·把…弄乱：尾段与前后文同一行（:1675+:1677+:1679+:1681）', async () => {
+  const cases = [
+    [0, '弄得乱七八糟的'],
+    [1, '插得更加乱七八糟'],
+  ];
+  for (const [last, word] of cases) {
+    const fixture = await setup_k13((f) => {
+      f.store.set('mark:31:2', 3);
+      f.store.set('abl:31:2', 3);
+      f.store.set('talent:31:157', 1);
+      f.load_module('facade/chara').chara(31).kojo.背后位 = 2;
+    }, 21);
+    const { kojo_message_com_family } = fixture.load_module('kojo/kojo-system');
+    // 抽签序：:1655 rand_n(2)=0 → :1657 rand_n(2) → :1663 rand_n(3)≠0
+    // → :1667 rand_n(2)≠0 → :1676 rand_n(2)
+    await kojo_message_com_family.call(13, {
+      args: [seq_rand(0, 1, 1, 1, last)],
+    });
+    assert.ok(
+      fixture.text_lines().includes(`把我${word}♡♡♡」`),
+      `末尾抽取 ${last}：把…段与收行落在同一行（#625）`,
+    );
+  }
+});
+
+test('#625 NTR_KOUJO_K13 それ以外支：:5547..:5570 三处整行（武器名/处女膜/亲密接触）', async () => {
+  // 原作 :5547+:5550+:5552+:5554（PRINTL 收行）、:5557+:5559+:5561、
+  // :5563+:5564+:5566+:5568+:5570（PRINTFORMW 收行）各是一整行，ere 侧曾各
+  // 拆成多条 era.print（#625）
+  const cases = [
+    [0, '胯下的巨根', '腰', 0],
+    [2, '胯下的巨根', '腰', 0],
+    [1, '取出的极粗假阳具', '极粗假阳具', 0],
+    [1, '取出的极粗假阳具', '极粗假阳具', 1],
+  ];
+  for (const [king_sex, weapon, weapon2, hymen] of cases) {
+    const fixture = await setup_k13((f) => {
+      if (hymen) {
+        f.store.set('talent:31:157', 1);
+        f.store.set('exp:31:60', 1);
+      }
+    });
+    const { game } = fixture.load_module('facade/game');
+    game.system.狂王性别 = king_sex;
+    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await ntr_koujo_family.call(13, { args: [seq_rand(0), 1] });
+    const lines = fixture.text_lines();
+    assert.ok(
+      lines.includes(
+        `狂王冷笑了一番、蹂躏了一番我的屁股、将${weapon}一口气刺穿了`,
+      ),
+      `狂王性别 ${king_sex}：:5547 组是一行`,
+    );
+    assert.ok(
+      lines.includes(
+        (hymen ? '由魔王再生的处女膜、' : '尚未经人事的小穴、蛮横地抽插着、') +
+          '纯洁的赤印将地板染红了。',
+      ),
+      `狂王性别 ${king_sex}（再生=${hymen}）：:5557 组是一行`,
+    );
+    assert.ok(
+      lines.some(
+        (l) =>
+          l.startsWith(
+            (hymen ? '（老公……抱歉……最终还是……）' : '') +
+              '不仅无视了伴随着呜咽声求饶的',
+          ) &&
+          l.includes(`将${weapon2}与`) &&
+          l.endsWith('亲密接触的模样记录在了水晶球中。'),
+      ),
+      `狂王性别 ${king_sex}（再生=${hymen}）：:5563 组是一行`,
+    );
+  }
+});
+
+test('#625 NTR_KOUJO_K13 P==4：:5593+:5595+:5596 是一行（TALENT:157 两档）', async () => {
+  const cases = [
+    [0, '「昂♡比魔王大人♡♡♡」'],
+    [1, '「昂♡比那个人、比魔王大人♡♡♡」'],
+  ];
+  for (const [hymen, line] of cases) {
+    const fixture = await setup_k13((f) => {
+      f.store.set('talent:31:85', 1);
+      if (hymen) {
+        f.store.set('talent:31:157', 1);
+      }
+    });
+    const { ntr_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await ntr_koujo_family.call(13, { args: [seq_rand(0), 4] });
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `TALENT:157==${hymen}：:5593 组是一行（#625）`,
+    );
+  }
+});
+
+test('#625 GOHOUBI_REQUEST_KOUJO_K13：兽名与前后文同一行（CFLAG:504 三档）', async () => {
+  const cases = [
+    [1, '犬'],
+    [2, '豚'],
+    [3, '马'],
+  ];
+  for (const [req, beast] of cases) {
+    const fixture = await setup_k13((f) => {
+      f.load_module('facade/chara').chara(31).stronghold.要求奖赏 = req;
+    });
+    const { gohoubi_request_koujo_family } = fixture.load_module(
+      'kojo/kojo-dungeon-after',
+    );
+    await gohoubi_request_koujo_family.call(13, { args: [] });
+    assert.ok(
+      fixture.text_lines().includes(`庇护者要求奖励与${beast}交尾`),
+      `CFLAG:504==${req}：兽名与前后文落在同一行（#625）`,
+    );
+  }
 });
