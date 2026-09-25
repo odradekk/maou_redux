@@ -364,6 +364,370 @@ test('DUNGEON_ATTACK：奴隶态 TALENT:11 真身', async () => {
   );
 });
 
+// —— #622：拆行合并后的整行断言（每组一处，覆盖该行的各分支组合） ——
+//
+// 组内各段在原作同属一行（无后缀 PRINTFORM 不换行），ere 曾拆成多条输出。
+// 行号是原作 ERB 行号，见 ere/kojo/kojo-k1-confident.js 的拼接锚。
+
+async function speak_self_kojo_k1(fixture, rand, q) {
+  const { self_kojo_family } = fixture.load_module('kojo/kojo-system');
+  return self_kojo_family.call(1, { args: [rand, q] });
+}
+
+async function speak_gohoubi_request_k1(fixture) {
+  const { gohoubi_request_koujo_family } = fixture.load_module(
+    'kojo/kojo-dungeon-after',
+  );
+  return gohoubi_request_koujo_family.call(1, { args: [CID] });
+}
+
+// TFLAG:89 时 kojo_message_com_1 岔进 DOG_KOJO_1、TFLAG:55 时岔进 COLOSSEUM_KOJO_1
+function dog_seed(extra) {
+  return (f) => {
+    f.store.set(`tequip:${CID}:89`, 1);
+    f.store.set(`tflag:13`, 0);
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 56;
+    extra(f);
+  };
+}
+
+function colosseum_seed(selectcom, extra) {
+  return (f) => {
+    f.store.set(`tequip:${CID}:55`, 1);
+    f.store.set(`base:${CID}:1`, 500);
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = selectcom;
+    extra(f);
+  };
+}
+
+test('SELECTCOM 56 交谈·初めて·视频·TALENT:89（RAND:3==0）：:4747+:4749+:4750 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`tequip:${CID}:53`, 1);
+    f.store.set(`talent:${CID}:89`, 1);
+    f.store.set(`abl:${CID}:31`, 3);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture, seq_rand(0));
+  assert.deepEqual(fixture.text_lines(), [
+    `你催促${NAME}进行一下自我介绍。`,
+    `于是${NAME}将自己的本名、至今为止的性体验以及自慰时意淫的内容津津有味的说了起来……`,
+    `只是想想这个水晶球在故乡公开放映的样子、${NAME}的股间就开始湿了……`,
+  ]);
+});
+
+test('SELECTCOM 56 交谈·初めて·视频·TALENT:89（RAND:3==0）但 ABL:31 < 3：SIF 段不拼（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`tequip:${CID}:53`, 1);
+    f.store.set(`talent:${CID}:89`, 1);
+    f.store.set(`abl:${CID}:31`, 2);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture, seq_rand(0));
+  assert.equal(
+    fixture.text_lines()[1],
+    `于是${NAME}将自己的本名、至今为止的性体验津津有味的说了起来……`,
+  );
+});
+
+test('SELECTCOM 56 交谈·初めて·无摄像·求爱档：:4787+:4789 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`palam:${CID}:5`, 10000); // PALAMLV[4]
+    f.store.set('tflag:60', 1);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `一边与你说着情话、${NAME}一边扭动着腰。`,
+  ]);
+});
+
+test('SELECTCOM 56 交谈·初めて·无摄像·装备档：:4793+:4795+:4797+:4799 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`tequip:${CID}:11`, 1); // 快感装备
+    f.store.set(`palam:${CID}:4`, 10000);
+    f.store.set(`palam:${CID}:5`, 10000);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `一边与你聊天、${NAME}一边发出着快乐的声音、一边拼命地回应着你。`,
+  ]);
+});
+
+test('SELECTCOM 56 交谈·初めて·无摄像·痛苦装备（TEQUIP:44）：拼「痛苦的」（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`tequip:${CID}:44`, 1);
+    f.store.set(`palam:${CID}:4`, 10000);
+    f.store.set(`palam:${CID}:5`, 10000);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `一边与你聊天、${NAME}一边发出着痛苦的声音、一边拼命地回应着你。`,
+  ]);
+});
+
+test('SELECTCOM 56 交谈·二回目·视频·TALENT:89（RAND:3==0）：:4833+:4835+:4836 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`cflag:${CID}:357`, 1);
+    f.store.set(`tequip:${CID}:53`, 1);
+    f.store.set(`talent:${CID}:89`, 1);
+    f.store.set(`abl:${CID}:31`, 3);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture, seq_rand(0));
+  assert.deepEqual(fixture.text_lines(), [
+    `你催促${NAME}进行一下自我介绍。`,
+    `于是${NAME}将自己的本名、至今为止的性体验以及自慰时意淫的内容津津有味的说了起来……`,
+    `只是想想这个水晶球在故乡公开放映的样子、${NAME}的股间就开始湿了……`,
+  ]);
+});
+
+test('SELECTCOM 56 交谈·二回目·无摄像·求爱档：:4873+:4875 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`cflag:${CID}:357`, 1);
+    f.store.set(`talent:${CID}:85`, 1);
+    f.store.set(`palam:${CID}:5`, 10000); // PALAMLV[4]
+    f.store.set('tflag:60', 1);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `你让${NAME}一边扭动着腰一边与你说着情话。`,
+  ]);
+});
+
+test('SELECTCOM 56 交谈·二回目·无摄像·装备档：:4879+:4881+:4883+:4885 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set(`cflag:${CID}:357`, 1);
+    f.store.set(`tequip:${CID}:11`, 1);
+    f.store.set(`palam:${CID}:4`, 10000);
+    f.store.set(`palam:${CID}:5`, 10000);
+    f.load_module('era-utils/era-flag').selectcom = 56;
+  });
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `你让${NAME}一边发出着快乐的声音、一边拼命地回应着你。`,
+  ]);
+});
+
+test('DOG 兽奸会話·初めて·视频·牝犬：:6341..:6348 与 :6351..:6371 各是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:136`, 1);
+      f.store.set(`cflag:${CID}:601`, 900); // 与野良犬结婚中
+      f.store.set(`talent:${CID}:成为勇者前的生活`, 1); // 学生
+    }),
+  );
+  await speak_k1(fixture);
+  const lines = fixture.text_lines();
+  assert.equal(lines[3], `「现在是优秀的狗的妻子！快乐的作为家畜生活着♡」`);
+  assert.equal(
+    lines[6],
+    `「在最后同班同学的大家、我成为了这样的变态母狗……对不起啊♡」`,
+  );
+});
+
+test('DOG 兽奸会話·初めて·视频·牝犬·未与狗结婚：另一支走「母狗」（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:136`, 1);
+      f.store.set(`cflag:${CID}:601`, 0);
+    }),
+  );
+  await speak_k1(fixture);
+  assert.equal(
+    fixture.text_lines()[3],
+    `「现在是优秀的母狗！快乐的作为家畜生活着♡」`,
+  );
+});
+
+test('DOG 兽奸会話·二回目·视频·牝犬：:6403..:6410 与 :6413..:6433 各是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`cflag:${CID}:357`, 1);
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:136`, 1);
+      f.store.set(`cflag:${CID}:601`, 900);
+      f.store.set(`talent:${CID}:成为勇者前的生活`, 15); // 商人・パン屋
+    }),
+  );
+  await speak_k1(fixture);
+  const lines = fixture.text_lines();
+  assert.equal(lines[2], `「现在是优秀的狗的妻子、快乐的作为家畜生活着♡」`);
+  assert.equal(
+    lines[5],
+    `「在最后我的店里消费过的客人、我成为了这样的变态母狗……对不起啊♡」`,
+  );
+});
+
+test('DOG 兽奸会話·初めて·视频·淫乱：:6374+:6376+:6377 是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:76`, 1);
+      f.store.set(`abl:${CID}:31`, 3);
+    }),
+  );
+  await speak_k1(fixture);
+  assert.equal(
+    fixture.text_lines()[1],
+    `${NAME}说出了自己的本名和至今为止关于性的体验、更说出了在自慰的时候意淫的内容、高兴地开始津津有味的说了起来……`,
+  );
+});
+
+test('DOG 兽奸会話·初めて·视频·爱慕：:6381+:6383+:6384 是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:85`, 1);
+      f.store.set(`abl:${CID}:31`, 2); // 不拼 SIF 段
+    }),
+  );
+  await speak_k1(fixture);
+  assert.equal(
+    fixture.text_lines()[1],
+    `${NAME}说出了自己的本名和至今为止关于性的体验开始高兴地讲着……`,
+  );
+});
+
+test('DOG 兽奸会話·二回目·视频·淫乱：:6437+:6439+:6440 是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`cflag:${CID}:357`, 1);
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:76`, 1);
+      f.store.set(`abl:${CID}:31`, 3);
+    }),
+  );
+  await speak_k1(fixture);
+  assert.equal(
+    fixture.text_lines()[0],
+    `${NAME}说出了自己的本名和至今为止关于性的体验、更说出了在自慰的时候意淫的内容、高兴地开始津津有味的说了起来……`,
+  );
+});
+
+test('DOG 兽奸会話·二回目·视频·爱慕：:6445+:6447+:6448 是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    dog_seed((f) => {
+      f.store.set(`cflag:${CID}:357`, 1);
+      f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set(`talent:${CID}:85`, 1);
+      f.store.set(`abl:${CID}:31`, 3);
+    }),
+  );
+  await speak_k1(fixture);
+  assert.equal(
+    fixture.text_lines()[0],
+    `${NAME}说出了自己的本名和至今为止关于性的体验、更说出了在自慰的时候意淫的内容、高兴地开始津津有味的说了起来……`,
+  );
+});
+
+test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（1回目）：:7040+:7042 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set(`talent:${CID}:136`, 1);
+    f.store.set(`cflag:${CID}:102`, 5);
+    f.store.set(`cflag:${CID}:601`, 90);
+  });
+  await speak_self_kojo_k1(fixture, seq_rand(1, 0)); // RAND:2 非 0 → ELSE 支；RAND:9 == 0 → 波奇
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes(`「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`),
+    '同一行里拼出名字',
+  );
+});
+
+test('SELF_KOJO 妊娠発覚·牝犬与野良犬结婚（2回目）：:7106+:7108 是一行（#622）', async () => {
+  const fixture = await setup_k1((f) => {
+    f.store.set('tflag:13', 11);
+    f.store.set(`cflag:${CID}:271`, 1);
+    f.store.set(`talent:${CID}:136`, 1);
+    f.store.set(`cflag:${CID}:102`, 5);
+    f.store.set(`cflag:${CID}:601`, 90);
+  });
+  await speak_self_kojo_k1(fixture, seq_rand(1, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes(`「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`),
+    '同一行里拼出名字（2回目以降）',
+  );
+});
+
+test('COLOSSEUM SC31 口交·助手在场：:7763+:7765+:7767+:7768 是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    colosseum_seed(31, (f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 5;
+      era_flag.assiplay = 1;
+      join_slave_chara(f, 5, '奴隶5');
+      f.store.set('talent:5:121', 1); // 真正的小鸡鸡
+    }),
+  );
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `「啊呜…呜嗯…嗯咕…嗯…呼啊……」`,
+    `奴隶5因为真正的小鸡鸡被${NAME}含了进去而露出了心旷神怡的表情……`,
+  ]);
+});
+
+test('COLOSSEUM SC21 背后位·助手在场：:7796+:7798+:7800+:7801 是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    colosseum_seed(21, (f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 5;
+      era_flag.assiplay = 1;
+      join_slave_chara(f, 5, '奴隶5');
+      f.store.set('item:4', 1); // 假阳具
+    }),
+  );
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `「啊啊啊…啊！这、这样的…不行了不行了～！」`,
+    `奴隶5一边听着悲鸣一边用假阳具毫不留情的继续蹂躏${NAME}的阴道……`,
+  ]);
+});
+
+test('COLOSSEUM SC27 背后位アナル·助手在场：:7820+:7822+:7824+:7825 是一行（#622）', async () => {
+  const fixture = await setup_k1(
+    colosseum_seed(27, (f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.assi = 5;
+      era_flag.assiplay = 1;
+      join_slave_chara(f, 5, '奴隶5');
+      f.store.set('item:4', 1);
+    }),
+  );
+  await speak_k1(fixture);
+  assert.deepEqual(fixture.text_lines(), [
+    `「啊啊啊…啊！屁、屁股坏掉了呜啊…不行了不行了～！」`,
+    `奴隶5一边听着悲鸣一边用假阳具毫不留情的继续蹂躏${NAME}的肛门……`,
+  ]);
+});
+
+test('GOHOUBI_REQUEST 兽奸要求：:8075..:8083 是一行，兽名三档（#622）', async () => {
+  for (const [lv, beast] of [
+    [1, '狗'],
+    [2, '猪'],
+    [3, '马'],
+  ]) {
+    const fixture = await setup_k1((f) => f.store.set(`cflag:${CID}:504`, lv));
+    await speak_gohoubi_request_k1(fixture);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [`「胜利之后、想要和${beast}交尾」`],
+      `CFLAG:504==${lv} 兽奸要求`,
+    );
+  }
+});
+
 test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
   const fixture = create_era_fixture();
   const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k1-confident');

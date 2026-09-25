@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2432; // #622 起 +26（M12500-M12525：K8 的 26 处「原作同一行被拆」的合并点各一条「拆回多条」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2452; // #622 起 +46（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处「原作同一行被拆」的合并点各一条「拆回多条」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -23207,5 +23207,436 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    await era.printAndWait(`交尾的那种${heart(1)}」`); // 变异：拆回',
     tests: ['kojo-k8-spade'],
     must_mention: ':7744..:7752 是一行',
+  },
+  // —— #622：口上剩余拆行第 B 组（kojo-k1-confident.js 20 处「原作同一行被拆」的
+  // 合并点，各配一条「拆回多条」变异；M12526-M12545。整行文本断言见
+  // test/kojo-k1-confident.test.js 同名用例） ——
+  {
+    desc: 'M12526 K1 交谈·初めて·视频自我介绍（:4747+:4749+:4750）拆回三条（#622：SIF 段又占一行）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.print(\n' +
+      '              `于是${target_name}将自己的本名、至今为止的性体验` +\n' +
+      "                (masturbation ? `以及自慰时意淫的内容` : '') +\n" +
+      '                `津津有味的说了起来……`,\n' +
+      '            ); // :4747+:4749+:4750',
+    replace:
+      '            await era.print(`于是${target_name}将自己的本名、至今为止的性体验`); // 变异：拆回\n' +
+      '            if (masturbation) {\n' +
+      '              await era.print(`以及自慰时意淫的内容`); // 变异：拆回\n' +
+      '            }\n' +
+      '            await era.print(`津津有味的说了起来……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':4747+:4749+:4750 是一行',
+  },
+  {
+    desc: 'M12527 K1 交谈·初めて·无摄像·求爱档（:4787+:4789）拆回两条（#622：%SAVESTR:PLAYER% 又占一行）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.print(\n' +
+      '              `一边与${player_name}说着情话、${target_name}一边扭动着腰。`,\n' +
+      '            ); // :4787+:4789',
+    replace:
+      '            await era.print(`一边与${player_name}`); // 变异：拆回\n' +
+      '            await era.print(`说着情话、${target_name}一边扭动着腰。`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':4787+:4789 是一行',
+  },
+  {
+    desc: 'M12528 K1 交谈·初めて·无摄像·装备档（:4793+:4795+:4797+:4799）拆回多条（#622：快乐/痛苦又各占一行）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.print(\n' +
+      '              chat_prefix +\n' +
+      '                `聊天、${target_name}一边发出着` +\n' +
+      "                (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n" +
+      '                `声音、一边拼命地回应着${player_name}。`,\n' +
+      '            ); // :4793+:4795+:4797+:4799',
+    replace:
+      '            await era.print(\n' +
+      '              chat_prefix + `聊天、${target_name}一边发出着`,\n' +
+      '            ); // 变异：拆回\n' +
+      '            if (equip_pleasure) {\n' +
+      '              await era.print(`快乐的`); // 变异：拆回\n' +
+      '            } else if (equip_pain) {\n' +
+      '              await era.print(`痛苦的`); // 变异：拆回\n' +
+      '            }\n' +
+      '            await era.print(`声音、一边拼命地回应着${player_name}。`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':4793+:4795+:4797+:4799 是一行',
+  },
+  {
+    desc: 'M12529 K1 交谈·二回目·视频自我介绍（:4833+:4835+:4836）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.print(\n' +
+      '              `于是${target_name}将自己的本名、至今为止的性体验` +\n' +
+      "                (masturbation ? `以及自慰时意淫的内容` : '') +\n" +
+      '                `津津有味的说了起来……`,\n' +
+      '            ); // :4833+:4835+:4836',
+    replace:
+      '            await era.print(`于是${target_name}将自己的本名、至今为止的性体验`); // 变异：拆回\n' +
+      '            if (masturbation) {\n' +
+      '              await era.print(`以及自慰时意淫的内容`); // 变异：拆回\n' +
+      '            }\n' +
+      '            await era.print(`津津有味的说了起来……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':4833+:4835+:4836 是一行',
+  },
+  {
+    desc: 'M12530 K1 交谈·二回目·无摄像·求爱档（:4873+:4875）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.print(\n' +
+      '              `${player_name}让${target_name}一边扭动着腰一边与${player_name}说着情话。`,\n' +
+      '            ); // :4873+:4875',
+    replace:
+      '            await era.print(`${player_name}让`); // 变异：拆回\n' +
+      '            await era.print(\n' +
+      '              `${target_name}一边扭动着腰一边与${player_name}说着情话。`,\n' +
+      '            ); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':4873+:4875 是一行',
+  },
+  {
+    desc: 'M12531 K1 交谈·二回目·无摄像·装备档（:4879+:4881+:4883+:4885）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '            await era.print(\n' +
+      '              chat_prefix +\n' +
+      '                `${target_name}一边发出着` +\n' +
+      "                (equip_pleasure ? `快乐的` : equip_pain ? `痛苦的` : '') +\n" +
+      '                `声音、一边拼命地回应着${player_name}。`,\n' +
+      '            ); // :4879+:4881+:4883+:4885',
+    replace:
+      '            await era.print(\n' +
+      '              chat_prefix + `${target_name}一边发出着`,\n' +
+      '            ); // 变异：拆回\n' +
+      '            if (equip_pleasure) {\n' +
+      '              await era.print(`快乐的`); // 变异：拆回\n' +
+      '            } else if (equip_pain) {\n' +
+      '              await era.print(`痛苦的`); // 变异：拆回\n' +
+      '            }\n' +
+      '            await era.print(`声音、一边拼命地回应着${player_name}。`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':4879+:4881+:4883+:4885 是一行',
+  },
+  {
+    desc: 'M12532 K1 兽奸会話·初めて·牝犬自我介绍（:6341+:6344+:6346+:6348）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `「现在是优秀的` +\n' +
+      '              (chara(target).chara.结婚对象 === 900 ? `狗的妻子` : `母狗`) +\n' +
+      '              `！快乐的作为家畜生活着${heart(1)}」`,\n' +
+      '          ); // :6341+:6344+:6346+:6348',
+    replace:
+      '          await era.print(`「现在是优秀的`); // 变异：拆回\n' +
+      '          if (chara(target).chara.结婚对象 === 900) {\n' +
+      '            await era.print(`狗的妻子`); // 变异：拆回\n' +
+      '          } else {\n' +
+      '            await era.print(`母狗`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.printAndWait(`！快乐的作为家畜生活着${heart(1)}」`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
+  },
+  {
+    desc: 'M12533 K1 兽奸会話·初めて·牝犬的「在最后」（:6351..:6371）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `「在最后` +\n' +
+      '              (former_life === 1\n' +
+      '                ? `同班同学的大家`\n' +
+      '                : former_life === 2\n' +
+      '                  ? `修道院的大家`\n' +
+      '                  : former_life === 15 || former_life === 18\n' +
+      '                    ? `${sc()}的店里消费过的客人`\n' +
+      '                    : former_life === 19\n' +
+      '                      ? `部下的大家`\n' +
+      '                      : former_life === 21\n' +
+      '                        ? `最重要的你`\n' +
+      '                        : `爸爸、妈妈`) +\n' +
+      '              `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n' +
+      '          ); // :6351+:6354+:6357+:6360+:6363+:6366+:6369+:6371',
+    replace:
+      '          await era.print(`「在最后`); // 变异：拆回\n' +
+      '          if (former_life === 1) {\n' +
+      '            await era.print(`同班同学的大家`); // 变异：拆回\n' +
+      '          } else if (former_life === 2) {\n' +
+      '            await era.print(`修道院的大家`); // 变异：拆回\n' +
+      '          } else if (former_life === 15 || former_life === 18) {\n' +
+      '            await era.print(`${sc()}的店里消费过的客人`); // 变异：拆回\n' +
+      '          } else if (former_life === 19) {\n' +
+      '            await era.print(`部下的大家`); // 变异：拆回\n' +
+      '          } else if (former_life === 21) {\n' +
+      '            await era.print(`最重要的你`); // 变异：拆回\n' +
+      '          } else {\n' +
+      '            await era.print(`爸爸、妈妈`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.printAndWait(\n' +
+      '            `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n' +
+      '          ); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6341..:6348 与 :6351..:6371 各是一行',
+  },
+  {
+    desc: 'M12534 K1 兽奸会話·二回目·牝犬自我介绍（:6403+:6406+:6408+:6410）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `「现在是优秀的` +\n' +
+      '              (chara(target).chara.结婚对象 === 900 ? `狗的妻子` : `母狗`) +\n' +
+      '              `、快乐的作为家畜生活着${heart(1)}」`,\n' +
+      '          ); // :6403+:6406+:6408+:6410',
+    replace:
+      '          await era.print(`「现在是优秀的`); // 变异：拆回\n' +
+      '          if (chara(target).chara.结婚对象 === 900) {\n' +
+      '            await era.print(`狗的妻子`); // 变异：拆回\n' +
+      '          } else {\n' +
+      '            await era.print(`母狗`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.printAndWait(`、快乐的作为家畜生活着${heart(1)}」`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
+  },
+  {
+    desc: 'M12535 K1 兽奸会話·二回目·牝犬的「在最后」（:6413..:6433）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `「在最后` +\n' +
+      '              (former_life === 1\n' +
+      '                ? `同班同学的大家`\n' +
+      '                : former_life === 2\n' +
+      '                  ? `修道院的大家`\n' +
+      '                  : former_life === 15 || former_life === 18\n' +
+      '                    ? `${sc()}的店里消费过的客人`\n' +
+      '                    : former_life === 19\n' +
+      '                      ? `部下的大家`\n' +
+      '                      : former_life === 21\n' +
+      '                        ? `最重要的你`\n' +
+      '                        : `爸爸、妈妈`) +\n' +
+      '              `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n' +
+      '          ); // :6413+:6416+:6419+:6422+:6425+:6428+:6431+:6433',
+    replace:
+      '          await era.print(`「在最后`); // 变异：拆回\n' +
+      '          if (former_life === 1) {\n' +
+      '            await era.print(`同班同学的大家`); // 变异：拆回\n' +
+      '          } else if (former_life === 2) {\n' +
+      '            await era.print(`修道院的大家`); // 变异：拆回\n' +
+      '          } else if (former_life === 15 || former_life === 18) {\n' +
+      '            await era.print(`${sc()}的店里消费过的客人`); // 变异：拆回\n' +
+      '          } else if (former_life === 19) {\n' +
+      '            await era.print(`部下的大家`); // 变异：拆回\n' +
+      '          } else if (former_life === 21) {\n' +
+      '            await era.print(`最重要的你`); // 变异：拆回\n' +
+      '          } else {\n' +
+      '            await era.print(`爸爸、妈妈`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.printAndWait(\n' +
+      '            `、我成为了这样的变态母狗……对不起啊${heart(1)}」`,\n' +
+      '          ); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6403..:6410 与 :6413..:6433 各是一行',
+  },
+  {
+    desc: 'M12536 K1 兽奸会話·初めて·淫乱自我介绍（:6374+:6376+:6377）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n' +
+      "              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n" +
+      '              `高兴地开始津津有味的说了起来……`,\n' +
+      '          ); // :6374+:6376+:6377',
+    replace:
+      '          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n' +
+      '          if (masturbation) {\n' +
+      '            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`高兴地开始津津有味的说了起来……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6374+:6376+:6377 是一行',
+  },
+  {
+    desc: 'M12537 K1 兽奸会話·初めて·爱慕自我介绍（:6381+:6383+:6384）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n' +
+      "              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n" +
+      '              `开始高兴地讲着……`,\n' +
+      '          ); // :6381+:6383+:6384',
+    replace:
+      '          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n' +
+      '          if (masturbation) {\n' +
+      '            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`开始高兴地讲着……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6381+:6383+:6384 是一行',
+  },
+  {
+    desc: 'M12538 K1 兽奸会話·二回目·淫乱自我介绍（:6437+:6439+:6440）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n' +
+      "              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n" +
+      '              `高兴地开始津津有味的说了起来……`,\n' +
+      '          ); // :6437+:6439+:6440',
+    replace:
+      '          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n' +
+      '          if (masturbation) {\n' +
+      '            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`高兴地开始津津有味的说了起来……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6437+:6439+:6440 是一行',
+  },
+  {
+    desc: 'M12539 K1 兽奸会話·二回目·爱慕自我介绍（:6445+:6447+:6448）拆回三条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}说出了自己的本名和至今为止关于性的体验` +\n' +
+      "              (masturbation ? `、更说出了在自慰的时候意淫的内容、` : '') +\n" +
+      '              `高兴地开始津津有味的说了起来……`,\n' +
+      '          ); // :6445+:6447+:6448',
+    replace:
+      '          await era.print(`${target_name}说出了自己的本名和至今为止关于性的体验`); // 变异：拆回\n' +
+      '          if (masturbation) {\n' +
+      '            await era.print(`、更说出了在自慰的时候意淫的内容、`); // 变异：拆回\n' +
+      '          }\n' +
+      '          await era.print(`高兴地开始津津有味的说了起来……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':6445+:6447+:6448 是一行',
+  },
+  {
+    desc: 'M12540 K1 妊娠発覚 1回目·牝犬野良犬（:7040+:7042）拆回两条（#622：名字又占一行）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          if (rand_n(9) === 0) {\n' +
+      '            // :7041\n' +
+      '            await era.printAndWait(\n' +
+      '              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n' +
+      '            ); // :7040+:7042',
+    replace:
+      '          await era.print(\n' +
+      '            `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`,\n' +
+      '          ); // 变异：拆回\n' +
+      '          if (rand_n(9) === 0) {\n' +
+      '            // :7041\n' +
+      '            await era.printAndWait(`波奇？」`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':7040+:7042 是一行',
+  },
+  {
+    desc: 'M12541 K1 妊娠発覚 2回目以降·牝犬野良犬（:7106+:7108）拆回两条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '          if (rand_n(9) === 0) {\n' +
+      '            // :7107\n' +
+      '            await era.printAndWait(\n' +
+      '              `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…波奇？」`,\n' +
+      '            ); // :7106+:7108',
+    replace:
+      '          await era.print(\n' +
+      '            `「竟然会…和狗生下孩子什么的…唔噗噗…名字叫什么好呢…`,\n' +
+      '          ); // 变异：拆回\n' +
+      '          if (rand_n(9) === 0) {\n' +
+      '            // :7107\n' +
+      '            await era.printAndWait(`波奇？」`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':7106+:7108 是一行',
+  },
+  {
+    desc: 'M12542 K1 死斗场·SC31 口交（:7763+:7765+:7767+:7768）拆回多条（#622：部位词又各占一行）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}因为` +\n' +
+      "          (assi_has_penis ? `真正的小鸡鸡` : '') +\n" +
+      "          (assi_has_strap ? `假阳具` : '') +\n" +
+      '          `被${target_name}含了进去而露出了心旷神怡的表情……`,\n' +
+      '      ); // :7763+:7765+:7767+:7768',
+    replace:
+      '      await era.print(`${assi_name}因为`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`真正的小鸡鸡`); // 变异：拆回\n' +
+      '      }\n' +
+      '      if (assi_has_strap) {\n' +
+      '        await era.print(`假阳具`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`被${target_name}含了进去而露出了心旷神怡的表情……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':7763+:7765+:7767+:7768 是一行',
+  },
+  {
+    desc: 'M12543 K1 死斗场·SC21 背后位（:7796+:7798+:7800+:7801）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着悲鸣一边用` +\n' +
+      "          (assi_has_penis ? `真正的小鸡鸡` : '') +\n" +
+      "          (assi_has_strap ? `假阳具` : '') +\n" +
+      '          `毫不留情的继续蹂躏${target_name}的阴道……`,\n' +
+      '      ); // :7796+:7798+:7800+:7801',
+    replace:
+      '      await era.print(`${assi_name}一边听着悲鸣一边用`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`真正的小鸡鸡`); // 变异：拆回\n' +
+      '      }\n' +
+      '      if (assi_has_strap) {\n' +
+      '        await era.print(`假阳具`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`毫不留情的继续蹂躏${target_name}的阴道……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':7796+:7798+:7800+:7801 是一行',
+  },
+  {
+    desc: 'M12544 K1 死斗场·SC27 背后位アナル（:7820+:7822+:7824+:7825）拆回多条（#622）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着悲鸣一边用` +\n' +
+      "          (assi_has_penis ? `真正的小鸡鸡` : '') +\n" +
+      "          (assi_has_strap ? `假阳具` : '') +\n" +
+      '          `毫不留情的继续蹂躏${target_name}的肛门……`,\n' +
+      '      ); // :7820+:7822+:7824+:7825',
+    replace:
+      '      await era.print(`${assi_name}一边听着悲鸣一边用`); // 变异：拆回\n' +
+      '      if (assi_has_penis) {\n' +
+      '        await era.print(`真正的小鸡鸡`); // 变异：拆回\n' +
+      '      }\n' +
+      '      if (assi_has_strap) {\n' +
+      '        await era.print(`假阳具`); // 变异：拆回\n' +
+      '      }\n' +
+      '      await era.printAndWait(`毫不留情的继续蹂躏${target_name}的肛门……`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':7820+:7822+:7824+:7825 是一行',
+  },
+  {
+    desc: 'M12545 K1 迎击奖赏·兽奸要求（:8075..:8083）拆回多条（#622：兽名又占一行）',
+    file: 'ere/kojo/kojo-k1-confident.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `「胜利之后、想要和` +\n' +
+      "        (reward === 1 ? `狗` : reward === 2 ? `猪` : reward === 3 ? `马` : '') +\n" +
+      '        `交尾」`,\n' +
+      '    ); // :8075+:8077+:8079+:8081+:8083',
+    replace:
+      '    await era.print(`「胜利之后、想要和`); // 变异：拆回\n' +
+      '    if (reward === 1) {\n' +
+      '      await era.print(`狗`); // 变异：拆回\n' +
+      '    } else if (reward === 2) {\n' +
+      '      await era.print(`猪`); // 变异：拆回\n' +
+      '    } else if (reward === 3) {\n' +
+      '      await era.print(`马`); // 变异：拆回\n' +
+      '    }\n' +
+      '    await era.printAndWait(`交尾」`); // 变异：拆回',
+    tests: ['kojo-k1-confident'],
+    must_mention: ':8075..:8083 是一行',
   },
 ];
