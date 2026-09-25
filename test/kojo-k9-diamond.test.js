@@ -613,28 +613,19 @@ test('#623 口塞初回：爱慕与それ以外两支的首段并入整行（:41
       await speak_k9(fixture);
       const lines = fixture.text_lines();
       const prefix = item.prefix;
-      if (gagged) {
-        assert.equal(
-          line_with(fixture, prefix),
-          item.merged,
-          `${item.label}：首段并入 :4146/:4155 前缀的整行`,
-        );
-        assert.equal(
-          lines.filter((l) => l === prefix).length,
-          0,
-          `${item.label}：并入后前缀不得再单独成行`,
-        );
-      } else {
-        assert.equal(
-          lines.filter((l) => l === prefix).length,
-          1,
-          `${item.label}：ELSE 支的前缀仍单独一行`,
-        );
-        assert.ok(
-          lines.includes('的眼神看着你………'),
-          `${item.label}：ELSE 支文案`,
-        );
-      }
+      // 两支都拼前缀（#623：前缀提为局部量 line_head，各支拼接）——
+      // 所以无论走哪一支，整行都成立、前缀都不再单独占一行
+      assert.equal(
+        lines.filter((l) => l === prefix).length,
+        0,
+        `${item.label}：前缀不得单独成行`,
+      );
+      assert.ok(
+        lines.includes(
+          gagged ? item.merged : `${prefix}的眼神看着你………`,
+        ),
+        `${item.label}：${gagged ? 'TRUE' : 'ELSE'} 支整行`,
+      );
       assert.equal(
         fixture.store.get('cflag:20:346'),
         1,

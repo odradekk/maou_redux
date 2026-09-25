@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2458; // #623 起 +52（M12600-M12651：K11 莉莉 16 处 + K9 黑方片 19 处 + K3 温妮 17 处「原作同一行被拆」的合并点各一条「拆回多条」）（M12600-M12634：K11 莉莉 16 处 + K9 黑方片 19 处「原作同一行被拆」的合并点各一条「拆回多条」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2458; // #623 起 +52（M12600-M12651：K11 莉莉 16 处 + K9 黑方片 19 处 + K3 温妮 17 处「原作同一行被拆」的合并点各一条「拆回多条」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -23037,7 +23037,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12616 K9 口塞初回·爱慕首段（:4146+:4148）拆回两条（#623：前缀又占一行）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4146+:4148',
+    find: '          await era.printAndWait(line_head + `的样子………`); // :4148',
     replace:
       '          await era.print(`${target_name}好像在期待着什么`); // 变异：拆回\n' +
       '          await era.printAndWait(`的样子………`); // 变异：拆回',
@@ -23047,29 +23047,29 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12617 K9 口塞初回·それ以外首段（:4155+:4157）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}抗议的左右甩起了脑袋………`); // :4155+:4157',
+    find: '          await era.printAndWait(line_head + `左右甩起了脑袋………`); // :4157',
     replace:
-      '          await era.print(`${target_name}抗议的`); // 变异：拆回\n' +
-      '          await era.printAndWait(`左右甩起了脑袋………`); // 变异：拆回',
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.printAndWait(`的样子………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞初回',
   },
   {
     desc: 'M12618 K9 口塞二回目·淫乱受虐狂Lv5 首段（:4169+:4171）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4169+:4171',
+    find: '          await era.printAndWait(line_head + `的样子………`); // :4171',
     replace:
-      '          await era.print(`${target_name}好像在期待着什么`); // 变异：拆回\n' +
-      '          await era.printAndWait(`的样子………`); // 变异：拆回',
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.printAndWait(`左右甩起了脑袋………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞二回目',
   },
   {
     desc: 'M12619 K9 口塞二回目·淫乱受虐狂Lv3 首段（:4179+:4181）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4179+:4181',
+    find: '          await era.printAndWait(line_head + `的样子………`); // :4181',
     replace:
-      '          await era.print(`${target_name}好像在期待着什么`); // 变异：拆回\n' +
+      '          await era.print(line_head); // 变异：拆回\n' +
       '          await era.printAndWait(`的样子………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞二回目',
@@ -23077,29 +23077,29 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12620 K9 口塞二回目·爱慕受虐狂Lv5 首段（:4194+:4196）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}好像在期待着什么的样子……………`); // :4194+:4196',
+    find: '          await era.printAndWait(line_head + `的样子……………`); // :4196',
     replace:
-      '          await era.print(`${target_name}好像在期待着什么`); // 变异：拆回\n' +
-      '          await era.printAndWait(`的样子……………`); // 变异：拆回',
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.printAndWait(`的样子………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞二回目',
   },
   {
     desc: 'M12621 K9 口塞二回目·爱慕受虐狂Lv3 首段（:4204+:4206）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4204+:4206',
+    find: '          await era.printAndWait(line_head + `的样子………`); // :4206',
     replace:
-      '          await era.print(`${target_name}好像在期待着什么`); // 变异：拆回\n' +
-      '          await era.printAndWait(`的样子………`); // 变异：拆回',
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.printAndWait(`的样子……………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞二回目',
   },
   {
     desc: 'M12622 K9 口塞二回目·爱慕首段（:4214+:4216）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4214+:4216',
+    find: '          await era.printAndWait(line_head + `的样子………`); // :4216',
     replace:
-      '          await era.print(`${target_name}好像在期待着什么`); // 变异：拆回\n' +
+      '          await era.print(line_head); // 变异：拆回\n' +
       '          await era.printAndWait(`的样子………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞二回目',
@@ -23107,20 +23107,20 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M12623 K9 口塞二回目·受虐狂Lv3 首段（:4224+:4226）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}好像在期待着什么的样子…………`); // :4224+:4226',
+    find: '          await era.printAndWait(line_head + `的样子…………`); // :4226',
     replace:
-      '          await era.print(`${target_name}好像在期待着什么`); // 变异：拆回\n' +
-      '          await era.printAndWait(`的样子…………`); // 变异：拆回',
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.printAndWait(`的样子………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞二回目',
   },
   {
     desc: 'M12624 K9 口塞二回目·それ以外首段（:4234+:4236）拆回两条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
-    find: '          await era.printAndWait(`${target_name}抗议的左右甩起了脑袋………`); // :4234+:4236',
+    find: '          await era.printAndWait(line_head + `左右甩起了脑袋………`); // :4236',
     replace:
-      '          await era.print(`${target_name}抗议的`); // 变异：拆回\n' +
-      '          await era.printAndWait(`左右甩起了脑袋………`); // 变异：拆回',
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.printAndWait(`的样子…………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 口塞二回目',
   },
@@ -23134,11 +23134,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `十分兴奋地说了出来……`,\n' +
       '          ); // :4424+:4426+:4427',
     replace:
-      '          await era.print(`${target_name}将自己的本名、接下来要进行的性体验`); // 变异：拆回\n' +
-      '          if (masturbation_talk) {\n' +
-      "            await era.print('还有手淫时妄想的内容'); // 变异：拆回\n" +
-      '          }\n' +
-      '          await era.print(`十分兴奋地说了出来……`); // 变异：拆回',
+      '          await era.print(line_head); // 变异：拆回\n' +
+      '          await era.printAndWait(`左右甩起了脑袋………`); // 变异：拆回',
     tests: ['kojo-k9-diamond'],
     must_mention: '#623 交谈录像',
   },
@@ -23159,14 +23156,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12627 K9 交谈初回·第三支插入段整行（:4446+:4448+:4450+:4452）拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
-      '            era.get(`tequip:${target}:11`) ||\n' +
-      '            era.get(`tequip:${target}:13`) ||\n' +
-      '            era.get(`tequip:${target}:14`) ||\n' +
-      '            era.get(`tequip:${target}:15`) ||\n' +
-      '            era.get(`tequip:${target}:16`) ||\n' +
-      '            era.get(`tequip:${target}:17`); // :4440-4447\n' +
-      '          const painful =\n' +
-      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`); // :4440-4449\n' +
       '          await era.print(\n' +
       '            `搭话后、${target_name}就发出了` +\n' +
       "              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n" +
@@ -23218,14 +23207,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12630 K9 交谈二回目·第三支插入段整行（:4497+:4499+:4501+:4503）拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
-      '            era.get(`tequip:${target}:11`) ||\n' +
-      '            era.get(`tequip:${target}:13`) ||\n' +
-      '            era.get(`tequip:${target}:14`) ||\n' +
-      '            era.get(`tequip:${target}:15`) ||\n' +
-      '            era.get(`tequip:${target}:16`) ||\n' +
-      '            era.get(`tequip:${target}:17`); // :4491-4498\n' +
-      '          const painful =\n' +
-      '            era.get(`tequip:${target}:44`) || era.get(`tequip:${target}:49`); // :4491-4500\n' +
       '          await era.print(\n' +
       '            `搭话后、${target_name}就发出了` +\n' +
       "              (excited ? '快乐的' : painful ? '苦痛的' : '') +\n" +
@@ -23246,12 +23227,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12631 K9 死斗场·口交器具名整行（:7085+:7087+:7089+:7090）拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
-      '        era.get(`talent:${assi}:121`) == 1 ||\n' +
-      '        era.get(`talent:${assi}:122`) == 1; // :7086\n' +
-      '      const assi_band =\n' +
-      '        era.get(`talent:${assi}:121`) != 1 &&\n' +
-      '        era.get(`talent:${assi}:122`) != 1 &&\n' +
-      '        era.get(`item:${PBAND}`) == 1; // :7088\n' +
       '      await era.printAndWait(\n' +
       '        `${assi_name}看着${target_name}舔着` +\n' +
       "          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n" +
@@ -23272,12 +23247,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12632 K9 死斗场·背后位器具名整行（:7119+:7121+:7123+:7124）拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
-      '        era.get(`talent:${assi}:121`) == 1 ||\n' +
-      '        era.get(`talent:${assi}:122`) == 1; // :7120\n' +
-      '      const assi_band =\n' +
-      '        era.get(`talent:${assi}:121`) != 1 &&\n' +
-      '        era.get(`talent:${assi}:122`) != 1 &&\n' +
-      '        era.get(`item:${PBAND}`) == 1; // :7122\n' +
       '      await era.printAndWait(\n' +
       '        `${assi_name}听着${target_name}的悲鸣继续用` +\n' +
       "          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n" +
@@ -23298,12 +23267,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12633 K9 死斗场·背后位肛门器具名整行（:7144+:7146+:7148+:7149）拆回多条（#623）',
     file: 'ere/kojo/kojo-k9-diamond.js',
     find:
-      '        era.get(`talent:${assi}:121`) == 1 ||\n' +
-      '        era.get(`talent:${assi}:122`) == 1; // :7145\n' +
-      '      const assi_band =\n' +
-      '        era.get(`talent:${assi}:121`) != 1 &&\n' +
-      '        era.get(`talent:${assi}:122`) != 1 &&\n' +
-      '        era.get(`item:${PBAND}`) == 1; // :7147\n' +
       '      await era.printAndWait(\n' +
       '        `${assi_name}一边听着${target_name}的悲鸣一边用` +\n' +
       "          (assi_penis ? `阴茎` : assi_band ? `假阴茎` : '') +\n" +
@@ -23353,10 +23316,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '                  : `「从奴隶`) + `成为了勇者，就能摆脱以前的生活…才对的啊…」`,\n' +
       '          ); // :4569+:4571+:4573+:4575+:4577',
     replace:
-      '          await era.printAndWait(`「从娼妇`); // 变异：拆回\n' +
-      '          await era.printAndWait(`「从乞丐`); // 变异：拆回\n' +
-      '          await era.printAndWait(`「从贫民`); // 变异：拆回\n' +
-      '          await era.printAndWait(`「从奴隶`); // 变异：拆回\n' +
+      '          await era.print(`「从娼妇`); // 变异：拆回\n' +
+      '          await era.print(`「从乞丐`); // 变异：拆回\n' +
+      '          await era.print(`「从贫民`); // 变异：拆回\n' +
+      '          await era.print(`「从奴隶`); // 变异：拆回\n' +
       '          await era.printAndWait(\n' +
       '            `成为了勇者，就能摆脱以前的生活…才对的啊…」`,\n' +
       '          ); // 变异：拆回',
@@ -23373,8 +23336,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '              `还不如的待遇！！」`,\n' +
       '          ); // :4589+:4591+:4593+:4595+:4597+:4599',
     replace:
-      "          await era.printAndWait(`「不、不要啊！${'\\u3000'}这这这、这样子的、比`); // 变异：拆回\n" +
-      '          await era.printAndWait(origin_word); // 变异：拆回\n' +
+      "          await era.print(`「不、不要啊！${'\\u3000'}这这这、这样子的、比`); // 变异：拆回\n" +
+      '          await era.print(origin_word); // 变异：拆回\n' +
       '          await era.printAndWait(`还不如的待遇！！」`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 强制排泄·出身两支的整行',
@@ -23393,7 +23356,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '                    `了的话…吼吼噢噢噢噢${black_heart(1)}」`,\n' +
       '                ); // :4653+:4655+:4657+:4659+:4661',
     replace:
-      "                await era.print(`「…哈、啊哈${black_heart(1)}${${'\\u3000'}}一想到${sc()}拉出来的东西、要是让探索中的勇者`); // 变异：拆回\n" +
+      "                await era.print(`「…哈、啊哈${black_heart(1)}${'\\u3000'}一想到${sc()}拉出来的东西、要是让探索中的勇者`); // 变异：拆回\n" +
       '                await era.print(rand_n(3) === 0 ? `找到` : rand_n(2) === 0 ? `一不小心捡到` : `无意中踩到`); // 变异：拆回\n' +
       '                await era.printAndWait(`了的话…吼吼噢噢噢噢${black_heart(1)}」`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
@@ -23407,9 +23370,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "              `「不、骗人的吧！${'\\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动着……竟然…」`,\n" +
       '            ); // :4775+:4777',
     replace:
-      '          if (crying_out) {\n' +
-      '            // :4776\n' +
-      "            await era.print(`「不、骗人的吧！${${'\\u3000'}}像这样子动着…慢慢排出来、菊穴、还蠕动`); // 变异：拆回\n" +
+      "            await era.print(`「不、骗人的吧！${'\\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`); // 变异：拆回\n" +
       '            await era.printAndWait(`着……竟然…」`); // 变异：拆回',
     tests: ['kojo-k3-noble'],
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
@@ -23422,10 +23383,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       "                `「原、原谅我…啊啊啊啊！！${'\\u3000'}又要…出来了、出…快停下来啊……！！」`,\n" +
       '              ); // :4810+:4812',
     replace:
-      '            if (birth_shown) {\n' +
-      '              // :4811\n' +
       '              await era.print(`「原、原谅我…啊啊啊啊！！`); // 变异：拆回\n' +
-      '              await era.printAndWait(`又要…出来了、出…快停下来啊……！！」`); // 变异：拆回',
+      "              await era.printAndWait(`${'\\u3000'}又要…出来了、出…快停下来啊……！！」`); // 变异：拆回",
     tests: ['kojo-k3-noble'],
     must_mention: '#623 强制排泄·两穴与屈辱支的整行',
   },
@@ -23555,12 +23514,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12648 K3 死斗场·口交器具名整行（:8492+:8494+:8496+:8497）拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find:
-      '        era.get(`talent:${assi}:121`) === 1 ||\n' +
-      '        era.get(`talent:${assi}:122`) === 1; // :8494\n' +
-      '      const assi_band =\n' +
-      '        era.get(`talent:${assi}:121`) !== 1 &&\n' +
-      '        era.get(`talent:${assi}:122`) !== 1 &&\n' +
-      "        era.get('item:4') === 1; // :8496\n" +
       '      await era.printAndWait(\n' +
       '        `${assi_name}用` +\n' +
       "          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n" +
@@ -23581,12 +23534,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12649 K3 死斗场·背后位器具名整行（:8525+:8527+:8529+:8530）拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find:
-      '        era.get(`talent:${assi}:121`) === 1 ||\n' +
-      '        era.get(`talent:${assi}:122`) === 1; // :8527\n' +
-      '      const assi_band =\n' +
-      '        era.get(`talent:${assi}:121`) !== 1 &&\n' +
-      '        era.get(`talent:${assi}:122`) !== 1 &&\n' +
-      "        era.get('item:4') === 1; // :8529\n" +
       '      await era.printAndWait(\n' +
       '        `${assi_name}一边听着悲鸣一边用` +\n' +
       "          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n" +
@@ -23607,12 +23554,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     desc: 'M12650 K3 死斗场·背后位肛门器具名整行（:8549+:8551+:8553+:8554）拆回多条（#623）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find:
-      '        era.get(`talent:${assi}:121`) === 1 ||\n' +
-      '        era.get(`talent:${assi}:122`) === 1; // :8551\n' +
-      '      const assi_band =\n' +
-      '        era.get(`talent:${assi}:121`) !== 1 &&\n' +
-      '        era.get(`talent:${assi}:122`) !== 1 &&\n' +
-      "        era.get('item:4') === 1; // :8553\n" +
       '      await era.printAndWait(\n' +
       '        `${assi_name}一边听着悲鸣一边用` +\n' +
       "          (assi_penis ? `大鸡巴` : assi_band ? `假阳具` : '') +\n" +

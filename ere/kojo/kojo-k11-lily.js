@@ -12866,9 +12866,10 @@ async function kojo_message_com_11(rand) {
         if (assi_mao) {
           // :6864
           // :6865+:6867 原作是一整行：:6865 的 PRINTFORM 不换行、:6867 的
-          // PRINTFORML 收行。其余 ELSEIF 支与 :6865 同样同属一行，但那几支的
-          // 末行也是自带换行的 PRINTFORML，保真锁的拼接锚只容一个末行——本票
-          // 只并把普查指出的首支，其余支保持「:6865 前缀单独一行 + 支文本」（#623）
+          // PRINTFORML 收行。其余五支同样接在 :6865 之后，但那五支的末行也自带
+          // 换行（PRINTFORML），而拼接锚只容一个末行——并进同一条语句会被保真锁
+          // 判红，所以它们保持「:6865 前缀单独一行 + 支文本」，即玩家在那五条
+          // 路径上仍看到两行（#623 完成评论第 4 项）
           const faced_first =
             chara(target).train.欲情 >= era0('palamlv:4') &&
             (era.get(`talent:${target}:85`) ||

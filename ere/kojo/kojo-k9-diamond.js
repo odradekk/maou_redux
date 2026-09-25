@@ -8471,34 +8471,31 @@ async function kojo_message_com_9(rand) {
       } else if (era.get(`talent:${target}:85`) == 1) {
         // :4138-4144
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`); // :4145
-        // :4146+:4148 原作是一整行：:4146 的 PRINTFORM 不换行、:4148 的
-        // PRINTW 收行。ELSE 支（:4150）自带等待，并入前缀会破坏拼接锚的
-        // 「中段不带 W/L」判据，那一支保持前缀单独一行（#623）
+        // :4146 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}好像在期待着什么`); // :4146
-        }
+        const line_head = `${target_name}好像在期待着什么`; // :4146
         if (gagged) {
           // :4138-4147
-          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4146+:4148
+          await era.printAndWait(line_head + `的样子………`); // :4148
         } else {
           // :4138-4149
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4150
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4150
         } // :4151-4162
       } else {
         // :4153-4162
         await era.printAndWait(`「这是什么啊…嗯唔~…嗯~…嗯呜~~！」`); // :4154
         // :4155+:4157 与 :4146+:4148 同型（ELSE 支 :4159 保持前缀单独一行，#623）
+        // :4155 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}抗议的`); // :4155
-        }
+        const line_head = `${target_name}抗议的`; // :4155
         if (gagged) {
           // :4156-4162
-          await era.printAndWait(`${target_name}抗议的左右甩起了脑袋………`); // :4155+:4157
+          await era.printAndWait(line_head + `左右甩起了脑袋………`); // :4157
         } else {
           // :4158-4162
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4159
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4159
         } // :4160-4162
       } // :4161-4162
       // CFLAG:TARGET:346  = 1（变量语义：CFLAG 族，TARGET:346） // :4162
@@ -8517,16 +8514,16 @@ async function kojo_message_com_9(rand) {
           `「啊啊…是要做要发出很大声悲鸣的事情对吧…${heart(1)} 嗯噗…嗯~………」`,
         ); // :4168
         // :4169+:4171 与初回 :4146+:4148 同型（ELSE 支 :4173 保持前缀单独一行，#623）
+        // :4169 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}好像在期待着什么`); // :4169
-        }
+        const line_head = `${target_name}好像在期待着什么`; // :4169
         if (gagged) {
           // :4167-4170
-          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4169+:4171
+          await era.printAndWait(line_head + `的样子………`); // :4171
         } else {
           // :4172-4175
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4173
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4173
         } // :4174-4175
         // CFLAG:TARGET:346  = 9（变量语义：CFLAG 族，TARGET:346） // :4175
         kojo.口塞 = 9; // :4175
@@ -8540,16 +8537,16 @@ async function kojo_message_com_9(rand) {
           `「啊啊…是要做要发出很大声悲鸣的事情对吧…${heart(1)} 嗯噗…嗯~………」`,
         ); // :4178
         // :4179+:4181 与 :4146+:4148 同型（ELSE 支 :4183 保持前缀单独一行，#623）
+        // :4179 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}好像在期待着什么`); // :4179
-        }
+        const line_head = `${target_name}好像在期待着什么`; // :4179
         if (gagged) {
           // :4177-4180
-          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4179+:4181
+          await era.printAndWait(line_head + `的样子………`); // :4181
         } else {
           // :4182-4185
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4183
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4183
         } // :4184-4185
         // CFLAG:TARGET:346  = 8（变量语义：CFLAG 族，TARGET:346） // :4185
         kojo.口塞 = 8; // :4185
@@ -8572,16 +8569,16 @@ async function kojo_message_com_9(rand) {
         // :4192
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`); // :4193
         // :4194+:4196 与 :4146+:4148 同型（ELSE 支 :4198 保持前缀单独一行，#623）
+        // :4194 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}好像在期待着什么`); // :4194
-        }
+        const line_head = `${target_name}好像在期待着什么`; // :4194
         if (gagged) {
           // :4195-4196
-          await era.printAndWait(`${target_name}好像在期待着什么的样子……………`); // :4194+:4196
+          await era.printAndWait(line_head + `的样子……………`); // :4196
         } else {
           // :4196-4197
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4198
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4198
         } // :4199-4200
         // CFLAG:TARGET:346  = 6（变量语义：CFLAG 族，TARGET:346） // :4200
         kojo.口塞 = 6; // :4200
@@ -8593,16 +8590,16 @@ async function kojo_message_com_9(rand) {
         // :4202
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`); // :4203
         // :4204+:4206 与 :4146+:4148 同型（ELSE 支 :4208 保持前缀单独一行，#623）
+        // :4204 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}好像在期待着什么`); // :4204
-        }
+        const line_head = `${target_name}好像在期待着什么`; // :4204
         if (gagged) {
           // :4202-4205
-          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4204+:4206
+          await era.printAndWait(line_head + `的样子………`); // :4206
         } else {
           // :4207-4210
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4208
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4208
         } // :4209-4210
         // CFLAG:TARGET:346  = 5（变量语义：CFLAG 族，TARGET:346） // :4210
         kojo.口塞 = 5; // :4210
@@ -8613,16 +8610,16 @@ async function kojo_message_com_9(rand) {
         // :4212
         await era.printAndWait(`「啊呜…嗯~…嗯唔…呜噗~………」`); // :4213
         // :4214+:4216 与 :4146+:4148 同型（ELSE 支 :4218 保持前缀单独一行，#623）
+        // :4214 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}好像在期待着什么`); // :4214
-        }
+        const line_head = `${target_name}好像在期待着什么`; // :4214
         if (gagged) {
           // :4212-4215
-          await era.printAndWait(`${target_name}好像在期待着什么的样子………`); // :4214+:4216
+          await era.printAndWait(line_head + `的样子………`); // :4216
         } else {
           // :4217-4220
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4218
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4218
         } // :4219-4220
         // CFLAG:TARGET:346  = 4（变量语义：CFLAG 族，TARGET:346） // :4220
         kojo.口塞 = 4; // :4220
@@ -8633,16 +8630,16 @@ async function kojo_message_com_9(rand) {
         // :4222
         await era.printAndWait(`「哈啊…哈啊…要被束缚起来了呀………♪」`); // :4223
         // :4224+:4226 与 :4146+:4148 同型（ELSE 支 :4228 保持前缀单独一行，#623）
+        // :4224 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}好像在期待着什么`); // :4224
-        }
+        const line_head = `${target_name}好像在期待着什么`; // :4224
         if (gagged) {
           // :4223-4225
-          await era.printAndWait(`${target_name}好像在期待着什么的样子…………`); // :4224+:4226
+          await era.printAndWait(line_head + `的样子…………`); // :4226
         } else {
           // :4227-4230
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4228
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4228
         } // :4229-4230
         // CFLAG:TARGET:346  = 3（变量语义：CFLAG 族，TARGET:346） // :4230
         kojo.口塞 = 3; // :4230
@@ -8650,16 +8647,16 @@ async function kojo_message_com_9(rand) {
         // :4232
         await era.printAndWait(`「这是什么啊…嗯唔~…嗯~…嗯呜~~！」`); // :4233
         // :4234+:4236 与 :4146+:4148 同型（ELSE 支 :4238 保持前缀单独一行，#623）
+        // :4234 原作的无后缀 PRINTFORM 前缀，与下面两支的 PRINTW 同属一行；
+        // 两支都拼它（#623：各支末行自带等待，拼接锚只容一个末行）
         const gagged = era.get(`tequip:${target}:43`);
-        if (!gagged) {
-          await era.print(`${target_name}抗议的`); // :4234
-        }
+        const line_head = `${target_name}抗议的`; // :4234
         if (gagged) {
           // :4232-4235
-          await era.printAndWait(`${target_name}抗议的左右甩起了脑袋………`); // :4234+:4236
+          await era.printAndWait(line_head + `左右甩起了脑袋………`); // :4236
         } else {
           // :4237-4240
-          await era.printAndWait(`的眼神看着${player_name}………`); // :4238
+          await era.printAndWait(line_head + `的眼神看着${player_name}………`); // :4238
         } // :4239-4240
         // CFLAG:TARGET:346  = 2（变量语义：CFLAG 族，TARGET:346） // :4240
         kojo.口塞 = 2; // :4240
