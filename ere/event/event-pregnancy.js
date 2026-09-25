@@ -479,11 +479,11 @@ async function child_care_chara(arg) {
   const able = check_able_to_child_care(arg);
   if (able !== 0) {
     if (able === 1) {
-      era.printAndWait('你不在育儿室。'); // :499
+      await era.printAndWait('你不在育儿室。'); // :499
     } else if (able === 2) {
       return 2; // :500-502
     } else if (able === 3) {
-      era.printAndWait('该角色不在育儿室。'); // :504
+      await era.printAndWait('该角色不在育儿室。'); // :504
     }
     return 0;
   }

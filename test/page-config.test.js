@@ -339,6 +339,20 @@ test('dispatch_config(28)：立绘开关按 #542 判不移植，按下打一行�
   );
 });
 
+test('dispatch_config(28) 返回后可立即开始下一轮输入（内部等待不外泄——漏 await 会触发夹具的重叠检测，#557）', async () => {
+  const fixture = create_era_fixture();
+  const { dispatch_config } = load(fixture);
+  const page = await dispatch_config(28, 1);
+  assert.equal(page, 1);
+  // config_menu 的循环在 dispatch 返回后回到循环头：重绘 → 下一轮
+  // era.input()。dispatch_config 必须已等完内部的全部等待（提示行等键），
+  // 否则夹具的重叠检测（#557）在此当场报「漏写 await」——#542 当时「去掉
+  // await 测试仍全绿」的缺口由这里钉住
+  fixture.set_inputs(100);
+  const value = await fixture.era.input();
+  assert.equal(value, 100);
+});
+
 test('dispatch_config(27/29/30)：三个魔改存档变量的切换落地（#547 存储）', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);

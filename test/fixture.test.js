@@ -826,6 +826,97 @@ test('clear 在 isContinue 时强制等键（非 0 实参）；clear(0) 不等',
   assert.equal(forced.waited, true);
 });
 
+// —— 等待重叠检测（#557）——
+// 漏写 await 的调用在引擎里是两处同时等待同一个输入（画面先重绘、提示后
+// 到）；此前夹具的等待立即返回，后续代码照样顺序拿到预置输入，重叠不可观察。
+// 以下用例钉住检测本体：不 await 的等待没完成就开始下一次等待必须抛错，
+// 正常 await 的序列与「不进 waits」等既定观测契约不受影响。
+
+test('等待重叠：waitAnyKey 未 await 完成前开始 input → 抛错', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.print('行'); // 置位 allowWait，让 waitAnyKey 真等
+  fixture.era.waitAnyKey(); // 故意不 await
+  fixture.set_inputs(1);
+  await assert.rejects(() => fixture.era.input(), /漏写 await/);
+});
+
+test('等待重叠：input 未 await 完成前开始 waitAnyKey → 抛错', async () => {
+  const fixture = create_era_fixture();
+  fixture.set_inputs(42);
+  fixture.era.input(); // 故意不 await（回显置位 allowWait）
+  await assert.rejects(() => fixture.era.waitAnyKey(), /漏写 await/);
+});
+
+test('等待重叠：printAndWait 的内部等待占窗口', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.printAndWait('按任意键继续'); // 故意不 await
+  fixture.set_inputs(1);
+  await assert.rejects(() => fixture.era.input(), /漏写 await/);
+  // 上一行的 rejects 只消费微任务，等待的窗口语义与记录面分离：
+  // printAndWait 从不进 waits / inputs_consumed（上方既有用例钉住）
+});
+
+test('等待重叠：无输出跳过的 waitAnyKey 不占窗口', async () => {
+  const fixture = create_era_fixture();
+  await fixture.era.waitAnyKey(); // 空屏：引擎条件式短路，没等
+  assert.deepEqual(fixture.waits, [
+    { waited: false, rows_at_wait: 0, forced: false },
+  ]);
+  fixture.set_inputs(3);
+  assert.equal(await fixture.era.input(), 3); // 不抛：没等就没窗口
+});
+
+test('等待重叠：clear 的内部强制等键占窗口，await 完的 clear 不误报', async () => {
+  const fixture = create_era_fixture();
+  fixture.is_continue = true;
+  fixture.era.clear(1); // 故意不 await：内部 waitAnyKey(true) 尚未完成
+  fixture.set_inputs(1);
+  await assert.rejects(() => fixture.era.input(), /漏写 await/);
+
+  // 让不 await 的第一个 clear 走完（窗口清除在宏任务边界，微任务里等不到）
+  await new Promise((resolve) => setImmediate(resolve));
+
+  // 同一夹具走正常序列：clear 内部的等键（自己套自己）不是重叠
+  await fixture.era.clear(1);
+  assert.equal(await fixture.era.input(), 1);
+});
+
+test('等待重叠：等待自身抛错后窗口已清，后续等待不连带报重叠', async () => {
+  const fixture = create_era_fixture();
+  fixture.era.print('行');
+  await assert.rejects(() => fixture.era.input(), /预置输入已耗尽/);
+  // 错误路径不能把窗口留在那：后续等待不该看到连锁的重叠报错
+  await fixture.era.waitAnyKey(); // print 已置位 → 真等，正常完成
+  assert.equal(fixture.waits[0].waited, true);
+});
+
+test('等待重叠：外层函数漏 await 内层等待、自身立即返回 → 调用方再等待时抛错', async () => {
+  const fixture = create_era_fixture();
+  // #542 设置页的形态：dispatch_config 漏 await not_ported_line_wait 后自身
+  // 立即 resolve，调用方 await 外层、再开始下一轮等待——清除在宏任务边界，
+  // 中间隔多少次微任务跳转都不关窗口
+  const outer = async () => {
+    fixture.era.printAndWait('内层等待'); // 故意不 await（外层漏写的形态）
+    return '外层返回值';
+  };
+  assert.equal(await outer(), '外层返回值');
+  fixture.set_inputs(1);
+  await assert.rejects(() => fixture.era.input(), /漏写 await/);
+});
+
+test('等待重叠：正常 await 的连续等待不报重叠', async () => {
+  const fixture = create_era_fixture();
+  fixture.set_inputs(7, 9);
+  fixture.era.print('行');
+  await fixture.era.waitAnyKey();
+  assert.equal(await fixture.era.input(), 7);
+  await fixture.era.printAndWait('按任意键继续');
+  fixture.is_continue = true;
+  await fixture.era.clear(1); // 内部强制等键 + 清行
+  assert.equal(await fixture.era.input(), 9);
+  await fixture.era.waitAnyKey(true);
+});
+
 test('文本片段数组被压平为纯文本', () => {
   const fixture = create_era_fixture();
   fixture.era.print([
