@@ -77,6 +77,11 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
+        ref: '21',
+        any: [/^\s*SIF TALENT:ARG:种族 == 4$/m],
+      },
+      {
+        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU_MAN.ERB',
         ref: '22',
         any: [/PRINTFORM 无头骑士的/],
       },

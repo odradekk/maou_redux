@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2652; // #623 起 +61（M12600-M12651：K11 莉莉 16 处 + K9 黑方片 19 处 + K3 温妮 17 处「原作同一行被拆」的合并点各一条「拆回多条」；返工 +9：M12652-M12660——8 族首支以外的分支各一条拆回 + :4810 前缀行尾全角空格丢字）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2702; // #623 起 +61（M12600-M12651：K11 莉莉 16 处 + K9 黑方片 19 处 + K3 温妮 17 处「原作同一行被拆」的合并点各一条「拆回多条」；返工 +9：M12652-M12660——8 族首支以外的分支各一条拆回 + :4810 前缀行尾全角空格丢字）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#624 起净 +50（合并态实测 2641 − #625 态 2591：M12700-M12750 段的合并点与审查补条（交谈二回目 :4733..:4741、奖励请求 :8133..:8141、灌肠肛塞脱着的观赏支 :4484 与疼爱支 :4486）、M12751 对人格斗蜡烛支（:2674+:2679）的语句外前缀常量合并（另两处同型口交支改用既有 M12707/M12718，find 同步到新语句）、M12752 K0 灌肠脱着疼爱支拆回、M12753 K0 助手后背位「肉棒/假阳具」两档写反；其间删 M12731/M12732/M12733/M11948）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
 
 export default [
   {
@@ -15983,12 +15983,12 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3094 K0 灌肠肛塞脱着 RAND:2 首支旁路失效（=== 0 改 === 1）（#231）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: `        if (rand_n(2) === 0) {
-          // :4432
-          era.print(\`「呀…嗯啊、啊、啊啊！\`); // :4433`,
-    replace: `        if (rand_n(2) === 1) {
-          // :4432
-          era.print(\`「呀…嗯啊、啊、啊啊！\`); // :4433`,
+    find: `        await era.printAndWait(
+          (rand_n(2) === 0
+            ? '「呀…嗯啊、啊、啊啊！　'`,
+    replace: `        await era.printAndWait(
+          (rand_n(2) === 1
+            ? '「呀…嗯啊、啊、啊啊！　'`,
     tests: ['kojo-k0-tender'],
     must_mention: '灌肠+肛塞脱着：淫乱+A感觉拼句',
   },
@@ -21648,30 +21648,30 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11600 K0 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: `        era.get(\`talent:\${assi}:122\`) != 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        // :7786`,
-    replace: `        era.get(\`talent:\${assi}:122\`) != 1 &&
-        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
-      ) {
-        // :7786`,
+    find: `      const assi_with_band = !assi_has_cock && era.get('item:4') === 1; // ITEM:PBAND（#552：内建非角色变量 = 4 号假阳具）
+      await era.printAndWait(
+        \`\${assi_name}让\` +`,
+    replace: `      const assi_with_band = !assi_has_cock && era.get('item:PBAND') === 1; // 变异：回退字符串具名寻址（#552）
+      await era.printAndWait(
+        \`\${assi_name}让\` +`,
     tests: ['kojo-k0-tender'],
-    must_mention: '拼接「吞咽着假阳具的」',
+    must_mention: '假阳具词',
   },
   {
     desc: 'M11601 K0 死斗场 SC21 的假阳具判定回退成具名寻址 item:PBAND（#552）',
     file: 'ere/kojo/kojo-k0-tender.js',
-    find: `        era.get(\`talent:\${assi}:122\`) != 1 &&
-        era.get('item:4') === 1 // 原作 ITEM:PBAND：PBAND 是内建非角色变量，SYSTEM ver1.0.3.ERB:42 赋 4（4 号 = 假阳具，Item.csv:5），全库不再改写（#552）
-      ) {
-        // :7819`,
-    replace: `        era.get(\`talent:\${assi}:122\`) != 1 &&
-        era.get('item:PBAND') === 1 // 变异：回退字符串具名寻址（#552）
-      ) {
-        // :7819`,
+    find: `      const assi_with_band = !assi_has_cock && era.get('item:4') === 1; // ITEM:PBAND（#552：内建非角色变量 = 4 号假阳具）
+      await era.printAndWait(
+        \`\${assi_name}一边听着悲鸣一边\` +
+          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +
+          \`毫不留情地持续蹂躙着\${target_name}的阴道……\`,`,
+    replace: `      const assi_with_band = !assi_has_cock && era.get('item:PBAND') === 1; // 变异：回退字符串具名寻址（#552）
+      await era.printAndWait(
+        \`\${assi_name}一边听着悲鸣一边\` +
+          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +
+          \`毫不留情地持续蹂躙着\${target_name}的阴道……\`,`,
     tests: ['kojo-k0-tender'],
-    must_mention: '拼接「用假阳具」',
+    must_mention: '假阳具词',
   },
   {
     desc: 'M11602 K4 死斗场 SC31 的假阳具判定回退成具名寻址 item:PBAND（#552）',
@@ -22164,22 +22164,6 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`); // :96+:98',
     tests: ['kojo-text-fidelity'],
     must_mention: 'JS 用了 printAndWait',
-  },
-  {
-    desc: 'M11948 女性版肉便器收尾行拆回两条（#584：:1560+:1562 的同一行被拆）',
-    file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find:
-      '    // :1560+:1562 原作 PRINTFORM + PRINTFORMW，同一行（#584）\n' +
-      '    await era.printAndWait(\n' +
-      "      '之类的话。络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',\n" +
-      '    ); // :1560+:1562',
-    replace:
-      "    await era.print('之类的话。'); // :1560（变异：拆回）\n" +
-      '    await era.printAndWait(\n' +
-      "      '络绎不绝的魔族男人，将嘴巴、私处、肛门等等地方都侵犯了，精液流得到处都是。',\n" +
-      '    ); // :1562（变异：拆回）',
-    tests: ['kojo-dungeon-ravish'],
-    must_mention: '肉便器收尾行必须是整行',
   },
   {
     desc: 'M11949 男版肉便器收尾行拆回两条（#584 的 :802+:804；#600 起靶在整行语句的末段）',
@@ -23734,6 +23718,768 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-k3-noble'],
     must_mention: '含前缀行尾全角空格',
   },
+  // —— #624：口上剩余拆行第 D 组（迷宫四文件与 k0，59 组「原作同一行被拆」）——
+  // 每处合并后的整行断言见对应测试文件；条目按工单给的 M12700 起编号。
+  {
+    desc: 'M12700 女版卖春·LOG_BITCH_HAND 整行（:386..:403）拆回多条（#624：名字与收行又各占一行）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find:
+      '  await era.printAndWait(\n' +
+      '    `${name_of(arg)}` +\n' +
+      '      (abl13 === 0',
+    replace:
+      '  era.print(`${name_of(arg)}`); // 变异：拆回\n' +
+      '  await era.printAndWait(\n' +
+      "    '' +\n" +
+      '      (abl13 === 0',
+    tests: ['kojo-dungeon-bitch-log'],
+    must_mention: 'LOG_BITCH_HAND 整行',
+  },
+  {
+    desc: 'M12701 女版卖春·LOG_BITCH_ORAL 整行（:559..:574）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find:
+      '  await era.printAndWait(\n' +
+      '    `${name_of(arg)}` +\n' +
+      '      (abl32 === 0',
+    replace:
+      '  era.print(`${name_of(arg)}`); // 变异：拆回\n' +
+      '  await era.printAndWait(\n' +
+      "    '' +\n" +
+      '      (abl32 === 0',
+    tests: ['kojo-dungeon-bitch-log'],
+    must_mention: 'LOG_BITCH_ORAL 整行',
+  },
+  {
+    desc: 'M12702 女版卖春·LOG_BITCH_LES 整行（:729..:744）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find:
+      '  await era.printAndWait(\n' +
+      '    `${name_of(arg)}` +\n' +
+      '      (abl33 === 0',
+    replace:
+      '  era.print(`${name_of(arg)}`); // 变异：拆回\n' +
+      '  await era.printAndWait(\n' +
+      "    '' +\n" +
+      '      (abl33 === 0',
+    tests: ['kojo-dungeon-bitch-log'],
+    must_mention: 'LOG_BITCH_LES 整行',
+  },
+  {
+    desc: 'M12703 女版卖春·LOG_BITCH_ANAL 整行（:943..:960）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find:
+      '  await era.printAndWait(\n' +
+      '    `${name_of(arg)}` +\n' +
+      '      (abl3 === 0',
+    replace:
+      '  era.print(`${name_of(arg)}`); // 变异：拆回\n' +
+      '  await era.printAndWait(\n' +
+      "    '' +\n" +
+      '      (abl3 === 0',
+    tests: ['kojo-dungeon-bitch-log'],
+    must_mention: 'LOG_BITCH_ANAL 整行',
+  },
+  {
+    desc: 'M12704 女版卖春·LOG_BITCH_SEX 整行（:1182..:1207）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-bitch-log.js',
+    find:
+      '  await era.printAndWait(\n' +
+      '    `${name_of(arg)}` +\n' +
+      '      (abl2 === 0',
+    replace:
+      '  era.print(`${name_of(arg)}`); // 变异：拆回\n' +
+      '  await era.printAndWait(\n' +
+      "    '' +\n" +
+      '      (abl2 === 0',
+    tests: ['kojo-dungeon-bitch-log'],
+    must_mention: 'LOG_BITCH_SEX 整行',
+  },
+  {
+    desc: 'M12705 男版迷宫凌辱·兽人口交整行（:22..:31）拆回多条（#624：无头骑士前缀与名字又各占一行）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '    await era.printAndWait(\n' +
+      "      (headless ? '无头骑士的' : '') +\n" +
+      '        `${arg_name}` +\n',
+    replace:
+      "    await era.print(headless ? '无头骑士的' : ''); // 变异：拆回\n" +
+      '    await era.printAndWait(\n' +
+      "      '' +\n" +
+      '        `${arg_name}` +\n',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '无头骑士前缀',
+  },
+  {
+    desc: 'M12706 男版迷宫凌辱·兽人口交整行（:81..:105）拆回多条（#624：名字与收行又各占一行）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '          `${arg_name}把` +\n' +
+      '          penis +\n' +
+      "          '含了下去，『呃……这家伙，简直就是经验丰富的娼妓嘛～』',\n" +
+      '      ); // :81+:84+:87+:91+:101+:105',
+    replace:
+      '          `${arg_name}把`,\n' +
+      '      ); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        penis + '含了下去，『呃……这家伙，简直就是经验丰富的娼妓嘛～』',\n" +
+      '      ); // 变异：拆回',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: 'TALENT:52 支',
+  },
+  {
+    desc: 'M12707 男版迷宫凌辱·兽人口交收行（:112..:127）拆回两条（#624：收行文本又占一行）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      "                    ? '拼命地用舌头奉仕着，'\n" +
+      "                    : '') +\n" +
+      "          '奉仕持续了下去……',\n" +
+      '      ); // :112+:115+:118+:121+:124+:127',
+    replace:
+      "                    ? '拼命地用舌头奉仕着，'\n" +
+      "                    : ''),\n" +
+      '      ); // 变异：拆回\n' +
+      "      await era.print('奉仕持续了下去……'); // 变异：拆回",
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: ':81..:101 与 :112..:127 合成一条',
+  },
+  {
+    desc: 'M12708 男版迷宫凌辱·全穴奉仕整行（:152..:175）拆回多条（#624：随机词条又占一行）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '    await era.print(\n' +
+      "      '兽人的' +\n" +
+      '        penis +\n' +
+      '        `插进了${arg_name}的喉咙深处，射精的同时喷溅出来的精液在${arg_name}的` +\n',
+    replace:
+      "    await era.print('兽人的'); // 变异：拆回\n" +
+      '    await era.print(\n' +
+      '      penis +\n' +
+      '        `插进了${arg_name}的喉咙深处，射精的同时喷溅出来的精液在${arg_name}的` +\n',
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '整行「兽人的阴茎插进了',
+  },
+  {
+    desc: 'M12709 男版迷宫凌辱·润滑液整行（:198..:216）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '    await era.print(\n' +
+      '      `兽人们把润滑液涂在了${arg_name}的` +\n',
+    replace:
+      '    await era.print(`兽人们把润滑液涂在了${arg_name}的`); // 变异：拆回\n' +
+      '    await era.print(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '整行「兽人们把润滑液涂在了',
+  },
+  {
+    desc: 'M12710 男版迷宫凌辱·体型分档整行（:217..:242）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find: '    await era.print(\n' + '      `在${arg_name}的` +\n',
+    replace:
+      '    await era.print(`在${arg_name}的`); // 变异：拆回\n' +
+      '    await era.print(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '整行「在冒险者的',
+  },
+  {
+    desc: 'M12711 男版迷宫凌辱·屈辱プレイ整行（:268..:287）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `${arg_name}全裸地四肢着地趴在地下、` +\n',
+    replace:
+      '    await era.print(`${arg_name}全裸地四肢着地趴在地下、`); // 变异：拆回\n' +
+      '    await era.printAndWait(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish-man'],
+    must_mention: '整行「冒险者全裸地四肢着地趴在地下',
+  },
+  {
+    desc: 'M12712 女版迷宫凌辱·主框架空行（:16+:19）拆回两条（#624：立绘分支的空 PRINT 又占一行）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: "  await era.print(''); // :16+:19 PRINTL",
+    replace:
+      "  await era.print(''); // 变异：拆回\n" +
+      "  await era.print(''); // 变异：拆回",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '合成一条空行',
+  },
+  {
+    desc: 'M12713 女版兽人凌辱·单只整行（:302..:328）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '    await era.print(\n' + "      '四肢着地趴在地上，' +\n",
+    replace:
+      "    await era.print('四肢着地趴在地上，'); // 变异：拆回\n" +
+      '    await era.print(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「四肢着地趴在地上',
+  },
+  {
+    desc: 'M12714 女版兽人凌辱·「脸上」与恥じらい分档（:330+:335）拆回两条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '      await era.print(`脸上流露着沉浸在了羞耻与情欲之中的神色……`); // :330+:335',
+    replace:
+      "      await era.print('脸上'); // 变异：拆回\n" +
+      '      await era.print(`流露着沉浸在了羞耻与情欲之中的神色……`); // 变异：拆回',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: ':330+:335 是一整行',
+  },
+  {
+    desc: 'M12715 女版兽人凌辱·口交整行（:410..:419）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '    await era.printAndWait(\n' +
+      "      (headless ? '无头骑士的' : '') +\n",
+    replace:
+      "    await era.print(headless ? '无头骑士的' : ''); // 变异：拆回\n" +
+      '    await era.printAndWait(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「无头骑士的冒险者身体被固定住了',
+  },
+  {
+    desc: 'M12716 女版兽人凌辱·素直耻情行（:470+:471）拆回两条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '          `迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,\n' +
+      '        ); // :470+:471',
+    replace:
+      '          `迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，`,\n' +
+      '        ); // 变异：拆回\n' +
+      '        await era.print(`耻情点数+${mon_num * 10}`); // 变异：拆回',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: ':470（PRINTFORM）+ :471（PRINTFORML）整行',
+  },
+  {
+    desc: 'M12717 女版兽人凌辱·口交整行（:475..:502）拆回多条（#624：名字与收行又各占一行）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '          `${arg_name}把` +\n' +
+      '          cock +\n' +
+      "          '含了下去，『呃……这家伙，简直就是经验丰富的妓女嘛～』',\n" +
+      '      ); // :475+:478+:481+:484+:488+:498+:502',
+    replace:
+      '          `${arg_name}把`,\n' +
+      '      ); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        cock + '含了下去，『呃……这家伙，简直就是经验丰富的妓女嘛～』',\n" +
+      '      ); // 变异：拆回',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: 'TALENT:52 支',
+  },
+  {
+    desc: 'M12718 女版兽人凌辱·口交收行（:509..:524）拆回两条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      "                    ? '拼命地用舌头奉仕着，'\n" +
+      "                    : '') +\n" +
+      "          '奉仕持续了下去……',\n" +
+      '      ); // :509+:512+:515+:518+:521+:524',
+    replace:
+      "                    ? '拼命地用舌头奉仕着，'\n" +
+      "                    : ''),\n" +
+      '      ); // 变异：拆回\n' +
+      "      await era.print('奉仕持续了下去……'); // 变异：拆回",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: ':475..:498 与 :509..:524 合成一条',
+  },
+  {
+    desc: 'M12719 女版兽人凌辱·全穴奉仕整行（:549..:572）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '    await era.print(\n' + "      '兽人的' +\n" + '        cock +\n',
+    replace:
+      "    await era.print('兽人的'); // 变异：拆回\n" +
+      '    await era.print(\n' +
+      '      cock +\n',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「兽人的阴茎插进了',
+  },
+  {
+    desc: 'M12720 女版兽人凌辱·润滑液整行（:595..:613）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '    await era.print(\n' +
+      '      `兽人们把润滑液涂在了${arg_name}的` +\n',
+    replace:
+      '    await era.print(`兽人们把润滑液涂在了${arg_name}的`); // 变异：拆回\n' +
+      '    await era.print(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「兽人们把润滑液涂在了',
+  },
+  {
+    desc: 'M12721 女版兽人凌辱·体型分档整行（:614..:639）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: '    await era.print(\n' + '      `在${arg_name}的` +\n',
+    replace:
+      '    await era.print(`在${arg_name}的`); // 变异：拆回\n' +
+      '    await era.print(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「在冒险者的',
+  },
+  {
+    desc: 'M12722 女版兽人凌辱·屈辱プレイ整行（:668..:687）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `${arg_name}全裸地四肢着地趴在地下、` +\n',
+    replace:
+      '    await era.print(`${arg_name}全裸地四肢着地趴在地下、`); // 变异：拆回\n' +
+      '    await era.printAndWait(\n' +
+      "      '' +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「冒险者全裸地四肢着地趴在地下',
+  },
+  {
+    desc: 'M12723 女版男人凌辱·肉便器整行（:1514..:1562）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `${arg_name}的身上，被写着` +\n' +
+      "        (virgin ? '【处女开通纪念】' : '【最喜欢阴茎】') +\n",
+    replace:
+      '    await era.print(`${arg_name}的身上，被写着`); // 变异：拆回\n' +
+      '    await era.printAndWait(\n' +
+      "      (virgin ? '【处女开通纪念】' : '【最喜欢阴茎】') +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「冒险者的身上，被写着',
+  },
+  {
+    desc: 'M12724 女魔族凌辱·一人支整行（:1692..:1706）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `紫色的长舌头，在${arg_name}的` +\n' +
+      '          (p318 === 1\n',
+    replace:
+      '      await era.print(`紫色的长舌头，在${arg_name}的`); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        '' +\n" +
+      '          (p318 === 1\n',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「紫色的长舌头',
+  },
+  {
+    desc: 'M12725 女魔族凌辱·多人口交支整行（:1733..:1747）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `紫色的长舌头，在${arg_name}的` +\n' +
+      '          (p318b === 1\n',
+    replace:
+      '      await era.print(`紫色的长舌头，在${arg_name}的`); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        '' +\n" +
+      '          (p318b === 1\n',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「紫色的长舌头',
+  },
+  {
+    desc: 'M12726 女魔族凌辱·喂奶支整行（:1805..:1819）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `紫色的手，温柔地在${arg_name}的` +\n' +
+      '          (p318d === 1\n',
+    replace:
+      '      await era.print(`紫色的手，温柔地在${arg_name}的`); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        '' +\n" +
+      '          (p318d === 1\n',
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '整行「紫色的手',
+  },
+  {
+    desc: 'M12727 女魔族凌辱·处女封印整行（:1889..:1895）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '        await era.printAndWait(\n' +
+      "          '『这边的穴' +\n" +
+      "            (rand_n(2) === 0 ? '才有的' : '也有的') +\n",
+    replace:
+      "        await era.print('『这边的穴'); // 变异：拆回\n" +
+      '        await era.printAndWait(\n' +
+      "          '' +\n" +
+      "            (rand_n(2) === 0 ? '才有的' : '也有的') +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '→ 整行「『这边的穴',
+  },
+  {
+    desc: 'M12728 对人格斗·巨型假阳具整行（:2517..:2523）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${loser_name}的` +\n' +
+      "          (loser_is_man ? '后穴' : '前后两穴都') +\n",
+    replace:
+      '      await era.print(`${loser_name}的`); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        (loser_is_man ? '后穴' : '前后两穴都') +\n",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: ':2517..:2523 是一整行',
+  },
+  {
+    desc: 'M12729 对人格斗·头发压脸收句（:2646..:2650）拆回两条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: "        await era.printAndWait((winner_has_cock ? '阴茎' : '私处') + '。'); // :2646+:2648+:2650",
+    replace:
+      "        await era.print(winner_has_cock ? '阴茎' : '私处'); // 变异：拆回\n" +
+      "        await era.printAndWait('。'); // 变异：拆回",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: ':2646/:2648 与 :2650 合成一行',
+  },
+  {
+    desc: 'M12730 对人格斗·捆绑鞭打行（:2674+:2676）拆回两条（#624）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            `向伏在地上的${loser_name}的背上用鞭子不停地抽打着、`,\n' +
+      '          ); // :2674+:2676',
+    replace:
+      '          await era.print(`向伏在地上的${loser_name}的背上`); // 变异：拆回\n' +
+      "          await era.printAndWait('用鞭子不停地抽打着、'); // 变异：拆回",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: 'RAND:2 = 0 → :2674+:2676 是一整行',
+  },
+  {
+    desc: 'M12734 内职·副业行（:504+:511）拆回多条（#624：随机副业名又占一行）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `${name_of(arg)}从事了` + job + `副业${local}点收入。`,\n' +
+      '    ); // :504+:511',
+    replace:
+      '    await era.print(`${name_of(arg)}从事了`); // 变异：拆回\n' +
+      '    await era.print(job); // 变异：拆回\n' +
+      '    await era.printAndWait(`副业${local}点收入。`); // 变异：拆回',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: ':504 + PRINTDATA 词条 + :511 合成一条',
+  },
+  {
+    desc: 'M12735 自慰·妄想行（:571..:637）拆回多条（#624）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find:
+      '  await era.printAndWait(\n' +
+      '    (branch === 1\n' +
+      "      ? '想象着跟女人的交合'\n" +
+      '      : branch === 2\n' +
+      "        ? '陷入了跟野兽交尾的幻想'\n" +
+      '        : dream) +\n' +
+      "      (has_cock ? '握住肉棒捋了起来' : '') +\n" +
+      '      `自慰了${play}次。`,\n' +
+      '  ); // :571+:575+:634+:637',
+    replace:
+      '  await era.print(\n' +
+      '    branch === 1\n' +
+      "      ? '想象着跟女人的交合'\n" +
+      '      : branch === 2\n' +
+      "        ? '陷入了跟野兽交尾的幻想'\n" +
+      '        : dream,\n' +
+      '  ); // 变异：拆回\n' +
+      '  await era.printAndWait(\n' +
+      "    (has_cock ? '握住肉棒捋了起来' : '') + `自慰了${play}次。`,\n" +
+      '  ); // 变异：拆回',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: ':571..:637 是一整行',
+  },
+  {
+    desc: 'M12736 K0 自慰二次·拍摄（:887..:893）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格\n' +
+      '          `「看吧～${heart(1)}　噗咻噗咻勃起的` +\n' +
+      "            (has_penis ? '鸡鸡～' : '假鸡鸡～') +\n" +
+      '            `${heart(1)}」`,\n' +
+      '        ); // :887+:889+:891+:893',
+    replace:
+      '        era.print(`「看吧～${heart(1)}　噗咻噗咻勃起的`); // 变异：拆回\n' +
+      "        era.print(has_penis ? '鸡鸡～' : '假鸡鸡～'); // 变异：拆回\n" +
+      '        await era.printAndWait(`${heart(1)}」`); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: '「看吧～♡',
+  },
+  {
+    desc: 'M12737 K0 自慰二次·爱慕拍摄（:922..:928）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          // eslint-disable-next-line no-irregular-whitespace -- 原文全角空格\n' +
+      "          '「看见了吗？～♪　噗咻噗咻勃起的' +\n" +
+      "            (has_penis ? '鸡鸡……' : '假鸡鸡') +\n" +
+      "            '♪」',\n" +
+      '        ); // :922+:924+:926+:928',
+    replace:
+      "        era.print('「看见了吗？～♪　噗咻噗咻勃起的'); // 变异：拆回\n" +
+      "        era.print(has_penis ? '鸡鸡……' : '假鸡鸡'); // 变异：拆回\n" +
+      "        await era.printAndWait('♪」'); // 变异：拆回",
+    tests: ['kojo-k0-tender'],
+    must_mention: '「看见了吗？～♪',
+  },
+  {
+    desc: 'M12738 K0 灌肠·淫乱（:4433..:4445）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '        await era.printAndWait(\n' +
+      '          (rand_n(2) === 0\n' +
+      "            ? '「呀…嗯啊、啊、啊啊！　'\n" +
+      "            : '「啊啊～！、不行、不、不要看、') +\n" +
+      "            (rand_n(2) === 0 ? '出来了、' : '出来、要出来了、') +\n" +
+      "            (rand_n(3) === 0 ? '全部' : '') +\n" +
+      '            `要排出来了啊${heart(3)}」`,\n' +
+      '        ); // :4433+:4435+:4438+:4440+:4443+:4445',
+    replace:
+      "        era.print(rand_n(2) === 0 ? '「呀…嗯啊、啊、啊啊！　' : '「啊啊～！、不行、不、不要看、'); // 变异：拆回\n" +
+      "        era.print(rand_n(2) === 0 ? '出来了、' : '出来、要出来了、'); // 变异：拆回\n" +
+      "        era.print(rand_n(3) === 0 ? '全部' : ''); // 变异：拆回\n" +
+      '        await era.printAndWait(`要排出来了啊${heart(3)}」`); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: '「呀…嗯啊',
+  },
+  {
+    desc: 'M12739 K0 灌肠·壶虫（:4448..:4452）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '          await era.printAndWait(\n' +
+      '            (rand_n(2) === 0\n' +
+      '              ? `以Ｍ字的状态大开双腿的${target_name}那秘所之中`\n' +
+      '              : `四肢着地的${target_name}那股间之中`) +\n' +
+      "              '极粗的蠕虫正在蠢动着、',\n" +
+      '          ); // :4448+:4450+:4452',
+    replace:
+      '          era.print(\n' +
+      '            rand_n(2) === 0\n' +
+      '              ? `以Ｍ字的状态大开双腿的${target_name}那秘所之中`\n' +
+      '              : `四肢着地的${target_name}那股间之中`,\n' +
+      '          ); // 变异：拆回\n' +
+      "          await era.printAndWait('极粗的蠕虫正在蠢动着、'); // 变异：拆回",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'TEQUIP:11 壶虫支要说出蠕虫',
+  },
+  {
+    desc: 'M12740 K0 灌肠·内壁（:4460..:4466）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '          await era.printAndWait(\n' +
+      "            '那扩张开来无法闭合的' +\n" +
+      "              (rand_n(2) === 0 ? '肛门' : '肛穴') +\n" +
+      "              '之中，可以看清那内壁正在痉挛着……',\n" +
+      '          ); // :4460+:4462+:4464+:4466',
+    replace:
+      "          era.print('那扩张开来无法闭合的'); // 变异：拆回\n" +
+      "          era.print(rand_n(2) === 0 ? '肛门' : '肛穴'); // 变异：拆回\n" +
+      "          await era.printAndWait('之中，可以看清那内壁正在痉挛着……'); // 变异：拆回",
+    tests: ['kojo-k0-tender'],
+    must_mention: 'EXP:53 >= 5 支的一整行',
+  },
+  {
+    desc: 'M12741 K0 交谈·按捺（:4674..:4682）拆回两条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}一边竭力按捺住` +\n' +
+      "              (holding ? '快乐的' : hurting ? '痛苦的' : '自己的') +\n" +
+      '              `声音，一边回应着${player_name}。`,\n' +
+      '          ); // :4674+:4676+:4678+:4680+:4682',
+    replace:
+      '          era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n' +
+      '          await era.print(\n' +
+      "            (holding ? '快乐的' : hurting ? '痛苦的' : '自己的') +\n" +
+      '              `声音，一边回应着${player_name}。`,\n' +
+      '          ); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: ':4674..:4682 是一整行',
+  },
+  {
+    desc: 'M12742 K0 交谈二回目·按捺（:4733..:4741）拆回两条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '          await era.print(\n' +
+      '            `${target_name}一边竭力按捺住` +\n' +
+      "              (holding_b ? '快乐的' : hurting_b ? '痛苦的' : '自己的') +\n" +
+      '              `声音，一边回应着${player_name}。`,\n' +
+      '          ); // :4733+:4735+:4737+:4739+:4741',
+    replace:
+      '          era.print(`${target_name}一边竭力按捺住`); // 变异：拆回\n' +
+      '          await era.print(\n' +
+      "            (holding_b ? '快乐的' : hurting_b ? '痛苦的' : '自己的') +\n" +
+      '              `声音，一边回应着${player_name}。`,\n' +
+      '          ); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: ':4733..:4741 是一整行',
+  },
+  {
+    desc: 'M12743 K0 助手口交（:7782..:7787）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}让` +\n' +
+      '          (assi_has_cock\n' +
+      "            ? '吞咽着肉棒的'\n" +
+      '            : assi_with_band\n' +
+      "              ? '吞咽着假阳具的'\n" +
+      "              : '') +\n" +
+      '          `${target_name}露出了愉悦的表情……`,\n' +
+      '      ); // :7782+:7784+:7786+:7787',
+    replace:
+      '      era.print(`${assi_name}让`); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      '        (assi_has_cock\n' +
+      "          ? '吞咽着肉棒的'\n" +
+      '          : assi_with_band\n' +
+      "            ? '吞咽着假阳具的'\n" +
+      "            : '') +\n" +
+      '          `${target_name}露出了愉悦的表情……`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: '→ 整行「玛奥让',
+  },
+  {
+    desc: 'M12744 K0 助手后背位（:7815..:7820）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着悲鸣一边` +\n' +
+      "          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n" +
+      '          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n' +
+      '      ); // :7815+:7817+:7819+:7820',
+    replace:
+      '      era.print(`${assi_name}一边听着悲鸣一边`); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n" +
+      '          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: '的阴道……',
+  },
+  {
+    desc: 'M12745 K0 助手后背位肛门（:7839..:7844）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '      await era.printAndWait(\n' +
+      '        `${assi_name}一边听着悲鸣一边` +\n' +
+      "          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n" +
+      '          `毫不留情地持续蹂躙着${target_name}的肛门……`,\n' +
+      '      ); // :7839+:7841+:7843+:7844',
+    replace:
+      '      era.print(`${assi_name}一边听着悲鸣一边`); // 变异：拆回\n' +
+      '      await era.printAndWait(\n' +
+      "        (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n" +
+      '          `毫不留情地持续蹂躙着${target_name}的肛门……`,\n' +
+      '      ); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: '的肛门……',
+  },
+  {
+    desc: 'M12746 女版兽人凌辱·「脸上」前缀的兄弟支（:339）拆回两条（#624：前缀又单独成行）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: "        await era.print(face_front + '的神情为屈服的喜悦与口水所浸染……'); // :339",
+    replace:
+      '        await era.print(face_front); // 变异：拆回\n' +
+      "        await era.print('的神情为屈服的喜悦与口水所浸染……'); // 变异：拆回",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: '→ 整行「脸上的神情为屈服的喜悦与口水所浸染……',
+  },
+  {
+    desc: 'M12747 女版卖春·客行前缀（:213+:217）拆回两条（#624：名字又单独成行）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find:
+      '        await era.print(\n' +
+      "          (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,\n" +
+      '        ); // :213+:217',
+    replace:
+      "        await era.print(girl[0] && man[0] ? '于是' : name_of(arg)); // 变异：拆回\n" +
+      '        await era.print(`以${locals}为对手`); // 变异：拆回',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: '前缀并进 :217 那条',
+  },
+  {
+    desc: 'M12748 女版卖春·街中客行前缀（:233+:237）拆回两条（#624）',
+    file: 'ere/kojo/kojo-dungeon-bitch.js',
+    find:
+      '          await era.print(\n' +
+      "            (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,\n" +
+      '          ); // :233+:237',
+    replace:
+      "          await era.print(girl[0] && man[0] ? '于是' : name_of(arg)); // 变异：拆回\n" +
+      '          await era.print(`以${locals}为对手`); // 变异：拆回',
+    tests: ['kojo-dungeon-bitch'],
+    must_mention: '前缀并进 :237 那条',
+  },
+  {
+    desc: 'M12749 K0 奖励请求·动物名（:8133..:8141）拆回多条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      '    await era.printAndWait(\n' +
+      '      `「要是${sc()}打倒勇者的话…` +\n' +
+      '        (request_kind === 1\n' +
+      "          ? '可以奖励我与犬'\n" +
+      '          : request_kind === 2\n' +
+      "            ? '可以奖励我与猪'\n" +
+      "            : '可以奖励我与马') +\n" +
+      "        '做爱吗…？」',\n" +
+      '    ); // :8133+:8135+:8137+:8139+:8141',
+    replace:
+      '    era.print(`「要是${sc()}打倒勇者的话…`); // 变异：拆回\n' +
+      '    era.printAndWait(\n' +
+      '        (request_kind === 1\n' +
+      "          ? '可以奖励我与犬'\n" +
+      '          : request_kind === 2\n' +
+      "            ? '可以奖励我与猪'\n" +
+      "            : '可以奖励我与马') +\n" +
+      "        '做爱吗…？」'); // 变异：拆回",
+    tests: ['kojo-k0-tender'],
+    must_mention: ':8133..:8141 是一整行',
+  },
+  {
+    desc: 'M12750 K0 灌肠肛塞脱着·观赏支（:4484）拆回两条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '          await era.printAndWait(front_4475 + dump_mid + `请您好好地观赏……」`); // :4484',
+    replace:
+      '          era.print(front_4475 + dump_mid); // 变异：拆回\n' +
+      '          await era.printAndWait(`请您好好地观赏……」`); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: ':4484 合成一条',
+  },
+  {
+    desc: 'M12752 K0 灌肠肛塞脱着·疼爱支（:4486）拆回两条（#624）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find: '          await era.printAndWait(front_4475 + dump_mid + `请您好好地疼爱……」`); // :4486',
+    replace:
+      '          era.print(front_4475 + dump_mid); // 变异：拆回\n' +
+      '          await era.printAndWait(`请您好好地疼爱……」`); // 变异：拆回',
+    tests: ['kojo-k0-tender'],
+    must_mention: ':4486 合成一条',
+  },
+  {
+    desc: 'M12753 K0 助手后背位·肉棒/假阳具两档写反（:7815）换档（#624 验收返工：有阴茎时不得拼假阳具词）',
+    file: 'ere/kojo/kojo-k0-tender.js',
+    find:
+      "          (assi_has_cock ? '用肉棒' : assi_with_band ? '用假阳具' : '') +\n" +
+      '          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n' +
+      '      ); // :7815+:7817+:7819+:7820',
+    replace:
+      "          (assi_has_cock ? '用假阳具' : assi_with_band ? '用肉棒' : '') +\n" +
+      '          `毫不留情地持续蹂躙着${target_name}的阴道……`,\n' +
+      '      ); // :7815+:7817+:7819+:7820',
+    tests: ['kojo-k0-tender'],
+    must_mention: '21：肉棒词',
+  },
+  {
+    desc: 'M12751 对人格斗·捆绑蜡烛支（:2674+:2679）拆回两条（#624：前缀常量改用单占一行）',
+    file: 'ere/kojo/kojo-dungeon-ravish.js',
+    find: "          await era.printAndWait(back_2674 + '将点燃的蜡烛倾倒了上去'); // :2679",
+    replace:
+      '          await era.print(back_2674); // 变异：拆回\n' +
+      "          await era.printAndWait('将点燃的蜡烛倾倒了上去'); // 变异：拆回",
+    tests: ['kojo-dungeon-ravish'],
+    must_mention: ':2674 与 :2679 合成一条',
+  },
+
   // —— #622：口上剩余拆行第 B 组（kojo-k8-spade.js 26 处「原作同一行被拆」的
   // 合并点，各配一条「拆回多条」变异；每组一条，M12500-M12525。整行文本断言见
   // test/kojo-k8-spade.test.js 同名用例） ——

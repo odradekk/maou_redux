@@ -595,9 +595,8 @@ test('自慰二次淫乱+自慰中毒 Lv3：拍摄拼接 / 三支随机', async 
   });
   await speak_k0(film);
   assert.deepEqual(film.text_lines(), [
-    '「看吧～♡　噗咻噗咻勃起的',
-    '鸡鸡～',
-    '♡」',
+    // #624：:887..:893 原作是一整行（无后缀 PRINTFORM 不换行）
+    '「看吧～♡　噗咻噗咻勃起的鸡鸡～♡」',
     '「我今天也是情绪高涨！请大家一起看我做舒服的事吧～♡」',
   ]);
   assert.equal(film.store.get('cflag:31:304'), 8);
@@ -612,9 +611,7 @@ test('自慰二次淫乱+自慰中毒 Lv3：拍摄拼接 / 三支随机', async 
   });
   await speak_k0(dildo);
   assert.deepEqual(dildo.text_lines(), [
-    '「看吧～♡　噗咻噗咻勃起的',
-    '假鸡鸡～',
-    '♡」',
+    '「看吧～♡　噗咻噗咻勃起的假鸡鸡～♡」',
     '「我今天也是情绪高涨！请大家一起看我做舒服的事吧～♡」',
   ]);
 
@@ -714,9 +711,8 @@ test('自慰二次爱慕+自慰中毒 Lv3：拍摄拼接与随机支', async () 
   });
   await speak_k0(film);
   assert.deepEqual(film.text_lines(), [
-    '「看见了吗？～♪　噗咻噗咻勃起的',
-    '假鸡鸡',
-    '♪」',
+    // #624：:922..:928 原作是一整行（与 :887..:893 同型）
+    '「看见了吗？～♪　噗咻噗咻勃起的假鸡鸡♪」',
     '「我呐，只有有爱的话，在大家面前也不觉得尴尬了……♪」',
   ]);
   assert.equal(film.store.get('cflag:31:304'), 5);
@@ -3911,10 +3907,8 @@ test('灌肠+肛塞脱着：淫乱+A感觉拼句 / 壶虫 / 空 PRINTFORMW 仍�
   });
   await speak_k0(splice, seq_rand(0, 0, 0, 0, 0, 0));
   assert.deepEqual(splice.text_lines(), [
-    '「呀…嗯啊、啊、啊啊！',
-    '出来了、',
-    '全部',
-    '要排出来了啊♡♡♡」',
+    // #624：:4433..:4445 原作是一整行（:4433 的原文行尾带全角空格）
+    '「呀…嗯啊、啊、啊啊！　出来了、全部要排出来了啊♡♡♡」',
     '琼露出欢愉又夹杂着苦痛的表情、因为排泄的快感而扭动着身体。',
   ]);
 
@@ -3929,8 +3923,29 @@ test('灌肠+肛塞脱着：淫乱+A感觉拼句 / 壶虫 / 空 PRINTFORMW 仍�
   });
   await speak_k0(worm, seq_rand(0, 0, 1, 0, 0, 0));
   assert.ok(
-    worm.text_lines().some((line) => line.includes('极粗的蠕虫正在蠢动着、')),
-    'TEQUIP:11 壶虫支要说出蠕虫',
+    // #624：:4448+:4450+:4452 原作是一整行（末句 PRINTW 收行）
+    worm
+      .text_lines()
+      .includes('以Ｍ字的状态大开双腿的琼那秘所之中极粗的蠕虫正在蠢动着、'),
+    'TEQUIP:11 壶虫支要说出蠕虫，且与秘所描写同属一行',
+  );
+
+  const stretched = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 46;
+    f.store.set('tequip:31:46', 0);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:3', 3);
+    f.store.set('abl:31:21', 3);
+    f.store.set('exp:31:53', 6); // :4459 EXP:53 >= 5 → 内壁支
+  });
+  await speak_k0(stretched, seq_rand(0, 0, 0, 0, 1));
+  assert.ok(
+    // #624：:4460+:4462+:4464+:4466 原作是一整行
+    stretched
+      .text_lines()
+      .includes('那扩张开来无法闭合的肛穴之中，可以看清那内壁正在痉挛着……'),
+    'EXP:53 >= 5 支的一整行',
   );
 
   const empty = await setup_k0((f) => {
@@ -4921,8 +4936,10 @@ test('GOHOUBI_REQUEST：CFLAG:504==1 与犬做爱请求', async () => {
   era_flag.target = 31;
   await gohoubi_request_koujo_family.call(0, { args: [31] });
   assert.ok(
-    fixture.text_lines().some((l) => /犬/.test(l)),
-    '应含与犬做爱请求',
+    fixture
+      .text_lines()
+      .includes('「要是我打倒勇者的话…可以奖励我与犬做爱吗…？」'),
+    `:8133..:8141 是一整行（动物名与收行段合成一条）；实际：${JSON.stringify(fixture.text_lines())}`,
   );
 });
 
@@ -5172,11 +5189,26 @@ test('COLOSSEUM：selectcom 31 + 助手调教 → 助手名插值', async () => 
 // 判不出——地址写回 item:PBAND 时下列用例必须红。
 test('COLOSSEUM：SELECTCOM 31/21/27 助手无 121/122 且持假阳具（item:4）→ 拼接假阳具词', async () => {
   const cases = [
-    { selectcom: 31, word: '吞咽着假阳具的', tail: '露出了愉悦的表情' },
-    { selectcom: 21, word: '用假阳具', tail: '的阴道' },
-    { selectcom: 27, word: '用假阳具', tail: '的肛门' },
+    {
+      selectcom: 31,
+      word: '吞咽着假阳具的',
+      tail: '露出了愉悦的表情',
+      line: '玛奥让吞咽着假阳具的琼露出了愉悦的表情……', // #624：:7782..:7787 一整行
+    },
+    {
+      selectcom: 21,
+      word: '用假阳具',
+      tail: '的阴道',
+      line: '玛奥一边听着悲鸣一边用假阳具毫不留情地持续蹂躙着琼的阴道……', // #624：:7815..:7820
+    },
+    {
+      selectcom: 27,
+      word: '用假阳具',
+      tail: '的肛门',
+      line: '玛奥一边听着悲鸣一边用假阳具毫不留情地持续蹂躙着琼的肛门……', // #624：:7839..:7844
+    },
   ];
-  for (const { selectcom, word, tail } of cases) {
+  for (const { selectcom, word, tail, line } of cases) {
     const fixture = await setup_k0((f) => {
       f.store.set('tequip:31:55', 1);
       join_slave_chara(f, 17, '玛奥');
@@ -5189,11 +5221,169 @@ test('COLOSSEUM：SELECTCOM 31/21/27 助手无 121/122 且持假阳具（item:4�
     await speak_k0(fixture);
     assert.ok(
       fixture.text_lines().some((l) => l.includes(word)),
-      `selectcom ${selectcom} 助手无 121/122 且 item:4 == 1 → 拼接「${word}」`,
+      `${selectcom}：假阳具词`,
+    );
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${selectcom} → 整行「${line}」`,
     );
     assert.ok(
       fixture.text_lines().some((l) => l.includes(tail)),
       `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
     );
+  }
+});
+
+// #624 验收返工：上面那条只覆盖假阳具一档（item:4），「用肉棒」写成「用假阳具」
+// 没有用例发现——这里补有阴茎档（助手 TALENT:121 / 122），并加「不得出现假阳具词」
+// 的负向守卫（换档写反时整行断言与守卫都会红）。
+test('COLOSSEUM：SELECTCOM 31/21/27 助手有阴茎（TALENT:121/122）→ 拼接肉棒词', async () => {
+  const cases = [
+    {
+      seed: { 'talent:17:121': 1 }, // 扶她（TALENT:121）
+      selectcom: 31,
+      word: '吞咽着肉棒的',
+      tail: '露出了愉悦的表情',
+      line: '玛奥让吞咽着肉棒的琼露出了愉悦的表情……', // #624：:7782..:7787 一整行
+    },
+    {
+      seed: { 'talent:17:122': 1 }, // 男人（TALENT:122）
+      selectcom: 21,
+      word: '用肉棒',
+      tail: '的阴道',
+      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的阴道……', // #624：:7815..:7820
+    },
+    {
+      seed: { 'talent:17:121': 1 },
+      selectcom: 27,
+      word: '用肉棒',
+      tail: '的肛门',
+      line: '玛奥一边听着悲鸣一边用肉棒毫不留情地持续蹂躙着琼的肛门……', // #624：:7839..:7844
+    },
+  ];
+  for (const { seed, selectcom, word, tail, line } of cases) {
+    const fixture = await setup_k0((f) => {
+      f.store.set('tequip:31:55', 1);
+      join_slave_chara(f, 17, '玛奥');
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(key, value);
+      }
+    });
+    const era_flag = fixture.load_module('era-utils/era-flag');
+    era_flag.selectcom = selectcom;
+    era_flag.assi = 17;
+    era_flag.assiplay = 1;
+    await speak_k0(fixture);
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(word)),
+      `${selectcom}：肉棒词（助手有 121/122 档）`,
+    );
+    assert.ok(
+      fixture.text_lines().includes(line),
+      `${selectcom} → 整行「${line}」`,
+    );
+    assert.ok(
+      !fixture.text_lines().some((l) => l.includes('假阳具')),
+      `${selectcom}：有阴茎时不得出现假阳具词（换档写反即红）`,
+    );
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(tail)),
+      `selectcom ${selectcom} 分支尾部「${tail}」（区分 sc21/sc27 同词分支）`,
+    );
+  }
+});
+
+// —— #624：两处「原作同一行被拆开」合回一条输出 ——
+
+test('#624 交谈：:4674..:4682 的「…一边竭力按捺住…」是一整行', async () => {
+  const cases = [
+    [{}, '自己的'],
+    [{ 'tequip:31:11': 1 }, '快乐的'],
+    [{ 'tequip:31:44': 1 }, '痛苦的'],
+  ];
+  for (const [seed, word] of cases) {
+    const fixture = await setup_k0((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('talent:31:76', 1); // 但 PALAM:5 达 PALAMLV[4] 时先走 :4673 支
+      f.store.set('palam:31:5', 10000); // PALAMLV[4]
+      f.store.set('palam:31:4', 10000);
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(key, value);
+      }
+    });
+    await speak_k0(fixture);
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(`琼一边竭力按捺住${word}声音，一边回应着你。`),
+      `${JSON.stringify(seed)} → :4674..:4682 是一整行`,
+    );
+  }
+});
+
+test('#624 交谈二回目：:4733..:4741 的「…一边竭力按捺住…」是一整行', async () => {
+  // :4727 的 ELSE（通常会話）支：交谈二回目以降（CFLAG:357 == 1）且未插着不拔，
+  // PALAM:4/5 达 PALAMLV[4] 时由 :4732 的判据进 :4733。装备分档同 :4674 支
+  const cases = [
+    [{}, '自己的'],
+    [{ 'tequip:31:11': 1 }, '快乐的'],
+    [{ 'tequip:31:44': 1 }, '痛苦的'],
+  ];
+  for (const [seed, word] of cases) {
+    const fixture = await setup_k0((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 56;
+      f.store.set('cflag:31:357', 1); // 交谈二回目以降
+      f.store.set('palam:31:4', 10000); // PALAMLV[4]
+      f.store.set('palam:31:5', 10000);
+      for (const [key, value] of Object.entries(seed)) {
+        f.store.set(key, value);
+      }
+    });
+    await speak_k0(fixture);
+    assert.ok(
+      fixture
+        .text_lines()
+        .includes(`琼一边竭力按捺住${word}声音，一边回应着你。`),
+      `${JSON.stringify(seed)} → :4733..:4741 是一整行；实际：${JSON.stringify(fixture.text_lines())}`,
+    );
+  }
+});
+
+test('#624 灌肠+肛塞脱着：:4475..:4484 的「主人…那…」是一整行', async () => {
+  // 抽数序同原作：三选一（:4476/:4478）先、收行二选一（:4483）后
+  const cases = [
+    {
+      rand: seq_rand(0, 0),
+      lines: ['「主人…我那排泄的地方也请您好好地观赏……」'],
+      why: '三选一 = 排泄的地方也、收尾 = 观赏（:4484 合成一条）',
+    },
+    {
+      rand: seq_rand(1, 0, 0),
+      lines: ['「主人…我那肮脏的地方也请您好好地观赏……」'],
+      why: '三选一 = 肮脏的地方也、收尾 = 观赏（:4484 合成一条）',
+    },
+    {
+      rand: seq_rand(0, 1),
+      lines: ['「主人…我那排泄的地方也请您好好地疼爱……」'],
+      why: '三选一 = 排泄的地方也、收尾 = 疼爱（:4486 合成一条）',
+    },
+    {
+      rand: seq_rand(1, 0, 1),
+      lines: ['「主人…我那肮脏的地方也请您好好地疼爱……」'],
+      why: '三选一 = 肮脏的地方也、收尾 = 疼爱（:4486 合成一条）',
+    },
+  ];
+  for (const { rand, lines, why } of cases) {
+    const fixture = await setup_k0((f) => {
+      const era_flag = f.load_module('era-utils/era-flag');
+      era_flag.selectcom = 46; // 灌肠+肛塞脱着（TEQUIP:46 == 0）
+      f.store.set('talent:31:85', 1); // 愛（:4472 支；:4429 的淫乱支不命中）
+      f.store.set('abl:31:3', 3); // A感覚 Lv3
+      f.store.set('abl:31:21', 3); // マゾっ気 Lv3
+    });
+    await speak_k0(fixture, rand);
+    assert.deepEqual(fixture.text_lines(), lines, why);
   }
 });

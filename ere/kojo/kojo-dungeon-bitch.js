@@ -337,7 +337,6 @@ async function sell_bitch(arg, place, rand = default_rand) {
 
       // :203-244 客与玩法的显示（场所分档）
       if (place === 'DUNGEON') {
-        era.print(`${name_of(arg)}`); // :205
         locals = ''; // :206 VARSET LOCALS
         if (man[0]) {
           // :208 男性客合计显示（FS_LOG_BITCH）
@@ -350,11 +349,17 @@ async function sell_bitch(arg, place, rand = default_rand) {
             man[5],
           );
         }
+        // :205 的 %SAVESTR:ARG% 是这一行的前缀：
+        // - GIRL && MAN 时它与 :212 合成一条（:212 的 PRINTFORML 收行）；
+        // - 其余情况 :212 不执行、行继续到 :217，此时前缀并进 :217 那条
+        //   （前缀提到语句外共用、锚写该分支自己的行号，见 #624；只并第一支的话
+        //   其余分支上玩家仍看到两行）
+        // 前缀是「内联在 :205+:212 的拼接锚语句里」（锁 C 要求 ARGNAME、LOCALS
+        // 两个槽位按序出现），其余分支用 name_of(arg) 直接调用（不是模板槽位）。
+        if (girl[0] && man[0]) {
+          era.print(`${name_of(arg)}${locals}、`); // :205+:212
+        }
         if (girl[0]) {
-          if (man[0]) {
-            await era.print(`${locals}、`); // :212
-            era.print('于是'); // :213
-          }
           locals = fs_log_bitch(
             'DUNGEON_GIRL',
             girl[1],
@@ -364,7 +369,11 @@ async function sell_bitch(arg, place, rand = default_rand) {
             girl[5],
           ); // :215
         }
-        await era.print(`以${locals}为对手`); // :217
+        // :213+:217 原作是一整行：:213 的「于是」（只在 GIRL && MAN 时输出，
+        // 那时前缀已由上面那条收行）与 :217 的「以%LOCALS%为对手」都不换行（#624）
+        await era.print(
+          (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
+        ); // :213+:217
 
         locals = fs_log_bitch(
           'PLAYNAME',
@@ -377,10 +386,13 @@ async function sell_bitch(arg, place, rand = default_rand) {
         await era.printAndWait(`${locals}进行着`); // :220
       } else {
         // :222-244 街中
-        era.print(`${name_of(arg)}`); // :223
+        // :223 的 %SAVESTR:ARG% 是这一行的前缀，两条路径各并一次：
+        // - PLAY == PLAY:6 时与 :226 合成一条（拼接锚）；
+        // - 其余情况行继续，前缀并进 :232（GIRL && MAN）或 :237 那一条（锚写该
+        //   分支自己的行号，见 #624；只并第一支的话其余分支上仍看到两行）
         locals = ''; // :224
         if (play[0] === play[6]) {
-          await era.printAndWait(`进行了${play[6]}次兽交秀。`); // :226
+          await era.printAndWait(`${name_of(arg)}进行了${play[6]}次兽交秀。`); // :223+:226
         } else {
           if (man[0]) {
             locals = fs_log_bitch(
@@ -392,11 +404,10 @@ async function sell_bitch(arg, place, rand = default_rand) {
               man[5],
             ); // :229
           }
+          if (girl[0] && man[0]) {
+            era.print(name_of(arg) + `${locals}、`); // :232
+          }
           if (girl[0]) {
-            if (man[0]) {
-              await era.print(`${locals}、`); // :232
-              era.print('于是'); // :233
-            }
             locals = fs_log_bitch(
               'TOWN_GIRL',
               girl[1],
@@ -406,7 +417,11 @@ async function sell_bitch(arg, place, rand = default_rand) {
               girl[5],
             ); // :235
           }
-          await era.print(`以${locals}为对手`); // :237
+          // :233+:237 原作是一整行：:233 的「于是」（只在 GIRL && MAN 时输出，
+          // 那时前缀已由上面那条收行）与 :237 的「以%LOCALS%为对手」都不换行（#624）
+          await era.print(
+            (girl[0] && man[0] ? '于是' : name_of(arg)) + `以${locals}为对手`,
+          ); // :233+:237
 
           locals = fs_log_bitch(
             'PLAYNAME',
@@ -788,7 +803,7 @@ function profit_bitch(arg, place, type, play, rand = default_rand) {
  * @param {number} arg 角色 ID
  * @param {(n: number) => number} [rand] RAND 随机源
  */
-function dungeon_work(arg, rand = default_rand) {
+async function dungeon_work(arg, rand = default_rand) {
   // :500 收入 = CFLAG:9 * 20 + 100
   let local = (era.get(`cflag:${arg}:9`) || 0) * 20 + 100;
   // :501-502 潜入中（CFLAG:0 == 0）收入 ÷10
@@ -797,11 +812,14 @@ function dungeon_work(arg, rand = default_rand) {
   }
   // :503-512 调试位（FLAG:5 & 32）显示随机副业名
   if (era.get('flag:5') & 32) {
-    era.print(`${name_of(arg)}从事了`); // :504
-    // :505-510 PRINTDATA 随机选一
+    // :505-510 PRINTDATA 随机选一（提到语句外当取值，锚留在注释里）
     const jobs = ['研磨宝石的', '制作工艺品的', '抄写书籍的', '制作手工的'];
-    era.print(jobs[rand(jobs.length)]); // :505 PRINTDATA
-    era.printAndWait(`副业${local}点收入。`); // :511
+    const job = jobs[rand(jobs.length)]; // :505 PRINTDATA
+    // :504..:511 原作是一整行：:504 的「…从事了」、上面的随机副业名与 :511 的
+    // PRINTFORMW 收行都不换行（#624）
+    await era.printAndWait(
+      `${name_of(arg)}从事了` + job + `副业${local}点收入。`,
+    ); // :504+:511
   }
   // :513-514 收入入账
   era_flag.money += local; // :513 MONEY += LOCAL
@@ -884,8 +902,13 @@ async function self_bitch(arg, place, rand = default_rand) {
 
   // :568-630 妄想对象分档（调教后自慰的妄想对象）
   // :569-572 レズ（无爱慕且百合气质 > RAND:5）
+  // 分档的文本与 :634 的追加、:637 的收行同属一行（:571..:637 之间只有
+  // PRINTDATA 块，不是 PRINT 行）——:571/:575 的字面量留在输出语句里，
+  // PRINTDATA 的随机词条提到语句外当取值，RAND 抽数在条件与语句内惰性消费（#624）
+  let branch = 0;
+  let dream = '';
   if (!era.get(`talent:${arg}:85`) && era.get(`abl:${arg}:22`) > rand(5)) {
-    era.print('想象着跟女人的交合'); // :571
+    branch = 1;
     local = 1; // :572
   } else if (
     // :573-576 兽（无爱慕、有野狗道具、兽奸中毒 > RAND:5）
@@ -893,7 +916,7 @@ async function self_bitch(arg, place, rand = default_rand) {
     !era.get(`talent:${arg}:85`) &&
     era.get(`abl:${arg}:39`) > rand(5)
   ) {
-    era.print('陷入了跟野兽交尾的幻想'); // :575
+    branch = 2;
     local = 2; // :576
   } else if (
     // :577-586 ダンジョン限定で主人（调教次数依赖：20 回 50%、40 回必中）
@@ -906,7 +929,7 @@ async function self_bitch(arg, place, rand = default_rand) {
       '想起了上次的调教', // :583
       '想象着下一次的调教', // :584
     ];
-    era.print(dreams[rand(dreams.length)]); // :580 PRINTDATA
+    dream = dreams[rand(dreams.length)]; // :580 PRINTDATA
     local = 3; // :586
   } else if (
     // :587-615 梦中（自慰中毒依赖，5 以上必中）
@@ -937,7 +960,7 @@ async function self_bitch(arg, place, rand = default_rand) {
       '十分粗野的撕扯着衣服，双乳若隐若现', // :612
       '挣扎在绝顶的边缘', // :613
     ];
-    era.print(dreams[rand(dreams.length)]); // :590 PRINTDATA
+    dream = dreams[rand(dreams.length)]; // :590 PRINTDATA
     local = 4; // :615
   } else {
     // :616-629 控えめに（克制）
@@ -952,21 +975,25 @@ async function self_bitch(arg, place, rand = default_rand) {
       '懒洋洋地低下了头', // :626
       '烦恼地皱了皱眉头', // :627
     ];
-    era.print(dreams[rand(dreams.length)]); // :618 PRINTDATA
+    dream = dreams[rand(dreams.length)]; // :618 PRINTDATA
     local = 5; // :629
   }
 
-  // :632-635 扶她/男人/肉芽：握住肉棒
-  if (
+  // :571..:637 原作是一整行：分档文本（:571/:575 或上面的 PRINTDATA 词条）
+  // + :634 的扶她/男人追加 + :637 的 PRINTFORMW 收行（#624）
+  const has_cock =
     era.get(`talent:${arg}:121`) === 1 ||
     era.get(`talent:${arg}:122`) === 1 ||
-    era.get(`talent:${arg}:326`) === 1
-  ) {
-    era.print('握住肉棒捋了起来'); // :634
-  }
-
-  // :637 次数
-  await era.printAndWait(`自慰了${play}次。`); // :637
+    era.get(`talent:${arg}:326`) === 1;
+  await era.printAndWait(
+    (branch === 1
+      ? '想象着跟女人的交合'
+      : branch === 2
+        ? '陷入了跟野兽交尾的幻想'
+        : dream) +
+      (has_cock ? '握住肉棒捋了起来' : '') +
+      `自慰了${play}次。`,
+  ); // :571+:575+:634+:637
 
   // :639-641 日志
   await log_bitch_self(arg, place, local); // :640 CALL LOG_BITCH_SELF(ARG, PLACE, LOCAL)

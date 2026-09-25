@@ -483,11 +483,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '385-397',
-        any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
         ref: '386',
         any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
       },
@@ -604,11 +599,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '560-572',
-        any: [/^\s*SELECTCASE\ ABL:ARG:32/m],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
         ref: '562',
         any: [/^\s*PRINTFORM\ 看着顶到鼻尖的肉棒，脸色发青的/m],
       },
@@ -715,11 +705,6 @@ export const FILES = [
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
         ref: '729',
-        any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '729-741',
         any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
       },
       {
@@ -834,11 +819,6 @@ export const FILES = [
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
         ref: '943',
-        any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '943-955',
         any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
       },
       {
@@ -979,11 +959,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '1181-1196',
-        any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
         ref: '1182',
         any: [/^\s*PRINTFORM\ %SAVESTR:ARG%/m],
       },
@@ -999,11 +974,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '1187-1190',
-        any: [/^\s*PRINTFORM\ 用经验不多的阴道/m],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
         ref: '1189',
         any: [/^\s*PRINTFORM\ 沉浸在快乐之中/m],
       },
@@ -1011,11 +981,6 @@ export const FILES = [
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
         ref: '1191',
         any: [/^\s*PRINTFORM\ 用已经完完全全的开发了小穴/m],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
-        ref: '1192-1195',
-        any: [/^\s*CASE\ 5,\ 6/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB',
