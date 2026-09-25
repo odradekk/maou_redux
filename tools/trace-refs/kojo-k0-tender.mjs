@@ -24200,13 +24200,6 @@ export const FILES = [
         any: [/出来的地方也/],
       },
       {
-        // #624：:4480 是 ELSE、:4481 才是 PRINT 行——拼接锚（:4475+:4477+…）
-        // 里用得到单独的行号
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4481',
-        any: [/出来的地方也/],
-      },
-      {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4483',
         any: [/\t\t\tIF RAND:2 == 0/m],
@@ -24217,8 +24210,10 @@ export const FILES = [
         any: [/请您好好地观赏……」/],
       },
       {
+        // #624：两条收尾支（:4484 / :4486）各自成锚——:4485 是 ELSE，
+        // 单看 :4486 这条 PRINTFORMW 行（原 4485-4486 区间登记随拼接锚改为单行）
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4485-4486',
+        ref: '4486',
         any: [/请您好好地疼爱……」/],
       },
       {
