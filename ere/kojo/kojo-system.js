@@ -291,7 +291,10 @@ const EVENT_K_DISPATCH_TABLE = [
     module: 'kojo/kojo-system',
     family: 'benki_koujo_family',
     flag_guard: false,
-    missing: 'stub',
+    // #585：try_kojo 通道未命中静默（#565 返工第 4 条），与登记表
+    // BENKI_KOUJO 行的说法对齐；其余仍标 'stub' 的行是 #565 遗留的历史
+    // 声明，本票不改
+    missing: 'silent',
     call: ['rand'],
     handler: ['rand'],
   },

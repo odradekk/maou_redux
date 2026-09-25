@@ -18,7 +18,9 @@
  *     （kojo-system.js 文件头「handler 签名」段）——七道头部守卫对
  *     **已注册的全部 handler** 逐条置位驱动，守卫命中时不得出现台词。
  *     口上票（轴 B）落地新 handler 自动进契约，无需逐票自写守卫用例；
- *     指令族票（轴 A）对着同一签名扩展 SELECTCOM 分支。
+ *     指令族票（轴 A）对着同一签名扩展 SELECTCOM 分支；
+ *   - **#585 改名契约**：try_kojo 的旧名不再导出、常设形参只剩两个
+ *     （family + 清单锚名），且 ere/ 与 tools/ 全库不残留旧名文本。
  */
 
 const assert = require('node:assert/strict');
@@ -289,12 +291,14 @@ test('改名完整性：ere/ 与 tools/ 里不残留旧名（#585）', () => {
   // 在 test/ 下，不在扫描范围内。
   const repo = path.resolve(__dirname, '..');
   const found = [];
+  let scanned = 0;
   const walk = (dir) => {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, entry.name);
       if (entry.isDirectory()) {
         walk(full);
       } else if (/\.(?:js|mjs)$/.test(entry.name)) {
+        scanned += 1;
         if (fs.readFileSync(full, 'utf8').includes('try_kojo_or_stub')) {
           found.push(path.relative(repo, full).replace(/\\/g, '/'));
         }
@@ -304,6 +308,10 @@ test('改名完整性：ere/ 与 tools/ 里不残留旧名（#585）', () => {
   for (const dir of ['ere', 'tools']) {
     walk(path.join(repo, dir));
   }
+  // 空集守卫（同 test/event-k-dispatch.test.js 的「扫描器自身不许漂成空集」）：
+  // 少了它，目录改名或扩展名过滤失效时 found 恒空、本用例照绿。ere/ 与
+  // tools/ 下当前 517 个 .js/.mjs，门槛取 300 留出删并文件的空间
+  assert.ok(scanned >= 300, `扫描面塌了：只读到 ${scanned} 个 .js/.mjs`);
   assert.deepEqual(found, [], '旧名残留（#585 改成 try_kojo）');
 });
 
