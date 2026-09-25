@@ -7029,18 +7029,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8134',
-        any: [/\tIF CFLAG:A:504 == 1/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '8135',
         any: [/可以奖励我与犬/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8136',
-        any: [/\tELSEIF CFLAG:A:504 == 2/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -7049,17 +7039,7 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8138',
-        any: [/\tELSEIF CFLAG:A:504 == 3/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '8139',
-        any: [/可以奖励我与馬/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '8139-8140',
         any: [/可以奖励我与馬/],
       },
       {
@@ -24090,23 +24070,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4432',
-        any: [/\t\t\tIF RAND:2 == 0/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4433',
         any: [/「呀…嗯啊、啊、啊啊！/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4434-4435',
-        any: [/「啊啊～！、不行、不、不要看、/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4437',
-        any: [/\t\t\tIF RAND:2 == 0/m],
+        ref: '4435',
+        any: [/^\s*PRINT 「啊啊～！、不行、不、不要看、$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -24115,13 +24085,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4439-4440',
-        any: [/出来、要出来了、/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4442',
-        any: [/\t\t\tIF RAND:3 == 0/m],
+        ref: '4440',
+        any: [/^\s*PRINT 出来、要出来了、$/m],
       },
       { src: 'target/ERB/口上/EVENT_K0_慈愛.ERB', ref: '4443', any: [/全部/] },
       {
@@ -24136,18 +24101,13 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4447',
-        any: [/\t\t\t\tIF RAND:2 == 0/m],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4448',
         any: [/以Ｍ字的状态大开双腿的%SAVESTR:TARGET%那秘所之中/],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4449-4450',
-        any: [/四肢着地的%SAVESTR:TARGET%那股間之中/],
+        ref: '4450',
+        any: [/^\s*PRINTFORM 四肢着地的%SAVESTR:TARGET%那股間之中$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -24183,16 +24143,11 @@ export const FILES = [
         ref: '4460',
         any: [/那扩张开来无法闭合的/],
       },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4461',
-        any: [/\t\t\t\tIF RAND:2 == 0/m],
-      },
       { src: 'target/ERB/口上/EVENT_K0_慈愛.ERB', ref: '4462', any: [/肛門/] },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4463-4464',
-        any: [/肛穴/],
+        ref: '4464',
+        any: [/^\s*PRINT 肛穴$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -24737,20 +24692,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4675',
-        any: [
-          /\t\t\t\tIF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/m,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4676',
         any: [/快楽的/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4677',
-        any: [/\t\t\t\tELSEIF TEQUIP:44 \|\| TEQUIP:49/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -24759,8 +24702,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4679-4680',
-        any: [/自己的/],
+        ref: '4680',
+        any: [/^\s*PRINT 自己的$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -24988,20 +24931,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4734',
-        any: [
-          /\t\t\t\tIF TEQUIP:11 \|\| TEQUIP:13 \|\| TEQUIP:14 \|\| TEQUIP:15 \|\| TEQUIP:16 \|\| TEQUIP:17/m,
-        ],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
         ref: '4735',
         any: [/快楽的/],
-      },
-      {
-        src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4736',
-        any: [/\t\t\t\tELSEIF TEQUIP:44 \|\| TEQUIP:49/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
@@ -25010,8 +24941,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
-        ref: '4738-4739',
-        any: [/自己的/],
+        ref: '4739',
+        any: [/^\s*PRINT 自己的$/m],
       },
       {
         src: 'target/ERB/口上/EVENT_K0_慈愛.ERB',
