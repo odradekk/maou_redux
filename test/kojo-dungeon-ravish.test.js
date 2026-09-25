@@ -736,13 +736,14 @@ test('#624 兽人凌辱·口交：:475..:502 与 :509..:524 两条收行路径�
     const mod = fixture_module(fixture);
     await mod.orc_ryou(31, 5, seq_rand(0, 0, 0, 0));
     const lines = fixture.text_lines();
+    const line = `${prefix}冒险者把阴茎含了下去，${tail}奉仕持续了下去……`;
     assert.ok(
-      lines.includes(`${prefix}冒险者把阴茎含了下去，`),
-      `TALENT ${JSON.stringify(talents)} → 前半段整行`,
+      lines.includes(line),
+      `TALENT ${JSON.stringify(talents)} → :475..:498 与 :509..:524 合成一条「${line}」`,
     );
     assert.ok(
-      lines.includes(`${tail}奉仕持续了下去……`),
-      `TALENT ${JSON.stringify(talents)} → 后半段整行`,
+      !lines.includes(`${prefix}冒险者把阴茎含了下去，`),
+      `TALENT ${JSON.stringify(talents)} → 前半段不得单独成行`,
     );
   }
 });
@@ -1036,11 +1037,17 @@ test('#624 对人格斗·捆绑：:2674+:2676 与 :2679 两条收行路径各自
   await mod_candle.pc_ryou(0, 31, seq_rand(1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1));
   const lines = candle.text_lines();
   assert.ok(
-    lines.includes('向伏在地上的冒险者的背上'),
-    'RAND:2 = 1 → :2674 单占一行（:2679 自带 W，无法并进同一拼接锚）',
+    lines.includes('向伏在地上的冒险者的背上将点燃的蜡烛倾倒了上去'),
+    'RAND:2 = 1 → :2674 与 :2679 合成一条（语句外前缀常量 + 该分支自己的收行）',
   );
   assert.ok(
-    lines.includes('将点燃的蜡烛倾倒了上去'),
-    'RAND:2 = 1 → :2679 自占一行',
+    !lines.includes('向伏在地上的冒险者的背上'),
+    'RAND:2 = 1 → :2674 不得再单独成行',
+  );
+  assert.ok(
+    lines.includes(
+      '过热的刺痛让冒险者的身体不住地抽搐着、身上更是被滴上了更多的蜡',
+    ),
+    ':2680 自占一行',
   );
 });

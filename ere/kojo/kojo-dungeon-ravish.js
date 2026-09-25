@@ -829,6 +829,23 @@ async function orc_ryou(arg, mon_num, rand) {
     const quick = era.get(`talent:${arg}:50`) || 0;
     const smelly = era.get(`talent:${arg}:62`) || 0;
     const devoted = era.get(`talent:${arg}:63`) || 0;
+    // :475/:478/:481/:484 的初见分档 + :488/:498 的前半段：链上的 TALENT:52 支
+    // 照旧把文本写在语句里（拼接锚 :475+:478+:481+:484+:488+:498+:502 要按行
+    // 核对文本）；其余分支用这个语句外的前缀常量 + 自己的分档与收行合成一条
+    //（#624，同 kojo-k7-heart.js 的 talk_front_5485 写法）
+    const tongue_front_475 =
+      (quiet
+        ? '提心吊胆地'
+        : proud
+          ? '嘿嘿媚笑着'
+          : ashamed
+            ? '不敢直视肉棒而闭上了眼睛'
+            : maiden
+              ? '为了守住自己处女的'
+              : '') +
+      `${arg_name}把` +
+      cock +
+      '含了下去，'; // :475+:478+:481+:484+:488+:498
     //
     // :499-505 舌使い：TALENT:52 时由 :502 的 PRINTW 收行
     if (era.get(`talent:${arg}:52`)) {
@@ -856,31 +873,19 @@ async function orc_ryou(arg, mon_num, rand) {
       await era.print('奉仕持续了下去……'); // :524
     } else {
       await era.print(
-        (quiet
-          ? '提心吊胆地'
-          : proud
-            ? '嘿嘿媚笑着'
-            : ashamed
-              ? '不敢直视肉棒而闭上了眼睛'
-              : maiden
-                ? '为了守住自己处女的'
-                : '') +
-          `${arg_name}把` +
-          cock +
-          '含了下去，',
-      ); // :475+:478+:481+:484+:488+:498
-      await era.print(
-        (indifferent
-          ? '像工作一样地奉仕着，'
-          : vulgar
-            ? '不禁发出了粗俗的声音，'
-            : quick
-              ? '很快地抓住了奉仕的诀窍，'
-              : smelly
-                ? '忍受着腥臭味，'
-                : devoted
-                  ? '拼命地用舌头奉仕着，'
-                  : '') + '奉仕持续了下去……',
+        tongue_front_475 +
+          (indifferent
+            ? '像工作一样地奉仕着，'
+            : vulgar
+              ? '不禁发出了粗俗的声音，'
+              : quick
+                ? '很快地抓住了奉仕的诀窍，'
+                : smelly
+                  ? '忍受着腥臭味，'
+                  : devoted
+                    ? '拼命地用舌头奉仕着，'
+                    : '') +
+          '奉仕持续了下去……',
       ); // :509+:512+:515+:518+:521+:524
     }
 
@@ -3605,17 +3610,19 @@ async function pc_ryou(arg0, arg1, rand) {
       if (rand_n(3) === 0) {
         // :2663-2681 鞭打/蜡烛
         // :2674 与 :2676/:2679 是同一行的两段互斥收行（RAND:2）：两条收行都自带
-        // W，拼接锚的区间又绕不过中间的 :2677（自带 W），所以 :2674 的前半段在
-        // 两条路径上各写一次。RAND 抽数有状态，提到语句外只抽一次（#624）
+        // W，拼接锚的区间又绕不过中间的 :2677（自带 W）。链上的鞭子支照旧把
+        // :2674 写在语句里（拼接锚 :2674+:2676 要按行核对文本）；蜡烛支用语句外
+        // 的前缀常量 + 自己的收行 :2679 合成一条（#624，同 kojo-k7-heart.js 的
+        // talk_front_5485 写法）。RAND 抽数有状态，提到语句外只抽一次（#624）
         const whip = rand_n(2) === 0;
+        const back_2674 = `向伏在地上的${loser_name}的背上`; // :2674
         if (whip) {
           await era.printAndWait(
             `向伏在地上的${loser_name}的背上用鞭子不停地抽打着、`,
           ); // :2674+:2676
           await era.printAndWait(`在${loser_name}的背上留下了数道血痕`); // :2677
         } else {
-          await era.print(`向伏在地上的${loser_name}的背上`); // :2674
-          await era.printAndWait('将点燃的蜡烛倾倒了上去'); // :2679
+          await era.printAndWait(back_2674 + '将点燃的蜡烛倾倒了上去'); // :2679
           await era.printAndWait(
             `过热的刺痛让${loser_name}的身体不住地抽搐着、身上更是被滴上了更多的蜡`,
           ); // :2680

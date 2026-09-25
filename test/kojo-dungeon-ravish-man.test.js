@@ -433,13 +433,14 @@ test('#624 兽人凌辱·口交：:81..:105 与 :112..:127 两条收行路径各
     const mod = fixture_module(fixture);
     await mod.orc_ryou_man(31, 5, seq_rand(0, 0, 0));
     const lines = fixture.text_lines();
+    const line = `${prefix}冒险者把阴茎含了下去，${tail}奉仕持续了下去……`;
     assert.ok(
-      lines.includes(`${prefix}冒险者把阴茎含了下去，`),
-      `TALENT ${JSON.stringify(talents)} → 前半段整行`,
+      lines.includes(line),
+      `TALENT ${JSON.stringify(talents)} → :81..:101 与 :112..:127 合成一条「${line}」`,
     );
     assert.ok(
-      lines.includes(`${tail}奉仕持续了下去……`),
-      `TALENT ${JSON.stringify(talents)} → 后半段整行`,
+      !lines.includes(`${prefix}冒险者把阴茎含了下去，`),
+      `TALENT ${JSON.stringify(talents)} → 前半段不得单独成行`,
     );
   }
 });
