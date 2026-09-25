@@ -1231,69 +1231,76 @@ test('#623 强制排泄·最深部遭遇三档整行（:4653+:4655+:4657+:4659+:
 });
 
 test('#623 强制排泄·两穴与屈辱支的整行（:4775+:4777 / :4810+:4812）', async () => {
-  // 两穴支：tequip:54 未开、ABL:3/21 齐备（:4765 的 ELSE）
-  const two = await setup_k3((f) => {
+  // 两穴支：tequip:54 未开、ABL:3/21 齐备（:4765 的 ELSE）。RAND:3 定
+  // crying_out、RAND:2 定后两支；三支都拼 :4775 前缀（#623）
+  const two_seed = (f) => {
     f.load_module('era-utils/era-flag').selectcom = 46;
     f.store.set('tequip:31:46', 0);
     f.store.set('cflag:31:387', 1);
     f.store.set('abl:31:3', 3);
     f.store.set('abl:31:21', 3);
-  });
-  await speak_k3(two, seq_rand(0));
-  assert.ok(
-    two
-      .text_lines()
-      .includes(
-        '「不、骗人的吧！\u3000像这样子动着…慢慢排出来、菊穴、还蠕动着……竟然…」',
-      ),
-    ':4775+:4777 整行',
-  );
-  assert.equal(
-    two
-      .text_lines()
-      .filter(
-        (l) =>
-          l === '「不、骗人的吧！\u3000像这样子动着…慢慢排出来、菊穴、还蠕动',
-      ).length,
-    0,
-    '并入后前缀不得再单独成行',
-  );
+  };
+  const prefix_4775 =
+    '「不、骗人的吧！\u3000像这样子动着…慢慢排出来、菊穴、还蠕动';
+  const two_cases = [
+    { label: 'RAND:3==0 首支', draws: [0], tail: '着……竟然…」' },
+    { label: 'ELSEIF 支', draws: [1, 0], tail: '着……唔！」' },
+    { label: 'ELSE 支', draws: [1, 1], tail: '着…明明不可以的……」' },
+  ];
+  for (const item of two_cases) {
+    const fixture = await setup_k3(two_seed);
+    await speak_k3(fixture, seq_rand(...item.draws));
+    assert.ok(
+      fixture.text_lines().includes(prefix_4775 + item.tail),
+      `:4775 ${item.label}整行`,
+    );
+    assert.equal(
+      fixture.text_lines().filter((l) => l === prefix_4775).length,
+      0,
+      `:4775 ${item.label}：前缀不得再单独成行`,
+    );
+  }
 
-  const other = await setup_k3((f) => {
-    f.load_module('era-utils/era-flag').selectcom = 46;
-    f.store.set('tequip:31:46', 0);
-    f.store.set('cflag:31:387', 1);
-    f.store.set('abl:31:3', 3);
-    f.store.set('abl:31:21', 3);
-  });
-  await speak_k3(other, seq_rand(1));
-  assert.equal(
-    other
-      .text_lines()
-      .filter(
-        (l) =>
-          l === '「不、骗人的吧！\u3000像这样子动着…慢慢排出来、菊穴、还蠕动',
-      ).length,
-    1,
-    'ELSEIF 支的前缀仍单独成行',
-  );
-
-  // 屈辱支：MARK:2 == 3 且 CFLAG:387 <= 1（:4786 支）的 ELSE（:4809）
-  const shame = await setup_k3((f) => {
+  // 屈辱支：MARK:2 == 3 且 CFLAG:387 <= 1（:4786 支）的 ELSE（:4809）；
+  // :4810 的 PRINTFORM 行尾带全角空格，三支都拼（审查建议 11）
+  const shame_seed = (f) => {
     f.load_module('era-utils/era-flag').selectcom = 46;
     f.store.set('tequip:31:46', 0);
     f.store.set('cflag:31:387', 1);
     f.store.set('mark:31:2', 3);
-  });
-  await speak_k3(shame, seq_rand(0));
-  assert.ok(
-    shame
-      .text_lines()
-      .includes(
-        '「原、原谅我…啊啊啊啊！！\u3000又要…出来了、出…快停下来啊……！！」',
-      ),
-    ':4810+:4812 整行',
-  );
+  };
+  const prefix_4810 = '「原、原谅我…啊啊啊啊！！\u3000';
+  const shame_cases = [
+    {
+      label: 'RAND:3==0 首支',
+      draws: [0],
+      tail: '又要…出来了、出…快停下来啊……！！」',
+    },
+    {
+      label: 'ELSEIF 支',
+      draws: [1, 0],
+      tail: '请、请怜悯下…！\u3000啊？\u3000啊啊、不要啊啊……」',
+    },
+    {
+      label: 'ELSE 支',
+      draws: [1, 1],
+      tail: '不要…请原俩…啊啊啊！\u3000啊啊啊……」」',
+    },
+  ];
+  for (const item of shame_cases) {
+    const fixture = await setup_k3(shame_seed);
+    await speak_k3(fixture, seq_rand(...item.draws));
+    assert.ok(
+      fixture.text_lines().includes(prefix_4810 + item.tail),
+      `:4810 ${item.label}整行（含前缀行尾全角空格）`,
+    );
+    assert.equal(
+      fixture.text_lines().filter((l) => l === '「原、原谅我…啊啊啊啊！！')
+        .length,
+      0,
+      `:4810 ${item.label}：前缀不得再单独成行（丢掉行尾全角空格也会在此露头）`,
+    );
+  }
 });
 
 test('#623 交谈·搭话首支整行（:5026+:5028 / :5098+:5100）', async () => {

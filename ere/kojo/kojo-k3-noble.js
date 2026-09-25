@@ -7086,25 +7086,19 @@ async function kojo_message_com_3(rand) {
             ); // :4771
           }
         } else {
-          // :4775+:4777 原作是一整行：:4775 的 PRINTFORM 不换行、:4777 的
-          // PRINTFORMW 收行。ELSEIF/ELSE 支（:4779/:4781）自带等待，前缀只能
-          // 单独一行（抽签顺序照原作，#623）
+          // :4775+:4777 原作是一整行：:4775 的 PRINTFORM 不换行，三支的
+          // PRINTFORMW 各自收行。前缀提到语句外共用——各支语句只列本支行号，
+          // 前缀留在里面会被保真锁 C 当成多出来的插值记号（抽签顺序照原作，#623）
           const crying_out = rand_n(3) === 0;
-          if (!crying_out) {
-            era.print(
-              `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`,
-            ); // :4775
-          }
+          const line_head = `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动`; // :4775
           if (crying_out) {
             // :4776
-            await era.printAndWait(
-              `「不、骗人的吧！${'\u3000'}像这样子动着…慢慢排出来、菊穴、还蠕动着……竟然…」`,
-            ); // :4775+:4777
+            await era.printAndWait(line_head + `着……竟然…」`); // :4777
           } else if (rand_n(2) === 0) {
             // :4778
-            await era.printAndWait(`着……唔！」`); // :4779
+            await era.printAndWait(line_head + `着……唔！」`); // :4779
           } else {
-            await era.printAndWait(`着…明明不可以的……」`); // :4781
+            await era.printAndWait(line_head + `着…明明不可以的……」`); // :4781
           }
         }
         // CFLAG:387  = 3（变量语义：CFLAG 族，387） // :4784
@@ -7153,26 +7147,25 @@ async function kojo_message_com_3(rand) {
             // :4806
             await era.printAndWait(`「呜呜…别看啊、至少…请不要拍、啊……」`); // :4807
           } else {
-            // :4810+:4812 原作是一整行：:4810 的 PRINTFORM 不换行、:4812 的
-            // PRINTFORMW 收行。ELSEIF/ELSE 支（:4814/:4816）自带等待，前缀
-            // 只能单独一行（抽签顺序照原作，#623）
+            // :4810+:4812 原作是一整行：:4810 的 PRINTFORM 不换行（行尾全角
+            // 空格照抄），三支的 PRINTFORMW 各自收行。前缀提到语句外共用，
+            // 各支语句只列本支行号（抽签顺序照原作，#623）
             const birth_shown = rand_n(3) === 0;
-            if (!birth_shown) {
-              era.print(`「原、原谅我…啊啊啊啊！！`); // :4810
-            }
+            const line_head = `「原、原谅我…啊啊啊啊！！${'\u3000'}`; // :4810
             if (birth_shown) {
               // :4811
               await era.printAndWait(
-                `「原、原谅我…啊啊啊啊！！${'\u3000'}又要…出来了、出…快停下来啊……！！」`,
-              ); // :4810+:4812
+                line_head + `又要…出来了、出…快停下来啊……！！」`,
+              ); // :4812
             } else if (rand_n(2) === 0) {
               // :4813
               await era.printAndWait(
-                `请、请怜悯下…！${'\u3000'}啊？${'\u3000'}啊啊、不要啊啊……」`,
+                line_head +
+                  `请、请怜悯下…！${'\u3000'}啊？${'\u3000'}啊啊、不要啊啊……」`,
               ); // :4814
             } else {
               await era.printAndWait(
-                `不要…请原俩…啊啊啊！${'\u3000'}啊啊啊……」」`,
+                line_head + `不要…请原俩…啊啊啊！${'\u3000'}啊啊啊……」」`,
               ); // :4816
             }
           }
