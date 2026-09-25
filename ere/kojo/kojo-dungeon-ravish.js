@@ -801,15 +801,10 @@ async function orc_ryou(arg, mon_num, rand) {
           `迫于兽人的威胁，她衡量了一下得失之后，老实地接受了屈辱的命运……听天由命地流泪，耻情点数+${mon_num * 10}`,
         ); // :470+:471
         era.add(`juel:${arg}:8`, mon_num * 10); // :337 JUEL:ARG:8 耻情
-      } else if (era.get(`talent:${arg}:14`)) {
-        await era.print('提心吊胆地'); // :475 大人しい
-      } else if (era.get(`talent:${arg}:17`)) {
-        await era.print('嘿嘿媚笑着'); // :478 プライド低い
-      } else if (era.get(`talent:${arg}:35`)) {
-        await era.print('不敢直视肉棒而闭上了眼睛'); // :481 恥じらい
-      } else if (era.get(`talent:${arg}:0`)) {
-        await era.print('为了守住自己处女的'); // :438 処女
       }
+      // :475/:478/:481/:484（大人しい・プライド低い・恥じらい・処女）的初见分档
+      // 文本已并进下面 :475..:498 的整行语句（前缀当取值表达式），此处不再单独
+      // 输出——否则同一段会先自占一行、又出现在合并行里（#624 审查发现）
     }
 
     // :488-496 PRINTDATA（:489-495 的五个候选）——原作的随机词条夹在这一行

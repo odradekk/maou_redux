@@ -3820,11 +3820,6 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
-        ref: '1883-1885',
-        any: [/IF TALENT:ARG:273/],
-      },
-      {
-        src: 'target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB',
         ref: '1887',
         any: [/PRINTFORMW 『真是较真。这样的孩子反而容易觉醒后面的快感呢～』/],
       },
