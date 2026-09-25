@@ -1587,8 +1587,8 @@ export const FILES = [
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH.ERB',
-        ref: '632-635',
-        any: [/^\s*IF TALENT:ARG:121 == 1 \|\| TALENT:ARG:122/m],
+        ref: '634',
+        any: [/^\s*PRINT 握住肉棒捋了起来$/m],
       },
       {
         src: 'target/ERB/迷宮/DUNGEON_BITCH.ERB',

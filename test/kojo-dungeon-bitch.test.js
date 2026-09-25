@@ -613,7 +613,7 @@ test('#584 DUNGEON_ANIMAL：:524-525（无法压抑兽交的欲望 + 悄悄寻�
   );
 });
 
-test('DUNGEON_WORK：内职收入（潜入中 ÷10；MONEY/EX_FLAG 入账）', () => {
+test('DUNGEON_WORK：内职收入（潜入中 ÷10；MONEY/EX_FLAG 入账）', async () => {
   const { fixture, mod } = setup_bitch((f) => {
     f.store.set('cflag:31:9', 2); // 等级 2 → (2*20)+100 = 140
     f.store.set('cflag:31:0', 1); // 非潜入 → 不 ÷10
@@ -621,7 +621,7 @@ test('DUNGEON_WORK：内职收入（潜入中 ÷10；MONEY/EX_FLAG 入账）', (
     f.store.set('exflag:4444', 0);
     f.store.set('flag:5', 0); // 调试位关
   });
-  mod.dungeon_work(31, seq_rand(0));
+  await mod.dungeon_work(31, seq_rand(0));
   assert.equal(fixture.store.get('flag:10004'), 140);
   assert.equal(fixture.store.get('exflag:4444'), 140);
 
@@ -633,7 +633,7 @@ test('DUNGEON_WORK：内职收入（潜入中 ÷10；MONEY/EX_FLAG 入账）', (
     f.store.set('exflag:4444', 0);
     f.store.set('flag:5', 0);
   });
-  m2.dungeon_work(31, seq_rand(0));
+  await m2.dungeon_work(31, seq_rand(0));
   assert.equal(f2.store.get('flag:10004'), 14);
 });
 
@@ -697,4 +697,105 @@ test('EXP_BITCH：ANIMAL 的 JUEL 加算真打到 arg 名下（JUEL:1/6/8 三段
   assert.equal(fixture.store.get('juel:31:8'), 400, 'JUEL:8 必须 +PLAY*200');
   // 角色 1 名下不得被打扰（二段形态 era.add(`juel:1`) 打的是它的行对象）
   assert.equal(fixture.store.get('juel:1:1'), undefined);
+});
+
+// —— #624：三处「原作同一行被拆开」合回一条输出 ——
+//
+// 断言一律钉整行：旧的 `.some(includes(片段))` 在「拆回多条」时照样绿。
+// 本文件其余 13 组落在 [SKIPSTART]:1199-:3132 的跳过块里（未移植），或在
+// 跳过块之前的行被未终止的 `PRINT  ` 链到块内——都清不掉，见完成评论。
+
+test('#624 SELL_BITCH：:205+:212（名字与客合计）与 :213+:217 各是一条输出', async () => {
+  const { fixture, mod } = setup_bitch((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('base:31:1', 500);
+    f.store.set('cflag:31:1', 0);
+    f.store.set('cflag:31:151', -20);
+    f.store.set('cflag:31:120', 1);
+    f.store.set('abl:31:37', 0);
+    f.store.set('exp:31:74', 10);
+    f.store.set('flag:10004', 1000);
+    f.store.set('exflag:4444', 1000);
+  });
+  await mod.sell_bitch(31, 'DUNGEON', seq_rand(0, 0, 0, 0, 0));
+  const lines = fixture.text_lines();
+  assert.deepEqual(
+    lines.slice(0, 2),
+    ['温妮', '以2人的兽人为对手'],
+    ':205+:212 与 :213+:217 各占一条（男性客时 :212/:213 不输出）',
+  );
+});
+
+test('#624 SELL_BITCH 街中：:233+:237 的客行是一整条输出', async () => {
+  const { fixture, mod } = setup_bitch((f) => {
+    f.store.set('base:31:0', 500);
+    f.store.set('base:31:1', 500);
+    f.store.set('cflag:31:1', 0);
+    f.store.set('cflag:31:151', -20);
+    f.store.set('cflag:31:120', 1);
+    f.store.set('abl:31:37', 0);
+    f.store.set('exp:31:74', 10);
+    f.store.set('flag:10004', 1000);
+    f.store.set('exflag:4444', 1000);
+  });
+  await mod.sell_bitch(31, 'TOWN', seq_rand(0, 0, 0, 0, 0));
+  assert.deepEqual(
+    fixture.text_lines().slice(0, 2),
+    ['温妮', '以1人的村民为对手'],
+    ':233+:237 是一条输出（街中时 :223 的 %SAVESTR:ARG% 因 :226 的 W 无法并入）',
+  );
+});
+
+test('#624 DUNGEON_WORK：:504..:511 的副业行是一整条输出', async () => {
+  const { fixture, mod } = setup_bitch((f) => {
+    f.store.set('cflag:31:9', 2);
+    f.store.set('cflag:31:0', 1);
+    f.store.set('flag:5', 32); // 调试位：显示副业名
+    f.store.set('flag:10004', 0);
+    f.store.set('exflag:4444', 0);
+  });
+  await mod.dungeon_work(31, seq_rand(0));
+  assert.deepEqual(
+    fixture.text_lines(),
+    ['温妮从事了研磨宝石的副业140点收入。'],
+    ':504 + PRINTDATA 词条 + :511 合成一条',
+  );
+});
+
+test('#624 SELF_BITCH：:571..:637 的分档文本、扶她追加与收行同属一行', async () => {
+  const cases = [
+    ['レズ支', (f) => f.store.set('abl:31:22', 10), '想象着跟女人的交合'],
+    [
+      '兽支',
+      (f) => {
+        f.store.set('item:22', 1);
+        f.store.set('abl:31:39', 10);
+      },
+      '陷入了跟野兽交尾的幻想',
+    ],
+    ['主人支', (f) => f.store.set('cflag:31:10', 40), '想起你的事'],
+    ['梦中支', (f) => f.store.set('abl:31:31', 5), '如饥似渴，一副十分想要的样子'],
+    ['克制支', () => {}, '努力地忍住声音'],
+  ];
+  for (const [name, seed, part] of cases) {
+    const { fixture, mod } = setup_bitch(seed);
+    await mod.self_bitch(31, 'DUNGEON', seq_rand(0, 0, 0));
+    assert.ok(
+      fixture.text_lines().includes(`${part}自慰了1次。`),
+      `${name} → :571..:637 是一整行`,
+    );
+  }
+
+  // :632 扶她/男人/肉芽 → :634 的追加与分档文本、收行同属一行
+  const { fixture, mod } = setup_bitch((f) => {
+    f.store.set('talent:31:121', 1);
+    f.store.set('abl:31:22', 10);
+  });
+  await mod.self_bitch(31, 'DUNGEON', seq_rand(0, 0, 0));
+  assert.ok(
+    fixture
+      .text_lines()
+      .includes('想象着跟女人的交合握住肉棒捋了起来自慰了1次。'),
+    '扶她追加（:634）也并进同一行',
+  );
 });
