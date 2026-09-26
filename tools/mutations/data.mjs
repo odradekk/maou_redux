@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 28; // #640 +7（M12870-M12876：yml 装载覆盖与内容固定的行为守卫）
+export const COUNT = 32; // master 28（#640 +7：M12870-M12876 yml 装载覆盖与内容固定的行为守卫）+ 本票 4（#642：M12936-M12939 GameBase 游戏名称/作者/发布时间/追加信息改坏——标题画面直读 yml 的一致性用例拦截）
 
 export default [
   {
@@ -296,5 +296,37 @@ export default [
       "assert.deepEqual(adder.data.no, [1], '角色 0 必须进入引擎的 data.no'); // 变异：data.no 断言坏",
     tests: ['chara-load'],
     must_mention: '角色 0 必须进入引擎的 data.no',
+  },
+  {
+    desc: 'M12936 GameBase 游戏名称改回旧名（#642——标题画面直读 yml 的一致性用例红）',
+    file: 'yml/GameBase.yml',
+    find: `"游戏名称": "魔王 Redux"`,
+    replace: `"游戏名称": "ERA魔王 年度版（名字暂定）（PC only）"`,
+    tests: ['page-title'],
+    must_mention: '【游戏名称】必须为「魔王 Redux」',
+  },
+  {
+    desc: 'M12937 GameBase 作者改坏（#642）',
+    file: 'yml/GameBase.yml',
+    find: `"作者": "odradekk"`,
+    replace: `"作者": "人人为我，我为人人"`,
+    tests: ['page-title'],
+    must_mention: '【作者】必须为 odradekk',
+  },
+  {
+    desc: 'M12938 GameBase 发布时间改坏（#642）',
+    file: 'yml/GameBase.yml',
+    find: `"发布时间": "2026"`,
+    replace: `"发布时间": "2011 - 2024！"`,
+    tests: ['page-title'],
+    must_mention: '【发布时间】必须为 2026',
+  },
+  {
+    desc: 'M12939 GameBase 追加信息填回旧串（#642——留空契约破）',
+    file: 'yml/GameBase.yml',
+    find: `"追加信息": ""`,
+    replace: `"追加信息": "※未经允许，任何人不得引用、修改再打包或进行商业用途※"`,
+    tests: ['page-title'],
+    must_mention: '【追加信息】必须留空',
   },
 ];

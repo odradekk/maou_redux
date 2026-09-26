@@ -47,39 +47,12 @@ export const FILES = [
         ref: '110',
         any: [/^\s*RESTART\s*$/m],
       },
-      // #596：致辞按钮之后的 PRINTL 只结束按钮所在行（展开 :67 / 折叠 :72）
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '67',
-        any: [/^\s*PRINTL\s*$/m],
-      },
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '72',
-        any: [/^\s*PRINTL\s*$/m],
-      },
-      // #596：信息行的行尾由 :76/:80 的 PRINTFORML 收掉（不是空行）
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '74',
-        any: [/^PRINTFORM %GAMEBASE_INFO%/m],
-      },
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '76',
-        any: [/^\s*PRINTFORML\s*$/m],
-      },
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '77',
-        any: [/^\s*PRINTFORM 版本推进出问题/m],
-      },
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '81',
-        any: [/^\s*PRINTFORM 群里@Delicious或者小窗/m],
-      },
-      // #596：:86-87 的 PRINTFORML 只结束联系按钮那一行、DRAWLINE 紧随其后
+      // 【#642 删除】#596 的致辞按钮 PRINTL 锚（:67/:72）——致辞与展开/折叠钮
+      // 整段删除，ere 侧注释里的 :67/:72 引用随之消失，在场检查不再过。
+      // 【#642 返工删除】#596 的信息行/联系方式锚（:74/:76/:77/:81）——联系方式
+      // 段与追加信息行整段删除，ere 侧注释里的这些引用随之消失，在场检查不再过。
+      // #596：:86-87 的 PRINTFORML 只结束上一行、DRAWLINE 紧随其后（#642 返工
+      // 后上一行是年份行后的空行）
       {
         src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
         ref: '86-87',
@@ -117,24 +90,18 @@ export const SAMPLE_LOG_REFS = {
     {
       js: 'ere/page/page-title.js',
       refs: [
-        // #596：致辞按钮行与信息行相邻、联系按钮行与分割线相邻
-        {
-          ref: '30-31',
-          any: [/感谢群内所有人的测试与指导/],
-        },
-        {
-          ref: '32-33',
-          any: [/版本推进出问题/],
-        },
+        // #642 返工：联系方式段删除后 ere 侧无 golden 相邻证据可引，登记撤销
+        //（致辞按钮-信息行相邻的 :30-31 与联系按钮行相邻的 :32-33 均已移除）
       ],
     },
     {
       js: 'test/page-title.test.js',
       refs: [
-        // #596：同上，一行段覆盖两处相邻
+        // #642 返工：联系方式段删除后改为引用分割线/首按钮的相邻（样本 :33-34），
+        // 断言说明见用例内注释
         {
-          ref: '30-33',
-          any: [/版本推进出问题/],
+          ref: '33-34',
+          any: [/^\[0\] 旧的奴隶/, /^-{60,}/],
         },
       ],
     },

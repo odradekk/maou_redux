@@ -821,11 +821,10 @@ const item = {
   300: named('装饰戒指', 'yml/Item.yml id 300'),
 };
 
-const global = {
-  98: named('联系方式开关', 'yml/Global.yml id 98'),
-  99: named('致辞折叠开关', 'yml/Global.yml id 99'),
-};
-
+// —— GLOBAL ——
+// 98（联系方式开关）与 99（致辞折叠开关）已随标题画面两段删除（#642），
+// 暂无已命名下标；后续全局变量随票按 named/named_tail 补入。
+const global = {};
 // —— MARK：只收 yml 缺口（#90）——
 // Mark.yml 列名覆盖 0-3/10；mark:4 原作侧无列名，语义从 @MARK_GOT_CHECK
 // 的用法读出：与 MARK:3 同值连写、只升不降（`MARK:4 <= N` 是取得门限），

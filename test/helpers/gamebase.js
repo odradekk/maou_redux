@@ -13,10 +13,10 @@
  */
 
 const GAMEBASE_SHAPE = {
-  title: 'ERA魔王 年度版（名字暂定）（PC only）',
-  author: '「人人为我，我为人人」',
-  info: '※未经允许，任何人不得引用、修改再打包或进行商业用途※',
-  year: '2011 - 2024！',
+  title: '魔王 Redux',
+  author: 'odradekk',
+  info: '',
+  year: '2026',
   gameCode: 931060,
   version: 0,
   versionName: '0.0.0',

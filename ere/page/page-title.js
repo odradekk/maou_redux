@@ -48,39 +48,6 @@ const { init_portcflag } = require('#/chara/chara-portcflag');
 const era_global = require('#/era-utils/era-global');
 const { load_game } = require('#/page/page-save-load');
 
-// 原作 :58-73：GLOBAL:99 == 0 时展开的完整制作名单。末行「※特别鸣谢…※」在
-// 原作是不换行的 PRINTFORM，其后紧跟按钮 9；'' 即原作的空 PRINTFORML。
-const GREETING_EXPANDED_LINES = [
-  '※本版本由Delicious基于谦悟制作的0.60EX制作，仅作为汉化交流及代码练习使用，请于18小时内删除※',
-  '※私自传播及运行本程序所产生的一切后果，请自行负责※',
-  '※本作在许多方面已偏离原作较远，敬请留意※',
-  '',
-  '地文及指令素质汉化：谦悟、匿名神人、干掉人龙、魔法少女张春华、幽灵 轻^3、文文、撸撸睡、Delicious',
-  '技术支持：风飏、stick、红茶与枪、你见不到我、谦悟、雄霸天、看飞机、墨镜马赛克、不科学灰骑士、毒菇、Delicious',
-  '测试校对及润色：钢笔、谦悟、猫出没注意、醉饮千殇不知愁、imightcatchsth',
-  '',
-  '口上组成员：',
-  '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious',
-  '专用口上：毛线夜、谦悟、幽灵 轻^3、魔法少女张春华、文文、喝奶茶呛着了、社会废人',
-  '原创口上及剧情：白告姬、红茶与枪、幽灵 轻^3、毛线夜、谦悟',
-  '',
-  '年度版现由我（自由人）在先人的基础上进行魔改',
-  '因为本人是重度魔王爱好者，又因为本人比较自私与傲慢，所以大量私货不可避…以及ooc致歉，但大概率是改不了的！诶嘿（）',
-  '欢迎各路大佬的加入，本人势单力薄，但仍会尽力！',
-  '总而言之…',
-  '敬请见证！',
-  '',
-  '※衷心感谢首席代码君：风飏。没有昨天的你就没有今天的我，在此祝愿你的明天会更好※',
-  '※特别鸣谢安东尼，感谢日本网友的原创，也感谢群内所有人的测试与指导※',
-];
-
-// 原作 :76-79：GLOBAL:99 非 0 时折叠为两行摘要（第二行无句末※、不换行，
-// 其后紧跟按钮 9）
-const GREETING_COLLAPSED_LINES = [
-  '※本版本由谦悟制作，仅作为汉化交流及代码练习使用，请于18小时内删除※',
-  '※私自传播及运行本程序所产生的一切后果，请自行负责',
-];
-
 // 原作 $PRINT_TITLE 起至 INPUT 前的整屏渲染（RESTART 每轮重跑）
 function draw_title_screen() {
   // gamebase 由静态表 yml/GameBase.yml 提供，属性名是英文变量名
@@ -108,15 +75,11 @@ function draw_title_screen() {
   // 原作 :25-26 SETFONT "ARIEL BLACK"/FONTBOLD、:82 SETFONT：ere 无全局字体
   // 开关，用片段的 fontWeight / 行的 fontSize 近似
   era.print(gamebase.title, { fontSize: '1.25rem' });
-  // 原作 :29-35 标题行三段拼色：伪(#ff8000) + Ver%LOCALS% + 立绘版(#ccff99)
-  era.print(
-    [
-      { content: '伪', color: '#ff8000', fontWeight: 'bold' },
-      { content: `Ver${version_text}`, fontWeight: 'bold' },
-      { content: '立绘版', color: '#ccff99', fontWeight: 'bold' },
-    ],
-    { fontSize: '1.25rem' },
-  );
+  // 版本行只留 Ver【版本代号】（#642 返工：删掉原作的「伪」「立绘版」两段装饰——
+  // 立绘在本仓库未实现，装饰失去所指）
+  era.print([{ content: `Ver${version_text}`, fontWeight: 'bold' }], {
+    fontSize: '1.25rem',
+  });
   era.print([{ content: gamebase.author, fontWeight: 'bold' }]);
   // 原作 :36-37 SIF STRLENS(GAMEBASE_YEAR) > 0（非空才输出，带半角括号）
   if (gamebase.year) {
@@ -124,38 +87,12 @@ function draw_title_screen() {
   }
   era.println(); // 原作 :41 PRINTL（:38 是作者行、:39-40 年份行，空行由 :41 出）
 
-  // 原作 :39-86 致辞段：GLOBAL:99 == 0 展开、非 0 折叠（读值走包装层，#18）
-  const greeting_lines =
-    era_global.greeting_collapsed === 0
-      ? GREETING_EXPANDED_LINES
-      : GREETING_COLLAPSED_LINES;
-  greeting_lines.forEach((line) => era.print(line));
-  // 致辞末行在原作不换行（PRINTFORM），按钮 9 直接跟在同一行；ere 的按钮
-  // 独占一行（dev-guides/06-output.md），无法完全同行。
-  // 原作 PRINTBUTTON " <<" 的前置空格不移植：引擎渲染时会把按钮文本里的连续
-  // 空白折叠成一个空格（见下方 printButton 的前缀说明），留了也无效。
-  era.printButton(era_global.greeting_collapsed === 0 ? '<<' : '>>', 9);
-  // 原作 :67/:72 的 PRINTL 只结束按钮所在行（按钮与致辞末行同行），不产生
-  // 空行：mainmenu-natural-log:30-31 里按钮行与下一行信息行逐行相邻
-
-  // 原作 :74 PRINTFORM %GAMEBASE_INFO% 不换行、行尾由 :76/:80 的 PRINTFORML
-  // 收掉；ere 的每次 print 独占一行（dev-guides/06-output.md），两行布局等效
-  era.print(gamebase.info);
-  // 原作 :74-81 联系方式段：GLOBAL:98 == 0 显示「版本推进出问题 」、非 0 显示
-  // 联系方式，按钮 8 切换。前者的尾部空格照原作（这是普通文本行，不受按钮的
-  // 空白折叠影响）。
-  if (era_global.contact_info_shown === 0) {
-    era.print('版本推进出问题 ');
-    era.printButton('>>', 8);
-  } else {
-    era.print('群里@Delicious或者小窗');
-    era.printButton('<<', 8);
+  // 追加信息与年份同款：留空时不占行（本仓库【追加信息】为空）
+  if (gamebase.info) {
+    era.print(gamebase.info);
   }
 
-  // 原作 :86-87 的 PRINTFORML 同样只结束上一行（:77/:81 的 PRINTFORM + 按钮 8
-  // 拼出的行），不产生空行：mainmenu-natural-log:32-33 里「版本推进出问题 」
-  // 行与分割线逐行相邻。:74 的 PRINTFORM 的收行在 :76/:80 的 PRINTFORML，
-  // ere 侧由 print 自成一行承接，两处都不补空行
+  // 分割线紧跟年份行后的空行，两者之间不补空行；按钮一律独占一行
   era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）
   // 原作 :89-90 [0]/[1] 原为纯文本 + INPUT 收数字；ere 侧改为可点按钮（可点可
   // 键入），accelerator 沿用原作编号。
@@ -228,22 +165,6 @@ async function run_title_page() {
       await load_game();
       continue;
     }
-
-    if (result === 8) {
-      // 原作 :108-110：GLOBAL:98 = (GLOBAL:98+1)%2; SAVEGLOBAL; RESTART。
-      // 包装层 setter 不代劳保存（#18），显式 await 落公共存档。
-      era_global.toggle_contact_info();
-      await era.saveGlobal();
-      continue;
-    }
-
-    if (result === 9) {
-      // 原作 :111-113：GLOBAL:99 = (GLOBAL:99+1)%2; SAVEGLOBAL; RESTART
-      era_global.toggle_greeting();
-      await era.saveGlobal();
-      continue;
-    }
-
     // 原作 :114-115 ELSE → RESTART：无法识别的输入重绘标题画面，不报错。
     // （原作函数尾的 RETURN RESULT 只在 BEGIN/CALL 转场路径上到达；本移植
     // 的转场经 begin() 以信号退出函数——循环仅在信号抛出时离开，其余输入

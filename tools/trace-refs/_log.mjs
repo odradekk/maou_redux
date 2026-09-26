@@ -43,5 +43,6 @@ export const LOG_REFS = [
 ];
 
 // 带样本名前缀的引用随 golden/ 样本与输出比对工具一并删除（#640），登记清空；
-// 本目录整体由 #641 删除。
+// 本目录整体由 #641 删除。（#642 曾登记 rules.js 的 mainmenu-natural-log:7-31
+// 锚——rules.js 与 golden 均已随 #640 删除，登记不再保留。）
 export const SAMPLE_LOG_REFS = {};

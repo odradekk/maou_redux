@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 509; // #557 +1（M12359：设置页 [28] 漏 await 的重叠检测直接报错条目）；#615 起 +17（M12240-M12248：print 正文的尾换行——[98]/[99] 确认页两行、RACE_CONFIG 表头/编辑头两行/随机档两个标签、兵器标题与鸡鸡状态回显；M12250-M12253/M12269：完全召唤横幅两行、之间的真空行与 :76 的两个空行、首段短横线与尾随两空格；M12254-M12256：ENEMY_EXIST2 首行空行与空名单分支）；#596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 515; // #642 验收 +1（M12942：整屏居中改成左对齐）；#642 返工 -2（M12934/M12935 删：联系方式段整段删除，find 无输出点）+2（M12940/M12941：版本行装饰段与联系方式段复活守卫）；#642 起 -1（M12074 删：致辞钮 9 随名单整段删除，find 无输出点）+6（M12930-M12935：标题画面新游戏信息——硬编码旧名/漏印作者/追加信息与年份守卫拆除/钮 8 复用已删编号 9/联系方式两段互换）；#557 +1（M12359：设置页 [28] 漏 await 的重叠检测直接报错条目）；#615 起 +17（M12240-M12248：print 正文的尾换行——[98]/[99] 确认页两行、RACE_CONFIG 表头/编辑头两行/随机档两个标签、兵器标题与鸡鸡状态回显；M12250-M12253/M12269：完全召唤横幅两行、之间的真空行与 :76 的两个空行、首段短横线与尾随两空格；M12254-M12256：ENEMY_EXIST2 首行空行与空名单分支）；#596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4456,15 +4456,9 @@ export default [
     tests: ['page-chara-info'],
     must_mention: '操作按钮行的下一行就是页脚分割线，中间不夹空行',
   },
-  {
-    desc: 'M12074 标题画面致辞按钮之后补回空行（:67/:72 的 PRINTL 只结束按钮所在行）',
-    file: 'ere/page/page-title.js',
-    find: "  era.printButton(era_global.greeting_collapsed === 0 ? '<<' : '>>', 9);",
-    replace:
-      "  era.printButton(era_global.greeting_collapsed === 0 ? '<<' : '>>', 9);\n  era.println(); // 变异：多补一条空行",
-    tests: ['page-title'],
-    must_mention: '致辞按钮行与信息行之间不夹空行',
-  },
+  // 【#642 删除】M12074（致辞按钮后的空行普查）——致辞与展开/折叠钮 9 随
+  // 汉化及制作名单整段删除，find 串已无输出点；空行普查由 M12075 与
+  // test/page-title.test.js 的空行普查用例（#596）继续守住。
   {
     desc: 'M12075 标题画面联系按钮之后补回空行（:86-87 的 PRINTFORML 只结束上一行）',
     file: 'ere/page/page-title.js',
@@ -4472,7 +4466,7 @@ export default [
     replace:
       '  era.println(); // 变异：多补一条空行\n  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
     tests: ['page-title'],
-    must_mention: '联系按钮行与分割线之间不夹空行',
+    must_mention: '年份行后恰一个空行（:41）即分割线',
   },
   {
     desc: 'M12076 服饰店现状行与追问行之间补回空行（:74 是空白源码行，不产生输出）',
@@ -4905,5 +4899,69 @@ export default [
     ); // 变异：漏 await`,
     tests: ['page-config'],
     must_mention: '疑似漏写 await',
+  },
+  {
+    desc: 'M12930 标题画面硬编码旧游戏名（gamebase.title 改旧字面量，#642）',
+    file: 'ere/page/page-title.js',
+    find: "  era.print(gamebase.title, { fontSize: '1.25rem' });",
+    replace:
+      "  era.print('ERA魔王 年度版（名字暂定）（PC only）', { fontSize: '1.25rem' }); // 变异：硬编码旧名",
+    tests: ['page-title'],
+    must_mention: '标题画面必须显示 yml 的游戏名称「魔王 Redux」',
+  },
+  {
+    desc: 'M12931 标题画面作者行漏印（#642）',
+    file: 'ere/page/page-title.js',
+    find: "  era.print([{ content: gamebase.author, fontWeight: 'bold' }]);",
+    replace: '  // 变异：作者行删除',
+    tests: ['page-title'],
+    must_mention: '标题画面必须显示 yml 的作者 odradekk',
+  },
+  {
+    desc: 'M12932 追加信息守卫拆成无条件输出（留空也打空串行，#642）',
+    file: 'ere/page/page-title.js',
+    find: '  if (gamebase.info) {\n    era.print(gamebase.info);\n  }',
+    replace: '  era.print(gamebase.info); // 变异：守卫拆除',
+    tests: ['page-title'],
+    must_mention: '【追加信息】为空时不得输出空串行',
+  },
+  {
+    desc: 'M12933 年份守卫拆成无条件输出（空年份也打「()」，#642）',
+    file: 'ere/page/page-title.js',
+    find: "  if (gamebase.year) {\n    era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]);\n  }",
+    replace:
+      "  era.print([{ content: `(${gamebase.year})`, fontWeight: 'bold' }]); // 变异：守卫拆除",
+    tests: ['page-title'],
+    must_mention: '【发布时间】为空时不得输出',
+  },
+  // 【#642 返工删除】M12934（联系方式钮复用编号 9）/M12935（联系方式两段互换）
+  // ——联系方式段与 GLOBAL:98 整段删除，find 串已无输出点；联系方式的「不得
+  // 复活」由 M12941 与首屏断言守住。
+  {
+    desc: 'M12940 版本行装饰段复活（「伪」「立绘版」加回，#642 返工）',
+    file: 'ere/page/page-title.js',
+    find: "  era.print([{ content: `Ver${version_text}`, fontWeight: 'bold' }], {\n    fontSize: '1.25rem',\n  });",
+    replace:
+      "  era.print(\n    [\n      { content: '伪', color: '#ff8000', fontWeight: 'bold' },\n      { content: `Ver${version_text}`, fontWeight: 'bold' },\n      { content: '立绘版', color: '#ccff99', fontWeight: 'bold' },\n    ],\n    { fontSize: '1.25rem' },\n  ); // 变异：装饰段复活",
+    tests: ['page-title'],
+    must_mention: '版本行必须显示 Ver【版本代号】',
+  },
+  {
+    desc: 'M12941 联系方式段复活（联系行与 [8] 钮加回，#642 返工）',
+    file: 'ere/page/page-title.js',
+    find: '  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）',
+    replace:
+      "  era.print('版本推进出问题 '); // 变异：联系方式段复活\n  era.printButton('>>', 8);\n  era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）",
+    tests: ['page-title'],
+    must_mention: '联系方式段已删除：「版本推进出问题」不得出现',
+  },
+  {
+    desc: 'M12942 标题画面整屏居中改成左对齐（#642 验收抽样补的断言）',
+    file: 'ere/page/page-title.js',
+    find: "  era.setAlign('center'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中",
+    replace:
+      "  era.setAlign('left'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中",
+    tests: ['page-title'],
+    must_mention: '标题画面整屏居中：首个 setAlign 必须是 center',
   },
 ];

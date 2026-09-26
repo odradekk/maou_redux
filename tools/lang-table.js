@@ -856,12 +856,6 @@ const EXEMPT_STRINGS = [
     where: 'ere/page/page-clothtype.js, ere/system/cloth-lookup.js',
     why: 'FUNC_CLOTH.ERB:922/:1056 的 CFLAG:42 == 56（土着頭飾→汉化版「土著头饰」）。著 在简体规范里是「土著」（tǔzhù，原住民）的正字——词级豁免而非字级映射：单收 著→着 会把这个词改坏（土着），而 著 在本作语料里只随这一个词出现。#215（J5）收录。',
   },
-  {
-    value:
-      '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious',
-    where: 'ere/page/page-title.js',
-    why: '口上组致谢名单整行。華胥の亡靈 是贡献者 ID（含日文の与繁体華/靈），其余名字同理不译——对人名/ID 做字符归一会改名。豁免到「字符串整体」，这行被改写时失配变红，改者须有意识地同步本表。',
-  },
   ...['日常着装・裙子', '日常着装・裤子'].map((value) => ({
     value,
     where: 'ere/page/page-tailor.js',

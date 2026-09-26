@@ -40,9 +40,9 @@ const sample_global_yml = [
   '  id: 0',
   '  name: "title_music_enabled"',
   '  type: "number"',
-  '"致辞折叠开关":',
-  '  id: 99',
-  '  name: "greeting_collapsed"',
+  '"音频默认值已落盘":',
+  '  id: 2',
+  '  name: "audio_defaults_seeded"',
   '  type: "number"',
   '',
 ].join('\n');
@@ -58,7 +58,12 @@ test('解析：id/name/type 逐条读出，键可为任意中文', () => {
       name: 'title_music_enabled',
       type: 'number',
     },
-    { key: '致辞折叠开关', id: 99, name: 'greeting_collapsed', type: 'number' },
+    {
+      key: '音频默认值已落盘',
+      id: 2,
+      name: 'audio_defaults_seeded',
+      type: 'number',
+    },
   ]);
 });
 
@@ -117,13 +122,13 @@ test('渲染：getter 数字寻址 + || 0 兜底 + 中文 JSDoc；setter 成对'
 
   // #13 的兜底规则：读未声明/未初始化序号引擎返回 undefined，getter 必须 || 0
   assert.ok(section.includes("return era.get('global:0') || 0;"));
-  assert.ok(section.includes("return era.get('global:99') || 0;"));
+  assert.ok(section.includes("return era.get('global:2') || 0;"));
   // 写入侧成对出现，同样用数字下标（#5：底层寻址一律数字）
   assert.ok(section.includes("era.set('global:0', v);"));
-  assert.ok(section.includes("era.set('global:99', v);"));
+  assert.ok(section.includes("era.set('global:2', v);"));
   // 每个变量的中文键进 JSDoc（AGENTS.md：变量语义必须注释）
   assert.ok(section.includes('是否启用标题音乐'));
-  assert.ok(section.includes('致辞折叠开关'));
+  assert.ok(section.includes('音频默认值已落盘'));
   // 访问器对象按 #11 命名：era-<表名>.js / era_<表名>
   assert.ok(section.includes('const era_global = {'));
 });
@@ -231,7 +236,7 @@ test('重生成（--force）：生成区被替换，手写区逐字节存活（#
     const hand_work = fs
       .readFileSync(target, 'utf8')
       .replace(' * 标记之外是手写区', ' * 人工补充说明：这一行是定稿时写的');
-    const with_hand = `${hand_work}era_global.toggle_greeting = () => {};\n`;
+    const with_hand = `${hand_work}era_global.hand_added_method = () => {};\n`;
     fs.writeFileSync(target, with_hand, 'utf8');
 
     // yml 变了：新增一个变量，重生成必须把新访问器带进来
@@ -250,7 +255,7 @@ test('重生成（--force）：生成区被替换，手写区逐字节存活（#
     const regenerated = fs.readFileSync(target, 'utf8');
     // 手写区存活：人工补的每一处都在
     assert.ok(regenerated.includes('人工补充说明：这一行是定稿时写的'));
-    assert.ok(regenerated.includes('era_global.toggle_greeting = () => {};'));
+    assert.ok(regenerated.includes('era_global.hand_added_method = () => {};'));
     // 生成区确实被替换了：新变量进来了，且仍是合法 JS
     assert.ok(regenerated.includes('get title_music_volume()'));
     new vm.Script(regenerated);
