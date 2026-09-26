@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2709; // #641 起净 -2（M3329/M8946/M8959 随清单核对与锚名机制移除；+1 M12907 try_kojo 守卫）；#557 +1（M12356：强制肉偿调用点漏 await 的重叠检测直接报错条目）；#623 起 +69（M12600-M12651：K11 莉莉 16 处 + K9 黑方片 19 处 + K3 温妮 17 处「原作同一行被拆」的合并点各一条「拆回多条」；返工 +9：M12652-M12660——8 族首支以外的分支各一条拆回 + :4810 前缀行尾全角空格丢字；第 2 轮验收返工 +8：M12661-M12668——K11 四族的第五、六支各一条「丢前缀」）；#600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平；#622 起 +62（M12500-M12525：K8 的 26 处；M12526-M12545：K1 的 20 处；M12546-M12556：K10 的 11 处「原作同一行被拆」的合并点各一条「拆回多条」；M12557/M12558 两条换档变异钉住 k1/k10 二回目的快乐↔痛苦映射；M12559/M12560 两条「非首支漏拼前缀」变异钉住 k1 狗名链的语句外前缀；M12561 一条补查追加的「蜜裂与肛门段」拆回）；#624 起净 +50（合并态实测 2641 − #625 态 2591：M12700-M12750 段的合并点与审查补条（交谈二回目 :4733..:4741、奖励请求 :8133..:8141、灌肠肛塞脱着的观赏支 :4484 与疼爱支 :4486）、M12751 对人格斗蜡烛支（:2674+:2679）的语句外前缀常量合并（另两处同型口交支改用既有 M12707/M12718，find 同步到新语句）、M12752 K0 灌肠脱着疼爱支拆回、M12753 K0 助手后背位「肉棒/假阳具」两档写反；其间删 M12731/M12732/M12733/M11948）；#621 起 +53（M12400-M12452：口上剩余拆行 A 组（K6/K7）53 组「拆回多条」） // #600 起 +16（M12140-M12155：16 处「原作同一行被拆」的合并点各一条「拆回多条」）；#599 起 +10（M12130-M12139：肉便器名字接入——丢名字 ×6（K0 四处 + K12 + K3）、换调用 ×1（K0）、保真锁守卫 ×3（记号表退回/不收上方记号行/K12 两行并一行））；#572 起 +3（M12018/M12019：迷宫凌辱旁观/不要两处选择项按钮化；M12035：K10 初调教两处二选一按钮化）；#584 起 +13（M11940-M11952：拼接行拆回/丢段/锚缩水/两档写反的十三条）；#570 起 +31（M11740-M11765、M11769-M11773：语尾口上返回文字 + 迷宫凌辱行内拼接 + 拼接锚守卫）；#549 全量变异修复：-1（M8971 删除——missing 字段自 #565 静默化起只作历史文档，'stub'/'silent' 行为不可区分，同 M1730/M8956 删除先例）；#389 起 -1（M7826 随 GET_LOOK_INFO 子集搬进 tools/mutations/look.mjs）；#403 起 +53（M8941-M9000）；#493 起 +7（M10700-M10704、M10709、M10711）；#514 起 +5（M10980-M10984）；#544 起 +28（M11400-M11427，强制肉偿）；#542 起 +3（M11319 bich_level_text 首判写反、M11326 第二臂文案、M11327 第三臂数值——page-chara-info 的 [18] 按钮表驱动用例守护）；#552 起 +10（M11600-M11609，口上 item:PBAND → item:4）；#565 返工 +1−1（M11636 未命中复辟占位；M1730/M8956 随静默化前提反转删除——「未注册打占位」已是错的行为），实测持平
+export const COUNT = 2701; // #640 -8（M447 转译器 1 条 + 保真锁专属守卫 5 条：M11772/M11773/M11947/M12137/M12138 + M75/M76 删条目不补）；M78/M80/M81/M1774/M11419/M12131/M12139 改挂行为测试 #641 净 -2（M3329/M8946/M8959 随清单核对与锚名机制移除，+1 M12907 try_kojo 守卫）；// 原沿革见 git 历史
 
 export default [
   {
@@ -173,52 +173,35 @@ export default [
     tests: ['kojo-k3-noble'],
     must_mention: 'MARK:1 == 3',
   },
-  {
-    desc: 'M75 K3 的 PRINTFORML 映射错变体（:944 print 改 printAndWait）',
-    file: 'ere/kojo/kojo-k3-noble.js',
-    find: `        era.print(
-          \`\${player_name}开始爱抚后、\${target_name}立马将双脚大幅度地张开了、如同为了让股间突出来一样挺起了腰。\`,
-        ); // :944 PRINTFORML`,
-    replace: `        await era.printAndWait(
-          \`\${player_name}开始爱抚后、\${target_name}立马将双脚大幅度地张开了、如同为了让股间突出来一样挺起了腰。\`,
-        ); // :944 PRINTFORML`,
-    tests: ['kojo-text-fidelity'],
-    must_mention: 'W/L',
-  },
-  {
-    desc: 'M76 K3 插值填错孔（:1076 player 与 target 互换）',
-    file: 'ere/kojo/kojo-k3-noble.js',
-    find: '`${player_name}轻轻地抚摸了一下${target_name}紧紧闭着的眼皮子旁边后、${target_name}的身体颤抖起来，惊叫了一下。`,',
-    replace:
-      '`${target_name}轻轻地抚摸了一下${player_name}紧紧闭着的眼皮子旁边后、${target_name}的身体颤抖起来，惊叫了一下。`,',
-    tests: ['kojo-text-fidelity', 'kojo-k3-noble'],
-    must_mention: '槽位序',
-  },
+  // M75（K3 :944 的 print/printAndWait 归类）随保真锁删除后无人可守（#640
+  // 实测：行为断言不覆盖 W/L 形态）——删条目不补。
+  // M76（K3 :1076 插值槽位）随保真锁删除后无人可守（#640 实测：该分支无
+  // 行为断言覆盖）——删条目不补。
   {
     desc: 'M78 K5 台词改回繁体（简体锁 + 锁 D 反向 + 行为断言三处红）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "        await era.printAndWait('「你这个变态…别、别碰我！」'); // :810",
     replace:
       "        await era.printAndWait('「你這個變態…別、別碰我！」'); // :810",
-    tests: ['output-lang-lock', 'kojo-text-fidelity', 'kojo-k5-mao'],
+    tests: ['output-lang-lock', 'kojo-k5-mao'],
     must_mention: '非简体',
   },
   {
-    desc: 'M80 K5 抄错字（归一后锁 D 仍抓：正向片段找不到）',
+    desc: 'M80 K5 抄错字（行为断言的整行对账抓：文本对不上）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: "        await era.printAndWait('「咕…呜呜…啊！」'); // :807",
     replace: "        await era.printAndWait('「咕…呜呜…啊呀！」'); // :807",
-    tests: ['kojo-text-fidelity'],
-    must_mention: '未见于 JS',
+    tests: ['kojo-k5-mao'],
+    must_mention: '咕…呜呜…啊',
   },
   {
-    desc: 'M81 K5 句中空格丢失（归一后锁 D 仍抓：片段含前导空格）',
+    desc: 'M81 K5 句中空格丢失（行为断言的整行对账抓：文本对不上）',
     file: 'ere/kojo/kojo-k5-mao.js',
     find: '`「主人、再多摸摸我嘛${heart(1)} 舒服的我都要叫出来了啦${heart(1)}」`',
     replace:
       '`「主人、再多摸摸我嘛${heart(1)}舒服的我都要叫出来了啦${heart(1)}」`',
-    tests: ['kojo-text-fidelity'],
-    must_mention: '未见于 JS',
+    tests: ['kojo-k5-mao'],
+    must_mention: '再多摸摸我嘛',
   },
   {
     // #183（H14 迷宫凌辱男性对象）：同名函数区分（验收要求「此行为必须有测试」）
@@ -300,15 +283,7 @@ export default [
     must_mention: '收益结算',
   },
 
-  {
-    desc: 'M447 SKIP 块处理删除（[SKIPSTART] 内容被当活代码装载，#184 反向变异：四组同名的死代码判定）',
-    file: 'tools/kojo-transpiler.js',
-    find: '    if (/^\\[SKIPSTART\\]$/i.test(trimmed)) {',
-    replace:
-      '    if (false && /^\\[SKIPSTART\\]$/i.test(trimmed)) { // 变异：SKIP 块不拦截',
-    tests: ['kojo-transpiler'],
-    must_mention: '不产出重复顶层函数',
-  },
+  // M447（口上转译器的 SKIP 块处理）随转译器删除（#640）。
 
   {
     // #182（H13 迷宫凌辱）：分派表缺失（验收要求「13 种怪物 × 两种对象的
@@ -697,14 +672,14 @@ export default [
     must_mention: '主启动图漏装：kojo-k4-stoic',
   },
   {
-    desc: 'M1774 K4 插值槽位错配（CALLNAME:MASTER 与 NAME:MASTER 混，#235 保真）',
+    desc: 'M1774 K4 插值槽位错配（CALLNAME:MASTER 与 NAME:MASTER 混，#235 保真；#640 起由行为断言守）',
     file: 'ere/kojo/kojo-k4-stoic.js',
     find: `        \`四脚爬爬，扭动着腰，用炽热的视线仰视着\${master_name}。\`,
       ); // :152`,
     replace: `        \`四脚爬爬，扭动着腰，用炽热的视线仰视着\${target_name}。\`,
       ); // :152 变异：填错孔`,
-    tests: ['kojo-text-fidelity'],
-    must_mention: '槽位序',
+    tests: ['kojo-k4-stoic'],
+    must_mention: '仰视着你',
   },
 
   {
@@ -21534,7 +21509,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     find: '    `由于${name_of(arg)}欠的债务实在太高了，在休息的时候${name_of(arg)}被某位的债主绑架了！`,',
     replace:
       '    `${name_of(arg)}由于欠的债务实在太高了，在休息的时候${name_of(arg)}被某位的债主绑架了！`,',
-    tests: ['kojo-forced-payment', 'kojo-text-fidelity'],
+    tests: ['kojo-forced-payment'],
     must_mention: '档开场',
   },
   {
@@ -21988,22 +21963,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-dungeon-ravish'],
     must_mention: '语尾两处都拼进『猪』行',
   },
-  {
-    desc: 'M11772 男版拼接锚漏列末行（#570：B/C/D 三锁同时红——末行不再是 W 行、GOBI 记号少一个、JS 片段不在拼接文本里）',
-    file: 'ere/kojo/kojo-dungeon-ravish-man.js',
-    find: '    ); // :308+:317+:328',
-    replace: '    ); // :308+:317 变异：漏列 :328',
-    tests: ['kojo-text-fidelity'],
-    must_mention: 'JS 片段未按序见于 ERB',
-  },
-  {
-    desc: 'M11773 女版拼接锚漏列中段（#570：锚必须列全区间内的 PRINT 行）',
-    file: 'ere/kojo/kojo-dungeon-ravish.js',
-    find: '    ); // :708+:717+:728',
-    replace: '    ); // :708+:728 变异：漏列 :717',
-    tests: ['kojo-text-fidelity'],
-    must_mention: '漏列区间内的 PRINT 行 :717',
-  },
+  // M11772（拼接锚漏列——保真锁专属守卫）随 kojo-text-fidelity 删除（#640）。
+  // M11773（拼接锚漏列——保真锁专属守卫）随 kojo-text-fidelity 删除（#640）。
   // —— #572：K10 初调教两处二选一的按钮化 ——
   {
     desc: 'M12035 K10 初调教的选项退回纯文本行（引擎里点不动）',
@@ -22116,15 +22077,7 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     tests: ['kojo-dungeon-ravish-man'],
     must_mention: '反抗的：恐怖点数与前置描写同一行',
   },
-  {
-    desc: 'M11947 拼接锚漏列末行（#584：:96+:98+:100 缩成 :96+:98，末段不再收行）',
-    file: 'ere/kojo/kojo-forced-payment.js',
-    find: '    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`); // :96+:98+:100',
-    replace:
-      '    await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`); // :96+:98',
-    tests: ['kojo-text-fidelity'],
-    must_mention: 'JS 用了 printAndWait',
-  },
+  // M11947（拼接锚漏列——保真锁专属守卫）随 kojo-text-fidelity 删除（#640）。
   {
     desc: 'M11949 男版肉便器收尾行拆回两条（#584 的 :802+:804；#600 起靶在整行语句的末段）',
     file: 'ere/kojo/kojo-dungeon-ravish-man.js',
@@ -22254,9 +22207,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     file: 'ere/kojo/kojo-k0-tender.js',
     find: '`「和${benki_player_name()}来同时用小穴和菊花来做爱了♪」`',
     replace: '`「和${sc()}来同时用小穴和菊花来做爱了♪」`',
-    tests: ['kojo-text-fidelity'],
-    test_name: '插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔）',
-    must_mention: '槽位序不一致',
+    tests: ['kojo-k0-tender'],
+    must_mention: '首次台词必须是整行',
   },
   {
     desc: 'M12132 K0 施舍首句（:7516+:7518）名字删除（缺对象名）（#599）',
@@ -22329,33 +22281,10 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     must_mention:
       '#599 BENKI_KOUJO：行动 6 常识改写首句在名字位置插 FLAG:64 的对象名',
   },
+  // M12137（保真锁记号表守卫）随 kojo-text-fidelity 删除（#640）。
+  // M12138（保真锁上方记号行守卫）随 kojo-text-fidelity 删除（#640）。
   {
-    desc: 'M12137 保真锁记号表退回只认 GOBI（CALL BENKI_PLAYER_NAME 不再算记号——扩出来的检查被拆）（#599）',
-    file: 'test/kojo-text-fidelity.test.js',
-    find:
-      'const MARKER_CALL_RULES = [\n' +
-      "  [/^\\s*CALL\\s+GOBI_KOUJO\\b/i, 'GOBI'],\n" +
-      "  [/^\\s*CALL\\s+BENKI_PLAYER_NAME\\b/i, 'BENKI_PLAYER_NAME'],\n" +
-      '];',
-    replace:
-      'const MARKER_CALL_RULES = [\n' +
-      "  [/^\\s*CALL\\s+GOBI_KOUJO\\b/i, 'GOBI'], // 变异：只认 GOBI，退回 #570 的记号表\n" +
-      '];',
-    tests: ['kojo-text-fidelity'],
-    test_name: '插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔）',
-    must_mention: '槽位序不一致',
-  },
-  {
-    desc: 'M12138 保真锁不收「上方记号行」（单行锚只看自己那行——K12 续行的名字记号落空）（#599）',
-    file: 'test/kojo-text-fidelity.test.js',
-    find: '  let prev = upper_bound_line(erb_lines, prints[0].line_no - 1);',
-    replace: '  let prev = prints[0].line_no - 1; // 变异：不收上方记号行',
-    tests: ['kojo-text-fidelity'],
-    test_name: '插值槽位序：%…% 与 ${…} 归一化后逐项相等（防填错孔）',
-    must_mention: '槽位序不一致',
-  },
-  {
-    desc: 'M12139 K12 两行并回一行（:5171+:5173 的前缀行被吞——锁 A 的「带 W/L 前缀行不许被吞」抓）（#599）',
+    desc: 'M12139 K12 两行并回一行（:5171+:5173 的前缀行被吞——行为断言的整行输出对账抓）（#599；#640 起由 kojo-k12-intellectual 守）',
     file: 'ere/kojo/kojo-k12-intellectual.js',
     find:
       '      await era.printAndWait(`「多亏`); // :5171\n' +
@@ -22366,10 +22295,8 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '      await era.printAndWait(\n' +
       '        `「多亏${benki_player_name()}的阴茎的帮助、几乎让下巴脱臼的『实验』得以进行咯♪」`,\n' +
       '      ); // :5173（变异：两行并一行，前缀行被吞）',
-    tests: ['kojo-text-fidelity'],
-    test_name:
-      '锚覆盖：ere/kojo 每个 era.print* 调用都绑定到源文件的 PRINTFORM 行',
-    must_mention: '并进本语句会吞掉一行',
+    tests: ['kojo-k12-intellectual'],
+    must_mention: '多亏',
   },
 
   // —— #600：16 处「原作同一行被拆」的合并点，各配一条「拆回多条」变异 ——

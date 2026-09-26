@@ -83,8 +83,8 @@
  *     （page-chara-info.js 的 `MASTER` 恒假两支同款处置），移除后该函数
  *     只剩「`spouse % 10 == 9` 走家族册、其余查 ITEMNAME」两出口。
  *
- *   - **跨域写一律经属主域门面**（ownership/*-cross-domain-writes.yml 逐条
- *     核对）：婚姻状况 CFLAG:601/602/606/609 走 `chara().chara.结婚对象/
+ *   - **跨域写一律经属主域门面**（逐条登记在案）：婚姻状况
+ *     CFLAG:601/602/606/609 走 `chara().chara.结婚对象/
  *     结婚爱情` 与 `chara().dungeon.恋人`（读用裸寻址），状态 CFLAG:1 走
  *     `chara().invasion.状态`，处女丧失对象 CFLAG:15 与初吻对象 CFLAG:16 /
  *     名字 CSTR:4 走 `chara().train.*`（train 域）。**一处例外**：`DIVORCE`

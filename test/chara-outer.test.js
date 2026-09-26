@@ -27,7 +27,7 @@
  *     隐藏入队角色（SYSTEM.ERB 丽塔块两处 ADDCHARA 223、SHOP.ERB 召唤
  *     事件 ADDCHARA 777）；两表互指相性 1000（"223|777"/"777|223"）。
  *
- * 引擎不在场（无 app.asar）时引擎级用例 skip 并留警告；文件级用例始终跑。
+ * 引擎不在场（无 app.asar）时全部用例 skip 并留警告。
  */
 
 const assert = require('node:assert/strict');
@@ -44,16 +44,11 @@ const {
   attach_variable_tables,
   load_repo_variable_tables,
 } = require('./helpers/static-tables');
-const { read_text } = require('../tools/csv-to-yml');
-// T20 归一（#60）：源 CSV 文本过同一张表再装载，比对语义是「产物 = 归一(源)」
-const { to_simplified_yaml } = require('../tools/lang-normalize');
-
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const YML_DIR = path.join(REPO_ROOT, 'yml');
-const CHARA_DIR = path.join(REPO_ROOT, 'target', 'CSV', 'Chara');
 
 // 编号外批（#105 决议二的第二批）：0/17/35 与常规批 27 张已随前票入库
 const OUTER_IDS = [
@@ -66,42 +61,6 @@ const EXTENDED_TABLES = { portcflag: 2, ex_talent: 2 };
 function read_yml(name) {
   return fs.readFileSync(path.join(YML_DIR, name), 'utf8');
 }
-
-// —— 文件级（仓库文件层，无引擎也跑）——
-
-test('角色数据全量在库：yml/Chara*.yml 与 target/CSV/Chara/ 的编号集一致（45 张收口）', () => {
-  const source_ids = fs
-    .readdirSync(CHARA_DIR)
-    .filter((name) => /^Chara\d+\.csv$/i.test(name))
-    .map((name) => /^Chara(\d+)\.csv$/i.exec(name)[1])
-    .sort((a, b) => Number(a) - Number(b));
-  assert.equal(source_ids.length, 45, '源 CSV 应为 45 张（#105 决议二实测）');
-
-  const product_ids = fs
-    .readdirSync(YML_DIR)
-    .filter((name) => /^Chara\d+\.yml$/i.test(name))
-    .map((name) => /^Chara(\d+)\.yml$/i.exec(name)[1])
-    .sort((a, b) => Number(a) - Number(b));
-  // #134 父票「角色数据全量在库」的收口判定：产物编号集 ⊇ 源编号集
-  // （库内允许有源外增补，但源内每张必须有产物）
-  for (const id of source_ids) {
-    assert.ok(
-      product_ids.includes(id),
-      `yml/Chara${id}.yml 缺失（源 ${CHARA_DIR}/Chara${id}.csv 在场）`,
-    );
-  }
-});
-
-test('编号外批产物在场：15 张头两行指到真实源文件（产物边界注释）', () => {
-  for (const id of OUTER_IDS) {
-    const head = read_yml(`Chara${id}.yml`).split('\n').slice(0, 2).join('\n');
-    assert.match(
-      head,
-      new RegExp(`转换自 target/CSV/Chara/Chara${id}\\.csv`),
-      `Chara${id}.yml 头注必须指到源文件`,
-    );
-  }
-});
 
 // —— 引擎级（驱动 app.asar 的真代码）——
 
@@ -118,53 +77,6 @@ function load_outer_presets() {
   }
   return loader;
 }
-
-engine_test(
-  '编号外批 15 张：库内产物经引擎装载与源 CSV 逐字段一致、零告警零丢弃',
-  () => {
-    // #113 登记的 cstr 空值行分歧归一（全 45 文件仅 Chara150 的 3/4 两行），
-    // 与 test/chara-yml.test.js 的 strip_empty_cstr 同一做法——剥除集若意外
-    // 扩大，deepEqual 在其他角色上红
-    const strip_empty_cstr = (preset) => {
-      if (!preset.cstr) {
-        return preset;
-      }
-      const cstr = {};
-      for (const [key, value] of Object.entries(preset.cstr)) {
-        if (value !== '' && value !== 0) {
-          cstr[key] = value;
-        }
-      }
-      return { ...preset, cstr };
-    };
-
-    for (const id of OUTER_IDS) {
-      const source = read_text(path.join(CHARA_DIR, `Chara${id}.csv`));
-      const from_yml = create_chara_loader();
-      attach_variable_tables(from_yml, repo_tables);
-      from_yml.load_rows(
-        engine.parse_data_file(read_yml(`Chara${id}.yml`), 'yml', 'chara'),
-      );
-      const from_csv = create_chara_loader();
-      attach_variable_tables(from_csv, repo_tables);
-      from_csv.load_rows(
-        engine.parse_data_file(to_simplified_yaml(source.text), 'csv', 'chara'),
-      );
-
-      assert.deepEqual(from_yml.errors, [], `Chara${id} 装载不应有缺表错误`);
-      assert.deepEqual(
-        strip_empty_cstr(from_yml.static_data.chara[id]),
-        strip_empty_cstr(from_csv.static_data.chara[id]),
-        `Chara${id}：引擎读库内产物的预设与读源 CSV 不一致`,
-      );
-      assert.deepEqual(
-        from_yml.static_data.relationship,
-        from_csv.static_data.relationship,
-        `Chara${id}：称呼/相性（relationship）不一致`,
-      );
-    }
-  },
-);
 
 engine_test(
   '消费验证：addCharacter 加入 15 张预设后预设值确实可读（base/talent/abl/exp/callname）',

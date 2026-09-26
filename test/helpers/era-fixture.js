@@ -900,8 +900,8 @@ function create_era_fixture() {
   //   v(this.config,"system.hideUserInput") || e.hideInput || e.any
   //     || this.print(i)
   // 即普通 input() 对回显值 print → addTotalLines → +1 Row；任一短路命中
-  // 则不 print。夹具只调计数器、不推条目——条目层的回显由比对回放的输入
-  // 标记承载（tools/compare/replay.js），再推条目会把比对窗口的输入边界
+  // 则不 print。夹具只调计数器、不推条目——条目层不回显输入，再推条目
+  // 会把输入边界
   // 翻倍（回显行与标记各产生一次 input 事件）。waitAnyKey 不占行的机制
   // 也在这条短路上：引擎 waitAnyKey 内部走 input({any:true})，e.any 命中
   // 第三段、回显 print 不发生——不是另一套独立实现（夹具的 waitAnyKey
@@ -917,9 +917,8 @@ function create_era_fixture() {
   // （test/fixture.test.js 逐条钉住）：空串与 null 都归一成 0（最反直觉
   // 的一条）、非数字串原样、前后空白照样解析、部分数字的串不截断。
   // 归一只在白名单校验之后发生——引擎渲染层 returnFromButton 校验的就是
-  // 原始 val（#130 段）。回显的条目层仍不推（设计裁定 2，docs/
-  // output-diff.md）：print 的归一后值在夹具只计行（上方回显计数），条目
-  // 层的输入回显由 tools/compare/replay.js 的回放器承载，勿在此补。
+  // 原始 val（#130 段）。回显的条目层仍不推（设计裁定）：print 的归一后值
+  // 在夹具只计行（上方回显计数），条目层不回显输入，勿在此补。
   const get_number = (val) => {
     const num = Number(val);
     return isNaN(num) ? val : num;

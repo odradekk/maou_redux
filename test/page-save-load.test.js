@@ -704,7 +704,7 @@ test('夹具镜像版本闸门：低版本存档 loadData 拒读，不转场、�
 test('夹具镜像整体替换：loadData 成功后变量表换成存档快照（this.era.data = r）', async () => {
   const fixture = create_era_fixture();
   fixture.store.set('flag:10000', 7);
-  fixture.store.set('global:99', 1); // global 不随档走
+  fixture.store.set('global:0', 1); // global 不随档走
   const { save_game } = load_page(fixture);
   fixture.set_inputs(3);
   await save_game();
@@ -719,7 +719,7 @@ test('夹具镜像整体替换：loadData 成功后变量表换成存档快照�
     7,
     '读档成功后读的是存档时的值（数据被整体替换）',
   );
-  assert.equal(fixture.store.get('global:99'), 1, 'global 表不随档走');
+  assert.equal(fixture.store.get('global:0'), 1, 'global 表不随档走');
 });
 
 // —— #136 返工：指针槽的登记与显式初始化 ——

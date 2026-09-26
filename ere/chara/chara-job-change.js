@@ -48,8 +48,8 @@
  *     照抄，`MEDAL_REQUIRED` 一个常量两处共用），不构造只有夹具能触发的
  *     用例——page-dungeon-setup.js :19-27 的先例。
  *
- *   - **跨域写一律经属主域门面**（#66/#70 裁定，ownership/
- *     *-cross-domain-writes.yml 逐条核对）：状态 CFLAG:1 走
+ *   - **跨域写一律经属主域门面**（#66/#70 裁定，逐条登记在案）：
+ *     状态 CFLAG:1 走
  *     `chara().invasion.状态`（invasion）、攻防 CFLAG:11/12 走
  *     `chara().dungeon.攻击力/防御力`（dungeon）、体力气力 BASE:0/1 走
  *     `chara().dungeon.体力/气力`（dungeon）、契约怪物 CFLAG:570 走

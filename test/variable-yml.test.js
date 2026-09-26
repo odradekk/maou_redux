@@ -1,22 +1,17 @@
 /**
- * @file 变量表迁移的引擎比对测试（issue #38）。
+ * @file 变量表装载的引擎行为测试（issue #38；#640 起只留 yml 侧行为）。
  *
- * 与 test/chara-yml.test.js 同构的验证路线：不用夹具（记录层证明不了
- * 「引擎接受」），不用自写镜像（会漂移），全部经 test/helpers/engine-bundle.js
- * 驱动 app.asar 里的 parseDataFile 与 eraStart 变量表装载分支（转写），
- * 回答验收的核心问题——**引擎自己的代码**读到 yml/Talent.yml、yml/Item.yml
- * 后得到的静态数据与读源 CSV 是否逐字段一致；yml/Base.yml（人工表）装载
- * 后的形状是否符合预期；item* 寻址在表在场/缺席时的引擎行为（PR #34 直接崩溃
- * 的回归锁）。
- *
- * 已知并固定的一处偏差：Item.csv 有 5 对重名（1000-1004 与 1005-1009，
- * 名称与价格完全相同）。引擎 csv 路径 name→id 后者覆盖、序号各自保留；
- * yml 以名称为键无法表达同名双序号，产物保留后者（见 Item.yml 头注与
- * issue #38 评论）。比对用「csv 侧状态剔除被合并序号」作为期望，剔除集
- * 由转换器返回的 dropped 逐点断言——偏差集有任何意外扩大都会红。
+ * 不用夹具（记录层证明不了「引擎接受」），不用自写镜像（会漂移），全部经
+ * test/helpers/engine-bundle.js 驱动 app.asar 里的 parseDataFile 与 eraStart
+ * 变量表装载分支（转写），钉住：
+ *   - yml/Base.yml（人工表）装载后的形状符合预期；
+ *   - item* 寻址在表在场/缺席时的引擎行为（PR #34 直接崩溃的回归锁）；
+ *   - item:PBAND 具名地址落空时读恒 undefined、写另立键（#552 的依据）。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告。
  */
+
+'use strict';
 
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -27,52 +22,11 @@ const {
   create_variable_loader,
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
-const { parse_variable_csv, read_text } = require('../tools/csv-to-yml');
-// T20 归一表（#60）：产物名经离线归一（如 滅焰呪印→灭焰咒印）。比对缝在
-// **名字面**（对象键与 fieldNames 的 n）——两侧同过一张表后比对；k（含
-// item 第 4 列的日文注释，引擎元数据非文案）与 t 原样不动
-const { to_simplified } = require('../tools/lang-normalize');
-
-/** 深拷贝并把「名字面」过归一表：对象键、n 值；k（含日文注释）/t/数字原样 */
-const simplify_display = (value, key = null) => {
-  if (key === 'n' && typeof value === 'string') {
-    return to_simplified(value);
-  }
-  if (Array.isArray(value)) {
-    return value.map((item) => simplify_display(item));
-  }
-  if (value && typeof value === 'object') {
-    const out = {};
-    for (const [k, v] of Object.entries(value)) {
-      out[to_simplified(k)] = simplify_display(v, k);
-    }
-    return out;
-  }
-  return value;
-};
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 const REPO_ROOT = path.resolve(__dirname, '..');
-const CSV_DIR = path.join(REPO_ROOT, 'target', 'CSV');
-
-// deepEqual 的布尔版（diff_ids 用；assert.deepEqual 抛错而非返回值）
-const deep_equal = (a, b) => {
-  try {
-    assert.deepEqual(a, b);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
-// 走引擎 csv 路径装载一份表
-function load_csv_table(csv_text, table) {
-  const loader = create_variable_loader();
-  loader.load_rows(engine.parse_data_file(csv_text, 'csv', table), table);
-  return loader;
-}
 
 // 走引擎 yml 路径装载一份表
 function load_yml_table(yml_text, table) {
@@ -80,147 +34,6 @@ function load_yml_table(yml_text, table) {
   loader.load_rows(engine.parse_data_file(yml_text, 'yml', table), table);
   return loader;
 }
-
-// —— Talent：无重复，两条加载路径逐字段一致（验收项） ——
-
-engine_test('Talent：产物经引擎装载的结果与源 CSV 逐字段一致', () => {
-  const { text } = read_text(path.join(CSV_DIR, 'Talent.csv'));
-  const { entries, dropped, warnings } = parse_variable_csv(text, {
-    table: 'talent',
-  });
-  assert.deepEqual(dropped, [], 'Talent.csv 实测无重名，出现即需人工核读');
-  assert.deepEqual(
-    warnings,
-    [],
-    'Talent.csv 实测无截断/重名告警，出现即需人工核读',
-  );
-  assert.equal(entries.length, 267, 'Talent.csv 转换后应为 267 条');
-
-  const product = fs.readFileSync(
-    path.join(REPO_ROOT, 'yml', 'Talent.yml'),
-    'utf8',
-  );
-  const from_csv = load_csv_table(text, 'talent');
-  const from_yml = load_yml_table(product, 'talent');
-
-  // 名称 → 序号（staticData：era.get('talent:名称') 的翻译层）
-  assert.deepEqual(
-    simplify_display(from_yml.static_data.talent),
-    simplify_display(from_csv.static_data.talent),
-  );
-  // 序号 → 名称 + 开发套件 k/t（fieldNames：itemname/*name 寻址的数据源）
-  assert.deepEqual(
-    simplify_display(from_yml.field_names.talent),
-    simplify_display(from_csv.field_names.talent),
-  );
-  // 报出几条：id 1 = 童贞（Chara0 的素質 1 预设指向它）
-  assert.equal(from_yml.static_data.talent['童贞'], 1);
-  assert.equal(from_yml.static_data.talent['男人'], 122);
-  assert.deepEqual(from_yml.field_names.talent[1], {
-    n: '童贞',
-    k: 'talent1',
-    t: 'number',
-  });
-});
-
-// —— Item：重名合并偏差集逐点固定，其余逐字段一致（验收项） ——
-
-engine_test(
-  'Item：产物与源 CSV 一致（重名合并的 5 个序号除外，逐点固定）',
-  () => {
-    const { text } = read_text(path.join(CSV_DIR, 'Item.csv'));
-    const { dropped, warnings } = parse_variable_csv(text, { table: 'item' });
-
-    // 偏差集 = 转换器申报的重名合并：恰好 5 对，先出现的序号被并入后者
-    assert.deepEqual(
-      dropped.map((entry) => [entry.id, entry.name]),
-      [
-        [1000, '十字军战士'],
-        [1001, '十字军神官'],
-        [1002, '十字军骑士'],
-        [1003, '十字军法师'],
-        [1004, '十字军猎手'],
-      ],
-      '重名合并集与 issue #38 登记的 5 对不一致，产物语义变了',
-    );
-    // 第 4 列非注释（序号 28）的告警恰好一条
-    assert.equal(
-      warnings.filter((warning) => warning.includes('第 4 列')).length,
-      1,
-    );
-
-    const product = fs.readFileSync(
-      path.join(REPO_ROOT, 'yml', 'Item.yml'),
-      'utf8',
-    );
-    const from_csv = load_csv_table(text, 'item');
-    const from_yml = load_yml_table(product, 'item');
-    // T20 缝（#60）：名字面（键与 n）过归一表后再比对；k 断言用原始侧
-    const csv_n = simplify_display(from_csv);
-    const yml_n = simplify_display(from_yml);
-
-    // 名称 → 序号：两条路径完全一致（含重名对取后者的语义）
-    assert.deepEqual(
-      yml_n.static_data.item.name,
-      csv_n.static_data.item.name,
-      'name→id 映射必须逐字段一致（含 5 对重名取后者；名字面归一后比对）',
-    );
-    assert.equal(yml_n.static_data.item.name['十字军战士'], 1005);
-
-    // 序号 → 价格 / fieldNames 的实际差集必须恰好等于预报差集（两类）：
-    //   a) 重名合并——被并入后者的 5 个序号在 yml 路径整体消失；
-    //   b) 序号 28 的开发套件键 k——csv 第 4 列非注释文本被引擎记进 k，
-    //      产物按文档形状不写该列，回落缺省 item28（n/t 不受影响）。
-    // 差集之外多一条、少一条、错一条都会在这里红——偏差不允许静默扩大。
-    const dropped_ids = new Set(dropped.map((entry) => entry.id));
-    const diff_ids = (yml_obj, csv_obj) => {
-      const diffs = [];
-      for (const key of Object.keys(csv_obj)) {
-        if (!deep_equal(yml_obj[key], csv_obj[key])) {
-          diffs.push(Number(key));
-        }
-      }
-      for (const key of Object.keys(yml_obj)) {
-        if (!(key in csv_obj)) {
-          diffs.push(Number(key));
-        }
-      }
-      return diffs.sort((a, b) => a - b);
-    };
-    assert.deepEqual(
-      diff_ids(yml_n.static_data.item.price, csv_n.static_data.item.price),
-      [...dropped_ids].sort((a, b) => a - b),
-      '价格映射的差集必须恰好是重名合并集',
-    );
-    assert.deepEqual(
-      diff_ids(yml_n.field_names.item, csv_n.field_names.item),
-      [28, ...[...dropped_ids].sort((a, b) => a - b)],
-      'fieldNames 的差集必须恰好是 {k 差异的 28} ∪ 重名合并集',
-    );
-    // 偏差 a 的形态：被合并序号在 yml 路径确实不可寻址（偏差是真实的）
-    assert.equal(from_yml.field_names.item[1000], undefined);
-    assert.equal(from_yml.static_data.item.price[1000], undefined);
-    assert.equal(yml_n.field_names.item[1005].n, '十字军战士');
-    // 偏差 b 的形态：28 号仅 k 不同（csv 侧是第 4 列原文，yml 侧是缺省键）
-    assert.equal(
-      from_csv.field_names.item[28].k,
-      'ビデオカメラの使用に必要。使い捨て',
-    );
-    assert.equal(from_yml.field_names.item[28].k, 'item28');
-    assert.equal(
-      yml_n.field_names.item[28].n,
-      csv_n.field_names.item[28].n,
-      'n（名字面）归一后一致',
-    );
-    assert.equal(
-      from_yml.field_names.item[28].t,
-      from_csv.field_names.item[28].t,
-    );
-    // 保留序号的价格逐条抽查（含首个与最后一个）
-    assert.equal(from_yml.static_data.item.price[0], 200);
-    assert.equal(from_yml.static_data.item.price[1009], 1);
-  },
-);
 
 // —— Base：人工表装载形状（base 同时定义 maxbase，驱动 addCharacter 预设） ——
 
@@ -298,11 +111,10 @@ engine_test(
 engine_test(
   '引擎 setVar：item:PBAND 名字表查不到 → 读恒 undefined、写另立键（口上 25 处读错下标的依据，#552）',
   () => {
-    // PBAND 是 Emuera 内建非角色变量（SYSTEM ver1.0.3.ERB:42 赋 4；
-    // 4 号 = 假阳具，Item.csv:5）。口上初稿把它当字符串下标写成
-    // era.get('item:PBAND')——引擎 setVar（模块 648）的 item 分支按
-    // staticData.item.name[下标] 翻译名字，yml/Item.yml 没有 PBAND 条目，
-    // 翻译不中就原样回落，落到 data.item.hold['pband'] 这个不存在的键上。
+    // PBAND 是个内建非角色变量的名字（口上按 ITEM:PBAND 判助手是否持有
+    // 假阳具）。引擎 setVar 的 item 分支按 staticData.item.name[下标] 翻译
+    // 名字，yml/Item.yml 没有 PBAND 条目，翻译不中就原样回落，落到
+    // data.item.hold['pband'] 这个不存在的键上。
     const product = fs.readFileSync(
       path.join(REPO_ROOT, 'yml', 'Item.yml'),
       'utf8',
@@ -324,7 +136,7 @@ engine_test(
       '具名地址在名字表与数据桶里都落空，必须读到 undefined——持有假阳具也判不出',
     );
     // 写侧同样另立门户：era.set('item:PBAND', 1) 落 hold['pband']，与 hold[4]
-    // 互不相通（#13「写未声明的名字会静默建变量」在 item 族的形态）
+    // 互不相通（写未声明的名字会静默建变量，在 item 族的形态）
     engine.set_var.call(fake_this, 'item:PBAND', 1);
     assert.deepEqual(Object.keys(fake_this.data.item.hold), ['4', 'pband']);
   },

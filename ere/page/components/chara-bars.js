@@ -10,8 +10,8 @@
  * 表现层（#74 裁定的 BASE 条版）：原作是 BAR 命令的字符条 + (cur/max) 数值
  * + 状态标；ere 侧换 printMultiColumns 的 progress 格——
  *   - 语义值＝条内文字（体力/气力/射精（名）…）+ 条后文字 `(cur/max)`，
- *     归一化器零解析直取（tools/compare/normalize.js 的 progress 分支，
- *     #212 扩展了 `(cur/max)` → gauge{val, max} 的映射）；
+ *     读取层零解析直取（progress 格的条内/条后文字即全部语义，
+ *     #212 起 `(cur/max)` 映射为 gauge{val, max}）；
  *   - 条形几何不进事件流（原作 14/32 格字符条 vs 引擎百分比条）；
  *   - 状态标（★濒死★ 等）与「避孕套使用中」缀在 (cur/max) 之后，玩家可见。
  *

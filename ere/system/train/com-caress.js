@@ -45,7 +45,7 @@
  * 是一行（golden train-natural:169 实证），故 com_order 自 #219 起改为
  * **返回段落数组、不自行打印**，由调用方拼接后一次 print；Emuera 日志按
  * 终端宽折行产生的两物理段与 ere 整行的形态差是记名差异（同点线近似，
- * 归因见 tools/compare/rules.js 判定行规则）。
+ * 两条物理段按同一判定行归档）。
  *
  * COMF3:872 起）已随 #218 在 ere/event/event-autotrain.js 实现（自动调教），
  * 调用点在 dungeon 域的 DUNGEON_TOWN.ERB/DUNGEON_TRAP.ERB，与本文件 COM0/COM3

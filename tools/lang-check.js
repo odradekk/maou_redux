@@ -1,28 +1,19 @@
 /**
- * @file T20 归一表的载入器与离线转换器（issue #60）。
+ * @file 简体文本检查的判定器与扫描器（issue #60；#188 收紧；#640 起只留检查）。
  *
- * 数据在 tools/lang-table.js（唯一真相源），本文件只做四件事：
+ * 数据在 tools/lang-table.js（唯一真相源），本文件只做三件事：
  *   1. load_table()：载入并**校验**归一表——坏表在载入期就报，不等人撞上；
- *   2. to_simplified(text)：词级（长词优先）→ 字级两趟转换，输出即简体；
- *   3. find_offenders(str)：判定一段文本是否含**表内登记的**非简体字符（字级
+ *   2. find_offenders(str)：判定一段文本是否含**表内登记的**非简体字符（字级
  *      命中 / 假名 / 词级命中），供简体锁逐条报出——判定是查表命中，表外
  *      繁/日字种不在此判定器的视野内（#188 勘误）；
- *   4. convert_source(text) 与 CLI：只改 JS 源码里的字符串字面量（注释与
- *      标识符不碰），豁免串原样放行——ere/ 现有文本的离线转换入口，也是
- *      后续各子系统票转换约 2,300 行待办的机制。
- *   5. find_outside_trad(str)：判定一段文本是否含**归一表外的繁侧字**（#188
+ *   3. find_outside_trad(str)：判定一段文本是否含**归一表外的繁侧字**（#188
  *      收紧）——数据源 tools/lang-simp-ref.js（OpenCC 派生，独立于归一表），
  *      补上查表命中对表外繁体的失明；简体锁两路判定并用。
+ * 另有整串豁免判定 is_exempted 与 JS 源码字符串字面量扫描器
+ * scan_string_literals（注释感知，简体锁的取词工具）。
  *
- * 消费方：test/lang-normalize.test.js（表测试）、test/output-lang-lock.test.js
- * （ere/ + yml/ 简体锁）、test/kojo-text-fidelity.test.js（锁 D 的 ERB 侧
- * 归一）、转译器（#10，将来）与输出比对（#48，对黄金样本侧应用同一张表）。
- * 运行时（ere/）不 require 本文件——归一只在离线发生。
- *
- * 用法：node tools/lang-normalize.js [--write] <js 文件...>
- *   默认干跑：逐条列出会发生的改动（file:line 原文 → 归一后），不写盘；
- *   --write 才落盘。yml/ 产物不在此转（产物边界：重转走 csv-to-yml，人名
- *   等人工定译后人工维护）。
+ * 消费方：test/lang-check.test.js（表测试）、test/output-lang-lock.test.js
+ * （ere/ + yml/ 简体锁）。
  */
 
 'use strict';
@@ -34,7 +25,7 @@ const { TRAD_SIDE } = require('./lang-simp-ref');
 const TRAD_SIDE_SET = new Set(TRAD_SIDE);
 
 /** 假名（含长音符・半角片假名；・ 在假名区，用作分隔样式时会有意红一次） */
-const KANA_RE = /[\u3041-\u30FF\uFF66-\uFF9F]/;
+const KANA_RE = /[ぁ-ヿｦ-ﾞ]/;
 
 /**
  * 校验归一表的形状不变量，返回归并后的表。坏表 throw（file:行号可追）。
@@ -119,38 +110,6 @@ function load_table() {
   return validate(table);
 }
 
-/** 词级（长词优先）→ 字级。幂等：对已归一文本是无操作。 */
-function to_simplified(text, tbl = load_table()) {
-  let out = text;
-  for (const { source, target } of tbl.word_map) {
-    out = out.split(source).join(target);
-  }
-  return [...out].map((ch) => tbl.char_map.get(ch) ?? ch).join('');
-}
-
-/**
- * 归一一段 yml 产物文本，**保护引擎列名键**（素質/名前/呼び名…——引擎按名
- * 读取的接口，不是文案，见 lang-table.js 的 ENGINE_COLUMN_KEYS）。
- * 用占位符把键罩住再归一。csv-to-yml 在生成期对产物文本自应用（唯一出口
- * emit_product_lines，#60），#10 的转译器生成 yml 时同用这个。
- */
-function to_simplified_yaml(text, tbl = load_table()) {
-  const guards = [];
-  let out = text;
-  for (const key of tbl.engine_column_keys) {
-    const placeholder = `\u0000${guards.length}\u0000`;
-    if (out.includes(key)) {
-      out = out.split(key).join(placeholder);
-      guards.push(key);
-    }
-  }
-  out = to_simplified(out, tbl);
-  guards.forEach((key, i) => {
-    out = out.split(`\u0000${i}\u0000`).join(key);
-  });
-  return out;
-}
-
 /**
  * 找出文本里的非简体内容（简体锁的判定器）。
  *
@@ -218,11 +177,10 @@ function find_outside_trad(text, tbl = load_table()) {
 /**
  * 扫描 JS 源码里的字符串字面量（注释感知）。
  *
- * 与 test/kojo-text-fidelity.test.js 的扫描器同一套边界：字符串内容按不
- * 透明处理（模板字面量的 ${…} 原样进内容——里面的非简体会被报出，这是
- * 有意的过近似，宁可红一次）；**不识别正则字面量**，正则字符类里出现
- * 引号会误开一个字符串——ere/ 现状没有这种写法，出现了会以「文本离奇」
- * 的样子红出来，届时有意识地扩。
+ * 字符串内容按不透明处理（模板字面量的 ${…} 原样进内容——里面的非简体会
+ * 被报出，这是有意的过近似，宁可红一次）；**不识别正则字面量**，正则字符
+ * 类里出现引号会误开一个字符串——ere/ 现状没有这种写法，出现了会以「文本
+ * 离奇」的样子红出来，届时有意识地扩。
  *
  * @param {string} text 源码全文
  * @returns {Array<{start: number, end: number, line: number, quote: string,
@@ -287,91 +245,11 @@ function scan_string_literals(text) {
   return lits;
 }
 
-/**
- * 转换 JS 源码：只动字符串字面量内容，注释/标识器不碰；豁免串原样保留。
- *
- * 含转义序列的字面量**跳过**并计入 changes（标记 skipped）：内容按字面值
- * 重建会把 \n 之类的转义写成真实控制符、破坏源码——这种串留给人工。
- *
- * @returns {{text: string, changes: Array<{line: number, before: string,
- *   after: string, skipped?: boolean}>}} changes 为空即无改动（幂等：对
- * 已归一源码无操作）
- */
-function convert_source(text, tbl = load_table()) {
-  const changes = [];
-  // 从后往前替换，保住前面字面量的偏移
-  const lits = [...scan_string_literals(text)].reverse();
-  let out = text;
-  for (const lit of lits) {
-    if (is_exempted(lit.content, tbl)) {
-      continue;
-    }
-    if (find_offenders(lit.content, tbl).length === 0) {
-      continue; // 干净串不动（等价于幂等，也省一次重建）
-    }
-    if (text.slice(lit.start, lit.end).includes('\\')) {
-      changes.unshift({
-        line: lit.line,
-        before: lit.content,
-        after: to_simplified(lit.content, tbl),
-        skipped: true,
-      });
-      continue;
-    }
-    const after = to_simplified(lit.content, tbl);
-    if (after !== lit.content) {
-      changes.unshift({ line: lit.line, before: lit.content, after });
-      out =
-        out.slice(0, lit.start) +
-        lit.quote +
-        after +
-        lit.quote +
-        out.slice(lit.end);
-    }
-  }
-  return { text: out, changes };
-}
-
-// —— CLI（离线一次性转换的入口；测试走上面的模块函数） ——
-if (require.main === module) {
-  const args = process.argv.slice(2);
-  const write = args[0] === '--write';
-  const files = write ? args.slice(1) : args;
-  if (files.length === 0) {
-    console.error('用法：node tools/lang-normalize.js [--write] <js 文件...>');
-    process.exit(2);
-  }
-  const fs = require('node:fs');
-  const tbl = load_table();
-  let total = 0;
-  for (const file of files) {
-    const text = fs.readFileSync(file, 'utf8');
-    const { text: converted, changes } = convert_source(text, tbl);
-    for (const c of changes) {
-      console.log(
-        `${file}:${c.line}${c.skipped ? '【跳过：字面量含转义序列，须人工】' : ''}`,
-      );
-      console.log(`  - ${c.before}`);
-      console.log(`  + ${c.after}`);
-    }
-    total += changes.length;
-    if (write && converted !== text) {
-      fs.writeFileSync(file, converted, 'utf8');
-    }
-  }
-  console.log(
-    `${write ? '已转换' : '待转换（干跑，加 --write 落盘）'}：${total} 处`,
-  );
-}
-
 module.exports = {
-  convert_source,
   find_offenders,
   find_outside_trad,
   is_exempted,
   load_table,
   scan_string_literals,
-  to_simplified,
-  to_simplified_yaml,
   validate,
 };

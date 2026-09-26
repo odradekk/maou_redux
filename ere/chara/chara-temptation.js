@@ -48,8 +48,7 @@
  *     共用的入账）；
  *     状态 CFLAG:1 / 新人 506 / 归城 507（invasion）、气力 BASE:0:1 与
  *     所持金 CFLAG:580（dungeon）、借款 CFLAG:582（patch）、肉芽诅咒
- *     TALENT:326（stronghold）——ownership/*-cross-domain-writes.yml 逐条
- *     核对。
+ *     TALENT:326（stronghold）——均为跨域写下标，写一律走属主域门面。
  *
  *   - **`RAND(1, 4)` / `RAND(1, 3)` 是双参形式（左闭右开）**：技能手册
  *     references/core-concepts/in-expression-functions.md:96「双参数返回

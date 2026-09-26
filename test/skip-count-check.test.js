@@ -39,7 +39,7 @@ const PRESENT_BASELINE = path.join(
   'engine-present-skip-baseline.txt',
 );
 
-/** 临时目录夹具：用完即删，测试之间互不污染（做法同 csv-to-yml.test.js） */
+/** 临时目录夹具：用完即删，测试之间互不污染 */
 function with_temp_dir(run) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-skip-count-'));
   try {

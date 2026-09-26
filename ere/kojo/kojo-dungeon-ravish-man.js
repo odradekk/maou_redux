@@ -454,7 +454,7 @@ async function orc_ryou_man(arg, mon_num, rand) {
     // 源 :308 起『猪…』整段是一行（PRINTFORM 不换行 → 两处 GOBI → PRINTFORMW
     // 收尾）；语尾按 #570 返回文字、拼进同一行，一次 printAndWait 输出。
     // 尾锚 :308+:317+:328 是拼接锚（一语句对应一行的多段 PRINT），语义见
-    // test/kojo-text-fidelity.test.js 头注
+    // 拼接锚＝一语句对应源一行的多段 PRINT，尾锚吃整行文本
     const gobi_pig = await require('#/kojo/kojo-system').gobi_koujo(
       t(17) ? 1 : 5,
     ); // :312/:315（プライド低い → 喜び、否则情けない）

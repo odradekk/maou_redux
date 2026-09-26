@@ -88,8 +88,8 @@ function talent(cid, index) {
 /**
  * 写素质。
  *
- * 174/175（貴公子 / 伶俐）属 system 域（ownership/talent-cross-domain-writes.yml
- * 的 `talent` 174/175 条在案），走 `chara(cid).system` 的具名访问器；其余是
+ * 174/175（貴公子 / 伶俐）属 system 域（跨域写下标，登记在案），走
+ * `chara(cid).system` 的具名访问器；其余是
  * chara 属主下标，域内裸寻址即合法（#70）。
  *
  * @param {number} cid 角色 ID

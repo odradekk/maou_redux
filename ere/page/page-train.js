@@ -19,7 +19,7 @@
  * #74 的两条换表现层（比对都在旁边看着——本画面在黄金样本覆盖内）：
  *   - 参数条：手绘 10 格字符条退役，printMultiColumns 的 progress 格承载。
  *     语义值（参数名 + palam 原值）在条内/条后文字里，归一化器零解析直取
- *     （tools/compare/normalize.js 的 progress 分支）；percentage 纯表现。
+ *     （progress 格的条内/条后文字即全部语义）；percentage 纯表现。
  *   - 整页＝一个 ScreenBlock（@SHOW_STATUS 函数粒度，原作锚点也在函数尾）。
  *     重绘时机见 SHOW_STATUS 处理器的 prevcom 判据。
  */
@@ -69,8 +69,8 @@ const PALAM_VALUE_WIDTH = 5;
  *   - 每行 3 格。
  *
  * percentage 是**纯表现**：比对两侧归一的语义值＝条后数值（palam 原值），
- * 条形几何（字符条格数 vs 百分比）不进事件流——「换掉表现层不影响比对」的裁定
- * 本体，见 tools/compare/normalize.js 的 progress 分支与 docs/output-diff.md。
+ * 条形几何（字符条格数 vs 百分比）是纯表现，不进事件流——换渲染字符集
+ * 不动语义值（条内/条后文字才是契约）。
  *
  * @param {number} cid 角色 ID（原作实参 TARGET）
  */

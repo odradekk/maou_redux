@@ -35,7 +35,7 @@
  * == :10 那 201 条写的落法（工单硬约束六） ==
  *
  * 一条 `VARSET` 展开成 201 个下标写入，其中 **47 个下标属主在 event 域外**
- * （`ownership/tflag-cross-domain-writes.yml` 里 file = 本文件的记录正好 47
+ * （跨域写登记里 file = 本文件的记录正好 47
  * 条：train 31 / system 12 / dungeon 1 / kojo 1 / stronghold 2）。按
  * CONTEXT.md「跨域写必须经属主域导出的具名方法」，这 47 条一律走门面 setter
  * （`game.<域>.<字段>`），**逐条**与所有权表核对过；剩下 154 条的属主是
@@ -45,7 +45,7 @@
  *
  * **一份交叉验证**：门面只为「有跨域写者」的下标生成——201 个下标里恰好
  * 60 个有门面字段，且 47 个跨域下标**全部**在其中（另 13 个属 event 域但
- * 有跨域写者）。这与 tflag-cross-domain-writes.yml 的记录集完全吻合，
+ * 有跨域写者）。这与跨域写登记的记录集完全吻合，
  * 是本文件逐条落地的独立佐证。
  */
 
@@ -69,7 +69,7 @@ on('EVENTTRAIN', async () => {
 
   // :10 VARSET TFLAG, 0, 0, 201 —— 201 个下标逐条清 0（起始 0、结束 201
   // 不含）。分域落法见文件头「:10 那 201 条写的落法」。
-  // —— 跨域 47 条：一律走属主域门面 setter（ownership/tflag-cross-domain-writes.yml
+  // —— 跨域 47 条：一律走属主域门面 setter（跨域写登记
   //    逐条核对过：train 31 / system 12 / dungeon 1 / kojo 1 / stronghold 2）——
   // train（31 条）
   game.train.口中射精 = 0; // tflag:0 口中射精

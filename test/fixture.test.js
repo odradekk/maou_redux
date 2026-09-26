@@ -94,13 +94,13 @@ test('saveGlobal 盖戳落盘（#147）：loadGlobal 读回同一份，多出的
   const { era, store } = fixture;
 
   store.set('global:0', 7);
-  store.set('global:98', 2);
+  store.set('global:1', 2);
   assert.equal(await era.saveGlobal(), true);
 
   // 落盘后改内存：读回必须是落盘时的快照（整份替换，非合并）
   store.set('global:0', 9);
-  store.delete('global:98');
-  store.set('global:99', 5); // 不在文件里的键
+  store.delete('global:1');
+  store.set('global:3', 5); // 不在文件里的键（声明过的冒险者性别槽）
   await era.loadGlobal();
 
   assert.equal(
@@ -108,9 +108,9 @@ test('saveGlobal 盖戳落盘（#147）：loadGlobal 读回同一份，多出的
     7,
     '读回的是落盘时的值（盖戳写盘被拆即红）',
   );
-  assert.equal(store.get('global:98'), 2, '文件里的键一并灌回');
+  assert.equal(store.get('global:1'), 2, '文件里的键一并灌回');
   assert.equal(
-    store.get('global:99'),
+    store.get('global:3'),
     undefined,
     '不在文件中的键随整份替换消失（引擎 this.era.global = n）',
   );

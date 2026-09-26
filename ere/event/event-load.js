@@ -13,8 +13,8 @@
  *
  * 原作 :760-778 逐行处置（复核于 #137，别照抄旧清单）：
  *   - :762 LOADGLOBAL——#137 曾判「ere 引擎行为（global 表在内存、读档不动
- *     它），不镜像」，前提是 global 表变量改完都立即 SAVEGLOBAL（global:98/99
- *     确实如此）；#547 的 global:3（冒險者性別）改完不即时保存，前提失效，
+ *     它），不镜像」，前提是 global 表变量改完都立即 SAVEGLOBAL（当时的
+ *     标题画面开关确实如此）；#547 的 global:3（冒險者性別）改完不即时保存，前提失效，
  *     改为在本链首行镜像 `await era.loadGlobal()`（副作用核对见下）；
  *   - :764 CALL CHARA_NAME_INIT——真身在 chara-name-list.js（#388）：数据已在
  *     yml/NameList.yml，读档后调用是空操作，仅保留调用点可检索；

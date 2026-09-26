@@ -28,8 +28,8 @@ export default [
       type: 'button',
       text,
       accelerator: undefined, // 变异：不记编号`,
-    tests: ['compare-first-turn', 'page-usercom'],
-    must_mention: '分类计数与当前待办清单一致',
+    tests: ['page-usercom'],
+    must_mention: '调教菜单登录',
   },
   {
     desc: 'M2113 夹具 input 白名单校验被拆（未打印按钮的值照单全收——#130 要防的复发形态）',

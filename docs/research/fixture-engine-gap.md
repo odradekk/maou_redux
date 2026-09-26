@@ -104,7 +104,7 @@ this.api
 
 ### G8（可接受，登记观察面）`setAlign` 等 12 个样式 API 走兜底
 
-引擎侧 `setAlign` = `this.era.connect("setAlign", e)`，纯渲染事件：无守卫、无行数、无返回值。游戏代码在用（7 处：`event-first.js` / `page-main-menu.js` / `page-title.js`），夹具兜底层记录在 `calls` 里可断言调用发生（`fixture.test.js:49-58` 即此写法）。对齐是渲染属性，不进 `lines` 条目，比对工具（`tools/compare/`）也不记录——「标题画面居中」这类视觉语义在测试与比对两层都不可见。属观察面限制而非闸门缺口，登记；`setTitle`/`setColor`/`setBack` 等其余 11 个样式 API 游戏代码零调用。
+引擎侧 `setAlign` = `this.era.connect("setAlign", e)`，纯渲染事件：无守卫、无行数、无返回值。游戏代码在用（7 处：`event-first.js` / `page-main-menu.js` / `page-title.js`），夹具兜底层记录在 `calls` 里可断言调用发生（`fixture.test.js:49-58` 即此写法）。对齐是渲染属性，不进 `lines` 条目——「标题画面居中」这类视觉语义在测试层不可见。属观察面限制而非闸门缺口，登记；`setTitle`/`setColor`/`setBack` 等其余 11 个样式 API 游戏代码零调用。
 
 ### G9（可接受，两个低危观察项）变量族
 
@@ -124,8 +124,8 @@ this.api
 | `era-fixture.js:147-149` | `printAndWait` 的内部等待不进 `inputs_consumed`                                    | 冻结于 `tools/engine-contract-ledger.mjs`（#91）               |
 | `era-fixture.js:126-128` | `printLineChart`/`setToBottom`（各 +1 Row）、`notify`（无行）不实现                | 游戏代码未用，随用随补                                         |
 | `era-fixture.js:151-153` | `isContinue` 以旋钮代位渲染层回包的 continue 字段                                  | `system_config` 同类旋钮，#91                                  |
-| `era-fixture.js:576-581` | `input` 回显只计数不推条目                                                         | 比对回放的输入标记承载（`tools/compare/replay.js`）            |
-| `era-fixture.js:643-648` | `addCharacter` 只镜像守卫与 `callname:-1/-2`，完整数据层装载不镜像                 | `test/chara-yml.test.js` 驱动引擎真方法比对                    |
+| `era-fixture.js:576-581` | `input` 回显只计数不推条目                                                         | 回放器的输入标记承载                                           |
+| `era-fixture.js:643-648` | `addCharacter` 只镜像守卫与 `callname:-1/-2`，完整数据层装载不镜像                 | `test/chara-load.test.js` 驱动引擎真方法比对                   |
 
 G5 的锐边说明：`beginTrain`/`endTrain` 自陈的「删表不镜像」意味着夹具 `store` 里 `tflag:*`、`palam:*` 等旧值**跨调教场残留可读**（引擎 `endTrain` 删整表、下次 `beginTrain` 重建并把 tflag 静态清 0）。归入已声明范围，但反向锐边真实存在：残留值可能掩盖「忘清 tflag」的真缺陷（夹具下读得到旧值、引擎下是 0）。后续票清单里给了低优先级处理项。
 

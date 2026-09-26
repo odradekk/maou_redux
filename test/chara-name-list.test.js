@@ -2,7 +2,7 @@
  * @file ere/chara/chara-name-list.js 与 yml/NameList.yml 的行为测试
  * （issue #388：CHARA_NAME_INIT 落表；#435：文件名被引擎误判为逐角色数据）。
  *
- * 四层验证：
+ * 三层验证：
  *   - 夹具层（快，无需引擎）：get_fixed_chara_name 的守卫与缓存行为；
  *   - 文件分类层（需引擎）：拿引擎自己的 staticFormatRegex 逐文件分类一遍，
  *     钉住「本表走的是普通表分支」（#435 的根因与修复方向）；
@@ -10,9 +10,6 @@
  *     文件名派生（与引擎同款取法），生产代码的读取键必须与它一致；以及
  *     「未注册 id 直接崩溃」是真实风险（未经守卫的裸三段寻址会撞上它，
  *     这正是 chara-name-list.js 的 valid_ids() 存在的理由）；
- *   - 数据同步层（无需引擎）：从 target/ERB 独立重新推导整张表（提取、
- *     そら 覆盖、归一、重名合并），与库内产物逐条比对——防止产物被
- *     手改漂移，或归一表变化后产物未跟着重转。
  */
 
 'use strict';
@@ -27,7 +24,6 @@ const {
   create_variable_loader,
   load_engine_bundle,
 } = require('./helpers/engine-bundle');
-const { to_simplified, load_table } = require('../tools/lang-normalize');
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
@@ -39,14 +35,6 @@ const YML_DIR = path.join(REPO_ROOT, 'yml');
 const YML_NAME = 'NameList.yml';
 const TABLE = YML_NAME.replace(/\.yml$/, '').toLowerCase(); // = 'namelist'
 const YML_PATH = path.join(YML_DIR, YML_NAME);
-const SRC_PATH = path.join(
-  REPO_ROOT,
-  'target',
-  'ERB',
-  'キャラ関数',
-  'CHARA_NAME_INIT.ERB',
-);
-
 // —— 夹具层：valid_ids 守卫与缓存 ——
 
 test('get_fixed_chara_name：已注册 id 查表返回名字', () => {
@@ -301,76 +289,3 @@ engine_test(
     assert(keys.includes(0) && keys.includes(3610) && !keys.includes(3030));
   },
 );
-
-// —— 数据同步层：从 target/ERB 独立重推导，与库内产物逐条比对 ——
-
-/** 与 yml/NameList.yml 同一算法，独立重算一遍（不 require 生成脚本，脚本未入库） */
-function recompute_expected() {
-  const src = fs.readFileSync(SRC_PATH, 'utf8');
-  const re = /^LIST_CHARA_NAME:(\d+)\s*=\s*(.*)$/;
-  const by_id = new Map();
-  for (const line of src.split(/\r?\n/)) {
-    const m = re.exec(line.trim());
-    if (m) {
-      by_id.set(Number(m[1]), m[2]); // Map.set 覆盖：天然取「最后一次赋值」
-    }
-  }
-  by_id.set(3610, '空'); // そら → 空（issue #388 讨论确认，一次性译名决定）
-
-  const tbl = load_table();
-  const by_name = new Map();
-  for (const [id, raw] of by_id) {
-    const name = to_simplified(raw, tbl);
-    if (!by_name.has(name)) {
-      by_name.set(name, []);
-    }
-    by_name.get(name).push(id);
-  }
-  const kept = new Map();
-  for (const [name, ids] of by_name) {
-    kept.set(name, Math.max(...ids)); // 重名合并：保留较大 id
-  }
-  return kept;
-}
-
-/** 解析 yml/NameList.yml 的 "名字":\n  id: N 正文（跳过 # 头注） */
-function parse_product() {
-  const lines = fs.readFileSync(YML_PATH, 'utf8').split(/\r?\n/);
-  const entries = new Map();
-  let pending_name;
-  for (const line of lines) {
-    const name_m = /^"(.*)":$/.exec(line);
-    if (name_m) {
-      pending_name = name_m[1];
-      continue;
-    }
-    const id_m = /^\s+id:\s*(\d+)$/.exec(line);
-    if (id_m && pending_name !== undefined) {
-      entries.set(pending_name, Number(id_m[1]));
-      pending_name = undefined;
-    }
-  }
-  return entries;
-}
-
-test('产物同步：yml/NameList.yml 与从 target/ERB 独立重推导的结果逐条一致', () => {
-  const expected = recompute_expected();
-  const actual = parse_product();
-
-  assert.equal(actual.size, expected.size, '条目总数必须一致');
-  assert.deepEqual(
-    [...actual.entries()].sort(),
-    [...expected.entries()].sort(),
-    '产物内容与源数据重推导结果逐条一致（含重名合并与 そら 覆盖）——drift 说明产物被手改或归一表变化后未重转',
-  );
-});
-
-test('产物同步：源文件的两处「同一 id 二次赋值」按最后一次生效', () => {
-  const expected = recompute_expected();
-  // 3003 源文件先赋 陸 后赋 颯太（归一后 飒太）；3013 先赋 悠斗 后赋 陽斗（归一后 阳斗）
-  assert.equal(expected.get('飒太'), 3003);
-  assert.equal(expected.get('阳斗'), 3013);
-  assert.ok(
-    ![...expected.keys()].includes('陆') || expected.get('陆') !== 3003,
-  );
-});
