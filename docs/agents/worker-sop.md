@@ -58,18 +58,12 @@ node tools/run-node.mjs -- tools/mutation-check.mjs --ids <新增编号>
 
 开 PR 前先 `git fetch origin` 并 `git merge origin/master`；提交较多时不要 rebase，避免逐个提交重复解决同一冲突。冲突处理见 `merge-conflicts.md`：公共计数重新测量、登记表按键合并、生成文件先合源数据再生成，并检查 Git 未报告冲突的逻辑错误。合并后跑一次完整 `npm test`，只跑本工单对应的测试文件不够。
 
-## 4. 审查：用 Paseo 起独立的 reviewer
+## 4. 审查
 
-实现完成、测试通过后执行 `/code-review` 技能。该技能要起的审查子 agent（规范审查、需求审查）**不用内置 Agent 工具，改用 Paseo 的 `create_agent`**，每个子审查一个 agent：
+实现完成、测试通过后执行 `/code-review` 技能。技能要起的审查子 agent（规范审查、需求审查）用你自身内置的子 agent 工具起，不指定模型。
 
-- `workspaceId` 用当前工作区（`list_workspaces` 按当前目录找）。
-- **`modeId` 必须设成 `plan`，而且要确认它真的生效了。** 起完用 `get_agent_status` 看 `currentModeId`：是 `plan` 才算只读。只读的审查员跑不了会改文件的 `mutation-check --ids`，那部分由你在本机实跑、在完成评论里写明。
-- **提供方必须支持 `plan`。`list_profiles` 里的 `Reviewer` profile（`pi`）不支持**——`pi` 的 `availableModes` 是空的，传 `modeId` 直接报 `Invalid mode 'plan' for provider 'pi'`，不传则 `currentModeId` 为 `null`、审查员能写你工作树里的文件。用 `claude` / `claude-opus-5`（#530、#532 的审查都是它，约 3 分钟出结论）或 `codebuddy-code` / `deepseek-v4.1-flash`，thinking 都设 `max`。
-- 为什么这条是硬要求：审查员和你共用一个工作树。#505 的审查员不是只读的，跑了 `mutation-check --ids` 又被超时强杀，`finally` 没执行，把变异留在了 `ere/page/page-invasion.js` 里。
 - 提示词写明只读：审查 `origin/master..HEAD` 的改动，对照 issue #N 的要求，不修改文件；给出每条发现的文件、行、问题和依据。
-- 用 `create_agent` 的完成通知或 `get_agent_status` 等结果，不轮询。审完 `archive_agent`。
-
-**审查员卡住时换 Flash 重起。** 判断条件是 `get_agent_status` 的输出计数二十分钟不变（会话还在长 thinking，不会自己结束）。`archive_agent` 之后用 `codebuddy-code` / `deepseek-v4.1-flash`、`modeId: plan`、thinking `max` 重起同一份审查提示词，并在完成评论第 5 项写明这次换人。#467 的 `Reviewer` profile 跑了四十多分钟卡住，换 Flash 后正常出结论。
+- 审查子 agent 和你共用一个工作树，不能跑会改文件的命令。`mutation-check --ids` 这类验证由你自己在本机跑，在完成评论里写明。#505 的审查员跑了 `mutation-check --ids`，又被超时强制终止，`finally` 没执行，把变异留在了 `ere/page/page-invasion.js` 里。
 
 发现的处理规则：确认无误的正确性问题必须修；其余由你决定，驳回的在完成评论里列出理由。修完再跑一遍对应测试与 `--ids`。
 
