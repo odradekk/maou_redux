@@ -55,7 +55,7 @@
  * 属主 train，域内直写。**CFLAG:44（胸罩状态）属主 stronghold**
  * （ownership/cflag-ownership.yml "44"：3 处写中据点侧占 2）——COM111
  * 撕胸罩的 CFLAG:44 = -3 是登记在册的跨域写
- * （ownership/cflag-cross-domain-writes.yml），经 chara(cid).stronghold.
+ * （跨域写登记在案），经 chara(cid).stronghold.
  * 胸罩状态 门面（#71）。CFLAG:42/49 只读（42 的写在 AFTERTRAIN_CLOTH、
  * 49 的写据点/日程侧）。
  *

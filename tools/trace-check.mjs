@@ -5,8 +5,8 @@
 // 其余弱锚冻结成只减不增的基线；#331 起 --coverage 独占模式出移植状态表，
 // 判定面在 tools/trace-coverage.mjs）。
 //
-// 守什么：ere/ 移植文件正文里的 `// :N 原作片段` 注释，以及 #48 起
-// tools/compare 等处指向黄金样本 target/emuera.log 的 `log:N` 注释。文件头
+// 守什么：ere/ 移植文件正文里的 `// :N 原作片段` 注释，以及指向旧样本
+// target/emuera.log 的 `log:N` 注释。文件头
 // 的「源: 文件 @函数」在历次验收里靠人核对了，但正文内联引用数量大、成片
 // 偏移靠人眼查不出来（#44 实测：偏早 2~30 行；#48 实测：emuera.log 引用
 // 26/42 处错——数值读对、行号指错，同一款亏）。
@@ -18,14 +18,10 @@
 // emuera.log 引用（LOG_REFS）同款两道，外加第三道**扫描完整性**：
 //   3. ere/ tools/ test/ 全部 .js/.mjs 里出现的每个 log:N / emuera.log:N
 //      （含区间）都必须在 LOG_REFS 登记——新增引用不登记即红，防绕过。
-//      #156 起引用可带**样本名前缀**：`<样本名>-log:行号`（如范围 B 的
-//      mainmenu-natural-log:行号）。前缀的样本名必须在 SAMPLES（唯一
-//      真相源 tools/compare/samples.js，与 cli --sample 共用——两边映射
-//      漂移 = 静默错判）登记，引用锚表按样本名分住在 SAMPLE_LOG_REFS，
-//      校核目标是该样本名对应的样本文件。**裸 log:N 与 legacy
-//      emuera.log:N 恒等价旧样本 target/emuera.log，存量注释一行不改**；
-//      不带前缀写新样本的行号，扫描只会拿它去核旧样本（核对目标错位且
-//      不报错）——所以新样本引用必须带前缀（#109 裁定）。
+//      #156 起引用可带**样本名前缀**：`<样本名>-log:行号`。前缀机随
+//      golden/ 样本与输出比对工具一并删除（#640），前缀引用不再校验；
+//      **裸 log:N 与 legacy emuera.log:N 恒等价旧样本 target/emuera.log，
+//      存量注释一行不改**。
 // ERB 侧同款第三道（#63 起）：
 //   4. ere/ 全部 .js 注释里出现的每个 :N / :N-M 都必须在 FILES 登记或在
 //      tools/trace-exempt.mjs 豁免——新增引用静默失守即红（#63 之前，
@@ -109,15 +105,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import samples_module from './compare/samples.js';
 import { ERB_EXEMPT } from './trace-exempt.mjs';
 import { DEFAULT_TRACE_REFS_DIR, load_trace_refs } from './trace-refs-load.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-
-// 样本名 → 样本文件（唯一真相源 tools/compare/samples.js；default 互导拿整
-// 份 module.exports，不依赖 CJS 具名导出的静态分析）。
-const SAMPLES = samples_module.SAMPLES;
 
 const EMUERA_LOG = 'target/emuera.log';
 
@@ -901,66 +892,12 @@ for (const { js, refs } of LOG_REFS) {
   }
 }
 
-// —— 带样本名前缀的引用：同款两道校验（在场 + 锚），目标是 SAMPLES 里
-//    该样本名对应的样本文件。样本名未登记 / 样本文件不在库，先红——
-//    引用锚到不存在的样本等于没锚。 ——
-
-/** 样本名做正则字面量安全转义（样本名约定 [A-Za-z0-9-]，转义是防御） */
-function escape_re(text) {
-  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-for (const [sample_name, groups] of Object.entries(SAMPLE_LOG_REFS)) {
-  const sample_rel = SAMPLES[sample_name];
-  if (sample_rel === undefined) {
-    checked += 1;
-    console.log(
-      `✗ ${sample_name} 的引用锚表 —— 样本名不在 SAMPLES（tools/compare/samples.js 是样本名→文件的唯一真相源，先登记再引用）`,
-    );
-    failures += 1;
-    continue;
-  }
-  if (!fs.existsSync(path.join(REPO, sample_rel))) {
-    checked += 1;
-    console.log(
-      `✗ ${sample_name} 的引用锚表 —— 样本文件 ${sample_rel} 不在库（#156 阶段二回收后才能登记引用锚）`,
-    );
-    failures += 1;
-    continue;
-  }
-  for (const { js, refs } of groups) {
-    const js_text = load_js_text(js);
-    for (const { ref, any } of refs) {
-      checked += 1;
-      const label = `${js} ${sample_name}-log:${ref} ↔ ${sample_rel}`;
-      const presence = new RegExp(
-        `${escape_re(sample_name)}-log:${ref}(?!-?\\d)`,
-      );
-      if (!presence.test(js_text)) {
-        console.log(
-          `✗ ${label} —— js 里已不存在「${sample_name}-log:${ref}」（引用被删或被改？同步更新本表）`,
-        );
-        failures += 1;
-        continue;
-      }
-      const lines = load_source(sample_rel);
-      const [a, b = a] = ref.split('-').map(Number);
-      const slice = lines.slice(a - 1, b).join('\n');
-      if (!any.some((anchor) => anchor.test(slice))) {
-        console.log(
-          `✗ ${label} —— 样本 ${a}${b === a ? '' : `-${b}`} 行未命中任何锚`,
-        );
-        failures += 1;
-      }
-    }
-  }
-}
-
+// —— 带样本名前缀的引用：随 golden/ 样本与输出比对工具一并删除（#640），
+//    前缀引用不再校验——trace-refs 里的 SAMPLE_LOG_REFS 登记随之空置，
+//    本工具整体由 #641 删除。 ——
 // —— 扫描完整性：ere/ tools/ test/ 全部 .js/.mjs 里的 log:N 引用都必须
 //    在锚表登记（防新增引用绕过锚表——本锁的存在理由就是 #48 的
-//    26 处无人看守的偏移）。#156 起引用可带样本名前缀：前缀段 = 紧邻
-//    log: 之前、由字母数字与连词符组成且以 - 收尾的一截；带前缀的引用
-//    按样本名查 SAMPLES 与 SAMPLE_LOG_REFS，裸引用照旧查 LOG_REFS。
+//    26 处无人看守的偏移）。带样本名前缀的引用随样本删除不再校验（#640）。
 //    legacy 的 emuera.log:N 写法照旧按裸引用解析（存量一行不改）。 ——
 
 const LOG_REF_RE =
@@ -989,15 +926,6 @@ function list_js_files(dir_rel) {
 const tabled_by_file = new Map(
   LOG_REFS.map(({ js, refs }) => [js, new Set(refs.map((r) => r.ref))]),
 );
-const sample_tabled_by_file = new Map();
-for (const [sample_name, groups] of Object.entries(SAMPLE_LOG_REFS)) {
-  for (const { js, refs } of groups) {
-    const key = `${sample_name}\u0000${js}`;
-    const set = sample_tabled_by_file.get(key) ?? new Set();
-    refs.forEach((r) => set.add(r.ref));
-    sample_tabled_by_file.set(key, set);
-  }
-}
 for (const rel of ['ere', 'tools', 'test'].flatMap(list_js_files)) {
   if (!in_scope(rel)) continue;
   const found = new Set(
@@ -1009,24 +937,13 @@ for (const rel of ['ere', 'tools', 'test'].flatMap(list_js_files)) {
   );
   for (const entry of found) {
     const [sample, ref] = entry.split('\u0000');
-    if (sample === '') {
-      if (!tabled_by_file.get(rel)?.has(ref)) {
-        console.log(
-          `✗ ${rel} log:${ref} —— 未登记进 LOG_REFS（登记后才能过锚校验）`,
-        );
-        failures += 1;
-      }
+    if (sample !== '') {
+      // 带样本名前缀的引用随 golden/ 样本删除不再校验（#640）
       continue;
     }
-    const token = `${sample}-log:${ref}`;
-    if (!Object.hasOwn(SAMPLES, sample)) {
+    if (!tabled_by_file.get(rel)?.has(ref)) {
       console.log(
-        `✗ ${rel} ${token} —— 样本名不在 SAMPLES（tools/compare/samples.js），先登记样本名再引用`,
-      );
-      failures += 1;
-    } else if (!sample_tabled_by_file.get(`${sample}\u0000${rel}`)?.has(ref)) {
-      console.log(
-        `✗ ${rel} ${token} —— 未登记进 SAMPLE_LOG_REFS['${sample}']（登记后才能过锚校验）`,
+        `✗ ${rel} log:${ref} —— 未登记进 LOG_REFS（登记后才能过锚校验）`,
       );
       failures += 1;
     }

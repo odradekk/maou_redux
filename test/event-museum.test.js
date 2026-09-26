@@ -13,7 +13,6 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
 
-const { output_name_for } = require('../tools/kojo-transpiler');
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function seq(values) {
@@ -38,10 +37,6 @@ function seed_world() {
   }
   return fixture;
 }
-
-test('转译器：MUSEUM.ERB 登记为 ASCII 意译产物名', () => {
-  assert.equal(output_name_for('MUSEUM.ERB'), 'museum.js');
-});
 
 test('MUSEUM：家具化后记录展品、结算封印经验并除名角色', async () => {
   const fixture = seed_world();

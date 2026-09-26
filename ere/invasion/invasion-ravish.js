@@ -2,7 +2,7 @@
  * @file 侵略时的凌辱旁白（issue #470，阶段 5c Q13 侵略残余·3）。
  *
  * 文件名按仓库约定意译（凌辱 → ravish；同词先例是
- * `tools/kojo-transpiler.js` 的 `DUNGEON_RYOUZYOKU.ERB → kojo-dungeon-ravish.js`）；
+ * 口上文件的同词先例 `kojo-dungeon-ravish.js`）；
  * 函数名 `invasion_ryouzyoku` 1:1 跟随原作 `@INVASION_RYOUZYOKU`，不改。
  *
  * 源: target/ERB/侵略/INVASION_RYOUZYOKU.ERB  @INVASION_RYOUZYOKU（:1-66，

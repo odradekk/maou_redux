@@ -31,10 +31,6 @@ const {
   attach_variable_tables,
   load_repo_variable_tables,
 } = require('./helpers/static-tables');
-const { read_text } = require('../tools/csv-to-yml');
-// T20 归一表（#60）：CSV 侧装载前过同一张表，比对语义是「产物 = 归一(源)」
-const { to_simplified_yaml } = require('../tools/lang-normalize');
-
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
@@ -173,19 +169,10 @@ engine_test(
   },
 );
 
-// —— Chara35（菲娅）：入库产物装载（验收项：与源 CSV 逐字段一致） ——
-
+// —— Chara35（菲娅）：入库产物装载与消费 ——
 const repo_tables = load_repo_variable_tables();
 
-function load_source_csv(csv_text) {
-  const loader = create_chara_loader();
-  attach_variable_tables(loader, repo_tables);
-  loader.load_rows(
-    engine.parse_data_file(to_simplified_yaml(csv_text), 'csv', 'chara'),
-  );
-  return loader;
-}
-
+/** 装载一份库内角色 yml（引擎 yml 路径 + 入库变量表） */
 function load_product_yml(yml_text) {
   const loader = create_chara_loader();
   attach_variable_tables(loader, repo_tables);
@@ -194,35 +181,20 @@ function load_product_yml(yml_text) {
 }
 
 engine_test(
-  '入库的 yml/Chara35.yml：引擎装载零告警零丢弃，预设与源 CSV 逐字段一致',
+  '入库的 yml/Chara35.yml：引擎装载零告警零丢弃，预设内容逐项固定',
   () => {
     const product = fs.readFileSync(
       path.join(REPO_ROOT, 'yml', 'Chara35.yml'),
       'utf8',
     );
-    const { text } = read_text(
-      path.join(REPO_ROOT, 'target', 'CSV', 'Chara', 'Chara35.csv'),
-    );
-
     const from_yml = load_product_yml(product);
-    const from_csv = load_source_csv(text);
 
     // 零告警零丢弃：缺表行（ABL/CSTR → abl/cstr）会在这里逐行报出——#113 起
     // helpers/static-tables.js 登记 Abl.yml/CStr.yml，菲娅是首个带这两类
     // 预设行的入库角色
     assert.deepEqual(from_yml.errors, []);
-    assert.deepEqual(
-      from_yml.static_data.chara,
-      from_csv.static_data.chara,
-      '菲娅预设两条装载路径不一致（产物 ≠ 归一(源)）',
-    );
-    assert.deepEqual(
-      from_yml.static_data.relationship,
-      from_csv.static_data.relationship,
-    );
-    assert.deepEqual(from_yml.errors, from_csv.errors);
-    // 报出期望（值均来自源 CSV）：菲娅的 22 项フラグ（含负值 -1 与大值
-    // 1270）、素質 36 项（两列行缺省 1 与三列行显式值）、ABL、CSTR 第一人称
+    // 预设内容逐项固定：22 项フラグ（含负值 -1 与大值 1270）、素質 36 项
+    // （两列行缺省 1 与三列行显式值）、ABL、CSTR 第一人称
     assert.deepEqual(
       from_yml.static_data.chara[35],
       {
@@ -293,7 +265,7 @@ engine_test(
         abl: { 10: 2, 21: 3 },
         cstr: { 60: '菲娅' },
       },
-      '菲娅预设与报出期望不一致（值应逐项等于源 Chara35.csv）',
+      '菲娅预设内容与库内产物不一致',
     );
   },
 );

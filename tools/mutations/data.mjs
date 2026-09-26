@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 21;
+export const COUNT = 28; // #640 +7（M12870-M12876：yml 装载覆盖与内容固定的行为守卫）
 
 export default [
   {
@@ -77,14 +77,14 @@ export default [
   },
   {
     engine: true,
-    desc: 'M243 Chara31 预设改坏（ABL 21 琼 3 改 9——库内产物与源 CSV 逐字段比对红，#138）',
+    desc: 'M243 Chara31 预设改坏（ABL 21 琼 3 改 9——消费验证的 ABL 断言红，#138；#640 起由行为断言守）',
     file: 'yml/Chara31.yml',
     find: `"ABL":
   "21": 3`,
     replace: `"ABL":
   "21": 9`,
     tests: ['extalent-table'],
-    must_mention: '与读源 CSV 不一致',
+    must_mention: 'ABL 21（琼的预设）',
   },
   {
     desc: 'M244 版本轴退回 0.0.0（【版本】改 0 而【版本代号】仍是当前串——编码一致性用例红，#138 抬版本的机器可查子集；find 随 #188 抬 0.0.2、#215 抬 0.0.3、#217 抬 0.0.4、#349 抬 0.0.5、#545 抬 0.0.6、#547 抬 0.0.7、#560 抬 0.0.8 同步）',
@@ -104,7 +104,7 @@ export default [
   },
   {
     engine: true,
-    desc: 'M245 Chara34 预设段删（MARK 1/3/4 整块删——逐字段比对与边界用例双红，#138）',
+    desc: 'M245 Chara34 预设段删（MARK 1/3/4 整块删——消费验证的 MARK 断言红，#138；#640 起由行为断言守）',
     file: 'yml/Chara34.yml',
     find: `"MARK":
   "1": 3
@@ -112,7 +112,7 @@ export default [
   "4": 3`,
     replace: '# 变异：MARK 预设段删除',
     tests: ['extalent-table'],
-    must_mention: '与读源 CSV 不一致',
+    must_mention: 'MARK 1（葵希罗的预设）',
   },
   {
     engine: true,
@@ -215,7 +215,7 @@ export default [
   },
   {
     engine: true,
-    desc: 'Chara35 预设值改坏（素質 300 银发 5 改 6——与源 CSV 逐字段比对红，#113）',
+    desc: 'Chara35 预设值改坏（素質 300 银发 5 改 6——预设内容逐项固定红，#113）',
     file: 'yml/Chara35.yml',
     find: '  "300": 5',
     replace: '  "300": 6',
@@ -232,5 +232,69 @@ export default [
   id: 80`,
     tests: ['exflag-chara35'],
     must_mention: '人间界侵攻度必须落在原作下标 81',
+  },
+  {
+    engine: true,
+    desc: 'M12870 Chara0 基礎预设改坏（体力 10000 改 1000——预设内容固定用例必须红，#640）',
+    file: 'yml/Chara0.yml',
+    find: '"基礎":\n  "0": 10000\n  "1": 10000\n  "2": 10000',
+    replace: '"基礎":\n  "0": 1000\n  "1": 10000\n  "2": 10000',
+    tests: ['chara-load'],
+    must_mention: '角色 0 的预设内容（基礎全满、素質 1/122）',
+  },
+  {
+    engine: true,
+    desc: 'M12871 Chara17 素質 312 改坏（20 改 2——预设内容固定用例必须红，#640）',
+    file: 'yml/Chara17.yml',
+    find: '  "312": 20',
+    replace: '  "312": 2',
+    tests: ['chara-load'],
+    must_mention: '角色 17 的预设内容（素質 32 项、フラグ、portcflag 增补）',
+  },
+  {
+    engine: true,
+    desc: 'M12872 Chara35 フラグ 453 改坏（1270 改 127——预设内容逐项固定用例必须红，#640）',
+    file: 'yml/Chara35.yml',
+    find: '  "453": 1270',
+    replace: '  "453": 127',
+    tests: ['exflag-chara35'],
+    must_mention: '菲娅预设内容与库内产物不一致',
+  },
+  {
+    desc: 'M12873 常规批在场清单混入不存在的 99（产物在场用例必须红，#640）',
+    file: 'test/extalent-table.test.js',
+    find: '  24, 31, 32, 33, 34,',
+    replace: '  24, 31, 32, 33, 34, 99, // 变异：清单混入不存在的 99',
+    tests: ['extalent-table'],
+    must_mention: 'yml/Chara99.yml 缺失',
+  },
+  {
+    engine: true,
+    desc: 'M12874 角色表全量装载的张数判据改坏（45 改 44——yml 丢失一张也绿，#640）',
+    file: 'test/chara-load.test.js',
+    find: '      files.length,\n      45,\n      `库内应有 45 张 Chara*.yml，实际 ${files.length}`,',
+    replace:
+      '      files.length,\n      44, // 变异：张数判据坏\n      `库内应有 45 张 Chara*.yml，实际 ${files.length}`,',
+    tests: ['chara-load'],
+    must_mention: '库内应有 45 张',
+  },
+  {
+    engine: true,
+    desc: 'M12875 缺 CFlag 名字表的行丢弃回归锁改坏（报错断言改空——フラグ 行静默丢失无人报，#640）',
+    file: 'test/chara-load.test.js',
+    find: "  assert.deepEqual(loader.errors, ['角色数据表不存在: cflag!']);",
+    replace: '  assert.deepEqual(loader.errors, []); // 变异：行丢弃回归锁改坏',
+    tests: ['chara-load'],
+    must_mention: '角色数据表不存在: cflag!',
+  },
+  {
+    engine: true,
+    desc: 'M12876 addCharacter 进 data.no 断言改坏（角色 0 的 [0] 改 [1]——引擎装载链路失明，#640）',
+    file: 'test/chara-load.test.js',
+    find: "assert.deepEqual(adder.data.no, [0], '角色 0 必须进入引擎的 data.no');",
+    replace:
+      "assert.deepEqual(adder.data.no, [1], '角色 0 必须进入引擎的 data.no'); // 变异：data.no 断言坏",
+    tests: ['chara-load'],
+    must_mention: '角色 0 必须进入引擎的 data.no',
   },
 ];

@@ -999,7 +999,7 @@ export default [
     file: 'ere/system/train/com-caress.js',
     find: '  } else if ((cloth_bits & 28) !== 0) {',
     replace: '  } else if (false) {',
-    tests: ['cloth-func', 'compare-train'],
+    tests: ['cloth-func'],
     must_mention: '基本服装前缀（:33-35',
   },
   {
@@ -1745,7 +1745,7 @@ export default [
     file: 'ere/system/train/com-cloth.js',
     find: `      era.print(' [9] - 移动到[撕破衣服]');`,
     replace: `      // 变异：移轨行删`,
-    tests: ['com-cloth', 'compare-train'],
+    tests: ['com-cloth'],
     must_mention: 'golden train-natural:212-221 的逐字形状',
   },
   {
@@ -1849,7 +1849,7 @@ export default [
     file: 'ere/system/train/com-cloth.js',
     find: `      era.print(\` [1] - \${clothtype_main2_text(target)}上半身脱掉\`);`,
     replace: `      era.print(\`[1] - \${clothtype_main2_text(target)}上半身脱掉\`); // 变异：空格形态`,
-    tests: ['com-cloth', 'compare-train'],
+    tests: ['com-cloth'],
     must_mention: 'golden train-natural:212-221 的逐字形状',
   },
   {

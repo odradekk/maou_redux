@@ -475,7 +475,7 @@ function run() {
   for (const rel of stats.unmapped) {
     const hint = WRAPPER_HOMES.some((home) => rel.startsWith(home))
       ? '（包装层新文件须显式登记 WRAPPER_FILES）'
-      : '（新目录须在 DIR_DOMAINS 认领，照 ownership-scan 的纪律）';
+      : '（新目录须在 DIR_DOMAINS 认领，照区段属主表的纪律）';
     console.log(`✗ ${rel} —— 目录未认领：检查器不知道它属于哪个域${hint}`);
     failures += 1;
   }

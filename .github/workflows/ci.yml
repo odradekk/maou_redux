@@ -7,7 +7,6 @@
 #   pull_request   → engine / windows / static   与 master push 同一套全库检查（static 含锚点质量全文量，#626）
 #   push(master)   → 上述三个 + engineless         无引擎全库，守跳过数基线
 #
-# 九份输出比对样本随 engine 任务跑（每份约 1 秒），任一样本有未解释差异即红。
 # 全量变异在 mutation.yml，只对打了 `phase-acceptance` 标签的阶段收尾 PR 跑。
 name: CI
 
@@ -42,12 +41,6 @@ jobs:
         run: >-
           node tools/skip-count-check.mjs test-report.tap
           --baseline test/engine-present-skip-baseline.txt
-      - name: 九份输出比对样本（未解释差异必须为 0）
-        run: |
-          for s in mainmenu-natural mainmenu-max saveload-natural saveload-max daycycle-natural daycycle-max train-natural train-upgrade sale-natural; do
-            echo "=== 样本 $s ==="
-            node tools/compare/cli.js --sample "$s" || exit 1
-          done
 
   # 原生 Windows 开发环境：覆盖盘符、反斜杠、中文临时目录与进程树清理。
   windows:

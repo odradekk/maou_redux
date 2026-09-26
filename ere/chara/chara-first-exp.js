@@ -28,8 +28,7 @@
  * 移植说明（有意偏离，均注明依据）：
  *
  *   - **跨域写走门面**（#71）：四个产物里 CFLAG:15/16 与 CSTR:3/4 的属主都是
- *     train 域（ownership/cflag-cross-domain-writes.yml:1444、
- *     cstr-cross-domain-writes.yml:96 逐条在案），写一律经 `chara(cid).train`
+ *     train 域（跨域写下标，逐条登记在案），写一律经 `chara(cid).train`
  *     的具名访问器；四项产物的初值也走同一组 getter 取回，其余读是裸寻址
  *     （#70 跨域读放行）。
  *   - **原作 `CASE 0,4,8` / `CASE 1,5,7` / `CASEELSE` 的三分数字位**（:67-129

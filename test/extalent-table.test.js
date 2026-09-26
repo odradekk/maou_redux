@@ -12,9 +12,8 @@
  *     永不建、写入静默丢弃——正是本票要修的 #21 已知缺口）。
  *   - 版本轴（无引擎也跑）：#138 破坏性改动两条命中（ADR-0006 判定表：
  *     extendedCharaTables 加表 + 角色预设内容变更），0.0.0 → 0.0.1。
- *   - 常规批逐字段：库内产物经引擎 yml 路径装载与源 CSV 路径逐字段一致、
- *     零告警零丢弃（test/chara-yml.test.js 的做法推广到库内文件——那边的
- *     45 文件全量比对用的是转换器现产物，不经库内文件）。
+ *   - 常规批装载：27 张库内产物经引擎 yml 路径装载（逐字段比对随转换器删除，
+ *     内容守卫由 test/chara-load.test.js 的全量装载与逐项固定承接）；
  *   - 消费验证：base/talent/abl/mark 预设落 data 可读；#118 定夺的边界
  *     （cflag/cstr 预设不随 addCharacter 落 data）如实钉住，另有两处同族
  *     缺口（Chara34 的 MARK:4、Chara24 的相性预设，见各用例注释）。
@@ -40,16 +39,11 @@ const {
   attach_variable_tables,
   load_repo_variable_tables,
 } = require('./helpers/static-tables');
-const { read_text } = require('../tools/csv-to-yml');
-// T20 归一（#60）：源 CSV 文本过同一张表再装载，比对语义是「产物 = 归一(源)」
-const { to_simplified_yaml } = require('../tools/lang-normalize');
-
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const YML_DIR = path.join(REPO_ROOT, 'yml');
-const CHARA_DIR = path.join(REPO_ROOT, 'target', 'CSV', 'Chara');
 const TABLE_NAME = 'ex_talent';
 
 // 常规批（#105 决议二的第一批）：0/17/35 已随前票入库，不重做
@@ -79,18 +73,14 @@ test('登记契约：Ex_Talent.yml 在场则 ex_talent 必须登记（未登记�
   );
 });
 
-test('常规批产物在场：27 张 Chara*.yml（1–24 除 0/17、31–34）与源文件同名同号', () => {
+test('常规批产物在场：27 张 Chara*.yml（1–24 除 0/17、31–34）齐全', () => {
   for (const id of BATCH_IDS) {
     assert.ok(
       fs.existsSync(path.join(YML_DIR, `Chara${id}.yml`)),
-      `yml/Chara${id}.yml 缺失（源 ${CHARA_DIR}/Chara${id}.csv 在场）`,
+      `yml/Chara${id}.yml 缺失`,
     );
   }
-  // 头两行是转换器的固定头注：来源行必须指到真实源文件
-  const head = read_yml('Chara31.yml').split('\n').slice(0, 2).join('\n');
-  assert.match(head, /转换自 target\/CSV\/Chara\/Chara31\.csv/);
 });
-
 test('版本轴：0.0.1——【版本】=【最低支持版本】= 版本代号的编码（#138 破坏性改动抬版本）', () => {
   const text = read_yml('GameBase.yml');
   const field = (name) => {
@@ -148,37 +138,6 @@ function load_batch_presets(extended_tables = EXTENDED_TABLES) {
 }
 
 engine_test(
-  '常规批 27 张：库内产物经引擎装载与源 CSV 逐字段一致、零告警零丢弃',
-  () => {
-    for (const id of BATCH_IDS) {
-      const source = read_text(path.join(CHARA_DIR, `Chara${id}.csv`));
-      const from_yml = create_chara_loader();
-      attach_variable_tables(from_yml, repo_tables);
-      from_yml.load_rows(
-        engine.parse_data_file(read_yml(`Chara${id}.yml`), 'yml', 'chara'),
-      );
-      const from_csv = create_chara_loader();
-      attach_variable_tables(from_csv, repo_tables);
-      from_csv.load_rows(
-        engine.parse_data_file(to_simplified_yaml(source.text), 'csv', 'chara'),
-      );
-
-      assert.deepEqual(from_yml.errors, [], `Chara${id} 装载不应有缺表错误`);
-      assert.deepEqual(
-        from_yml.static_data.chara[id],
-        from_csv.static_data.chara[id],
-        `Chara${id}：引擎读库内产物的预设与读源 CSV 不一致`,
-      );
-      assert.deepEqual(
-        from_yml.static_data.relationship,
-        from_csv.static_data.relationship,
-        `Chara${id}：称呼/相性（relationship）不一致`,
-      );
-    }
-  },
-);
-
-engine_test(
   '消费验证：addCharacter 加入后预设值确实可读（base/maxbase/talent/abl/mark/callname）',
   () => {
     const loader = load_batch_presets();
@@ -209,12 +168,12 @@ engine_test(
 
     // Chara31 琼：ABL 21 = 3（Abl.yml 有 21 号名条目，initCharaTable 建槽）
     assert.equal(adder.add(31), true);
-    assert.equal(adder.data.abl[31][21], 3);
+    assert.equal(adder.data.abl[31][21], 3, 'ABL 21（琼的预设）');
 
     // Chara34 葵希罗：MARK 1/3 = 3 落（Mark.yml 有名条目）
     assert.equal(adder.add(34), true);
-    assert.equal(adder.data.mark[34][1], 3);
-    assert.equal(adder.data.mark[34][3], 3);
+    assert.equal(adder.data.mark[34][1], 3, 'MARK 1（葵希罗的预设）');
+    assert.equal(adder.data.mark[34][3], 3, 'MARK 3（葵希罗的预设）');
 
     // 全批 27 个都能加进去（预设在场即加入成功，引擎语义）
     for (const id of BATCH_IDS) {

@@ -2,17 +2,15 @@
  * @file 简体锁（issue #60；#188 收紧）：ere/ 与 yml/ 的玩家可见文本不得含
  * 非简体字符。
  *
- * 缘由：游戏语言统一为简体中文是产品决定（对 1:1 的有意偏离），偏离必须以
- * 「一张表 + 一道锁」落地。**两路判定器**都在 tools/lang-normalize.js，本文件
- * 不自持判定逻辑：
+ * 缘由：游戏语言统一为简体中文是产品决定，落地为「一张表 + 一道锁」。
+ * **两路判定器**都在 tools/lang-check.js，本文件不自持判定逻辑：
  *   - find_offenders：查表命中（字级 / 假名 / 词级），数据 tools/lang-table.js
  *     （唯一真相源）——报「表内登记的」非简体字符；
  *   - find_outside_trad（#188 新增）：独立参考集判定（tools/lang-simp-ref.js，
  *     OpenCC 繁→简字表派生），报「归一表外的」繁侧字——补上查表命中对表外
  *     繁体的失明（find_offenders('巖穴里的赠礼') 曾返回 []，巖 不在归一表）。
- * 形状参照 test/static-table-coverage.test.js 与 test/kojo-text-fidelity.test.js：
- * **从源码扫、逐条探**，新模块 / 新产物自动纳入——文件二不用登记。
- *
+ * 形状参照 test/static-table-coverage.test.js：从源码扫、逐条探，
+ * 新模块 / 新产物自动纳入——文件不用登记。
  * 扫描范围与过近似（有意为之，防漏大于防误伤）：
  *   - ere/ 目录下全部 .js 的**全部字符串字面量**（era-electron.js 除外：引擎
  *     SDK，其 JSDoc 不是游戏代码）。不区分「是否输出 API 的实参」——
@@ -47,7 +45,7 @@ const {
   is_exempted,
   load_table,
   scan_string_literals,
-} = require('../tools/lang-normalize');
+} = require('../tools/lang-check');
 const { make_probe_repo, refresh_probe_repo } = require('./helpers/probe-repo');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -155,7 +153,7 @@ test('ere/ 与 yml/ 的玩家可见文本不含非简体字符（表内查表命
   assert.deepEqual(
     problems,
     [],
-    `玩家可见文本里有非简体字符（修法：char:/word: 是表内命中，跑 node tools/lang-normalize.js --write <文件>，词级/专有名词先补 tools/lang-table.js；outside: 是归一表外的繁侧字，把映射收进 lang-table.js 或按整串豁免——表与豁免都只能有意识地长）：\n  ${problems.join('\n  ')}`,
+    `玩家可见文本里有非简体字符（修法：char:/word: 是表内命中，按 lang-table.js 里的对应简体字手工改正文；词级/专有名词先补 tools/lang-table.js；outside: 是归一表外的繁侧字，把映射收进 lang-table.js 或按整串豁免——表与豁免都只能有意识地长）：\n  ${problems.join('\n  ')}`,
   );
 });
 

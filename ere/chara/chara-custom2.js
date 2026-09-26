@@ -36,7 +36,7 @@
  *     `config.color`（page-ablup.js 的 GRAY 同值 #808080；命名色在 hover 态
  *     会拼出非法值，见 menu-button.js 文件头第 2 条）。
  *   - **跨域写走门面**（#71）：本文件属 chara 域，四张表的下标各有属主——
- *     口上两素质（system，ownership/talent-cross-domain-writes.yml 逐条在案）、
+ *     口上两素质（system 域，跨域写下标登记在案）、
  *     train 域的童贞与初体验对象/初吻对象/两个名字（`talent` 的 1 号、`cflag` 的 15/16、
  *     `cstr` 的 3/4、`abl` 的 31 号）、invasion 域的状态（`cflag` 的 1 号）、
  *     dungeon 域的攻防与战斗经验（`cflag` 的 11/12、`exp` 的 80 号、`base`）、
