@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 302; // #597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 301; // #641 起 -2+1（M6743/M6881 名单复辟守卫随 STUBBED_CALLS 机制移除；+1 M12906 LABO 战斗删除守卫）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判据、欲望门槛、睡着分支文案；M11489：挑战臂漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
@@ -1075,14 +1075,6 @@ export default [
     must_mention: '一半经验给魔王',
   },
   {
-    desc: 'M6743 MAGIC 重新登记成 dungeon-battle 存根（#565 起名单为空，改由存根名核对拦截）',
-    file: 'ere/dungeon/dungeon-battle.js',
-    find: 'const STUBBED_CALLS = [];',
-    replace: "const STUBBED_CALLS = ['MAGIC']; // 变异：真身倒退为存根登记",
-    tests: ['stub-registry-status'],
-    must_mention: '已实现函数的调用点不得再打占位',
-  },
-  {
     desc: 'M6744 决斗的无参 MAGIC 被擅自传成 X:1 战斗类型',
     file: 'ere/dungeon/dungeon-battle2.js',
     find: '  if ((await battle.magic(0, magic_a, magic_b, rand, move_ctx)) === 999) {',
@@ -1879,14 +1871,6 @@ export default [
       '          await Promise.resolve(sub_result); // 变异：删除怪物改造调用',
     tests: ['page-dungeon-info'],
     must_mention: 'INFO2：部下状态总览',
-  },
-  {
-    desc: 'M6881 城镇陈旧 MONSTER_PLAY 存根登记复辟（#565 起名单清空）',
-    file: 'ere/dungeon/dungeon-town.js',
-    find: 'const STUBBED_CALLS = []; // #565：四名全数落地（CHARADEAD_CHECK 随 #548），名单清空',
-    replace: "const STUBBED_CALLS = ['MONSTER_PLAY']; // 变异：陈旧登记复辟",
-    tests: ['stub-registry-status'],
-    must_mention: '已实现函数的调用点不得再打占位',
   },
   {
     desc: 'M6882 结婚日主函数整体删除',
@@ -2727,5 +2711,19 @@ export default [
     replace: '  // 变异：TALENT:60 支的真空行删除',
     tests: ['dungeon-trap'],
     must_mention: '催情气体（TALENT:60）：那一支里的收尾 PRINTL 是真空行',
+  },
+
+  {
+    desc: 'M12906 LABO 野外战斗调用复活（dungeon_battle 调用点打回——#638 删除的原作缺失调用不得回潮；函数已删，回潮即 ReferenceError）',
+    file: 'ere/dungeon/labo-dungeon-map.js',
+    find: `      return 0; // :208-209 魔王軍は仲間
+    }
+    // :211 CALL DUNGEON_BATTLE`,
+    replace: `      return 0; // :208-209 魔王軍は仲間
+    }
+    era.print('野外战斗（DUNGEON_BATTLE）开始……'); // 变异：野外战斗行复活
+    // :211 CALL DUNGEON_BATTLE`,
+    tests: ['dungeon-labo'],
+    must_mention: '不再打印任何战斗行',
   },
 ];

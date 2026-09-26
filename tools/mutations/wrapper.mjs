@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 21; // #542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
+export const COUNT = 17; // #641 起 -4（M145、M11310–M11312 随 ere/utils/stub-line.js 删除）；#542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
 // 话术退回、丢等键、丢 @函数名，均由 test/page-config.test.js 的 dispatch_config(26/28)
 // 用例守护）
 //；#547 起 +3（M11575-M11577，era-modsave/era-global 的两个开关循环与首臂——由 test/era-modsave.test.js 与 test/era-global.test.js 守护）
@@ -43,19 +43,6 @@ export default [
     replace: '  // 变异：无标记守卫，每次都播种',
     tests: ['era-global'],
     must_mention: '不被覆盖',
-  },
-  {
-    desc: 'M145 分发期存根退回纯 print（stub_line_wait 丢掉等键——玩家看不到）',
-    file: 'ere/utils/stub-line.js',
-    find: `async function stub_line_wait(erb_name, note, owner) {
-  era.print(stub_text(erb_name, note, owner));
-  await era.waitAnyKey();
-}`,
-    replace: `async function stub_line_wait(erb_name, note, owner) {
-  era.print(stub_text(erb_name, note, owner));
-}`,
-    tests: ['page-main-menu'],
-    must_mention: '玩家先看到',
   },
   {
     desc: 'M158 未声明下标读兜底被删（undefined 泄漏给调用方）',
@@ -140,41 +127,6 @@ export default [
       '    return era.get(`palam:${this.cid}:8`) || 0; // 变异：与耻情串位',
     tests: ['kojo-k14-nobleman'],
     must_mention: '首次恐怖 Lv2 置 224=1',
-  },
-  // —— #542：不移植提示行（stub-line 的第三变体）——
-  {
-    desc: 'M11310 not_ported_line_wait 文案退回占位话术（「不在移植范围」改回「尚未移植，此处为占位」——判死终态被读成会补的待办）',
-    file: 'ere/utils/stub-line.js',
-    find: '    `（${note}不在移植范围——原作 @${erb_name}，${basis}，见 docs/stub-registry.md。）`,',
-    replace:
-      '    `（${note}尚未移植，此处为占位——原作 @${erb_name}，${basis}，见 docs/stub-registry.md。）`, // 变异：退回占位话术',
-    tests: ['page-config'],
-    must_mention: '不移植提示要说清是什么与为何',
-  },
-  {
-    desc: 'M11311 not_ported_line_wait 丢掉等键（分发期输出被重绘清掉，玩家看不到，#73 同款形态）',
-    file: 'ere/utils/stub-line.js',
-    find: `async function not_ported_line_wait(erb_name, note, basis) {
-  era.print(
-    \`（\${note}不在移植范围——原作 @\${erb_name}，\${basis}，见 docs/stub-registry.md。）\`,
-  );
-  await era.waitAnyKey();
-}`,
-    replace: `async function not_ported_line_wait(erb_name, note, basis) {
-  era.print(
-    \`（\${note}不在移植范围——原作 @\${erb_name}，\${basis}，见 docs/stub-registry.md。）\`,
-  );
-}`,
-    tests: ['page-config'],
-    must_mention: '提示行必须等键',
-  },
-  {
-    desc: 'M11312 not_ported_line_wait 文案丢掉 @函数名（可检索性没了——清单、注释、提示行三处互为印证的一环断掉）',
-    file: 'ere/utils/stub-line.js',
-    find: '——原作 @${erb_name}，',
-    replace: '——原作 ${erb_name}，',
-    tests: ['page-config'],
-    must_mention: '提示行必须带原作函数名 @MODLIST',
   },
   {
     desc: 'M11575 era_modsave 的卖淫影响循环错向（0 → 2，#547）',

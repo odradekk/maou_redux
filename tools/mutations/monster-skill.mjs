@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #345（阶段 5a L14）怪物技能与两处战斗接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 40;
+export const COUNT = 38; // #641 起 -2（M7175/M7177 名单复辟守卫随 STUBBED_CALLS 机制移除）
 
 export default [
   {
@@ -305,15 +305,6 @@ export default [
     must_mention: '精英版的数值差异与写入位置',
   },
   {
-    desc: 'M7175 MONSTER_SKILL 重新登记成 dungeon-battle 存根（#565 起名单为空，改由存根名核对拦截）',
-    file: 'ere/dungeon/dungeon-battle.js',
-    find: 'const STUBBED_CALLS = [];',
-    replace:
-      "const STUBBED_CALLS = ['MONSTER_SKILL']; // 变异：真身倒退为存根登记",
-    tests: ['stub-registry-status'],
-    must_mention: '已实现函数的调用点不得再打占位',
-  },
-  {
     desc: 'M7176 怪物战斗入口不再透传随机源',
     file: 'ere/dungeon/dungeon-battle.js',
     find: '    (await monster_skill_mod.monster_skill(arg0, skill_no, monid, rand)) === 999',
@@ -321,14 +312,6 @@ export default [
       '    (await monster_skill_mod.monster_skill(arg0, skill_no, monid)) === 999',
     tests: ['monster-skill'],
     must_mention: '透传确定性随机源',
-  },
-  {
-    desc: 'M7177 SLAVE_MONSTER_SKILL 重新登记成 dungeon-battle2 存根',
-    file: 'ere/dungeon/dungeon-battle2.js',
-    find: 'const STUBBED_CALLS = [];',
-    replace: "const STUBBED_CALLS = ['SLAVE_MONSTER_SKILL']; // 变异",
-    tests: ['monster-skill'],
-    must_mention: 'SLAVE_MONSTER_SKILL 不再登记为存根',
   },
   {
     desc: 'M7178 精英战斗入口不再透传随机源',
