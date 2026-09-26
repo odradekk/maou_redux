@@ -116,8 +116,9 @@ const B_SAVELOAD_LABELS = new Set([
 // 全角数字网格行（GEO_OUTPUT_2 的地图输出：全角数字/＠出入口/凹凸标记，
 // 逗号分隔—— Ere 侧 GEO_OUTPUT_2 未移植，stub-registry 在案）
 const B_MAP_GRID_RE = /^[０-９＠凹凸]+(,[０-９＠凹凸]+)+,$/;
-// 版本行（伪Ver93.106立绘版 / 伪Ver0.0.1立绘版——版本轴重设，ADR-0006）
-const B_VERSION_LINE_RE = /^伪Ver\d+\.\d+(\.\d+)?立绘版$/;
+// 版本行（伪Ver93.106立绘版 / Ver0.0.1——版本轴重设，ADR-0006；#642 返工后
+// ere 侧只输出 Ver【版本代号】，「伪」「立绘版」装饰段已删，两侧形态都接）
+const B_VERSION_LINE_RE = /^伪?Ver\d+\.\d+(\.\d+)?(立绘版)?$/;
 // —— #642：标题画面游戏信息改为「魔王 Redux」——golden 侧的旧作者/年份/追加
 //    信息行与汉化及制作名单整段（样本 mainmenu-natural-log:7-31 的 17 行，名
 //    单行经过 lang 归一、「華胥の亡靈」已简化）。名单删除后联系方式行与名
@@ -1108,17 +1109,9 @@ function classify_scope_b(entry, side, context) {
             '游戏信息改为「魔王 Redux」（#642）：golden 侧旧作者/年份/追加信息行与汉化及制作名单行随名单整段删除',
         };
       }
-      // 名单整段删除后联系方式行与 golden 名单首行 LCS 配对错位的两个半边。
-      // 正常配对时 ere 半边由上面的按钮同行规则接住、golden 半边由带后缀
-      // 规则接住，这里只兜配对错位（counterpart 不是按钮形态）的情形；内容
-      // 正确性由 test/page-title.test.js 的首屏断言兜住。
-      if (side === 'ere' && entry.text === '版本推进出问题') {
-        return {
-          category: 'version',
-          reason:
-            '游戏信息改名（#642）后名单整段删除：联系方式行与 golden 名单首行配对错位的 ere 半边',
-        };
-      }
+      // golden 侧独有的联系方式行（带 >> 后缀）：联系方式段随 #642 返工整段
+      // 删除，ere 侧再无对应输出。精确字面值白名单，内容正确性由
+      // test/page-title.test.js 的首屏断言兜住。
       if (
         side === 'golden' &&
         entry.text === '版本推进出问题 >>' &&
@@ -1126,7 +1119,8 @@ function classify_scope_b(entry, side, context) {
       ) {
         return {
           category: 'version',
-          reason: '同上配对错位的 golden 半边（带 >> 后缀）',
+          reason:
+            '联系方式段随游戏信息改名整段删除（#642）：golden 侧独有的联系行',
         };
       }
       if (side === 'golden' && entry.text === '兼容性修正中……') {

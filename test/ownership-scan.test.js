@@ -392,7 +392,7 @@ test('TIMES：乘法赋值计入写入、不计读', async () => {
 test('ignored 文件：整体跳过测量（死代码），声明了不存在的文件报错', async () => {
   const { result } = await generate_on_fixture({
     甲: [['A.ERB', 'CFLAG:1 = 1\n']],
-    '(root)': [['TITLE.ERB', 'GLOBAL:98 = 1\nCFLAG:9 = 9\n']],
+    '(root)': [['TITLE.ERB', 'GLOBAL:4 = 1\nCFLAG:9 = 9\n']],
   });
   assert.equal(result.tables.get('global').scan.writes_total, 0);
   assert.equal(result.tables.get('cflag').scan.writes_total, 1);

@@ -157,8 +157,6 @@ const REPLAY_DONE = '__replay_plan_exhausted__';
  */
 async function seed_scope_b(fixture, { sale = false } = {}) {
   fixture.store.set('gamebase', { ...GAMEBASE });
-  // 标题画面状态：联系方式未显示（GLOBAL:98==0，样本 :32 是「版本推进出问题 >>」）
-  fixture.store.set('global:98', 0);
   // 标题音乐开关关（避免音乐记录噪音；resource:false 下播不播都无声）
   fixture.store.set('global:0', 0);
   // save00：真实落一份档（备注 + 快照都走 saveData）。样本流程不读它，

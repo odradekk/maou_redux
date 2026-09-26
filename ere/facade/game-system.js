@@ -324,22 +324,6 @@ class SystemGame {
   set 反抗刻印回避(v) {
     era.set('tflag:150', v);
   }
-
-  // —— global ——
-  /**
-   * 联系方式开关（global:98 ↔ GLOBAL:98）
-   * 源: yml/Global.yml id 98
-   * @returns {number}
-   */
-  get 联系方式开关() {
-    return era.get('global:98') || 0;
-  }
-  /**
-   * @param {number} v
-   */
-  set 联系方式开关(v) {
-    era.set('global:98', v);
-  }
 }
 const facade = new SystemGame();
 // GENERATED END

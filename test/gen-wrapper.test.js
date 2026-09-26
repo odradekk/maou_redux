@@ -40,9 +40,9 @@ const sample_global_yml = [
   '  id: 0',
   '  name: "title_music_enabled"',
   '  type: "number"',
-  '"联系方式开关":',
-  '  id: 98',
-  '  name: "contact_info_shown"',
+  '"音频默认值已落盘":',
+  '  id: 2',
+  '  name: "audio_defaults_seeded"',
   '  type: "number"',
   '',
 ].join('\n');
@@ -58,7 +58,12 @@ test('解析：id/name/type 逐条读出，键可为任意中文', () => {
       name: 'title_music_enabled',
       type: 'number',
     },
-    { key: '联系方式开关', id: 98, name: 'contact_info_shown', type: 'number' },
+    {
+      key: '音频默认值已落盘',
+      id: 2,
+      name: 'audio_defaults_seeded',
+      type: 'number',
+    },
   ]);
 });
 
@@ -117,13 +122,13 @@ test('渲染：getter 数字寻址 + || 0 兜底 + 中文 JSDoc；setter 成对'
 
   // #13 的兜底规则：读未声明/未初始化序号引擎返回 undefined，getter 必须 || 0
   assert.ok(section.includes("return era.get('global:0') || 0;"));
-  assert.ok(section.includes("return era.get('global:98') || 0;"));
+  assert.ok(section.includes("return era.get('global:2') || 0;"));
   // 写入侧成对出现，同样用数字下标（#5：底层寻址一律数字）
   assert.ok(section.includes("era.set('global:0', v);"));
-  assert.ok(section.includes("era.set('global:98', v);"));
+  assert.ok(section.includes("era.set('global:2', v);"));
   // 每个变量的中文键进 JSDoc（AGENTS.md：变量语义必须注释）
   assert.ok(section.includes('是否启用标题音乐'));
-  assert.ok(section.includes('联系方式开关'));
+  assert.ok(section.includes('音频默认值已落盘'));
   // 访问器对象按 #11 命名：era-<表名>.js / era_<表名>
   assert.ok(section.includes('const era_global = {'));
 });

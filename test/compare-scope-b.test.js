@@ -82,14 +82,18 @@ const REPO = path.resolve(__dirname, '..');
 // 改归版本类），unexplained 全部仍为 0。数字为逐份重跑的实测值；此前的
 // 各轮推进注释随这次重测归档（saveload #228 起算、daycycle #401/#469/#508、
 // sale #338-#612 的逐轮数字演进见 git 历史），本表只锁当前实测。
+// #642 返工：版本行去掉「伪」「立绘版」装饰（B_VERSION_LINE_RE 改双形态），
+// 联系方式段整段删除（GLOBAL:98 随之退役）。七份样本各 −1 版本类（联系行
+// 配对错位的 ere 半边不再有输出点）与 −1 存根（ere 侧 [8] >> 钮消失，原本
+// 归 val 8/9 按钮规则），matched 与 unexplained 不动。数字为重跑实测。
 const BASELINE = {
-  'mainmenu-natural': { matched: 29, version: 27, stub: 58, unexplained: 0 },
-  'mainmenu-max': { matched: 51, version: 27, stub: 71, unexplained: 0 },
-  'saveload-natural': { matched: 187, version: 27, stub: 143, unexplained: 0 },
-  'saveload-max': { matched: 190, version: 27, stub: 137, unexplained: 0 },
-  'daycycle-natural': { matched: 52, version: 27, stub: 172, unexplained: 0 },
-  'daycycle-max': { matched: 52, version: 27, stub: 212, unexplained: 0 },
-  'sale-natural': { matched: 147, version: 27, stub: 117, unexplained: 0 },
+  'mainmenu-natural': { matched: 29, version: 26, stub: 57, unexplained: 0 },
+  'mainmenu-max': { matched: 51, version: 26, stub: 70, unexplained: 0 },
+  'saveload-natural': { matched: 187, version: 26, stub: 142, unexplained: 0 },
+  'saveload-max': { matched: 190, version: 26, stub: 136, unexplained: 0 },
+  'daycycle-natural': { matched: 52, version: 26, stub: 171, unexplained: 0 },
+  'daycycle-max': { matched: 52, version: 26, stub: 211, unexplained: 0 },
+  'sale-natural': { matched: 147, version: 26, stub: 116, unexplained: 0 },
 };
 for (const [name, expected] of Object.entries(BASELINE)) {
   test(`比对基线锁：${name} 匹配 ${expected.matched} / 版本 ${expected.version} + 存根 ${expected.stub} + 未解释 ${expected.unexplained}`, async () => {

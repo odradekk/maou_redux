@@ -75,15 +75,11 @@ function draw_title_screen() {
   // 原作 :25-26 SETFONT "ARIEL BLACK"/FONTBOLD、:82 SETFONT：ere 无全局字体
   // 开关，用片段的 fontWeight / 行的 fontSize 近似
   era.print(gamebase.title, { fontSize: '1.25rem' });
-  // 原作 :29-35 标题行三段拼色：伪(#ff8000) + Ver%LOCALS% + 立绘版(#ccff99)
-  era.print(
-    [
-      { content: '伪', color: '#ff8000', fontWeight: 'bold' },
-      { content: `Ver${version_text}`, fontWeight: 'bold' },
-      { content: '立绘版', color: '#ccff99', fontWeight: 'bold' },
-    ],
-    { fontSize: '1.25rem' },
-  );
+  // 版本行只留 Ver【版本代号】（#642 返工：删掉原作的「伪」「立绘版」两段装饰——
+  // 立绘在本仓库未实现，装饰失去所指）
+  era.print([{ content: `Ver${version_text}`, fontWeight: 'bold' }], {
+    fontSize: '1.25rem',
+  });
   era.print([{ content: gamebase.author, fontWeight: 'bold' }]);
   // 原作 :36-37 SIF STRLENS(GAMEBASE_YEAR) > 0（非空才输出，带半角括号）
   if (gamebase.year) {
@@ -96,21 +92,7 @@ function draw_title_screen() {
     era.print(gamebase.info);
   }
 
-  // 原作 :74-81 联系方式段：GLOBAL:98 == 0 显示「版本推进出问题 」、非 0 显示
-  // 联系方式，按钮 8 切换。前者的尾部空格照原作（这是普通文本行，不受按钮的
-  // 空白折叠影响）。
-  if (era_global.contact_info_shown === 0) {
-    era.print('版本推进出问题 ');
-    era.printButton('>>', 8);
-  } else {
-    era.print('群里@Delicious或者小窗');
-    era.printButton('<<', 8);
-  }
-
-  // 原作 :86-87 的 PRINTFORML 同样只结束上一行（:77/:81 的 PRINTFORM + 按钮 8
-  // 拼出的行），不产生空行：mainmenu-natural-log:32-33 里「版本推进出问题 」
-  // 行与分割线逐行相邻。:74 的 PRINTFORM 的收行在 :76/:80 的 PRINTFORML，
-  // ere 侧由 print 自成一行承接，两处都不补空行
+  // 分割线紧跟年份行后的空行，两者之间不补空行；按钮一律独占一行
   era.drawLine(); // 原作 :86-87（PRINTFORML 只收行 + DRAWLINE）
   // 原作 :89-90 [0]/[1] 原为纯文本 + INPUT 收数字；ere 侧改为可点按钮（可点可
   // 键入），accelerator 沿用原作编号。
@@ -181,14 +163,6 @@ async function run_title_page() {
       era.drawLine();
       era.setAlign('left'); // 原作 :106 ALIGNMENT LEFT
       await load_game();
-      continue;
-    }
-
-    if (result === 8) {
-      // 原作 :108-110：GLOBAL:98 = (GLOBAL:98+1)%2; SAVEGLOBAL; RESTART。
-      // 包装层 setter 不代劳保存（#18），显式 await 落公共存档。
-      era_global.toggle_contact_info();
-      await era.saveGlobal();
       continue;
     }
     // 原作 :114-115 ELSE → RESTART：无法识别的输入重绘标题画面，不报错。
