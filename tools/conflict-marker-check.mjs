@@ -17,8 +17,7 @@
 //      `[>>>>>>>>..]` 是八连子符夹点号，不命中；
 //   4. 七个等号在 markdown 里、上一行有正文时按 setext 标题下划线排除，
 //      上一行空白仍报——排除按上下文不是按扩展名一刀切。
-// 扫描面：git ls-files 的跟踪文本，排除 target/（只读输入）与
-// node_modules/。二进制按扩展名与 NUL 字节跳过。
+// 扫描面：git ls-files 的跟踪文本，排除 node_modules/。
 //
 // 用法：node tools/conflict-marker-check.mjs [--root <dir>]
 //   全绿退出码 0；任一命中退出码 1。--root 给探针副本（默认本工具上级）。
@@ -86,12 +85,7 @@ function parse_args(argv) {
 
 function should_skip(rel) {
   const posix = rel.replaceAll('\\', '/');
-  return (
-    posix === 'target' ||
-    posix.startsWith('target/') ||
-    posix === 'node_modules' ||
-    posix.startsWith('node_modules/')
-  );
+  return posix === 'node_modules' || posix.startsWith('node_modules/');
 }
 
 function list_tracked(root) {
