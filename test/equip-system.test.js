@@ -51,6 +51,7 @@ test('equip_database：装饰行五列、武装行十三列、附魔增量与强
       ring.前缀,
     ],
     [10, 70000, 0, 0, 1, 10, 3, 0],
+    '装饰行五列（成长戒指价格 70000 等）',
   );
 
   // 武装行（战锤 id 47 + 强度 2 → 伤害强化 150 + 2*5）
@@ -78,7 +79,7 @@ test('equip_database：装饰行五列、武装行十三列、附魔增量与强
   // 附魔（前缀 1 巨人 + 剑 + 强度 1：伤害强化 100+30+5、失手率 20）
   const enchanted = { 存储编号: 1 * 100000 + 1 * 1000 + 40 };
   equip_database(enchanted);
-  assert.equal(enchanted.伤害强化, 135);
+  assert.equal(enchanted.伤害强化, 135, '附魔增量：前缀 1 巨人的伤害强化 +30');
   assert.equal(enchanted.失手率, 20);
   // 附魔前缀 2 剧毒：毒位 + 伤害弱化
   const poison = { 存储编号: 2 * 100000 + 40 };
@@ -169,7 +170,11 @@ test('print：前缀 + 名 + 强度后缀共一行，LightSalmon；未知识别�
   assert.equal(unknown_w.强度, 0);
   const unknown_r = { 存储编号: 21 + 5 * 1000 }; // 戒指段只认 0-20
   print.print_equiptype_ring(unknown_r);
-  assert.equal(fixture.text_lines()[4], '暗黑戒指');
+  assert.equal(
+    fixture.text_lines()[4],
+    '暗黑戒指',
+    '未知识别号回落暗黑戒指（ELSE 臂）',
+  );
   assert.equal(unknown_r.存储编号, 0);
   assert.equal(unknown_r.强度, 0);
 

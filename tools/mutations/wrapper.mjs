@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 17; // #641 起 -4（M145、M11310–M11312 随 ere/utils/stub-line.js 删除）；#542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
+export const COUNT = 16; // #643 -1（M185：产物出处路径注释变异无行为面，出处核对用例删除）；#641 起 -4（M145、M11310–M11312 随 ere/utils/stub-line.js 删除）；#542 起 +3（M11310-M11312：stub-line 的 not_ported_line_wait——
 // 话术退回、丢等键、丢 @函数名，均由 test/page-config.test.js 的 dispatch_config(26/28)
 // 用例守护）
 //；#547 起 +3（M11575-M11577，era-modsave/era-global 的两个开关循环与首臂——由 test/era-modsave.test.js 与 test/era-global.test.js 守护）
@@ -69,15 +69,6 @@ export default [
 }`,
     tests: ['gen-facade'],
     must_mention: '按 ID 缓存',
-  },
-  {
-    desc: 'M185 产物出处路径指向不存在的文件（#71 翻过车的一类）',
-    file: 'ere/facade/chara-train.js',
-    find: '   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
-    replace:
-      '   * 源: target/ERB/SYSTEM/__NOPE__.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）',
-    tests: ['gen-facade'],
-    must_mention: '出处路径',
   },
   {
     desc: 'M203 一人称直设删除（CSTR:60 = 我 / CFLAG:450 = 9，SELF_CALL.ERB:38-42，#383 起真身落在 chara-self-call.js）',

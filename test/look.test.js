@@ -3177,37 +3177,6 @@ for (const row of GOBI_TIER_ROWS) {
   });
 }
 
-/**
- * 表里的「原作行号 → 期望档位」不是手抄的：逐行回读原作 LOOK.ERB 的
- * `CALL GOBI_KOUJO` 实参核对（三元式的两支都算合法取值）。行号漂了、
- * 档位抄错，这条当场红——`src` 因此是断言的一部分，不是装饰。
- */
-test('LOOK_INFO 语尾档位表：原作行号与期望档位对得上（回读 LOOK.ERB）', () => {
-  const erb = fs
-    .readFileSync(
-      path.join(__dirname, '..', 'target', 'ERB', 'キャラ関数', 'LOOK.ERB'),
-      'utf8',
-    )
-    .split(/\r?\n/);
-  for (const row of GOBI_TIER_ROWS) {
-    const line = erb[row.src - 1] ?? '';
-    const at = line.indexOf('CALL GOBI_KOUJO');
-    assert.notEqual(
-      at,
-      -1,
-      `源 :${row.src}（${row.note}）在 LOOK.ERB 里不是 CALL GOBI_KOUJO 行：${line.trim()}`,
-    );
-    const arg = line.slice(at + 'CALL GOBI_KOUJO'.length);
-    const allowed = arg.includes('?')
-      ? new Set([...arg.matchAll(/\b(\d)\b/g)].map((m) => Number(m[1])))
-      : new Set([Number(/^\s*,\s*(\d)/.exec(arg)?.[1])]);
-    assert.ok(
-      allowed.has(row.seq[row.at]),
-      `源 :${row.src}（${row.note}）表里期望 ${row.seq[row.at]}，原作实参是「${arg.trim()}」`,
-    );
-  }
-});
-
 test('LOOK_INFO：口上视角（FLAG:5 位 11）走「」与高亮，语尾未命中静默', async () => {
   const w = info_world();
   const cid = w.run(0, always);

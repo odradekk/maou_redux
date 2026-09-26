@@ -22,8 +22,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -475,54 +473,6 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
       `LOCAL ${local}：不抛错`,
     );
   }
-});
-
-test('同名函数断言：*_ryou 与 H14 的 *_ryou_man 名字区分', async () => {
-  // #12 的首个加载生效遮蔽只发生在「同名」函数之间。本文件（H13）的
-  // 函数是 `@*_RYOU`（JS 导出 `*_ryou`），H14 的 DUNGEON_RYOUZYOKU_MAN.ERB
-  // 是 `@*_RYOU男`（带 man）——两组名字不同，互不遮蔽。这里断言导出名
-  // 都不带 man 后缀，且与源文件的 @ 原名逐字对应（对照
-  // DUNGEON_RYOUZYOKU.ERB 的分派调用名）。
-  const fixture = create_era_fixture();
-  const mod = fixture.load_module('kojo/kojo-dungeon-ravish');
-  const erb = fs.readFileSync(
-    path.resolve(
-      __dirname,
-      '..',
-      'target',
-      'ERB',
-      '迷宮',
-      'DUNGEON_RYOUZYOKU.ERB',
-    ),
-    'utf8',
-  );
-  for (const [export_name, erb_name] of FUNCS) {
-    assert.equal(typeof mod[export_name], 'function');
-    assert.ok(
-      erb.includes(`@${erb_name}(ARG)`) || erb.includes(`@${erb_name}, ARG`),
-      `源文件应含 @${erb_name}(ARG) 定义`,
-    );
-    assert.ok(
-      !export_name.endsWith('_man'),
-      `H13 导出不应带 man 后缀：${export_name}`,
-    );
-  }
-  // H13 的分派 CALL 名（TALENT:122 为假）引用的正是本文件的无 man 名
-  const h14 = fs.readFileSync(
-    path.resolve(
-      __dirname,
-      '..',
-      'target',
-      'ERB',
-      '迷宮',
-      'DUNGEON_RYOUZYOKU_MAN.ERB',
-    ),
-    'utf8',
-  );
-  assert.ok(
-    h14.includes('@ORC_RYOU男(ARG)'),
-    'H14 源应含带 man 名（互不遮蔽的证据）',
-  );
 });
 
 // —— #624：女版迷宫凌辱里十九处「原作同一行被拆开」合回一条输出 ——

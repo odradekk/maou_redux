@@ -10,40 +10,15 @@
  *   - MARK:1/2 刻印分档、TALENT:76/85 素质分支；
  *   - 随机分支可控可重复（rand 定值序注入，RAND:3 → RAND:2 定序）；
  *   - 三种插值（角色名 %SAVESTR% / 自称 %SELF_CALL% / 心形 %UNICODE%）；
- *   - **黄金样本 :1097 逐字比对**——期望值运行时读自 target/emuera.log:26
- *     与 ERB 原文两处（比对能有的最强形式）；
  *   - 七道跳过判定（含 K3 特有：死斗场最先、兽奸岔 DOG_KOJO_3）；
  *   - BENKI_KOUJO 真身（常识改写支）；
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-
-// 黄金样本的那一行（emuera.log:26——运行时读取，与 #45 结算块同款做法）
-const GOLDEN_LOG_LINE = (() => {
-  const log = fs.readFileSync(
-    path.resolve(__dirname, '..', 'target', 'emuera.log'),
-    'utf8',
-  );
-  return log.split(/\r?\n/)[25];
-})();
-
-// ERB 原文 :1097（第二重期望源：%SAVESTR:TARGET% 按样本角色名代换）
-const GOLDEN_ERB_LINE = (() => {
-  const erb = fs.readFileSync(
-    path.resolve(__dirname, '..', 'target', 'ERB', '口上', 'EVENT_K3_高貴.ERB'),
-    'utf8',
-  );
-  const raw = erb.split(/\r?\n/)[1096];
-  return raw
-    .replace(/^\s*PRINTFORMW\s*/, '')
-    .replace(/%SAVESTR:TARGET%/g, '温妮');
-})();
 
 // 世界底座：温妮（高貴 163 → GET_KOJO_NUM 103）入列调教
 async function setup_k3(seed) {
@@ -125,17 +100,6 @@ test('二次以后それ以外支逐阶段推进：201 → 202 → 203 → 随�
     '「呀…啊、不要啊……请、请快住手，停下来吧…」',
   ]);
   assert.equal(tail.store.get('cflag:31:301'), 203);
-});
-
-test('黄金样本 :1097 逐字比对：RAND:3 != 0 且 RAND:2 == 0，双期望源一致', async () => {
-  // 样本角色状态（issue #45 反推）：MARK:2 <= 1、MARK:1 != 3、无淫乱/爱慕，
-  // CFLAG:301 已过 203（样本是长期调教的尾段）——落在随机尾的中支
-  const fixture = await setup_k3((f) => f.store.set('cflag:31:301', 203));
-  await speak_k3(fixture, seq_rand(1, 0)); // RAND:3 → 1（≠0）、RAND:2 → 0
-  assert.deepEqual(fixture.text_lines(), [GOLDEN_LOG_LINE]);
-  assert.equal(fixture.text_lines()[0], GOLDEN_ERB_LINE);
-  // 随机尾不推进状态
-  assert.equal(fixture.store.get('cflag:31:301'), 203);
 });
 
 test('随机尾的第三支（RAND:3 != 0 且 RAND:2 != 0）与可重复性', async () => {

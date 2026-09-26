@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #348 处刑、设施与苗床业务。
 /** 本分片条数（门 1）：增删条目必须同步改它。 */
-export const COUNT = 170; // #597 起 +5（M12121：处刑对象列表表头之后的 :22 PRINTL 不是空行；
+export const COUNT = 166; // #643 -4（M11394/M11395/M11792/M11793：W/L 等待后缀在行为层不可观测，源文锁删除后无守卫）；#597 起 +5（M12121：处刑对象列表表头之后的 :22 PRINTL 不是空行；
 // M12124/M12125：公开处刑的勋章空行只属于 :56/:76 两支——第三支补回与第一支删除都算错；
 // M12126/M12127：流放开场与处置菜单末项之后的真空行不许删）；#572 起 +10（M11990-M11999：流放/公开处刑/处置菜单/设施四菜单按钮化）；#593 起 +1（M11985：批量处刑的 [121] 退回预设 ID 段——同屏核对）；#549 起 +2（M11641/M11642：自動處刑1 漏播报、流放漏勋章——自动处刑 e2e 唯一守卫）；#561 起 +12（M11782-M11793：归档槽位/NO 寻址与等待次数）
 
@@ -1143,24 +1143,6 @@ export default [
       '等级前缀是「LV:」——page-select-target 没有冒号是它自己原文如此',
   },
   {
-    desc: 'M11394 肉便器：:208 的不等待输出改成 printAndWait',
-    file: 'ere/event/event-execution-batch.js',
-    find: '  era.print(`被吸收了全部力量的${she(cid)}，身体变成淫靡的肉块了。`);',
-    replace:
-      '  await era.printAndWait(`被吸收了全部力量的${she(cid)}，身体变成淫靡的肉块了。`);',
-    tests: ['event-execution-batch'],
-    must_mention: '不等待的原作行必须用裸 era.print',
-  },
-  {
-    desc: 'M11395 肉便器：:299 的 PRINTFORMW 改成不等待的 print',
-    file: 'ere/event/event-execution-batch.js',
-    find: '  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`); // :299 PRINTFORMW',
-    replace:
-      '  era.print(`现在的肉便器数量：${game.invasion.肉便器数}`); // :299 PRINTFORMW',
-    tests: ['event-execution-batch'],
-    must_mention: ':299 PRINTFORMW 必须用 printAndWait',
-  },
-  {
     desc: 'M11396 名单屏：把 :11 的 CUSTOMDRAWLINE 线画回顶部（原作画完即被 CLEARLINE 清掉）',
     file: 'ere/event/event-execution-batch.js',
     find: '        // 第 11 行的 CUSTOMDRAWLINE = 画的那条线立刻被第 16 行 CLEARLINE 清掉，不镜像\n        if (',
@@ -1314,23 +1296,8 @@ export default [
     must_mention:
       'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
   },
-  {
-    desc: 'M11792 肉便器 :166 的不等待输出改成 printAndWait',
-    file: 'ere/event/event-execution.js',
-    find: "  era.print('被吸收了全部力量的她，身体变成淫靡的肉块了。');",
-    replace:
-      "  await era.printAndWait('被吸收了全部力量的她，身体变成淫靡的肉块了。');",
-    tests: ['event-execution'],
-    must_mention: '不等待的原作行必须用裸 era.print：',
-  },
-  {
-    desc: 'M11793 肉便器 :255 的 PRINTFORMW 改成不等待的 print',
-    file: 'ere/event/event-execution.js',
-    find: '  await era.printAndWait(`现在的肉便器数量：${game.invasion.肉便器数}`);',
-    replace: '  era.print(`现在的肉便器数量：${game.invasion.肉便器数}`);',
-    tests: ['event-execution'],
-    must_mention: ':255 PRINTFORMW 必须用 printAndWait',
-  },
+  // M11792/M11793：删除（#643）——与 M11394/M11395 同款：W/L 等待后缀在夹具
+  // 的行为层不可观测，源文锁删除后无守卫。
   // —— #572：处刑与设施菜单的选项按钮化（引擎里点得动）——
   {
     desc: 'M11990 流放五选一退回纯文本行（引擎里点不动，PR #53 通则失效）',

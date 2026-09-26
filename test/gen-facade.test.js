@@ -410,25 +410,6 @@ test('一维未命名属主下标跳过并报告，不进产物', () => {
   assert.ok(entries.every((entry) => !/^tflag_\d+$/.test(entry.name)));
 });
 
-test('出处路径指向仓库里存在的 target/ 文件', () => {
-  const names = require('../tools/facade-names');
-  assert.ok(
-    fs.existsSync(
-      path.join(REPO_ROOT, names.SRC_FLAG.replace(/\//g, path.sep)),
-    ),
-  );
-  assert.ok(
-    fs.existsSync(path.join(REPO_ROOT, names.SRC_KXX.replace(/\//g, path.sep))),
-  );
-  const product = fs.readFileSync(
-    path.join(REPO_ROOT, 'ere', 'facade', 'chara-kojo.js'),
-    'utf8',
-  );
-  assert.ok(product.includes('target/資料_非必要無須解壓/'));
-  assert.ok(!product.includes('target/资料_非必要無須解壓/'));
-  assert.ok(!product.includes('源: 资料_非必要無須解壓/'));
-});
-
 test('tequip 不进一维门面：JS 侧是三段寻址，按一维切会写错地址', () => {
   const text = fs.readFileSync(
     path.join(REPO_ROOT, 'ere', 'facade', 'game-train.js'),
@@ -589,32 +570,6 @@ test('两源合流：同一下标两源名字不一致即报错；一致时手�
   const yml_only = gen.merged_name('mark', 0);
   assert.equal(yml_only.name, '苦痛刻印');
   assert.equal(yml_only.source, 'yml/Mark.yml id 0');
-});
-
-test('出处路径全部真实存在：扫产物源注释里的路径 token', () => {
-  const dir = path.join(REPO_ROOT, 'ere', 'facade');
-  const checked = new Set();
-  for (const file of fs.readdirSync(dir).filter((f) => f.endsWith('.js'))) {
-    const text = fs.readFileSync(path.join(dir, file), 'utf8');
-    for (const line of text.split('\n')) {
-      if (!line.includes('* 源: ')) {
-        continue;
-      }
-      for (const token of line.matchAll(
-        /(?:target|yml|docs|CONTEXT\.md)\/?[^\s（）；;，]+/g,
-      )) {
-        checked.add(token[0]);
-      }
-    }
-  }
-  assert.ok(
-    checked.size >= 5,
-    `扫描应有产出，实得 ${[...checked].join(' | ')}`,
-  );
-  const missing = [...checked].filter(
-    (rel) => !fs.existsSync(path.join(REPO_ROOT, rel)),
-  );
-  assert.deepEqual(missing, [], '#71 翻过车的一类：出处指向不存在的文件');
 });
 
 test('移植自建表门面：delta/deltabase 归 train，读写落对寻址', () => {

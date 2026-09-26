@@ -237,7 +237,7 @@ export default [
     番号: 100,
     等级: 9, // 变异：等级改坏`,
     tests: ['dungeon-battle'],
-    must_mention: '九字段与源不一致',
+    must_mention: '等级 = 基础 1 + 4',
   },
   {
     desc: 'M485 BATTLE2 的败者号传参坏（loser 恒 0）',
