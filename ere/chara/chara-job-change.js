@@ -65,12 +65,6 @@ const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。四函数都落真身，名单为空。
- */
-const STUBBED_CALLS = [];
-
 /** 判定返回值：魔王（你）的职业不可变（:31） */
 const JOB_CHANGE_KING = 1;
 /** 判定返回值：侵攻中的勇者（:33-34） */
@@ -470,7 +464,6 @@ async function job_change_benki(arg) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   show_button_job_change,
   check_able_to_job_change,
   chara_info_job_change,

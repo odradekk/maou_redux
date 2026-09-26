@@ -44,7 +44,6 @@ const {
 } = require('#/system/train/com-vaginasex');
 
 /** 本文件没有自行存根化的原作调用；口上由 source-check 的既有分发承载。 */
-const STUBBED_CALLS = [];
 
 /**
  * Emuera strict TIMES：本游戏关闭「向 Eramaker 对齐」，须用十进制定点相乘，
@@ -1924,4 +1923,4 @@ for (const id of [30, 31, 32, 33, 35, 37, 38])
 for (const id of [34, 36])
   train_message_a_family.register(id, train_message_a_riding);
 
-module.exports = { STUBBED_CALLS, times };
+module.exports = { times };

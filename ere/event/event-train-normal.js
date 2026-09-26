@@ -55,12 +55,6 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const era_flag = require('#/era-utils/era-flag');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；#401 起本文件全部落真身，名单为空。
- */
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN（EVETRAIN.ERB:1-17，无属性档——on 的缺省档即 TIER.NORMAL）
 on('EVENTTRAIN', async () => {
   // :3 主人公の射精を0に（BASE:2 = 射精槽，属主 train → 门面）
@@ -154,5 +148,3 @@ on('EVENTTRAIN', async () => {
     era_flag.player = era_flag.assi;
   }
 });
-
-module.exports = { STUBBED_CALLS };

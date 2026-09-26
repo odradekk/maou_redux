@@ -61,23 +61,6 @@ const lovers_mod = require('#/dungeon/dungeon-lovers');
 // L13（#344）真身：@SELL_EX_ITEM（:123）/ @ADD_EX_ITEM（:354）。
 const ex_item_mod = require('#/dungeon/ex-item');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。COM63_AUTO 随 #178、COM0_AUTO 随
- * #500 直调 ere/event/event-autotrain.js 的真身；KARMA 复用 dungeon.js 的
- * 域内存根；BEFORE_AUTOTRAIN / SOURCE_CHECK_AUTO 经模块对象引用
- * dungeon-battle.js 的同名转发（#508 起 before_autotrain 已是那侧的真身
- * 转发，SOURCE_CHECK_AUTO 自 #461 起发同名事件）；
- * DUNGEON_TOWN_LOVER 随 #341、SELL_EX_ITEM / ADD_EX_ITEM 随 #344 换成
- * 真身；SHOW_LIST_TRAINABLE / SELL_MILK / SELL_FIGHTMONEY 的调用点均已接
- * 真身（page-select-target.js 与 stronghold/sale.js，#565 清出名单）；
- * CHARADEAD_CHECK 随 #548 落地真身（ere/event/event-aftertrain.js，
- * EVENTEND 的死亡检查行已接），#565 起名单清空。对 dungeon.js / dungeon-battle.js 的引用
- * 一律函数内延迟 require 防环（dungeon.js → 本文件是顶层引用，反向只许
- * 延迟）。
- */
-const STUBBED_CALLS = []; // #565：四名全数落地（CHARADEAD_CHECK 随 #548），名单清空
-
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 先例） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
@@ -853,5 +836,4 @@ module.exports = {
   town_pt_party,
   town_pt_dayevent,
   sell_ex_item: ex_item_mod.sell_ex_item,
-  STUBBED_CALLS,
 };

@@ -71,16 +71,6 @@ const { show_chara_info } = require('#/page/page-chara-info-show');
 const { stain_info } = require('#/page/components/stain-info');
 const { condom_settings } = require('#/system/train/com-condom');
 
-/**
- * 本文件存根化的原作调用名（@USERCOM 分发到的存根处理器）。
- * docs/stub-registry.md 必须收录每一个；名单变动必须同步清单。
- * @P_C 已随 #212 落地真身；SHOW_COMMENU 与 COMSEQ_* 已随 #214 落地真身
- * （本文件 show_commenu 与 system/train/com-register.js）；SHOW_CHARA_INFO 与
- * STAIN_INFO 已随 #390 落地真身（page/page-chara-info-show.js 与
- * page/components/stain-info.js），四条都不在名单。
- */
-const STUBBED_CALLS = [];
-
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
@@ -370,4 +360,4 @@ on('USERCOM', async (result) => {
   // 主菜单对无效输入的处置一致）
 });
 
-module.exports = { STUBBED_CALLS, command_button_label, show_commenu };
+module.exports = { command_button_label, show_commenu };

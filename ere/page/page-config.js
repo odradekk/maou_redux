@@ -23,14 +23,6 @@ const { config_age_setting } = require('#/page/page-config-age');
 const { get_look_info, KIND } = require('#/chara/look-info');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
-const { not_ported_line_wait } = require('#/utils/stub-line');
-/**
- * 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个，
- * 测试核对固定，同 page-shop.js/event-first.js 的既有先例）。MODLIST 随
- * #542 判不移植离开本名单；CONFIG_AGE_SETTING 随 #547 落地为
- * ere/page/page-config-age.js——名单已空，保留导出形状。
- */
-const STUBBED_CALLS = [];
 
 /** GETBIT(X, n)：FLAG:5 用到位 32-36，位运算在 JS 里按 32 位截断会溢出，改算术运算 */
 function getbit(v, n) {
@@ -345,15 +337,12 @@ function draw_config_page(page) {
       '勇者的任务揭示板  　　　 现在：' + (getbit(af, 3) ? '禁止' : '许可'),
       25,
     );
-    // [26] MOD开关：CONFIG_MODLIST（状态展示）与 MODLIST（设置动作）随
-    // MOD 子系统判不移植（#542，#540 范围决定 2）；按钮本体保留可见（原作
-    // :190 无条件打印该行），按下打不移植提示，只省略「现在：」状态预览
-    era.printButton('MOD开关', 26);
+    // [26] MOD开关与 [28] 立绘开关：MOD 子系统与立绘系统均判不移植（#542），
+    // 缺内容的入口随存根清单一并删除（#638 按 #574「缺内容的去掉入口」）
     era.printButton(
       '出现冒险者的性别限制　　 现在：' + adventurer_gender_status_text(),
       27,
     );
-    era.printButton('立绘开关 　　　　 　　 　现在：OFF', 28);
     era.printButton(
       '卖淫对奴隶售价的影响　　 现在：' + prostitution_effect_status_text(),
       29,
@@ -420,23 +409,9 @@ async function dispatch_config(local, page) {
       era_flag.adventurer_flags,
       local - 22,
     );
-  } else if (local === 26) {
-    await not_ported_line_wait(
-      'MODLIST',
-      'MOD 开关菜单',
-      '#542 判不移植：需手动开启、默认全关的 MOD 子系统',
-    );
   } else if (local === 27) {
     // [27] 冒险者性别：-1→0→1→2→3→4→-1 六档循环（:253-264，GLOBAL 变量）
     era_global.cycle_adventurer_gender();
-  } else if (local === 28) {
-    // [28] 立绘开关（:266-271 只翻 SAVEDATA 开关，无函数调用）：立绘系统
-    // 判不移植（#542，#540 范围决定 4），开关不落地、按下打不移植提示
-    await not_ported_line_wait(
-      '更换立绘',
-      '立绘系统',
-      '#542 判不移植：开关默认关、素材不在仓库',
-    );
   } else if (local === 29) {
     // [29] 卖淫影响：0→1→2→0 三档循环（:273-278）
     era_modsave.cycle_prostitution_effect();
@@ -473,7 +448,6 @@ async function config_menu() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   config_filter_setting,
   filter_status_text,
   config_virgin_conceded_setting,

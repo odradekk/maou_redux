@@ -61,7 +61,7 @@
  *
  * 4. **段落跳转（GOTO）用循环标签复刻**，`CLEARLINE`（局部重绘）不镜像
  *    （ere 是滚动视图，page-ability-up.js / page-tailor.js 同款），`PRINTW`
- *    按 utils/stub-line.js 定下的形态显式组合 `era.print + era.waitAnyKey`，
+ *    按既有约定显式组合 `era.print + era.waitAnyKey`，
  *    `WAIT` 用 `era.waitAnyKey()`。
  *
  * 5. **`[SKIPSTART]`…`[SKIPEND]` 两段死代码不移植**：:1246-1372 的「旧ソース」

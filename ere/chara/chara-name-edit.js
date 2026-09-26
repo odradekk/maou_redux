@@ -48,12 +48,6 @@ const { chara_name_reset } = require('#/chara/chara-name');
 const { random_self_call } = require('#/chara/chara-self-call');
 const { input_text } = require('#/utils/input-text');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。三函数都落真身，名单为空。
- */
-const STUBBED_CALLS = [];
-
 /** 判定返回值：可改名（魔王：改名会波及全库的称呼，故单独一档） */
 const NAME_EDIT_KING = 1;
 /** 判定返回值：侵攻中的勇者 */
@@ -181,7 +175,6 @@ async function chara_info_name_edit(arg, reset = 0) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   check_able_to_name_edit,
   show_button_name_edit,
   chara_info_name_edit,

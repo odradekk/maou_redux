@@ -23,7 +23,6 @@ const { juel_check_main } = require('#/system/train/juel-check');
 const { auto_ablup } = require('#/system/train/ablup');
 const { chara } = require('#/facade/chara');
 /** 本文件存根化的原作调用名（空：#467 起 AUTO_ABLUP 已接真身） */
-const STUBBED_CALLS = [];
 
 /**
  * LOSEBASE → `deltabase:${cid}:${i}` 的负向累加（全项目同款写法，见
@@ -670,7 +669,6 @@ function rand_autotrain() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   after_autotrain,
   autotrain,
   before_autotrain,

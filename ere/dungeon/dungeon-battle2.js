@@ -47,12 +47,6 @@ const battle = require('#/dungeon/dungeon-battle');
 const { weapon_restore } = require('#/system/equip/weapon-restore');
 const { party_del } = require('#/dungeon/dungeon-party');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 /** 名字承载（#5 决议） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
@@ -1434,7 +1428,6 @@ async function dungeon_battle2_party(arg0, rand, move_ctx = {}) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   name_of,
   clitoris_word,
   get_tatoo,

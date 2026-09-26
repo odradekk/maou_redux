@@ -72,12 +72,6 @@ const rand_n = (n) => Math.floor(Math.random() * n);
 /** MASTER 恒为角色 0（K1 kojo-k1-confident.js 同款先例） */
 const MASTER = 0;
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN #PRI（:62-65）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
   'EVENTTRAIN',
@@ -14504,7 +14498,6 @@ public_exucution_koujo_family.register(7, public_exucution_koujo_k7);
 grotesque_koujo_family.register(7, grotesque_koujo_k7);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_7,
   dog_kojo_7,
   colosseum_kojo_7,

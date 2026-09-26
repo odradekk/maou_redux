@@ -23,12 +23,6 @@ const { equip_ring_spans } = require('#/system/equip/equip-print');
 const { remove_curse } = require('#/system/equip/equip-curse');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
-/**
  * @CAMPAIGN_EQUIP_SELECT_{FLAG:400} 族：战役迷宫的指轮宝箱（#469，
  * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
  * 依据）；实现在 ere/page/page-campaign-1.js 注册。
@@ -137,7 +131,6 @@ async function equip_select(cid, rng = default_rand) {
 
 module.exports = {
   equip_select,
-  STUBBED_CALLS,
   campaign_equip_select,
   // page-campaign-1.js 向这个族 register(1, ...)，本文件只声明、不参与注册
   campaign_equip_select_family,

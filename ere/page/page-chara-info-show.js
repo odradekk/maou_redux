@@ -7,8 +7,10 @@
  *       target/ERB/キャラ関数/CHARA_INFO_SHOW_MaouShadowsPlus.ERH
  *         （`#DIM directToHomePage`，只服务本文件的献祭分支，见下）
  *
- * 六个页码臂（`ARG:1`）：
- *   -2 贡品时 / -1 调教时 / 0 首页 / 1 状态 / 2 外观 / 3 素质条件 / 4 自我介绍。
+ * 页码臂（`ARG:1`）：
+ *   -2 贡品时 / -1 调教时 / 0 首页 / 1 状态 / 2 外观 / 3 素质条件。
+ *   4 自我介绍页（SHOW_PERSONAL_INFO）结构性不可达——全库无定义、调用方只传
+ *   -2/-1/0-3（#14 判死的证据链见下），case 4 随存根机制一并删除（#638）。
  * **进入即换 TARGET、退出即恢复**（源 :25-26 的 `TARGET = ARG` 与 :320-321 的
  * `TARGET = LOCAL:1`）：@LOOK_INFO 等被调段按 TARGET 取语尾口上，不换的话
  * 调用方（如开局形象确认的 -2 页）会拿魔王的口上编号打出一排语尾占位、
@@ -79,7 +81,6 @@ const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width');
-const { stub_line } = require('#/utils/stub-line');
 
 const default_rand = (n) => Math.floor(Math.random() * n);
 
@@ -535,16 +536,9 @@ async function show_chara_info_body(cid, page, rand, background) {
         );
         era.print('※ 润滑与欲情每10000积蓄一点；【威压感】需要调教致死三人');
         break;
-      case 4:
-        // :304-306 自我介绍页——@SHOW_PERSONAL_INFO 全库无定义，原作结构性
-        // 不可达（#14 判死，文件头有完整证据链），占位保留只为 1:1 追溯
-        stub_line(
-          'SHOW_PERSONAL_INFO',
-          '自我介绍式的角色信息',
-          '#14 判死不实现',
-        );
-        era.drawLine();
-        break;
+      // case 4（:304-306 自我介绍页）随 #638 删除：SHOW_PERSONAL_INFO 全库无
+      // 定义、调用方只传 -2/-1/0-3，原作结构性不可达（#14 判死，文件头有
+      // 完整证据链）
       default:
         break;
     }

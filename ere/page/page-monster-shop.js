@@ -31,7 +31,7 @@
  *    与它上一条逐字相同、只多一个 `&& TALENT:A:122`），照 #391 口径精简：
  *    上一条已把整个条件吃掉。同 :216-224 的 SELECT_MONSTER 里也有这一对。
  * 5. **`PRINTW` / `CLEARLINE`**：PRINTW = print + waitAnyKey 显式组合
- *    （utils/stub-line.js 文件头的说明）；CLEARLINE（:82/:111 的「表示外の
+ *    （PRINTW 的既有约定）；CLEARLINE（:82/:111 的「表示外の
  *    数字なら戻す」）在 ere 侧没有对应动作——本屏幕的重绘由商店轮的循环
  *    承担，局部清行不镜像（page-ability-up.js 同款）。
  * 6. **选项升格为按钮**（#572）：入口菜单（:30-37）、性别（:71/:73）、
@@ -57,7 +57,6 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） */
-const STUBBED_CALLS = [];
 
 /** 魔物从者的上限（:55 `COUNT:1 >= 30`） */
 const FOLLOWER_LIMIT = 30;
@@ -626,7 +625,6 @@ async function buy_monster(rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   monster_shop,
   show_shop_monster,
   select_monster,

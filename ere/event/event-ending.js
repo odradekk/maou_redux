@@ -63,17 +63,6 @@ const { party_char_del } = require('#/dungeon/dungeon-party');
 const { show_chara_info } = require('#/page/page-chara-info-show'); // #390 起真身
 
 /**
- * 本文件仍以占位行代替的原作调用名（docs/stub-registry.md 核对固定）。
- * #173（H4）起 ENDING_2 接真身、#404（N20）起 ENDING_3/4/5、CHAR_GIFT、
- * END10_55、ENDING_N、ENDINGINPUT、ENDINCONSQSELECT 全部接真身；
- * RACE_AGE_GENERATE 自 #404 rebase（#385 合并后）起也接真身
- * （ere/chara/chara-body.js 的 race_age_generate）。只剩 CHAR_GIFT 的一处
- * 体外依赖：SHOW_CHARA_INFO 属 調教相關/USERCOM.ERB 的角色信息详情页，
- * 已随 #390 换真身（ere/page/page-chara-info-show.js）。
- */
-const STUBBED_CALLS = [];
-
-/**
  * @ENDING_1（ENDING ver 1.0.1.ERB:6-40）：人间界征服的中场结局（GOOD END）。
  *
  * 横幅 → 菲娅（角色 35）入队与初始化 → 询问是否继续 → 置 FLAG:82。
@@ -787,7 +776,6 @@ async function end10_55() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   char_gift,
   end10_55,
   ending_1,

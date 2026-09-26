@@ -10,14 +10,13 @@
  *
  * 源文件头注（:1-3 逐字）：「フィールドでの戦闘；水面下での開発に戻しました；
  * この部分のコードが欲しいひとは0.310以前のバージョンを参照してください」
- * ——野外战斗被作者撤回开发，证据在本票查实：**@DUNGEON_BATTLE 与
- * @DUNGEON_BATTLE2 在 target/ 全库无定义**，唯二调用点就在本文件 :187/:211，
- * 原作 Emuera 运行到这两个分支会因「関数が見つかりません」报错停止
- * （缺陷登记 #14）。ere 侧处置：两处调用点 1:1 保留位置与 RESULT 分支
- * 结构，调用本身落为占位存根（RESULT 中性值 0——不陷落、不击退），
- * 不替作者补写 0.310 版的野外战斗（与 #116「不修好原作缺陷」同一约定；
- * M:2 怪物 LV 的传参形态也与既有 3D 战斗（dungeon_party_battle 系）对不上，
- * 映射无据）。
+ * ——野外战斗被作者撤回开发：**@DUNGEON_BATTLE 与 @DUNGEON_BATTLE2 全库无
+ * 定义**，唯二调用点就在本文件 :187/:211，原作 Emuera 运行到这两个分支会
+ * 因「関数が見つかりません」报错停止（缺陷登记 #14）。ere 侧处置（#638，
+ * 按 #574「LABO 迷宫不再触发战斗」）：两处调用点与占位存根一并删除——
+ * 撞上敌方单位/怪物时该回合移动即止，不发生战斗，也不替作者补写 0.310
+ * 版的野外战斗（M:2 怪物 LV 的传参形态与既有 3D 战斗
+ * （dungeon_party_battle 系）对不上，映射无据）。
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - 原作全局 A（推进中的单位）经显式传参（#5 决议第六条）；D:20（侵攻度）
@@ -46,22 +45,13 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { equip_check } = require('#/system/equip/equip-check');
 const { equip_select } = require('#/system/equip/equip-select');
-const { use_ex_item } = require('#/dungeon/dungeon'); // 3D 路径同款存根（单点登记）
+const { use_ex_item } = require('#/dungeon/dungeon');
 const { ending_2 } = require('#/event/event-ending');
 const dungeon_bitch_mod = require('#/kojo/kojo-dungeon-bitch'); // :29-30（真身 #184；模块对象引用，测试可替换）
 const { da_get, db_set, geo_test } = require('#/dungeon/labo');
 const { unit_check, mon_check, set_vil } = require('#/dungeon/labo-map');
-
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）。DUNGEON_BATTLE / DUNGEON_BATTLE2 不是「归后续票的待办」而是
- * 「原作即缺失的调用目标」（文件头），登记栏写明判据。
- */
-const STUBBED_CALLS = ['DUNGEON_BATTLE', 'DUNGEON_BATTLE2'];
-
 /** 名字承载（#5 决议；savestr 通道不存在，dungeon.js 同款） */
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
@@ -73,36 +63,12 @@ function default_rand(n) {
 }
 
 /**
- * @DUNGEON_BATTLE 存根（原作缺失，文件头）：野外战斗（勇者对怪物）。
- * 原作读全局 A（勇者）与 M:2（怪物 LV），调用点 :211 之后的 RESULT 消费
- * 只判 CFLAG:A:1（陷落）——存根 RESULT 0 中性。参数不落形参（dungeon.js
- * 存根同款：真身落地时按调用点实参定签名）。
- * @returns {Promise<number>} 原作 RESULT（存根恒 0）
+ * 原作缺失的两个野外战斗函数（@DUNGEON_BATTLE / @DUNGEON_BATTLE2）：源文件
+ * 头注明「水面下开发撤回，要代码请参照 0.310 以前」，全库无定义——原作
+ * 运行到这两个分支会报「関数が見つかりません」停止（#14 登记）。#638 起
+ * 两处调用点随存根机制一并删除：撞上敌方单位/怪物时该回合移动即止，
+ * 不发生战斗（#574：LABO 迷宫不再触发战斗）。
  */
-async function dungeon_battle() {
-  await stub_line_wait(
-    'DUNGEON_BATTLE',
-    '野外战斗',
-    '原作即缺失（0.310 以前存在，#14 登记），ere 不补写',
-  );
-  return 0;
-}
-
-/**
- * @DUNGEON_BATTLE2 存根（原作缺失，文件头）：野外战斗（单位对单位）。
- * 调用点 :189-199 消费 RESULT（2 = 对方陷落 / 1 = 本方被击退）——存根
- * RESULT 0 两臂皆不进，行为中性。参数同上不落形参。
- * @returns {Promise<number>} 原作 RESULT（存根恒 0）
- */
-async function dungeon_battle2() {
-  await stub_line_wait(
-    'DUNGEON_BATTLE2',
-    '野外战斗（单位对单位）',
-    '原作即缺失（0.310 以前存在，#14 登记），ere 不补写',
-  );
-  return 0;
-}
-
 /**
  * @UNIT_MOVE（:83-235）：单位移动——按侵攻度 D:20 决定趋近/远离中心，
  * 逐格随机抖动，避开领域外与（80% 概率）高低差；到达中心 (16,16) 触发
@@ -223,20 +189,10 @@ async function unit_move(a, walk20, rand) {
     if ((era.get(`cflag:${other}:1`) || 0) === chara(a).invasion.状态) {
       return 0; // :181-183 仲間の場合移動停止
     } else if ((era.get(`cflag:${other}:1`) || 0) === 2) {
-      // :184-199 違う場合対戦（原作缺失的 DUNGEON_BATTLE2，文件头）
-      const result = await dungeon_battle2(a, other);
-      if (result === 2) {
-        // 陥落した（:189-195）
-        era.print(`${name_of(other)}已经陷落了…`); // PRINTFORML %SAVESTR:B%（简体归一：經→经）
-        era_flag.money += 1000 * (era.get(`cflag:${other}:9`) || 0); // MONEY += 1000 * CFLAG:B:9
-        era.print(`得到了${1000 * (era.get(`cflag:${other}:9`) || 0)}G！`); // :192 PRINTFORMW
-        era.set(`cflag:${a}:505`, (era.get(`cflag:${a}:505`) || 0) + 1); // CFLAG:A:505 += 1
-        chara(other).invasion.新人 = 1; // CFLAG:B:506 = 1
-        chara(other).invasion.回城标志 = 0; // CFLAG:B:507 = 0
-      } else if (result === 1) {
-        era_flag.target = -1; // :197 TARGET = -1
-        return 0; // :198
-      }
+      // :184-199 違う場合対戦（CALL DUNGEON_BATTLE2）：函数原作即缺失（文件头），
+      // 调用点随 #638 删除——撞上敌方单位该回合移动即止，不发生战斗
+      //（#574：LABO 迷宫不再触发战斗）；RESULT 的两个消费分支（陷落/击退）
+      // 随之移除
     }
     return 0;
   }
@@ -247,15 +203,10 @@ async function unit_move(a, walk20, rand) {
     if (chara(a).invasion.状态 === 3) {
       return 0; // :208-209 魔王軍は仲間
     }
-    await dungeon_battle(a, mon_lv); // :211 CALL DUNGEON_BATTLE（原作缺失，文件头）
-    if (chara(a).invasion.状态 !== 2) {
-      // 陥落したか否か（:213-220）
-      era.print(`${name_of(a)}已经陷落了…`); // PRINTFORML %SAVESTR:A%
-      era_flag.money += 1000 * (era.get(`cflag:${a}:9`) || 0);
-      era.print(`得到了${1000 * (era.get(`cflag:${a}:9`) || 0)}G！`); // :216 PRINTFORML
-      chara(a).invasion.新人 = 1; // CFLAG:A:506 = 1
-      chara(a).invasion.回城标志 = 0; // CFLAG:A:507 = 0
-    }
+    // :211 CALL DUNGEON_BATTLE（原作缺失，文件头）随 #638 删除：撞上怪物该
+    // 回合移动即止，不发生战斗（#574：LABO 迷宫不再触发战斗）。其后的
+    // 陷落结算（:213-220）读的是战斗改写后的状态——只有侵攻中（CFLAG:A:1==2）
+    // 的单位能走到这里，战斗不再发生，该分支永假，一并移除
     return 0;
   }
 
@@ -455,7 +406,6 @@ async function labo_map_set(rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   dungeon_map,
   unit_move,
   config_labo_map_status,

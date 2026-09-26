@@ -30,12 +30,6 @@ const era = require('#/era-electron');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。**#384 起本文件全部落真身，名单清空。**
- */
-const STUBBED_CALLS = [];
-
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -267,7 +261,6 @@ function cmi_conflict_check(child, rand = default_rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   chara_make_inherit,
   cmi_settalent,
   cmi_mom_complex,

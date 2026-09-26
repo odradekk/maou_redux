@@ -64,12 +64,6 @@ const {
   in_vagina_ntrd_to_t,
 } = require('#/event/event-pregnancy');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；#401 起名单清空（十个体外调用全落真身）。
- */
-const STUBBED_CALLS = [];
-
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -516,7 +510,6 @@ on(
 );
 
 module.exports = {
-  STUBBED_CALLS,
   auto_buying,
   debug_check,
 };

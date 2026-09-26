@@ -72,22 +72,6 @@ const {
 } = require('#/system/train/benki');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。QUEST_BATTLE_SET / RESULT_QUEST 不在
- * 此列（#178 真身 ere/dungeon/dungeon-quest.js，:77/:363/:365 经模块对象
- * quest_mod 调用）；#217（J7）起 SELECT_BENKI_MENU / NAME_BENKI_MENU /
- * GET_EXP_BENKI_MENU 换真身（ere/system/train/benki.js），从名单移除；
- * #461 起 SOURCE_CHECK_AUTO 换真身（source_check_auto 改发同名事件，真身在
- * ere/event/source-check.js 的 on('SOURCE_CHECK_AUTO', …)），从名单移除；
- * #500 起 COM13_AUTO 换真身（调用点直调 ere/event/event-autotrain.js），
- * 从名单移除；#508 起 BEFORE_AUTOTRAIN 亦换真身（同一模块的
- * before_autotrain），从名单移除；#514 起 ATTACK_KOUJO / VICTORY_KOUJO
- * 的分发族补齐（本文件的调用点直调 kojo-system 的分发层），亦从名单
- * 移除，名单自此清空。
- */
-const STUBBED_CALLS = [];
-
-/**
  * @CAMPAIGN_MONSTER_LIST_{FLAG:400} 族：战役迷宫的出现怪物表（#469，
  * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
  * 依据）；实现在 ere/page/page-campaign-1.js 注册。whenMissing 按原作
@@ -1649,7 +1633,6 @@ function monster_data_call(inum, line, arg2, arg3, rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   name_of,
   she,
   magic: magic_mod.magic,

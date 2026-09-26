@@ -38,12 +38,6 @@ const { charadead_check, self_check } = require('#/event/event-aftertrain');
 // PARTY_CHAR_DEL 真身（#172）——@EVENTEND :372 死亡删除分支的调用
 const { party_char_del } = require('#/dungeon/dungeon-party');
 
-/**
- * 本文件存根化的原作调用名。#548（S7）起名单清空：CHARADEAD_CHECK 与
- * PARTY_CHAR_DEL 均已换真身。清单核对测试仍读它。
- */
-const STUBBED_CALLS = [];
-
 on(
   'EVENTEND',
   async () => {
@@ -194,5 +188,3 @@ on(
   },
   TIER.LATER,
 );
-
-module.exports = { STUBBED_CALLS };

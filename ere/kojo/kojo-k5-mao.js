@@ -79,12 +79,6 @@ const {
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
-/**
  * 口上函数共用的读取面：随机源、当前角色名、自称、门面。
  * @param {(n: number) => number} [rand]
  */
@@ -13866,7 +13860,6 @@ public_exucution_koujo_family.register(5, public_exucution_koujo_k5);
 grotesque_koujo_family.register(5, grotesque_koujo_k5);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_5,
   colosseum_kojo_5,
   k5_kojo2,

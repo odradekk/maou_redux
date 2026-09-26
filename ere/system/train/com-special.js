@@ -65,7 +65,6 @@ const { clothtype_text } = require('#/page/page-clothtype');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
 /** 本文件没有未实现原作调用；口上台词分发随轴 B 落地。 */
-const STUBBED_CALLS = [];
 
 /**
  * Emuera TIMES：每一步乘法立即向下截断，禁止合并系数。
@@ -1065,7 +1064,6 @@ equip_com_family.register(58, equip_com58);
 equip_com_family.register(59, equip_com59);
 
 module.exports = {
-  STUBBED_CALLS,
   bath_sources,
   clear_video_records,
   com50,

@@ -90,8 +90,6 @@ const {
   gohoubi_request_koujo_family,
 } = require('#/kojo/kojo-dungeon-after');
 
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN #PRI（:67-71）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
   'EVENTTRAIN',
@@ -8304,5 +8302,4 @@ module.exports = {
   benki_koujo_k12,
   colosseum_kojo_12,
   dog_kojo_12,
-  STUBBED_CALLS,
 };

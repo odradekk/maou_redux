@@ -47,7 +47,6 @@
  * 终端宽折行产生的两物理段与 ere 整行的形态差是记名差异（同点线近似，
  * 归因见 tools/compare/rules.js 判定行规则）。
  *
- * 本文件的 STUBBED_CALLS 现为空：COM0_AUTO / COM3_AUTO（COMF0:174 /
  * COMF3:872 起）已随 #218 在 ere/event/event-autotrain.js 实现（自动调教），
  * 调用点在 dungeon 域的 DUNGEON_TOWN.ERB/DUNGEON_TRAP.ERB，与本文件 COM0/COM3
  * 真身是两条不同的调用路径，不需要本文件登记（#459）。
@@ -89,12 +88,6 @@ const {
   train_message_b_family,
 } = require('#/system/train/train-message');
 const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
-
-/**
- * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
- * 变动必须同步清单。
- */
-const STUBBED_CALLS = [];
 
 // —— 纯数据表（错一格不会报错——每档的用例与变异条目固定住） ——
 
@@ -3806,5 +3799,3 @@ for (const [id, fn] of [
 ]) {
   adv_com_family.register(id, fn);
 }
-
-module.exports = { STUBBED_CALLS };

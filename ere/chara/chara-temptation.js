@@ -67,12 +67,6 @@ const { party_del } = require('#/dungeon/dungeon-party');
 const { add_ex_item } = require('#/dungeon/ex-item');
 const { chara } = require('#/facade/chara');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。六函数都落真身，名单为空。
- */
-const STUBBED_CALLS = [];
-
 /** 判定返回值：不是侵攻中的勇者（:29-31） */
 const TEMPTATION_NOT_HERO = 1;
 /** 判定返回值：狂王（CFLAG:800 == 4，无法被诱惑）（:32-34） */
@@ -566,7 +560,6 @@ function add_juel(arg, index, delta) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   show_button_temptation,
   check_able_to_temptation,
   temptation,

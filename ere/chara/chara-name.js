@@ -84,7 +84,6 @@ const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
  * #384 起本文件的十个函数全部落真身，名单清空。 */
-const STUBBED_CALLS = [];
 
 /**
  * Emuera 的整数除法（向零截断）：`CHARANUM*4/10` 这类判据在原作里是整型运算，
@@ -622,5 +621,4 @@ module.exports = {
   cn_span_combine_name_num,
   nid_findcharas,
   nid_get_type,
-  STUBBED_CALLS,
 };

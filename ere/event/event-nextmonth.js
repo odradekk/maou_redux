@@ -31,10 +31,6 @@ const { human_age_generate } = require('#/chara/chara-body'); // #385 起真身
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 
-/** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
- * HUMAN_AGE_GENERATE 自 #385 起为真身（ere/chara/chara-body.js），移出名单。 */
-const STUBBED_CALLS = [];
-
 /**
  * 月替处理：各月末日则换月（原作 @EVENT_NEXTMONTH，被 #PRI 档在
  * DAY:2 > 28 时调用；见文件头的调用前提）。
@@ -77,4 +73,4 @@ async function run_event_nextmonth() {
   }
 }
 
-module.exports = { run_event_nextmonth, STUBBED_CALLS };
+module.exports = { run_event_nextmonth };

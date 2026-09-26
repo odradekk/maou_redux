@@ -44,12 +44,6 @@ const { weapon_restore } = require('#/system/equip/weapon-restore');
 // duel_attack / speed_plus2 在测试里整体可替换
 const battle2 = require('#/dungeon/dungeon-battle2');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 /** 名字承载（#5 决议：SAVESTR:x ↔ callname:x:-1，随 dungeon-battle2 复用） */
 const { name_of } = battle2;
 
@@ -268,7 +262,6 @@ async function arcana_battle(atker, defer, rand, move_ctx = {}) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   arcana_battle,
   death_check4,
 };

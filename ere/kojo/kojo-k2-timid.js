@@ -62,12 +62,6 @@ const { peek_aftertrain_q } = require('#/event/event-aftertrain');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
-/**
  * 口上函数共用的读取面：随机源、当前角色名、自称、门面。
  * @param {(n: number) => number} [rand]
  */
@@ -11264,7 +11258,6 @@ gohoubi_request_koujo_family.register(2, gohoubi_request_koujo_k2);
 gobi_koujo_family.register(2, gobi_koujo_k2);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_2,
   dog_kojo_2,
   colosseum_kojo_2,

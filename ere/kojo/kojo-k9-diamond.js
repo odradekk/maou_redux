@@ -103,12 +103,6 @@ const {
   peek_sale_price,
 } = require('#/event/event-aftertrain');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN #PRI（:54-58）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
   'EVENTTRAIN',
@@ -14298,7 +14292,6 @@ public_exucution_koujo_family.register(9, public_exucution_koujo_k9);
 grotesque_koujo_family.register(9, grotesque_koujo_k9);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_9,
   dog_kojo_9,
   colosseum_kojo_9,

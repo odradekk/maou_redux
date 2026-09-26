@@ -41,12 +41,6 @@
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 
-/**
- * 本文件存根化的原作调用名：无（三个函数全部落地）。
- * docs/stub-registry.md 的核对测试读这个导出。
- */
-const STUBBED_CALLS = [];
-
 /** `SETCOLORBYNAME GRAY` 的十六进制（page-ablup.js 同值） */
 const GRAY = '#808080';
 
@@ -609,7 +603,6 @@ function char_custom_look_deal(arg, cid = era_flag.target) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   GRAY,
   WRAP_WIDTH,
   MAX_BLANKS,

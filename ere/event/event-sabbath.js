@@ -6,7 +6,6 @@
  *
  * 调用点 EVENT_NEXTDAY.ERB:137/:139（每角色每日）在 #400（N16）范围内，
  * 本票只落两个函数的真身，不改调用点、不接线——`ere/event/event-nextday.js`
- * 的 STUBBED_CALLS 仍登记 SABBATH/SABBATH_DAY，接线随该票。
  *
  * 移植说明：
  *   - CFLAG:1 = 角色状态（0=調教中/默认待机 1=待機 2=侵攻中…11=召喚酔い，

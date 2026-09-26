@@ -92,27 +92,6 @@ const era_flag = require('#/era-utils/era-flag');
 const era_global = require('#/era-utils/era-global'); // #547：冒險者性別（global:3）
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- *
- * #394 变更：@CM_NS_EXP 的 CALL CHARA_FIRST_EXP（:1103）换真身
- * （ere/chara/chara-first-exp.js），CHARA_FIRST_EXP 移出名单。
- *
- * #384 变更：@RAND_CHARA_MAKE 落真身；同时 **CMI_CONFLICT_CHECK 换真身**
- * （cm_skill 尾段改调 ere/chara/chara-make-inherit.js 的实现），移出名单。
- *
- * #392 变更：@RAND_CHARA_MAKE 依赖的 FUNC_CHARA_AND_HAIR 八函数换真身
- * （ere/chara/chara-and-hair.js）——本文件是它们全库唯一的调用方，八条从
- * 名单移除。
- *
- * #390 变更：SHOW_CHARA_INFO 换真身（rand_chara_make 的形象确认段改调
- * ere/page/page-chara-info-show.js），也从名单移除。#565 起 @CM_ST /
- * @CM_ST_ACE 的 CALL ST_UP（:879/:892）亦接真身（ere/dungeon/dungeon-
- * lvup.js 的 st_up，rand_n 透传掷骰），名单自此清空。
- */
-const STUBBED_CALLS = [];
-
-/**
  * @CHARA_MAKE（:2-120）：随机生成一名完整角色。
  *
  * 三分叉（:32-51）决定 CFLAG:A:1——本管线的关键产出：
@@ -2022,7 +2001,6 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   chara_make,
   rand_chara_make,
   cm_stp,

@@ -584,28 +584,22 @@ async function self_kojo(rand, q, outside_train = false) {
  * 落空的 RESULT 0 语义——此前打占位行，把「原作本来就没有」（如 K11 没有语
  * 尾函数）与「ID 在口上窗口外」（如魔王的 -2 确认页）也吵成一条占位）。
  *
- * 「原作有对应函数而 ere 没移植」的真缺口因此不再有运行时提示，改由
- * test/kojo-family-coverage.test.js 的静态核对拦住：扫 target/ERB/口上 的
- * `@…_K{n}` 定义集合与各族注册集合双向比对，缺口即红；确属不移植的按
- * 那份测试的说明在 docs/stub-registry.md 登记存根行。stub_name 保留作核对
- * 锚（check_stub_names 经 try_kojo(族, '名字' 的写法收集，
- * test/stub-registry-status.test.js），不是死参数。
- *
- * 族与存根名由调用点给——kojo-dungeon-after.js 的 gohoubi_request_koujo
- * 也用它（同一条缺席策略只实现一次）。
+ * 「有对应函数而没移植」的真缺口因此不再有运行时提示，改由
+ * test/kojo-family-coverage.test.js 的静态核对拦住：缺口即红。
+ * kojo-dungeon-after.js 的 gohoubi_request_koujo 也用它（同一条缺席策略只
+ * 实现一次）。
  *
  * #585：占位语义取消后，原来的 stub_desc / stub_ticket / wait 三个形参只剩
- * `void` 压着，随改名一并删除（函数名的 or_stub 后缀已名不副实）。
+ * `void` 压着，随改名一并删除（函数名的 or_stub 后缀已名不副实）；#638 删
+ * 存根清单时，仅服务静态核对的 stub_name 形参随之删除。
  *
  * @param {import('#/system/dispatch/dispatch-family').DispatchFamily} family
  *   目标分发族
- * @param {string} stub_name 原作函数名（静态核对的锚，见上）
  * @param {number} [arg=-1] 角色号（缺省取当前 TARGET；经 kojo_handler_id 换算）
  * @param {any[]} [extra_args=[]] 透传给 handler 的实参
  * @returns {Promise<any>} handler 的返回值，或未命中的 0
  */
-async function try_kojo(family, stub_name, arg = -1, extra_args = []) {
-  void stub_name;
+async function try_kojo(family, arg = -1, extra_args = []) {
   const id = kojo_handler_id(arg);
   if (id >= 0 && family.has(id)) {
     return family.call(id, { whenMissing: 0, args: extra_args });
@@ -627,18 +621,14 @@ async function kojo_message_palamcng(rand) {
   ) {
     return 0;
   }
-  return try_kojo(kojo_message_palamcng_family, 'KOJO_MESSAGE_PALAMCNG', -1, [
-    rand,
-  ]);
+  return try_kojo(kojo_message_palamcng_family, -1, [rand]);
 }
 
 async function kojo_message_markcng(rand) {
   if ((era.get('flag:7') || 0) <= 0) {
     return 0;
   }
-  return try_kojo(kojo_message_markcng_family, 'KOJO_MESSAGE_MARKCNG', -1, [
-    rand,
-  ]);
+  return try_kojo(kojo_message_markcng_family, -1, [rand]);
 }
 
 /**
@@ -670,7 +660,7 @@ async function kojo_event_com() {
 }
 
 async function benki_koujo(rand) {
-  return try_kojo(benki_koujo_family, 'BENKI_KOUJO', -1, [rand]);
+  return try_kojo(benki_koujo_family, -1, [rand]);
 }
 
 async function victory_koujo(cid, rand) {
@@ -678,12 +668,7 @@ async function victory_koujo(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid;
   }
-  const result = await try_kojo(
-    dungeon_victory_family,
-    'VICTORY_KOUJO',
-    cid ?? -1,
-    [rand],
-  );
+  const result = await try_kojo(dungeon_victory_family, cid ?? -1, [rand]);
   era_flag.target = target_pool;
   return result;
 }
@@ -693,12 +678,7 @@ async function attack_koujo(cid, rand) {
   if (cid !== undefined && cid >= 0) {
     era_flag.target = cid;
   }
-  const result = await try_kojo(
-    dungeon_attack_family,
-    'ATTACK_KOUJO',
-    cid ?? -1,
-    [rand],
-  );
+  const result = await try_kojo(dungeon_attack_family, cid ?? -1, [rand]);
   era_flag.target = target_pool;
   return result;
 }
@@ -732,7 +712,6 @@ async function attack_koujo_b(cid, rand) {
   }
   const result = await try_kojo(
     dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
-    'ATTACK_KOUJO_B',
     cid ?? -1,
     [rand],
   );
@@ -821,12 +800,7 @@ async function ntr_koujo(p, rand) {
 async function enterenemy_koujo(cid, rand) {
   const target_pool = era_flag.target;
   era_flag.target = cid;
-  const result = await try_kojo(
-    enterenemy_koujo_family,
-    'ENTERENEMY_KOUJO',
-    cid,
-    [rand],
-  );
+  const result = await try_kojo(enterenemy_koujo_family, cid, [rand]);
   era_flag.target = target_pool;
   return result;
 }
@@ -843,10 +817,7 @@ async function enterenemy_koujo(cid, rand) {
  *   原作就没有语尾函数）返回空串——调用方的行照常结束
  */
 async function gobi_koujo(arg0, rand) {
-  const text = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', -1, [
-    arg0,
-    rand,
-  ]);
+  const text = await try_kojo(gobi_koujo_family, -1, [arg0, rand]);
   return typeof text === 'string' ? text : '';
 }
 

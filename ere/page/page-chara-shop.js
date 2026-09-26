@@ -67,7 +67,6 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：补位 NBSP 化
 
 /** 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） */
-const STUBBED_CALLS = [];
 
 /** 异界勇者的预设编号（:63 `CHARA = 211`） */
 const IKA_SIM_ID = 211;
@@ -425,7 +424,6 @@ async function buy_chara(rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   chara_sim_shop,
   show_shop_chara,
   select_chara,

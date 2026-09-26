@@ -49,11 +49,6 @@ function default_rand(n) {
 }
 
 /**
- * 本文件存根化的原作调用名（docs/stub-registry.md 核对）。
- */
-const STUBBED_CALLS = [];
-
-/**
  * 源: target/ERB/侵略/CAMPAIGN/CAMPAIGN_EVENT.ERB
  *   @CAMPAIGN_DUNGEON_LV（:250-257）。FLAG:400 < 1 为 0，否则按战役号
  *   TRY 调用专属实现；专属函数缺失时保留预置 RESULT=0。当前唯一专属
@@ -581,7 +576,6 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   campaign_dungeon_lv,
   enemy_data_check,
   e_get,

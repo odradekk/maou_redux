@@ -49,7 +49,6 @@ const { EXPLV } = require('#/era-utils/exp-level');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const { adv_com_family, get_adv_com } = require('#/system/train/com-adv');
 const { com_able_family, com_family } = require('#/system/train/com-family');
 const { com_order } = require('#/system/train/com-order');
@@ -67,9 +66,6 @@ const {
   train_message_b,
   train_message_b_family,
 } = require('#/system/train/train-message');
-
-/** 本文件没有自行存根化的原作调用；INCEST 走 #220 共用真身。 */
-const STUBBED_CALLS = [];
 
 const MASTER = 0;
 const PBAND = 4;
@@ -118,13 +114,15 @@ function same_trainer() {
   return (era_flag.assiplay && t50 !== 0) || (!era_flag.assiplay && t50 === 0);
 }
 
-/** JUMPFORM COM{RESULT}：目标未落地时沿项目既有约定走登记存根。 */
+/**
+ * JUMPFORM COM{RESULT}：升格目标已全部注册进 com_family（升格表能返回的
+ * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 对应原作
+ * 「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * @param {number} id 升格后的 COM 号
+ * @returns {Promise<number>}
+ */
 async function jump_to_advanced(id) {
-  if (com_family.has(id)) {
-    return com_family.call(id);
-  }
-  stub_line(`COM${id}`, `指令 ${id} 的升格目标`, '随追加与高级指令票');
-  return 1;
+  return com_family.call(id, { whenMissing: 1 });
 }
 
 /**
@@ -2696,7 +2694,6 @@ com_family.register(72, com72);
 com_family.register(73, com73);
 
 module.exports = {
-  STUBBED_CALLS,
   able60,
   able61,
   able62,

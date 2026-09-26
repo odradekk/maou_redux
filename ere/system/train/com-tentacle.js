@@ -33,7 +33,6 @@
  *   - CSTR:7 癖好无门面字段，era.get(`cstr:${cid}:7`)。
  *
  * 本族无 @GET_ADV_COM 升格规则（COMF_JUMP 无 CASE 100-109/150/208）。
- * JUMP/CALL 全部经分发族，STUBBED_CALLS 为空。
  */
 
 const era = require('#/era-electron');
@@ -55,8 +54,6 @@ const {
   train_message_b_family,
 } = require('#/system/train/train-message');
 const { chara_callname } = require('#/utils/callname-utils');
-
-const STUBBED_CALLS = [];
 
 const times = (v, m) => Math.floor(v * m);
 const idiv = (a, b) => Math.floor(a / b);
@@ -758,7 +755,6 @@ equip_com_family.register(100, equip_com100);
 equip_com_family.register(108, equip_com108);
 
 module.exports = {
-  STUBBED_CALLS,
   able100,
   able101,
   able102,

@@ -50,17 +50,6 @@ const {
 const { com_order } = require('#/system/train/com-order');
 const { chara_callname } = require('#/utils/callname-utils');
 const { monster_name, e_get } = require('#/dungeon/monster-data');
-const { stub_line } = require('#/utils/stub-line');
-
-/**
- * 本族升格规则能命中的目标（COM64 / COM120 / COM121 / COM130 /
- * COM134）已全部由 #225/#229 落地注册，jump_to_advanced 的占位回落对
- * 它们不再触发，名单自此清空（#565）。回落本身保留：它是 JUMPFORM
- * 语义的防御网（占位 + RETURN 1，不混成 COM 缺失或本回合取消），升格
- * 表将来扩目标而未落地时仍由它兜住。
- */
-const STUBBED_CALLS = [];
-
 // —— 读取与写入：未声明序号均按原项目约定兜底为 0 ——
 const get = (name) => era.get(name) || 0;
 const set = (name, value) => era.set(name, value);
@@ -128,13 +117,15 @@ function reverse_lust_level(cid) {
             : 5;
 }
 
-/** JUMPFORM COM{RESULT}：高级真身未落地时沿项目既有约定走登记存根。 */
+/**
+ * JUMPFORM COM{RESULT}：升格目标已全部注册进 com_family（升格表能返回的
+ * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 对应原作
+ * 「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * @param {number} id 升格后的 COM 号
+ * @returns {Promise<number>}
+ */
 async function jump_to_advanced(id) {
-  if (com_family.has(id)) {
-    return com_family.call(id);
-  }
-  stub_line(`COM${id}`, `指令 ${id} 的升格目标`, '随追加与高级指令票');
-  return 1;
+  return com_family.call(id, { whenMissing: 1 });
 }
 
 /** 阴道性交共通的 V 感觉初始 V 快感/情爱表。 */
@@ -2002,7 +1993,6 @@ com_family.register(28, com28);
 com_family.register(29, com29);
 
 module.exports = {
-  STUBBED_CALLS,
   able20,
   able21,
   able22_or_23,

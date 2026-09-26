@@ -68,12 +68,6 @@
 const era = require('#/era-electron');
 const { chara_callname } = require('#/utils/callname-utils');
 const { chara } = require('#/facade/chara');
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。GOBI_KOUJO 是语尾口上分派
- * （EVENT_K.ERB 的 @GOBI_KOUJO），全库多文件调用、未移植。
- */
-const STUBBED_CALLS = [];
 
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
@@ -1509,7 +1503,6 @@ async function horse_ryou_man(arg, mon_num, rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   orc_ryou_man,
   slime_ryou_man,
   insect_ryou_man,

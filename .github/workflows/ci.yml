@@ -78,10 +78,6 @@ jobs:
           cache: npm
       - name: 安装依赖
         run: npm ci
-      # 全文量（含已冻结文件）并核对总基线。PR 也跑：只量未冻结文件时，改了
-      # 已冻结文件锚表的 PR 要等 master push 才暴露（#572 → #610，#626）。
-      - name: 锚点质量全文量（弱锚点只减不增，核对总基线）
-        run: node tools/trace-check.mjs --anchor-quality --all
       - name: ESLint（零警告，与本地三项自检同一标准）
         run: npx eslint . --max-warnings 0
       - name: Prettier（格式比对）

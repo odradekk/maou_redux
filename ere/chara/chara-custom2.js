@@ -87,16 +87,6 @@ const era_exflag = require('#/era-utils/era-exflag');
 const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- *
- * 现在是空的：`CHAR_BUST_REGENERATE_WAPPED`（源 :174 的 TRYCALL）已在
- * #406 落真身（`ere/chara/chara-body.js` 的 `char_bust_regenerate_wapped`），
- * 不再需要占位。
- */
-const STUBBED_CALLS = [];
-
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** `SETCOLORBYNAME GRAY`（page-ablup.js 同值） */
@@ -1198,7 +1188,6 @@ async function char_custom(cid, mode, rand = default_rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   CONFLICT_PAIRS,
   TALENT_COLUMNS,
   TALENT_PAGE_GROUPS,

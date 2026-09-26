@@ -57,12 +57,6 @@ const {
   pad_left,
 } = require('#/utils/display-width');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 // :65/:87/:107 SETCOLOR 128,255,0（选中项绿色）
 const COLOR_SELECTED = 'rgb(128, 255, 0)';
 // :67/:89/:109 SETCOLORBYNAME RoyalBlue（未选中列蓝）
@@ -810,7 +804,6 @@ async function dungeon_info2() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   dungeon_info2,
   enemy_compare,
   enemy_exist2,

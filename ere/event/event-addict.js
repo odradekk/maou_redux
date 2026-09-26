@@ -9,7 +9,6 @@
  *
  * 调用点 EVENT_NEXTDAY.ERB:47（每角色每日，无条件）在 #400（N16）范围内，
  * 本票只落函数真身，签名定死为 `aphrodisiac_addict(cid, rand)`——
- * `ere/event/event-nextday.js` 的 STUBBED_CALLS 仍登记 APHRODISIAC_ADDICT，
  * 接线随该票。
  *
  * 移植说明：

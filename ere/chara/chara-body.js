@@ -25,7 +25,6 @@ const { char_age_expect, rf_all } = require('#/chara/chara-family');
 const { game } = require('#/facade/game');
 const { chara } = require('#/facade/chara');
 
-const STUBBED_CALLS = [];
 const default_rand = (n) => Math.floor(Math.random() * n);
 const int = Math.trunc;
 
@@ -701,7 +700,6 @@ function cup_size(cid) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   char_age_generate,
   char_body_generate_wapped,
   char_bust_generate,

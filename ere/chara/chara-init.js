@@ -32,12 +32,6 @@ const { char_body_generate_wapped } = require('#/chara/chara-body'); // #385 起
 const { chara } = require('#/facade/chara');
 const { st_up } = require('#/dungeon/dungeon-lvup');
 
-/** 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
- * ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js）、
- * SET_SUIT_SELFCALL/SET_NICK_SELFCALL/CSVCSTR 自 #383 起为真身
- * （ere/chara/chara-self-call.js）、CHAR_BODY_GENERATE_WAPPED 自 #385 起
- * 为真身（ere/chara/chara-body.js），均移出名单。 */
-const STUBBED_CALLS = [];
 /**
  * @CHARA_INIT（CHAR_MAKE.ERB:22 JUMP 壳 → CHARA_MAKE_INIT.ERB:2 @CHARA_INIT）：
  * 初始化从预设加入的角色。
@@ -112,4 +106,4 @@ async function char_init(cid, rand) {
   return cid; // :54 RETURN L_A
 }
 
-module.exports = { STUBBED_CALLS, char_init };
+module.exports = { char_init };

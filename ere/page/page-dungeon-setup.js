@@ -47,14 +47,6 @@ const { item_name } = require('#/dungeon/monster-data');
 const { db_set } = require('#/dungeon/labo');
 const { geo_output_2, mon_limit, chip_draw } = require('#/dungeon/labo-map');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。#181（H12）返工后 GEO_OUTPUT_2 /
- * MON_LIMIT / CHIP_DRAW 三者收敛于 ere/dungeon/labo-map.js 真身（域内存根
- * 撤销），名单清空。
- */
-const STUBBED_CALLS = [];
-
 // :17 SETCOLORBYNAME RoyalBlue（楼层列表行）
 const COLOR_ROYAL_BLUE = 'royalblue';
 // :240 SETCOLOR 255,255,0（部下名黄）
@@ -661,7 +653,6 @@ async function dungeon_info() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   dungeon_info,
   enemy_exist,
   room_setup,

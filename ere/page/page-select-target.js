@@ -48,10 +48,6 @@ const monster_play_mod = require('#/dungeon/monster-play');
 const { game } = require('#/facade/game');
 const { chara_callname } = require('#/utils/callname-utils');
 
-// 本文件曾经存根化的原作调用名：SHOW_LIST_TRAINABLE 的富化列随 #395 补全，
-// 清单归零（留空数组的理由见 page-main-menu.js 同款说明）。
-const STUBBED_CALLS = [];
-
 /**
  * @IS_TRAINABLE（SHOP_FUNCTION.ERB:105-113，#FUNCTION）：编号可调教返回 0，
  * 否则 1（范围外/魔王）或 2（CFLAG:x:1 != 0，占用中）。
@@ -405,7 +401,6 @@ async function select_assi() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   get_job_name,
   is_assistable,
   is_trainable,
