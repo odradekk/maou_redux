@@ -1412,7 +1412,7 @@ export default [
     replace:
       "          '菲娅在床上迷糊的看着周围……似乎还没有对自己身上发生的事情有所认知……',",
     tests: ['event-ending'],
-    must_mention: '保真锁',
+    must_mention: 'END7_1 的首行文本',
   },
   {
     desc: 'M8236 数据表 END10_12 的 after 条件：CFLAG 下界 3000 误写成 3001',
