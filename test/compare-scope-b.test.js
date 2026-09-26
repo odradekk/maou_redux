@@ -74,72 +74,23 @@ const REPO = path.resolve(__dirname, '..');
 // `era_flag.bought = -1`（真实存档里 @EVENTSHOP:20 每轮进店恒置 -1）后
 // 七份样本各 -1 存根（那句占位行不再出现，与之配对的 stub 归因条目一并
 // 消失），matched 与 unexplained 不动。下面七组是重测的实测值。
+// #642 推进：标题画面游戏信息改为「魔王 Redux」、汉化与制作名单整段删除
+//（含 [9] 展开/折叠钮，GLOBAL:99 随之退役）。七份样本的标题窗口各失去
+// 19 条匹配（旧作者/年份行 + 17 行名单 + 追加信息行）；新增 25 条版本类
+//（版本行 2 条原有 + 新旧信息行与名单行 22 条 + 联系方式行配对错位 1 对）
+// 与 −6 存根（ere 侧旧标题回退行、[9] 钮、原按钮同行配对的联系方式行
+// 改归版本类），unexplained 全部仍为 0。数字为逐份重跑的实测值；此前的
+// 各轮推进注释随这次重测归档（saveload #228 起算、daycycle #401/#469/#508、
+// sale #338-#612 的逐轮数字演进见 git 历史），本表只锁当前实测。
 const BASELINE = {
-  'mainmenu-natural': { matched: 48, version: 2, stub: 64, unexplained: 0 },
-  'mainmenu-max': { matched: 70, version: 2, stub: 77, unexplained: 0 },
-  // saveload 两份自 #228 起 150/213：diff.js 的 menu 集合比对改「相等
-  // token 先配」（同号槽位条目在两侧次序受重绘影响，按下标配对会把同形
-  // 条目错开成伪 change 对——存读档槽位组正撞此形，+4 匹配 / −8 存根）。
-  // 补偿该假差异的 <TS> 备注错位归因规则随之无消费者，与配对修正一并
-  // 拆除（rules.js 原位留注、M305 删——删前删后四数逐数不变、
-  // unexplained 仍 0，验收反馈一）
-  'saveload-natural': { matched: 206, version: 2, stub: 149, unexplained: 0 },
-  'saveload-max': { matched: 209, version: 2, stub: 143, unexplained: 0 },
-  // #401（N17）推进：回合结束链的十个存根换真身后，日循环样本里
-  // @IN_VAGINA_ALL / @CONCEPTION_CHECK_ALL（各 4 处）、@AUTO_BUYING 与
-  // @DEBUG_CHECK（各 2 处）的占位行消失，真身自己又带回若干占位（它们调用的
-  // 下游仍是存根），净减 7：natural 190 → 183、max 230 → 223。matched 不变
-  // （这些占位行本就不产生 matched），unexplained 仍 0。数字为合并态实测
-  // （并上含 #389/#397 的 master 之后），由派单人重测写回。
-  // #469 推进：@CAMPAIGN_GAMEOVER 落真身（turnend-settle.js，FLAG:400 = 0
-  // 早退、无输出）——回合结束处原先无条件的占位行消失，本处 ere 侧只剩
-  // AUTOTRAIN 一条占位，与 golden 侧两行地图读数的配对随之重排：占位行改配
-  // 第一行读数，第二行改归 GEO_OUTPUT_2（2D 地图输出未移植）。net -1
-  // 存根：natural 182 → 181、max 222 → 221；matched 不变（占位行不产生
-  // matched），unexplained 仍 0。数字为合入 #461 返工 master 后实测写回。
-  // #508 推进：@AUTOTRAIN 落真身（turnend-settle.js:740 直调
-  // event-autotrain.js 的 autotrain；占位行消失）。本样本的回放窗口经过三次
-  // 回合结算，故两份各 -3：natural 181 → 178、max 221 → 218；matched 与
-  // unexplained 不变（占位行不产生 matched，AUTOTRAIN 在本样本世界无入列
-  // 角色 → 真身零输出）。数字为本次 --sample 重测的实测值。
-  'daycycle-natural': { matched: 71, version: 2, stub: 178, unexplained: 0 },
-  'daycycle-max': { matched: 71, version: 2, stub: 218, unexplained: 0 },
-  // #338 出售段：能力值提升尚为存根，出售全链与 K0 黑市末路已回放。
-  // #384 推进（rebase 到 #419 之后重测）：CN_REBUILD 从存根落真身
-  // （ere/chara/chara-name.js；改名后按姓名重建称呼，**无输出**），出售段
-  // 回放里那条 `（名字重建尚未移植…）` 占位行随之消失——ere 事件流少一条，
-  // 与它对上的那条 stub 归因条目一并消失：stub 160 → 159，matched 不变
-  // （该占位行此前是 stub 对的一侧，不产生 matched）、unexplained 仍 0。
-  // 同票的 CHARA_NAME_DEFINE 等真身不出现在本样本的回放窗口里（实测：
-  // 只把 chara-name.js 换回 master 版即复现 160）。
-  // #397 返工：@ABILITY_UP / @LIFE_LIST 族落地后 105 不再按一下就返回（真身
-  // 是「选人列表 + CORE」两层、都要吃输入），回放计划按黄金样本的回显序列
-  // 补齐三层（tools/compare/replay-b.js 的 sale 计划与注释），ere 侧自此真的
-  // 走进能力提升画面——matched 123 → 163、stub 159 → 131、unexplained 仍 0。
-  // 同票的另三处配套（都在本文件外的注释里写明）：① 播种补上静态名表
-  // （ablname/palamname/expname/expkeys/markname，取 yml 产物）与样本行给出
-  // 的取值（LV/调教回数/职业/性格、juel 点数、经验、初吻对象）；② 归因把
-  // 已作废的「89-178 行一律算能力提升画面未移植」换成四条真实成因（可提升
-  // 标记 * 未接入、切换按钮与角色行的 PR #53 按钮化形态差，两侧各一条）；
-  // ③ 归一层认「整行只有线绘字符」的折行残段（sale-natural-log:178 的 `═`）。
-  // 另六个样本的四数与基线逐字相同（返工实测），未改。
-  // 【#462 后重测】YOKUBO_UP_CHECK 从 page-ability-up.js（RESULT===999 出口，
-  // :247）与 juel-check.js（$LABEL_EXIT，:542）两处各自的 stub_line 占位，
-  // 改接共用真身 ere/system/train/ability-check.js。本样本经能力提升画面，
-  // 「欲情变化检查尚未移植」占位行消失；温妮欲望达标（ABL:11=5>=3）但压抑/
-  // 抵抗天赋（TALENT:32/34）均未播种，条件不成立、真身无 PRINT 输出，故
-  // 只是差异整行消失（非改判为 matched），stub 130 → 129，matched/
-  // unexplained 不变。
-  // 【#467 后重测】能力提升画面的 `*` 可提升标记开始按 @DECIDE_ABLUPn 渲染
-  // （本样本的 flag:5 同样只置了 bit34，AUTO_ABLUP 分支不进样本）：matched
-  // 163→164、stub 129→127，unexplained 保持 0。数字取自重跑。
-  // 【#612 后重测】能力值提高画面的按钮正文补回原作的「- 」分隔符（本票的
-  // golden 判据之一）：该屏的 `[999] - 能力值提高结束` 与升级屏的
-  // `[0] - …点数×…`、`[100] - 停止` 由「与能力值列表条目错位配对的 stub
-  // 半边」转为逐字匹配——matched 164→166、stub 127→123，unexplained 保持 0。
-  'sale-natural': { matched: 166, version: 2, stub: 123, unexplained: 0 },
+  'mainmenu-natural': { matched: 29, version: 27, stub: 58, unexplained: 0 },
+  'mainmenu-max': { matched: 51, version: 27, stub: 71, unexplained: 0 },
+  'saveload-natural': { matched: 187, version: 27, stub: 143, unexplained: 0 },
+  'saveload-max': { matched: 190, version: 27, stub: 137, unexplained: 0 },
+  'daycycle-natural': { matched: 52, version: 27, stub: 172, unexplained: 0 },
+  'daycycle-max': { matched: 52, version: 27, stub: 212, unexplained: 0 },
+  'sale-natural': { matched: 147, version: 27, stub: 117, unexplained: 0 },
 };
-
 for (const [name, expected] of Object.entries(BASELINE)) {
   test(`比对基线锁：${name} 匹配 ${expected.matched} / 版本 ${expected.version} + 存根 ${expected.stub} + 未解释 ${expected.unexplained}`, async () => {
     const [segment, state] = name.split('-');

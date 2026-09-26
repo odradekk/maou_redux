@@ -28,7 +28,6 @@ test('未初始化读取返回 0 而非 undefined（#13 引擎行为 + 包装层
   assert.equal(era_global.title_music_volume, 0);
   assert.equal(era_global.audio_defaults_seeded, 0);
   assert.equal(era_global.contact_info_shown, 0);
-  assert.equal(era_global.greeting_collapsed, 0);
 
   // 各访问器读的都是数字（undefined + 1 === NaN 类事故的根）
   for (const value of [
@@ -36,25 +35,22 @@ test('未初始化读取返回 0 而非 undefined（#13 引擎行为 + 包装层
     era_global.title_music_volume,
     era_global.audio_defaults_seeded,
     era_global.contact_info_shown,
-    era_global.greeting_collapsed,
   ]) {
     assert.equal(typeof value, 'number');
   }
 });
 
-test('四个标题路径全局变量经包装层写入并读回', () => {
+test('三个标题路径全局变量经包装层写入并读回', () => {
   const fixture = create_era_fixture();
   const era_global = fixture.load_module('era-utils/era-global');
 
   era_global.title_music_enabled = 1;
   era_global.title_music_volume = 66;
   era_global.contact_info_shown = 1;
-  era_global.greeting_collapsed = 1;
 
   assert.equal(era_global.title_music_enabled, 1);
   assert.equal(era_global.title_music_volume, 66);
   assert.equal(era_global.contact_info_shown, 1);
-  assert.equal(era_global.greeting_collapsed, 1);
 });
 
 test('写入落到 global 表寻址（公共存档 global.sav 的主体）', () => {
@@ -62,36 +58,32 @@ test('写入落到 global 表寻址（公共存档 global.sav 的主体）', () 
   const era_global = fixture.load_module('era-utils/era-global');
 
   era_global.title_music_volume = 66;
-  era_global.greeting_collapsed = 1;
+  era_global.contact_info_shown = 1;
 
   // 底层寻址是数字下标（#5 决议），且全部落在 global: 命名空间
   assert.deepEqual(fixture.var_writes, [
     { name: 'global:1', value: 66 },
-    { name: 'global:99', value: 1 },
+    { name: 'global:98', value: 1 },
   ]);
   assert.equal(fixture.store.get('global:1'), 66);
-  assert.equal(fixture.store.get('global:99'), 1);
+  assert.equal(fixture.store.get('global:98'), 1);
 
   // 重新读取（同局内再次访问）保留刚写入的值
   assert.equal(era_global.title_music_volume, 66);
-  assert.equal(era_global.greeting_collapsed, 1);
+  assert.equal(era_global.contact_info_shown, 1);
 });
 
 test('手写区业务方法与生成区访问器共存：toggle 0↔1 往返', () => {
   const fixture = create_era_fixture();
   const era_global = fixture.load_module('era-utils/era-global');
 
-  // 镜像原作 GLOBAL:n = (GLOBAL:n + 1) % 2 的两个切换方法
-  assert.equal(era_global.toggle_greeting(), 1);
-  assert.equal(era_global.toggle_greeting(), 0);
+  // 镜像 GLOBAL:n = (GLOBAL:n + 1) % 2 的切换方法
   assert.equal(era_global.toggle_contact_info(), 1);
   assert.equal(era_global.toggle_contact_info(), 0);
 
   // 切换落盘到对应序号
-  assert.equal(fixture.store.get('global:99'), 0);
   assert.equal(fixture.store.get('global:98'), 0);
 });
-
 // —— 标题音乐默认值播种（issue #69 落地 #18 移交的缺口）——
 //
 // 原作随包 global.sav 预置 是否启用标题音乐=1、标题音乐音量=66；ere 引擎
@@ -131,7 +123,7 @@ test('seed_title_music_defaults：标记已置则不播（用户关掉的标题�
 test('seed_title_music_defaults：这张票之前的旧档（无 global:2 槽）也落在播种分支', async () => {
   const fixture = create_era_fixture();
   const era_global = fixture.load_module('era-utils/era-global');
-  // 旧档形态：只有 0/98/99 槽，2 槽缺失（读值得 undefined → 兜底 0）
+  // 旧档形态：只有 0/98 槽，2 槽缺失（读值得 undefined → 兜底 0）
   fixture.store.set('global:98', 1);
 
   assert.equal(await era_global.seed_title_music_defaults(), true);

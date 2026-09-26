@@ -15,6 +15,8 @@
  */
 
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -22,7 +24,8 @@ const { preset_chara_0 } = require('./helpers/chara');
 const { preset_gamebase } = require('./helpers/gamebase');
 const { preset_audio_seeded } = require('./helpers/audio');
 
-test('首屏：标题、版本行、作者、年份、展开名单、信息行与四个按钮', async () => {
+const REPO_ROOT = path.resolve(__dirname, '..');
+test('首屏：标题、版本行、作者、年份、联系方式与三个按钮（#642：名单与按钮 9 已删）', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   const run_title_page = fixture.load_module('page/page-title');
@@ -32,32 +35,27 @@ test('首屏：标题、版本行、作者、年份、展开名单、信息行�
   const texts = fixture.text_lines();
   // 标题与版本行取自静态表：版本直读【版本代号】versionName（#135，
   // "0.0.0"），不再沿用原作 {V/1000}.{V%1000} 自算式
-  assert(texts.includes('ERA魔王 年度版（名字暂定）（PC only）'));
+  assert(
+    texts.includes('魔王 Redux'),
+    '标题画面必须显示 yml 的游戏名称「魔王 Redux」',
+  );
   assert(texts.includes('伪Ver0.0.0立绘版'));
-  // 作者与年份（原作带半角括号、仅年份非空时输出）
-  assert(texts.includes('「人人为我，我为人人」'));
-  assert(texts.includes('(2011 - 2024！)'));
-  // GLOBAL:99 默认 0 → 展开完整制作名单（开头/中段/结尾各抽一行）
-  assert(
-    texts.includes(
-      '※本版本由Delicious基于谦悟制作的0.60EX制作，仅作为汉化交流及代码练习使用，请于18小时内删除※',
-    ),
-  );
-  assert(texts.includes('敬请见证！'));
-  assert(
-    texts.includes(
-      '※衷心感谢首席代码君：风飏。没有昨天的你就没有今天的我，在此祝愿你的明天会更好※',
-    ),
-  );
-  // GAMEBASE_INFO 与 GLOBAL:98 == 0 的联系段（尾部空格照原作）
-  assert(
-    texts.includes('※未经允许，任何人不得引用、修改再打包或进行商业用途※'),
-  );
+  // 作者与年份（带半角括号、仅年份非空时输出）
+  assert(texts.includes('odradekk'), '标题画面必须显示 yml 的作者 odradekk');
+  assert(texts.includes('(2026)'));
+  // 【追加信息】为空 → 信息行不占行
+  assert(!texts.some((line) => line.includes('未经允许')));
+  // 汉化与制作名单整段删除（#642）：展开态与折叠态的句子都不得出现
+  assert(!texts.some((line) => line.includes('Delicious基于')));
+  assert(!texts.some((line) => line.includes('由谦悟制作')));
+  assert(!texts.some((line) => line.includes('敬请见证')));
+  assert(!texts.some((line) => line.includes('口上组成员')));
+  // 联系方式段（GLOBAL:98 == 0 的默认形态）
   assert(texts.includes('版本推进出问题 '));
 
-  // 按钮：accelerator 沿用原作编号 0/1/8/9。断言看 rendered（引擎实际显示的
-  // 文本，含引擎自动拼的 [快捷键] 前缀）——只断言 text 会漏掉手写前缀与引擎
-  // 前缀撞车，实机曾渲染出「[0] [0] 旧的奴隶」。
+  // 按钮：accelerator 沿用原作编号 0/1/8，名单展开钮 9 已随名单删除。
+  // 断言看 rendered（引擎实际显示的文本，含引擎自动拼的 [快捷键] 前缀）——
+  // 只断言 text 会漏掉手写前缀与引擎前缀撞车，实机曾渲染出「[0] [0] 旧的奴隶」。
   const buttons = fixture.lines.filter((line) => line.type === 'button');
   assert(
     buttons.some((b) => b.accelerator === 0 && b.rendered === '[0] 旧的奴隶'),
@@ -65,16 +63,21 @@ test('首屏：标题、版本行、作者、年份、展开名单、信息行�
   assert(
     buttons.some((b) => b.accelerator === 1 && b.rendered === '[1] 新的猎物'),
   );
-  assert(buttons.some((b) => b.accelerator === 9 && b.rendered === '[9] <<'));
-  assert(buttons.some((b) => b.accelerator === 8 && b.rendered === '[8] >>'));
+  assert(
+    buttons.some((b) => b.accelerator === 8 && b.rendered === '[8] >>'),
+    '联系方式钮 [8] 必须渲染',
+  );
+  assert(
+    buttons.every((b) => b.accelerator !== 9),
+    '名单展开/折叠钮 9 已删除，不得再渲染',
+  );
   // 没有任何按钮的正文自带 [编号] 前缀（前缀是引擎的职责）
   assert(buttons.every((b) => !/^\s*\[\d+\]/.test(b.text)));
 });
 
-test('空行普查（#596）：致辞按钮行与信息行相邻、联系按钮行与分割线相邻', async () => {
-  // 原作 :67/:72（按钮 9 所在行）与 :86（按钮 8 所在行）的 PRINTL/PRINTFORML
-  // 都只结束所在的那一行，不产生空行：mainmenu-natural-log:30-33 里
-  // 「…※ <<」「…※」「版本推进出问题 >>」与分割线四行逐行相邻。
+test('空行普查（#596）：年份空行、信息行缺席与按钮-分割线逐行相邻', async () => {
+  // 联系方式行与按钮 8 所在行之间、按钮 8 与分割线之间不夹空行
+  //（golden 侧 mainmenu-natural-log:32-33 逐行相邻的布局等效）。
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   const run_title_page = fixture.load_module('page/page-title');
@@ -86,45 +89,30 @@ test('空行普查（#596）：致辞按钮行与信息行相邻、联系按钮�
     assert.ok(line, `找不到目标行：${predicate}`);
     return line.row;
   };
-  const button_9 = row_of((l) => l.type === 'button' && l.accelerator === 9);
-  const info = row_of(
-    (l) =>
-      l.type === 'text' &&
-      l.text === '※未经允许，任何人不得引用、修改再打包或进行商业用途※',
-  );
   const contact = row_of(
     (l) => l.type === 'text' && l.text === '版本推进出问题 ',
   );
   const button_8 = row_of((l) => l.type === 'button' && l.accelerator === 8);
-  const divider = row_of((l) => l.type === 'divider' && l.row > contact);
+  const divider = row_of((l) => l.type === 'divider' && l.row > button_8);
+  const button_0 = row_of((l) => l.type === 'button' && l.accelerator === 0);
 
-  assert.equal(info, button_9 + 1, '致辞按钮行与信息行之间不夹空行');
-  assert.equal(
-    contact,
-    info + 1,
-    '信息行与联系行之间不夹空行（:76/:80 只收行）',
-  );
   assert.equal(button_8, contact + 1, '联系行与按钮行同屏逐行相邻');
-  assert.equal(divider, button_8 + 1, '联系按钮行与分割线之间不夹空行（:86）');
-  // 致辞之前的空行（两种形态都算：println 落 br、print('') 落 text 空串）只有
-  // 三处——:26/:27 那两个（图片缺席时也照打）与 :41 那一个；致辞串自带的空行
-  // 属屏幕下半段，不在此断言范围
-  const greeting_start = row_of(
-    (l) =>
-      l.type === 'text' &&
-      l.text.startsWith('※本版本由Delicious基于谦悟制作的0.60EX制作'),
-  );
+  assert.equal(divider, button_8 + 1, '联系按钮行与分割线之间不夹空行');
+  assert.equal(button_0, divider + 1, '分割线与首枚菜单按钮逐行相邻');
+  // 标题上段的空行（println 落 br、print('') 落 text 空串都计）只有三处——
+  // 标题图下的两个与年份行后的一个；【追加信息】为空、信息行整行缺席，
+  // 不产空行（留空不占行是 #642 与年份行同款的守卫行为）
   const top_divider = row_of((l) => l.type === 'divider');
-  const year = row_of((l) => l.type === 'text' && l.text === '(2011 - 2024！)');
+  const year = row_of((l) => l.type === 'text' && l.text === '(2026)');
   const is_blank = (line) =>
     line.type === 'br' || (line.type === 'text' && line.text === '');
   assert.deepEqual(
     fixture.lines
       .filter(is_blank)
       .map((line) => line.row)
-      .filter((row) => row < greeting_start),
+      .filter((row) => row < contact),
     [top_divider + 1, top_divider + 2, year + 1],
-    '致辞之前只有三个空行：:26/:27 与 :41',
+    '联系行以上只有三个空行：标题图下两个与年份后一个',
   );
 });
 
@@ -141,41 +129,6 @@ test('版本行直读【版本代号】自静态表，不自算、不硬编码�
   assert(fixture.text_lines().includes('伪Ver1.2.3立绘版'));
   assert(!fixture.text_lines().some((line) => line.includes('20.4')));
   assert(!fixture.text_lines().some((line) => line.includes('0.0.0')));
-});
-
-test('GLOBAL:99 非 0 → 折叠致辞 + 按钮「>>」', async () => {
-  const fixture = create_era_fixture();
-  preset_gamebase(fixture);
-  fixture.store.set('global:99', 1);
-  const run_title_page = fixture.load_module('page/page-title');
-
-  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
-
-  const texts = fixture.text_lines();
-  assert(
-    texts.includes(
-      '※本版本由谦悟制作，仅作为汉化交流及代码练习使用，请于18小时内删除※',
-    ),
-  );
-  // 折叠版第二行无句末※（展开版有，借此区分两分支）
-  assert(
-    texts.some(
-      (line) =>
-        line.startsWith('※私自传播') && !line.endsWith('※') && line !== '',
-    ),
-  );
-  // 展开版独有的行不得出现
-  assert(!texts.some((line) => line.includes('Delicious基于')));
-  assert(!texts.some((line) => line.includes('敬请见证')));
-  // 按钮 9 在折叠态显示「>>」（引擎前缀后即 [9] >>）
-  assert(
-    fixture.lines.some(
-      (line) =>
-        line.type === 'button' &&
-        line.accelerator === 9 &&
-        line.rendered === '[9] >>',
-    ),
-  );
 });
 
 test('GLOBAL:98 非 0 → 联系方式 + 按钮「<<」', async () => {
@@ -199,28 +152,6 @@ test('GLOBAL:98 非 0 → 联系方式 + 按钮「<<」', async () => {
   );
 });
 
-test('按钮 9：切换致辞开关 → 写 global:99、存公共存档、按折叠态立即重绘', async () => {
-  const fixture = create_era_fixture();
-  preset_gamebase(fixture);
-  fixture.set_inputs(9);
-  const run_title_page = fixture.load_module('page/page-title');
-
-  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
-
-  // 变量写入：(0+1)%2 = 1，落在 global:99（公共存档 global.sav 的主体）
-  assert.deepEqual(
-    fixture.var_writes.filter((w) => w.name === 'global:99'),
-    [{ name: 'global:99', value: 1 }],
-  );
-  assert.equal(fixture.store.get('global:99'), 1);
-  // 原作 SAVEGLOBAL 的显式落盘
-  assert(fixture.calls.some((c) => c.api === 'saveGlobal'));
-  // 画布已清屏重画，屏幕呈现折叠版 = 「切换后立即重绘」的证据
-  assert(fixture.text_lines().some((line) => line.includes('由谦悟制作')));
-  assert(!fixture.text_lines().some((line) => line.includes('敬请见证')));
-  assert.deepEqual(fixture.inputs_consumed, [{ api: 'input', value: 9 }]);
-});
-
 test('按钮 8：切换联系方式开关 → 写 global:98、存公共存档、按新态立即重绘', async () => {
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
@@ -237,29 +168,6 @@ test('按钮 8：切换联系方式开关 → 写 global:98、存公共存档、
   assert(fixture.calls.some((c) => c.api === 'saveGlobal'));
   assert(fixture.text_lines().includes('群里@Delicious或者小窗'));
   assert(!fixture.text_lines().some((line) => line.includes('版本推进出问题')));
-});
-
-test('按钮 9 两次：(n+1)%2 往返，回到展开态', async () => {
-  const fixture = create_era_fixture();
-  preset_gamebase(fixture);
-  // 预置播种标记：避免 #69 的默认值播种在本用例多出一次 saveGlobal
-  preset_audio_seeded(fixture);
-  fixture.set_inputs(9, 9);
-  const run_title_page = fixture.load_module('page/page-title');
-
-  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
-
-  assert.deepEqual(
-    fixture.var_writes.filter((w) => w.name === 'global:99'),
-    [
-      { name: 'global:99', value: 1 },
-      { name: 'global:99', value: 0 },
-    ],
-  );
-  assert.equal(fixture.store.get('global:99'), 0);
-  // 每次切换都显式存公共存档
-  assert.equal(fixture.calls.filter((c) => c.api === 'saveGlobal').length, 2);
-  assert(fixture.text_lines().includes('敬请见证！'));
 });
 
 test('未打印按钮的值引擎不送达：拒收且画面不重绘（原作 ELSE → RESTART 分支不可达，#130）', async () => {
@@ -429,9 +337,9 @@ test('标题音乐：重绘不重播（PLAYBGM 在 $PRINT_TITLE 标签之前，�
   const fixture = create_era_fixture();
   preset_gamebase(fixture);
   fixture.seed_res('TFM-003A_17.mp3', 'audio');
-  // 两次 [9] 切换各重绘一轮（引擎可达的重绘来源；原用例的 42 属无效输入，
+  // 两次 [8] 切换各重绘一轮（引擎可达的重绘来源；原用例的 42 属无效输入，
   // 引擎侧不送达、RESTART 不会发生，#130），两轮循环后仍只有一次播放
-  fixture.set_inputs(9, 9);
+  fixture.set_inputs(8, 8);
   const run_title_page = fixture.load_module('page/page-title');
 
   await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
@@ -500,4 +408,94 @@ test('标题图：资源在场时显示 TITLE 全图，缺席时纯文本兜底�
   // resource: false（未注册）时 checkImage 恒假——无图可显、纯文本标题兜底
   assert(!without_image.lines.some((line) => line.type === 'image.whole'));
   assert(without_image.text_lines().includes('伪Ver0.0.0立绘版'));
+});
+
+test('名单展开钮 9 已删：输入 9 不是合法按钮值，引擎拒收且不重绘（#642）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture);
+  fixture.set_inputs(9);
+  const run_title_page = fixture.load_module('page/page-title');
+
+  // 9 曾是名单展开/折叠钮；按钮随名单删除后，9 不在已渲染按钮的快捷键集合里，
+  // 与 #130 的 42 同款：夹具镜像引擎白名单校验，当场抛错、游戏逻辑拿不到 9
+  await assert.rejects(
+    () => run_title_page(),
+    /输入不合法！请输入以下值之一：/,
+  );
+  assert.deepEqual(fixture.inputs_consumed, []);
+  assert(
+    !fixture.var_writes.some((w) => w.name === 'global:99'),
+    'GLOBAL:99 已无读写：不得产生 global:99 写入',
+  );
+});
+
+test('【追加信息】非空时输出信息行、留空时不占行（#642 的守卫行为）', async () => {
+  const with_info = create_era_fixture();
+  preset_gamebase(with_info, { info: '测试用追加信息' });
+  const run_with = with_info.load_module('page/page-title');
+  await assert.rejects(() => run_with(), /预置输入已耗尽/);
+  assert(with_info.text_lines().includes('测试用追加信息'));
+
+  // 留空（仓库 yml 的现状）：信息行整行缺席——若守卫被拆成无条件 print，
+  // 这里会多出一个空串行（空行普查用例的 blank 断言同时变红）
+  const without_info = create_era_fixture();
+  preset_gamebase(without_info);
+  const run_without = without_info.load_module('page/page-title');
+  await assert.rejects(() => run_without(), /预置输入已耗尽/);
+  assert(
+    !without_info.lines.some(
+      (line) => line.type === 'text' && line.text === '',
+    ),
+    '【追加信息】为空时不得输出空串行',
+  );
+});
+
+test('【发布时间】留空时不占行（与追加信息同款的守卫）', async () => {
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture, { year: '' });
+  const run_title_page = fixture.load_module('page/page-title');
+  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+  assert(
+    !fixture.text_lines().some((line) => line === '()'),
+    '【发布时间】为空时不得输出「()」',
+  );
+});
+
+test('标题画面读 yml/GameBase.yml 的游戏信息（#642：魔王 Redux / odradekk / 2026）', async () => {
+  // 夹具的 preset_gamebase 是 yml 形状的手工镜像；本用例直读真实 yml，断言
+  // 标题画面显示的正是仓库数据——改 yml 值或画面硬编码旧值都会在这里红
+  const text = fs.readFileSync(
+    path.join(REPO_ROOT, 'yml', 'GameBase.yml'),
+    'utf8',
+  );
+  const field = (key) => {
+    const match = text.match(new RegExp(`^"${key}": "(.*)"$`, 'm'));
+    assert.ok(match, `GameBase.yml 缺「${key}」`);
+    return match[1];
+  };
+  const gamebase = {
+    title: field('游戏名称'),
+    author: field('作者'),
+    info: field('追加信息'),
+    year: field('发布时间'),
+  };
+  assert.equal(
+    gamebase.title,
+    '魔王 Redux',
+    '【游戏名称】必须为「魔王 Redux」',
+  );
+  assert.equal(gamebase.author, 'odradekk', '【作者】必须为 odradekk');
+  assert.equal(gamebase.info, '', '【追加信息】必须留空');
+  assert.equal(gamebase.year, '2026', '【发布时间】必须为 2026');
+
+  const fixture = create_era_fixture();
+  preset_gamebase(fixture, gamebase);
+  const run_title_page = fixture.load_module('page/page-title');
+  await assert.rejects(() => run_title_page(), /预置输入已耗尽/);
+
+  const texts = fixture.text_lines();
+  assert(texts.includes(gamebase.title));
+  assert(texts.includes(gamebase.author));
+  assert(texts.includes(`(${gamebase.year})`));
+  assert(!texts.some((line) => line.includes('未经允许')));
 });

@@ -76,19 +76,6 @@ const era_global = {
     era.set('global:98', v);
   },
   /**
-   * 致辞折叠开关（global:99 ↔ GLOBAL:99）
-   * @returns {number}
-   */
-  get greeting_collapsed() {
-    return era.get('global:99') || 0;
-  },
-  /**
-   * @param {number} v
-   */
-  set greeting_collapsed(v) {
-    era.set('global:99', v);
-  },
-  /**
    * 通信勇者记录（global:100 ↔ GLOBAL:100）
    * @returns {string}
    */
@@ -121,8 +108,6 @@ const era_global = {
 //   contact_info_shown   GLOBAL:98 联系方式开关：0=显示「版本推进出问题」、
 //       1=显示联系方式；标题画面按钮 8 切换。源: target/ERB/SYSTEM/
 //       TITLE ver1.0.8.ERB @SYSTEM_TITLE（IF GLOBAL:98 == 0 分支）。
-//   greeting_collapsed   GLOBAL:99 致辞折叠开关：0=展开完整制作名单、1=折叠为
-//       三行摘要；标题画面按钮 9 切换。源同上（IF GLOBAL:99 == 0 分支）。
 //   communication_roster GLOBAL:100 通信勇者记录：原作 GLOBALS:0..99 的字符串
 //       记录在 ere 中合并为 JSON 数组；元素仍保留 MAOUNET.ERB @INPORT_B 的
 //       下划线与斜线分隔格式。源: target/ERB/其他/MAOUNET.ERB。
@@ -170,14 +155,6 @@ era_global.toggle_contact_info = () => {
   return era_global.contact_info_shown;
 };
 
-/**
- * 切换致辞折叠开关（镜像原作 GLOBAL:99 = (GLOBAL:99 + 1) % 2，按钮 9）。
- * @returns {number} 切换后的值
- */
-era_global.toggle_greeting = () => {
-  era_global.greeting_collapsed = (era_global.greeting_collapsed + 1) % 2;
-  return era_global.greeting_collapsed;
-};
 /**
  * 切换冒险者性别档位（镜像原作设置页 [27] 的 -1→0→1→2→3→4→-1 循环，
  * SYSTEM/CONFIG.ERB:253-264）。

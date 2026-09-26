@@ -118,6 +118,38 @@ const B_SAVELOAD_LABELS = new Set([
 const B_MAP_GRID_RE = /^[０-９＠凹凸]+(,[０-９＠凹凸]+)+,$/;
 // 版本行（伪Ver93.106立绘版 / 伪Ver0.0.1立绘版——版本轴重设，ADR-0006）
 const B_VERSION_LINE_RE = /^伪Ver\d+\.\d+(\.\d+)?立绘版$/;
+// —— #642：标题画面游戏信息改为「魔王 Redux」——golden 侧的旧作者/年份/追加
+//    信息行与汉化及制作名单整段（样本 mainmenu-natural-log:7-31 的 17 行，名
+//    单行经过 lang 归一、「華胥の亡靈」已简化）。名单删除后联系方式行与名
+//    单首行的 LCS 配对错位，「版本推进出问题（ >>）」的两个半边也在此类。
+//    双侧精确字面值（白名单形态）：改游戏信息时失配变红，改者须同步本表。
+const B_TITLE_GAMEINFO_OLD = new Set([
+  '「人人为我，我为人人」', // 旧【作者】（样本 :7）
+  '(2011 - 2024！)', // 旧【发布时间】（样本 :8）
+  '※未经允许，任何人不得引用、修改再打包或进行商业用途※', // 旧【追加信息】（样本 :31）
+  '※本版本由Delicious基于谦悟制作的0.60EX制作，仅作为汉化交流及代码练习使用，请于18小时内删除※',
+  '※私自传播及运行本程序所产生的一切后果，请自行负责※',
+  '※本作在许多方面已偏离原作较远，敬请留意※',
+  '地文及指令素质汉化：谦悟、匿名神人、干掉人龙、魔法少女张春华、幽灵 轻^3、文文、撸撸睡、Delicious',
+  '技术支持：风飏、stick、红茶与枪、你见不到我、谦悟、雄霸天、看飞机、墨镜马赛克、不科学灰骑士、毒菇、Delicious',
+  '测试校对及润色：钢笔、谦悟、猫出没注意、醉饮千殇不知愁、imightcatchsth',
+  '口上组成员：',
+  '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、华胥の亡灵、Delicious',
+  '专用口上：毛线夜、谦悟、幽灵 轻^3、魔法少女张春华、文文、喝奶茶呛着了、社会废人',
+  '原创口上及剧情：白告姬、红茶与枪、幽灵 轻^3、毛线夜、谦悟',
+  '年度版现由我（自由人）在先人的基础上进行魔改',
+  '因为本人是重度魔王爱好者，又因为本人比较自私与傲慢，所以大量私货不可避…以及ooc致歉，但大概率是改不了的！诶嘿（）',
+  '欢迎各路大佬的加入，本人势单力薄，但仍会尽力！',
+  '总而言之…',
+  '敬请见证！',
+  '※衷心感谢首席代码君：风飏。没有昨天的你就没有今天的我，在此祝愿你的明天会更好※',
+  '※特别鸣谢安东尼，感谢日本网友的原创，也感谢群内所有人的测试与指导※ <<',
+]);
+const B_TITLE_GAMEINFO_NEW = new Set([
+  '魔王 Redux', // 新【游戏名称】（标题图缺席时的回退文本行）
+  'odradekk', // 新【作者】
+  '(2026)', // 新【发布时间】
+]);
 
 /**
  * TrainCommand.yml 的全部编号（L_I 侧值域）与「L_IDX 位次 → L_I」的映射
@@ -1060,6 +1092,43 @@ function classify_scope_b(entry, side, context) {
           reason: `版本轴重设（ADR-0006/#135）：样本 ${entry.text} vs 移植版自算版本号`,
         };
       }
+      // #642 游戏信息改为「魔王 Redux」：ere 侧新名称/作者/年份行（与 golden
+      // 横幅/旧信息行的配对错位半边也归本类——内容差异的成因是改名本身）
+      if (B_TITLE_GAMEINFO_NEW.has(entry.text)) {
+        return {
+          category: 'version',
+          reason:
+            '游戏信息改为「魔王 Redux」（#642）：ere 侧新名称/作者/发布年份行',
+        };
+      }
+      if (B_TITLE_GAMEINFO_OLD.has(entry.text)) {
+        return {
+          category: 'version',
+          reason:
+            '游戏信息改为「魔王 Redux」（#642）：golden 侧旧作者/年份/追加信息行与汉化及制作名单行随名单整段删除',
+        };
+      }
+      // 名单整段删除后联系方式行与 golden 名单首行 LCS 配对错位的两个半边。
+      // 正常配对时 ere 半边由上面的按钮同行规则接住、golden 半边由带后缀
+      // 规则接住，这里只兜配对错位（counterpart 不是按钮形态）的情形；内容
+      // 正确性由 test/page-title.test.js 的首屏断言兜住。
+      if (side === 'ere' && entry.text === '版本推进出问题') {
+        return {
+          category: 'version',
+          reason:
+            '游戏信息改名（#642）后名单整段删除：联系方式行与 golden 名单首行配对错位的 ere 半边',
+        };
+      }
+      if (
+        side === 'golden' &&
+        entry.text === '版本推进出问题 >>' &&
+        context.counterpart === undefined
+      ) {
+        return {
+          category: 'version',
+          reason: '同上配对错位的 golden 半边（带 >> 后缀）',
+        };
+      }
       if (side === 'golden' && entry.text === '兼容性修正中……') {
         return {
           category: 'stub',
@@ -1182,13 +1251,9 @@ function classify_scope_b(entry, side, context) {
             '读档界面空槽降为纯文本（page-save-load.js 有意偏离：原作 CHKDATA 拦下 = 不可选，ere 侧不按钮化——存档界面空槽仍是灰色按钮）',
         };
       }
-      if (side === 'ere' && entry.text.startsWith('ERA魔王 年度版')) {
-        return {
-          category: 'stub',
-          reason:
-            '标题行输出（page-title.js 图片缺席的回退路径，#19；原作标题由图片承载、该行被注释）',
-        };
-      }
+      // 【#642 拆除】此处原是「ere 侧标题行（旧游戏名的图片缺席回退文本）」豁免
+      // ——游戏信息改为「魔王 Redux」后 ere 侧回退文本行已是新名称，由上方
+      // B_TITLE_GAMEINFO_NEW 规则接走；旧名称在 ere 侧再无输出点，规则永不命中。
       // daycycle 段兜底（放具体规则之后）：#395 起 199 是真转场（真实
       // BEGIN TURNEND），回放只推进一次真转场、停在次日主菜单等待输入处
       // （tools/compare/replay-b.js 的 daycycle 计划注释）——golden 继续

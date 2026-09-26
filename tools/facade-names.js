@@ -823,7 +823,6 @@ const item = {
 
 const global = {
   98: named('联系方式开关', 'yml/Global.yml id 98'),
-  99: named('致辞折叠开关', 'yml/Global.yml id 99'),
 };
 
 // —— MARK：只收 yml 缺口（#90）——

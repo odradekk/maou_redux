@@ -46,15 +46,9 @@ export const SAMPLE_LOG_REFS = {
         },
       ],
     },
-    {
-      js: 'test/compare-scope-b.test.js',
-      refs: [
-        {
-          ref: '178',
-          any: [/^═$/m],
-        },
-      ],
-    },
+    // 【#642 删除】test/compare-scope-b.test.js 的 '178' 锚——基线注释归档时
+    // 「归一层认折行残段（sale-natural 样本 178 行的 ═）」的引用说明一并
+    // 移除，js 侧已无该引用；normalize.js 侧的登记保留。
     {
       js: 'tools/compare/replay-b.js',
       refs: [

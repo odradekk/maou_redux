@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 37;
+export const COUNT = 36; // #642 起 -1（M79 删：華胥の亡靈 豁免条目随致谢名单整段删除，find 无匹配）
 
 export default [
   {
@@ -14,19 +14,9 @@ export default [
     tests: ['lang-normalize', 'kojo-text-fidelity'],
     must_mention: '缺映射',
   },
-  {
-    desc: 'M79 豁免名单删華胥の亡靈条（简体锁必须报出致谢行）',
-    file: 'tools/lang-table.js',
-    find: `  {
-    value:
-      '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious',
-    where: 'ere/page/page-title.js',
-    why: '口上组致谢名单整行。華胥の亡靈 是贡献者 ID（含日文の与繁体華/靈），其余名字同理不译——对人名/ID 做字符归一会改名。豁免到「字符串整体」，这行被改写时失配变红，改者须有意识地同步本表。',
-  },`,
-    replace: '  // 变异：豁免条目删除',
-    tests: ['output-lang-lock'],
-    must_mention: '華胥の亡靈',
-  },
+  // 【#642 删除】M79（豁免名单删華胥の亡靈条）——致谢名单整段已随标题画面
+  // 删除，lang-table 的豁免条目同步移除，find 串已无匹配；简体锁的自证
+  // 由 output-lang-lock 的探针用例继续守住。
   {
     desc: 'M82 词级译法删奴隷→奴隶（转换用例必须红）',
     file: 'tools/lang-table.js',

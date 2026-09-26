@@ -405,16 +405,12 @@ test('富文本标记行：img src 抠出 → image；纯 shape → 丢弃（#16
   assert.equal(stats.total, 2);
 });
 
-test('黄金侧豁免名单：整串命中的行原样放行（致谢名单的華胥の亡靈）', () => {
-  // ere 侧该行按 lang-table 豁免保留原文；黄金侧若归一即两侧假差异
-  //（#161 范围 B 首次对拍实证）。豁免判定与 output-lang-lock 同一真相源
-  const stream = golden_stream(
-    '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious\r\n',
-  );
-  assert.ok(
-    stream[0].text.includes('華胥の亡靈'),
-    '豁免串必须原样放行（繁体保留）',
-  );
+test('黄金侧豁免名单：整串命中的行原样放行（存根行的自動處刑）', () => {
+  // ere 侧该行按 lang-table 豁免保留原文（ere/system/turnend-settle.js 的
+  // 存根占位行，含繁体 處）；黄金侧若归一即两侧假差异。豁免判定与
+  // output-lang-lock 同一真相源（#642 起改用本串：致谢名单整段已删除）。
+  const stream = golden_stream('自動處刑\r\n');
+  assert.equal(stream[0].text, '自動處刑', '豁免串必须原样放行（繁体保留）');
   // 非豁免的繁体行照旧过归一表
   const normalized = golden_stream('奴隷市场\r\n');
   assert.equal(normalized[0].text, '奴隶市场');

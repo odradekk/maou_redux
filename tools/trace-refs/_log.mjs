@@ -142,6 +142,11 @@ export const SAMPLE_LOG_REFS = {
         },
       ],
     },
+    {
+      js: 'tools/compare/rules.js',
+      // #642：旧游戏信息与致谢名单的逐字证据（作者行在 :7，名单 :10-31）
+      refs: [{ ref: '7-31', any: [/「人人为我，我为人人」/] }],
+    },
   ],
   'train-natural': [
     // —— #211 第三段：调教段两份（replay.js 的播种/RNG 反推/区间表、

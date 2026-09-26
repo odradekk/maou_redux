@@ -47,17 +47,8 @@ export const FILES = [
         ref: '110',
         any: [/^\s*RESTART\s*$/m],
       },
-      // #596：致辞按钮之后的 PRINTL 只结束按钮所在行（展开 :67 / 折叠 :72）
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '67',
-        any: [/^\s*PRINTL\s*$/m],
-      },
-      {
-        src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
-        ref: '72',
-        any: [/^\s*PRINTL\s*$/m],
-      },
+      // 【#642 删除】#596 的致辞按钮 PRINTL 锚（:67/:72）——致辞与展开/折叠钮
+      // 整段删除，ere 侧注释里的 :67/:72 引用随之消失，在场检查不再过。
       // #596：信息行的行尾由 :76/:80 的 PRINTFORML 收掉（不是空行）
       {
         src: 'target/ERB/SYSTEM/TITLE ver1.0.8.ERB',
@@ -117,11 +108,8 @@ export const SAMPLE_LOG_REFS = {
     {
       js: 'ere/page/page-title.js',
       refs: [
-        // #596：致辞按钮行与信息行相邻、联系按钮行与分割线相邻
-        {
-          ref: '30-31',
-          any: [/感谢群内所有人的测试与指导/],
-        },
+        // #596：联系按钮行与分割线相邻（:32-33）；致辞按钮-信息行相邻
+        // 的 :30-31 登记随名单整段删除（#642）移除
         {
           ref: '32-33',
           any: [/版本推进出问题/],
@@ -131,9 +119,10 @@ export const SAMPLE_LOG_REFS = {
     {
       js: 'test/page-title.test.js',
       refs: [
-        // #596：同上，一行段覆盖两处相邻
+        // #596：同上，联系行与分割线的相邻（#642 后标题画面唯一保留的
+        // golden 相邻证据；断言说明见用例内注释）
         {
-          ref: '30-33',
+          ref: '32-33',
           any: [/版本推进出问题/],
         },
       ],

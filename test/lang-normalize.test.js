@@ -295,15 +295,12 @@ test('find_offenders：字级/词级/假名分别报出，豁免按整串放行'
     { kind: 'char', value: '靈' },
   ]);
   assert.ok(
-    is_exempted(
-      '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious',
-      tbl,
-    ),
-    '致谢名单整串豁免',
+    is_exempted('自動處刑', tbl),
+    '存根函数名整串豁免（#642 起改用本串：致谢名单整段已删除）',
   );
   assert.ok(
-    !is_exempted('華胥の亡靈', tbl),
-    '豁免粒度是字符串整体：名单里抠出来的片段不豁免',
+    !is_exempted('處刑', tbl),
+    '豁免粒度是字符串整体：函数名里抠出来的片段不豁免',
   );
 });
 
@@ -342,7 +339,7 @@ test('convert_source：只动字符串字面量，注释/标识符不碰，幂�
     "const a = '你這個變態…別、別碰我！';",
     'const 這個變態_id = 1; // 标识符（示意）不转换',
     'const exempt =',
-    "  '大众性格：谦悟、文文、匿名神人、干掉人龙、歪闷林、華胥の亡靈、Delicious';",
+    "  '自動處刑';",
     'const t = `主人、${x}好厲害`;',
   ].join('\n');
   const { text, changes } = convert_source(src, tbl);
@@ -350,7 +347,7 @@ test('convert_source：只动字符串字面量，注释/标识符不碰，幂�
   assert.ok(text.includes("'你这个变态…别、别碰我！'"));
   assert.ok(text.includes('// 注释里的 這個變態 不转换'));
   assert.ok(text.includes('const 這個變態_id = 1;'));
-  assert.ok(text.includes('華胥の亡靈'), '豁免串原样保留');
+  assert.ok(text.includes('自動處刑'), '豁免串原样保留');
   assert.ok(text.includes('`主人、${x}好厉害`'), '模板字面量归一且插值不伤');
   // 幂等
   const second = convert_source(text, tbl);

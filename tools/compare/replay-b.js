@@ -54,10 +54,10 @@ const { parse_name_ids } = require('./assertions');
 // 标题画面的 gamebase（yml/GameBase.yml 的引擎属性名形态；离线工具直读
 // 产物有先例——replay.js 读 yml/Palam.yml——此处按英文键手工播种并注明出处）
 const GAMEBASE = {
-  title: 'ERA魔王 年度版（名字暂定）（PC only）', // 【游戏名称】
-  author: '「人人为我，我为人人」', // 【作者】（样本 :7）
-  info: '※未经允许，任何人不得引用、修改再打包或进行商业用途※', // 【追加信息】（样本 :31）
-  year: '2011 - 2024！', // 【发布时间】（样本 :8）
+  title: '魔王 Redux', // 【游戏名称】（#642；ere 侧标题图缺席时的回退文本行）
+  author: 'odradekk', // 【作者】（样本 :7 是旧作者名——归 rules 的 version 类）
+  info: '', // 【追加信息】留空（#642；样本 :31 的信息行同样归 version 类）
+  year: '2026', // 【发布时间】（样本 :8 是旧年份——归 version 类）
   versionName: '0.0.1', // 【版本代号】——版本轴 0.0.1（ADR-0006/#138）；
   // 样本是 93.106（伪Ver93.106 立绘版，:6），差异归 rules 的 version 类
 };
@@ -157,9 +157,7 @@ const REPLAY_DONE = '__replay_plan_exhausted__';
  */
 async function seed_scope_b(fixture, { sale = false } = {}) {
   fixture.store.set('gamebase', { ...GAMEBASE });
-  // 标题画面状态：致辞展开（GLOBAL:99==0，样本 :10-31 是完整名单）、联系
-  // 方式未显示（GLOBAL:98==0，样本 :32 是「版本推进出问题 >>」）
-  fixture.store.set('global:99', 0);
+  // 标题画面状态：联系方式未显示（GLOBAL:98==0，样本 :32 是「版本推进出问题 >>」）
   fixture.store.set('global:98', 0);
   // 标题音乐开关关（避免音乐记录噪音；resource:false 下播不播都无声）
   fixture.store.set('global:0', 0);
