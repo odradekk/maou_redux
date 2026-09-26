@@ -1076,6 +1076,22 @@ test('[20] 更换立绘与 [99] 调试面板按钮不再渲染（任何分页、
   }
 });
 
+test('[10] 提升能力：可提升时按钮编号是 10（[20] 删除后不得挪用）', async () => {
+  const fixture = create_era_fixture();
+  add_chara(fixture, 0, '你');
+  add_chara(fixture, 1, '甲');
+  fixture.store.set('cflag:1:1', 0); // 可调教
+  fixture.store.set('base:1:0', 100); // 体力 >= 1
+  fixture.set_inputs(100);
+  await fixture
+    .load_module('page/page-chara-info')
+    .chara_info_individual(1, [1]);
+  const button = fixture.lines_history.find(
+    (line) => line.type === 'button' && line.text.includes('提升能力'),
+  );
+  assert.equal(button?.accelerator, 10, '[10] 提升能力的按钮编号必须是 10');
+});
+
 test('case 20：立绘入口已删（#638），键入 20 在输入层被弹回', async () => {
   // 引擎只接受已打印按钮的快捷键（#130）：[20] 按钮删掉后，键入 20 在
   // input 层直接被弹回、画面不再推进——这就是「输入不被接受」的运行时形态。
