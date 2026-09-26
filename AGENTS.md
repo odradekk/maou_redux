@@ -185,7 +185,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 - **文件名** kebab-case 带类别前缀：`sys-calc-*.js`（系统计算）、`page-*.js`（界面）、`*-factory.js`（工厂）、`calc-*.js` / `*-utils.js`（工具）。
 
 - **文件名一律使用 ASCII，描述部分翻译为英文单词。** 例如，`EVENT_K3_高貴.ERB` 对应 `kojo-k3-noble.js`，`据点2.mp3` 对应 `stronghold-2.mp3`，不用日文罗马字或中文拼音代替翻译。人名无对应英文词时使用拉丁转写（マオ → `mao`、菲娅 → `fia`）。口上 22 个源文件的映射表位于 `tools/kojo-transpiler.js`；未登记的源文件名必须报错。
-  - **资源的注册名不跟着改**：`res/*.csv` 是「注册名,文件名」两列，注册名照抄原作 `PLAYBGM` / `printImage` 的实参（1:1 追溯），只有磁盘文件名改 ASCII。所以 `era.playMusic('据点2.mp3')` 的调用点一行不动。
+  - **资源的注册名不跟着改**：`res/*.csv` 是「注册名,文件名」两列，注册名是 `ere/` 里调用点正在使用的名字（如 `era.playMusic('据点2.mp3')`），不跟着磁盘文件名一起改；调用点按注册名取用资源，一行不动。
 - **标识符** snake_case（`get_display_name`、`birth_list`）；引擎 API 自身是 camelCase（`era.printMultiColumns`）。
 - **模块引用** `ere/` 内一律用 `#/` 别名，引擎原生解析、无需构建步骤；别名不覆盖 `tools/`、`test/`，那些目录之间用相对路径。
 - **导入分组排序**：`era` 置顶，其后 `system` / `page` / `event` / `chara` / `kojo` / `facade` / `utils` / `data` / `i18n`（`chara` = 角色域代码，如 `#/chara/chara-ex`，T6 引入；`kojo` = 口上模块，独立顶层目录，#46 起存在；`facade` = 按域门面，#71 起存在）。
@@ -196,12 +196,12 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
   set_lan(era.get('global:3') || era.set('global:3', 'zh-CN'));
   ```
 
-- **用文件头注释记录与原作的对应关系**（issue #11），无需复制原作目录结构。例如：`// 源: target/ERB/SYSTEM/TITLE ver1.0.8.ERB  @SYSTEM_TITLE`。
-- **保留原作输出中的字面量 `$`。** `PRINTFORML 所持金：${MONEY}点` 在 Emuera 中表示字面量 `$` 加上 `{MONEY}` 的值，输出为 `所持金：$800点`。JavaScript 模板串应写成 `` `所持金：$${era_flag.money}点` ``；只写一个 `$` 会将它用于插值语法，输出中便缺少货币符号。ESLint 无法发现这类语义差异，测试必须断言实际输出（#338 通过逐字比对发现，M7700 验证对应测试能检测该错误）。`target/ERB/EVENT/EVENT_NEXTDAY.ERB:358` 的「生活费花了`${A}`点」也有同样的移植要求。
+- **注释只写「为什么这样写」。** 不写来源标注（外部文件路径、函数名、行号）；解释性注释用当前代码自身能说明的说法，例如「游戏提供 99 个手动存档槽」。#11 的 `源:` 文件头约定已废止（#639）。
+- **金额提示中的字面量 `$` 保留。** 游戏内金额按 `$` 加数值的格式显示（如 `所持金：$800点`），JavaScript 模板串要写成 `` `所持金：$${era_flag.money}点` ``——只写一个 `$` 会把它用作插值语法，输出里就少了货币符号。ESLint 发现不了这类语义差异，测试必须断言实际输出（#338 发现，M7700 验证对应测试能检测该错误）；其余金额提示（如生活费的扣款提示）同样处理。
 - **玩家可见文本一律使用简体**（issue #60）。原作混用简体、繁体和日文，移植时按 `tools/lang-table.js` 统一转换；字符映射、词语译法和整串豁免分别维护。使用 `node tools/lang-normalize.js [--write] <js 文件…>` 离线转换，运行时不转换。以下检查共同验证结果：
   - `test/output-lang-lock.test.js` 扫描 `ere/` 字符串字面量和 `yml/` 文本，检查归一表中的非简体字，以及 `tools/lang-simp-ref.js` 中的繁体字；后者由 OpenCC 字表派生，补充归一表未收录的字符（#188）。引擎列名按清单豁免。未收录的日文新字体仍需通过归一表和转译期 `REVIEW` 处理；假名按字符区间检查。
   - `test/kojo-text-fidelity.test.js` 的 D 类检查将 JS 字面量片段与转为简体后的 ERB 文本双向比对，范围和规则见测试文件头。
-  - 新增字符映射或词条前，必须在原作语料中找到实际用例。
+  - 新增字符映射或词条只在检查漏报、误报时进行，提交说明写明触发它的文本位置。
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（`train` / `ero` / `event` / `chara` / `page` / `data` / `util`）。
 
 ## 移植源：`target/`
