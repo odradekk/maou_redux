@@ -63,13 +63,13 @@ export default [
     must_mention: 'EVENTLOAD 链必须真的调用 chara_name_init',
   },
   {
-    desc: 'M7975 NameList.yml 里一条数据的 id 被改错，产物与源推导不再一致',
+    desc: 'M7975 NameList.yml 里一条数据的 id 被改错（玛丽 0 改 5——引擎实证查名断言红，#640 起由行为断言守）',
     file: 'yml/NameList.yml',
     find: '"玛丽":\n  id: 0',
     replace: '"玛丽":\n  id: 5',
+    engine: true,
     tests: ['chara-name-list'],
-    must_mention:
-      '产物内容与源数据重推导结果逐条一致（含重名合并与 そら 覆盖）——drift 说明产物被手改或归一表变化后未重转',
+    must_mention: '玛丽',
   },
   // —— #435：文件名（→ 表名）、读取键三处必须同步。文件改名本身没法用
   // find/replace 表达，这里钉的是它的两个读取键——键与表名一旦脱节，引擎对

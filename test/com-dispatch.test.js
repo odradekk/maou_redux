@@ -165,7 +165,7 @@ test('映射双向：恒等段 0-38、黄金实证对（打屁股 40↔39 / 交�
   // 39 起 L_IDX = L_I − 累计空号数（#211 三条实证的算术）
   assert.equal(com_index(40), 39, '打屁股——恒等映射在此必红（40≠39）');
   assert.equal(com_index(56), 55, '交谈——同上');
-  assert.equal(com_index(110), 89, '穿脱衣服——golden 按键 89 跑出 COM110');
+  assert.equal(com_index(110), 89, '穿脱衣服——旧样本按键 89 跑出 COM110');
   // 反向
   assert.equal(com_id(0), 0);
   assert.equal(com_id(38), 38);
@@ -239,7 +239,7 @@ test('机制样例（前两回合序列 → 高级 COM）：CASE 8 形状的规�
     }
     rand_seen = rand(11);
     if (era_flag.prevcom === 8 && (era.get('abl:0:12') || 0) >= 3) {
-      return 84; // 刺激Ｇ点（golden/train-upgrade 的升格链实测）
+      return 84; // 刺激Ｇ点（旧样本 train-upgrade 的升格链实测）
     }
     if (era_flag.prevcom === 84) {
       return 84;

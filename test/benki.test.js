@@ -94,8 +94,8 @@ test('run_benki：占用中（CFLAG:1 != 0）或育儿中不结算', async () =>
 
 test('run_benki：FLAG:83/84 不触发肉便器事件——只认角色素质 TALENT:204', async () => {
   // 验收项：日循环的肉便器事件按角色素质判定，与 FLAG:83/84（设施/展品
-  // 计数，只影响按钮与地城概况显示）互不混淆。golden/README.md 的置位串
-  // 注释正是指这一点——本票接通后该注释仍然成立（BENKI 不看 FLAG:83/84）。
+  // 计数，只影响按钮与地城概况显示）互不混淆——本票接通后该判定仍然成立
+  //（BENKI 不看 FLAG:83/84）。
   const { fixture, mod } = setup_benki();
   // 有肉便器素质但 FLAG:83/84 为 0 → 事件照常触发
   fixture.store.set('flag:83', 0);

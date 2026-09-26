@@ -122,7 +122,7 @@ export default [
     file: 'ere/page/page-train.js',
     find: '      outContent: pad_left(String(value), PALAM_VALUE_WIDTH),',
     replace: "      outContent: '', // 变异：数值丢失",
-    tests: ['page-train', 'compare-first-turn'],
+    tests: ['page-train'],
     must_mention: '条后数值',
   },
   {
@@ -1000,7 +1000,7 @@ export default [
     file: 'ere/page/page-train.js',
     find: '  era.print(`【${clothtype_text(target)}】`);',
     replace: '  // 变异：服装表示行删',
-    tests: ['page-train', 'compare-train'],
+    tests: ['page-train'],
     must_mention: '服装表示行为【全裸】（着衣模式关）',
   },
   {

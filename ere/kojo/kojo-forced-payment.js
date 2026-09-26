@@ -30,8 +30,8 @@
  *
  * 原作 PRINTFORM 不换行，一串 PRINTFORM 拼成**一条**显示行。本文件与
  * kojo-dungeon-bitch.js（#184）同款，**逐条 ERB 输出语句一次 era.print**
- * ——保真锁（test/kojo-text-fidelity.test.js 锁 A–D）按「一条 ERB PRINT
- * 行 ↔ 一条 JS 输出语句」配对，见该文件头。代价是结算行（:78-86）、片酬
+ * ——按「一条源 PRINT 行 ↔ 一条 JS 输出语句」的配对纪律逐条对应
+ *（同 kojo-dungeon-bitch.js）。代价是结算行（:78-86）、片酬
  * 行（:90-94、:96-100）这类拼接线在 ere 里各占一行：有意偏离，与 #184
  * 对 DUNGEON_BITCH.ERB:212-217 的既有处理一致。SETCOLORBYNAME /
  * RESETCOLOR（:79/:81/:83/:85、:91/:93/:97/:99）配色不做、逐条注释留痕

@@ -2,8 +2,8 @@
 //
 // 守什么：测试是否真的守得住它声称守护的行为——把被测代码改坏一小块
 // （变异），对应测试必须红；红不了 = 误报通过。它因此是「验证其余检查器
-// 真的守得住」的那一个：trace-check / domain-check / engine-contract-check /
-// compare 的行为锁各有变异条目钉在条目表里。
+// 真的守得住」的那一个：trace-check / domain-check / engine-contract-check
+// 的行为锁各有变异条目钉在条目表里。
 //
 // 形态（#89 两问之「形态」）：
 //   变异记录按靶文件目录分片住在 tools/mutations/*.mjs（加载时动态汇总，
@@ -197,7 +197,7 @@ const DEFAULT_ROOT = path.resolve(TOOL_DIR, '..');
  *   #349 +2：M6993/M6994（C_Relation/C_Relation_Sub 名字表经引擎真解析、
  *           建桶、寻址与存档往返）
  */
-const ENGINE_SKIP_BASELINE = 19;
+const ENGINE_SKIP_BASELINE = 26; // #640 +7（M12870/M12871/M12872/M12874/M12875/M12876 六个新引擎条目 + M7975 改由引擎实证守护）
 
 /** engine-bundle 缺 asar 时的警告前缀（测试输出里据此识别整组跳过） */
 const ENGINE_WARN_MARKER = '[engine-bundle] 未找到 ere-4.8.0 的 app.asar';
@@ -727,14 +727,6 @@ const EXEMPT_MUST_MENTION = new Map([
     '1521',
     'test/kojo-family-wiring.test.js:111-114 同一个 format_missing()，' +
       'must_mention「主启动图漏装：kojo-k5-mao」同样横跨拼接边界',
-  ],
-  // 类别 D：出处在 tests: 引入的共享库模块里，不在 file:/era-fixture.js 范围内
-  [
-    '92',
-    'must_mention「比对窗口不完整」定义在 tools/compare/normalize.js:421 的' +
-      'window_between_inputs()，由 test/compare-first-turn.test.js 用 ' +
-      "require('../tools/compare/normalize') 引入——既非 file: 目标" +
-      '（tools/compare/replay.js），也非 era-fixture.js',
   ],
 ]);
 

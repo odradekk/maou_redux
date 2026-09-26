@@ -110,7 +110,7 @@ test('黄金样本比对：第一次爱抚的结算块 15 行逐字节一致（�
   assert.ok(start >= 0, '39 点线必须在输出里');
   const block = texts.slice(start, start + GOLDEN_BLOCK.length);
   // #577：ere 侧的对齐补位是 U+00A0（引擎合并半角空格），黄金日志是普通
-  // 空格——比对面把 NBSP 归一回空格（tools/compare 的 compress_ws 同款语义）
+  // 空格——断言侧把 NBSP 归一回空格（#577 的同款语义）
   assert.deepEqual(
     block.map((t) => t.replaceAll('\u00A0', ' ')),
     GOLDEN_BLOCK,

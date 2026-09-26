@@ -51,7 +51,7 @@ const RENDERABLE_ONE_DIM_TABLES = new Set([
 
 // 变量字段行：id / name / type（引擎三字段，见 #5 决议与 18-tools.md）
 const FIELD_RE = /^\s+(id|name|type):\s*(.+?)\s*$/;
-// 引号键行（JSON 风格转义）：引擎转换器与 csv-to-yml 的键名一律加引号
+// 引号键行（JSON 风格转义）：引擎转换器产物的键名一律加引号
 const QUOTED_KEY_RE = /^("(?:[^"\\]|\\.)*"):\s*$/;
 // name 字段约束：英文 snake_case 标识符（#5 决议的渐进命名规则）
 const NAME_RE = /^[a-z][a-z0-9_]*$/;
@@ -370,7 +370,7 @@ function render_wrapper(table, entries, { source_file }) {
   return `${header}${section}${hand_zone}`;
 }
 
-// CLI 的状态文案（与 csv-to-yml 的报告风格一致：写出/更新/跳过 + 原因）
+// CLI 的状态文案（写出/更新/跳过 + 原因）
 const STATUS_LABEL = {
   written: '写出',
   updated: '更新',

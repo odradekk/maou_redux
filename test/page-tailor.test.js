@@ -188,7 +188,7 @@ test('#612 TAILOR_CORE 主菜单：按钮正文照写原作的「- 」（含价�
     .filter((line) => line.type === 'button')
     .map((line) => line.rendered);
   for (const expected of [
-    '[0] - 日常服饰（100点）', // :78（原作写死价格，移植侧是插值——判据见 tools/button-dash-scan.mjs）
+    '[0] - 日常服饰（100点）', // :78（原作写死价格，移植侧是插值）
     '[1] - 普通装备（1000点）', // :79
     '[2] - 其它', // :80
     '[3] - 替换内衣（5点）', // :81

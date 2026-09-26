@@ -1,19 +1,13 @@
-// 变异条目表切片：tools/compare、tools/lang-*、tools/csv-to-yml（数据管线与输出比对）。
+// 变异条目表切片：tools/lang-*（简体检查与参考集）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 36; // #642 起 -1（M79 删：華胥の亡靈 豁免条目随致谢名单整段删除，find 无匹配）
+export const COUNT = 7; // master 8（#640：-31 比对/转换工具条目与 M77，+2 M12877/M12878 守 lang-check）- 本票 1（#642 删 M79：華胥の亡靈 豁免条目随致谢名单整段删除，find 无匹配）；M1371 改挂 com-family-wiring 自持清单
 
 export default [
-  {
-    desc: 'M77 归一表删一个实测字种（著→着）',
-    file: 'tools/lang-table.js',
-    find: "  著: '着',",
-    replace: '  // 变异：著→着 删除',
-    tests: ['lang-normalize', 'kojo-text-fidelity'],
-    must_mention: '缺映射',
-  },
+  // M77（归一表删实测字种）随语料普查测试删除、无人可守（#640 删除——
+  // 「新增映射须有原作用例」的规则已由 #573 废止）。
   // 【#642 删除】M79（豁免名单删華胥の亡靈条）——致谢名单整段已随标题画面
   // 删除，lang-table 的豁免条目同步移除，find 串已无匹配；简体锁的自证
   // 由 output-lang-lock 的探针用例继续守住。
@@ -22,191 +16,22 @@ export default [
     file: 'tools/lang-table.js',
     find: "  { source: '奴隷', target: '奴隶' },",
     replace: '  // 变异：奴隷 词删除',
-    tests: ['lang-normalize'],
-    must_mention: '奴隷',
+    must_mention: '词级命中未报出',
+    tests: ['output-lang-lock'],
   },
-  {
-    desc: 'M83 生成器去归一（csv-to-yml 不再自应用归一表——验收实测的退回路径）',
-    file: 'tools/csv-to-yml.js',
-    find: `function emit_product_lines(lines) {
-  return to_simplified_yaml(\`\${lines.join('\\n')}\\n\`);
-}`,
-    replace: `function emit_product_lines(lines) {
-  // 变异：生成期归一删除——产物与库内（已归一）不再一致
-  return \`\${lines.join('\\n')}\\n\`;
-}`,
-    tests: ['csv-to-yml'],
-    must_mention: '逐字节一致',
-  },
-  {
-    desc: 'M85 归一化器样本侧去归一（黄金样本不再过 #60 归一表）',
-    file: 'tools/compare/normalize.js',
-    find: '.map((l) => (is_exempted(l) ? l : to_simplified(l)));',
-    replace:
-      '.map((l) => l); // 变异：样本侧去归一（豁免放行也被抹平，豁免用例一并红）',
-    tests: ['compare-normalize'],
-    must_mention: '繁/日键名',
-  },
-  {
-    desc: 'M86 归一化器菜单编号解析坏（Number → -1）',
-    file: 'tools/compare/normalize.js',
-    find: "cells.push({ kind: 'menu', key: name, val: Number(inner.trim()) });",
-    replace:
-      "cells.push({ kind: 'menu', key: name, val: -1 }); // 变异：编号解析坏",
-    tests: ['compare-normalize'],
-    must_mention: 'menu 条目',
-  },
-  {
-    desc: 'M87 差异引擎 calc 键忽略全部数值（植入算式缺陷抓不到——检验3b 的靶心）',
-    file: 'tools/compare/diff.js',
-    find: 'return `calc:${entry.key}|${entry.from}|+${entry.add}|-${entry.sub}|=${entry.to}|${entry.phrase}`;',
-    replace: 'return `calc:${entry.key}|${entry.phrase}`; // 变异：数值不进键',
-    tests: ['compare-diff'],
-    must_mention: '加数漂移',
-  },
-  {
-    desc: 'M88 差异引擎 menu 键回退常数（同编号异名被吞——真缺陷出口焊死）',
-    file: 'tools/compare/diff.js',
-    find: '      return `menu:${entry.key}|${entry.val}`;',
-    replace: "      return 'menu:?'; // 变异：标签与编号不进键",
-    tests: ['compare-diff', 'compare-first-turn'],
-    must_mention: '真缺陷出口',
-  },
-  {
-    desc: 'M89 归因规则删 体力 条键（范围 B 主菜单的 golden 基础条变未解释差异）',
-    file: 'tools/compare/rules.js',
-    find: "const STUB_GAUGE_KEYS = new Set(['体力', '气力', '射精（你）']);",
-    replace:
-      "const STUB_GAUGE_KEYS = new Set(['气力', '射精（你）']); // 变异：体力 删",
-    tests: ['compare-samples'],
-    must_mention: 'mainmenu-natural',
-  },
-  {
-    desc: 'M90 回放播种改错（阴核初值 5240 → 5200——变量层断言的靶心）',
-    file: 'tools/compare/replay.js',
-    find: '[0, 5240], // 阴核 5240+300=5540（log:34）',
-    replace: '[0, 5200], // 变异：播种值错（log:34）',
-    tests: ['compare-first-turn'],
-    must_mention: '日志算式断言',
-  },
-  {
-    desc: 'M91 回放随机源取错支（RAND_FIX 落到别的台词——确定性回放的靶心）',
-    file: 'tools/compare/replay.js',
-    find: 'const RAND_FIX = 0.4;',
-    replace: 'const RAND_FIX = 0.9; // 变异：错支',
-    tests: ['compare-first-turn'],
-    must_mention: '逐条文本',
-  },
-  {
-    desc: 'M92 回放输入标记不落 lines（窗口两侧不再同构）',
-    file: 'tools/compare/replay.js',
-    find: "    fixture.lines.push({ type: 'input', text: String(value) });",
-    replace: '    // 变异：输入标记不落 lines',
-    tests: ['compare-first-turn'],
-    must_mention: '比对窗口不完整',
-  },
-  {
-    desc: 'M148 归一化器 progress→gauge 语义值读错（val 取 percentage——表现闯进事件流）',
-    file: 'tools/compare/normalize.js',
-    find: '        val: Number(record.out),',
-    replace: '        val: record.percentage, // 变异：语义值读错',
-    tests: ['compare-normalize', 'compare-first-turn'],
-    must_mention: 'percentage 不进事件流',
-  },
-  {
-    desc: 'M149 归一化器 progress 分支删除（结构化记录从事件流消失——比对未解释）',
-    file: 'tools/compare/normalize.js',
-    find: "    } else if (record.type === 'progress') {",
-    replace:
-      "    } else if (record.type === 'progress_never') { // 变异：分支删除",
-    tests: ['compare-normalize', 'compare-first-turn'],
-    must_mention: 'progress 记录',
-  },
-  {
-    desc: 'M284 样本登记表未知名静默回落旧样本（#156：回落=拿旧样本冒充新样本）',
-    file: 'tools/compare/samples.js',
-    find: '    throw new Error(`未知样本名「${name}」。有效样本名：${known}`);',
-    replace: "    name = ''; // 变异：未知名静默回落旧样本",
-    tests: ['compare-samples'],
-    must_mention: '静默回落等于拿旧样本冒充新样本',
-  },
-  {
-    desc: 'M285 cli 缺席样本继续走（#156：阶段二回收前的占位名必须显式失败）',
-    file: 'tools/compare/cli.js',
-    find: '  if (!fs.existsSync(sample.abs)) {',
-    replace:
-      '  if (false && !fs.existsSync(sample.abs)) { // 变异：缺席样本继续走',
-    tests: ['compare-samples'],
-    must_mention: '消息必须给出缺席路径本体',
-  },
-  {
-    desc: 'M299 灰条单元当按钮拆（编号位 --- 也进 menu——把占位当可点入口）',
-    file: 'tools/compare/normalize.js',
-    find: "      cells.push({ kind: 'text', text: `[---]${label ? ` ${label}` : ''}` });",
-    replace:
-      "      cells.push({ kind: 'menu', key: `[---]${label ? ` ${label}` : ''}`, val: -2 }); // 变异：灰条当按钮",
-    tests: ['compare-normalize'],
-    must_mention: 'ere 侧 page-main-menu 的灰条正是',
-  },
-  {
-    desc: 'M300 槽位备注时间戳不归一（重录必假红——归一化裁定 #161 的靶心）',
-    file: 'tools/compare/normalize.js',
-    find: "function normalize_ts(text) {\n  return text.replace(TIMESTAMP_RE, '<TS>');\n}",
-    replace:
-      'function normalize_ts(text) {\n  return text; // 变异：时间戳不归一\n}',
-    tests: ['compare-normalize', 'compare-scope-b'],
-    must_mention: '两个录制时刻的归一结果',
-  },
-  {
-    desc: 'M301 按钮行守门删除（残渣行也拆成 menu——叙述文本被误拆）',
-    file: 'tools/compare/normalize.js',
-    find: "    cursor = BRACKET_CELL_RE.lastIndex;\n  }\n  if (cells.length === 0 || line.slice(cursor).trim() !== '') {\n    return null;\n  }\n  return cells;\n}",
-    replace:
-      '    cursor = BRACKET_CELL_RE.lastIndex;\n  }\n  if (cells.length === 0) {\n    return null;\n  }\n  return cells; // 变异：行尾与单元间残渣不拦\n}',
-    tests: ['compare-normalize'],
-    must_mention: '残渣（方括号外有正文）',
-  },
-  {
-    desc: 'M302 ere 侧按钮正文不做时间戳归一（两侧同构被破坏——黄金侧独归一）',
-    file: 'tools/compare/normalize.js',
-    find: '        key: normalize_ts(compress_ws(record.text)),',
-    replace: '        key: compress_ws(record.text), // 变异：ere 侧不去时间戳',
-    tests: ['compare-normalize', 'compare-scope-b'],
-    must_mention: 'ere 侧按钮正文过同一套时间戳归一',
-  },
-  {
-    desc: 'M303 回放观测面把命名清行当原作清行（set_story_name 不进自建判定——保存画面被错误剔除）',
-    file: 'tools/compare/replay-b.js',
-    find: 'const REDRAW_CLEAR_RE = /screen-block\\.js|set_story_name/;',
-    replace:
-      'const REDRAW_CLEAR_RE = /screen-block\\.js/; // 变异：命名清行漏判',
-    tests: ['compare-scope-b'],
-    must_mention: '基线漂移',
-  },
-  {
-    desc: 'M304 回放输入恢复白名单校验（useRule:false 删——199/9999 无按钮输入被夹具拦下）',
-    file: 'tools/compare/replay-b.js',
-    find: '    const got = await original_input({ ...(config ?? {}), useRule: false });',
-    replace:
-      '    const got = await original_input(config); // 变异：走白名单校验',
-    tests: ['compare-scope-b'],
-    must_mention: '输入不合法！请输入以下值之一',
-  },
-  {
-    desc: 'M306 cli 比对不传 scope（范围 B 归因组整体旁路——真库直跑未解释非零）',
-    file: 'tools/compare/cli.js',
-    find: "    report = diff_streams(golden_entries, ere_entries, {\n      scope: 'B',\n      segment,\n    });",
-    replace:
-      '    report = diff_streams(golden_entries, ere_entries, {}); // 变异：scope 忘传',
-    tests: ['compare-samples'],
-    must_mention: 'unexplained 归零',
-  },
+  // M83（数据转换器生成期归一）随转换器删除（#640）。
+  // M85-M92（输出比对归一化器/差异引擎/回放播种）随输出比对工具删除（#640）。
+  // M148/M149（归一化器 progress 分支）随输出比对工具删除（#640）。
+  // M284/M285（样本登记表/cli）随输出比对工具删除（#640）。
+  // M299-M302（归一化器灰条/时间戳/守门/ere 侧归一）随输出比对工具删除（#640）。
+  // M303/M304（回放观测面/输入白名单）随输出比对工具删除（#640）。
+  // M306（cli 比对 scope）随输出比对工具删除（#640）。
   {
     desc: 'M370 表外繁体判定器坏（find_outside_trad 永不报——锁对表外繁体复盲，#188 的靶心）',
-    file: 'tools/lang-normalize.js',
+    file: 'tools/lang-check.js',
     find: '    if (tbl.char_map.has(ch) || !TRAD_SIDE_SET.has(ch)) {',
     replace: '    if (true) { // 变异：表外繁体永不报',
-    tests: ['lang-normalize', 'output-lang-lock'],
+    tests: ['lang-check', 'output-lang-lock'],
     // 锚取断言消息而非具体汉字：#236 把「贖」加进归一表后，表外检测器不再
     // 报它，旧锚当场失配。断言消息不随表增长而漂。
     must_mention: '不在归一表——这正是 #188 的失明点，由参考集报出',
@@ -216,7 +41,7 @@ export default [
     file: 'tools/lang-simp-ref.js',
     find: '贖贗',
     replace: '贗',
-    tests: ['lang-simp-ref', 'lang-normalize', 'output-lang-lock'],
+    tests: ['lang-simp-ref'],
     must_mention: '贖',
   },
   {
@@ -228,105 +53,32 @@ export default [
     must_mention: '繁侧',
   },
 
-  // —— #212（J2 调教回合骨架）：M713 ——
+  // M714（归一化器 (cur/max) 拆解）随输出比对工具删除（#640）。
+  // M660-M667（调教段登记/回放/归因/基线锁）随输出比对工具删除（#640）。
+  // M1102（回放漏装性交系）随输出比对工具删除；同一行为的清单守卫改挂
+  // M1371（见下，靶改为 com-family-wiring 自持的调教路径清单）。
   {
-    desc: 'M714 progress 基础条的 (cur/max) 拆解焊死（max 不进事件流）',
-    file: 'tools/compare/normalize.js',
-    find: `      const base = record.out.match(/^\\(\\s*(\\d+)\\/(\\d+)\\)/);`,
-    replace: `      const base = null; // 变异：(cur/max) 不拆`,
-    tests: ['compare-normalize'],
-    must_mention: 'max: 2000',
-  },
-  // —— #211 第三段：调教段全序列（登记/回放/归因/基线锁）——
-  {
-    desc: 'M660 L_IDX 在册判定退回 L_I 值域（#213 映射层落地后的形态：位次映射臂删——ere 侧按钮的紧凑序号重新全部 unexplained）',
-    file: 'tools/compare/rules.js',
-    find: `  const l_i_of = (val) => (tc_ids.has(val) ? val : idx_map.get(val));`,
-    replace: `  const l_i_of = (val) =>
-    tc_ids.has(val) ? val : undefined; // 变异：L_IDX 位次映射删`,
-    tests: ['compare-train'],
-    must_mention: '位次映射回 L_I 才豁免',
-  },
-  {
-    desc: 'M661 相殺随机序列坏一掷（train-natural 首掷 2→0：屈服改恭顺开扣，终态偏移）',
-    file: 'tools/compare/replay.js',
-    find: "  'train-natural': [2, 2, 2, 2, 0, 1],",
-    replace: "  'train-natural': [0, 2, 2, 2, 0, 1], // 变异：首掷改恭顺",
-    tests: ['compare-train'],
-    // must_mention 不能取序列数字本身：node 的 inspect 给数组元素加 ANSI 色码，
-    // 原始 stdout 里是 `[ ^[[33m0^[[39m, … ]`，`2, 2, 2, 0, 1` 这个字面量永远
-    // 匹配不上（验收期查实）。取断言名，且它在宿主文件里恰出现一次。
-    must_mention: '池序号与 golden 相殺终态一致',
-  },
-  {
-    desc: 'M662 回放输入计划坏一键（train-upgrade 的夺处女确认 0→1，ere 侧不再误执行 COM0）',
-    file: 'tools/compare/replay.js',
-    find: "  'train-upgrade': [89, 7, 8, 0, 8, 999, 999],",
-    replace:
-      "  'train-upgrade': [89, 7, 8, 1, 8, 999, 999], // 变异：确认键改 1",
-    tests: ['compare-train'],
-    must_mention: '基线漂移',
-  },
-  {
-    desc: 'M663 播种把屈服刻印改回 LV1（K3 的 2xx 支重新可达——爱抚随机支出声并吃掉相殺序列）',
-    file: 'tools/compare/replay.js',
-    find: "  fixture.store.set('mark:31:2', 2); // 屈服刻印 LV2（train-natural-log:169）",
-    replace:
-      "  fixture.store.set('mark:31:2', 1); // 变异：屈服刻印 LV1（2xx 支可达，随机支出声）",
-    tests: ['compare-train'],
-    must_mention: '基线漂移',
-  },
-  {
-    desc: 'M664 cli 的 train 段分流失效（train 样本误走 replay-b，以「未知段」当场崩）',
-    file: 'tools/compare/cli.js',
-    find: "  if (segment === 'train') {",
-    replace: "  if (segment === 'train-never') { // 变异：分流键改坏",
-    tests: ['compare-samples'],
-    must_mention: '调教样本',
-  },
-  {
-    desc: 'M665 train 规则组的 gauge 归因删（参数条数值差全部 unexplained——基线锁的靶心）',
-    file: 'tools/compare/rules.js',
-    find: "  if (entry.kind === 'gauge' && context.counterpart?.kind === 'gauge') {",
-    replace:
-      "  if (entry.kind === 'gauge' && context.counterpart?.kind === 'never') { // 变异：gauge 归因删",
-    tests: ['compare-train'],
-    must_mention: '基线漂移',
-  },
-  {
-    desc: 'M666 样本登记表删 train-natural（resolve 报未知样本，绝不静默回落缺省）',
-    file: 'tools/compare/samples.js',
-    find: "  'train-natural': 'golden/train-natural.log',",
-    replace: '  // 变异：train-natural 条目删除',
-    tests: ['compare-samples'],
-    must_mention: '未知样本名',
-  },
-  {
-    desc: 'M667 golden 调教窗口裁切坏（slice 起点多含一次输入回显，窗口边界漂移）',
-    file: 'tools/compare/replay.js',
-    find: `  return stream
-    .slice(start + 1, end + 1)
-    .filter((entry) => entry.kind !== 'discard' && entry.kind !== 'group');`,
-    replace: `  return stream
-    .slice(start, end) // 变异：窗口边界漂一档
-    .filter((entry) => entry.kind !== 'discard' && entry.kind !== 'group');`,
-    tests: ['compare-train'],
-    must_mention: '裁切',
-  },
-  {
-    desc: 'M1102 回放漏装性交系（COM20-29 的真实 guard 不生效）（#221）',
-    file: 'tools/compare/replay.js',
-    find: "  'system/train/com-sex',",
-    replace: '  // 变异：回放漏装性交系',
-    tests: ['compare-train'],
-    must_mention: 'COM20 必须随回放装载',
-  },
-  {
-    desc: 'M1371 回放漏装奉仕系（COM30-38 的真实 guard 不生效）（#274）',
-    file: 'tools/compare/replay.js',
+    desc: 'M1371 调教路径清单漏装奉仕系（COM30-38 的真实 guard 不生效）（#274；#640 起靶改为 com-family-wiring 自持清单）',
+    file: 'test/com-family-wiring.test.js',
     find: "  'system/train/com-service',",
-    replace: '  // 变异：回放漏装奉仕系',
+    replace: '  // 变异：路径清单漏装奉仕系',
     tests: ['com-family-wiring'],
-    must_mention: '回放清单漏装：com-service',
+    must_mention: '调教路径清单漏装：com-service',
+  },
+  {
+    desc: 'M12877 lang-check 词级判定被拆（find_offenders 不再查词级——简体锁探针的词级命中失明）',
+    file: 'tools/lang-check.js',
+    find: '  for (const { source } of tbl.word_map) {',
+    replace: '  for (const { source } of []) { // 变异：词级判定拆',
+    tests: ['lang-check', 'output-lang-lock'],
+    must_mention: '词级命中未报出',
+  },
+  {
+    desc: 'M12878 scan_string_literals 注释分支被拆（注释里的引号误开字符串——扫描器失明，转义断言先红）',
+    file: 'tools/lang-check.js',
+    find: "    if (ch === '/' && text[i + 1] === '/') {",
+    replace: '    if (false) { // 变异：注释分支拆',
+    tests: ['lang-check'],
+    must_mention: '转义序列按其字面值入内容',
   },
 ];

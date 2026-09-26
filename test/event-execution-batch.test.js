@@ -1167,7 +1167,7 @@ test('列表行的等级带冒号（原作 :34 的 LV:{CFLAG:COUNT:9}）', async
 
 test('方法 4 正文的等待后缀与原作一致（W 才等；夹具观测不到，按源文锁）', async () => {
   // 夹具的 printAndWait 内部等待不入 waits（test/fixture.test.js 的既定裁定），
-  // W/L 之别在行为层不可观测——同 test/kojo-text-fidelity.test.js 的 B 锁取法，
+  // W/L 之别在行为层不可观测——按「源行后缀 ↔ JS 调用」的配对取法，
   // 按「ERB 行后缀 ↔ JS 调用」逐条核对
   const batch_src = fs.readFileSync(
     path.resolve(__dirname, '..', 'ere', 'event', 'event-execution-batch.js'),

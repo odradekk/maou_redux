@@ -17,44 +17,15 @@ export const LOG_REFS = [];
 export const SAMPLE_LOG_REFS = {
   'sale-natural': [
     // #397 返工：rules.js 的 sale 段规则不再按行号兜底「能力提升画面未移植」
-    //（105 已真身化），故这里的 89-142 / 144-178 两条锚一并撤掉；下面这四条
-    // 是新引入的样本行引用（播种与归因的证据出处）。
-    {
-      js: 'tools/compare/replay-b.js',
-      refs: [
-        {
-          ref: '95',
-          any: [/弓手\s+LV\s+1/],
-        },
-      ],
-    },
+    //（105 已真身化），故 89-142 / 144-178 两条锚一并撤掉。输出比对工具删除
+    //（#640）后，指向其样本文件（replay-b.js / normalize.js / compare-scope-b）
+    // 的四条锚随之撤掉，只留 ere/ 侧两条。
     {
       js: 'ere/utils/display-width.js',
       refs: [
         {
           ref: '124',
           any: [/调教自慰:/],
-        },
-      ],
-    },
-    {
-      js: 'tools/compare/normalize.js',
-      refs: [
-        {
-          ref: '178',
-          any: [/^═$/m],
-        },
-      ],
-    },
-    // 【#642 删除】test/compare-scope-b.test.js 的 '178' 锚——基线注释归档时
-    // 「归一层认折行残段（sale-natural 样本 178 行的 ═）」的引用说明一并
-    // 移除，js 侧已无该引用；normalize.js 侧的登记保留。
-    {
-      js: 'tools/compare/replay-b.js',
-      refs: [
-        {
-          ref: '177-219',
-          any: [/温妮能卖出14430点的样子。/],
         },
       ],
     },

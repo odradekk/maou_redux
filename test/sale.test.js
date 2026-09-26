@@ -1,8 +1,8 @@
 /**
  * 售出估价与零散结算测试（issue #335）。
  *
- * 缝 = test/helpers/era-fixture.js。估价以 golden/sale-natural.log 的真实
- * 14430 输出为主样本；母乳与死斗场验证资金、非作弊资金和跨域状态写入。
+ * 缝 = test/helpers/era-fixture.js。估价以实测过的真实 14430
+ * 输出为主样本；母乳与死斗场验证资金、非作弊资金和跨域状态写入。
  */
 
 const assert = require('node:assert/strict');

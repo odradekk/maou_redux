@@ -19,7 +19,6 @@
 开始开发前阅读以下文档：
 
 - `docs/skeleton.md`：模块分层、注册机制、变量访问和测试约定，以及早期端到端验证的结论。
-- `docs/output-diff.md`：输出比对工具、样本范围和判定标准（issue #48）。使用 `node tools/compare/cli.js --sample <名>` 运行，样本名见 `tools/compare/samples.js`。具体覆盖范围见文档开头。
 - `CONTEXT.md`：日文原作、简体汉化和引擎 API 的术语对照。命名使用「本项目用词」一列；文档中的「写作约定」说明中文表达要求。
 - `docs/stub-registry.md`：尚未实现的功能清单。认领工单时确认对应条目，实现后更新状态或移除已完成条目。
 
@@ -33,8 +32,6 @@
 <仓库根>/（当前 Windows 主工作目录为 D:/Code/era）
 ├── ere/              # 游戏源码，入口 main.js；era-electron.js 是引擎 SDK，勿改名或移动
 ├── yml/              # 静态数据表（YAML），即引擎的静态数据目录
-├── products/         # 口上转译初稿，待复核后移入 ere/（#107）
-├── golden/           # 范围 B 的基准日志与录制资料（#156；登记表见 tools/compare/samples.js）
 ├── tools/            # 离线脚本，不受 ere/ 的依赖限制
 ├── test/             # node --test；helpers/era-fixture.js 是全项目唯一的注入点（issue #16）
 ├── res/              # 图片/音频（#69 起启用，resource: true；六图 + 三首 BGM）
@@ -52,8 +49,6 @@
 ```
 
 完成的移植代码和资源分别写入 `ere/`、`yml/`、`res/`。
-
-**`products/` 专门保存尚未复核的口上转译初稿**。`tools/kojo-transpiler.js` 的输出在这里纳入版本控制，复核结果直接记录在文件中（#107 的 Q3 决策）。生成器默认不覆盖已有文件，只有显式指定 `--force` 才重写（#10）。复核完成后，将文件改名并移入 `ere/kojo/`，此后接受简体文本检查和原文一致性检查。初稿首行的 `eslint-disable` 是有意保留的：初稿尚未补全导入，会产生大量 `no-undef` 报错。
 
 ## 运行与调试
 
@@ -85,7 +80,7 @@ npm run format:check     # Prettier，只检查格式
 | ----------------- | ------------------------------------------------------------------------------------------------------ |
 | 每次完成一项改动  | 对应测试文件 ＋ `mutation-check --ids <本轮新加的编号>`                                                |
 | 开 PR 前          | `npm test` ＋ `npm run lint` ＋ `npm run format:check`                                                 |
-| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）＋ 九份输出比对样本 ＋ 锚点质量全文量；master 另跑无引擎全库     |
+| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）＋ 锚点质量全文量；master 另跑无引擎全库                         |
 | 阶段结束          | 给阶段收尾 PR 打 `phase-acceptance` 标签，在 CI 跑全量变异测试；引擎实际运行在本机用 Electron MCP 验收 |
 
 曾有按改动文件选择测试的选择器（#256），实测最多省一半时间，#452 撤掉：本地和 CI 只有 `npm test` 一个入口，PR 的 CI 通过即全库通过。
@@ -119,12 +114,12 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 
 `.github/workflows/ci.yml` 根据触发方式运行以下检查（#92 引入 CI，#302 增加引擎检查，#452 改为 PR 也跑全库）：
 
-| 触发             | job          | 内容                                                                                   |
-| ---------------- | ------------ | -------------------------------------------------------------------------------------- |
-| PR / master push | `engine`     | Linux 全库 `npm run test:ci`，带引擎，跳过数必须为 0；九份输出比对样本不得有未解释差异 |
-| PR / master push | `windows`    | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0                            |
-| PR / master push | `static`     | ESLint、Prettier、锚点质量全文量（含已冻结文件，#626）                                 |
-| master push      | `engineless` | Linux 全库 `npm run test:ci`，无引擎，跳过数与基线比较                                 |
+| 触发             | job          | 内容                                                        |
+| ---------------- | ------------ | ----------------------------------------------------------- |
+| PR / master push | `engine`     | Linux 全库 `npm run test:ci`，带引擎，跳过数必须为 0        |
+| PR / master push | `windows`    | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0 |
+| PR / master push | `static`     | ESLint、Prettier、锚点质量全文量（含已冻结文件，#626）      |
+| master push      | `engineless` | Linux 全库 `npm run test:ci`，无引擎，跳过数与基线比较      |
 
 PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任务只在 master push 跑，用于发现引擎缺失时的退化。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
 
@@ -159,7 +154,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
   - **`saveFiles` 固定为 99，写在 `_fixed.json` 中（#135）。** 原作有 99 个手动存档槽（0–98）和 99 号自动存档槽（ADR-0006）。引擎 `listSaveFiles` 的扫描条件为 `for (let t = 0; t <= saveFiles; ++t)`，因此 99 能覆盖 0–99；`dev-guides/03-config.md:76` 规定取值为 10–99 的整数，不能设为 100。若只写在 `_config.json` 中，旧的本地配置仍可能使用 10，导致 `loadGlobal` 不维护槽位 11–98 的备注，界面显示为空；仅使用默认配置的测试无法发现这一问题。固定该值后，配置界面的「存档数量」设置不再生效，这是 #135 接受的限制。
   - erauma、ere-kanon、ere-example 所需槽位数未超过引擎默认范围，因此未设置 `saveFiles`。erauma 还会通过 `era.get('gameconfig')?.system.saveFiles` 读取生效配置，但 **4.8.0 不提供 `gameconfig` 键**，本项目不能使用这一方法。
 
-`yml/` 文件由 `tools/csv-to-yml.js` 生成后提交到 Git，再由人工维护（issue #10）。**转换器默认跳过已有文件，覆盖必须显式指定 `--force`**；测试会检查这一行为。生成时根据 `tools/lang-table.js`（issue #60）将名称转为简体，引擎列名键如 素質/名前 保持原样。同步检查直接比较生成结果与仓库文件；漏做简体转换会导致检查失败。YAML 键名一律加引号，避免含 `:`、`#` 或首尾空格的键产生解析问题。`GameBase.yml` 的原始输入已随迁移删除，重新转换前须从 Git 历史取回 `csv/GameBase.csv`。
+`yml/` 文件是静态数据的唯一来源，由人工维护（issue #10 迁移后接续）。键名一律加引号，避免含 `:`、`#` 或首尾空格的键产生解析问题；名称用简体（`tools/lang-table.js`，issue #60），引擎列名键如 素質/名前 保持原样。
 
 ## 引擎 API 与硬约束
 
@@ -184,7 +179,7 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 
 - **文件名** kebab-case 带类别前缀：`sys-calc-*.js`（系统计算）、`page-*.js`（界面）、`*-factory.js`（工厂）、`calc-*.js` / `*-utils.js`（工具）。
 
-- **文件名一律使用 ASCII，描述部分翻译为英文单词。** 例如，`EVENT_K3_高貴.ERB` 对应 `kojo-k3-noble.js`，`据点2.mp3` 对应 `stronghold-2.mp3`，不用日文罗马字或中文拼音代替翻译。人名无对应英文词时使用拉丁转写（マオ → `mao`、菲娅 → `fia`）。口上 22 个源文件的映射表位于 `tools/kojo-transpiler.js`；未登记的源文件名必须报错。
+- **文件名一律使用 ASCII，描述部分翻译为英文单词。** 例如，`EVENT_K3_高貴.ERB` 对应 `kojo-k3-noble.js`，`据点2.mp3` 对应 `stronghold-2.mp3`，不用日文罗马字或中文拼音代替翻译。人名无对应英文词时使用拉丁转写（マオ → `mao`、菲娅 → `fia`）。口上文件按同一约定命名（源文件名描述部分意译为英文单词，如 `EVENT_K3_高貴.ERB` → `kojo-k3-noble.js`）。
   - **资源的注册名不跟着改**：`res/*.csv` 是「注册名,文件名」两列，注册名是 `ere/` 里调用点正在使用的名字（如 `era.playMusic('据点2.mp3')`），不跟着磁盘文件名一起改；调用点按注册名取用资源，一行不动。
 - **标识符** snake_case（`get_display_name`、`birth_list`）；引擎 API 自身是 camelCase（`era.printMultiColumns`）。
 - **模块引用** `ere/` 内一律用 `#/` 别名，引擎原生解析、无需构建步骤；别名不覆盖 `tools/`、`test/`，那些目录之间用相对路径。
@@ -198,9 +193,8 @@ if (this.config || (this.config = JSON.parse(JSON.stringify(this.defaultConfig))
 
 - **注释只写「为什么这样写」。** 不写来源标注（外部文件路径、行号），不写「同某处一致」这类脱离当前代码的说明；提到函数名时用当前代码的函数名，解释性注释用当前代码自身能说明的说法，例如「游戏提供 99 个手动存档槽」。口上里的日文分支注释（`それ以外`、`初めて` 等）是分支标记，保留。仓库里既有的 `源:` 文件头和 `// :1234` 行号注释由 #644 用脚本统一删除，不要手工删；其余提到原作的注释由各 C 工单按目录清理。#11 的 `源:` 文件头约定已废止（#639）。
 - **金额提示中的字面量 `$` 保留。** 游戏内金额按 `$` 加数值的格式显示（如 `所持金：$800点`），JavaScript 模板串要写成 `` `所持金：$${era_flag.money}点` ``——只写一个 `$` 会把它用作插值语法，输出里就少了货币符号。ESLint 发现不了这类语义差异，测试必须断言实际输出（#338 发现，M7700 验证对应测试能检测该错误）；其余金额提示（如生活费的扣款提示）同样处理。
-- **玩家可见文本一律使用简体**（issue #60）。原作混用简体、繁体和日文，移植时按 `tools/lang-table.js` 统一转换；字符映射、词语译法和整串豁免分别维护。使用 `node tools/lang-normalize.js [--write] <js 文件…>` 离线转换，运行时不转换。以下检查共同验证结果：
-  - `test/output-lang-lock.test.js` 扫描 `ere/` 字符串字面量和 `yml/` 文本，检查归一表中的非简体字，以及 `tools/lang-simp-ref.js` 中的繁体字；后者由 OpenCC 字表派生，补充归一表未收录的字符（#188）。引擎列名按清单豁免。未收录的日文新字体仍需通过归一表和转译期 `REVIEW` 处理；假名按字符区间检查。
-  - `test/kojo-text-fidelity.test.js` 的 D 类检查将 JS 字面量片段与转为简体后的 ERB 文本双向比对，范围和规则见测试文件头。
+- **玩家可见文本一律使用简体**（issue #60）。字符映射、词语译法和整串豁免分别维护在 `tools/lang-table.js`；直接写简体，检查报错时按表手工改正。以下检查共同验证结果：
+  - `test/output-lang-lock.test.js` 扫描 `ere/` 字符串字面量和 `yml/` 文本，检查归一表中的非简体字，以及 `tools/lang-simp-ref.js` 中的繁体字；后者由 OpenCC 字表派生，补充归一表未收录的字符（#188）。引擎列名按清单豁免。未收录的日文新字体仍需通过归一表处理；假名按字符区间检查。
   - 新增字符映射或词条只在检查漏报、误报时进行，提交说明写明触发它的文本位置。
 - **提交信息** 用 Conventional Commits，scope 按子系统划分（`train` / `ero` / `event` / `chara` / `page` / `data` / `util`）。
 

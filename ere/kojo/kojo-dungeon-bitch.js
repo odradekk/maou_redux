@@ -37,9 +37,8 @@
  *
  * == 文本 ==
  *
- * 口上正文经 tools/lang-normalize.js 离线归一为简体（issue #60，对 1:1 的
- * 有意偏离——源文件汉化本身繁简混用）。保真锁（test/kojo-text-fidelity
- * .test.js 锁 D）对 ERB 侧应用同一张表归一后比对。
+ * 口上正文统一为简体（issue #60 的归一表裁定，对 1:1 的有意偏离——
+ * 源文件汉化本身繁简混用），新增文本受 tools/lang-check.js 检查。
  *
  * == #572 复核：@SET_BICH_LEVEL 的裸编号行保持纯文本 ==
  *

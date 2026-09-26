@@ -97,7 +97,7 @@
 # 用例——TSTR 建模与 trainname 表名裁定的 setVar/beginTrain/endTrain 探针），
 # 现为 72（1371 = 1299 过 + 72 跳过 + 0 挂，ERE_ENGINE_ASAR=none 实测）。
 # 算式：67（既有）+ 5（tstr-train-table 的 engine_test）= 72；本票其余新用例
-#（train-name/page-train 槽条段/p_c/compare-normalize 扩展）全走 era-fixture
+#（train-name/page-train 槽条段/p_c 扩展）全走 era-fixture
 # 或纯解析路径，无 engine-bundle 门控。
 # #349（L18 家族关系）：chara-family 的扩展角色表建桶、寻址与存档往返 +1。
 # #388（N4 名字表）：chara-name-list.test.js 的四个引擎门控用例（
@@ -115,7 +115,7 @@
 # mark:<cid>:4 的写入：addCharacter 后 setVar 落 data 可读回」——引擎真
 # parse_data_file + create_add_character + set_var 驱动）。本票另三个新测试
 # 文件（dungeon-bedroom / event-charadead / page-shop-floor）与 com-toy /
-# event-end / page-shop / compare-train / extalent-table 的改动全走
+# event-end / page-shop / extalent-table 的改动全走
 # era-fixture 路径，无 engine-bundle 门控，不新增跳过。
 # #552（S9 口上 PBAND 下标）：+1（variable-yml.test.js 的引擎门控用例「item:PBAND
 # 名字表查不到 → 读恒 undefined、写另立键」——引擎侧证据钉住「口上具名地址
@@ -131,4 +131,9 @@
 # #547（S6 设置页魔改存档变量）：+1（era-modsave.test.js 的引擎门控用例
 # 「ModSave.yml 经引擎装载后 setVar 接受 modsave: 寻址」——扩展普通表路径，
 # resource-media.test.js 的 Audio.yml 同款），81 + 1 = 82。
-82
+# #640（R1 删除转换与比对工具）实测重测：删除比对/转换测试的引擎门控用例
+# （输出比对 7 份、角色表比对、数据转换、区段扫描等测试的引擎门控用例
+# train-static-tables/variable-yml 的逐字段比对用例）与新增 chara-load 的 8 个
+# 引擎门控用例对冲后，现为 70（6923 = 6853 过 + 70 跳过 + 0 挂，
+# ERE_ENGINE_ASAR=none 实测）。
+70

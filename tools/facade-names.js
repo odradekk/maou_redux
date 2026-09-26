@@ -429,7 +429,7 @@ const cflag = {
   ),
   // 胸罩状态（44）属主 stronghold（ownership/cflag-ownership.yml "44"：3 处
   // 写中据点侧 2）——COM111 撕胸罩的 CFLAG:44 = -3 是登记在册的跨域写
-  //（cflag-cross-domain-writes.yml），经 chara(cid).stronghold 门面（#71，
+  //（跨域写登记在案），经 chara(cid).stronghold 门面（#71，
   // #228 J18 接线）。与 41/45/46 同族但属主不同，落 chara-stronghold.js
   44: named_tail(
     '胸罩状态',
