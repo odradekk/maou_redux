@@ -875,7 +875,7 @@ const EXEMPT_STRINGS = [
   {
     value: '自動處刑',
     where: 'ere/system/turnend-settle.js',
-    why: '原作函数名（SYSTEM ver1.0.3.ERB:590 的 CALL 自動處刑，繁体）。存根占位行携带原作函数名供检索（docs/stub-registry.md 的检索约定），归一成「自动处刑」会切断与 target/ 的对应。#114 收录。',
+    why: '原作函数名（SYSTEM ver1.0.3.ERB:590 的 CALL 自動處刑，繁体）。归一成「自动处刑」会切断与 target/ 的对应。#114 收录。',
   },
   {
     value: '「很快就要生出来了、请安心期待吧、亲・爱・的${heart(1)}」',

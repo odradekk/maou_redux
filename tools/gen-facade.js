@@ -266,7 +266,7 @@ function capitalize(domain) {
   return domain.charAt(0).toUpperCase() + domain.slice(1);
 }
 
-/** 出处进 JS 注释前清洗：全角空格；孤立 `:数字` 会触发 trace-check 行引用扫描 */
+/** 出处进 JS 注释前清洗：全角空格；孤立 `:数字` 转成「行N」（生成注释不带裸行号） */
 function sanitize_source(source) {
   return source
     .replace(/\u3000/g, ' ')
