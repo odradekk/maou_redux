@@ -14,8 +14,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -282,52 +280,6 @@ test('GOBI_KOUJO 行内拼接：『猪…』整段一行收语尾（源 :308-:32
     miss.text_lines().includes('『猪还自称冒险者……简直傻了　噗噗，噗嘻！』'),
     '语尾落空 → 空串，整段行照常输出',
   );
-});
-
-test('同名函数断言：*_ryou_man 与 H13 的 *_ryou 名字区分', async () => {
-  // #12 的首个加载生效遮蔽只发生在「同名」函数之间。本文件（H14）的
-  // 函数是 `*_RYOU男`（JS 导出 `*_ryou_man`），H13 的 DUNGEON_RYOUZYOKU.ERB
-  // 是 `@*_RYOU`（无 man）——两组名字不同，互不遮蔽。这里断言导出名
-  // 都带 man 后缀，且与源文件的 @ 原名逐字对应（对照 DUNGEON_RYOUZYOKU.ERB
-  // 的分派调用名，防止将来改错名触发遮蔽）。
-  const fixture = create_era_fixture();
-  const mod = fixture.load_module('kojo/kojo-dungeon-ravish-man');
-  const erb = fs.readFileSync(
-    path.resolve(
-      __dirname,
-      '..',
-      'target',
-      'ERB',
-      '迷宮',
-      'DUNGEON_RYOUZYOKU_MAN.ERB',
-    ),
-    'utf8',
-  );
-  for (const [export_name, erb_name] of FUNCS) {
-    assert.equal(typeof mod[export_name], 'function');
-    assert.ok(
-      erb.includes(`@${erb_name}(ARG)`),
-      `源文件应含 @${erb_name}(ARG) 定义`,
-    );
-  }
-  // H13 的分派 CALL 名（TALENT:122 为真）引用的正是本文件的带 man 名
-  const h13 = fs.readFileSync(
-    path.resolve(
-      __dirname,
-      '..',
-      'target',
-      'ERB',
-      '迷宮',
-      'DUNGEON_RYOUZYOKU.ERB',
-    ),
-    'utf8',
-  );
-  for (const [, erb_name] of FUNCS) {
-    assert.ok(
-      h13.includes(`CALL ${erb_name},ARG`),
-      `H13 分派应 CALL ${erb_name},ARG（TALENT:122 为真时）`,
-    );
-  }
 });
 
 // —— #624：兽人凌辱里七处「原作同一行被拆开」合回一条输出 ——

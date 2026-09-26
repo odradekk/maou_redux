@@ -18,8 +18,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -1047,73 +1045,6 @@ test('#597：处刑对象列表的表头之后不补空行（:22 的 PRINTL 只�
       `${label}：表头之后不补空行`,
     );
   }
-});
-
-test('EXECUTION：肉便器支正文的等待后缀与原作一致（#561 第 3 条；夹具观测不到，按源文锁）', () => {
-  // 夹具的 printAndWait 内部等待不入 waits（test/fixture.test.js 的既定裁定），
-  // W/L 之别在行为层不可观测——同 event-execution-batch.test.js 的「方法 4 正文
-  // 的等待后缀」取法，按「ERB 行后缀 ↔ JS 调用」逐条核对
-  const src = fs.readFileSync(
-    path.resolve(__dirname, '..', 'ere', 'event', 'event-execution.js'),
-    'utf8',
-  );
-  const erb = fs
-    .readFileSync(
-      path.resolve(
-        __dirname,
-        '..',
-        'target',
-        'ERB',
-        '處刑相關',
-        'EXECUTION.ERB',
-      ),
-      'utf8',
-    )
-    .split(/\r?\n/);
-  // 原作 :165-167 三条都不等待，只有 :168 的 PRINTW 等待；:255 的
-  // PRINTFORMW 等待（新文件 event-execution-batch.js 的 :206-210/:299 同款）
-  assert.match(
-    erb[164],
-    /^\s*PRINTFORML 但%SAVESTR:PLAYER%依然给/,
-    ':165 是 PRINTFORML（不等待）',
-  );
-  assert.match(
-    erb[165],
-    /^\s*PRINTL 被吸收了全部力量的她/,
-    ':166 是 PRINTL（不等待）',
-  );
-  assert.match(
-    erb[166],
-    /^\s*PRINTL 作为地下城里怪物的慰问品被使用着/,
-    ':167 是 PRINTL（不等待）',
-  );
-  assert.match(
-    erb[167],
-    /^\s*PRINTW 今后别说重新当勇者/,
-    ':168 是 PRINTW（等待）',
-  );
-  assert.match(
-    erb[254],
-    /^\s*PRINTFORMW 现在的肉便器数量/,
-    ':255 是 PRINTFORMW（等待）',
-  );
-  for (const re of [
-    /era\.print\(\s*`\$\{prelude\}但\$\{chara_callname\(0\)\}依然给/, // :165
-    /era\.print\('被吸收了全部力量的她，身体变成淫靡的肉块了。'\)/, // :166
-    /era\.print\('作为地下城里怪物的慰问品被使用着，'\)/, // :167
-  ]) {
-    assert.match(src, re, `不等待的原作行必须用裸 era.print：${re}`);
-  }
-  assert.match(
-    src,
-    /await era\.printAndWait\('今后别说重新当勇者，就连看一眼阳光也不可能了吧。'\)/,
-    ':168 PRINTW 必须用 printAndWait',
-  );
-  assert.match(
-    src,
-    /await era\.printAndWait\(`现在的肉便器数量：\$\{game\.invasion\.肉便器数\}`\)/,
-    ':255 PRINTFORMW 必须用 printAndWait',
-  );
 });
 
 // —— 五个处刑调用点的实参位置锁（#403 收口；验收反馈实测 execution 与

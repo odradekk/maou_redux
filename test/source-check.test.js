@@ -3,10 +3,6 @@
  * 可达路径）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - **黄金样本比对**：emuera.log 第一次输入 0 之后的结算块（39 点线、源
- *     一览、体力气力条、9 个参数行）逐字节一致——角色状态按样本数值反推
- *     （ABL:0=3/ABL:1=0/顺从 0/欲望 1/侍奉精神 0/露出癖 0、CFLAG:16=-1
- *     初吻未体验、MARK:3=1 反抗刻印、调教者技巧 0），反推依据见 issue #45；
  *   - SOURCE→PALAM 换算的逐环节（调教者技巧档、欲情系数档、欲望档、情爱
  *     双梯、性行动双梯、露出的三路、爱液、不洁）——验收项「此行为有测试」；
  *   - 绝顶（阈值、DOWN 回落、NOWEX 只写不并、绝顶经验）；
@@ -66,64 +62,6 @@ async function run_caress(seed, post) {
   await emit('SOURCE_CHECK');
   return fixture;
 }
-
-// 黄金样本的结算块（emuera.log :30-44——39 点线到反感行）
-const GOLDEN_BLOCK = (() => {
-  const log = fs.readFileSync(
-    path.resolve(__dirname, '..', 'target', 'emuera.log'),
-    'utf8',
-  );
-  return log.split(/\r?\n/).slice(29, 44);
-})();
-
-test('黄金样本比对：第一次爱抚的结算块 15 行逐字节一致（含推断角色状态）', async () => {
-  const fixture = await run_caress((f) => {
-    // 推断的温妮状态（反推依据记在 issue #45）：九个数全部由这套状态复现
-    f.store.set('abl:31:0', 3); // SOURCE:0 = 1200
-    f.store.set('abl:31:1', 0); // SOURCE:17 = 15
-    f.store.set('abl:31:10', 0); // 顺从 0 档
-    f.store.set('abl:31:11', 1); // 欲望 1 档（欲情 +47 的关键）
-    f.store.set('abl:31:13', 0);
-    f.store.set('abl:31:16', 0); // 侍奉精神 0 档（习得 +34）
-    f.store.set('abl:31:17', 0); // 露出癖 0 档
-    f.store.set('cflag:31:16', -1); // 初吻未体验（不洁源清零、情爱 ÷4）
-    f.store.set('mark:31:3', 1); // 反抗刻印 LV1（恭顺 ×0.7 → +1）
-    // 样本的参数面板（上一条指令·振动杖之后的值）
-    f.store.set('palam:31:0', 5240);
-    f.store.set('palam:31:3', 2854);
-    f.store.set('palam:31:4', 6);
-    f.store.set('palam:31:5', 2378);
-    f.store.set('palam:31:6', 100);
-    f.store.set('palam:31:7', 204);
-    f.store.set('palam:31:8', 1654);
-    f.store.set('palam:31:11', 3379);
-    f.store.set('palam:31:13', 24);
-    f.store.set('palam:31:14', 42);
-    f.store.set('ex:31:0', 1); // [阴蒂绝顶：1次] 的计数
-  });
-
-  const texts = fixture.lines
-    .map((l) => (l.type === 'divider' ? '§DIV§' : l.text))
-    .filter((t) => !t.startsWith('（')); // 存根占位行是记名差异，不在比对面
-  const start = texts.indexOf('‥'.repeat(39));
-  assert.ok(start >= 0, '39 点线必须在输出里');
-  const block = texts.slice(start, start + GOLDEN_BLOCK.length);
-  // #577：ere 侧的对齐补位是 U+00A0（引擎合并半角空格），黄金日志是普通
-  // 空格——断言侧把 NBSP 归一回空格（#577 的同款语义）
-  assert.deepEqual(
-    block.map((t) => t.replaceAll('\u00A0', ' ')),
-    GOLDEN_BLOCK,
-  );
-
-  // 结算终态：体力/气力与样本下一帧一致（1445 / 360），delta 已清零
-  assert.equal(fixture.store.get('base:31:0'), 1445);
-  assert.equal(fixture.store.get('base:31:1'), 360);
-  assert.equal(fixture.store.get('delta:31:0'), 0);
-  assert.equal(fixture.store.get('delta:31:5'), 0);
-  // TFLAG:59 = 旧 PREVCOM（12）；TFLAG:50 = 0（主人调教）
-  assert.equal(fixture.store.get('tflag:59'), 12);
-  assert.equal(fixture.store.get('tflag:50'), 0);
-});
 
 // —— SOURCE → PALAM 换算的逐环节（验收项「此行为有测试」） ——
 
@@ -396,10 +334,12 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   assert(
     texts.some(
       (l) =>
-        l.startsWith('阴核') && l.includes('+\u00A0\u00A0\u00A0\u00A0\u00A05'),
-    ), // #577：figure_indent_2(5) 的 NBSP×5
-    '参数变动行（阴核 0+5）',
+        l ===
+        `阴核${'\u00A0'.repeat(5)}0+${'\u00A0'.repeat(5)}5${'\u00A0'.repeat(7)}=${'\u00A0'.repeat(5)}5`,
+    ),
+    '参数变动行（阴核 0+5：算式五段全宽，无 DOWN 段的 7 位补白）',
   );
+  assert(texts.includes('‥'.repeat(39)), '结算块的 39 字点线');
   // 指令按钮是按钮不是死文本（PR #53 通则）
   assert(
     fixture.lines.some(
@@ -410,6 +350,12 @@ test('端到端：输入 0 → 爱抚全链输出 → 回合继续 → 999 退�
   );
   // 上次的调教指令行（PREVCOM 已更新为 0）
   assert(texts.includes('＜上次的调教指令：爱抚＞'));
+  // TFLAG:59（前前回指令）写的是旧 PREVCOM，不是当回 SELECTCOM
+  assert.equal(
+    fixture.store.get('tflag:59'),
+    -1,
+    'TFLAG:59 = 旧 PREVCOM（首轮是 -1，不是当回的 0）',
+  );
   // SELECTCOM/PREVCOM 的写序（flag:10011 一次；10009 两次：-1 → 0）
   const writes = (id) =>
     fixture.var_writes.filter((w) => w.name === id).map((w) => w.value);

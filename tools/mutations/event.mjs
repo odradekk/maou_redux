@@ -204,7 +204,7 @@ export default [
     find: "  era.set('tflag:59', era_flag.prevcom);",
     replace: "  era.set('tflag:59', era_flag.selectcom);",
     tests: ['source-check'],
-    must_mention: '黄金样本',
+    must_mention: 'TFLAG:59 = 旧 PREVCOM',
   },
   {
     desc: 'M53 参数行的缺段空格错一（DOWN 缺段 7 改 8）',
@@ -213,7 +213,7 @@ export default [
     replace:
       '          (d > 0 ? `-${figure_indent_2(d)}${d}` : NBSP.repeat(8)) +',
     tests: ['source-check'],
-    must_mention: '黄金样本',
+    must_mention: '无 DOWN 段的 7 位补白',
   },
   {
     desc: 'M54 PRINTW 点线错一（39 改 38）',
@@ -221,7 +221,7 @@ export default [
     find: "  era.print('‥'.repeat(39));",
     replace: "  era.print('‥'.repeat(38));",
     tests: ['source-check'],
-    must_mention: '黄金样本',
+    must_mention: '结算块的 39 字点线',
   },
   {
     desc: 'M108 村娘加入点漏盖版本戳（init_portcflag 调用删除）',

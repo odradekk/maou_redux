@@ -5,8 +5,7 @@
  *   1. 搬运边界：res/ 的文件清单恰为 img.csv「菜单通用」节的 6 张图 + 三首
  *      BGM——头像素材（243 项）裁定为**不搬运不登记**（依据与裁定过程见
  *      issue #69 评论），精确清单断言让任何混入的头像文件当场红；
- *   2. 复制保真：媒体文件与只读移植源逐字节一致（验收项「不修改内容」的
- *      机械证明）；
+ *   2. 复制保真比对已随只读源删除（res/ 的媒体文件本身保留在仓库）；
  *   3. 引擎接受（test/helpers/engine-bundle.js，app.asar 真代码）：注册表
  *      csv 能被引擎解析器装载、行内文件真实存在；yml/Audio.yml 经引擎装载
  *      后 setVar 接受 audio: 寻址——「名字表在 + 桶在 → 通过」的实测路径。
@@ -29,8 +28,6 @@ const engine_test = engine ? test : test.skip;
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const RES_DIR = path.join(REPO_ROOT, 'res');
-const TARGET_RESOURCES = path.join(REPO_ROOT, 'target', 'resources');
-const TARGET_SOUND = path.join(REPO_ROOT, 'target', 'sound');
 
 // 这张票搬运范围（相对 res/ 的路径）。清单即边界：多一个少一个都红。
 const EXPECTED_FILES = [
@@ -48,21 +45,6 @@ const EXPECTED_FILES = [
   'sound/stronghold-2.mp3',
 ];
 
-// res/ 媒体文件 → 只读源文件的映射（复制保真断言用）
-const SOURCE_OF = {
-  'COVER_WHITE.png': path.join(TARGET_RESOURCES, 'COVER_WHITE.png'),
-  'HEART.png': path.join(TARGET_RESOURCES, 'HEART.png'),
-  'HEART_B.png': path.join(TARGET_RESOURCES, 'HEART_B.png'),
-  'HEART_R.png': path.join(TARGET_RESOURCES, 'HEART_R.png'),
-  'TITLE.png': path.join(TARGET_RESOURCES, 'TITLE.png'),
-  'WHITE_L.png': path.join(TARGET_RESOURCES, 'WHITE_L.png'),
-  'sound/TFM-003A_17.mp3': path.join(TARGET_SOUND, 'TFM-003A_17.mp3'),
-  // 磁盘文件名改 ASCII（AGENTS.md 代码约定），只读源保持原名——
-  // 键是产物路径、值是 target/ 源路径，两侧本就不必同名。
-  'sound/great-library.mp3': path.join(TARGET_SOUND, '大书库.mp3'),
-  'sound/stronghold-2.mp3': path.join(TARGET_SOUND, '据点2.mp3'),
-};
-
 /** 递归收集目录下全部文件的相对路径（posix 风格，排序保证断言稳定） */
 function walk_files(dir, prefix = '') {
   const out = [];
@@ -79,18 +61,6 @@ function walk_files(dir, prefix = '') {
 
 test('res/ 的搬运范围恰为「菜单通用」六图 + 三首 BGM（头像素材不在内）', () => {
   assert.deepEqual(walk_files(RES_DIR), [...EXPECTED_FILES].sort());
-});
-
-test('图片与音频与只读源逐字节一致（不修改内容）', () => {
-  for (const [rel, source] of Object.entries(SOURCE_OF)) {
-    const copied = fs.readFileSync(path.join(RES_DIR, rel));
-    const original = fs.readFileSync(source);
-    assert.deepEqual(
-      copied,
-      original,
-      `${rel} 与源 ${path.relative(REPO_ROOT, source)} 不一致`,
-    );
-  }
 });
 
 test('注册表不含头像素材的繁体注册名（紅綠藍銀——不登记裁定的机械钉子）', () => {

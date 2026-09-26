@@ -1,16 +1,12 @@
 /**
  * EVENT_K.ERB 口上分发表的行为测试（issue #403，N19 段 4）。
  *
- * 源: target/ERB/EVENT/EVENT_K.ERB（522 行，27 个函数、22 条 TRYCALLFORM）。
- * 表本身在 ere/kojo/kojo-system.js 的 EVENT_K_DISPATCH_TABLE（分片在
- * kojo-dungeon-after.js 与 kojo-dungeon-ravish.js），本文件的用例对着它逐条
- * 驱动；表的**完整性**由 test/event-k-dispatch.test.js 的源对照用例守着
- * （从 target/ 扫 TRYCALLFORM 行与表比对，表长草即红）。
+ * 表在 ere/kojo/kojo-system.js 的 EVENT_K_DISPATCH_TABLE（分片在
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一注入点）。覆盖：
  *   - 22 条派发的编号换算（性格素质 160-179 → LOCAL 100-119 → 分发键
  *     LOCAL - 100；EX_TALENT 101-800 → LOCAL 1001-1700 → 键 901-1600）；
- *   - 各入口的守卫集与 TARGET 语义逐条对照原作的 :N（有无 FLAG:7 守卫、
+ *   - 各入口的守卫集与 TARGET 语义逐条驱动（有无 FLAG:7 守卫、
  *     有无存在判定、是否 TARGET = A / B / ARG:0 并还原）；
  *   - 缺席语义：未命中一律静默（原作 TRYCALL 落空；#565 返工统一）——逐条钉住；
  *   - :218 的 KOJO_EVENT_COM 恒空转（全库 0 个 @KOJO_EVENT_COM_* 定义，
@@ -126,21 +122,6 @@ test('@KOJO_EVENT_COM：没有性格素质（LOCAL 0）→ 分发守卫不通过
   assert.equal(await kojo_event_com(), 0);
   assert.deepEqual(seen, []);
   assert.deepEqual(fixture.text_lines(), [], '无目标 = TRYCALL 落空，静默');
-});
-
-test('@KOJO_EVENT_COM：全库 0 个 @KOJO_EVENT_COM_* 定义（#14 恒空转，照原样移植）', () => {
-  const dir = path.join(REPO, 'target', 'ERB', '口上');
-  const defs = [];
-  for (const name of fs.readdirSync(dir)) {
-    if (!name.endsWith('.ERB') && !name.endsWith('.ERH')) {
-      continue;
-    }
-    const src = fs.readFileSync(path.join(dir, name), 'utf8');
-    for (const m of src.matchAll(/^@KOJO_EVENT_COM_\d+/gm)) {
-      defs.push(`${name}${m[0]}`);
-    }
-  }
-  assert.deepEqual(defs, [], '原作缺陷 #14：目标全库 0 个定义，这条恒空转');
 });
 
 // —— @ATTACK_KOUJO_B（:325-337）——
@@ -392,60 +373,6 @@ test('迷宫凌辱两族：无性格编号时静默（TRYCALL 落空）', async 
 
 // —— 22 条分发表（EVENT_K_DISPATCH_TABLE）——
 
-const SOURCE = fs.readFileSync(
-  path.join(REPO, 'target', 'ERB', 'EVENT', 'EVENT_K.ERB'),
-  'utf8',
-);
-
-/**
- * 从原件扫出全部 TRYCALLFORM 行（含注释态）。
- * @returns {{line: number, commented: boolean, dispatch: string}[]}
- */
-function scan_source_trycallform() {
-  const out = [];
-  SOURCE.split('\n').forEach((raw, i) => {
-    const m = raw.match(/^(\s*)(;?)\s*TRYCALLFORM\s+(\S+)/);
-    if (!m) {
-      return;
-    }
-    const dispatch = m[3].split('{')[0]; // 去掉 {LOCAL - 100} 与「, ARG:0」
-    out.push({
-      line: i + 1,
-      commented: m[2] === ';',
-      dispatch,
-    });
-  });
-  return out;
-}
-
-test('源对照：表的 22 行与 EVENT_K.ERB 的 22 处活 TRYCALLFORM 逐行对上', () => {
-  const fixture = create_era_fixture();
-  const { EVENT_K_DISPATCH_TABLE: table } =
-    fixture.load_module('kojo/kojo-system');
-  const scanned = scan_source_trycallform();
-  const active = scanned.filter((r) => !r.commented);
-  const commented = scanned.filter((r) => r.commented);
-
-  assert.equal(active.length, 22, '原件活的分发点恰 22 处');
-  assert.equal(table.length, 22, '表的行数对上');
-  assert.deepEqual(
-    table.map((r) => [r.line, r.dispatch]),
-    active.map((r) => [r.line, r.dispatch]),
-    '行号 + 拼名前缀逐条一致（源改动 / 表长草都红）',
-  );
-  // 注释态的三条是 eraWiz 未使用的入口，不进表（见 kojo-system.js 的表注）
-  assert.equal(commented.length, 3, '注释态分发恰 3 处');
-  assert.deepEqual(
-    commented.map((r) => r.dispatch),
-    [
-      'MESSAGE_COM_ASSI_',
-      'KOJO_MESSAGE_COM_ASSI_',
-      'KOJO_MESSAGE_PLAYERCHANGE_',
-    ],
-    '三条注释态分发的名字（对照 @KOJO_MESSAGE_COM_MASTER/_ASSI/PLAYERCHANGE）',
-  );
-});
-
 /** 读分发表（独立夹具加载一次；表是纯数据，后续夹具重建不影响它）。 */
 function table_rows() {
   return create_era_fixture().load_module('kojo/kojo-system')
@@ -535,43 +462,6 @@ test('22 行逐条驱动：注册 handler 后按 LOCAL-100 命中，实参形状
       row.entry === 'gobi_koujo' ? '' : 0,
       // #570：gobi_koujo 转交真身返回值并归一为字符串（mock 返回 0 → 空串）；
       // 其余入口契约仍是 0（TRYCALLFORM 不读）
-      `${row.entry}：返回值`,
-    );
-  }
-});
-
-test('存在判定与源一致：原件同段有 `SIF FLAG:LOCAL == 0` 的入口在两道标志都关时静默', async () => {
-  const lines = SOURCE.split('\n').map((l) => l.replace(/\r$/, ''));
-  for (const row of table_rows()) {
-    const header = `@${row.erb}`;
-    const start = lines.findIndex(
-      (line) => line === header || line.startsWith(`${header},`),
-    );
-    const slice = lines.slice(start, row.line).join('\n');
-    // 只认没被注释掉的那行（MARKCNG 的存在判定在原作是 `;SIF` 注释态）
-    const has_check = /^SIF FLAG:LOCAL == 0/m.test(slice);
-
-    const { seen, result } = await drive_row(row, {
-      seed: (fixture0, cid) => {
-        fixture0.store.set(`talent:${cid}:163`, 1); // 性格在、存在标志不置
-      },
-    });
-    if (has_check) {
-      assert.deepEqual(
-        seen,
-        [],
-        `${row.entry}：FLAG:LOCAL == 0 && EX_FLAG == 0 → 存在判定早退`,
-      );
-    } else {
-      assert.equal(
-        seen.length,
-        1,
-        `${row.entry}：原件同段没有存在判定 → 照常派发`,
-      );
-    }
-    assert.equal(
-      result,
-      row.entry === 'gobi_koujo' ? '' : 0, // #570：语尾未命中返回空串
       `${row.entry}：返回值`,
     );
   }
@@ -671,25 +561,6 @@ test('FLAG:7 = 0（口上总开关关）：flag_guard 行不派发，其余行�
         `${row.entry}：原件同段没有 FLAG:7 守卫 → 关掉也照常派发`,
       );
     }
-  }
-});
-
-test('守卫集与源一致：表的 flag_guard 与原件各入口函数体段里的 FLAG:7 逐条对上', () => {
-  const lines = SOURCE.split('\n').map((l) => l.replace(/\r$/, ''));
-  for (const row of table_rows()) {
-    const header = `@${row.erb}`;
-    const start = lines.findIndex(
-      (line) => line === header || line.startsWith(`${header},`),
-    );
-    assert.ok(start >= 0, `原件有 @${row.erb} 定义（entry=${row.entry}）`);
-    const slice = lines.slice(start, row.line).join('\n');
-    assert.equal(
-      /FLAG:7/.test(slice),
-      row.flag_guard,
-      `${row.entry}：表说 flag_guard=${row.flag_guard}，原件同段${
-        /FLAG:7/.test(slice) ? '有' : '没有'
-      } FLAG:7`,
-    );
   }
 });
 

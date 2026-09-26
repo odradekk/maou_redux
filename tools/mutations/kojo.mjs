@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2701; // #640 -8（M447 转译器 1 条 + 保真锁专属守卫 5 条：M11772/M11773/M11947/M12137/M12138 + M75/M76 删条目不补）；M78/M80/M81/M1774/M11419/M12131/M12139 改挂行为测试 #641 净 -2（M3329/M8946/M8959 随清单核对与锚名机制移除，+1 M12907 try_kojo 守卫）；// 原沿革见 git 历史
+export const COUNT = 2696; // #643 -5（+M67：K3 随机尾中支整句只由黄金样本逐字守）（M8967/M8968/M8974/M8975：分发表 line/erb/拼名/行数只由源对照守）；#640 -8（M447 转译器 1 条 + 保真锁专属守卫 5 条：M11772/M11773/M11947/M12137/M12138 + M75/M76 删条目不补）；M78/M80/M81/M1774/M11419/M12131/M12139 改挂行为测试 #641 净 -2（M3329/M8946/M8959 随清单核对与锚名机制移除，+1 M12907 try_kojo 守卫）；// 原沿革见 git 历史
 
 export default [
   {
@@ -94,22 +94,16 @@ export default [
     must_mention: '阈值闸',
   },
   {
-    desc: 'M66 K3 黄金分支条件（RAND:2 == 0 改 == 1）',
+    desc: 'M66 K3 随机尾中支条件（RAND:2 == 0 改 == 1——中/第三支互换）',
     file: 'ere/kojo/kojo-k3-noble.js',
     find: '        } else if (rand_n(2) === 0) {\n          await era.printAndWait(\n            `「哈呜、${target_name}、可是，一心地，想要杀了…嗯、为什么、那么地……啊~、这么…温柔地…啊、啊啊……」`,',
     replace:
       '        } else if (rand_n(2) === 1) {\n          await era.printAndWait(\n            `「哈呜、${target_name}、可是，一心地，想要杀了…嗯、为什么、那么地……啊~、这么…温柔地…啊、啊啊……」`,',
     tests: ['kojo-k3-noble'],
-    must_mention: '黄金样本',
+    must_mention: '随机尾的第三支',
   },
-  {
-    desc: 'M67 K3 黄金文本逐字（「想要杀了」改「想杀了」）',
-    file: 'ere/kojo/kojo-k3-noble.js',
-    find: '一心地，想要杀了',
-    replace: '一心地，想杀了',
-    tests: ['kojo-k3-noble'],
-    must_mention: '黄金样本',
-  },
+  // M67：删除（#643）——K3 随机尾中支的整句文本此前只由黄金样本逐字比对守住，
+  // 比对删除后该句无行为断言可挂（R1 的 M75/M76 同款处置）。
   {
     desc: 'M68 K3 淫乱阶段推进写错（CFLAG:301 = 600 改 500）',
     file: 'ere/kojo/kojo-k3-noble.js',
@@ -210,7 +204,7 @@ export default [
     find: 'async function orc_ryou_man(arg, mon_num, rand) {',
     replace: 'async function orc_ryou(arg, mon_num, rand) {',
     tests: ['kojo-dungeon-ravish-man'],
-    must_mention: '同名函数断言',
+    must_mention: '11 种怪物分派',
   },
   {
     // #183：%SAVESTR:ARG% 插值承载改坏（arg_name 变固定串）。保真锁 D 只
@@ -20914,24 +20908,9 @@ on('EVENTEND', eventend_kojo_903);`,
     tests: ['event-k-dispatch'],
     must_mention: '冻结的单参 cid',
   },
-  {
-    desc: 'M8967 分发表：KOJO_MESSAGE_COM 行号漂一格（源对照失守）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `    line: 161,
-    dispatch: 'KOJO_MESSAGE_COM_',`,
-    replace: `    line: 162,
-    dispatch: 'KOJO_MESSAGE_COM_',`,
-    tests: ['event-k-dispatch'],
-    must_mention: '行号 + 拼名前缀逐条一致',
-  },
-  {
-    desc: 'M8968 分发表：SELF_KOJO 拼名前缀写错（SELF_JOJO_K）',
-    file: 'ere/kojo/kojo-system.js',
-    find: "    dispatch: 'SELF_KOJO_K',",
-    replace: "    dispatch: 'SELF_JOJO_K',",
-    tests: ['event-k-dispatch'],
-    must_mention: '行号 + 拼名前缀逐条一致',
-  },
+  // M8967/M8968：删除（#643）——分发表的 line/erb 与拼名前缀只对照只读源消费，
+  // 源对照用例删除后无行为面；dispatch 拼名错被 kojo-register-coverage 的注册
+  // 实参反推掩盖，同样无人可守。
   {
     desc: 'M8969 分发表：DUNGEON_ATTACK 行族错填（victory 族）',
     file: 'ere/kojo/kojo-system.js',
@@ -20997,33 +20976,8 @@ on('EVENTEND', eventend_kojo_903);`,
     tests: ['event-k-dispatch'],
     must_mention: '有 FLAG:7 守卫',
   },
-  {
-    desc: 'M8974 分发表：OSIOKI 行的原作函数名错拼（OSIOSKI_KOUJO）',
-    file: 'ere/kojo/kojo-system.js',
-    find: "    erb: 'OSIOKI_KOUJO',",
-    replace: "    erb: 'OSIOSKI_KOUJO',",
-    tests: ['event-k-dispatch'],
-    must_mention: '原件有 @OSIOSKI_KOUJO 定义',
-  },
-  {
-    desc: 'M8975 分发表：行数与源不符（删掉 GOBI 一行）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `  {
-    line: 520,
-    dispatch: 'GOBI_KOUJO_K',
-    entry: 'gobi_koujo',
-    erb: 'GOBI_KOUJO',
-    module: 'kojo/kojo-system',
-    family: 'gobi_koujo_family',
-    flag_guard: false,
-    call: ['arg0', 'rand'],
-    handler: ['arg0', 'rand'],
-  },
-];`,
-    replace: `];`,
-    tests: ['event-k-dispatch'],
-    must_mention: '表的行数对上',
-  },
+  // M8974/M8975：删除（#643）——erb 字段与「表行数对上」都只由源对照用例守，
+  // 行为面（入口函数、逐行驱动）不随行数变化。
   {
     desc: 'M8976 kojo-system 重新引入第二份 GOHOUBI_REQUEST_KOUJO 族（同名两实例）',
     file: 'ere/kojo/kojo-system.js',

@@ -5,8 +5,7 @@
  * 缝 = test/helpers/era-fixture.js（分发表与映射是纯数据/纯逻辑，夹具只为
  * require '#/' 别名与可寻址的表）。覆盖四块：
  *   1. 121 段分发表契约：DECLARED_COM_IDS / DECLARED_TRAIN_IDS /
- *      ADVANCED_COM_IDS 对 target/ 源（COMF*.ERB 的 @COM 定义 ∪ Train.csv
- *      有效行）逐号锁定——**缺号当场红**（验收项「分发表完整，缺号显式
+ *      ADVANCED_COM_IDS 的精确清单与两空间的包含关系（缺号显式报错
  *      报错而非静默回落」的数据面；行为面是空间外 call/register 抛错）；
  *   2. L_IDX ↔ L_I 映射层（com-index.js）：双向、黄金样本实证对（穿脱
  *      衣服 110 ↔ 89）、由 TrainCommand.yml 条目顺序推出的独立通道核对、
@@ -17,8 +16,6 @@
  *      空间外显式抛错；
  *   4. @V_ABLE（v-able.js）六条判定 + TRAIN_MESSAGE 分发族的缺号语义。
  *
- * 源读取按内容判定编码：target/ 有一个 Shift-JIS 活代码文件
- * （COMF90_ニプルファック.ERB，内含 @COM90——恰好是 121 段之一）。
  */
 
 const assert = require('node:assert/strict');
@@ -31,76 +28,7 @@ const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
 
 const REPO = path.resolve(__dirname, '..');
 
-/** 按内容判定编码读源文件（utf-8 优先，Shift-JIS 回落；AGENTS.md 的规约） */
-function read_source_text(file) {
-  const raw = fs.readFileSync(file);
-  for (const label of ['utf-8', 'shift_jis']) {
-    try {
-      return new TextDecoder(label, { fatal: true }).decode(raw);
-    } catch {
-      // 试下一种编码
-    }
-  }
-  throw new Error(`无法解码源文件：${file}`);
-}
-
-/** target/ERB/調教相關/COMF*.ERB 的 @COM<n> 定义全集（剥离 CR，防 CRLF） */
-function source_com_ids() {
-  const ids = new Set();
-  const dir = path.join(REPO, 'target', 'ERB', '調教相關');
-  for (const file of fs.readdirSync(dir)) {
-    if (!file.startsWith('COMF') || !file.endsWith('.ERB')) {
-      continue;
-    }
-    for (const m of read_source_text(path.join(dir, file)).matchAll(
-      /^@COM(\d+)\r?$/gm,
-    )) {
-      ids.add(Number(m[1]));
-    }
-  }
-  return ids;
-}
-
-/** target/CSV/Train.csv 的有效指令号（注释行 ;n,... 不算） */
-function source_train_csv_ids() {
-  const ids = new Set();
-  for (const line of read_source_text(
-    path.join(REPO, 'target', 'CSV', 'Train.csv'),
-  ).split(/\r?\n/)) {
-    const first = line.split(',')[0].trim();
-    if (/^\d+$/.test(first)) {
-      ids.add(Number(first));
-    }
-  }
-  return ids;
-}
-
 // —— 1. 121 段分发表契约 ——
-
-test('121 段分发表：DECLARED_COM_IDS = @COM 定义全集 ∪ Train.csv（缺号当场红）', async () => {
-  const fixture = create_era_fixture();
-  const { DECLARED_COM_IDS, DECLARED_TRAIN_IDS } = fixture.load_module(
-    'system/train/com-family',
-  );
-
-  const com_ids = source_com_ids();
-  const csv_ids = source_train_csv_ids();
-  assert.equal(com_ids.size, 121, '源侧 @COM 定义应为 121 个（含 SJIS 的 90）');
-  assert.equal(csv_ids.size, 101, '源侧 Train.csv 有效指令应为 101 个');
-
-  // 可直选空间 = Train.csv；分发空间 = 并集 121；两者精确锁定
-  assert.deepEqual(
-    DECLARED_TRAIN_IDS,
-    [...csv_ids].sort((a, b) => a - b),
-    'DECLARED_TRAIN_IDS 必须逐号等于 Train.csv 有效行（升序）',
-  );
-  assert.deepEqual(
-    DECLARED_COM_IDS,
-    [...new Set([...com_ids, ...csv_ids])].sort((a, b) => a - b),
-    'DECLARED_COM_IDS 必须逐号等于 @COM 定义 ∪ Train.csv',
-  );
-  assert.equal(DECLARED_COM_IDS.length, 121);
-});
 
 test('高级 COM 20 个的精确清单：有实现、不可直选（Train.csv 注释段）', async () => {
   const fixture = create_era_fixture();

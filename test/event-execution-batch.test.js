@@ -23,8 +23,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -1162,63 +1160,6 @@ test('列表行的等级带冒号（原作 :34 的 LV:{CFLAG:COUNT:9}）', async
     row.text,
     /LV:4$/,
     '等级前缀是「LV:」——page-select-target 没有冒号是它自己原文如此，不是先例',
-  );
-});
-
-test('方法 4 正文的等待后缀与原作一致（W 才等；夹具观测不到，按源文锁）', async () => {
-  // 夹具的 printAndWait 内部等待不入 waits（test/fixture.test.js 的既定裁定），
-  // W/L 之别在行为层不可观测——按「源行后缀 ↔ JS 调用」的配对取法，
-  // 按「ERB 行后缀 ↔ JS 调用」逐条核对
-  const batch_src = fs.readFileSync(
-    path.resolve(__dirname, '..', 'ere', 'event', 'event-execution-batch.js'),
-    'utf8',
-  );
-  const erb = fs
-    .readFileSync(
-      path.resolve(
-        __dirname,
-        '..',
-        'target',
-        'ERB',
-        '魔改新增',
-        '處刑改寫.ERB',
-      ),
-      'utf8',
-    )
-    .split(/\r?\n/);
-  // 原作：:206 PRINTFORM / :207-208 PRINTFORML / :209 PRINTL 都不等待，
-  // :210 PRINTW 等待；:299 PRINTFORMW 等待
-  assert.match(
-    erb[205],
-    /^\s*PRINTFORM 深爱着你的/,
-    ':206 是 PRINTFORM（不等待）',
-  );
-  assert.match(
-    erb[209],
-    /^\s*PRINTW 今后别说重新当勇者/,
-    ':210 是 PRINTW（等待）',
-  );
-  assert.match(
-    erb[298],
-    /^\s*PRINTFORMW 现在的肉便器数量/,
-    ':299 是 PRINTFORMW（等待）',
-  );
-  for (const re of [
-    /era\.print\(\s*`\$\{prelude\}但\$\{chara_callname\(0\)\}依然给/, // :206-207
-    /era\.print\(\s*`被吸收了全部力量的\$\{she\(cid\)\}，身体变成淫靡的肉块了。`/, // :208
-    /era\.print\('作为地下城里怪物的慰问品被使用着，'\)/, // :209
-  ]) {
-    assert.match(batch_src, re, `不等待的原作行必须用裸 era.print：${re}`);
-  }
-  assert.match(
-    batch_src,
-    /await era\.printAndWait\('今后别说重新当勇者，就连看一眼阳光也不可能了吧。'\)/,
-    ':210 PRINTW 必须用 printAndWait',
-  );
-  assert.match(
-    batch_src,
-    /await era\.printAndWait\(`现在的肉便器数量：\$\{game\.invasion\.肉便器数\}`\)/,
-    ':299 PRINTFORMW 必须用 printAndWait',
   );
 });
 
