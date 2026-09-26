@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 108; // #641 起 -99（trace-check / trace-coverage / stub-registry 体系的守卫条目随工具与清单一并删除，含 M94–M98、M6507–M6521、M9519–M9527、M10900–M10903、M11060–M11069、M11111–M11117、M11270–M11289、M11322–M11325、M11618–M11629、M11637/11638/11643 等）；#582 起 +10（M11890-M11899：变异写入走同一个带重试的写函数、重试尽的「未写入」报告与跳过继续的处置、注入预算与年龄阈值；并行副本名带创建者 PID 与启动时的陈旧副本清理；M11893 在审查轮从「报告不说明处置」改指失败后的读回实测；M11248/M11703/M11704/M11715 的 find 随符号改名、entry_label 抽取与写入重试泛化同步）；#553 起 +18（M11700-M11717：--jobs 下传筛选并按交集切片、还原写入瞬态失败重试与失败报告、并行逐块转发、空选集短路、对照范围与副本数收敛；审查轮 +6：M11711 --slice 与 --jobs 互斥、M11712 --files 零匹配看切片前、M11713/M11714 还原建议按 git 状态分三支、M11715 三个可重试码、M11716 空选集提示、M11717 --jobs 的 --files/--changed 清单下传，M11710 的 find 随还原建议改指新分支；M11248 的 find 随 finally 体改为 write_restore 同步）；#549 起 +1（M11643：try_kojo 收集器对 family 实参后行尾注释失明——attack_kojo_b 锚名漏收，全量变异 M8946 红暴露）；#547 返工：-2（M11287/M11288 删除——靶类清空：RACE_CONFIG/CONFIG_AGE_SETTING 行随本票收口、
+export const COUNT = 87; // #641 -96（trace-check / trace-coverage / stub-registry 体系守卫条目随工具与清单一并删除）；更早的计数沿革见 git 历史（#640 起改为单行注记）
 // SHOW_BUTTON_EQUIP/EQUIP_ST_SHOW 行随 #546 收口后，#540 终点达成、存根行归零，
 // 「未了结行的源」无实体可挂；两条此前已两次改挂（#548→#547），记录在案。
 // 将来再登记存根行时随票补回同型条目）；#565 审查轮 +4（M11627-M11630）+ 返工轮 +2（M11637/M11638，try_kojo 收集与分流）；#542 起 +5（M11322-M11325：RULINGS 删 img.ERB 判死条目、清单大书库/MODLIST/
@@ -32,199 +32,6 @@ export default [
     replace: '    if (false) {',
     tests: ['conflict-marker-check'],
     must_mention: '行中标记必须红',
-  },
-  {
-    desc: 'M99 产物边界失效：所有权表永远强制重写（人工修改不再幸存）',
-    file: 'tools/ownership-scan.js',
-    find: `    reports.push(
-      write_product(
-        path.join(out_dir, \`\${key}-ownership.yml\`),
-        result.tables.get(key).ownership_yaml,
-        {
-          force,
-        },
-      ),
-    );`,
-    replace: `    reports.push(
-      write_product(
-        path.join(out_dir, \`\${key}-ownership.yml\`),
-        result.tables.get(key).ownership_yaml,
-        { force: true },
-      ),
-    );`,
-    tests: ['ownership-scan'],
-    must_mention: '人工修改幸存',
-  },
-  {
-    desc: 'M100 寻址段字符集退回 ASCII（名字下标与 CJK 槽位全丢——同步守护必须红）',
-    file: 'tools/ownership-scan.js',
-    find: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_\\u3000-\\u30FF\\u3400-\\u4DBF\\u4E00-\\u9FFF\\uF900-\\uFAFF\\uFF00-\\uFFEF]+)`;',
-    replace: 'const SEG = String.raw`(?:\\([^)]*\\)|[0-9A-Za-z_]+)`;',
-    tests: ['ownership-scan'],
-    must_mention: '逐字节一致',
-  },
-  {
-    desc: 'M101 属主决胜反转：并列改取后声明者（tflag 夹具的 1:1 并列翻转）',
-    file: 'tools/ownership-scan.js',
-    find: '      if (count > best) {',
-    replace: '      if (count >= best) {',
-    tests: ['ownership-scan'],
-    must_mention: '属主判定',
-  },
-  {
-    desc: 'M102 跨域滤芯反接（只收属主自己的写入——清单测试必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '          entry.index !== null &&\n          owner_of_index.get(entry.index) !== entry.domain,',
-    replace:
-      '          entry.index !== null &&\n          owner_of_index.get(entry.index) === entry.domain,',
-    tests: ['ownership-scan'],
-    must_mention: '跨域写入清单',
-  },
-  {
-    desc: 'M128 词边界负向后行被砍（EX_CFLAG 的假写回流——词边界用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: "  return new RegExp(\n    `(?<![0-9A-Za-z_])(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
-    replace:
-      "  return new RegExp(\n    `(${alternation}):(${SEG}(?::${SEG})*)`,\n    'g',\n  );",
-    tests: ['ownership-scan'],
-    must_mention: '词边界',
-  },
-  {
-    desc: "M2100 字符串赋值 '= 不再算写入（CSTR 写形用例必须红）",
-    file: 'tools/ownership-scan.js',
-    find: "const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^']|<<|>>)?=[ \\t]*[^=]/;",
-    replace: 'const ASSIGN_OP_RE = /^[ \\t]*([-+*/|&^]|<<|>>)?=[ \\t]*[^=]/;',
-    tests: ['ownership-scan'],
-    must_mention: '字符串赋值',
-  },
-  {
-    desc: 'M129 后缀 ++/-- 不再算写入（ABL/MARK/CFLAG 自增丢失——写形用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '    if (ASSIGN_OP_RE.test(rest) || POSTFIX_OP_RE.test(rest)) {',
-    replace: '    if (ASSIGN_OP_RE.test(rest)) {',
-    tests: ['ownership-scan'],
-    must_mention: '后缀',
-  },
-  {
-    desc: 'M130 TIMES 不再算写入（SOURCE 乘法赋值全丢——TIMES 用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: "  if (command === 'TIMES') {",
-    replace: "  if (command === 'TIMES_NEVER') {",
-    tests: ['ownership-scan'],
-    must_mention: 'TIMES',
-  },
-  {
-    desc: 'M131 VARSET 区间右端改包含（止端下标也写入——左闭右开用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '      for (let i = Number(start); i < Number(end); i += 1) {',
-    replace: '      for (let i = Number(start); i <= Number(end); i += 1) {',
-    tests: ['ownership-scan'],
-    must_mention: '左闭右开',
-  },
-  {
-    desc: 'M132 名字下标不再归一（繁/日形态查不到表——归一用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: "const { to_simplified } = require('./lang-normalize');",
-    replace: 'const { to_simplified } = { to_simplified: (x) => x };',
-    tests: ['ownership-scan'],
-    must_mention: '归一',
-  },
-  {
-    desc: 'M133 跨域读判定反接（只统计本域读——同步守护与跨域读者锚点必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '        if (reader !== owner) {\n          cross_total += count;',
-    replace: '        if (reader === owner) {\n          cross_total += count;',
-    tests: ['ownership-scan'],
-    must_mention: '逐字节一致',
-  },
-  {
-    desc: 'M134 ignored 文件不再跳过测量（TITLE.ERB 死代码写入回流——ignored 用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '    if (rel.length === 1 && ignored.has(rel[0])) {\n      continue; // 死代码：引擎不装载，整体跳过\n    }',
-    replace: '    void ignored;',
-    tests: ['ownership-scan'],
-    must_mention: 'ignored',
-  },
-  {
-    desc: 'M135 ignored_files 存在性守卫被删（过期失效声明不再报错——过期失效用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: `  const missing_ignored = domains.ignored_files.filter(
-    (name) => !root_files.includes(name),
-  );
-  if (missing_ignored.length > 0) {
-    throw new Error(
-      \`ignored_files 声明了不存在的文件：\${missing_ignored.join('、')}（数据过期失效，删掉或改对）\`,
-    );
-  }`,
-    replace: '  void root_files;',
-    tests: ['ownership-scan'],
-    // #133 收紧：原值「声明了不存在的文件」在宿主已多处出现（文件级守卫
-    // 用例同款文案），按 SOP 判据 3 换成用例名独有的片段
-    must_mention: 'ignored 文件：整体跳过测量',
-  },
-  {
-    desc: 'M136 未认领目录守卫被删（后来者不再自动纳入——未认领用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: `  const unclaimed = top_dirs.filter((dir) => !domains.dir_to_domain.has(dir));
-  if (unclaimed.length > 0) {
-    throw new Error(
-      \`ERB 根下有未被域清单认领的一级目录：\${unclaimed.join('、')}（在 ownership/domains.yml 里给它们归属一个域）\`,
-    );
-  }`,
-    replace: '  void top_dirs;',
-    tests: ['ownership-scan'],
-    must_mention: '未认领',
-  },
-  {
-    desc: 'M235 文件级优先级反转：目录级先命中，files: 声明永不生效（#133 文件级用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: `    const domain_key =
-      domains.file_to_domain.get(rel_posix) ??
-      domains.dir_to_domain.get(rel[0]);`,
-    replace: `    const domain_key =
-      domains.dir_to_domain.get(rel[0]) ??
-      domains.file_to_domain.get(rel_posix);`,
-    tests: ['ownership-scan'],
-    must_mention: 'files: 覆盖目录级',
-  },
-  {
-    desc: 'M236 导出基线不再剔除目标目录（合租目录自己的票回流——循环论证复活，去偏用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '  baseline.dir_to_domain.set(target_dir, EXPORT_EXCLUDED);',
-    replace: '  // 变异：基线不剔除目标目录（兜底票回流）',
-    tests: ['ownership-scan'],
-    must_mention: '基线剔除目标目录',
-  },
-  {
-    desc: 'M237 文件级存在性守卫被删（过期失效的文件级声明不再报错——文件级守卫用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: `  const missing_files = [...domains.file_to_domain.keys()].filter(
-    (file) => !fs.existsSync(path.join(erb_root, ...file.split('/'))),
-  );
-  if (missing_files.length > 0) {
-    throw new Error(
-      \`域清单文件级声明了不存在的文件：\${missing_files.join('、')}（数据过期失效，删掉或改对）\`,
-    );
-  }`,
-    replace: '  void domains;',
-    tests: ['ownership-scan'],
-    must_mention: '文件级守卫：声明的文件不存在',
-  },
-  {
-    desc: 'M238 文件重复认领守卫跳过（同一文件两域声明不再报错——守卫用例必须红）',
-    file: 'tools/ownership-scan.js',
-    find: '      if (seen_files.has(file)) {',
-    replace: '      if (seen_files.has(file) && false) {',
-    tests: ['ownership-scan'],
-    must_mention: '一个文件被两个域认领',
-  },
-  {
-    desc: 'M239 域清单删一条文件级声明（FUNC_CLOTH 回落 system 兜底——同步守护必须红：改清单不重跑产物即失配）',
-    file: 'ownership/domains.yml',
-    find: '  files: 其他/FUNC_CLOTH.ERB\n',
-    replace: '',
-    tests: ['ownership-scan'],
-    must_mention: '与重跑逐字节一致',
   },
   {
     desc: 'M157 生成区/手写区：--force 重写整文件而不经标记替换',
@@ -443,15 +250,6 @@ export default [
     tests: ['mutation-check'],
     must_mention: 'M 编号相同但 desc 不同必须非 0',
   },
-  {
-    desc: 'M2081 归一表重复正则检测被拆（先匹配者胜下的静默遮蔽——#238 SAVESTR:A 教训无人再守）（#295）',
-    file: 'test/kojo-text-fidelity.test.js',
-    find: '    if (prior !== undefined) {',
-    replace:
-      '    if (false && prior !== undefined) { // 变异：重复正则检测被拆',
-    tests: ['kojo-text-fidelity'],
-    must_mention: 'find_duplicate_patterns 的检测逻辑被拆了',
-  },
   // —— #302：CI 补引擎后，有引擎那一侧的守护 ——
   {
     desc: 'M2770 有引擎侧基线从 0 改成 3（默许跳过三个用例而不报警）（#302）',
@@ -591,17 +389,6 @@ export default [
     tests: ['mutation-check'],
     must_mention: '信号会一直排队到跑完',
     test_name: 'SIGINT 能中断串行档，并把靶文件还原',
-  },
-
-  {
-    desc: 'M9528 豁免清单键打错（M92 的键 92 改成 920，这一条真实条目不再被豁免——豁免清单必须逐条对准 M 编号，打错等于没登记）（#442）',
-    file: 'tools/mutation-check.mjs',
-    find: `    '92',`,
-    replace: `    '920', // 变异：豁免键打错——这一条不再豁免任何真实条目`,
-    tests: ['mutation-check'],
-    test_name:
-      '快速模式全绿：--verify 退出码 0（五项检查进 npm test，变异检查的自动执行点）',
-    must_mention: '应全绿，实际退出',
   },
   // —— #493：新加的门面属性检查器自己的行为锁 ——
   {

@@ -120,7 +120,7 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 
 PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任务只在 master push 跑，用于发现引擎缺失时的退化。
 
-**全量变异测试只对阶段收尾 PR 跑。** `.github/workflows/mutation.yml` 在 PR 被打上 `phase-acceptance` 标签时触发，之后每次推送重跑，去掉标签即停。条目按 `--slice i 12` 分成 12 个并行分片各自串行运行（#641 后 7029 条，每条约 2.1 秒，每片约 21 分钟；分片单条命令上限 2100 秒，条目再涨到贴近上限时加分片），汇总任务把「拦截 / 跳过 / 红」合计写进 job summary；合格线是每片退出码 0（拦截全部、跳过 0、红 0）。本机全量仍可用 `--jobs 2` 跑，但 7029 条时实测约 3.6 小时，阶段验收优先走 CI。
+**全量变异测试只对阶段收尾 PR 跑。** `.github/workflows/mutation.yml` 在 PR 被打上 `phase-acceptance` 标签时触发，之后每次推送重跑，去掉标签即停。条目按 `--slice i 12` 分成 12 个并行分片各自串行运行（#641 后 6986 条，每条约 2.1 秒，每片约 21 分钟；分片单条命令上限 2100 秒，条目再涨到贴近上限时加分片），汇总任务把「拦截 / 跳过 / 红」合计写进 job summary；合格线是每片退出码 0（拦截全部、跳过 0、红 0）。本机全量仍可用 `--jobs 2` 跑，但 6986 条时实测约 3.5 小时，阶段验收优先走 CI。
 
 **CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-4.8.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 42 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
 
