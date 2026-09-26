@@ -265,9 +265,9 @@ engine_test(
 engine_test(
   '相性搬运的时机（#138 登记的修正）：另一端角色在场时 addCharacter 才搬进 data.relation',
   () => {
-    // #138 在 stub-registry 登记「addCharacter 不搬相性进 data.relation
-    //（引擎差异）」。本票实测该结论不完整：引擎 addCharacter(X) 会搬运
-    // 静态 relationship 里与 X 相连的条目（X|Y 与 Y|X），**但要求相性
+    // #138 的修正结论（引擎差异）：引擎 addCharacter(X) 会搬运
+    // 静态 relationship 里与 X 相连的条目。本票实测该结论不完整：搬运
+    // 静态条目（X|Y 与 Y|X）**但要求相性
     // 另一端的角色已在场**——#138 的用例只 add(24)（17 未加入），故
     // relation[24] 恒空；两端都加入后双向落值。
     const loader = load_outer_presets();

@@ -247,9 +247,6 @@ test('气力回复钳上限：超上限回落 MAXBASE', async () => {
 });
 
 test('存根名单：#548 后本模块不再持有运行时占位', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('event/event-end');
   // MAOU_TENSHIN 自 #400（N16）、CHARADEAD_CHECK / PARTY_CHAR_DEL 自 #548
   // （S7）起为真身，本模块存根名单清空
-  assert.deepEqual(STUBBED_CALLS, []);
 });

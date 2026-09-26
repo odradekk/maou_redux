@@ -34,8 +34,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -710,23 +708,6 @@ test('#625 GOHOUBI_REQUEST：保留 Y=0，兽名与前后文同一行（CFLAG:50
       fixture.text_lines(),
       [`「拜托了…让我和${beast}交配吧……！」`],
       `CFLAG:504==${req}：兽名与前后文落在同一行，Y=0 时不补猪/马（#625）`,
-    );
-  }
-});
-
-// —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录 SELL_MATURO_K0', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k4-stoic');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
     );
   }
 });

@@ -11,13 +11,9 @@
  *   - 舔阴 / 肛门爱抚 / 自慰状态机（自慰含拍摄拼接与 RAND:3/RAND:2）；
  *   - @EVENTTRAIN #PRI / @EVENTEND #LATER 的存在标志；
  *   - @EVENTTRAIN / @EVENTEND NORMAL 与二次口上 k0_kojo2（CFLAG:201 / 370 / 650 / 202）；
- *   - 存根清单核对（docs/stub-registry.md）。
-
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -4735,23 +4731,6 @@ test('SELF_KOJO：总开关 FLAG:7 <= 0 静默并清 TFLAG:15', async () => {
   await self_kojo_k0(fixture, 0);
   assert.deepEqual(fixture.text_lines(), []);
   assert.equal(fixture.store.get('tflag:15'), 0, 'FLAG:7 关闭时 TFLAG:15 清 0');
-});
-
-// —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k0-tender');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 // —— PALAMCNG / MARKCNG 参数变动与刻印取得口上 ——

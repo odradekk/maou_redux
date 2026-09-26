@@ -19,8 +19,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -1190,39 +1188,4 @@ test('#597：瞬移/催情气体的收尾 PRINTL 只在对应分支里是真空�
   gas.store.set('talent:1:60', 1);
   await load(gas).love_gas_trap(1, seq(5));
   assert_blank_after(gas, '阴核点数+10', '催情气体（TALENT:60）');
-});
-
-// —— 存根清单核对（dungeon-battle.test.js 同款）——
-
-test('本文件无运行时存根：STUBBED_CALLS 已空，且四行在 docs/stub-registry.md 记为已实现', () => {
-  const fixture = create_era_fixture();
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  const names = load(fixture).STUBBED_CALLS;
-  // #500 起四个 _AUTO 变体接真身、#469 起 CAMPAIGN_TRAP 是族真身，名单
-  // 清算空。空名单不等于不核对：下面的循环型契约（每个名字都能在清单里
-  // 查到）在空名单上恒真，故按 com-tentacle.test.js 的先例改断言空集，
-  // 另按 tools/trace-coverage.mjs 的同一判据逐行查状态格——只看「名字
-  // 出现过」抓不住「状态列仍写存根」，那样测试照样绿
-  assert.deepEqual(names, [], '名单应已清空');
-  for (const name of ['COM0_AUTO', 'COM3_AUTO', 'COM13_AUTO', 'COM50_AUTO']) {
-    const row = registry
-      .split('\n')
-      .find(
-        (line) =>
-          line.startsWith(`|\`${name}\``) || line.startsWith(`| \`${name}\``),
-      );
-    assert.ok(row, `存根清单缺少 ${name}`);
-    const status = row
-      .split('|')
-      .map((c) => c.trim())
-      .filter(Boolean)
-      .pop();
-    assert.ok(
-      status.startsWith('已实现'),
-      `${name} 的状态格应为「已实现…」，实际「${status}」`,
-    );
-  }
 });

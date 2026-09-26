@@ -400,22 +400,3 @@ test('MONSTER_PLAY 保留自由输入：未显示但有库存的编号仍可进�
     '22 不是野狗快捷键 900',
   );
 });
-
-test('三处旧调用方均已清除 MONSTER_PLAY / MONSTER_SETUP 存根登记', () => {
-  const fixture = setup();
-  assert(
-    !fixture
-      .load_module('page/page-select-target')
-      .STUBBED_CALLS.includes('MONSTER_PLAY'),
-  );
-  assert(
-    !fixture
-      .load_module('page/page-dungeon-info2')
-      .STUBBED_CALLS.includes('MONSTER_SETUP'),
-  );
-  assert(
-    !fixture
-      .load_module('dungeon/dungeon-town')
-      .STUBBED_CALLS.includes('MONSTER_PLAY'),
-  );
-});

@@ -14,7 +14,6 @@
  *     与 ERB 原文两处（比对能有的最强形式）；
  *   - 七道跳过判定（含 K3 特有：死斗场最先、兽奸岔 DOG_KOJO_3）；
  *   - BENKI_KOUJO 真身（常识改写支）；
- *   - 存根清单核对（docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
@@ -1491,24 +1490,6 @@ test('#623 奖赏请求·野兽名整行（:8803+:8805+:8807+:8809+:8811）', as
           `「我…这场战斗完后想要跟…${item.beast}交配想得受不了了~…！」`,
         ),
       `要求奖赏=${item.要求}：野兽名并入整行`,
-    );
-  }
-});
-
-// —— 存根清单核对 ——
-
-test('SELL_MATURO_K0 已从存根清单移除', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k3-noble');
-  assert.deepEqual(STUBBED_CALLS, []);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
     );
   }
 });

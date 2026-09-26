@@ -13,8 +13,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
@@ -2105,22 +2103,6 @@ test('SELF_KOJO 妊娠发觉：爱慕+主人 CFLAG:102==1', async () => {
     '妊娠发觉爱慕主人',
   );
   assert.equal(fixture.store.get(`cflag:${CID}:271`), 1, '妊娠发觉 → 271=1');
-});
-
-test('SELL_MATURO_K0 已从存根清单移除', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k15-clever');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  assert.deepEqual(STUBBED_CALLS, []);
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 async function ravish_k15(fixture) {

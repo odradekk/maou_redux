@@ -15,12 +15,9 @@
  *   3. 侵攻度自然衰减：FLAG:81 有余量时每日 RAND:100、下限 0；
  *   4. 魔王回复 +1400/+1000 与战役中的 -10；
  *   5. 最小世界的全量写入断言（多写、少写、写错地址当场红）；
- *   6. 存根清单核对（STUBBED_CALLS ↔ docs/stub-registry.md）与三档链序。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -875,45 +872,6 @@ test('#502 宣言数 SENGEN 真读 EX_FLAG:9012：衰减后的流行度决定追
     '流行度 6 → 当日衰减为 5 → 一次 + FOR EFFECT 循环 3 次（5 - 2）',
   );
   assert.deepEqual(some, [0, 0, 0, 0], '全部无实参（原作 CALL ENTER_ENEMY）');
-});
-
-test('存根清单核对：两个模块的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS: pri_stubs } = fixture.load_module(
-    'event/event-turnend',
-  );
-  const { STUBBED_CALLS: settle_stubs } = fixture.load_module(
-    'system/turnend-settle',
-  );
-  // 名单本身固定（增删存根必须同步本测试与清单）。#115 起 EVENT_NEXTDAY/
-  // EVENT_NEXTMONTH 换成真身（ere/event/event-nextday.js、event-nextmonth.js），
-  // 不再占位；#171 起 ENTER_ENEMY 换真身（ere/event/enter-enemy.js）；
-  // **#401 起十个体外调用全落真身**（CHECK_SPECIALSKIL 接 #405 的
-  // get-specialtalent.js；八个妊娠调用与 AUTO_BUYING/DEBUG_CHECK 在本文件
-  // 或 ere/event/event-pregnancy.js），#PRI 档名单因此清空
-  assert.deepEqual(pri_stubs, []);
-  // #174 起 WEAPON_RESTORE/EQUIP_CHECK 换真身（ere/system/equip/），不再占位；
-  // #172 起 PARTY_UNITE/DUNGEON/PARTY_JOIN/PARTY_DEL 换真身（ere/dungeon/）；
-  // #181 起 DUNGEON_MAP/GEO_OUTPUT_2 换真身（labo-dungeon-map.js 与
-  // labo-map.js）；#179 起 LVUP/DUNGEON_AFTER 换真身（dungeon-lvup.js 与
-  // dungeon-after.js）；#217 起 BENKI 换真身（system/train/benki.js）——
-  // 四条均已从名单移除；#342 起 MARRIAGE_DAY 亦接真身；#508 起
-  // FORMAT_AUTOTRAIN / AUTOTRAIN 亦接真身（ere/event/event-autotrain.js
-  // 的同名函数，调用点原为占位行）；#543 起自動處刑接真身；#565 起
-  // GET_LOOK_INFO（头发生长 :540/:564 的发色段）亦接真身（look-info.js）
-  // ——名单自此清空
-  assert.deepEqual(settle_stubs, []);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of [...pri_stubs, ...settle_stubs]) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-  // 登记不占位的两处（各归 #119/#118）也必须可检索
-  for (const name of ['KYOTEN_EVENT', 'INVASION_CHECK']) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });
 
 test('结婚日接线：普通档逐角色调用真身，妊娠角色看到婚后生活', async () => {

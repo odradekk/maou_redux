@@ -114,20 +114,6 @@ test('注册 100-109 / 150 / 208：COM、COM_ABLE、B/A 全部进族；EQUIP 100
   assert.equal(world.equip_com_family.has(108), true, 'EQUIP_COM108');
 });
 
-test('STUBBED_CALLS 为空：JUMP/CALL 全部经分发族，不建 COM11/13-17/31 存根', () => {
-  const { fixture } = seed_world();
-  const mod = fixture.load_module('system/train/com-tentacle');
-  const registry = fs.readFileSync(
-    path.join(REPO, 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  assert.deepEqual(mod.STUBBED_CALLS, []);
-  assert.ok(
-    registry.includes('COM100') && registry.includes('#227'),
-    '存根清单须登记本族已实现（#227）',
-  );
-});
-
 // —— @COM_ABLE100-109 / 150 / 208 ——
 
 test('@COM_ABLE100：秘密知识 + 道具；未开启时装备互斥；浴室/新妻/决斗/使役各挡一条', async () => {

@@ -7,8 +7,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -19,26 +17,6 @@ async function run_hook(fixture) {
   fixture.load_module('event/event-load');
   await emit('EVENTLOAD');
 }
-
-test('存根清单核对：STUBBED_CALLS 固定且全部收录进 docs/stub-registry.md', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('event/event-load');
-  // 名单本身固定（增删存根必须同步本测试与清单）
-  assert.deepEqual(STUBBED_CALLS, []);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-  // 登记不占位的两分支（不可达）也必须可检索
-  assert(
-    registry.includes('LASTLOAD_NO == 999'),
-    '999 → MAOUNET 分支的登记必须在场（不可达，登记不占位）',
-  );
-  assert(registry.includes('INPORT_B'), '1000–1020 → INPORT_B 同上');
-});
 
 test('DATA_FIX 等价物 1：EX_TALENT:MASTER:200 = 1，只写 MASTER（恒 0 号魔王）', async () => {
   const fixture = create_era_fixture();

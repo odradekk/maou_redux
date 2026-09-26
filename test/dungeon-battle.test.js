@@ -232,31 +232,6 @@ test('DUEL_ATTACK：TALENT:193 的自动调教三连接 COM13_AUTO 真身（:670
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
-// —— 存根清单核对（enter-enemy.test.js 同款）——
-
-test('存根清单可检索：docs/stub-registry.md 收录战斗两文件与 monster-data 的全部存根化调用', () => {
-  const fixture = create_era_fixture();
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  const names = [
-    ...load(fixture, 'dungeon/dungeon-battle').STUBBED_CALLS,
-    ...load(fixture, 'dungeon/dungeon-battle2').STUBBED_CALLS,
-    ...load(fixture, 'dungeon/monster-data').STUBBED_CALLS,
-    ...load(fixture, 'kojo/kojo-dungeon-ravish').STUBBED_CALLS,
-  ];
-  // 这里只防循环空转，不锁条数。原为 `>= 13` 的下限锁，而存根被实现掉时
-  // 这个数只会减（#217 换三个真身减 3、#333 换 CAMPAIGN_DUNGEON_LV 再减 1），
-  // 于是每张实现存根的票都被迫改它一次——SOP §5 判据 5 记的正是这种路障。
-  // 真正的契约是下面那个循环：每个登记名都必须在存根清单里查得到。
-  assert.ok(names.length > 0, '四份名单全空，下面的循环会空过');
-
-  for (const name of names) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
-
 // —— monster-database 与 ERB 源逐条比对（SOP §5 判据 7）——
 
 /** 从 MONSTER_DATA.ERB / ENEMY_DATA.ERB 解析各怪物函数的 E 赋值 */

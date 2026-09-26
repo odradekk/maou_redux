@@ -477,12 +477,6 @@ test('召唤确认段接上 SHOW_CHARA_INFO 真身（cid = 异界勇者 211、�
   );
 });
 
-test('存根清单：STUBBED_CALLS 已空（SHOW_CHARA_INFO 已接真身）', () => {
-  const fixture = chara_world();
-  const { STUBBED_CALLS } = fixture.load_module('page/page-chara-shop');
-  assert.deepEqual(STUBBED_CALLS, []);
-});
-
 // —— 随机源透传（接线验收返工）：形参有缺省值时，实参被去掉会静静落回
 //    Math.random（#344 的形态：本机跑一次绿、CI 抽中才红） ——
 

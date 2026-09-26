@@ -9,7 +9,6 @@
  *   - %SAVESTR:ARG% 插值（arg_name ← callname:31:-1）与 {MON_NUM} 计算插值；
  *   - PRINTDATA 随机数组（pick 按 rand_n 取一条）；
  *   - 初吻对象推进（CFLAG:16 == -1 → 995，SIF 语义）；
- *   - 存根清单核对（GOBI_KOUJO 登记 docs/stub-registry.md）；
  *   - **同名函数断言**：本文件导出 `*_ryou_man`（带 man 后缀），与 H13
  *     （#182）的 `@*_RYOU`（无 man）区分——#12 的首个加载生效遮蔽不触发。
  */
@@ -283,21 +282,6 @@ test('GOBI_KOUJO 行内拼接：『猪…』整段一行收语尾（源 :308-:32
     miss.text_lines().includes('『猪还自称冒险者……简直傻了　噗噗，噗嘻！』'),
     '语尾落空 → 空串，整段行照常输出',
   );
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录 GOBI_KOUJO', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-dungeon-ravish-man');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 test('同名函数断言：*_ryou_man 与 H13 的 *_ryou 名字区分', async () => {

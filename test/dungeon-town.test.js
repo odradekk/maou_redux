@@ -65,26 +65,6 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-// —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录城镇文件的新增存根', () => {
-  const fixture = create_era_fixture();
-  const fs = require('node:fs');
-  const path = require('node:path');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  const names = [...load(fixture).STUBBED_CALLS];
-  // #565 起四名全数落地（CHARADEAD_CHECK 随 #548，其余三名的调用点随本票
-  // 接真身）、名单清空；名字 ↔ 清单状态的机械核对在
-  // test/stub-registry-status.test.js 与 --coverage
-  assert.deepEqual(names, []);
-  for (const name of names) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
-
 // —— 援助金（FI_FUNDING / FI_PT_FUNDING）——
 
 test('FI_FUNDING：补正全读 TARGET（ARG ≠ TARGET 时按 TARGET 算）', () => {

@@ -16,15 +16,12 @@
  *   - SET_BICH_LEVEL 分档（0/1/2-5）；
  *   - DUNGEON_BITCH / HEROINE_BITCH 入口（体力门槛/卖春积极性/强制肉偿
  *     真身/内职）；
- *   - 存根清单核对（docs/stub-registry.md）。
  *
  * 随机源注入：每个函数接受 rand 参数（[0, n) 整数），测试用定值序固定
  * 随机分支（与 kojo-k3-noble 同款 seq_rand）。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -671,17 +668,6 @@ test('HEROINE_BITCH：债务过高强制卖春接真身（CFLAG:582 < -10000 且
   // 顺序断言放最后：门槛不成立（M11420）时上面两条先红，漏 await（M11427）
   // 时开场行照打、只有这里能拦
   assert.deepEqual(uppers, [3, 4, 10, 500, 3, 36], '调用点与真身的抽取序');
-});
-
-test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文件全部占位名', () => {
-  const { mod } = setup_bitch();
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of mod.STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });
 
 // —— #212 返工：ANIMAL 的 JUEL 加算（首版二段寻址打在角色 1 的行对象上，从未生效）——

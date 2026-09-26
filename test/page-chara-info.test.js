@@ -3,9 +3,8 @@
  *
  * 缝 = test/helpers/era-fixture.js。覆盖行动徽章/比较器/婚姻文本三个纯函数、
  * 四个列表函数的排序契约、主循环 CHARA_INFO 的翻页与分派、个别信息页
- * CHARA_INFO_INDIVIDUAL 的按钮分发与导航。详情正文（SHOW_CHARA_INFO）与
- * 大部分操作按钮属存根，此处只验证「按钮出现/不出现」与「调用被正确门控」，
- * 不验证存根本身的文本（存根文本由 stub-line.js 自身的测试固定）。
+ * CHARA_INFO_INDIVIDUAL 的按钮分发与导航（详情正文 SHOW_CHARA_INFO 由
+ * page-chara-info-show.js 模块承载，行为经本文件的用例间接覆盖）。
  */
 
 'use strict';
@@ -1042,113 +1041,61 @@ test('CHARA_INFO_INDIVIDUAL_WAPPED：包装入口吞掉内层的 1，恒回 0（
   );
 });
 
-// —— 未落地调用一律走存根，登记与实现同步 ——
+// —— #638：立绘与调试入口已删（#542 判不移植的落点随存根机制一并移除） ——
 
-test('STUBBED_CALLS：只剩调试一条在列；装备两处与一人称改名随 #546 换真身移出，兼职与更换立绘随 #542 判死移出，统一积极性与换号随 #545 换真身移出', async () => {
+test('[20] 更换立绘与 [99] 调试面板按钮不再渲染（任何分页、奴隶与魔王）', async () => {
+  // 立绘系统与 CHAR_DEBUG 调试面板均不移植（#542），#638 起按钮与处理分支
+  // 一并删除：任何角色、任何 sub_page 都不得再渲染这两枚按钮
+  const table = [
+    ['奴隶 sub_page 0', 1, [1]],
+    ['魔王 sub_page 0（ARG == MASTER 原本就不渲染 [20]）', 0, [0, 1]],
+    ['奴隶 sub_page 1', 1, [1], [102]],
+    ['奴隶 sub_page 2', 1, [1], [102, 102]],
+  ];
+  for (const [label, cid, sort, nav] of table) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '你');
+    add_chara(fixture, 1, '甲');
+    fixture.set_inputs(...(nav ?? []), 100);
+    await fixture
+      .load_module('page/page-chara-info')
+      .chara_info_individual(cid, sort);
+    const accelerators = fixture.lines_history
+      .filter((line) => line.type === 'button')
+      .map((b) => b.accelerator);
+    assert.equal(
+      accelerators.includes(20),
+      false,
+      `${label}：[20] 更换立绘不得渲染`,
+    );
+    assert.equal(
+      accelerators.includes(99),
+      false,
+      `${label}：[99] 调试面板不得渲染`,
+    );
+  }
+});
+
+test('case 20：立绘入口已删（#638），键入 20 在输入层被弹回', async () => {
+  // 引擎只接受已打印按钮的快捷键（#130）：[20] 按钮删掉后，键入 20 在
+  // input 层直接被弹回、画面不再推进——这就是「输入不被接受」的运行时形态。
+  //（[99] 从未打印过按钮，键入 99 前后都被弹回，无分支可达，无断言可做——
+  // 它的删除由上方按钮用例与代码评审承担。）
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '甲');
-  const { STUBBED_CALLS, chara_info_individual } = fixture.load_module(
-    'page/page-chara-info',
+  fixture.set_inputs(20);
+  await assert.rejects(
+    () =>
+      fixture.load_module('page/page-chara-info').chara_info_individual(1, [1]),
+    /输入不合法！请输入以下值之一/,
+    '[20] 按钮删掉后，20 不再是合法输入',
   );
-
-  // SHOW_BUTTON_NAME_EDIT / CHARA_INFO_NAME_EDIT 自 #384 起是真身
-  // （ere/chara/chara-name-edit.js），SHOW_BUTTON_CHILD_CARE / CHILD_CARE_CHARA
-  // 自 #401 起是真身（ere/event/event-pregnancy.js），转职 / 魔的诱惑 / 结婚
-  // 三对自 #393 起是真身（ere/chara/chara-job-change.js、chara-temptation.js、
-  // chara-marriage.js），统一卖春积极性 / 换号自 #545 起是真身
-  // （ere/page/page-uniform-bitch-level.js、page-chara-number-swap.js），
-  // 装备详情三函数与 RANDOM_SELF_CALL 的 MODE 1 自 #546 起是真身
-  // （ere/system/equip/equip-show.js、ere/chara/chara-self-call.js）
-  assert.ok(
-    STUBBED_CALLS.includes('CHAR_DEBUG'),
-    'CHAR_DEBUG 应在存根登记表内',
-  );
-  // PTJ_BUTTON / 更换立绘 自 #542 起是判死终态（打工 MOD 与立绘系统不移植），
-  // 入口提示行不是存根占位，不再进名单；清单同名行仍在函数表（改判不移植）
-  for (const name of ['PTJ_BUTTON', '更换立绘']) {
-    assert.ok(
-      !STUBBED_CALLS.includes(name),
-      `${name} 已判不移植（#542），不应再留在存根名单里`,
-    );
-  }
-  // #546 起 [16] 装备情报按钮与详情流程换真身：随真身名单核对，见下方专测
-  for (const name of [
-    'SHOW_BUTTON_EQUIP',
-    'EQUIP_ST_SHOW',
-    'RANDOM_SELF_CALL',
-  ]) {
-    assert.ok(
-      !STUBBED_CALLS.includes(name),
-      `${name} 已有真身（#546），不应再留在本文件的存根名单里`,
-    );
-  }
-  // SHOW_CHARA_INFO 自 #390 起是真身（ere/page/page-chara-info-show.js），
-  // 三对动作按钮与流程自 #393 起是真身——两票各加一批，这里取并集
-  for (const name of [
-    'SHOW_BUTTON_CHILD_CARE',
-    'CHILD_CARE_CHARA',
-    'SHOW_CHARA_INFO',
-    'SHOW_BUTTON_JOB_CHANGE',
-    'SHOW_BUTTON_TEMPTATION',
-    'SHOW_BUTTON_MARRIAGE',
-    'CHARA_INFO_JOB_CHANGE',
-    'TEMPTATION',
-    'MARRIAGE',
-    '统一卖春积极性',
-    '换号',
-  ]) {
-    assert.ok(
-      !STUBBED_CALLS.includes(name),
-      `${name} 已有真身，不应再留在本文件的存根名单里`,
-    );
-  }
-  // 绘制期：改名自 #384、三对动作按钮自 #393、育儿室自 #401 起都是真按钮
-  // （都在判定放行时才渲染）；#546 起装备详情（sub_page 1/2 的 [16]）也是真按钮
-  fixture.set_inputs(100);
-  const result = await chara_info_individual(1, [1]);
-  assert.equal(result, 0);
-  const rendered = fixture.lines_history
-    .filter((line) => line.type === 'button')
-    .map((b) => b.rendered);
-  assert.ok(
-    rendered.includes('[0] 改名 ') && rendered.includes('[1] 还原名字 '),
-    '改名 / 还原名字按钮已渲染（#384 真身）',
-  );
-  // 角色 1：状态 0（可转职 / 可结婚）、等级 0（转职按钮照渲染，只是染灰）、
-  // 非侵攻中（诱惑按钮不渲染）
-  assert.ok(rendered.includes('[2] 转职 '), '转职按钮已渲染（#393 真身）');
   assert.equal(
-    rendered.some((text) => text.includes('魔的诱惑')),
+    fixture.text_lines().some((t) => t.includes('不在移植范围')),
     false,
-    '非侵攻中 → 诱惑按钮不渲染（:29-31）',
+    '不得再打印任何不移植提示行',
   );
-  assert.ok(rendered.includes('[4] 结婚 '), '结婚按钮已渲染（#393 真身）');
-  assert.ok(
-    !rendered.includes('[5] 前往育儿室'),
-    '角色 1 不在育儿室（CFLAG:1:1 = 0）→ 育儿室按钮不渲染（#401 真身，:459-467）',
-  );
-  assert.ok(
-    !rendered.some((text) => text.includes('装备情报')),
-    'sub_page 0 不渲染 [16] 装备情报（:873 的 ELSEIF 不含 0）',
-  );
-  for (const stub_name of [
-    'SHOW_BUTTON_JOB_CHANGE',
-    'SHOW_BUTTON_TEMPTATION',
-    'SHOW_BUTTON_MARRIAGE',
-    'CHARA_INFO_JOB_CHANGE',
-    'TEMPTATION',
-    'MARRIAGE',
-    'SHOW_BUTTON_EQUIP',
-    'EQUIP_ST_SHOW',
-    'RANDOM_SELF_CALL',
-  ]) {
-    assert.equal(
-      printed_includes(fixture, `@${stub_name}`),
-      false,
-      `${stub_name} 的占位行不该再出现`,
-    );
-  }
 });
 
 // —— #546：装备详情与自定义一人称的接线 ——
@@ -1255,52 +1202,7 @@ test('case 8：输入 0 代替空输入（有意偏离，原作会把一人称�
   assert.equal(fixture.store.get('cflag:1:450'), 9);
 });
 
-// —— #542：PTJ_BUTTON 与更换立绘的判死落点 ——
-
-test('更换立绘按钮（:870-871）：守卫去掉恒关的立绘开关，按钮保留可见——表驱动', async () => {
-  // 原作守卫是 `SIF 立绘 && CFLAG:ARG:1 == 0 && ARG != MASTER`；立绘系统判
-  // 不移植（#542）后开关恒关，照抄守卫按钮永不可见——有意偏离：去掉开关
-  // 条件、保留后两条，玩家能按到 [20] 并看到不移植提示（#540 范围决定 4）
-  // [标签, 角色, CFLAG:1:1, 期望 [20] 是否渲染]
-  const table = [
-    ['奴隶 + 状态 0：渲染', 1, 0, true],
-    ['奴隶 + 状态 2（侵攻中）：不渲染', 1, 2, false],
-    ['魔王（ARG == MASTER）：不渲染', 0, 0, false],
-  ];
-  for (const [label, cid, state, expected] of table) {
-    const fixture = create_era_fixture();
-    add_chara(fixture, 0, '你');
-    add_chara(fixture, 1, '甲');
-    fixture.store.set('cflag:1:1', state);
-    fixture.set_inputs(100);
-    await fixture
-      .load_module('page/page-chara-info')
-      .chara_info_individual(cid, [1]);
-    const rendered = fixture.lines_history
-      .filter((line) => line.type === 'button')
-      .some((b) => b.rendered === '[20] 更换立绘');
-    assert.equal(rendered, expected, label);
-  }
-});
-
-test('更换立绘按钮（CASE 20）：按下打一行不移植提示并等键', async () => {
-  const fixture = create_era_fixture();
-  add_chara(fixture, 0, '你');
-  add_chara(fixture, 1, '甲');
-  fixture.set_inputs(20, 100);
-  await fixture
-    .load_module('page/page-chara-info')
-    .chara_info_individual(1, [1]);
-
-  const line = fixture.text_lines().find((t) => t.includes('@更换立绘'));
-  assert.ok(line, '提示行必须带原作函数名 @更换立绘（清单行的检索键）');
-  assert.ok(
-    line.includes('不在移植范围') && line.includes('素材不在仓库'),
-    `不移植提示要说清为何：${line}`,
-  );
-  assert.equal(fixture.waits.length, 1, '提示行必须等键（#73 同款）');
-});
-
+// —— #542：PTJ_BUTTON 的判死落点（[20] 立绘入口随 #638 一并删除，见上方） ——
 test('卖春积极性按钮（PTJ_BUTTON 默认态）：档位文案随 CFLAG:120 变，按下进真身——表驱动', async () => {
   // :883 CALL PTJ_BUTTON(ARG)：打工 MOD（EX_FLAG:9000 第 2 位）判不移植
   // （#542），只保留默认态分支——PTJ.ERB:5 的 ELSE = SHOW_BUTTON_BICH_LEVEL(18,ARG)

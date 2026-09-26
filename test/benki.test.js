@@ -14,7 +14,7 @@
  *   - 跨域写走门面（flag:63 经 game.dungeon、exp 属主 dungeon 经
  *     chara(cid).dungeon）——domain-check 判绿；
  *   - TEQUIP 只读不写（#215 建模归 J5）：本文件无 tequip 写入；
- *   - 存根清单核对（docs/stub-registry.md）——未加载口上时 BENKI_KOUJO 打占位行；K3 真身随 #234。
+ *   - 未加载口上时 BENKI_KOUJO 静默（TRYCALLFORM 落空语义，#565）；K3 真身随 #234。
  *
  * 随机源注入：run_benki / select_benki_menu 接受 rand 参数（[0, n) 整数），
  * 测试用定值序固定分支（fs_bitch_looks 的 DICE=2 覆盖与 RAND:4 共用同一
@@ -22,14 +22,10 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
-
-const REPO = path.resolve(__dirname, '..');
 
 // RAND:N 定值序：draws 依次被消费，越界取模
 const seq_rand =
@@ -418,20 +414,6 @@ test('BENKI_PLAYER_NAME：读 FLAG:64 返回对象名', () => {
   assert.equal(mod.benki_player_name(), '女淫魔');
   fixture.store.set('flag:64', -2);
   assert.equal(mod.benki_player_name(), '');
-});
-
-// —— 存根清单核对 ——
-
-test('存根清单可检索：benki.js 的 STUBBED_CALLS 已空（BENKI_KOUJO 换真分发）', () => {
-  const { mod } = setup_benki();
-  const registry = fs.readFileSync(
-    path.join(REPO, 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  assert.deepEqual(mod.STUBBED_CALLS, []);
-  for (const name of mod.STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });
 
 // —— #595：空行普查（BENKI.ERB 对照） ————

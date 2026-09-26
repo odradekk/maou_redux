@@ -10,14 +10,10 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-
-const REPO = path.join(__dirname, '..');
 
 /** 道具族的最小调教世界：主人 0、目标 31、所有道具无视模式。 */
 function seed_world({ assi = -1 } = {}) {
@@ -564,19 +560,6 @@ test('TRAIN_MESSAGE_B：淋浴开始分成原作的两行', async () => {
   await world.train_message_b();
   assert.ok(world.fixture.text_lines().includes('温妮的淋浴开始了、'));
   assert.ok(world.fixture.text_lines().includes('水花流过吹弹可破的肌肤………'));
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录 SYOKUSYU_MILK', () => {
-  const { fixture } = seed_world();
-  const mod = fixture.load_module('system/train/com-toy');
-  const registry = fs.readFileSync(
-    path.join(REPO, 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  // #548 起 SYOKUSYU_MILK 换真身（ere/system/train/com-tentacle.js），
-  // 本模块存根名单清空
-  assert.deepEqual(mod.STUBBED_CALLS, []);
-  assert.ok(registry.includes('`SYOKUSYU_MILK`'), '登记表的历史行仍在');
 });
 
 test('满月确认的两项是按钮（#572）', async () => {

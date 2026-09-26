@@ -8,8 +8,7 @@
  * `DispatchFamily.implemented`）双向比对：
  *
  *   - 只在原作：真缺口（口上模块没写或没装载）——本用例红，修法是落
- *     实现；确属「不移植」的要在 docs/stub-registry.md 登记存根行，并把
- *     该编号从本表的原作侧排除（注明票号）；
+ *     实现（注明票号）；
  *   - 只在 ere：注册了原作没有的编号——口上写串了，红。
  *
  * 两侧集合的首次实测（#565 返工，2026-09）：九族完全一致——
@@ -136,7 +135,7 @@ test('口上九族：原作 @…_K{n} 定义集合与 ere 注册集合双向一�
     assert.deepEqual(
       [missing, extra],
       [[], []],
-      `${f.name}：只原作{${missing.join(',')}}是真缺口——落实现，或在 docs/stub-registry.md 登记存根行后从本表排除；只ere{${extra.join(',')}}是口上写串了`,
+      `${f.name}：只原作{${missing.join(',')}}是真缺口——落实现；只ere{${extra.join(',')}}是口上写串了`,
     );
   }
 });
@@ -151,7 +150,7 @@ test('try_kojo 未命中静默（原作 TRYCALLFORM 落空语义，不打占位�
   const before = fixture.lines_history.length;
 
   // 窗口外（target = 0 魔王，无口上性格）→ kojo_handler_id = -1 → 静默
-  const a = await try_kojo(dungeon_attack_family, 'ATTACK_KOUJO', 0);
+  const a = await try_kojo(dungeon_attack_family, 0);
   assert.equal(a, 0, '未命中返回 0（原作 TRYCALLFORM 落空的 RESULT 语义）');
   assert.equal(
     fixture.lines_history.length,
@@ -164,7 +163,7 @@ test('try_kojo 未命中静默（原作 TRYCALLFORM 落空语义，不打占位�
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
   fixture.store.set('talent:31:171', 1); // K11（COUNT 171 − 60 = 111 → 族内 11）
-  const b = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', 31);
+  const b = await try_kojo(gobi_koujo_family, 31);
   assert.equal(b, 0);
   assert.equal(
     fixture.lines_history.length,

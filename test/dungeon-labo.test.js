@@ -462,29 +462,39 @@ test('UNIT_MOVE：撞同伴（同状态）移动停止，坐标不落笔（:180-
   );
 });
 
-test('UNIT_MOVE：撞不同阵营单位走 DUNGEON_BATTLE2 占位（:184-199，原作缺失）', async () => {
+test('UNIT_MOVE：撞不同阵营单位不发生战斗，移动停止（:184-199 已删，#638/#574）', async () => {
   const { fixture, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 3, 11, 11); // 迎击中（else 臂：walk20 -= 2x）
   seed_unit(fixture, 2, '乙', 2, 12, 12); // 侵攻中——甲的落点，不同阵营
   // 迎击侧累加是 -2x = -178：传入 200 才能保 D:20 = 22 > 10 走趋近臂
   await labo_dungeon_map.unit_move(1, 200, rand_max);
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('原作 @DUNGEON_BATTLE2')),
-    '野外单位战的原作占位行（#14 登记：原作全库无定义）',
+  assert.equal(
+    fixture.text_lines().some((line) => line.includes('DUNGEON_BATTLE2')),
+    false,
+    '原作缺失的野外单位战调用点随 #638 删除：不再打印任何战斗行',
+  );
+  assert.equal(
+    fixture.store.get('cflag:1:510'),
+    11,
+    '不发生战斗：移动停止，坐标停在出发格（落笔在 RETURN 之后不可达）',
   );
 });
 
-test('UNIT_MOVE：撞怪物走 DUNGEON_BATTLE 占位（:205-222，原作缺失）', async () => {
+test('UNIT_MOVE：撞怪物不发生战斗，移动停止（:205-222 已删，#638/#574）', async () => {
   const { fixture, labo, labo_dungeon_map } = setup_labo();
   seed_unit(fixture, 1, '甲', 2, 11, 11);
   labo.db_set(12, 12, 3); // 甲的落点是怪物
   fixture.store.set('item:130', 21); // 兵力足够
   await labo_dungeon_map.unit_move(1, 89, rand_max);
-  assert.ok(
-    fixture
-      .text_lines()
-      .some((line) => line.includes('原作 @DUNGEON_BATTLE，')),
-    '野外怪物战的原作占位行（#14 登记）',
+  assert.equal(
+    fixture.text_lines().some((line) => line.includes('DUNGEON_BATTLE')),
+    false,
+    '原作缺失的野外怪物战调用点随 #638 删除：不再打印任何战斗行',
+  );
+  assert.equal(
+    fixture.store.get('cflag:1:510'),
+    11,
+    '不发生战斗：移动停止，坐标停在出发格（落笔在 RETURN 之后不可达）',
   );
 });
 

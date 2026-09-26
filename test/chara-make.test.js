@@ -1598,17 +1598,3 @@ test('character/haircolor/xingge 跨调用保留（原作 #DIM 静态，:66-72 �
     '第二次招募的新角色被预设成上次选择的性格',
   );
 });
-
-// —— 存根清单核对（与 event-first.test.js 同款）——
-test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = load(fixture);
-  const { STUBBED_CALLS: FORWARD_STUBS } = load_forward(fixture);
-  // #565 起 ST_UP 已接线（cm_st / cm_st_ace），两份名单都清空；名字与清单
-  // 状态的机械核对在 test/stub-registry-status.test.js 与 --coverage。
-  assert.deepEqual(
-    [STUBBED_CALLS, FORWARD_STUBS],
-    [[], []],
-    'chara-make 实现层与转发层均无存根化调用（#565）',
-  );
-});

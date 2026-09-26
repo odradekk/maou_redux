@@ -8,8 +8,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -113,12 +111,6 @@ test('SEARCH_FAMILY：队伍离队调用点会清掉找到的结婚对象', () =
 
   fixture.load_module('dungeon/dungeon-party').party_del(0);
   assert.equal(fixture.store.get('cflag:2:601'), 0);
-  assert.equal(
-    fixture
-      .load_module('chara/chara-make')
-      .STUBBED_CALLS.includes('SEARCH_FAMILY'),
-    false,
-  );
 });
 
 test('SEARCH_FAMILY：慈爱来袭口上会找到家人并按关系称呼', async () => {
@@ -350,32 +342,4 @@ test('CAMPAIGN_DUNGEON_LV：无战役为 0，战役 1 为 45，缺失编号为 0
   assert.equal(campaign_dungeon_lv(), 45);
   fixture.store.set('flag:400', 2);
   assert.equal(campaign_dungeon_lv(), 0);
-});
-
-test('存根清单：三项范围外家族调用已登记，九个真身不再登记为存根', () => {
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of ['RELATION_REBUILD', 'RF_JOINTO', 'RF_SETBOTH']) {
-    assert.ok(registry.includes(`| \`${name}\``), `存根清单缺少 ${name}`);
-  }
-  for (const name of [
-    'SELECT_YES_NO',
-    'ITEM_DETOX',
-    'FAMILY_BIRTHTO_MOM',
-    'FAMILY_BIRTHTO_DAD',
-    'NAKADASHI_CHECK',
-    'ENEMY_DATA_CHECK',
-    'NTR_CHILD_BIRTH',
-    'NTR_KOUJO',
-    'SEARCH_FAMILY',
-    'CAMPAIGN_DUNGEON_LV',
-  ]) {
-    const row = registry
-      .split('\n')
-      .find((line) => line.includes(`\`${name}\``));
-    assert.ok(row, `存根清单缺少 ${name}`);
-    assert.ok(!row.includes('| 存根'), `${name} 仍登记为存根`);
-  }
 });

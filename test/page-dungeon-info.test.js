@@ -675,12 +675,8 @@ test('DRAW_DUNGEON_DAILY：威望五档与上界钳制（100 封顶）', async (
 
 test('DRAW_DUNGEON_DAILY：尾部 DISPLAY_DUNGEON_DAILY 真身（#179 起）', async () => {
   const fixture = setup_world();
-  const { draw_dungeon_daily, STUBBED_CALLS } = load(
-    fixture,
-    'page/page-main-menu',
-  );
+  const { draw_dungeon_daily } = load(fixture, 'page/page-main-menu');
   await draw_dungeon_daily();
-  assert.ok(!STUBBED_CALLS.includes('DISPLAY_DUNGEON_DAILY'));
   assert.ok(
     fixture.text_lines().some((t) => t.includes('Space for further docuement')),
     '日程头一行可见（page/page-dungeon-daily.js 真身）',

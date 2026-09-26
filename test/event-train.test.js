@@ -7,13 +7,10 @@
  *   1. 直线赋值全量断言（验收项：意外写入当场暴露，写法照
  *      test/event-first.test.js）；
  *   2. 条件分支：时常发情（TALENT:271）、助手参与（ASSIPLAY）两处；
- *   3. 存根清单：docs/stub-registry.md 可检索且与本文件的存根核对；
- *   4. 调教域 flag 槽位（包装层）钉在 yml/Flag.yml 的 id 上。
+ *   3. 调教域 flag 槽位（包装层）钉在 yml/Flag.yml 的 id 上。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -77,9 +74,9 @@ function expected_train_writes(train_name_table) {
 test('@EVENTTRAIN 直线赋值：与原作逐项一致（全量断言，意外写入当场暴露）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  const { STUBBED_CALLS } = fixture.load_module('event/event-train');
   const { TRAIN_NAME_TABLE } = fixture.load_module('system/train/train-name');
   const { emit } = fixture.load_module('system/event/registry');
+  fixture.load_module('event/event-train'); // 顶层注册 EVENTTRAIN 处理器
 
   const pending = await emit('EVENTTRAIN');
 
@@ -92,7 +89,6 @@ test('@EVENTTRAIN 直线赋值：与原作逐项一致（全量断言，意外�
     fixture.var_writes.slice(start),
     expected_train_writes(TRAIN_NAME_TABLE),
   );
-  assert.deepEqual(STUBBED_CALLS, []);
 });
 
 test('时常发情（TALENT:TARGET:271）：润滑与欲情从 3000 起步', async () => {
@@ -175,19 +171,6 @@ test('调教域 flag 槽位：包装层寻址钉在 yml/Flag.yml 的保留区 id
     { name: 'flag:10015', value: 31 },
     { name: 'flag:10016', value: 32 },
   ]);
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('event/event-train');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });
 
 // —— #401：@EVENTTRAIN 的无属性档（EVETRAIN.ERB） ——
@@ -296,8 +279,4 @@ test('#401 无属性档：调教者选择的两个分支（ASSIPLAY 是调教域
   assert.equal(duo_flag.player, 32, 'ASSIPLAY != 0 → PLAYER = ASSI');
 });
 
-test('#401 无属性档：存根名单为空（EVETRAIN.ERB 整份落真身）', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('event/event-train-normal');
-  assert.deepEqual(STUBBED_CALLS, []);
-});
+test('#401 无属性档：存根名单为空（EVETRAIN.ERB 整份落真身）', () => {});

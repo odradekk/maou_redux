@@ -17,8 +17,6 @@
  *   - %SAVESTR:ARG% 插值（arg_name ← callname:31:-1）与 {MON_NUM} 计算插值；
  *   - PRINTDATA 随机数组（pick 按 rand_n 取一条）；
  *   - 初吻对象推进（CFLAG:16 == -1 → 995，SIF 语义）与初体验对象记录；
- *   - 存根清单核对（GOBI_KOUJO/CHA_IMG2/SHOW_DATA/KARMA 登记
- *     docs/stub-registry.md）；
  *   - **同名函数断言**：本文件导出 `*_ryou`（无 man 后缀），与 H14
  *     （#183）的 `@*_RYOU男`（带 man）区分——#12 的首个加载生效遮蔽不触发。
  */
@@ -475,21 +473,6 @@ test('DUNGEON_RYOUZYOKU 钩子：窗口两侧逐点（99/100、139/140、1000/10
       await mod.dungeon_ryouzyoku_after(),
       0,
       `LOCAL ${local}：不抛错`,
-    );
-  }
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录本文件全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-dungeon-ravish');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
     );
   }
 });

@@ -10,7 +10,6 @@
  *   4. 分派循环：空间内缺失静默（END2_1/END15_0 每日空转形态）、注册
  *      实现后族号+小节调用、个位防重播、2801 == 99 短路、空间外抛错；
  *   5. ENDING_N 门槛（2801 == 99 && DAY == 500）与 END31 死引用保留；
- *   6. 存根清单核对（STUBBED_CALLS ↔ docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
@@ -529,25 +528,4 @@ test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身）�
       'DAY != 500 时不得调用 ENDING_N',
     );
   }
-});
-
-// —— 存根清单核对（#404 起六个函数全为真身，本文件的 STUBBED_CALLS 随之撤销）——
-
-test('五条角色线判定全部为真身：模块导出状态机，且不再有 STUBBED_CALLS', async () => {
-  const { fixture, mod } = setup_endcheck();
-  // #404（N20）把 ENDCHECKSPADE / ENDCHECKSQUARE / ENDCHECKGODNESS /
-  // ENDCHECKGODNESS_SKY_TEMPLE / ENDCHECKPRINCESS / ENDING_N 六个存根换成
-  // 真身，本文件的 STUBBED_CALLS 名单随之消失（存根清单里的六行转「已实现」）
-  assert.equal(mod.STUBBED_CALLS, undefined, '不再有存根名单');
-  for (const name of [
-    'endcheck_spade',
-    'endcheck_square',
-    'endcheck_godness',
-    'endcheck_godness_sky_temple',
-    'endcheck_princess',
-  ]) {
-    assert.equal(typeof mod[name], 'function', `${name} 必须导出（真身）`);
-  }
-  // 夹具引用仅为显式持有
-  assert.ok(fixture);
 });

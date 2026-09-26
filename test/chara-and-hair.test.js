@@ -414,14 +414,6 @@ test('CHOOSE_HAIRCOLOR：每行 N 项可换（实参）', async () => {
   ]);
 });
 
-// —— 存根清单核对（与 chara-make.test.js 同款）——
-
-test('本模块零存根：STUBBED_CALLS 为空数组', () => {
-  const fixture = setup();
-  const { STUBBED_CALLS } = load(fixture);
-  assert.deepEqual(STUBBED_CALLS, []);
-});
-
 // —— 按钮与颜色：两个列表函数用的是文本行（原作 PRINTFORM/PRINTBUTTON 的形态）——
 
 test('CHOOSE_CHARASTERISTIC 用的是按钮（原作 :103 是 PRINTFORM，不是按钮）', async () => {

@@ -14,7 +14,6 @@
  *   - 体力气力扣减与钳制、气力 0 的损耗加倍；
  *   - TFLAG:59（旧 PREVCOM）/TFLAG:50；
  *   - 端到端：回合循环输入 0 → 全链输出 → 999 退出；
- *   - 存根清单核对（docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
@@ -2102,25 +2101,6 @@ test('AUTO_NUM_CHECK：CFLAG:667（自动调教回数）八档阈值', async () 
       `CFLAG:667=${rate}`,
     );
   }
-});
-
-// —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('event/source-check');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
-  // 组级登记（EQUIP_COM 是整组的代表名，清单里须有装备持续效果组行）
-  assert.ok(registry.includes('装备持续效果'), '装备持续效果组行');
 });
 
 // —— #90：跨域写走门面（条目表 22 条清零的契约锁）——

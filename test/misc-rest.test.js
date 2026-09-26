@@ -5,9 +5,7 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const path = require('node:path');
 const { test } = require('node:test');
-const { pathToFileURL } = require('node:url');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
@@ -1473,7 +1471,6 @@ test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 
   shop_fixture.set_inputs(9);
   const shop = shop_fixture.load_module('page/page-shop');
   await shop.usershop(888);
-  assert(!shop.STUBBED_CALLS.includes('MAOUNET'));
   assert(!shop_fixture.text_lines().some((line) => line.includes('存根')));
   assert(
     shop_fixture.lines_history.some(
@@ -1527,14 +1524,4 @@ test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 
     ),
     '特殊档备注不在 0..99 的扫描面时仍须允许选择 SAVE1000.sav',
   );
-});
-
-test('TEST.ERB：整文件按已确认的无调用者缺陷登记，不接入结局日程', async () => {
-  const trace = await import(
-    pathToFileURL(path.resolve(__dirname, '../tools/trace-coverage.mjs'))
-  );
-  const ruling = trace.RULINGS.find(
-    (item) => item.path === 'target/ERB/其他/TEST.ERB',
-  );
-  assert.match(ruling?.reason ?? '', /#14.*无调用者/);
 });

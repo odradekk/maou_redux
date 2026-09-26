@@ -6,8 +6,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -336,15 +334,8 @@ test('ADD_EX_ITEM：现有武器不弱、职业不适用或五个槽全满时不
 test('三处旧模块不再登记五个 EX 道具存根', () => {
   const fixture = setup();
   const dungeon = fixture.load_module('dungeon/dungeon');
-  const room = fixture.load_module('dungeon/dungeon-room');
   const town = fixture.load_module('dungeon/dungeon-town');
   const ex_item = load(fixture);
-  assert(!dungeon.STUBBED_CALLS.includes('ADD_EX_ITEM'));
-  assert(!dungeon.STUBBED_CALLS.includes('USE_EX_ITEM'));
-  assert(!room.STUBBED_CALLS.includes('SELL_EX_ITEM'));
-  assert(!room.STUBBED_CALLS.includes('EX_ITEM_NAME'));
-  assert(!town.STUBBED_CALLS.includes('SELL_EX_ITEM'));
-  assert(!town.STUBBED_CALLS.includes('ADD_EX_ITEM'));
   assert.equal(
     dungeon.add_ex_item,
     ex_item.add_ex_item,
@@ -356,26 +347,6 @@ test('三处旧模块不再登记五个 EX 道具存根', () => {
     'dungeon 导出 USE 真身',
   );
   assert.equal(town.sell_ex_item, ex_item.sell_ex_item, '城镇导出 SELL 真身');
-
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of [
-    'EX_ITEM_NAME',
-    'SELL_EX_ITEM',
-    'ADD_EX_ITEM',
-    'USE_EX_ITEM',
-  ]) {
-    const rows = registry
-      .split('\n')
-      .filter((line) => line.startsWith(`| \`${name}\``));
-    assert(rows.length > 0, `清单仍保留 ${name} 的追溯行`);
-    assert(
-      rows.every((line) => line.includes('已实现')),
-      `${name} 清单行未改已实现`,
-    );
-  }
 });
 
 test('房间与城镇调用点复用 SELL_EX_ITEM 真身，冰室用真身打印道具名', async () => {

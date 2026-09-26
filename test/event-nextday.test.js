@@ -13,14 +13,11 @@
  *      无条件副作用——ENDRESET 的玛奥清场写：日推进回合 1 笔、午后回合
  *      0 笔、N 天累计 N 笔）；
  *   3. 单元级全量写入断言（直接调 run_event_nextday / run_event_newday）；
- *   4. 存根清单核对（两模块的 STUBBED_CALLS ↔ docs/stub-registry.md）；
  *   5. 执行序：EVENT_NEXTDAY 先于日推进（月替播报在其后）、ENDCHECK 在
  *      普通档尾部。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -3469,41 +3466,4 @@ test('#502 SENGEN_VIDEO_DE 在 run_event_nextday 的 :184 被无条件每日调�
   }
   assert.equal(fixture.store.get('exflag:9013'), 3, '过时倒计时每日 -1');
   assert.equal(fixture.store.get('exflag:9012'), 5, '流行度随 RAND:3 非零 -1');
-});
-
-test('存根清单核对：两模块的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS: nextday_stubs } = fixture.load_module(
-    'event/event-nextday',
-  );
-  const { STUBBED_CALLS: nextmonth_stubs } = fixture.load_module(
-    'event/event-nextmonth',
-  );
-  // 名单本身固定（增删存根必须同步本测试与清单）
-  assert.deepEqual(
-    nextday_stubs,
-    [
-      // #174 起 CURSE_EQUIP_RING 换真身（ere/system/equip/equip-curse.js）；
-      // #177 起 DUNGEON_ROOM_DAY 换真身（ere/dungeon/dungeon-room.js）；
-      // #400（N16）起 APHRODISIAC_ADDICT / SABBATH / SABBATH_DAY / TAX_GET
-      // 四张跨边接线落地（真身由 #405 / #396 交付），MAOU_KOUHO 本体同票落成；
-      // @PILLORY 自 #400 起真身（ere/event/event-nextday-pillory.js），其体内的
-      // CAMPAIGN_EXP_PILLORY 调用点（侵略域）自 #469 起也换真身，已从名单移除；
-      // #502 起 SENGEN_VIDEO_DE 换真身（本文件的 sengen_video_de，
-      // INVASION.ERB:1269-1281）——名单至此清空
-    ],
-    'SENGEN_VIDEO_DE 落地后本模块零存根',
-  );
-  // HUMAN_AGE_GENERATE 自 #385 起为真身（ere/chara/chara-body.js），本模块
-  // 的存根名单已清空
-  assert.deepEqual(nextmonth_stubs, []);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of [...nextday_stubs, ...nextmonth_stubs]) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-  // 登记不占位的影寿命段（不可达）也必须可检索
-  assert(registry.includes('影の寿命'), '存根清单缺少影寿命段（登记不占位）');
 });

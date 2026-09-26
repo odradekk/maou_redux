@@ -461,21 +461,20 @@ test('ABILITY_UP_CORE：已接真身的 ABLUP 全部走真实判定而非占位�
   }
 });
 
-test('ABILITY_UP_CORE：ABLUP 分发表覆盖全部可达编号（只剩 [100] 不可达）', async () => {
-  const { ABLUP_IDS, ABLUP_HANDLERS, STUBBED_ABLUP_NAMES } =
-    create_era_fixture().load_module('system/train/juel-check');
-  // #467 起 0-17/20-23/30-33/37/39/40/99/100 全部落真身，分发表之外没有任何
-  // 编号会落到占位分支（[100] 也在表内，只是它的按钮来自原作 `[IF_DEBUG]`
-  // 块、ere 侧不渲染 → 经输入通道不可达）
-  assert.deepEqual(STUBBED_ABLUP_NAMES, []);
-  for (const id of ABLUP_IDS) {
-    assert.ok(
-      id in ABLUP_HANDLERS || id === 100,
-      `ABLUP${id} 既不在分发表、也不是不可达的 [100]`,
-    );
-  }
+test('ABILITY_UP_CORE：ABLUP_IDS 与分发表一一对应（#638：占位回落已删，表内编号必须全有真身）', async () => {
+  const { ABLUP_IDS, ABLUP_HANDLERS } = create_era_fixture().load_module(
+    'system/train/juel-check',
+  );
+  assert.deepEqual(
+    Object.keys(ABLUP_HANDLERS)
+      .map(Number)
+      .sort((a, b) => a - b),
+    [...ABLUP_IDS].sort((a, b) => a - b),
+    '菜单可达的每个编号都有 handler，handler 也没有菜单选不中的多余键',
+  );
 
-  // 不可达的 [100] 真的喂不进去：引擎层直接拒收（夹具同款校验）
+  // [100] 的按钮来自原作 [IF_DEBUG] 块、ere 侧不渲染 → 经输入通道不可达：
+  // 引擎层直接拒收（夹具同款校验）
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
   add_chara(fixture, 1, '玛奥');

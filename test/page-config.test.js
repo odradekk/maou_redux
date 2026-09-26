@@ -4,31 +4,12 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
+
 const { create_era_fixture } = require('./helpers/era-fixture');
 
 function load(fixture) {
   return fixture.load_module('page/page-config');
 }
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = load(fixture);
-  const registry_path = path.resolve(
-    __dirname,
-    '..',
-    'docs',
-    'stub-registry.md',
-  );
-  const registry = fs.readFileSync(registry_path, 'utf8');
-  // MODLIST 随 #542 判不移植离开存根名单；CONFIG_AGE_SETTING 随 #547 落地为
-  // ere/page/page-config-age.js——名单已空（空名单也必须被核对测试看见）
-  assert.deepEqual(STUBBED_CALLS, []);
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
 
 test('config_filter_setting：0-4 切换 FLAG:25 对应位，100 返回', async () => {
   const fixture = create_era_fixture();
@@ -291,68 +272,50 @@ test('dispatch_config(21)：进入 config_virgin_conceded_setting 子菜单', as
   assert.equal(era_flag.virgin_conceded_mode, 1);
 });
 
-test('dispatch_config(26)：MOD开关按 #542 判不移植，按下打一行不移植提示并等键', async () => {
+test('dispatch_config(26)：MOD 开关入口已删（#638），输入不被接受', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
   const page = await dispatch_config(26, 1);
-  assert.equal(page, 1);
-  const line = fixture.text_lines().find((t) => t.includes('@MODLIST'));
-  assert.ok(line, '提示行必须带原作函数名 @MODLIST（可检索，同存根占位形状）');
-  assert.ok(
-    line.includes('MOD 开关菜单') && line.includes('不在移植范围'),
-    `不移植提示要说清是什么与为何：${line}`,
-  );
-  assert.ok(
-    line.includes('docs/stub-registry.md'),
-    '不移植提示与存根占位同款，末尾指向清单',
-  );
+  assert.equal(page, 1, '无分支命中，原页返回');
   assert.equal(
-    fixture.waits.length,
-    1,
-    '提示行必须等键（#73 同款：分发期输出不等键会被重绘清掉）',
-  );
-  assert.equal(
-    fixture.var_writes.length,
+    fixture.text_lines().length,
     0,
-    '不移植不写任何变量（EX_FLAG:9000 不落地）',
+    'MOD 子系统不移植（#542），删掉入口后不得再打印任何提示行',
   );
+  assert.equal(fixture.waits.length, 0, '不得等待读键');
+  assert.equal(fixture.var_writes.length, 0, '不得写任何变量');
 });
-
-test('dispatch_config(28)：立绘开关按 #542 判不移植，按下打一行不移植提示并等键', async () => {
+test('dispatch_config(28)：立绘开关入口已删（#638），输入不被接受', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);
   const page = await dispatch_config(28, 1);
-  assert.equal(page, 1);
-  // [28] 原作只翻立绘开关（CONFIG.ERB:266-271，无函数调用）；提示行锚定
-  // 判不移植的 @更换立绘（魔改新增/img.ERB:168），与清单行同键
-  const line = fixture.text_lines().find((t) => t.includes('@更换立绘'));
-  assert.ok(line, '提示行必须带 @更换立绘（清单行的检索键）');
-  assert.ok(
-    line.includes('立绘系统') && line.includes('不在移植范围'),
-    `不移植提示要说清是什么与为何：${line}`,
-  );
-  assert.equal(fixture.waits.length, 1, '提示行必须等键');
+  assert.equal(page, 1, '无分支命中，原页返回');
   assert.equal(
-    fixture.var_writes.length,
+    fixture.text_lines().length,
     0,
-    '立绘开关不落地（#542：开关默认关、素材不在仓库）',
+    '立绘系统不移植（#542），删掉入口后不得再打印任何提示行',
+  );
+  assert.equal(fixture.waits.length, 0, '不得等待读键');
+  assert.equal(fixture.var_writes.length, 0, '开关不落地');
+});
+
+test('config_menu page 1：MOD 开关与立绘开关按钮不再渲染', async () => {
+  const fixture = create_era_fixture();
+  const { config_menu } = load(fixture);
+  fixture.set_inputs(101, 100); // 翻到 page 1 后退出
+  await config_menu();
+  const buttons = fixture.lines_history.filter((l) => l.type === 'button');
+  assert.equal(
+    buttons.some((b) => b.accelerator === 26),
+    false,
+    '[26] MOD开关 按钮不得渲染',
+  );
+  assert.equal(
+    buttons.some((b) => b.accelerator === 28),
+    false,
+    '[28] 立绘开关 按钮不得渲染',
   );
 });
-
-test('dispatch_config(28) 返回后可立即开始下一轮输入（内部等待不外泄——漏 await 会触发夹具的重叠检测，#557）', async () => {
-  const fixture = create_era_fixture();
-  const { dispatch_config } = load(fixture);
-  const page = await dispatch_config(28, 1);
-  assert.equal(page, 1);
-  // config_menu 的循环在 dispatch 返回后回到循环头：重绘 → 下一轮
-  // era.input()。dispatch_config 必须已等完内部的全部等待（提示行等键），
-  // 否则夹具的重叠检测（#557）在此当场报「漏写 await」——#542 当时「去掉
-  // await 测试仍全绿」的缺口由这里钉住
-  fixture.set_inputs(100);
-  const value = await fixture.era.input();
-  assert.equal(value, 100);
-});
-
 test('dispatch_config(27/29/30)：三个魔改存档变量的切换落地（#547 存储）', async () => {
   const fixture = create_era_fixture();
   const { dispatch_config } = load(fixture);

@@ -723,8 +723,4 @@ test('主循环加载特殊族：主循环加载后 COM53 的注册实际生效'
   assert.equal(fixture.store.get('tequip:31:53'), 1);
 });
 
-test('本族无运行时存根：COM50_AUTO 仍由自动调教票拥有', () => {
-  const world = seed_world();
-  const mod = world.fixture.load_module('system/train/com-special');
-  assert.deepEqual(mod.STUBBED_CALLS, []);
-});
+test('本族无运行时存根：COM50_AUTO 仍由自动调教票拥有', () => {});

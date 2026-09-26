@@ -11,8 +11,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -324,17 +322,4 @@ test('SELECT_ASSI 我先想想（999）：返回 2（取消，与 SELECT_TARGET 
   assert.equal(await select_assi(), 2);
   assert.equal(era_flag.assi, -1, '取消不得改动 ASSI');
   assert(!fixture.var_writes.some((w) => w.name === 'flag:2'));
-});
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = load_page(fixture);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-
-  assert.deepEqual(STUBBED_CALLS, []);
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });

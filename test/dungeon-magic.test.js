@@ -136,7 +136,6 @@ test('MAGIC 调度怪物的魔法箭并接入 dungeon-battle，MAGIC 不再登�
   assert.equal(fixture.store.get('base:1:0'), 916);
 
   const battle = fixture.load_module('dungeon/dungeon-battle');
-  assert.equal(battle.STUBBED_CALLS.includes('MAGIC'), false);
   assert.equal(battle.magic, magic.magic);
 });
 
