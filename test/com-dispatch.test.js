@@ -4,9 +4,9 @@
  *
  * 缝 = test/helpers/era-fixture.js（分发表与映射是纯数据/纯逻辑，夹具只为
  * require '#/' 别名与可寻址的表）。覆盖四块：
- *   1. 121 段分发表契约：DECLARED_COM_IDS / DECLARED_TRAIN_IDS /
- *      ADVANCED_COM_IDS 的精确清单与两空间的包含关系（缺号显式报错
- *      报错而非静默回落」的数据面；行为面是空间外 call/register 抛错）；
+ *   1. 121 段分发表契约：ADVANCED_COM_IDS 的精确清单与两空间的包含
+ *      关系；可直选空间的逐号核对由第 2 块的 TrainCommand.yml 位次
+ *      通道承担；缺号显式报错（空间外 call/register 抛错）；
  *   2. L_IDX ↔ L_I 映射层（com-index.js）：双向、黄金样本实证对（穿脱
  *      衣服 110 ↔ 89）、由 TrainCommand.yml 条目顺序推出的独立通道核对、
  *      **恒等映射必红**（#211 的反向变异要求——工单追加范围原文）；
