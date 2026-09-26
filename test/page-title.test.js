@@ -63,6 +63,12 @@ test('首屏：标题、版本行、作者、年份与两个按钮（#642：名�
     '联系方式段已删除：「版本推进出问题」不得出现',
   );
   assert(!texts.some((line) => line.includes('群里@Delicious')));
+  // 整屏居中：首个对齐调用就是 center
+  assert.equal(
+    fixture.calls.find((c) => c.api === 'setAlign')?.args[0],
+    'center',
+    '标题画面整屏居中：首个 setAlign 必须是 center',
+  );
 
   // 按钮只剩 [0]/[1]：accelerator 沿用原作编号，名单钮 9 与联系方式钮 8
   // 已随各自段落删除。断言看 rendered（引擎实际显示的文本，含引擎自动拼的
