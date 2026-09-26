@@ -77,7 +77,7 @@ npm run format:check     # Prettier，只检查格式
 | ----------------- | ------------------------------------------------------------------------------------------------------ |
 | 每次完成一项改动  | 对应测试文件 ＋ `mutation-check --ids <本轮新加的编号>`                                                |
 | 开 PR 前          | `npm test` ＋ `npm run lint` ＋ `npm run format:check`                                                 |
-| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）；master 另跑无引擎全库                                         |
+| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）；master 另跑无引擎全库                                          |
 | 阶段结束          | 给阶段收尾 PR 打 `phase-acceptance` 标签，在 CI 跑全量变异测试；引擎实际运行在本机用 Electron MCP 验收 |
 
 曾有按改动文件选择测试的选择器（#256），实测最多省一半时间，#452 撤掉：本地和 CI 只有 `npm test` 一个入口，PR 的 CI 通过即全库通过。
