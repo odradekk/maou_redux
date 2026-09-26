@@ -77,8 +77,6 @@ const {
 } = require('#/event/event-aftertrain');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
-const STUBBED_CALLS = [];
-
 /**
  * 口上函数共用的读取面：随机源、当前角色名、自称、门面。
  * @param {(n: number) => number} [rand]
@@ -14538,7 +14536,6 @@ osioski_koujo_family.register(6, osioki_koujo_k6);
 gobi_koujo_family.register(6, gobi_koujo_k6);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_6,
   dog_kojo_6,
   colosseum_kojo_6,

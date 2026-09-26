@@ -73,15 +73,15 @@
  *     的快捷键（#129），[8]/[16] 的可见性判定因此变成访问限制——两处
  *     case 内的注释写明，行为保持（第 1 轮验收补记）；
  *   - 立绘更换按钮 `[20]`（:870-871）：立绘系统判不移植（#542，#540 范围
- *     决定 4——开关默认关、素材不在仓库、只增强显示）。原作守卫「立绘开关
- *     && CFLAG:ARG:1 == 0 && ARG != MASTER」的开关项恒假，照抄则按钮永不可
- *     见；有意偏离：去掉开关条件保留后两条，按钮可见、按下打不移植提示；
- *     `:883 CALL PTJ_BUTTON` 同票落判——打工 MOD 不移植，默认态分支
+ *     决定 4——开关默认关、素材不在仓库、只增强显示），#638 起按「缺内容的
+ *     去掉入口」删除按钮与 CASE 20：原作守卫「立绘开关 && CFLAG:ARG:1 == 0
+ *     && ARG != MASTER」的开关项恒假，按钮本就永远按不到。`:883 CALL
+ *     PTJ_BUTTON` 同票落判——打工 MOD 不移植，默认态分支
  *     （[18] 卖春积极性按钮，SHOW_BUTTON_BICH_LEVEL）换真身接线；
- *   - `[IF_DEBUG][99] 修改角色[ENDIF]` 调试按钮不渲染（分发端 :934 的
- *     CASE 99 → `CHAR_DEBUG`，docs/stub-registry.md 判「不移植（调试功能）」，
- *     行号随 #542 订正）：本项目未移植 Emuera 的编译期调试开关概念，直接按
- *     「非调试构建」处理；
+ *   - `[IF_DEBUG][99] 修改角色[ENDIF]` 调试按钮（分发端 :934 的 CASE 99 →
+ *     `CHAR_DEBUG`）：本项目未移植 Emuera 的编译期调试开关概念，直接按
+ *     「非调试构建」处理——按钮本就不渲染；#638 起调试面板判不移植的
+ *     处理分支一并删除；
  *   - `CASE 500`（前一人）/`CASE 600`（后一人）原作各含一支
  *     `... && MASTER` 的判据，`MASTER` 是恒为 0 的角色号常量、逻辑与运算
  *     里恒假，两支分支实际不可达——1:1 精简为可达分支，不逐字保留死分支；
@@ -145,27 +145,8 @@ const {
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 const { show_chara_info } = require('#/page/page-chara-info-show');
-const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
-
 const NUM_PAGE = 24;
 
-/**
- * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
- * #401 起「育儿室」按钮与流程换真身（ere/event/event-pregnancy.js 的
- * show_button_child_care / child_care_chara）；#393 起转职 / 魔的诱惑 /
- * 结婚三对按钮与流程换真身（ere/chara/chara-job-change.js、
- * chara-temptation.js、chara-marriage.js），九条从名单移除；#390 起
- * SHOW_CHARA_INFO 换真身（ere/page/page-chara-info-show.js），也从名单移除。
- * 多票各删一批，合并后只剩一条：#542 起 PTJ_BUTTON（打工 MOD）与更换
- * 立绘（立绘系统）判不移植——入口提示行不是存根占位，移出名单（PTJ_BUTTON
- * 的默认态分支＝[18] 卖春积极性按钮，另一支真身见 kojo-dungeon-bitch）；
- * #545 起统一卖春积极性 / 换号两支换真身（page-uniform-bitch-level.js、
- * page-chara-number-swap.js）；#546 起装备详情三函数换真身
- * （system/equip/equip-show.js，[16] 按钮与 CASE 16）、RANDOM_SELF_CALL 的
- * MODE 1 换真身（chara/chara-self-call.js，CASE 8 的自定义输入）——四条
- * 一并移出，仅剩 CHAR_DEBUG（调试功能不移植）。
- */
-const STUBBED_CALLS = ['CHAR_DEBUG'];
 function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
@@ -755,11 +736,8 @@ async function chara_info_individual(arg, chara_sort) {
           9,
         );
       }
-      // [20] 更换立绘（:870-871）：原作守卫是「立绘开关 && CFLAG:ARG:1 == 0
-      // && ARG != MASTER」。立绘系统判不移植（#542）后开关恒关，照抄守卫
-      // 按钮永不可见——有意偏离：去掉恒关的开关条件、保留后两条，玩家能
-      // 按到 [20] 并看到不移植提示（#540 范围决定 4）
-      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);
+      // [20] 更换立绘（:870-871）随 #638 删除：立绘系统判不移植（#542），
+      // 按「缺内容的去掉入口」处理——按钮与 CASE 20 一并移除（见文件头）
     } else if (sub_page === 1 || sub_page === 2) {
       if (is_trainable(current) === 0) era.printButton('设为目标', 6);
       if (is_assistable(current) === 0) era.printButton('设为助手', 7);
@@ -952,16 +930,9 @@ async function chara_info_individual(arg, chara_sort) {
       case 18:
         await set_bich_level(current);
         continue;
-      case 20:
-        await not_ported_line_wait(
-          '更换立绘',
-          '更换立绘',
-          '#542 判不移植：立绘系统默认关闭、素材不在仓库',
-        );
-        continue;
-      case 99:
-        await stub_line_wait('CHAR_DEBUG', '角色调试面板', '调试功能，不移植');
-        continue;
+      // case 20（更换立绘）与 case 99（CHAR_DEBUG 调试面板）随 #638 删除：
+      // 两者均判不移植（#542），按钮不渲染、引擎输入白名单送不到这两值，
+      // 分支只有直调可达——按「缺内容的去掉入口」一并移除
       default:
         if (result >= 15000) {
           const target = result - 15000;
@@ -975,7 +946,6 @@ async function chara_info_individual(arg, chara_sort) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   show_chara_act,
   compare_chara_act,
   chara_marriage_before,

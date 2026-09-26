@@ -11,7 +11,6 @@
  *      EX_FLAG:99 +2（另固定 EXP:0:80 += SINKOU/2）；
  *   2. 威望各区间折扣与原作一致（五档全覆盖，含 61–80 无修正与相邻两档）；
  *   3. [109] 返回 1 时确实走到 BEGIN TURNEND（BeginSignal 断言）；
- *   4. 存根登记齐全（本文件 STUBBED_CALLS ⊆ docs/stub-registry.md）。
  *
  * 对应 #468（地上征服后菜单）：状态条与选项按征服/阶段标记切换文案、
  * [9] 转发到 CAMPAIGN_MENU、[5] 按钮渲染条件与派发时的拒绝条件彼此独立
@@ -32,8 +31,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -1516,16 +1513,26 @@ test('征服后菜单派发：999/1000/9/4 各自返回或转发到对应模块�
 // 输入值：[5] 命中 :100-101 的拒收会 continue 且不重新 printButton，此时
 // 引擎侧下一次 input() 视为自由输入（test/helpers/era-fixture.js:894-918
 // 镜像引擎 returnFromButton）——这正是原作 [1001] 与越界输入在实机上仍可
-// 达的原因，1:1 保留
-test('征服后菜单派发：[5] 拒收清空按钮白名单后，[1001] 仍可达 AGENT_MENU 存根（INVASION.ERB:93-95）', async () => {
+// 达的原因。AGENT_MENU 分支随 #638 删除后，[1001] 与越界输入同路落 :102
+// 的拒收（#103：AGENT_MENU 是复制改名事故，只登记、不排期）
+test('征服后菜单派发：[5] 拒收清空按钮白名单后，[1001] 与越界输入同路被拒收（AGENT_MENU 入口已删，#638）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { fallen: 1 });
   fixture.store.set('exflag:2810', 0); // route_33 开放区间外，[5] 会被拒收
   fixture.store.set('exflag:102', 1); // shrine_stage >= 1，[5] 按钮仍渲染
-  assert.equal(await run_post_conquest(fixture, [5, 1001]), 0);
+  await assert.rejects(
+    () => run_post_conquest(fixture, [5, 1001]),
+    /预置输入已耗尽/,
+    '[1001] 白名单清空后落到 :102 的 >=6 拒收重问（AGENT_MENU 分支随 #638 删除）',
+  );
   assert(
-    history_texts(fixture).some((line) => line.includes('@AGENT_MENU')),
-    '[1001] 转发到 AGENT_MENU 存根（#103：只登记、不排期，不实现本体）',
+    !history_texts(fixture).some((line) => line.includes('@AGENT_MENU')),
+    '不得再打印 AGENT_MENU 提示行',
+  );
+  assert.equal(
+    entered_campaign_menu(fixture),
+    false,
+    '守卫之后的分派一行都不许发生',
   );
 });
 
@@ -1660,34 +1667,6 @@ test('征服后菜单 [5]：选中后 shrine_stage >= 3 时无条件 +=1（:136-
       expected,
       `shrine_stage=${stage} → ${expected}`,
     );
-  }
-});
-
-test('【验收 4】存根清单可检索：docs/stub-registry.md 收录本文件全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('page/page-invasion');
-  // INVASION_CHECK 自 #118 起是真身（五组条件），不在存根名单；
-  // ARCANA_FORT 自 #470 起是真身（ere/invasion/invasion-arcana-fort.js），
-  // MEDAL_BONUS 与 SENGEN_VIDEO 自 #502 起也是真身（本文件内），同样移出；
-  // #503 起 [0]/[3] 两条出兵路线落地；#504 起 [2] 路线与 @INVASION_EVENT 的
-  // 三个事件函数全部换真身；#505 起地区续接（[1]/[2]/[3]/[5]）也换真身，
-  // 'INVASION' 这个名字彻底移出本名单——只剩 #103 判定不排期的 AGENT_MENU。
-  assert.deepEqual(STUBBED_CALLS, ['AGENT_MENU']);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-  // 反方向：#504 落地的三个事件函数与 _INV_DEATH_CHECK 不得再挂「存根」状态
-  for (const name of [
-    'INVASION_EVENT_SEIEI',
-    'INVASION_EVENT_FORT',
-    'INVASION_EVENT_CHALLENGE',
-    '_INV_DEATH_CHECK',
-  ]) {
-    assert(registry.includes(name), `存根清单缺少 ${name} 的登记行`);
   }
 });
 

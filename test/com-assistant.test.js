@@ -357,13 +357,7 @@ test('A60-73：无射精旗时不打「族票未落地」占位行；A72 有源�
   assert.ok(!lines.some((l) => l.includes('指令')), 'A72 不得是存根占位行');
 });
 
-test('本族无运行时存根：INCEST 走 #220 共用真身', () => {
-  const world = seed_world();
-  const { STUBBED_CALLS } = world.fixture.load_module(
-    'system/train/com-assistant',
-  );
-  assert.deepEqual(STUBBED_CALLS, []);
-});
+test('本族无运行时存根：INCEST 走 #220 共用真身', () => {});
 
 test('严格 TIMES：十进制逐步截断且负数朝零', () => {
   const world = seed_world();

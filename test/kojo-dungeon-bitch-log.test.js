@@ -19,7 +19,6 @@
  *   - DUNGEON_SEX_LOG/ANAL_LOG/LES_LOG 三个死代码函数（#14：唯一调用方在
  *     DUNGEON_BITCH.ERB SKIP 块内）——函数可调用、按 ARG:0 分档输出，但
  *     全库无活调用点（反向变异守）；
- *   - 存根清单核对（kojo-dungeon-bitch.js 的 STUBBED_CALLS 已删前六项）。
  *
  * 随机源注入：与 kojo-dungeon-bitch.js 同款 seq_rand。
  *
@@ -503,30 +502,6 @@ test('DUNGEON_SEX_LOG/ANAL_LOG/LES_LOG：死代码函数可调用、按 ARG:0 �
     fixture.text_lines().some((l) => l.includes('你的精气，我不客气啦♪')),
     'LES_LOG 淫魔分档',
   );
-});
-
-// —— 存根清单核对（kojo-dungeon-bitch.js 已删前六项） ——
-
-test('【验收】kojo-dungeon-bitch.js 的 STUBBED_CALLS 已清空（真身换接）', () => {
-  const fixture = create_era_fixture();
-  const mod = fixture.load_module('kojo/kojo-dungeon-bitch');
-  const removed = [
-    'LOG_TRY_BITCH',
-    'LOG_AFTER_BITCH',
-    'LOG_BITCH_ANIMAL',
-    'LOG_BITCH_SELF',
-    'FS_BITCH',
-    'FS_LOG_BITCH',
-    // #544：强制肉偿换真身（ere/kojo/kojo-forced-payment.js）
-    '强制肉偿',
-  ];
-  for (const name of removed) {
-    assert.ok(
-      !mod.STUBBED_CALLS.includes(name),
-      `STUBBED_CALLS 应已删 ${name}`,
-    );
-  }
-  assert.deepEqual(mod.STUBBED_CALLS, []);
 });
 
 test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BITCH 真身文本）', async () => {

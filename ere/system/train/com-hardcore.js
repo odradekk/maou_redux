@@ -88,18 +88,10 @@ const { soiling_cloth_no1 } = require('#/system/train/cloth');
 const { monster_name, monster_data, e_get } = require('#/dungeon/monster-data');
 const { karma } = require('#/dungeon/dungeon');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const {
   clothtype_main2_text,
   clothtype_special_text,
 } = require('#/page/page-clothtype');
-
-/**
- * 本族升格能命中的 COM64（CASE 80 → 64，3P，属 J15 助手族）已由 #225
- * 落地，占位回落不再触发，名单清空（#565）；回落作为 JUMPFORM 防御网
- * 保留（占位 + RETURN 1 语义见 com-sex.js 同款注释）。
- */
-const STUBBED_CALLS = [];
 
 // —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 兜底） ——
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
@@ -151,13 +143,15 @@ const zooko_worn = (cid) =>
 /** PBAND（ITEM:4，SYSTEM ver1.0.3.ERB:42 的内建常量赋值） */
 const PBAND = 4;
 
-/** JUMPFORM COM{RESULT}：高级真身未落地时沿项目既有约定走登记存根。 */
+/**
+ * JUMPFORM COM{RESULT}：升格目标已全部注册进 com_family（升格表能返回的
+ * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 对应原作
+ * 「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * @param {number} id 升格后的 COM 号
+ * @returns {Promise<number>}
+ */
 async function jump_to_advanced(id) {
-  if (com_family.has(id)) {
-    return com_family.call(id);
-  }
-  stub_line(`COM${id}`, `指令 ${id} 的升格目标`, '随追加与高级指令票');
-  return 1;
+  return com_family.call(id, { whenMissing: 1 });
 }
 
 // ============================================================
@@ -2515,7 +2509,6 @@ com_family.register(90, com90);
 equip_com_family.register(89, equip_com89);
 
 module.exports = {
-  STUBBED_CALLS,
   piercing_state,
   able80,
   able81,

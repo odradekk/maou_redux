@@ -47,12 +47,6 @@ const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
 const { pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-/**
- * 本文件存根化的原作调用名：无——9 个函数全部落地，调用的只有引擎 API。
- * docs/stub-registry.md 的核对测试读这个导出（loOK.js 同款）。
- */
-const STUBBED_CALLS = [];
-
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** ID_OF_GENERAL_CHARASTERISTICS（VARIABLES.ERH:6）：非唯一性格的素质编号表 */
@@ -349,7 +343,6 @@ async function choose_haircolor(cid = -1, per_line = 6) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   /** 写「口上」两素质的属主域写法（174/175 走 system 门面）——本文件是
    * 那份写法的唯一落点，chara-custom2.js 从这里取 */
   set_personality: set_talent,

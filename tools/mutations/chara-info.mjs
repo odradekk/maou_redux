@@ -8,7 +8,7 @@
 // #391 的三个新测试文件（chara-info-actions / chara-soul-transfer /
 // page-chara-info）尚未落库时，门 3 会报「测试文件不存在」，属预期中间态。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 96; // #557 +2（M12357/M12358：名册两处漏 await 的重叠检测直接报错条目）；#389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致；#546 +5（M11539-M11543：[16] 装备情报按钮接线、CASE 16 详情与 WAIT、CASE 8 的 MODE 实参、STUBBED_CALLS 收敛）
+export const COUNT = 93; // #641 验收 +1（M12910：提升能力按钮编号）；#641 起 -4（M11315–M11317 立绘入口守卫与 M11543 名单守卫随入口删除与 STUBBED_CALLS 机制移除）；#557 +2（M12357/M12358：名册两处漏 await 的重叠检测直接报错条目）；#389 起 -4；#393 返工 +11；返工二 +1（M9043 名册页长）；返工三 +2（M9057/M9058 故乡 kind 表）；#517 +1（M11141 COMPARE_CHARA_ACT 的阅读法）；#530 +2（M11209 魔王行的编号格、M11210 魔王行的等级地址）；#535 +3（M11300 角色行的编号前缀、M11301 角色行的等级地址、M11302 角色行的按钮快捷键）；#535 返工 +5（M11303-M11307 魔王行/角色行姓名列的对齐契约与其列宽）；#542 +4（M11315-M11318：[20] 更换立绘按钮的两臂守卫、CASE 20 提示话术、[18] 卖春积极性按钮快捷键）；#545 +31（M11430-M11460：统一卖春积极性八条、换号与排序编号十九条、名册分发三条）；#545 返工 +7（M11461-M11464：两处 await 顺序、候选列表排序、跨次进入的页码；M11465-M11467：#535 转来的三处覆盖缺口补变异条目；M11445-M11448/M11459/M11460 按「只换排序编号」重写）；#545 第 2 轮返工 +2（M11468 第二屏取消支路、M11469 等级列左对齐宽度；M11454/M11455 的 find 随行体改 `LV:`+宽度同步）。合并态 45 + 40 + 4 = 89，与 --verify 实核一致；#546 +5（M11539-M11543：[16] 装备情报按钮接线、CASE 16 详情与 WAIT、CASE 8 的 MODE 实参、STUBBED_CALLS 收敛）
 
 export default [
   {
@@ -764,39 +764,6 @@ export default [
     tests: ['page-chara-info'],
     must_mention: '收藏标记读 cflag:cid:700',
   },
-  // —— #542：[20] 更换立绘与 [18] 卖春积极性按钮（PTJ_BUTTON 默认态）——
-  {
-    desc: 'M11315 更换立绘按钮守卫漏「非魔王」臂（ARG != MASTER——魔王行也画出 [20]，#542）',
-    file: 'ere/page/page-chara-info.js',
-    find: "      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);",
-    replace:
-      "      if (state === 0) era.printButton('更换立绘', 20); // 变异：漏掉 ARG != MASTER",
-    tests: ['page-chara-info'],
-    must_mention: '魔王（ARG == MASTER）：不渲染',
-  },
-  {
-    desc: 'M11316 更换立绘按钮守卫漏「状态 0」臂（CFLAG:ARG:1 == 0——侵攻中等占用角色也画 [20]，#542）',
-    file: 'ere/page/page-chara-info.js',
-    find: "      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);",
-    replace:
-      "      if (current !== 0) era.printButton('更换立绘', 20); // 变异：漏掉 CFLAG:1 == 0",
-    tests: ['page-chara-info'],
-    must_mention: '奴隶 + 状态 2（侵攻中）：不渲染',
-  },
-  {
-    desc: 'M11317 CASE 20 的不移植提示退回存根占位（「随资源票」话术——判死终态被读成待办，#542）',
-    file: 'ere/page/page-chara-info.js',
-    find: `      case 20:
-        await not_ported_line_wait(
-          '更换立绘',
-          '更换立绘',
-          '#542 判不移植：立绘系统默认关闭、素材不在仓库',
-        );`,
-    replace: `      case 20:
-        await stub_line_wait('更换立绘', '更换立绘', '随资源票'); // 变异：退回占位话术`,
-    tests: ['page-chara-info'],
-    must_mention: '不移植提示要说清为何',
-  },
   {
     desc: 'M11318 卖春积极性按钮快捷键错位（18 改 81——原作编号 [18] 的分发落在白名单外，#542）',
     file: 'ere/page/page-chara-info.js',
@@ -856,14 +823,6 @@ export default [
     tests: ['page-chara-info'],
     must_mention: '输入不合法！请输入以下值之一',
   },
-  {
-    desc: 'M11543 STUBBED_CALLS 残留旧条目（SHOW_BUTTON_EQUIP 没随换真身移出名单）',
-    file: 'ere/page/page-chara-info.js',
-    find: "const STUBBED_CALLS = ['CHAR_DEBUG'];",
-    replace: "const STUBBED_CALLS = ['CHAR_DEBUG', 'SHOW_BUTTON_EQUIP'];",
-    tests: ['page-chara-info'],
-    must_mention: '已有真身（#546），不应再留在本文件的存根名单里',
-  },
   // —— #557：重叠检测直接报错的调用点变异（与 M11461/M11462 同一目标、
   // 独立条目：那两条守播报顺序断言，这两条守夹具的重叠抛错本身）——
   {
@@ -885,5 +844,13 @@ export default [
       continue;`,
     tests: ['page-chara-info'],
     must_mention: '疑似漏写 await',
+  },
+  {
+    desc: 'M12910 角色详情「提升能力」按钮改用已删的编号 20（#641 验收抽样补的断言）',
+    file: 'ere/page/page-chara-info.js',
+    find: "era.printButton('提升能力', 10);",
+    replace: "era.printButton('提升能力', 20);",
+    tests: ['page-chara-info'],
+    must_mention: '[10] 提升能力的按钮编号必须是 10',
   },
 ];

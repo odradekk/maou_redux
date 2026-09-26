@@ -68,18 +68,6 @@ const room_mod = require('#/dungeon/dungeon-room');
 const town_mod = require('#/dungeon/dungeon-town');
 const ex_item_mod = require('#/dungeon/ex-item');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。EQUIP_CHECK/EQUIP_SELECT 不在此列
- * （#174 真身，文件头）；DUNGEON_TRAP 不在此列（#176 真身
- * ere/dungeon/dungeon-trap.js）；DUNGEON_ROOM 不在此列（#177 真身
- * ere/dungeon/dungeon-room.js）；DUNGEON_TOWN 亦不在此列（#178 真身
- * ere/dungeon/dungeon-town.js，撤到迷宫外的调用点经模块对象 town_mod）。
- * BEDROOM_BATTLE_MALE 亦不在此列（#548 真身，本文件的
- * bedroom_battle_male——ENDING ver 1.0.1.ERB 的定义随 S0 订正）。
- */
-const STUBBED_CALLS = [];
-
 // —— 战役 1「赤蛮咒森」的 DispatchFamily（#469，决议 #7）——
 // 键都是 FLAG:400（当前进行中的战役号）；只有 CAMPAIGN_SET_1 存在，
 // FLAG:400 在可达状态下只能是 0/1（各调用点先挡 < 1），declaredIds
@@ -1509,7 +1497,6 @@ async function get_down_enemy(arg0) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   run_dungeon,
   bedroom_battle_male,
   check_status,

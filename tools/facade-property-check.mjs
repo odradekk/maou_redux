@@ -50,7 +50,7 @@ import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
-/** 引擎 SDK：不是游戏代码，整体跳过（trace-check / domain-check 同款标准） */
+/** 引擎 SDK：不是游戏代码，整体跳过（engine-contract-check / domain-check 同款标准） */
 const SDK_FILE = 'ere/era-electron.js';
 
 /** 门面根：域切片文件在 chara-<域>.js，装配体在 chara.js */

@@ -44,14 +44,6 @@ const era_global = require('#/era-utils/era-global');
 const { geo_test, db_set } = require('#/dungeon/labo'); // 2D 模式分支（#181 H12）
 const { set_vil } = require('#/dungeon/labo-map');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）。#565 起 RAND_CHARA_MAKE（随机分支 :203）与 CHARA_NAME_DEFINE
- * （村娘分支 :111）均接真身，名单清空；名字 ↔ 清单状态的机械核对在
- * tools/trace-coverage.mjs 的 check_stub_names（随 --coverage 跑）。
- */
-const STUBBED_CALLS = [];
-
 // 注册在模块顶层（往注册表塞函数，不碰 era.*——引擎允许；era.* 只在处理器
 // 函数体内调用，#6 的两条硬规则之二）。普通档：原作 @EVENTFIRST 的其他
 // 定义随各自所属票接入。
@@ -385,5 +377,3 @@ on('EVENTFIRST', async () => {
   // 是这张票到站的预期结果。
   begin(STATE.SHOP);
 });
-
-module.exports = { STUBBED_CALLS };

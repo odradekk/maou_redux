@@ -18,10 +18,9 @@
  *   3. 无效输入：不抛错、无提示、画面重绘（原作无 ELSE，:228 RETURN 0，
  *      派单核实事实 #5）；
  *   4. 连续多轮混合操作后状态一致；
- *   5. 作用域外指令分支的壳：占位带原作调用名（派单核实事实 #7——不静默
- *      丢掉），含 110/111 守卫与 520-530 区间的 1:1；
- *   6. 存根清单核对（docs/stub-registry.md）；
- *   7. BOUGHT 的两个跳转：#396 起 >= 54 画陷阱商店真身、#399 起 0-53 画
+ *   5. 作用域外指令分支的分发：110/111 守卫、520-530 区间的 1:1、
+ *      525 代表抽查；999 调试入口与 400 隐入口随 #638 删除（输入不被接受）；
+ *   6. BOUGHT 的两个跳转：#396 起 >= 54 画陷阱商店真身、#399 起 0-53 画
  *      道具商店真身（page/page-item-shop.js），两支都整个接管本轮（原作
  *      :27/:29 的 JUMP 在 DRAW_MENU 之前）。店内的 997/998/999 三键与
  *      「购物态下其余输入 RETURN 0」在 test/shop-trap.test.js（同一张票的
@@ -29,15 +28,12 @@
  *      test/item-shop.test.js。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：作用域外的每个指令壳只抽查代表
- * （101/777/200/199/525 + 498/499 + 999 未逐个断言）——壳的
- * 完整性由 STUBBED_CALLS 核对与链结构的 deepEqual 之外的代码评审承担；
- * 删掉某个未抽查的壳（如 102 DUNGEON_INFO2）测试仍绿，认领对应子系统票时
- * 以 docs/stub-registry.md 的专节为核对依据。
+ * （101/777/200/199/525 + 498/499）——壳的完整性由链结构的 deepEqual
+ * 之外的代码评审承担；删掉某个未抽查的壳（如 102 DUNGEON_INFO2）测试仍绿，
+ * 认领对应子系统票时以本文件的直调分发用例为核对依据。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -438,21 +434,18 @@ async function dispatch(...results) {
   return fixture;
 }
 
-test('作用域外的指令分支：壳占位带原作调用名（代表抽查）', async () => {
+test('作用域外的指令分支：占位壳已全部接通或删除（代表抽查）', async () => {
   // 一次分发打一行存根并等键（#73：玩家看到后再重绘）；取证在行史。
   // 200 自 #136 起是真身存档界面，199 自 #395 起是真身 BEGIN TURNEND
   // 转场（专属用例见下），101 自 #391 起是真身角色信息画面
   // （test/page-chara-info.test.js 独立覆盖），777 自 #463 起是真身设定
   // 界面（test/page-config.test.js 独立覆盖），103 自 #543 起是真身批量
   // 处刑（test/event-execution-batch.test.js 独立覆盖），52x 自 #548（S7）
-  // 起是真身阶层信息（test/page-shop-floor.test.js 独立覆盖）——仍走占位的
-  // 只剩 LABO（400，面板无按钮的隐入口）
-  const fixture = await dispatch(400, 525);
+  // 起是真身阶层信息（test/page-shop-floor.test.js 独立覆盖），LABO（400，
+  // 面板无按钮的隐入口）与 999（DEBUG_MENU_U）随 #638 删除——本用例只剩
+  // 真身分支可抽
+  const fixture = await dispatch(525);
   const texts = history_texts(fixture);
-  assert(
-    texts.some((line) => line.includes('@LABO')),
-    '指令壳应占位 @LABO',
-  );
   assert(
     !texts.some((line) => line.includes('@SHOW_FLOOR')),
     '52x 分支已换真身（第5阶层内容见 test/page-shop-floor.test.js）',
@@ -460,6 +453,11 @@ test('作用域外的指令分支：壳占位带原作调用名（代表抽查�
   assert(
     texts.some((line) => line.includes('第5阶层')),
     '525 → SHOW_FLOOR 5',
+  );
+  assert.equal(
+    texts.filter((line) => line.includes('尚未移植')).length,
+    0,
+    '主菜单不再有任何存根占位行（#638 删除存根机制）',
   );
 });
 
@@ -725,23 +723,29 @@ test('520-530 区间判定 1:1：520 与 531 不匹配，530 匹配（RESULT > 5
   );
 });
 
-test('非购物态的 999 落到调试菜单的不移植提示', async () => {
+test('非购物态的 999：调试菜单入口已删（#638），输入不被接受', async () => {
   // 原作主菜单不印 [999]（DRAW_MAINMENU 的编号表 100-888 无它）——键入式
-  // 后门在引擎侧不可达（#130），调试分支经 usershop 直调验证。**只有**非
-  // 购物态的 999 到得了这个分支：店内的 999 走 :44-46 的退出商店，原作那
-  // 条路径经 CLEAR_SHOP 把 RESULT 清成 0，落不到 :222（#592，见下一条用例
-  // 与 test/shop-trap.test.js 的 USERSHOP 999 用例）。DEBUG_MENU_U 自 #542
-  // 起判不移植（原作者的调试工具，#540 范围决定 3），占位行换成不移植提示
+  // 后门在引擎侧本不可达（#130），DEBUG_MENU_U 又随 #542 判不移植，#638 起
+  // 分支一并删除：直调 usershop(999) 不得再打印任何提示行、不得等键。
+  // **只有**非购物态的 999 到得了这里：店内的 999 走 :44-46 的退出商店
+  //（#592，见下一条用例）
   const fixture = await dispatch(999);
-  const line = history_texts(fixture).find((l) => l.includes('@DEBUG_MENU_U'));
-  assert(line, '提示行必须带原作函数名 @DEBUG_MENU_U（清单行的检索键）');
+  const texts = history_texts(fixture);
   assert(
-    line.includes('调试菜单') && line.includes('不在移植范围'),
-    `不移植提示要说清是什么与为何：${line}`,
+    !texts.some((line) => line.includes('@DEBUG_MENU_U')),
+    '删掉入口后不得再打印调试菜单提示行',
   );
-  assert.equal(fixture.waits.length, 1, '提示行必须等键（#73 同款）');
-});
+  assert.equal(fixture.waits.length, 0, '不得等待读键');
 
+  // 同票的 400（LABO 隐入口）一并删除：直调不得打印提示行、不得等键
+  const labo_fixture = await dispatch(400);
+  const labo_texts = history_texts(labo_fixture);
+  assert(
+    !labo_texts.some((line) => line.includes('@LABO')),
+    'LABO 隐入口删掉后不得再打印占位提示行',
+  );
+  assert.equal(labo_fixture.waits.length, 0, 'LABO 隐入口不得等待读键');
+});
 test('店内 999 退出商店：清标志后直接结束，不打调试菜单提示、不等键（#592）', async () => {
   // #562 验收在引擎里实测的缺陷：退出商店会多一行「调试菜单不在移植范围」
   // 并要求按键。原作 :44-46 确实没有 RETURN，但 :45 的 CALL CLEAR_SHOP 调
@@ -806,41 +810,6 @@ test('498/499 无守卫：指针未选也照原作进分支', async () => {
     2,
     '498/499 各进入一次个别信息页（原作 :156-159 无 A 守卫）',
   );
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_shop_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('page/page-shop');
-  const registry_path = path.resolve(
-    __dirname,
-    '..',
-    'docs',
-    'stub-registry.md',
-  );
-  const registry = fs.readFileSync(registry_path, 'utf8');
-
-  // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
-  // SELECT_TARGET/SELECT_ASSI 与 100 分支的 BEGIN TRAIN 自 #44、INVASION 与
-  // 109 分支的 BEGIN TURNEND 自 #117、199 分支的 BEGIN TURNEND 自 #395 起
-  // 为真身/真转场，SYSTEM_SAVEGAME / SYSTEM_LOADGAME 自 #136 起为真身
-  // （200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
-  // page-dungeon-info2.js），CHARA_INFO / CHARA_INFO_INDIVIDUAL_WAPPED
-  // 自 #391 起为真身（101/498/499 分支，page-chara-info.js），
-  // ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 分支 → show_shop 调用
-  // page/page-shop-trap.js；#395 的运行时占位随之撤除），CONFIG 自 #463
-  // 起为真身（777 分支，page/page-config.js），INTERCEPT / ABILITY_UP /
-  // TAILOR_MAIN 自 #397 起为真身（104/105/108 分支，page-intercept.js /
-  // page-ability-up.js / page-tailor.js），均已移出。#397 那三个是 #515
-  // 订正的：名单与这份断言一起停在旧状态，所以一直没人发现。
-  assert.deepEqual(
-    STUBBED_CALLS,
-    ['LABO'],
-    '存根名单必须只列仍未接真身的分支（#397 起 INTERCEPT/ABILITY_UP/TAILOR_MAIN 已接真身；#542 起 DEBUG_MENU_U 判不移植；#543 起批量处刑已接真身；#548 起 SHOW_FLOOR 已接真身）',
-  );
-  // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });
 
 test('A 的判据两半都算数：被占用的奴隶（CFLAG:x:1 != 0）不计入', async () => {

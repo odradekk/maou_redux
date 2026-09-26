@@ -15,13 +15,6 @@ const era_flag = require('#/era-utils/era-flag');
 const { train_name_init } = require('#/system/train/train-name');
 const { pritrain_message } = require('#/event/event-beforetrain');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- * PRITRAIN_MESSAGE 已随 #218 换真身。
- */
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN（TRAIN_MAIN.ERB:13-58，#PRI）
 on(
   'EVENTTRAIN',
@@ -75,5 +68,3 @@ on(
   },
   TIER.PRI,
 );
-
-module.exports = { STUBBED_CALLS };

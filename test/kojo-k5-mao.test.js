@@ -11,12 +11,9 @@
  *   - @EVENTTRAIN 初调教 / PALAMCNG / MARKCNG / SELF_KOJO / NTR / GOBI /
  *     GOHOUBI / OSIOKI / 死斗场 / 迷宫胜利；
  *   - 插值（%SAVESTR:TARGET/PLAYER% 与心形 ♡）；
- *   - 存根清单核对（docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -224,23 +221,6 @@ test('死斗场（TEQUIP:55）：SELECTCOM==0 静默、==55 走真身', async ()
   });
   await speak_k5(fixture);
   assert.deepEqual(fixture.text_lines(), ['玛奥连站起来的力气都没有了……']);
-});
-
-// —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k5-mao');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 test('@EVENTTRAIN #PRI 置 FLAG:105、@EVENTEND #LATER 清 0', async () => {

@@ -1,7 +1,6 @@
 /**
  * @file 地下城卖春日志与文本函数（issue #185，H16）：DUNGEON_BITCH_LOG.ERB
  * 十四函数的移植。卖春主流程（ere/kojo/kojo-dungeon-bitch.js，#184）的
- * 日志/文本调用点此前以占位行（STUBBED_CALLS）替代，本文件落地真身后换接。
  *
  * 源: target/ERB/迷宮/DUNGEON_BITCH_LOG.ERB  @LOG_TRY_BITCH（:8-49）
  *     @FS_BITCH（:51-277）@FS_LOG_BITCH（:279-316）@LOG_AFTER_BITCH

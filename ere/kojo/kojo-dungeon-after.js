@@ -141,9 +141,7 @@ async function gohoubi_after_koujo(cid, choice) {
 async function gohoubi_request_koujo(cid) {
   const target_pool = era_flag.target; // SWAP LOCAL:2, TARGET
   era_flag.target = cid; // TARGET = A
-  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, [
-    cid,
-  ]);
+  await try_kojo(gohoubi_request_koujo_family, cid, [cid]);
   era_flag.target = target_pool; // SWAP 还原（:450-463 段）
   return 0;
 }

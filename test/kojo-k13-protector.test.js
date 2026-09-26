@@ -12,8 +12,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -510,22 +508,6 @@ test('阈值闸：FLAG:7==1 时淫乱阶段耗尽不出声、==2 时旁路重出
     ['「啊、啊……快点让我的身子燃烧起来吧……♪」'],
     '阈值闸 FLAG:7==2 旁路重出声',
   );
-});
-
-test('SELL_MATURO_K0 已从存根清单移除', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k13-protector');
-  assert.deepEqual(STUBBED_CALLS, []);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 // —— 家族注册接线 ——

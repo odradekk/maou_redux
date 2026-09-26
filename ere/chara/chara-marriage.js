@@ -102,12 +102,6 @@ const { e_get, monster_data } = require('#/dungeon/monster-data');
 const { monsterplay_list } = require('#/dungeon/monster-play');
 const { chara } = require('#/facade/chara');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。二十函数都落真身，名单为空。
- */
-const STUBBED_CALLS = [];
-
 /** 判定返回值：不可结婚（状态不对）（:45-47） */
 const MARRIAGE_BLOCKED = 1;
 /** 判定返回值：侵攻中的勇者（走恋人线）（:42-43） */
@@ -1232,7 +1226,6 @@ function divorce(arg) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   show_button_marriage,
   check_able_to_marriage,
   marriage,

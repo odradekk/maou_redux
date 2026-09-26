@@ -93,13 +93,6 @@ const { ntr_video } = require('#/system/ntr');
 // 在原作同属全局 RAND 序列，ere 侧各自缺省即等价
 const room_day_mod = require('#/dungeon/dungeon-room');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。#502 起 SENGEN_VIDEO_DE 换真身
- * （本文件的 sengen_video_de），名单清空。
- */
-const STUBBED_CALLS = [];
-
 /** 原作 RAND:N（0..N-1）的缺省随机源（各函数以 rand 为注入名，同族模块同款） */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
@@ -1732,5 +1725,4 @@ module.exports = {
   run_event_nextday,
   run_event_newday,
   sengen_video_de,
-  STUBBED_CALLS,
 };

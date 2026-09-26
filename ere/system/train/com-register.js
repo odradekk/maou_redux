@@ -242,7 +242,7 @@ async function comseq_register() {
   await comseq_show(); // :117
   era.drawLine(); // :118
   era.print('调教菜单登录完毕'); // :119 PRINTW（print + 等键——夹具对等待
-  await era.waitAnyKey(); // 的观测统一走 waitAnyKey，stub_line_wait 习语）
+  await era.waitAnyKey(); // 的观测统一走 waitAnyKey，PRINTW 的既有约定）
   game_train.当前选择的调教指令编号 = 0; // :120
   return 0;
 }

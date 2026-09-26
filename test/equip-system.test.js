@@ -510,7 +510,6 @@ test('weapon_restore：装备强化倍率、铁壁、劣化、攻防变动、勋
   assert.equal(not_full.fixture.store.get('cflag:31:11'), 10);
 });
 
-// equip-select 的 STUBBED_CALLS 已清空（CAMPAIGN_EQUIP_SELECT 换真身，
 // #469）：清单核对测试随之移除，同 dungeon-room.test.js 的处置
 
 // —— #546：装备详情显示三函数（其他/EQUIP.ERB:1030-1113）——

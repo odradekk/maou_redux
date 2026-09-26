@@ -68,12 +68,6 @@ const {
 const { game } = require('#/facade/game');
 
 /**
- * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
- * 变动必须同步清单。
- */
-const STUBBED_CALLS = []; // #565：A/B 全量收口后缺号回落删除，两名字移出
-
-/**
  * @TRAIN_MESSAGE_B 的分支族（SELECTCOM → 情景描写）。族票在 com-<族>.js
  * 注册：`train_message_b_family.register(<n>, async () => { … })`。
  */
@@ -1125,7 +1119,6 @@ for (const id of [43, 44, 45, 46, 47, 48, 49, 110, 111]) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   train_message_a,
   train_message_a_family,
   train_message_b,

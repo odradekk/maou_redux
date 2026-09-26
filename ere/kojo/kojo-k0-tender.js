@@ -123,12 +123,6 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN #PRI（:73-77）：存在标志 + 总开关补 0
 on(
   'EVENTTRAIN',
@@ -14036,4 +14030,4 @@ kojo_message_palamcng_family.register(0, kojo_message_palamcng_0);
 kojo_message_markcng_family.register(0, kojo_message_markcng_0);
 kojo_message_com_family.register(0, kojo_message_com_0);
 
-module.exports = { STUBBED_CALLS, kojo_message_com_0, eventtrain_normal_k0 };
+module.exports = { kojo_message_com_0, eventtrain_normal_k0 };

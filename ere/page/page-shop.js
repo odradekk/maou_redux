@@ -65,39 +65,10 @@ const { secret_labo } = require('#/page/page-shop-labo');
 const { item_name, monstername } = require('#/dungeon/monster-data');
 const { chara_callname } = require('#/utils/callname-utils');
 const { batch_execution } = require('#/event/event-execution-batch');
-const { stub_line_wait, not_ported_line_wait } = require('#/utils/stub-line');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
 /** MAX_CHARANUM（其他/VARIABLES.ERH:2 `#DEFINE MAX_CHARANUM 90`） */
 const MAX_CHARANUM = 90;
-
-/**
- * 本文件存根化的原作调用名（作用域外指令分支的壳占位）。
- * docs/stub-registry.md 必须收录每一个（test/page-shop.test.js 核对固定）；
- * 名单变动必须同步清单。SELECT_TARGET/SELECT_ASSI 与 100 分支的 BEGIN
- * TRAIN 自 #44 起为真身/真转场，INVASION 自 #117 起为真身（[109] 的
- * BEGIN TURNEND 随之真转场），199 休息自 #395 起为真身（回合结算的
- * BEGIN TURNEND 出口），SYSTEM_SAVEGAME / SYSTEM_LOADGAME 自 #136 起为
- * 真身（200/300 分支），DUNGEON_INFO2 自 #180 起为真身（102 分支，
- * page-dungeon-info2.js），CHARA_INFO /
- * CHARA_INFO_INDIVIDUAL_WAPPED 自 #391 起为真身（101/498/499 分支，
- * page-chara-info.js），ITEM_SHOP_TRAP 自 #396 起为真身（BOUGHT >= 54 的
- * 陷阱商店，page/page-shop-trap.js；#395 的运行时占位随之撤），SECRET_LABO
- * 自 #398 起为真身（110 分支，page-shop-labo.js），ITEM_SHOP 自 #399 起为
- * 真身（BOUGHT 0-53 的道具商店，page-item-shop.js；#395 的运行时
- * 占位随之撤），MONSTER_SHOP 自 #399 起为真身（120 分支的召唤商店，
- * page-monster-shop.js），CONFIG 自 #463 起为真身（777 分支，
- * page-config.js），INTERCEPT / ABILITY_UP / TAILOR_MAIN 自 #397 起为
- * 真身（104/105/108 分支，page-intercept.js / page-ability-up.js /
- * page-tailor.js），SHOW_FLOOR 自 #548（S7）起为真身（52x 分支，本文件
- * show_floor），批量处刑自 #543 起为真身（103 分支，
- * event/event-execution-batch.js），均移出本名单（#515 订正：三个名字此前
- * 与测试一同停在旧状态，见 test/page-shop.test.js 的固定断言）。999 分支的
- * DEBUG_MENU_U 自 #542 起判不移植（原作者调试工具），运行时提示行不是存根
- * 占位，移出本名单；分支结构保留（usershop 的 999 分支注释；#592 起店内
- * 999 走退出商店的早退，不再与它汇合）。
- */
-const STUBBED_CALLS = ['LABO'];
 
 /**
  * @EVENTSHOP（:4-20）：每轮 BEGIN SHOP 进入时执行一次。
@@ -193,11 +164,8 @@ async function show_shop(main_menu) {
  * （含被守卫拦下的 100/496/497，A == 0 时）落到函数尾（对应 :226-229 的
  * RETURN 0），回循环重绘，不提示、不报错（原作行为）。
  *
- * 作用域外的指令分支按原作结构留壳：运行时打一行占位（原作调用名可检
- * 索），真行为整支欠着，docs/stub-registry.md 整组登记。100 分支自 #44 起
- * 是真身（SELECT_TARGET 真身 + BEGIN TRAIN 真转场）；109 分支自 #117 起
- * 是真身（INVASION 窄路径 + BEGIN TURNEND 真转场）；199 休息自 #395 起
- * 是真身（回合结算的 BEGIN TURNEND 出口，见函数体注释）。
+ * 指令分支全部真身化（#391-#548 逐票接通；999 调试菜单与 400 隐入口随
+ * #638 删除——缺内容的入口按 #574「去掉入口」处理，见函数体注释）。
  *
  * @param {number} result 玩家输入（原作 RESULT，即 era.input() 的返回值）
  */
@@ -413,9 +381,6 @@ async function usershop(result) {
   } else if (result === 888) {
     // 通信（:146）
     await maounet();
-  } else if (result === 400) {
-    // LABO（:148；面板无此按钮，2D 迷宫地质相关的隐入口）
-    await stub_line_wait('LABO', '2D 迷宫实验室', '随迷宫票');
   } else if (result === 496 && selectable_count > 0) {
     // 调教目标（:152-153）：CALL SELECT_TARGET（真身见 page-select-target.js，
     // 原作此调用点忽略返回值——只开选择画面）
@@ -460,19 +425,11 @@ async function usershop(result) {
       era.print('奴隶太多了！'); // :220 PRINTW
       await era.waitAnyKey();
     }
-  } else if (result === 999) {
-    // 调试菜单（:222-223）。**只有非购物态**的 999 到得了这里：店内的 999
-    // 在上面的购物段就 return 了（#592——原作那条路径经 :45 的 CLEAR_SHOP
-    // 把 RESULT 清成 0，落不进本分支）。DEBUG_MENU_U 随 DEBUG小白娘判不移植
-    // （#542，#540 范围决定 3：原作者的调试工具；原作商店输入 999 进入，
-    // ere 输入只接受已打印按钮，入口本就不可达——#130），分支保留结构
-    // 与不移植提示
-    await not_ported_line_wait(
-      'DEBUG_MENU_U',
-      '调试菜单',
-      '#542 判不移植：原作者的调试工具',
-    );
   }
+  // 原作的 :222-223 调试菜单（DEBUG_MENU_U，原作者的调试工具）自 #542 判不
+  // 移植、#638 起随存根清单一并删除入口：主菜单不印 [999] 按钮，引擎的输入
+  // 白名单（#130）本就送不到这里；店内的 999 在上面的购物段早退（#592），
+  // 也不会落到链尾
 
   // :226-227 链外尾检查（SIF，非 ELSEIF）：未被链上分支提前 RETURN 的
   // 输入再查一次 7788。链上的提前 return 都在 100 分支内（取消 :68 与
@@ -630,8 +587,8 @@ async function run_shop({ skip_eventshop = false } = {}) {
 
 // usershop 一并导出（#130）：引擎的 input() 只送达已打印按钮的快捷键。
 // #395 起 [101]-[888] 大部分分支已配上按钮（page-main-menu.js 的指令面板
-// 段，渲染真身、分发仍存根，见该文件文件头）；仍无按钮的是 498/499
+// 段，渲染与分发全部真身）；仍无按钮的是 498/499
 // （名字按钮随角色数据票）、52x（阶层信息，DRAW_DUNGEON_OVERVIEW 的
-// [520]-[530] 已打，登记与本文件无关）与 999/7788（隐藏调试入口，原作
+// [520]-[530] 已打）与 7788（隐藏调试入口，原作
 // 本就无 PRINTLC）——这些分支的分发行为只能经直接调用测试，不经输入通道。
-module.exports = { run_shop, usershop, show_floor, STUBBED_CALLS };
+module.exports = { run_shop, usershop, show_floor };

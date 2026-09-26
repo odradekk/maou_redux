@@ -484,14 +484,19 @@ test('USERSHOP 999：购物态下清购物标志与在售位后直接结束（#5
     'BOUGHT == 0 仍在购物态（>= 0 的下界）',
   );
 
-  // 非购物态：999 走原路径（不改 BOUGHT，仍是调试菜单）
+  // 非购物态：999 的调试菜单入口已删（#638，#542 判不移植）——不改 BOUGHT，
+  // 不打印提示行、不等键
   const outside = create_era_fixture();
   const outside_flag = outside.load_module('era-utils/era-flag');
   const outside_shop = outside.load_module('page/page-shop');
   outside_flag.bought = -1;
   await outside_shop.usershop(999);
   assert.equal(outside_flag.bought, -1);
-  assert(history_texts(outside).some((line) => line.includes('@DEBUG_MENU_U')));
+  assert(
+    !history_texts(outside).some((line) => line.includes('@DEBUG_MENU_U')),
+    '调试菜单入口删掉后不得再打印提示行（#638）',
+  );
+  assert.equal(outside.waits.filter((w) => w.waited).length, 0, '不得等待读键');
 });
 
 test('USERSHOP 999 后回主菜单：下一轮 @SHOW_SHOP 重画主菜单（回合能继续）', async () => {

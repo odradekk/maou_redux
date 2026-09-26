@@ -15,12 +15,10 @@
  *   3. 序号 vs 角色 ID：村娘分支的写入必须落在角色 ID 17 上，用「序号 1
  *      ≠ ID 17」的开局世界固定（#50 最易错处）；
  *   4. era-flag 包装层：月份/所持金的底层寻址钉在 yml/Flag.yml 的 id 上；
- *   5. 存根清单：docs/stub-registry.md 可检索且与本文件两处存根核对。
+ *   5. RAND_CHARA_MAKE 已接线真身，开局形象确认走 page-chara-info-show。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -32,7 +30,7 @@ const {
 } = require('./helpers/chara');
 
 // 原作 @EVENTFIRST 直线赋值的完整期望（SYSTEM ver1.0.3.ERB:11-62，按语句
-// 顺序；:42 的不可落地项不在内，见 docs/stub-registry.md）。
+// 顺序；:42 的不可落地项不在内）。
 // 逐槽等价性由 test/extalent-table.test.js 用 BigInt 拆原值钉住）。
 // DAY:1/MONEY 走包装层（flag:10001/10004），TARGET 走指针槽（flag:10005）。
 // initial_slave = FLAG:501（#50：first-setting.js 问答的写入，:19 位置）；
@@ -460,7 +458,7 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
   // rand ≡ 0 → RAND(1,17) 取 1：勇者位 1 的预设必须先种（严格夹具，#35）
   preset_chara_0(fixture);
   preset_chara_1(fixture);
-  const { STUBBED_CALLS } = fixture.load_module('event/event-first');
+  fixture.load_module('event/event-first'); // 顶层注册 EVENTFIRST 处理器
   const { emit } = fixture.load_module('system/event/registry');
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
@@ -534,8 +532,6 @@ test('初始化写入（随机）：问答选 0 后开局直线赋值逐项一�
   assert.equal(fixture.store.get('flag:402'), 0);
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, 0, ':184 TARGET = FLAG:1（开局默认 0）');
-  // 存根清单核对用的导出（RAND_CHARA_MAKE 已接线，本文件存根名单清空）
-  assert.deepEqual(STUBBED_CALLS, []);
 });
 
 test('初始化写入（村娘）：CFLAG 一组 1:1 落在角色 ID 17 上（全量断言）', async () => {
@@ -693,25 +689,4 @@ test('era-flag 包装层：月份/所持金的底层寻址钉在 yml/Flag.yml �
     { name: 'flag:10001', value: 2 },
     { name: 'flag:10004', value: 5 },
   ]);
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('event/event-first');
-  // #565 起 RAND_CHARA_MAKE / CHARA_NAME_DEFINE 均已接线，本文件存根名单
-  // 清空——「名字 ↔ 清单状态」的机械核对由 test/stub-registry-status.test.js
-  // 与 tools/trace-check.mjs --coverage 承担，此处只剩历史检索锚。
-  assert.deepEqual(STUBBED_CALLS, []);
-  const registry_path = path.resolve(
-    __dirname,
-    '..',
-    'docs',
-    'stub-registry.md',
-  );
-  const registry = fs.readFileSync(registry_path, 'utf8');
-
-  // 工单指出的优先项 + 既有存根（page-title 的读档）也必须可检索
-  for (const name of ['PARTY_UNITE', 'SYSTEM_LOADGAME']) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });

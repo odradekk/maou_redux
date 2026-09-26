@@ -22,17 +22,6 @@ const { chara_make_inherit } = require('#/chara/chara-make-inherit');
 const { chara_name_define, cn_rebuild } = require('#/chara/chara-name');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- *
- * #384 起 @NAMING 与 @NAME_RESET 的 JUMP 目标（CHARA_NAME_DEFINE / CN_REBUILD）
- * 都是真身（ere/chara/chara-name.js），两项移出名单；#394 起
- * @CHAR_MAKE_INPORT 的 JUMP 目标同样落真身（ere/chara/chara-make-inport.js），
- * 最后一项也移出——本层的存根名单自此为空。
- */
-const STUBBED_CALLS = [];
-
-/**
  * @CHAR_MAKE（:2-4）：角色生成入口——JUMP CHARA_MAKE(A, ARG:0, ARG:1)。
  *
  * ARG:0 是性格设定（如 ENTER_ENEMY 传 998 = 无指定）、ARG:1 是种族设定。
@@ -112,7 +101,6 @@ function char_inherit(child, parent) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   char_make,
   naming,
   name_reset,

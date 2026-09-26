@@ -17,8 +17,6 @@
 'use strict';
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -458,21 +456,6 @@ test('卖却分支（TFLAG:13 == 6）：进入 SELL_MATURO_K0 真身', async () 
   const mod = fixture.load_module('kojo/kojo-k6-wicked');
   await mod.self_kojo_k6();
   assert.ok(fixture.text_lines().includes('要卖到哪个市场？'));
-});
-
-test('SELL_MATURO_K0 已从存根清单移除', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k6-wicked');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 // —— COLOSSEUM_KOJO_6：ITEM:PBAND → item:4（#552；源 :7495/:7528/:7552） ——

@@ -96,12 +96,6 @@ const { chara_callname, chara_name } = require('#/utils/callname-utils');
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN #PRI（:61-65）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
   'EVENTTRAIN',
@@ -6376,7 +6370,6 @@ osioski_koujo_family.register(4, osioski_koujo_k4);
 gobi_koujo_family.register(4, gobi_koujo_k4);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_4,
   dog_kojo_4,
   kojo_message_palamcng_4,

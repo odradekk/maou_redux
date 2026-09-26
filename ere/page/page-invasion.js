@@ -127,18 +127,11 @@
  *     派发检查（:100，只认 route_33 <= 500）两组条件不对称是原作真实缺陷，
  *     1:1 保留：shrine_stage >= 1 时按钮可点，但 route_33 未开窗仍会被
  *     拒收重问；
- *   - [1001]（AGENT_MENU）的 PRINTL 按钮渲染行（:84）在原作已被注释，但
- *     ELSEIF RESULT == 1001 / CALL AGENT_MENU（:93-95）本身是活代码，排在
- *     :102 的 >=6 拒收之前——Emuera 的 INPUT 接受任意整数，不限于已打印
- *     按钮，手工键入 1001 在原作里仍可达；era.input() 只在本轮打印过按钮
- *     时才按白名单校验（test/helpers/era-fixture.js 镜像引擎
- *     returnFromButton），一旦某次 input() 因合法按钮值被判定为业务层
- *     无效（如 [5] 触发 :100-101 的拒收）而 continue 且不重新 printButton，
- *     白名单即清空，下一次 input() 变回自由输入，1001 在 ere 里同样可达
- *     （实测：flag:82=1、exflag:102=1、exflag:2810=0 时依次输入 5、1001
- *     可触达）。因此接一个显式存根分支，不落 AGENT_MENU 本体——其所在的
- *     侵略/AGENT/ 已被 #103 判定为复制改名事故，全库无调用点，登记为
- *     「只登记、不排期」；
+ *   - [1001]（AGENT_MENU）的 PRINTL 按钮渲染行（:84）在原作已被注释，
+ *     ELSEIF RESULT == 1001 / CALL AGENT_MENU（:93-95）虽排在 :102 的 >=6
+ *     拒收之前，但 AGENT_MENU 所在的侵略/AGENT/ 是 #103 判定过的复制改名
+ *     事故、不排期——缺内容的入口随 #638 一并删除：键入 1001 落到 :102 的
+ *     拒收支重问（原作里它也是未移植功能的残桩）
  *   - FORT 与 CHALLENGE 的选项（`PRINTFORML [n] …`）改 `era.printButton`
  *     （PR #53 的「子画面选项按钮化」通则）：引擎白名单因此先一步挡下
  *     未渲染的值，`!INRANGE(RESULT,1,3)` / `!(RESULT == 1 || RESULT == 2)` /
@@ -171,27 +164,8 @@ const { party_char_del } = require('#/dungeon/dungeon-party');
 const { arcana_fort } = require('#/invasion/invasion-arcana-fort');
 const { invasion_ryouzyoku } = require('#/invasion/invasion-ravish');
 const { chara } = require('#/facade/chara');
-const { stub_line_wait } = require('#/utils/stub-line');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 const { NBSP, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
-
-/**
- * 本文件存根化的原作调用名（docs/stub-registry.md 核对固定）。
- *
- * 'AGENT_MENU'（:93-95，[1001]，#103 判定的复制改名事故，只登记不排期）是
- * 本文件仅剩的存根调用名。'INVASION'（地区选择后的出兵续接，:108-138）自
- * #505 起是真身（CAMPAIGN_REGIONS 表 + start_campaign() 的 region 实参），
- * 移出本名单——四条出兵路线更早落地（[1] #117、[0]/[3] #503、[2] #504）。
- * 'INVASION_EVENT_SEIEI' / 'INVASION_EVENT_FORT' / 'INVASION_EVENT_CHALLENGE'
- * （:212-235 的 RAND:10 三臂）自 #504 起同为真身。'INVASION_CHECK' 自 #118
- * 起是真身（五组条件 1:1），'ARCANA_FORT'（:126，[4]）自 #470 起是真身
- * （ere/invasion/invasion-arcana-fort.js），'MEDAL_BONUS'（:593，共通补正）
- * 与 'SENGEN_VIDEO'（:91，[1000]）自 #502 起同样是真身（本文件内），上述都
- * 已移出本名单。
- * 'CAMPAIGN_MENU'（:98，[9]）不在此列——调用点本身是真实调用，存根名归属
- * page-campaign.js 自己的 STUBBED_CALLS（#468）。
- */
-const STUBBED_CALLS = ['AGENT_MENU'];
 
 /**
  * 原作 RESTART 的 ere 侧信号（control-flow.md:376-377「回到当前函数开头重新
@@ -2354,8 +2328,8 @@ async function invasion(rand = default_rand) {
  * FLAG:92 == 15 切换）+ 六个可选分支（[0] 与 [1]/[2]/[3]/[5] 都转
  * start_campaign()，区别只在地区实参——[1]/[2]/[3]/[5] 自 #505 起是真身；
  * [4] 转 ARCANA_FORT 真身，#470）+ [9] CAMPAIGN_MENU + [999] 退出 +
- * [1000] SENGEN_VIDEO + [1001] AGENT_MENU（原作按钮渲染行已注释，但
- * ELSEIF/CALL 分支仍可达，接一个存根，不落本体——见文件头）。
+ * [1000] SENGEN_VIDEO + 原作 [1001] AGENT_MENU 分支（后者随 #638 删除，
+ * 键入 1001 落到 :102 的拒收支——见文件头）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（转 start_campaign）
  * @returns {Promise<number|typeof RESTART>} 0 / 1；RESTART = 原作出兵路线里
@@ -2462,13 +2436,9 @@ async function post_conquest_menu(rand = default_rand) {
       await sengen_video();
       return 0;
     }
-    if (result === 1001) {
-      // :93-95 CALL AGENT_MENU：按钮渲染行原作已注释，但这条 ELSEIF/CALL
-      // 分支本身是活代码，文件头有说明——只接存根，不落 AGENT_MENU 本体
-      // （#103：所在的侵略/AGENT/ 是复制改名事故，只登记、不排期）
-      await stub_line_wait('AGENT_MENU', '代理人相关菜单', '不排期（#103）');
-      return 0;
-    }
+    // :93-95 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：
+    // AGENT_MENU 是复制改名事故、不排期，缺内容的入口去掉），键入 1001 落到
+    // 下方 :102 的 >=6 拒收支继续重问
     if (result === 9) {
       await campaign_menu(); // :97-98
       return 0; // :97-99
@@ -3262,7 +3232,6 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   brute_rejected,
   inv_death_check,
   invasion,

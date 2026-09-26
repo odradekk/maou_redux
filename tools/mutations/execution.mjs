@@ -169,7 +169,8 @@ export default [
     desc: 'M7279 据点分发：设施入口退回存根',
     file: 'ere/page/page-shop.js',
     find: '    await infrastructure(selectable_count);',
-    replace: "    await stub_line_wait('INFRASTRUCTURE', '设施·设备', '变异');",
+    replace: `    era.print('（设施·设备不在移植范围。）');
+    await era.waitAnyKey(); // 变异：入口退回提示`,
     tests: ['page-shop'],
     must_mention: '守卫成立应进设施真身',
   },
@@ -1045,7 +1046,7 @@ export default [
     file: 'ere/page/page-shop.js',
     find: '    await batch_execution();',
     replace:
-      "    await stub_line_wait('批量处刑', '处刑（批量处刑）', '变异');",
+      "    era.print('（批量处刑不在移植范围。）');\n    await era.waitAnyKey(); // 变异：退回提示",
     tests: ['event-execution-batch'],
     must_mention: '主菜单 [103]：usershop 接通批量处刑真身',
   },

@@ -55,7 +55,6 @@ const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 
 /** 本文件存根化的原作调用名（#544 起全部接真身，名单已空） */
-const STUBBED_CALLS = [];
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -287,6 +286,5 @@ async function forced_payment(arg, rand = default_rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   forced_payment,
 };

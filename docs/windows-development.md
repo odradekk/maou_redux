@@ -4,7 +4,7 @@
 
 ## Node 与依赖
 
-使用 **Node 24 LTS，至少 24.13.1**，与 CI 的 Node 24 保持一致。本机迁移时的 24.13.0 在 `fs.rmSync` 清理中文临时目录时直接崩溃（退出码 `3221226505`），会使 `trace-check` 等测试整文件失败；[官方 24.13.1 修复记录](https://github.com/nodejs/node/pull/61108) 已修正该行为。
+使用 **Node 24 LTS，至少 24.13.1**，与 CI 的 Node 24 保持一致。本机迁移时的 24.13.0 在 `fs.rmSync` 清理中文临时目录时直接崩溃（退出码 `3221226505`），会使依赖文件系统清理的测试整文件失败；[官方 24.13.1 修复记录](https://github.com/nodejs/node/pull/61108) 已修正该行为。
 
 ```powershell
 Set-Location D:\Code\era

@@ -64,25 +64,6 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-// —— 存根清单核对（dungeon-battle.test.js 同款）——
-
-test('存根清单可检索：docs/stub-registry.md 收录任务两文件的复用存根', () => {
-  const fixture = create_era_fixture();
-  const fs = require('node:fs');
-  const path = require('node:path');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  const names = [...load(fixture).STUBBED_CALLS];
-  // #565 起 ADD_EX_ITEM 接真身后名单清空；名字 ↔ 清单状态的机械核对在
-  // test/stub-registry-status.test.js 与 --coverage，这里钉「确实清空」
-  assert.deepEqual(names, [], '#565：dungeon-quest 的存根名单清空');
-  for (const name of names) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
-
 // —— @SET_QUEST：受注与清算 ——
 
 test('SET_QUEST：FLAG:8 位 3（任务禁止）开时不受理', async () => {

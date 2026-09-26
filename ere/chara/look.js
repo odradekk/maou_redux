@@ -50,15 +50,6 @@ const { get_look_info } = require('#/chara/look-info');
 const { heart, self_call } = require('#/kojo/kojo-text');
 const { chara } = require('#/facade/chara');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- *
- * 空数组：本文件调用的 GOBI_KOUJO / SELF_CALL / FAMILY_PRINT_INFO /
- * NAME_LOVER / KARMA 都是真身（各自的未落地分支由那些模块自己登记）。
- */
-const STUBBED_CALLS = [];
-
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** 素质下标（yml/Talent.yml；与 ere/chara/look-info.js 的同名常量各写一份，两边都只服务本文件） */
@@ -2015,7 +2006,6 @@ async function look_info_love(cid) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   look_set,
   look_clear,
   look_info,

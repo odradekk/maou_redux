@@ -60,13 +60,6 @@ const {
 } = require('#/system/train/train-message');
 const { read_train_name } = require('#/system/train/train-name');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
-
-/**
- * CASE 21 升格能命中的 COM64 已由 #225 落地（com_family 注册在案），
- * 占位回落不再触发，名单清空（#565）；回落作为 JUMPFORM 防御网保留。
- */
-const STUBBED_CALLS = [];
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
@@ -140,10 +133,15 @@ function same_trainer() {
     : game.system.上次调教者是助手 === 0;
 }
 
+/**
+ * JUMPFORM 语义：升格目标已全部注册进 com_family（#565 起名单清空，
+ * 升格表能返回的每个号都有真身），直调目标号并透传其返回值；
+ * whenMissing 1 对应原作「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * @param {number} id 升格后的 COM 号
+ * @returns {Promise<number>}
+ */
 async function jump_to_advanced(id) {
-  if (com_family.has(id)) return com_family.call(id);
-  stub_line(`COM${id}`, `指令 ${id} 的升格目标`, '随追加与高级指令票');
-  return 1;
+  return com_family.call(id, { whenMissing: 1 });
 }
 
 /**
@@ -3813,7 +3811,6 @@ com_family.register(134, com134);
 com_family.register(135, com135);
 
 module.exports = {
-  STUBBED_CALLS,
   able120,
   able121,
   able122,

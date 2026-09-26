@@ -81,15 +81,6 @@ const battle = require('#/dungeon/dungeon-battle');
 const summon_mod = require('#/dungeon/monster-summon');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- * #500 起为空：COM0_AUTO / COM3_AUTO / COM13_AUTO / COM50_AUTO 的调用点
- * 全部接上 ere/event/event-autotrain.js 的真身，CAMPAIGN_TRAP 自 #469 起
- * 已是族真身。
- */
-const STUBBED_CALLS = [];
-
-/**
  * @CAMPAIGN_TRAP_{FLAG:400} 族：战役迷宫的陷阱槽读值（#469，决议 #7）。
  * 键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款依据）；实现在
  * ere/page/page-campaign-1.js 注册。
@@ -2439,7 +2430,6 @@ async function slave_trap_set(a) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   dungeon_trap,
   slave_trap_set,
   trap_price,

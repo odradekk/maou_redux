@@ -1,25 +1,8 @@
 // issue #351：阶段 5a 奴隶出售全链与 ENDING_2 真身接入证明。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 6;
+export const COUNT = 4; // #641 起 -2（M7800/M7801 名单复辟守卫随 STUBBED_CALLS 机制移除）
 
 export default [
-  {
-    desc: 'M7800 MAGIC 重新登记成 dungeon-battle 存根（端到端宿主；#565 起名单为空，改由存根名核对拦截）',
-    file: 'ere/dungeon/dungeon-battle.js',
-    find: 'const STUBBED_CALLS = [];',
-    replace: "const STUBBED_CALLS = ['MAGIC']; // 变异：真身倒退为存根登记",
-    tests: ['stub-registry-status'],
-    must_mention: '已实现函数的调用点不得再打占位',
-  },
-  {
-    desc: 'M7801 MONSTER_SKILL 重新登记成 dungeon-battle 存根（端到端宿主；#565 起名单为空，改由存根名核对拦截）',
-    file: 'ere/dungeon/dungeon-battle.js',
-    find: 'const STUBBED_CALLS = [];',
-    replace:
-      "const STUBBED_CALLS = ['MONSTER_SKILL']; // 变异：真身倒退为存根登记",
-    tests: ['stub-registry-status'],
-    must_mention: '已实现函数的调用点不得再打占位',
-  },
   {
     desc: 'M7802 USE_EX_ITEM 战斗中调用点删除',
     file: 'ere/dungeon/dungeon-battle.js',

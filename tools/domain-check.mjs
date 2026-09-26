@@ -8,7 +8,7 @@
 // 万处样板——ADR-0002「跨域读放行，跨域写具名」），但计数进报告，可见
 // 而不强制。
 //
-// 怎么守（照 tools/trace-check.mjs 的形状，#63 已被多轮验收探针打过）：
+// 怎么守（照既有基线检查器的形状，#63 已被多轮验收探针打过）：
 //   1. 条目表在 tools/domain-ledger.mjs（条目 = 文件 → 寻址串 → 次数），
 //      与代码实测逐条核对：代码多出即红（未登记的跨域写，新文件自动
 //      纳入——扫描的是 ere/ 全树，不是登记表）；代码少了也红（条目
@@ -42,7 +42,7 @@
 // 的裸寻址是职责不是违规。口子收在两层：条目必须落在 WRAPPER_HOMES 两
 // 个包装层目录里（游戏代码目录永远进不了这张表），且包装层里未登记的
 // 新文件没有域映射，同样红（往 ere/facade/ 塞文件逃不掉）。era-electron.js
-// 是引擎 SDK，整体跳过（与 trace-check 同款）。
+// 是引擎 SDK，整体跳过（与 engine-contract-check 同款）。
 //
 // 用法：node tools/domain-check.mjs [--print-ledger]
 //   全绿退出码 0；任何失配退出码 1。--print-ledger 打印当前实测的条目表
@@ -72,7 +72,7 @@ function list_ownership_tables() {
     .sort();
 }
 
-/** 引擎 SDK：不是游戏代码，整体跳过（trace-check 同款标准） */
+/** 引擎 SDK：不是游戏代码，整体跳过（engine-contract-check 同款标准） */
 const SDK_FILE = 'ere/era-electron.js';
 
 /** 包装层目录：WRAPPER_FILES 的条目只准落在这里（角色门槛，防白名单被挪用） */

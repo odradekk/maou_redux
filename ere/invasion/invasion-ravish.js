@@ -54,12 +54,6 @@ const {
   monster_data,
 } = require('#/dungeon/monster-data');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 /** 原作 RAND:N（0..N-1）的缺省实现 */
 const default_rand = (n) => Math.floor(Math.random() * n);
 
@@ -941,7 +935,6 @@ async function horse_inv(area, sinkou, rand = default_rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   invasion_ryouzyoku,
   orc_inv,
   slime_inv,

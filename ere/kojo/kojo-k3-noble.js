@@ -85,12 +85,6 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 // @EVENTTRAIN #PRI（:81-85）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
   'EVENTTRAIN',
@@ -14378,7 +14372,6 @@ public_exucution_koujo_family.register(3, public_exucution_koujo_k3);
 grotesque_koujo_family.register(3, grotesque_koujo_k3);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_3,
   dog_kojo_3,
   colosseum_kojo_3,

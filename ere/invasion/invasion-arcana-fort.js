@@ -59,12 +59,6 @@ const { st_up } = require('#/dungeon/dungeon-lvup');
 const { party_char_del } = require('#/dungeon/dungeon-party');
 const { arcana_battle } = require('#/invasion/invasion-arcana-battle');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 /** 原作 RAND:N（0..N-1）的缺省实现 */
 const default_rand = (n) => Math.floor(Math.random() * n);
 
@@ -565,6 +559,5 @@ async function arcana_fort(rand = default_rand, move_ctx = {}) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   arcana_fort,
 };

@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2703; // #640 -8（M447 转译器 1 条 + 保真锁专属守卫 5 条：M11772/M11773/M11947/M12137/M12138 + M75/M76 删条目不补）；M78/M80/M81/M1774/M11419/M12131/M12139 改挂行为测试 // 原沿革：
+export const COUNT = 2701; // #640 -8（M447 转译器 1 条 + 保真锁专属守卫 5 条：M11772/M11773/M11947/M12137/M12138 + M75/M76 删条目不补）；M78/M80/M81/M1774/M11419/M12131/M12139 改挂行为测试 #641 净 -2（M3329/M8946/M8959 随清单核对与锚名机制移除，+1 M12907 try_kojo 守卫）；// 原沿革见 git 历史
 
 export default [
   {
@@ -1375,7 +1375,7 @@ export default [
   if (id >= 0 && family.has(id)) {
     return family.call(id, { whenMissing: 0, args: extra_args });
   }
-  require('#/utils/stub-line').stub_line(stub_name, '未移植内容'); // 变异：占位复辟
+  era.print('（口上未移植内容占位）'); // 变异：占位复辟
   return 0;`,
     tests: ['kojo-family-coverage'],
     must_mention: '窗口外不得有任何输出',
@@ -17310,14 +17310,6 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     must_mention: '主启动图漏装：kojo-k13-protector',
   },
   {
-    desc: 'M3329 K13 已完成调用被重新登记为存根（#338）',
-    file: 'ere/kojo/kojo-k13-protector.js',
-    find: `const STUBBED_CALLS = [];`,
-    replace: `const STUBBED_CALLS = ['SELL_MATURO_K0'];`,
-    tests: ['kojo-k13-protector'],
-    must_mention: '已从存根清单移除',
-  },
-  {
     desc: 'M3330 K13 PALAMCNG 口塞守卫删（TEQUIP:45 不再跳过，#244）',
     file: 'ere/kojo/kojo-k13-protector.js',
     find: `  if (era0(\`tequip:\${target}:45\`)) {
@@ -20718,25 +20710,12 @@ on('EVENTEND', eventend_kojo_903);`,
     must_mention: '返回后 TARGET 还原',
   },
   {
-    // #549 重锚：原条目打「占位行丢原名」，#565 返工把未命中统一成静默后
-    // 占位行为已不存在、事件分发测试不再红。锚名（stub_name）如今唯一的
-    // 机器消费是 check_stub_names 的清单行核对——改成无清单行的名字直接红
-    desc: 'M8946 ATTACK_KOUJO_B 核对锚名改成无清单行的名字（#549 重锚：静默化后锚名仅剩清单核对一道机器检查）',
-    file: 'ere/kojo/kojo-system.js',
-    find: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
-    'ATTACK_KOUJO_B',`,
-    replace: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
-    'ATTACK_KOUJO_BX', // 变异：核对锚失联`,
-    tests: ['stub-registry-status'],
-    must_mention: '口上核对锚失联',
-  },
-  {
     desc: 'M8947 ATTACK_KOUJO_B 随机源错传 cid（handler 收 [cid]）',
     file: 'ere/kojo/kojo-system.js',
-    find: `    'ATTACK_KOUJO_B',
+    find: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
     cid ?? -1,
     [rand],`,
-    replace: `    'ATTACK_KOUJO_B',
+    replace: `    dungeon_attack_family, // TRYCALLFORM DUNGEON_ATTACK_K{LOCAL - 100}
     cid ?? -1,
     [cid],`,
     tests: ['event-k-dispatch'],
@@ -20830,11 +20809,9 @@ on('EVENTEND', eventend_kojo_903);`,
   {
     desc: 'M8957 GOHOUBI_REQUEST 族内实参丢 cid（K7 读不到 CFLAG:504）',
     file: 'ere/kojo/kojo-dungeon-after.js',
-    // #585 起调用收成四参（family / 锚名 / arg / extra_args），find 随新文本
-    find: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, [
-    cid,
-  ]);`,
-    replace: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, []);`,
+    // #641 起调用去掉锚名实参（收成三参 family / arg / extra_args），find 随新文本
+    find: '  await try_kojo(gohoubi_request_koujo_family, cid, [cid]);',
+    replace: '  await try_kojo(gohoubi_request_koujo_family, cid, []);',
     tests: ['event-k-dispatch'],
     must_mention: 'K 侧收 cid',
   },
@@ -20848,17 +20825,6 @@ on('EVENTEND', eventend_kojo_903);`,
 }`,
     tests: ['event-k-dispatch'],
     must_mention: '返回后 TARGET 还原',
-  },
-  {
-    // #549 重锚：同 M8946——「占位行丢原名」的前提随 #565 静默化消失，
-    // 改打「锚名与清单失联」（GOHOUBI_REQUEST 自身另有已实现行，改名成它
-    // 恰好绕过核对，所以变异值取无行的名字）
-    desc: 'M8959 GOHOUBI_REQUEST_KOUJO 核对锚名改成无清单行的名字（#549 重锚）',
-    file: 'ere/kojo/kojo-dungeon-after.js',
-    find: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO', cid, [`,
-    replace: `  await try_kojo(gohoubi_request_koujo_family, 'GOHOUBI_REQUEST_KOUJO_X', cid, [ // 变异：核对锚失联`,
-    tests: ['stub-registry-status'],
-    must_mention: '口上核对锚失联',
   },
   {
     desc: 'M8960 PALAMCNG 存在判定丢 EX 臂（EX 性格的口上永久静默）',
@@ -21171,11 +21137,11 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M8994 try_kojo 缺省哨兵改 0（不传参时读 0 号而不是 TARGET）',
     file: 'ere/kojo/kojo-system.js',
-    // #585 起签名收成一行四参（stub_desc/stub_ticket/wait 已删）——
+    // #641 起签名去掉锚名实参（收成三参）——
     // find 同步到新文本，变异仍是「缺省哨兵改 0」
-    find: 'async function try_kojo(family, stub_name, arg = -1, extra_args = []) {',
+    find: 'async function try_kojo(family, arg = -1, extra_args = []) {',
     replace:
-      'async function try_kojo(family, stub_name, arg = 0, extra_args = []) { // 变异：缺省哨兵改 0',
+      'async function try_kojo(family, arg = 0, extra_args = []) { // 变异：缺省哨兵改 0',
     tests: ['kojo-system'],
     must_mention: '缺省与 -1 都吃 TARGET',
   },
@@ -21767,15 +21733,9 @@ const gohoubi_request_koujo_family = new DispatchFamily(
   {
     desc: 'M11741 语尾分发入口：丢弃真身返回值、恒给空串（#570 转交被吞）',
     file: 'ere/kojo/kojo-system.js',
-    find: `  const text = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', -1, [
-    arg0,
-    rand,
-  ]);
+    find: `  const text = await try_kojo(gobi_koujo_family, -1, [arg0, rand]);
   return typeof text === 'string' ? text : '';`,
-    replace: `  const text = await try_kojo(gobi_koujo_family, 'GOBI_KOUJO', -1, [
-    arg0,
-    rand,
-  ]);
+    replace: `  const text = await try_kojo(gobi_koujo_family, -1, [arg0, rand]);
   void text; // 变异：吞掉真身返回值
   return '';`,
     tests: ['kojo-gobi'],
@@ -27844,5 +27804,16 @@ const gohoubi_request_koujo_family = new DispatchFamily(
     forced_payment(arg, rand); // 变异：漏 await`,
     tests: ['kojo-forced-payment', 'kojo-dungeon-bitch'],
     must_mention: '疑似漏写 await',
+  },
+
+  {
+    desc: 'M12907 try_kojo 命中静默化（family 调用条件改恒假——口上真身不再执行，未命中静默变成全面失声）',
+    file: 'ere/kojo/kojo-system.js',
+    find: `  const id = kojo_handler_id(arg);
+  if (id >= 0 && family.has(id)) {`,
+    replace: `  const id = kojo_handler_id(arg);
+  if (false && id >= 0 && family.has(id)) { // 变异：命中静默化`,
+    tests: ['kojo-system'],
+    must_mention: '缺省与 -1 都吃 TARGET',
   },
 ];

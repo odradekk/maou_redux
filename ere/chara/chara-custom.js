@@ -66,13 +66,6 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { input_text } = require('#/utils/input-text');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-/**
- * 本文件存根化的原作调用名：无——@CHAR_CREATE 与 @CHAR_APPEND 全部落地，
- * 内部依赖（CHAR_MAKE / CHAR_INIT / WEARING_CLOTH_ABLE / CHAR_BODY_GENERATE_WAPPED /
- * ST_UP / ADDCHARA_EX / CHARA_NAME_RANDOM_DEFINE）都是真身。
- */
-const STUBBED_CALLS = [];
-
 const default_rand = (n) => Math.floor(Math.random() * n);
 
 /** 「勇者」段的每行格数（源 :31 `SIF L_I % 4 == 0`） */
@@ -380,7 +373,6 @@ async function append_card(cid, arg, rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   HERO_COLUMNS,
   ELITE_COLUMNS,
   char_create,

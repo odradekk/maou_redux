@@ -61,11 +61,6 @@
  *     EXPLV:n/2（半阈值），唯 @EQUIP_COM49 用整阈值（EXPLV:2/3/4/5 不除
  *     2）——四处阶梯两形并存，原样互异，不归一。
  *   - @COM_ABLE40 的助手判定 ABL:ASSI:20 < 2、41/42 是 < 3（SM 系内部互异）。
- *
- * 这张票存根/登记（docs/stub-registry.md）：
- *   - COM132（升格跳转目标，随 J19 com-advanced.js）；
- *   - SHOW_EQUIP_1/2 的本族显示位（43-46/49）仍占位——显示面三族共用
- *     （J10/J13/J17），随点亮全部装备位的最后一张或专项显示票接线。
  */
 
 const era = require('#/era-electron');
@@ -84,18 +79,9 @@ const {
 } = require('#/system/train/train-message');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
-const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { soiling_cloth_no2 } = require('#/system/train/cloth');
 const { clothtype_special_text } = require('#/page/page-clothtype');
-
-/**
- * 本文件存根化的原作函数名。docs/stub-registry.md 必须收录每一个；名单
- * 变动必须同步清单。COM132（@COM40 的升格目标）已由 #229 落地，
- * jump_to_advanced 直调真身，#565 起从名单移除，名单自此清空。
- */
-const STUBBED_CALLS = [];
-
 // —— 读数兜底（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——
 
 const tq = (cid, i) => era.get(`tequip:${cid}:${i}`) || 0;
@@ -426,16 +412,13 @@ async function com42() {
 
 /**
  * JUMPFORM COM{RESULT} 的同位落地（#213 定）：升格号在 COM 族内分发——
- * 已实现（如 J19 的 132）则整段执行其真身；未落地则一行存根 + RETURN 1。
+ * 升格表能返回的每个号都有真身，直调目标号并透传返回值；whenMissing 1
+ * 对应原作「目标缺失时 RETURN 1」（本不该发生，防御语义）。
  * @param {number} com 升格后的 COM 号
  * @returns {Promise<number>}
  */
 async function jump_to_advanced(com) {
-  if (com_family.has(com)) {
-    return com_family.call(com);
-  }
-  stub_line(`COM${com}`, `指令 ${com} 的升格目标`, '随追加与高级指令票');
-  return 1;
+  return com_family.call(com, { whenMissing: 1 });
 }
 
 // —— @COM43 眼罩（COMF43_アイマスク.ERB:7-91） ——
@@ -2029,7 +2012,6 @@ module.exports = {
   MASO_WIDE_LADDER,
   PAIN_LADDERS,
   ROPE_MASO_LADDER,
-  STUBBED_CALLS,
   equip_com43,
   equip_com44,
   equip_com45,

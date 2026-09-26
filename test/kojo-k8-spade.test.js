@@ -13,12 +13,9 @@
  *     金红桃/白梅花/扶她三支）与 @K8_KOJO2（二回目以降，含淫乱/爱慕的
  *     着装与魔族分档）；
  *   - @EVENTEND 的调教终了分档；
- *   - 存根清单核对（docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名）。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -5250,21 +5247,4 @@ test('GOBI：默认支（含 ARG:0==0）三选一，前两支源作同文（返�
     '什么啊。',
     'ARG:0 不在 1-5 内也走默认支',
   );
-});
-
-// —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录 STUBBED_CALLS 全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k8-spade');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });

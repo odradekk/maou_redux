@@ -156,12 +156,6 @@ const { equip_database } = require('#/system/equip/equip-lookup');
 // require dungeon-battle/-battle2，后者将 require 本文件——顶层引用会成环。
 // 本文件在函数体内延迟 require（dungeon-battle.js :1273 的 karma 先例）。
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = ['CHA_IMG2'];
-
 /** PRINTDATA/PRINTDATAW 的随机取一条（DATAFORM 数组的等价物） */
 function pick(list, rand_n) {
   return list[rand_n(list.length)];
@@ -4124,7 +4118,6 @@ async function dungeon_ryouzyoku_escape(arg, rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   ryouzyoku_kojo_family,
   ryouzyoku_after_kojo_family,
   dungeon_ryouzyoku,

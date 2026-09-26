@@ -84,7 +84,6 @@ const era = require('#/era-electron');
 const { on } = require('#/system/event/registry');
 const era_flag = require('#/era-utils/era-flag');
 const { NBSP } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
-const { stub_line } = require('#/utils/stub-line');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { train_message_a } = require('#/system/train/train-message');
@@ -115,14 +114,6 @@ const {
 } = require('#/system/train/ability-check');
 /** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
-
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个；名单
- * 变动必须同步清单。KOJO_MESSAGE_PALAMCNG / KOJO_MESSAGE_MARKCNG（kojo-
- * system.js 的分发入口）与 EQUIP_COM（本文件内的真身段）均已实现，
- * #565 清出名单，名单自此清空。
- */
-const STUBBED_CALLS = [];
 
 // —— 结算上下文：目标 / 调教者的变量读写助手 ——
 
@@ -3277,23 +3268,14 @@ on('SOURCE_CHECK', async () => {
   era.drawLine();
 
   // :58-123 装备持续效果组（SIF TEQUIP:n / CALL EQUIP_COM<n> 链，#223
-  // 接通）：按原作链序遍历装备位，真身随各自指令族票注册进
-  // equip_com_family（com-family.js 的 EQUIP_COM_CHAIN——J13 交 43-49，
-  // 道具/特殊/重度/触手族位随各自票）。缺失位且装备着 → 占位行
-  //（当前各写点未落地，装备位点不亮，实际不触发；族票落地即自愈）
+  // 接通）：按原作链序遍历装备位。EQUIP_COM_CHAIN 的每个号都已注册进
+  // equip_com_family（道具/SM/特殊/重度/触手各族的 EQUIP_COM 注册），链上
+  // 不再有缺失位——缺位回落分支随存根机制一并删除（#638）
   for (const [bit, com] of EQUIP_COM_CHAIN) {
     if (!era.get(`tequip:${cid}:${bit}`)) {
       continue;
     }
-    if (equip_com_family.has(com)) {
-      await equip_com_family.call(com);
-    } else {
-      stub_line(
-        `EQUIP_COM${com}`,
-        `装备位 ${bit} 的持续效果`,
-        '随对应指令族票',
-      );
-    }
+    await equip_com_family.call(com);
   }
 
   // :128-130 调教者侧检查三连
@@ -3701,4 +3683,4 @@ on('SOURCE_CHECK_AUTO', async () => {
   palam_up_check_mini();
 });
 
-module.exports = { STUBBED_CALLS, auto_num_check };
+module.exports = { auto_num_check };

@@ -373,28 +373,24 @@ test('#612 COM24 逆侵犯的处女确认：两键正文照写原作的「- 」'
   );
 });
 
-test('升格到未实现目标：输出占位并按 JUMPFORM 返回 1', async () => {
-  const world = seed_world();
+test('升格到已实现目标：执行 COM64 真身，不打占位（JUMPFORM 语义）', async () => {
+  const world = seed_world({ assi: 17 });
+  world.fixture.load_module('system/train/com-assistant'); // COM64 真身注册
   world.era_flag.prevcom = 64;
   world.fixture.store.set('tflag:42', 0);
+  world.fixture.store.set('item:4', 1); // PBAND：able64 的两根判据（魔王男根 + 道具）
+  world.fixture.store.set('exp:31:1', 10); // able64 的 A 经验门槛 >= 10
+  world.fixture.store.set('talent:0:121', 1); // 魔王男根：able64 的两根判据之一
 
   assert.equal(await run_com(world, 20), 1);
   assert.ok(
-    world.fixture
-      .text_lines()
-      .some((line) => line.includes('COM64') && line.includes('升格目标')),
-    '未实现升格目标必须可见',
+    world.fixture.text_lines().some((line) => line.includes('３Ｐ')),
+    '升格命中已注册的 COM64 真身（#225）',
   );
-});
-
-test('存根清单可检索：升格目标全部落地后名单清空（#565）', () => {
-  const world = seed_world();
-  const { STUBBED_CALLS } = world.fixture.load_module('system/train/com-sex');
-  // #565：本族升格能命中的 COM64/120/121/130/134 已全部由 #225/#229 落地
-  // 注册，jump_to_advanced 的占位回落不再触发；回落保留为 JUMPFORM 防御网
-  // （占位 + RETURN 1 语义见 com-sex.js 的名单注释）。名字 ↔ 清单状态的
-  // 机械核对在 test/stub-registry-status.test.js 与 --coverage
-  assert.deepEqual(STUBBED_CALLS, []);
+  assert.ok(
+    !world.fixture.text_lines().some((line) => line.includes('升格目标')),
+    '升格目标全部落地，不再有占位行（#638）',
+  );
 });
 
 test('COM_ABLE：特殊守卫保持各指令原作差异', async () => {

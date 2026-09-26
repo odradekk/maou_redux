@@ -56,12 +56,6 @@ const { chara_name_init } = require('#/chara/chara-name-list');
 const era_flag = require('#/era-utils/era-flag');
 
 /**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（名单
- * 变动必须同步清单）。
- */
-const STUBBED_CALLS = [];
-
-/**
  * @EVENTLOAD（SYSTEM ver1.0.3.ERB:760-778）：读档成功后的固定钩子。
  *
  * 1:1 移植（对读入的存档数据重放；逐行处置见文件头）。
@@ -112,5 +106,3 @@ on(
   },
   TIER.NORMAL,
 );
-
-module.exports = { STUBBED_CALLS };

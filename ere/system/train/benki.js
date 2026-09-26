@@ -16,7 +16,6 @@
  *     dungeon-battle.js——本票把三个存根换成真身）；
  *   - @BENKI_KOUJO（肉便器口上）由 @BENKI 在五个分支配对后调用（:591/
  *     :808/:982/:1128/:1310）——**属轴 B 的口上票（#210 裁定 2）**，本票
- *     建存根登记、不实现（见 STUBBED_CALLS 与 docs/stub-registry.md）；
  *   - @BENKI_PLAYER_NAME 是 @BENKI 内部的行内名字函数（读 FLAG:64），
  *     @BENKI_KOUJO 之外的口上文件（K0/K3/K12 等）也会调它读 FLAG:64——
  *     ere 侧真身随本票，口上票直接 require 使用。
@@ -61,13 +60,6 @@ const { v_able } = require('#/system/train/v-able');
 const { chara_callname } = require('#/utils/callname-utils');
 const { benki_koujo } = require('#/kojo/kojo-system');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。分发层在 kojo-system.js：未注册性格
- * 静默（try_kojo，原作 TRYCALLFORM 落空语义，K3/K5 路径同此）；K1 真身
- * 随 #232 落地。
- */
-const STUBBED_CALLS = [];
 /** 原作 RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
@@ -1412,7 +1404,6 @@ function benki_player_name() {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   run_benki,
   select_benki_menu,
   name_benki_menu,

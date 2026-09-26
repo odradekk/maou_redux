@@ -19,7 +19,6 @@
 const era = require('#/era-electron');
 const { pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-const STUBBED_CALLS = [];
 const default_rand = (n) => Math.floor(Math.random() * n);
 const int = Math.trunc;
 
@@ -785,7 +784,6 @@ function dec_bit_add(number, bit, value) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   search_family,
   relation_get,
   relation_set,

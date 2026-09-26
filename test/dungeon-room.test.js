@@ -831,7 +831,5 @@ test('贯通·迷阵：MASE 的 D:20 写经 ctx 收回侵攻度（:835 ↔ :748�
   assert.equal(fixture.store.get('cflag:1:509'), 1, '迷惑状態立起');
 });
 
-// —— 存根清单核对（dungeon-trap.test.js 同款）——
-// #469 起 dungeon-room.js 的 STUBBED_CALLS 已清空（CAMPAIGN_ROOM_EXTRA
 // 换真身，见上）：清单核对测试随之移除——名单为空时循环本身没有契约
 // 可验证，留着只是形式（SOP §5 判据 5 的精神是防漏登记，不是防清单变短）。

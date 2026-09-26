@@ -53,7 +53,6 @@ const { PALAMLV } = require('#/era-utils/palam-level');
 // 族模块只能函数内延迟 require，见 equip_com16 的注释
 
 /** 运行时存根（#548 起为空——SYOKUSYU_MILK 已换真身）；清单核对测试仍读它。 */
-const STUBBED_CALLS = [];
 
 // —— 读数兜底（未声明下标 undefined → 0，#13） ——
 
@@ -1678,7 +1677,6 @@ equip_com_family.register(18, equip_com18);
 equip_com_family.register(19, equip_com19);
 
 module.exports = {
-  STUBBED_CALLS,
   com10,
   com11,
   com12,

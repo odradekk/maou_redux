@@ -75,8 +75,6 @@ const {
   ryouzyoku_after_kojo_family,
 } = require('#/kojo/kojo-dungeon-ravish');
 
-const STUBBED_CALLS = [];
-
 /** 读未声明的序号返回 undefined 而非 0（#13），口上条件一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
 
@@ -7929,7 +7927,6 @@ public_exucution_koujo_family.register(13, public_exucution_koujo_k13);
 grotesque_koujo_family.register(13, grotesque_koujo_k13);
 
 module.exports = {
-  STUBBED_CALLS,
   eventtrain_k13,
   eventend_k13,
   kojo_message_com_13,

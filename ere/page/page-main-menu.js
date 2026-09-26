@@ -34,12 +34,6 @@ const era_audio = require('#/era-utils/era-audio');
 const era_exflag = require('#/era-utils/era-exflag');
 const { NBSP, pad_display } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
 
-// 本文件曾经存根化的原作调用名：DRAW_HAVEITEMS/DRAW_HAVETRAPS/指令面板段
-// 均随 #395 转真身，清单归零。留空数组而非删除导出——
-// test/page-main-menu.test.js 的核对逻辑按「遍历 STUBBED_CALLS」运作，
-// 空数组时循环体不执行，天然通过，删导出反而要连带改测试。
-const STUBBED_CALLS = [];
-
 // 原文排版里的全角空格（UNICODE 0x3000）。以转义书写并集中定义：ESLint
 // 的 no-irregular-whitespace 拦裸写，prettier 会把字符串里的裸全角空格当
 // 可删空白吃掉。
@@ -647,5 +641,4 @@ module.exports = {
   draw_dungeon_daily,
   draw_have_items,
   draw_have_traps,
-  STUBBED_CALLS,
 };

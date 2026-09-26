@@ -517,9 +517,3 @@ test('强制肉偿：HEROINE_BITCH 的调用点接真身（占位行消失）', 
   // 时开场行照打、只有这里能拦
   assert.deepEqual(uppers, [3, 4, 10, 500, 3, 36], '调用点与真身的抽取序');
 });
-
-test('强制肉偿：kojo-dungeon-bitch.js 的 STUBBED_CALLS 已无强制肉偿', () => {
-  const fixture = create_era_fixture();
-  const mod = fixture.load_module('kojo/kojo-dungeon-bitch');
-  assert.deepEqual(mod.STUBBED_CALLS, []);
-});

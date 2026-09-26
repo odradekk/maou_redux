@@ -17,14 +17,10 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara, preset_chara_0 } = require('./helpers/chara');
-
-const REPO = path.join(__dirname, '..');
 
 /** 世界底座：开火车表、指好 TARGET/PLAYER、装好 SM 族。 */
 function seed_world({ assi = -1 } = {}) {
@@ -1170,22 +1166,25 @@ test('CASE 40：COM_ABLE132 不可用 → 维持 40（规则内复核）', async
   }
 });
 
-test('@COM40 的 JUMPFORM 落点：升格目标缺失 → 占位行 + RETURN 1；不升格 → 正常打屁股', async () => {
+test('@COM40 的 JUMPFORM 落点：升格目标已注册 → 执行 COM132 真身；不升格 → 正常打屁股', async () => {
   const world = seed_world();
+  world.fixture.load_module('system/train/com-advanced'); // COM132 真身注册
   world.era_flag.prevcom = 21; // 命中升格
-  world.era_flag.selectcom = 40;
+  world.era_flag.selectcom = 21; // COM132 真身的确认早退种子（同 com-advanced 用例）
+  world.fixture.store.set('item:4', 1); // PBAND：insert_able 的男根判据
+  world.fixture.store.set('abl:31:14', 2); // able132 的 skill 门：目标技巧 >= 2
+  world.fixture.store.set('exp:31:0', 4);
+  world.fixture.store.set('palam:31:3', 500);
   const result = await world.com_family.call(40);
   assert.equal(result, 1);
   assert.ok(
-    world.fixture
-      .text_lines()
-      .some((l) => l.includes('COM132') && l.includes('占位')),
-    '升格目标缺失的占位行（J19 落地前）',
+    world.fixture.text_lines().includes('背后位・打屁股'),
+    '升格目标 COM132 已是真身（#229），跳转整段执行',
   );
   assert.equal(
-    world.fixture.store.get('source:31:6'),
-    undefined,
-    '跳转替换整段：COM40 本体不执行',
+    world.era_flag.selectcom,
+    132,
+    '原作显式回填 SELECTCOM = 132（跳转替换整段，COM40 本体不执行）',
   );
 
   const w2 = seed_world();
@@ -1226,11 +1225,12 @@ test('口塞装上（COM45 真身）→ K3 守卫跳过；SELECTCOM = 45 豁免�
 
 // —— source-check 的装备持续效果消费循环（#223 接线） ——
 
-test('SOURCE_CHECK 链循环：装备位按链序消费 + 缺失位占位行', async () => {
+test('SOURCE_CHECK 链循环：装备位按链序全部走真身（链上无缺失位）', async () => {
   const world = seed_world({ assi: 17 });
   const { emit } = world.fixture.load_module('system/event/registry');
+  world.fixture.load_module('system/train/com-toy'); // 道具族 EQUIP_COM11 注册
   world.fixture.load_module('event/source-check');
-  // 眼罩（已实现）+ 振动宝石位 11（J10 未落地）同时点亮
+  // 眼罩（43，SM 族）+ 振动器位 11（道具族）同时点亮——链上每个号都有真身
   world.fixture.store.set('tequip:31:43', 1);
   world.fixture.store.set('tequip:31:11', 1);
   world.era_flag.selectcom = 43;
@@ -1238,27 +1238,14 @@ test('SOURCE_CHECK 链循环：装备位按链序消费 + 缺失位占位行', a
 
   await emit('SOURCE_CHECK');
   const lines = world.fixture.text_lines();
-  assert.ok(lines.includes('＜眼罩装着中＞'), '已实现位真身执行');
+  assert.ok(lines.includes('＜眼罩装着中＞'), '眼罩位真身执行');
   assert.ok(
-    lines.some((l) => l.includes('EQUIP_COM11') && l.includes('装备位 11')),
-    '缺失位占位行',
+    lines.some((l) => l.includes('＜蠕虫插入中＞')),
+    '振动器位真身执行（EQUIP_COM11 已注册）',
+  );
+  assert.ok(
+    !lines.some((l) => l.includes('尚未移植')),
+    '链上不再有占位行（#638）',
   );
   assert.equal(world.fixture.store.get('source:31:12'), 1000, '眼罩持续位写入');
-});
-
-// —— 存根清单核对 ——
-
-test('存根清单可检索：docs/stub-registry.md 收录 com-sm.js 的 COM132', () => {
-  const { fixture } = seed_world();
-  const mod = fixture.load_module('system/train/com-sm');
-  const registry = fs.readFileSync(
-    path.join(REPO, 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  // #565：COM132 已由 #229 落地（com_family 注册在案），jump_to_advanced
-  // 直调真身、占位回落不再触发，名单清空
-  assert.deepEqual(mod.STUBBED_CALLS, []);
-  for (const name of mod.STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });

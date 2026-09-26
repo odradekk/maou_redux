@@ -2,7 +2,7 @@
 
 本文写给分配任务、验收并合并的主 agent。执行工单的 worker 读 `worker-sop.md`。一张工单对应一个 Paseo worktree 和一个 agent 会话；优先使用 Paseo MCP，没有对应操作时用 CLI。本文的远端写入、合并和归档步骤是已获授权的工作流：验收通过且 CI 绿即合并，不逐个 PR 请示；仍须遵守当前会话的权限范围。
 
-工单位于 GitHub 的 `odradekk/maou_redux`，操作约定见 `issue-tracker.md`。移植决策索引 #1 只读。路线图 #101 规定阶段顺序：其子 issue 记录阶段决策，实施 issue 归入各阶段的子路线图。零散工作按 `docs/stub-registry.md` 认领。阻塞关系以 GitHub 的 `issue_dependencies_summary.blocked_by` 为准。
+工单位于 GitHub 的 `odradekk/maou_redux`，操作约定见 `issue-tracker.md`。移植决策索引 #1 只读。路线图 #101 规定阶段顺序：其子 issue 记录阶段决策，实施 issue 归入各阶段的子路线图。阻塞关系以 GitHub 的 `issue_dependencies_summary.blocked_by` 为准。
 
 ## 0. 环境前提
 
@@ -153,8 +153,7 @@ worker 的完成评论（PR 链接、本地验证、CI 链接、偏差、审查�
 3. 本机实际执行 `mutation-check --ids <本工单新增编号>`，不能用 `--verify` 代替。
 4. 对照工单验收清单逐条核对；要求「此行为有测试」的条目须经实际变异验证。
 5. 改游戏逻辑的工单另做**独立抽样变异**：验收方另选 3 处生产代码，避开已有条目 `desc` 描述的位置，优先大函数中缺少断言的分支；每轮返工后换新位置并确认上一轮问题已修（#346）。串行修改、运行、还原，同一工作区不得同时跑其他修改源码的任务；定位串必须只命中一次，否则报「未成功修改，结果无效」。判断等价变异前检查夹具值（#343 的 `idiv(5,5)` 与 `idiv(5,4)` 都为 1 是特定输入下的等价；#347 的 `mark:3` 从未设置而状态 2、3 均可达，是覆盖不足）。
-6. 涉及大量 `:N` 引用的工单，运行 `node tools/trace-check.mjs --anchor-quality --all`。弱锚点数量只能减少，修正后同步降低 `ANCHOR_QUALITY_BASELINE`，不能提高基线或往 `ANCHOR_QUALITY_BY_FILE` 加冻结项。
-7. 对照附录的验收参考核对新增校验机制、`must_mention`、引擎行为验证、存档兼容等项。
+6. 对照附录的验收参考核对新增校验机制、`must_mention`、引擎行为验证、存档兼容等项。
 
 不再本机重跑 `npm test`：PR 的 CI 已跑过全库。
 
@@ -219,8 +218,8 @@ git -C D:/Code/era worktree list                                    # 无当前�
 
 在路线图 #101 的阶段决策 issue 关闭前完成一次，不要求每张实施工单重复：
 
-1. **全量变异测试**：开阶段收尾 PR（承载阶段本来要做的文档改动，如 `docs/stub-registry.md` 状态、AGENTS.md「当前状态」；没有改动就用空提交），打 `phase-acceptance` 标签，`mutation.yml` 分 12 片在 CI 运行。合格线是每片退出码 0，汇总任务的 job summary 给出「拦截 / 跳过 / 红」合计，把数字写进 #101。本机也可 `node tools/run-node.mjs --timeout 14400 -- tools/mutation-check.mjs --jobs 2`，但 7154 条时实测约 3.7 小时，优先走 CI。
-2. **引擎实际运行**：在主工作目录用 Electron MCP 工具（`launch_game`、`click`、`type`、`read_text`、`screenshot`、`get_errors`）走完该阶段的端到端流程。从新游戏开始；按 ADR-0006，旧存档因版本过低被拒绝属预期。临时设置的状态不得提交。列出验收路径前先用 `rg -n stub_line_wait ere/page/page-shop.js` 确认入口已实现。
+1. **全量变异测试**：开阶段收尾 PR（承载阶段本来要做的文档改动，如 AGENTS.md「当前状态」；没有改动就用空提交），打 `phase-acceptance` 标签，`mutation.yml` 分 12 片在 CI 运行。合格线是每片退出码 0，汇总任务的 job summary 给出「拦截 / 跳过 / 红」合计，把数字写进 #101。本机也可 `node tools/run-node.mjs --timeout 14400 -- tools/mutation-check.mjs --jobs 2`，但 6986 条时实测约 3.5 小时，优先走 CI。
+2. **引擎实际运行**：在主工作目录用 Electron MCP 工具（`launch_game`、`click`、`type`、`read_text`、`screenshot`、`get_errors`）走完该阶段的端到端流程。从新游戏开始；按 ADR-0006，旧存档因版本过低被拒绝属预期。临时设置的状态不得提交。列出验收路径前先核对入口在源码里已接线（按钮渲染与分发分支同名同号）。
 3. **九份输出比对样本**：已随每次 PR 与 master push 的 `engine` 任务运行，阶段验收只需核对 master 最近一次运行为绿。
 
 全量变异用于发现其他模块的变化让旧测试失效：阶段 5a 的 `test/dungeon-trap.test.js` 只断言 `CFLAG:502 = 1`，MAGIC 实现后 `dungeon.js:678` 也写 1，删除陷阱 TELEPORT 路径仍能通过；5b 结束后补跑发现 15 条失守（#438–#443）。单票的 `--ids` 发现不了这一类。日志里 `红=false` 是测试未检测到变异，须查覆盖；`红=true 命中=false` 是测试失败但 `must_mention` 未匹配，须确认实际失败对应目标断言。

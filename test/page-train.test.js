@@ -9,8 +9,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -449,21 +447,6 @@ test('旁路清行：重绘后行数未回锚点须记录并重锚恢复（#73 �
     1,
     '重锚后不应再触发自校验',
   );
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = load_module_safe(fixture);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-
-  // SHOW_EQUIP_1/2 随 #390 换真身，本文件已无存根
-  assert.deepEqual(STUBBED_CALLS, []);
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });
 
 // —— #212：基础条（@LIFE_BAR/@VITAL_BAR）与射精/母乳/触手槽条段（:144-252）——

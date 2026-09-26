@@ -24,8 +24,8 @@
  *    不回退。ere 侧用带标签的外层循环复刻（内层是菜单循环、最内层是输入
  *    循环，三层的跳转目标与原作标签一一对应）。
  *
- * 3. **PRINTW / CLEARLINE**：`PRINTW`（print + 读键）按 utils/stub-line.js
- *    文件头定下的形态显式组合 `era.print + era.waitAnyKey`；`CLEARLINE N`
+ * 3. **PRINTW / CLEARLINE**：`PRINTW`（print + 读键）按项目既有约定显式
+ *    组合 `era.print + era.waitAnyKey`；`CLEARLINE N`
  *    的局部重绘不镜像（ere 是滚动视图，page-select-target.js 同款先例），
  *    校验类提示因此会留在屏上而不是被抹掉——已知表现差异。
  *
@@ -33,11 +33,10 @@
  *    `FONTREGULAR / SETFONT "黑体"` 是 Emuera 的字体命令，EraElectron 的
  *    输出 API 无对应参数（引擎渲染层固定字体）。
  *
- * 5. **ABLUP 各支（:170-245）仍是存根**：升级规则本体（ABL/ABLUP*.ERB，
- *    8,808 行）不在本票范围（工单只点 SHOP/SHOP_2.ERB），与
- *    system/train/juel-check.js 的 @JUEL_CHECK 分发同一批占位——两处共用
- *    juel-check 导出的 ABLUP_IDS（同一张表，不重列）。各支的原作注释
- *    （部位/能力名）保留在下方分发表的注释里，供接入时对照。
+ * 5. **ABLUP 各支（:170-245）**：升级规则本体（ABL/ABLUP*.ERB）自
+ *    #464-#466 起全部落地（juel-check.js 的 ABLUP_HANDLERS），本文件的
+ *    分发与之共用同一张表。各支的原作注释（部位/能力名）保留在下方
+ *    分发表的注释里，供对照。
  */
 
 'use strict';
@@ -56,23 +55,9 @@ const { show_info_exp } = require('#/page/page-info-exp');
 const { menu_button } = require('#/page/components/menu-button');
 const { check_sellassiable } = require('#/system/stronghold/sale');
 const { yokubo_up_check } = require('#/system/train/ability-check');
-const {
-  ABLUP_IDS,
-  ABLUP_HANDLERS,
-  STUBBED_ABLUP_NAMES,
-} = require('#/system/train/juel-check');
+const { ABLUP_HANDLERS } = require('#/system/train/juel-check');
 const { chara_callname } = require('#/utils/callname-utils');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
-const { stub_line } = require('#/utils/stub-line');
-
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。ABLUPxx 是 @ABILITY_UP_CORE 输入
- * 分发的全部目标（:170-245），与 system/train/juel-check.js 的
- * @JUEL_CHECK 分发同表；ABLUP_HANDLERS 覆盖的编号（issue #464）已落真身，
- * 不再登记为存根。
- */
-const STUBBED_CALLS = [...STUBBED_ABLUP_NAMES];
 
 /** 勇者一览的每页行数（:68 `NUM_PAGE = 24`） */
 const ENEMY_NUM_PAGE = 24;
@@ -322,10 +307,8 @@ async function ability_up_core(arg) {
       await ABLUP_HANDLERS[result](arg); // issue #464
       continue; // :254 GOTO INPUT_LOOP_1
     }
-    if (ABLUP_IDS.includes(result)) {
-      stub_line(`ABLUP${result}`, '能力提升处理'); // 剩余编号仍是存根
-      continue; // :254 GOTO INPUT_LOOP_1
-    }
+    // 菜单按钮的编号与 ABLUP_HANDLERS 的键一一对应（#464-#466 全部落地），
+    // 未实现的回落分支随存根机制一并删除（#638）：其余输入落到链尾重绘
 
     if (result === 999) {
       // :246-251 结束：欲情变化检查（真身）→ 出售资格复核 → 还原 TARGET
@@ -342,7 +325,6 @@ async function ability_up_core(arg) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   ENEMY_NUM_PAGE,
   MENU_ENEMY,
   MENU_SLAVE,

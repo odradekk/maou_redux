@@ -14,13 +14,10 @@
 
 已验证三条端到端流程：#15 标题画面到主菜单、#42 一回合调教、#112 侵略流程到 `ENDING_1`。十二项移植决策均已有运行时验证。阶段 2 完成后，存档系统可用，45 张角色表已纳入仓库。**从新游戏到结局的流程由 `test/event-ending-e2e.test.js` 持续验证**，该测试包含在 `npm test` 中。
 
-尚未实现的子系统入口和指令以存根形式保留，具体状态见 `docs/stub-registry.md`。
-
 开始开发前阅读以下文档：
 
 - `docs/skeleton.md`：模块分层、注册机制、变量访问和测试约定，以及早期端到端验证的结论。
 - `CONTEXT.md`：日文原作、简体汉化和引擎 API 的术语对照。命名使用「本项目用词」一列；文档中的「写作约定」说明中文表达要求。
-- `docs/stub-registry.md`：尚未实现的功能清单。认领工单时确认对应条目，实现后更新状态或移除已完成条目。
 
 **移植决策索引为 issue #1**，详细依据保存在对应工单中。索引保持只读；需要修正既有决策时，在原工单补充说明并引用新证据，保留历史记录。#3 被 #6 修正、#13 经端到端验证补充，均采用这种方式。
 
@@ -80,7 +77,7 @@ npm run format:check     # Prettier，只检查格式
 | ----------------- | ------------------------------------------------------------------------------------------------------ |
 | 每次完成一项改动  | 对应测试文件 ＋ `mutation-check --ids <本轮新加的编号>`                                                |
 | 开 PR 前          | `npm test` ＋ `npm run lint` ＋ `npm run format:check`                                                 |
-| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）＋ 锚点质量全文量；master 另跑无引擎全库                         |
+| PR 与 master push | CI 全库测试（Linux、Windows 均带引擎）；master 另跑无引擎全库                                          |
 | 阶段结束          | 给阶段收尾 PR 打 `phase-acceptance` 标签，在 CI 跑全量变异测试；引擎实际运行在本机用 Electron MCP 验收 |
 
 曾有按改动文件选择测试的选择器（#256），实测最多省一半时间，#452 撤掉：本地和 CI 只有 `npm test` 一个入口，PR 的 CI 通过即全库通过。
@@ -118,12 +115,12 @@ node tools/run-node.mjs --timeout 5400 -- tools/mutation-check.mjs --jobs 2 *> l
 | ---------------- | ------------ | ----------------------------------------------------------- |
 | PR / master push | `engine`     | Linux 全库 `npm run test:ci`，带引擎，跳过数必须为 0        |
 | PR / master push | `windows`    | 原生 Windows 全库 `npm run test:ci`，带引擎，跳过数必须为 0 |
-| PR / master push | `static`     | ESLint、Prettier、锚点质量全文量（含已冻结文件，#626）      |
+| PR / master push | `static`     | ESLint、Prettier                                            |
 | master push      | `engineless` | Linux 全库 `npm run test:ci`，无引擎，跳过数与基线比较      |
 
-PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任务只在 master push 跑，用于发现引擎缺失时的退化。锚点质量检查用于确认追溯引用能否准确定位原作 ERB 中的片段，避免用重复出现的 `ENDIF` 等内容判断位置；具体规则见 `tools/trace-check.mjs`。
+PR 与 master push 跑同一套全库测试，PR 绿即全库绿。无引擎任务只在 master push 跑，用于发现引擎缺失时的退化。
 
-**全量变异测试只对阶段收尾 PR 跑。** `.github/workflows/mutation.yml` 在 PR 被打上 `phase-acceptance` 标签时触发，之后每次推送重跑，去掉标签即停。条目按 `--slice i 12` 分成 12 个并行分片各自串行运行（阶段 6 收尾时 7154 条，每条约 2.1 秒，每片约 21 分钟；分片单条命令上限 2100 秒，条目再涨到贴近上限时加分片），汇总任务把「拦截 / 跳过 / 红」合计写进 job summary；合格线是每片退出码 0（拦截全部、跳过 0、红 0）。本机全量仍可用 `--jobs 2` 跑，但 7154 条时实测约 3.7 小时，阶段验收优先走 CI。
+**全量变异测试只对阶段收尾 PR 跑。** `.github/workflows/mutation.yml` 在 PR 被打上 `phase-acceptance` 标签时触发，之后每次推送重跑，去掉标签即停。条目按 `--slice i 12` 分成 12 个并行分片各自串行运行（#641 后 6986 条，每条约 2.1 秒，每片约 21 分钟；分片单条命令上限 2100 秒，条目再涨到贴近上限时加分片），汇总任务把「拦截 / 跳过 / 红」合计写进 job summary；合格线是每片退出码 0（拦截全部、跳过 0、红 0）。本机全量仍可用 `--jobs 2` 跑，但 6986 条时实测约 3.5 小时，阶段验收优先走 CI。
 
 **CI 从 Release 下载引擎。** `.github/actions/setup-engine` 下载 `engine-4.8.0` 的 `app.asar`，校验 SHA256 后放到 `~/.era-engine/app.asar`，测试按默认路径查找。引擎文件约 42 MB，不提交到 Git，也不依赖缓存是否存在。**升级引擎时，创建新的 Release tag，并更新 action 中的 SHA256 校验值。**
 

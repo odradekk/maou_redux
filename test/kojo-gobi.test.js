@@ -14,8 +14,7 @@
  *   - 分发入口 kojo-system.gobi_koujo 转交真身返回值；未命中（原作
  *     TRYCALLFORM 落空——如 K11 原作就没有语尾函数，两侧同缺）返回空串；
  *   - K3 形参序回归：#403 起真身签名 (rand, arg_0) 与族实参 [arg0, rand]
- *     反接，真调用即 TypeError（docs/stub-registry.md 曾登记该偏差，
- *     本票修正为 (arg_0, rand)）。
+ *     反接，真调用即 TypeError（#403 修正为 (arg_0, rand)）。
  *
  * 行内拼接的行为面（LOOK_INFO 的「」、迷宫凌辱的『猪…』）由
  * test/look.test.js 与 test/kojo-dungeon-ravish*.test.js 各自钉住。

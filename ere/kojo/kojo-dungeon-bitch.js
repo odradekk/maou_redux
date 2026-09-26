@@ -69,12 +69,6 @@ const {
   log_bitch_self,
 } = require('#/kojo/kojo-dungeon-bitch-log');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。#544 起强制肉偿已换真身，名单为空。
- */
-const STUBBED_CALLS = [];
-
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */
 const default_rand = (n) => Math.floor(Math.random() * n);
 
@@ -1748,7 +1742,6 @@ async function set_bich_level(arg) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   dungeon_bitch,
   heroine_bitch,
   sell_bitch,

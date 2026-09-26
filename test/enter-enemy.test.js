@@ -20,8 +20,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -731,18 +729,4 @@ test('夹具隔离开关：disable_enter_enemy 后 EVENTTURNEND 不再生成勇�
     '隔离开关生效：生成管线整链未跑（CFLAG:1 未写）',
   );
   fixture.restore_math_random();
-});
-
-// —— 存根清单核对（与 chara-make.test.js 同款）——
-
-test('存根清单可检索：docs/stub-registry.md 收录全部存根化调用', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = load(fixture);
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
 });

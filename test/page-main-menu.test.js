@@ -12,10 +12,9 @@
  *   2. 六个功能入口：编号、正文、引擎渲染文本、明暗（@MENU_BUTTON 近似）；
  *   3. 防御性修正（@DRAW_MAINMENU :20-39 / @EVENTSHOP :7-12）：越界、
  *      同人、占用三态重置；
- *   4. 四个子面板与指令面板的存根占位；
+ *   4. 四个子面板与指令面板全部真身（#395 起无占位行）；
  *   5. @SHOW_SHOP 的日期钳制（玩家看到的开局是「第 0 年 1 月 1 日」）；
- *   6. 存根清单核对（docs/stub-registry.md）；
- *   7. #73 画面组件迁入：商店轮的就地重绘（不涨屏、上方内容完好、分发期
+ *   6. #73 画面组件迁入：商店轮的就地重绘（不涨屏、上方内容完好、分发期
  *      临时输出被消费、跨会话锚点重新起算）。
  *
  * 已知未测行（变异测试实证，勿误当守卫）：page-shop.js 的 eventshop() 里
@@ -26,8 +25,6 @@
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -722,39 +719,6 @@ test('@SHOW_SHOP 日期钳制：正常日期不动', async () => {
   assert.equal(era_flag.date, 20);
 });
 
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部待办', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('page/page-main-menu');
-  const registry_path = path.resolve(
-    __dirname,
-    '..',
-    'docs',
-    'stub-registry.md',
-  );
-  const registry = fs.readFileSync(registry_path, 'utf8');
-
-  // 先固定名单本身（漏登记会在此红，#22 验收抓过的误报通过形态），再核对清单。
-  // DRAW_DUNGEON_OVERVIEW / DRAW_DUNGEON_DAILY 自 #180 起为真身（本文件
-  // 下方）；DAILY 尾部的 DISPLAY_DUNGEON_DAILY 自 #179（H10）起亦为真身
-  // （page/page-dungeon-daily.js）；DRAW_HAVEITEMS/DRAW_HAVETRAPS/指令
-  // 面板段自 #395 起均为真身，均移出——清单归零
-  assert.deepEqual(STUBBED_CALLS, []);
-  // 运行时占位的存根必须在清单里（删清单行或删存根不同步，都会在这里红）
-  for (const name of STUBBED_CALLS) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-  // 登记型待办（无运行时占位，只注释 + 清单）：page-shop.js 的商店段
-  for (const name of [
-    'CLEAR_SHOP',
-    'ITEM_SHOP',
-    'ITEM_SHOP_TRAP',
-    'SAVESTR:0',
-    '是否启用背景音乐',
-  ]) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
-
 // —— #73：主菜单画面组件的就地重绘（商店轮集成）——
 // 组件层单元（行数测量、Row 的计法、回显跨度）在 test/screen-block.test.js；
 // 这里钉调用点：重绘只发生在玩家交互之后、锚点不越过上方内容。
@@ -792,29 +756,30 @@ test('主菜单就地重绘：轮数增加不涨屏、上方内容完好（重�
   assert.equal(one_round.era.getLineCount(), two_rounds.era.getLineCount());
 });
 
-test('分发期输出玩家先看到再被重绘清掉：点未移植入口不留残行', async () => {
-  // 102（地下城存根）不印按钮（按钮与真身同票落地的政策），引擎不会送达
-  // （#130）；101 自 #391、777 自 #463、103 自 #543（批量处刑）、52x 自
-  // #548（阶层信息）依次真身化——**店里已没有任何带按钮的运行时存根**，
-  // 最后一个存根是 LABO（400，面板无此入口）。所以拆成两半驱动：#73 的
-  // 「玩家先看到」用直调 400（stub_line_wait 的显式等键可观测：waits 记
+test('分发期输出玩家先看到再被重绘清掉：阶层信息入口的等键输出不留残行', async () => {
+  // 101 自 #391、777 自 #463、103 自 #543（批量处刑）、52x 自 #548（阶层
+  // 信息）依次真身化，#638 起最后的占位入口（LABO 400 与 999 调试）也删了
+  // ——店里已没有任何运行时存根。拆成两半驱动：#73 的「玩家先看到」用
+  // 直调 100 的育儿室守卫（:94-97 的 PRINTFORMW 等键可观测：waits 记
   // rows_at_wait）；「下一轮重绘清掉」用 [521] 的真身分支继续驱同一轮循环
-  //（真身内容同样先落屏、重绘后不留残行）。printAndWait 的内部等待按夹具
-  // 契约（era-fixture.js 的 printAndWait 注释）不入 waits——[521] 那半只能
-  // 断言「落过屏 + 重绘后不在屏上」。
+  //（真身内容同样先落屏、重绘后不留残行；printAndWait 的内部等待按夹具
+  // 契约——era-fixture.js 的 printAndWait 注释——不入 waits，那半只能
+  // 断言「落过屏 + 重绘后不在屏上」）。
   const stub_direct = create_era_fixture();
   join_chara(stub_direct, 31);
   stub_direct.load_module('era-utils/era-flag').bought = -1; // BOUGHT = -1：非购物态
   const { usershop: usershop_stub } = stub_direct.load_module('page/page-shop');
-  await usershop_stub(400); // LABO（:148 的隐入口）直调分发
-  const labo_waits = stub_direct.waits.filter((w) => w.waited);
-  assert.equal(labo_waits.length, 1, '400 分支必须等一次键');
-  const labo_at_wait = stub_direct.lines_history.filter(
-    (l) => l.row !== undefined && l.row < labo_waits[0].rows_at_wait,
+  stub_direct.store.set('cflag:0:1', 10); // 育儿室守卫分支（魔王在育儿室）
+  stub_direct.load_module('era-utils/era-flag').target = 31; // 跳过选人，直达守卫
+  await usershop_stub(100);
+  const guard_waits = stub_direct.waits.filter((w) => w.waited);
+  assert.equal(guard_waits.length, 1, '100 育儿室守卫必须等一次键');
+  const guard_at_wait = stub_direct.lines_history.filter(
+    (l) => l.row !== undefined && l.row < guard_waits[0].rows_at_wait,
   );
   assert(
-    labo_at_wait.some((l) => l.text?.includes('@LABO')),
-    '等键时存根行必须已在屏幕上',
+    guard_at_wait.some((l) => l.text?.includes('育儿室中的你不能进行调教')),
+    '等键时守卫报文必须已在屏幕上',
   );
 
   const stub_round = create_era_fixture();

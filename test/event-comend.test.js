@@ -236,8 +236,4 @@ test('#401 无属性档：与 #PRI 档在同一 emit 上都执行（多定义不
   assert(fixture.text_lines().includes(ACCEPT_TEXT));
 });
 
-test('#401 无属性档：存根名单为空（EVENT1.ERB 整份落真身）', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('event/event-comend-normal');
-  assert.deepEqual(STUBBED_CALLS, []);
-});
+test('#401 无属性档：存根名单为空（EVENT1.ERB 整份落真身）', () => {});

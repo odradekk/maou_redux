@@ -37,12 +37,6 @@ const era = require('#/era-electron');
 const { search_family } = require('#/chara/chara-family');
 const { chara } = require('#/facade/chara');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- */
-const STUBBED_CALLS = [];
-
 /** 原作 CHARANUM 的等价物（在场角色数） */
 function charanum() {
   return era.getAddedCharacters().length;
@@ -312,7 +306,6 @@ function party_char_del(cid) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   charanum,
   party_unite,
   party_join,

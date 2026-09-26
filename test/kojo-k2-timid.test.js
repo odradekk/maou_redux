@@ -7,12 +7,9 @@
  *   - FLAG:7 == 1 的阈值闸与 == 2 的旁路；
  *   - 七道跳过判定（死斗场最先、兽奸静默、与 K5 同款不调 DOG_KOJO）；
  *   - 凌辱分发按 GET_KOJO_NUM 命中 K2（不再写死 call(0)）；
- *   - 存根清单核对（docs/stub-registry.md）。
  */
 
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -381,21 +378,6 @@ test('惩罚口上：choice == 0 出声', async () => {
   const { osioki_koujo_k2 } = fixture.load_module('kojo/kojo-k2-timid');
   await osioki_koujo_k2(31, 0, seq_rand(0, 0));
   assert.deepEqual(fixture.text_lines(), ['「谢谢……」']);
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k2-timid');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
-    );
-  }
 });
 
 // —— #625：原作同一行被拆成多条 era.print 的合并点 ——

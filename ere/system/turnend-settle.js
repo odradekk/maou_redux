@@ -62,23 +62,6 @@ const { run_benki } = require('#/system/train/benki');
 const { run_seedbed } = require('#/system/train/seedbed');
 const { auto_execution } = require('#/event/event-execution-batch');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。#172（H3）起 PARTY_UNITE / DUNGEON /
- * PARTY_JOIN / PARTY_DEL 已接真身（ere/dungeon/），从名单移除；#181（H12）
- * 起 DUNGEON_MAP（2D 模式的 else 臂）与 GEO_OUTPUT_2（FLAG:502==1 的地图
- * 重绘）亦接真身（ere/dungeon/labo-dungeon-map.js 与 labo-map.js）；#179
- * （H10）起 LVUP / DUNGEON_AFTER 亦接真身（ere/dungeon/dungeon-lvup.js 与
- * dungeon-after.js）；#217（J7）起 BENKI 亦接真身（ere/system/train/
- * benki.js）——四条均从名单移除；#508 起 FORMAT_AUTOTRAIN / AUTOTRAIN
- * 亦接真身（ere/event/event-autotrain.js 的同名函数，调用点原为占位行），
- * 从名单移除；#543 起自動處刑亦接真身（ere/event/event-execution-batch.js
- * 的 auto_execution，FLAG:5 位 3 的开关位）；#565 起 GET_LOOK_INFO（头发生长
- * :540/:564 两处播报的发色段）接真身（ere/chara/look-info.js 的式中函数），
- * 名单自此清空。
- */
-const STUBBED_CALLS = [];
-
 /** 原作 RAND:N（0..N-1）的等价物 */
 function rand(n) {
   return Math.floor(Math.random() * n);
@@ -662,5 +645,3 @@ async function decay_invasion_degree(region, spec) {
     }
   }
 }
-
-module.exports = { STUBBED_CALLS };

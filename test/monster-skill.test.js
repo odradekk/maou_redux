@@ -314,11 +314,6 @@ test('两套战斗入口调用怪物技能真身并透传确定性随机源', as
 
     assert.equal(await battle.monster_attack(1, 0, rand), 999);
     assert.deepEqual(calls, [[1, 7, -1, rand]]);
-    assert.equal(
-      battle.STUBBED_CALLS.includes('MONSTER_SKILL'),
-      false,
-      'MONSTER_SKILL 不再登记为存根',
-    );
   }
 
   {
@@ -336,10 +331,5 @@ test('两套战斗入口调用怪物技能真身并透传确定性随机源', as
 
     assert.equal(await battle2.duel_attack(1, 0, 2, 1, rand), 999);
     assert.deepEqual(calls, [[2, 1, rand]]);
-    assert.equal(
-      battle2.STUBBED_CALLS.includes('SLAVE_MONSTER_SKILL'),
-      false,
-      'SLAVE_MONSTER_SKILL 不再登记为存根',
-    );
   }
 });

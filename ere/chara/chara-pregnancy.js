@@ -63,7 +63,6 @@ const MAX_CHARANUM = 90;
  */
 const FIRST_CHILD_ID = 100000;
 const CHILD_ID_BLOCK_SIZE = 100;
-const STUBBED_CALLS = [];
 
 function default_rand(n) {
   return Math.floor(Math.random() * n);
@@ -810,7 +809,6 @@ async function ninsin_main(rand = default_rand) {
 }
 
 module.exports = {
-  STUBBED_CALLS,
   MAX_CHARANUM,
   FIRST_CHILD_ID,
   template_no_of,

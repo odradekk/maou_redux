@@ -11,8 +11,6 @@
  *   - 成熟出售调用（SELL_MATURO_K0，#338 接通）。
  */
 const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
@@ -814,21 +812,6 @@ test('GOHOUBI_REQUEST 兽奸要求：:8075..:8083 是一行，兽名三档（#62
       fixture.text_lines(),
       [`「胜利之后、想要和${beast}交尾」`],
       `CFLAG:504==${lv} 兽奸要求`,
-    );
-  }
-});
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = fixture.load_module('kojo/kojo-k1-confident');
-  const registry = fs.readFileSync(
-    path.resolve(__dirname, '..', 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of STUBBED_CALLS) {
-    assert.ok(
-      registry.includes(name),
-      `docs/stub-registry.md 必须收录 ${name}`,
     );
   }
 });

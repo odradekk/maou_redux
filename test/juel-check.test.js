@@ -470,25 +470,9 @@ test('交互循环：能力分支走真身、重绘后可再选（进得去出�
   );
 });
 
-test('交互循环：能力分支命中表兜底——handler 缺位的编号仍打 @ABLUPxx 占位（#521）', async () => {
-  const fixture = create_era_fixture();
-  const juel_check = seed_world(fixture);
-  // #467 起 ABLUP_IDS 的全部编号都接了真身，else-if 兜底分支在按钮白名单
-  // 下不可达，M38 因此逃逸（#521）。兜底契约本身仍在：ABLUP_IDS 里的编号
-  // 失去 handler（未来接入遗漏/新存根——STUBBED_ABLUP_NAMES 正是按「表内
-  // 减 handler」算出的）时，分发必须落 @ABLUPxx 占位行，而不是静默无操作。
-  // 从导出表删掉 99 的 handler 模拟该状态：夹具每例重建 ere/ 模块缓存，
-  // 改动不外泄；[99] 反抗刻印行照常打印，白名单放行。
-  delete juel_check.ABLUP_HANDLERS[99];
-  fixture.set_inputs(99, 999);
-
-  await juel_check.run_juel_check();
-
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('@ABLUP99')),
-    'handler 缺位的编号必须打 @ABLUP99 占位行（M38 守的兜底分支）',
-  );
-});
+// 原「交互循环：能力分支命中表兜底」用例（删 handler 戳 @ABLUPxx 占位）已删
+//（#638）：STUBBED_ABLUP_NAMES 与占位回落随存根机制一并删除，兜底分支不再有
+// 实体；ABLUP_IDS 与 ABLUP_HANDLERS 的一一对应由下一文件的分发表覆盖用例钉住。
 
 // 原「交互循环：无分支输入静默重绘」用例（喂 7）已删（#130）：7 不是
 // 已打印按钮的快捷键，引擎的 input() 在渲染层就把它弹回——「无分支输入」
@@ -830,20 +814,6 @@ test('SHOW_ABLUP_SELECT：#467 癖好行（[4]／[40]）也按各自 DECIDE 打 
     rendered(40),
     '[40] 舔中毒 - LV 0',
     '局部中毒 Lv0 需 2000，不够',
-  );
-});
-
-// ———— 存根清单核对 ————
-
-test('存根清单可检索：docs/stub-registry.md 收录这张票全部占位名', () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS } = seed_world(fixture);
-  // #565 起 CHECK_SPECIALSKIL 接线；ABLUP 族自 #467 起已清零（spread 展开
-  // 为空数组）。名字 ↔ 清单状态的机械核对在 test/stub-registry-status.test.js。
-  assert.deepEqual(
-    STUBBED_CALLS,
-    [],
-    'juel-check 的存根名单清空（ABLUP 缺号回落仍由 STUBBED_ABLUP_NAMES 驱动）',
   );
 });
 

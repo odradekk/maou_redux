@@ -2865,29 +2865,6 @@ test('ENDINGINPUT CASE 16（双飞）与 CASEELSE（各角色线）：写的是 
   }
 });
 
-test('存根清单核对：event-ending 与 chara-init 的 STUBBED_CALLS 全部收录进 docs/stub-registry.md', async () => {
-  const fixture = create_era_fixture();
-  const { STUBBED_CALLS: ENDING_STUBS } =
-    fixture.load_module('event/event-ending');
-  const { STUBBED_CALLS: INIT_STUBS } = fixture.load_module('chara/chara-init');
-  // #404（N20）起 ENDING_3/4/5、CHAR_GIFT、END10_55、ENDING_N 全接真身；
-  // RACE_AGE_GENERATE 随 #385 合并接上真身（rebase 后清出名单）；
-  // SHOW_CHARA_INFO 随 #390 接上真身（本文件的两处贡品详情页），名单清空
-  assert.deepEqual(ENDING_STUBS, []);
-  // ST_UP 自 #179（H10）起为真身（ere/dungeon/dungeon-lvup.js）、
-  // SET_SUIT_SELFCALL/SET_NICK_SELFCALL/CSVCSTR 自 #383 起为真身
-  // （ere/chara/chara-self-call.js）、CHAR_BODY_GENERATE_WAPPED 自 #385 起
-  // 为真身（ere/chara/chara-body.js），均移出
-  assert.deepEqual(INIT_STUBS, []);
-  const registry = fs.readFileSync(
-    path.resolve(REPO_ROOT, 'docs', 'stub-registry.md'),
-    'utf8',
-  );
-  for (const name of [...ENDING_STUBS, ...INIT_STUBS]) {
-    assert(registry.includes(name), `存根清单缺少 ${name}`);
-  }
-});
-
 // —— 引擎桥接（简报第 3 条）：夹具证明「调了」，引擎真方法证明「接受了」 ——
 // #21/#22 的教训：addCharacter 对无预设角色静默返回 false，夹具的记录层
 // 看不见这层短路。这里用引擎自己的装载循环 + addCharacter 方法体验证

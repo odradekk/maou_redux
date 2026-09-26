@@ -46,15 +46,6 @@ const { clothtype_text } = require('#/page/page-clothtype');
 // 一族共用）；此处再导出 palam_level 供既有用例继续从本模块取用
 const { PALAMLV, palam_level } = require('#/era-utils/palam-level');
 
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。
- * LIFE_BAR/VITAL_BAR（#212 落地，ere/page/components/chara-bars.js）、
- * PRINT_CLOTHTYPE（#215 落地，ere/page/page-clothtype.js）与
- * 射精/母乳/触手槽条段（:144-252，就地实现）不在名单里。
- */
-const STUBBED_CALLS = [];
-
 // 参数条的引擎原生渲染参数（#74 起手绘 10 格字符条退役）：
 //   - 条内文字（inContent）＝参数名；条后文字（outContent）＝右对齐宽 5 的
 //     数值（原作 PRINT_PALAM 数值列的同款形状，log 实测）；
@@ -429,14 +420,13 @@ on('SHOW_STATUS', async () => {
     // 都已被那一次输入消费，就地重绘（#73 锚点跨度；重绘只发生在玩家
     // 交互之后——本重入必经一次输入）。首绘（组件未画过）时 redraw
     // 等价 draw，不清屏、保住上方内容。未来 USERCOM 分支若输出子画面，
-    // 其可见性归它自己的 stub_line_wait（#73 习语），不归本判据。
+    // 其可见性归它自己的输出（#73 锚点跨度习语），不归本判据。
     await status_block.redraw();
   }
   command_path_seen = false;
 });
 
 module.exports = {
-  STUBBED_CALLS,
   palam_level,
   print_palam,
 };

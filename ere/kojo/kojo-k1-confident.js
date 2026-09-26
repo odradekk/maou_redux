@@ -62,7 +62,6 @@ const { game } = require('#/facade/game');
 const { piercing_state } = require('#/system/train/piercing-state');
 const { chara_callname, chara_name } = require('#/utils/callname-utils');
 
-const STUBBED_CALLS = [];
 const MASTER = 0;
 
 // @EVENTTRAIN // :84
@@ -13648,4 +13647,4 @@ gohoubi_after_koujo_family.register(1, gohoubi_after_koujo_k1);
 osioski_koujo_family.register(1, osioski_koujo_k1);
 gobi_koujo_family.register(1, gobi_koujo_k1);
 
-module.exports = { STUBBED_CALLS, kojo_message_com_1 };
+module.exports = { kojo_message_com_1 };

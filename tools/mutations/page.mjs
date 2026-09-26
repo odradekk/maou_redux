@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 515; // #642 验收 +1（M12942：整屏居中改成左对齐）；#642 返工 -2（M12934/M12935 删：联系方式段整段删除，find 无输出点）+2（M12940/M12941：版本行装饰段与联系方式段复活守卫）；#642 起 -1（M12074 删：致辞钮 9 随名单整段删除，find 无输出点）+6（M12930-M12935：标题画面新游戏信息——硬编码旧名/漏印作者/追加信息与年份守卫拆除/钮 8 复用已删编号 9/联系方式两段互换）；#557 +1（M12359：设置页 [28] 漏 await 的重叠检测直接报错条目）；#615 起 +17（M12240-M12248：print 正文的尾换行——[98]/[99] 确认页两行、RACE_CONFIG 表头/编辑头两行/随机档两个标签、兵器标题与鸡鸡状态回显；M12250-M12253/M12269：完全召唤横幅两行、之间的真空行与 :76 的两个空行、首段短横线与尾随两空格；M12254-M12256：ENEMY_EXIST2 首行空行与空名单分支）；#596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 507; // #641 净 -8（M97、M9723、M11110、M11313/11314/11320/11321/11328/11329、M11573、M11974、M12359 随 trace-check 与判不移植入口删除；+4 M12900/M12901/M12908/M12909 入口删除守卫）；#642 验收 +1（M12942：整屏居中改成左对齐）；#642 返工 -2（M12934/M12935 删：联系方式段整段删除，find 无输出点）+2（M12940/M12941：版本行装饰段与联系方式段复活守卫）；#642 起 -1（M12074 删：致辞钮 9 随名单整段删除，find 无输出点）+6（M12930-M12935：标题画面新游戏信息——硬编码旧名/漏印作者/追加信息与年份守卫拆除/钮 8 复用已删编号 9/联系方式两段互换）；#557 +1（M12359：设置页 [28] 漏 await 的重叠检测直接报错条目）；#615 起 +17（M12240-M12248：print 正文的尾换行——[98]/[99] 确认页两行、RACE_CONFIG 表头/编辑头两行/随机档两个标签、兵器标题与鸡鸡状态回显；M12250-M12253/M12269：完全召唤横幅两行、之间的真空行与 :76 的两个空行、首段短横线与尾随两空格；M12254-M12256：ENEMY_EXIST2 首行空行与空名单分支）；#596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -170,15 +170,6 @@ export default [
     replace: '    // 变异：按钮渲染删除',
     tests: ['source-check', 'page-usercom'],
     must_mention: '端到端',
-  },
-  {
-    desc: 'M97 引用行号改坏（:53→:48 死代码行——在册校验 + 完整性双红）',
-    file: 'ere/page/page-main-menu.js',
-    find: "      fontWeight: 'bold', // :53 FONTBOLD（整行粗体，片段级携带）",
-    replace:
-      "      fontWeight: 'bold', // :48 FONTBOLD（整行粗体，片段级携带）",
-    tests: ['trace-check'],
-    must_mention: '已不存在',
   },
   {
     desc: 'M109 标题新游戏漏盖版本戳（init_portcflag 调用删除）',
@@ -1922,15 +1913,6 @@ export default [
     must_mention: '征服后菜单不会打出窄路径专属的怪物数量提示',
   },
   {
-    desc: 'M9723 [1001] AGENT_MENU 存根登记名改坏（INVASION.ERB:93-95，返工#1）',
-    file: 'ere/page/page-invasion.js',
-    find: "stub_line_wait('AGENT_MENU', '代理人相关菜单', '不排期（#103）');",
-    replace:
-      "stub_line_wait('DEPUTY_MENU', '代理人相关菜单', '不排期（#103）'); // 变异：登记名改坏",
-    tests: ['page-invasion'],
-    must_mention: '转发到 AGENT_MENU 存根',
-  },
-  {
     desc: 'M9724 精灵状态行读错地区标记（改读 dragon_realm_invasion，返工#2 P1）',
     file: 'ere/page/page-invasion.js',
     find: '    era_flag.elf_realm_invasion,\n    10000,\n  );',
@@ -3502,16 +3484,6 @@ export default [
     must_mention: '恰好 80 人',
   },
   {
-    desc: 'M11110 page-shop 存根名单退回旧状态（INTERCEPT/ABILITY_UP/TAILOR_MAIN 自 #397 起已接真身，重新列入即红，#515）',
-    file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['LABO'];",
-    replace:
-      "const STUBBED_CALLS = [\n  '批量处刑',\n  'INTERCEPT',\n  'ABILITY_UP',\n  'TAILOR_MAIN',\n  'LABO',\n  'SHOW_FLOOR',\n  'DEBUG_MENU_U',\n];",
-    tests: ['page-shop'],
-    test_name: '存根清单可检索',
-    must_mention: '存根名单必须只列仍未接真身的分支',
-  },
-  {
     desc: 'M11204 祭品名单轮的返回退回纯文本（该轮白名单非空——名单行与条件键都是按钮，编号被引擎拒收，#530；编号 #586 起是 [999]）',
     file: 'ere/page/page-chara-info-show.js',
     find: `    era.printButton('返回', LIST_RETURN);`,
@@ -3645,87 +3617,6 @@ export default [
     replace: '  await era.waitAnyKey(); // 变异：少一个空行',
     tests: ['page-shop-floor'],
     must_mention: 'PRINTW 的空行',
-  },
-  // —— #542：设置页 [26]/[28] 与主菜单 999 的不移植提示 ——
-  {
-    desc: 'M11313 设置页 [26] 的不移植提示整段删掉（回到空转——按钮在、按了没反应，#542）',
-    file: 'ere/page/page-config.js',
-    find: `  } else if (local === 26) {
-    await not_ported_line_wait(
-      'MODLIST',
-      'MOD 开关菜单',
-      '#542 判不移植：需手动开启、默认全关的 MOD 子系统',
-    );
-  } else if (local === 27) {`,
-    replace: `  } else if (local === 27) { // 变异：[26] 分支整段删掉（#547 起 [27] 段紧随其后）`,
-    tests: ['page-config'],
-    must_mention: '提示行必须带原作函数名 @MODLIST',
-  },
-  {
-    desc: 'M11314 设置页 [28] 的不移植提示换成误写变量（不移植的功能被按下却写 flag——开关不落地被破坏，#542）',
-    file: 'ere/page/page-config.js',
-    // 提示行留着、只在后面补一次写——这样红的是「开关不落地」那条断言本身，
-    // 不会先撞上「提示行必须带 @更换立绘」（前一次写法整段删掉，红的变成了
-    // 前一条断言，must_mention 对不上）
-    find: `    await not_ported_line_wait(
-      '更换立绘',
-      '立绘系统',
-      '#542 判不移植：开关默认关、素材不在仓库',
-    );`,
-    replace: `    await not_ported_line_wait(
-      '更换立绘',
-      '立绘系统',
-      '#542 判不移植：开关默认关、素材不在仓库',
-    );
-    era.set('flag:999', 1); // 变异：不移植的开关反而写状态`,
-    tests: ['page-config'],
-    must_mention: '立绘开关不落地',
-  },
-  {
-    desc: 'M11320 主菜单 999 的不移植提示退回占位话术（「随调试票」——判死终态被读成待办，#542）',
-    file: 'ere/page/page-shop.js',
-    find: `    await not_ported_line_wait(
-      'DEBUG_MENU_U',
-      '调试菜单',
-      '#542 判不移植：原作者的调试工具',
-    );`,
-    replace: `    await stub_line_wait('DEBUG_MENU_U', '调试菜单', '随调试票'); // 变异：退回占位话术`,
-    tests: ['page-shop'],
-    must_mention: '不移植提示要说清是什么与为何',
-  },
-  {
-    desc: 'M11321 page-shop 存根名单退回旧状态（DEBUG_MENU_U 已随 #542 判不移植，重新列入即红）',
-    file: 'ere/page/page-shop.js',
-    find: "const STUBBED_CALLS = ['LABO'];",
-    replace: "const STUBBED_CALLS = ['LABO', 'SHOW_FLOOR', 'DEBUG_MENU_U'];",
-    tests: ['page-shop'],
-    test_name: '存根清单可检索：docs/stub-registry.md 收录这张票全部占位名',
-    must_mention: '存根名单必须只列仍未接真身的分支',
-  },
-  {
-    desc: 'M11328 [20] 更换立绘按钮快捷键错位（20 改 21——清单行的编号与引擎分发对不上，#542）',
-    file: 'ere/page/page-chara-info.js',
-    find: "      if (state === 0 && current !== 0) era.printButton('更换立绘', 20);",
-    replace:
-      "      if (state === 0 && current !== 0) era.printButton('更换立绘', 21); // 变异：快捷键错位",
-    tests: ['page-chara-info'],
-    must_mention: '奴隶 + 状态 0：渲染',
-  },
-  {
-    desc: 'M11329 设置页 [28] 的提示文案串成 [26] 的（note 改「MOD 开关菜单」——立绘开关按下却说 MOD，#542）',
-    file: 'ere/page/page-config.js',
-    find: `    await not_ported_line_wait(
-      '更换立绘',
-      '立绘系统',
-      '#542 判不移植：开关默认关、素材不在仓库',
-    );`,
-    replace: `    await not_ported_line_wait(
-      '更换立绘',
-      'MOD 开关菜单',
-      '#542 判不移植：开关默认关、素材不在仓库',
-    );`,
-    tests: ['page-config'],
-    must_mention: '不移植提示要说清是什么与为何',
   },
   {
     desc: 'M11550 CONFIG_AGE_SETTING [9] 详细设定的渲染门用错位（13 → 12，#547）',
@@ -4042,14 +3933,6 @@ export default [
     must_mention: 'OFF 档',
   },
   {
-    desc: 'M11573 设置页存根名单退回旧状态（CONFIG_AGE_SETTING 重新列入，#547）',
-    file: 'ere/page/page-config.js',
-    find: `const STUBBED_CALLS = [];`,
-    replace: `const STUBBED_CALLS = ['CONFIG_AGE_SETTING']; // 变异：退回存根`,
-    tests: ['page-config'],
-    must_mention: '存根清单可检索',
-  },
-  {
     desc: 'M11574 设置页 [15] 分支退回存根占位（不进年龄子菜单，#547）',
     file: 'ere/page/page-config.js',
     find: `  } else if (local === 15) {
@@ -4240,15 +4123,6 @@ export default [
       '  if (result === 998 && era_flag.bought >= 0) { // 变异：退出键改 998',
     tests: ['page-shop'],
     must_mention: '999 退出商店（:46）',
-  },
-  {
-    desc: 'M11974 调试菜单后门被限制在购物态（999 分支加 bought >= 0：非购物态 999 失去不移植提示）',
-    file: 'ere/page/page-shop.js',
-    find: '  } else if (result === 999) {',
-    replace:
-      '  } else if (result === 999 && era_flag.bought >= 0) { // 变异：后门限购物态',
-    tests: ['page-shop'],
-    must_mention: '提示行必须带原作函数名 @DEBUG_MENU_U',
   },
   // —— #562：PRINTLC 系不换行（收尾的 PRINTL 只结束按钮那一行，不产生空行） ——
   // 四条各补回一处空行：按钮自成一行（＝ PRINTLC + 收尾的 PRINTL），多补
@@ -4883,22 +4757,56 @@ export default [
     tests: ['page-dungeon-info'],
     must_mention: ':595 的首行空行 + 队伍行',
   },
-  // —— #557：重叠检测直接报错的调用点变异（#542 当时未单独补的那处）——
+
   {
-    desc: 'M12359 设置页 [28] 漏写 await（重叠检测直接报错：不移植提示的等键与设置页下一轮输入并发，#557/#542）',
+    desc: 'M12900 设置页 [26]/[28] 入口复活（MOD 开关与立绘开关按钮打回——#638 按 #574 删除的判不移植入口不得回潮）',
     file: 'ere/page/page-config.js',
-    find: `    await not_ported_line_wait(
-      '更换立绘',
-      '立绘系统',
-      '#542 判不移植：开关默认关、素材不在仓库',
-    );`,
-    replace: `    not_ported_line_wait(
-      '更换立绘',
-      '立绘系统',
-      '#542 判不移植：开关默认关、素材不在仓库',
-    ); // 变异：漏 await`,
+    find: `    // [26] MOD开关与 [28] 立绘开关：MOD 子系统与立绘系统均判不移植（#542），
+    // 缺内容的入口随存根清单一并删除（#638 按 #574「缺内容的去掉入口」）`,
+    replace: `    // 变异：入口复活
+    era.printButton('MOD开关', 26);
+    era.printButton('立绘开关 　　　　 　　 　现在：OFF', 28);`,
     tests: ['page-config'],
-    must_mention: '疑似漏写 await',
+    must_mention: '[26] MOD开关 按钮不得渲染',
+  },
+  {
+    desc: 'M12901 主菜单 999 调试入口复活（提示行+等键打回——#638 删除的 DEBUG_MENU_U 分支不得回潮）',
+    file: 'ere/page/page-shop.js',
+    find: `  // 原作的 :222-223 调试菜单（DEBUG_MENU_U，原作者的调试工具）自 #542 判不
+  // 移植、#638 起随存根清单一并删除入口：主菜单不印 [999] 按钮，引擎的输入
+  // 白名单（#130）本就送不到这里；店内的 999 在上面的购物段早退（#592），
+  // 也不会落到链尾`,
+    replace: `  if (result === 999) {
+    era.print('（调试菜单不在移植范围。）');
+    await era.waitAnyKey();
+  }
+  // 变异：999 调试入口复活`,
+    tests: ['page-shop'],
+    must_mention: '不得等待读键',
+  },
+  {
+    desc: 'M12908 征服后菜单 [1001] AGENT_MENU 分支复活（提示行打回——#638 删除的入口不得回潮）',
+    file: 'ere/page/page-invasion.js',
+    find: `    // :93-95 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：`,
+    replace: `    if (result === 1001) {
+      era.print('（代理人菜单不在移植范围。）');
+      await era.waitAnyKey();
+      return 0;
+    }
+    // :93-95 的 ELSEIF RESULT == 1001 / CALL AGENT_MENU 随 #638 删除（#103：`,
+    tests: ['page-invasion'],
+    must_mention: '落到 :102 的 >=6 拒收重问',
+  },
+  {
+    desc: 'M12909 主菜单 400 LABO 隐入口复活（提示行+等键打回——#638 删除的分支不得回潮）',
+    file: 'ere/page/page-shop.js',
+    find: '  } else if (result === 496 && selectable_count > 0) {',
+    replace: `  } else if (result === 400) {
+    era.print('（2D 迷宫实验室不在移植范围。）');
+    await era.waitAnyKey();
+  } else if (result === 496 && selectable_count > 0) { // 变异：400 入口复活`,
+    tests: ['page-shop'],
+    must_mention: 'LABO 隐入口不得等待读键',
   },
   {
     desc: 'M12930 标题画面硬编码旧游戏名（gamebase.title 改旧字面量，#642）',

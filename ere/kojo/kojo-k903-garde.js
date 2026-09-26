@@ -71,7 +71,6 @@ const era_flag = require('#/era-utils/era-flag');
 const { PALAMLV } = require('#/era-utils/palam-level');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
-const STUBBED_CALLS = [];
 const default_rand = (n) => Math.floor(Math.random() * n);
 // Emuera 数值变量未声明时为 0；EraElectron 原始 API 返回 undefined（#13）。
 const era0 = (key) => era.get(key) || 0;
@@ -9568,7 +9567,6 @@ kojo_message_markcng_family.register(903, kojo_message_markcng_903);
 self_kojo_family.register(903, self_kojo_k903);
 
 module.exports = {
-  STUBBED_CALLS,
   k903_kojo2,
   kojo_message_com_903,
   dog_kojo_903,

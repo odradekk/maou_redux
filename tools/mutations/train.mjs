@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1006; // #620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 1002; // #641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -22,22 +22,6 @@ export default [
     replace: '  // 变异：守卫删除（原作 :746 条件不满足时零输出）',
     tests: ['train-message'],
     must_mention: 'TEQUIP:44（紧缚）时不得输出爱抚反应',
-  },
-  {
-    desc: 'M11621 com-sm 的 STUBBED_CALLS 复辟 COM132（已实现名重进名单）',
-    file: 'ere/system/train/com-sm.js',
-    find: 'const STUBBED_CALLS = [];',
-    replace: "const STUBBED_CALLS = ['COM132']; // 变异：已实现名复辟",
-    tests: ['stub-registry-status'],
-    must_mention: '已实现函数的调用点不得再打占位',
-  },
-  {
-    desc: 'M11622 com-sex 的 STUBBED_CALLS 复辟 COM64（已实现名重进名单）',
-    file: 'ere/system/train/com-sex.js',
-    find: 'const STUBBED_CALLS = [];',
-    replace: "const STUBBED_CALLS = ['COM64']; // 变异：已实现名复辟",
-    tests: ['stub-registry-status'],
-    must_mention: '已实现函数的调用点不得再打占位',
   },
   {
     desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
@@ -238,14 +222,6 @@ export default [
     must_mention: '结算表第 11 行',
   },
   {
-    desc: 'M38 能力分支：命中表判假（@ABLUPxx 占位不再出现）',
-    file: 'ere/system/train/juel-check.js',
-    find: '    } else if (ABLUP_IDS.includes(result)) {',
-    replace: '    } else if (false && ABLUP_IDS.includes(result)) {',
-    tests: ['juel-check'],
-    must_mention: '能力分支',
-  },
-  {
     desc: 'M39 COM_ABLE0 爱抚系过滤：FLAG:25 & 1 判据删掉',
     file: 'ere/system/train/com-caress.js',
     find: `com_able_family.register(0, async () => {
@@ -318,15 +294,6 @@ export default [
     replace: '  // 变异：SOURCE_CHECK 槽位删除',
     tests: ['source-check'],
     must_mention: '端到端',
-  },
-  {
-    desc: 'M98 豁免条目过期失效（main-loop 的 :231 改号——条目表核对必须红）',
-    file: 'ere/system/flow/main-loop.js',
-    find: '  // 真身出口显式 begin(STATE.SHOP)（:231），此行只在未来的处理器们都不发',
-    replace:
-      '  // 真身出口显式 begin(STATE.SHOP)（:232），此行只在未来的处理器们都不发',
-    tests: ['trace-check'],
-    must_mention: '清单只能变短',
   },
 
   // —— #212（J2 调教回合骨架）：M700-M703 ——
@@ -514,7 +481,7 @@ export default [
   });
   if (branch === 0) {
     // 变异：占位行复辟（缺号的 whenMissing 缺省值是 0）
-    era.print('（情景描写尚未移植，此处为占位——原作 @TRAIN_MESSAGE_B，见 docs/stub-registry.md。）');
+    era.print('（情景描写尚未移植，此处为占位——原作 @TRAIN_MESSAGE_B。）');
   }`,
     tests: ['train-message'],
     must_mention: '未装载的号不得再出占位行',
@@ -2460,23 +2427,6 @@ export default [
     must_mention: `同调教者 + 上回合后背位族`,
   },
   {
-    desc: `M986 JUMPFORM 落点的占位行删（升格目标缺失静默）`,
-    file: 'ere/system/train/com-sm.js',
-    find:
-      '  stub_line(' +
-      '`' +
-      'COM${com}' +
-      '`' +
-      ', ' +
-      '`' +
-      '指令 ${com} 的升格目标' +
-      '`' +
-      ", '随追加与高级指令票');\n  return 1;",
-    replace: `  return 1; // 变异：占位行删`,
-    tests: [`com-sm`],
-    must_mention: `升格目标缺失的占位行（J19 落地前）`,
-  },
-  {
     desc: `M987 EQUIP_COM43 的 UP:10 直写删`,
     file: 'ere/system/train/com-sm.js',
     find: `  add_up(target, 5, a);
@@ -3043,14 +2993,6 @@ export default [
     set_src(cid, 15, times(src(cid, 15), row[1]));`,
     tests: ['com-sex'],
     must_mention: '顺从段三格各取独立倍率',
-  },
-  {
-    desc: 'M1106 COM20 高级跳转缺失时删除可见 staged stub（#221）',
-    file: 'ere/system/train/com-sex.js',
-    find: "  stub_line(`COM${id}`, `指令 ${id} 的升格目标`, '随追加与高级指令票');\n  return 1;",
-    replace: '  // 变异：未实现升格目标静默成功\n  return 1;',
-    tests: ['com-sex'],
-    must_mention: '未实现升格目标必须可见',
   },
   {
     desc: 'M1107 GET_ADV_COM CASE20 SP 命中时提前清 TFLAG:42（#221）',
@@ -10664,5 +10606,27 @@ export default [
       "    era.print(s); // 变异：様子另起一行\n    era.print(\n      flag63() === 1\n        ? '像家常便饭似的一边聊着天一边交欢着……'\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑……'\n          : t(arg, 76)\n            ? '带着淫乱的表情，发出野兽般的娇喘……'\n            : t(arg, 85)\n              ? '泪流满面地在嘴里叨念着你的名字……'\n              : exp(arg, 20) > 1000\n                ? '带着谦卑的微笑央求着精液……'\n                : exp(arg, 20) > 500\n                  ? '带着谦卑的表情不时吐露着淫语……'\n                  : exp(arg, 20) > 250\n                    ? '带着生硬的笑容做着V字手势，乞求着原谅……'\n                    : exp(arg, 20) > 100\n                      ? '带着生硬的笑容被强行做着V字手势……'\n                      : exp(arg, 20) > 50\n                        ? '不断重复着谢罪的话语……'\n                        : '两眼无神地看着远方……',\n    );",
     tests: ['benki'],
     must_mention: '#620 通常分派：名字句 + 様子同属一条显示行',
+  },
+
+  {
+    desc: 'M12903 升格跳转不执行目标真身（jump_to_advanced 恒 return 1——JUMPFORM 语义被架空）',
+    file: 'ere/system/train/com-sm.js',
+    find: `async function jump_to_advanced(com) {
+  return com_family.call(com, { whenMissing: 1 });
+}`,
+    replace: `async function jump_to_advanced(com) {
+  void com;
+  return 1; // 变异：升格目标不执行
+}`,
+    tests: ['com-sm'],
+    must_mention: '升格目标 COM132 已是真身（#229），跳转整段执行',
+  },
+  {
+    desc: 'M12905 ABLUP 分发表缺键（100 号 handler 被删——与 ABLUP_IDS 的一一对应被破，能力值提高画面少一支）',
+    file: 'ere/system/train/juel-check.js',
+    find: '  100: ablup100,',
+    replace: '  // 变异：100 号 handler 删除',
+    tests: ['page-ability-up'],
+    must_mention: '菜单可达的每个编号都有 handler',
   },
 ];

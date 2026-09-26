@@ -68,7 +68,6 @@
  * 源文件 7953 行全部落地：头部守卫、开局/终局口上（CFLAG:201 状态机）、
  * K8_KOJO2、KOJO_MESSAGE_COM_8 的 51 个 SELECTCOM 分支、DOG_KOJO_8、
  * COLOSSEUM_KOJO_8、PALAMCNG/MARKCNG、SELF_KOJO_K8 与全部非调教函数；
- * SELL_MATURO_K0 成熟出售真身已随 #338 接通，STUBBED_CALLS 已空。
  */
 
 const era = require('#/era-electron');
@@ -111,13 +110,6 @@ const { piercing_state } = require('#/system/train/piercing-state');
 
 /** 读未声明的序号返回 undefined 而非 0（#13），TALENT/MARK/BASE/TEQUIP 一律 || 0 兜底 */
 const era0 = (k) => era.get(k) || 0;
-
-/**
- * 本文件存根化的原作调用名。docs/stub-registry.md 必须收录每一个（测试
- * 核对固定）；名单变动必须同步清单。本文件已整份落地，成熟出售调用也已
- * 随 #338 接通，因此清单为空。
- */
-const STUBBED_CALLS = [];
 
 // @EVENTTRAIN #PRI（:61-65）：存在标志 + 总开关补 0（同 EVENT_K.ERB 语义）
 on(
@@ -12937,7 +12929,6 @@ osioski_koujo_family.register(8, (cid, choice) =>
 gobi_koujo_family.register(8, gobi_koujo_k8);
 
 module.exports = {
-  STUBBED_CALLS,
   kojo_message_com_8,
   dog_kojo_8,
   kojo_message_palamcng_8,

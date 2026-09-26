@@ -341,22 +341,17 @@ test('端到端：新档从标题走到 ENDING_2（quit 抛出 + 演出齐全 + 
       'ENDING_1 横幅未出现（两条结局的竞速由本票压住）',
     );
 
-    // —— 阶段 5a 三块真身的贯通证据：既要实际抵达，也不许退回存根登记。——
-    const battle = fixture.load_module('dungeon/dungeon-battle');
+    // —— 阶段 5a 三块真身的贯通证据：既要实际抵达，也不许退回存根形态。——
     console.log('[e2e] 阶段 5a 真身调用次数', {
       magic_calls,
       monster_skill_calls,
       use_ex_item_in_battle_calls,
       use_ex_item_after_battle_calls,
     });
+    assert(magic_calls > 0, 'MAGIC 在 ENDING_2 战斗路径实际执行');
     assert(
-      magic_calls > 0 && !battle.STUBBED_CALLS.includes('MAGIC'),
-      'MAGIC 在 ENDING_2 战斗路径实际执行且未退回存根',
-    );
-    assert(
-      monster_skill_calls > 0 &&
-        !battle.STUBBED_CALLS.includes('MONSTER_SKILL'),
-      'MONSTER_SKILL 在 ENDING_2 战斗路径实际执行且未退回存根',
+      monster_skill_calls > 0,
+      'MONSTER_SKILL 在 ENDING_2 战斗路径实际执行',
     );
     // ENDING_2 不进入奴隶迎击的 duel_attack；SLAVE_MONSTER_SKILL 的接入
     // 由 test/monster-skill.test.js:329 的模块边界用例负责。
