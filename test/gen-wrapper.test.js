@@ -162,7 +162,7 @@ test('新文件骨架：可编译、含 #/ 引用与手写区、LF、无 BOM、�
 
 // —— 产物边界与目录扫描 ——
 
-// 测试小工具：临时目录 + 静音控制台（照 csv-to-yml.test.js 的先例）
+// 测试小工具：临时目录 + 静音控制台
 async function with_temp_dir(run) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ere-gen-wrapper-'));
   try {

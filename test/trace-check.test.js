@@ -1,6 +1,6 @@
 /**
  * @file trace-check 的行为锁（issue #63）：工具不只「表内一致」，还要
- * 「表外即红」——五条行为在此固定；#290 起锚表按 js 文件分片，再加两条；
+ * 「表外即红」——三条行为在此固定；#290 起锚表按 js 文件分片，再加两条；
  * #298 起再加鉴别力：ENDIF 一类弱锚必须红、平行复现与空 PRINTFORM 整行
  * 锚放行、基线只减不增、默认路径只量未冻结文件、`--anchor-quality` 打印分布（`--all` 才全文量）；
  * #431 起报告行里的两个引用数改锁量级（比大小会被正常增长顶翻，口径见
@@ -17,31 +17,24 @@
  *      整改：此前这条只在测试里，条目表 465→466 时单独跑工具的人看到的是
  *      绿）。本文件不持基线副本（数据只有条目表与工具内嵌的冻结基线
  *      两份），只验行为：塞进基线外条目 → 红，还原 → 复绿。
- *   4. 样本前缀引用（#156）：`<样本名>-log:行号` 必须按样本名解析——
- *      样本名未登记进 SAMPLES、或登记了但引用没进 SAMPLE_LOG_REFS，都红
- *      且报出完整前缀引用串。带前缀的引用若被当裸 log:N 核对旧样本，
- *      就是 #109 裁定点名的静默错判，探针必须抓到「按样本报出」本身。
- *   5. 样本前缀的登记路径真的可走通：副本里登记锚表 + 伪造样本文件，
- *      工具全绿；再把样本内容改得锚不命中，必须红且报出该样本引用——
- *      「登记后才能过锚校验」两头都有行为靶，防登记机制空转。
- *   6. #290 分片粒度：`tools/trace-refs/` 下一份 js 一份锚表。按域拆不够
+ *   4. #290 分片粒度：`tools/trace-refs/` 下一份 js 一份锚表。按域拆不够
  *      ——二十张口上票全落 `kojo.mjs` 仍互撞；判据是后面十五张票各自新增
  *      条目时不会改到别人的行。
- *   7. #290 新分片即入账：往副本的 `tools/trace-refs/` 丢一份新锚表（不改
+ *   5. #290 新分片即入账：往副本的 `tools/trace-refs/` 丢一份新锚表（不改
  *      任何既有文件），工具必须认得——加载器按目录扫描，不靠 index 的
  *      import 清单（那份清单会变成下一处跨票冲突面）。
- *   8. #331 移植状态表：`--coverage` 把 target/ERB/ 的 346 个文件归五类，
+ *   6. #331 移植状态表：`--coverage` 把 target/ERB/ 的 346 个文件归五类，
  *      合计恰为分母、真值点（K7 / COMF31 / MUSEUM）与两类误报规则（范围
  *      式引用展开、yml 承载）判对；存根归因把「有证据 + 欠账」记部分移植、
  *      判死登记不算欠账、清单行**管道符后带/不带空格两种形态都认**（验收
  *      缺陷：30 行无空格形态曾被跳过，MONSTER_SETUP 所在文件被报成已移植）；
  *      证据悬空、分母漂移、已判定表悬空、待移植基线与归因不到基线超限
  *      各自即红；`--only` 在该模式下限定 target 路径并自报范围。
- *   9. #513 源绑定：内联 :N 按最近的「源: target/…ERB」单文件声明归属到具体
+ *   7. #513 源绑定：内联 :N 按最近的「源: target/…ERB」单文件声明归属到具体
  *      ERB——js 侧（绑定区引用须有同 src 登记）与表侧（条目须有归属该 src
  *      的引用在场）双向锁死；文件头开放区与路径限定写法（#486）不误伤；
  *      存量错绑冻结进 SRC_MISBIND_BASELINE（只减不增、消化后删条目）。
- *  10. #538 两条补强：错绑基线的「条目已消化必须删」用例改报出**规则自己的
+ *   8. #538 两条补强：错绑基线的「条目已消化必须删」用例改报出**规则自己的
  *      报错文案**（只断言非零退出会被「条目总数超出冻结上界」顶替，规则整条
  *      失效时仍全绿）；另加「扫描面覆盖 ere/kojo/」的正面锁——`--only` 一个
  *      没有基线条目的口上文件，扫描面塌掉时工具仍全绿、报告里的完整性计数
@@ -54,7 +47,7 @@
  * 地写工作树会与 node --test 的并行读者撞车（#91 勘误；16 核 Linux 五跑
  * 四红），而整棵递归拷贝又会撞上并行探针的文件增删（cpSync 中途 ENOENT）。
  * 副本清单 = 工具的全部判定面：ere/ + tools/ + test/（两侧完整性扫描与
- * FILES 表的 js 侧）+ golden/（#156 样本落点，探针 5 伪造样本用）+ 从工具
+ * FILES 表的 js 侧）+ 从工具
  * 与锚表分片的源码文本机械提取的 target/ 引用（FILES 表的 src 侧与
  * emuera.log——手抄会过期失效）。进程内单例、文件内用例串行复用，探针
  * 残骸先清、条目表改动 finally 清单回拷还原。副本的 tools/ 运行时从真树
@@ -92,7 +85,7 @@ function run_tool(extra_args = []) {
 
 // 探针副本清单：工具的全部判定面。target/ 引用从工具与锚表分片的源码
 // 文本提取（FILES 表的 src、EMUERA_LOG 等——散在数据表里，手抄会过期
-// 失效）。golden/ 是 #156 的样本落点（探针 5 伪造样本文件用）。
+// 失效）。
 function listed_trace_sources() {
   const files = ['tools/trace-check.mjs'];
   const dir = path.join(REPO_ROOT, 'tools', 'trace-refs');
@@ -120,7 +113,6 @@ const PROBE_REPO_ENTRIES = [
   'ere',
   'tools',
   'test',
-  'golden',
   // #331：--coverage 的部分移植信号读存根清单，共享副本要带一份
   'docs/stub-registry.md',
   ...listed_trace_sources(),
@@ -834,266 +826,8 @@ test('豁免条目不许过期失效：对应的 js 引用被删，工具必须�
   );
 });
 
-// —— #156：样本前缀引用的两面（表外即红 / 登记后可走通）。探针里的
-//    前缀引用串一律运行时拼接——本测试文件自身也在扫描完整性范围内，
-//    字面量会让真树的工具先红。 ——
-
-test('样本前缀引用：样本名未登记或引用未进锚表，都必须红且按样本报出', () => {
-  const root = probe_repo();
-  const probe_path = path.join(root, 'ere', '__prefix_probe__.js');
-  // 探针 1：样本名合法（在 SAMPLES）但引用没登记进 SAMPLE_LOG_REFS
-  const token_untabled = 'mainmenu-natural' + '-log:' + '12';
-  // 探针 2：样本名本身不在 SAMPLES（拼错形态）
-  const token_unknown = 'mainmenu-typo' + '-log:' + '12';
-  const cleanup = () => {
-    if (fs.existsSync(probe_path)) {
-      fs.unlinkSync(probe_path);
-    }
-  };
-  cleanup();
-  try {
-    fs.writeFileSync(
-      probe_path,
-      [
-        '// 探针模块（test/trace-check.test.js 写入，跑完即删）：',
-        `// ${token_untabled} 与 ${token_unknown} —— #156 前缀引用探针。`,
-        'module.exports = {};',
-        '',
-      ].join('\n'),
-      'utf8',
-    );
-    const { status, output } = run_tool_in(root, [
-      '--only',
-      'ere/__prefix_probe__.js',
-    ]);
-    assert.notEqual(
-      status,
-      0,
-      '前缀引用未登记，工具必须非 0——按样本名分表核对是 #156 的存在理由',
-    );
-    assert.ok(
-      output.includes(token_untabled),
-      `已登记样本名的未登记引用必须按完整前缀串报出（拿到「${token_untabled}」以外的形态即静默错判）：\n${output}`,
-    );
-    assert.ok(
-      output.includes(token_unknown),
-      `未登记样本名的前缀引用必须原样报出：\n${output}`,
-    );
-    assert.ok(
-      output.includes('未登记进 SAMPLE_LOG_REFS') &&
-        output.includes('样本名不在 SAMPLES'),
-      `两种失守（引用未登记 / 样本名未登记）必须分开点名：\n${output}`,
-    );
-  } finally {
-    cleanup();
-  }
-  // 删净之后复绿
-  const restored = run_tool_in(root, ['--only', 'ere/__prefix_probe__.js']);
-  assert.equal(
-    restored.status,
-    0,
-    `探针删了还红——副本或工具有一边不对：\n${restored.output}`,
-  );
-});
-
-test('样本前缀引用：登记后全绿，样本内容漂移必须红（登记机制两头有靶）', () => {
-  const root = probe_repo();
-  const golden_dir = path.join(root, 'golden');
-  // 探针样本名挑 SAMPLE_LOG_REFS 里**没有既有登记**的一个（#161 样本入库
-  // 后 golden/ 全是真实样本：伪造内容会覆盖副本里的真文件，撞上其它文件
-  // 对该样本的已登记引用）。#390 起 daycycle-max / train-upgrade 也被登记了
-  // （角色信息显示链的黄金样本锚），探针改用仍无登记的 daycycle-natural。
-  const probe_sample = 'daycycle-natural';
-  const sample_path = path.join(golden_dir, `${probe_sample}.log`);
-  const probe_path = path.join(root, 'ere', '__sample_ref_probe__.js');
-  // #290：登记走新分片，不改既有文件——加载器按目录扫描即入账。
-  const shard_path = path.join(
-    root,
-    'tools',
-    'trace-refs',
-    '__sample_ref_probe__.mjs',
-  );
-  // 拼接构造（不用模板串）：扫描器会把源码里的带前缀引用文本当真引用
-  // 扫进完整性检查，拼接让源码文本里不存在该形态（#156 阶段一的既有写法）
-  const token = `${probe_sample}` + '-log:' + '1';
-  const cleanup = () => {
-    for (const p of [probe_path, shard_path]) {
-      if (fs.existsSync(p)) {
-        fs.unlinkSync(p);
-      }
-    }
-  };
-  cleanup(); // 上一次异常退出留下的残骸先清
-  const restore_sample = () => {
-    // 被覆盖的真实样本从真树回拷（refresh_probe_repo 之外的单文件还原）
-    fs.copyFileSync(
-      path.join(REPO_ROOT, 'golden', `${probe_sample}.log`),
-      sample_path,
-    );
-  };
-  try {
-    // 1) 副本里登记锚表（新分片）+ 伪造样本内容（第 1 行命中锚）+ 探针引用 → 全绿
-    fs.mkdirSync(path.dirname(shard_path), { recursive: true });
-    fs.writeFileSync(
-      shard_path,
-      [
-        'export const FILES = [];',
-        'export const LOG_REFS = [];',
-        'export const SAMPLE_LOG_REFS = {',
-        `  '${probe_sample}': [`,
-        "    { js: 'ere/__sample_ref_probe__.js', refs: [{ ref: '1', any: [/^第7日/m] }] },",
-        '  ],',
-        '};',
-        '',
-      ].join('\n'),
-      'utf8',
-    );
-    fs.mkdirSync(golden_dir, { recursive: true });
-    fs.writeFileSync(sample_path, '第7日 上午\r\n[100] 调教\r\n', 'utf8');
-    fs.writeFileSync(
-      probe_path,
-      [
-        `// 探针模块（test/trace-check.test.js 写入，跑完即删）：`,
-        `// ${token} —— 登记过的前缀引用。`,
-        'module.exports = {};',
-        '',
-      ].join('\n'),
-      'utf8',
-    );
-    const green = run_tool_in(root, ['--only', 'ere/__sample_ref_probe__.js']);
-    assert.equal(
-      green.status,
-      0,
-      `登记后的样本前缀引用必须让工具全绿（登记机制可走通）：\n${green.output}`,
-    );
-
-    // 2) 样本内容漂移到锚不命中 → 红且报出该样本引用
-    fs.writeFileSync(sample_path, 'XXXX 漂移\r\n', 'utf8');
-    const red = run_tool_in(root, ['--only', 'ere/__sample_ref_probe__.js']);
-    assert.notEqual(
-      red.status,
-      0,
-      '样本锚失配必须红——锚校验焊死的变异靠这条拦下',
-    );
-    assert.ok(
-      red.output.includes(token) && red.output.includes('未命中任何锚'),
-      `红的必须是样本锚失配且按样本引用报出：\n${red.output}`,
-    );
-  } finally {
-    cleanup();
-    restore_sample(); // 被伪造内容覆盖的真实样本回拷还原
-    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
-  }
-  // 还原之后复绿
-  const restored = run_tool_in(root, ['--only', 'ere/__sample_ref_probe__.js']);
-  assert.equal(
-    restored.status,
-    0,
-    `还原后还红——副本或工具有一边不对：\n${restored.output}`,
-  );
-});
-
-// #431 自检探针补：样本锚表的两道守卫（样本名不在 SAMPLES / 样本文件不在库）
-// 此前没有用例站在它两侧——它们只在前一个样本名就失效时开火，前缀引用那两条
-// 用例走的是**扫描侧**的同名判定，锚表侧的两道一直是空的。
-test('样本锚表的守卫：样本名不在 SAMPLES / 样本文件不在库，都必须红并点名', () => {
-  const root = probe_repo();
-  const shard_path = path.join(
-    root,
-    'tools',
-    'trace-refs',
-    '__sample_guard_probe__.mjs',
-  );
-  const js_path = path.join(root, 'ere', '__sample_guard_probe__.js');
-  const samples_path = path.join(root, 'tools', 'compare', 'samples.js');
-  const samples_original = fs.readFileSync(samples_path, 'utf8');
-  // 样本名拼接构造（本测试文件自身也在完整性扫描范围内，字面量形态会让真树
-  // 的工具先红——#156 阶段一的既有写法）
-  const unknown = '__sample-guard' + '-unknown__';
-  const missing = 'sample-guard' + '-missing';
-  const cleanup = () => {
-    for (const p of [shard_path, js_path]) {
-      if (fs.existsSync(p)) fs.unlinkSync(p);
-    }
-  };
-  cleanup(); // 上一次异常退出留下的残骸先清
-  /** 把探针锚表写成「某个样本名下挂一条引用锚」的形态 */
-  const write_shard = (sample_name) => {
-    fs.mkdirSync(path.dirname(shard_path), { recursive: true });
-    fs.writeFileSync(
-      shard_path,
-      [
-        'export const FILES = [];',
-        'export const LOG_REFS = [];',
-        'export const SAMPLE_LOG_REFS = {',
-        `  '${sample_name}': [`,
-        "    { js: 'ere/__sample_guard_probe__.js', refs: [{ ref: '1', any: [/./] }] },",
-        '  ],',
-        '};',
-        '',
-      ].join('\n'),
-      'utf8',
-    );
-  };
-  try {
-    fs.writeFileSync(
-      js_path,
-      '// 探针模块（test/trace-check.test.js 写入，跑完即删）\nmodule.exports = {};\n',
-      'utf8',
-    );
-    // 1) 锚表给未登记的样本名配引用锚
-    write_shard(unknown);
-    const r1 = run_tool_in(root, ['--only', 'ere/__sample_guard_probe__.js']);
-    assert.notEqual(
-      r1.status,
-      0,
-      '锚表引用未登记样本名，工具必须非 0——锚到不存在的样本等于没锚',
-    );
-    assert.ok(
-      r1.output.includes('样本名不在 SAMPLES'),
-      `必须点名样本名不在 SAMPLES：\n${r1.output}`,
-    );
-    // 2) 样本名在 SAMPLES、但样本文件不在库：往**副本**的样本表里加一条指向
-    //    不存在文件的登记（真树不碰；finally 里显式回写一次，refresh 再兜一遍）
-    const anchor = "  'sale-natural': 'golden/sale-natural.log',";
-    if (!samples_original.includes(anchor)) {
-      throw new Error('探针锚行不在 samples.js 里——样本表结构变了？');
-    }
-    fs.writeFileSync(
-      samples_path,
-      samples_original.replace(
-        anchor,
-        `${anchor}\n  '${missing}': 'golden/${missing}.log',`,
-      ),
-      'utf8',
-    );
-    write_shard(missing);
-    const r2 = run_tool_in(root, ['--only', 'ere/__sample_guard_probe__.js']);
-    assert.notEqual(
-      r2.status,
-      0,
-      '样本文件不在库，工具必须非 0——#156 阶段二回收后才允许登记引用锚',
-    );
-    assert.ok(
-      r2.output.includes('不在库'),
-      `必须点名样本文件不在库：\n${r2.output}`,
-    );
-  } finally {
-    cleanup();
-    fs.writeFileSync(samples_path, samples_original, 'utf8'); // 显式回写，refresh 再兜一遍
-    refresh_probe_repo(root, PROBE_REPO_ENTRIES);
-  }
-  // 还原之后复绿（也证明探针真的进过锚表）
-  const restored = run_tool_in(root, [
-    '--only',
-    'ere/__sample_guard_probe__.js',
-  ]);
-  assert.equal(
-    restored.status,
-    0,
-    `探针删净后必须复绿——副本或工具有一边不对：\n${restored.output}`,
-  );
-});
+// —— #156：样本前缀引用机随 golden/ 样本与输出比对工具一并删除（#640），
+//    三条样本机理探针（表外即红 / 登记后全绿 / 锚表两道守卫）随之移除。 ——
 
 test('锚表按 js 文件分片：每个 ere js 至多一份 FILES 表（#290）', () => {
   const dir = path.join(REPO_ROOT, 'tools', 'trace-refs');

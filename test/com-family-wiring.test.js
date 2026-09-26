@@ -1,14 +1,12 @@
 /**
  * 指令族接线的通用锁（issue #274）：`ere/system/train/com-*.js` 里靠副作用
- * 注册进 COM / COM_ABLE 的模块，必须同时出现在两张清单上——
+ * 注册进 COM / COM_ABLE 的模块，必须同时出现在两张加载图上——
  *
  *   - `ere/system/flow/main-loop.js`：游戏运行时实际加载的族；
- *   - `tools/compare/replay.js` 的 TRAIN_PATH_MODULES：对拍回放实际加载的族。
- *
- * 两边都没有守卫时，族票的单测走 `load_module('system/train/com-xxx')`、
- * 对拍走 replay 自己的清单，主启动图漏装不会被任何检查发现（#228 的
- * com-cloth、#223/#226/#224/#222 的 replay 漏装都是这样混过去的）。
- *
+ *   - 本文件自持的 TRAIN_PATH_MODULES：一次调教路径实际装载的模块清单。
+ * 两张图都没有守卫时，族票的单测走 `load_module('system/train/com-xxx')`、
+ * 主流程走自己的加载清单，另一张图漏装不会被任何检查发现（#228 的
+ * com-cloth、#223/#226/#224/#222 的漏装都是这样混过去的）。
  * 号集合从源码扫出，不维护手写名单——新族文件落地即纳入；漏 require
  * 时断言点名模块，不报一串裸编号。
  */
@@ -20,8 +18,35 @@ const path = require('node:path');
 const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
-const { TRAIN_PATH_MODULES } = require('../tools/compare/replay');
 
+/**
+ * 一次调教路径实际装载的模块清单（回放工具删除后由本文件自持；往主流程
+ * 加族加载点时同步这里）。
+ */
+const TRAIN_PATH_MODULES = [
+  'event/event-train',
+  'event/event-com',
+  'event/event-comend',
+  'event/event-end',
+  'event/source-check',
+  'kojo/kojo-k3-noble',
+  'page/page-train',
+  'page/page-usercom',
+  'system/train/com-caress',
+  'system/train/com-toy',
+  'system/train/com-sex',
+  'system/train/com-service',
+  'system/train/com-sm',
+  'system/train/com-hardcore',
+  'system/train/com-special',
+  'system/train/com-cloth',
+  'system/train/com-colosseum',
+  'system/train/com-advanced',
+  'system/train/com-assistant',
+  'system/train/com-tentacle',
+  'system/train/juel-check',
+  'system/train/train-message',
+];
 const REPO = path.resolve(__dirname, '..');
 const TRAIN_DIR = path.join(REPO, 'ere', 'system', 'train');
 
@@ -148,8 +173,8 @@ test('主启动图加载 main-loop 后，COM / COM_ABLE 注册号等于族模块
   );
 });
 
-test('回放清单加载 TRAIN_PATH_MODULES 后，COM / COM_ABLE 注册号等于族模块并集', () => {
-  // 漏装时报「回放清单漏装：com-service」——M1371 的 must_mention 锚
+test('调教路径清单加载 TRAIN_PATH_MODULES 后，COM / COM_ABLE 注册号等于族模块并集', () => {
+  // 漏装时报「调教路径清单漏装：com-service」——M1371 的 must_mention 锚
   const expected_by_module = scan_family_modules();
   const expected_com = union_ids(expected_by_module, 'com');
   const expected_able = union_ids(expected_by_module, 'able');
@@ -163,7 +188,11 @@ test('回放清单加载 TRAIN_PATH_MODULES 后，COM / COM_ABLE 注册号等于
   const actual_able = registered_ids(com_able_family, DECLARED_COM_IDS);
 
   const missing_com = missing_modules(expected_by_module, 'com', actual_com);
-  assert.equal(missing_com.length, 0, format_missing('回放清单', missing_com));
+  assert.equal(
+    missing_com.length,
+    0,
+    format_missing('调教路径清单', missing_com),
+  );
   const missing_able = missing_modules(expected_by_module, 'able', actual_able);
   assert.equal(
     missing_able.length,
@@ -173,11 +202,11 @@ test('回放清单加载 TRAIN_PATH_MODULES 后，COM / COM_ABLE 注册号等于
   assert.deepEqual(
     extra_ids(expected_com, actual_com),
     [],
-    '回放清单多出未扫到的 COM 号',
+    '调教路径清单多出未扫到的 COM 号',
   );
   assert.deepEqual(
     extra_ids(expected_able, actual_able),
     [],
-    '回放清单多出未扫到的 COM_ABLE 号',
+    '调教路径清单多出未扫到的 COM_ABLE 号',
   );
 });

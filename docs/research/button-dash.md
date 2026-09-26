@@ -8,8 +8,8 @@
 
 1. **病灶**：原作把选项编号与正文写在同一行（`PRINTL [100] - 停止`，`- ` 是**正文
    的一部分**）；移植成 `era.printButton(正文, 编号)` 后引擎按 `showAcc` 自己拼
-   `[编号] `，正文里不写 `- ` 就显示成 `[100] 停止`。golden 样本是判据：
-   `golden/train-natural.log:959-960` 是 `[0] - 阴核点数×5859/20000 ……点数不足 `
+   `[编号] `，正文里不写 `- ` 就显示成 `[100] 停止`。旧样本是判据：
+   其第 959-960 行是 `[0] - 阴核点数×5859/20000 ……点数不足 `
    与 `[100] - 停止`，本票前移植版渲染的是 `[0] 阴核点数×…` / `[100] 停止`。
    既有口径见 `ere/page/page-ability-up.js` 的文件头；**正文不写 `[N]` 前缀**是
    AGENTS.md 的硬约束（PR #30 实机撞见 `[0] [0]`），本票只补分隔符、不碰编号。
@@ -45,15 +45,11 @@
 7. **九份输出比对样本**：改动前后各跑一次。`train-natural` 匹配 1120→**1122**、
    存根 255→**251**，`sale-natural` 164→**166** / 127→**123**（两处都是 ere 侧
    的升级屏/出售确认按钮从「与对侧错位配对的 stub 半边」转为逐字匹配），
-   其余七份四数逐字不变、未解释恒 0（详见工单完成评论与 `tools/compare/rules.js`
-   的规则注释）。
+   其余七份四数逐字不变、未解释恒 0（详见工单完成评论）。
 
-## 二、判定面与配对办法（`tools/button-dash-scan.mjs`）
+## 二、判定面与配对办法（当时的离线扫描脚本，已随 #640 删除）
 
-```
-node tools/button-dash-scan.mjs          # 打印配对结论
-node tools/button-dash-scan.mjs --json   # 机器可读（同一份数据）
-```
+（本节描述的扫描脚本已删除；判定口径即下文两节，守护由所列测试文件承担。）
 
 **原作侧**：扫 `target/ERB/**/*.ERB`，按 PRINT 族的**逻辑行**取选项。逻辑行 = 一串
 不换行的 PRINT 语句（`PRINT` / `PRINTS` / `PRINTV` / `PRINTFORM` / `PRINTC` …）＋
@@ -82,8 +78,9 @@ node tools/button-dash-scan.mjs --json   # 机器可读（同一份数据）
 - `COMF90_ニプルファック.ERB` 是 Shift-JIS，按 UTF-8 读会带替换字符，**跳过并
   在报告里点名**——不让「读不了」悄悄变成「扫过了、没有」。该文件里没有
   `[N] - ` 形态的选项行，跳过不影响结论。
-- 比对前两侧都过一遍 `tools/lang-normalize.js` 的 `to_simplified`（原作是繁体/日文
-  新字体混排，移植版一律简体），中点 `・`/`·`/`･` 也归一——否则
+- 比对前两侧都过一遍归一表（`tools/lang-table.js`，issue #60）的 `to_simplified`
+  转换（原作是繁体/日
+  文新字体混排，移植版一律简体），中点 `・`/`·`/`･` 也归一——否则
   `[9] - 向著世界之外` 与 `'向着世界之外'`、`（资金・俘虏）` 与 `（资金·俘虏）`
   对不上，那几屏会整批落进「没配上原作」而漏判。
 - **经包装函数的按钮按调用点记账，条数偏少**：`chara-marriage.js` 的
@@ -261,7 +258,7 @@ node tools/button-dash-scan.mjs --json   # 机器可读（同一份数据）
 ## 五、重跑与守护
 
 ```
-node tools/button-dash-scan.mjs            # 全库配对结论
+（全库配对的扫描脚本已删除；重跑守护即下方测试。）
 node tools/run-node.mjs -- --test test/ablup.test.js
 node tools/run-node.mjs -- --test test/page-tailor.test.js test/page-shop-labo.test.js
 ```

@@ -50,7 +50,7 @@
  *   - `G:2 = -1`（END11_4 / END14_4 与 ADDON1 里的同型段）写的是未声明表 G
  *     （全库无声明），是 `FLAG:2` 的笔误——不落任何表（见 ending-family.js
  *     的 leave 步）。
- *   - 文本一律简体（issue #60）：本文件的字面量过 tools/lang-normalize.js。
+ *   - 文本一律简体（issue #60）：本文件的字面量受 tools/lang-check.js 检查。
  */
 
 const END_SCRIPTS = {
