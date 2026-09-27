@@ -22,17 +22,17 @@
  *     :251-252/:280 五处），唯一**有独立结果**的例外是发色子菜单——源
  *     :254 的 `RESULT == 11` 受理未显示的编号，消费点保留 `useRule: false`
  *     （源 :224-226 的 `RESULT >= 8 → PERSONAL = 160` 同样受理未显示编号，
- *     但与 [0] 慈爱同值、玩法上零影响，按钮化后不可达，1:1 保留结构）；
+ *     但与 [0] 慈爱同值、玩法上零影响，按钮化后不可达，保留结构）；
  *   - $INPUT_LOOP 的无效输入只重问不重画（原作 :31-37 的 GOTO）；
  *   - `CALL ADDCHARA_EX, CHARANUM-1` → add_chara_ex(35)（ere 以角色号
  *     直接寻址，#21）；`A = CHARANUM-1` 是原作的全局传参媒介，ere 显式
  *     传参（#5 决议第六条），不再镜像；
  *   - ENDING_2 的 %SAVESTR:TARGET% → callname:TARGET:-1（SAVESTR 无引擎
  *     通道，#171 的 #5 决议承载；取 TARGET 指针不取队长，见函数内注释）；
- *   - CHAR_GIFT 的「FLAG:87/89/91 = 1 → CALL → = 2」状态机 1:1 保留
+ *   - CHAR_GIFT 的「FLAG:87/89/91 = 1 → CALL → = 2」状态机保留
  *     （置位是防重复触发的判据，不是演出），演出本体自 #404 起为真身；
  *   - ENDING_N 的 14 行横幅是 PRINTFORMW 逐行读键（原作 :117-131），
- *     :118 的 FORCEWAIT 紧跟在 :117 的读键之后——**连续两次等待**，照抄；
+ *     :118 的 FORCEWAIT 紧跟在 :117 的读键之后——**连续两次等待**，保留；
  *   - END10_55 的八行演出自 #404 起为真身（此前只做 EX_FLAG:2810 += 5）。
  */
 
@@ -144,7 +144,7 @@ async function ending_2() {
   // PRINTFORMW *勇者%SAVESTR:TARGET%封印了魔王……*。SAVESTR 无引擎
   // 通道（#171：app.asar 无 savestr 表），名字承载按 #5 决议读
   // callname:TARGET:-1。**取的是 TARGET 指针、不是队长 ARG:0**（票面
-  // #173：两者在这条路径上未必同一人，差异属原作行为，照抄别顺手改成
+  // #173：两者在这条路径上未必同一人，差异属原作行为，保留，别顺手改成
   // 队长）——本函数无参（JUMP 不带参），读的就是全局指针；其值由
   // run_dungeon 的 DUNGEON.ERB 行 37（TARGET = ARG:0）设置，行 852 的
   // TARGET = -1 复位在 JUMP 之后不可达，故触发时恒为踏破第 9 层的队长
@@ -511,11 +511,11 @@ async function ending_5(rand) {
  *
  * 调用点 @ENDCHECK :351-352（EX_FLAG:2801 == 99 && DAY:0 == 500，每日一次）。
  * 14 行 PRINTFORMW（每行读一次键）+ :118 的 FORCEWAIT（**紧跟在 :117 的
- * 读键之后，连读两次**，原作即如此，照抄）+ :133 的 ENDINGINPUT 选择。
+ * 读键之后，连读两次**，保留）+ :133 的 ENDINGINPUT 选择。
  *
  * :131 的选项是手写 `[1] …[2] …` 而不是 printButton——原作亦无按钮，玩家
  * 键入编号，ENDINGINPUT 的 INPUT 直接收（与 ENDING_1 的按钮化刻意不同，
- * 照抄原作形态）。
+ * 保留该形态）。
  *
  * @returns {Promise<void>}
  */
@@ -559,19 +559,13 @@ async function ending_n() {
  * @ENDINGINPUT（ENDING ver 1.0.1.ERB:919-993）：结局线的选项分发 + 后果写入。
  *
  * `LOCAL = ARG / 1000`（:922，向零截断）决定分档：1 = Normal End 的
- * 结束/继续、7 = 菲娅线的 three-way、16 = 姐妹双飞 end、其余 = 各角色线。
+ * 结束/继续、7 = 菲娅线的 three-way、16 = 姐妹双飞 end。
  * $ENDDINGSELECT 的 INPUT + GOTO 是「无效输入只重问不重画」（:924-926、
  * :936/:956/:971/:989）。
  *
- * 三处原作缺陷，1:1 照抄（都写在行内）：
- *   - :978 `FLAG:(2800 + LOCAL) += 100` 写的是 FLAG 侧（角色线 flag 在
- *     EX_FLAG 侧，同一族错位见本文件头与 ExFlag.yml 头注）；
- *   - :980 `SIF LOCAL == (5 || 6)`：Emuera 的逻辑或按 C 语义返回 1/0，
- *     `(5 || 6)` 求值为 1，于是条件成为 `LOCAL == 1`——而 LOCAL == 1 已被
- *     `LOCAL == 1` 的 CASE 1 截走，本行恒假（原意显然是「LOCAL 为 5 或 6」的姐妹
- *     双飞特殊处理）。不修。
- *   - 全库活调用点只有 @ENDING_N（LOCAL 恒 1），故 CASE 5/6/7/16 及其
- *     ELSE 档只经死代码 @ENDLEGACY（全库零调用者）到达。
+ * 分档 7/16 只有测试直驱：全库活调用点只有 @ENDING_N（LOCAL 恒 1）。
+ * 原 CASEELSE（各角色线档）的后果写在 FLAG 侧无人读、活调用点走不到，
+ * 自 #649 起整档删除；未分档线号静默返回。
  *
  * @param {number} arg 原作 ARG（千位以上是分档，见上）
  * @returns {Promise<void>} QUIT 路径不返回（异常炸穿，见 ending_1 的说明）
@@ -635,31 +629,8 @@ async function ending_input(arg) {
         handled = false; // GOTO ENDDINGSELECT
       }
     } else {
-      // 各角色线（LOCAL = 5/6/8/9/10/11/12/13/14）
-      if (result === 1) {
-        era.print('此处剧情尚未做好');
-        await era.waitAnyKey();
-        // FLAG:(2800 + LOCAL) += 100 —— 原作错写 FLAG 侧（见函数头）；
-        // flag 是引擎内嵌表，未声明下标直写可落（era-flag.js 尾注）
-        const flag_no = 2800 + local;
-        era.set(`flag:${flag_no}`, (era.get(`flag:${flag_no}`) || 0) + 100);
-        era_exflag.first_run_deadline = era_exflag.first_run_deadline + 2;
-        // SIF LOCAL == (5 || 6)：恒假（见函数头），照抄为 local === 1
-        if (local === 1) {
-          era_exflag.first_run_deadline = era_exflag.first_run_deadline + 1;
-        }
-      } else if (result === 2) {
-        era.print('你跳过了本故事线');
-        await era.waitAnyKey();
-        // FLAG:(2800 + LOCAL) += 100（同一处 FLAG 侧错写，见函数头）
-        const flag_no = 2800 + local;
-        era.set(`flag:${flag_no}`, (era.get(`flag:${flag_no}`) || 0) + 100);
-      } else if (result === 3) {
-        era.print('好的，明天见');
-        await era.waitAnyKey();
-      } else {
-        handled = false; // GOTO ENDDINGSELECT
-      }
+      // 未分档的线号（5/6/8-14 各角色线）：无活调用点，原 CASEELSE 整档已删
+      // （#649）——落进来静默返回，不印文本、不写任何 flag 侧
     }
     if (handled) {
       return;
@@ -672,9 +643,7 @@ async function ending_input(arg) {
  * （点头/摇头、好吃/不好吃、喝不喝魔药）的后果文本。只有 ARG == 7 一档有
  * 内容（:997），其余静默。
  *
- * 调用点：@END7_2 / @END7_5 / @END7_22（数据表，ere/data/ending-scripts.js）
- * 与死代码 @ENDLEGACY。
- *
+ * 调用点：@END7_2 / @END7_5 / @END7_22（数据表，ere/data/ending-scripts.js）。
  * @param {number} arg 原作 ARG（只认 7）
  * @returns {Promise<void>}
  */
