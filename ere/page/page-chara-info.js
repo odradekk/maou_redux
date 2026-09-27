@@ -159,7 +159,7 @@ function show_chara_act(cid) {
   if (state === 8) return { content: '[拘束台]', color: '#64ff64' };
   if (state === 9) return { content: '[ NTR中]', color: '#ff0000' };
   if (state === 10) return { content: '[育儿室]', color: '#64ff64' };
-  // LOCALS = -F\u3000―\u3000（原作字面量，"F" 疑似残留字符，1:1 保留）
+  // LOCALS = -F\u3000―\u3000（未登记状态的回显串，"F" 是残留字符，字面量有意保留）
   return { content: '-F\u3000\u2015\u3000' };
 }
 
@@ -201,8 +201,8 @@ function compare_chara_act(a, b, act = 2) {
  * `CFLAG:x:601 == 0`（无配偶登记）时的婚姻括号列使用。
  *
  * 原作用 `PRINT`（副作用输出）；本函数改为返回字符串以便拼进行内片段，
- * 观测到的文本完全一致。CASE 5 / CASEELSE 原作只赋值 `LOCALS` 未打印
- * （死代码，#14 登记），此处同样不产生任何文本。
+ * 观测到的文本完全一致。CASE 5 / CASEELSE 只赋值 `LOCALS` 未打印（无输
+ * 出），此处 `return ''` 即等价。
  * @param {number} cid 角色 ID
  * @returns {string}
  */
@@ -219,7 +219,7 @@ function chara_marriage_before(cid) {
     if ([1, 5, 7].includes(kind)) return '故乡扶她';
     return '故乡妻子';
   }
-  return ''; // CASE 5 / CASEELSE：原作死代码，无输出
+  return ''; // CASE 5 / CASEELSE：无输出（只赋值不打印）
 }
 
 /**
@@ -238,7 +238,7 @@ function marriage_bracket_text(cid) {
     return LOVER_NAMES.get(era.get(`cflag:${cid}:606`) || 0) ?? '';
   }
   // ELSE 分支：其内两支 `CFLAG:COUNT:601==0` 判据在此处恒假
-  // （外层已排除 spouse==0），原作死代码，1:1 保留其余可达分支
+  // （外层已排除 spouse==0），两支判据恒假、无输出，保留其余可达分支
   const partner = search_family(cid, 'MARRIAGE');
   if ((era.get(`ex_talent:${cid}:2`) || 0) !== 0 && partner < 0) return '无';
   if ((era.get('cflag:0:601') || 0) === (era.get(`cflag:${cid}:6`) || 0)) {
@@ -647,8 +647,8 @@ async function chara_info() {
       // CASE 0 TO CHARANUM-1（改写为 ID 语义：0=魔王或已加入
       // 角色）。`SIF RESULT==0 && MASTER: RESULT=MASTER` 恒假（MASTER 是
       // 恒 0 常量，逻辑与运算里恒假），无需代码
-      // SORT_SELECT==1200 走包装入口（恒回 0，见该函数注释——
-      // 原作缺陷，#606 起照搬）；其余视图直调内层，返回值直达 :100 的判据
+      // SORT_SELECT==1200 走包装入口（透传内层返回值，见该函数注释）；
+      // 其余视图直调内层：两路的返回值都直达回合结束判据
       const sub_result =
         sort_select === 1200
           ? await chara_info_individual_wrapped(result)
@@ -667,19 +667,14 @@ async function chara_info() {
  * 个别信息页的入口——原作现建的是 `LOCAL:COUNT = COUNT + 1`（1..CHARANUM）
  * 的序号顺位表，即「编号」视图那套顺序；ere 侧换成同一套排列键
  * （number_view_order，按移植自建的排序编号）。
- * 原作在 :829 的 CALL 之后没有 RETURN，直接落到函数末尾；Emuera 对普通函数
- * state.Return(0)`）。本包装入口因此恒回 0：内层返回 1 的操作只有结婚
- * （@MARRIAGE 的两个出口——婚礼完成 CHARA_MARRIAGE.ERB:450-451、
- * ENTER_LOVER 成功 CHARA_MARRIAGE.ERB:71-74；转职最高返回 2，诱惑的
- * RETURN 1 被注释）。名册 1200 视图走此入口时结婚
- * 不结束本回合、回到人物列表；主菜单 498/499 名字按钮的调用点不读返回值
- * （回到主菜单）——原作自身的缺陷（#14 已登记），照搬不修。
+ *
+ * 包装透传内层返回值：内层返回 1（婚礼完成 / ENTER_LOVER 成功）即上浮
+ * 结束本回合，与其余视图一致。
  * @param {number} cid 角色 ID
- * @returns {Promise<number>} 恒 0（原作 RESULT 被清 0，不是透传内层返回值）
+ * @returns {Promise<number>} 内层的返回值（0 = 回到名册；1 = 回合结束）
  */
 async function chara_info_individual_wrapped(cid) {
-  await chara_info_individual(cid, number_view_order());
-  return 0;
+  return chara_info_individual(cid, number_view_order());
 }
 
 // —— @CHARA_INFO_INDIVIDUAL（:833-1100） ——

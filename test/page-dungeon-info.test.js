@@ -168,32 +168,31 @@ test('ENEMY_EXIST2：近卫层（floor 10）追加护卫中名单（EX_TALENT + 
   assert.ok(guard_line.includes('剑术'), '护卫行含 TALENTNAME 素质名');
 });
 
-test('ENEMY_EXIST2：护卫名单看原作的全局 X，不是实参（#548 订正）', async () => {
+test('ENEMY_EXIST2：护卫名单只看近卫层（floor 10），1-9 层不追加', async () => {
   const fixture = setup_world();
   const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
   fixture.store.set('ex_talent:2:1', 1); // 勇者乙是护卫
 
-  // DUNGEON_INFO2 的调用点：X 与实参同值 → 第 3 层不追加
+  // 普通层：不管从哪个入口进来都不追加护卫名单
   await enemy_exist2(3);
   assert.ok(
     !fixture.text_lines().some((t) => t.includes('[护卫中]')),
-    'floor 3（X = 3）不追加护卫名单',
+    'floor 3 不追加护卫名单',
   );
 
-  // SHOW_FLOOR 的调用点：X 恒为 10 → 第 3 层也追加（1-9 层同理）
+  // 近卫层：追加
   const second = setup_world();
   const { enemy_exist2: enemy_exist2_b } = load(
     second,
     'page/page-dungeon-info2',
   );
   second.store.set('ex_talent:2:1', 1);
-  await enemy_exist2_b(3, true);
+  await enemy_exist2_b(10);
   assert.ok(
     second.text_lines().some((t) => t.includes('[护卫中]')),
-    'X == 10 时第 3 层也追加护卫名单',
+    'floor 10 追加护卫名单',
   );
 });
-
 test('ENEMY_EXIST2：名字补齐按显示宽度计，全角 2 格（STRLENS 计法，#563）', async () => {
   const fixture = setup_world();
   const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
@@ -241,7 +240,7 @@ test('ENEMY_EXIST2：MAX_NAME_LEN 跨调用只增不减——先长后短，宽�
   fixture.store.set('cflag:1:1', 0);
   fixture.store.set('cflag:2:1', 0);
   fixture.store.set('ex_talent:2:1', 1);
-  await enemy_exist2(3, true);
+  await enemy_exist2(10);
   assert.equal(
     fixture.text_lines().find((t) => t.includes('[护卫中]')),
     '[护卫中]\u3000[\u00A02]勇者乙\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0',
@@ -293,12 +292,12 @@ test('#615 ENEMY_EXIST2：名单为空但有护卫时，空行在护卫行之前
   const fixture = setup_world();
   const { enemy_exist2 } = load(fixture, 'page/page-dungeon-info2');
   fixture.store.set('ex_talent:2:1', 1); // 勇者乙是护卫
-  await enemy_exist2(3, true); // X == 10：1-9 层也追加护卫名单
+  await enemy_exist2(10); // 近卫层：追加护卫名单
 
   assert.deepEqual(
     fixture.lines.map((l) => l.type),
     ['br', 'text'],
-    ':630 的空行 + 护卫行（与有队伍时 :595 的位置一致）',
+    '名单为空时的空行 + 护卫行（与有队伍时空行的位置一致）',
   );
   assert.ok(fixture.text_lines()[0].includes('[护卫中]'));
 });

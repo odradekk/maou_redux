@@ -156,7 +156,7 @@ async function monster_shop(rand) {
   // 1-3、种族 1-9）再也键入不进」——那只在**同轮只打一部分按钮**时成立；
   // 同轮的每个选项都升格按钮后，白名单恰是显示出来的编号，点击与键入都通。
   // 本轮「其余值」（原作没有 ELSE、顺着落进 :48）的兜底臂随之不可达，
-  // 1:1 保留不补用例（page-ability-up.js 文件头同款登记）。
+  // 结构保留不补用例（page-ability-up.js 文件头同款）。
   era.drawLine({ isSolid: true });
   era.printButton('召唤魔物从者', 1);
   // [IF DEBUG] 的 [2]召唤异界勇者不移植（文件头第 2 条）
@@ -522,7 +522,7 @@ async function buy_follower({ show, rand }) {
         continue;
       }
       // 两行 PRINTFORM 拼一格；格尾是实参里的制表符（不是全角空格，
-      // 与祭品行的 `只` + 两个 U+3000 不同源），照抄成 \t
+      // 与祭品行的 `只` + 两个 U+3000 不同源），保留为 \t
       row +=
         `[${pad_display(String(id), 3)}] ` +
         `${pad_display(item_name(id), PICK_NAME_WIDTH)} ` +

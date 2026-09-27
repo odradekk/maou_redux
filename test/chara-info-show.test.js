@@ -650,7 +650,7 @@ test('SHOW_TALENT：体质段无输出时标签与下一段同拼一行，有输
   );
 });
 
-test('SHOW_TALENT：327/328 的原作笔误 1:1（守 328 的判据读 TALENT:327）', () => {
+test('SHOW_TALENT：魔虫知识（328）按自身判据显示', () => {
   const only327 = talent_fixture({
     flag5: 1 << 8,
     talents: { [T.淫魔知识]: 1 },
@@ -658,7 +658,7 @@ test('SHOW_TALENT：327/328 的原作笔误 1:1（守 328 的判据读 TALENT:32
   only327.show_talent(7);
   const line = only327.fixture.text_lines().find((t) => t.includes('技术'));
   assert(line.includes('[淫魔知识]'), '327 自身照出');
-  assert(line.includes('[魔虫知识]'), '328 由 327 的值守出（原作笔误）');
+  assert(!line.includes('[魔虫知识]'), '只设 327 时 328 不连带出');
 
   const only328 = talent_fixture({
     flag5: 1 << 8,
@@ -666,8 +666,8 @@ test('SHOW_TALENT：327/328 的原作笔误 1:1（守 328 的判据读 TALENT:32
   });
   only328.show_talent(7);
   assert(
-    !only328.fixture.text_lines().some((t) => t.includes('[魔虫知识]')),
-    '只设 328 时反而不出（笔误的后果）',
+    only328.fixture.text_lines().some((t) => t.includes('[魔虫知识]')),
+    '只设 328 时照出',
   );
 });
 
@@ -1223,7 +1223,7 @@ test('SHOW_APPEARACE：阴毛七档 + 白虎（TALENT:125）优先级', () => {
   );
 });
 
-test('SHOW_APPEARACE：TALENT:310 为 0 时行不收（原作自身的显示缺陷，1:1）', () => {
+test('SHOW_APPEARACE：TALENT:310 为 0 时行不收（无 ELSE 兜底的旧版显示缺陷，出口收行是 ere 侧的等价承载）', () => {
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 0, 1: 1 },
   });
@@ -2535,13 +2535,13 @@ test('#615 SHOW_CHARA_INFO：完全召唤横幅两行、之间一个真空行、
   );
 });
 
-test('HEXtoDEC：六位十六进制按 ×15 合成三段（原作自身的进制笔误，1:1）', () => {
+test('HEXtoDEC：六位十六进制按 ×16 合成三段（#652 改正进制位权）', () => {
   const { hex_to_dec } = main_fixture();
   // [颜色整数, 期望三段, 说明]
   const cases = [
     [0x000000, [0, 0, 0], '全黑'],
-    [0xffffff, [240, 240, 240], '全白（15*15+15 = 240，×16 会得 255）'],
-    [0x123456, [17, 49, 81], '1*15+2 / 3*15+4 / 5*15+6'],
+    [0xffffff, [255, 255, 255], '全白（15*16+15 = 255，×15 会得 240）'],
+    [0x123456, [18, 52, 86], '1*16+2 / 3*16+4 / 5*16+6'],
     [0x000001, [0, 0, 1], '末位最低'],
   ];
   for (const [hex, expected, label] of cases) {

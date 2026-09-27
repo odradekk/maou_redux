@@ -3,7 +3,7 @@
  *
  * 缝 = test/helpers/era-fixture.js。验收项（工单 #136 验收清单第 3 条）：
  * 99 槽 + 分页 + 故事命名（32 字符上限）+ 删除 + 覆盖确认 + 上次存/读档号
- * 高亮，**逐条有测试**；另钉 @SYSTEM_LOADEND 死代码不被接上（#14 登记）。
+ * 高亮，**逐条有测试**。
  *
  * 夹具注意：saveData / loadData / rmData 的数据层镜像与 global 系三 API
  * （saveGlobal / loadGlobal / resetGlobal）分别由 #137 / #147 落实，契约见
@@ -183,7 +183,9 @@ test('SAVEINFO：日期时段/LV/正在调教段/24 空格/故事名逐段拼接
   fixture.store.set('flag:10003', 0); // TIME = 0 → 午前
   fixture.store.set('cflag:0:9', 5); // 魔王等级
   fixture.store.set('flag:1', 3); // 前回调教目标
-  fixture.store.set('callname:3', '玛奥');
+  // 引擎把 callname 按 <角色号>:<下标> 存（-1 = 呼び名）——旧写法不带下标读
+  // callname:3 会拿到整个名字表对象，存档说明里显出 [object Object]
+  fixture.store.set('callname:3:-1', '玛奥');
   fixture.store.set('cstr:0:99', '魔王城物语');
   const { build_save_info } = load_page(fixture);
 
@@ -585,19 +587,6 @@ test('LOADGAME 读档界面标题与操作行形态（1:1 文案）', async () =
       `操作按钮 ${acc} 必须真的 printButton（实机可达）`,
     );
   }
-});
-
-test('反向钉：读档成功路径不出现 @SYSTEM_LOADEND 的「兼容性修正中……」', async () => {
-  const fixture = create_era_fixture();
-  seed_save(fixture, 3, '三号档');
-  const { load_game } = load_page(fixture);
-  fixture.era.loadData = async () => true;
-  fixture.set_inputs(3);
-  await assert.rejects(() => load_game(), /BEGIN/);
-  assert(
-    !history_texts(fixture).some((t) => t.includes('兼容性修正中')),
-    '@SYSTEM_LOADEND 是死代码（零调用者 + 非保留名，#14 登记），不得被顺手接上',
-  );
 });
 
 // —— #137：LOADDATA 的转场语义与读档钩子 ——

@@ -24,9 +24,8 @@
  *   - 按钮 [100] 的状态文案「關閉/開啟」按 #60 归一为简体「关闭/开启」；
  *   - 局部变量 DISPLAY_FLAG/SELECT_FLAG/DIALOGUE 在原作是跨调用持久的
  *     #DIM（:483-488 尾部手工复位），ere 侧是函数局部变量，天然复位；
- *   - @ENEMY_EXIST2 尾部 :632 的 `IF X == 10` 读的是调用方（@DUNGEON_INFO2
- *     部下一览 :454）设置的全局 X——与实参同一个值（原作笔误式全局读，
- *     行为无差），ere 侧参数化 floor；
+ *   - @ENEMY_EXIST2 尾部的护卫名单按阶层实参判断，只出在近卫层
+ *     （floor 10）——从地城概况点开 1-9 层时不追加；
  *   - @ENEMY_EXIST2 的 MAX_NAME_LEN 补齐（:551/:569/:627/:637）按原作移植：
  *     静态保留 + 显示宽度计（全角 2 格，STRLENS 同尺），见 max_name_len
  *     的声明注释。勇者行/护卫行是普通文本行（era.print），字符串层不经
@@ -172,20 +171,12 @@ function enemy_compare(a, b) {
  * 尾部的 `PRINTL`（:629-630）落出。#615 起按这两个分支分开写（此前固定先落
  * 一个空行，两处的行数相同但代码结构与原作对不上）。
  *
- * **护卫名单（:632-645）的判定是全局 `X == 10`，不是参数**（#548 订正，
- * #14 登记）：@DUNGEON_INFO2 的调用点（:445-454 的 `CALL ENEMY_EXIST2(X)`）
- * 里 X 就是当前的 `Z / 10`，与实参同值；而 @SHOW_FLOOR 的调用点里 X 恒为
- * 10——DRAW_MAINMENU 的楼层循环（打印那十枚阶层按钮的那段）结束时
- * `X = Z / 10 + 1` = 10，此后到 CALL SHOW_FLOOR 之间没有地方改写 X。所以
- * **从地城概况点开任一层**都会在勇者行之后追加全部护卫的 `[护卫中]` +
- * 全角空格 + `[NN]名字素质……` 行，从部下一览进来时只有第 10 段会。
- *
+ * **护卫名单（:632-645）只出在近卫层**：判据是阶层实参 `floor == 10`，
+ * 1-9 层一律不追加。
  * @param {number} floor 阶层（1-9；10 = 近卫层）
- * @param {boolean} [x_is_10] 原作的 `X == 10`：缺省按「与实参同值」取值
- *   （DUNGEON_INFO2 的调用点如此），SHOW_FLOOR 传 true
  * @returns {Promise<void>}
  */
-async function enemy_exist2(floor, x_is_10 = floor === 10) {
+async function enemy_exist2(floor) {
   // VARSET LOCAL + L_LEN = 0（插入排序的缓冲区与长度）；MAX_NAME_LEN
   // 不在此复位——原作 :551 的静态量跨调用保留，见 max_name_len 的声明注释
   const sorted = [];
@@ -293,8 +284,8 @@ async function enemy_exist2(floor, x_is_10 = floor === 10) {
     // 名单为空：:595 未执行，这一条 PRINTL 落出那个空行
     era.println();
   }
-  // 护卫名单：原作的判据是全局 X == 10（见 JSDoc，不是 floor == 10）
-  if (x_is_10) {
+  // 护卫名单：只出在近卫层（floor 10），1-9 层不追加
+  if (floor === 10) {
     for (const cid of era.getAddedCharacters()) {
       // 原作 FOR COUNT, 0, CHARANUM 从 0 起
       if (
