@@ -2429,7 +2429,7 @@ export default [
     find: '  if (tflag15 > 0 && tequip55) {',
     replace: '  if (false) { // 变异：TFLAG:15 死斗场两分支删',
     tests: ['com-colosseum'],
-    must_mention: '死斗场 ==1 臂',
+    must_mention: '死斗场 ==1 分支',
   },
   {
     desc: 'M1020 A 公共头两分支的 SELECTCOM 三支过滤删（206 也灌精）',
@@ -3495,7 +3495,7 @@ export default [
     find: '  if (palam(target, 5) < PALAMLV[3]) {\n    return;\n  }',
     replace: '  if (palam(target, 5) >= PALAMLV[3]) {\n    return;\n  }',
     tests: ['com-special', 'train-message'],
-    must_mention: 'SOURCE_CHECK 调用时输出原作反应',
+    must_mention: 'source-check 结算时输出反应文本',
   },
   {
     desc: 'M1310 AFTERTRAIN: sex_check 经验落点改回肛门（exp:0 → exp:1）（#270）',
