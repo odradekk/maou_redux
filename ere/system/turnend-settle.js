@@ -295,7 +295,8 @@ on('EVENTTURNEND', async () => {
           chara(cid).chara.异种婚姻 = 0;
         }
       } else if (dominate > 0 && chara(cid).invasion.状态 === 3) {
-        // 迎击中的勇者按阶层决定捕获：阶层（CFLAG:501）越高伙伴号越大，8 层以上一成概率换稀有（191-193）
+        // 迎击中的勇者按阶层（CFLAG:501）分配从属怪物：阶层越高怪物号越大；
+        // 8 层以上有一成概率换成稀有怪物（191-193），前提是魔王持有该怪物
         let partner = (era.get(`cflag:${cid}:501`) || 0) - 1;
         partner *= 10;
         partner += 100 + rand(5);
