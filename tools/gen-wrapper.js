@@ -8,8 +8,7 @@
  *     重写必须显式 --force。已有产物但找不到 GENERATED 标记时拒绝重写
  *     （无法区分生成内容与手写内容，宁可报错也不冒险，#10 的教训）；
  *   - #13：引擎对未声明序号返回 undefined 而非 0，且写入会静默建变量进存档。
- *     生成的 getter 一律 `|| 0` 兜底，底层寻址用数字下标（#5 决议）。
- *
+ *     生成的 getter 一律 `|| 0` 给默认值，底层寻址用数字下标（#5 决议）。
  * 用法：node tools/gen-wrapper.js [--force]
  *   扫描 yml/ 下的变量表（键为中文显示名、值含 id/name/type 三字段的 yml），
  *   目前只支持渲染一维表白名单（global）。非变量表（如 GameBase.yml）自动跳过；
@@ -38,7 +37,7 @@ const GENERATED_END = '// GENERATED END';
 // 落扩展普通表 yml/Audio.yml，引擎侧自动建桶（见该 yml 头注）。
 // exflag 自 issue #117 起入白名单：EX_FLAG 一族（威望、非作弊资金、结局线
 // 等）落 yml/ExFlag.yml（#113 落表，头注点名首个消费者生成包装层）。
-// modsave 自 issue #547 起入白名单：魔改使用.ERH 的单档 SAVEDATA 一族
+// modsave 自 issue #547 起入白名单：单档 SAVEDATA 一族
 // （卖淫影响/反作弊）落扩展普通表 yml/ModSave.yml，GLOBAL 那支（冒险者性别）
 // 在 yml/Global.yml（见该 yml 头注）。
 const RENDERABLE_ONE_DIM_TABLES = new Set([
@@ -163,14 +162,14 @@ function try_parse_variable_yml(text) {
 
 // —— 渲染 ——
 
-// type → JSDoc 类型与未初始化兜底表达式。#13：引擎对未声明序号返回
+// type → JSDoc 类型与未初始化默认值表达式。#13：引擎对未声明序号返回
 // undefined；number 用 0（引擎声明表初始化值），string 保留合法空串。
 const TYPE_RENDER = {
   number: { js_type: 'number', fallback_expression: '|| 0' },
   string: { js_type: 'string', fallback_expression: "?? ''" },
 };
 
-// 单个变量的 getter/setter 对（含中文 JSDoc 与双向寻址注释）
+// 单个变量的 getter/setter 对（含中文 JSDoc）
 function render_entry(table, entry) {
   const render_type = TYPE_RENDER[entry.type ?? 'number'];
   if (!render_type) {
@@ -179,11 +178,9 @@ function render_entry(table, entry) {
     );
   }
   const address = `${table}:${entry.id}`;
-  // 原作侧寻址注释：一维表名大写即 Emuera 数组名（global ↔ GLOBAL）
-  const legacy = `${table.toUpperCase()}:${entry.id}`;
   return [
     '  /**',
-    `   * ${entry.key}（${address} ↔ ${legacy}）`,
+    `   * ${entry.key}（${address}）`,
     `   * @returns {${render_type.js_type}}`,
     '   */',
     `  get ${entry.name}() {`,
@@ -351,9 +348,8 @@ function render_wrapper(table, entries, { source_file }) {
     '/**',
     ` * @file ${table} 表的具名访问器初稿（tools/gen-wrapper.js 自 yml/${source_file} 生成）。`,
     ' *',
-    ' * 生成区（GENERATED 标记之间）由脚本维护，重生成加 --force；',
     ' * 标记之外是手写区：变量语义补注、业务方法，重新生成不会触碰（#11 决议）。',
-    ' * 变量的原作语义与来源写进手写区补注（AGENTS.md「变量语义必须注释」）。',
+    ' * 变量的含义写进手写区补注（AGENTS.md「变量语义必须注释」）。',
     ' */',
     '',
     "const era = require('#/era-electron');",
@@ -363,7 +359,7 @@ function render_wrapper(table, entries, { source_file }) {
   const hand_zone = [
     '',
     '// —— 手写区（重新生成不会触碰）——',
-    '// 变量语义补注（原作语义 + 来源文件）与业务方法写在这里。',
+    '// 变量语义补注与业务方法写在这里。',
     `module.exports = ${var_name};`,
     '',
   ].join('\n');

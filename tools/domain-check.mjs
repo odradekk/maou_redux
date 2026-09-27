@@ -286,10 +286,10 @@ function file_domain(rel) {
 }
 
 /**
- * 解析门面访问器注释，建立 `表:下标` → 具名方法 的映射（报错的整改
+ * 解析门面访问器注释，建立 `表:下标` → 具名方法 的映射（报错的修改
  * 指引用；门面本体的裸寻址不进扫描——WRAPPER_FILES 已排除）。
- * 注释形态（gen-facade 生成）：`   * 录像开始状况（flag:22 ↔ FLAG:22）`
- * 与 `   * 爱抚（cflag:cid:301 ↔ CFLAG:301）`。
+ * 注释形态（gen-facade 生成）：`   * 录像开始状况（flag:22）`
+ * 与 `   * 爱抚（cflag:cid:301）`。
  */
 function parse_accessors() {
   const accessors = new Map();
@@ -310,7 +310,7 @@ function parse_accessors() {
       'utf8',
     );
     const re =
-      /^ {3}\* (.+?)（([a-z_]+):(?:(?:cid|\$\{this\.cid\}):)?(-?\d+) ↔ /gm;
+      /^ {3}\* (.+?)（([a-z_]+):(?:(?:cid|\$\{this\.cid\}):)?(-?\d+)）/gm;
     let match;
     while ((match = re.exec(text))) {
       accessors.set(

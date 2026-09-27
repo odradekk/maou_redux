@@ -489,7 +489,7 @@ export default [
   ),
   make(
     8753,
-    'DISPLAY_WIDTH：全角判据由 > 0xff 改成 > 0x7f',
+    'DISPLAY_WIDTH：全角判断条件由 > 0xff 改成 > 0x7f',
     WIDTH,
     '    width += ch.charCodeAt(0) > 0xff ? 2 : 1;',
     '    width += ch.charCodeAt(0) > 0x7f ? 2 : 1;',
@@ -497,7 +497,7 @@ export default [
   ),
   make(
     8754,
-    'SLICE_DISPLAY：超宽判据由 > 改成 >=（恰好装满时多截一个全角字）',
+    'SLICE_DISPLAY：超宽判断条件由 > 改成 >=（恰好装满时多截一个全角字）',
     WIDTH,
     '    if (used + w > width) break;',
     '    if (used + w >= width) break;',

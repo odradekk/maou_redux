@@ -5,9 +5,9 @@
  *   1. 产物边界——「默认不覆盖、显式 --force 才覆盖」与 #10/#17 同一条规则；
  *   2. 生成区/手写区分离——--force 重生成只替换 GENERATED 标记之间的内容，
  *      手写区（语义补注、业务方法）逐字节存活。#11 决议的核心，必须有测试；
- *   3. 严格解析——输入不是已知形态就大声报错，绝不静默丢弃（#10 的教训）。
+ *   3. 严格解析——输入不是已知形式就大声报错，绝不静默丢弃（#10 的教训）。
  *
- * 已知限制：测试用本脚本自己的解析器定义输入形态，不经过引擎的 yaml 解析器。
+ * 已知限制：测试用本脚本自己的解析器定义输入形式，不经过引擎的 yaml 解析器。
  * 产出格式对引擎是否可解析，依据是 #17 已实机验证的 Global 同构表格式
  * （键引号 + id/name/type 三字段，引擎自带转换器的产出形状）。
  */
@@ -110,7 +110,7 @@ test('解析严格性：坏行、缺字段、重复键、重复 id、非法 name
 
 const sample_entries = parse_variable_yml(sample_global_yml);
 
-test('渲染：getter 数字寻址 + || 0 兜底 + 中文 JSDoc；setter 成对', () => {
+test('渲染：getter 数字寻址 + || 0 默认值 + 中文 JSDoc；setter 成对', () => {
   const section = render_generated_section('global', sample_entries, {
     source_file: 'Global.yml',
   });
@@ -120,7 +120,7 @@ test('渲染：getter 数字寻址 + || 0 兜底 + 中文 JSDoc；setter 成对'
   assert.ok(lines[0].startsWith(GENERATED_START));
   assert.ok(lines[lines.length - 1].startsWith(GENERATED_END));
 
-  // #13 的兜底规则：读未声明/未初始化序号引擎返回 undefined，getter 必须 || 0
+  // #13 的默认值规则：读未声明/未初始化序号引擎返回 undefined，getter 必须 || 0
   assert.ok(section.includes("return era.get('global:0') || 0;"));
   assert.ok(section.includes("return era.get('global:2') || 0;"));
   // 写入侧成对出现，同样用数字下标（#5：底层寻址一律数字）
@@ -142,7 +142,7 @@ test('渲染：string 类型保留空串并只对 nullish 值回落', () => {
   });
   assert.ok(
     section.includes("return era.get('global:3') ?? '';"),
-    'string getter 应保留合法空串，并以空串兜底未初始化值',
+    'string getter 应保留合法空串，并以空串为未初始化默认值',
   );
   assert.ok(section.includes('@returns {string}'));
 });
@@ -307,7 +307,7 @@ test('变量表但不在渲染白名单（如二维角色表）：告警跳过�
   });
 });
 
-// —— 同步守护：仓库产物与其 yml 输入不得漂移 ——
+// —— 同步守护：仓库产物与其 yml 输入保持一致 ——
 //
 // 逐表遍历渲染白名单，而不是每加一张表就手抄一条用例：#22 加入 flag 表时，
 // 原先只盯 global 的守护对 era-flag.js 视而不见，改了 Flag.yml 不重生成也

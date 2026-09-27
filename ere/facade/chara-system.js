@@ -14,8 +14,8 @@ class SystemFacade {
 
   // —— cflag ——
   /**
-   * 通信勇者唯一标记（cflag:cid:190 ↔ CFLAG:190）
-   * 源: target/ERB/其他/MAOUNET.ERB CFLAG:190
+   * 通信勇者唯一标记（cflag:cid:190）
+   * CFLAG:190
    * @returns {number}
    */
   get 通信勇者唯一标记() {
@@ -29,8 +29,8 @@ class SystemFacade {
   }
 
   /**
-   * 从属怪物（cflag:cid:570 ↔ CFLAG:570）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:570 従属モンスター（使役パートナーの NO）
+   * 从属怪物（cflag:cid:570）
+   * CFLAG:570 従属モンスター（使役パートナーの NO）
    * @returns {number}
    */
   get 从属怪物() {
@@ -44,8 +44,8 @@ class SystemFacade {
   }
 
   /**
-   * 主人膣内射精（cflag:cid:101 ↔ CFLAG:101）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行317 CFLAG:101 マスターによる膣内射精カウント用（SYSTEM_SOURCE.ERB:442/454/467）
+   * 主人膣内射精（cflag:cid:101）
+   * CFLAG:101 マスターによる膣内射精カウント用
    * @returns {number}
    */
   get 主人膣内射精() {
@@ -59,8 +59,8 @@ class SystemFacade {
   }
 
   /**
-   * 助手膣内射精（cflag:cid:103 ↔ CFLAG:103）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行319 CFLAG:103 助手から奴隷への膣内射精カウント用（SYSTEM_SOURCE.ERB:439/448）
+   * 助手膣内射精（cflag:cid:103）
+   * CFLAG:103 助手から奴隷への膣内射精カウント用
    * @returns {number}
    */
   get 助手膣内射精() {
@@ -74,8 +74,8 @@ class SystemFacade {
   }
 
   /**
-   * 对象膣内射精（cflag:cid:104 ↔ CFLAG:104）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行320 CFLAG:104 奴隷から助手への膣内射精カウント用（SYSTEM_SOURCE.ERB:461/464/470）
+   * 对象膣内射精（cflag:cid:104）
+   * CFLAG:104 奴隷から助手への膣内射精カウント用
    * @returns {number}
    */
   get 对象膣内射精() {
@@ -89,8 +89,8 @@ class SystemFacade {
   }
 
   /**
-   * 狂王膣内射精（cflag:cid:108 ↔ CFLAG:108）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行324 CFLAG:108 狂王からの中田氏カウント用
+   * 狂王膣内射精（cflag:cid:108）
+   * CFLAG:108 狂王からの中田氏カウント用
    * @returns {number}
    */
   get 狂王膣内射精() {
@@ -105,8 +105,8 @@ class SystemFacade {
 
   // —— cstr ——
   /**
-   * 故事名（cstr:cid:99 ↔ CSTR:99）
-   * 源: target/ERB/SYSTEM/SYSTEM_DATA.ERB 行193-209 $SET_NAME 读写（32 字符上限）
+   * 故事名（cstr:cid:99）
+   * set_story_name 读写（32 字符上限）
    * @returns {string}
    */
   get 故事名() {
@@ -121,8 +121,8 @@ class SystemFacade {
 
   // —— tequip ——
   /**
-   * 利尿剂（tequip:cid:22 ↔ TEQUIP:22）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行510 TEQUIP:22 利尿剤（属主 system：COMF52/COMF85 的 train 跨域写走本门面）
+   * 利尿剂（tequip:cid:22）
+   * TEQUIP:22 利尿剤（属主 system：com52/com85 的 train 跨域写走本门面）
    * @returns {number}
    */
   get 利尿剂() {
@@ -137,8 +137,7 @@ class SystemFacade {
 
   // —— talent ——
   /**
-   * 金红桃（talent:cid:167 ↔ TALENT:167）
-   * 源: yml/Talent.yml id 167
+   * 金红桃（talent:cid:167）
    * @returns {number}
    */
   get 金红桃() {
@@ -152,8 +151,7 @@ class SystemFacade {
   }
 
   /**
-   * 银黑桃（talent:cid:168 ↔ TALENT:168）
-   * 源: yml/Talent.yml id 168
+   * 银黑桃（talent:cid:168）
    * @returns {number}
    */
   get 银黑桃() {
@@ -167,8 +165,7 @@ class SystemFacade {
   }
 
   /**
-   * 黑方片（talent:cid:169 ↔ TALENT:169）
-   * 源: yml/Talent.yml id 169
+   * 黑方片（talent:cid:169）
    * @returns {number}
    */
   get 黑方片() {
@@ -182,8 +179,7 @@ class SystemFacade {
   }
 
   /**
-   * 白梅花（talent:cid:170 ↔ TALENT:170）
-   * 源: yml/Talent.yml id 170
+   * 白梅花（talent:cid:170）
    * @returns {number}
    */
   get 白梅花() {
@@ -197,8 +193,7 @@ class SystemFacade {
   }
 
   /**
-   * 贵公子（talent:cid:174 ↔ TALENT:174）
-   * 源: yml/Talent.yml id 174
+   * 贵公子（talent:cid:174）
    * @returns {number}
    */
   get 贵公子() {
@@ -212,8 +207,7 @@ class SystemFacade {
   }
 
   /**
-   * 伶俐（talent:cid:175 ↔ TALENT:175）
-   * 源: yml/Talent.yml id 175
+   * 伶俐（talent:cid:175）
    * @returns {number}
    */
   get 伶俐() {
@@ -228,8 +222,7 @@ class SystemFacade {
 
   // —— abl ——
   /**
-   * 阴蒂感觉（abl:cid:0 ↔ ABL:0）
-   * 源: yml/Abl.yml id 0
+   * 阴蒂感觉（abl:cid:0）
    * @returns {number}
    */
   get 阴蒂感觉() {
@@ -243,8 +236,7 @@ class SystemFacade {
   }
 
   /**
-   * 乳房感觉（abl:cid:1 ↔ ABL:1）
-   * 源: yml/Abl.yml id 1
+   * 乳房感觉（abl:cid:1）
    * @returns {number}
    */
   get 乳房感觉() {
@@ -258,8 +250,7 @@ class SystemFacade {
   }
 
   /**
-   * 私处感觉（abl:cid:2 ↔ ABL:2）
-   * 源: yml/Abl.yml id 2
+   * 私处感觉（abl:cid:2）
    * @returns {number}
    */
   get 私处感觉() {
@@ -273,8 +264,7 @@ class SystemFacade {
   }
 
   /**
-   * 肛门感觉（abl:cid:3 ↔ ABL:3）
-   * 源: yml/Abl.yml id 3
+   * 肛门感觉（abl:cid:3）
    * @returns {number}
    */
   get 肛门感觉() {
@@ -288,8 +278,7 @@ class SystemFacade {
   }
 
   /**
-   * 顺从（abl:cid:10 ↔ ABL:10）
-   * 源: yml/Abl.yml id 10
+   * 顺从（abl:cid:10）
    * @returns {number}
    */
   get 顺从() {
@@ -303,8 +292,7 @@ class SystemFacade {
   }
 
   /**
-   * 欲望（abl:cid:11 ↔ ABL:11）
-   * 源: yml/Abl.yml id 11
+   * 欲望（abl:cid:11）
    * @returns {number}
    */
   get 欲望() {
@@ -318,8 +306,7 @@ class SystemFacade {
   }
 
   /**
-   * 技巧（abl:cid:12 ↔ ABL:12）
-   * 源: yml/Abl.yml id 12
+   * 技巧（abl:cid:12）
    * @returns {number}
    */
   get 技巧() {
@@ -333,8 +320,7 @@ class SystemFacade {
   }
 
   /**
-   * 侍奉精神（abl:cid:16 ↔ ABL:16）
-   * 源: yml/Abl.yml id 16
+   * 侍奉精神（abl:cid:16）
    * @returns {number}
    */
   get 侍奉精神() {
@@ -348,8 +334,7 @@ class SystemFacade {
   }
 
   /**
-   * 露出癖（abl:cid:17 ↔ ABL:17）
-   * 源: yml/Abl.yml id 17
+   * 露出癖（abl:cid:17）
    * @returns {number}
    */
   get 露出癖() {
@@ -363,8 +348,7 @@ class SystemFacade {
   }
 
   /**
-   * 抖M气质（abl:cid:21 ↔ ABL:21）
-   * 源: yml/Abl.yml id 21
+   * 抖M气质（abl:cid:21）
    * @returns {number}
    */
   get 抖M气质() {
@@ -378,8 +362,7 @@ class SystemFacade {
   }
 
   /**
-   * 断背气质（abl:cid:23 ↔ ABL:23）
-   * 源: yml/Abl.yml id 23
+   * 断背气质（abl:cid:23）
    * @returns {number}
    */
   get 断背气质() {
@@ -394,8 +377,7 @@ class SystemFacade {
 
   // —— mark ——
   /**
-   * 苦痛刻印（mark:cid:0 ↔ MARK:0）
-   * 源: yml/Mark.yml id 0
+   * 苦痛刻印（mark:cid:0）
    * @returns {number}
    */
   get 苦痛刻印() {
@@ -409,8 +391,7 @@ class SystemFacade {
   }
 
   /**
-   * 快乐刻印（mark:cid:1 ↔ MARK:1）
-   * 源: yml/Mark.yml id 1
+   * 快乐刻印（mark:cid:1）
    * @returns {number}
    */
   get 快乐刻印() {
@@ -424,8 +405,7 @@ class SystemFacade {
   }
 
   /**
-   * 屈服刻印（mark:cid:2 ↔ MARK:2）
-   * 源: yml/Mark.yml id 2
+   * 屈服刻印（mark:cid:2）
    * @returns {number}
    */
   get 屈服刻印() {
@@ -439,8 +419,7 @@ class SystemFacade {
   }
 
   /**
-   * 反抗刻印（mark:cid:3 ↔ MARK:3）
-   * 源: yml/Mark.yml id 3
+   * 反抗刻印（mark:cid:3）
    * @returns {number}
    */
   get 反抗刻印() {
@@ -454,8 +433,8 @@ class SystemFacade {
   }
 
   /**
-   * 反抗刻印履历（mark:cid:4 ↔ MARK:4）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB 行961-981 MARK:4 取得门限，与 MARK:3 同值连写（Mark.yml 无此列，人工命名）
+   * 反抗刻印履历（mark:cid:4）
+   * MARK:4 取得门限，与 MARK:3 同值连写（Mark.yml 无此列，人工命名）
    * @returns {number}
    */
   get 反抗刻印履历() {
@@ -470,8 +449,7 @@ class SystemFacade {
 
   // —— exp ——
   /**
-   * 放尿经验（exp:cid:31 ↔ EXP:31）
-   * 源: yml/Exp.yml id 31
+   * 放尿经验（exp:cid:31）
    * @returns {number}
    */
   get 放尿经验() {
@@ -486,8 +464,8 @@ class SystemFacade {
 
   // —— ex ——
   /**
-   * 喷乳绝顶（ex:cid:5 ↔ EX:5）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt :EX:5 射精·喷乳（COM_EJAC_PLAYER_MILK 的 EX:PLAYER:5 += 1）
+   * 喷乳绝顶（ex:cid:5）
+   * EX:5 射精·喷乳（com_ejac_player_milk 的 EX:PLAYER:5 += 1）
    * @returns {number}
    */
   get 喷乳绝顶() {
@@ -501,8 +479,8 @@ class SystemFacade {
   }
 
   /**
-   * 普通射精绝顶（ex:cid:6 ↔ EX:6）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE_SUB1.ERB 行523 @TARGET_EJAC_CHECK 通常の射精
+   * 普通射精绝顶（ex:cid:6）
+   * target_ejac_check 通常の射精
    * @returns {number}
    */
   get 普通射精绝顶() {
@@ -520,7 +498,7 @@ class SystemFacade {
 // —— 手写区（重新生成不会触碰）——
 /**
  * 写入 NTR 破处演出的狂王纹章。CSTR:10..17 依次是脸、胸、背、
- * 下腹、屁股、性器、肛门、大腿的刺青槽（其他/TATOO.ERB）。
+ * 下腹、屁股、性器、肛门、大腿的刺青槽。
  * @param {number} locate 10..17 中的随机位置
  */
 SystemFacade.prototype.设置狂王纹章 = function (locate) {

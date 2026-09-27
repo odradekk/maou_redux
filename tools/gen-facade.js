@@ -6,7 +6,7 @@
  * era_flag / era_global 并存，口上域两个样本已迁；二维角色表的口上域切片
  * （cflag 属主 kojo 的 110 个下标）。
  *
- * #90 起（依据与裁定见 issue #90）：
+ * #90 起（依据与结论见 issue #90）：
  *   1. 二维表按属主域全量推广——talent/source/abl/palam/mark/exp 各自的
  *      属主域切片合成 chara-<域>.js（一域一文件、域内多表分组），cflag 在
  *      kojo 之外按补名逐个进入（其余跳过并报告），delta/deltabase 按
@@ -47,7 +47,7 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // ownership 属主 dungeon——无门面即无合法写径）；maxbase 只读、暂不进门面
 // （读侧放行，见 domain-check 的跨域读政策）。
 // cstr 随 #136 进门面（yml 空表、名字走 facade-names；首个字段 99 故事名，
-// 原作读写都在 SYSTEM_DATA.ERB 的存档界面）。
+// 读写在存档界面）。
 // ex 随 #216（J6）进门面：绝顶计数（ex/nowex 共用名字表，引擎寻址层
 // case"nowex" → staticData.ex）；yml/Ex.yml 是空表（有意，同 tequip 的
 // 理由——登记名字表会让 initCharaTable 预置 0），名字走 facade-names，
@@ -55,7 +55,7 @@ const ONE_DIM_TABLES = ['flag', 'tflag', 'item', 'global'];
 // tequip 随 #215（J5）进门面：调教域表（桶随 beginTrain 建、endTrain 删），
 // yml/TEquip.yml 是空表（有意：登记名字表会令 initCharaTable 预置 0，见该
 // 文件头注），名字走 facade-names；跨域两段（22 属 system、35 属 event）的
-// train 侧写经门面是 domain-check 的硬要求，四位守卫位（45/55/89/90）一并
+// train 侧写经门面是 domain-check 的硬要求，四位检查位（45/55/89/90）一并
 // 具名供族票读写。
 const TWO_DIM_TABLES = [
   'cflag',
@@ -74,7 +74,7 @@ const TWO_DIM_TABLES = [
   'deltabase',
 ];
 
-// yml 名字表（name→id 形态）——这七张表的列名唯一真相（#90 裁定 + #114 base）
+// yml 名字表（name→id 形式）——这七张表的列名唯一真相（#90 结论 + #114 base）
 const YML_NAME_FILES = {
   base: 'Base.yml',
   talent: 'Talent.yml',
@@ -94,7 +94,7 @@ function parse_yml_columns(file) {
     by_id.set(Number(match[2]), match[1]);
   }
   if (by_id.size === 0) {
-    throw new Error(`yml 名字表解析为空：yml/${file}——文件形态变了？`);
+    throw new Error(`yml 名字表解析为空：yml/${file}——文件形式变了？`);
   }
   return by_id;
 }
@@ -107,9 +107,9 @@ const yml_names = new Map(
 );
 
 /**
- * 两源合流（#90）：yml 列名为唯一真相，facade-names 只补缺口或给一致的
- * 名字换更精出处；同一下标两源名字不一致 → 报错，宁可红也不静默择一。
- * cflag/tflag/item/global 与移植自建表不在 yml_names 里，直接走手写表。
+ * 两源合流（#90）：yml 列名为唯一真相，facade-names 只补缺口；
+ * 同一下标两源名字不一致 → 报错，宁可红也不静默择一。cflag/tflag/item/global
+ * 与移植自建表不在 yml_names 里，直接走手写表。
  */
 function merged_name(table, index) {
   const from_yml = yml_names.get(table)?.get(index);
@@ -123,10 +123,7 @@ function merged_name(table, index) {
     return manual;
   }
   if (from_yml !== undefined) {
-    return {
-      name: from_yml,
-      source: `yml/${YML_NAME_FILES[table]} id ${index}`,
-    };
+    return { name: from_yml };
   }
   return manual;
 }
@@ -143,17 +140,13 @@ const DOMAINS = [
 ];
 
 // 表类型：字符串表（cstr——引擎对 cstr 新增表变量赋 ''，11-saves.md）的
-// getter 兜底是 '' 且 JSDoc 是 string；`|| 0` 会把空串与 undefined 一起吞成
+// getter 默认值是 '' 且 JSDoc 是 string；`|| 0` 会把空串与 undefined 一起吞成
 // 数字 0，字符串消费方（.length / startsWith）随之错型。其余按数字表渲染。
 const TYPE_RENDER = {
   number: { js_type: 'number', fallback: '0' },
   string: { js_type: 'string', fallback: "''" },
 };
 const STRING_TABLES = new Set(['cstr']);
-
-// 移植自建表的原作对应名（JSDoc 的 ↔ 侧）：delta/deltabase 在 ERB 里叫
-// UP / LOSEBASE，不是同名表——照 toUpperCase 写会产出对不上原作的假锚点
-const LEGACY_TABLE_NAMES = { delta: 'UP', deltabase: 'LOSEBASE' };
 
 function parse_ownership(text) {
   const owned = new Map();
@@ -217,7 +210,7 @@ function entries_for(table, domain, ownership_dir, lookup = merged_name) {
   for (const index of indexes) {
     const named = lookup(table, index);
     // 名字缺失、或不是本仓标识符规则下的合法名字（yml 列名如「常识改变
-    // 【战斗】」含括号）→ 都不进门面，跳过并报告（#71 裁定三同款；手工
+    // 【战斗】」含括号）→ 都不进门面，跳过并报告（#71 结论三同款；手工
     // 表经 validate_names 已拦，这里再拦一道是给 yml 来源的）
     if (!named || !NAME_RE.test(named.name)) {
       skipped.push({ table, index, domain });
@@ -227,7 +220,7 @@ function entries_for(table, domain, ownership_dir, lookup = merged_name) {
       table,
       index,
       name: named.name,
-      source: named.source,
+      note: named.note,
       // named_tail 的尾部标志（缺省 undefined = 既有条目，见下方分区）
       tail: named.tail,
     });
@@ -243,7 +236,7 @@ function entries_for(table, domain, ownership_dir, lookup = merged_name) {
   // 之后发射——sort 稳定，两侧仍各自保持升序，既有条目的相对次序不动。
   // 用途：并行票各自补名时让后加的字段落在域区块尾部，两票在生成产物
   // 上的落点不相邻，合并面最小（#170 与 #174 同改本表的先例）。tail
-  // 标志只能来自手写命名表（merged_name 的 manual 臂），yml 来源恒无。
+  // 标志只能来自手写命名表（merged_name 的 manual 分支），yml 来源恒无。
   named_entries.sort((a, b) => (a.tail ? 1 : 0) - (b.tail ? 1 : 0));
   return { entries: named_entries, skipped };
 }
@@ -266,13 +259,6 @@ function capitalize(domain) {
   return domain.charAt(0).toUpperCase() + domain.slice(1);
 }
 
-/** 出处进 JS 注释前清洗：全角空格；孤立 `:数字` 转成「行N」（生成注释不带裸行号） */
-function sanitize_source(source) {
-  return source
-    .replace(/\u3000/g, ' ')
-    .replace(/(^|[^A-Za-z0-9_.${}])(:(\d+(?:-\d+)?))/g, '$1行$3');
-}
-
 function groups_of(spec) {
   if (spec.groups) {
     return spec.groups;
@@ -281,11 +267,10 @@ function groups_of(spec) {
 }
 
 function render_accessor(kind, entry) {
-  const { table, index, name, source } = entry;
+  const { table, index, name, note } = entry;
   const render_type = STRING_TABLES.has(table)
     ? TYPE_RENDER.string
     : TYPE_RENDER.number;
-  const legacy = `${LEGACY_TABLE_NAMES[table] ?? table.toUpperCase()}:${index}`;
   const address =
     kind === 'chara' ? `${table}:cid:${index}` : `${table}:${index}`;
   const getter_body =
@@ -296,10 +281,11 @@ function render_accessor(kind, entry) {
     kind === 'chara'
       ? `    era.set(\`${table}:\${this.cid}:${index}\`, v);`
       : `    era.set('${table}:${index}', v);`;
+  const doc_note = note ? [`   * ${note}`] : [];
   return [
     '  /**',
-    `   * ${name}（${address} ↔ ${legacy}）`,
-    `   * 源: ${sanitize_source(source)}`,
+    `   * ${name}（${address}）`,
+    ...doc_note,
     `   * @returns {${render_type.js_type}}`,
     '   */',
     `  get ${name}() {`,
@@ -548,7 +534,7 @@ function build_facades(ownership_dir) {
   const skipped = [];
   // 二维角色表按属主域推广（#90）：一域一张 chara-<域>.js，域内多表按
   // TWO_DIM_TABLES 序分组；未命名的属主下标跳过并报告（cflag 的 kojo 切片
-  // 仍是 #71 的全量真名门，缺名即抛错）。
+  // 仍是 #71 的全量真名门面，缺名即抛错）。
   for (const domain of DOMAINS) {
     const groups = [];
     for (const table of TWO_DIM_TABLES) {
