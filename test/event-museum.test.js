@@ -314,7 +314,7 @@ test('MUSEUM：特殊角色扣威望，稳定角色 ID 下不递减其他角色�
   assert.equal(fixture.store.get('flag:2'), -1, '指向被删角色时清空');
 });
 
-test('MUSEUM：已有造型王只翻倍显示经验，不翻倍实际入账', async () => {
+test('MUSEUM：已有造型王双倍加成计入实际入账与显示（#650 修复显示虚高）', async () => {
   const fixture = seed_world();
   fixture.store.set('talent:0:329', 1);
   fixture.set_inputs(8);
@@ -322,7 +322,8 @@ test('MUSEUM：已有造型王只翻倍显示经验，不翻倍实际入账', as
 
   await museum(31, seq([0]));
 
-  assert.equal(fixture.store.get('exp:0:80'), 250);
+  // 双倍先计入再入账：实际获得 500，显示 500——两者一致
+  assert.equal(fixture.store.get('exp:0:80'), 500);
   const lines = fixture.text_lines();
   assert(lines.some((line) => line.includes('因为造型王实绩的双倍加成，最后')));
   assert(lines.some((line) => line.includes('获得了500点的经验值！》')));

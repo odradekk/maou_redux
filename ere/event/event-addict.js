@@ -14,8 +14,8 @@
  *     用例变红」的死边界，与工单验收标准（字面量改动必须有用例能抓）相
  *     悖，故按等价简化处理，不算「未 1:1」；
  *   - `PRECIPITATE_WITHDRAWAL_BE_A_WRECK` 的准入判据读 `TALENT:9`（崩坏），
- *     但生效动作写的是 `TALENT:19 = 1`——两个不同的素质序号，原作实机如
- *     此（非本项目误读），照抄，不「修好」；
+ *     生效动作也写 `TALENT:9`——播报【崩坏】与实际获得一致（#650 修复：
+ *     原先误写未声明的 TALENT:19，提示看得到、实际不生效）；
  *   - `RAND:100`/`RAND:50`/`RAND:3` 等经 `rand(n)` 形参注入（[0,n) 整数，
  *     缺省 Math.random，测试注入定值序，juel-check.js 同款先例）；
  *   - U/V/W 是 Emuera 全局标量（issue #5 决议第 3 条：A-Z 类临时变量按 JS
@@ -347,15 +347,15 @@ async function simple_withdrawal_outcome(cid, key) {
 }
 
 /**
- * @PRECIPITATE_WITHDRAWAL_BE_A_WRECK（:338-343）：门槛读 TALENT:9（崩坏），
- * 生效写 TALENT:19——两个不同素质序号，原作实机如此，照抄不改。
+ * @PRECIPITATE_WITHDRAWAL_BE_A_WRECK：废人化——播报【崩坏】并写入
+ * TALENT:9（与准入判据同序号）。
  */
 async function precipitate_withdrawal_be_a_wreck(cid) {
   const name = chara_callname(cid);
   await era.printAndWait(`${name}的样子明显不对头……`);
   await era.printAndWait(`${name}饱受禁断症状的痛苦，完全变成一个废人了。`);
   await era.printAndWait(`${name}的精神【崩坏】了……`);
-  set_talent(cid, 19, 1);
+  set_talent(cid, 9, 1);
 }
 
 /** @PRECIPITATE_WITHDRAWAL_BE_A_MISANTHROPIST（:319-331）：厌世 + 好感度惩罚 */

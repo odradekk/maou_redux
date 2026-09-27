@@ -12,7 +12,8 @@
  *   （→ 70）已由 com-service.js 注册。本票只注册本族入口 CASE 61。
  * - COM63_AUTO 属于自动调教票 #218，本模块不重复实现。
  * - @INCEST 真身在 ere/system/train/incest.js（#220）：本族 require 共用实现，
- *   传 (target, player)。CFLAG:25 命中读 CFLAG:24 的上游缺陷 1:1 保留。
+ *   传 (target, player)。亲族判定的命中读 CFLAG:24、写入侧用 CFLAG:25——
+ *   两槽不对称是既有行为（全库无 CFLAG:24 写点，判定实际恒落空）。
  *   @HAIRSET / TALK_1 / TALK_2 定义在 COMF73 内，自足。
  * - 原作无 EQUIP_COM60-73，故不注册装备持续效果。
  *
@@ -520,7 +521,7 @@ async function hairset() {
   for (;;) {
     era.print(`把${t_name}的头发弄成什么样子？`);
     // 分隔符照写原作：1-9 是 `---`，10-12 是 `--`（COMF73_髪型を弄る.ERB:135-148 的
-    // 对齐写法，不是笔误——原文那几行就是两个破折号）
+    // 对齐写法——10-12 号就是比 1-9 号少一个破折号）
     era.printButton('---自然', 1);
     era.printButton('---中分', 2);
     era.printButton('---不均分', 3);

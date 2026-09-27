@@ -98,13 +98,14 @@ test('FLAG:35 开关的另一侧：体力 0 在开关开时走衰弱分支（不
   );
 });
 
-test('分支 3：助手体力 <= 0 → 助手死亡消息（代词与 TEQUIP 都照原作读目标）', async () => {
+test('分支 3：助手体力 <= 0 → 助手死亡消息（代词取助手侧；录像标志读目标侧）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture, { assi: 32 });
+  fixture.store.set('talent:32:122', 1); // 助手是男性——代词取助手侧才测得出
   fixture.store.set('base:31:0', 2000); // 目标健在
   fixture.store.set('base:32:0', 0);
-  // 原作 :296-297 的 SIF TEQUIP:53 无角色前缀 = TEQUIP:TARGET:53（1:1：
-  // 助手死时查的是**目标**的录像装备——可疑但照搬，勿「修好」）
+  // 录像标志读目标的 TEQUIP:53：录像状态存在目标侧，助手死亡时问的是
+  // 「本场调教是否在录像」
   fixture.store.set('tequip:31:53', 1); // 只预置目标的录像标志
 
   const pending = await run_comend(fixture);
@@ -112,8 +113,8 @@ test('分支 3：助手体力 <= 0 → 助手死亡消息（代词与 TEQUIP 都
   assert.equal(pending, 'AFTERTRAIN');
   const texts = fixture.text_lines();
   assert(texts.includes('助手桑一动也不动，'));
-  // 原作 :299 用 SHE(TARGET)（笔误）：助手分支的代词取目标侧
-  assert(texts.includes('对她做什么都不再有反应了……'));
+  // #650 修复：代词原先误取目标侧（目标 31 温妮为女性，恒打「她」）
+  assert(texts.includes('对他做什么都不再有反应了……'));
   assert(
     fixture.var_writes.some((w) => w.name === 'tflag:34' && w.value === 1),
   );

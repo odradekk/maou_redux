@@ -10,7 +10,8 @@
  *     （CFLAG:113 1-4 与膣内的随机受精判定）、TFLAG:2/38、STAIN、
  *     ゲージ复位钳位；
  *   - @COM_EJAC_PLAYER_MILK：非母乳体质早退、乘率串（克制减半等）、
- *     半衰蓄积、E 判定（B 判据的上游怪相）、EX:5/NOWEX:5（门面 + 直写）；
+ *     半衰蓄积、E 判定（蓄积 S 越过上限即喷乳，与性交/肛交喷射精同构）、
+ *     EX:5/NOWEX:5（门面 + 直写）；
  *   - @COM_AFTER_VAGINA_SEX：私处经验分档、处女异常经验（此时 TALENT:0
  *     未清——丧失在 SOURCE_CHECK 后半）、RAND:2 清 CFLAG:113、百合 +4、
  *     爱情经验表、RELATION 助手分支、童贞丧失（CFLAG:PLAYER:15 与近亲
@@ -264,22 +265,24 @@ test('MILK：E = 2 大量喷乳 → 文案、喷奶经验、STAIN:5 |= 16、EX/N
   assert.equal(fixture.store.get('nowex:0:5'), 1);
 });
 
-test('MILK：B 判据行为锁——E1 的门槛是增量 B 而非蓄积 S（上游怪相 1:1）', async () => {
+test('MILK：E1 判据是蓄积 S——半衰后 B ≤ 上限但 S 越过即喷乳', async () => {
   const { fixture, vs } = seed_world();
   arm_player(fixture);
   fixture.store.set('talent:0:130', 1); // 母乳体质
   fixture.store.set('maxbase:0:3', 1000);
   fixture.store.set('base:0:3', 800);
   // b：1000 × 0.6 = 600 → 半衰 1000 + (600-1000)/2 = 800 → 蓄积 800+800
-  // = 1600 > 1000（S 判据会 E1），但半衰后 B = 800 ≤ 1000（B 判据 E0）
-  // ——上游用 B，故不喷乳
+  // = 1600 > 1000：B = 800 ≤ 上限，但 S 判据越过 → E1 喷乳
   await vs.com_ejac_player_milk(1000);
-  assert.equal(fixture.store.get('base:0:3'), 1600);
+  assert.equal(fixture.store.get('base:0:3'), 0, '喷乳后槽按 EJAC*2 扣减钳 0');
+  const lines = fixture.text_lines();
   assert.ok(
-    !fixture.text_lines().some((t) => t.includes('母乳')),
-    'B ≤ 上限 → 无喷乳（S > 上限也不算——:761 的 B）',
+    lines.some((t) => t.includes('流出了母乳')),
+    '通常喷乳文案',
   );
-  assert.equal(fixture.store.get('exp:0:54'), undefined);
+  assert.ok(lines.includes('喷奶经验＋1'));
+  assert.equal(fixture.store.get('exp:0:54'), 1);
+  assert.equal(fixture.store.get('nowex:0:5'), 1);
 });
 
 // —— @COM_AFTER_VAGINA_SEX ——

@@ -15,24 +15,23 @@
  * 妊娠许可、CFLAG:15 = 初体验对象记录（+1 存 character no；300+ 近亲代码）、
  * CSTR:3 = 初体验对象名。
  *
- * 移植说明（有意偏离与上游缺陷，均注明依据）：
+ * 移植说明（有意偏离与已知怪相，均注明依据）：
  *   - @CONFIRM_LOST_VIRGIN_YOU（:21-38）**不移植**：全库零调用点
  *     （(TRY)?CALL(JUMP)?FORM 全扫，#210 实测的同款核法）——eraIM@S 流用
- *     残留，#14 登记。
+ *     残留。
  *   - @COM_EJAC_PLAYER_SEX 的 `#DIM EXP_ID`（:41）赋值两次从未被读
  *     （:587-589/:614-616，EXP:0/52 的分档恒用 0/52 自身）——死变量，
- *     不移植，#14 登记。
- *   - @COM_EJAC_PLAYER_MILK 的 E 判定 `ELSEIF B > EJAC`（:761）用的是 B
- *     （本回合增量）而非 S（蓄积值）——与 _SEX/_ANALSEX 的同位代码
- *     （S > EJAC）不一致，上游疑似笔误，1:1 保留，#14 登记。同函数
- *     E == 1 支也减 EJAC*2（:826，_SEX 是减 EJAC）——同款 1:1 保留。
+ *     不移植。
+ *   - @COM_EJAC_PLAYER_MILK 的 E 判定取蓄积 S（与 _SEX/_ANALSEX 同构）；
+ *     通常喷乳支扣减同大量档（EJAC*2 而非 _SEX 的 EJAC）——两档一致的
+ *     扣法，行为保留。
  *   - ABL:PLAYER:1 分档的 `ELSE → 1.60`（:757-758）在 >= 4 分支之后不可达
  *     ——死分支不移植（表 [0.60,0.80,1.00,1.20] + >= 4 → 1.40）。
  *   - @COM_AFTER_EXTRA_SEX 的日文原文串（:1074 性交経験＋１ / :1171
  *     【童貞喪失】）按 #60 归一简体（性交经验＋１ / 【童贞丧失】——
  *     V 版 :881/:1013 的简体字形）。
- *   - CALL INCEST 复用 `system/train/incest` 的原作解码；TFLAG:14 的归零与
- *     CFLAG:21–25 亲族关系计算都由共用函数 1:1 承载。
+ *   - CALL INCEST 复用 `system/train/incest` 的解码；TFLAG:14 的归零与
+ *     CFLAG:21–25 亲族关系计算都由共用函数承载。
  */
 
 const era = require('#/era-electron');
@@ -339,10 +338,10 @@ async function com_ejac_player_milk(b) {
   b = 1000 + Math.floor((b - 1000) / 2);
   era.add(`base:${player}:3`, b);
 
-  // 判定（头注：E == 1 的判据是 B 不是 S——上游疑似笔误，1:1）
+  // 判定：蓄积 S 越过上即喷乳（与性交/肛交的射精判定同构）
   const s = era.get(`base:${player}:3`) || 0;
   const ejac = era.get(`maxbase:${player}:3`) || 0;
-  const e = s > ejac * 2 ? 2 : b > ejac ? 1 : 0;
+  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
 
   if (e === 2) {
     // 大量喷乳
@@ -354,7 +353,7 @@ async function com_ejac_player_milk(b) {
     }
     era.add(`exp:${player}:54`, 2);
     era.set(`stain:${player}:5`, (era.get(`stain:${player}:5`) || 0) | 16); // Ｂ母乳
-    // （头注：E == 1 支同减 EJAC*2）
+    // （通常喷乳支同大量档扣 EJAC*2——两档一致的扣法）
     const next = Math.max((era.get(`base:${player}:3`) || 0) - ejac * 2, 0);
     era.set(`base:${player}:3`, next >= ejac ? ejac - 1 : next);
     era.add(`nowex:${player}:5`, 1);
@@ -543,7 +542,7 @@ async function com_after_vagina_sex(rand) {
       era.set(`cflag:${player}:15`, cid + 1); // NO:TARGET + 1
       era.set(`cstr:${player}:3`, name_of(cid));
       // 初体验是近亲的代码表（与 LOST_VIRGIN_CHECK 的表不同——
-      // 3↔4 两组互换、5/6 的性别位互换，原作两处各表，1:1 保留）
+      // 3↔4 两组互换、5/6 的性别位互换；两处代码表独立，不统一）
       if (t14() === 2 && tal(cid, 122)) {
         era.set(`cflag:${player}:15`, 300);
       } else if (t14() === 2 && !tal(cid, 122)) {

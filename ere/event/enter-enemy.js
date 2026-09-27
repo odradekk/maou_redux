@@ -1,12 +1,10 @@
 /**
  * @file 勇者来袭（issue #171，阶段 3 H2）：@ENTER_ENEMY 与三个附属函数。
  *
- * 调用频率是**每日**：EVENT_TURNEND.ERB:93 的 CALL ENTER_ENEMY,0 每次换日
- * 都跑，另有四处按 DAY 的追加调用（ere/event/event-turnend.js 的五个调用
- * 点）。原作「月末才来」的守卫（:11-13）在汉化版里被**注释掉了**，LOCAL 也
- * 从 RAND:10 + 20 写死成 10（:7-8）——这是原作现状，1:1 保留、别「修好」
- * 它（#14 登记；钉住用例 + 反向变异条目防守）。
- *
+ * 调用频率是**每日**：@EVENTTURNEND 的 CALL ENTER_ENEMY,0 每次换日都跑，
+ * 另有四处按 DAY 的追加调用（ere/event/event-turnend.js 的五个调用点）。
+ * 月末休战的守卫在原作里就被注释掉，移植不恢复（#574 第 4 条），勇者每日
+ * 来袭。
  * 移植说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**：EraElectron 4.8.0 的 bundle 里没有 savestr
  *     表（app.asar 全文零命中；寻址 `savestr:N` 经 engine-bundle 驱动引擎
@@ -34,10 +32,10 @@
  *     era_flag.crazylord_entered）。cflag:502/510/511 与 flag:60/223 属主
  *     是 event（域内裸寻址即合法，#70），其中 502 沿用既有门面字段
  *     chara(cid).event.侵攻度；
- *   - 初期座標 CFLAG:510/511 两行 1:1 保留（:140-154；@K_34 与 @GET_ENEMY
- *     各有一份复制段，三处同源）：原作注释「現在は死んでいる変数です／
+ *   - 初期座標 CFLAG:510/511 两行照写（K_34 与 GET_ENEMY 各有一份复制
+ *     段，三处同源）：这两行原本是死变量备注「現在は死んでいる変数です／
  *     気が変わったときのために残しています」，但裁定 5（#168）让 2D 模式
- *     在 H12 变可达——按死代码删掉会在那张票埋坑；
+ *     变可达——按死代码删掉会在那张票埋坑；
  *   - 原作 PRINT/PRINTS 不换行、PRINTL 换行，同一显示行的拼接在 ere 侧
  *     归并为一次 era.print（引擎 print 每调用一行，dev-guides/06）；
  *   - CHAR_MAKE_INPORT 判定（RAND(ARG:0)）缺省 ARG:0 = 1 → RAND(1) 恒 0，
@@ -88,11 +86,11 @@ function getchara_sp0(no) {
 }
 
 /**
- * 人数上限六分支（:35-47；@GET_ENEMY 的 :332-344 是同一段的复制，两处
- * 各自 1:1 保留）。命中任一分支 = 本次来袭整段取消（原作 RETURN 0）。
+ * 人数上限六分支（GET_ENEMY 有一段同构复制，两处各自照写）。命中任一分支
+ * = 本次来袭整段取消（RETURN 0）。
  * FLAG:82 人间界已出 ENDING_1 / 87·89·91 精灵·龙·天界征服 / 92 四方
- * 城塞（< 15 未全陷）——征服进度越深、可容纳的来袭者越多（STICK 修改，
- * :34 注释「按照侵攻进度限制勇者数量」）。
+ * 城塞（< 15 未全陷）——征服进度越深、可容纳的来袭者越多（修改点注释
+ * 「按照侵攻进度限制勇者数量」）。
  * @returns {boolean} true = 人数已满，须中断
  */
 function chara_cap_reached() {
@@ -122,9 +120,8 @@ function chara_cap_reached() {
 }
 
 /**
- * 初期座標段（:140-154；@K_34_crazylord 的 :306-317 与 @GET_ENEMY 的
- * :388-399 是同一段的复制，三处各自 1:1 保留——裁定 5 让 2D 模式在 H12
- * 可达，勿删）。
+ * 初期座標段（K_34_crazylord 与 GET_ENEMY 各有一份同构复制，三处各自
+ * 照写——裁定 5 让 2D 模式可达，勿删）。
  * @param {(n: number) => number} rand_n RAND:N 随机源
  * @returns {[number, number]} [CFLAG:510（X 座標）, CFLAG:511（Y 座標）]
  */
@@ -159,10 +156,8 @@ function roll_initial_position(rand_n) {
 async function enter_enemy(arg0 = 0, rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
 
-  // LOCAL = 10（原 RAND:10 + 20 被写死）——原作现状，#14 登记，勿修
-  // 月末才来的守卫（SIF DAY:2 > LOCAL && ARG:0 == 0 && FLAG:60 < 300
-  //   → RETURN 0）在汉化版里被整段注释掉，1:1 保持死注释不移植（钉住
-  //   用例证明「月末也照来」，反向变异条目防守「修好」它的手滑）
+  // LOCAL = 10 写死（早退阈值用）：原月末守卫要求 DAY:2 > LOCAL，该守卫
+  // 被注释掉的功能不恢复，每日来袭（#574 第 4 条）
 
   // 莉莉出現（ARG:0 == 0 的通常来袭，或对方持 TALENT:村娘Ａ）
   // TALENT:村娘Ａ = talent:165（yml/Talent.yml id 165）
@@ -173,8 +168,8 @@ async function enter_enemy(arg0 = 0, rand) {
   // 狂王出现（无条件）
   await k_34_crazylord(rand_n);
 
-  // 被注释掉的旗标段（フラグ確保 / 今いるキャラのフラグを消す），
-  // 1:1 保持注释状态、不移植
+  // 被注释掉的旗标段（フラグ確保 / 今いるキャラのフラグを消す）保持
+  // 注释状态、不移植
 
   // キャラが多すぎる場合中断（六分支）
   if (chara_cap_reached()) {
@@ -421,8 +416,8 @@ async function k_34_crazylord(rand_n) {
   const name = era.get(`callname:${a}:-1`) ?? '';
   chara(a).chara.加入时名字 = name; // CSTR:A:1
 
-  // 性别设定（FLAG:500 狂王性别：1 女性 / 0·2 扶她；其他值不写
-  // ——原作 IF 无 else，1:1 保留）
+  // 性别设定（FLAG:500 狂王性别：1 女性 / 0·2 扶她；IF 无 else，其他值
+  // 不写）
   const gender = era.get('flag:500') || 0; // FLAG:500 狂王性别
   if (gender === 1) {
     chara(a).chara.扶她 = 0; // TALENT:A:121

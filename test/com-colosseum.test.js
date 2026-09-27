@@ -13,8 +13,9 @@
  *   - @COM201 真身：压制/反击两支、助手退却、凌辱菜单（选项条件/收入/
  *     暂时放过）；
  *   - @COM202-206 真身：五体的开战损耗/败北线/追加伤害/收入倍率（对照
- *     手算真值表）、体力枯竭折减、失神支、999 的两型出口（COM206 缺
- *     RETURN 0）、COM206 的扩张经验、射精检查的全部分档与旗标；
+ *     手算真值表）、体力枯竭折减、失神支、999 暂时放过统一回合作废
+ *     （COM206 与另四体一致）、COM206 的扩张经验、射精检查的全部分档与
+ *     旗标；
  *   - @COM207 真身：无失神判定、JUMP COM51 的尾调用形态；
  *   - train-loop 的 RETURN 0 语义（#230 落地）：回合作废、不结算、PREVCOM
  *     不推进。
@@ -713,7 +714,7 @@ test('@COM202 失神中（TFLAG:899）：战斗点再高也走败北支且无追
   assert.equal(fixture.store.get('deltabase:31:0'), -5, '无追加伤害');
 });
 
-test('@COM202 999 暂时放过 → RETURN 0；@COM206 缺 RETURN 0 → RETURN 1（#14 第七批）', async () => {
+test('@COM202/206 999 暂时放过 → 一律 RETURN 0（整条指令作废）', async () => {
   const first = seed_colosseum_world();
   first.fixture.store.set('tequip:31:55', 1);
   first.era_flag.selectcom = 202;
@@ -727,17 +728,17 @@ test('@COM202 999 暂时放过 → RETURN 0；@COM206 缺 RETURN 0 → RETURN 1�
   sixth.fixture.set_inputs(999);
   assert.equal(
     await sixth.com_family.call(206),
-    1,
-    '999 后照走射精检查并 RETURN 1（源缺 RETURN 0，1:1）',
+    0,
+    '巨魔的 999 与另四体一致：放过即作废，不结算怪物射精',
   );
-  // SELECTCOM 仍是 206 → 射精量 B 归零、TFLAG:15 = 0（E = 0 档）
+  // 作废即不收射精检查：TFLAG:15 不写、SELECTCOM 停在 206
   assert.equal(sixth.era_flag.selectcom, 206);
-  assert.equal(sixth.fixture.store.get('tflag:15'), 0);
+  assert.equal(sixth.fixture.store.get('tflag:15'), undefined, '射精旗标不写');
 });
 
-test('@COM204 的陷落行是 PRINTL（无等待）——其余四体 PRINTW', async () => {
-  // 可观测面：fixture.waits 逐次记录 waitAnyKey；204 的败北倒地段比 202
-  // 少一次等待（＜奴隶陷落＞行不等键）
+test('@COM204 的陷落行与其余四体一致：PRINTW（等键）', async () => {
+  // 可观测面：fixture.waits 逐次记录 waitAnyKey。败北 + 倒地支的场景恰 3 次
+  // 等键（败北追加行 / 倒地支行 / ＜奴隶陷落＞行）——陷落行删等键会掉到 2。
   const run = async (com) => {
     const world = seed_colosseum_world();
     world.fixture.store.set('tequip:31:55', 1);
@@ -748,8 +749,8 @@ test('@COM204 的陷落行是 PRINTL（无等待）——其余四体 PRINTW', a
   };
   const waits_202 = await run(202);
   const waits_204 = await run(204);
-  assert.ok(waits_202 > 0, '202 的战斗文本有等待（PRINTW 系）');
-  assert.equal(waits_204, waits_202 - 1, ':35 PRINTL ＜奴隶陷落＞ 不等键');
+  assert.equal(waits_202, 3, ':35 ＜奴隶陷落＞ 行 PRINTW（202 同形对照）');
+  assert.equal(waits_204, 3, ':35 ＜奴隶陷落＞ 行 PRINTW（五体统一等键）');
 });
 
 test('@COM206 拡張経験：背后位/肛交的初回异常经验与扩张经验（门面写）', async () => {

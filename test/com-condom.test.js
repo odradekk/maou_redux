@@ -122,19 +122,24 @@ test('TARGET < 1（魔王自己是对象）→ RETURN 1，不开画面', async (
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('画面：标题 + 当前设定行（值为空，LOCALS 缺陷的 1:1）+ 分隔线 + 四键，[9] 返回', async () => {
+test('画面：标题 + 当前设定行（跟随 CFLAG:61 档位）+ 分隔线 + 四键，[9] 返回', async () => {
+  for (const [cflag61, label] of [
+    [0, '现在：每次都问'],
+    [1, '现在：有套就用'],
+    [2, '现在：每次都直接来，来个痛快'],
+  ]) {
+    const { fixture, condom } = seed_world();
+    fixture.store.set('cflag:31:61', cflag61);
+    fixture.set_inputs(9);
+    const result = await condom.condom_settings();
+    assert.equal(result, 0);
+    const lines = fixture.text_lines();
+    assert.ok(lines.includes('和温妮做爱要戴套吗？'));
+    assert.ok(lines.includes(label), `CFLAG:61 = ${cflag61} 的档位标签`);
+  }
   const { fixture, condom } = seed_world();
   fixture.set_inputs(9);
-  const result = await condom.condom_settings();
-  assert.equal(result, 0);
-  const lines = fixture.text_lines();
-  assert.ok(lines.includes('和温妮做爱要戴套吗？'));
-  // 的 %LOCALS:(CFLAG:61)% 恒空——整行在、值空（#14 已登记不修）
-  assert.ok(lines.includes('现在：'), '行在');
-  assert.ok(
-    !lines.some((t) => /^现在：.+/.test(t)),
-    '值为空：LOCALS 是函数级局部数组，本函数零写点',
-  );
+  await condom.condom_settings();
   const buttons = fixture.lines
     .filter((line) => line.type === 'button')
     .map((b) => [b.accelerator, b.text]);
@@ -146,14 +151,12 @@ test('画面：标题 + 当前设定行（值为空，LOCALS 缺陷的 1:1）+ �
   ]);
 });
 
-test('当前设定行与 CFLAG:61 无关（值恒空——反向变异 M870 的宿主）', async () => {
+test('当前设定行跟随 CFLAG:61：档位标签与按钮措辞一一对应', async () => {
   const { fixture, condom } = seed_world();
   fixture.store.set('cflag:31:61', 1);
   fixture.set_inputs(9);
   await condom.condom_settings();
-  const lines = fixture.text_lines();
-  assert.ok(lines.includes('现在：'), '行在');
-  assert.ok(!lines.some((t) => /^现在：.+/.test(t)), '仍为空值');
+  assert.ok(fixture.text_lines().includes('现在：有套就用'));
 });
 
 test('[0]/[1]/[2] 各写 CFLAG:61 并回显确认行', async () => {

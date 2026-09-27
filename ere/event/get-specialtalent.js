@@ -14,17 +14,17 @@
  *     （`talentname:n`/`ex_talentname(n)`），不硬编码中文标签——原作即是
  *     数据驱动查表，硬编码等于另开一份可能与 `yml/Talent.yml` 漂移的
  *     真相源；
- *   - **`:719-734`（闘姫の修得，`EXP:76 → TALENT:188`）是原作死代码**：
- *     紧邻的上一句 `:714-716` 是无条件 `CALL CHECK_SPECIALSKIL_BODYSHIFT`
- *     + `RETURN 0`（`grep -n` 核对过其上全部 IF/ENDIF 均已闭合，两行是
- *     顶层无条件语句），此后的闘姫判定永远执行不到；全库唯一给
- *     `TALENT:188` 赋值的地方就是这段死代码，「争斗女王」素质因此在原作
- *     里事实上从未被授予。移植不构造这段不可达逻辑（同 issue #14 已登记
- *     的 `END31`/`KOJO_EVENT_COM` 同类死代码处置口径：不实现，登记说明）；
+ *   - **闘姫の修得段（`EXP:76 → TALENT:188`）是死代码**：它紧邻的上一句是
+ *     无条件 `CALL CHECK_SPECIALSKIL_BODYSHIFT` + `RETURN 0`（核对过其上
+ *     全部 IF/ENDIF 均已闭合，两行是顶层无条件语句），此后的闘姫判定永远
+ *     执行不到；全库唯一给 `TALENT:188` 赋值的地方就是这段死代码，「争斗
+ *     女王」素质因此在旧实现里事实上从未被授予。移植不构造这段不可达
+ *     逻辑（与 `END31`/`KOJO_EVENT_COM` 同类死代码处置口径一致：不实现，
+ *     登记说明）；
  *   - `PRECIPITATE_WITHDRAWAL_BE_A_WRECK` 式的「门槛与生效素质错位」在本
  *     文件不存在，但**「強化素質」段的 101/103 两个移除走 PRINTFORMW（等
- *     键），105/107 两个走 PRINTFORM（不等键）**——原作字面量如此，逐字
- *     保留这一不对称；
+ *     键），105/107 两个走 PRINTFORM（不等键）**——字面量如此，保留这一
+ *     不对称；
  *   - CFLAG:9 之外没有其他跨函数残留依赖，TARGET 全部显式改成 `cid` 参数
  *     （issue #5 决议第 6 条：函数内部一律参数化，不读全局角色指针）。
  */
@@ -118,10 +118,9 @@ function remove_dislike_talents_20_21(cid) {
 }
 
 /**
- * 【压抑(32)】【抵抗(34)】【嫉妒(84)】的组合消失渲染（:166-184 / :570-588
- * 同形两处）。**原作 bug 逐字保留**：TALENT:84 分支打印的是
- * `%TALENTNAME:32%`（压抑）而非 84 号自身的名字——两处出处一致，非本
- * 项目误读，照抄不改。
+ * 【压抑(32)】【抵抗(34)】【嫉妒(84)】的组合消失渲染。84 号分支打印
+ * 84 号自身的名字——与移除的素质一致（#650 修复：原先误打印 32 号的
+ * 名字「压抑」）。
  */
 function remove_dislike_talents_32_34_84(cid) {
   if (talent(cid, 32) || talent(cid, 34) || talent(cid, 84)) {
@@ -135,7 +134,7 @@ function remove_dislike_talents_32_34_84(cid) {
       set_talent(cid, 34, 0);
     }
     if (talent(cid, 84)) {
-      line += `【${talent_name(32)}】`; // 原作 bug：应为 talent_name(84)
+      line += `【${talent_name(84)}】`;
       set_talent(cid, 84, 0);
     }
     era.print(`${line}失去了。`);

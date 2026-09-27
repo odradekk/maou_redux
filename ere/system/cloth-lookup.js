@@ -22,16 +22,12 @@
  * **#397（N13）已随 @TAILOR_CORE 落地**——三处都按「名字 → 动词」的
  * 渲染序取本函数的返回值（页面上即「日常服装……脱下了。」）。
  *
- * == 与 PRINT 版的两处表差（1:1 保留，不做合并重构） ==
+ * == 与 PRINT 版的表差（两张表各自落地，不做合并重构） ==
  *
- * - @GET_CLOTHTYPE_MAIN2 缺 CASE 9（胸甲＆透视裙子）：PRINT 版有，GET 版
- *   落 CASEELSE「服」——两函数是独立拷贝（GET 版头部注着 ;REF），差异
- *   原样登记进 #14（原作缺陷第若干批），ere 不合并两张表。
- * - @GET_CLOTHTYPE_SPECIAL 的 CASE 98/99 用 PRINT 不赋 LOCALS，且文本是
- *   未汉化的繁体（「神秘的導尿管」「附加導尿管神秘的貞操帯」；PRINT 版
- *   是简体「神秘的尿道导管」「附有神秘尿道导管的贞操带」）。ere 侧按
- *   #60（玩家可见文本一律简体）取 PRINT 版的简体名；繁体残留与 PRINT/
- *   LOCALS 混用两处均登记 #14。
+ * - @GET_CLOTHTYPE_MAIN2 曾缺 CASE 9（胸甲＆透视裙子），9 号会落 CASEELSE
+ *   「服」；现已按 PRINT 版同名补登。两表仍是独立维护的两份拷贝。
+ * - @GET_CLOTHTYPE_SPECIAL 的 CASE 98/99 取 PRINT 版的简体名（简体规则
+ *   #60；两号在 PRINT 版的旧文本是未汉化的繁体）。
  */
 
 'use strict';
@@ -49,8 +45,8 @@ function cloth_special_type(cid) {
 }
 
 /**
- * @GET_CLOTHTYPE_MAIN2 的名字表（:716-886 逐字；**缺 CASE 9**——见文件头，
- * 9 号落 CASEELSE「服」，与 PRINT 版的差异 1:1 保留）。键 = CFLAG:41。
+ * @GET_CLOTHTYPE_MAIN2 的名字表（:716-886 逐字；9 号已按 PRINT 版补登，
+ * 未知编号落 CASEELSE「服」）。键 = CFLAG:41。
  */
 const MAIN2_TABLE = {
   0: '全裸',
@@ -62,6 +58,7 @@ const MAIN2_TABLE = {
   6: '胸甲＆裙子',
   7: '尖刺铠＆裙子',
   8: '乳贴＆迷你短裙铠甲',
+  9: '胸甲＆透视裙子',
   17: '高中制服',
   18: '初中制服',
   19: '水手服',
@@ -204,7 +201,7 @@ function get_clothtype_main2(cid, verb = '') {
  * @GET_CLOTHTYPE_SPECIAL（:998-1109）。
  * @param {number} cid 角色 ID（原作 L_A，缺省 TARGET 的显式化）
  * @returns {string} 特别服装名（未知编号 → 'ERROR'，CASEELSE :1105-1106
- *   的 RETURNF "ERROR" 哨兵 1:1 保留——AFTERTRAIN_CLOTH 等消费方以空串
+ *   的 RETURNF "ERROR" 哨兵——AFTERTRAIN_CLOTH 等消费方以空串
  *   判定，ERROR 与未装备的区分由调用方自理）
  */
 function get_clothtype_special(cid) {

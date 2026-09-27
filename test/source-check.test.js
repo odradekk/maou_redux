@@ -2575,24 +2575,30 @@ test('气力 0 损耗结算：Block B 写入的 deltabase 经 :2773-2774 当场�
   );
 });
 
-test('PALAM_UP_CHECK_MINI：原作缺失 UPCOUNT==15 分支——UPID 14 结算两次、UPID 15 永不写回（原作缺陷，登记 issue #14）', async () => {
+test('PALAM_UP_CHECK_MINI：UPID 14 单次结算、UPID 15 照常写回（#14 缺陷已修）', async () => {
   const fixture = await run_auto_check((f) => {
-    f.store.set('delta:31:14', 100); // 乳房快乐：验证双重结算
+    f.store.set('delta:31:14', 100); // 乳房快乐：验证单次结算
     f.store.set('delta:31:13', 50); // 抑郁：不在 AUTO_NUM_CHECK 处理范围内的单次基线
     f.store.set('source:31:18', 90); // SOURCE_CHECK_UP_FREE 的输入 → UP:15
   });
   // UP:14 经 Block A（BASE:1>0，跳过）与 AUTO_NUM_CHECK（×1.25）后为 125；
-  // MINI 的 ORDER 数组含两次 14（UPCOUNT=3 与缺陷版 UPCOUNT=15），各自累计一次
+  // MINI 的 ORDER 与完整版一致（14 在第 4 位、15 收尾），各自单次结算
   assert.equal(
     fixture.store.get('palam:31:14'),
-    Math.floor(100 * 1.25) * 2,
-    'UPID 14 因原作缺陷被结算两次',
+    Math.floor(100 * 1.25),
+    'UPID 14 只结算一次',
   );
   assert.equal(fixture.store.get('palam:31:13'), 50, 'UPID 13：单次结算基线');
+  // UP:15 不在 AUTO_NUM_CHECK 的乘算范围内（跳过 11-13/15-16），保持 90
   assert.equal(
     fixture.store.get('palam:31:15'),
-    undefined,
-    'UPID 15：ORDER 数组不含 15，UP:15=90 非零也永不写回',
+    90,
+    'UPID 15：ORDER 末位收 15，UP:15=90 写回一次',
+  );
+  assert.equal(
+    fixture.store.get('delta:31:15'),
+    0,
+    'UPID 15 结算后 delta 清零，不残留到引擎 nextTurnInTrain',
   );
 });
 
