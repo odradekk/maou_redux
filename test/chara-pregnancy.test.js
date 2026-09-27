@@ -279,14 +279,14 @@ test('胸部升档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六�
   }
 });
 
-test('胸部降档覆盖超乳不退的原作缺陷及其余五种状态', () => {
+test('胸部降档覆盖绝壁、贫乳、普通、巨乳、爆乳与超乳六种状态', () => {
   const cases = [
     ['绝壁', '绝壁'],
     ['贫乳', '贫乳'],
     [undefined, '贫乳'],
     ['巨乳', undefined],
     ['爆乳', '巨乳'],
-    ['超乳', '超乳'],
+    ['超乳', '爆乳'],
   ];
 
   for (const [before, after] of cases) {
@@ -837,16 +837,20 @@ test('同一预设连续生成两个后代不覆盖，种族字段使用 319/321
   assert.equal(fixture.store.get(`talent:${first}:160`), 1);
 });
 
-test('近卫随机下界保留原作缺陷：模板 200 不存在时明确失败', async () => {
-  const fixture = create_era_fixture();
-  const { gb_add_guard } = fixture.load_module('chara/chara-pregnancy');
-
-  await assert.rejects(
-    gb_add_guard(0, -2, seq([0])),
-    /后代预设角色 200 不存在/,
-  );
+test('近卫后代随机模板覆盖 201–211 全部预设', async () => {
+  for (let roll = 0; roll <= 10; roll += 1) {
+    const fixture = create_era_fixture();
+    add_chara(fixture, 0, '魔王');
+    const source = 201 + roll;
+    fixture.seed_chara(source, { name: '后代模板' });
+    const child = await fixture
+      .load_module('chara/chara-pregnancy')
+      .gb_add_guard(0, -2, seq([roll, ...new Array(300).fill(0)]));
+    assert.equal(child, 120000 + roll * 100, `模板 ${source}`);
+    assert.equal(fixture.store.get(`ex_talent:${child}:1`), 1, '近卫后代');
+    assert.equal(fixture.store.get(`ex_talent:${child}:2`), 1, '后代');
+  }
 });
-
 test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级两侧', async () => {
   const cases = [
     {
@@ -871,6 +875,13 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
       level: 7,
     },
     {
+      mother: 211,
+      father: 0,
+      rolls: new Array(300).fill(0),
+      child: 121000,
+      level: 7,
+    },
+    {
       mother: 17,
       father: 0,
       rolls: new Array(300).fill(0),
@@ -888,7 +899,7 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
       mother: 0,
       father: -2,
       rolls: [1, ...new Array(300).fill(0)],
-      child: 120000,
+      child: 120100,
       level: 7,
     },
   ];
@@ -902,7 +913,7 @@ test('近卫生成覆盖随机、普通、精英模板及双亲替身和等级�
         fixture.store.set(`cflag:${spec.mother}:9`, 10);
       }
     }
-    fixture.seed_chara(spec.child === 120000 ? 201 : 1, { name: '后代模板' });
+    fixture.seed_chara((spec.child - 100000) / 100 + 1, { name: '后代模板' });
     if (spec.father !== -4) fixture.store.set('cflag:0:9', 10);
 
     const child = await fixture
@@ -940,6 +951,7 @@ test('普通后代生成覆盖普通、精英、随机模板及父亲有无的�
       level: 8,
     },
     { mother: 201, father: 2, child: 120000, source: 201, level: 10 },
+    { mother: 211, father: 2, child: 121000, source: 211, level: 10 },
     { mother: 17, father: -1, child: 100000, source: 1, level: 7 },
     { mother: 2, father: 0, child: 100100, source: 2, level: 1 },
   ];
@@ -955,8 +967,7 @@ test('普通后代生成覆盖普通、精英、随机模板及父亲有无的�
       fixture.store.set(`cflag:${spec.mother}:9`, 10);
     }
     if (spec.father > 0) fixture.store.set(`cflag:${spec.father}:9`, 20);
-    chara_view(fixture, spec.mother).invasion.状态 =
-      spec.mother === 201 ? 9 : 0;
+    chara_view(fixture, spec.mother).invasion.状态 = spec.mother >= 201 ? 9 : 0;
 
     const child = await fixture
       .load_module('chara/chara-pregnancy')
@@ -970,11 +981,11 @@ test('普通后代生成覆盖普通、精英、随机模板及父亲有无的�
     assert.equal(fixture.store.get(`talent:${child}:314`), 5);
     assert.equal(
       fixture.store.get(`talent:${child}:322`),
-      spec.source === 201 ? 201 : spec.mother === 2 ? 0 : 8,
+      spec.source >= 201 ? spec.source : spec.mother === 2 ? 0 : 8,
     );
     assert.equal(
       chara_view(fixture, child).invasion.状态,
-      spec.mother === 201 ? 2 : 0,
+      spec.mother >= 201 ? 2 : 0,
     );
     assert.equal(fixture.store.get(`cflag:${child}:9`), spec.level);
   }
@@ -1289,6 +1300,37 @@ test('正常生产覆盖父亲解析、父性觉醒、处女膜与异常部位�
   }
 });
 
+test('生产文案的异常部位按生产角色取值：魔王无异常时照常打印母亲的部位', async () => {
+  {
+    const fixture = create_era_fixture();
+    const view = prepare_birth(fixture, 3, 10);
+    view.chara.乳内妊娠 = 1;
+    await fixture
+      .load_module('chara/chara-pregnancy')
+      .ninsin_reach_day(1, seq([]));
+    assert.ok(
+      fixture.lines_history.some((line) =>
+        line.text?.includes('平安的从巨大的乳房中生下了'),
+      ),
+      '正常生产分支取母亲的异常妊娠部位',
+    );
+  }
+  {
+    const fixture = create_era_fixture();
+    const view = prepare_birth(fixture, -3, 2);
+    view.chara.口内妊娠 = 1;
+    await fixture
+      .load_module('chara/chara-pregnancy')
+      .ninsin_reach_day(1, seq(new Array(40).fill(0)));
+    assert.ok(
+      fixture.lines_history.some((line) =>
+        line.text?.includes('发现自己在昏迷时从巨大的腹中，通过口腔生下了孩子'),
+      ),
+      '地下城生产分支取母亲的异常妊娠部位',
+    );
+  }
+});
+
 test('直接生产分派覆盖角色上限的魔王与普通角色、近卫、怪物和奴隶', async () => {
   for (const mother of [0, 1]) {
     const fixture = create_era_fixture();
@@ -1425,9 +1467,10 @@ test('端到端：怪物妊娠从发觉、临月推进到生产并清理状态',
   assert.equal(fixture.store.get('maxbase:1:0'), 1000);
   assert.ok(
     fixture.lines_history.some(
-      (line) => line.text === '母亲平安的生下了怪物的孩子。',
+      (line) =>
+        line.text === '母亲平安的从巨大的腹中，通过肛门生下了怪物的孩子。',
     ),
-    '原作 CALL CHILD_BIRTH_PLACE 漏传参数，非魔王的异常生产部位不会出现',
+    '异常妊娠部位文案按生产角色打印',
   );
 });
 

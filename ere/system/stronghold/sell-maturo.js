@@ -131,12 +131,12 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
             ending = '脱粪肥料装置';
           }
         } else if (route == 0) {
-          // 原作行 111 把超乳（119）写了两次、没有检查扶她（121）；按 1:1 保留。
+          // TALENT 110/114/119/121 = 巨乳/爆乳/超乳/扶她：任一成立走奶罐末路。
           if (
             era.get(`talent:${cid}:110`) == 1 ||
             era.get(`talent:${cid}:114`) == 1 ||
             era.get(`talent:${cid}:119`) == 1 ||
-            era.get(`talent:${cid}:119`) == 1
+            era.get(`talent:${cid}:121`) == 1
           ) {
             await era.printAndWait(
               `反抗心很强的${target_name}被当作奶罐被饲养着畜舍里。`,

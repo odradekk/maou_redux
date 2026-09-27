@@ -1,6 +1,6 @@
 // issue #338：成熟奴隶黑市末路与口上接线（M7600-M7699）。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 73; // #640 -1（M7665 随输出比对工具删除）
+export const COUNT = 73; // #640 -1（M7665 随输出比对工具删除）；#653 -1 +1（删反向变异 M7650：代词已改为跟随出售对象，新增 M13256 守卫）
 
 const code = 'ere/system/stronghold/sell-maturo-k0.js';
 const make = (id, desc, find, replace, must_mention) => ({
@@ -360,13 +360,6 @@ export default [
     '保存录像标题',
   ),
   make(
-    7650,
-    '无参 SHE 错读出售对象',
-    '以恶毒性虐者而闻名的地方领主，将${she(0)}买下带到肉联厂去了。`,\n            ); // 源行 168',
-    '以恶毒性虐者而闻名的地方领主，将${she(cid)}买下带到肉联厂去了。`,\n            ); // 源行 168',
-    '原作无参 SHE',
-  ),
-  make(
     7651,
     '反抗非魔族十万边界抬高',
     'if (price >= 100000) {\n        // 源行 187',
@@ -529,6 +522,15 @@ export default [
       replace: '      // 变异：成熟出售真身调用丢失',
       tests: ['sell-maturo'],
       must_mention: '14 个活动口上的成熟出售事件均进入市场真身',
+    },
+    {
+      desc: 'M13256 代词改回跟随 0 号角色（魔王为男性时出售对象被称「他」）',
+      file: 'ere/system/stronghold/sell-maturo-k0.js',
+      find: '              `${she(cid)}的手肘及膝盖以下都被切除，换成金属的替代品。`,',
+      replace:
+        '              `${she(0)}的手肘及膝盖以下都被切除，换成金属的替代品。`,',
+      tests: ['sell-maturo'],
+      must_mention: '反抗刻印路线覆盖五次随机调用的两侧与全部特殊路由',
     },
   ],
 ];

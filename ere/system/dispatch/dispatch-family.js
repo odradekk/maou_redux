@@ -24,9 +24,9 @@
  * TRYCALL 落空时 RESULT = 0 的缺省，调用点应按原作各自显式给值。
  *
  * 【命名例外】declaredIds / whenMissing 保持 camelCase 而非仓库的 snake_case
- * 约定：接口形状由 #7 决议定死、验收清单原文照抄，且决议中各子系统的迁移
- * 示例（kojo / COM_ABLE / CHARA_EX）都以该拼写成文——公共底座的名字必须
- * 与决议逐字一致，避免十七个子系统照抄示例时对不上。
+ * 约定：接口形状由 #7 决议定死，且决议中各子系统的迁移示例（kojo /
+ * COM_ABLE / CHARA_EX）都以该拼写成文——公共底座的名字必须与决议一致，
+ * 避免各子系统按示例迁移时对不上。
  */
 
 /**
@@ -61,9 +61,8 @@ class DispatchFamily {
    * @param {number} id 编号，必须在声明空间内
    * @param {Function} fn 实现，参数由 call 的 args 透传，返回值经 await 交回
    * @throws {Error} 编号在声明空间外（拼写错误）
-   * @throws {Error} 重复注册同一编号。原作的真实事故（#14）：23 个口上函数
-   *   被同名定义悄悄遮蔽，引擎只给一条警告，玩家侧表现为口上完全失效——
-   *   本项目要让它在启动（模块加载）时就炸出来
+   * @throws {Error} 重复注册同一编号——重号会让后一次注册悄悄遮蔽前一次，
+   *   玩家侧表现为整族口上失效；必须启动（模块加载）期即报
    */
   register(id, fn) {
     if (typeof fn !== 'function') {
@@ -75,9 +74,7 @@ class DispatchFamily {
       );
     }
     if (this.implemented.has(id)) {
-      throw new Error(
-        `${this.name}[${id}] 重复注册（#14：原作同名遮蔽缺陷，本项目启动期即报）`,
-      );
+      throw new Error(`${this.name}[${id}] 重复注册（同名遮蔽，启动期即报）`);
     }
     this.implemented.set(id, fn);
   }

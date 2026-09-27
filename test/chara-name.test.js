@@ -273,50 +273,26 @@ test('cn_rebuild：逐个角色以姓名重建称呼，跳过 MASTER（0）', ()
   );
 });
 
-// —— @NID_FINDCHARAS（:236-250）——
-
-test('nid_findcharas：首个同 NID 角色；无命中时被哨兵 -1 顶走（原作 :241/:249 的合力）', () => {
-  const fixture = create_era_fixture();
-  for (const cid of [4, 6, 9]) {
-    fixture.seed_chara(cid, {
-      id: cid,
-      name: `名${cid}`,
-      callname: `名${cid}`,
-    });
-    fixture.era.addCharacter(cid);
-  }
-  fixture.store.set('cflag:4:6', 11);
-  fixture.store.set('cflag:6:6', 22);
-  fixture.store.set('cflag:9:6', 11); // 与 4 同 NID
-  const { nid_findcharas } = load(fixture);
-  assert.equal(nid_findcharas(11), 4, '升序集合里的首个同 NID 角色');
-  assert.equal(nid_findcharas(22), 6);
-  // VARSET RESULT 清零后 :249 的 -1 落在第 0 格 → 返回值就是 -1，不是 0
-  assert.equal(nid_findcharas(999), -1, '无命中时哨兵顶到 RESULT:0');
-});
-
 // —— @NID_GET_TYPE（:255-265；#384 起真身在本文件）——
 
-test('nid_get_type：三档分界与 [2000,3000) 的重叠缺陷', () => {
+test('nid_get_type：三档分界与男性和名/中式名的和名归位', () => {
   const fixture = create_era_fixture();
   const { nid_get_type } = load(fixture);
   const cases = [
     ['组合名（> 1e9）', 1_000_000_001, 2],
-    ['组合名边界 1e9 走非组合支', 1_000_000_000, 1],
+    ['组合名边界 1e9 走非组合支（≥3000 归和名）', 1_000_000_000, 0],
     ['和名下界 200', 200, 0],
     ['和名下界前一格 199 → 洋名', 199, 1],
     ['和名上界 999', 999, 0],
     ['1000 → 洋名（与和名区间重叠，先中者胜）', 1000, 1],
     ['1999 → 洋名', 1999, 1],
-    ['2000 → 洋名（缺陷：男性向和名编号 2000-2999 落此）', 2000, 1],
-    ['2999 → 洋名（同缺陷）', 2999, 1],
-    [
-      '3000 → 洋名（缺陷：:261 的 >= 2000 先命中，:263 的 >= 3000 够不着）',
-      3000,
-      1,
-    ],
-    ['3999 → 洋名（同缺陷）', 3999, 1],
-    ['4000 → 洋名（男性向和名实际终点）', 4000, 1],
+    ['2000 → 洋名（男性洋名 [2000,2453)）', 2000, 1],
+    ['2999 → 洋名', 2999, 1],
+    ['3000 → 和名（男性和名起点）', 3000, 0],
+    ['3999 → 和名', 3999, 0],
+    ['4058 → 和名（男性和名终点 3000+1059-1）', 4058, 0],
+    ['4500 → 和名（中式名起点）', 4500, 0],
+    ['5288 → 和名（中式名终点 4500+789-1）', 5288, 0],
     ['负数 NID → 洋名（:260 的 < 200 侧）', -1, 1],
   ];
   for (const [label, nid, expected] of cases) {

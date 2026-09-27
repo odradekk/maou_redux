@@ -430,36 +430,34 @@ test('CHAR_AGE_GENERATE：取点表 RAND:17 的 17 个落点（权重 1,3,9,3,1�
   }
 });
 
-test('CHAR_AGE_GENERATE：家族年龄约束按成员角色号 1-8 分档（原作判据如此）', () => {
-  // 原作 :216-223 比较的是 L_B（成员角色号），不是关系码——表里每条都用
-  // 同一种关系码（兄），只有角色号能解释结果差异。
+test('CHAR_AGE_GENERATE：家族年龄约束按关系码分档（兄姊取小、弟妹取大、父母压 6、儿女抬 6）', () => {
   const cases = [
-    [1, 9, 9, '角色 1（兄档）：MIN 到成员年龄 9'],
-    [2, 9, 9, '角色 2（姊档）：MIN 到成员年龄 9'],
-    [3, 25, 25, '角色 3（弟档）：MAX 到成员年龄 25'],
-    [4, 25, 25, '角色 4（妹档）：MAX 到成员年龄 25'],
-    [5, 8, 10, '角色 5（父档）：MIN(18, 8-6) 后抬到下限 10'],
-    [6, 8, 10, '角色 6（母档）：同上'],
-    [5, 20, 14, '角色 5（父档）：MIN(18, 20-6) = 14（年龄差 6 的判据）'],
-    [6, 20, 14, '角色 6（母档）：同上'],
-    [5, 40, 18, '角色 5（父档）：成员年龄 40 → MIN(18, 34) 不变'],
-    [7, 20, 26, '角色 7（儿档）：MAX 到成员年龄 + 6'],
-    [8, 20, 26, '角色 8（娘档）：MAX 到成员年龄 + 6'],
-    [9, 40, 18, '角色 9 不在 1-8 内：任何约束都不命中'],
+    [1, 9, 9, '关系 1（兄）：MIN 到成员年龄 9'],
+    [2, 9, 9, '关系 2（姊）：MIN 到成员年龄 9'],
+    [3, 25, 25, '关系 3（弟）：MAX 到成员年龄 25'],
+    [4, 25, 25, '关系 4（妹）：MAX 到成员年龄 25'],
+    [5, 8, 10, '关系 5（父）：MAX(10, MIN(18, 8-6)) = 10'],
+    [6, 8, 10, '关系 6（母）：同上'],
+    [5, 20, 14, '关系 5（父）：MIN(18, 20-6) = 14（年龄差 6 的判据）'],
+    [6, 20, 14, '关系 6（母）：同上'],
+    [5, 40, 18, '关系 5（父）：成员年龄 40 → MIN(18, 34) 不变'],
+    [7, 20, 26, '关系 7（儿）：MAX 到成员年龄 + 6'],
+    [8, 20, 26, '关系 8（娘）：MAX 到成员年龄 + 6'],
+    [9, 40, 18, '关系码 9 不在 1-8 内：任何约束都不命中'],
   ];
-  for (const [member, member_age, expected, label] of cases) {
+  for (const [relation, member_age, expected, label] of cases) {
     const { fixture, char_age_generate } = age_fixture();
     fixture.store.set('talent:21:0', 1); // 关掉处女修正：中值 17
     fixture.store.set('talent:21:99', 1); // 魁梧 +1 → 18
     add_chara(fixture, 21, '对象');
-    add_chara(fixture, member, `成员${member}`);
-    fixture.store.set(`cflag:${member}:451`, member_age); // 成员的年龄
+    add_chara(fixture, 31, '成员');
+    fixture.store.set('cflag:31:451', member_age); // 成员的年龄
     const family = fixture.load_module('chara/chara-family');
-    family.rf_set_both(21, member, 1); // 关系码恒为 1（兄），差异只看角色号
+    family.rf_set_both(21, 31, relation); // 关系码分档，成员号恒为 31
     assert.equal(
       char_age_generate(21, seq([7]))[0],
       expected,
-      `成员 ${member}（年龄 ${member_age}）：${label}`,
+      `关系码 ${relation}（成员年龄 ${member_age}）：${label}`,
     );
   }
 });

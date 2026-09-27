@@ -174,24 +174,48 @@ test('SALE_CHARA：精英或近卫出售会扣除威望', async () => {
   }
 });
 
-test('SALE_CHARA：据点不创建调教表，零价确认仍增加威望', async () => {
+test('SALE_CHARA：据点不创建调教表，确认出售仍按估价增加威望', async () => {
   const fixture = create_era_fixture();
   join_slave_chara(fixture, 0, '你');
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
-  fixture.store.set('exp:31:74', 1); // 卖淫影响 2 首次估价读 E:74=0
   fixture.set_inputs(0);
 
-  const { sale_chara } = fixture.load_module('system/stronghold/sale');
+  const { estimate_chara, sale_chara } = fixture.load_module(
+    'system/stronghold/sale',
+  );
+  const expected = estimate_chara(31, { prostitution_effect: 2 }).price;
+  assert.ok(expected > 0, '卖淫影响 2 的估价不再被卖淫经验归零');
+
   assert.equal(
     await sale_chara(31, { prostitution_effect: 2, rand: seq([0]) }),
-    0,
+    expected,
   );
   assert.equal(fixture.store.get('exflag:99'), 5);
   assert.deepEqual(fixture.era.getCharactersInTrain(), []);
   assert(!fixture.calls.some(({ api }) => api === 'beginTrain'));
   assert(!fixture.calls.some(({ api }) => api === 'endTrain'));
+});
+
+test('SALE_CHARA：零价确认仍结算威望，但不送别也不除名', async () => {
+  const fixture = create_era_fixture();
+  join_slave_chara(fixture, 0, '你');
+  join_slave_chara(fixture, 31, '温妮');
+  const era_flag = fixture.load_module('era-utils/era-flag');
+  era_flag.target = 31;
+  // 基础价 10（欲望零级）× 卖淫经验低档 40% × 素质 73 的 20% 恰好归零
+  fixture.store.set('cflag:31:0', 1);
+  fixture.store.set('base:31:0', 100);
+  fixture.store.set('exp:31:74', 1);
+  fixture.store.set('talent:31:73', 1);
+  fixture.set_inputs(31, 0, 999);
+
+  const { chara_sale } = fixture.load_module('system/stronghold/sale');
+  await chara_sale({ prostitution_effect: 0, rand: seq([0]) });
+  assert(fixture.era.getAddedCharacters().includes(31), '零价不除名');
+  assert.equal(fixture.store.get('exflag:99'), 5);
+  assert(fixture.text_lines().includes('温妮以0点卖掉了。'));
 });
 
 test('SALE_CHARA：调教外事件码能抵达角色出售口上', async () => {
@@ -349,22 +373,26 @@ test('CHARA_SALE：所持金保留原作格式串中的字面量 $', async () =>
   assert(fixture.text_lines().includes('所持金：$100点'));
 });
 
-test('CHARA_SALE：零价确认仍结算威望，但不送别也不除名', async () => {
+test('CHARA_SALE：确认出售后送别、除名并结算威望', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('cflag:31:0', 1);
   fixture.store.set('base:31:0', 100);
-  fixture.store.set('exp:31:74', 1);
+  fixture.store.set('exp:31:74', 1); // 卖淫影响 2：经验不作用于估价
   fixture.set_inputs(31, 0, 999);
 
-  const { chara_sale } = fixture.load_module('system/stronghold/sale');
+  const { chara_sale, estimate_chara } = fixture.load_module(
+    'system/stronghold/sale',
+  );
+  const { price } = estimate_chara(31, { prostitution_effect: 2 });
+  assert.ok(price > 0, '估价不再被卖淫经验归零');
   await chara_sale({ prostitution_effect: 2, rand: seq([0]) });
 
-  assert(fixture.era.getAddedCharacters().includes(31));
+  assert(!fixture.era.getAddedCharacters().includes(31), '售出后除名');
   assert.equal(fixture.store.get('exflag:99'), 5);
-  assert(fixture.text_lines().includes('温妮以0点卖掉了。'));
+  assert(fixture.text_lines().includes(`温妮以${price}点卖掉了。`));
+  assert.equal(fixture.era.getAddedCharacters().length, 2, '送别不除名误伤');
 });
-
 test('CHARA_SALE：手输未显示的占用角色仍能出售', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);

@@ -3,8 +3,7 @@
  *
  * 原作 S = SALE_CHARA 算出的售价；独立调用时用 ESTIMATE_CHARA 重算。
  * 市场菜单的 1000 号输入翻转 EXFLAG:9000 第 2 位（水晶球录像开关）。
- * 原作 135 处无参 SHE() 会读取 0 号角色而非出售对象；按 #14 登记的缺陷
- * 1:1 保留为 she(0)，不顺手修正玩家可见代词。
+ * 代词一律按被出售角色（各函数实参 cid）的 TALENT:122 取「他/她」。
  *
  * 变量语义：MARK 下标 3 = 反抗刻印；CFLAG 下标 9 = 等级、605 = 压缩
  * 家族关系；ABL 下标 2/3/15 = 私处/肛门感觉/话术；TALENT 下标 75-77/
@@ -228,7 +227,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `本来只需要普通的鞭刑。但是，那位大人有另外的打算。`,
             ); // 源行 167
             await era.printAndWait(
-              `以恶毒性虐者而闻名的地方领主，将${she(0)}买下带到肉联厂去了。`,
+              `以恶毒性虐者而闻名的地方领主，将${she(cid)}买下带到肉联厂去了。`,
             ); // 源行 168
             await era.printAndWait(''); // 源行 169
             await era.printAndWait(`「你看，上等的肉哦？！看看这胸～」`); // 源行 170
@@ -247,10 +246,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `逃走失败的${target_name}被绑在手术台上，看来马上要进行什么变态的改造。`,
             ); // 源行 177
             await era.printAndWait(
-              `数小时后，${she(0)}的手脚都被截肢，弄成人棍了。`,
+              `数小时后，${she(cid)}的手脚都被截肢，弄成人棍了。`,
             ); // 源行 178
             await era.printAndWait(
-              `猎奇收藏家觉得不错，马上把${she(0)}买走了……`,
+              `猎奇收藏家觉得不错，马上把${she(cid)}买走了……`,
             ); // 源行 179
             ending = '生物标本'; // 源行 180
           } // 源行 181
@@ -382,7 +381,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `即将对${target_name}进行手术的男人笑着说。`,
             ); // 源行 262
             await era.printAndWait(
-              `${she(0)}的手肘及膝盖以下都被切除，换成金属的替代品。`,
+              `${she(cid)}的手肘及膝盖以下都被切除，换成金属的替代品。`,
             ); // 源行 263
             await era.printAndWait(
               `完全没有听到任何的抗议，因为舌头已经被拔掉了。`,
@@ -400,7 +399,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `即将为${target_name}进行手术的男人笑着说。`,
             ); // 源行 273
             await era.printAndWait(
-              `${she(0)}的四肢被齐根切除，以人棍的模样被做成了人肉椅子。`,
+              `${she(cid)}的四肢被齐根切除，以人棍的模样被做成了人肉椅子。`,
             ); // 源行 274
             await era.printAndWait(
               `舌头也被拔掉了，手脚则作为椅子的装饰被粘合在椅子上。`,
@@ -426,7 +425,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `本来只需要普通的鞭刑，但是，那位大人有另外的打算。`,
             ); // 源行 285
             await era.printAndWait(
-              `以恶毒性虐者而闻名的地方领主，将${she(0)}买下带到肉联厂去了。`,
+              `以恶毒性虐者而闻名的地方领主，将${she(cid)}买下带到肉联厂去了。`,
             ); // 源行 286
             await era.printAndWait(''); // 源行 287
             await era.printAndWait(`「你看，上等的肉哦？！看看这胸～」`); // 源行 288
@@ -445,10 +444,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `逃走失败的${target_name}被绑在手术台上，看来马上要进行什么变态的改造。`,
             ); // 源行 295
             await era.printAndWait(
-              `数小时后，${she(0)}的手脚都被截肢，弄成人棍了。`,
+              `数小时后，${she(cid)}的手脚都被截肢，弄成人棍了。`,
             ); // 源行 296
             await era.printAndWait(
-              `猎奇收藏家觉得不错，马上把${she(0)}买走了……`,
+              `猎奇收藏家觉得不错，马上把${she(cid)}买走了……`,
             ); // 源行 297
             ending = '生物标本'; // 源行 298
           } // 源行 299
@@ -533,7 +532,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `被主人买下的${target_name}每天晚上都被仔细地玩弄乳房，在床上不断娇喘着。`,
             ); // 源行 347
             await era.printAndWait(
-              `不过，${she(0)}在你身边的时候已经充分学会如何应对这种情况了。`,
+              `不过，${she(cid)}在你身边的时候已经充分学会如何应对这种情况了。`,
             ); // 源行 348
             await era.printAndWait(
               `作为被主人宠爱的宠物，${target_name}的生活还是过得比较幸福的。`,
@@ -560,7 +559,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为堕落神和神官长的近侍在神殿里工作着。`,
             ); // 源行 360
             await era.printAndWait(
-              `为了更好地供奉堕落神，神官长对${she(0)}的肛门进行了深度的调教。`,
+              `为了更好地供奉堕落神，神官长对${she(cid)}的肛门进行了深度的调教。`,
             ); // 源行 361
             await era.printAndWait(
               `现在，敏感的菊穴已经被扩张，巨魔的阴茎也能轻易插入了。`,
@@ -583,7 +582,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           if (era.get(`abl:${cid}:15`) >= 5) {
             // 源行 373
             await era.printAndWait(
-              `${target_name}在枕边经常妙语连珠，让土豪决定把${she(0)}当成秘书。`,
+              `${target_name}在枕边经常妙语连珠，让土豪决定把${she(cid)}当成秘书。`,
             ); // 源行 374
             await era.printAndWait(
               `机智的交涉及性感的身体，为主人带来了不少好处。`,
@@ -849,10 +848,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `大农场主在买农奴的时候顺便买下了${target_name}。`,
             ); // 源行 519
             await era.printAndWait(
-              `最初品尝过${she(0)}的肛门之后，被预想以外的快感所震惊，因而每晚都要侵犯${she(0)}。`,
+              `最初品尝过${she(cid)}的肛门之后，被预想以外的快感所震惊，因而每晚都要侵犯${she(cid)}。`,
             ); // 源行 520
             await era.printAndWait(
-              `被巨大阴茎连续侵犯的结果，就是${she(0)}现在只能摊在床上，还略带有脱肛。`,
+              `被巨大阴茎连续侵犯的结果，就是${she(cid)}现在只能摊在床上，还略带有脱肛。`,
             ); // 源行 521
           } else {
             // 源行 522
@@ -860,7 +859,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `大农场主在买农奴的时候顺便买下了${target_name}。`,
             ); // 源行 523
             await era.printAndWait(
-              `也说不出到底喜欢${she(0)}哪里，但是依然像对妻子一样温柔地对待${she(0)}。`,
+              `也说不出到底喜欢${she(cid)}哪里，但是依然像对妻子一样温柔地对待${she(cid)}。`,
             ); // 源行 524
             await era.printAndWait(
               `接受了主人精液的${target_name}怀孕了，临盘也快了。`,
@@ -956,7 +955,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `对${target_name}宏伟的胸部来说，女服务员的制服胸口处实在是太小了。`,
             ); // 源行 581
             await era.printAndWait(
-              `「适合你的制服呢～」店长这么说着，最后的结果是要${she(0)}一直赤裸上身迎客。`,
+              `「适合你的制服呢～」店长这么说着，最后的结果是要${she(cid)}一直赤裸上身迎客。`,
             ); // 源行 582
             await era.printAndWait(
               `每晚都收到很多小费，再这么下去，看来帮自己赎身也只是时间问题而已。`,
@@ -979,7 +978,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}和其它几个奴隶作为农奴被买下了。`,
             ); // 源行 594
             await era.printAndWait(
-              `不过，农场主在试过${she(0)}舒服的肛门之后上瘾了。`,
+              `不过，农场主在试过${she(cid)}舒服的肛门之后上瘾了。`,
             ); // 源行 595
             await era.printAndWait(`现在作为专用性奴隶而存在着。`); // 源行 596
             ending = '农场主的性奴'; // 源行 597
@@ -989,7 +988,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}和其它几个奴隶作为农奴被买下了。`,
             ); // 源行 599
             await era.printAndWait(
-              `为了不让其它农奴逃跑，强制让${she(0)}做了农奴们的共同妻子，每晚都被好几个男人侵犯着。`,
+              `为了不让其它农奴逃跑，强制让${she(cid)}做了农奴们的共同妻子，每晚都被好几个男人侵犯着。`,
             ); // 源行 600
             ending = '农奴的共妻'; // 源行 601
           } // 源行 602
@@ -1010,7 +1009,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             await era.printAndWait(
               `${target_name}作为公众肉便器不分昼夜地被使用着。`,
             ); // 源行 611
-            await era.printAndWait(`过于残酷的生活让${she(0)}精神崩溃了。`); // 源行 612
+            await era.printAndWait(`过于残酷的生活让${she(cid)}精神崩溃了。`); // 源行 612
             await era.printAndWait(`到最后，从灵魂到身体，都彻底坏掉了。`); // 源行 613
           } // 源行 614
           ending = '肉便器'; // 源行 615
@@ -1065,7 +1064,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `迷人的肉体以及作为原勇者的经历，也是将军非常中意的地方。`,
             ); // 源行 648
             await era.printAndWait(
-              `将军疼爱得就差亲手喂饭给${she(0)}吃了，对于异族性奴隶来说，是难得得好待遇。`,
+              `将军疼爱得就差亲手喂饭给${she(cid)}吃了，对于异族性奴隶来说，是难得得好待遇。`,
             ); // 源行 649
           } else {
             // 源行 650
@@ -1136,10 +1135,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           if (era.get(`abl:${cid}:15`) >= 5) {
             // 源行 687
             await era.printAndWait(
-              `${target_name}本来只是作为性奴隶被买回来，土豪却意外地发现${she(0)}相当能说会道。`,
+              `${target_name}本来只是作为性奴隶被买回来，土豪却意外地发现${she(cid)}相当能说会道。`,
             ); // 源行 688
             await era.printAndWait(
-              `为了让商谈取得优势，经常把${she(0)}当做夜晚的宴客工具，`,
+              `为了让商谈取得优势，经常把${she(cid)}当做夜晚的宴客工具，`,
             ); // 源行 689
             await era.printAndWait(
               `${target_name}在主人的指示下与其它男人发生关系，多次怀孕并分娩了。`,
@@ -1151,10 +1150,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `作为土豪宠物的${target_name}，对主人相当顺从。`,
             ); // 源行 693
             await era.printAndWait(
-              `土豪的众多孩子们也很喜欢可爱的${she(0)}，作为宠物被多次弄怀孕并分娩了。`,
+              `土豪的众多孩子们也很喜欢可爱的${she(cid)}，作为宠物被多次弄怀孕并分娩了。`,
             ); // 源行 694
             await era.printAndWait(
-              `${she(0)}已经得到了作为宠物的最高幸福了吧。`,
+              `${she(cid)}已经得到了作为宠物的最高幸福了吧。`,
             ); // 源行 695
             ending = '土豪的宠物'; // 源行 696
           } // 源行 697
@@ -1205,7 +1204,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `以前也试过多次逃走，但是发现奴隶项圈和奴隶手铐根本无法靠自己取下来之后变得老实了。`,
             ); // 源行 727
             await era.printAndWait(
-              `主人对这样的${target_name}非常疼爱，给予了${she(0)}比较宽松的自由。`,
+              `主人对这样的${target_name}非常疼爱，给予了${she(cid)}比较宽松的自由。`,
             ); // 源行 728
           } else {
             // 源行 729
@@ -1265,7 +1264,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `神殿新设置了堕落神的贡品，${target_name}作为贡品，被堕落信徒没完没了地侵犯着。`,
             ); // 源行 758
             await era.printAndWait(
-              `侵犯异族和异教徒的女人也算是一种功德，信徒们每天都为侵犯${she(0)}而排起了长队。`,
+              `侵犯异族和异教徒的女人也算是一种功德，信徒们每天都为侵犯${she(cid)}而排起了长队。`,
             ); // 源行 759
             await era.printAndWait(
               `以前信仰其它神的${target_name}早晚也会从心底变成堕落神的信徒了吧。`,
@@ -1345,7 +1344,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `对年轻的士官来说，与其说是性奴隶，不如说是可爱的恋人更为贴切。`,
             ); // 源行 806
             await era.printAndWait(
-              `看着每晚都服侍自己阴茎的${she(0)}，士官对${target_name}越来越爱怜了。`,
+              `看着每晚都服侍自己阴茎的${she(cid)}，士官对${target_name}越来越爱怜了。`,
             ); // 源行 807
           } else {
             // 源行 808
@@ -1373,7 +1372,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}那双有魅力的乳房，被注射了学院还在开发中的药剂。`,
             ); // 源行 818
             await era.printAndWait(
-              `作为乳房淫虫的培养基，乳房中蠢蠢欲动的淫虫分泌着奇妙的体液，给予${she(0)}持续的甜美快感。`,
+              `作为乳房淫虫的培养基，乳房中蠢蠢欲动的淫虫分泌着奇妙的体液，给予${she(cid)}持续的甜美快感。`,
             ); // 源行 819
             await era.printAndWait(
               `如果这个实验成功的话，市面上应该就会多出一种新的媚药了吧。`,
@@ -1403,7 +1402,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             ); // 源行 833
             await era.printAndWait(`过着谁都可以将其玩弄的奴隶生活。`); // 源行 834
             await era.printAndWait(
-              `被巨大阴茎连续侵犯的结果，就是${she(0)}现在只能摊在床上，还略带有脱肛。`,
+              `被巨大阴茎连续侵犯的结果，就是${she(cid)}现在只能摊在床上，还略带有脱肛。`,
             ); // 源行 835
             ending = '农场主的菊奴'; // 源行 836
           } else {
@@ -1490,7 +1489,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为开矿奴隶的慰问品被饲养着。`,
             ); // 源行 887
             await era.printAndWait(
-              `好几次被侵犯时都嚎啕大哭，矿工们觉得很有意思，令${she(0)}相当受欢迎。`,
+              `好几次被侵犯时都嚎啕大哭，矿工们觉得很有意思，令${she(cid)}相当受欢迎。`,
             ); // 源行 888
           } // 源行 889
           ending = '矿山性奴'; // 源行 890
@@ -1504,10 +1503,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           ) {
             // 源行 894
             await era.printAndWait(
-              `看中了${target_name}傲人胸部的魅力，于是让${she(0)}赤裸上身接待客人。`,
+              `看中了${target_name}傲人胸部的魅力，于是让${she(cid)}赤裸上身接待客人。`,
             ); // 源行 895
             await era.printAndWait(
-              `客人们毫不客气地把玩${she(0)}的乳房，作为奴隶的${she(0)}只能忍耐。`,
+              `客人们毫不客气地把玩${she(cid)}的乳房，作为奴隶的${she(cid)}只能忍耐。`,
             ); // 源行 896
             await era.printAndWait(
               `为了帮自己赎身，每晚都很在意客人的小费，有时会故意挺胸让客人们玩。`,
@@ -1515,10 +1514,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           } else {
             // 源行 898
             await era.printAndWait(
-              `店主对客人介绍${she(0)}的时候，会特意提醒${she(0)}可以出台。`,
+              `店主对客人介绍${she(cid)}的时候，会特意提醒${she(cid)}可以出台。`,
             ); // 源行 899
             await era.printAndWait(
-              `作为异族女孩${target_name}还是相当有人气的，不过皮肉钱绝大部分都被主人拿走，没留下多少给${she(0)}。`,
+              `作为异族女孩${target_name}还是相当有人气的，不过皮肉钱绝大部分都被主人拿走，没留下多少给${she(cid)}。`,
             ); // 源行 900
           } // 源行 901
           ending = '酒馆女侍应'; // 源行 902
@@ -1563,7 +1562,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             await era.printAndWait(
               `${target_name}作为公众肉便器不分昼夜地被使用着。`,
             ); // 源行 923
-            await era.printAndWait(`过于残酷的生活让${she(0)}精神崩溃了。`); // 源行 924
+            await era.printAndWait(`过于残酷的生活让${she(cid)}精神崩溃了。`); // 源行 924
             await era.printAndWait(
               `多次呐喊着曾经作为主人的你的名字，最后终于完全坏掉了。`,
             ); // 源行 925
@@ -1621,7 +1620,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}据闻和一个山间小国的君主结婚了。`,
             ); // 源行 962
             await era.printAndWait(
-              `那国王在和${she(0)}相处了一晚之后就马上发布了结婚的决定。`,
+              `那国王在和${she(cid)}相处了一晚之后就马上发布了结婚的决定。`,
             ); // 源行 963
             await era.printAndWait(
               `你突然想起，那小国是生产魔界中为数不多的珍稀魔石的地方。`,
@@ -1636,7 +1635,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `作为淫魔且拥有极品身体的${target_name}对讯问官手舞足蹈着，`,
             ); // 源行 968
             await era.printAndWait(
-              `无论男女都被${she(0)}吸干精气而死，面对这样的身姿，其他讯问官都胆怯地跑掉了。`,
+              `无论男女都被${she(cid)}吸干精气而死，面对这样的身姿，其他讯问官都胆怯地跑掉了。`,
             ); // 源行 969
             await era.printAndWait(
               `这样的生活，对于${target_name}来说，也算是一种幸福了吧。`,
@@ -1653,10 +1652,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           ) {
             // 源行 976
             await era.printAndWait(
-              `${target_name}彻底堕落的身体让所有客人都很尽兴。从现在这个在男人身上淫乱不堪的样子，根本无法想象${she(0)}曾经作为勇者挥剑战斗。`,
+              `${target_name}彻底堕落的身体让所有客人都很尽兴。从现在这个在男人身上淫乱不堪的样子，根本无法想象${she(cid)}曾经作为勇者挥剑战斗。`,
             ); // 源行 977
             await era.printAndWait(
-              `面对整晚都在渴求阴茎的${she(0)}，有熟客说不如让他手下的一个小队来玩轮奸秀吧！`,
+              `面对整晚都在渴求阴茎的${she(cid)}，有熟客说不如让他手下的一个小队来玩轮奸秀吧！`,
             ); // 源行 978
             await era.printAndWait(
               `结果留下了光靠乳交就榨干了一个小队的精液这样的轶事。`,
@@ -1665,13 +1664,13 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           } else {
             // 源行 981
             await era.printAndWait(
-              `${target_name}彻底堕落的身体让所有客人都很尽兴。从现在这个在男人身上淫乱不堪的样子，根本无法想象${she(0)}曾经作为勇者挥剑战斗。`,
+              `${target_name}彻底堕落的身体让所有客人都很尽兴。从现在这个在男人身上淫乱不堪的样子，根本无法想象${she(cid)}曾经作为勇者挥剑战斗。`,
             ); // 源行 982
             await era.printAndWait(
               `一天到晚都在渴求阴茎，还曾发生把初次接待的客人榨干致死的事。`,
             ); // 源行 983
             await era.printAndWait(
-              `没有三个人一起上是搞不定${she(0)}的，传出这样的传闻，让预约${she(0)}的客人反而大大增加了。`,
+              `没有三个人一起上是搞不定${she(cid)}的，传出这样的传闻，让预约${she(cid)}的客人反而大大增加了。`,
             ); // 源行 984
             ending = '高级娼妇'; // 源行 985
           } // 源行 986
@@ -1711,13 +1710,13 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           if (era.get(`talent:${cid}:204`) == 1) {
             // 源行 1004
             await era.printAndWait(
-              `「知道主人为${she(0)}花费了多少吗？」正当客人这样窃窃私语的时候，${target_name}在掌声中入场了。`,
+              `「知道主人为${she(cid)}花费了多少吗？」正当客人这样窃窃私语的时候，${target_name}在掌声中入场了。`,
             ); // 源行 1005
             await era.printAndWait(
               `被带上台的${target_name}腹部夸张地隆起，能看出快要临盘了。`,
             ); // 源行 1006
             await era.printAndWait(
-              `排卵诱发剂让${she(0)}同时多重怀孕了，也进一步注射了阵痛诱发剂。`,
+              `排卵诱发剂让${she(cid)}同时多重怀孕了，也进一步注射了阵痛诱发剂。`,
             ); // 源行 1007
             await era.printAndWait(
               `今晚的出产秀，到底会生出个什么呢？大家都拭目以待。`,
@@ -1726,7 +1725,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           } else {
             // 源行 1010
             await era.printAndWait(
-              `「知道${she(0)}的主人为${she(0)}花费了多少吗？」正当客人这样窃窃私语的时候，${target_name}在掌声中入场了。`,
+              `「知道${she(cid)}的主人为${she(cid)}花费了多少吗？」正当客人这样窃窃私语的时候，${target_name}在掌声中入场了。`,
             ); // 源行 1011
             await era.printAndWait(
               `被车子推上台的${target_name}的股间被两根巨大的假阳具撑开到极限。`,
@@ -1936,7 +1935,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `每晚都用淫秽的肉体和部下交欢着，团队内部因此非常团结。`,
             ); // 源行 1125
             await era.printAndWait(
-              `${target_name}在黑社会中如何生存下去真的难以预料，愿${she(0)}长寿吧……`,
+              `${target_name}在黑社会中如何生存下去真的难以预料，愿${she(cid)}长寿吧……`,
             ); // 源行 1126
             ending = '黑帮成员'; // 源行 1127
           } else {
@@ -1945,10 +1944,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}成为黑社会的一员了。作为成员情妇的${target_name}每晚都要侍奉不同的男人。`,
             ); // 源行 1129
             await era.printAndWait(
-              `对于一天都不能没有性爱的${she(0)}来说，也算是一个可喜的环境吧。`,
+              `对于一天都不能没有性爱的${she(cid)}来说，也算是一个可喜的环境吧。`,
             ); // 源行 1130
             await era.printAndWait(
-              `${target_name}在黑社会中如何生存下去真的难以预料，愿${she(0)}长寿吧……`,
+              `${target_name}在黑社会中如何生存下去真的难以预料，愿${she(cid)}长寿吧……`,
             ); // 源行 1131
             ending = '黑社会的情妇'; // 源行 1132
           } // 源行 1133
@@ -1962,20 +1961,20 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           ) {
             // 源行 1137
             await era.printAndWait(
-              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(0)}的丰满的乳房被画上了下流的图案，乳头也穿了几个乳环。`,
+              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(cid)}的丰满的乳房被画上了下流的图案，乳头也穿了几个乳环。`,
             ); // 源行 1138
             await era.printAndWait(
               `因为这个原因，总有很多熟客找上门来。对于${target_name}这一直渴求男人的淫靡肉体来说，能每晚交欢，应该是比能挣钱还重要吧。`,
             ); // 源行 1139
-            await era.printAndWait(`${she(0)}已经无法想象没有性的生活了。`); // 源行 1140
+            await era.printAndWait(`${she(cid)}已经无法想象没有性的生活了。`); // 源行 1140
             ending = '刺青娼妇'; // 源行 1141
           } else {
             // 源行 1142
             await era.printAndWait(
-              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(0)}的脸的右侧被画上了下流的图案。`,
+              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(cid)}的脸的右侧被画上了下流的图案。`,
             ); // 源行 1143
             await era.printAndWait(
-              `貌似因为这个原因吸引了不少有着奇妙癖好的熟客，每晚${she(0)}的房间里都传出不间断的悲鸣。`,
+              `貌似因为这个原因吸引了不少有着奇妙癖好的熟客，每晚${she(cid)}的房间里都传出不间断的悲鸣。`,
             ); // 源行 1144
             await era.printAndWait(
               `对于不能没有男人的${target_name}来说，这样的生活也许也是一种幸福吧。`,
@@ -2012,7 +2011,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             await era.printAndWait(
               `${target_name}平常只是做一般的服务员，有时也会被一些嗑药嗑高了，或者喝多了的客人侵犯。`,
             ); // 源行 1159
-            await era.printAndWait(`不过${she(0)}也挺享受这种偶发事件的。`); // 源行 1160
+            await era.printAndWait(`不过${she(cid)}也挺享受这种偶发事件的。`); // 源行 1160
             ending = '黑酒吧的女侍应'; // 源行 1161
           } // 源行 1162
         } else if (route == 0) {
@@ -2028,7 +2027,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             ); // 源行 1168
             await era.printAndWait(`私处和肛门，被塞了很多赌场特制的筹码，`); // 源行 1169
             await era.printAndWait(
-              `每天在赌场里输掉的人络绎不绝，看来今后${she(0)}都要作为肉便器玩具永远这样生活下去了。`,
+              `每天在赌场里输掉的人络绎不绝，看来今后${she(cid)}都要作为肉便器玩具永远这样生活下去了。`,
             ); // 源行 1170
             ending = '赌场的肉便器'; // 源行 1171
           } else {
@@ -2041,7 +2040,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `不过不久之后，就作为借款的抵押，又被赌场当成赠品了。这样的事连续发生了好多次。`,
             ); // 源行 1175
             await era.printAndWait(
-              `在赌徒中，开始有流言说${she(0)}是会吸取财运的魔女。`,
+              `在赌徒中，开始有流言说${she(cid)}是会吸取财运的魔女。`,
             ); // 源行 1176
             ending = '赌场的赠品'; // 源行 1177
           } // 源行 1178
@@ -2087,20 +2086,20 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1206
             await era.printAndWait(`周末，这种酒吧都会搞一些特别的活动。`); // 源行 1207
             await era.printAndWait(
-              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(0)}被射中的痛楚都会转变为快感。`,
+              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(cid)}被射中的痛楚都会转变为快感。`,
             ); // 源行 1208
             await era.printAndWait(
-              `赢了的人，就可以当场侵犯已经发情的${target_name}，不过${she(0)}做爱如此疯狂，常常会把优胜者给榨干。`,
+              `赢了的人，就可以当场侵犯已经发情的${target_name}，不过${she(cid)}做爱如此疯狂，常常会把优胜者给榨干。`,
             ); // 源行 1209
             ending = '酒吧的赠品'; // 源行 1210
           } else {
             // 源行 1211
             await era.printAndWait(`周末，这种酒吧都会搞一些特别的活动。`); // 源行 1212
             await era.printAndWait(
-              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(0)}被射中的痛楚都会转变为快感。`,
+              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(cid)}被射中的痛楚都会转变为快感。`,
             ); // 源行 1213
             await era.printAndWait(
-              `赢了的人，就可以当场侵犯已经发情的${target_name}，其它的参赛者，往往也会在之后对${she(0)}进行轮奸。`,
+              `赢了的人，就可以当场侵犯已经发情的${target_name}，其它的参赛者，往往也会在之后对${she(cid)}进行轮奸。`,
             ); // 源行 1214
             ending = '酒吧的赠品'; // 源行 1215
           } // 源行 1216
@@ -2157,7 +2156,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             ); // 源行 1239
             await era.printAndWait(`不知培养了多少触手，也许成百上千了。`); // 源行 1240
             await era.printAndWait(
-              `完全适应了作为触手的母体，看来这样的生活会持续到${she(0)}死去的那一天。`,
+              `完全适应了作为触手的母体，看来这样的生活会持续到${she(cid)}死去的那一天。`,
             ); // 源行 1241
             ending = '触手的苗床'; // 源行 1242
           } // 源行 1243
@@ -2182,7 +2181,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为市民的公众肉便器，不分昼夜地被使用着。`,
             ); // 源行 1254
             await era.printAndWait(
-              `每次被男人侵犯的时候，${she(0)}都不停地娇声呻吟着。`,
+              `每次被男人侵犯的时候，${she(cid)}都不停地娇声呻吟着。`,
             ); // 源行 1255
             await era.printAndWait(
               `被你彻底调教的淫乱身体起了充分的反应，不断吸收着市民们的欲望。`,
@@ -2260,7 +2259,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `以原勇者的名头与新人对战训练，是${target_name}无聊的牢狱生活中唯一的娱乐。`,
             ); // 源行 1301
             await era.printAndWait(
-              `训练生们也知道这一点，所以在对战胜利之后，也会相当彻底地凌辱${she(0)}一番。`,
+              `训练生们也知道这一点，所以在对战胜利之后，也会相当彻底地凌辱${she(cid)}一番。`,
             ); // 源行 1302
             ending = '间谍教材'; // 源行 1303
           } // 源行 1304
@@ -2277,7 +2276,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `作为完全调教的奴隶而被买入的${target_name}，马上就被客人指名了。`,
             ); // 源行 1310
             await era.printAndWait(
-              `最初的客人为了留念，在${she(0)}的乳房上留下了刺青，从那时起，老鸨就为${she(0)}推出了刺青服务。`,
+              `最初的客人为了留念，在${she(cid)}的乳房上留下了刺青，从那时起，老鸨就为${she(cid)}推出了刺青服务。`,
             ); // 源行 1311
             await era.printAndWait(
               `各种各样的刺青，现在充斥在${target_name}高耸迷人的乳房上。`,
@@ -2289,7 +2288,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `作为完全调教的奴隶而被买入的${target_name}，马上就被客人指名了。`,
             ); // 源行 1315
             await era.printAndWait(
-              `像淫魔一样变换着花式来榨取着客人的精气，${she(0)}的身姿连老鸨都看呆了。`,
+              `像淫魔一样变换着花式来榨取着客人的精气，${she(cid)}的身姿连老鸨都看呆了。`,
             ); // 源行 1316
             await era.printAndWait(
               `实际上，${target_name}没用多久，就成为了头牌。`,
@@ -2320,10 +2319,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1330
             await era.printAndWait(`${target_name}被带到了神殿深处。`); // 源行 1331
             await era.printAndWait(
-              `以神官长为首的神官们，为${she(0)}施下了淫乱的秘术。`,
+              `以神官长为首的神官们，为${she(cid)}施下了淫乱的秘术。`,
             ); // 源行 1332
             await era.printAndWait(
-              `准备着数百年一次的仪式，貌似打算把${she(0)}当作最后一天的祭品。`,
+              `准备着数百年一次的仪式，貌似打算把${she(cid)}当作最后一天的祭品。`,
             ); // 源行 1333
             ending = '堕落神的巫女'; // 源行 1334
           } // 源行 1335
@@ -2339,10 +2338,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `手脚都被切掉了，身子和一根铁管连在一起一动也不能动。`,
             ); // 源行 1341
             await era.printAndWait(
-              `一般来说这么弄要顺便洗脑的，不过主人说要保持${she(0)}的智力和意识，所以未实施。`,
+              `一般来说这么弄要顺便洗脑的，不过主人说要保持${she(cid)}的智力和意识，所以未实施。`,
             ); // 源行 1342
             await era.printAndWait(
-              `通常人被这么弄早就发疯了，但被你彻底调教的${she(0)}却坚持了下来。`,
+              `通常人被这么弄早就发疯了，但被你彻底调教的${she(cid)}却坚持了下来。`,
             ); // 源行 1343
             await era.printAndWait(
               `被主人和客人的尿淋满一身，${target_name}居然愉悦地绝顶了。`,
@@ -2352,7 +2351,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1346
             await era.printAndWait(`${target_name}被装上台座，被放到屋里。`); // 源行 1347
             await era.printAndWait(
-              `台座伸出两根巨大的假阳具，深深地插入了${she(0)}的私处及肛门，不停抽插着。`,
+              `台座伸出两根巨大的假阳具，深深地插入了${she(cid)}的私处及肛门，不停抽插着。`,
             ); // 源行 1348
             await era.printAndWait(
               `在同一房间内，不知有多少个与${target_name}一样处境的原勇者，被作为展品似的放置着。`,
@@ -2406,10 +2405,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}被主人卓越的调教弄得彻底堕落了，然后被编入了魔界军。`,
             ); // 源行 1382
             await era.printAndWait(
-              `原勇者的实力，让${she(0)}得心应手地指挥着部队。`,
+              `原勇者的实力，让${she(cid)}得心应手地指挥着部队。`,
             ); // 源行 1383
             await era.printAndWait(
-              `${she(0)}的部队据说有着非常凶悍的炮友亲卫队，用疯狂的战斗热情让其它部队都感到颤抖。`,
+              `${she(cid)}的部队据说有着非常凶悍的炮友亲卫队，用疯狂的战斗热情让其它部队都感到颤抖。`,
             ); // 源行 1384
             ending = '魔界的士官'; // 源行 1385
           } else {
@@ -2436,7 +2435,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}的乳头被打入了好几根乳钉，穿着露乳服装接待着客人。`,
             ); // 源行 1396
             await era.printAndWait(
-              `客人们可以拔下${she(0)}乳头上的细钉，来代替叉子来食用料理。`,
+              `客人们可以拔下${she(cid)}乳头上的细钉，来代替叉子来食用料理。`,
             ); // 源行 1397
             await era.printAndWait(`这种服务，受到了客人们的广泛好评。`); // 源行 1398
             ending = '高级酒馆的女侍应'; // 源行 1399
@@ -2446,10 +2445,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}被指派专门接待脾气不好的客人。但被客人责骂，${target_name}也感到相当愉悦。`,
             ); // 源行 1401
             await era.printAndWait(
-              `应对性骚扰也显得游刃有余，对于淫乱的${she(0)}来说，这根本不是问题。`,
+              `应对性骚扰也显得游刃有余，对于淫乱的${she(cid)}来说，这根本不是问题。`,
             ); // 源行 1402
             await era.printAndWait(
-              `当然，为了接待怎么也不满足的客人，${she(0)}为他们留下了一间特别的侍奉房间。`,
+              `当然，为了接待怎么也不满足的客人，${she(cid)}为他们留下了一间特别的侍奉房间。`,
             ); // 源行 1403
             ending = '高级酒馆的女侍应'; // 源行 1404
           } // 源行 1405
@@ -2495,7 +2494,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `当然，马到了发情期的时候，会狠狠地侵犯${target_name}。`,
             ); // 源行 1426
             await era.printAndWait(
-              `主人有时也会身穿便服来马厩侵犯${she(0)}。脏脏的小屋里，气氛非常和谐。`,
+              `主人有时也会身穿便服来马厩侵犯${she(cid)}。脏脏的小屋里，气氛非常和谐。`,
             ); // 源行 1427
             ending = '马厩的肉便器'; // 源行 1428
           } else {
@@ -2505,7 +2504,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `手脚都被切断了，被削成人棍，还被装上了一些可爱的装饰。`,
             ); // 源行 1431
             await era.printAndWait(
-              `不过，也许是主人的睡相不好吧～总是在早上发现${she(0)}掉到床下正在挣扎。`,
+              `不过，也许是主人的睡相不好吧～总是在早上发现${she(cid)}掉到床下正在挣扎。`,
             ); // 源行 1432
             ending = '好事者的抱枕'; // 源行 1433
           } // 源行 1434
@@ -2551,7 +2550,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1462
             await era.printAndWait(`${target_name}作为干部的情妇生活着。`); // 源行 1463
             await era.printAndWait(
-              `${target_name}在干部的卓越调教下堕落了，利用${she(0)}来操纵着部下。`,
+              `${target_name}在干部的卓越调教下堕落了，利用${she(cid)}来操纵着部下。`,
             ); // 源行 1464
             await era.printAndWait(`被放到别墅里，每晚都侍奉着不同的男人。`); // 源行 1465
             ending = '黑社会的情妇'; // 源行 1466
@@ -2561,7 +2560,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为虐待狂干部的情妇生活着。`,
             ); // 源行 1468
             await era.printAndWait(
-              `${she(0)}最开始也为此困惑过，不过夜晚的生活比想象中的更充实、更令${she(0)}满足。`,
+              `${she(cid)}最开始也为此困惑过，不过夜晚的生活比想象中的更充实、更令${she(cid)}满足。`,
             ); // 源行 1469
             await era.printAndWait(
               `每晚的过激玩法，让${target_name}彻底沉迷于这种快乐。`,
@@ -2579,7 +2578,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1477
             await era.printAndWait(`${target_name}隔着橱窗招揽客人。`); // 源行 1478
             await era.printAndWait(
-              `在橱窗待了一段时间之后，${she(0)}出名了。因为袒胸露乳的衣着下，${she(0)}丰满的乳房被画上了下流的刺青，乳头也被穿上乳环。`,
+              `在橱窗待了一段时间之后，${she(cid)}出名了。因为袒胸露乳的衣着下，${she(cid)}丰满的乳房被画上了下流的刺青，乳头也被穿上乳环。`,
             ); // 源行 1479
             await era.printAndWait(
               `虽然以后也很难把胸部藏起来了，但在熟客们的照顾下，还是过得不错。`,
@@ -2591,13 +2590,13 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}隔着橱窗招揽客人，看上去已经习惯自己的妆容了。`,
             ); // 源行 1483
             await era.printAndWait(
-              `身为异族女人好像特别受欢迎，最近每个月底都会有个魔族男人总是指名${she(0)}。`,
+              `身为异族女人好像特别受欢迎，最近每个月底都会有个魔族男人总是指名${she(cid)}。`,
             ); // 源行 1484
             await era.printAndWait(
-              `直接包夜，结结实实地侵犯着${she(0)}的全身，把${she(0)}弄丢几十次。`,
+              `直接包夜，结结实实地侵犯着${she(cid)}的全身，把${she(cid)}弄丢几十次。`,
             ); // 源行 1485
             await era.printAndWait(
-              `那人有意无意地传递着想帮${she(0)}赎身的想法，但${target_name}婉拒了。`,
+              `那人有意无意地传递着想帮${she(cid)}赎身的想法，但${target_name}婉拒了。`,
             ); // 源行 1486
             ending = '橱窗娼妇'; // 源行 1487
           } // 源行 1488
@@ -2649,7 +2648,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             ); // 源行 1510
             await era.printAndWait(`私处和肛门，被塞了很多赌场特制的筹码，`); // 源行 1511
             await era.printAndWait(
-              `每天在赌场里输掉的人络绎不绝，看来今后${she(0)}都要作为肉便器玩具永远这样生活下去了。`,
+              `每天在赌场里输掉的人络绎不绝，看来今后${she(cid)}都要作为肉便器玩具永远这样生活下去了。`,
             ); // 源行 1512
             ending = '赌场的肉便器'; // 源行 1513
           } else {
@@ -2708,19 +2707,19 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1548
             await era.printAndWait(`周末，这种酒吧都会搞一些特别的竞赛。`); // 源行 1549
             await era.printAndWait(
-              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(0)}被射中都不会留下伤口，而是转变为一种电击似的痛楚。`,
+              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(cid)}被射中都不会留下伤口，而是转变为一种电击似的痛楚。`,
             ); // 源行 1550
             await era.printAndWait(
-              `谁让${she(0)}惨叫得最大声，谁就会成为优胜者。竞赛在热烈的气氛中持续着。`,
+              `谁让${she(cid)}惨叫得最大声，谁就会成为优胜者。竞赛在热烈的气氛中持续着。`,
             ); // 源行 1551
           } else {
             // 源行 1552
             await era.printAndWait(`周末，这种酒吧都会搞一些特别的表演。`); // 源行 1553
             await era.printAndWait(
-              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(0)}被射中都不会留下伤口，而是转变为一种电击似的痛楚。`,
+              `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。特别的魔法，让${she(cid)}被射中都不会留下伤口，而是转变为一种电击似的痛楚。`,
             ); // 源行 1554
             await era.printAndWait(
-              `酒吧老板很有技巧地投掷着飞镖，让${she(0)}连晕过去都做不到，持续地惨叫着……`,
+              `酒吧老板很有技巧地投掷着飞镖，让${she(cid)}连晕过去都做不到，持续地惨叫着……`,
             ); // 源行 1555
           } // 源行 1556
           ending = '酒吧的赠品'; // 源行 1557
@@ -2792,7 +2791,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `被锁在公厕里的${target_name}，作为公众肉便器开始了无休止的侍奉。`,
             ); // 源行 1590
             await era.printAndWait(
-              `被地下城里各个种族的无尽的男人侵犯，对${she(0)}来说，还没有住在公厕里辛苦。`,
+              `被地下城里各个种族的无尽的男人侵犯，对${she(cid)}来说，还没有住在公厕里辛苦。`,
             ); // 源行 1591
             await era.printAndWait(
               `后来，通过了肉便器放置的法案，${target_name}被开放了。直到那天为止，好像为几百人生了孩子。`,
@@ -2803,7 +2802,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `被锁在公厕里的${target_name}，作为公众肉便器开始了无休止的侍奉。`,
             ); // 源行 1594
             await era.printAndWait(
-              `各个种族的男人都使用${she(0)}的身体来处理性欲。`,
+              `各个种族的男人都使用${she(cid)}的身体来处理性欲。`,
             ); // 源行 1595
             await era.printAndWait(
               `后来，通过了肉便器放置的法案，${target_name}被开放了。直到那天为止，好像为几百人生了孩子。`,
@@ -2862,7 +2861,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `被改造成魔族的${target_name}，每晚都被主人温柔地对待着。`,
             ); // 源行 1633
             await era.printAndWait(
-              `${she(0)}好像在主人身上感受到了在你身上感受不到的东西。`,
+              `${she(cid)}好像在主人身上感受到了在你身上感受不到的东西。`,
             ); // 源行 1634
             await era.printAndWait(`主人也觉得自己买了个好奴隶，非常满意。`); // 源行 1635
             ending = '高级将校的性奴'; // 源行 1636
@@ -2870,7 +2869,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1637
             await era.printAndWait(`主人把${target_name}当作宠物来饲养。`); // 源行 1638
             await era.printAndWait(
-              `主人整天在客人来访的时候让${she(0)}讲述自己如何作为勇者战败，最后沦落为奴隶的故事。每讲一次，都能宾主尽欢。`,
+              `主人整天在客人来访的时候让${she(cid)}讲述自己如何作为勇者战败，最后沦落为奴隶的故事。每讲一次，都能宾主尽欢。`,
             ); // 源行 1639
             await era.printAndWait(`主人对此非常满意，认为自己买了个好奴隶。`); // 源行 1640
             ending = '高级将校的宠物'; // 源行 1641
@@ -2898,7 +2897,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             await era.printAndWait(
               `那个孩子，有着禁忌的血统的力量，传闻有时候会巨魔化然后捏碎自己的奴隶。`,
             ); // 源行 1653
-            await era.printAndWait(`${she(0)}的下场，想必不会很好吧。`); // 源行 1654
+            await era.printAndWait(`${she(cid)}的下场，想必不会很好吧。`); // 源行 1654
             ending = '领主孩子的玩具'; // 源行 1655
           } // 源行 1656
         } else if (route == 1) {
@@ -2926,10 +2925,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}因为被发现信奉着其它的神，立刻被带到了地下室。`,
             ); // 源行 1666
             await era.printAndWait(
-              `神官们嘲弄着${she(0)}的信仰，不停地狠狠侵犯着${she(0)}，直到蓝色肌肤完全被精液染成白色。`,
+              `神官们嘲弄着${she(cid)}的信仰，不停地狠狠侵犯着${she(cid)}，直到蓝色肌肤完全被精液染成白色。`,
             ); // 源行 1667
             await era.printAndWait(
-              `${she(0)}的理性终于被粉碎，屈服了，发誓自己将皈依堕落神。`,
+              `${she(cid)}的理性终于被粉碎，屈服了，发誓自己将皈依堕落神。`,
             ); // 源行 1668
             ending = '堕落神的信徒'; // 源行 1669
           } // 源行 1670
@@ -2954,10 +2953,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为主人的第五个性奴隶在宅邸的地下室生活着。`,
             ); // 源行 1681
             await era.printAndWait(
-              `多亏了你的调教，${she(0)}早就习惯了地下的生活，很快就习惯了新环境。`,
+              `多亏了你的调教，${she(cid)}早就习惯了地下的生活，很快就习惯了新环境。`,
             ); // 源行 1682
             await era.printAndWait(
-              `每晚被叫去侍奉主人也是轻车熟路，对${she(0)}来说就是单纯换了个主人而已。`,
+              `每晚被叫去侍奉主人也是轻车熟路，对${she(cid)}来说就是单纯换了个主人而已。`,
             ); // 源行 1683
             ending = '性奴隶'; // 源行 1684
           } // 源行 1685
@@ -3005,7 +3004,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为奖赏，赏给立了战功的士官。`,
             ); // 源行 1714
             await era.printAndWait(
-              `「这么年轻漂亮的魔族姑娘是我的奴隶」，年轻的士官还不是很适应状况，因而像恋人一样地对待${she(0)}。`,
+              `「这么年轻漂亮的魔族姑娘是我的奴隶」，年轻的士官还不是很适应状况，因而像恋人一样地对待${she(cid)}。`,
             ); // 源行 1715
             await era.printAndWait(
               `${target_name}积极地回应着主人的疼爱，展露出与年轻的脸不相称的性交上的成熟。`,
@@ -3031,7 +3030,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           ) {
             // 源行 1726
             await era.printAndWait(
-              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(0)}的丰满的乳房被画上了下流的图案，乳头也穿了几个乳环。`,
+              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(cid)}的丰满的乳房被画上了下流的图案，乳头也穿了几个乳环。`,
             ); // 源行 1727
             await era.printAndWait(
               `据说在被弄上淫靡装饰的时候，${target_name}不停地在哭喊。`,
@@ -3042,7 +3041,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
           } else {
             // 源行 1730
             await era.printAndWait(
-              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(0)}的脸的右侧被画上了下流的图案。`,
+              `${target_name}被放在橱窗里吸引客人。不知是否是妓院主人的爱好，${she(cid)}的脸的右侧被画上了下流的图案。`,
             ); // 源行 1731
             await era.printAndWait(
               `据说在被弄上淫靡装饰的时候，${target_name}不停地在哭喊。`,
@@ -3075,7 +3074,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `邪恶的孩子们，每晚都要狠狠地侵犯${target_name}。`,
             ); // 源行 1745
             await era.printAndWait(
-              `没多长时间，${she(0)}怀孕了，孩子们对父亲是谁开了一个赌局。`,
+              `没多长时间，${she(cid)}怀孕了，孩子们对父亲是谁开了一个赌局。`,
             ); // 源行 1746
           } // 源行 1747
           ending = '大农场里的玩具'; // 源行 1748
@@ -3092,14 +3091,14 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             ); // 源行 1754
             await era.printAndWait(`私处和肛门，被塞了很多赌场特制的筹码，`); // 源行 1755
             await era.printAndWait(
-              `每天在赌场里输掉的人络绎不绝，看来今后${she(0)}都要作为肉便器玩具永远这样生活下去了。`,
+              `每天在赌场里输掉的人络绎不绝，看来今后${she(cid)}都要作为肉便器玩具永远这样生活下去了。`,
             ); // 源行 1756
             ending = '赌场肉便器'; // 源行 1757
           } else {
             // 源行 1758
             await era.printAndWait(`${target_name}成为了赌场的赠品。`); // 源行 1759
             await era.printAndWait(
-              `作为美丽的魔族奴隶的${she(0)}，被漂亮地包装着，`,
+              `作为美丽的魔族奴隶的${she(cid)}，被漂亮地包装着，`,
             ); // 源行 1760
             await era.printAndWait(`等待着什么时候，会有新主人来把自己带走……`); // 源行 1761
             ending = '赌场赠品'; // 源行 1762
@@ -3156,7 +3155,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为开矿奴隶的慰问品被饲养着。`,
             ); // 源行 1796
             await era.printAndWait(
-              `好几次在被侵犯都嚎啕大哭。矿工们觉得这很有意思，令${she(0)}相当受欢迎。`,
+              `好几次在被侵犯都嚎啕大哭。矿工们觉得这很有意思，令${she(cid)}相当受欢迎。`,
             ); // 源行 1797
           } // 源行 1798
           ending = '矿山性奴'; // 源行 1799
@@ -3174,7 +3173,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。优胜者可以拿到可观的奖金。`,
             ); // 源行 1806
             await era.printAndWait(
-              `在决出优胜者的时候，${she(0)}那宏伟挺拔的乳房，早已鲜血横流了。`,
+              `在决出优胜者的时候，${she(cid)}那宏伟挺拔的乳房，早已鲜血横流了。`,
             ); // 源行 1807
           } else {
             // 源行 1808
@@ -3183,7 +3182,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。优胜者可以拿到可观的奖金。`,
             ); // 源行 1810
             await era.printAndWait(
-              `在决出优胜者的时候，${she(0)}的身体已经千疮百孔，血流满地了。`,
+              `在决出优胜者的时候，${she(cid)}的身体已经千疮百孔，血流满地了。`,
             ); // 源行 1811
           } // 源行 1812
           ending = '酒吧的玩具'; // 源行 1813
@@ -3210,7 +3209,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             ); // 源行 1822
             await era.printAndWait(`不知培养了多少触手，也许成百上千了。`); // 源行 1823
             await era.printAndWait(
-              `完全适应了作为触手的母体，看来这样的生活会持续到${she(0)}死去的那一天。`,
+              `完全适应了作为触手的母体，看来这样的生活会持续到${she(cid)}死去的那一天。`,
             ); // 源行 1824
           } // 源行 1825
           ending = '触手的苗床'; // 源行 1826
@@ -3230,7 +3229,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为公众肉便器不分昼夜地被使用着。`,
             ); // 源行 1835
             await era.printAndWait(
-              `过于残酷的生活让${she(0)}不到半年便精神崩溃了。`,
+              `过于残酷的生活让${she(cid)}不到半年便精神崩溃了。`,
             ); // 源行 1836
           } // 源行 1837
           ending = '公众肉便器'; // 源行 1838
@@ -3278,7 +3277,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
 
           if (era.get(`talent:${cid}:75`) == 1) {
             // 源行 1870
-            await era.printAndWait(`主人把${she(0)}当成重要的性奴隶来看待。`); // 源行 1871
+            await era.printAndWait(`主人把${she(cid)}当成重要的性奴隶来看待。`); // 源行 1871
             await era.printAndWait(
               `然后，${target_name}也尽力地侍奉着主人，在主人身上感受到了在你身上感受不到的温柔。`,
             ); // 源行 1872
@@ -3290,7 +3289,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1875
             await era.printAndWait(`主人把${target_name}当作宠物来饲养。`); // 源行 1876
             await era.printAndWait(
-              `主人整天在客人来访的时候让${she(0)}讲述自己如何作为勇者战败，最后沦落为奴隶的故事。每讲一次，都能宾主尽欢。`,
+              `主人整天在客人来访的时候让${she(cid)}讲述自己如何作为勇者战败，最后沦落为奴隶的故事。每讲一次，都能宾主尽欢。`,
             ); // 源行 1877
             await era.printAndWait(
               `然后，客人总会轻蔑地看着${target_name}。主人每次都很享受这种时光。`,
@@ -3311,7 +3310,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `被灌下了特殊的药物，以前就很有规模的乳房，现在更加膨胀了，总是滴出母乳。`,
             ); // 源行 1887
             await era.printAndWait(
-              `主人还特意雇佣了一个女仆来照顾${she(0)}以及加热${she(0)}的母乳。`,
+              `主人还特意雇佣了一个女仆来照顾${she(cid)}以及加热${she(cid)}的母乳。`,
             ); // 源行 1888
             ending = '人形奶牛'; // 源行 1889
           } else {
@@ -3338,7 +3337,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为侍奉神殿的女奴，整天都被信徒们侵犯着。`,
             ); // 源行 1901
             await era.printAndWait(
-              `本来信奉其它神灵的${she(0)}，现在已经彻底转为信奉堕落神了。`,
+              `本来信奉其它神灵的${she(cid)}，现在已经彻底转为信奉堕落神了。`,
             ); // 源行 1902
             await era.printAndWait(
               `那对诱人的双峰被绳子勒着，更是极大地激发起信徒们的情欲。`,
@@ -3350,10 +3349,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}因为被发现信奉着其它的神，立刻被带到了地下室。`,
             ); // 源行 1906
             await era.printAndWait(
-              `神官们嘲弄着${she(0)}的信仰，不停地狠狠侵犯着${she(0)}，直到全身肌肤完全被精液染成白色。`,
+              `神官们嘲弄着${she(cid)}的信仰，不停地狠狠侵犯着${she(cid)}，直到全身肌肤完全被精液染成白色。`,
             ); // 源行 1907
             await era.printAndWait(
-              `${she(0)}的理性终于被粉碎，屈服了，发誓自己将皈依堕落神。`,
+              `${she(cid)}的理性终于被粉碎，屈服了，发誓自己将皈依堕落神。`,
             ); // 源行 1908
             ending = '堕落神的信徒'; // 源行 1909
           } // 源行 1910
@@ -3376,9 +3375,9 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 1919
             await era.printAndWait(`${target_name}作为主人的宠物生活在屋里。`); // 源行 1920
             await era.printAndWait(
-              `在主人的脚下撒娇着，${she(0)}已经忘记了自己曾经身为勇者了吧。`,
+              `在主人的脚下撒娇着，${she(cid)}已经忘记了自己曾经身为勇者了吧。`,
             ); // 源行 1921
-            await era.printAndWait(`看来${she(0)}的一生也就是这样了。`); // 源行 1922
+            await era.printAndWait(`看来${she(cid)}的一生也就是这样了。`); // 源行 1922
             ending = '大商人的宠物'; // 源行 1923
           } // 源行 1924
         } // 源行 1925
@@ -3448,7 +3447,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}成为了专门收集异族美女的妓院里的奴隶。`,
             ); // 源行 1967
             await era.printAndWait(
-              `为了让${she(0)}逃跑也跑不远，在丰满的乳房上烙下了烙印，因为过度的疼痛而晕倒了。`,
+              `为了让${she(cid)}逃跑也跑不远，在丰满的乳房上烙下了烙印，因为过度的疼痛而晕倒了。`,
             ); // 源行 1968
             await era.printAndWait(
               `托了原勇者这个绰头的福，现在这里完全不愁客人了。`,
@@ -3459,7 +3458,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}成为了专门收集异族美女的妓院里的奴隶。`,
             ); // 源行 1971
             await era.printAndWait(
-              `为了让${she(0)}逃跑也跑不远，在肩膀上烙下了烙印，因为过度的疼痛而晕倒了。`,
+              `为了让${she(cid)}逃跑也跑不远，在肩膀上烙下了烙印，因为过度的疼痛而晕倒了。`,
             ); // 源行 1972
             await era.printAndWait(
               `托了原勇者这个绰头的福，现在这里完全不愁客人了。`,
@@ -3518,10 +3517,10 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             // 源行 2000
             await era.printAndWait(`${target_name}成为了赌场里的赛狗。`); // 源行 2001
             await era.printAndWait(
-              `被彻底调教的${she(0)}，现在只会四脚爬爬地行走了。`,
+              `被彻底调教的${she(cid)}，现在只会四脚爬爬地行走了。`,
             ); // 源行 2002
             await era.printAndWait(
-              `赛跑成绩不错的${target_name}，被拿去和其它赛狗配种，人们希望${she(0)}能生出更优良的赛狗。`,
+              `赛跑成绩不错的${target_name}，被拿去和其它赛狗配种，人们希望${she(cid)}能生出更优良的赛狗。`,
             ); // 源行 2003
             ending = '赌场的狗'; // 源行 2004
           } // 源行 2005
@@ -3577,7 +3576,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为开矿奴隶的慰问品被饲养着。`,
             ); // 源行 2038
             await era.printAndWait(
-              `${target_name}好几次在被侵犯时都会嚎啕大哭，矿工们觉得很有意思。这令${she(0)}相当受欢迎。`,
+              `${target_name}好几次在被侵犯时都会嚎啕大哭，矿工们觉得很有意思。这令${she(cid)}相当受欢迎。`,
             ); // 源行 2039
           } // 源行 2040
           ending = '矿山性奴'; // 源行 2041
@@ -3595,7 +3594,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。优胜者可以拿到可观的奖金。`,
             ); // 源行 2048
             await era.printAndWait(
-              `在决出优胜者的时候，${she(0)}那宏伟挺拔的乳房，早已鲜血横流了。`,
+              `在决出优胜者的时候，${she(cid)}那宏伟挺拔的乳房，早已鲜血横流了。`,
             ); // 源行 2049
           } else {
             // 源行 2050
@@ -3604,7 +3603,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为飞镖的靶子，参加了特别的飞镖比赛。优胜者可以拿到可观的奖金。`,
             ); // 源行 2052
             await era.printAndWait(
-              `在决出优胜者的时候，${she(0)}的身体已经千疮百孔，血流满地了。`,
+              `在决出优胜者的时候，${she(cid)}的身体已经千疮百孔，血流满地了。`,
             ); // 源行 2053
           } // 源行 2054
           ending = '酒吧的玩具'; // 源行 2055
@@ -3631,7 +3630,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
             ); // 源行 2065
             await era.printAndWait(`不知培养了多少触手，也许成百上千了。`); // 源行 2066
             await era.printAndWait(
-              `${target_name}已经完全适应了作为触手的母体，看来这样的生活会持续到${she(0)}死去的那一天。`,
+              `${target_name}已经完全适应了作为触手的母体，看来这样的生活会持续到${she(cid)}死去的那一天。`,
             ); // 源行 2067
           } // 源行 2068
           ending = '触手的苗床'; // 源行 2069
@@ -3651,7 +3650,7 @@ async function sell_maturo_k0(cid = era_flag.target, { price, rand } = {}) {
               `${target_name}作为公众肉便器，不分昼夜地被使用着。`,
             ); // 源行 2079
             await era.printAndWait(
-              `过于残酷的生活让${she(0)}不到半年便精神崩溃了。`,
+              `过于残酷的生活让${she(cid)}不到半年便精神崩溃了。`,
             ); // 源行 2080
           } // 源行 2081
           ending = '公众肉便器'; // 源行 2082

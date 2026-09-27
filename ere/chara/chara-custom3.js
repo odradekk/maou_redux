@@ -14,7 +14,7 @@
  *     `PRINTBUTTON @"[%LOCALS%]", L_IDX * 100 + L_I`——Emuera 的按钮正文
  *     原样显示（print-system.md「虽非必须但建议保留 [0] 等标记」），
  *     EraElectron 的 `era.printButton` 则**自动**拼 `[快捷键] 正文`
- *     （夹具 make_button_entry 的 rendered 公式）。照抄方括号会渲染成
+ *     （夹具 make_button_entry 的 rendered 公式）。手写方括号会渲染成
  *     `[1100] [金色]`，故正文只给名字（与 menu-button.js 文件头第 1 条同款）。
  *   - **`PRINTV "  "` 的行首缩进不搬运**：那是 Emuera 字符流里的两格缩进，
  *     EraElectron 的 `printMultiColumns` 是栅格布局，行首空格没有对应位置。

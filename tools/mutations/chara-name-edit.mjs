@@ -6,7 +6,7 @@
 // M7821 原在 chara.mjs（靶是 chara-family.js 里的 nid_get_type），#384 把该函数
 // 收拢到 chara-name.js，条目随真身搬入本分片。
 
-export const COUNT = 72; // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，守卫型用例与 PAIRS 表的补钉）；#567 +1（M11832，改名输入的空输入语义）
+export const COUNT = 72; // #384 建表 60 条（M7976-M8035）；#384 返工 +11 条（M8276-M8286，守卫型用例与 PAIRS 表的补钉）；#567 +1（M11832，改名输入的空输入语义）；#653 -1（M7987 随 nid_findcharas 删除）；#653 +1（M13261：NID_GET_TYPE 3000 和名臂的修复守卫）
 
 export default [
   {
@@ -86,26 +86,19 @@ export default [
   {
     desc: 'M7985 NID_GET_TYPE 和名下界改错（CHARA_NAME.ERB:261）',
     file: 'ere/chara/chara-name.js',
-    find: '  if (nid < 200 || nid >= 2000) {\n    return 1; // 洋名',
-    replace: '  if (nid < 201 || nid >= 2000) {\n    return 1; // 洋名',
+    find: '  if (nid < 200 || nid >= 2000) {\n    return 1; // 洋名（含男性洋名 [2000,2453)）',
+    replace:
+      '  if (nid < 201 || nid >= 2000) {\n    return 1; // 洋名（含男性洋名 [2000,2453)）',
     tests: ['chara-name'],
     must_mention: '和名下界 200',
   },
   {
     desc: 'M7986 NID_GET_TYPE 的和名上界改错（999 判成洋名）',
     file: 'ere/chara/chara-name.js',
-    find: '  if (nid < 1000 || nid >= 3000) {\n    return 0; // 和名',
-    replace: '  if (nid < 1001 || nid >= 3000) {\n    return 0; // 和名',
+    find: '  if (nid < 1000) {\n    return 0; // 和名 [200,650)',
+    replace: '  if (nid < 1001) {\n    return 0; // 和名 [200,650)',
     tests: ['chara-name'],
     must_mention: '三档分界',
-  },
-  {
-    desc: 'M7987 NID_FINDCHARAS 的哨兵 -1 改成 0（无命中时的返回值口径变）',
-    file: 'ere/chara/chara-name.js',
-    find: '  found.push(-1); // RESULT:L_I = -1（L_I = 已写入条数）',
-    replace: '  found.push(0); // RESULT:L_I = -1（L_I = 已写入条数）',
-    tests: ['chara-name'],
-    must_mention: '首个同 NID 角色',
   },
   {
     desc: 'M7988 组合名长度公式的减数改错（RAND:2 的权重变化）',
@@ -617,5 +610,15 @@ export default [
       "    const input = String((await era.input()) ?? ''); // 变异：A 语义",
     tests: ['chara-name-edit'],
     must_mention: ':101 的播报（空输入支）',
+  },
+  // —— #653（F7）：男性和名/中式名的判型守卫 ——
+  {
+    desc: 'M13261 NID_GET_TYPE 的 3000 和名臂回退（男性和名/中式名又判成洋名）',
+    file: 'ere/chara/chara-name.js',
+    find: '  if (nid >= 3000) {\n    return 0; // 男性和名 [3000,4059) 与中式名 [4500,5289)',
+    replace:
+      '  if (nid >= 3001) {\n    return 0; // 男性和名 [3000,4059) 与中式名 [4500,5289)',
+    tests: ['chara-name'],
+    must_mention: '3000 → 和名（男性和名起点）',
   },
 ];

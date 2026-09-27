@@ -1182,7 +1182,7 @@ test('CHARA_FIRST_XP：初体验自定义输入（997）写下名字', async () 
   // 源 :692-706 的 CASE 997 只写名字、**不改 LOCAL:1**，故编码留在 997
   assert.equal(fixture.store.get('cflag:1:15'), 997);
   assert.equal(fixture.store.get('cstr:1:3'), '初恋');
-  assert.ok(texts(fixture).includes('新建人物初体验对象为为初恋。'));
+  assert.ok(texts(fixture).includes('新建人物初体验对象为初恋。'));
   assert.ok(texts(fixture).includes('[初体验对象：初恋]'));
   // #572 审查返工：初体验对象一问（源 :683）的九枚按钮
   for (const [acc, text] of [
@@ -1229,7 +1229,7 @@ test('CHARA_FIRST_XP：初体验自定义输入 0 走原作的随机生成支（
   await chara_first_xp(1);
   assert.ok(texts(fixture).includes('随机生成。'), ':704 的播报');
   assert.ok(
-    !texts(fixture).includes('新建人物初体验对象为为0。'),
+    !texts(fixture).includes('新建人物初体验对象为0。'),
     '不再把 0 当字面量名字',
   );
   assert.ok(
