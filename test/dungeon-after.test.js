@@ -1,5 +1,5 @@
 /**
- * ere/dungeon/dungeon-after.js @DUNGEON_AFTER + @GOHOUBI + @OSIOKI 的行为
+ * ere/dungeon/dungeon-after.js dungeon_after + gohoubi + osioski 的行为
  * 测试（issue #179，H10）；口上分发层（ere/kojo/kojo-dungeon-after.js）
  * 的落空与命中一并在此验。
  *
@@ -7,10 +7,10 @@
  * input 消费序）；PRINTW 的等键是 waitAnyKey（不消耗预置输入）。
  *
  * 验收对应（#179 清单）：
- *   - @DUNGEON_AFTER 的分派条件：CFLAG:x:1 == 5 → 奖赏臂、== 6 → 惩罚臂，
- *     两臂结束各自把状态清 0；其余状态不动作——**分派条件各有测试**；
- *   - @GOHOUBI / @OSIOKI 的档位表、菜单选择与身体/能力定臂、
- *     choice 序号（原作 TFLAG:18 的链内传参，见 kojo-dungeon-after.js 头注）、点数/经验落点抽查；
+ *   - dungeon_after 的分派条件：CFLAG:x:1 == 5 → 奖赏分支、== 6 → 惩罚分支，
+ *     两分支结束各自把状态清 0；其余状态不动作——**分派条件各有测试**；
+ *   - gohoubi / osioski 的档位表、菜单选择与身体/能力定分支、
+ *     choice 序号（TFLAG:18 的链内传参，见 kojo-dungeon-after.js 头注）、点数/经验落点抽查；
  *   - 输入循环（负值 / 越界重输）；
  *   - 口上族空间内缺失合法（落空静默）、register 后被调、TARGET 的
  *     暂存/置/还原（SWAP 语义）。
@@ -48,9 +48,9 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-// —— @DUNGEON_AFTER 分派条件（验收：两条臂各有测试）——
+// —— dungeon_after 分派条件（验收：两条分支各有测试）——
 
-test('分派：CFLAG:1 == 5 → 奖赏臂（GOHOUBI 文本 + 状态清 0）', async () => {
+test('分派：CFLAG:1 == 5 → 奖赏分支（gohoubi 文本 + 状态清 0）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:1', 5);
   fixture.set_inputs(0); // 选 [0] 应份
@@ -59,12 +59,12 @@ test('分派：CFLAG:1 == 5 → 奖赏臂（GOHOUBI 文本 + 状态清 0）', as
   const lines = text_lines(fixture);
   assert(
     lines.some((l) => l.includes('打倒了勇者，凯旋而归')),
-    '奖赏臂的开场文本',
+    '奖赏分支的开场文本',
   );
-  assert.equal(fixture.store.get('cflag:1:1'), 0, '状态清 0（:9）');
+  assert.equal(fixture.store.get('cflag:1:1'), 0, '状态清 0');
 });
 
-test('分派：CFLAG:1 == 6 → 惩罚臂（OSIOKI 文本 + 状态清 0）', async () => {
+test('分派：CFLAG:1 == 6 → 惩罚分支（osioski 文本 + 状态清 0）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:1', 6);
   fixture.set_inputs(0); // 选 [0] 什么也不做
@@ -73,23 +73,23 @@ test('分派：CFLAG:1 == 6 → 惩罚臂（OSIOKI 文本 + 状态清 0）', asy
   const lines = text_lines(fixture);
   assert(
     lines.some((l) => l.includes('没有发现勇者（或者是输了）')),
-    '惩罚臂的开场文本',
+    '惩罚分支的开场文本',
   );
-  assert.equal(fixture.store.get('cflag:1:1'), 0, '状态清 0（:12）');
+  assert.equal(fixture.store.get('cflag:1:1'), 0, '状态清 0');
 });
 
-test('分派：CFLAG:1 为其他值（0/2/5 之外）不进任何臂、状态不动', async () => {
+test('分派：CFLAG:1 为其他值（0/2/5 之外）不进任何分支、状态不动', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:1', 3); // 迎击中——非 5 非 6
   const { dungeon_after } = load(fixture);
   await dungeon_after(1);
   assert.equal(fixture.store.get('cflag:1:1'), 3, '状态原样');
-  assert.equal(text_lines(fixture).length, 0, '零输出（不进臂）');
+  assert.equal(text_lines(fixture).length, 0, '零输出（不进分支）');
 });
 
-// —— @GOHOUBI ——
+// —— gohoubi ——
 
-test('GOHOUBI [0] 应份：否定点数 = LV*60、勋章无', async () => {
+test('gohoubi [0] 应份：否定点数 = LV*60、勋章无', async () => {
   const fixture = setup_world();
   fixture.set_inputs(0);
   const { gohoubi } = load(fixture);
@@ -98,7 +98,7 @@ test('GOHOUBI [0] 应份：否定点数 = LV*60、勋章无', async () => {
   assert.equal(fixture.store.get('exp:1:81'), undefined, '无勋章经验');
 });
 
-test('GOHOUBI [1] 勋章：勋章经验 +1；乳首穿孔位（CFLAG:7 & 1）的换钉行', async () => {
+test('gohoubi [1] 勋章：勋章经验 +1；乳首穿孔位（CFLAG:7 & 1）的换钉行', async () => {
   const fixture = setup_world();
   fixture.set_inputs(1);
   const { gohoubi } = load(fixture);
@@ -113,11 +113,11 @@ test('GOHOUBI [1] 勋章：勋章经验 +1；乳首穿孔位（CFLAG:7 & 1）的
   await gohoubi2(1);
   assert(
     text_lines(pierced).some((l) => l.includes('毫不犹豫地把乳钉换成了勋章')),
-    'CFLAG:7 & 1 → 换钉行（:75-76）',
+    'CFLAG:7 & 1 → 换钉行',
   );
 });
 
-test('GOHOUBI [2] 金币档（504=0）：钱够 → 扣 LV*100（MONEY 与非作弊资金）', async () => {
+test('gohoubi [2] 金币档（504=0）：钱够 → 扣 LV*100（MONEY 与非作弊资金）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 0);
   fixture.set_inputs(2);
@@ -127,7 +127,7 @@ test('GOHOUBI [2] 金币档（504=0）：钱够 → 扣 LV*100（MONEY 与非作
   assert.equal(fixture.store.get('exflag:4444'), -500, 'EX_FLAG:4444 -= 500');
 });
 
-test('GOHOUBI [2] 金币档（504=0）：钱不够 → 回落否定点数、不扣钱', async () => {
+test('gohoubi [2] 金币档（504=0）：钱不够 → 回落否定点数、不扣钱', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 0);
   fixture.era.set('flag:10004', 100); // < 500
@@ -142,10 +142,10 @@ test('GOHOUBI [2] 金币档（504=0）：钱不够 → 回落否定点数、不�
   );
 });
 
-test('GOHOUBI [2] 犬兽奸档（504=1）：处女/男人 → 肛门臂，否则私处臂', async () => {
+test('gohoubi [2] 犬兽奸档（504=1）：处女/男人 → 肛门分支，否则私处分支', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 1);
-  fixture.store.set('talent:1:122', 1); // 男人 → 肛门臂
+  fixture.store.set('talent:1:122', 1); // 男人 → 肛门分支
   fixture.set_inputs(2);
   const { gohoubi } = load(fixture);
   await gohoubi(1);
@@ -157,7 +157,7 @@ test('GOHOUBI [2] 犬兽奸档（504=1）：处女/男人 → 肛门臂，否则
   assert.equal(fixture.store.get('juel:1:1'), undefined, '私处未动');
 
   const vaginal = setup_world();
-  vaginal.store.set('cflag:1:504', 1); // 无处女/男人标记 → 私处臂
+  vaginal.store.set('cflag:1:504', 1); // 无处女/男人标记 → 私处分支
   vaginal.set_inputs(2);
   const { gohoubi: gohoubi2 } = load(vaginal);
   await gohoubi2(1);
@@ -165,10 +165,10 @@ test('GOHOUBI [2] 犬兽奸档（504=1）：处女/男人 → 肛门臂，否则
   assert.equal(vaginal.store.get('exp:1:0'), 10, '私处经验 +10');
 });
 
-test('GOHOUBI [2] 馬兽奸档（504=3）：扩张经验随臂（肛门 53 / 私处 52）', async () => {
+test('gohoubi [2] 馬兽奸档（504=3）：扩张经验随分支（肛门 53 / 私处 52）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 3);
-  fixture.store.set('talent:1:0', 1); // 处女 → 肛门臂
+  fixture.store.set('talent:1:0', 1); // 处女 → 肛门分支
   fixture.set_inputs(2);
   const { gohoubi } = load(fixture);
   await gohoubi(1);
@@ -176,7 +176,7 @@ test('GOHOUBI [2] 馬兽奸档（504=3）：扩张经验随臂（肛门 53 / 私
   assert.equal(fixture.store.get('exp:1:52'), undefined);
 });
 
-test('GOHOUBI [2] 接吻档（504=4）：爱情经验 +10、无点数', async () => {
+test('gohoubi [2] 接吻档（504=4）：爱情经验 +10、无点数', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 4);
   fixture.set_inputs(2);
@@ -186,7 +186,7 @@ test('GOHOUBI [2] 接吻档（504=4）：爱情经验 +10、无点数', async ()
   assert.equal(fixture.store.get('juel:1:5'), undefined, '无欲情点数');
 });
 
-test('GOHOUBI [2] 性交档（504=5）：私处感觉 > 肛门感觉 → 私处臂', async () => {
+test('gohoubi [2] 性交档（504=5）：私处感觉 > 肛门感觉 → 私处分支', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 5);
   fixture.store.set('abl:1:2', 3);
@@ -208,7 +208,7 @@ test('GOHOUBI [2] 性交档（504=5）：私处感觉 > 肛门感觉 → 私处�
   assert.equal(anal.store.get('exp:1:5'), 10, '性交经验 +10');
 });
 
-test('GOHOUBI [2] 精液档（504=6）：口交 +10 / 精液 +5、欲情 600', async () => {
+test('gohoubi [2] 精液档（504=6）：口交 +10 / 精液 +5、欲情 600', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 6);
   fixture.set_inputs(2);
@@ -219,7 +219,7 @@ test('GOHOUBI [2] 精液档（504=6）：口交 +10 / 精液 +5、欲情 600', a
   assert.equal(fixture.store.get('juel:1:5'), 600);
 });
 
-test('GOHOUBI [2] 饮尿档（504=8）：魔王非扶她非男人 → 秘裂', async () => {
+test('gohoubi [2] 饮尿档（504=8）：魔王非扶她非男人 → 秘裂', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:504', 8);
   fixture.set_inputs(2);
@@ -243,7 +243,7 @@ test('GOHOUBI [2] 饮尿档（504=8）：魔王非扶她非男人 → 秘裂', a
   );
 });
 
-test('GOHOUBI 菜单是按钮（#572）：白名单＝三枚按钮，越界输入由引擎拒收', async () => {
+test('gohoubi 菜单是按钮（#572）：白名单＝三枚按钮，越界输入由引擎拒收', async () => {
   const fixture = setup_world();
   fixture.set_inputs(0);
   const { gohoubi } = load(fixture);
@@ -258,7 +258,7 @@ test('GOHOUBI 菜单是按钮（#572）：白名单＝三枚按钮，越界输�
   ]);
 
   // 旧行为是「RESULT < 0 或 >= 3 落回 $INPUT_LOOP 重问」——按钮化后白名单
-  // 就是上面三枚，引擎当场拒收（重问支在实机上不可达，1:1 保留）
+  // 就是上面三枚，引擎当场拒收（重问支在实机上不可达，有意保留）
   const rejected = setup_world();
   rejected.set_inputs(9);
   const { gohoubi: gohoubi2 } = load(rejected);
@@ -268,9 +268,9 @@ test('GOHOUBI 菜单是按钮（#572）：白名单＝三枚按钮，越界输�
   );
 });
 
-// —— @OSIOKI ——
+// —— osioski ——
 
-test('OSIOKI [0] 什么也不做：无点数', async () => {
+test('osioski [0] 什么也不做：无点数', async () => {
   const fixture = setup_world();
   fixture.set_inputs(0);
   const { osioski } = load(fixture);
@@ -278,9 +278,9 @@ test('OSIOKI [0] 什么也不做：无点数', async () => {
   assert.equal(fixture.store.get('juel:1:6'), undefined, '无屈服点数');
 });
 
-test('OSIOKI [1] 电椅刑：抖M >= 3 的恍惚臂三系点数，否则两系', async () => {
+test('osioski [1] 电椅刑：抖M >= 3 的恍惚分支三系点数，否则两系', async () => {
   const fixture = setup_world();
-  fixture.store.set('abl:1:21', 3); // 抖M 3 → 恍惚臂
+  fixture.store.set('abl:1:21', 3); // 抖M 3 → 恍惚分支
   fixture.set_inputs(1);
   const { osioski } = load(fixture);
   await osioski(1);
@@ -294,15 +294,11 @@ test('OSIOKI [1] 电椅刑：抖M >= 3 的恍惚臂三系点数，否则两系',
   crying.set_inputs(1);
   const { osioski: osioski2 } = load(crying);
   await osioski2(1);
-  assert.equal(crying.store.get('juel:1:9'), 400, '哭叫臂也有苦痛');
-  assert.equal(
-    crying.store.get('juel:1:5'),
-    undefined,
-    '哭叫臂无欲情（:422-428）',
-  );
+  assert.equal(crying.store.get('juel:1:9'), 400, '哭叫分支也有苦痛');
+  assert.equal(crying.store.get('juel:1:5'), undefined, '哭叫分支无欲情');
 });
 
-test('OSIOKI [2] 当街自慰刑：露出 >= 4 的自嘲臂 vs 羞耻臂', async () => {
+test('osioski [2] 当街自慰刑：露出 >= 4 的自嘲分支 vs 羞耻分支', async () => {
   const fixture = setup_world();
   fixture.store.set('abl:1:17', 4);
   fixture.set_inputs(2);
@@ -310,28 +306,28 @@ test('OSIOKI [2] 当街自慰刑：露出 >= 4 的自嘲臂 vs 羞耻臂', async
   await osioski(1);
   assert.equal(fixture.store.get('exp:1:10'), 3, '自慰经验 +3');
   assert.equal(fixture.store.get('exp:1:11'), 3, '调教自慰经验 +3');
-  assert.equal(fixture.store.get('juel:1:8'), undefined, '恍惚臂无耻情');
+  assert.equal(fixture.store.get('juel:1:8'), undefined, '恍惚分支无耻情');
 
   const shy = setup_world();
   shy.store.set('abl:1:17', 0);
   shy.set_inputs(2);
   const { osioski: osioski2 } = load(shy);
   await osioski2(1);
-  assert.equal(shy.store.get('juel:1:8'), 400, '羞耻臂耻情 400');
+  assert.equal(shy.store.get('juel:1:8'), 400, '羞耻分支耻情 400');
   assert.equal(shy.store.get('exp:1:10'), 1, '自慰经验 +1');
 });
 
-test('OSIOKI [5] 小便器刑：受虐狂（88）或淫乱（76）定臂', async () => {
+test('osioski [5] 小便器刑：受虐狂（88）或淫乱（76）定分支', async () => {
   const fixture = setup_world();
-  fixture.store.set('talent:1:76', 1); // 淫乱 → 兴奋臂
+  fixture.store.set('talent:1:76', 1); // 淫乱 → 兴奋分支
   fixture.set_inputs(5);
   const { osioski } = load(fixture);
   await osioski(1);
-  assert.equal(fixture.store.get('juel:1:5'), 200, '兴奋臂欲情 200');
+  assert.equal(fixture.store.get('juel:1:5'), 200, '兴奋分支欲情 200');
   assert(text_lines(fixture).some((l) => l.includes('用嘴巴接饮着小便')));
 });
 
-test('OSIOKI [8] 媚药放置刑：药物经验 +10、三系点数', async () => {
+test('osioski [8] 媚药放置刑：药物经验 +10、三系点数', async () => {
   const fixture = setup_world();
   fixture.set_inputs(8);
   const { osioski } = load(fixture);
@@ -342,7 +338,7 @@ test('OSIOKI [8] 媚药放置刑：药物经验 +10、三系点数', async () =>
   assert(text_lines(fixture).some((l) => l.includes('你走出了房间')));
 });
 
-test('OSIOKI 菜单是按钮（#572）：白名单＝九枚按钮，越界输入由引擎拒收', async () => {
+test('osioski 菜单是按钮（#572）：白名单＝九枚按钮，越界输入由引擎拒收', async () => {
   const fixture = setup_world();
   fixture.set_inputs(8);
   const { osioski } = load(fixture);
@@ -376,11 +372,11 @@ test('OSIOKI 菜单是按钮（#572）：白名单＝九枚按钮，越界输入
 
 // —— 口上分发层（ere/kojo/kojo-dungeon-after.js）——
 
-test('口上族：无性格素质（GET_KOJO_NUM = 0）不进分派守卫，静默走完', async () => {
+test('口上族：无性格素质（get_kojo_num = 0）不进分派检查，静默走完', async () => {
   const fixture = setup_world();
   fixture.set_inputs(0);
   const { gohoubi } = load(fixture);
-  await gohoubi(1); // 阿尔无性格素质 → LOCAL 0 → 守卫不进
+  await gohoubi(1); // 阿尔无性格素质 → LOCAL 0 → 检查不进
   assert.equal(
     fixture.store.get('juel:1:100'),
     300,
@@ -388,9 +384,9 @@ test('口上族：无性格素质（GET_KOJO_NUM = 0）不进分派守卫，静�
   );
 });
 
-test('口上族：GOHOUBI_AFTER / OSIOKI 无性格编号（GET_KOJO_NUM = 0）时窗口拒绝，不拼键', async () => {
+test('口上族：gohoubi_after / osioski 无性格编号（get_kojo_num = 0）时窗口拒绝，不拼键', async () => {
   // 窗口（in_kojo_window）在 0 上必须拦住：键 = LOCAL - 100 = -100 落在声明
-  // 空间外，漏掉窗口会当场报错——两个入口各站一次（#403 收口）
+  // 空间外，漏掉窗口会当场报错——两个入口各站一次（#403 收尾）
   const fixture = setup_world(); // 阿尔无性格素质 → LOCAL 0
   const { gohoubi_after_koujo, osioski_koujo } = fixture.load_module(
     'kojo/kojo-dungeon-after',
@@ -403,7 +399,7 @@ test('口上族：GOHOUBI_AFTER / OSIOKI 无性格编号（GET_KOJO_NUM = 0）�
 
 test('口上族：命中已注册 → 实现收 (cid, choice)、TARGET 暂存还原；未注册落空', async () => {
   const fixture = setup_world();
-  fixture.store.set('talent:1:163', 1); // 高貴 → GET_KOJO_NUM = 103
+  fixture.store.set('talent:1:163', 1); // 高貴 → get_kojo_num = 103
   fixture.set_inputs(1); // 选 [1] 勋章 → choice = 1
   // 往族里挂一个哨兵实现（DispatchFamily 是模块单例，测试内注册后须清）
   const kojo = fixture.load_module('kojo/kojo-dungeon-after');
@@ -418,7 +414,7 @@ test('口上族：命中已注册 → 实现收 (cid, choice)、TARGET 暂存还
   assert.deepEqual(
     calls,
     [[1, 1]],
-    'K3 实现收到 cid 与 choice（原作读 TFLAG:18 的链内等价）',
+    'K3 实现收到 cid 与 choice（读 TFLAG:18 的链内等价）',
   );
   assert.equal(era_flag.target, 7, 'TARGET 还原（SWAP LOCAL:2, TARGET）');
   // 未注册的惩罚族 → 落空静默（不抛错）
@@ -426,5 +422,5 @@ test('口上族：命中已注册 → 实现收 (cid, choice)、TARGET 暂存还
   fixture.set_inputs(0);
   const { dungeon_after } = load(fixture);
   await dungeon_after(1);
-  assert.equal(fixture.store.get('cflag:1:1'), 0, '惩罚臂正常走完（落空）');
+  assert.equal(fixture.store.get('cflag:1:1'), 0, '惩罚分支正常走完（落空）');
 });

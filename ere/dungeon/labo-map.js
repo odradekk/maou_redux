@@ -1,20 +1,20 @@
 /**
- * @file 2D 地下城模式的地图组件（issue #181，阶段 3 H12）：LABO_MAP.ERB 八函数。
+ * @file 2D 地下城模式的地图组件（issue #181，阶段 3 H12）：八个函数。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 说明（有意偏离，均注明依据）：
  *   - DA/DB/DC 的承载与 [y][x] 维度约定见 labo.js 文件头（本文件是 DB 的
  *     清零方之一与 DC 的产地）；
- *   - 原作坐标协议 P:0/P:1（chip 系函数的隐式输入）经显式传参 (x, y)
- *     （#5 决议第六条）；X/Y 原作全局在 UNIT_CHECK 内只是暂存，不落变量；
- *   - 原作 REPEAT CHARANUM 按已加入序号迭代，ere 侧按角色 ID 迭代
- *     （era.getAddedCharacters()，turnend-settle.js 先例）——UNIT_CHECK
+ *   - 坐标协议 P:0/P:1（chip 系函数的隐式输入）经显式传参 (x, y)
+ *     （#5 决议第六条）；X/Y 全局在 unit_check 内只是暂存，不落变量；
+ *   - REPEAT CHARANUM 按已加入序号迭代，ere 侧按角色 ID 迭代
+ *     （era.getAddedCharacters()，turnend-settle.js 先例）——unit_check
  *     返回的「キャラNo」按消费端语义（CFLAG:RESULT:1、SAVESTR:B 均按其
  *     寻址）改回角色 ID；
- *   - SETFONT "ＭＳ ゴシック"（GEO_OUTPUT_2 :9/:21）无 era API 通道，以
- *     注释标记跳过（BARL 先例）——数值行为不受影响，仅渲染字体；
+ *   - SETFONT "ＭＳ ゴシック" 无 era API 通道，以注释标记跳过
+ *     （BARL 先例）——数值行为不受影响，仅渲染字体；
  *   - WAIT → era.waitAnyKey()；一行 32 chip 归并为一次 era.print(段数组)
  *     （labo.js 文件头同款）；
- *   - MON_CHECK 在兵力不足时清掉该格的 DB（村娘扫荡无兵怪物），这一副作用
+ *   - mon_check 在兵力不足时清掉该格的 DB（村娘扫荡无兵怪物），这一副作用
  *     保留。
  */
 
@@ -29,18 +29,18 @@ const {
   c_out,
 } = require('#/dungeon/labo');
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
 /**
- * @UNIT_CHECK（:26-47）：MAP 上に勇者が存在するか——座標 (x,y) に侵攻中
+ * unit_check：MAP 上に勇者が存在するか——座標 (x,y) に侵攻中
  * （CFLAG:1==2）/迎击中（==3）的单位（CFLAG:510/511 座標 ≥ 0）在场则返回
  * 其角色 ID，不在场返回 -1。
  *
- * @param {number} x 座標（原作 P:0）
- * @param {number} y 座標（原作 P:1）
+ * @param {number} x 座標（P:0）
+ * @param {number} y 座標（P:1）
  * @returns {number} 角色 ID，不在场 -1
  */
 function unit_check(x, y) {
@@ -67,11 +67,11 @@ function unit_check(x, y) {
 }
 
 /**
- * @MON_CHECK（:51-77）：MAP 上に怪物が存在するか——DB 的怪物 LV 需有足够
+ * mon_check：MAP 上に怪物が存在するか——DB 的怪物 LV 需有足够
  * 兵力（ITEM 100+ 段 5 格合计 > 20）支撑，不足则清掉该格并返回 0。
  *
- * @param {number} x 座標（原作 P:0）
- * @param {number} y 座標（原作 P:1）
+ * @param {number} x 座標（P:0）
+ * @param {number} y 座標（P:1）
  * @returns {number} 怪物 LV，不在场 0
  */
 function mon_check(x, y) {
@@ -87,7 +87,7 @@ function mon_check(x, y) {
     troops += era.get(`item:${item_no}`) || 0;
   }
 
-  // 十分な兵が存在に必要（:72-73）
+  // 十分な兵が存在に必要
   if (troops > 20) {
     return lv;
   }
@@ -98,9 +98,9 @@ function mon_check(x, y) {
 }
 
 /**
- * @VIL_CHECK（:80-91）：MAP 上に村が存在するか。
- * @param {number} x 座標（原作 P:0）
- * @param {number} y 座標（原作 P:1）
+ * vil_check：MAP 上に村が存在するか。
+ * @param {number} x 座標（P:0）
+ * @param {number} y 座標（P:1）
  * @returns {number} 発展 LV，不在场 0
  */
 function vil_check(x, y) {
@@ -112,7 +112,7 @@ function vil_check(x, y) {
 }
 
 /**
- * @C_OUT_MON（:183-228）：彩色文字输出（怪物）——怪物 LV 0..10 → 带圈数字
+ * c_out_mon：彩色文字输出（怪物）——怪物 LV 0..10 → 带圈数字
  * ＋逗号（与 c_out 同结构，数字与逗号同色）。
  *
  * @param {number} arg0 怪物 LV
@@ -147,16 +147,16 @@ function c_out_mon(arg0) {
     0: '０',
   }[arg0];
   return color === undefined
-    ? [{ content: ',' }] // CASEELSE（:221-222）
+    ? [{ content: ',' }] // CASEELSE
     : [{ color, content: `${ch},` }];
 }
 
 /**
- * @CHIP_DRAW（:95-139）：地图 chip 绘制——优先级：魔王城（中心凸）＞勇者
+ * chip_draw：地图 chip 绘制——优先级：魔王城（中心凸）＞勇者
  * 单位（＠，侵攻中红色）＞怪物（带圈数字）＞村庄（凹）＞地形色。
  *
- * @param {number} x 座標（原作 P:0）
- * @param {number} y 座標（原作 P:1）
+ * @param {number} x 座標（P:0）
+ * @param {number} y 座標（P:1）
  * @returns {{color?: string, content: string}[]} 一个格子的输出段
  */
 function chip_draw(x, y) {
@@ -165,7 +165,7 @@ function chip_draw(x, y) {
     return [{ content: '凸,' }]; // PRINT 凸 / PRINT ,
   }
 
-  const unit = unit_check(x, y); // CALL UNIT_CHECK
+  const unit = unit_check(x, y); // CALL unit_check
   if (unit >= 0) {
     if ((era.get(`cflag:${unit}:1`) || 0) === 2) {
       return [{ color: '#c83232', content: '@,' }]; // SETCOLOR 200,50,50 → PRINT ＠ / PRINT ,
@@ -173,45 +173,45 @@ function chip_draw(x, y) {
     return [{ content: '@,' }];
   }
 
-  const mon = mon_check(x, y); // CALL MON_CHECK
+  const mon = mon_check(x, y); // CALL mon_check
   if (mon > 0) {
-    return c_out_mon(mon); // CALL C_OUT_MON(RESULT)
+    return c_out_mon(mon); // CALL c_out_mon(RESULT)
   }
 
   if (vil_check(x, y) > 0) {
     return [{ content: '凹,' }]; // PRINTFORM 凹 / PRINT ,
   }
 
-  return c_out(Math.trunc(da_get(y, x) / 32)); // LOCAL:2 = DA/32 → C_OUT
+  return c_out(Math.trunc(da_get(y, x) / 32)); // LOCAL:2 = DA/32 → c_out
 }
 
 /**
- * @GEO_OUTPUT_2（:6-23）：chip 地图输出——32×32 格逐格 CHIP_DRAW，行尾换行。
+ * geo_output_2：chip 地图输出——32×32 格逐格 chip_draw，行尾换行。
  * @returns {Promise<void>}
  */
 async function geo_output_2() {
-  // SETFONT "ＭＳ ゴシック"（:9）——无 era API 通道，跳过（文件头）
+  // SETFONT "ＭＳ ゴシック"——无 era API 通道，跳过（文件头）
   // ;マップを出力
   for (let y = 0; y < 32; y += 1) {
     const row = [];
     for (let x = 0; x < 32; x += 1) {
       row.push(...chip_draw(x, y)); // P:0/P:1 → 显式传参
     }
-    // 的 PRINTL 只结束这一行的 32 个 CHIP_DRAW `PRINT` 串（PRINT 不换
+    // 的 PRINTL 只结束这一行的 32 个 chip_draw `PRINT` 串（PRINT 不换
     // 行），**不是空行**——ere 的 print 一次调用即一行，别再补（#597）
     era.print(row);
   }
-  // SETFONT（:21）——复原同样无通道，跳过
+  // SETFONT 复原同样无通道，跳过
 
   await era.waitAnyKey(); // WAIT
 }
 
 /**
- * @SET_VIL（:142-159）：村庄设置——DC 50×50 清零后随机放 4 个村庄
+ * set_vil：村庄设置——DC 50×50 清零后随机放 4 个村庄
  * （中心 16,16 排除）。维度 [y][x]（labo.js 文件头的对齐解释）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {number} 原作 RETURN 0
+ * @returns {number} 恒 return 0
  */
 function set_vil(rand) {
   const rand_n = rand ?? default_rand;
@@ -222,7 +222,7 @@ function set_vil(rand) {
   }
 
   for (let i = 0; i < 4; i += 1) {
-    // REPEAT 4——LOCAL:0 = y、LOCAL:1 = x（VIL_CHECK 读 DC:(P:1):(P:0)
+    // REPEAT 4——LOCAL:0 = y、LOCAL:1 = x（vil_check 读 DC:(P:1):(P:0)
     // 的同维解释，文件头）
     const y = rand_n(32);
     const x = rand_n(32);

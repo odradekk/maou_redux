@@ -1,5 +1,5 @@
 /**
- * @file 任务系统（issue #178，阶段 3 H9）：DUNGEON_QUEST.ERB 全量 17 函数。
+ * @file 任务系统（issue #178，阶段 3 H9）：全量 17 函数。
  *
  * 任务状态槽（CFLAG，dungeon 属主域内）：
  *   534 受注状态（0=无 1=受注中 bit1=成功完结 bit2=失败完结）
@@ -7,24 +7,22 @@
  *   2 时限、3 大量敌人、4 性要求、5 假任务）/ 537 任务类型（1-3）、
  *   538 讨伐对象怪物 ID / 539 受注计数（回合）/ 540 任务人称变体（0-4）
  *
- * 移植说明（有意偏离，均注明依据）：
- *   - **角色变量省略角色号 = TARGET**（Emuera 语义；旁证
- *     キャラ関数/CHARA_INFO_SHOW ver1.1.2.ERB:24-26「TARGETを差し替えて
- *     おく」后 :1057-1058 的 CFLAG:16 与 :1055 的 CFLAG:TARGET:9 指同一
- *     角色）。QUEST_BITCH 系的初吻/失贞写点（CFLAG:16/-1 判定、EXP:0、
- *     TALENT:0、CFLAG:15）全部读 era_flag.target——调用时点的残留值
- *     （原作同样如此，见文件尾注释）；
+ * 说明（有意偏离，均注明依据）：
+ *   - **角色变量省略角色号 = TARGET**：quest_bitch 系的初吻/失贞写点
+ *     （CFLAG:16/-1 判定、EXP:0、TALENT:0、CFLAG:15）全部读
+ *     era_flag.target——调用时点的残留值
+ *     （有意如此，见文件尾注释）；
  *   - %SAVESTR:ARG% 承载名前，走 callname（#5 决议，dungeon.js 先例）；
  *     %ITEMNAME:MON_ID% 是裸 Item.yml 名，era.get(`itemname:id`)（#175
- *     MONSTER_LIST 段同款；拼接名才是 monstername）；
+ *     monster_list 段同款；拼接名才是 monstername）；
  *   - E 数组走 yml/E.yml 引擎表（monster-data.js 的 e_get/e_set）；
- *   - 原作全局 A（陷阱段换手）/ RESULT（QUEST_ON）/ ARGS（RESULT_QUEST
- *     的出参改写）改显式传参与返回值（#5 决议第六条）；ARGS 是 Emuera
+ *   - 全局 A（陷阱段换手）/ RESULT（QUEST_ON）/ ARGS（RESULT_QUEST
+ *     的出参改写）改显式传参与返回值（#5 决议第六条）；ARGS 是
  *     引用传参，ere 侧以返回值 { args } 传出，调用方不消费也保留；
  *   - ere 无全局 RAND 序列（#117），掷点经注入 rand（缺省 Math.random，
- *     dungeon-battle.js 先例）；**死赋值处的 RAND 照掷**（PRNG 序列与
- *     原作逐位对齐是种子化对比测试的前提，#175 文件头同款）；
- *   - 逐段注释保留原样（日文分支标记不译），行号锚点已随全库清理删除。
+ *     dungeon-battle.js 先例）；**死赋值处的 RAND 照掷**（PRNG 序列
+ *     逐位对齐是种子化对比测试的前提，#175 文件头同款）；
+ *   - 逐段注释保留原样（日文分支标记不译），行号引用已删除。
  */
 
 'use strict';
@@ -33,7 +31,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { e_get, e_set } = require('#/dungeon/monster-data');
-// 陷阱真身（#176）：QUEST_BATTLE_SET 的障碍陷阱三选一。其对 dungeon.js
+// 陷阱真身（#176）：quest_battle_set 的障碍陷阱三选一。其对 dungeon.js
 // 存根的延迟 require 同款防环；本文件不反依赖它，顶层引用无环。
 const trap_mod = require('#/dungeon/dungeon-trap');
 
@@ -42,7 +40,7 @@ function name_of(cid) {
   return era.get(`callname:${cid}:-1`) ?? '';
 }
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -58,22 +56,22 @@ function setbit(v, n) {
 }
 
 /**
- * @SET_QUEST（:6-113）：任务受注与上次任务的清算。
+ * set_quest：任务受注与上次任务的清算。
  *
- * 勇者队伍回城时由 @DUNGEON_TOWN 调用（必须在 TOWN_PT_PLANNING 之后——
- * 讨伐对象 RAND:(CFLAG:520) 读计划段刚写入的目标阶层，原作 :11-12 注释）。
+ * 勇者队伍回城时由 dungeon_town 调用（必须在 town_pt_planning 之后——
+ * 讨伐对象 RAND:(CFLAG:520) 读计划段刚写入的目标阶层）。
  * 每个成员：完结态先清算（成功按报酬类型 1/2/3 发放；失败无报酬清 534），
  * 再在 534 == 0 时抽新任务（报酬 → 六个障碍位 → 任务类型与人称 → 讨伐
  * 对象 → 受注计数）。
  *
- * @param {number} arg 队长（原作 ARG:0；同伴经 CFLAG:531/532 编入）
+ * @param {number} arg 队长（ARG:0；同伴经 CFLAG:531/532 编入）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 1
+ * @returns {Promise<number>} 恒 return 1
  */
 async function set_quest(arg, rand = default_rand) {
   const rand_n = rand;
   // クエスト禁止（FLAG:8 位 3 = 游戏设置 2 的任务开关，enter-enemy.js
-  // 同款裸读；CHARA_INFO_SHOW 的受注显示同判此位）
+  // 同款裸读；角色信息页的受注显示同判此位）
   if (getbit(era.get('flag:8') || 0, 3) !== 0) {
     return 0;
   }
@@ -98,23 +96,23 @@ async function set_quest(arg, rand = default_rand) {
       // 失败完结：无报酬，仅复位
       chara(cid).dungeon.已接任务 = 0;
     } else if (getbit(q534, 1) !== 0) {
-      // 成功報酬（:32-45）
+      // 成功報酬
       const reward = era.get(`cflag:${cid}:535`) || 0;
       if (reward === 1) {
-        // お金（:33-37）
+        // お金
         const local = (era.get(`cflag:${cid}:9`) || 0) * 10 + 100;
         era.print(`${name_of(cid)}完成了任务、获得了资金${local}！`);
         await era.waitAnyKey(); // PRINTFORMW
         chara(cid).dungeon.所持金 += local; // CFLAG:580 += LOCAL
       } else if (reward === 2) {
-        // 道德（:38-41）
+        // 道德
         const local = 10;
         era.print(`${name_of(cid)}完成了任务、道德提升了${local}！`);
         await era.waitAnyKey(); // PRINTFORMW
         const { karma } = require('#/dungeon/dungeon');
         karma(cid, local); // CALL KARMA, (PM:LCOUNT), LOCAL
       } else if (reward === 3) {
-        // 道具（:42-44）
+        // 道具
         era.print(`${name_of(cid)}完成了任务！`);
         await era.waitAnyKey(); // PRINTFORMW
         const { add_ex_item } = require('#/dungeon/dungeon');
@@ -132,7 +130,7 @@ async function set_quest(arg, rand = default_rand) {
     era.set(`cflag:${cid}:535`, rand_n(3) + 1);
 
     // クエストの障害（六个独立 1/3 掷点；bit5 假任务非显示）
-    let q536 = 0; // CFLAG:536 = 0（:58 初始化）
+    let q536 = 0; // CFLAG:536 = 0（初始化）
     if (rand_n(3) === 0) {
       q536 = setbit(q536, 0); // それはボスとの戦闘を強いられる
     }
@@ -189,19 +187,19 @@ async function set_quest(arg, rand = default_rand) {
 }
 
 /**
- * @RESULT_QUEST（:116-177）：战斗后的任务成败结算。
+ * result_quest：战斗后的任务成败结算。
  *
- * 由 @DUNGEON_PARTY_BATTLE 在任务战斗（QUEST_FLAG == 2）结束后按战果调用
+ * 由 dungeon_party_battle 在任务战斗（QUEST_FLAG == 2）结束后按战果调用
  * （成功 → "成功"、失败 → "失败"）。对每个受注中（534 == 1）且 E 列三列
  * 之一直接持有讨伐对象（E:0/E:100/E:200 == 538）的成员：假任务（bit5）或
  * 受注计数耗尽（539 < 1）把 ARGS 覆写为"失败"，随后打印成败日志并把 534
  * 置成功/失败完结位。
  *
- * @param {number} arg 队长（原作 ARG:0）
- * @param {string} args 成败初值（"成功" / "失败"；原作 ARGS 引用传参，
+ * @param {number} arg 队长（ARG:0）
+ * @param {string} args 成败初值（"成功" / "失败"；ARGS 引用传参，
  *   函数内可被覆写——出参经返回值传出）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 1
+ * @returns {Promise<number>} 恒 return 1
  */
 async function result_quest(arg, args, rand = default_rand) {
   const rand_n = rand;
@@ -244,7 +242,7 @@ async function result_quest(arg, args, rand = default_rand) {
     era.print('*任务结果*');
     await era.waitAnyKey();
 
-    // 偽の依頼（ARGS 覆写为 失敗；原作引用传参，此处局部变量）
+    // 偽の依頼（ARGS 覆写为 失敗；引用传参改局部变量）
     let args_local = args;
     if (getbit(era.get(`cflag:${cid}:536`) || 0, 5) !== 0) {
       era.print('看来是接了个假任务……');
@@ -259,7 +257,7 @@ async function result_quest(arg, args, rand = default_rand) {
       args_local = '失败';
     }
 
-    // 成败日志（QUEST_SELECT 的成功/失敗文本）
+    // 成败日志（quest_select 的成功/失敗文本）
     await quest_select(cid, args_local, 0, rand_n);
 
     // 完结位（bit1 成功 / bit2 失败）
@@ -278,7 +276,7 @@ async function result_quest(arg, args, rand = default_rand) {
 /**
  * 三型任务的人称变体（CFLAG:540 → 名）：受救/受害者的身份。
  * @param {number} type 任务类型 1-3
- * @param {number} v CFLAG:540 的值（0-4，越界回落村娘——原作 ELSE 臂）
+ * @param {number} v CFLAG:540 的值（0-4，越界回落村娘——ELSE 分支）
  * @returns {string}
  */
 function quest_victim(type, v) {
@@ -292,9 +290,9 @@ function quest_victim(type, v) {
 
 /**
  * 「失敗」态的 9 档凌辱结局文本（RAND:10/9/…/2 逐档掷点，先掷先中；
- * 末二档判 ITEM:22 野狗）。掷点顺序 1:1（每档独立 RAND:N，未中才掷下一档）。
+ * 末二档判 ITEM:22 野狗）。掷点顺序有意保留（每档独立 RAND:N，未中才掷下一档）。
  * @param {(n: number) => number} rand_n
- * @returns {string} 一行结局文本（含原作 PRINTL 的行首「被…的」后半）
+ * @returns {string} 一行结局文本（含 PRINTL 的行首「被…的」后半）
  */
 function quest_fail_tail(rand_n) {
   if (rand_n(10) === 0) {
@@ -314,13 +312,13 @@ function quest_fail_tail(rand_n) {
   } else if (rand_n(3) === 0) {
     return '全身被纹上了低贱的刺青、成了渴求着精液的肉便器……';
   } else if (rand_n(2) === 0 && (era.get('item:22') || 0) === 1) {
-    // 野良犬で獣姦フラグON（RAND 先掷、道具后判——1:1）
+    // 野良犬で獣姦フラグON（RAND 先掷、道具后判，顺序有意保留）
     return '与猪交换了灵魂成了家畜、沉迷在了与猪的交尾当中……';
   }
   return '已然被侵犯了……';
 }
 
-/** 「失敗」态 type 2（淫魔の虜）的 9 档结局文本（:325-345） */
+/** 「失敗」态 type 2（淫魔の虜）的 9 档结局文本 */
 function quest_fail_tail2(rand_n) {
   if (rand_n(10) === 0) {
     return '完全成了魔的眷属甚至还怀孕了……';
@@ -344,7 +342,7 @@ function quest_fail_tail2(rand_n) {
   return '已然被侵犯了……';
 }
 
-/** 「失敗」态 type 3（変異する身体）的 9 档结局文本（:403-424） */
+/** 「失敗」态 type 3（変異する身体）的 9 档结局文本 */
 function quest_fail_tail3(rand_n) {
   if (rand_n(10) === 0) {
     return '似乎用长出的巨大阴茎一个接一个地侵犯着街娘……';
@@ -363,30 +361,30 @@ function quest_fail_tail3(rand_n) {
   } else if (rand_n(3) === 0) {
     return '似乎觉醒了变态性癖全身纹上低贱的刺青、成为了肉便器……';
   } else if (rand_n(2) === 0 && (era.get('item:22') || 0) === 1) {
-    // 野良犬で獣姦フラグON（:419-421；RAND 先掷、道具后判）
+    // 野良犬で獣姦フラグON（RAND 先掷、道具后判）
     return '把自己当成了母狗、在草丛里和野狗交尾时被发现了……';
   }
   return '似乎因为长出了阴茎强奸了城里的女人而被逮捕了……';
 }
 
 /**
- * @QUEST_SELECT（:180-513）：任务文本分发。
+ * quest_select：任务文本分发。
  *
- * ARGS 四态：セット→「设定」（掷定类型 537 与人称 540；原作字面「セット」是
- * 内部协议值非玩家可见，按简体锁落简体——CHARA_INFO_SHOW 票移植时同此）/ 成功 /
+ * ARGS 四态：セット→「设定」（掷定类型 537 与人称 540；字面「セット」是
+ * 内部协议值非玩家可见，按简体锁落简体——角色信息页工单同此）/ 成功 /
  * 失败 / 名前。
  * QUEST_LINE：0 = 全份（TYPE 段 + LINE2 障碍明细 + LINE3 讨伐对象行，
- *   各自换行、末尾 WAIT）；1 = 仅任务名（不换行，CHARA_INFO_SHOW:392 的
- *   行内拼接用）；2 = 仅障碍聚合（不换行，:406）；3 = 仅讨伐对象（不
- *   换行，:417）。LINE2/LINE3 段在原作 `IF ARGS == "名前"` 块内
- *   （:452-:511 的 ENDIF），セット/成功/失敗 态不落一行障碍/讨伐对象；
- *   唯 quest_line 3 的 GOTO $LINE3 越过守卫直落块内（见下）。
+ *   各自换行、末尾 WAIT）；1 = 仅任务名（不换行，角色信息页的
+ *   行内拼接用）；2 = 仅障碍聚合（不换行）；3 = 仅讨伐对象（不
+ *   换行）。LINE2/LINE3 段在 `IF ARGS == "名前"` 块内——
+ *   セット/成功/失敗 态不落一行障碍/讨伐对象；
+ *   唯 quest_line 3 的 GOTO $LINE3 越过判定直落块内（见下）。
  *
- * @param {number} arg 角色（原作 ARG:0）
+ * @param {number} arg 角色（ARG:0）
  * @param {string} args 分发态（"セット" / "成功" / "失败" / "名前"）
- * @param {number} [quest_line] 行形态（0-3，缺省 0）
+ * @param {number} [quest_line] 行形式（0-3，缺省 0）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 1（类型越界 RETURN 0）
+ * @returns {Promise<number>} 恒 return 1（类型越界 RETURN 0）
  */
 async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
   const rand_n = rand;
@@ -401,7 +399,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
   }
 
   // MON_ID = CFLAG:ARG:538（セット态时是上一任务残留，但 LINE3 段
-  // 受名前态守卫、セット 不消费它——残留值无读者）
+  // 受名前态判定、セット 不消费它——残留值无读者）
   const mon_id = era.get(`cflag:${arg}:538`) || 0;
   const mon_name = era.get(`itemname:${mon_id}`) ?? ''; // %ITEMNAME:MON_ID%
 
@@ -419,11 +417,11 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         era.print(
           `被${mon_name}掳走的${quest_victim(1, era.get(`cflag:${arg}:540`) || 0)}`,
         );
-        era.print(quest_fail_tail(rand_n)); // ;PRINT は（原注释态的接续词不落）
+        era.print(quest_fail_tail(rand_n)); // ;PRINT は（注释态的接续词不落）
       } else if (args === '名前') {
-        // 名段 + ]（原作两次 PRINT 不换行 = 同一显示行，归并为
+        // 名段 + ]（两次 PRINT 不换行 = 同一显示行，归并为
         // 一次 print——dungeon.js 文件头先例；quest_line 1 供
-        // CHARA_INFO_SHOW 行内拼接，不落换行符）
+        // 角色信息页行内拼接，不落换行符）
         era.print(
           `任务[被掳走的${quest_victim(1, era.get(`cflag:${arg}:540`) || 0)}]`,
         );
@@ -475,7 +473,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
     }
   }
 
-  // —— quest_line 3 的 GOTO $LINE3（:206-207）：标签在 名前 守卫块内，
+  // —— quest_line 3 的 GOTO $LINE3：标签在 名前 判定块内，
   //    GOTO 跳过 IF 判定直落块内——args 非名前也执行讨伐对象行 ——
   if (quest_line === 3) {
     if (mon_id === 0) {
@@ -485,11 +483,11 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
     return 1;
   }
 
-  // —— $LINE2（:451-511）：障碍明细——名前 态专属 ——
+  // —— $LINE2：障碍明细——名前 态专属 ——
   if (args === '名前') {
     const q536 = era.get(`cflag:${arg}:536`) || 0;
     if (quest_line === 0) {
-      // 五行逐位明细（受注面板全份形态）
+      // 五行逐位明细（受注面板全份形式）
       if (getbit(q536, 0) !== 0) {
         era.print('*须强迫与BOSS战斗');
       }
@@ -506,8 +504,8 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
         era.print('*会有性奉仕的要求');
       }
     } else {
-      // 聚合形态（CHARA_INFO_SHOW:406 的行内拼接；SIF CFLAG:536
-      // 守门——无障碍时「*任务会有」也不打）
+      // 聚合形式（角色信息页的行内拼接；SIF CFLAG:536
+      // 检查——无障碍时「*任务会有」也不打）
       if (q536 !== 0) {
         const parts = [];
         const labels = ['BOSS战', '陷阱', '时限', '大量敌人', '性要求'];
@@ -524,7 +522,7 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
       return 1;
     }
 
-    // —— $LINE3（:501-510）：讨伐对象行（名前 态内；quest_line 3 经上方
+    // —— $LINE3：讨伐对象行（名前 态内；quest_line 3 经上方
     //    GOTO 分支独立进入）——
     if (mon_id === 0) {
       return 1; // GOTO LINEEND
@@ -542,18 +540,18 @@ async function quest_select(arg, args, quest_line = 0, rand = default_rand) {
 }
 
 /**
- * @QUEST_BATTLE_SET（:516-617）：任务战斗判定与敌方设置。
+ * quest_battle_set：任务战斗判定与敌方设置。
  *
- * 每场普通战斗前由 @DUNGEON_PARTY_BATTLE 调用（存根期恒 0 = 普通战斗照
+ * 每场普通战斗前由 dungeon_party_battle 调用（存根期恒 0 = 普通战斗照
  * 打；#178 起真身）。对每个成员：受注计数 -1（> 0 时）；1/3 掷点命中且
  * 受注中（534 == 1）且 E 列头持有讨伐对象时进入任务战斗——按障碍位改
  * 写 E 第三列（boss 化 / 15 只）或先掷陷阱；性要求位（bit4）另算交涉值，
- * 掷过 100 即以 QUEST_BITCH 完结任务并 RETURN 1（跳过普通战斗）。
+ * 掷过 100 即以 quest_bitch 完结任务并 RETURN 1（跳过普通战斗）。
  *
- * @param {number} arg0 队长（原作 ARG:0）
+ * @param {number} arg0 队长（ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
  * @returns {Promise<number>} QUEST_ON：0 = 非任务战斗 / 1 = 性奉侍完结
- *   （调用方直接结束战斗）/ 2 = 任务战斗（战果交 RESULT_QUEST）
+ *   （调用方直接结束战斗）/ 2 = 任务战斗（战果交 result_quest）
  */
 async function quest_battle_set(arg0, rand = default_rand) {
   const rand_n = rand;
@@ -611,15 +609,15 @@ async function quest_battle_set(arg0, rand = default_rand) {
       e_set(299, 1);
     }
 
-    // それは罠が仕掛けてある（原作全局 A 换手 PM:LCOUNT，A 的
+    // それは罠が仕掛けてある（全局 A 换手 PM:LCOUNT，A 的
     // 暂存/恢复即陷阱受者的指定；ere 侧经第一参数显式传）
     if (getbit(q536, 1) !== 0) {
       if (rand_n(3) === 0) {
-        await trap_mod.arrow_trap(cid, rand_n); // CALL ARROW_TRAP
+        await trap_mod.arrow_trap(cid, rand_n); // CALL arrow_trap
       } else if (rand_n(2) === 0) {
-        await trap_mod.oil_trap(cid, rand_n); // CALL OIL_TRAP
+        await trap_mod.oil_trap(cid, rand_n); // CALL oil_trap
       } else {
-        await trap_mod.all_down_trap(cid, rand_n); // CALL ALL_DOWN_TRAP
+        await trap_mod.all_down_trap(cid, rand_n); // CALL all_down_trap
       }
     }
 
@@ -666,17 +664,17 @@ async function quest_battle_set(arg0, rand = default_rand) {
 }
 
 /**
- * @QUEST_BITCH（:620-682）：性奉侍按怪物凌辱类型（E:(列头+7)）分派到
+ * quest_bitch：性奉侍按怪物凌辱类型（E:(列头+7)）分派到
  * 12 个类型段，最后做失贞判定。
  *
  * 初吻/失贞写点（CFLAG:16 == -1 → 995、EXP:0 > 0 且 TALENT:0 == 1 →
  * TALENT:0 = 0 + CFLAG:15 = 104）是省略角色号写法 → 读 era_flag.target
- * （文件头裁定）。调用时点 target 是战斗链的残留值（@DUNGEON 开头设的
- * 队长，或更近的攻击者换手）——原作同样读 TARGET 残留，1:1。
+ * （文件头结论）。调用时点 target 是战斗链的残留值（run_dungeon 开头设的
+ * 队长，或更近的攻击者换手）——同样读 TARGET 残留，有意保留。
  *
- * @param {number} arg 奉侍者（原作 ARG:0）
+ * @param {number} arg 奉侍者（ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {Promise<number>} 原作 RETURN 1
+ * @returns {Promise<number>} 恒 return 1
  */
 async function quest_bitch(arg, rand = default_rand) {
   const rand_n = rand;
@@ -724,7 +722,7 @@ async function quest_bitch(arg, rand = default_rand) {
 }
 
 /**
- * 各类型段共用的初吻判定（原作段内 `SIF CFLAG:16 == -1 / CFLAG:16 = 995`
+ * 各类型段共用的初吻判定（段内 `SIF CFLAG:16 == -1 / CFLAG:16 = 995`
  * ——省略角色号 → TARGET，995 = 初吻对象「怪物的阴茎」；train 属主门面）。
  */
 function first_kiss_check() {
@@ -735,7 +733,7 @@ function first_kiss_check() {
 }
 
 /**
- * @ORC_QUEST_BITCH（:689-706）：亜人。口交/精液经验 + 初吻判定。
+ * orc_quest_bitch：亜人。口交/精液经验 + 初吻判定。
  * @param {number} arg 奉侍者 @param {number} mcount 列头 @param {Function} rand_n
  * @returns {Promise<number>} 1
  */
@@ -755,7 +753,7 @@ async function orc_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @SLIME_QUEST_BITCH（:711-729）：スライム。阴茎/阴核点数（JUEL:0 同槽）。 */
+/** slime_quest_bitch：スライム。阴茎/阴核点数（JUEL:0 同槽）。 */
 async function slime_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -769,13 +767,13 @@ async function slime_quest_bitch(arg, mcount, rand_n) {
   } else {
     era.print('将腰沉了下去……'); // PRINTL
     era.print(`阴核点数+${monnum}`);
-    era.add(`juel:${arg}:0`, monnum); // JUEL:ARG:0（两臂同槽）
+    era.add(`juel:${arg}:0`, monnum); // JUEL:ARG:0（两分支同槽）
   }
   await era.waitAnyKey();
   return 1;
 }
 
-/** @INSECT_QUEST_BITCH（:734-751）：昆虫。阴茎点数 / 私处经验 +1。 */
+/** insect_quest_bitch：昆虫。阴茎点数 / 私处经验 +1。 */
 async function insect_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -794,7 +792,7 @@ async function insect_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @IVY_QUEST_BITCH（:756-770）：蔦触手。苦痛/恐怖点数（JUEL:9/10）。 */
+/** ivy_quest_bitch：蔦触手。苦痛/恐怖点数（JUEL:9/10）。 */
 async function ivy_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -810,7 +808,7 @@ async function ivy_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @SYOKUSYU_QUEST_BITCH（:775-796）：触手。阴茎点数 / 私处+阴核。 */
+/** syokusyu_quest_bitch：触手。阴茎点数 / 私处+阴核。 */
 async function syokusyu_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -831,7 +829,7 @@ async function syokusyu_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @FAILY_QUEST_BITCH（:801-819）：妖精。阴茎/阴蒂摩擦（JUEL:0）。 */
+/** faily_quest_bitch：妖精。阴茎/阴蒂摩擦（JUEL:0）。 */
 async function faily_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -851,7 +849,7 @@ async function faily_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @GIANT_QUEST_BITCH（:824-841）：巨人。口交/精液经验 + 初吻。 */
+/** giant_quest_bitch：巨人。口交/精液经验 + 初吻。 */
 async function giant_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -868,7 +866,7 @@ async function giant_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @MAN_QUEST_BITCH（:846-863）：男。口交/精液经验 + 初吻。 */
+/** man_quest_bitch：男。口交/精液经验 + 初吻。 */
 async function man_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -885,7 +883,7 @@ async function man_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @GIRL_QUEST_BITCH（:868-886）：女。交尾/交合（JUEL:0）。 */
+/** girl_quest_bitch：女。交尾/交合（JUEL:0）。 */
 async function girl_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -906,7 +904,7 @@ async function girl_quest_bitch(arg, mcount, rand_n) {
 }
 
 /**
- * @BEAST_QUEST_BITCH（:891-910）：獣。口交/精液/兽奸经验 + 初吻。
+ * beast_quest_bitch：獣。口交/精液/兽奸经验 + 初吻。
  * 兽奸经验行是 PRINTFORMW（等键）——与段尾 WAIT 共两处等键。
  */
 async function beast_quest_bitch(arg, mcount, rand_n) {
@@ -928,7 +926,7 @@ async function beast_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @BRAIN_QUEST_BITCH（:915-926）：脳姦。阴茎点数（JUEL:0）。 */
+/** brain_quest_bitch：脳姦。阴茎点数（JUEL:0）。 */
 async function brain_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);
@@ -942,7 +940,7 @@ async function brain_quest_bitch(arg, mcount, rand_n) {
   return 1;
 }
 
-/** @HORSE_QUEST_BITCH（:931-950）：馬。口交/精液/兽奸经验 + 初吻。 */
+/** horse_quest_bitch：馬。口交/精液/兽奸经验 + 初吻。 */
 async function horse_quest_bitch(arg, mcount, rand_n) {
   void rand_n;
   const monid = e_get(mcount);

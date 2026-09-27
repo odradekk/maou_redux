@@ -1,31 +1,31 @@
 /**
- * @file 怪物状态生成与改造。issue #175（阶段 3 H6）实现 @MONSTER_DATA、
+ * @file 怪物状态生成与改造。issue #175（阶段 3 H6）实现 monster_data、
  *     骷髅兵和怪物名；issue #340（阶段 5a L9）补齐怪物改造菜单与判定。
  *
- * **为什么随 H6 落地（隐性硬前置，SOP §2 判据）**：H6 票面只有两个战斗
- * 文件的 22 个函数，但 @DUNGEON_PARTY_BATTLE 的怪物全靠本函数写进 E 数组
- * （怪物相關/MONSTER_DATA.ERB 是 E 数组的唯一写者）——存根化的后果实测
- * 推演：E 全空 → @DEATH_CHECK 的怪物侧 ALIVE == 0 → RETURN 1 → 勇者每战
- * 必胜且 @MONSTER_ATTACK 因 MEMBER == 0 直接返回，**勇者不掉血**，本票
- * 「让勇者会被打退」的核心交付落空。与 #169 把 CHARA_MAKE 拉进阶段 3 成
- * 为 H1 是同一形态。怪物属性数据在 ere/data/monster-database.js（#168
- * 裁定 6 先例）。
+ * **为什么随 H6 实现（隐性硬前置，SOP §2 判断条件）**：H6 工单内容只有两个
+ * 战斗文件的 22 个函数，但 dungeon_party_battle 的怪物全靠本函数写进 E
+ * 数组（本文件是 E 数组的唯一写者）——存根化的后果（实测推演）：
+ * E 全空 → death_check 的怪物侧 ALIVE == 0 → RETURN 1 → 勇者每战
+ * 必胜且 monster_attack 因 MEMBER == 0 直接返回，**勇者不掉血**，这张工单
+ * 「让勇者会被打退」的核心交付落空。与 #169 把 chara-make.js 拉进阶段 3 成
+ * 为 H1 是同一形式。怪物属性数据在 ere/data/monster-database.js（#168
+ * 结论 6 先例）。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 说明（有意偏离，均注明依据）：
  *   - **E 数组走引擎变量**（yml/E.yml 建桶，见该文件头注）：数字下标寻址
- *     `era.get/set('e:N')`，读写帮手 e_get/e_set 收口（getter 一律 || 0
- *     兜底——Emuera 的 E 全区初始 0，ere 侧未写槽读 undefined）；
+ *     `era.get/set('e:N')`，读写统一经帮手 e_get/e_set（getter 一律 || 0
+ *     取默认值——E 全区初始 0，ere 侧未写槽读 undefined）；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（缺省
  *     Math.random——run_dungeon 第二参先例）；
- *   - 原作 88 个怪物函数 → 数据表查表（MONSTER_DATABASE）；@SKELETON 的
+ *   - 88 个怪物函数 → 数据表查表（MONSTER_DATABASE）；skeleton 的
  *     动态等级保留为函数；
- *   - 原作 GROUP 战用段（:154-170 的 GROUP != -1 臂）无调用方传 GROUP
- *     （全库 CALL MONSTER_DATA 均 4 参以内），结构保留、注释标注；
- *   - 名字拼接（@MONSTERNAME 的 #FUNCTIONS 与 @MONSTER_NAME 的 PRINT 链）
+ *   - GROUP 战用段（GROUP != -1 分支）无调用方传 GROUP
+ *     （全库调用 monster_data 均 4 参以内），结构保留、注释标注；
+ *   - 名字拼接（monstername 的 #FUNCTIONS 与 monster_name 的 PRINT 链）
  *     改为返回字符串，由调用方并入一次 era.print（引擎 print 每调用一行，
  *     同显示行归并先例）；
  *   - ITEM:INUM（怪物所持数，经济的怪物库存）经 `item:${inum}` 寻址
- *     （ere 侧 game-stronghold.js 等先例；Emuera ITEM = data.item.hold）。
+ *     （ere 侧 game-stronghold.js 等先例；ITEM = data.item.hold）。
  */
 
 'use strict';
@@ -36,7 +36,7 @@ const era_exflag = require('#/era-utils/era-exflag');
 const { select_yes_no } = require('#/page/page-life-list');
 const { MONSTER_DATABASE } = require('#/data/monster-database');
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** RAND:N（0..N-1）的缺省实现 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
@@ -47,9 +47,8 @@ function campaign_dungeon_lv() {
 }
 
 /**
- * @ENEMY_DATA_CHECK（侵略/ENEMY_DATA.ERB:1-8）与 @CRUSADER（:10-40）。
- * ARG 被声明成形参，却漏了 INUM/TOP 的赋值，导致字面执行恒为 0；
- * #333 裁定不修复，因此这里保留无操作行为。
+ * enemy_data_check 与 crusader 段：ARG 被声明成形参，却漏了 INUM/TOP 的
+ * 赋值，两个入口字面执行都恒 0；#333 结论不修复，因此这里保留无操作行为。
  */
 function enemy_data_check(inum, top) {
   void inum;
@@ -57,7 +56,7 @@ function enemy_data_check(inum, top) {
   return 0;
 }
 
-/** E 数组读：未写槽兜 0（Emuera 全局数组初始 0 的等价物） */
+/** E 数组读：未写槽取 0（全局数组初始 0 的等价物） */
 function e_get(i) {
   return era.get(`e:${i}`) || 0;
 }
@@ -67,16 +66,16 @@ function e_set(i, v) {
   era.set(`e:${i}`, v);
 }
 
-/** 怪物名（Item.yml 的登记名；原作 %ITEMNAME:ID%） */
+/** 怪物名（Item.yml 的登记名；%ITEMNAME:ID%） */
 function item_name(id) {
   return era.get(`itemname:${id}`) ?? '';
 }
 
 /**
- * @SKELETON（:1994-2032）：骷髅兵——等级随掷点或阶层动态，所以不进
+ * skeleton：骷髅兵——等级随掷点或阶层动态，所以不进
  * 数据表。ARG:1 < 0 时 RAND:9+1，否则用 ARG:1 的当前阶层（CFLAG:501）。
- * @param {number} top 列头（原作 ARG:0）
- * @param {number} arg1 怪物持有者的角色号（原作 ARG:1；-1 = 无）
+ * @param {number} top 列头
+ * @param {number} arg1 怪物持有者的角色号（-1 = 无）
  * @param {(n: number) => number} rand RAND:N 随机源
  */
 function skeleton(top, arg1, rand) {
@@ -99,16 +98,16 @@ function skeleton(top, arg1, rand) {
 
 /**
  * 怪物改造位（FLAG:(怪物番号 + 700)）：低两位 = 强化改造、百位段 = 兵种，
- * 拼名与生成都读它（@MONSTERNAME / @MONSTER_NAME / @MONSTER_DATA 共用）。
+ * 拼名与生成都读它（monstername / monster_name / monster_data 共用）。
  * @param {number} id 怪物识别号
- * @returns {number} 改造位（原作 EXTRA）
+ * @returns {number} 改造位（EXTRA）
  */
 function monster_extra(id) {
   return era.get(`flag:${id + 700}`) || 0;
 }
 
 /**
- * @MONSTERNAME（:2701-2766）：怪物名拼接（#FUNCTIONS——返回字符串）。
+ * monstername：怪物名拼接（#FUNCTIONS——返回字符串）。
  * 改造前缀（上级/地形适应定语/酸性/猛毒/装甲）+ 怪物名 + 兵种。
  * @param {number} id 怪物识别号
  * @returns {string} 拼接名
@@ -162,22 +161,22 @@ function monstername(id) {
 }
 
 /**
- * @MONSTER_NAME（:2772-2878）：打印型名字拼接。与 @MONSTERNAME 同构
- * （前缀 + 名 + 兵种）；原作第二参（1 = 空格配置）控制的 STRLENS 半角
+ * monster_name：打印型名字拼接。与 monstername 同构
+ * （前缀 + 名 + 兵种）；第二参（1 = 空格配置）控制的 STRLENS 半角
  * 字宽对齐段无 era 通道（引擎 print 自适应布局），不移植（注释留痕），
  * 签名相应只留识别号。
  * @param {number} id 怪物识别号
  * @returns {string} 拼接名（供调用方并入一次 era.print）
  */
 function monster_name(id) {
-  // 的 STRLENS 空格对齐段：ere 无字宽对齐通道，不移植
+  // STRLENS 空格对齐段：ere 无字宽对齐通道，不移植
   return monstername(id);
 }
 
 /**
- * @MONSTER_SETUP_ABLE（:2648-2698）：判定怪物能否选择指定改造或兵种。
- * @param {number} id 怪物识别号（原作 ARG）
- * @param {number} selection 改造菜单号（原作 ARG:1）
+ * monster_setup_able：判定怪物能否选择指定改造或兵种。
+ * @param {number} id 怪物识别号
+ * @param {number} selection 改造菜单号
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {number} 1 = 可选，0 = 不可选
  */
@@ -186,7 +185,7 @@ function monster_setup_able(id, selection, rand = default_rand) {
   if (selection === 0 || selection === 1) return 1;
   if (selection === 2 && id < 190) return 1;
 
-  // 怪物种族与法术取自 MONSTER_DATA 的第 0 防卫列。
+  // 怪物种族与法术取自 monster_data 的第 0 防卫列。
   monster_data(id, 0, -1, -1, -1, rand);
   const type = e_get(7); // E:7 = 凌辱类型（怪物种族）
   const magic = e_get(6); // E:6 = 怪物固有魔法
@@ -205,7 +204,7 @@ function monster_setup_able(id, selection, rand = default_rand) {
   return 0;
 }
 
-/** 改造菜单正文（原作 :2479-2645） */
+/** 改造菜单正文 */
 const MONSTER_MOD_LABELS = Object.freeze({
   0: '无改造',
   1: '上级化',
@@ -215,7 +214,7 @@ const MONSTER_MOD_LABELS = Object.freeze({
   5: '装甲化',
 });
 
-/** 兵种菜单正文（原作 :2479-2645） */
+/** 兵种菜单正文 */
 const MONSTER_TROOP_LABELS = Object.freeze({
   50: '普通兵',
   51: '弓兵',
@@ -225,11 +224,11 @@ const MONSTER_TROOP_LABELS = Object.freeze({
 });
 
 /**
- * @MONSTER_SETUP（:2479-2645）：怪物改造菜单。选择可用改造、确认并支付
+ * monster_setup：怪物改造菜单。选择可用改造、确认并支付
  * 1000 资金后更新 FLAG:(怪物号+700)，随后留在菜单继续选择。
  *
- * 原作 KAI_LIST 是调用方部下一览的死回传（DUNGEON_INFO2.ERB:439 赋值后
- * 无读者）；ere 调用方同样不消费，因此所有退出路径统一返回 0。
+ * KAI_LIST 是调用方部下一览的死回传（赋值后无读者，dungeon 信息页已随
+ * #685 删除）；ere 调用方同样不消费，因此所有退出路径统一返回 0。
  * @param {number} id 怪物识别号（100-199）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0；非法识别号返回 999
@@ -280,7 +279,7 @@ async function monster_setup(id, rand = default_rand) {
 
     era.drawLine();
     era.printButton('返回', 999);
-    // 原作 PRINT 菜单 + INPUT 是自由输入；按钮只改善可点击性，不收紧输入集。
+    // PRINT 菜单 + INPUT 是自由输入；按钮只改善可点击性，不收紧输入集。
     const selection = await era.input({ useRule: false });
     if (selection === 999) return 0;
     if (monster_setup_able(id, selection, rand) === 0) return 0;
@@ -308,29 +307,29 @@ async function monster_setup(id, rand = default_rand) {
 }
 
 /**
- * @MONSTER_DATA（:2-461）：把怪物写进 E 数组的一列。
+ * monster_data：把怪物写进 E 数组的一列。
  *
  * 流程：等级骰 → 数量两骰（GROUP 战取大、常规则取小）→ boss 化 →
  * 查数据表写属性 → 精英随从修正 → 兵种改造补正 → 迷宫等级缩放。
  *
- * @param {number} inum 怪物识别号（原作 ARG:0；可被本函数改写为 190 骷髅）
- * @param {number} line 队列（原作 ARG:1：0-2 防御三列、3 = 勇者(A)配下、
+ * @param {number} inum 怪物识别号（可被本函数改写为 190 骷髅）
+ * @param {number} line 队列（0-2 防御三列、3 = 勇者(A)配下、
  *   4 = 勇者(T)配下、5 = X 的怪物数据取得；列头 = line * 100）
- * @param {number} [arg2] 勇者A（原作 ARG:2，缺省 -1；LINE == 3 与骷髅战用）
- * @param {number} [arg3] 奴隶的对手勇者T（原作 ARG:3，缺省 -1；LINE == 4 用）
- * @param {number} [group] GROUP 战分组（原作 GROUP，缺省 -1；全库无调用方
+ * @param {number} [arg2] 勇者A（缺省 -1；LINE == 3 与骷髅战用）
+ * @param {number} [arg3] 奴隶的对手勇者T（缺省 -1；LINE == 4 用）
+ * @param {number} [group] GROUP 战分组（缺省 -1；全库无调用方
  *   传它，结构保留）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
- * @returns {number} 原作 RETURN 0
+ * @returns {number} 恒 return 0
  */
 function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   const rand_n = rand ?? default_rand;
   const top = line * 100; // TOP = 列头
 
-  // —— 怪物生成レベル（:96-110）——
+  // —— 怪物生成レベル ——
   let lv;
   if (inum >= 600) {
-    // イベント領域のモンスター：CAMPAIGN_DUNGEON_LV（战役等级）
+    // イベント領域のモンスター：campaign_dungeon_lv（战役等级）
     const camp_lv = campaign_dungeon_lv();
     lv = Math.floor(camp_lv / 10) + 2;
     if (rand_n(10) < camp_lv % 10) {
@@ -344,7 +343,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     }
   }
 
-  // —— 数量第一骰 LOCAL:1（:112-170）——
+  // —— 数量第一骰 LOCAL:1 ——
   let first_count;
   if (group === -1) {
     if (inum >= 600) {
@@ -383,7 +382,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
       first_count = 1;
     }
   } else {
-    // GROUP 战用（:154-170）——全库无调用方传 GROUP，结构保留
+    // GROUP 战用——全库无调用方传 GROUP，结构保留
     if (line >= 0 && line < 3) {
       const held = era.get(`item:${inum}`) || 0;
       if (held <= 100) {
@@ -402,11 +401,11 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     }
   }
 
-  // —— 状態異常初期化（:171-172）——
+  // —— 状態異常初期化 ——
   e_set(top + 9, 0);
 
-  // —— ボス化判定（:174-182）——
-  // 第二臂（&& GROUP）是第一臂的真子集，恒冗余——保留现状
+  // —— ボス化判定 ——
+  // 第二分支（&& GROUP）是第一分支的真子集，恒冗余——保留现状
   if (inum === 190) {
     // 骷髅兵不 boss 化
     e_set(top + 8, 0);
@@ -416,7 +415,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     e_set(top + 8, 0);
   }
 
-  // —— 数量第二骰 LOCAL:0（:184-214）——
+  // —— 数量第二骰 LOCAL:0 ——
   let second_count;
   if (group === -1) {
     if (line >= 0 && line < 3) {
@@ -445,7 +444,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   // E:Y+99（その列の怪物の数）
   e_set(top + 99, second_count);
 
-  // —— 怪物函数分发（:216-339）——
+  // —— 怪物函数分发 ——
   const row = MONSTER_DATABASE[inum];
   if (row !== undefined) {
     e_set(top, row.番号);
@@ -460,11 +459,11 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   } else if (inum >= 1000 && inum < 2000) {
     enemy_data_check(inum, top);
   } else {
-    // ELSE 臂：未知识别号 → 骷髅兵（SKELETON 的 ARG:1 用勇者A）
+    // ELSE 分支：未知识别号 → 骷髅兵（skeleton 的 ARG:1 用勇者A）
     skeleton(top, arg2, rand_n);
   }
 
-  // —— 精英のお供（:341-355）——
+  // —— 精英のお供 ——
   if (arg2 === -1) {
     arg2 = 0;
   }
@@ -483,7 +482,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     second_count = first_count;
   }
 
-  // —— 兵種による特性変化（:357-419）——
+  // —— 兵種による特性変化 ——
   const extra = monster_extra(inum);
   const mod = extra % 100;
   if (mod === 1) {
@@ -524,7 +523,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
     e_set(top + 3, e_get(top + 3) + rand_n(lv) + 1);
   }
 
-  // —— 怪物ステータス補正（:421-437）——
+  // —— 怪物ステータス補正 ——
   let local = e_get(top + 1);
   e_set(top + 1, local + 4); // 等级 +4
   local *= 2; // テコ入れ
@@ -548,7 +547,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   e_set(top + 2, e_get(top + 2) * 2 + lvup);
   e_set(top + 3, e_get(top + 3) * 2 + lvup);
 
-  // —— 精英のお供を強化（:443-456）——
+  // —— 精英のお供を強化 ——
   const follower_lv = era.get(`cflag:${arg2}:9`) || 0;
   if (is_elite_follower) {
     e_set(top + 2, e_get(top + 2) + follower_lv);

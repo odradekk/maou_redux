@@ -5,15 +5,15 @@
  * 预置输入）；随机经函数级 rand 参数注入定值序。
  *
  * 验收对应（#178 清单）：
- *   - @SET_QUEST → @QUEST_SELECT → @RESULT_QUEST 的任务生命周期有测试
+ *   - set_quest → quest_select → result_quest 的任务生命周期有测试
  *     （受注落位 / 报酬清算 / 成败结算 / 假任务与超时覆写 / E 列匹配门槛）；
- *   - 12 个 @*_QUEST_BITCH 段的经验累加逐条有测试；
- *   - @QUEST_BATTLE_SET 的三态（0/1/2）与障碍位（boss / 大量敌人 / 性
+ *   - 12 个 *_quest_bitch 段的经验累加逐条有测试；
+ *   - quest_battle_set 的三态（0/1/2）与障碍位（boss / 大量敌人 / 性
  *     奉侍交涉）各有断言；受注计数递减有断言。
  *
- * 本票核心移植裁定的钉子：
+ * 这张工单核心移植结论的钉子：
  *   - 省略角色号 = TARGET（初吻/失贞写点打在 era_flag.target 上）；
- *   - SET_QUEST 的受注计数挂在障碍 bit2（时限）——#651 已从 bit3（大量
+ *   - set_quest 的受注计数挂在障碍 bit2（时限）——#651 已从 bit3（大量
  *     敌人）改正，短计数归时限任务。
  */
 
@@ -34,7 +34,7 @@ function seq_rand(given, fallback = 99) {
 
 /**
  * 最小世界：魔王 0 + 勇者队长 1（侵攻中、第 1 层、目标阶层 8）。
- * E 列预置：狗头人（100）×3 在第一列——RESULT_QUEST / QUEST_BATTLE_SET
+ * E 列预置：狗头人（100）×3 在第一列——result_quest / quest_battle_set
  * 的「E 列头 == 讨伐对象」门槛直接命中。
  */
 function setup_world() {
@@ -64,9 +64,9 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-// —— @SET_QUEST：受注与清算 ——
+// —— set_quest：受注与清算 ——
 
-test('SET_QUEST：FLAG:8 位 3（任务禁止）开时不受理', async () => {
+test('set_quest：FLAG:8 位 3（任务禁止）开时不受理', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:8', 1 << 3);
   const { set_quest } = load(fixture);
@@ -75,10 +75,10 @@ test('SET_QUEST：FLAG:8 位 3（任务禁止）开时不受理', async () => {
   assert.equal(fixture.store.get('cflag:1:534'), undefined, '534 未写');
 });
 
-test('SET_QUEST：受注落位（534=1 / 535 报酬 / 536 障碍 / 539 计数）', async () => {
+test('set_quest：受注落位（534=1 / 535 报酬 / 536 障碍 / 539 计数）', async () => {
   const fixture = setup_world();
   // rand 序：535=rand(3)+1→0；六个障碍 rand(3)→3,3,3,3,3,3（全不中）；
-  // QUEST_SELECT セット rand(3)+1→2（type3）、rand(5)→1（人称）；
+  // quest_select セット rand(3)+1→2（type3）、rand(5)→1（人称）；
   // 讨伐对象 rand(520)→2、rand(5)→4；时限不掷（bit3 未中）
   const { set_quest } = load(fixture);
   await set_quest(1, seq_rand([0, 3, 3, 3, 3, 3, 3, 2, 1, 2, 4]));
@@ -100,15 +100,15 @@ test('SET_QUEST：受注落位（534=1 / 535 报酬 / 536 障碍 / 539 计数）
   );
   assert(
     lines.some((l) => l.includes('任务[因变异魔法而暴走的')),
-    'QUEST_SELECT 名前（type3 称谓）',
+    'quest_select 名前（type3 称谓）',
   );
   assert(
     lines.some((l) => l.includes('*讨伐对象是')),
-    'QUEST_SELECT LINE3 讨伐对象行',
+    'quest_select LINE3 讨伐对象行',
   );
 });
 
-test('SET_QUEST：障碍 bit2（时限）挂短受注计数', async () => {
+test('set_quest：障碍 bit2（时限）挂短受注计数', async () => {
   const fixture = setup_world();
   // 535→0；障碍掷点 [3(不中),3(不中),0→bit2 中,3,3,3]；セット 2/1；
   // 讨伐 0/0；时限 rand(10)+1→4
@@ -118,7 +118,7 @@ test('SET_QUEST：障碍 bit2（时限）挂短受注计数', async () => {
   assert.equal(fixture.store.get('cflag:1:539'), 5, 'rand(10)+1 = 5（短计数）');
 });
 
-test('SET_QUEST：成功完结的清算——报酬资金入账（等级×10+100）', async () => {
+test('set_quest：成功完结的清算——报酬资金入账（等级×10+100）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1 | (1 << 1)); // 成功完结位
   fixture.store.set('cflag:1:535', 1); // 资金报酬
@@ -137,7 +137,7 @@ test('SET_QUEST：成功完结的清算——报酬资金入账（等级×10+100
   );
 });
 
-test('SET_QUEST：失败完结的清算——无报酬、534 清 0 后照常接新', async () => {
+test('set_quest：失败完结的清算——无报酬、534 清 0 后照常接新', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1 | (1 << 2)); // 失败完结位
   fixture.store.set('cflag:1:535', 1);
@@ -148,9 +148,9 @@ test('SET_QUEST：失败完结的清算——无报酬、534 清 0 后照常接�
   assert.equal(fixture.store.get('cflag:1:534'), 1, '清 0 后接新任务');
 });
 
-// —— @RESULT_QUEST：成败结算 ——
+// —— result_quest：成败结算 ——
 
-test('RESULT_QUEST：战斗胜利 → 成功完结位 + 成功日志', async () => {
+test('result_quest：战斗胜利 → 成功完结位 + 成功日志', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:537', 1); // type1 被拐走的女子
@@ -167,11 +167,11 @@ test('RESULT_QUEST：战斗胜利 → 成功完结位 + 成功日志', async () 
   );
   assert(
     lines.some((l) => l.includes('安全救出了！')),
-    'QUEST_SELECT 成功日志（type1 村娘）',
+    'quest_select 成功日志（type1 村娘）',
   );
 });
 
-test('RESULT_QUEST：假任务（bit5）把成败覆写为失败', async () => {
+test('result_quest：假任务（bit5）把成败覆写为失败', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:536', 1 << 5);
@@ -191,7 +191,7 @@ test('RESULT_QUEST：假任务（bit5）把成败覆写为失败', async () => {
   );
 });
 
-test('RESULT_QUEST：受注计数耗尽（539 < 1）覆写为失败', async () => {
+test('result_quest：受注计数耗尽（539 < 1）覆写为失败', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:539', 0);
@@ -205,7 +205,7 @@ test('RESULT_QUEST：受注计数耗尽（539 < 1）覆写为失败', async () =
   );
 });
 
-test('RESULT_QUEST：E 列不持有讨伐对象时不结算', async () => {
+test('result_quest：E 列不持有讨伐对象时不结算', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:538', 250); // 不在 E 列头
@@ -217,9 +217,9 @@ test('RESULT_QUEST：E 列不持有讨伐对象时不结算', async () => {
   assert.equal(text_lines(fixture).length, 0, '零输出');
 });
 
-// —— @QUEST_SELECT：四态 × 四线 ——
+// —— quest_select：四态 × 四线 ——
 
-test('QUEST_SELECT：设定态（原作セット）掷定型（537/540），名前态不掷', async () => {
+test('quest_select：设定态（セット）掷定型（537/540），名前态不掷', async () => {
   const fixture = setup_world();
   const { quest_select } = load(fixture);
   await quest_select(1, '设定', 0, seq_rand([1, 3])); // type = 1+1 = 2，人称 3
@@ -235,7 +235,7 @@ test('QUEST_SELECT：设定态（原作セット）掷定型（537/540），名�
   assert.equal(fixture2.store.get('cflag:1:537'), 2, '不覆写');
 });
 
-test('QUEST_SELECT：quest_line 1/2/3 的行内拼接形态（CHARA_INFO_SHOW 用）', async () => {
+test('quest_select：quest_line 1/2/3 的行内拼接写法（角色信息页用）', async () => {
   const base = () => {
     const f = setup_world();
     f.store.set('cflag:1:537', 1);
@@ -261,17 +261,17 @@ test('QUEST_SELECT：quest_line 1/2/3 的行内拼接形态（CHARA_INFO_SHOW �
     ['*任务会有BOSS战/陷阱/性要求'],
     'line 2 聚合（斜杠分隔，bit 序）',
   );
-  // line 3：讨伐对象行内（越过了名前守卫）
+  // line 3：讨伐对象行内（越过了名前检查）
   const f3 = base();
   await load(f3).quest_select(1, '成功', 3, seq_rand([1]));
   assert.deepEqual(
     text_lines(f3).filter((l) => l.includes('讨伐对象')),
     ['*讨伐对象是狗头人'],
-    'line 3 越过名前守卫',
+    'line 3 越过名前检查',
   );
 });
 
-test('QUEST_SELECT：失敗态 9 档链按掷序先中（rand(10)==0 第一档）', async () => {
+test('quest_select：失敗态 9 档链按掷序先中（rand(10)==0 第一档）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:537', 1);
   fixture.store.set('cflag:1:540', 0);
@@ -294,9 +294,9 @@ test('QUEST_SELECT：失敗态 9 档链按掷序先中（rand(10)==0 第一档�
   );
 });
 
-// —— @QUEST_BATTLE_SET：三态与障碍 ——
+// —— quest_battle_set：三态与障碍 ——
 
-test('QUEST_BATTLE_SET：非受注中 → 0（普通战斗）；受注计数仍递减', async () => {
+test('quest_battle_set：非受注中 → 0（普通战斗）；受注计数仍递减', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 0);
   fixture.store.set('cflag:1:539', 10);
@@ -307,7 +307,7 @@ test('QUEST_BATTLE_SET：非受注中 → 0（普通战斗）；受注计数仍�
   assert.equal(fixture.store.get('cflag:1:539'), 9, '计数在掷点前递减');
 });
 
-test('QUEST_BATTLE_SET：受注中且 E 列命中 → 2（任务战斗）', async () => {
+test('quest_battle_set：受注中且 E 列命中 → 2（任务战斗）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:538', 100);
@@ -322,7 +322,7 @@ test('QUEST_BATTLE_SET：受注中且 E 列命中 → 2（任务战斗）', asyn
   );
 });
 
-test('QUEST_BATTLE_SET：bit0（BOSS 战）把 E 第三列 boss 化', async () => {
+test('quest_battle_set：bit0（BOSS 战）把 E 第三列 boss 化', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:538', 100);
@@ -333,7 +333,7 @@ test('QUEST_BATTLE_SET：bit0（BOSS 战）把 E 第三列 boss 化', async () =
   assert.equal(fixture.store.get('e:299'), 1, 'E:299 = 1（数量）');
 });
 
-test('QUEST_BATTLE_SET：bit3（大量敌人）覆写为 15 只', async () => {
+test('quest_battle_set：bit3（大量敌人）覆写为 15 只', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:538', 100);
@@ -344,7 +344,7 @@ test('QUEST_BATTLE_SET：bit3（大量敌人）覆写为 15 只', async () => {
   assert.equal(fixture.store.get('e:299'), 15, '15 只');
 });
 
-test('QUEST_BATTLE_SET：bit4（性要求）交涉值掷过 100 → QUEST_BITCH 完结、RETURN 1', async () => {
+test('quest_battle_set：bit4（性要求）交涉值掷过 100 → quest_bitch 完结、RETURN 1', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:538', 100);
@@ -367,7 +367,7 @@ test('QUEST_BATTLE_SET：bit4（性要求）交涉值掷过 100 → QUEST_BITCH 
   );
   assert(
     lines.some((l) => l.includes('口交经验+3')),
-    'QUEST_BITCH 亜人段执行（E 列 3 只）',
+    'quest_bitch 亜人段执行（E 列 3 只）',
   );
   assert(
     lines.some((l) => l.includes('*任务成功*')),
@@ -375,7 +375,7 @@ test('QUEST_BATTLE_SET：bit4（性要求）交涉值掷过 100 → QUEST_BITCH 
   );
 });
 
-test('QUEST_BATTLE_SET：交涉值补正（娼妇出身 +30 / 卖淫经验 / 低善恶两档）', async () => {
+test('quest_battle_set：交涉值补正（娼妇出身 +30 / 卖淫经验 / 低善恶两档）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:538', 100);
@@ -389,7 +389,7 @@ test('QUEST_BATTLE_SET：交涉值补正（娼妇出身 +30 / 卖淫经验 / 低
   assert.equal(ret, 1, '补正叠加后交涉成功');
 });
 
-test('QUEST_BATTLE_SET：交涉失败 → 回绝播报、QUEST_ON 2', async () => {
+test('quest_battle_set：交涉失败 → 回绝播报、QUEST_ON 2', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:534', 1);
   fixture.store.set('cflag:1:538', 100);
@@ -403,9 +403,9 @@ test('QUEST_BATTLE_SET：交涉失败 → 回绝播报、QUEST_ON 2', async () =
   );
 });
 
-// —— @QUEST_BITCH 12 段：经验/点数累加逐条（验收点名）——
+// —— quest_bitch 12 段：经验/点数累加逐条（验收点名）——
 
-/** 12 段的落点表：[导出名, 有阴茎臂 {键:期望}, 无阴茎臂 {键:期望}]（E 列 7 只） */
+/** 12 段的落点表：[导出名, 有阴茎分支 {键:期望}, 无阴茎分支 {键:期望}]（E 列 7 只） */
 const BITCH_SECTIONS = [
   [
     'orc_quest_bitch',
@@ -413,7 +413,7 @@ const BITCH_SECTIONS = [
     { 'exp:1:22': 7, 'exp:1:20': 7 },
   ],
   ['slime_quest_bitch', { 'juel:1:0': 7 }, { 'juel:1:0': 7 }],
-  // 无阴茎臂的私处经验是 +1（:747 EXP:ARG:0 += 1），不是 += MONNUM
+  // 无阴茎分支的私处经验是 +1（EXP:ARG:0 += 1），不是 += MONNUM
   ['insect_quest_bitch', { 'juel:1:0': 7 }, { 'exp:1:0': 1 }],
   [
     'ivy_quest_bitch',
@@ -451,7 +451,7 @@ for (const [fn_name, dick_writes, plain_writes] of BITCH_SECTIONS) {
     ['有阴茎（扶她 121）', dick_writes],
     ['无阴茎（女性）', plain_writes],
   ]) {
-    test(`QUEST_BITCH 段 ${fn_name}（${arm}）：${Object.keys(writes)
+    test(`quest_bitch 段 ${fn_name}（${arm}）：${Object.keys(writes)
       .map((k) => `${k}=${writes[k]}`)
       .join(' + ')}`, async () => {
       const fixture = setup_world();
@@ -466,7 +466,7 @@ for (const [fn_name, dick_writes, plain_writes] of BITCH_SECTIONS) {
       for (const [key, want] of Object.entries(writes)) {
         assert.equal(fixture.store.get(key), want, `${key} 落账`);
       }
-      // 两臂并集之外的键不写（对照）
+      // 两分支并集之外的键不写（对照）
       const all_keys = new Set([
         ...Object.keys(dick_writes),
         ...Object.keys(plain_writes),
@@ -495,7 +495,7 @@ for (const [fn_name, dick_writes, plain_writes] of BITCH_SECTIONS) {
   }
 }
 
-test('QUEST_BITCH 初吻判定：cflag:16 == -1 → 995（打在 TARGET 上，非 ARG）', async () => {
+test('quest_bitch 初吻判定：cflag:16 == -1 → 995（打在 TARGET 上，非 ARG）', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:10005', 0); // era_flag.target = 魔王 0（≠ ARG 1）
   fixture.store.set('cflag:0:16', -1); // TARGET（魔王）初吻未经验
@@ -510,11 +510,11 @@ test('QUEST_BITCH 初吻判定：cflag:16 == -1 → 995（打在 TARGET 上，�
   assert.equal(
     fixture.store.get('cflag:1:16'),
     -1,
-    'ARG（勇者）不动——原作省略角色号语义',
+    'ARG（勇者）不动——省略角色号语义',
   );
 });
 
-test('QUEST_BITCH 分派：按 E 列凌辱类型分派、空列跳过；失贞段（TARGET）', async () => {
+test('quest_bitch 分派：按 E 列凌辱类型分派、空列跳过；失贞段（TARGET）', async () => {
   const fixture = setup_world();
   // 第一列空（数量 0）、第二列触手（type5 ×4）
   fixture.store.set('e:99', 0);
@@ -522,7 +522,7 @@ test('QUEST_BITCH 分派：按 E 列凌辱类型分派、空列跳过；失贞�
   fixture.store.set('e:107', 5);
   fixture.store.set('e:199', 4);
   // TARGET 与 ARG 分离（魔王 0 vs 奉侍者 1）：两侧都备私处经验与处女，
-  // 失贞应打在 TARGET（魔王）上——变异改读 ARG 时勇者侧被动（M653 靶）
+  // 失贞应打在 TARGET（魔王）上——变异改读 ARG 时勇者侧被动（M653 目标）
   fixture.store.set('flag:10005', 0);
   fixture.store.set('cflag:1:16', 5);
   fixture.store.set('exp:1:0', 3);
@@ -532,7 +532,7 @@ test('QUEST_BITCH 分派：按 E 列凌辱类型分派、空列跳过；失贞�
   const { quest_bitch } = load(fixture);
   const ret = await quest_bitch(1, seq_rand([1]));
   assert.equal(ret, 1);
-  assert.equal(fixture.store.get('exp:1:0'), 4, '触手无阴茎臂：EXP:0 += 1');
+  assert.equal(fixture.store.get('exp:1:0'), 4, '触手无阴茎分支：EXP:0 += 1');
   assert.equal(fixture.store.get('juel:1:0'), 4, 'JUEL:0 += 4');
   assert.equal(fixture.store.get('talent:0:0'), 0, '失贞：处女素质消去');
   assert.equal(

@@ -1,10 +1,10 @@
 // 变异条目表切片：issue #345（阶段 5a L14）怪物技能与两处战斗接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 38; // #641 起 -2（M7175/M7177 名单复辟守卫随 STUBBED_CALLS 机制移除）；#651 起 -1+1（M7154 破铠吐息反向钉子随缺陷修复删除；+1 M13160 文案实伤一致守卫）
+export const COUNT = 38; // #641 起 -2（M7175/M7177 名单复辟检查随 STUBBED_CALLS 机制移除）；#651 起 -1+1（M7154 破铠吐息反向钉子随缺陷修复删除；+1 M13160 文案实伤一致回归检查）
 
 export default [
   {
-    desc: 'M7140 MONSTER_SKILL 三分之一不发动守卫删除',
+    desc: 'M7140 monster_skill 三分之一不发动检查删除',
     file: 'ere/dungeon/monster-skill.js',
     find: '  if (rand(3) === 0) {\n    return 0;\n  }\n  dmg += Math.trunc(dmg / 2);',
     replace:
@@ -13,7 +13,7 @@ export default [
     must_mention: '三分之一不发动',
   },
   {
-    desc: 'M7141 MONSTER_SKILL 伤害强化删除',
+    desc: 'M7141 monster_skill 伤害强化删除',
     file: 'ere/dungeon/monster-skill.js',
     find: '  dmg += Math.trunc(dmg / 2);',
     replace: '  dmg += 0; // 变异：伤害强化删除',
@@ -21,7 +21,7 @@ export default [
     must_mention: '强化伤害',
   },
   {
-    desc: 'M7142 MONSTER_SKILL 伤害上限改坏',
+    desc: 'M7142 monster_skill 伤害上限改坏',
     file: 'ere/dungeon/monster-skill.js',
     find: '  dmg = Math.min(dmg, 400);',
     replace: '  dmg = Math.min(dmg, 399); // 变异：上限',
@@ -29,7 +29,7 @@ export default [
     must_mention: '钳在 400',
   },
   {
-    desc: 'M7143 MONSTER_SKILL 参数下降除数改坏',
+    desc: 'M7143 monster_skill 参数下降除数改坏',
     file: 'ere/dungeon/monster-skill.js',
     find: '  let palam_down = Math.trunc(dmg / 5) + 1;',
     replace: '  let palam_down = Math.trunc(dmg / 6) + 1; // 变异：除数',
@@ -37,7 +37,7 @@ export default [
     must_mention: '十八种技能逐项',
   },
   {
-    desc: 'M7144 MONSTER_SKILL 参数下降上限改坏',
+    desc: 'M7144 monster_skill 参数下降上限改坏',
     file: 'ere/dungeon/monster-skill.js',
     find: '  palam_down = Math.min(palam_down, 50);',
     replace: '  palam_down = Math.min(palam_down, 49); // 变异：上限',
@@ -105,7 +105,7 @@ export default [
     must_mention: '十八种技能逐项',
   },
   {
-    desc: 'M7152 MONSTER_SKILL 诱惑善恶值改坏',
+    desc: 'M7152 monster_skill 诱惑善恶值改坏',
     file: 'ere/dungeon/monster-skill.js',
     find: '      `${monster_name}诱惑着对手……（善恶值:-2 好感度+4）`,\n    );\n    target_view.chara.好感度 += 4; // CFLAG:2 = 好感度（跨 chara 域）\n    karma(target, -2);',
     replace:
@@ -114,7 +114,7 @@ export default [
     must_mention: '好感度与善恶值',
   },
   {
-    desc: 'M7153 MONSTER_SKILL 经验吸取等级检查删除',
+    desc: 'M7153 monster_skill 经验吸取等级检查删除',
     file: 'ere/dungeon/monster-skill.js',
     find: '    await print_battle_line(`${monster_name}发动经验吸取！！（经验值-${dmg}）`);\n    target_view.dungeon.战斗经验 -= dmg;\n    await chara_lv_check(target);\n  } else if (skill === 14)',
     replace:
@@ -168,7 +168,7 @@ export default [
     must_mention: '沼地攻击 +2',
   },
   {
-    desc: 'M7160 人间牧场库存守卫改坏',
+    desc: 'M7160 人间牧场库存检查改坏',
     file: 'ere/dungeon/monster-skill.js',
     find: '  } else if (room === 502 && game.invasion.肉便器数 > 0) {',
     replace: '  } else if (room === 502 && game.invasion.肉便器数 > 1) {',
@@ -185,7 +185,7 @@ export default [
     must_mention: '冰室防御 +2',
   },
   {
-    desc: 'M7162 热砂低防御守卫改坏',
+    desc: 'M7162 热砂低防御检查改坏',
     file: 'ere/dungeon/monster-skill.js',
     find: '    if (e_get(user + 3) > 2) {',
     replace: '    if (e_get(user + 3) >= 2) { // 变异',
@@ -211,7 +211,7 @@ export default [
     must_mention: '七种房间逐项',
   },
   {
-    desc: 'M7165 SLAVE_MONSTER_SKILL 三分之一不发动守卫删除',
+    desc: 'M7165 slave_monster_skill 三分之一不发动检查删除',
     file: 'ere/dungeon/monster-skill.js',
     find: 'async function slave_monster_skill(target, user, rand = default_rand) {\n  if (rand(3) === 0) {',
     replace:
@@ -244,7 +244,7 @@ export default [
     must_mention: '471 - 470 = 粘液捕获',
   },
   {
-    desc: 'M7169 USE_MONSTER_SKILL 不再覆盖传入等级',
+    desc: 'M7169 use_monster_skill 不再覆盖传入等级',
     file: 'ere/dungeon/monster-skill.js',
     find: '  dmg = e_get(user + 1) + chara(0).chara.等级;',
     replace: '  dmg += 0; // 变异：保留传入等级',
@@ -252,7 +252,7 @@ export default [
     must_mention: '传入的精英等级会被 E 槽重算覆盖',
   },
   {
-    desc: 'M7170 USE_MONSTER_SKILL 参数下降除数改坏',
+    desc: 'M7170 use_monster_skill 参数下降除数改坏',
     file: 'ere/dungeon/monster-skill.js',
     find: '  const palam_down = Math.trunc(dmg / 3) + 1;',
     replace: '  const palam_down = Math.trunc(dmg / 5) + 1; // 变异',
@@ -314,7 +314,7 @@ export default [
     must_mention: '透传确定性随机源',
   },
   {
-    desc: 'M7179 战斗日志守卫被恒关闭',
+    desc: 'M7179 战斗日志检查被恒关闭',
     file: 'ere/dungeon/monster-skill.js',
     find: '  if ((game.dungeon.游戏设定 & 32) !== 0) {',
     replace: '  if (false) { // 变异：日志恒关闭',

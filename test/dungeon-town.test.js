@@ -9,12 +9,12 @@
  *     的分支）：利息截断、还款分档、百元取整、上限钳（min > max 时取
  *     上限）、债务清零、借不到（-50000）、担保人按魔王等级背债；
  *   - 冒险计划的目标/出发阶层与 COST 落账；重度借债直奔深潜（GOAL =
- *     FLOOR_MAX + 1，#651 已把原误嵌调试守卫的赋值提出）有钉子；
+ *     FLOOR_MAX + 1，#651 已把误嵌调试检查的赋值提出）有钉子；
  *   - 宴会预算段的 TARGET 残留读（收集与支付不对称）有钉子；
  *   - 城镇主流程：507 复位、再起点消耗与全恢复、散会概率。
  *
- * 本票核心移植裁定的钉子：省略角色号 = TARGET（FI_FUNDING 补正、还款
- * 分档、宴会预算全读 era_flag.target，原作不设 TARGET 读残留）。
+ * 这张工单核心移植结论的钉子：省略角色号 = TARGET（fi_funding 补正、还款
+ * 分档、宴会预算全读 era_flag.target，不设 TARGET 时读残留）。
  */
 
 const assert = require('node:assert/strict');
@@ -65,9 +65,9 @@ function text_lines(fixture) {
     .map((line) => line.text);
 }
 
-// —— 援助金（FI_FUNDING / FI_PT_FUNDING）——
+// —— 援助金（fi_funding / fi_pt_funding）——
 
-test('FI_FUNDING：补正全读 TARGET（ARG ≠ TARGET 时按 TARGET 算）', () => {
+test('fi_funding：补正全读 TARGET（ARG ≠ TARGET 时按 TARGET 算）', () => {
   const fixture = setup_world();
   fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
   fixture.era.addCharacter(2);
@@ -90,11 +90,11 @@ test('FI_FUNDING：补正全读 TARGET（ARG ≠ TARGET 时按 TARGET 算）', (
     'ARG = TARGET 同值',
   );
   assert.equal(fi_funding(-1), 0, '空位 0');
-  // 魔王 0 号同样是 ARG <= 0 的空位语义（原作 :160-161 1:1）
+  // 魔王 0 号同样是 ARG <= 0 的空位语义（有意保留）
   assert.equal(fi_funding(0), 0, 'ARG 0（魔王号）被空位检查挡下');
 });
 
-test('FI_FUNDING：负补正（乞丐 -500 / 为钱 -1000）可到负值', () => {
+test('fi_funding：负补正（乞丐 -500 / 为钱 -1000）可到负值', () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:315', 7); // 乞丐
   fixture.store.set('talent:1:316', 2); // 为钱
@@ -102,7 +102,7 @@ test('FI_FUNDING：负补正（乞丐 -500 / 为钱 -1000）可到负值', () =>
   assert.equal(fi_funding(1), -500 - 1000 + 5 * 8, '-1460');
 });
 
-test('FI_PT_FUNDING：三人合计下限 1', () => {
+test('fi_pt_funding：三人合计下限 1', () => {
   const fixture = setup_world();
   const { fi_pt_funding } = load(fixture);
   assert.equal(fi_pt_funding(1, 0, 0), 5 * 8, '单人是等级补正');
@@ -110,9 +110,9 @@ test('FI_PT_FUNDING：三人合计下限 1', () => {
   assert.equal(fi_pt_funding(-1, -1, -1), 1, '下限 1');
 });
 
-// —— TOWN_SELL / TOWN_HOSHOUNIN ——
+// —— town_sell / town_hoshounin ——
 
-test('TOWN_SELL：战利品槽 581 并入所持金并清零', () => {
+test('town_sell：战利品槽 581 并入所持金并清零', () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:580', 1000);
   fixture.store.set('cflag:1:581', 250);
@@ -126,7 +126,7 @@ test('TOWN_SELL：战利品槽 581 并入所持金并清零', () => {
   assert.equal(f2.store.get('cflag:1:580'), undefined, '无战利品不动作');
 });
 
-test('TOWN_HOSHOUNIN：担保人按魔王等级背债（lv10 × 8 + 500 = 580）', async () => {
+test('town_hoshounin：担保人按魔王等级背债（lv10 × 8 + 500 = 580）', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:209', 1); // 担保人
   fixture.store.set('cflag:1:582', -1000);
@@ -139,9 +139,9 @@ test('TOWN_HOSHOUNIN：担保人按魔王等级背债（lv10 × 8 + 500 = 580）
   assert.equal(f2.store.get('cflag:1:582'), -1000);
 });
 
-// —— @TOWN_HENSAI：还债（验收点名的三段之一，含边界）——
+// —— town_hensai：还债（验收点名的三段之一，含边界）——
 
-test('TOWN_HENSAI：利息按向零截断（-1234 → -1357）且总可见', async () => {
+test('town_hensai：利息按向零截断（-1234 → -1357）且总可见', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', -1234);
   fixture.store.set('cflag:1:580', 0); // 无钱可还 → 还款 0
@@ -153,11 +153,11 @@ test('TOWN_HENSAI：利息按向零截断（-1234 → -1357）且总可见', asy
   );
   assert(
     text_lines(fixture).some((l) => l.includes('债务变成了-1357')),
-    '利息播报无守卫（FLAG:5 位 32 关）',
+    '利息播报无检查（FLAG:5 位 32 关）',
   );
 });
 
-test('TOWN_HENSAI：大额债务按 TARGET 善恶分档还（karma 0 → 1/6）', async () => {
+test('town_hensai：大额债务按 TARGET 善恶分档还（karma 0 → 1/6）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', -6000);
   fixture.store.set('cflag:1:580', 20000);
@@ -173,7 +173,7 @@ test('TOWN_HENSAI：大额债务按 TARGET 善恶分档还（karma 0 → 1/6）'
   assert.equal(fixture.store.get('cflag:1:580'), 20000 - 1100);
 });
 
-test('TOWN_HENSAI：还款分档读 TARGET 而非本人（ARG ≠ TARGET）', async () => {
+test('town_hensai：还款分档读 TARGET 而非本人（ARG ≠ TARGET）', async () => {
   const fixture = setup_world();
   fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
   fixture.era.addCharacter(2);
@@ -190,7 +190,7 @@ test('TOWN_HENSAI：还款分档读 TARGET 而非本人（ARG ≠ TARGET）', as
   );
 });
 
-test('TOWN_HENSAI：小额债务固定还 500、不越债务（-300 → 清零）', async () => {
+test('town_hensai：小额债务固定还 500、不越债务（-300 → 清零）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', -300);
   fixture.store.set('cflag:1:580', 2000);
@@ -204,7 +204,7 @@ test('TOWN_HENSAI：小额债务固定还 500、不越债务（-300 → 清零�
   assert.equal(fixture.store.get('cflag:1:580'), 2000 - 330);
 });
 
-test('TOWN_HENSAI：还不起（所持金 < 200 → 上限 < 下限，LIMIT 取上限后取整为 0）', async () => {
+test('town_hensai：还不起（所持金 < 200 → 上限 < 下限，LIMIT 取上限后取整为 0）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', -300);
   fixture.store.set('cflag:1:580', 100); // 100/2 = 50 < 100（min > max）
@@ -214,7 +214,7 @@ test('TOWN_HENSAI：还不起（所持金 < 200 → 上限 < 下限，LIMIT 取�
   assert.equal(fixture.store.get('cflag:1:580'), 100, '分文未动');
 });
 
-test('TOWN_HENSAI：百元取整（上限 250 → 还 200）', async () => {
+test('town_hensai：百元取整（上限 250 → 还 200）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', -300);
   fixture.store.set('cflag:1:580', 500); // 500/2 = 250 → trunc(250/100)*100 = 200
@@ -223,7 +223,7 @@ test('TOWN_HENSAI：百元取整（上限 250 → 还 200）', async () => {
   assert.equal(fixture.store.get('cflag:1:580'), 500 - 200);
 });
 
-test('TOWN_HENSAI：无债直接返回（零输出、不动账）', async () => {
+test('town_hensai：无债直接返回（零输出、不动账）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', 0);
   fixture.store.set('cflag:1:580', 5000);
@@ -232,9 +232,9 @@ test('TOWN_HENSAI：无债直接返回（零输出、不动账）', async () => 
   assert.equal(text_lines(fixture).length, 0);
 });
 
-// —— @TOWN_LOAN：借款 ——
+// —— town_loan：借款 ——
 
-test('TOWN_LOAN：债务 < -50000 再也没人肯借', async () => {
+test('town_loan：债务 < -50000 再也没人肯借', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', -50001);
   fixture.store.set('cflag:1:580', 0);
@@ -243,7 +243,7 @@ test('TOWN_LOAN：债务 < -50000 再也没人肯借', async () => {
   assert.equal(fixture.store.get('cflag:1:580'), 0);
 });
 
-test('TOWN_LOAN：（260 + 善恶）面骰 < 50 借入 1000', async () => {
+test('town_loan：（260 + 善恶）面骰 < 50 借入 1000', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:582', 0);
   fixture.store.set('cflag:1:580', 0);
@@ -291,7 +291,7 @@ test('借贷三段连转：担保人背债 → 加息偿还 → 金额守恒', a
 
 // —— 采购 ——
 
-test('TOWN_SHOPPING：3000 门槛 + ADD_EX_ITEM 真身买到后扣款', async () => {
+test('town_shopping：3000 门槛 + add_ex_item 真身买到后扣款', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:580', 2999);
   const { town_shopping } = load(fixture);
@@ -304,9 +304,9 @@ test('TOWN_SHOPPING：3000 门槛 + ADD_EX_ITEM 真身买到后扣款', async ()
   assert.equal(f2.store.get('cflag:1:560'), 401, '补给进入首个空槽');
 });
 
-// —— @TOWN_PT_PLANNING ——
+// —— town_pt_planning ——
 
-test('PLANNING：英雄类素质（自信家 161）直奔 8 层', async () => {
+test('town_pt_planning：英雄类素质（自信家 161）直奔 8 层', async () => {
   const fixture = setup_world();
   fixture.store.set('talent:1:161', 1); // 自信家
   fixture.store.set('cflag:1:520', 3);
@@ -314,12 +314,12 @@ test('PLANNING：英雄类素质（自信家 161）直奔 8 层', async () => {
   assert.equal(fixture.store.get('cflag:1:520'), 8, '目标阶层 8');
 });
 
-test('PLANNING：无债（loan_pt > -7000）走 INTO_DEEPER（FLOOR_MAX + 1，封顶 8）', async () => {
+test('town_pt_planning：无债（loan_pt > -7000）走 INTO_DEEPER（FLOOR_MAX + 1，封顶 8）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:520', 7);
   fixture.store.set('cflag:1:580', 0);
   fixture.store.set('cflag:1:582', 0);
-  // 无债即臂 3（借金がぜんぜん無い）：不掷点直取深潜
+  // 无债即分支 3（借金がぜんぜん無い）：不掷点直取深潜
   await load(fixture).town_pt_planning(1, 0, 0, seq_rand([1]));
   assert.equal(
     fixture.store.get('cflag:1:520'),
@@ -333,11 +333,11 @@ test('PLANNING：无债（loan_pt > -7000）走 INTO_DEEPER（FLOOR_MAX + 1，�
   );
 });
 
-test('PLANNING：中债（loan_pt ≤ -7000 且人均收支 > -7000）走慎重层', async () => {
+test('town_pt_planning：中债（loan_pt ≤ -7000 且人均收支 > -7000）走慎重层', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:520', 4);
   fixture.store.set('cflag:1:580', 5000);
-  fixture.store.set('cflag:1:582', -7500); // balance = -2500 > -7000（避臂2）
+  fixture.store.set('cflag:1:582', -7500); // balance = -2500 > -7000（避分支 2）
   // rand(2) 给 1（不 GOTO）→ 慎重：GOAL = max(trunc(4/2), 4, 1) = 4、START = 4
   await load(fixture).town_pt_planning(1, 0, 0, seq_rand([1]));
   assert.equal(fixture.store.get('cflag:1:520'), 4, 'GOAL 4');
@@ -346,13 +346,13 @@ test('PLANNING：中债（loan_pt ≤ -7000 且人均收支 > -7000）走慎重�
   assert.equal(fixture.store.get('cflag:1:582'), -7500 - 2160, 'COST 记入借款');
 });
 
-test('PLANNING：重度借债直奔深潜（GOAL = FLOOR_MAX + 1）', async () => {
+test('town_pt_planning：重度借债直奔深潜（GOAL = FLOOR_MAX + 1）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:520', 6);
   fixture.store.set('cflag:1:580', 0);
   fixture.store.set('cflag:1:582', -15000); // karma 0 → 档 0 = -11000，loan_min 越线
-  // rand(4) 给 4（不进 1/4 掷点的 INTO_DEEPER）——else 臂同样落
-  // GOAL/START = FLOOR_MAX + 1（赋值原误嵌调试守卫，#651 已提出）
+  // rand(4) 给 4（不进 1/4 掷点的 INTO_DEEPER）——else 分支同样落
+  // GOAL/START = FLOOR_MAX + 1（赋值原误嵌调试检查，#651 已提出）
   await load(fixture).town_pt_planning(1, 0, 0, seq_rand([4]));
   assert.equal(fixture.store.get('cflag:1:520'), 7, 'GOAL = FLOOR_MAX + 1');
   assert.equal(fixture.store.get('cflag:1:501'), 7, 'START = 7');
@@ -363,9 +363,9 @@ test('PLANNING：重度借债直奔深潜（GOAL = FLOOR_MAX + 1）', async () =
   );
 });
 
-// —— @TOWN_PT_PARTY ——
+// —— town_pt_party ——
 
-test('PARTY：预算收集读 TARGET 残留（与支付不对称的原作行为）', async () => {
+test('town_pt_party：预算收集读 TARGET 残留（与支付不对称，有意保留）', async () => {
   const fixture = setup_world();
   fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
   fixture.era.addCharacter(2);
@@ -373,8 +373,8 @@ test('PARTY：预算收集读 TARGET 残留（与支付不对称的原作行为�
   fixture.store.set('flag:10005', 1); // TARGET = 勇者 1
   fixture.store.set('cflag:1:580', 5000); // TARGET 的钱袋
   fixture.store.set('cflag:2:580', 0); // 贝丝身无分文
-  fixture.store.set('flag:5', 32); // 宴会开场打印有守卫
-  fixture.store.set('cflag:1:151', 100); // karma > 50 → 早睡（演出最短臂）
+  fixture.store.set('flag:5', 32); // 宴会开场打印受日志开关控制
+  fixture.store.set('cflag:1:151', 100); // karma > 50 → 早睡（演出最短分支）
   fixture.store.set('cflag:2:151', 100);
   // 预算：TARGET(1) 的 5000 ≥ 1000 → 两人的 COST 各 = 1000（贝丝没钱也记 1000）
   await load(fixture).town_pt_party(1, 2, 0, seq_rand([1]));
@@ -391,11 +391,11 @@ test('PARTY：预算收集读 TARGET 残留（与支付不对称的原作行为�
   );
   assert(
     lines.some((l) => l.includes('为了备战冒险早早就寝了')),
-    '早睡臂',
+    '早睡分支',
   );
 });
 
-test('PARTY：TARGET 钱袋 < 1000 → 流局（零支付零演出）', async () => {
+test('town_pt_party：TARGET 钱袋 < 1000 → 流局（零支付零演出）', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:10005', 1);
   fixture.store.set('cflag:1:580', 500); // TARGET 的钱 < 1000
@@ -404,35 +404,31 @@ test('PARTY：TARGET 钱袋 < 1000 → 流局（零支付零演出）', async ()
   assert.equal(fixture.store.get('cflag:1:580'), 500, '不动账');
 });
 
-test('PARTY：karma ≤ 50 恒进第二臂——巫女（206）的祈祷臂不达（#14 钉子）', async () => {
+test('town_pt_party：karma ≤ 50 恒进第二分支——巫女（206）的祈祷分支不达（#14 钉子）', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:10005', 1);
   fixture.store.set('cflag:1:580', 2000);
   fixture.store.set('cflag:1:151', 0); // karma ≤ 50
-  fixture.store.set('talent:1:206', 1); // 巫女——祈祷条件满足也无臂可达
+  fixture.store.set('talent:1:206', 1); // 巫女——祈祷条件满足也无分支可达
   const ret = await load(fixture).town_pt_party(1, 0, 0, seq_rand([1]));
   assert.equal(ret, 1, '开宴');
   const lines = text_lines(fixture);
   assert(
     !lines.some((l) => l.includes('心怀祈祷地')),
-    '祈祷臂恒不达（臂 3 的 karma<=50 左半恒真）',
+    '祈祷分支恒不达（分支 3 的 karma<=50 左半恒真）',
   );
-  assert(
-    !lines.some((l) => l.includes('@KARMA')),
-    'KARMA +1 调用点不可达（原作死代码）',
-  );
-  assert(!lines.some((l) => l.includes('醉醺醺')), '醉睡臂同不达');
+  assert(!lines.some((l) => l.includes('醉醺醺')), '醉睡分支同不达');
   assert.equal(fixture.store.get('flag:10005'), 1, 'TARGET 恢复暂存值');
 });
 
-test('PARTY：娼婦購入臂的爱抚自动调教接 COM0_AUTO 真身（:645）', async () => {
+test('town_pt_party：娼婦購入分支的爱抚自动调教接 com0_auto 真身', async () => {
   const fixture = setup_world();
-  fixture.store.set('flag:5', 32); // 宴会演出有守卫
+  fixture.store.set('flag:5', 32); // 宴会演出受日志开关控制
   fixture.store.set('cflag:1:580', 5000); // 宴会预算（TARGET = 勇者 1）
-  fixture.store.set('cflag:1:151', 0); // karma ≤ 50 → 进第二臂
+  fixture.store.set('cflag:1:151', 0); // karma ≤ 50 → 进第二分支
   fixture.store.set('talent:1:122', 1); // 男人 → 娼婦購入
   // 开调教域（#508）：自动调教三连的本体写的 SOURCE 要落得下（夹具镜像引擎
-  // 守卫），第三站 SOURCE_CHECK_AUTO 的真身也要显式载入（生产由 main-loop 加载）
+  // 的检查），第三站 source_check_auto 的真身也要显式载入（生产由 main-loop 加载）
   fixture.load_module('event/source-check');
   fixture.era.beginTrain(0, 1);
   const ret = await load(fixture).town_pt_party(1, 0, 0, seq_rand([1]));
@@ -442,36 +438,36 @@ test('PARTY：娼婦購入臂的爱抚自动调教接 COM0_AUTO 真身（:645）
     lines.some((l) => l.includes('妓女买了春')),
     '娼婦購入演出',
   );
-  // CALL COM0_AUTO——真身（ere/event/event-autotrain.js 的 com0_auto）
+  // CALL com0_auto——ere/event/event-autotrain.js 的真身
   assert.ok(
     lines.some((l) => l.includes('≪摸来摸去≫')),
-    'COM0_AUTO 真身被调（:645）',
+    'com0_auto 真身被调',
   );
   assert.equal(
     fixture.store.get('source:1:4'),
     0,
-    'SOURCE 已被第三站清零（换算在 SOURCE_CHECK_AUTO、逐键置零在 nextTurnInTrain）（性行为 60 是本体写的原值）',
+    'SOURCE 已被第三站清零（换算在 source_check_auto、逐键置零在 nextTurnInTrain）（性行为 60 是本体写的原值）',
   );
   assert.equal(
     fixture.store.get('palam:1:8'),
     25125,
-    '耻情 25125 =（TARGET_EJAC_CHECK 大量射精写的 SOURCE:12 = 20100，TALENT:122 男人进场）' +
+    '耻情 25125 =（target_ejac_check 大量射精写的 SOURCE:12 = 20100，TALENT:122 男人进场）' +
       ' × 自动调教倍率 1.25',
   );
   assert.equal(
     fixture.store.get('base:1:1'),
     295,
-    '气力 400 − 105（本体 LOSEBASE + 链条损耗，SOURCE_CHECK_AUTO 结算落 BASE）',
+    '气力 400 − 105（本体 LOSEBASE + 链条损耗，source_check_auto 结算落 BASE）',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
-test('PARTY：少年风俗臂的爱抚自动调教接 COM0_AUTO 真身（:652）', async () => {
+test('town_pt_party：少年风俗分支的爱抚自动调教接 com0_auto 真身', async () => {
   const fixture = setup_world();
   fixture.store.set('flag:5', 32);
   fixture.store.set('cflag:1:580', 5000);
   fixture.store.set('cflag:1:151', 0);
-  fixture.store.set('talent:1:143', 1); // 正太控 → 少年风俗臂
+  fixture.store.set('talent:1:143', 1); // 正太控 → 少年风俗分支
   fixture.era.beginTrain(0, 1);
   const ret = await load(fixture).town_pt_party(1, 0, 0, seq_rand([1]));
   assert.equal(ret, 1, '开宴');
@@ -480,44 +476,44 @@ test('PARTY：少年风俗臂的爱抚自动调教接 COM0_AUTO 真身（:652）
     lines.some((l) => l.includes('少年')),
     '少年风俗演出',
   );
-  // CALL COM0_AUTO——同一真身的第二个调用点
+  // CALL com0_auto——同一真身的第二个调用点
   assert.ok(
     lines.some((l) => l.includes('≪摸来摸去≫')),
-    'COM0_AUTO 真身被调（:652）',
+    'com0_auto 真身被调',
   );
   assert.equal(fixture.store.get('cflag:1:666'), 1, '自动调教回数 +1');
 });
 
-// —— 主流程 @DUNGEON_TOWN ——
+// —— 主流程 dungeon_town ——
 
-test('DUNGEON_TOWN：507 复位、再起点消耗与全恢复、9/10 散会', async () => {
+test('dungeon_town：507 复位、再起点消耗与全恢复、9/10 散会', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:507', 1); // 回城标志
   fixture.store.set('cflag:1:508', 2); // 再起点
   fixture.store.set('cflag:1:580', 5000); // TARGET 钱袋够开宴（散会概率的对照前提）
   fixture.store.set('base:1:0', 100); // 疲惫态
   fixture.store.set('base:1:1', 50);
-  fixture.store.set('flag:5', 32); // 打开城镇日志守卫（看得到演出行）
+  fixture.store.set('flag:5', 32); // 打开城镇日志开关（看得到演出行）
   // rand 序：fi 系不掷；loan 的 rand(260) → 99 不借；rand(10) = 99 > 0 散会
   const ret = await load(fixture).dungeon_town(1, seq_rand([]));
   assert.equal(ret, 0);
-  assert.equal(fixture.store.get('cflag:1:507'), 0, '回城标志复位（:24）');
-  assert.equal(fixture.store.get('cflag:1:508'), 1, '再起点 -1（:87）');
+  assert.equal(fixture.store.get('cflag:1:507'), 0, '回城标志复位');
+  assert.equal(fixture.store.get('cflag:1:508'), 1, '再起点 -1');
   assert.equal(fixture.store.get('base:1:0'), 2000, 'HP 全恢复');
   assert.equal(fixture.store.get('base:1:1'), 1000, '气力全恢复');
   const lines = text_lines(fixture);
   assert(
     lines.some((l) => l.includes('旅馆里进行了修整')),
-    '宿屋演出（守卫开）',
+    '宿屋演出（开关开）',
   );
   assert(
     lines.some((l) => l.startsWith('------')),
-    '分隔线（:58）',
+    '分隔线',
   );
   assert(!lines.some((l) => l.includes('晚宴')), 'rand(10) > 0 散会不开宴');
 });
 
-test('DUNGEON_TOWN：日常段换手 TARGET 并调用恋人真身', async () => {
+test('dungeon_town：日常段换手 TARGET 并调用恋人真身', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:580', 20000); // 钱够多（避开借款分支的掷点差异）
   fixture.store.set('cflag:1:507', 1);

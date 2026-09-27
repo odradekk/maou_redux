@@ -2,8 +2,8 @@
  * @file 怪物与精英部下的战斗技能（issue #345）。
  *
  * E 列布局沿用 monster-data：列头 +0 = 怪物识别号、+1 = 等级、+2 = 攻击、
- * +3 = 防御。两套 1–18 技能表有多处原作差异（倍率、名字与写入位置），
- * 因此分别按源结构保留，不抽成一张会掩盖差异的共享表。
+ * +3 = 防御。两套 1–18 技能表存在多处差异（倍率、名字与写入位置），
+ * 因此分别按各自结构保留，不抽成一张会掩盖差异的共享表。
  */
 
 'use strict';
@@ -212,7 +212,7 @@ async function use_monster_skill(
   rand = default_rand,
 ) {
   const monster_name = monstername(e_get(user));
-  // 源 :329 会覆盖形参 DMG；精英等级 ×3 因而无效，按原作保留。
+  // 函数体会覆盖形参 dmg；精英等级 ×3 因而无效，有意保留。
   dmg = e_get(user + 1) + chara(0).chara.等级;
   const palam_down = Math.trunc(dmg / 3) + 1;
   const target_view = chara(target);
@@ -290,14 +290,14 @@ async function use_monster_skill(
     target_view.dungeon.气力 -= drain;
     add_defence(4);
   } else if (skill === 16) {
-    // 源 :443 没用 ARGS:0，而是把精英角色号当 E 列头拼怪物名。
+    // 不用传入的 user_name，而是把精英角色号当 E 列头拼怪物名。
     await print_battle_line(`${monster_name}用弓箭发动了攻击！！（HP-${dmg}）`);
     target_view.dungeon.体力 -= dmg;
   } else if (skill === 17) {
     // 不按类型分流：精英路径的地形增益仍写 E 数组，保留。
     await monster_room_skill(target, user);
   } else if (skill === 18) {
-    // 源不按类型分流，并继续使用怪物名；精英路径也固定写 E 数组。
+    // 同样不按类型分流，并继续使用怪物名；精英路径也固定写 E 数组。
     await print_battle_line(
       `${monster_name}从身上的肉便器吸收着体力……（防御+2）`,
     );

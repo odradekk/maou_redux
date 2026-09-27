@@ -1358,7 +1358,7 @@ export default [
   ),
   make(
     7543,
-    '脸部标签的随机选择臂反转',
+    '脸部标签的随机选择分支反转',
     'ere/dungeon/dungeon-battle2.js',
     '            tatoos[0] === 10',
     '            tatoos[0] !== 10',
