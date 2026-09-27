@@ -6,9 +6,10 @@
  *
  * 三名可对话助手按 NO:ASSI 直接判角色号（21 银黑桃 / 22 黑方片 /
  * 23 白梅花，白梅花另有 TALENT:ASSI:121 守卫），各自 CFLAG:202/203/204
- * 三阶（初次 → 爱或淫乱单条 → 双线合流）。原作 ELSEIF NO:ASSI == 22 分支
- * 的「二回目以降（CFLAG:203==2 && FLAG:7==2）」臂缺 RETURN 1（源
- * :484-495，其余同构臂均有）——1:1 保留，落到隐式 RETURN 0。
+ * 三阶（初次 → 爱或淫乱单条 → 双线合流）。黑方片「二回目以降
+ * （CFLAG:203==2 && FLAG:7==2）」臂结尾不写 return：emit 不消费事件
+ * 处理器的返回值（registry.js 只暂存 BeginSignal），与其余同构臂的
+ * 显式 return 1 输出相同。
  *
  * == 文本内嵌三目与插值（转译器未识别，人工修复） ==
  *
@@ -295,8 +296,8 @@ on('EVENTTRAIN', async () => {
       `「呼、你在开玩笑吧！和你做那种事只会感觉到恶心而已！」`,
     );
     await era.printAndWait(
-      `「啊啊啊…真想早点从这里逃走，回到狂王大人温暖的怀抱里去，那才叫心情舒畅！」」`,
-    ); // （原作双引号收尾，1:1 保留）
+      `「啊啊啊…真想早点从这里逃走，回到狂王大人温暖的怀抱里去，那才叫心情舒畅！」`,
+    );
     era.set(`cflag:${target}:201`, 3);
     return 1;
   } else if (
@@ -848,8 +849,7 @@ on('EVENTTRAIN', async () => {
       }
       return 1;
     } else if (era0(`cflag:${target}:203`) == 2 && era0('flag:7') == 2) {
-      // 二回目以降——原作此支缺 RETURN 1（源 :484-495，其余同构臂均有），
-      // 1:1 保留，落到函数末尾的隐式 RETURN 0
+      // 二回目以降（结尾不写 return：emit 不消费处理器返回值，见文件头）
       if (era0(`talent:${target}:85`) == 1) {
         const time_word = era_flag.time === 0 ? '今日' : '今夜'; // TIME 三目（:487）
         await era.printAndWait(
@@ -1148,7 +1148,7 @@ async function k7_kojo2() {
     if (era0('flag:37') != 0) {
       // 服分岐優先（着衣設定無しの場合は進む）
       if (era0(`cflag:${target}:40`) & 28 && era0(`cflag:${target}:41`) == 1) {
-        // 普段着・スカートタイプ（原作两行注释掉，模板未填写，1:1 保留）
+        // 普段着・スカートタイプ（模板未填写：此装束无台词，保持空输出）
       } else if (
         era0(`cflag:${target}:40`) & 28 &&
         era0(`cflag:${target}:41`) == 101
@@ -1303,7 +1303,7 @@ async function k7_kojo2() {
     if (era0('flag:37') != 0) {
       // 服分岐優先
       if (era0(`cflag:${target}:40`) & 28 && era0(`cflag:${target}:41`) == 1) {
-        // 普段着・スカートタイプ（模板未填写，1:1 保留）
+        // 普段着・スカートタイプ（模板未填写：此装束无台词，保持空输出）
       } else if (
         era0(`cflag:${target}:40`) & 28 &&
         era0(`cflag:${target}:41`) == 101
@@ -11085,10 +11085,10 @@ async function kojo_message_com_7(rand) {
 /**
  * @DOG_KOJO_7（:6281-7085）：兽奸PLAY专用口上。
  *
- * 源文件本函数内全部 155 处 PRINTFORMW 均无文本（`PRINTFORMW ` 后接空白，
- * 逐行核对确认），即金红桃这一角色未撰写兽奸专属台词——CFLAG:301-357
- * 状态机照常推进，但每次调用只有空行 + 等待按键，无对话输出。1:1 保留
- * 这一原作留白，不额外补文本。SELECTCOM 覆盖：0/1/5/6/9/21/27/30/31/34/37/43/56。
+ * 本函数的台词模板全部未填写（155 处 PRINTFORMW 均无文本，逐行核对
+ * 确认），即金红桃这一角色没有兽奸专属台词——CFLAG:301-357 状态机
+ * 照常推进，但每次调用只有空行 + 等待按键，无对话输出。空槽不补写
+ * 台词，保持空输出。SELECTCOM 覆盖：0/1/5/6/9/21/27/30/31/34/37/43/56。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @returns {Promise<number>} 0
@@ -14110,10 +14110,9 @@ async function exucution_koujo_k7() {
 }
 
 /**
- * @MUSEUM_KOUJO_K7（:8556-8590）：博物馆展示口上。TFLAG:500 十档。
- * **:8565 的 `TFLAG:500 == 2`（蝋人形化）源侧误写成与 :8559 相同的
- * `== 0`**，该臂因此永不可达（IF/ELSEIF 链首条命中即短路）——1:1 保留，
- * 不改判据。
+ * @MUSEUM_KOUJO_K7：博物馆展示口上。TFLAG:500 分档。
+ * 档位 2（蝋人形化）无台词（模板未填写），不设分支；3-9 档同为空槽，
+ * 仅输出空行。
  * @returns {Promise<number>} 0
  */
 async function museum_koujo_k7() {
@@ -14125,9 +14124,6 @@ async function museum_koujo_k7() {
     await era.printAndWait(
       `「要把活着的我制作成标本…？不、不要…请停止…不要啊啊啊啊！」`,
     );
-  } else if (era0('tflag:500') == 0) {
-    // 源误写 == 0（原意 == 2，蝋人形化），死分支 1:1 保留
-    await era.printAndWait('');
   } else if (era0('tflag:500') == 3) {
     await era.printAndWait('');
   } else if (era0('tflag:500') == 4) {
@@ -14359,7 +14355,7 @@ async function gohoubi_after_koujo_k7(cid, choice) {
         await era.printAndWait(`「来用我的肛门小穴让你毕业童贞哦${heart(1)}」`);
       }
     } else {
-      // ELSE 无内容，ENDIF 直接跟上（源 :8781-8790，1:1 保留原作空分支）
+      // CFLAG:504 超出 0–9 时无台词槽，不输出
     }
   }
 }

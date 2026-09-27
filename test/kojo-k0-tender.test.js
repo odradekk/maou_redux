@@ -518,16 +518,32 @@ test('肛门爱抚润滑合计含 UP:3：delta 把不足抬过 Lv2', async () =>
   ]);
 });
 
-test('肛门爱抚末支门槛是 CFLAG:223（原文 :847），不是 303', async () => {
-  const quiet = await setup_k0((f) => {
+test('肛门爱抚末支门槛读 CFLAG:303 自身计数器', async () => {
+  // 303=1 过末支 <=1 门槛；干扰项 223=9 按首次耻情计数不会命中
+  const hit = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 2;
     f.store.set('cflag:31:303', 1);
-    f.store.set('cflag:31:223', 2);
+    f.store.set('cflag:31:223', 9); // 干扰项：首次耻情计数与本支无关
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(hit);
+  assert.deepEqual(hit.text_lines(), ['「不要啊…够了、快住手～！」']);
+  assert.equal(hit.store.get('cflag:31:303'), 2, '末支推进到 2');
+  assert.equal(hit.store.get('cflag:31:223'), 9, '不动首次耻情计数');
+
+  // 303=2 已越过末支门槛：沉默（223=1 不应被本支读取）
+  const quiet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 2);
+    f.store.set('cflag:31:223', 1);
     f.store.set('flag:7', 1);
   });
   await speak_k0(quiet);
   assert.deepEqual(quiet.text_lines(), []);
+  assert.equal(quiet.store.get('cflag:31:303'), 2);
+  assert.equal(quiet.store.get('cflag:31:223'), 1, '不动首次耻情计数');
 });
 
 test('自慰首次爱慕或淫乱：一句邀请，推进到 1', async () => {
@@ -1061,19 +1077,71 @@ test('自己扒开首次淫乱 / 爱慕 / それ以外，推进到 1', async () 
   assert.deepEqual(other.text_lines(), ['「咕呜…这、这样…是不对的…」']);
 });
 
-test('自己扒开二次：原文把推进写进 CFLAG:306（胸爱抚），不是 308', async () => {
+test('自己扒开二次：各档判据与推进都是 CFLAG:308', async () => {
+  // 淫乱档：308=1 过 <=4 门槛推进到 5；干扰项 306=7 按胸爱抚计数不应变动
   const lewd = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 7;
     f.store.set('talent:31:76', 1);
     f.store.set('cflag:31:308', 1);
+    f.store.set('cflag:31:306', 7); // 干扰项：胸爱抚计数与本支无关
+    f.store.set('flag:7', 1);
   });
   await speak_k0(lewd);
   assert.deepEqual(lewd.text_lines(), [
     '「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢♡」',
   ]);
-  assert.equal(lewd.store.get('cflag:31:306'), 5, '自己扒开二次写 CFLAG:306');
-  assert.equal(lewd.store.get('cflag:31:308'), 1, 'CFLAG:308 保持首次后的 1');
+  assert.equal(lewd.store.get('cflag:31:308'), 5, '淫乱档推进到 5');
+  assert.equal(lewd.store.get('cflag:31:306'), 7, '不动胸爱抚计数');
+
+  // 爱慕档 / 露出癖档同样写 308
+  const love = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+    f.store.set('talent:31:85', 1);
+    f.store.set('cflag:31:308', 1);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(love);
+  assert.equal(love.store.get('cflag:31:308'), 4, '爱慕档推进到 4');
+
+  const exhibition = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+    f.store.set('abl:31:17', 3);
+    f.store.set('cflag:31:308', 1);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(exhibition);
+  assert.equal(exhibition.store.get('cflag:31:308'), 3, '露出癖档推进到 3');
+
+  // 兜底档：308=1 过 <=1 门槛推进到 2；306=9 不影响判据
+  const fallback = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+    f.store.set('cflag:31:308', 1);
+    f.store.set('cflag:31:306', 9);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(fallback);
+  assert.deepEqual(fallback.text_lines(), [
+    '「咕呜～…求你了…别看了…不要看那种地方…」',
+  ]);
+  assert.equal(fallback.store.get('cflag:31:308'), 2, '兜底档推进到 2');
+  assert.equal(fallback.store.get('cflag:31:306'), 9, '不动胸爱抚计数');
+
+  // 308=2 已越过兜底门槛：沉默（306=1 不应被本支读取）
+  const quiet = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 7;
+    f.store.set('cflag:31:308', 2);
+    f.store.set('cflag:31:306', 1);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(quiet);
+  assert.deepEqual(quiet.text_lines(), []);
+  assert.equal(quiet.store.get('cflag:31:308'), 2);
+  assert.equal(quiet.store.get('cflag:31:306'), 1, '不动胸爱抚计数');
 });
 
 test('插入手指首次：淫乱 / 屈服Lv3+爱慕 / それ以外+V钝感，推进到 1', async () => {
@@ -2028,54 +2096,56 @@ test('背后位首次处女淫乱 + 故乡恋人附加句，推进到 1', async 
   assert.equal(fixture.store.get('cflag:31:322'), 1, '背后位首次推进到 1');
 });
 
-test('背后位二次淫乱+性爱狂：门槛读 CFLAG:321 不是 322', async () => {
-  const r0 = await setup_k0((f) => {
+test('背后位二次淫乱+性爱狂：门槛读 CFLAG:322', async () => {
+  // 322=1 过 <=8 门槛；干扰项 321=9 按正常位计数不会命中
+  const hit = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 21;
     f.store.set('talent:31:76', 1);
     f.store.set('talent:31:75', 1);
     f.store.set('cflag:31:322', 1);
-    f.store.set('cflag:31:321', 8);
+    f.store.set('cflag:31:321', 9); // 干扰项：正常位计数与本支无关
+    f.store.set('flag:7', 1);
   });
-  await speak_k0(r0, seq_rand(0));
-  assert.deepEqual(r0.text_lines(), [
+  await speak_k0(hit, seq_rand(0));
+  assert.deepEqual(hit.text_lines(), [
     '「嗯哈啊～啊～啊啊～咿啊啊啊～！♡ 再用力插我～♡」',
     '「还想再要大肉棒～♡ 想要更多…更多的大肉棒啊～♡」',
   ]);
-  assert.equal(r0.store.get('cflag:31:322'), 9, '背后位二次淫乱+性爱狂写 9');
-  assert.equal(r0.store.get('cflag:31:321'), 8, '门槛读 321，不改写正常位');
+  assert.equal(hit.store.get('cflag:31:322'), 9, '背后位二次淫乱+性爱狂写 9');
+  assert.equal(hit.store.get('cflag:31:321'), 9, '不动正常位计数');
 
+  // 阈值闸：322=8 仍过 <=8 门槛
   const at_cap = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 21;
     f.store.set('talent:31:76', 1);
     f.store.set('talent:31:75', 1);
-    f.store.set('cflag:31:322', 1);
-    f.store.set('cflag:31:321', 8);
+    f.store.set('cflag:31:322', 8);
+    f.store.set('cflag:31:321', 9);
     f.store.set('flag:7', 1);
   });
   await speak_k0(at_cap, seq_rand(0));
   assert.ok(
     at_cap.text_lines().length > 0,
-    'CFLAG:321=8 且 FLAG:7==1 仍出声（门槛是 321 <=8）',
+    'CFLAG:322=8 且 FLAG:7==1 仍出声（门槛是 322 <=8）',
   );
+  assert.equal(at_cap.store.get('cflag:31:322'), 9);
 
+  // 322=9 已越过门槛：沉默（321=8 不应被本支读取）
   const exhausted = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 21;
     f.store.set('talent:31:76', 1);
     f.store.set('talent:31:75', 1);
-    f.store.set('cflag:31:322', 1);
-    f.store.set('cflag:31:321', 9);
+    f.store.set('cflag:31:322', 9);
+    f.store.set('cflag:31:321', 8);
     f.store.set('flag:7', 1);
   });
   await speak_k0(exhausted, seq_rand(0));
-  // 321 耗尽只跳过性爱狂档，落到淫乱档（门槛改回 322 则会仍走性爱狂）
-  assert.deepEqual(exhausted.text_lines(), [
-    '「呀呜～！哈啊…啊啊～…咿呀～～！好爽啊～…随心所欲的叫床！要变成动物了～！」',
-    '「咿呀～啊啊～…啊啊～…好喜欢！像动物一样的做爱好喜欢啊！」',
-  ]);
-  assert.equal(exhausted.store.get('cflag:31:322'), 6, '落到淫乱档写 6');
+  assert.deepEqual(exhausted.text_lines(), []);
+  assert.equal(exhausted.store.get('cflag:31:322'), 9);
+  assert.equal(exhausted.store.get('cflag:31:321'), 8, '不动正常位计数');
 });
 
 test('背后位二次爱慕 + V钝感附加句 / 阈值闸', async () => {
@@ -2538,13 +2608,13 @@ test('对面座位首次非处女：淫乱 + V钝感附加句', async () => {
   assert.equal(fixture.store.get('cflag:31:323'), 1);
 });
 
-test('对面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321', async () => {
+test('对面座位二次淫乱+性爱狂：门槛读 CFLAG:323 / 黑心插值', async () => {
+  // 淫乱档 RAND:3==1 支含黑心，推进到 6
   const r1 = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 22;
     f.store.set('talent:31:76', 1);
     f.store.set('cflag:31:323', 1);
-    f.store.set('cflag:31:321', 1);
   });
   await speak_k0(r1, seq_rand(1, 0));
   assert.deepEqual(r1.text_lines(), [
@@ -2555,7 +2625,44 @@ test('对面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321', async () =
   ]);
   assert.equal(r1.store.get('cflag:31:323'), 6);
 
+  // 淫乱+性爱狂档：323=1 过 <=8 门槛；干扰项 321=9 按正常位计数不会命中
+  const hit = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 22;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:75', 1);
+    f.store.set('cflag:31:323', 1);
+    f.store.set('cflag:31:321', 9); // 干扰项：正常位计数与本支无关
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(hit, seq_rand(0));
+  assert.deepEqual(hit.text_lines(), [
+    '「啊啊啊～…大肉棒插得好深…主人的大肉棒插得好深啊～♡ 插进小穴的深处了～♡」',
+    '琼一边发出淫荡的娇喘声一边在你的身上晃动着腰。',
+    '「再多的～…让我感受大肉棒吧♡ 把精液满满地射进来～♡」',
+  ]);
+  assert.equal(hit.store.get('cflag:31:323'), 9, '对面座位二次淫乱+性爱狂写 9');
+  assert.equal(hit.store.get('cflag:31:321'), 9, '不动正常位计数');
+
+  // 阈值闸：323=8 仍过 <=8 门槛
   const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 22;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:75', 1);
+    f.store.set('cflag:31:323', 8);
+    f.store.set('cflag:31:321', 9);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap, seq_rand(0));
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'CFLAG:323=8 且 FLAG:7==1 仍出声（门槛是 323 <=8）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:323'), 9);
+
+  // 323=9 已越过门槛：沉默（321=8 不应被本支读取）
+  const exhausted = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 22;
     f.store.set('talent:31:76', 1);
@@ -2564,16 +2671,10 @@ test('对面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321', async () =
     f.store.set('cflag:31:321', 8);
     f.store.set('flag:7', 1);
   });
-  await speak_k0(at_cap, seq_rand(0));
-  assert.ok(
-    at_cap.text_lines().length > 0,
-    'CFLAG:321=8 且 CFLAG:323=9 且 FLAG:7==1 仍出声（门槛是 321 <=8）',
-  );
-  assert.equal(
-    at_cap.store.get('cflag:31:323'),
-    9,
-    '对面座位二次淫乱+性爱狂写 9',
-  );
+  await speak_k0(exhausted, seq_rand(0));
+  assert.deepEqual(exhausted.text_lines(), []);
+  assert.equal(exhausted.store.get('cflag:31:323'), 9);
+  assert.equal(exhausted.store.get('cflag:31:321'), 8, '不动正常位计数');
 });
 
 test('背面座位首次处女：空 PRINTFORMW 仍等待，推进到 1', async () => {
@@ -2602,13 +2703,13 @@ test('背面座位首次非处女：淫乱 + 黑心插值', async () => {
   assert.equal(fixture.store.get('cflag:31:324'), 1);
 });
 
-test('背面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321', async () => {
+test('背面座位二次淫乱+性爱狂：门槛读 CFLAG:324 / 黑心插值', async () => {
+  // 淫乱档 RAND:3==0 支含黑心，推进到 6
   const r0 = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 23;
     f.store.set('talent:31:76', 1);
     f.store.set('cflag:31:324', 1);
-    f.store.set('cflag:31:321', 1);
   });
   await speak_k0(r0, seq_rand(0));
   assert.ok(
@@ -2617,7 +2718,44 @@ test('背面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321', async () =
   );
   assert.equal(r0.store.get('cflag:31:324'), 6);
 
+  // 淫乱+性爱狂档：324=1 过 <=8 门槛；干扰项 321=9 按正常位计数不会命中
+  const hit = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 23;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:75', 1);
+    f.store.set('cflag:31:324', 1);
+    f.store.set('cflag:31:321', 9); // 干扰项：正常位计数与本支无关
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(hit, seq_rand(0));
+  assert.deepEqual(hit.text_lines(), [
+    '「嗯啊～…啊～哈啊啊啊…再动啊～♡ 让我好好感下吧～…♡」',
+    '琼的话已经变得下流淫靡而不堪入耳了。',
+    '「啊～啊啊啊…♡ 感到大肉棒了～好有感觉啊～～…♡」',
+  ]);
+  assert.equal(hit.store.get('cflag:31:324'), 9, '背面座位二次淫乱+性爱狂写 9');
+  assert.equal(hit.store.get('cflag:31:321'), 9, '不动正常位计数');
+
+  // 阈值闸：324=8 仍过 <=8 门槛
   const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 23;
+    f.store.set('talent:31:76', 1);
+    f.store.set('talent:31:75', 1);
+    f.store.set('cflag:31:324', 8);
+    f.store.set('cflag:31:321', 9);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap, seq_rand(0));
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'CFLAG:324=8 且 FLAG:7==1 仍出声（门槛是 324 <=8）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:324'), 9);
+
+  // 324=9 已越过门槛：沉默（321=8 不应被本支读取）
+  const exhausted = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 23;
     f.store.set('talent:31:76', 1);
@@ -2626,16 +2764,10 @@ test('背面座位二次淫乱：黑心插值 / 门槛读 CFLAG:321', async () =
     f.store.set('cflag:31:321', 8);
     f.store.set('flag:7', 1);
   });
-  await speak_k0(at_cap, seq_rand(0));
-  assert.ok(
-    at_cap.text_lines().length > 0,
-    'CFLAG:321=8 且 CFLAG:324=9 且 FLAG:7==1 仍出声（门槛是 321 <=8）',
-  );
-  assert.equal(
-    at_cap.store.get('cflag:31:324'),
-    9,
-    '背面座位二次淫乱+性爱狂写 9',
-  );
+  await speak_k0(exhausted, seq_rand(0));
+  assert.deepEqual(exhausted.text_lines(), []);
+  assert.equal(exhausted.store.get('cflag:31:324'), 9);
+  assert.equal(exhausted.store.get('cflag:31:321'), 8, '不动正常位计数');
 });
 
 test('正常位肛交首次：淫乱 + A钝感附加句，推进到 1', async () => {
@@ -3027,14 +3159,16 @@ test('乳交首次：淫乱，推进到 1', async () => {
   assert.equal(fixture.store.get('cflag:31:333'), 1, '乳交首次推进到 1');
 });
 
-test('乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸', async () => {
+test('乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:333 / 阈值闸', async () => {
+  // 333=1 过 <=5 门槛；干扰项 332=6 按口交计数不会命中
   const r0 = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 32;
     f.store.set('talent:31:76', 1);
     f.store.set('abl:31:16', 5);
     f.store.set('cflag:31:333', 1);
-    f.store.set('cflag:31:332', 1);
+    f.store.set('cflag:31:332', 6); // 干扰项：口交计数与本支无关
+    f.store.set('flag:7', 1);
   });
   await speak_k0(r0, seq_rand(0));
   assert.deepEqual(r0.text_lines(), [
@@ -3043,34 +3177,39 @@ test('乳交二次：淫乱+侍奉写 6 / 门槛读 CFLAG:332 / 阈值闸', asyn
     '琼一边露出淫猥的笑容一边倾斜着乳房奉仕着鸡鸡………',
   ]);
   assert.equal(r0.store.get('cflag:31:333'), 6, '乳交二次淫乱+侍奉写 6');
+  assert.equal(r0.store.get('cflag:31:332'), 6, '不动口交计数');
 
+  // 阈值闸：333=5 仍过 <=5 门槛
   const at_cap = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 32;
     f.store.set('talent:31:76', 1);
     f.store.set('abl:31:16', 5);
-    f.store.set('cflag:31:333', 9); // 本档耗尽；若门槛改回 333 则静默
-    f.store.set('cflag:31:332', 5); // 口交档仍 <=5，正确读 332 才出声
+    f.store.set('cflag:31:333', 5);
+    f.store.set('cflag:31:332', 6);
     f.store.set('flag:7', 1);
   });
   await speak_k0(at_cap, seq_rand(0));
   assert.ok(
     at_cap.text_lines().length > 0,
-    'cflag:332=5 且 FLAG:7==1 仍出声（门槛读口交 CFLAG:332 <=5）',
+    'cflag:333=5 且 FLAG:7==1 仍出声（门槛是 333 <=5）',
   );
   assert.equal(at_cap.store.get('cflag:31:333'), 6);
 
+  // 333=6 已越过门槛：沉默（332=5 不应被本支读取）
   const exhausted = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 32;
     f.store.set('talent:31:76', 1);
     f.store.set('abl:31:16', 5);
-    f.store.set('cflag:31:333', 9);
-    f.store.set('cflag:31:332', 6);
+    f.store.set('cflag:31:333', 6);
+    f.store.set('cflag:31:332', 5);
     f.store.set('flag:7', 1);
   });
   await speak_k0(exhausted, seq_rand(0));
   assert.deepEqual(exhausted.text_lines(), []);
+  assert.equal(exhausted.store.get('cflag:31:333'), 6);
+  assert.equal(exhausted.store.get('cflag:31:332'), 5, '不动口交计数');
 });
 
 test('股间性交首次：淫乱，推进到 1', async () => {
@@ -3162,50 +3301,58 @@ test('骑乘位首次处女：淫乱，推进到 1', async () => {
   assert.equal(fixture.store.get('cflag:31:335'), 1, '骑乘位首次推进到 1');
 });
 
-test('骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:321 / 阈值闸', async () => {
+test('骑乘位二次：淫乱+性爱狂写 9 / 门槛读 CFLAG:335 / 阈值闸', async () => {
+  // 335=1 过 <=8 门槛；干扰项 321=9 按正常位计数不会命中
   const r0 = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 34;
     f.store.set('talent:31:76', 1);
     f.store.set('talent:31:75', 1);
     f.store.set('cflag:31:335', 1);
-    f.store.set('cflag:31:321', 1);
+    f.store.set('cflag:31:321', 9); // 干扰项：正常位计数与本支无关
+    f.store.set('flag:7', 1);
   });
   await speak_k0(r0, seq_rand(0));
-  assert.ok(r0.text_lines().length > 0);
+  assert.deepEqual(r0.text_lines(), [
+    '「咿啊啊～…啊～啊啊啊啊…腰完全停不下来啊～～…大肉棒实在是太爽了～～♡」',
+    '琼淫猥地扭着腰、用整个阴道品味着阴茎。',
+    '「把精液射进来吧…呐…求您了～…把我淫乱的小穴里～…用主人的精液到处打满记号吧～！」',
+    '「即使怀孕也没事～♡ 让我生下主人的孩子吧～♡」',
+  ]);
   assert.equal(r0.store.get('cflag:31:335'), 9, '骑乘位二次淫乱+性爱狂写 9');
+  assert.equal(r0.store.get('cflag:31:321'), 9, '不动正常位计数');
 
+  // 阈值闸：335=8 仍过 <=8 门槛
   const at_cap = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 34;
     f.store.set('talent:31:76', 1);
     f.store.set('talent:31:75', 1);
-    f.store.set('cflag:31:335', 9); // 本档耗尽；若门槛改回 335 则静默
-    f.store.set('cflag:31:321', 8); // 正常位仍 <=8，正确读 321 才出声
+    f.store.set('cflag:31:335', 8);
+    f.store.set('cflag:31:321', 9);
     f.store.set('flag:7', 1);
   });
   await speak_k0(at_cap, seq_rand(0));
   assert.ok(
     at_cap.text_lines().length > 0,
-    'cflag:321=8 且 FLAG:7==1 仍出声（门槛读正常位 CFLAG:321 <=8）',
+    'cflag:335=8 且 FLAG:7==1 仍出声（门槛是 335 <=8）',
   );
   assert.equal(at_cap.store.get('cflag:31:335'), 9);
 
+  // 335=9 已越过门槛：沉默（321=8 不应被本支读取）
   const exhausted = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 34;
     f.store.set('talent:31:76', 1);
     f.store.set('talent:31:75', 1);
-    f.store.set('cflag:31:335', 1);
-    f.store.set('cflag:31:321', 9);
+    f.store.set('cflag:31:335', 9);
+    f.store.set('cflag:31:321', 8);
     f.store.set('flag:7', 1);
   });
   await speak_k0(exhausted, seq_rand(0));
-  assert.equal(
-    exhausted.store.get('cflag:31:335'),
-    6,
-    'CFLAG:321=9 跳过性爱狂档、落到淫乱档写 6',
-  );
+  assert.deepEqual(exhausted.text_lines(), []);
+  assert.equal(exhausted.store.get('cflag:31:335'), 9);
+  assert.equal(exhausted.store.get('cflag:31:321'), 8, '不动正常位计数');
 });
 
 test('全身擦洗首次：侍奉 >= 3，推进到 1', async () => {
@@ -3462,7 +3609,7 @@ test('鞭首次：淫乱，推进到 1', async () => {
   assert.equal(fixture.store.get('cflag:31:342'), 1, '鞭首次推进到 1');
 });
 
-test('鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸', async () => {
+test('鞭二次：淫乱+抖M写 9 / 末支门槛读 CFLAG:342 / 阈值闸', async () => {
   const r0 = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 41;
@@ -3495,36 +3642,39 @@ test('鞭二次：淫乱+抖M写 9 / 末支读 CFLAG:335 / 阈值闸', async () 
     f.store.set('talent:31:76', 1);
     f.store.set('abl:31:21', 5);
     f.store.set('cflag:31:342', 9);
-    f.store.set('cflag:31:335', 2);
     f.store.set('flag:7', 1);
   });
   await speak_k0(exhausted);
   assert.deepEqual(exhausted.text_lines(), []);
 
-  // 末支读 CFLAG:335（骑乘位）不是自己的 342：own=9 + 335=1 仍出声并写 2
-  const last_foreign = await setup_k0((f) => {
+  // 末支：342=1 过 <=1 门槛推进到 2；干扰项 335=9 按骑乘位计数不会命中
+  const last = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 41;
+    f.store.set('cflag:31:342', 1);
+    f.store.set('cflag:31:335', 9); // 干扰项：骑乘位计数与本支无关
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(last);
+  assert.deepEqual(last.text_lines(), [
+    '「啊啊～…求你了…快住手吧…求你了…」',
+    '琼泪流满面、祈求饶恕………',
+  ]);
+  assert.equal(last.store.get('cflag:31:342'), 2, '末支推进到 2');
+  assert.equal(last.store.get('cflag:31:335'), 9, '不动骑乘位计数');
+
+  // 342=9 已越过末支门槛：沉默（335=1 不应被本支读取）
+  const last_quiet = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 41;
     f.store.set('cflag:31:342', 9);
     f.store.set('cflag:31:335', 1);
     f.store.set('flag:7', 1);
   });
-  await speak_k0(last_foreign);
-  assert.ok(
-    last_foreign.text_lines().length > 0,
-    'own=9 且 骑乘位=1 仍出声（末支读 CFLAG:335）',
-  );
-  assert.equal(last_foreign.store.get('cflag:31:342'), 2);
-
-  const last_exhausted = await setup_k0((f) => {
-    const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 41;
-    f.store.set('cflag:31:342', 9);
-    f.store.set('cflag:31:335', 2);
-    f.store.set('flag:7', 1);
-  });
-  await speak_k0(last_exhausted);
-  assert.deepEqual(last_exhausted.text_lines(), []);
+  await speak_k0(last_quiet);
+  assert.deepEqual(last_quiet.text_lines(), []);
+  assert.equal(last_quiet.store.get('cflag:31:342'), 9);
+  assert.equal(last_quiet.store.get('cflag:31:335'), 1, '不动骑乘位计数');
 });
 
 test('针首次：淫乱，推进到 1', async () => {
@@ -4384,17 +4534,43 @@ test('六九式二次：淫乱写 5 / 阈值闸', async () => {
   assert.deepEqual(exhausted.text_lines(), []);
 });
 
-test('深喉二次：读 CFLAG:363 写 CFLAG:365 / 阈值闸', async () => {
+test('深喉二次：淫乱门槛读 CFLAG:365 / 阈值闸', async () => {
+  // 365=1 过 <=4 门槛；干扰项 363=9 按真空口交计数不会命中
   const r0 = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 124;
     f.store.set('talent:31:76', 1);
     f.store.set('cflag:31:365', 1);
+    f.store.set('cflag:31:363', 9); // 干扰项：真空口交计数与本支无关
+    f.store.set('flag:7', 1);
   });
   await speak_k0(r0);
+  assert.deepEqual(r0.text_lines(), [
+    '琼把阴茎吞入喉咙深处、用嘴唇紧紧含着根部。',
+    '「嗯噗呜唔…嗯咻噜～咻噜…咻噜噗呜～♡ 咻噜～咻～咻噗呜♡…嗯咕～嗯呼呜♡」',
+    '（喉咙里面…被肉棒塞得满满的…好开心…♡）',
+  ]);
   assert.equal(r0.store.get('cflag:31:365'), 5, '深喉二次淫乱写 5');
+  assert.equal(r0.store.get('cflag:31:363'), 9, '不动真空口交计数');
 
+  // 阈值闸：365=4 仍过 <=4 门槛
   const at_cap = await setup_k0((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 124;
+    f.store.set('talent:31:76', 1);
+    f.store.set('cflag:31:365', 4);
+    f.store.set('cflag:31:363', 9);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k0(at_cap);
+  assert.ok(
+    at_cap.text_lines().length > 0,
+    'cflag:365=4 且 FLAG:7==1 仍出声（门槛是 365 <=4）',
+  );
+  assert.equal(at_cap.store.get('cflag:31:365'), 5);
+
+  // 365=9 已越过门槛：沉默（363=4 不应被本支读取）
+  const exhausted = await setup_k0((f) => {
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 124;
     f.store.set('talent:31:76', 1);
@@ -4402,23 +4578,10 @@ test('深喉二次：读 CFLAG:363 写 CFLAG:365 / 阈值闸', async () => {
     f.store.set('cflag:31:363', 4);
     f.store.set('flag:7', 1);
   });
-  await speak_k0(at_cap);
-  assert.ok(
-    at_cap.text_lines().length > 0,
-    'own=9 且 CFLAG:363=4 且 FLAG:7==1 仍出声（门槛读 363）',
-  );
-  assert.equal(at_cap.store.get('cflag:31:365'), 5);
-
-  const exhausted = await setup_k0((f) => {
-    const era_flag = f.load_module('era-utils/era-flag');
-    era_flag.selectcom = 124;
-    f.store.set('talent:31:76', 1);
-    f.store.set('cflag:31:365', 9);
-    f.store.set('cflag:31:363', 5);
-    f.store.set('flag:7', 1);
-  });
   await speak_k0(exhausted);
   assert.deepEqual(exhausted.text_lines(), []);
+  assert.equal(exhausted.store.get('cflag:31:365'), 9);
+  assert.equal(exhausted.store.get('cflag:31:363'), 4, '不动真空口交计数');
 });
 
 test('深喉首次：淫乱，推进到 1', async () => {

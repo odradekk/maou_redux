@@ -392,7 +392,7 @@ test('PRINT_COLORBAR：超上限、零值与零上限仍保持定宽输出', () 
   ]);
 });
 
-test('IKAI_BONUS：异界综合征只生成原作临时倍率，覆盖五档与边界', () => {
+test('IKAI_BONUS：异界综合征只生成临时倍率，覆盖五档与边界', () => {
   const fixture = create_era_fixture();
   const ikai = fixture.load_module('system/otherworld-bonus');
   for (const [level, overall] of [
@@ -554,7 +554,7 @@ test('NTR_VIDEO：欲望零到九级的基础出价逐档可观测', async () =>
   }
 });
 
-test('NTR_VIDEO：欲望出价的互斥分支、戒备分档和下限保持原作数值', async () => {
+test('NTR_VIDEO：欲望出价的互斥分支、戒备分档和下限保持原数值', async () => {
   for (const [values, cost] of [
     [{ 'talent:17:30': 1, 'talent:17:31': 1 }, 18000],
     [{ 'talent:17:32': 1, 'talent:17:33': 1 }, 18000],
@@ -1147,7 +1147,7 @@ test('NTR_VIDEO：感觉戒备倍率、下限与珠经验双门槛均可观测',
   );
 });
 
-test('MAOUNET：INPORT_B 按原作字段格式写入通信记录并跳过重复勇者', async () => {
+test('MAOUNET：INPORT_B 按字段格式写入通信记录并跳过重复勇者', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(17, { id: 17, name: '玛奥', callname: '玛奥' });
   fixture.era.addCharacter(17);
@@ -1293,8 +1293,8 @@ test('MAOUNET：导出候选只显示据点内的非魔王角色', async () => {
 });
 
 test('MAOUNET：导出菜单里 100 号角色能被选中、取消照常可用（预设 100 × [100] 取消，#593）', async () => {
-  // 预设 100「怪物的女儿」能以 ID 100 加入（生命摇篮 @CHAR_CREATE 的 CASEELSE
-  // 透传，见 #586 的完成评论）；候选行以**角色 ID** 作快捷键，而原作取消键也是
+  // 预设 100「怪物的女儿」能以 ID 100 加入（生命摇篮的 CASEELSE
+  // 透传，见 #586 的完成评论）；候选行以**角色 ID** 作快捷键，而取消键也是
   // [100]——修好之前敲 100 命中的是取消分支，这个角色永远选不中（#593）。
   // 本用例在修好之前必定红：100 会退出菜单而不是选中。
   const { fixture, net } = setup_communication([0, 17, 100]);
@@ -1464,7 +1464,7 @@ test('MAOUNET：等级一开关连续点击两次回到关闭', async () => {
 
 test('MAOUNET：据点 888 接入真身，读档钩子保留 999 与 1000..1019 分支', async () => {
   const shop_fixture = create_era_fixture();
-  // 商店轮的入口状态 BOUGHT = -1（@EVENTFIRST:27 / @EVENTSHOP:20）：直调
+  // 商店轮的入口状态 BOUGHT = -1（event-first.js 初始化 / page-shop.js 进店再置）：直调
   // usershop 时必须先落，否则 era_flag.bought 读回 0——那是「刚买了 0 号
   // 商品」的店内态，#396 接通店内购物段后会吞掉全部输入
   shop_fixture.load_module('era-utils/era-flag').bought = -1;

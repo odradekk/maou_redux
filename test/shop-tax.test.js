@@ -1,11 +1,11 @@
 /**
- * 税金结算测试（issue #396 / N12 段 3）：@TAX_GET（target/ERB/SHOP/TAX.ERB）。
+ * 税金结算测试（issue #396 / N12 段 3）：ere/system/stronghold/tax.js 的 tax_get。
  *
  * 接缝 = ere/system/stronghold/tax.js 导出的 tax_get；经唯一夹具观察玩家
  * 输出行、等待、资金与 EX_FLAG，不断言模块内部辅助函数。总税额从末行
  * 「合计税收 {n}」与所持金/非作弊资金的增量两路核对——输出与数值必须一致。
  *
- * 维度型判据（派单覆盖标准）一律表驱动走完整维度，不挑点：
+ * 维度型条件（派单覆盖标准）一律表驱动走完整维度，不挑点：
  *   - 税収日的三个字面量 10/20/30：跑遍 1..31 整月，非税日一个输出都没有；
  *   - 威望五档（EX_FLAG:99）：含每档边界（20/21、40/41、60/61、80/81、
  *     100/101）与范围外（-1、101）整表走完；
@@ -19,11 +19,11 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-/** 原作 :15 的税収日（DAY:2 == 10 || 20 || 30） */
+/** 税収日（DAY:2 == 10 || 20 || 30） */
 const TAX_DAYS = [10, 20, 30];
 
 /**
- * 跑一遍 @TAX_GET。seed 直接落夹具的变量存储（键名与 ere 的寻址串一致）；
+ * 跑一遍 tax_get。seed 直接落夹具的变量存储（键名与 ere 的寻址串一致）；
  * DAY:2 默认取税日 10 号。
  */
 async function run_tax(seed = {}) {
@@ -79,7 +79,7 @@ test('税収日：整个 1..31 只有 10/20/30 三天产出，其余日子一行
   }
 });
 
-test('税収日：开场文案与「收税」分隔块 1:1', async () => {
+test('税収日：开场文案与「收税」分隔块逐字输出', async () => {
   const fixture = await run_tax();
   const lines = fixture.text_lines();
   assert.deepEqual(lines.slice(0, 4), [
@@ -88,19 +88,19 @@ test('税収日：开场文案与「收税」分隔块 1:1', async () => {
     '- - - 收税 - - -',
     '',
   ]);
-  // PRINTW 与 :29 裸 WAIT 各等一次键
+  // PRINTW 与裸 WAIT 各等一次键
   assert.equal(fixture.waits[0].waited, true);
   assert.equal(fixture.waits[1].waited, true);
 });
 
 test('威望五档：EX_FLAG:99 整表（含五处边界与范围外）驱动「魔界支援」档位', async () => {
-  // [威望值, 期望支援额, 文案]——原作 :41-68 的五支 IF/ELSEIF：
+  // [威望值, 期望支援额, 文案]——五支 IF/ELSEIF：
   //   <=20 && >=0 → 0（仅文案） / <=40 && >20 → ×30 封顶 5000 /
   //   <=60 && >40 → ×50 封顶 10000 / <=80 && >60 → ×50 封顶 30000 /
   //   <=100 && >80 → ×100 封顶 50000；范围外（<0 或 >100）一支都不命中。
   // DAY:0 = 100 时支援额 = trunc(100 × 单价 × 威望 / 100) = 单价 × 威望，
   // 四档都远在各自封顶之内（最大 100×100 = 10000 < 50000），故边界两侧
-  // 的差值是判据本身。
+  // 的差值就是判断条件本身。
   const cases = [
     [0, 0, '威望值是【岌岌可危】'],
     [20, 0, '威望值是【岌岌可危】'],
@@ -166,7 +166,7 @@ test('威望五档：封顶以内按整数除法截断（单价 × 天数 × 威
 });
 
 test('土地税：五块领土 × 三态（已征服 / 殖民地 / 都没有）整表驱动', async () => {
-  // 每块领土两行判据（原作 :86-121）：已征服走定值 1200，否则看侵攻度
+  // 每块领土两行判断条件：已征服走定值 1200，否则看侵攻度
   // 是否 > 10（殖民地数 = 侵攻度 / 10 整数除法）；两块都不成立则这一块
   // 一行都不打。第五块（圣灵骑士）只有已征服一支。
   // [殖民/征服标志名, 殖民度名, 已征服文案, 殖民地前缀, 已征服值]
@@ -216,7 +216,7 @@ test('土地税：五块领土 × 三态（已征服 / 殖民地 / 都没有）�
     assert.equal(value_after(colony, colony_prefix), 9, '97 / 10 = 9');
     assert.equal(value_after(colony, '合计 '), 9 + DUNGEON_BASE);
 
-    // 状态三：未征服 + 殖民度 == 10（判据是 > 10，10 不算）→ 一块都不打
+    // 状态三：未征服 + 殖民度 == 10（条件是 > 10，10 不算）→ 一块都不打
     const none = await run_tax({ [invasion]: 10 });
     assert(
       !none.text_lines().includes(conquered_line),
@@ -228,11 +228,11 @@ test('土地税：五块领土 × 三态（已征服 / 殖民地 / 都没有）�
     );
   }
 
-  // 第一块的征服判据是 `IF FLAG:82`（非零即可），不是 `== 2`——1 也算
+  // 第一块的征服判断条件是 `IF FLAG:82`（非零即可），不是 `== 2`——1 也算
   const truthy = await run_tax({ 'flag:82': 1 });
   assert(truthy.text_lines().includes('├ 地上的魔界领土 1200'));
 
-  // 第二至四块的判据是 `== 2`，1 不算
+  // 第二至四块的条件是 `== 2`，1 不算
   for (const [conquered, invasion, conquered_line] of blocks.slice(1)) {
     const one = await run_tax({ [conquered]: 1, [invasion]: 0 });
     assert(
@@ -254,7 +254,7 @@ test('土地税：五块领土 × 三态（已征服 / 殖民地 / 都没有）�
 });
 
 test('土地税：地下城六档按 CFLAG:0:9（迷宫 Lv）逐档表驱动', async () => {
-  // 原作 :127-145：<20 → Lv*50+100 / <40 → Lv*40+300 / <80 → Lv*30+700 /
+  // <20 → Lv*50+100 / <40 → Lv*40+300 / <80 → Lv*30+700 /
   // <150 → Lv*20+1500 / <300 → Lv*10+3000 / ELSE → Lv*5+4500
   const cases = [
     [0, 100], // 0*50+100
@@ -284,13 +284,13 @@ test('土地税：地下城六档按 CFLAG:0:9（迷宫 Lv）逐档表驱动', a
     );
   }
 
-  // 负等级落第一档（原作 `IF CFLAG:0:9 < 20` 没有下界）——-5*50+100 = -150
+  // 负等级落第一档（`IF CFLAG:0:9 < 20` 没有下界）——-5*50+100 = -150
   const negative = await run_tax({ 'cflag:0:9': -5 });
   assert.equal(value_after(negative, '└ 地下城 '), -150);
 });
 
 test('肉便器税：两处门槛（> 0 才收）与卖春税的三件道具字面量', async () => {
-  // 原作 :163-196。TAX:2 的合计是第二条「合计 」行（第一条是土地税）。
+  // TAX:2 的合计是第二条「合计 」行（第一条是土地税）。
   const tax2 = (fixture) => values_after(fixture, '合计 ')[1];
 
   // 两项都不满足时：只有「淫魔卖春税」一行（无门槛），值 = 0+0+0+20
@@ -334,7 +334,7 @@ test('肉便器税：两处门槛（> 0 才收）与卖春税的三件道具字�
   assert.equal(value_after(whores, '└ 淫魔卖春税 '), 2 + 4 + 6 + 20);
   assert.equal(tax2(whores), 32);
 
-  // 两处门槛与卖春税同时成立，且三项按原作顺序累加
+  // 两处门槛与卖春税同时成立，且三项按固定顺序累加
   const all = await run_tax({
     'flag:84': 3,
     'flag:83': 2,
@@ -352,7 +352,7 @@ test('肉便器税：两处门槛（> 0 才收）与卖春税的三件道具字�
 });
 
 test('肉便器税：FLAG:350-358 等于 507 的娼馆各乘 1.1（截断，逐个复合）', async () => {
-  // 原作 :187-191 `FOR LOCAL,1,10` + `SIF FLAG:(LOCAL + 349) == 507` +
+  // `FOR LOCAL,1,10` + `SIF FLAG:(LOCAL + 349) == 507` +
   // `TIMES TAX:2, 1.1`——下标 350..358 共九个，命中几次就乘几次 1.1。
   const tax2 = (fixture) => values_after(fixture, '合计 ')[1];
   const base = 76; // FLAG:84=3（30）+ FLAG:83=2（20）+ 卖春税 26
@@ -390,7 +390,7 @@ test('肉便器税：FLAG:350-358 等于 507 的娼馆各乘 1.1（截断，逐�
     100,
   );
 
-  // 范围外的 FLAG:349 / FLAG:359 不参与（判据是 350..358 九个下标）
+  // 范围外的 FLAG:349 / FLAG:359 不参与（条件是 350..358 九个下标）
   assert.equal(
     tax2(await run_tax({ ...seed, 'flag:349': 507, 'flag:359': 507 })),
     base,
@@ -398,7 +398,7 @@ test('肉便器税：FLAG:350-358 等于 507 的娼馆各乘 1.1（截断，逐�
 });
 
 test('魔王特别税：按 FLAG:9 加成（+= 不是 ×），收完清零', async () => {
-  // 原作 :199-213。基数（FLAG:9 = 0 时）= 地下城 100 + 淫魔卖春税 20 = 120；
+  // 基数（FLAG:9 = 0 时）= 地下城 100 + 淫魔卖春税 20 = 120；
   // 合计 {TAX:3} 是第三条「合计 」行。
   const tax3 = (fixture) => values_after(fixture, '合计 ')[2];
   const cases = [
@@ -421,7 +421,7 @@ test('魔王特别税：按 FLAG:9 加成（+= 不是 ×），收完清零', asy
 });
 
 test('黑方片加成：EX_FLAG:2811 ∈ [51, 100) 时收入乘 (10 + 2811/10)/10', async () => {
-  // 原作 :215-226。基数取 FLAG:9 = 5 时的 126（含特别税），
+  // 基数取 FLAG:9 = 5 时的 126（含特别税），
   // 便于观察截断：2811 = 60 → trunc(126 × 16/10) = trunc(201.6) = 201。
   const base = { 'flag:9': 5 };
   const final_total = (fixture) => value_after(fixture, '合计税收 ');

@@ -1275,7 +1275,7 @@ on(
  * 分档写 1；二回目以降先判「助手玛奥」——命中则走自身内部「淫乱（含处女
  * 子分档）→爱慕（含处女子分档）→それ以外（无写点）」三选，写 7/5/－；
  * 未命中则走扁平九支 ELSEIF 链（与助手玛奥支互斥、彼此独立判据，非
- * 「各档再按助手玛奥二分」的对称结构，1:1 保留源作形状）：淫乱+处女→
+ * 「各档再按助手玛奥二分」的对称结构）：淫乱+处女→
  * 淫乱+自慰中毒Lv3以上（RAND:3 三选一台词）→淫乱+自慰中毒Lv3未満（RAND:2
  * 二选一）→爱慕+处女→爱慕+自慰中毒Lv3以上（RAND:3 三选一）→爱慕+自慰
  * 中毒Lv3未満（RAND:2 二选一）→屈服刻印Lv3+自慰中毒Lv1以上（RAND:2 二选
@@ -1294,7 +1294,7 @@ on(
  * 爱慕且非助手陪玩／助手玛奥（内部再按淫乱→爱慕→それ以外）／それ以外」
  * 四分档写 1，前两支另受 TEQUIP:89/90（兽奸/触手）排除，但头部守卫已把
  * 这两条已在头部分别路由兽奸专用口上或静默跳过，本分支执行时恒为 0
- * （1:1 保留原判断）；普通初めて
+ * （判断冗余，保留无害）；普通初めて
  * （CFLAG:307 == 0 非首吻）按「助手玛奥（内部淫乱→爱慕→それ以外）／
  * 淫乱→爱慕→それ以外」写 1；二回目以降先分「助手玛奥」再各自按
  * 「淫乱→爱慕→従順Lv2以上→それ以外」写 5/4/3/2，两支结构对称（与
@@ -7262,8 +7262,6 @@ async function kojo_message_com_11(rand) {
 
   // IF SELECTCOM == 27（背后位肛交 CFLAG:328）
   if (era_flag.selectcom === 27) {
-    // 原作缺陷：源第 4079、4102、4181、4201 行的前两档误读 CFLAG:327
-    //（正常位肛交），1:1 保留。
     const weapon =
       era0(`talent:${player}:121`) === 0 && era0(`talent:${player}:122`) === 0
         ? '电动假阳具'
@@ -7389,7 +7387,7 @@ async function kojo_message_com_11(rand) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
           chara(target).system.肛门感觉 >= 3 &&
-          (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+          (kojo.背后位肛交 <= 6 || game.kojo.口上开关 === 2)
         ) {
           if (rand_n(3) === 0) {
             await era.print(
@@ -7444,7 +7442,7 @@ async function kojo_message_com_11(rand) {
           kojo.背后位肛交 = 7;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+          (kojo.背后位肛交 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.print(`『啊嘿嘿，姐姐的屁股……真是调教多少次都不会腻啊♪』`);
           await era.printAndWait(
@@ -7606,7 +7604,7 @@ async function kojo_message_com_11(rand) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
           chara(target).system.肛门感觉 >= 3 &&
-          (kojo.正常位肛交 <= 6 || game.kojo.口上开关 === 2)
+          (kojo.背后位肛交 <= 6 || game.kojo.口上开关 === 2)
         ) {
           if (rand_n(3) === 0) {
             await era.print(
@@ -7652,7 +7650,7 @@ async function kojo_message_com_11(rand) {
           kojo.背后位肛交 = 7;
         } else if (
           era.get(`talent:${target}:76`) === 1 &&
-          (kojo.正常位肛交 <= 5 || game.kojo.口上开关 === 2)
+          (kojo.背后位肛交 <= 5 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
             `敏感的肛门尚未得到充足的调教就被侵犯了，疼痛、不适与异样的快感让${target_name}弓起了身子。`,
@@ -9021,8 +9019,7 @@ async function kojo_message_com_11(rand) {
     if (assi_mao) {
       if (
         era.get(`talent:${target}:76`) === 1 &&
-        // 原作 :4946 误读 CFLAG:332（口交），而非本支 CFLAG:333，1:1 保留。
-        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+        (kojo.乳交 <= 4 || game.kojo.口上开关 === 2)
       ) {
         if (rand_n(2) === 0) {
           await era.printAndWait(
@@ -9076,8 +9073,7 @@ async function kojo_message_com_11(rand) {
       }
     } else if (
       era.get(`talent:${target}:76`) === 1 &&
-      // 原作 :4978 同样误读 CFLAG:332，1:1 保留。
-      (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+      (kojo.乳交 <= 4 || game.kojo.口上开关 === 2)
     ) {
       if (rand_n(2) === 0) {
         await era.printAndWait(
@@ -19029,7 +19025,7 @@ async function kojo_message_com_11(rand) {
       if (assi_mao) {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+          (kojo.深喉 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
             `「人家继续了哦……${heart(1)} 呜呜……咕呜……咕呣…${heart(1)}」`,
@@ -19044,7 +19040,7 @@ async function kojo_message_com_11(rand) {
           kojo.深喉 = 5;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+          (kojo.深喉 <= 3 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
             `「${player_name}的小鸡鸡，我要全部吃下去了哦${heart(1)}  呜呜……咕呜……咕呣…${heart(1)}」`,
@@ -19059,7 +19055,7 @@ async function kojo_message_com_11(rand) {
           kojo.深喉 = 4;
         } else if (
           chara(target).system.侍奉精神 >= 3 &&
-          (kojo.真空口交 <= 2 || game.kojo.口上开关 === 2)
+          (kojo.深喉 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
             `「要，要进到喉，喉咙深处吗……呜呜……咕呜……咕呣…！」`,
@@ -19072,7 +19068,7 @@ async function kojo_message_com_11(rand) {
           );
           // CFLAG:365  = 3（变量语义：CFLAG 族，365）
           kojo.深喉 = 3;
-        } else if (kojo.真空口交 <= 1 || game.kojo.口上开关 === 2) {
+        } else if (kojo.深喉 <= 1 || game.kojo.口上开关 === 2) {
           await era.printAndWait(`「喉，喉咙深处也要吗……呜呜……咕呜……咕呣…！」`);
           await era.printAndWait(
             `${target_name}口交的时候大概是过于激烈了，将${player_name}的阴茎吞入到了喉咙最深处`,
@@ -19086,7 +19082,7 @@ async function kojo_message_com_11(rand) {
       } else {
         if (
           era.get(`talent:${target}:76`) === 1 &&
-          (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+          (kojo.深喉 <= 4 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
             `「人家继续了哦，魔王大人……${heart(1)} 呜呜……咕呜……咕呣…${heart(1)}」`,
@@ -19101,7 +19097,7 @@ async function kojo_message_com_11(rand) {
           kojo.深喉 = 5;
         } else if (
           era.get(`talent:${target}:85`) === 1 &&
-          (kojo.真空口交 <= 3 || game.kojo.口上开关 === 2)
+          (kojo.深喉 <= 3 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(
             `「${player_name}的阴茎，我会好好地全部吃下去的${heart(1)} 呜呜……咕呜……咕呣…${heart(1)}」`,
@@ -19116,7 +19112,7 @@ async function kojo_message_com_11(rand) {
           kojo.深喉 = 4;
         } else if (
           chara(target).system.侍奉精神 >= 3 &&
-          (kojo.真空口交 <= 2 || game.kojo.口上开关 === 2)
+          (kojo.深喉 <= 2 || game.kojo.口上开关 === 2)
         ) {
           await era.printAndWait(`「呜呜……咕呜……喉咙好热的感觉……呜呣……」`);
           await era.printAndWait(
@@ -19127,7 +19123,7 @@ async function kojo_message_com_11(rand) {
           );
           // CFLAG:365  = 3（变量语义：CFLAG 族，365）
           kojo.深喉 = 3;
-        } else if (kojo.真空口交 <= 1 || game.kojo.口上开关 === 2) {
+        } else if (kojo.深喉 <= 1 || game.kojo.口上开关 === 2) {
           await era.printAndWait(`「呜呜……咕呜……整根都……唔呣！」`);
           await era.printAndWait(
             `${target_name}口交的时候大概是过于激烈了，将${player_name}的阴茎吞入到了喉咙最深处`,
@@ -20712,7 +20708,7 @@ async function dog_kojo_11(rand) {
         kojo.口交_奴 = 6;
       } else if (
         era.get(`talent:${target}:76`) === 1 &&
-        (kojo.口交_奴 <= 4 || game.kojo.口上开关 === 2)
+        (kojo.乳交 <= 4 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait('');
         // CFLAG:332  = 5（变量语义：CFLAG 族，332）
@@ -20982,21 +20978,21 @@ async function dog_kojo_11(rand) {
   } else if (era_flag.selectcom === 43 && era0(`tequip:${target}:43`) === 0) {
     if (
       era.get(`talent:${target}:136`) === 1 &&
-      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 === 2)
+      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait('');
       // CFLAG:444  = 4（变量语义：CFLAG 族，444）
       kojo.兽奸眼罩 = 4;
     } else if (
       era.get(`talent:${target}:76`) === 1 &&
-      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 === 2)
+      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait('');
       // CFLAG:444  = 3（变量语义：CFLAG 族，444）
       kojo.兽奸眼罩 = 3;
     } else if (
       era.get(`talent:${target}:85`) === 1 &&
-      (kojo.肛门侍奉 < 2 || game.kojo.口上开关 === 2)
+      (kojo.兽奸眼罩 < 2 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait('');
       // CFLAG:444  = 2（变量语义：CFLAG 族，444）

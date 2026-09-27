@@ -14,8 +14,8 @@
  *     注释标记跳过（BARL 先例）——数值行为不受影响，仅渲染字体；
  *   - WAIT → era.waitAnyKey()；一行 32 chip 归并为一次 era.print(段数组)
  *     （labo.js 文件头同款）；
- *   - MON_CHECK 的「兵力不足清 DB」副作用是原作设计（:75，村娘扫荡无兵
- *     怪物），MON_LIMIT 全图扫描时逐格触发——保留。
+ *   - MON_CHECK 在兵力不足时清掉该格的 DB（村娘扫荡无兵怪物），这一副作用
+ *     保留。
  */
 
 const era = require('#/era-electron');
@@ -235,31 +235,6 @@ function set_vil(rand) {
   return 0;
 }
 
-/**
- * @MON_LIMIT（:162-181）：怪物配置限界——全图怪物 LV 合计 ≤ 120 时返回 1，
- * 超限打印提示并返回 0。扫描逐格走 MON_CHECK（兵力不足的格子在此被扫掉，
- * 原作副作用，文件头）。
- *
- * @returns {number} 1 = 还有配置余量 / 0 = 到极限
- */
-function mon_limit() {
-  // ;怪物配置限界——レベルが高いほどリミット圧迫
-  let total = 0; // LOCAL:2
-  for (let y = 0; y < 32; y += 1) {
-    for (let x = 0; x < 32; x += 1) {
-      total += mon_check(x, y); // CALL MON_CHECK（P:0/P:1 → 传参）
-    }
-  }
-
-  if (total <= 120) {
-    return 1;
-  }
-
-  era.print('*怪物的配置到极限了*'); // PRINTL
-
-  return 0;
-}
-
 module.exports = {
   geo_output_2,
   unit_check,
@@ -267,6 +242,5 @@ module.exports = {
   vil_check,
   chip_draw,
   set_vil,
-  mon_limit,
   c_out_mon,
 };

@@ -316,7 +316,7 @@ test('头部守卫①-⑦：ASSIPLAY/口塞/失神/兽奸/死斗场/崩坏/触�
   assert.deepEqual(
     dog.text_lines(),
     [''],
-    '全篇为未填写模板（1:1），非头部守卫②等落到 SELECTCOM==0 的实际台词',
+    '全篇为未填写模板，非头部守卫②等落到 SELECTCOM==0 的实际台词',
   );
 
   const colosseum = await setup_k9((f) => {

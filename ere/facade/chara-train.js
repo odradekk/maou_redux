@@ -14,8 +14,8 @@ class TrainFacade {
 
   // —— cflag ——
   /**
-   * 灌肠经验（cflag:cid:4 ↔ CFLAG:4）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）
+   * 灌肠经验（cflag:cid:4）
+   * CFLAG:4 浣腸経験（1=経験済み、2=ビデオ撮影済み）
    * @returns {number}
    */
   get 灌肠经验() {
@@ -29,8 +29,8 @@ class TrainFacade {
   }
 
   /**
-   * 公开自慰经验（cflag:cid:3 ↔ CFLAG:3）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行262 CFLAG:3 公開オナニーの経験
+   * 公开自慰经验（cflag:cid:3）
+   * CFLAG:3 公開オナニーの経験
    * @returns {number}
    */
   get 公开自慰经验() {
@@ -44,8 +44,8 @@ class TrainFacade {
   }
 
   /**
-   * 野外露出经验（cflag:cid:5 ↔ CFLAG:5）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:5 野外露出経験
+   * 野外露出经验（cflag:cid:5）
+   * CFLAG:5 野外露出経験
    * @returns {number}
    */
   get 野外露出经验() {
@@ -59,8 +59,8 @@ class TrainFacade {
   }
 
   /**
-   * 穿环状态（cflag:cid:7 ↔ CFLAG:7）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:7 = ピアスの装着状況（&1:乳首 &2:ヘソ &4:ラビア &8:クリトリス &16:舌 &32:唇 &64:鼻）
+   * 穿环状态（cflag:cid:7）
+   * CFLAG:7 = ピアスの装着状況（&1:乳首 &2:ヘソ &4:ラビア &8:クリトリス &16:舌 &32:唇 &64:鼻）
    * @returns {number}
    */
   get 穿环状态() {
@@ -74,8 +74,8 @@ class TrainFacade {
   }
 
   /**
-   * 初体验对象（cflag:cid:15 ↔ CFLAG:15）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行275 CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）
+   * 初体验对象（cflag:cid:15）
+   * CFLAG:15 初体験の相手のキャラ番号＋１（101 壺ワーム、102 触手生物、103 野良犬、104 モンスター、105 狂王）
    * @returns {number}
    */
   get 初体验对象() {
@@ -89,8 +89,8 @@ class TrainFacade {
   }
 
   /**
-   * 初吻对象（cflag:cid:16 ↔ CFLAG:16）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行276 CFLAG:16 ファーストキスの相手のキャラ番号＋１（未経験は -1 初期化）
+   * 初吻对象（cflag:cid:16）
+   * CFLAG:16 ファーストキスの相手のキャラ番号＋１（未経験は -1 初期化）
    * @returns {number}
    */
   get 初吻对象() {
@@ -104,8 +104,8 @@ class TrainFacade {
   }
 
   /**
-   * 媚药禁断症状（cflag:cid:32 ↔ CFLAG:32）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:32 媚薬中毒の禁断症状判定
+   * 媚药禁断症状（cflag:cid:32）
+   * CFLAG:32 媚薬中毒の禁断症状判定
    * @returns {number}
    */
   get 媚药禁断症状() {
@@ -119,8 +119,8 @@ class TrainFacade {
   }
 
   /**
-   * 着衣状态（cflag:cid:40 ↔ CFLAG:40）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行294 CFLAG:40 = 着衣の状態
+   * 着衣状态（cflag:cid:40）
+   * CFLAG:40 = 着衣の状態
    * @returns {number}
    */
   get 着衣状态() {
@@ -134,8 +134,8 @@ class TrainFacade {
   }
 
   /**
-   * 上衣类型（cflag:cid:41 ↔ CFLAG:41）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行295 CFLAG:41 上着のタイプ（詳細は FUNC_CLOTH.ERB @PRINT_CLOTHTYPE）
+   * 上衣类型（cflag:cid:41）
+   * CFLAG:41 上着のタイプ（类型名见 ere/page/page-clothtype.js 的 clothtype_text）
    * @returns {number}
    */
   get 上衣类型() {
@@ -149,8 +149,8 @@ class TrainFacade {
   }
 
   /**
-   * 内裤状态（cflag:cid:43 ↔ CFLAG:43）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:43 パンツの状態（-3:破り取られている -2:汚物まみれ -1:没収 0:通常 1以上:洗濯中）
+   * 内裤状态（cflag:cid:43）
+   * CFLAG:43 パンツの状態（-3:破り取られている -2:汚物まみれ -1:没収 0:通常 1以上:洗濯中）
    * @returns {number}
    */
   get 内裤状态() {
@@ -164,8 +164,8 @@ class TrainFacade {
   }
 
   /**
-   * 上衣上状态（cflag:cid:45 ↔ CFLAG:45）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行299 CFLAG:45 上着上の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
+   * 上衣上状态（cflag:cid:45）
+   * CFLAG:45 上着上の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
    * @returns {number}
    */
   get 上衣上状态() {
@@ -179,8 +179,8 @@ class TrainFacade {
   }
 
   /**
-   * 上衣下状态（cflag:cid:46 ↔ CFLAG:46）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行300 CFLAG:46 上着下の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
+   * 上衣下状态（cflag:cid:46）
+   * CFLAG:46 上着下の状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
    * @returns {number}
    */
   get 上衣下状态() {
@@ -194,8 +194,8 @@ class TrainFacade {
   }
 
   /**
-   * 特别服装状态（cflag:cid:47 ↔ CFLAG:47）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:47 特別コスチュームの状態（同上の符号约定）
+   * 特别服装状态（cflag:cid:47）
+   * CFLAG:47 特別コスチュームの状態（同上の符号约定）
    * @returns {number}
    */
   get 特别服装状态() {
@@ -209,8 +209,8 @@ class TrainFacade {
   }
 
   /**
-   * 内裤穿着期间（cflag:cid:48 ↔ CFLAG:48）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:48 現在のパンツを穿き続けている期間
+   * 内裤穿着期间（cflag:cid:48）
+   * CFLAG:48 現在のパンツを穿き続けている期間
    * @returns {number}
    */
   get 内裤穿着期间() {
@@ -224,8 +224,8 @@ class TrainFacade {
   }
 
   /**
-   * 逆强暴（cflag:cid:61 ↔ CFLAG:61）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行307 CFLAG:61 = 逆レイプ
+   * 逆强暴（cflag:cid:61）
+   * CFLAG:61 = 逆レイプ
    * @returns {number}
    */
   get 逆强暴() {
@@ -239,8 +239,8 @@ class TrainFacade {
   }
 
   /**
-   * 蓄积润滑（cflag:cid:81 ↔ CFLAG:81）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行317 CFLAG:81 = 蓄積潤滑
+   * 蓄积润滑（cflag:cid:81）
+   * CFLAG:81 = 蓄積潤滑
    * @returns {number}
    */
   get 蓄积润滑() {
@@ -254,8 +254,8 @@ class TrainFacade {
   }
 
   /**
-   * 蓄积欲情（cflag:cid:82 ↔ CFLAG:82）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行318 CFLAG:82 = 蓄積欲情
+   * 蓄积欲情（cflag:cid:82）
+   * CFLAG:82 = 蓄積欲情
    * @returns {number}
    */
   get 蓄积欲情() {
@@ -269,8 +269,8 @@ class TrainFacade {
   }
 
   /**
-   * 异常妊娠部位（cflag:cid:113 ↔ CFLAG:113）
-   * 源: target/ERB/其他/NINSIN.ERB 行86-103/行202-234 CFLAG:113 = 异常妊娠部位
+   * 异常妊娠部位（cflag:cid:113）
+   * CFLAG:113 = 异常妊娠部位
    * @returns {number}
    */
   get 异常妊娠部位() {
@@ -284,8 +284,8 @@ class TrainFacade {
   }
 
   /**
-   * 录像时间（cflag:cid:491 ↔ CFLAG:491）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:491 撮影時間
+   * 录像时间（cflag:cid:491）
+   * CFLAG:491 撮影時間
    * @returns {number}
    */
   get 录像时间() {
@@ -299,8 +299,8 @@ class TrainFacade {
   }
 
   /**
-   * 水晶球充能次数（cflag:cid:499 ↔ CFLAG:499）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:499 水晶球充能回数
+   * 水晶球充能次数（cflag:cid:499）
+   * CFLAG:499 水晶球充能回数
    * @returns {number}
    */
   get 水晶球充能次数() {
@@ -314,8 +314,8 @@ class TrainFacade {
   }
 
   /**
-   * 自动调教（cflag:cid:666 ↔ CFLAG:666）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:666 = 自動調教
+   * 自动调教（cflag:cid:666）
+   * CFLAG:666 = 自動調教
    * @returns {number}
    */
   get 自动调教() {
@@ -330,8 +330,8 @@ class TrainFacade {
 
   // —— cstr ——
   /**
-   * 初体验对象名（cstr:cid:3 ↔ CSTR:3）
-   * 源: target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB 行2445 CSTR:(ARG:1)行3 = %SAVESTR:(ARG:0)%
+   * 初体验对象名（cstr:cid:3）
+   * CSTR:(ARG:1):3 = %SAVESTR:(ARG:0)%
    * @returns {string}
    */
   get 初体验对象名() {
@@ -345,8 +345,8 @@ class TrainFacade {
   }
 
   /**
-   * 初吻对象名（cstr:cid:4 ↔ CSTR:4）
-   * 源: target/ERB/口上/EVENT_K8_スペード.ERB 行393 CSTR:TARGET:4 = %SAVESTR:ASSI%
+   * 初吻对象名（cstr:cid:4）
+   * CSTR:TARGET:4 = %SAVESTR:ASSI%
    * @returns {string}
    */
   get 初吻对象名() {
@@ -361,8 +361,8 @@ class TrainFacade {
 
   // —— tequip ——
   /**
-   * 淋浴中（tequip:cid:18 ↔ TEQUIP:18）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行507 TEQUIP:18 シャワー使用中
+   * 淋浴中（tequip:cid:18）
+   * TEQUIP:18 シャワー使用中
    * @returns {number}
    */
   get 淋浴中() {
@@ -376,8 +376,8 @@ class TrainFacade {
   }
 
   /**
-   * 媚药效果（tequip:cid:21 ↔ TEQUIP:21）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行509 TEQUIP:21 しあわせ草
+   * 媚药效果（tequip:cid:21）
+   * TEQUIP:21 しあわせ草
    * @returns {number}
    */
   get 媚药效果() {
@@ -391,8 +391,8 @@ class TrainFacade {
   }
 
   /**
-   * 助手避孕套（tequip:cid:36 ↔ TEQUIP:36）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行512 TEQUIP:36 助手がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:19-51 的 event 跨域写走本门面，#461）
+   * 助手避孕套（tequip:cid:36）
+   * TEQUIP:36 助手がコンドーム装着（属主 train：source-check 的 event 跨域写走本门面，#461）
    * @returns {number}
    */
   get 助手避孕套() {
@@ -406,8 +406,8 @@ class TrainFacade {
   }
 
   /**
-   * 对象避孕套（tequip:cid:37 ↔ TEQUIP:37）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行513 TEQUIP:37 調教対象がコンドーム装着（属主 train：SYSTEM_SOURCE.ERB:427-430 的 system 跨域清零）
+   * 对象避孕套（tequip:cid:37）
+   * TEQUIP:37 調教対象がコンドーム装着（属主 train：source-check 的 system 跨域清零）
    * @returns {number}
    */
   get 对象避孕套() {
@@ -421,8 +421,8 @@ class TrainFacade {
   }
 
   /**
-   * 口塞（tequip:cid:45 ↔ TEQUIP:45）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行516 TEQUIP:45 ボールギャグ装着
+   * 口塞（tequip:cid:45）
+   * TEQUIP:45 ボールギャグ装着
    * @returns {number}
    */
   get 口塞() {
@@ -436,8 +436,8 @@ class TrainFacade {
   }
 
   /**
-   * 录像摄影（tequip:cid:53 ↔ TEQUIP:53）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行521 TEQUIP:53 ビデオ撮影
+   * 录像摄影（tequip:cid:53）
+   * TEQUIP:53 ビデオ撮影
    * @returns {number}
    */
   get 录像摄影() {
@@ -451,8 +451,8 @@ class TrainFacade {
   }
 
   /**
-   * 野外PLAY（tequip:cid:54 ↔ TEQUIP:54）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行522 TEQUIP:54 野外プレイ
+   * 野外PLAY（tequip:cid:54）
+   * TEQUIP:54 野外プレイ
    * @returns {number}
    */
   get 野外PLAY() {
@@ -466,8 +466,8 @@ class TrainFacade {
   }
 
   /**
-   * 死斗场（tequip:cid:55 ↔ TEQUIP:55）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行523 TEQUIP:55 コロシアム
+   * 死斗场（tequip:cid:55）
+   * TEQUIP:55 コロシアム
    * @returns {number}
    */
   get 死斗场() {
@@ -481,8 +481,8 @@ class TrainFacade {
   }
 
   /**
-   * 羞耻PLAY（tequip:cid:57 ↔ TEQUIP:57）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行524 TEQUIP:57 羞恥プレイ
+   * 羞耻PLAY（tequip:cid:57）
+   * TEQUIP:57 羞恥プレイ
    * @returns {number}
    */
   get 羞耻PLAY() {
@@ -496,8 +496,8 @@ class TrainFacade {
   }
 
   /**
-   * 浴室PLAY（tequip:cid:58 ↔ TEQUIP:58）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行525 TEQUIP:58 お風呂場プレイ
+   * 浴室PLAY（tequip:cid:58）
+   * TEQUIP:58 お風呂場プレイ
    * @returns {number}
    */
   get 浴室PLAY() {
@@ -511,8 +511,8 @@ class TrainFacade {
   }
 
   /**
-   * 新妻PLAY（tequip:cid:59 ↔ TEQUIP:59）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行526 TEQUIP:59 新妻プレイ
+   * 新妻PLAY（tequip:cid:59）
+   * TEQUIP:59 新妻プレイ
    * @returns {number}
    */
   get 新妻PLAY() {
@@ -526,8 +526,8 @@ class TrainFacade {
   }
 
   /**
-   * 兽奸（tequip:cid:89 ↔ TEQUIP:89）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行527 TEQUIP:89 獣姦プレイ
+   * 兽奸（tequip:cid:89）
+   * TEQUIP:89 獣姦プレイ
    * @returns {number}
    */
   get 兽奸() {
@@ -541,8 +541,8 @@ class TrainFacade {
   }
 
   /**
-   * 触手（tequip:cid:90 ↔ TEQUIP:90）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行528 TEQUIP:90 触手調教
+   * 触手（tequip:cid:90）
+   * TEQUIP:90 触手調教
    * @returns {number}
    */
   get 触手() {
@@ -557,8 +557,7 @@ class TrainFacade {
 
   // —— base ——
   /**
-   * 射精槽（base:cid:2 ↔ BASE:2）
-   * 源: yml/Base.yml id 2
+   * 射精槽（base:cid:2）
    * @returns {number}
    */
   get 射精槽() {
@@ -572,8 +571,7 @@ class TrainFacade {
   }
 
   /**
-   * 母乳槽（base:cid:3 ↔ BASE:3）
-   * 源: yml/Base.yml id 3
+   * 母乳槽（base:cid:3）
    * @returns {number}
    */
   get 母乳槽() {
@@ -587,8 +585,7 @@ class TrainFacade {
   }
 
   /**
-   * 触手射精槽（base:cid:4 ↔ BASE:4）
-   * 源: yml/Base.yml id 4
+   * 触手射精槽（base:cid:4）
    * @returns {number}
    */
   get 触手射精槽() {
@@ -603,8 +600,7 @@ class TrainFacade {
 
   // —— talent ——
   /**
-   * 童贞（talent:cid:1 ↔ TALENT:1）
-   * 源: yml/Talent.yml id 1
+   * 童贞（talent:cid:1）
    * @returns {number}
    */
   get 童贞() {
@@ -618,8 +614,7 @@ class TrainFacade {
   }
 
   /**
-   * 未熟（talent:cid:135 ↔ TALENT:135）
-   * 源: yml/Talent.yml id 135
+   * 未熟（talent:cid:135）
    * @returns {number}
    */
   get 未熟() {
@@ -634,8 +629,7 @@ class TrainFacade {
 
   // —— source ——
   /**
-   * 阴核快感（source:cid:0 ↔ SOURCE:0）
-   * 源: yml/Source.yml id 0
+   * 阴核快感（source:cid:0）
    * @returns {number}
    */
   get 阴核快感() {
@@ -649,8 +643,7 @@ class TrainFacade {
   }
 
   /**
-   * 私处快感（source:cid:1 ↔ SOURCE:1）
-   * 源: yml/Source.yml id 1
+   * 私处快感（source:cid:1）
    * @returns {number}
    */
   get 私处快感() {
@@ -664,8 +657,7 @@ class TrainFacade {
   }
 
   /**
-   * 肛门快感（source:cid:2 ↔ SOURCE:2）
-   * 源: yml/Source.yml id 2
+   * 肛门快感（source:cid:2）
    * @returns {number}
    */
   get 肛门快感() {
@@ -679,8 +671,7 @@ class TrainFacade {
   }
 
   /**
-   * 情爱（source:cid:3 ↔ SOURCE:3）
-   * 源: yml/Source.yml id 3
+   * 情爱（source:cid:3）
    * @returns {number}
    */
   get 情爱() {
@@ -694,8 +685,7 @@ class TrainFacade {
   }
 
   /**
-   * 性行为（source:cid:4 ↔ SOURCE:4）
-   * 源: yml/Source.yml id 4
+   * 性行为（source:cid:4）
    * @returns {number}
    */
   get 性行为() {
@@ -709,8 +699,7 @@ class TrainFacade {
   }
 
   /**
-   * 达成感（source:cid:5 ↔ SOURCE:5）
-   * 源: yml/Source.yml id 5
+   * 达成感（source:cid:5）
    * @returns {number}
    */
   get 达成感() {
@@ -724,8 +713,7 @@ class TrainFacade {
   }
 
   /**
-   * 疼痛（source:cid:6 ↔ SOURCE:6）
-   * 源: yml/Source.yml id 6
+   * 疼痛（source:cid:6）
    * @returns {number}
    */
   get 疼痛() {
@@ -739,8 +727,7 @@ class TrainFacade {
   }
 
   /**
-   * 成瘾追加（source:cid:7 ↔ SOURCE:7）
-   * 源: yml/Source.yml id 7
+   * 成瘾追加（source:cid:7）
    * @returns {number}
    */
   get 成瘾追加() {
@@ -754,8 +741,7 @@ class TrainFacade {
   }
 
   /**
-   * 不洁（source:cid:8 ↔ SOURCE:8）
-   * 源: yml/Source.yml id 8
+   * 不洁（source:cid:8）
    * @returns {number}
    */
   get 不洁() {
@@ -769,8 +755,7 @@ class TrainFacade {
   }
 
   /**
-   * 液体追加（source:cid:10 ↔ SOURCE:10）
-   * 源: yml/Source.yml id 10
+   * 液体追加（source:cid:10）
    * @returns {number}
    */
   get 液体追加() {
@@ -784,8 +769,7 @@ class TrainFacade {
   }
 
   /**
-   * 欲情追加（source:cid:11 ↔ SOURCE:11）
-   * 源: yml/Source.yml id 11
+   * 欲情追加（source:cid:11）
    * @returns {number}
    */
   get 欲情追加() {
@@ -799,8 +783,7 @@ class TrainFacade {
   }
 
   /**
-   * 露出（source:cid:12 ↔ SOURCE:12）
-   * 源: yml/Source.yml id 12
+   * 露出（source:cid:12）
    * @returns {number}
    */
   get 露出() {
@@ -814,8 +797,7 @@ class TrainFacade {
   }
 
   /**
-   * 屈从（source:cid:13 ↔ SOURCE:13）
-   * 源: yml/Source.yml id 13
+   * 屈从（source:cid:13）
    * @returns {number}
    */
   get 屈从() {
@@ -829,8 +811,7 @@ class TrainFacade {
   }
 
   /**
-   * 逃离（source:cid:14 ↔ SOURCE:14）
-   * 源: yml/Source.yml id 14
+   * 逃离（source:cid:14）
    * @returns {number}
    */
   get 逃离() {
@@ -844,8 +825,7 @@ class TrainFacade {
   }
 
   /**
-   * 反感追加（source:cid:15 ↔ SOURCE:15）
-   * 源: yml/Source.yml id 15
+   * 反感追加（source:cid:15）
    * @returns {number}
    */
   get 反感追加() {
@@ -859,8 +839,7 @@ class TrainFacade {
   }
 
   /**
-   * 恭顺追加（source:cid:16 ↔ SOURCE:16）
-   * 源: yml/Source.yml id 16
+   * 恭顺追加（source:cid:16）
    * @returns {number}
    */
   get 恭顺追加() {
@@ -874,8 +853,7 @@ class TrainFacade {
   }
 
   /**
-   * 乳房快感（source:cid:17 ↔ SOURCE:17）
-   * 源: yml/Source.yml id 17
+   * 乳房快感（source:cid:17）
    * @returns {number}
    */
   get 乳房快感() {
@@ -889,8 +867,7 @@ class TrainFacade {
   }
 
   /**
-   * 局部快感（source:cid:18 ↔ SOURCE:18）
-   * 源: yml/Source.yml id 18
+   * 局部快感（source:cid:18）
    * @returns {number}
    */
   get 局部快感() {
@@ -905,8 +882,7 @@ class TrainFacade {
 
   // —— abl ——
   /**
-   * 局部感觉（abl:cid:4 ↔ ABL:4）
-   * 源: yml/Abl.yml id 4
+   * 局部感觉（abl:cid:4）
    * @returns {number}
    */
   get 局部感觉() {
@@ -920,8 +896,7 @@ class TrainFacade {
   }
 
   /**
-   * 侍奉技术（abl:cid:13 ↔ ABL:13）
-   * 源: yml/Abl.yml id 13
+   * 侍奉技术（abl:cid:13）
    * @returns {number}
    */
   get 侍奉技术() {
@@ -935,8 +910,7 @@ class TrainFacade {
   }
 
   /**
-   * 性交技术（abl:cid:14 ↔ ABL:14）
-   * 源: yml/Abl.yml id 14
+   * 性交技术（abl:cid:14）
    * @returns {number}
    */
   get 性交技术() {
@@ -950,8 +924,7 @@ class TrainFacade {
   }
 
   /**
-   * 话术（abl:cid:15 ↔ ABL:15）
-   * 源: yml/Abl.yml id 15
+   * 话术（abl:cid:15）
    * @returns {number}
    */
   get 话术() {
@@ -965,8 +938,7 @@ class TrainFacade {
   }
 
   /**
-   * 抖S气质（abl:cid:20 ↔ ABL:20）
-   * 源: yml/Abl.yml id 20
+   * 抖S气质（abl:cid:20）
    * @returns {number}
    */
   get 抖S气质() {
@@ -980,8 +952,7 @@ class TrainFacade {
   }
 
   /**
-   * 性交中毒（abl:cid:30 ↔ ABL:30）
-   * 源: yml/Abl.yml id 30
+   * 性交中毒（abl:cid:30）
    * @returns {number}
    */
   get 性交中毒() {
@@ -995,8 +966,7 @@ class TrainFacade {
   }
 
   /**
-   * 自慰中毒（abl:cid:31 ↔ ABL:31）
-   * 源: yml/Abl.yml id 31
+   * 自慰中毒（abl:cid:31）
    * @returns {number}
    */
   get 自慰中毒() {
@@ -1010,8 +980,7 @@ class TrainFacade {
   }
 
   /**
-   * 精液中毒（abl:cid:32 ↔ ABL:32）
-   * 源: yml/Abl.yml id 32
+   * 精液中毒（abl:cid:32）
    * @returns {number}
    */
   get 精液中毒() {
@@ -1025,8 +994,7 @@ class TrainFacade {
   }
 
   /**
-   * 百合中毒（abl:cid:33 ↔ ABL:33）
-   * 源: yml/Abl.yml id 33
+   * 百合中毒（abl:cid:33）
    * @returns {number}
    */
   get 百合中毒() {
@@ -1040,8 +1008,7 @@ class TrainFacade {
   }
 
   /**
-   * 卖淫中毒（abl:cid:37 ↔ ABL:37）
-   * 源: yml/Abl.yml id 37
+   * 卖淫中毒（abl:cid:37）
    * @returns {number}
    */
   get 卖淫中毒() {
@@ -1055,8 +1022,7 @@ class TrainFacade {
   }
 
   /**
-   * 兽奸中毒（abl:cid:39 ↔ ABL:39）
-   * 源: yml/Abl.yml id 39
+   * 兽奸中毒（abl:cid:39）
    * @returns {number}
    */
   get 兽奸中毒() {
@@ -1070,8 +1036,7 @@ class TrainFacade {
   }
 
   /**
-   * 局部中毒（abl:cid:40 ↔ ABL:40）
-   * 源: yml/Abl.yml id 40
+   * 局部中毒（abl:cid:40）
    * @returns {number}
    */
   get 局部中毒() {
@@ -1086,8 +1051,7 @@ class TrainFacade {
 
   // —— palam ——
   /**
-   * 润滑（palam:cid:3 ↔ PALAM:3）
-   * 源: yml/Palam.yml id 3
+   * 润滑（palam:cid:3）
    * @returns {number}
    */
   get 润滑() {
@@ -1101,8 +1065,7 @@ class TrainFacade {
   }
 
   /**
-   * 欲情（palam:cid:5 ↔ PALAM:5）
-   * 源: yml/Palam.yml id 5
+   * 欲情（palam:cid:5）
    * @returns {number}
    */
   get 欲情() {
@@ -1116,8 +1079,7 @@ class TrainFacade {
   }
 
   /**
-   * 不快（palam:cid:12 ↔ PALAM:12）
-   * 源: yml/Palam.yml id 12
+   * 不快（palam:cid:12）
    * @returns {number}
    */
   get 不快() {
@@ -1132,8 +1094,7 @@ class TrainFacade {
 
   // —— mark ——
   /**
-   * 异界综合征（mark:cid:10 ↔ MARK:10）
-   * 源: yml/Mark.yml id 10
+   * 异界综合征（mark:cid:10）
    * @returns {number}
    */
   get 异界综合征() {
@@ -1148,8 +1109,7 @@ class TrainFacade {
 
   // —— exp ——
   /**
-   * 射精经验（exp:cid:3 ↔ EXP:3）
-   * 源: yml/Exp.yml id 3
+   * 射精经验（exp:cid:3）
    * @returns {number}
    */
   get 射精经验() {
@@ -1163,8 +1123,7 @@ class TrainFacade {
   }
 
   /**
-   * 爱情经验（exp:cid:23 ↔ EXP:23）
-   * 源: yml/Exp.yml id 23
+   * 爱情经验（exp:cid:23）
    * @returns {number}
    */
   get 爱情经验() {
@@ -1178,8 +1137,7 @@ class TrainFacade {
   }
 
   /**
-   * 乳房经验（exp:cid:35 ↔ EXP:35）
-   * 源: yml/Exp.yml id 35
+   * 乳房经验（exp:cid:35）
    * @returns {number}
    */
   get 乳房经验() {
@@ -1193,8 +1151,7 @@ class TrainFacade {
   }
 
   /**
-   * 百合经验（exp:cid:40 ↔ EXP:40）
-   * 源: yml/Exp.yml id 40
+   * 百合经验（exp:cid:40）
    * @returns {number}
    */
   get 百合经验() {
@@ -1208,8 +1165,7 @@ class TrainFacade {
   }
 
   /**
-   * 断背经验（exp:cid:41 ↔ EXP:41）
-   * 源: yml/Exp.yml id 41
+   * 断背经验（exp:cid:41）
    * @returns {number}
    */
   get 断背经验() {
@@ -1223,8 +1179,7 @@ class TrainFacade {
   }
 
   /**
-   * 紧缚经验（exp:cid:51 ↔ EXP:51）
-   * 源: yml/Exp.yml id 51
+   * 紧缚经验（exp:cid:51）
    * @returns {number}
    */
   get 紧缚经验() {
@@ -1238,8 +1193,7 @@ class TrainFacade {
   }
 
   /**
-   * 喷奶经验（exp:cid:54 ↔ EXP:54）
-   * 源: yml/Exp.yml id 54
+   * 喷奶经验（exp:cid:54）
    * @returns {number}
    */
   get 喷奶经验() {
@@ -1253,8 +1207,7 @@ class TrainFacade {
   }
 
   /**
-   * 调教失神经验（exp:cid:65 ↔ EXP:65）
-   * 源: yml/Exp.yml id 65
+   * 调教失神经验（exp:cid:65）
    * @returns {number}
    */
   get 调教失神经验() {
@@ -1268,8 +1221,7 @@ class TrainFacade {
   }
 
   /**
-   * 拍摄经验（exp:cid:70 ↔ EXP:70）
-   * 源: yml/Exp.yml id 70
+   * 拍摄经验（exp:cid:70）
    * @returns {number}
    */
   get 拍摄经验() {
@@ -1283,8 +1235,7 @@ class TrainFacade {
   }
 
   /**
-   * 歌唱经验（exp:cid:71 ↔ EXP:71）
-   * 源: yml/Exp.yml id 71
+   * 歌唱经验（exp:cid:71）
    * @returns {number}
    */
   get 歌唱经验() {
@@ -1298,8 +1249,7 @@ class TrainFacade {
   }
 
   /**
-   * 舞蹈经验（exp:cid:72 ↔ EXP:72）
-   * 源: yml/Exp.yml id 72
+   * 舞蹈经验（exp:cid:72）
    * @returns {number}
    */
   get 舞蹈经验() {
@@ -1313,8 +1263,7 @@ class TrainFacade {
   }
 
   /**
-   * 斗技胜利经验（exp:cid:76 ↔ EXP:76）
-   * 源: yml/Exp.yml id 76
+   * 斗技胜利经验（exp:cid:76）
    * @returns {number}
    */
   get 斗技胜利经验() {
@@ -1328,8 +1277,7 @@ class TrainFacade {
   }
 
   /**
-   * 异界经验（exp:cid:99 ↔ EXP:99）
-   * 源: yml/Exp.yml id 99
+   * 异界经验（exp:cid:99）
    * @returns {number}
    */
   get 异界经验() {
@@ -1344,8 +1292,8 @@ class TrainFacade {
 
   // —— stain ——
   /**
-   * 阴茎污渍（stain:cid:2 ↔ STAIN:2）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt STAIN:2 = ペニス
+   * 阴茎污渍（stain:cid:2）
+   * STAIN:2 = ペニス
    * @returns {number}
    */
   get 阴茎污渍() {
@@ -1359,8 +1307,8 @@ class TrainFacade {
   }
 
   /**
-   * 阴道污渍（stain:cid:3 ↔ STAIN:3）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt STAIN:3 = ヴァギナ
+   * 阴道污渍（stain:cid:3）
+   * STAIN:3 = ヴァギナ
    * @returns {number}
    */
   get 阴道污渍() {
@@ -1374,8 +1322,8 @@ class TrainFacade {
   }
 
   /**
-   * 胸部污渍（stain:cid:5 ↔ STAIN:5）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt STAIN:5 = 胸
+   * 胸部污渍（stain:cid:5）
+   * STAIN:5 = 胸
    * @returns {number}
    */
   get 胸部污渍() {
@@ -1390,8 +1338,8 @@ class TrainFacade {
 
   // —— delta ——
   /**
-   * 阴核增量（delta:cid:0 ↔ UP:0）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:0（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 阴核增量（delta:cid:0）
+   * UP:0（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 阴核增量() {
@@ -1405,8 +1353,8 @@ class TrainFacade {
   }
 
   /**
-   * 私处增量（delta:cid:1 ↔ UP:1）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:1（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 私处增量（delta:cid:1）
+   * UP:1（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 私处增量() {
@@ -1420,8 +1368,8 @@ class TrainFacade {
   }
 
   /**
-   * 肛门增量（delta:cid:2 ↔ UP:2）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:2（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 肛门增量（delta:cid:2）
+   * UP:2（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 肛门增量() {
@@ -1435,8 +1383,8 @@ class TrainFacade {
   }
 
   /**
-   * 润滑增量（delta:cid:3 ↔ UP:3）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:3（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 润滑增量（delta:cid:3）
+   * UP:3（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 润滑增量() {
@@ -1450,8 +1398,8 @@ class TrainFacade {
   }
 
   /**
-   * 恭顺增量（delta:cid:4 ↔ UP:4）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:4（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 恭顺增量（delta:cid:4）
+   * UP:4（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 恭顺增量() {
@@ -1465,8 +1413,8 @@ class TrainFacade {
   }
 
   /**
-   * 欲情增量（delta:cid:5 ↔ UP:5）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:5（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 欲情增量（delta:cid:5）
+   * UP:5（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 欲情增量() {
@@ -1480,8 +1428,8 @@ class TrainFacade {
   }
 
   /**
-   * 屈服增量（delta:cid:6 ↔ UP:6）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:6（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 屈服增量（delta:cid:6）
+   * UP:6（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 屈服增量() {
@@ -1495,8 +1443,8 @@ class TrainFacade {
   }
 
   /**
-   * 习得增量（delta:cid:7 ↔ UP:7）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:7（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 习得增量（delta:cid:7）
+   * UP:7（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 习得增量() {
@@ -1510,8 +1458,8 @@ class TrainFacade {
   }
 
   /**
-   * 耻情增量（delta:cid:8 ↔ UP:8）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:8（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 耻情增量（delta:cid:8）
+   * UP:8（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 耻情增量() {
@@ -1525,8 +1473,8 @@ class TrainFacade {
   }
 
   /**
-   * 苦痛增量（delta:cid:9 ↔ UP:9）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:9（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 苦痛增量（delta:cid:9）
+   * UP:9（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 苦痛增量() {
@@ -1540,8 +1488,8 @@ class TrainFacade {
   }
 
   /**
-   * 恐怖增量（delta:cid:10 ↔ UP:10）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:10（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 恐怖增量（delta:cid:10）
+   * UP:10（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 恐怖增量() {
@@ -1555,8 +1503,8 @@ class TrainFacade {
   }
 
   /**
-   * 反感增量（delta:cid:11 ↔ UP:11）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:11（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 反感增量（delta:cid:11）
+   * UP:11（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 反感增量() {
@@ -1570,8 +1518,8 @@ class TrainFacade {
   }
 
   /**
-   * 不快增量（delta:cid:12 ↔ UP:12）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:12（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 不快增量（delta:cid:12）
+   * UP:12（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 不快增量() {
@@ -1585,8 +1533,8 @@ class TrainFacade {
   }
 
   /**
-   * 抑郁增量（delta:cid:13 ↔ UP:13）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:13（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 抑郁增量（delta:cid:13）
+   * UP:13（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 抑郁增量() {
@@ -1600,8 +1548,8 @@ class TrainFacade {
   }
 
   /**
-   * 乳房增量（delta:cid:14 ↔ UP:14）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:14（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 乳房增量（delta:cid:14）
+   * UP:14（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 乳房增量() {
@@ -1615,8 +1563,8 @@ class TrainFacade {
   }
 
   /**
-   * 局部增量（delta:cid:15 ↔ UP:15）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行666 起 UP:15（UP/DOWN→delta，CONTEXT.md 变量族）
+   * 局部增量（delta:cid:15）
+   * UP:15（UP/DOWN→delta，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 局部增量() {
@@ -1631,8 +1579,8 @@ class TrainFacade {
 
   // —— deltabase ——
   /**
-   * 体力损耗（deltabase:cid:0 ↔ LOSEBASE:0）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行411 LOSEBASE:0（LOSEBASE→deltabase 存负值，CONTEXT.md 变量族）
+   * 体力损耗（deltabase:cid:0）
+   * LOSEBASE:0（LOSEBASE→deltabase 存负值，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 体力损耗() {
@@ -1646,8 +1594,8 @@ class TrainFacade {
   }
 
   /**
-   * 气力损耗（deltabase:cid:1 ↔ LOSEBASE:1）
-   * 源: target/ERB/SYSTEM/SYSTEM_SOURCE.ERB 行411 LOSEBASE:1（LOSEBASE→deltabase 存负值，CONTEXT.md 变量族）
+   * 气力损耗（deltabase:cid:1）
+   * LOSEBASE:1（LOSEBASE→deltabase 存负值，CONTEXT.md 变量族）
    * @returns {number}
    */
   get 气力损耗() {
@@ -1666,9 +1614,9 @@ class TrainFacade {
 /**
  * 耻情（palam:cid:8 ↔ PALAM:8）。
  * 生成器不发射本项：ownership/palam-ownership.yml 只有 3/5/12 的测量事实，
- * 8/10 无写入记录（原作的实际写点在 @SOURCE_CHECK_UP_* 的 UP:8 一侧，
+ * 8/10 无写入记录（实际写点在 source_check_up_* 一族的 UP:8 一侧，
  * palam 表由引擎在回合末结算），故 ownership 侧无下标可切。口上要读
- * 「当前值 + 增量」的当前值一侧（K14 贵公子 PALAMCNG，行4439 P = PALAM:8 + UP:8，#493）。
+ * 「当前值 + 增量」的当前值一侧（K14 贵公子 PALAMCNG：P = PALAM:8 + UP:8，#493）。
  */
 Object.defineProperty(TrainFacade.prototype, '耻情', {
   get() {
@@ -1679,7 +1627,7 @@ Object.defineProperty(TrainFacade.prototype, '耻情', {
   },
 });
 
-/** 恐怖（palam:cid:10 ↔ PALAM:10）；手写理由同 耻情（同上段，行4454 P = PALAM:10 + UP:10）。 */
+/** 恐怖（palam:cid:10 ↔ PALAM:10）；手写理由同 耻情（P = PALAM:10 + UP:10）。 */
 Object.defineProperty(TrainFacade.prototype, '恐怖', {
   get() {
     return era.get(`palam:${this.cid}:10`) || 0;

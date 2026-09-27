@@ -527,8 +527,9 @@ on(
 /**
  * @KOJO_MESSAGE_COM_4（:521-3092）：指令执行时的口上。
  *
- * 五道头部守卫（:526-543，见文件头）之后按 SELECTCOM 平铺。K4 无
- * ASSI 与 TALENT:9 守卫（源逐行注释/缺失，1:1 保留）。
+ * 五道头部守卫（见文件头）之后按 SELECTCOM 平铺。其他口上
+ * 的 ASSI（助手调教跳过）与 TALENT:9（崩坏）两道守卫在 K4 模板从未
+ * 成文，不补写：助手调教中与崩坏时口上照常播放。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（[0, n) 整数；缺省
  *   均匀随机，测试注入定值序——分支序恒按 RAND:N 从大到小）
@@ -5056,7 +5057,7 @@ async function kojo_message_markcng_4() {
  * @SELF_KOJO_K4（:4182-4432）：调教后事件口上（TFLAG:13 分派）。
  * 1 自慰 / 2 百合 / 3 朝口交 / 4 调教后性交 / 5 夜袭 / 6 卖却 / 11 妊娠发觉 /
  * 12 生产 / 13 育儿室 / 14 亲离 / 999 死亡 / 998 寿命；末行 TFLAG:13 = 0。
- * 卖却分支的 PRINTFORMW 是模板未填写（源逐字空串，1:1 保留）。
+ * 卖却分支的 PRINTFORMW 模板未填写（空串），保持空输出不补写。
  */
 async function self_kojo_k4() {
   const target = era_flag.target;
@@ -5986,8 +5987,7 @@ async function ntr_koujo_k4(p) {
 }
 
 /**
- * @EXUCUTION_KOUJO_K4（:5119-5133）：处刑口上（TFLAG:16 分派；7 记忆消除
- * 分支为空 = 模板未填写，1:1 保留）。
+ * @EXUCUTION_KOUJO_K4：处刑口上（TFLAG:16 分派；7 记忆消除分支模板未填写，输出空行）。
  */
 async function exucution_koujo_k4() {
   if (era0('tflag:16') == 4) {
@@ -6004,8 +6004,7 @@ async function exucution_koujo_k4() {
 }
 
 /**
- * @MUSEUM_KOUJO_K4（:5136-5168）：博物馆口上（TFLAG:500 分派；多数分支
- * 为空 = 模板未填写，1:1 保留；3/4 有台词）。
+ * @MUSEUM_KOUJO_K4：博物馆口上（TFLAG:500 分派；3/4 有台词，其余分支模板未填写，各输出空行）。
  */
 async function museum_koujo_k4() {
   if (era0('tflag:500') == 0) {
@@ -6032,8 +6031,7 @@ async function museum_koujo_k4() {
 }
 
 /**
- * @BANISHMENT_KOUJO_K4（:5171-5189）：追放口上（TFLAG:510 分派；0 追放有
- * 台词，其余空 = 模板未填写，1:1 保留）。
+ * @BANISHMENT_KOUJO_K4：追放口上（TFLAG:510 分派；0 追放有台词，其余分支模板未填写，各输出空行）。
  */
 async function banishment_koujo_k4() {
   if (era0('tflag:510') == 0) {
@@ -6050,8 +6048,7 @@ async function banishment_koujo_k4() {
 }
 
 /**
- * @PUBLIC_EXUCUTION_KOUJO_K4（:5192-5204）：公开处刑口上（TFLAG:520 分派；
- * 2 魂粉碎空 = 模板未填写，1:1 保留）。
+ * @PUBLIC_EXUCUTION_KOUJO_K4：公开处刑口上（TFLAG:520 分派；2 魂粉碎模板未填写，输出空行）。
  */
 async function public_exucution_koujo_k4() {
   if (era0('tflag:520') == 0) {
@@ -6066,8 +6063,7 @@ async function public_exucution_koujo_k4() {
 }
 
 /**
- * @GROTESQUE_KOUJO_K4（:5207-5231）：猎奇处刑口上（TFLAG:530 分派；全部分支
- * 为空 = 模板未填写，1:1 保留）。
+ * @GROTESQUE_KOUJO_K4：猎奇处刑口上（TFLAG:530 分派；全部分支模板未填写，各输出空行）。
  */
 async function grotesque_koujo_k4() {
   if (era0('tflag:530') == 0) {
@@ -6113,12 +6109,12 @@ async function enterenemy_koujo_k4() {
 
 /**
  * @GOHOUBI_REQUEST_KOUJO_K4（:5251-5286）：迎击时的奖赏要求口上（TARGET = A）。
- * CFLAG:504 0-9 分档。**原作缺陷（#14）：:5262/:5264 的 ELSEIF Y == 2/3
- * 的 Y 从未赋值（恒 0），猪/马两臂是死码——登记不修，1:1 保留**。
+ * CFLAG:504 0-9 分档。1/2/3 档共用一句兽奸台词，仅 504==1 的兽名为
+ * 「狗」；504==2/3 的兽名臂本就不可达（选择变量从未赋值），已删除，
+ * 两档落空串。
  */
 async function gohoubi_request_koujo_k4() {
   const a = era_flag.target; // A（原作 @GOHOUBI_REQUEST_KOUJO 前置 TARGET = A）
-  const Y = 0; // 原作缺陷（#14）：Y 未赋值恒 0，猪/马两臂死码——登记不修，1:1 保留
 
   if (era0(`cflag:${a}:504`) == 0) {
     await era.printAndWait(`「钱钱钱！嘻嘻嘻～」`);
@@ -6127,12 +6123,9 @@ async function gohoubi_request_koujo_k4() {
     era0(`cflag:${a}:504`) == 2 ||
     era0(`cflag:${a}:504`) == 3
   ) {
-    // 原作是一整行：无后缀 PRINTFORM/PRINT 连续
-    // 不换行，末行 PRINTFORMW 才收行。兽名三档（:5260/:5262/:5264）里后两档读
-    // 的是恒 0 的 Y（源缺陷，见函数头注）——判据提到语句外当取值、文本留在
-    // 输出语句里（#625）
-    const beast_word =
-      era0(`cflag:${a}:504`) == 1 ? '狗' : Y == 2 ? '猪' : Y == 3 ? '马' : '';
+    // 一整行结构：判据提到语句外当取值、文本留在输出语句里（#625）；
+    // 兽名仅 504==1 有词（狗），504==2/3 落空串
+    const beast_word = era0(`cflag:${a}:504`) == 1 ? '狗' : '';
     await era.printAndWait(`「拜托了…让我和` + beast_word + `交配吧……！」`);
   } else if (era0(`cflag:${a}:504`) == 4) {
     await era.printAndWait(`「嘻嘻！…魔王大人要和我来个很长很长的湿吻哦～」`);
@@ -6151,8 +6144,9 @@ async function gohoubi_request_koujo_k4() {
 
 /**
  * @GOHOUBI_AFTER_KOUJO_K4（:5288-5364）：迎击成功后的奖赏口上（TARGET = A）。
- * TFLAG:18 0/1/2 分档；2 内再按 CFLAG:504 0-9 分档（5/9 的膣/肛由
- * ABL:2 vs ABL:3 判定，1:1 保留两臂同文）。
+ * TFLAG:18 0/1/2 分档；2 内再按 CFLAG:504 0-9 分档。504==5 的 ABL:2 vs
+ * ABL:3 两臂同文（模板只写了一条台词，玩家不可区分）；504==9 两臂按
+ * ABL 大小分用膣/肛措辞，判定有效。
  */
 async function gohoubi_after_koujo_k4() {
   const a = era_flag.target; // A（原作 @GOHOUBI_AFTER_KOUJO 前置 TARGET = A）
@@ -6233,7 +6227,7 @@ async function gohoubi_after_koujo_k4() {
         );
       }
     } else {
-      // 原作空 else 臂（:5363-5365 ELSE → ENDIF），1:1 保留
+      // CFLAG:504 超出 0–9 时无台词槽，不输出
     }
   }
 }

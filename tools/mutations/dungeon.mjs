@@ -18,7 +18,7 @@ export const COUNT = 305; // #641 起 -2+1（M6743/M6881 名单复辟守卫随 S
 
 export default [
   {
-    desc: 'M375 迷宫接入点·探索臂守卫改坏（place 2/3 判定恒假——勇者进不了迷宫）',
+    desc: 'M375 迷宫接入点·探索分支检查改坏（place 2/3 判定恒假——勇者进不了迷宫）',
     file: 'ere/system/turnend-settle.js',
     find: "    if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {",
     replace:
@@ -27,11 +27,11 @@ export default [
     must_mention: '状态 2 且 FLAG:502 == 0 应走迷宫本体',
   },
   {
-    desc: 'M376 迷宫接入点·战役臂守卫改坏（CFLAG:1 == 12 判定恒假）',
+    desc: 'M376 迷宫接入点·战役分支检查改坏（CFLAG:1 == 12 判定恒假）',
     file: 'ere/system/turnend-settle.js',
-    find: `    weapon_restore(cid); // CALL WEAPON_RESTORE（行 267；#174 起真身）
+    find: `    weapon_restore(cid); // #174 起真身
     if (chara(cid).invasion.状态 === 12) {`,
-    replace: `    weapon_restore(cid); // CALL WEAPON_RESTORE（行 267；#174 起真身）
+    replace: `    weapon_restore(cid); // #174 起真身
     if (chara(cid).invasion.状态 === 1200) {`,
     tests: ['event-turnend'],
     must_mention: '状态 12 恰好一次 DUNGEON',
@@ -362,7 +362,7 @@ export default [
     must_mention: 'CFLAG:502 = D:20 = 1（:748）',
   },
   // —— #181（H12 2D 地下城）：LABO 三文件 + FIRST_SETTING 一问 + turnend
-  //    else 臂。M580 起编（#182/#185/#176/#180 占 M500/M520/M540/M560 段）——
+  //    else 分支。M580 起编（#182/#185/#176/#180 占 M500/M520/M540/M560 段）——
 
   {
     desc: 'M580 余弦系数表偏移 1 改坏（4 → 5：三条插值曲线的起点权重漂移）',
@@ -416,7 +416,7 @@ export default [
     must_mention: 'CFLAG:502 = D:20',
   },
   {
-    desc: 'M586 turnend else 臂的 DUNGEON_MAP 调用蒸发（2D 模式的勇者原地不动）',
+    desc: 'M586 turnend else 分支的 dungeon_map 调用蒸发（2D 模式的勇者原地不动）',
     file: 'ere/system/turnend-settle.js',
     find: `    } else if (place === 2 || place === 3) {
       await dungeon_map(cid);
@@ -457,7 +457,7 @@ export default [
   },
   // —— #179（H10）迷宫日程与战果：LVUP / DUNGEON_AFTER / DUNGEON_DAILY ——
   {
-    desc: 'M620 升级守卫删（place !== 2 改恒真——侵攻中的勇者也升级）',
+    desc: 'M620 升级检查删（place !== 2 改恒真——侵攻中的勇者也升级）',
     file: 'ere/system/turnend-settle.js',
     find: '    if (place !== 2) {',
     replace: '    if (true) { // 变异：守卫删',
@@ -2018,7 +2018,7 @@ export default [
     must_mention: 'DOG/YOU：身体分流写入不同经验，YOU 另有显式等待',
   },
   {
-    desc: 'M6905 TURNEND 接线未关闭同状态重入',
+    desc: 'M6905 TURNEND 接入未关闭同状态重入',
     file: 'ere/system/turnend-settle.js',
     find: '    await marriage_day(cid, undefined, false);',
     replace: '    await marriage_day(cid); // 变异：重新抛出同状态转场',

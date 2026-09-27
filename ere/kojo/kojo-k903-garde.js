@@ -3,13 +3,6 @@
  * @file 嘉德（K903）完整口上（issue #249）。
  *
  * EX_TALENT:103 经 GET_EX_KOJO_NUM 映成 LOCAL=1003，分发键为 903。
- * 源中不可达段、错读计数器与空模板均按原样保留。
- *
- * 缺陷 2（裁定见 issue #14）：EVENT_K902 文件另含一份逐字节相同的
- * _903 定义，并因加载顺序在前而在原作中胜出、吞掉本文件的同名定义；
- * 两份普通函数定义完全相同，因此没有可观测差异，移植只保留本模块这一份
- * 实现。但同名事件函数会全部执行：K902 第 422 行与 K903 第 464 行的 EVENTEND
- * 正文各执行一次，故下方以同一个处理器注册两次（同一裁定的事件侧缺陷）。
  */
 
 'use strict';
@@ -344,8 +337,6 @@ async function k903_kojo2() {
         `「没想到自己竟然会爱上这种事呢，自己把自己弄得奇怪什么的……♪」`,
       );
       await era.printAndWait(`「总之不要让本宫再等了啦！」`);
-    } else if (era0(`talent:${target}:74`)) {
-      await era.printAndWait(`「见到你……本宫敏感的小穴已经湿嗒嗒的了……♪」`);
     } else if (era0(`talent:${target}:77`)) {
       await era.printAndWait(
         `「…………本宫并不是喜欢什么的……但是屁股……那个……你能再继续……♪」`,
@@ -374,7 +365,7 @@ async function k903_kojo2() {
       );
     }
 
-    if (era0(`talent:${target}:83`)) {
+    if (era0(`talent:${target}:89`)) {
       await era.printAndWait(
         `「那个，能早点去外面吗？本宫好闷的啊……在房间里不够刺激啦～」`,
       );
@@ -449,8 +440,6 @@ async function k903_kojo2() {
       await era.printAndWait(
         `「没想到自己竟然会爱上这种事呢，自己把自己弄得奇怪什么的……♪」`,
       );
-    } else if (era0(`talent:${target}:74`)) {
-      await era.printAndWait(`「快来和本宫来一次灵肉交汇的爱爱吧！♪」`);
     } else if (era0(`talent:${target}:77`)) {
       await era.printAndWait(
         `「本宫后面的小穴，那个……已经想你想得……有点发疼了……♪」`,
@@ -478,7 +467,7 @@ async function k903_kojo2() {
       );
     }
 
-    if (era0(`talent:${target}:83`)) {
+    if (era0(`talent:${target}:89`)) {
       await era.printAndWait(`「今天会带本宫去哪里玩么……？」`);
     }
 
@@ -503,10 +492,9 @@ async function k903_kojo2() {
   return 0;
 }
 
-// @EVENTEND（K903 源 :464-531）：调教结束口上正文。
+// @EVENTEND：调教结束口上正文。
 async function eventend_kojo_903() {
   const target = era_flag.target;
-  const target_name = chara_callname(target);
 
   if (game.kojo.口上开关 <= 0) {
     return 0;
@@ -521,79 +509,8 @@ async function eventend_kojo_903() {
   }
   await era.printAndWait(`「啊……可恶……已经………………」`);
   return 0;
-
-  if (era0(`mark:${target}:3`) == 3 && era0(`talent:${target}:85`) == 0) {
-    era.drawLine();
-    await era.printAndWait(
-      `「可恶！这样对待本宫，本宫定会将尔等渎神之人千刀万剐，生祭于神前！」`,
-    );
-    return 1;
-  } else if (
-    era0(`mark:${target}:2`) <= 1 &&
-    era0(`talent:${target}:85`) == 0
-  ) {
-    era.drawLine();
-    await era.printAndWait(
-      `「哈哈……就这，这种程度……离让本宫高兴还远着呢，凡间蛆虫！」`,
-    );
-    return 1;
-  } else if (
-    era0(`mark:${target}:2`) == 2 &&
-    era0(`talent:${target}:85`) == 0
-  ) {
-    era.drawLine();
-    await era.printAndWait(
-      `「哼，对本宫做这种事，就能满足你那自卑的心么？真可怜……」`,
-    );
-    return 1;
-  } else if (
-    era0(`mark:${target}:2`) == 3 &&
-    era0(`talent:${target}:85`) == 0
-  ) {
-    era.drawLine();
-    await era.printAndWait(
-      `「呵……呵啊……本宫……本宫还没有允许你这凡人擅自离开呢……」`,
-    );
-    return 1;
-  } else if (
-    era0(`talent:${target}:76`) == 1 &&
-    era0(`base:${target}:0`) >= 500
-  ) {
-    era.drawLine();
-    await era.printAndWait(`「这就不行啦？喂喂～来继续做舒服的事嘛～♪」`);
-    await era.printAndWait(`${target_name}意犹未尽地抱着你的身子摩擦着。`);
-    return 1;
-  } else if (
-    era0(`talent:${target}:76`) == 1 &&
-    era0(`base:${target}:0`) <= 500
-  ) {
-    era.drawLine();
-    await era.printAndWait(
-      `「你，你真是个有趣的家伙呢……本宫今……今天可能有点累了……但是还没……没到极限哦～♪」`,
-    );
-    return 1;
-  } else if (
-    era0(`talent:${target}:85`) == 1 &&
-    era0(`base:${target}:0`) >= 500
-  ) {
-    era.drawLine();
-    await era.printAndWait(
-      `「魔王大人，明天，还会来的对吧？不会去其他人那里的吧～？」`,
-    );
-    return 1;
-  } else if (
-    era0(`talent:${target}:85`) == 1 &&
-    era0(`base:${target}:0`) <= 500
-  ) {
-    era.drawLine();
-    await era.printAndWait(`「啊～好…………就这样……就这样……一起上天堂吧！！～」`);
-    return 1;
-  }
-  return 0;
 }
 
-on('EVENTEND', eventend_kojo_903);
-// 事件函数无 #ONLY，故同一正文还会再执行一次（issue #14）。
 on('EVENTEND', eventend_kojo_903);
 
 // @KOJO_MESSAGE_COM_903
@@ -793,10 +710,7 @@ async function kojo_message_com_903(rand = default_rand) {
         );
         // CFLAG:303  = 3（变量语义：CFLAG 族，303）
         chara(target).kojo.肛门爱抚 = 3;
-      } else if (
-        chara(target).kojo.首次耻情Lv2 <= 1 ||
-        game.kojo.口上开关 == 2
-      ) {
+      } else if (chara(target).kojo.肛门爱抚 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(
           `「从后面玩弄本宫什么的……绝对不可原谅啊……啊啊……住手啊，本宫叫你住手啊！」`,
         );
@@ -1103,15 +1017,15 @@ async function kojo_message_com_903(rand = default_rand) {
         (chara(target).kojo.自己扒开 <= 4 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「不要只是看看啦～～～所以快点插进来啊～～」`);
-        // CFLAG:306  = 5（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 5;
+        // CFLAG:308  = 5（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 5;
       } else if (
         era0(`talent:${target}:85`) == 1 &&
         (chara(target).kojo.自己扒开 <= 3 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「这，这……是只为你敞开的地方………」`);
-        // CFLAG:306  = 4（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 4;
+        // CFLAG:308  = 4（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 4;
       } else if (
         era0(`abl:${target}:17`) >= 3 &&
         (chara(target).kojo.自己扒开 <= 2 || game.kojo.口上开关 == 2)
@@ -1119,12 +1033,12 @@ async function kojo_message_com_903(rand = default_rand) {
         await era.printAndWait(
           `「啊……被看见了吗？……虽然好害羞啊…但是居然会有点开心呢…本宫，本宫变得奇怪了…………」`,
         );
-        // CFLAG:306  = 3（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 3;
-      } else if (chara(target).kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // CFLAG:308  = 3（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 3;
+      } else if (chara(target).kojo.自己扒开 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(`「喜欢摆出这种样子的本宫么……你这变态……」`);
-        // CFLAG:306  = 2（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 2;
+        // CFLAG:308  = 2（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 2;
       }
       return 0;
     }
@@ -1492,8 +1406,8 @@ async function kojo_message_com_903(rand = default_rand) {
           `${target_name}因为肛门虫的活动，媚态尽显地高声呻吟着。`,
         );
         await era.printAndWait(`「还有什么新鲜的玩法可以拿出来吗？♪」`);
-        // CFLAG:314  = 6（变量语义：CFLAG 族，314）
-        chara(target).kojo.肛门虫 = 6;
+        // CFLAG:314  = 7（变量语义：CFLAG 族，314）
+        chara(target).kojo.肛门虫 = 7;
       } else if (
         era0(`talent:${target}:76`) == 1 &&
         (chara(target).kojo.肛门虫 <= 5 || game.kojo.口上开关 == 2)
@@ -1501,8 +1415,8 @@ async function kojo_message_com_903(rand = default_rand) {
         await era.printAndWait(
           `「嘻嘻，好啊～再深入本宫的洞里……♪再让本宫更兴奋吧♪」`,
         );
-        // CFLAG:314  = 6（变量语义：CFLAG 族，314）
-        chara(target).kojo.肛门虫 = 6;
+        // CFLAG:314  = 5（变量语义：CFLAG 族，314）
+        chara(target).kojo.肛门虫 = 5;
       } else if (
         era0(`talent:${target}:85`) == 1 &&
         era0(`abl:${target}:3`) >= 3 &&
@@ -2768,7 +2682,6 @@ async function kojo_message_com_903(rand = default_rand) {
         // CFLAG:331  = 5（变量语义：CFLAG 族，331）
         chara(target).kojo.手淫 = 5;
       } else if (
-        era0(`talent:${target}:85`) == 1 &&
         era0(`abl:${target}:16`) >= 3 &&
         (chara(target).kojo.手淫 <= 3 || game.kojo.口上开关 == 2)
       ) {
@@ -2911,7 +2824,7 @@ async function kojo_message_com_903(rand = default_rand) {
         chara(target).kojo.乳交 = 6;
       } else if (
         era0(`talent:${target}:76`) == 1 &&
-        (chara(target).kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)
+        (chara(target).kojo.乳交 <= 4 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「喜欢用胸部啊……？感觉也不坏啦～～～」`);
         // CFLAG:333  = 5（变量语义：CFLAG 族，333）
@@ -3463,7 +3376,7 @@ async function kojo_message_com_903(rand = default_rand) {
         // CFLAG:TARGET:341  = 3（变量语义：CFLAG 族，TARGET:341）
         chara(target).kojo.打屁股 = 3;
         return 0;
-      } else if (chara(target).kojo.打屁股 <= 1 && game.kojo.口上开关 == 2) {
+      } else if (chara(target).kojo.打屁股 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(
           `「停……停手啊啊！啊……这种屈辱……这种疼痛……啊！……总有一天要让你加倍奉还的啊啊啊！……痛啊！……快住手啊……」`,
         );
@@ -3561,7 +3474,7 @@ async function kojo_message_com_903(rand = default_rand) {
         await era.printAndWait(`「好不甘心啊啊啊啊啊啊！！…」`);
         // CFLAG:TARGET:342  = 3（变量语义：CFLAG 族，TARGET:342）
         chara(target).kojo.鞭 = 3;
-      } else if (chara(target).kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
+      } else if (chara(target).kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(
           `「没……没用的！……只是…这种…程度…罢…罢了！……啊！！」`,
         );
@@ -4158,7 +4071,7 @@ async function kojo_message_com_903(rand = default_rand) {
     } else {
       if (era0(`tequip:${target}:53`)) {
         if (
-          era0(`talent:${target}:85`) == 1 &&
+          era0(`talent:${target}:76`) == 1 &&
           (chara(target).kojo.交谈 <= 3 || game.kojo.口上开关 == 2)
         ) {
           await era.printAndWait(
@@ -4200,7 +4113,7 @@ async function kojo_message_com_903(rand = default_rand) {
         }
       } else {
         if (
-          era0(`talent:${target}:85`) == 1 &&
+          era0(`talent:${target}:76`) == 1 &&
           (chara(target).kojo.交谈 <= 3 || game.kojo.口上开关 == 2)
         ) {
           await era.printAndWait(
@@ -7133,7 +7046,7 @@ async function colosseum_kojo_903() {
 
   if (era_flag.selectcom == 27) {
     if (era_flag.assi > 0 && era_flag.assiplay) {
-      await era.printAndWait(`「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」`);
+      await era.printAndWait(`「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」`);
       // 同 :5390 组的一整行（#625）
       await era.printAndWait(
         `${assi_name}听到悲鸣，更加兴奋了，继续用` +

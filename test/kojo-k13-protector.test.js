@@ -286,8 +286,8 @@ test('@EVENTEND 调教终了分档（反抗 / 淫乱体力闸 / 爱慕）', asyn
     'EVENTEND 反抗刻印Lv3',
   );
 
-  // 原作缺陷：淫乱 && BASE:0 >= 500 臂没有 RETURN 1，IF 链结束后 RETURN 0
-  // emit() 丢掉处理器返回值，直接调 eventend_k13 才能锁住这条缺陷
+  // 淫乱 && BASE:0 >= 500 臂出完台词后落到函数末尾的 return 0；emit() 不读
+  // 处理器返回值，该返回值在游戏内不可见——直接调 eventend_k13 锁住这一契约
   const whore_hi = await setup_k13((f) => {
     f.store.set('talent:31:76', 1);
     f.store.set('talent:31:85', 1);
@@ -299,9 +299,9 @@ test('@EVENTEND 调教终了分档（反抗 / 淫乱体力闸 / 爱慕）', asyn
   assert.deepEqual(
     whore_hi.text_lines(),
     ['「哎呀、已经结束了哎……明天也请您多多关照了……♪」', '「我会翘首以待的♪」'],
-    '淫乱体力>=500 无 RETURN 1（原作缺陷 1:1）',
+    'EVENTEND 淫乱体力>=500 两句台词',
   );
-  assert.equal(r_hi, 0, '淫乱体力>=500 无 RETURN 1（原作缺陷 1:1）');
+  assert.equal(r_hi, 0, '淫乱体力>=500 臂落末尾 return 0（返回值无人消费）');
 
   const love_lo = await setup_k13((f) => {
     f.store.set('talent:31:85', 1);

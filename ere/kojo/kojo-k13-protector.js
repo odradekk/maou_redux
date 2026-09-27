@@ -6,20 +6,22 @@
  *
  * ①TEQUIP:45 && SELECTCOM!=45 → return 0；②TFLAG:899（失神）→ return 0；
  * ③TEQUIP:89 → CALL DOG_KOJO_13, return 0；④TEQUIP:55 → CALL
- * COLOSSEUM_KOJO_13, return 0。ASSI 守卫源 :538-539 整行注释；TALENT:9 与
- * TEQUIP:90 本函数不读——按源文 1:1。
+ * COLOSSEUM_KOJO_13, return 0。ASSI 守卫未实现（助手调教时照常出声）；
+ * TALENT:9 与 TEQUIP:90 本函数不读。
  *
- * == 混写条件的读法（非缺陷，运算符序列同层不交叉） ==
+ * == 混写条件的读法（运算符序列同层不交叉） ==
  *
  * EVENTTRAIN 屈服Lv2/Lv3/淫乱的 `TALENT:157 && TALENT:110 || TALENT:114 ||
  * TALENT:119`：Emuera 的 && 与 || 同优先级、左结合，读作
  * `((TALENT:157 && TALENT:110) || TALENT:114) || TALENT:119`。该层的运算符序列
  * 是「`&&` … `||` … `||`」，`||` 之后没有 `&&`，左折叠与 C 式分组得到同一棵树
- * ——两种读法在一切取值上同值，故代码照抄、不构成原作缺陷（#517）。
+ * ——两种读法在一切取值上同值，故采用当前分组写法。
  *
- * == 原作缺陷 1:1 保留 ==
+ * == EVENTEND 淫乱体力>=500 臂的返回值 ==
  *
- * EVENTEND 淫乱体力>=500 臂无 RETURN 1。
+ * 该臂出完台词后没有单独 return 1，落到函数末尾的 return 0。事件分发的
+ * emit() 不读处理器返回值，返回 0 与返回 1 在游戏内不可区分，故不补
+ * return 1。
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */

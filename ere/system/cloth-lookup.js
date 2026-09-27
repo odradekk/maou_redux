@@ -1,32 +1,26 @@
 /**
- * @file 服装类型的取串函数：@GET_CLOTHTYPE_MAIN2 与 @GET_CLOTHTYPE_SPECIAL
- * （issue #215 J5；PRINT_/GET_ 分法见 #106 裁定三：GET_ → ere/system/，
- * PRINT_ → ere/page/page-clothtype.js，两处不共享表——原作自己就是两份
+ * @file 服装类型的取串函数：get_clothtype_main2 与 get_clothtype_special
+ * （issue #215 J5；PRINT_/GET_ 分法见 #106 决定三：GET_ → ere/system/，
+ * PRINT_ → ere/page/page-clothtype.js，两处不共享表——两张表本来就是
  * 有差异的拷贝，见下）。
  *
- * == Emuera 内联 PRINT 习语的 ere 等价物 ==
+ * == 取值函数直接返回串 ==
  *
- * 原作 @GET_CLOTHTYPE_MAIN2 的 CASE 分支全部用 `PRINT`（不赋 LOCALS），
- * 尾部 `RETURNF L_VERB + LOCALS` 返回的其实是动词 + 空串——名字靠 PRINT
- * 副作用在 PRINTFORM 的 %...% 求值中途落进当前行（Emuera 的 PRINT 追加
- * 行缓冲、不换行；黄金样本 train-natural:122 的「隔着紧身衣＆裙甲、…」
- * 一行内三段 PRINT 拼接是直接证据）。ere 引擎的 era.print 每次调用即结束
- * 一行，内联拼接必须由调用方合成一次输出——故 ere 侧取值函数直接返回
- * 名字串（ere/dungeon/monster-data.js 的 monster_name 同款改法：原作
- * PRINT、ere 返回串供调用方并入一次 era.print）。
+ * 引擎的 era.print 每次调用即结束一行，行内拼接必须由调用方合成一次
+ * 输出——本模块的取值函数因此直接返回名字串，供调用方并入一次
+ * era.print（ere/dungeon/monster-data.js 的 monster_name 同款写法）。
  *
- * 由此动词参数的渲染序原样保留：原作渲染序是「名字（PRINT 副作用）→
- * 动词（RETURNF 值）」，即 %GET_CLOTHTYPE_MAIN2(TARGET,"身穿")% 渲染为
- * 「紧身衣＆裙甲身穿」而非「身穿紧身衣＆裙甲」。全库带参调用只在
- * SHOP_TAILOR.ERB 的 :73（身穿）/ :168（脱下）/ :176（换上）三处，
- * **#397（N13）已随 @TAILOR_CORE 落地**——三处都按「名字 → 动词」的
+ * 动词参数的渲染序是「名字 → 动词」：get_clothtype_main2(cid, '身穿')
+ * 返回「紧身衣＆裙甲身穿」而非「身穿紧身衣＆裙甲」。带参调用都在
+ * ere/page/page-tailor.js 的换装流程（身穿 / 脱下 / 换上三处），
+ * **#397（N13）已随 tailor_core 实现**——三处都按「名字 → 动词」的
  * 渲染序取本函数的返回值（页面上即「日常服装……脱下了。」）。
  *
- * == 与 PRINT 版的表差（两张表各自落地，不做合并重构） ==
+ * == 与 PRINT 版的表差（两张表各自实现，不做合并重构） ==
  *
- * - @GET_CLOTHTYPE_MAIN2 曾缺 CASE 9（胸甲＆透视裙子），9 号会落 CASEELSE
+ * - MAIN2_TABLE 曾缺 9 号（胸甲＆透视裙子），9 号会落 CASEELSE
  *   「服」；现已按 PRINT 版同名补登。两表仍是独立维护的两份拷贝。
- * - @GET_CLOTHTYPE_SPECIAL 的 CASE 98/99 取 PRINT 版的简体名（简体规则
+ * - SPECIAL_TABLE 的 98/99 取 PRINT 版的简体名（简体规则
  *   #60；两号在 PRINT 版的旧文本是未汉化的繁体）。
  */
 
@@ -34,18 +28,18 @@
 
 const era = require('#/era-electron');
 
-/** CFLAG:41（上衣类型）的读数兜底（未声明下标 undefined → 0，#13） */
+/** CFLAG:41（上衣类型）的读数缺省处理（未声明下标 undefined → 0，#13） */
 function cloth_main_type(cid) {
   return era.get(`cflag:${cid}:41`) || 0;
 }
 
-/** CFLAG:42（特别服装类型）的读数兜底 */
+/** CFLAG:42（特别服装类型）的读数缺省处理 */
 function cloth_special_type(cid) {
   return era.get(`cflag:${cid}:42`) || 0;
 }
 
 /**
- * @GET_CLOTHTYPE_MAIN2 的名字表（:716-886 逐字；9 号已按 PRINT 版补登，
+ * get_clothtype_main2 的名字表（9 号已按 PRINT 版补登，
  * 未知编号落 CASEELSE「服」）。键 = CFLAG:41。
  */
 const MAIN2_TABLE = {
@@ -133,7 +127,7 @@ const MAIN2_TABLE = {
 };
 
 /**
- * @GET_CLOTHTYPE_SPECIAL 的名字表（:1006-1107 逐字；98/99 按文件头裁定
+ * get_clothtype_special 的名字表（98/99 按文件头的决定
  * 取 PRINT 版的简体名）。键 = CFLAG:42。
  */
 const SPECIAL_TABLE = {
@@ -186,11 +180,10 @@ const SPECIAL_TABLE = {
 };
 
 /**
- * @GET_CLOTHTYPE_MAIN2（:707-888）。渲染序「名字 → 动词」是原作行为
- * （文件头「内联 PRINT 习语」节），动词缺省空串。
- * @param {number} cid 角色 ID（原作 L_A，缺省 TARGET 的显式化）
- * @param {string} [verb] 衣服前的动词（原作 L_VERB；渲染在名字之后）
- * @returns {string} 服装名（未知编号 →「服」，CASEELSE :884-885）
+ * get_clothtype_main2。渲染序「名字 → 动词」（见文件头），动词缺省空串。
+ * @param {number} cid 角色 ID
+ * @param {string} [verb] 衣服前的动词（渲染在名字之后）
+ * @returns {string} 服装名（未知编号 →「服」，落 CASEELSE）
  */
 function get_clothtype_main2(cid, verb = '') {
   const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '服';
@@ -198,10 +191,10 @@ function get_clothtype_main2(cid, verb = '') {
 }
 
 /**
- * @GET_CLOTHTYPE_SPECIAL（:998-1109）。
- * @param {number} cid 角色 ID（原作 L_A，缺省 TARGET 的显式化）
- * @returns {string} 特别服装名（未知编号 → 'ERROR'，CASEELSE :1105-1106
- *   的 RETURNF "ERROR" 哨兵——AFTERTRAIN_CLOTH 等消费方以空串
+ * get_clothtype_special。
+ * @param {number} cid 角色 ID
+ * @returns {string} 特别服装名（未知编号 → 'ERROR'，RETURNF "ERROR"
+ *   哨兵——aftertrain_cloth 等消费方以空串
  *   判定，ERROR 与未装备的区分由调用方自理）
  */
 function get_clothtype_special(cid) {

@@ -27,7 +27,7 @@ export default [
     must_mention: 'portcflag',
   },
   {
-    desc: 'M119 播种默认值改坏（音量 66 → 0，原作随包 global.sav 实证 66）',
+    desc: 'M119 播种默认值改坏（音量 66 → 0，随包 global.sav 实证 66）',
     file: 'ere/era-utils/era-global.js',
     find: '  era_global.title_music_volume = 66;',
     replace: '  era_global.title_music_volume = 0;',
@@ -35,17 +35,17 @@ export default [
     must_mention: '66',
   },
   {
-    desc: 'M120 播种标记守卫删掉（每次进标题都重播、覆盖用户偏好）',
+    desc: 'M120 播种标记检查删掉（每次进标题都重播、覆盖用户偏好）',
     file: 'ere/era-utils/era-global.js',
     find: `  if (era_global.audio_defaults_seeded === 1) {
     return false;
   }`,
-    replace: '  // 变异：无标记守卫，每次都播种',
+    replace: '  // 变异：无标记检查，每次都播种',
     tests: ['era-global'],
     must_mention: '不被覆盖',
   },
   {
-    desc: 'M158 未声明下标读兜底被删（undefined 泄漏给调用方）',
+    desc: 'M158 未声明下标读默认值被删（undefined 泄漏给调用方）',
     file: 'ere/facade/chara-kojo.js',
     find: '    return era.get(`cflag:${this.cid}:301`) || 0;',
     replace: '    return era.get(`cflag:${this.cid}:301`);',
@@ -88,7 +88,7 @@ export default [
     must_mention: '守卫挡住五连',
   },
   {
-    desc: 'M813 tequip 门面口塞位寻址错（45 写到 46——#215 四守卫位的门面靶）',
+    desc: 'M813 tequip 门面口塞位寻址错（45 写到 46——#215 四检查位的门面目标）',
     file: 'ere/facade/chara-train.js',
     find: `  set 口塞(v) {
     era.set(\`tequip:\${this.cid}:45\`, v);
@@ -136,7 +136,7 @@ export default [
     must_mention: '0↔1 翻转',
   },
   {
-    desc: 'M11577 era_global 的冒险者性别循环首臂断掉（-1 按了不动，#547）',
+    desc: 'M11577 era_global 的冒险者性别循环首分支断掉（-1 按了不动，#547）',
     file: 'ere/era-utils/era-global.js',
     find: `  const next =
     v === -1 ? 0 : v === 0 ? 1 : v === 1 ? 2 : v === 2 ? 3 : v === 3 ? 4 : -1;`,
@@ -147,19 +147,19 @@ export default [
   },
   // —— #567：自由文本输入的空输入判据（0 ＝ 空输入），靶 ere/utils/input-text.js ——
   {
-    desc: 'M11830 判空漏掉 0（引擎归一后的空输入形态不再还原，全库回到 A 语义）',
+    desc: 'M11830 判空漏掉 0（引擎归一后的空输入形式不再还原，全库回到 A 语义）',
     file: 'ere/utils/input-text.js',
     find: '  if (raw === undefined || raw === null || raw === 0) {',
     replace: '  if (raw === undefined || raw === null) {',
     tests: ['input-text'],
-    must_mention: '0 = 空串与 "0" 的共同归一形态',
+    must_mention: '0 = 空串与 "0" 的共同归一形式',
   },
   {
-    desc: 'M11831 判空只认 0（undefined/null 的缺值形态漏给 String，字面量「undefined」落库）',
+    desc: 'M11831 判空只认 0（undefined/null 的缺值形式漏给 String，字面量「undefined」落库）',
     file: 'ere/utils/input-text.js',
     find: '  if (raw === undefined || raw === null || raw === 0) {',
     replace: '  if (raw === 0) {',
     tests: ['input-text'],
-    must_mention: 'undefined / null 的缺值形态也归空串',
+    must_mention: 'undefined / null 的缺值输入也归空串',
   },
 ];

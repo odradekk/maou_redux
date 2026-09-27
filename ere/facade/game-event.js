@@ -10,8 +10,8 @@ const era = require('#/era-electron');
 class EventGame {
   // —— flag ——
   /**
-   * 休息（flag:0 ↔ FLAG:0）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:0 休憩
+   * 休息（flag:0）
+   * FLAG:0 休憩
    * @returns {number}
    */
   get 休息() {
@@ -25,8 +25,8 @@ class EventGame {
   }
 
   /**
-   * 上次调教对象（flag:1 ↔ FLAG:1）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:1
+   * 上次调教对象（flag:1）
+   * FLAG:1
    * @returns {number}
    */
   get 上次调教对象() {
@@ -40,8 +40,8 @@ class EventGame {
   }
 
   /**
-   * 上次助手（flag:2 ↔ FLAG:2）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:2
+   * 上次助手（flag:2）
+   * FLAG:2
    * @returns {number}
    */
   get 上次助手() {
@@ -55,8 +55,8 @@ class EventGame {
   }
 
   /**
-   * 爱或淫乱人数（flag:30 ↔ FLAG:30）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:30
+   * 爱或淫乱人数（flag:30）
+   * FLAG:30
    * @returns {number}
    */
   get 爱或淫乱人数() {
@@ -70,8 +70,8 @@ class EventGame {
   }
 
   /**
-   * 杀死人数（flag:31 ↔ FLAG:31）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:31
+   * 杀死人数（flag:31）
+   * FLAG:31
    * @returns {number}
    */
   get 杀死人数() {
@@ -85,8 +85,8 @@ class EventGame {
   }
 
   /**
-   * 勇者基础等级修正（flag:60 ↔ FLAG:60）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:60
+   * 勇者基础等级修正（flag:60）
+   * FLAG:60
    * @returns {number}
    */
   get 勇者基础等级修正() {
@@ -100,8 +100,8 @@ class EventGame {
   }
 
   /**
-   * 处刑勇者数（flag:80 ↔ FLAG:80）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:80
+   * 处刑勇者数（flag:80）
+   * FLAG:80
    * @returns {number}
    */
   get 处刑勇者数() {
@@ -115,8 +115,8 @@ class EventGame {
   }
 
   /**
-   * 人间界征服完了（flag:82 ↔ FLAG:82）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:82
+   * 人间界征服完了（flag:82）
+   * FLAG:82
    * @returns {number}
    */
   get 人间界征服完了() {
@@ -130,8 +130,8 @@ class EventGame {
   }
 
   /**
-   * 装饰品数（flag:84 ↔ FLAG:84）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:84
+   * 装饰品数（flag:84）
+   * FLAG:84
    * @returns {number}
    */
   get 装饰品数() {
@@ -145,8 +145,8 @@ class EventGame {
   }
 
   /**
-   * 精灵领域征服完了（flag:87 ↔ FLAG:87）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:87
+   * 精灵领域征服完了（flag:87）
+   * FLAG:87
    * @returns {number}
    */
   get 精灵领域征服完了() {
@@ -160,8 +160,8 @@ class EventGame {
   }
 
   /**
-   * 龙山征服完了（flag:89 ↔ FLAG:89）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:89
+   * 龙山征服完了（flag:89）
+   * FLAG:89
    * @returns {number}
    */
   get 龙山征服完了() {
@@ -175,8 +175,8 @@ class EventGame {
   }
 
   /**
-   * 天界征服完了（flag:91 ↔ FLAG:91）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:91
+   * 天界征服完了（flag:91）
+   * FLAG:91
    * @returns {number}
    */
   get 天界征服完了() {
@@ -190,8 +190,8 @@ class EventGame {
   }
 
   /**
-   * 勇者入场_23（flag:223 ↔ FLAG:223）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:200～ 勇者入场旗标
+   * 勇者入场_23（flag:223）
+   * FLAG:200～ 勇者入场旗标
    * @returns {number}
    */
   get 勇者入场_23() {
@@ -205,8 +205,8 @@ class EventGame {
   }
 
   /**
-   * 石像数（flag:600 ↔ FLAG:600）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:600
+   * 石像数（flag:600）
+   * FLAG:600
    * @returns {number}
    */
   get 石像数() {
@@ -220,8 +220,8 @@ class EventGame {
   }
 
   /**
-   * 剥制数（flag:601 ↔ FLAG:601）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:601
+   * 剥制数（flag:601）
+   * FLAG:601
    * @returns {number}
    */
   get 剥制数() {
@@ -235,8 +235,8 @@ class EventGame {
   }
 
   /**
-   * 蜡像数（flag:602 ↔ FLAG:602）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:602
+   * 蜡像数（flag:602）
+   * FLAG:602
    * @returns {number}
    */
   get 蜡像数() {
@@ -250,8 +250,8 @@ class EventGame {
   }
 
   /**
-   * 人偶数_服装（flag:603 ↔ FLAG:603）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:603
+   * 人偶数_服装（flag:603）
+   * FLAG:603
    * @returns {number}
    */
   get 人偶数_服装() {
@@ -265,8 +265,8 @@ class EventGame {
   }
 
   /**
-   * 人偶数_球形关节（flag:604 ↔ FLAG:604）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:604
+   * 人偶数_球形关节（flag:604）
+   * FLAG:604
    * @returns {number}
    */
   get 人偶数_球形关节() {
@@ -280,8 +280,8 @@ class EventGame {
   }
 
   /**
-   * 金属像数（flag:605 ↔ FLAG:605）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:605
+   * 金属像数（flag:605）
+   * FLAG:605
    * @returns {number}
    */
   get 金属像数() {
@@ -295,8 +295,8 @@ class EventGame {
   }
 
   /**
-   * 冰像数（flag:606 ↔ FLAG:606）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:606
+   * 冰像数（flag:606）
+   * FLAG:606
    * @returns {number}
    */
   get 冰像数() {
@@ -310,8 +310,8 @@ class EventGame {
   }
 
   /**
-   * 金属像数_2（flag:607 ↔ FLAG:607）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:607 文档重名
+   * 金属像数_2（flag:607）
+   * FLAG:607 文档重名
    * @returns {number}
    */
   get 金属像数_2() {
@@ -325,8 +325,8 @@ class EventGame {
   }
 
   /**
-   * 家具数（flag:608 ↔ FLAG:608）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:608
+   * 家具数（flag:608）
+   * FLAG:608
    * @returns {number}
    */
   get 家具数() {
@@ -340,8 +340,8 @@ class EventGame {
   }
 
   /**
-   * 绘画数（flag:609 ↔ FLAG:609）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:609
+   * 绘画数（flag:609）
+   * FLAG:609
    * @returns {number}
    */
   get 绘画数() {
@@ -355,8 +355,8 @@ class EventGame {
   }
 
   /**
-   * 喷水像_石（flag:611 ↔ FLAG:611）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:611
+   * 喷水像_石（flag:611）
+   * FLAG:611
    * @returns {number}
    */
   get 喷水像_石() {
@@ -370,8 +370,8 @@ class EventGame {
   }
 
   /**
-   * 喷水像_金属（flag:612 ↔ FLAG:612）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:612
+   * 喷水像_金属（flag:612）
+   * FLAG:612
    * @returns {number}
    */
   get 喷水像_金属() {
@@ -385,8 +385,8 @@ class EventGame {
   }
 
   /**
-   * 人间牧场竿役（flag:613 ↔ FLAG:613）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:613
+   * 人间牧场竿役（flag:613）
+   * FLAG:613
    * @returns {number}
    */
   get 人间牧场竿役() {
@@ -401,8 +401,8 @@ class EventGame {
 
   // —— tflag ——
   /**
-   * 犬射精或处刑口上（tflag:16 ↔ TFLAG:16）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:16
+   * 犬射精或处刑口上（tflag:16）
+   * TFLAG:16
    * @returns {number}
    */
   get 犬射精或处刑口上() {
@@ -416,8 +416,8 @@ class EventGame {
   }
 
   /**
-   * 本次调教处女丧失（tflag:31 ↔ TFLAG:31）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:31
+   * 本次调教处女丧失（tflag:31）
+   * TFLAG:31
    * @returns {number}
    */
   get 本次调教处女丧失() {
@@ -431,8 +431,8 @@ class EventGame {
   }
 
   /**
-   * 珠结算_0（tflag:51 ↔ TFLAG:51）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58 @JUEL_CHECK
+   * 珠结算_0（tflag:51）
+   * TFLAG:51～58（juel_check_main 的珠结算）
    * @returns {number}
    */
   get 珠结算_0() {
@@ -446,8 +446,8 @@ class EventGame {
   }
 
   /**
-   * 珠结算_1（tflag:52 ↔ TFLAG:52）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58 @JUEL_CHECK
+   * 珠结算_1（tflag:52）
+   * TFLAG:51～58（juel_check_main 的珠结算）
    * @returns {number}
    */
   get 珠结算_1() {
@@ -461,8 +461,8 @@ class EventGame {
   }
 
   /**
-   * 珠结算_2（tflag:53 ↔ TFLAG:53）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58 @JUEL_CHECK
+   * 珠结算_2（tflag:53）
+   * TFLAG:51～58（juel_check_main 的珠结算）
    * @returns {number}
    */
   get 珠结算_2() {
@@ -476,8 +476,8 @@ class EventGame {
   }
 
   /**
-   * 珠结算_3（tflag:54 ↔ TFLAG:54）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58 @JUEL_CHECK
+   * 珠结算_3（tflag:54）
+   * TFLAG:51～58（juel_check_main 的珠结算）
    * @returns {number}
    */
   get 珠结算_3() {
@@ -491,8 +491,8 @@ class EventGame {
   }
 
   /**
-   * 珠结算_4（tflag:55 ↔ TFLAG:55）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58 @JUEL_CHECK
+   * 珠结算_4（tflag:55）
+   * TFLAG:51～58（juel_check_main 的珠结算）
    * @returns {number}
    */
   get 珠结算_4() {
@@ -506,8 +506,8 @@ class EventGame {
   }
 
   /**
-   * 珠结算_5（tflag:56 ↔ TFLAG:56）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58 @JUEL_CHECK
+   * 珠结算_5（tflag:56）
+   * TFLAG:51～58（juel_check_main 的珠结算）
    * @returns {number}
    */
   get 珠结算_5() {
@@ -521,8 +521,8 @@ class EventGame {
   }
 
   /**
-   * 珠结算_6（tflag:57 ↔ TFLAG:57）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:51～58 @JUEL_CHECK
+   * 珠结算_6（tflag:57）
+   * TFLAG:51～58（juel_check_main 的珠结算）
    * @returns {number}
    */
   get 珠结算_6() {
@@ -536,8 +536,8 @@ class EventGame {
   }
 
   /**
-   * 前前回指令（tflag:59 ↔ TFLAG:59）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:59
+   * 前前回指令（tflag:59）
+   * TFLAG:59
    * @returns {number}
    */
   get 前前回指令() {
@@ -551,8 +551,8 @@ class EventGame {
   }
 
   /**
-   * 插着不拔（tflag:60 ↔ TFLAG:60）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:60
+   * 插着不拔（tflag:60）
+   * TFLAG:60
    * @returns {number}
    */
   get 插着不拔() {
@@ -566,8 +566,8 @@ class EventGame {
   }
 
   /**
-   * 录像次数（tflag:70 ↔ TFLAG:70）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:70
+   * 录像次数（tflag:70）
+   * TFLAG:70
    * @returns {number}
    */
   get 录像次数() {
@@ -581,8 +581,8 @@ class EventGame {
   }
 
   /**
-   * 精爱味觉（tflag:110 ↔ TFLAG:110）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:110
+   * 精爱味觉（tflag:110）
+   * TFLAG:110
    * @returns {number}
    */
   get 精爱味觉() {
@@ -596,8 +596,8 @@ class EventGame {
   }
 
   /**
-   * 博物馆口上（tflag:500 ↔ TFLAG:500）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:500
+   * 博物馆口上（tflag:500）
+   * TFLAG:500
    * @returns {number}
    */
   get 博物馆口上() {
@@ -611,8 +611,8 @@ class EventGame {
   }
 
   /**
-   * 流放口上（tflag:510 ↔ TFLAG:510）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:510
+   * 流放口上（tflag:510）
+   * TFLAG:510
    * @returns {number}
    */
   get 流放口上() {
@@ -626,8 +626,8 @@ class EventGame {
   }
 
   /**
-   * 公开处刑口上（tflag:520 ↔ TFLAG:520）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:520
+   * 公开处刑口上（tflag:520）
+   * TFLAG:520
    * @returns {number}
    */
   get 公开处刑口上() {
@@ -641,8 +641,8 @@ class EventGame {
   }
 
   /**
-   * 猎奇处刑口上（tflag:530 ↔ TFLAG:530）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:530
+   * 猎奇处刑口上（tflag:530）
+   * TFLAG:530
    * @returns {number}
    */
   get 猎奇处刑口上() {

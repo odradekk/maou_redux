@@ -10,8 +10,8 @@ const era = require('#/era-electron');
 class StrongholdGame {
   // —— flag ——
   /**
-   * 税金修正（flag:9 ↔ FLAG:9）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:9
+   * 税金修正（flag:9）
+   * FLAG:9
    * @returns {number}
    */
   get 税金修正() {
@@ -25,8 +25,8 @@ class StrongholdGame {
   }
 
   /**
-   * 技巧素质道具数（flag:33 ↔ FLAG:33）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:33
+   * 技巧素质道具数（flag:33）
+   * FLAG:33
    * @returns {number}
    */
   get 技巧素质道具数() {
@@ -40,8 +40,8 @@ class StrongholdGame {
   }
 
   /**
-   * 显示模式（flag:36 ↔ FLAG:36）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:36
+   * 显示模式（flag:36）
+   * FLAG:36
    * @returns {number}
    */
   get 显示模式() {
@@ -55,8 +55,8 @@ class StrongholdGame {
   }
 
   /**
-   * 每日香料购买数（flag:61 ↔ FLAG:61）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:61
+   * 每日香料购买数（flag:61）
+   * FLAG:61
    * @returns {number}
    */
   get 每日香料购买数() {
@@ -70,8 +70,8 @@ class StrongholdGame {
   }
 
   /**
-   * 陷阱等级（flag:85 ↔ FLAG:85）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:85
+   * 陷阱等级（flag:85）
+   * FLAG:85
    * @returns {number}
    */
   get 陷阱等级() {
@@ -86,8 +86,8 @@ class StrongholdGame {
 
   // —— tflag ——
   /**
-   * 召唤暂存_1（tflag:101 ↔ TFLAG:101）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:100～103 召唤暂存
+   * 召唤暂存_1（tflag:101）
+   * TFLAG:100～103 召唤暂存
    * @returns {number}
    */
   get 召唤暂存_1() {
@@ -101,8 +101,8 @@ class StrongholdGame {
   }
 
   /**
-   * 召唤暂存_2（tflag:102 ↔ TFLAG:102）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:100～103
+   * 召唤暂存_2（tflag:102）
+   * TFLAG:100～103
    * @returns {number}
    */
   get 召唤暂存_2() {
@@ -117,8 +117,8 @@ class StrongholdGame {
 
   // —— item ——
   /**
-   * 触手生物（item:90 ↔ ITEM:90）
-   * 源: yml/Item.yml id 90
+   * 触手生物（item:90）
+   * yml/Item.yml id 90
    * @returns {number}
    */
   get 触手生物() {
@@ -132,8 +132,8 @@ class StrongholdGame {
   }
 
   /**
-   * 装饰戒指（item:300 ↔ ITEM:300）
-   * 源: yml/Item.yml id 300
+   * 装饰戒指（item:300）
+   * yml/Item.yml id 300
    * @returns {number}
    */
   get 装饰戒指() {

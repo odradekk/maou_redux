@@ -1,11 +1,11 @@
 /**
  * @file 据点域的角色出售、估价与调教后零散结算（issue #335/#339）。
  *
- * ESTIMATE_CHARA 的 A/B/E/T/O 临时数组改成带语义的返回对象，供后续
- * SALE_CHARA 原样渲染明细；每个百分比仍按原作顺序立即做整数除法，不能
- * 合并倍率。原作自定义 SAVEDATA「卖淫影响」自 #547 落 yml/ModSave.yml id 0
+ * estimate_chara 的 A/B/E/T/O 临时数组改成带语义的返回对象，供后续
+ * sale_chara 原样渲染明细；每个百分比仍按书写顺序立即做整数除法，不能
+ * 合并倍率。自定义存档位「卖淫影响」自 #547 落 yml/ModSave.yml id 0
  * （era_modsave.prostitution_effect）：各入口的参数缺省值读它，显式传参仍
- * 覆盖（原作各读点直读变量，参数通道只为测试注入保留）。
+ * 覆盖（正常运行各读点直读变量，参数通道只为测试注入保留）。
  *
  * 变量语义：ABL 0-3 = 阴蒂/乳房/私处/肛门感觉，10-17 = 顺从/欲望/
  * 技巧/侍奉技术/露出/话术/侍奉精神/露出癖，20-23 = 抖S/抖M/百合/断背
@@ -43,7 +43,7 @@ const MAX_MILK_AMOUNT = 600;
 const MAX_MILK_PRICE = 40_000;
 const MAX_FIGHT_INCOME = 12_000;
 
-/** @CHECK_SELLASSIABLE：检查角色是否解锁出售或助手资格。 */
+/** check_sellassiable：检查角色是否解锁出售或助手资格。 */
 async function check_sellassiable(cid = era_flag.target) {
   if (!era.getAddedCharacters().includes(cid)) return 0;
 
@@ -263,8 +263,8 @@ function apply_talent_multipliers(
 }
 
 /**
- * 计算角色售价与 SALE_CHARA 要显示的逐项明细。
- * @param {number} [cid] 原作 TARGET
+ * 计算角色售价与 sale_chara 要显示的逐项明细。
+ * @param {number} [cid] 角色 ID（缺省 era_flag.target）
  * @param {{prostitution_effect?: number}} [options] 卖淫影响：0 负面、1 正面、2 无影响
  */
 function estimate_chara(
@@ -334,7 +334,7 @@ function estimate_chara(
   }
 
   // ISASSI 是角色 CSV 的独立字段，不是 ASSI 指针。本作全部角色 CSV 都没写
-  // 「助手」字段，ERB 也没有赋值路径，故两个 ISASSI 分支在原数据中恒不达。
+  // 「助手」字段，也没有赋值路径，故两个 ISASSI 分支在原数据中恒不达。
   const former_assistant_multiplier = 100;
   price = multiply_percent(price, former_assistant_multiplier);
 
@@ -432,7 +432,7 @@ function print_sale_details(cid, details, prostitution_effect) {
   }
 }
 
-/** @SALE_CHARA：显示估价明细并让玩家确认出售。 */
+/** sale_chara：显示估价明细并让玩家确认出售。 */
 async function sale_chara(
   cid = era_flag.target,
   { prostitution_effect = era_modsave.prostitution_effect, rand } = {},
@@ -443,14 +443,14 @@ async function sale_chara(
   print_sale_details(cid, details, prostitution_effect);
   era.print(`${name}能卖出${price}点的样子。`);
   era.print(`把${name}卖掉吗？`);
-  era.printButton('- 好的', 0); // SELL_CHARA.ERB:422
-  era.printButton('- 不要', 1); // SELL_CHARA.ERB:423
+  era.printButton('- 好的', 0);
+  era.printButton('- 不要', 1);
 
   for (;;) {
     const result = await era.input();
     if (result === 0) {
       remember_sale_price(price);
-      // Emuera 在据点也可写 TFLAG；EraElectron 的 tflag 表只存在于
+      // 旧引擎在据点也可写 TFLAG；EraElectron 的 tflag 表只存在于
       // 调教期。这里改用口上调用链内的事件码，不伪造调教结算。
       await game.train.with_self_kojo_event(6, () =>
         self_kojo(rand, undefined, true),
@@ -475,7 +475,7 @@ async function sale_chara(
   }
 }
 
-/** @LONG_GOOD_BYE：出售前结算其他角色的送别与崩坏。 */
+/** long_good_bye：出售前结算其他角色的送别与崩坏。 */
 async function long_good_bye(cid = era_flag.target) {
   for (const other of era.getAddedCharacters()) {
     if (other === 0) continue;
@@ -532,16 +532,16 @@ async function long_good_bye(cid = era_flag.target) {
   return 0;
 }
 
-/** @KILL_TARGET：把已售角色从队伍和已加入角色中除名。 */
+/** kill_target：把已售角色从队伍和已加入角色中除名。 */
 async function kill_target(cid = era_flag.target) {
-  // FLAG:(NO:TARGET + 199) = 对应勇者已经处刑（SELL_CHARA.ERB:170）。普通
-  // 角色的 NO 就是角色 ID；后代的原作 NO 是来源模板号，经 template_no_of 换算。
+  // FLAG:(NO:TARGET + 199) = 对应勇者已经处刑。普通角色的 NO 就是角色
+  // ID；后代的 NO 是来源模板号，经 template_no_of 换算。
   era.set(`flag:${template_no_of(cid) + 199}`, 1);
   party_char_del(cid);
   era.removeCharacter(cid);
 
   // FLAG:1/2 属 event 域；跨域写经其具名门面。ere 的角色 ID
-  // 在 removeCharacter 后不重排（#21），故原作 185–188 行的序号减一是死语义。
+  // 在 removeCharacter 后不重排（#21），指针按 ID 判等、不随人数修正。
   if (game.event.上次调教对象 === cid) game.event.上次调教对象 = -1;
   if (game.event.上次助手 === cid) game.event.上次助手 = -1;
   era_flag.target = game.event.上次调教对象;
@@ -560,13 +560,13 @@ function sale_candidate(cid) {
   );
 }
 
-/** @CHARA_SALE：据点的角色出售列表与完整出售流程。 */
+/** chara_sale：据点的角色出售列表与完整出售流程。 */
 async function chara_sale({
   prostitution_effect = era_modsave.prostitution_effect,
   rand,
 } = {}) {
   for (;;) {
-    // 源行 164 RESTART：每完成或取消一单都从函数头重画。
+    // 每完成或取消一单都从函数头重画。
     era.drawLine();
     era.print(
       `${era_flag.day_count + 1}日  ${era_flag.time === 0 ? '上午' : '下午'}`,
@@ -577,8 +577,8 @@ async function chara_sale({
     era.drawLine({ content: '‥' });
     for (const cid of era.getAddedCharacters()) {
       if (!sale_candidate(cid)) continue;
-      // 源行 77 TARGET = COUNT：列表估价会把全局目标留在最后一名候选人。
-      // 取消单次出售时原作会恢复这个值，而非进入页面前的目标。
+      // 列表估价会把全局目标留在最后一名候选人；取消单次出售时恢复的
+      // 是这个值，而非进入页面前的目标。
       era_flag.target = cid;
       const { price } = estimate_chara(cid, { prostitution_effect });
       const price_text =
@@ -620,7 +620,7 @@ async function chara_sale({
     if (price > 0) {
       await long_good_bye(selected);
       await kill_target(selected);
-      // 原作成功售出时 T = -1，不恢复旧目标。
+      // 成功售出时目标置 -1，不恢复旧目标。
       era_flag.target = -1;
     } else {
       era_flag.target = era.getAddedCharacters().includes(previous_target)
@@ -631,7 +631,7 @@ async function chara_sale({
   }
 }
 
-/** @SELL_MILK：调教结束时出售本轮榨出的母乳。 */
+/** sell_milk：调教结束时出售本轮榨出的母乳。 */
 async function sell_milk() {
   const target = era_flag.target;
   if (!era.getAddedCharacters().includes(target)) return 0;
@@ -672,7 +672,7 @@ async function sell_milk() {
   return 0;
 }
 
-/** @SELL_FIGHTMONEY：调教结束时结算死斗场观战费。 */
+/** sell_fightmoney：调教结束时结算死斗场观战费。 */
 async function sell_fightmoney() {
   const target = era_flag.target;
   if (era.get(`tequip:${target}:55`)) {

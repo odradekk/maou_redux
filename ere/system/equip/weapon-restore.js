@@ -1,8 +1,8 @@
 /**
- * @file 装备复原（攻击/防御力的再计算）：@WEAPON_RESTORE。
+ * @file 装备复原（攻击/防御力的再计算）：weapon_restore。
  *
- * 攻击/防御的「装备效果（7/8）加成」已被原作从回合结算移进本函数
- * （turnend-settle.js 的注释段、SYSTEM ver1.0.3.ERB 行 415-431 同此）。cflag:11/12 属主 dungeon、
+ * 攻击/防御的「装备效果（7/8）加成」在本函数结算、不在回合结算里做
+ * （turnend-settle.js 的对应段说明）。cflag:11/12 属主 dungeon、
  * base:0 同（跨域写走门面）；cflag:9/13/14、talent、exp、maxbase 只读。
  */
 
@@ -14,13 +14,13 @@ const { chara } = require('#/facade/chara');
 const { equip_check } = require('#/system/equip/equip-check');
 
 /**
- * @WEAPON_RESTORE（:7-66）：按装备效果与素质重算角色的攻击力/防御力
+ * weapon_restore：按装备效果与素质重算角色的攻击力/防御力
  * （CFLAG:11/12），铁壁（TALENT:249）低气力时另回体力。
  *
- * 写序与原作一致（逐步赋值，中间写不合并）——回合结算的全量写入断言按
+ * 写序保持逐步赋值、中间写不合并——回合结算的全量写入断言按
  * 此序核对。
  *
- * @param {number} cid 角色（原作 ARG:0；内部 A = ARG:0）
+ * @param {number} cid 角色
  */
 function weapon_restore(cid) {
   // 装备効果（W:8 = 2 装備強化）：攻/防 = 基础值 × (RESULT + 10) / 10

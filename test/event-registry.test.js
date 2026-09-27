@@ -1,7 +1,7 @@
 /**
  * @file ere/system/event/registry.js 的行为测试（issue #20，决议 #6）。
  *
- * 核心被守行为（#6 推翻 #3 之后的语义，这张票是它的首次运行时验证）：
+ * 核心被测行为（#6 推翻 #3 之后的语义，这张票是它的首次运行时验证）：
  *   - 事件链中的 BEGIN 不中止链：剩余处理器仍然全部执行；
  *   - 链中多次 BEGIN 后写覆盖先写，最后一个胜出；
  *   - 吞掉信号 = 转场静默丢失（硬约束存在的原因，反例用例）。
@@ -25,7 +25,7 @@ function setup() {
   };
 }
 
-test('一个事件挂多个处理器：全部执行（对应原作同名事件的多处定义）', async () => {
+test('一个事件挂多个处理器：全部执行（对应同名事件的多处定义）', async () => {
   const { registry } = setup();
   const ran = [];
   registry.on('EVENTTEST', async () => ran.push('a'));
@@ -60,7 +60,7 @@ test('三档优先级：PRI → 普通 → LATER（对应 #PRI / 无标记 / #LA
   assert.deepEqual(ran, ['pri', 'normal-1', 'normal-2', 'later-1', 'later-2']);
 });
 
-test('同档内按注册的书写顺序执行（有意偏离原作的目录项序，#6）', async () => {
+test('同档内按注册的书写顺序执行（有意偏离目录枚举顺序，#6）', async () => {
   const { registry } = setup();
   const ran = [];
   // 同档三个处理器：书写序 b,a,c，执行序必须是 b,a,c 而非名字序或其他
@@ -76,7 +76,7 @@ test('同档内按注册的书写顺序执行（有意偏离原作的目录项�
 test('事件链中的 BEGIN：剩余处理器仍然全部执行，emit 返回暂存目标', async () => {
   const { registry, flow } = setup();
   const ran = [];
-  // 对照原作 @EVENTTURNEND 的三组定义（#6 的证据链场景）：
+  // 对照 EVENTTURNEND 事件的三档定义（#6 的证据链场景）：
   // PRI 组以无条件 BEGIN SHOP 结尾，普通组必须仍然执行
   registry.on(
     'EVENTTEST',
@@ -91,7 +91,7 @@ test('事件链中的 BEGIN：剩余处理器仍然全部执行，emit 返回暂
 
   const pending = await registry.emit('EVENTTEST');
 
-  // 链没有中止：三档处理器全跑了（#6 用 emuera.log 证明的原作语义）
+  // 链没有中止：三档处理器全跑了（#6 验证时确认的语义）
   assert.deepEqual(ran, ['pri', 'normal', 'later']);
   assert.equal(pending, flow.STATE.SHOP);
 });
@@ -147,7 +147,7 @@ test('反例（硬约束的由来）：处理器吞掉信号 → 转场静默丢
   assert.deepEqual(ran, ['swallow', 'after']);
 });
 
-test('处理器抛普通错误：原样上抛并中断链（对应 Emuera 报错停机）', async () => {
+test('处理器抛普通错误：原样上抛并中断链', async () => {
   const { registry } = setup();
   const ran = [];
   registry.on('EVENTTEST', async () => ran.push('before'));

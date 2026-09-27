@@ -125,6 +125,21 @@ test('屈服刻印分档（各 Lv 一次）：CFLAG:201 2 → 3 → 4', async ()
   ]);
   assert.equal(lv1.store.get('cflag:20:201'), 2);
 
+  const lv2 = await setup_k7((f) => {
+    f.store.set('mark:20:2', 2);
+    f.store.set('cflag:20:201', 2);
+  });
+  const { emit: emit2 } = lv2.load_module('system/event/registry');
+  await emit2('EVENTTRAIN');
+  assert.deepEqual(lv2.text_lines(), [
+    '「呵呵…又来了…调教我就让你那么乐在其中吗？」',
+    '金红桃露出厌烦的样子皱着眉，瞪着你',
+    '”上次的调教，好像有谁很不成体统呢”，在金红桃耳边低声私语，她的脸唰的红了。',
+    '「呼、你在开玩笑吧！和你做那种事只会感觉到恶心而已！」',
+    '「啊啊啊…真想早点从这里逃走，回到狂王大人温暖的怀抱里去，那才叫心情舒畅！」',
+  ]);
+  assert.equal(lv2.store.get('cflag:20:201'), 3);
+
   const lv3 = await setup_k7((f) => {
     f.store.set('mark:20:2', 3);
     f.store.set('cflag:20:201', 3);
@@ -239,7 +254,7 @@ test('助手白梅花（NO:ASSI == 23）守卫：TALENT:ASSI:121 == 0 时静默�
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('助手黑方片（NO:ASSI == 22）二回目以降 CFLAG:203==2 分支缺 RETURN 1（1:1 保留原作缺陷）', async () => {
+test('助手黑方片（NO:ASSI == 22）二回目以降 CFLAG:203==2 分支照常输出对话', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('cflag:20:201', 9);
     f.store.set('cflag:20:203', 2);
@@ -248,13 +263,12 @@ test('助手黑方片（NO:ASSI == 22）二回目以降 CFLAG:203==2 分支缺 R
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.assi = 22;
   const { emit } = fixture.load_module('system/event/registry');
-  const result = await emit('EVENTTRAIN');
+  await emit('EVENTTRAIN');
   assert.equal(
     fixture.text_lines()[0],
     '「哎呀、今日是三个人一起享受吧♡」',
     'TIME 三目按 era_flag.time 展开（默认 0 → 今日）',
   );
-  void result;
 });
 
 // —— @EVENTEND：调教结束口上 ——
@@ -390,7 +404,7 @@ test('SELECTCOM==87（穿环）读 piercing_state.p（跨模块存活态）', as
   ]);
 });
 
-test('TEQUIP:89（兽奸PLAY）：头部守卫岔去 DOG_KOJO_7 真身，全部空文本（源无台词）', async () => {
+test('TEQUIP:89（兽奸PLAY）：头部守卫岔去 DOG_KOJO_7 真身，全部空文本（模板未填台词）', async () => {
   const fixture = await setup_k7((f) => {
     f.store.set('tequip:20:89', 1);
     f.store.set('mark:20:2', 2);
@@ -632,7 +646,7 @@ test('NTR_KOUJO_K7：P 分派编号 1（首次经 CFLAG:650 标记）', async ()
   assert.equal(fixture.store.get('cflag:20:651'), 1);
 });
 
-test('MUSEUM_KOUJO_K7：TFLAG:500==2（蝋人形化）源误写成 ==0，两支都判不到 2', async () => {
+test('MUSEUM_KOUJO_K7：TFLAG:500==2（蝋人形化）无台词槽，链上无分支不输出', async () => {
   const fixture = await setup_k7();
   const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
   fixture.store.set('tflag:500', 0);
@@ -643,8 +657,7 @@ test('MUSEUM_KOUJO_K7：TFLAG:500==2（蝋人形化）源误写成 ==0，两支�
   fixture.store.set('tflag:500', 2);
   const { museum_koujo_k7 } = fixture.load_module('kojo/kojo-k7-heart');
   await museum_koujo_k7();
-  // 蝋人形化本该在 TFLAG:500==2 触发，源误写成第二个 ==0，链上没有任何分支
-  // 认领 2，永不可达——直调验证真的不出声（1:1 保留原作缺陷）。
+  // 蝋人形化（TFLAG:500==2）无台词槽：链上不设分支，直调验证不出声。
   assert.deepEqual(fixture.text_lines(), [
     '「啊…奇、奇怪，身体…身体动不了了…咕…啊…啊啊啊啊啊啊…啊………」',
   ]);

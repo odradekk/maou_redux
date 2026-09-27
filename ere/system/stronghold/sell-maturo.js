@@ -1,7 +1,7 @@
 /**
  * @file 成熟奴隶出售后的异族市场与宠物市场末路（issue #337）。
  *
- * 原作 S = SALE_CHARA 算出的售价；独立调用时用 ESTIMATE_CHARA 重算。
+ * 售价由调用方传入；独立调用时用 estimate_chara 重算。
  * K1 的随机源可注入，保证分支测试确定。CSTR 的家族角色下标 5 保存末路，
  * TSTR 下标 30 是 VIDEO_MATURO 消费的录像标题暂存。
  *
@@ -2057,7 +2057,7 @@ async function sell_maturo_k1(cid = era_flag.target, { price, rand } = {}) {
   return 0;
 }
 
-// @SELL_MATURO_K2_<n>（:225-297）：15 个纯输出函数照原作合为一张表。
+// 15 个末路文案合为一张表，按末路编号交给 sell_maturo_k2_branch 分发。
 const K2_ENDINGS = {
   101: [
     '{name}今天也作为最高级牝犬饲养员在为让牝犬奴隶怀上幼犬而努力。',
@@ -2136,7 +2136,7 @@ const K2_ENDINGS = {
   ],
 };
 
-/** @SELL_MATURO_K2_<n>：原作 15 个纯输出函数的统一分发入口。 */
+/** sell_maturo_k2_branch：按末路编号分发 K2_ENDINGS 文案的统一入口。 */
 async function sell_maturo_k2_branch(branch, cid = era_flag.target) {
   const name = chara_callname(cid);
   for (const line of K2_ENDINGS[branch]) {
@@ -2166,7 +2166,7 @@ function k2_route(price, sex_maniac, speech_level) {
   return ['魔界变态', 3, '牝犬'];
 }
 
-/** @SELL_MATURO_K2（:9-224）：宠物市场的牝犬末路。 */
+/** sell_maturo_k2：宠物市场的牝犬末路。 */
 async function sell_maturo_k2(cid = era_flag.target, { price } = {}) {
   price ??= estimate_chara(cid).price;
   const name = chara_callname(cid);

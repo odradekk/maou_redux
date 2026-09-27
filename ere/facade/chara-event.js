@@ -14,8 +14,8 @@ class EventFacade {
 
   // —— cflag ——
   /**
-   * 妊娠相手（cflag:cid:102 ↔ CFLAG:102）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行318 CFLAG:102 = 誰によって妊娠させられたか（マスター=1, 助手=2, 奴隷=3, 客=4, 犬=5, モンスター・触手=6, 狂王=7）
+   * 妊娠相手（cflag:cid:102）
+   * CFLAG:102 = 誰によって妊娠させられたか（マスター=1, 助手=2, 奴隷=3, 客=4, 犬=5, モンスター・触手=6, 狂王=7）
    * @returns {number}
    */
   get 妊娠相手() {
@@ -29,8 +29,8 @@ class EventFacade {
   }
 
   /**
-   * 装饰（cflag:cid:551 ↔ CFLAG:551）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:550～559 装備品枠——装飾（存储编号，EQUIP.ERB:36）
+   * 装饰（cflag:cid:551）
+   * CFLAG:550～559 装備品枠——装飾（存储编号）
    * @returns {number}
    */
   get 装饰() {
@@ -44,8 +44,8 @@ class EventFacade {
   }
 
   /**
-   * 装饰2（cflag:cid:552 ↔ CFLAG:552）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:550～559 装備品枠——装飾2（存储编号，EQUIP.ERB:37）
+   * 装饰2（cflag:cid:552）
+   * CFLAG:550～559 装備品枠——装飾2（存储编号）
    * @returns {number}
    */
   get 装饰2() {
@@ -59,8 +59,8 @@ class EventFacade {
   }
 
   /**
-   * 媚药残留度（cflag:cid:31 ↔ CFLAG:31）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:31 体内媚薬残留度
+   * 媚药残留度（cflag:cid:31）
+   * CFLAG:31 体内媚薬残留度
    * @returns {number}
    */
   get 媚药残留度() {
@@ -74,8 +74,8 @@ class EventFacade {
   }
 
   /**
-   * 贞操带钥匙（cflag:cid:50 ↔ CFLAG:50）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行304 CFLAG:50 = 貞操帯のカギをダンジョンで見つけた
+   * 贞操带钥匙（cflag:cid:50）
+   * CFLAG:50 = 貞操帯のカギをダンジョンで見つけた
    * @returns {number}
    */
   get 贞操带钥匙() {
@@ -89,8 +89,8 @@ class EventFacade {
   }
 
   /**
-   * 预产日（cflag:cid:110 ↔ CFLAG:110）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:110 = 出産予定日
+   * 预产日（cflag:cid:110）
+   * CFLAG:110 = 出産予定日
    * @returns {number}
    */
   get 预产日() {
@@ -104,8 +104,8 @@ class EventFacade {
   }
 
   /**
-   * 孩子父亲（cflag:cid:111 ↔ CFLAG:111）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:111 = 父親のキャラ番号（-1なら娼館の客, -2ならノラ犬, -3ならモンスターの子供, -4なら狂王）
+   * 孩子父亲（cflag:cid:111）
+   * CFLAG:111 = 父親のキャラ番号（-1なら娼館の客, -2ならノラ犬, -3ならモンスターの子供, -4なら狂王）
    * @returns {number}
    */
   get 孩子父亲() {
@@ -119,8 +119,8 @@ class EventFacade {
   }
 
   /**
-   * 侵攻度（cflag:cid:502 ↔ CFLAG:502）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行387 CFLAG:502 侵攻度
+   * 侵攻度（cflag:cid:502）
+   * CFLAG:502 侵攻度
    * @returns {number}
    */
   get 侵攻度() {
@@ -134,8 +134,8 @@ class EventFacade {
   }
 
   /**
-   * X坐标（cflag:cid:510 ↔ CFLAG:510）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行412 CFLAG:510 = X座標
+   * X坐标（cflag:cid:510）
+   * CFLAG:510 = X座標
    * @returns {number}
    */
   get X坐标() {
@@ -149,8 +149,8 @@ class EventFacade {
   }
 
   /**
-   * Y坐标（cflag:cid:511 ↔ CFLAG:511）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行413 CFLAG:511 = Y座標
+   * Y坐标（cflag:cid:511）
+   * CFLAG:511 = Y座標
    * @returns {number}
    */
   get Y坐标() {
@@ -164,8 +164,8 @@ class EventFacade {
   }
 
   /**
-   * 自动调教回数（cflag:cid:667 ↔ CFLAG:667）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:667 = 自動調教回数
+   * 自动调教回数（cflag:cid:667）
+   * CFLAG:667 = 自動調教回数
    * @returns {number}
    */
   get 自动调教回数() {
@@ -180,8 +180,8 @@ class EventFacade {
 
   // —— cstr ——
   /**
-   * 孩子父亲名字（cstr:cid:2 ↔ CSTR:2）
-   * 源: target/ERB/其他/NINSIN.ERB 行316 CSTR:2 = 孩子父亲的名字
+   * 孩子父亲名字（cstr:cid:2）
+   * CSTR:2 = 孩子父亲的名字
    * @returns {string}
    */
   get 孩子父亲名字() {
@@ -195,8 +195,8 @@ class EventFacade {
   }
 
   /**
-   * 家人末路（cstr:cid:5 ↔ CSTR:5）
-   * 源: target/ERB/售卻相關/SELL_MATURO_K1.ERB 行1370-1371 CSTR:(FAMILY:2)行5 = %MATURO%%SAVESTR:TARGET%（K2 行215-216 同构）
+   * 家人末路（cstr:cid:5）
+   * CSTR:(FAMILY:2):5 = %MATURO%%SAVESTR:TARGET%（K2 同构）
    * @returns {string}
    */
   get 家人末路() {
@@ -211,8 +211,8 @@ class EventFacade {
 
   // —— tequip ——
   /**
-   * 主人避孕套（tequip:cid:35 ↔ TEQUIP:35）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行511 TEQUIP:35 マスターがコンドーム装着（属主 event：SYSTEM_SOURCE/COMF_CONDOM 的跨域写走本门面）
+   * 主人避孕套（tequip:cid:35）
+   * TEQUIP:35 マスターがコンドーム装着（属主 event：source-check 与 com-condom 的跨域写走本门面）
    * @returns {number}
    */
   get 主人避孕套() {
@@ -227,8 +227,7 @@ class EventFacade {
 
   // —— talent ——
   /**
-   * 反抗心（talent:cid:11 ↔ TALENT:11）
-   * 源: yml/Talent.yml id 11
+   * 反抗心（talent:cid:11）
    * @returns {number}
    */
   get 反抗心() {
@@ -242,8 +241,7 @@ class EventFacade {
   }
 
   /**
-   * 克制（talent:cid:20 ↔ TALENT:20）
-   * 源: yml/Talent.yml id 20
+   * 克制（talent:cid:20）
    * @returns {number}
    */
   get 克制() {
@@ -257,8 +255,7 @@ class EventFacade {
   }
 
   /**
-   * 冷漠（talent:cid:21 ↔ TALENT:21）
-   * 源: yml/Talent.yml id 21
+   * 冷漠（talent:cid:21）
    * @returns {number}
    */
   get 冷漠() {
@@ -272,8 +269,7 @@ class EventFacade {
   }
 
   /**
-   * 感情淡薄（talent:cid:22 ↔ TALENT:22）
-   * 源: yml/Talent.yml id 22
+   * 感情淡薄（talent:cid:22）
    * @returns {number}
    */
   get 感情淡薄() {
@@ -287,8 +283,7 @@ class EventFacade {
   }
 
   /**
-   * 悲观的（talent:cid:26 ↔ TALENT:26）
-   * 源: yml/Talent.yml id 26
+   * 悲观的（talent:cid:26）
    * @returns {number}
    */
   get 悲观的() {
@@ -302,8 +297,7 @@ class EventFacade {
   }
 
   /**
-   * 戒备森严（talent:cid:27 ↔ TALENT:27）
-   * 源: yml/Talent.yml id 27
+   * 戒备森严（talent:cid:27）
    * @returns {number}
    */
   get 戒备森严() {
@@ -317,8 +311,7 @@ class EventFacade {
   }
 
   /**
-   * 看重贞操（talent:cid:30 ↔ TALENT:30）
-   * 源: yml/Talent.yml id 30
+   * 看重贞操（talent:cid:30）
    * @returns {number}
    */
   get 看重贞操() {
@@ -332,8 +325,7 @@ class EventFacade {
   }
 
   /**
-   * 压抑（talent:cid:32 ↔ TALENT:32）
-   * 源: yml/Talent.yml id 32
+   * 压抑（talent:cid:32）
    * @returns {number}
    */
   get 压抑() {
@@ -347,8 +339,7 @@ class EventFacade {
   }
 
   /**
-   * 抵抗（talent:cid:34 ↔ TALENT:34）
-   * 源: yml/Talent.yml id 34
+   * 抵抗（talent:cid:34）
    * @returns {number}
    */
   get 抵抗() {
@@ -362,8 +353,7 @@ class EventFacade {
   }
 
   /**
-   * 药物上瘾（talent:cid:46 ↔ TALENT:46）
-   * 源: yml/Talent.yml id 46
+   * 药物上瘾（talent:cid:46）
    * @returns {number}
    */
   get 药物上瘾() {
@@ -377,8 +367,7 @@ class EventFacade {
   }
 
   /**
-   * 喜欢精液（talent:cid:47 ↔ TALENT:47）
-   * 源: yml/Talent.yml id 47
+   * 喜欢精液（talent:cid:47）
    * @returns {number}
    */
   get 喜欢精液() {
@@ -392,8 +381,7 @@ class EventFacade {
   }
 
   /**
-   * 擅用舌头（talent:cid:52 ↔ TALENT:52）
-   * 源: yml/Talent.yml id 52
+   * 擅用舌头（talent:cid:52）
    * @returns {number}
    */
   get 擅用舌头() {
@@ -407,8 +395,7 @@ class EventFacade {
   }
 
   /**
-   * 漏尿癖（talent:cid:57 ↔ TALENT:57）
-   * 源: yml/Talent.yml id 57
+   * 漏尿癖（talent:cid:57）
    * @returns {number}
    */
   get 漏尿癖() {
@@ -422,8 +409,7 @@ class EventFacade {
   }
 
   /**
-   * 否定快感（talent:cid:71 ↔ TALENT:71）
-   * 源: yml/Talent.yml id 71
+   * 否定快感（talent:cid:71）
    * @returns {number}
    */
   get 否定快感() {
@@ -437,8 +423,7 @@ class EventFacade {
   }
 
   /**
-   * 性爱狂（talent:cid:75 ↔ TALENT:75）
-   * 源: yml/Talent.yml id 75
+   * 性爱狂（talent:cid:75）
    * @returns {number}
    */
   get 性爱狂() {
@@ -452,8 +437,7 @@ class EventFacade {
   }
 
   /**
-   * 弄乳狂（talent:cid:78 ↔ TALENT:78）
-   * 源: yml/Talent.yml id 78
+   * 弄乳狂（talent:cid:78）
    * @returns {number}
    */
   get 弄乳狂() {
@@ -467,8 +451,7 @@ class EventFacade {
   }
 
   /**
-   * 男人婆（talent:cid:79 ↔ TALENT:79）
-   * 源: yml/Talent.yml id 79
+   * 男人婆（talent:cid:79）
    * @returns {number}
    */
   get 男人婆() {
@@ -482,8 +465,7 @@ class EventFacade {
   }
 
   /**
-   * 讨厌男人（talent:cid:82 ↔ TALENT:82）
-   * 源: yml/Talent.yml id 82
+   * 讨厌男人（talent:cid:82）
    * @returns {number}
    */
   get 讨厌男人() {
@@ -497,8 +479,7 @@ class EventFacade {
   }
 
   /**
-   * 施虐狂（talent:cid:83 ↔ TALENT:83）
-   * 源: yml/Talent.yml id 83
+   * 施虐狂（talent:cid:83）
    * @returns {number}
    */
   get 施虐狂() {
@@ -512,8 +493,7 @@ class EventFacade {
   }
 
   /**
-   * 嫉妒（talent:cid:84 ↔ TALENT:84）
-   * 源: yml/Talent.yml id 84
+   * 嫉妒（talent:cid:84）
    * @returns {number}
    */
   get 嫉妒() {
@@ -527,8 +507,7 @@ class EventFacade {
   }
 
   /**
-   * 盲从（talent:cid:86 ↔ TALENT:86）
-   * 源: yml/Talent.yml id 86
+   * 盲从（talent:cid:86）
    * @returns {number}
    */
   get 盲从() {
@@ -542,8 +521,7 @@ class EventFacade {
   }
 
   /**
-   * 受虐狂（talent:cid:88 ↔ TALENT:88）
-   * 源: yml/Talent.yml id 88
+   * 受虐狂（talent:cid:88）
    * @returns {number}
    */
   get 受虐狂() {
@@ -557,8 +535,7 @@ class EventFacade {
   }
 
   /**
-   * 露出狂（talent:cid:89 ↔ TALENT:89）
-   * 源: yml/Talent.yml id 89
+   * 露出狂（talent:cid:89）
    * @returns {number}
    */
   get 露出狂() {
@@ -572,8 +549,7 @@ class EventFacade {
   }
 
   /**
-   * 威压感（talent:cid:93 ↔ TALENT:93）
-   * 源: yml/Talent.yml id 93
+   * 威压感（talent:cid:93）
    * @returns {number}
    */
   get 威压感() {
@@ -587,8 +563,7 @@ class EventFacade {
   }
 
   /**
-   * 疯狂（talent:cid:123 ↔ TALENT:123）
-   * 源: yml/Talent.yml id 123
+   * 疯狂（talent:cid:123）
    * @returns {number}
    */
   get 疯狂() {
@@ -602,8 +577,7 @@ class EventFacade {
   }
 
   /**
-   * 幼儿退行（talent:cid:131 ↔ TALENT:131）
-   * 源: yml/Talent.yml id 131
+   * 幼儿退行（talent:cid:131）
    * @returns {number}
    */
   get 幼儿退行() {
@@ -617,8 +591,7 @@ class EventFacade {
   }
 
   /**
-   * 牝犬（talent:cid:136 ↔ TALENT:136）
-   * 源: yml/Talent.yml id 136
+   * 牝犬（talent:cid:136）
    * @returns {number}
    */
   get 牝犬() {
@@ -632,8 +605,7 @@ class EventFacade {
   }
 
   /**
-   * 从不自慰（talent:cid:150 ↔ TALENT:150）
-   * 源: yml/Talent.yml id 150
+   * 从不自慰（talent:cid:150）
    * @returns {number}
    */
   get 从不自慰() {
@@ -647,8 +619,7 @@ class EventFacade {
   }
 
   /**
-   * 绝不侍奉（talent:cid:151 ↔ TALENT:151）
-   * 源: yml/Talent.yml id 151
+   * 绝不侍奉（talent:cid:151）
    * @returns {number}
    */
   get 绝不侍奉() {
@@ -662,8 +633,7 @@ class EventFacade {
   }
 
   /**
-   * 同族不育（talent:cid:158 ↔ TALENT:158）
-   * 源: yml/Talent.yml id 158
+   * 同族不育（talent:cid:158）
    * @returns {number}
    */
   get 同族不育() {
@@ -677,8 +647,7 @@ class EventFacade {
   }
 
   /**
-   * 斗姬（talent:cid:188 ↔ TALENT:188）
-   * 源: yml/Talent.yml id 188
+   * 斗姬（talent:cid:188）
    * @returns {number}
    */
   get 斗姬() {
@@ -692,8 +661,7 @@ class EventFacade {
   }
 
   /**
-   * 主从逆转（talent:cid:293 ↔ TALENT:293）
-   * 源: yml/Talent.yml id 293
+   * 主从逆转（talent:cid:293）
    * @returns {number}
    */
   get 主从逆转() {
@@ -707,8 +675,7 @@ class EventFacade {
   }
 
   /**
-   * 异种恋慕（talent:cid:294 ↔ TALENT:294）
-   * 源: yml/Talent.yml id 294
+   * 异种恋慕（talent:cid:294）
    * @returns {number}
    */
   get 异种恋慕() {
@@ -722,8 +689,7 @@ class EventFacade {
   }
 
   /**
-   * 混乱（talent:cid:482 ↔ TALENT:482）
-   * 源: yml/Talent.yml id 482
+   * 混乱（talent:cid:482）
    * @returns {number}
    */
   get 混乱() {
@@ -738,8 +704,7 @@ class EventFacade {
 
   // —— exp ——
   /**
-   * 勋章经验（exp:cid:81 ↔ EXP:81）
-   * 源: yml/Exp.yml id 81
+   * 勋章经验（exp:cid:81）
    * @returns {number}
    */
   get 勋章经验() {
