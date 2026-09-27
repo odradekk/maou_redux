@@ -16,8 +16,8 @@
  *     加清零面 50×50）内 y*100+x 无碰撞。**必须进引擎表而不能放模块内存**
  *     （#181 返工裁定，依据见 issue #181 返工报告）：引擎 saveData 是整份
  *     data 的 JSON 快照，模块内存不进存档；而地形只在 EVENTFIRST 生成一次
- *     （GEO_TEST 全库唯一调用点 :67）、无读档重建路径，玩家为 DB 付的钱
- *     （#180 的 MON_SET_OMAKASE 扣 MONEY）都不容读档蒸发；原作同样持久
+ *     （GEO_TEST 全库唯一调用点 :67）、无读档重建路径，三表内容只能靠
+ *     存档留存；原作同样持久
  *     （emuera.config:60 二进制存档，EVENTFIRST 的显式清零循环只在数据会
  *     留存时才有意义）。本模块导出 da/db/dc 三对读写包装（DB 一对自 #180
  *     起收归此处，与 DA/DC 两对同栈）；
@@ -58,6 +58,7 @@ function idiv(a, b) {
 // —— DA/DB/DC：VariableSize.csv :132-134 的三张 100×100 全局二维数组 ——
 //    引擎表一维折叠承载（文件头）；未写格 getter 兜 0，与 Emuera「全区
 //    0 起步」同语义。DB 的包装自 #180 移交至此，与 DA/DC 两对同栈。
+
 /** DA:Y:X 读（一维折叠，yml/DA.yml 建桶）——地质高度图（/32 后为颜色档） */
 function da_get(y, x) {
   return era.get(`da:${y * 100 + x}`) || 0;

@@ -3,7 +3,9 @@
 #
 # 源: target/CSV/VariableSize.csv:133（DB,100,100——Emuera 二维全局数组）。
 #     写者：DUNGEON_SETUP.ERB 的 @MON_SET_OMAKASE（:512，随机放置）与
-#     @DUNGEON_INFO_MAP 的手动放置（:478）；读者：LABO_MAP.ERB 的 @MON_CHECK
+#     @DUNGEON_INFO_MAP 的手动放置（:478）——放置界面已随 #685 删除，
+#     现行写者只剩清零（event-first 开局清格、mon_check 兵力不足扫格）；
+#     读者：LABO_MAP.ERB 的 @MON_CHECK
 #     （怪物在位判定，联动 ITEM:100-199 的等级段库存——H6 战斗的怪物来源）、
 #     @CHIP_DRAW 与 LABO_DUNGEON_MAP.ERB 的地图渲染。
 #
@@ -11,8 +13,7 @@
 # 桶——本文件让引擎按「开发者自定义一维表」建 data.db 桶（与 E.yml 同款；
 # 装载器把非内置表标为 tableType.normal，fillData 建桶并给声明条目补 0），
 # 游戏代码把二维寻址折叠成一维：db:(Y * 100 + X)。实际使用面 32×32
-# （MON_LIMIT/MON_SET_OMAKASE 的 RAND:32 与 DUNGEON_INFO_MAP 的 32×32 地图），
-# Y*100+X 在该面内无碰撞（X < 100）。
+# （labo 地图族的 32×32 网格），Y*100+X 在该面内无碰撞（X < 100）。
 #
 # 空表即够用（CFlag.yml 同款先例）：游戏代码一律数字下标寻址，未声明下标
 # 读侧 getter 兜 0（1:1 于原作「全区 0 起步」——MON_CHECK 对 <= 0 的格判
