@@ -1217,7 +1217,8 @@ export default [
     find: '  era.set(`flag:${template_no_of(cid) + 199}`, 1);',
     replace: '  era.set(`flag:${cid + 199}`, 1);',
     tests: ['event-execution-batch'],
-    must_mention: 'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
+    must_mention:
+      'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
   },
   {
     desc: 'M11784 肉便器归档槽位回退成角色 ID',
