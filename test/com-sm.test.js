@@ -1,16 +1,16 @@
 /**
  * ere/system/train/com-sm.js 的行为测试（issue #223 J13：SM 系指令族
- * 40-49——#209 裁定 6 的「四样装齐」行为靶）。
+ * 40-49——#209 结论 6 的「四样装齐」行为目标）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - @COM_ABLE40-49 的判据（SM 过滤/道具/场景挡/解除随时/助手门/服装挡/
+ *   - 40-49 号可用性检查的判断条件（SM 过滤/道具/场景挡/解除随时/助手条件/服装挡/
  *     经验门槛——每条指令至少一段可用性用例）；
- *   - @COM40-49 真身（分档表逐档 + 装备位取反 + 经验上升 + TFLAG:30）；
- *   - @EQUIP_COM43-49 持续效果（SOURCE/UP 累加、链序消费在 source-check）；
+ *   - COM40-49 真身（分档表逐档 + 装备位取反 + 经验上升 + TFLAG:30）；
+ *   - equip_com43-49 持续效果（SOURCE/UP 累加、链序消费在 source-check）；
  *   - TRAIN_MESSAGE_B 40-49 分支与 TRAIN_MESSAGE_A 40-42 分支（含
  *     TFLAG:899 的三指令共钳与 TEQUIP:46 段）；
- *   - CASE 40 升格规则与 JUMPFORM 落点；
- *   - TEQUIP:45 写入路径 → @KOJO_MESSAGE_COM 头部守卫（#213 接触面第 3 道）。
+ *   - CASE 40 升格规则与跳转目标；
+ *   - TEQUIP:45 写入路径 → kojo_message_com 头部检查（#213 接触面第 3 项）。
  *
  * 世界底座与 test/com0-caress.test.js 的 seed 同构：魔王 0 + 奴隶 31、
  * 火车表已开，直接经族调用（同时验注册接入）。
@@ -50,21 +50,17 @@ function seed_world({ assi = -1 } = {}) {
   return { fixture, era_flag, com_family, com_able_family, equip_com_family };
 }
 
-/** 经族调用一条指令（真实循环里 SELECTCOM 由 train-loop 先置——测试同位） */
+/** 经族调用一条指令（真实循环里 selectcom 由 train-loop 先置——测试同位） */
 async function run_com(world, com) {
   world.era_flag.selectcom = com;
   return world.com_family.call(com);
 }
 
-// —— @COM_ABLE：判据逐条 ——
+// —— 可用性检查：条件逐条 ——
 
-test('@COM_ABLE40：默认可执行；SM 过滤与四场景挡各挡一条；无道具要求', async () => {
+test('40 号可用性检查：默认可执行；SM 过滤与四场景挡各挡一条；无道具要求', async () => {
   const { fixture, com_able_family } = seed_world();
-  assert.equal(
-    await com_able_family.call(40),
-    1,
-    '打屁股无道具要求（:1883-1901）',
-  );
+  assert.equal(await com_able_family.call(40), 1, '打屁股无道具要求');
 
   fixture.store.set('flag:25', 16); // FLAG:25 & 16（SM 系过滤）
   assert.equal(await com_able_family.call(40), 0);
@@ -78,7 +74,7 @@ test('@COM_ABLE40：默认可执行；SM 过滤与四场景挡各挡一条；无
   fixture.store.set('tequip:31:55', 0);
 });
 
-test('@COM_ABLE40：助手执行且顺从/百合弱、非施虐狂且抖S不足 → 不可', async () => {
+test('40 号可用性检查：助手执行且顺从/百合弱、非施虐狂且抖S不足 → 不可', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
   era_flag.assiplay = 1;
   // ABL:17:10 = 3（≤4）、TALENT:17:83 无、ABL:17:20 = 1（< 2）
@@ -86,7 +82,7 @@ test('@COM_ABLE40：助手执行且顺从/百合弱、非施虐狂且抖S不足 
   fixture.store.set('abl:17:20', 1);
   assert.equal(await com_able_family.call(40), 0);
 
-  // 施虐狂（TALENT:83）放行（:1886-1887 的第二臂）
+  // 施虐狂（TALENT:83）放行（第二分支）
   fixture.store.set('talent:17:83', 1);
   assert.equal(await com_able_family.call(40), 1);
   fixture.store.set('talent:17:83', 0);
@@ -96,7 +92,7 @@ test('@COM_ABLE40：助手执行且顺从/百合弱、非施虐狂且抖S不足 
   assert.equal(await com_able_family.call(40), 1);
 });
 
-test('@COM_ABLE41/42：要持鞭/针；NOITEM 非零时免持；助手门 < 3', async () => {
+test('41/42 号可用性检查：要持鞭/针；NOITEM 非零时免持；助手条件 < 3', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
 
   assert.equal(await com_able_family.call(41), 0, '无鞭（ITEM:10 == 0）');
@@ -113,7 +109,7 @@ test('@COM_ABLE41/42：要持鞭/针；NOITEM 非零时免持；助手门 < 3', 
   fixture.store.set('noitem:0', 0);
   assert.equal(await com_able_family.call(41), 0);
 
-  // 助手门：41/42 是 ABL:ASSI:20 < 3
+  // 助手条件：41/42 是 ABL:ASSI:20 < 3
   fixture.store.set('item:10', 1);
   era_flag.assiplay = 1;
   fixture.store.set('abl:17:10', 3);
@@ -128,11 +124,11 @@ test('@COM_ABLE41/42：要持鞭/针；NOITEM 非零时免持；助手门 < 3', 
   assert.equal(await com_able_family.call(42), 0);
 });
 
-test('@COM_ABLE43：失神挡、解除随时、要 ITEM:5', async () => {
+test('43 号可用性检查：失神挡、解除随时、要 ITEM:5', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(43), 0, '无眼罩');
 
-  fixture.store.set('tflag:899', 1); // 失神中（:1986-1987）
+  fixture.store.set('tflag:899', 1); // 失神中
   fixture.store.set('item:5', 1);
   assert.equal(await com_able_family.call(43), 0);
   fixture.store.set('tflag:899', 0);
@@ -143,7 +139,7 @@ test('@COM_ABLE43：失神挡、解除随时、要 ITEM:5', async () => {
   fixture.store.set('tequip:31:43', 1);
   assert.equal(await com_able_family.call(43), 1);
 
-  // 着ぐるみ + FLAG:37（:1989-1990——43 的判据带 FLAG:37，与 45 互异）
+  // 着ぐるみ + FLAG:37（43 的判断条件带 FLAG:37，与 45 互异）
   fixture.store.set('tequip:31:43', 0);
   fixture.store.set('item:5', 1);
   fixture.store.set('cflag:31:42', 11);
@@ -153,7 +149,7 @@ test('@COM_ABLE43：失神挡、解除随时、要 ITEM:5', async () => {
   assert.equal(await com_able_family.call(43), 0, '着ぐるみ + FLAG:37 挡');
 });
 
-test('@COM_ABLE44：调教者技巧 ≥3；助手要 ≥5；解除随时', async () => {
+test('44 号可用性检查：调教者技巧 ≥3；助手要 ≥5；解除随时', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
   fixture.store.set('item:14', 1);
 
@@ -178,12 +174,12 @@ test('@COM_ABLE44：调教者技巧 ≥3；助手要 ≥5；解除随时', async
   assert.equal(await com_able_family.call(44), 1);
 });
 
-test('@COM_ABLE45：触手口辱挡、着ぐるみ挡（无 FLAG:37 臂）、助手技巧 ≥3', async () => {
+test('45 号可用性检查：触手口辱挡、着ぐるみ挡（无 FLAG:37 分支）、助手技巧 ≥3', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
   fixture.store.set('item:9', 1);
   assert.equal(await com_able_family.call(45), 1);
 
-  fixture.store.set('tequip:31:98', 1); // 触手口辱（:2049-2050）
+  fixture.store.set('tequip:31:98', 1); // 触手口辱
   assert.equal(await com_able_family.call(45), 0);
   fixture.store.set('tequip:31:98', 0);
 
@@ -200,7 +196,7 @@ test('@COM_ABLE45：触手口辱挡、着ぐるみ挡（无 FLAG:37 臂）、助
   assert.equal(await com_able_family.call(45), 1);
 });
 
-test('@COM_ABLE46：服装三挡、肛门经验 > 25、三和 ≥ 10、与肛具互斥', async () => {
+test('46 号可用性检查：服装三挡、肛门经验 > 25、三和 ≥ 10、与肛具互斥', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('item:15', 1);
   fixture.store.set('exp:31:1', 26);
@@ -215,7 +211,7 @@ test('@COM_ABLE46：服装三挡、肛门经验 > 25、三和 ≥ 10、与肛具
     '重复调用仍可执行（无状态残留）',
   );
 
-  // 经验门槛（:2120-2121）
+  // 经验门槛
   fixture.store.set('exp:31:1', 25);
   assert.equal(await com_able_family.call(46), 0, 'EXP:1 = 25 不可（要 > 25）');
   fixture.store.set('exp:31:1', 26);
@@ -233,7 +229,7 @@ test('@COM_ABLE46：服装三挡、肛门经验 > 25、三和 ≥ 10、与肛具
   fixture.store.set('cflag:31:40', 0);
   fixture.store.set('flag:37', 0);
 
-  // 肛具互斥（:2109-2118）
+  // 肛具互斥
   fixture.store.set('tequip:31:13', 1);
   assert.equal(await com_able_family.call(46), 0);
   fixture.store.set('tequip:31:13', 0);
@@ -247,7 +243,7 @@ test('@COM_ABLE46：服装三挡、肛门经验 > 25、三和 ≥ 10、与肛具
   assert.equal(await com_able_family.call(46), 1);
 });
 
-test('@COM_ABLE47：只能助手穿（ASSIPLAY && ASSI ≥ 1）且抖S ≥ 2', async () => {
+test('47 号可用性检查：只能助手穿（assiplay && ASSI ≥ 1）且抖S ≥ 2', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
   fixture.store.set('item:23', 1);
   assert.equal(await com_able_family.call(47), 0, '主人执行不可');
@@ -263,7 +259,7 @@ test('@COM_ABLE47：只能助手穿（ASSIPLAY && ASSI ≥ 1）且抖S ≥ 2', a
   fixture.store.set('item:23', 0);
   assert.equal(await com_able_family.call(47), 1);
 
-  // 助手限定独立于抖S门：主人执行、助手抖S 已达标 → 仍不可（:2142-2143）
+  // 助手限定独立于抖S条件：主人执行、助手抖S 已达标 → 仍不可
   fixture.store.set('tequip:31:47', 0);
   fixture.store.set('item:23', 1);
   assert.equal(
@@ -273,7 +269,7 @@ test('@COM_ABLE47：只能助手穿（ASSIPLAY && ASSI ≥ 1）且抖S ≥ 2', a
   );
 });
 
-test('@COM_ABLE48：对象须男人/扶她；服装三挡', async () => {
+test('48 号可用性检查：对象须男人/扶她；服装三挡', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(48), 0, '温妮（女）不可');
 
@@ -289,18 +285,18 @@ test('@COM_ABLE48：对象须男人/扶她；服装三挡', async () => {
   assert.equal(await com_able_family.call(48), 1);
 });
 
-test('@COM_ABLE49：要 ITEM:21；与灌肠互斥；解除随时', async () => {
+test('49 号可用性检查：要 ITEM:21；与灌肠互斥；解除随时', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(49), 0, '无电极');
 
   fixture.store.set('item:21', 1);
   assert.equal(await com_able_family.call(49), 1);
 
-  fixture.store.set('tequip:31:46', 1); // 普通の浣腸使用中（:2231-2234）
+  fixture.store.set('tequip:31:46', 1); // 普通の浣腸使用中
   assert.equal(await com_able_family.call(49), 0);
   fixture.store.set('tequip:31:46', 0);
 
-  fixture.store.set('tequip:31:58', 1); // 浴室PLAY中（:2236-2237——49 独有）
+  fixture.store.set('tequip:31:58', 1); // 浴室PLAY中（49 独有）
   assert.equal(await com_able_family.call(49), 0, '浴室中不可插电极');
   fixture.store.set('tequip:31:58', 0);
 
@@ -309,9 +305,9 @@ test('@COM_ABLE49：要 ITEM:21；与灌肠互斥；解除随时', async () => {
   assert.equal(await com_able_family.call(49), 1, '解除随时可');
 });
 
-// —— @COM 真身：分档逐档 + 副作用 ——
+// —— COM 真身：分档逐档 + 副作用 ——
 
-// COMF40/41/42 的 PALAM:9（苦痛）五档 → SOURCE:6（PAIN_LADDERS 逐字复写源值）
+// COM40/41/42 的 PALAM:9（苦痛）五档 → SOURCE:6（PAIN_LADDERS 逐字复写表值）
 const PAIN_TIERS = [
   [40, [300, 500, 800, 1200, 1800]],
   [41, [1000, 1500, 2200, 3000, 4000]],
@@ -321,7 +317,7 @@ const PALAM9_LEVELS = [99, 499, 2999, 9999, 10000]; // < LV1 / < LV2 / < LV3 / <
 
 for (const [com, tiers] of PAIN_TIERS) {
   for (const [tier, expected] of tiers.entries()) {
-    test(`@COM${com}：PALAM:9 档 ${tier} → SOURCE:6 = ${expected}`, async () => {
+    test(`com${com}：PALAM:9 档 ${tier} → SOURCE:6 = ${expected}`, async () => {
       const world = seed_world();
       world.fixture.store.set('palam:31:9', PALAM9_LEVELS[tier]);
       assert.equal(await run_com(world, com), 1);
@@ -330,7 +326,7 @@ for (const [com, tiers] of PAIN_TIERS) {
   }
 }
 
-test('@COM40：LOSEBASE、SOURCE:12/14、百合经验、TFLAG:30、爱情经验', async () => {
+test('com40：LOSEBASE、SOURCE:12/14、百合经验、TFLAG:30、爱情经验', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('abl:31:21', 1); // 抖M ≥ 1 → 主人经验
@@ -359,7 +355,7 @@ test('@COM40：LOSEBASE、SOURCE:12/14、百合经验、TFLAG:30、爱情经验'
   assert.equal(w2.fixture.store.get('exp:31:23'), 1);
 });
 
-test('@COM41/42：鞭与针的 SOURCE:14 与 TFLAG:30 门槛差', async () => {
+test('com41/42：鞭与针的 SOURCE:14 与 TFLAG:30 门槛差', async () => {
   const w1 = seed_world();
   w1.fixture.store.set('abl:31:21', 1);
   await run_com(w1, 41);
@@ -382,7 +378,7 @@ test('@COM41/42：鞭与针的 SOURCE:14 与 TFLAG:30 门槛差', async () => {
   assert.equal(w3.fixture.store.get('source:31:14'), 1000);
 });
 
-// COMF43/44 的紧缚经验三档（半阈值 <10/<25）→ [LOSEBASE:0, LOSEBASE:1]
+// COM43/44 的紧缚经验三档（半阈值 <10/<25）→ [LOSEBASE:0, LOSEBASE:1]
 for (const [com, tiers] of [
   [
     43,
@@ -410,7 +406,7 @@ for (const [com, tiers] of [
   ],
 ]) {
   for (const [tier, [l0, l1]] of tiers.entries()) {
-    test(`@COM${com}：紧缚经验档 ${tier} → LOSEBASE ${l0}/${l1}`, async () => {
+    test(`com${com}：紧缚经验档 ${tier} → LOSEBASE ${l0}/${l1}`, async () => {
       const world = seed_world();
       world.fixture.store.set('exp:31:51', [0, 10, 25][tier]);
       await run_com(world, com);
@@ -424,9 +420,9 @@ for (const [com, tiers] of [
   }
 }
 
-// —— @COM43/44：SOURCE:10 乘法链与装备位取反 ——
+// —— COM43/44：SOURCE:10 乘法链与装备位取反 ——
 
-test('@COM43：欲情×顺从×抖M×倒错 的 S10 链 + 眼罩位取反', async () => {
+test('com43：欲情×顺从×抖M×倒错 的 S10 链 + 眼罩位取反', async () => {
   const world = seed_world();
   const { fixture } = world;
   // 欲情 ≥ LV4（×1.20）、顺从 2（×0.80）、抖M 2（×1.30）、倒错
@@ -449,14 +445,14 @@ test('@COM43：欲情×顺从×抖M×倒错 的 S10 链 + 眼罩位取反', asyn
   assert.equal(fixture.store.get('tequip:31:43'), 0, '再执行即解除');
 });
 
-test('@COM43：胆怯翻倍 SOURCE:14', async () => {
+test('com43：胆怯翻倍 SOURCE:14', async () => {
   const world = seed_world();
   world.fixture.store.set('talent:31:10', 1);
   await run_com(world, 43);
   assert.equal(world.fixture.store.get('source:31:14'), 1000); // 500 × 2
 });
 
-test('@COM44：S10 = 800×链、S6/13/14 直填、触手支清 t:0、装上后 love gate', async () => {
+test('com44：S10 = 800×链、S6/13/14 直填、触手支清 t:0、装上后爱情经验条件', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('palam:31:5', 99); // ×0.80
@@ -484,9 +480,9 @@ test('@COM44：S10 = 800×链、S6/13/14 直填、触手支清 t:0、装上后 l
   assert.equal(fixture.store.get('t:0'), 0);
 });
 
-// —— @COM45/46：口塞位与灌肠 ——
+// —— COM45/46：口塞位与灌肠 ——
 
-test('@COM45：六格 SOURCE 直填 + 口塞位取反（kojo 守卫的写入路径）', async () => {
+test('com45：六格 SOURCE 直填 + 口塞位取反（kojo 检查的写入路径）', async () => {
   const world = seed_world();
   const { fixture } = world;
   await run_com(world, 45);
@@ -499,12 +495,12 @@ test('@COM45：六格 SOURCE 直填 + 口塞位取反（kojo 守卫的写入路�
   assert.equal(
     fixture.store.get('tequip:31:45'),
     1,
-    '口塞装上（#213 守卫位的写点）',
+    '口塞装上（#213 检查位的写点）',
   );
   assert.equal(fixture.store.get('exp:31:51'), 2);
 });
 
-test('@COM46：ABL:3 档 → S2/S13 基础，ABL:21 档整组覆写（含 S13）', async () => {
+test('com46：ABL:3 档 → S2/S13 基础，ABL:21 档整组覆写（含 S13）', async () => {
   // ABL:3 = 2 → S2 = 600 / S13 = 1400；ABL:21 = 1 → S13 覆写为 500
   const world = seed_world();
   world.fixture.store.set('abl:31:3', 2);
@@ -527,7 +523,7 @@ test('@COM46：ABL:3 档 → S2/S13 基础，ABL:21 档整组覆写（含 S13）
   assert.equal(f.store.get('source:31:15'), 1000);
 });
 
-test('@COM46：润滑档 ×S2 与 S6 +=；欲情×顺从链；钝感三连；重贞操 S13/3', async () => {
+test('com46：润滑档 ×S2 与 S6 +=；欲情×顺从链；钝感三连；重贞操 S13/3', async () => {
   const world = seed_world();
   const f = world.fixture;
   f.store.set('abl:31:3', 0); // S2 = 80 / S13 = 300（随后被 ABL:21=0 档覆写）
@@ -551,7 +547,7 @@ test('@COM46：润滑档 ×S2 与 S6 +=；欲情×顺从链；钝感三连；重
   assert.ok(f.text_lines().includes('肛门经验＋5'));
 });
 
-test('@COM46：初次排泄异常经验 +1；录像中 +2 且 CFLAG:4 = 2；二次录像 +1', async () => {
+test('com46：初次排泄异常经验 +1；录像中 +2 且 CFLAG:4 = 2；二次录像 +1', async () => {
   // 插入回合（TEQUIP:46 未装）不触发异常经验——只在解除（装着中执行）回合
   const w1 = seed_world();
   w1.fixture.store.set('tequip:31:46', 1); // 已装着 → 本回合是解除
@@ -576,7 +572,7 @@ test('@COM46：初次排泄异常经验 +1；录像中 +2 且 CFLAG:4 = 2；二�
   assert.equal(w3.fixture.store.get('cflag:31:4'), 2);
 });
 
-test('@COM46：插入回合 + 触手 → STAIN:4 |= 6；解除回合 + 着衣 → 弄脏衣物', async () => {
+test('com46：插入回合 + 触手 → STAIN:4 |= 6；解除回合 + 着衣 → 弄脏衣物', async () => {
   // 插入 + 触手：A 口污垢 2|4
   const w1 = seed_world();
   w1.fixture.store.set('tequip:31:90', 1);
@@ -602,9 +598,9 @@ test('@COM46：插入回合 + 触手 → STAIN:4 |= 6；解除回合 + 着衣 �
   );
 });
 
-// —— @COM47/48/49 ——
+// —— COM47/48/49 ——
 
-test('@COM47：已穿着 → 仅解除（无 LOSEBASE）；穿着时抖M减免 + 位取反', async () => {
+test('com47：已穿着 → 仅解除（无 LOSEBASE）；穿着时抖M减免 + 位取反', async () => {
   const w1 = seed_world();
   w1.fixture.store.set('tequip:31:47', 1);
   await run_com(w1, 47);
@@ -623,7 +619,7 @@ test('@COM47：已穿着 → 仅解除（无 LOSEBASE）；穿着时抖M减免 +
   assert.equal(w3.fixture.store.get('deltabase:31:1'), -45, '抖M ≤ 2 → 45');
 });
 
-test('@COM48：ABL:0 档与抖M配对链；被虐快乐三档；男人 E=2 的爱情经验', async () => {
+test('com48：ABL:0 档与抖M配对链；被虐快乐三档；男人 E=2 的爱情经验', async () => {
   const world = seed_world();
   const f = world.fixture;
   f.store.set('abl:31:0', 3); // S0 = 500
@@ -652,7 +648,7 @@ test('@COM48：ABL:0 档与抖M配对链；被虐快乐三档；男人 E=2 的�
   assert.equal(w3.fixture.store.get('exp:31:30'), 1);
 });
 
-test('@EVENT_SEITSU_ASIKOKI：男人/扶她 + 未熟 + Ｃ感度5 + 关系 150 → 精通', async () => {
+test('足交精通判定：男人/扶她 + 未熟 + Ｃ感度5 + 关系 150 → 精通', async () => {
   const world = seed_world();
   const f = world.fixture;
   f.store.set('talent:31:122', 1); // 温妮是男人
@@ -687,7 +683,7 @@ test('@EVENT_SEITSU_ASIKOKI：男人/扶她 + 未熟 + Ｃ感度5 + 关系 150 �
   assert.equal(w3.fixture.store.get('talent:31:135'), 1, '触手中不精通');
 });
 
-test('@COM49：ABL:3/EXP:1 双梯 + 位取反', async () => {
+test('com49：ABL:3/EXP:1 双梯 + 位取反', async () => {
   const world = seed_world();
   const f = world.fixture;
   f.store.set('abl:31:3', 1); // S2 = 500 / S13 = 2000
@@ -709,9 +705,9 @@ test('@COM49：ABL:3/EXP:1 双梯 + 位取反', async () => {
   assert.equal(f.store.get('tequip:31:49'), 0, '再执行即解除');
 });
 
-// —— @EQUIP_COM43-49：持续效果（直调 + 链序消费） ——
+// —— equip_com43-49：持续效果（直调 + 链序消费） ——
 
-test('@EQUIP_COM43：三格累加 + UP 直写（欲情/恐怖）', async () => {
+test('equip_com43：三格累加 + UP 直写（欲情/恐怖）', async () => {
   const world = seed_world();
   const f = world.fixture;
   world.era_flag.selectcom = 43;
@@ -728,7 +724,7 @@ test('@EQUIP_COM43：三格累加 + UP 直写（欲情/恐怖）', async () => {
   assert.ok(f.text_lines().includes('＜眼罩装着中＞'));
 });
 
-test('@EQUIP_COM44：抖M 档 A × 倒错 × 欲情，四格累加，触手 T:0 += 1', async () => {
+test('equip_com44：抖M 档 A × 倒错 × 欲情，四格累加，触手 T:0 += 1', async () => {
   const world = seed_world();
   const f = world.fixture;
   world.era_flag.selectcom = 44;
@@ -751,7 +747,7 @@ test('@EQUIP_COM44：抖M 档 A × 倒错 × 欲情，四格累加，触手 T:0 
   assert.equal(w2.fixture.store.get('t:0'), 1);
 });
 
-test('@EQUIP_COM45：整阈值紧缚减免（<20/<50）+ 四格累加', async () => {
+test('equip_com45：整阈值紧缚减免（<20/<50）+ 四格累加', async () => {
   const world = seed_world();
   const f = world.fixture;
   world.era_flag.selectcom = 45;
@@ -771,7 +767,7 @@ test('@EQUIP_COM45：整阈值紧缚减免（<20/<50）+ 四格累加', async ()
   }
 });
 
-test('@EQUIP_COM46：EXP:1 半阈值档；S14 += B（不是 C）；S13/3', async () => {
+test('equip_com46：EXP:1 半阈值档；S14 += B（不是 C）；S13/3', async () => {
   const world = seed_world();
   const f = world.fixture;
   world.era_flag.selectcom = 46;
@@ -790,12 +786,12 @@ test('@EQUIP_COM46：EXP:1 半阈值档；S14 += B（不是 C）；S13/3', async
   assert.equal(
     f.store.get('source:31:14'),
     300,
-    'S14 += B（源 :307 原样，不是 C）',
+    'S14 += B（式子如此，不是 C）',
   );
   assert.equal(f.store.get('exp:31:1'), 3 + 3, 'EXP:1 += 3（种子 3 + 增量）');
 });
 
-test('@EQUIP_COM47：恐怖×抖M×助手抖S×胆怯 的 A 链 + S11/S10/S15 档增量', async () => {
+test('equip_com47：恐怖×抖M×助手抖S×胆怯 的 A 链 + S11/S10/S15 档增量', async () => {
   const world = seed_world({ assi: 17 });
   const f = world.fixture;
   world.era_flag.selectcom = 47;
@@ -814,7 +810,7 @@ test('@EQUIP_COM47：恐怖×抖M×助手抖S×胆怯 的 A 链 + S11/S10/S15 �
   assert.ok(f.text_lines().some((l) => l.includes('束缚衣着装中＞')));
 });
 
-test('@EQUIP_COM49：整阈值 EXP 档 + 无 S14 += B（与 46 互异）', async () => {
+test('equip_com49：整阈值 EXP 档 + 无 S14 += B（与 46 互异）', async () => {
   const world = seed_world();
   const f = world.fixture;
   world.era_flag.selectcom = 49;
@@ -832,7 +828,7 @@ test('@EQUIP_COM49：整阈值 EXP 档 + 无 S14 += B（与 46 互异）', async
 
 // —— TRAIN_MESSAGE 分支（B 40-49 / A 40-42） ——
 
-/** 直调某 SELECTCOM 的 B 分支（公共头由 train_message_b 出） */
+/** 直调某 selectcom 的 B 分支（公共头由 train_message_b 出） */
 async function run_b(world, com) {
   world.era_flag.selectcom = com;
   const { train_message_b } = world.fixture.load_module(
@@ -850,7 +846,7 @@ test('B40：普通支两行 + 连续打的红印差；着ぐるみ支', async ()
   assert.ok(lines.includes('你在温妮屁股上、一掌一掌地拍打着。'));
   assert.ok(lines.includes('温妮被打的地方变红了…'));
 
-  // PREVCOM == 40 → 越来越红
+  // prevcom == 40 → 越来越红
   const w2 = seed_world();
   w2.era_flag.prevcom = 40;
   await run_b(w2, 40);
@@ -862,7 +858,7 @@ test('B40：普通支两行 + 连续打的红印差；着ぐるみ支', async ()
   w3.fixture.store.set('cflag:31:40', 64);
   await run_b(w3, 40);
   const l3 = w3.fixture.text_lines();
-  // 特别服装名（cflag:42 = 11 → 史莱姆）由 PRINT_CLOTHTYPE_SPECIAL 内联拼进同一行
+  // 特别服装名（cflag:42 = 11 → 史莱姆）内联拼进同一行
   assert.ok(l3.includes('你在史莱姆外面、一掌一掌地拍打着。'));
   assert.ok(l3.includes('史莱姆里的温妮、好像不太有感觉…'));
 
@@ -931,7 +927,7 @@ test('B43/44/45/49：装着/解除二支（打印在取反之前）', async () =
   assert.ok(w5.fixture.text_lines().includes('温妮的菊花、被插入了电极…'));
 });
 
-test('B46：解除支的抖M六档与 TFLAG:899 门；插入支', async () => {
+test('B46：解除支的抖M六档与 TFLAG:899 条件；插入支', async () => {
   const w1 = seed_world();
   w1.fixture.store.set('tequip:31:46', 1);
   w1.fixture.store.set('abl:31:21', 5);
@@ -1005,7 +1001,7 @@ test('B47：助手肤色三支 + 解除支；B48：欲情档', async () => {
   );
 });
 
-/** 直调某 SELECTCOM 的 A 分支 */
+/** 直调某 selectcom 的 A 分支 */
 async function run_a(world, com) {
   world.era_flag.selectcom = com;
   const { train_message_a } = world.fixture.load_module(
@@ -1080,12 +1076,12 @@ test('A40-42：TFLAG:899 > 1 时三条指令都静默（&& 与 || 同优先级�
           (l) => !l.startsWith('（') && !l.includes('‥') && !l.includes('---'),
         ),
       [],
-      `SELECTCOM = ${com} 失神中无反应文本`,
+      `selectcom = ${com} 失神中无反应文本`,
     );
   }
 });
 
-test('A40-42：装着灌肠塞时的排泄段（分支体内，:1253-1272）', async () => {
+test('A40-42：装着灌肠塞时的排泄段（分支体内）', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:46', 1);
   world.fixture.store.set('abl:31:21', 4);
@@ -1101,11 +1097,11 @@ test('A40-42：装着灌肠塞时的排泄段（分支体内，:1253-1272）', a
   );
 });
 
-test('A43-49：源侧无 A 分支 → 显式无操作，不出占位行（#402 收口）', async () => {
-  // #45 起 A43-49 落的是「族票未落地」占位行；#402 查实源侧 :1208-1276 从
+test('A43-49：无 A 分支 → 显式无操作，不出占位行（#402 收尾）', async () => {
+  // #45 起 A43-49 打的是「族级工单未实现」占位行；#402 查实分发从
   // 42 直跳 72、43-49 从来没有 A 支，故在 train-message.js 注册显式空
   // handler（同款先例 com-tentacle.js 的 A 100-109/208）——占位行从此只
-  // 表示「族票未落地」，而这几个号永远不该出现它。
+  // 表示「族级工单未实现」，而这几个号永远不该出现它。
   const world = seed_world();
   world.era_flag.selectcom = 45;
   const { train_message_a } = world.fixture.load_module(
@@ -1114,21 +1110,21 @@ test('A43-49：源侧无 A 分支 → 显式无操作，不出占位行（#402 �
   await train_message_a();
   assert.ok(
     !world.fixture.text_lines().some((l) => l.includes('指令 45 的参数反应')),
-    '源侧无分支的号不得出占位行',
+    '无分支的号不得出占位行',
   );
 });
 
-// —— CASE 40 升格规则与 JUMPFORM 落点 ——
+// —— CASE 40 升格规则与跳转目标 ——
 
-test('CASE 40：同调教者 + 上回合后背位族 → 升格 132（COM_ABLE132 未落地视为可）', async () => {
+test('CASE 40：同调教者 + 上回合后背位族 → 升格 132（132 号可用性检查未实现时视为可）', async () => {
   const world = seed_world();
   const { get_adv_com } = world.fixture.load_module('system/train/com-adv');
   // assiplay = 0 且 tflag:50 = 0 → 同调教者
   for (const prev of [21, 131, 133, 134]) {
     world.era_flag.prevcom = prev;
-    assert.equal(await get_adv_com(40), 132, `PREVCOM = ${prev}`);
+    assert.equal(await get_adv_com(40), 132, `prevcom = ${prev}`);
   }
-  // 第二臂：上上回合后背位族 + 上回合 120/121
+  // 第二分支：上上回合后背位族 + 上回合 120/121
   world.era_flag.prevcom = 120;
   world.fixture.store.set('tflag:59', 132);
   assert.equal(await get_adv_com(40), 132);
@@ -1150,13 +1146,13 @@ test('CASE 40：调教者换了人 → 不升格', async () => {
   assert.equal(await get_adv_com(40), 40);
 });
 
-test('CASE 40：COM_ABLE132 不可用 → 维持 40（规则内复核）', async () => {
+test('CASE 40：132 号可用性检查不通过 → 维持 40（规则内复核）', async () => {
   const world = seed_world();
   const { get_adv_com } = world.fixture.load_module('system/train/com-adv');
   const { com_able_family } = world.fixture.load_module(
     'system/train/com-family',
   );
-  // 临时装一个返回 0 的 COM_ABLE132（J19 落地前的复核路径）
+  // 临时装一个返回 0 的 132 号可用性检查（J19 实现前的复核路径）
   com_able_family.implemented.set(132, async () => 0);
   try {
     world.era_flag.prevcom = 21;
@@ -1166,13 +1162,13 @@ test('CASE 40：COM_ABLE132 不可用 → 维持 40（规则内复核）', async
   }
 });
 
-test('@COM40 的 JUMPFORM 落点：升格目标已注册 → 执行 COM132 真身；不升格 → 正常打屁股', async () => {
+test('com40 的跳转目标：升格目标已注册 → 执行 COM132 真身；不升格 → 正常打屁股', async () => {
   const world = seed_world();
   world.fixture.load_module('system/train/com-advanced'); // COM132 真身注册
   world.era_flag.prevcom = 21; // 命中升格
   world.era_flag.selectcom = 21; // COM132 真身的确认早退种子（同 com-advanced 用例）
-  world.fixture.store.set('item:4', 1); // PBAND：insert_able 的男根判据
-  world.fixture.store.set('abl:31:14', 2); // able132 的 skill 门：目标技巧 >= 2
+  world.fixture.store.set('item:4', 1); // PBAND：insert_able 的男根判断条件
+  world.fixture.store.set('abl:31:14', 2); // able132 的技巧条件：目标技巧 >= 2
   world.fixture.store.set('exp:31:0', 4);
   world.fixture.store.set('palam:31:3', 500);
   const result = await world.com_family.call(40);
@@ -1184,7 +1180,7 @@ test('@COM40 的 JUMPFORM 落点：升格目标已注册 → 执行 COM132 真�
   assert.equal(
     world.era_flag.selectcom,
     132,
-    '原作显式回填 SELECTCOM = 132（跳转替换整段，COM40 本体不执行）',
+    '显式回填 selectcom = 132（跳转替换整段，COM40 本体不执行）',
   );
 
   const w2 = seed_world();
@@ -1193,11 +1189,11 @@ test('@COM40 的 JUMPFORM 落点：升格目标已注册 → 执行 COM132 真�
   assert.ok(w2.fixture.text_lines().includes('打屁股'));
 });
 
-// —— TEQUIP:45 写入路径 → @KOJO_MESSAGE_COM 头部守卫（#213 接触面） ——
+// —— TEQUIP:45 写入路径 → kojo_message_com 头部检查（#213 接触面） ——
 
-test('口塞装上（COM45 真身）→ K3 守卫跳过；SELECTCOM = 45 豁免（第 3 道守卫）', async () => {
-  // 判别器：口塞守卫（SELECTCOM != 45）静默；SELECTCOM = 45 豁免后落到
-  // 口塞着脱真台词（#234 起 DOG_KOJO_3 已是真身，不再打占位行）。
+test('口塞装上（COM45 真身）→ K3 检查跳过；selectcom = 45 豁免（第 3 项检查）', async () => {
+  // 判别器：口塞检查（selectcom != 45）静默；selectcom = 45 豁免后落到
+  // 口塞着脱真台词（#234 起 K3 口上已是真身，不再打占位行）。
   const world = seed_world({ assi: -1 });
   world.fixture.load_module('kojo/kojo-k3-noble');
   const { kojo_message_com_3 } =
@@ -1212,23 +1208,23 @@ test('口塞装上（COM45 真身）→ K3 守卫跳过；SELECTCOM = 45 豁免�
   assert.deepEqual(
     world.fixture.text_lines().filter((l) => l.includes('嗯~')),
     [],
-    '口塞守卫先跳过（SELECTCOM = 0 ≠ 45）',
+    '口塞检查先跳过（selectcom = 0 ≠ 45）',
   );
 
   world.era_flag.selectcom = 45;
   await kojo_message_com_3(() => 0);
   assert.ok(
     world.fixture.text_lines().some((l) => l.includes('嗯~…嗯呜~…嗯呼~…嗯嗯~')),
-    'SELECTCOM = 45 豁免口塞守卫 → 走到口塞着脱支',
+    'selectcom = 45 豁免口塞检查 → 走到口塞着脱支',
   );
 });
 
-// —— source-check 的装备持续效果消费循环（#223 接线） ——
+// —— source-check 的装备持续效果消费循环（#223 接入） ——
 
-test('SOURCE_CHECK 链循环：装备位按链序全部走真身（链上无缺失位）', async () => {
+test('source-check 链循环：装备位按链序全部走真身（链上无缺失位）', async () => {
   const world = seed_world({ assi: 17 });
   const { emit } = world.fixture.load_module('system/event/registry');
-  world.fixture.load_module('system/train/com-toy'); // 道具族 EQUIP_COM11 注册
+  world.fixture.load_module('system/train/com-toy'); // 道具族 equip_com11 注册
   world.fixture.load_module('event/source-check');
   // 眼罩（43，SM 族）+ 振动器位 11（道具族）同时点亮——链上每个号都有真身
   world.fixture.store.set('tequip:31:43', 1);
@@ -1241,7 +1237,7 @@ test('SOURCE_CHECK 链循环：装备位按链序全部走真身（链上无缺�
   assert.ok(lines.includes('＜眼罩装着中＞'), '眼罩位真身执行');
   assert.ok(
     lines.some((l) => l.includes('＜蠕虫插入中＞')),
-    '振动器位真身执行（EQUIP_COM11 已注册）',
+    '振动器位真身执行（equip_com11 已注册）',
   );
   assert.ok(
     !lines.some((l) => l.includes('尚未移植')),

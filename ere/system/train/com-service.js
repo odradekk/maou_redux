@@ -1,8 +1,8 @@
 /**
- * @file 奉仕系指令族（30-38）：@COM / @COM_ABLE / TRAIN_MESSAGE / GET_ADV_COM。
+ * @file 奉仕系指令族（30-38）：指令真身 / 可用性检查 / TRAIN_MESSAGE / get_adv_com。
  *
- * 本文件的高级跳转遵从 COMF 头部的 JUMPFORM：目标尚未移植时返回
- * COM_MISSING，由训练循环废弃本回合；绝不回退执行原基础指令。
+ * 本文件的高级跳转遵从指令真身头部的升格检查：目标尚未移植时返回
+ * COM_MISSING，由训练循环废弃本回合；绝不回退执行基础指令。
  */
 
 const era = require('#/era-electron');
@@ -37,11 +37,11 @@ const {
   confirm_lost_virgin,
 } = require('#/system/train/com-vaginasex');
 
-/** 本文件没有自行存根化的原作调用；口上由 source-check 的既有分发承载。 */
+/** 本文件没有需要存根化的未移植调用；口上由 source-check 的既有分发承载。 */
 
 /**
- * Emuera strict TIMES：本游戏关闭「向 Eramaker 对齐」，须用十进制定点相乘，
- * 每一步朝零截断，不能让 JS 二进制浮点把 175 × 1.40 算成 244。
+ * TIMES：本游戏须用十进制定点相乘、每一步朝零截断，不能让 JS 二进制
+ * 浮点把 175 × 1.40 算成 244。
  */
 function times(value_to_multiply, rate) {
   const text = String(rate);
@@ -1316,7 +1316,7 @@ async function com38() {
   return 1;
 }
 
-// —— @COM_ABLE30-38（COMABLE.ERB:1447-1870；有序早退） ——
+// —— com_able_family 的 30-38 号可用性检查（有序早退） ——
 
 function worn(target) {
   return era.get(`cflag:${target}:40`) || 0;
@@ -1498,7 +1498,7 @@ com_able_family.register(38, async () => {
   return costume_blocked(target, 0, false, true) ? 0 : 1;
 });
 
-// —— TRAIN_MESSAGE_B（EVENT_TRAIN_MESSAGE_B.ERB:1485-1739） ——
+// —— train_message_b：30-38 的 B 文 ——
 
 function target_name() {
   return chara_callname(era_flag.target);
@@ -1750,18 +1750,18 @@ async function train_message_b_38() {
   era.print(`${target_name()}用脚夹着${player_name()}的阴茎${style}玩弄着…`);
 }
 
-/** EVENT_TRAIN_MESSAGE_A :30-108：COM33 的公共股间性交射精分支。 */
-// A 30-38 的射精文本属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
-// train-message.js）：股间射精、狗灌精、口/手/足射精链都在那里，本族不再
-// 另留一份拷贝（两份同时跑会把同一行打两遍）。源侧 A 文件对 30-33/35/37/38
-// 没有专属分支，故这些号显式无操作；34/36 保留骑乘反应。
+/** A 消息：COM33 的公共股间性交射精分支。 */
+// A 30-38 的射精文本属 A 消息的公共段（#402 合流到 train-message.js）：
+// 股间射精、狗灌精、口/手/足射精链都在那里，本族不再另留一份拷贝（两份
+// 同时跑会把同一行打两遍）。A 消息对 30-33/35/37/38 没有专属分支，故这些
+// 号显式无操作；34/36 保留骑乘反应。
 async function no_message_a() {
   return 0;
 }
 
 // A 文只有 TFLAG 链；按真实旗标注册在本族可达的 SELECTCOM，避免把九条写成错误的孤立指令分支。
 
-/** EVENT_TRAIN_MESSAGE_A :1175-1203：骑乘位的肛门快感增量反应。 */
+/** A 消息：骑乘位的肛门快感增量反应。 */
 function train_message_a_riding_reaction() {
   const target = target_name();
   const pleasure = era.get(`delta:${era_flag.target}:2`) || 0;
@@ -1800,12 +1800,12 @@ function train_message_a_riding_reaction() {
 
 async function train_message_a_riding() {
   // 公共段（#402 合流到 train-message.js）在分发之前已跑完：这里只剩骑乘位
-  // 自己的参数反应。原作同一 IF / ELSEIF 链：玩家性交射精时已走 TFLAG:2 段，
+  // 自己的参数反应。同一 IF / ELSEIF 链：玩家性交射精时已走 TFLAG:2 段，
   // 不能再叠骑乘反应。
   if ((era.get('tflag:2') || 0) === 0) train_message_a_riding_reaction();
 }
 
-// —— GET_ADV_COM CASE30-34 ——
+// —— get_adv_com CASE 30-34 ——
 function same_trainer() {
   return era_flag.assiplay
     ? game.system.上次调教者是助手 !== 0
@@ -1839,10 +1839,10 @@ adv_com_family.register(31, async (rand) => {
     return 64;
   }
   if (
-    // COMF_JUMP.ERB:522 `(ASSIPLAY && TFLAG:50 == 0) || (ASSIPLAY == 0 &&
-    // TFLAG:50) && TEQUIP:89 == 0` 按 Emuera 的「&& 与 || 同优先级、左结合」
-    // 读作 `(调教者切换两臂) && TEQUIP:89 == 0`（#517）——不是 C 式
-    // 「&& 优先」的「第二臂各自带兽奸门」。
+    // `(ASSIPLAY && TFLAG:50 == 0) || (ASSIPLAY == 0 && TFLAG:50) &&
+    // TEQUIP:89 == 0` 按「&& 与 || 同优先级、左结合」读作
+    // `(调教者切换两个分支) && TEQUIP:89 == 0`（#517）——不是 C 式
+    // 「&& 优先」的「第二个分支各自带兽奸检查」。
     ((era_flag.assiplay && !game.system.上次调教者是助手) ||
       (!era_flag.assiplay && game.system.上次调教者是助手)) &&
     !target_tequip(89) &&

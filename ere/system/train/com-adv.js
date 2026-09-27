@@ -1,38 +1,36 @@
 /**
- * @file 高级 COM 升格分发：@GET_ADV_COM 的骨架与升格机制（issue #213——
- * 各族的升格规则随族票注册，这张票只立分发面）。
+ * @file 高级 COM 升格分发：get_adv_com 的骨架与升格机制（issue #213——
+ * 各族的升格规则随族工单注册，本工单只立分发面）。
  *
- * == 原作的机制（升格 = 「前两回合序列 → 高级 COM」） ==
+ * == 升格机制：前两回合序列 → 高级 COM ==
  *
- * @GET_ADV_COM(ARG) 按当前指令号查升格规则：规则读 PREVCOM（上回合指令）、
+ * get_adv_com(id) 按当前指令号查升格规则：规则读 PREVCOM（上回合指令）、
  * TFLAG:59（上上回合指令，由回合循环推进）、TFLAG:50（上回合调教者是否
  * 助手）、ASSIPLAY、ABL:PLAYER:12（调教者技巧）与 PALAM:5（欲情）等，
  * 命中则 CALL COM_ABLE<目标> 复核后 RETURN 高级号（不可用则落空），
  * 不命中落到函数尾 RETURN ARG——**原样返回当前指令号**。
  *
  * 两个调用面（ere 侧同一族供给）：
- *   - 渲染侧：@SHOW_COMMENU 的 CALL GET_ADV_COM, L_I（USERCOM.ERB:209），
+ *   - 渲染侧：指令菜单界面逐格调用 get_adv_com（传入玩家可直选的 L_I），
  *     方格标签取 %TRAIN_NAME:RESULT%——名字用升格后的号、编号用升格前的
  *     位次（#211 实证：8 号格标签已是「刺激Ｇ点」＝COM84 而编号仍是 8）；
- *   - 执行侧：COMF*.ERB 头部的 LOCAL = n / CALL GET_ADV_COM,LOCAL /
- *     SIF RESULT != LOCAL / JUMPFORM COM{RESULT}（21 个文件，如
- *     COMF8_指挿入れ.ERB:17-20）——玩家选了 n、实际执行升格后的号。
- *     JUMPFORM 的目标集静态可枚举（#7 的六族之一），ere 侧由族票在
- *     com-<族>.js 里以 com_family.call(升格号) 同位落地。
+ *   - 执行侧：各指令真身头部先以当前号调用 get_adv_com，返回号与当前号
+ *     不同即跳转执行升格后的指令（21 个调用点）——玩家选了 n、实际执行
+ *     升格后的号。JUMPFORM 的目标集静态可枚举（#7 的六族之一），ere 侧
+ *     由族工单在 com-<族>.js 里以 com_family.call(升格号) 同位实现。
  *
- * == 升格规则的副作用（留在规则体内，随族票） ==
+ * == 升格规则的副作用（留在规则体内，随族工单） ==
  *
  * CASE 20-34 的体位族升格会写 FLAG:71（体位连续记录，1120/1121/2120…），
  * CASE 20/21/26/27/31/80 的 3P 升格写 TFLAG:42 = 1（3P 连续旗标）并先清
- * TFLAG:42 = 0——渲染侧逐格调用时这些写入照常发生（原作同形：SHOW_COMMENU
- * 的 CALL 亦带副作用）。
+ * TFLAG:42 = 0——渲染侧逐格调用时这些写入照常发生（指令菜单渲染的
+ * 逐格调用同样带副作用）。
  *
  * == 规则挂点与缺失语义 ==
  *
- * 规则挂在**可直选空间**（DECLARED_TRAIN_IDS 101 个号）：SHOW_COMMENU 与
- * COMF 头部传入的都是玩家可直选的 L_I。21 个 CASE ⊂ 101（135 在
- * Train.csv 有效行内）。空间内未注册 = 该指令无升格规则 = 原样返回
- * （RETURN ARG 的等价物，由调用点以 whenMissing 传入——#7 决议：缺失
+ * 规则挂在**可直选空间**（DECLARED_TRAIN_IDS 101 个号）：指令菜单界面与
+ * 指令真身头部传入的都是玩家可直选的 L_I。21 个 CASE ⊂ 101（135 在
+ * 指令表有效行内）。空间内未注册 = 该指令无升格规则 = 原样返回
  * 语义归调用点，本族不硬编码）；空间外 = 拼写错误，启动/调用即抛错。
  *
  * @param 随机源以参数注入（RAND:N → (n) => [0, n) 整数；缺省均匀随机），
@@ -44,16 +42,16 @@ const { DispatchFamily } = require('#/system/dispatch/dispatch-family');
 const { DECLARED_TRAIN_IDS } = require('#/system/train/com-family');
 
 /**
- * @GET_ADV_COM 的升格规则族。规则签名（#213 定死，族票照此写）：
+ * get_adv_com 的升格规则族。规则签名（#213 定死，族工单照此写）：
  *   async (rand) => number——返回升格后的 COM 号；不升级返回当前号。
  * rand 是 RAND:N 的随机源（[0, n) 整数）。
  */
 const adv_com_family = new DispatchFamily('GET_ADV_COM', DECLARED_TRAIN_IDS);
 
 /**
- * @GET_ADV_COM（COMF_JUMP.ERB:1-684）。
+ * get_adv_com：升格分发入口。
  *
- * 这张票（#213）零规则注册：未注册的号原样返回（RETURN ARG）。族票
+ * 这张工单（#213）零规则注册：未注册的号原样返回（RETURN ARG）。族工单
  * （J9-J20）把各 CASE 的升格规则注册进 adv_com_family。
  *
  * @param {number} id 当前指令号（可直选空间内；玩家所选的 L_I）

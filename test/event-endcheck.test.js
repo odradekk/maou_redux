@@ -1,15 +1,15 @@
 /**
- * @ENDCHECK 全链的行为测试（issue #116：S4 可空转 + 结局分派循环）。
+ * run_endcheck 全链的行为测试（issue #116：S4 可空转 + 结局分派循环）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
  * 直接单元级驱动 run_endcheck（不走路由），对照工单 #116 验收清单：
- *   1. ENDCHECKMAIN 五条线（2801 门槛 / 2802 资金 / 2803 魔力过载 /
+ *   1. endcheck_main 五条线（2801 门槛 / 2802 资金 / 2803 魔力过载 /
  *      2804 魔王过载 / FLAG:2816 反叛）；
- *   2. ENDRESET 十一角清场（银黑桃/嘉德段位守卫读各自线值、葵希罗落 FLAG 侧）；
- *   3. ENDCHECKCHARA 素质定线（恋慕 10 / 淫乱 20）与四子判定调用守卫；
+ *   2. endreset 十一角清场（银黑桃/嘉德段位检查读各自线值、葵希罗落 FLAG 侧）；
+ *   3. endcheck_chara 素质定线（恋慕 10 / 淫乱 20）与四子判定调用检查；
  *   4. 分派循环：只巡有脚本的四族（7/10/11/14）、小节 = 线值 / 10、个位
  *      防重播、2801 == 99 短路、空间外抛错；
- *   5. ENDING_N 门槛（2801 == 99 && DAY == 500）；END31 死调用已删（2803
+ *   5. ending_n 门槛（2801 == 99 && DAY == 500）；END31 死调用已删（2803
  *      非零静默）；菲娅线 -10 崩坏态当天命中 Bad Ending 占位演出（#649 用户决定）。
  */
 
@@ -33,14 +33,14 @@ function join_chara(fixture, no, name = `角色${no}`) {
   fixture.era.addCharacter(no);
 }
 
-// —— ENDCHECKMAIN 五条线（验收清单第 1 条的五个面）——
+// —— endcheck_main 五条线（验收清单第 1 条的五个面）——
 
-test('ENDCHECKMAIN 2801：DAY==500 且主线空闲（==0 或 >=90）→ 置 99；其余不动', async () => {
+test('endcheck_main 2801：DAY==500 且主线空闲（==0 或 >=90）→ 置 99；其余不动', async () => {
   {
     // 主线未起步（0）
     const { fixture, mod } = setup_endcheck();
     fixture.store.set('flag:10000', 500); // DAY:0
-    // #404 起置 99 会在同一轮尾部真调 @ENDING_N（演出 + ENDINGINPUT）：
+    // #404 起置 99 会在同一轮尾部真调 ending_n（演出 + ending_input）：
     // 喂 [2]「继续游戏」让它正常返回（[1] 是 QUIT，走 throw 型控制流）
     fixture.set_inputs(2);
     await mod.run_endcheck();
@@ -84,7 +84,7 @@ test('ENDCHECKMAIN 2801：DAY==500 且主线空闲（==0 或 >=90）→ 置 99�
   }
 });
 
-test('ENDCHECKMAIN 2802：持有金超过非作弊资金 + 8766 容差 → 置 10；恰在界上不动', async () => {
+test('endcheck_main 2802：持有金超过非作弊资金 + 8766 容差 → 置 10；恰在界上不动', async () => {
   {
     const { fixture, mod } = setup_endcheck();
     fixture.store.set('flag:10004', 10067); // MONEY
@@ -105,7 +105,7 @@ test('ENDCHECKMAIN 2802：持有金超过非作弊资金 + 8766 容差 → 置 1
   }
 });
 
-test('ENDCHECKMAIN 2803：奴隶魔力过载记录角色号；占用中（CFLAG:x:1 非零）不记', async () => {
+test('endcheck_main 2803：奴隶魔力过载记录角色号；占用中（CFLAG:x:1 非零）不记', async () => {
   {
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 31, '温妮');
@@ -127,14 +127,14 @@ test('ENDCHECKMAIN 2803：奴隶魔力过载记录角色号；占用中（CFLAG:
     assert.equal(
       fixture.store.get('exflag:2803') || 0,
       0,
-      '占用中的角色不得计入（原作 CFLAG:(COUNTER):1 == 0 守卫）',
+      '占用中的角色不得计入（CFLAG:(COUNTER):1 == 0 检查）',
     );
   }
   {
-    // 覆盖写语义（原作 :51-55 无 break）。加入序故意非升序（31 先、24 后）：
+    // 覆盖写语义（无 break）。加入序故意非升序（31 先、24 后）：
     // ere 按引擎键序迭代（getAddedCharacters 数值升序，#150），「后命中」＝
-    // 最大命中 ID（31）；原作位序模型（位序＝加入序）下会记 24——两个模型
-    // 在非升序加入时分道，这里是顺序语义的活判据
+    // 最大命中 ID（31）；位序模型（位序＝加入序）下会记 24——两个模型
+    // 在非升序加入时分道，这里是顺序语义的活条件
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 31, '温妮');
     join_chara(fixture, 24, '莉莉');
@@ -149,21 +149,21 @@ test('ENDCHECKMAIN 2803：奴隶魔力过载记录角色号；占用中（CFLAG:
   }
 });
 
-test('ENDCHECKMAIN 2804：魔王自己 CFLAG:0:9 >= 1500 → 置 10', async () => {
+test('endcheck_main 2804：魔王自己 CFLAG:0:9 >= 1500 → 置 10', async () => {
   const { fixture, mod } = setup_endcheck();
   fixture.store.set('cflag:0:9', 1500);
   await mod.run_endcheck();
   assert.equal(fixture.store.get('exflag:2804'), 10, '魔王过载必须置 10');
 });
 
-test('ENDCHECKMAIN FLAG:2816：威望耗尽（EX_FLAG:99 <= 0）→ FLAG 侧置 10；正值不动', async () => {
+test('endcheck_main FLAG:2816：威望耗尽（EX_FLAG:99 <= 0）→ FLAG 侧置 10；正值不动', async () => {
   {
     const { fixture, mod } = setup_endcheck();
     await mod.run_endcheck(); // 夹具零播种 → 威望 0
     assert.equal(
       fixture.store.get('flag:2816'),
       10,
-      '威望 <= 0 必须置 FLAG:2816 = 10（原作错写 FLAG 侧，1:1 照写）',
+      '威望 <= 0 必须置 FLAG:2816 = 10（错写 FLAG 侧，有意保留）',
     );
   }
   {
@@ -178,16 +178,16 @@ test('ENDCHECKMAIN FLAG:2816：威望耗尽（EX_FLAG:99 <= 0）→ FLAG 侧置 
   }
 });
 
-// —— ENDRESET 清场 ——
+// —— endreset 清场 ——
 
-test('ENDRESET：角色全不在场 → 清全部十一角线 flag；银黑桃/嘉德段位守卫 1:1', async () => {
+test('endreset：角色全不在场 → 清全部十一角线 flag；银黑桃/嘉德段位检查一致', async () => {
   const { fixture, mod } = setup_endcheck();
   // 十一角线 flag 全部预置非零
   for (const id of [2805, 2806, 2807, 2808, 2809, 2810, 2811, 2812, 2813]) {
     fixture.store.set(`exflag:${id}`, 50);
   }
-  fixture.store.set('exflag:2814', 299); // 银黑桃：守卫线内 → 清
-  fixture.store.set('exflag:2810', 499); // 嘉德：守卫读自家线值（< 500）→ 清
+  fixture.store.set('exflag:2814', 299); // 银黑桃：检查线内 → 清
+  fixture.store.set('exflag:2810', 499); // 嘉德：检查读自家线值（< 500）→ 清
   fixture.store.set('flag:2815', 50); // 葵希罗（FLAG 侧）
   fixture.store.set('exflag:2815', 77); // 葵希罗的 EX_FLAG 侧（族 15 不进分派，无消费者）
   await mod.run_endcheck();
@@ -208,14 +208,14 @@ test('ENDRESET：角色全不在场 → 清全部十一角线 flag；银黑桃/�
   assert.equal(
     fixture.store.get('exflag:2815'),
     77,
-    '葵希罗的 EX_FLAG 侧不是清场对象（原作写 FLAG 侧的错写 1:1）',
+    '葵希罗的 EX_FLAG 侧不是清场对象（写 FLAG 侧的错写，有意保留）',
   );
 });
 
-test('ENDRESET：银黑桃死亡段（>= 300）不清；嘉德守卫读自家线值（>= 500 才免清）', async () => {
+test('endreset：银黑桃死亡段（>= 300）不清；嘉德检查读自家线值（>= 500 才免清）', async () => {
   const { fixture, mod } = setup_endcheck();
   fixture.store.set('exflag:2814', 300); // 银黑桃放走/死亡段
-  fixture.store.set('exflag:2810', 500); // 嘉德天神宫段——守卫读自家线值 → 不清
+  fixture.store.set('exflag:2810', 500); // 嘉德天神宫段——检查读自家线值 → 不清
   join_chara(fixture, 17, '玛奥');
   fixture.store.set('exflag:2805', 50); // 在场：不清
   await mod.run_endcheck();
@@ -223,12 +223,12 @@ test('ENDRESET：银黑桃死亡段（>= 300）不清；嘉德守卫读自家线
   assert.equal(
     fixture.store.get('exflag:2810'),
     500,
-    '嘉德 >= 500 不得清（守卫读 2810 自家线值）',
+    '嘉德 >= 500 不得清（检查读 2810 自家线值）',
   );
   assert.equal(fixture.store.get('exflag:2805'), 50, '玛奥在场不得清');
 
-  // 银黑桃线值在守卫线内、嘉德线值 >= 500：嘉德仍不得清——
-  // 若守卫误读银黑桃线值（299 < 500）会把 2810 清掉
+  // 银黑桃线值在检查线内、嘉德线值 >= 500：嘉德仍不得清——
+  // 若检查误读银黑桃线值（299 < 500）会把 2810 清掉
   const b = setup_endcheck();
   b.fixture.store.set('exflag:2814', 77);
   b.fixture.store.set('exflag:2810', 500);
@@ -236,11 +236,11 @@ test('ENDRESET：银黑桃死亡段（>= 300）不清；嘉德守卫读自家线
   assert.equal(
     b.fixture.store.get('exflag:2810'),
     500,
-    '嘉德 2810 >= 500 不得清（守卫不得读银黑桃线值）',
+    '嘉德 2810 >= 500 不得清（检查不得读银黑桃线值）',
   );
 
   // 银黑桃线值 >= 500、嘉德线值 77：嘉德必须清——
-  // 若守卫误读银黑桃线值（500 不小于 500）会漏清
+  // 若检查误读银黑桃线值（500 不小于 500）会漏清
   const c = setup_endcheck();
   c.fixture.store.set('exflag:2814', 500);
   c.fixture.store.set('exflag:2810', 77);
@@ -248,10 +248,10 @@ test('ENDRESET：银黑桃死亡段（>= 300）不清；嘉德守卫读自家线
   assert.equal(
     c.fixture.store.get('exflag:2810'),
     0,
-    '嘉德 2810 < 500 必须清（守卫不得读银黑桃线值）',
+    '嘉德 2810 < 500 必须清（检查不得读银黑桃线值）',
   );
 });
-// —— ENDCHECKCHARA ——
+// —— endcheck_chara ——
 
 test('素质定线：恋慕（TALENT:85）置 10、淫乱（TALENT:76）置 20、无线旗标不动；葵希罗落 FLAG 侧', async () => {
   {
@@ -288,7 +288,7 @@ test('素质定线：恋慕（TALENT:85）置 10、淫乱（TALENT:76）置 20�
     assert.equal(fixture.store.get('exflag:2805'), 30, '已起步的线不得重定线');
   }
   {
-    // 葵希罗：定线写 FLAG 侧（原作错写 1:1），EX_FLAG 侧不动
+    // 葵希罗：定线写 FLAG 侧（错写，有意保留），EX_FLAG 侧不动
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 34, '葵希罗');
     fixture.store.set('talent:34:85', 1);
@@ -302,14 +302,14 @@ test('素质定线：恋慕（TALENT:85）置 10、淫乱（TALENT:76）置 20�
     assert.equal(
       fixture.store.get('exflag:2815'),
       41,
-      '葵希罗的 EX_FLAG 侧不是定线对象（族错位 1:1）',
+      '葵希罗的 EX_FLAG 侧不是定线对象（族错位，有意保留）',
     );
   }
 });
 
-test('四条角色线推进判定：调用守卫 1:1（#404 起为真身，按状态机效果观测）', async () => {
-  // 每个分支都预置 EX_FLAG:2801 = 99 短路分派循环（原作 :344 的守卫）——
-  // 否则 END 族的数据段会在同一次 run_endcheck 里再推一次线值，把「守卫
+test('四条角色线推进判定：调用检查一致（#404 起为真身，按状态机效果观测）', async () => {
+  // 每个分支都预置 EX_FLAG:2801 = 99 短路分派循环（分派入口的检查）——
+  // 否则 END 族的数据段会在同一次 run_endcheck 里再推一次线值，把「检查
   // 有没有调用状态机」这件事淹没在两次推进的合成结果里
   const no_dispatch = (fixture) => fixture.store.set('exflag:2801', 99);
   {
@@ -343,7 +343,7 @@ test('四条角色线推进判定：调用守卫 1:1（#404 起为真身，按�
     );
   }
   {
-    // 黑方片：在场即判定（无段位守卫）——9 档起步
+    // 黑方片：在场即判定（无段位检查）——9 档起步
     const { fixture, mod } = setup_endcheck();
     join_chara(fixture, 22, '黑方片');
     no_dispatch(fixture);
@@ -357,7 +357,7 @@ test('四条角色线推进判定：调用守卫 1:1（#404 起为真身，按�
     );
   }
   {
-    // 嘉德：在场走本体（淫乱起步）；离队走天神宫线（:122-129 的两臂）
+    // 嘉德：在场走本体（淫乱起步）；离队走天神宫线（两个分支）
     const a = setup_endcheck();
     join_chara(a.fixture, 33, '嘉德');
     no_dispatch(a.fixture);
@@ -369,8 +369,8 @@ test('四条角色线推进判定：调用守卫 1:1（#404 起为真身，按�
       110,
       '嘉德在场必须调用推进判定（本体：淫乱起步 11）',
     );
-    // 嘉德离队（不在场）且 2810 = 300：两臂的 gate 都不成立（第一臂缺在场、
-    // 第二臂要求 >= 500）→ 本体不跑。ENDRESET 的嘉德清场守卫读自家线值，
+    // 嘉德离队（不在场）且 2810 = 300：两个分支的 gate 都不成立（第一分支缺在场、
+    // 第二分支要求 >= 500）→ 本体不跑。endreset 的嘉德清场检查读自家线值，
     // 预置 500 让它免清，才能看见 2810 原样不动
     const b = setup_endcheck();
     no_dispatch(b.fixture);
@@ -385,7 +385,7 @@ test('四条角色线推进判定：调用守卫 1:1（#404 起为真身，按�
     );
     assert.equal(b.fixture.store.get('cflag:33:515'), 5, '计数器未被动过');
     // 嘉德离队且 2810 >= 500：走天神宫线。该线在可达区间的四个档位都是
-    // 空分支、540 档的 560 转移又被 GETCHARA(33) == 0 的死守卫挡住
+    // 空分支、540 档的 560 转移又被 GETCHARA(33) == 0 的死检查挡住
     // （见 event-ending.test.js 的同名用例），故此处可观测的只有「不抛错、
     // 不动 2810」——调用本身由 endcheck_godness_sky_temple 的单元用例覆盖
     const c = setup_endcheck();
@@ -410,9 +410,9 @@ test('四条角色线推进判定：调用守卫 1:1（#404 起为真身，按�
 
 // —— 分派循环（验收清单第 2 条）——
 
-test('分派循环：无脚本的族不再被巡（反作弊计数器与葵希罗线值空转形态消失）', async () => {
+test('分派循环：无脚本的族不再被巡（反作弊计数器与葵希罗线值空转写法消失）', async () => {
   const { fixture, mod } = setup_endcheck();
-  // 反作弊计数器与葵希罗线值落进 2800+线号 区间的碰撞形态
+  // 反作弊计数器与葵希罗线值落进 2800+线号 区间的碰撞写法
   // （docs/research/ending-paths.md 第二节）：2802 置 10 曾拼出 END2_1、
   // 2815 置 10 曾拼出 END15_0——两族均无脚本，分派只巡 7/10/11/14，
   // 静默无输出、不抛错
@@ -428,8 +428,8 @@ test('分派循环：无脚本的族不再被巡（反作弊计数器与葵希�
 });
 
 test('分派循环：按族号调用、小节 = 线值 / 10、个位非 0 防重播、2801 == 99 短路', async () => {
-  // 观测目标用族 14（银黑桃线，EX_FLAG:2814）：其清场守卫 < 300 会清预置线值，
-  // 预置 300 段（守卫线外、个位为 0）可稳定存在；真实脚本的分发由
+  // 观测目标用族 14（银黑桃线，EX_FLAG:2814）：其清场检查 < 300 会清预置线值，
+  // 预置 300 段（检查线外、个位为 0）可稳定存在；真实脚本的分发由
   // event-ending.test.js 的贯通用例覆盖，这里替换已注册实现来记录调用
   {
     const { fixture, mod } = setup_endcheck();
@@ -469,12 +469,12 @@ test('分派循环：按族号调用、小节 = 线值 / 10、个位非 0 防重
 test('分派循环：四族各自的个位为 0 线值当天都命中对应族实现（表驱动）', async () => {
   // 观测目标 = 替换已注册实现来记录调用（真实脚本的分发由 event-ending.test.js
   // 的贯通用例覆盖）。每族的线值须能「稳定预置到分派那一刻」：
-  //   族 7 菲娅（2807）/族 11 黑方片（2811）：ENDRESET 要求角色在场才免清，
+  //   族 7 菲娅（2807）/族 11 黑方片（2811）：endreset 要求角色在场才免清，
   //     故入队角色；20 段的阶梯门槛要未播种的素质（love/lust）才推进，
   //     零播种时线值当天不动
-  //   族 10 嘉德（2810）：清场守卫 >= 500 免清，预置 510 段；该段落在
+  //   族 10 嘉德（2810）：清场检查 >= 500 免清，预置 510 段；该段落在
   //     天神宫线的空档（500-510 不含 510）
-  //   族 14 银黑桃（2814）：清场守卫 >= 300 免清，预置 300 段
+  //   族 14 银黑桃（2814）：清场检查 >= 300 免清，预置 300 段
   const CASES = [
     { family: 7, flag: 2807, stage: 20, section: 2, join: 35 },
     { family: 10, flag: 2810, stage: 510, section: 51 },
@@ -533,13 +533,13 @@ test('END 族声明空间：只声明有脚本的四族（7/10/11/14），空间
   assert.ok(fixture);
 });
 
-// —— ENDING_N 与 END31 ——
+// —— ending_n 与 END31 ——
 
-test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身），否则不出现', async () => {
+test('ending_n：2801 == 99 且 DAY == 500 才调用（#404 起演出真身），否则不出现', async () => {
   {
     const { fixture, mod } = setup_endcheck();
     fixture.store.set('flag:10000', 500);
-    // 跑判定前置 99（DAY==500 主线空闲 → ENDCHECKMAIN 置 99 → 尾部触发）；
+    // 跑判定前置 99（DAY==500 主线空闲 → endcheck_main 置 99 → 尾部触发）；
     // 演出问 [1] 结束 / [2] 继续，喂 2 让它正常返回
     fixture.set_inputs(2);
     await mod.run_endcheck();
@@ -548,15 +548,15 @@ test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身）�
       texts.some((line) =>
         line.includes('自从魔王被解开封印已经过了整整500天。'),
       ),
-      '2801 == 99 && DAY == 500 必须调用 ENDING_N（横幅首行可见）',
+      '2801 == 99 && DAY == 500 必须调用 ending_n（横幅首行可见）',
     );
     assert.ok(
       texts.some((line) => line.includes('达成了【Normal End】。')),
-      'ENDING_N 的收尾行可见',
+      'ending_n 的收尾行可见',
     );
     assert.ok(
       texts.some((line) => line.includes('魔王的传说，还将继续......')),
-      'ENDINGINPUT 的 [2] 继续分支可见（真身，非存根）',
+      'ending_input 的 [2] 继续分支可见（真身，非存根）',
     );
   }
   {
@@ -564,7 +564,7 @@ test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身）�
     fixture.store.set('flag:10000', 500);
     fixture.store.set('exflag:2801', 99);
     fixture.store.set('exflag:2803', 31); // 失控奴隶号：END31 死调用已删，须静默
-    fixture.set_inputs(2); // ENDING_N 的 [2] 继续
+    fixture.set_inputs(2); // ending_n 的 [2] 继续
     await mod.run_endcheck();
     assert.ok(
       !fixture.text_lines().some((line) => line.includes('END31')),
@@ -580,7 +580,7 @@ test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身）�
       !fixture
         .text_lines()
         .some((line) => line.includes('自从魔王被解开封印已经过了整整500天。')),
-      'DAY != 500 时不得调用 ENDING_N',
+      'DAY != 500 时不得调用 ending_n',
     );
   }
 });
@@ -622,6 +622,6 @@ test('菲娅线 -10 崩坏态：当天命中 Bad Ending 占位演出、只播一
       (line) => line.type === 'text' && line.text.includes('菲娅线 Bad Ending'),
     ).length,
     1,
-    'Bad Ending 只播一次（个位守卫）',
+    'Bad Ending 只播一次（个位检查）',
   );
 });

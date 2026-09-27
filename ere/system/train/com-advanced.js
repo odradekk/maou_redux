@@ -1,20 +1,20 @@
 /**
- * @file 调教指令 120–135「追加与高级」族：@COM、@COM_ABLE、TRAIN_MESSAGE_A/B
- * 分支，以及 @GET_ADV_COM CASE 135（自助舔舐 → 口交时自慰）升格规则。
+ * @file 调教指令 120–135「追加与高级」族：com、com_able、train_message_a/b
+ * 分支，以及 get_adv_com 的 135 号规则（自助舔舐 → 口交时自慰）升格。
  *
- * J19（issue #229）。122 与 135 在 Train.csv（可直选）；其余 14 条是高级 COM，
- * 只能经 @GET_ADV_COM 升格抵达，但进 DECLARED_COM_IDS 分发空间（#213）。
+ * J19（issue #229）。122 与 135 在 TrainCommand.yml（可直选）；其余 14 条是高级 COM，
+ * 只能经 get_adv_com 升格抵达，但进 DECLARED_COM_IDS 分发空间（#213）。
  *
- * **COM135 头部 `LOCAL = 21` 是源侧原文**（COMF135:14），与 COMF21 同形——
- * 执行时走 CASE 21（背后位升格），不是 CASE 135。CASE 135 只挂在可直选号
- * 135 上，供 @SHOW_COMMENU 的标签升格（口交时自慰）使用。
+ * **COM135 头部 `LOCAL = 21`**，与 COM21 同形——执行时走 21 号规则
+ * （背后位升格），不是 135 号规则。135 号规则只挂在可直选号
+ * 135 上，供指令菜单界面的标签升格（口交时自慰）使用。
  *
- * 高级 COM（120/121/123-134）均显式 `SELECTCOM = <自己的号>` 回填号位；
- * 122/135 是可直选指令，源侧没有这条赋值。
+ * 高级 COM（120/121/123-134）均显式回填 selectcom 为自己的号；
+ * 122/135 是可直选指令，没有这条赋值。
  *
- * TRAIN_MESSAGE A/B 随各指令真身登记。COM135 源侧无 A 分支，A 登记空操作以免
- * 「族票未落地」占位行。口上（@KOJO_MESSAGE_COM_<n>）随轴 B，本票不写台词。
- * COM135 经 CASE 21 可能跳到 COM64（三人，J15）。真身未落地时走登记存根。
+ * TRAIN_MESSAGE A/B 随各指令真身登记。COM135 无 A 分支，A 登记空操作以免
+ * 「族工单未完成」占位行。口上（kojo_message_com_<n>）随轴 B，本工单不写台词。
+ * COM135 经 21 号规则可能跳到 COM64（三人，J15）。真身未实现时走登记存根。
  */
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
@@ -63,9 +63,9 @@ const has_mat = () =>
   (era.get('item:13') || 0) !== 0 || (era.get('noitem:0') || 0) !== 0;
 
 const clothing_guard = (cid) => (worn(cid) & 17) !== 0 && clothes_on();
-// A 120-135 的射精文本都属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
-// train-message.js：绝顶行/性交射精两臂/绝顶余韵/股间与口交支），本族不再
-// 另留一份拷贝——两份同时跑会把同一行打两遍。源侧 A 文件也没有 120-135 的
+// A 120-135 的射精文本都属 train_message_a 的公共段（#402 合并到
+// train-message.js：绝顶行/性交射精两个分支/绝顶余韵/股间与口交支），本族不再
+// 另留一份拷贝——两份同时跑会把同一行打两遍。A 文也没有 120-135 的
 // 专属分支（尾链止于 42 / 72 / 150），故本组全部显式无操作。
 async function no_message_a() {
   return 0;
@@ -115,7 +115,7 @@ function same_trainer() {
 /**
  * JUMPFORM 语义：升格目标已全部注册进 com_family（#565 起名单清空，
  * 升格表能返回的每个号都有真身），直调目标号并透传其返回值；
- * whenMissing 1 对应原作「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * whenMissing 1 即「目标缺失时返回 1」（本不该发生，防御语义）。
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
@@ -124,7 +124,7 @@ async function jump_to_advanced(id) {
 }
 
 /**
- * 插入系高级 COM 的共形守卫（COMABLE.ERB:3728-4587）。
+ * 插入系高级 COM 的共形检查。
  * @param {{ skill?: boolean, duel?: boolean, beast?: boolean }} [opts]
  */
 function insert_able(opts = {}) {
@@ -358,7 +358,7 @@ function times_src(cid, index, multiplier) {
   set_src(cid, index, times(src(cid, index), multiplier));
 }
 
-/** @COM120 的 SOURCE 计算（COMF120:29-381）。PALAM:13 是源侧原文。 */
+/** com120 的 SOURCE 计算。分档读 PALAM:13（抑郁）。 */
 function source120() {
   const cid = era_flag.target;
   const player = era_flag.player;
@@ -455,7 +455,7 @@ function source120() {
   }
 
   // 本条按抑郁（PALAM:13）分档；同族另一条指令的同名分档按欲情（PALAM:5）——
-  // 两处判据不同是既有行为，不统一
+  // 两处判断条件不同是既有行为，不统一
   if (palam(cid, 13) < PALAMLV[1]) {
     times_src(cid, 1, 0.6);
     times_src(cid, 3, 0.3);
@@ -523,7 +523,7 @@ function source120() {
       add_src(cid, 3, row[1]);
       add_src(cid, 4, row[2]);
     } else {
-      set_src(cid, 3, 2100); // 源 ELSE 写 SOURCE:3 = 2100，不是 SOURCE:17
+      set_src(cid, 3, 2100); // ELSE 支写 SOURCE:3 = 2100，不是 SOURCE:17
       add_src(cid, 3, 1400);
       add_src(cid, 4, 1400);
     }
@@ -637,9 +637,9 @@ async function message_b120() {
   }
 }
 
-// message_a120：源侧无 A 支——射精文本由公共段出（见上）
+// message_a120：无 A 支——射精文本由公共段出（见上）
 
-/** @COM120（COMF120_挿入Ｇスポ責め.ERB）插入Ｇ点蹂躏。高级 COM。 */
+/** com120：插入Ｇ点蹂躏。高级 COM。 */
 async function com120() {
   const select = era_flag.selectcom;
   game.train.三人PLAY持续 = 0;
@@ -648,7 +648,7 @@ async function com120() {
   } else {
     era.print('插入Ｇ点蹂躏');
   }
-  era_flag.selectcom = 120; // 原作显式 SELECTCOM = 120（升格抵达时回填号位）
+  era_flag.selectcom = 120; // 升格抵达时回填号位
   await train_message_b();
   const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
@@ -661,7 +661,7 @@ async function com120() {
   return 1;
 }
 
-/** @COM121 的 SOURCE 计算（COMF121:29-414）。润滑低档乘 SOURCE:0 是源侧原文。 */
+/** com121 的 SOURCE 计算。润滑低档乘 SOURCE:0 是既有写法（SOURCE:0 常为 0）。 */
 function source121() {
   const cid = era_flag.target;
   const player = era_flag.player;
@@ -955,9 +955,9 @@ async function message_b121() {
   }
 }
 
-// message_a121：源侧无 A 支——射精文本由公共段出（见上）
+// message_a121：无 A 支——射精文本由公共段出（见上）
 
-/** @COM121（COMF121_挿入子宮口責め.ERB）插入子宫口蹂躏。高级 COM。 */
+/** com121：插入子宫口蹂躏。高级 COM。 */
 async function com121() {
   const select = era_flag.selectcom;
   game.train.三人PLAY持续 = 0;
@@ -966,7 +966,7 @@ async function com121() {
   } else {
     era.print('插入子宫口蹂躏');
   }
-  era_flag.selectcom = 121; // 原作显式 SELECTCOM = 121（升格抵达时回填号位）
+  era_flag.selectcom = 121; // 升格抵达时回填号位
   await train_message_b();
   const cid = era_flag.target;
   game.train.伴V经验指令 = 1;
@@ -1054,7 +1054,7 @@ async function order122() {
   }
   if (tal(cid, 85) && !era_flag.assiplay) {
     append_term(parts, state, name_of('talentname', 85), 3);
-    state.s = 3; // 源侧 S = 3（COMF122:114）
+    state.s = 3; // 置符号旗标（数值沿用 3）
   }
   if (tal(player, 121)) {
     append_term(parts, state, name_of('talentname', 121), 8);
@@ -1195,9 +1195,9 @@ async function message_b122() {
   }
 }
 
-// message_a122：源侧无 A 支——射精文本由公共段出（见上）
+// message_a122：无 A 支——射精文本由公共段出（见上）
 
-/** @COM122（COMF122_兜あわせ.ERB）阴茎互捅。可直选。 */
+/** com122：阴茎互捅。可直选。 */
 async function com122() {
   era.print('阴茎互捅');
   if (!(await order122())) return 0;
@@ -1334,7 +1334,7 @@ function gauge123() {
   if (tal(cid, 119)) b = times(b, 1.3);
   else if (tal(cid, 114)) b = times(b, 1.2);
   else if (tal(cid, 110)) b = times(b, 1.1);
-  // 源侧 ELSEIF TALENT:110 贫乳 ×0.90 与上一支巨乳同一条件，死代码
+  // ELSEIF TALENT:110 贫乳 ×0.90 与上一支巨乳同一条件，死代码
   if (tal(player, 119) || tal(player, 122) || tal(player, 121)) {
     era.add(`base:${player}:2`, b);
   }
@@ -1447,11 +1447,11 @@ async function message_b123() {
   era.print(line);
 }
 
-// message_a123：源侧无 A 支——射精文本由公共段出（见上）
+// message_a123：无 A 支——射精文本由公共段出（见上）
 
-/** @COM123（COMF123_パイズリフェラ.ERB）乳夹口交。高级 COM。 */
+/** com123：乳夹口交。高级 COM。 */
 async function com123() {
-  era_flag.selectcom = 123; // 原作显式 SELECTCOM = 123（升格抵达时回填号位）
+  era_flag.selectcom = 123; // 升格抵达时回填号位
   era.print('乳夹口交');
   const y = dirty_penalty_123();
   if (!(await order123(y))) return 0;
@@ -1690,11 +1690,11 @@ async function message_b124() {
   era.print(line);
 }
 
-// message_a124：源侧无 A 支——射精文本由公共段出（见上）
+// message_a124：无 A 支——射精文本由公共段出（见上）
 
-/** @COM124（COMF124_ディープスロート.ERB）深喉。高级 COM。 */
+/** com124：深喉。高级 COM。 */
 async function com124() {
-  era_flag.selectcom = 124; // 原作显式 SELECTCOM = 124（升格抵达时回填号位）
+  era_flag.selectcom = 124; // 升格抵达时回填号位
   era.print('深喉');
   const y = dirty_penalty_124();
   if (!(await order124(y))) return 0;
@@ -2146,11 +2146,11 @@ async function message_b125() {
   era.print(line);
 }
 
-// message_a125：源侧无 A 支——射精文本由公共段出（见上）
+// message_a125：无 A 支——射精文本由公共段出（见上）
 
-/** @COM125（COMF125_フェラ自慰.ERB）口交时自慰。高级 COM。 */
+/** com125：口交时自慰。高级 COM。 */
 async function com125() {
-  era_flag.selectcom = 125; // 原作显式 SELECTCOM = 125（升格抵达时回填号位）
+  era_flag.selectcom = 125; // 升格抵达时回填号位
   era.print('口交时自慰');
   const y = dirty_penalty_125();
   if (!(await order125(y))) return 0;
@@ -2259,11 +2259,11 @@ async function message_b126() {
   era.print(line);
 }
 
-// message_a126：源侧无 A 支——射精文本由公共段出（见上）
+// message_a126：无 A 支——射精文本由公共段出（见上）
 
-/** @COM126（COMF126_手コキフェラ.ERB）手搓口交。高级 COM。 */
+/** com126：手搓口交。高级 COM。 */
 async function com126() {
-  era_flag.selectcom = 126; // 原作显式 SELECTCOM = 126（升格抵达时回填号位）
+  era_flag.selectcom = 126; // 升格抵达时回填号位
   era.print('手搓口交');
   const y = dirty_penalty_125();
   if (!(await order124(y))) return 0;
@@ -2288,11 +2288,11 @@ async function message_b127() {
   era.print(line);
 }
 
-// message_a127：源侧无 A 支——射精文本由公共段出（见上）
+// message_a127：无 A 支——射精文本由公共段出（见上）
 
-/** @COM127（COMF127_バキュームフェラ.ERB）真空口交。高级 COM。 */
+/** com127：真空口交。高级 COM。 */
 async function com127() {
-  era_flag.selectcom = 127; // 原作显式 SELECTCOM = 127（升格抵达时回填号位）
+  era_flag.selectcom = 127; // 升格抵达时回填号位
   era.print('真空口交');
   const y = dirty_penalty_124();
   if (!(await order124(y))) return 0;
@@ -2418,7 +2418,7 @@ function source128() {
   times_src(cid, 3, obey[1]);
   times_src(cid, 15, obey[2]);
   if (tal(cid, 85)) times_src(cid, 1, 1.5);
-  times_src(cid, 3, 2); // 源侧无缩进，恒乘（COMF128:230）
+  times_src(cid, 3, 2); // 恒乘，不在任何条件分支内
 }
 
 function after128() {
@@ -2435,11 +2435,11 @@ async function message_b128() {
   );
 }
 
-// message_a128：源侧无 A 支——射精文本由公共段出（见上）
+// message_a128：无 A 支——射精文本由公共段出（见上）
 
-/** @COM128（COMF128_正常位・キス.ERB）正常位・接吻。高级 COM。 */
+/** com128：正常位・接吻。高级 COM。 */
 async function com128() {
-  era_flag.selectcom = 128; // 原作显式 SELECTCOM = 128（升格抵达时回填号位）
+  era_flag.selectcom = 128; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('正常位・接吻');
@@ -2579,11 +2579,11 @@ async function message_b129() {
   era.print(line);
 }
 
-// message_a129：源侧无 A 支——射精文本由公共段出（见上）
+// message_a129：无 A 支——射精文本由公共段出（见上）
 
-/** @COM129（COMF129_正常位・胸愛撫.ERB）正常位・胸爱抚。高级 COM。 */
+/** com129：正常位・胸爱抚。高级 COM。 */
 async function com129() {
-  era_flag.selectcom = 129; // 原作显式 SELECTCOM = 129（升格抵达时回填号位）
+  era_flag.selectcom = 129; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('正常位・胸爱抚');
@@ -2691,7 +2691,7 @@ function source130() {
     [2800, 250],
   ][Math.min(abl(cid, 1), 5)];
   set_src(cid, 17, breast[0]);
-  set_src(cid, 3, breast[1]); // 源侧覆写情爱，不是加算（COMF130:189）
+  set_src(cid, 3, breast[1]); // 覆写情爱，不是加算
   const lust = palam(cid, 5);
   if (lust < PALAMLV[1]) {
     times_src(cid, 1, 0.6);
@@ -2781,11 +2781,11 @@ async function message_b130() {
   }
 }
 
-// message_a130：源侧无 A 支——射精文本由公共段出（见上）
+// message_a130：无 A 支——射精文本由公共段出（见上）
 
-/** @COM130（COMF130_正常位ＳＰ.ERB）正常位ＳＰ。高级 COM。 */
+/** com130：正常位ＳＰ。高级 COM。 */
 async function com130() {
-  era_flag.selectcom = 130; // 原作显式 SELECTCOM = 130（升格抵达时回填号位）
+  era_flag.selectcom = 130; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('正常位ＳＰ');
@@ -2928,11 +2928,11 @@ async function message_b131() {
   era.print(line);
 }
 
-// message_a131：源侧无 A 支——射精文本由公共段出（见上）
+// message_a131：无 A 支——射精文本由公共段出（见上）
 
-/** @COM131（COMF131_後背位・胸愛撫.ERB）背后位・胸爱抚。高级 COM。 */
+/** com131：背后位・胸爱抚。高级 COM。 */
 async function com131() {
-  era_flag.selectcom = 131; // 原作显式 SELECTCOM = 131（升格抵达时回填号位）
+  era_flag.selectcom = 131; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('背后位・胸爱抚');
@@ -3095,11 +3095,11 @@ async function message_b132() {
   }
 }
 
-// message_a132：源侧无 A 支——射精文本由公共段出（见上）
+// message_a132：无 A 支——射精文本由公共段出（见上）
 
-/** @COM132（COMF132_後背位・スパンキング.ERB）背后位・打屁股。高级 COM。 */
+/** com132：背后位・打屁股。高级 COM。 */
 async function com132() {
-  era_flag.selectcom = 132; // 原作显式 SELECTCOM = 132（升格抵达时回填号位）
+  era_flag.selectcom = 132; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('背后位・打屁股');
@@ -3244,7 +3244,7 @@ function source133() {
   times_src(cid, 3, obey[1]);
   times_src(cid, 15, obey[2]);
   if (tal(cid, 85)) times_src(cid, 1, 1.2);
-  times_src(cid, 3, 1.5); // 源侧无缩进，恒乘（COMF133:230）
+  times_src(cid, 3, 1.5); // 恒乘，不在任何条件分支内
 }
 
 function after133() {
@@ -3277,11 +3277,11 @@ async function message_b133() {
   era.print(second);
 }
 
-// message_a133：源侧无 A 支——射精文本由公共段出（见上）
+// message_a133：无 A 支——射精文本由公共段出（见上）
 
-/** @COM133（COMF133_立ちバック.ERB）站立背后位。高级 COM。 */
+/** com133：站立背后位。高级 COM。 */
 async function com133() {
-  era_flag.selectcom = 133; // 原作显式 SELECTCOM = 133（升格抵达时回填号位）
+  era_flag.selectcom = 133; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('站立背后位');
@@ -3497,11 +3497,11 @@ async function message_b134() {
   }
 }
 
-// message_a134：源侧无 A 支——射精文本由公共段出（见上）
+// message_a134：无 A 支——射精文本由公共段出（见上）
 
-/** @COM134（COMF134_後背位ＳＰ.ERB）背后位ＳＰ。高级 COM。 */
+/** com134：背后位ＳＰ。高级 COM。 */
 async function com134() {
-  era_flag.selectcom = 134; // 原作显式 SELECTCOM = 134（升格抵达时回填号位）
+  era_flag.selectcom = 134; // 升格抵达时回填号位
   if ((await confirm_lost_virgin()) === 0) return 0;
   if (!(await confirm_condom())) return 0;
   era.print('背后位ＳＰ');
@@ -3634,7 +3634,7 @@ function source135() {
     }
   }
   if (!tal(cid, 125) && tal(cid, 310) <= 20) {
-    times_src(cid, 12, 2); // COMF135:428 剃毛加倍
+    times_src(cid, 12, 2); // 未剃毛且毛量 ≤ 20 时加倍
   }
 }
 
@@ -3694,8 +3694,8 @@ async function message_b135() {
 }
 
 /**
- * @COM135（COMF135_セルフクンニ.ERB）自助舔阴。可直选。
- * 头部 LOCAL = 21 / CALL GET_ADV_COM（源 :14-16），命中则 JUMPFORM。
+ * com135：自助舔阴。可直选。
+ * 头部 LOCAL = 21：先取 get_adv_com(21)，命中则直跳升格目标。
  */
 async function com135() {
   const upgraded = await get_adv_com(21);
@@ -3712,7 +3712,7 @@ async function com135() {
   return 1;
 }
 
-// —— GET_ADV_COM CASE 135（COMF_JUMP.ERB:666-682） ——
+// —— get_adv_com 的 135 号升格规则 ——
 adv_com_family.register(135, async () => {
   if (
     same_trainer() &&

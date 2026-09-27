@@ -1,19 +1,19 @@
 /**
- * ere/event/event-ending.js @ENDING_1 真身与 @ENDING_3/4/5 接线的
- * 行为测试（issue #118），外加 ere/page/page-invasion.js @INVASION_CHECK
+ * ere/event/event-ending.js ending_1 真身与 ending_3/4/5 接入的
+ * 行为测试（issue #118），外加 ere/page/page-invasion.js invasion_check
  * 四组条件的触发测试（经模块公开接口 invasion_check 直驱）。天神宫组
- * 随 #652 删除（判据读的 EX_FLAG:101 无写点，死分支）；END10_55 演出
+ * 随 #652 删除（条件读的 EX_FLAG:101 无写点，死分支）；end10_55 演出
  * 本体保留、直驱测试。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）。
  *
  * 对应 #118 验收清单：
- *   1. FLAG:81 置 10000 后调 INVASION_CHECK：ENDING_1 被调用一次
+ *   1. FLAG:81 置 10000 后调 INVASION_CHECK：ending_1 被调用一次
  *      （横幅演出）、FLAG:82 变 1、角色 35 入队（夹具层）+ 引擎真方法
  *      接受该入队（engine-bundle 桥接用例，简报第 3 条：夹具证明
  *      「调了」，引擎证明「接受了」）；
  *   2. FLAG:82 == 1 之后再次满足 FLAG:81 >= 10000 不重复触发；
- *   3. 变异自证见 tools/mutations/ 的本票条目。
+ *   3. 变异自证见 tools/mutations/ 的本工单条目。
  */
 
 const assert = require('node:assert/strict');
@@ -59,7 +59,7 @@ function make_world(
   fixture.store.set('flag:89', dragon_conquered); // FLAG:89 龙之山脉征服
   fixture.store.set('flag:90', heaven_invasion); // FLAG:90 天界侵攻度
   fixture.store.set('flag:91', heaven_conquered); // FLAG:91 天界征服
-  // 菲娅预设（Chara35.yml 的最小夹具形状）：addCharacter 守卫放行的前提
+  // 菲娅预设（Chara35.yml 的最小夹具形状）：addCharacter 检查放行的前提
   fixture.seed_chara(35, { name: '菲娅', callname: '菲娅' });
 }
 
@@ -86,24 +86,21 @@ function button_rendered(fixture) {
     .map((line) => line.rendered);
 }
 
-test('【验收 1】FLAG:81 满 10000：ENDING_1 演出一次、菲娅入队并初始化、FLAG:82 = 1、威望 +10', async () => {
+test('【验收 1】FLAG:81 满 10000：ending_1 演出一次、菲娅入队并初始化、FLAG:82 = 1、威望 +10', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
   await run_check(fixture, 0); // 演出询问选 [0] 继续
 
-  // 演出出现（判据 #112：取「演出已出现」即 FLAG:82 == 1，不是游戏退出）
-  assert.equal(fixture.store.get('flag:82'), 1, 'FLAG:82 置 1（:38）');
+  // 演出出现（条件 #112：取「演出已出现」即 FLAG:82 == 1，不是游戏退出）
+  assert.equal(fixture.store.get('flag:82'), 1, 'FLAG:82 置 1');
   assert.equal(fixture.store.get('exflag:99'), 80, 'EX_FLAG:99 = 70 + 10');
-  assert(
-    fixture.chara_no.includes(35),
-    '角色 35（菲娅）入队（ADDCHARA 35，:15）',
-  );
+  assert(fixture.chara_no.includes(35), '角色 35（菲娅）入队（ADDCHARA 35）');
   assert.equal(
     fixture.store.get('ex_talent:35:104'),
     1,
-    'ADDCHARA_EX 分发 CHARA_EX_35：EX_TALENT:104 = 菲娅（:16）',
+    'add_chara_ex 分发：EX_TALENT:104 = 菲娅',
   );
-  // CHAR_INIT 窄路径的一人称（RANDOM_SELF_CALL 的 <9 直设，SELF_CALL.ERB:38-42）
+  // CHAR_INIT 窄路径的一人称（RANDOM_SELF_CALL 的 <9 直设）
   assert.equal(fixture.store.get('cstr:35:60'), '我', '一人称 = 我');
   assert.equal(fixture.store.get('cflag:35:450'), 9, '一人称档位 = 9');
 
@@ -112,19 +109,16 @@ test('【验收 1】FLAG:81 满 10000：ENDING_1 演出一次、菲娅入队并�
     texts.includes(
       '｜　　　　　　　　魔王终于再次掌握了世界　　　　　　　　　　｜',
     ),
-    '横幅演出（:8）',
+    '横幅演出',
   );
   assert(
     texts.includes(
       '人间界已经陷落了，不过世上还有很多其它地方，要继续游戏吗？',
     ),
-    '继续询问（:22）',
+    '继续询问',
   );
-  assert(texts.includes('声望+10'), 'PRINTL 声望+10（:1003）');
-  assert(
-    texts.includes('*人类皇族公主菲娅，被你抓获了*'),
-    'PRINTW 抓获播报（:39）',
-  );
+  assert(texts.includes('声望+10'), 'PRINTL 声望+10');
+  assert(texts.includes('*人类皇族公主菲娅，被你抓获了*'), 'PRINTW 抓获播报');
   // 选项是按钮且不带手写编号前缀（PR #30，工单「两个容易做错的点」之二）
   assert(
     fixture.lines_history.some(
@@ -133,7 +127,7 @@ test('【验收 1】FLAG:81 满 10000：ENDING_1 演出一次、菲娅入队并�
         line.accelerator === 0 &&
         line.rendered === '[0] - 世界这么大，我想再去看看！',
     ),
-    '[0] 按钮由引擎拼快捷键前缀，正文带原作的「- 」（ENDING ver 1.0.1.ERB:29）',
+    '[0] 按钮由引擎拼快捷键前缀，正文带显示文本的「- 」',
   );
   assert(
     fixture.lines_history.some(
@@ -142,7 +136,7 @@ test('【验收 1】FLAG:81 满 10000：ENDING_1 演出一次、菲娅入队并�
         line.accelerator === 1 &&
         line.rendered === '[1] - 我……已经……不想做魔王了……',
     ),
-    '[1] 按钮由引擎拼快捷键前缀，正文带原作的「- 」（ENDING ver 1.0.1.ERB:30）',
+    '[1] 按钮由引擎拼快捷键前缀，正文带显示文本的「- 」',
   );
 });
 
@@ -156,7 +150,7 @@ test('【验收 2】FLAG:82 == 1 后再次满足 FLAG:81 >= 10000 不重复触�
   assert.equal(
     texts.filter((line) => line.includes('魔王终于再次掌握了世界')).length,
     1,
-    'ENDING_1 横幅只出现一次（&& FLAG:82 == 0 的作用）',
+    'ending_1 横幅只出现一次（&& FLAG:82 == 0 的作用）',
   );
   assert.equal(fixture.store.get('exflag:99'), 80, '威望只加一次');
   assert.equal(fixture.chara_no.length, 1, '菲娅不重复入队');
@@ -189,22 +183,22 @@ test('选 [1] 退出：era.quit() 抛 Error("quit") 炸穿 invasion_check（真�
   assert.equal(
     fixture.store.get('flag:82'),
     0,
-    '退出路径不置陷落标记（异常炸穿，:38 不可达）',
+    '退出路径不置陷落标记（异常炸穿，置位不可达）',
   );
   assert.equal(
     fixture.store.get('exflag:99'),
     70,
-    '威望 +10 不发生（异常炸穿，:1003 不可达——不是哨兵短路）',
+    '威望 +10 不发生（异常炸穿——不是哨兵短路）',
   );
 });
 
-// —— @ENDING_2 真身（#173 H4）：魔王城陷落的真 GAMEOVER ——
+// —— ending_2 真身（#173 H4）：魔王城陷落的真 GAMEOVER ——
 
-test('ENDING_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的名字）+ GAMEOVER 行 + INPUT 后 quit 抛出', async () => {
+test('ending_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的名字）+ GAMEOVER 行 + INPUT 后 quit 抛出', async () => {
   const fixture = create_era_fixture();
   // 两个角色在场：TARGET 指针指向 1——封印播报必须取指针的名字，不是
-  // 「最近的」「随便一个」角色（票面 #173：取 TARGET 不是队长 ARG:0，
-  // 差异属原作行为，照抄）
+  // 「最近的」「随便一个」角色（#173：取 TARGET 不是队长 ARG:0，
+  // 差异是有意保留的行为）
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
   fixture.era.addCharacter(1);
@@ -227,7 +221,7 @@ test('ENDING_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
     fixture.calls.some(({ api }) => api === 'quit'),
     'QUIT → era.quit()（关窗 IPC 已记录）',
   );
-  // 演出八行逐字（:45-54）
+  // 演出八行逐字
   const texts = history_texts(fixture);
   assert.deepEqual(
     texts,
@@ -241,7 +235,7 @@ test('ENDING_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
       '  ',
       '-------------------------------GAMEOVER---------------------------------',
     ],
-    '横幅 6 行 + 封印播报 + 空行（两个尾随空格）+ GAMEOVER 分隔行（:46-54 逐字）',
+    '横幅 6 行 + 封印播报 + 空行（两个尾随空格）+ GAMEOVER 分隔行（逐字）',
   );
   // 的名字来自 TARGET 指针（callname:1:-1，不是 2 的「贝丝」）
   // PRINTFORMW 的读键（waitAnyKey，print 置位 allowWait 后真等）在
@@ -251,11 +245,11 @@ test('ENDING_2：横幅 + 封印播报（%SAVESTR:TARGET% 取 TARGET 指针的�
       value === undefined ? api : `${api}:${value}`,
     ),
     ['waitAnyKey', 'input:0'],
-    'PRINTFORMW 读键在前、INPUT 恰一次在 QUIT 之前（:52/:55/:56 的顺序）',
+    'PRINTFORMW 读键在前、INPUT 恰一次在 QUIT 之前（顺序）',
   );
 });
 
-test('ENDING_2·TARGET 判据：指针指向 2 时封印播报取 2 的名字（非写死、非队长）', async () => {
+test('ending_2·TARGET 条件：指针指向 2 时封印播报取 2 的名字（非写死、非队长）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(1, { id: 1, name: '阿尔', callname: '阿尔' });
   fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
@@ -271,14 +265,14 @@ test('ENDING_2·TARGET 判据：指针指向 2 时封印播报取 2 的名字（
     history_texts(fixture).includes(
       '*勇者贝丝封印了魔王，被后人歌颂为传说中的勇者*',
     ),
-    '封印播报随 TARGET 指针取名（%SAVESTR:TARGET% 的 1:1）',
+    '封印播报随 TARGET 指针取名（%SAVESTR:TARGET% 语义）',
   );
 });
 
-test('演出横幅只画一次（:33-36 的无效重问分支引擎侧不可达，#130）', async () => {
+test('演出横幅只画一次（无效重问分支引擎侧不可达，#130）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000 });
-  // 原作用例曾喂 5 验证「无效输入重问不重画」。引擎的 input() 只送达已
+  // 旧用例曾喂 5 验证「无效输入重问不重画」。引擎的 input() 只送达已
   // 打印按钮的快捷键（本画面 [0]/[1]），5 在渲染层就被弹回、到不了游戏
   // ——该分支是引擎死路径，重问本身不会发生；横幅只画一次由单次有效输入
   // 直接钉住。喂 5 当场拒收的锁在夹具契约（test/fixture.test.js，#130）
@@ -293,7 +287,7 @@ test('演出横幅只画一次（:33-36 的无效重问分支引擎侧不可达�
   );
 });
 
-test('ELSEIF 优先序：人间界与精灵领域同时满 10000 只触发 ENDING_1（:1001-1006）', async () => {
+test('ELSEIF 优先序：人间界与精灵领域同时满 10000 只触发 ending_1', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { human_invasion: 10000, elf_invasion: 10000 });
   await run_check(fixture, 0);
@@ -303,7 +297,7 @@ test('ELSEIF 优先序：人间界与精灵领域同时满 10000 只触发 ENDIN
   assert.equal(fixture.store.get('exflag:99'), 80, '威望只加一组');
 });
 
-// —— #404（N20）：三个领域结局的横幅 + @CHAR_GIFT 真身 ——
+// —— #404（N20）：三个领域结局的横幅 + char_gift 真身 ——
 // 三个 ARG 档（1/5/6）的文案与角色号用一张表走完；预设角色收下（[0]）是
 // 最短路径，自选路线（另外挑选 → 随机角色 → 性格/发色 → 决定）另起用例。
 
@@ -340,23 +334,19 @@ const GIFT_CASES = [
   },
 ];
 
-test('ENDING_3/4/5：横幅 + CHAR_GIFT(arg) 收下预设角色 → 领域 flag 走 1→2、威望 +10（表驱动三档）', async () => {
+test('ending_3/4/5：横幅 + char_gift(arg) 收下预设角色 → 领域 flag 走 1→2、威望 +10（表驱动三档）', async () => {
   for (const c of GIFT_CASES) {
     const fixture = create_era_fixture();
     make_world(fixture, { [c.invasion]: 10000 });
-    // 献上对象的预设名（CHAR_GIFT 的 %CSVNAME(n)% 与 addCharacter 的守卫）
+    // 献上对象的预设名（char_gift 的角色名拼接与 addCharacter 的检查）
     const names = { 31: '琼', 32: '菲娅', 33: '嘉德' };
     fixture.seed_chara(c.no_chara, {
       name: names[c.no_chara],
       callname: names[c.no_chara],
     });
-    await run_check(fixture, 0); // CHAR_GIFT 的 [0] 收下她吧
+    await run_check(fixture, 0); // char_gift 的 [0] 收下她吧
 
-    assert.equal(
-      fixture.store.get(c.flag),
-      2,
-      `${c.name}：${c.flag} 走完 1→2（:70/:72）`,
-    );
+    assert.equal(fixture.store.get(c.flag), 2, `${c.name}：${c.flag} 走完 1→2`);
     assert.deepEqual(
       fixture.var_writes.filter((w) => w.name === c.flag).map((w) => w.value),
       [1, 2],
@@ -365,28 +355,25 @@ test('ENDING_3/4/5：横幅 + CHAR_GIFT(arg) 收下预设角色 → 领域 flag 
     assert.equal(fixture.store.get('exflag:99'), 80, `${c.name}：威望 +10`);
     const texts = history_texts(fixture);
     assert(texts.includes(c.banner), `${c.name}：横幅逐字`);
-    assert(
-      texts.includes(c.gift_line),
-      `${c.name}：LOCALS:10 的 %CSVNAME% 拼串`,
-    );
-    assert(texts.includes(c.ask), `${c.name}：LOCALS:20 的询问`);
-    // #572：:184 的两项已是按钮（正文不带 [N]，引擎按 showAcc 拼）
+    assert(texts.includes(c.gift_line), `${c.name}：贡品播报的姓名拼串`);
+    assert(texts.includes(c.ask), `${c.name}：询问文案`);
+    // #572：询问两项已是按钮（正文不带 [N]，引擎按 showAcc 拼）
     for (const option of ['[0] 收下她吧', '[1] 另外挑选']) {
       assert(
         button_rendered(fixture).includes(option),
-        `${c.name}：:184 选项 ${option}`,
+        `${c.name}：询问选项 ${option}`,
       );
     }
     assert(
       texts.includes('*****************************************'),
-      `${c.name}：:177/:179 的分隔行`,
+      `${c.name}：播报分隔行`,
     );
     assert(
       fixture.chara_no.includes(c.no_chara),
       `${c.name}：收下 = 角色 ${c.no_chara} 在队`,
     );
 
-    // 判据已被置 2 挡住：再查空转、不重复入队
+    // 条件已被置 2 挡住：再查空转、不重复入队
     await run_check(fixture);
     assert.equal(
       fixture.store.get('exflag:99'),
@@ -401,14 +388,14 @@ test('ENDING_3/4/5：横幅 + CHAR_GIFT(arg) 收下预设角色 → 领域 flag 
   }
 });
 
-test('CHAR_GIFT：ARG 不在 1/5/6 三档 → THROW INVALID ARGUMENT（:162-163）', async () => {
+test('char_gift：ARG 不在 1/5/6 三档 → THROW INVALID ARGUMENT', async () => {
   const fixture = create_era_fixture();
   const { char_gift } = fixture.load_module('event/event-ending');
   await assert.rejects(() => char_gift(2), /INVALID ARGUMENT/);
   await assert.rejects(() => char_gift(0), /INVALID ARGUMENT/);
 });
 
-test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色子菜单 → 决定（:190-296）', async () => {
+test('char_gift 自选路线：另外挑选 → 随机角色 → 性格/发色子菜单 → 决定', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
@@ -424,25 +411,25 @@ test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色�
   assert.equal(
     fixture.chara_no.includes(31),
     false,
-    '预设角色 31 被退掉（PARTY_CHAR_DEL + DELCHARA）',
+    '预设角色 31 被退掉（party_char_del + DELCHARA）',
   );
   assert.equal(
     fixture.store.get('talent:5:161'),
     1,
-    'CHAR_MAKE 按 PERSONAL=161 生成',
+    'char_make 按 PERSONAL=161 生成',
   );
   const texts = history_texts(fixture);
   const buttons = button_rendered(fixture);
-  assert(texts.includes('请设定偏好的性格和发色。'), ':210');
+  assert(texts.includes('请设定偏好的性格和发色。'), '性格发色主菜单文案');
   // #572：主菜单三项与两个子菜单都改成按钮，实显文本由引擎按 showAcc 拼
   // （正文里的连续空白折成一个空格，故 `性格 ：  自信家` 实显为 `性格 ： 自信家`）
   assert(
     buttons.includes('[0] 性格 ： 自信家'),
-    `:211 的 %TALENTNAME:PERSONAL%（实显：${JSON.stringify(buttons)}）`,
+    `性格标签（实显：${JSON.stringify(buttons)}）`,
   );
-  assert(buttons.includes('[1] 发色 ： 金发'), ':212 的 %GET_LOOK_INFO 默认色');
-  assert(buttons.includes('[100] 决定'), ':214');
-  assert(texts.includes('请选择偏好的性格。'), ':219');
+  assert(buttons.includes('[1] 发色 ： 金发'), '发色标签默认色');
+  assert(buttons.includes('[100] 决定'), '决定按钮');
+  assert(texts.includes('请选择偏好的性格。'), '性格子菜单文案');
   for (const option of [
     '[0] - 慈爱',
     '[1] - 自信家',
@@ -453,24 +440,20 @@ test('CHAR_GIFT 自选路线：另外挑选 → 随机角色 → 性格/发色�
     '[6] - 智慧',
     '[7] - 庇护者',
   ]) {
-    assert(buttons.includes(option), `:220-222 性格菜单 ${option}`);
+    assert(buttons.includes(option), `性格菜单 ${option}`);
   }
-  // 取的是 `%SAVESTR:A%`——角色的称呼，而 A 刚经 CHAR_MAKE 生成
-  // （:264-266）。生成链里的命名段（CHARA_MAKE.ERB:18-20 →
-  // @CHARA_NAME_RANDOM_DEFINE，**#384 起为真身**）会把 ADDCHARA 从预设拷来的
+  // 取的是 `%SAVESTR:A%`——角色的称呼，而 A 刚经 char_make 生成。
+  // 生成链里的命名段（#384 起为真身）会把 ADDCHARA 从预设拷来的
   // 名字覆盖成随机名：夹具没种名字表（namelistkeys 为空），固定名分支
   // 回落到默认名「佳奈美」。故这里断的是**生成后**的称呼——「路人五」只是
   // ADDCHARA 那一刻的初值，不是这条输出里的值。
-  assert(
-    texts.includes('精灵族挑选少女佳奈美作为贡品………'),
-    ':275（ARG 1 的 LOCALS:40）',
-  );
+  assert(texts.includes('精灵族挑选少女佳奈美作为贡品………'), 'ARG 1 的种族播报');
   for (const option of ['[0] 就是她了', '[1] 再换一个', '[2] 去要圣女']) {
-    assert(buttons.includes(option), `:280 终局询问 ${option}`);
+    assert(buttons.includes(option), `终局询问 ${option}`);
   }
 });
 
-test('CHAR_GIFT 子菜单边界：性格取 0 档（慈爱）、发色取 10 档（暗金发）', async () => {
+test('char_gift 子菜单边界：性格取 0 档（慈爱）、发色取 10 档（暗金发）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
@@ -505,10 +488,10 @@ test('CHAR_GIFT 子菜单边界：性格取 0 档（慈爱）、发色取 10 档
   }
 });
 
-test('CHAR_GIFT 发色子菜单：未显示的 11 号色仍可键入（#572：保留 useRule: false）', async () => {
-  // 原作 :254 的条件是 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`——11 号
+test('char_gift 发色子菜单：未显示的 11 号色仍可键入（#572：保留 useRule: false）', async () => {
+  // 受理条件是 `RESULT >= 1 && RESULT <= 10 || RESULT == 11`——11 号
   // 发色界面上不显示却仍被受理，收紧白名单会锁死它，故消费点保留
-  // `useRule: false`（先例 event-museum.js:83-85）。本用例走真实 input 路径
+  // `useRule: false`（先例 event-museum.js）。本用例走真实 input 路径
   // 把这条路径钉住：改回默认白名单即红。
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
@@ -519,12 +502,12 @@ test('CHAR_GIFT 发色子菜单：未显示的 11 号色仍可键入（#572：�
   await char_gift(1, seq([4])); // RAND(1, 17) → 角色 5
 
   assert.equal(fixture.store.get('talent:5:300'), 11, '11 号色落盘');
-  assert.equal(fixture.store.get('cflag:5:1'), 0, 'CHAR_MAKE 后清状态位');
+  assert.equal(fixture.store.get('cflag:5:1'), 0, 'char_make 后清状态位');
 });
 
 test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素质 × >= 130）各自回起始档', async () => {
   {
-    // ENDCHECKSPADE :247-250：淫乱素质且 30-100 段 → 110
+    // 淫乱素质且 30-100 段 → 110（endcheck_spade 的重置段）
     const fixture = setup_route(21, {
       talent: { 85: 0, 76: 1 },
       cflag: { 2: 0, 515: 3 },
@@ -540,7 +523,7 @@ test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素�
     assert.equal(fixture.store.get('cflag:21:515'), 0, '重置清零计数器');
   }
   {
-    // ENDCHECKPRINCESS :361-364：恋慕素质且 >= 130 → 30
+    // 恋慕素质且 >= 130 → 30（endcheck_princess 的重置段）
     const fixture = setup_route(35, {
       talent: { 85: 1, 76: 0 },
       cflag: { 2: 0, 515: 3 },
@@ -557,10 +540,10 @@ test('素质互换重置：银黑桃（76 素质 × 30-100）与菲娅（85 素�
   }
 });
 
-test('CHAR_GIFT 子菜单的越界输入：引擎当场拒收（#572：选项已按钮化）', async () => {
+test('char_gift 子菜单的越界输入：引擎当场拒收（#572：选项已按钮化）', async () => {
   // 旧行为是「性格 >= 8 与 < 0 都落回 160（慈爱）」——按钮化后白名单就是
   // 那八档，越界值在引擎那头被拒收、不回传游戏，该支结构性不可达
-  // （1:1 保留，page-ability-up.js 文件头同款登记）。
+  // （有意保留，page-ability-up.js 文件头同款登记）。
   for (const picked of [8, -1]) {
     const fixture = create_era_fixture();
     fixture.seed_chara(31, { name: '琼', callname: '琼' });
@@ -576,9 +559,9 @@ test('CHAR_GIFT 子菜单的越界输入：引擎当场拒收（#572：选项已
   }
 });
 
-test('CHAR_GIFT 主菜单的越界输入：引擎当场拒收（#572：选项已按钮化）', async () => {
-  // 旧行为是「非 0/1/100 的键回菜单重画（:260-261）」——按钮化后越界值
-  // 被引擎拒收，重画支结构性不可达（1:1 保留）。
+test('char_gift 主菜单的越界输入：引擎当场拒收（#572：选项已按钮化）', async () => {
+  // 旧行为是「非 0/1/100 的键回菜单重画」——按钮化后越界值
+  // 被引擎拒收，重画支结构性不可达（有意保留）。
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
@@ -590,7 +573,7 @@ test('CHAR_GIFT 主菜单的越界输入：引擎当场拒收（#572：选项已
   );
 });
 
-test('CHAR_GIFT 终局 [2]「去要圣女」：退掉随机角色、回到预设角色的 loop 0', async () => {
+test('char_gift 终局 [2]「去要圣女」：退掉随机角色、回到预设角色的 loop 0', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(31, { name: '琼', callname: '琼' });
   fixture.seed_chara(5, { name: '路人五', callname: '路人五' });
@@ -598,12 +581,12 @@ test('CHAR_GIFT 终局 [2]「去要圣女」：退掉随机角色、回到预设
   // 另外挑选(1) → 决定(100) → 终局 [2] 回预设 → [0] 收下预设
   fixture.set_inputs(1, 100, 2, 0);
   const result = await char_gift(1, seq([4]));
-  assert.equal(result, undefined, '收下预设角色的 RETURN 无值');
+  assert.equal(result, undefined, '收下预设角色无返回值');
   assert.ok(fixture.chara_no.includes(31), '预设角色 31 再次入队并被收下');
   assert.equal(
     fixture.chara_no.includes(5),
     false,
-    '随机角色 5 在 [2] 支里被退掉（PARTY_CHAR_DEL + DELCHARA）',
+    '随机角色 5 在 [2] 支里被退掉（party_char_del + DELCHARA）',
   );
   assert.equal(
     button_rendered(fixture).filter((t) => t === '[0] 收下她吧').length,
@@ -612,7 +595,7 @@ test('CHAR_GIFT 终局 [2]「去要圣女」：退掉随机角色、回到预设
   );
 });
 
-test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_generate 的返回值写进 CFLAG:452', async () => {
+test('char_gift 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_generate 的返回值写进 CFLAG:452', async () => {
   // 种族年龄表（FLAG:26/27）按 #385 的种子；两档都在下面独立算出期望值
   const RACE_TABLE_0 = [11, 115, 431, 325, 15, 232];
   const RACE_TABLE_1 = [1, 1];
@@ -626,10 +609,9 @@ test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
   };
 
   for (const bit of [12, 13]) {
-    // #389 勘误：种族不再能靠预置 TALENT:314 指定——@CM_LOOK 接上 LOOK_SET
-    // 真身后它会重掷 RAND:200 并覆盖（源 :330），且 @CHAR_GIFT 调用本流程时
-    // 把**自己的 ARG 当种族设定传下去**（源 ENDING :264 `CALL CHAR_MAKE,
-    // PERSONAL, ARG` → CM_LOOK 的 ARG:2），于是礼物档位决定种族：ARG=1 精灵。
+    // #389 勘误：种族不再能靠预置 TALENT:314 指定——cm_look 真身
+    // 会重掷 RAND:200 并覆盖，且 char_gift 调用本流程时
+    // 把**自己的 ARG 当种族设定传下去**（char_make 的 ARG:2），于是礼物档位决定种族：ARG=1 精灵。
     // 精灵是槽 0 = 011（整数倍档）：返回值 = 年龄 × 10 + RAND:10
     const fixture = create_era_fixture();
     seed(fixture, 1 << bit);
@@ -661,7 +643,7 @@ test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
     fixture.seed_chara(32, { name: '龙族公主', callname: '龙族公主' });
     const { char_gift } = fixture.load_module('event/event-ending');
     const bounds = [];
-    // 换一个礼物档位换种族：ARG=5 龙族公主 → 种族设定 5 → LOOK_SET 的
+    // 换一个礼物档位换种族：ARG=5 龙族公主 → 种族设定 5 → look 设置的
     // `ELSEIF … || ARG == 5` → 种族 5（槽 4 = 015，整数倍档 ×50）
     const source = (n) => {
       bounds.push(n);
@@ -697,7 +679,7 @@ test('CHAR_GIFT 的种族年龄支：FLAG:5 位 12/13 为真时把 race_age_gene
   }
 });
 
-test('ENDINCONSQSELECT：ARG != 7 时只读一次键、无输出（:1035 的 CASEELSE 空档）', async () => {
+test('inconseq_select：ARG != 7 时只读一次键、无输出（默认空档）', async () => {
   const fixture = create_era_fixture();
   const { inconseq_select } = fixture.load_module('event/event-ending');
   fixture.set_inputs(1);
@@ -710,17 +692,13 @@ test('ENDINCONSQSELECT：ARG != 7 时只读一次键、无输出（:1035 的 CAS
   );
 });
 
-test('END10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLAG:102 不置（#652 起不受 invasion_check 分派，直驱演出本体）', async () => {
+test('end10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLAG:102 不置（#652 起不受 invasion_check 分派，直驱演出本体）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
   const { end10_55 } = fixture.load_module('event/event-ending');
   await end10_55();
 
-  assert.equal(
-    fixture.store.get('exflag:2810'),
-    5,
-    'EX_FLAG:2810 += 5（:485）',
-  );
+  assert.equal(fixture.store.get('exflag:2810'), 5, 'EX_FLAG:2810 += 5');
   assert.equal(
     fixture.store.get('exflag:99'),
     70,
@@ -736,15 +714,15 @@ test('END10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLA
     texts.includes(
       '当你突破层层包围、攻入天界宫广场时、首先看到的却是嘉德被六个人包围在其中的身影',
     ),
-    'END10_55 首行（:477）',
+    'end10_55 首行',
   );
-  assert(texts.includes('战斗、一触即发。'), 'END10_55 末行（:484）');
+  assert(texts.includes('战斗、一触即发。'), 'end10_55 末行');
 });
 
 test('天神宫组不再是 invasion_check 的分派（#652 删除死分支）：EX_FLAG:101 满 10000 也空转', async () => {
   const fixture = create_era_fixture();
   make_world(fixture);
-  fixture.store.set('exflag:101', 10000); // 旧判据读的侵攻度（已无写点）
+  fixture.store.set('exflag:101', 10000); // 旧条件读的侵攻度（已无写点）
   fixture.store.set('exflag:102', 0);
   await run_check(fixture);
 
@@ -762,13 +740,13 @@ test('五组全不满足：零输出、威望不动（窄路径的常态）', as
   assert.equal(fixture.store.get('flag:82'), 0);
 });
 
-test('贯通：出兵封顶 10000 → 结算尾触发 ENDING_1 → 选 0 继续后 invasion() 仍返回 1（走 TURNEND）', async () => {
+test('贯通：出兵封顶 10000 → 结算尾触发 ending_1 → 选 0 继续后 invasion() 仍返回 1（走 TURNEND）', async () => {
   const fixture = create_era_fixture();
   make_world(fixture, { prestige: 90, human_invasion: 9900 });
   fixture.store.set('base:0:1', 10000);
   fixture.store.set('maxbase:0:1', 10000);
   fixture.store.set('callname:0:-1', '你');
-  // [109] 主菜单 → 侵略画面选 [1] 出兵 → ENDING_1 询问选 [0] 继续
+  // [109] 主菜单 → 侵略画面选 [1] 出兵 → ending_1 询问选 [0] 继续
   fixture.set_inputs(109, 1, 0);
   const { run_shop } = fixture.load_module('page/page-shop');
   const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
@@ -783,8 +761,7 @@ test('贯通：出兵封顶 10000 → 结算尾触发 ENDING_1 → 选 0 继续�
 });
 
 // —— #404（N20）结局链：四条角色线的推进判定状态机 ——
-// 源 ENDINGDATA.ERB:143-207（黑方片）/ :208-352（银黑桃）/ :353-480（菲娅）
-// 与 ENDINGDATA_ADDON1.ERB:1-144（嘉德）/ :146-153（嘉德离队后天神宫）。
+// 四条角色线（黑方片/银黑桃/菲娅/嘉德与天神宫线）。
 // 每条线一个表驱动用例走完整个档位维度（工单覆盖面标准），不在表里的
 // 分支另起用例。
 
@@ -812,7 +789,7 @@ function setup_route(cid, { talent = {}, cflag = {} } = {}) {
   return fixture;
 }
 
-test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 300 档', async () => {
+test('endcheck_square 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 300 档', async () => {
   // 表：起始档位 / CFLAG:2 好感 / CFLAG:515 计数器 / ABL 攻+敏 / 期望档位与计数器
   const CASES = [
     // 起步：好感 >= 2000 且线值 < 10
@@ -995,7 +972,7 @@ test('ENDCHECKSQUARE 恋慕阶梯：档位 × 门槛表驱动走完 10→90 与 
   }
 });
 
-test('ENDCHECKSQUARE 无恋慕素质（TALENT:85 != 1）时阶梯整段不动', async () => {
+test('endcheck_square 无恋慕素质（TALENT:85 != 1）时阶梯整段不动', async () => {
   const fixture = setup_route(22, {
     talent: { 85: 0 },
     cflag: { 2: 99999, 515: 0 },
@@ -1006,7 +983,7 @@ test('ENDCHECKSQUARE 无恋慕素质（TALENT:85 != 1）时阶梯整段不动', 
   assert.equal(fixture.store.get('exflag:2811'), 9, '素质不在：起步条件不成立');
 });
 
-test('ENDCHECKSQUARE 素质互换重置：恋慕 100-200 → 10、淫乱 30-100/300-310 → 110', async () => {
+test('endcheck_square 素质互换重置：恋慕 100-200 → 10、淫乱 30-100/300-310 → 110', async () => {
   // reset = 重置块是否命中（命中才断言计数器清零；未命中的档计数器保持原值）
   const CASES = [
     {
@@ -1076,7 +1053,7 @@ test('ENDCHECKSQUARE 素质互换重置：恋慕 100-200 → 10、淫乱 30-100/
     endcheck_square(seq([1]));
     assert.equal(fixture.store.get('exflag:2811'), c.want, c.why);
     // 重置块命中时计数器清零；未命中时保持预置的 5（阶梯对 30-90 之外的档
-    // 无动作）——两种结果都是原作的形态
+    // 无动作）——两种结果都是原实现的形式
     assert.equal(
       fixture.store.get('cflag:22:515'),
       c.reset ? 0 : 5,
@@ -1085,7 +1062,7 @@ test('ENDCHECKSQUARE 素质互换重置：恋慕 100-200 → 10、淫乱 30-100/
   }
 });
 
-test('ENDCHECKSQUARE 不在场时整段空转（GETCHARA(22) < 0）', async () => {
+test('endcheck_square 不在场时整段空转（GETCHARA(22) < 0）', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(0, { id: 0, name: '你', callname: '你' });
   fixture.era.addCharacter(0);
@@ -1100,7 +1077,7 @@ test('ENDCHECKSQUARE 不在场时整段空转（GETCHARA(22) < 0）', async () =
   );
 });
 
-test('ENDCHECKSPADE 恋慕与淫乱双阶梯表驱动', async () => {
+test('endcheck_spade 恋慕与淫乱双阶梯表驱动', async () => {
   const L = { 85: 1, 76: 0 }; // 恋慕素质
   const X = { 85: 0, 76: 1 }; // 淫乱素质
   const CASES = [
@@ -1322,7 +1299,7 @@ test('ENDCHECKSPADE 恋慕与淫乱双阶梯表驱动', async () => {
   }
 });
 
-test('ENDCHECKSPADE 淫乱 140 档：ABL:1/17 + TALENT:78 + TALENT:0 四条件合取', async () => {
+test('endcheck_spade 淫乱 140 档：ABL:1/17 + TALENT:78 + TALENT:0 四条件合取', async () => {
   const CASES = [
     { abl1: 10, abl17: 5, t78: 1, t0: 0, want: 150, why: '四条件齐 → 150' },
     { abl1: 9, abl17: 5, t78: 1, t0: 0, want: 140, why: 'ABL:1 差 1' },
@@ -1352,8 +1329,8 @@ test('ENDCHECKSPADE 淫乱 140 档：ABL:1/17 + TALENT:78 + TALENT:0 四条件�
   }
 });
 
-test('ENDCHECKSPADE 151 档乳业收入：MONEY 与 EX_FLAG:4444 同步 +（含档位倍率与向零截断）', async () => {
-  // 倍率 = trunc((线值 - 140) / 10)：Emuera 整数除法向零截断（operators.md:44），
+test('endcheck_spade 151 档乳业收入：MONEY 与 EX_FLAG:4444 同步 +（含档位倍率与向零截断）', async () => {
+  // 倍率 = trunc((线值 - 140) / 10)：整数除法向零截断，
   // 151 → 1 倍而不是 1.1 倍
   const CASES = [
     { stage: 150, rand: 0, want_money: 0, why: '150 档不足 151：无收入' },
@@ -1408,7 +1385,7 @@ test('ENDCHECKSPADE 151 档乳业收入：MONEY 与 EX_FLAG:4444 同步 +（含�
   }
 });
 
-test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫乱 170-220', async () => {
+test('endcheck_princess 初会与两阶梯：表驱动走完恋慕 70-120 与淫乱 170-220', async () => {
   const CASES = [
     // 线值 0 → 10（初次会面）
     {
@@ -1606,7 +1583,7 @@ test('ENDCHECKPRINCESS 初会与两阶梯：表驱动走完恋慕 70-120 与淫�
   }
 });
 
-test('ENDCHECKPRINCESS 10-20 档：MARK:1/2 == 3 与 TALENT:0 的组合', async () => {
+test('endcheck_princess 10-20 档：MARK:1/2 == 3 与 TALENT:0 的组合', async () => {
   const CASES = [
     {
       mark1: 3,
@@ -1639,7 +1616,7 @@ test('ENDCHECKPRINCESS 10-20 档：MARK:1/2 == 3 与 TALENT:0 的组合', async 
   }
 });
 
-test('ENDCHECKPRINCESS 20-30 档：恋慕/淫乱素质直接定线，无素质不动', async () => {
+test('endcheck_princess 20-30 档：恋慕/淫乱素质直接定线，无素质不动', async () => {
   const CASES = [
     { talent: { 85: 1 }, want: 30, why: '恋慕 → 30' },
     { talent: { 85: 0, 76: 1 }, want: 130, why: '淫乱 → 130' },
@@ -1657,7 +1634,7 @@ test('ENDCHECKPRINCESS 20-30 档：恋慕/淫乱素质直接定线，无素质�
   }
 });
 
-test('ENDCHECKGODNESS 淫乱阶梯：表驱动走完 110-190 与 300 档（DAY:1 与嘉德/葵希罗在场守卫）', async () => {
+test('endcheck_godness 淫乱阶梯：表驱动走完 110-190 与 300 档（DAY:1 与嘉德/葵希罗在场检查）', async () => {
   const CASES = [
     { stage: 9, c2: 2000, c515: 0, want: 110, want515: 0, why: '淫乱起步' },
     {
@@ -1785,10 +1762,10 @@ test('ENDCHECKGODNESS 淫乱阶梯：表驱动走完 110-190 与 300 档（DAY:1
   }
 });
 
-test('ENDCHECKGODNESS 300 档：被素质互换重置抢先（:31-34），310 跳档不可达（1:1）', async () => {
-  // 的 `ELSEIF EX_FLAG:2810 == 300` 档要求 `TALENT:76 == 1`，而 :31-34
+test('endcheck_godness 300 档：被素质互换重置抢先，310 跳档不可达（有意保留）', async () => {
+  // 的 `ELSEIF EX_FLAG:2810 == 300` 档要求 `TALENT:76 == 1`，而重置块
   // 的重置块恰好也吃 76 素质的 [300,310] 区间——同一日内两者不可能同时成立，
-  // 310 只在「线值 300 且 76 素质」这一条路上可达，被重置截胡。照抄不修。
+  // 310 只在「线值 300 且 76 素质」这一条路上可达，被重置截胡，有意保留。
   const fixture = setup_route(33, {
     talent: { 85: 0, 76: 1 },
     cflag: { 2: 0, 515: 5 },
@@ -1800,14 +1777,14 @@ test('ENDCHECKGODNESS 300 档：被素质互换重置抢先（:31-34），310 �
   assert.equal(
     fixture.store.get('cflag:33:515'),
     1,
-    '重置清零后同日阶梯无条件 +1（:93）',
+    '重置清零后同日阶梯无条件 +1',
   );
 });
 
-test('ENDCHECKGODNESS 140/160/170/180 档的 GETCHARA 守卫：真值恒真（原作缺陷，1:1）', async () => {
+test('endcheck_godness 140/160/170/180 档的 GETCHARA 检查：真值恒真（已知缺陷，有意保留）', async () => {
   // 写作 `SIF DAY:1 >= 350 && GETCHARA(n)`。GETCHARA
-  // 返回列表位置或 -1（skill: character.md:136），**两者都非零**——Emuera
-  // 的布尔上下文里恒真，本移植的 get_chara(n)（在场返回 cid、否则 -1）同样
+  // 返回列表位置或 -1，**两者都非零**——引擎
+  // 的布尔上下文里恒真，ere 的 get_chara(n)（在场返回 cid、否则 -1）同样
   // 恒真。故「葵希罗/嘉德不在场」挡不住跳档，四个档位照跳。
   const CASES = [
     { stage: 140, c515: 150, want: 150, why: '140→150：葵希罗不在场也跳' },
@@ -1816,7 +1793,7 @@ test('ENDCHECKGODNESS 140/160/170/180 档的 GETCHARA 守卫：真值恒真（�
     { stage: 180, c515: 250, want: 190, why: '180→190：同上' },
   ];
   for (const c of CASES) {
-    // 嘉德在场（守卫读的是 34）：140 档的守卫角色 34 不在队伍里
+    // 嘉德在场（检查读的是 34）：140 档的检查角色 34 不在队伍里
     const fixture = setup_route(33, {
       talent: { 85: 0, 76: 1 },
       cflag: { 2: 0, 515: c.c515 },
@@ -1829,7 +1806,7 @@ test('ENDCHECKGODNESS 140/160/170/180 档的 GETCHARA 守卫：真值恒真（�
   }
 });
 
-test('ENDCHECKGODNESS 秀素质互换重置：恋慕 110-200 → 10、淫乱 30-100/300-310 → 110', async () => {
+test('endcheck_godness 秀素质互换重置：恋慕 110-200 → 10、淫乱 30-100/300-310 → 110', async () => {
   // want515：重置命中后同日还会走一遍阶梯——压回 110 的那几档落「110-120
   // 无条件 +1」，压回 10 的档不落任何分支（计数器保持重置后的 0）
   const CASES = [
@@ -1892,7 +1869,7 @@ test('ENDCHECKGODNESS 秀素质互换重置：恋慕 110-200 → 10、淫乱 30-
 // 「每档的下界值 + 上界值 + 上界+1 落下一档」表驱动走完整条阶梯；表里逐行写出
 // 期望的档位与计数器，不复用实现里的数字。
 
-test('ENDCHECKSQUARE 档位区间：起步门与九个档位的下界/上界各一行（表驱动）', async () => {
+test('endcheck_square 档位区间：起步门与九个档位的下界/上界各一行（表驱动）', async () => {
   // [输入档位, 好感, 攻+敏, 计数器, 期望档位, 期望计数器, 站在哪条边界上]
   const CASES = [
     [9, 2000, 0, 0, 10, 0, '起步门 stage < 10 的下界（9 进档）'],
@@ -1931,7 +1908,7 @@ test('ENDCHECKSQUARE 档位区间：起步门与九个档位的下界/上界各�
   }
 });
 
-test('ENDCHECKSPADE 档位区间：恋慕线九档 + 淫乱线九档的下界/上界各一行（表驱动）', async () => {
+test('endcheck_spade 档位区间：恋慕线九档 + 淫乱线九档的下界/上界各一行（表驱动）', async () => {
   // 恋慕线（TALENT:85）：[输入档位, 好感, 攻+敏, 计数器, 期望档位, 期望计数器, 说明]
   const LOVE = [
     [9, 2000, 0, 0, 10, 0, '恋慕起步门的下界'],
@@ -2020,7 +1997,7 @@ test('ENDCHECKSPADE 档位区间：恋慕线九档 + 淫乱线九档的下界/�
   }
 });
 
-test('ENDCHECKPRINCESS 档位区间：十七档 + 三处重置门槛的下界/上界各一行（表驱动）', async () => {
+test('endcheck_princess 档位区间：十七档 + 三处重置门槛的下界/上界各一行（表驱动）', async () => {
   // [输入档位, 素质, 好感, 计数器, MARK:1, 期望档位, 期望计数器, 说明]
   // 素质用字符串标：'85' 恋慕 / '76' 淫乱 / '' 都无
   // MARK:1 只在 10-20 档有意义（== 3 且处女 → 20；标记不够且非处女 → -10）
@@ -2121,7 +2098,7 @@ test('ENDCHECKPRINCESS 档位区间：十七档 + 三处重置门槛的下界/�
   }
 });
 
-test('ENDCHECKGODNESS 档位区间：九档 + 三处重置门槛的下界/上界各一行（表驱动）', async () => {
+test('endcheck_godness 档位区间：九档 + 三处重置门槛的下界/上界各一行（表驱动）', async () => {
   // [输入档位, 好感, 攻+敏, 计数器, 期望档位, 期望计数器, 说明]
   // 全部行都用淫乱素质（TALENT:76），重置行另标素质
   const CASES = [
@@ -2145,7 +2122,7 @@ test('ENDCHECKGODNESS 档位区间：九档 + 三处重置门槛的下界/上界
       151,
       '150 档下界同时是 140-150 档的上界外：门槛 150 满足了也不跳（这一档看的是 180），计数器累加',
     ],
-    [150, 0, 0, 180, 150, 180, '150-160 档（560 死守卫：不动）'],
+    [150, 0, 0, 180, 150, 180, '150-160 档（560 死检查：不动）'],
     [159, 0, 0, 180, 159, 180, '150-160 档上界（同上）'],
     [160, 0, 0, 200, 170, 200, '160-170 档下界'],
     [169, 0, 0, 200, 170, 200, '160-170 档上界'],
@@ -2202,11 +2179,11 @@ test('ENDCHECKGODNESS 档位区间：九档 + 三处重置门槛的下界/上界
   }
 });
 
-test('ENDCHECKGODNESS_SKY_TEMPLE：500/520/530 三档空转；540 档的 560 转移是死分支（原作缺陷，1:1）', async () => {
-  // 的守卫写作 `GETCHARA(33) == 0`。GETCHARA 返回的是**列表位置**
-  // （skill: character.md:136，不存在为 -1），而 0 号魔王恒占位置 0——
+test('endcheck_godness_sky_temple：500/520/530 三档空转；540 档的 560 转移是死分支（已知缺陷，有意保留）', async () => {
+  // 的检查写作 `GETCHARA(33) == 0`。GETCHARA 返回的是**列表位置**
+  // （不存在为 -1），而 0 号魔王恒占位置 0——
   // 该条件在真机上永不成立，560 转移不可达。与「天神宫线整体不可达」
-  // （EX_FLAG:101 无写入点，#102 查明）是同一片未完成区，照抄不修。
+  // （EX_FLAG:101 无写入点，#102 查明）是同一片未完成区，有意保留。
   const CASES = [
     { stage: 500, flag93: 0, want: 500, why: '500-510 空分支' },
     { stage: 520, flag93: 3, want: 520, why: '520-530 空分支' },
@@ -2215,7 +2192,7 @@ test('ENDCHECKGODNESS_SKY_TEMPLE：500/520/530 三档空转；540 档的 560 转
       stage: 540,
       flag93: 3,
       want: 540,
-      why: '540-550：FLAG:93 == 3 也不动（守卫死分支）',
+      why: '540-550：FLAG:93 == 3 也不动（检查死分支）',
     },
     { stage: 540, flag93: 2, want: 540, why: 'FLAG:93 != 3 同样不动' },
     { stage: 549, flag93: 3, want: 549, why: '540-550 上界内' },
@@ -2231,7 +2208,7 @@ test('ENDCHECKGODNESS_SKY_TEMPLE：500/520/530 三档空转；540 档的 560 转
     endcheck_godness_sky_temple();
     assert.equal(fixture.store.get('exflag:2810'), c.want, c.why);
   }
-  // 守卫两侧都踩一遍：不在场（-1）与在场（33）都不是 0
+  // 检查两侧都踩一遍：不在场（-1）与在场（33）都不是 0
   const absent = setup_route(0, { cflag: {} });
   absent.store.set('exflag:2810', 540);
   absent.store.set('flag:93', 3);
@@ -2254,7 +2231,7 @@ test('ENDCHECKGODNESS_SKY_TEMPLE：500/520/530 三档空转；540 档的 560 转
   }
 });
 
-// —— #404（N20）：65 个 @END<n> 的结局文本段数据表 ——
+// —— #404（N20）：65 个结局文本段数据表 ——
 //
 // 效果表驱动——每段跑一次、断言线值与副作用（表里逐条写死，不复用数据表
 // 的数字）；分岔与具名步——八个 INPUT 段、END10_12 的 after 条件、finish /
@@ -2269,11 +2246,11 @@ test('END 族分派：65 段全部注册进 END_FAMILY，线值个位为 0 时�
   for (const family of [2, 3, 4, 5, 6, 8, 9, 12, 13, 15]) {
     assert.ok(!END_FAMILY.has(family), `族 ${family} 全库无定义，不得注册`);
   }
-  // 小节键 13 = 原作 @END713（原作函数名无下划线，:659）；分派按线值 / 10
+  // 小节键 13 = 段名 END713（无下划线）；分派按线值 / 10
   // 拼节号，13 能命中（#649 把登记键从 713 挪正，该段是空段、命中后无输出）
   assert.ok(
     END_SCRIPTS[7]['13'] !== undefined,
-    '@END713 的段必须登记在节号 13 下',
+    'END713 的段必须登记在节号 13 下',
   );
   assert.equal(END_SCRIPTS[7]['713'], undefined, "节号键 '713' 不得再出现");
   // 小节 -1 = 菲娅线崩坏态的 Bad Ending 占位段（#649 用户决定新增）
@@ -2592,7 +2569,7 @@ test('leave 步：调教对象指针归空、TARGET/ASSI 从 FLAG:1/2 回填、�
   fixture.era.addCharacter(5);
   fixture.store.set('flag:1', 22); // 上次调教对象 = 黑方片
   fixture.store.set('flag:2', 5); // 上次助手 = 路人
-  fixture.store.set('exflag:2803', 5); // 失控奴隶号（原作 PARTY_CHAR_DEL 的实参）
+  fixture.store.set('exflag:2803', 5); // 失控奴隶号（party_char_del 的实参）
   // 让两条实参路径可区分：5 号自己是队长（cflag:533 == 5），PARTY_CHAR_DEL(5)
   // 会清 5 号的队伍槽位；若误传 cid（22）则清的是 0 号那组
   fixture.store.set('cflag:5:533', 5);
@@ -2609,7 +2586,7 @@ test('leave 步：调教对象指针归空、TARGET/ASSI 从 FLAG:1/2 回填、�
   assert.equal(
     fixture.store.get('flag:2'),
     5,
-    'FLAG:2 不动——原作那行写的是未声明的 G:2（笔误），1:1 不落表',
+    'FLAG:2 不动——那行写的是未声明的 G:2（笔误），有意保留不落表',
   );
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.target, -1, 'TARGET = FLAG:1');
@@ -2641,9 +2618,9 @@ test('rampage 步（END10_15）：嘉德线 540、威望 −50、库存与全角
   fixture.store.set('exflag:99', 200); // 威望
   fixture.store.set('item:100', 1000); // 库存减半
   fixture.store.set('item:106', 62); // 减半到 31：恰在下限门槛外（<= 30 不成立）
-  fixture.store.set('item:189', 40); // 减半到 20 → 兜底 30（189 < 190）
-  fixture.store.set('item:190', 40); // 减半到 20 → 不兜底（190 < 190 不成立）
-  fixture.store.set('item:105', 40); // 减半到 20 → 兜底 30
+  fixture.store.set('item:189', 40); // 减半到 20 → 保底 30（189 < 190）
+  fixture.store.set('item:190', 40); // 减半到 20 → 不保底（190 < 190 不成立）
+  fixture.store.set('item:105', 40); // 减半到 20 → 保底 30
   fixture.store.set('base:0:0', 5000); // 魔王不在 FOR 域内（从 1 起）
   fixture.store.set('base:5:0', 5000);
   fixture.store.set('base:5:1', 5000);
@@ -2659,14 +2636,14 @@ test('rampage 步（END10_15）：嘉德线 540、威望 −50、库存与全角
   assert.equal(
     fixture.store.get('item:105'),
     30,
-    '减半后 <= 30 且 105 < 190 → 兜底 30',
+    '减半后 <= 30 且 105 < 190 → 保底 30',
   );
-  assert.equal(fixture.store.get('item:106'), 31, '减半到 31：> 30，不兜底');
-  assert.equal(fixture.store.get('item:189'), 30, '189 < 190 → 兜底');
+  assert.equal(fixture.store.get('item:106'), 31, '减半到 31：> 30，不保底');
+  assert.equal(fixture.store.get('item:189'), 30, '189 < 190 → 保底');
   assert.equal(
     fixture.store.get('item:190'),
     20,
-    '190 号不兜底（< 190 不成立）',
+    '190 号不保底（< 190 不成立）',
   );
   assert.equal(
     fixture.store.get('base:0:0'),
@@ -2695,7 +2672,7 @@ test('rampage 步（END10_15）：嘉德线 540、威望 −50、库存与全角
   );
 });
 
-test('inconseq 步：END7_2/END7_5/END7_22 调 ENDINCONSQSELECT,7，按结果印不同文本', async () => {
+test('inconseq 步：END7_2/END7_5/END7_22 调 inconseq_select(7)，按结果印不同文本', async () => {
   const CASES = [
     [7, 2, 1, '「哇～魔王大人最好了～那，菲娅先去房间里了哦～♪」'], // 无声段，单输入
     [7, 2, 2, '「啊唔唔……魔王大人今天很忙吗……这样啊……」'],
@@ -2729,7 +2706,7 @@ test('inconseq 步的插值：%SAVESTR:MASTER% 换成角色 0 的姓名', async 
     history_texts(fixture).includes(
       '小魔王就这样顺势的，把菲娅按倒在床上，扯开了衣服，露出了幼小的身体……',
     ),
-    '插值点（ENDINCONSQSELECT 的 5 号文本）',
+    '插值点（因果选择 5 号文本）',
   );
 });
 
@@ -2742,7 +2719,7 @@ test('数据段的插值：END7_1 的 %SAVESTR:MASTER% 换成角色 0 的姓名'
     history_texts(fixture).includes(
       '已经将幼女的人生完全掌握的小魔王，在水晶球中俯视着影像。',
     ),
-    '插值点（ENDINGDATA.ERB:488）',
+    '插值点（数据段 1 的播报文案）',
   );
 });
 
@@ -2760,7 +2737,7 @@ test('end10_54 的 ALIGNMENT：先 CENTER 后 LEFT（era.setAlign 各一次）',
   assert(history_texts(fixture).includes('天神宫可以侵略了。'), '收尾行');
 });
 
-test('ENDINGINPUT CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无效输入重问', async () => {
+test('ending_input CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无效输入重问', async () => {
   {
     const fixture = create_era_fixture();
     const { ending_input } = fixture.load_module('event/event-ending');
@@ -2797,7 +2774,7 @@ test('ENDINGINPUT CASE 1：输入的 [2] 继续 / [1] QUIT（throw 型）/ 无�
   }
 });
 
-test('ENDINGINPUT CASE 7（菲娅线）：[1] 两条起线提示 + 线值与主线推进、[2]/[3]/重问', async () => {
+test('ending_input CASE 7（菲娅线）：[1] 两条起线提示 + 线值与主线推进、[2]/[3]/重问', async () => {
   // [初始 2807, 输入, 期望 2807, 期望 2801, 期望文本]
   const CASES = [
     [3, 1, 103, 2, '菲娅公主线start~'],
@@ -2831,7 +2808,7 @@ test('ENDINGINPUT CASE 7（菲娅线）：[1] 两条起线提示 + 线值与主�
   }
 });
 
-test('ENDINGINPUT CASE 16（双飞）：两个选项都只抬 2805（原作未完成），[3] 不动', async () => {
+test('ending_input CASE 16（双飞）：两个选项都只抬 2805（未完成内容），[3] 不动', async () => {
   // CASE 16：两个选项都只抬 2805（未完成线），[3] 不动
   for (const [input, want] of [
     [1, 100],
@@ -2850,9 +2827,9 @@ test('ENDINGINPUT CASE 16（双飞）：两个选项都只抬 2805（原作未�
   }
 });
 
-test('ENDINGINPUT 未分档的线号（5/6/8-14）：CASEELSE 已删，静默返回、不写 FLAG 侧', async () => {
+test('ending_input 未分档的线号（5/6/8-14）：CASEELSE 已删，静默返回、不写 FLAG 侧', async () => {
   // #649：原 CASEELSE（各角色线档）的后果写在 FLAG 侧无人读、活调用点
-  // （ENDING_N，LOCAL 恒 1）走不到，整档删除。未分档线号落进来不印
+  // （ending_n，LOCAL 恒 1）走不到，整档删除。未分档线号落进来不印
   // 「此处剧情尚未做好」、不写 flag:(2800+线号)、不抬主线
   const fixture = create_era_fixture();
   const { ending_input } = fixture.load_module('event/event-ending');
@@ -2868,14 +2845,14 @@ test('ENDINGINPUT 未分档的线号（5/6/8-14）：CASEELSE 已删，静默返
 // —— 引擎桥接（简报第 3 条）：夹具证明「调了」，引擎真方法证明「接受了」 ——
 // #21/#22 的教训：addCharacter 对无预设角色静默返回 false，夹具的记录层
 // 看不见这层短路。这里用引擎自己的装载循环 + addCharacter 方法体验证
-// ENDING_1 发出的 addCharacter(35) 在引擎侧也会被接受（Chara35.yml 自 #113
+// ending_1 发出的 addCharacter(35) 在引擎侧也会被接受（Chara35.yml 自 #113
 // 入库）。缺引擎（无 app.asar）时整组 skip，跳过数进基线。
 
 const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 engine_test(
-  '引擎 addCharacter：ENDING_1 的入队调用被引擎接受（装载 Chara35.yml 后 add(35) = true，data.no = [35]）',
+  '引擎 addCharacter：ending_1 的入队调用被引擎接受（装载 Chara35.yml 后 add(35) = true，data.no = [35]）',
   () => {
     const repo_tables = load_repo_variable_tables();
     const loader = create_chara_loader();

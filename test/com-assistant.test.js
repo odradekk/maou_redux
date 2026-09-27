@@ -2,10 +2,10 @@
  * ere/system/train/com-assistant.js 的行为测试（issue #225：J15 指令族·助手
  * 与蕾丝 60–73）。验收项「四件套一文件」的落点：
  *
- *   - @COM_ABLE60-73 的判据（助手身份 / 双阴茎 / 失神 / 装备互斥；67 不建壳）；
- *   - @COM60-73 真身（高级 COM 64/69/70 的 SELECTCOM 回填、COM61 升格入口）；
- *   - TRAIN_MESSAGE_B 60-66/68-72 分支与 67/73 的真实无输出；
- *   - @GET_ADV_COM 的 CASE 61 升格规则（强制舔阴 → 六九式）。
+ *   - 60–73 号可用性检查的条件（助手身份 / 双阴茎 / 失神 / 装备互斥；67 不建壳）；
+ *   - com60–73 真身（高级 COM 64/69/70 的 SELECTCOM 回填、com61 升格入口）；
+ *   - train_message_b 的 60–66/68–72 分支与 67/73 的真实无输出；
+ *   - get_adv_com 的 CASE 61 升格规则（强制舔阴 → 六九式）。
  */
 
 'use strict';
@@ -180,17 +180,17 @@ test('注册 60–73：COM、COM_ABLE（除 67）、B/A 与 CASE 61 全部进族
   for (const id of ABLE_IDS) {
     assert.equal(world.com_able_family.has(id), true, `COM_ABLE${id}`);
   }
-  assert.equal(world.com_able_family.has(67), false, '源侧无 COM_ABLE67');
+  assert.equal(world.com_able_family.has(67), false, 'able67 无注册');
   assert.equal(world.adv_com_family.has(61), true, 'GET_ADV_COM CASE 61');
 });
 
-test('@COM_ABLE67：源侧无定义，未定义即可执行', async () => {
+test('able67 不存在，未定义即可执行', async () => {
   const { com_able_family } = seed_world();
   assert.equal(com_able_family.has(67), false);
   assert.equal(await com_able_family.call(67, { whenMissing: 1 }), 1);
 });
 
-test('@COM_ABLE60：必须是助手在调教；失神/口枷/绝不侍奉/触手各挡一条', async () => {
+test('able60：必须是助手在调教；失神/口枷/绝不侍奉/触手各挡一条', async () => {
   const world = seed_world({ player: ASSI });
   const { fixture, era_flag, com_able_family } = world;
   era_flag.assiplay = 1;
@@ -214,7 +214,7 @@ test('@COM_ABLE60：必须是助手在调教；失神/口枷/绝不侍奉/触手
   assert.equal(await com_able_family.call(60), 0, '绝不侍奉');
 });
 
-test('@COM_ABLE64：助手在场 + 两根阴茎；男人/未熟/震动器各挡一条', async () => {
+test('able64：助手在场 + 两根阴茎；男人/未熟/震动器各挡一条', async () => {
   const world = seed_world();
   const { fixture, com_able_family } = world;
   fixture.store.set('talent:0:122', 1);
@@ -237,7 +237,7 @@ test('@COM_ABLE64：助手在场 + 两根阴茎；男人/未熟/震动器各挡�
   assert.equal(await com_able_family.call(64), 0, '肛门经验不足 10');
 });
 
-test('@COM_ABLE73：自动调教旗与顺从门槛', async () => {
+test('able73：自动调教旗与顺从门槛', async () => {
   const world = seed_world();
   const { fixture, com_able_family } = world;
   fixture.store.set(`abl:${TARGET}:10`, 2);
@@ -251,7 +251,7 @@ test('@COM_ABLE73：自动调教旗与顺从门槛', async () => {
   assert.equal(await com_able_family.call(73), 0, '顺从不足 2');
 });
 
-test('@COM60-73：骨架标题行与返回 1', async () => {
+test('com60–73：骨架标题行与返回 1', async () => {
   const titles = {
     60: '助手接吻',
     61: '强制舔阴',
@@ -273,9 +273,9 @@ test('@COM60-73：骨架标题行与返回 1', async () => {
     world.fixture.set_inputs(1);
     const result = await run_com(world, Number(id));
     assert.equal(result, 1, `COM${id}`);
-    // COM64 的标题与部位后缀同行（COMF64:79 的 PRINT ３Ｐ 不收行，:81/83/85/87
-    // 的 PRINTL 收尾同一行——#595 合成一次 print）；本用例的种子（ASSIPLAY=0）
-    // 走 :81 的「私处和肛门」支，故期望串是完整的标题+后缀
+    // COM64 的标题与部位后缀同行（标题「３Ｐ」不单独收行，部位后缀与它
+    // 同行——#595 合成一次 print）；本用例的种子（ASSIPLAY=0）
+    // 走「私处和肛门」支，故期望串是完整的标题+后缀
     const expected = id === '64' ? `${title}・私处和肛门一起插` : title;
     assert.ok(
       world.fixture.text_lines().includes(expected),
@@ -284,7 +284,7 @@ test('@COM60-73：骨架标题行与返回 1', async () => {
   }
 });
 
-test('@COM64/@COM69/@COM70：升格抵达时显式回填 SELECTCOM', async () => {
+test('com64/com69/com70：升格抵达时显式回填 SELECTCOM', async () => {
   for (const id of [64, 69, 70]) {
     const world = seed_world();
     world.era_flag.selectcom = 20;
@@ -321,7 +321,7 @@ test('CASE 61：绳缚中不升格', async () => {
   assert.equal(result, 61);
 });
 
-test('B60-72：各有专属文案（源侧真实分支，非存根占位）', async () => {
+test('B60-72：各有专属文案（真实分支，非存根占位）', async () => {
   for (const com of B_TEXT_IDS) {
     const world = seed_world();
     world.fixture.store.set('tflag:40', 1);
@@ -336,7 +336,7 @@ test('B60-72：各有专属文案（源侧真实分支，非存根占位）', as
   }
 });
 
-test('B67/B73：源侧无 SELECTCOM 分支，真实无输出', async () => {
+test('B67/B73：无 SELECTCOM 分支，真实无输出', async () => {
   for (const com of [67, 73]) {
     const world = seed_world();
     await run_b(world, com);
@@ -344,7 +344,7 @@ test('B67/B73：源侧无 SELECTCOM 分支，真实无输出', async () => {
   }
 });
 
-test('A60-73：无射精旗时不打「族票未落地」占位行；A72 有源侧反应', async () => {
+test('A60-73：无射精旗时不打「族票缺失」占位行；A72 有实际反应文', async () => {
   for (const com of FAMILY_IDS.filter((id) => id !== 72)) {
     const world = seed_world();
     await run_a(world, com);
@@ -357,9 +357,9 @@ test('A60-73：无射精旗时不打「族票未落地」占位行；A72 有源�
   assert.ok(!lines.some((l) => l.includes('指令')), 'A72 不得是存根占位行');
 });
 
-test('本族无运行时存根：INCEST 走 #220 共用真身', () => {});
+test('本族无运行时存根：incest 走 #220 共用真身', () => {});
 
-test('严格 TIMES：十进制逐步截断且负数朝零', () => {
+test('严格 times：十进制逐步截断且负数朝零', () => {
   const world = seed_world();
   const { times } = world.fixture.load_module('system/train/com-assistant');
   assert.equal(times(175, 1.4), 245);
@@ -367,7 +367,7 @@ test('严格 TIMES：十进制逐步截断且负数朝零', () => {
   assert.equal(times(times(250, 0.7), 1.4), 245);
 });
 
-test('@COM_ABLE61：调教者是男人则不可', async () => {
+test('able61：调教者是男人则不可', async () => {
   const world = seed_world();
   const { fixture, com_able_family } = world;
   assert.equal(await com_able_family.call(61), 1);
@@ -375,7 +375,7 @@ test('@COM_ABLE61：调教者是男人则不可', async () => {
   assert.equal(await com_able_family.call(61), 0, '调教者是男人');
 });
 
-test('@COM_ABLE62：助手调教中不可；关系不足不可', async () => {
+test('able62：助手调教中不可；关系不足不可', async () => {
   const world = seed_world();
   const { fixture, era_flag, com_able_family } = world;
   fixture.store.set('talent:0:122', 1);
@@ -388,7 +388,7 @@ test('@COM_ABLE62：助手调教中不可；关系不足不可', async () => {
   assert.equal(await com_able_family.call(62), 0, '相性不足');
 });
 
-test('@COM_ABLE65：必须是助手在调教', async () => {
+test('able65：必须是助手在调教', async () => {
   const world = seed_world({ player: ASSI });
   const { fixture, era_flag, com_able_family } = world;
   era_flag.assiplay = 1;
@@ -399,7 +399,7 @@ test('@COM_ABLE65：必须是助手在调教', async () => {
   assert.equal(await com_able_family.call(65), 0, '主人当调教者不可');
 });
 
-test('@COM_ABLE72：阴毛过短不可刮', async () => {
+test('able72：阴毛过短不可刮', async () => {
   const world = seed_world();
   const { fixture, com_able_family } = world;
   assert.equal(await com_able_family.call(72), 1);
@@ -428,7 +428,7 @@ test('COM64：升格路径按本次/上次指令分配部位并回填 SELECTCOM'
   assert.equal(fixture.store.get('tflag:41'), 2);
   assert.ok(
     fixture.text_lines().includes('３Ｐ・私处和肛门一起插'),
-    'COMF64:79 的 PRINT ３Ｐ 与 :81 的 PRINTL 后缀同行（#595）',
+    '标题「３Ｐ」与部位后缀同行（#595 合成一次 print）',
   );
 });
 
@@ -443,7 +443,7 @@ test('COM65：助手处女选「不要」则取消回合', async () => {
     fixture.text_lines().some((line) => line.includes('处女，让')),
     '应询问是否夺走助手处女',
   );
-  // #612：两键正文照写原作（COMF65_助手を犯させる.ERB:195-196）
+  // #612：两键正文保留「- 」分隔符字面
   assert.deepEqual(
     fixture.lines
       .filter((line) => line.type === 'button')
@@ -453,7 +453,7 @@ test('COM65：助手处女选「不要」则取消回合', async () => {
   );
 });
 
-test('COM72：刮后阴毛状态置 1，且本体不调 TRAIN_MESSAGE_B', async () => {
+test('COM72：刮后阴毛状态置 1，且本体不调 train_message_b', async () => {
   const world = seed_world();
   const { fixture } = world;
   assert.equal(await run_com(world, 72), 1);
@@ -481,7 +481,7 @@ test('COM73：短发跳过剪发；发型不变时保持原样；按钮无手写
   assert.ok(buttons.every((line) => !/\[\d+\]/.test(line.text)));
 });
 
-test('#612 COM73：剪发菜单与发型菜单的按钮正文照写原作的「---」「--」', async () => {
+test('#612 COM73：剪发菜单与发型菜单的按钮正文保留「---」「--」字面', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set(`talent:${TARGET}:302`, 300); // 长发：剪发与发型两个菜单都出现
@@ -490,18 +490,18 @@ test('#612 COM73：剪发菜单与发型菜单的按钮正文照写原作的「-
   const rendered = fixture.lines
     .filter((line) => line.type === 'button')
     .map((button) => button.rendered);
-  // COMF73_髪型を弄る.ERB:78-81 与 :135-148 的分隔符是三个/两个连写破折号，1:1 照写
+  // 剪发菜单与发型菜单的分隔符是三个/两个连写破折号，按字面保留
   assert.deepEqual(
     rendered.slice(0, 3),
     ['[0] ---适当剪一下', '[1] ---大刀阔斧地剪', '[2] ---不剪'],
-    '剪发菜单三项的分隔符是原作的三个连写破折号（COMF73_髪型を弄る.ERB:78-81）',
+    '剪发菜单三项的分隔符是三个连写破折号',
   );
   assert.ok(rendered.includes('[1] ---自然'), '发型菜单第一项');
   assert.ok(rendered.includes('[10] --侧束发'), '长度 >100 的款式');
   assert.ok(rendered.includes('[12] --卷发'), '长度 >200 的款式');
 });
 
-test('A62/A68/A69：射精旗打开后走源侧反应文', async () => {
+test('A62/A68/A69：射精旗打开后走实际反应文', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('tflag:7', 1);
@@ -552,7 +552,7 @@ test('COM69：有亲族打前缀，无亲族静默', async () => {
 // ———— #595：print 之后多补的空行普查 ————
 
 test('#595 COM64：四个部位后缀都与「３Ｐ」同行，且不落纯空白行', async () => {
-  // COMF64:79 的 `PRINT ３Ｐ` 不收行，:81/83/85/87 的 PRINTL 收尾同一行——
+  // 标题「３Ｐ」不单独收行，部位后缀与它同行——
   // ere 侧合成一次 print（#595）
   for (const [selectcom, prevcom, suffix] of [
     [20, 27, '・私处和肛门一起插'], // (1,2)
@@ -585,8 +585,7 @@ test('#595 COM64：四个部位后缀都与「３Ｐ」同行，且不落纯空�
 });
 
 test('#595 COM73：>100 时剪发菜单之后恰有一个真空行，≤100 时一个都没有', async () => {
-  // COMF73:132 的裸 PRINTL 落在空行上；:69-70 的 SIF 在短发时 GOTO
-  // $INPUT_LOOP_HAIRSET，把它整条跳过（#595）
+  // 菜单前有一次不附文本的输出产生真空行；短发分支把它整条跳过（#595）
   const long = seed_world();
   long.fixture.store.set(`talent:${TARGET}:302`, 300); // 头发长度 > 100
   long.fixture.set_inputs(2, 1); // 剪发菜单选「不剪」→ 发型菜单选「自然」
@@ -599,7 +598,7 @@ test('#595 COM73：>100 时剪发菜单之后恰有一个真空行，≤100 时�
   assert.equal(
     long.fixture.lines[menu - 1].text,
     '',
-    '菜单之前是 COMF73:132 的真空行',
+    '菜单之前是那次裸输出的真空行',
   );
   assert.ok(
     !long.fixture.lines.some(
@@ -608,7 +607,7 @@ test('#595 COM73：>100 时剪发菜单之后恰有一个真空行，≤100 时�
         /^[ \u3000]*$/.test(line.text ?? '') &&
         line !== long.fixture.lines[menu - 1],
     ),
-    '剪发流程里除 :132 外没有别的空行',
+    '剪发流程里除那次裸输出外没有别的空行',
   );
 
   const short = seed_world(); // 默认 TALENT:302 = 1（短发）→ 跳过剪发菜单与真空行
@@ -621,6 +620,6 @@ test('#595 COM73：>100 时剪发菜单之后恰有一个真空行，≤100 时�
   assert.ok(short_menu > 0, '短发时发型菜单仍在场');
   assert.ok(
     !/^[ \u3000]*$/.test(short.fixture.lines[short_menu - 1].text ?? ''),
-    '短发时菜单之前没有空行（:69-70 的 GOTO 跳过 :132）',
+    '短发时菜单之前没有空行（短发分支跳过裸输出）',
   );
 });

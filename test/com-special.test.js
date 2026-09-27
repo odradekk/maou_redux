@@ -2,8 +2,8 @@
  * ere/system/train/com-special.js 的行为测试（issue #224 J14）：特殊指令族
  * COM50–59。
  *
- * 覆盖十条 @COM / @COM_ABLE、消息分支，以及 53/54/57/58/59 的持续效果。
- * COM53 的录像槽、逐段 TIMES 截断、充能输入白名单和 COM58 的写入顺序是本族
+ * 覆盖十条指令真身 / 可用性检查、消息分支，以及 53/54/57/58/59 的持续效果。
+ * COM53 的录像槽、逐段 times 截断、充能输入白名单和 COM58 的写入顺序是本族
  * 最易静默回归的边界，单独锁定。
  */
 
@@ -41,15 +41,15 @@ function seed_world({ assi = -1 } = {}) {
   return { fixture, era_flag, com_family, com_able_family, equip_com_family };
 }
 
-/** 真实分发入口：回合循环已先写 SELECTCOM，单测同位模拟。 */
+/** 真实分发入口：回合循环已先写 selectcom，单测同位模拟。 */
 async function run_com(world, id) {
   world.era_flag.selectcom = id;
   return world.com_family.call(id);
 }
 
-// —— @COM_ABLE50–59：每条至少放行与一个原作门 ——
+// —— 50–59 号可用性检查：每条至少验证放行与一个拦截条件 ——
 
-test('@COM_ABLE50–59：默认所需道具下全部放行', async () => {
+test('50–59 号可用性检查：默认所需道具下全部放行', async () => {
   const { fixture, com_able_family } = seed_world();
   for (const item of [6, 16, 18, 19, 25, 26, 27, 28]) {
     fixture.store.set(`item:${item}`, 1);
@@ -63,7 +63,7 @@ test('@COM_ABLE50–59：默认所需道具下全部放行', async () => {
   }
 });
 
-test('@COM_ABLE50–52：器具过滤、药物抗性、连续利尿各自拦截', async () => {
+test('50–52 号可用性检查：器具过滤、药物抗性、连续利尿各自拦截', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('item:25', 1);
   fixture.store.set('item:26', 1);
@@ -82,7 +82,7 @@ test('@COM_ABLE50–52：器具过滤、药物抗性、连续利尿各自拦截'
   assert.equal(await com_able_family.call(52), 0, '利尿剂不可连续投放');
 });
 
-test('@COM_ABLE53–56：录像解除随时、野外门槛、死斗与失神门', async () => {
+test('53–56 号可用性检查：录像解除随时、野外门槛、死斗与失神条件', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(53), 0, '无相机与魔力源不可开录像');
   fixture.store.set('tequip:31:53', 1);
@@ -111,7 +111,7 @@ test('@COM_ABLE53–56：录像解除随时、野外门槛、死斗与失神门'
   assert.equal(await com_able_family.call(53), 0, '自动调教不得开启录像');
 });
 
-test('@COM_ABLE57–59：镜子、浴室及新妻的关键门槛', async () => {
+test('57–59 号可用性检查：镜子、浴室及新妻的关键门槛', async () => {
   const { fixture, era_flag, com_able_family } = seed_world();
   fixture.store.set('abl:31:10', 3);
   assert.equal(await com_able_family.call(57), 0, '缺镜子不可羞耻 PLAY');
@@ -134,7 +134,7 @@ test('@COM_ABLE57–59：镜子、浴室及新妻的关键门槛', async () => {
 
   fixture.store.set('item:19', 1);
   fixture.store.set('abl:31:0', 2);
-  assert.equal(await com_able_family.call(59), 0, '原作新妻门槛是 ABL:0 > 2');
+  assert.equal(await com_able_family.call(59), 0, '新妻门槛是 ABL:0 > 2');
   fixture.store.set('abl:31:0', 3);
   assert.equal(await com_able_family.call(59), 1);
   era_flag.assiplay = 1;
@@ -159,7 +159,7 @@ test('@COM_ABLE57–59：镜子、浴室及新妻的关键门槛', async () => {
 
 // —— COM50–52：药剂状态、道具与经验 ——
 
-test('@COM50：覆写 SOURCE、消耗润滑液并累积同性经验', async () => {
+test('com50：覆写 SOURCE、消耗润滑液并累积同性经验', async () => {
   const world = seed_world();
   world.fixture.store.set('item:25', 2);
   assert.equal(await run_com(world, 50), 1);
@@ -173,7 +173,7 @@ test('@COM50：覆写 SOURCE、消耗润滑液并累积同性经验', async () =
   );
 });
 
-test('@COM51：调合知识、药物经验与成瘾状态按原作落盘', async () => {
+test('com51：调合知识、药物经验与成瘾状态按规则落盘', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('item:26', 1);
@@ -185,7 +185,7 @@ test('@COM51：调合知识、药物经验与成瘾状态按原作落盘', async
   assert.equal(
     fixture.store.get('deltabase:31:0'),
     0,
-    '300-150-100-100 后原作钳至 0',
+    '300-150-100-100 后钳至 0',
   );
   assert.equal(fixture.store.get('deltabase:31:1'), -150);
   assert.equal(fixture.store.get('source:31:7'), 500);
@@ -207,7 +207,7 @@ test('@COM51：调合知识、药物经验与成瘾状态按原作落盘', async
   );
 });
 
-test('@COM52：触手时抗药性例外，置利尿剂并不消耗实体道具', async () => {
+test('com52：触手时抗药性例外，置利尿剂并不消耗实体道具', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('talent:31:56', 1);
@@ -220,12 +220,12 @@ test('@COM52：触手时抗药性例外，置利尿剂并不消耗实体道具',
   assert.equal(fixture.store.get('source:31:14'), 2000);
   assert.equal(fixture.store.get('source:31:15'), 150);
   assert.equal(fixture.store.get('tequip:31:22'), 1);
-  assert.equal(fixture.store.get('item:27'), 1, '触手调教时原作不耗利尿剂');
+  assert.equal(fixture.store.get('item:27'), 1, '触手调教时不耗利尿剂');
 });
 
 // —— COM53：录像的槽、tick、充能与停机 ——
 
-test('@COM53：启动只清 480–489、首个持续 tick 不录帧', async () => {
+test('com53：启动只清 480–489、首个持续 tick 不录帧', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.store.set('item:6', 1);
@@ -238,7 +238,7 @@ test('@COM53：启动只清 480–489、首个持续 tick 不录帧', async () =
   assert.equal(await run_com(world, 53), 1);
   assert.equal(fixture.store.get('tequip:31:53'), 1);
   assert.equal(fixture.store.get('cflag:31:491'), 0);
-  assert.equal(fixture.store.get('cflag:31:460'), 99, '原作启动不清 460–479');
+  assert.equal(fixture.store.get('cflag:31:460'), 99, '启动不清 460–479');
   assert.equal(fixture.store.get('cflag:31:480'), 0);
   assert.equal(fixture.store.get('flag:22'), 513, '野外 + 淋浴快照位');
   assert.ok(
@@ -254,7 +254,7 @@ test('@COM53：启动只清 480–489、首个持续 tick 不录帧', async () =
   assert.equal(fixture.store.get('cflag:31:460'), 99, '首 tick 不写录像');
 });
 
-test('@EQUIP_COM53：录第 1/11/30 帧、助手编码，逐段 TIMES 精确截断', async () => {
+test('equip_com53：录第 1/11/30 帧、助手编码，逐段 times 精确截断', async () => {
   const world = seed_world({ assi: 17 });
   const { fixture, era_flag, equip_com_family } = world;
   fixture.store.set('tequip:31:53', 1);
@@ -275,7 +275,7 @@ test('@EQUIP_COM53：录第 1/11/30 帧、助手编码，逐段 TIMES 精确截�
   assert.equal(
     fixture.store.get('source:31:10'),
     258,
-    '370 的每步整数 TIMES 链（不得合并为一次截断的 259）',
+    '370 的每步整数 times 链（不得合并为一次截断的 259）',
   );
   assert.equal(fixture.store.get('source:31:12'), 1750);
   assert.equal(fixture.store.get('source:31:14'), 980);
@@ -286,13 +286,13 @@ test('@EQUIP_COM53：录第 1/11/30 帧、助手编码，逐段 TIMES 精确截�
   assert.equal(fixture.store.get('cflag:31:470'), 1055, '第 11 帧必须可写 470');
 
   fixture.store.set('cflag:31:491', 30);
-  fixture.store.set('cflag:31:499', 5); // video_max = 30，最大帧后原作会询问
+  fixture.store.set('cflag:31:499', 5); // video_max = 30，最大帧后会询问
   fixture.set_inputs(2);
   await equip_com_family.call(53);
   assert.equal(fixture.store.get('cflag:31:489'), 1055, '最大帧写入 489');
 });
 
-test('@EQUIP_COM53：充能先注册按钮，成功时双扣资金，选择停止时清充能', async () => {
+test('equip_com53：充能先注册按钮，成功时双扣资金，选择停止时清充能', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.store.set('tequip:31:53', 1);
@@ -310,7 +310,7 @@ test('@EQUIP_COM53：充能先注册按钮，成功时双扣资金，选择停�
       ['不了', 2],
     ],
   );
-  // #595：COMF53:175 的裸 PRINTL 落在 :174 的 [1] 行之后 → 真空行（保留）
+  // #595：充能按钮行之后的裸 PRINTL → 真空行（保留）
   assert.deepEqual(
     fixture.lines
       .filter((line) => line.row > buttons[0].row && line.row < buttons[1].row)
@@ -355,7 +355,7 @@ test('@EQUIP_COM53：充能先注册按钮，成功时双扣资金，选择停�
 
 // —— COM54–59：状态、持续函数与消息 ——
 
-test('@COM54：首次开启记录野外露出经验；持续效果由装备分发调用', async () => {
+test('com54：首次开启记录野外露出经验；持续效果由装备分发调用', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.store.set('item:18', 1);
@@ -379,7 +379,7 @@ test('@COM54：首次开启记录野外露出经验；持续效果由装备分�
   assert.equal(fixture.store.get('deltabase:31:1'), -400);
 });
 
-test('@COM58：开启的 SOURCE/LOSEBASE 与持续效果使用不同底数', async () => {
+test('com58：开启的 SOURCE/LOSEBASE 与持续效果使用不同底数', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.store.set('abl:31:10', 3);
@@ -403,7 +403,7 @@ test('@COM58：开启的 SOURCE/LOSEBASE 与持续效果使用不同底数', asy
   );
 });
 
-test('@COM55：无 B 消息，A55 在欲情门开启后输出并置屈服刻印结算', async () => {
+test('com55：无 B 消息，A55 在欲情条件开启后输出并置屈服刻印结算', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('palam:31:5', 3000);
@@ -425,7 +425,7 @@ test('@COM55：无 B 消息，A55 在欲情门开启后输出并置屈服刻印�
   );
 });
 
-test('@TRAIN_MESSAGE_A55：SOURCE_CHECK 调用时输出原作反应；其余 A 位无占位', async () => {
+test('A55：source-check 结算时输出反应文本；其余 A 位无占位', async () => {
   const world = seed_world();
   const { fixture } = world;
   const { train_message_a } = fixture.load_module('system/train/train-message');
@@ -441,14 +441,10 @@ test('@TRAIN_MESSAGE_A55：SOURCE_CHECK 调用时输出原作反应；其余 A �
   world.era_flag.selectcom = 50;
   const before = fixture.text_lines().length;
   await train_message_a();
-  assert.equal(
-    fixture.text_lines().length,
-    before,
-    '本族其余 A 分支是原作无输出',
-  );
+  assert.equal(fixture.text_lines().length, before, '本族其余 A 分支无输出');
 });
 
-test('@TRAIN_MESSAGE_A55：失神值 1 仍输出，2 才抑制', async () => {
+test('A55：失神值 1 仍输出，2 才抑制', async () => {
   const world = seed_world();
   const { fixture } = world;
   const { train_message_a } = fixture.load_module('system/train/train-message');
@@ -468,7 +464,7 @@ test('@TRAIN_MESSAGE_A55：失神值 1 仍输出，2 才抑制', async () => {
   assert.equal(fixture.text_lines().length, before, 'TFLAG:899 = 2 才抑制 A55');
 });
 
-test('@TRAIN_MESSAGE_B50–54、56–59：每条默认分支文本可达', async () => {
+test('B50–54、56–59：每条默认分支文本可达', async () => {
   const world = seed_world();
   const { fixture } = world;
   const { train_message_b } = fixture.load_module('system/train/train-message');
@@ -498,7 +494,7 @@ test('@TRAIN_MESSAGE_B50–54、56–59：每条默认分支文本可达', async
   }
 });
 
-test('@TRAIN_MESSAGE_B52：失神值仅 0 才输出忍尿反应', async () => {
+test('B52：失神值仅 0 才输出忍尿反应', async () => {
   const world = seed_world();
   const { fixture } = world;
   const { train_message_b } = fixture.load_module('system/train/train-message');
@@ -519,7 +515,7 @@ test('@TRAIN_MESSAGE_B52：失神值仅 0 才输出忍尿反应', async () => {
   );
 });
 
-test('@TRAIN_MESSAGE_B：COM51/52 触手及 COM53/54/58/59 关闭分支', async () => {
+test('TRAIN_MESSAGE_B：COM51/52 触手及 COM53/54/58/59 关闭分支', async () => {
   const world = seed_world();
   const { fixture } = world;
   const { train_message_b } = fixture.load_module('system/train/train-message');
@@ -545,7 +541,7 @@ test('@TRAIN_MESSAGE_B：COM51/52 触手及 COM53/54/58/59 关闭分支', async 
   }
 });
 
-test('@COM56：话术读取目标自身，歌唱显示量与实际加值保留原作差 1', async () => {
+test('com56：话术读取目标自身，歌唱显示量与实际加值保留差 1', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('abl:31:10', 3);
@@ -570,7 +566,7 @@ test('@COM56：话术读取目标自身，歌唱显示量与实际加值保留�
   assert.ok(fixture.text_lines().includes('歌唱经验+6'));
 });
 
-test('@COM57：SIF 只约束下一条语句，开启与持续的无素质路径均保留后续效果', async () => {
+test('com57：单行条件只约束下一条语句，开启与持续的无素质路径均保留后续效果', async () => {
   const opening = seed_world();
   opening.fixture.store.set('item:16', 1);
   opening.fixture.store.set('abl:31:10', 3);
@@ -589,7 +585,7 @@ test('@COM57：SIF 只约束下一条语句，开启与持续的无素质路径�
   assert.equal(ongoing.fixture.store.get('source:31:3'), undefined);
 });
 
-test('@COM57：开关、爱情经验与持续效果', async () => {
+test('com57：开关、爱情经验与持续效果', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.store.set('item:16', 1);
@@ -612,7 +608,7 @@ test('@COM57：开关、爱情经验与持续效果', async () => {
   assert.equal(fixture.store.get('deltabase:31:1'), -500);
 });
 
-test('@COM58：关闭时必须先清淋浴，再清浴室位', async () => {
+test('com58：关闭时必须先清淋浴，再清浴室位', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('tequip:31:58', 1);
@@ -629,7 +625,7 @@ test('@COM58：关闭时必须先清淋浴，再清浴室位', async () => {
   ]);
 });
 
-test('@EQUIP_COM58：两个主人经验条件分别累积', async () => {
+test('equip_com58：两个主人经验条件分别累积', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.store.set('abl:31:10', 1);
@@ -648,7 +644,7 @@ test('@EQUIP_COM58：两个主人经验条件分别累积', async () => {
   assert.equal(fixture.store.get('tflag:30'), 2);
 });
 
-test('@COM59：爱情经验 +2，持续效果再 +1 与主人经验四条件', async () => {
+test('com59：爱情经验 +2，持续效果再 +1 与主人经验四条件', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.store.set('item:19', 1);
@@ -672,7 +668,7 @@ test('@COM59：爱情经验 +2，持续效果再 +1 与主人经验四条件', a
   assert.equal(fixture.store.get('source:31:16'), 4320);
 });
 
-test('@SHOW_STATUS：COM53 启动并推进后显示剩余录像次数和特殊持续状态，不落 SHOW_EQUIP_2 占位', async () => {
+test('SHOW_STATUS 事件：COM53 启动并推进后显示剩余录像次数和特殊持续状态，不落 show_equip_2 占位', async () => {
   const world = seed_world();
   const { fixture, equip_com_family } = world;
   fixture.load_module('page/page-train');
@@ -699,8 +695,8 @@ test('@SHOW_STATUS：COM53 启动并推进后显示剩余录像次数和特殊�
   assert.ok(equip.text.includes('[浴室PLAY中]'));
   assert.ok(equip.text.includes('[新妻PLAY中]'));
   assert.ok(
-    !fixture.text_lines().some((line) => line.includes('@SHOW_EQUIP_2')),
-    '本族状态已点亮时不得回退为 SHOW_EQUIP_2 占位',
+    !fixture.text_lines().some((line) => line.includes('SHOW_EQUIP_2')),
+    '本族状态已点亮时不得回退为 show_equip_2 占位',
   );
 });
 
@@ -723,4 +719,4 @@ test('主循环加载特殊族：主循环加载后 COM53 的注册实际生效'
   assert.equal(fixture.store.get('tequip:31:53'), 1);
 });
 
-test('本族无运行时存根：COM50_AUTO 仍由自动调教票拥有', () => {});
+test('本族无运行时存根：COM50_AUTO 仍由自动调教工单拥有', () => {});

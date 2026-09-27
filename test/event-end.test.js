@@ -1,5 +1,5 @@
 /**
- * ere/event/event-end.js 的行为测试（issue #44：@EVENTEND 真身）。
+ * ere/event/event-end.js 的行为测试（issue #44：EVENTEND 真身）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：角色复位（T:10-12 暂存的读回）、
  * 前回指针记录（FLAG:1/2）、失神旗标（TFLAG:860 → FLAG:7）、死亡删除分支
@@ -13,9 +13,9 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
 
-// 世界底座：@EVENTTRAIN 已跑过的调教后状态——目标 31、记录值与暂存值就位、
-// 体力/气力由用例另置。tflag/palam/ex 寻址有夹具守卫，先 beginTrain 开表。
-// #47 起 @EVENTEND 内联 @JUEL_CHECK（读键 + 一枚输入退出交互循环）。
+// 世界底座：train 循环已跑过的调教后状态——目标 31、记录值与暂存值就位、
+// 体力/气力由用例另置。tflag/palam/ex 寻址有夹具防护，先 beginTrain 开表。
+// #47 起 EVENTEND 内联珠结算（读键 + 一枚输入退出交互循环）。
 function seed_world(fixture, { assi = -1 } = {}) {
   join_slave_chara(fixture, 31, '温妮');
   if (assi >= 0) {
@@ -24,8 +24,8 @@ function seed_world(fixture, { assi = -1 } = {}) {
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = 31;
   era_flag.assi = assi;
-  // @EVENTTRAIN 的记录（TARGET:1/ASSI:1）与 @PRITRAIN_MESSAGE 的暂存
-  //（T:10-12）——正常流程它们由那两个函数写入
+  // train 循环的记录（TARGET:1/ASSI:1）与调教循环的暂存
+  //（T:10-12）——正常流程它们由 train 循环写入
   era_flag.target_record = 31;
   era_flag.assi_record = assi;
   era_flag.master_backup = 0;
@@ -45,18 +45,18 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture, { assi: 32 });
   fixture.store.set('base:31:0', 2000); // 存活
-  fixture.store.set('flag:37', 1); // 着衣系统开（@EVENTFIRST :47 的开局值）
+  fixture.store.set('flag:37', 1); // 着衣系统开（开局值）
   fixture.store.set('maxbase:0:1', 10000); // 气力上限（回复用）
   // 中途被对换调教搞乱的指针：复位段读暂存还原
   era_flag.target = 999;
-  // @JUEL_CHECK 交互循环的退出键（#47：内联于 :421 的普通 CALL）
+  // 珠结算交互循环的退出键（#47：内联珠结算是普通 CALL）
   fixture.set_inputs(999);
 
   const pending = await run_eventend(fixture);
 
-  // 出口：:429 BEGIN TURNEND
+  // 出口：BEGIN TURNEND
   assert.equal(pending, 'TURNEND');
-  // 消息 + :317 WAIT
+  // 消息 + WAIT
   assert(fixture.text_lines().includes('调教结束了。'));
   assert(fixture.inputs_consumed.some((c) => c.api === 'waitAnyKey'));
   // 复位（TARGET = T:11；SIF ASSI（32 非零）→ ASSI = T:12）
@@ -65,19 +65,19 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   // 前回指针记录（FLAG:1/FLAG:2）
   assert(fixture.var_writes.some((w) => w.name === 'flag:1' && w.value === 31));
   assert(fixture.var_writes.some((w) => w.name === 'flag:2' && w.value === 32));
-  // CHARADEAD_CHECK / PARTY_CHAR_DEL 自 #548（S7）起为真身（存活路径
+  // charadead_check / party_char_del 自 #548（S7）起为真身（存活路径
   // 静默、死亡路径在 test/event-charadead.test.js 锁行为），不再打占位行
   assert(
-    !fixture.text_lines().some((line) => line.includes('@CHARADEAD_CHECK')),
+    !fixture.text_lines().some((line) => line.includes('CHARADEAD_CHECK')),
   );
 
-  // AFTERTRAIN_CLOTH / RE_CLOTHED 自 #215（J5）起为真身：着衣分支可达
+  // aftertrain_cloth / re_clothed 自 #215（J5）起为真身：着衣分支可达
   // （FLAG:37 = 1 且存活）但本世界 TFLAG:45 = 0、无衣物状态变化 → 静默
   // （真身的行为锁在 test/cloth-func.test.js）
-  // @JUEL_CHECK 已是真身（#47）：结算表落地、不再是占位行
+  // 珠结算已是真身（#47）：结算表已实现、不再是占位行
   assert(fixture.text_lines().includes('以上的点数变化了。'));
-  assert(!fixture.text_lines().some((line) => line.includes('@JUEL_CHECK')));
-  // 尾部还原（:423-425）：ASSI = ASSI:1、TARGET = TARGET:1——复位段（:321）
+  assert(!fixture.text_lines().some((line) => line.includes('JUEL_CHECK')));
+  // 尾部还原：ASSI = ASSI:1、TARGET = TARGET:1——复位段
   // 与尾部各还原一次，末值都是记录值 31/32
   const target_writes = fixture.var_writes.filter(
     (w) => w.name === 'flag:10005',
@@ -88,7 +88,7 @@ test('主体：复位/记录/珠结算/尾部还原，出口转场 TURNEND', asy
   assert.equal(era_flag.assi, 32);
 });
 
-test('录像出售接线：EVENTEND 在调教表销毁前结算有效录像', async () => {
+test('录像出售接入：EVENTEND 在调教表销毁前结算有效录像', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('base:31:0', 2000);
@@ -102,10 +102,10 @@ test('录像出售接线：EVENTEND 在调教表销毁前结算有效录像', as
   assert.equal(
     fixture.store.get('cflag:31:493'),
     50,
-    'SELL_VIDEO 真身完成定价',
+    'sell_video 真身完成定价',
   );
   assert.equal(fixture.store.get('cstr:31:6'), '奴隶的调教');
-  assert(!fixture.text_lines().some((line) => line.includes('@SELL_VIDEO')));
+  assert(!fixture.text_lines().some((line) => line.includes('SELL_VIDEO')));
 });
 
 test('死亡删除分支：后代的死亡标记按来源模板号落位（#561 第 2 条）', async () => {
@@ -126,7 +126,7 @@ test('死亡删除分支：后代的死亡标记按来源模板号落位（#561 
   assert.equal(pending, 'TURNEND');
   assert(
     fixture.var_writes.some((w) => w.name === 'flag:200' && w.value === 1),
-    'FLAG:(NO+199)：后代的原作 NO 是来源模板号（模板 1 → FLAG:200）',
+    'FLAG:(NO+199)：后代的 NO 是来源模板号（模板 1 → FLAG:200）',
   );
   assert(
     !fixture.var_writes.some((w) => w.name === 'flag:100199'),
@@ -140,7 +140,7 @@ test('失神旗标：TFLAG:860 = 1 → FLAG:7 = 1 并清零', async () => {
   seed_world(fixture);
   fixture.store.set('base:31:0', 2000);
   fixture.store.set('tflag:860', 1);
-  fixture.set_inputs(999); // @JUEL_CHECK 交互循环退出键
+  fixture.set_inputs(999); // 珠结算交互循环退出键
 
   await run_eventend(fixture);
 
@@ -184,8 +184,8 @@ test('死亡删除分支：珠不结算、指针清空、除名，BEGIN TURNEND 
     !fixture.text_lines().some((line) => line.includes('以上的点数变化了。')),
     '死亡分支后的珠结算不得执行',
   );
-  // #548 起 CHARADEAD_CHECK 为真身：死亡叙事先行（温妮死掉了……），
-  // SELF_CHECK 因 RESULT != 0 被跳过（:341-345）
+  // #548 起 charadead_check 为真身：死亡叙事先行（温妮死掉了……），
+  // self_check 因 RESULT != 0 被跳过
   assert(fixture.text_lines().includes('温妮死掉了……'));
   assert.equal(fixture.store.get('tflag:13'), 999, '死亡口上事件码');
 });
@@ -247,6 +247,6 @@ test('气力回复钳上限：超上限回落 MAXBASE', async () => {
 });
 
 test('存根名单：#548 后本模块不再持有运行时占位', async () => {
-  // MAOU_TENSHIN 自 #400（N16）、CHARADEAD_CHECK / PARTY_CHAR_DEL 自 #548
+  // event_maou_tenshin 自 #400（N16）、charadead_check / party_char_del 自 #548
   // （S7）起为真身，本模块存根名单清空
 });

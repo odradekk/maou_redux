@@ -1,46 +1,46 @@
 /**
  * @file 调教指令 80–90「重度调教」族：拳交系、G点刺激、放尿、穿环、使役魔兽
- * PLAY、兽奸 PLAY、乳内插入的 @COM、@COM_ABLE、TRAIN_MESSAGE_A/B 分支，以及
- * @GET_ADV_COM CASE 80（强制口交 → 3P）升格规则与 @EQUIP_COM89（兽奸 PLAY 中
+ * PLAY、兽奸 PLAY、乳内插入的 com、com_able、train_message_a/b 分支，以及
+ * get_adv_com 的 80 号规则（强制口交 → 3P）与 equip_com89（兽奸 PLAY 中
  * 持续效果）。
  *
- * J16（issue #226）。族编号 80-99，本票落 80–85、87、88、89、90 十条；86（饮尿）
- * 在 Train.csv 被注释、TRAINNAME 恒空，COM_ABLE86 第 4 行即 RETURN 0（后续判定
- * 全死码）——com-family.js 头注已勘定为「死段不进 DECLARED_TRAIN_IDS」，本票不
- * 建 @COM86/@COM_ABLE86 壳。84（G 点刺激）是高级 COM，只能经 CASE 8（COM8 →
- * 84，已由 com-caress.js 的 adv_rule_8 注册）升格抵达，源侧无 @COM_ABLE84——
- * 「未定义即视为可执行」（com-family.js 头注 #213 勘定），本票同样不建
- * @COM_ABLE84 壳。
+ * J16（issue #226）。族编号 80-99，本工单落 80–85、87、88、89、90 十条；86（饮尿）
+ * 在 TrainCommand.yml 被注释、TRAINNAME 恒空，其检查第 4 行即返回 0（后续判定
+ * 全死码）——com-family.js 头注已定为「死段不进 DECLARED_TRAIN_IDS」，本工单
+ * 不建 86 号实现/检查壳。84（G 点刺激）是高级 COM，只能经 8 号规则（COM8 →
+ * 84，已由 com-caress.js 的 adv_rule_8 注册）升格抵达，无对应可用性检查——
+ * 「未定义即视为可执行」（com-family.js 头注 #213 结论），本工单同样不建
+ * 84 号检查壳。
  *
- * **@EQUIP_COM88 是死代码，不移植**：COMF88 定义了完整的 @EQUIP_COM88（使役
- * 魔兽 PLAY 中的持续效果，约 350 行），但 com-family.js 的 EQUIP_COM_CHAIN
- * （= SYSTEM_SOURCE.ERB:58-123 的 SIF 链实测）里没有 TEQUIP:88 这一位——全库
- * 搜索确认 `CALL EQUIP_COM88` 从未出现在任何调用点。TEQUIP:88 这个旗标本身是
- * 活的（COMABLE.ERB 数十处 `SIF TEQUIP:88 RETURN 0` 用它互斥其他指令，
- * EVENT_TRAIN_MESSAGE_B.ERB 多处用它切换文案），只是「使役 PLAY 期间每回合
- * 持续结算」这个 CALL 点从未被原作接上。@EQUIP_COM89（兽奸 PLAY，结构几乎
- * 相同）在 EQUIP_COM_CHAIN 里是 `[89, 89]`，是活代码，本票落地。
+ * **equip_com88 是死代码，不移植**：使役魔兽 PLAY 有约 350 行的完整持续
+ * 效果实现，但 com-family.js 的 EQUIP_COM_CHAIN
+ * （= source-check 结算的 SIF 链实测）里没有 TEQUIP:88 这一位——全库
+ * 搜索确认没有任何调用点。TEQUIP:88 这个旗标本身是
+ * 活的（数十处可用性检查用它互斥其他指令，
+ * B 文多处用它切换文案），只是「使役 PLAY 期间每回合持续结算」
+ * 这个调用点从未接上。equip_com89（兽奸 PLAY，结构几乎
+ * 相同）在 EQUIP_COM_CHAIN 里是 `[89, 89]`，是活代码，本工单实现。
  *
- * **COM80 的「実行できるかの判定」整段是死码**：COMF80 源文件 :21 `IF
- * TALENT:151` 直到 :209 `ENDIF` 才闭合（IF/ENDIF 计数验证：全文件 32 对，
+ * **COM80 的「実行できるかの判定」整段是死码**：整段 `IF
+ * TALENT:151` 直到尾部 `ENDIF` 才闭合（IF/ENDIF 计数验证：全文件 32 对，
  * 恰好平衡），把 COM_ORDER 调用、全部 ABL/MARK/PALAM/TALENT 加成、汚れ（Y）
  * 计算、`実行値` 判定与 WAIT、`実行できない RETURN 0` 通通包在里面。而
- * COM_ABLE80 已经在 `TALENT:151` 为真时 RETURN 0——COM80 能被执行时
+ * com_able80 已经在 `TALENT:151` 为真时返回 0——COM80 能被执行时
  * TALENT:151 恒为 0，这段判定从未运行过。连带地，段内计算的 Y（汚れ权重）
  * 也从未被赋新值；后面 `SOURCE:8 = Y*40 + 100` 读到的是这个从未刷新的 Y。
- * ere 侧不镜像这整段判定（无 WAIT、无失败 RETURN 0，直接执行），Y 按其唯一
+ * ere 侧不镜像这整段判定（无 WAIT、无失败返回 0，直接执行），Y 按其唯一
  * 可能取值 0 代入（`Y*40+100` = 100）。
  *
- * TRAIN_MESSAGE_A/B 只随本票登记本族 ID 显式出现的 SELECTCOM 分支
+ * TRAIN_MESSAGE_A/B 只随本工单登记本族 ID 显式出现的 SELECTCOM 分支
  * （com-sex.js/com-caress.js 同款先例）：90 的乳内射精文案（CFLAG:113==1 &&
  * TFLAG:2==1/2）虽然外层不是按 SELECTCOM 分流，但 CFLAG:113 全库仅由 COM90
  * 置 1，故在 SELECTCOM===90 的注册点内直接判它是安全且完整的。80 的口内
- * 射精文案与 124（COM_ABLE124，后续追加与高级族票）共享同一段源文本，本票
- * 只注册 80；81-85/87-89 在两份 TRAIN_MESSAGE 源文件里都没有专属分支，登记
- * 空操作占位（源本身无文案，不是本票遗漏）。
+ * 射精文案与 124（追加与高级族的后续工单）共享同一段文本，本工单
+ * 只注册 80；81-85/87-89 在 A/B 文里都没有专属分支，登记
+ * 空操作占位（本身无文案，不是本工单遗漏）。
  *
- * COM87（穿环）的部位位域 P 在原作是跨 `CALL TRAIN_MESSAGE_B` 存活的 Emuera
- * 全局单字母变量；ere 侧用模块级 piercing_state 承载（com-caress.js 的
+ * COM87（穿环）的部位位域 P 跨 train_message_b 存活（单字母全局
+ * 变量）；ere 侧用模块级 piercing_state 承载（com-caress.js 的
  * order_state 同款先例，单线程回合制下安全）。
  */
 
@@ -78,14 +78,14 @@ const {
   clothtype_special_text,
 } = require('#/page/page-clothtype');
 
-// —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 兜底） ——
+// —— 共享读取助手（#13：未声明下标读值得 undefined，一律 || 0 取默认值） ——
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
 const abl = (id, i) => Math.floor(era.get(`abl:${id}:${i}`) || 0);
 const tequip = (id, i) => era.get(`tequip:${id}:${i}`) || 0;
 const palam = (id, i) => era.get(`palam:${id}:${i}`) || 0;
 const exp = (id, i) => era.get(`exp:${id}:${i}`) || 0;
 
-/** 名字表读取（ablname/talentname/expname…，#13 空值兜底） */
+/** 名字表读取（ablname/talentname/expname…，#13 空值取默认值） */
 const name_of = (table, id) => era.get(`${table}:${id}`) ?? '';
 
 /** 判定行助手：把「= A … 实行值 V」的收尾段拼进 parts（com-caress.js 同款） */
@@ -125,13 +125,13 @@ const zooko_worn = (cid) =>
   ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0 &&
   (era.get('flag:37') || 0) !== 0;
 
-/** PBAND（ITEM:4，SYSTEM ver1.0.3.ERB:42 的内建常量赋值） */
+/** PBAND（ITEM:4 的内建常量赋值） */
 const PBAND = 4;
 
 /**
- * JUMPFORM COM{RESULT}：升格目标已全部注册进 com_family（升格表能返回的
- * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 对应原作
- * 「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * 升格直跳：升格目标已全部注册进 com_family（升格表能返回的每个号都有
+ * 真身），直调目标号并透传返回值；whenMissing 1 即「目标缺失时返回 1」
+ * （本不该发生，防御语义）。
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
@@ -140,7 +140,7 @@ async function jump_to_advanced(id) {
 }
 
 // ============================================================
-// @COM_ABLE80-90（COMABLE.ERB:3142-3538；84/86 死段不建壳）
+// com_able_family 的 80–90 号可用性检查（84/86 死段不建壳）
 // ============================================================
 
 function able80() {
@@ -396,19 +396,19 @@ function able90() {
 }
 
 // ============================================================
-// @COM80-90（COMF80-90.ERB）
+// com80–com90 指令实现
 // ============================================================
 
 /**
- * @COM80（COMF80_イラマチオ.ERB）强制口交。
- * :19-209「実行できるかの判定」整段是死码（文件头注已勘定），不镜像。
- * @returns {Promise<number>} 原作 RETURN 1
+ * com80：强制口交。
+ * 「実行できるかの判定」整段是死码（文件头注已说明），不镜像。
+ * @returns {Promise<number>} 返回 1
  */
 async function com80() {
   const target = era_flag.target;
   const player = era_flag.player;
 
-  // CASE 80 头部升格跳转（LOCAL = 80 → 3P，见 adv_com_family.register(80)）
+  // 头部升格检查（80 → 3P，见 adv_com_family.register(80)）
   const upgraded = await get_adv_com(80);
   if (upgraded !== 80) {
     return jump_to_advanced(upgraded);
@@ -579,7 +579,7 @@ async function com80() {
 
   // 大量射精 / 通常射精
   if (e === 2) {
-    era.add(`source:${target}:7`, 0); // 无操作（对齐 TIMES 后续读点，占位）
+    era.add(`source:${target}:7`, 0); // 无操作（对齐后续 times 读点，占位）
     set(7, src(7) * 2.0);
     set(5, src(5) * 1.5);
     era.add(`exp:${player}:3`, 2);
@@ -656,7 +656,7 @@ async function com80() {
   return 1;
 }
 
-/** @COM81（COMF81_フィストファック.ERB）拳交。 */
+/** com81：拳交。 */
 async function com81() {
   const target = era_flag.target;
   const player = era_flag.player;
@@ -706,7 +706,7 @@ async function com81() {
   return 1;
 }
 
-/** @COM82（COMF82_アナルフィスト.ERB）肛门拳交。 */
+/** com82：肛门拳交。 */
 async function com82() {
   const target = era_flag.target;
   era.print('肛门拳交');
@@ -832,7 +832,7 @@ async function com82() {
   return 1;
 }
 
-/** @COM83（COMF83_両穴フィスト.ERB）两穴拳交。 */
+/** com83：两穴拳交。 */
 async function com83() {
   const target = era_flag.target;
   era.print('双穴拳交');
@@ -1081,13 +1081,13 @@ async function com83() {
   return 1;
 }
 
-/** @COM84（COMF84_Gスポット刺激.ERB）刺激G点。高级 COM，只经 CASE 8 升格抵达。 */
+/** com84：刺激G点。高级 COM，只经 8 号规则升格抵达。 */
 async function com84() {
   const target = era_flag.target;
   const player = era_flag.player;
 
   era.print('刺激Ｇ点');
-  era_flag.selectcom = 84; // 原作显式 SELECTCOM = 84（升格抵达时回填号位）
+  era_flag.selectcom = 84; // 升格抵达时回填号位
   await train_message_b();
 
   const { src, set } = make_src_helpers(target);
@@ -1217,7 +1217,7 @@ async function com84() {
   return 1;
 }
 
-/** @COM85（COMF85_放尿.ERB）放尿。 */
+/** com85：放尿。 */
 async function com85() {
   const target = era_flag.target;
   const player = era_flag.player;
@@ -1360,7 +1360,7 @@ async function com85() {
   return 1;
 }
 
-/** @COM87（COMF87_ピアシング.ERB）穿环。跨 CALL TRAIN_MESSAGE_B 存活的部位
+/** com87：穿环。跨 train_message_b 存活的部位
  * 位域 P（com-caress.js order_state 同款存活态；模块抽出见 piercing-state.js）。 */
 
 const PIERCING_BITS = [1, 2, 4, 8, 16, 32, 64];
@@ -1391,7 +1391,7 @@ function piercing_status_line(target) {
   era.print(stock ? `手上有${stock}个环。` : '手上没有环。');
 }
 
-/** @COM87 判定段：装/取选择后返回 P（0 = 玩家取消） */
+/** com87 判定段：装/取选择后返回 P（0 = 玩家取消） */
 async function piercing_choose_part() {
   const target = era_flag.target;
   for (;;) {
@@ -1680,7 +1680,7 @@ async function com87() {
   return 1;
 }
 
-/** @COM88（COMF88_使役魔獣プレイ.ERB）使役魔兽 PLAY 开关。*/
+/** com88：使役魔兽 PLAY 开关。*/
 async function com88() {
   const target = era_flag.target;
   era.print('使役魔兽PLAY');
@@ -1697,7 +1697,7 @@ async function com88() {
   return 1;
 }
 
-/** @COM89（COMF89_獣姦プレイ.ERB）兽奸 PLAY 开关。 */
+/** com89：兽奸 PLAY 开关。 */
 async function com89() {
   era.print('兽奸PLAY');
   await train_message_b();
@@ -1713,8 +1713,8 @@ async function com89() {
 }
 
 /**
- * @EQUIP_COM89（COMF89_獣姦プレイ.ERB:19-249）：兽奸 PLAY 中的持续效果。
- * @EQUIP_COM_CHAIN 的 [89, 89] 消费点（SYSTEM_SOURCE.ERB SIF 链），本族票落地。
+ * equip_com89：兽奸 PLAY 中的持续效果。
+ * EQUIP_COM_CHAIN 的 [89, 89] 消费点（source-check 结算的 SIF 链），本族工单实现。
  */
 async function equip_com89() {
   const target = era_flag.target;
@@ -1807,9 +1807,9 @@ async function equip_com89() {
 
   // —— 射精チェック ——
   const player_master = 0; // MASTER 恒为 0（CONTEXT.md）
-  // GOTO END_EJAC 命中时原作 E 无新赋值（读到从未刷新的全局）；ere 侧按其
+  // GOTO END_EJAC 命中时 E 无新赋值（读到从未刷新的全局）；ere 侧按其
   // 唯一可合理代入的默认值 0（COM80 头注同类处理），下方汚れ/TFLAG:16 与
-  // T 收尾在两条路径都执行（$END_EJAC 之后是共同尾段，1:1 挪到 if 外）
+  // T 收尾在两条路径都执行（$END_EJAC 之后是共同尾段，挪到 if 外）
   let e = 0;
   if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0) {
     let ejacb = 0;
@@ -1967,13 +1967,13 @@ async function equip_com89() {
   return 1;
 }
 
-/** @COM90（COMF90_ニプルファック.ERB）乳内插入。 */
+/** com90：乳内插入。 */
 async function com90() {
   const target = era_flag.target;
   if (!(await confirm_condom())) return 0;
 
   era.print('乳房插入');
-  await train_message_b(); // 源侧无 SELECTCOM==90 分支，真实无输出
+  await train_message_b(); // 无 SELECTCOM==90 分支，真实无输出
 
   era.set(`cflag:${target}:113`, 1); // 乳房挿入フラグ
   await com_ejac_player_sex();
@@ -2099,13 +2099,13 @@ async function com90() {
 }
 
 // ============================================================
-// @GET_ADV_COM CASE 80（COMF_JUMP.ERB:642-663）
+// get_adv_com 的 80 号升格规则
 // ============================================================
 
 /**
- * CASE 80：强制口交 → 3P（64，J15 助手族，源侧升格目标）。TFLAG:42 先清 0，
+ * 80 号规则：强制口交 → 3P（64，J15 助手族）。TFLAG:42 先清 0，
  * 命中「上回合是 3P」或「调教者切换 && 上回合是正常/背后/背后肛交/3P」时
- * 升格；COM_ABLE64 未落地时按缺失语义处理（whenMissing: 0 = 不可用）。
+ * 升格；64 号可用性检查未实现时按缺失语义处理（whenMissing: 0 = 不可用）。
  */
 adv_com_family.register(80, async () => {
   era.set('tflag:42', 0);
@@ -2129,7 +2129,7 @@ adv_com_family.register(80, async () => {
 });
 
 // ============================================================
-// @TRAIN_MESSAGE_B（SELECTCOM 80-89；90 源侧无分支，真实无输出）
+// train_message_b（SELECTCOM 80-89；90 无分支，真实无输出）
 // ============================================================
 
 train_message_b_family.register(80, async () => {
@@ -2442,16 +2442,16 @@ train_message_b_family.register(89, async () => {
   return 0;
 });
 
-// 90：源侧 EVENT_TRAIN_MESSAGE_B.ERB 无 SELECTCOM == 90 分支，真实无输出。
+// 90：B 文无 SELECTCOM == 90 分支，真实无输出。
 train_message_b_family.register(90, async () => 0);
 
 // ============================================================
-// @TRAIN_MESSAGE_A（80 的口内射精文案；90 的乳内射精文案；其余源侧无分支）
+// train_message_a（80 的口内射精文案；90 的乳内射精文案；其余无分支）
 // ============================================================
 
-// A 的射精文本属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
+// A 的射精文本属 train_message_a 的公共段（#402 合并到
 // train-message.js）：本族不再另留一份拷贝——两份同时跑会把同一行打两遍。
-// 源侧 A 文件对这些号没有专属分支，故显式无操作。
+// A 文对这些号没有专属分支，故显式无操作。
 async function no_message_a() {
   return 0;
 }
@@ -2463,7 +2463,7 @@ train_message_a_family.register(80, no_message_a);
 train_message_a_family.register(90, no_message_a);
 
 for (const id of [81, 82, 83, 84, 85, 87, 88, 89]) {
-  train_message_a_family.register(id, async () => 0); // 源侧无专属分支
+  train_message_a_family.register(id, async () => 0); // 无专属分支
 }
 
 // ============================================================

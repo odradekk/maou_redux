@@ -1,6 +1,6 @@
 /**
- * ere/system/train/com-register.js 的行为测试（issue #214：COMSEQ 的
- * 登记 / 显示 / 执行三段 + MULTI_COMABLE + CALLTRAIN 等价）。
+ * ere/system/train/com-register.js 的行为测试（issue #214：comseq 的
+ * 登记 / 显示 / 执行三段 + multi_comable + run_calltrain 等价）。
  *
  * 缝 = test/helpers/era-fixture.js。tflag 是调教期表：全部用例先开火车表。
  * 输入经 set_inputs 驱动（夹具按已打印按钮的白名单校验——#130），
@@ -30,9 +30,9 @@ function seed_menu(fixture, ids) {
   ids.forEach((id, i) => fixture.store.set(`flag:${551 + i}`, id));
 }
 
-// —— @COMSEQ_SHOW（:126-155） ——
+// —— comseq_show ——
 
-test('COMSEQ_SHOW：名字串 + 「 → 」分隔 + 收尾换行（静态名表）', async () => {
+test('comseq_show：名字串 + 「 → 」分隔 + 收尾换行（静态名表）', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.store.set('traincommandname:6', '接吻');
@@ -41,12 +41,12 @@ test('COMSEQ_SHOW：名字串 + 「 → 」分隔 + 收尾换行（静态名表�
   await mod.comseq_show();
 
   assert.equal(fixture.text_lines().join(''), '已登录指令：爱抚 → 接吻');
-  // 的 PRINTL 只收尾那一行；ere 的每个 print 已经自成一行，故行末不再
+  // 收尾的 PRINTL 只结束所在行；ere 的每个 print 已经自成一行，故行末不再
   // 补空行（#562）——多一个 br 就是多出来的空行
-  assert.notEqual(fixture.lines.at(-1).type, 'br', ':155 的 PRINTL 不产生空行');
+  assert.notEqual(fixture.lines.at(-1).type, 'br', '收尾的 PRINTL 不产生空行');
 });
 
-test('COMSEQ_SHOW：连续同指令折叠 ×n（:138-151）', async () => {
+test('comseq_show：连续同指令折叠 ×n', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.store.set('traincommandname:6', '接吻');
@@ -57,7 +57,7 @@ test('COMSEQ_SHOW：连续同指令折叠 ×n（:138-151）', async () => {
   assert.equal(fixture.text_lines().join(''), '已登录指令：爱抚×3 → 接吻×2');
 });
 
-test('COMSEQ_SHOW：不可用条目显示（不可用）（COM_ABLE=0）', async () => {
+test('comseq_show：不可用条目显示（不可用）（可用性检查返回 0）', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family } = fixture.load_module('system/train/com-family');
   fixture.store.set('traincommandname:0', '爱抚');
@@ -70,7 +70,7 @@ test('COMSEQ_SHOW：不可用条目显示（不可用）（COM_ABLE=0）', async
   assert.equal(fixture.text_lines().join(''), '已登录指令：爱抚 → （不可用）');
 });
 
-test('COMSEQ_SHOW：空菜单只有前缀与换行', async () => {
+test('comseq_show：空菜单只有前缀与换行', async () => {
   const { fixture, mod } = load_register();
   await mod.comseq_show();
   assert.equal(fixture.text_lines().join(''), '已登录指令：');
@@ -83,21 +83,21 @@ function history_texts(fixture) {
     .map((l) => l.text);
 }
 
-// —— @MULTI_COMABLE（:190-202） ——
+// —— multi_comable ——
 
-test('MULTI_COMABLE：TRAINNAME 为空（高级 COM 84）→ 0，不进登记面', async () => {
+test('multi_comable：traincommandname 为空（高级 COM 84）→ 0，不进登记面', async () => {
   const { fixture, mod } = load_register();
   assert.equal(await mod.multi_comable(84), 0);
   assert.equal(fixture.store.get('tflag:224') ?? 0, 0, '提前返回路径不置旗标');
 });
 
-test('MULTI_COMABLE：在册且未实现 COM_ABLE → 1（引擎初期值语义）', async () => {
+test('multi_comable：在册且未实现可用性检查 → 1（未定义即默认可用）', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   assert.equal(await mod.multi_comable(0), 1);
 });
 
-test('MULTI_COMABLE：探测包着 TFLAG:224 = 555（置位 → 调用 → 复位）', async () => {
+test('multi_comable：探测包着 TFLAG:224 = 555（置位 → 调用 → 复位）', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family } = fixture.load_module('system/train/com-family');
   fixture.store.set('traincommandname:0', '爱抚');
@@ -113,9 +113,9 @@ test('MULTI_COMABLE：探测包着 TFLAG:224 = 555（置位 → 调用 → 复�
   assert.equal(fixture.store.get('tflag:224'), 0, '探测后复位');
 });
 
-// —— @COMSEQSUB_PRINT_COMLIST（:162-179） ——
+// —— print_comlist ——
 
-test('PRINT_COMLIST：可登记指令的按钮列表，编号印 L_I 本身', async () => {
+test('print_comlist：可登记指令的按钮列表，编号印指令号本身', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.store.set('traincommandname:40', '打屁股');
@@ -128,17 +128,17 @@ test('PRINT_COMLIST：可登记指令的按钮列表，编号印 L_I 本身', as
   const buttons = fixture.lines
     .filter((l) => l.type === 'button')
     .map((b) => [b.accelerator, b.text]);
-  // 零实现态其余全可用；40 被 COM_ABLE 拦下、高级 COM（TRAINNAME 空）无按钮
+  // 零实现态其余全可用；40 被可用性检查拦下、高级 COM（traincommandname 空）无按钮
   const map = new Map(buttons);
   assert.equal(map.get(0), '爱抚');
-  assert.equal(map.get(110), '穿脱衣服', '登记面编号是 L_I（110 不折位次）');
-  assert.ok(!map.has(40), 'COM_ABLE=0 不得出现在登记面');
-  assert.ok(!map.has(84), '高级 COM（TRAINNAME 空）不得出现在登记面');
+  assert.equal(map.get(110), '穿脱衣服', '登记面编号是指令号（110 不折位次）');
+  assert.ok(!map.has(40), '可用性检查不过不得出现在登记面');
+  assert.ok(!map.has(84), '高级 COM（traincommandname 空）不得出现在登记面');
 });
 
-// —— @COMSEQ_REGISTER（:25-121） ——
+// —— comseq_register ——
 
-test('COMSEQ_REGISTER：登记一条后保存并返回（槽位/长度/旗标终态）', async () => {
+test('comseq_register：登记一条后保存并返回（槽位/长度/旗标终态）', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.reset_inputs(0, 1000); // 第 1 条选爱抚 → 保存并返回
@@ -147,12 +147,12 @@ test('COMSEQ_REGISTER：登记一条后保存并返回（槽位/长度/旗标终
 
   assert.equal(fixture.store.get('flag:551'), 0);
   assert.equal(fixture.store.get('flag:550'), 1, '首条覆盖式开新菜单');
-  assert.equal(fixture.store.get('tflag:204'), 0, ':120 完成后清 TFLAG:204');
+  assert.equal(fixture.store.get('tflag:204'), 0, '完成后清 TFLAG:204');
   assert.ok(fixture.text_lines().some((t) => t.includes('调教菜单登录完毕')));
-  assert.equal(fixture.waits.at(-1)?.waited, true, ':119 PRINTW 等键');
-  // 是一串 PRINTC 出口键，:52 的 PRINTL 只结束它们所在的行（PRINTC 系
-  // 不换行，见 CONTEXT.md「输出 API 与原作的对应」）：ere 的 printButton 自成
-  // 一行，出口键之后紧接 :53 的 DRAWLINE，中间不夹空行（#562）
+  assert.equal(fixture.waits.at(-1)?.waited, true, '完成段 PRINTW 等键');
+  // 出口键是一串 PRINTC，紧随的 PRINTL 只结束它们所在的行（PRINTC 系
+  // 不换行，见 CONTEXT.md 的输出 API 说明）：ere 的 printButton 自成
+  // 一行，出口键之后紧接分割线，中间不夹空行（#562）
   const exit_button = fixture.lines
     .filter((line) => line.type === 'button' && line.accelerator === 1000)
     .at(-1);
@@ -163,7 +163,7 @@ test('COMSEQ_REGISTER：登记一条后保存并返回（槽位/长度/旗标终
     ['divider'],
     '出口键之后紧接分割线，不夹空行',
   );
-  // 的 PRINTL 整行自成一行，紧随的是 :35 的分割线——同样不夹空行（#562）
+  // 标题行整行自成一行，紧随的是分割线——同样不夹空行（#562）
   const title_row = fixture.lines.find(
     (line) => line.type === 'text' && line.text === '调教菜单登录',
   ).row;
@@ -176,7 +176,7 @@ test('COMSEQ_REGISTER：登记一条后保存并返回（槽位/长度/旗标终
   );
 });
 
-test('COMSEQ_REGISTER：首步取消（1000）→ 原菜单不动', async () => {
+test('comseq_register：首步取消（1000）→ 原菜单不动', async () => {
   const { fixture, mod } = load_register();
   seed_menu(fixture, [6]);
   fixture.reset_inputs(1000);
@@ -187,7 +187,7 @@ test('COMSEQ_REGISTER：首步取消（1000）→ 原菜单不动', async () => 
   assert.equal(fixture.store.get('flag:551'), 6);
 });
 
-test('COMSEQ_REGISTER：登记中途的出口文案切换（取消并返回 → 保存并返回）', async () => {
+test('comseq_register：登记中途的出口文案切换（取消并返回 → 保存并返回）', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.reset_inputs(0, 1000);
@@ -201,7 +201,7 @@ test('COMSEQ_REGISTER：登记中途的出口文案切换（取消并返回 → 
   assert.equal(labels.at(-1), '保存并返回');
 });
 
-test('COMSEQ_REGISTER：重复指令[999]把已登记段循环复制到满 10 条', async () => {
+test('comseq_register：重复指令[999]把已登记段循环复制到满 10 条', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.store.set('traincommandname:6', '接吻');
@@ -214,11 +214,11 @@ test('COMSEQ_REGISTER：重复指令[999]把已登记段循环复制到满 10 �
   assert.deepEqual(
     Array.from({ length: 10 }, (_, i) => fixture.store.get(`flag:${551 + i}`)),
     [0, 6, 0, 6, 0, 6, 0, 6, 0, 6],
-    ':84-86 以 LOCAL:1 为周期的模板槽复制',
+    '以已登记段为周期的模板槽复制',
   );
 });
 
-test('COMSEQ_REGISTER：重置菜单[998]清 550-560 与本会话计数', async () => {
+test('comseq_register：重置菜单[998]清 550-560 与本会话计数', async () => {
   const { fixture, mod } = load_register();
   seed_menu(fixture, [0, 6]);
   fixture.reset_inputs(998, 1000); // 重置 → 重画（0 条）→ 取消并返回
@@ -230,7 +230,7 @@ test('COMSEQ_REGISTER：重置菜单[998]清 550-560 与本会话计数', async 
   }
 });
 
-test('COMSEQ_REGISTER：登满 10 条自动进完成段（不再要输入）', async () => {
+test('comseq_register：登满 10 条自动进完成段（不再要输入）', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.reset_inputs(0, 0, 0, 0, 0, 0, 0, 0, 0, 0); // 恰 10 次输入
@@ -240,12 +240,12 @@ test('COMSEQ_REGISTER：登满 10 条自动进完成段（不再要输入）', a
   assert.equal(
     fixture.store.get('flag:550'),
     10,
-    ':111-113 第 10 条登记后直入完成段（<= 9 边界）',
+    '第 10 条登记后直入完成段（<= 9 边界）',
   );
   // 输入队列耗尽未抛错 = 完成段不再要输入
 });
 
-test('COMSEQ_REGISTER：每轮重画带「选择第N个指令:」行', async () => {
+test('comseq_register：每轮重画带「选择第N个指令:」行', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   fixture.reset_inputs(0, 1000);
@@ -254,7 +254,7 @@ test('COMSEQ_REGISTER：每轮重画带「选择第N个指令:」行', async () 
 
   const prompts = history_texts(fixture).filter((t) => t.includes('个指令:'));
   assert.deepEqual(prompts, ['选择第1个指令:', '选择第2个指令:']);
-  // 的 PRINTFORML 整行自成一行（era.print 已是一行），紧随的是 :39 方格
+  // 提示行整行自成一行（era.print 已是一行），紧随的是方格
   // 的第一个按钮——中间不夹空行（#562）
   const prompt_row = fixture.lines.find(
     (line) => line.type === 'text' && line.text.startsWith('选择第'),
@@ -266,8 +266,8 @@ test('COMSEQ_REGISTER：每轮重画带「选择第N个指令:」行', async () 
     ['button'],
     '「选择第N个指令」行之后紧接方格按钮，不夹空行',
   );
-  // 的 PRINTL 是**真空行**（:39 的方格由 @COMSEQSUB_PRINT_COMLIST 自己在
-  // 收尾），所以 :38-:41 的顺序是「提示行 → 方格按钮 → 恰好一个
+  // 出口键前的 PRINTL 是**真空行**（方格行由 print_comlist 自己
+  // 收尾），所以顺序是「提示行 → 方格按钮 → 恰好一个
   // 空行 → 出口键」——删掉这一行（少了空行）或再补一条（多出空行）都要红
   const exit_row = fixture.lines.find(
     (line) =>
@@ -279,11 +279,7 @@ test('COMSEQ_REGISTER：每轮重画带「选择第N个指令:」行', async () 
       line.row < exit_row &&
       (line.type === 'br' || (line.type === 'text' && line.text === '')),
   );
-  assert.equal(
-    blanks.length,
-    1,
-    '方格与出口键之间恰有一个空行（:40 的 PRINTL）',
-  );
+  assert.equal(blanks.length, 1, '方格与出口键之间恰有一个空行');
   assert.equal(
     blanks[0].row,
     exit_row - 1,
@@ -291,9 +287,9 @@ test('COMSEQ_REGISTER：每轮重画带「选择第N个指令:」行', async () 
   );
 });
 
-// —— @COMSEQ_TRAIN 与 CALLTRAIN 等价（:207-237 / :230） ——
+// —— comseq_train 与 run_calltrain 等价 ——
 
-test('COMSEQ_TRAIN：预检查有不可用条目 → 整体拒绝，零执行', async () => {
+test('comseq_train：预检查有不可用条目 → 整体拒绝，零执行', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family, com_family } = fixture.load_module(
     'system/train/com-family',
@@ -312,11 +308,11 @@ test('COMSEQ_TRAIN：预检查有不可用条目 → 整体拒绝，零执行', 
 
   await mod.comseq_train();
 
-  assert.deepEqual(fired, [], '任何一条不可用即整段拒绝（:222-224 BREAK）');
+  assert.deepEqual(fired, [], '任何一条不可用即整段拒绝（预检查中断）');
   assert.ok(
     fixture.text_lines().some((t) => t.includes('所登录的指令目前无法实行')),
   );
-  // #595：COM_REGISTER.ERB:234 的 PRINTL 整行自成一行——其后不补空行
+  // #595：拒绝文案整行自成一行——其后不补空行
   const not_runnable = fixture.lines.find((l) =>
     l.text?.includes('所登录的指令目前无法实行'),
   );
@@ -325,17 +321,17 @@ test('COMSEQ_TRAIN：预检查有不可用条目 → 整体拒绝，零执行', 
       .filter((l) => l.row === not_runnable.row + 1)
       .map((l) => [l.type, l.text]),
     [],
-    ':234 之后不得补空行（该行已是整行 PRINTL）',
+    '拒绝文案之后不得补空行（该行已是整行 PRINTL）',
   );
-  assert.equal(fixture.store.get('tflag:224'), 0, ':233 拒绝路径复位旗标');
+  assert.equal(fixture.store.get('tflag:224'), 0, '拒绝路径复位旗标');
   assert.equal(
     fixture.load_module('era-utils/era-flag').prevcom,
     prevcom_before,
-    ':236 PREVCOM 恢复',
+    'prevcom 恢复',
   );
 });
 
-test('COMSEQ_TRAIN：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回合，PREVCOM 恢复', async () => {
+test('comseq_train：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回合，prevcom 恢复', async () => {
   const { fixture, mod } = load_register();
   const { com_family } = fixture.load_module('system/train/com-family');
   const { on } = fixture.load_module('system/event/registry');
@@ -348,7 +344,7 @@ test('COMSEQ_TRAIN：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回
   on('EVENTCOM', () => fired.push('EVENTCOM'));
   on('EVENTCOMEND', () => fired.push('EVENTCOMEND'));
   const era_flag = fixture.load_module('era-utils/era-flag');
-  era_flag.prevcom = 12; // 进函数时的原值（恢复的锚）
+  era_flag.prevcom = 12; // 进函数时的原值（要恢复的基准）
 
   await mod.comseq_train();
 
@@ -360,20 +356,12 @@ test('COMSEQ_TRAIN：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回
     'COM6',
     'EVENTCOMEND',
   ]);
-  assert.equal(era_flag.prevcom, 12, ':236 序列后 PREVCOM 恢复原值');
-  assert.equal(
-    fixture.store.get('tflag:224'),
-    0,
-    'CALLTRAINEND 复位（:243-245）',
-  );
-  assert.equal(
-    fixture.store.get('flag:10011'),
-    6,
-    'SELECTCOM 停在序列末条（引擎行为）',
-  );
+  assert.equal(era_flag.prevcom, 12, '序列后 prevcom 恢复原值');
+  assert.equal(fixture.store.get('tflag:224'), 0, 'calltrainend 复位');
+  assert.equal(fixture.store.get('flag:10011'), 6, 'selectcom 停在序列末条');
 });
 
-test('COMSEQ_TRAIN：预检查的 PREVCOM 推进——探测第 k 条时它是第 k-1 条', async () => {
+test('comseq_train：预检查的 prevcom 推进——探测第 k 条时它是第 k-1 条', async () => {
   const { fixture, mod } = load_register();
   const { com_able_family } = fixture.load_module('system/train/com-family');
   fixture.store.set('traincommandname:0', '爱抚');
@@ -392,8 +380,8 @@ test('COMSEQ_TRAIN：预检查的 PREVCOM 推进——探测第 k 条时它是�
 
   await mod.comseq_train();
 
-  // 前两轮是函数头 comseq_show 的显示探测（:209 → :131，PREVCOM 未动）；
-  // 后两轮是预检查（:220-227 探测在前、PREVCOM 推进在后）：首轮见进函数
+  // 前两轮是函数头 comseq_show 的显示探测（prevcom 未动）；
+  // 后两轮是预检查（探测在前、prevcom 推进在后）：首轮见进函数
   // 原值，次轮见首轮条号
   assert.deepEqual(seen_prevcom, [
     [0, 12],
@@ -403,21 +391,21 @@ test('COMSEQ_TRAIN：预检查的 PREVCOM 推进——探测第 k 条时它是�
   ]);
 });
 
-test('run_calltrain：@COMxx 未移植（COM_MISSING）跳过该回合，序列继续', async () => {
+test('run_calltrain：指令未实现（COM_MISSING）跳过该回合，序列继续', async () => {
   const { fixture, mod } = load_register();
   const { com_family } = fixture.load_module('system/train/com-family');
   const { on } = fixture.load_module('system/event/registry');
   const fired = [];
   com_family.register(6, async () => fired.push('COM6')); // 0 号未注册（缺失）
   on('EVENTCOMEND', () => fired.push('EVENTCOMEND'));
-  fixture.store.set('tflag:224', 555); // 调用方 COMSEQ_TRAIN 先置位（:213）
+  fixture.store.set('tflag:224', 555); // 调用方 comseq_train 先置位
 
   await mod.run_calltrain([0, 6]);
 
   // 0 号：COM 缺失 → 该回合中止、不进 EVENTCOMEND（引擎「重新要求输入」
   // 在无输入的自动循环里无位可落，ere 取跳过——train-loop 同构语义）
   assert.deepEqual(fired, ['COM6', 'EVENTCOMEND'], '缺失条跳过、后续照跑');
-  assert.equal(fixture.store.get('tflag:224'), 0, '序列结束 CALLTRAINEND 复位');
+  assert.equal(fixture.store.get('tflag:224'), 0, '序列结束 calltrainend 复位');
 });
 
 test('calltrainend：单独可调（引擎回调位，TFLAG:224 = 0）', async () => {

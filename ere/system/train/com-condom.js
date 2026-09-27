@@ -3,19 +3,19 @@
  * 逆侵犯助手（COM65）专用的对象侧确认。
  *
  * 变量语义：CFLAG:61 = 每角色的自动用套设定（0 每次问 / 1 有就用 / 2 不用，
- * COMF_CONDOM.ERB:7-8 的头注）；TEQUIP:35 = 主人装着（属主 event——train
+ * 不用）；TEQUIP:35 = 主人装着（属主 event——train
  * 侧写经 chara(cid).event 门面，#215 建模）；TEQUIP:36 = 助手装着 /
  * TEQUIP:37 = 对象装着（属主 train，直写）；ITEM:24 = 安全套所持数。
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - 设定画面的「现在：」行显示当前档位标签（CFLAG:61 → 每次问/有套就用/
  *     不用三档措辞，与画面按钮一一对应）。
- *   - 原作 PRINTL [n] 正文 + 自由数字 INPUT、CASEELSE GOTO 的行内重试在
+ *   - PRINTL [n] 正文 + 自由数字 INPUT、CASEELSE GOTO 的行内重试在
  *     ere 侧不可达：引擎对已打印按钮拒收白名单外输入（#130 白名单），
- *     按钮化后无效值到不了游戏（#214 裁定六同款）。循环骨架保留给
- *     RESTART——CASE 2/3 改设定后从函数头重跑（:66/:69），化为外层循环。
- *   - @CONFIRM_CONDOM 的自动分支里「没有安全套」的 PRINTFORM 尾接
- *     PRINTFORML（:146-150）拼一行，ere 侧一个 print 调用同串。
+ *     按钮化后无效值到不了游戏（#214 决定六同款）。循环骨架保留给
+ *     RESTART——CASE 2/3 改设定后从函数头重跑，化为外层循环。
+ *   - confirm_condom 的自动分支里「没有安全套」的 PRINTFORM 尾接
+ *     PRINTFORML 拼一行，ere 侧一个 print 调用同串。
  */
 
 const era = require('#/era-electron');
@@ -23,12 +23,12 @@ const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 
-/** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
+/** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
 /**
- * @CONDOM_SETTINGS（:10-40）：调教菜单 [103] 的设定画面。
- * TARGET < 1（魔王自己是调教对象）时直接 RETURN 1 不开画面（:11-12）。
+ * condom_settings：调教菜单 [103] 的设定画面。
+ * TARGET < 1（魔王自己是调教对象）时直接 RETURN 1 不开画面。
  * @returns {Promise<number>} 0（[9] 返回与设定变更后均 RETURN 0；引擎不读）
  */
 async function condom_settings() {
@@ -72,12 +72,12 @@ async function condom_settings() {
       era.set(`cflag:${cid}:61`, 2);
       return 0;
     }
-    // CASEELSE GOTO INPUT_LOOP_01（:35）：白名单外输入到不了游戏（头注）
+    // CASEELSE：白名单外输入到不了游戏（头注）
   }
 }
 
 /**
- * @CONFIRM_CONDOM（:42-163）：性交指令入口的用套确认。
+ * confirm_condom：性交指令入口的用套确认。
  * RETURN 1 = 指令继续；RETURN 0 = 中止（调用方 SIF !RESULT RETURN 0）。
  * 会消耗一枚安全套（ITEM:24 -= 1）并置装着位。
  * @returns {Promise<number>} 1 继续 / 0 中止（无套且玩家拒绝时）
@@ -151,7 +151,7 @@ async function confirm_condom() {
         era.set(`cflag:${cid}:61`, 1);
         continue; // RESTART
       }
-      // CASEELSE GOTO（:95）：白名单外输入到不了游戏（头注）
+      // CASEELSE：白名单外输入到不了游戏（头注）
     }
     // 设定为有就用
     if ((era.get(`cflag:${cid}:61`) || 0) === 1) {
@@ -166,7 +166,7 @@ async function confirm_condom() {
         }
         return 1;
       }
-      // 没套：主人技巧 Lv5 以上才问（魔王笨一点就直接来——:115 原注）
+      // 没套：主人技巧 Lv5 以上才问（魔王笨一点就直接来）
       if (Math.floor(era.get(`abl:${MASTER}:12`) || 0) > 4) {
         // PRINTFORM 尾接 PRINTFORML 拼一行（头注）
         era.print(
@@ -187,21 +187,21 @@ async function confirm_condom() {
         if (result === 2) {
           return 0;
         }
-        // CASEELSE（:136）：白名单外输入到不了游戏（头注）
+        // CASEELSE：白名单外输入到不了游戏（头注）
       } else {
         era.print('因为没有安全套所以直接插入。');
         return 1;
       }
     }
-    return 1; // 全模式拾遗（原文为注释态的兜底 RETURN）
+    return 1; // 全模式的缺省返回
   }
 }
 
 /**
- * @CONFIRM_CONDOM2（:165-183）：COM65「逆侵犯助手」的对象侧用套确认。
+ * confirm_condom2：COM65「逆侵犯助手」的对象侧用套确认。
  * 对象（TARGET）有男性器（121/122）且未戴（TEQUIP:37）且有套且主人设定
  * 非「不用」时问一次；选「用」消耗一枚并给对象戴上。
- * @returns {Promise<number>} 1（恒继续——:183 的 RETURN 1 是唯一出口）
+ * @returns {Promise<number>} 1（恒继续——RETURN 1 是唯一出口）
  */
 async function confirm_condom2() {
   const cid = era_flag.target;
@@ -227,7 +227,7 @@ async function confirm_condom2() {
       } else if (result === 1) {
         era.set(`cflag:${MASTER}:61`, 2);
       }
-      // ELSEIF RESULT != 1 → GOTO（:178）：白名单外输入到不了游戏（头注）
+      // 白名单外输入到不了游戏（头注）
     }
     return 1;
   }

@@ -3,16 +3,16 @@
  * ere/system/train/com-analsex.js 的行为测试（issue #216 J6）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - @COM_EJAC_PLAYER_ANALSEX：兽奸/死斗场早退、指令位表（25 基础值のみ /
+ *   - com_ejac_player_analsex：兽奸/死斗场早退、指令位表（25 基础值のみ /
  *     26 技巧+顺从 / 27 技巧のみ / 36 三乘）、润滑表（0.4 起步——与 V 版
  *     不同值）、EXP:1/53 阈值、安全套 0.5、E 判定与大量/通常射精、
  *     肛内异常妊娠（TALENT:340 × rand 概率档）；
- *   - @COM_AFTER_ANAL_SEX：肛门经验分档（首两档同 3）、CFLAG:113 == 3 的
+ *   - com_after_anal_sex：肛门经验分档（首两档同 3）、CFLAG:113 == 3 的
  *     妊娠相手判定（五种相手，102 属主 event 走门面）、百合 +5 / 男同 +7、
  *     爱情经验（26 → 3；28 → 4；其他 → 2；男性对象 +1）、
  *     TFLAG:30、污渍互换（A 位 4 ↔ P 位 2）。
  *
- * 契约（调用方 = COMF25-29/36，J11/J15 落地）：
+ * 契约（调用方为 25-29/36 的性交系指令，J11/J15 实现）：
  *   com_ejac_player_analsex(rand) / com_after_anal_sex() → Promise<void>。
  */
 
@@ -168,9 +168,9 @@ test('CFLAG:109 抬概率档（通常射精 1/5 → 1/10 的对照组）', async
   assert.equal(fixture.store.get('cflag:31:113'), 3);
 });
 
-// —— @COM_AFTER_ANAL_SEX ——
+// —— com_after_anal_sex ——
 
-test('肛门经验分档：≤ 1 与 ≤ 4 同为 +3（原文如此），≥ 8 → +5', async () => {
+test('肛门经验分档：≤ 1 与 ≤ 4 同为 +3（两档同值是有意的），≥ 8 → +5', async () => {
   for (const [abl3, want] of [
     [0, 3],
     [4, 3],
@@ -256,7 +256,7 @@ test('爱情经验：COM26 → 3；COM28 → 4；其他 → 2；男性 +1', asyn
   }
 });
 
-test('主人亲自 → TFLAG:30（判据 ABL:3 肛门感觉）', async () => {
+test('主人亲自 → TFLAG:30（条件：ABL:3 肛门感觉）', async () => {
   for (const [abl3, want] of [
     [0, 1],
     [3, 2],

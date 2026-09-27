@@ -2,16 +2,16 @@
  * ere/system/train/com-hardcore.js 的行为测试（issue #226：J16 指令族·重度
  * 调教 80-90）。验收项「四件套一文件」的落点：
  *
- *   - @COM_ABLE80-90 的判据（自动/装备互斥/道具/经验门槛/助手门槛——每条
+ *   - 80–90 号可用性检查的条件（自动/装备互斥/道具/经验门槛/助手门槛——每条
  *     指令至少一段可用性用例，含 84/86 不建壳的验证）；
- *   - @COM80-90 真身（COM80 的死判定块不镜像、COM81-83 拳交系经验累积、
- *     COM84 的 EXP:0/40/41、COM85 放尿的 EXP 门面写与 TFLAG:200、COM87
- *     穿环的装/取双支、COM88/89 的开关切换、COM90 的乳内插入与 CFLAG:113）；
- *   - @EQUIP_COM89 持续效果（T 共享变量的累加与 EXP:56 收尾、GOTO END_EJAC
- *     尾段无条件执行）；
- *   - TRAIN_MESSAGE_B 80-89 分支与 90 的真实无输出、TRAIN_MESSAGE_A 80/90
- *     分支与 81-89 的显式无操作（源侧无分支，不得出占位行）；
- *   - @GET_ADV_COM 的 CASE 80 升格规则（COM80 → 64，三人）。
+ *   - com80–90 真身（com80 的死判定块不镜像、com81–83 拳交系经验累积、
+ *     com84 的 EXP:0/40/41、com85 放尿的 EXP 门面写与 TFLAG:200、com87
+ *     穿环的装/取双支、com88/89 的开关切换、com90 的乳内插入与 CFLAG:113）；
+ *   - equip_com89 持续效果（T 共享变量的累加与 EXP:56 收尾、射精检查
+ *     关闭时跳到尾段，尾段无条件执行）；
+ *   - train_message_b 的 80–89 分支与 90 的真实无输出、train_message_a 的
+ *     80/90 分支与 81–89 的显式无操作（无对应分支，不得出占位行）；
+ *   - get_adv_com 的 CASE 80 升格规则（com80 → 64，三人）。
  *
  * 世界底座与 com-colosseum.test.js 的 seed_colosseum_world 同构。
  */
@@ -57,9 +57,9 @@ async function run_com(world, com) {
   return world.com_family.call(com);
 }
 
-// —— @COM_ABLE80-90（COMABLE.ERB:3142-3560） ——
+// —— 80–90 号可用性检查 ——
 
-test('@COM_ABLE80：调教者需男人/扶她；口枷/绝不侍奉/顺从欲望门槛/触手/兽奸/使役/决斗/新妻/zooko 各挡一条', async () => {
+test('able80：调教者需男人/扶她；口枷/绝不侍奉/顺从欲望门槛/触手/兽奸/使役/决斗/新妻/zooko 各挡一条', async () => {
   const { fixture, era_flag, com_able_family } = seed_world();
   fixture.store.set('abl:31:10', 3);
   fixture.store.set('abl:31:11', 3);
@@ -89,7 +89,7 @@ test('@COM_ABLE80：调教者需男人/扶她；口枷/绝不侍奉/顺从欲望
   era_flag.player = 0;
 });
 
-test('@COM_ABLE81：SM 系滤镜/私处经验 75+/震动器/男人/未熟施虐狂例外', async () => {
+test('able81：SM 系滤镜/私处经验 75+/震动器/男人/未熟施虐狂例外', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('exp:31:0', 75);
   assert.equal(await com_able_family.call(81), 1, '私处经验达标默认可执行');
@@ -108,7 +108,7 @@ test('@COM_ABLE81：SM 系滤镜/私处经验 75+/震动器/男人/未熟施虐�
   assert.equal(await com_able_family.call(81), 1);
 });
 
-test('@COM_ABLE82：肛门经验 75+/肛门震动器/灌肠肛塞各挡一条', async () => {
+test('able82：肛门经验 75+/肛门震动器/灌肠肛塞各挡一条', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('exp:31:1', 75);
   assert.equal(await com_able_family.call(82), 1);
@@ -121,7 +121,7 @@ test('@COM_ABLE82：肛门经验 75+/肛门震动器/灌肠肛塞各挡一条', 
   assert.equal(await com_able_family.call(82), 0);
 });
 
-test('@COM_ABLE83：Ｖ・肛门经验各 150+；男人挡；娇小需扩张经验 5+', async () => {
+test('able83：私处・肛门经验各 150+；男人挡；娇小需扩张经验 5+', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('exp:31:0', 150);
   fixture.store.set('exp:31:1', 150);
@@ -144,13 +144,13 @@ test('@COM_ABLE83：Ｖ・肛门经验各 150+；男人挡；娇小需扩张经�
   assert.equal(await com_able_family.call(83), 1);
 });
 
-test('@COM_ABLE84：源侧无 @COM_ABLE84，未定义即可执行', async () => {
+test('able84 不存在，未定义即可执行', async () => {
   const { com_able_family } = seed_world();
   assert.equal(com_able_family.has(84), false);
   assert.equal(await com_able_family.call(84, { whenMissing: 1 }), 1);
 });
 
-test('@COM_ABLE85：SM 滤镜/失神中/需利尿剂或漏尿癖/顺从 3+（浴室例外）', async () => {
+test('able85：SM 滤镜/失神中/需利尿剂或漏尿癖/顺从 3+（浴室例外）', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('tequip:31:22', 1); // 利尿剂
   fixture.store.set('abl:31:10', 3);
@@ -172,13 +172,13 @@ test('@COM_ABLE85：SM 滤镜/失神中/需利尿剂或漏尿癖/顺从 3+（浴
   assert.equal(await com_able_family.call(85), 1);
 });
 
-test('@COM_ABLE86：Train.csv 注释掉的死段，不建壳（不在声明空间内）', async () => {
+test('86 号可用性检查：指令表注释掉的死段，不建壳（不在声明空间内）', async () => {
   const { com_able_family, com_family } = seed_world();
   assert.equal(com_able_family.has(86), false);
   await assert.rejects(() => com_family.call(86), /不在声明的编号空间内/);
 });
 
-test('@COM_ABLE87：无穿孔工具且未穿任何环则不可；助手门/顺从 3+/道具互斥', async () => {
+test('able87：无穿孔工具且未穿任何环则不可；助手检查/顺从 3+/道具互斥', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(87), 0, '无 ITEM:34 且未穿任何环');
 
@@ -195,7 +195,7 @@ test('@COM_ABLE87：无穿孔工具且未穿任何环则不可；助手门/顺�
   assert.equal(await com_able_family.call(87), 1);
 });
 
-test('@COM_ABLE88：需从属怪物设定；道具使用中（野外 PLAY 除外）不可', async () => {
+test('able88：需从属怪物设定；道具使用中（野外 PLAY 除外）不可', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(88), 0, '未设从属怪物');
 
@@ -208,7 +208,7 @@ test('@COM_ABLE88：需从属怪物设定；道具使用中（野外 PLAY 除外
   assert.equal(await com_able_family.call(88), 0, '兽奸 PLAY 与使役互斥仍挡');
 });
 
-test('@COM_ABLE89：需阴茎袋或无道具设定；使役 PLAY 中互斥', async () => {
+test('able89：需阴茎袋或无道具设定；使役 PLAY 中互斥', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(89), 0, '无 ITEM:22');
 
@@ -219,7 +219,7 @@ test('@COM_ABLE89：需阴茎袋或无道具设定；使役 PLAY 中互斥', asy
   assert.equal(await com_able_family.call(89), 0);
 });
 
-test('@COM_ABLE90：爱抚滤镜/决斗/使役/需男人扶她或 PBAND/胸罩上装挡/需超乳', async () => {
+test('able90：爱抚滤镜/决斗/使役/需男人扶她或 PBAND/胸罩上装挡/需超乳', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('talent:0:122', 1);
   fixture.store.set('talent:31:119', 1); // 超乳
@@ -239,9 +239,9 @@ test('@COM_ABLE90：爱抚滤镜/决斗/使役/需男人扶她或 PBAND/胸罩�
   assert.equal(await com_able_family.call(90), 1);
 });
 
-// —— @COM80-90 真身 ——
+// —— com80–90 真身 ——
 
-test('@COM80：死判定块不镜像（直接执行），私处放血/汚れ常量 100/初吻记录', async () => {
+test('com80：死判定块不镜像（直接执行），私处放血/污渍常量 100/初吻记录', async () => {
   const world = seed_world();
   const { fixture, era_flag } = world;
   fixture.store.set('talent:0:121', 1);
@@ -263,13 +263,13 @@ test('@COM80：死判定块不镜像（直接执行），私处放血/汚れ常�
   assert.equal(era_flag.selectcom, 80);
 });
 
-test('@COM80：CASE 80 命中且 COM64 真身已注册（族票测试假身）时委托其执行', async () => {
+test('com80：CASE 80 命中且 com64 真身已注册（族票测试假身）时委托其执行', async () => {
   const world = seed_world();
   const { era_flag, com_able_family, com_family } = world;
   era_flag.prevcom = 64;
   com_able_family.register(64, () => 1);
   com_family.register(64, async () => {
-    era_flag.selectcom = 64; // 比照真身应有的显式回填（COM80 自身不做这步）
+    era_flag.selectcom = 64; // 比照真身应有的显式回填（com80 自身不做这步）
     return 1;
   });
   const result = await run_com(world, 80);
@@ -277,7 +277,7 @@ test('@COM80：CASE 80 命中且 COM64 真身已注册（族票测试假身）�
   assert.equal(era_flag.selectcom, 64, 'SELECTCOM 由 COM64 真身自行回填');
 });
 
-test('@COM80：CASE 80 命中但 COM64 真身未落地 → jump_to_advanced 打占位行 + RETURN 1', async () => {
+test('com80：CASE 80 命中但 com64 真身未实现 → jump_to_advanced 打占位行 + RETURN 1', async () => {
   const world = seed_world();
   const { fixture, era_flag, com_able_family } = world;
   era_flag.prevcom = 64;
@@ -291,16 +291,16 @@ test('@COM80：CASE 80 命中但 COM64 真身未落地 → jump_to_advanced 打�
   assert.equal(era_flag.selectcom, 80, 'jump_to_advanced 存根不改写 SELECTCOM');
 });
 
-test('@COM80：COM_ABLE64 不可用 → CASE 80 不升格，COM80 正常执行', async () => {
+test('com80：able64 不可用 → CASE 80 不升格，com80 正常执行', async () => {
   const world = seed_world();
   const { fixture, era_flag } = world;
-  era_flag.prevcom = 64; // CASE 80 命中检查，但 COM_ABLE64 未注册 → whenMissing:0 不可用
+  era_flag.prevcom = 64; // CASE 80 命中检查，但 able64 未注册 → whenMissing:0 不可用
   const result = await run_com(world, 80);
   assert.equal(result, 1, '未升格，COM80 本体正常执行并 RETURN 1');
   assert.ok(fixture.text_lines().includes('强制口交'), '落回 COM80 正常执行');
 });
 
-test('@COM81：拳交，私处经验＋２５、私处扩张经验＋1、首次异常经验＋1', async () => {
+test('com81：拳交，私处经验＋２５、私处扩张经验＋1、首次异常经验＋1', async () => {
   const world = seed_world();
   const { fixture } = world;
   const result = await run_com(world, 81);
@@ -315,7 +315,7 @@ test('@COM81：拳交，私处经验＋２５、私处扩张经验＋1、首次�
   );
 });
 
-test('@COM82：肛门拳交，肛门经验＋２５、肛门扩张经验＋1', async () => {
+test('com82：肛门拳交，肛门经验＋２５、肛门扩张经验＋1', async () => {
   const world = seed_world();
   const result = await run_com(world, 82);
   assert.equal(result, 1);
@@ -323,7 +323,7 @@ test('@COM82：肛门拳交，肛门经验＋２５、肛门扩张经验＋1', a
   assert.equal(world.fixture.store.get('exp:31:53'), 1);
 });
 
-test('@COM83：两穴拳交，私处/肛门经验同时累积、私处扩张经验＋1、肛门扩张经验＋3', async () => {
+test('com83：两穴拳交，私处/肛门经验同时累积、私处扩张经验＋1、肛门扩张经验＋3', async () => {
   const world = seed_world();
   const result = await run_com(world, 83);
   assert.equal(result, 1);
@@ -333,7 +333,7 @@ test('@COM83：两穴拳交，私处/肛门经验同时累积、私处扩张经�
   assert.equal(world.fixture.store.get('exp:31:53'), 3);
 });
 
-test('@COM84：Ｇ点刺激（升格目标），私处经验＋1、显式回填 SELECTCOM=84', async () => {
+test('com84：Ｇ点刺激（升格目标），私处经验＋1、显式回填 SELECTCOM=84', async () => {
   const world = seed_world();
   const { fixture, era_flag } = world;
   fixture.store.set('talent:0:122', 1); // 调教者男人：走 EXP:41
@@ -344,10 +344,10 @@ test('@COM84：Ｇ点刺激（升格目标），私处经验＋1、显式回填 
   assert.ok(fixture.text_lines().includes('刺激Ｇ点'));
   assert.equal(fixture.store.get('exp:31:0'), 1);
   assert.equal(fixture.store.get('exp:31:41'), 1, '双方均为男人 → EXP:41');
-  assert.equal(era_flag.selectcom, 84, '原作显式 SELECTCOM = 84');
+  assert.equal(era_flag.selectcom, 84, '显式回填 selectcom = 84');
 });
 
-test('@COM85：放尿，EXP:31（经门面写）＋2、汚れ位 STAIN:2/3、TFLAG:200=2', async () => {
+test('com85：放尿，EXP:31（经门面写）＋2、污渍位 STAIN:2/3、TFLAG:200=2', async () => {
   const world = seed_world();
   const result = await run_com(world, 85);
   assert.equal(result, 1);
@@ -362,7 +362,7 @@ test('@COM85：放尿，EXP:31（经门面写）＋2、汚れ位 STAIN:2/3、TFL
   assert.equal(world.fixture.store.get('tflag:200'), 2);
 });
 
-test('@COM87：装环成功（绳子紧缚免判定）写 CFLAG:7 位与消耗 ITEM:34，双份消耗（乳头 2 个）', async () => {
+test('com87：装环成功（绳子紧缚免判定）写 CFLAG:7 位与消耗 ITEM:34，双份消耗（乳头 2 个）', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('item:34', 3);
@@ -378,7 +378,7 @@ test('@COM87：装环成功（绳子紧缚免判定）写 CFLAG:7 位与消耗 I
   );
 });
 
-test('@COM87：取下已穿的环恒自动成功（worn & p !== 0）、CFLAG:7 位清零', async () => {
+test('com87：取下已穿的环恒自动成功（worn & p !== 0）、CFLAG:7 位清零', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('cflag:31:7', 1 | 128); // 已穿乳头环（过去装着经验位一并设好）
@@ -388,7 +388,7 @@ test('@COM87：取下已穿的环恒自动成功（worn & p !== 0）、CFLAG:7 �
   assert.equal((fixture.store.get('cflag:31:7') || 0) & 1, 0, '乳头位已清');
 });
 
-test('@COM88：使役魔兽 PLAY 开关切换，共享变量 T 收尾清零', async () => {
+test('com88：使役魔兽 PLAY 开关切换，共享变量 T 收尾清零', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('t:0', 5);
@@ -401,7 +401,7 @@ test('@COM88：使役魔兽 PLAY 开关切换，共享变量 T 收尾清零', as
   assert.equal(fixture.store.get('tequip:31:88'), 0, '再执行一次即关');
 });
 
-test('@COM89：兽奸 PLAY 开关切换', async () => {
+test('com89：兽奸 PLAY 开关切换', async () => {
   const world = seed_world();
   const { fixture } = world;
   let result = await run_com(world, 89);
@@ -412,17 +412,17 @@ test('@COM89：兽奸 PLAY 开关切换', async () => {
   assert.equal(fixture.store.get('tequip:31:89'), 0);
 });
 
-test('@COM90：乳内插入，confirm_condom 静默通过时写 CFLAG:113 并累积乳房经验', async () => {
+test('com90：乳内插入，confirm_condom 静默通过时写 CFLAG:113 并累积乳房经验', async () => {
   const world = seed_world();
   const { fixture } = world;
-  fixture.set_inputs(); // 无套且从未确认过：原作静默 RETURN 1，不问也不提示
+  fixture.set_inputs(); // 无套且从未确认过：静默返回 1，不问也不提示
   const result = await run_com(world, 90);
   assert.equal(result, 1);
   assert.equal(fixture.store.get('cflag:31:113'), 1, '乳房插入旗标');
   assert.ok(fixture.text_lines().includes('乳房插入'));
 });
 
-test('@COM90：confirm_condom 拒绝（唯一返回 0 的路径）时整回合取消', async () => {
+test('com90：confirm_condom 拒绝（唯一返回 0 的路径）时整回合取消', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('talent:0:122', 1); // 调教者配男性器（confirm_condom 的前置）
@@ -434,31 +434,31 @@ test('@COM90：confirm_condom 拒绝（唯一返回 0 的路径）时整回合�
   assert.equal(fixture.store.get('cflag:31:113'), undefined, '未执行到写入点');
 });
 
-// —— @EQUIP_COM89（COMF89_獣姦プレイ.ERB:19-249） ——
+// —— equip_com89 ——
 
-test('@EQUIP_COM89：SOURCE 累加、EXP:56 随共享变量 T 收尾、返回 1', async () => {
+test('equip_com89：SOURCE 累加、EXP:56 随共享变量 T 收尾、返回 1', async () => {
   const world = seed_world();
   const { fixture, era_flag } = world;
   era_flag.selectcom = 21; // 走阴道性交的射精分支（COM=21 → T+=2）
   fixture.store.set('maxbase:0:4', 0); // 关闭射精检查分支，只验共同尾段
   const result = await world.equip_com_family.call(89);
-  assert.equal(result, 1, '比照 COMF89 源码尾 RETURN 1');
+  assert.equal(result, 1, '尾段无条件返回 1');
   assert.ok(fixture.text_lines().includes('＜兽奸PLAY中＞'));
   assert.equal(fixture.store.get('t:0'), 0, '尾段清零共享变量');
   assert.ok(fixture.store.get('exp:31:56') > 0, 'EXP:56 已随 T 收尾累加');
   assert.ok(fixture.store.get('source:31:8') > 0);
 });
 
-test('@EQUIP_COM89：GOTO END_EJAC 命中（射精检查关闭）时汚れ/T 收尾仍无条件执行', async () => {
+test('equip_com89：射精检查关闭时污渍/T 收尾仍无条件执行', async () => {
   const world = seed_world();
   const { fixture, era_flag } = world;
   era_flag.selectcom = 30; // COM=30 → 命中尾段的 STAIN:1 与 TFLAG:200
-  fixture.store.set('maxbase:0:4', 0); // MASTER 射精ゲージ上限为 0 → GOTO END_EJAC
+  fixture.store.set('maxbase:0:4', 0); // MASTER 射精槽上限为 0 → 射精检查整段跳过
   await world.equip_com_family.call(89);
   assert.equal(
     (fixture.store.get('stain:31:1') || 0) & 2,
     2,
-    '尾段的汚れ位仍写入',
+    '尾段的污渍位仍写入',
   );
   assert.equal(fixture.store.get('tflag:200'), 2);
   assert.equal(
@@ -468,7 +468,7 @@ test('@EQUIP_COM89：GOTO END_EJAC 命中（射精检查关闭）时汚れ/T 收
   );
 });
 
-// —— @GET_ADV_COM CASE 80 ——
+// —— get_adv_com CASE 80 ——
 
 test('CASE 80：上回合非 3P 且调教者未切换 → 原样返回 80（不升格）', async () => {
   const world = seed_world();
@@ -482,7 +482,7 @@ test('CASE 80：上回合非 3P 且调教者未切换 → 原样返回 80（不�
   assert.equal(world.fixture.store.get('tflag:42'), 0, '先清 3P 连续旗标');
 });
 
-test('CASE 80：调教者切换且上回合是正常体位（20）→ 升格到 64（需 COM_ABLE64 可用）', async () => {
+test('CASE 80：调教者切换且上回合是正常体位（20）→ 升格到 64（需 able64 可用）', async () => {
   const world = seed_world();
   const { era_flag, com_able_family, adv_com_family } = world;
   era_flag.prevcom = 20;
@@ -529,13 +529,13 @@ async function run_a(world, com) {
   await train_message_a();
 }
 
-test('B90：源侧无 SELECTCOM==90 分支，真实无输出（不是占位行）', async () => {
+test('B90：无 SELECTCOM==90 分支，真实无输出（不是占位行）', async () => {
   const world = seed_world();
   await run_b(world, 90);
   assert.deepEqual(world.fixture.text_lines(), []);
 });
 
-test('B81-89：各有专属文案输出（源侧真实分支，非存根占位）', async () => {
+test('B81-89：各有专属文案输出（真实分支，非存根占位）', async () => {
   for (const com of [81, 82, 83, 85, 87, 88, 89]) {
     const world = seed_world();
     await run_b(world, com);
@@ -548,14 +548,14 @@ test('B81-89：各有专属文案输出（源侧真实分支，非存根占位�
   }
 });
 
-test('A81-89：源侧无专属分支，显式无操作 → 不打「族票未落地」占位行', async () => {
+test('A81-89：无专属分支，显式无操作 → 不打「族票缺失」占位行', async () => {
   for (const com of [81, 82, 83, 84, 85, 87, 88, 89]) {
     const world = seed_world();
     await run_a(world, com);
     assert.deepEqual(
       world.fixture.text_lines(),
       [],
-      `A${com} 无源侧分支，注册为显式无操作`,
+      `A${com} 无专属分支，注册为显式无操作`,
     );
   }
 });
