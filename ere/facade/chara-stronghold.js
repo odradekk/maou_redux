@@ -14,8 +14,8 @@ class StrongholdFacade {
 
   // —— cflag ——
   /**
-   * 出售与助手资格（cflag:cid:0 ↔ CFLAG:0）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行259 CFLAG:0 = 売却及び助手可能 1=売却可 2=助手可
+   * 出售与助手资格（cflag:cid:0）
+   * CFLAG:0 = 売却及び助手可能 1=売却可 2=助手可
    * @returns {number}
    */
   get 出售与助手资格() {
@@ -29,8 +29,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 调教回数（cflag:cid:10 ↔ CFLAG:10）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行269 CFLAG:10 = 調教回数
+   * 调教回数（cflag:cid:10）
+   * CFLAG:10 = 調教回数
    * @returns {number}
    */
   get 调教回数() {
@@ -44,8 +44,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 排卵诱发剂（cflag:cid:109 ↔ CFLAG:109）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:109 排卵促進剤の使用の有無（日程推进的效果消去写 0）
+   * 排卵诱发剂（cflag:cid:109）
+   * CFLAG:109 排卵促進剤の使用の有無（日程推进的效果消去写 0）
    * @returns {number}
    */
   get 排卵诱发剂() {
@@ -59,8 +59,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 异界召唤标记（cflag:cid:999 ↔ CFLAG:999）
-   * 源: target/ERB /SHOP/SHOP_CHARA.ERB:123-124 成交后置 1，仅此一处写
+   * 异界召唤标记（cflag:cid:999）
+   * chara_sim_shop 成交后置 1，仅此一处写
    * @returns {number}
    */
   get 异界召唤标记() {
@@ -74,8 +74,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 胸罩状态（cflag:cid:44 ↔ CFLAG:44）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行298 CFLAG:44 ブラジャーの状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
+   * 胸罩状态（cflag:cid:44）
+   * CFLAG:44 ブラジャーの状態（-3 破り取られている -2 汚物まみれ -1 没収 0 通常 1以上 洗濯中）
    * @returns {number}
    */
   get 胸罩状态() {
@@ -89,8 +89,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 贞操带钥匙已丢弃（cflag:cid:49 ↔ CFLAG:49）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:49 貞操帯のカギを捨てた
+   * 贞操带钥匙已丢弃（cflag:cid:49）
+   * CFLAG:49 貞操帯のカギを捨てた
    * @returns {number}
    */
   get 贞操带钥匙已丢弃() {
@@ -104,8 +104,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 已性转（cflag:cid:70 ↔ CFLAG:70）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行309 CFLAG:70 = 性転換済（0:NO 1:YES)
+   * 已性转（cflag:cid:70）
+   * CFLAG:70 = 性転換済（0:NO 1:YES)
    * @returns {number}
    */
   get 已性转() {
@@ -119,8 +119,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 处女膜已再生（cflag:cid:71 ↔ CFLAG:71）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行310 CFLAG:71 = 処女膜再生済
+   * 处女膜已再生（cflag:cid:71）
+   * CFLAG:71 = 処女膜再生済
    * @returns {number}
    */
   get 处女膜已再生() {
@@ -134,8 +134,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 录像价值（cflag:cid:493 ↔ CFLAG:493）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:493 評価
+   * 录像价值（cflag:cid:493）
+   * CFLAG:493 評価
    * @returns {number}
    */
   get 录像价值() {
@@ -149,8 +149,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 录像浏览数（cflag:cid:495 ↔ CFLAG:495）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:495 閲覧者数
+   * 录像浏览数（cflag:cid:495）
+   * CFLAG:495 閲覧者数
    * @returns {number}
    */
   get 录像浏览数() {
@@ -164,8 +164,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 录像粉丝信数（cflag:cid:496 ↔ CFLAG:496）
-   * 源: target/ERB/售卻相關/SELL_VIDEO.ERB 行1116-1126 FAV（粉丝信数）累积
+   * 录像粉丝信数（cflag:cid:496）
+   * FAV（粉丝信数）累积
    * @returns {number}
    */
   get 录像粉丝信数() {
@@ -179,8 +179,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 录像属性（cflag:cid:498 ↔ CFLAG:498）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:498 属性（1=清純 -1=不純）
+   * 录像属性（cflag:cid:498）
+   * CFLAG:498 属性（1=清純 -1=不純）
    * @returns {number}
    */
   get 录像属性() {
@@ -194,8 +194,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 迷宫内行动（cflag:cid:500 ↔ CFLAG:500）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行385 CFLAG:500 = ダンジョン内行動(0:内職 1:売春 2:罠補充 3:施設拡張 4:潜入)
+   * 迷宫内行动（cflag:cid:500）
+   * CFLAG:500 = ダンジョン内行動(0:内職 1:売春 2:罠補充 3:施設拡張 4:潜入)
    * @returns {number}
    */
   get 迷宫内行动() {
@@ -209,8 +209,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 要求奖赏（cflag:cid:504 ↔ CFLAG:504）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:504 = 要求したご褒美
+   * 要求奖赏（cflag:cid:504）
+   * CFLAG:504 = 要求したご褒美
    * @returns {number}
    */
   get 要求奖赏() {
@@ -225,8 +225,8 @@ class StrongholdFacade {
 
   // —— cstr ——
   /**
-   * 录像标题（cstr:cid:6 ↔ CSTR:6）
-   * 源: target/ERB/售卻相關/SELL_VIDEO.ERB 行1072 CSTR:6 = %LOCALS%
+   * 录像标题（cstr:cid:6）
+   * CSTR:6 = %LOCALS%
    * @returns {string}
    */
   get 录像标题() {
@@ -240,8 +240,8 @@ class StrongholdFacade {
   }
 
   /**
-   * 自由调教内容（cstr:cid:7 ↔ CSTR:7）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行11 CSTR:7 = フリー調教箇所
+   * 自由调教内容（cstr:cid:7）
+   * CSTR:7 = フリー調教箇所
    * @returns {string}
    */
   get 自由调教内容() {
@@ -256,8 +256,7 @@ class StrongholdFacade {
 
   // —— base ——
   /**
-   * 寿命（base:cid:10 ↔ BASE:10）
-   * 源: yml/Base.yml id 10
+   * 寿命（base:cid:10）
    * @returns {number}
    */
   get 寿命() {
@@ -272,8 +271,7 @@ class StrongholdFacade {
 
   // —— talent ——
   /**
-   * 崩坏（talent:cid:9 ↔ TALENT:9）
-   * 源: yml/Talent.yml id 9
+   * 崩坏（talent:cid:9）
    * @returns {number}
    */
   get 崩坏() {
@@ -287,8 +285,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 调合知识（talent:cid:55 ↔ TALENT:55）
-   * 源: yml/Talent.yml id 55
+   * 调合知识（talent:cid:55）
    * @returns {number}
    */
   get 调合知识() {
@@ -302,8 +299,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 自慰狂（talent:cid:74 ↔ TALENT:74）
-   * 源: yml/Talent.yml id 74
+   * 自慰狂（talent:cid:74）
    * @returns {number}
    */
   get 自慰狂() {
@@ -317,8 +313,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 淫乱（talent:cid:76 ↔ TALENT:76）
-   * 源: yml/Talent.yml id 76
+   * 淫乱（talent:cid:76）
    * @returns {number}
    */
   get 淫乱() {
@@ -332,8 +327,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 尻穴狂（talent:cid:77 ↔ TALENT:77）
-   * 源: yml/Talent.yml id 77
+   * 尻穴狂（talent:cid:77）
    * @returns {number}
    */
   get 尻穴狂() {
@@ -347,8 +341,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 爱慕（talent:cid:85 ↔ TALENT:85）
-   * 源: yml/Talent.yml id 85
+   * 爱慕（talent:cid:85）
    * @returns {number}
    */
   get 爱慕() {
@@ -362,8 +355,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 白虎（talent:cid:125 ↔ TALENT:125）
-   * 源: yml/Talent.yml id 125
+   * 白虎（talent:cid:125）
    * @returns {number}
    */
   get 白虎() {
@@ -377,8 +369,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 蠕虫（talent:cid:192 ↔ TALENT:192）
-   * 源: yml/Talent.yml id 192
+   * 蠕虫（talent:cid:192）
    * @returns {number}
    */
   get 蠕虫() {
@@ -392,8 +383,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 淫核（talent:cid:230 ↔ TALENT:230）
-   * 源: yml/Talent.yml id 230
+   * 淫核（talent:cid:230）
    * @returns {number}
    */
   get 淫核() {
@@ -407,8 +397,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 淫乳（talent:cid:231 ↔ TALENT:231）
-   * 源: yml/Talent.yml id 231
+   * 淫乳（talent:cid:231）
    * @returns {number}
    */
   get 淫乳() {
@@ -422,8 +411,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 淫壶（talent:cid:232 ↔ TALENT:232）
-   * 源: yml/Talent.yml id 232
+   * 淫壶（talent:cid:232）
    * @returns {number}
    */
   get 淫壶() {
@@ -437,8 +425,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 淫肛（talent:cid:233 ↔ TALENT:233）
-   * 源: yml/Talent.yml id 233
+   * 淫肛（talent:cid:233）
    * @returns {number}
    */
   get 淫肛() {
@@ -452,8 +439,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 时常发情（talent:cid:271 ↔ TALENT:271）
-   * 源: yml/Talent.yml id 271
+   * 时常发情（talent:cid:271）
    * @returns {number}
    */
   get 时常发情() {
@@ -467,8 +453,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 性豪（talent:cid:272 ↔ TALENT:272）
-   * 源: yml/Talent.yml id 272
+   * 性豪（talent:cid:272）
    * @returns {number}
    */
   get 性豪() {
@@ -482,8 +467,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 魂缚（talent:cid:274 ↔ TALENT:274）
-   * 源: yml/Talent.yml id 274
+   * 魂缚（talent:cid:274）
    * @returns {number}
    */
   get 魂缚() {
@@ -497,8 +481,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 狂王俘虏（talent:cid:280 ↔ TALENT:280）
-   * 源: yml/Talent.yml id 280
+   * 狂王俘虏（talent:cid:280）
    * @returns {number}
    */
   get 狂王俘虏() {
@@ -512,8 +495,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 魔王之影（talent:cid:292 ↔ TALENT:292）
-   * 源: yml/Talent.yml id 292
+   * 魔王之影（talent:cid:292）
    * @returns {number}
    */
   get 魔王之影() {
@@ -527,8 +509,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 魔界知识（talent:cid:325 ↔ TALENT:325）
-   * 源: yml/Talent.yml id 325
+   * 魔界知识（talent:cid:325）
    * @returns {number}
    */
   get 魔界知识() {
@@ -542,8 +523,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 肉芽诅咒（talent:cid:326 ↔ TALENT:326）
-   * 源: yml/Talent.yml id 326
+   * 肉芽诅咒（talent:cid:326）
    * @returns {number}
    */
   get 肉芽诅咒() {
@@ -557,8 +537,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 淫魔知识（talent:cid:327 ↔ TALENT:327）
-   * 源: yml/Talent.yml id 327
+   * 淫魔知识（talent:cid:327）
    * @returns {number}
    */
   get 淫魔知识() {
@@ -572,8 +551,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 魔虫知识（talent:cid:328 ↔ TALENT:328）
-   * 源: yml/Talent.yml id 328
+   * 魔虫知识（talent:cid:328）
    * @returns {number}
    */
   get 魔虫知识() {
@@ -587,8 +565,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 异常妊娠体质（talent:cid:340 ↔ TALENT:340）
-   * 源: yml/Talent.yml id 340
+   * 异常妊娠体质（talent:cid:340）
    * @returns {number}
    */
   get 异常妊娠体质() {
@@ -603,8 +580,7 @@ class StrongholdFacade {
 
   // —— exp ——
   /**
-   * 肛门快乐经验（exp:cid:32 ↔ EXP:32）
-   * 源: yml/Exp.yml id 32
+   * 肛门快乐经验（exp:cid:32）
    * @returns {number}
    */
   get 肛门快乐经验() {
@@ -618,8 +594,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 阴蒂经验（exp:cid:34 ↔ EXP:34）
-   * 源: yml/Exp.yml id 34
+   * 阴蒂经验（exp:cid:34）
    * @returns {number}
    */
   get 阴蒂经验() {
@@ -633,8 +608,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 异种奸经验（exp:cid:58 ↔ EXP:58）
-   * 源: yml/Exp.yml id 58
+   * 异种奸经验（exp:cid:58）
    * @returns {number}
    */
   get 异种奸经验() {
@@ -648,8 +622,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 料理经验（exp:cid:61 ↔ EXP:61）
-   * 源: yml/Exp.yml id 61
+   * 料理经验（exp:cid:61）
    * @returns {number}
    */
   get 料理经验() {
@@ -663,8 +636,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 从属快乐经验（exp:cid:63 ↔ EXP:63）
-   * 源: yml/Exp.yml id 63
+   * 从属快乐经验（exp:cid:63）
    * @returns {number}
    */
   get 从属快乐经验() {
@@ -678,8 +650,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 主从爱情经验（exp:cid:64 ↔ EXP:64）
-   * 源: yml/Exp.yml id 64
+   * 主从爱情经验（exp:cid:64）
    * @returns {number}
    */
   get 主从爱情经验() {
@@ -693,8 +664,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 狂王调教经验（exp:cid:66 ↔ EXP:66）
-   * 源: yml/Exp.yml id 66
+   * 狂王调教经验（exp:cid:66）
    * @returns {number}
    */
   get 狂王调教经验() {
@@ -708,8 +678,7 @@ class StrongholdFacade {
   }
 
   /**
-   * 营业爱情经验（exp:cid:75 ↔ EXP:75）
-   * 源: yml/Exp.yml id 75
+   * 营业爱情经验（exp:cid:75）
    * @returns {number}
    */
   get 营业爱情经验() {

@@ -9,8 +9,8 @@ const era = require('#/era-electron');
 // GENERATED START —— tools/gen-facade.js 自 ownership + yml 列名 + tools/facade-names.js 生成，勿手改
 class InvasionGame {
   /**
-   * 肉便器数（flag:83 ↔ FLAG:83）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:83
+   * 肉便器数（flag:83）
+   * FLAG:83
    * @returns {number}
    */
   get 肉便器数() {
@@ -24,8 +24,8 @@ class InvasionGame {
   }
 
   /**
-   * 亲卫队砦侵攻度（flag:92 ↔ FLAG:92）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:92
+   * 亲卫队砦侵攻度（flag:92）
+   * FLAG:92
    * @returns {number}
    */
   get 亲卫队砦侵攻度() {
@@ -39,8 +39,8 @@ class InvasionGame {
   }
 
   /**
-   * 人间界侵攻事件（flag:93 ↔ FLAG:93）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:93
+   * 人间界侵攻事件（flag:93）
+   * FLAG:93
    * @returns {number}
    */
   get 人间界侵攻事件() {
@@ -54,8 +54,8 @@ class InvasionGame {
   }
 
   /**
-   * 活动迷宫（flag:400 ↔ FLAG:400）
-   * 源: target/ERB/迷宮/DUNGEON.ERB 行125 FLAG:400 イベントダンジョン
+   * 活动迷宫（flag:400）
+   * FLAG:400 イベントダンジョン
    * @returns {number}
    */
   get 活动迷宫() {

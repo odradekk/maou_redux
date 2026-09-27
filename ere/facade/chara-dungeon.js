@@ -14,8 +14,8 @@ class DungeonFacade {
 
   // —— cflag ——
   /**
-   * 凌辱畏怖记忆_怪物（cflag:cid:130 ↔ CFLAG:130）
-   * 源: target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB 行67 CFLAG:ARG:130 = LOCAL:1（被凌辱モンスターID記憶）
+   * 凌辱畏怖记忆_怪物（cflag:cid:130）
+   * CFLAG:ARG:130 = LOCAL:1（被凌辱モンスターID記憶）
    * @returns {number}
    */
   get 凌辱畏怖记忆_怪物() {
@@ -29,8 +29,8 @@ class DungeonFacade {
   }
 
   /**
-   * 凌辱畏怖计数（cflag:cid:131 ↔ CFLAG:131）
-   * 源: target/ERB/迷宮/DUNGEON_RYOUZYOKU.ERB 行69/行72 CFLAG:ARG:131（凌辱畏怖記憶の回数；BATLLE.ERB:701 起按它做伤害减免/增伤）
+   * 凌辱畏怖计数（cflag:cid:131）
+   * CFLAG:ARG:131（凌辱畏怖記憶の回数；战斗按它做伤害减免/增伤）
    * @returns {number}
    */
   get 凌辱畏怖计数() {
@@ -44,8 +44,8 @@ class DungeonFacade {
   }
 
   /**
-   * 休憩（cflag:cid:503 ↔ CFLAG:503）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:503 フラグ（回合结算的休憩判定消费）
+   * 休憩（cflag:cid:503）
+   * CFLAG:503 フラグ（回合结算的休憩判定消费）
    * @returns {number}
    */
   get 休憩() {
@@ -59,8 +59,8 @@ class DungeonFacade {
   }
 
   /**
-   * 目标阶层（cflag:cid:520 ↔ CFLAG:520）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行418 CFLAG:520 目標階層
+   * 目标阶层（cflag:cid:520）
+   * CFLAG:520 目標階層
    * @returns {number}
    */
   get 目标阶层() {
@@ -74,8 +74,8 @@ class DungeonFacade {
   }
 
   /**
-   * 已接任务（cflag:cid:534 ↔ CFLAG:534）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:534 受注クエスト
+   * 已接任务（cflag:cid:534）
+   * CFLAG:534 受注クエスト
    * @returns {number}
    */
   get 已接任务() {
@@ -89,8 +89,8 @@ class DungeonFacade {
   }
 
   /**
-   * 攻击力（cflag:cid:11 ↔ CFLAG:11）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行270 CFLAG:11 = 攻撃力（@WEAPON_RESTORE 每日重算写入）
+   * 攻击力（cflag:cid:11）
+   * CFLAG:11 = 攻撃力（weapon_restore 每日重算写入）
    * @returns {number}
    */
   get 攻击力() {
@@ -104,8 +104,8 @@ class DungeonFacade {
   }
 
   /**
-   * 防御力（cflag:cid:12 ↔ CFLAG:12）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行271 CFLAG:12 = 防御力（@WEAPON_RESTORE 每日重算写入）
+   * 防御力（cflag:cid:12）
+   * CFLAG:12 = 防御力（weapon_restore 每日重算写入）
    * @returns {number}
    */
   get 防御力() {
@@ -119,8 +119,8 @@ class DungeonFacade {
   }
 
   /**
-   * 客膣内射精（cflag:cid:105 ↔ CFLAG:105）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行321 CFLAG:105 娼館などの客から奴隷への中田氏カウント用
+   * 客膣内射精（cflag:cid:105）
+   * CFLAG:105 娼館などの客から奴隷への中田氏カウント用
    * @returns {number}
    */
   get 客膣内射精() {
@@ -134,8 +134,8 @@ class DungeonFacade {
   }
 
   /**
-   * 犬膣内射精（cflag:cid:106 ↔ CFLAG:106）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行322 CFLAG:106 ノラ犬からの中田氏カウント用（SYSTEM_SOURCE.ERB:445）
+   * 犬膣内射精（cflag:cid:106）
+   * CFLAG:106 ノラ犬からの中田氏カウント用
    * @returns {number}
    */
   get 犬膣内射精() {
@@ -149,8 +149,8 @@ class DungeonFacade {
   }
 
   /**
-   * 怪物膣内射精（cflag:cid:107 ↔ CFLAG:107）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行323 CFLAG:107 モンスター・触手から奴隷への膣内射精カウント用（SYSTEM_SOURCE.ERB:451/457）
+   * 怪物膣内射精（cflag:cid:107）
+   * CFLAG:107 モンスター・触手から奴隷への膣内射精カウント用
    * @returns {number}
    */
   get 怪物膣内射精() {
@@ -164,8 +164,8 @@ class DungeonFacade {
   }
 
   /**
-   * 胎儿怪物编号（cflag:cid:112 ↔ CFLAG:112）
-   * 源: target/ERB/其他/NINSIN.ERB 行172-176 CFLAG:112 = 怀孕中的怪物编号
+   * 胎儿怪物编号（cflag:cid:112）
+   * CFLAG:112 = 怀孕中的怪物编号
    * @returns {number}
    */
   get 胎儿怪物编号() {
@@ -179,8 +179,8 @@ class DungeonFacade {
   }
 
   /**
-   * 侵攻阶层（cflag:cid:501 ↔ CFLAG:501）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行386 CFLAG:501 侵攻階層
+   * 侵攻阶层（cflag:cid:501）
+   * CFLAG:501 侵攻階層
    * @returns {number}
    */
   get 侵攻阶层() {
@@ -194,8 +194,8 @@ class DungeonFacade {
   }
 
   /**
-   * 勇者击破数（cflag:cid:505 ↔ CFLAG:505）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:505 勇者撃破数
+   * 勇者击破数（cflag:cid:505）
+   * CFLAG:505 勇者撃破数
    * @returns {number}
    */
   get 勇者击破数() {
@@ -209,8 +209,8 @@ class DungeonFacade {
   }
 
   /**
-   * 再起点（cflag:cid:508 ↔ CFLAG:508）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行409 CFLAG:508 再起ポイント（ダンジョン外で全回復するために必要。階層突破で増加）
+   * 再起点（cflag:cid:508）
+   * CFLAG:508 再起ポイント（ダンジョン外で全回復するために必要。階層突破で増加）
    * @returns {number}
    */
   get 再起点() {
@@ -224,8 +224,8 @@ class DungeonFacade {
   }
 
   /**
-   * 弹药（cflag:cid:571 ↔ CFLAG:571）
-   * 源: target/ERB/侵略/ARCANA_BATTLE.ERB 行21-22 CFLAG:ATKER/DEFER:571 = 15（对人决斗弹药补充；对人格斗一族的弾薬消耗同族字段见 550-552 装备枠）
+   * 弹药（cflag:cid:571）
+   * CFLAG:ATKER/DEFER:571 = 15（对人决斗弹药补充；对人格斗一族的弾薬消耗同族字段见 550-552 装备枠）
    * @returns {number}
    */
   get 弹药() {
@@ -239,8 +239,8 @@ class DungeonFacade {
   }
 
   /**
-   * 所持金（cflag:cid:580 ↔ CFLAG:580）
-   * 源: target/ERB/迷宮/DUNGEON_TOWN.ERB 行121 勇者所持金（城镇经济消费，ENTER_ENEMY.ERB 的初期加算同此下标）
+   * 所持金（cflag:cid:580）
+   * 勇者所持金（城镇经济消费，enter_enemy 的初期加算同此下标）
    * @returns {number}
    */
   get 所持金() {
@@ -254,8 +254,8 @@ class DungeonFacade {
   }
 
   /**
-   * 恋人（cflag:cid:606 ↔ CFLAG:606）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行469 CFLAG:606 = 恋人（LOVERS.ERB）
+   * 恋人（cflag:cid:606）
+   * CFLAG:606 = 恋人（ere/dungeon/dungeon-lovers.js）
    * @returns {number}
    */
   get 恋人() {
@@ -269,8 +269,8 @@ class DungeonFacade {
   }
 
   /**
-   * 恋人爱情（cflag:cid:607 ↔ CFLAG:607）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行470 CFLAG:607 = 恋人愛情（LOVERS.ERB）
+   * 恋人爱情（cflag:cid:607）
+   * CFLAG:607 = 恋人愛情（ere/dungeon/dungeon-lovers.js）
    * @returns {number}
    */
   get 恋人爱情() {
@@ -284,8 +284,8 @@ class DungeonFacade {
   }
 
   /**
-   * 恋人名字（cflag:cid:608 ↔ CFLAG:608）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行471 CFLAG:608 = 恋人の名前（LOVERS.ERB）
+   * 恋人名字（cflag:cid:608）
+   * CFLAG:608 = 恋人の名前（ere/dungeon/dungeon-lovers.js）
    * @returns {number}
    */
   get 恋人名字() {
@@ -299,8 +299,8 @@ class DungeonFacade {
   }
 
   /**
-   * 恋人ID（cflag:cid:610 ↔ CFLAG:610）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行473 CFLAG:610 = 恋人のID（キャラのときのみ）
+   * 恋人ID（cflag:cid:610）
+   * CFLAG:610 = 恋人のID（キャラのときのみ）
    * @returns {number}
    */
   get 恋人ID() {
@@ -315,8 +315,7 @@ class DungeonFacade {
 
   // —— base ——
   /**
-   * 体力（base:cid:0 ↔ BASE:0）
-   * 源: yml/Base.yml id 0
+   * 体力（base:cid:0）
    * @returns {number}
    */
   get 体力() {
@@ -330,8 +329,7 @@ class DungeonFacade {
   }
 
   /**
-   * 气力（base:cid:1 ↔ BASE:1）
-   * 源: yml/Base.yml id 1
+   * 气力（base:cid:1）
    * @returns {number}
    */
   get 气力() {
@@ -346,8 +344,7 @@ class DungeonFacade {
 
   // —— talent ——
   /**
-   * 谜之魅力（talent:cid:92 ↔ TALENT:92）
-   * 源: yml/Talent.yml id 92
+   * 谜之魅力（talent:cid:92）
    * @returns {number}
    */
   get 谜之魅力() {
@@ -361,8 +358,7 @@ class DungeonFacade {
   }
 
   /**
-   * 魅力（talent:cid:113 ↔ TALENT:113）
-   * 源: yml/Talent.yml id 113
+   * 魅力（talent:cid:113）
    * @returns {number}
    */
   get 魅力() {
@@ -376,8 +372,7 @@ class DungeonFacade {
   }
 
   /**
-   * 高人气（talent:cid:126 ↔ TALENT:126）
-   * 源: yml/Talent.yml id 126
+   * 高人气（talent:cid:126）
    * @returns {number}
    */
   get 高人气() {
@@ -391,8 +386,7 @@ class DungeonFacade {
   }
 
   /**
-   * 妓女（talent:cid:180 ↔ TALENT:180）
-   * 源: yml/Talent.yml id 180
+   * 妓女（talent:cid:180）
    * @returns {number}
    */
   get 妓女() {
@@ -406,8 +400,7 @@ class DungeonFacade {
   }
 
   /**
-   * 倾城（talent:cid:181 ↔ TALENT:181）
-   * 源: yml/Talent.yml id 181
+   * 倾城（talent:cid:181）
    * @returns {number}
    */
   get 倾城() {
@@ -421,8 +414,7 @@ class DungeonFacade {
   }
 
   /**
-   * 巧言（talent:cid:182 ↔ TALENT:182）
-   * 源: yml/Talent.yml id 182
+   * 巧言（talent:cid:182）
    * @returns {number}
    */
   get 巧言() {
@@ -436,8 +428,7 @@ class DungeonFacade {
   }
 
   /**
-   * 歌姫（talent:cid:185 ↔ TALENT:185）
-   * 源: yml/Talent.yml id 185
+   * 歌姫（talent:cid:185）
    * @returns {number}
    */
   get 歌姫() {
@@ -451,8 +442,7 @@ class DungeonFacade {
   }
 
   /**
-   * 舞姫（talent:cid:186 ↔ TALENT:186）
-   * 源: yml/Talent.yml id 186
+   * 舞姫（talent:cid:186）
    * @returns {number}
    */
   get 舞姫() {
@@ -466,8 +456,7 @@ class DungeonFacade {
   }
 
   /**
-   * 私处产卵（talent:cid:190 ↔ TALENT:190）
-   * 源: yml/Talent.yml id 190
+   * 私处产卵（talent:cid:190）
    * @returns {number}
    */
   get 私处产卵() {
@@ -481,8 +470,7 @@ class DungeonFacade {
   }
 
   /**
-   * 直肠产卵（talent:cid:191 ↔ TALENT:191）
-   * 源: yml/Talent.yml id 191
+   * 直肠产卵（talent:cid:191）
    * @returns {number}
    */
   get 直肠产卵() {
@@ -496,8 +484,7 @@ class DungeonFacade {
   }
 
   /**
-   * 肛门虫（talent:cid:193 ↔ TALENT:193）
-   * 源: yml/Talent.yml id 193
+   * 肛门虫（talent:cid:193）
    * @returns {number}
    */
   get 肛门虫() {
@@ -511,8 +498,7 @@ class DungeonFacade {
   }
 
   /**
-   * 战士（talent:cid:200 ↔ TALENT:200）
-   * 源: yml/Talent.yml id 200
+   * 战士（talent:cid:200）
    * @returns {number}
    */
   get 战士() {
@@ -526,8 +512,7 @@ class DungeonFacade {
   }
 
   /**
-   * 魔法师（talent:cid:201 ↔ TALENT:201）
-   * 源: yml/Talent.yml id 201
+   * 魔法师（talent:cid:201）
    * @returns {number}
    */
   get 魔法师() {
@@ -541,8 +526,7 @@ class DungeonFacade {
   }
 
   /**
-   * 神官（talent:cid:202 ↔ TALENT:202）
-   * 源: yml/Talent.yml id 202
+   * 神官（talent:cid:202）
    * @returns {number}
    */
   get 神官() {
@@ -556,8 +540,7 @@ class DungeonFacade {
   }
 
   /**
-   * 盗贼（talent:cid:203 ↔ TALENT:203）
-   * 源: yml/Talent.yml id 203
+   * 盗贼（talent:cid:203）
    * @returns {number}
    */
   get 盗贼() {
@@ -571,8 +554,7 @@ class DungeonFacade {
   }
 
   /**
-   * 肉便器（talent:cid:204 ↔ TALENT:204）
-   * 源: yml/Talent.yml id 204
+   * 肉便器（talent:cid:204）
    * @returns {number}
    */
   get 肉便器() {
@@ -586,8 +568,7 @@ class DungeonFacade {
   }
 
   /**
-   * 骑士（talent:cid:205 ↔ TALENT:205）
-   * 源: yml/Talent.yml id 205
+   * 骑士（talent:cid:205）
    * @returns {number}
    */
   get 骑士() {
@@ -601,8 +582,7 @@ class DungeonFacade {
   }
 
   /**
-   * 巫女（talent:cid:206 ↔ TALENT:206）
-   * 源: yml/Talent.yml id 206
+   * 巫女（talent:cid:206）
    * @returns {number}
    */
   get 巫女() {
@@ -616,8 +596,7 @@ class DungeonFacade {
   }
 
   /**
-   * 忍者（talent:cid:207 ↔ TALENT:207）
-   * 源: yml/Talent.yml id 207
+   * 忍者（talent:cid:207）
    * @returns {number}
    */
   get 忍者() {
@@ -631,8 +610,7 @@ class DungeonFacade {
   }
 
   /**
-   * 弓手（talent:cid:208 ↔ TALENT:208）
-   * 源: yml/Talent.yml id 208
+   * 弓手（talent:cid:208）
    * @returns {number}
    */
   get 弓手() {
@@ -646,8 +624,7 @@ class DungeonFacade {
   }
 
   /**
-   * 苗床（talent:cid:209 ↔ TALENT:209）
-   * 源: yml/Talent.yml id 209
+   * 苗床（talent:cid:209）
    * @returns {number}
    */
   get 苗床() {
@@ -662,8 +639,7 @@ class DungeonFacade {
 
   // —— exp ——
   /**
-   * 私处经验（exp:cid:0 ↔ EXP:0）
-   * 源: yml/Exp.yml id 0
+   * 私处经验（exp:cid:0）
    * @returns {number}
    */
   get 私处经验() {
@@ -677,8 +653,7 @@ class DungeonFacade {
   }
 
   /**
-   * 肛门经验（exp:cid:1 ↔ EXP:1）
-   * 源: yml/Exp.yml id 1
+   * 肛门经验（exp:cid:1）
    * @returns {number}
    */
   get 肛门经验() {
@@ -692,8 +667,7 @@ class DungeonFacade {
   }
 
   /**
-   * 绝顶经验（exp:cid:2 ↔ EXP:2）
-   * 源: yml/Exp.yml id 2
+   * 绝顶经验（exp:cid:2）
    * @returns {number}
    */
   get 绝顶经验() {
@@ -707,8 +681,7 @@ class DungeonFacade {
   }
 
   /**
-   * 性交经验（exp:cid:5 ↔ EXP:5）
-   * 源: yml/Exp.yml id 5
+   * 性交经验（exp:cid:5）
    * @returns {number}
    */
   get 性交经验() {
@@ -722,8 +695,7 @@ class DungeonFacade {
   }
 
   /**
-   * 精饮绝顶经验（exp:cid:8 ↔ EXP:8）
-   * 源: yml/Exp.yml id 8
+   * 精饮绝顶经验（exp:cid:8）
    * @returns {number}
    */
   get 精饮绝顶经验() {
@@ -737,8 +709,7 @@ class DungeonFacade {
   }
 
   /**
-   * 自慰经验（exp:cid:10 ↔ EXP:10）
-   * 源: yml/Exp.yml id 10
+   * 自慰经验（exp:cid:10）
    * @returns {number}
    */
   get 自慰经验() {
@@ -752,8 +723,7 @@ class DungeonFacade {
   }
 
   /**
-   * 调教自慰经验（exp:cid:11 ↔ EXP:11）
-   * 源: yml/Exp.yml id 11
+   * 调教自慰经验（exp:cid:11）
    * @returns {number}
    */
   get 调教自慰经验() {
@@ -767,8 +737,7 @@ class DungeonFacade {
   }
 
   /**
-   * 精液经验（exp:cid:20 ↔ EXP:20）
-   * 源: yml/Exp.yml id 20
+   * 精液经验（exp:cid:20）
    * @returns {number}
    */
   get 精液经验() {
@@ -782,8 +751,7 @@ class DungeonFacade {
   }
 
   /**
-   * 侍奉快乐经验（exp:cid:21 ↔ EXP:21）
-   * 源: yml/Exp.yml id 21
+   * 侍奉快乐经验（exp:cid:21）
    * @returns {number}
    */
   get 侍奉快乐经验() {
@@ -797,8 +765,7 @@ class DungeonFacade {
   }
 
   /**
-   * 口交经验（exp:cid:22 ↔ EXP:22）
-   * 源: yml/Exp.yml id 22
+   * 口交经验（exp:cid:22）
    * @returns {number}
    */
   get 口交经验() {
@@ -812,8 +779,7 @@ class DungeonFacade {
   }
 
   /**
-   * 被虐快乐经验（exp:cid:30 ↔ EXP:30）
-   * 源: yml/Exp.yml id 30
+   * 被虐快乐经验（exp:cid:30）
    * @returns {number}
    */
   get 被虐快乐经验() {
@@ -827,8 +793,7 @@ class DungeonFacade {
   }
 
   /**
-   * 施虐快乐经验（exp:cid:33 ↔ EXP:33）
-   * 源: yml/Exp.yml id 33
+   * 施虐快乐经验（exp:cid:33）
    * @returns {number}
    */
   get 施虐快乐经验() {
@@ -842,8 +807,7 @@ class DungeonFacade {
   }
 
   /**
-   * 异常经验（exp:cid:50 ↔ EXP:50）
-   * 源: yml/Exp.yml id 50
+   * 异常经验（exp:cid:50）
    * @returns {number}
    */
   get 异常经验() {
@@ -857,8 +821,7 @@ class DungeonFacade {
   }
 
   /**
-   * 私处扩张经验（exp:cid:52 ↔ EXP:52）
-   * 源: yml/Exp.yml id 52
+   * 私处扩张经验（exp:cid:52）
    * @returns {number}
    */
   get 私处扩张经验() {
@@ -872,8 +835,7 @@ class DungeonFacade {
   }
 
   /**
-   * 肛门扩张经验（exp:cid:53 ↔ EXP:53）
-   * 源: yml/Exp.yml id 53
+   * 肛门扩张经验（exp:cid:53）
    * @returns {number}
    */
   get 肛门扩张经验() {
@@ -887,8 +849,7 @@ class DungeonFacade {
   }
 
   /**
-   * 触手经验（exp:cid:55 ↔ EXP:55）
-   * 源: yml/Exp.yml id 55
+   * 触手经验（exp:cid:55）
    * @returns {number}
    */
   get 触手经验() {
@@ -902,8 +863,7 @@ class DungeonFacade {
   }
 
   /**
-   * 兽奸经验（exp:cid:56 ↔ EXP:56）
-   * 源: yml/Exp.yml id 56
+   * 兽奸经验（exp:cid:56）
    * @returns {number}
    */
   get 兽奸经验() {
@@ -917,8 +877,7 @@ class DungeonFacade {
   }
 
   /**
-   * 药物经验（exp:cid:57 ↔ EXP:57）
-   * 源: yml/Exp.yml id 57
+   * 药物经验（exp:cid:57）
    * @returns {number}
    */
   get 药物经验() {
@@ -932,8 +891,7 @@ class DungeonFacade {
   }
 
   /**
-   * 调教会话经验（exp:cid:73 ↔ EXP:73）
-   * 源: yml/Exp.yml id 73
+   * 调教会话经验（exp:cid:73）
    * @returns {number}
    */
   get 调教会话经验() {
@@ -947,8 +905,7 @@ class DungeonFacade {
   }
 
   /**
-   * 卖淫经验（exp:cid:74 ↔ EXP:74）
-   * 源: yml/Exp.yml id 74
+   * 卖淫经验（exp:cid:74）
    * @returns {number}
    */
   get 卖淫经验() {
@@ -962,8 +919,7 @@ class DungeonFacade {
   }
 
   /**
-   * 战斗经验（exp:cid:80 ↔ EXP:80）
-   * 源: yml/Exp.yml id 80
+   * 战斗经验（exp:cid:80）
    * @returns {number}
    */
   get 战斗经验() {

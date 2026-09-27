@@ -183,9 +183,8 @@ export default [
   {
     desc: 'M182 cflag 好感度补名下标错位（2 → 3，写进别的槽）',
     file: 'tools/facade-names.js',
-    find: "  2: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
-    replace:
-      "  3: named('好感度', src(SRC_FLAG, ':261 CFLAG:2 主人による調教経験(好感度)')),",
+    find: "  2: named('好感度', 'CFLAG:2 主人による調教経験(好感度)'),",
+    replace: "  3: named('好感度', 'CFLAG:2 主人による調教経験(好感度)'),",
     tests: ['gen-facade'],
     must_mention: '好感度',
   },

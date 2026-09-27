@@ -154,7 +154,7 @@ function add_values(target, values = {}) {
   }
 }
 
-/** :98-712：解析一帧录像内容并返回下一帧装备状态与本帧价值。 */
+/** 解析一帧录像内容并返回下一帧装备状态与本帧价值。 */
 function apply_command(cid, assi, command, equipment, state) {
   let score = 0;
   let bonus_abl = 0;
@@ -282,7 +282,7 @@ function apply_command(cid, assi, command, equipment, state) {
     }
   }
 
-  // 三个持续装备位依次覆盖能力加成，顺序必须与原作一致。
+  // 三个持续装备位依次覆盖能力加成，顺序不能换——后面的位覆盖前面的。
   if (equipment & 1) {
     bonus_abl = 17;
     state.extra[7] += 1;
@@ -315,7 +315,7 @@ function apply_command(cid, assi, command, equipment, state) {
   return { equipment, score };
 }
 
-/** :876-1056：由人物背景与录像题材生成标题。 */
+/** 由人物背景与录像题材生成标题。 */
 function make_video_title(cid, state) {
   let title = '';
   if (state.action[1] > 3) {
@@ -355,7 +355,7 @@ function make_video_title(cid, state) {
   else if (state.cbva[2] > 3) title += '子宫口蹂躏';
   else if (state.cbva[3] > 3) title += '肛门';
 
-  // 原作检查 PLAY_ACTION 下标 0，但所有“侍奉”累计都写在下标 1；保持差异。
+  // 判定读的是 PLAY_ACTION 下标 0，但“侍奉”累计都写在下标 1；保持差异。
   if (state.action[0] > 3) title += '侍奉';
   else if (state.action[4] > 3) title += '自慰';
   else if (state.menu[3] > 3) title += '性交';
@@ -368,7 +368,7 @@ function archive_title(index) {
   return era.get(`videoarchive:${index}`) || '';
 }
 
-/** 把给定片名写入首个空槽；满架时按原作静默丢弃。 */
+/** 把给定片名写入首个空槽；满架时静默丢弃。 */
 function archive_first_empty(title) {
   for (let index = 0; index < ARCHIVE_SIZE; index += 1) {
     if (archive_title(index) === '') {
@@ -380,7 +380,7 @@ function archive_first_empty(title) {
 }
 
 /**
- * @VIDEO_BACKUP（:1180-1193）：把角色最后一次出售的片名写进首个空槽。
+ * video_backup：把角色最后一次出售的片名写进首个空槽。
  * @param {number} cid
  */
 function video_backup(cid) {
@@ -389,8 +389,8 @@ function video_backup(cid) {
 }
 
 /**
- * @VIDEO_MATURO / @VIDEO_MATURO2（:1146-1179）的共同本体。
- * 两个原作入口逐字同构，仍分别导出以供售出与处刑调用方接线。
+ * video_maturo / video_maturo2 的共同本体。
+ * 两个入口行为一致，仍分别导出以供售出与处刑两处调用。
  */
 function save_temporary_video(cid) {
   // EX_FLAG:9000 第 2 位 = 水晶球录像保存开关。
@@ -416,7 +416,7 @@ function video_maturo(cid) {
   save_temporary_video(cid);
 }
 
-/** @VIDEO_CHECK（:1194-1213）：统计书架中全部非空录像。 */
+/** video_check：统计书架中全部非空录像。 */
 function video_check() {
   let count = 0;
   for (let index = 0; index < ARCHIVE_SIZE; index += 1) {
@@ -426,8 +426,8 @@ function video_check() {
 }
 
 /**
- * @VIDEO_SHELF（:1214-1244）：从调用方保存的槽位起打印一页三列片名。
- * NO_PAGE 在原作函数体中未使用，保留形参以维持调用契约。
+ * video_shelf：从调用方保存的槽位起打印一页三列片名。
+ * no_page 形参在函数体内未使用，保留它是为了维持调用形状。
  * @param {number} no_page
  * @param {number} num_page
  * @param {number} content_count
@@ -455,7 +455,7 @@ function video_shelf(no_page, num_page, content_count) {
 }
 
 /**
- * @SELL_VIDEO（:7-1090）：结算当前调教中拍摄的录像。
+ * sell_video：结算当前调教中拍摄的录像。
  * @param {number} cid 调教对象
  * @param {number} assi 助手；0 表示无助手
  */
@@ -476,7 +476,7 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
     extra: Array(20).fill(0),
     video_assi: 0,
   };
-  // CFLAG:90 = 拍摄开始时的装备位图；原作全库无写点，仍按源文读取。
+  // CFLAG:90 = 拍摄开始时的装备位图；全库无写点，仍按此语义读取。
   let equipment = era.get(`cflag:${cid}:90`) || 0;
   let score = 0;
 
@@ -569,7 +569,7 @@ async function sell_video(cid = era_flag.target, assi = era_flag.assi) {
 }
 
 /**
- * @EVENT_VIDEO_DAY（:1091-1145）：公开录像的每日浏览、粉丝与收入结算。
+ * event_video_day：公开录像的每日浏览、粉丝与收入结算。
  * @param {number} cid
  */
 async function event_video_day(cid) {
@@ -579,7 +579,7 @@ async function event_video_day(cid) {
 
   const view = chara(cid).stronghold;
   let viewers = Math.trunc(view.录像价值 / 10);
-  // CFLAG:494 = 狂热度；1..99 时降低浏览数，随后按原作最低补 1。
+  // CFLAG:494 = 狂热度；1..99 时降低浏览数，随后最低补 1。
   const mania = era.get(`cflag:${cid}:494`) || 0;
   if (mania > 0 && mania < 100) {
     viewers = Math.trunc((viewers * (100 - mania)) / 100) + 1;

@@ -1,5 +1,5 @@
 /**
- * @file ere/era-utils/era-modsave.js 的行为测试（issue #547：魔改使用.ERH 的
+ * @file ere/era-utils/era-modsave.js 的行为测试（issue #547：魔改声明的
  * 两个单档 SAVEDATA 变量落 yml/ModSave.yml 扩展普通表）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点，issue #16）。
@@ -8,7 +8,7 @@
  *
  * 覆盖四层：
  *   1. 未初始化读取返回 0（#13 引擎行为 + 包装层 `|| 0` 缺值处理）；
- *   2. 两个设置页变量的读写、循环/翻转业务方法（CONFIG.ERB:273-285）；
+ *   2. 两个设置页变量的读写、循环/翻转业务方法；
  *   3. 存档语义：modsave:* 随 saveData 落快照、loadData 整体替换后保持
  *      （#DIM SAVEDATA 的 ere 等价物，与 global:* 的跨档共享对照）；
  *   4. 引擎比对：ModSave.yml 用引擎自己的解析器装载后 setVar 接受
@@ -61,7 +61,7 @@ test('两个变量经包装层写入并读回（数字下标寻址，#5 决议�
   assert.equal(fixture.store.get('modsave:1'), 1);
 });
 
-test('cycle_prostitution_effect：0→1→2→0 三档循环（CONFIG.ERB:273-278）', () => {
+test('cycle_prostitution_effect：0→1→2→0 三档循环', () => {
   const fixture = create_era_fixture();
   const era_modsave = fixture.load_module('era-utils/era-modsave');
 
@@ -71,7 +71,7 @@ test('cycle_prostitution_effect：0→1→2→0 三档循环（CONFIG.ERB:273-27
   assert.equal(fixture.store.get('modsave:0'), 0);
 });
 
-test('toggle_anti_cheat：0↔1 翻转（CONFIG.ERB:281-285）', () => {
+test('toggle_anti_cheat：0↔1 翻转', () => {
   const fixture = create_era_fixture();
   const era_modsave = fixture.load_module('era-utils/era-modsave');
 

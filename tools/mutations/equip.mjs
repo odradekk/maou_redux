@@ -53,7 +53,7 @@ export default [
     find: "const EQUIP_RING_FALLBACK = '暗黑戒指';",
     replace: "const EQUIP_RING_FALLBACK = '黑戒指';",
     tests: ['equip-system'],
-    must_mention: '未知识别号回落暗黑戒指（ELSE 臂）',
+    must_mention: '未知识别号回落暗黑戒指（ELSE 分支）',
   },
   {
     desc: 'M336 EQUIP_CHECK 槽位丢（552 装饰槽不查——两槽合计用例红）',
@@ -153,7 +153,7 @@ export default [
     must_mention: '装饰戒指被消耗一件',
   },
   {
-    desc: 'M11140 宝箱换装守卫按 C 式「&& 优先」读错（空槽不再吃强度/诅咒门，源 :243/:258 左结合，#517）',
+    desc: 'M11140 宝箱换装检查按 C 式「&& 优先」读错（空槽不再吃强度/诅咒判定，左结合，#517）',
     file: 'ere/system/equip/equip-select.js',
     find: '    if ((w.存储编号 === -1 || found) && w.强度 < floor && w.诅咒 === 0) {',
     replace:
@@ -211,7 +211,7 @@ export default [
     must_mention: '善恶值 1 且其余全不满足',
   },
   {
-    desc: 'M11526 SHOW_BUTTON_EQUIP 守卫取反（=== 1 改 === 0——放行时反而不渲染按钮）',
+    desc: 'M11526 show_button_equip 检查取反（=== 1 改 === 0——放行时反而不渲染按钮）',
     file: 'ere/system/equip/equip-show.js',
     find: '  if (check_able_to_show_equip(cid) === 1) {',
     replace: '  if (check_able_to_show_equip(cid) === 0) {',

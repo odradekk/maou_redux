@@ -3,7 +3,7 @@
  *
  * 生成区（GENERATED 标记之间）由脚本维护，重生成加 --force；
  * 标记之外是手写区：变量语义补注、业务方法，重新生成不会触碰（#11 决议）。
- * 变量的原作语义与来源写进手写区补注（AGENTS.md「变量语义必须注释」）。
+ * 变量语义与来源写进手写区补注（AGENTS.md「变量语义必须注释」）。
  */
 
 const era = require('#/era-electron');
@@ -11,7 +11,7 @@ const era = require('#/era-electron');
 // GENERATED START —— tools/gen-wrapper.js 自 yml/Flag.yml 生成，勿手改；重新生成（--force）只替换本标记之间
 const era_flag = {
   /**
-   * 特别税加成（flag:9 ↔ FLAG:9）
+   * 特别税加成（flag:9）
    * @returns {number}
    */
   get tax_surcharge() {
@@ -24,7 +24,7 @@ const era_flag = {
     era.set('flag:9', v);
   },
   /**
-   * 人间界侵攻度（flag:81 ↔ FLAG:81）
+   * 人间界侵攻度（flag:81）
    * @returns {number}
    */
   get human_realm_invasion() {
@@ -37,7 +37,7 @@ const era_flag = {
     era.set('flag:81', v);
   },
   /**
-   * 人间界陷落（flag:82 ↔ FLAG:82）
+   * 人间界陷落（flag:82）
    * @returns {number}
    */
   get human_realm_fallen() {
@@ -50,7 +50,7 @@ const era_flag = {
     era.set('flag:82', v);
   },
   /**
-   * 人间界侵略事件进度（flag:93 ↔ FLAG:93）
+   * 人间界侵略事件进度（flag:93）
    * @returns {number}
    */
   get human_realm_event_stage() {
@@ -63,7 +63,7 @@ const era_flag = {
     era.set('flag:93', v);
   },
   /**
-   * 精灵领域侵攻度（flag:86 ↔ FLAG:86）
+   * 精灵领域侵攻度（flag:86）
    * @returns {number}
    */
   get elf_realm_invasion() {
@@ -76,7 +76,7 @@ const era_flag = {
     era.set('flag:86', v);
   },
   /**
-   * 精灵领域征服（flag:87 ↔ FLAG:87）
+   * 精灵领域征服（flag:87）
    * @returns {number}
    */
   get elf_realm_conquered() {
@@ -89,7 +89,7 @@ const era_flag = {
     era.set('flag:87', v);
   },
   /**
-   * 龙之山脉侵攻度（flag:88 ↔ FLAG:88）
+   * 龙之山脉侵攻度（flag:88）
    * @returns {number}
    */
   get dragon_realm_invasion() {
@@ -102,7 +102,7 @@ const era_flag = {
     era.set('flag:88', v);
   },
   /**
-   * 龙之山脉征服（flag:89 ↔ FLAG:89）
+   * 龙之山脉征服（flag:89）
    * @returns {number}
    */
   get dragon_realm_conquered() {
@@ -115,7 +115,7 @@ const era_flag = {
     era.set('flag:89', v);
   },
   /**
-   * 天界侵攻度（flag:90 ↔ FLAG:90）
+   * 天界侵攻度（flag:90）
    * @returns {number}
    */
   get heaven_invasion() {
@@ -128,7 +128,7 @@ const era_flag = {
     era.set('flag:90', v);
   },
   /**
-   * 天界征服（flag:91 ↔ FLAG:91）
+   * 天界征服（flag:91）
    * @returns {number}
    */
   get heaven_conquered() {
@@ -141,7 +141,7 @@ const era_flag = {
     era.set('flag:91', v);
   },
   /**
-   * 圣灵骑士堡垒攻略进度（flag:92 ↔ FLAG:92）
+   * 圣灵骑士堡垒攻略进度（flag:92）
    * @returns {number}
    */
   get arcana_fort_stage() {
@@ -154,7 +154,7 @@ const era_flag = {
     era.set('flag:92', v);
   },
   /**
-   * 勇者战役中（flag:400 ↔ FLAG:400）
+   * 勇者战役中（flag:400）
    * @returns {number}
    */
   get hero_campaign_active() {
@@ -167,7 +167,7 @@ const era_flag = {
     era.set('flag:400', v);
   },
   /**
-   * 战役剧情进度（flag:401 ↔ FLAG:401）
+   * 战役剧情进度（flag:401）
    * @returns {number}
    */
   get campaign_story_progress() {
@@ -180,7 +180,7 @@ const era_flag = {
     era.set('flag:401', v);
   },
   /**
-   * 二维地图模式（flag:502 ↔ FLAG:502）
+   * 二维地图模式（flag:502）
    * @returns {number}
    */
   get map_2d_mode() {
@@ -193,7 +193,7 @@ const era_flag = {
     era.set('flag:502', v);
   },
   /**
-   * 狂王替身登场（flag:224 ↔ FLAG:224）
+   * 狂王替身登场（flag:224）
    * @returns {number}
    */
   get crazylord_entered() {
@@ -206,7 +206,7 @@ const era_flag = {
     era.set('flag:224', v);
   },
   /**
-   * 葵希罗线（flag:2815 ↔ FLAG:2815）
+   * 葵希罗线（flag:2815）
    * @returns {number}
    */
   get route_34() {
@@ -219,7 +219,7 @@ const era_flag = {
     era.set('flag:2815', v);
   },
   /**
-   * 反叛结局（flag:2816 ↔ FLAG:2816）
+   * 反叛结局（flag:2816）
    * @returns {number}
    */
   get rebellion_ending() {
@@ -232,7 +232,7 @@ const era_flag = {
     era.set('flag:2816', v);
   },
   /**
-   * 天数（flag:10000 ↔ FLAG:10000）
+   * 天数（flag:10000）
    * @returns {number}
    */
   get day_count() {
@@ -245,7 +245,7 @@ const era_flag = {
     era.set('flag:10000', v);
   },
   /**
-   * 月（flag:10001 ↔ FLAG:10001）
+   * 月（flag:10001）
    * @returns {number}
    */
   get month() {
@@ -258,7 +258,7 @@ const era_flag = {
     era.set('flag:10001', v);
   },
   /**
-   * 日（flag:10002 ↔ FLAG:10002）
+   * 日（flag:10002）
    * @returns {number}
    */
   get date() {
@@ -271,7 +271,7 @@ const era_flag = {
     era.set('flag:10002', v);
   },
   /**
-   * 时段（flag:10003 ↔ FLAG:10003）
+   * 时段（flag:10003）
    * @returns {number}
    */
   get time() {
@@ -284,7 +284,7 @@ const era_flag = {
     era.set('flag:10003', v);
   },
   /**
-   * 所持金（flag:10004 ↔ FLAG:10004）
+   * 所持金（flag:10004）
    * @returns {number}
    */
   get money() {
@@ -297,7 +297,7 @@ const era_flag = {
     era.set('flag:10004', v);
   },
   /**
-   * 目标（flag:10005 ↔ FLAG:10005）
+   * 目标（flag:10005）
    * @returns {number}
    */
   get target() {
@@ -310,7 +310,7 @@ const era_flag = {
     era.set('flag:10005', v);
   },
   /**
-   * 助手（flag:10006 ↔ FLAG:10006）
+   * 助手（flag:10006）
    * @returns {number}
    */
   get assi() {
@@ -323,7 +323,7 @@ const era_flag = {
     era.set('flag:10006', v);
   },
   /**
-   * 助手参与调教（flag:10007 ↔ FLAG:10007）
+   * 助手参与调教（flag:10007）
    * @returns {number}
    */
   get assiplay() {
@@ -336,7 +336,7 @@ const era_flag = {
     era.set('flag:10007', v);
   },
   /**
-   * 调教者（flag:10008 ↔ FLAG:10008）
+   * 调教者（flag:10008）
    * @returns {number}
    */
   get player() {
@@ -349,7 +349,7 @@ const era_flag = {
     era.set('flag:10008', v);
   },
   /**
-   * 上次指令（flag:10009 ↔ FLAG:10009）
+   * 上次指令（flag:10009）
    * @returns {number}
    */
   get prevcom() {
@@ -362,7 +362,7 @@ const era_flag = {
     era.set('flag:10009', v);
   },
   /**
-   * 下次指令（flag:10010 ↔ FLAG:10010）
+   * 下次指令（flag:10010）
    * @returns {number}
    */
   get nextcom() {
@@ -375,7 +375,7 @@ const era_flag = {
     era.set('flag:10010', v);
   },
   /**
-   * 当前指令（flag:10011 ↔ FLAG:10011）
+   * 当前指令（flag:10011）
    * @returns {number}
    */
   get selectcom() {
@@ -388,7 +388,7 @@ const era_flag = {
     era.set('flag:10011', v);
   },
   /**
-   * 记录调教对象（flag:10012 ↔ FLAG:10012）
+   * 记录调教对象（flag:10012）
    * @returns {number}
    */
   get target_record() {
@@ -401,7 +401,7 @@ const era_flag = {
     era.set('flag:10012', v);
   },
   /**
-   * 记录助手（flag:10013 ↔ FLAG:10013）
+   * 记录助手（flag:10013）
    * @returns {number}
    */
   get assi_record() {
@@ -414,7 +414,7 @@ const era_flag = {
     era.set('flag:10013', v);
   },
   /**
-   * 暂存主人（flag:10014 ↔ FLAG:10014）
+   * 暂存主人（flag:10014）
    * @returns {number}
    */
   get master_backup() {
@@ -427,7 +427,7 @@ const era_flag = {
     era.set('flag:10014', v);
   },
   /**
-   * 暂存目标（flag:10015 ↔ FLAG:10015）
+   * 暂存目标（flag:10015）
    * @returns {number}
    */
   get target_backup() {
@@ -440,7 +440,7 @@ const era_flag = {
     era.set('flag:10015', v);
   },
   /**
-   * 暂存助手（flag:10016 ↔ FLAG:10016）
+   * 暂存助手（flag:10016）
    * @returns {number}
    */
   get assi_backup() {
@@ -453,7 +453,7 @@ const era_flag = {
     era.set('flag:10016', v);
   },
   /**
-   * 星期（flag:10017 ↔ FLAG:10017）
+   * 星期（flag:10017）
    * @returns {number}
    */
   get weekday() {
@@ -466,7 +466,7 @@ const era_flag = {
     era.set('flag:10017', v);
   },
   /**
-   * 上次读取存档（flag:10018 ↔ FLAG:10018）
+   * 上次读取存档（flag:10018）
    * @returns {number}
    */
   get last_load_no() {
@@ -479,7 +479,7 @@ const era_flag = {
     era.set('flag:10018', v);
   },
   /**
-   * 上次保存存档（flag:10019 ↔ FLAG:10019）
+   * 上次保存存档（flag:10019）
    * @returns {number}
    */
   get last_save_no() {
@@ -492,7 +492,7 @@ const era_flag = {
     era.set('flag:10019', v);
   },
   /**
-   * 上次保存存档_1（flag:10020 ↔ FLAG:10020）
+   * 上次保存存档_1（flag:10020）
    * @returns {number}
    */
   get last_save_no_1() {
@@ -505,7 +505,7 @@ const era_flag = {
     era.set('flag:10020', v);
   },
   /**
-   * 上次保存存档_2（flag:10021 ↔ FLAG:10021）
+   * 上次保存存档_2（flag:10021）
    * @returns {number}
    */
   get last_save_no_2() {
@@ -518,7 +518,7 @@ const era_flag = {
     era.set('flag:10021', v);
   },
   /**
-   * 上次保存存档_3（flag:10022 ↔ FLAG:10022）
+   * 上次保存存档_3（flag:10022）
    * @returns {number}
    */
   get last_save_no_3() {
@@ -531,7 +531,7 @@ const era_flag = {
     era.set('flag:10022', v);
   },
   /**
-   * 上次保存存档_4（flag:10023 ↔ FLAG:10023）
+   * 上次保存存档_4（flag:10023）
    * @returns {number}
    */
   get last_save_no_4() {
@@ -544,7 +544,7 @@ const era_flag = {
     era.set('flag:10023', v);
   },
   /**
-   * 上次保存存档_5（flag:10024 ↔ FLAG:10024）
+   * 上次保存存档_5（flag:10024）
    * @returns {number}
    */
   get last_save_no_5() {
@@ -557,7 +557,7 @@ const era_flag = {
     era.set('flag:10024', v);
   },
   /**
-   * 上次保存存档_6（flag:10025 ↔ FLAG:10025）
+   * 上次保存存档_6（flag:10025）
    * @returns {number}
    */
   get last_save_no_6() {
@@ -570,7 +570,7 @@ const era_flag = {
     era.set('flag:10025', v);
   },
   /**
-   * 上次保存存档_7（flag:10026 ↔ FLAG:10026）
+   * 上次保存存档_7（flag:10026）
    * @returns {number}
    */
   get last_save_no_7() {
@@ -583,7 +583,7 @@ const era_flag = {
     era.set('flag:10026', v);
   },
   /**
-   * 上次保存存档_8（flag:10027 ↔ FLAG:10027）
+   * 上次保存存档_8（flag:10027）
    * @returns {number}
    */
   get last_save_no_8() {
@@ -596,7 +596,7 @@ const era_flag = {
     era.set('flag:10027', v);
   },
   /**
-   * 上次保存存档_9（flag:10028 ↔ FLAG:10028）
+   * 上次保存存档_9（flag:10028）
    * @returns {number}
    */
   get last_save_no_9() {
@@ -609,7 +609,7 @@ const era_flag = {
     era.set('flag:10028', v);
   },
   /**
-   * 购入品指针（flag:10029 ↔ FLAG:10029）
+   * 购入品指针（flag:10029）
    * @returns {number}
    */
   get bought() {
@@ -622,7 +622,7 @@ const era_flag = {
     era.set('flag:10029', v);
   },
   /**
-   * 第1层陷阱A（flag:300 ↔ FLAG:300）
+   * 第1层陷阱A（flag:300）
    * @returns {number}
    */
   get floor_1_trap_a() {
@@ -635,7 +635,7 @@ const era_flag = {
     era.set('flag:300', v);
   },
   /**
-   * 第2层陷阱A（flag:301 ↔ FLAG:301）
+   * 第2层陷阱A（flag:301）
    * @returns {number}
    */
   get floor_2_trap_a() {
@@ -648,7 +648,7 @@ const era_flag = {
     era.set('flag:301', v);
   },
   /**
-   * 第3层陷阱A（flag:302 ↔ FLAG:302）
+   * 第3层陷阱A（flag:302）
    * @returns {number}
    */
   get floor_3_trap_a() {
@@ -661,7 +661,7 @@ const era_flag = {
     era.set('flag:302', v);
   },
   /**
-   * 第4层陷阱A（flag:303 ↔ FLAG:303）
+   * 第4层陷阱A（flag:303）
    * @returns {number}
    */
   get floor_4_trap_a() {
@@ -674,7 +674,7 @@ const era_flag = {
     era.set('flag:303', v);
   },
   /**
-   * 第5层陷阱A（flag:304 ↔ FLAG:304）
+   * 第5层陷阱A（flag:304）
    * @returns {number}
    */
   get floor_5_trap_a() {
@@ -687,7 +687,7 @@ const era_flag = {
     era.set('flag:304', v);
   },
   /**
-   * 第6层陷阱A（flag:305 ↔ FLAG:305）
+   * 第6层陷阱A（flag:305）
    * @returns {number}
    */
   get floor_6_trap_a() {
@@ -700,7 +700,7 @@ const era_flag = {
     era.set('flag:305', v);
   },
   /**
-   * 第7层陷阱A（flag:306 ↔ FLAG:306）
+   * 第7层陷阱A（flag:306）
    * @returns {number}
    */
   get floor_7_trap_a() {
@@ -713,7 +713,7 @@ const era_flag = {
     era.set('flag:306', v);
   },
   /**
-   * 第8层陷阱A（flag:307 ↔ FLAG:307）
+   * 第8层陷阱A（flag:307）
    * @returns {number}
    */
   get floor_8_trap_a() {
@@ -726,7 +726,7 @@ const era_flag = {
     era.set('flag:307', v);
   },
   /**
-   * 第9层陷阱A（flag:308 ↔ FLAG:308）
+   * 第9层陷阱A（flag:308）
    * @returns {number}
    */
   get floor_9_trap_a() {
@@ -739,7 +739,7 @@ const era_flag = {
     era.set('flag:308', v);
   },
   /**
-   * 第1层陷阱B（flag:310 ↔ FLAG:310）
+   * 第1层陷阱B（flag:310）
    * @returns {number}
    */
   get floor_1_trap_b() {
@@ -752,7 +752,7 @@ const era_flag = {
     era.set('flag:310', v);
   },
   /**
-   * 第2层陷阱B（flag:311 ↔ FLAG:311）
+   * 第2层陷阱B（flag:311）
    * @returns {number}
    */
   get floor_2_trap_b() {
@@ -765,7 +765,7 @@ const era_flag = {
     era.set('flag:311', v);
   },
   /**
-   * 第3层陷阱B（flag:312 ↔ FLAG:312）
+   * 第3层陷阱B（flag:312）
    * @returns {number}
    */
   get floor_3_trap_b() {
@@ -778,7 +778,7 @@ const era_flag = {
     era.set('flag:312', v);
   },
   /**
-   * 第4层陷阱B（flag:313 ↔ FLAG:313）
+   * 第4层陷阱B（flag:313）
    * @returns {number}
    */
   get floor_4_trap_b() {
@@ -791,7 +791,7 @@ const era_flag = {
     era.set('flag:313', v);
   },
   /**
-   * 第5层陷阱B（flag:314 ↔ FLAG:314）
+   * 第5层陷阱B（flag:314）
    * @returns {number}
    */
   get floor_5_trap_b() {
@@ -804,7 +804,7 @@ const era_flag = {
     era.set('flag:314', v);
   },
   /**
-   * 第6层陷阱B（flag:315 ↔ FLAG:315）
+   * 第6层陷阱B（flag:315）
    * @returns {number}
    */
   get floor_6_trap_b() {
@@ -817,7 +817,7 @@ const era_flag = {
     era.set('flag:315', v);
   },
   /**
-   * 第7层陷阱B（flag:316 ↔ FLAG:316）
+   * 第7层陷阱B（flag:316）
    * @returns {number}
    */
   get floor_7_trap_b() {
@@ -830,7 +830,7 @@ const era_flag = {
     era.set('flag:316', v);
   },
   /**
-   * 第8层陷阱B（flag:317 ↔ FLAG:317）
+   * 第8层陷阱B（flag:317）
    * @returns {number}
    */
   get floor_8_trap_b() {
@@ -843,7 +843,7 @@ const era_flag = {
     era.set('flag:317', v);
   },
   /**
-   * 第9层陷阱B（flag:318 ↔ FLAG:318）
+   * 第9层陷阱B（flag:318）
    * @returns {number}
    */
   get floor_9_trap_b() {
@@ -856,7 +856,7 @@ const era_flag = {
     era.set('flag:318', v);
   },
   /**
-   * 第1层陷阱C（flag:320 ↔ FLAG:320）
+   * 第1层陷阱C（flag:320）
    * @returns {number}
    */
   get floor_1_trap_c() {
@@ -869,7 +869,7 @@ const era_flag = {
     era.set('flag:320', v);
   },
   /**
-   * 第2层陷阱C（flag:321 ↔ FLAG:321）
+   * 第2层陷阱C（flag:321）
    * @returns {number}
    */
   get floor_2_trap_c() {
@@ -882,7 +882,7 @@ const era_flag = {
     era.set('flag:321', v);
   },
   /**
-   * 第3层陷阱C（flag:322 ↔ FLAG:322）
+   * 第3层陷阱C（flag:322）
    * @returns {number}
    */
   get floor_3_trap_c() {
@@ -895,7 +895,7 @@ const era_flag = {
     era.set('flag:322', v);
   },
   /**
-   * 第4层陷阱C（flag:323 ↔ FLAG:323）
+   * 第4层陷阱C（flag:323）
    * @returns {number}
    */
   get floor_4_trap_c() {
@@ -908,7 +908,7 @@ const era_flag = {
     era.set('flag:323', v);
   },
   /**
-   * 第5层陷阱C（flag:324 ↔ FLAG:324）
+   * 第5层陷阱C（flag:324）
    * @returns {number}
    */
   get floor_5_trap_c() {
@@ -921,7 +921,7 @@ const era_flag = {
     era.set('flag:324', v);
   },
   /**
-   * 第6层陷阱C（flag:325 ↔ FLAG:325）
+   * 第6层陷阱C（flag:325）
    * @returns {number}
    */
   get floor_6_trap_c() {
@@ -934,7 +934,7 @@ const era_flag = {
     era.set('flag:325', v);
   },
   /**
-   * 第7层陷阱C（flag:326 ↔ FLAG:326）
+   * 第7层陷阱C（flag:326）
    * @returns {number}
    */
   get floor_7_trap_c() {
@@ -947,7 +947,7 @@ const era_flag = {
     era.set('flag:326', v);
   },
   /**
-   * 第8层陷阱C（flag:327 ↔ FLAG:327）
+   * 第8层陷阱C（flag:327）
    * @returns {number}
    */
   get floor_8_trap_c() {
@@ -960,7 +960,7 @@ const era_flag = {
     era.set('flag:327', v);
   },
   /**
-   * 第9层陷阱C（flag:328 ↔ FLAG:328）
+   * 第9层陷阱C（flag:328）
    * @returns {number}
    */
   get floor_9_trap_c() {
@@ -973,7 +973,7 @@ const era_flag = {
     era.set('flag:328', v);
   },
   /**
-   * 第1层宝箱（flag:340 ↔ FLAG:340）
+   * 第1层宝箱（flag:340）
    * @returns {number}
    */
   get floor_1_treasure() {
@@ -986,7 +986,7 @@ const era_flag = {
     era.set('flag:340', v);
   },
   /**
-   * 第2层宝箱（flag:341 ↔ FLAG:341）
+   * 第2层宝箱（flag:341）
    * @returns {number}
    */
   get floor_2_treasure() {
@@ -999,7 +999,7 @@ const era_flag = {
     era.set('flag:341', v);
   },
   /**
-   * 第3层宝箱（flag:342 ↔ FLAG:342）
+   * 第3层宝箱（flag:342）
    * @returns {number}
    */
   get floor_3_treasure() {
@@ -1012,7 +1012,7 @@ const era_flag = {
     era.set('flag:342', v);
   },
   /**
-   * 第4层宝箱（flag:343 ↔ FLAG:343）
+   * 第4层宝箱（flag:343）
    * @returns {number}
    */
   get floor_4_treasure() {
@@ -1025,7 +1025,7 @@ const era_flag = {
     era.set('flag:343', v);
   },
   /**
-   * 第5层宝箱（flag:344 ↔ FLAG:344）
+   * 第5层宝箱（flag:344）
    * @returns {number}
    */
   get floor_5_treasure() {
@@ -1038,7 +1038,7 @@ const era_flag = {
     era.set('flag:344', v);
   },
   /**
-   * 第6层宝箱（flag:345 ↔ FLAG:345）
+   * 第6层宝箱（flag:345）
    * @returns {number}
    */
   get floor_6_treasure() {
@@ -1051,7 +1051,7 @@ const era_flag = {
     era.set('flag:345', v);
   },
   /**
-   * 第7层宝箱（flag:346 ↔ FLAG:346）
+   * 第7层宝箱（flag:346）
    * @returns {number}
    */
   get floor_7_treasure() {
@@ -1064,7 +1064,7 @@ const era_flag = {
     era.set('flag:346', v);
   },
   /**
-   * 第8层宝箱（flag:347 ↔ FLAG:347）
+   * 第8层宝箱（flag:347）
    * @returns {number}
    */
   get floor_8_treasure() {
@@ -1077,7 +1077,7 @@ const era_flag = {
     era.set('flag:347', v);
   },
   /**
-   * 第9层宝箱（flag:348 ↔ FLAG:348）
+   * 第9层宝箱（flag:348）
    * @returns {number}
    */
   get floor_9_treasure() {
@@ -1090,7 +1090,7 @@ const era_flag = {
     era.set('flag:348', v);
   },
   /**
-   * 第1层设施（flag:350 ↔ FLAG:350）
+   * 第1层设施（flag:350）
    * @returns {number}
    */
   get floor_1_facility() {
@@ -1103,7 +1103,7 @@ const era_flag = {
     era.set('flag:350', v);
   },
   /**
-   * 第2层设施（flag:351 ↔ FLAG:351）
+   * 第2层设施（flag:351）
    * @returns {number}
    */
   get floor_2_facility() {
@@ -1116,7 +1116,7 @@ const era_flag = {
     era.set('flag:351', v);
   },
   /**
-   * 第3层设施（flag:352 ↔ FLAG:352）
+   * 第3层设施（flag:352）
    * @returns {number}
    */
   get floor_3_facility() {
@@ -1129,7 +1129,7 @@ const era_flag = {
     era.set('flag:352', v);
   },
   /**
-   * 第4层设施（flag:353 ↔ FLAG:353）
+   * 第4层设施（flag:353）
    * @returns {number}
    */
   get floor_4_facility() {
@@ -1142,7 +1142,7 @@ const era_flag = {
     era.set('flag:353', v);
   },
   /**
-   * 第5层设施（flag:354 ↔ FLAG:354）
+   * 第5层设施（flag:354）
    * @returns {number}
    */
   get floor_5_facility() {
@@ -1155,7 +1155,7 @@ const era_flag = {
     era.set('flag:354', v);
   },
   /**
-   * 第6层设施（flag:355 ↔ FLAG:355）
+   * 第6层设施（flag:355）
    * @returns {number}
    */
   get floor_6_facility() {
@@ -1168,7 +1168,7 @@ const era_flag = {
     era.set('flag:355', v);
   },
   /**
-   * 第7层设施（flag:356 ↔ FLAG:356）
+   * 第7层设施（flag:356）
    * @returns {number}
    */
   get floor_7_facility() {
@@ -1181,7 +1181,7 @@ const era_flag = {
     era.set('flag:356', v);
   },
   /**
-   * 第8层设施（flag:357 ↔ FLAG:357）
+   * 第8层设施（flag:357）
    * @returns {number}
    */
   get floor_8_facility() {
@@ -1194,7 +1194,7 @@ const era_flag = {
     era.set('flag:357', v);
   },
   /**
-   * 第9层设施（flag:358 ↔ FLAG:358）
+   * 第9层设施（flag:358）
    * @returns {number}
    */
   get floor_9_facility() {
@@ -1207,7 +1207,7 @@ const era_flag = {
     era.set('flag:358', v);
   },
   /**
-   * 肉便器数（flag:83 ↔ FLAG:83）
+   * 肉便器数（flag:83）
    * @returns {number}
    */
   get meat_toilet_count() {
@@ -1220,7 +1220,7 @@ const era_flag = {
     era.set('flag:83', v);
   },
   /**
-   * 展品数（flag:84 ↔ FLAG:84）
+   * 展品数（flag:84）
    * @returns {number}
    */
   get exhibit_count() {
@@ -1233,7 +1233,7 @@ const era_flag = {
     era.set('flag:84', v);
   },
   /**
-   * 处女献上后续发生方式（flag:38 ↔ FLAG:38）
+   * 处女献上后续发生方式（flag:38）
    * @returns {number}
    */
   get virgin_conceded_mode() {
@@ -1246,7 +1246,7 @@ const era_flag = {
     era.set('flag:38', v);
   },
   /**
-   * 勇者相关杂项开关（flag:8 ↔ FLAG:8）
+   * 勇者相关杂项开关（flag:8）
    * @returns {number}
    */
   get adventurer_flags() {
@@ -1265,23 +1265,23 @@ const era_flag = {
 //
 // 存读档域指针（#136 并入；随 #136 返工登记进 yml/Flag.yml 保留区
 // 10018-10028，两组变量**来源不同**）：
-//   last_load_no  LASTLOAD_NO  Emuera 内建只读变量（LOADDATA 后更新，
-//       RESETDATA 或返回标题后恢复初值 **-1**——技能 data-save-load.md
+//   last_load_no  LASTLOAD_NO  内建只读变量（LOADDATA 后更新，
+//       RESETDATA 或返回标题后恢复初值 **-1**——data-save-load.md
 //       「LASTLOAD 变量」：初始值「-1 或空」，int 型为 -1）。ere 无内建
 //       等价物，由 page-save-load 在读档成功后写入。
-//   last_save_no  LASTSAVE_NO:0  其他/VARIABLES.ERH:16
-//       `#DIM LASTSAVE_NO,10 = -1`——**声明即带初值 -1**；[1..9]（flag:
-//       10020..10028，生成的 last_save_no_1..9 无人消费）是 ARRAYSHIFT
-//       压栈的历史元素，@SYSTEM_LIST_DATA 的高亮比较只读 [0]。
+//   last_save_no  LASTSAVE_NO:0  `#DIM LASTSAVE_NO,10 = -1`
+//       ——**声明即带初值 -1**；[1..9]（flag:10020..10028，生成的
+//       last_save_no_1..9 无人消费）是 ARRAYSHIFT 压栈的历史元素，存档
+//       列表的高亮比较只读 [0]（ere/page/page-save-load.js）。
 //
 // **为什么必须显式初始化（ere/event/event-first.js 的 EVENTFIRST 开头
 // 写 -1），不能靠 undefined 表示「没读过」**：槽位登记进 Flag.yml 后，
 // 引擎 resetData/fillData 会为**已声明**序号赋 0（#13 的 fillData 语义；
 // 未登记时才是 undefined）。而 0 是有效槽号——0 号存档槽会被高亮成
-// 「上次存/读」，哨兵语义被破坏。`?? -1` 兜底只救未初始化的 undefined
-// 读（如测试直调；fillData 补出的 0 非 nullish，兜底管不了），**初值的
-// 真正保证是初始化写入**。原作侧对应：Emuera 在装载期（#DIM 声明）与
-// RESETDATA/返回标题时恢复 -1，ere 无这两个钩子，等价落点＝新档初始化。
+// 「上次存/读」，哨兵语义被破坏。`?? -1` 只救未初始化的 undefined
+// 读（如测试直调；fillData 补出的 0 非 nullish，救不到），**初值的
+// 真正保证是初始化写入**。ere 没有「装载期按 #DIM 声明赋初值」与
+// 「RESETDATA/返回标题恢复 -1」两个钩子，等价落点＝新档初始化。
 // 下面的 defineProperty 覆盖生成区的 `|| 0` 同名访问器——`|| 0` 会把
 // 未初始化读伪装成「0 号槽」（0 falsy 时返回 0），同样破坏哨兵。
 // 同版本旧档不存在（移植期 saves 为空对象，ADR-0006），fillData 对
@@ -1313,7 +1313,7 @@ Object.defineProperty(era_flag, 'last_save_no', {
 
 Object.defineProperty(era_flag, 'communication_hero_level_one', {
   configurable: true,
-  /** 通信勇者登场时是否压到 1 级（flag:77 的 bit 0，MAOUNET.ERB）。 */
+  /** 通信勇者登场时是否压到 1 级（flag:77 的 bit 0）。 */
   get() {
     return era.get('flag:77') || 0;
   },
@@ -1324,57 +1324,56 @@ Object.defineProperty(era_flag, 'communication_hero_level_one', {
 });
 
 //
-// 变量语义补注（原作语义 + 来源，AGENTS.md「变量语义必须注释」）：
+// 变量语义补注（语义 + 来源，AGENTS.md「变量语义必须注释」）：
 //
-// 生成区的「↔ FLAG:1000x」注释对 10000 保留区失真——这七个条目不是原作
-// FLAG 的下标，而是 #5 决议并入 flag 的 Emuera 内置变量（原作侧名字见下），
+// 生成区的「↔ FLAG:1000x」注释对 10000 保留区失真——这七个条目不是
+// FLAG 的下标，而是 #5 决议并入 flag 的内置变量（各条对照的变量名见下），
 // 生成器只按表名大写拼注释，改不了，以此处为准：
 //
 //   day_count  DAY:0  天数计数（经年累月的日数，主菜单「第{DAY/365}年」与
-//       「第{DAY+1}日」的读数源）。原作 @EVENTFIRST 不初始化它、留 0，
-//       1:1 照搬——勿自作主张补成第 1 天（DRAW_MAINMENU.ERB:56-58）。
-//   month      DAY:1  月份。开局置 1（SYSTEM ver1.0.3.ERB:33，@EVENTFIRST）。
-//   date       DAY:2  日。原作开局不写、留 0——主菜单如实显示「1月0日」，
-//       这是原作行为，不是漏移植（DRAW_MAINMENU.ERB:57）。
-//   time       TIME   时段：0=上午、1=下午（@SAVEINFO 与主菜单的上午/下午
-//       判据）。开局不写、留 0。
-//   weekday    DAY:3  星期（0=月曜…6=日曜，原作注释「日曜の次は月曜にする」）。
-//       @EVENTTURNEND 的日推进 +1、超过 6 回 0（EVENT_TURNEND.ERB:86-89）；
+//       「第{DAY+1}日」的读数源）。开局不初始化、留 0——「第{DAY+1}日」
+//       随之显示「第1日」，自洽；勿自作主张补成第 1 天。
+//   month      DAY:1  月份。开局置 1（ere/event/event-first.js 的 EVENTFIRST）。
+//   date       DAY:2  日。开局不写、留 0——主菜单如实显示「1月0日」，
+//       这是有意保留的行为，不是漏移植。
+//   time       TIME   时段：0=上午、1=下午（存档信息行与主菜单的上午/下午
+//       判断）。开局不写、留 0。
+//   weekday    DAY:3  星期（0=月曜…6=日曜，「日曜の次は月曜にする」）。
+//       EVENTTURNEND 的日推进 +1、超过 6 回 0（ere/event/event-turnend.js）；
 //       开局不写、留 0（#114 并入保留区）。
-//   money      MONEY  持有金钱（单位 pts.，_replace.csv 的 お金の単位 归
-//       游戏代码，#10 决议）。开局 10000（SYSTEM ver1.0.3.ERB:55）。
+//   money      MONEY  持有金钱（单位 pts.，#10 决议：金钱单位归游戏代码）。
+//       开局 10000（ere/event/event-first.js 的 EVENTFIRST）。
 //   target     TARGET 角色指针（#5 决议第六条：指针占 flag 槽位，函数间一律
-//       显式传参、不隐式读全局）：-1=未选中。开局置 -1（同文件 :26）。
-//   assi       ASSI   助手指针：0=无。原作开局不显式初始化（Emuera 零值），
-//       照搬留 0。
+//       显式传参、不隐式读全局）：-1=未选中。开局置 -1（ere/event/
+//       event-first.js 的 EVENTFIRST）。
+//   assi       ASSI   助手指针：0=无。开局不显式初始化、留 0。
 //
-// 调教域内置变量（#44 T14 并入；生成区的「↔ FLAG:100xx」注释同样失真，
-// 以此处为准）：
+// 调教域内置变量（#44 T14 并入；生成区注释只写寻址，逐条语义以此处为准）：
 //   assiplay     ASSIPLAY:0  助手是否参与调教：0=主人亲自调教、1=助手调教。
-//       BEGIN TRAIN 时引擎清 0（train-loop.js 的引擎初始化段镜像）。
-//   player       PLAYER      当前调教者（视角角色）：@EVENTTRAIN 依 ASSIPLAY
-//       置 MASTER 或 ASSI（TRAIN_MAIN.ERB:45-49）；@USERCOM 的 102/112
-//       分支会切换（随指令票）。
-//   prevcom      PREVCOM:0   上次调教指令编号：BEGIN TRAIN 时引擎置 -1，
-//       指令执行后由引擎更新为 SELECTCOM；@SHOW_USERCOM 的「上次的调教
-//       指令」读它（> -1 才显示）。
-//   nextcom      NEXTCOM:0   下次指令编号：BEGIN TRAIN 时引擎置 -1。Emuera
-//       官方标注有已知缺陷、不推荐使用（system-flow.md 注意事项 3），ere
-//       侧只镜像初始化，暂无消费者。
+//       调教初始化清 0（train-loop.js 初始化段，#44 并入）。
+//   player       PLAYER      当前调教者（视角角色）：EVENTTRAIN 依 ASSIPLAY
+//       置 MASTER 或 ASSI（ere/event/event-train.js）；「交代助手[102]」
+//       「对换调教[112]」分支会切换（随指令票）。
+//   prevcom      PREVCOM:0   上次调教指令编号：调教初始化置 -1（train-loop.js），
+//       指令执行后由脚本更新为 SELECTCOM（train-loop.js）；「上次的调教指令」行读它
+//       （> -1 才显示，ere/page/page-usercom.js）。
+//   nextcom      NEXTCOM:0   下次指令编号：调教初始化置 -1（train-loop.js），
+//       ere 侧只镜像初始化，暂无消费者。
 //   selectcom    SELECTCOM   当前回合玩家选定的指令编号：回合循环的输入
 //       检查设定（train-loop.js），口上与指令实现读它。
-//   target_record  TARGET:1  @EVENTTRAIN 记录的调教对象（TRAIN_MAIN.ERB:52，
-//       「以备人物切换」）；@EVENTEND 写回 FLAG:1 并在尾部还原指针。
-//   assi_record    ASSI:1    同上，记录的助手（:51）。
-//   master_backup  T:10      @PRITRAIN_MESSAGE 开头暂存的 MASTER
-//       （EVENT_BEFORETRAIN.ERB:11-13，注释「避免角色错乱的暂存纪录」）；
-//       @EVENTEND 复位角色时读回（TRAIN_MAIN.ERB:320）。T 是 Emuera 单字母
-//       内置数组，这里只落调教路径用到的三个元素。
-//   target_backup  T:11      同上，暂存的 TARGET（:321 复位）。
-//   assi_backup    T:12      同上，暂存的 ASSI（:323 复位；SIF ASSI 才写）。
+//   target_record  TARGET:1  EVENTTRAIN 记录的调教对象，以备人物切换
+//       （ere/event/event-train.js）；EVENTEND 写回 FLAG:1 并在尾部还原
+//       指针（ere/event/event-end.js）。
+//   assi_record    ASSI:1    同上，记录的助手。
+//   master_backup  T:10      调教开场暂存的 MASTER（「避免角色错乱的暂存
+//       纪录」，ere/event/event-beforetrain.js）；EVENTEND 复位角色时读回
+//       （ere/event/event-end.js）。T 是单字母内置数组，这里只落调教
+//       路径用到的三个元素。
+//   target_backup  T:11      同上，暂存的 TARGET（复位时用）。
+//   assi_backup    T:12      同上，暂存的 ASSI（仅 ASSI 有效时才写）。
 //
-// 原作 FLAG:N 条目（0-9999）随各子系统票按原下标 1:1 增补进 yml/Flag.yml
-// 后重生成；底层直写未声明下标也能落（flag 是引擎内嵌表，app.asar 实证），
+// FLAG:N 条目（0-9999）随各子系统票按下标增补进 yml/Flag.yml 后重生成；
+// 底层直写未声明下标也能落（flag 是引擎内嵌表，app.asar 实证），
 // 但读侧必须走本包装层或有注释的直读（#13：未声明读值得 undefined）。
 
 module.exports = era_flag;

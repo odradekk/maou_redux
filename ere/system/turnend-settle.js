@@ -1,16 +1,16 @@
 /**
- * @file 回合结束事件 @EVENTTURNEND 的普通档定义（issue #114——回合结算本体）。
+ * @file 回合结束事件 EVENTTURNEND 的普通档定义（issue #114——回合结算本体）。
  *
  * 与 ere/event/event-turnend.js（#PRI 档）在同一条链上先后执行：#PRI 先跑
- * （时段/日期推进），本处理器随后（#6 语义：#PRI 尾部的 BEGIN SHOP（行 140）只暂存
- * 跳转，链继续），尾部 BEGIN SHOP（行 758）覆盖暂存值（同为 SHOP，无差异）。
+ * （时段/日期推进），本处理器随后（#6 语义：#PRI 尾部的 BEGIN SHOP 只暂存
+ * 跳转，链继续），尾部 BEGIN SHOP 覆盖暂存值（同为 SHOP，无差异）。
  * 第三处 #LATER 定义是空的（ere/event/event-turnend-later.js）。
  *
- * #508（自动调教链的调教域表生命周期）：本档的 :250-258 与 :740 之间是
- * 迷宮域自动调教三连（BEFORE_AUTOTRAIN → COM*_AUTO → SOURCE_CHECK_AUTO，
- * 十处调用点全在迷宮/ 下）+ 回合尾部的 AUTOTRAIN 结算，全程需要一个打开的
- * 调教窗口（`era.beginTrain` → `era.endTrain`）。理由见下方 :250-258 段的注释。
- *
+ * #508（自动调教链的调教域表生命周期）：本档从全角色格式化到回合尾部的
+ * AUTOTRAIN 结算之间是迷宮域自动调教三连（BEFORE_AUTOTRAIN → COM*_AUTO →
+ * SOURCE_CHECK_AUTO，十处调用点全在迷宮/ 下）+ 回合尾部的 AUTOTRAIN 结算，
+ * 全程需要一个打开的调教窗口（`era.beginTrain` → `era.endTrain`）。
+ * 理由见下方循环头的注释。
  * 移植说明：
  *   - 跨域写一律走门面（#71/#72：属主域门面 setter）：base 体力/气力、
  *     cflag 状态/新人/回城标志/休憩/已接任务/好感度/基础攻击/基础防御、
@@ -18,20 +18,19 @@
  *     文件属 system 域，flag:81/86/88/90（侵攻度）、cflag:570（从属怪物）、
  *     abl:10（顺从）是域内写，裸寻址即合法；juel 表无所有权产物（#70 未
  *     测量），读写均不判定。
- *   - 角色循环语义：原作以已加入序号迭代（FOR TARGET/A, 0, CHARANUM；结算
- *     主循环 A = 1 起跳过魔王），ere 侧按角色 ID 迭代（era.getAddedCharacters()
- *     逐一遍历，结算循环跳过 cid 0——魔王恒角色 ID 0，与原作跳过首位角色
- *     等价，CONTEXT.md「角色与指针」）。
- *   - EQUIP_CHECK/WEAPON_RESTORE 自 #174（H5）起为真身（ere/system/equip/）：
+ *   - 角色循环语义：按已加入序号迭代（era.getAddedCharacters() 逐一遍历），
+ *     结算主循环跳过 cid 0——魔王恒角色 ID 0，即跳过首位角色
+ *     （CONTEXT.md「角色与指针」）。
+ *   - equip_check/weapon_restore 自 #174（H5）起为真身（ere/system/equip/）：
  *     装备倍率按佩戴效果实际取值，戒指两事件（陷落/洗脑）随 RESULT > 0 可达。
- *     KYOTEN_EVENT（#119）自本票起接线：四个领域的衰减块在衰减完成后按
- *     领域号调用（ere/page/page-invasion.js 的 kyoten_event——system → page
+ *     kyoten_event 自这张工单起接入：四个领域的衰减块在衰减完成后按
+ *     领域号调用（ere/page/page-invasion.js——system → page
  *     的依赖方向与 juel-check → page-info-exp 同构，判断依据见 issue #119
- *     评论）。ARG:0 == 1 人间界臂是真身；2/3/4 三臂不可达（FLAG:86/88/90
- *     无写入路径恒 0，衰减分支不进），被调时空转。INVASION_CHECK（#118）
- *     不在存根之列：原作即是注释状态（行 621）、1:1 不调用。EVENT_NEWDAY
- *     自 #115 起为真身（ere/event/event-nextday.js，含每日一次的 @ENDCHECK
- *     调用点）。
+ *     评论）。ARG:0 == 1 人间界分支是真身；2/3/4 三分支不可达（FLAG:86/88/90
+ *     无写入路径恒 0，衰减分支不进），被调时空转。invasion_check（#118）
+ *     不在本档的调用之列——结局判定由侵略结算尾部触发（page-invasion.js）。
+ *     EVENT_NEWDAY 自 #115 起为真身（ere/event/event-nextday.js，含每日一次
+ *     的 run_endcheck 调用点）。
  */
 
 const era = require('#/era-electron');
@@ -40,7 +39,7 @@ const { begin, STATE } = require('#/system/flow/begin-signal');
 const { kyoten_event } = require('#/page/page-invasion');
 const { chara } = require('#/facade/chara');
 const era_flag = require('#/era-utils/era-flag');
-const { get_look_info } = require('#/chara/look-info'); // #565 起接线（式中函数，纯取值）
+const { get_look_info } = require('#/chara/look-info'); // #565 起接入（式中函数，纯取值）
 const { chara_callname } = require('#/utils/callname-utils');
 const { run_event_newday } = require('#/event/event-nextday');
 const { equip_check } = require('#/system/equip/equip-check');
@@ -60,24 +59,23 @@ const { run_benki } = require('#/system/train/benki');
 const { run_seedbed } = require('#/system/train/seedbed');
 const { auto_execution } = require('#/event/event-execution-batch');
 
-/** 原作 RAND:N（0..N-1）的等价物 */
+/** RAND:N（0..N-1）的等价物 */
 function rand(n) {
   return Math.floor(Math.random() * n);
 }
 
 on('EVENTTURNEND', async () => {
-  // 指针暂存与复位。ASSI_POOL 在原作赋值后无读者（行 755 的助手
-  // 还原读 FLAG:2），照搬注释、不落变量
+  // 指针暂存与复位（助手不暂存——还原时读 FLAG:2，见下方目标还原）
   const target_pool = era_flag.target;
   era_flag.player = 0;
   era_flag.assi = -1;
 
   // 全角色：自动调教格式化、新人/自动调教标志消去
   //
-  // #508：本档从 FORMAT_AUTOTRAIN（:250-258）到 AUTOTRAIN（:740）之间要开一个
-  // 调教窗口。原作的 SOURCE / UP / PALAM / TFLAG / LOSEBASE 是常驻角色
-  // 变量；ere 引擎把它们放进 beginTrain 建、endTrain 删的调教域表
-  // （app.asar 模块 183，test/helpers/era-fixture.js:1014-1054 逐字镜像）。
+  // #508：本档从全角色的 format_autotrain 到尾部的 autotrain 之间要开一个
+  // 调教窗口。SOURCE / UP / PALAM / TFLAG / LOSEBASE 在 ere 引擎里是
+  // beginTrain 建、endTrain 删的调教域表
+  // （app.asar 模块 183，test/helpers/era-fixture.js 逐字镜像）。
   // 迷宫域的自动调教三连跑在本处理器里：窗口不开时 COM*_AUTO 写的 SOURCE、
   // SOURCE_CHECK_AUTO 换算出的 UP（delta）/ PALAM 全部被引擎静默丢弃
   // （三段寻址在角色子表缺失时 `if(!this.data[a]||!this.data[a][c])return;`，
@@ -85,19 +83,19 @@ on('EVENTTURNEND', async () => {
   // 的整半空转——#500 接真身的四个 _AUTO 调用点，用例都得先手工
   // beginTrain(0, 1) 才看得见 SOURCE 落值（test/dungeon-trap.test.js）。
   //
-  // 窗口边界＝原作的两个端点：FORMAT_AUTOTRAIN（重置 PALAM / SOURCE /
-  // TFLAG / BASE 槽）开，AUTOTRAIN（PALAM → 珠/能力的结算）关。之后的
-  // PARTY_JOIN（:743）与 EVENT_NEWDAY（:749-751）留在窗口外，保持既有行为
-  // （event-nextday.js:442 的「PALAM 读回来恒空」判据依赖它）。
+  // 窗口边界＝format_autotrain（重置 PALAM / SOURCE / TFLAG / BASE 槽）开，
+  // autotrain（PALAM → 珠/能力的结算）关。之后的
+  // party_join 与 run_event_newday 留在窗口外，保持既有行为
+  // （event-nextday.js 的「PALAM 读回来恒空」判断条件依赖它）。
   era.beginTrain(...era.getAddedCharacters());
   for (const cid of era.getAddedCharacters()) {
-    // 原作 FOR TARGET 赋值即指好指针，format_autotrain 读的就是它
+    // 先把 target 指到当前角色——format_autotrain 读的就是它
     era_flag.target = cid;
     require('#/event/event-autotrain').format_autotrain(); // （#508 真身）
-    chara(cid).invasion.新人 = 0; // CFLAG:506 = 0（行 254）
-    chara(cid).train.自动调教 = 0; // CFLAG:666 = 0（行 256）
+    chara(cid).invasion.新人 = 0; // CFLAG:506 = 0
+    chara(cid).train.自动调教 = 0; // CFLAG:666 = 0
   }
-  // 循环末位不留在 TARGET 上（原作留在末位，本处理器按角色 ID 直迭、不读
+  // 循环末位不把 target 留在最后一名角色上（本处理器按角色 ID 直迭、不读
   // 该指针；后续模块按既有约定读 target_pool）
   era_flag.target = target_pool;
 
@@ -106,21 +104,21 @@ on('EVENTTURNEND', async () => {
 
   // 全角色：装备复原；战役中（CFLAG:1 == 12）的角色推进迷宫攻略
   for (const cid of era.getAddedCharacters()) {
-    weapon_restore(cid); // CALL WEAPON_RESTORE（行 267；#174 起真身）
+    weapon_restore(cid); // #174 起真身
     if (chara(cid).invasion.状态 === 12) {
-      // 阶段 3 的接入点之一（勇者战役）——#172 起真身。行 270-271
+      // 阶段 3 的接入点之一（勇者战役）——#172 起真身。
       await run_dungeon(cid);
     }
   }
 
-  // 起：结算主循环（原作 A = 1 起跳过魔王；LEADER/A 的往复在
-  // DUNGEON 存根下无角色增减，按角色 ID 直迭）
+  // 起：结算主循环（跳过魔王：cid 0 不结算；循环内无角色增减，
+  // 按角色 ID 直迭）
   for (const cid of era.getAddedCharacters()) {
     if (cid === 0) {
       continue;
     }
 
-    // 战役结束后的复位（行 280-284）
+    // 战役结束后的复位
     if ((era.get('flag:400') || 0) === 0 && chara(cid).invasion.状态 === 12) {
       chara(cid).invasion.状态 = 0;
       chara(cid).dungeon.已接任务 = 0;
@@ -128,7 +126,7 @@ on('EVENTTURNEND', async () => {
 
     // 迷宫攻略分档——阶段 3 的接入点之二：勇者探索中（2）或
     // 迎击中（3）且非 2D 模式（FLAG:502 == 0）走迷宫本体（#172 起真身，
-    // H1 的勇者生成让守卫第一次可达）；2D 模式走地图（#181 起真身，
+    // H1 的勇者生成让这个检查第一次可达）；2D 模式走地图（#181 起真身，
     // ere/dungeon/labo-dungeon-map.js，缺省随机源走 Math.random）。
     const place = chara(cid).invasion.状态;
     if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {
@@ -138,8 +136,8 @@ on('EVENTTURNEND', async () => {
     }
 
     // 升级结算（侵攻中的勇者除外）——#179 起真身
-    //（ere/dungeon/dungeon-lvup.js；守卫 SIF CFLAG:A:1 != 2 原样保留，
-    // 与 H2 写入的 CFLAG:1 = 2 直接耦合：侵攻中的勇者不升级）
+    //（ere/dungeon/dungeon-lvup.js；跳过检查 SIF CFLAG:A:1 != 2 与
+    // H2 写入的 CFLAG:1 = 2 直接耦合：侵攻中的勇者不升级）
     if (place !== 2) {
       lvup(cid);
     }
@@ -156,8 +154,8 @@ on('EVENTTURNEND', async () => {
     let heal =
       era_flag.time === 1 ? Math.floor(max_hp / 10) : Math.floor(max_hp / 2);
 
-    // 装备效果（W:8 = 4 HP回复加成乘、W:8 = 13 回复减衰除；行 318
-    // 与 324 的 RESULT += 1 已并入调用）
+    // 装备效果（W:8 = 4 HP回复加成乘、W:8 = 13 回复减衰除；两处
+    // RESULT += 1 已并入调用）
     heal *= equip_check(cid, 4) + 1;
     heal = Math.floor(heal / (equip_check(cid, 13) + 1));
 
@@ -217,7 +215,7 @@ on('EVENTTURNEND', async () => {
 
     // 容易陷落戒指（W:8 = 6）。RESULT 按佩戴效果取值（#174 起真身）
     const fall_ring = equip_check(cid, 6);
-    era.println(); // PRINTFORML（行 394）
+    era.println(); // PRINTFORML
     if (
       fall_ring > 0 &&
       !era.get(`talent:${cid}:69`) &&
@@ -228,9 +226,9 @@ on('EVENTTURNEND', async () => {
       era.print(`戒指的魔力永久地改变了${name}的身体和心灵`);
       era.print(`${name}身体变得敏感，心中充满了欲望。`);
       await era.waitAnyKey();
-      chara(cid).chara.容易陷落 = 1; // TALENT:A:73 = 1（行 399）
+      chara(cid).chara.容易陷落 = 1; // TALENT:A:73 = 1
       if ((era.get(`juel:${cid}:5`) || 0) < 10000) {
-        era.add(`juel:${cid}:5`, Math.floor(fall_ring / 2)); // 按等级欲情（行 401）
+        era.add(`juel:${cid}:5`, Math.floor(fall_ring / 2)); // 按等级欲情
       }
     } else if (
       fall_ring > 0 &&
@@ -256,7 +254,7 @@ on('EVENTTURNEND', async () => {
       await era.waitAnyKey();
     }
 
-    // 攻击/防御增加的装备效果已被原作移进 @WEAPON_RESTORE（注释段）
+    // 攻击/防御增加的装备效果（W:8 = 7/8）已并入 weapon_restore，本档不重复结算
     // 经验增加（W:8 = 10）
     {
       const exp_up = equip_check(cid, 10);
@@ -334,7 +332,7 @@ on('EVENTTURNEND', async () => {
     // 洗脑戒指（W:8 = 15）。RESULT 按佩戴效果取值（#174 起真身）
     {
       const brainwash = equip_check(cid, 15);
-      era.println(); // PRINTFORML（行 499）
+      era.println(); // PRINTFORML
       if (brainwash > 0 && era.get(`talent:${cid}:152`)) {
         const name = era.get(`callname:${cid}:-1`) ?? '';
         era.print(`${name}手上的灰色戒指发出奇异的魔法波动`);
@@ -358,10 +356,10 @@ on('EVENTTURNEND', async () => {
         );
         era.print(`${name}成了魔王的俘虏。`);
         await era.waitAnyKey();
-        chara(cid).invasion.新人 = 1; // CFLAG:506 = 1（行 511）
-        chara(cid).invasion.回城标志 = 0; // CFLAG:507 = 0（行 512）
-        party_del(cid); // 行 513 CALL PARTY_DEL（#172 起真身）
-        chara(cid).system.顺从 += 1; // ABL:A:10 += 1（行 514）
+        chara(cid).invasion.新人 = 1; // CFLAG:506 = 1
+        chara(cid).invasion.回城标志 = 0; // CFLAG:507 = 0
+        party_del(cid); // #172 起真身
+        chara(cid).system.顺从 += 1; // ABL:A:10 += 1
       } else if (
         brainwash > 0 &&
         chara(cid).system.顺从 < brainwash &&
@@ -372,7 +370,7 @@ on('EVENTTURNEND', async () => {
         era.print(`一个声音在${name}的脑内不断重复，服从……服从……服从……`);
         era.print(`${name}对魔王的顺从程度增加了`);
         await era.waitAnyKey();
-        chara(cid).system.顺从 += 1; // 行 519
+        chara(cid).system.顺从 += 1; // ABL:A:10 += 1
       } else if (
         brainwash > 0 &&
         chara(cid).system.顺从 >= brainwash &&
@@ -390,10 +388,9 @@ on('EVENTTURNEND', async () => {
       chara(cid).chara.好感度 -= rand(100);
     }
 
-    // 头发生长（eraWIZ 流用改変）：长到 51/201 时播报。发色一段的
-    // %GET_LOOK_INFO(A,"发色(颜色)")% 自 #565 起接真身（LOOK.ERB:2894-2921
-    // 的形容词表，「红色」形），「的」随之按原作补回——PRINTFORM + SIF +
-    // PRINTFORM + PRINTL 拼成一行
+    // 头发生长（eraWIZ 流用改変）：长到 51/201 时播报。发色一段调
+    // get_look_info(cid, '发色(颜色)')（#565 起真身，形容词表的「红色」形），
+    // 「的」随之补回——整句拼成一行输出
     if ((era.get(`talent:${cid}:302`) || 0) <= 201) {
       chara(cid).chara.头发长度 += 1;
       const hair = chara(cid).chara.头发长度;
@@ -434,13 +431,12 @@ on('EVENTTURNEND', async () => {
           151: '刚毛长出来了。',
           201: '森林复苏了。',
         }[growth];
-        // 的 %GET_LOOK_INFO(A,"发色(颜色)")%的（毛色按发色判定，同上）；
-        // 原作 PRINT/PRINTFORM 到 PRINTL 才换行，整句拼成一行
+        // 毛色按发色判定（同上 get_look_info）；整句拼成一行输出
         era.print(
           `${name}${charm ?? ''}的阴阜上，${get_look_info(cid, '发色(颜色)')}的${state_word}`,
         );
         if (chara(cid).chara.阴毛状态 >= (era.get(`talent:${cid}:311`) || 0)) {
-          // 长满即钳到目标值（行 578-580）
+          // 长满即钳到目标值
           chara(cid).chara.阴毛状态 = era.get(`talent:${cid}:311`) || 0;
         }
       }
@@ -449,9 +445,9 @@ on('EVENTTURNEND', async () => {
 
   // 自动处刑（FLAG:5 & 8 的开关位，设置页 [3]）——#543 起真身
   //（ere/event/event-execution-batch.js 的 auto_execution；本段跑在
-  // 的调教窗口内，口上/装备通道的调教域表都在）。原作注释段里的
-  // EXECUTION_MINI 不登清单（注释不是调用点）。FLAG:5 的位 3 开局为 0
-  //（@EVENTFIRST 置 17179934119）
+  // 的调教窗口内，口上/装备通道的调教域表都在）。EXECUTION_MINI 只出现在
+  // 注释里、不是调用点，不进批处理清单。FLAG:5 的位 3 开局为 0
+  //（EVENTFIRST 开局置 17179934119）
   if ((era.get('flag:5') || 0) & 8) {
     await auto_execution();
   }
@@ -463,15 +459,15 @@ on('EVENTTURNEND', async () => {
     await era.waitAnyKey(); // WAIT
   }
 
-  // 魔王的升级结算——#179 起真身（CALL LVUP, 0）
+  // 魔王的升级结算——#179 起真身（lvup(0)）
   lvup(0);
 
-  // 原作此处即注释状态（;CALL INVASION_CHECK，行 621）；#118 落地时按其结论处置
+  // 此处不调用 invasion_check（#118 的结局判定在侵略结算尾部触发，本档保持不调用）
 
   era.println(); // PRINTL
   // 侵攻度自然衰减：未征服（FLAG:82/87/89/91 == 0）且有余量时每日 RAND:100；
   // 已征服低概率反抗、保底 100。直接决定通关天数（#112 验收的天数估算依据），
-  // 衰减后各领域按领域号 CALL KYOTEN_EVENT, <1-4>（#119 接线，
+  // 衰减后各领域按领域号调 kyoten_event（#119 接入，
   // 本体在 ere/page/page-invasion.js）
   await decay_invasion_degree(1, {
     conquered: era.get('flag:82') || 0, // 人间界征服完了
@@ -482,7 +478,7 @@ on('EVENTTURNEND', async () => {
     reconquer_resist_text: '人间界的军队为了夺回领地、反抗着魔王军………',
     reconquer_lost_text: '*地上的魔界领土的侵略度减少了*',
     reconquer_rand: 6,
-  }); // 行 624-642（KYOTEN_EVENT,1 的调用点在行 631/640）
+  });
   await decay_invasion_degree(2, {
     conquered: era.get('flag:87') || 0, // 精灵领域征服完了
     degree: () => era.get('flag:86') || 0, // 精灵领域侵攻度
@@ -492,7 +488,7 @@ on('EVENTTURNEND', async () => {
     reconquer_resist_text: '精灵族的抵抗组织为了夺回领地、反抗着魔王军………',
     reconquer_lost_text: '*黑暗精灵的领土的侵略度减少了*',
     reconquer_rand: 5,
-  }); // 行 643-661（KYOTEN_EVENT,2 的调用点在行 650/659）
+  });
   await decay_invasion_degree(3, {
     conquered: era.get('flag:89') || 0, // 龙山征服完了
     degree: () => era.get('flag:88') || 0, // 龙山侵攻度
@@ -502,7 +498,7 @@ on('EVENTTURNEND', async () => {
     reconquer_resist_text: '成群的龙为了夺回领地、反抗着魔王军………',
     reconquer_lost_text: '*混沌龙之山的侵略度减少了*',
     reconquer_rand: 4,
-  }); // 行 662-680（KYOTEN_EVENT,3 的调用点在行 669/678）
+  });
   await decay_invasion_degree(4, {
     conquered: era.get('flag:91') || 0, // 天界征服完了
     degree: () => era.get('flag:90') || 0, // 天界侵攻度
@@ -512,7 +508,7 @@ on('EVENTTURNEND', async () => {
     reconquer_resist_text: '天界的军队为了夺回领地、反抗着魔王军………',
     reconquer_lost_text: '*堕天使的淫界的侵略度减少了*',
     reconquer_rand: 3,
-  }); // 行 681-699（KYOTEN_EVENT,4 的调用点在行 688/697）
+  });
 
   // 魔王的回复：午前结算（TIME==0，日推进的回合）+1400，午后结算
   // +1000；战役中（FLAG:400 > 0）气力改为 -10。TIME 已被 #PRI 翻转
@@ -548,16 +544,16 @@ on('EVENTTURNEND', async () => {
     }
   }
 
-  // 目标还原（暂存值；助手不还原——行 755 读 FLAG:2）
+  // 目标还原（暂存值；助手稍后由 FLAG:2 还原）
   era_flag.target = target_pool;
 
   // 全角色：肉便器/苗床业务与结婚日、事件后的场所/任务复位
   for (const cid of era.getAddedCharacters()) {
-    // CALL BENKI（#217 真身：肉便器业务——门槛不中静默返回，演出段
+    // run_benki（#217 真身：肉便器业务——门槛不中静默返回，演出段
     // 输出 + BENKI_KOUJO 口上存根，见 ere/system/train/benki.js）
     await run_benki(cid);
     await run_seedbed(cid);
-    // 已处于 TURNEND：原作子程序里的同状态 BEGIN 在这里等价为顺接后文；
+    // 已处于 TURNEND：同状态 BEGIN 在这里等价为顺接后文；
     // 若让 BeginSignal 穿出，会中断本处理器并让主循环无限重进 TURNEND。
     await marriage_day(cid, undefined, false);
     if ((era.get('flag:400') || 0) === 0 && chara(cid).invasion.状态 === 12) {
@@ -584,28 +580,28 @@ on('EVENTTURNEND', async () => {
   }
 
   // 翌朝的事件（日推进回合 TIME==0 时；#115 真身——影寿命段 +
-  // 晨间三事件存根 + 每日一次的 @ENDCHECK 调用点）
+  // 晨间三事件存根 + 每日一次的 run_endcheck 调用点）
   if (era_flag.time === 0) {
     await run_event_newday();
   }
 
-  // 还原前次的调教对象与助手（FLAG:1/FLAG:2，@EVENTEND 记录）
+  // 还原前次的调教对象与助手（FLAG:1/FLAG:2，EVENTEND 链记录）
   era_flag.target = era.get('flag:1') || 0;
   era_flag.assi = era.get('flag:2') || 0;
 
-  // BEGIN SHOP（行 758）—— 覆盖 #PRI 档的暂存值（后写胜出，#6 语义）
+  // BEGIN SHOP——覆盖 #PRI 档的暂存值（后写胜出，#6 语义）
   begin(STATE.SHOP);
 });
 
 /**
- * 侵攻度自然衰减（行 624-699 四个领域的同构块）。
+ * 侵攻度自然衰减（四个领域的同构块）。
  *
  * 未征服（conquered == 0）：余量 > 0 时每日衰减 RAND:100、下限 0；
  * 已征服（conquered == 1）：每 reconquer_rand 日一遇的反抗，余量 > 100 时
- * 衰减 RAND:100、下限 100。衰减完成后 CALL KYOTEN_EVENT, region（#119 接线，
- * 调用点行号见各调用处注释）。
+ * 衰减 RAND:100、下限 100。衰减完成后调 kyoten_event(region)（#119 接入）。
  *
- * @param {number} region 领域号（KYOTEN_EVENT 的原作实参 1-4）
+ * @param {number} region 领域号（kyoten_event 的实参 1-4）
+ *
  * @param {object} spec 一个领域的衰减参数
  * @param {number} spec.conquered 征服完了旗标（FLAG:82/87/89/91）
  * @param {Function} spec.degree 侵攻度读子（FLAG:81/86/88/90）
@@ -626,7 +622,7 @@ async function decay_invasion_degree(region, spec) {
       if (spec.degree() < 0) {
         spec.write(0);
       }
-      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+      // kyoten_event(region)（未征服分支）
       await kyoten_event(region);
     }
   } else if (spec.conquered === 1 && rand(spec.reconquer_rand) === 0) {
@@ -638,7 +634,7 @@ async function decay_invasion_degree(region, spec) {
       if (spec.degree() < 100) {
         spec.write(100);
       }
-      // CALL KYOTEN_EVENT, region（征服后反抗臂，原作 :640/:659/:678/:697）
+      // kyoten_event(region)（征服后反抗分支）
       await kyoten_event(region);
     }
   }

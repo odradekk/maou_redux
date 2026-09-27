@@ -38,7 +38,7 @@ export default [
     must_mention: '随机奴隶经 @RAND_CHARA_MAKE 真身生成',
   },
   {
-    desc: 'M11612 头发生长播报缺发色段（GET_LOOK_INFO 接线旁路）',
+    desc: 'M11612 头发生长播报缺发色段（get_look_info 接入旁路）',
     file: 'ere/system/turnend-settle.js',
     find: `          \`\${name}\${beauty}\${get_look_info(cid, '发色(颜色)')}的\${\n            hair === 51 ? '头发半长，到肩膀了。' : '头发很长，长发及腰。'\n          }\`,`,
     replace: `          \`\${name}\${beauty}\${\n            hair === 51 ? '头发半长，到肩膀了。' : '头发很长，长发及腰。'\n          }\`,`,
@@ -46,7 +46,7 @@ export default [
     must_mention: '头发半长播报必须含',
   },
   {
-    desc: 'M11613 阴毛播报缺发色段（GET_LOOK_INFO 接线旁路）',
+    desc: 'M11613 阴毛播报缺发色段（get_look_info 接入旁路）',
     file: 'ere/system/turnend-settle.js',
     find: `          \`\${name}\${charm ?? ''}的阴阜上，\${get_look_info(cid, '发色(颜色)')}的\${state_word}\`,`,
     replace: `          \`\${name}\${charm ?? ''}的阴阜上，\${state_word}\`,`,
@@ -263,7 +263,7 @@ export default [
     must_mention: 'DAY:0 += 1',
   },
   {
-    desc: 'M187 迷宫守卫恒放行（CFLAG:1 判据删掉——阶段 3 接入点失守）',
+    desc: 'M187 迷宫检查恒放行（CFLAG:1 判断条件删掉——阶段 3 接入点失守）',
     file: 'ere/system/turnend-settle.js',
     find: "    if ((place === 2 || place === 3) && (era.get('flag:502') || 0) === 0) {",
     replace: '    if (true) {',
@@ -331,7 +331,7 @@ export default [
     must_mention: 'ENDCHECK 必须恰好被调用一次',
   },
   {
-    desc: 'M194 普通档的 TIME==0 守卫删掉（午后回合也跑翌朝事件，每日翻倍）',
+    desc: 'M194 普通档的 TIME==0 检查删掉（午后回合也跑翌朝事件，每日翻倍）',
     file: 'ere/system/turnend-settle.js',
     find: `  if (era_flag.time === 0) {
     await run_event_newday();
@@ -350,20 +350,20 @@ export default [
   },
   // —— #119 KYOTEN_EVENT 接线（普通档衰减块内两处调用，条目收本切片）——
   {
-    desc: 'M197 KYOTEN_EVENT 未征服臂调用删除（衰减后据点事件不触发）',
+    desc: 'M197 kyoten_event 未征服分支调用删除（衰减后据点事件不触发）',
     file: 'ere/system/turnend-settle.js',
-    find: `      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+    find: `      // kyoten_event(region)（未征服分支）
       await kyoten_event(region);`,
-    replace: '      // 变异：未征服臂不调 KYOTEN_EVENT',
+    replace: '      // 变异：未征服分支不调 kyoten_event',
     tests: ['event-turnend'],
     must_mention: '推进 FLAG:93 0→1',
   },
   {
-    desc: 'M198 KYOTEN_EVENT 征服后反抗臂调用删除（反抗衰减后据点事件不触发）',
+    desc: 'M198 kyoten_event 征服后反抗分支调用删除（反抗衰减后据点事件不触发）',
     file: 'ere/system/turnend-settle.js',
-    find: `      // CALL KYOTEN_EVENT, region（征服后反抗臂，原作 :640/:659/:678/:697）
+    find: `      // kyoten_event(region)（征服后反抗分支）
       await kyoten_event(region);`,
-    replace: '      // 变异：征服后反抗臂不调 KYOTEN_EVENT',
+    replace: '      // 变异：征服后反抗分支不调 kyoten_event',
     tests: ['event-turnend'],
     // #120 起该用例改确定构造（随机源注入），断言消息随之更换（flag:93
     // 的断言先于横幅断言红）
@@ -372,9 +372,9 @@ export default [
   {
     desc: 'M199 KYOTEN_EVENT 领域号写死 1（精灵衰减误读人间界状态再退一档）',
     file: 'ere/system/turnend-settle.js',
-    find: `      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+    find: `      // kyoten_event(region)（未征服分支）
       await kyoten_event(region);`,
-    replace: `      // CALL KYOTEN_EVENT, region（未征服臂，原作 :631/:650/:669/:688）
+    replace: `      // kyoten_event(region)（未征服分支）
       await kyoten_event(1); // 变异：领域号写死`,
     tests: ['event-turnend'],
     must_mention: 'ARG 2 臂不得误读人间界状态再退一档',

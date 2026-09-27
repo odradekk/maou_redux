@@ -58,8 +58,8 @@ export default [
   make(
     7106,
     'K1 不把结局交给录像书架',
-    "  await era.print('');\n  video_maturo(cid);\n  return 0;\n}\n\n// @SELL_MATURO_K2_",
-    "  await era.print('');\n  void cid;\n  return 0;\n}\n\n// @SELL_MATURO_K2_",
+    "  await era.print('');\n  video_maturo(cid);\n  return 0;\n}\n\n// 15 个末路文案合为一张表，按末路编号交给 sell_maturo_k2_branch 分发。",
+    "  await era.print('');\n  void cid;\n  return 0;\n}\n\n// 15 个末路文案合为一张表，按末路编号交给 sell_maturo_k2_branch 分发。",
     '生成结局并交给录像书架',
   ),
   make(

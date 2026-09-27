@@ -1,9 +1,9 @@
 /**
  * @file 跨存档勇者通信。
  *
- * 原作 GLOBALS:0..99 在 EraElectron 4.8.0 已是废弃表名。这里把同样的
- * 100 条记录以 JSON 数组存入 global:100；数组元素仍保持原作下划线与
- * 斜线分隔格式，后续 CHARA_MAKE_INPORT 可以逐字段消费。
+ * 通信勇者记录在引擎里没有逐条的表可用（GLOBALS 表名在 EraElectron 4.8.0
+ * 已废弃），故把 100 条记录以 JSON 数组存入 global:100；数组元素是下划线与
+ * 斜线分隔的串，后续 CHARA_MAKE_INPORT 可以逐字段消费。
  */
 
 'use strict';
@@ -22,21 +22,21 @@ const SHARE_SLOT_FIRST = 1000;
 const SHARE_SLOT_LAST = 1019;
 
 /**
- * 导出菜单的两个固定编号（原作 MAOUNET.ERB:95-97 的 `[ 99] 决定` / `[100] 取消`）。
- * **#593 起偏离原作**，选点 998/999：
+ * 导出菜单的两个固定编号（「决定 / 取消」两项）。
+ * **#593 起不沿用 [99]/[100] 的选点**，改选 998/999：
  *   - 候选行以**角色 ID** 作快捷键（export_menu 的 printButton），而预设 100
- *     「怪物的女儿」能以 ID 100 加入（加入路径见 #586 的完成评论），原作的
+ *     「怪物的女儿」能以 ID 100 加入（加入路径见 #586 的完成评论），
  *     `[100] 取消` 与 `if (result === 100) return 0` 会把这个角色吃掉；
  *   - 两个数都大于预设 ID 上界（当前 777，见 yml/Chara777.yml）、小于后代 ID
- *     段的起点 FIRST_CHILD_ID = 100000（chara-pregnancy.js；#560 的裁定），
+ *     段的起点 FIRST_CHILD_ID = 100000（chara-pregnancy.js；#560 的决定），
  *     与两类角色 ID 都不同段；
- *   - 999 同时是全库「返回/退出」类键的通行编号（page-chara-info.js:626、
- *     sale.js:605、chara-marriage.js:815 与 842、page-ability-up.js:184、
+ *   - 999 同时是全库「返回/退出」类键的通行编号（page-chara-info.js、
+ *     sale.js、chara-marriage.js、page-ability-up.js、
  *     page-chara-info-show.js 的 LIST_RETURN），998 与它相邻、同属列表页
- *     997-999 的固定编号带（page-chara-info.js:625-627）。
- * 原作的 [99] 今天虽未与预设撞号，也一并移出预设区间——预设编号历来零散
+ *     997-999 的固定编号带（page-chara-info.js）。
+ * [99] 今天虽未与预设撞号，也一并移出预设区间——预设编号历来零散
  * 新增（150、201-211、223、777 都是后加的），留在区间内等于把它交给下一位
- * 加表的人。静态守卫见 test/child-id-collision.test.js 的「登记屏幕的同屏
+ * 加表的人。静态检查见 test/child-id-collision.test.js 的「登记屏幕的同屏
  * 固定编号不与预设 ID 撞号」。
  */
 const EXPORT_DECIDE = 998;
@@ -65,8 +65,9 @@ function set_roster(records) {
 }
 
 /**
- * LOADDATA 的转场等价物：更新 LASTLOAD_NO，重放 @EVENTLOAD，并把其中的
- * BEGIN 继续抛给外层状态机。特殊档不经过 page-save-load，必须在这里补齐。
+ * 读档（loadData）后的转场补齐：更新 LASTLOAD_NO，重放 EVENTLOAD 事件链，
+ * 并把其中的 BEGIN 继续抛给外层状态机。特殊档不经过 page-save-load，
+ * 必须在这里补齐。
  */
 async function load_special_save(slot) {
   if (!(await era.loadData(slot))) return false;
@@ -77,7 +78,7 @@ async function load_special_save(slot) {
 }
 
 function sparse_values(cid, table, size) {
-  // @INPORT_B 按表名与动态下标扫描全部序列化面，无法换成
+  // inport_b 按表名与动态下标扫描全部序列化面，无法换成
   // 单个具名字段；表名与上界由 TABLE_SIZES 集中限定。
   let result = '';
   for (let index = 0; index < size; index += 1) {
@@ -101,7 +102,7 @@ function serialize_character(cid) {
   return fields.join('_');
 }
 
-/** @INPORT_B：把特殊档中的角色写入公共通信记录，再恢复 999 号操作档。 */
+/** inport_b：把特殊档中的角色写入公共通信记录，再恢复 999 号操作档。 */
 async function inport_b() {
   const records = get_roster();
   const known = new Set(
@@ -188,9 +189,9 @@ async function export_menu() {
       era.printButton('不要', 1);
       if ((await era.input()) === 0) {
         era.print('请输入队伍名');
-        // 原作 MAOUNET.ERB 的队伍名 INPUTS 没有空输入分支（直接落地），
+        // 队伍名输入没有空输入分支（输入值直接当作文本使用），
         // 按 #567「没有空输入分支的地方不动」保持原样：0 在这里仍是字面量
-        // 文本，不接共享判据——例外理由见 ere/utils/input-text.js 文件头。
+        // 文本，不走共享的空输入判断——例外理由见 ere/utils/input-text.js 文件头。
         const team_name = String(await era.input({ useRule: false }));
         era.print(`「${team_name}」这个队伍名可以吗？`);
         era.printButton('好的', 0);
@@ -213,7 +214,7 @@ async function export_menu() {
   }
 }
 
-/** @INPORT_A：选择 1000..1019 号共享档并交给 INPORT_B 登记。 */
+/** inport_a：选择 1000..1019 号共享档并交给 inport_b 登记。 */
 async function inport_a() {
   for (;;) {
     era.drawLine();
@@ -237,7 +238,7 @@ async function inport_a() {
   }
 }
 
-/** @MAOUNET：通信菜单。 */
+/** maounet：通信菜单。 */
 async function maounet() {
   const anchor = era.getLineCount();
   for (;;) {
@@ -252,10 +253,9 @@ async function maounet() {
       `通信勇者登场时为等级1(现在:${era_flag.communication_hero_level_one & 1 ? 'ON' : 'OFF'})`,
       4,
     );
-    // MAOUNET_MODPRINT 的魔界银行（MOD_SWITCH ver1.0.11.ERB:181-186，守卫
-    // GETBIT(EX_FLAG:9000,0)）随 MOD/ 整目录判不移植（#542，#540 范围
-    // 决定 2）：开关默认关、原作默认态不打印该行，本函数也就不注册 [5]——
-    // 输入层不会把 5 送进本函数。
+    // 魔界银行的显示行属于 MOD/ 系列，整目录不移植（#542，#540 范围
+    // 决定 2）：其显示开关（EX_FLAG:9000 的位 0）默认关、默认态不打印该行，
+    // 本函数也就不注册 [5]——输入层不会把 5 送进本函数。
     era.printButton('返回', 9);
     const result = await era.input();
     if (result === 9) return 0;

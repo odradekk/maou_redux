@@ -1,5 +1,5 @@
 /**
- * @file 装备佩戴检查与角色强化：@EQUIP_CHECK、@EQUIP_POWERUP。
+ * @file 装备佩戴检查与角色强化：equip_check、equip_powerup。
  *
  */
 
@@ -9,16 +9,16 @@ const era = require('#/era-electron');
 const { equip_database } = require('#/system/equip/equip-lookup');
 
 /**
- * @EQUIP_CHECK（:65-86）：算出角色两枚装饰（CFLAG:551/552）里、效果列等于
- * 效果号 的装备强度合计。原作以全局 W:8 传效果号、W:3 比对、W:2 累计，
- * 此处改为显式参数（调用点的效果号见各处注释：回合结算 4/13/5/13/6/10/14/
- * 9/15，@WEAPON_RESTORE 2/11/7/8）。
+ * equip_check：算出角色两枚装饰（CFLAG:551/552）里、效果列等于
+ * 效果号 的装备强度合计。效果号走显式参数（W:8 = 效果号、W:3 = 比对列、
+ * W:2 = 累计列）；调用点的效果号见各处注释：回合结算 4/13/5/13/6/10/14/
+ * 9/15，weapon_restore 2/11/7/8。
  *
  * 空槽 -1 与未装备（引擎缺省 0 = 装饰戒指、效果 0）都不贡献强度；武装
- * （CFLAG:550）不参与——原作只查两枚装饰。
+ * （CFLAG:550）不参与——只查两枚装饰。
  *
- * @param {number} cid 角色（原作 A；< 0 时恒 0，:69-70）
- * @param {number} effect_no 效果号（原作 W:8）
+ * @param {number} cid 角色（< 0 时恒 0）
+ * @param {number} effect_no 效果号（W:8）
  * @returns {number} RESULT：强度合计（无匹配为 0）
  */
 function equip_check(cid, effect_no) {
@@ -40,12 +40,12 @@ function equip_check(cid, effect_no) {
 }
 
 /**
- * @EQUIP_POWERUP（:904-1027）：用角色素质强化 w 里的装备能力。
- * **必须在 equip_database 之后调用**（原作文件头说明 :907）；只改 w，不写
+ * equip_powerup：用角色素质强化 w 里的装备能力。
+ * **必须在 equip_database 之后调用**（读的是查表列）；只改 w，不写
  * 任何引擎变量。素质号 → 名称见 yml/Talent.yml。
  *
  * @param {object} w 装备记录（equip_database 已填充）
- * @param {number} cid 角色（原作 ARG:0）
+ * @param {number} cid 角色
  */
 function equip_powerup(w, cid) {
   // 初心者（TALENT:291）：伤害减少·失手增加
