@@ -1,31 +1,31 @@
 /**
- * @file 调教指令 50–59「特殊」族：@COM50-59 真身 + @COM_ABLE50-59 可执行性
- * 判定 + @EQUIP_COM53/54/57/58/59 持续效果 + TRAIN_MESSAGE_A/B 分支（issue
- * #224，阶段 4 轴 A J14）。
+ * @file 调教指令 50–59「特殊」族：com50-59 真身 + com_able_family 的 50-59 号
+ * 可执行性判定 + equip_com53/54/57/58/59 持续效果 + TRAIN_MESSAGE_A/B 分支
+ * （issue #224，阶段 4 轴 A J14）。
  *
  * == 本族边界 ==
  *
- * - COM50_AUTO（COMF50:30-46）属于自动调教票 #218，本模块不重复实现。
- * - 原作 @GET_ADV_COM 没有 CASE 50-59，故不注册升格规则。
- * - COM55 只调用自身 PRINTL，**不** CALL TRAIN_MESSAGE_B；它的反应是
- *   SOURCE_CHECK 末尾的 TRAIN_MESSAGE_A 分支。其余 A 分支在原作不存在，
+ * - COM50 的自动调教段属于工单 #218，本模块不重复实现。
+ * - get_adv_com 没有 50-59 的升格规则，故不注册。
+ * - COM55 只调用自身 PRINTL，**不**调用 train_message_b；它的反应是
+ *   source-check 结算末尾的 TRAIN_MESSAGE_A 分支。其余 A 分支不存在，
  *   显式注册 no-op，不能误落公共分发器的占位输出。
- * - EQUIP 链由 com-family.js 的原作顺序消费，本模块只注册 53/54/57/58/59；
- *   55/56 原作无持续函数。
+ * - EQUIP 链由 com-family.js 按链序消费，本模块只注册 53/54/57/58/59；
+ *   55/56 无持续函数。
  *
  * == 变量承载 ==
  *
  * SOURCE / LOSEBASE 对应 source / deltabase（后者存负值）；TEQUIP 属 train。
  * CFLAG:31 属 event，经 chara(cid).event.媚药残留度 跨域写；CFLAG:5/32/491/
- * 499 属 train，经本域门面。CFLAG:480-489 是录像槽的动态有限区间，原作按
+ * 499 属 train，经本域门面。CFLAG:480-489 是录像槽的动态有限区间，按
  * SAVE_ID 间接寻址，保留为本模块受限 helper，不能泛化成裸动态寻址惯例。
  * EXP:50/57/73 属 dungeon，跨域写经门面；其余经验属 train。录像内容
  * TFLAG:32 属 kojo，经 game.kojo；录像开始状况 FLAG:22、TFLAG:30/200 和
  * 物品都已有 train 门面。EX_FLAG:4444 与 MONEY 的同步记账复用 era_exflag /
  * era_flag 的既有具名包装层。
  *
- * SUISEI_STR 只在 EXCOM.ERH 声明、出售/展示侧消费，COM53 原作本体没有读写。
- * 本票不预填或操作 yml/TStr.yml；录像内容文本建模留给 #5 的遗留项。
+ * SUISEI_STR 由出售/展示侧消费，COM53 本体没有读写。
+ * 本工单不预填或操作 yml/TStr.yml；录像内容文本建模留给 #5 的遗留项。
  */
 
 'use strict';
@@ -50,17 +50,17 @@ const {
 const { clothtype_text } = require('#/page/page-clothtype');
 const { chara_callname, chara_nickname } = require('#/utils/callname-utils');
 
-/** 本文件没有未实现原作调用；口上台词分发随轴 B 落地。 */
+/** 本文件没有未移植的调用；口上台词分发随轴 B 实现。 */
 
 /**
- * Emuera TIMES：每一步乘法立即向下截断，禁止合并系数。
+ * TIMES 语义：每一步乘法立即向下截断，禁止合并系数。
  *
- * target/emuera.config 的「TIMESの計算をERAMAKERにあわせる:NO」令小数
- * 运算不走 JS 二进制浮点。倍率以百分比整数承载，保证 90 × 140 / 100 的
- * 精确结果仍是 126，而非 Math.floor(90 * 1.4) 的 125。
+ * 小数运算不走 JS 二进制浮点。
+ * 倍率以百分比整数承载，保证 90 × 140 / 100 的精确结果
+ * 仍是 126，而非 Math.floor(90 * 1.4) 的 125。
  */
 const times = (value, percent) => Math.floor((value * percent) / 100);
-/** Emuera 正数整数除法（A / 2）。 */
+/** 正数整数除法（A / 2）。 */
 const idiv = (left, right) => Math.floor(left / right);
 
 const MASTER = 0;
@@ -80,7 +80,7 @@ const has_item = (index) =>
   (era.get(`item:${index}`) || 0) > 0 || noitem() !== 0;
 const target_name = () => chara_callname(target_id());
 
-/** 两个角色同为非男人 / 同为男人时的同性经验原文共通段。 */
+/** 两个角色同为非男人 / 同为男人时的同性经验共通段。 */
 function same_sex_exp(cid, player, gain) {
   if (!tal(cid, 122) && !tal(player, 122)) {
     era.print(`百合经验+${gain}`);
@@ -100,11 +100,11 @@ function lust_factor(cid) {
   return 120;
 }
 
-/** 六档数组按 ABL 等级取值；5 以上落原作 ELSE 档。 */
+/** 六档数组按 ABL 等级取值；5 以上落 ELSE 档。 */
 const tier = (values, level) => values[Math.min(level, values.length - 1)];
 
 /**
- * COM54 的开启 / 持续公共数值段（COMF54:20-98 / :119-196）。
+ * COM54 的开启 / 持续公共数值段。
  * @param {number} cid 目标
  * @returns {{a: number, b: number}}
  */
@@ -287,7 +287,7 @@ function newlywed_master_exp(cid) {
 /**
  * COM53 启动时清理的录像帧区：480..489。
  *
- * 原作启动循环就是这十格；实际记录槽另由 set_video_record 守 460..489。
+ * 启动循环就是这十格；实际记录槽另由 set_video_record 限制在 460..489。
  */
 function clear_video_records(cid) {
   for (let index = 480; index <= 489; index += 1) {
@@ -295,7 +295,7 @@ function clear_video_records(cid) {
   }
 }
 
-/** COM53 的动态录像帧槽：原作 SAVE_ID = CFLAG:491 + 459（460..489）。 */
+/** COM53 的动态录像帧槽：SAVE_ID = CFLAG:491 + 459（460..489）。 */
 function set_video_record(cid, frame, value) {
   const index = frame + 459;
   if (index < 460 || index > 489) {
@@ -304,7 +304,7 @@ function set_video_record(cid, frame, value) {
   era.set(`cflag:${cid}:${index}`, value);
 }
 
-/** @COM50 润滑液（COMF50:3-28）。 */
+/** com50：润滑液。 */
 async function com50() {
   const cid = target_id();
   era.print('润滑液');
@@ -316,7 +316,7 @@ async function com50() {
   return 1;
 }
 
-/** @COM51 媚药（COMF51:10-97）。 */
+/** com51：媚药。 */
 async function com51() {
   const cid = target_id();
   era.print('媚药');
@@ -356,7 +356,7 @@ async function com51() {
   return 1;
 }
 
-/** @COM52 利尿剂（COMF52:6-71）。 */
+/** com52：利尿剂。 */
 async function com52() {
   const cid = target_id();
   era.print('利尿剂');
@@ -397,7 +397,7 @@ function drug_exp_level(value) {
   return 4;
 }
 
-/** @COM53 水晶球录像开关（COMF53:3-49）。 */
+/** com53：水晶球录像开关。 */
 async function com53() {
   const cid = target_id();
   await train_message_b(); // ：切换前消息看旧 TEQUIP
@@ -429,7 +429,7 @@ async function com53() {
   return 1;
 }
 
-/** @EQUIP_COM53（COMF53:52-204）。 */
+/** equip_com53。 */
 async function equip_com53() {
   const cid = target_id();
   let video_max = 10 + 4 * chara(cid).train.水晶球充能次数;
@@ -475,11 +475,11 @@ async function equip_com53() {
   if (chara(cid).train.录像时间 > video_max) {
     era.print('＜魔力耗尽了，录像拍摄将要结束＞');
     era.print('要给水晶球充能吗？');
-    // 原作 COMF53:172-173 的 PRINTFORM + PRINTL 合成同一行；按钮化是为了与
+    // PRINTFORM + PRINTL 合成同一行；按钮化是为了与
     // era.input() 的本轮快捷键白名单对接。
     era.print(`已充能${chara(cid).train.水晶球充能次数}次。充能费用为500G。`);
     era.printButton('充能', 1);
-    // COMF53:175 的裸 PRINTL 落在 COMF53:174 的 [1] 行之后 → 真空行（#595）
+    // 裸 PRINTL 落在 [1] 行之后 → 真空行（#595）
     era.println();
     era.printButton('不了', 2);
     const result = await era.input();
@@ -511,7 +511,7 @@ async function equip_com53() {
   return 1;
 }
 
-/** @COM54 野外PLAY（COMF54:3-109）。 */
+/** com54：野外PLAY。 */
 async function com54() {
   const cid = target_id();
   era.print('野外PLAY');
@@ -531,7 +531,7 @@ async function com54() {
   return 1;
 }
 
-/** @EQUIP_COM54（COMF54:111-211）。 */
+/** equip_com54。 */
 async function equip_com54() {
   const cid = target_id();
   era.print('＜野外PLAY中＞');
@@ -545,7 +545,7 @@ async function equip_com54() {
   return 1;
 }
 
-/** @COM55 放置PLAY（COMF55:7-84）。消息在 A 阶段，见 register。 */
+/** com55：放置PLAY。消息在 A 阶段，见 register。 */
 async function com55() {
   const cid = target_id();
   era.print('什么都不做');
@@ -581,7 +581,7 @@ async function com55() {
   return 1;
 }
 
-/** @COM56 交谈（COMF56:6-196）。 */
+/** com56：交谈。 */
 async function com56() {
   const cid = target_id();
   era.print(tq(cid, 53) ? '介绍自己' : '交谈');
@@ -680,7 +680,7 @@ function palam_level4(cid, index) {
   return 4;
 }
 
-/** @COM57 羞耻PLAY（COMF57:3-131）。 */
+/** com57：羞耻PLAY。 */
 async function com57() {
   const cid = target_id();
   era.print('羞耻PLAY');
@@ -707,7 +707,7 @@ async function com57() {
   return 1;
 }
 
-/** @EQUIP_COM57（COMF57:134-254）。 */
+/** equip_com57。 */
 async function equip_com57() {
   const cid = target_id();
   era.print('＜羞耻PLAY中＞');
@@ -723,7 +723,7 @@ async function equip_com57() {
   return 1;
 }
 
-/** @COM58 浴室PLAY（COMF58:3-98）。 */
+/** com58：浴室PLAY。 */
 async function com58() {
   const cid = target_id();
   era.print('浴室PLAY');
@@ -739,7 +739,7 @@ async function com58() {
   return 1;
 }
 
-/** @EQUIP_COM58（COMF58:100-198）。 */
+/** equip_com58。 */
 async function equip_com58() {
   const cid = target_id();
   era.print('＜浴室PLAY中＞');
@@ -752,7 +752,7 @@ async function equip_com58() {
   return 1;
 }
 
-/** @COM59 新妻PLAY（COMF59:3-160）。 */
+/** com59：新妻PLAY。 */
 async function com59() {
   const cid = target_id();
   era.print('新妻PLAY');
@@ -772,7 +772,7 @@ async function com59() {
   return 1;
 }
 
-/** @EQUIP_COM59（COMF59:163-318）。 */
+/** equip_com59。 */
 async function equip_com59() {
   const cid = target_id();
   era.print('＜新妻PLAY中＞');
@@ -786,7 +786,7 @@ async function equip_com59() {
   return 1;
 }
 
-// —— @COM_ABLE50-59（COMABLE:2246-2506）——
+// —— com_able_family 的 50–59 号可用性检查 ——
 
 com_able_family.register(50, async () => {
   const cid = target_id();
@@ -907,7 +907,7 @@ com_able_family.register(59, async () => {
   return (era.get(`cflag:${cid}:40`) || 0) && era.get('flag:37') ? 0 : 1;
 });
 
-// —— TRAIN_MESSAGE_B（EVENT_TRAIN_MESSAGE_B:1901-2063）——
+// —— TRAIN_MESSAGE_B：50–59 的 B 文 ——
 
 train_message_b_family.register(50, async () => {
   era.print(`${clothtype_text(target_id())}的${target_name()}被涂满了润滑液…`);
@@ -1016,13 +1016,13 @@ train_message_b_family.register(59, async () => {
   era.print(`${target_name()}${skin}肌肤被围裙包裹着…`);
 });
 
-// —— TRAIN_MESSAGE_A：原作仅 COM55 有分支；其余显式 no-op。 ——
+// —— TRAIN_MESSAGE_A：仅 COM55 有分支；其余显式 no-op。 ——
 //
-// A55 分支的实现**不在这里**：#402 把放置 PLAY 的正文按源侧位置挪进了
-// train-message.js 的公共射精链末支（源 :362-373 是 TFLAG:0/1/18 那条
-// IF/ELSEIF 链的最后一支，排在绝顶段 :377 之前；族分发在绝顶段之后跑，
+// A55 分支的实现**不在这里**：#402 把放置 PLAY 的正文挪进了
+// train-message.js 的公共射精链末支（TFLAG:0/1/18 那条
+// IF/ELSEIF 链的最后一支，排在绝顶段之前；族分发在绝顶段之后跑，
 // 同回合既落「放置 PLAY」又落绝顶时两处行序会颠倒）。注册保留为空实现，
-// 让「缺失 = 族票未落地 → 占位行」的语义对 55 保持精确。
+// 让「缺失 = 族工单未完成 → 占位行」的语义对 55 保持精确。
 
 train_message_a_family.register(55, async () => {});
 

@@ -1,13 +1,13 @@
 /**
- * 指令族接线的通用锁（issue #274）：`ere/system/train/com-*.js` 里靠副作用
+ * 指令族接入的通用锁（issue #274）：`ere/system/train/com-*.js` 里靠副作用
  * 注册进 COM / COM_ABLE 的模块，必须同时出现在两张加载图上——
  *
  *   - `ere/system/flow/main-loop.js`：游戏运行时实际加载的族；
  *   - 本文件自持的 TRAIN_PATH_MODULES：一次调教路径实际装载的模块清单。
- * 两张图都没有守卫时，族票的单测走 `load_module('system/train/com-xxx')`、
+ * 两张图都没有检查时，族票的单测走 `load_module('system/train/com-xxx')`、
  * 主流程走自己的加载清单，另一张图漏装不会被任何检查发现（#228 的
  * com-cloth、#223/#226/#224/#222 的漏装都是这样混过去的）。
- * 号集合从源码扫出，不维护手写名单——新族文件落地即纳入；漏 require
+ * 号集合从源码扫出，不维护手写名单——新族文件加入即纳入；漏 require
  * 时断言点名模块，不报一串裸编号。
  */
 'use strict';
@@ -116,7 +116,7 @@ function extra_ids(expected, actual) {
 
 test('源码扫描能拿到每个族模块的 COM / COM_ABLE 号，循环注册不漏', () => {
   const by_module = scan_family_modules();
-  // 抽查三种写法各一份，防止扫描器自己漂成空集还全绿
+  // 抽查三种写法各一份，防止扫描器悄悄返回空集还全绿
   assert.deepEqual(
     [...by_module.get('com-cloth').com].sort((a, b) => a - b),
     [110, 111],
@@ -140,7 +140,7 @@ test('源码扫描能拿到每个族模块的 COM / COM_ABLE 号，循环注册�
 });
 
 test('主启动图加载 main-loop 后，COM / COM_ABLE 注册号等于族模块并集', () => {
-  // 漏装时报「主启动图漏装：com-cloth」——M1370 的 must_mention 锚
+  // 漏装时报「主启动图漏装：com-cloth」——M1370 的 must_mention 基准
   const expected_by_module = scan_family_modules();
   const expected_com = union_ids(expected_by_module, 'com');
   const expected_able = union_ids(expected_by_module, 'able');
@@ -174,7 +174,7 @@ test('主启动图加载 main-loop 后，COM / COM_ABLE 注册号等于族模块
 });
 
 test('调教路径清单加载 TRAIN_PATH_MODULES 后，COM / COM_ABLE 注册号等于族模块并集', () => {
-  // 漏装时报「调教路径清单漏装：com-service」——M1371 的 must_mention 锚
+  // 漏装时报「调教路径清单漏装：com-service」——M1371 的 must_mention 基准
   const expected_by_module = scan_family_modules();
   const expected_com = union_ids(expected_by_module, 'com');
   const expected_able = union_ids(expected_by_module, 'able');

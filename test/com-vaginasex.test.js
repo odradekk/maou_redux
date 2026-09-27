@@ -3,24 +3,24 @@
  * ere/system/train/com-vaginasex.js 的行为测试（issue #216 J6）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - @CONFIRM_LOST_VIRGIN：非处女直通 / 处女二键（0 夺取 / 1 保留）；
- *   - @COM_EJAC_PLAYER_SEX：兽奸与死斗场早退、指令位基础值表（COM20 技巧
+ *   - confirm_lost_virgin：非处女直通 / 处女二键（0 夺取 / 1 保留）；
+ *   - com_ejac_player_sex：兽奸与死斗场早退、指令位基础值表（COM20 技巧
  *     分档 × 顺从）、共通乘率（欲望/性交技术/润滑/玩家阴蒂感觉/EXP 阈值/
  *     安全套 0.6）、ゲージ蓄积与 E 判定（通常/大量）、射精文案的部位分支
  *     （CFLAG:113 1-4 与膣内的随机受精判定）、TFLAG:2/38、STAIN、
  *     ゲージ复位钳位；
- *   - @COM_EJAC_PLAYER_MILK：非母乳体质早退、乘率串（克制减半等）、
+ *   - com_ejac_player_milk：非母乳体质早退、乘率串（克制减半等）、
  *     半衰蓄积、E 判定（蓄积 S 越过上限即喷乳，与性交/肛交喷射精同构）、
  *     EX:5/NOWEX:5（门面 + 直写）；
- *   - @COM_AFTER_VAGINA_SEX：私处经验分档、处女异常经验（此时 TALENT:0
- *     未清——丧失在 SOURCE_CHECK 后半）、RAND:2 清 CFLAG:113、百合 +4、
+ *   - com_after_vagina_sex：私处经验分档、处女异常经验（此时 TALENT:0
+ *     未清——丧失在 source-check 后半）、RAND:2 清 CFLAG:113、百合 +4、
  *     爱情经验表、RELATION 助手分支、童贞丧失（CFLAG:PLAYER:15 与近亲
  *     代码表）、污渍互换；
- *   - @COM_AFTER_EXTRA_SEX：CFLAG:113 == 1 的乳房经验 + 首次异常 2、
+ *   - com_after_extra_sex：CFLAG:113 == 1 的乳房经验 + 首次异常 2、
  *     日文残留串的 #60 归一（性交经验＋１ / 【童贞丧失】）。
  *
- * 契约（调用方 = COMF8/11/20-23/34/64/90/120/121/128-134，J9-J19 落地）：
- *   confirm_lost_virgin() → Promise<number>（RESULT 语义，0 中止指令）；
+ * 契约（调用方 = COM8/11/20-23/34/64/90/120/121/128-134，J9-J19 已实现）：
+ *   confirm_lost_virgin() → Promise<number>（返回值语义，0 中止指令）；
  *   com_ejac_player_sex(rand) / com_after_vagina_sex(rand) → Promise<void>；
  *   com_ejac_player_milk(b) 只被 com_ejac_player_sex 尾调（B 透传）；
  *   com_after_extra_sex() → Promise<void>。
@@ -57,16 +57,16 @@ function arm_player(fixture) {
   fixture.store.set('maxbase:0:3', 5000);
 }
 
-// —— @CONFIRM_LOST_VIRGIN ——
+// —— confirm_lost_virgin ——
 
-test('非处女 → RETURN 1 直通（无输出无输入）', async () => {
+test('非处女 → 返回 1 直通（无输出无输入）', async () => {
   const { fixture, vs } = seed_world();
   fixture.set_inputs();
   assert.equal(await vs.confirm_lost_virgin(), 1);
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('处女 + [0] 来吧女人 → RETURN 1；[1] 让她继续做女孩 → RETURN 0', async () => {
+test('处女 + [0] 来吧女人 → 返回 1；[1] 让她继续做女孩 → 返回 0', async () => {
   for (const [key, want] of [
     [0, 1],
     [1, 0],
@@ -79,7 +79,7 @@ test('处女 + [0] 来吧女人 → RETURN 1；[1] 让她继续做女孩 → RET
   }
 });
 
-test('#612 处女确认：两键正文照写原作的「- 」（COMF_VAGINASEX.ERB:10-11）', async () => {
+test('#612 处女确认：两键正文保留「- 」字面', async () => {
   const { fixture, vs } = seed_world();
   fixture.store.set('talent:31:0', 1);
   fixture.set_inputs(0);
@@ -89,11 +89,11 @@ test('#612 处女确认：两键正文照写原作的「- 」（COMF_VAGINASEX.E
       .filter((line) => line.type === 'button')
       .map((button) => button.rendered),
     ['[0] - 来吧女人', '[1] - 让她继续做女孩'],
-    '处女确认两键带「- 」（COMF_VAGINASEX.ERB:10-11）',
+    '处女确认两键带「- 」',
   );
 });
 
-// —— @COM_EJAC_PLAYER_SEX ——
+// —— com_ejac_player_sex ——
 
 test('兽奸（tequip:89）→ 早退，ゲージ不动', async () => {
   const { fixture, vs } = seed_world();
@@ -229,7 +229,7 @@ test('部位文案：CFLAG:113 = 3（肛）/ 4（口）的追加句', async () =
   }
 });
 
-// —— @COM_EJAC_PLAYER_MILK ——
+// —— com_ejac_player_milk ——
 
 test('MILK：非母乳体质 → 早退（ゲージ 3 不动）', async () => {
   const { fixture, vs } = seed_world();
@@ -265,14 +265,14 @@ test('MILK：E = 2 大量喷乳 → 文案、喷奶经验、STAIN:5 |= 16、EX/N
   assert.equal(fixture.store.get('nowex:0:5'), 1);
 });
 
-test('MILK：E1 判据是蓄积 S——半衰后 B ≤ 上限但 S 越过即喷乳', async () => {
+test('MILK：E1 的判断条件是蓄积 S——半衰后 B ≤ 上限但 S 越过即喷乳', async () => {
   const { fixture, vs } = seed_world();
   arm_player(fixture);
   fixture.store.set('talent:0:130', 1); // 母乳体质
   fixture.store.set('maxbase:0:3', 1000);
   fixture.store.set('base:0:3', 800);
   // b：1000 × 0.6 = 600 → 半衰 1000 + (600-1000)/2 = 800 → 蓄积 800+800
-  // = 1600 > 1000：B = 800 ≤ 上限，但 S 判据越过 → E1 喷乳
+  // = 1600 > 1000：B = 800 ≤ 上限，但 S 条件越过 → E1 喷乳
   await vs.com_ejac_player_milk(1000);
   assert.equal(fixture.store.get('base:0:3'), 0, '喷乳后槽按 EJAC*2 扣减钳 0');
   const lines = fixture.text_lines();
@@ -285,7 +285,7 @@ test('MILK：E1 判据是蓄积 S——半衰后 B ≤ 上限但 S 越过即喷�
   assert.equal(fixture.store.get('nowex:0:5'), 1);
 });
 
-// —— @COM_AFTER_VAGINA_SEX ——
+// —— com_after_vagina_sex ——
 
 test('私处经验分档（ABL:2 ≤ 1 → +2；≥ 8 → +5）与性交经验 +1', async () => {
   for (const [abl2, want] of [
@@ -395,7 +395,7 @@ test('调教者童贞丧失：TFLAG 复位、CFLAG:PLAYER:15 = no + 1、CSTR:3�
   assert.ok(fixture.text_lines().includes('【童贞丧失】'));
 });
 
-test('亲族关系：V 事后处理复用 INCEST，并按原作关系 2 写调教者初体验码', async () => {
+test('亲族关系：V 事后处理复用 incest，并按关系 2 写调教者初体验码', async () => {
   const { fixture, vs } = seed_world();
   arm_player(fixture);
   fixture.store.set('talent:31:0', 1);
@@ -404,7 +404,7 @@ test('亲族关系：V 事后处理复用 INCEST，并按原作关系 2 写调�
   fixture.store.set('cflag:31:21', 100); // 玩家是对象的子女（关系 2）
   await vs.com_after_vagina_sex(() => 1);
 
-  assert.equal(fixture.store.get('tflag:14'), 0, '事后处理末尾按原作复位');
+  assert.equal(fixture.store.get('tflag:14'), 0, '事后处理末尾复位');
   assert.equal(
     fixture.store.get('exp:31:50'),
     undefined,
@@ -426,7 +426,7 @@ test('污渍互换：STAIN:3 |= STAIN:P:2（含精液位 4 的传播）', async 
   assert.equal(fixture.store.get('stain:0:2'), 5);
 });
 
-// —— @COM_AFTER_EXTRA_SEX ——
+// —— com_after_extra_sex ——
 
 test('EXTRA：CFLAG:113 == 1 → 乳房经验（ABL:1 分档）+ 首次异常 2；#60 归一文案', async () => {
   const { fixture, era_flag, vs } = seed_world();
@@ -439,7 +439,7 @@ test('EXTRA：CFLAG:113 == 1 → 乳房经验（ABL:1 分档）+ 首次异常 2�
   assert.equal(fixture.store.get('exp:31:5'), 1);
   const lines = fixture.text_lines();
   assert.ok(lines.includes('乳房经验+2'));
-  assert.ok(lines.includes('性交经验＋１'), '原文 経験 → 归一简体');
+  assert.ok(lines.includes('性交经验＋１'), '日文 経験 → 归一简体');
 });
 
 test('EXTRA：CFLAG:113 != 1 → 乳房经验段不写（经验 35 不动）', async () => {

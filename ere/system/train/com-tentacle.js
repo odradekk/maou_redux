@@ -1,15 +1,15 @@
 /**
- * @file 调教指令「触手与自由调教」族：@COM100–109 / 150 / 208 真身 +
- * @COM_ABLE 可用性判定 + TRAIN_MESSAGE_A/B 分支 + @EQUIP_COM100 / 108
- * 持续效果 + @SYOKUSYU_MILK（issue #227 / J17）。
+ * @file 调教指令「触手与自由调教」族：com100–109 / 150 / 208 真身 +
+ * able100–109 / 150 / 208 可用性判定 + TRAIN_MESSAGE_A/B 分支 +
+ * equip_com100 / 108 持续效果 + syokusyu_milk（issue #227 / J17）。
  *
  * == JUMP 语义 ==
  *
  *   - COM101-107/109 尾 JUMP 不改写 SELECTCOM（TRAIN_MESSAGE_B 仍走触手号
- *     分支）。目标 11/13-17 未落地 → COM_MISSING；44/46 已由 com-sm.js
+ *     分支）。目标 11/13-17 未移植 → COM_MISSING；44/46 已由 com-sm.js
  *     注册。不建 COM11/13-17 存根（#220 在飞）。
- *   - COM208 先改写 SELECTCOM 再 JUMP COM31/5/21/27。COM5/21/27 已落地；
- *     COM31 未落地 → COM_MISSING（#222 在飞）。
+ *   - COM208 先改写 SELECTCOM 再 JUMP COM31/5/21/27。COM5/21/27 已移植；
+ *     COM31 未移植 → COM_MISSING（#222 在飞）。
  *
  * == 变量承载 ==
  *
@@ -21,7 +21,7 @@
  *   - CFLAG:16 初吻直写 era.set（门面 `|| 0` 会吞 -1）；
  *   - CSTR:7 癖好无门面字段，era.get(`cstr:${cid}:7`)。
  *
- * 本族无 @GET_ADV_COM 升格规则（COMF_JUMP 无 CASE 100-109/150/208）。
+ * 本族无 get_adv_com 升格规则（无 CASE 100-109/150/208）。
  */
 
 const era = require('#/era-electron');
@@ -61,7 +61,7 @@ const zooko_worn = (cid) =>
   (era.get(`cflag:${cid}:42`) || 0) === 11 &&
   ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0 &&
   (era.get('flag:37') || 0) !== 0;
-/** B 分支着ぐるみ（无 FLAG:37，源侧 CFLAG:42==11 && (CFLAG:40 & 64)） */
+/** B 分支着ぐるみ（无 FLAG:37，条件 CFLAG:42==11 && (CFLAG:40 & 64)） */
 const in_zooko_msg = (cid) =>
   (era.get(`cflag:${cid}:42`) || 0) === 11 &&
   ((era.get(`cflag:${cid}:40`) || 0) & 64) !== 0;
@@ -73,7 +73,7 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** JUMP COM{id}：未落地返回 COM_MISSING（不建存根）。 */
+/** JUMP COM{id}：目标未移植返回 COM_MISSING（不建存根）。 */
 function jump_com(id, { rewrite_selectcom = false } = {}) {
   if (rewrite_selectcom) {
     era_flag.selectcom = id;
@@ -130,7 +130,7 @@ function apply_serve_and_skill(cid) {
 }
 
 // ============================================================
-// @COM_ABLE100-109 / 150 / 208
+// able100-109 / 150 / 208 可用性检查
 // ============================================================
 
 function able100() {
@@ -254,7 +254,7 @@ function able208() {
 }
 
 // ============================================================
-// @COM100 / 108 / 150 / 208 与 JUMP 101-107/109
+// com100 / 108 / 150 / 208 与 JUMP 101-107/109
 // ============================================================
 
 async function com100() {
@@ -369,8 +369,8 @@ async function com150() {
 async function com208(rand = default_rand) {
   // 延迟读取：主启动图的死斗场族注册（COM200-207）仍仅由 com-colosseum
   // 自己负责；本族只在 COM208 真身里复用其死斗场结算 helper。顶层 require
-  // 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接线锁与 M1249
-  // 一起失明（#288 全树守卫抓到现存这一处，与 #233/#234 同形态）。
+  // 会让 main-loop 漏装时模块仍被间接拉进来，#274/#282 接入锁与 M1249
+  // 一起失明（#288 全树检查抓到现存这一处，与 #233/#234 同一写法）。
   const {
     arena_slave_point,
     com_after_arena,
@@ -402,7 +402,7 @@ async function com208(rand = default_rand) {
   }
 
   for (;;) {
-    // COMF208:37-43 的菜单项全是整行 PRINTL——按钮之间不补空行（#595）
+    // 菜单项全是整行 PRINTL——按钮之间不补空行（#595）
     era.print('对哪里进行凌辱？');
     era.printButton('- 嘴巴', 0);
     era.printButton('- 胸部', 1);
@@ -433,9 +433,8 @@ async function com208(rand = default_rand) {
 }
 
 /**
- * @SYOKUSYU_MILK（COMF100:412-424）：触手榨乳触发的母乳体质获得。
- * 调用点在 @EQUIP_COM16（COMF16:218，ere/system/train/com-toy.js——#548
- * 起换真身调用）。
+ * syokusyu_milk：触手榨乳触发的母乳体质获得。
+ * 调用点在 equip_com16（ere/system/train/com-toy.js——#548 起换真身调用）。
  * @returns {Promise<number>}
  */
 async function syokusyu_milk() {
@@ -455,7 +454,7 @@ async function syokusyu_milk() {
 }
 
 // ============================================================
-// @EQUIP_COM100 / 108
+// equip_com100 / 108
 // ============================================================
 
 async function equip_com100() {
@@ -658,9 +657,9 @@ train_message_b_family.register(150, async () => {
   } else {
     tail = `${f}调教开始了…`;
   }
-  era.print(`${player_name()}向${tail}`); // EVENT_TRAIN_MESSAGE_B:2992-3000 的 PRINTFORM 链
-  // EVENT_TRAIN_MESSAGE_B:3002 的裸 PRINTL 只收尾上面那条拼行（前一条没有
-  // 换行）——不是空行，这里不补 print（#595）
+  era.print(`${player_name()}向${tail}`); // PRINTFORM 链
+  // 裸 PRINTL 只收尾上面那条拼行（前一条没有换行）——不是空行，
+  // 这里不补 print（#595）
 });
 
 train_message_a_family.register(150, async () => {

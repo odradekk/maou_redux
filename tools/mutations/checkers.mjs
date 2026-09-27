@@ -15,7 +15,7 @@ export const COUNT = 87; // #641 -96（trace-check / trace-coverage / stub-regis
 // #513 起 +10（M11060-M11069：trace-check 源绑定判定与错绑基线）；#515 起 +7（M11111-M11117：四条登记表行文退回——两条判死措辞退回「存根」、
 // 两条过期说法退回（ABILITY_UP_CORE 行与验收补钉的 JUEL_CHECK 行），以及三条针对
 // 「状态格判死依据」的退回（DUNGEON_BATTLE2 行退回存根、两条把判死依据从状态格里删掉）。
-// 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 靶在 ere/page/page-shop.js，
+// 均由 test/trace-check.test.js 的 #515 用例守护；同票的 M11110 目标文件 ere/page/page-shop.js，
 // 记在 tools/mutations/page.mjs）；#532 起 +11（M11240-M11250：--verify 只读、残留态启动
 // 自检与其 in-flight 标记、run_one/SIGINT 两处还原本身——由 test/mutation-check.test.js
 // 的 #532 用例与既有的拦截路径/SIGINT 用例守护）；#530 起 +2（M11207/M11208：纯文本选项行的棘轮两个方向——新增一行、基线留过期条目，
@@ -895,9 +895,9 @@ export default [
       '启动清理陈旧并行副本：超龄且所有者不在才删，活副本与新鲜副本不动（#582）',
     must_mention: '超过清理阈值、所有者进程已不在的副本必须删掉',
   },
-  // —— #530：纯文本选项行棘轮（靶在 ere/system/train/com-toy.js 与 tools/plaintext-options.mjs）——
+  // —— #530：纯文本选项行棘轮（目标文件 ere/system/train/com-toy.js 与 tools/plaintext-options.mjs）——
   {
-    desc: 'M11207 新增一行纯文本选项（com-toy 的满月确认多打一枚 [2] 行——棘轮的「只许收紧」门必须拦住，#530；靶行随 #572 的按钮化同步改写）',
+    desc: 'M11207 新增一行纯文本选项（com-toy 的满月确认多打一枚 [2] 行——棘轮的「只许收紧」的阻断性检查必须拦住，#530；目标行随 #572 的按钮化同步改写）',
     file: 'ere/system/train/com-toy.js',
     find: "  era.printButton('好的', 0);\n  era.printButton('算了', 1);",
     replace: `  era.printButton('好的', 0);\n  era.printButton('算了', 1);\n  era.print('[2] 再看一下'); // 变异：新增纯文本选项行`,

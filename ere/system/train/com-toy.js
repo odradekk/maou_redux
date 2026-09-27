@@ -1,7 +1,7 @@
 /**
- * @file 调教指令 10–19「道具使用」族：@COM10–19 真身 + @EQUIP_COM11/13–19
- * 持续效果 + @COM_ABLE10–19 可用性 + TRAIN_MESSAGE_A/B 分支（issue #220，
- * J10——#209 裁定 6 的「四样装齐」）。
+ * @file 调教指令 10–19「道具使用」族：com10–19 真身 + equip_com11/13–19
+ * 持续效果 + com_able_family 的 10–19 号可用性检查 + TRAIN_MESSAGE_A/B 分支
+ * （issue #220，J10——#209 决定 6 的「四样装齐」）。
  *
  * == 变量承载 ==
  *
@@ -10,11 +10,11 @@
  * - TEQUIP:11/13–19、STAIN、TFLAG:19、T:0 都属 train，可在本域直写。
  * - EXP:0/1 属 dungeon，统一经 chara(cid).dungeon；EXP:40/41/54 属 train，
  *   经 chara(cid).train。TALENT:190/191 属 dungeon，经其门面写入。
- * - @SYOKUSYU_MILK 真身在 COMF100_触手召喚.ERB（#227/J17 落在
- *   ere/system/train/com-tentacle.js）；#548 起 COMF16:218 的调用点换真身。
+ * - syokusyu_milk 真身在触手族（#227/J17 实现在
+ *   ere/system/train/com-tentacle.js）；#548 起 equip_com16 的调用点换真身。
  *
- * 本族没有 COMF_JUMP.ERB 的 @GET_ADV_COM CASE，故无 adv_com_family 注册。
- * TRAIN_MESSAGE_A 原作仅有 10–14；15–19 显式注册无操作，避免分发骨架错误地
+ * 本族没有 get_adv_com 升格规则，故无 adv_com_family 注册。
+ * TRAIN_MESSAGE_A 仅 10–14 有分支；15–19 显式注册无操作，避免分发骨架错误地
  * 输出「尚未移植」占位。
  */
 
@@ -35,12 +35,12 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { confirm_lost_virgin } = require('#/system/train/com-vaginasex');
 const { EXPLV } = require('#/era-utils/exp-level');
 const { PALAMLV } = require('#/era-utils/palam-level');
-// @SYOKUSYU_MILK 的真身在触手族文件（#227/J17 导出；#548 起调用点换真身）——
+// syokusyu_milk 的真身在触手族文件（#227/J17 导出；#548 起调用点换真身）——
 // 族模块只能函数内延迟 require，见 equip_com16 的注释
 
-/** 运行时存根（#548 起为空——SYOKUSYU_MILK 已换真身）；清单核对测试仍读它。 */
+/** 运行时存根（#548 起为空——syokusyu_milk 已换真身）；清单核对测试仍读它。 */
 
-// —— 读数兜底（未声明下标 undefined → 0，#13） ——
+// —— 读数缺省处理（未声明下标 undefined → 0，#13） ——
 
 const tq = (cid, i) => era.get(`tequip:${cid}:${i}`) || 0;
 const set_tq = (cid, i, v) => era.set(`tequip:${cid}:${i}`, v);
@@ -100,7 +100,7 @@ const obey_factor = (cid) =>
 const anal_escape_factor = (cid) =>
   [2, 1.5, 1, 0.8, 0.6, 0.3][Math.min(abl(cid, 10), 5)];
 
-/** COM13 肛门虫的 ABL:10 快感系数：顺从 2 以上原作不再放大。 */
+/** COM13 肛门虫的 ABL:10 快感系数：顺从 2 以上不再放大。 */
 const anal_worm_obey_factor = (cid) =>
   [0.8, 0.9, 1, 1, 1, 1][Math.min(abl(cid, 10), 5)];
 
@@ -130,7 +130,7 @@ function anal_sense_factor(cid, value) {
   return value;
 }
 
-/** 原作「处女且看重贞操」的 SOURCE:13 整数除法。 */
+/** 「处女且看重贞操」的 SOURCE:13 整数除法。 */
 function divide_chastity_source(cid) {
   if (exp(cid, 0) === 0 && tal(cid, 30)) {
     set_src(cid, 13, Math.floor(src(cid, 13) / 3));
@@ -147,7 +147,7 @@ function tentacle_stain(cid, tequip_index, stain_index) {
   }
 }
 
-/** 满月确认：原作 INPUT 0 继续、非 0 取消。 */
+/** 满月确认：输入 0 继续、非 0 取消。 */
 async function confirm_full_moon() {
   era.print('*满月是蠕虫的产卵期，要继续吗？*');
   // 两项 → 按钮（PR #53 通则，正文不写 [编号]；#572）
@@ -172,7 +172,7 @@ function shower_clean(cid) {
   era.set(`palam:${cid}:12`, Math.floor(palam(cid, 12) / 2));
 }
 
-/** @COM10（COMF10:8-52）。 */
+/** com10。 */
 async function com10() {
   const target = era_flag.target;
   era.print('振动宝石');
@@ -186,7 +186,7 @@ async function com10() {
   return 1;
 }
 
-/** @COM12（COMF12:9-53）。 */
+/** com12。 */
 async function com12() {
   const target = era_flag.target;
   era.print('振动杖');
@@ -200,7 +200,7 @@ async function com12() {
   return 1;
 }
 
-/** @COM11（COMF11:7-171）：蠕虫装着/解除；返回 0 是回合取消。 */
+/** com11：蠕虫装着/解除；返回 0 是回合取消。 */
 async function com11() {
   const target = era_flag.target;
   if ((await confirm_lost_virgin()) === 0) {
@@ -281,7 +281,7 @@ async function com11() {
   return 1;
 }
 
-/** @COM13（COMF13:7-198）：肛门虫装着/解除；返回 0 是满月输入取消。 */
+/** com13：肛门虫装着/解除；返回 0 是满月输入取消。 */
 async function com13() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '肛门触手' : '肛门虫');
@@ -373,7 +373,7 @@ async function com13() {
   return 1;
 }
 
-/** @COM14（COMF14:7-67）。 */
+/** com14。 */
 async function com14() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '触手凌辱阴蒂' : '电动阴蒂夹');
@@ -393,7 +393,7 @@ async function com14() {
   return 1;
 }
 
-/** @COM15（COMF15:7-86）。 */
+/** com15。 */
 async function com15() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '触手凌辱乳头' : '乳头夹');
@@ -425,7 +425,7 @@ async function com15() {
   return 1;
 }
 
-/** @COM16（COMF16:7-98）。 */
+/** com16。 */
 async function com16() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '触手榨乳' : '榨乳器');
@@ -462,7 +462,7 @@ async function com16() {
   return 1;
 }
 
-/** @COM17（COMF17:7-70）。 */
+/** com17。 */
 async function com17() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '触手凌辱阴茎' : '飞机杯');
@@ -479,7 +479,7 @@ async function com17() {
   return 1;
 }
 
-/** @COM18（COMF18:7-105）。 */
+/** com18。 */
 async function com18() {
   const target = era_flag.target;
   era.print('淋浴');
@@ -514,7 +514,7 @@ async function com18() {
   return 1;
 }
 
-/** @COM19（COMF19:7-155）。 */
+/** com19。 */
 async function com19() {
   const target = era_flag.target;
   era.print('肛珠');
@@ -584,9 +584,9 @@ async function com19() {
   return 1;
 }
 
-// —— @EQUIP_COM11 / 13–19（由 source-check 按 EQUIP_COM_CHAIN 调用） ——
+// —— equip_com11 / 13–19（由 source-check 按 EQUIP_COM_CHAIN 调用） ——
 
-/** @EQUIP_COM11（COMF11:177-334）。 */
+/** equip_com11。 */
 async function equip_com11(rand = (n) => Math.floor(Math.random() * n)) {
   const target = era_flag.target;
   era.set('tflag:19', 1);
@@ -659,7 +659,7 @@ async function equip_com11(rand = (n) => Math.floor(Math.random() * n)) {
   return 1;
 }
 
-/** @EQUIP_COM13（COMF13:204-377）。 */
+/** equip_com13。 */
 async function equip_com13(rand = (n) => Math.floor(Math.random() * n)) {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '＜肛门触手插入中＞' : '＜肛门虫插入中＞');
@@ -765,7 +765,7 @@ function simple_equip_pleasure(cid, ability) {
   return times(a, obey_factor(cid));
 }
 
-/** @EQUIP_COM14（COMF14:73-139）。 */
+/** equip_com14。 */
 async function equip_com14() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '＜触手玩弄阴蒂中＞' : '＜阴蒂夹装备中＞');
@@ -780,7 +780,7 @@ async function equip_com14() {
   return 1;
 }
 
-/** @EQUIP_COM15（COMF15:92-168）。 */
+/** equip_com15。 */
 async function equip_com15() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '＜触手玩弄乳头中＞' : '＜乳头夹装备中＞');
@@ -796,7 +796,7 @@ async function equip_com15() {
   return 1;
 }
 
-/** @EQUIP_COM16（COMF16:104-221）。 */
+/** equip_com16。 */
 async function equip_com16() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '＜触手榨乳中＞' : '＜榨乳器装备中＞');
@@ -847,17 +847,17 @@ async function equip_com16() {
   same_sex_exp(target, era_flag.player, 1);
   if (tq(target, 90)) {
     era.add('t:0', 1);
-    // @SYOKUSYU_MILK 的真身在触手族文件（#227/J17 导出）。**函数内延迟
+    // syokusyu_milk 的真身在触手族文件（#227/J17 导出）。**函数内延迟
     // require 是硬要求**：com-tentacle 属主启动图的装载责任（main-loop
     // 显式 require 的族模块），顶层引用会让它的注册变成间接装载——main-loop
-    // 那行被删也照样绿（#288 的守卫守着这一形态，同 kojo-k2/k3 引 com-hardcore）
+    // 那行被删也照样绿（#288 的测试守住这一写法，同 kojo-k2/k3 引 com-hardcore）
     const { syokusyu_milk } = require('#/system/train/com-tentacle');
-    await syokusyu_milk(); // CALL SYOKUSYU_MILK（#548 起真身）
+    await syokusyu_milk(); // 调真身（#548 起）
   }
   return 1;
 }
 
-/** @EQUIP_COM17（COMF17:76-153）。 */
+/** equip_com17。 */
 async function equip_com17() {
   const target = era_flag.target;
   era.print(tq(target, 90) ? '＜触手玩弄阴茎中＞' : '＜飞机杯装备中＞');
@@ -908,7 +908,7 @@ function shower_source(cid, equipped) {
   }
 }
 
-/** @EQUIP_COM18（COMF18:111-204）。 */
+/** equip_com18。 */
 async function equip_com18() {
   const target = era_flag.target;
   era.print('＜淋浴中＞');
@@ -919,7 +919,7 @@ async function equip_com18() {
   return 1;
 }
 
-/** @EQUIP_COM19（COMF19:161-310）。 */
+/** equip_com19。 */
 async function equip_com19() {
   const target = era_flag.target;
   era.print('＜肛珠装备中＞');
@@ -988,7 +988,7 @@ async function equip_com19() {
   return 1;
 }
 
-// —— @COM_ABLE10–19（COMABLE.ERB:382-859） ——
+// —— com_able_family 的 10–19 号可用性检查 ——
 
 const tool_filtered = () => ((era.get('flag:25') || 0) & 2) !== 0;
 const lower_worn = (cid) =>
@@ -1242,7 +1242,7 @@ com_able_family.register(19, async () => {
     : 1;
 });
 
-// —— TRAIN_MESSAGE_B（EVENT_TRAIN_MESSAGE_B.ERB:783-1013） ——
+// —— TRAIN_MESSAGE_B：10–19 的 B 文 ——
 
 train_message_b_family.register(10, async () => {
   const target = era_flag.target;
@@ -1471,7 +1471,7 @@ train_message_b_family.register(18, async () => {
   era.print(`水花流过${skin}吹弹可破的肌肤………`);
 });
 
-// —— TRAIN_MESSAGE_A（EVENT_TRAIN_MESSAGE_A.ERB:986-1149） ——
+// —— TRAIN_MESSAGE_A：10–14 的 A 文（15–19 显式无操作） ——
 
 const clit_name = (cid) => (tal(cid, 121) || tal(cid, 122) ? '阴茎' : '阴蒂');
 

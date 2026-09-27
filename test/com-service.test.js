@@ -1,9 +1,9 @@
 /**
  * @file #222 奉仕系（COM30-38）的行为与回合生命周期测试。
  *
- * 覆盖源: COMF30-38、COMABLE.ERB、COMF_JUMP.ERB CASE30-34、
- * EVENT_TRAIN_MESSAGE_A/B.ERB 对应段。高阶目标尚未落地时，JUMPFORM 的
- * COM_MISSING 必须废弃回合而不能把基础指令当作回退。
+ * 覆盖 30-38 号指令的可用性与实行、30-34 号的高级目标跳转，以及对应
+ * 的 A/B 消息段。高阶目标未实现时，跳转缺失（COM_MISSING）必须废弃
+ * 回合而不能把基础指令当作回退。
  */
 
 const assert = require('node:assert/strict');
@@ -117,7 +117,7 @@ function arm_service_world(world, { target_abl = 5, player_futa = true } = {}) {
 
 const SERVICE_COMS = [30, 31, 32, 33, 35, 37, 38];
 for (const id of SERVICE_COMS) {
-  test(`@COM${id}：完整判定通过后返回 1，并置快乐/屈服结算位`, async () => {
+  test(`com${id}：完整判定通过后返回 1，并置快乐/屈服结算位`, async () => {
     const world = seed_service_world(id);
     arm_service_world(world);
     assert.equal(await world.com_family.call(id), 1);
@@ -126,7 +126,7 @@ for (const id of SERVICE_COMS) {
   });
 }
 
-test('@COM34：复用性交/避孕套流程，成功时置 TFLAG:19 并保留 SOURCE', async () => {
+test('com34：复用性交/避孕套流程，成功时置 TFLAG:19 并保留 SOURCE', async () => {
   const world = seed_service_world(34);
   arm_service_world(world);
   world.fixture.store.set('exp:31:0', 10);
@@ -136,18 +136,18 @@ test('@COM34：复用性交/避孕套流程，成功时置 TFLAG:19 并保留 SO
   assert.notEqual(world.fixture.store.get('source:31:1'), undefined);
 });
 
-test('@COM36：复用肛交共用后处理，成功时结算肛门经验', async () => {
+test('com36：复用肛交共用后处理，成功时结算肛门经验', async () => {
   const world = seed_service_world(36);
   arm_service_world(world);
   world.fixture.store.set('exp:31:0', 10);
   world.fixture.store.set('exp:31:1', 10);
   assert.equal(await world.com_family.call(36), 1);
   assert.equal(world.fixture.store.get('tflag:100'), 1);
-  // COMF_ANALSEX 的共用后处理：ABL:3=5 时本回合肛门经验增加 4。
+  // 肛交指令的共用后处理：ABL:3=5 时本回合肛门经验增加 4。
   assert.equal(world.fixture.store.get('exp:31:1'), 14);
 });
 
-test('@COM_ABLE30-38：默认门槛与各自一条阻断条件', async () => {
+test('30-38 号可用性检查：默认门槛与各自一条阻断条件', async () => {
   const world = seed_service_world();
   const { fixture, com_able_family } = world;
   fixture.store.set('talent:0:121', 1);
@@ -155,25 +155,45 @@ test('@COM_ABLE30-38：默认门槛与各自一条阻断条件', async () => {
   fixture.store.set('exp:31:1', 10);
   fixture.store.set('item:13', 1);
   fixture.store.set('tequip:31:58', 1);
-  // COM_ABLE32：非巨乳/爆乳/超乳时，技巧至少为 3。
+  // 32 号可用性检查：非巨乳/爆乳/超乳时，技巧至少为 3。
   fixture.store.set('abl:31:12', 3);
   for (const id of [30, 31, 32, 33, 34, 35, 36, 37, 38]) {
-    assert.equal(await com_able_family.call(id), 1, `COM_ABLE${id} 默认放行`);
+    assert.equal(
+      await com_able_family.call(id),
+      1,
+      `${id} 号可用性检查默认放行`,
+    );
   }
   fixture.store.set('tequip:31:44', 1);
   for (const id of [30, 31, 32, 34, 36, 37, 38]) {
-    assert.equal(await com_able_family.call(id), 0, `COM_ABLE${id} 被绳子阻断`);
+    assert.equal(
+      await com_able_family.call(id),
+      0,
+      `${id} 号可用性检查被绳子阻断`,
+    );
   }
   fixture.store.set('tequip:31:44', 0);
   fixture.store.set('cflag:31:40', 17);
   fixture.store.set('flag:37', 1);
-  assert.equal(await com_able_family.call(34), 0, 'COM_ABLE34 被下装阻断');
+  assert.equal(await com_able_family.call(34), 0, '34 号可用性检查被下装阻断');
   fixture.store.set('cflag:31:40', 0);
   fixture.store.set('flag:37', 0);
   fixture.store.set('item:13', 0);
-  assert.equal(await com_able_family.call(33), 0, 'COM_ABLE33 浴室没有地垫');
-  assert.equal(await com_able_family.call(35), 0, 'COM_ABLE35 浴室没有地垫');
-  assert.equal(await com_able_family.call(36), 0, 'COM_ABLE36 浴室没有地垫');
+  assert.equal(
+    await com_able_family.call(33),
+    0,
+    '33 号可用性检查：浴室没有地垫',
+  );
+  assert.equal(
+    await com_able_family.call(35),
+    0,
+    '35 号可用性检查：浴室没有地垫',
+  );
+  assert.equal(
+    await com_able_family.call(36),
+    0,
+    '36 号可用性检查：浴室没有地垫',
+  );
 });
 
 test('COM31：TALENT:119 也能蓄积射精槽；死斗场第一次口交置初吻旗标', async () => {
@@ -245,7 +265,7 @@ test('COM38：射精增量先后按玩家 ABL:21 与 ABL:0 截断', async () => 
   assert.equal(world.fixture.store.get('base:0:2'), 1473);
 });
 
-test('CASE34：PALAM:5 = 10000 按第五档算，随机 10/0 跳子宫口并缓存 5121', async () => {
+test('COM34 高级目标跳转：PALAM:5 = 10000 按第五档算，随机 10/0 跳子宫口并缓存 5121', async () => {
   const world = seed_service_world(34);
   const { fixture, era_flag, com_able_family } = world;
   era_flag.prevcom = 34;
@@ -260,7 +280,7 @@ test('CASE34：PALAM:5 = 10000 按第五档算，随机 10/0 跳子宫口并缓�
       await world.com_family.call(34, { whenMissing: world.COM_MISSING }),
       world.COM_MISSING,
     );
-    assert.equal(era_flag.selectcom, 34, '缺失高级目标不得提前改 SELECTCOM');
+    assert.equal(era_flag.selectcom, 34, '缺失高级目标不得提前改 selectcom');
     assert.equal(fixture.store.get('flag:71'), 5121);
   } finally {
     fixture.restore_math_random();
@@ -281,7 +301,7 @@ test('高级目标缺失：COM_MISSING 上抛，不回退执行基础 COM', asyn
   assert.equal(fixture.store.get('source:31:4'), undefined);
 });
 
-test('TRAIN_MESSAGE_B：COM31 死斗场、COM35 肤色、COM36 连续体位都走原始分支', async () => {
+test('TRAIN_MESSAGE_B：COM31 死斗场、COM35 肤色、COM36 连续体位都走各自的条件分支', async () => {
   const world = seed_service_world(31);
   const { fixture, era_flag } = world;
   const { train_message_b } = fixture.load_module('system/train/train-message');
@@ -322,7 +342,7 @@ test('TRAIN_MESSAGE_B：正常末尾归一 TFLAG:31，文本省略早退不改�
   assert.equal(fixture.store.get('tflag:31'), 2);
 });
 
-test('严格 TIMES：十进制逐步截断且负数朝零', () => {
+test('严格 times：十进制逐步截断且负数朝零', () => {
   const world = seed_service_world();
   const { times } = world.fixture.load_module('system/train/com-service');
   assert.equal(times(175, 1.4), 245);

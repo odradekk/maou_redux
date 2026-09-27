@@ -1,72 +1,72 @@
 /**
- * @file 调教指令 110「穿脱衣服」与 111「撕破衣服」：@COM110 / @COM111 的
- * 实现 + @COM_ABLE110 / @COM_ABLE111 的可执行性判定（issue #228 J18——
- * 服装系统 #215 在指令侧的消费者，本票主要是接线）。
+ * @file 调教指令 110「穿脱衣服」与 111「撕破衣服」：com110 / com111 的
+ * 实现 + com_able110 / com_able111 的可执行性判定（issue #228 J18——
+ * 调用服装系统 #215 的接口）。
  *
- * == 本族的形态（源文件头自述：「実行してもパラメーターは変更せず通常
- *    コマンド扱いにならない」） ==
+ * == 子菜单不消耗调教回合 ==
+ * 子菜单可以改变服装状态，但不改变调教参数。
  *
- * 两条指令都是**自带 INPUT 循环的子菜单指令**，不写 SOURCE/delta、不调
- * TRAIN_MESSAGE——era wiki（Emuera/flow，flow1821＝本作引擎 1.821）TRAIN
- * 节明载：**@COMxx 返回 0 → 引擎不调 @SOURCE_CHECK/@EVENTCOMEND，直接回
- * @SHOW_STATUS**；返回非 0 才走结算。COM110/111 的全部出口 RETURN 0，故：
- * 无 SOURCE_CHECK 输出、PREVCOM 不推进（原作在 @SOURCE_CHECK:545 自做，
- * SOURCE_CHECK 不跑就不推——golden train-natural 的 210/250 两行实证：COM110
- * 执行前后「上次的调教指令」同为接吻）。「通常コマンド扱いにならない」
- * 指的就是这条。ere 侧的回合取消语义随本票落进 train-loop.js 的
- * execute_command_round。
+ * 两条指令都是**自带输入循环的子菜单指令**，不写 SOURCE/delta、不调用
+ * train_message_a/b。回合循环将指令返回 0 解释为取消本回合：
+ * 不进行 source-check 结算，不推进 PREVCOM，重新显示调教界面。
+ * 返回非 0 才走结算。com110 的全部出口返回 0，
+ * 因此穿脱衣服前后「上次的调教指令」保持不变。
+ * com111 返回 1 时表示退出整个穿脱子菜单，返回 0 时回到穿脱菜单；
+ * 这个内部返回值由 com110 处理，不会直接进入回合结算。
+ * 回合取消由 train-loop.js 的 execute_command_round 负责，
+ * 本模块只负责服装变化与子菜单控制。
  *
- * COM111 是高级 COM（#213 的 ADVANCED_COM_IDS 之一）但 @GET_ADV_COM 的
- * 21 个 CASE 无 110/111——全库唯一调用点是 COM110 子菜单 [9]（COMF110
- * 的 :314 CALL COM111）。COM_ABLE111 因此不会被引擎扫描消费（不在
- * Train.csv 可直选空间），注册进 com_able_family 只为编号空间的完整性。
+ * 111 是高级 COM（#213 的 ADVANCED_COM_IDS 之一），但 get_adv_com
+ * 不含 110/111 的升格规则；com111 由 com110 子菜单的 [9] 调用。
+ * com_able111 不在可直选空间内，不参与指令菜单扫描；
+ * 仍注册进 com_able_family，以保持编号空间完整。
  *
- * == 四样装齐的空缺说明（#209 裁定 6 的两条空项） ==
+ * == 本族不注册消息分支与升格规则（#209 决定 6） ==
  *
- * - TRAIN_MESSAGE_A/B 分支：EVENT_TRAIN_MESSAGE_A/B.ERB 全文无
- *   SELECTCOM == 110/111 分支（grep 实证），COMF110/111 也不 CALL
- *   TRAIN_MESSAGE——本族无消息分支可装。
- * - 升格规则：@GET_ADV_COM 无 110/111 的 CASE（grep 实证）——本族无
- *   升格规则，adv_com_family 留空（缺失语义由调用点 whenMissing 声明，
- *   #7 决议）。
- * - 口上：SOURCE_CHECK → @KOJO_MESSAGE_COM 的既有分发（kojo-system.js）
- *   对 SELECTCOM 110/111 经 TRYCALL 落空静默——各性格文件的
- *   IF SELECTCOM == 110/111 台词段随轴 B（J21-J41）落地，本票不写台词。
+ * - train_message_a/b 不含 SELECTCOM == 110/111 分支，
+ *   com110/com111 也不调用这两个消息分发函数，
+ *   因此本族无需注册消息分支。
+ * - get_adv_com 没有 110/111 的升格规则，
+ *   adv_com_family 留空；缺失语义由调用点的 whenMissing 声明
+ *   （#7 决议）。
+ * - 口上由 kojo-system.js 的 kojo_message_com 分发，
+ *   缺失的 SELECTCOM 110/111 分支保持静默。
+ *   各性格的对应台词由口上模块负责（轴 B，J21–J41），本模块不写台词。
  *
- * == 被调面（全部为 #215 已落真身，直接用） ==
+ * == 服装接口（#215） ==
  *
- *   @WEARING_CLOTH_ALL → ere/system/train/cloth.js（B = 标准装位探测：
- *   源 :14-17 先存 A、初始化后读 B、再还原 A——判定函数按 B 判断「标准
- *   装备是否含该部位」）；@PRINT_CLOTHTYPE / _MAIN2 / _SPECIAL →
- *   ere/page/page-clothtype.js（返回串出口，行由本模块合成一次 print）。
+ *   wearing_cloth_all 位于 ere/system/train/cloth.js，用于探测标准装位。
+ *   standard_bits 暂存当前装位，调用该函数后读取标准装位，再还原当前态；
+ *   各判定函数据此判断「标准装备是否含该部位」。服装名称来自
+ *   ere/page/page-clothtype.js 的取值函数，由本模块合成整行再打印。
  *
- * == 写入通道的域归属（#215 完成报告「给 J18」节） ==
+ * == 写入通道的域归属（#215） ==
  *
  * 穿脱/撕破坏写 CFLAG:40（位域）/41/43/45/46/47（各部位洗濯状态）——
  * 属主 train，域内直写。**CFLAG:44（胸罩状态）属主 stronghold**
  * （ownership/cflag-ownership.yml "44"：3 处写中据点侧占 2）——COM111
  * 撕胸罩的 CFLAG:44 = -3 是登记在册的跨域写
  * （跨域写登记在案），经 chara(cid).stronghold.
- * 胸罩状态 门面（#71）。CFLAG:42/49 只读（42 的写在 AFTERTRAIN_CLOTH、
+ * 胸罩状态 门面（#71）。CFLAG:42/49 只读（42 由调教后服装处理写入，
  * 49 的写据点/日程侧）。
  *
- * == 原作空格与排版的三条裁定（对拍逐字比对的依据） ==
+ * == 菜单空格与排版约定 ==
  *
- * - Emuera 的 PRINT 系取「命令 + 一个分隔空格」之后的**字面文本**：
- *   源 `PRINTL  [7] - 全部扒光`（两空格）在 golden train-natural:217
- *   渲染为 ` [7] - 全部扒光`（一空格）——脱衣行一空格、穿衣行
- *   （源四空格）三空格。
- * - COM111 的 [100] 行是 ` [100]- 算了`——] 与 - 间无空格（有意保留的
- *   排版本样）。
- *   （cloth.js 尿布菜单两键与 passout.js 恢复文本的前导空格曾是移植
- *   转录缺陷——比渲染语义多抄了一格，#577 已改正；两处均不在 golden
- *   窗口内，靠 #577 的普查补漏发现。）
- * - 内裤脱衣（:278-287）的弄脏前缀查 TFLAG:45 的位 8/4（下装/下装处理）
- *   而非位 2/1（内裤）——与穿衣分支（位 2/1）不对称，是抄写怪癖的既有
- *   行为，保留不改。
+ * - 菜单正文中的前导空格是字面文本，不应按代码缩进处理：
+ *   脱衣行保留一个空格，如 ` [7] - 全部扒光`；
+ *   穿衣行保留三个空格，用于区分穿衣与脱衣选项。
+ *   每行合成后通过一次 print 输出。
+ * - com111 的 [100] 行是 ` [100]- 算了`，
+ *   ] 与 - 之间不加空格。
+ *   cloth.js 尿布菜单两键与 passout.js 恢复文本的前导空格
+ *   曾多出一格，#577 已修正；
+ *   本菜单的空格仍按上述规则保留。
+ * - 内裤脱衣的弄脏前缀检查 TFLAG:45 的位 8/4（下装/下装处理），
+ *   而非位 2/1（内裤）；与穿衣分支的位 2/1 不对称，
+ *   当前行为保留不改。
  *
- * 这张票无存根/登记（docs/stub-registry.md）：被调全为真身，口上经既有
- * 分发的合法缺失。
+ * 本模块不需要存根登记（docs/stub-registry.md）：所调接口均已实现，
+ * 口上缺失由既有分发静默处理。
  */
 
 'use strict';
@@ -83,7 +83,7 @@ const {
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
 
-// CFLAG:40 着衣位域（FUNC_CLOTH.ERB:14）：1 内裤 2 胸罩 4 上装 8 裙
+// CFLAG:40 着衣位域：1 内裤 2 胸罩 4 上装 8 裙
 // 16 裤 64 特别服装
 const BIT_PANTY = 1;
 const BIT_BRA = 2;
@@ -92,7 +92,7 @@ const BIT_SKIRT = 8;
 const BIT_TROUSERS = 16;
 const BIT_SPECIAL = 64;
 
-// —— 读数兜底（未声明下标 undefined → 0，#13） ——
+// —— 读数默认值（未声明下标 undefined → 0，#13） ——
 
 const worn = (cid) => era.get(`cflag:${cid}:40`) || 0;
 const set_worn = (cid, v) => era.set(`cflag:${cid}:40`, v);
@@ -102,15 +102,15 @@ const laundry = (cid, idx) => era.get(`cflag:${cid}:${idx}`) || 0;
 const set_laundry = (cid, idx, v) => era.set(`cflag:${cid}:${idx}`, v);
 const tequip = (cid, idx) => era.get(`tequip:${cid}:${idx}`) || 0;
 
-/** 裙型判定（源多处复用的 CFLAG:41 ∈ [1,100]） */
+/** 裙型判定：CFLAG:41 ∈ [1,100] */
 const is_skirt = (cid) => {
   const type = main_type(cid);
   return type >= 1 && type <= 100;
 };
 
 /**
- * 源 :14-17 / :13-16 的 A・B 探测：存回当前着衣位、以 WEARING_CLOTH_ALL
- * 求标准装位（B）、再还原当前态（A）。判定函数的 B 参数由此传入。
+ * 先保存当前着衣位，再以 wearing_cloth_all 求标准装位（B），
+ * 最后还原当前态。判定函数的 B 参数由此传入。
  * @param {number} cid 角色 ID
  * @returns {number} 标准装位（B）
  */
@@ -123,13 +123,13 @@ function standard_bits(cid) {
 }
 
 // ============================================================
-// @COM110 的 12 个着脱判定（COMF110:328-611）
+// com110 的 12 个穿脱判定
 // ============================================================
 
 /**
- * @COM110_ABLE0T（:329-349）：特別コス脱衣。尿布（42==69）支内的第二条
- * SIF（(40&64) && 42<=50）在 42==69 的分支里恒假——尿布支内互斥条件的
- * 双保险写法，保留。
+ * com110_able0t：特别服装脱衣。尿布（42==69）分支内的第二条
+ * 检查（(40&64) && 42<=50）在 42==69 的分支里恒假——两个条件互斥，
+ * 因此该检查不会额外阻止脱衣。
  */
 function com110_able0t(cid) {
   if (special_type(cid) === 0) {
@@ -152,7 +152,7 @@ function com110_able0t(cid) {
   return 1;
 }
 
-/** @COM110_ABLE0W（:351-377）：特別コス装着（B 含特别位、洗涤中不可） */
+/** com110_able0w：特别服装穿衣（B 含特别位、洗涤中不可） */
 function com110_able0w(cid, b) {
   if (special_type(cid) === 0) {
     return 0;
@@ -180,7 +180,7 @@ function com110_able0w(cid, b) {
   return 1;
 }
 
-/** @COM110_ABLE1T（:379-390）：ワンピース脱衣（41 ≥ 201 的全身衣装） */
+/** com110_able1t：连体服装脱衣（41 ≥ 201 的全身衣装） */
 function com110_able1t(cid) {
   if (main_type(cid) <= 200) {
     return 0;
@@ -194,14 +194,14 @@ function com110_able1t(cid) {
   return 1;
 }
 
-/** @COM110_ABLE1W（:392-411）：ワンピース装着（上下两半都不可用时才行） */
+/** com110_able1w：连体服装穿衣（上下两半不能同时在身或洗涤中） */
 function com110_able1w(cid, b) {
   if (main_type(cid) <= 200) {
     return 0;
   }
   // 「上装穿着中或洗涤中」且「下装穿着中或洗涤中」→ 不可
-  //（原作注释：为「衣装破れた」情形留的口——上下任一半还在（含洗着）
-  // 就不算失去整件，不能重新穿上）
+  // 上下两半均还在（含洗涤中）时，不能重新穿上；
+  // 只剩一半时仍允许重新穿衣，以处理部分衣物破损的情况。
   if (worn(cid) & BIT_UPPER || laundry(cid, 45) !== 0) {
     if (worn(cid) & (BIT_SKIRT | BIT_TROUSERS) || laundry(cid, 46) !== 0) {
       return 0;
@@ -219,7 +219,7 @@ function com110_able1w(cid, b) {
   return 1;
 }
 
-/** @COM110_ABLE2T（:413-424）：ツーピース上脱衣（41 ≤ 200 的两截衣装） */
+/** com110_able2t：两件套上装脱衣（41 ≤ 200 的两截衣装） */
 function com110_able2t(cid) {
   if (main_type(cid) >= 201) {
     return 0;
@@ -233,7 +233,7 @@ function com110_able2t(cid) {
   return 1;
 }
 
-/** @COM110_ABLE2W（:426-443）：ツーピース上装着 */
+/** com110_able2w：两件套上装穿衣 */
 function com110_able2w(cid, b) {
   if (main_type(cid) >= 201) {
     return 0;
@@ -253,7 +253,7 @@ function com110_able2w(cid, b) {
   return 1;
 }
 
-/** @COM110_ABLE3T（:445-456）：ツーピース下脱衣 */
+/** com110_able3t：两件套下装脱衣 */
 function com110_able3t(cid) {
   if (main_type(cid) >= 201) {
     return 0;
@@ -267,7 +267,7 @@ function com110_able3t(cid) {
   return 1;
 }
 
-/** @COM110_ABLE3W（:458-475）：ツーピース下装着 */
+/** com110_able3w：两件套下装穿衣 */
 function com110_able3w(cid, b) {
   if (main_type(cid) >= 201) {
     return 0;
@@ -287,7 +287,7 @@ function com110_able3w(cid, b) {
   return 1;
 }
 
-/** @COM110_ABLE4T（:477-488）：ブラジャー脱衣（上装在身时不可） */
+/** com110_able4t：胸罩脱衣（上装在身时不可） */
 function com110_able4t(cid) {
   if ((worn(cid) & BIT_BRA) === 0) {
     return 0;
@@ -301,7 +301,7 @@ function com110_able4t(cid) {
   return 1;
 }
 
-/** @COM110_ABLE4W（:490-504）：ブラジャー装着（上半身全裸才可） */
+/** com110_able4w：胸罩穿衣（上半身全裸才可） */
 function com110_able4w(cid, b) {
   if (worn(cid) & (BIT_BRA | BIT_UPPER)) {
     return 0;
@@ -318,7 +318,7 @@ function com110_able4w(cid, b) {
   return 1;
 }
 
-/** @COM110_ABLE5T（:506-520）：パンツ脱衣（裤型下装在身时不可） */
+/** com110_able5t：内裤脱衣（裤型下装在身时不可） */
 function com110_able5t(cid) {
   if ((worn(cid) & BIT_PANTY) === 0) {
     return 0;
@@ -335,7 +335,7 @@ function com110_able5t(cid) {
   return 1;
 }
 
-/** @COM110_ABLE5W（:522-540）：パンツ装着 */
+/** com110_able5w：内裤穿衣 */
 function com110_able5w(cid, b) {
   if (worn(cid) & BIT_PANTY) {
     return 0;
@@ -359,10 +359,10 @@ function com110_able5w(cid, b) {
 }
 
 // ============================================================
-// @COM111 的 7 个引き裂き判定（COMF111:158-321）
+// com111 的 7 个撕破判定
 // ============================================================
 
-/** @COM111_ABLE0L（:174-182）：特別コス引き裂き */
+/** com111_able0l：特别服装撕破 */
 function com111_able0l(cid) {
   if (special_type(cid) === 0) {
     return 0;
@@ -373,7 +373,7 @@ function com111_able0l(cid) {
   return 1;
 }
 
-/** @COM111_ABLE1L（:184-195）：ワンピース上引き裂き（41 ≥ 201） */
+/** com111_able1l：连体服装上半身撕破（41 ≥ 201） */
 function com111_able1l(cid) {
   if (main_type(cid) <= 200) {
     return 0;
@@ -387,7 +387,7 @@ function com111_able1l(cid) {
   return 1;
 }
 
-/** @COM111_ABLE2L（:197-208）：ワンピース下引き裂き */
+/** com111_able2l：连体服装下半身撕破 */
 function com111_able2l(cid) {
   if (main_type(cid) <= 200) {
     return 0;
@@ -401,7 +401,7 @@ function com111_able2l(cid) {
   return 1;
 }
 
-/** @COM111_ABLE3L（:210-221）：ツーピース上引き裂き（41 ≤ 200） */
+/** com111_able3l：两件套上装撕破（41 ≤ 200） */
 function com111_able3l(cid) {
   if (main_type(cid) >= 201) {
     return 0;
@@ -415,7 +415,7 @@ function com111_able3l(cid) {
   return 1;
 }
 
-/** @COM111_ABLE4L（:223-234）：ツーピース下引き裂き */
+/** com111_able4l：两件套下装撕破 */
 function com111_able4l(cid) {
   if (main_type(cid) >= 201) {
     return 0;
@@ -429,7 +429,7 @@ function com111_able4l(cid) {
   return 1;
 }
 
-/** @COM111_ABLE5L（:236-247）：ブラジャー引き裂き */
+/** com111_able5l：胸罩撕破 */
 function com111_able5l(cid) {
   if ((worn(cid) & BIT_BRA) === 0) {
     return 0;
@@ -443,7 +443,7 @@ function com111_able5l(cid) {
   return 1;
 }
 
-/** @COM111_ABLE6L（:249-262）：パンツ引き裂き（和服下为裙时不可） */
+/** com111_able6l：内裤撕破（和服下为裙时不可） */
 function com111_able6l(cid) {
   if ((worn(cid) & BIT_PANTY) === 0) {
     return 0;
@@ -461,13 +461,13 @@ function com111_able6l(cid) {
 }
 
 // ============================================================
-// @COM110 / @COM111 主体
+// com110 / com111 主体
 // ============================================================
 
 /**
  * 弄脏前缀（脱衣行的内联形容词；TFLAG:45 位 → 串）。pos 为「污物处理」位、
  * neg 为「尿」位（各部位两 bit 相邻：32/16 特别服装、8/4 下装——内裤脱衣
- * 也查下装位是原作怪癖，见文件头）。
+ * 也检查下装位，见文件头）。
  */
 function soiled_adjective(mask, poop_bit, pee_bit) {
   if (mask & poop_bit) {
@@ -493,8 +493,8 @@ function soiled_unusable(mask, poop_bit, pee_bit) {
 }
 
 /**
- * @COM110（COMF110:7-134）：穿脱衣服子菜单。1:1 的 INPUT 循环。
- * @returns {Promise<number>} 原作 RETURN 0（全部出口；引擎语义见文件头）
+ * com110：穿脱衣服子菜单。逐键输入循环。
+ * @returns {Promise<number>} 返回 0（全部出口；回合取消语义见文件头）
  */
 async function com110() {
   const target = era_flag.target;
@@ -526,7 +526,7 @@ async function com110() {
       com110_able5w(target, b),
     ];
 
-    // —— :52-135 子菜单（脱衣行一空格 / 穿衣行三空格，见文件头）——
+    // —— 子菜单（脱衣行一空格 / 穿衣行三空格，见文件头）——
     if (t[0]) {
       era.print(
         ` [0] - ${clothtype_special_text(target)}${
@@ -589,9 +589,9 @@ async function com110() {
     }
     era.print(' [100] - 算了');
 
-    const result = await era.input(); // （COMF110）
+    const result = await era.input(); // 选择结果用于下面的穿脱分支
 
-    // —— :142-319 着脱処理 ——
+    // —— 穿脱处理 ——
     if (result === 0 && laundry(target, 49)) {
       // 外せない特別コス（贞操带钥匙已丢）
       era.print(`${name}贞操带的钥匙丢掉了。`);
@@ -705,7 +705,7 @@ async function com110() {
       era.print(`${name}穿上了胸罩。`);
       set_worn(target, worn(target) | BIT_BRA);
     } else if (result === 4 && t[5]) {
-      // パンツ脱衣（弄脏位查下装 8/4 是原作怪癖，见文件头）
+      // 内裤脱衣（弄脏位检查下装 8/4，见文件头）
       const mask = era.get('tflag:45') || 0;
       era.print(`${name}把${soiled_adjective(mask, 8, 4)}内裤脱掉了。`);
       set_worn(target, worn(target) - BIT_PANTY);
@@ -732,8 +732,8 @@ async function com110() {
         return 0;
       }
     } else if (result === 9 && worn(target) !== 0) {
-      // 移动到撕破衣服；COMF110:313 的裸 PRINTL 落在菜单已收行
-      // 之后 → 真空行（#595）
+      // 移动到撕破衣服；菜单输出已经结束当前行，
+      // 此处再输出一个空行（#595）。
       era.print('');
       const ripped = await com111();
       if (ripped === 1) {
@@ -744,22 +744,22 @@ async function com110() {
       return 0;
     }
 
-    era.print(''); // COMF110:321 的真空行（各分支输出已收行——#595）
-    // GOTO INPUT_LOOP（:323）
+    era.print(''); // 各分支输出已结束当前行，再补一个空行（#595）
+    // 回到输入循环
   }
 }
 
 /**
- * @COM111（COMF111:7-154）：撕破衣服子菜单。COM110 的 [9] 移动过来；
+ * com111：撕破衣服子菜单，由 com110 的 [9] 调用；
  * RETURN 1 = 算了（COM110 据此退出）、0 = 返回穿脱/已处理。
- * @returns {Promise<number>} 原作 RETURN 0 / 1
+ * @returns {Promise<number>} 返回 0 / 1
  */
 async function com111() {
   const target = era_flag.target;
   const name = chara_callname(target);
 
   for (;;) {
-    era.print('撕破衣服'); // （COMF111）
+    era.print('撕破衣服'); // 撕破菜单标题
 
     standard_bits(target); // A・B 探测（L 判定不用 B，还原即止）
 
@@ -777,7 +777,7 @@ async function com111() {
       com111_able6l(target),
     ];
 
-    // —— :41-84 子菜单 ——
+    // —— 子菜单 ——
     if (l[0]) {
       era.print(` [10] - ${clothtype_special_text(target)}剥掉`);
     }
@@ -808,7 +808,7 @@ async function com111() {
 
     const result = await era.input();
 
-    // —— :91-157 引き裂き処理 ——
+    // —— 撕破处理 ——
     // 剥ぎ取れない特別コス（史莱姆/贞操带：被徒手撕破但撕不下来）
     if (
       result === 10 &&
@@ -892,22 +892,22 @@ async function com111() {
     // 撕完全裸 → 收尾退出
     if (worn(target) === 0) {
       era.print('（已经全裸，撕无可撕）');
-      // COMF111:161 的裸 PRINTL 落在 COMF111:160 已收行之后 → 真空行（#595）
+      // 前一条提示已结束当前行，此处再输出一个空行（#595）
       era.print('');
       await era.waitAnyKey();
       return 0;
     }
 
-    era.print(''); // COMF111:166 的真空行（撕破分支输出已收行——#595）
-    // GOTO INPUT_LOOP（:168）
+    era.print(''); // 撕破分支输出已结束当前行，再补一个空行（#595）
+    // 回到输入循环
   }
 }
 
 // ============================================================
-// @COM_ABLE110 / @COM_ABLE111（COMABLE.ERB:3662-3716）
+// com_able110 / com_able111：可用性检查
 // ============================================================
 
-/** @COM_ABLE110（:3662-3678）：着衣設定未开/无衣可穿/特殊调教装备中不可 */
+/** com_able110：着衣设定未开/无衣可穿/特殊调教装备中不可 */
 async function com_able110() {
   const target = era_flag.target;
   // 自动不可（CALLTRAIN 的自动回合标记）
@@ -941,7 +941,7 @@ async function com_able110() {
   return 1;
 }
 
-/** @COM_ABLE111（:3692-3716）：同 110，另加全裸不可 */
+/** com_able111：复用 com_able110，另加全裸不可 */
 async function com_able111() {
   const base = await com_able110();
   if (base === 0) {

@@ -16,10 +16,10 @@ export default [
     must_mention: 'CHECK_SPECIALSKIL 真身必须真的被调到',
   },
   {
-    desc: 'M11617 com-caress 的 :746 守卫删除（紧缚/失神仍出爱抚反应）',
+    desc: 'M11617 com-caress 的 紧缚/失神检查删除（仍出爱抚反应）',
     file: 'ere/system/train/com-caress.js',
     find: `  if (era.get(\`tequip:\${target}:44\`) || (era.get('tflag:899') || 0) > 1) {\n    return;\n  }`,
-    replace: '  // 变异：守卫删除（原作 :746 条件不满足时零输出）',
+    replace: '  // 变异：紧缚/失神检查删除（条件不满足时零输出）',
     tests: ['train-message'],
     must_mention: 'TEQUIP:44（紧缚）时不得输出爱抚反应',
   },
@@ -214,22 +214,22 @@ export default [
     must_mention: '结算表第 11 行',
   },
   {
-    desc: 'M39 COM_ABLE0 爱抚系过滤：FLAG:25 & 1 判据删掉',
+    desc: 'M39 able0 爱抚系过滤：FLAG:25 & 1 条件删掉',
     file: 'ere/system/train/com-caress.js',
     find: "com_able_family.register(0, async () => {\n  if ((era.get('flag:25') || 0) & 1) {\n    return 0;\n  }",
     replace: `com_able_family.register(0, async () => {
   // 变异：过滤判据删除`,
     tests: ['com-caress'],
-    must_mention: 'COM_ABLE0',
+    must_mention: '0 号可用性检查',
   },
   {
-    desc: 'M40 COM_ABLE0 决斗中判据删掉（TEQUIP:55）',
+    desc: 'M40 able0 决斗中条件删掉（TEQUIP:55）',
     file: 'ere/system/train/com-caress.js',
     find: '  if (era.get(`tequip:${era_flag.target}:55`)) {\n    return 0;\n  }\n  return 1;\n});',
     replace: `  return 1; // 变异：决斗判据删除
 });`,
     tests: ['com-caress'],
-    must_mention: 'COM_ABLE0',
+    must_mention: '0 号可用性检查',
   },
   {
     desc: 'M41 ABL:0 分档表错一格（1200 改 1201）',
@@ -248,11 +248,11 @@ export default [
     must_mention: '= 2 档',
   },
   {
-    desc: 'M43 初吻回避判据取反（CFLAG:16 === -1 改 !== -1）',
+    desc: 'M43 初吻回避条件取反（CFLAG:16 === -1 改 !== -1）',
     file: 'ere/system/train/com-caress.js',
-    find: '  if ((era.get(`cflag:${target}:16`) || 0) === -1) {\n    // 初吻未体験 → 回避接吻，效果减',
+    find: '  if ((era.get(`cflag:${target}:16`) || 0) === -1) {\n    // 初吻未体验 → 回避接吻，效果减',
     replace:
-      '  if ((era.get(`cflag:${target}:16`) || 0) !== -1) {\n    // 初吻未体験 → 回避接吻，效果减',
+      '  if ((era.get(`cflag:${target}:16`) || 0) !== -1) {\n    // 初吻未体验 → 回避接吻，效果减',
     tests: ['com-caress'],
     must_mention: '初吻未体验',
   },
@@ -349,7 +349,7 @@ export default [
     must_mention: '打屁股——恒等映射在此必红',
   },
   {
-    desc: 'M741 输入侧映射的越界兜底改成 0（空间外输入被误当爱抚执行）',
+    desc: 'M741 输入侧映射的越界缺省处理改成 0（空间外输入被误当爱抚执行）',
     file: 'ere/system/train/com-index.js',
     find: `  if (!Number.isInteger(idx) || idx < 0 || idx >= ORDERED_TRAIN_IDS.length) {
     return undefined;
@@ -415,7 +415,7 @@ export default [
     must_mention: '64 合成臂',
   },
   {
-    desc: 'M747 GET_ADV_COM 的缺失语义改 0（RETURN ARG 变 RETURN 0——无规则的指令被升格去 0 号）',
+    desc: 'M747 get_adv_com 的缺失语义改 0（RETURN ARG 变 RETURN 0——无规则的指令被升格去 0 号）',
     file: 'ere/system/train/com-adv.js',
     find: `  return adv_com_family.call(id, { whenMissing: id, args: [rule_rand] });`,
     replace: `  return adv_com_family.call(id, { whenMissing: 0, args: [rule_rand] }); // 变异`,
@@ -428,7 +428,7 @@ export default [
     find: `  const rule_rand = rand ?? ((n) => Math.floor(Math.random() * n));`,
     replace: `  const rule_rand = undefined; // 变异：随机源不注入`,
     tests: ['com-dispatch'],
-    must_mention: 'rand 必须以函数形态注入规则',
+    must_mention: 'rand 必须以函数形式注入规则',
   },
   {
     desc: 'M749 V_ABLE 的未成熟判定删（源注释与代码的出入处——照注释不照代码）',
@@ -609,7 +609,7 @@ export default [
     must_mention: 'PLAYER != MASTER → ASSIPLAY = 1',
   },
   {
-    desc: 'M772 MULTI_COMABLE 的 TRAINNAME 空判据删（高级 COM 可登记）',
+    desc: 'M772 multi_comable 的 TRAINNAME 空条件删（高级 COM 可登记）',
     file: 'ere/system/train/com-register.js',
     find: `  if ((era.get(\`traincommandname:\${id}\`) ?? '').length === 0) {
     return 0;
@@ -619,7 +619,7 @@ export default [
     must_mention: '高级 COM 84',
   },
   {
-    desc: 'M773 MULTI_COMABLE 的 TFLAG:224 包裹删（探测时索求抑制旗标不在场）',
+    desc: 'M773 multi_comable 的 TFLAG:224 包裹删（探测时索求抑制旗标不在场）',
     file: 'ere/system/train/com-register.js',
     find: `  game_train.索求口上抑制 = COMSEQ_ACTIVE;
   const able = await com_able_family.call(id, { whenMissing: 1 });
@@ -631,7 +631,7 @@ export default [
     must_mention: '探测时旗标必须是 555',
   },
   {
-    desc: 'M774 COMSEQ_SHOW 的 ×n 折叠删（连续同指令逐条展开）',
+    desc: 'M774 comseq_show 的 ×n 折叠删（连续同指令逐条展开）',
     file: 'ere/system/train/com-register.js',
     find: `    let times = 1;
     while (count < length - 1) {
@@ -650,7 +650,7 @@ export default [
     must_mention: '×3',
   },
   {
-    desc: 'M775 COMSEQ_SHOW 的（不可用）分支换成照印名字（不可用条目伪装可用）',
+    desc: 'M775 comseq_show 的（不可用）分支换成直接印名字（不可用条目伪装可用）',
     file: 'ere/system/train/com-register.js',
     find: `    if (able) {
       era.print(era.get(\`traincommandname:\${id}\`) ?? '');
@@ -662,7 +662,7 @@ export default [
     must_mention: '（不可用）',
   },
   {
-    desc: 'M776 COMSEQ_REGISTER 的重复指令周期模板换成常数 0（填充段全复制首条）',
+    desc: 'M776 comseq_register 的重复指令周期模板换成常数 0（填充段全复制首条）',
     file: 'ere/system/train/com-register.js',
     find: `        const template = era.get(\`flag:\${SLOT_BASE + (local0 % period)}\`) || 0;`,
     replace: `        const template = era.get(\`flag:\${SLOT_BASE}\`) || 0; // 变异：恒取首槽`,
@@ -670,7 +670,7 @@ export default [
     must_mention: '0, 6, 0, 6',
   },
   {
-    desc: 'M777 COMSEQ_REGISTER 的满 10 条边界放宽（<= 9 改 < 9——第 10 条后仍重画要输入）',
+    desc: 'M777 comseq_register 的满 10 条边界放宽（<= 9 改 < 9——第 10 条后仍重画要输入）',
     file: 'ere/system/train/com-register.js',
     find: `    local0 += 1;
     if (local0 <= 9) {
@@ -696,7 +696,7 @@ export default [
     must_mention: '未清',
   },
   {
-    desc: 'M779 COMSEQ_TRAIN 的预检查删（不可用条目照样执行）',
+    desc: 'M779 comseq_train 的预检查删（不可用条目照样执行）',
     file: 'ere/system/train/com-register.js',
     find: `    const able =
       DECLARED_TRAIN_IDS.includes(id) &&
@@ -710,12 +710,12 @@ export default [
     must_mention: '任何一条不可用即整段拒绝',
   },
   {
-    desc: 'M780 COMSEQ_TRAIN 的 PREVCOM 保存/恢复删（调用方语境被序列污染）',
+    desc: 'M780 comseq_train 的 PREVCOM 保存/恢复删（调用方语境被序列污染）',
     file: 'ere/system/train/com-register.js',
     find: '  era_flag.prevcom = prevcom_saved; // PREVCOM 恢复\n  return pending;',
     replace: `  return pending; // 变异：不恢复`,
     tests: ['com-register'],
-    must_mention: '序列后 PREVCOM 恢复原值',
+    must_mention: '序列后 prevcom 恢复原值',
   },
   {
     desc: 'M781 run_calltrain 尾部的 CALLTRAINEND 删（实行旗标不复位）',
@@ -724,10 +724,10 @@ export default [
   return undefined;`,
     replace: `  return undefined; // 变异：不回调 CALLTRAINEND`,
     tests: ['com-register'],
-    must_mention: 'CALLTRAINEND 复位',
+    must_mention: 'calltrainend 复位',
   },
   {
-    desc: 'M782 COMSEQ_TRAIN 的预检查 PREVCOM 推进删（探测时看到进函数原值）',
+    desc: 'M782 comseq_train 的预检查 PREVCOM 推进删（探测时看到进函数原值）',
     file: 'ere/system/train/com-register.js',
     find: '    sequence.push(id);\n    era_flag.prevcom = id;',
     replace: `    sequence.push(id); // 变异：不推进`,
@@ -735,7 +735,7 @@ export default [
     must_mention: '探测第 k 条时它是第 k-1 条',
   },
   {
-    desc: 'M783 COM_ORDER 的百合条件反（双方皆女被当百合外）',
+    desc: 'M783 com_order 的百合条件反（双方皆女被当百合外）',
     file: 'ere/system/train/com-order.js',
     find: `  if (p_talent(122) === 0 && talent(122) === 0) {`,
     replace: `  if (p_talent(122) !== 0 || talent(122) !== 0) { // 变异：条件反`,
@@ -743,7 +743,7 @@ export default [
     must_mention: '百合气质LV2(6)',
   },
   {
-    desc: 'M784 COM_ORDER 的刻印 T 系数恒 2（高姿态/低姿态的调节丢失）',
+    desc: 'M784 com_order 的刻印 T 系数恒 2（高姿态/低姿态的调节丢失）',
     file: 'ere/system/train/com-order.js',
     find: `  const t = talent(15) ? 4 : talent(17) ? 1 : 2;`,
     replace: `  const t = 2; // 变异：系数恒 2`,
@@ -751,7 +751,7 @@ export default [
     must_mention: 'T 系数 = 4',
   },
   {
-    desc: 'M785 COM_ORDER 的相性正值前置判据删（值 0 的未登场关系被当最差档）',
+    desc: 'M785 com_order 的相性正值前置条件删（值 0 的未登场关系被当最差档）',
     file: 'ere/system/train/com-order.js',
     find: `  if (relation > 0 && relation < 30) {`,
     replace: `  if (relation < 30) { // 变异：正值前置删除`,
@@ -759,7 +759,7 @@ export default [
     must_mention: '相性最差',
   },
   {
-    desc: 'M786 COM_ORDER 的 a 初值透传删（调用方累计被重置）',
+    desc: 'M786 com_order 的 a 初值透传删（调用方累计被重置）',
     file: 'ere/system/train/com-order.js',
     find: `async function com_order(a = 0, s = 0) {`,
     replace: `async function com_order(_a = 0, s = 0) {
@@ -896,7 +896,7 @@ export default [
     must_mention: '只有尿布自身',
   },
   {
-    desc: 'M804 TRAIN_MESSAGE_B 服装前缀的基本服装支删（位 28 判恒假）',
+    desc: 'M804 train_message_b 服装前缀的基本服装支删（位 28 判恒假）',
     file: 'ere/system/train/com-caress.js',
     find: '  } else if ((cloth_bits & 28) !== 0) {',
     replace: '  } else if (false) {',
@@ -904,7 +904,7 @@ export default [
     must_mention: '基本服装前缀（:33-35',
   },
   {
-    desc: 'M805 TRAIN_MESSAGE_B 触手支删（触手玩弄着 → 仔细爱抚着）',
+    desc: 'M805 train_message_b 触手支删（触手玩弄着 → 仔细爱抚着）',
     file: 'ere/system/train/com-caress.js',
     find: "    line += '触手玩弄着';",
     replace: "    line += ''; // （变异）",
@@ -912,7 +912,7 @@ export default [
     must_mention: '触手支（:42-43）',
   },
   {
-    desc: 'M806 TRAIN_MESSAGE_B 兽奸支删（狗的舌头舔舐着 → 空）',
+    desc: 'M806 train_message_b 兽奸支删（狗的舌头舔舐着 → 空）',
     file: 'ere/system/train/com-caress.js',
     find: "    line += '狗的舌头舔舐着';",
     replace: "    line += ''; // （变异）",
@@ -920,7 +920,7 @@ export default [
     must_mention: '兽奸支（:62-63）',
   },
   {
-    desc: 'M807 TRAIN_MESSAGE_B 魔兽支的种族分支改走 ELSE（E:307 判恒假）',
+    desc: 'M807 train_message_b 魔兽支的种族分支改走 ELSE（E:307 判恒假）',
     file: 'ere/system/train/com-caress.js',
     find: '  } else if (teq(88)) {\n    const species = e_get(307);\n    const action =',
     replace:
@@ -1166,7 +1166,7 @@ export default [
 
   // —— #216 J6 跨族共用子程序与失神、受精（锚定 find 串经脚本核唯一）——
   {
-    desc: 'M871 CONFIRM_CONDOM 已戴守卫删（重复消耗安全套）',
+    desc: 'M871 confirm_condom 已戴检查删（重复消耗安全套）',
     file: 'ere/system/train/com-condom.js',
     find: `    const wearing_master = chara(cid).event.主人避孕套;
     const wearing_assi = era.get(\`tequip:\${cid}:36\`) || 0;
@@ -1181,7 +1181,7 @@ export default [
     must_mention: '不重复消耗',
   },
   {
-    desc: 'M872 CONFIRM_CONDOM 每次问的 [0] 不消耗 ITEM:24',
+    desc: 'M872 confirm_condom 每次问的 [0] 不消耗 ITEM:24',
     file: 'ere/system/train/com-condom.js',
     find: '      if (result === 0) {\n        game.train.安全套 -= 1;',
     replace: `      if (result === 0) {
@@ -1199,13 +1199,13 @@ export default [
     must_mention: '消耗一枚、主人位 35',
   },
   {
-    desc: 'M874 CONFIRM_CONDOM 的 RESTART 删（改设定后直接放行，不走自动用段）',
+    desc: 'M874 confirm_condom 的 RESTART 删（改设定后直接放行，不走自动用段）',
     file: 'ere/system/train/com-condom.js',
     find: "      if (result === 3) {\n        era.print('今后有套就用。');\n        era.set(`cflag:${cid}:61`, 1);\n        continue; // RESTART\n      }",
     replace:
       "      if (result === 3) {\n        era.print('今后有套就用。');\n        era.set(`cflag:${cid}:61`, 1);\n        return 1; // 变异：RESTART 删\n      }",
     tests: ['com-condom'],
-    must_mention: 'RESTART 后走自动用',
+    must_mention: '改设后重走自动用',
   },
   {
     desc: 'M875 笨魔王条款翻转（无套时技巧 < 5 也问）',
@@ -1216,7 +1216,7 @@ export default [
     must_mention: '直接插入（笨魔王条款',
   },
   {
-    desc: 'M876 CONFIRM_CONDOM2 的主人设定写到 TARGET 行',
+    desc: 'M876 confirm_condom2 的主人设定写到 TARGET 行',
     file: 'ere/system/train/com-condom.js',
     find: '      } else if (result === 1) {\n        era.set(`cflag:${MASTER}:61`, 2);',
     replace: `      } else if (result === 1) {
@@ -1225,7 +1225,7 @@ export default [
     must_mention: 'MASTER 的 CFLAG:61 = 2',
   },
   {
-    desc: 'M877 COM20 的基础值表 SP 化（1500/1600/1800/2500/3200/4000）',
+    desc: 'M877 com20 的基础值表 SP 化（1500/1600/1800/2500/3200/4000）',
     file: 'ere/system/train/com-vaginasex.js',
     find: '  if (com === 20 || com === 21 || com === 90) {\n    // 正常位、背后位、乳内\n    skill_base(SKILL_BASE_HI);',
     replace:
@@ -1292,7 +1292,7 @@ export default [
   {
     desc: 'M882 膣内射精旗的置位条件反转（无套才漏标）',
     file: 'ere/system/train/com-vaginasex.js',
-    find: "    if (!era_flag.assiplay && chara(cid).event.主人避孕套 === 0) {\n      era.set('tflag:38', 2); // 膣内射精（主人・无套）",
+    find: "    if (!era_flag.assiplay && chara(cid).event.主人避孕套 === 0) {\n      era.set('tflag:38', 2); // 阴道内射精（主人・无套）",
     replace: `    if (!era_flag.assiplay && chara(cid).event.主人避孕套 !== 0) {
       era.set('tflag:38', 2); // 变异：条件反转`,
     tests: ['com-vaginasex'],
@@ -1324,15 +1324,15 @@ export default [
   {
     desc: 'M886 EXTRA 的日文残留退回（性交经验＋１ → 性交経験＋１，#60 简体锁）',
     file: 'ere/system/train/com-vaginasex.js',
-    find: "  era.print('性交经验＋１'); // （原文 経験，#60 归一）",
+    find: "  era.print('性交经验＋１'); // 提示按 #60 使用简体",
     replace: `  era.print('性交経験＋１'); // 变异：退回日文`,
     tests: ['com-vaginasex'],
     must_mention: '归一简体',
   },
   {
-    desc: 'M887 COM27（後背位）错加顺从乘率（原文此位无）',
+    desc: 'M887 com27（背后位）错加顺从乘率（此位本无）',
     file: 'ere/system/train/com-analsex.js',
-    find: '  } else if (com === 27) {\n    // 後背位肛交（技巧のみ——顺从表不在原作此位）\n    skill_base([2700, 2800, 2900, 3100, 3200, 3300]);',
+    find: '  } else if (com === 27) {\n    // 後背位肛交（技巧のみ——此位不乘顺从表）\n    skill_base([2700, 2800, 2900, 3100, 3200, 3300]);',
     replace:
       '  } else if (com === 27) {\n    // 後背位肛交\n    skill_base([2700, 2800, 2900, 3100, 3200, 3300]);\n    b = times(b, abl_rate(cid, 10, OBED_STRONG));',
     tests: ['com-analsex'],
@@ -1351,7 +1351,7 @@ export default [
     must_mention: 'A 版润滑',
   },
   {
-    desc: 'M889 肛内异常妊娠的 TALENT:340 判据删（恒置 3）',
+    desc: 'M889 肛内异常妊娠的 TALENT:340 条件删（恒置 3）',
     file: 'ere/system/train/com-analsex.js',
     find: `  const anal_pregnancy = (heavy) => {
     if (era.get(\`cflag:\${cid}:109\`)) {
@@ -1586,15 +1586,15 @@ export default [
     must_mention: '仅剩位 64',
   },
   {
-    desc: 'M991 COM110 的 [9] 移轨行删（移动到[撕破衣服]）',
+    desc: 'M991 com110 的 [9] 移轨行删（移动到[撕破衣服]）',
     file: 'ere/system/train/com-cloth.js',
     find: `      era.print(' [9] - 移动到[撕破衣服]');`,
     replace: `      // 变异：移轨行删`,
     tests: ['com-cloth'],
-    must_mention: 'golden train-natural:212-221 的逐字形状',
+    must_mention: '移动到[撕破衣服]',
   },
   {
-    desc: 'M992 ABLE2T 上装位判据错（位 4 改查位 8）',
+    desc: 'M992 able2t 上装位条件错（位 4 改查位 8）',
     file: 'ere/system/train/com-cloth.js',
     find: `function com110_able2t(cid) {
   if (main_type(cid) >= 201) {
@@ -1623,7 +1623,7 @@ export default [
     must_mention: '201-250 裙型 → 位 4+8',
   },
   {
-    desc: 'M994 W:5 洗濯判据错（CFLAG:43 改查 44）',
+    desc: 'M994 W:5 洗濯条件错（CFLAG:43 改查 44）',
     file: 'ere/system/train/com-cloth.js',
     find: `  if ((b & BIT_PANTY) === 0) {
     return 0;
@@ -1642,7 +1642,7 @@ export default [
     must_mention: 'CFLAG:43 != 0 时 W:5 不出现',
   },
   {
-    desc: 'M995 COM111 撕胸罩的 CFLAG:44 写改裸寻址（不走 stronghold 门面）',
+    desc: 'M995 com111 撕胸罩的 CFLAG:44 写改裸寻址（不走 stronghold 门面）',
     file: 'ere/system/train/com-cloth.js',
     find: '      chara(target).stronghold.胸罩状态 = -3; // CFLAG:44 = -3',
     replace: `      era.set(\`cflag:\${target}:44\`, -3); // 变异：跨域裸写`,
@@ -1650,7 +1650,7 @@ export default [
     must_mention: 'cflag:44',
   },
   {
-    desc: 'M996 COM111 史莱姆/贞操带徒手守卫删（剥ぎ取れない支直落 L:0 撕破）',
+    desc: 'M996 com111 史莱姆/贞操带徒手检查删（剥ぎ取れない支直落 L:0 撕破）',
     file: 'ere/system/train/com-cloth.js',
     find: `    if (
       result === 10 &&
@@ -1668,11 +1668,11 @@ export default [
     must_mention: '撕不动直接退出',
   },
   {
-    desc: 'M997 COM111 撕完全裸收尾删（不退出改重绘菜单）',
+    desc: 'M997 com111 撕完全裸收尾删（不退出改重绘菜单）',
     file: 'ere/system/train/com-cloth.js',
     find: `    if (worn(target) === 0) {
       era.print('（已经全裸，撕无可撕）');
-      // COMF111:161 的裸 PRINTL 落在 COMF111:160 已收行之后 → 真空行（#595）
+      // 前一条提示已结束当前行，此处再输出一个空行（#595）
       era.print('');
       await era.waitAnyKey();
       return 0;
@@ -1682,7 +1682,7 @@ export default [
     must_mention: '撕完全裸 → RETURN 0',
   },
   {
-    desc: 'M998 COM111 的 [100] 行空格形态改坏（] 与 - 间补空格）',
+    desc: 'M998 com111 的 [100] 行空格写法改坏（] 与 - 间补空格）',
     file: 'ere/system/train/com-cloth.js',
     find: `    era.print(' [100]- 算了');`,
     replace: `    era.print(' [100] - 算了'); // 变异：空格形态`,
@@ -1690,23 +1690,23 @@ export default [
     must_mention: '] 与 - 间无空格',
   },
   {
-    desc: 'M999 COM110 脱衣菜单行空格形态改坏（一空格删成顶格）',
+    desc: 'M999 com110 脱衣菜单行空格写法改坏（一空格删成顶格）',
     file: 'ere/system/train/com-cloth.js',
     find: `      era.print(\` [1] - \${clothtype_main2_text(target)}上半身脱掉\`);`,
     replace: `      era.print(\`[1] - \${clothtype_main2_text(target)}上半身脱掉\`); // 变异：空格形态`,
     tests: ['com-cloth'],
-    must_mention: 'golden train-natural:212-221 的逐字形状',
+    must_mention: ' [1] - 紧身衣＆裙甲上半身脱掉',
   },
   {
-    desc: 'M1000 COM_ABLE110 的着衣設定判据删（FLAG:37）',
+    desc: 'M1000 able110 的着衣设定条件删（FLAG:37）',
     file: 'ere/system/train/com-cloth.js',
     find: "  // 着衣設定を使ってない\n  if ((era.get('flag:37') || 0) === 0) {\n    return 0;\n  }",
     replace: `  // 变异：着衣設定判据删`,
     tests: ['com-cloth'],
-    must_mention: '八条判据各挡一条',
+    must_mention: '八条判断条件各挡一条',
   },
   {
-    desc: 'M1001 COM_ABLE111 的全裸判据删',
+    desc: 'M1001 able111 的全裸条件删',
     file: 'ere/system/train/com-cloth.js',
     find: '  // 全裸だとダメ\n  if (worn(era_flag.target) === 0) {\n    return 0;\n  }',
     replace: `  // 变异：全裸判据删`,
@@ -1722,7 +1722,7 @@ export default [
     must_mention: '非裙型措辞',
   },
   {
-    desc: 'M1003 COM111 特别服装撕破的废弃态写错（-3 改 -2）',
+    desc: 'M1003 com111 特别服装撕破的废弃态写错（-3 改 -2）',
     file: 'ere/system/train/com-cloth.js',
     find: '      set_laundry(target, 47, -3); // CFLAG:47 = -3（破り取られている）',
     replace: `      set_laundry(target, 47, -2); // 变异：废弃态值错`,
@@ -1730,7 +1730,7 @@ export default [
     must_mention: '废弃态 -3',
   },
   {
-    desc: 'M1004 ABLE1W 上下两半守卫删（洗涤中两半也可重穿整件）',
+    desc: 'M1004 able1w 上下两半检查删（洗涤中两半也可重穿整件）',
     file: 'ere/system/train/com-cloth.js',
     find: `  if (worn(cid) & BIT_UPPER || laundry(cid, 45) !== 0) {
     if (worn(cid) & (BIT_SKIRT | BIT_TROUSERS) || laundry(cid, 46) !== 0) {
@@ -1742,7 +1742,7 @@ export default [
     must_mention: '上下两半都不可用时 W:1 不出现',
   },
   {
-    desc: 'M1005 ABLE5T 和服支删（202 下为裙也可脱内裤）',
+    desc: 'M1005 able5t 和服支删（202 下为裙也可脱内裤）',
     file: 'ere/system/train/com-cloth.js',
     find: `  if (main_type(cid) === 202 && worn(cid) & BIT_SKIRT) {
     return 0; // 和服下为裙时脱内裤不可
@@ -1750,25 +1750,25 @@ export default [
   return 1;
 }
 
-/** @COM110_ABLE5W（:522-540）：パンツ装着 */`,
+/** com110_able5w：内裤穿衣 */`,
     replace: `  return 1;
 }
 
-/** @COM110_ABLE5W（:522-540）：パンツ装着 */`,
+/** com110_able5w：内裤穿衣 */`,
     tests: ['com-cloth'],
     must_mention: '202 && 位 8 → T:5 = 0',
   },
   {
-    desc: 'M1006 贞操带钥匙分支判据坏（CFLAG:49 恒假，提示行不出现）',
+    desc: 'M1006 贞操带钥匙分支条件坏（CFLAG:49 恒假，提示行不出现）',
     file: 'ere/system/train/com-cloth.js',
     find: `    if (result === 0 && laundry(target, 49)) {`,
     replace: `    if (result === 0 && false) {
       // 变异：钥匙分支判据坏`,
     tests: ['com-cloth'],
-    must_mention: ':143 的提示行',
+    must_mention: '提示行',
   },
   {
-    desc: 'M1007 ABLE0T 的标准装位判定错（未设定特别服装也放行）',
+    desc: 'M1007 able0t 的标准装位判定错（未设定特别服装也放行）',
     file: 'ere/system/train/com-cloth.js',
     find: `function com110_able0t(cid) {
   if (special_type(cid) === 0) {
@@ -1821,7 +1821,7 @@ export default [
   },
   // —— #223（J13：SM 系指令族 40-49）——
   {
-    desc: `M950 COM40 苦痛档首档错（300 改 30——PAIN_LADDERS 的打屁股表）`,
+    desc: `M950 com40 苦痛档首档错（300 改 30——PAIN_LADDERS 的打屁股表）`,
     file: 'ere/system/train/com-sm.js',
     find: `  40: [300, 500, 800, 1200, 1800],`,
     replace: `  40: [30, 500, 800, 1200, 1800],`,
@@ -1829,7 +1829,7 @@ export default [
     must_mention: `SOURCE:6 = 300`,
   },
   {
-    desc: `M951 COM40 LOSEBASE 体力扣错（80 改 8）`,
+    desc: `M951 com40 LOSEBASE 体力扣错（80 改 8）`,
     file: 'ere/system/train/com-sm.js',
     find: `  add_lose(target, 0, 80);
   add_lose(target, 1, 40);`,
@@ -1847,15 +1847,15 @@ export default [
     must_mention: `TFLAG:30 += 1（主人亲自 + 抖M ≥ 1）`,
   },
   {
-    desc: `M953 爱情经验的抖M/受虐狂门删（40/41/42/44 的 maso_gate 恒真）`,
+    desc: `M953 爱情经验的抖M/受虐狂检查删（40/41/42/44 的 maso_gate 恒真）`,
     file: 'ere/system/train/com-sm.js',
     find: `  const gate_ok = maso_gate ? abl(cid, 21) >= 3 || tal(cid, 88) !== 0 : true;`,
-    replace: `  const gate_ok = true; // 变异：门删`,
+    replace: `  const gate_ok = true; // 变异：受虐狂检查删`,
     tests: [`com-sm`],
-    must_mention: `@COM40：LOSEBASE、SOURCE:12/14`,
+    must_mention: `com40：LOSEBASE、SOURCE:12/14`,
   },
   {
-    desc: `M954 COM43 的 S10 三连链：抖M 首档系数错（0.8 改 1）`,
+    desc: `M954 com43 的 S10 三连链：抖M 首档系数错（0.8 改 1）`,
     file: 'ere/system/train/com-sm.js',
     find: `function maso_factor(cid) {
   const m = abl(cid, 21);
@@ -1866,18 +1866,18 @@ export default [
   return m === 0
     ? 1`,
     tests: [`com-sm`],
-    must_mention: `@COM43：欲情×顺从×抖M×倒错`,
+    must_mention: `com43：欲情×顺从×抖M×倒错`,
   },
   {
-    desc: `M955 COM43 胆怯不翻倍（S14 的胆怯臂删）`,
+    desc: `M955 com43 胆怯不翻倍（S14 的胆怯分支删）`,
     file: 'ere/system/train/com-sm.js',
     find: '  set_src(target, 14, tal(target, 10) ? times(500, 2) : 500);',
-    replace: `  set_src(target, 14, 500); // 变异：胆怯臂删`,
+    replace: `  set_src(target, 14, 500); // 变异：胆怯分支删`,
     tests: [`com-sm`],
     must_mention: `胆怯翻倍 SOURCE:14`,
   },
   {
-    desc: `M956 COM44 触手紧缚不清触手计数（T:0 = 0 删）`,
+    desc: `M956 com44 触手紧缚不清触手计数（T:0 = 0 删）`,
     file: 'ere/system/train/com-sm.js',
     find: `  set_tq(target, 44, 1 - tq(target, 44));
   if (tq(target, 90)) {
@@ -1885,18 +1885,18 @@ export default [
   }`,
     replace: `  set_tq(target, 44, 1 - tq(target, 44));`,
     tests: [`com-sm`],
-    must_mention: `@COM44：S10 = 800×链`,
+    must_mention: `com44：S10 = 800×链`,
   },
   {
-    desc: `M957 COM45 六格直填错（S13 = 150 改 15）`,
+    desc: `M957 com45 六格直填错（S13 = 150 改 15）`,
     file: 'ere/system/train/com-sm.js',
     find: '  set_src(target, 13, 150); // SOURCE:13 屈从',
     replace: `  set_src(target, 13, 15); // 变异`,
     tests: [`com-sm`],
-    must_mention: `@COM45：六格 SOURCE 直填`,
+    must_mention: `com45：六格 SOURCE 直填`,
   },
   {
-    desc: `M958 COM46 的 ABL:21 整组覆写删（S13 保留 ABL:3 档的 1400）`,
+    desc: `M958 com46 的 ABL:21 整组覆写删（S13 保留 ABL:3 档的 1400）`,
     file: 'ere/system/train/com-sm.js',
     find: `  const wide = MASO_WIDE_LADDER[Math.min(abl(target, 21), 5)];
   set_src(target, 6, wide[0]);
@@ -1909,16 +1909,16 @@ export default [
     must_mention: `S13 被 ABL:21 档覆写`,
   },
   {
-    desc: `M959 COM46 润滑档的 S6 += 删（80/500/300/120/100 加算不发生）`,
+    desc: `M959 com46 润滑档的 S6 += 删（80/500/300/120/100 加算不发生）`,
     file: 'ere/system/train/com-sm.js',
-    find: '    src(target, 6) +\n      (palam_below(target, 3, 1)\n        ? 800\n        : palam_below(target, 3, 2)\n          ? 500\n          : palam_below(target, 3, 3)\n            ? 300\n            : palam_below(target, 3, 4)\n              ? 120\n              : 100),\n  );\n\n  // S2 再乘 欲情（:102-113）× 顺从（:115-128，肛门系表）',
+    find: '    src(target, 6) +\n      (palam_below(target, 3, 1)\n        ? 800\n        : palam_below(target, 3, 2)\n          ? 500\n          : palam_below(target, 3, 3)\n            ? 300\n            : palam_below(target, 3, 4)\n              ? 120\n              : 100),\n  );\n\n  // S2 再乘欲情 × 顺从（肛门系表）\n  set_src(target, 2, times(src(target, 2), lust_factor(target)));\n  set_src(target, 2, times(src(target, 2), anal_obey_factor(target)));\n\n  // 体型三连（S6）\n',
     replace:
-      '    src(target, 6) + 0),\n  );\n\n  // S2 再乘 欲情（:102-113）× 顺从（:115-128，肛门系表）',
+      '    src(target, 6) + 0),\n  );\n\n  // S2 再乘欲情 × 顺从（肛门系表）\n  set_src(target, 2, times(src(target, 2), lust_factor(target)));\n  set_src(target, 2, times(src(target, 2), anal_obey_factor(target)));\n\n  // 体型三连（S6）\n',
     tests: [`com-sm`],
     must_mention: `ABL:3 档 → S2/S13 基础`,
   },
   {
-    desc: `M960 COM46 肛门钝感不乘（anal_sense_factor 直通）`,
+    desc: `M960 com46 肛门钝感不乘（anal_sense_factor 直通）`,
     file: 'ere/system/train/com-sm.js',
     find: `function anal_sense_factor(cid, v) {
   if (tal(cid, 105)) {
@@ -1929,25 +1929,35 @@ export default [
     return times(v, 1.5);
   }`,
     tests: [`com-sm`],
-    must_mention: `@COM46：润滑档`,
+    must_mention: `com46：润滑档`,
   },
   {
-    desc: `M961 COM46 重贞操的 S13/3 删`,
+    desc: `M961 com46 重贞操的 S13/3 删`,
     file: 'ere/system/train/com-sm.js',
     find:
+      '  // 肛门钝感/敏感（S6/S13/S14 三格共乘）\n' +
+      '  set_src(target, 6, anal_sense_factor(target, src(target, 6)));\n' +
+      '  set_src(target, 13, anal_sense_factor(target, src(target, 13)));\n' +
+      '  set_src(target, 14, anal_sense_factor(target, src(target, 14)));\n\n' +
+      '  // 看重贞操的处女（EXP:0 == 0 && TALENT:30）→ S13 /= 3\n' +
       '  if ((era.get(' +
       '`' +
       'exp:${target}:0' +
       '`' +
-      ') || 0) === 0 && tal(target, 30)) {\n    set_src(target, 13, Math.floor(src(target, 13) / 3));\n  }\n\n  // —— 経験上昇（:157-161）——',
-    replace: `  // 变异：重贞操删
+      ') || 0) === 0 && tal(target, 30)) {\n    set_src(target, 13, Math.floor(src(target, 13) / 3));\n  }\n\n  // —— 经验上升 ——',
+    replace: `  // 肛门钝感/敏感（S6/S13/S14 三格共乘）
+  set_src(target, 6, anal_sense_factor(target, src(target, 6)));
+  set_src(target, 13, anal_sense_factor(target, src(target, 13)));
+  set_src(target, 14, anal_sense_factor(target, src(target, 14)));
 
-  // —— 経験上昇（:157-161）——`,
+  // 变异：重贞操删
+
+  // —— 经验上升 ——`,
     tests: [`com-sm`],
-    must_mention: `@COM46：润滑档`,
+    must_mention: `com46：润滑档`,
   },
   {
-    desc: `M962 COM46 初次排泄门错（CFLAG:4 == 0 改 == 9）`,
+    desc: `M962 com46 初次排泄条件错（CFLAG:4 == 0 改 == 9）`,
     file: 'ere/system/train/com-sm.js',
     find:
       '  if (tq(target, 46) && (era.get(' +
@@ -1965,7 +1975,7 @@ export default [
     must_mention: `初次 +1`,
   },
   {
-    desc: `M963 COM46 触手插入的 A 口污垢置位删`,
+    desc: `M963 com46 触手插入的 A 口污垢置位删`,
     file: 'ere/system/train/com-sm.js',
     find:
       '  if (tq(target, 46) === 0 && tq(target, 90)) {\n    era.set(' +
@@ -1982,7 +1992,7 @@ export default [
     must_mention: `插入回合 + 触手`,
   },
   {
-    desc: `M964 COM46 着衣弄脏调用删（soiling_cloth_no2 不再发生）`,
+    desc: `M964 com46 着衣弄脏调用删（soiling_cloth_no2 不再发生）`,
     file: 'ere/system/train/com-sm.js',
     find: `  if (tq(target, 46) && era.get('flag:37')) {
     await soiling_cloth_no2(target);
@@ -1992,7 +2002,7 @@ export default [
     must_mention: `弄脏位 &1|&2（内裤洗濯+处理）`,
   },
   {
-    desc: `M965 COM47 解除无修正的提前返回删（脱衣回合也吃气力扣）`,
+    desc: `M965 com47 解除无修正的提前返回删（脱衣回合也吃气力扣）`,
     file: 'ere/system/train/com-sm.js',
     find: `  if (tq(target, 47)) {
     set_tq(target, 47, 0);
@@ -2002,10 +2012,10 @@ export default [
     set_tq(target, 47, 0);
   } // 变异：提前返回删`,
     tests: [`com-sm`],
-    must_mention: `@COM47：已穿着`,
+    must_mention: `com47：已穿着`,
   },
   {
-    desc: `M966 COM48 抖M配对链 S0 系数错（1.2 改 1）`,
+    desc: `M966 com48 抖M配对链 S0 系数错（1.2 改 1）`,
     file: 'ere/system/train/com-sm.js',
     find: `const MASO_PAIR_LADDER = [
   [1, 1],
@@ -2014,10 +2024,10 @@ export default [
   [1, 1],
   [1, 0.8],`,
     tests: [`com-sm`],
-    must_mention: `@COM48：ABL:0 档与抖M配对链`,
+    must_mention: `com48：ABL:0 档与抖M配对链`,
   },
   {
-    desc: `M967 COM48 被虐快乐首档错（+3 落到 +1）`,
+    desc: `M967 com48 被虐快乐首档错（+3 落到 +1）`,
     file: 'ere/system/train/com-sm.js',
     find: "  if (tal(target, 88) === 1 || (abl(target, 11) >= 3 && abl(target, 21) >= 3)) {\n    era.print('被虐快乐经验+3'); // PRINTFORML %EXPNAME:30%+3\n    chara(target).dungeon.被虐快乐经验 += 3;\n  } else if",
     replace: `  if (false) {
@@ -2025,7 +2035,7 @@ export default [
     chara(target).dungeon.被虐快乐经验 += 3;
   } else if`,
     tests: [`com-sm`],
-    must_mention: `@COM48：ABL:0 档与抖M配对链`,
+    must_mention: `com48：ABL:0 档与抖M配对链`,
   },
   {
     desc: `M968 精通的关系门槛错（150 改 1500）`,
@@ -2046,7 +2056,7 @@ export default [
     must_mention: `未熟解除`,
   },
   {
-    desc: `M969 COM49 本体的经验档整阈值化（EXPLV[3]/2 改 EXPLV[3]——半阈值是源形）`,
+    desc: `M969 com49 本体的经验档整阈值化（EXPLV[3]/2 改 EXPLV[3]——半阈值是原写法）`,
     file: 'ere/system/train/com-sm.js',
     find: `  const e = era.get(\`exp:\${target}:1\`) || 0;
   const exp_idx =
@@ -2079,7 +2089,7 @@ export default [
   set_src(target, 2, times(src(target, 2), ANAL_EXP_LADDER[exp_idx][0]));
   set_src(target, 6, ANAL_EXP_LADDER[exp_idx][1]);`,
     tests: [`com-sm`],
-    must_mention: `@COM49：ABL:3/EXP:1 双梯`,
+    must_mention: `com49：ABL:3/EXP:1 双梯`,
   },
   {
     desc: `M970 SM 系过滤位错（FLAG:25 & 16 改 & 1）`,
@@ -2090,10 +2100,10 @@ export default [
     must_mention: `SM 过滤`,
   },
   {
-    desc: `M971 鞭的道具持有门删（无鞭也可执行）`,
+    desc: `M971 鞭的道具持有检查删（无鞭也可执行）`,
     file: 'ere/system/train/com-sm.js',
     find: '  if (!has_item(10)) {\n    return 0;\n  }',
-    replace: `  // 变异：持有门删`,
+    replace: `  // 变异：持有检查删`,
     tests: [`com-sm`],
     must_mention: `无鞭（ITEM:10 == 0）`,
   },
@@ -2106,10 +2116,10 @@ export default [
     must_mention: `失神挡、解除随时、要 ITEM:5`,
   },
   {
-    desc: `M973 绳子的调教者技巧门删（技巧 0 也可绑）`,
+    desc: `M973 绳子的调教者技巧检查删（技巧 0 也可绑）`,
     file: 'ere/system/train/com-sm.js',
     find: '  if (abl(era_flag.player, 12) <= 2) {\n    return 0; // 調教者の技巧\n  }',
-    replace: `  // 变异：技巧门删`,
+    replace: `  // 变异：技巧检查删`,
     tests: [`com-sm`],
     must_mention: `技巧不足（ABL:PLAYER:12 = 0）`,
   },
@@ -2119,7 +2129,7 @@ export default [
     find: '  if (tq(cid, 98)) {\n    return 0; // 触手口辱中\n  }',
     replace: `  // 变异：触手口辱挡删`,
     tests: [`com-sm`],
-    must_mention: `@COM_ABLE45：触手口辱挡`,
+    must_mention: `45 号可用性检查`,
   },
   {
     desc: `M975 灌肠的肛门经验门槛错（<= 25 改 <= 0）`,
@@ -2135,18 +2145,18 @@ export default [
     must_mention: `EXP:1 = 25 不可（要 > 25）`,
   },
   {
-    desc: `M976 拘束衣的助手限定门删（主人也可穿）`,
+    desc: `M976 拘束衣的助手限定检查删（主人也可穿）`,
     file: 'ere/system/train/com-sm.js',
     find: '  if (era_flag.assiplay === 0 || era_flag.assi < 1) {\n    return 0; // 助手じゃなきゃダメ\n  }',
     replace: `  // 变异：助手限定删`,
     tests: [`com-sm`],
-    must_mention: `@COM_ABLE47：只能助手穿`,
+    must_mention: `47 号可用性检查：只能助手穿`,
   },
   {
-    desc: `M977 践踏的对象性别门删（女性也可被踩）`,
+    desc: `M977 践踏的对象性别检查删（女性也可被踩）`,
     file: 'ere/system/train/com-sm.js',
     find: '  if (!tal(cid, 121) && !tal(cid, 122)) {\n    return 0; // 対象が男人か扶她\n  }',
-    replace: `  // 变异：性别门删`,
+    replace: `  // 变异：性别检查删`,
     tests: [`com-sm`],
     must_mention: `温妮（女）不可`,
   },
@@ -2164,7 +2174,7 @@ export default [
     find: '  if (tq(cid, 13) || tq(cid, 19) || tq(cid, 46)) {\n    return 0; // 肛门振动棒/肛珠/普通の浣腸使用中\n  }',
     replace: `  // 变异：互斥删`,
     tests: [`com-sm`],
-    must_mention: `@COM_ABLE49：要 ITEM:21`,
+    must_mention: `49 号可用性检查：要 ITEM:21`,
   },
   {
     desc: `M980 B40 着ぐるみ支删（永远走普通支）`,
@@ -2181,7 +2191,7 @@ export default [
     must_mention: `着ぐるみ支`,
   },
   {
-    desc: `M981 B46 失神中仍打抖M档（TFLAG:899 门删）`,
+    desc: `M981 B46 失神中仍打抖M档（TFLAG:899 检查删）`,
     file: 'ere/system/train/com-sm.js',
     find:
       '    era.print(' +
@@ -2199,12 +2209,12 @@ export default [
     must_mention: `失神中无抖M档文本`,
   },
   {
-    desc: `M982 A40-42 的失神门删（&&/|| 同优先级的三指令共钳被破坏）`,
+    desc: `M982 A40-42 的失神检查删（&&/|| 同优先级的三指令共钳被破坏）`,
     file: 'ere/system/train/com-sm.js',
-    find: "  // 的第三臂 + TFLAG:899 失神门（> 1 时不进本分支——整支跳过，\n  // 与原作 ELSEIF 不命中同形）\n  if ((era.get('tflag:899') || 0) > 1) {\n    return;\n  }",
-    replace: `  // 变异：失神门删`,
+    find: "  // TFLAG:899 > 1 时跳过整个反应分支，\n  // 40/41/42 三条指令共用这一失神检查。\n  if ((era.get('tflag:899') || 0) > 1) {\n    return;\n  }",
+    replace: `  // 变异：失神检查删`,
     tests: [`com-sm`],
-    must_mention: `SELECTCOM = 40 失神中无反应文本`,
+    must_mention: `selectcom = 40 失神中无反应文本`,
   },
   {
     desc: `M983 A40-42 的灌肠塞排泄段删`,
@@ -2233,7 +2243,7 @@ export default [
     must_mention: `装着灌肠塞时的排泄段`,
   },
   {
-    desc: `M984 CASE 40 同调教者门删（换人也升格）`,
+    desc: `M984 CASE 40 同调教者检查删（换人也升格）`,
     file: 'ere/system/train/com-sm.js',
     find: `  const same_trainer =
     (era_flag.assiplay && (era.get('tflag:50') || 0)) ||
@@ -2241,12 +2251,12 @@ export default [
   if (!same_trainer) {
     return 40; // 未命中 → RETURN ARG
   }`,
-    replace: `  // 变异：同调教者门删`,
+    replace: `  // 变异：同调教者检查删`,
     tests: [`com-sm`],
     must_mention: `调教者换了人 → 不升格`,
   },
   {
-    desc: `M985 CASE 40 第二臂删（上上回合 + 挿入Ｇスポ/子宮口 不再升格）`,
+    desc: `M985 CASE 40 第二分支删（上上回合 + 挿入Ｇスポ/子宮口 不再升格）`,
     file: 'ere/system/train/com-sm.js',
     find: `  const hit =
     [21, 131, 133, 134].includes(prev) ||
@@ -2257,7 +2267,7 @@ export default [
     must_mention: `同调教者 + 上回合后背位族`,
   },
   {
-    desc: `M987 EQUIP_COM43 的 UP:10 直写删`,
+    desc: `M987 equip_com43 的 UP:10 直写删`,
     file: 'ere/system/train/com-sm.js',
     find: `  add_up(target, 5, a);
   add_up(target, 10, src(target, 14));`,
@@ -2266,7 +2276,7 @@ export default [
     must_mention: `UP:10 += SOURCE:14（累加后）`,
   },
   {
-    desc: `M988 EQUIP_COM46 的 S14 += B 改 += C（源 :328 的 B 是有意互异）`,
+    desc: `M988 equip_com46 的 S14 += B 改 += C（这格的 B 与累加格有意互异）`,
     file: 'ere/system/train/com-sm.js',
     find: `  set_src(target, 2, src(target, 2) + a);
   set_src(target, 13, src(target, 13) + b_base);
@@ -2277,10 +2287,10 @@ export default [
   set_src(target, 6, src(target, 6) + c);
   set_src(target, 14, src(target, 14) + c);`,
     tests: [`com-sm`],
-    must_mention: `@EQUIP_COM46：EXP:1 半阈值档`,
+    must_mention: `equip_com46：EXP:1 半阈值档`,
   },
   {
-    desc: `M989 EQUIP_COM49 的经验档半阈值化（整阈值是全库唯一一处源形）`,
+    desc: `M989 equip_com49 的经验档半阈值化（整阈值是全库唯一一处原写法）`,
     file: 'ere/system/train/com-sm.js',
     find: `  const exp_idx =
     e < EXPLV[1]
@@ -2310,7 +2320,7 @@ export default [
     must_mention: `整阈值 EXP 档`,
   },
   {
-    desc: 'M1010 COM_ABLE200 的观战券守卫删（无券也放行）',
+    desc: 'M1010 able200 的观战券检查删（无券也放行）',
     file: 'ere/system/train/com-colosseum.js',
     find: "  // 无观战券（ITEM:35）不可\n  if ((era.get('item:35') || 0) === 0) {\n    return 0;\n  }",
     replace: '  // 变异：观战券守卫删',
@@ -2318,7 +2328,7 @@ export default [
     must_mention: '无观战券不可',
   },
   {
-    desc: 'M1011 COM_ABLE200 的互斥位照判删（死斗场中触手也可开）',
+    desc: 'M1011 able200 的互斥位检查删除（死斗场中触手也可开）',
     file: 'ere/system/train/com-colosseum.js',
     find: '  if (tequip(90)) {\n    return 0;\n  }',
     replace: '  // 变异：触手互斥删',
@@ -2326,7 +2336,7 @@ export default [
     must_mention: '死斗场中与触手互斥',
   },
   {
-    desc: 'M1012 COM_ABLE201 的助手亲自出战判定翻转',
+    desc: 'M1012 able201 的助手亲自出战判定翻转',
     file: 'ere/system/train/com-colosseum.js',
     find: '  // 助手亲自出战才有\n  if (era_flag.player !== era_flag.assi) {\n    return 0;\n  }',
     replace: '  // 变异：助手出战判定删',
@@ -2334,7 +2344,7 @@ export default [
     must_mention: '主人调教',
   },
   {
-    desc: 'M1013 COM_ABLE 等级门槛的 < 改 <=（恰在门槛也拒绝）',
+    desc: 'M1013 able 等级门槛的 < 改 <=（恰在门槛也拒绝）',
     file: 'ere/system/train/com-colosseum.js',
     find: '    if ((era.get(`cflag:${era_flag.player}:9`) || 0) < min_level) {',
     replace:
@@ -2343,7 +2353,7 @@ export default [
     must_mention: '等级恰在门槛',
   },
   {
-    desc: 'M1014 COM200 进入支的胆怯/感情淡薄缩放删',
+    desc: 'M1014 com200 进入支的胆怯/感情淡薄缩放删',
     file: 'ere/system/train/com-colosseum.js',
     find: '    let a = 100; // A = 100\n    if (era.get(`talent:${target}:10`)) {\n      a = times(a, 2.0); // 胆怯\n    }\n    if (era.get(`talent:${target}:22`)) {\n      a = times(a, 0.6); // 感情淡薄\n    }',
     replace: '    let a = 100; // 变异：素质缩放删',
@@ -2351,7 +2361,7 @@ export default [
     must_mention: '×2 / 感情淡薄 ×0.6',
   },
   {
-    desc: 'M1015 COM200 的 UP:10（恐怖）写删',
+    desc: 'M1015 com200 的 UP:10（恐怖）写删',
     file: 'ere/system/train/com-colosseum.js',
     find: '  era.add(`delta:${target}:10`, a * 20); // UP:10（恐怖）',
     replace: '  // 变异：UP:10 写删',
@@ -2359,12 +2369,12 @@ export default [
     must_mention: 'UP:10（恐怖）',
   },
   {
-    desc: 'M1016 COM200 退出支的观战券扣减删',
+    desc: 'M1016 com200 退出支的观战券扣减删',
     file: 'ere/system/train/com-colosseum.js',
     find: "    era.add('item:35', -1); // item 表 34-35 属主 train，直写",
     replace: '    // 变异：观战券不扣',
     tests: ['com-colosseum'],
-    must_mention: ':15 ITEM:35 -= 1',
+    must_mention: 'ITEM:35 -= 1',
   },
   {
     desc: 'M1017 B 的 200 分支进入支删（落到无操作也不出文本）',
@@ -2401,15 +2411,15 @@ export default [
     must_mention: 'SELECTCOM 206 无新增',
   },
   {
-    desc: 'M1021 COM201 的非助手出战双保险删',
+    desc: 'M1021 com201 的非助手出战双保险删',
     file: 'ere/system/train/com-colosseum.js',
-    find: '  // 非助手亲自出战不可执行（与 COM_ABLE201 双保险）\n  if (assi !== era_flag.player) {\n    return 0;\n  }',
+    find: '  // 非助手亲自出战不可执行，与 201 号可用性检查共同限制\n  if (assi !== era_flag.player) {\n    return 0;\n  }',
     replace: '  // 变异：双保险删',
     tests: ['com-colosseum'],
-    must_mention: ':10-11 双保险',
+    must_mention: '双保险',
   },
   {
-    desc: 'M1022 COM201 反击支的助手气力扣减删（门面写不落）',
+    desc: 'M1022 com201 反击支的助手气力扣减删（门面写不落）',
     file: 'ere/system/train/com-colosseum.js',
     find: '    chara(assi).dungeon.体力 -= slave_point;\n    chara(assi).dungeon.气力 -= slave_point * 10;',
     replace: '    // 变异：助手体力气力不扣',
@@ -2417,15 +2427,15 @@ export default [
     must_mention: '直接扣助手体力气力',
   },
   {
-    desc: 'M1023 COM201 的助手退却气力线（1/5）改 1/6',
+    desc: 'M1023 com201 的助手退却气力线（1/5）改 1/6',
     file: 'ere/system/train/com-colosseum.js',
     find: '      idiv(era.get(`maxbase:${era_flag.assi}:1`) || 0, 5)',
     replace: '      idiv(era.get(`maxbase:${era_flag.assi}:1`) || 0, 6)',
     tests: ['com-colosseum'],
-    must_mention: ':56-57 退则 → 暂时放过（RETURN 1）',
+    must_mention: '助手退却后暂时放过（RETURN 1），不再进入凌辱菜单',
   },
   {
-    desc: 'M1024 COM201 凌辱收入算式的 ×5 改 ×4',
+    desc: 'M1024 com201 凌辱收入算式的 ×5 改 ×4',
     file: 'ere/system/train/com-colosseum.js',
     find: "      era.add('tflag:402', lose(target, 0) * 5 + rand(com_result));\n    } else if (result === 2 && can_vagina) {",
     replace:
@@ -2434,13 +2444,13 @@ export default [
     must_mention: '收入 = LOSEBASE:0 × 5',
   },
   {
-    desc: 'M1025 COM201 的 999 暂时放过改 RETURN 1',
+    desc: 'M1025 com201 的 999 暂时放过改 RETURN 1',
     file: 'ere/system/train/com-colosseum.js',
     find: '      await era.waitAnyKey();\n      return 0;\n    } else {\n      continue;',
     replace:
       '      await era.waitAnyKey();\n      return 1; // 变异：放过不作废回合\n    } else {\n      continue;',
     tests: ['com-colosseum'],
-    must_mention: ':105-107 暂时放过 RETURN 0',
+    must_mention: '暂时放过 RETURN 0',
   },
   {
     desc: 'M1026 怪物开战损耗的等级缩放删（203 的 level 倍率）',
@@ -2484,12 +2494,12 @@ export default [
     must_mention: '死亡斗场收入 × 5',
   },
   {
-    desc: 'M1032 COM206 拡張经验的初回异常经验判据删',
+    desc: 'M1032 com206 扩张经验的初回异常经验条件删',
     file: 'ere/system/train/com-colosseum.js',
     find: '    if ((era.get(`exp:${target}:52`) || 0) === 0 && era_flag.selectcom === 21) {',
     replace: '    if (false && era_flag.selectcom === 21) {',
     tests: ['com-colosseum'],
-    must_mention: '初回异常经验各 +1',
+    must_mention: '首次异常经验各 +1',
   },
   {
     desc: 'M1033 射精量的技巧分档表改坏（档 2 值 1600 改 1500）',
@@ -2533,7 +2543,7 @@ export default [
     must_mention: '2880 < 10000 → E = 0',
   },
   {
-    desc: 'M1038 COM207 的 JUMP COM51 尾调用改不设 SELECTCOM',
+    desc: 'M1038 com207 的 JUMP com51 尾调用改不设 SELECTCOM',
     file: 'ere/system/train/com-colosseum.js',
     find: 'function call_insult_com(com) {\n  era_flag.selectcom = com;\n  return com_family.call(com, { whenMissing: 0 });\n}',
     replace:
@@ -2547,15 +2557,15 @@ export default [
     find: '  if ((era.get(`base:${target}:1`) || 0) > 0) {',
     replace: '  if ((era.get(`base:${target}:1`) || 0) > 1) {',
     tests: ['com-colosseum'],
-    must_mention: '気力有余（1 > 0）→ 胜利 0',
+    must_mention: '气力有余（1 > 0）→ 胜利 0',
   },
   {
-    desc: 'M1041 ARENA_SLAVE_POINT 的気力折减删（点数不随気力降）',
+    desc: 'M1041 arena_slave_point 的気力折减删（点数不随気力降）',
     file: 'ere/system/train/com-colosseum.js',
     find: '  b *= era.get(`base:${a}:1`) || 0;\n  b = idiv(b, era.get(`maxbase:${a}:1`) || 0);',
     replace: '  // 变异：気力折减删',
     tests: ['com-colosseum'],
-    must_mention: '按気力比例折减',
+    must_mention: '按气力比例折减',
   },
   {
     desc: 'M1042 train-loop 的 RETURN 0 分支删（作废回合照结算）',
@@ -2563,7 +2573,7 @@ export default [
     find: '  if (com_result === 0) {\n    return { missing: false, cancelled: true };\n  }',
     replace: '  // 变异：RETURN 0 分支删',
     tests: ['com-colosseum', 'com-cloth'],
-    must_mention: '作废回合不得进 @SOURCE_CHECK',
+    must_mention: '作废不执行 source-check 结算',
   },
   {
     desc: 'M1043 SHOW_EQUIP_2 整段调用删（#390 起真身在 chara-equip-status.js）',
@@ -2574,48 +2584,48 @@ export default [
     must_mention: '[死斗场决斗中]',
   },
   {
-    desc: 'M1044 COM_ABLE207 的死斗场守卫删（不在场也可用→输入 100 触发指令）',
+    desc: 'M1044 able207 的死斗场检查删（不在场也可用→输入 100 触发指令）',
     file: 'ere/system/train/com-colosseum.js',
-    find: '    if ((era.get(`tequip:${era_flag.target}:55`) || 0) === 0) {\n      return 0; // 死斗场判定（:4699 等）\n    }',
+    find: '    if ((era.get(`tequip:${era_flag.target}:55`) || 0) === 0) {\n      return 0; // 死斗场判定\n    }',
     replace: '    // 变异：死斗场守卫删',
     tests: ['com-colosseum'],
     must_mention: '#214 撞号消解',
   },
 
   {
-    desc: 'M910 COM_ABLE1 的下装着衣判据删（位 16 + FLAG:37）',
+    desc: 'M910 able1 的下装着衣条件删（位 16 + FLAG:37）',
     file: 'ere/system/train/com-caress.js',
-    find: '  if (cloth_blocked(target, 17)) {\n    return 0; // パンツか上着下・ズボン\n  }',
+    find: '  if (cloth_blocked(target, 17)) {\n    return 0; // 内裤或下装\n  }',
     replace: '  // 变异：着衣判据删除',
     tests: ['com-caress'],
-    must_mention: 'パンツ/下装在身',
+    must_mention: '内裤/下装在身',
   },
   {
-    desc: 'M911 COM_ABLE2 助手双低放行删（顺从 ≤3 且百合 ≤3 → RETURN 1 源逐字）',
+    desc: 'M911 able2 助手双低放行删（顺从 ≤3 且百合 ≤3 → 直接 RETURN 1）',
     file: 'ere/system/train/com-caress.js',
     find: '    if (\n      (era.get(`abl:${assi}:10`) || 0) <= 3 &&\n      (era.get(`abl:${assi}:22`) || 0) <= 3\n    ) {\n      return 1;\n    }',
     replace: '    // 变异：双低放行删除',
     tests: ['com-caress'],
-    must_mention: '双 ≤3 放行（源逐字）',
+    must_mention: '双 ≤3 放行',
   },
   {
-    desc: 'M912 COM3 判定不过仍进 B 文（A < V 的 RETURN 0 删）',
+    desc: 'M912 com3 判定不过仍进 B 文（A < V 的 RETURN 0 删）',
     file: 'ere/system/train/com-caress.js',
-    find: '  // 実行できない\n  if (a < v) {\n    return 0;\n  }',
-    replace: '  // 実行できない\n  if (false) {\n    return 0;\n  }',
+    find: '  // 不可执行\n  if (a < v) {\n    return 0;\n  }',
+    replace: '  // 不可执行\n  if (false) {\n    return 0;\n  }',
     tests: ['com-caress'],
     must_mention: 'RETURN 0 且不进 B 文',
   },
   {
-    desc: 'M913 COM4 调教者经验写删（CFLAG:22 += 1）',
+    desc: 'M913 com4 调教者经验写删（CFLAG:22 += 1）',
     file: 'ere/system/train/com-caress.js',
-    find: '  era.add(`cflag:${player}:22`, 1); // 調教者的経験',
+    find: '  era.add(`cflag:${player}:22`, 1); // 调教者的经验',
     replace: '  // 变异：经验写删除',
     tests: ['com-caress'],
     must_mention: 'ABL:0 分档',
   },
   {
-    desc: 'M914 COM6 兽奸判定修正删（A -= 15 的数值怪癖，打印值仍 (10)）',
+    desc: 'M914 com6 兽奸判定修正删（A -= 15 的数值怪癖，打印值仍 (10)）',
     file: 'ere/system/train/com-caress.js',
     find: '    if (tequip(89) && !talent(136)) {\n      minus();\n      a -= 15;',
     replace: '    if (tequip(89) && !talent(136)) {\n      // 变异：修正删除',
@@ -2623,7 +2633,7 @@ export default [
     must_mention: '兽奸',
   },
   {
-    desc: 'M915 COM7 处女罚则删（A -= 20 → 判定恒过）',
+    desc: 'M915 com7 处女罚则删（A -= 20 → 判定恒过）',
     file: 'ere/system/train/com-caress.js',
     find: '  if (talent(0)) {\n    minus();\n    a -= 20;',
     replace: '  if (talent(0)) {\n    // 变异：罚则删除',
@@ -2631,7 +2641,7 @@ export default [
     must_mention: '-20 使判定不过',
   },
   {
-    desc: 'M916 COM8 最末档乘法对象改 S1（源 :72 乘 SOURCE:2 的逐字怪癖）',
+    desc: 'M916 com8 最末档乘法对象改 S1（乘 SOURCE:2 的逐字怪癖）',
     file: 'ere/system/train/com-caress.js',
     find: '  } else {\n    set(2, times(src(2), 1.8));\n    set(13, times(src(13), 1.5));\n    set(6, 0);\n  }',
     replace:
@@ -2640,7 +2650,7 @@ export default [
     must_mention: '乘 SOURCE:2 而非 SOURCE:1',
   },
   {
-    desc: 'M917 COM9 深入档判据删（EXP:1 ≥ 50 且 ABL:3/欲情双门槛）',
+    desc: 'M917 com9 深入档条件删（EXP:1 ≥ 50 且 ABL:3/欲情双门槛）',
     file: 'ere/system/train/com-caress.js',
     find: "${exp_a >= 50 && deep ? '、舌头伸入到洞里去、有节奏地搅动' : ''}",
     replace: "${deep ? '、舌头伸入到洞里去、有节奏地搅动' : ''}",
@@ -2677,7 +2687,7 @@ export default [
     file: 'ere/system/train/com-caress.js',
     find: 'for (const id of [4, 6, 7, 8, 9]) {\n  train_message_a_family.register(id, async () => 0);\n}',
     replace:
-      'for (const id of [4, 6, 7, 8, 9]) {\n  train_message_a_family.register(id, () => {\n    era.print(`@TRAIN_MESSAGE_A ${id}（变异：占位行）`);\n    return 0;\n  });\n}',
+      'for (const id of [4, 6, 7, 8, 9]) {\n  train_message_a_family.register(id, () => {\n    era.print(`TRAIN_MESSAGE_A ${id}（变异：占位行）`);\n    return 0;\n  });\n}',
     tests: ['com-caress'],
     must_mention: '不落占位行',
   },
@@ -2755,7 +2765,7 @@ export default [
     must_mention: '角色堕落长跑',
   },
   {
-    desc: 'M1057 E2E: 回路第 3 环破环——COM_ABLE 放行切断（灌肠判定顺从欲望露出门槛改高到 999 永不放行）',
+    desc: 'M1057 E2E: 回路第 3 环破环——able 放行切断（灌肠判定顺从欲望露出门槛改高到 999 永不放行）',
     file: 'ere/system/train/com-sm.js',
     find: '  if (abl(cid, 10) + abl(cid, 11) + abl(cid, 17) < 10) {',
     replace: '  if (abl(cid, 10) + abl(cid, 11) + abl(cid, 17) < 999) {',
@@ -2772,10 +2782,10 @@ export default [
   },
   // —— #221 J11：COM20–29 性交系 ——
   {
-    desc: 'M1103 COM22 爱慕三格乘数漏乘（SOURCE:7/16 不翻倍）（#221）',
+    desc: 'M1103 com22 爱慕三格乘数漏乘（SOURCE:7/16 不翻倍）（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  const extra = player_skill_source(cid, false);
-  // 原作 SIF EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，原样保留。
+  // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))
     multiply_source(cid, [
@@ -2784,7 +2794,7 @@ export default [
       [16, 2],
     ]);`,
     replace: `  const extra = player_skill_source(cid, false);
-  // 原作 SIF EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，原样保留。
+  // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))
     multiply_source(cid, [
@@ -2795,7 +2805,7 @@ export default [
     must_mention: '成瘾与恭顺不能漏乘',
   },
   {
-    desc: 'M1104 COM26–28 欲情段错乘情爱格（SOURCE:3）（#221）',
+    desc: 'M1104 com26–28 欲情段错乘情爱格（SOURCE:3）（#221）',
     file: 'ere/system/train/com-sex.js',
     find: '    set_src(cid, 13, times(src(cid, 13), row[1]));',
     replace: '    set_src(cid, 3, times(src(cid, 3), row[1]));',
@@ -2803,7 +2813,7 @@ export default [
     must_mention: '欲情段乘肛门快感与屈从格',
   },
   {
-    desc: 'M1105 COM29 顺从段错用非肛交两列倍率（#221）',
+    desc: 'M1105 com29 顺从段错用非肛交两列倍率（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  if (anal) {
     set_src(cid, 2, times(src(cid, 2), row[0]));
@@ -2816,7 +2826,7 @@ export default [
     must_mention: '顺从段三格各取独立倍率',
   },
   {
-    desc: 'M1107 GET_ADV_COM CASE20 SP 命中时提前清 TFLAG:42（#221）',
+    desc: 'M1107 get_adv_com CASE20 SP 命中时提前清 TFLAG:42（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  if (
     same_trainer() &&
@@ -2840,7 +2850,7 @@ export default [
     must_mention: 'SP 保留旗',
   },
   {
-    desc: 'M1108 COM24 低欲情档错作 LV1 放行（#221）',
+    desc: 'M1108 com24 低欲情档错作 LV1 放行（#221）',
     file: 'ere/system/train/com-sex.js',
     find: `  return below(cid, 5, 1)
     ? 0
@@ -3053,7 +3063,7 @@ export default [
     must_mention: 'cflag:666==0 的角色必须跳过',
   },
   {
-    desc: 'M1230 COM_ABLE80 调教者男性器判定删除（#226）',
+    desc: 'M1230 able80 调教者男性器判定删除（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  if (!tal(player, 121) && !tal(player, 122)) return 0; // 调教者需男人/扶她\n  if (tequip(target, 45)) return 0; // 口枷使用中',
     replace:
@@ -3062,7 +3072,7 @@ export default [
     must_mention: '调教者未配男性器',
   },
   {
-    desc: 'M1231 COM_ABLE85 利尿剂/漏尿癖改判为需同时具备（#226）',
+    desc: 'M1231 able85 利尿剂/漏尿癖改判为需同时具备（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  if (!tequip(target, 22) && !tal(target, 57)) return 0; // 需利尿剂或漏尿癖',
     replace:
@@ -3071,7 +3081,7 @@ export default [
     must_mention: '需利尿剂或漏尿癖',
   },
   {
-    desc: 'M1232 COM_ABLE87 顺从门槛 3 误抄为 2（#226）',
+    desc: 'M1232 able87 顺从门槛 3 误抄为 2（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  if (abl(target, 10) < 3) return 0;\n  if (tequip(target, 11)) return 0;',
     replace:
@@ -3080,7 +3090,7 @@ export default [
     must_mention: '顺从不足 3',
   },
   {
-    desc: 'M1233 COM_ABLE90 需超乳判定删除（#226）',
+    desc: 'M1233 able90 需超乳判定删除（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  if (!tal(target, 119)) return 0; // 需超乳\n  return 1;\n}',
     replace: '  return 1; // 变异：需超乳判定删除\n}',
@@ -3088,7 +3098,7 @@ export default [
     must_mention: '需超乳',
   },
   {
-    desc: 'M1234 COM80 死判定块的 SOURCE:8 汚れ常量 100 误改 200（#226）',
+    desc: 'M1234 com80 死判定块的 SOURCE:8 汚れ常量 100 误改 200（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  set(8, 100);\n  if (abl(target, 16) === 0) {',
     replace:
@@ -3097,7 +3107,7 @@ export default [
     must_mention: 'SOURCE:8 简化为 100',
   },
   {
-    desc: 'M1235 COM81 私处经验增量 25 误抄为 10（#226）',
+    desc: 'M1235 com81 私处经验增量 25 误抄为 10（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: "  if (tal(target, 99)) set(6, src(6) * 0.8); // 魁梧\n  if (tal(target, 100)) set(6, src(6) * 2.0); // 小柄体形\n  if (tal(target, 135)) set(6, src(6) * 4.0); // 未熟\n\n  if (!tal(target, 122) && !tal(player, 122)) {\n    era.print(`${name_of('expname', 40)}+1`);\n    era.add(`exp:${target}:40`, 1);\n  } else if (tal(target, 122) && tal(player, 122)) {\n    era.print(`${name_of('expname', 41)}+1`);\n    era.add(`exp:${target}:41`, 1);\n  }\n\n  chara(target).dungeon.私处经验 += 25;",
     replace:
@@ -3106,7 +3116,7 @@ export default [
     must_mention: '拳交，私处经验',
   },
   {
-    desc: 'M1236 COM83 肛门扩张经验（EXP:53）累加行删除（#226）',
+    desc: 'M1236 com83 肛门扩张经验（EXP:53）累加行删除（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: "  chara(target).dungeon.肛门扩张经验 += 3;\n  era.print('肛门扩张经验＋3');",
     replace: "  era.print('肛门扩张经验＋3'); // 变异：EXP:53 累加行删除",
@@ -3114,7 +3124,7 @@ export default [
     must_mention: '肛门扩张经验',
   },
   {
-    desc: 'M1237 COM_ABLE83 男人判定挡删除（#226）',
+    desc: 'M1237 able83 男人判定挡删除（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  if (tal(target, 122)) return 0;\n  if (exp(target, 0) < 150 || exp(target, 1) < 150) return 0;',
     replace:
@@ -3123,15 +3133,15 @@ export default [
     must_mention: '男人挡',
   },
   {
-    desc: 'M1238 COM84 显式回填 SELECTCOM=84 删除（#226）',
+    desc: 'M1238 com84 显式回填 SELECTCOM=84 删除（#226）',
     file: 'ere/system/train/com-hardcore.js',
-    find: "  era.print('刺激Ｇ点');\n  era_flag.selectcom = 84; // 原作显式 SELECTCOM = 84（升格抵达时回填号位）",
+    find: "  era.print('刺激Ｇ点');\n  era_flag.selectcom = 84; // 升格抵达时回填号位",
     replace: "  era.print('刺激Ｇ点'); // 变异：显式回填删除",
     tests: ['com-hardcore'],
-    must_mention: '原作显式 SELECTCOM',
+    must_mention: '显式回填 selectcom',
   },
   {
-    desc: 'M1239 COM85 放尿经验增量 2 误抄为 1（#226）',
+    desc: 'M1239 com85 放尿经验增量 2 误抄为 1（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: "  era.print(`${name_of('expname', 31)}＋２`);\n  chara(target).system.放尿经验 += 2;",
     replace:
@@ -3140,7 +3150,7 @@ export default [
     must_mention: '放尿经验经',
   },
   {
-    desc: 'M1240 COM87 取环位运算 cflag7 - p 误写为 cflag7 | p（#226）',
+    desc: 'M1240 com87 取环位运算 cflag7 - p 误写为 cflag7 | p（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  if (cflag7 & p) {\n    era.set(`cflag:${target}:7`, cflag7 - p);',
     replace:
@@ -3149,7 +3159,7 @@ export default [
     must_mention: '乳头位已清',
   },
   {
-    desc: 'M1241 COM88 使役 PLAY 开关切换判定反转（#226）',
+    desc: 'M1241 com88 使役 PLAY 开关切换判定反转（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  if (tequip(target, 88)) {\n    era.set(`tequip:${target}:88`, 0);\n  } else {\n    era.set(`tequip:${target}:88`, 1);\n  }',
     replace:
@@ -3158,7 +3168,7 @@ export default [
     must_mention: '开关切换',
   },
   {
-    desc: 'M1242 COM90 乳内插入旗标（CFLAG:113）赋值删除（#226）',
+    desc: 'M1242 com90 乳内插入旗标（CFLAG:113）赋值删除（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  era.set(`cflag:${target}:113`, 1); // 乳房挿入フラグ\n  await com_ejac_player_sex();',
     replace: '  await com_ejac_player_sex(); // 变异：乳房插入旗标赋值删除',
@@ -3166,7 +3176,7 @@ export default [
     must_mention: '乳房插入旗标',
   },
   {
-    desc: 'M1243 EQUIP_COM89 尾段 T 收尾清零删除，跨回合残留（#226）',
+    desc: 'M1243 equip_com89 尾段 T 收尾清零删除，跨回合残留（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: "  chara(target).dungeon.兽奸经验 += t_final;\n  era.set('t:0', 0);",
     replace:
@@ -3175,7 +3185,7 @@ export default [
     must_mention: '尾段清零共享变量',
   },
   {
-    desc: 'M1244 EQUIP_COM89 GOTO END_EJAC 默认 E 误设为 1（#226）',
+    desc: 'M1244 equip_com89 共同尾段默认 E 误设为 1（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  let e = 0;\n  if ((era.get(`maxbase:${player_master}:4`) || 0) !== 0) {',
     replace:
@@ -3184,7 +3194,7 @@ export default [
     must_mention: 'E 默认值 0',
   },
   {
-    desc: 'M1245 EQUIP_COM89 GOTO END_EJAC 误跳过 TFLAG:16 尾段写入（#226）',
+    desc: 'M1245 equip_com89 射精路径误跳过 TFLAG:16 尾段写入（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: "  game.event.犬射精或处刑口上 = e;\n  const t_final = era.get('t:0') || 0;",
     replace:
@@ -3193,7 +3203,7 @@ export default [
     must_mention: 'E 默认值 0',
   },
   {
-    desc: 'M1246 GET_ADV_COM CASE 80 上回合是 3P 判据删除（#226）',
+    desc: 'M1246 get_adv_com CASE 80 上回合是 3P 条件删除（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: '  const prev = era_flag.prevcom;\n  if (prev === 64) {',
     replace:
@@ -3202,7 +3212,7 @@ export default [
     must_mention: '上回合是 3P',
   },
   {
-    desc: 'M1247 TRAIN_MESSAGE_B90 从真实无输出改为打印文本（#226）',
+    desc: 'M1247 train_message_b90 从真实无输出改为打印文本（#226）',
     file: 'ere/system/train/com-hardcore.js',
     find: 'train_message_b_family.register(90, async () => 0);',
     replace:
@@ -3219,7 +3229,7 @@ export default [
     must_mention: '主启动图注册重度调教系',
   },
   {
-    desc: 'M1190 COM51 药物经验五档首档偏移（EXP:57=0 错落下一档）',
+    desc: 'M1190 com51 药物经验五档首档偏移（EXP:57=0 错落下一档）',
     file: 'ere/system/train/com-special.js',
     find: `function drug_exp_level(value) {
   if (value < EXPLV[1]) return 0;`,
@@ -3229,7 +3239,7 @@ export default [
     must_mention: '调合知识、药物经验与成瘾状态',
   },
   {
-    desc: 'M1191 EQUIP_COM53 首 tick 改为直接录帧',
+    desc: 'M1191 equip_com53 首 tick 改为直接录帧',
     file: 'ere/system/train/com-special.js',
     find: '  if (frame === 0) {\n    chara(cid).train.录像时间 += 1; // 首 tick 不记入录像\n  } else if (frame <= video_max) {',
     replace: `  if (frame === 0) {
@@ -3240,7 +3250,7 @@ export default [
     must_mention: '首个持续 tick 不录帧',
   },
   {
-    desc: 'M1192 EQUIP_COM53 充能上限 5 改 6（第六次不关机）',
+    desc: 'M1192 equip_com53 充能上限 5 改 6（第六次不关机）',
     file: 'ere/system/train/com-special.js',
     find: '      if (chara(cid).train.水晶球充能次数 <= 5) {',
     replace: '      if (chara(cid).train.水晶球充能次数 <= 6) {',
@@ -3248,7 +3258,7 @@ export default [
     must_mention: '充能先注册按钮，成功时双扣资金，选择停止时清充能',
   },
   {
-    desc: 'M1193 COM54 野外露出经验标志守卫删（重复取得异常经验）',
+    desc: 'M1193 com54 野外露出经验标志检查删（重复取得异常经验）',
     file: 'ere/system/train/com-special.js',
     find: `  if (!chara(cid).train.野外露出经验) {
     era.print('异常经验＋１');`,
@@ -3258,7 +3268,7 @@ export default [
     must_mention: '首次开启记录野外露出经验',
   },
   {
-    desc: 'M1194 COM55 气力损耗 10 改为 0',
+    desc: 'M1194 com55 气力损耗 10 改为 0',
     file: 'ere/system/train/com-special.js',
     find: `  era.print('什么都不做');
   add_lose(cid, 1, 10);`,
@@ -3268,7 +3278,7 @@ export default [
     must_mention: '放置PLAY',
   },
   {
-    desc: 'M1195 COM56 歌唱经验实际值改为显示值（原作差 1 消失）',
+    desc: 'M1195 com56 歌唱经验实际值改为显示值（差 1 消失）',
     file: 'ere/system/train/com-special.js',
     find: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 3;',
     replace: '    chara(cid).train.歌唱经验 += gain + abl(cid, 71) - 2;',
@@ -3276,15 +3286,15 @@ export default [
     must_mention: '显示 +6，实际加 E+ABL-3 = 5',
   },
   {
-    desc: 'M1196 COM57 爱情经验露出门槛 3 降为 2',
+    desc: 'M1196 com57 爱情经验露出门槛 3 降为 2',
     file: 'ere/system/train/com-special.js',
     find: '    abl(cid, 17) >= 3 &&',
     replace: '    abl(cid, 17) >= 2 &&',
     tests: ['com-special'],
-    must_mention: 'COM57：开关、爱情经验与持续效果',
+    must_mention: 'com57：开关、爱情经验与持续效果',
   },
   {
-    desc: 'M1197 COM58 关闭时先清浴室再清淋浴',
+    desc: 'M1197 com58 关闭时先清浴室再清淋浴',
     file: 'ere/system/train/com-special.js',
     find: '  if (chara(cid).train.浴室PLAY) {\n    if (chara(cid).train.淋浴中) chara(cid).train.淋浴中 = 0; // 必须先清淋浴\n    chara(cid).train.浴室PLAY = 0;',
     replace: `  if (chara(cid).train.浴室PLAY) {
@@ -3294,7 +3304,7 @@ export default [
     must_mention: '关闭时必须先清淋浴，再清浴室位',
   },
   {
-    desc: 'M1198 COM59 新妻主人经验的爱慕条件删',
+    desc: 'M1198 com59 新妻主人经验的爱慕条件删',
     file: 'ere/system/train/com-special.js',
     find: '  if (tal(cid, 85)) game.train.主人经验 += 20;',
     replace: '  // 变异：爱慕条件删',
@@ -3302,7 +3312,7 @@ export default [
     must_mention: '主人经验四条件',
   },
   {
-    desc: 'M1199 COM_ABLE50 器具过滤守卫删',
+    desc: 'M1199 able50 器具过滤检查删',
     file: 'ere/system/train/com-special.js',
     find: '    game.train.指令过滤 & 2 ||',
     replace: '    false ||',
@@ -3310,7 +3320,7 @@ export default [
     must_mention: '器具过滤、药物抗性、连续利尿各自拦截',
   },
   {
-    desc: 'M1200 COM_ABLE51 抗药性守卫删',
+    desc: 'M1200 able51 抗药性检查删',
     file: 'ere/system/train/com-special.js',
     find: '  if (tal(cid, 56) || tq(cid, 55)) return 0;',
     replace: '  if (tq(cid, 55)) return 0;',
@@ -3318,7 +3328,7 @@ export default [
     must_mention: '器具过滤、药物抗性、连续利尿各自拦截',
   },
   {
-    desc: 'M1201 COM_ABLE52 连续利尿剂守卫删',
+    desc: 'M1201 able52 连续利尿剂检查删',
     file: 'ere/system/train/com-special.js',
     find: '  if (chara(cid).system.利尿剂 || tq(cid, 59) || tq(cid, 55)) return 0;',
     replace: '  if (tq(cid, 59) || tq(cid, 55)) return 0;',
@@ -3326,23 +3336,23 @@ export default [
     must_mention: '器具过滤、药物抗性、连续利尿各自拦截',
   },
   {
-    desc: 'M1202 COM_ABLE53 索求口上抑制守卫删',
+    desc: 'M1202 able53 索求口上抑制检查删',
     file: 'ere/system/train/com-special.js',
     find: '  if (game.train.索求口上抑制 === 555) return 0;',
     replace: '  // 变异：索求口上抑制守卫删',
     tests: ['com-special'],
-    must_mention: '录像解除随时、野外门槛、死斗与失神门',
+    must_mention: '53–56 号可用性检查',
   },
   {
-    desc: 'M1203 COM_ABLE54 顺从抖M双门槛降为 2',
+    desc: 'M1203 able54 顺从抖M双门槛降为 2',
     file: 'ere/system/train/com-special.js',
     find: '(abl(cid, 10) <= 2 && abl(cid, 21) <= 2)',
     replace: '(abl(cid, 10) <= 1 && abl(cid, 21) <= 1)',
     tests: ['com-special'],
-    must_mention: '录像解除随时、野外门槛、死斗与失神门',
+    must_mention: '53–56 号可用性检查',
   },
   {
-    desc: 'M1204 COM_ABLE57 镜子道具守卫删',
+    desc: 'M1204 able57 镜子道具检查删',
     file: 'ere/system/train/com-special.js',
     find: '  if (!has_item(16) || abl(cid, 10) <= 1) return 0;',
     replace: '  if (abl(cid, 10) <= 1) return 0;',
@@ -3350,7 +3360,7 @@ export default [
     must_mention: '镜子、浴室及新妻的关键门槛',
   },
   {
-    desc: 'M1205 COM_ABLE58 着衣守卫删',
+    desc: 'M1205 able58 着衣检查删',
     file: 'ere/system/train/com-special.js',
     find: `  if (
     worn &&
@@ -3363,7 +3373,7 @@ export default [
     must_mention: '镜子、浴室及新妻的关键门槛',
   },
   {
-    desc: 'M1206 COM_ABLE59 助手守卫删',
+    desc: 'M1206 able59 助手检查删',
     file: 'ere/system/train/com-special.js',
     find: '  if (!has_item(19) || era_flag.assiplay || abl(cid, 0) <= 2) return 0;',
     replace: '  if (!has_item(19) || abl(cid, 0) <= 2) return 0;',
@@ -3371,7 +3381,7 @@ export default [
     must_mention: '镜子、浴室及新妻的关键门槛',
   },
   {
-    desc: 'M1207 COM_ABLE59 着衣守卫删',
+    desc: 'M1207 able59 着衣检查删',
     file: 'ere/system/train/com-special.js',
     find: "  return (era.get(`cflag:${cid}:40`) || 0) && era.get('flag:37') ? 0 : 1;",
     replace: '  return 1; // 变异：着衣守卫删',
@@ -3379,7 +3389,7 @@ export default [
     must_mention: '镜子、浴室及新妻的关键门槛',
   },
   {
-    desc: 'M1208 COM_ABLE58 助手动物耳朵门槛删',
+    desc: 'M1208 able58 助手动物耳朵门槛删',
     file: 'ere/system/train/com-special.js',
     find: `  if (
     era_flag.assi > 0 &&
@@ -3392,7 +3402,7 @@ export default [
     must_mention: '镜子、浴室及新妻的关键门槛',
   },
   {
-    desc: 'M1209 TRAIN_MESSAGE_B53 启停文案反转',
+    desc: 'M1209 train_message_b53 启停文案反转',
     file: 'ere/system/train/com-special.js',
     find: `    chara(target_id()).train.录像摄影
       ? '★★★录像摄影结束★★★'
@@ -3404,7 +3414,7 @@ export default [
     must_mention: '启动只清 480–489',
   },
   {
-    desc: 'M1210 TRAIN_MESSAGE_B54 返回房间文案删',
+    desc: 'M1210 train_message_b54 返回房间文案删',
     file: 'ere/system/train/com-special.js',
     find: `  if (chara(cid).train.野外PLAY) {
     era.print('回到了房间……');
@@ -3417,16 +3427,16 @@ export default [
     must_mention: '首次开启记录野外露出经验',
   },
   {
-    desc: 'M1212 COM57 将 TALENT:80 后无条件的 B 倍率误并入条件',
+    desc: 'M1212 com57 将 TALENT:80 后无条件的 B 倍率误并入条件',
     file: 'ere/system/train/com-special.js',
     find: '  if (tal(cid, 80)) a = times(a, 150);\n  b = times(b, 120);',
     replace:
       '  if (tal(cid, 80)) {\n    a = times(a, 150);\n    b = times(b, 120);\n  }',
     tests: ['com-special'],
-    must_mention: 'SIF 只约束下一条语句',
+    must_mention: '单行条件只约束下一条语句',
   },
   {
-    desc: 'M1213 COM57 将 TALENT:113 后无条件效果误并入条件',
+    desc: 'M1213 com57 将 TALENT:113 后无条件效果误并入条件',
     file: 'ere/system/train/com-special.js',
     find: `  if (tal(cid, 113)) add_src(cid, 3, 500);
   add_src(cid, 16, 500);
@@ -3439,7 +3449,7 @@ export default [
     b = times(b, 120);
   }`,
     tests: ['com-special'],
-    must_mention: 'SIF 只约束下一条语句',
+    must_mention: '单行条件只约束下一条语句',
   },
   {
     desc: 'M1214 主启动图删特殊系注册（COM50/COM_ABLE50 不进实际运行图）（#224）',
@@ -3502,7 +3512,7 @@ export default [
 
   // —— #222 J12：COM30–38 奉仕系 ——
   {
-    desc: 'M1110 COM34/36 骑乘位衣物判定把目标号漏传（#222）',
+    desc: 'M1110 com34/36 骑乘位衣物判定把目标号漏传（#222）',
     file: 'ere/system/train/com-service.js',
     find: `  if (target_tequip(58) && !(era.get('item:13') || 0) && !era.get('noitem:0'))
     return 0;
@@ -3513,10 +3523,10 @@ export default [
   if (costume_blocked(17)) return 0; // 变异：误把位掩码当目标号
   if (special(target) === 79 && worn(target) & 64 && clothes_on()) return 0;`,
     tests: ['com-service'],
-    must_mention: 'COM_ABLE30-38',
+    must_mention: '30-38 号可用性检查',
   },
   {
-    desc: 'M1111 COM34/36 骑乘反应去掉「未射精才追加」的门（#222；#402 起靶位挪到 riding 尾段）',
+    desc: 'M1111 com34/36 骑乘反应去掉「未射精才追加」的阻断性检查（#222；#402 起目标位置挪到 riding 尾段）',
     file: 'ere/system/train/com-service.js',
     find: "  if ((era.get('tflag:2') || 0) === 0) train_message_a_riding_reaction();",
     replace:
@@ -3531,7 +3541,7 @@ export default [
     replace:
       '  return Math.floor(value_to_multiply * rate); // 变异：JS 浮点截断',
     tests: ['com-service'],
-    must_mention: '严格 TIMES',
+    must_mention: '严格 times',
   },
   {
     desc: 'M1113 B 文公共尾部不把 TFLAG:31 的连续态归一（#222）',
@@ -3542,7 +3552,7 @@ export default [
     must_mention: '正常末尾归一 TFLAG:31',
   },
   {
-    desc: 'M1115 COM35 玩家执行时把标准污渍误写固定 0 号（#222）',
+    desc: 'M1115 com35 玩家执行时把标准污渍误写固定 0 号（#222）',
     file: 'ere/system/train/com-service.js',
     find: '  set_standard_stain(era_flag.assiplay ? era_flag.assi : era_flag.player);',
     replace: '  set_standard_stain(era_flag.assiplay ? era_flag.assi : 0);',
@@ -3574,15 +3584,15 @@ export default [
     must_mention: '主启动图注册助手与蕾丝系',
   },
   {
-    desc: 'M1401 COM_ABLE60 主人当调教者也放行（#225）',
+    desc: 'M1401 able60 主人当调教者也放行（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  if (era_flag.player !== era_flag.assi) return 0;',
     replace: '  // 变异：主人当调教者也放行',
     tests: ['com-assistant'],
-    must_mention: '@COM_ABLE60：必须是助手在调教',
+    must_mention: 'able60：必须是助手在调教',
   },
   {
-    desc: 'M1402 COM_ABLE61 调教者是男人也放行（#225）',
+    desc: 'M1402 able61 调教者是男人也放行（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  if (tal(era_flag.player, 122)) return 0;',
     replace: '  // 变异：调教者是男人也放行',
@@ -3590,7 +3600,7 @@ export default [
     must_mention: '调教者是男人',
   },
   {
-    desc: 'M1403 COM_ABLE62 助手调教中也放行（#225）',
+    desc: 'M1403 able62 助手调教中也放行（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: `  if (assi < 1) return 0;
   if (era_flag.assiplay) return 0;`,
@@ -3600,7 +3610,7 @@ export default [
     must_mention: '助手调教中',
   },
   {
-    desc: 'M1404 COM_ABLE64 假阳具不再补第二根（#225）',
+    desc: 'M1404 able64 假阳具不再补第二根（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  if (rods + item(PBAND) < 2) return 0;',
     replace: '  if (rods < 2) return 0; // 变异：假阳具不算第二根',
@@ -3608,24 +3618,24 @@ export default [
     must_mention: '假阳具补第二根',
   },
   {
-    desc: 'M1405 COM_ABLE65 主人当调教者也放行（#225）',
+    desc: 'M1405 able65 主人当调教者也放行（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  if (player !== era_flag.assi) return 0;',
     replace: '  // 变异：主人当调教者也放行',
     tests: ['com-assistant'],
-    must_mention: '@COM_ABLE65：必须是助手在调教',
+    must_mention: 'able65：必须是助手在调教',
   },
   {
-    desc: 'M1406 给 COM_ABLE67 建壳并恒返回 0（#225）',
+    desc: 'M1406 给 able67 建壳并恒返回 0（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: 'com_able_family.register(66, able66);',
     replace:
       'com_able_family.register(66, able66);\ncom_able_family.register(67, async () => 0); // 变异：源侧无定义的 67 被建成不可执行',
     tests: ['com-assistant'],
-    must_mention: '源侧无 COM_ABLE67',
+    must_mention: 'able67 无注册',
   },
   {
-    desc: 'M1407 COM_ABLE72 阴毛过短也放行（#225）',
+    desc: 'M1407 able72 阴毛过短也放行（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  if (tal(target, 310) <= 20) return 0;',
     replace: '  // 变异：阴毛过短也放行',
@@ -3633,7 +3643,7 @@ export default [
     must_mention: '阴毛状态 ≤ 20',
   },
   {
-    desc: 'M1408 COM_ABLE73 自动调教旗不挡（#225）',
+    desc: 'M1408 able73 自动调教旗不挡（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: "  if ((era.get('tflag:224') || 0) === 555) return 0;",
     replace: '  // 变异：自动调教旗不挡',
@@ -3647,7 +3657,7 @@ export default [
     replace:
       '  return Math.floor(value_to_multiply * rate); // 变异：JS 浮点截断',
     tests: ['com-assistant'],
-    must_mention: '严格 TIMES',
+    must_mention: '严格 times',
   },
   {
     desc: 'M1410 CASE 61 上回合舔阴不升格（#225）',
@@ -3659,7 +3669,7 @@ export default [
     must_mention: '上回合舔阴/口交/六九式且同调教者 → 升格 69',
   },
   {
-    desc: 'M1411 COM60 情爱源写成 0（#225）',
+    desc: 'M1411 com60 情爱源写成 0（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: `  src.set(13, 100);
   src.set(14, 10);`,
@@ -3669,7 +3679,7 @@ export default [
     must_mention: 'COM60：实行通过后写入情爱/屈从源',
   },
   {
-    desc: 'M1412 COM64 升格路径把本次部位写给助手（#225）',
+    desc: 'M1412 com64 升格路径把本次部位写给助手（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: `      era.set('tflag:40', now);
       era.set('tflag:41', prev);`,
@@ -3679,7 +3689,7 @@ export default [
     must_mention: 'COM64：升格路径按本次/上次指令分配部位并回填 SELECTCOM',
   },
   {
-    desc: 'M1413 COM65 助手处女选不要仍继续（#225）',
+    desc: 'M1413 com65 助手处女选不要仍继续（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '    if ((await era.input()) === 1) return 0;',
     replace: '    await era.input(); // 变异：选不要也不取消',
@@ -3687,7 +3697,7 @@ export default [
     must_mention: '助手处女选「不要」则取消回合',
   },
   {
-    desc: 'M1414 COM72 刮后阴毛状态不置 1（#225）',
+    desc: 'M1414 com72 刮后阴毛状态不置 1（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  chara(target).chara.阴毛状态 = 1;',
     replace: '  // 变异：刮完不改阴毛状态',
@@ -3695,7 +3705,7 @@ export default [
     must_mention: 'COM72：刮后阴毛状态置 1',
   },
   {
-    desc: 'M1415 COM72 本体误调 TRAIN_MESSAGE_B（#225）',
+    desc: 'M1415 com72 本体误调 train_message_b（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  era.print(\n    `${chara_callname(era_flag.player)}将${chara_callname(target)}的阴毛漂亮地刮掉了。`,\n  );',
     replace:
@@ -3704,7 +3714,7 @@ export default [
     must_mention: 'COM72 本体不得再调 B72',
   },
   {
-    desc: 'M1416 COM73 发型按钮手写编号前缀（#225）',
+    desc: 'M1416 com73 发型按钮手写编号前缀（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: "    era.printButton('---自然', 1);",
     replace: "    era.printButton('[1] ---自然', 1); // 变异：手写编号前缀",
@@ -3712,7 +3722,7 @@ export default [
     must_mention: '按钮无手写编号前缀',
   },
   {
-    desc: 'M1418 COM69 亲族路径不调 INCEST 真身（#225）',
+    desc: 'M1418 com69 亲族路径不调 incest（#225）',
     file: 'ere/system/train/com-assistant.js',
     find: '  incest(target, player);\n  const prefix = incest_prefix(player);',
     replace:
@@ -3721,7 +3731,7 @@ export default [
     must_mention: '目标是 PLAYER 的亲族则出前缀',
   },
   {
-    desc: 'M1450 COM_ABLE120 的 FLAG:71==1 守卫删（#229）',
+    desc: 'M1450 able120 的 FLAG:71==1 检查删（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  if (game.train.自由调教跳转 === 1) return 0; // 追加指令未许可\n  if (skill) return 0;',
     replace: '  if (skill) return 0; // 变异：FLAG:71 守卫删除',
@@ -3729,20 +3739,20 @@ export default [
     must_mention: 'FLAG:71==1 追加未许可',
   },
   {
-    desc: 'M1451 COM120 显式回填 SELECTCOM=120 删除（#229）',
+    desc: 'M1451 com120 显式回填 SELECTCOM=120 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '  era_flag.selectcom = 120; // 原作显式 SELECTCOM = 120（升格抵达时回填号位）',
+    find: '  era_flag.selectcom = 120; // 升格抵达时回填号位',
     replace: '  // 变异：SELECTCOM 回填删除',
     tests: ['com-advanced'],
-    must_mention: '原作显式 SELECTCOM = 120',
+    must_mention: '显式回填 selectcom = 120',
   },
   {
-    desc: 'M1452 GET_ADV_COM CASE 135 口交 PREVCOM 判据删除（#229）',
+    desc: 'M1452 get_adv_com CASE 135 口交 PREVCOM 条件删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '    [31, 123, 124, 126, 127].includes(era_flag.prevcom) &&',
     replace: '    true && // 变异：PREVCOM 口交系判据删除',
     tests: ['com-advanced'],
-    must_mention: 'PREVCOM 口交系且 COM_ABLE125',
+    must_mention: 'PREVCOM 口交系且 able125 通过',
   },
   {
     desc: 'M1453 主启动图删追加与高级系注册（COM122/COM_ABLE122 不进实际运行图）（#229）',
@@ -3753,7 +3763,7 @@ export default [
     must_mention: '主启动图注册追加与高级系',
   },
   {
-    desc: 'M1454 COM120 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
+    desc: 'M1454 com120 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  times_src(cid, 1, obey[0]);\n  times_src(cid, 3, obey[1]);\n  times_src(cid, 15, obey[2]);\n\n  if (prev === 34) {',
     replace:
@@ -3762,133 +3772,133 @@ export default [
     must_mention: '默认档 SOURCE',
   },
   {
-    desc: 'M1455 COM121 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
+    desc: 'M1455 com121 默认档 SOURCE:1 截断链改成不乘顺从（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  times_src(cid, 1, obey[1]);',
     replace: '  // 变异：COM121 顺从乘算删除',
     tests: ['com-advanced'],
-    must_mention: 'COM121',
+    must_mention: 'com121：插入子宫口蹂躏，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1456 COM122 默认档润滑乘算删除（#229）',
+    desc: 'M1456 com122 默认档润滑乘算删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  times_src(cid, 0, [0.5, 0.75, 1, 1.5, 2, 2.5][lube]);',
     replace: '  // 变异：COM122 润滑乘算删除',
     tests: ['com-advanced'],
-    must_mention: 'COM122：默认档 SOURCE',
+    must_mention: 'com122：默认档 SOURCE / TFLAG',
   },
   {
-    desc: 'M1457 COM123 默认档侍奉精神 SOURCE:4 删除（#229）',
+    desc: 'M1457 com123 默认档侍奉精神 SOURCE:4 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  set_src(cid, 4, service[0]);\n  set_src(cid, 5, service[1]);\n  times_src(cid, 8, service[2]);\n  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl(cid, 1), 5)];',
     replace:
       '  // 变异：COM123 侍奉精神 SOURCE:4 删除\n  set_src(cid, 5, service[1]);\n  times_src(cid, 8, service[2]);\n  let breast = [100, 200, 400, 800, 1200, 1500][Math.min(abl(cid, 1), 5)];',
     tests: ['com-advanced'],
-    must_mention: 'COM123：乳夹口交，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com123：乳夹口交，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1458 COM124 默认档苦痛 SOURCE:6 删除（#229）',
+    desc: 'M1458 com124 默认档苦痛 SOURCE:6 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  set_src(cid, 6, 200);',
     replace: '  // 变异：COM124 苦痛 SOURCE:6 删除',
     tests: ['com-advanced'],
-    must_mention: 'COM124：深喉，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com124：深喉，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1459 COM125 默认档剃毛 SOURCE:12 加倍删除（#229）',
+    desc: 'M1459 com125 默认档剃毛 SOURCE:12 加倍删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  if (!tal(cid, 125) && tal(cid, 310) <= 20) times_src(cid, 12, 2);',
     replace: '  // 变异：COM125 剃毛 SOURCE:12 加倍删除',
     tests: ['com-advanced'],
-    must_mention: 'COM125：默认档 SOURCE',
+    must_mention: 'com125：默认档 SOURCE / TFLAG',
   },
   {
-    desc: 'M1460 COM126 默认档技巧 SOURCE:4 乘算删除（#229）',
+    desc: 'M1460 com126 默认档技巧 SOURCE:4 乘算删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  times_src(cid, 4, [0.8, 1, 1.2, 1.5, 1.8, 2.4][skill]);',
     replace: '  // 变异：COM126 技巧 SOURCE:4 乘算删除',
     tests: ['com-advanced'],
-    must_mention: 'COM126：手搓口交，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com126：手搓口交，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1461 COM127 显式回填 SELECTCOM=127 删除（#229）',
+    desc: 'M1461 com127 显式回填 SELECTCOM=127 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '  era_flag.selectcom = 127; // 原作显式 SELECTCOM = 127（升格抵达时回填号位）',
+    find: '  era_flag.selectcom = 127; // 升格抵达时回填号位',
     replace: '  // 变异：COM127 回填号删除',
     tests: ['com-advanced'],
-    must_mention: '原作显式 SELECTCOM = 127',
+    must_mention: '显式回填 selectcom = 127',
   },
   {
-    desc: 'M1462 COM128 默认档情爱 SOURCE:3 恒乘删除（#229）',
+    desc: 'M1462 com128 默认档情爱 SOURCE:3 恒乘删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '  times_src(cid, 3, 2); // 源侧无缩进，恒乘（COMF128:230）',
+    find: '  times_src(cid, 3, 2); // 恒乘，不在任何条件分支内',
     tests: ['com-advanced'],
     replace: '  // 变异：COM128 情爱恒乘删除',
-    must_mention: 'COM128：正常位・接吻，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com128：正常位・接吻，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1463 COM129 默认档乳房 SOURCE:17 删除（#229）',
+    desc: 'M1463 com129 默认档乳房 SOURCE:17 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  set_src(cid, 17, breast[0]);\n  add_src(cid, 3, breast[1]);\n  const lube = palam(cid, 3);\n  if (lube < PALAMLV[1]) {\n    times_src(cid, 1, 0.1);\n    add_src(cid, 6, 1000);',
     replace:
       '    [1800, 700],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM129 乳房 SOURCE:17 删除\n  add_src(cid, 3, breast[1]);\n  const lube = palam(cid, 3);\n  if (lube < PALAMLV[1]) {\n    times_src(cid, 1, 0.1);\n    add_src(cid, 6, 1000);',
     tests: ['com-advanced'],
-    must_mention: 'COM129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com129：正常位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1464 COM130 默认档乳房覆写情爱 SOURCE:3 删除（#229）',
+    desc: 'M1464 com130 默认档乳房覆写情爱 SOURCE:3 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '  set_src(cid, 3, breast[1]); // 源侧覆写情爱，不是加算（COMF130:189）',
+    find: '  set_src(cid, 3, breast[1]); // 覆写情爱，不是加算',
     replace: '  // 变异：COM130 情爱覆写删除',
     tests: ['com-advanced'],
-    must_mention: 'COM130：正常位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com130：正常位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1465 COM131 默认档 EXP 档疼痛 SOURCE:6 删除（#229）',
+    desc: 'M1465 com131 默认档 EXP 档疼痛 SOURCE:6 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '    set_src(cid, 6, 30);\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [\n    [20, 50],\n    [100, 100],\n    [500, 160],',
     replace:
       '    // 变异：COM131 EXP 档疼痛删除\n  } else if (e0 < EXPLV[4]) {\n    times_src(cid, 1, 1.2);\n    set_src(cid, 6, 5);\n  } else if (e0 < EXPLV[5]) {\n    times_src(cid, 1, 1.3);\n    set_src(cid, 6, 0);\n  } else {\n    times_src(cid, 1, 1.8);\n    set_src(cid, 6, 0);\n  }\n  const breast = [\n    [20, 50],\n    [100, 100],\n    [500, 160],',
     tests: ['com-advanced'],
-    must_mention: 'COM131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com131：背后位・胸爱抚，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1466 COM132 默认档 PALAM:9 覆写疼痛 SOURCE:6 删除（#229）',
+    desc: 'M1466 com132 默认档 PALAM:9 覆写疼痛 SOURCE:6 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '  if (pain < PALAMLV[1]) set_src(cid, 6, 300);',
     replace: '  // 变异：COM132 PALAM:9 疼痛覆写删除',
     tests: ['com-advanced'],
-    must_mention: 'COM132：背后位・打屁股，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com132：背后位・打屁股，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1467 COM133 默认档情爱 SOURCE:3 恒乘删除（#229）',
+    desc: 'M1467 com133 默认档情爱 SOURCE:3 恒乘删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '  times_src(cid, 3, 1.5); // 源侧无缩进，恒乘（COMF133:230）',
+    find: '  times_src(cid, 3, 1.5); // 恒乘，不在任何条件分支内',
     replace: '  // 变异：COM133 情爱恒乘删除',
     tests: ['com-advanced'],
-    must_mention: 'COM133：站立背后位，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com133：站立背后位，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1468 COM134 默认档乳房 SOURCE:17 删除（#229）',
+    desc: 'M1468 com134 默认档乳房 SOURCE:17 删除（#229）',
     file: 'ere/system/train/com-advanced.js',
     find: '    [3200, 1000],\n  ][Math.min(abl(cid, 1), 5)];\n  set_src(cid, 17, breast[0]);',
     replace:
       '    [3200, 1000],\n  ][Math.min(abl(cid, 1), 5)];\n  // 变异：COM134 乳房 SOURCE:17 删除',
     tests: ['com-advanced'],
-    must_mention: 'COM134：背后位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
+    must_mention: 'com134：背后位ＳＰ，回填 SELECTCOM 与默认 SOURCE',
   },
   {
-    desc: 'M1469 COM135 默认档剃毛 SOURCE:12 加倍删除（#229）',
+    desc: 'M1469 com135 默认档剃毛 SOURCE:12 加倍删除（#229）',
     file: 'ere/system/train/com-advanced.js',
-    find: '    times_src(cid, 12, 2); // COMF135:428 剃毛加倍',
+    find: '    times_src(cid, 12, 2); // 未剃毛且毛量 ≤ 20 时加倍',
     replace: '    // 变异：COM135 剃毛加倍删除',
     tests: ['com-advanced'],
-    must_mention: 'COM135：默认档 SOURCE 与自慰经验',
+    must_mention: 'com135：默认档 SOURCE 与自慰经验',
   },
 
   // —— #220 J10：COM10–19 道具使用 ——
   {
-    desc: 'M1060 COM_ABLE10 器具过滤门失效（FLAG:25&2 仍放行）（#220）',
+    desc: 'M1060 able10 器具过滤检查失效（FLAG:25&2 仍放行）（#220）',
     file: 'ere/system/train/com-toy.js',
     find: `com_able_family.register(10, async () => {
   const cid = era_flag.target;
@@ -3897,10 +3907,10 @@ export default [
   const cid = era_flag.target;
   return false || // 变异：器具过滤门失效`,
     tests: ['com-toy'],
-    must_mention: '@COM_ABLE10：器具过滤、无道具和下装各阻止执行',
+    must_mention: '10 号可用性检查：器具过滤、无道具和下装各阻止执行',
   },
   {
-    desc: 'M1061 COM_ABLE11 贞操带门失效（#220）',
+    desc: 'M1061 able11 贞操带检查失效（#220）',
     file: 'ere/system/train/com-toy.js',
     find: '    chastity_belt_worn(cid) ||',
     replace: '    false || // 变异：贞操带不再阻止',
@@ -3908,15 +3918,15 @@ export default [
     must_mention: '贞操带挡',
   },
   {
-    desc: 'M1062 COM_ABLE12 低技巧助手门失效（#220）',
+    desc: 'M1062 able12 低技巧助手检查失效（#220）',
     file: 'ere/system/train/com-toy.js',
     find: '    assi_skill_without_sadist_blocked() ||',
     replace: '    false || // 变异：低技巧助手不再阻止',
     tests: ['com-toy'],
-    must_mention: '@COM_ABLE12：低技巧助手可由施虐狂豁免',
+    must_mention: '12 号可用性检查：低技巧助手可由施虐狂豁免',
   },
   {
-    desc: 'M1063 COM_ABLE18 兽奸场景门失效（#220）',
+    desc: 'M1063 able18 兽奸场景检查失效（#220）',
     file: 'ere/system/train/com-toy.js',
     find: '    tq(cid, 89) ||',
     replace: '    false || // 变异：兽奸场景不再阻止',
@@ -3924,7 +3934,7 @@ export default [
     must_mention: 'TEQUIP:89 阻止 COM18',
   },
   {
-    desc: 'M1064 EQUIP_COM11 未注册，SOURCE_CHECK 链不再消费蠕虫持续效果（#220）',
+    desc: 'M1064 equip_com11 未注册，SOURCE_CHECK 链不再消费蠕虫持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(11, equip_com11);',
     replace: '// 变异：EQUIP_COM11 不注册',
@@ -3932,7 +3942,7 @@ export default [
     must_mention: '八个装备位的持续效果横幅必须在场',
   },
   {
-    desc: 'M1065 EQUIP_COM13 未注册，SOURCE_CHECK 链不再消费肛门虫持续效果（#220）',
+    desc: 'M1065 equip_com13 未注册，SOURCE_CHECK 链不再消费肛门虫持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(13, equip_com13);',
     replace: '// 变异：EQUIP_COM13 不注册',
@@ -3940,7 +3950,7 @@ export default [
     must_mention: '八个装备位的持续效果横幅必须在场',
   },
   {
-    desc: 'M1066 EQUIP_COM14 未注册，SOURCE_CHECK 链不再消费阴蒂夹持续效果（#220）',
+    desc: 'M1066 equip_com14 未注册，SOURCE_CHECK 链不再消费阴蒂夹持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(14, equip_com14);',
     replace: '// 变异：EQUIP_COM14 不注册',
@@ -3948,7 +3958,7 @@ export default [
     must_mention: '八个装备位的持续效果横幅必须在场',
   },
   {
-    desc: 'M1067 EQUIP_COM15 未注册，SOURCE_CHECK 链不再消费乳头夹持续效果（#220）',
+    desc: 'M1067 equip_com15 未注册，SOURCE_CHECK 链不再消费乳头夹持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(15, equip_com15);',
     replace: '// 变异：EQUIP_COM15 不注册',
@@ -3956,7 +3966,7 @@ export default [
     must_mention: '八个装备位的持续效果横幅必须在场',
   },
   {
-    desc: 'M1068 EQUIP_COM16 未注册，SOURCE_CHECK 链不再消费榨乳器持续效果（#220）',
+    desc: 'M1068 equip_com16 未注册，SOURCE_CHECK 链不再消费榨乳器持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(16, equip_com16);',
     replace: '// 变异：EQUIP_COM16 不注册',
@@ -3964,7 +3974,7 @@ export default [
     must_mention: '八个装备位的持续效果横幅必须在场',
   },
   {
-    desc: 'M1069 EQUIP_COM17 未注册，SOURCE_CHECK 链不再消费飞机杯持续效果（#220）',
+    desc: 'M1069 equip_com17 未注册，SOURCE_CHECK 链不再消费飞机杯持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(17, equip_com17);',
     replace: '// 变异：EQUIP_COM17 不注册',
@@ -3972,7 +3982,7 @@ export default [
     must_mention: '八个装备位的持续效果横幅必须在场',
   },
   {
-    desc: 'M1070 EQUIP_COM18 未注册，SOURCE_CHECK 链不再消费淋浴持续效果（#220）',
+    desc: 'M1070 equip_com18 未注册，SOURCE_CHECK 链不再消费淋浴持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(18, equip_com18);',
     replace: '// 变异：EQUIP_COM18 不注册',
@@ -3980,7 +3990,7 @@ export default [
     must_mention: '八个装备位的持续效果横幅必须在场',
   },
   {
-    desc: 'M1071 EQUIP_COM19 未注册，SOURCE_CHECK 链不再消费肛珠持续效果（#220）',
+    desc: 'M1071 equip_com19 未注册，SOURCE_CHECK 链不再消费肛珠持续效果（#220）',
     file: 'ere/system/train/com-toy.js',
     find: 'equip_com_family.register(19, equip_com19);',
     replace: '// 变异：EQUIP_COM19 不注册',
@@ -4045,7 +4055,7 @@ export default [
     must_mention: '主启动图漏装：kojo-k5-mao',
   },
   {
-    desc: 'M1330 COM_ABLE100 秘密知识守卫删（#227）',
+    desc: 'M1330 able100 秘密知识检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(player, 325) === 0) return 0; // 调教者须秘密知识',
     replace: '  // 变异：秘密知识守卫删',
@@ -4053,7 +4063,7 @@ export default [
     must_mention: '缺秘密知识',
   },
   {
-    desc: 'M1331 COM_ABLE100 道具持有守卫删（#227）',
+    desc: 'M1331 able100 道具持有检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(player, 325) === 0) return 0; // 调教者须秘密知识\n  if (!has_item(90)) return 0;',
     replace:
@@ -4062,7 +4072,7 @@ export default [
     must_mention: '缺 ITEM:90',
   },
   {
-    desc: 'M1332 COM_ABLE100 浴室 PLAY 守卫删（#227）',
+    desc: 'M1332 able100 浴室 PLAY 检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tequip(target, 58)) return 0; // 浴室',
     replace: '  // 变异：浴室 PLAY 守卫删',
@@ -4070,7 +4080,7 @@ export default [
     must_mention: '浴室 PLAY',
   },
   {
-    desc: 'M1333 COM_ABLE100 决斗守卫删（#227）',
+    desc: 'M1333 able100 决斗检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tequip(target, 55)) return 0; // 决斗',
     replace: '  // 变异：决斗守卫删',
@@ -4078,7 +4088,7 @@ export default [
     must_mention: '决斗中',
   },
   {
-    desc: 'M1334 COM_ABLE101 贞操带判定删（#227）',
+    desc: 'M1334 able101 贞操带判定删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    (era.get(`cflag:${target}:42`) || 0) === 79 &&',
     replace:
@@ -4087,7 +4097,7 @@ export default [
     must_mention: '101 贞操带',
   },
   {
-    desc: 'M1335 COM_ABLE101 贞操封印守卫删（#227）',
+    desc: 'M1335 able101 贞操封印检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(target, 273)) return 0; // 贞操封印',
     replace: '  // 变异：贞操封印守卫删',
@@ -4095,7 +4105,7 @@ export default [
     must_mention: '101 贞操封印',
   },
   {
-    desc: 'M1336 COM_ABLE102 灌肠互斥删（#227）',
+    desc: 'M1336 able102 灌肠互斥删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tequip(target, 90) === 0) return 0;\n  if (tequip(target, 46)) return 0;\n  return 1;',
     replace:
@@ -4104,7 +4114,7 @@ export default [
     must_mention: '102 灌肠中',
   },
   {
-    desc: 'M1337 COM_ABLE108 口塞互斥删（#227）',
+    desc: 'M1337 able108 口塞互斥删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tequip(target, 45)) return 0;',
     replace: '  // 变异：口塞互斥删',
@@ -4112,7 +4122,7 @@ export default [
     must_mention: '108 口塞中',
   },
   {
-    desc: 'M1338 COM_ABLE109 男人/扶她门槛删（#227）',
+    desc: 'M1338 able109 男人/扶她门槛删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(target, 121) === 0 && tal(target, 122) === 0) return 0;',
     replace: '  // 变异：男人/扶她门槛删',
@@ -4120,7 +4130,7 @@ export default [
     must_mention: '109 需男人或扶她',
   },
   {
-    desc: 'M1339 COM_ABLE150 顺从+欲望合计门槛改 5（#227）',
+    desc: 'M1339 able150 顺从+欲望合计门槛改 5（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (abl(target, 10) + abl(target, 11) < 6) return 0;',
     replace:
@@ -4129,7 +4139,7 @@ export default [
     must_mention: '合计 5 < 6',
   },
   {
-    desc: 'M1340 COM_ABLE150 癖好未设定守卫删（#227）',
+    desc: 'M1340 able150 癖好未设定检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: "  if (fetish(target) === '') return 0;",
     replace: '  // 变异：癖好未设定守卫删',
@@ -4137,7 +4147,7 @@ export default [
     must_mention: '癖好未设定',
   },
   {
-    desc: 'M1341 COM_ABLE208 死斗场守卫删（#227）',
+    desc: 'M1341 able208 死斗场检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tequip(target, 55) === 0) return 0;',
     replace: '  // 变异：死斗场守卫删',
@@ -4145,7 +4155,7 @@ export default [
     must_mention: '不在死斗场',
   },
   {
-    desc: 'M1342 COM_ABLE208 助手调教守卫删（#227）',
+    desc: 'M1342 able208 助手调教检查删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (era_flag.assiplay) return 0;',
     replace: '  // 变异：助手调教守卫删',
@@ -4153,7 +4163,7 @@ export default [
     must_mention: '助手调教不可',
   },
   {
-    desc: 'M1343 COM100 TRAIN_MESSAGE_B 挪到翻转之后（#227）',
+    desc: 'M1343 com100 train_message_b 挪到翻转之后（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: "  era.print('召唤触手');\n  await train_message_b(); // —— 翻转之前",
     replace: "  era.print('召唤触手');\n  // 变异：B 挪到翻转之后",
@@ -4161,7 +4171,7 @@ export default [
     must_mention: 'B 读翻转前',
   },
   {
-    desc: 'M1344 COM100 半阈值缩放改走整档 EXPLV（#227）',
+    desc: 'M1344 com100 半阈值缩放改走整档 EXPLV（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    let a = scale_a_by_half_explv(target, 100);',
     replace: '    let a = scale_a_by_explv(target, 100); // 变异：半阈值改整档',
@@ -4169,7 +4179,7 @@ export default [
     must_mention: 'deltabase:31:0',
   },
   {
-    desc: 'M1345 COM100 胆怯 ×2 缩放删（#227）',
+    desc: 'M1345 com100 胆怯 ×2 缩放删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tal(cid, 10)) a = times(a, 2.0); // 胆怯',
     replace: '  // 变异：胆怯缩放删',
@@ -4177,7 +4187,7 @@ export default [
     must_mention: '胆怯 ×2',
   },
   {
-    desc: 'M1346 COM100 退出支清位表删 98（#227）',
+    desc: 'M1346 com100 退出支清位表删 98（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    for (const bit of [11, 13, 14, 15, 16, 17, 44, 46, 98]) {',
     replace:
@@ -4186,24 +4196,24 @@ export default [
     must_mention: '清 TEQUIP:98',
   },
   {
-    desc: 'M1347 COM101 JUMP 改写 SELECTCOM（#227）',
+    desc: 'M1347 com101 跳转改写 SELECTCOM（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  return jump_com(11);',
     replace:
       '  return jump_com(11, { rewrite_selectcom: true }); // 变异：改写 SELECTCOM',
     tests: ['com-tentacle'],
-    must_mention: 'JUMP 不改写 SELECTCOM',
+    must_mention: '跳转 COM11 且不改写 selectcom',
   },
   {
-    desc: 'M1348 COM106 JUMP 目标改 45（#227）',
+    desc: 'M1348 com106 跳转目标改 45（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  return jump_com(44);',
     replace: '  return jump_com(45); // 变异：JUMP 目标改 45',
     tests: ['com-tentacle'],
-    must_mention: '目标看到的 SELECTCOM 仍是触手指令号',
+    must_mention: '目标看到的 selectcom 仍是触手指令号',
   },
   {
-    desc: 'M1349 COM108 初吻判定改走会吞 -1 的门面（#227）',
+    desc: 'M1349 com108 初吻判定改走会吞 -1 的门面（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (era.get(`cflag:${target}:16`) === -1) {',
     replace:
@@ -4212,7 +4222,7 @@ export default [
     must_mention: '初吻直写',
   },
   {
-    desc: 'M1350 COM108 STAIN:0 |= 2|4 删（#227）',
+    desc: 'M1350 com108 STAIN:0 |= 2|4 删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    era.set(`stain:${target}:0`, (era.get(`stain:${target}:0`) || 0) | 2 | 4);',
     replace:
@@ -4221,7 +4231,7 @@ export default [
     must_mention: 'STAIN:0 |= 2|4',
   },
   {
-    desc: 'M1351 COM150 百合经验增量 5 改 1（#227）',
+    desc: 'M1351 com150 百合经验增量 5 改 1（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    chara(target).train.百合经验 += 5; // EXP:40',
     replace: '    chara(target).train.百合经验 += 1; // 变异：增量改 1',
@@ -4229,7 +4239,7 @@ export default [
     must_mention: '百合经验+5',
   },
   {
-    desc: 'M1352 COM150 断背经验增量 5 改 1（#227）',
+    desc: 'M1352 com150 断背经验增量 5 改 1（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    chara(target).train.断背经验 += 5; // EXP:41',
     replace: '    chara(target).train.断背经验 += 1; // 变异：增量改 1',
@@ -4237,15 +4247,15 @@ export default [
     must_mention: '断背经验+5',
   },
   {
-    desc: 'M1353 COM208 JUMP COM31 不改写 SELECTCOM（#227）',
+    desc: 'M1353 com208 跳向 com31 不改写 SELECTCOM（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '      return jump_com(31, { rewrite_selectcom: true });',
     replace: '      return jump_com(31); // 变异：不改写 SELECTCOM',
     tests: ['com-tentacle'],
-    must_mention: 'JUMP 前改写 SELECTCOM',
+    must_mention: '跳转前改写 selectcom',
   },
   {
-    desc: 'M1354 COM208 男人仍显示私处按钮（#227）',
+    desc: 'M1354 com208 男人仍显示私处按钮（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: "    if (tal(target, 122) === 0) {\n      era.printButton('- 私处', 2);",
     replace:
@@ -4254,16 +4264,16 @@ export default [
     must_mention: '男人不显示私处',
   },
   {
-    desc: 'M1355 COM208 暂时放过改 RETURN 0（#227）',
+    desc: 'M1355 com208 暂时放过改 RETURN 0（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    if (result === 999) {\n      return 1; // 暂时放过落空后 RETURN 1',
     replace:
       '    if (result === 999) {\n      return 0; // 变异：暂时放过改 RETURN 0',
     tests: ['com-tentacle'],
-    must_mention: '暂时放过 RETURN 1',
+    must_mention: '暂时放过返回 1',
   },
   {
-    desc: 'M1356 EQUIP_COM100 TFLAG:15 写入删（#227）',
+    desc: 'M1356 equip_com100 TFLAG:15 写入删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    game.train.怪物射精或购入金 = e; // TFLAG:15',
     replace: '    // 变异：TFLAG:15 写入删',
@@ -4271,7 +4281,7 @@ export default [
     must_mention: 'tflag:15',
   },
   {
-    desc: 'M1357 EQUIP_COM100 触手经验收尾改只 +1（#227）',
+    desc: 'M1357 equip_com100 触手经验收尾改只 +1（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  chara(target).dungeon.触手经验 += t_final; // EXP:55',
     replace: '  chara(target).dungeon.触手经验 += 1; // 变异：不按 T 累加',
@@ -4279,7 +4289,7 @@ export default [
     must_mention: 'T+=1 后 EXP:55 += T',
   },
   {
-    desc: 'M1358 EQUIP_COM108 尾段误清 T（#227）',
+    desc: 'M1358 equip_com108 尾段误清 T（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: "  era.add('t:0', 1);\n  return 1;",
     replace:
@@ -4288,7 +4298,7 @@ export default [
     must_mention: '只累加 T，不清零',
   },
   {
-    desc: 'M1359 TRAIN_MESSAGE_B100 zooko 前缀改走「将身体」（#227）',
+    desc: 'M1359 train_message_b100 zooko 前缀改走「将身体」（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (in_zooko_msg(target)) {\n    line += clothtype_special_text(target);',
     replace:
@@ -4297,7 +4307,7 @@ export default [
     must_mention: 'zooko 前缀拼进同一行',
   },
   {
-    desc: 'M1360 TRAIN_MESSAGE_B150 嗅觉支改走其它（#227）',
+    desc: 'M1360 train_message_b150 嗅觉支改走其它（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: "  if (f === '嗅觉') {",
     replace: "  if (f === '变异嗅觉') { // 变异：嗅觉支失效",
@@ -4305,7 +4315,7 @@ export default [
     must_mention: '你向温妮坚持不懈地熏陶着那个味道',
   },
   {
-    desc: 'M1361 TRAIN_MESSAGE_A150 中毒 5 档门槛改 6（#227）',
+    desc: 'M1361 train_message_a150 中毒 5 档门槛改 6（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (addict >= 5) {',
     replace: '  if (addict >= 6) { // 变异：中毒 5 档门槛改 6',
@@ -4318,10 +4328,10 @@ export default [
     find: '  if (tflag15 === 1 && tequip55 !== 1) {',
     replace: '  if (false) { // 变异：非死斗场触手臂 SIF 删',
     tests: ['com-tentacle'],
-    must_mention: ':113-125 SIF 与 :143-145 ELSEIF 各打一次',
+    must_mention: 'SIF 与 ELSEIF 各打一次',
   },
   {
-    desc: 'M1363 SYOKUSYU_MILK 母乳体质获得删（#227）',
+    desc: 'M1363 syokusyu_milk 母乳体质获得删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '    chara(target).chara.母乳体质 = 1;',
     replace: '    // 变异：母乳体质获得删',
@@ -4337,7 +4347,7 @@ export default [
     must_mention: '主启动图注册触手系',
   },
   {
-    desc: 'M1365 COM_ABLE105 凌辱乳头互斥删（#227）',
+    desc: 'M1365 able105 凌辱乳头互斥删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tequip(target, 15)) return 0;',
     replace: '  // 变异：凌辱乳头互斥删',
@@ -4345,7 +4355,7 @@ export default [
     must_mention: '105 凌辱乳头中',
   },
   {
-    desc: 'M1366 COM_ABLE107 肛交触手互斥删（#227）',
+    desc: 'M1366 able107 肛交触手互斥删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: '  if (tequip(target, 13)) return 0;',
     replace: '  // 变异：肛交触手互斥删',
@@ -4353,7 +4363,7 @@ export default [
     must_mention: '107 肛交触手中',
   },
   {
-    desc: 'M1367 COM100 尾段 T = 0 删（#227）',
+    desc: 'M1367 com100 尾段 T = 0 删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: "  }\n  era.set('t:0', 0);\n  return 1;",
     replace: '  }\n  // 变异：尾段 T = 0 删\n  return 1;',
@@ -4361,7 +4371,7 @@ export default [
     must_mention: '尾段 T = 0',
   },
   {
-    desc: 'M1368 EQUIP_COM100 大量射精文本删（#227）',
+    desc: 'M1368 equip_com100 大量射精文本删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: "      era.print('触手大量射精');",
     replace: '      // 变异：大量射精文本删',
@@ -4369,14 +4379,14 @@ export default [
     must_mention: '触手大量射精',
   },
   {
-    desc: 'M1369 TRAIN_MESSAGE_A 100-109/208 显式无操作注册删（#227）',
+    desc: 'M1369 train_message_a 100-109/208 显式无操作注册删（#227）',
     file: 'ere/system/train/com-tentacle.js',
     find: 'for (const id of [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 208]) {',
     replace: 'for (const id of []) { // 变异：显式无操作注册删',
     tests: ['com-tentacle'],
     // #549 全量变异更新：守卫仍在（红=true），守护用例随 #565 改名后旧
     // must_mention 失配——改取现行用例标题（注册 100-109/150/208：…全部进族）
-    must_mention: '全部进族；EQUIP 100/108 进链',
+    must_mention: 'B/A 全部进族；equip 100/108 进链',
   },
   {
     desc: 'M1544 主启动图删 K2 口上注册（#233）',
@@ -7203,7 +7213,7 @@ export default [
 
   // —— #459（COMF3_自慰 头部升格跳转补齐）——
   {
-    desc: 'M9529 COM3 头部升格跳转删除（jump_advanced(3) 整段拿掉，PREVCOM 升格判据失效）',
+    desc: 'M9529 com3 头部升格跳转删除（jump_advanced(3) 整段拿掉，PREVCOM 升格条件失效）',
     file: 'ere/system/train/com-caress.js',
     find: 'async function com3() {\n  // 头部升格跳转（LOCAL = 3 → CASE 3：自慰 → 口交时自慰 → 125）\n  const jumped = await jump_advanced(3);\n  if (jumped !== false) {\n    return jumped;\n  }\n\n  const target = era_flag.target;\n  const player = era_flag.player;',
     replace: `async function com3() {
@@ -7211,7 +7221,7 @@ export default [
   const target = era_flag.target;
   const player = era_flag.player;`,
     tests: ['com-caress'],
-    must_mention: 'JUMP COM125',
+    must_mention: '升格跳转：PREVCOM ∈ {31,123,124,126,127}',
   },
 
   // —— #461（SYSTEM_SOURCE.ERB：SOURCE_CHECK_AUTO 新逻辑 + EQUIP_COM 接线核实）——
@@ -7386,7 +7396,7 @@ export default [
     find: "    extra_lose: ['level', 'level'], // [L9, L9]",
     replace: '    extra_lose: [0, 0], // 变异：败北追加伤害删',
     tests: ['com-colosseum'],
-    must_mention: '気力有余的败北支',
+    must_mention: '气力有余的败北支',
   },
   {
     desc: 'M9831 怪物收入倍率表改坏（203 的 ×2 改 ×3）',
@@ -7421,7 +7431,7 @@ export default [
     replace:
       '    threshold: (level) => 4 * level, // IF RESULT < (4 * CFLAG:0:9)\n    extra_lose: [0, 0], // 变异：败北追加伤害删',
     tests: ['com-colosseum'],
-    must_mention: '気力有余的败北支',
+    must_mention: '气力有余的败北支',
   },
   {
     desc: 'M9835 怪物收入倍率表改坏（205 的 ×4 改 ×5）',
@@ -9706,7 +9716,7 @@ export default [
     must_mention: 'CORE_ABLUP99 每次只降一级',
   },
   {
-    desc: 'M11143 COM4 服装守卫按 C 式「&& 优先」读错（位 1 不再吃 FLAG:37，源 COMABLE.ERB:183 左结合，#517）',
+    desc: 'M11143 com4 服装检查按 C 式「&& 优先」读错（位 1 不再吃 FLAG:37，脚本侧左结合，#517）',
     file: 'ere/system/train/com-caress.js',
     find: "  if (((worn & 1) !== 0 || (worn & 16) !== 0) && era.get('flag:37')) {",
     replace:
@@ -9715,7 +9725,7 @@ export default [
     must_mention: 'FLAG:37 关 → 位 1 不挡',
   },
   {
-    desc: 'M11144 姿势句守卫按 C 式「&& 优先」读错（20/22/23 不再吃 TFLAG:899 失神门，源 :1154/:1161/:1168 左结合，#517）',
+    desc: 'M11144 姿势句检查按 C 式「&& 优先」读错（20/22/23 不再吃 TFLAG:899 失神检查，脚本侧左结合，#517）',
     file: 'ere/system/train/com-sex.js',
     find: '  const position_group =\n    ((com === 20 || com === 26) && passout_guard) ||\n    ((com === 22 || com === 28) && passout_guard) ||\n    ((com === 23 || com === 29) && passout_guard);',
     replace:
@@ -9724,10 +9734,10 @@ export default [
     must_mention: 'COM20：TFLAG:899 = 2 时姿势句不落',
   },
   {
-    desc: 'M11488 EQUIP_COM16 漏调 SYOKUSYU_MILK（触手榨乳不再给母乳体质）',
+    desc: 'M11488 equip_com16 漏调 syokusyu_milk（触手榨乳不再给母乳体质）',
     file: 'ere/system/train/com-toy.js',
-    find: '    await syokusyu_milk(); // CALL SYOKUSYU_MILK（#548 起真身）',
-    replace: '    // 变异：漏调 SYOKUSYU_MILK',
+    find: '    await syokusyu_milk(); // 调真身（#548 起）',
+    replace: '    // 变异：漏调 syokusyu_milk',
     tests: ['com-toy'],
     must_mention: '母乳',
   },
@@ -9741,28 +9751,28 @@ export default [
   },
   {
     // #562：出口键是 :41-51 那串 PRINTC，:52 的 PRINTL 只结束那一行——
-    // 按钮自成一行，补回空行即多一行（见 CONTEXT.md「输出 API 与原作的对应」）
-    desc: 'M11871 调教菜单登记面出口键之后补回空行（照「PRINTL 要再补一条」翻译的旧形态）',
+    // 按钮自成一行，补回空行即多一行（见 CONTEXT.md「输出 API 的排版与对齐」）
+    desc: 'M11871 调教菜单登记面出口键之后补回空行（照「PRINTL 要再补一条」翻译的旧写法）',
     file: 'ere/system/train/com-register.js',
-    find: '    // 的 PRINTL 只结束 :41-51 那串 PRINTC 出口键所在的行（PRINTC 系不\n    // 换行，见 CONTEXT.md「输出 API 与原作的对应」）；按钮自成一行，故这里\n    // 不补空行（#562）。\n    era.drawLine();',
+    find: '    // 的 PRINTL 只结束那串 PRINTC 出口键所在的行（PRINTC 系不\n    // 换行，见 CONTEXT.md「输出 API 的排版与对齐」）；按钮自成一行，故这里\n    // 不补空行（#562）。\n    era.drawLine();',
     replace:
       '    era.println(); // 变异：出口键之后多补空行\n    era.drawLine();',
     tests: ['com-register'],
     must_mention: '出口键之后紧接分割线，不夹空行',
   },
   {
-    // #562：:155 的 PRINTL 只收尾 @COMSEQ_SHOW 拼出的那一行；ere 的每个 print
+    // #562：comseq_show 拼出的行由 PRINTL 收尾；ere 的每个 print
     // 已自成一行，补 println 即多一个空行
-    desc: 'M11874 COMSEQ_SHOW 收尾补回空行（照「PRINTL 收尾换行」翻译的旧形态）',
+    desc: 'M11874 comseq_show 收尾补回空行（照「PRINTL 收尾换行」翻译的旧写法）',
     file: 'ere/system/train/com-register.js',
-    find: '  // 的 PRINTL 只结束 @COMSEQ_SHOW 拼出的那一行（:126-155）——ere 侧每个',
+    find: '  // 的 PRINTL 只结束 comseq_show 拼出的那一行——ere 侧每个 print 已经',
     replace:
-      '  era.println(); // 变异：收尾之后多补空行\n  // 的 PRINTL 只结束 @COMSEQ_SHOW 拼出的那一行（:126-155）——ere 侧每个',
+      '  era.println(); // 变异：收尾之后多补空行\n  // 的 PRINTL 只结束 comseq_show 拼出的那一行——ere 侧每个 print 已经',
     tests: ['com-register'],
-    must_mention: ':155 的 PRINTL 不产生空行',
+    must_mention: '收尾的 PRINTL 不产生空行',
   },
   {
-    desc: 'M11875 登记面提示行之后补回空行（:38 的 PRINTFORML 整行自成一行，:39 的方格紧随）',
+    desc: 'M11875 登记面提示行之后补回空行（提示行整行自成一行，方格紧随）',
     file: 'ere/system/train/com-register.js',
     find: '    era.print(`选择第${local0 + 1}个指令:`);\n    await print_comlist();',
     replace:
@@ -9771,7 +9781,7 @@ export default [
     must_mention: '「选择第N个指令」行之后紧接方格按钮，不夹空行',
   },
   {
-    desc: 'M11876 登记面标题行之后补回空行（:26 的 PRINTL 整行自成一行，:35 的分割线紧随）',
+    desc: 'M11876 登记面标题行之后补回空行（标题行整行自成一行，分割线紧随）',
     file: 'ere/system/train/com-register.js',
     find: "  era.print('调教菜单登录'); // PRINTL（整行自成一行，不再补换行——#562）",
     replace:
@@ -9780,13 +9790,13 @@ export default [
     must_mention: '标题行之后紧接分割线，不夹空行',
   },
   {
-    // #562 返工：:40 的 PRINTL 落在空行上（:39 的方格已由 @COMSEQSUB_PRINT_
-    // COMLIST 自己的 :177-178 收尾）——这一条是真空行，删掉即少一行；反方向
+    // #562 返工：方格行之后的 PRINTL 落在空行上（方格已由自己的输出收尾）——
+    // 这一条是真空行，删掉即少一行；反方向
     // （多补一行）由同一条「恰有一个空行」的断言守
-    desc: 'M11877 登记面 :40 的真空行删除（它不是收尾——方格已由自己的 PRINTL 收尾）',
+    desc: 'M11877 登记面的真空行删除（它不是收尾——方格已由自己的输出收尾）',
     file: 'ere/system/train/com-register.js',
-    find: '    era.println(); // （这一条是真空行——:39 的方格已由自己的 PRINTL 收尾）',
-    replace: '    // 变异：:40 的真空行删除',
+    find: '    era.println(); // （这一条是真空行——上面的方格已由自己的 PRINTL 收尾）',
+    replace: '    // 变异：真空行删除',
     tests: ['com-register'],
     must_mention: '方格与出口键之间恰有一个空行',
   },
@@ -9848,7 +9858,7 @@ export default [
     must_mention: '下一行是 :270 的点数句',
   },
   {
-    desc: 'M12049 COM201 菜单 [0] 之后补回空行（:67 是整行 PRINTL）',
+    desc: 'M12049 com201 菜单 [0] 之后补回空行（菜单键行是整行输出）',
     file: 'ere/system/train/com-colosseum.js',
     find: "      era.printButton('- 嘴巴', 0); // [0]",
     replace:
@@ -9857,7 +9867,7 @@ export default [
     must_mention: '菜单行全是按钮',
   },
   {
-    desc: 'M12050 COM202-206 菜单 [1] 之后补回空行（:55 是整行 PRINTL）',
+    desc: 'M12050 com202-206 菜单 [1] 之后补回空行（菜单键行是整行输出）',
     file: 'ere/system/train/com-colosseum.js',
     find: "    era.printButton('- 胸部', 1); // [1]（无条件）\n    if (show_vagina) {",
     replace:
@@ -9866,7 +9876,7 @@ export default [
     must_mention: '菜单行全是按钮',
   },
   {
-    desc: 'M12051 COM207 菜单 [2] 之后补回空行（:51 是整行 PRINTL）',
+    desc: 'M12051 com207 菜单 [2] 之后补回空行（菜单键行是整行输出）',
     file: 'ere/system/train/com-colosseum.js',
     find: "    era.printButton('- 肛门', 2);",
     replace:
@@ -9875,16 +9885,16 @@ export default [
     must_mention: '菜单行全是按钮',
   },
   {
-    desc: 'M12052 COM_REGISTER「无法实行」行之后补回空行（:234 是整行 PRINTL）',
+    desc: 'M12052 COM_REGISTER「无法实行」行之后补回空行（提示行是整行输出）',
     file: 'ere/system/train/com-register.js',
     find: "    era.print('所登录的指令目前无法实行'); // PRINTL（整行自成一行，不补空行——#595）",
     replace:
       "    era.print('所登录的指令目前无法实行'); // PRINTL\n    era.println(); // 变异：无法实行行之后补回空行",
     tests: ['com-register'],
-    must_mention: ':234 之后不得补空行',
+    must_mention: '拒绝文案之后不得补空行',
   },
   {
-    desc: 'M12053 COM208 菜单 [0] 之后补回空行（:38 是整行 PRINTL）',
+    desc: 'M12053 com208 菜单 [0] 之后补回空行（菜单键行是整行输出）',
     file: 'ere/system/train/com-tentacle.js',
     find: "    era.printButton('- 嘴巴', 0);",
     replace:
@@ -9893,12 +9903,12 @@ export default [
     must_mention: '菜单行全是按钮',
   },
   {
-    desc: 'M12054 B150 句尾补回空行（:3002 的裸 PRINTL 只收尾 :2992-3000 拼行）',
+    desc: 'M12054 B150 句尾补回空行（句尾的裸 PRINTL 只收尾前一条拼行）',
     file: 'ere/system/train/com-tentacle.js',
-    find: '  // EVENT_TRAIN_MESSAGE_B:3002 的裸 PRINTL 只收尾上面那条拼行（前一条没有\n  // 换行）——不是空行，这里不补 print（#595）',
+    find: '  // 裸 PRINTL 只收尾上面那条拼行（前一条没有换行）——不是空行，\n  // 这里不补 print（#595）',
     replace: "  era.print(' '); // 变异：句尾补回空行",
     tests: ['com-tentacle'],
-    must_mention: 'EVENT_TRAIN_MESSAGE_B:3002 的 PRINTL 只收尾',
+    must_mention: 'PRINTL 只收尾拼行，不得落成独立空串行',
   },
   {
     desc: 'M12055 结算表头之后补回空行（:655 的 PRINTL 只收尾 :652-654 拼行）',
@@ -9909,15 +9919,15 @@ export default [
     must_mention: '表头之后直接是 :656 的点线',
   },
   {
-    desc: 'M12056 COM64「３Ｐ」拆回两行（:79 的 PRINT 与 :81-87 的 PRINTL 本是一行）',
+    desc: 'M12056 com64「３Ｐ」拆回两行（两段输出本是一行）',
     file: 'ere/system/train/com-assistant.js',
     find: '  era.print(`３Ｐ${suffix}`);',
     replace: "  era.print('３Ｐ');\n  era.print(suffix); // 变异：拆回两行",
     tests: ['com-assistant'],
-    must_mention: 'COMF64:79 的 PRINT ３Ｐ 与 :81 的 PRINTL 后缀同行',
+    must_mention: '标题「３Ｐ」与部位后缀同行',
   },
   {
-    desc: 'M12057 B64 拼串为空也照印（原作 :2114-2129 零输出支不落行）',
+    desc: 'M12057 B64 拼串为空也照样打印（零输出支不落行）',
     file: 'ere/system/train/com-assistant.js',
     find: "  const text = era_flag.assiplay\n    ? site('master', t40, true) + site('assi', t41, false)\n    : site('assi', t41, true) + site('master', t40, false);\n  if (text) era.print(text);",
     replace:
@@ -9926,21 +9936,21 @@ export default [
     must_mention: '３Ｐ 行不接受独立空行/纯空白行',
   },
   {
-    desc: 'M12058 COM73 :132 的真空行移出 >100 分支（短发路径本应跳过它）',
+    desc: 'M12058 com73 剪发菜单前的真空行移出 >100 分支（短发路径本应跳过它）',
     file: 'ere/system/train/com-assistant.js',
-    find: "    // COMF73:132 的裸 PRINTL 落在空行上 → 真空行；它在 COMF73:70 的 GOTO 目标\n    // ($INPUT_LOOP_HAIRSET) 之前，短发（TALENT:302 ≤ 100）时被整条跳过，\n    // 所以只能放在这条 >100 分支里（#595）\n    era.print('');\n  }\n\n  for (;;) {\n    era.print(`把${t_name}的头发弄成什么样子？`);",
+    find: "    // 这条空行输出只在长发路径可达——短发（TALENT:302 ≤ 100）时整个\n    // 剪发菜单被跳过，故放在 >100 分支里（#595）\n    era.print('');\n  }\n\n  for (;;) {\n    era.print(`把${t_name}的头发弄成什么样子？`);",
     replace:
       "  }\n  era.print(''); // 变异：真空行移出 >100 分支（短发也落空行）\n  for (;;) {\n    era.print(`把${t_name}的头发弄成什么样子？`);",
     tests: ['com-assistant'],
     must_mention: '短发时菜单之前没有空行',
   },
   {
-    desc: 'M12059 COM73 :132 的真空行删除（它是真行，删掉即少一行）',
+    desc: 'M12059 com73 剪发菜单前的真空行删除（它是真行，删掉即少一行）',
     file: 'ere/system/train/com-assistant.js',
-    find: "    // COMF73:132 的裸 PRINTL 落在空行上 → 真空行；它在 COMF73:70 的 GOTO 目标\n    // ($INPUT_LOOP_HAIRSET) 之前，短发（TALENT:302 ≤ 100）时被整条跳过，\n    // 所以只能放在这条 >100 分支里（#595）\n    era.print('');",
-    replace: '    // 变异：:132 的真空行删除',
+    find: "    // 这条空行输出只在长发路径可达——短发（TALENT:302 ≤ 100）时整个\n    // 剪发菜单被跳过，故放在 >100 分支里（#595）\n    era.print('');",
+    replace: '    // 变异：真空行删除',
     tests: ['com-assistant'],
-    must_mention: '菜单之前是 COMF73:132 的真空行',
+    must_mention: '菜单之前是那次裸输出的真空行',
   },
   // —— #595：真空行保留（删掉空行方向） ——
   {
@@ -9960,33 +9970,33 @@ export default [
     must_mention: 'BENKI.ERB:1352 的真空行在场',
   },
   {
-    desc: 'M12060 COMF111 :161 的真空行删除（:160 的 PRINTL 已收行）',
+    desc: 'M12060 com111 撕破分支后的真空行删除（:160 的 PRINTL 已收行）',
     file: 'ere/system/train/com-cloth.js',
-    find: "      // COMF111:161 的裸 PRINTL 落在 COMF111:160 已收行之后 → 真空行（#595）\n      era.print('');",
+    find: "      // 前一条提示已结束当前行，此处再输出一个空行（#595）\n      era.print('');",
     replace: '      // 变异：:161 的真空行删除',
     tests: ['com-cloth'],
-    must_mention: 'COMF111:161 的真空行',
+    must_mention: '那次裸输出的真空行',
   },
   {
-    desc: 'M12061 COMF110 :313 的真空行删除（菜单已收行，它是真行）',
+    desc: 'M12061 com110 菜单页的真空行删除（菜单已收行，它是真行）',
     file: 'ere/system/train/com-cloth.js',
-    find: "      // 移动到撕破衣服；COMF110:313 的裸 PRINTL 落在菜单已收行\n      // 之后 → 真空行（#595）\n      era.print('');",
+    find: "      // 移动到撕破衣服；菜单输出已经结束当前行，\n      // 此处再输出一个空行（#595）。\n      era.print('');",
     replace: '      // 变异：:313 的真空行删除',
     tests: ['com-cloth'],
-    must_mention: 'COMF110:313 的真空行',
+    must_mention: 'com111 菜单之前是那次裸输出的真空行',
   },
   {
-    desc: 'M12062 COMF110 :321 的真空行删除（各分支输出已收行，它是真行）',
+    desc: 'M12062 com110 撕破页的真空行删除（各分支输出已收行，它是真行）',
     file: 'ere/system/train/com-cloth.js',
-    find: "    era.print(''); // COMF110:321 的真空行（各分支输出已收行——#595）",
+    find: "    era.print(''); // 各分支输出已结束当前行，再补一个空行（#595）",
     replace: '    // 变异：:321 的真空行删除',
     tests: ['com-cloth'],
-    must_mention: 'COM110 重绘前有空行',
+    must_mention: 'com110 重绘前有空行',
   },
   {
-    desc: 'M12063 COMF53 :175 的真空行删除（:174 的 [1] 行已收行，它是真行）',
+    desc: 'M12063 com53 菜单的真空行删除（前一条 [1] 行已收行，它是真行）',
     file: 'ere/system/train/com-special.js',
-    find: '    // COMF53:175 的裸 PRINTL 落在 COMF53:174 的 [1] 行之后 → 真空行（#595）\n    era.println();',
+    find: '    // 裸 PRINTL 落在 [1] 行之后 → 真空行（#595）\n    era.println();',
     replace: '    // 变异：:175 的真空行删除',
     tests: ['com-special'],
     must_mention: '充能按钮与不了按钮之间恰有一个空行',
@@ -10008,12 +10018,12 @@ export default [
     must_mention: '温妮依然未醒来',
   },
   {
-    desc: 'M12066 COMF111 :166 的真空行删除（撕破分支已收行，它是真行）',
+    desc: 'M12066 com111 真空行删除（撕破分支已收行，它是真行）',
     file: 'ere/system/train/com-cloth.js',
-    find: "    era.print(''); // COMF111:166 的真空行（撕破分支输出已收行——#595）",
+    find: "    era.print(''); // 撕破分支输出已结束当前行，再补一个空行（#595）",
     replace: '    // 变异：:166 的真空行删除',
     tests: ['com-cloth'],
-    must_mention: 'COM111:166 的真空行',
+    must_mention: '那次裸输出的真空行',
   },
   {
     desc: 'M12067 PASSOUT :255 的真空行删除（895 = 3 档，:254 台词行已收行）',
@@ -10095,15 +10105,15 @@ export default [
     must_mention: '原作各 PRINTL [N] - 正文',
   },
   {
-    desc: 'M12285 COM73 剪发菜单丢掉原作的「---」（三个连写破折号）',
+    desc: 'M12285 com73 剪发菜单丢掉字面的「---」（三个连写破折号）',
     file: 'ere/system/train/com-assistant.js',
     find: "era.printButton('---适当剪一下', 0);",
     replace: "era.printButton('适当剪一下', 0); // 变异：丢掉「---」",
     tests: ['com-assistant'],
-    must_mention: '剪发菜单三项的分隔符是原作的三个连写破折号',
+    must_mention: '剪发菜单三项的分隔符是三个连写破折号',
   },
   {
-    desc: 'M12286 COM73 发型菜单丢掉原作的「---」（[1] 自然那一项）',
+    desc: 'M12286 com73 发型菜单丢掉字面的「---」（[1] 自然那一项）',
     file: 'ere/system/train/com-assistant.js',
     find: "era.printButton('---自然', 1);",
     replace: "era.printButton('自然', 1); // 变异：丢掉「---」",
@@ -10111,36 +10121,36 @@ export default [
     must_mention: '发型菜单第一项',
   },
   {
-    desc: 'M12287 COM65 处女确认的 [0] 丢掉「- 」',
+    desc: 'M12287 com65 处女确认的 [0] 丢掉「- 」',
     file: 'ere/system/train/com-assistant.js',
-    find: "era.printButton('- 好', 0); // COMF65_助手を犯させる.ERB:195",
+    find: "era.printButton('- 好', 0);",
     replace: "era.printButton('好', 0); // 变异：丢掉「- 」",
     tests: ['com-assistant'],
     must_mention: 'COM65 处女确认两键带「- 」',
   },
   {
-    desc: 'M12288 COM201 凌辱菜单的 [0] 嘴巴丢掉「- 」',
+    desc: 'M12288 com201 凌辱菜单的 [0] 嘴巴丢掉「- 」',
     file: 'ere/system/train/com-colosseum.js',
     find: "      era.printButton('- 嘴巴', 0); // [0]",
     replace: "      era.printButton('嘴巴', 0); // 变异：丢掉「- 」",
     tests: ['com-colosseum'],
-    must_mention: 'COM201 四部位带「- 」',
+    must_mention: 'com201 四部位带「- 」',
   },
   {
-    desc: 'M12289 COM201 凌辱菜单的 [3] 肛门丢掉「- 」',
+    desc: 'M12289 com201 凌辱菜单的 [3] 肛门丢掉「- 」',
     file: 'ere/system/train/com-colosseum.js',
     find: "      era.printButton('- 肛门', 3); // [3]",
     replace: "      era.printButton('肛门', 3); // 变异：丢掉「- 」",
     tests: ['com-colosseum'],
-    must_mention: 'COM201 四部位带「- 」',
+    must_mention: 'com201 四部位带「- 」',
   },
   {
-    desc: 'M12290 COM207 凌辱菜单的 [1] 私处丢掉「- 」',
+    desc: 'M12290 com207 凌辱菜单的 [1] 私处丢掉「- 」',
     file: 'ere/system/train/com-colosseum.js',
     find: "era.printButton('- 私处', 1); // （男人不显示）",
     replace: "era.printButton('私处', 1); // 变异：丢掉「- 」",
     tests: ['com-colosseum'],
-    must_mention: 'COM207 三部位带「- 」',
+    must_mention: 'com207 三部位带「- 」',
   },
   {
     desc: 'M12291 避孕套每次问的 [0] 戴丢掉「- 」',
@@ -10159,17 +10169,17 @@ export default [
     must_mention: '无套三键带「- 」',
   },
   {
-    desc: 'M12293 COM208 凌辱菜单的 [0] 嘴巴丢掉「- 」',
+    desc: 'M12293 com208 凌辱菜单的 [0] 嘴巴丢掉「- 」',
     file: 'ere/system/train/com-tentacle.js',
     find: "era.printButton('- 嘴巴', 0);",
     replace: "era.printButton('嘴巴', 0); // 变异：丢掉「- 」",
     tests: ['com-tentacle'],
-    must_mention: 'COMF208_触手.ERB:38-43 的分隔符照写',
+    must_mention: '凌辱菜单的分隔符保留字面',
   },
   {
-    desc: 'M12294 COM24 逆侵犯处女确认的 [0] 丢掉「- 」',
+    desc: 'M12294 com24 逆侵犯处女确认的 [0] 丢掉「- 」',
     file: 'ere/system/train/com-sex.js',
-    find: "era.printButton('- 好的', 0); // COMF24_逆レイプ.ERB:197",
+    find: "era.printButton('- 好的', 0);",
     replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
     tests: ['com-sex'],
     must_mention: 'COM24 处女确认两键带「- 」',
@@ -10312,7 +10322,7 @@ export default [
   },
 
   {
-    desc: 'M12903 升格跳转不执行目标真身（jump_to_advanced 恒 return 1——JUMPFORM 语义被架空）',
+    desc: 'M12903 升格跳转不执行目标真身（jump_to_advanced 恒 return 1——升格跳转语义被架空）',
     file: 'ere/system/train/com-sm.js',
     find: `async function jump_to_advanced(com) {
   return com_family.call(com, { whenMissing: 1 });
@@ -10463,7 +10473,7 @@ export default [
     must_mention: '202 同形对照',
   },
   {
-    desc: 'M13002 MILK 的 E1 判据退回增量 B（蓄积 S 越过上限也不喷乳）',
+    desc: 'M13002 MILK 的 E1 条件退回增量 B（蓄积 S 越过上限也不喷乳）',
     file: 'ere/system/train/com-vaginasex.js',
     find: '  const ejac = era.get(`maxbase:${player}:3`) || 0;\n  const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;',
     replace:
@@ -10472,7 +10482,7 @@ export default [
     must_mention: '喷乳后槽按 EJAC*2 扣减钳 0',
   },
   {
-    desc: 'M13003 对面座位（COM28）的爱情经验 4 档删（按普通档 2 结算）',
+    desc: 'M13003 对面座位（com28）的爱情经验 4 档删（按普通档 2 结算）',
     file: 'ere/system/train/com-analsex.js',
     find: `  } else if (era_flag.selectcom === 28) {
     e = 4; // 対面座位`,

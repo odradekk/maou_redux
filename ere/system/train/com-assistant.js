@@ -1,24 +1,24 @@
 /**
- * @file 调教指令 60–73「助手与蕾丝」族：@COM60-73 真身 + @COM_ABLE60-73
- * 可执行性判定 + TRAIN_MESSAGE_A/B 分支 + @GET_ADV_COM CASE 61 升格规则
+ * @file 调教指令 60–73「助手与蕾丝」族：com60-73 真身 + able60-73
+ * 可执行性判定 + TRAIN_MESSAGE_A/B 分支 + get_adv_com CASE 61 升格规则
  * （issue #225，阶段 4 轴 A J15）。
  *
  * == 本族边界 ==
  *
  * - 可直选 11 条（60-66/68/71-73）+ 高级 COM 3 条（67/69/70）。67/69/70 在
- *   Train.csv 被注释，只能经 @GET_ADV_COM 升格抵达。源侧无 @COM_ABLE67
- *   （#213：「未定义即视为可执行」），本票不建壳。
+ *   指令表中被注释，只能经 get_adv_com 升格抵达。无 67 号可用性检查
+ *   （#213：「未定义即视为可执行」），本工单不建壳。
  * - CASE 1/4（→ 69）已由 com-caress.js 注册；CASE 31（→ 69/64）与 CASE 33
- *   （→ 70）已由 com-service.js 注册。本票只注册本族入口 CASE 61。
- * - COM63_AUTO 属于自动调教票 #218，本模块不重复实现。
- * - @INCEST 真身在 ere/system/train/incest.js（#220）：本族 require 共用实现，
+ *   （→ 70）已由 com-service.js 注册。本工单只注册本族入口 CASE 61。
+ * - COM63_AUTO 属于自动调教工单 #218，本模块不重复实现。
+ * - incest 真身在 ere/system/train/incest.js（#220）：本族 require 共用实现，
  *   传 (target, player)。亲族判定的命中读 CFLAG:24、写入侧用 CFLAG:25——
  *   两槽不对称是既有行为（全库无 CFLAG:24 写点，判定实际恒落空）。
- *   @HAIRSET / TALK_1 / TALK_2 定义在 COMF73 内，自足。
- * - 原作无 EQUIP_COM60-73，故不注册装备持续效果。
+ *   hairset / TALK_1 / TALK_2 定义在 73 号真身内，自足。
+ * - 无 60–73 号的装备持续效果，故不注册。
  *
- * TRAIN_MESSAGE_A/B 只登记本族 ID 在源文件里显式出现的 SELECTCOM 分支：
- * B 67/73 与 A 除 62/68/69/72 外均无专属分支，注册显式无操作（源本身无
+ * TRAIN_MESSAGE_A/B 只登记本族 ID 已有文案的 SELECTCOM 分支：
+ * B 67/73 与 A 除 62/68/69/72 外均无专属分支，注册显式无操作（无
  * 文案，不是遗漏）。
  */
 
@@ -98,8 +98,8 @@ function same_trainer() {
 
 /**
  * JUMPFORM COM{RESULT}：升格目标已全部注册进 com_family（升格表能返回的
- * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 对应原作
- * 「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 即「目标缺失
+ * 时返回 1」（本不该发生，防御语义）。
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
@@ -108,8 +108,7 @@ async function jump_to_advanced(id) {
 }
 
 /**
- * Emuera strict TIMES：十进制定点相乘，每步朝零截断。
- * 源: com-service.js 同款（本游戏关闭「向 Eramaker 对齐」）。
+ * TIMES：十进制定点相乘，每步朝零截断。com-service.js 同款。
  */
 function times(value_to_multiply, rate) {
   const text = String(rate);
@@ -471,11 +470,11 @@ async function hairset() {
         era.print('现在[半长]');
       } else {
         era.print('现在[长]');
-        // 分隔符是原作的三个连写破折号（COMF73_髪型を弄る.ERB:78 `PRINTL [0]---适当剪一下`）
+        // 分隔符保留三个连写破折号
         era.printButton('---适当剪一下', 0);
       }
-      era.printButton('---大刀阔斧地剪', 1); // COMF73_髪型を弄る.ERB:80
-      era.printButton('---不剪', 2); // COMF73_髪型を弄る.ERB:81
+      era.printButton('---大刀阔斧地剪', 1);
+      era.printButton('---不剪', 2);
       const result = await era.input();
       let l = 0;
       if (result === 0 && chara(target).chara.头发长度 >= 201) {
@@ -492,7 +491,7 @@ async function hairset() {
       }
       if (l) {
         era.print('剪成什么样子呢？');
-        // 分隔符照写原作的 `---`（COMF73_髪型を弄る.ERB:99-103）
+        // 分隔符保留三个连写破折号 `---`
         era.printButton('---还是不剪了', 0);
         era.printButton('---自然的样子', 1);
         era.printButton('---剪齐整', 2);
@@ -512,16 +511,15 @@ async function hairset() {
       }
       break;
     }
-    // COMF73:132 的裸 PRINTL 落在空行上 → 真空行；它在 COMF73:70 的 GOTO 目标
-    // ($INPUT_LOOP_HAIRSET) 之前，短发（TALENT:302 ≤ 100）时被整条跳过，
-    // 所以只能放在这条 >100 分支里（#595）
+    // 这条空行输出只在长发路径可达——短发（TALENT:302 ≤ 100）时整个
+    // 剪发菜单被跳过，故放在 >100 分支里（#595）
     era.print('');
   }
 
   for (;;) {
     era.print(`把${t_name}的头发弄成什么样子？`);
-    // 分隔符照写原作：1-9 是 `---`，10-12 是 `--`（COMF73_髪型を弄る.ERB:135-148 的
-    // 对齐写法——10-12 号就是比 1-9 号少一个破折号）
+    // 分隔符保留字面：1-9 是 `---`，10-12 是 `--`（10-12 号就是比 1-9 号
+    // 少一个破折号）
     era.printButton('---自然', 1);
     era.printButton('---中分', 2);
     era.printButton('---不均分', 3);
@@ -698,7 +696,7 @@ function relation_to(cid, other) {
 }
 
 // ============================================================
-// @COM_ABLE60-73（COMABLE.ERB:2514-3135；无 67）
+// able60-73 可用性检查（无 67）
 // ============================================================
 
 function able60() {
@@ -943,7 +941,7 @@ function able73() {
 }
 
 // ============================================================
-// @COM60-73 真身
+// com60-73 真身
 // ============================================================
 
 async function start_judge() {
@@ -1312,8 +1310,8 @@ async function com64() {
   }
   const t40 = era.get('tflag:40') || 0;
   const t41 = era.get('tflag:41') || 0;
-  // COMF64:79 的 `PRINT ３Ｐ` 不收行，COMF64:81/83/85/87 的 PRINTL 收尾同一行——
-  // 四种后缀与「３Ｐ」同处一行，故这里合成一次 print（#595）
+  // 「３Ｐ」标题不收行，四个后缀分支的文案收尾在同一行——四种后缀与
+  // 「３Ｐ」同处一行，故这里合成一次 print（#595）
   let suffix;
   if ((t40 === 1 && t41 === 2) || (t40 === 2 && t41 === 1)) {
     suffix = '・私处和肛门一起插';
@@ -1587,8 +1585,8 @@ async function com65() {
     era.print(
       `${chara_callname(player)}的处女，让${chara_callname(target)}夺走好吗？`,
     );
-    era.printButton('- 好', 0); // COMF65_助手を犯させる.ERB:195
-    era.printButton('- 不要', 1); // COMF65_助手を犯させる.ERB:196
+    era.printButton('- 好', 0);
+    era.printButton('- 不要', 1);
     if ((await era.input()) === 1) return 0;
   }
   if (!(await confirm_condom2())) return 0;
@@ -1825,7 +1823,7 @@ async function com66() {
     era.print(`${name_of('expname', 40)}+10`);
     chara(target).train.百合经验 += 10;
   }
-  // 源: RETURN 1 之后的 TFLAG:100/200 为死代码，1:1 不写。
+  // RETURN 1 之后的 TFLAG:100/200 为死代码，不写。
   return 1;
 }
 
@@ -2429,7 +2427,7 @@ async function com73() {
 }
 
 // ============================================================
-// @GET_ADV_COM CASE 61（COMF_JUMP.ERB:627-637）
+// get_adv_com CASE 61 升格规则
 // ============================================================
 
 adv_com_family.register(61, async () => {
@@ -2446,7 +2444,7 @@ adv_com_family.register(61, async () => {
 });
 
 // ============================================================
-// @TRAIN_MESSAGE_B（SELECTCOM 60-72；67/73 源侧无分支）
+// train_message_b（SELECTCOM 60-72；67/73 无分支）
 // ============================================================
 
 train_message_b_family.register(60, async () => {
@@ -2514,8 +2512,8 @@ train_message_b_family.register(64, async () => {
     }
     return '';
   };
-  // EVENT_TRAIN_MESSAGE_B:2099-2129：两侧部位各自命中才各打一句；TFLAG:40/41
-  // 都为 0（没升格到任何部位）时原作零输出——不可无条件 print（多一个空行，见 #595）
+  // 两侧部位各自命中才各打一句；TFLAG:40/41
+  // 都为 0（没升格到任何部位）时零输出——不可无条件 print（多一个空行，见 #595）
   const text = era_flag.assiplay
     ? site('master', t40, true) + site('assi', t41, false)
     : site('assi', t41, true) + site('master', t40, false);
@@ -2608,16 +2606,16 @@ train_message_b_family.register(67, async () => 0);
 train_message_b_family.register(73, async () => 0);
 
 // ============================================================
-// @TRAIN_MESSAGE_A（62/68/69/72 有源侧分支；其余显式无操作）
+// train_message_a（62/68/69/72 有分支；其余显式无操作）
 // ============================================================
 
 for (const id of [60, 61, 63, 64, 65, 66, 67, 70, 71, 73]) {
   train_message_a_family.register(id, async () => 0);
 }
 
-// A 的射精文本属 EVENT_TRAIN_MESSAGE_A 的公共段（#402 合流到
-// train-message.js）：本族不再另留一份拷贝——两份同时跑会把同一行打两遍。
-// 源侧 A 文件对这些号没有专属分支，故显式无操作。
+// A 的射精文本属 A 消息的公共段（#402 合流到 train-message.js）：本族
+// 不再另留一份拷贝——两份同时跑会把同一行打两遍。A 消息对这些号没有
+// 专属分支，故显式无操作。
 async function no_message_a() {
   return 0;
 }
