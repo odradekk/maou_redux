@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 301; // #641 起 -2+1（M6743/M6881 名单复辟守卫随 STUBBED_CALLS 机制移除；+1 M12906 LABO 战斗删除守卫）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
+export const COUNT = 305; // #641 起 -2+1（M6743/M6881 名单复辟守卫随 STUBBED_CALLS 机制移除；+1 M12906 LABO 战斗删除守卫）；#651 起 -6+10（M486/M613/M614/M646/M648/M6686 反向变异随缺陷修复删除；+10 M13150-M13159 守卫）；#597 起 +16（M12100-M12113 与 M12122/M12123：陷阱/2D 地图/
 // 商店街/背叛提问的收尾 PRINTL 不产生空行，休憩演出与税入播报前的真空行不许删，
 // 瞬移/催情气体的分条件真空行两个方向都钉住）；#548 起 +4（M11485-M11487：BEDROOM_BATTLE_MALE 真身——
 // 男人位判据、欲望门槛、睡着分支文案；M11489：挑战臂漏掉函数返回的后半句）；#461 +1（SOURCE_CHECK_AUTO 接线 M9882，号段见 #461 完成报告——原
@@ -243,15 +243,6 @@ export default [
   }`,
     tests: ['dungeon-battle'],
     must_mention: '败者号 = 勇者 2',
-  },
-  {
-    desc: 'M486 MONSTER_ATTACK 的 off-by-one 被「修好」（-100 → -99：原作缺陷形态被改）',
-    file: 'ere/dungeon/dungeon-battle.js',
-    find: '  // IDを先頭に——-100（非同构处的 -99）：off-by-one，文件头注释\n  monid -= 100;',
-    replace:
-      '  // IDを先頭に——变异：off-by-one 被修好（-99），原作缺陷形态被改\n  monid -= 99;',
-    tests: ['dungeon-battle'],
-    must_mention: 'HP 不动（DMG = 0×等级 = 0）',
   },
   {
     desc: 'M487 BATTLE2 勇者退场的 result 分流坏（return 2 → 0）',
@@ -679,7 +670,7 @@ export default [
     replace:
       '    } // 变异：牧场臂删\n    // } else if (room === 502) {\n    //   await dungeon_farm(extra, rand_n);\n    // }',
     tests: ['dungeon-room'],
-    must_mention: '税入 100 + 牧场 50',
+    must_mention: '税入 100 + 牧场 0',
   },
   {
     desc: 'M612 FARM 的只数写回删（ITEM:MON_ID 不写）',
@@ -688,23 +679,6 @@ export default [
     replace: '  // era.set(`item:${mon_id}`, mon_num); // 变异：写回删',
     tests: ['dungeon-room'],
     must_mention: 'ITEM:100 += 5',
-  },
-  {
-    desc: 'M613 FARM 的 SIF 作用域事故被修好（原作缺陷不许修，#14）',
-    file: 'ere/dungeon/dungeon-room.js',
-    find: '  era_flag.money += meat_count * 10;\n  era_exflag.legit_money += meat_count * 10;',
-    replace:
-      '  if (sell_baby) {\n    era_flag.money += meat_count * 10; // 变异：修好原作缺陷\n    era_exflag.legit_money += meat_count * 10;\n  }',
-    tests: ['dungeon-room'],
-    must_mention: 'FLAG:614 = 0 仍 +50（原作缺陷）',
-  },
-  {
-    desc: 'M614 FARM_RESCUE 的 EXTRA 当角色号缺陷被修好（原作缺陷不许修，#14）',
-    file: 'ere/dungeon/dungeon-room.js',
-    find: '  if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {\n    era_flag.meat_toilet_count -= 1;\n  }',
-    replace: '  era_flag.meat_toilet_count -= 1; // 变异：修好原作缺陷（恒减）',
-    tests: ['dungeon-room'],
-    must_mention: 'EXTRA = 1 恰逢勇者在战役',
   },
   {
     desc: 'M615 ROOM_BUILD 的拡張位写入删（FLAG:ROOMID 不 +1）',
@@ -822,30 +796,12 @@ export default [
     must_mention: '贝丝被记了同一份飲み代（不对称）',
   },
   {
-    desc: 'M646 重度借债的 GOAL 赋值提出守卫（修好原作笔误——#14 反向钉子）',
-    file: 'ere/dungeon/dungeon-town.js',
-    find: "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n        goal = floor_max + 1;\n        start_floor = floor_max + 1;\n      }",
-    replace:
-      "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n      }\n      goal = floor_max + 1; // 变异：修好原作笔误（赋值提出守卫）\n      start_floor = floor_max + 1;",
-    tests: ['dungeon-town'],
-    must_mention: 'GOAL 0（闲逛）',
-  },
-  {
     desc: 'M647 城镇主流程散会概率反（9/10 散会改 1/10）',
     file: 'ere/dungeon/dungeon-town.js',
     find: '  if (rand_n(10) > 0) {',
     replace: '  if (rand_n(10) === 0) { // 变异',
     tests: ['dungeon-town'],
     must_mention: 'rand(10) > 0 散会不开宴',
-  },
-  {
-    desc: 'M648 受注计数判定改 bit2（修好原作笔误——#14 反向钉子）',
-    file: 'ere/dungeon/dungeon-quest.js',
-    find: '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) {',
-    replace:
-      '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 2) !== 0) { // 变异：改 bit2',
-    tests: ['dungeon-quest'],
-    must_mention: 'rand(10)+1 = 5（短计数）',
   },
   {
     desc: 'M649 受注计数递减删（任务永不超时）',
@@ -1257,15 +1213,6 @@ export default [
     replace: '    love_exp[4] = 0; // 变异：V 直接丢弃，不转成 A',
     tests: ['dungeon-lovers'],
     must_mention: '贞操封印把 V 全转 A',
-  },
-  {
-    desc: 'M6686 前戏珠把遗留 LOCAL 误修成前戏数',
-    file: 'ere/dungeon/dungeon-lovers.js',
-    find: '    era.add(`juel:${cid}:0`, 250); // LOCAL 是首个 FOR 结束值 50（原作缺陷）',
-    replace:
-      '    era.add(`juel:${cid}:0`, love_exp[9] * 5); // 变异：误修原作缺陷',
-    tests: ['dungeon-lovers'],
-    must_mention: '固定保留 LOCAL×5 缺陷',
   },
   {
     desc: 'M6687 接吻初吻对象误记成口交编号 101',
@@ -2710,5 +2657,92 @@ export default [
       "      return 0; // 魔王軍は仲間\n    }\n    era.print('野外战斗（DUNGEON_BATTLE）开始……'); // 变异：野外战斗行复活\n    // CALL DUNGEON_BATTLE",
     tests: ['dungeon-labo'],
     must_mention: '不再打印任何战斗行',
+  },
+  {
+    desc: 'M13150 MONSTER_ATTACK 换算回退 -100（修好不回潮，#651）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: '  // IDを先頭に（数量槽 99/199/299 → 列头 0/100/200，与同构三处一致）\n  monid -= 99;',
+    replace:
+      '  // 变异：换算回退 -100（数量槽错位、DMG 恒 0）\n  monid -= 100;',
+    tests: ['dungeon-battle'],
+    must_mention: 'HP -10',
+  },
+  {
+    desc: 'M13151 VICTORY_GET 骄傲低扣减重印段复活（#651 删的重复段不回潮）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: '  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {\n    will -= 1; // プライド低い\n  }',
+    replace:
+      '  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {\n    will -= 1; // プライド低い\n  }\n  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {\n    will -= 1; // 变异：重印段复活（骄傲低多扣一次）\n  }',
+    tests: ['dungeon-battle'],
+    must_mention: 'will 6 > 5，RETURN 0',
+  },
+  {
+    desc: 'M13152 DEFENCE_CHARA_EXTRA_DMG 的低位判据回退 CFLAG:681（#651 修好的笔误不回潮）',
+    file: 'ere/dungeon/dungeon-battle.js',
+    find: '  } else if (debuff > 0) {\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));',
+    replace:
+      '  } else if ((era.get(`cflag:${arg0}:681`) || 0) > 0) { // 变异：判据回退 681\n    dmg = Math.floor((dmg * (100 + debuff)) / 100);\n    era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));',
+    tests: ['dungeon-battle'],
+    must_mention: 'DMG 100 × 110%',
+  },
+  {
+    desc: 'M13153 FARM 卖孩子守卫失效（无条件加钱回归，#651 修好的 SIF 作用域事故不回潮）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  if (sell_baby) {\n    era_flag.money += meat_count * 10;',
+    replace:
+      '  if (true) { // 变异：卖孩子守卫失效\n    era_flag.money += meat_count * 10;',
+    tests: ['dungeon-room'],
+    must_mention: 'FLAG:614 = 0 不加钱',
+  },
+  {
+    desc: 'M13154 FARM_RESCUE 战役守卫删（恒救走，#651 修好的按本人状态判定不回潮）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '  if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {\n    era_flag.meat_toilet_count -= 1;\n  }',
+    replace: '  era_flag.meat_toilet_count -= 1; // 变异：战役守卫删（恒救走）',
+    tests: ['dungeon-room'],
+    must_mention: '战役中的勇者不停留',
+  },
+  {
+    desc: 'M13155 FARM_RESCUE 分发实参回退扩张位域（#651 修好的实参不回潮）',
+    file: 'ere/dungeon/dungeon-room.js',
+    find: '    await dungeon_farm_rescue(arg0);',
+    replace: '    await dungeon_farm_rescue(extra); // 变异：实参回退扩张位域',
+    tests: ['dungeon-room'],
+    must_mention: '实参是勇者 1（侵攻中）→ 救走一只',
+  },
+  {
+    desc: 'M13156 PLANNING 重度借债 GOAL 赋值收回调试守卫（#651 修好的笔误不回潮）',
+    file: 'ere/dungeon/dungeon-town.js',
+    find: "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n      }\n      goal = floor_max + 1;\n      start_floor = floor_max + 1;",
+    replace:
+      "      if (show) {\n        era.print(\n          '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',\n        );\n        goal = floor_max + 1; // 变异：赋值收回守卫内（守卫关 → 闲逛）\n        start_floor = floor_max + 1;\n      }",
+    tests: ['dungeon-town'],
+    must_mention: 'GOAL = FLOOR_MAX + 1',
+  },
+  {
+    desc: 'M13157 SET_QUEST 受注计数判据回退 bit3（#651 修好的笔误不回潮）',
+    file: 'ere/dungeon/dungeon-quest.js',
+    find: '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 2) !== 0) {',
+    replace:
+      '    if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) { // 变异：判据回退 bit3',
+    tests: ['dungeon-quest'],
+    must_mention: 'bit2（时限）',
+  },
+  {
+    desc: 'M13158 LOVERS 前戏珠回退遗留字面量 250（#651 修好的 LOCAL×5 不回潮）',
+    file: 'ere/dungeon/dungeon-lovers.js',
+    find: '    era.add(`juel:${cid}:0`, love_exp[9] * 5);',
+    replace: '    era.add(`juel:${cid}:0`, 250); // 变异：回退遗留字面量',
+    tests: ['dungeon-lovers'],
+    must_mention: '前戏数 2 × 5',
+  },
+  {
+    desc: 'M13159 ENERGY_BOLT 收口删（kill_monsters 改裸算，怪物数可负，#651 修好的负怪物数不回潮）',
+    file: 'ere/dungeon/magic.js',
+    find: '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    // 过量击杀按现存怪物数收口（kill_monsters 内 min）：怪物数不跌破 0\n    const killed = kill_monsters(a, b, damage);',
+    replace:
+      '    damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);\n    const killed = idiv(damage, e_get(b + 99)); // 变异：收口删（怪物数可负）',
+    tests: ['dungeon-magic'],
+    must_mention: '怪物数不跌破 0',
   },
 ];

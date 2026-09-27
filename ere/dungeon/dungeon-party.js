@@ -10,14 +10,14 @@
  * 移植说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**（#171 用引擎实测钉下，钉子在
  *     test/static-table-coverage.test.js 的「savestr 族不存在」用例）：三段
- *     寻址 `savestr:0:1` 连 era.error 都不给、完全静默丢弃，照抄的后果是
+ *     寻址 `savestr:0:1` 连 era.error 都不给、完全静默丢弃，直接移植的后果是
  *     全部演出文本空白。名字承载一律走 `callname:${id}:-1`（#5 决议）；
  *   - 原作 `FOR CHARID, 0, CHARANUM` 按注册序号迭代，ere 扁平化（#21）
  *     下角色号 = 预设号，迭代改 `era.getAddedCharacters()`（键升序，夹具
  *     与引擎同序）；从 1 起的循环以 `charid === 0` 跳过魔王等价；
  *   - **@PARTY_CHAR_DEL 的重排段不移植**（:312-324）：原作 DELCHARA 后
  *     注册号整体前移，531/532/533 里大于被删号的引用要跟着 -1；ere 的
- *     角色号是预设号、removeCharacter 后**不重排**（#21），照抄重排会把
+ *     角色号是预设号、removeCharacter 后**不重排**（#21），照搬重排会把
  *     活引用改写成不存在的号——按死代码处理，注释保留原文说明；
  *   - PARTY_DEL 对 CFLAG:601（结婚对象，属主 chara）的清零经门面
  *     chara(cid).chara.结婚对象（#172 补名），SEARCH_FAMILY 查找配偶
@@ -290,7 +290,7 @@ function party_del(cid) {
  *
  * 先走 @PARTY_DEL 解除本人的队伍关系，再修正残余引用。原作 :312-324 的
  * 重排循环（531/532/533 大于被删号者 -1）依赖 DELCHARA 后注册号前移，
- * **ere 扁平化（#21）下角色号 = 预设号、removeCharacter 不重排**，照抄会
+ * **ere 扁平化（#21）下角色号 = 预设号、removeCharacter 不重排**，照搬会
  * 把活引用改写成不存在的号——按死代码不移植（文件头）。
  *
  * @param {number} cid 被除名角色（ARG:0）

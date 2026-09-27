@@ -228,7 +228,7 @@ function attack_chara_extra_dmg_battle2(
   );
 
   // DEF = 相手の防御力（单臂 IF，无 ELSE——条件假时 DEF 保持入参
-  // dmg 计算前的 0 初值语义，1:1 保留）
+  // dmg 计算前的 0 初值语义，保留）
   let def = 0;
   if (chara(arg2).dungeon.防御力 < chara(arg0).dungeon.攻击力) {
     def = chara(arg2).dungeon.防御力;
@@ -423,7 +423,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
     );
   }
 
-  // 查表与强化（原作对 ARG:2 调 POWERUP——1:1 保留）
+  // 查表与强化（对 ARG:2 调 POWERUP）
   equip_database(w);
   equip_powerup(w, arg2);
 
@@ -452,7 +452,7 @@ async function duel_attack(arg0, arg1, arg2, arg3, rand, move_ctx = {}) {
   }
 
   // DMG = (攻 - 防) × 2（BATTLE2 版的初值，随后被 EXTRA_DMG_BATTLE2
-  // 重算——1:1 保留两次计算）
+  // 重算——保留两次计算）
   let dmg = (chara(arg0).dungeon.攻击力 - chara(arg2).dungeon.防御力) * 2;
 
   // 対人補正

@@ -27,7 +27,7 @@
  *     文本近似并注明）：玩家可见的行序与文案 1:1，字宽对齐与配色不做；
  *   - FLAG:5 & 32（战斗日志显示）的守卫逐处保留——夹具与 e2e 的 FLAG:5
  *     缺省 0，战斗数值行为不依赖该位；
- *   - 原作注释（;）照抄为 JS 注释，行号锚点保留。
+ *   - 逐段注释保留原样（日文分支标记不译），行号锚点已随全库清理删除。
  */
 
 'use strict';
@@ -508,14 +508,14 @@ function defence_chara_extra_dmg(arg0, dmg, rand) {
     return 0;
   }
 
-  // 防御減少デバフ（CFLAG:680）。:1180 的 ELSEIF 条件写的是 CFLAG:681——
-  // 原作笔误（601 区段的两个 debuff 混写），1:1 保留（登记 #14）
+  // 防御減少デバフ（CFLAG:680）：DEBUFF% 放大受到的伤害（>50 时封顶 +50%），
+  // 每回合衰减 floor(DEBUFF/10)+1
   const debuff = era.get(`cflag:${arg0}:680`) || 0;
   if (debuff > 50) {
     // 最大 50% ダメージ上昇
     dmg += Math.floor(dmg / 2);
     era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));
-  } else if ((era.get(`cflag:${arg0}:681`) || 0) > 0) {
+  } else if (debuff > 0) {
     dmg = Math.floor((dmg * (100 + debuff)) / 100);
     era.set(`cflag:${arg0}:680`, debuff - (Math.floor(debuff / 10) + 1));
   }
@@ -539,10 +539,9 @@ function defence_chara_extra_dmg(arg0, dmg, rand) {
 }
 
 /**
- * 防御侧选择（ENEMY_ATTACK :577-595 与 SLAVE_MONSTER_ATTACK :897-916 的
- * 同构段）：扫三列数量槽，返回首个存活列的列头。全灭时 b 终值 300
- * （< 400，:589 的全灭早退因此不可达——REPEAT 3 只扫三列，B 到不了 400，
- * 结构 1:1 保留、死分支注释标注）。
+ * 防御侧选择（ENEMY_ATTACK 与 SLAVE_MONSTER_ATTACK 的同构段）：扫三列
+ * 数量槽，返回首个存活列的列头。全灭时 b 终值 300（< 400——REPEAT 3 只扫
+ * 三列，B 到不了 400，全灭早退分支不可达，死分支留注释标注）。
  * @returns {{head: number, b: number}} head = 列头（0/100/200），b = 扫描终值
  */
 function pick_defender_column() {
@@ -802,8 +801,8 @@ async function enemy_attack(arg0, arg1, rand, move_ctx = {}) {
 
   if (rest_def <= 0) {
     // 列全灭
-    // SIF 单行作用域（:803-807）：守卫只盖住第一行 PRINTFORML，怪物名与
-    // 「全灭了」两行无条件出（Emuera SIF 语义，1:1 保留）
+    // SIF 单行作用域：战斗日志守卫只盖住第一行打印，怪物名与
+    // 「全灭了」两行无条件出
     if (boss_flag === 0) {
       if ((settings & 32) !== 0) {
         era.print(`${surprise_tag}${poison_tag}勇者的攻击令`);
@@ -1006,15 +1005,10 @@ async function slave_monster_attack(rand) {
  * @MONSTER_ATTACK（:1006-1115）：怪物侧的攻击（打勇者的气力；HP 的扣减
  * 在 DEFENCE_CHARA_EXTRA_DMG 内）。
  *
- * **原作缺陷（1:1 保留，登记 #14）**：选列循环 `FOR MONID, 0, 300 / +99 /
- * BREAK` 命中时 MONID = 99/199/299（同文件 @SELECT_SLAVE 的作者注释
- * 「怪物数のID（99,199,299）が返る」是铁证），而 :1052 的换算是
- * `MONID -= 100`（同构三处 ENEMY_ATTACK/SLAVE_MONSTER_ATTACK/
- * DEATH_CHECK 都用 -99）——得 -1/99/199，整体错位一格。错位后读的数量槽
- * E:98/E:198/E:298 全库无写入者（数量只写在列头+99），MONNUM 恒 0、
- * DMG 恒 0：**原作里怪物打勇者不掉血**（勇者的损耗实际来自逃跑段的气力
- * 扣减与 @DUNGEON 的冒险疲劳）。ere 侧照字面移植，勿「修好」——行为
- * 对齐由「怪物攻击的 DMG 恒 0」用例钉住（#116 M214/M218 先例）。
+ * 选列循环 BREAK 停在数量槽 99/199/299，换算 -99 得列头 0/100/200（与
+ * ENEMY_ATTACK / SLAVE_MONSTER_ATTACK / DEATH_CHECK 同构），随后读数量槽
+ * E:99/199/299 与攻撃槽 E:2/102/202——怪物攻击按 数量 × 攻撃 对勇者造成
+ * HP 扣减（DEFENCE_CHARA_EXTRA_DMG 内）与气力扣减。
  *
  * @param {number} arg0 被攻击的勇者（原作 ARG:0）
  * @param {number} arg1 回合数（原作 ARG:1）
@@ -1052,15 +1046,15 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
       rest -= 1;
     }
   }
-  // IDを先頭に——-100（非同构处的 -99）：off-by-one，文件头注释
-  monid -= 100;
+  // IDを先頭に（数量槽 99/199/299 → 列头 0/100/200，与同构三处一致）
+  monid -= 99;
 
   // B = MONID; CALL MAGIC,2（存根不动目标）
   if ((await magic_mod.magic(2, arg0, monid, rand, move_ctx)) === 999) {
     return 999;
   }
 
-  // 怪物技能（E:(MONID+5) 为技能号——off-by-one 下实读速度槽）
+  // 怪物技能（E:(列头+5) 为技能号）
   const skill_no = e_get(monid + 5);
   if (
     (await monster_skill_mod.monster_skill(arg0, skill_no, monid, rand)) === 999
@@ -1068,7 +1062,7 @@ async function monster_attack(arg0, arg1, rand, move_ctx = {}) {
     return 999;
   }
 
-  // 怪物数（off-by-one 下实读 E:98/198/298，恒 0）
+  // 怪物数（数量槽 E:99/199/299）
   let monnum = e_get(monid + 99);
   const boss_flag = e_get(monid + 8);
   if (boss_flag === 1) {
@@ -1205,9 +1199,6 @@ async function victory_get(arg0, rand) {
   }
   if ((era.get(`talent:${arg0}:23`) || 0) !== 0) {
     will -= 1; // 好奇心
-  }
-  if ((era.get(`talent:${arg0}:17`) || 0) !== 0) {
-    will -= 1; // 重出的プライド低い（原作重印，1:1 保留）
   }
   if ((era.get(`talent:${arg0}:36`) || 0) !== 0) {
     will -= 1; // 恥薄い

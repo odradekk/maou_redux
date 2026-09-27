@@ -20,7 +20,7 @@
  *   - 原作 88 个怪物函数 → 数据表查表（MONSTER_DATABASE）；@SKELETON 的
  *     动态等级保留为函数；
  *   - 原作 GROUP 战用段（:154-170 的 GROUP != -1 臂）无调用方传 GROUP
- *     （全库 CALL MONSTER_DATA 均 4 参以内），结构 1:1 保留、注释标注；
+ *     （全库 CALL MONSTER_DATA 均 4 参以内），结构保留、注释标注；
  *   - 名字拼接（@MONSTERNAME 的 #FUNCTIONS 与 @MONSTER_NAME 的 PRINT 链）
  *     改为返回字符串，由调用方并入一次 era.print（引擎 print 每调用一行，
  *     同显示行归并先例）；
@@ -48,8 +48,8 @@ function campaign_dungeon_lv() {
 
 /**
  * @ENEMY_DATA_CHECK（侵略/ENEMY_DATA.ERB:1-8）与 @CRUSADER（:10-40）。
- * 原作把 ARG 声明成形参，却漏了 INUM/TOP 的赋值，导致字面执行恒为 0；
- * #333 没有修复源缺陷的裁定，因此这里 1:1 保留无操作行为。
+ * ARG 被声明成形参，却漏了 INUM/TOP 的赋值，导致字面执行恒为 0；
+ * #333 裁定不修复，因此这里保留无操作行为。
  */
 function enemy_data_check(inum, top) {
   void inum;
@@ -319,7 +319,7 @@ async function monster_setup(id, rand = default_rand) {
  * @param {number} [arg2] 勇者A（原作 ARG:2，缺省 -1；LINE == 3 与骷髅战用）
  * @param {number} [arg3] 奴隶的对手勇者T（原作 ARG:3，缺省 -1；LINE == 4 用）
  * @param {number} [group] GROUP 战分组（原作 GROUP，缺省 -1；全库无调用方
- *   传它，结构 1:1 保留）
+ *   传它，结构保留）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
  * @returns {number} 原作 RETURN 0
  */
@@ -383,7 +383,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
       first_count = 1;
     }
   } else {
-    // GROUP 战用（:154-170）——全库无调用方传 GROUP，结构 1:1 保留
+    // GROUP 战用（:154-170）——全库无调用方传 GROUP，结构保留
     if (line >= 0 && line < 3) {
       const held = era.get(`item:${inum}`) || 0;
       if (held <= 100) {
@@ -406,7 +406,7 @@ function monster_data(inum, line, arg2 = -1, arg3 = -1, group = -1, rand) {
   e_set(top + 9, 0);
 
   // —— ボス化判定（:174-182）——
-  // 第二臂（&& GROUP）是第一臂的真子集，恒冗余——原作现状，1:1 保留
+  // 第二臂（&& GROUP）是第一臂的真子集，恒冗余——保留现状
   if (inum === 190) {
     // 骷髅兵不 boss 化
     e_set(top + 8, 0);

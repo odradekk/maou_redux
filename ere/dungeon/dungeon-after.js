@@ -17,7 +17,7 @@
  *     :27-31 与 :331-341），选项打印后紧接 `input_choice`，中途没有
  *     成功回传，按钮照常可点（引擎 app.asar 的 returnFromButton /
  *     getButtonObject 与 valCount 三处机制，逐字见 #180、#572 的核对）。
- *     随之「越界值重问」支在实机上不可达，1:1 保留不补用例
+ *     随之「越界值重问」支在实机上不可达，保留结构不补用例
  *     （page-ability-up.js 文件头同款登记）；
  *   - ABL/EXP 走门面（chara 域：顺从/欲望/私处感觉/肛门感觉/露出癖/抖M
  *     气质；dungeon 域：私处/肛门/绝顶/性交/自慰/调教自慰/精液/口交/私处
@@ -29,7 +29,7 @@
  *     endTrain 删，裁定当时「调教外（EVENTTURNEND）写 `tflag:18` 落引擎兜底
  *     分支 era.error 且丢失」（engine-bundle 驱动 setVar 的探针实证，裁定
  *     全文见 ere/kojo/kojo-dungeon-after.js 文件头）。故 result 直接作为
- *     第二参传给口上分发，原作各分支的赋值行不落、序号值 1:1 透传；
+ *     第二参传给口上分发，原作各分支的赋值行不落、序号值原样透传；
  *     TFLAG:18 的调教期语义（足コキ / SYSTEM_SOURCE）不受影响——那
  *     些调用点桶在场，仍走 era.set。
  *     **#508 补记**：本链唯一的调用点（turnend-settle.js:163，原作 :302）
@@ -43,8 +43,7 @@
  *   - MONEY / EX_FLAG:4444 → era_flag.money / era_exflag.legit_money
  *     （dungeon-trap.js 先例）；
  *   - @OSIOKI 的 ELSEIF RESULT == 9（:562-566）是死分支——输入循环
- *     （:342-346）把 RESULT >= 9 拦回重输，0-8 全被覆盖，9 永不达。
- *     1:1 保留（结构照搬），不另登记；
+ *     保留结构，不另登记；
  *   - 原作文本的繁/日字按 #60 归一为简体（経験→经验、糞→粪、終→终、
  *     給→给、頭→头、呑→吞、幇→帮、説→说、帯→带、浄→净），玩家可见
  *     文本一律简体的有意识偏离。
@@ -70,7 +69,7 @@ function name_of(cid) {
  * INPUT 循环（原作 $INPUT_LOOP：RESULT < 0 或 >= 上界时 GOTO 重输）。
  *
  * #572 起两个调用点的选项都打成了按钮，白名单＝按钮集，越界值由引擎
- * 拒收（弹「输入不合法」），`while` 那支在实机上不可达——1:1 保留结构
+ * 拒收（弹「输入不合法」），`while` 那支在实机上不可达——保留结构
  * 与文案，不补用例（page-ability-up.js 文件头同款登记）。
  *
  * @param {number} upper 合法输入的上界（GOHOUBI 3 / OSIOKI 9）

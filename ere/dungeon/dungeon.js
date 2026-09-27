@@ -1,8 +1,7 @@
 /**
  * @file 迷宫主循环（issue #172，阶段 3 H3）：@DUNGEON 与三个附属函数。
  *
- * 原作局部变量语义（DUNGEON.ERB :14-22 注释逐条照抄——后续七张 H 票的
- * 共同词汇表）：
+ * 局部变量语义（各 H 票共用词汇表）：
  *   ARG:0 / A = 攻略中的角色（队长）     D:20 = 侵攻度    D:1 = 1 时帰還
  *   D:4 = 陷阱试行次数                   D:0  = 欠番（有意跳过，别复用）
  *   TURN = 侵攻计数器   SIDEA / SIDEB = 同伴 A / B   TURNEND = 有人战败而中断
@@ -14,7 +13,7 @@
  * 移植说明（有意偏离，均注明依据）：
  *   - **SAVESTR 无引擎通道**（#171 引擎实测钉下，钉子在
  *     test/static-table-coverage.test.js「savestr 族不存在」用例）：三段
- *     `savestr:0:1` 完全静默丢弃，照抄的后果是 88 处演出文本全部空白。
+ *     `savestr:0:1` 完全静默丢弃，直接移植的后果是 88 处演出文本全部空白。
  *     名字承载一律走 `callname:${id}:-1`（#5 决议）；
  *   - EQUIP_CHECK / EQUIP_SELECT 用 #174（H5）真身 ere/system/equip/——
  *     工单票面把它俩列在存根表，出票后 H5 已先合并，以文件实际内容为准；
@@ -135,15 +134,15 @@ async function campaign_quest(cid) {
  * @CAMPAIGN_ENDING（CAMPAIGN_EVENT.ERB:303-318）：战役终局演出。
  *
  * :304-312 的角色复位循环无条件跑（不受 :313 的 FLAG:400 < 1 早退约束，
- * 原作把 FOR 循环放在 SIF 之前）——即使调用点已经用 `FLAG:400 > 0` 挡过一层
- * （源 DUNGEON.ERB:195 唯一调用点），函数体自身仍照抄这个无条件动作。
+ * FOR 循环放在 SIF 之前）：即使调用点已经用 `FLAG:400 > 0` 挡过一层，
+ * 函数体自身仍保留这个无条件动作。
  *
  * 调用点传 ARG:0（队长），但函数体自身不使用，@CAMPAIGN_ENDING_{n} 也不接收
  * 参数（见 CAMPAIGN_1.ERB:360）——故本移植不设形参。
  * @returns {Promise<number>} 原作 RETURN（FLAG:400 < 1 时恒 0）
  */
 async function campaign_ending() {
-  // 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立照抄）
+  // 全员取消战役派遣（与 CAMPAIGN_GAMEOVER 同构，各自独立保留）
   for (const cid of era.getAddedCharacters()) {
     if (chara(cid).invasion.状态 === 12) {
       party_del(cid);
@@ -217,9 +216,8 @@ async function bedroom_battle_male(cid) {
  * @DUNGEON（:3-853）：迷宫攻略主循环。每次调用推进一「回合」（FOR TURN
  * 0..4 在 TURN > 0 即 BREAK——:79-81 的平衡调整，实际单轮），回合内按
  * 侵攻度 D:20 决定踏破 / 撤退 / 滞留，再走设施、陷阱、战斗、伤势判定与
- * 撤退决议。#103 判定：本函数曾被 侵略/AGENT/AGENT.ERB 的 2014 旧快照
- * 遮蔽（首个加载生效），实际运行的一直是旧版——本项目以本文件为准，
- * AGENT 版登记为缺陷死代码。
+ * 撤退决议。本函数曾有同名旧版（首个加载生效会遮蔽本版）——以本文件为准，
+ * 旧版不再保留。
  *
  * @param {number} arg0 攻略中的角色·队长（原作 ARG:0）
  * @param {(n: number) => number} [rand] RAND:N 随机源（缺省均匀随机）
@@ -252,7 +250,7 @@ async function run_dungeon(arg0, rand) {
   // 仍读它，声明随之外提）
   let floor = chara(arg0).dungeon.侵攻阶层;
   // D:1 = 0（帰還フラグ——全函数无读者，撤退判定实走 CFLAG:507，
-  // 原作注释照抄、不落变量）
+  // 原作注释保留、不落变量）
 
   // FLAG:5 & 32（战斗日志显示）时的开场演出
   const settings = era.get('flag:5') || 0;
@@ -1260,11 +1258,10 @@ async function run_dungeon(arg0, rand) {
  * 仲間B 的同构链）：按 HP/MP 百分比写 CFLAG:534（状态档）并返回累加的
  * STATUS 槽位。
  *
- * 原作现状（1:1 保留，不「修好」）：首分支 `HP% < 60 || MP% < 50` 已吞并
- * 其后全部六个分支（身体抱恙 / 重伤 / 头脑发昏 / 濒死×2 / 气绝在逻辑上
- * 均不可达），实际可达态只有「轻伤（2）」与「元气满满（1）」两档——
- * DUNGEON.ERB 的撤退判定（:685-696 的 534 >= 3 / == 4）随之只有
- * 「轻伤 + 胆小」一臂真实可达。
+ * 首分支 `HP% < 60 || MP% < 50` 已吞并其后全部六个分支（身体抱恙 / 重伤 /
+ * 头脑发昏 / 濒死×2 / 气绝在逻辑上均不可达），实际可达态只有「轻伤（2）」
+ * 与「元气满满（1）」两档——DUNGEON.ERB 的撤退判定（:685-696 的
+ * 534 >= 3 / == 4）随之只有「轻伤 + 胆小」一臂真实可达。
  *
  * @param {number} cid 角色
  * @param {number} mode MODE（非 0 时静默不打印，:899）
@@ -1279,8 +1276,8 @@ function check_status_one(cid, mode) {
     (chara(cid).dungeon.气力 * 100) / (era.get(`maxbase:${cid}:1`) || 0),
   );
   // 阈值（S1_HP 60 / S1_MP 50 / S2_HP 35 / S2_MP 30 / S3_HP 20 /
-  // S3_MP 10）随各分支字面内联。原作是 ELSEIF 链，ere 侧以顺序 if + return
-  // 等价改写（首个真条件胜出）——分支 2-7 的条件被首分支覆盖（原作现状），
+  // S3_MP 10）随各分支字面内联。ELSEIF 链以顺序 if + return
+  // 等价改写（首个真条件胜出）——分支 2-7 的条件被首分支覆盖，
   // 改写不引入行为差异
   if (hp_pct < 60 || wp_pct < 50) {
     if (!mode) {
@@ -1290,7 +1287,7 @@ function check_status_one(cid, mode) {
     return 1;
   }
   if (wp_pct < 50) {
-    // 不可达（首分支已含），1:1 保留
+    // 不可达（首分支已含），保留
     if (!mode) {
       era.print(`${name}身体抱恙。`);
     }
@@ -1298,7 +1295,7 @@ function check_status_one(cid, mode) {
     return 4;
   }
   if (hp_pct < 35 || wp_pct < 30) {
-    // 不可达，1:1 保留
+    // 不可达，保留
     if (!mode) {
       era.print(`${name}重伤。`);
     }
@@ -1306,7 +1303,7 @@ function check_status_one(cid, mode) {
     return 2;
   }
   if (wp_pct < 30) {
-    // 不可达，1:1 保留
+    // 不可达，保留
     if (!mode) {
       era.print(`${name}头脑发昏。`);
     }
@@ -1314,7 +1311,7 @@ function check_status_one(cid, mode) {
     return 5;
   }
   if (hp_pct < 20 && wp_pct < 10) {
-    // 不可达，1:1 保留
+    // 不可达，保留
     if (!mode) {
       era.print(`${name}濒死。`);
     }
@@ -1322,7 +1319,7 @@ function check_status_one(cid, mode) {
     return 3;
   }
   if (hp_pct < 20) {
-    // 不可达，1:1 保留
+    // 不可达，保留
     if (!mode) {
       era.print(`${name}濒死。`);
     }
@@ -1330,7 +1327,7 @@ function check_status_one(cid, mode) {
     return 3;
   }
   if (wp_pct < 10) {
-    // 不可达，1:1 保留
+    // 不可达，保留
     if (!mode) {
       era.print(`${name}气绝。`);
     }
@@ -1464,10 +1461,10 @@ async function get_junk_item(cid, rand) {
 /**
  * @GET_DOWN_ENEMY（:1076-1091）：勇者陷落时的初始化与资金入手。
  *
- * 原作里因 @DUNGEON 主入口被 AGENT.ERB 旧快照遮蔽而**纯死代码**——
- * **#103 判定为复制粘贴事故、本项目决定复活**（判据：AGENT 版恰缺 2015
- * 三轮补丁特征，含本函数消费的 CFLAG:580/581/582 勇者资产闭环）。本票
- * 接上全部 9 处调用点（:446/:463/:470/:484/:497/:503/:510/:516/:569）。
+ * 本函数曾被同名旧版主入口遮蔽而不可达——**判定为复制粘贴事故、决定复活**
+ * （判据：旧版恰缺 2015 三轮补丁特征，含本函数消费的 CFLAG:580/581/582
+ * 勇者资产闭环）。已接上全部 9 处调用点（:446/:463/:470/:484/:497/:503/
+ * :510/:516/:569）。
  *
  * @param {number} arg0 陷落的勇者（原作 ARG:0）
  * @returns {Promise<number>} 原作 RETURN 0

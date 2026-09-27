@@ -1,6 +1,6 @@
 // 变异条目表切片：issue #345（阶段 5a L14）怪物技能与两处战斗接入。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 38; // #641 起 -2（M7175/M7177 名单复辟守卫随 STUBBED_CALLS 机制移除）
+export const COUNT = 38; // #641 起 -2（M7175/M7177 名单复辟守卫随 STUBBED_CALLS 机制移除）；#651 起 -1+1（M7154 破铠吐息反向钉子随缺陷修复删除；+1 M13160 文案实伤一致守卫）
 
 export default [
   {
@@ -121,15 +121,6 @@ export default [
       '    await print_battle_line(`${monster_name}发动经验吸取！！（经验值-${dmg}）`);\n    target_view.dungeon.战斗经验 -= dmg;\n    // 变异：等级检查删除\n  } else if (skill === 14)',
     tests: ['monster-skill'],
     must_mention: '调用等级检查并同步四维',
-  },
-  {
-    desc: 'M7154 破铠吐息文案被顺手修成实伤',
-    file: 'ere/dungeon/monster-skill.js',
-    find: '${monster_name}喷出了破坏铠甲的吐息！！（HP-${level * 2} 防御-${palam_down}）',
-    replace:
-      '${monster_name}喷出了破坏铠甲的吐息！！（HP-${breath} 防御-${palam_down}）',
-    tests: ['monster-skill'],
-    must_mention: '文案与实伤不一致',
   },
   {
     desc: 'M7155 魔力吸取防御增量改坏',
@@ -329,5 +320,14 @@ export default [
     replace: '  if (false) { // 变异：日志恒关闭',
     tests: ['monster-skill'],
     must_mention: '战斗日志开启时等待输出',
+  },
+  {
+    desc: 'M13160 破铠吐息文案回退显示 level*2（#651 修好的文案实伤一致不回潮）',
+    file: 'ere/dungeon/monster-skill.js',
+    find: '`${monster_name}喷出了破坏铠甲的吐息！！（HP-${breath} 防御-${palam_down}）`,',
+    replace:
+      '`${monster_name}喷出了破坏铠甲的吐息！！（HP-${level * 2} 防御-${palam_down}）`, // 变异：文案回退（与实伤不一致）',
+    tests: ['monster-skill'],
+    must_mention: '文案与实伤一致',
   },
 ];

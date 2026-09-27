@@ -2,15 +2,10 @@
  * @file 2D 地下城模式的野外推进（issue #181，阶段 3 H12）：
  * LABO_DUNGEON_MAP.ERB 五函数。
  *
- * 源文件头注（:1-3 逐字）：「フィールドでの戦闘；水面下での開発に戻しました；
- * この部分のコードが欲しいひとは0.310以前のバージョンを参照してください」
- * ——野外战斗被作者撤回开发：**@DUNGEON_BATTLE 与 @DUNGEON_BATTLE2 全库无
- * 定义**，唯二调用点就在本文件 :187/:211，原作 Emuera 运行到这两个分支会
- * 因「関数が見つかりません」报错停止（缺陷登记 #14）。ere 侧处置（#638，
- * 按 #574「LABO 迷宫不再触发战斗」）：两处调用点与占位存根一并删除——
- * 撞上敌方单位/怪物时该回合移动即止，不发生战斗，也不替作者补写 0.310
- * 版的野外战斗（M:2 怪物 LV 的传参形态与既有 3D 战斗
- * （dungeon_party_battle 系）对不上，映射无据）。
+ * 野外战斗没有实现：DUNGEON_BATTLE 与 DUNGEON_BATTLE2 全库无定义，唯二
+ * 调用点在本文件的野外推进段。处置：两处调用点已删除——撞上敌方单位/
+ * 怪物时该回合移动即止，不发生战斗，也不补写旧版野外战斗（M:2 怪物 LV
+ * 的传参形态与既有 3D 战斗（dungeon_party_battle 系）对不上，映射无据）。
  *
  * 移植说明（有意偏离，均注明依据）：
  *   - 原作全局 A（推进中的单位）经显式传参（#5 决议第六条）；D:20（侵攻度）
@@ -23,9 +18,9 @@
  *     一律走 callname:${id}:-1（#5 决议，dungeon.js 同款）；
  *   - MONEY → era_flag.money / era_flag.money += …（EX_FLAG:4444 镜像不在
  *     本文件原作正文里，不搬）；TARGET → era_flag.target；
- *   - 原作 :56-74 的三臂 IF/ELSEIF/ELSEIF：第二臂条件与第一臂字面相同
- *     （:64 复制粘贴产物），逻辑上不可达——1:1 保留结构（check_status
- *     的不可达分支先例）；
+ *   - :56-74 的三臂 IF/ELSEIF/ELSEIF：第二臂条件与第一臂字面相同
+ *     （复制粘贴产物），逻辑上不可达——保留结构（check_status 的
+ *     不可达分支先例）；
  *   - CLEARLINE 1（:269，无效输入清行重问）无 era API 通道，重问循环
  *     收敛为再问（SETFONT/CLEARLINE 同为渲染细节，跳过不落）；
  *   - ere 无全局 RAND 序列（#117），随机经注入的 rand 掷出（缺省
@@ -57,11 +52,8 @@ function default_rand(n) {
 }
 
 /**
- * 原作缺失的两个野外战斗函数（@DUNGEON_BATTLE / @DUNGEON_BATTLE2）：源文件
- * 头注明「水面下开发撤回，要代码请参照 0.310 以前」，全库无定义——原作
- * 运行到这两个分支会报「関数が見つかりません」停止（#14 登记）。#638 起
- * 两处调用点随存根机制一并删除：撞上敌方单位/怪物时该回合移动即止，
- * 不发生战斗（#574：LABO 迷宫不再触发战斗）。
+ * 野外战斗（@DUNGEON_BATTLE / @DUNGEON_BATTLE2）全库无定义：撞上敌方单位/
+ * 怪物时该回合移动即止，不发生战斗。
  */
 /**
  * @UNIT_MOVE（:83-235）：单位移动——按侵攻度 D:20 决定趋近/远离中心，
@@ -297,8 +289,8 @@ async function dungeon_map(a, rand) {
     chara(a).dungeon.休憩 -= 1;
   }
 
-  // 休憩演出（FLAG:5 & 32 渲染守卫内）。第二臂（:64）条件与第一臂
-  // 字面相同——原作复制粘贴产物，逻辑不可达，1:1 保留（文件头）
+  // 休憩演出（FLAG:5 & 32 渲染守卫内）。第二臂条件与第一臂字面相同
+  // （复制粘贴产物），逻辑不可达，保留结构（文件头）
   if (chara(a).invasion.状态 === 2 && chara(a).dungeon.休憩 & 1) {
     if ((era.get('flag:5') || 0) & 32) {
       era.println(); // PRINTL（空行）
@@ -307,8 +299,8 @@ async function dungeon_map(a, rand) {
       era.drawLine();
       era.println(); // 真空行：60 行的 PRINTFORMW 已收尾
     }
-    // 第二臂（:64）条件与第一臂字面相同——原作复制粘贴产物，逻辑不可达，
-    // 1:1 保留（check_status 的不可达分支先例）；该规则判的正是这类重复
+    // 第二臂条件与第一臂字面相同（复制粘贴产物），逻辑不可达，
+    // 保留结构（check_status 的不可达分支先例）；该规则判的正是这类重复
     // eslint-disable-next-line no-dupe-else-if
   } else if (chara(a).invasion.状态 === 2 && chara(a).dungeon.休憩 & 1) {
     if ((era.get('flag:5') || 0) & 32) {
@@ -319,7 +311,7 @@ async function dungeon_map(a, rand) {
       era.println();
     }
   } else if (chara(a).invasion.状态 === 3) {
-    // 空体（原作如此）
+    // 空体（无演出）
   }
   if ((era.get('flag:5') || 0) & 32) {
     era.println(); // SIF FLAG:5 & 32 PRINTL（空行）
