@@ -9,12 +9,12 @@
  *      通道承担；缺号显式报错（空间外 call/register 抛错）；
  *   2. L_IDX ↔ L_I 映射层（com-index.js）：双向、黄金样本实证对（穿脱
  *      衣服 110 ↔ 89）、由 TrainCommand.yml 条目顺序推出的独立通道核对、
- *      **恒等映射必红**（#211 的反向变异要求——工单追加范围原文）；
- *   3. @GET_ADV_COM 升格机制（com-adv.js）：零规则原样返回（RETURN ARG）、
+ *      **恒等映射必红**（#211 的反向变异要求——工单追加范围）；
+ *   3. get_adv_com 升格机制（com-adv.js）：零规则原样返回、
  *      「前两回合序列 → 高级 COM」的机制样例（测试内注册 CASE 8 形状的
  *      规则；族票接上真规则后按新语义调紧，见用例注）、rand 注入、
  *      空间外显式抛错；
- *   4. @V_ABLE（v-able.js）六条判定 + TRAIN_MESSAGE 分发族的缺号语义。
+ *   4. v_able（v-able.js）六条判定 + TRAIN_MESSAGE 分发族的缺号语义。
  *
  */
 
@@ -30,7 +30,7 @@ const REPO = path.resolve(__dirname, '..');
 
 // —— 1. 121 段分发表契约 ——
 
-test('高级 COM 20 个的精确清单：有实现、不可直选（Train.csv 注释段）', async () => {
+test('高级 COM 20 个的精确清单：有实现、不可直选（指令表中的注释段）', async () => {
   const fixture = create_era_fixture();
   const { ADVANCED_COM_IDS, DECLARED_COM_IDS, DECLARED_TRAIN_IDS } =
     fixture.load_module('system/train/com-family');
@@ -41,7 +41,7 @@ test('高级 COM 20 个的精确清单：有实现、不可直选（Train.csv �
       67, 69, 70, 84, 111, 120, 121, 123, 124, 125, 126, 127, 128, 129, 130,
       131, 132, 133, 134, 208,
     ],
-    '高级 COM = 分发空间 − 可直选空间（#213 勘定：67/84 无 COM_ABLE 段、' +
+    '高级 COM = 分发空间 − 可直选空间（#213 结论：67/84 无可用性检查段、' +
       '86 是死段不进空间）',
   );
   assert.ok(
@@ -50,9 +50,12 @@ test('高级 COM 20 个的精确清单：有实现、不可直选（Train.csv �
   );
   assert.ok(
     ADVANCED_COM_IDS.every((id) => DECLARED_COM_IDS.includes(id)),
-    '高级 COM 一律在分发空间（JUMPFORM 升格目标可分发）',
+    '高级 COM 一律在分发空间（升格目标可分发）',
   );
-  assert.ok(!DECLARED_COM_IDS.includes(86), 'COM_ABLE86 死段不进空间（饮尿）');
+  assert.ok(
+    !DECLARED_COM_IDS.includes(86),
+    '86 号可用性检查死段不进空间（饮尿）',
+  );
 });
 
 test('缺号显式报错而非静默回落：空间外 register/call 一律抛错', async () => {
@@ -68,7 +71,7 @@ test('缺号显式报错而非静默回落：空间外 register/call 一律抛�
   assert.throws(
     () => com_able_family.register(86, async () => 0),
     /不在声明的编号空间内/,
-    '86 是 COM_ABLE 的死段（无 @COM86、TRAINNAME 恒空）——空间外',
+    '86 是可用性检查的死段（无对应指令、指令名恒空）——空间外',
   );
   await assert.rejects(
     () => com_family.call(999, { whenMissing: 0 }),
@@ -77,7 +80,7 @@ test('缺号显式报错而非静默回落：空间外 register/call 一律抛�
   await assert.rejects(
     () => com_able_family.call(39, { whenMissing: 1 }),
     /不在声明的编号空间内/,
-    'L_I 39 是 Train.csv 空号——空间外（打屁股是 40）',
+    'L_I 39 是指令表空号——空间外（打屁股是 40）',
   );
 });
 
@@ -87,7 +90,7 @@ test('映射双向：恒等段 0-38、黄金实证对（打屁股 40↔39 / 交�
   const fixture = create_era_fixture();
   const { com_id, com_index } = fixture.load_module('system/train/com-index');
 
-  // 0-38：Train.csv 第一个空号（39）之前两套重合
+  // 0-38：指令表第一个空号（39）之前两套重合
   assert.equal(com_index(0), 0);
   assert.equal(com_index(38), 38);
   // 39 起 L_IDX = L_I − 累计空号数（#211 三条实证的算术）
@@ -106,8 +109,8 @@ test('映射是双射且由 TrainCommand.yml 条目顺序推出（独立通道�
   const fixture = create_era_fixture();
   const { com_id, com_index } = fixture.load_module('system/train/com-index');
 
-  // 独立通道：直接读 yml 文本推出位次（@SHOW_COMMENU 的 FOR L_I,0,300 +
-  // STRLENS(TRAINNAME) 守卫的离线等价物），与运行时映射逐号对账
+  // 独立通道：直接读 yml 文本推出位次（指令菜单按名字非空逐项编号的
+  // 离线等价物），与运行时映射逐号对账
   const yml = fs.readFileSync(
     path.join(REPO, 'yml', 'TrainCommand.yml'),
     'utf8',
@@ -127,8 +130,8 @@ test('映射是双射且由 TrainCommand.yml 条目顺序推出（独立通道�
     assert.equal(com_index(adv), undefined);
   }
   // 越界输入：不是指令编号（999 出口 / 子菜单号 / 乱数都经 undefined 落
-  // @USERCOM；100 是合法位次——末位指令 207 媚药史莱姆，与能力表示[100]
-  // 的撞号由 COM_ABLE 过滤消解，同原作）
+  // USERCOM 事件；100 是合法位次——末位指令 207 媚药史莱姆，与能力表示[100]
+  // 的撞号由可用性检查过滤消解）
   for (const bad of [-1, 101, 999, 1.5]) {
     assert.equal(com_id(bad), undefined, `com_id(${bad}) 必须 undefined`);
   }
@@ -136,7 +139,7 @@ test('映射是双射且由 TrainCommand.yml 条目顺序推出（独立通道�
   assert.equal(com_index(-1), undefined);
 });
 
-// —— 3. @GET_ADV_COM 升格机制 ——
+// —— 3. get_adv_com 升格机制 ——
 
 test('机制样例（前两回合序列 → 高级 COM）：CASE 8 形状的规则 + 零规则原样返回', async () => {
   const fixture = create_era_fixture();
@@ -151,19 +154,19 @@ test('机制样例（前两回合序列 → 高级 COM）：CASE 8 形状的规�
     'system/train/com-adv',
   );
 
-  // 零规则（#213 骨架态）：全部可直选号原样返回（RETURN ARG 的等价物）
+  // 零规则（#213 骨架态）：全部可直选号原样返回（入参原样返回的等价物）
   for (const id of [0, 8, 40, 110, 135, 207]) {
     assert.equal(await get_adv_com(id), id, `无规则时 ${id} 原样返回`);
   }
 
-  // 机制样例：测试内注册 CASE 8（COMF_JUMP.ERB:140-141）形状的规则——
-  // PREVCOM == 8 && ABL:PLAYER:12 >= 3 → 84（不调 COM_ABLE、无随机）。
+  // 机制样例：测试内注册 CASE 8 形状的规则——
+  // PREVCOM == 8 && ABL:PLAYER:12 >= 3 → 84（不调可用性检查、无随机）。
   // J9（#219）把真规则注册进 adv_com_family 后，本断言按新语义调紧
   // （零规则原样返回的六连断言届时删除）
   let rand_seen;
   adv_com_family.register(8, async (rand) => {
     if (typeof rand !== 'function') {
-      throw new Error('rand 必须以函数形态注入规则（get_adv_com 的签名契约）');
+      throw new Error('rand 必须以函数形式注入规则（get_adv_com 的签名契约）');
     }
     rand_seen = rand(11);
     if (era_flag.prevcom === 8 && (era.get('abl:0:12') || 0) >= 3) {
@@ -193,15 +196,15 @@ test('机制样例（前两回合序列 → 高级 COM）：CASE 8 形状的规�
     seen.push(n);
     return 0;
   });
-  assert.deepEqual(seen, [11], 'rand 必须以 RAND:11 的形态注入规则');
+  assert.deepEqual(seen, [11], 'rand 以 11 为上界注入规则');
   assert.ok(Number.isInteger(rand_seen) && rand_seen >= 0 && rand_seen < 11);
 });
 
-test('GET_ADV_COM 的挂点空间：可直选 101；高级号/空号显式抛错', async () => {
+test('get_adv_com 的挂点空间：可直选 101；高级号/空号显式抛错', async () => {
   const fixture = create_era_fixture();
   const { get_adv_com } = fixture.load_module('system/train/com-adv');
 
-  // 规则挂在可直选空间（SHOW_COMMENU 与 COMF 头部传入的都是玩家所选 L_I）
+  // 规则挂在可直选空间（指令菜单界面与指令分发传入的都是玩家所选 L_I）
   await assert.rejects(
     () => get_adv_com(84),
     /不在声明的编号空间内/,
@@ -211,9 +214,9 @@ test('GET_ADV_COM 的挂点空间：可直选 101；高级号/空号显式抛错
   await assert.rejects(() => get_adv_com(999), /不在声明的编号空间内/);
 });
 
-// —— 4. @V_ABLE 公共头 ——
+// —— 4. v_able 公共头 ——
 
-test('@V_ABLE：六条判定逐条（男 / 未成熟 / 处女 / 贞操带三条件 / 贞操封印 / 可）', async () => {
+test('v_able：六条判定逐条（男 / 未成熟 / 处女 / 贞操带三条件 / 贞操封印 / 可）', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -230,7 +233,7 @@ test('@V_ABLE：六条判定逐条（男 / 未成熟 / 处女 / 贞操带三条�
   assert.equal(v_able(31), 0, '男人不可');
   del('talent:31:122');
 
-  set('talent:31:135', 1); // 未成熟（源注释的「萨德豁免」不在函数体）
+  set('talent:31:135', 1); // 未成熟（判定不含施虐狂豁免）
   assert.equal(v_able(31), 0, '未成熟不可');
   del('talent:31:135');
 
@@ -259,7 +262,7 @@ test('@V_ABLE：六条判定逐条（男 / 未成熟 / 处女 / 贞操带三条�
 
 // —— 5. TRAIN_MESSAGE 分发族的缺号语义 ——
 
-test('TRAIN_MESSAGE 分发族：声明空间 121；缺失零输出（#565 还原原作语义）；空间外显式抛错', async () => {
+test('TRAIN_MESSAGE 分发族：声明空间 121；缺失零输出（#565 语义）；空间外显式抛错', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -284,12 +287,12 @@ test('TRAIN_MESSAGE 分发族：声明空间 121；缺失零输出（#565 还原
   assert.ok(train_message_b_family.has(0));
   assert.ok(!train_message_b_family.has(84));
 
-  // 缺失（族模块未装载）→ 零输出（#565 起按原作语义：源侧对无分支的号
-  // 什么都不打印；#45–#402 期间 ere 给缺号打占位行，全量收口后还原）
+  // 缺失（族模块未装载）→ 零输出（#565 起的语义：无分支的号
+  // 什么都不打印；#45–#402 期间 ere 给缺号打占位行，全量收尾后还原）
   era_flag.selectcom = 84; // 升格可达的高级号：本世界未装载 com-hardcore
   await train_message_b();
   assert(
-    !fixture.text_lines().some((l) => l.includes('@TRAIN_MESSAGE_B')),
+    !fixture.text_lines().some((l) => l.includes('TRAIN_MESSAGE_B')),
     '缺失分支零输出，不得再落占位行（#565）',
   );
 

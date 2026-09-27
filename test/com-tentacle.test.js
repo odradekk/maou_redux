@@ -1,21 +1,21 @@
 /**
  * ere/system/train/com-tentacle.js 的行为测试（issue #227：J17 指令族·触手
- * 与自由调教 COM 100–109 / 150 / 208）。验收项「四件套一文件」的落点：
+ * 与自由调教 COM 100–109 / 150 / 208）。验收项「四件套一文件」覆盖：
  *
- *   - @COM_ABLE100-109 / 150 / 208 的判据（秘密知识/道具/装备互斥/触手中/
+ *   - able100-109 / 150 / 208 的判断条件（秘密知识/道具/装备互斥/触手中/
  *     男人/口塞/癖好 CSTR:7 / 死斗场——每条指令至少一段可用性用例）；
- *   - @COM100 真身（TRAIN_MESSAGE_B 在翻转 TEQUIP:90 之前、半阈值 EXP:55
+ *   - COM100 真身（train_message_b 在翻转 TEQUIP:90 之前、半阈值 EXP:55
  *     分档、胆怯/感情淡薄、解除清位）；
- *   - @COM101-107/109 的尾 JUMP（不改写 SELECTCOM；未落地目标 → COM_MISSING，
- *     已落地目标经 com_family 真身返回）；
- *   - @COM108 真身（初吻 CFLAG:16 直写、TEQUIP:98 取反、口交经验门面）；
- *   - @COM150 真身（CSTR:7 癖好、SOURCE:18/8/12、百合/断背经验）；
- *   - @COM208 真身（复用 ARENA_SLAVE_POINT / COM_AFTER_ARENA、菜单、
- *     JUMP COM31 缺失哨兵、JUMP COM5 落地、男人私处 RETURN 0）；
- *   - @EQUIP_COM100 / 108 持续效果（射精旗标 TFLAG:15、EXP:55 随 T 收尾）；
+ *   - COM101-107/109 的尾跳转（不改写 selectcom；未实现目标 → COM_MISSING，
+ *     已实现目标经 com_family 真身返回）；
+ *   - COM108 真身（初吻 CFLAG:16 直写、TEQUIP:98 取反、口交经验门面）；
+ *   - COM150 真身（CSTR:7 癖好、SOURCE:18/8/12、百合/断背经验）；
+ *   - COM208 真身（复用 arena_slave_point / com_after_arena、菜单、
+ *     跳转 COM31 缺失哨兵、跳转 COM5 已实现、男人私处返回 0）；
+ *   - equip_com100 / 108 持续效果（射精旗标 TFLAG:15、EXP:55 随 T 收尾）；
  *   - TRAIN_MESSAGE_B 100-109/150 与 A 150 + 100-109/208 显式无操作；
- *   - A 公共头 TFLAG:15 非死斗场触手两臂（含源侧双重打印）；
- *   - @SYOKUSYU_MILK（母乳体质获得；#220 的调用点可换掉存根）。
+ *   - A 公共头 TFLAG:15 非死斗场触手两个分支（双重打印）；
+ *   - syokusyu_milk（母乳体质获得；#220 的调用点可换掉存根）。
  *
  * 世界底座与 com-hardcore.test.js 的 seed_world 同构。
  */
@@ -63,7 +63,7 @@ function seed_world({ load_colosseum = false, load_caress = false } = {}) {
   };
 }
 
-/** 经族调用一条指令（真实循环里 SELECTCOM 由 train-loop 先置——测试同位） */
+/** 经族调用一条指令（真实循环里 selectcom 由 train-loop 先置——测试同位） */
 async function run_com(world, com, extra = {}) {
   world.era_flag.selectcom = com;
   return world.com_family.call(com, extra);
@@ -98,7 +98,7 @@ function able_on(world) {
 
 // —— 注册面 ——
 
-test('注册 100-109 / 150 / 208：COM、COM_ABLE、B/A 全部进族；EQUIP 100/108 进链', async () => {
+test('注册 100-109 / 150 / 208：真身、可用性检查、B/A 全部进族；equip 100/108 进链', async () => {
   const world = seed_world();
   const { train_message_a_family, train_message_b_family } =
     world.fixture.load_module('system/train/train-message');
@@ -106,21 +106,21 @@ test('注册 100-109 / 150 / 208：COM、COM_ABLE、B/A 全部进族；EQUIP 100
     100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 150, 208,
   ]) {
     assert.equal(world.com_family.has(id), true, `COM${id}`);
-    assert.equal(world.com_able_family.has(id), true, `COM_ABLE${id}`);
+    assert.equal(world.com_able_family.has(id), true, `${id} 号可用性检查`);
     assert.equal(train_message_b_family.has(id), true, `B${id}`);
     assert.equal(train_message_a_family.has(id), true, `A${id}`);
   }
-  assert.equal(world.equip_com_family.has(100), true, 'EQUIP_COM100');
-  assert.equal(world.equip_com_family.has(108), true, 'EQUIP_COM108');
+  assert.equal(world.equip_com_family.has(100), true, 'equip_com100');
+  assert.equal(world.equip_com_family.has(108), true, 'equip_com108');
 });
 
-// —— @COM_ABLE100-109 / 150 / 208 ——
+// —— 100-109 / 150 / 208 号可用性检查 ——
 
-test('@COM_ABLE100：秘密知识 + 道具；未开启时装备互斥；浴室/新妻/决斗/使役各挡一条', async () => {
+test('able100：秘密知识 + 道具；未开启时装备互斥；浴室/新妻/决斗/使役各挡一条', async () => {
   const world = seed_world();
   const { fixture, com_able_family } = world;
 
-  // 先给道具、再查知识：两道守卫拆开，删掉知识守卫时本断言必红（M1330）
+  // 先给道具、再查知识：两道检查拆开，删掉知识检查时本断言必红（M1330）
   fixture.store.set('item:90', 1);
   assert.equal(await com_able_family.call(100), 0, '缺秘密知识');
 
@@ -161,10 +161,14 @@ test('@COM_ABLE100：秘密知识 + 道具；未开启时装备互斥；浴室/�
   assert.equal(await com_able_family.call(100), 0, '使役 PLAY');
 });
 
-test('@COM_ABLE101-109：一律需 TEQUIP:90；各号独有挡（男人/灌肠/榨乳/口塞/阴茎）', async () => {
+test('able101-109：一律需 TEQUIP:90；各号独有挡（男人/灌肠/榨乳/口塞/阴茎）', async () => {
   const { fixture, com_able_family } = seed_world();
   for (const id of [101, 102, 103, 104, 105, 106, 107, 108, 109]) {
-    assert.equal(await com_able_family.call(id), 0, `COM_ABLE${id} 无触手中`);
+    assert.equal(
+      await com_able_family.call(id),
+      0,
+      `${id} 号可用性检查：无触手中`,
+    );
   }
   fixture.store.set('tequip:31:90', 1);
 
@@ -224,7 +228,7 @@ test('@COM_ABLE101-109：一律需 TEQUIP:90；各号独有挡（男人/灌肠/�
   assert.equal(await com_able_family.call(109), 1, '109 扶她');
 });
 
-test('@COM_ABLE150：顺从+欲望≥6、无触手/兽奸/使役/决斗、无 zooko、CSTR:7 非空', async () => {
+test('able150：顺从+欲望≥6、无触手/兽奸/使役/决斗、无 zooko、CSTR:7 非空', async () => {
   const { fixture, com_able_family } = seed_world();
   assert.equal(await com_able_family.call(150), 0, '能力合计不足且无癖好');
 
@@ -261,10 +265,10 @@ test('@COM_ABLE150：顺从+欲望≥6、无触手/兽奸/使役/决斗、无 zo
   assert.equal(await com_able_family.call(150), 0, '癖好未设定');
 });
 
-test('@COM_ABLE208：死斗场中 + 秘密知识 + 道具；助手调教不可；无等级门槛', async () => {
+test('able208：死斗场中 + 秘密知识 + 道具；助手调教不可；无等级门槛', async () => {
   const { fixture, era_flag, com_able_family } = seed_world();
 
-  // 先给知识+道具、再查死斗场：叠层拆开，删掉死斗场守卫时本断言必红（M1341）
+  // 先给知识+道具、再查死斗场：叠层拆开，删掉死斗场检查时本断言必红（M1341）
   able_on({ fixture });
   assert.equal(await com_able_family.call(208), 0, '不在死斗场');
 
@@ -289,9 +293,9 @@ test('@COM_ABLE208：死斗场中 + 秘密知识 + 道具；助手调教不可�
   assert.equal(await com_able_family.call(208), 0, '助手调教不可');
 });
 
-// —— @COM100 ——
+// —— COM100 ——
 
-test('@COM100：B 在翻转之前（未开启 → 缠上了）；置位并按 EXP:55 半阈值缩放损耗', async () => {
+test('com100：B 在翻转之前（未开启 → 缠上了）；置位并按 EXP:55 半阈值缩放损耗', async () => {
   const world = seed_world();
   const { fixture } = world;
   able_on(world);
@@ -311,7 +315,7 @@ test('@COM100：B 在翻转之前（未开启 → 缠上了）；置位并按 EX
   assert.equal(fixture.store.get('t:0'), 0, '尾段 T = 0');
 });
 
-test('@COM100：胆怯 ×2、感情淡薄 ×0.6；半阈值各档', async () => {
+test('com100：胆怯 ×2、感情淡薄 ×0.6；半阈值各档', async () => {
   const timid = seed_world();
   able_on(timid);
   timid.fixture.store.set('talent:31:10', 1);
@@ -339,7 +343,7 @@ test('@COM100：胆怯 ×2、感情淡薄 ×0.6；半阈值各档', async () => 
   );
 });
 
-test('@COM100：已开启 → B 走退出支，并清掉全部触手位', async () => {
+test('com100：已开启 → B 走退出支，并清掉全部触手位', async () => {
   const world = seed_world();
   const { fixture } = world;
   able_on(world);
@@ -356,16 +360,16 @@ test('@COM100：已开启 → B 走退出支，并清掉全部触手位', async 
   assert.equal(fixture.store.get('deltabase:31:0') || 0, 0, '退出支不写损耗');
 });
 
-// —— JUMP 101-107 / 109 ——
+// —— 跳转 101-107 / 109 ——
 
-test('@COM101：JUMP COM11 且不改写 SELECTCOM；目标未落地 → COM_MISSING', async () => {
+test('com101：跳转 COM11 且不改写 selectcom；目标未实现 → COM_MISSING', async () => {
   const world = seed_world();
   const result = await run_com(world, 101);
   assert.equal(result, world.COM_MISSING);
-  assert.equal(world.era_flag.selectcom, 101, 'JUMP 不改写 SELECTCOM');
+  assert.equal(world.era_flag.selectcom, 101, '跳转不改写 selectcom');
 });
 
-test('@COM106：JUMP COM44 落地时返回目标真身，SELECTCOM 仍是 106', async () => {
+test('com106：跳转 COM44 已实现时返回目标真身，selectcom 仍是 106', async () => {
   const world = seed_world();
   const jumped = [];
   world.com_family.register(44, async () => {
@@ -373,12 +377,12 @@ test('@COM106：JUMP COM44 落地时返回目标真身，SELECTCOM 仍是 106', 
     return 77;
   });
   const result = await run_com(world, 106);
-  assert.equal(result, 77, '目标看到的 SELECTCOM 仍是触手指令号');
-  assert.deepEqual(jumped, [106], '目标看到的 SELECTCOM 仍是触手指令号');
+  assert.equal(result, 77, '目标看到的 selectcom 仍是触手指令号');
+  assert.deepEqual(jumped, [106], '目标看到的 selectcom 仍是触手指令号');
   assert.equal(world.era_flag.selectcom, 106);
 });
 
-test('@COM102/103/104/105/107/109：各自 JUMP 到 13/14/15/16/46/17', async () => {
+test('com102/103/104/105/107/109：各自跳转到 13/14/15/16/46/17', async () => {
   const targets = [
     [102, 13],
     [103, 14],
@@ -400,9 +404,9 @@ test('@COM102/103/104/105/107/109：各自 JUMP 到 13/14/15/16/46/17', async ()
   }
 });
 
-// —— @COM108 ——
+// —— COM108 ——
 
-test('@COM108：侍奉精神/技巧分档、取反 TEQUIP:98、初吻直写 -1→999、口交经验门面', async () => {
+test('com108：侍奉精神/技巧分档、取反 TEQUIP:98、初吻直写 -1→999、口交经验门面', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('cflag:31:16', -1);
@@ -434,7 +438,7 @@ test('@COM108：侍奉精神/技巧分档、取反 TEQUIP:98、初吻直写 -1�
   assert.equal(fixture.store.get('tequip:31:98'), 0, '再执行即关');
 });
 
-test('@COM108：初吻判定必须直读 cflag，不得走会把 -1 当 0 的门面', () => {
+test('com108：初吻判定必须直读 cflag，不得走会把 -1 当 0 的门面', () => {
   const src = fs.readFileSync(
     path.join(REPO, 'ere', 'system', 'train', 'com-tentacle.js'),
     'utf8',
@@ -445,7 +449,7 @@ test('@COM108：初吻判定必须直读 cflag，不得走会把 -1 当 0 的门
   );
 });
 
-test('@COM108：CFLAG:16 非 -1 时不改初吻', async () => {
+test('com108：CFLAG:16 非 -1 时不改初吻', async () => {
   const world = seed_world();
   world.fixture.store.set('cflag:31:16', 3);
   await run_com(world, 108);
@@ -453,9 +457,9 @@ test('@COM108：CFLAG:16 非 -1 时不改初吻', async () => {
   assert.equal(world.fixture.store.get('tflag:13'), undefined);
 });
 
-// —— @COM150 ——
+// —— COM150 ——
 
-test('@COM150：癖好名标题、SOURCE 分档、双方非男人 → 百合经验 +5', async () => {
+test('com150：癖好名标题、SOURCE 分档、双方非男人 → 百合经验 +5', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('cstr:31:7', '尾巴');
@@ -474,7 +478,7 @@ test('@COM150：癖好名标题、SOURCE 分档、双方非男人 → 百合经�
   assert.equal(fixture.store.get('exp:31:40'), 5, '百合经验+5');
 });
 
-test('@COM150：双方皆男人 → 断背经验 +5；局部中毒倍率', async () => {
+test('com150：双方皆男人 → 断背经验 +5；局部中毒倍率', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('cstr:31:7', '嗅觉');
@@ -492,9 +496,9 @@ test('@COM150：双方皆男人 → 断背经验 +5；局部中毒倍率', async
   assert.equal(fixture.store.get('source:31:18'), 1800);
 });
 
-// —— @COM208 ——
+// —— COM208 ——
 
-test('@COM208：気力有余 → COM_AFTER_ARENA 胜利收场，不进凌辱菜单', async () => {
+test('com208：気力有余 → com_after_arena 胜利收场，不进凌辱菜单', async () => {
   const world = seed_world({ load_colosseum: true });
   const { fixture } = world;
   able_on(world);
@@ -506,14 +510,14 @@ test('@COM208：気力有余 → COM_AFTER_ARENA 胜利收场，不进凌辱菜�
   fixture.store.set('cflag:31:14', 20);
   fixture.store.set('cflag:0:9', 10);
   const result = await run_com(world, 208);
-  assert.equal(result, 1, 'RESULT==0 → RETURN 1 跳过菜单');
+  assert.equal(result, 1, '结果 == 0 → 返回 1，跳过菜单');
   assert.ok(fixture.text_lines().includes('触手'));
   assert.ok(fixture.text_lines().includes('斗技胜利经验+1'));
   assert.equal(fixture.store.get('tflag:400'), 208);
   assert.ok(!printed_buttons(fixture).includes('0:- 嘴巴'), '胜利不进菜单');
 });
 
-test('@COM208：陷落后菜单；JUMP COM31 未落地 → COM_MISSING；SELECTCOM 改写为 31', async () => {
+test('com208：陷落后菜单；跳转 COM31 未实现 → COM_MISSING；selectcom 改写为 31', async () => {
   const world = seed_world({ load_colosseum: true });
   const { fixture } = world;
   able_on(world);
@@ -523,8 +527,8 @@ test('@COM208：陷落后菜单；JUMP COM31 未落地 → COM_MISSING；SELECTC
   fixture.store.set('cflag:0:9', 10);
   fixture.set_inputs(0);
   const result = await run_com(world, 208);
-  assert.equal(result, world.COM_MISSING, 'COM31 未落地');
-  assert.equal(world.era_flag.selectcom, 31, 'JUMP 前改写 SELECTCOM');
+  assert.equal(result, world.COM_MISSING, 'COM31 未实现');
+  assert.equal(world.era_flag.selectcom, 31, '跳转前改写 selectcom');
   const buttons = printed_buttons(fixture);
   assert.ok(buttons.includes('0:- 嘴巴'));
   assert.ok(buttons.includes('1:- 胸部'));
@@ -533,7 +537,7 @@ test('@COM208：陷落后菜单；JUMP COM31 未落地 → COM_MISSING；SELECTC
   assert.ok(buttons.includes('999:暂时放过'));
 });
 
-test('#612 @COM208 凌辱菜单：四部位带「- 」、[999] 无分隔符', async () => {
+test('#612 com208 凌辱菜单：四部位带「- 」、[999] 无分隔符', async () => {
   const world = seed_world({ load_colosseum: true });
   able_on(world);
   world.fixture.store.set('tequip:31:55', 1);
@@ -546,11 +550,11 @@ test('#612 @COM208 凌辱菜单：四部位带「- 」、[999] 无分隔符', as
       .filter((line) => line.type === 'button')
       .map((button) => button.rendered),
     ['[0] - 嘴巴', '[1] - 胸部', '[2] - 私处', '[3] - 肛门', '[999] 暂时放过'],
-    'COMF208_触手.ERB:38-43 的分隔符照写',
+    '凌辱菜单的分隔符保留字面',
   );
 });
 
-test('@COM208：JUMP COM5 落地（胸爱抚已注册）返回子指令结果', async () => {
+test('com208：跳转 COM5 已实现（胸爱抚已注册）返回子指令结果', async () => {
   const world = seed_world({ load_colosseum: true, load_caress: true });
   const { fixture } = world;
   able_on(world);
@@ -559,19 +563,19 @@ test('@COM208：JUMP COM5 落地（胸爱抚已注册）返回子指令结果', 
   fixture.store.set('maxbase:31:1', 1000);
   fixture.set_inputs(1);
   const result = await run_com(world, 208);
-  assert.equal(result, 1, 'COM5 落地 RETURN 1');
+  assert.equal(result, 1, 'COM5 已实现，返回 1');
   assert.equal(world.era_flag.selectcom, 5);
   assert.ok(fixture.text_lines().includes('胸爱抚'));
 });
 
-test('@COM208：男人不显示私处；999 暂时放过 → RETURN 1', async () => {
+test('com208：男人不显示私处；999 暂时放过 → 返回 1', async () => {
   const spare = seed_world({ load_colosseum: true });
   able_on(spare);
   spare.fixture.store.set('tequip:31:55', 1);
   spare.fixture.store.set('base:31:1', 0);
   spare.fixture.store.set('maxbase:31:1', 1000);
   spare.fixture.set_inputs(999);
-  assert.equal(await run_com(spare, 208), 1, '暂时放过 RETURN 1');
+  assert.equal(await run_com(spare, 208), 1, '暂时放过返回 1');
 
   const man = seed_world({ load_colosseum: true });
   able_on(man);
@@ -580,14 +584,14 @@ test('@COM208：男人不显示私处；999 暂时放过 → RETURN 1', async ()
   man.fixture.store.set('maxbase:31:1', 1000);
   man.fixture.store.set('talent:31:122', 1);
   man.fixture.set_inputs(999);
-  assert.equal(await run_com(man, 208), 1, '暂时放过 RETURN 1');
+  assert.equal(await run_com(man, 208), 1, '暂时放过返回 1');
   assert.ok(
     !printed_buttons(man.fixture).includes('2:- 私处'),
     '男人不显示私处',
   );
 });
 
-test('@COM208：战斗点低于 10×魔王等级 → 追加伤害；否则打倒文本', async () => {
+test('com208：战斗点低于 10×魔王等级 → 追加伤害；否则打倒文本', async () => {
   const low = seed_world({ load_colosseum: true });
   able_on(low);
   low.fixture.store.set('tequip:31:55', 1);
@@ -624,9 +628,9 @@ test('@COM208：战斗点低于 10×魔王等级 → 追加伤害；否则打倒
   );
 });
 
-// —— @EQUIP_COM100 / 108 ——
+// —— equip_com100 / 108 ——
 
-test('@EQUIP_COM100：半阈值（整档 EXPLV）缩放损耗、SOURCE 倍率、首次异常经验、T 收尾', async () => {
+test('equip_com100：半阈值（整档 EXPLV）缩放损耗、SOURCE 倍率、首次异常经验、T 收尾', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('source:31:0', 10);
@@ -657,7 +661,7 @@ test('@EQUIP_COM100：半阈值（整档 EXPLV）缩放损耗、SOURCE 倍率、
   assert.equal(fixture.store.get('t:0'), 0);
 });
 
-test('@EQUIP_COM100：MAXBASE:4 非 0 时射精检查写 TFLAG:15；大量射精走 E=2', async () => {
+test('equip_com100：MAXBASE:4 非 0 时射精检查写 TFLAG:15；大量射精走 E=2', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('maxbase:0:4', 100);
@@ -678,7 +682,7 @@ test('@EQUIP_COM100：MAXBASE:4 非 0 时射精检查写 TFLAG:15；大量射精
   assert.equal(fixture.store.get('exp:31:55'), 3, 'T+=1 后 EXP:55 += T');
 });
 
-test('@EQUIP_COM108：喜欢精液减半损耗；侍奉分档与口交经验；T += 1 不清零', async () => {
+test('equip_com108：喜欢精液减半损耗；侍奉分档与口交经验；T += 1 不清零', async () => {
   const world = seed_world();
   const { fixture } = world;
   fixture.store.set('talent:31:47', 1);
@@ -693,12 +697,12 @@ test('@EQUIP_COM108：喜欢精液减半损耗；侍奉分档与口交经验；T
   assert.equal(fixture.store.get('deltabase:31:1'), -60);
   assert.equal(fixture.store.get('source:31:4'), 100);
   assert.equal(fixture.store.get('exp:31:22'), 1);
-  assert.equal(fixture.store.get('t:0'), 5, 'EQUIP_COM108 只累加 T，不清零');
+  assert.equal(fixture.store.get('t:0'), 5, 'equip_com108 只累加 T，不清零');
 });
 
-// —— TRAIN_MESSAGE_B 100-109 / 150 ——
+// —— train_message_b 100-109 / 150 ——
 
-test('@TRAIN_MESSAGE_B100：zooko 着装走特别服装名，不拼「将身体」', async () => {
+test('B100：zooko 着装走特别服装名，不拼「将身体」', async () => {
   const world = seed_world();
   world.fixture.store.set('cflag:31:42', 11);
   world.fixture.store.set('cflag:31:40', 64);
@@ -714,7 +718,7 @@ test('@TRAIN_MESSAGE_B100：zooko 着装走特别服装名，不拼「将身体�
   assert.ok(!lines.some((l) => l.includes('将温妮的身体')));
 });
 
-test('@TRAIN_MESSAGE_B101-109：进入/退出各号独有文本；zooko 前缀同一行', async () => {
+test('B101-109：进入/退出各号独有文本；zooko 前缀同一行', async () => {
   const cases = [
     [
       101,
@@ -789,7 +793,7 @@ test('@TRAIN_MESSAGE_B101-109：进入/退出各号独有文本；zooko 前缀�
   }
 });
 
-test('@TRAIN_MESSAGE_B150：嗅觉 / 腋 / 其它癖好三支；拼在「向」之后同一行', async () => {
+test('B150：嗅觉 / 腋 / 其它癖好三支；拼在「向」之后同一行', async () => {
   const smell = seed_world();
   smell.fixture.store.set('cstr:31:7', '嗅觉');
   await run_b(smell, 150);
@@ -817,7 +821,7 @@ test('@TRAIN_MESSAGE_B150：嗅觉 / 腋 / 其它癖好三支；拼在「向」�
   );
 });
 
-test('@TRAIN_MESSAGE_B208 与 A 100-109/208：源侧无分支，注册显式无操作（不得出占位行）', async () => {
+test('B208 与 A 100-109/208：无分支，注册显式无操作（不得出占位行）', async () => {
   const world = seed_world();
   await run_b(world, 208);
   await run_a(world, 100);
@@ -829,9 +833,9 @@ test('@TRAIN_MESSAGE_B208 与 A 100-109/208：源侧无分支，注册显式无�
   );
 });
 
-// —— TRAIN_MESSAGE_A 150 + TFLAG:15 公共头 ——
+// —— train_message_a 150 + TFLAG:15 公共头 ——
 
-test('@TRAIN_MESSAGE_A150：F 中毒 / F 感觉分档；嗅觉与其它癖好各一支', async () => {
+test('A150：F 中毒 / F 感觉分档；嗅觉与其它癖好各一支', async () => {
   const high = seed_world();
   high.fixture.store.set('cstr:31:7', '尾巴');
   high.fixture.store.set('abl:31:40', 5);
@@ -851,7 +855,7 @@ test('@TRAIN_MESSAGE_A150：F 中毒 / F 感觉分档；嗅觉与其它癖好各
   assert.ok(smell.fixture.text_lines().includes('温妮对嗅觉调教十分厌恶…'));
 });
 
-test('A 公共头 TFLAG:15 非死斗场触手两臂：源侧 SIF + ELSEIF 双重打印', async () => {
+test('A 公共头 TFLAG:15 非死斗场触手两个分支：SIF + ELSEIF 双重打印', async () => {
   const world = seed_world();
   const { fixture } = world;
   const { train_message_a } = fixture.load_module('system/train/train-message');
@@ -862,7 +866,7 @@ test('A 公共头 TFLAG:15 非死斗场触手两臂：源侧 SIF + ELSEIF 双重
   const once = fixture
     .text_lines()
     .filter((l) => l === '温妮身上的触手、吐出了体液…');
-  assert.equal(once.length, 2, ':113-125 SIF 与 :143-145 ELSEIF 各打一次');
+  assert.equal(once.length, 2, 'SIF 与 ELSEIF 各打一次');
 
   fixture.store.set('tflag:15', 2);
   await train_message_a();
@@ -872,7 +876,7 @@ test('A 公共头 TFLAG:15 非死斗场触手两臂：源侧 SIF + ELSEIF 双重
   assert.equal(mass.length, 2, '大量射精同样双重打印');
 });
 
-test('A 公共头：死斗场中触手臂不落（SIF 要求 TEQUIP:55 != 1，IF 链被死斗场臂消费）', async () => {
+test('A 公共头：死斗场中触手分支不落（SIF 要求 TEQUIP:55 != 1，IF 链被死斗场分支消费）', async () => {
   const world = seed_world({ load_colosseum: true });
   const { fixture } = world;
   const { train_message_a } = fixture.load_module('system/train/train-message');
@@ -886,9 +890,9 @@ test('A 公共头：死斗场中触手臂不落（SIF 要求 TEQUIP:55 != 1，IF
   assert.ok(!fixture.text_lines().some((l) => l.includes('触手、吐出了体液')));
 });
 
-// —— @SYOKUSYU_MILK ——
+// —— syokusyu_milk ——
 
-test('@SYOKUSYU_MILK：B 感度≥5 且无母乳/贫乳/绝壁/男人 → 获得母乳体质', async () => {
+test('syokusyu_milk：B 感度≥5 且无母乳/贫乳/绝壁/男人 → 获得母乳体质', async () => {
   const world = seed_world();
   const { fixture } = world;
   const { syokusyu_milk } = fixture.load_module('system/train/com-tentacle');
@@ -900,7 +904,7 @@ test('@SYOKUSYU_MILK：B 感度≥5 且无母乳/贫乳/绝壁/男人 → 获得
   assert.ok(fixture.text_lines().some((l) => l.includes('获得了【母乳体质】')));
 });
 
-test('@SYOKUSYU_MILK：贫乳 / 已有母乳体质 / 感度不足 各挡一条', async () => {
+test('syokusyu_milk：贫乳 / 已有母乳体质 / 感度不足 各挡一条', async () => {
   const blocked = async (setup) => {
     const world = seed_world();
     world.fixture.store.set('abl:31:1', 5);
@@ -924,27 +928,23 @@ test('@SYOKUSYU_MILK：贫乳 / 已有母乳体质 / 感度不足 各挡一条',
   assert.equal(low.fixture.store.get('talent:31:130') || 0, 0);
 });
 
-// —— 接线 ——
+// —— 接入 ——
 
-test('主启动图注册触手系：COM100 与 COM_ABLE100 可由主循环侧的 require 发现', async () => {
+test('主启动图注册触手系：COM100 与 able100 可由主循环侧的 require 发现', async () => {
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
   const { com_family, com_able_family } = fixture.load_module(
     'system/train/com-family',
   );
   assert.equal(com_family.has(100), true, 'COM100 必须经主启动图注册');
-  assert.equal(
-    com_able_family.has(100),
-    true,
-    'COM_ABLE100 必须经主启动图注册',
-  );
+  assert.equal(com_able_family.has(100), true, 'able100 必须经主启动图注册');
   assert.equal(com_family.has(150), true);
   assert.equal(com_family.has(208), true);
 });
 
-// —— #595：print 之后多补的空行 ——＠COM208 菜单与 TRAIN_MESSAGE_A150 ————
+// —— #595：print 之后多补的空行 —— COM208 菜单与 A150 ————
 
-test('#595 COM208 凌辱菜单：菜单行之间没有多补的空行（COMF208:37-43 连续 PRINTL）', async () => {
+test('#595 COM208 凌辱菜单：菜单行之间没有多补的空行（连续 PRINTL）', async () => {
   const world = seed_world({ load_colosseum: true });
   const { fixture } = world;
   able_on(world);
@@ -965,7 +965,7 @@ test('#595 COM208 凌辱菜单：菜单行之间没有多补的空行（COMF208:
   );
   assert.ok(
     rows_between.every((line) => line.type === 'button'),
-    '菜单行全是按钮（COMF208:37-43 的整行 PRINTL）',
+    '菜单行全是按钮（整行 PRINTL）',
   );
   assert.equal(
     exit.row - head.row,
@@ -974,7 +974,7 @@ test('#595 COM208 凌辱菜单：菜单行之间没有多补的空行（COMF208:
   );
 });
 
-test('#595 TRAIN_MESSAGE_B150：癖好句自成一行，句尾不再多补一个空串行', async () => {
+test('#595 B150：癖好句自成一行，句尾不再多补一个空串行', async () => {
   const world = seed_world();
   world.fixture.store.set('cstr:31:7', '尾巴');
   await run_b(world, 150);
@@ -984,6 +984,6 @@ test('#595 TRAIN_MESSAGE_B150：癖好句自成一行，句尾不再多补一个
         (line.type === 'br' || line.type === 'text') &&
         /^[ \u3000]*$/.test(line.text ?? ''),
     ),
-    'EVENT_TRAIN_MESSAGE_B:3002 的 PRINTL 只收尾 :2992 的拼行，不得落成独立空串行',
+    'PRINTL 只收尾拼行，不得落成独立空串行',
   );
 });

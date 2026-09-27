@@ -1,7 +1,7 @@
 /**
  * @file 肛交系共用子程序：调教者射精检查与事后处理。
  *
- * 调用方（J11 性交系 / J15 助手与蕾丝 / J16 重度调教族票）的接口面：
+ * 调用方（J11 性交系 / J15 助手与蕾丝 / J16 重度调教族工单）的接口面：
  *   - com_ejac_player_analsex(rand) / com_after_anal_sex() → Promise<void>，
  *     rand = (n) => [0, n) 整数（缺省均匀随机，#117 决议）
  *
@@ -30,7 +30,7 @@ const tequip = (id, i) => era.get(`tequip:${id}:${i}`) || 0;
 /** TIMES X, m：整数乘小数后截断（math-etc.md） */
 const times = (v, m) => Math.floor(v * m);
 
-/** ABL 分档取率：表按 LV0-5，超出取末位（原作 ELSE 兜底） */
+/** ABL 分档取率：表按 LV0-5，超出取末位（缺省处理） */
 const abl_rate = (id, i, table) =>
   table[Math.min(abl(id, i), table.length - 1)];
 
@@ -45,14 +45,14 @@ function exp_rate(id, index, rates) {
   return rates[rates.length - 1];
 }
 
-// 指令位表（:15-242）
+// 指令位表
 const SKILL_BASE_HI = [1500, 1600, 1800, 2000, 2400, 3000]; // 25/26
 const OBED_STRONG = [0.8, 0.9, 1.0, 1.1, 1.2, 1.3]; // 顺从乘率（弱侧）
 const SVC_RATE = [0.3, 0.7, 1.0, 1.2, 1.5, 1.8]; // 侍奉技术（ABL:13）
 
 /**
- * @COM_EJAC_PLAYER_ANALSEX（:6-351）：调教者的射精ゲージ蓄积与射精结算
- * （肛交位）。兽奸 / 死斗场（助手本人以外）直接返回（:10-14）。
+ * com_ejac_player_analsex：调教者的射精ゲージ蓄积与射精结算
+ * （肛交位）。兽奸 / 死斗场（助手本人以外）直接返回。
  * @param {(n: number) => number} [rand] RAND:N 的随机源
  * @returns {Promise<void>}
  */
@@ -80,7 +80,7 @@ async function com_ejac_player_analsex(rand) {
     skill_base(SKILL_BASE_HI);
     b = times(b, abl_rate(cid, 10, OBED_STRONG));
   } else if (com === 27) {
-    // 後背位肛交（技巧のみ——顺从表不在原作此位）
+    // 後背位肛交（技巧のみ——此位不乘顺从表）
     skill_base([2700, 2800, 2900, 3100, 3200, 3300]);
   } else if (com === 28) {
     // 対面座位肛交
@@ -97,7 +97,7 @@ async function com_ejac_player_analsex(rand) {
     b = times(b, abl_rate(cid, 13, SVC_RATE));
   }
 
-  // —— 共通乘率（:244-315，头注：润滑/安全套/经验位与 V 版各异） ——
+  // —— 共通乘率（润滑/安全套/经验位与 V 版各异） ——
   b = times(b, abl_rate(cid, 11, [1.0, 1.1, 1.2, 1.3, 1.4, 1.5])); // 欲望
   b = times(b, abl_rate(cid, 14, [1.0, 1.1, 1.2, 1.3, 1.4, 1.5])); // 性交技術
   {
@@ -133,7 +133,7 @@ async function com_ejac_player_analsex(rand) {
   const ejac = era.get(`maxbase:${player}:2`) || 0;
   const e = s > ejac * 2 ? 2 : s > ejac ? 1 : 0;
 
-  // 肛内异常妊娠（:335-344 大量 / :360-369 通常，TALENT:340 异常妊娠体质；
+  // 肛内异常妊娠（大量 / 通常，TALENT:340 异常妊娠体质；
   // CFLAG:109 异常妊娠许可时概率更高：大量 1/3（否则 1/5）、通常 1/5（否则 1/10））
   const anal_pregnancy = (heavy) => {
     if (era.get(`cflag:${cid}:109`)) {
@@ -171,14 +171,14 @@ async function com_ejac_player_analsex(rand) {
 }
 
 /**
- * @COM_AFTER_ANAL_SEX（:353-452）：肛交后处理。
+ * com_after_anal_sex：肛交后处理。
  * @returns {Promise<void>}
  */
 async function com_after_anal_sex() {
   const cid = era_flag.target;
   const player = era_flag.player;
 
-  // 肛门经验（肛门感觉 ABL:3 越高越多——首两档同为 3，1:1）
+  // 肛门经验（肛门感觉 ABL:3 越高越多——首两档同为 3，原样保留）
   let s = 0;
   if (abl(cid, 3) <= 1) {
     s += 3;
@@ -248,7 +248,7 @@ async function com_after_anal_sex() {
   }
   e = 0;
 
-  // 主人亲自 → 好感度加成旗（判据 ABL:3 肛门感觉）
+  // 主人亲自 → 好感度加成旗（判断条件 ABL:3 肛门感觉）
   if (!era_flag.assiplay) {
     if (abl(cid, 3) >= 3) {
       era.add('tflag:30', 2);

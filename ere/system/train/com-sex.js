@@ -1,9 +1,9 @@
 /**
- * @file 调教指令 20–29「性交系」族：阴道性交、逆强奸与肛交的 @COM、
- * @COM_ABLE、TRAIN_MESSAGE_A/B 及 @GET_ADV_COM 派生规则。
+ * @file 调教指令 20–29「性交系」族：阴道性交、逆强奸与肛交的指令真身、
+ * 可用性检查、TRAIN_MESSAGE_A/B 及 get_adv_com 派生规则。
  *
  * J11（issue #221）。COM20–23 是阴道性交，24/25 是目标侵犯调教者，26–29
- * 是肛交。原作没有 EQUIP_COM20–29，故本文件不注册装备持续效果。
+ * 是肛交。没有 20–29 号的装备持续效果，故本文件不注册。
  */
 
 const era = require('#/era-electron');
@@ -35,7 +35,7 @@ const {
 const { com_order } = require('#/system/train/com-order');
 const { chara_callname } = require('#/utils/callname-utils');
 const { monster_name, e_get } = require('#/dungeon/monster-data');
-// —— 读取与写入：未声明序号均按原项目约定兜底为 0 ——
+// —— 读取与写入：未声明序号均按项目约定缺省为 0 ——
 const get = (name) => era.get(name) || 0;
 const set = (name, value) => era.set(name, value);
 const add = (name, value) => era.add(name, value);
@@ -55,7 +55,7 @@ const below = (cid, index, level) => palam(cid, index) < PALAMLV[level];
 const target_name = () => chara_callname(era_flag.target);
 const player_name = () => chara_callname(era_flag.player);
 
-/** 目标与上一回合调教者一致（Emuera 原式显式括号化）。 */
+/** 目标与上一回合调教者一致。 */
 function same_trainer() {
   return (
     (era_flag.assiplay && get('tflag:50') !== 0) ||
@@ -63,7 +63,7 @@ function same_trainer() {
   );
 }
 
-/** 当前调教者较上一回合发生主/助手切换（原作 OR 两臂）。 */
+/** 当前调教者较上一回合发生主/助手切换（两个分支任一）。 */
 function switched_trainer() {
   return (
     (era_flag.assiplay && get('tflag:50') === 0) ||
@@ -71,7 +71,7 @@ function switched_trainer() {
   );
 }
 
-/** PALAM 欲情等级：原作 A=1..5。 */
+/** PALAM 欲情等级：A=1..5。 */
 function lust_level(cid) {
   return below(cid, 5, 1)
     ? 1
@@ -85,7 +85,7 @@ function lust_level(cid) {
 }
 
 /**
- * COM24/25 的实行值欲情档：原作低于 PALAMLV:1 是 L=0；与升格规则
+ * COM24/25 的实行值欲情档：低于 PALAMLV:1 是 L=0；与升格规则
  * （低档即 L=1）不同，不能共用 lust_level。
  */
 function reverse_lust_level(cid) {
@@ -104,8 +104,8 @@ function reverse_lust_level(cid) {
 
 /**
  * JUMPFORM COM{RESULT}：升格目标已全部注册进 com_family（升格表能返回的
- * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 对应原作
- * 「目标缺失时 RETURN 1」（本不该发生，防御语义）。
+ * 每个号都有真身），直调目标号并透传返回值；whenMissing 1 即「目标缺失
+ * 时返回 1」（本不该发生，防御语义）。
  * @param {number} id 升格后的 COM 号
  * @returns {Promise<number>}
  */
@@ -196,7 +196,7 @@ function multiply_source(cid, entries) {
 
 /** 阴道性交末尾的调教者阴核快感加算。 */
 function player_clit_source(cid) {
-  // 原作 MIN(ABL:技巧 + ABL:PLAYER:技巧) 是单参 MIN，等于和本身。
+  // 单参 MIN 等于其参数本身，此处即两人技巧之和。
   const local = 100 + 10 * (abl(cid, 12) + abl(era_flag.player, 12));
   add_src(era_flag.player, 0, divide(150 * local, 100));
 }
@@ -446,7 +446,7 @@ function source22() {
   vagina_lust_source(cid, V_LUST_22);
   vagina_obey_source(cid, V_OBEY_22);
   const extra = player_skill_source(cid, false);
-  // 原作 SIF EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，原样保留。
+  // EXPLV 槽零 >= 3：读数组槽零（0），恒不成立，保留。
   if (EXPLV[0] >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85))
     multiply_source(cid, [
@@ -484,7 +484,7 @@ function source23() {
   vagina_lust_source(cid, V_LUST_23, true);
   vagina_obey_source(cid, V_OBEY_23);
   const extra = player_skill_source(cid, true);
-  // 原作 SIF EXPLV 槽十 >= 3：未定义 EXPLV 槽按 0，恒不成立。
+  // EXPLV 槽十 >= 3：未定义 EXPLV 槽按 0，恒不成立。
   if ((EXPLV[10] || 0) >= 3) add_src(cid, 1, extra);
   if (tal(cid, 85)) set_src(cid, 3, times(src(cid, 3), 2));
   player_clit_source(cid);
@@ -495,7 +495,7 @@ function source23() {
 function check_reverse_sex(player_virgin_penalty) {
   const cid = era_flag.target;
   const player = era_flag.player;
-  // COM_ORDER 会输出共通实行值明细；其 A/S 返回值必须接回后续原作累计。
+  // com_order 会输出共通实行值明细；其 A/S 返回值必须接回后续累计。
   return com_order(0, 0).then(async ({ a, s }) => {
     const plus_level = (label, level, value) => {
       if (s) era.print(' + ');
@@ -579,10 +579,10 @@ async function confirm_reverse_virgin() {
   const player = era_flag.player;
   if (!tal(player, 0)) return await confirm_condom2();
   era.print(`${player_name()}的处女，要让${target_name()}夺走吗？`);
-  era.printButton('- 好的', 0); // COMF24_逆レイプ.ERB:197
-  era.printButton('- 不好', 1); // COMF24_逆レイプ.ERB:198
+  era.printButton('- 好的', 0);
+  era.printButton('- 不好', 1);
   // 非 0/1 的键入值在 ere 的按钮白名单处被拒收，不会到达这里。
-  // 原作 CLEARLINE 1 只清该输入回显；有效输入不走这条分支。
+  // CLEARLINE 1 只清该输入回显；有效输入不走这条分支。
   if ((await era.input()) === 1) return 0;
   return await confirm_condom2();
 }
@@ -592,7 +592,7 @@ function reverse_source(cid) {
   add_lose(cid, 1, 200);
   set_src(cid, 12, 220);
   set_src(cid, 14, 50);
-  // 阴核感觉初始赋值后被侍奉精神段覆写，仍照源逐段保留。
+  // 阴核感觉初始赋值后被侍奉精神段覆写，仍逐段保留。
   set_src(cid, 0, [50, 200, 800, 1600, 2400, 3200][Math.min(abl(cid, 0), 5)]);
   const [clit, a, b] = [
     [800, 1600, 200],
@@ -640,7 +640,7 @@ function reverse_same_sex_exp(cid, player) {
 
 function event_seitsu(cid, site) {
   const player = era_flag.player;
-  // 原式：SIF (TALENT:121 == 0 && TALENT:122 == 0) || TALENT:135 == 0 RETURN。
+  // 判断条件：无男性器（121/122 皆 0）或未熟（135 == 0）即返回。
   if ((!tal(cid, 121) && !tal(cid, 122)) || !tal(cid, 135)) return;
   if (abl(cid, 0) <= 4 || tq(cid, 90) || tq(cid, 89)) return;
   if (get(`relation:${cid}:${player}`) < 150) return;
@@ -681,7 +681,7 @@ async function reverse_post24() {
     await era.printAndWait('【处女丧失】');
     chara(player).chara.处女 = 0;
     if (!chara(player).train.初体验对象) {
-      // COMF24 的玩家记录段只记录 TARGET + 1 与名字；近亲编码是其后目标
+      // COM24 的玩家记录段只记录 TARGET + 1 与名字；近亲编码是其后目标
       // 童贞丧失分支专属，不能套用到玩家处女记录。
       chara(player).train.初体验对象 = cid + 1;
       chara(player).train.初体验对象名 = target_name();
@@ -921,7 +921,7 @@ function source26() {
   set_anal_source(cid, ANAL26_TABLE);
   anal_experience_source(cid, ANAL_EXP_26, true);
   anal_lube_source(cid);
-  // 源误写 V 快感格，非肛快感格，按原样保留。
+  // 此处误乘 V 快感格而非肛快感格，按原样保留。
   if (era_flag.assiplay && tal(era_flag.assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   anal_body_pain(cid);
@@ -961,7 +961,7 @@ function source28() {
   anal_experience_source(cid, ANAL_EXP_SEAT, true);
   service_spirit_source(cid);
   anal_lube_source(cid);
-  // 源误写 V 快感格，非肛快感格，按原样保留。
+  // 此处误乘 V 快感格而非肛快感格，按原样保留。
   if (era_flag.assiplay && tal(era_flag.assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   anal_body_pain(cid);
@@ -987,7 +987,7 @@ function source29() {
   anal_experience_source(cid, ANAL_EXP_SEAT, true);
   breast_clit_source(cid);
   anal_lube_source(cid);
-  // 源误写 V 快感格，非肛快感格，按原样保留。
+  // 此处误乘 V 快感格而非肛快感格，按原样保留。
   if (era_flag.assiplay && tal(era_flag.assi, 121))
     set_src(cid, 1, times(src(cid, 1), 2.5));
   anal_body_pain(cid);
@@ -996,12 +996,12 @@ function source29() {
   anal_lust_source(cid, ANAL_SEAT_LUST, true);
   anal_obey_source(cid, ANAL_SEAT_OBEY, true);
   const extra = player_skill_source(cid, true);
-  // 原作 SIF EXPLV 槽一 >= 3：读数组槽一（1），恒不成立。
+  // EXPLV 槽一 >= 3：读数组槽一（1），恒不成立。
   if (EXPLV[1] >= 3) add_src(cid, 2, extra);
   if (tal(cid, 85)) set_src(cid, 3, times(src(cid, 3), 1.5));
 }
 
-// —— @COM20–29 执行入口 ——
+// —— com20–29 执行入口 ——
 
 async function com_vagina(id, label, calculate) {
   if (!(await confirm_lost_virgin())) return 0;
@@ -1092,7 +1092,7 @@ async function com29() {
   return com_anal(29, '背面座位肛交', source29);
 }
 
-// —— @COM_ABLE20–29：按 COMABLE.ERB 的 guard 顺序逐条保留 ——
+// —— able20–29：按 guard 顺序逐条保留 ——
 
 const has_pband = () => get('item:4') !== 0;
 const has_mat = () => get('item:13') !== 0 || get('noitem:0') !== 0;
@@ -1304,7 +1304,7 @@ function able28_or_29() {
   return 1;
 }
 
-// —— @GET_ADV_COM CASE 20/21/22/23/26/27 ——
+// —— get_adv_com CASE 20/21/22/23/26/27 ——
 
 async function try_3p(previous, switch_previous) {
   if (era_flag.prevcom === 64) {
@@ -1341,15 +1341,14 @@ async function vagina_advanced(id, series, threshold, previous, rand) {
 
 adv_com_family.register(20, async (rand) => {
   // CASE 20：SP 分支 RETURN 130 先于 TFLAG:42 = 0，命中时保留旧值。
-  // COMF_JUMP.ERB:152-163
   const prev2 = get('tflag:59');
   const prev = era_flag.prevcom;
-  // COMF_JUMP.ERB:156 `(TFLAG:59==128 && PREVCOM==129) || (TFLAG:59==129 &&
+  // `(TFLAG:59==128 && PREVCOM==129) || (TFLAG:59==129 &&
   // PREVCOM==128) || TFLAG:59==130 && (PREVCOM==128 || PREVCOM==129)` 同层
-  // 混写：Emuera 的 && 与 || 同优先级、左结合，读作
+  // 混写：&& 与 || 同优先级、左结合，读作
   // `((…128…) || (…129…) || TFLAG:59==130) && PREVCOM ∈ {128,129}`。
-  // 前两臂本身已含 PREVCOM ∈ {128,129}，故左结合与 C 式「&& 优先」在此
-  // 一切取值上同值，保留原式的显式括号结构（#517）。
+  // 前两个分支本身已含 PREVCOM ∈ {128,129}，故左结合与 C 式「&& 优先」在此
+  // 一切取值上同值，保留上式的显式括号结构（#517）。
   if (
     same_trainer() &&
     ((prev2 === 128 && prev === 129) ||
@@ -1366,7 +1365,6 @@ adv_com_family.register(20, async (rand) => {
 
 adv_com_family.register(21, async (rand) => {
   // CASE 21：SP 分支 RETURN 134 先于 TFLAG:42 = 0，命中时保留旧值。
-  // COMF_JUMP.ERB:228-239
   const prev2 = get('tflag:59');
   const prev = era_flag.prevcom;
   if (same_trainer() && [131, 132, 134].includes(prev2) && prev === 133) {
@@ -1393,7 +1391,7 @@ adv_com_family.register(27, async () => {
   return try_3p(27, [20, 21, 31, 80]);
 });
 
-// —— TRAIN_MESSAGE_B：体位进入描写（原文 B 文件对应分支） ——
+// —— TRAIN_MESSAGE_B：体位进入描写 ——
 
 function vagina_phrase(cid, possessive = false) {
   let text = '';
@@ -1410,7 +1408,7 @@ function anal_phrase(cid) {
   return `${text}肛门`;
 }
 
-/** 死斗场 COM21 的原文用词与普通阴部描述不同，不能共用 vagina_phrase。 */
+/** 死斗场 COM21 的用词与普通阴部描述不同，不能共用 vagina_phrase。 */
 function arena_vagina_phrase(cid) {
   let text = '';
   if (exp(cid, 0) === 0) text += '未经人事的';
@@ -1819,7 +1817,7 @@ async function message_b27() {
   const prev = era_flag.prevcom;
   if (tq(cid, 55)) arena_anal_message();
 
-  // 原式 `!88 && !89 && !55 || 55 && ASSI == PLAYER` 按同优先级左结合。
+  // `!88 && !89 && !55 || 55 && ASSI == PLAYER` 按同优先级左结合。
   // CALL MONSTER_NAME / PRINTFORM 均不收行，故前缀须同后续正文合并成一次输出。
   let prefix = '';
   if (tq(cid, 88)) prefix += monster_name(e_get(300));
@@ -1899,10 +1897,10 @@ async function message_b29() {
     );
 }
 
-// —— TRAIN_MESSAGE_A：姿势反应（原文 A 文件 :1154-1170 的三支） ——
+// —— TRAIN_MESSAGE_A：姿势反应的三支 ——
 //
-// **公共段不在这里**（#402 合流）：绝顶行与射精附文、性交射精两臂、绝顶余韵、
-// 处女尾段都已落在 train-message.js 的公共段（源 :377-741，在 SELECTCOM 分发
+// **公共段不在这里**（#402 合流）：绝顶行与射精附文、性交射精两个分支、绝顶余韵、
+// 处女尾段都已落在 train-message.js 的公共段（在 SELECTCOM 分发
 // 之前无条件跑）。本模块此前另有一份公共段拷贝（message_a_orgasm /
 // message_a_ejaculation / message_a_orgasm_afterglow / message_a_virgin_tail
 // 与共享壳 train_message_a_sex_common，其中后者还导出给 com-service 的 34/36
@@ -1912,11 +1910,11 @@ async function message_b29() {
 function message_a_position() {
   const cid = era_flag.target;
   const com = era_flag.selectcom;
-  // EVENT_TRAIN_MESSAGE_A.ERB:1154-1168 的三式
+  // 下述三式
   // `SELECTCOM == 20 || SELECTCOM == 26 && TFLAG:899 <= 1`（及 22/28、23/29）
-  // 按 Emuera 的「&& 与 || 同优先级、左结合」读作 `(20 || 26) && 失神门`
-  // 等三式——**六条指令都吃失神门**，不是 C 式「&& 优先」的「20 无条件、
-  // 26 才吃门」（#517）。
+  // 按「&& 与 || 同优先级、左结合」读作 `(20 || 26) && 失神检查`
+  // 等三式——**六条指令都吃失神检查**，不是 C 式「&& 优先」的「20 无条件、
+  // 26 才吃检查」（#517）。
   const passout_guard = get('tflag:899') <= 1;
   const position_group =
     ((com === 20 || com === 26) && passout_guard) ||
@@ -1940,7 +1938,7 @@ async function message_a_sex() {
   message_a_position();
 }
 
-// 每个 20–29 ID 都占两张消息分发表；A 是同一条原作大链的对应分支。
+// 每个 20–29 ID 都占两张消息分发表；A 是同一条判定链的对应分支。
 train_message_b_family.register(20, message_b20);
 train_message_b_family.register(21, message_b21);
 train_message_b_family.register(22, message_b22);

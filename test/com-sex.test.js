@@ -51,18 +51,18 @@ async function run_com(world, id) {
   return world.com_family.call(id);
 }
 
-test('注册 20–29：COM、COM_ABLE、B/A 与升格 CASE 全部进族', async () => {
+test('注册 20–29：真身、可用性检查、B/A 与升格 CASE 全部进族', async () => {
   const world = seed_world();
   const { train_message_a_family, train_message_b_family } =
     world.fixture.load_module('system/train/train-message');
   for (const id of [20, 21, 22, 23, 24, 25, 26, 27, 28, 29]) {
     assert.equal(world.com_family.has(id), true, `COM${id}`);
-    assert.equal(world.com_able_family.has(id), true, `COM_ABLE${id}`);
+    assert.equal(world.com_able_family.has(id), true, `${id} 号可用性检查`);
     assert.equal(train_message_a_family.has(id), true, `A${id}`);
     assert.equal(train_message_b_family.has(id), true, `B${id}`);
   }
   for (const id of [20, 21, 22, 23, 26, 27]) {
-    assert.equal(world.adv_com_family.has(id), true, `GET_ADV_COM CASE ${id}`);
+    assert.equal(world.adv_com_family.has(id), true, `get_adv_com CASE ${id}`);
   }
 });
 
@@ -140,7 +140,7 @@ test('COM26–29：逐条完成并产生不同肛交 SOURCE 入口', async () =>
   }
 });
 
-test('COM27 不套用玩家技巧段；COM26 也保留原作无该段', async () => {
+test('COM27 不套用玩家技巧段；COM26 也无该段', async () => {
   for (const id of [26, 27]) {
     const world = seed_world();
     world.fixture.store.set('talent:0:122', 1);
@@ -155,7 +155,7 @@ test('COM27 不套用玩家技巧段；COM26 也保留原作无该段', async ()
   }
 });
 
-test('COM_ABLE：COM20 的男性器/道具门与 COM25 不额外禁止男性调教者', async () => {
+test('可用性检查：COM20 的男性器/道具条件与 COM25 不额外禁止男性调教者', async () => {
   const world = seed_world();
   assert.equal(await world.com_able_family.call(20), 0, '无男性器和假阳具');
   world.fixture.store.set('item:4', 1);
@@ -163,14 +163,10 @@ test('COM_ABLE：COM20 的男性器/道具门与 COM25 不额外禁止男性调�
 
   world.fixture.store.set('talent:31:121', 1);
   world.fixture.store.set('talent:0:122', 1);
-  assert.equal(
-    await world.com_able_family.call(25),
-    1,
-    'COM25 原作允许男性调教者',
-  );
+  assert.equal(await world.com_able_family.call(25), 1, 'COM25 允许男性调教者');
 });
 
-test('GET_ADV_COM：连续三人目标缺失时按既有 staged stub 跳转；不能误写 TFLAG:42', async () => {
+test('get_adv_com：连续三人目标缺失时按既有 staged stub 跳转；不能误写 TFLAG:42', async () => {
   const world = seed_world();
   world.era_flag.prevcom = 64;
   assert.equal(await world.get_adv_com(20, () => 0), 64);
@@ -217,7 +213,7 @@ test('B20/B21：130/134 只可作为前前回 + 120/121，不可直接续插', a
   }
 });
 
-test('A：无玩家射精时保留高潮余韵；姿势句六条指令都吃失神门', async () => {
+test('A：无玩家射精时保留高潮余韵；姿势句六条指令都受失神检查约束', async () => {
   const afterglow = seed_world();
   afterglow.era_flag.selectcom = 20;
   afterglow.fixture.store.set('tflag:29', 3);
@@ -231,9 +227,9 @@ test('A：无玩家射精时保留高潮余韵；姿势句六条指令都吃失�
       .some((line) => line.includes('绝顶高潮的余韵')),
   );
 
-  // 源 :1154/:1161/:1168 三式都是 `SELECTCOM == 20 || SELECTCOM == 26
-  // && TFLAG:899 <= 1` 形态——按 Emuera 的「&& 与 || 同优先级、左结合」读作
-  // `(20 || 26) && 失神门`：**六条指令都吃失神门**，不是 20/22/23 无条件（#517）
+  // 三处条件式都是 `selectcom == 20 || selectcom == 26 && TFLAG:899 <= 1`
+  // 写法——&& 与 || 同优先级、左结合，读作 `(20 || 26) && 失神检查`：
+  // **六条指令都受失神检查约束**，不是 20/22/23 无条件（#517）
   const probes = [
     [20, '把脚缠到'],
     [26, '把脚缠到'],
@@ -285,7 +281,7 @@ test('COM26–28：欲情段乘肛门快感与屈从格，不得误乘情爱格'
         world.fixture.store.get(`source:31:${index}`),
       ),
       expected,
-      `COM${id}（COMF${id} 的欲情 / 顺从段）`,
+      `COM${id} 的欲情 / 顺从段`,
     );
   }
 });
@@ -306,11 +302,11 @@ test('COM29：顺从段三格各取独立倍率并逐次截断', () => {
       world.fixture.store.get(`source:31:${index}`),
     ),
     [294, 2520, 700, 0],
-    'COMF29:190-235 的欲情三乘与顺从三乘',
+    'COM29 的欲情三乘与顺从三乘',
   );
 });
 
-test('GET_ADV_COM：20/21 的 SP 返回不清 TFLAG:42；22/23 不触碰该旗', async () => {
+test('get_adv_com：20/21 的 SP 返回不清 TFLAG:42；22/23 不触碰该旗', async () => {
   const sp_cases = [
     [20, 128, 129, 130],
     [21, 131, 133, 134],
@@ -354,7 +350,7 @@ test('COM24：确认菜单只接受两个按钮值；无效键在引擎输入层
   );
 });
 
-test('#612 COM24 逆侵犯的处女确认：两键正文照写原作的「- 」', async () => {
+test('#612 COM24 逆侵犯的处女确认：两键正文保留「- 」字面', async () => {
   const world = seed_world();
   world.fixture.store.set('talent:31:122', 1);
   world.fixture.store.set('talent:0:0', 1); // 调教者是处女 → 进确认菜单
@@ -363,24 +359,24 @@ test('#612 COM24 逆侵犯的处女确认：两键正文照写原作的「- 」'
   world.fixture.store.set('abl:31:20', 10);
   world.fixture.store.set('talent:31:63', 1);
   world.fixture.set_inputs(1);
-  assert.equal(await run_com(world, 24), 0, '[1] 不好 → RETURN 0（:198-200）');
+  assert.equal(await run_com(world, 24), 0, '[1] 不好 → 返回 0');
   assert.deepEqual(
     world.fixture.lines
       .filter((line) => line.type === 'button')
       .map((button) => button.rendered),
     ['[0] - 好的', '[1] - 不好'],
-    'COM24 处女确认两键带「- 」（COMF24_逆レイプ.ERB:197-198）',
+    'COM24 处女确认两键带「- 」',
   );
 });
 
-test('升格到已实现目标：执行 COM64 真身，不打占位（JUMPFORM 语义）', async () => {
+test('升格到已实现目标：执行 COM64 真身，不打占位（跳转语义）', async () => {
   const world = seed_world({ assi: 17 });
   world.fixture.load_module('system/train/com-assistant'); // COM64 真身注册
   world.era_flag.prevcom = 64;
   world.fixture.store.set('tflag:42', 0);
-  world.fixture.store.set('item:4', 1); // PBAND：able64 的两根判据（魔王男根 + 道具）
+  world.fixture.store.set('item:4', 1); // PBAND：able64 的两项判断条件之一
   world.fixture.store.set('exp:31:1', 10); // able64 的 A 经验门槛 >= 10
-  world.fixture.store.set('talent:0:121', 1); // 魔王男根：able64 的两根判据之一
+  world.fixture.store.set('talent:0:121', 1); // 魔王男根：able64 的两项判断条件之一
 
   assert.equal(await run_com(world, 20), 1);
   assert.ok(
@@ -389,12 +385,12 @@ test('升格到已实现目标：执行 COM64 真身，不打占位（JUMPFORM �
   );
   assert.ok(
     !world.fixture.text_lines().some((line) => line.includes('升格目标')),
-    '升格目标全部落地，不再有占位行（#638）',
+    '升格目标全部实现，不再有占位行（#638）',
   );
 });
 
-test('COM_ABLE：特殊守卫保持各指令原作差异', async () => {
-  // COM27 没有电极位 49 守卫，COM26 有；两者都要求 EXP:1 >= 10。
+test('可用性检查：特殊检查保持各指令的差异', async () => {
+  // COM27 没有电极位 49 检查，COM26 有；两者都要求 EXP:1 >= 10。
   for (const [id, expected] of [
     [26, 0],
     [27, 1],
@@ -410,7 +406,7 @@ test('COM_ABLE：特殊守卫保持各指令原作差异', async () => {
     );
   }
 
-  // COM27 的助手润滑门阈值为 4；COM26 为 3。
+  // COM27 的助手润滑条件阈值为 4；COM26 为 3。
   for (const [id, expected] of [
     [26, 1],
     [27, 0],
@@ -442,15 +438,15 @@ test('COM22：爱慕三格乘数不同，成瘾与恭顺不能漏乘', () => {
   assert.deepEqual(
     [3, 7, 16].map((index) => world.fixture.store.get(`source:31:${index}`)),
     [1056, 200, 2400],
-    'COMF22:264-269：情爱 ×3、成瘾追加 ×2、恭顺追加 ×2',
+    'COM22：情爱 ×3、成瘾追加 ×2、恭顺追加 ×2',
   );
 });
 
 test('COM24：低欲情档为 0，不能按普通升格档的 LV1 放行', async () => {
   const world = seed_world();
-  // COM_ORDER 后恰为 38：欲望 20 + 侍奉精神 16 + 接受快感 2。
-  // COM24_CHECK 的欲情档在 PALAM:5 < PALAMLV:1 时是 0；若错复用
-  // GET_ADV_COM 的 lust_level（低档为 1），会加 2 而错误达到实行值 40。
+  // com_order 后恰为 38：欲望 20 + 侍奉精神 16 + 接受快感 2。
+  // COM24 判定用的欲情档在 PALAM:5 < PALAMLV:1 时是 0；若错复用
+  // get_adv_com 的 lust_level（低档为 1），会加 2 而错误达到实行值 40。
   world.fixture.store.set('talent:31:122', 1);
   world.fixture.store.set('abl:31:11', 10);
   world.fixture.store.set('abl:31:16', 4);

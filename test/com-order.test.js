@@ -1,11 +1,11 @@
 /**
- * ere/system/train/com-order.js 的行为测试（issue #214：@COM_ORDER；
+ * ere/system/train/com-order.js 的行为测试（issue #214：com_order；
  * #219 起明细段以 parts 返回、不再自行打印——断言跟着改 parts.join('')）。
  *
- * 明细行形态的第一断言锚在 golden train-natural-log:169 的实行值判定行
- * 前半（COM_ORDER 的贡献段）：「顺从LV1(4) + 抖M气质LV3(6) + 苦痛刻印
+ * 明细行的第一断言对齐实行值判定行
+ * 前半（com_order 的贡献段）：「顺从LV1(4) + 抖M气质LV3(6) + 苦痛刻印
  * LV1(5) + 屈服刻印LV2(12) - 反抗刻印LV1(4)」——该行的后半（欲望/快乐
- * 刻印/欲情）归调用方 COMF6（族票），不在本文件账上。
+ * 刻印/欲情）归调用方指令 6（族级工单），不在本文件账上。
  *
  * 缝 = test/helpers/era-fixture.js（名字表与角色表按需播种——夹具不装
  * 静态数据表，name_of 读空时串里缺名，断言也随之暴露）。
@@ -22,7 +22,7 @@ function load_order(fixture) {
   fixture.era.addCharacter(0);
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
   fixture.era.addCharacter(31);
-  // palam 是调教期表（三段寻址守卫）：先开火车表，播种的参数值才可读
+  // palam 是调教期表（三段寻址检查）：先开火车表，播种的参数值才可读
   fixture.era.beginTrain(0, 31);
   fixture.store.set('flag:10005', 31); // TARGET
   fixture.store.set('flag:10008', 0); // PLAYER
@@ -61,11 +61,11 @@ function seed_names(fixture) {
   }
 }
 
-test('golden 实证形态：判定行的 COM_ORDER 段逐字（train-natural-log:169）', async () => {
+test('判定行的 com_order 段逐字', async () => {
   const fixture = create_era_fixture();
   seed_names(fixture);
   const { com_order } = load_order(fixture);
-  // replay 播种同源的状态（golden 反解）：顺从1 / 抖M3 / 苦痛刻印1 /
+  // replay 播种同源的状态：顺从1 / 抖M3 / 苦痛刻印1 /
   // 屈服刻印2 / 反抗刻印1；主人是男人（TALENT:0:122）→ 百合段不进
   fixture.store.set('talent:0:122', 1);
   fixture.store.set('abl:31:10', 1);
@@ -79,13 +79,13 @@ test('golden 实证形态：判定行的 COM_ORDER 段逐字（train-natural-log
   assert.equal(
     parts.join(''),
     '顺从LV1(4) + 抖M气质LV3(6) + 苦痛刻印LV1(5) + 屈服刻印LV2(12) - 反抗刻印LV1(4)',
-    '明细行逐字（含首项无分隔、反抗刻印的行首 " - "——源码不查 S）',
+    '明细行逐字（含首项无分隔、反抗刻印的行首 " - "——负贡献段不查分隔标志）',
   );
   assert.equal(a, 4 + 6 + 5 + 12 - 4);
   assert.equal(s, 1);
 });
 
-test('首项为负（反抗心）：行首带 " - "，无前置 " + "（:182-188 不查 S）', async () => {
+test('首项为负（反抗心）：行首带 " - "，无前置 " + "（负贡献段不查分隔标志）', async () => {
   const fixture = create_era_fixture();
   seed_names(fixture);
   fixture.store.set('talentname:11', '反抗心');
@@ -98,7 +98,7 @@ test('首项为负（反抗心）：行首带 " - "，无前置 " + "（:182-188
   assert.equal(a, -5);
 });
 
-test('百合段两态：双方皆女才进（:28），好奇心/保守的取值随分支（:57-90）', async () => {
+test('百合段两态：双方皆女才进，好奇心/保守的取值随分支', async () => {
   // 皆女（TALENT:PLAYER:122 与 TALENT:TARGET:122 均 0）→ 百合段生效
   {
     const fixture = create_era_fixture();
@@ -114,14 +114,14 @@ test('百合段两态：双方皆女才进（:28），好奇心/保守的取值�
 
     const { a, parts } = await com_order(0, 0);
 
-    // 好奇心段 SIF S 打 " + "、保守的段（无 SIF）打 " - "——两个分隔都输出
+    // 好奇心段查分隔标志才打 " + "、保守的段不查直接打 " - "——两个分隔都输出
     assert.equal(
       parts.join(''),
       '百合气质LV2(6) + 双性恋(10) + 好奇心(7) - 保守的(13)',
     );
     assert.equal(a, 6 + 10 + 7 - 13);
   }
-  // 调教者是男人（replay/golden 同款）→ ELSE 分支：好奇心 +5、保守的 -10
+  // 调教者是男人（与 replay 同款）→ ELSE 分支：好奇心 +5、保守的 -10
   {
     const fixture = create_era_fixture();
     seed_names(fixture);
@@ -140,8 +140,8 @@ test('百合段两态：双方皆女才进（:28），好奇心/保守的取值�
   }
 });
 
-test('刻印 T 系数：高姿态(15)→4 / 低姿态(17)→1 / 皆无→2（:105-111）', async () => {
-  // 15/17 号同时在素质段贡献（:206 高姿态 -15 / :214 低姿态 +5），
+test('刻印 T 系数：高姿态(15)→4 / 低姿态(17)→1 / 皆无→2', async () => {
+  // 15/17 号同时在素质段贡献（高姿态 -15 / 低姿态 +5），
   // 期望值两项都算（源码两处都用，非笔误）
   for (const [t15, t17, factor] of [
     [1, 0, 4],
@@ -176,7 +176,7 @@ test('参数阶梯：恭顺/恐怖按 PALAMLV 取 L（<100 为 0、≥30000 为 
   assert.equal(a, 3, '恐怖 LV0 不进明细也不计值');
 });
 
-test('调教者素质五项（:291-334）：读 PLAYER 的 TALENT，全查 S', async () => {
+test('调教者素质五项：读 PLAYER 的 TALENT，全查分隔标志', async () => {
   const fixture = create_era_fixture();
   seed_names(fixture);
   for (const [id, name] of [
@@ -200,7 +200,7 @@ test('调教者素质五项（:291-334）：读 PLAYER 的 TALENT，全查 S', a
   assert.equal(a, 6 + 6 + 6 + 3 + 1);
 });
 
-test('相性六档（:339-379）：RELATION:PLAYER 的档位与文案', async () => {
+test('相性六档：RELATION:PLAYER 的档位与文案', async () => {
   const cases = [
     [25, ' - 相性最差(10)', -10],
     [60, ' - 相性较差(6)', -6],
@@ -229,12 +229,12 @@ test('接触面：a/s 初值透传，返回累加后的新值（调用方继续�
   const { com_order } = load_order(fixture);
   fixture.store.set('abl:31:10', 2); // 顺从 ×4 → +8
 
-  const first = await com_order(0, 0); // COMF 的第一拍：清零起步
+  const first = await com_order(0, 0); // 指令的第一拍：清零起步
   assert.equal(first.a, 8);
   assert.equal(first.s, 1);
   assert.deepEqual(first.parts, ['顺从LV2(8)'], '明细段随返回值交回调用方');
 
-  const second = await com_order(first.a, first.s); // 同拍复算（幂等形态）
+  const second = await com_order(first.a, first.s); // 同拍复算（结果幂等）
   assert.equal(second.a, 16, 'a 初值透传累加');
   assert.deepEqual(
     second.parts,

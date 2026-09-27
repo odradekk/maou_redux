@@ -1,10 +1,10 @@
 /**
  * ere/system/train/com-toy.js 的行为测试（issue #220 J10：道具使用 10–19）。
  *
- * 缝 = test/helpers/era-fixture.js。每条指令至少固定：@COM 真身、@COM_ABLE
- * 判据与 TRAIN_MESSAGE_B；另覆盖 11/13–19 的装备持续效果、满月取消和产卵
+ * 缝 = test/helpers/era-fixture.js。每条指令至少固定：COM 真身、可用性检查
+ * 判断条件与 TRAIN_MESSAGE_B；另覆盖 11/13–19 的装备持续效果、满月取消和产卵
  * （Math.random 注入钉满月掷）、TRAIN_MESSAGE_A 的 10–14 真分支及 15–19
- * 显式空分支、触手榨乳接线（#548 起 EQUIP_COM16 真调 SYOKUSYU_MILK）；
+ * 显式空分支、触手榨乳接入（#548 起 equip_com16 真调 syokusyu_milk）；
  * 装备持续效果另有一条经 emit('SOURCE_CHECK')
  * → EQUIP_COM_CHAIN 的正式链集成回归。
  */
@@ -64,9 +64,9 @@ function clear_lines(fixture) {
   fixture.lines.length = 0;
 }
 
-// —— @COM_ABLE10–19：逐条可用性 ——
+// —— 10–19 号可用性检查：逐条 ——
 
-test('正式运行时接线：加载 main-loop 后 COM10–19、可用性与装备持续族均已注册', () => {
+test('正式运行时接入：加载 main-loop 后 COM10–19、可用性与装备持续族均已注册', () => {
   const fixture = create_era_fixture();
   fixture.load_module('system/flow/main-loop');
   const { com_able_family, com_family, equip_com_family } = fixture.load_module(
@@ -74,14 +74,14 @@ test('正式运行时接线：加载 main-loop 后 COM10–19、可用性与装�
   );
   for (let com = 10; com <= 19; com += 1) {
     assert.ok(com_family.has(com), `COM${com}`);
-    assert.ok(com_able_family.has(com), `COM_ABLE${com}`);
+    assert.ok(com_able_family.has(com), `${com} 号可用性检查`);
   }
   for (const com of [11, 13, 14, 15, 16, 17, 18, 19]) {
-    assert.ok(equip_com_family.has(com), `EQUIP_COM${com}`);
+    assert.ok(equip_com_family.has(com), `equip_com${com}`);
   }
 });
 
-test('@COM_ABLE10–19：各条可用性函数均已注册且满足自身前置时可执行', async () => {
+test('10–19 号可用性检查：各条可用性函数均已注册且满足自身前置时可执行', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('talent:31:130', 1);
   fixture.store.set('abl:31:1', 3);
@@ -98,7 +98,7 @@ test('@COM_ABLE10–19：各条可用性函数均已注册且满足自身前置�
   assert.equal(await shower.com_able_family.call(18), 1, '浴室中可开始淋浴');
 });
 
-test('@COM_ABLE10：器具过滤、无道具和下装各阻止执行', async () => {
+test('10 号可用性检查：器具过滤、无道具和下装各阻止执行', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('flag:25', 2);
   assert.equal(await com_able_family.call(10), 0);
@@ -111,7 +111,7 @@ test('@COM_ABLE10：器具过滤、无道具和下装各阻止执行', async () 
   assert.equal(await com_able_family.call(10), 0);
 });
 
-test('@COM_ABLE11：贞操带、处女助手门、润滑助手门；解除仍可', async () => {
+test('11 号可用性检查：贞操带、处女助手条件、润滑助手条件；解除仍可', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
   fixture.store.set('flag:37', 1);
   fixture.store.set('cflag:31:40', 64);
@@ -127,7 +127,7 @@ test('@COM_ABLE11：贞操带、处女助手门、润滑助手门；解除仍可
   fixture.store.set('abl:17:22', 5);
   assert.equal(await com_able_family.call(11), 0, '处女且助手顺从不足挡');
   fixture.store.set('exp:31:0', 1);
-  assert.equal(await com_able_family.call(11), 1, '非处女不吃处女助手门');
+  assert.equal(await com_able_family.call(11), 1, '非处女不受处女助手条件限制');
   fixture.store.set('palam:31:3', 0);
   fixture.store.set('abl:17:10', 3);
   assert.equal(await com_able_family.call(11), 0, '润滑不足且助手不足挡');
@@ -135,7 +135,7 @@ test('@COM_ABLE11：贞操带、处女助手门、润滑助手门；解除仍可
   assert.equal(await com_able_family.call(11), 1, '解除优先放行');
 });
 
-test('@COM_ABLE12：低技巧助手可由施虐狂豁免', async () => {
+test('12 号可用性检查：低技巧助手可由施虐狂豁免', async () => {
   const { fixture, era_flag, com_able_family } = seed_world({ assi: 17 });
   era_flag.assiplay = 1;
   fixture.store.set('abl:17:12', 2);
@@ -144,7 +144,7 @@ test('@COM_ABLE12：低技巧助手可由施虐狂豁免', async () => {
   assert.equal(await com_able_family.call(12), 1);
 });
 
-test('@COM_ABLE13：肛具互斥；装着后可解除', async () => {
+test('13 号可用性检查：肛具互斥；装着后可解除', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('tequip:31:46', 1);
   assert.equal(await com_able_family.call(13), 0);
@@ -156,7 +156,7 @@ test('@COM_ABLE13：肛具互斥；装着后可解除', async () => {
   assert.equal(await com_able_family.call(13), 1);
 });
 
-test('@COM_ABLE14–17：性别、乳汁和互斥装备门各生效', async () => {
+test('14–17 号可用性检查：性别、乳汁和互斥装备条件各生效', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('talent:31:121', 1);
   assert.equal(await com_able_family.call(14), 0, '扶她不可阴蒂夹');
@@ -173,7 +173,7 @@ test('@COM_ABLE14–17：性别、乳汁和互斥装备门各生效', async () =
   assert.equal(await com_able_family.call(17), 1);
 });
 
-test('@COM_ABLE18：着衣设定关闭时衣物不挡；开启时全裸门生效', async () => {
+test('18 号可用性检查：着衣设定关闭时衣物不挡；开启时全裸条件生效', async () => {
   const { fixture, com_able_family } = seed_world();
   fixture.store.set('tequip:31:58', 1);
   fixture.store.set('cflag:31:40', 1);
@@ -184,7 +184,7 @@ test('@COM_ABLE18：着衣设定关闭时衣物不挡；开启时全裸门生效
   assert.equal(await com_able_family.call(18), 1, '解除随时可');
 });
 
-test('@COM_ABLE18：兽奸、羞耻与死斗场景均禁止开始淋浴', async () => {
+test('18 号可用性检查：兽奸、羞耻与死斗场景均禁止开始淋浴', async () => {
   for (const slot of [89, 88, 55]) {
     const { fixture, com_able_family } = seed_world();
     fixture.store.set('tequip:31:58', 1);
@@ -197,7 +197,7 @@ test('@COM_ABLE18：兽奸、羞耻与死斗场景均禁止开始淋浴', async 
   }
 });
 
-test('@COM_ABLE19：肛门虫、灌肠、电极和新妻均互斥', async () => {
+test('19 号可用性检查：肛门虫、灌肠、电极和新妻均互斥', async () => {
   const { fixture, com_able_family } = seed_world();
   for (const slot of [13, 46, 49, 59]) {
     fixture.store.set(`tequip:31:${slot}`, 1);
@@ -208,9 +208,9 @@ test('@COM_ABLE19：肛门虫、灌肠、电极和新妻均互斥', async () => 
   assert.equal(await com_able_family.call(19), 1, '装着后可以解除');
 });
 
-// —— @COM10–19 真身 ——
+// —— COM10–19 真身 ——
 
-test('@COM10：写快感/露出/逸脱、体气消耗和百合经验', async () => {
+test('com10：写快感/露出/逸脱、体气消耗和百合经验', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:0', 2);
   assert.equal(await run_com(world, 10), 1);
@@ -222,7 +222,7 @@ test('@COM10：写快感/露出/逸脱、体气消耗和百合经验', async () 
   assert.equal(world.fixture.store.get('exp:31:40'), 1);
 });
 
-test('@COM11：处女确认取消保持回合取消；满月取消不写数值', async () => {
+test('com11：处女确认取消保持回合取消；满月取消不写数值', async () => {
   const virgin = seed_world();
   virgin.fixture.store.set('talent:31:0', 1);
   virgin.fixture.set_inputs(1);
@@ -236,7 +236,7 @@ test('@COM11：处女确认取消保持回合取消；满月取消不写数值',
   assert.equal(moon.fixture.store.get('source:31:1'), undefined);
 });
 
-test('@COM11：装着时写私处经验、触手污渍与 T 清零', async () => {
+test('com11：装着时写私处经验、触手污渍与 T 清零', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:90', 1);
   world.fixture.store.set('t:0', 9);
@@ -248,7 +248,7 @@ test('@COM11：装着时写私处经验、触手污渍与 T 清零', async () =>
   assert.equal(world.fixture.store.get('exp:31:0'), 2);
 });
 
-test('@COM12：振动杖使用对应大快感与逸脱', async () => {
+test('com12：振动杖使用对应大快感与逸脱', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:0', 0);
   assert.equal(await run_com(world, 12), 1);
@@ -256,7 +256,7 @@ test('@COM12：振动杖使用对应大快感与逸脱', async () => {
   assert.equal(world.fixture.store.get('source:31:14'), 400);
 });
 
-test('@COM13：顺从 3 不再额外放大肛门快感，且切换装备', async () => {
+test('com13：顺从 3 不再额外放大肛门快感，且切换装备', async () => {
   const world = seed_world();
   world.fixture.store.set('abl:31:3', 0);
   world.fixture.store.set('abl:31:10', 3);
@@ -272,7 +272,7 @@ test('@COM13：顺从 3 不再额外放大肛门快感，且切换装备', async
   assert.equal(world.fixture.store.get('exp:31:1'), 1);
 });
 
-test('@COM14–17：分别切换自身装备位', async () => {
+test('com14–17：分别切换自身装备位', async () => {
   const world = seed_world();
   world.fixture.store.set('talent:31:130', 1);
   world.fixture.store.set('abl:31:1', 3);
@@ -287,7 +287,7 @@ test('@COM14–17：分别切换自身装备位', async () => {
   }
 });
 
-test('@COM18：欲情最高档写 SOURCE:12 = 150，不读取 ABL:5', async () => {
+test('com18：欲情最高档写 SOURCE:12 = 150，不读取 ABL:5', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:58', 1);
   world.fixture.store.set('abl:31:5', 0);
@@ -296,7 +296,7 @@ test('@COM18：欲情最高档写 SOURCE:12 = 150，不读取 ABL:5', async () =
   assert.equal(world.fixture.store.get('source:31:12'), 150);
 });
 
-test('@COM18：开始淋浴重置污渍、减半润滑并切换装备', async () => {
+test('com18：开始淋浴重置污渍、减半润滑并切换装备', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:58', 1);
   world.fixture.store.set('stain:31:0', 15);
@@ -310,7 +310,7 @@ test('@COM18：开始淋浴重置污渍、减半润滑并切换装备', async ()
   assert.equal(world.fixture.store.get('palam:31:12'), 6);
 });
 
-test('@COM19：未装着为 ×0.8 / 肛门经验＋１，装着为 ×3 / ＋２', async () => {
+test('com19：未装着为 ×0.8 / 肛门经验＋１，装着为 ×3 / ＋２', async () => {
   const first = seed_world();
   first.fixture.store.set('abl:31:3', 0);
   first.fixture.store.set('palam:31:3', 0);
@@ -331,9 +331,9 @@ test('@COM19：未装着为 ×0.8 / 肛门经验＋１，装着为 ×3 / ＋２'
   assert.ok(second.fixture.text_lines().includes('肛门经验＋２'));
 });
 
-// —— @EQUIP_COM11 / 13–19 持续效果 ——
+// —— equip_com11 / 13–19 持续效果 ——
 
-test('@EQUIP_COM11：满月产卵写 dungeon 门面、等待两次并置 TFLAG:19', async () => {
+test('equip_com11：满月产卵写 dungeon 门面、等待两次并置 TFLAG:19', async () => {
   const world = seed_world();
   world.era_flag.date = 15;
   world.fixture.store.set('tequip:31:11', 1);
@@ -365,7 +365,7 @@ test('@EQUIP_COM11：满月产卵写 dungeon 门面、等待两次并置 TFLAG:1
   );
 });
 
-test('@EQUIP_COM13：未熟只翻倍既有 SOURCE:6，后加苦痛保持原值', async () => {
+test('equip_com13：未熟只翻倍既有 SOURCE:6，后加苦痛保持原值', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:13', 1);
   world.fixture.store.set('source:31:6', 10);
@@ -382,7 +382,7 @@ test('@EQUIP_COM13：未熟只翻倍既有 SOURCE:6，后加苦痛保持原值',
   );
 });
 
-test('@EQUIP_COM14–17：分别累加对应快感与同性经验', async () => {
+test('equip_com14–17：分别累加对应快感与同性经验', async () => {
   const world = seed_world();
   for (const com of [14, 15, 16, 17]) {
     world.fixture.store.set(`tequip:31:${com}`, 1);
@@ -393,7 +393,7 @@ test('@EQUIP_COM14–17：分别累加对应快感与同性经验', async () => 
   assert.ok((world.fixture.store.get('exp:31:40') || 0) >= 3);
 });
 
-test('@EQUIP_COM16：触手路径真调 SYOKUSYU_MILK——B感度≥5 且无母乳体质时获得', async () => {
+test('equip_com16：触手路径真调 syokusyu_milk——B感度≥5 且无母乳体质时获得', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:16', 1);
   world.fixture.store.set('tequip:31:90', 1);
@@ -401,18 +401,18 @@ test('@EQUIP_COM16：触手路径真调 SYOKUSYU_MILK——B感度≥5 且无母
   await world.equip_com_family.call(16);
   assert(
     world.fixture.text_lines().some((line) => line.includes('流出了母乳')),
-    'COMF100:414 的母乳行',
+    '母乳行',
   );
   assert(
     world.fixture
       .text_lines()
       .some((line) => line.includes('获得了【母乳体质】')),
-    'COMF100:416 的获得行',
+    '获得行',
   );
   assert.equal(world.fixture.store.get('talent:31:130'), 1, 'TALENT:130 = 1');
 });
 
-test('@EQUIP_COM16：触手榨乳的四道否决（B感度/贫乳/绝壁/男人）与已有体质', async () => {
+test('equip_com16：触手榨乳的四道否决（B感度/贫乳/绝壁/男人）与已有体质', async () => {
   // 表驱动：任一条件不满足 → 无输出、不落体质
   for (const [key, value] of [
     ['abl:31:1', 4], // B感度 < 5
@@ -429,12 +429,12 @@ test('@EQUIP_COM16：触手榨乳的四道否决（B感度/贫乳/绝壁/男人�
     await world.equip_com_family.call(16);
     assert(
       !world.fixture.text_lines().some((line) => line.includes('母乳')),
-      `${key} = ${value} 时不触发（COMF100:413 的五连判据）`,
+      `${key} = ${value} 时不触发（五连判断条件）`,
     );
   }
 });
 
-test('@EQUIP_COM16：非触手路径不调 SYOKUSYU_MILK', async () => {
+test('equip_com16：非触手路径不调 syokusyu_milk', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:16', 1);
   world.fixture.store.set('tequip:31:90', 0);
@@ -442,11 +442,11 @@ test('@EQUIP_COM16：非触手路径不调 SYOKUSYU_MILK', async () => {
   await world.equip_com_family.call(16);
   assert(
     !world.fixture.text_lines().some((line) => line.includes('母乳')),
-    'TEQUIP:90 关 → COMF16:216 的 IF 不进',
+    'TEQUIP:90 关 → 不进触手分支',
   );
 });
 
-test('@EQUIP_COM18：欲情最高档在附加 50 后写 SOURCE:12 = 200', async () => {
+test('equip_com18：欲情最高档在附加 50 后写 SOURCE:12 = 200', async () => {
   const world = seed_world();
   world.fixture.store.set('tequip:31:18', 1);
   world.fixture.store.set('abl:31:5', 0);
@@ -455,7 +455,7 @@ test('@EQUIP_COM18：欲情最高档在附加 50 后写 SOURCE:12 = 200', async 
   assert.equal(world.fixture.store.get('source:31:12'), 200);
 });
 
-test('@EQUIP_COM18：每回合清洗；@EQUIP_COM19：肛门经验与同性经验', async () => {
+test('equip_com18：每回合清洗；equip_com19：肛门经验与同性经验', async () => {
   const shower = seed_world();
   shower.fixture.store.set('tequip:31:18', 1);
   shower.fixture.store.set('stain:31:0', 15);
@@ -470,7 +470,7 @@ test('@EQUIP_COM18：每回合清洗；@EQUIP_COM19：肛门经验与同性经�
   assert.equal(beads.fixture.store.get('exp:31:40'), 1);
 });
 
-test('SOURCE_CHECK 正式链：道具族装备位经 emit → EQUIP_COM_CHAIN 全部打到真身', async () => {
+test('source-check 正式链：道具族装备位经 emit → EQUIP_COM_CHAIN 全部打到真身', async () => {
   const world = seed_world();
   const { emit } = world.fixture.load_module('system/event/registry');
   world.fixture.load_module('event/source-check');
@@ -509,12 +509,12 @@ test('SOURCE_CHECK 正式链：道具族装备位经 emit → EQUIP_COM_CHAIN �
   assert.equal(
     world.fixture.store.get('tflag:19'),
     1,
-    'EQUIP_COM11 置位 TFLAG:19（本族唯一写者）',
+    'equip_com11 置位 TFLAG:19（本族唯一写者）',
   );
   assert.equal(
     world.fixture.store.get('exp:31:1'),
     2,
-    'EQUIP_COM13/19 各 +1 肛门经验',
+    'equip_com13/19 各 +1 肛门经验',
   );
 });
 
@@ -532,7 +532,7 @@ test('TRAIN_MESSAGE_B：10–19 都有本族文本分支', async () => {
     assert.ok(
       world.fixture
         .text_lines()
-        .some((line) => !line.includes('@TRAIN_MESSAGE_B')),
+        .some((line) => !line.includes('TRAIN_MESSAGE_B')),
       `COM${com} 不得落公共存根`,
     );
   }
@@ -550,11 +550,11 @@ test('TRAIN_MESSAGE_A：10–14 输出自身分支，15–19 显式无输出不�
     clear_lines(world.fixture);
     world.era_flag.selectcom = com;
     await world.train_message_a();
-    assert.deepEqual(world.fixture.text_lines(), [], `COM${com} 原作无 A 分支`);
+    assert.deepEqual(world.fixture.text_lines(), [], `COM${com} 无 A 分支`);
   }
 });
 
-test('TRAIN_MESSAGE_B：淋浴开始分成原作的两行', async () => {
+test('TRAIN_MESSAGE_B：淋浴开始分成两行', async () => {
   const world = seed_world();
   world.era_flag.selectcom = 18;
   await world.train_message_b();

@@ -1,29 +1,29 @@
 /**
  * ere/system/train/com-colosseum.js 的行为测试（issue #230：死斗场与怪物
  * 族 200-207）。验收项「8 条指令各有测试（真身 + 可用性判定 + 消息分支
- * 三样都要覆盖）」的落点：
+ * 三样都要覆盖）」的覆盖范围：
  *
- *   - @COM_ABLE200-207：自动不可/装备互斥/观战券、死斗场守卫、等级门槛
- *     （数据驱动）、以及 #214 裁定的撞号消解——L_IDX 100（COM207 媚药
- *     史莱姆）被 COM_ABLE 过滤后输入 100 恒落 @USERCOM；
- *   - @COM200 真身：进入/退出翻转、胆怯/感情淡薄的损耗缩放；
+ *   - 200–207 号可用性检查：自动不可/装备互斥/观战券、死斗场检查、等级门槛
+ *     （数据驱动）、以及 #214 的撞号消解——L_IDX 100（COM207 媚药
+ *     史莱姆）被可用性检查过滤后，输入 100 恒进入 usercom 界面；
+ *   - com200 真身：进入/退出翻转、胆怯/感情淡薄的损耗缩放；
  *   - TRAIN_MESSAGE 分支：B 的 200 分支（进出两支 + 服装前缀 + 全裸示众）
- *     与 201-207 的显式无操作（源侧无分支，不得出占位行）、A 公共头的
- *     TFLAG:15 死斗场两臂；
- *   - @COM201 真身：压制/反击两支、助手退却、凌辱菜单（选项条件/收入/
+ *     与 201-207 的显式无操作（无消息分支，不得出占位行）、A 公共头的
+ *     TFLAG:15 死斗场两个分支；
+ *   - com201 真身：压制/反击两支、助手退却、凌辱菜单（选项条件/收入/
  *     暂时放过）；
- *   - @COM202-206 真身：五体的开战损耗/败北线/追加伤害/收入倍率（对照
+ *   - 202–206 号指令主体：五体的开战损耗/败北线/追加伤害/收入倍率（对照
  *     手算真值表）、体力枯竭折减、失神支、999 暂时放过统一回合作废
  *     （COM206 与另四体一致）、COM206 的扩张经验、射精检查的全部分档与
  *     旗标；
- *   - @COM207 真身：无失神判定、JUMP COM51 的尾调用形态；
- *   - train-loop 的 RETURN 0 语义（#230 落地）：回合作废、不结算、PREVCOM
+ *   - com207 真身：无失神判定、转入 51 号指令时的尾调用；
+ *   - train-loop 的 RETURN 0 语义（#230）：回合作废、不结算、PREVCOM
  *     不推进。
  *
- * 世界底座与 com0-caress.test.js 的 seed_caress_world 同构。战斗点的世界
- * 参数一律播 **CFLAG:13/14（基础攻击/防御）**——ARENA_*_POINT 先过
- * WEAPON_RESTORE，它会用基础值 × 装备系数重算并覆盖 CFLAG:11/12，直接播
- * 11/12 会被清零。别族子指令（COM5/21/27/31/51，归 #219/#221/#222/#224）
+ * 战斗点的测试参数必须使用 CFLAG:13/14（基础攻击/防御），
+ * 因为战斗点计算会按基础值 × 装备系数覆盖 CFLAG:11/12。
+ * 若只播种 11/12，基础攻防仍为零，重算后当前攻防也会被清零。
+ * 别族子指令（COM5/21/27/31/51，归 #219/#221/#222/#224）
  * 在用例里按需注册假身——分发族按 fixture 隔离，测试态的假身不污染别的
  * 用例。
  */
@@ -41,7 +41,7 @@ function join_assi_chara(fixture, id = 32, name = `助手${id}`) {
 }
 
 /**
- * 世界底座：魔王 0 + 奴隶 31（+ 可选助手 32）、火车表已开。默认奴隶
+ * 测试世界：魔王 0 + 奴隶 31（+ 可选助手 32），调教表已启用。默认奴隶
  * 气力枯竭（base:1 = 0 → 陷落路径可达）、魔王等级 10、观战券 3 张、
  * 怪物射精槽上限 10000。
  */
@@ -85,9 +85,9 @@ function printed_buttons(fixture) {
     .map((l) => `${l.accelerator}:${l.text}`);
 }
 
-// —— @COM_ABLE200-207（COMABLE.ERB:4650-4755） ——
+// —— 200–207 号可用性检查 ——
 
-test('@COM_ABLE200：观战券必备；自动调教与持续装备互斥；死斗场中不受装备表限制', async () => {
+test('200 号可用性检查：观战券必备；自动调教与持续装备互斥；死斗场中不受装备表限制', async () => {
   const { fixture, com_able_family } = seed_colosseum_world();
 
   assert.equal(await com_able_family.call(200), 1, '持券且无装备 → 放行');
@@ -103,14 +103,14 @@ test('@COM_ABLE200：观战券必备；自动调教与持续装备互斥；死�
   // 未在死斗场时，任何持续装备使用中不可开启
   fixture.store.set('tequip:31:44', 1); // 绳子紧缚
   assert.equal(await com_able_family.call(200), 0);
-  // 已在死斗场（TEQUIP:55 = 1）时装备表跳过，但互斥位照判（:4661-4684）
+  // 已在死斗场（TEQUIP:55 = 1）时装备表跳过，但互斥位照判
   fixture.store.set('tequip:31:55', 1);
   assert.equal(await com_able_family.call(200), 1);
-  fixture.store.set('tequip:31:90', 1); // 触手调教中（:4677-4678）
+  fixture.store.set('tequip:31:90', 1); // 触手调教中
   assert.equal(await com_able_family.call(200), 0, '死斗场中与触手互斥');
 });
 
-test('@COM_ABLE201：死斗场中且助手亲自出战才有', async () => {
+test('201 号可用性检查：死斗场中且助手亲自出战才有', async () => {
   const { fixture, era_flag, com_able_family } = seed_colosseum_world({
     assi: true,
   });
@@ -125,10 +125,10 @@ test('@COM_ABLE201：死斗场中且助手亲自出战才有', async () => {
 
   era_flag.assiplay = 1;
   era_flag.player = 32;
-  assert.equal(await com_able_family.call(201), 1, ':4697 RETURN 1');
+  assert.equal(await com_able_family.call(201), 1, 'RETURN 1');
 });
 
-// 202-207 的等级门槛（:4699-4755）：门槛读调教者的 CFLAG:9（PLAYER 侧）
+// 202-207 的等级门槛：门槛读调教者的 CFLAG:9（PLAYER 侧）
 for (const [com, min_level] of [
   [202, 0],
   [203, 20],
@@ -137,7 +137,7 @@ for (const [com, min_level] of [
   [206, 80],
   [207, 100],
 ]) {
-  test(`@COM_ABLE${com}：死斗场守卫 + 调教者等级门槛（≥ ${min_level}）+ 助手调教不可`, async () => {
+  test(`${com} 号可用性检查：死斗场检查 + 调教者等级门槛（≥ ${min_level}）+ 助手调教不可`, async () => {
     const { fixture, era_flag, com_able_family } = seed_colosseum_world();
     assert.equal(await com_able_family.call(com), 0, '不在死斗场');
 
@@ -153,12 +153,12 @@ for (const [com, min_level] of [
     assert.equal(await com_able_family.call(com), 0, '门槛之下 → 拒绝');
 
     fixture.store.set('cflag:0:9', min_level);
-    era_flag.assiplay = 1; // 等 助手じゃ駄目
+    era_flag.assiplay = 1; // 助手调教不可
     assert.equal(await com_able_family.call(com), 0);
   });
 }
 
-test('#214 撞号消解：COM207 不可用时限输入 100（其紧凑序号）恒落 @USERCOM', async () => {
+test('#214 撞号消解：COM207 不可用时输入 100（其紧凑序号）恒进入 usercom 界面', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -178,14 +178,14 @@ test('#214 撞号消解：COM207 不可用时限输入 100（其紧凑序号）�
 
   // 207 的紧凑序号恰是 100（可直选空间的末位），与 [100] 能力表示撞号。
   // 调教者等级抬到门槛（≥100）以隔离等级判定——不在死斗场时只剩
-  // @COM_ABLE207 的死斗场守卫拦它：100 不进 usable → @USERCOM
+  // 207 号可用性检查因不在死斗场而拒绝：100 不进 usable → usercom 界面
   fixture.store.set('cflag:0:9', 100);
   assert.equal(com_index(207), 100);
   fixture.set_inputs(100, 999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
 
-  assert.deepEqual(usercom_probe, [100, 999], '100 必须落 @USERCOM');
+  assert.deepEqual(usercom_probe, [100, 999], '100 必须进入 usercom 界面');
   assert.ok(
     !fixture.text_lines().some((l) => l.includes('媚药史莱姆')),
     'COM207 不得被 100 触发',
@@ -210,9 +210,9 @@ test('怪物败北线是严格小于：战斗点恰等于败北线判胜（202 @
   );
 });
 
-// —— @COM200（COMF200_コロシアム.ERB:8-37） ——
+// —— com200 ——
 
-test('@COM200 进入：置 TEQUIP:55、清陷落旗标、按素质缩放的损耗与恐怖/逃离', async () => {
+test('com200 进入：置 TEQUIP:55、清陷落旗标、按素质缩放的损耗与恐怖/逃离', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   era_flag.selectcom = 200;
 
@@ -227,7 +227,7 @@ test('@COM200 进入：置 TEQUIP:55、清陷落旗标、按素质缩放的损�
   assert.equal(fixture.store.get('item:35'), 3, '进入不扣券');
 });
 
-test('@COM200 进入的素质缩放：胆怯 ×2 / 感情淡薄 ×0.6（A = 100 → 120）', async () => {
+test('com200 进入的素质缩放：胆怯 ×2 / 感情淡薄 ×0.6（A = 100 → 120）', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('talent:31:10', 1); // 胆怯
   fixture.store.set('talent:31:22', 1); // 感情淡薄
@@ -239,7 +239,7 @@ test('@COM200 进入的素质缩放：胆怯 ×2 / 感情淡薄 ×0.6（A = 100 
   assert.equal(fixture.store.get('deltabase:31:1'), -240);
 });
 
-test('@COM200 退出：清 TEQUIP:55、扣一张观战券', async () => {
+test('com200 退出：清 TEQUIP:55、扣一张观战券', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   fixture.store.set('tflag:401', 1);
@@ -247,7 +247,7 @@ test('@COM200 退出：清 TEQUIP:55、扣一张观战券', async () => {
 
   assert.equal(await com_family.call(200), 1);
   assert.equal(fixture.store.get('tequip:31:55'), 0);
-  assert.equal(fixture.store.get('item:35'), 2, ':15 ITEM:35 -= 1');
+  assert.equal(fixture.store.get('item:35'), 2, 'ITEM:35 -= 1');
   assert.equal(fixture.store.get('tflag:401'), 1, '退出支不动陷落旗标');
 });
 
@@ -263,7 +263,7 @@ test('B 的 200 分支：退出支（带回房间）', async () => {
   assert.deepEqual(fixture.text_lines(), ['你把温妮带回了房间…']);
 });
 
-test('B 的 200 分支：进入支（気力尽的长句 + 三行省略 + 全裸示众）', async () => {
+test('B 的 200 分支：进入支（气力尽的长句 + 三行省略 + 全裸示众）', async () => {
   const { fixture, era_flag } = seed_colosseum_world();
   era_flag.selectcom = 200;
   const { train_message_b } = fixture.load_module('system/train/train-message');
@@ -283,7 +283,7 @@ test('B 的 200 分支：进入支（気力尽的长句 + 三行省略 + 全裸�
   );
 });
 
-test('B 的 200 分支：服装前缀三档与気力有余的短句', async () => {
+test('B 的 200 分支：服装前缀三档与气力有余的短句', async () => {
   // 位 64 + 类型 11（史莱姆）→ 特别服装前缀（#215 真身）
   const special = seed_colosseum_world();
   special.fixture.store.set('flag:37', 1);
@@ -327,7 +327,7 @@ test('B 的 200 分支：服装前缀三档与気力有余的短句', async () =
   );
 });
 
-test('B/A 对 201-207 注册显式无操作：源侧无分支，不得出占位行', async () => {
+test('B/A 对 201-207 注册显式无操作：无消息分支，不得出占位行', async () => {
   const { fixture, era_flag } = seed_colosseum_world();
   const { train_message_a, train_message_b } = fixture.load_module(
     'system/train/train-message',
@@ -345,7 +345,7 @@ test('B/A 对 201-207 注册显式无操作：源侧无分支，不得出占位�
     );
   }
   // 对照：未装载的族（SELECTCOM = 30，com-service 不在本世界）零输出——
-  // #565 起缺号按原作语义归零，显式无操作与缺失同为零输出
+  // #565 起缺号归零，显式无操作与缺失同为零输出
   era_flag.selectcom = 30;
   await train_message_b();
   assert.ok(
@@ -354,7 +354,7 @@ test('B/A 对 201-207 注册显式无操作：源侧无分支，不得出占位�
   );
 });
 
-test('A 公共头的 TFLAG:15 死斗场两臂（SELECTCOM 21/27/31 的灌精文本）', async () => {
+test('A 公共头的 TFLAG:15 死斗场两个分支（SELECTCOM 21/27/31 的灌精文本）', async () => {
   const { fixture, era_flag } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   const { train_message_a } = fixture.load_module('system/train/train-message');
@@ -363,7 +363,7 @@ test('A 公共头的 TFLAG:15 死斗场两臂（SELECTCOM 21/27/31 的灌精文�
   await train_message_a();
   assert.ok(
     fixture.text_lines().includes('温妮的私处里、被灌入了怪物黏黏糊糊的精液…'),
-    ':127-133 的死斗场 ==1 臂（A 分发占位行照出，两不相干）',
+    '死斗场 ==1 分支（A 分发段与此处独立）',
   );
 
   fixture.store.set('tflag:15', 2);
@@ -371,48 +371,48 @@ test('A 公共头的 TFLAG:15 死斗场两臂（SELECTCOM 21/27/31 的灌精文�
   await train_message_a();
   assert.ok(
     fixture.text_lines().includes('温妮的嘴里、被怪物大量的粘稠精液灌满了…'),
-    ':135-141 的死斗场 ==2 臂',
+    '死斗场 ==2 分支',
   );
 
-  // 三支之外的 SELECTCOM 无输出。死斗场命中 IF 链后 ELSEIF 触手臂不再落
-  // （源形状，1:1）。非死斗场的触手两臂随 J17 落地，但本用例在死斗场中。
-  // A 分发段的占位行随 SELECTCOM 逐条出现，与此处无关——只数两臂的文本
+  // SELECTCOM 不在上述三项时无输出。死斗场命中 IF 链后不再进入触手分支。
+  // 非死斗场的触手两个分支已在 J17 实现，本用例在死斗场中。
+  // A 分发段与此处无关——只数两个分支的文本
   const arm_texts = () =>
     fixture
       .text_lines()
       .filter((l) => l.includes('被灌入了怪物') || l.includes('粘稠精液灌满'))
       .length;
-  assert.equal(arm_texts(), 2, '前两次分发的两臂文本');
+  assert.equal(arm_texts(), 2, '前两次分发的两个分支文本');
   fixture.store.set('tflag:15', 1);
   era_flag.selectcom = 206;
   await train_message_a();
   assert.equal(arm_texts(), 2, 'SELECTCOM 206 无新增（三支之外）');
   assert.ok(
     !fixture.text_lines().some((l) => l.includes('触手、吐出了体液')),
-    '死斗场中触手臂不落（SIF 要求 TEQUIP:55 != 1）',
+    '死斗场中触手分支不落（SIF 要求 TEQUIP:55 != 1）',
   );
 });
 
-// —— @COM201（COMF201_助手.ERB） ——
+// —— com201 ——
 
-test('@COM201：非助手亲自出战直接 RETURN 0', async () => {
+test('com201：非助手亲自出战直接 RETURN 0', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   era_flag.selectcom = 201;
-  assert.equal(await com_family.call(201), 0, ':10-11 双保险');
+  assert.equal(await com_family.call(201), 0, '双保险');
 });
 
-test('@COM201 压制支：追加伤害与武器打掉文本；当前気力仍有余 → 胜利收场', async () => {
+test('com201 压制支：追加伤害与武器打掉文本；当前气力仍有余 → 胜利收场', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world({
     assi: true,
   });
   fixture.store.set('tequip:31:55', 1);
-  // 奴隶点 1（基础攻防 0、気力 500 → 下限）；助手 200（基础攻防 100×100、気力满）
+  // 奴隶点 1（基础攻防 0、气力 500 → 下限）；助手 200（基础攻防 100×100、气力满）
   fixture.store.set('maxbase:32:1', 1000);
   fixture.store.set('base:32:1', 1000);
   fixture.store.set('cflag:32:13', 100);
   fixture.store.set('cflag:32:14', 100);
-  fixture.store.set('base:31:1', 500); // 気力有余 → 追加伤害支
+  fixture.store.set('base:31:1', 500); // 气力有余 → 追加伤害支
   era_flag.assiplay = 1;
   era_flag.player = 32;
   era_flag.selectcom = 201;
@@ -420,27 +420,27 @@ test('@COM201 压制支：追加伤害与武器打掉文本；当前気力仍有
   assert.equal(
     await com_family.call(201),
     1,
-    'COM_AFTER_ARENA 胜利 → RETURN 1',
+    'com_after_arena 胜利 → RETURN 1',
   );
   assert.equal(fixture.store.get('exp:31:76'), 1, '斗技胜利经验 +1');
   assert.equal(fixture.store.get('tflag:400'), 201);
   // 开战 200/2000 + 追加 200/1000 → lose = 400/3000
   assert.equal(fixture.store.get('deltabase:31:0'), -400);
   assert.equal(fixture.store.get('deltabase:31:1'), -3000);
-  // 気力 500 < 3000 → 武器被打掉 + ＜奴隶陷落＞
+  // 气力 500 < 3000 → 武器被打掉 + ＜奴隶陷落＞
   assert.ok(fixture.text_lines().includes('温妮完全无法抵挡助手32的攻击！'));
   assert.ok(fixture.text_lines().includes('＜奴隶陷落＞'));
   // 菜单不可达（胜利收场）：无凌辱菜单头
   assert.ok(!fixture.text_lines().includes('对哪里进行凌辱？'));
 });
 
-test('@COM201 反击支：奴隶战斗点不低 → 直接扣助手体力气力（门面）', async () => {
+test('com201 反击支：奴隶战斗点不低 → 直接扣助手体力气力（门面）', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world({
     assi: true,
   });
   fixture.store.set('tequip:31:55', 1);
-  fixture.store.set('base:31:1', 0); // 奴隶気力 0（com_after_arena 走陷落）
-  slave_base_combat(fixture, 100, 100); // 奴隶基础攻防 100，但気力 0 → 点 1
+  fixture.store.set('base:31:1', 0); // 奴隶气力 0（com_after_arena 走陷落）
+  slave_base_combat(fixture, 100, 100); // 奴隶基础攻防 100，但气力 0 → 点 1
   // 助手基础攻防 0 → 点 1；slave(1) < assi(1) 不成立 → 反击支
   fixture.store.set('maxbase:32:1', 1000);
   fixture.store.set('base:32:1', 1000);
@@ -450,7 +450,7 @@ test('@COM201 反击支：奴隶战斗点不低 → 直接扣助手体力气力�
   era_flag.selectcom = 201;
   fixture.set_inputs(999); // 陷落 → 菜单 → 暂时放过
 
-  assert.equal(await com_family.call(201), 0, ':105-107 暂时放过 RETURN 0');
+  assert.equal(await com_family.call(201), 0, '暂时放过 RETURN 0');
   // 反击：BASE:ASSI:0 -= 1 / BASE:ASSI:1 -= 10（跨域写经 chara(32).dungeon）
   assert.equal(fixture.store.get('base:32:0'), 499);
   assert.equal(fixture.store.get('base:32:1'), 990);
@@ -461,7 +461,7 @@ test('@COM201 反击支：奴隶战斗点不低 → 直接扣助手体力气力�
   );
 });
 
-test('@COM201 助手退却：気力 < 上限 1/5 → 助手让位、跳过凌辱菜单', async () => {
+test('com201 助手退却：气力 < 上限 1/5 → 助手让位、跳过凌辱菜单', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world({
     assi: true,
   });
@@ -479,10 +479,10 @@ test('@COM201 助手退却：気力 < 上限 1/5 → 助手让位、跳过凌辱
   assert.equal(
     await com_family.call(201),
     1,
-    ':56-57 退则 → 暂时放过（RETURN 1）',
+    '助手退却后暂时放过（RETURN 1），不再进入凌辱菜单',
   );
-  assert.equal(era_flag.assiplay, 0, ':87 ASSIPLAY = 0');
-  assert.equal(era_flag.player, 0, ':88 PLAYER = MASTER');
+  assert.equal(era_flag.assiplay, 0, 'ASSIPLAY = 0');
+  assert.equal(era_flag.player, 0, 'PLAYER = MASTER');
   assert.ok(
     fixture.text_lines().includes('＜助手退却＞'),
     '气力 < 上限 1/5 才退却（180 < 1000/5）',
@@ -490,7 +490,7 @@ test('@COM201 助手退却：気力 < 上限 1/5 → 助手让位、跳过凌辱
   assert.ok(!fixture.text_lines().includes('对哪里进行凌辱？'));
 });
 
-test('@COM201 凌辱菜单：选项按调教者条件显示；胸爱抚支不查実行可否、收入照加', async () => {
+test('com201 凌辱菜单：选项按调教者条件显示；胸爱抚支不查可用性、收入照加', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world({
     assi: true,
   });
@@ -506,13 +506,13 @@ test('@COM201 凌辱菜单：选项按调教者条件显示；胸爱抚支不查
 
   // 女助手无假阳具：[0]/[2]/[3] 不显示（TALENT:ASSI:121/122 与 ITEM:PBAND 皆无）
   fixture.set_inputs(1); // 胸爱抚（无条件项）
-  assert.equal(await com_family.call(201), 1, ':83-88 无結果検査 → RETURN 1');
+  assert.equal(await com_family.call(201), 1, '不检查子指令结果 → RETURN 1');
   const buttons = printed_buttons(fixture);
   assert.ok(buttons.includes('1:- 胸部'));
   assert.ok(!buttons.includes('0:- 嘴巴'), '无插入手段不显示嘴巴');
   assert.ok(!buttons.includes('2:- 私处'));
   assert.ok(!buttons.includes('3:- 肛门'));
-  // 收入：LOSEBASE:0（开战 200；気力 0 支无追加）× 5 + rand(0)（whenMissing
+  // 收入：LOSEBASE:0（开战 200；气力 0 支无追加）× 5 + rand(0)（whenMissing
   // 的 RESULT = 0 → RAND:0 恒 0）→ 1000
   assert.equal(
     fixture.store.get('tflag:402'),
@@ -525,12 +525,12 @@ test('@COM201 凌辱菜单：选项按调教者条件显示；胸爱抚支不查
   com_family.register(31, async () => 0);
   fixture.reset_inputs(0);
   const r = await com_family.call(201);
-  assert.equal(r, 0, ':79-80 口交実行不可 → RETURN 0');
+  assert.equal(r, 0, '口交不可用 → RETURN 0');
   assert.ok(fixture.text_lines().includes('＜助手・口交＞'));
   assert.ok(printed_buttons(fixture).includes('0:- 嘴巴'));
 });
 
-test('@COM201 假阳具持有者（ITEM:PBAND == 1）可插入；收入吃 rand', async () => {
+test('com201 假阳具持有者（ITEM:PBAND == 1）可插入；收入吃 rand', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world({
     assi: true,
   });
@@ -569,9 +569,9 @@ test('@COM201 假阳具持有者（ITEM:PBAND == 1）可插入；收入吃 rand'
   assert.ok(fixture.text_lines().includes('＜助手・背后位肛交＞'));
 });
 
-// —— @COM202-206：五体怪物的同构主体 ——
+// —— 202–206 号指令：五体怪物的同构主体 ——
 
-/** 五体的源侧真值（COMF202-206 逐文件手抄；level = 10） */
+/** 五体怪物在 level = 10 时的预期损耗、败北线、收入倍率与文本 */
 const MONSTER_TRUTH = {
   202: {
     label: '最下层居民',
@@ -630,10 +630,10 @@ const MONSTER_TRUTH = {
 for (const [com, truth] of Object.entries(MONSTER_TRUTH)) {
   const n = Number(com);
 
-  test(`@COM${n}（${truth.label}）：胜利支（战斗点 ≥ ${truth.threshold}）的開戦損耗与文本`, async () => {
+  test(`${n} 号指令（${truth.label}）：胜利支（战斗点 ≥ ${truth.threshold}）的开战损耗与文本`, async () => {
     const { fixture, era_flag, com_family } = seed_colosseum_world();
     fixture.store.set('tequip:31:55', 1);
-    fixture.store.set('base:31:1', 1000); // 気力满 → 点 = 攻防合计
+    fixture.store.set('base:31:1', 1000); // 气力满 → 点 = 攻防合计
     slave_base_combat(fixture, 100, 100); // 点 200 ≥ threshold（level 10）
     era_flag.selectcom = n;
 
@@ -646,13 +646,13 @@ for (const [com, truth] of Object.entries(MONSTER_TRUTH)) {
     assert.ok(!fixture.text_lines().includes('对哪里进行凌辱？'));
   });
 
-  test(`@COM${n}（${truth.label}）：気力有余的败北支（追加 [${truth.extra}] 与倒地）`, async () => {
+  test(`${n} 号指令（${truth.label}）：气力有余的败北支（追加 [${truth.extra}] 与倒地）`, async () => {
     const { fixture, era_flag, com_family } = seed_colosseum_world();
     fixture.store.set('tequip:31:55', 1);
-    fixture.store.set('base:31:1', 1); // 気力 1（> 0 且 < 累计损耗）
+    fixture.store.set('base:31:1', 1); // 气力 1（> 0 且 < 累计损耗）
     era_flag.selectcom = n; // 基础攻防 0 → 点 1（下限）< threshold
 
-    // 奴隶気力 1 > 0 → COM_AFTER_ARENA 判「胜利」（RETURN 1 收场），但
+    // 奴隶气力 1 > 0 → com_after_arena 判「胜利」（RETURN 1 收场），但
     // 战斗文本已走败北支（追加伤害 + 倒地 + 陷落行）
     assert.equal(await com_family.call(n), 1);
     assert.equal(
@@ -667,11 +667,11 @@ for (const [com, truth] of Object.entries(MONSTER_TRUTH)) {
     assert.ok(fixture.text_lines().includes('＜奴隶陷落＞'));
   });
 
-  test(`@COM${n}（${truth.label}）：体力枯竭的 /=4 折减（LOSEBASE:0 ${truth.open[0]} → ${truth.open_weak[0]}）`, async () => {
+  test(`${n} 号指令（${truth.label}）：体力枯竭的 /=4 折减（LOSEBASE:0 ${truth.open[0]} → ${truth.open_weak[0]}）`, async () => {
     const { fixture, era_flag, com_family } = seed_colosseum_world();
     fixture.store.set('tequip:31:55', 1);
     fixture.store.set('base:31:0', 0); // 体力枯竭 → weak
-    fixture.store.set('base:31:1', 1000); // 気力满 + 攻防充足 → 胜利支（不落菜单）
+    fixture.store.set('base:31:1', 1000); // 气力满 + 攻防充足 → 胜利支（不落菜单）
     slave_base_combat(fixture, 100, 100);
     era_flag.selectcom = n;
 
@@ -680,10 +680,10 @@ for (const [com, truth] of Object.entries(MONSTER_TRUTH)) {
     assert.equal(fixture.store.get('deltabase:31:1'), -truth.open_weak[1]);
   });
 
-  test(`@COM${n}（${truth.label}）：凌辱的死亡斗场收入 × ${truth.income_mult}`, async () => {
+  test(`${n} 号指令（${truth.label}）：凌辱的死亡斗场收入 × ${truth.income_mult}`, async () => {
     const { fixture, era_flag, com_family } = seed_colosseum_world();
     fixture.store.set('tequip:31:55', 1);
-    // base:1 = 0 → 陷落 → 菜单；気力 0 支无追加伤害（lose = open）
+    // base:1 = 0 → 陷落 → 菜单；气力 0 支无追加伤害（lose = open）
     era_flag.selectcom = n;
     com_family.register(31, async () => 1);
     fixture.reset_inputs(0);
@@ -692,13 +692,13 @@ for (const [com, truth] of Object.entries(MONSTER_TRUTH)) {
     assert.equal(
       fixture.store.get('tflag:402'),
       truth.open[0] * truth.income_mult,
-      ':71 收入 = LOSEBASE:0 × 倍率 + RAND:RESULT(=0)',
+      '收入 = LOSEBASE:0 × 倍率 + RAND:RESULT(=0)',
     );
     assert.ok(fixture.text_lines().includes(`＜${truth.label}・口交＞`));
   });
 }
 
-test('@COM202 失神中（TFLAG:899）：战斗点再高也走败北支且无追加伤害', async () => {
+test('202 号指令：失神中（TFLAG:899）：战斗点再高也走败北支且无追加伤害', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   fixture.store.set('tflag:899', 2);
@@ -709,17 +709,17 @@ test('@COM202 失神中（TFLAG:899）：战斗点再高也走败北支且无追
   assert.equal(await com_family.call(202), 1);
   assert.ok(
     fixture.text_lines().includes('温妮无法抵抗，被嘲笑了。'),
-    ':32-34 失神/気力 0 支的文本',
+    '失神/気力 0 支的文本',
   );
   assert.equal(fixture.store.get('deltabase:31:0'), -5, '无追加伤害');
 });
 
-test('@COM202/206 999 暂时放过 → 一律 RETURN 0（整条指令作废）', async () => {
+test('202/206 号指令 999 暂时放过 → 一律 RETURN 0（整条指令作废）', async () => {
   const first = seed_colosseum_world();
   first.fixture.store.set('tequip:31:55', 1);
   first.era_flag.selectcom = 202;
   first.fixture.set_inputs(999);
-  assert.equal(await first.com_family.call(202), 0, ':98-99 RETURN 0');
+  assert.equal(await first.com_family.call(202), 0, 'RETURN 0');
   assert.ok(first.fixture.text_lines().includes('你让最下层居民退下了……'));
 
   const sixth = seed_colosseum_world();
@@ -736,7 +736,7 @@ test('@COM202/206 999 暂时放过 → 一律 RETURN 0（整条指令作废）',
   assert.equal(sixth.fixture.store.get('tflag:15'), undefined, '射精旗标不写');
 });
 
-test('@COM204 的陷落行与其余四体一致：PRINTW（等键）', async () => {
+test('204 号指令的陷落行与其余四体一致：PRINTW（等键）', async () => {
   // 可观测面：fixture.waits 逐次记录 waitAnyKey。败北 + 倒地支的场景恰 3 次
   // 等键（败北追加行 / 倒地支行 / ＜奴隶陷落＞行）——陷落行删等键会掉到 2。
   const run = async (com) => {
@@ -749,11 +749,11 @@ test('@COM204 的陷落行与其余四体一致：PRINTW（等键）', async () 
   };
   const waits_202 = await run(202);
   const waits_204 = await run(204);
-  assert.equal(waits_202, 3, ':35 ＜奴隶陷落＞ 行 PRINTW（202 同形对照）');
-  assert.equal(waits_204, 3, ':35 ＜奴隶陷落＞ 行 PRINTW（五体统一等键）');
+  assert.equal(waits_202, 3, '＜奴隶陷落＞ 行 PRINTW（202 同形对照）');
+  assert.equal(waits_204, 3, '＜奴隶陷落＞ 行 PRINTW（五体统一等键）');
 });
 
-test('@COM206 拡張経験：背后位/肛交的初回异常经验与扩张经验（门面写）', async () => {
+test('206 号指令的扩张经验：背后位/肛交的首次异常经验与扩张经验（门面写）', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   era_flag.selectcom = 206;
@@ -763,12 +763,12 @@ test('@COM206 拡張経験：背后位/肛交的初回异常经验与扩张经�
 
   assert.equal(await com_family.call(206), 1);
   assert.equal(await com_family.call(206), 1);
-  // 第一次（SELECTCOM 21）：异常 +1（EXP:52 初回）+ 私处扩张 +1
-  // 第二次（SELECTCOM 27）：异常 +1（EXP:53 初回）+ 肛门扩张 +1
+  // 第一次（SELECTCOM 21）：异常 +1（EXP:52 首次）+ 私处扩张 +1
+  // 第二次（SELECTCOM 27）：异常 +1（EXP:53 首次）+ 肛门扩张 +1
   assert.equal(
     fixture.store.get('exp:31:50'),
     2,
-    '初回异常经验各 +1（52/53 首次时）',
+    '首次异常经验各 +1（52/53 首次时）',
   );
   assert.equal(fixture.store.get('exp:31:52'), 1);
   assert.equal(fixture.store.get('exp:31:53'), 1);
@@ -782,7 +782,7 @@ test('@COM206 拡張経験：背后位/肛交的初回异常经验与扩张经�
   assert.ok(texts.includes('肛门扩张经验＋1'));
 });
 
-// —— 射精チェック + 汚れ（COM202-206 共用段） ——
+// —— 射精检查与污垢（COM202-206 共用段） ——
 
 test('射精量分档：技巧/顺从/欲情/体位倍率逐档相乘（SELECTCOM 27）', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
@@ -825,19 +825,19 @@ test('通常射精（E = 1）：精液经验 +1、槽扣减、射精旗标与污
   assert.equal(fixture.store.get('exp:31:20'), 1, 'EXP:20 +1（门面）');
   // 900 + 135×1.2(口交) = 1062 → E=1 → -= 1000 → 62（< 1000 不钳制）
   assert.equal(fixture.store.get('base:0:4'), 62);
-  assert.equal(fixture.store.get('tflag:0'), 1, ':255-256 口交射精');
+  assert.equal(fixture.store.get('tflag:0'), 1, '口交射精');
   assert.equal(fixture.store.get('tflag:15'), 1);
   // SOURCE 修正：4 ×3、7 = 200、5 ×2.5、13 ×1.6
   assert.equal(fixture.store.get('source:31:4'), 300);
   assert.equal(fixture.store.get('source:31:7'), 200);
   assert.equal(fixture.store.get('source:31:5'), 250);
   assert.equal(fixture.store.get('source:31:13'), 160);
-  // 汚れ：口（STAIN:0）|= 2 | 4
+  // 污垢：口（STAIN:0）|= 2 | 4
   assert.equal(fixture.store.get('stain:31:0'), 6, '口位 STAIN:0 |= 2 | 4');
   assert.equal(
     fixture.store.get('stain:31:1'),
     undefined,
-    '手 untouched（30 才写）',
+    '手位不写入（30 才写）',
   );
   assert.ok(fixture.text_lines().includes('怪物射精'));
   assert.ok(fixture.text_lines().includes('精液经验＋1'));
@@ -864,8 +864,8 @@ test('大量射精（E = 2）：×2 扣减后的钳制与三旗标', async () =>
     999,
     '扣减后仍 ≥ EJAC → 钳制到 EJAC-1',
   );
-  assert.equal(fixture.store.get('tflag:38'), 2, ':238-239 私处内射精（怪物）');
-  assert.equal(fixture.store.get('tflag:2'), 2, ':242-243 性行为射精');
+  assert.equal(fixture.store.get('tflag:38'), 2, '私处内射精（怪物）');
+  assert.equal(fixture.store.get('tflag:2'), 2, '性行为射精');
   assert.equal(fixture.store.get('tflag:15'), 2);
   assert.equal(fixture.store.get('stain:31:3'), 6, '私处 |= 2 | 4');
   assert.ok(fixture.text_lines().includes('怪物大量射精'));
@@ -884,26 +884,26 @@ test('MAXBASE:MASTER:4 == 0（无射精槽）→ 射精检查整段跳过', asyn
   assert.equal(
     fixture.store.get('tflag:15'),
     undefined,
-    ':105-107 整段跳过（含 TFLAG:15）',
+    '整段跳过（含 TFLAG:15）',
   );
   assert.equal(fixture.store.get('exp:31:20'), undefined);
 });
 
-// —— @COM207（COMF207_媚薬スライム.ERB） ——
+// —— com207 ——
 
-test('@COM207：只削气力；败北支的两档文本与追加；胜利支', async () => {
+test('com207：只削气力；败北支的两档文本与追加；胜利支', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
-  fixture.store.set('base:31:1', 1); // 気力 1 > 0 → 追加支
+  fixture.store.set('base:31:1', 1); // 气力 1 > 0 → 追加支
   era_flag.selectcom = 207;
   fixture.set_inputs(999);
 
-  assert.equal(await com_family.call(207), 1, ':72 空支 → RETURN 1');
+  assert.equal(await com_family.call(207), 1, '空支 → RETURN 1');
   // 开战 100 + 败北追加 100（level 10 × 10）
   assert.equal(
     fixture.store.get('deltabase:31:0'),
     undefined,
-    'LOSEBASE:0 无し（207 不写体力损耗）',
+    'LOSEBASE:0 未写入（207 不写体力损耗）',
   );
   assert.equal(fixture.store.get('deltabase:31:1'), -200);
   assert.ok(
@@ -927,7 +927,7 @@ test('@COM207：只削气力；败北支的两档文本与追加；胜利支', a
   );
 });
 
-test('@COM207 无失神判定：TFLAG:899 不强制败北（与 202-206 的差异）', async () => {
+test('com207 无失神判定：TFLAG:899 不强制败北（与 202-206 的差异）', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   fixture.store.set('tflag:899', 2);
@@ -942,7 +942,7 @@ test('@COM207 无失神判定：TFLAG:899 不强制败北（与 202-206 的差�
   );
 });
 
-test('@COM207 三支 JUMP COM51：尾调用（SELECTCOM = 51、返回值透传）', async () => {
+test('com207 三支 JUMP COM51：尾调用（SELECTCOM = 51、返回值透传）', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   era_flag.selectcom = 207;
@@ -966,7 +966,7 @@ test('@COM207 三支 JUMP COM51：尾调用（SELECTCOM = 51、返回值透传�
   );
 });
 
-test('@COM207 私处支：男人目标 RETURN 0；按钮不显示', async () => {
+test('com207 私处支：男人目标 RETURN 0；按钮不显示', async () => {
   const { fixture, era_flag, com_family } = seed_colosseum_world();
   fixture.store.set('tequip:31:55', 1);
   fixture.store.set('talent:31:122', 1);
@@ -977,14 +977,14 @@ test('@COM207 私处支：男人目标 RETURN 0；按钮不显示', async () => 
   const buttons = printed_buttons(fixture);
   assert.ok(
     !buttons.includes('1:- 私处'),
-    ':53-54 男人不显示私处项（引擎层拒收代位 :65-66 的双保险）',
+    '男人不显示私处项（引擎层拒收无效选项，与指令内检查形成双保险）',
   );
   assert.ok(buttons.includes('0:- 嘴巴'));
 });
 
-// —— SHOW_EQUIP_2 的死斗场臂（page-train 就地实现，#230） ——
+// —— show_equip_2 的死斗场分支（#230） ——
 
-test('死斗场中的 SHOW_STATUS：装备行出 [死斗场决斗中]（粉色）、不再占位', async () => {
+test('死斗场中的状态显示：装备行出 [死斗场决斗中]（粉色）、不再占位', async () => {
   const fixture = create_era_fixture();
   preset_chara_0(fixture);
   fixture.era.addCharacter(0);
@@ -997,16 +997,16 @@ test('死斗场中的 SHOW_STATUS：装备行出 [死斗场决斗中]（粉色�
   const { emit } = fixture.load_module('system/event/registry');
 
   await emit('SHOW_STATUS');
-  // #390 起 SHOW_EQUIP_2 是真身：无任何位时只打一个空格，不再有占位文案
+  // #390 起 show_equip_2 是完整实现：无任何位时只打一个空格，不再有占位文案
   assert.ok(
-    !fixture.text_lines().some((l) => l.includes('@SHOW_EQUIP_2')),
+    !fixture.text_lines().some((l) => l.includes('SHOW_EQUIP_2')),
     '未在死斗场时不再落占位行（真身：空行）',
   );
 
   fixture.store.set('tequip:31:55', 1);
   await emit('SHOW_STATUS');
-  // 真身逐位前有一个前导空格（源 :1588 `PRINT  [死斗场决斗中] `，命令后的
-  // 第一个空格是分隔符，见 chara-info-abl-mark.js 文件头）
+  // 装备状态项的正文保留一个前导空格与一个尾随空格，
+  // 以便与同一行的其他状态项分隔。
   const arena = fixture.lines
     .filter((l) => l.type === 'text')
     .find((l) => l.text === ' [死斗场决斗中] ');
@@ -1014,11 +1014,11 @@ test('死斗场中的 SHOW_STATUS：装备行出 [死斗场决斗中]（粉色�
   assert.equal(
     arena.content[0].color,
     '#ff1493',
-    ':1565 SETCOLOR 0xff1493（DeepPink）',
+    'SETCOLOR 0xff1493（DeepPink）',
   );
 });
 
-// —— train-loop 的 RETURN 0 语义（本票落地） ——
+// —— train-loop 的 RETURN 0 语义（#230） ——
 
 test('RETURN 0 的指令：回合作废——不结算、不进 EVENTCOMEND、PREVCOM 不推进', async () => {
   const fixture = create_era_fixture();
@@ -1041,33 +1041,33 @@ test('RETURN 0 的指令：回合作废——不结算、不进 EVENTCOMEND、PR
   });
   const { com_index } = fixture.load_module('system/train/com-index');
 
-  // COM202 的 999 → RETURN 0（引擎「実行に失敗した」：Process.SystemProc.cs
-  // 的 endCallComXX 分支）
+  // COM202 选择 999 返回 0，表示这次指令未执行，
+  // 不应触发回合结算事件。
   fixture.store.set('tequip:31:55', 1);
   fixture.set_inputs(com_index(202), 999, 999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
 
-  assert.ok(!probe.includes('SOURCE_CHECK'), '作废回合不得进 @SOURCE_CHECK');
-  assert.ok(!probe.includes('EVENTCOMEND'), '作废回合不得进 @EVENTCOMEND');
+  assert.ok(!probe.includes('SOURCE_CHECK'), '作废不执行 source-check 结算');
+  assert.ok(!probe.includes('EVENTCOMEND'), '作废不触发 EVENTCOMEND');
   const prevcom_writes = fixture.var_writes
     .filter((w) => w.name === 'flag:10009')
     .map((w) => w.value);
   assert.deepEqual(
     prevcom_writes,
     [-1],
-    'PREVCOM 不推进（引擎从不代写，原作在 SOURCE_CHECK:545 自更）',
+    'PREVCOM 不推进（回合作废，不执行 source-check 结算）',
   );
 });
 
-// —— @COM_AFTER_ARENA / @ARENA_*（J17 的接线前置，导出面） ——
+// —— com_after_arena / arena_slave_point / arena_assi_point（J17 的调用前置，导出面） ——
 
 test('导出面：arena_slave_point / arena_assi_point / com_after_arena 在场可调用', async () => {
   const { fixture } = seed_colosseum_world();
   const { arena_slave_point, arena_assi_point, com_after_arena } =
     fixture.load_module('system/train/com-colosseum');
 
-  // WEAPON_RESTORE 重算后：基础攻防合计 × 気力比例；魔术加算 = 等级 ×2
+  // 重算装备攻防后：基础攻防合计 × 气力比例；魔术加算 = 等级 ×2
   slave_base_combat(fixture, 30, 20);
   fixture.store.set('talent:31:241', 1);
   fixture.store.set('cflag:31:9', 7);
@@ -1075,7 +1075,7 @@ test('导出面：arena_slave_point / arena_assi_point / com_after_arena 在场�
   assert.equal(
     arena_slave_point(),
     Math.floor(((30 + 20 + 14) * 500) / 1000),
-    '攻防 + 魔术加算后按気力比例折减',
+    '攻防 + 魔术加算后按气力比例折减',
   );
 
   fixture.store.set('talent:31:241', 0);
@@ -1084,16 +1084,16 @@ test('导出面：arena_slave_point / arena_assi_point / com_after_arena 在场�
   fixture.era.set('base:31:1', 0);
   assert.equal(arena_slave_point(), 1, '下限 1');
 
-  // com_after_arena：気力有余 → 胜利 0；枯竭 → 陷落 1
+  // com_after_arena：气力有余 → 胜利 0；枯竭 → 陷落 1
   fixture.era.set('base:31:1', 1);
-  assert.equal(await com_after_arena(), 0, '気力有余（1 > 0）→ 胜利 0');
+  assert.equal(await com_after_arena(), 0, '气力有余（1 > 0）→ 胜利 0');
   fixture.era.set('base:31:1', 0);
   assert.equal(await com_after_arena(), 1);
   assert.equal(fixture.store.get('tflag:401'), 1);
   void arena_assi_point; // 导出面在场（COM201 的用例覆盖其行为）
 });
 
-// —— #595：凌辱菜单的按钮行逐行相邻（原作是连续 PRINTL，无空行） ————
+// —— #595：凌辱菜单的按钮行逐行相邻（连续输出按钮行，不额外插入空行） ————
 
 test('#595 COM201/202/207 凌辱菜单：菜单行之间没有多补的空行', async () => {
   // COM201：男助手（TALENT:122）→ 全项显示；陷落进菜单后放过
@@ -1141,7 +1141,7 @@ test('#595 COM201/202/207 凌辱菜单：菜单行之间没有多补的空行', 
     assert.deepEqual(
       rows_between.map((line) => line.type),
       rows_between.map(() => 'button'),
-      `${header}：菜单行全是按钮（COMF201:65-73 / COMF202:53-59 / COMF207:47-52 的连续 PRINTL）`,
+      `${header}：菜单行全是按钮（连续输出，无空行）`,
     );
     assert.equal(
       exit.row - head.row,
@@ -1151,10 +1151,10 @@ test('#595 COM201/202/207 凌辱菜单：菜单行之间没有多补的空行', 
   }
 });
 
-// —— #612：凌辱菜单的按钮正文照写原作的「- 」分隔符 ————
+// —— #612：凌辱菜单的按钮正文保留字面的「- 」分隔符 ————
 
-test('#612 COM201/202/207 凌辱菜单：四部位带「- 」、[999] 无分隔符', async () => {
-  // COM201：男助手 → [0]/[1]/[2]/[3] 全显示（COMF201_助手.ERB:66-73）
+test('#612 com201/202/207 凌辱菜单：四部位带「- 」、[999] 无分隔符', async () => {
+  // com201：男助手 → [0]/[1]/[2]/[3] 全显示
   const world201 = seed_colosseum_world({ assi: true });
   world201.fixture.store.set('tequip:31:55', 1);
   world201.fixture.store.set('base:31:1', 0);
@@ -1188,16 +1188,16 @@ test('#612 COM201/202/207 凌辱菜单：四部位带「- 」、[999] 无分隔�
   assert.deepEqual(
     rendered(world201.fixture),
     ['[0] - 嘴巴', '[1] - 胸部', '[2] - 私处', '[3] - 肛门', '[999] 暂时放过'],
-    'COM201 四部位带「- 」、[999] 不带（COMF201_助手.ERB:66-73）',
+    'com201 四部位带「- 」、[999] 不带',
   );
   assert.deepEqual(
     rendered(fixture202),
     ['[0] - 嘴巴', '[1] - 胸部', '[2] - 私处', '[3] - 肛门', '[999] 暂时放过'],
-    'COM202 四部位带「- 」、[999] 不带（COMF202_最下層民.ERB:53-59）',
+    'com202 四部位带「- 」、[999] 不带',
   );
   assert.deepEqual(
     rendered(fixture207),
     ['[0] - 嘴巴', '[1] - 私处', '[2] - 肛门', '[999] 暂时放过'],
-    'COM207 三部位带「- 」、[999] 不带（COMF207_媚薬スライム.ERB:47-52）',
+    'com207 三部位带「- 」、[999] 不带',
   );
 });
