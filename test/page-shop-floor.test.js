@@ -11,8 +11,8 @@
  *   - 设施四格（FLAG 299+ARG+{0,10,20,40}——REPEAT 内 COUNT==3→4 跳过 +30
  *     段）与「格上有道具才出行」的判据；
  *   - 近卫层（ARG = 10）的护卫名单（!CFLAG:1 && EX_TALENT:1）与素质名拼接；
- *   - **@ENEMY_EXIST2 的护卫名单在 1-9 层也追加**（原作判据是全局 X == 10，
- *     不是实参——#548 返工订正）与编号的宽度 2 右对齐；
+ *   - @ENEMY_EXIST2 的护卫名单只出在近卫层（floor 10），1-9 层不追加（#652
+ *     改正：判据只看阶层实参）；
  *   - 怪物库存十格（槽 = (ARG-1)*10+100，{N,2,LEFT} 的左对齐两位）；
  *   - 三处空行（@ENEMY_EXIST2 首行、:489 的 PRINTL、:500 无参 PRINTW 的空行）；
  *   - LIMIT(ARG,1,10) 钳制；
@@ -84,7 +84,7 @@ test('第 1 阶层：楼层头 + 设施后缀合行、设施四格、怪物库�
   assert.equal(texts.filter((line) => line === '').length, 1, 'PRINTW 的空行');
 });
 
-test('1-9 层也追加护卫名单：原作判据是全局 X == 10，不是参数（#548 订正）', async () => {
+test('1-9 层不追加护卫名单：护卫名单只出在近卫层（#652 改正）', async () => {
   const fixture = create_floor_fixture();
   fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
   fixture.era.addCharacter(34);
@@ -95,18 +95,36 @@ test('1-9 层也追加护卫名单：原作判据是全局 X == 10，不是参�
   const texts = text_lines(fixture);
   assert(texts.includes('第3阶层'), '仍是所点阶层的画面');
   assert(
-    texts.includes('[护卫中]\u3000[34]葵希罗'),
-    '1-9 层也出护卫行（DRAW_MAINMENU 的楼层循环把 X 留成 10）',
+    !texts.includes('[护卫中]\u3000[34]葵希罗'),
+    '主菜单进 1-9 层不出护卫行',
   );
 });
 
+test('第 10 层（近卫层）走本条自己的护卫名单（[名] —— ＋素质名）', async () => {
+  const fixture = create_floor_fixture();
+  fixture.seed_chara(34, { id: 34, name: '葵希罗', callname: '葵希罗' });
+  fixture.era.addCharacter(34);
+  fixture.store.set('ex_talent:34:1', 1);
+  fixture.store.set('talent:34:205', 1);
+  fixture.store.set('talentname:205', '剑术');
+
+  await show_floor_via_usershop(fixture, 530); // 第 10 阶层（近卫层）
+
+  const texts = text_lines(fixture);
+  assert(texts.includes('近卫兵'), '近卫兵头');
+  assert(
+    texts.some((t) => t.includes('[葵希罗] —— ') && t.includes('剑术')),
+    '近卫层出护卫行（[名] —— ＋素质名格式）',
+  );
+});
 test('护卫行的编号是宽度 2 的右对齐（原作 [{COUNT,2}]）', async () => {
   const fixture = create_floor_fixture();
   fixture.seed_chara(7, { id: 7, name: '贝尔', callname: '贝尔' });
   fixture.era.addCharacter(7);
   fixture.store.set('ex_talent:7:1', 1);
 
-  await show_floor_via_usershop(fixture, 521);
+  const { enemy_exist2 } = fixture.load_module('page/page-dungeon-info2');
+  await enemy_exist2(10); // 近卫层的 ENEMY_EXIST2 护卫名单
 
   assert(
     text_lines(fixture).includes('[护卫中]\u3000[\u00A07]贝尔'),

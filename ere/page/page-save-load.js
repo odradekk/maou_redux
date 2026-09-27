@@ -3,11 +3,10 @@
  * 删除（@SYSTEM_DELDATA）/ 槽位列表（@SYSTEM_LIST_DATA）+ 存档备注文本
  * （@SAVEINFO）的 1:1 移植（issue #136）。
  *
- * @SYSTEM_LOADEND（SYSTEM_DATA.ERB:328-469，142 行）**不移植**：全库静态搜索
- * 零调用者，且它不是 Emuera 保留名（保留名 @SYSTEM_TITLE / @TITLE_LOADGAME
- * / @SYSTEM_AUTOSAVE / @EVENTLOAD 等，技能 system-flow.md「主要系统函数一览」）
- * ——死代码，登记 #14；「不要顺手接上」由 test/page-save-load.test.js 的反向
- * 钉与变异条目 M232 守住。
+ * @SYSTEM_LOADEND 不移植：全库静态搜索零调用者，且它不是引擎保留名
+ * （保留名是 SYSTEM_TITLE / TITLE_LOADGAME / SYSTEM_AUTOSAVE / EVENTLOAD
+ * 等，技能 system-flow.md「主要系统函数一览」）——读档成功的收尾由
+ * 本文件的 EVENTLOAD 链与转场承担。
  *
  * 原作 → ere 的引擎映射（本文件全部语义依据集中在此）：
  *   - SAVENOS()（分页步长）→ 常量 PAGE_LEN = 20。它是 Emuera 的
@@ -31,8 +30,8 @@
  *     「故事名: 99」——登记进名字表的下标会被 addCharacter 的
  *     initCharaTable 预置 0，行为随之改变（简报事实 3 / #136）；门面命名
  *     是代码层动作（tools/facade-names.js），不碰 yml）；
- *   - SAVESTR:TARGET（@SAVEINFO 的调教对象名）→ callname:${target}
- *     （#5 决议：SAVESTR 的名字承载归内置 callname）；
+ *   - SAVESTR:TARGET（@SAVEINFO 的调教对象名）→ chara_callname(target)
+ *     （读 callname:<角色号>:-1；#5 决议：SAVESTR 的名字承载归内置 callname）；
  *   - GETTIMES() → get_times()（`YYYY/MM/DD HH:MM:SS`，技能
  *     in-expression-functions.md）；
  *   - SAVEDATA_TEXT + PUTFORM → 局部字符串拼接（Emuera 的存档备注暂存
@@ -70,8 +69,8 @@
  *   - PRINTBUTTON（现名, CSTR:MASTER:99）（点击把现名预填进输入框）→ 纯
  *     文本 `（现名）` 提示：ere 引擎无「按钮点击预填输入框」能力。
  *   - **故事命名的空输入（:200 `INPUTS`）按 #567 的裁定处理**：0 视为空输入、
- *     走 :207-209 的消名支；提示行**不补**输入 0 的说明——原作文案
- *     「请输入一个名称故事：」不含「不输入」字样，1:1 保留。判断依据见
+ *     走消名支；提示行**不补**输入 0 的说明——提示语本身不含「不输入」字样
+ *     （既有文案）。判断依据见
  *     ere/utils/input-text.js。**#151 的旧结论（消名分支真机双重不可达，
  *     登记为引擎换代失效）随本票作废**：0 就是「不输入」在引擎上的归一形态，
  *     按 #567 的「有原作空输入分支的一律 B」裁定恢复可达。
@@ -105,6 +104,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { input_text } = require('#/utils/input-text');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { chara_callname } = require('#/utils/callname-utils');
 
 /**
  * 分页步长：原作 SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
@@ -215,9 +215,8 @@ function push_last_save_no(idx) {
  *   TARGET >= 1 时 ` 正在调教:名字 `（名字左对齐宽 14）否则 24 个空格 →
  *   有故事名时追加 `『故事名』`。
  *
- * 原作的副作用 1:1 保留（:959-963）：SIF FLAG:1 >= 0 → TARGET = FLAG:1、
- * SIF FLAG:2 >= 0 → ASSI = FLAG:2——@SAVEINFO 会把指针改写成「前回调教
- * 目标/助手」（Emuera 的 FLAG 零值 0 恒 >= 0，新档上等于把指针归零）。
+ * 读档备注的副作用：FLAG:1/FLAG:2 >= 0 时把 TARGET/ASSI 指针改回前回调教
+ * 目标/助手（FLAG 缺省 0 也满足 >= 0，新档上等于把指针归零）。
  *
  * @returns {string} 备注正文（不含时间戳前缀）
  */
@@ -241,8 +240,9 @@ function build_save_info() {
   // TARGET >= 1 → ` 正在调教:%SAVESTR:TARGET,14,LEFT% `（首尾各一
   // 半角空格）；ELSE → %"",24%（24 个空格）
   if (era_flag.target >= 1) {
-    // SAVESTR:TARGET → callname（#5 决议，见文件头映射表）
-    const target_name = String(era.get(`callname:${era_flag.target}`) ?? '');
+    // SAVESTR:TARGET → callname 的 -1 下标（#5 决议；引擎里 callname:<号> 不
+    // 带下标读到的是整个名字表对象——必须用 chara_callname 读 -1）
+    const target_name = chara_callname(era_flag.target);
     text += ` 正在调教:${pad_display(target_name, 14)} `;
   } else {
     text += NBSP.repeat(24);
@@ -267,7 +267,7 @@ async function set_story_name(anchor) {
   await era.clear(era.getLineCount() - anchor);
   // CASE 200 的 DRAWLINE
   era.drawLine();
-  // PRINTFORM 请输入一个名称故事：（原作文案即此语序，1:1 保留）
+  // PRINTFORM 请输入一个名称故事：（提示语即此语序）
   era.print('请输入一个名称故事：');
   const current = chara(0).system.故事名;
   if (current.length > 0) {
@@ -500,7 +500,7 @@ async function save_game() {
  * **对原作的有意偏离**：原作全库只有一处玩家存档写点（SYSTEM_DATA.ERB:185，
  * 槽位 0-98），99 号槽在读档界面被渲染却没有任何写点，原作也未定义 Emuera
  * 的内建自动存档钩子 @SYSTEM_AUTOSAVE——占用它不改变任何原作可见行为，
- * 正当性见 ADR-0006「后果」节，追溯登记 #14。
+ * 正当性见 ADR-0006「后果」节。
  *
  * 行为边界（有意取舍，写明）：
  *   - 备注 = 「自动」前缀 + 手动档同款 `%GETTIMES()% %SAVEDATA_TEXT%`

@@ -200,7 +200,7 @@ function show_list_trainable(no_page, num_page) {
   const trainable = added.filter((cid) => is_trainable(cid) === 0);
   trainable.forEach((cid, index) => {
     // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，
-    // 按可训练序号开窗——原作缺陷的修正移植，见文件头）
+    // 按可训练序号开窗（修正了旧版按角色号开窗的错位），见文件头）
     if (index >= no_page * num_page && index < (no_page + 1) * num_page) {
       // 原作行：PRINTFORM [{COUNT,2}] %SAVESTR:COUNT,12,LEFT% + 富化列（职业/
       // LV/HP 条/调教回数/爱慕·淫乱·未沦陷/收藏标记，#395 补全，见

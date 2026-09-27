@@ -149,22 +149,17 @@ test('INFO：设定宝物（301）写宝箱槽', async () => {
   assert.equal(fixture.store.get('flag:344'), 301, '第 5 层宝箱 = 盾');
 });
 
-test('INFO：宝物 300 是原作缺陷位——SETUP 版 ELSEIF Z > 300 漏掉 300（#14 登记，照抄）', async () => {
+test('INFO：宝物 300 写宝箱槽（SETUP 版判据含 300 本身）', async () => {
   const fixture = setup_world();
   const { dungeon_info } = load(fixture, 'page/page-dungeon-setup');
   fixture.set_inputs(0, 300, 100); // 第 1 层 → 选 300（剑）
   await dungeon_info();
-  // 原作 :225-229 的 ELSEIF Z > 300 不含 300 本身：z=300 两个分支都不进，
-  // Y 保持残留（全局初值 0）→ FLAG:0 = 300 脏写，宝箱槽不动。INFO2 版
-  // （:391 RESULT >= 300 && < 340）没有这个缺陷——同构两处不同判，SETUP
-  // 侧是原作笔误。1:1 照抄，登记 #14；「修好」它的变异必须红（M 段条目）。
   assert.equal(
-    fixture.store.get('flag:340') ?? 0,
-    0,
-    '宝物 300 不写宝箱槽（原作缺陷照抄）',
+    fixture.store.get('flag:340'),
+    300,
+    '宝物 300 写宝箱槽（判据含 300 本身，与 INFO2 版一致）',
   );
 });
-
 test('INFO：[999] 结束地下城的设定（子画面内退出）', async () => {
   const fixture = setup_world();
   const { dungeon_info } = load(fixture, 'page/page-dungeon-setup');

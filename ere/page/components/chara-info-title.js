@@ -150,7 +150,7 @@ async function show_block(cid) {
     // 的 INPUT 接受手输任意编号，敲 8 即可）；ere 的 input 只接受本轮已打印
     // 按钮的快捷键（#129），CASE 8（RANDOM_SELF_CALL 的 MODE 1）必须由真
     // 按钮接进——升级为 printButton（本项目通例，#384 改名按钮同款），按钮
-    // 自成一行；正文不写 [8] 前缀（AGENTS.md 硬约束），尾部半角空格照抄
+    // 自成一行；正文不写 [8] 前缀（AGENTS.md 硬约束），尾部半角空格保留
     era.printButton('一人称重设 ', 8);
   }
 

@@ -17,7 +17,7 @@
  *
  * 原作 → ere 的映射（本文件语义依据集中在此）：
  *   - GOTO INPUT_LOOP 的「无效输入重输」分支（:88-92/:181-185/:211-215 等）
- *     1:1 保留为 continue，但在 ere 侧结构性不可达——引擎 input() 只回传
+ *     保留为 continue，该支不可达、作防御——引擎 input() 只回传
  *     已打印按钮的快捷键（useRule 默认开，#130 镜像进夹具），非按钮值在
  *     渲染层就被拒收，到不了游戏逻辑；
  *   - 原作 PRINTFORM 拼行的多按钮布局 → 一行一钮（#73 排版近似，功能面
@@ -637,8 +637,8 @@ async function dungeon_info() {
             }
             break;
           }
-        } else if (z > 300) {
-          // 宝物：Y = X + 340
+        } else if (z >= 300) {
+          // 宝物：Y = X + 340（判据含 300 本身，与 INFO2 版一致）
           flag_set(floor + 340, z);
         }
         done = true;

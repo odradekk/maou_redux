@@ -98,7 +98,7 @@ function filter_status_text() {
  * 裸写（tools/domain-ledger.mjs 已冻结、不接受新条目）——改走 era_flag 具名
  * 访问器（yml/Flag.yml 已登记，见 #468 的 arcana_fort_stage 先例）。
  *
- * 原作 WHILE 1 对无效输入 CLEARLINE 1 后重新等待——1:1 保留。
+ * 无效输入清一行后重新等待（行为保留）。
  */
 async function config_virgin_conceded_setting() {
   era.printButton('从不发生', 0);
@@ -139,7 +139,7 @@ function virgin_conceded_status_text() {
  * chara(0).chara.阴茎的状态（TALENT:0:318，与 ask_penis_size 共用门面）。
  *
  * 原作单次 INPUT，无重试循环——非 999、非 0-4 的输入直接落到函数尾、
- * 什么也不做（1:1 保留，不补校验）。
+ * 无效输入静默无操作（既有行为，不补校验）。
  *
  * 确认回显原作是 PRINT（不换行）+ PRINTW（换行并等键，:104-113）——等键
  * 保证玩家在下一次整页重绘清屏前看到结果；ere 侧用 printAndWait 镜像该
