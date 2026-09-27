@@ -10,9 +10,8 @@
  *
  *   强制肉偿落在 ere/kojo/kojo-forced-payment.js（#544），本文件顶层
  *   import 它的 forced_payment；经验/点数结算在该文件内直接入账。
-
- * == 随机源 ==
  *
+ * == 随机源 ==
  * 每个函数接受可选的 rand 参数（[0, n) 整数，缺省均匀随机），测试注入
  * 定值序固定随机分支（与 kojo-k3-noble / kojo-system 同款）。RAND:N →
  * rand_n(N)；RAND(min, max) → min + rand_n(max - min)（emuera-basic-agent-guide
