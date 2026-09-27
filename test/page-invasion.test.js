@@ -3204,6 +3204,8 @@ test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 /
   // 与怪物路线同构：掷 RAND:10，roll > 0 平安无事（体力 ×9/10、直接
   // RETURN 0）、roll == 0 埋伏（RETURN 1）。
   const raid = make_arm_world();
+  // 姓名（-1）与称呼（-2）取不同值：播报用的是称呼
+  raid.store.set('callname:1:-1', '姓名1');
   const raid_state = { sinkou: 100, yusya_i: 1 };
   let roll_upper = 0;
   const roll_rand = (n) => {
@@ -3223,7 +3225,7 @@ test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 /
       .includes(
         '勇者1绕开城堡向人间界进发，因为路途遥远地形复杂耗费了一些体力。',
       ),
-    '平安支的播报（PRINTFORML，不等键）',
+    '平安支的播报（PRINTFORML，不等键），勇者用称呼而不是姓名',
   );
 
   const raid_ambushed = make_arm_world();

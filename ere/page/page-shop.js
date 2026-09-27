@@ -496,8 +496,8 @@ async function show_floor(arg) {
       era.print(install_fragments.join('')); // 四格合一行（PRINTFORM 链）
       era.drawLine(); // IF LOCAL:1 → PRINTL + DRAWLINE
     }
-    // @ENEMY_EXIST2（#180 真身）+ 空行。护卫名单只出在近卫层（#652：
-    // 1-9 层一律不追加），与从部下一览进来的行为一致
+    // @ENEMY_EXIST2（#180 真身）+ 空行。护卫名单只出在近卫层（1-9 层
+    // 一律不追加），与从部下一览进来的行为一致
     await enemy_exist2(arg);
     era.println();
   } else {

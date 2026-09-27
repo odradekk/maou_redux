@@ -1184,7 +1184,7 @@ async function invasion_event_fort(
   if (choice === 3 && inv_type === 3) {
     if (rand(10) > 0) {
       era.print(
-        `${chara_callname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,
+        `${chara_nickname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,
       );
       chara(yusya).dungeon.体力 = Math.trunc(
         (chara(yusya).dungeon.体力 * 9) / 10,

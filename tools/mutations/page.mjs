@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 509; // #652 净 +3（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+17 新守卫 M13200-M13216）
+export const COUNT = 510; // #652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+18 新守卫 M13200-M13217）
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -4774,5 +4774,14 @@ export default [
       '      chara(yusya).dungeon.体力 = Math.trunc(\n        (chara(yusya).dungeon.体力 * 8) / 10,\n      ); // 变异：体力公式改坏',
     tests: ['page-invasion'],
     must_mention: '体力 ×9/10',
+  },
+  {
+    desc: 'M13217 FORT 绕路（INV_TYPE == 3）平安支的播报把勇者的称呼换成姓名（chara_nickname 改 chara_callname）',
+    file: 'ere/page/page-invasion.js',
+    find: '        `${chara_nickname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,',
+    replace:
+      '        `${chara_callname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`, // 变异：称呼换成姓名',
+    tests: ['page-invasion'],
+    must_mention: '勇者用称呼而不是姓名',
   },
 ];
