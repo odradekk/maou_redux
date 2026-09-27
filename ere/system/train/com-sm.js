@@ -84,9 +84,8 @@ const add_up = (cid, i, v) => era.add(`delta:${cid}:${i}`, v);
 const times = (v, m) => Math.floor(v * m);
 
 /**
- * EXPLV（经验等级阈值）：引擎内建，默认 0,1,4,20,50,200（config.md
- * 「EXPLVの初期値」标准值）。无生效的自定义，取默认。PALAMLV 复用
- * ere-utils/palam-level.js。
+ * EXPLV（经验等级阈值）：0,1,4,20,50,200。PALAMLV 复用
+ * era-utils/palam-level.js。
  */
 const EXPLV = [0, 1, 4, 20, 50, 200];
 

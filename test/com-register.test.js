@@ -91,7 +91,7 @@ test('multi_comable：traincommandname 为空（高级 COM 84）→ 0，不进�
   assert.equal(fixture.store.get('tflag:224') ?? 0, 0, '提前返回路径不置旗标');
 });
 
-test('multi_comable：在册且未实现可用性检查 → 1（引擎初期值语义）', async () => {
+test('multi_comable：在册且未实现可用性检查 → 1（未定义即默认可用）', async () => {
   const { fixture, mod } = load_register();
   fixture.store.set('traincommandname:0', '爱抚');
   assert.equal(await mod.multi_comable(0), 1);
@@ -358,11 +358,7 @@ test('comseq_train：序列执行——EVENTCOM→COM→EVENTCOMEND 每条一回
   ]);
   assert.equal(era_flag.prevcom, 12, '序列后 prevcom 恢复原值');
   assert.equal(fixture.store.get('tflag:224'), 0, 'calltrainend 复位');
-  assert.equal(
-    fixture.store.get('flag:10011'),
-    6,
-    'selectcom 停在序列末条（引擎行为）',
-  );
+  assert.equal(fixture.store.get('flag:10011'), 6, 'selectcom 停在序列末条');
 });
 
 test('comseq_train：预检查的 prevcom 推进——探测第 k 条时它是第 k-1 条', async () => {

@@ -243,8 +243,8 @@ async function comseq_register() {
 }
 
 /**
- * calltrainend：CALLTRAIN 结束后的引擎回调（非事件函数）。
- * 调教菜单实行旗标复位。由 run_calltrain 的序列尾部调用（引擎同位）。
+ * calltrainend：指令序列执行完后的收尾（非事件函数），复位调教菜单实行旗标。
+ * 由 run_calltrain 在序列尾部调用。
  */
 function calltrainend() {
   game_train.索求口上抑制 = 0;
@@ -253,7 +253,7 @@ function calltrainend() {
 /**
  * CALLTRAIN N 的 ere 等价（唯一调用点）：依次执行指令序列。
  * TFLAG:224 由调用方 comseq_train 先置位，序列结束由本函数的
- * CALLTRAINEND 复位（引擎同位）。com 未实现（族工单未完成）的条目跳过
+ * calltrainend 复位。com 未实现（族工单未完成）的条目跳过
  * 该回合（引擎「重新要求输入」在无输入的自动循环里无位可落，ere 侧取
  * 「跳过继续」——过渡态语义，族工单全部完成后不可达）。
  *

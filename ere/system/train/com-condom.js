@@ -23,7 +23,7 @@ const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 const { game } = require('#/facade/game');
 
-/** MASTER（引擎内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
+/** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
 /**
