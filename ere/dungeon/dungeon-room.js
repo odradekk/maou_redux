@@ -1,7 +1,7 @@
 /**
  * @file 迷宫房间与设施（issue #177，阶段 3 H8）：DUNGEON_ROOM.ERB 十四函数。
  *
- * 原作局部变量语义（各函数 #DIM 注释照抄，DUNGEON.ERB :14-22 词汇表）：
+ * 局部变量语义（各函数共用的词汇表）：
  *   ARG:0 / A = 受设施效果者（调用方 1/3 掷选）   ROOM = 设施番号 500-507
  *   EXTRA = 设施扩张位域（位 0 / 位 1）           COST / INCOME = 代金 / 收入
  *   DMG = 体力伤害   MDMG = 气力伤害   BACK = 侵攻度减少   MENU = 娼馆业态
@@ -41,10 +41,8 @@
  *     拼接归并为一次 era.print（引擎 print 每调用一行，dungeon.js 先例）；
  *     PRINTW/PRINTFORMW 是 print + 读键；设施头部的「扩张：○」三连拼为
  *     同一行（:121-135 等七处）；
- *   - 原作缺陷 1:1 保留（登记 #14，见各处注释）：FARM 的 SIF 作用域事故
- *     （:627-630，卖孩子收入不受 SIF 约束、SELL_BABY 时双重计入）、
- *     FARM_RESCUE 收到 EXTRA 当角色号用（:650/:677，CFLAG:(0..3):1）、
- *     SHOP_DAY 的 PRINTW 収入减少（原文日文汉字「収」，#60 归一为「收」）。
+ *   - 设施日结算的显示怪癖保留（见各处注释）：SHOP_DAY 的 PRINTW 収入
+ *     减少（原文日文汉字「収」，#60 归一为「收」）。
  */
 
 'use strict';
@@ -168,7 +166,7 @@ async function dungeon_room(arg0, rand, ctx) {
   } else if (room === 501) {
     await dungeon_swamp(arg0, extra);
   } else if (room === 502) {
-    await dungeon_farm_rescue(extra);
+    await dungeon_farm_rescue(arg0);
   } else if (room === 503) {
     await dungeon_ice(arg0, extra, rand_n);
   } else if (room === 504) {
@@ -704,9 +702,7 @@ const FARM_TALK = {
  * += FLAG:83（上限 999）或卖孩子（FLAG:614 位 1）折现金；FLAG:614 位 0
  * 是日志关闭（LOG_OFF）；FLAG:613 是竿役（1 大叔 / 2 少年 / 3 扶她）。
  *
- * **原作缺陷 1:1 保留（登记 #14）**：:627 的 SIF 只约束 :628 的播报行，
- * :629-630 的 `MONEY += FLAG:83 * 10` 两行缩进在 SIF 下但不受其约束——
- * 卖孩子收入无条件计入（SELL_BABY 时与 :443 的首计入双重叠加）。
+ * 卖孩子开启时出生只数不增加库存、直接折现金（只计一次）。
  *
  * @param {number} extra 扩张位域（原作 ARG:0）
  * @param {(n: number) => number} rand_n RAND:N 随机源
@@ -799,12 +795,9 @@ async function dungeon_farm(extra, rand_n) {
     `人类牧场的肉便器生了${meat_count}只${era.get(`itemname:${mon_id}`) ?? ''}。`,
   );
 
-  // 原作缺陷（文件头）：SIF 只管播报行，钱两行无条件计入
   if (!log_off && sell_baby) {
     era.print(`将人类牧场的肉便器生下的孩子卖了${meat_count * 10}G。`);
   }
-  era_flag.money += meat_count * 10;
-  era_exflag.legit_money += meat_count * 10;
 
   if (extra & 1) {
     // 搾乳
@@ -834,12 +827,9 @@ async function dungeon_farm(extra, rand_n) {
  * @DUNGEON_FARM_RESCUE（:650-680）：勇者到达牧场时肉便器被救走一只。
  * 拡張& 1=搾乳設備、& 2=扶她種付け奴隷（:653-654，仅头部播报用）。
  *
- * **原作缺陷 1:1 保留（登记 #14）**：分发实参是 EXTRA（:60，0-3 的扩张
- * 位域），本函数却把它当角色号读 `CFLAG:(ARG:0):1`（:677）——「战役中
- * 的勇者不救走便器」的判定实际读的是 0-3 号角色（魔王与前三名同伴）的
- * 状态位。照抄，不修。
+ * 战役中（CFLAG:1 == 12）的勇者不停留救走肉便器；侵攻中（== 2）救走一只。
  *
- * @param {number} arg0 原作 ARG:0（分发传入的是 EXTRA 位域）
+ * @param {number} arg0 到达牧场的勇者
  * @returns {Promise<number>} 原作 RETURN 0
  */
 async function dungeon_farm_rescue(arg0) {
@@ -863,7 +853,7 @@ async function dungeon_farm_rescue(arg0) {
     await era.waitAnyKey();
   }
 
-  // 原作缺陷（文件头）：ARG:0 是 EXTRA，按角色号读
+  // 战役中的勇者救走便器前先确认本人状态（CFLAG:1 == 12 不停留）
   if ((era.get(`cflag:${arg0}:1`) || 0) !== 12) {
     era_flag.meat_toilet_count -= 1;
   }

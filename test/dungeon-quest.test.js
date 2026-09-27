@@ -13,8 +13,8 @@
  *
  * 本票核心移植裁定的钉子：
  *   - 省略角色号 = TARGET（初吻/失贞写点打在 era_flag.target 上）；
- *   - SET_QUEST 的受注计数挂在障碍 bit3（大量敌人）而非 bit2（时限）——
- *     原作笔误 1:1（登记 #14）。
+ *   - SET_QUEST 的受注计数挂在障碍 bit2（时限）——#651 已从 bit3（大量
+ *     敌人）改正，短计数归时限任务。
  */
 
 const assert = require('node:assert/strict');
@@ -108,13 +108,13 @@ test('SET_QUEST：受注落位（534=1 / 535 报酬 / 536 障碍 / 539 计数）
   );
 });
 
-test('SET_QUEST：障碍 bit3（大量敌人）挂短受注计数——原作笔误 1:1（#14）', async () => {
+test('SET_QUEST：障碍 bit2（时限）挂短受注计数', async () => {
   const fixture = setup_world();
-  // 535→0；障碍掷点 [0(不中),0(不中),0(不中),0→bit3 中,3,3]；セット 2/1；
+  // 535→0；障碍掷点 [3(不中),3(不中),0→bit2 中,3,3,3]；セット 2/1；
   // 讨伐 0/0；时限 rand(10)+1→4
   const { set_quest } = load(fixture);
-  await set_quest(1, seq_rand([0, 3, 3, 3, 0, 3, 3, 2, 1, 0, 0, 4]));
-  assert.equal(fixture.store.get('cflag:1:536'), 1 << 3, 'bit3（大量敌人）');
+  await set_quest(1, seq_rand([0, 3, 3, 0, 3, 3, 3, 2, 1, 0, 0, 4]));
+  assert.equal(fixture.store.get('cflag:1:536'), 1 << 2, 'bit2（时限）');
   assert.equal(fixture.store.get('cflag:1:539'), 5, 'rand(10)+1 = 5（短计数）');
 });
 

@@ -108,7 +108,7 @@ test('DUNGEON_TOWN_LOVER：普通恋人按阶段演出、结算并降低善恶',
   assert.equal(fixture.store.get('exp:1:5'), 1);
 });
 
-test('DUNGEON_TOWN_LOVER：贞操封印把 V 全转 A，固定保留 LOCAL×5 缺陷', async () => {
+test('DUNGEON_TOWN_LOVER：贞操封印把 V 全转 A，前戏珠按前戏数 ×5 结算', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:606', 1);
   fixture.store.set('cflag:1:607', 40);
@@ -118,10 +118,10 @@ test('DUNGEON_TOWN_LOVER：贞操封印把 V 全转 A，固定保留 LOCAL×5 �
   assert.equal(fixture.store.get('exp:1:1'), 2, '两次 V 转成两次 A');
   assert.equal(
     fixture.store.get('juel:1:0'),
-    250,
-    '原作遗留 LOCAL=50，不按前戏数计算',
+    10,
+    '前戏数 2 × 5（#651 修掉遗留 LOCAL=50）',
   );
-  assert.equal(fixture.store.get('juel:1:14'), 250);
+  assert.equal(fixture.store.get('juel:1:14'), 10);
 });
 
 test('DUNGEON_TOWN_LOVER：两次 V 行为写客人射精槽并调用妊娠检查', async () => {

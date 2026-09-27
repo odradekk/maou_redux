@@ -190,15 +190,15 @@ test('MONSTER_ROOM_SKILL：牧场与博物馆没有库存时不发动，热砂�
   assert.equal(fixture.store.get('e:3'), 2);
 });
 
-test('MONSTER_SKILL：战斗日志开启时等待输出，并保留破铠吐息的文案与实伤不一致', async () => {
+test('MONSTER_SKILL：战斗日志开启时等待输出，破铠吐息文案与实伤一致', async () => {
   const fixture = setup();
   fixture.store.set('flag:5', 32);
 
   await load(fixture).monster_skill(1, 14, 0, seq(1));
 
   const line = fixture.lines_history.find((item) => item.type === 'text');
-  assert.equal(line.text, '狗头人喷出了破坏铠甲的吐息！！（HP-60 防御-7）');
-  assert.equal(fixture.store.get('base:1:0'), 1933, '实际扣 67，不按文案扣 60');
+  assert.equal(line.text, '狗头人喷出了破坏铠甲的吐息！！（HP-67 防御-7）');
+  assert.equal(fixture.store.get('base:1:0'), 1933, '实际扣 67，文案同值');
 });
 
 test('USE_MONSTER_SKILL：十八种技能保留精英版的数值差异与写入位置', async () => {
@@ -309,11 +309,11 @@ test('两套战斗入口调用怪物技能真身并透传确定性随机源', as
     const magic_mod = fixture.load_module('dungeon/magic');
     magic_mod.magic = async () => 0;
     const battle = fixture.load_module('dungeon/dungeon-battle');
-    fixture.store.set('e:4', 7);
+    fixture.store.set('e:5', 7);
     fixture.store.set('e:99', 1);
 
     assert.equal(await battle.monster_attack(1, 0, rand), 999);
-    assert.deepEqual(calls, [[1, 7, -1, rand]]);
+    assert.deepEqual(calls, [[1, 7, 0, rand]]);
   }
 
   {

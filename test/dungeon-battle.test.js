@@ -14,8 +14,8 @@
  *     条真身行为用例，此处补 SPY_BATTLE 三分支的数值与背叛臂）；
  *   - monster-database 与 ERB 源逐条比对（SOP §5 判据 7：机械转写的验收
  *     证据是逐条等价，equip-database.test.js 先例）；
- *   - MONSTER_ATTACK 的 off-by-one（原作缺陷形态，#14 登记）有行为钉——
- *     「修好」它的变异必须红（#116 M214/M218 先例）。
+ *   - MONSTER_ATTACK 修好后的行为钉（#651）：怪物攻击按 数量 × 攻撃 扣
+ *     勇者 HP 与气力（旧 off-by-one 形态已由本文件修复并删除反向变异）。
  */
 
 const assert = require('node:assert/strict');
@@ -441,27 +441,53 @@ test('DUNGEON_SPY：背叛成立时勇者陷落（CFLAG:1 = 0、party_del、赏�
   );
 });
 
-// —— MONSTER_ATTACK 的 off-by-one 缺陷钉（#14；#116 先例）——
+// —— MONSTER_ATTACK 修好后按 数量 × 攻撃 造成伤害（#651，#574 第 6 条）——
 
-test('MONSTER_ATTACK：数量槽错位读取（原作缺陷形态）——DMG 恒 0、勇者不掉血', async () => {
+test('MONSTER_ATTACK：换算 -99 读数量槽，按 数量 × 攻撃 扣勇者 HP 与气力', async () => {
   const fixture = setup_world();
-  fixture.store.set('cflag:1:12', 0); // 防御归零：怪物若真打（-99 形态）必透防
+  fixture.store.set('cflag:1:12', 0); // 防御归零：伤害全额透过
   const b = load(fixture, 'dungeon/dungeon-battle');
   const md = load(fixture, 'dungeon/monster-data');
   const zero = () => 0;
   md.monster_data(100, 0, 1, -1, -1, zero); // 第一列狗头人 ×5
 
-  // 选列循环 BREAK 在数量槽 99，:1052 的换算是 -100（同构三处都 -99）——
-  // 错位后 MONNUM 读 E:98（无写者恒 0）。这是原作缺陷（登记 #14），
-  // 1:1 保留：怪物侧攻击对勇者恒 0 伤害。「修好」成 -99 的变异必须在此红
+  // 选列循环 BREAK 在数量槽 99，换算 -99 得列头 0：数量 E:99 = 5、
+  // 攻撃 E:2 = 数据表 1 × 2（等级骰 0 无追加）——DMG = 5 × 2 = 10
   const r = await b.monster_attack(1, 0, zero);
   assert.equal(r, 0, 'RETURN 0（通常）');
+  assert.equal(fixture.store.get('base:1:0'), 1990, 'HP -10');
+  assert.equal(fixture.store.get('base:1:1'), 990, '气力 -10（同值）');
+});
+
+// —— #651 修好的另两处战斗缺陷的回归钉 ——
+
+test('VICTORY_GET：骄傲低只扣一次意愿（重印段不回潮）', async () => {
+  const fixture = setup_world();
+  fixture.store.set('talent:1:17', 1); // プライド低い
+  // 善恶 0 → will = rand(15) = 7；骄傲低 -1 → 6 > 5 不搜刮。
+  // 重印段若回潮（-2 → 5）会走进搜刮分支（RETURN 1 且善恶 -5）
+  const b = load(fixture, 'dungeon/dungeon-battle');
+  assert.equal(await b.victory_get(1, () => 7), 0, 'will 6 > 5，RETURN 0');
   assert.equal(
-    fixture.store.get('base:1:0'),
-    2000,
-    'HP 不动（DMG = 0×等级 = 0）',
+    fixture.store.get('cflag:1:151'),
+    undefined,
+    '搜刮分支未进：善恶值无 Karma -5 写动',
   );
-  assert.equal(fixture.store.get('base:1:1'), 1000, '气力不动');
+});
+
+test('DEFENCE_CHARA_EXTRA_DMG：CFLAG:680 低位按 DEBUFF% 放大并衰减（681 判据不回潮）', () => {
+  const fixture = setup_world();
+  fixture.store.set('cflag:1:12', 0); // 防御 0：全额透过
+  fixture.store.set('cflag:1:680', 10);
+  const b = load(fixture, 'dungeon/dungeon-battle');
+  const dmg = b.defence_chara_extra_dmg(1, 100, () => 50); // rand(100)=50 不闪避
+  assert.equal(dmg, 110, 'DMG 100 × 110%');
+  assert.equal(fixture.store.get('base:1:0'), 2000 - 110, 'HP 扣减');
+  assert.equal(
+    fixture.store.get('cflag:1:680'),
+    8,
+    '680 衰减 floor(10/10)+1 = 2（681 判据回潮则恒 10）',
+  );
 });
 
 // —— BATTLE2 主流程的 result/loser 出口 ——

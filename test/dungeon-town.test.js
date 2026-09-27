@@ -8,8 +8,8 @@
  *   - **借贷 → 还债 → 保证人**三段的金额流转有测试，含边界（还不起时
  *     的分支）：利息截断、还款分档、百元取整、上限钳（min > max 时取
  *     上限）、债务清零、借不到（-50000）、担保人按魔王等级背债；
- *   - 冒险计划的目标/出发阶层与 COST 落账；重度借债分支的 GOAL 笔误
- *     （守卫关 → 第一层闲逛，#14）有钉子；
+ *   - 冒险计划的目标/出发阶层与 COST 落账；重度借债直奔深潜（GOAL =
+ *     FLOOR_MAX + 1，#651 已把原误嵌调试守卫的赋值提出）有钉子；
  *   - 宴会预算段的 TARGET 残留读（收集与支付不对称）有钉子；
  *   - 城镇主流程：507 复位、再起点消耗与全恢复、散会概率。
  *
@@ -346,20 +346,21 @@ test('PLANNING：中债（loan_pt ≤ -7000 且人均收支 > -7000）走慎重�
   assert.equal(fixture.store.get('cflag:1:582'), -7500 - 2160, 'COST 记入借款');
 });
 
-test('PLANNING：重度借债在守卫关闭时 GOAL 笔误 → 第一层闲逛（#14 钉子）', async () => {
+test('PLANNING：重度借债直奔深潜（GOAL = FLOOR_MAX + 1）', async () => {
   const fixture = setup_world();
   fixture.store.set('cflag:1:520', 6);
   fixture.store.set('cflag:1:580', 0);
   fixture.store.set('cflag:1:582', -15000); // karma 0 → 档 0 = -11000，loan_min 越线
-  // rand(4) 给 4（不 GOTO）；FLAG:5 无位 32 → GOAL/START 赋值不发生
+  // rand(4) 给 4（不进 1/4 掷点的 INTO_DEEPER）——else 臂同样落
+  // GOAL/START = FLOOR_MAX + 1（赋值原误嵌调试守卫，#651 已提出）
   await load(fixture).town_pt_planning(1, 0, 0, seq_rand([4]));
+  assert.equal(fixture.store.get('cflag:1:520'), 7, 'GOAL = FLOOR_MAX + 1');
+  assert.equal(fixture.store.get('cflag:1:501'), 7, 'START = 7');
   assert.equal(
-    fixture.store.get('cflag:1:520'),
-    0,
-    'GOAL 0（闲逛）——原作赋值误嵌调试守卫',
+    fixture.store.get('cflag:1:582'),
+    -15000 - 7 * 540,
+    'COST = 7 × min(500 + 40, 900) = 3780 记入借款',
   );
-  assert.equal(fixture.store.get('cflag:1:501'), 1, 'START = LIMIT(0,1,7) = 1');
-  assert.equal(fixture.store.get('cflag:1:582'), -15000, 'COST = 0 不再记债');
 });
 
 // —— @TOWN_PT_PARTY ——

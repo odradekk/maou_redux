@@ -24,7 +24,7 @@
  *   - ere 无全局 RAND 序列（#117），掷点经注入 rand（缺省 Math.random，
  *     dungeon-battle.js 先例）；**死赋值处的 RAND 照掷**（PRNG 序列与
  *     原作逐位对齐是种子化对比测试的前提，#175 文件头同款）；
- *   - 原作注释（;）照抄为 JS 注释，行号锚点保留。
+ *   - 逐段注释保留原样（日文分支标记不译），行号锚点已随全库清理删除。
  */
 
 'use strict';
@@ -172,10 +172,8 @@ async function set_quest(arg, rand = default_rand) {
       era.set(`cflag:${cid}:538`, local * 10 + rand_n(5) + 100);
     }
 
-    // 受注カウンタ——**原作判 GETBIT(536,3)（大量敌人）而非 bit2
-    // （时限）**，注释却写「時間制限あり」：短时限实际挂在大量敌人位上
-    // （登记 #14；1:1 照抄不修）。普通依頼は99ターンまで猶予。
-    if (getbit(era.get(`cflag:${cid}:536`) || 0, 3) !== 0) {
+    // 受注カウンタ：时限（bit2）任务给 1-10 回合的短计数，普通依頼 99 回合
+    if (getbit(era.get(`cflag:${cid}:536`) || 0, 2) !== 0) {
       era.set(`cflag:${cid}:539`, rand_n(10) + 1);
     } else {
       era.set(`cflag:${cid}:539`, 99);
