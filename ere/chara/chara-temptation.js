@@ -1,54 +1,39 @@
 /**
  * @file 魔的诱惑：侵攻中勇者的劝降判定与结算（issue #393，N9）。
  *
- * 调用点：原作 CHARA_INFO ver1.0.1.ERB:861（按钮）与 :1054（CASE 3 动作），
- * 已接在 ere/page/page-chara-info.js。
+ * 调用点：ere/page/page-chara-info.js 的「魔的诱惑」按钮与其动作分发。
  *
- * **`@TEMPTATION_TRY` 在这个文件里出现两次，不是重定义。** 第一份
- * （:90-197）整段包在 `[SKIPSTART]`～`[SKIPEND]` 之间，Emuera 的预处理
- * 指令把整段的装载整个跳过（技能手册 references/core-concepts/preprocessor.md
- * :61-69「`[SKIPSTART]` 到 `[SKIPEND]` 之间的所有行不会被执行」），所以
- * 引擎里只有 :202 那一份定义。移植照此只落第二份；第一份的差异（固定
- * `RAND:10` 档位表、`TALENT:ARG:290` 的旧写法）不构成行为面。
- *
- * 移植说明（有意偏离，均注明依据）：
+ * 移植说明（有意偏离既有写法，均注明依据）：
  *
  *   - **按钮正文不写 `[{NUM}]` 前缀**（同 chara-name-edit.js 的处置）：
  *     引擎 `printButton` 自动拼 `[快捷键] `，手写会渲染成 `[0] [0] 魔的诱惑`。
- *     `:11-13` 的空体 `IF LOCAL != 2`（评分支）与 `:14-19` 合并为一条
- *     「非 0 即不渲染」——两支的返回一致（都 RETURN 0），合并后行为不变。
+ *     判定非 0 时整段不渲染——空体判定与提前返回合写为一条，行为不变。
  *
- *   - **`BARL x,max,50` 的两行（文本行 ＋ 条）并成一行原生进度格**：
- *     字符条的 50 格长度是 Emuera 的文本排版，era 的 `printProgress` 按
- *     网格列宽排版，没有「50 格」这个通道（page-invasion.js 的
+ *   - **「文本行 ＋ 字符条」两行并成一行原生进度格**：固定 50 格的字符条
+ *     没有对应通道——era 的 `printProgress` 按网格列宽排版（page-invasion.js 的
  *     `print_progress_line`、components/chara-bars.js 同款先例）。标签与
  *     数值原样进格：`好感度：{n}/1000` 的两段拆成 inContent/outContent。
  *
- *   - **`#DIM REF SEIKOU` / `#DIM REF SIPPAI` 的引用传参改为返回数组**
- *     （:404-447）：ere 无引用通道，按 `[seikou, sippai]` 返回——
- *     chara-family.js 的 `family_register` / chara-body.js 的
+ *   - **双输出（成功签/失败签张数）改为返回数组**：ere 无引用传参通道，
+ *     按 `[seikou, sippai]` 返回——chara-family.js 的 `family_register` / chara-body.js 的
  *     `char_age_generate` 同款（多输出的既有约定）。
  *
- *   - **`TALENT:ARG:担保人`（:306）按名字表下标写作 290**（`yml/Talent.yml`
- *     的 id；同文件 :189 的 SKIPSTART 版就是写 290）。全篇素质一律下标寻址
- *     （look-info.js 的头注同款）。
+ *   - **担保人素质按名字表下标 290 寻址**（`yml/Talent.yml` 的 id）。
+ *     全篇素质一律下标寻址（look-info.js 的头注同款）。
  *
  *   - **`MONEY` 与 `EX_FLAG:4444` 走具名访问器**（`era_flag.money` /
- *     `era_exflag.legit_money`，:319-320 三处同款）；跨域写经属主域门面：
- *     **三支赞助的入账并不相同**——「担保人」（`:319-322`）与「肉芽
- *     诅咒」（`:339-341`）两支给目标写 CFLAG:580，代还借款那一支（`:355-357`）**不写**
- *     （那笔钱直接抵了勇者的债，写的是 582），三处收尾因此拆成
- *     `pay_sponsor()`（双资金同减，三支共用）与 `credit_partner()`（两支
- *     共用的入账）；
+ *     `era_exflag.legit_money`）；跨域写经属主域门面：**三支赞助的入账
+ *     并不相同**——「担保人」与「肉芽诅咒」两支给目标写 CFLAG:580，代还
+ *     借款那一支**不写**（那笔钱直接抵了勇者的债，写的是 582），收尾因此
+ *     拆成 `pay_sponsor()`（双资金同减，三支共用）与 `credit_partner()`
+ *     （两支共用的入账）；
  *     状态 CFLAG:1 / 新人 506 / 归城 507（invasion）、气力 BASE:0:1 与
  *     所持金 CFLAG:580（dungeon）、借款 CFLAG:582（patch）、肉芽诅咒
  *     TALENT:326（stronghold）——均为跨域写下标，写一律走属主域门面。
  *
- *   - **`RAND(1, 4)` / `RAND(1, 3)` 是双参形式（左闭右开）**：技能手册
- *     references/core-concepts/in-expression-functions.md:96「双参数返回
- *     [min, max)」，故逐字写作 `1 + rand(3)` / `1 + rand(2)`。
- *     `&&`/`||` 的短路求值照 JS 语义直译（技能手册确认 Emuera 同样是短路
- *     求值，:288-300），掷骰的次数因此逐次对应。
+ *   - **取 1..3 / 1..2 写作 `1 + rand(3)` / `1 + rand(2)`**（随机源返回
+ *     [0, n) 的整数）。`&&`/`||` 按短路求值直译——右侧未掷的骰不消耗
+ *     随机序列，掷骰的次数因此逐次对应。
  */
 
 const era = require('#/era-electron');
@@ -60,21 +45,21 @@ const { party_del } = require('#/dungeon/dungeon-party');
 const { add_ex_item } = require('#/dungeon/ex-item');
 const { chara } = require('#/facade/chara');
 
-/** 判定返回值：不是侵攻中的勇者（:29-31） */
+/** 判定返回值：不是侵攻中的勇者 */
 const TEMPTATION_NOT_HERO = 1;
-/** 判定返回值：狂王（CFLAG:800 == 4，无法被诱惑）（:32-34） */
+/** 判定返回值：狂王（CFLAG:800 == 4，无法被诱惑） */
 const TEMPTATION_CRAZY_KING = 2;
 
-/** 每次诱惑消耗的魔王气力（:60-64 判据与扣减同值） */
+/** 每次诱惑消耗的魔王气力（门槛与扣减同值） */
 const TEMPTATION_MP_COST = 2000;
-/** 投诚线：好感度满这个数即陷落（:77 与 :71 的条刻度同值） */
+/** 投诚线：好感度满这个数即陷落（也是进度条的满刻度） */
 const TEMPTATION_FALL = 1000;
-/** 进度格的条宽（网格列数；原作字符条的 50 格无 era 通道，见文件头） */
+/** 进度格的条宽（网格列数；固定 50 格的字符条没有对应通道，见文件头） */
 const TEMPTATION_BAR_WIDTH = 20;
 
-/** 担保人的援助额（:304 `LOCAL = 10000`） */
+/** 担保人的援助额 */
 const SPONSOR_AMOUNT = 10000;
-/** 担保人素质（:306 `TALENT:ARG:担保人` 的名字表下标） */
+/** 担保人素质（yml/Talent.yml 的名字表下标） */
 const T_SPONSOR = 290;
 
 function default_rand(n) {
@@ -87,7 +72,7 @@ function state_of(cid) {
 }
 
 /**
- * 一行「标签 ＋ 原生进度格 ＋ 数值」（BARL 的等价物，见文件头）。
+ * 一行「标签 ＋ 原生进度格 ＋ 数值」（见文件头的进度格说明）。
  * @param {string} label 条内文字
  * @param {number} value 当前值
  * @param {number} max 满刻度
@@ -105,9 +90,9 @@ function print_bar(label, value, max) {
 }
 
 /**
- * @CHECK_ABLE_TO_TEMPTATION（:23-36，#FUNCTION 式中函数）：勇者能否被诱惑。
+ * check_able_to_temptation：勇者能否被诱惑。
  *
- * @param {number} arg 角色号（原作 ARG）
+ * @param {number} arg 角色号
  * @returns {0|1|2} 0 = 可以；1 = 不是侵攻中的勇者；2 = 狂王
  */
 function check_able_to_temptation(arg) {
@@ -117,13 +102,10 @@ function check_able_to_temptation(arg) {
 }
 
 /**
- * @SHOW_BUTTON_TEMPTATION（:4-20）：渲染「魔的诱惑」按钮。
+ * show_button_temptation：渲染「魔的诱惑」按钮——判定非 0 一律不渲染。
  *
- * 原作 :11-19 的形状是 `IF LOCAL != 2`（空体）＋ `IF LOCAL != 0 → RETURN 0`
- * ＋ 打印——两段合起来就是「非 0 一律不渲染」（文件头）。
- *
- * @param {number} num 按钮的快捷键编号（原作 NUM）
- * @param {number} arg 目标角色号（原作 ARG）
+ * @param {number} num 按钮的快捷键编号
+ * @param {number} arg 目标角色号
  */
 function show_button_temptation(num, arg) {
   if (check_able_to_temptation(arg) !== 0) return;
@@ -131,9 +113,9 @@ function show_button_temptation(num, arg) {
 }
 
 /**
- * @TEMPTATION（:39-86）：魅力诱惑的整场结算。
+ * temptation：魅力诱惑的整场结算。
  *
- * @param {number} arg 目标角色号（原作 ARG）
+ * @param {number} arg 目标角色号
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {Promise<number>} 0 = 已处理；2 = 不是侵攻中的勇者（按钮本不该显示）
  */
@@ -164,23 +146,21 @@ async function temptation(arg, rand = default_rand) {
   if ((era.get(`cflag:${arg}:2`) || 0) >= TEMPTATION_FALL) {
     // 陥落：投诚
     era.print('*勇者被你诱惑，投诚了！*');
-    chara(arg).invasion.状态 = 0; // CFLAG:ARG:1 = 0
-    chara(arg).invasion.新人 = 1; // CFLAG:ARG:506 = 1
-    chara(arg).invasion.回城标志 = 0; // CFLAG:ARG:507 = 0
-    party_del(arg); // CALL PARTY_DEL(ARG)
+    chara(arg).invasion.状态 = 0; // CFLAG:1 = 0
+    chara(arg).invasion.新人 = 1; // CFLAG:506 = 1
+    chara(arg).invasion.回城标志 = 0; // CFLAG:507 = 0
+    party_del(arg);
   }
 
-  // `;リターン１でターンエンド` 与 `;RETURN 1` 在原作里是注释，
-  // 函数落尾返回 0——移植照此不返回 1。
+  // 函数落尾返回 0，不返回 1。
   return 0;
 }
 
 /**
- * @PREPARE_TEMPTATION（:404-447）：算出成功/失败的抽签张数。
+ * prepare_temptation：算出成功/失败的抽签张数。
  *
- * @param {number} arg 目标角色号（原作 ARG）
- * @returns {[number, number]} `[SEIKOU, SIPPAI]`（原作的 #DIM REF 双输出，
- *   见文件头）
+ * @param {number} arg 目标角色号
+ * @returns {[number, number]} `[seikou, sippai]`（双输出，见文件头）
  */
 function prepare_temptation(arg) {
   // 成功の基本値（魔王等级＋三个 FLAG 加成＋勇者的经验与素质）
@@ -231,7 +211,7 @@ function prepare_temptation(arg) {
 }
 
 /**
- * `(BASE:ARG:n * 100) / MAXBASE:ARG:n` 的整数除法。
+ * (当前值 * 100) / 上限 的整数除法（截断为整数）。
  * @param {number} arg 角色号
  * @param {0|1} index 0 = 体力、1 = 气力
  * @returns {number} 百分比（整数）
@@ -243,7 +223,7 @@ function health_ratio(arg, index) {
 }
 
 /**
- * `:419-440` 两条 SELECTCASE 的倍率（体力与气力逐位同值）。
+ * 体力/气力残量百分比的倍率（两轴逐位同值）。
  * @param {number} arg 角色号
  * @param {0|1} index 0 = 体力、1 = 气力
  * @returns {number} 倍率
@@ -257,19 +237,19 @@ function health_factor(arg, index) {
   return 6;
 }
 
-/** `TIMES 整数变量, 小数`：截断（技能手册 commands/math-etc.md:209-227） */
+/** 乘以小数后截断（向下取整） */
 function times(value, factor) {
   return Math.floor(value * factor);
 }
 
 /**
- * @FI_TEMPTATION（:373-397，#FUNCTION 式中函数）：单轮诱惑的正否抽签。
+ * fi_temptation：单轮诱惑的正否抽签。
  *
- * 四条判据按序短路，掷骰次数随之不同（`&&` 短路，见文件头）。
+ * 判定条件按序短路，掷骰次数随之不同（见文件头）。
  *
- * @param {number} arg 目标角色号（原作 ARG）
- * @param {number} seikou 成功签张数（原作 SEIKOU）
- * @param {number} sippai 失败签张数（原作 SIPPAI）
+ * @param {number} arg 目标角色号
+ * @param {number} seikou 成功签张数
+ * @param {number} sippai 失败签张数
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {0|1} 1 = 诱惑成功
  */
@@ -294,21 +274,21 @@ function fi_temptation(arg, seikou, sippai, rand = default_rand) {
 }
 
 /**
- * @TEMPTATION_TRY（:202-364）：六轮诱惑判定与三次「赞助机会」。
+ * temptation_try：六轮诱惑判定与三次「赞助机会」。
  *
- * @param {number} arg 目标角色号（原作 ARG）
+ * @param {number} arg 目标角色号
  * @param {(n: number) => number} [rand] RAND:N 随机源
- * @returns {Promise<number>} 原作的 RETURN 0
+ * @returns {Promise<number>} 恒 0
  */
 async function temptation_try(arg, rand = default_rand) {
   const [seikou, sippai] = prepare_temptation(arg);
-  const name = era.get(`callname:${arg}:-1`) ?? ''; // %SAVESTR:ARG%
+  const name = era.get(`callname:${arg}:-1`) ?? ''; // callname -1 槽
   const master_lv = era.get('cflag:0:9') || 0; // CFLAG:0:9 魔王等级
 
   for (let num = 0; num < 6; num += 1) {
     // 誘惑判定成功
     if (fi_temptation(arg, seikou, sippai, rand)) {
-      let item_failed = false; // 原作 CASE 7,8 的 GOTO FAIL
+      let item_failed = false; // 道具赠送失败的标志
       switch (rand(9)) {
         case 0:
           era.print(`*梦魔的快乐袭击了${name}！*`);
@@ -364,17 +344,17 @@ async function temptation_try(arg, rand = default_rand) {
           if ((await add_ex_item(-1, arg, 0, rand)) > 0) {
             add_affection(arg, 5);
           } else {
-            item_failed = true; // GOTO FAIL
+            item_failed = true; // 转入失败结算
           }
           break;
       }
 
       if (item_failed) {
-        // $FAIL：道具没送出去也走失败结算（掷的是 RAND(1, 3)）
+        // 道具没送出去也走失败结算（掷的是 1 + rand(2)）
         era.print('诱惑被切断了！');
         karma(arg, 1 + rand(2));
       } else {
-        // 籠絡され堕落していく（失败时掷的是 RAND(1, 4)）
+        // 籠絡され堕落していく（失败时掷的是 1 + rand(3)）
         karma(arg, -(1 + rand(3)));
       }
     } else {
@@ -384,14 +364,14 @@ async function temptation_try(arg, rand = default_rand) {
     }
   }
 
-  // 保証人チャンス！（三次机会各自一条判据）
+  // 保証人チャンス！（三次机会各自一条判定条件）
   await sponsor_chances(arg, rand);
 
   return 0; // （保証人チャンス段落走到函数尾的收尾）
 }
 
 /**
- * `:243-278` 两条治愈臂共用的好感度档（体力/气力逐位同值）。
+ * 两条治愈分支共用的好感度档（体力/气力逐位同值）。
  * @param {number} arg 角色号
  * @param {0|1} index 0 = 体力、1 = 气力
  * @returns {number} 好感度增量
@@ -406,7 +386,7 @@ function heal_affection(arg, index) {
 }
 
 /**
- * `:258-260` / `:276-278`：加值后按上限截断（跨域写走 dungeon 门面）。
+ * 加值后按上限截断（跨域写走 dungeon 门面）。
  * @param {number} arg 角色号
  * @param {0|1} index 0 = 体力、1 = 气力
  * @param {number} delta 加值
@@ -421,12 +401,12 @@ function heal_base(arg, index, delta) {
 }
 
 /**
- * `:301-360` 三次「赞助机会」：担保人援助 / 肉芽诅咒 / 代还借款。
+ * 三次「赞助机会」：担保人援助 / 肉芽诅咒 / 代还借款。
  *
- * 三条判据以 `IF`/`ELSEIF` 串成一条链，第一条不命中时后面的 `RAND:20` /
- * `RAND:10` 会**再掷**（短路求值只跳过同一表达式右侧，见文件头）。
+ * 三条判定条件串成一条链，第一条不命中时后面的 `rand(20)` / `rand(10)`
+ * 会**再掷**（短路求值只跳过同一表达式右侧，见文件头）。
  *
- * @param {number} arg 目标角色号（原作 ARG）
+ * @param {number} arg 目标角色号
  * @param {(n: number) => number} rand RAND:N 随机源
  * @returns {Promise<void>}
  */
@@ -502,23 +482,23 @@ async function sponsor_chances(arg, rand) {
   }
 }
 
-/** `:319-321` / `:339-341` / `:355-356`：赞助款双资金同减（三支共用） */
+/** 赞助款双资金同减（三支共用） */
 function pay_sponsor() {
   era_flag.money -= SPONSOR_AMOUNT;
   era_exflag.legit_money -= SPONSOR_AMOUNT;
 }
 
 /**
- * 目标那一侧的入账：只有「担保人」`:319-322` 与「肉芽诅咒」`:339-341` 两支写
- * `CFLAG:ARG:580`；代还借款那一支 `:355-357` **不写**——那笔钱直接抵了
- * 勇者的债（写的是 582），不进他的口袋。
+ * 目标那一侧的入账：只有「担保人」与「肉芽诅咒」两支写 `CFLAG:580`；
+ * 代还借款那一支**不写**——那笔钱直接抵了勇者的债（写的是 582），
+ * 不进他的口袋。
  * @param {number} arg 目标角色号
  */
 function credit_partner(arg) {
   chara(arg).dungeon.所持金 += SPONSOR_AMOUNT; // CFLAG:580（dungeon 域）
 }
 
-/** 一串素质下标之和（`ABL:ARG:0 + ABL:ARG:1 + …` 的读法） */
+/** 一串 ABL 下标之和 */
 function abl_sum(arg, indexes) {
   return indexes.reduce(
     (sum, idx) => sum + (era.get(`abl:${arg}:${idx}`) || 0),
@@ -526,7 +506,7 @@ function abl_sum(arg, indexes) {
   );
 }
 
-/** 一串刻印下标之和（`MARK:ARG:a + …` 的读法） */
+/** 一串 MARK 下标之和 */
 function mark_sum(arg, indexes) {
   return indexes.reduce(
     (sum, idx) => sum + (era.get(`mark:${arg}:${idx}`) || 0),
@@ -534,17 +514,17 @@ function mark_sum(arg, indexes) {
   );
 }
 
-/** 单个刻印读数（MARK:ARG:n） */
+/** 单个刻印读数（MARK:n） */
 function mark_of(arg, index) {
   return era.get(`mark:${arg}:${index}`) || 0;
 }
 
-/** 好感度写入（CFLAG:ARG:2） */
+/** 好感度写入（CFLAG:2） */
 function add_affection(arg, delta) {
   era.set(`cflag:${arg}:2`, (era.get(`cflag:${arg}:2`) || 0) + delta);
 }
 
-/** 屈服/欲情点数写入（JUEL:ARG:n） */
+/** 屈服/欲情点数写入（JUEL:n） */
 function add_juel(arg, index, delta) {
   era.set(
     `juel:${arg}:${index}`,

@@ -1,23 +1,21 @@
 /**
  * @file 后代素质继承：调度骨架与三条继承规则（issue #332 建壳，#384 落真身）。
  *
- * 移植说明（有意偏离，均注明依据）：
+ * 移植说明（有意偏离既有行为，均注明依据）：
  *
- *   - **素质编号走 Talent.yml 的序号**：原作用名字寻址（`TALENT:L_A:私处封印`、
- *     `TALENT:L_B:母性` 一类），ere 无名字寻址，按 yml/Talent.yml 的 id 落序号
+ *   - **素质编号走 Talent.yml 的序号**：按 yml/Talent.yml 的 id 落序号
  *     （私处封印 273、恋母情结 140、恋父情结 141、萝莉控 142、正太控 143、
  *     母性 155、父性 156、人妻 157、男人婆 79、讨厌男人 82、未熟 135、
  *     娇小 100、男人 122、扶她 121）。EX_TALENT:2（后代）与 EX_TALENT:1 另有前缀。
  *
- *   - **私处封印的清零写给当前 TARGET**：引擎的隐式 TARGET 寻址省略角色号，
- *     调用点上 TARGET 即新生成的子代，与写给子参等价。
+ *   - **私处封印的清零写给当前 TARGET（era_flag.target）而非 child**：调用点
+ *     上 TARGET 即新生成的子代，两者等价，保留既有写法。
  *
- *   - **PAIRS 常量表（:133-151）以普通数组承载**，成对展平后按 `VARSIZE/2`
- *     遍历（原作用 `#DIM CONST` 的花括号块）。表尾两对 `60,150` 与 `82,143`
- *     照录——表内 79/82 与 143 同时出现两次不是手误（原作如此），重复对只会
- *     在第一次命中时决定消哪一侧，第二次再看时已有一侧为 0。
+ *   - **PAIRS 常量表以普通数组承载**，成对展平后按长度的一半遍历。表尾两对
+ *     `60,150` 与 `82,143` 保留既有数据——表内 79/82 与 143 同时出现两次不是
+ *     手误，重复对只会在第一次命中时决定清哪一侧，第二次再看时已有一侧为 0。
  *
- *   - RAND:N 经 rand 参数逐层透传（#117：ere 无全局 RAND 序列），缺省均匀随机。
+ *   - 随机数经 rand 参数逐层透传（#117：ere 无全局随机序列），缺省均匀随机。
  */
 
 const era = require('#/era-electron');
@@ -28,7 +26,7 @@ function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** :133-151 CONST PAIRS —— 互斥素质对（展平） */
+/** PAIRS —— 互斥素质对（展平） */
 const PAIRS = [
   10, 12, 11, 13, 14, 16, 15, 17, 17, 18, 20, 23, 21, 23, 22, 23, 20, 63, 21,
   63, 22, 63, 23, 24, 25, 26, 27, 28, 30, 31, 32, 33, 35, 36, 40, 41, 42, 43,
@@ -41,15 +39,15 @@ const PAIRS = [
 ];
 
 /**
- * @CHARA_MAKE_INHERIT（:4-67）：令角色 L_A 继承 L_B 与 L_C（可选）的素质。
+ * chara_make_inherit：令角色 child 继承 parent_a 与 parent_b（可选）的素质。
  *
- * 不继承的段：崩坏、口上、调教素质、种族、职业、经历（:2-3 的文件头声明；
- * 落成代码的排除项见 :18 与 :35 两行）。
+ * 不继承的段：崩坏、口上、调教素质、种族、职业、经历（排除项见下方两处
+ * continue 的判定行）。
  *
- * @param {number} child 子代角色 ID（原作 L_A）
- * @param {number} parent_a 第一亲本角色 ID（原作 L_B）
- * @param {number} [parent_b=-1] 第二亲本角色 ID（原作 L_C）
- * @param {(n: number) => number} [rand] RAND:N 随机源（透传）
+ * @param {number} child 子代角色 ID
+ * @param {number} parent_a 第一亲本角色 ID
+ * @param {number} [parent_b=-1] 第二亲本角色 ID
+ * @param {(n: number) => number} [rand] 随机源（透传）
  * @returns {number} 子代角色 ID
  */
 function chara_make_inherit(
@@ -76,13 +74,13 @@ function chara_make_inherit(
     cmi_settalent(index, child, parent_a, parent_b, rand);
   }
 
-  // TALENT:L_A:扶她 || 男人 || !处女 → 私处封印 = 0
+  // 扶她 || 男人 || !处女 → 私处封印 = 0
   if (
     era.get(`talent:${child}:121`) || // TALENT:扶她
     era.get(`talent:${child}:122`) || // TALENT:男人
     !era.get(`talent:${child}:0`) // TALENT:处女
   ) {
-    // 省略角色号的 TALENT 写当前 TARGET（文件头「移植说明」条）
+    // 写当前 TARGET（era_flag.target），见文件头「移植说明」条
     chara(era_flag.target).chara.私处封印 = 0;
   }
 
@@ -134,15 +132,15 @@ function chara_make_inherit(
 }
 
 /**
- * @CMI_SETTALENT（:73-91）：按亲本构成选一档概率继承单项素质。
+ * cmi_settalent：按亲本构成选一档概率继承单项素质。
  *
  * 三档：单亲或魔王为父 3/4、魔王为母 2/3、双亲 15/16（命中后再掷选亲本）。
  *
- * @param {number} index 素质序号（原作 L_I）
- * @param {number} child 子代角色 ID（原作 L_A）
- * @param {number} parent_a 第一亲本（原作 L_B）
- * @param {number} [parent_b=-1] 第二亲本（原作 L_C）
- * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @param {number} index 素质序号
+ * @param {number} child 子代角色 ID
+ * @param {number} parent_a 第一亲本
+ * @param {number} [parent_b=-1] 第二亲本
+ * @param {(n: number) => number} [rand] 随机源
  * @returns {void}
  */
 function cmi_settalent(
@@ -153,7 +151,7 @@ function cmi_settalent(
   rand = default_rand,
 ) {
   if (parent_b <= 0) {
-    // 单亲，或（stick 增加）魔王为父 → A 有 3/4 概率继承 B 的素质
+    // 单亲，或魔王为父 → child 有 3/4 概率继承 parent_a 的素质
     if (rand(4)) {
       era.set(
         `talent:${child}:${index}`,
@@ -161,7 +159,7 @@ function cmi_settalent(
       );
     }
   } else if (parent_a === 0) {
-    // （stick 增加、未测试）魔王为母 → A 有 2/3 概率继承 C 的素质
+    // 魔王为母 → child 有 2/3 概率继承 parent_b 的素质
     if (rand(3)) {
       era.set(
         `talent:${child}:${index}`,
@@ -169,11 +167,8 @@ function cmi_settalent(
       );
     }
   } else if (rand(16)) {
-    // 双亲 → A 有 15/16 概率继承 B 或 C 的素质。
-    // `TALENT:A:L_I = RAND:2 ? TALENT:B:L_I # TALENT:C:L_I` ——
-    // Emuera 的三目是 `cond ? 真值 # 假值`（dev-guides 的运算符表，
-    // emuera-basic-agent-guide 的 core-concepts/expressions.md:169），
-    // 故 RAND:2 非零时取 L_B 侧（第一亲本）。
+    // 双亲 → child 有 15/16 概率继承 parent_a 或 parent_b 的素质，
+    // rand(2) 非零时取 parent_a 侧（第一亲本）。
     const value = rand(2)
       ? era.get(`talent:${parent_a}:${index}`)
       : era.get(`talent:${parent_b}:${index}`);
@@ -182,11 +177,11 @@ function cmi_settalent(
 }
 
 /**
- * @CMI_MOM_COMPLEX（:97-121）：按亲本的性别观与性格设置孩子的恋母/恋父一类情结。
+ * cmi_mom_complex：按亲本的性别观与性格设置孩子的恋母/恋父一类情结。
  *
- * @param {number} child 子代角色 ID（原作 L_A）
- * @param {number} parent 亲本角色 ID（原作 L_B）
- * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @param {number} child 子代角色 ID
+ * @param {number} parent 亲本角色 ID
+ * @param {(n: number) => number} [rand] 随机源
  * @returns {void}
  */
 function cmi_mom_complex(child, parent, rand = default_rand) {
@@ -202,7 +197,7 @@ function cmi_mom_complex(child, parent, rand = default_rand) {
     if (era.get(`talent:${parent}:155`) && rand(2)) {
       era.set(`talent:${child}:140`, 1); // 恋母情结
     }
-    // 人妻（恰 == 1 才算命中，与另几处 RAND:2 的真值判定不同）
+    // 人妻（rand(3) 恰 == 1 才算命中，与另几处 rand(2) 的真值判定不同）
     if (era.get(`talent:${parent}:157`) && rand(3) === 1) {
       era.set(`talent:${child}:140`, 1); // 恋母情结
     }
@@ -227,11 +222,11 @@ function cmi_mom_complex(child, parent, rand = default_rand) {
 }
 
 /**
- * @CMI_CONFLICT_CHECK（:127-166）：按 PAIRS 表逐对检查互斥素质，
+ * cmi_conflict_check：按 PAIRS 表逐对检查互斥素质，
  * 两侧都在时随机清掉一侧。
  *
- * @param {number} child 子代角色 ID（原作 L_A）
- * @param {(n: number) => number} [rand] RAND:N 随机源
+ * @param {number} child 子代角色 ID
+ * @param {(n: number) => number} [rand] 随机源
  * @returns {number} 子代角色 ID
  */
 function cmi_conflict_check(child, rand = default_rand) {
@@ -242,8 +237,7 @@ function cmi_conflict_check(child, rand = default_rand) {
       era.get(`talent:${child}:${left}`) &&
       era.get(`talent:${child}:${right}`)
     ) {
-      // 真值支清的是 L_I（= PAIRS:(L_II*2)，即本对的前一项），
-      // 假值支清 L_J（后一项）
+      // rand(2) 非零清 left（本对的前一项），否则清 right（后一项）
       if (rand(2)) {
         era.set(`talent:${child}:${left}`, 0);
       } else {
@@ -251,7 +245,7 @@ function cmi_conflict_check(child, rand = default_rand) {
       }
     }
   }
-  return child; // RETURN L_A
+  return child;
 }
 
 module.exports = {

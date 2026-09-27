@@ -1,8 +1,8 @@
 /**
  * @file ere/chara/chara-marriage.js 的行为测试（issue #393，N9）。
  *
- * 缝 = test/helpers/era-fixture.js。婚姻状况读写 CFLAG:601/602/606/609，
- * 家族构成读 TALENT:320（`chara_marriage_before` 的既有测试在
+ * 缝 = test/helpers/era-fixture.js。婚姻状况读写 cflag:601/602/606/609，
+ * 家族构成读 talent:320（`chara_marriage_before` 的既有测试在
  * test/page-chara-info.test.js，本文件不重复）。
  */
 
@@ -45,9 +45,9 @@ function seed(arg = 1, preset = {}) {
   return fixture;
 }
 
-// —— @CHECK_ABLE_TO_MARRIAGE（:35-49，式中函数）——
+// —— check_able_to_marriage（式中函数）——
 
-test('CHECK_ABLE_TO_MARRIAGE：侵攻中单独一档，其余「可结婚状态」三档放行——表驱动', () => {
+test('check_able_to_marriage：侵攻中单独一档，其余「可结婚状态」三档放行——表驱动', () => {
   // [标签, 状态, 期望]
   const table = [
     ['侵攻中的勇者（状态 2）', 2, 2],
@@ -66,9 +66,9 @@ test('CHECK_ABLE_TO_MARRIAGE：侵攻中单独一档，其余「可结婚状态�
   }
 });
 
-// —— @SHOW_BUTTON_MARRIAGE（:14-32）——
+// —— show_button_marriage ——
 
-test('SHOW_BUTTON_MARRIAGE：不可结婚不渲染；可结婚渲染「结婚」；侵攻中渲染「恋人设定」', () => {
+test('show_button_marriage：不可结婚不渲染；可结婚渲染「结婚」；侵攻中渲染「恋人设定」', () => {
   // [标签, 状态, 期望的按钮正文（undefined = 不渲染）]
   const table = [
     ['不可结婚：连按钮都没有', 1, undefined],
@@ -88,10 +88,10 @@ test('SHOW_BUTTON_MARRIAGE：不可结婚不渲染；可结婚渲染「结婚」
   }
 });
 
-// —— 十三支种族典礼（:508-867）＋ 四支特殊典礼（:455-505/:870-878）——
+// —— 十三支种族典礼 ＋ 四支特殊典礼 ——
 
 /**
- * 走「淫乱（TALENT:76）/ 爱慕（TALENT:85）/ 其他」三档的十支典礼：
+ * 走「淫乱（talent:76）/ 爱慕（talent:85）/ 其他」三档的十支典礼：
  * [函数名, 怪物显示名, {76: 行, 85: 行, 0: 行}]。行里的 X 代指角色名。
  */
 const RACE_TABLE = [
@@ -195,7 +195,7 @@ test('十支种族典礼：首行与三档反应行——表驱动走完十族�
       if (talent !== '0') fixture.store.set(`talent:1:${talent}`, 1);
       await load(fixture)[func](1, 500);
       if (func !== 'syokusyu_marriage') {
-        // 触手婚的首行是字面「触手」（：629），单独一支用例钉它
+        // 触手婚的首行是字面「触手」，单独一支用例钉它
         assert.ok(
           texts(fixture).includes(`角色1和${monster}结婚了。`),
           `${func}：首行`,
@@ -208,13 +208,13 @@ test('十支种族典礼：首行与三档反应行——表驱动走完十族�
       assert.equal(
         fixture.waits.length,
         1,
-        `${func}：一支 WAIT（BEAST/HORSE 之外的典礼都等一次键）`,
+        `${func}：一支 waitAnyKey（beast/horse 两支外的典礼都等一次键）`,
       );
     }
   }
 });
 
-test('兽系三支典礼：反应走「牝犬（TALENT:136）/ 兽奸中毒（ABL:39）/ 其他」这组分支', async () => {
+test('兽系三支典礼：反应走「牝犬（talent:136）/ 兽奸中毒（abl:39）/ 其他」这组分支', async () => {
   // [函数名, 对象名, {136: 行, 39: 行, 0: 行}]；dog 的对象名是字面「野狗」
   const table = [
     [
@@ -263,7 +263,7 @@ test('兽系三支典礼：反应走「牝犬（TALENT:136）/ 兽奸中毒（AB
       );
     }
   }
-  // 兽系典礼里只有野狗那支没有 WAIT（原作 :480 直接 RETURN）
+  // 兽系典礼里只有野狗那支不等键（marriage_dog 直接返回）
   const dog = seed();
   dog.store.set('itemname:500', '野狗');
   await load(dog).marriage_dog(1);
@@ -297,7 +297,7 @@ test('男人与女人两支典礼：对象名前按素质加「中年/少年」�
   assert.ok(texts(both).includes('角色1和中年成年男子结婚了。'));
 });
 
-test('触手婚的首行写的是字面「触手」，不是 ITEMNAME', async () => {
+test('触手婚的首行写的是字面「触手」，不是 itemname', async () => {
   const fixture = seed();
   fixture.store.set('itemname:500', '触手生物');
   await load(fixture).syokusyu_marriage(1, 500);
@@ -305,7 +305,7 @@ test('触手婚的首行写的是字面「触手」，不是 ITEMNAME', async ()
   assert.equal(texts(fixture).includes('角色1和触手生物结婚了。'), false);
 });
 
-test('MARRIAGE_YOU / MARRIAGE_LOVERS / SLAVE_MARRIAGE：三支特殊典礼的正文', async () => {
+test('marriage_you / marriage_lovers / slave_marriage：三支特殊典礼的正文', async () => {
   {
     const fixture = seed();
     await load(fixture).marriage_you(1);
@@ -333,9 +333,9 @@ test('MARRIAGE_YOU / MARRIAGE_LOVERS / SLAVE_MARRIAGE：三支特殊典礼的正
   }
 });
 
-// —— @MARRIAGE 主流程（:52-451） ——
+// —— marriage 主流程 ——
 
-/** 已持有的一只怪物：100 号（凌辱类型 1 = 亚人/半兽人，走 ORC 典礼） */
+/** 已持有的一只怪物：100 号（凌辱类型 1 = 亚人/半兽人，走 orc_marriage） */
 const MONSTER = 100;
 /** 怪物识别号 → 它触发的种族典礼（凌辱类型取自 ere/data/monster-database.js） */
 const RITUAL_BY_MONSTER = [
@@ -354,7 +354,7 @@ const RITUAL_BY_MONSTER = [
 ];
 
 /**
- * 让 SEARCH_FAMILY(cid, kind) 能在 1 ↔ 2 之间命中（照 test/cross-stubs.test.js
+ * 让 search_family(cid, kind) 能在 1 ↔ 2 之间命中（照 test/cross-stubs.test.js
  * 的实测配置：名字编号一致 + 前身 4 + 性格 165 + 家族构成 76）。
  * @param {object} fixture 夹具
  * @param {'MARRIAGE'|'LOVE'} kind 关系种类
@@ -373,7 +373,7 @@ function seed_pair_relation(fixture, kind) {
   fixture.store.set('talent:2:320', 76);
 }
 
-test('MARRIAGE：入口两档——不可结婚返回 2；侵攻中的勇者走 ENTER_LOVER，成功则返回 1', async () => {
+test('marriage：入口两档——不可结婚返回 2；侵攻中的勇者走 enter_lover，成功则返回 1', async () => {
   {
     const fixture = seed();
     fixture.store.set('cflag:1:1', 1);
@@ -388,16 +388,16 @@ test('MARRIAGE：入口两档——不可结婚返回 2；侵攻中的勇者走 
     assert.equal(await load(fixture).marriage(1), 0);
   }
   {
-    // 恋人设定选了实人 → 返回 1（原作「成功の場合ターンエンド」）
+    // 恋人设定选了实人 → 返回 1（成功即回合结束）
     const fixture = seed();
     fixture.store.set('cflag:1:1', 2);
     fixture.set_inputs(1);
     assert.equal(await load(fixture).marriage(1), 1);
-    assert.equal(fixture.store.get('cflag:1:606'), 1, '恋人类型落进 CFLAG:606');
+    assert.equal(fixture.store.get('cflag:1:606'), 1, '恋人类型落进 cflag:606');
   }
 });
 
-test('MARRIAGE：菜单按钮集——野狗/恋人三项/离婚的可选性随 ITEM:22、CFLAG:606、CFLAG:601 变', async () => {
+test('marriage：菜单按钮集——野狗/恋人三项/离婚的可选性随 item:22、cflag:606、cflag:601 变', async () => {
   // [标签, 预置, 期望可选项（正文 + 编号）, 期望灰掉的正文]
   const table = [
     [
@@ -446,7 +446,7 @@ test('MARRIAGE：菜单按钮集——野狗/恋人三项/离婚的可选性随 
       expected_disabled,
       `${label}：灰掉的正文`,
     );
-    // 灰项一律用原作的 666 编号，且不进合法输入集（夹具的 disabled 镜像）
+    // 灰项一律用 666 编号，且不进合法输入集（夹具的 disabled 镜像）
     assert.ok(
       grey.every((b) => b.accelerator === 666),
       `${label}：灰项编号`,
@@ -454,8 +454,8 @@ test('MARRIAGE：菜单按钮集——野狗/恋人三项/离婚的可选性随 
   }
 });
 
-test('MARRIAGE：菜单尾部画出「目前结婚对象」的一行', async () => {
-  // [标签, CFLAG:601, 期望正文]
+test('marriage：菜单尾部画出「目前结婚对象」的一行', async () => {
+  // [标签, cflag:601, 期望正文]
   const table = [
     ['没对象', 0, '无'],
     ['野狗', 900, '野狗'],
@@ -467,7 +467,7 @@ test('MARRIAGE：菜单尾部画出「目前结婚对象」的一行', async () 
     const fixture = seed();
     fixture.store.set('cflag:1:601', spouse);
     fixture.store.set('cflag:1:606', 3);
-    fixture.store.set('cflag:1:6', 42); // 避免与 CFLAG:0:601 的 0 撞成「魔王配偶」
+    fixture.store.set('cflag:1:6', 42); // 避免与 cflag:0:601 的 0 撞成「魔王配偶」
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
     fixture.set_inputs(999);
     await load(fixture).marriage(1, () => 0);
@@ -478,9 +478,9 @@ test('MARRIAGE：菜单尾部画出「目前结婚对象」的一行', async () 
   }
 });
 
-test('MARRIAGE：登记一位是 9（家族册上的人）时名字从家族册上取，找不到人显示「无」', async () => {
-  // 奴隶婚登记的是 `CHARA_ID_OUTPUT + 9`（:306-307 的 CFLAG:609 交换），所以
-  // `CFLAG:601 % 10 == 9` 这一支是「配偶在家族册上」的正常形态：SEARCH_FAMILY
+test('marriage：登记一位是 9（家族册上的人）时名字从家族册上取，找不到人显示「无」', async () => {
+  // 奴隶婚登记的是 `chara_id_output + 9`（与 cflag:609 互换），所以
+  // `cflag:601 % 10 == 9` 这一支是「配偶在家族册上」的正常情况：search_family
   // 找到人显示对方名字，找不到（档案不匹配）显示「无」——两侧各一个用例。
   {
     const fixture = seed();
@@ -519,7 +519,7 @@ test('MARRIAGE：登记一位是 9（家族册上的人）时名字从家族册�
   }
 });
 
-test('MARRIAGE：选怪物 → MONSTER_DATA 取陵辱类型 → 对应种族典礼——表驱动走完十二族', async () => {
+test('marriage：选怪物 → monster_data 取陵辱类型 → 对应种族典礼——表驱动走完十二族', async () => {
   for (const [id, ritual, marker] of RITUAL_BY_MONSTER) {
     const fixture = seed();
     fixture.store.set(`item:${id}`, 1);
@@ -540,7 +540,7 @@ test('MARRIAGE：选怪物 → MONSTER_DATA 取陵辱类型 → 对应种族典�
   }
 });
 
-test('MARRIAGE：选野狗与选你——两支特殊典礼，登记为 900/901', async () => {
+test('marriage：选野狗与选你——两支特殊典礼，登记为 900/901', async () => {
   {
     const fixture = seed();
     fixture.store.set('item:22', 1);
@@ -558,9 +558,9 @@ test('MARRIAGE：选野狗与选你——两支特殊典礼，登记为 900/901'
   }
 });
 
-test('MARRIAGE：与恋人结婚分两路——恋人就是家族册上的实人时，对方那一侧也登记', async () => {
+test('marriage：与恋人结婚分两路——恋人就是家族册上的实人时，对方那一侧也登记', async () => {
   {
-    // 一般恋人（CFLAG:606 != 200）：对象名走 LOVER_NAMES
+    // 一般恋人（cflag:606 != 200）：对象名走 LOVER_NAMES
     const fixture = seed();
     fixture.store.set('cflag:1:606', 3);
     fixture.set_inputs(902);
@@ -570,8 +570,8 @@ test('MARRIAGE：与恋人结婚分两路——恋人就是家族册上的实人
     assert.ok(texts(fixture).includes('角色1被允许与信赖的恋人结婚了'));
   }
   {
-    // 恋人 == 200（实人）：SEARCH_FAMILY 的 LOVE 找得到就登记对方；对方那侧
-    // 若是已婚/离婚位，编档也要进位（:292-297）
+    // 恋人 == 200（实人）：search_family 的 LOVE 找得到就登记对方；对方那侧
+    // 若是已婚/离婚位，编档也要进位
     const fixture = seed();
     add_chara(fixture, 2, '乙');
     seed_pair_relation(fixture, 'LOVE');
@@ -589,7 +589,7 @@ test('MARRIAGE：与恋人结婚分两路——恋人就是家族册上的实人
   }
 });
 
-test('MARRIAGE：从奴隶中选——LIFE_LIST 的选中者成为对象，双方名槽互换', async () => {
+test('marriage：从奴隶中选——life_list 的选中者成为对象，双方名槽互换', async () => {
   const fixture = seed();
   add_chara(fixture, 2, '乙');
   fixture.store.set('cflag:1:6', 5);
@@ -610,11 +610,11 @@ test('MARRIAGE：从奴隶中选——LIFE_LIST 的选中者成为对象，双�
   );
   assert.ok(texts(fixture).includes('*角色1和乙举行了结婚典礼*'));
   assert.ok(texts(fixture).includes('角色1和乙结婚了。'));
-  // 奴隶婚不掷处女丧失的骰（GROOM_TYPE == 1000 被排除在 :405 的判据外）
+  // 奴隶婚不掷处女丧失的骰（groom_type == 1000 被排除在条件外）
   assert.equal(texts(fixture).includes('【处女丧失】'), false);
 });
 
-test('MARRIAGE：奴隶子菜单的四条拒绝与返回——状态 2 / 其它占用态 / 已婚 / 自恋', async () => {
+test('marriage：奴隶子菜单的四条拒绝与返回——状态 2 / 其它占用态 / 已婚 / 自恋', async () => {
   // [标签, 预置的对方状态/婚姻, 期望播报]
   const table = [
     ['对方侵攻中', { 'cflag:2:1': 2 }, '乙尚未在支配之下。'],
@@ -650,7 +650,7 @@ test('MARRIAGE：奴隶子菜单的四条拒绝与返回——状态 2 / 其它�
   }
 });
 
-test('MARRIAGE：奴隶子菜单的翻页——单页时两块页码按钮都不动页，重画同一页', async () => {
+test('marriage：奴隶子菜单的翻页——单页时两块页码按钮都不动页，重画同一页', async () => {
   const fixture = seed();
   add_chara(fixture, 2, '乙');
   // 上一页 / 下一页 各按一次都不该改页（总数 2 ≤ 20），最后 999 退出
@@ -666,7 +666,7 @@ test('MARRIAGE：奴隶子菜单的翻页——单页时两块页码按钮都不
   );
 });
 
-test('MARRIAGE：已婚后选别的对象报「已婚了」，选当前对象报「对象已婚了」', async () => {
+test('marriage：已婚后选别的对象报「已婚了」，选当前对象报「对象已婚了」', async () => {
   {
     const fixture = seed();
     fixture.store.set('cflag:1:601', 900);
@@ -687,8 +687,8 @@ test('MARRIAGE：已婚后选别的对象报「已婚了」，选当前对象报
     assert.ok(texts(fixture).includes('对象已婚了。'));
   }
   {
-    // 守卫的门槛是「非零」本身（:261）：压缩数据取最小非零值 1 也算已婚。
-    // 判据写成 `> 1` 会让登记值 1 一路走到婚礼，所以这里测边界。
+    // 检查的门槛是「非零」本身：压缩数据取最小非零值 1 也算已婚。
+    // 条件写成 `> 1` 会让登记值 1 一路走到婚礼，所以这里测边界。
     const fixture = seed();
     fixture.store.set('cflag:1:601', 1);
     fixture.store.set(`item:${MONSTER}`, 1);
@@ -700,7 +700,7 @@ test('MARRIAGE：已婚后选别的对象报「已婚了」，选当前对象报
   }
 });
 
-test('MARRIAGE：[903] 与恋人分手、[998] 离婚，两条出口各自收尾', async () => {
+test('marriage：[903] 与恋人分手、[998] 离婚，两条出口各自收尾', async () => {
   {
     const fixture = seed();
     fixture.store.set('cflag:1:606', 3);
@@ -721,7 +721,7 @@ test('MARRIAGE：[903] 与恋人分手、[998] 离婚，两条出口各自收尾
   }
 });
 
-test('DIVORCE：家族册上的对方也被解除登记，婚姻编码按重婚/再婚回落', () => {
+test('divorce：家族册上的对方也被解除登记，婚姻编码按重婚/再婚回落', () => {
   const fixture = seed();
   add_chara(fixture, 2, '乙');
   seed_pair_relation(fixture, 'MARRIAGE');
@@ -737,10 +737,10 @@ test('DIVORCE：家族册上的对方也被解除登记，婚姻编码按重婚/
   assert.equal(fixture.store.get('talent:1:320'), 10000, '重婚回落一档');
 });
 
-test('MARRIAGE：婚前清旧账——CFLAG:609 有值但家族册上找不到人时，DIVORCE(-1) 先跑一趟', async () => {
-  // 能走到清旧账段的唯一形态：CFLAG:601 == 0（否则 :261 的「已婚」守卫先返回）
-  // 而 CFLAG:609 > 0。此时 SEARCH_FAMILY 返回 -1，原作 :271 的 ELSE 仍然调
-  // DIVORCE(RESULT)——即 DIVORCE(-1)，只把发起方自己清干净（文件头的例外条）
+test('marriage：婚前清旧账——cflag:609 有值但家族册上找不到人时，divorce(-1) 先跑一趟', async () => {
+  // 能走到清旧账段的唯一情形：cflag:601 == 0（否则「已婚」检查先返回）
+  // 而 cflag:609 > 0。此时 search_family 返回 -1，仍然会调
+  // divorce(-1)——只把发起方自己清干净（文件头的例外条）
   {
     const fixture = seed();
     fixture.store.set(`item:${MONSTER}`, 1);
@@ -752,11 +752,11 @@ test('MARRIAGE：婚前清旧账——CFLAG:609 有值但家族册上找不到�
 
     assert.ok(texts(fixture).includes('离婚了。'), '旧账清了一趟');
     assert.equal(fixture.store.get('cflag:1:601'), MONSTER, '新婚礼登记落上');
-    // DIVORCE(-1) 清的是 cflag:-1:601/609，发起方的名槽 42 留着（原作同款）
+    // divorce(-1) 清的是 cflag:-1:601/609，发起方的名槽 42 留着
     assert.equal(fixture.store.get('cflag:1:609'), 42, '名槽没被动过');
   }
   {
-    // EX_TALENT:2 且找不到人时那支是空体：不清旧账，直接办婚礼
+    // ex_talent:2 且找不到人时那支是空体：不清旧账，直接办婚礼
     const fixture = seed();
     fixture.store.set(`item:${MONSTER}`, 1);
     fixture.store.set(`itemname:${MONSTER}`, '怪物');
@@ -772,8 +772,8 @@ test('MARRIAGE：婚前清旧账——CFLAG:609 有值但家族册上找不到�
   }
 });
 
-test('MARRIAGE：处女丧失的记录码按对象分档（你 1 / 野狗 103 / 怪物 104）', async () => {
-  // [标签, 输入, 预置, 期望 CFLAG:15]
+test('marriage：处女丧失的记录码按对象分档（你 1 / 野狗 103 / 怪物 104）', async () => {
+  // [标签, 输入, 预置, 期望 cflag:15]
   const table = [
     ['与你结婚 → 1', 901, {}, 1],
     ['与野狗结婚 → 103', 900, { 'item:22': 1 }, 103],
@@ -800,13 +800,13 @@ test('MARRIAGE：处女丧失的记录码按对象分档（你 1 / 野狗 103 / 
   }
 });
 
-test('MARRIAGE：处女丧失的四道守卫——特殊服装 79 / 素质 273 / 经验非零 / 奴隶婚都不落', async () => {
+test('marriage：处女丧失的四道检查——特殊服装 79 / 素质 273 / 经验非零 / 奴隶婚都不落', async () => {
   // [标签, 预置, 是否走奴隶婚]
   const table = [
     ['特殊服装 79 挡住', { 'cflag:1:42': 79 }, false],
     ['素质 273 挡住', { 'talent:1:273': 1 }, false],
     ['经验非零挡住', { 'exp:1:0': 5 }, false],
-    ['奴隶婚不掷这颗骰（GROOM_TYPE == 1000）', {}, true],
+    ['奴隶婚不掷这颗骰（groom_type == 1000）', {}, true],
   ];
   for (const [label, preset, slave] of table) {
     const fixture = seed();
@@ -831,7 +831,7 @@ test('MARRIAGE：处女丧失的四道守卫——特殊服装 79 / 素质 273 /
   }
 });
 
-test('MARRIAGE：虫/史莱姆/植物婚的处女骰上界是 9，掷 3 破处、掷 4 不破（阈值 >= 4）', async () => {
+test('marriage：虫/史莱姆/植物婚的处女骰上界是 9，掷 3 破处、掷 4 不破（阈值 >= 4）', async () => {
   for (const id of [102, 103, 112]) {
     for (const [draw, broken] of [
       [3, true],
@@ -872,8 +872,8 @@ test('MARRIAGE：虫/史莱姆/植物婚的处女骰上界是 9，掷 3 破处�
   }
 });
 
-test('MARRIAGE：初吻的记录码按对象分档（你 1 / 野狗 998 / 其它 994），你那一档连魔王一起记', async () => {
-  // [标签, 输入, 预置, 期望 CFLAG:16]
+test('marriage：初吻的记录码按对象分档（你 1 / 野狗 998 / 其它 994），你那一档连魔王一起记', async () => {
+  // [标签, 输入, 预置, 期望 cflag:16]
   const table = [
     ['与你结婚 → 1', 901, {}, 1],
     ['与野狗结婚 → 998', 900, { 'item:22': 1 }, 998],
@@ -902,14 +902,14 @@ test('MARRIAGE：初吻的记录码按对象分档（你 1 / 野狗 998 / 其它
       assert.equal(
         fixture.store.get('cflag:0:16'),
         2,
-        '魔王的初吻对象 = ARG + 1',
+        '魔王的初吻对象 = 发起方角色号 + 1',
       );
       assert.equal(fixture.store.get('cstr:0:4'), '角色1');
     }
   }
 });
 
-test('MARRIAGE：初吻只在未初始化（-1）时落一次', async () => {
+test('marriage：初吻只在未初始化（-1）时落一次', async () => {
   const fixture = seed();
   fixture.store.set('cflag:1:16', 5); // 已经有初吻对象
   fixture.store.set(`item:${MONSTER}`, 1);
@@ -922,7 +922,7 @@ test('MARRIAGE：初吻只在未初始化（-1）时落一次', async () => {
   assert.equal(fixture.store.get('cflag:1:16'), 5, '原值不动');
 });
 
-test('MARRIAGE：异种婚姻（欲望 LV 5 + 异种奸经验 300 + 主从逆转/异种恋慕）追加三行并置素质 159', async () => {
+test('marriage：异种婚姻（欲望 LV 5 + 异种奸经验 300 + 主从逆转/异种恋慕）追加三行并置素质 159', async () => {
   // [标签, 预置, 是否触发]
   const table = [
     ['全部满足', { 'abl:1:11': 5, 'talent:1:293': 1, 'exp:1:58': 300 }, true],
@@ -969,7 +969,7 @@ test('MARRIAGE：异种婚姻（欲望 LV 5 + 异种奸经验 300 + 主从逆转
 
 // —— 补钉：奴隶婚的处女骰、婚姻编码的进位、翻页边界（#393 自检补） ——
 
-test('MARRIAGE：奴隶婚的处女骰按双方性别组合掷四档上界（5/7/9/5 逐个钉住）', async () => {
+test('marriage：奴隶婚的处女骰按双方性别组合掷四档上界（5/7/9/5 逐个钉住）', async () => {
   // [标签, 对方 122/121, 本人 122/121, 期望上界]
   const table = [
     ['双方都不是男人也不是扶她（同为女性）', [0, 0], [0, 0], 5],
@@ -994,8 +994,8 @@ test('MARRIAGE：奴隶婚的处女骰按双方性别组合掷四档上界（5/7
     await load(fixture).marriage(1, rand);
 
     assert.ok(bounds.includes(upper), `${label}：处女骰上界 ${upper}`);
-    // 奴隶婚的 VIRGIN_B 是**死值**：:405 的判据带 `GROOM_TYPE != 1000`，
-    // 掷出来的数没有任何消费者（原作如此，见模块文件头）
+    // 奴隶婚的 virgin_b 是**死值**：条件带 `groom_type != 1000`，
+    // 掷出来的数没有任何消费者（见模块文件头）
     assert.equal(
       texts(fixture).includes('【处女丧失】'),
       false,
@@ -1005,7 +1005,7 @@ test('MARRIAGE：奴隶婚的处女骰按双方性别组合掷四档上界（5/7
   }
 });
 
-test('MARRIAGE：奴隶婚的第五档——对方是女性且本人是男人时，直接让对方破处', async () => {
+test('marriage：奴隶婚的第五档——对方是女性且本人是男人时，直接让对方破处', async () => {
   {
     const fixture = seed();
     add_chara(fixture, 2, '乙');
@@ -1031,7 +1031,7 @@ test('MARRIAGE：奴隶婚的第五档——对方是女性且本人是男人时
   }
 });
 
-test('MARRIAGE：婚姻编码的进位——已婚（位 1）与离婚（位 2）再婚各 +20000', async () => {
+test('marriage：婚姻编码的进位——已婚（位 1）与离婚（位 2）再婚各 +20000', async () => {
   // [标签, TALENT:320 初值, 期望终值]
   const table = [
     ['未婚（位 0）：不进位', 0, 0],
@@ -1052,7 +1052,7 @@ test('MARRIAGE：婚姻编码的进位——已婚（位 1）与离婚（位 2�
   }
 });
 
-test('DIVORCE：重婚（位 3）与再婚（位 4）各回落 20000，其余不动', () => {
+test('divorce：重婚（位 3）与再婚（位 4）各回落 20000，其余不动', () => {
   for (const [before, after] of [
     [30000, 10000],
     [40000, 20000],
@@ -1072,7 +1072,7 @@ test('DIVORCE：重婚（位 3）与再婚（位 4）各回落 20000，其余不
   }
 });
 
-test('MARRIAGE：奴隶列表的翻页窗口按位置开——第 21 人只在第 2 页', async () => {
+test('marriage：奴隶列表的翻页窗口按位置开——第 21 人只在第 2 页', async () => {
   const fixture = seed();
   for (let cid = 2; cid <= 21; cid += 1) add_chara(fixture, cid, `角色${cid}`);
   fixture.set_inputs(904, 1001, 21); // 进子菜单 → 下一页 → 选第 21 人
@@ -1083,13 +1083,13 @@ test('MARRIAGE：奴隶列表的翻页窗口按位置开——第 21 人只在�
   assert.equal(
     fixture.store.get('cflag:1:601'),
     fixture.load_module('chara/chara-stats').chara_id_output(21) + 9,
-    '登记对象 = CHARA_ID_OUTPUT(21) + 9',
+    '登记对象 = chara_id_output(21) + 9',
   );
 });
 
-// —— 补钉二：目前结婚对象的「在故乡等待的伴侣」、自恋守卫、魔王娶奴隶、翻页边界 ——
+// —— 补钉二：目前结婚对象的「在故乡等待的伴侣」、自恋检查、魔王娶奴隶、翻页边界 ——
 
-test('MARRIAGE：没对象但素质 315 == 21 或有 157 时，显示「在故乡等待的伴侣」', async () => {
+test('marriage：没对象但素质 315 == 21 或有 157 时，显示「在故乡等待的伴侣」', async () => {
   // [标签, 预置]
   const table = [
     ['前身是主妇（TALENT:315 == 21）', { 'talent:1:315': 21 }],
@@ -1111,7 +1111,7 @@ test('MARRIAGE：没对象但素质 315 == 21 或有 157 时，显示「在故�
   }
 });
 
-test('MARRIAGE：[901] 选自己——魔王被拒（自恋守卫），非魔王则照常结婚', async () => {
+test('marriage：[901] 选自己——魔王被拒（自恋检查），非魔王则照常结婚', async () => {
   {
     const fixture = seed();
     fixture.set_inputs(901, 999);
@@ -1123,7 +1123,7 @@ test('MARRIAGE：[901] 选自己——魔王被拒（自恋守卫），非魔王
     assert.equal(fixture.store.get('cflag:0:601') || 0, 0, '没结成');
   }
   {
-    // 角色 1 选「你」不受这条守卫限制
+    // 角色 1 选「你」不受这条检查限制
     const fixture = seed();
     fixture.set_inputs(901);
     assert.equal(await load(fixture).marriage(1, () => 0), 1);
@@ -1131,7 +1131,7 @@ test('MARRIAGE：[901] 选自己——魔王被拒（自恋守卫），非魔王
   }
 });
 
-test('MARRIAGE：魔王（ARG 0）娶奴隶时，被求婚方那一侧登记的是 901（你）而不是编号', async () => {
+test('marriage：魔王（cid 0）娶奴隶时，被求婚方那一侧登记的是 901（你）而不是编号', async () => {
   const fixture = seed();
   add_chara(fixture, 2, '乙');
   fixture.set_inputs(904, 2);
@@ -1142,16 +1142,16 @@ test('MARRIAGE：魔王（ARG 0）娶奴隶时，被求婚方那一侧登记的�
   assert.ok(texts(fixture).includes('你和乙结婚了。'));
 });
 
-test('MARRIAGE：奴隶子菜单的翻页边界——19 名奴隶（总数 20，正好一页）时下一页翻到空页', async () => {
-  // 原作判据是 (NO_PAGE+1)*20 <= CHARANUM，而 CHARANUM 含魔王：19 名奴隶
-  // ＋魔王正好让「还有下一页」成立一次，翻过去是空页（原作如此）
+test('marriage：奴隶子菜单的翻页边界——19 名奴隶（总数 20，正好一页）时下一页翻到空页', async () => {
+  // 条件是 (no_page+1)*20 <= 已加入角色数（含魔王）：19 名奴隶
+  // ＋魔王正好让「还有下一页」成立一次，翻过去是空页（行为原样保留）
   const fixture = seed();
   for (let cid = 2; cid <= 19; cid += 1) add_chara(fixture, cid, `角色${cid}`);
   fixture.set_inputs(904, 1001, 999, 999);
 
   assert.equal(await load(fixture).marriage(1, () => 0), 0);
 
-  // 两轮子菜单各自的收尾标记（LIFE_LIST 的行在页码按钮之前）
+  // 两轮子菜单各自的收尾标记（life_list 的行在页码按钮之前）
   const nexts = [];
   fixture.lines_history.forEach((line, idx) => {
     if (line.type === 'button' && line.text === '- 下一页') nexts.push(idx);
@@ -1163,14 +1163,14 @@ test('MARRIAGE：奴隶子菜单的翻页边界——19 名奴隶（总数 20，
   assert.deepEqual(rows_in_second_render, [], '第 2 页是空的');
 });
 
-test('MARRIAGE：婚前清旧账的两侧——家族册上找得到人时先解掉那一侧的登记（门槛是 CFLAG:609 > 0，名槽正好是 1 也照清）', async () => {
-  // 清旧账段的门槛 `CFLAG:ARG:609 > 0`（:267）测在边界上：CFLAG:609 是
-  // SAVESTR 名字槽号（:6「結婚相手の名前」），**1 是合法的正值**——判据写成
+test('marriage：婚前清旧账的两侧——家族册上找得到人时先解掉那一侧的登记（门槛是 cflag:609 > 0，名槽正好是 1 也照清）', async () => {
+  // 清旧账段的门槛 `cflag:609 > 0` 测在边界上：cflag:609 是
+  // 名字槽号（登记配偶名字用的槽），**1 是合法的正值**——条件写成
   // `> 1` 会把「配偶名槽 = 1」这一整类漏掉，所以这里刻意取 1 而不是 42。
   //
-  // 走到清旧账段的形态仍是 CFLAG:601 == 0（否则 :261 的「已婚」守卫先返回），
-  // 于是 SEARCH_FAMILY 以「压缩数据 0」的档案去找：对方的名字槽必须等于
-  // 发起方的 CFLAG:6，前身（315）与性格档（160 = 0/1000 + 160）按数据 0
+  // 走到清旧账段的情形仍是 cflag:601 == 0（否则「已婚」检查先返回），
+  // 于是 search_family 以「压缩数据 0」的档案去找：对方的名字槽必须等于
+  // 发起方的 cflag:6，前身（315）与性格档（160 = 0/1000 + 160）按数据 0
   // 解析，家族构成（320）同为 0——这正是「登记丢了、名槽还在」的语义。
   const fixture = seed();
   add_chara(fixture, 2, '乙');
@@ -1179,7 +1179,7 @@ test('MARRIAGE：婚前清旧账的两侧——家族册上找得到人时先解
   fixture.store.set('cflag:1:6', 42); // 名字编号
   fixture.store.set('cflag:1:601', 0); // 压缩数据 0 = 走清旧账
   fixture.store.set('cflag:1:609', 1); // 名槽：边界值本身
-  fixture.store.set('cflag:2:609', 42); // 对方名槽 == 发起方的 CFLAG:6
+  fixture.store.set('cflag:2:609', 42); // 对方名槽 == 发起方的 cflag:6
   fixture.store.set('cflag:2:601', 1); // 对方压缩数据非零（否则搜索跳过）
   fixture.store.set('talent:2:160', 1); // 性格档 160
   fixture.set_inputs(MONSTER);
@@ -1203,11 +1203,11 @@ test('MARRIAGE：婚前清旧账的两侧——家族册上找得到人时先解
   }
 });
 
-test('DIVORCE：对方侧只清「真角色」——SEARCH_FAMILY 回 0（魔王）时不动他那侧', () => {
-  // 原作 :885 的 `RESULT > 0 && RESULT < CHARANUM` 按 #21 的 ID 世界改写为
-  // 「是不是已加入角色」，`> 0` 原样保留：0 号是魔王，在册但不是「对方」。
-  // 造法：发起方名字槽 0（魔王的判据要求如此）+ 压缩数据 1（家族册那条），
-  // 魔王那侧数据非零、名字槽等于发起方的 CFLAG:6——SEARCH_FAMILY 于是回 0。
+test('divorce：对方侧只清「真角色」——search_family 回 0（魔王）时不动他那侧', () => {
+  // 「是不是已加入角色」的判断按 #21 的 ID 世界改写（`> 0` 原样保留）：
+  // 0 号是魔王，在册但不是「对方」。
+  // 造法：发起方名字槽 0（魔王的条件要求如此）+ 压缩数据 1（家族册那条），
+  // 魔王那侧数据非零、名字槽等于发起方的 cflag:6——search_family 于是回 0。
   const fixture = seed();
   fixture.store.set('cflag:1:6', 42); // 名字编号
   fixture.store.set('cflag:1:601', 1); // 压缩数据（一位不是 9）

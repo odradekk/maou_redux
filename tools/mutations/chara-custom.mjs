@@ -1,14 +1,14 @@
 // 变异条目表分片：角色定制链（issue #392，N8 段 2）。
-// 靶文件：ere/chara/chara-and-hair.js（FUNC_CHARA_AND_HAIR 真身）、
-//         ere/chara/chara-custom.js（@CHAR_CREATE / @CHAR_APPEND 真身）、
-//         ere/chara/chara-custom2.js（@CHAR_CUSTOM 一族真身）、
+// 目标文件：ere/chara/chara-and-hair.js（性格/发色交互函数真身）、
+//         ere/chara/chara-custom.js（char_create / char_append 真身）、
+//         ere/chara/chara-custom2.js（char_custom 一族真身）、
 //         ere/chara/chara-custom3.js（外观页真身）。
-// 守护测试：test/chara-and-hair.test.js、test/chara-custom.test.js、
+// 对应测试：test/chara-and-hair.test.js、test/chara-custom.test.js、
 //           test/chara-custom2.test.js、test/chara-custom3.test.js。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。
 //
 // M8805-M8820 是首轮验收返工的补表：M8761-M8804 全压在 and-hair/custom2/
-// custom3 三个文件上，chara-custom.js（@CHAR_CREATE / @CHAR_APPEND）一条没有
+// custom3 三个文件上，chara-custom.js（char_create / char_append）一条没有
 // ——而它是留给 #398 的接口边。补表按「区间上界」这一种形状统一处理四个文件
 // （验收用 `index <= 40` / `arg <= 210` 两处上界改坏时全绿）。
 // M9001-M9009 是二轮验收返工的补表：把「排版与宽度常量」这一类补齐——栅格宽
@@ -21,13 +21,13 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 91; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的修复守卫）
+export const COUNT = 91; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的回归检查）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
 
   {
-    desc: 'M8761 SET_RANDOM_CHARASTERISTIC 的重掷判据改成 175（174 会落地）',
+    desc: 'M8761 set_random_charasteristic 的重掷条件改成 175（174 会写入）',
     file: 'ere/chara/chara-and-hair.js',
     find: '    if (talent_id === 174) {\n      continue;\n    }\n    set_talent(chara_id, talent_id, 1);',
     replace:
@@ -46,8 +46,8 @@ export default [
   {
     desc: 'M8763 发色随机上界 100 改 99（最后一档永不出现）',
     file: 'ere/chara/chara-and-hair.js',
-    find: 'const roll = rand(100); // SELECTCASE RAND:100',
-    replace: 'const roll = rand(99); // SELECTCASE RAND:100',
+    find: 'const roll = rand(100);',
+    replace: 'const roll = rand(99);',
     tests: ['chara-and-hair'],
     must_mention: 'RAND:100 的上界',
   },
@@ -76,7 +76,7 @@ export default [
     must_mention: '掷出 98',
   },
   {
-    desc: 'M8767 CHOOSE_CHARASTERISTIC 每行项数缺省 3 改 4',
+    desc: 'M8767 choose_charasteristic 每行项数缺省 3 改 4',
     file: 'ere/chara/chara-and-hair.js',
     find: 'async function choose_charasteristic(cid = -1, per_line = 3) {',
     replace: 'async function choose_charasteristic(cid = -1, per_line = 4) {',
@@ -93,7 +93,7 @@ export default [
     must_mention: 'N160',
   },
   {
-    desc: 'M8769 CHOOSE_HAIRCOLOR 的 SIZE 12 改 11（12 号被拒收）',
+    desc: 'M8769 choose_haircolor 的 SIZE 12 改 11（12 号被拒收）',
     file: 'ere/chara/chara-and-hair.js',
     find: '  const size = 12;',
     replace: '  const size = 11;',
@@ -101,7 +101,7 @@ export default [
     must_mention: '列出 1-11 号',
   },
   {
-    desc: 'M8770 CHOOSE_HAIRCOLOR 每行项数缺省 6 改 5',
+    desc: 'M8770 choose_haircolor 每行项数缺省 6 改 5',
     file: 'ere/chara/chara-and-hair.js',
     find: 'async function choose_haircolor(cid = -1, per_line = 6) {',
     replace: 'async function choose_haircolor(cid = -1, per_line = 5) {',
@@ -112,7 +112,7 @@ export default [
     desc: 'M8771 SHOW_CHARASTERISTIC 的首位命中序号改错（返回表内序号 +1）',
     file: 'ere/chara/chara-and-hair.js',
     // #565 返工起 SHOW 的查询半段抽成 charasteristic_index（按钮拼正文要
-    // 只查不打印），变异靶随之挪到 index 的命中返回
+    // 只查不打印），变异目标随之挪到 index 的命中返回
     find: 'function charasteristic_index(cid) {\n  for (let i = 0; i < GENERAL_CHARASTERISTICS.length; i += 1) {\n    const talent_id = GENERAL_CHARASTERISTICS[i];\n    if (talent(cid, talent_id)) {\n      return i;',
     replace:
       'function charasteristic_index(cid) {\n  for (let i = 0; i < GENERAL_CHARASTERISTICS.length; i += 1) {\n    const talent_id = GENERAL_CHARASTERISTICS[i];\n    if (talent(cid, talent_id)) {\n      return i + 1; // 变异：命中序号 +1',
@@ -144,7 +144,7 @@ export default [
     find: 'const MAX_BLANKS = 10;',
     replace: 'const MAX_BLANKS = 9;',
     tests: ['chara-custom3'],
-    must_mention: '恰好 10 个空串不触发 BREAK',
+    must_mention: '恰好 10 个空串不早退',
   },
   {
     desc: 'M8775 每项宽度加算的间隔 2 改 3（换行位置提前）',
@@ -398,7 +398,7 @@ export default [
   // —— 首轮验收返工补表：区间上界与 chara-custom.js 的分布 ——
 
   {
-    desc: 'M8805 CHAR_CREATE 的「已在场复用」区间上界 40 改 39（首轮验收漏网的那一处）',
+    desc: 'M8805 char_create 的「已在场复用」区间上界 40 改 39（首轮验收漏网的那一处）',
     file: 'ere/chara/chara-custom.js',
     find: '    if (index >= 17 && index <= 40) {',
     replace: '    if (index >= 17 && index <= 39) {',
@@ -406,15 +406,15 @@ export default [
     must_mention: '特殊位区间上界 40',
   },
   {
-    desc: 'M8806 CHAR_APPEND 精英段的区间上界 210 改 209（首轮验收漏网的那一处）',
+    desc: 'M8806 char_append 精英段的区间上界 210 改 209（首轮验收漏网的那一处）',
     file: 'ere/chara/chara-custom.js',
     find: '  } else if (arg >= 201 && arg <= 210) {',
     replace: '  } else if (arg >= 201 && arg <= 209) {',
     tests: ['chara-custom'],
-    must_mention: '精英（201-210）在模式 1 同样走 CHAR_MAKE',
+    must_mention: '精英（201-210）在模式 1 同样走 char_make',
   },
   {
-    desc: 'M8807 CHAR_CREATE 输入映射的区间上界 60 改 59（60 落进兜底臂）',
+    desc: 'M8807 char_create 输入映射的区间上界 60 改 59（60 落进默认分支）',
     file: 'ere/chara/chara-custom.js',
     find: '    } else if (result >= 37 && result <= 60) {',
     replace: '    } else if (result >= 37 && result <= 59) {',
@@ -422,20 +422,20 @@ export default [
     must_mention: '特殊位区间上界 40',
   },
   {
-    desc: 'M8808 CHAR_APPEND 勇者段的区间上界 16 改 15（16 号不再随机成型）',
+    desc: 'M8808 char_append 勇者段的区间上界 16 改 15（16 号不再随机成型）',
     file: 'ere/chara/chara-custom.js',
     find: '  if (arg >= 1 && arg <= 16) {',
     replace: '  if (arg >= 1 && arg <= 15) {',
     tests: ['chara-custom'],
-    must_mention: '勇者（1-16）在模式 1 走 CHAR_MAKE',
+    must_mention: '勇者（1-16）在模式 1 走 char_make',
   },
   {
-    desc: 'M8809 CHAR_APPEND 精英段的区间下界 201 改 202（201 号不再随机成型）',
+    desc: 'M8809 char_append 精英段的区间下界 201 改 202（201 号不再随机成型）',
     file: 'ere/chara/chara-custom.js',
     find: '  } else if (arg >= 201 && arg <= 210) {',
     replace: '  } else if (arg >= 202 && arg <= 210) {',
     tests: ['chara-custom'],
-    must_mention: '精英（201-210）在模式 1 同样走 CHAR_MAKE',
+    must_mention: '精英（201-210）在模式 1 同样走 char_make',
   },
   {
     desc: 'M8810 特殊段的 FOR 上界 40 改 39（39 号不再列出）',
@@ -446,12 +446,12 @@ export default [
     must_mention: '特殊段列 17-39',
   },
   {
-    desc: 'M8811 CASE 35, 31 TO 33 的区间上界 33 改 32（33 号不再走 CHAR_INIT）',
+    desc: 'M8811 CASE 35, 31 TO 33 的区间上界 33 改 32（33 号不再走 char_init）',
     file: 'ere/chara/chara-custom.js',
     find: '  } else if ((arg >= 31 && arg <= 33) || arg === 35) {',
     replace: '  } else if ((arg >= 31 && arg <= 32) || arg === 35) {',
     tests: ['chara-custom'],
-    must_mention: 'CASE 31-33 与 35 走 CHAR_INIT',
+    must_mention: '预设 31-33 与 35 走 char_init',
   },
   {
     desc: 'M8812 名字长度上界 16 改 15（16 字的名字被拒）',
@@ -472,7 +472,7 @@ export default [
   {
     // 注：BUST_TALENTS 里删掉某一档是**等价变异**——五档在 CONFLICT_PAIRS 里
     // 构成为两两互斥的完全图（109/110/114/116/119 十条对全在表内），组内
-    // 清空循环与互斥检查重叠，任一侧单独生效都看不出差别。故这里改钉 :173
+    // 清空循环与互斥检查重叠，任一侧单独生效都看不出差别。故这里改钉还原行
     // 的还原行：`bust` 是取反后的值，替换成常量会让选中项落回 0
     desc: 'M8814 胸围组选中项的还原值改成常量 0（选中项被清空）',
     file: 'ere/chara/chara-custom2.js',
@@ -499,12 +499,12 @@ export default [
     must_mention: '外观页点选后按体型清肥胖位',
   },
   {
-    desc: 'M8817 设定完备后不再进入初体验问卷（:534 的调用删掉）',
+    desc: 'M8817 设定完备后不再进入初体验问卷（问卷的调用删掉）',
     file: 'ere/chara/chara-custom2.js',
     find: '    await chara_first_xp(cid);',
     replace: '    await Promise.resolve();',
     tests: ['chara-custom2'],
-    must_mention: 'TALENT_EMPTY_CHECK：完备时返回 0',
+    must_mention: 'talent_empty_check：完备时返回 0',
   },
   {
     desc: 'M8818 EMPTY_CHECK 职业区间的上界 220 改 221（221 号也算职业）',
@@ -523,7 +523,7 @@ export default [
     must_mention: '阴毛状态七个档位的上下界',
   },
   {
-    desc: 'M8820 SET_CHARASTERISTIC 的表外兜底从素质 0 改成 1（写错下标）',
+    desc: 'M8820 set_charasteristic 的表外缺省从素质 0 改成 1（写错下标）',
     file: 'ere/chara/chara-and-hair.js',
     find: '  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 0;',
     replace: '  const talent_id = GENERAL_CHARASTERISTICS[index] ?? 1;',
@@ -609,12 +609,12 @@ export default [
   },
   // —— #567：自由文本输入的空输入语义统一（0 ＝ 空输入）——
   // chara-custom 的名字输入与 chara-custom2 的两处自定义输入从 A 翻修到 B，
-  // 提示行各补一句输入 0 的说明；靶与断言见 test/chara-custom.test.js、
+  // 提示行各补一句输入 0 的说明；目标与断言见 test/chara-custom.test.js、
   // test/chara-custom2.test.js 的「输入 0」用例。
   {
-    desc: 'M11833 char_append 的名字输入改回 A 语义（0 落成名字「0」，:261-264 支不可达）',
+    desc: 'M11833 char_append 的名字输入改回 A 语义（0 落成名字「0」，该支不可达）',
     file: 'ere/chara/chara-custom.js',
-    find: "      const name = input_text(raw); // LOCALS '= RESULTS（0 经共享判据归空串）",
+    find: '      const name = input_text(raw); // 0 经共享判断条件归空串',
     replace: "      const name = String(raw ?? ''); // 变异：A 语义",
     tests: ['chara-custom'],
     must_mention: '输入 0 不再落成字面量「0」',
@@ -635,7 +635,7 @@ export default [
       "        kiss_name = String((await era.input()) ?? ''); // 变异：A 语义",
     tests: ['chara-custom2'],
     // #572 起选项是按钮：A 语义下部位一问照问、输入序列错位，由引擎的按钮
-    // 白名单当场拒收（断言走不到「:656 的播报」），变异仍被判红。
+    // 白名单当场拒收（断言走不到播报），变异仍被判红。
     must_mention: '输入不合法！请输入以下值之一：',
   },
   {
@@ -645,13 +645,12 @@ export default [
     replace:
       "          sex_name = String((await era.input()) ?? ''); // 变异：A 语义",
     tests: ['chara-custom2'],
-    must_mention: ':704 的播报',
+    must_mention: '该支的播报',
   },
   {
     desc: 'M11837 初吻提示行的输入 0 说明改坏（玩家看不到「不输入」的替代操作）',
     file: 'ere/chara/chara-custom2.js',
-    find: `        // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
-        era.print('（输入 0 随机生成初吻对象）');`,
+    find: `        // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形式）\n        era.print('（输入 0 随机生成初吻对象）');`,
     replace: `        // 变异：初吻的输入 0 说明删除`,
     tests: ['chara-custom2'],
     must_mention: 'ere 侧补的输入 0 说明（#567）',
@@ -659,16 +658,15 @@ export default [
   {
     desc: 'M11843 初体验提示行的输入 0 说明改坏（同一文案两处各钉一条，删一处不再共享断言）',
     file: 'ere/chara/chara-custom2.js',
-    find: `          // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形态）
-          era.print('（输入 0 随机生成初体验对象）');`,
+    find: `          // ere 侧补的输入 0 说明（#567：引擎不受理空提交，0 是「不输入」的可达形式）\n          era.print('（输入 0 随机生成初体验对象）');`,
     replace: `          // 变异：初体验的输入 0 说明删除`,
     tests: ['chara-custom2'],
     must_mention: 'ere 侧补的输入 0 说明（#567）',
   },
   {
-    // #562：PRINTLC 不换行，页脚四个按钮那一行由 :45 的 PRINTL 收尾后即入
+    // #562：PRINTLC 不换行，页脚四个按钮那一行由 PRINTL 收尾后即入
     // INPUT（见 CONTEXT.md「输出 API 与原作的对应」）
-    desc: 'M11865 角色定制页脚补回空行（照「PRINTLC 自带换行」翻译的旧形态）',
+    desc: 'M11865 角色定制页脚补回空行（照「PRINTLC 自带换行」翻译的旧写法）',
     file: 'ere/chara/chara-custom2.js',
     find: "    era.printButton('后一页', 998);",
     replace:
@@ -693,7 +691,7 @@ export default [
     replace:
       "      era.print('[1] 唇 '); // 变异\n      if (talent(0, T_扶她) || talent(0, T_男人)) {",
     tests: ['chara-custom2'],
-    must_mention: ':619-620 的 [201] 不显示',
+    must_mention: '[201] 不显示，其余三枚照常',
   },
   {
     desc: 'M12012 CHARA_FIRST_XP 的确认退回纯文本行',
@@ -713,7 +711,7 @@ export default [
     must_mention: '输入不合法！请输入以下值之一：',
   },
   {
-    desc: 'M12014 CHAR_APPEND 的性别选项改成按钮（源是 PRINTFORMW，WAIT 会把按钮整批禁用）',
+    desc: 'M12014 char_append 的性别选项改成按钮（源是 PRINTFORMW，WAIT 会把按钮整批禁用）',
     file: 'ere/chara/chara-custom.js',
     find: '    era.print(`[1] 男性${NBSP.repeat(6)}[2] 女性${NBSP.repeat(6)}[3] 扶她`);',
     replace:
@@ -727,7 +725,7 @@ export default [
     find: "      era.printButton('嘴', 3);",
     replace: "      era.print('[3] 嘴'); // 变异",
     tests: ['chara-custom2'],
-    must_mention: ':634 的三枚按钮',
+    must_mention: '野狗部位的三枚按钮',
   },
   {
     desc: 'M12016 CHARA_FIRST_XP 的 997 支路部位菜单退回纯文本行',
@@ -748,43 +746,44 @@ export default [
   },
   // —— #596：print 之后多补的空行普查（性格/发色列表与外观分组） ——
   {
-    desc: 'M12083 性格列表残行之后补回空行（:112 的 PRINTL 只收残行那一行）',
+    desc: 'M12083 性格列表残行之后补回空行（PRINTL 只收残行那一行）',
     file: 'ere/chara/chara-and-hair.js',
-    find: '  if (row.length > 0) {\n    era.print(row); // 的 PRINTL 只收残行那一行，不产生空行\n  } else {\n    // 整行恰满时 :112 的 PRINTL 落在空行上——这一支才是真空行',
+    find: "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行",
     replace:
-      '  if (row.length > 0) {\n    era.print(row); // 的 PRINTL 只收残行那一行，不产生空行\n    era.println(); // 变异：多补一条空行\n  } else {\n    // 整行恰满时 :112 的 PRINTL 落在空行上——这一支才是真空行',
+      "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n    era.println(); // 变异：多补一条空行",
     tests: ['chara-and-hair'],
     must_mention: '换行位置按每行 N 项',
   },
   {
-    desc: 'M12084 性格列表整行恰满时的真空行删除（:112 落在空行上——那一个是真行）',
+    desc: 'M12084 性格列表整行恰满时的真空行删除（恰满时 PRINTL 落在空行上——那一个是真行）',
     file: 'ere/chara/chara-and-hair.js',
-    find: '    // 整行恰满时 :112 的 PRINTL 落在空行上——这一支才是真空行\n    era.println();',
-    replace: '    // 变异：整行恰满时的真空行删除',
+    find: "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n  } else {\n    // 整行恰满时这里输出空行——这一支才是真空行\n    era.println();",
+    replace:
+      "      era.print(row); // 本行满 N 格\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n  } else {\n    // 变异：整行恰满时的真空行删除",
     tests: ['chara-and-hair'],
     must_mention: '每 3 项换行',
   },
   {
-    desc: 'M12085 发色列表残行之后补回空行（:227 的 PRINTL 只收残行那一行）',
+    desc: 'M12085 发色列表残行之后补回空行（PRINTL 只收残行那一行）',
     file: 'ere/chara/chara-and-hair.js',
-    find: '  if (row.length > 0) {\n    era.print(row); // 的 PRINTL 只收残行那一行，不产生空行\n  } else {\n    // 整行恰满时 :227 的 PRINTL 落在空行上——这一支才是真空行',
+    find: "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;\n    count += 1;\n    if (count % per_line === 0) {\n      era.print(row);\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行",
     replace:
-      '  if (row.length > 0) {\n    era.print(row); // 的 PRINTL 只收残行那一行，不产生空行\n    era.println(); // 变异：多补一条空行\n  } else {\n    // 整行恰满时 :227 的 PRINTL 落在空行上——这一支才是真空行',
+      "    row += `[${pad_left(String(color_id), 2)}] ${pad_display(ARR_HAIRCOLOR[color_id] ?? '', 7)}`;\n    count += 1;\n    if (count % per_line === 0) {\n      era.print(row);\n      row = '';\n    }\n  }\n  if (row.length > 0) {\n    era.print(row); // 残行整行输出，不产生空行\n    era.println(); // 变异：多补一条空行",
     tests: ['chara-and-hair'],
     must_mention: '每行 N 项可换',
   },
   {
-    desc: 'M12086 外观分组末尾补回空行（:231 的 PRINTL 只结束那一格行——行首由 :198 的 PRINTV "  " 起头）',
+    desc: 'M12086 外观分组末尾补回空行（PRINTL 只结束那一格行——行首由 PRINTV "  " 起头）',
     file: 'ere/chara/chara-custom3.js',
-    find: "  era.setColor(''); // RESETCOLOR（原作的字符色复位）",
+    find: "  era.setColor(''); // RESETCOLOR（字符色复位）",
     replace:
-      "  era.println(); // 变异：多补一条空行\n  era.setColor(''); // RESETCOLOR（原作的字符色复位）",
+      "  era.println(); // 变异：多补一条空行\n  era.setColor(''); // RESETCOLOR（字符色复位）",
     tests: ['chara-custom3'],
-    must_mention: '按钮行恰好一行，末尾 PRINTL 不生空行',
+    must_mention: '按钮行恰好一行，末尾收尾换行不生空行',
   },
-  // —— #653（F7）：列表越界放行修复守卫 ——
+  // —— #653（F7）：列表越界放行修复检查 ——
   {
-    desc: 'M13257 CHOOSE_CHARASTERISTIC 越界判据回退（等于表长又写素质 0）',
+    desc: 'M13257 choose_charasteristic 越界检查回退（等于表长又写素质 0）',
     file: 'ere/chara/chara-and-hair.js',
     find: '    if (result < 0 || result >= size) {',
     replace: '    if (result < 0 || result > size) {',
@@ -792,7 +791,7 @@ export default [
     must_mention: '重问后输入 3 → 表内第 3 项',
   },
   {
-    desc: 'M13258 CHOOSE_HAIRCOLOR 越界判据回退（12 号无名发色被接受）',
+    desc: 'M13258 choose_haircolor 越界检查回退（12 号无名发色被接受）',
     file: 'ere/chara/chara-and-hair.js',
     find: '    if (result < 1 || result >= size) {',
     replace: '    if (result < 1 || result > size) {',

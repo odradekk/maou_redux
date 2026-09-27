@@ -2,16 +2,16 @@
  * @file 妊娠、生产与育儿（issue #346，阶段 5a L15）。
  *
  * 移植说明：
- *   - MASTER 恒为角色 ID 0；SAVESTR 读 callname:id:-1。
- *   - RAND:N 经 rand 参数逐层透传；测试可注入确定性序列。
+ *   - 主角恒为角色 ID 0；姓名读 callname:id:-1。
+ *   - 随机数经 rand 参数逐层透传；测试可注入确定性序列。
  *   - 生产的复制角色用 addCharacter([新 ID, 预设 ID])。动态 ID 从 100000
  *     起（见 FIRST_CHILD_ID 的注释）按预设编号各保留 100 位，令存档中的 ID
- *     可反推出原作 NO；这既避免覆盖预设角色，也让同一预设连续生子和多代
+ *     可反推出预设编号；这既避免覆盖预设角色，也让同一预设连续生子和多代
  *     生育保留模板身份。
- *   - 原作调教外借 TFLAG:13 传 SELF_KOJO 事件码，走 game.train 的调用链
- *     临时值，不伪造调教期。
- *   - 三处 JUMP 都是不返回的尾调用：GB_DEFINE_NAME 与 CHILD_CARE_BEGIN
- *     直接返回被调函数结果；SUMMON_MONSTER 侧的自跳见对应模块。
+ *   - 自称口上的事件码在调教期外也走 game.train 的调用链临时值
+ *     （with_self_kojo_event），不伪造调教期。
+ *   - 三处尾调用都不返回：gb_define_name 与 child_care_begin 直接返回被调
+ *     函数结果；summon_monster 侧的自跳见对应模块。
  */
 
 'use strict';
@@ -57,7 +57,7 @@ const MAX_CHARANUM = 90;
  * 可达集合（预设 ≤ 777 ∪ 后代 [100000, 121099]）」算过不会落进固定编号区间，
  * 但静态检查只扫纯数字字面量，这两类靠人工普查（见 #560 的完成评论）。
  * 两者之间留出余量后起点取 100000。test/child-id-collision.test.js 的静态检查
- * 守「固定编号 < FIRST_CHILD_ID」，改小即红。撞号清单与选点依据见 #560。
+ * 保证「固定编号 < FIRST_CHILD_ID」，改小即红。撞号清单与选点依据见 #560。
  */
 const FIRST_CHILD_ID = 100000;
 const CHILD_ID_BLOCK_SIZE = 100;
@@ -84,7 +84,7 @@ function int_div(value, divisor) {
 
 function allocate_child_id(source) {
   const added = new Set(era.getAddedCharacters());
-  // 每个预设保留一个 100 位区间，令存档中的角色 ID 自带原作 NO；角色总数
+  // 每个预设保留一个 100 位区间，令存档中的角色 ID 自带预设编号；角色总数
   // 上限为 90，因此单一预设不可能耗尽一个区间。
   let cid = FIRST_CHILD_ID + (source - 1) * CHILD_ID_BLOCK_SIZE;
   while (added.has(cid)) cid += 1;
@@ -114,7 +114,7 @@ function resolve_father(mother) {
   return stored > 0 ? nid_r(stored - 1) : stored;
 }
 
-/** @N_FLAG_CLEAR（:872-881）：清除受孕来源、日期与父亲记录。 */
+/** n_flag_clear：清除受孕来源、日期与父亲记录。 */
 function n_flag_clear(cid) {
   if (chara(cid).invasion.状态 === 10) chara(cid).invasion.状态 = 0;
   chara(cid).system.主人膣内射精 = 0;
@@ -131,7 +131,7 @@ function n_flag_clear(cid) {
   return 0;
 }
 
-/** @PREG_TALENT_GET（:202-234）：取得妊娠与异常妊娠素质。 */
+/** preg_talent_get：取得妊娠与异常妊娠素质。 */
 async function preg_talent_get(cid) {
   const kind = chara(cid).train.异常妊娠部位;
   const place = {
@@ -155,7 +155,7 @@ async function preg_talent_get(cid) {
   return 1;
 }
 
-/** @N_BREAST_GROW（:887-916）：胸部尺寸上升一档。 */
+/** n_breast_grow：胸部尺寸上升一档。 */
 function n_breast_grow(cid, rand = default_rand) {
   const view = chara(cid).chara;
   if (view.绝壁) {
@@ -195,7 +195,7 @@ function n_breast_grow(cid, rand = default_rand) {
   return 0;
 }
 
-/** @N_BREAST_REVERSE（:922-943）：胸部尺寸下降一档。 */
+/** n_breast_reverse：胸部尺寸下降一档。 */
 function n_breast_reverse(cid, rand = default_rand) {
   const view = chara(cid).chara;
   if (view.超乳) {
@@ -219,7 +219,7 @@ function n_breast_reverse(cid, rand = default_rand) {
   return 0;
 }
 
-/** @N_RESET_STATUS（:829-851）：妊娠/育儿结束后的恢复。 */
+/** n_reset_status：妊娠/育儿结束后的恢复。 */
 function n_reset_status(cid, rand = default_rand) {
   const view = chara(cid).chara;
   if (view.超乳) {
@@ -239,7 +239,7 @@ function n_reset_status(cid, rand = default_rand) {
   return 0;
 }
 
-/** @CHILD_BIRTH_PLACE（:856-867）：输出异常生产部位。 */
+/** child_birth_place_text：输出异常生产部位。 */
 function child_birth_place_text(cid) {
   if (chara(cid).chara.乳内妊娠) return '从巨大的乳房中';
   if (chara(cid).chara.精巢妊娠) return '从巨大的阴囊，通过阴茎';
@@ -294,7 +294,7 @@ function n_change_stress(cid) {
   return stress;
 }
 
-/** @N_CHANGE_STATUS（:647-823）：妊娠发觉时的身体与精神变化。 */
+/** n_change_status：妊娠发觉时的身体与精神变化。 */
 async function n_change_status(cid, rand = default_rand) {
   chara(cid).dungeon.体力上限 = Math.max(1, chara(cid).dungeon.体力上限 - 500);
   chara(cid).dungeon.体力 = Math.min(
@@ -339,7 +339,7 @@ async function n_change_status(cid, rand = default_rand) {
   return 0;
 }
 
-/** @NINSIN_AWARE（:68-199）：检查受孕条件并进入妊娠状态。 */
+/** ninsin_aware：检查受孕条件并进入妊娠状态。 */
 async function ninsin_aware(cid, rand = default_rand) {
   const cv = chara(cid).chara;
   if (
@@ -410,7 +410,7 @@ async function ninsin_aware(cid, rand = default_rand) {
   return 1;
 }
 
-/** @NINSIN_REACH_TERM（:239-292）：临产前移动与迎击召回。 */
+/** ninsin_reach_term：临产前移动与迎击召回。 */
 async function ninsin_reach_term(cid, rand = default_rand) {
   era.print(`${name_of(cid)}快要临盘了……`);
   if (chara(cid).invasion.状态 === 9) {
@@ -452,7 +452,7 @@ async function ninsin_reach_term(cid, rand = default_rand) {
   return 0;
 }
 
-/** @GB_DEFINE_NAME（:628-642）：按父母名字类型尾调用随机命名。 */
+/** gb_define_name：按父母名字类型尾调用随机命名。 */
 function gb_define_name(child, mother, father, rand = default_rand) {
   const type =
     father > 0
@@ -474,7 +474,7 @@ async function finish_child(child, source, mother, father, race, levels, rand) {
   return child;
 }
 
-/** @GB_ADD_GUARD（:470-558）：生成近卫后代。 */
+/** gb_add_guard：生成近卫后代。 */
 async function gb_add_guard(mother = 0, father = 0, rand = default_rand) {
   const other = mother === 0 ? father : mother;
   const other_template = other > 0 ? template_no_of(other) : other;
@@ -512,7 +512,7 @@ async function gb_add_guard(mother = 0, father = 0, rand = default_rand) {
   return finish_child(child, source, mother, father, 9, levels, rand);
 }
 
-/** @GB_ADD_SLAVE（:563-625）：生成普通奴隶/勇者后代。 */
+/** gb_add_slave：生成普通奴隶/勇者后代。 */
 async function gb_add_slave(mother, father, rand = default_rand) {
   const mother_template = template_no_of(mother);
   const source =
@@ -551,7 +551,7 @@ async function gb_add_slave(mother, father, rand = default_rand) {
   return child;
 }
 
-/** @NINSIN_GIVE_BIRTH（:420-464）：按双亲类型生成后代或怪物。 */
+/** ninsin_give_birth：按双亲类型生成后代或怪物。 */
 async function ninsin_give_birth(mother, rand = default_rand) {
   const father = resolve_father(mother);
   if (era.getAddedCharacters().length >= MAX_CHARANUM) {
@@ -581,7 +581,7 @@ function child_description(cid, father) {
   );
 }
 
-/** @CHILD_CARE_CHANGE_NURSE（:981-1068）：改由合格的母性角色照看。 */
+/** child_care_change_nurse：改由合格的母性角色照看。 */
 async function child_care_change_nurse(cid, rand = default_rand) {
   const eligible = era
     .getAddedCharacters()
@@ -646,7 +646,7 @@ async function child_care_change_nurse(cid, rand = default_rand) {
   return 0;
 }
 
-/** @CHILD_CARE_BEGIN（:949-974）：进入育儿室；崩坏者尾调用换人。 */
+/** child_care_begin：进入育儿室；崩坏者尾调用换人。 */
 async function child_care_begin(cid, rand = default_rand) {
   if (chara(cid).stronghold.崩坏) return child_care_change_nurse(cid, rand);
   era.print(`${cid === 0 ? name_of(0) : name_of(cid)}开始在育儿室照顾孩子。`);
@@ -667,7 +667,7 @@ async function child_care_begin(cid, rand = default_rand) {
   return 0;
 }
 
-/** @NINSIN_REACH_DAY（:297-414）：生产日的流产、NTR 与正常生产分支。 */
+/** ninsin_reach_day：生产日的流产、NTR 与正常生产分支。 */
 async function ninsin_reach_day(cid, rand = default_rand) {
   const stored_father = chara(cid).event.孩子父亲;
   const father = resolve_father(cid);
@@ -749,7 +749,7 @@ async function ninsin_reach_day(cid, rand = default_rand) {
   return 0;
 }
 
-/** @CHILD_CARE_DEPART（:1074-1098）：育儿结束并生成孩子。 */
+/** child_care_depart：育儿结束并生成孩子。 */
 async function child_care_depart(cid, rand = default_rand) {
   era.print(`${name_of(cid)}照顾的孩子终于可以离开母亲了。`);
   era.drawLine();
@@ -771,7 +771,7 @@ async function child_care_depart(cid, rand = default_rand) {
   return 0;
 }
 
-/** @NINSIN_MAIN（:16-64）：每日妊娠/生产/育儿推进。 */
+/** ninsin_main：每日妊娠/生产/育儿推进。 */
 async function ninsin_main(rand = default_rand) {
   for (const cid of [...era.getAddedCharacters()]) {
     if ((await ninsin_aware(cid, rand)) === 1) continue;

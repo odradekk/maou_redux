@@ -46,13 +46,13 @@ function seed_able(fixture, cid = 1) {
   return cid;
 }
 
-// —— @CHECK_ABLE_TO_JOB_CHANGE（:23-42，式中函数）——
+// —— check_able_to_job_change（式中函数）——
 
-test('CHECK_ABLE_TO_JOB_CHANGE：五档判定的先后与边界——表驱动走完整个维度', () => {
+test('check_able_to_job_change：五档判定的先后与边界——表驱动走完整个维度', () => {
   // [标签, arg, 状态, 等级, 期望]；状态 null = 不预设（读作 0）
   const table = [
     ['魔王恒不可转职', 0, null, 99, 1],
-    ['魔王：状态 2 也还是 1（ARG==0 先判）', 0, 2, 99, 1],
+    ['魔王：状态 2 也还是 1（arg==0 先判）', 0, 2, 99, 1],
     ['侵攻中的勇者', 1, 2, 99, 2],
     ['侵攻中：等级不足也还是 2（状态 2 先于等级判）', 1, 2, 0, 2],
     ['等级 49 = 差一点', 1, 0, 49, 3],
@@ -72,9 +72,9 @@ test('CHECK_ABLE_TO_JOB_CHANGE：五档判定的先后与边界——表驱动�
   }
 });
 
-// —— @SHOW_BUTTON_JOB_CHANGE（:4-20）——
+// —— show_button_job_change ——
 
-test('SHOW_BUTTON_JOB_CHANGE：侵攻中不渲染；其余三档渲染同一按钮，只有不可用档染灰', () => {
+test('show_button_job_change：侵攻中不渲染；其余三档渲染同一按钮，只有不可用档染灰', () => {
   // [标签, 状态, 等级, 期望的 setColor 调用序列]
   const table = [
     ['侵攻中：按钮整个不出现', 2, 99, []],
@@ -97,9 +97,9 @@ test('SHOW_BUTTON_JOB_CHANGE：侵攻中不渲染；其余三档渲染同一按�
   }
 });
 
-// —— @CHARA_INFO_JOB_CHANGE（:45-230）：入口四档 ——
+// —— chara_info_job_change：入口四档 ——
 
-test('CHARA_INFO_JOB_CHANGE：四档拒绝——三档播报后返回 0，侵攻中那档静默返回 2', async () => {
+test('chara_info_job_change：四档拒绝——三档播报后返回 0，侵攻中那档静默返回 2', async () => {
   // [标签, 状态, 等级, arg, 期望返回, 期望播报]
   const table = [
     ['魔王不可转职', 0, 99, 0, 0, '你的职业无法改变'],
@@ -124,9 +124,9 @@ test('CHARA_INFO_JOB_CHANGE：四档拒绝——三档播报后返回 0，侵攻
   }
 });
 
-// —— @CHARA_INFO_JOB_CHANGE：菜单渲染与输入校验（:68-101）——
+// —— chara_info_job_change：菜单渲染与输入校验 ——
 
-test('CHARA_INFO_JOB_CHANGE：菜单恒有 0-9/12/999，上位职两项按勋章数（EXP:81 > 9）出现', async () => {
+test('chara_info_job_change：菜单恒有 0-9/12/999，上位职两项按勋章数（EXP:81 > 9）出现', async () => {
   for (const [medals, expected_tenth, expected_eleventh] of [
     [9, false, false],
     [10, true, true],
@@ -170,7 +170,7 @@ test('CHARA_INFO_JOB_CHANGE：菜单恒有 0-9/12/999，上位职两项按勋章
     );
     // 排版：每行 JOB_MENU_COLUMNS(3) 格——按 Row 分组逐行钉住。格数常量
     // 少写一格时最后一行会散开（11 项 3 格一行 → 收尾是 [9,12] 两格一行），
-    // 这条断言就是那个边界的看门人（M9046）
+    // 这条断言盯住那个边界（M9046）
     const rows = [];
     for (const b of buttons(fixture)) {
       if (rows.length === 0 || rows.at(-1).row !== b.row) {
@@ -193,7 +193,7 @@ test('CHARA_INFO_JOB_CHANGE：菜单恒有 0-9/12/999，上位职两项按勋章
   }
 });
 
-test('CHARA_INFO_JOB_CHANGE：999 返回且不动任何状态', async () => {
+test('chara_info_job_change：999 返回且不动任何状态', async () => {
   const fixture = create_era_fixture();
   seed_able(fixture);
   fixture.store.set('talent:1:200', 1); // 旧职业标记
@@ -204,9 +204,9 @@ test('CHARA_INFO_JOB_CHANGE：999 返回且不动任何状态', async () => {
   assert.equal(fixture.store.get('cflag:1:9'), 50, '未动等级');
 });
 
-// —— @CHARA_INFO_JOB_CHANGE：转职落地（:103-176）——
+// —— chara_info_job_change：转职实现 ——
 
-/** 职业号 → 职业名（TALENTNAME 的播种值，与菜单正文同源：yml/Talent.yml） */
+/** 职业号 → 职业名（talentname 的播种值，与菜单正文同源：yml/Talent.yml） */
 const JOB_NAMES = {
   0: '战士',
   1: '魔法师',
@@ -223,7 +223,7 @@ const JOB_NAMES = {
   12: '魔物使',
 };
 
-test('CHARA_INFO_JOB_CHANGE：转职落地——职业表先清后设、等级归 1、四维与上限按职业表（13 档表驱动）', async () => {
+test('chara_info_job_change：转职实现——职业表先清后设、等级归 1、四维与上限按职业表（13 档表驱动）', async () => {
   // [输入, 职业素质, 战斗技能素质, 状态, [攻,防,基础攻,基础防], 上限, 治癒, 鼓舞, 追加输入]
   const table = [
     [0, 200, 240, 0, [20, 20, 20, 20], 2000, false, true, []],
@@ -343,7 +343,7 @@ test('CHARA_INFO_JOB_CHANGE：转职落地——职业表先清后设、等级�
   }
 });
 
-test('CHARA_INFO_JOB_CHANGE：弃教一问——三个条件只放行「换掉神官后仍有神官技能」这一支', async () => {
+test('chara_info_job_change：弃教一问——三个条件只放行「换掉神官后仍有神官技能」这一支', async () => {
   // [标签, 预设的 250/242 技能, 新职业, 282 预设, 期望提问次数]
   const table = [
     ['旧神官技能还在（242）且新职不是神官/巫女 → 问', 242, 0, 0, 1],
@@ -375,7 +375,7 @@ test('CHARA_INFO_JOB_CHANGE：弃教一问——三个条件只放行「换掉�
   }
 });
 
-test('CHARA_INFO_JOB_CHANGE：弃教问答答 [1] 不落弃教', async () => {
+test('chara_info_job_change：弃教问答答 [1] 不落弃教', async () => {
   const fixture = create_era_fixture();
   seed_able(fixture);
   fixture.store.set('talent:1:242', 1); // 旧神官技能
@@ -388,9 +388,9 @@ test('CHARA_INFO_JOB_CHANGE：弃教问答答 [1] 不落弃教', async () => {
   assert.equal(texts(fixture).includes('*已经弃教了*'), false, '不播报弃教');
 });
 
-// —— @JOB_CHANGE_BENKI（:233-262）——
+// —— job_change_benki ——
 
-test('JOB_CHANGE_BENKI：菜单两行各带当前取值（GET_LOOK_INFO 的两 kind），[999] 終了', async () => {
+test('job_change_benki：菜单两行各带当前取值（get_look_info 的两 kind），[999] 終了', async () => {
   const fixture = create_era_fixture();
   seed_able(fixture);
   fixture.store.set('talent:1:281', 1); // 战斗常识：奉侍战斗
@@ -417,7 +417,7 @@ test('JOB_CHANGE_BENKI：菜单两行各带当前取值（GET_LOOK_INFO 的两 k
   );
 });
 
-test('JOB_CHANGE_BENKI：[0] 战斗常识三档循环；[1] 日常常识六档循环且没养狗时跳过兽奸档', async () => {
+test('job_change_benki：[0] 战斗常识三档循环；[1] 日常常识六档循环且没养狗时跳过兽奸档', async () => {
   // [标签, 起始值, 目标素质, 是否养狗, 期望值]
   const table = [
     ['战斗 0 → 1', 0, 281, false, 1],
@@ -442,7 +442,7 @@ test('JOB_CHANGE_BENKI：[0] 战斗常识三档循环；[1] 日常常识六档�
   }
 });
 
-test('CHARA_INFO_JOB_CHANGE：魔物使转职后选契约魔兽——编号写入 CFLAG:570 并播报怪物名', async () => {
+test('chara_info_job_change：魔物使转职后选契约魔兽——编号写入 CFLAG:570 并播报怪物名', async () => {
   const fixture = create_era_fixture();
   seed_able(fixture);
   fixture.store.set('item:110', 1); // 持有 110 号怪物
@@ -453,7 +453,7 @@ test('CHARA_INFO_JOB_CHANGE：魔物使转职后选契约魔兽——编号写�
 
   assert.ok(
     buttons(fixture).some((b) => b.accelerator === 110),
-    '持有怪物进了 MONSTERPLAY_LIST 的按钮列表',
+    '持有怪物进了 monsterplay_list 的按钮列表',
   );
   assert.equal(fixture.store.get('cflag:1:570'), 110, '契约怪物写入 CFLAG:570');
   assert.ok(texts(fixture).includes('与哥布林缔结契约了'), '播报怪物名');

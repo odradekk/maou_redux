@@ -1,6 +1,6 @@
 /**
  * @file ere/chara/chara-name-edit.js 的行为测试（issue #384，N2）：
- * @SHOW_BUTTON_NAME_EDIT / @CHECK_ABLE_TO_NAME_EDIT / @CHARA_INFO_NAME_EDIT。
+ * show_button_name_edit / check_able_to_name_edit / chara_info_name_edit。
  *
  * 缝 = test/helpers/era-fixture.js。判定函数是纯的（只看 CFLAG:1），
  * 按钮外观断言看夹具的 `rendered` 字段（引擎的 `[加速键] ` 前缀与空白
@@ -38,7 +38,7 @@ function texts(fixture) {
  * 带进按钮**（data/research/fixture-engine-gap.md 的观察面限制）；
  * `button.color` 只反映显式传的 `config.color`，本模块从不传，于是
  * `assert.equal(button.color, undefined)` 对任何输入都成立——那是一句
- * 验不出东西的断言（#384 返工整改）。
+ * 验不出东西的断言（#384 返工）。
  */
 function color_calls(fixture) {
   return fixture.calls
@@ -46,11 +46,11 @@ function color_calls(fixture) {
     .map((call) => call.args[0]);
 }
 
-// —— @CHECK_ABLE_TO_NAME_EDIT（:32-50）——
+// —— check_able_to_name_edit ——
 
 test('check_able_to_name_edit：五档返回值的完整分支表', () => {
   const table = [
-    ['魔王（ARG 0）恒 1', 0, undefined, 1],
+    ['魔王（角色号 0）恒 1', 0, undefined, 1],
     ['侵攻中的勇者（状态 2）', 3, 2, 2],
     ['苗床（状态 7）', 3, 7, 3],
     ['调教中（状态 1）', 3, 1, 4],
@@ -68,7 +68,7 @@ test('check_able_to_name_edit：五档返回值的完整分支表', () => {
   }
 });
 
-// —— @SHOW_BUTTON_NAME_EDIT（:4-29）——
+// —— show_button_name_edit ——
 
 test('show_button_name_edit：可改名时渲染「改名」按钮，正文不带手写快捷键前缀', () => {
   const fixture = create_era_fixture();
@@ -84,7 +84,7 @@ test('show_button_name_edit：可改名时渲染「改名」按钮，正文不�
   assert.deepEqual(
     color_calls(fixture),
     [''],
-    '可改名时不染灰（只有 :29 RESETCOLOR 的那一次空参）',
+    '可改名时不染灰（只有末尾复位默认色的那一次空参）',
   );
 });
 
@@ -96,13 +96,13 @@ test('show_button_name_edit：reset 非零渲染「还原名字」', () => {
   assert.equal(buttons(fixture)[0].rendered, '[1] 还原名字 ');
 });
 
-test('show_button_name_edit：侵攻中的勇者整条按钮不渲染（:14-15）', () => {
+test('show_button_name_edit：侵攻中的勇者整条按钮不渲染', () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 3);
   fixture.store.set('cflag:3:1', 2);
   const { show_button_name_edit } = load(fixture);
   show_button_name_edit(0, 3);
-  assert.deepEqual(buttons(fixture), [], '状态 2 → 直接 RETURN 0');
+  assert.deepEqual(buttons(fixture), [], '状态 2 → 直接返回 0');
 });
 
 test('show_button_name_edit：奴隷不可改名时染灰并在按钮后复原默认色', () => {
@@ -117,8 +117,8 @@ test('show_button_name_edit：奴隷不可改名时染灰并在按钮后复原�
       '[0] 改名 ',
       `状态 ${state} 仍渲染按钮`,
     );
-    // SETCOLOR 0x646464 → era.setColor('#646464')、:29 RESETCOLOR →
-    // 空参（SDK「Set default text color」）。**染色本身在夹具里不可见**：
+    // 染灰即 era.setColor('#646464')、复原即末尾的 era.setColor('') 空参
+    // （SDK「Set default text color」）。**染色本身在夹具里不可见**：
     // 夹具只记录 setColor 调用、不模拟「后续输出被染」的状态（见 color_calls
     // 的注释），故断言的是这对调用的次序。
     assert.deepEqual(
@@ -136,20 +136,20 @@ test('show_button_name_edit：魔王档（返回值 1）不染灰', () => {
   assert.equal(
     buttons(fixture)[0].rendered,
     '[0] 改名 ',
-    ':16-18 魔王走 ELSEIF LOCAL == 1（按钮照渲染）',
+    '魔王走可改名档（按钮照渲染）',
   );
   assert.deepEqual(
     color_calls(fixture),
     [''],
-    ':16-18 的魔王档不进 :19-22 的染灰支——拆掉 `able !== KING` 这一半会红',
+    '魔王档不进染灰支——拆掉 able !== NAME_EDIT_KING 这一半会红',
   );
 });
 
-// —— @CHARA_INFO_NAME_EDIT（:53-109）——
+// —— chara_info_name_edit ——
 
 test('chara_info_name_edit：魔王档（返回值 1）不走不可改名支，照常进改名循环', async () => {
-  // 的判据是 `LOCAL != 0 && LOCAL != 1`——魔王是**例外**，改名照做
-  // （按钮那侧 :16-18 只是不染灰）。拆掉 `&& able !== NAME_EDIT_KING`
+  // 这里的判断条件是 `able != 0 && able != 1`——魔王是**例外**，改名照做
+  // （按钮那侧只是不染灰）。拆掉 `&& able !== NAME_EDIT_KING`
   // 这一半时，魔王会被当成不可改名：既没有「的新名字是？」也没有落名。
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '魔王');
@@ -159,9 +159,13 @@ test('chara_info_name_edit：魔王档（返回值 1）不走不可改名支，�
   assert.equal(await chara_info_name_edit(0), 0);
   assert(
     texts(fixture).includes('魔王的新名字是？'),
-    ':89 的输入循环入口（魔王档不该被 :61 挡下）',
+    '输入循环入口（魔王档不该被挡下）',
   );
-  assert.equal(fixture.store.get('callname:0:-2'), '新魔王名', ':99 落名');
+  assert.equal(
+    fixture.store.get('callname:0:-2'),
+    '新魔王名',
+    '称呼键写入新名',
+  );
 });
 
 test('chara_info_name_edit：不可改名的三档各自反馈，返回值区分 2 与 0', async () => {
@@ -200,7 +204,7 @@ test('chara_info_name_edit：还原名字——称呼回到初始值并读回', 
   );
   assert(
     texts(fixture).some((t) => t.includes('恢复了原来的名字')),
-    ':78 的播报',
+    '还原名字的播报',
   );
 });
 
@@ -212,19 +216,19 @@ test('chara_info_name_edit：改名成功——两个名字键都更新为输入
   const { chara_info_name_edit } = load(fixture);
 
   assert.equal(await chara_info_name_edit(3), 0);
-  assert.equal(fixture.store.get('callname:3:-1'), '新名字', ':98');
-  assert.equal(fixture.store.get('callname:3:-2'), '新名字', ':99');
+  assert.equal(fixture.store.get('callname:3:-1'), '新名字', '姓名键更新');
+  assert.equal(fixture.store.get('callname:3:-2'), '新名字', '称呼键更新');
   assert(
     texts(fixture).some((t) => t === '旧名今后被称呼为新名字。'),
-    ':97 的播报用改名前的称呼',
+    '播报用改名前的称呼',
   );
 });
 
-test('chara_info_name_edit：输入 0 走原作的零长分支（#567：0 视为空输入，名字不变更）', async () => {
+test('chara_info_name_edit：输入 0 走零长分支（#567：0 视为空输入，名字不变更）', async () => {
   // 引擎把回传值按 getNumber 归一（夹具同款）：空输入与字面量 "0" 到手都是
-  // 数值 0。#567 的裁定——原作有「不输入」分支的自由文本输入一律按 B 处理：
-  // 0 视为空输入、走原作 :100-101「名字没有变更」支。代价是玩家不能把名字
-  // 设成字面量「0」（有意取舍，判据与依据见 ere/utils/input-text.js）。
+  // 数值 0。#567 的结论——带「不输入」分支的自由文本输入一律按空输入处理：
+  // 0 视为空输入、走「名字没有变更」支。代价是玩家不能把名字
+  // 设成字面量「0」（有意取舍，判断条件与依据见 ere/utils/input-text.js）。
   const fixture = create_era_fixture();
   add_chara(fixture, 3, '旧名');
   fixture.store.set('cflag:3:1', 0);
@@ -232,20 +236,17 @@ test('chara_info_name_edit：输入 0 走原作的零长分支（#567：0 视为
   const { chara_info_name_edit } = load(fixture);
 
   assert.equal(await chara_info_name_edit(3), 0);
-  assert(
-    texts(fixture).includes('旧名的名字没有变更。'),
-    ':101 的播报（空输入支）',
-  );
+  assert(texts(fixture).includes('旧名的名字没有变更。'), '播报（空输入支）');
   assert.equal(fixture.store.get('callname:3:-1'), '旧名', '姓名键不动');
   assert.equal(fixture.store.get('callname:3:-2'), '旧名', '称呼键不动');
 });
 
-test('chara_info_name_edit：零长输入落「名字没有变更」支（:100-101，不写任何键）', async () => {
-  // SELECTCASE STRLENS(LOCALS) 的 CASEELSE。归一路径见上一条（引擎归一
-  // 后的 0），本例补的是「压根没有回传值」的缺值形态：`Number(undefined)`
-  // = NaN → 原样回传，真机上渲染层拦住空提交、不会出现，夹具留作形态覆盖，
+test('chara_info_name_edit：零长输入落「名字没有变更」支（不写任何键）', async () => {
+  // 长度判定的零长支。归一路径见上一条（引擎归一
+  // 后的 0），本例补的是「压根没有回传值」的缺值形式：`Number(undefined)`
+  // = NaN → 原样回传，真机上渲染层拦住空提交、不会出现，夹具留作缺值形式的覆盖，
   // 移植侧以 `undefined/null → ''` 承接（utils/input-text.js）。没有这条
-  // 用例时，`strlens(input) > 0` 这半个判据（落地 vs 不动）无人守。
+  // 用例时，`strlens(input) > 0` 这半个判断条件（写键 vs 不动）无人守。
   const fixture = create_era_fixture();
   add_chara(fixture, 3, '旧名');
   fixture.store.set('cflag:3:1', 0);
@@ -255,13 +256,13 @@ test('chara_info_name_edit：零长输入落「名字没有变更」支（:100-1
   assert.equal(await chara_info_name_edit(3), 0);
   assert(
     texts(fixture).includes('旧名的名字没有变更。'),
-    ':101 的播报（走 ELSE 支而非落地支）',
+    '播报（走「没有变更」支而非写键支）',
   );
   assert.equal(fixture.store.get('callname:3:-1'), '旧名', '姓名键不动');
   assert.equal(fixture.store.get('callname:3:-2'), '旧名', '称呼键不动');
 });
 
-test('chara_info_name_edit：超长名字打回重问（重新进入 :88 的输入循环）', async () => {
+test('chara_info_name_edit：超长名字打回重问（重新进入输入循环）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 3, '旧名');
   fixture.store.set('cflag:3:1', 0);
@@ -272,7 +273,7 @@ test('chara_info_name_edit：超长名字打回重问（重新进入 :88 的输�
   assert.equal(await chara_info_name_edit(3), 0);
   assert(
     texts(fixture).includes('名字太长，请使用全角八字以下的名字。'),
-    ':94 的提示',
+    '打回提示',
   );
   assert.equal(
     fixture.store.get('callname:3:-2'),
@@ -354,5 +355,5 @@ test('chara_info_name_edit：还原名字时同样按 CFLAG:450 决定是否重�
   fixture.store.set('cflag:3:450', 99);
   const { chara_info_name_edit } = load(fixture);
   await chara_info_name_edit(3, 1);
-  assert.notEqual(fixture.store.get('cstr:3:60'), undefined, ':82 已调用');
+  assert.notEqual(fixture.store.get('cstr:3:60'), undefined, '重设路径已调用');
 });

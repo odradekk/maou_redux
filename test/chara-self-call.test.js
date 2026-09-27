@@ -444,7 +444,7 @@ test('set_nick_selfcall：姓名含半角字符时立即回落姓名本体并返
 
 test('set_nick_selfcall：NID 决定和名/洋名分派，男性和名 [3000,4059) 归和名（#653 修复）', () => {
   const cases = [
-    ['NID<200 → 洋名（CASE0 直接照抄）', 0, 0, '索菲亚'],
+    ['NID<200 → 洋名（CASE0 直接用原名）', 0, 0, '索菲亚'],
     ['NID 落 [200,1000) → 和名（CASE1 挑字）', 200, 1, '索菲'],
     ['NID 落 [3000,4059) → 和名（男性和名同样挑字）', 3000, 1, '索菲'],
     // 注：type===2（组合名）与 type===1（洋名）在此调用点走的是同一条
@@ -472,17 +472,17 @@ test('set_nick_selfcall：和名六档（NID 落 [200,1000)）', () => {
   fixture.store.set('cflag:1:6', 200);
   const nick = load(fixture);
 
-  // CASE 0：字数<=2 → 原样照抄
+  // CASE 0：字数<=2 → 原样保留
   fixture.store.set('callname:1:-1', '皐月');
   assert.equal(
     nick.set_nick_selfcall(1, -1, seq([])),
     0,
-    '和名CASE0字数<=2原样照抄',
+    '和名CASE0字数<=2原样保留',
   );
   assert.equal(
     fixture.store.get('cstr:1:60'),
     '皐月',
-    '和名CASE0字数<=2原样照抄',
+    '和名CASE0字数<=2原样保留',
   );
 
   // CASE 1：字数>2，无尾「子」→ 首字 + 随机挑一字（rand(2)=1 → 第 3 字"美"）
@@ -551,7 +551,7 @@ test('set_nick_selfcall：洋名五档（NID 落 [0,200)）', () => {
   fixture.store.set('cflag:1:6', 0);
   const nick = load(fixture);
 
-  // CASE 0：字数<=3 → 原样照抄
+  // CASE 0：字数<=3 → 原样保留
   fixture.store.set('callname:1:-1', '艾莉');
   assert.equal(nick.set_nick_selfcall(1, -1, seq([])), 0);
   assert.equal(fixture.store.get('cstr:1:60'), '艾莉');
@@ -653,7 +653,7 @@ test('random_self_call：档位落 [9,100) 委派合适一人称表，档位与�
   );
 });
 
-test('random_self_call：合适一人称表耗尽后落到绰号一人称表，档位为 命中档+100 但返回值只是命中档（原作不对称，1:1 保留）', async () => {
+test('random_self_call：合适一人称表耗尽后落到绰号一人称表，档位为 命中档+100 但返回值只是命中档（不对称是既有行为，保留）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1, '皐月'); // 2 字，和名 CASE 0 直接命中
   fixture.store.set('cflag:1:6', 200); // 和名区间
@@ -672,7 +672,7 @@ test('random_self_call：两张表均落空时清空档位重试一次，最终�
   assert.equal(fixture.store.get('cstr:1:60'), '我');
   assert.equal(fixture.store.get('cflag:1:450'), 9);
 });
-test('random_self_call：档位 >=200 或为负数时走 CSV 预设回落；预设存在则采用并把档位清零', async () => {
+test('random_self_call：档位 >=200 或为负数时走角色预设回落；预设存在则采用并把档位清零', async () => {
   const cases = [
     ['档位 >=200', 200],
     ['档位为负', -5],
@@ -681,13 +681,13 @@ test('random_self_call：档位 >=200 或为负数时走 CSV 预设回落；预�
     const fixture = create_era_fixture();
     add_chara(fixture, 1);
     fixture.store.set('cflag:1:450', preset_flag);
-    fixture.store.set('chara:1', { cstr: { 60: '朕' } }); // CSV 预设一人称
+    fixture.store.set('chara:1', { cstr: { 60: '朕' } }); // 角色预设一人称
     assert.equal(await load(fixture).random_self_call(1, seq([])), 0, label);
     assert.equal(fixture.store.get('cstr:1:60'), '朕', label);
     assert.equal(fixture.store.get('cflag:1:450'), 0, label);
   }
 });
-test('random_self_call：CSV 预设缺失时降级为 <9 直设分支（不清空档位重试，因为已经落在 <0 分支内部）', async () => {
+test('random_self_call：角色预设缺失时降级为 <9 直设分支（不清空档位重试，因为已经落在 <0 分支内部）', async () => {
   const fixture = create_era_fixture();
   add_chara(fixture, 1); // 未预置 chara:1，即无 CSTR 预设
   fixture.store.set('cflag:1:450', -1);
@@ -697,8 +697,8 @@ test('random_self_call：CSV 预设缺失时降级为 <9 直设分支（不清�
 });
 
 // ---- random_self_call MODE 1（自定义输入，#546）——
-// 引擎事实（app.asar 与 dev-guides/05-interaction.md:124）：INPUTS 的 ere 等价物
-// `era.input()` 在本轮未打印按钮时接受任意文本，回传值经 getNumber 归一
+// 引擎事实（app.asar 与 dev-guides/05-interaction.md:124）：era.input() 在
+// 本轮未打印按钮时接受任意文本，回传值经 getNumber 归一
 // （`Number(e); isNaN ? e : 数值`）——空串与 "0" 都归一成 0，非数字串原样。
 
 test('random_self_call MODE 1：自由文本 → 写入 CSTR:60、档位清 0、返回 0；不碰两张子表', async () => {
@@ -714,8 +714,8 @@ test('random_self_call MODE 1：自由文本 → 写入 CSTR:60、档位清 0、
   assert.equal(fixture.store.get('cstr:1:60'), '在下', 'CSTR:x:60 = 输入文本');
   assert.equal(fixture.store.get('cflag:1:450'), 0, 'CFLAG:x:450 = 0');
   assert.equal(rand_calls, 0, '自定义命中不掷骰');
-  // $INPUT_LOOP 的输出：两条分割线夹提示（:10-12）+ ere 侧补的一句
-  // 「（输入 0 随机设定）」（有意偏离，见实现处注释）
+  // 输入提示的形状：两条分割线夹提示 + ere 侧补的一句
+  // 「（输入 0 随机设定）」（有意偏离既有行为，#567）
   const texts = fixture.text_lines();
   assert.equal(
     texts.filter((t) => t === '请输入想设定的第一人称，若不输入则随机设定')
@@ -739,7 +739,7 @@ test('random_self_call MODE 1：数字文本按引擎归一成数值再字符串
 });
 // （曾有「set_inputs('') 模拟空输入」一例：真实引擎不受理空提交，该路径只在
 // 夹具里存在，getNumber 的 ''→0 归一已由 test/fixture.test.js 钉住，删除）
-test('random_self_call MODE 1：输入 0 代替空输入（有意偏离，原作会把一人称写成「0」）→ 随机路径沿用进入时的档位（:6）', async () => {
+test('random_self_call MODE 1：输入 0 代替空输入（有意偏离既有行为，#567）→ 随机路径沿用进入时的档位', async () => {
   // 引擎不受理空提交（渲染层吞掉直接回车），「不输入则随机设定」的等价物
   // 是输入 0；提示行后另有一句 ere 侧说明「（输入 0 随机设定）」
   const fixture = create_era_fixture();

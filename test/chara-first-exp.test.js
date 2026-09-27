@@ -1,8 +1,8 @@
 /**
- * ere/chara/chara-first-exp.js @CHARA_FIRST_EXP 的行为测试（issue #394，N10）。
+ * ere/chara/chara-first-exp.js chara_first_exp 的行为测试（issue #394，N10）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）+ 函数的 `rand`
- * 形参（原作 `RAND:N` 的随机源，缺省均匀随机）。
+ * 形参（`RAND:N` 型随机源，缺省均匀随机）。
  *
  * 随机源的三档用法：
  *   - never = () => 1：所有 `== 0` 判定不中（`> 0` 判定命中）；
@@ -13,11 +13,11 @@
  *     position_roll 取「分母 + 位次」而非「绝对位次」的理由）。
  *
  * 被测量的是四个产物（CFLAG:15/16 与 CSTR:3/4）与掷骰序（分母序列）——
- * 后者是分支结构的直接观测面，若干「这一段有没有掷」的判据只能由它回答。
+ * 后者是分支结构的直接观测面，若干「这一段有没有掷」的条件只能由它回答。
  *
- * 注意两处无掷的「兜底」：`:588-591`（无条件把候选写成初吻对象名）与
- * `:593-597`（无条件把候选写成初体验对象名，随后把未定的初体验补成 100）。
- * 只要 `not_virgin()`（TALENT:0 == 0）成立且初体验为 0，初体验就必定被这两行
+ * 注意两处无掷的保底处理：末段无条件把候选写成初吻对象名；初体验侧同款，
+ * 随后把未定的初体验补成 100。
+ * 只要 `not_virgin()`（TALENT:0 == 0）成立且初体验为 0，初体验就必定被这两处
  * 接手——要观测别的分支必须先把初体验从 0 上挪开。
  */
 
@@ -64,7 +64,7 @@ const all_2 = (n) => (n === 2 ? 0 : 1);
 /**
  * 按「分母 : 第几次（0 基）」指定该次掷骰的返回值，形如
  * `{ 3: { 0: 2 } }` = 第 0 次 RAND:3 返回 2。未登记的掷一律返回 1（不中）。
- * 比 hit_nth 多一档「返回 1 以外的值」，给 SELECTCASE 的 CASEELSE 用。
+ * 比 hit_nth 多一档「返回 1 以外的值」，让三选项式能掷出 2（取第三项）。
  */
 function script(spec) {
   const used = new Map();
@@ -114,9 +114,9 @@ function product(fixture) {
   };
 }
 
-// —— 初值与写回（:14-19 / :664-667） ——
+// —— 初值与写回 ——
 
-test('四项产物写回各自的 CFLAG / CSTR（:664-667）', () => {
+test('四项产物写回各自的 CFLAG / CSTR', () => {
   const fixture = setup({
     'cflag:1:16': 401, // 初吻：肛门
     'cstr:1:4': '青梅竹马',
@@ -132,7 +132,7 @@ test('四项产物写回各自的 CFLAG / CSTR（:664-667）', () => {
   );
 });
 
-test('四项产物恰好写这四个槽（:664-667）', () => {
+test('四项产物恰好写这四个槽', () => {
   const fixture = setup();
   run(fixture, never);
   const written = fixture.var_writes
@@ -145,13 +145,13 @@ test('四项产物恰好写这四个槽（:664-667）', () => {
   );
 });
 
-test('全跳过路径的掷骰序：初吻/初体验都非 0 时只有 :477-585 两段（:29/:199/:215 的守卫）', () => {
+test('全跳过路径的掷骰序：初吻/初体验都非 0 时只剩两段三选（其余段的采纳条件不成立）', () => {
   const fixture = setup({ 'cflag:1:16': 401, 'cflag:1:15': 103 });
   const calls = run(fixture, never);
   assert.deepEqual(
     calls,
     [3, 3, 2, 3],
-    ':477 三选 RAND:3 + 预约部位 [3,2] + :550 三选 RAND:3',
+    '不幸なキス三选 RAND:3 + 预约链 [3,2] + 誰にでもあるキス三选 RAND:3',
   );
   assert.deepEqual(
     product(fixture),
@@ -160,9 +160,9 @@ test('全跳过路径的掷骰序：初吻/初体验都非 0 时只有 :477-585 
   );
 });
 
-// —— :22-26 两处「未体验」修正 ——
+// —— 两处「未体验」修正 ——
 
-test(':22-23 不是男人 + 非处女 + FIRST_SEX == -1 → 拉回 0（随后被 :596 补成 100）', () => {
+test('不是男人 + 非处女 + 初体验编码 -1 → 拉回 0（随后被末段补成 100）', () => {
   const rows = [
     { male: 0, virgin: 0, first_sex: -1, fired: true },
     { male: 0, virgin: 1, first_sex: -1, fired: false },
@@ -179,12 +179,12 @@ test(':22-23 不是男人 + 非处女 + FIRST_SEX == -1 → 拉回 0（随后被
     assert.equal(
       product(fixture).sex,
       row.fired ? 100 : -1,
-      `male=${row.male} virgin=${row.virgin}：${row.fired ? '判据成立 → 0 → :596 补 100' : '判据不成立 → 保持 -1'}`,
+      `male=${row.male} virgin=${row.virgin}：${row.fired ? '条件成立 → 0 → 末段补 100' : '条件不成立 → 保持 -1'}`,
     );
   }
 });
 
-test(':25-26 性交经验或卖春经验 + FIRST_KISS == -1 → 拉回 0（|| 的两侧表驱动）', () => {
+test('性交经验或卖春经验 + 初吻编码 -1 → 拉回 0（|| 的两侧表驱动）', () => {
   const rows = [
     { sex_exp: 0, sale_exp: 0, fired: false },
     { sex_exp: 1, sale_exp: 0, fired: true },
@@ -198,7 +198,7 @@ test(':25-26 性交经验或卖春经验 + FIRST_KISS == -1 → 拉回 0（|| �
       'exp:1:74': row.sale_exp, // 卖淫经验
     });
     run(fixture, never);
-    // 判据成立 → -1 变 0 → :588 采纳候选 → :644 落到嘴唇；不成立 → 保持 -1
+    // 条件成立 → -1 变 0 → 末段采纳候选 → 部位落在嘴唇；不成立 → 保持 -1
     assert.equal(
       product(fixture).kiss,
       row.fired ? 1 : -1,
@@ -207,7 +207,7 @@ test(':25-26 性交经验或卖春经验 + FIRST_KISS == -1 → 拉回 0（|| �
   }
 });
 
-// —— :29-48 兽姦三连 ——
+// —— 兽姦三连 ——
 
 test('兽姦三连：部位 996 / 997 / 998 与三档概率（表驱动）', () => {
   const rows = [
@@ -225,14 +225,14 @@ test('兽姦三连：部位 996 / 997 / 998 与三档概率（表驱动）', () 
       `RAND:${row.denominator} 命中 → 部位 ${row.point}`,
     );
 
-    // 该档不中 → 部位不动（后续两档也因 FIRST_KISS != 0 被跳过）
+    // 该档不中 → 部位不动（后续两档也因初吻编码 != 0 被跳过）
     const miss = setup({ 'cflag:1:16': 0, 'exp:1:56': 1 });
     run(miss, never);
     assert.notEqual(product(miss).kiss, row.point, '不中则不设该部位');
   }
 });
 
-test('兽姦三连的后两档被前一档挡下（:36/:43 的 FIRST_KISS == 0 判据）', () => {
+test('兽姦三连的后两档被前一档挡下（后档要求初吻编码仍为 0）', () => {
   const fixture = setup({ 'cflag:1:16': 0, 'exp:1:56': 1 });
   const calls = run(fixture, (n) => (n === 20 ? 0 : 1));
   assert.deepEqual(
@@ -242,7 +242,7 @@ test('兽姦三连的后两档被前一档挡下（:36/:43 的 FIRST_KISS == 0 �
   );
 });
 
-test('兽姦命中且非处女时初体验落到 103（:32-33 的两侧）', () => {
+test('兽姦命中且非处女时初体验落到 103（rand(2) 的两侧）', () => {
   const hit = setup({
     'cflag:1:16': 0,
     'cflag:1:15': 0,
@@ -262,11 +262,11 @@ test('兽姦命中且非处女时初体验落到 103（:32-33 的两侧）', () 
   assert.equal(
     product(virgin).sex,
     0,
-    '处女不走野良犬初体验（:22-23 也不动它）',
+    '处女不走野良犬初体验（「未体验」修正也不动它）',
   );
 });
 
-test('兽奸经验的判据（:29/:36/:43 的第三个条件）两侧', () => {
+test('兽奸经验的条件（三档各自的第三个条件）两侧', () => {
   const with_exp = setup({ 'cflag:1:16': 0, 'exp:1:56': 1 });
   const calls_with = run(with_exp, never);
   assert(
@@ -286,7 +286,7 @@ test('兽奸经验的判据（:29/:36/:43 的第三个条件）两侧', () => {
   );
 });
 
-test('兽姦三连要求初吻未定且称呼为空（:29 前两个条件的表驱动）', () => {
+test('兽姦三连要求初吻未定且称呼为空（前两个条件的表驱动）', () => {
   const rows = [
     { kiss: -1, name: '', why: '初吻 -1 不参与兽姦段' },
     { kiss: 0, name: '已有', why: '已有称呼不参与兽姦段' },
@@ -302,9 +302,9 @@ test('兽姦三连要求初吻未定且称呼为空（:29 前两个条件的表�
   }
 });
 
-// —— :58-196 家族段 ——
+// —— 家族段 ——
 
-test('家族段：婚姻状态 × 性别数字位 = 表驱动（:64-130 的三臂全覆盖）', () => {
+test('家族段：婚姻状态 × 性别数字位 = 表驱动（内层三个分支全覆盖）', () => {
   const states = [
     { code: 1, labels: ['丈夫', '扶她妻子', '妻子'] },
     { code: 2, labels: ['前夫', '前扶她妻子', '前妻'] },
@@ -312,7 +312,7 @@ test('家族段：婚姻状态 × 性别数字位 = 表驱动（:64-130 的三�
     { code: 4, labels: ['前夫', '前扶她妻子', '前妻'] },
     { code: 5, labels: ['亡夫', '亡妻（扶她）', '亡妻'] },
   ];
-  // CASE 0,4,8 → 男；CASE 1,5,7 → 扶她；CASEELSE → 女
+  // 数字位 0/4/8 → 男；1/5/7 → 扶她；其余 → 女
   const digits = [0, 4, 8, 1, 5, 7, 2, 3, 6, 9];
   const branch_of = (digit) =>
     [0, 4, 8].includes(digit) ? 0 : [1, 5, 7].includes(digit) ? 1 : 2;
@@ -321,7 +321,7 @@ test('家族段：婚姻状态 × 性别数字位 = 表驱动（:64-130 的三�
       const fixture = setup({
         'cflag:1:16': 0,
         // TALENT:320 家族构成：个位 1 = 有家族设定、万位 = 婚姻状态、
-        // 十亿位 = 配偶性别数字位（:53 / :61-62）
+        // 十亿位 = 配偶性别数字位
         'talent:1:320': 1 + state.code * 10000 + digit * 1e9,
       });
       run(fixture, all_2);
@@ -334,7 +334,7 @@ test('家族段：婚姻状态 × 性别数字位 = 表驱动（:64-130 的三�
   }
 });
 
-test('家族段未列出的婚姻状态不产生配偶候选（:64 的 SELECTCASE 无 CASEELSE）', () => {
+test('家族段未列出的婚姻状态不产生配偶候选（MARRIAGE_PARTNER 查不到即跳过）', () => {
   const labels = [
     '丈夫',
     '扶她妻子',
@@ -365,7 +365,7 @@ test('家族段未列出的婚姻状态不产生配偶候选（:64 的 SELECTCAS
   }
 });
 
-test('家族段的各位数字互不串味：只置某一个亲属位（:133-194 的四个截取）', () => {
+test('家族段的各位数字互不串味：只置某一个亲属位（四个截取）', () => {
   // 每行只置一位、其余位为零：被置的亲属胜出，说明它读的正是自己那一位
   const rows = [
     { name: '兄位 1e6', place: 1e6, label: '亲哥哥' },
@@ -379,18 +379,18 @@ test('家族段的各位数字互不串味：只置某一个亲属位（:133-194
     assert.equal(product(fixture).kiss_name, row.label, row.name);
   }
 
-  // 个位改取十位时这组状态必须变脸：十位非零的家族码在正确判据下仍是「有家族设定」
+  // 个位改取十位时这组状态必须变脸：十位非零的家族码在正确条件下仍是「有家族设定」
   const tens = setup({ 'cflag:1:16': 0, 'talent:1:320': 1 + 1e6 + 10 });
   run(tens, always);
   assert.equal(
     product(tens).kiss_name,
     '亲哥哥',
-    '十位非零不影响个位的家族设定判据',
+    '十位非零不影响个位的家族设定条件',
   );
 });
 
-test('家族段亲属六项：表驱动（:132-194）', () => {
-  // 父与母排在最后两格，母要等父的两条判据都不中才轮到（:177-194 的链式 ELSEIF）
+test('家族段亲属六项：表驱动', () => {
+  // 父与母排在最后两格，母要等父的两条条件都不中才轮到（链式的 else if）
   const rows = [
     { name: '兄', place: 1e6, label: '亲哥哥', gender: 1, rand: always },
     { name: '弟', place: 1e8, label: '亲弟弟', gender: 1, rand: always },
@@ -402,8 +402,8 @@ test('家族段亲属六项：表驱动（:132-194）', () => {
       place: null,
       label: '亲妈',
       gender: 2,
-      // 父的 RAND:20 不中、母的命中；hit_nth(3,0) 让 :477 的三选与它后面那条
-      // 预约链都命中（与 always 下的兄/姉同款），把 KISS_POINT 定在 101
+      // 父的 RAND:20 不中、母的命中；hit_nth(3,0) 让不幸なキス的三选与它后面那条
+      // 预约链都命中（与 always 下的兄/姉同款），把 kiss_point 定在 101
       rand: hits(all_2, hit_nth(20, 1), hit_nth(3, 0)),
     },
   ];
@@ -415,18 +415,18 @@ test('家族段亲属六项：表驱动（:132-194）', () => {
     });
     run(fixture, row.rand);
     assert.equal(product(fixture).kiss_name, row.label, `${row.name}命中`);
-    // 性别一路传到初吻部位：:542 先把预约的 101（ペニス）落下来，随后
-    //   - 对象是男 1 → :637 的 `FIRST_KISS < 300 && MEN_OR_GIRL:1 == 2` 不成立 → 保 101；
-    //   - 对象是女 2 → :637 白纸成 0，:643 的 RAND:30 不中（`> 0` 为假）→ 落アナル 401。
+    // 性别一路传到初吻部位：预约的 101（ペニス）先落进初吻，随后
+    //   - 对象是男 1 → 白纸条件（编码 < 300 且对象性别 2）不成立 → 保 101；
+    //   - 对象是女 2 → 白纸成 0，RAND:30 不中（`> 0` 为假）→ 落アナル 401。
     assert.equal(
       product(fixture).kiss,
       row.gender === 1 ? 101 : 401,
-      `${row.name}的性别经 :637 白纸规则后的落点`,
+      `${row.name}的性别经白纸规则后的落点`,
     );
   }
 });
 
-test('亲属段的位置位为零时该亲属不出场（:136/:145/:158/:167 的 LOCAL:1 > 0）', () => {
+test('亲属段的位置位为零时该亲属不出场（各分支要求截取位 > 0）', () => {
   const rows = [
     { name: '兄', place: 1e6 },
     { name: '弟', place: 1e8 },
@@ -455,7 +455,7 @@ test('亲属段的位置位为零时该亲属不出场（:136/:145/:158/:167 的
   }
 });
 
-test('前面的亲属已给出候选时后面的不再掷（:136 的 LOCALS:2 == "" 链）', () => {
+test('前面的亲属已给出候选时后面的不再掷（候选为空的链式判断）', () => {
   const fixture = setup({
     'cflag:1:16': 0,
     'talent:1:320': 1 + 1e6 + 1e8, // 兄与弟都在场
@@ -464,14 +464,14 @@ test('前面的亲属已给出候选时后面的不再掷（:136 的 LOCALS:2 ==
   assert.equal(product(fixture).kiss_name, '亲哥哥', '兄先命中即停');
 });
 
-test('三个「控」加成分支（:148-152 / :170-174 / :180-184 / :190-194）', () => {
+test('三个「控」加成分支', () => {
   const rows = [
     { talent: 143, place: 1e8, label: '亲弟弟', hint: '正太控' },
     { talent: 142, place: 1e7, label: '亲妹妹', hint: '萝莉控' },
   ];
   for (const row of rows) {
     // 持有该控 + RAND:20 全不中、RAND:5 命中 → 加成支；
-    // all_2 让 :199 的采纳掷命中，候选才进得了产物
+    // all_2 让家族段的采纳掷命中，候选才进得了产物
     const on = setup({
       'cflag:1:16': 0,
       'talent:1:320': 1 + row.place,
@@ -483,7 +483,7 @@ test('三个「控」加成分支（:148-152 / :170-174 / :180-184 / :190-194）
     );
     assert.equal(product(on).kiss_name, row.label, `${row.hint}加成支`);
 
-    // 未持有 → RAND:5 命中也不加成（含 :149 的 TALENT 判据）
+    // 未持有 → RAND:5 命中也不加成（加成支还要求持有对应素质）
     const off = setup({ 'cflag:1:16': 0, 'talent:1:320': 1 + row.place });
     run(
       off,
@@ -536,7 +536,7 @@ test('三个「控」加成分支（:148-152 / :170-174 / :180-184 / :190-194）
   }
 });
 
-test('家族段只在个位为 1 时展开（:58 的两侧）', () => {
+test('家族段只在个位为 1 时展开（两侧）', () => {
   const on = setup({ 'cflag:1:16': 0, 'talent:1:320': 1 + 1e6 });
   assert(run(on, never).includes(20), '个位 1 → 亲属段开掷');
 
@@ -546,23 +546,23 @@ test('家族段只在个位为 1 时展开（:58 的两侧）', () => {
   }
 });
 
-// —— :224-465 「キスしたかもしれない職業」段 ——
-// —— :224-465 「キスしたかもしれない職業」段 ——
+// —— 「キスしたかもしれない職業」段 ——
+// —— 「キスしたかもしれない職業」段 ——
 //
-// 表驱动的前置知识：职业段的候选要进产物，靠的是 :468-471 的采纳掷
-// （`RAND:2 == 0`）——在此之前 :588 的无掷兜底会被 :550 段覆写候选，只有
-// 拿到的才是职业段给的称呼。于是两类取法：
+// 表驱动的前置知识：职业段的候选要进产物，靠的是职业段末尾的采纳掷
+// （`RAND:2 == 0`）——没被采纳的话，后面的不幸なキス/誰にでもあるキス段
+// 会换掉候选，只有采纳过的才是职业段给的称呼。于是两类取法：
 //   - `all_2`（所有 RAND:2 命中）覆盖「链在 RAND:4/3/5/6/7/20/25 上命中」与
 //     「链尾就是 RAND:2」；
-//   - `hit_nth(2, 2)` 覆盖 ELSE 臂：第 0 次 RAND:2 是 :215、第 1 次是链尾、
-//     第 2 次才是 :468（五条 RAND 链各只消耗一个 RAND:2）。
+//   - `hit_nth(2, 2)` 覆盖 ELSE 分支：第 0 次 RAND:2 是家族段后的再掷、第 1 次
+//     是链尾、第 2 次才是职业段的采纳（五条 RAND 链各只消耗一个 RAND:2）。
 //
 // 注意短路求值下 `rand(20) === 0 && is_male` 里的 RAND:20 **照掷**（左操作数
 // 先求值），所以后面几段的分母位次要把这些「掷了但用不上」的算进去。
 
-test('职业段：男／扶她共用表 —— 十个职业的表驱动（:225-380）', () => {
+test('职业段：男／扶她共用表 —— 十个职业的表驱动', () => {
   const rows = [
-    // 学生：三段链 + ELSE，四臂各一行
+    // 学生：三段链 + ELSE，四个分支各一行
     { job: 1, rand: () => hits(all_2, hit_nth(4, 0)), label: '学校的后辈' },
     { job: 1, rand: () => hits(all_2, hit_nth(3, 0)), label: '学校的先辈' },
     { job: 1, rand: () => all_2, label: '女教师' }, // 链尾 RAND:2 命中
@@ -586,7 +586,7 @@ test('职业段：男／扶她共用表 —— 十个职业的表驱动（:225-3
     { job: 5, rand: () => all_2, label: '女客人' },
     { job: 20, rand: () => all_2, label: '女奴隶主' },
   ];
-  // 男与扶她两段逐字相同（:225-300 / :305-380），两侧各走一遍全表
+  // 男与扶她两段逐字相同，两侧各走一遍全表
   for (const talent of [122, 121]) {
     for (const row of rows) {
       const fixture = setup({
@@ -604,8 +604,8 @@ test('职业段：男／扶她共用表 —— 十个职业的表驱动（:225-3
   }
 });
 
-test('职业段：男／扶她表的「貴族」ELSE 臂是「小女仆」（:391-393）', () => {
-  // 与女表不同：男／扶她这条 CASE 有 ELSE，链全不中就走它（女表那条没有）
+test('职业段：男／扶她表的「貴族」ELSE 分支是「小女仆」', () => {
+  // 与女表不同：男／扶她这条链有 ELSE，链全不中就走它（女表那条没有）
   const fixture = setup({
     'cflag:1:16': 0,
     'talent:1:122': 1,
@@ -621,10 +621,10 @@ test('职业段：男／扶她表的「貴族」ELSE 臂是「小女仆」（:39
     'talent:1:315': 8,
   });
   run(hit_family, all_2);
-  assert.equal(product(hit_family).kiss_name, '家庭教师', 'RAND:2 命中臂');
+  assert.equal(product(hit_family).kiss_name, '家庭教师', 'RAND:2 命中分支');
 });
 
-test('职业段：女表 —— 十个职业的表驱动（:385-462）', () => {
+test('职业段：女表 —— 十个职业的表驱动', () => {
   const rows = [
     { job: 1, rand: () => hits(all_2, hit_nth(4, 0)), label: '学校的后辈' },
     { job: 1, rand: () => hits(all_2, hit_nth(3, 0)), label: '学校的先辈' },
@@ -656,9 +656,9 @@ test('职业段：女表 —— 十个职业的表驱动（:385-462）', () => {
   }
 });
 
-test('职业段的「貴族」链全不中时保留上一轮的候选（:406-412 的无 ELSE）', () => {
+test('职业段的「貴族」链全不中时保留上一轮的候选（该表项没有 ELSE）', () => {
   // 家族段的「兄」给出候选、但它自己的采纳掷落空（初吻称呼还是空）；
-  // 职业段（貴族）链全不中且没有 ELSE → 候选保留「亲哥哥」；:468 的采纳才落地
+  // 职业段（貴族）链全不中且没有 ELSE → 候选保留「亲哥哥」；职业段的采纳掷才写进产物
   const fixture = setup({
     'cflag:1:16': 0,
     'talent:1:320': 1 + 1e6,
@@ -673,7 +673,7 @@ test('职业段的「貴族」链全不中时保留上一轮的候选（:406-412
   assert.equal(product(fixture).kiss_name, '亲哥哥', '候选保留上一轮的值');
 });
 
-test('职业段的「貴族」在女表里没有 ELSE：链全不中则候选留空（:406-412）', () => {
+test('职业段的「貴族」在女表里没有 ELSE：链全不中则候选留空', () => {
   const fixture = setup({ 'cflag:1:16': 0, 'talent:1:315': 8 });
   run(fixture, hit_nth(2, 2)); // 职业段不给候选，后面几段接手
   const name = product(fixture).kiss_name;
@@ -683,10 +683,10 @@ test('职业段的「貴族」在女表里没有 ELSE：链全不中则候选留
     'RAND:20 与 RAND:25 都不中 → 职业段不给候选',
   );
   assert.notEqual(name, '佣人', '同上');
-  assert.equal(name, '男朋友', '候选由 :550-585 接手给出');
+  assert.equal(name, '男朋友', '候选由誰にでもあるキス段接手给出');
 });
 
-test('职业段未列举的职业不动候选（:225 的 SELECTCASE 无 CASEELSE）', () => {
+test('职业段未列举的职业不动候选（职业表查不到即跳过）', () => {
   const fixture = setup({ 'cflag:1:16': 0, 'talent:1:315': 2 }); // 职业 2 未列举
   run(fixture, hit_nth(2, 2));
   const name = product(fixture).kiss_name;
@@ -696,7 +696,7 @@ test('职业段未列举的职业不动候选（:225 的 SELECTCASE 无 CASEELSE
   );
 });
 
-test('职业段按性别选表：男／扶她取「女对象」表、女取「男对象」表（:302/:382/:464）', () => {
+test('职业段按性别选表：男／扶她取「女对象」表、女取「男对象」表', () => {
   const male_like = setup({
     'cflag:1:16': 0,
     'talent:1:122': 1,
@@ -718,9 +718,9 @@ test('职业段按性别选表：男／扶她取「女对象」表、女取「�
   assert.equal(product(female_like).kiss_name, '长官的儿子', '女走男对象表');
 });
 
-test('职业段的预约部位：男／扶她表两条臂（:291-298 / :373-380）', () => {
-  // KISS_POINT 会被 :477-533 的预约链覆写，所以要让那条链两条臂都落空：
-  // RAND:2 的第 0 次 = :215、第 1 次 = :468、第 2 次 = 不幸なキス链的第二臂
+test('职业段的预约部位：男／扶她表两条分支', () => {
+  // kiss_point 会被不幸なキス的预约链覆写，所以要让那条链两条分支都落空：
+  // RAND:2 的第 0 次 = 家族段后的再掷、第 1 次 = 职业段采纳、第 2 次 = 不幸なキス链的第二分支
   const rules = (denominator) =>
     hits(hit_nth(2, 0), hit_nth(2, 1), hit_nth(denominator, 0));
   const arm1 = setup({
@@ -730,10 +730,10 @@ test('职业段的预约部位：男／扶她表两条臂（:291-298 / :373-380�
   });
   run(arm1, rules(3));
   assert.equal(product(arm1).kiss_name, '女客人');
-  assert.equal(product(arm1).kiss, 301, '娼婦的第一臂 → ヴァギナ 301');
+  assert.equal(product(arm1).kiss, 301, '娼婦的第一分支 → ヴァギナ 301');
 
-  // 第二臂：第一臂落空、链的 RAND:2 命中 → 401。位次要让第 2 次 RAND:2 留给
-  // （否则采纳掷一起落空，称呼就进不了产物）
+  // 第二分支：第一分支落空、链的 RAND:2 命中 → 401。位次要让第 2 次 RAND:2
+  // 留给职业段的采纳掷（否则一起落空，称呼就进不了产物）
   const arm2 = setup({
     'cflag:1:16': 0,
     'talent:1:122': 1,
@@ -741,31 +741,35 @@ test('职业段的预约部位：男／扶她表两条臂（:291-298 / :373-380�
   });
   run(arm2, hits(hit_nth(2, 0), hit_nth(2, 1), hit_nth(2, 2)));
   assert.equal(product(arm2).kiss_name, '女奴隶主');
-  assert.equal(product(arm2).kiss, 401, '奴隷的第二臂 → アナル 401');
+  assert.equal(product(arm2).kiss, 401, '奴隷的第二分支 → アナル 401');
 });
 
-test('职业段的预约部位：女表两条臂（:455-461）', () => {
+test('职业段的预约部位：女表两条分支', () => {
   const arm1 = setup({ 'cflag:1:16': 0, 'talent:1:315': 5 });
   run(arm1, hits(hit_nth(2, 0), hit_nth(2, 1), hit_nth(3, 0)));
   assert.equal(product(arm1).kiss_name, '中年客人');
-  assert.equal(product(arm1).kiss, 101, '娼婦的第一臂 → ペニス 101');
+  assert.equal(product(arm1).kiss, 101, '娼婦的第一分支 → ペニス 101');
 });
 
-test('预约链落空时 KISS_POINT 保持 0，:542 不落部位（:542 的判据）', () => {
+test('预约链落空时 kiss_point 保持 0，预约部位不写回（写回要求 kiss_point > 0）', () => {
   const fixture = setup({
     'cflag:1:16': 0,
     'talent:1:122': 1,
     'talent:1:315': 5,
   });
-  // RAND:2：0 = :215、1 = 预约链第二臂（落空）、2 = :468 采纳
+  // RAND:2：0 = 家族段后的再掷、1 = 预约链第二分支（落空）、2 = 职业段采纳
   run(fixture, hits(hit_nth(2, 0), hit_nth(2, 2)));
-  assert.equal(product(fixture).kiss_name, '女客人', '采纳掷命中，称呼落地');
-  assert.equal(product(fixture).kiss, 1, '无预约 → :644 走嘴唇');
+  assert.equal(
+    product(fixture).kiss_name,
+    '女客人',
+    '采纳掷命中，称呼写进产物',
+  );
+  assert.equal(product(fixture).kiss, 1, '无预约 → 部位走嘴唇');
 });
 
-// —— :477-533 不幸なキス 与 :550-585 誰にでもあるキス ——
+// —— 不幸なキス 与 誰にでもあるキス ——
 
-test('不幸なキス：三选项 × 三性别表驱动（:477-533）', () => {
+test('不幸なキス：三选项 × 三性别表驱动', () => {
   const rows = [
     { talent: 122, options: ['狩猎少年的痴女', '淫乱女家教', '女暴露狂'] },
     { talent: 121, options: ['狩猎少年的痴女', '淫乱女家教', '女暴露狂'] },
@@ -777,7 +781,7 @@ test('不幸なキス：三选项 × 三性别表驱动（:477-533）', () => {
         'cflag:1:16': 0,
         ...(row.talent === null ? {} : { [`talent:1:${row.talent}`]: 1 }),
       });
-      // 的三选是第 0 次 RAND:3（CASEELSE 走 2）；第 2 次是 :536 的采纳掷
+      // 不幸なキス的三选是第 0 次 RAND:3（掷 2 取第三项）；第 2 次是本段的采纳掷
       const roll = index === 2 ? 2 : index;
       run(fixture, script({ 3: { 0: roll, 2: 0 } }));
       assert.equal(
@@ -789,7 +793,7 @@ test('不幸なキス：三选项 × 三性别表驱动（:477-533）', () => {
   }
 });
 
-test('誰にでもあるキス：三选项 × 三性别表驱动（:550-585）', () => {
+test('誰にでもあるキス：三选项 × 三性别表驱动', () => {
   const rows = [
     { talent: 122, options: ['青梅竹马', '女朋友', '初恋'] },
     { talent: 121, options: ['青梅竹马', '女朋友', '初恋'] },
@@ -801,7 +805,7 @@ test('誰にでもあるキス：三选项 × 三性别表驱动（:550-585）',
         'cflag:1:16': 0,
         ...(row.talent === null ? {} : { [`talent:1:${row.talent}`]: 1 }),
       });
-      // 的三选是第 3 次 RAND:3（:477 三选、预约链、:536 各占一次）
+      // 誰にでもあるキス的三选是第 3 次 RAND:3（不幸なキス三选、预约链、采纳掷各占一次）
       const roll = index === 2 ? 2 : index;
       run(fixture, script({ 3: { 3: roll } }));
       assert.equal(
@@ -813,40 +817,40 @@ test('誰にでもあるキス：三选项 × 三性别表驱动（:550-585）',
   }
 });
 
-test('不幸なキス的三选项带预约部位（:486-492 / :524-530）', () => {
-  // 男／扶她表：KISS_POINT 301，对象性别 2 → 301 与它相容，保留
+test('不幸なキス的三选项带预约部位', () => {
+  // 男／扶她表：kiss_point 301，对象性别 2 → 301 与它相容，保留
   const female_target = setup({ 'cflag:1:16': 0, 'talent:1:122': 1 });
   run(female_target, script({ 3: { 0: 0, 1: 0, 2: 0 } }));
   assert.equal(product(female_target).kiss_name, '狩猎少年的痴女');
   assert.equal(product(female_target).kiss, 301, '女对象 + ヴァギナ预约');
 
-  // 女表：KISS_POINT 101，对象性别 1 → 保留
+  // 女表：kiss_point 101，对象性别 1 → 保留
   const male_target = setup({ 'cflag:1:16': 0 });
   run(male_target, script({ 3: { 0: 0, 1: 0, 2: 0 } }));
   assert.equal(product(male_target).kiss_name, '流氓');
   assert.equal(product(male_target).kiss, 101, '男对象 + ペニス预约 101');
 
-  // 第二臂（アナル 401）：链的 RAND:3 落空、RAND:2 命中。RAND:2 的位次：
-  // 0 = :215、1 = :468、2 = 这条链的第二臂
+  // 第二分支（アナル 401）：链的 RAND:3 落空、RAND:2 命中。RAND:2 的位次：
+  // 0 = 家族段后的再掷、1 = 职业段采纳、2 = 这条链的第二分支
   const anal = setup({ 'cflag:1:16': 0, 'talent:1:122': 1 });
   run(anal, hits(hit_nth(2, 2), script({ 3: { 0: 0, 2: 0 } })));
-  assert.equal(product(anal).kiss, 401, '第二臂 → アナル 401');
+  assert.equal(product(anal).kiss, 401, '第二分支 → アナル 401');
 });
 
-// —— :588-597 无条件兜底 ——
+// —— 末段的无条件写候选 ——
 
-test(':588-591 无掷采纳：前面的段都没给候选时由它收尾', () => {
+test('无掷采纳：前面的段都没给候选时由末段接手', () => {
   const fixture = setup({ 'cflag:1:16': 0 });
   run(fixture, never);
   assert.equal(
     product(fixture).kiss_name,
     '男朋友',
-    '由 :550 的候选收尾（女）',
+    '由誰にでもあるキス的候选收尾（女）',
   );
   assert.equal(product(fixture).kiss, 1, 'RAND:30 > 0 → 嘴唇');
 });
 
-test(':596-597 初体验编码 100：有对象但部位不明', () => {
+test('初体验编码 100：有对象但部位不明', () => {
   const fixture = setup({
     'cflag:1:16': 401,
     'cflag:1:15': 0,
@@ -854,7 +858,7 @@ test(':596-597 初体验编码 100：有对象但部位不明', () => {
   });
   run(fixture, never);
   assert.equal(product(fixture).sex, 100, '非处女 + 初体验 0 → 100');
-  assert.notEqual(product(fixture).sex_name, '', ':593 已给出对象名');
+  assert.notEqual(product(fixture).sex_name, '', '末段已给出对象名');
 
   const with_sex = setup({
     'cflag:1:16': 401,
@@ -865,18 +869,19 @@ test(':596-597 初体验编码 100：有对象但部位不明', () => {
   assert.equal(product(with_sex).sex, 401, '已有初体验编码则不动');
 });
 
-// —— :599-631 故郷の恋人的性别待定 ——
+// —— 故郷の恋人的性别待定 ——
 //
-// 候选性别 4 只有「故郷の恋人」会给（:208-212），它要在产物上留下痕迹需要
-// 三个条件：:215 的采纳掷命中（否则整段不跑）、:542 不落部位（否则 :643 的
-// `FIRST_KISS == 0` 不成立）、RAND:30 不中（否则 :644 抢先落到嘴唇）。
-// 统一用 `hit_nth(2, 0)`：第 0 次 RAND:2 是 :215（命中）、第 1 次是不幸なキス
-// 链的第二臂（落空 → KISS_POINT 保持 0）。
+// 候选性别 4 只有「故郷の恋人」会给，它要在产物上留下痕迹需要
+// 三个条件：故郷の恋人段之后的采纳掷命中（否则整段不跑）、预约不落部位
+// （否则 `first_kiss == 0` 不成立）、RAND:30 不中（否则部位抢先落到嘴唇）。
+// 统一用 `hit_nth(2, 0)`：第 0 次 RAND:2 是那一次采纳（命中）、第 1 次是不幸なキス
+// 链的第二分支（落空 → kiss_point 保持 0）。
 //
-// 定位则要算上「短路求值下左操作数照掷」的那些 RAND：男走 :611/:614/:617，
-// 女的 :611/:614 里 `is_male` 为假但 RAND 已经掷了，所以女的两臂落在第 1 次。
+// 定位则要算上「短路求值下左操作数照掷」的那些 RAND：性别待定块里男先掷
+// RAND:20 与 RAND:8，女的对应两条里 `is_male` 为假但 RAND 已经掷了，
+// 所以女的两个分支落在第 1 次。
 
-test('性别待定七分支（:599-631）：扶她三臂 + 男两臂 + 女两臂', () => {
+test('性别待定七分支：扶她三个分支 + 男两个分支 + 女两个分支', () => {
   const rows = [
     {
       name: '扶她 · RAND:10 命中 → 2（女の恋人）',
@@ -891,7 +896,7 @@ test('性别待定七分支（:599-631）：扶她三臂 + 男两臂 + 女两臂
       kiss: 301,
     },
     {
-      name: '扶她 · 前两臂不中 → 1（男的恋人）',
+      name: '扶她 · 前两分支不中 → 1（男的恋人）',
       talents: { 'talent:1:121': 1 },
       rand: hits(hit_nth(2, 0), hit_nth(30, 0)),
       kiss: 101,
@@ -903,7 +908,7 @@ test('性别待定七分支（:599-631）：扶她三臂 + 男两臂 + 女两臂
       kiss: 101,
     },
     {
-      name: '男 · 前两臂不中 → 1（:617 兜底）',
+      name: '男 · 前两分支不中 → 1（走缺省处理）',
       talents: { 'talent:1:122': 1 },
       rand: hits(hit_nth(2, 0), hit_nth(30, 0)),
       kiss: 101,
@@ -915,7 +920,7 @@ test('性别待定七分支（:599-631）：扶她三臂 + 男两臂 + 女两臂
       kiss: 301,
     },
     {
-      name: '女 · 前两臂不中 → 1（:627 兜底）',
+      name: '女 · 前两分支不中 → 1（走缺省处理）',
       talents: {},
       rand: hits(hit_nth(2, 0), hit_nth(30, 0)),
       kiss: 101,
@@ -933,33 +938,33 @@ test('性别待定七分支（:599-631）：扶她三臂 + 男两臂 + 女两臂
   }
 });
 
-test('男 · RAND:8 命中 → 3（扶她的恋人）；女 · RAND:8 命中同款（:614-616 / :621-626）', () => {
+test('男 · RAND:8 命中 → 3（扶她的恋人）；女 · RAND:8 命中同款', () => {
   const male = setup({
     'cflag:1:16': 0,
     'talent:1:317': 4,
     'talent:1:122': 1,
   });
   run(male, hits(hit_nth(2, 0), hit_nth(8, 0), hit_nth(30, 0)));
-  assert.equal(product(male).kiss, 301, '男：性别 3 + :656 落空 → ヴァギナ');
+  assert.equal(product(male).kiss, 301, '男：性别 3 + 再掷落空 → ヴァギナ');
 
   const female = setup({ 'cflag:1:16': 0, 'talent:1:317': 4 });
   run(female, hits(hit_nth(2, 0), hit_nth(8, 1), hit_nth(30, 0)));
   assert.equal(
     product(female).kiss,
     301,
-    '女：第 0 次 RAND:8 被 is_male 为假的臂吃掉',
+    '女：第 0 次 RAND:8 被 is_male 为假的分支吃掉',
   );
 });
 
-test(':656 与 :659 两条臂（扶她恋人 + RAND:2 的再掷）', () => {
+test('扶她对象的部位两条分支（RAND:2 的再掷）', () => {
   const penis = setup({
     'cflag:1:16': 0,
     'talent:1:317': 4,
     'talent:1:121': 1,
   });
-  // RAND:2：0 = :215 采纳、1 = 不幸なキス链第二臂、2 = :604、3 = :656
+  // RAND:2：0 = 家族段后的再掷采纳、1 = 不幸なキス链第二分支、2 = 性别待定块的扶她分支、3 = 部位再掷
   run(penis, hits(hit_nth(2, 0), hit_nth(2, 2), hit_nth(2, 3), hit_nth(30, 0)));
-  assert.equal(product(penis).kiss, 101, ':656 命中 → ペニス');
+  assert.equal(product(penis).kiss, 101, '再掷命中 → ペニス');
 
   const vagina = setup({
     'cflag:1:16': 0,
@@ -967,14 +972,14 @@ test(':656 与 :659 两条臂（扶她恋人 + RAND:2 的再掷）', () => {
     'talent:1:121': 1,
   });
   run(vagina, hits(hit_nth(2, 0), hit_nth(2, 2), hit_nth(30, 0)));
-  assert.equal(product(vagina).kiss, 301, ':656 不中 → ヴァギナ');
+  assert.equal(product(vagina).kiss, 301, '再掷不中 → ヴァギナ');
 });
 
-// —— :635-662 白纸与部位 ——
+// —— 白纸与部位 ——
 
-test(':637 ペニス编码 + 女对象 → 白纸（:635-638）', () => {
-  // 亲属「姉」在 :199 给出女对象（matched_gender 2），女表的不幸なキス链第一臂
-  // 预约 101（ペニス），:542 落进初吻，随后被 :637 白纸 —— 末值由 :653 接手
+test('ペニス编码 + 女对象 → 白纸', () => {
+  // 亲属「姉」经家族段采纳给出女对象（matched_gender 2），女表的不幸なキス链第一分支
+  // 预约 101（ペニス）落进初吻，随后被白纸 —— 末值由女对象分支接手
   const female_object = setup({ 'cflag:1:16': 0, 'talent:1:320': 1 + 1e5 });
   run(
     female_object,
@@ -983,7 +988,7 @@ test(':637 ペニス编码 + 女对象 → 白纸（:635-638）', () => {
   assert.equal(product(female_object).kiss_name, '亲姐姐');
   assert.equal(product(female_object).kiss, 301, 'ペニス 101 被白纸后落到 301');
 
-  // 对照：同一路径下对象是男（兄）→ :637 的 `MEN_OR_GIRL:1 == 2` 不成立 → 保 101
+  // 对照：同一路径下对象是男（兄）→ 白纸条件（对象性别 2）不成立 → 保 101
   const male_object = setup({ 'cflag:1:16': 0, 'talent:1:320': 1 + 1e6 });
   run(
     male_object,
@@ -993,9 +998,9 @@ test(':637 ペニス编码 + 女对象 → 白纸（:635-638）', () => {
   assert.equal(product(male_object).kiss, 101, '男对象 + ペニス 相容');
 });
 
-test(':640 ヴァギナ编码 + 男对象 → 白纸（:639-641）', () => {
+test('ヴァギナ编码 + 男对象 → 白纸', () => {
   // 故郷の恋人的候选性别待定；扶她表把预约部位定在 301（ヴァギナ），
-  // 的兜底臂把性别定成 1（男）→ :640 白纸，末值由 :650 接手
+  // 性别待定块把性别定成 1（男）→ 白纸，末值由男对象分支接手
   const male_object = setup({
     'cflag:1:16': 0,
     'talent:1:317': 4,
@@ -1007,7 +1012,7 @@ test(':640 ヴァギナ编码 + 男对象 → 白纸（:639-641）', () => {
   );
   assert.equal(product(male_object).kiss, 101, 'ヴァギナ 301 被白纸后落到 101');
 
-  // 对照：性别落成 2（女）→ :640 不成立 → 保 301
+  // 对照：性别落成 2（女）→ 白纸条件不成立 → 保 301
   const female_object = setup({
     'cflag:1:16': 0,
     'talent:1:317': 4,
@@ -1020,7 +1025,7 @@ test(':640 ヴァギナ编码 + 男对象 → 白纸（:639-641）', () => {
   assert.equal(product(female_object).kiss, 301, '女对象 + ヴァギナ 相容');
 });
 
-test(':643-662 初吻部位的四条性别臂（:644 / :647 / :650 / :653）', () => {
+test('初吻部位的四条分支（唇/アナル/ペニス/ヴァギナ）', () => {
   const cases = [
     {
       name: '唇（RAND:30 > 0）',
@@ -1048,7 +1053,7 @@ test(':643-662 初吻部位的四条性别臂（:644 / :647 / :650 / :653）', (
     },
   ];
   for (const row of cases) {
-    // RAND:2 只让 :199 的采纳掷命中；RAND:20 让亲属出场
+    // RAND:2 只让家族段的采纳掷命中；RAND:20 让亲属出场
     const fixture = setup({
       'cflag:1:16': 0,
       'talent:1:320': 1 + row.family,
@@ -1058,10 +1063,10 @@ test(':643-662 初吻部位的四条性别臂（:644 / :647 / :650 / :653）', (
   }
 });
 
-test('职业段落下的对象性别决定初吻部位（:464 女表 / :382 男表）', () => {
-  // 无预约部位（RAND:3 全不中）且 RAND:30 不中时，:650/:653 按 matched_gender 落码
-  const female_table = setup({ 'cflag:1:16': 0, 'talent:1:315': 3 }); // 女 → :464 男对象
-  // RAND:2：0 = :215、1 = :468 采纳（:315 的 CASE 3 不带预约链，不占 RAND:2）
+test('职业段落下的对象性别决定初吻部位', () => {
+  // 无预约部位（RAND:3 全不中）且 RAND:30 不中时，按 matched_gender 落码
+  const female_table = setup({ 'cflag:1:16': 0, 'talent:1:315': 3 }); // 女 → 男对象
+  // RAND:2：0 = 家族段后的再掷、1 = 职业段采纳（职业 3 农夫不带预约链，不占 RAND:2）
   run(
     female_table,
     hits(hit_nth(2, 0), hit_nth(2, 1), script({ 30: { 0: 0 } })),
@@ -1073,7 +1078,7 @@ test('职业段落下的对象性别决定初吻部位（:464 女表 / :382 男�
     'cflag:1:16': 0,
     'talent:1:122': 1,
     'talent:1:315': 3,
-  }); // 男 → :382 女对象
+  }); // 男 → 女对象
   run(male_table, hits(hit_nth(2, 0), hit_nth(2, 1), script({ 30: { 0: 0 } })));
   assert.equal(product(male_table).kiss_name, '农妇');
   assert.equal(
@@ -1083,9 +1088,9 @@ test('职业段落下的对象性别决定初吻部位（:464 女表 / :382 男�
   );
 });
 
-// —— 接入：@CM_NS_EXP 的 CALL CHARA_FIRST_EXP（:1103） ——
+// —— 接入：chara-make.js 的 cm_ns_exp 调用 chara_first_exp ——
 
-test('cm_ns_exp 的 :1103 已接入真身：占位行消失且产物落地', async () => {
+test('cm_ns_exp 已接入真身：占位行消失且产物写回', async () => {
   const fixture = create_era_fixture();
   fixture.seed_chara(1, { id: 1, name: '预设名', callname: '预设称呼' });
   fixture.era.addCharacter(1);
@@ -1102,7 +1107,7 @@ test('cm_ns_exp 的 :1103 已接入真身：占位行消失且产物落地', asy
     .map((line) => line.text);
   assert(
     !texts.some((line) => line.includes('@CHARA_FIRST_EXP')),
-    ':1103 不再有占位行',
+    '不再有占位行',
   );
   assert.equal(fixture.store.get('cstr:1:4'), '青梅竹马', '真身已跑过一遍');
 });

@@ -1,54 +1,54 @@
 /**
- * @file 外观信息式中函数（issue #389，N5）：`%GET_LOOK_INFO(ARG, ARGS)%`。
+ * @file 外观信息式中函数（issue #389，N5）：`get_look_info(cid, kind)`。
  *
- * 本文件只承载这一个纯计算函数：它被 `ere/chara/look.js`（同源文件的其余
+ * 本文件只承载这一个纯计算函数：它被 `ere/chara/look.js`（同主题的其余
  * 五个函数）与八个外部模块消费，且 **被 ere/dungeon/dungeon-lovers.js 反向
  * 依赖**——LOOK_INFO_LOVE 要用 dungeon-lovers 的 LOVER_NAMES，若两者同处一个
  * 模块即成 require 环（CJS 下先启动的一方拿到空 exports）。拆成叶子模块是
  * 消环的办法，不是分层主张。
  *
- * == 与 kojo-dungeon-bitch-log.js 旧子集的关系（本票的「调用面不留两份」）==
+ * == 与 kojo-dungeon-bitch-log.js 旧子集的关系（这张工单的「调用面不留两份」）==
  *
  * #185（H16）在 `ere/kojo/kojo-dungeon-bitch-log.js` 里实现过本函数的 11 个
  * kind 子集（#383/#391 各补过一个）。#389 把那份实现整体搬到这里、补齐其余
  * kind，并让 kojo 侧改成 require——两份实现就此消失，全项目只剩这一份。
  * 子集原有的 11 个 kind 的返回值逐字未变（有测试锁），搬家不搬语义。
  *
- * == 逐条对照源文件时的三处判定 ==
+ * == 三处等价判定 ==
  *
- *   - **"魅力点" CASE 29（:3172-3176）在源里用 PRINT 而非赋值**：原文是
+ *   - **"魅力点" CASE 29 用 PRINT 而非赋值**：旧写法是
  *     `SIF 男人||扶她 PRINT 自己的鸡鸡` / `SIF 不是两者 PRINT 私处`，
- *     LOCALS 保持空串。式中函数调用 PRINT 在本引擎里没有对应形态（era.print
- *     是异步且会切行），但**两者对调用方的可见效果相同**——调用方一律写
- *     `PRINTFORM %GET_LOOK_INFO(…)%`，PRINT 的内容先落进同一条输出流、空
+ *     LOCALS 保持空串。式中函数调用 PRINT 在本引擎里没有对应形式（era.print
+ *     是异步且会切行），但**两者对调用方的可见效果相同**——调用方一律把
+ *     返回值拼进同一句输出，PRINT 的内容先落进同一条输出流、空
  *     LOCALS 什么也不补。故本实现直接**返回**该串，与旧子集一致。
- *   - **"种族12"（:3309-3314）源里是 GOTO 两个标号**（`$INFO_种族` :3254 /
- *     `$INFO_种族2` :3286），效果等于按 TALENT:220 二选一递归调用；本实现按
+ *   - **"种族12" 旧写法是 GOTO 两个标号**（`$INFO_种族` /
+ *     `$INFO_种族2`），效果等于按 TALENT:220 二选一递归调用；本实现按
  *     递归写，与旧子集一致。
- *   - **"原种族"（:3674-3703）的 CASEELSE 是 `ARGS = "种族"; RESTART`**
- *     （RESTART = 回到本函数开头重执行，见 control-flow.md）。重入时只改了
+ *   - **"原种族" 的 CASEELSE 是 `ARGS = "种族"; RESTART`**
+ *     （RESTART = 回到本函数开头重执行）。重入时只改了
  *     ARGS，等价于递归调 "种族" 分支，同样按递归写。
  *
- * == 与源不同的两处等价改写（不影响返回值）==
+ * == 两处等价改写（不影响返回值）==
  *
- *   - `CASE 2 TO 20` / `CASE 20 TO 50` 这类**闭区间重叠**：Emuera 的 CASE 是
+ *   - `CASE 2 TO 20` / `CASE 20 TO 50` 这类**闭区间重叠**：CASE 是
  *     先匹配先取，故 20 归前者。here 用 `<=` 链表达同一顺序。
- *   - `TOSTR(v, "$${0}")`（:3307）＝ 字面量 `$` 拼段号，本实现写 `` `$${v}` ``
+ *   - `TOSTR(v, "$${0}")`＝ 字面量 `$` 拼段号，本实现写 `` `$${v}` ``
  *     ——注意 AGENTS.md 的 `${` 转义约定：模板串里 `$$` 才是字面 `$`。
  *
- * == 未落地的旁支（登记，不在本票范围）==
+ * == 未实现的旁支（登记，不在这张工单的范围）==
  *
- * 无。本函数全文落地，无存根、无占位。
+ * 无。本函数全文实现，无存根、无占位。
  */
 
 'use strict';
 
 const era = require('#/era-electron');
 
-/** 语言中立空串：未登记的 kind 与各 CASEELSE 的兜底 */
+/** 语言中立的回退字串 'ERROR'：未登记的 kind 与各 CASEELSE 的默认值 */
 const ERROR = 'ERROR';
 
-/** 定义时的 kind 名（`ELSEIF ARGS == "<名>"` 的实参；源 :2894 起） */
+/** 定义时的 kind 名（`ELSEIF ARGS == "<名>"` 的实参） */
 const KIND = {
   HAIR_COLOR_ALT: '发色(颜色)',
   HAIR_COLOR: '头发颜色',
@@ -80,7 +80,7 @@ const KIND = {
   COMMON_SENSE_DAILY: '常识改变【日常】',
 };
 
-/** 素质下标（yml/Talent.yml 的名字表；源里混用列名与下标，此处统一取下标的字面量） */
+/** 素质下标（yml/Talent.yml 的名字表；统一取下标的字面量） */
 const T_扶她 = 121;
 const T_男人 = 122;
 const T_精英 = 220;
@@ -110,37 +110,37 @@ const T_现种族 = 322;
 const T_父亲种族 = 323;
 const T_母亲种族 = 324;
 
-/** 发型长度档（源 :2967-2977 的闭区间） */
+/** 发型长度档（闭区间） */
 const HAIR_LENGTH_SHORT_MAX = 100;
 const HAIR_LENGTH_MID_MAX = 200;
 const HAIR_LENGTH_LONG_MAX = 300;
 
-/** 体型档（源 :3071-3081） */
+/** 体型档 */
 const BODY_SLIM_MAX = 100;
 const BODY_NORMAL_MAX = 200;
 const BODY_PLUMP_MAX = 300;
 
-/** 阴毛状态档（源 :3095-3113） */
+/** 阴毛状态档 */
 const PUBIC_MAX = 500;
 
-/** 结婚对象的性别码（源 :3516-3522/:3527-3533/:3538-3544/:3549-3555 的 `CASE 0,4,8` / `CASE 1,5,7`） */
+/** 结婚对象的性别码（`CASE 0,4,8` / `CASE 1,5,7`） */
 const HUSBAND_KINDS = [0, 4, 8];
 const FUTA_WIFE_KINDS = [1, 5, 7];
 
-/** 家族构成码的位数（源 :3490 起注释的十进制编码） */
+/** 家族构成码的位数（十进制编码） */
 const FAMILY_CHILD_DIGITS = [100, 1000];
 const FAMILY_SIBLING_DIGITS = [100000, 1000000, 10000000, 100000000];
 const FAMILY_MARRIAGE_PLACE = 1000000000;
 
-/** 「职业」扫描的素质区间（源 :3462 `FOR LOCAL, 200, 229`——上界开区间） */
+/** 「职业」扫描的素质区间（`FOR LOCAL, 200, 229`——上界开区间） */
 const JOB_RANGE = { start: 200, end: 229 };
-/** 「性格」扫描的素质区间（源 :3475 起两段 `FOR … 179` / `… 19`） */
+/** 「性格」扫描的素质区间（两段 `FOR … 179` / `… 19`） */
 const PERSONALITY_RANGE = { start: 160, end: 179 };
 const PERSONALITY_FALLBACK_RANGE = { start: 10, end: 19 };
 
 /**
- * 源 :2894-3774 各 CASE 表的字面量映射（字面量集中在此，逐条带源行号）。
- * 与 Emuera 的 `SELECTCASE`/`CASEELSE` 同构：命中取表、未命中取 fallback。
+ * 各 CASE 表的字面量映射（字面量集中在此）。
+ * 与 `SELECTCASE`/`CASEELSE` 同构：命中取表、未命中取 fallback。
  */
 const HAIR_COLOR_ALT_MAP = {
   1: '金色',
@@ -251,7 +251,7 @@ const CHARM_POINT_MAP = {
   28: '寝癖',
 };
 
-/** 魅力点 CASE 29（:3172-3176）：男人/扶她看自己的，其余看私处 */
+/** 魅力点 CASE 29：男人/扶她看自己的，其余看私处 */
 const CHARM_POINT_PENIS = '自己的鸡鸡';
 const CHARM_POINT_VULVA = '私处';
 
@@ -305,7 +305,7 @@ const RACE_MAP = {
   9: '魔族',
   10: '霍比特人',
   11: '矮人',
-}; // （"种族" 与 "原种族" :3675-3699 共用同一张表）
+}; // （"种族" 与 "原种族" 共用同一张表）
 
 const RACE2_MAP = {
   1: '兽人',
@@ -348,7 +348,7 @@ const PREV_JOB_MAP = {
   94: '魔族的孽种',
 }; // 的性别中立档
 
-/** 修道女/巫女/圣女/主妇四档按性别分叉（源 :3336-3340、:3356-3360、:3366-3370、:3378-3382） */
+/** 修道女/巫女/圣女/主妇四档按性别分叉 */
 const PREV_JOB_SISTER = [2, '修士', '修女'];
 const PREV_JOB_MIKO = [11, '巫者', '巫女'];
 const PREV_JOB_SAINT = [12, '圣者', '圣女'];
@@ -385,7 +385,7 @@ const HERO_REASON_MAP = {
 
 const PENIS_MAP = { 1: '巨根', 2: '短小包茎', 3: '包茎', 4: '马阴茎' };
 
-/** 常识改变【战斗】（:3711-3735）：3-11 档源里显式留空，CASEELSE 回「不改变」 */
+/** 常识改变【战斗】：3-11 档显式留空，CASEELSE 回「不改变」 */
 const COMMON_SENSE_BATTLE_MAP = {
   0: '不改变',
   1: '奉侍战斗',
@@ -402,7 +402,7 @@ const COMMON_SENSE_BATTLE_MAP = {
 };
 const COMMON_SENSE_BATTLE_DEFAULT = '不改变';
 
-/** 常识改变【日常】（:3740-3764）：同上 */
+/** 常识改变【日常】：同上 */
 const COMMON_SENSE_DAILY_MAP = {
   0: '不改变',
   1: '服侍乞丐',
@@ -420,7 +420,7 @@ const COMMON_SENSE_DAILY_MAP = {
 const COMMON_SENSE_DAILY_DEFAULT = '不改变';
 
 /**
- * 角色的素质读数（`TALENT:ARG:n`；未声明的序号引擎返回 undefined，按 0 兜底）。
+ * 角色的素质读数（`TALENT:ARG:n`；未声明的序号引擎返回 undefined，默认 0）。
  * @param {number} cid 角色 ID
  * @param {number} idx 素质下标
  * @returns {number}
@@ -448,7 +448,7 @@ function itemname(idx) {
 }
 
 /**
- * 闭环区间判定（`INRANGE(v, a, b)`）。
+ * 闭区间判定（`INRANGE(v, a, b)`）。
  * @param {number} v 值
  * @param {number} low 下界
  * @param {number} high 上界
@@ -459,8 +459,8 @@ function inrange(v, low, high) {
 }
 
 /**
- * 「婚史」族与「家族」族共用的配偶称呼（源 :3516-3522/:3527-3533/:3538-3544/:3549-3555 →
- * :3599-3601/:3606-3612/:3615-3621 三处 SELECTCASE 逐字相同）。
+ * 「婚史」族与「家族」族共用的配偶称呼
+ * （三处 SELECTCASE 逐字相同）。
  * @param {number} kind 配偶性别码（整数部分取 LOCAL:2 / 1000000000）
  * @returns {string}
  */
@@ -471,7 +471,7 @@ function spouse_word(kind) {
 }
 
 /**
- * 「家族」的兄弟姐妹/子女段（源 :3623 起七段同构：一位数=1 时不带数量，
+ * 「家族」的兄弟姐妹/子女段（七段同构：一位数=1 时不带数量，
  * >1 时 `TOSTR(LOCAL:1, " 娘x{0}")` 式的带数量写法）。
  * @param {number} count 该类的数量（家族构成码的一位）
  * @param {string} single 数量为 1 时的后缀
@@ -485,19 +485,19 @@ function family_suffix(count, single, label) {
 }
 
 /**
- * `%GET_LOOK_INFO(cid, kind)%`（源 @GET_LOOK_INFO :2885-3775，#FUNCTIONS）。
+ * `get_look_info(cid, kind)`（式中函数，#FUNCTIONS）。
  *
- * 调用点一律是式中函数形态（`%GET_LOOK_INFO(…)%` 写在表达式里），本实现
+ * 调用点一律是式中函数形式（写在表达式里取值），本实现
  * 是纯函数：只有读取与字符串拼接，无输出、无状态写入。
  *
- * @param {number} cid 角色 ID（源 ARG）
- * @param {string} kind 参照内容（源 ARGS；各分支名见本文件 KIND 表）
- * @returns {string} 对应文字；未登记的 kind 返回空串（源 :3772-3773 的 ELSE）
+ * @param {number} cid 角色 ID
+ * @param {string} kind 参照内容（各分支名见本文件 KIND 表）
+ * @returns {string} 对应文字；未登记的 kind 返回空串（ELSE 支）
  */
 function get_look_info(cid, kind) {
   switch (kind) {
     case KIND.HAIR_COLOR_ALT:
-      // 发色（形容词形；与 "头发颜色" 是两个 kind，源里各一张表）
+      // 发色（形容词形；与 "头发颜色" 是两个 kind，各一张表）
       return HAIR_COLOR_ALT_MAP[talent(cid, T_头发颜色)] ?? '黑色';
     case KIND.HAIR_COLOR:
       return HAIR_COLOR_MAP[talent(cid, T_头发颜色)] ?? '黑发';
@@ -545,7 +545,7 @@ function get_look_info(cid, kind) {
     case KIND.CHARM_POINT: {
       const v = talent(cid, T_魅力点);
       if (v === 29) {
-        // CASE 29 是源里唯一以 PRINT 出值的分支（本文件头已判等价）
+        // CASE 29 是唯一以 PRINT 出值的分支（本文件头已判等价）
         return talent(cid, T_扶她) === 1 || talent(cid, T_男人) === 1
           ? CHARM_POINT_PENIS
           : CHARM_POINT_VULVA;
@@ -555,10 +555,10 @@ function get_look_info(cid, kind) {
     case KIND.HABIT:
       return HABIT_MAP[talent(cid, T_癖)] ?? ERROR;
     case KIND.RACE:
-      // （标号 $INFO_种族 :3254）
+      // （标号 $INFO_种族）
       return RACE_MAP[talent(cid, T_种族)] ?? ERROR;
     case KIND.RACE2: {
-      // （标号 $INFO_种族2 :3286）
+      // （标号 $INFO_种族2）
       const v = talent(cid, T_种族2);
       return RACE2_MAP[v] ?? `$${v}`; // CASEELSE = TOSTR(v, "$${0}")
     }
@@ -616,7 +616,7 @@ function get_look_info(cid, kind) {
       return found >= 0 ? talentname(found) : '不明';
     }
     case KIND.MARRIAGE_HISTORY: {
-      // （TALENT:320 压缩家族码；与 CHARA_MARRIGE_BEFORE 同源不同式）
+      // （TALENT:320 压缩家族码；与「婚史」分支共用编码、算式不同）
       const family = talent(cid, T_家族构成);
       if (family % 10 === 0 && family !== 0) return '婚史保密';
       if (family === 0) return '无';

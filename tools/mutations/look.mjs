@@ -1,14 +1,14 @@
 // issue #389：LOOK 外观描述（新条目 M8301-M8340 ＋ 随实现迁入的 M7826 / M7868-M7871）。
 //
-// 两个靶文件：ere/chara/look.js（@LOOK_SET/@LOOK_CLEAR/@LOOK_INFO/
-// @LOOK_INFO_LOVE/@LOVE_LIKE_BASE）与 ere/chara/look-info.js（@GET_LOOK_INFO）。
-// tests 一律是本票的 test/look.test.js。
+// 两个目标文件：ere/chara/look.js（look_set/look_clear/look_info/
+// look_info_love/love_like_base）与 ere/chara/look-info.js（get_look_info）。
+// tests 一律是这张工单的 test/look.test.js。
 //
 // M7826 原在 tools/mutations/kojo.mjs、M7868-M7871 原在
-// tools/mutations/chara-info.mjs（靶都是 kojo-dungeon-bitch-log.js 里的
-// GET_LOOK_INFO 子集）：#389 把那份子集搬进 ere/chara/look-info.js，五条
-// 随靶搬家（本分片 +5：kojo.mjs -1、chara-info.mjs -4），tests 改到本票的
-// test/look.test.js——kojo/chara-info 两侧的 GET_LOOK_INFO 用例已随实现
+// tools/mutations/chara-info.mjs（目标都是 kojo-dungeon-bitch-log.js 里的
+// get_look_info 子集）：#389 把那份子集搬进 ere/chara/look-info.js，五条
+// 随目标搬家（本分片 +5：kojo.mjs -1、chara-info.mjs -4），tests 改到这张工单的
+// test/look.test.js——kojo/chara-info 两侧的 get_look_info 用例已随实现
 // 一并搬走，留原 tests 会「find 失配 + 无人守」双错。
 //
 // 覆盖面取法：每条钉一个**可观测的**字面量或分支——look_set/love_score 是
@@ -18,7 +18,7 @@ const look = 'ere/chara/look.js';
 const info = 'ere/chara/look-info.js';
 
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 89; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）；+30（M11910-M11939，20 个语尾调用点的情绪档与其分支，含两处条件对调）；+3（M11960-M11962，显示面的上界/门槛/心形上限三个字面量——票里点名的 29/31 实测是等价变异，见条目头注）；+3（M12180-M12182，经验補正七组各自的档位，#601）；#653 +2（M13262/M13263：双性恋与牝犬补正段的修复守卫）
+export const COUNT = 89; // #570 起 +3（M11766-M11768，语尾行内拼接）；+3（M11774 调用点丢返回值、M11775 换行多空行、M11776 收尾另起一行）；+30（M11910-M11939，20 个语尾调用点的情绪档与其分支，含两处条件对调）；+3（M11960-M11962，显示面的上界/门槛/心形上限三个字面量——票里点名的 29/31 实测是等价变异，见条目头注）；+3（M12180-M12182，经验補正七组各自的档位，#601）；#653 +2（M13262/M13263：双性恋与牝犬补正段的回归检查）
 
 const make = (id, desc, find, replace, must_mention, extra = {}) => ({
   desc: `M${id} ${desc}`,
@@ -31,13 +31,13 @@ const make = (id, desc, find, replace, must_mention, extra = {}) => ({
 });
 
 export default [
-  // —— @LOOK_SET：外貌素质的掷骰与随机表（源 :4-813） ——
+  // —— look_set：外貌素质的掷骰与随机表 ——
   make(
     8301,
     '发色区间 0-4 收成 0-3（粉发少一档）',
     '      q_color <= 4',
     '      q_color <= 3',
-    'LOOK_SET 素质 300',
+    'look_set 素质 300',
   ),
   make(
     8302,
@@ -51,7 +51,7 @@ export default [
     '短发的发型掷骰上界 RAND:3 改成 4',
     '    q_style = rand_n(3);',
     '    q_style = rand_n(4);',
-    'LOOK_SET 素质 304',
+    'look_set 素质 304',
   ),
   make(
     8304,
@@ -69,7 +69,7 @@ export default [
   ),
   make(
     8306,
-    '魅力点 24 的扶她掷骰判据 0 改成 1',
+    '魅力点 24 的扶她掷骰条件 0 改成 1',
     '      if (rand_n(40) === 0 && t(cid, T_男人) === 0) {',
     '      if (rand_n(40) === 1 && t(cid, T_男人) === 0) {',
     '魅力点 24 给扶她机会',
@@ -97,7 +97,7 @@ export default [
   ),
   make(
     8310,
-    '不会法术时的修道女重掷判据 Q == 2 改成 Q == 3',
+    '不会法术时的修道女重掷条件 Q == 2 改成 Q == 3',
     '    if (q === 2 && t(cid, T_法术) === 0) {',
     '    if (q === 3 && t(cid, T_法术) === 0) {',
     '修道女（Q=2）重掷',
@@ -138,7 +138,7 @@ export default [
     '断背气质（abl:23）',
   ),
 
-  // —— @LOOK_CLEAR / @LOVE_LIKE_BASE ——
+  // —— look_clear / love_like_base ——
   make(
     8316,
     'LOOK_CLEAR 漏清 301（起扫点从 301 挪到 302）',
@@ -161,7 +161,7 @@ export default [
     '喜欢的东西 12',
   ),
 
-  // —— @LOOK_INFO_LOVE 的评分半（love_score） ——
+  // —— look_info_love 的评分半（love_score） ——
   make(
     8319,
     '高洁种族的世界 +1 改成 -1',
@@ -219,7 +219,7 @@ export default [
     '50 > 6',
   ),
 
-  // —— @LOOK_INFO 的分支与显示 ——
+  // —— look_info 的分支与显示 ——
   make(
     8327,
     '信仰行（与弃教行）的开门条件漏掉咒术持有者',
@@ -229,7 +229,7 @@ export default [
   ),
   make(
     8328,
-    '所持金 <= 0 的判据改成 < 0（0 元不再报身无分文）',
+    '所持金 <= 0 的条件改成 < 0（0 元不再报身无分文）',
     '    if (money <= 0) {',
     '    if (money < 0) {',
     '身无分文',
@@ -243,7 +243,7 @@ export default [
   ),
   make(
     8330,
-    '男性也显示发型（`!male` 守卫拆掉）',
+    '男性也显示发型（`!male` 检查拆掉）',
     "      if (!male) {\n        s.add(`][发型：${get_look_info(cid, '发型')}`);",
     "      if (true) {\n        s.add(`][发型：${get_look_info(cid, '发型')}`);",
     '男性不显示发型',
@@ -335,11 +335,11 @@ export default [
     },
   ),
 
-  // —— @GET_LOOK_INFO：随实现搬进 ere/chara/look-info.js 的存量条目
-  //    （M7826 来自 kojo.mjs、M7868-M7871 来自 chara-info.mjs；靶文件与
-  //    tests 一并改到本票面，kojo/chara-info 两个分片的 COUNT 相应减一/减四） ——
+  // —— get_look_info：随实现搬进 ere/chara/look-info.js 的存量条目
+  //    （M7826 来自 kojo.mjs、M7868-M7871 来自 chara-info.mjs；目标文件与
+  //    tests 一并改到这张工单，kojo/chara-info 两个分片的 COUNT 相应减一/减四） ——
   {
-    desc: 'M7826 GET_LOOK_INFO 种族2「植物」映射改错（LOOK.ERB:3285，#383）',
+    desc: 'M7826 get_look_info 种族2「植物」映射改错（#383）',
     file: info,
     find: "  4: '植物',",
     replace: "  4: '植物不存在',",
@@ -347,7 +347,7 @@ export default [
     must_mention: '种族2',
   },
   {
-    desc: 'M7868 GET_LOOK_INFO 种族2 未登记代号不再回落 $N（改 ERROR）',
+    desc: 'M7868 get_look_info 种族2 未登记代号不再回落 $N（改 ERROR）',
     file: info,
     find: '      return RACE2_MAP[v] ?? `$${v}`;',
     replace: "      return RACE2_MAP[v] ?? 'ERROR';",
@@ -355,7 +355,7 @@ export default [
     must_mention: '字面 $ 前缀',
   },
   {
-    desc: 'M7869 GET_LOOK_INFO 种族12 精英（TALENT:220）不再切到种族2',
+    desc: 'M7869 get_look_info 种族12 精英（TALENT:220）不再切到种族2',
     file: info,
     find: `      return get_look_info(cid, talent(cid, T_精英) ? KIND.RACE2 : KIND.RACE);`,
     replace: `      return get_look_info(cid, KIND.RACE);`,
@@ -363,7 +363,7 @@ export default [
     must_mention: '精英（TALENT:220）走种族2',
   },
   {
-    desc: 'M7870 GET_LOOK_INFO 性格的 [10,19) 回退循环被清空（只认 [160,179)）',
+    desc: 'M7870 get_look_info 性格的 [10,19) 回退循环被清空（只认 [160,179)）',
     file: info,
     find: '          tc < PERSONALITY_FALLBACK_RANGE.end;',
     replace: '          tc < PERSONALITY_FALLBACK_RANGE.start;',
@@ -371,7 +371,7 @@ export default [
     must_mention: '全空才回落',
   },
   {
-    desc: 'M7871 GET_LOOK_INFO 婚史保密分支被短路（个位 0 且非零码落到家族码解码）',
+    desc: 'M7871 get_look_info 婚史保密分支被短路（个位 0 且非零码落到家族码解码）',
     file: info,
     find: "      if (family % 10 === 0 && family !== 0) return '婚史保密';",
     replace: "      if (false) return '婚史保密';",
@@ -401,7 +401,7 @@ export default [
   return require('#/kojo/kojo-system').gobi_koujo(arg0);
 }`,
     replace: `async function gobi_koujo(arg0) {
-  // 变异：自行打印（#570 前的旧形态），不再交给调用方拼行
+  // 变异：自行打印（#570 前的旧写法），不再交给调用方拼行
   era.print(await require('#/kojo/kojo-system').gobi_koujo(arg0));
   return '';
 }`,
@@ -444,7 +444,7 @@ export default [
   // 这一批打在 ere/chara/look.js 的语尾实参上，守它们的是 test/look.test.js
   // 的「语尾档位表」：语尾族里装假处理函数返回 `〈档〉` 标记，按构造出的
   // 状态断言**整行**的标记序列——只断「行里有某档」会被同一行的另一个同档
-  // 标记顶过去，档位写错照样绿（#570 抽样把 :1277 的 4 改成 0 时全绿，正是
+  // 标记顶过去，档位写错照样绿（#570 抽样把该处 4 改成 0 时全绿，正是
   // 这个形状）。每条 must_mention 是那一行用例名/断言消息里的档位说明，
   // 逐字取自表里的 note。
   {
@@ -453,7 +453,7 @@ export default [
     find: '  const gobi_mark = mark_rank >= 3 ? 0 : 4; // (MARK:屈服刻印 >= 3) ? 0 # 4',
     replace: '  const gobi_mark = mark_rank > 3 ? 0 : 4; // 变异：门槛收到 > 3',
     tests: ['look'],
-    must_mention: '源 :877 首行（屈服刻印 >= 3 → 0）',
+    must_mention: '首行（屈服刻印 >= 3 → 0）',
   },
   {
     desc: 'M11911 LOOK_INFO 原种族不明的语尾两支对调（爱慕/淫乱 → 3，其余 → 0）',
@@ -462,7 +462,7 @@ export default [
     replace:
       '        t3.add(await gobi_koujo(t(cid, T_服从) || t(cid, T_淫乱_T) ? 3 : 0));',
     tests: ['look'],
-    must_mention: '源 :884 原种族不明（爱慕 → 0）',
+    must_mention: '原种族不明（爱慕 → 0）',
   },
   {
     desc: 'M11912 LOOK_INFO 原种族不明的选档 || 改 &&（单侧命中就落到 3）',
@@ -471,7 +471,7 @@ export default [
     replace:
       '        t3.add(await gobi_koujo(t(cid, T_服从) && t(cid, T_淫乱_T) ? 0 : 3));',
     tests: ['look'],
-    must_mention: '源 :884 原种族不明（爱慕 → 0）',
+    must_mention: '原种族不明（爱慕 → 0）',
   },
   {
     desc: 'M11913 LOOK_INFO 原种族已知的语尾两支对调（屈服刻印 >= 3 → 2，其余 → 0）',
@@ -479,7 +479,7 @@ export default [
     find: '        t3.add(await gobi_koujo(mark_rank >= 3 ? 0 : 2));',
     replace: '        t3.add(await gobi_koujo(mark_rank >= 3 ? 2 : 0));',
     tests: ['look'],
-    must_mention: '源 :889 原种族已知（屈服刻印 < 3 → 2）',
+    must_mention: '原种族已知（屈服刻印 < 3 → 2）',
   },
   {
     desc: 'M11914 LOOK_INFO 原种族已知的语尾门槛 >= 3 收到 > 3（屈服刻印 3 落回 2）',
@@ -487,7 +487,7 @@ export default [
     find: '        t3.add(await gobi_koujo(mark_rank >= 3 ? 0 : 2));',
     replace: '        t3.add(await gobi_koujo(mark_rank > 3 ? 0 : 2));',
     tests: ['look'],
-    must_mention: '源 :889 原种族已知（屈服刻印 >= 3 → 0）',
+    must_mention: '原种族已知（屈服刻印 >= 3 → 0）',
   },
   {
     desc: 'M11915 LOOK_INFO 发色与性质的语尾档 1 改成 0（喜 → 默认）',
@@ -497,7 +497,7 @@ export default [
     replace: `      s.hl(get_look_info(cid, '头发状态'));
       s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :931 发色与性质（喜 → 1）',
+    must_mention: '发色与性质（喜 → 1）',
   },
   {
     desc: 'M11916 LOOK_INFO 头发长度・修剪・发型的语尾档 0 改成 1（默认 → 喜）',
@@ -511,7 +511,7 @@ export default [
     } else {
       s.add(\`[头发长度：\${get_look_info(cid, '头发长度')}\`);`,
     tests: ['look'],
-    must_mention: '源 :971 头发长度・修剪・发型（默认 → 0）',
+    must_mention: '头发长度・修剪・发型（默认 → 0）',
   },
   {
     desc: 'M11917 LOOK_INFO 眼・瞳・唇的语尾档 1 改成 0（喜 → 默认）',
@@ -521,7 +521,7 @@ export default [
     replace: `      s.hl(get_look_info(cid, '唇'));
       s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1013 眼/瞳/唇（喜 → 1）',
+    must_mention: '眼/瞳/唇（喜 → 1）',
   },
   {
     desc: 'M11918 LOOK_INFO 乳头的语尾档 0 改成 1（默认 → 喜）',
@@ -531,17 +531,17 @@ export default [
     replace: `      s.add('乳头嘛……').hl(get_look_info(cid, '乳头'));
       s.add(await gobi_koujo(1));`,
     tests: ['look'],
-    must_mention: '源 :1042 乳头（默认 → 0）',
+    must_mention: '乳头（默认 → 0）',
   },
   {
-    desc: 'M11919 LOOK_INFO 阴毛的语尾档 4 改成 0（害羞 → 默认；#570 抽样的逃逸形态）',
+    desc: 'M11919 look_info 阴毛的语尾档 4 改成 0（害羞 → 默认；#570 抽样的逃逸形式）',
     file: look,
     find: `      s.add('下面的毛毛……').hl(get_look_info(cid, '阴毛状态'));
       s.add(await gobi_koujo(4));`,
     replace: `      s.add('下面的毛毛……').hl(get_look_info(cid, '阴毛状态'));
       s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1054 阴毛（害羞 → 4）',
+    must_mention: '阴毛（害羞 → 4）',
   },
   {
     desc: 'M11920 LOOK_INFO 阴茎的语尾档 2 改成 0（怒 → 默认）',
@@ -551,7 +551,7 @@ export default [
     replace: `        s.add('小鸡鸡是……').hl(get_look_info(cid, '阴茎的状态'));
         s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1069 阴茎（怒 → 2）',
+    must_mention: '阴茎（怒 → 2）',
   },
   {
     desc: 'M11921 LOOK_INFO 魅力点的语尾档 0 改成 1（默认 → 喜）',
@@ -561,7 +561,7 @@ export default [
     replace: `      s.add(await gobi_koujo(1));
       s.hl(get_look_info(cid, '癖')).add('是我的习惯');`,
     tests: ['look'],
-    must_mention: '源 :1093 魅力点（默认 → 0）',
+    must_mention: '魅力点（默认 → 0）',
   },
   {
     desc: 'M11922 LOOK_INFO 癖的语尾档 0 改成 1（默认 → 喜）',
@@ -571,7 +571,7 @@ export default [
     replace: `      s.hl(get_look_info(cid, '癖')).add('是我的习惯');
       s.add(await gobi_koujo(1));`,
     tests: ['look'],
-    must_mention: '源 :1105 癖（默认 → 0）',
+    must_mention: '癖（默认 → 0）',
   },
   {
     desc: 'M11923 LOOK_INFO 来历两块的语尾档一律传 0（丢掉前职业/契机算出的档）',
@@ -581,7 +581,7 @@ export default [
     replace: `    s.hl(value);
     s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1388 前职业贵族・聖女・軍人（誇らしい → 1）',
+    must_mention: '前职业贵族・聖女・軍人（誇らしい → 1）',
   },
   {
     desc: 'M11924 LOOK_INFO 前职业贵族・聖女・軍人的语尾档 1 改成 0',
@@ -590,7 +590,7 @@ export default [
     replace:
       '  if (value === 8 || value === 12 || value === 19) return 0; // 变异：不再喜び',
     tests: ['look'],
-    must_mention: '源 :1388 前职业贵族・聖女・軍人（誇らしい → 1）',
+    must_mention: '前职业贵族・聖女・軍人（誇らしい → 1）',
   },
   {
     desc: 'M11925 LOOK_INFO 前职业妓女・奴隷的语尾档 4 改成 0',
@@ -598,7 +598,7 @@ export default [
     find: '  if (value === 5 || value === 20) return 4; // 妓女・奴隷は恥ずかしい',
     replace: '  if (value === 5 || value === 20) return 0; // 变异：不再害羞',
     tests: ['look'],
-    must_mention: '源 :1392 前职业妓女・奴隷（恥ずかしい → 4）',
+    must_mention: '前职业妓女・奴隷（恥ずかしい → 4）',
   },
   {
     desc: 'M11926 LOOK_INFO 前职业表默认支的语尾档 0 改成 1（学生等落到喜び）',
@@ -608,7 +608,7 @@ export default [
     replace: `  if (value === 7 || value === 9) return 5; // 物乞い・貧民は情けなくなる
   return 1; // 变异：默认支不再默认`,
     tests: ['look'],
-    must_mention: '源 :1403 前职业默认（学生 → 0）',
+    must_mention: '前职业默认（学生 → 0）',
   },
   {
     desc: 'M11927 LOOK_INFO 前职业物乞い・貧民的语尾档 5 改成 0',
@@ -617,7 +617,7 @@ export default [
     replace:
       '  if (value === 7 || value === 9) return 0; // 变异：不再情けない',
     tests: ['look'],
-    must_mention: '源 :1400 前职业物乞い・貧民（情けない → 5）',
+    must_mention: '前职业物乞い・貧民（情けない → 5）',
   },
   {
     desc: 'M11928 LOOK_INFO 契机啓示・故郷・平和・正義的语尾档 1 改成 0',
@@ -626,7 +626,7 @@ export default [
     replace:
       '  if (value === 3 || value === 7 || value === 16 || value === 17) return 0; // 变异：不再喜び',
     tests: ['look'],
-    must_mention: '源 :1454 契机啓示・故郷・平和・正義（誇らしい → 1）',
+    must_mention: '契机啓示・故郷・平和・正義（誇らしい → 1）',
   },
   {
     desc: 'M11929 LOOK_INFO 契机罪・仕方なく的语尾档 4 改成 0',
@@ -634,7 +634,7 @@ export default [
     find: '  if (value === 10 || value === 14) return 4; // 罪・仕方なく',
     replace: '  if (value === 10 || value === 14) return 0; // 变异：不再害羞',
     tests: ['look'],
-    must_mention: '源 :1458 契机罪・仕方なく（恥ずかしい → 4）',
+    must_mention: '契机罪・仕方なく（恥ずかしい → 4）',
   },
   {
     desc: 'M11930 LOOK_INFO 契机表默认支的语尾档 0 改成 1（運命等落到喜び）',
@@ -644,7 +644,7 @@ export default [
     replace: `  if (value === 2 || value === 13) return 5; // 金のため・命令
   return 1; // 变异：默认支不再默认`,
     tests: ['look'],
-    must_mention: '源 :1469 契机默认（運命 → 0）',
+    must_mention: '契机默认（運命 → 0）',
   },
   {
     desc: 'M11931 LOOK_INFO 契机金のため・命令的语尾档 5 改成 0',
@@ -653,7 +653,7 @@ export default [
     replace:
       '  if (value === 2 || value === 13) return 0; // 变异：不再情けない',
     tests: ['look'],
-    must_mention: '源 :1466 契机金のため・命令（情けない → 5）',
+    must_mention: '契机金のため・命令（情けない → 5）',
   },
   {
     desc: 'M11932 LOOK_INFO 信仰的语尾档 1 改成 0（喜 → 默认）',
@@ -665,7 +665,7 @@ export default [
         s.add(await gobi_koujo(0));
         s.add(\`（信仰值：\${faith}）」\`);`,
     tests: ['look'],
-    must_mention: '源 :1511 信仰（喜 → 1）',
+    must_mention: '信仰（喜 → 1）',
   },
   {
     desc: 'M11933 LOOK_INFO 弃教的语尾档 1 改成 0（喜 → 默认）',
@@ -675,7 +675,7 @@ export default [
     replace: `        if (kojo) {
           b.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1542 弃教（喜 → 1）',
+    must_mention: '弃教（喜 → 1）',
   },
   {
     desc: 'M11934 LOOK_INFO 妊娠适性的语尾档 5 改成 0（情けない → 默认）',
@@ -685,7 +685,7 @@ export default [
     replace: `      s.add(\`「\${self_call(cid)}\`).hl('不能正常的怀孕');
       s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1567 妊娠适性（情けない → 5）',
+    must_mention: '妊娠适性（情けない → 5）',
   },
   {
     desc: 'M11935 LOOK_INFO 身无分文的语尾档 5 改成 0（情けない → 默认）',
@@ -695,7 +695,7 @@ export default [
     replace: `      s.add('身无分文');
       if (kojo) s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1585 身无分文（情けない → 5）',
+    must_mention: '身无分文（情けない → 5）',
   },
   {
     desc: 'M11936 LOOK_INFO 所持金 > 0 的语尾档 0 改成 5（默认 → 情けない）',
@@ -705,7 +705,7 @@ export default [
     replace: `      s.add(String(money));
       if (kojo) s.add(await gobi_koujo(5));`,
     tests: ['look'],
-    must_mention: '源 :1590 所持金 > 0（默认 → 0）',
+    must_mention: '所持金 > 0（默认 → 0）',
   },
   {
     desc: 'M11937 LOOK_INFO 欠债的语尾档 5 改成 0（情けない → 默认）',
@@ -715,7 +715,7 @@ export default [
     replace: `      s.color(String(0 - debt), LIGHT_GREEN);
       if (kojo) s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1604 欠债（情けない → 5）',
+    must_mention: '欠债（情けない → 5）',
   },
   {
     desc: 'M11938 LOOK_INFO 常识改变的语尾档 1 改成 0（喜 → 默认）',
@@ -725,7 +725,7 @@ export default [
     replace: `      s.add(\`方面完全被改变了，真是可怜的\${self_call(cid)}\`);
       s.add(await gobi_koujo(0));`,
     tests: ['look'],
-    must_mention: '源 :1653 常识改变（喜 → 1）',
+    must_mention: '常识改变（喜 → 1）',
   },
   {
     desc: 'M11939 LOOK_INFO_LOVE 喜好收尾的语尾档 1 改成 0（喜 → 默认）',
@@ -733,7 +733,7 @@ export default [
     find: '    s.add(`${await gobi_koujo(1)}」 `); // 喜び语尾 + PRINTL 」 同一行',
     replace: '    s.add(`${await gobi_koujo(0)}」 `); // 变异：收尾档 1 → 0',
     tests: ['look'],
-    must_mention: '源 :2799 喜好收尾（喜 → 1）',
+    must_mention: '喜好收尾（喜 → 1）',
   },
 
   // —— #591：显示面的三个字面量（LOVE_SORT_MAX / LOVE_SHOW_MIN / LOVE_HEART_MAX） ——
@@ -743,7 +743,7 @@ export default [
   // 排到 rank 27，上界取 [28, 100] 里任何值都逐字同输出；本角色的实测更松——
   // 「分数 > 3 的下标」23 个（含那个 50），过门槛的项排到 rank 22 就到头，rank 23
   // 起全是分数 ≤ 3 的下标、必被门槛 continue（25…32 逐个代入排序 + 显示，22 项
-  // 与顺序完全一致，见 #591 完成报告）。于是本票改钉三处 **能观测**的：上界压进
+  // 与顺序完全一致，见 #591 完成报告）。于是这张工单改钉三处 **能观测**的：上界压进
   // 可观测区（22）、显示门槛（4）、心形上限（5），三条都由 test/look.test.js 的
   // 「满旋钮角色的显示面上限」拦下。
   make(
@@ -768,9 +768,9 @@ export default [
     '人妻♡♡♡♡♡　',
   ),
 
-  // —— #601：経験補正的档位（源 :2472-2550，每组自带 hi/mid） ——
+  // —— #601：経験補正的档位（每组自带 hi/mid） ——
   //
-  // 修正后七组档位写在表里逐组带上：肛门快乐经验（:2519-2528）用 >200 / >80，
+  // 修正后七组档位写在表里逐组带上：肛门快乐经验用 >200 / >80，
   // 其余六组用 >100 / >30。三条各钉一处：肛门组整组抄回别组档位、肛门组只错
   // 下档、别组误抄成肛门的档位。守它们的是 test/look.test.js 的「七组各自的
   // 档位」用例，逐组取 hi+1 / hi / mid+1 / mid / 1 / 0 六个值。

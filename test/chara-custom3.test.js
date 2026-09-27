@@ -2,8 +2,8 @@
  * ere/chara/chara-custom3.js 的行为测试（issue #392，N8 段 2）。
  *
  * 缝 = test/helpers/era-fixture.js。被测量的是：按钮的快捷键编码
- * （`L_IDX*100 + 序号`，即 CHAR_CUSTOM2 页脚回传的编码面）、素质的写入、
- * 以及 PRINT_ARR_GROUP 的 80 宽换行与「空串累计超过 10 个即止」。
+ * （`L_IDX*100 + 序号`，即 chara-custom2 页脚回传的编码面）、素质的写入、
+ * 以及 print_arr_group 的 80 宽换行与「空串累计超过 10 个即止」。
  */
 
 'use strict';
@@ -82,9 +82,9 @@ function width_rows(fixture) {
 const range = (start, end) =>
   Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
-// —— @PRINT_ARR_GROUP（:184-231）——
+// —— print_arr_group ——
 
-test('PRINT_ARR_GROUP：按钮编码 = 组号 × 100 + 表内序号，未选中为灰', () => {
+test('print_arr_group：按钮编码 = 组号 × 100 + 表内序号，未选中为灰', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);
 
@@ -93,43 +93,43 @@ test('PRINT_ARR_GROUP：按钮编码 = 组号 × 100 + 表内序号，未选中�
   assert.deepEqual(
     buttons(fixture).map((b) => b.text),
     ['金色', '栗色'],
-    '空串项不渲染（:205-210）',
+    '空串项不渲染',
   );
   assert.deepEqual(
     buttons(fixture).map((b) => b.color),
     ['#808080', undefined],
-    '未选中 SETCOLORBYNAME GRAY，选中项 RESETCOLOR（:220-226）',
+    '未选中项灰色，选中项默认色',
   );
 });
 
-test('PRINT_ARR_GROUP：超宽首项先冲空行——row.length 为 0 的 flush 不产出 Row', () => {
+test('print_arr_group：超宽首项先冲空行——row.length 为 0 的 flush 不产出 Row', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);
   // 单项显示宽 100 ≥ 80：进换行判定时行还是空的，flush 必须直接返回；
-  // 少了这道守卫会多出一个空的 printMultiColumns Row（行数 +1）
+  // 少了这道检查会多出一个空的 printMultiColumns Row（行数 +1）
   print_arr_group(['甲'.repeat(50)], 0, 7);
 
   assert.deepEqual(accelerators(fixture), [700], '按钮恰好一枚');
-  // 的 PRINTV "  " 起头、按钮逐格续拼，:231 的 PRINTL 只收那一行——
+  // 行首两格空白起头、按钮逐格续拼，收尾换行只收那一行——
   // 只有 1 个按钮行，末尾不再补空行（#596）
   assert.equal(
     fixture.era.getLineCount(),
     1,
-    '按钮行恰好一行，末尾 PRINTL 不生空行',
+    '按钮行恰好一行，末尾收尾换行不生空行',
   );
 });
 
-test('PRINT_ARR_GROUP：宽度按显示宽度累加 +2，达到 80 就换行', () => {
+test('print_arr_group：宽度按显示宽度累加 +2，达到 80 就换行', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);
 
-  // 每项「甲乙丙丁」显示宽 8，+2 = 10：第 8 项使 L_LEN = 80 → 从它起换行
+  // 每项「甲乙丙丁」显示宽 8，+2 = 10：第 8 项使行宽到 80 → 从它起换行
   print_arr_group(['', ...Array.from({ length: 16 }, () => '甲乙丙丁')], 0, 3);
 
   assert.deepEqual(
     button_rows(fixture).map((row) => row.length),
     [7, 7, 2],
-    '每项宽 8 时每行 7 项：阈值 80（:212-218）',
+    '每项宽 8 时每行 7 项：阈值 80',
   );
   // 每格宽度 = floor(24 / 本行格数)——换行冲出的行也必须算，占位 0 会被
   // 引擎按缺省列宽渲染（getValidWidth(0) 落到设置里的 colWidth）
@@ -144,7 +144,7 @@ test('PRINT_ARR_GROUP：宽度按显示宽度累加 +2，达到 80 就换行', (
   );
 });
 
-test('PRINT_ARR_GROUP：每格宽度 = floor(24 / 本行格数)（表驱动，含整行一格的端）', () => {
+test('print_arr_group：每格宽度 = floor(24 / 本行格数)（表驱动，含整行一格的端）', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);
   // [项目数, 期望格数, 期望宽度]——每项宽 2 时 40 项/行，故这些行都不换行；
@@ -169,7 +169,7 @@ test('PRINT_ARR_GROUP：每格宽度 = floor(24 / 本行格数)（表驱动，�
   }
 });
 
-test('PRINT_ARR_GROUP：换行后 L_LEN 从本项宽度重新起算', () => {
+test('print_arr_group：换行后行宽从本项宽度重新起算', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);
 
@@ -181,34 +181,34 @@ test('PRINT_ARR_GROUP：换行后 L_LEN 从本项宽度重新起算', () => {
   );
 });
 
-test('PRINT_ARR_GROUP：空串累计超过 10 个即止（L_EXCEED 不重置）', () => {
+test('print_arr_group：空串累计超过 10 个即止（空串计数不重置）', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);
-  // 空串共 11 个（下标 0 与 2-11）→ 第 11 个触发 BREAK
+  // 空串共 11 个（下标 0 与 2-11）→ 第 11 个触发早退
   print_arr_group(['', '甲', '', '', '', '', '', '', '', '', '', ''], 1, 4);
 
   assert.deepEqual(accelerators(fixture), [401], '只有「甲」一枚按钮');
 });
 
-test('PRINT_ARR_GROUP：恰好 10 个空串不触发 BREAK（判据是 > 10）', () => {
+test('print_arr_group：恰好 10 个空串不早退（条件是 > 10）', () => {
   const fixture = setup();
   const { print_arr_group } = load(fixture);
-  // 空串 10 个之后还有一个「乙」：阈值若收紧到 9，乙就被 BREAK 吞掉
+  // 空串 10 个之后还有一个「乙」：阈值若收紧到 9，乙就被早退吞掉
   print_arr_group(['', '甲', '', '', '', '', '', '', '', '', '', '乙'], 1, 4);
 
   assert.deepEqual(accelerators(fixture), [401, 411], '阈值 > 10 才早退');
 });
 
-// —— @CHAR_CUSTOM_LOOK_PAGE（:1-111）——
+// —— char_custom_look_page ——
 
-test('LOOK_PAGE 0：十一组的编码逐组核对（组号 × 100 + 序号，空串项不出按钮）', () => {
+test('char_custom_look_page 0：十一组的编码逐组核对（组号 × 100 + 序号，空串项不出按钮）', () => {
   const fixture = setup();
   const { char_custom_look_page } = load(fixture);
 
   char_custom_look_page(0);
   assert.deepEqual(accelerators(fixture), [
-    ...range(1101, 1111), // 发色（ARR_头发颜色2，「金色」起）
-    ...range(1201, 1212), // 发型（ARR_发型，「自然」起）
+    ...range(1101, 1111), // 发色（「金色」起）
+    ...range(1201, 1212), // 发型（「自然」起）
     1300,
     1301,
     1302, // 头发长度：短/半长/长
@@ -258,11 +258,11 @@ test('LOOK_PAGE 0：十一组的编码逐组核对（组号 × 100 + 序号，�
   );
 });
 
-test('LOOK_PAGE 0：选中项按各表自己的换算（头发长度/体型 ÷100、阴毛状态分档）', () => {
+test('char_custom_look_page 0：选中项按各表自己的换算（头发长度/体型 ÷100、阴毛状态分档）', () => {
   const fixture = setup();
   fixture.store.set('talent:1:302', 201); // 头发长度 → (201-1)/100 = 2
   fixture.store.set('talent:1:308', 101); // 体型 → (101-1)/100 = 1
-  fixture.store.set('talent:1:310', 100); // 阴毛状态 → 分档 3（「稀薄」，CASE 50 TO 100 先取）
+  fixture.store.set('talent:1:310', 100); // 阴毛状态 → 分档 3（「稀薄」，重叠区间先匹配先取）
   const { char_custom_look_page } = load(fixture);
 
   char_custom_look_page(0);
@@ -272,14 +272,14 @@ test('LOOK_PAGE 0：选中项按各表自己的换算（头发长度/体型 ÷10
   assert.deepEqual(selected, [1302, 2401, 2503]);
 });
 
-test('LOOK_PAGE 0：阴毛状态七个档位的上下界（重叠区间先匹配先取）', () => {
+test('char_custom_look_page 0：阴毛状态七个档位的上下界（重叠区间先匹配先取）', () => {
   const fixture = setup();
   const { char_custom_look_page } = load(fixture);
   const table = [
-    [0, null], // CASEELSE（档位 7 没有按钮，无选中项）
+    [0, null], // 档位 7 没有按钮，无选中项
     [1, 2500],
     [2, 2501],
-    [20, 2501], // CASE 2 TO 20 先于 20 TO 50
+    [20, 2501], // 2-20 区间先于 20-50 区间匹配
     [21, 2502],
     [50, 2502],
     [51, 2503],
@@ -290,7 +290,7 @@ test('LOOK_PAGE 0：阴毛状态七个档位的上下界（重叠区间先匹配
     [200, 2505],
     [201, 2506],
     [500, 2506],
-    [501, null], // CASEELSE 同上
+    [501, null], // 表外值同上
   ];
   for (const [value, expected] of table) {
     fixture.lines.length = 0;
@@ -309,7 +309,7 @@ test('LOOK_PAGE 0：阴毛状态七个档位的上下界（重叠区间先匹配
   }
 });
 
-test('LOOK_PAGE 1：普通勇者——三处标题与全部编码', () => {
+test('char_custom_look_page 1：普通勇者——三处标题与全部编码', () => {
   const fixture = setup();
   const { char_custom_look_page } = load(fixture);
 
@@ -332,7 +332,7 @@ test('LOOK_PAGE 1：普通勇者——三处标题与全部编码', () => {
   ]);
 });
 
-test('LOOK_PAGE 1：精英走「精英种族」（组 2），魔王整组不打印', () => {
+test('char_custom_look_page 1：精英走「精英种族」（组 2），魔王整组不打印', () => {
   const fixture = setup();
   const { char_custom_look_page } = load(fixture);
 
@@ -365,9 +365,9 @@ test('LOOK_PAGE 1：精英走「精英种族」（组 2），魔王整组不打�
   );
 });
 
-// —— @CHAR_CUSTOM_LOOK_DEAL（:118-182）——
+// —— char_custom_look_deal ——
 
-test('LOOK_DEAL：组号与序号按 ×100 拆开，逐组落到对应素质', () => {
+test('char_custom_look_deal：组号与序号按 ×100 拆开，逐组落到对应素质', () => {
   const fixture = setup();
   const { char_custom_look_deal } = load(fixture);
   const table = [
@@ -399,7 +399,7 @@ test('LOOK_DEAL：组号与序号按 ×100 拆开，逐组落到对应素质', (
   }
 });
 
-test('LOOK_DEAL：阴毛状态的 7 档编码（2500-2506 → 1/2/21/51/101/151/202）', () => {
+test('char_custom_look_deal：阴毛状态的 7 档编码（2500-2506 → 1/2/21/51/101/151/202）', () => {
   const fixture = setup();
   const { char_custom_look_deal } = load(fixture);
   [1, 2, 21, 51, 101, 151, 202].forEach((value, i) => {
@@ -408,7 +408,7 @@ test('LOOK_DEAL：阴毛状态的 7 档编码（2500-2506 → 1/2/21/51/101/151/
   });
 });
 
-test('LOOK_DEAL：阴毛状态序号 7 以上不写（无 CASEELSE 的 SELECTCASE）', () => {
+test('char_custom_look_deal：阴毛状态序号 7 以上不写（分档没有默认分支）', () => {
   const fixture = setup();
   fixture.store.set('talent:1:310', 55);
   const { char_custom_look_deal } = load(fixture);
@@ -417,7 +417,7 @@ test('LOOK_DEAL：阴毛状态序号 7 以上不写（无 CASEELSE 的 SELECTCAS
   assert.equal(fixture.store.get('talent:1:310'), 55, '未写入');
 });
 
-test('LOOK_DEAL：未登记的组号返回 -1 且不写任何素质', () => {
+test('char_custom_look_deal：未登记的组号返回 -1 且不写任何素质', () => {
   const fixture = setup();
   const { char_custom_look_deal } = load(fixture);
   for (const code of [1600, 1700, 2000, 2700, 3000, 3400, 4300, 9900]) {

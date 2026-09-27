@@ -2,14 +2,13 @@
  * ere/chara/chara-and-hair.js 的行为测试（issue #392，N8 段 2）。
  *
  * 缝 = test/helpers/era-fixture.js（全项目唯一测试注入点）+ 两个随机函数的
- * `rand` 形参（原作 `RAND:N` / `RAND(VARSIZE(...))` 的随机源，缺省均匀随机）。
+ * `rand` 形参（随机源，缺省均匀随机）。
  *
  * 被测量的是三处：素质表（talent:cid:160..175 与 300）的写入、屏幕上的按钮
  * 与文本、以及随机上界（分母）——上界单独钉（`rand(n)` 捕获实参 n）。
  *
  * 补位断言用显示宽度（全角算 2、半角算 1，NBSP 填充——#577 起对齐补位字符
- * 是 U+00A0）——原作 `{A,N}` / `%S,N,LEFT%` 的语义（expressions.md「FORM
- * 语法中的位数和对齐」）。
+ * 是 U+00A0），分别钉住编号列的右对齐补位与名字列的左对齐补位。
  */
 
 'use strict';
@@ -19,10 +18,10 @@ const { test } = require('node:test');
 
 const { create_era_fixture } = require('./helpers/era-fixture');
 
-/** 性格素质编号表（源 :6 `#DIM ID_OF_GENERAL_CHARASTERISTICS`，VARIABLES.ERH:6） */
+/** 性格素质编号表（ere/chara/chara-and-hair.js 的 GENERAL_CHARASTERISTICS 同表） */
 const CHARASTERISTICS = [160, 161, 162, 163, 164, 166, 172, 173, 174, 175];
 
-/** 发色名表（源 :9 `#DIMS ARR_HAIRCOLOR`，VARIABLES.ERH:9） */
+/** 发色名表（ere/chara/chara-and-hair.js 的 ARR_HAIRCOLOR 同表，0 号是空串） */
 const HAIRCOLORS = [
   '',
   '金发',
@@ -47,12 +46,12 @@ function disp_width(text) {
   return width;
 }
 
-/** `{A,N}`：右对齐补位 */
+/** 右对齐补位（编号列） */
 function pad_left(text, width) {
   return '\u00A0'.repeat(Math.max(0, width - disp_width(text))) + text; // #577：补位 NBSP
 }
 
-/** `%S,N,LEFT%`：左对齐补位 */
+/** 左对齐补位（名字列） */
 function pad_right(text, width) {
   return text + '\u00A0'.repeat(Math.max(0, width - disp_width(text))); // #577：补位 NBSP
 }
@@ -90,7 +89,7 @@ function texts(fixture) {
 }
 
 /**
- * 逐行快照：文本行给正文、`era.println()`（PRINTL）给 '\n' 记号——换行位置
+ * 逐行快照：文本行给正文、`era.println()` 给 '\n' 记号——换行位置
  * 是列表函数的关键观测面，不能被 filter 掉。
  */
 function rows(fixture) {
@@ -108,9 +107,9 @@ function talents(fixture, cid = 1) {
   );
 }
 
-// —— @SHOW_CHARASTERISTIC（:7-23）——
+// —— show_charasteristic ——
 
-test('SHOW_CHARASTERISTIC：返回首个已设性格的序号，并打印其名', () => {
+test('show_charasteristic：返回首个已设性格的序号，并打印其名', () => {
   const fixture = setup();
   fixture.store.set('talent:1:162', 1);
   fixture.store.set('talent:1:166', 1);
@@ -122,14 +121,14 @@ test('SHOW_CHARASTERISTIC：返回首个已设性格的序号，并打印其名'
   assert.deepEqual(texts(fixture), ['坦率'], '打印的是命中那一项的名字');
 });
 
-test('SHOW_CHARASTERISTIC：一个都没设时返回 -1 且不打印', () => {
+test('show_charasteristic：一个都没设时返回 -1 且不打印', () => {
   const fixture = setup();
   const { show_charasteristic } = load(fixture);
   assert.equal(show_charasteristic(1), -1);
   assert.deepEqual(texts(fixture), []);
 });
 
-test('SHOW_CHARASTERISTIC：省略实参（-1）时读 TARGET 指针', () => {
+test('show_charasteristic：省略实参（-1）时读 TARGET 指针', () => {
   const fixture = setup(3);
   fixture.store.set('talent:3:175', 1);
   fixture.store.set('talentname:175', '伶俐');
@@ -138,11 +137,11 @@ test('SHOW_CHARASTERISTIC：省略实参（-1）时读 TARGET 指针', () => {
   assert.deepEqual(texts(fixture), ['伶俐']);
 });
 
-// —— @SET_RANDOM_CHARASTERISTIC（:28-46）——
+// —— set_random_charasteristic ——
 
-test('SET_RANDOM_CHARASTERISTIC：先清空再掷骰，返回掷中的序号', () => {
+test('set_random_charasteristic：先清空再掷骰，返回掷中的序号', () => {
   const fixture = setup();
-  fixture.store.set('talent:1:160', 1); // 会被 CLEAR 掉
+  fixture.store.set('talent:1:160', 1); // 会被清空步骤清掉
   let upper = 0;
   const rand = (n) => {
     upper = n;
@@ -151,11 +150,7 @@ test('SET_RANDOM_CHARASTERISTIC：先清空再掷骰，返回掷中的序号', (
   const { set_random_charasteristic } = load(fixture);
 
   assert.equal(set_random_charasteristic(1, rand), 5);
-  assert.equal(
-    upper,
-    10,
-    'RAND(VARSIZE(ID_OF_GENERAL_CHARASTERISTICS)) 的分母是表长 10',
-  );
+  assert.equal(upper, 10, '随机分母是表长 10');
   assert.equal(
     fixture.store.get('talent:1:166'),
     1,
@@ -168,7 +163,7 @@ test('SET_RANDOM_CHARASTERISTIC：先清空再掷骰，返回掷中的序号', (
   );
 });
 
-test('SET_RANDOM_CHARASTERISTIC：掷中 174（貴公子）时重掷', () => {
+test('set_random_charasteristic：掷中 174（貴公子）时重掷', () => {
   const fixture = setup();
   const rolls = [8, 3]; // 第 0 次掷中 174，第 1 次掷中 163
   let calls = 0;
@@ -181,13 +176,13 @@ test('SET_RANDOM_CHARASTERISTIC：掷中 174（貴公子）时重掷', () => {
 
   assert.equal(set_random_charasteristic(1, rand), 3);
   assert.equal(calls, 2, '掷了两次');
-  assert.equal(fixture.store.get('talent:1:174'), 0, '174 不落地');
+  assert.equal(fixture.store.get('talent:1:174'), 0, '174 不写入');
   assert.equal(fixture.store.get('talent:1:163'), 1);
 });
 
-// —— @SET_CHARASTERISTIC（:52-63）——
+// —— set_charasteristic ——
 
-test('SET_CHARASTERISTIC：按序号设定单条性格（越界不检查，1:1）', () => {
+test('set_charasteristic：按序号设定单条性格（越界不检查）', () => {
   const fixture = setup();
   fixture.store.set('talent:1:160', 1);
   const { set_charasteristic } = load(fixture);
@@ -197,11 +192,11 @@ test('SET_CHARASTERISTIC：按序号设定单条性格（越界不检查，1:1�
   assert.equal(fixture.store.get('talent:1:160'), 0, '事前初始化清掉了旧值');
 });
 
-test('SET_CHARASTERISTIC：序号在表外（等于或超过表长）时写素质 0（1:1）', () => {
+test('set_charasteristic：序号在表外（等于或超过表长）时写素质 0', () => {
   const fixture = setup();
   const { set_charasteristic } = load(fixture);
-  // 源 :62 的 `ID_OF_GENERAL_CHARASTERISTICS:(ARG:1)` 读到表外给 0，
-  // 于是写的是素质 0（処女）——文件头的「?? 0」这一端单独钉住
+  // 表外序号取不到表项、下标落回 0，于是写的是素质 0（処女）
+  // ——下标 0 这一端单独钉住
   for (const index of [10, 99]) {
     fixture.store.delete('talent:1:0');
     set_charasteristic(1, index);
@@ -213,9 +208,9 @@ test('SET_CHARASTERISTIC：序号在表外（等于或超过表长）时写素�
   }
 });
 
-// —— @CLEAR_CHARASTERISTIC（:68-78）——
+// —— clear_charasteristic ——
 
-test('CLEAR_CHARASTERISTIC：表内 10 项全部清零', () => {
+test('clear_charasteristic：表内 10 项全部清零', () => {
   const fixture = setup();
   for (const id of CHARASTERISTICS) fixture.store.set(`talent:1:${id}`, 1);
   const { clear_charasteristic } = load(fixture);
@@ -224,14 +219,14 @@ test('CLEAR_CHARASTERISTIC：表内 10 项全部清零', () => {
   assert.deepEqual(talents(fixture), new Array(10).fill(0));
 });
 
-// —— @CHOOSE_CHARASTERISTIC（:84-122）——
+// —— choose_charasteristic ——
 
-/** 列表一行的正文（:103 的 `[{i,2}] %name,10,LEFT%`） */
+/** 列表一行的正文：编号右对齐宽 2，名字左对齐宽 10 */
 function charasteristic_row(index, name) {
   return `[${pad_left(String(index), 2)}] ${pad_right(name, 10)}`;
 }
 
-test('CHOOSE_CHARASTERISTIC：列表跳过 174，每 3 项换行；输入越界重问', async () => {
+test('choose_charasteristic：列表跳过 174，每 3 项换行；输入越界重问', async () => {
   const fixture = setup();
   for (const id of CHARASTERISTICS)
     fixture.store.set(`talentname:${id}`, `N${id}`);
@@ -239,7 +234,7 @@ test('CHOOSE_CHARASTERISTIC：列表跳过 174，每 3 项换行；输入越界�
   fixture.set_inputs(99, 2); // 99 > SIZE 重问；2 命中表内第 2 项
 
   await choose_charasteristic(1);
-  // 一行 3 格（源 :103-109 的 `SIF (LOCAL:1) % 3 == 0 PRINTL`），9 项正好三行
+  // 一行 3 格（每 3 项换一行），9 项正好三行
   assert.deepEqual(rows(fixture), [
     [
       charasteristic_row(0, 'N160'),
@@ -256,14 +251,14 @@ test('CHOOSE_CHARASTERISTIC：列表跳过 174，每 3 项换行；输入越界�
       charasteristic_row(7, 'N173'),
       charasteristic_row(9, 'N175'),
     ].join(''),
-    // 9 项 % 3 = 0：没有残行，:112 的 PRINTL 落在空行上 = 真空行（#596）
+    // 9 项 % 3 = 0：没有残行，列表末尾的收尾换行自成一行 = 真空行（#596）
     '\n',
   ]);
   assert.equal(fixture.store.get('talent:1:162'), 1, '输入 2 → 表内第 2 项');
   assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
-test('CHOOSE_CHARASTERISTIC：换行位置按每行 N 项（实参可换）', async () => {
+test('choose_charasteristic：换行位置按每行 N 项（实参可换）', async () => {
   const fixture = setup();
   for (const id of CHARASTERISTICS)
     fixture.store.set(`talentname:${id}`, `N${id}`);
@@ -271,7 +266,7 @@ test('CHOOSE_CHARASTERISTIC：换行位置按每行 N 项（实参可换）', as
   fixture.set_inputs(0);
 
   await choose_charasteristic(1, 2);
-  // 9 项 % 2 = 1：末行是残行，:112 的 PRINTL 只收它，不产生空行（#596）。
+  // 9 项 % 2 = 1：末行是残行，收尾换行只收它，不产生空行（#596）。
   // 残行为空的那一支才留空行，见上一条「每 3 项换行」用例
   assert.deepEqual(rows(fixture), [
     [charasteristic_row(0, 'N160'), charasteristic_row(1, 'N161')].join(''),
@@ -282,7 +277,7 @@ test('CHOOSE_CHARASTERISTIC：换行位置按每行 N 项（实参可换）', as
   ]);
 });
 
-test('CHOOSE_CHARASTERISTIC：输入等于表长（10）按越界重问', async () => {
+test('choose_charasteristic：输入等于表长（10）按越界重问', async () => {
   const fixture = setup();
   const { choose_charasteristic } = load(fixture);
   fixture.set_inputs(10, 3); // SIZE = 10，输入 10 越界重问；3 命中
@@ -297,9 +292,9 @@ test('CHOOSE_CHARASTERISTIC：输入等于表长（10）按越界重问', async 
   assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
-// —— @SHOW_HAIRCOLOR（:127-138）／@SET_HAIRCOLOR（:194-202）——
+// —— show_haircolor ／ set_haircolor ——
 
-test('SHOW_HAIRCOLOR：打印发色名并返回编号；未设（0）时打印空串', () => {
+test('show_haircolor：打印发色名并返回编号；未设（0）时打印空串', () => {
   const fixture = setup();
   const { show_haircolor } = load(fixture);
 
@@ -311,9 +306,9 @@ test('SHOW_HAIRCOLOR：打印发色名并返回编号；未设（0）时打印�
   assert.deepEqual(texts(fixture), ['', '黑发']);
 });
 
-test('SHOW_HAIRCOLOR：编号超表（12，SET_HAIRCOLOR 不设检查的端）时打印空串', () => {
+test('show_haircolor：编号超表（12，set_haircolor 不设检查的端）时打印空串', () => {
   const fixture = setup();
-  fixture.store.set('talent:1:300', 12); // 12 号没有名字（ARR_HAIRCOLOR 到 11 止）
+  fixture.store.set('talent:1:300', 12); // 12 号没有名字（发色表到 11 止）
   const { show_haircolor } = load(fixture);
 
   assert.equal(show_haircolor(1), 12, '编号原样回传');
@@ -324,7 +319,7 @@ test('SHOW_HAIRCOLOR：编号超表（12，SET_HAIRCOLOR 不设检查的端）�
   );
 });
 
-test('SET_HAIRCOLOR：写入并回传编号（越界不检查，1:1）', () => {
+test('set_haircolor：写入并回传编号（越界不检查）', () => {
   const fixture = setup();
   const { set_haircolor } = load(fixture);
 
@@ -333,12 +328,12 @@ test('SET_HAIRCOLOR：写入并回传编号（越界不检查，1:1）', () => {
   assert.equal(fixture.store.get('talent:1:300'), 7, '发色落在 talent:1:300');
 });
 
-// —— @SET_RANDOM_HAIRCOLOR（:143-189）——
+// —— set_random_haircolor ——
 
-test('SET_RANDOM_HAIRCOLOR：RAND:100 的全部分档', () => {
+test('set_random_haircolor：RAND:100 的全部分档', () => {
   const fixture = setup();
   const { set_random_haircolor } = load(fixture);
-  // [掷出的值, 期望的发色编号]——覆盖 8 个 CASE 的两端与邻界
+  // [掷出的值, 期望的发色编号]——覆盖 8 个分档的两端与邻界
   const table = [
     [0, 11],
     [1, 1],
@@ -368,14 +363,14 @@ test('SET_RANDOM_HAIRCOLOR：RAND:100 的全部分档', () => {
   }
 });
 
-// —— @CHOOSE_HAIRCOLOR（:207-237）——
+// —— choose_haircolor ——
 
-/** 列表一行的正文（:219 的 `[{COLOR_ID,2}] %name,7,LEFT%`） */
+/** 列表一行的正文：编号右对齐宽 2，名字左对齐宽 7 */
 function haircolor_row(index, name) {
   return `[${pad_left(String(index), 2)}] ${pad_right(name, 7)}`;
 }
 
-test('CHOOSE_HAIRCOLOR：列出 1-11 号，每 6 项换行；输入越界重问', async () => {
+test('choose_haircolor：列出 1-11 号，每 6 项换行；输入越界重问', async () => {
   const fixture = setup();
   const { choose_haircolor } = load(fixture);
   fixture.set_inputs(0, 13, 12, 5); // 0、13 与 12 越界（`< 1 || >= 12`），5 命中
@@ -385,14 +380,14 @@ test('CHOOSE_HAIRCOLOR：列出 1-11 号，每 6 项换行；输入越界重问'
     haircolor_row(i + 1, name),
   );
   assert.deepEqual(rows(fixture), [
-    items.slice(0, 6).join(''), // 一行 6 格（源 :223-225 的 `% (ARG:1) == 0`）
+    items.slice(0, 6).join(''), // 一行 6 格（每 6 项换一行）
     items.slice(6).join(''),
   ]);
   assert.equal(fixture.store.get('talent:1:300'), 5);
   assert.equal(fixture.inputs_consumed.length, 4);
 });
 
-test('CHOOSE_HAIRCOLOR：12 号无名字（表外），按越界重问', async () => {
+test('choose_haircolor：12 号无名字（表外），按越界重问', async () => {
   const fixture = setup();
   const { choose_haircolor } = load(fixture);
   fixture.set_inputs(12, 4); // 12 越界重问；4 命中
@@ -402,7 +397,7 @@ test('CHOOSE_HAIRCOLOR：12 号无名字（表外），按越界重问', async (
   assert.equal(fixture.inputs_consumed.length, 2, '第一次输入被拒后重问');
 });
 
-test('CHOOSE_HAIRCOLOR：每行 N 项可换（实参）', async () => {
+test('choose_haircolor：每行 N 项可换（实参）', async () => {
   const fixture = setup();
   const { choose_haircolor } = load(fixture);
   fixture.set_inputs(1);
@@ -411,7 +406,7 @@ test('CHOOSE_HAIRCOLOR：每行 N 项可换（实参）', async () => {
   const items = HAIRCOLORS.slice(1).map((name, i) =>
     haircolor_row(i + 1, name),
   );
-  // 11 项 % 4 = 3：末行残行由 :227 的 PRINTL 收尾，不产生空行（#596）
+  // 11 项 % 4 = 3：末行残行由收尾换行结束，不产生空行（#596）
   assert.deepEqual(rows(fixture), [
     items.slice(0, 4).join(''),
     items.slice(4, 8).join(''),
@@ -419,9 +414,9 @@ test('CHOOSE_HAIRCOLOR：每行 N 项可换（实参）', async () => {
   ]);
 });
 
-// —— 按钮与颜色：两个列表函数用的是文本行（原作 PRINTFORM/PRINTBUTTON 的形态）——
+// —— 按钮与颜色：两个列表函数用的是文本行，不是按钮 ——
 
-test('CHOOSE_CHARASTERISTIC 用的是按钮（原作 :103 是 PRINTFORM，不是按钮）', async () => {
+test('choose_charasteristic：性格列表是文本行，不是按钮', async () => {
   const fixture = setup();
   fixture.store.set('talentname:160', '刚强');
   const { choose_charasteristic } = load(fixture);
@@ -431,11 +426,11 @@ test('CHOOSE_CHARASTERISTIC 用的是按钮（原作 :103 是 PRINTFORM，不是
   assert.deepEqual(
     buttons(fixture),
     [],
-    '1:1：性格列表是纯文本行 + INPUT，不升级为按钮（与 CHARA_CUSTOM2 的素质格不同）',
+    '性格列表是纯文本行 + 输入，不升级为按钮（与 chara-custom2 的素质格不同）',
   );
 });
 
-// —— 接入（源 CHARA_MAKE.ERB 的 @RAND_CHARA_MAKE，本票把八处存根换真身）——
+// —— 接入（rand_chara_make，这张工单把八处存根换真身）——
 
 test('接入：rand_chara_make 的形象确认段走真身，性格与发色被写上', async () => {
   const fixture = create_era_fixture();
@@ -448,7 +443,7 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
   fixture.era.addCharacter(9);
   fixture.seed_chara(3, { id: 3, name: '勇者3', callname: '勇者3' });
   fixture.store.set('cflag:3:6', 99); // 名字编号：避让随机命名的重掷
-  // @RAND_CHARA_MAKE 的两处 INPUT：:107 形象确认（100 = 继续）→ :158 收下（2）
+  // rand_chara_make 的两处输入：形象确认（100 = 继续）→ 收下（2）
   const answers = [100, 2];
   let asked = 0;
   fixture.era.input = () => Promise.resolve(answers[asked++] ?? 100);
@@ -479,8 +474,8 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
     [0, 3, 9],
     '新加入的是掷中的 3 号',
   );
-  // 的播报读 SAVESTR:(CHARANUM-1)——CHAR_MAKE 内部会重建称呼，
-  // 故按落地后的实际称呼比对（它非空是这条断言有意义的前提）
+  // 播报读最新加入者的称呼——char_make 内部会重建称呼，
+  // 故按生成后的实际称呼比对（它非空是这条断言有意义的前提）
   const recruit_name = fixture.store.get('callname:3:-1');
   assert.ok(recruit_name, '新加入的 3 号有称呼');
   assert.ok(
@@ -489,7 +484,7 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
         line.type === 'text' &&
         line.text === `冒险者${recruit_name}被囚禁在了地牢里！`,
     ),
-    ':173-178 收下播报点名新加入的 3 号（源 SAVESTR:(CHARANUM-1)）',
+    '收下播报点名新加入的 3 号（读最新加入者的称呼）',
   );
   const placeholders = [
     'SET_CHARASTERISTIC',
@@ -506,6 +501,6 @@ test('接入：rand_chara_make 的形象确认段走真身，性格与发色被�
       placeholders.some((name) => text.includes(`@${name}`)),
     ),
     [],
-    '八处 FUNC_CHARA_AND_HAIR 占位行不再出现（其余存根如 SHOW_CHARA_INFO 不在本票）',
+    '八处 chara-and-hair 存根占位行不再出现（其余存根如 show_chara_info 不在这张工单）',
   );
 });

@@ -1,15 +1,13 @@
 /**
- * @file 固定名列表：查表实现（issue #388，#329 裁定 10 的落地）。
+ * @file 固定名列表：查表实现（issue #388，#329 决定 10）。
  *
- * 原作 @CHARA_NAME_INIT 是「3,336 条 LIST_CHARA_NAME:n = 名字」的纯数据体，
- * 首行 SIF STRLENS(LIST_CHARA_NAME:0) > 1 RETURN（:7-8）只是防止游戏内重复
- * 初始化的守卫。写成 JS 代码没有意义（#329 裁定 10），数据落点是
- * yml/NameList.yml——引擎在装载静态数据时（早于 ere/main.js 导出的任何
- * 函数执行，见 AGENTS.md「启动顺序」）已经把它读进 field_names.namelist，
- * 本文件因此没有真正的初始化状态要建：`chara_name_init` 只是把 valid_ids()
- * 的缓存提前建好（下方函数文档细说），让 SYSTEM ver1.0.3.ERB 里两处原作
- * CALL CHARA_NAME_INIT（EVENTFIRST、EVENTLOAD 钩子，行号见 event-first.js／
- * event-load.js 各自的追溯注释）仍有对应实现可查、可被测试观测到。
+ * 固定名列表是「3,336 条编号 → 名字」的纯数据体，写成 JS 代码没有意义
+ * （#329 决定 10），数据落点是 yml/NameList.yml——引擎在装载静态数据时
+ * （早于 ere/main.js 导出的任何函数执行，见 AGENTS.md「启动顺序」）已经
+ * 把它读进 field_names.namelist，本文件因此没有真正的初始化状态要建：
+ * `chara_name_init` 只是把 valid_ids() 的缓存提前建好（下方函数文档细说），
+ * 让 EVENTFIRST、EVENTLOAD 两处调用点（见 event-first.js／event-load.js
+ * 各自的追溯注释）仍有对应实现可查、可被测试观测到。
  *
  * **表名/读取键与文件名强耦合**（#435）：引擎按文件名小写取表名，装载时
  * 一条写死的 /chara[^/]+\.yml/ 会把 chara 开头的文件划进逐角色数据桶——
@@ -18,25 +16,22 @@
  * 任何一处与文件名脱节都会让查表恒空——test/chara-name-list.test.js 的
  * 「文件名分类」与「引擎真解析驱动本模块」两条用例钉住这条链。
  *
- * 5 个计数常量（WEST_NAME_COUNT 等，:10-14）不在本文件——它们只服务
- * @CHARA_NAME_RANDOM_DEFINE 的随机范围计算，且已随 #332 独立落在
+ * 5 个计数常量（WEST_NAME_COUNT 等）不在本文件——它们只服务
+ * chara_name_random_define 的随机范围计算，且已随 #332 独立放在
  * ere/chara/chara-name.js（JAPANESE_NAME_COUNT 等同值常量）。
  *
- * get_fixed_chara_name 是给未来 @CHARA_NAME_DEFINE 移植票（キャラ関数/
- * CHARA_NAME.ERB，ere 落点同为 ere/chara/chara-name.js）用的查表接口——
- * 本票只落表、不实现读取逻辑（默认名兜底等属于那张票，见
- * yml/NameList.yml 头注的重名合并说明）。
+ * get_fixed_chara_name 是给 chara_name_define（ere 落点同为
+ * ere/chara/chara-name.js）用的查表接口——这张工单只建表，默认名的缺省
+ * 处理属于 chara_name_define 一侧（重名合并说明见 yml/NameList.yml 头注）。
  */
 
 const era = require('#/era-electron');
 
 /**
- * @CHARA_NAME_INIT 的守卫生效时，原作 LIST_CHARA_NAME 的声明尺寸
- * （CHARA_NAME.ERH:7 `#DIMS LIST_CHARA_NAME,5500`）。@CHARA_NAME_DEFINE 的
- * `:175`（IF L_NID < VARSIZE("LIST_CHARA_NAME")）判的是它而不是注册表尺寸
- * ——3,264 个已注册编号之外，声明域内还有大量空隙走「名字没有被记录」
- * 分支，两者不可互相代入。常量放在本模块：它是唯一持有该表产物的文件，
- * chara-name.js 从这里的导出消费，不另立第二个来源。
+ * 固定名列表的声明尺寸（5500）。chara_name_define 判的是它而不是注册表
+ * 尺寸——3,264 个已注册编号之外，声明域内还有大量空隙走「名字没有被
+ * 记录」分支，两者不可互相代入。常量放在本模块：它是唯一持有该表产物的
+ * 文件，chara-name.js 从这里的导出消费，不另立第二个来源。
  */
 const LIST_CHARA_NAME_SIZE = 5500;
 
@@ -45,7 +40,7 @@ const LIST_CHARA_NAME_SIZE = 5500;
  * 的 id 直接崩溃——app.asar 的 set_var 在这条分支只判「表在不在」
  * （`if (this.fieldNames[a]) return this.fieldNames[a][u].n`），不判「这个
  * id 在不在」，缺项时 `.n` 读在 undefined 上直接抛 TypeError（实机验证，
- * #388）。3,336 个原作编号里只有 3,264 个落进了本表（55→65 组重名合并，
+ * #388）。3,336 个编号里只有 3,264 个落进了本表（55→65 组重名合并，
  * 见 yml/NameList.yml 头注），中间大量空隙都会撞上这条——所以查表前
  * 必须先用 `namelistkeys`（= Object.values(staticData.namelist)，
  * 即全部已注册 id，dev-guides/09-static.md 的「变量序号数组」读法）确认
@@ -60,11 +55,11 @@ function valid_ids() {
 }
 
 /**
- * @CHARA_NAME_INIT 的调用点实现：原作只是「已初始化就早退」的守卫，数据
- * 本身在静态表里、无事可做——真正有意义的动作是把 valid_ids() 的缓存提前
- * 建好，让 EVENTFIRST/EVENTLOAD 之后的首次查表不用现付这次 era.get。也让
- * 两处调用点变得可观测（fixture.var_reads 会看到 `namelistkeys`），
- * 而不是彻底的空调用——「调用点被删掉」因此是一处能被测试钉住的回归。
+ * chara_name_init：数据本身在静态表里、无事可做——真正有意义的动作是把
+ * valid_ids() 的缓存提前建好，让 EVENTFIRST/EVENTLOAD 之后的首次查表不用
+ * 现付这次 era.get。也让两处调用点变得可观测（fixture.var_reads 会看到
+ * `namelistkeys`），而不是彻底的空调用——「调用点被删掉」因此是一处能被
+ * 测试钉住的回归。
  * @returns {void}
  */
 function chara_name_init() {
@@ -72,12 +67,12 @@ function chara_name_init() {
 }
 
 /**
- * 查表：按固定名编号取名字（原作 LIST_CHARA_NAME:nid 的等价读法）。
+ * 查表：按固定名编号取名字。
  *
- * @param {number} nid 固定名编号（原作声明范围 0-5499，稀疏——只有 3,264 个
+ * @param {number} nid 固定名编号（声明范围 0-5499，稀疏——只有 3,264 个
  *   编号落进了本表，其余（含合并丢弃的 70 个）在此返回空串）
- * @returns {string} 查到的名字；编号未注册时空串（原作对应分支的默认名
- *   兜底属于 @CHARA_NAME_DEFINE 的移植票，不在本函数）
+ * @returns {string} 查到的名字；编号未注册时空串（未命中时的默认名缺省
+ *   处理在 chara_name_define，不在本函数）
  */
 function get_fixed_chara_name(nid) {
   if (!valid_ids().has(nid)) {
