@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 510; // #652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+18 新守卫 M13200-M13217）
+export const COUNT = 505; // #685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+18 新守卫 M13200-M13217）
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -734,25 +734,6 @@ export default [
     must_mention: '阶层 2 排在阶层 5 前',
   },
   {
-    desc: 'M565 ROOM_SETUP 设施改造的扣款删除（10000p 双减，:300-301）',
-    file: 'ere/page/page-dungeon-setup.js',
-    find: `      era_flag.money -= 10000;
-      era_exflag.legit_money -= 10000;
-      flag_set(floor + 350, result);`,
-    replace: `      // 变异：不扣款
-      flag_set(floor + 350, result);`,
-    tests: ['page-dungeon-setup'],
-    must_mention: 'MONEY -10000',
-  },
-  {
-    desc: 'M566 MON_SET_OMAKASE 玉座跳过删除（(16,16) 也放怪物，:509-511）',
-    file: 'ere/page/page-dungeon-setup.js',
-    find: '    // 玉座 (16,16) 跳过\n    if (x === 16 && y === 16) {\n      continue;\n    }',
-    replace: `    // 变异：玉座也放`,
-    tests: ['page-dungeon-setup'],
-    must_mention: '玉座 (16,16) 不写',
-  },
-  {
     desc: 'M567 OVERVIEW「迷宫外」判定改坏（501 <= 1 且 502 == 0 → 502 判据删）',
     file: 'ere/page/page-main-menu.js',
     find: `        if (floor <= 1 && (era.get(\`cflag:\${cid}:502\`) || 0) === 0) {
@@ -780,16 +761,6 @@ export default [
     replace: `  // 变异：不渲染 [102] 按钮`,
     tests: ['page-dungeon-info'],
     must_mention: '[102] 恰一枚',
-  },
-  {
-    desc: 'M570 SETUP 的 2D 模式分流删除（FLAG:502 == 1 不再进 DUNGEON_INFO_MAP，:8-11）',
-    file: 'ere/page/page-dungeon-setup.js',
-    find: `  if (flag_get(502) === 1) {
-    return dungeon_info_map();
-  }`,
-    replace: `  // 变异：不分流 2D 模式`,
-    tests: ['page-dungeon-setup'],
-    must_mention: '进了 MAP 界面',
   },
 
   // —— #212（J2 调教回合骨架）：M704-M712 ——
@@ -4201,14 +4172,6 @@ export default [
     must_mention: '原作 :180 的 [0] - 好的',
   },
   {
-    desc: 'M12297 设定子菜单的 [0] 解除陷阱丢掉「- 」',
-    file: 'ere/page/page-dungeon-setup.js',
-    find: "era.printButton('- 解除陷阱', 0);",
-    replace: "era.printButton('解除陷阱', 0); // 变异：丢掉「- 」",
-    tests: ['page-dungeon-setup'],
-    must_mention: 'DUNGEON_SETUP.ERB:176-177',
-  },
-  {
     desc: 'M12298 迎击列表页脚的 [999] 返回丢掉「- 」',
     file: 'ere/page/page-intercept.js',
     find: "era.printButton('- 返 回', 999); // PRINTLC（原作两个空格，引擎折叠成一个）",
@@ -4706,14 +4669,6 @@ export default [
       "    print_progress_line('天神宫侵攻度', era_exflag.shrine_invasion, 10000); // 变异：读回 EX_FLAG 侧",
     tests: ['page-invasion'],
     must_mention: '进度条读 FLAG:101 = 777',
-  },
-  {
-    desc: 'M13209 SETUP 宝物判定漏 300 复原（#652 改的 z >= 300 被改回 z > 300）',
-    file: 'ere/page/page-dungeon-setup.js',
-    find: '        } else if (z >= 300) {',
-    replace: '        } else if (z > 300) { // 变异：漏 300 复原',
-    tests: ['page-dungeon-setup'],
-    must_mention: '宝物 300 写宝箱槽',
   },
   {
     desc: 'M13210 ENEMY_EXIST2 护卫名单判据改坏（#652 的 floor === 10 被拆，近卫层也不出）',
