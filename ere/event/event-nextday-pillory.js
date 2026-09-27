@@ -701,7 +701,7 @@ async function pillory(rand = default_rand) {
   }
   await era.waitAnyKey(); // WAIT
 
-  // 精神达到极限则解放（第二支判据被第一支吞掉，不可达，照抄）
+  // 精神达到极限则解放（第二支判据被第一支吞掉，不可达，照写）
   if ((era.get(`juel:${cid}:100`) || 0) > 120 + cflag(9) * 40) {
     era.print(`${name}的精神达到极限了……`);
     await era.printAndWait('*从示众台解放*');

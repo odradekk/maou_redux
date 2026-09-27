@@ -303,7 +303,7 @@ test('自动存档（#137/ADR-0006）：EVENT_NEWDAY 入口写 99 号槽，备�
   assert.equal(
     saves[0]?.args[0],
     99,
-    '自动存档必须写 99 号槽（原作留白，ADR-0006）',
+    '自动存档必须写 99 号槽（ADR-0006 的读档钩子配套约定）',
   );
   assert.equal(saves.length, 1, '入口恰好存一次');
   assert.match(

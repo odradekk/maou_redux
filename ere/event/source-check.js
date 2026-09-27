@@ -145,8 +145,8 @@ function source_sex_check() {
 // @SOURCE_LESBIAN_SEX_CHECK（SUB2:9-238）：女性同士——TARGET 的百合气质
 // （ABL:22）、百合中毒（ABL:33）与调教者的同名两项共四段乘算级联，末尾
 // 调教者克制（TALENT:PLAYER:20）令疼痛/达成感减半。ABL:PLAYER:33 的档位
-// 在原作里从 ==1 起算，ELSE 同时兜底 0 与 ≥5（与其余三段「0 为最低档、
-// ELSE 只兜底 ≥5」的写法不对称，照抄不改）。
+// 从 ==1 起算，ELSE 同时兜底 0 与 ≥5（与其余三段「0 为最低档、ELSE 只
+// 兜底 ≥5」的写法不对称，照写不改）。
 function source_lesbian_sex_check() {
   if (abl(22) === 0) {
     set_src(8, times(src(8), 0.8));
@@ -353,9 +353,8 @@ function source_lesbian_sex_check() {
 }
 
 // @SOURCE_GAY_SEX_CHECK（SUB2:242-315）：男性同士——只按 TARGET 的ホモっ
-// 気（ABL:23）分档，0-5 共六档，无 ELSE 兜底（ABL:23≥6 整段跳过，照抄原
-// 作）；末尾调教者克制（TALENT:PLAYER:20）同 LESBIAN 分支令疼痛/达成感
-// 减半。
+// 気（ABL:23）分档，0-5 共六档，无 ELSE 兜底（ABL:23≥6 整段跳过，照写）；
+// 末尾调教者克制（TALENT:PLAYER:20）同 LESBIAN 分支令疼痛/达成感减半。
 function source_gay_sex_check() {
   if (abl(23) === 0) {
     set_src(8, times(src(8), 4.0));
@@ -1469,7 +1468,7 @@ function up_talent_check() {
     set_up(3, times(up(3), 1.2));
   }
   // 膣内射精による妊娠への恐怖：TFLAG:2 && SELECTCOM ∈ 体位组——爱抚
-  //（SELECTCOM 0）不达，体位票落地时随指令实现（此处 1:1 保留判据）
+  //（SELECTCOM 0）不达，体位票落地时随指令实现（此处照写判据）
   if (tflag(2) && [20, 21, 22, 23, 34].includes(era_flag.selectcom || 0)) {
     if (
       era_flag.assiplay === 0 &&
@@ -2643,7 +2642,7 @@ function master_flag_check() {
   }
   game.train.主人经验 = tflag(30) + tflag(29) * q;
 
-  // 射精系 TFLAG 的经验加算（TFLAG:0-4/9 恒 0，循环 1:1 保留）
+  // 射精系 TFLAG 的经验加算（TFLAG:0-4/9 恒 0，循环照写）
   for (let count = 0; count < 5; count += 1) {
     if (tflag(count) > 0 && (era.get(`exp:${cid}:20`) || 0) >= PALAMLV[2]) {
       game.train.主人经验 = tflag(30) + tflag(count);
@@ -3115,21 +3114,16 @@ function palam_up_check() {
 }
 
 // @PALAM_UP_CHECK_MINI（:2248-2277）：自动调教专用的静默结算——不打印任何
-// 行（原作三处 PRINT/CALL PALAM_MESSAGE_MINI 均被注释）。UPID 序缺少完整版
-// 的"UPCOUNT==15→UPID=15"专属分支，只有 UPCOUNT<=2/==3/else 三支：
-// UPCOUNT=15 落入 else 得 UPID=15-1=14，与 UPCOUNT=3 的 UPID=14 撞车重复
-// 结算；UPID=15 因此永远不会被这个序列命中——原作自身的缺陷，1:1 保留，
-// 登记见 issue #14。
-// 但 delta:15 仍须无条件清零，这与上面的 UPID 缺陷是两件事：ere 侧的
-// UP/DOWN 落在 delta 表，由本模块当场结算进 palam 并清零、令引擎
-// nextTurnInTrain 的通用结算成为无操作（见文件头顶部 delta/palam 结算职责划分
-// 的说明）——这是 ere 自身
-// 承担的收尾职责，不是对原作 UPID=15 缺陷的补全。ORDER 不含 15 会让
-// touched 永远漏收 15，delta:15 残留到引擎的 nextTurnInTrain 就会被重新
-// 累加进 palam，等于原作从未生效的收益在 ere 侧意外落地（issue #461 验收
-// 发现）
+// 行（三处 PRINT/CALL PALAM_MESSAGE_MINI 均不移植）。UPID 序与完整版
+// palam_up_check 相同（0,1,2,14,3,…,13,15）：14 号位稳快乐在 C/V/A 之后，
+// 15 号（CSTR:7 的癖好名）收尾；UPID 14 单次结算、UPID 15 照常写回。
+// delta 表由本模块当场结算进 palam 并清零、令引擎 nextTurnInTrain 的通用
+// 结算成为无操作（见文件头顶部 delta/palam 结算职责划分的说明）——这是
+// ere 自身承担的收尾职责。ORDER 不含 15 会让 touched 永远漏收 15，
+// delta:15 残留到引擎的 nextTurnInTrain 就会被重新累加进 palam，等于
+// 未生效的收益意外落地（issue #461 验收发现），故 ORDER 末位必须收 15。
 function palam_up_check_mini() {
-  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];
   const touched = [];
   for (const upid of ORDER) {
     if (up(upid) > 0 || down(upid) > 0) {
@@ -3140,7 +3134,6 @@ function palam_up_check_mini() {
   for (const upid of touched) {
     era.set(`delta:${cid}:${upid}`, 0);
   }
-  era.set(`delta:${cid}:15`, 0);
 }
 
 // @LOSELIFE_BAR / @LOSEVITAL_BAR（:2508-2572）：损耗条（32 格）。返回串，
@@ -3224,8 +3217,8 @@ on('SOURCE_CHECK', async () => {
   }
 
   // 避孕套判定·助手射精（同段内独立 IF，紧接上段）：与上面「调教者是谁」
-  // 的判据无关，TEQUIP:36 若已被上一段清零则本段条件自然不成立（原作段内
-  // 顺序执行，1:1 保留）
+  // 的判据无关，TEQUIP:36 若已被上一段清零则本段条件自然不成立（段内
+  // 顺序执行，照写）
   if (chara(cid).train.助手避孕套 && game.train.助手射精 && era_flag.assi > 0) {
     era.print(
       `射在避孕套里（${era.get(`callname:${era_flag.assi}:-2`) ?? ''}）`,
@@ -3255,7 +3248,7 @@ on('SOURCE_CHECK', async () => {
   master_skill_check();
 
   // 服装（CFLAG:42 == 11 && CFLAG:40 & 64 的茲古着ぐるみ减益）：
-  // 着衣位无写入路径，1:1 保留判据
+  // 着衣位无写入路径，照写判据
   if (
     (era.get(`cflag:${cid}:42`) || 0) === 11 &&
     (era.get(`cflag:${cid}:40`) || 0) & 64
@@ -3403,7 +3396,7 @@ on('SOURCE_CHECK', async () => {
   }
 
   // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——判据
-  // 1:1 保留）
+  // 挿しっぱ无判定（TFLAG:60：体位组指令才置 1，爱抚恒 0——判据照写）
   era.set('tflag:60', 0);
   if (
     [
@@ -3612,7 +3605,7 @@ on('SOURCE_CHECK_AUTO', async () => {
   auto_num_check(cid);
 
   // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有
-  // TFLAG:201 豁免——原作 1:1 保留）
+  // TFLAG:201 豁免——AUTO 侧照写没有豁免）
   if ((era.get(`base:${cid}:1`) || 0) <= 0) {
     for (const k of [3, 4, 5, 7, 9, 13]) {
       set_up(k, idiv(up(k), 2));

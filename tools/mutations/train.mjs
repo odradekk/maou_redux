@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 1018; // 合并 #648 后实测 1018（#648 +15 −4 与 #647 −3 +8 取并集）；返工（#647 验收第 1 轮）+3（M12955-M12957：ablup16 decide 素质复核漏判单项的守卫）；#647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归守卫）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
+export const COUNT = 1018; // 合并 #650 后实测 1018（#650 +2 −2、#647 返工 +3、#647 −3 +8 取并集）；返工（#647 验收第 1 轮）+3（M12955-M12957：ablup16 decide 素质复核漏判单项的守卫）；#650 起 +2 −2（M13100/M13101 修复守卫；M1314/M9783 反向变异随缺陷修复删除）；#648 起 +15 −4（M13000-M13014 守 F2 修复点；M798/M870/M884/M1031 随缺陷修复删除——M870/M884 反向变异、M798 洗涤天数、M1031 缺 RETURN 0 标记的前提均已消失）；#647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归守卫）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
 
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
@@ -3499,15 +3499,7 @@ export default [
     tests: ['event-aftertrain'],
     must_mention: 'aftertrain_masturbation_check 自慰检查',
   },
-  {
-    desc: 'M1314 AFTERTRAIN: 兽奸报告二次累加改成 b（把原作 A 残留「修好」）（#270）',
-    file: 'ere/event/event-aftertrain.js',
-    find: '    era.add(`juel:${target}:8`, leftover_a * 200);',
-    replace:
-      '    era.add(`juel:${target}:8`, b * 200); // 变异：把原作 A 残留修好成 B',
-    tests: ['event-aftertrain'],
-    must_mention: '兽奸报告二次累加 A≠B 时按自慰回数而非兽奸回数',
-  },
+
   // —— #222 J12：COM30–38 奉仕系 ——
   {
     desc: 'M1110 COM34/36 骑乘位衣物判定把目标号漏传（#222）',
@@ -7325,38 +7317,30 @@ export default [
   {
     desc: 'M9781 AUTO handler Block B：减半数组漏 UP:9（AUTO_NUM_CHECK 放大后不再减半）',
     file: 'ere/event/source-check.js',
-    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——原作 1:1 保留）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
-      '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——原作 1:1 保留）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 13]) {',
+      '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 13]) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
     desc: 'M9782 AUTO handler Block B：BASE:1 <= 0 边界收窄成 < 0（气力恰为 0 时不再减半加倍）',
     file: 'ere/event/source-check.js',
-    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——原作 1:1 保留）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+    find: '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) <= 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     replace:
-      '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——原作 1:1 保留）\n  if ((era.get(`base:${cid}:1`) || 0) < 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
+      '  // 气力０的感情减半与损耗加倍（与 manual 同款判据，但没有\n  // TFLAG:201 豁免——AUTO 侧照写没有豁免）\n  if ((era.get(`base:${cid}:1`) || 0) < 0) {\n    for (const k of [3, 4, 5, 7, 9, 13]) {',
     tests: ['source-check'],
     must_mention: '两处气力 0 减半块',
   },
   {
-    desc: 'M9783 PALAM_UP_CHECK_MINI：顺手"修好" ORDER 末位 14 → 15（原作缺陷被意外补全）',
+    desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 首个 UPID 14（第 4 位）删（UP:14 不再结算）',
     file: 'ere/event/source-check.js',
-    find: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
-    replace:
-      '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];',
+    find: `function palam_up_check_mini() {
+  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
+    replace: `function palam_up_check_mini() {
+  const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
     tests: ['source-check'],
-    must_mention: 'UPID 14 结算两次、UPID 15 永不写回',
-  },
-  {
-    desc: 'M9784 PALAM_UP_CHECK_MINI：ORDER 首个 UPID 14（第 4 位）删（UP:14 只单次结算）',
-    file: 'ere/event/source-check.js',
-    find: '  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
-    replace:
-      '  const ORDER = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];',
-    tests: ['source-check'],
-    must_mention: 'UPID 14 结算两次、UPID 15 永不写回',
+    must_mention: 'UPID 14 只结算一次',
   },
   {
     desc: 'M9785 SOURCE_CHECK_AUTO：down_map.clear() 删（DOWN 跨回合残留）',
@@ -7377,19 +7361,14 @@ export default [
     must_mention: '当场结算到 base',
   },
   {
-    desc: 'M9787 PALAM_UP_CHECK_MINI：delta:15 无条件清零行删（跳过档位残留会被引擎重新累加进 palam）',
+    desc: 'M9787 PALAM_UP_CHECK_MINI：ORDER 末位 15 删（delta:15 残留会被引擎重新累加进 palam）',
     file: 'ere/event/source-check.js',
-    find: `  for (const upid of touched) {
-    era.set(\`delta:\${cid}:\${upid}\`, 0);
-  }
-  era.set(\`delta:\${cid}:15\`, 0);
-}`,
-    replace: `  for (const upid of touched) {
-    era.set(\`delta:\${cid}:\${upid}\`, 0);
-  }
-}`,
+    find: `function palam_up_check_mini() {
+  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
+    replace: `function palam_up_check_mini() {
+  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];`,
     tests: ['source-check'],
-    must_mention: 'delta:15 应在处理器执行后清零',
+    must_mention: 'UPID 15：ORDER 末位收 15',
   },
   // —— #460（COMF203_カビ犬／COMF205_腐れ豚 变异覆盖补齐）——
   {
@@ -10433,6 +10412,30 @@ export default [
     replace: '        (talent(63) === 0 || talent(85) === 0)',
     tests: ['ablup'],
     must_mention: '只缺 86 时必须被拦',
+  },
+
+  // —— #650 F4 缺陷修复守卫 ——
+  {
+    desc: 'M13100 AFTERTRAIN：兽奸报告二次累加改成 B*300（显示与实得再次不符）',
+    file: 'ere/event/event-aftertrain.js',
+    find: `    era.print(\`耻情点数＋\${b * 200}\`);
+    // 二次累加与显示同按兽奸回数 B（#270：曾用自慰回数残留，显示与实得不符）
+    era.add(\`juel:\${target}:8\`, b * 200);`,
+    replace: `    era.print(\`耻情点数＋\${b * 200}\`);
+    // 二次累加与显示同按兽奸回数 B（#270：曾用自慰回数残留，显示与实得不符）
+    era.add(\`juel:\${target}:8\`, b * 300);`,
+    tests: ['event-aftertrain'],
+    must_mention: '兽奸报告二次累加按兽奸回数结算',
+  },
+  {
+    desc: 'M13101 PALAM_UP_CHECK_MINI：ORDER 回退成缺 15 重复 14（14 双结算、15 不写回复活）',
+    file: 'ere/event/source-check.js',
+    find: `function palam_up_check_mini() {
+  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15];`,
+    replace: `function palam_up_check_mini() {
+  const ORDER = [0, 1, 2, 14, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];`,
+    tests: ['source-check'],
+    must_mention: 'UPID 14 只结算一次',
   },
 
   // —— #648 F2 缺陷修复：调教指令、服装与昏迷（M13000-M13013 守修复点；

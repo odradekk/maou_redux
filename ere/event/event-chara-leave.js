@@ -27,20 +27,19 @@
  *     数据则调用 CHAR_BODY_GENERATE_WAPPED」），本移植在此收尾，不构造
  *     截断之后的半句。
  *
- * 三、`@EVENT_CHARA_RETURN` 的反序列化下标整体错位一格——原作 bug，非本
- *     项目误读。`@EVENT_CHARA_LEAVE` 用 "_" 拼出 13 段（0=NO / 1=CFLAG:9
- *     等级 / 2=NICKNAME / 3=ABL / 4=BASE / 5=MAXBASE / 6=CFLAG / 7=EXP /
- *     8=EQUIP / 9=JUEL / 10=TALENT / 11=MARK / 12=CSTR，SPLIT 后从 0 起序
- *     ——emuera-basic-agent-guide 的 string-operations.md 逐字确认），但
- *     `@EVENT_CHARA_RETURN` 通篇按 `LOCALS:1`=NO、`LOCALS:3`=NAME、
- *     `LOCALS:4`=ABL……逐项 +1 地读，`LOCALS:2`（本该是等级）从未被读取。
- *     这不是任何文档化的 SPLIT 变体，是原作单纯的下标笔误——逐字复刻会让
- *     函数把 ABL 数据写进等级、BASE 数据写进 ABL……产出的角色状态是纯
- *     垃圾，且因为零调用者、没有黄金样本能验证这坨垃圾「对不对」。本
- *     移植按 `@EVENT_CHARA_LEAVE` 实际写出的位置（0-based）读回，让这对
- *     函数第一次成为可用、可测的原地往返；这处偏离不影响任何外部可观察
- *     行为——1:1 复刻的对象（一个从未被调用过的函数）根本不存在可观察
- *     行为。
+ * 三、`@EVENT_CHARA_RETURN` 的反序列化下标整体错位一格——旧实现自带的
+ *     bug，非本项目误读。`@EVENT_CHARA_LEAVE` 用 "_" 拼出 13 段（0=NO /
+ *     1=CFLAG:9 等级 / 2=NICKNAME / 3=ABL / 4=BASE / 5=MAXBASE / 6=CFLAG /
+ *     7=EXP / 8=EQUIP / 9=JUEL / 10=TALENT / 11=MARK / 12=CSTR，SPLIT 后从
+ *     0 起序），但 `@EVENT_CHARA_RETURN` 通篇按 `LOCALS:1`=NO、
+ *     `LOCALS:3`=NAME、`LOCALS:4`=ABL……逐项 +1 地读，`LOCALS:2`（本该是
+ *     等级）从未被读取。这不是任何文档化的 SPLIT 变体，是单纯的下标
+ *     笔误——逐字复刻会让函数把 ABL 数据写进等级、BASE 数据写进
+ *     ABL……产出的角色状态是纯垃圾，且因为零调用者、没有样本能验证这
+ *     坨垃圾「对不对」。本移植按 `@EVENT_CHARA_LEAVE` 实际写出的位置
+ *     （0-based）读回，让这对函数第一次成为可用、可测的原地往返；这处
+ *     偏离不影响任何外部可观察行为——复刻的对象（一个从未被调用过的
+ *     函数）根本不存在可观察行为。
  *
  * 四、原作 `CALL PARTY_CHAR_DEL`（:67）之前的 FLAG:1/FLAG:2 第二次调整（:62-65，"前回の助手・
  *     調教対象より前だった場合减算"，`SIF FLAG:1==CHARA THEN FLAG:1=0` /

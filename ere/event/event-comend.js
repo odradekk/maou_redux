@@ -5,15 +5,15 @@
  * @EVENTFIRST :45 开局置 0 = 关）：
  *   1. BASE:0 <= 0 && !FLAG:35     → 目标死亡：消息 + WAIT + BEGIN AFTERTRAIN
  *   2. BASE:0 < 500 && FLAG:35     → 目标衰弱（体力 < 500）自动结束
- *   3. ASSI > 0 且 BASE:ASSI:0 <= 0 → 助手死亡（消息里的代词是 SHE(TARGET)，
- *      原作笔误也照搬——助手分支的文案以目标代词收尾）
+ *   3. ASSI > 0 且 BASE:ASSI:0 <= 0 → 助手死亡（消息代词取助手侧；录像
+ *      标志读目标的 TEQUIP:53——录像状态存在目标侧）
  *   4. ASSI > 0 且 BASE:ASSI:0 < 500 → 助手衰弱——**无 FLAG:35 条件**，
- *      开关只作用于目标侧（:303 对 :285 的不对称，1:1 保留）
+ *      开关只作用于目标侧
  *
  * 分支内的 BEGIN AFTERTRAIN 经事件链暂存（#6 语义：链继续、最后一个胜出），
  * 由 train-loop.js 的回合循环作为状态返回值提交。
  *
- * TEQUIP:53（录像使用中）→ TFLAG:34 = 1：死亡时录像标志转存，1:1。
+ * TEQUIP:53（录像使用中）→ TFLAG:34 = 1：死亡时若目标侧在录像，录像标志转存。
  */
 
 const era = require('#/era-electron');
@@ -61,16 +61,15 @@ async function check_assi_vitals() {
   }
   const stamina = era.get(`base:${era_flag.assi}:0`) || 0;
   if (stamina <= 0) {
-    // 死亡。两处 1:1 保留原作的隐式 TARGET：消息代词用 SHE(TARGET)
-    //（:299，原作笔误）、SIF TEQUIP:53 无角色前缀 = TEQUIP:TARGET:53
-    //（:296-297，助手死时查的还是目标的录像装备——同为可疑但照搬，
-    // 勿「修好」）
+    // 死亡。录像标志读目标的 TEQUIP:53：录像状态存在目标侧（助手没有
+    // 该装备位），助手死亡时问的是「本场调教是否在录像」；消息代词取
+    // 助手侧（#650 修复：原先误用目标代词）
     era.drawLine();
     if (era.get(`tequip:${era_flag.target}:53`)) {
       era.set('tflag:34', 1);
     }
     era.print(`${chara_callname(era_flag.assi)}一动也不动，`);
-    era.print(`对${she(era_flag.target)}做什么都不再有反应了……`);
+    era.print(`对${she(era_flag.assi)}做什么都不再有反应了……`);
     await era.waitAnyKey(); // WAIT
     begin(STATE.AFTERTRAIN);
   } else if (stamina < 500) {
