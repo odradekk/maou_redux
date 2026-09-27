@@ -670,7 +670,7 @@ export default [
     replace:
       '    } // 变异：牧场臂删\n    // } else if (room === 502) {\n    //   await dungeon_farm(extra, rand_n);\n    // }',
     tests: ['dungeon-room'],
-    must_mention: '税入 100 + 牧场 0',
+    must_mention: '牧场播报',
   },
   {
     desc: 'M612 FARM 的只数写回删（ITEM:MON_ID 不写）',
