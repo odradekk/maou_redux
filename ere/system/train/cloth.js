@@ -1,10 +1,9 @@
 /**
  * @file 服装系统的状态机：着衣位的初始化、调教后处理、再着衣与失禁弄脏
- * （issue #215 J5）。FUNC_CLOTH 归 train 域（ADR-0007：50 处 CFLAG 持久
- * 写入、AFTERTRAIN_CLOTH / SOILING_CLOTH / WASHING_CLOTH 的消费者全在
- * 调教流程内）。
+ * （issue #215 J5）。本文件归 train 域（ADR-0007：50 处 CFLAG 持久写入、
+ * 调教后处理 / 弄脏 / 洗涤的消费者全在调教流程内）。
  *
- * == 变量承载（CFLAG 头注的逐条对应，FUNC_CLOTH.ERB:8-21） ==
+ * == 变量承载 ==
  *
  *   - CFLAG:40 着衣状態位域（&1 内裤 &2 胸罩 &4 上装 &8 下装·裙
  *     &16 下装·裤 &64 特别服装）；41 上衣类型；42 特别服装类型；
@@ -16,31 +15,31 @@
  *     直写）；42 属主 chara——AFTERTRAIN_CLOTH 的写经 chara(cid).chara.
  *     特别服装类型 门面（#71，ownership/cflag-ownership.yml "42"）。
  *
- * == TFLAG:45 的调教外通道（#179 TFLAG:18 的同形态处置） ==
+ * == TFLAG:45 的调教外通道（#179 TFLAG:18 同样处置） ==
  *
- * 原作唯一的调教外消费链是 @EVENTNEXTDAY 的尿床分支（EVENT_NEXTDAY.ERB
- * :786-787：SOILING_CLOTH_NO1 置位、紧随的 AFTERTRAIN_CLOTH 消费）。ere
+ * 唯一的调教外消费链是日程推进的尿床分支（run_event_nextday 侧）：
+ * soiling_cloth_no1 置位、紧随的 aftertrain_cloth 消费。ere
  * 引擎的 tflag 桶随 endTrain 删除，调教外读写 TFLAG:45 会落「key error in
  * getter/setter」（era-fixture 的 TRAIN_ONLY_TABLES 镜像同一条）——该通道
  * 在 ere 侧由参数链代位：soiling_cloth_no1/no2 返回置位掩码，调教外调用
- * 传 { in_train: false } 跳过 tflag 写入，AFTERTRAIN_CLOTH 经第二参
- * soiled_mask 接收（Emuera 侧跨期残留靠「TRAIN 开始清零」消除、ere 靠
- * 「endTrain 删表」，等价——#179 裁定原文）。**给后续票的提醒：尿床票
- * 接线 EVENT_NEXTDAY 时读 soiling 返回值传 aftertrain 的 mask 参数，不要
- * 碰 tflag:45。**已知的语义边界：原作 TFLAG:45 的未处理位（如 CFLAG:46
- * != 0 时滞留的 &4）会跨 TRAIN 残留到日程段被补消费，ere 侧 endTrain 删
- * 表后该残留窗口关闭——按 #179 的等价裁定接受，不补通道。
+ * 传 { in_train: false } 跳过 tflag 写入，aftertrain_cloth 经第二参
+ * soiled_mask 接收（tflag:45 的写入只在调教期内存活，endTrain 删表即消除
+ * 残留——#179 结论）。**给后续工单的提醒：在日程推进侧实现尿床事件时，
+ * 读 soiling 返回值传 aftertrain 的 mask 参数，不要碰 tflag:45。**已知的
+ * 语义边界：TFLAG:45 的未处理位（如 CFLAG:46 != 0 时滞留的 &4）在调教期
+ * 结束时随 endTrain 删表一并消失，不会残留到日程段——按 #179 的等价
+ * 结论接受，不补通道。
  *
  * == 洗涤与洗衣状态（CFLAG:43-47 的正值语义已废弃） ==
  *
- * 洗涤即时完成：AFTERTRAIN_CLOTH 的各洗涤分支只收穿着位、不再置洗衣
- * 状态（43/45/46/47 ≥ 1 的正值），洗过的衣物下次 WEARING_CLOTH_ABLE /
- * RE_CLOTHED 即可穿回，无需购新重置。负值状态保留语义：-2 废弃
- * （AFTERTRAIN 丢弃支）、-3 撕破（COM111）、-1 没收。CFLAG:48（内裤穿旧度）
- * 无写点，恒 0。
+ * 洗涤即时完成：aftertrain_cloth 的各洗涤分支只收穿着位、不再置洗衣
+ * 状态（43/45/46/47 ≥ 1 的正值），洗过的衣物下次 wearing_cloth_able /
+ * re_clothed 即可穿回，无需购新重置。负值状态保留语义：-2 废弃
+ * （调教后处理的丢弃分支）、-3 撕破（指令 111）、-1 没收。CFLAG:48（内裤
+ * 穿旧度）无写点，恒 0。
  *
- * 这张票存根/登记（docs/stub-registry.md）：无——本文件全函数真身；
- * 消费方（PISSING_ECST_CHECK / COMF46 / COMF85 / 尿床事件）随各自票接线。
+ * 这张工单存根/登记（docs/stub-registry.md）：无——本文件全函数真身；
+ * 消费方（pissing_ecst_check / 指令 46・85 文本 / 尿床事件）各自接入。
  */
 
 'use strict';
@@ -53,7 +52,7 @@ const { chara_callname } = require('#/utils/callname-utils');
 const { clothtype_main2_text } = require('#/page/page-clothtype');
 const { get_clothtype_special } = require('#/system/cloth-lookup');
 
-// —— 读数兜底（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——
+// —— 读数缺省处理（未声明下标 undefined → 0，#13；包装层 getter 一律 || 0） ——
 
 const worn = (cid) => era.get(`cflag:${cid}:40`) || 0; // CFLAG:40 位域
 const set_worn = (cid, v) => era.set(`cflag:${cid}:40`, v);
@@ -70,11 +69,10 @@ function or_tflag45(mask, bit, in_train) {
 }
 
 /**
- * @WEARING_CLOTH_ALL（:161-221）：着衣位的初始化。CFLAG:41/42 都未设定
- * 时直接返回；否则先全裸、再按类型装位。
- * @param {number} cid 角色 ID（原作经 TARGET 隐式读——调用方一律 SWAP
- *   TARGET，ere 侧显式传参，#5 决议第六条）
- * @returns {number} 原作 RETURN（0 = 无既定服装、1 = 已初始化）
+ * wearing_cloth_all：着衣位的初始化。CFLAG:41/42 都未设定时直接返回；
+ * 否则先全裸、再按类型装位。
+ * @param {number} cid 角色 ID（显式传参，#5 决议第六条）
+ * @returns {number} 0 = 无既定服装、1 = 已初始化
  */
 function wearing_cloth_all(cid) {
   // 標準衣装が設定されてない場合は戻る
@@ -155,18 +153,18 @@ function wearing_cloth_all(cid) {
 }
 
 /**
- * @WEARING_CLOTH_ABLE（:226-239）：着用可能な衣装の全装着。全量初始化后，
- * 按各部位的洗濯/废弃状态剥掉不可着用的位。原作尾部无 RETURN（隐式 0），
- * 调用方（CHARA_MAKE_INIT / ENTER_ENEMY 等）不读返回值。
+ * wearing_cloth_able：着用可能な衣装の全装着。全量初始化后，按各部位
+ * 的洗濯/废弃状态剥掉不可着用的位。尾部不显式返回（隐式 0），调用方
+ * （char_init / enter_enemy 等）不读返回值。
  * @param {number} cid 角色 ID
- * @returns {number} 0（原作隐式返回）
+ * @returns {number} 0（隐式返回）
  */
 function wearing_cloth_able(cid) {
   wearing_cloth_all(cid);
   const before = worn(cid);
   let bits = before;
-  // 洗濯中（≥1）/没收（-1）/废弃（-2）的部位不可着用——原作每条
-  // SIF 命中才写 CFLAG:40（-= 位），全不命中时**不写**（未写与写 0 在
+  // 洗濯中（≥1）/没收（-1）/废弃（-2）的部位不可着用——逐部位检查
+  // 命中才写 CFLAG:40（-= 位），全不命中时**不写**（未写与写 0 在
   // undefined 读数上有别，测试可见）
   if ((era.get(`cflag:${cid}:43`) || 0) !== 0) {
     bits -= bits & 1;
@@ -193,18 +191,17 @@ function wearing_cloth_able(cid) {
 }
 
 /**
- * @AFTERTRAIN_CLOTH（:244-388）：调教后的衣物处理——丢弃/洗涤的结算与
- * 穿戴位的收回。
+ * aftertrain_cloth：调教后的衣物处理——丢弃/洗涤的结算与穿戴位的收回。
  * @param {number} cid 角色 ID
  * @param {number} [soiled_mask] 弄脏掩码（TFLAG:45 的等价物）。缺省
- *   （undefined）= 调教内调用（@EVENTEND），直接读写 TFLAG:45；传数值 =
+ *   （undefined）= 调教内调用（EVENTEND 链），直接读写 TFLAG:45；传数值 =
  *   调教外调用（尿床链），TFLAG:45 由 soiling_cloth_no* 的返回值传入、
  *   本函数不触碰 tflag 表（文件头「TFLAG:45 的调教外通道」节）。
- * @returns {Promise<number>} 原作 RETURN 1
+ * @returns {Promise<number>} 恒 1
  */
 async function aftertrain_cloth(cid, soiled_mask = undefined) {
   const in_train = soiled_mask === undefined;
-  const name = chara_callname(cid); // %SAVESTR:TARGET%
+  const name = chara_callname(cid);
   const mask = () => (in_train ? era.get('tflag:45') || 0 : soiled_mask);
   const set_mask = (v) => {
     if (in_train) {
@@ -213,9 +210,9 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     soiled_mask = v;
   };
 
-  // —— :247-295 特別コス ——
+  // —— 特別コス ——
   if (special_type(cid) !== 0 && (mask() & 32) !== 0) {
-    // 被拿去扔掉了（PRINTFORMW：一行 + 等键）
+    // 被拿去扔掉了（一行 + 等键）
     era.print(`（${name}的${get_clothtype_special(cid)}被拿去扔掉了）`);
     await era.waitAnyKey();
     chara(cid).chara.特别服装类型 = 0; // CFLAG:42 = 0
@@ -231,28 +228,28 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
   ) {
     // オムツの場合の特殊処理（换新 / 洗涤的选择）
     for (;;) {
-      era.print(`花费50p为${name}换尿布吗？`); // PRINTFORML
-      // 原作 `PRINTL  [0] - 好的`：命令名后第一格是分隔符，内容
-      // 一格里那一个半角空格照全项目 `[n] - …` 一族写成半角（#577 的普查口径）
+      era.print(`花费50p为${name}换尿布吗？`);
+      // 按钮串 `[0] - 好的`：编号后第一格是分隔符，那一个半角
+      // 空格照全项目 `[n] - …` 一族写成半角（#577 的普查标准）
       era.print(' [0] - 好的');
       era.print(' [1] - 不要');
       const result = await era.input();
       if (result === 0) {
-        // 换上新的尿布（PRINTFORM 不收行；:269 的裸 PRINTL 只收尾它）
+        // 换上新的尿布（下一条耻情加成紧随其后，同段输出）
         era.print(`（为${name}换上了新的尿布）`);
-        era_flag.money -= 50; // MONEY
-        era_exflag.legit_money -= 50; // EX_FLAG:4444
+        era_flag.money -= 50;
+        era_exflag.legit_money -= 50;
         era.set(`cflag:${cid}:47`, 0);
         set_mask(mask() - 16);
         if (talent(cid, 135) === 0) {
           // 未熟以外：耻情点数＋500（PALAMNAME:8 = 耻情）；
-          // FUNC_CLOTH.ERB:269 的裸 PRINTL 只收尾 :263 的 PRINTFORM，
-          // 不是空行——这里不补 println（#595）
+          // 本句与上句连续输出、各占一行，之间不是空行——
+          // 不补 println（#595）
           era.print(`${era.get('palamname:8') ?? ''}点数＋500`);
           const juel8 = era.get(`juel:${cid}:8`) || 0; // JUEL:8
           era.set(`juel:${cid}:8`, juel8 + 500);
         }
-        await era.waitAnyKey(); // WAIT
+        await era.waitAnyKey();
         break;
       }
       if (result === 1) {
@@ -266,7 +263,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
         }
         break;
       }
-      // ELSE → GOTO INPUT_LOOP_01（重问）
+      // 其余输入 → 重问
     }
   } else if (
     special_type(cid) !== 0 &&
@@ -283,9 +280,9 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     }
   }
 
-  // —— :297-350 上着下（下装） ——
+  // —— 上着下（下装） ——
   if (main_type(cid) !== 0 && (mask() & 8) !== 0) {
-    // 被拿去扔掉了（PRINTFORM + PRINTW 拼一行后等键）
+    // 被拿去扔掉了（拼一行后等键）
     let line = `（${name}穿过的${clothtype_main2_text(cid)}`;
     if (main_type(cid) >= 1 && main_type(cid) <= 100) {
       line += '的裙子';
@@ -293,7 +290,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       line += '的下身'; // （201+ 无后缀）
     }
     era.print(`${line}被拿去扔掉了）`);
-    await era.waitAnyKey(); // PRINTW
+    await era.waitAnyKey();
     if (main_type(cid) >= 201) {
       // 全身衣装は上下一緒に消える
       era.set(`cflag:${cid}:41`, 0);
@@ -361,7 +358,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     set_mask(mask() - 4);
   }
 
-  // —— :352-366 パンツ ——
+  // —— パンツ ——
   if ((mask() & 2) !== 0) {
     // 内衣被拿去扔掉了
     era.print(`（${name}的内衣被拿去扔掉了）`);
@@ -382,7 +379,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
     set_mask(mask() - 1);
   }
 
-  // —— :369-381 上下ともダメになった衣装は削除 ——
+  // —— 上下ともダメになった衣装は削除 ——
   if (main_type(cid)) {
     // 上着上（45）も下（46）も不可 → 类型消除
     if (
@@ -400,11 +397,11 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
       era.set(`cflag:${cid}:41`, 1);
     }
   }
-  // （旧实现此处还有一条 ELSEIF「内衣也脱掉了 → 类型 0」：外层 IF 对
-  // 非零（含 -1）恒真、41==0 时判据又恒假，两支都到不了——不可达死分支，
-  // 已删除）
+  // （此处曾有一条「内衣也脱掉了 → 类型 0」的追加分支：外层 if 对
+  // 非零（含 -1）恒真、41==0 时判断条件又恒假，两支都到不了——不可达死
+  // 分支，已删除）
 
-  // —— :383-386 ダメになった特別コスは削除 ——
+  // —— ダメになった特別コスは削除 ——
   if (special_type(cid)) {
     if ((era.get(`cflag:${cid}:47`) || 0) < 0) {
       chara(cid).chara.特别服装类型 = 0;
@@ -415,10 +412,10 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
 }
 
 /**
- * @RE_CLOTHED（:393-405）：衣類の再着衣。顺从（ABL:10）＋露出癖（ABL:17）
+ * re_clothed：衣類の再着衣。顺从（ABL:10）＋露出癖（ABL:17）
  * 3 以上则维持被脱掉的状态；否则把能穿的全部穿回。
  * @param {number} cid 角色 ID
- * @returns {Promise<number>} 原作 RETURN 1
+ * @returns {Promise<number>} 恒 1
  */
 async function re_clothed(cid) {
   const obedience = era.get(`abl:${cid}:10`) || 0; // ABL:10 顺从
@@ -427,7 +424,6 @@ async function re_clothed(cid) {
     const before = worn(cid);
     wearing_cloth_able(cid);
     if (worn(cid) > before) {
-      // PRINTFORML + :401 WAIT
       era.print(`（${chara_callname(cid)}把被脱掉的衣服又穿上了）`);
       await era.waitAnyKey();
     }
@@ -436,8 +432,8 @@ async function re_clothed(cid) {
 }
 
 /**
- * 失禁弄脏的下装句（:473-480 与 :508-515 共用形状：弄脏物名与收行命令
- * 不同——NO1 用 PRINTFORML、NO2 用 PRINTL，串内容一致由调用方拼）。
+ * 失禁弄脏的下装句前缀（soiling_cloth_no1 / no2 共用：弄脏物名不同
+ * ——尿与污物，串内容一致由调用方拼）。
  * @param {number} cid 角色 ID
  * @returns {string} 「…正穿着<类型><裙子/下身>」的前半句
  */
@@ -452,15 +448,15 @@ function soiled_lower_prefix(cid) {
 }
 
 /**
- * @SOILING_CLOTH_NO1（:459-488）：調教中のおもらし処理（小）。着衣設定
- * でなければ何もしない。
+ * soiling_cloth_no1：調教中のおもらし処理（小）。着衣設定でなければ何も
+ * しない。
  * @param {number} cid 角色 ID
  * @param {object} [opts]
  * @param {boolean} [opts.in_train] 调教内调用（缺省 true：置位落
  *   TFLAG:45）。调教外（尿床链）传 false——文件头「TFLAG:45 的调教外
  *   通道」节。
- * @returns {Promise<number>} 置位后的掩码（原作 RETURN 0/1 的补强返回，
- *   调教外调用方把它传给 aftertrain_cloth）
+ * @returns {Promise<number>} 置位后的掩码
+ *   （调教外调用方把它传给 aftertrain_cloth）
  */
 async function soiling_cloth_no1(cid, { in_train = true } = {}) {
   // 着衣設定でなければそのまま終了
@@ -476,7 +472,7 @@ async function soiling_cloth_no1(cid, { in_train = true } = {}) {
   ) {
     era.print(
       `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了尿》`,
-    ); // PRINTFORML
+    );
     mask = or_tflag45(mask, 16, in_train);
     // オムツ着用中なら他の衣類は無事
     if (special_type(cid) === 69) {
@@ -485,7 +481,7 @@ async function soiling_cloth_no1(cid, { in_train = true } = {}) {
   }
   // 下装
   if ((worn(cid) & 8) !== 0 || (worn(cid) & 16) !== 0) {
-    era.print(`${soiled_lower_prefix(cid)}沾满了尿》`); // PRINTFORML
+    era.print(`${soiled_lower_prefix(cid)}沾满了尿》`);
     mask = or_tflag45(mask, 4, in_train);
   }
   // 内裤
@@ -497,7 +493,7 @@ async function soiling_cloth_no1(cid, { in_train = true } = {}) {
 }
 
 /**
- * @SOILING_CLOTH_NO2（:493-525）：調教中のおもらし処理（大）——脱糞，
+ * soiling_cloth_no2：調教中のおもらし処理（大）——脱糞，
  * 弄脏的衣物直接进废弃处理。
  * @param {number} cid 角色 ID
  * @param {object} [opts] 同 soiling_cloth_no1
@@ -517,7 +513,7 @@ async function soiling_cloth_no2(cid, { in_train = true } = {}) {
   ) {
     era.print(
       `《${chara_callname(cid)}的${get_clothtype_special(cid)}沾满了污物》`,
-    ); // PRINTFORML（与下装句同形，右书名号闭合）
+    ); // 与下装句同形，右书名号闭合
     mask = or_tflag45(mask, 16, in_train);
     mask = or_tflag45(mask, 32, in_train);
     // オムツ着用中なら他の衣類は無事
@@ -527,7 +523,7 @@ async function soiling_cloth_no2(cid, { in_train = true } = {}) {
   }
   // 下装：洗濯 + 処分
   if ((worn(cid) & 8) !== 0 || (worn(cid) & 16) !== 0) {
-    era.print(`${soiled_lower_prefix(cid)}沾满了污物》`); // PRINTL
+    era.print(`${soiled_lower_prefix(cid)}沾满了污物》`);
     mask = or_tflag45(mask, 4, in_train);
     mask = or_tflag45(mask, 8, in_train);
   }

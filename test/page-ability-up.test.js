@@ -4,18 +4,18 @@
  * 接缝 = test/helpers/era-fixture.js：驱动一整次界面（预置输入 → 收集本次
  * 新增的输出行 → 按「一次绘制」切段断言）。
  *
- * 维度型判据一律表驱动：
+ * 维度型条件一律表驱动：
  *   - 菜单档维度（998 奴隶一览 / 997 勇者一览）两档各跑一遍；
  *   - 输入分发逐支（999 / 991-998 / 1000 / 1001 / 合法奴隶 / 魔王自己）；
  *   - 等级门（CFLAG:0:9 < 20 拦、≥ 20 放行）表驱动；
- *   - @ABILITY_UP_CORE 的 ABLUP 分发表整表走完（26 支）。
+ *   - ability_up_core 的 ABLUP 分发表整表走完（26 支）。
  *
- * **不可达支**（结构上到不了，1:1 保留不补用例，逐条注明）：ere 的输入集
+ * **不可达支**（结构上到不了，保留不补用例，逐条注明）：ere 的输入集
  * = 本轮已打印按钮（夹具与引擎同款校验），故 (a)「数值已超出允许范围外」
  * 两支（越界与未加入 ID）、(b)「不能选择非待命状态的奴隶 / 非侵攻状态的
- * 勇者」两支在实机输入下不可达——列表已经把这些人过滤掉了；(c) ABLUP100
- * 的按钮来自原作的 `[IF_DEBUG]` 块（未移植），故 RESULT == 100 的
- * @ABILITY_UP_CORE 分支同样不可达。
+ * 勇者」两支在实机输入下不可达——列表已经把这些人过滤掉了；(c) ablup100
+ * 的按钮属于调试专用块、ere 侧不渲染，故 RESULT == 100 的
+ * ability_up_core 分支同样不可达。
  */
 
 'use strict';
@@ -31,7 +31,7 @@ function add_chara(fixture, cid, name = `角色${cid}`) {
   assert.equal(fixture.era.addCharacter(cid), true);
 }
 
-/** 跑一次 @ABILITY_UP，返回本次新增的输出行 */
+/** 跑一次 ability_up，返回本次新增的输出行 */
 async function run(fixture, inputs) {
   fixture.set_inputs(...inputs);
   const before = fixture.lines.length;
@@ -129,10 +129,9 @@ test('ABILITY_UP：菜单档维度整表驱动（998 奴隶一览 / 997 勇者�
 /**
  * 页脚 [1001] 下一页键所在的行号（页脚空行断言的取证面）。
  *
- * 原作 :92-96 是三个 `PRINTLC`（`- 上一页` / `- 返  回` / `- 下一页`）跟一个
- * `PRINTL  `：`PRINTLC` 不换行（按 CONTEXT.md「输出 API 与原作的对应」），
- * 那个 `PRINTL` 只结束它所在的那一行。ere 的 `printButton` 自成一行
- * （＝ `PRINTLC` + 收尾的 `PRINTL`），故页脚按钮之后不应再出现空行。
+ * 页脚三键（`- 上一页` / `- 返  回` / `- 下一页`）共处一行，行尾输出只结束
+ * 该行、不另起空行；ere 的 `printButton` 每次调用自成一行（见 CONTEXT.md
+ * 「输出 API 的排版与对齐」），故页脚按钮之后不应再出现空行。
  * @param {object[]} lines 输出行
  * @returns {number} 行号
  */
@@ -142,23 +141,23 @@ function footer_row(lines) {
   ).row;
 }
 
-test('ABILITY_UP：页脚三个 PRINTLC 之后没有空行（PRINTLC 不换行，:96 的 PRINTL 只收那一行）', async () => {
+test('ABILITY_UP：页脚三键同行渲染，其后没有空行', async () => {
   const fixture = four_chara();
   const { added } = await run(fixture, [999]);
 
-  // 原作 :92-96 的三个 PRINTLC 打在同一行，收尾的 PRINTL 只结束那一行，
-  // 不产生空行（语义与勘误见 CONTEXT.md「输出 API 与原作的对应」）。
+  // 页脚三键打在同一行，收尾输出只结束那一行，不产生空行（见 CONTEXT.md
+  // 「输出 API 的排版与对齐」）。
   assert.deepEqual(
     added.filter((line) => line.row > footer_row(added)),
     [],
     '能力值提升页脚按钮之后不应有空行',
   );
-  // 页脚三键的正文照原作：`- 返  回` 的 `-` 与两个空格都在（引擎折叠连续
+  // 页脚三键的正文：`- 返  回` 的 `-` 与两个空格都在（引擎折叠连续
   // 空白，故渲染串里只剩一个空格）
   assert.deepEqual(
     [1000, 999, 1001].map((acc) => button_of(added, acc).rendered),
     ['[1000] - 上一页', '[999] - 返 回', '[1001] - 下一页'],
-    '页脚三键的正文照原作 :92-94',
+    '页脚三键的正文（连续空白折叠为单空格）',
   );
 });
 
@@ -171,11 +170,9 @@ test('ABILITY_UP：表头按钮文案与等级门灰显（CFLAG:0:9 < 20 → #bb
     assert.equal(button_of(draw, 998).color, undefined, '等级 ≥ 20 不灰');
     assert.equal(button_of(draw, 997).text, '▌勇者一览');
     assert.equal(button_of(draw, 997).color, undefined);
-    assert.ok(texts(draw).includes('要提高谁的能力值？'), '标题行（:63）');
-    // 两个 PRINTBUTTON 那一行由 :56 的 PRINTL 收尾（按钮自成一行，
-    // 见 CONTEXT.md「输出 API 与原作的对应」）：它与 :61 的 DRAWLINE 之间
-    // 不夹空行——golden 的 sale-natural-log:88-93 为证（按钮行、分割线、
-    // 标题行逐行相邻）
+    assert.ok(texts(draw).includes('要提高谁的能力值？'), '标题行');
+    // 两个表头按钮自成一行（见 CONTEXT.md「输出 API 的排版与对齐」）：按钮
+    // 行与紧随的分割线之间不夹空行
     const header_button_row = button_of(draw, 997).row;
     assert.deepEqual(
       draw
@@ -186,7 +183,7 @@ test('ABILITY_UP：表头按钮文案与等级门灰显（CFLAG:0:9 < 20 → #bb
     );
   }
 
-  // 门槛的边界：19 调暗、20 放行（SIF CFLAG:0:9 < 20）
+  // 门槛的边界：19 调暗、20 放行（条件 CFLAG:0:9 < 20）
   for (const [level, color] of [
     [19, '#bbbbbb'],
     [20, undefined],
@@ -218,9 +215,8 @@ test('ABILITY_UP：魔王行的名字与等级按定宽渲染（名字 12 / 8 �
 // —— 输入分发 ——
 
 test('ABILITY_UP：等级门整表驱动（< 20 拦下两个菜单键、≥ 20 放行）', async () => {
-  // 拦截支是 PRINTW + CLEARLINE 2 + GOTO INPUT_LOOP_0：**回输入而不重绘**
-  // （:102-105 的跳转目标是 $INPUT_LOOP_0 而非 MENU），故本次调用只有一次
-  // 绘制，玩家看到提示后要重新选。
+  // 拦截分支**回输入而不重绘**，故本次调用只有一次绘制，玩家看到提示后
+  // 要重新选。
   for (const level of [19, 20]) {
     const fixture = four_chara({ 'cflag:0:9': level });
     const { added } = await run(fixture, [997, 999]);
@@ -237,7 +233,7 @@ test('ABILITY_UP：等级门整表驱动（< 20 拦下两个菜单键、≥ 20 �
 });
 
 test('ABILITY_UP：菜单键切档（998 回奴隶一览、997 切勇者一览）', async () => {
-  // 991-996 的「イレギュラー归一」（:74 写回 998）在 ere 侧不可达——引擎
+  // 991-996 的「イレギュラー归一」（写回 998）在 ere 侧不可达——引擎
   // 只回传已打印的按钮编号，那两个按钮是 997/998（见文件头不可达支说明）
   const back = four_chara();
   {
@@ -308,10 +304,10 @@ test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）'
   // 998 档：魔王行（1）+ 奴隶行（n）算进 L_LCOUNT，补到 NUM_PAGE + 1 = 24 行
   const two = four_chara();
   const draw = split_draws((await run(two, [999])).added)[0];
-  // 空行 = 表头那条 PRINTL 已随 #562 去掉（:56 只收尾两个 PRINTBUTTON 那一
-  // 行）→ 只剩补行；页脚三个 PRINTLC 串之后的 PRINTL 同样只收尾，不产生空行
-  // （见 CONTEXT.md「输出 API 与原作的对应」）；补行数由 L_LCOUNT 与
-  // NUM_PAGE(+1) 算出——改动补行上下界这里立刻变数
+  // 空行 = 表头那条换行输出已随 #562 去掉 → 只剩补行；页脚三键之后的收尾
+  // 输出同样只结束那一行，不产生空行（见 CONTEXT.md「输出 API 的排版与
+  // 对齐」）；补行数由 L_LCOUNT 与 NUM_PAGE(+1) 算出——改动补行上下界
+  // 这里立刻变数
   assert.equal(
     draw.filter((l) => l.type === 'text' && l.text === '').length,
     21,
@@ -326,7 +322,7 @@ test('ABILITY_UP：补行到页高（L_LCOUNT < NUM_PAGE + 1 的边界两侧）'
     '1 名敌人（1 行）时的空行数',
   );
   // 边界的**两侧**：998 档 l_lcount 恰好等于 NUM_PAGE（23）时仍要补 1 行
-  // （判据是 `< NUM_PAGE + 1`）——收成 `< NUM_PAGE` 时这一行会消失
+  // （条件是 `< NUM_PAGE + 1`）——收成 `< NUM_PAGE` 时这一行会消失
   const full_page = create_era_fixture();
   add_chara(full_page, 0, '你');
   full_page.store.set('cflag:0:9', 25);
@@ -377,13 +373,13 @@ test('ABILITY_UP：勇者一览按 24 行分页（25 名敌人 → 第 2 页 1 �
   );
 });
 
-test('ABILITY_UP：选中待机奴隶进入 CORE（选中后菜单 RESTART）', async () => {
+test('ABILITY_UP：选中待机奴隶进入 CORE（结束后菜单重画）', async () => {
   const fixture = four_chara();
-  // 2 号 → CORE（能力画面）→ 999 结束 → RESTART 重画菜单（第二段绘制）
+  // 2 号 → CORE（能力画面）→ 999 结束 → 重画菜单（第二段绘制）
   // → 999 退出
   const { added } = await run(fixture, [2, 999, 999]);
   const draws = split_draws(added);
-  assert.equal(draws.length, 2, '菜单 → CORE → RESTART 重画菜单');
+  assert.equal(draws.length, 2, '菜单 → CORE → 重画菜单');
   assert.ok(
     texts(added).includes('奴隶2'),
     'CORE 的画面以 %SAVESTR:TARGET%（目标名）开场',
@@ -399,10 +395,10 @@ test('ABILITY_UP：选中待机奴隶进入 CORE（选中后菜单 RESTART）', 
         l.accelerator === 999 &&
         l.text.includes('能力值提高结束'),
     ),
-    'CORE 里调 SHOW_ABLUP_SELECT（[999] 结束键）',
+    'CORE 里调 show_ablup_select（[999] 结束键）',
   );
-  // draws[1] = CORE 的画面 + RESTART 后的菜单（切段只按页脚 1001 分），
-  // 故看尾八键 = RESTART 重画出来的菜单
+  // draws[1] = CORE 的画面 + 重画后的菜单（切段只按页脚 1001 分），
+  // 故看尾八键 = 重画出来的菜单
   assert.deepEqual(
     accs(draws[1]).slice(-8),
     [998, 997, 0, 1, 2, 1000, 999, 1001],
@@ -410,7 +406,7 @@ test('ABILITY_UP：选中待机奴隶进入 CORE（选中后菜单 RESTART）', 
 });
 
 test('ABILITY_UP：魔王自己（输入 0）也进 CORE', async () => {
-  // 魔王行的 BASE:0:0 必须 > 0（:127-131 的濒死守卫），否则进不了 CORE
+  // 魔王行的 BASE:0:0 必须 > 0（濒死检查），否则进不了 CORE
   const fixture = four_chara({ 'base:0:0': 1 });
   const { added } = await run(fixture, [0, 999, 999]);
   assert.ok(
@@ -419,7 +415,7 @@ test('ABILITY_UP：魔王自己（输入 0）也进 CORE', async () => {
   );
 });
 
-// —— @ABILITY_UP_CORE ——
+// —— ability_up_core ——
 
 test('ABILITY_UP_CORE：已接真身的 ABLUP 全部走真实判定而非占位（#464/#465/#466/#467）', async () => {
   const { ABLUP_HANDLERS } = create_era_fixture().load_module(
@@ -427,9 +423,9 @@ test('ABILITY_UP_CORE：已接真身的 ABLUP 全部走真实判定而非占位�
   );
   for (const id of Object.keys(ABLUP_HANDLERS).map(Number)) {
     if (id === 100) {
-      // [100] 异界综合征的按钮来自原作的 `[IF_DEBUG]` 块（page-ablup.js 文件
-      // 头），ere 侧没有这个按钮 → RESULT == 100 经输入通道不可达；分发表
-      // 里保留它（SHOP_2.ERB:244 的原作分支如此），但这里喂不进去
+      // [100] 异界综合征的按钮属于调试专用块（page-ablup.js 文件头），ere
+      // 侧没有这个按钮 → RESULT == 100 经输入通道不可达；分发表里保留它，
+      // 但这里喂不进去
       continue;
     }
     const fixture = create_era_fixture();
@@ -438,21 +434,20 @@ test('ABILITY_UP_CORE：已接真身的 ABLUP 全部走真实判定而非占位�
     fixture.store.set('base:1:0', 1);
     if (id === 4 || id === 40) {
       // 局部感觉 [4] 与局部中毒 [40] 只在 CSTR:7 定制后渲染出按钮
-      // （page-ablup.js:92-101）
       fixture.store.set('cstr:1:7', '舔');
     }
     if (id === 23) {
-      fixture.store.set('talent:1:122', 1); // 断背气质按钮仅男性渲染（:44-48 性别过滤）
+      fixture.store.set('talent:1:122', 1); // 断背气质按钮仅男性渲染（性别过滤）
     }
     // 选中能力 → （能力自身的 [100] 放弃）→ 退出。[99] 是例外：无刻印时
-    // 反抗刻印消去走「打印 + WAIT」早退（ABLUP99.ERB:28-32），没有子菜单。
+    // 反抗刻印消去走「打印 + 等待按键」早退，没有子菜单。
     // 夹具的 waitAnyKey 不取输入队列（既定桩策略），所以那一趟不需要 [100]
     fixture.set_inputs(...(id === 99 ? [id, 999] : [id, 100, 999]));
     const { ability_up_core } = fixture.load_module('page/page-ability-up');
     const ret = await ability_up_core(1);
     assert.equal(ret, 0, `ABLUP${id} 之后 [999] 正常结束`);
     assert.ok(
-      !fixture.text_lines().some((t) => t.includes(`@ABLUP${id}`)),
+      !fixture.text_lines().some((t) => t.includes(`ablup${id}`)),
       `ABLUP${id} 不应再打占位行`,
     );
   }
@@ -470,7 +465,7 @@ test('ABILITY_UP_CORE：ABLUP_IDS 与分发表一一对应（#638：占位回落
     '菜单可达的每个编号都有 handler，handler 也没有菜单选不中的多余键',
   );
 
-  // [100] 的按钮来自原作 [IF_DEBUG] 块、ere 侧不渲染 → 经输入通道不可达：
+  // [100] 的按钮属于调试专用块、ere 侧不渲染 → 经输入通道不可达：
   // 引擎层直接拒收（夹具同款校验）
   const fixture = create_era_fixture();
   add_chara(fixture, 0, '你');
@@ -502,7 +497,7 @@ test('ABILITY_UP_CORE：999 收尾三件（欲情变化检查真身 → 出售�
   const { ability_up_core } = fixture.load_module('page/page-ability-up');
   await ability_up_core(1);
   assert.ok(
-    !fixture.text_lines().some((t) => t.includes('@YOKUBO_UP_CHECK')),
+    !fixture.text_lines().some((t) => t.includes('yokubo_up_check')),
     'YOKUBO_UP_CHECK 已接真身，不应再打占位行',
   );
   assert.ok(

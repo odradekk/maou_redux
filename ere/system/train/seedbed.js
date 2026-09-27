@@ -75,7 +75,7 @@ async function naedoko(cid, rand_n = default_rand) {
   }
   if (chara(cid).invasion.状态 !== 7) return 0;
 
-  // TALENT:122 = 男人。原作 RAND:2 非零走肛门业务，零走种马业务。
+  // TALENT:122 = 男人。两值随机：非零走肛门业务，零走种马业务。
   if (get(`talent:${cid}:122`)) {
     return rand_n(2) ? naedoko_not_v(cid) : naedoko_man(cid);
   }

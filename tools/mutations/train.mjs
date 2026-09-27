@@ -1,6 +1,6 @@
 // 变异条目表切片：ere/system/（回合循环、珠结算、指令判定、系统流转）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 1018; // 合并 #650 后实测 1018（#650 +2 −2、#647 返工 +3、#647 −3 +8 取并集）；返工（#647 验收第 1 轮）+3（M12955-M12957：ablup16 decide 素质复核漏判单项的守卫）；#650 起 +2 −2（M13100/M13101 修复守卫；M1314/M9783 反向变异随缺陷修复删除）；#648 起 +15 −4（M13000-M13014 守 F2 修复点；M798/M870/M884/M1031 随缺陷修复删除——M870/M884 反向变异、M798 洗涤天数、M1031 缺 RETURN 0 标记的前提均已消失）；#647 起净 +2（删 M9695/M9930/M9949 三条缺陷反向变异，新增 M12950-M12954 五条修复回归守卫）；#641 起净 -4（M98、M986、M1106、M11621/11622、M38 随 stub 机制与占位回落删除；+2 M12903/M12905）；#620 起 +4（M12320-M12323：「奴隷の様子」四个分派拆回独立一行——兽奸 :741-763+/:765-776、奉仕 :892-920+/:922-940、同性爱 :1054-1078+/:1080-1094、通常 :1224-1232+/:1235-1260）；#612 起 +16（M12280-M12295：按钮正文的「- 」分隔符普查——条目块见本文件 #612 段注释）；#615 起 +10（M12260-M12268：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 落行——奉仕分派的收行/角色名落位/穴句行去名，奉仕与同性爱清算的并回、拆开与传闻独立三种；M12257：一般分派清算的 PRINTFORM 同一条显示行——共处理句、CALL、的性欲与传闻不许拆开）；#595 起 +30（M12040-M12069：调教系统的多补空行补回、真空白行删除）；#572 起 +1（M12036，com-toy.js 的满月确认按钮化）；#562 起 +5（M11871/M11874-M11877：登记面的 PRINTLC/PRINTFORML/PRINTL 收尾行不产生空行，:40 的真空行不许删）；#547 起 +1（M11583，ablup.js 的卖淫影响缺省读 modsave:0——由 test/ablup.test.js 守护）；#548 起 +1（M11488：EQUIP_COM16 的 SYOKUSYU_MILK 接线）；#565 起 +4 −3（M11616/M11617/M11621/M11622 四条接线；M8147/M8148/M1248 随缺号占位语义消失删除：空注册与缺号同为零输出，行为不可区分）；598（共同祖先，含 #461 的 M9769-M9787）+ 92（#462：M9589-M9648 + M9836-M9867）+ 54（#465：M9900-M9953）+ 80（#466：M10400-M10479）+ 25（#467：M10500-M10524）+ 54（#491：M10525-M10578）+ 10（#491 第二步：M10579-M10588）+ 19（#512：M10920-M10938）+ 3（#508：M11004-M11006，event-autotrain.js 的两处寻址订正与 LOSEBASE 归零）+ 1（#517：M11143，com-caress.js 的 COM4 服装守卫读法）+ 1（#517：M11144，com-sex.js 的姿势句失神门读法）——合并时按编号集合验并集，数字取自导入实测的条目数而非相加。合并 #547 时两侧同为 939 但条目集不同：收进 master 的 M11583 后实测 940
@@ -8,37 +8,37 @@ export const COUNT = 1018; // 合并 #650 后实测 1018（#650 +2 −2、#647 �
 export default [
   // —— #565 已实现函数的存根调用点接线 ——
   {
-    desc: 'M11616 juel-check 的 CHECK_SPECIALSKIL 接线删除（收尾三查缺一）',
+    desc: 'M11616 juel-check 的 check_specialskil 接入删除（收尾三查缺一）',
     file: 'ere/system/train/juel-check.js',
     find: '  await check_specialskil(target, 1);',
-    replace: '  // 变异：特殊技能获得检查接线删除',
+    replace: '  // 变异：特殊技能获得检查接入删除',
     tests: ['juel-check'],
-    must_mention: 'CHECK_SPECIALSKIL 真身必须真的被调到',
+    must_mention: 'check_specialskil 真身必须真的被调到',
   },
   {
     desc: 'M11617 com-caress 的 :746 守卫删除（紧缚/失神仍出爱抚反应）',
     file: 'ere/system/train/com-caress.js',
     find: `  if (era.get(\`tequip:\${target}:44\`) || (era.get('tflag:899') || 0) > 1) {\n    return;\n  }`,
-    replace: '  // 变异：守卫删除（原作 :746 条件不满足时零输出）',
+    replace: '  // 变异：检查删除（原作 :746 条件不满足时零输出）',
     tests: ['train-message'],
     must_mention: 'TEQUIP:44（紧缚）时不得输出爱抚反应',
   },
   {
     desc: 'M1 循环顺序：COM_ABLE 扫描挪到 SHOW_USERCOM 之后',
     file: 'ere/system/train/train-loop.js',
-    find: `    // 5. 遍历 @COM_ABLExx：可执行指令表（喂输入检查与 @SHOW_USERCOM 的
-    // 指令按钮渲染——按钮随首条指令票 #45 挂载）
+    find: `    // 5. 探测可执行性：可执行指令表（喂输入检查与 SHOW_USERCOM 的指令
+    // 按钮渲染——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();
 
-    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
+    // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
     // 可执行指令表透传给按钮渲染）
     const usercom_draw = await emit('SHOW_USERCOM', usable);`,
-    replace: `    // 6. @SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
+    replace: `    // 6. SHOW_USERCOM（函数体在 page/page-usercom.js，含 [999] 调教结束；
     // 可执行指令表透传给按钮渲染）
     const usercom_draw = await emit('SHOW_USERCOM', []);
 
-    // 5. 遍历 @COM_ABLExx：可执行指令表（喂输入检查与 @SHOW_USERCOM 的
-    // 指令按钮渲染——按钮随首条指令票 #45 挂载）
+    // 5. 探测可执行性：可执行指令表（喂输入检查与 SHOW_USERCOM 的指令
+    // 按钮渲染——按钮随首条指令票 #45 挂载）
     const usable = await scan_usable_commands();`,
     tests: ['train-loop'],
     must_mention: '回调顺序',
@@ -56,9 +56,9 @@ export default [
     file: 'ere/system/train/train-loop.js',
     find: `  // 10. 全角色 NOWEX 清零
   clear_nowex_all();
-  // 11. @EVENTCOM（函数体在 event/event-com.js）`,
+  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）`,
     replace: `  // 10. 变异：NOWEX 不清零
-  // 11. @EVENTCOM（函数体在 event/event-com.js）`,
+  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）`,
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
@@ -67,14 +67,14 @@ export default [
     file: 'ere/system/train/train-loop.js',
     find: `      // 9. 输入检查通过 → SELECTCOM = L_I（紧凑序号经 com-index 映射；
       // 空间外编号（999 出口、子菜单号、乱数）在映射处得 undefined，
-      // 落 @USERCOM——引擎「输入检查失败 → @USERCOM」的同位语义）
+      // 转 USERCOM——「输入检查失败 → USERCOM」的对应语义）
       era_flag.selectcom = result;`,
     replace: `      // 9. 变异：不设 SELECTCOM`,
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
   {
-    desc: 'M15 AFTERTRAIN 收尾：endTrain 挪到 @EVENTEND 链之前',
+    desc: 'M15 AFTERTRAIN 收尾：endTrain 挪到 EVENTEND 链之前',
     file: 'ere/system/train/train-loop.js',
     find: `  const pending = await emit('EVENTEND');
   era.endTrain();
@@ -114,15 +114,18 @@ export default [
   {
     desc: 'M24 双重结算：删掉结算尾部的 gotjuel 清零',
     file: 'ere/system/train/juel-check.js',
-    find: '  for (const key of OWNED_JUEL_KEYS) {\n    era.set(`gotjuel:${cid}:${key}`, 0);\n  }\n  return 0; // RETURN 0',
-    replace: '  return 0; // RETURN 0',
+    find: `  for (const key of OWNED_JUEL_KEYS) {
+    era.set(\`gotjuel:\${cid}:\${key}\`, 0);
+  }
+  return 0;`,
+    replace: '  return 0;',
     tests: ['juel-check'],
     must_mention: '职责划分',
   },
   {
     desc: 'M25 相殺取量：否定余量减半改三分之一',
     file: 'ere/system/train/juel-check.js',
-    find: '    let take = Math.floor(negative() / 2); // LOCAL:1 = JUEL:100 / 2',
+    find: '    let take = Math.floor(negative() / 2); // 扣减量 = JUEL:100 / 2',
     replace:
       '    let take = Math.floor(negative() / 3); // LOCAL:1 = JUEL:100 / 2',
     tests: ['juel-check'],
@@ -137,7 +140,7 @@ export default [
     must_mention: '池子里不够',
   },
   {
-    desc: 'M27 相殺兜底：余量取半为 0 时改扣 2（原作扣 1）',
+    desc: 'M27 相殺缺省处理：余量取半为 0 时改扣 2（正确扣 1）',
     file: 'ere/system/train/juel-check.js',
     find: '      take = 1; // 否定未清零时至少扣 1',
     replace: '      take = 2; // 否定未清零时至少扣 1',
@@ -164,8 +167,9 @@ export default [
   {
     desc: 'M30 相殺两组先后：LABEL_1/LABEL_2 对调',
     file: 'ere/system/train/juel-check.js',
-    find: `  offset_negative_group(cid, [4, 5, 6], rng); // $LABEL_1 恭顺/欲情/屈服
-  offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_2 耻情/苦痛/恐怖`,
+    find: `  // 否定の珠による相殺（两个循环同构，参数化）
+  offset_negative_group(cid, [4, 5, 6], rng); // 恭顺/欲情/屈服
+  offset_negative_group(cid, [8, 9, 10], rng); // 耻情/苦痛/恐怖`,
     replace: `  offset_negative_group(cid, [8, 9, 10], rng); // $LABEL_1 恭顺/欲情/屈服
   offset_negative_group(cid, [4, 5, 6], rng); // $LABEL_2 耻情/苦痛/恐怖`,
     tests: ['juel-check'],
@@ -174,14 +178,16 @@ export default [
   {
     desc: 'M31 交互循环出口：999 改 998（退出键失效）',
     file: 'ere/system/train/juel-check.js',
-    find: '    if (result === 999) {\n      break; // → $LABEL_EXIT（能力值提高结束）\n    }',
+    find: `    if (result === 999) {
+      break; // 能力值提高结束
+    }`,
     replace:
       '    if (result === 998) {\n      break; // → $LABEL_EXIT（能力值提高结束）\n    }',
     tests: ['juel-check', 'train-loop'],
     must_mention: '选 999 退出',
   },
   {
-    desc: 'M32 自动升级开关：GETBIT 位 35 改 34',
+    desc: 'M32 自动升级开关：按位取位的位 35 改 34',
     file: 'ere/system/train/juel-check.js',
     find: "    if (getbit(era.get('flag:5'), 35)) {",
     replace: "    if (getbit(era.get('flag:5'), 34)) {",
@@ -191,7 +197,7 @@ export default [
   {
     desc: 'M33 基础行格式：) 与 = 之间的 12 空格少 2 格',
     file: 'ere/system/train/juel-check.js',
-    find: '      { content: `)${NBSP.repeat(12)}= ` }, // PRINT ) + 12 空格 + "= "',
+    find: '      { content: `)${NBSP.repeat(12)}= ` },',
     replace:
       '      { content: `)${NBSP.repeat(10)}= ` }, // 变异：少 2 格（只改格数）',
     tests: ['juel-check'],
@@ -283,39 +289,47 @@ export default [
 
   // —— #212（J2 调教回合骨架）：M700-M703 ——
   {
-    desc: 'M700 回调顺序：@EVENTCOM 与 @COMxx 分发对调（步骤 11↔12）',
+    desc: 'M700 回调顺序：EVENTCOM 与指令处理器分发对调（步骤 11↔12）',
     file: 'ere/system/train/train-loop.js',
-    find: "  // 11. @EVENTCOM（函数体在 event/event-com.js）\n  const com_pending = await emit('EVENTCOM');\n  if (com_pending !== undefined) {\n    return { missing: false, pending: com_pending };\n  }\n  // 12. 对应 @COMxx；未实现 → 重新要求输入（引擎语义，见文件头）；\n  // 返回 0 → 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头\n  // 第 12 步的取消语义，子菜单指令全出口 RETURN 0）\n  const com_result = await com_family.call(result, {\n    whenMissing: COM_MISSING,\n  });",
+    find: `  // 11. EVENTCOM 事件链（函数体在 event/event-com.js）
+  const com_pending = await emit('EVENTCOM');
+  if (com_pending !== undefined) {
+    return { missing: false, pending: com_pending };
+  }
+  // 12. 对应指令处理器；未实现 → 重新要求输入（见文件头）；返回 0 →
+  // 回合取消（不结算、不进 EVENTCOMEND、PREVCOM 不推——文件头第 12 步的
+  // 取消语义，子菜单指令全出口返回 0）
+  const com_result = await com_family.call(result, {
+    whenMissing: COM_MISSING,
+  });`,
     replace:
       "  // 11. 变异：COM 分发先于 EVENTCOM\n  const com_result = await com_family.call(result, {\n    whenMissing: COM_MISSING,\n  });\n  const com_pending = await emit('EVENTCOM');\n  if (com_pending !== undefined) {\n    return { missing: false, pending: com_pending };\n  }",
     tests: ['train-loop'],
     must_mention: '回调顺序',
   },
   {
-    desc: 'M701 BEGIN TRAIN 清空 TSTR:90 删（#212：Emuera 整族清空的手动镜像）',
+    desc: 'M701 BEGIN TRAIN 清空 TSTR:90 删（#212：整族清空的手动镜像）',
     file: 'ere/system/train/train-loop.js',
-    find: `  // TSTR:90（前回指令名）清空：Emuera 在 BEGIN TRAIN 整族清空 TSTR
-  // （引擎内建）；ere 的 tstr 是持久普通表（yml/TStr.yml，#212 探针定论
-  // ——beginTrain/endTrain 的调教期表清单里没有 tstr），引擎不清，此处
-  // 手动镜像。原作 TRAIN_MAIN.ERB:29-30 那行注释掉的 ;TSTR:90 =
-  // 正是同语义（引擎替它清了才注释掉）
+    find: `  // TSTR:90（前回指令名）清空：ere 的 tstr 是持久普通表（yml/TStr.yml，
+  // #212 探针定论——beginTrain/endTrain 的调教期表清单里没有 tstr），
+  // 引擎不替调用方清它，此处手动清
   era.set('tstr:90', '');`,
     replace: `  // 变异：TSTR:90 不清（残留上一局的前回指令名）`,
     tests: ['train-loop'],
     must_mention: 'BEGIN TRAIN 必须清 TSTR:90',
   },
   {
-    desc: 'M702 TRAIN_NAME_INIT 守卫删（每次 EVENTTRAIN 重播种）',
+    desc: 'M702 train_name_init 检查删（每次 EVENTTRAIN 重播种）',
     file: 'ere/system/train/train-name.js',
     find: `  if ((era.get('trainalias:0') ?? '').length > 0) {
     return;
   }`,
-    replace: `  // 变异：守卫删`,
+    replace: `  // 变异：检查删`,
     tests: ['train-name'],
-    must_mention: '守卫命中后不得有任何写入',
+    must_mention: '检查命中后不得有任何写入',
   },
   {
-    desc: 'M703 TRAIN_NAME:150 的 %CSTR:7% 内插删（播种时求值丢失）',
+    desc: 'M703 train_name_init 的字符串内插删（播种时求值丢失）',
     file: 'ere/system/train/train-name.js',
     find: `  era.set(
     \`trainalias:150\`,
@@ -326,7 +340,7 @@ export default [
     must_mention: '尾巴调教',
   },
   {
-    desc: 'M704 read_train_name 的空串兜底删（未播种槽回 undefined）',
+    desc: 'M704 read_train_name 的空串缺省删（未播种槽回 undefined）',
     file: 'ere/system/train/train-name.js',
     find: `  return era.get(\`trainalias:\${id}\`) ?? '';`,
     replace: `  return era.get(\`trainalias:\${id}\`);`,
@@ -371,7 +385,7 @@ export default [
     replace: `    const idx = await era.input();
     const result = idx; // 变异：映射层旁路`,
     tests: ['train-loop'],
-    must_mention: 'L_IDX 39 必须分发到 @COM40',
+    must_mention: 'L_IDX 39 必须分发到指令 40',
   },
   {
     desc: 'M743 COM_ABLE 扫描域换成 121 段分发空间（高级 COM 混进可直选菜单）',
@@ -433,7 +447,9 @@ export default [
   {
     desc: 'M749 V_ABLE 的未成熟判定删（源注释与代码的出入处——照注释不照代码）',
     file: 'ere/system/train/v-able.js',
-    find: '  if (era.get(`talent:${cid}:135`)) {\n    return 0; // 未成熟（源注释的「萨德豁免」不在函数体内，见文件头）\n  }',
+    find: `  if (era.get(\`talent:\${cid}:135\`)) {
+    return 0; // 未成熟（「萨德豁免」不在判定内，见文件头）
+  }`,
     replace: `  // 变异：未成熟判定删`,
     tests: ['com-dispatch'],
     must_mention: '未成熟不可',
@@ -453,7 +469,7 @@ export default [
     must_mention: '高级 COM = 分发空间 − 可直选空间',
   },
   {
-    desc: 'M751 TRAIN_MESSAGE_B 的缺号回落复辟占位行（#565 起缺号 = 原作零输出）',
+    desc: 'M751 train_message_b 的缺号回落复辟占位行（#565 起缺号 = 零输出）',
     file: 'ere/system/train/train-message.js',
     find: `  await train_message_b_family.call(era_flag.selectcom, {
     args: [rand_source()],
@@ -463,15 +479,15 @@ export default [
   });
   if (branch === 0) {
     // 变异：占位行复辟（缺号的 whenMissing 缺省值是 0）
-    era.print('（情景描写尚未移植，此处为占位——原作 @TRAIN_MESSAGE_B。）');
+    era.print('（情景描写尚未移植，此处为占位——TRAIN_MESSAGE_B。）');
   }`,
     tests: ['train-message'],
-    must_mention: '未装载的号不得再出占位行',
+    must_mention: '未装载的号不得再出占位文案',
   },
   {
     desc: 'M752 TRAIN_MESSAGE_A 分发的空间外抛错被吞（越界 SELECTCOM 静默回落）',
     file: 'ere/system/train/train-message.js',
-    find: `  // 同 B：#402 收口后空间全数有主，缺失语义按原作归为零输出（#565）
+    find: `  // 同 B：#402 收尾后空间全数有主，缺失语义归为零输出（#565）
   await train_message_a_family.call(era_flag.selectcom, {
     args: [rand_source()],
   });`,
@@ -833,10 +849,10 @@ export default [
   {
     desc: 'M796 AFTERTRAIN_CLOTH 尿布换新不扣费（MONEY -= 50 删）',
     file: 'ere/system/train/cloth.js',
-    find: 'era_flag.money -= 50; // MONEY',
+    find: '        era_flag.money -= 50;',
     replace: '// 变异：不扣费',
     tests: ['cloth-func'],
-    must_mention: 'MONEY -= 50（:264）',
+    must_mention: 'MONEY -= 50',
   },
   {
     desc: 'M797 AFTERTRAIN_CLOTH 下装废弃状态错（46 = -2 改 -1）',
@@ -844,7 +860,7 @@ export default [
     find: 'era.set(`cflag:${cid}:46`, -2); // ツーピースは下のみ廃棄',
     replace: 'era.set(`cflag:${cid}:46`, -1); // （变异）',
     tests: ['cloth-func'],
-    must_mention: '两截型下装废弃（:315）',
+    must_mention: '两截型下装废弃',
   },
   {
     desc: 'M799 AFTERTRAIN_CLOTH 上下俱废的类型消除删（45<0&&46<0 判恒假）',
@@ -862,19 +878,33 @@ export default [
     must_mention: '上下俱废 → 类型 0',
   },
   {
-    desc: 'M800 RE_CLOTHED 守卫翻转（< 3 改 >= 3：露出癖高的反而穿回）',
+    desc: 'M800 re_clothed 检查翻转（< 3 改 >= 3：露出癖高的反而穿回）',
     file: 'ere/system/train/cloth.js',
     find: 'if (obedience + exposure < 3) {',
     replace: 'if (obedience + exposure >= 3) {',
     tests: ['cloth-func'],
-    must_mention: '≥3 维持脱衣（:396）',
+    must_mention: '≥3 维持脱衣',
   },
   {
     desc: 'M801 SOILING_CLOTH_NO1 内裤置位删（bit 1 不置）',
     file: 'ere/system/train/cloth.js',
-    find: '  if (worn(cid) & 1) {\n    era.print(`《${chara_callname(cid)}的内衣沾满了尿》`);\n    mask = or_tflag45(mask, 1, in_train);\n  }\n  return mask;\n}\n\n/**\n * @SOILING_CLOTH_NO2',
-    replace:
-      '  if (worn(cid) & 1) {\n    era.print(`《${chara_callname(cid)}的内衣沾满了尿》`);\n  }\n  return mask;\n}\n\n/**\n * @SOILING_CLOTH_NO2',
+    find: `  if (worn(cid) & 1) {
+    era.print(\`《\${chara_callname(cid)}的内衣沾满了尿》\`);
+    mask = or_tflag45(mask, 1, in_train);
+  }
+  return mask;
+}
+
+/**
+ * soiling_cloth_no2：調教中のおもらし処理（大）——脱糞，`,
+    replace: `  if (worn(cid) & 1) {
+    era.print(\`《\${chara_callname(cid)}的内衣沾满了尿》\`);
+  }
+  return mask;
+}
+
+/**
+ * soiling_cloth_no2：調教中のおもらし処理（大）——脱糞，`,
     tests: ['cloth-func'],
     must_mention: '特别服装（16）+ 下装（4）+ 内裤（1）',
   },
@@ -884,7 +914,7 @@ export default [
     find: 'mask = or_tflag45(mask, 32, in_train);',
     replace: '// 变异：废弃位不置',
     tests: ['cloth-func'],
-    must_mention: '大小便全置（:501-522）',
+    must_mention: '大小便全置',
   },
   {
     desc: 'M803 SOILING_CLOTH_NO1 尿布早退删（69 的 RETURN 拿掉）',
@@ -934,7 +964,7 @@ export default [
     find: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '服';",
     replace: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '';",
     tests: ['cloth-func'],
-    must_mention: '未知编号落 CASEELSE 兜底串',
+    must_mention: '未知编号取默认串',
   },
   {
     desc: 'M809 GET_CLOTHTYPE_SPECIAL 的 98 号退回繁体残留（#60 简体锁的靶点）',
@@ -942,22 +972,22 @@ export default [
     find: "  98: '神秘的尿道导管',",
     replace: "  98: '神秘的導尿管',",
     tests: ['cloth-func'],
-    must_mention: '98/99 按简体规则取 PRINT 版名称',
+    must_mention: '98/99 按简体规则取渲染版名称',
   },
   {
-    desc: 'M830 BENKI 魔王除外守卫删（ARG:0 == 0 不再提前返回）',
+    desc: 'M830 run_benki 魔王除外检查删（arg == 0 不再提前返回）',
     file: 'ere/system/train/benki.js',
     find: `  if (arg === 0) {
     return 0; // 魔王様は除外
   }`,
     replace: `  if (false) {
-    return 0; // 变异：魔王除外守卫失效
+    return 0; // 魔王様は除外
   }`,
     tests: ['benki'],
     must_mention: '魔王（角色 0）恒被除外',
   },
   {
-    desc: 'M831 BENKI 肉便器素质门槛删（TALENT:204 == 0 也结算）',
+    desc: 'M831 run_benki 肉便器素质门槛删（TALENT:204 == 0 也结算）',
     file: 'ere/system/train/benki.js',
     find: `  if (t(arg, 204) === 0) {
     return 0; // 肉便器以外は除外（TALENT:204 肉便器）
@@ -1001,7 +1031,7 @@ export default [
     must_mention: '兽奸配信说明',
   },
   {
-    desc: 'M835 BENKI 奉仕分派的对方写坏（FLAG:64 最下層民 0 改 3）',
+    desc: 'M835 run_benki 奉仕分派的对方写坏（FLAG:64 最下層民 0 改 3）',
     file: 'ere/system/train/benki.js',
     find: `    era.set('flag:62', 0); //
     era.set('flag:64', 0); //
@@ -1020,11 +1050,11 @@ export default [
     find: `    era.set('flag:62', 6); // その他。フェラ便器
   }
 
-  // —— :393-400 未定の相手を確定 ——`,
+  // —— 未定の相手を確定 ——`,
     replace: `    era.set('flag:62', 5); // 变异：フェラ便器行动号改坏
   }
 
-  // —— :393-400 未定の相手を確定 ——`,
+  // —— 未定の相手を確定 ——`,
     tests: ['benki'],
     must_mention: 'フェラ便器说明',
   },
@@ -1078,15 +1108,15 @@ export default [
     replace: `    if (abl(arg, 12) >= 2 && false) {
       answer = 30; // 变异：手淫分支不命中`,
     tests: ['benki'],
-    must_mention: '技巧 2 以上且 RAND 命中 → 手淫（30）',
+    must_mention: '手淫（30）',
   },
   {
-    desc: 'M840 SELECT_BENKI_MENU 的 V_ABLE 接线删（处女也升正常位）',
+    desc: 'M840 select_benki_menu 的 v_able 接入删（处女也升正常位）',
     file: 'ere/system/train/benki.js',
     find: `    if (abl(arg, 2) >= 2 && v_able(arg) === 1 && rand_n(dice) === 0) {
       answer = 20;`,
     replace: `    if (abl(arg, 2) >= 2 && rand_n(dice) === 0) {
-      answer = 20; // 变异：V_ABLE 接线删`,
+      answer = 20;`,
     tests: ['benki'],
     must_mention: '处女拦截正常位',
   },
@@ -1116,13 +1146,13 @@ export default [
     find: `      get_palam[7] += Math.floor(play / 3); // 正常位/後背位/対面座位/背面座位
       get_palam[1] += play;
       era.print(\`私处经验+\${Math.floor(play / 10)}\`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.私处经验 += Math.floor(play / 10);
       break;`,
     replace: `      get_palam[7] += Math.floor(play / 3); // 正常位/後背位/対面座位/背面座位
       get_palam[1] += play;
       era.print(\`私处经验+\${Math.floor(play / 10)}\`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       // 变异：私处经验写删
       break;`,
     tests: ['benki'],
@@ -1145,7 +1175,7 @@ export default [
     must_mention: '私处点数珠',
   },
   {
-    desc: 'M845 BENKI 的 FLAG:63 门面写删（game.dungeon.肉便器常识改写不写）',
+    desc: 'M845 run_benki 的 FLAG:63 门面写删（game.dungeon.肉便器常识改写不写）',
     file: 'ere/system/train/benki.js',
     find: `  game.dungeon.肉便器常识改写 = 0; // FLAG:63 = 0
   if (t(arg, 283) > 0) {
@@ -1161,7 +1191,7 @@ export default [
     find: `    2: '大型犬',`,
     replace: `    2: '大型犬（变异）',`,
     tests: ['benki'],
-    must_mention: 'BENKI_PLAYER_NAME：读 FLAG:64 返回对象名',
+    must_mention: 'benki_player_name：读 FLAG:64 返回对象名',
   },
 
   // —— #216 J6 跨族共用子程序与失神、受精（锚定 find 串经脚本核唯一）——
@@ -1433,7 +1463,7 @@ export default [
     must_mention: 'UP:9 < 7500',
   },
   {
-    desc: 'M896 TFLAG:899 计数块删（互斥守卫的写路径断）',
+    desc: 'M896 TFLAG:899 计数块删（互斥检查的写路径断）',
     file: 'ere/system/train/passout.js',
     find: `  if (tflag(896) >= 2 || tflag(897) >= 2 || tflag(898) >= 2) {
     if (tflag(899) === 0) {
@@ -1455,7 +1485,7 @@ export default [
     must_mention: '执行 4 回',
   },
   {
-    desc: 'M898 快照的绳值带入改恒 1（864 = tequip:44 值）',
+    desc: 'M898 快照的绳值带入改恒 1（tequip:44 的值）',
     file: 'ere/system/train/passout.js',
     find: `    if (tequip(cid, 44)) {
       set_tflag(864, tequip(cid, 44)); // 绳（值 = 绳种）`,
@@ -1465,7 +1495,7 @@ export default [
     must_mention: '快照（899 == 1）',
   },
   {
-    desc: 'M899 快照 else 臂的 -1 标记删（插入系）',
+    desc: 'M899 快照 else 分支的 -1 标记删（插入系）',
     file: 'ere/system/train/passout.js',
     find: `    if (tequip(cid, 11) === 1 && tflag(877) !== 1) {
       set_tflag(877, -1);
@@ -1497,10 +1527,10 @@ export default [
     must_mention: '恐怖/屈服路',
   },
   {
-    desc: 'M902 FLAG:72 系统开关守卫删',
+    desc: 'M902 FLAG:72 系统开关检查删',
     file: 'ere/system/train/seiin.js',
     find: "  if ((era.get('flag:72') || 0) === 1) {\n    return; // 系统关闭（头注：全库零写点，恒开）\n  }",
-    replace: `  // 变异：系统开关守卫删`,
+    replace: `  // 变异：系统开关检查删`,
     tests: ['seiin'],
     must_mention: 'FLAG:72',
   },
@@ -2384,15 +2414,15 @@ export default [
     must_mention: '不得出占位行',
   },
   {
-    desc: 'M1019 A 公共头 TFLAG:15 死斗场两臂删',
+    desc: 'M1019 A 公共头 TFLAG:15 死斗场两分支删',
     file: 'ere/system/train/train-message.js',
     find: '  if (tflag15 > 0 && tequip55) {',
-    replace: '  if (false) { // 变异：TFLAG:15 死斗场两臂删',
+    replace: '  if (false) { // 变异：TFLAG:15 死斗场两分支删',
     tests: ['com-colosseum'],
     must_mention: '死斗场 ==1 臂',
   },
   {
-    desc: 'M1020 A 公共头两臂的 SELECTCOM 三支过滤删（206 也灌精）',
+    desc: 'M1020 A 公共头两分支的 SELECTCOM 三支过滤删（206 也灌精）',
     file: 'ere/system/train/train-message.js',
     find: '    const site = com_site[era_flag.selectcom];',
     replace:
@@ -3450,7 +3480,7 @@ export default [
     must_mention: '主启动图注册特殊系',
   },
   {
-    desc: 'M1211 TRAIN_MESSAGE_A55 欲情输出阈值反转（#402 起靶 train-message.js 的链末支）',
+    desc: 'M1211 train_message_a 的 55 支欲情输出阈值反转（#402 起挪到链末支）',
     file: 'ere/system/train/train-message.js',
     find: '  if (palam(target, 5) < PALAMLV[3]) {\n    return;\n  }',
     replace: '  if (palam(target, 5) >= PALAMLV[3]) {\n    return;\n  }',
@@ -3990,9 +4020,9 @@ export default [
   {
     desc: 'M1072 INCEST 无亲族路径误输出（#220）',
     file: 'ere/system/train/incest.js',
-    find: '  game.train.近亲与自我口上 = 0; // SUB2:326',
-    replace:
-      "  game.train.近亲与自我口上 = 0; // SUB2:326\n  era.print('变异：无亲族相奸');",
+    find: '  game.train.近亲与自我口上 = 0;',
+    replace: `  game.train.近亲与自我口上 = 0;
+  era.print('变异：无亲族相奸');`,
     tests: ['source-check'],
     must_mention: 'INCEST：无亲族普通路径静默',
   },
@@ -4008,7 +4038,7 @@ export default [
       orgasms < 12
         ? '全身哆嗦着、颤动到了极点。'
         : '露出快乐又淫媚的神色、绝顶高潮了……';
-    era.set('str:0', line); // 变异：公共绝顶段不落行（#220 的判据是它在专属分支之前）`,
+    era.set('str:0', line); // 变异：公共绝顶段不落行（它在专属分支之前）`,
     tests: ['train-message'],
     must_mention: 'A 公共绝顶：TFLAG:29 在 COM12 专属反应之前输出同一行',
   },
@@ -4313,10 +4343,10 @@ export default [
     must_mention: '口水不断的从嘴角流了出来',
   },
   {
-    desc: 'M1362 A 公共头非死斗场触手臂 SIF 删（#227）',
+    desc: 'M1362 A 公共头非死斗场触手分支删（#227）',
     file: 'ere/system/train/train-message.js',
     find: '  if (tflag15 === 1 && tequip55 !== 1) {',
-    replace: '  if (false) { // 变异：非死斗场触手臂 SIF 删',
+    replace: '  if (false) { // 变异：非死斗场触手分支删',
     tests: ['com-tentacle'],
     must_mention: ':113-125 SIF 与 :143-145 ELSEIF 各打一次',
   },
@@ -4404,7 +4434,7 @@ export default [
   },
   // —— #402（N18 调教消息 A/B）：A 的公共段（train-message.js）——
   {
-    desc: 'M8116 A 股间射精 0 臂：TFLAG:10 ≥ 1 守卫删（对象没射也说话）',
+    desc: 'M8116 A 股间射精 0 分支：TFLAG:10 ≥ 1 检查删（对象没射也说话）',
     file: 'ere/system/train/train-message.js',
     find: `    if (tflag10 < 1) {
       return;
@@ -4415,7 +4445,7 @@ export default [
     must_mention: 'TFLAG:10 == 0 → 整段静默',
   },
   {
-    desc: 'M8117 A 股间射精 0 臂：「大量」的档界 2 抬到 3',
+    desc: 'M8117 A 股间射精 0 分支：「大量」的档界 2 抬到 3',
     file: 'ere/system/train/train-message.js',
     find: `\${tflag10 >= 2 ? '大量' : ''}`,
     replace: `\${tflag10 >= 3 ? '大量' : ''}`,
@@ -4423,21 +4453,21 @@ export default [
     must_mention: '对象大量射精',
   },
   {
-    desc: 'M8118 A 股间射精 0 臂：122 支改判 121（阴茎互捅支失守）',
+    desc: 'M8118 A 股间射精 0 分支：122 支改判 121（阴茎互捅支失守）',
     file: 'ere/system/train/train-message.js',
     find: '    if (selectcom === 122) {\n      era.print(\n        `${head}精液、将${chara_callname(player)}的阴茎用精液一吐为快了…`,\n      );',
     replace:
       '    if (selectcom === 121) {\n      era.print(\n        `${head}精液、将${chara_callname(player)}的阴茎用精液一吐为快了…`,\n      );',
     tests: ['train-message'],
-    must_mention: '0 臂 · 122 · 对象普通射精',
+    must_mention: '0 分支 · 122 · 对象普通射精',
   },
   {
-    desc: 'M8119 A 股间射精 0 臂：33 支丢「精液、把〈主人〉的」前缀（与 62 支合流）',
+    desc: 'M8119 A 股间射精 0 分支：33 支丢「精液、把〈主人〉的」前缀（与 62 支合流）',
     file: 'ere/system/train/train-message.js',
     find: '      const line =\n        selectcom === 33 ? `${head}精液、把${chara_callname(player)}的` : head;',
     replace: '      const line = head; // 变异：33 支的前缀删',
     tests: ['train-message'],
-    must_mention: '0 臂 · 33 · 恶魔肌肤',
+    must_mention: '0 分支 · 33 · 恶魔肌肤',
   },
   {
     desc: 'M8120 A 公共段肌肤色：恶魔肌肤的色名 蓝色 → 青色',
@@ -4449,51 +4479,51 @@ export default [
     return '青色';
   }`,
     tests: ['train-message'],
-    must_mention: '0 臂 · 33 · 恶魔肌肤',
+    must_mention: '0 分支 · 33 · 恶魔肌肤',
   },
   {
-    desc: 'M8121 A 股间射精 0 臂：色名链无 ELSE 的断句残留被补字',
+    desc: 'M8121 A 股间射精 0 分支：色名链无 ELSE 的断句残留被补字',
     file: 'ere/system/train/train-message.js',
     find: `      if (color === undefined) {
-        era.print(line); // 断句残留：源侧色名链无 ELSE`,
+        era.print(line); // 断句残留：色名链无 ELSE`,
     replace: `      if (color === undefined) {
         era.print(\`\${line}肌肤弄脏了…\`); // 变异：补字`,
     tests: ['train-message'],
-    must_mention: '0 臂 · 33 · 无肌肤素质',
+    must_mention: '0 分支 · 33 · 无肌肤素质',
   },
   {
-    desc: 'M8122 A 股间射精 1/2 臂：「双方同时射精」丢掉 TFLAG:10 ≥ 1 条件',
+    desc: 'M8122 A 股间射精 1/2 分支：「双方同时射精」丢掉 TFLAG:10 ≥ 1 条件',
     file: 'ere/system/train/train-message.js',
     find: '    const both = tflag10 >= 1 && (tal(player, 122) || tal(player, 121));',
     replace:
       '    const both = (tal(player, 122) || tal(player, 121)) > 0; // 变异：丢掉 TFLAG:10 条件',
     tests: ['train-message'],
-    must_mention: '1 臂 · 122 · TFLAG:10 == 0',
+    must_mention: '1 分支 · 122 · TFLAG:10 == 0',
   },
   {
-    desc: 'M8123 A 股间射精 2 臂：同时射精文案的「大量」删',
+    desc: 'M8123 A 股间射精 2 分支：同时射精文案的「大量」删',
     file: 'ere/system/train/train-message.js',
     find: "          ? '两人同时射精、对彼此的阴茎用大量的精液一吐为快…'",
     replace: "          ? '两人同时射精、对彼此的阴茎用精液一吐为快…'",
     tests: ['train-message'],
-    must_mention: '2 臂 · 122 · 主人是扶她',
+    must_mention: '2 分支 · 122 · 主人是扶她',
   },
   {
-    desc: 'M8124 A 股间射精 1/2 臂：33 支缺色名时补「黑色」（改变无素质语义）',
+    desc: 'M8124 A 股间射精 1/2 分支：33 支缺色名时补「黑色」（改变无素质语义）',
     file: 'ere/system/train/train-message.js',
     find: "    const color = skin_color(target) ?? ''; // 色名链无 ELSE，缺色即空串",
     replace:
       "    const color = skin_color(target) ?? '黑色'; // 变异：缺色补字",
     tests: ['train-message'],
-    must_mention: '1 臂 · 33 · 无肌肤素质',
+    must_mention: '1 分支 · 33 · 无肌肤素质',
   },
   {
-    desc: 'M8125 A 股间射精 2 臂：62 支文案的「射出的大量精液」改序',
+    desc: 'M8125 A 股间射精 2 分支：62 支文案的「射出的大量精液」改序',
     file: 'ere/system/train/train-message.js',
     find: "        ? '两人的身体被射出的大量精液沾满了…'",
     replace: "        ? '两人的身体被射出的大量精液沾满…'",
     tests: ['train-message'],
-    must_mention: '2 臂 · 62 · 双人股间',
+    must_mention: '2 分支 · 62 · 双人股间',
   },
   {
     desc: 'M8126 A 狗射精：34（骑乘位）支删，只留 21',
@@ -4504,7 +4534,7 @@ export default [
     must_mention: 'TFLAG:16 狗射精：SELECTCOM 34',
   },
   {
-    desc: 'M8127 A 狗射精：直肠支的判据 27 改 28（直肠行失守）',
+    desc: 'M8127 A 狗射精：直肠支的条件 27 改 28（直肠行失守）',
     file: 'ere/system/train/train-message.js',
     find: '  } else if (selectcom === 27) {',
     replace: '  } else if (selectcom === 28) {',
@@ -4564,7 +4594,7 @@ export default [
     must_mention: 'TFLAG:7 助手射精：两支文案',
   },
   {
-    desc: 'M8134 A 射精链口臂：125（自慰口交）支删，只留 31',
+    desc: 'M8134 A 射精链口分支：125（自慰口交）支删，只留 31',
     file: 'ere/system/train/train-message.js',
     find: '  if (selectcom === 31 || selectcom === 125) {',
     replace: '  if (selectcom === 31) {',
@@ -4572,7 +4602,7 @@ export default [
     must_mention: 'TFLAG:0-1 · 指令 125 的公共段输出',
   },
   {
-    desc: 'M8135 A 射精链口臂：精液中毒门 ABL:32 ≥ 3 抬到 ≥ 4',
+    desc: 'M8135 A 射精链口分支：精液中毒条件 ABL:32 ≥ 3 抬到 ≥ 4',
     file: 'ere/system/train/train-message.js',
     find: '  const addicted = abl(target, 32) >= 3; // 精液中毒',
     replace: '  const addicted = abl(target, 32) >= 4; // 精液中毒',
@@ -4580,7 +4610,7 @@ export default [
     must_mention: 'TFLAG:0-1 · 指令 31 的公共段输出',
   },
   {
-    desc: 'M8136 A 射精链口臂：乳交的豪乳判据 110 改 111',
+    desc: 'M8136 A 射精链口分支：乳交的豪乳条件 110 改 111',
     file: 'ere/system/train/train-message.js',
     find: '    } else if (tal(target, 110) || tal(target, 114)) {',
     replace: '    } else if (tal(target, 111) || tal(target, 114)) {',
@@ -4588,7 +4618,7 @@ export default [
     must_mention: 'TFLAG:0-1 · 指令 32 的公共段输出',
   },
   {
-    desc: 'M8137 A 射精链口臂：豪乳积存文案改字',
+    desc: 'M8137 A 射精链口分支：豪乳积存文案改字',
     file: 'ere/system/train/train-message.js',
     find: '      era.print(`${name}${tint}圆润挺拔的诱惑豪乳之间、积存着精液…`);',
     replace:
@@ -4597,7 +4627,7 @@ export default [
     must_mention: 'TFLAG:0-1 · 指令 32 的公共段输出',
   },
   {
-    desc: 'M8138 A 射精链口臂：强制口交的失神门 ≥ 2 抬到 ≥ 3',
+    desc: 'M8138 A 射精链口分支：强制口交的失神条件 ≥ 2 抬到 ≥ 3',
     file: 'ere/system/train/train-message.js',
     find: '    if (tflag(899) >= 2) {',
     replace: '    if (tflag(899) >= 3) {',
@@ -4605,7 +4635,7 @@ export default [
     must_mention: 'TFLAG:0-2 · 指令 80 的公共段输出',
   },
   {
-    desc: 'M8139 A 射精链口臂（大量）：123 支的第二行删',
+    desc: 'M8139 A 射精链口分支（大量）：123 支的第二行删',
     file: 'ere/system/train/train-message.js',
     find: "    if (heavy) {\n      era.print('从嘴里溢出来的精液、把阴茎和胸部都染成白色了…');\n    }",
     replace: '    // 变异：123 支的第二行删',
@@ -4613,7 +4643,7 @@ export default [
     must_mention: 'TFLAG:0-2 · 指令 123 的公共段输出',
   },
   {
-    desc: 'M8140 A 射精链口臂：126 支主人扶她句的素质 122 改 121',
+    desc: 'M8140 A 射精链口分支：126 支主人扶她句的素质 122 改 121',
     file: 'ere/system/train/train-message.js',
     find: '    if (addicted && tal(era_flag.player, 122)) {',
     replace: '    if (addicted && !tal(era_flag.player, 122)) {',
@@ -4621,7 +4651,7 @@ export default [
     must_mention: 'TFLAG:0-1 · 指令 126 的公共段输出',
   },
   {
-    desc: 'M8141 A 射精链手臂：初次精液经验门 EXP:20 == 0 改 == 1',
+    desc: 'M8141 A 射精链手分支：初次精液经验条件 EXP:20 == 0 改 == 1',
     file: 'ere/system/train/train-message.js',
     find: '  if (exp(target, 20) === 0 && tflag(899) <= 1) {',
     replace: '  if (exp(target, 20) === 1 && tflag(899) <= 1) {',
@@ -4629,7 +4659,7 @@ export default [
     must_mention: 'TFLAG:1-1 · 指令 0 的公共段输出',
   },
   {
-    desc: 'M8142 A 射精链足臂：轻蔑门的爱与施虐两项从「且」改「或」',
+    desc: 'M8142 A 射精链足分支：轻蔑条件的爱与施虐两项从「且」改「或」',
     file: 'ere/system/train/train-message.js',
     find: '  if ((tal(target, 83) || abl(target, 20) > 2) && tal(target, 85) === 0) {',
     replace:
@@ -4638,7 +4668,7 @@ export default [
     must_mention: 'TFLAG:18-1 · 指令 0 的公共段输出',
   },
   {
-    desc: 'M8143 A 射精链足臂（大量）：文案的「大量」删',
+    desc: 'M8143 A 射精链足分支（大量）：文案的「大量」删',
     file: 'ere/system/train/train-message.js',
     find: "    ? '看着你将大量热乎乎的精液射到她的脚上了…'",
     replace: "    ? '看着你将热乎乎的精液射到她的脚上了…'",
@@ -4663,7 +4693,7 @@ export default [
     must_mention: '放置 PLAY（指令 55）：欲情四档逐档取件',
   },
   {
-    desc: 'M8146 A 放置 PLAY：TEQUIP:21 门删（未插道具也追加颤抖句）',
+    desc: 'M8146 A 放置 PLAY：TEQUIP:21 条件删（未插道具也追加颤抖句）',
     file: 'ere/system/train/train-message.js',
     find: '  if (palam(target, 5) >= PALAMLV[3] && tq(target, 21)) {',
     replace: '  if (palam(target, 5) >= PALAMLV[3]) {',
@@ -4679,23 +4709,23 @@ export default [
     must_mention: 'TFLAG:2 == 1 · 插着 · 指令 0',
   },
   {
-    desc: 'M8150 A 性交射精链：抽出臂的落红改写句改字',
+    desc: 'M8150 A 性交射精链：抽出分支的落红改写句改字',
     file: 'ere/system/train/train-message.js',
     find: '      blood ? `${text}渗出了处女的落红、混合着` : text;',
     replace: '      blood ? `${text}渗出了处女的落红、混杂着` : text;',
     tests: ['train-message'],
-    must_mention: '抽出臂的落红改写',
+    must_mention: '抽出分支的落红改写',
   },
   {
-    desc: 'M8151 A 性交射精链：乳内 1 臂的 SELECTCOM == 90 门删',
+    desc: 'M8151 A 性交射精链：乳内 1 分支的 SELECTCOM == 90 条件删',
     file: 'ere/system/train/train-message.js',
     find: '  if (level === 1 && milk_inside && selectcom === 90) {',
     replace: '  if (level === 1 && milk_inside) {',
     tests: ['train-message'],
-    must_mention: '1 臂还要求指令 90',
+    must_mention: '1 分支还要求指令 90',
   },
   {
-    desc: 'M8152 A 性交射精链：乳内 2 臂的档位判据 2 改 3（大量乳内失守）',
+    desc: 'M8152 A 性交射精链：乳内 2 分支的档位条件 2 改 3（大量乳内失守）',
     file: 'ere/system/train/train-message.js',
     find: '  if (level === 2 && milk_inside) {',
     replace: '  if (level === 3 && milk_inside) {',
@@ -4719,7 +4749,7 @@ export default [
     must_mention: 'ELSE 支：绝顶余韵的五档',
   },
   {
-    desc: 'M8156 A 性交射精链：余韵「滴液」支丢掉未穿衣门（CFLAG:40 位判）',
+    desc: 'M8156 A 性交射精链：余韵「滴液」支丢掉未穿衣条件（CFLAG:40 位判）',
     file: 'ere/system/train/train-message.js',
     find: '  const dripping = tflag(19) && (tq(target, 11) || tflag(60)) && uncovered;',
     replace: '  const dripping = tflag(19) && (tq(target, 11) || tflag(60));',
@@ -4727,15 +4757,15 @@ export default [
     must_mention: 'ELSE 支：绝顶余韵的五档',
   },
   {
-    desc: 'M8159 A 性交射精链：抽出臂的 TFLAG:31 归零删',
+    desc: 'M8159 A 性交射精链：抽出分支的 TFLAG:31 归零删',
     file: 'ere/system/train/train-message.js',
     find: '    game.event.本次调教处女丧失 = 0;\n    game.event.插着不拔 = 0;',
     replace: '    game.event.插着不拔 = 0; // 变异：TFLAG:31 不归零',
     tests: ['train-message'],
-    must_mention: '抽出臂的落红改写',
+    must_mention: '抽出分支的落红改写',
   },
   {
-    desc: 'M8160 A 性交射精链：大量抽出臂的 121 支文案丢「大量」',
+    desc: 'M8160 A 性交射精链：大量抽出分支的 121 支文案丢「大量」',
     file: 'ere/system/train/train-message.js',
     find: '          ? `直接对${name}的子宫、注入了大量热乎乎的精液…`',
     replace: '          ? `直接对${name}的子宫、注入了热乎乎的精液…`',
@@ -4759,7 +4789,7 @@ export default [
     must_mention: '失神失禁（899 ≥ 2 · 29 ≥ 1 · 漏尿癖）',
   },
   {
-    desc: 'M8163 A 失禁段：尿布形态的 CFLAG:42 判据 69 改 68',
+    desc: 'M8163 A 失禁段：尿布形式的 CFLAG:42 条件 69 改 68',
     file: 'ere/system/train/train-message.js',
     find: '  if (cflag42 === 69 && doll_bit && burst) {',
     replace: '  if (cflag42 === 68 && doll_bit && burst) {',
@@ -4767,7 +4797,7 @@ export default [
     must_mention: '尿布放尿（42 == 69',
   },
   {
-    desc: 'M8164 A 失禁段：着ぐるみ形态的 CFLAG:42 判据 11 改 12',
+    desc: 'M8164 A 失禁段：着ぐるみ形式的 CFLAG:42 条件 11 改 12',
     file: 'ere/system/train/train-message.js',
     find: '  if (cflag42 === 11 && doll_bit && leak) {',
     replace: '  if (cflag42 === 12 && doll_bit && leak) {',
@@ -4784,7 +4814,7 @@ export default [
     must_mention: '着ぐるみ放尿',
   },
   {
-    desc: 'M8166 A 失禁段：服形态的位门 CFLAG:40 & 16 改 & 32',
+    desc: 'M8166 A 失禁段：服形式的位条件 CFLAG:40 & 16 改 & 32',
     file: 'ere/system/train/train-message.js',
     find: '  if (cflag40 & 16 && burst) {',
     replace: '  if (cflag40 & 32 && burst) {',
@@ -4930,7 +4960,7 @@ export default [
     must_mention: '逆强奸/逆肛交/口交',
   },
   {
-    desc: 'M8184 A 射精链手臂：初次精液经验的失神门 <= 1 收窄成 < 1',
+    desc: 'M8184 A 射精链手分支：初次精液经验的失神条件 <= 1 收窄成 < 1',
     file: 'ere/system/train/train-message.js',
     find: '  if (exp(target, 20) === 0 && tflag(899) <= 1) {',
     replace: '  if (exp(target, 20) === 0 && tflag(899) < 1) {',
@@ -6257,33 +6287,48 @@ export default [
   {
     desc: 'M9653 ablup0：阴蒂钝感倍率',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(101)) a = times(a, 1.2); // 阴蒂钝感 :198-200',
-    replace: 'if (talent(101)) a = times(a, 1.3); // 阴蒂钝感 :198-200',
+    find: '  if (talent(101)) a = times(a, 1.2); // 阴蒂钝感',
+    replace: `if (talent(101)) a = times(a, 1.3); // 阴蒂钝感 `,
     tests: ['ablup'],
     must_mention: '阴蒂钝感',
   },
   {
     desc: 'M9654 ablup0：阴蒂敏感倍率',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(102)) a = times(a, 0.8); // 阴蒂敏感 :202-204',
-    replace: 'if (talent(102)) a = times(a, 0.7); // 阴蒂敏感 :202-204',
+    find: '  if (talent(102)) a = times(a, 0.8); // 阴蒂敏感',
+    replace: `if (talent(102)) a = times(a, 0.7); // 阴蒂敏感 `,
     tests: ['ablup'],
     must_mention: '阴蒂钝感',
   },
   {
     desc: 'M9655 ablup0：其他部位封锁折扣分母（第一档）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (lv > 5 && lv <= 10 && calc > 0) {\n    a = Math.trunc((a * (15 - calc)) / 15);\n  } else if (lv <= 15 && calc > 1) {\n    a = Math.trunc((a * (16 - calc)) / 15);\n  } else if (lv <= 20 && calc > 2) {\n    a = Math.trunc((a * (17 - calc)) / 15);\n  }\n  if (talent(76)) a = times(a, 0.8); // 淫乱 :215-217',
-    replace:
-      '  if (lv > 5 && lv <= 10 && calc > 0) {\n    a = Math.trunc((a * (14 - calc)) / 15);\n  } else if (lv <= 15 && calc > 1) {\n    a = Math.trunc((a * (16 - calc)) / 15);\n  } else if (lv <= 20 && calc > 2) {\n    a = Math.trunc((a * (17 - calc)) / 15);\n  }\n  if (talent(76)) a = times(a, 0.8); // 淫乱 :215-217',
+    find: `  // 其他部位封锁数折扣，三档区间各自独立的分母都是 15
+  if (lv > 5 && lv <= 10 && calc > 0) {
+    a = Math.trunc((a * (15 - calc)) / 15);
+  } else if (lv <= 15 && calc > 1) {
+    a = Math.trunc((a * (16 - calc)) / 15);
+  } else if (lv <= 20 && calc > 2) {
+    a = Math.trunc((a * (17 - calc)) / 15);
+  }
+  if (talent(76)) a = times(a, 0.8); // 淫乱`,
+    replace: `  if (lv > 5 && lv <= 10 && calc > 0) {
+    a = Math.trunc((a * (14 - calc)) / 15);
+  } else if (lv <= 15 && calc > 1) {
+    a = Math.trunc((a * (16 - calc)) / 15);
+  } else if (lv <= 20 && calc > 2) {
+    a = Math.trunc((a * (17 - calc)) / 15);
+  }
+  if (talent(76)) a = times(a, 0.8); // 淫乱 `,
     tests: ['ablup'],
     must_mention: '其他部位封锁折扣——三个区间分母恒为 15',
   },
   {
     desc: 'M9656 ablup0：自慰狂折扣倍率',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(74)) a = times(a, 0.8); // 自慰狂 :218-220',
-    replace: 'if (talent(74)) a = times(a, 0.9); // 自慰狂 :218-220',
+    find: `  if (talent(76)) a = times(a, 0.8); // 淫乱
+  if (talent(74)) a = times(a, 0.8); // 自慰狂`,
+    replace: `if (talent(74)) a = times(a, 0.9); // 自慰狂 `,
     tests: ['ablup'],
     must_mention: 'ablup0：Lv5-9 梯子字面值',
   },
@@ -6338,7 +6383,7 @@ export default [
     must_mention: 'ablup1：两档终止判定',
   },
   {
-    desc: 'M9663 ablup2：男人却下守卫',
+    desc: 'M9663 ablup2：男人却下检查',
     file: 'ere/system/train/ablup.js',
     find: "  if (talent(122)) return { blocked: 'male' };",
     replace: "  if (talent(121)) return { blocked: 'male' };",
@@ -6348,18 +6393,32 @@ export default [
   {
     desc: 'M9664 ablup2：私处钝感 A 倍率',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(103)) {\n    // 私处钝感：:186-190，A/B 加成率不同\n    a = times(a, 1.2);\n    b = times(b, 1.1);\n  }',
-    replace:
-      '  if (talent(103)) {\n    // 私处钝感：:186-190，A/B 加成率不同\n    a = times(a, 1.3);\n    b = times(b, 1.1);\n  }',
+    find: `  if (talent(103)) {
+    // 私处钝感：a/b 加成率不同
+    a = times(a, 1.2);
+    b = times(b, 1.1);
+  }`,
+    replace: `  if (talent(103)) {
+    // 私处钝感：a/b 加成率不同
+    a = times(a, 1.3);
+    b = times(b, 1.1);
+  }`,
     tests: ['ablup'],
     must_mention: '私处钝感 A×1.20',
   },
   {
     desc: 'M9665 ablup2：私处钝感 B 倍率',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(103)) {\n    // 私处钝感：:186-190，A/B 加成率不同\n    a = times(a, 1.2);\n    b = times(b, 1.1);\n  }',
-    replace:
-      '  if (talent(103)) {\n    // 私处钝感：:186-190，A/B 加成率不同\n    a = times(a, 1.2);\n    b = times(b, 1.2);\n  }',
+    find: `  if (talent(103)) {
+    // 私处钝感：a/b 加成率不同
+    a = times(a, 1.2);
+    b = times(b, 1.1);
+  }`,
+    replace: `  if (talent(103)) {
+    // 私处钝感：a/b 加成率不同
+    a = times(a, 1.2);
+    b = times(b, 1.2);
+  }`,
     tests: ['ablup'],
     must_mention: '私处钝感 A×1.20',
   },
@@ -6384,9 +6443,32 @@ export default [
   {
     desc: 'M9668 ablup2：B 复利率（10-14 档）',
     file: 'ere/system/train/ablup.js',
-    find: '  // A＝私处点数需求、B＝私处经验需求，梯子与复利率彼此不对称（:119-170）\n  let a, b;\n  if (lv <= 9) {\n    a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];\n    b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];\n  } else if (lv < 15) {\n    a = 180000;\n    b = 600;\n    for (let n = 0; n < lv - 9; n++) {\n      a = compound(a, 125);\n      b = compound(b, 115);\n    }\n  } else if (lv < 20) {',
-    replace:
-      '  // A＝私处点数需求、B＝私处经验需求，梯子与复利率彼此不对称（:119-170）\n  let a, b;\n  if (lv <= 9) {\n    a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];\n    b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];\n  } else if (lv < 15) {\n    a = 180000;\n    b = 600;\n    for (let n = 0; n < lv - 9; n++) {\n      a = compound(a, 125);\n      b = compound(b, 116);\n    }\n  } else if (lv < 20) {',
+    find: `  // a＝私处点数需求、b＝私处经验需求，梯子与复利率彼此不对称
+  let a, b;
+  if (lv <= 9) {
+    a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
+    b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];
+  } else if (lv < 15) {
+    a = 180000;
+    b = 600;
+    for (let n = 0; n < lv - 9; n++) {
+      a = compound(a, 125);
+      b = compound(b, 115);
+    }
+  } else if (lv < 20) {`,
+    replace: `  // a＝私处点数需求、b＝私处经验需求，梯子与复利率彼此不对称
+  let a, b;
+  if (lv <= 9) {
+    a = [1, 20, 400, 8000, 20000, 40000, 60000, 90000, 120000, 180000][lv];
+    b = [2, 10, 30, 75, 150, 180, 250, 350, 500, 600][lv];
+  } else if (lv < 15) {
+    a = 180000;
+    b = 600;
+    for (let n = 0; n < lv - 9; n++) {
+      a = compound(a, 125);
+      b = compound(b, 116);
+    }
+  } else if (lv < 20) {`,
     tests: ['ablup'],
     must_mention: 'Lv10 复利梯子首级（A/B 各自复利率不对称）',
   },
@@ -6567,13 +6649,13 @@ export default [
   {
     desc: 'M9687 ablup6：倒错的折扣误加到 E',
     file: 'ere/system/train/ablup.js',
-    find: `      // 倒错的：:59-65，仅 A/B/C/D，不含 E
+    find: `      // 倒错的：仅 a/b/c/d，不含 e
       a = times(a, 0.75);
       b = times(b, 0.75);
       c = times(c, 0.75);
       d = times(d, 0.75);
     }`,
-    replace: `      // 倒错的：:59-65，仅 A/B/C/D，不含 E
+    replace: `      // 倒错的：仅 a/b/c/d，不含 e
       a = times(a, 0.75);
       b = times(b, 0.75);
       c = times(c, 0.75);
@@ -6685,15 +6767,15 @@ export default [
   {
     desc: 'M9700 ablup8：开放折扣倍率',
     file: 'ere/system/train/ablup.js',
-    find: `      // 开放：:57-64，先于倒错的，五个变量都受影响
+    find: `      // 开放：先于倒错的，五个变量都受影响
       a = times(a, 0.5);`,
-    replace: `      // 开放：:57-64，先于倒错的，五个变量都受影响
+    replace: `      // 开放：先于倒错的，五个变量都受影响
       a = times(a, 0.6);`,
     tests: ['ablup'],
     must_mention: '开放×0.50 先于倒错的×0.75',
   },
   {
-    desc: 'M9701 ablup8：选项0 渲染条件 b>0 被改坏（无哨兵的守卫）',
+    desc: 'M9701 ablup8：选项0 渲染条件 b>0 被改坏（无哨兵的检查）',
     file: 'ere/system/train/ablup.js',
     find: '    if (b > 0) {\n      if (juel9 < a) i |= 1;',
     replace: '    if (b >= 0) {\n      if (juel9 < a) i |= 1;',
@@ -6727,9 +6809,9 @@ export default [
   {
     desc: 'M9705 ablup9：双性恋折扣倍率',
     file: 'ere/system/train/ablup.js',
-    find: `      // 双性恋：:52-58，先于倒错的
+    find: `      // 双性恋：先于倒错的
       a = times(a, 0.25);`,
-    replace: `      // 双性恋：:52-58，先于倒错的
+    replace: `      // 双性恋：先于倒错的
       a = times(a, 0.3);`,
     tests: ['ablup'],
     must_mention: '双性恋×0.25 先于倒错的×0.75',
@@ -6756,9 +6838,9 @@ export default [
   {
     desc: 'M9708 ablup9：成功购买结算文案',
     file: 'ere/system/train/ablup.js',
-    find: "await era.printAndWait(`${era.get('ablname:9') || ''}变为LV${new_lv}。`); // PRINTW",
+    find: "      await era.printAndWait(`${era.get('ablname:9') || ''}变为LV${new_lv}。`); // （等待）",
     replace:
-      "await era.printAndWait(`${era.get('ablname:9') || ''}升级到LV${new_lv}。`); // PRINTW",
+      "await era.printAndWait(`${era.get('ablname:9') || ''}升级到LV${new_lv}。`); // 变异：结算文案改字",
     tests: ['ablup'],
     must_mention: '两个成功购买路径各自扣对应珠、升级、等待按键后显示变为LV',
   },
@@ -7458,8 +7540,10 @@ export default [
   {
     desc: 'M9903 ablup10：反抗心 A 倍率',
     file: 'ere/system/train/ablup.js',
-    find: '    // 反抗心 :224-230\n    a = times(a, 2.0);',
-    replace: '    // 反抗心 :224-230\n    a = times(a, 2.2);',
+    find: `    // 反抗心
+    a = times(a, 2.0);`,
+    replace: `    // 反抗心
+    a = times(a, 2.2);`,
     tests: ['ablup'],
     must_mention: '反抗心 A×2.00',
   },
@@ -7527,8 +7611,8 @@ export default [
   {
     desc: 'M9911 ablup11：看重贞操倍率',
     file: 'ere/system/train/ablup.js',
-    find: 'a = times(a, 1.5); // 看重贞操 :144-146',
-    replace: 'a = times(a, 1.6); // 看重贞操 :144-146',
+    find: '      a = times(a, 1.5); // 看重贞操',
+    replace: `a = times(a, 1.6); // 看重贞操 `,
     tests: ['ablup'],
     must_mention: '看重贞操',
   },
@@ -7614,7 +7698,7 @@ export default [
   {
     desc: 'M9921 ablup12：手写状态文案 bit4 制表符丢失',
     file: 'ere/system/train/ablup.js',
-    find: "    if (bits & 4) text += '金钱不足\\t'; // （尾随制表符，原文如此）",
+    find: "    if (bits & 4) text += '金钱不足\\t'; // （尾随制表符，有意保留）",
     replace:
       "    if (bits & 4) text += '金钱不足'; // （尾随制表符，原文如此）",
     tests: ['ablup'],
@@ -7810,9 +7894,10 @@ export default [
   {
     desc: 'M9943 ablup16：顺从门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl10() < lv + 1) {\n      // 顺从门槛，三条轨道同时命中（:515-520）',
-    replace:
-      '    if (abl10() <= lv + 1) {\n      // 顺从门槛，三条轨道同时命中（:515-520）',
+    find: `    if (abl10() < lv + 1) {
+      // 顺从门槛，三条轨道同时命中`,
+    replace: `    if (abl10() <= lv + 1) {
+      // 顺从门槛，三条轨道同时命中`,
     tests: ['ablup'],
     must_mention: 'Lv0 梯子字面值，三个选项皆渲染',
   },
@@ -7886,7 +7971,7 @@ export default [
     find: 'const combo_break = lv + abl15() >= 15;',
     replace: 'const combo_break = lv + abl15() > 15;',
     tests: ['ablup'],
-    must_mention: 'DECIDE 提前 RETURN 使 A/I 维持清零，等于免费购买',
+    must_mention: 'decide 阶段提前返回使 A/I 维持清零，等于免费购买',
   },
   {
     desc: 'M9953 ablup15：技巧+话术组合上限免费突破越界值',
@@ -7894,23 +7979,23 @@ export default [
     find: 'const combo_break = abl12() + lv >= 15;',
     replace: 'const combo_break = abl12() + lv > 15;',
     tests: ['ablup'],
-    must_mention: 'DECIDE 提前 RETURN 使 A/B/C/I 维持清零，等于免费购买',
+    must_mention: 'decide 阶段提前返回使 A/B/C/I 维持清零，等于免费购买',
   },
 
   // ———— issue #467：ABLUP37/39/40/99/100 与 ABL.ERB 本体 ————
   {
     desc: 'M10500 evaluate_ablup0：阴蒂钝感折扣改错（×1.20 → ×1.10）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(101)) a = times(a, 1.2); // 阴蒂钝感 :198-200',
-    replace: '  if (talent(101)) a = times(a, 1.1); // 阴蒂钝感 :198-200',
+    find: '  if (talent(101)) a = times(a, 1.2); // 阴蒂钝感',
+    replace: `  if (talent(101)) a = times(a, 1.1); // 阴蒂钝感 `,
     tests: ['ablup'],
     must_mention: '阴蒂钝感×1.20',
   },
   {
     desc: 'M10501 evaluate_ablup0：阴蒂敏感折扣改错（×0.80 → ×0.90）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(102)) a = times(a, 0.8); // 阴蒂敏感 :202-204',
-    replace: '  if (talent(102)) a = times(a, 0.9); // 阴蒂敏感 :202-204',
+    find: '  if (talent(102)) a = times(a, 0.8); // 阴蒂敏感',
+    replace: `  if (talent(102)) a = times(a, 0.9); // 阴蒂敏感 `,
     tests: ['ablup'],
     must_mention: '阴蒂敏感×0.80',
   },
@@ -7933,11 +8018,11 @@ export default [
   {
     desc: 'M10504 evaluate_ablup2：私处钝感的 B 轨加成改错（×1.10 → ×1.20）',
     file: 'ere/system/train/ablup.js',
-    find: `    // 私处钝感：:186-190，A/B 加成率不同
+    find: `    // 私处钝感：a/b 加成率不同
     a = times(a, 1.2);
     b = times(b, 1.1);
   }`,
-    replace: `    // 私处钝感：:186-190，A/B 加成率不同
+    replace: `    // 私处钝感：a/b 加成率不同
     a = times(a, 1.2);
     b = times(b, 1.2);
   }`,
@@ -7998,7 +8083,7 @@ export default [
     replace: `  const handler = DECIDE_HANDLERS[x];
   if (!handler) return 1;`,
     tests: ['ablup'],
-    must_mention: 'ABLUP20 的 DECIDE 尚未落地 → 落空',
+    must_mention: '编号 20 未登记 decide 分支 → 落空',
   },
   {
     desc: 'M10510 evaluate_ablup37：F 的[容易上瘾]减免改错（-2 → -1）',
@@ -8095,7 +8180,7 @@ export default [
     find: "    if (count > 15 && auto_getbit(era.get('flag:5'), 36)) break;",
     replace: "    if (count > 15 && auto_getbit(era.get('flag:5'), 35)) break;",
     tests: ['ablup'],
-    must_mention: 'COUNT 37 > 15 → BREAK，不提升',
+    must_mention: '循环计数 37 > 15 → 中断，不提升',
   },
   {
     desc: 'M10520 auto_ablup：ARG 指定目标后不还原 TARGET',
@@ -8103,7 +8188,7 @@ export default [
     find: '  era_flag.target = keep_target;',
     replace: '  era_flag.target = arg;',
     tests: ['ablup'],
-    must_mention: 'TARGET 还原',
+    must_mention: 'era_flag.target 还原',
   },
   {
     desc: 'M10521 page-ablup：`*` 标记恒不上屏（DECIDE 结果被丢弃）',
@@ -8123,12 +8208,12 @@ export default [
     must_mention: '两门槛与屈服珠全达标',
   },
   {
-    desc: 'M10523 decide_ablup39：上限判据改错（32+33+39 >= 30 → >= 10）',
+    desc: 'M10523 decide_ablup39：上限条件改错（32+33+39 >= 30 → >= 10）',
     file: 'ere/system/train/ablup.js',
     find: '      if (abl_sum() >= 30) return null;',
     replace: '      if (abl_sum() >= 10) return null;',
     tests: ['ablup'],
-    must_mention: '合计 27：DECIDE 放行',
+    must_mention: '合计 27：decide 放行',
   },
   {
     desc: 'M10524 page-ablup：[4] 癖好感觉行的 `*` 标记恒不上屏',
@@ -8167,11 +8252,15 @@ export default [
     must_mention: '欲情点数×0/100 ……点数不足 经验不足能力不足 ',
   },
   {
-    desc: 'M10403 ablup20：淫乱漏掉异常经验 C 的 ×0.80 折扣（原作 :279 在 C 赋值 :175 之后）',
+    desc: 'M10403 ablup20：淫乱漏掉异常经验 C 的 ×0.80 折扣（乘算在 C 赋值之后才生效）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 淫乱 :276-282（TIMES C 在 C 赋值（:175）之后，×0.80 真实生效）\n      a = times(a, 0.8);\n      b = times(b, 0.8);\n      c = times(c, 0.8);',
-    replace:
-      '      // 淫乱 :276-282（TIMES C 在 C 赋值（:175）之后，×0.80 真实生效）\n      a = times(a, 0.8);\n      b = times(b, 0.8);',
+    find: `      // 淫乱（对 c 的 ×0.80 在 c 赋值之后，真实生效）
+      a = times(a, 0.8);
+      b = times(b, 0.8);
+      c = times(c, 0.8);`,
+    replace: `      // 淫乱 （TIMES C 在 C 赋值之后，×0.80 真实生效）
+      a = times(a, 0.8);
+      b = times(b, 0.8);`,
     tests: ['ablup'],
     must_mention:
       'ablup20：异常经验 C 的两段折扣——戒备森严在赋值前（无效）、淫乱在赋值后（×0.80 生效）',
@@ -8179,18 +8268,24 @@ export default [
   {
     desc: 'M10404 ablup20：胆怯 A×1.50 改为 ×1.60（只乘 A 的证据）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(10)) a = times(a, 1.5); // 胆怯 :181-183（只乘 A）',
-    replace:
-      '    if (talent(10)) a = times(a, 1.6); // 胆怯 :181-183（只乘 A）',
+    find: '    if (talent(10)) a = times(a, 1.5); // 胆怯（只乘 a）',
+    replace: `    if (talent(10)) a = times(a, 1.6); // 胆怯 （只乘 A）`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/135 ……点数不足 经验不足',
   },
   {
     desc: 'M10405 ablup20：施虐狂 A/B 同乘 ×0.50 改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(83)) {\n      // 施虐狂 :289-292\n      a = times(a, 0.5);\n      b = times(b, 0.5);\n    }',
-    replace:
-      '    if (talent(83)) {\n      // 施虐狂 :289-292\n      a = times(a, 0.55);\n      b = times(b, 0.55);\n    }',
+    find: `    if (talent(83)) {
+      // 施虐狂
+      a = times(a, 0.5);
+      b = times(b, 0.5);
+    }`,
+    replace: `    if (talent(83)) {
+      // 施虐狂
+      a = times(a, 0.55);
+      b = times(b, 0.55);
+    }`,
     tests: ['ablup'],
     must_mention: '欲情点数×50/50 ……经验不足',
   },
@@ -8250,9 +8345,12 @@ export default [
   {
     desc: 'M10412 ablup21：[1] 轨苦痛点数判定含等号（JUEL:9 <= D 也算不足）',
     file: 'ere/system/train/ablup.js',
-    find: '      // [1] 苦痛+屈服 :508-520\n      if (juel9 < d) j |= 1;\n      if (juel6 < e) j |= 1;',
-    replace:
-      '      // [1] 苦痛+屈服 :508-520\n      if (juel9 <= d) j |= 1;\n      if (juel6 < e) j |= 1;',
+    find: `      // [1] 苦痛+屈服
+      if (juel9 < d) j |= 1;
+      if (juel6 < e) j |= 1;`,
+    replace: `      // [1] 苦痛+屈服
+      if (juel9 <= d) j |= 1;
+      if (juel6 < e) j |= 1;`,
     tests: ['ablup'],
     must_mention:
       'ablup21：Lv3 走 [1] 轨购买（D=2800/E=6000/被虐快乐 30/绝顶 1）',
@@ -8260,17 +8358,30 @@ export default [
   {
     desc: 'M10413 ablup21：[1] 轨绝顶经验需求 G=1 改为 2',
     file: 'ere/system/train/ablup.js',
-    find: '    const g = 1; // 绝顶经验需求，全等级 1（:249）',
-    replace: '    const g = 2; // 绝顶经验需求，全等级 1（:249）',
+    find: '    const g = 1; // 绝顶经验需求，全等级 1',
+    replace: `    const g = 2; // 绝顶经验需求，全等级 1`,
     tests: ['ablup'],
     must_mention: '　　　绝顶经验　0/1',
   },
   {
     desc: 'M10414 ablup21：受虐狂 ×0.50 改为 ×0.55（五元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(88)) {\n      // 受虐狂 :455-461（×0.50）\n      a = times(a, 0.5);\n      b = times(b, 0.5);\n      c = times(c, 0.5);\n      d = times(d, 0.5);\n      e = times(e, 0.5);\n    }',
-    replace:
-      '    if (talent(88)) {\n      // 受虐狂 :455-461（×0.50）\n      a = times(a, 0.55);\n      b = times(b, 0.55);\n      c = times(c, 0.55);\n      d = times(d, 0.55);\n      e = times(e, 0.55);\n    }',
+    find: `    if (talent(88)) {
+      // 受虐狂（×0.50）
+      a = times(a, 0.5);
+      b = times(b, 0.5);
+      c = times(c, 0.5);
+      d = times(d, 0.5);
+      e = times(e, 0.5);
+    }`,
+    replace: `    if (talent(88)) {
+      // 受虐狂（×0.50）
+      a = times(a, 0.55);
+      b = times(b, 0.55);
+      c = times(c, 0.55);
+      d = times(d, 0.55);
+      e = times(e, 0.55);
+    }`,
     tests: ['ablup'],
     must_mention: '苦痛点数×0/50 ……点数不足 ',
   },
@@ -8287,9 +8398,11 @@ export default [
   {
     desc: 'M10416 ablup21：欲望门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl11() < lv + 1) {\n      // 欲望门槛，双轨同时命中（:480-484）',
-    replace:
-      '    if (abl11() <= lv + 1) {\n      // 欲望门槛，双轨同时命中（:480-484）',
+    find: `    let j = 0;
+    if (abl11() < lv + 1) {
+      // 欲望门槛，双轨同时命中`,
+    replace: `    if (abl11() <= lv + 1) {
+      // 欲望门槛，双轨同时命中`,
     tests: ['ablup'],
     must_mention: 'Lv3→4 异常经验门槛',
   },
@@ -8324,11 +8437,16 @@ export default [
   {
     desc: 'M10420 ablup22：男人判定反转（TALENT:122 误判为非男人才返回）',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(122)) return; // 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine();\n\n  if (\n    abl22() >= 5 &&',
+    find: `  if (talent(122)) return; // 男人直接返回（分隔线之前，无输出）
+
+  era.drawLine();
+
+  if (
+    abl22() >= 5 &&`,
     replace:
-      '  if (talent(122) === 0) return; // 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine();\n\n  if (\n    abl22() >= 5 &&',
+      '  if (talent(122) === 0) return; // 男人直接返回（分割线之前，无输出）\n\n  era.drawLine();\n\n  if (\n    abl22() >= 5 &&',
     tests: ['ablup'],
-    must_mention: '男人（TALENT:122）在 DRAWLINE 前直接返回',
+    must_mention: '男人（TALENT:122）在 era.drawLine 前直接返回',
   },
   {
     desc: 'M10421 ablup22：Lv5 上限豁免五项素质最后一项 AND 误改为 OR',
@@ -8342,9 +8460,14 @@ export default [
   {
     desc: 'M10422 ablup22：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(百合经验)/C(屈服)/D([1]阴核点数) 梯子 :140-190\n    // Lv0/1 双轨（D=1000/5000），Lv2 起 D=0（[1] 轨隐藏）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];',
-    replace:
-      '    // A(欲情)/B(百合经验)/C(屈服)/D([1]阴核点数) 梯子 :140-190\n    // Lv0/1 双轨（D=1000/5000），Lv2 起 D=0（[1] 轨隐藏）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];',
+    find: `    // a(欲情)/b(百合经验)/c(屈服)/d([1]阴核点数) 的梯子
+    // Lv0/1 双轨（d=1000/5000），Lv2 起 d=0（[1] 轨隐藏）
+    let a, b, c, d;
+    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];`,
+    replace: `    // a(欲情)/b(百合经验)/c(屈服)/d([1]阴核点数) 的梯子
+    // Lv0/1 双轨（d=1000/5000），Lv2 起 d=0（[1] 轨隐藏）
+    let a, b, c, d;
+    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/200 ……点数不足 经验不足 能力不足',
   },
@@ -8360,27 +8483,60 @@ export default [
   {
     desc: 'M10424 ablup22：坦率 ×0.95 改为 ×0.90（四元组）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 坦率 :218-223（四元组 ×0.95）\n      a = times(a, 0.95);\n      b = times(b, 0.95);\n      c = times(c, 0.95);\n      d = times(d, 0.95);',
-    replace:
-      '      // 坦率 :218-223（四元组 ×0.95）\n      a = times(a, 0.9);\n      b = times(b, 0.9);\n      c = times(c, 0.9);\n      d = times(d, 0.9);',
+    find: `      // 坦率（四元组 ×0.95）
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+      d = times(d, 0.95);`,
+    replace: `      // 坦率（四元组 ×0.95）
+      a = times(a, 0.9);
+      b = times(b, 0.9);
+      c = times(c, 0.9);
+      d = times(d, 0.9);`,
     tests: ['ablup'],
     must_mention: 'ablup22：坦率（TALENT:13）×0.95 四元组（A/B/C/D 同步）',
   },
   {
     desc: 'M10425 ablup22：双性恋 ×0.50 改为 ×0.55（四元组）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(81)) {\n      // 双性恋 :299-304（×0.50）\n      a = times(a, 0.5);\n      b = times(b, 0.5);\n      c = times(c, 0.5);\n      d = times(d, 0.5);\n    }',
-    replace:
-      '    if (talent(81)) {\n      // 双性恋 :299-304（×0.50）\n      a = times(a, 0.55);\n      b = times(b, 0.55);\n      c = times(c, 0.55);\n      d = times(d, 0.55);\n    }',
+    find: `      d = times(d, 2.0);
+    }
+    if (talent(81)) {
+      // 双性恋（×0.50）
+      a = times(a, 0.5);
+      b = times(b, 0.5);
+      c = times(c, 0.5);
+      d = times(d, 0.5);
+    }`,
+    replace: `      d = times(d, 2.0);
+    }
+    if (talent(81)) {
+      // 双性恋（×0.50）
+      a = times(a, 0.55);
+      b = times(b, 0.55);
+      c = times(c, 0.55);
+      d = times(d, 0.55);
+    }`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/100 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10426 ablup22：男人婆 ×2.00 改为 ×2.20（百合特有加成）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(79)) {\n      // 男人婆 :291-296（×2.00，百合特有）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n    }',
-    replace:
-      '    if (talent(79)) {\n      // 男人婆 :291-296（×2.00，百合特有）\n      a = times(a, 2.2);\n      b = times(b, 2.2);\n      c = times(c, 2.2);\n      d = times(d, 2.2);\n    }',
+    find: `    if (talent(79)) {
+      // 男人婆（×2.00，百合特有）
+      a = times(a, 2.0);
+      b = times(b, 2.0);
+      c = times(c, 2.0);
+      d = times(d, 2.0);
+    }`,
+    replace: `    if (talent(79)) {
+      // 男人婆（×2.00，百合特有）
+      a = times(a, 2.2);
+      b = times(b, 2.2);
+      c = times(c, 2.2);
+      d = times(d, 2.2);
+    }`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/400 ……点数不足 经验不足 ',
   },
@@ -8419,7 +8575,7 @@ export default [
     find: '  if (talent(122) === 0) return;',
     replace: '  if (talent(122)) return;',
     tests: ['ablup'],
-    must_mention: '非男人（TALENT:122==0）在 DRAWLINE 前直接返回',
+    must_mention: '非男人（TALENT:122==0）在 era.drawLine 前直接返回',
   },
   {
     desc: 'M10431 ablup23：讨厌男人误加入 Lv5 上限豁免名单',
@@ -8433,27 +8589,60 @@ export default [
   {
     desc: 'M10432 ablup23：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(断背经验)/C(屈服)/D([1]肛门点数) 梯子 :136-186（与 ABLUP22 相同）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];',
-    replace:
-      '    // A(欲情)/B(断背经验)/C(屈服)/D([1]肛门点数) 梯子 :136-186（与 ABLUP22 相同）\n    let a, b, c, d;\n    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];',
+    find: `    // a(欲情)/b(断背经验)/c(屈服)/d([1]肛门点数) 的梯子（与 ablup22 相同）
+    let a, b, c, d;
+    if (lv === 0) [a, b, c, d] = [200, 50, 0, 1000];`,
+    replace: `    // a(欲情)/b(断背经验)/c(屈服)/d([1]肛门点数) 的梯子（与 ablup22 相同）
+    let a, b, c, d;
+    if (lv === 0) [a, b, c, d] = [201, 50, 0, 1000];`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/200 ……点数不足 经验不足 ',
   },
   {
-    desc: 'M10433 ablup23：讨厌男人 ×3.00 改为 ×2.00（与 ABLUP22 混同）',
+    desc: 'M10433 ablup23：讨厌男人 ×3.00 改为 ×2.00（与 ablup22 混同）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(82)) {\n      // 讨厌男人 :257-262（×3.00，与 ABLUP22 相反）\n      a = times(a, 3.0);\n      b = times(b, 3.0);\n      c = times(c, 3.0);\n      d = times(d, 3.0);\n    }',
-    replace:
-      '    if (talent(82)) {\n      // 讨厌男人 :257-262（×3.00，与 ABLUP22 相反）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n    }',
+    find: `    if (talent(82)) {
+      // 讨厌男人（×3.00，与 ablup22 相反）
+      a = times(a, 3.0);
+      b = times(b, 3.0);
+      c = times(c, 3.0);
+      d = times(d, 3.0);
+    }`,
+    replace: `    if (talent(82)) {
+      // 讨厌男人（×3.00，与 ablup22 相反）
+      a = times(a, 2.0);
+      b = times(b, 2.0);
+      c = times(c, 2.0);
+      d = times(d, 2.0);
+    }`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/600 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10434 ablup23：异常经验 E 的 lv-2 改为 lv-1',
     file: 'ere/system/train/ablup.js',
-    find: '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 2;\n    }',
-    replace:
-      '// E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）\n    let e = 0;\n    if (\n      lv >= 3 &&\n      talent(33) === 0 &&\n      talent(80) === 0 &&\n      talent(81) === 0 &&\n      talent(123) === 0\n    ) {\n      e = lv - 1;\n    }',
+    find: `    // e（异常经验）：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2
+    let e = 0;
+    if (
+      lv >= 3 &&
+      talent(33) === 0 &&
+      talent(80) === 0 &&
+      talent(81) === 0 &&
+      talent(123) === 0
+    ) {
+      e = lv - 2;
+    }`,
+    replace: `    // e（异常经验）：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2
+    let e = 0;
+    if (
+      lv >= 3 &&
+      talent(33) === 0 &&
+      talent(80) === 0 &&
+      talent(81) === 0 &&
+      talent(123) === 0
+    ) {
+      e = lv - 1;
+    }`,
     tests: ['ablup'],
     must_mention: '异常经验1以上(现在0)且',
   },
@@ -8496,9 +8685,43 @@ export default [
   {
     desc: 'M10439 ablup23：Lv4 戒备森严 ×2.00 改为 ×2.20',
     file: 'ere/system/train/ablup.js',
-    find: '      } else if (lv === 4) {\n        a = times(a, 2.0);\n        b = times(b, 2.0);\n        c = times(c, 2.0);\n      } else if (lv === 5) {\n        a = times(a, 2.5);\n        b = times(b, 2.5);\n        c = times(c, 2.5);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）',
-    replace:
-      '      } else if (lv === 4) {\n        a = times(a, 2.2);\n        b = times(b, 2.2);\n        c = times(c, 2.2);\n      } else if (lv === 5) {\n        a = times(a, 2.5);\n        b = times(b, 2.5);\n        c = times(c, 2.5);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2（:210-211）',
+    find: `      // 戒备森严（a/b/c 三列，与 ablup22 相同）
+      if (lv === 3) {
+        a = times(a, 1.5);
+        b = times(b, 1.5);
+        c = times(c, 1.5);
+      } else if (lv === 4) {
+        a = times(a, 2.0);
+        b = times(b, 2.0);
+        c = times(c, 2.0);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
+        c = times(c, 3.0);
+      }
+    }
+
+    // e（异常经验）：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2`,
+    replace: `      } else if (lv === 4) {
+        a = times(a, 2.2);
+        b = times(b, 2.2);
+        c = times(c, 2.2);
+      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
+        c = times(c, 3.0);
+      }
+    }
+
+    // E(异常经验)：lv>=3 且无[开放/倒错的/双性恋/疯狂]时 = lv-2`,
     tests: ['ablup'],
     must_mention:
       'ablup23：Lv4 戒备森严 A/B/C ×2.00（20000→40000、800→1600、5000→10000）',
@@ -8521,23 +8744,35 @@ export default [
       'if (\n      juel5_gate < abl30() * abl30() * 1000 || juel6_gate < abl30() * abl30() * 300\n    ) {',
     tests: ['ablup'],
     must_mention:
-      'ablup30：合计 10-19 且珠够时放行（DECIDE 里 >=20 才 RETURN），照常出需求',
+      'ablup30：合计 10-19 且珠够时放行（decide 阶段 >=20 才拦），照常出需求',
   },
   {
     desc: 'M10442 ablup30：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(屈服)/C(性交经验) 梯子 :129-169\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3000, 10000, 10];',
-    replace:
-      '    // A(欲情)/B(屈服)/C(性交经验) 梯子 :129-169\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3001, 10000, 10];',
+    find: `    // a(欲情)/b(屈服)/c(性交经验) 的梯子
+    let a, b, c;
+    if (lv === 0) [a, b, c] = [3000, 10000, 10];`,
+    replace: `    // a(欲情)/b(屈服)/c(性交经验) 的梯子
+    let a, b, c;
+    if (lv === 0) [a, b, c] = [3001, 10000, 10];`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/3000 ……点数不足 经验不足 能力不足',
   },
   {
     desc: 'M10443 ablup30：[1] 轨三倍点数改为两倍',
     file: 'ere/system/train/ablup.js',
-    find: "      `- ${era.get('palamname:5')}点数×${juel5}/${a * 3} ……${get_ablup_state(j)}`,\n      1,\n    ); // （恒渲染，无 256 分支）\n    // ABLUP30.ERB:62 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）",
-    replace:
-      "      `- ${era.get('palamname:5')}点数×${juel5}/${a * 2} ……${get_ablup_state(j)}`,\n      1,\n    ); // （恒渲染，无 256 分支）\n    // ABLUP30.ERB:62 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）",
+    find: `    era.print(\`　　　\${era.get('expname:5')}　\${exp5}/\${c}\`);
+    era.printButton(
+      \`- \${era.get('palamname:5')}点数×\${juel5}/\${a * 3} ……\${get_ablup_state(j)}\`,
+      1,
+    ); // （恒渲染，无 256 分支）
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `    era.print(\`　　　\${era.get('expname:5')}　\${exp5}/\${c}\`);
+    era.printButton(
+      \`- \${era.get('palamname:5')}点数×\${juel5}/\${a * 2} ……\${get_ablup_state(j)}\`,
+      1,
+    ); // （恒渲染，无 256 分支）
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/9000 ……点数不足 经验不足 能力不足',
   },
@@ -8559,20 +8794,30 @@ export default [
     must_mention: '异常经验1以上(现在0)且',
   },
   {
-    desc: 'M10446 ablup30：崩坏 ×0.80 误改为 ×2.00（混用 ABLUP20/21 的系数）',
+    desc: 'M10446 ablup30：崩坏 ×0.80 误改为 ×2.00（混用 ablup20/21 的系数）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(9)) {\n      // 崩坏 :302-306（×0.80，非 ABLUP20/21 的 ×2.00）\n      a = times(a, 0.8);\n      b = times(b, 0.8);\n      c = times(c, 0.8);\n    }',
-    replace:
-      '    if (talent(9)) {\n      // 崩坏 :302-306（×0.80，非 ABLUP20/21 的 ×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n    }',
+    find: `    if (talent(9)) {
+      // 崩坏（×0.80，非 ablup20/21 的 ×2.00）
+      a = times(a, 0.8);
+      b = times(b, 0.8);
+      c = times(c, 0.8);
+    }`,
+    replace: `    if (talent(9)) {
+      // 崩坏（×0.80，非 ablup20/21 的 ×2.00）
+      a = times(a, 2.0);
+      b = times(b, 2.0);
+      c = times(c, 2.0);
+    }`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/2400 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10447 ablup30：侍奉精神门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl16() < lv + 1) {\n      // 侍奉精神门槛，双轨同时命中（:327-330）',
-    replace:
-      '    if (abl16() <= lv + 1) {\n      // 侍奉精神门槛，双轨同时命中（:327-330）',
+    find: `    if (abl16() < lv + 1) {
+      // 侍奉精神门槛，双轨同时命中`,
+    replace: `    if (abl16() <= lv + 1) {
+      // 侍奉精神门槛，双轨同时命中`,
     tests: ['ablup'],
     must_mention:
       'ablup30：Lv2→3 异常经验门槛 F=lv-1，开放可免；素质修正——容易陷落×0.50、崩坏×0.80（非 2.00）',
@@ -8604,7 +8849,7 @@ export default [
       'if (\n    abl31() >= 5 &&\n    (talent(85) === 0 || talent(76) === 0 || talent(60) === 0 || talent(70) === 0 || talent(74) === 0 || talent(78) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention:
-      'ablup31：三档终止判定（六项豁免任一命中即可——与 ABLUP30 的全有相反）',
+      'ablup31：三档终止判定（六项豁免任一命中即可——与 ablup30 的全有相反）',
   },
   {
     desc: 'M10451 ablup31：组合上限拦截欲情系数 2550 改为 2500',
@@ -8637,9 +8882,20 @@ export default [
   {
     desc: 'M10454 ablup31：容易自慰 ×0.25 改为 ×0.20（A-D 四元组）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(60)) {\n      // 容易自慰 :252-257（A-D 四列 ×0.25，E 不受影响）\n      a = times(a, 0.25);\n      b = times(b, 0.25);\n      c = times(c, 0.25);\n      d = times(d, 0.25);\n    }',
-    replace:
-      '    if (talent(60)) {\n      // 容易自慰 :252-257（A-D 四列 ×0.25，E 不受影响）\n      a = times(a, 0.2);\n      b = times(b, 0.2);\n      c = times(c, 0.2);\n      d = times(d, 0.2);\n    }',
+    find: `    if (talent(60)) {
+      // 容易自慰（A-D 四列 ×0.25，E 不受影响）
+      a = times(a, 0.25);
+      b = times(b, 0.25);
+      c = times(c, 0.25);
+      d = times(d, 0.25);
+    }`,
+    replace: `    if (talent(60)) {
+      // 容易自慰（A-D 四列 ×0.25，E 不受影响）
+      a = times(a, 0.2);
+      b = times(b, 0.2);
+      c = times(c, 0.2);
+      d = times(d, 0.2);
+    }`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/750 ……点数不足 经验不足 ',
   },
@@ -8655,17 +8911,26 @@ export default [
   {
     desc: 'M10456 ablup31：阴蒂感觉门槛漏检（abl0 判定改为恒假）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl0() < lv + 1) {\n      // 阴蒂感觉门槛（:297-300）\n      i |= 4;\n      j |= 4;\n    }',
-    replace:
-      '    if (abl0() < 0) {\n      // 阴蒂感觉门槛（:297-300）\n      i |= 4;\n      j |= 4;\n    }',
+    find: `    if (abl0() < lv + 1) {
+      // 阴蒂感觉门槛
+      i |= 4;
+      j |= 4;
+    }`,
+    replace: `    if (abl0() < 0) {
+      // 阴蒂感觉门槛
+      i |= 4;
+      j |= 4;
+    }`,
     tests: ['ablup'],
     must_mention: 'ablup31：阴蒂感觉门槛（ABL:0）不足时两条轨道同时计能力不足',
   },
   {
     desc: 'M10457 ablup31：露出癖门槛比较改为 <=',
     file: 'ere/system/train/ablup.js',
-    find: '    if (abl17() < lv + 1) {\n      // 露出癖门槛（:291-294）',
-    replace: '    if (abl17() <= lv + 1) {\n      // 露出癖门槛（:291-294）',
+    find: `    if (abl17() < lv + 1) {
+      // 露出癖门槛`,
+    replace: `    if (abl17() <= lv + 1) {
+      // 露出癖门槛`,
     tests: ['ablup'],
     must_mention:
       'ablup31：Lv0 梯子字面值，双轨道同点数、不同经验行；容易自慰×0.25 四元组',
@@ -8694,7 +8959,7 @@ export default [
       'if (\n    abl32() >= 5 &&\n    talent(76) === 0 &&\n    talent(50) === 0 &&\n    talent(61) === 0 &&\n    (talent(64) === 0 || talent(47) === 0)\n  ) {',
     tests: ['ablup'],
     must_mention:
-      'ablup32：三档终止判定（五项豁免须全无才拦）/拦截阈值 6500 与提示文案 4000 不一致（原作如此）',
+      'ablup32：三档终止判定（五项豁免须全无才拦）/拦截阈值 6500 与提示文案 4000 不一致（有意保留）',
   },
   {
     desc: 'M10461 ablup32：拦截判定 6500 误改为与文案一致的 4000',
@@ -8717,16 +8982,30 @@ export default [
   {
     desc: 'M10463 ablup32：Lv0 欲情点数梯子字面值',
     file: 'ere/system/train/ablup.js',
-    find: '    // A(欲情)/B(屈服)/C(精液经验) 梯子 :143-183\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3000, 10000, 10];',
-    replace:
-      '    // A(欲情)/B(屈服)/C(精液经验) 梯子 :143-183\n    let a, b, c;\n    if (lv === 0) [a, b, c] = [3001, 10000, 10];',
+    find: `    // a(欲情)/b(屈服)/c(精液经验) 的梯子
+    let a, b, c;
+    if (lv === 0) [a, b, c] = [3000, 10000, 10];`,
+    replace: `    // a(欲情)/b(屈服)/c(精液经验) 的梯子
+    let a, b, c;
+    if (lv === 0) [a, b, c] = [3001, 10000, 10];`,
     tests: ['ablup'],
     must_mention: '欲情点数×0/3000 ……点数不足 经验不足 ',
   },
   {
     desc: 'M10464 ablup32：戒备森严 Lv5 ×2.50 改为 ×2.60（作用于合计覆盖值的证据）',
     file: 'ere/system/train/ablup.js',
-    find: '      } else if (lv === 5) {\n        a = times(a, 2.5);\n        b = times(b, 2.5);\n        c = times(c, 2.5);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // D(异常经验)：lv>=2 且无[不怕污臭/容易上瘾/倒错的/疯狂/喜欢精液]时',
+    find: `      } else if (lv === 5) {
+        a = times(a, 2.5);
+        b = times(b, 2.5);
+        c = times(c, 2.5);
+      } else if (lv >= 6) {
+        a = times(a, 3.0);
+        b = times(b, 3.0);
+        c = times(c, 3.0);
+      }
+    }
+
+    // d（异常经验）：lv>=2 且无[不怕污臭/容易上瘾/倒错的/疯狂/喜欢精液]时`,
     replace:
       '      } else if (lv === 5) {\n        a = times(a, 2.6);\n        b = times(b, 2.6);\n        c = times(c, 2.6);\n      } else if (lv >= 6) {\n        a = times(a, 3.0);\n        b = times(b, 3.0);\n        c = times(c, 3.0);\n      }\n    }\n\n    // D(异常经验)：lv>=2 且无[不怕污臭/容易上瘾/倒错的/疯狂/喜欢精液]时',
     tests: ['ablup'],
@@ -8736,9 +9015,10 @@ export default [
   {
     desc: 'M10465 ablup32：侍奉/欲望门槛二选一判定反转（talent(76)===0 → ===1）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(76) === 0) {\n      // 无淫乱：侍奉精神门槛（:343-347）',
-    replace:
-      '    if (talent(76) === 1) {\n      // 无淫乱：侍奉精神门槛（:343-347）',
+    find: `    if (talent(76) === 0) {
+      // 无淫乱：侍奉精神门槛`,
+    replace: `    if (talent(76) === 1) {
+      // 无淫乱：侍奉精神门槛`,
     tests: ['ablup'],
     must_mention:
       'ablup32：无淫乱查侍奉精神、有淫乱改查欲望（渲染行与判定同步切换）',
@@ -8781,9 +9061,14 @@ export default [
   {
     desc: 'M10470 ablup33：男人判定反转',
     file: 'ere/system/train/ablup.js',
-    find: '  if (talent(122)) return; // 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine();\n\n  if (\n    abl33() >= 5 &&',
+    find: `  if (talent(122)) return; // 男人直接返回（分隔线之前，无输出）
+
+  era.drawLine();
+
+  if (
+    abl33() >= 5 &&`,
     replace:
-      '  if (talent(122) === 0) return; // 男人直接返回（DRAWLINE 之前，无输出）\n\n  era.drawLine();\n\n  if (\n    abl33() >= 5 &&',
+      '  if (talent(122) === 0) return; // 男人直接返回（分割线之前，无输出）\n\n  era.drawLine();\n\n  if (\n    abl33() >= 5 &&',
     tests: ['ablup'],
     must_mention: '男人直接返回',
   },
@@ -8834,11 +9119,20 @@ export default [
     must_mention: '　　　屈服点数×0/1200',
   },
   {
-    desc: 'M10476 ablup33：保守的 ×1.50 误改为 ×1.20（混用 ABLUP22/23 的系数）',
+    desc: 'M10476 ablup33：保守的 ×1.50 误改为 ×1.20（混用 ablup22/23 的系数）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(24)) {\n      // 保守的 :217-221（×1.50，非 ABLUP22/23 的 ×1.20）\n      a = times(a, 1.5);\n      b = times(b, 1.5);\n      c = times(c, 1.5);\n    }',
-    replace:
-      '    if (talent(24)) {\n      // 保守的 :217-221（×1.50，非 ABLUP22/23 的 ×1.20）\n      a = times(a, 1.2);\n      b = times(b, 1.2);\n      c = times(c, 1.2);\n    }',
+    find: `    if (talent(24)) {
+      // 保守的（×1.50，非 ablup22/23 的 ×1.20）
+      a = times(a, 1.5);
+      b = times(b, 1.5);
+      c = times(c, 1.5);
+    }`,
+    replace: `    if (talent(24)) {
+      // 保守的（×1.50，非 ablup22/23 的 ×1.20）
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+    }`,
     tests: ['ablup'],
     must_mention:
       'ablup33：Lv0 梯子字面值；欲情/屈服需求同为 A；百合气质门槛；输入白名单无 [1]',
@@ -8846,9 +9140,18 @@ export default [
   {
     desc: 'M10477 ablup33：男人婆 ×2.00 丢失（改为 ×1.0）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(79)) {\n      // 男人婆 :297-301（×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n    }',
-    replace:
-      '    if (talent(79)) {\n      // 男人婆 :297-301（×2.00）\n      a = times(a, 1.0);\n      b = times(b, 1.0);\n      c = times(c, 1.0);\n    }',
+    find: `    if (talent(79)) {
+      // 男人婆（×2.00）
+      a = times(a, 2.0);
+      b = times(b, 2.0);
+      c = times(c, 2.0);
+    }`,
+    replace: `    if (talent(79)) {
+      // 男人婆（×2.00）
+      a = times(a, 1.0);
+      b = times(b, 1.0);
+      c = times(c, 1.0);
+    }`,
     tests: ['ablup'],
     must_mention: '阴核点数×0/10000 ……点数不足 经验不足 ',
   },
@@ -8878,26 +9181,44 @@ export default [
   {
     desc: 'M10525 ablup20：感情淡薄的 B 轨 ×1.2 误改为 ×1.5（#466 验收逃逸的那一处）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 感情淡薄 :222-225（B 是 ×1.2 非 ×1.5）\n      a = times(a, 1.5);\n      b = times(b, 1.2);',
-    replace:
-      '      // 感情淡薄 :222-225（B 是 ×1.2 非 ×1.5）\n      a = times(a, 1.5);\n      b = times(b, 1.5);',
+    find: `      // 感情淡薄（b 是 ×1.2 非 ×1.5）
+      a = times(a, 1.5);
+      b = times(b, 1.2);`,
+    replace: `      // 感情淡薄（b 是 ×1.2 非 ×1.5）
+      a = times(a, 1.5);
+      b = times(b, 1.5);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10526 ablup21：抵抗的 ×2.00 误改为 ×1.50（#466 验收逃逸的那一处）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 抵抗 :374-380（×2.00）\n      a = times(a, 2.0);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n      e = times(e, 2.0);',
-    replace:
-      '      // 抵抗 :374-380（×2.00）\n      a = times(a, 1.5);\n      b = times(b, 2.0);\n      c = times(c, 2.0);\n      d = times(d, 2.0);\n      e = times(e, 2.0);',
+    find: `      // 抵抗（×2.00）
+      a = times(a, 2.0);
+      b = times(b, 2.0);
+      c = times(c, 2.0);
+      d = times(d, 2.0);
+      e = times(e, 2.0);`,
+    replace: `      // 抵抗（×2.00）
+      a = times(a, 1.5);
+      b = times(b, 2.0);
+      c = times(c, 2.0);
+      d = times(d, 2.0);
+      e = times(e, 2.0);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10527 ablup40：否定快感的 ×1.75 误改为 ×1.50（#467 验收逃逸的那一处）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 否定快感 :105-106\n      a = times(a, 1.75);',
-    replace: '      // 否定快感 :105-106\n      a = times(a, 1.5);',
+    find: `      a = times(a, 0.75);
+    } else if (talent(71)) {
+      // 否定快感
+      a = times(a, 1.75);`,
+    replace: `      a = times(a, 0.75);
+    } else if (talent(71)) {
+      // 否定快感
+      a = times(a, 1.5);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -8913,82 +9234,107 @@ export default [
   {
     desc: 'M10529 ablup20：文静的 A 轨 ×1.20 误改为 ×1.30',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(14)) a = times(a, 1.2); // 文静 :193-194',
-    replace: 'if (talent(14)) a = times(a, 1.3); // 文静 :193-194',
+    find: `    if (talent(12)) a = times(a, 0.9); // 刚强
+    if (talent(14)) a = times(a, 1.2); // 文静`,
+    replace: `if (talent(14)) a = times(a, 1.3); // 文静 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10530 ablup20：刚强的 A 轨 ×0.90 误改为 ×0.95',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(12)) a = times(a, 0.9); // 刚强 :190-191',
-    replace: 'if (talent(12)) a = times(a, 0.95); // 刚强 :190-191',
+    find: '    if (talent(12)) a = times(a, 0.9); // 刚强',
+    replace: `if (talent(12)) a = times(a, 0.95); // 刚强 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10531 ablup20：悲观的 ×1.10 误改为 ×1.20（只乘 A 的轨道）',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(26)) a = times(a, 1.1); // 悲观的 :232-233',
-    replace: 'if (talent(26)) a = times(a, 1.2); // 悲观的 :232-233',
+    find: '    if (talent(26)) a = times(a, 1.1); // 悲观的',
+    replace: `if (talent(26)) a = times(a, 1.2); // 悲观的 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10532 ablup20：嫉妒的 ×0.80 误改为 ×0.90（A/B 两轨）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(84)) {\n      // 嫉妒 :299-302\n      a = times(a, 0.8);',
-    replace:
-      '    if (talent(84)) {\n      // 嫉妒 :299-302\n      a = times(a, 0.9);',
+    find: `    if (talent(84)) {
+      // 嫉妒
+      a = times(a, 0.8);`,
+    replace: `    if (talent(84)) {
+      // 嫉妒
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10533 ablup20：小恶魔的 ×0.80 误改为 ×0.90（A/B 两轨）',
     file: 'ere/system/train/ablup.js',
-    find: '    if (talent(87)) {\n      // 小恶魔 :304-307\n      a = times(a, 0.8);',
-    replace:
-      '    if (talent(87)) {\n      // 小恶魔 :304-307\n      a = times(a, 0.9);',
+    find: `    if (talent(87)) {
+      // 小恶魔
+      a = times(a, 0.8);`,
+    replace: `    if (talent(87)) {
+      // 小恶魔
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10534 ablup20：受虐狂的 ×1.20 误改为 ×1.30（同文件里 ×0.50 的是施虐狂）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 受虐狂 :294-297\n      a = times(a, 1.2);',
-    replace: '      // 受虐狂 :294-297\n      a = times(a, 1.3);',
+    find: `      // 受虐狂
+      a = times(a, 1.2);`,
+    replace: `      // 受虐狂
+      a = times(a, 1.3);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10535 ablup20：爱表现的 ×0.90 误改为 ×0.95（A/B 两轨）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 爱表现 :235-238\n      a = times(a, 0.9);',
-    replace: '      // 爱表现 :235-238\n      a = times(a, 0.95);',
+    find: `    if (talent(26)) a = times(a, 1.1); // 悲观的
+    if (talent(28)) {
+      // 爱表现
+      a = times(a, 0.9);`,
+    replace: `    if (talent(26)) a = times(a, 1.1); // 悲观的
+    if (talent(28)) {
+      // 爱表现
+      a = times(a, 0.95);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10536 ablup20：低姿态（ELSEIF 侧）的 ×1.10 误改为 ×1.20',
     file: 'ere/system/train/ablup.js',
-    find: '      // 低姿态 :206-208\n      a = times(a, 1.1);',
-    replace: '      // 低姿态 :206-208\n      a = times(a, 1.2);',
+    find: `      // 低姿态
+      a = times(a, 1.1);`,
+    replace: `      // 低姿态
+      a = times(a, 1.2);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10537 ablup20：开放（ELSEIF 侧）的 ×0.90 误改为 ×0.85',
     file: 'ere/system/train/ablup.js',
-    find: '      // 开放 :254-256\n      a = times(a, 0.9);',
-    replace: '      // 开放 :254-256\n      a = times(a, 0.85);',
+    find: `      b = times(b, 0.95);
+    } else if (talent(33)) {
+      // 开放
+      a = times(a, 0.9);`,
+    replace: `      b = times(b, 0.95);
+    } else if (talent(33)) {
+      // 开放
+      a = times(a, 0.85);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10538 ablup20：看轻贞操（ELSEIF 侧）的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 看轻贞操 :244-246\n      a = times(a, 0.95);',
-    replace: '      // 看轻贞操 :244-246\n      a = times(a, 0.9);',
+    find: `      // 看轻贞操
+      a = times(a, 0.95);`,
+    replace: `      // 看轻贞操
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9004,16 +9350,26 @@ export default [
   {
     desc: 'M10540 ablup21：冷漠的 ×1.10 误改为 ×1.20（五元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 冷漠 :309-315（×1.10）\n      a = times(a, 1.1);',
-    replace: '      // 冷漠 :309-315（×1.10）\n      a = times(a, 1.2);',
+    find: `      // 冷漠（×1.10）
+      a = times(a, 1.1);`,
+    replace: `      // 冷漠（×1.10）
+      a = times(a, 1.2);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10541 ablup21：保守的 ×1.20 误改为 ×1.30',
     file: 'ere/system/train/ablup.js',
-    find: '      // 保守的 :325-331\n      a = times(a, 1.2);',
-    replace: '      // 保守的 :325-331\n      a = times(a, 1.3);',
+    find: `      e = times(e, 1.5);
+    }
+    if (talent(24)) {
+      // 保守的
+      a = times(a, 1.2);`,
+    replace: `      e = times(e, 1.5);
+    }
+    if (talent(24)) {
+      // 保守的
+      a = times(a, 1.3);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9028,17 +9384,24 @@ export default [
   {
     desc: 'M10543 ablup21：接受快感的 ×0.90 误改为 ×0.95（与否定快感同段的 IF 侧）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 接受快感 :415-420 / 否定快感 :422-427\n      a = times(a, 0.9);',
-    replace:
-      '      // 接受快感 :415-420 / 否定快感 :422-427\n      a = times(a, 0.95);',
+    find: `      // 接受快感 / 否定快感
+      a = times(a, 0.9);`,
+    replace: `      // 接受快感 / 否定快感
+      a = times(a, 0.95);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10544 ablup21：反抗心的 ×1.20 误改为 ×1.25',
     file: 'ere/system/train/ablup.js',
-    find: '      // 反抗心 :260-266\n      a = times(a, 1.2);',
-    replace: '      // 反抗心 :260-266\n      a = times(a, 1.25);',
+    find: `    }
+    if (talent(11)) {
+      // 反抗心
+      a = times(a, 1.2);`,
+    replace: `    }
+    if (talent(11)) {
+      // 反抗心
+      a = times(a, 1.25);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9054,56 +9417,154 @@ export default [
   {
     desc: 'M10546 ablup22：好奇心的 ×0.95 误改为 ×0.90（四元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 好奇心 :232-237（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 好奇心 :232-237（×0.95）\n      a = times(a, 0.9);',
+    find: `      // 坦率（四元组 ×0.95）
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+      d = times(d, 0.95);
+    }
+    if (talent(21)) {
+      // 冷漠（×1.20）
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+      d = times(d, 1.2);
+    }
+    if (talent(23)) {
+      // 好奇心（×0.95）
+      a = times(a, 0.95);`,
+    replace: `      // 坦率（四元组 ×0.95）
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+      d = times(d, 0.95);
+    }
+    if (talent(21)) {
+      // 冷漠（×1.20）
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+      d = times(d, 1.2);
+    }
+    if (talent(23)) {
+      // 好奇心（×0.95）
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10547 ablup22：献身的 ×0.95 误改为 ×0.90（四元组同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 献身的 :261-266（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 献身的 :261-266（×0.95）\n      a = times(a, 0.9);',
+    find: `      d = times(d, 0.95);
+    }
+    if (talent(63)) {
+      // 献身的（×0.95）
+      a = times(a, 0.95);`,
+    replace: `      d = times(d, 0.95);
+    }
+    if (talent(63)) {
+      // 献身的（×0.95）
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10548 ablup23：保守的 ×1.20 误改为 ×1.30',
     file: 'ere/system/train/ablup.js',
-    find: '      // 保守的 :235-240（×1.20）\n      a = times(a, 1.2);',
-    replace: '      // 保守的 :235-240（×1.20）\n      a = times(a, 1.3);',
+    find: `    if (talent(24)) {
+      // 保守的（×1.20）
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+      d = times(d, 1.2);
+    }
+    if (talent(30)) {
+      // 看重贞操 / 看轻贞操（×1.20 / ×0.95）
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+      d = times(d, 1.2);
+    } else if (talent(31)) {
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+      d = times(d, 0.95);
+    }
+    if (talent(82)) {
+      // 讨厌男人（×3.00，与 ablup22 相反）`,
+    replace: `    if (talent(24)) {
+      // 保守的（×1.20）
+      a = times(a, 1.3);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+      d = times(d, 1.2);
+    }
+    if (talent(30)) {
+      // 看重贞操 / 看轻贞操（×1.20 / ×0.95）
+      a = times(a, 1.2);
+      b = times(b, 1.2);
+      c = times(c, 1.2);
+      d = times(d, 1.2);
+    } else if (talent(31)) {
+      a = times(a, 0.95);
+      b = times(b, 0.95);
+      c = times(c, 0.95);
+      d = times(d, 0.95);
+    }
+    if (talent(82)) {
+      // 讨厌男人（×3.00，与 ablup22 相反）`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10549 ablup23：献身的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 献身的 :264-269（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 献身的 :264-269（×0.95）\n      a = times(a, 0.9);',
+    find: `      d = times(d, 3.0);
+    }
+    if (talent(63)) {
+      // 献身的（×0.95）
+      a = times(a, 0.95);`,
+    replace: `      d = times(d, 3.0);
+    }
+    if (talent(63)) {
+      // 献身的（×0.95）
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10550 ablup30：抵抗的 ×1.20 误改为 ×1.25',
     file: 'ere/system/train/ablup.js',
-    find: '      // 抵抗 :242-246（×1.20）\n      a = times(a, 1.2);',
-    replace: '      // 抵抗 :242-246（×1.20）\n      a = times(a, 1.25);',
+    find: `      // 抵抗（×1.20）
+      a = times(a, 1.2);`,
+    replace: `      // 抵抗（×1.20）
+      a = times(a, 1.25);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10551 ablup30：容易上瘾的 ×0.60 误改为 ×0.65',
     file: 'ere/system/train/ablup.js',
-    find: '      // 容易上瘾 :272-276（×0.60）\n      a = times(a, 0.6);',
-    replace: '      // 容易上瘾 :272-276（×0.60）\n      a = times(a, 0.65);',
+    find: `      // 容易上瘾（×0.60）
+      a = times(a, 0.6);`,
+    replace: `      // 容易上瘾（×0.60）
+      a = times(a, 0.65);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10552 ablup30：容易陷落的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: '      // 容易陷落 :278-282（×0.50）\n      a = times(a, 0.5);',
-    replace: '      // 容易陷落 :278-282（×0.50）\n      a = times(a, 0.55);',
+    find: `      c = times(c, 0.6);
+    }
+    if (talent(73)) {
+      // 容易陷落（×0.50）
+      a = times(a, 0.5);`,
+    replace: `      c = times(c, 0.6);
+    }
+    if (talent(73)) {
+      // 容易陷落（×0.50）
+      a = times(a, 0.55);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9119,16 +9580,26 @@ export default [
   {
     desc: 'M10554 ablup31：倒错的 ×0.75 误改为 ×0.70（A-D 四元组，E 不受影响）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 倒错的 :268-273（×0.75）\n      a = times(a, 0.75);',
-    replace: '      // 倒错的 :268-273（×0.75）\n      a = times(a, 0.7);',
+    find: `      d = times(d, 0.5);
+    }
+    if (talent(80)) {
+      // 倒错的（×0.75）
+      a = times(a, 0.75);`,
+    replace: `      d = times(d, 0.5);
+    }
+    if (talent(80)) {
+      // 倒错的（×0.75）
+      a = times(a, 0.7);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10555 ablup31：淫乱化的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: '      // 淫乱化 :276-281（×0.50）\n      a = times(a, 0.5);',
-    replace: '      // 淫乱化 :276-281（×0.50）\n      a = times(a, 0.55);',
+    find: `      // 淫乱化（×0.50）
+      a = times(a, 0.5);`,
+    replace: `      // 淫乱化（×0.50）
+      a = times(a, 0.55);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9143,16 +9614,20 @@ export default [
   {
     desc: 'M10557 ablup32：擅用舌头的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 擅用舌头 :261-265（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 擅用舌头 :261-265（×0.95）\n      a = times(a, 0.9);',
+    find: `      // 擅用舌头（×0.95）
+      a = times(a, 0.95);`,
+    replace: `      // 擅用舌头（×0.95）
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10558 ablup32：不怕脏的 ×0.90 误改为 ×0.95',
     file: 'ere/system/train/ablup.js',
-    find: '      // 不怕脏 :279-283（×0.90）\n      a = times(a, 0.9);',
-    replace: '      // 不怕脏 :279-283（×0.90）\n      a = times(a, 0.95);',
+    find: `      // 不怕脏（×0.90）
+      a = times(a, 0.9);`,
+    replace: `      // 不怕脏（×0.90）
+      a = times(a, 0.95);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9168,48 +9643,66 @@ export default [
   {
     desc: 'M10560 ablup33：不怕污臭的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 不怕污臭 :248-252（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 不怕污臭 :248-252（×0.95）\n      a = times(a, 0.9);',
+    find: `      // 不怕污臭（×0.95）
+      a = times(a, 0.95);`,
+    replace: `      // 不怕污臭（×0.95）
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10561 ablup33：不怕脏的 ×0.95 误改为 ×0.90',
     file: 'ere/system/train/ablup.js',
-    find: '      // 不怕脏 :260-264（×0.95）\n      a = times(a, 0.95);',
-    replace: '      // 不怕脏 :260-264（×0.95）\n      a = times(a, 0.9);',
+    find: `      // 不怕脏（×0.95）
+      a = times(a, 0.95);`,
+    replace: `      // 不怕脏（×0.95）
+      a = times(a, 0.9);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10562 ablup33：小恶魔的 ×0.90 误改为 ×0.95',
     file: 'ere/system/train/ablup.js',
-    find: '      // 小恶魔 :322-326（×0.90）\n      a = times(a, 0.9);',
-    replace: '      // 小恶魔 :322-326（×0.90）\n      a = times(a, 0.95);',
+    find: `      c = times(c, 0.5);
+    }
+    if (talent(87)) {
+      // 小恶魔（×0.90）
+      a = times(a, 0.9);`,
+    replace: `      c = times(c, 0.5);
+    }
+    if (talent(87)) {
+      // 小恶魔（×0.90）
+      a = times(a, 0.95);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10563 ablup37：妊娠的 ×2.00 误改为 ×2.50',
     file: 'ere/system/train/ablup.js',
-    find: '      // 妊娠 :315-320\n      a = times(a, 2.0);',
-    replace: '      // 妊娠 :315-320\n      a = times(a, 2.5);',
+    find: `      // 妊娠
+      a = times(a, 2.0);`,
+    replace: `      // 妊娠
+      a = times(a, 2.5);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10564 ablup37：倾城的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: '      // 倾城 :343-348\n      a = times(a, 0.5);',
-    replace: '      // 倾城 :343-348\n      a = times(a, 0.55);',
+    find: `      // 倾城
+      a = times(a, 0.5);`,
+    replace: `      // 倾城
+      a = times(a, 0.55);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10565 ablup37：有常客的 ×0.90 误改为 ×0.95',
     file: 'ere/system/train/ablup.js',
-    find: '      // 有常客 :350-355\n      a = times(a, 0.9);',
-    replace: '      // 有常客 :350-355\n      a = times(a, 0.95);',
+    find: `      // 有常客
+      a = times(a, 0.9);`,
+    replace: `      // 有常客
+      a = times(a, 0.95);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9225,16 +9718,20 @@ export default [
   {
     desc: 'M10567 ablup39：动物耳朵的 ×0.80 误改为 ×0.85（三列同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 动物耳朵 :210-214\n      a = times(a, 0.8);',
-    replace: '      // 动物耳朵 :210-214\n      a = times(a, 0.85);',
+    find: `      // 动物耳朵
+      a = times(a, 0.8);`,
+    replace: `      // 动物耳朵
+      a = times(a, 0.85);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10568 ablup39：牝犬的 ×0.50 误改为 ×0.55（三列同乘）',
     file: 'ere/system/train/ablup.js',
-    find: '      // 牝犬 :216-220\n      a = times(a, 0.5);',
-    replace: '      // 牝犬 :216-220\n      a = times(a, 0.55);',
+    find: `      // 牝犬
+      a = times(a, 0.5);`,
+    replace: `      // 牝犬
+      a = times(a, 0.55);`,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9250,16 +9747,20 @@ export default [
   {
     desc: 'M10570 ablup40：倒錯的 ×0.75 误改为 ×0.70',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(80)) a = times(a, 0.75); // 倒錯的 :113-115',
-    replace: 'if (talent(80)) a = times(a, 0.7); // 倒錯的 :113-115',
+    find: `    if (talent(72)) a = times(a, 0.5); // 容易上瘾
+    if (talent(80)) a = times(a, 0.75); // 倒錯的`,
+    replace: `    if (talent(72)) a = times(a, 0.5); // 容易上瘾
+if (talent(80)) a = times(a, 0.7); // 倒錯的 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10571 ablup40：疯狂的 ×0.50 误改为 ×0.55',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(123)) a = times(a, 0.5); // 疯狂 :117-119',
-    replace: 'if (talent(123)) a = times(a, 0.55); // 疯狂 :117-119',
+    find: `    if (talent(72)) a = times(a, 0.5); // 容易上瘾
+    if (talent(80)) a = times(a, 0.75); // 倒錯的
+    if (talent(123)) a = times(a, 0.5); // 疯狂`,
+    replace: `if (talent(123)) a = times(a, 0.55); // 疯狂 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9275,8 +9776,8 @@ export default [
   {
     desc: 'M10573 ablup99：嚣张的 ×1.50 误改为 ×1.60',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(16)) a = times(a, 1.5); // 嚣张 :112-114',
-    replace: 'if (talent(16)) a = times(a, 1.6); // 嚣张 :112-114',
+    find: '    if (talent(16)) a = times(a, 1.5); // 嚣张',
+    replace: `if (talent(16)) a = times(a, 1.6); // 嚣张 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9299,16 +9800,18 @@ export default [
   {
     desc: 'M10576 ablup100：智慧的 ×0.80 误改为 ×0.85',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(172)) a = times(a, 0.8); // 智慧 :100-102',
-    replace: 'if (talent(172)) a = times(a, 0.85); // 智慧 :100-102',
+    find: '    if (talent(172)) a = times(a, 0.8); // 智慧',
+    replace: `if (talent(172)) a = times(a, 0.85); // 智慧 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
   {
     desc: 'M10577 ablup100：嚣张的 ×1.20 误改为 ×1.30（与刚强的 ×1.80 区分）',
     file: 'ere/system/train/ablup.js',
-    find: 'if (talent(16)) a = times(a, 1.2); // 嚣张 :110-112',
-    replace: 'if (talent(16)) a = times(a, 1.3); // 嚣张 :110-112',
+    find: `    if (talent(12)) a = times(a, 1.8); // 刚强
+    if (talent(16)) a = times(a, 1.2); // 嚣张`,
+    replace: `    if (talent(12)) a = times(a, 1.8); // 刚强
+if (talent(16)) a = times(a, 1.3); // 嚣张 `,
     tests: ['ablup'],
     must_mention: '素质倍率逐条表驱动',
   },
@@ -9348,10 +9851,10 @@ export default [
   {
     desc: 'M10581 ablup23：戒备森严 Lv3 档的 ×1.50 误改为 ×1.60（A/B/C 三列）',
     file: 'ere/system/train/ablup.js',
-    find: `（A/B/C 三列，与 ABLUP22 相同）
+    find: `      // 戒备森严（a/b/c 三列，与 ablup22 相同）
       if (lv === 3) {
         a = times(a, 1.5);`,
-    replace: `（A/B/C 三列，与 ABLUP22 相同）
+    replace: `      // 戒备森严（a/b/c 三列，与 ablup22 相同）
       if (lv === 3) {
         a = times(a, 1.6);`,
     tests: ['ablup'],
@@ -9360,7 +9863,7 @@ export default [
   {
     desc: 'M10582 ablup23：戒备森严 Lv6 档的 ×3.00 误改为 ×3.10（A/B/C 三列）',
     file: 'ere/system/train/ablup.js',
-    find: `（A/B/C 三列，与 ABLUP22 相同）
+    find: `      // 戒备森严（a/b/c 三列，与 ablup22 相同）
       if (lv === 3) {
         a = times(a, 1.5);
         b = times(b, 1.5);
@@ -9375,7 +9878,7 @@ export default [
         c = times(c, 2.5);
       } else if (lv >= 6) {
         a = times(a, 3.0);`,
-    replace: `（A/B/C 三列，与 ABLUP22 相同）
+    replace: `      // 戒备森严（a/b/c 三列，与 ablup22 相同）
       if (lv === 3) {
         a = times(a, 1.5);
         b = times(b, 1.5);
@@ -9396,7 +9899,11 @@ export default [
   {
     desc: 'M10583 ablup32：戒备森严 Lv6 档的 ×3.00 误改为 ×3.10（A/B/C 三列）',
     file: 'ere/system/train/ablup.js',
-    find: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
+    find: `      b = abl32() * abl32() * 19000;
+    }
+
+    if (talent(27)) {
+      // 戒备森严（作用于覆盖后的 a/b/c）
       if (lv === 3) {
         a = times(a, 1.5);
         b = times(b, 1.5);
@@ -9411,7 +9918,11 @@ export default [
         c = times(c, 2.5);
       } else if (lv >= 6) {
         a = times(a, 3.0);`,
-    replace: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
+    replace: `      b = abl32() * abl32() * 19000;
+    }
+
+    if (talent(27)) {
+      // 戒备森严（作用于覆盖后的 a/b/c）
       if (lv === 3) {
         a = times(a, 1.5);
         b = times(b, 1.5);
@@ -9432,10 +9943,18 @@ export default [
   {
     desc: 'M10584 ablup32：戒备森严 Lv3 档的 ×1.50 误改为 ×1.60（A/B/C 三列）',
     file: 'ere/system/train/ablup.js',
-    find: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
+    find: `      b = abl32() * abl32() * 19000;
+    }
+
+    if (talent(27)) {
+      // 戒备森严（作用于覆盖后的 a/b/c）
       if (lv === 3) {
         a = times(a, 1.5);`,
-    replace: `      // 戒备森严 :191-209（作用于覆盖后的 A/B/C）
+    replace: `      b = abl32() * abl32() * 19000;
+    }
+
+    if (talent(27)) {
+      // 戒备森严（作用于覆盖后的 a/b/c）
       if (lv === 3) {
         a = times(a, 1.6);`,
     tests: ['ablup'],
@@ -9698,12 +10217,12 @@ export default [
     must_mention: '合计 10 与 11 两档',
   },
   {
-    desc: 'M10938 ablup99：CORE_ABLUP99 一次降两级（MARK:3 -- → -= 2）',
+    desc: 'M10938 ablup99：core_ablup99 一次降两级（MARK:3 -- → -= 2）',
     file: 'ere/system/train/ablup.js',
     find: 'chara(cid).system.反抗刻印 -= 1; // core_ablup99',
     replace: 'chara(cid).system.反抗刻印 -= 2; // core_ablup99',
     tests: ['ablup'],
-    must_mention: 'CORE_ABLUP99 每次只降一级',
+    must_mention: 'core_ablup99 每次只降一级',
   },
   {
     desc: 'M11143 COM4 服装守卫按 C 式「&& 优先」读错（位 1 不再吃 FLAG:37，源 COMABLE.ERB:183 左结合，#517）',
@@ -9732,7 +10251,7 @@ export default [
     must_mention: '母乳',
   },
   {
-    desc: 'M11583 AUTO_ABLUP 的卖淫影响缺省退回常量 0（不读设置页档位，#547）',
+    desc: 'M11583 auto_ablup 的卖淫影响缺省退回常量 0（不读设置页档位，#547）',
     file: 'ere/system/train/ablup.js',
     find: `  { prostitution_effect = era_modsave.prostitution_effect } = {},`,
     replace: `  { prostitution_effect = 0 } = {}, // 变异：缺省退回常量`,
@@ -9792,60 +10311,86 @@ export default [
   },
   // —— #595 调教系统空行普查：多补的（补回空行方向） ——
   {
-    desc: 'M12040 ABLUP0 选项行之后补回空行（:69 的 PRINTL 只收尾 :64-68 拼行）',
+    desc: 'M12040 ablup0 选项行之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/ablup.js',
-    find: '    // ABLUP0.ERB:69 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
-    replace: '    era.println(); // 变异：选项行之后补回空行',
+    find: `    era.printButton(\`- \${label}点数×\${juel}/\${a} ……\${get_ablup_state(i)}\`, 0);
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `    era.printButton(\`- \${label}点数×\${juel}/\${a} ……\${get_ablup_state(i)}\`, 0);
+    era.println(); // 变异：选项行之后补回空行`,
     tests: ['ablup'],
     must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   {
-    desc: 'M12041 ABLUP6 [0] 之后补回空行（:135 是裸 PRINTL，只收尾拼行）',
+    desc: 'M12041 ablup6 [0] 之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/ablup.js',
-    find: '    // ABLUP6.ERB:135 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
-    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    find: `    option0 += \`……\${status_text(i)}\`;
+    era.printButton(option0, 0);
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `    option0 += \`……\${status_text(i)}\`;
+    era.printButton(option0, 0);
+    era.println(); // 变异：[0] 之后补回空行`,
     tests: ['ablup'],
     must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   {
-    desc: 'M12042 ABLUP16 [0] 之后补回空行（:57 是裸 PRINTL，只收尾拼行）',
+    desc: 'M12042 ablup16 [0] 之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/ablup.js',
-    find: '    // ABLUP16.ERB:57 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
-    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    find: `      \`- \${era.get('palamname:6')}点数×\${juel6}/\${a} ……\${get_ablup_state(i)}\`,
+      0,
+    ); // （恒渲染）
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `      \`- \${era.get('palamname:6')}点数×\${juel6}/\${a} ……\${get_ablup_state(i)}\`,
+      0,
+    ); // （恒渲染）
+    era.println(); // 变异：[0] 之后补回空行`,
     tests: ['ablup'],
     must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   {
-    desc: 'M12043 ABLUP17 [0] 之后补回空行（:55 是裸 PRINTL，只收尾拼行）',
+    desc: 'M12043 ablup17 [0] 之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/ablup.js',
-    find: '    // ABLUP17.ERB:55 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
-    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    find: `      \`- \${era.get('palamname:8')}点数×\${juel8}/\${a} ……\${get_ablup_state(i)}\`,
+      0,
+    );
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `      \`- \${era.get('palamname:8')}点数×\${juel8}/\${a} ……\${get_ablup_state(i)}\`,
+      0,
+    );
+    era.println(); // 变异：[0] 之后补回空行`,
     tests: ['ablup'],
     must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   {
-    desc: 'M12044 ABLUP100 [0] 之后补回空行（:36 是裸 PRINTL，只收尾拼行）',
+    desc: 'M12044 ablup100 [0] 之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/ablup.js',
-    find: '    // ABLUP100.ERB:36 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
-    replace: '    era.println(); // 变异：[0] 之后补回空行',
+    find: `      \`- \${era.get('expname:99')}点数×\${exp99}/\${a} ……\${get_ablup_state(i)}\`,
+      0,
+    );
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `      \`- \${era.get('expname:99')}点数×\${exp99}/\${a} ……\${get_ablup_state(i)}\`,
+      0,
+    );
+    era.println(); // 变异：[0] 之后补回空行`,
     tests: ['ablup'],
     must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   {
-    desc: 'M12045 BENKI 灌满句之后补回空行（:1223 的 PRINTFORML 只收尾拼行）',
+    desc: 'M12045 run_benki 灌满句之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/benki.js',
-    find: '    // BENKI.ERB:1223 的 PRINTFORML（空内容）只收尾上面那条 PRINTFORM 拼行——\n    // 前一条没有换行，故它不是空行，这里不补 println（#595）',
+    find: `    // 这条空内容输出只收尾上面那条拼行——前一条没有换行，故它不是
+    // 空行，这里不补 println（#595）`,
     replace: "    era.print(''); // 变异：灌满句之后补回空行",
     tests: ['benki'],
-    must_mention: '下一行是 :1224 起的名字句',
+    must_mention: '下一行是名字句',
   },
   {
-    desc: 'M12048 FUNC_CLOTH 尿布句之后补回空行（:269 的 PRINTL 只收尾 :263 拼行）',
+    desc: 'M12048 cloth 尿布句之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/cloth.js',
-    find: '          // FUNC_CLOTH.ERB:269 的裸 PRINTL 只收尾 :263 的 PRINTFORM，\n          // 不是空行——这里不补 println（#595）',
+    find: `          // 本句与上句连续输出、各占一行，之间不是空行——
+          // 不补 println（#595）`,
     replace: "          era.print(''); // 变异：尿布句之后补回空行",
     tests: ['cloth-func'],
-    must_mention: '下一行是 :270 的点数句',
+    must_mention: '下一行是点数句',
   },
   {
     desc: 'M12049 COM201 菜单 [0] 之后补回空行（:67 是整行 PRINTL）',
@@ -9901,12 +10446,12 @@ export default [
     must_mention: 'EVENT_TRAIN_MESSAGE_B:3002 的 PRINTL 只收尾',
   },
   {
-    desc: 'M12055 结算表头之后补回空行（:655 的 PRINTL 只收尾 :652-654 拼行）',
+    desc: 'M12055 结算表头之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/juel-check.js',
-    find: '  // 的 PRINTL（空串）只收尾上面那条 PRINTFORM 链——前一条没有换行，\n  // 故它不是空行，这里不补 println（#595）',
+    find: '  // 上一条输出与横线之间没有空行——不补 println（#595）',
     replace: '  era.println(); // 变异：结算表头之后补回空行',
     tests: ['juel-check'],
-    must_mention: '表头之后直接是 :656 的点线',
+    must_mention: '表头之后直接是点线',
   },
   {
     desc: 'M12056 COM64「３Ｐ」拆回两行（:79 的 PRINT 与 :81-87 的 PRINTL 本是一行）',
@@ -9944,20 +10489,27 @@ export default [
   },
   // —— #595：真空行保留（删掉空行方向） ——
   {
-    desc: 'M12046 BENKI :50 的真空行删除（函数开头的裸 PRINTL 是真行）',
+    desc: 'M12046 run_benki 开头的真空行删除（函数开头的空内容输出是真行）',
     file: 'ere/system/train/benki.js',
-    find: "  // BENKI.ERB:50 的裸 PRINTL 落在函数开头（前一条输出已收行）→ 真空行（#595）\n  era.print('');",
+    find: `  // —— 空行 + 分隔线 ——
+  // 开头的空内容输出只收尾上一行（前一条输出已收行）→ 真空行（#595）
+  era.print('');`,
     replace: '  // 变异：:50 的真空行删除',
     tests: ['benki'],
-    must_mention: 'BENKI.ERB:50 的真空行在场',
+    must_mention: '函数开头的真空行在场',
   },
   {
-    desc: 'M12047 BENKI :1352 的真空行删除（PRINTW 空内容落在 DRAWLINE 收行之后）',
+    desc: 'M12047 run_benki 出口的真空行删除（空内容等键落在分隔线收行之后）',
     file: 'ere/system/train/benki.js',
-    find: "  // BENKI.ERB:1352 的 PRINTW 空内容落在 DRAWLINE 已收行之后 → 真空行 + 等键（#595）\n  era.print('');",
-    replace: '  // 变异：:1352 的真空行删除',
+    find: `  // 出口：分隔线 + 空行等键 + TARGET 还原
+  era.drawLine();
+  // 这条空内容输出落在分隔线已收行之后 → 真空行 + 等键（#595）
+  era.print('');`,
+    replace: `  // 出口：分隔线 + 空行等键 + TARGET 还原
+  era.drawLine();
+  // 变异：真空行删除`,
     tests: ['benki'],
-    must_mention: 'BENKI.ERB:1352 的真空行在场',
+    must_mention: '收尾的真空行在场',
   },
   {
     desc: 'M12060 COMF111 :161 的真空行删除（:160 的 PRINTL 已收行）',
@@ -9992,18 +10544,26 @@ export default [
     must_mention: '充能按钮与不了按钮之间恰有一个空行',
   },
   {
-    desc: 'M12064 PASSOUT :244 的真空行删除（:243 的 PRINTFORML 已收行）',
+    desc: 'M12064 passout 快感失神的真空行删除（台词行已收行）',
     file: 'ere/system/train/passout.js',
-    find: "      // PASSOUT.ERB:244 的 PRINTFORML（空内容）落在 PASSOUT.ERB:243 已收行之后 → 真空行（#595）\n      era.print('');",
-    replace: '      // 变异：:244 的真空行删除',
+    find: `        era.print('「噢哈啊啊啊啊啊啊啊！！…啊啊……哈……喔…♪」');
+      }
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
+      era.print('');`,
+    replace: `        era.print('「噢哈啊啊啊啊啊啊啊！！…啊啊……哈……喔…♪」');
+      }
+      // 变异：:244 的真空行删除`,
     tests: ['passout'],
     must_mention: '绝顶的快感令温妮全身抽搐',
   },
   {
-    desc: 'M12065 PASSOUT :280 的真空行删除（分支外的裸 PRINTFORML）',
+    desc: 'M12065 passout 未醒分支的真空行删除（分支外的空内容输出）',
     file: 'ere/system/train/passout.js',
-    find: "      // PASSOUT.ERB:280 的 PRINTFORML（空内容）落在分支外已收行之后 → 真空行（#595）\n      era.print('');",
-    replace: '      // 变异：:280 的真空行删除',
+    find: `    } else {
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
+      era.print('');`,
+    replace: `    } else {
+      // 变异：:280 的真空行删除`,
     tests: ['passout'],
     must_mention: '温妮依然未醒来',
   },
@@ -10016,26 +10576,51 @@ export default [
     must_mention: 'COM111:166 的真空行',
   },
   {
-    desc: 'M12067 PASSOUT :255 的真空行删除（895 = 3 档，:254 台词行已收行）',
+    desc: 'M12067 passout 苦痛失神的真空行删除（台词行已收行）',
     file: 'ere/system/train/passout.js',
-    find: "      // PASSOUT.ERB:255 的 PRINTFORML（空内容）落在 PASSOUT.ERB:254 已收行之后 → 真空行（#595）\n      era.print('');",
-    replace: '      // 变异：:255 的真空行删除',
+    find: `      // 恐怖失神
+      if (gagged()) {
+        era.print('「不行了～～～～！！！…放、放过……我……吧」');
+      }
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
+      era.print('');`,
+    replace: `      // 恐怖失神
+      if (gagged()) {
+        era.print('「不行了～～～～！！！…放、放过……我……吧」');
+      }
+      // 变异：:255 的真空行删除`,
     tests: ['passout'],
     must_mention: '…温妮当场倒下，因为过于强烈的恐惧失去了意识',
   },
   {
-    desc: 'M12068 ABLUP10 条件渲染的 [2] 之后补回空行（:66 是裸 PRINTL）',
+    desc: 'M12068 ablup10 条件渲染的 [2] 之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/ablup.js',
-    find: '      // ABLUP10.ERB:66 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
-    replace: '      era.println(); // 变异：[2] 之后补回空行',
+    find: `        \`- \${era.get('palamname:5')}点数×\${juel5}/\${c} ……\${get_ablup_state(k)}\`,
+        2,
+      );
+      // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `        \`- \${era.get('palamname:5')}点数×\${juel5}/\${c} ……\${get_ablup_state(k)}\`,
+        2,
+      );
+      era.println(); // 变异：[2] 之后补回空行`,
     tests: ['ablup'],
     must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
   {
-    desc: 'M12069 ABLUP32 条件渲染的 [1] 之后补回空行（:72 是裸 PRINTL）',
+    desc: 'M12069 ablup32 条件渲染的 [1] 之后补回空行（空内容输出只收尾拼行）',
     file: 'ere/system/train/ablup.js',
-    find: '    // ABLUP32.ERB:72 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）',
-    replace: '    era.println(); // 变异：[1] 之后补回空行',
+    find: `    era.print(\`　　　\${era.get('expname:20')}　\${exp20}/\${c}\`);
+    era.printButton(
+      \`- \${era.get('palamname:5')}点数×\${juel5}/\${a * 3} ……\${get_ablup_state(j)}\`,
+      1,
+    ); // （恒渲染，无 256 分支）
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）`,
+    replace: `    era.print(\`　　　\${era.get('expname:20')}　\${exp20}/\${c}\`);
+    era.printButton(
+      \`- \${era.get('palamname:5')}点数×\${juel5}/\${a * 3} ……\${get_ablup_state(j)}\`,
+      1,
+    ); // （恒渲染，无 256 分支）
+    era.println(); // 变异：[1] 之后补回空行`,
     tests: ['ablup'],
     must_mention: 'ABLUPn 的按钮/需求行之间不得有空行',
   },
@@ -10057,42 +10642,48 @@ export default [
     replace:
       'era.printButton(`${label}点数×${juel}/${a} ……${get_ablup_state(i)}`, 0); // 变异：丢掉「- 」',
     tests: ['ablup'],
-    must_mention: '原作的「- 」是正文的一部分',
+    must_mention: '「- 」是正文的一部分',
   },
   {
     desc: 'M12281 ablup0 的 [100] 停止键丢掉「- 」',
     file: 'ere/system/train/ablup.js',
-    find: "    // ABLUP0.ERB:69 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）\n    era.printButton('- 停止', 100);",
-    replace:
-      "    // ABLUP0.ERB:69 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）\n    era.printButton('停止', 100); // 变异：丢掉「- 」",
+    find: `    era.printButton(\`- \${label}点数×\${juel}/\${a} ……\${get_ablup_state(i)}\`, 0);
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）
+    era.printButton('- 停止', 100);`,
+    replace: `    era.printButton(\`- \${label}点数×\${juel}/\${a} ……\${get_ablup_state(i)}\`, 0);
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）
+    era.printButton('停止', 100); // 变异：丢掉「- 」`,
     tests: ['ablup'],
-    must_mention: '原作的「- 」是正文的一部分',
+    must_mention: '「- 」是正文的一部分',
   },
   {
     desc: 'M12282 ablup4 的 [100] 放弃键丢掉「- 」',
     file: 'ere/system/train/ablup.js',
-    find: "    // ABLUP4.ERB:24 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）\n    era.printButton('- 放弃', 100);",
-    replace:
-      "    // ABLUP4.ERB:24 的 PRINTL 只收尾上一行（按钮已自成一行，不补空行——#595）\n    era.printButton('放弃', 100); // 变异：丢掉「- 」",
+    find: `    era.printButton(\`- \${era.get('palamname:15')}点数×\${a}……\${status}\`, 0); // （无 JUEL 现值，只显示需求 a，与 ablup0～3 不同）
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）
+    era.printButton('- 放弃', 100);`,
+    replace: `    era.printButton(\`- \${era.get('palamname:15')}点数×\${a}……\${status}\`, 0); // （无 JUEL 现值，只显示需求 a，与 ablup0～3 不同）
+    // 这条空内容输出只收尾上一行（按钮已自成一行，不补空行——#595）
+    era.printButton('放弃', 100); // 变异：丢掉「- 」`,
     tests: ['ablup'],
-    must_mention: '原作各 PRINTL [N] - 正文',
+    must_mention: '「[N] - 正文」的「- 」要照写',
   },
   {
-    desc: 'M12283 ablup6 的选项0 串首丢掉「- 」（PRINT [0] - 后接多行拼行的形态）',
+    desc: 'M12283 ablup6 的选项0 串首丢掉「- 」（多行拼行接在选项行后）',
     file: 'ere/system/train/ablup.js',
     find: "let option0 = `- ${era.get('palamname:6')}点数×${a}`;",
     replace:
       "let option0 = `${era.get('palamname:6')}点数×${a}`; // 变异：丢掉「- 」",
     tests: ['ablup'],
-    must_mention: '原作各 PRINTL [N] - 正文',
+    must_mention: '「[N] - 正文」的「- 」要照写',
   },
   {
-    desc: 'M12284 ablup6 的选项2 串首丢掉「- 」（模板串内联形态）',
+    desc: 'M12284 ablup6 的选项2 串首丢掉「- 」（模板串内联写法）',
     file: 'ere/system/train/ablup.js',
     find: "const option2 = `- ${era.get('palamname:7')}点数×${c}、",
     replace: "const option2 = `${era.get('palamname:7')}点数×${c}、",
     tests: ['ablup'],
-    must_mention: '原作各 PRINTL [N] - 正文',
+    must_mention: '「[N] - 正文」的「- 」要照写',
   },
   {
     desc: 'M12285 COM73 剪发菜单丢掉原作的「---」（三个连写破折号）',
@@ -10185,97 +10776,97 @@ export default [
 
   // —— #615：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 必须落行（BENKI.ERB:887/:951/:1105） ——
   {
-    desc: 'M12260 奉仕分派：对象名并回首行（:887 的 PRINTFORML 少了换行，#615 之前的写法）',
+    desc: 'M12260 奉仕分派：对象名并回首行（收行输出少了换行，#615 之前的写法）',
     file: 'ere/system/train/benki.js',
     find: "    s += '作为侍奉用便器在地下城里服侍着'; //\n    era.print(s);",
     replace:
       "    s += '作为侍奉用便器在地下城里服侍着' + benki_player_name(); // 变异：CALL 并回上一行\n    era.print(s);",
     tests: ['benki'],
-    must_mention: ':887 的收行句在场',
+    must_mention: '收行句在场',
   },
   {
-    desc: 'M12261 奉仕分派：对象名丢了角色名（:890 的 %SAVESTR:(ARG:0)% 是同一行尾）',
+    desc: 'M12261 奉仕分派：对象名丢了角色名（名字与对象名同在一条拼行的行尾）',
     file: 'ere/system/train/benki.js',
     find: '    era.print(`${benki_player_name()}${name_of(arg)}`);',
     replace: '    era.print(`${benki_player_name()}`); // 变异：角色名没了',
     tests: ['benki'],
-    must_mention: ':888 的 CALL 落在下一行行首',
+    must_mention: '对象名落在下一行行首',
   },
   {
-    desc: 'M12262 奉仕分派：角色名挪回穴句行行首（:892-941 那条显示行不再带角色名）',
+    desc: 'M12262 奉仕分派：角色名挪回穴句行行首（那条显示行不再带角色名）',
     file: 'ere/system/train/benki.js',
     find: "    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = '';",
     replace:
       '    era.print(`${benki_player_name()}${name_of(arg)}`);\n\n    s = `${name_of(arg)}`; // 变异：角色名挪回穴句行',
     tests: ['benki'],
-    must_mention: ':892 起的穴句行不再带角色名',
+    must_mention: '穴句行不再带角色名',
   },
   {
-    desc: 'M12263 奉仕清算：共处理句并回首行（:951 的 PRINTFORML），传闻也并回去',
+    desc: 'M12263 奉仕清算：共处理句并回首行，传闻也并回去',
     file: 'ere/system/train/benki.js',
     find: '    era.print(`${name_of(arg)}共处理了${play}个底层`);',
     replace:
       '    era.print(`${name_of(arg)}共处理了${play}个底层${benki_player_name()}的性欲。${service_rumor(arg, play)}`); // 变异：并回一行',
     tests: ['benki'],
-    must_mention: ':951 的 PRINTFORML 自成一行',
+    must_mention: '共处理句自成一行',
   },
   {
-    desc: 'M12264 奉仕清算：对象名与「的性欲。」拆开（:952-953 的 CALL 在行首）',
+    desc: 'M12264 奉仕清算：对象名与「的性欲。」拆开（换行调用落在行首）',
     file: 'ere/system/train/benki.js',
     find: '    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);',
     replace:
       '    era.print(`${benki_player_name()}`); // 变异：对象名独占一行\n    era.print(`的性欲。${service_rumor(arg, play)}`);',
     tests: ['benki'],
-    must_mention: ':952-953 的 CALL 与「的性欲。」落在下一行行首',
+    must_mention: '对象名与「的性欲。」落在下一行行首',
   },
   {
-    desc: 'M12265 奉仕清算：传闻拆出独立一行（:956-978 的 PRINTFORML 与的性欲句同一行）',
+    desc: 'M12265 奉仕清算：传闻拆出独立一行（与「的性欲。」句同一行）',
     file: 'ere/system/train/benki.js',
     find: '    era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);',
     replace:
       '    era.print(`${benki_player_name()}的性欲。`); // 变异：传闻拆出\n    era.print(service_rumor(arg, play));',
     tests: ['benki'],
-    must_mention: ':956-978 的传闻 PRINTFORML 收同一行',
+    must_mention: '传闻收同一行',
   },
   {
-    desc: 'M12266 同性爱清算：共处理句并回首行（:1105 的 PRINTFORML），传闻也并回去',
+    desc: 'M12266 同性爱清算：共处理句并回首行，传闻也并回去',
     file: 'ere/system/train/benki.js',
     find: '    era.print(`${name_of(arg)}一共处理了${play}个`);',
     replace:
       '    era.print(`${name_of(arg)}一共处理了${play}个${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`); // 变异：并回一行',
     tests: ['benki'],
-    must_mention: ':1105 的 PRINTFORML 自成一行',
+    must_mention: '共处理句自成一行',
   },
   {
-    desc: 'M12267 同性爱清算：对象名与「的性欲。」拆开（:1106-1107 的 CALL 在行首）',
+    desc: 'M12267 同性爱清算：对象名与「的性欲。」拆开（换行调用落在行首）',
     file: 'ere/system/train/benki.js',
     find: '    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);',
     replace:
       '    era.print(`${benki_player_name()}`); // 变异：对象名独占一行\n    era.print(`的性欲。${lesbian_rumor(arg, play)}`);',
     tests: ['benki'],
-    must_mention: ':1106-1107 的 CALL 与「的性欲。」落在下一行行首',
+    must_mention: '对象名与「的性欲。」落在下一行行首',
   },
   {
-    desc: 'M12268 同性爱清算：传闻拆出独立一行（:1109-1132 的 PRINTFORML 与的性欲句同一行）',
+    desc: 'M12268 同性爱清算：传闻拆出独立一行（与「的性欲。」句同一行）',
     file: 'ere/system/train/benki.js',
     find: '    era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);',
     replace:
       '    era.print(`${benki_player_name()}的性欲。`); // 变异：传闻拆出\n    era.print(lesbian_rumor(arg, play));',
     tests: ['benki'],
-    must_mention: ':1109-1132 的传闻 PRINTFORML 收同一行',
+    must_mention: '传闻收同一行',
   },
   {
-    desc: 'M12257 一般分派清算：共处理句与传闻拆回两行（:1287 是 PRINTFORM，原作同属一行）',
+    desc: 'M12257 一般分派清算：共处理句与传闻拆回两行（两者原同属一行）',
     file: 'ere/system/train/benki.js',
     find: '    era.print(\n      `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,\n    );',
     replace:
       '    era.print(`${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。`); // 变异：拆两行\n    era.print(general_rumor(arg, play));',
     tests: ['benki'],
-    must_mention: ':1292-1305 传闻的 PRINTFORML 收同一行',
+    must_mention: '传闻收同一行',
   },
   // —— #620：「奴隷の様子」四个分派都与前一句同属一条显示行（様子拆回独立一行） ——
   {
-    desc: 'M12320 兽奸分派：様子拆回独立一行（:765-776 的 PRINTFORML 收尾 :741-763 的拼行）',
+    desc: 'M12320 兽奸分派：様子拆回独立一行（收行输出只收尾前面的拼行）',
     file: 'ere/system/train/benki.js',
     find: "    s += t(arg, 9)\n      ? '浮现出被玩坏的痴笑。' // 崩坏\n      : t(arg, 136)\n        ? '高兴地摇着屁股。' // 牝犬\n        : abl(arg, 39)\n          ? '沉醉在与魔兽交配的快感之中。' // 兽奸中毒1以上\n          : '看起来很不自在。'; //\n    era.print(s);",
     replace:
@@ -10284,7 +10875,7 @@ export default [
     must_mention: '#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行',
   },
   {
-    desc: 'M12321 奉仕分派：様子拆回独立一行（:922-940 的 PRINTFORML 收尾 :892-920 的穴句行）',
+    desc: 'M12321 奉仕分派：様子拆回独立一行（收行输出只收尾穴句行）',
     file: 'ere/system/train/benki.js',
     find: "    s +=\n      flag63() === 1\n        ? '一如平常的面带微笑地交欢着……' // 常識改変\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑。' // 崩坏\n          : exp(arg, 21) > 100\n            ? `对底层${benki_player_name()}勃起的阴茎报以勉励式的温柔微笑。` // 侍奉快乐经验100超\n            : exp(arg, 21) > 50\n              ? `对底层${benki_player_name()}温柔地微笑着。` // 侍奉快乐经验50超\n              : '看起来很不自在。'; //\n    era.print(s);",
     replace:
@@ -10293,7 +10884,7 @@ export default [
     must_mention: '#620 奉仕分派：穴句 + 様子同属一条显示行',
   },
   {
-    desc: 'M12322 同性爱分派：様子拆回独立一行（:1080-1094 的 PRINTFORML 收尾 :1054-1078 的名字句）',
+    desc: 'M12322 同性爱分派：様子拆回独立一行（收行输出只收尾名字句）',
     file: 'ere/system/train/benki.js',
     find: "    s +=\n      flag63() === 1\n        ? '一如平常的面带微笑地交欢着……' // 常識改変\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑……' // 崩坏\n          : exp(arg, 40) > 1000\n            ? '快乐得快要晕过去了……' // 百合经验1000超\n            : exp(arg, 40) > 500\n              ? '沉醉在这种缠绵之中……' // 百合经验500超\n              : '看起来很不自在……'; //\n    era.print(s);",
     replace:
@@ -10302,7 +10893,7 @@ export default [
     must_mention: '#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行',
   },
   {
-    desc: 'M12323 通常分派：様子拆回独立一行（:1235-1260 的 PRINTFORML 收尾 :1224-1232 的名字句）',
+    desc: 'M12323 通常分派：様子拆回独立一行（收行输出只收尾名字句）',
     file: 'ere/system/train/benki.js',
     find: "    s +=\n      flag63() === 1\n        ? '像家常便饭似的一边聊着天一边交欢着……' // 常識改変\n        : t(arg, 9)\n          ? '浮现出被玩坏的痴笑……' // 崩坏\n          : t(arg, 76)\n            ? '带着淫乱的表情，发出野兽般的娇喘……' // 淫乱\n            : t(arg, 85)\n              ? '泪流满面地在嘴里叨念着你的名字……' // 爱慕\n              : exp(arg, 20) > 1000\n                ? '带着谦卑的微笑央求着精液……' // 精液経験1000超\n                : exp(arg, 20) > 500\n                  ? '带着谦卑的表情不时吐露着淫语……' // 精液経験500超\n                  : exp(arg, 20) > 250\n                    ? '带着生硬的笑容做着V字手势，乞求着原谅……' // 精液経験250超\n                    : exp(arg, 20) > 100\n                      ? '带着生硬的笑容被强行做着V字手势……' // 精液経験100超\n                      : exp(arg, 20) > 50\n                        ? '不断重复着谢罪的话语……' // 精液経験50超\n                        : '两眼无神地看着远方……'; //\n    era.print(s);",
     replace:
@@ -10369,16 +10960,16 @@ export default [
         return null;
       }`,
     tests: ['ablup'],
-    must_mention: 'DECIDE 复核缺一即挡',
+    must_mention: 'decide_ablup 复核缺一即挡',
   },
   {
-    desc: 'M12953 ablup17：重试文案改回带句号（与 ABLUP10～16 的统一被打破）',
+    desc: 'M12953 ablup17：重试文案改回带句号（与 ablup10～16 的统一被打破）',
     file: 'ere/system/train/ablup.js',
-    find: "      era.print('未满足条件'); // （与 ABLUP10～16 统一，无句号）",
+    find: "      era.print('未满足条件'); // （与 ablup10～16 统一，无句号）",
     replace:
-      "      era.print('未满足条件。'); // （与 ABLUP10～16 统一，无句号）",
+      "      era.print('未满足条件。'); // （与 ablup10～16 统一，无句号）",
     tests: ['ablup'],
-    must_mention: '重试文案"未满足条件"与 ABLUP10～16 统一',
+    must_mention: '重试文案"未满足条件"与 ablup10～16 统一',
   },
   {
     desc: 'M12954 ablup12：bit2 文案退回"经验不足"且无分隔（实际检查与显示再次错位）',
@@ -10579,6 +11170,6 @@ export default [
   9: '胸甲＆透视裙子',`,
     replace: `  8: '乳贴＆迷你短裙铠甲',`,
     tests: ['cloth-func'],
-    must_mention: '9 号补登（与 PRINT 版同名）',
+    must_mention: '9 号补登（与渲染版同名）',
   },
 ];

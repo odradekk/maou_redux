@@ -1,11 +1,11 @@
 /**
- * @file 精饮绝顶：口内射精的连锁绝顶判定（eraIM@S 流用）。
+ * @file 精饮绝顶：口内射精的连锁绝顶判定。
  *
  * 触发位：TFLAG:0 = 口で射精（本回合口内射精次数，奉仕系指令写——J12
- * 落地后游玩可达，此前仅测试可驱动）；TFLAG:29 = 绝顶强度
- * （@ECST_CHECK 写，已在库）；TFLAG:899 = 失神中（passout.js 写）——
- * 失神抑制精饮绝顶。FLAG:72 = 系统开关（与 FLAG:70 同形态：全库零写点
- * → 恒开，守卫照读 flag:72）。
+ * 实现后游玩可达，此前仅测试可驱动）；TFLAG:29 = 绝顶强度
+ * （ecst_check 写，已在库）；TFLAG:899 = 失神中（passout.js 写）——
+ * 失神抑制精饮绝顶。FLAG:72 = 系统开关（与 FLAG:70 同样：全库零写点
+ * → 恒开，检查照常读取 flag:72）。
  *
  * 变量语义：TALENT:47 = 喜欢精液；CFLAG:600 = 强制精饮绝顶累计回数；
  * TFLAG:110 = 喜欢精液获得旗（属主 event——写经 game.event 门面）；
@@ -24,19 +24,19 @@ const { game } = require('#/facade/game');
 const tal = (i) => era.get(`talent:${era_flag.target}:${i}`) || 0;
 const abl32 = () => Math.floor(era.get(`abl:${era_flag.target}:32`) || 0);
 const tflag = (i) => era.get(`tflag:${i}`) || 0;
-/** %SAVESTR:TARGET% 的名字承载（#5 决议：无 savestr 通道，读 callname） */
+/** 目标名的承载（#5 决议：无 savestr 通道，读 callname） */
 const name_of = (id) => era.get(`callname:${id}:-1`) ?? '';
 
-/** SHE(ARG) 代词（魔改新增/文本校正.ERB :1-7 的三行纯函数，随本票内联） */
+/** she：按对象性别取代词（男人→他，其余→她） */
 function she(id) {
   return era.get(`talent:${id}:122`) || 0 ? '他' : '她';
 }
 
-/** TIMES X, m：整数乘小数后截断（math-etc.md） */
+/** 整数乘小数后截断（math-etc.md） */
 const times = (v, m) => Math.floor(v * m);
 
 /**
- * @SEIIN_START（:6-23）：口内射精的连锁绝顶入口。
+ * seiin_start：口内射精的连锁绝顶入口。
  * 喜欢精液（47）直行精饮绝顶；否则绝顶中（TFLAG:29 > 0）才查帕夫洛夫
  * 计数器。失神中（TFLAG:899）整体跳过。
  * @returns {Promise<void>}
@@ -56,13 +56,12 @@ async function seiin_start() {
 }
 
 /**
- * @SEIIN_CHECK（:25-78）：帕夫洛夫计数器的阈值计算。
- * 基础 50，按素质增减（表见 :30-65 的 SIF 串）；算完交强制精饮绝顶。
+ * seiin_check：帕夫洛夫计数器的阈值计算。
+ * 基础 50，按素质增减；算完交强制精饮绝顶。
  * @returns {Promise<void>}
  */
 async function seiin_check() {
-  // P = 阈值（Emuera 全局，SEIIN_COMPULSION_ORGASM 读——ere 侧显式传参，
-  // #214 A/S 同款裁定）
+  // p = 阈值（向强制精饮绝顶显式传参，#214 A/S 同款结论）
   let p = 50;
   // 素质修正（+：刚强 13 / 保守 24 / 悲观 26 / 戒备森严 27 /
   // 压抑 32 / 反感污臭 62 / 否定快感 71；-：乐观 25 / 开放 33 /
@@ -113,7 +112,7 @@ async function seiin_check() {
 }
 
 /**
- * @SEIIN_ORGASM（:80-122）：精饮绝顶本体。
+ * seiin_orgasm：精饮绝顶本体。
  * @returns {Promise<void>}
  */
 async function seiin_orgasm() {
@@ -163,8 +162,8 @@ async function seiin_orgasm() {
 }
 
 /**
- * @SEIIN_COMPULSION_ORGASM（:124-166）：强制精饮绝顶（帕夫洛夫计数器）。
- * @param {number} p 阈值（@SEIIN_CHECK 算出，Emuera 全局 P 的显式传参）
+ * seiin_compulsion_orgasm：强制精饮绝顶（帕夫洛夫计数器）。
+ * @param {number} p 阈值（seiin_check 算出）
  * @returns {Promise<void>}
  */
 async function seiin_compulsion_orgasm(p) {
@@ -188,7 +187,7 @@ async function seiin_compulsion_orgasm(p) {
     era.print('异常经验＋１');
     chara(cid).dungeon.异常经验 = chara(cid).dungeon.异常经验 + 1;
   } else {
-    // 以降（同文无等待——原注）
+    // 以降（同文无等待）
     era.print('强制精饮绝顶');
     era.print(
       `${name_of(cid)}将${era.get('callname:0:-1') ?? ''}射出的精液尽力喝下去了，`,

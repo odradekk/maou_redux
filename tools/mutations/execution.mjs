@@ -102,7 +102,7 @@ export default [
     must_mention: '记录与出售开关',
   },
   {
-    desc: 'M7273 苗床：状态守卫取反',
+    desc: 'M7273 苗床：状态检查取反',
     file: 'ere/system/train/seedbed.js',
     find: '  if (chara(cid).invasion.状态 !== 7) return 0;',
     replace: '  if (chara(cid).invasion.状态 === 7) return 0;',

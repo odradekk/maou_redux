@@ -3,17 +3,17 @@
  * ere/system/train/seiin.js 的行为测试（issue #216 J6）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - @SEIIN_START 的三道守卫（FLAG:72 系统开关 / TFLAG:0 未口内射精 /
- *     TFLAG:899 失神中）与两臂分发（喜欢精液直行 / 绝顶中查计数器）；
- *   - @SEIIN_ORGASM 的计数（EX:13 / EXP:8）、两版文案（TFLAG:0 == 2）、
+ *   - seiin_start 的三道检查（FLAG:72 系统开关 / TFLAG:0 未口内射精 /
+ *     TFLAG:899 失神中）与两分支分发（喜欢精液直行 / 绝顶中查计数器）；
+ *   - seiin_orgasm 的计数（EX:13 / EXP:8）、两版文案（TFLAG:0 == 2）、
  *     源加成的四档乘算；
- *   - @SEIIN_CHECK 的阈值表（素质加减，抽测边界组合）；
- *   - @SEIIN_COMPULSION_ORGASM 的三段文案（达阈值 / 初回 / 以降）、
+ *   - seiin_check 的阈值表（素质加减，抽测边界组合）；
+ *   - seiin_compulsion_orgasm 的三段文案（达阈值 / 初回 / 以降）、
  *     TFLAG:110 获得旗（game.event 门面）、精液中毒 LV3 直抬、
  *     SOURCE:13 的乘算与 SOURCE:5 的达阈加成。
  *
- * 契约（调用方 = @SOURCE_CHECK 的 @EX_CHECK_UP，ere/event/source-check.js）：
- *   seiin_start() → Promise<void>（ECST_CHECK 之后、多重绝顶倍率之前）。
+ * 契约（调用方 = ere/event/source-check.js 的 ex_check_up）：
+ *   seiin_start() → Promise<void>（ecst_check 之后、多重绝顶倍率之前）。
  */
 
 const assert = require('node:assert/strict');
@@ -36,7 +36,7 @@ function seed_world() {
   return { fixture, era_flag, seiin };
 }
 
-test('系统开关：FLAG:72 = 1 整体跳过（全库零写点，守卫 1:1）', async () => {
+test('系统开关：FLAG:72 = 1 整体跳过（全库零写点，检查保留）', async () => {
   const { fixture, seiin } = seed_world();
   fixture.store.set('flag:72', 1);
   fixture.store.set('tflag:0', 1);
@@ -46,7 +46,7 @@ test('系统开关：FLAG:72 = 1 整体跳过（全库零写点，守卫 1:1）'
   assert.equal(fixture.store.get('exp:31:8'), undefined);
 });
 
-test('守卫：TFLAG:0 = 0（未口内射精）静默', async () => {
+test('检查：TFLAG:0 = 0（未口内射精）静默', async () => {
   const { fixture, seiin } = seed_world();
   fixture.store.set('tflag:0', 0);
   fixture.store.set('tflag:29', 1);
@@ -54,7 +54,7 @@ test('守卫：TFLAG:0 = 0（未口内射精）静默', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('守卫：失神中（TFLAG:899 ≥ 1）抑制精饮绝顶', async () => {
+test('检查：失神中（TFLAG:899 ≥ 1）抑制精饮绝顶', async () => {
   const { fixture, seiin } = seed_world();
   fixture.store.set('tflag:0', 1);
   fixture.store.set('tflag:29', 1);
@@ -98,7 +98,7 @@ test('ORGASM：初次精饮绝顶（EXP:8 加 1 后 == 1）→ SOURCE:13 ×3', a
   const { fixture, seiin } = seed_world();
   fixture.store.set('tflag:0', 1);
   fixture.store.set('talent:31:47', 1);
-  await seiin.seiin_start(); // EXP:8: 0 → 1，加成判的是加过后的值（:84 在前）
+  await seiin.seiin_start(); // EXP:8: 0 → 1，加成判的是加过后的值（计数在加成之前）
   assert.equal(fixture.store.get('source:31:13'), 30000);
 });
 
@@ -120,7 +120,7 @@ test('ORGASM：精液中毒分档（ABL:32 = 3 → S13 ×2；= 4 → 三源 ×1.
   }
 });
 
-test('CHECK 臂：非喜欢精液且绝顶中（TFLAG:29 > 0）→ 强制精饮绝顶初回', async () => {
+test('CHECK 分支：非喜欢精液且绝顶中（TFLAG:29 > 0）→ 强制精饮绝顶初回', async () => {
   const { fixture, seiin } = seed_world();
   fixture.store.set('tflag:0', 1);
   fixture.store.set('tflag:29', 1);
@@ -134,7 +134,7 @@ test('CHECK 臂：非喜欢精液且绝顶中（TFLAG:29 > 0）→ 强制精饮�
   assert.ok(lines.some((t) => t.includes('尽力喝下去了')));
 });
 
-test('CHECK 臂：非绝顶中（TFLAG:29 = 0）静默', async () => {
+test('CHECK 分支：非绝顶中（TFLAG:29 = 0）静默', async () => {
   const { fixture, seiin } = seed_world();
   fixture.store.set('tflag:0', 1);
   await seiin.seiin_start();

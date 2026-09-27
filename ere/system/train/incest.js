@@ -2,29 +2,29 @@
  * @file 亲族关系判定共用子程序。
  *
  * TFLAG:14 = 从当前 TARGET 看 PLAYER 的亲族关系：0 无、1 父母、2 子女、
- * 3 兄姐、4 弟妹、5 表姐、6 表弟。SOURCE_CHECK 与性交事后处理都会调用，
- * 因此不能各自复制或打桩。
+ * 3 兄姐、4 弟妹、5 表姐、6 表弟。ere/event/source-check.js 与性交事后
+ * 处理都会调用，因此不能各自复制或打桩。
  *
- * 上游在 CFLAG:25 命中时错误地以 CFLAG:24 / 100 赋值；这是可观察行为，
+ * CFLAG:25 命中时却以 CFLAG:24 / 100 赋值；这是错误但可观察的行为，
  * 有意逐字面保留，不能改为 CFLAG:25。
  */
 
 const era = require('#/era-electron');
 const { game } = require('#/facade/game');
 
-/** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md）。 */
+/** MASTER：魔王主角，恒为角色 0（CONTEXT.md）。 */
 const MASTER = 0;
 
 /**
- * 执行原作 @INCEST，写回并返回 TFLAG:14。
+ * 判定亲族关系，写回并返回 TFLAG:14。
  * @param {number} target 当前调教对象（TARGET）
  * @param {number} player 当前调教者（PLAYER）
  * @returns {number} 亲族关系编码（TFLAG:14）
  */
 function incest(target, player) {
-  game.train.近亲与自我口上 = 0; // SUB2:326
+  game.train.近亲与自我口上 = 0;
 
-  // 原作不用循环，按 21 → 25 顺序覆盖；数组只压缩同构的五段 SIF。
+  // 按 21 → 25 顺序覆盖（后号覆盖前号）；数组只是把同构的逐号判断收进循环。
   for (const index of [21, 22, 23, 24]) {
     const relation = era.get(`cflag:${target}:${index}`) || 0;
     if (relation !== 0 && relation % 100 === player) {
@@ -34,7 +34,7 @@ function incest(target, player) {
 
   const relation25 = era.get(`cflag:${target}:25`) || 0;
   if (relation25 !== 0 && relation25 % 100 === player) {
-    // SUB2:333-341：上游字面读取 CFLAG:24，不是 CFLAG:25。
+    // 此处字面读取 CFLAG:24，不是 CFLAG:25。
     game.train.近亲与自我口上 =
       Math.floor((era.get(`cflag:${target}:24`) || 0) / 100) + 1;
   }

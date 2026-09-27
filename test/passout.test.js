@@ -3,19 +3,19 @@
  * ere/system/train/passout.js 的行为测试（issue #216 J6）。
  *
  * 缝 = test/helpers/era-fixture.js。覆盖：
- *   - @PASSOUT_CHECK 三条触发线（连续强绝顶 / 苦痛 / 恐怖）、相位与叠加
+ *   - passout_check 三条触发线（连续强绝顶 / 苦痛 / 恐怖）、相位与叠加
  *     （895 = 1/2/3/4/6）、执行回数 899 的推进、恢复判定与 EXP:65；
- *   - @PASSOUT_TEXT 的四段：失神瞬间清零（864-894）、次回起的精液计数
+ *   - passout_text 的四段：失神瞬间清零（864-894）、次回起的精液计数
  *     （含戴套 -1）、装备快照（初回）与 -1 标记（次回）、895 分档文案
  *     （口塞 45 吞首行）与恢复分支（CFLAG:99 剪裁）；
- *   - @PASSOUT_MESSAGE 的选支优先级与 G/X/Y 结算（PASSOUT_PALAM_UP 读）；
- *   - @PASSOUT_PALAM_CHECK 的暂存与 UP 清零、@PASSOUT_PALAM_UP 的折算
+ *   - passout_message 的选支优先级与 G/X/Y 结算（passout_palam_up 读）；
+ *   - passout_palam_check 的暂存与 UP 清零、passout_palam_up 的折算
  *     放大回流（手算数值例）与 896-899 复位；
- *   - @PASSOUT_OUTDOOR 的解除与体力气力扣减；
- *   - **TFLAG:899 写入路径 → @KOJO_MESSAGE_COM 第四道守卫的端到端证明**
- *     （#213 七道守卫此前无真实置位者——本票的位置，验收项）。
+ *   - passout_outdoor 的解除与体力气力扣减；
+ *   - **TFLAG:899 写入路径 → kojo_message_com 第四道检查的端到端证明**
+ *     （#213 七道检查此前无真实置位者——这张工单的位置，验收项）。
  *
- * 契约（调用方 = @SOURCE_CHECK，ere/event/source-check.js）：
+ * 契约（调用方 = ere/event/source-check.js）：
  *   passout_check(rand) / passout_text() / passout_outdoor() → Promise；
  *   passout_palam_check() / passout_palam_up() → 同步。rand = (n) => [0, n)。
  */
@@ -49,9 +49,9 @@ function seed_strong_orgasm(fixture, total = 20) {
   fixture.store.set('nowex:31:0', total);
 }
 
-// —— @PASSOUT_CHECK ——
+// —— passout_check ——
 
-test('系统开关：FLAG:70 = 1 时整体跳过（全库零写点，守卫 1:1）', async () => {
+test('系统开关：FLAG:70 = 1 时整体跳过（全库零写点，检查保留）', async () => {
   const { fixture, passout } = seed_world();
   fixture.store.set('flag:70', 1);
   seed_strong_orgasm(fixture);
@@ -220,7 +220,7 @@ test('恢复：执行 4 回（899 ≥ 4）无条件恢复；苦痛 ≥ 5000 亦�
   }
 });
 
-// —— @PASSOUT_TEXT ——
+// —— passout_text ——
 
 test('失神瞬间（895 > 0）：864-894 全清', async () => {
   const { fixture, passout } = seed_world();
@@ -310,7 +310,7 @@ test('快照（899 == 1）：插入系/装具/媚药/情景/触手按 tequip 落
   assert.equal(fixture.store.get('cflag:31:74'), 0);
 });
 
-test('快照 else 臂（未失神回合同样跑）：与快照不同的位标 -1', async () => {
+test('快照 else 分支（未失神回合同样跑）：与快照不同的位标 -1', async () => {
   const { fixture, passout } = seed_world();
   fixture.store.set('tequip:31:11', 1); // 装了蠕虫但从未失神（877 无快照）
   await passout.passout_text();
@@ -349,9 +349,8 @@ test('失神中无新触发（895 = 0）：依然未醒来', async () => {
   assert.deepEqual(fixture.text_lines(), ['', '温妮依然未醒来。']);
 });
 
-test('#595 895 = 3/4/6 三档：台词行之后的真空行都在（:255/:260/:266）', async () => {
-  // PASSOUT.ERB:254/:259/:265 的台词 PRINTFORML 已收行 → 紧随的空内容
-  // PRINTFORML 是真空行，其后才是叙述行（#595）
+test('#595 895 = 3/4/6 三档：台词行之后的真空行都在', async () => {
+  // 台词行输出已收行 → 紧随的空内容输出是真空行，其后才是叙述行（#595）
   const cases = [
     [
       3,
@@ -412,7 +411,7 @@ test('恢复分支：CFLAG:99 = 1（地の文章カット）→ 不跑 PASSOUT_M
   assert.deepEqual(fixture.text_lines(), ['温妮恢复了意识。']);
 });
 
-// —— @PASSOUT_MESSAGE（经恢复分支驱动，G/X/Y 结算是给 PALAM_UP 的） ——
+// —— passout_message（经恢复分支驱动，G/X/Y 结算是给 passout_palam_up 的） ——
 
 async function recover_with(fixture, passout, seed) {
   fixture.store.set('tflag:896', 3);
@@ -433,7 +432,7 @@ test('MESSAGE：处女丧失支（873 ≥ 1）——血 + 精液混合文案与 
   const lines = fixture.text_lines();
   assert.ok(lines.includes('从私处里流出了血，'));
   assert.ok(lines.includes('混合着精液，'));
-  // G = 868+869+870+874+875+876 = 1、Y = 871+872 = 1（模块内，经 PALAM_UP 验证）
+  // G = 868+869+870+874+875+876 = 1、Y = 871+872 = 1（模块内，经 passout_palam_up 验证）
   await passout.passout_palam_up();
   assert.equal(fixture.store.get('tflag:899'), 0, 'PALAM_UP 尾段复位 899');
 });
@@ -484,7 +483,7 @@ test('MESSAGE：侵犯持续骨架句（TFLAG:60 = 1）的代词跟随对象性�
   );
 });
 
-// —— @PASSOUT_PALAM_CHECK / @PASSOUT_PALAM_UP ——
+// —— passout_palam_check / passout_palam_up ——
 
 test('PALAM_CHECK：失神瞬间（895 > 0）UP 进 883-888，UP 清零', () => {
   const { fixture, passout } = seed_world();
@@ -531,7 +530,7 @@ test('PALAM_UP：折算与 Z 分配（Z = 100 → 快乐路空、恐怖/屈服�
   fixture.store.set('tflag:899', 1);
   passout.passout_palam_up();
   // Z = 100（无刻印/顺从/爱慕）：恐怖/屈服路（Z/100 = 1）全额、快乐路
-  // （(100 - Z)/100 = 0）为空——原作的分配语义（顺从越高恐怖屈服占比越大）
+  // （(100 - Z)/100 = 0）为空——分配语义：顺从越高，恐怖/屈服占比越大
   assert.equal(fixture.store.get('delta:31:7'), 0);
   assert.equal(fixture.store.get('delta:31:8'), 0);
   assert.equal(fixture.store.get('delta:31:10'), 0);
@@ -579,7 +578,7 @@ test('PALAM_UP：顺从（abl:10 = 2）抬 Z——两路的分配比随 Z 变', 
   );
 });
 
-// —— @PASSOUT_OUTDOOR ——
+// —— passout_outdoor ——
 
 test('OUTDOOR：解除 tequip:54、带回文案、体力气力 -20/-10 钳 0', async () => {
   const { fixture, passout } = seed_world();
@@ -595,9 +594,9 @@ test('OUTDOOR：解除 tequip:54、带回文案、体力气力 -20/-10 钳 0', a
   assert.equal(fixture.store.get('base:0:1'), 0, '5 - 10 → 钳 0');
 });
 
-// —— 写入路径 → @KOJO_MESSAGE_COM 第四道守卫的端到端（验收项） ——
+// —— 写入路径 → kojo_message_com 第四道检查的端到端（验收项） ——
 
-test('端到端：真实写入路径置 TFLAG:899 → K5 口上整体跳过（#213 守卫四）', async () => {
+test('端到端：真实写入路径置 TFLAG:899 → K5 口上整体跳过（#213 检查四）', async () => {
   const { fixture, era_flag, passout } = seed_world();
   // 口上底座：玛奥（165 村娘A → 105）+ 存在标志 + 总开关（kojo-system 惯例）
   fixture.store.set('talent:31:165', 1);
@@ -625,6 +624,6 @@ test('端到端：真实写入路径置 TFLAG:899 → K5 口上整体跳过（#2
   assert.equal(
     fixture.text_lines().length,
     lines_before,
-    '失神中口上完全静默（守卫四命中）',
+    '失神中口上完全静默（检查四命中）',
   );
 });

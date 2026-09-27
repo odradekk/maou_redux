@@ -1,6 +1,6 @@
 // 变异条目表切片：ere/page/（画面与交互组件）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 506; // #643 -1（M11970：病灶 DEBUG_MENU_U 提示已随 #641 删除，变异无行为面）；#641 净 -8（M97、M9723、M11110、M11313/11314/11320/11321/11328/11329、M11573、M11974、M12359 随 trace-check 与判不移植入口删除；+4 M12900/M12901/M12908/M12909 入口删除守卫）；#642 验收 +1（M12942：整屏居中改成左对齐）；#642 返工 -2（M12934/M12935 删：联系方式段整段删除，find 无输出点）+2（M12940/M12941：版本行装饰段与联系方式段复活守卫）；#642 起 -1（M12074 删：致辞钮 9 随名单整段删除，find 无输出点）+6（M12930-M12935：标题画面新游戏信息——硬编码旧名/漏印作者/追加信息与年份守卫拆除/钮 8 复用已删编号 9/联系方式两段互换）；#557 +1（M12359：设置页 [28] 漏 await 的重叠检测直接报错条目）；#615 起 +17（M12240-M12248：print 正文的尾换行——[98]/[99] 确认页两行、RACE_CONFIG 表头/编辑头两行/随机档两个标签、兵器标题与鸡鸡状态回显；M12250-M12253/M12269：完全召唤横幅两行、之间的真空行与 :76 的两个空行、首段短横线与尾随两空格；M12254-M12256：ENEMY_EXIST2 首行空行与空名单分支）；#596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
@@ -135,13 +135,13 @@ export default [
     must_mention: '育儿室',
   },
   {
-    desc: 'M35 SHOW_JUEL 数值列：右对齐宽 6 改 5',
+    desc: 'M35 show_juel 数值列：右对齐宽 6 改 5',
     file: 'ere/page/page-ablup.js',
-    find: '    row += ` ${name}点数：${pad_left(String(value), 6)}`; // {JUEL,6,RIGHT}',
+    find: '    row += ` ${name}点数：${pad_left(String(value), 6)}`; // 数值右对齐宽 6',
     replace:
       '    row += ` ${name}点数：${pad_left(String(value), 5)}`; // {JUEL,6,RIGHT}',
     tests: ['juel-check'],
-    must_mention: 'SHOW_JUEL 三行',
+    must_mention: 'show_juel 三行',
   },
   {
     desc: 'M36 等级行公式：本级需求 lv*10+10 改 lv*10+5',
@@ -1517,7 +1517,7 @@ export default [
     must_mention: '不列该行',
   },
   {
-    desc: 'M8436 ABILITY_UP 补行判据收紧（< NUM_PAGE + 1 → < NUM_PAGE）',
+    desc: 'M8436 ability_up 补行条件收紧（< NUM_PAGE + 1 → < NUM_PAGE）',
     file: 'ere/page/page-ability-up.js',
     find: '  if (l_lcount < page_size + 1) {',
     replace: '  if (l_lcount < page_size) {',
@@ -1535,13 +1535,13 @@ export default [
   {
     desc: 'M8405 ABILITY_UP 勇者一览的等级门（20 → 21）',
     file: 'ere/page/page-ability-up.js',
-    find: '  const dim = cflag(0, 9) < 20; // SIF CFLAG:0:9 < 20',
+    find: '  const dim = cflag(0, 9) < 20; // CFLAG:0:9 = 魔王等级',
     replace: '  const dim = cflag(0, 9) < 21; // 变异：等级门抬高',
     tests: ['page-ability-up'],
     must_mention: '表头按钮文案与等级门灰显',
   },
   {
-    desc: 'M8406 ABILITY_UP 等级门判据（< 20 → < 21）',
+    desc: 'M8406 ability_up 等级条件（< 20 → < 21）',
     file: 'ere/page/page-ability-up.js',
     find: '        if (result > 990 && result < 999 && cflag(0, 9) < 20) {',
     replace: '        if (result > 990 && result < 999 && cflag(0, 9) < 21) {',
@@ -1575,10 +1575,10 @@ export default [
     must_mention: '999 收尾三件',
   },
   {
-    desc: 'M8410 ABILITY_UP_CORE 不还原 TARGET',
+    desc: 'M8410 ability_up_core 不还原调教目标',
     file: 'ere/page/page-ability-up.js',
-    find: '      era_flag.target = previous_target; // TARGET = T',
-    replace: '      // 变异：不还原 TARGET',
+    find: '      era_flag.target = previous_target;',
+    replace: '      // 变异：不还原 era_flag.target',
     tests: ['page-ability-up'],
     must_mention: '999 收尾三件',
   },
@@ -1591,7 +1591,7 @@ export default [
     must_mention: '999 收尾三件',
   },
   {
-    desc: 'M8412 ABILITY_UP 上一页判据反向（> 0 → >= 0）',
+    desc: 'M8412 ability_up 上一页条件反向（> 0 → >= 0）',
     file: 'ere/page/page-ability-up.js',
     find: '          if (no_page > 0) {\n            no_page -= 1;\n          }',
     replace:
@@ -1600,7 +1600,7 @@ export default [
     must_mention: '翻页（1000/1001）',
   },
   {
-    desc: 'M8413 ABILITY_UP 下一页判据放宽（< max_page → <= max_page）',
+    desc: 'M8413 ability_up 下一页条件放宽（< max_page → <= max_page）',
     file: 'ere/page/page-ability-up.js',
     find: '          if (no_page < max_page) {\n            no_page += 1;\n          }',
     replace:
@@ -4037,7 +4037,7 @@ export default [
     must_mention: '陷阱商店页脚按钮之后不应有空行',
   },
   {
-    desc: 'M11861 能力值提升页脚补回空行（同上，:96 的 PRINTL 只收三个 PRINTLC 那一行）',
+    desc: 'M11861 能力值提升页脚补回空行（空内容输出只收三个标签那一行）',
     file: 'ere/page/page-ability-up.js',
     find: "  era.printButton('- 下一页', 1001);\n  return { menu, page_size, max_page };",
     replace:
@@ -4081,7 +4081,7 @@ export default [
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
   {
-    desc: 'M11873 能力值提升表头补回空行（:56 的 PRINTL 只收尾那两个 PRINTBUTTON，golden 里按钮行与分割线相邻）',
+    desc: 'M11873 能力值提升表头补回空行（空内容输出只收尾那两个按钮，按钮行与分割线相邻）',
     file: 'ere/page/page-ability-up.js',
     find: "  menu_button('勇者一览', MENU_ENEMY, dim);",
     replace:
@@ -4195,7 +4195,7 @@ export default [
   },
   // —— #596：print 之后多补的空行普查（画面侧） ——
   {
-    desc: 'M12070 能力值提升页的按钮行之间补回空行（:81-83 的 PRINTL 只收行，golden 里五行按钮逐行相邻）',
+    desc: 'M12070 能力值提升页的按钮行之间补回空行（五行按钮逐行相邻）',
     file: 'ere/page/page-ablup.js',
     find: "    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';",
     replace:
@@ -4204,7 +4204,7 @@ export default [
     must_mention: '按钮行之间不夹空行',
   },
   {
-    desc: 'M12071 能力值提升页 [999] 之后补回空行（:109/:111 只收行）',
+    desc: 'M12071 能力值提升页 [999] 之后补回空行（空内容输出只收行）',
     file: 'ere/page/page-ablup.js',
     find: "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）",
     replace:
@@ -4213,9 +4213,10 @@ export default [
     must_mention: '按钮行之间不夹空行',
   },
   {
-    desc: 'M12072 保有珠一览末尾的真空行删除（:26 那一个是真行——空行由它来，不是 :23 的收行）',
+    desc: 'M12072 保有珠一览末尾的真空行删除（那一个空内容输出是真行，不是收行）',
     file: 'ere/page/page-ablup.js',
-    find: '  era.println(); // PRINTL（末组恰为 4 项时补一空行）\n  era.drawLine();',
+    find: `  era.println(); // 末组恰为 4 项时补一空行
+  era.drawLine(); // 点线分割线`,
     replace: '  era.drawLine(); // 变异：:26 的真空行删除',
     tests: ['juel-check'],
     must_mention: '末行后有空行',
@@ -4278,11 +4279,15 @@ export default [
     must_mention: '三个真空行',
   },
   {
-    desc: 'M12080 能力值提升页 [99] 行与尾部分割线之间补回空行（:109 只结束 [40] 中毒行那一行）',
+    desc: 'M12080 能力值提升页 [99] 行与尾部分割线之间补回空行（空内容输出只结束 [40] 行）',
     file: 'ere/page/page-ablup.js',
-    find: "  era.drawLine(); // CUSTOMDRAWLINE ‥\n  era.printButton('- 能力值提高结束', 999);",
-    replace:
-      "  era.println(); // 变异：多补一条空行\n  era.drawLine(); // CUSTOMDRAWLINE ‥\n  era.printButton('- 能力值提高结束', 999);",
+    find: `  // [100] 异界综合征行是调试专用，不绘制
+  // （[99] 行与尾部分割线逐行相邻，不补空行）
+  era.drawLine(); // 点线分割线
+  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）`,
+    replace: `  era.println(); // 变异：多补一条空行
+  era.drawLine(); // 点线分割线
+  era.printButton('- 能力值提高结束', 999);`,
     tests: ['juel-check'],
     must_mention: '按钮行之间不夹空行',
   },
