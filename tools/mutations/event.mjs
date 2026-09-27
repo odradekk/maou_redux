@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 390; // #649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 394; // #649 返工起 +4（M13057-M13060：分派循环丢一族的守卫——四族各自当天命中有表驱动用例）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
@@ -3571,5 +3571,37 @@ export default [
   // 尾部 ELSE 空分支`,
     tests: ['event-endcheck'],
     must_mention: '崩坏态日检后线值不得移动',
+  },
+  {
+    desc: 'M13057 END 分派循环丢族 7（菲娅线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [10, 11, 14]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 7 线值 20 必须以小节 2 命中',
+  },
+  {
+    desc: 'M13058 END 分派循环丢族 10（嘉德线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [7, 11, 14]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 10 线值 510 必须以小节 51 命中',
+  },
+  {
+    desc: 'M13059 END 分派循环丢族 11（黑方片线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [7, 10, 14]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 11 线值 20 必须以小节 2 命中',
+  },
+  {
+    desc: 'M13060 END 分派循环丢族 14（银黑桃线当天不再命中）',
+    file: 'ere/event/event-endcheck.js',
+    find: '    for (const family of [7, 10, 11, 14]) {',
+    replace: '    for (const family of [7, 10, 11]) {',
+    tests: ['event-endcheck'],
+    must_mention: '族 14 线值 300 必须以小节 30 命中',
   },
 ];

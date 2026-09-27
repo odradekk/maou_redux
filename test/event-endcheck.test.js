@@ -466,6 +466,40 @@ test('分派循环：按族号调用、小节 = 线值 / 10、个位非 0 防重
   }
 });
 
+test('分派循环：四族各自的个位为 0 线值当天都命中对应族实现（表驱动）', async () => {
+  // 观测靶 = 替换已注册实现来记录调用（真实脚本的分发由 event-ending.test.js
+  // 的贯通用例覆盖）。每族的线值须能「稳定预置到分派那一刻」：
+  //   族 7 菲娅（2807）/族 11 黑方片（2811）：ENDRESET 要求角色在场才免清，
+  //     故入队角色；20 段的阶梯门槛要未播种的素质（love/lust）才推进，
+  //     零播种时线值当天不动
+  //   族 10 嘉德（2810）：清场守卫 >= 500 免清，预置 510 段；该段落在
+  //     天神宫线的空档（500-510 不含 510）
+  //   族 14 银黑桃（2814）：清场守卫 >= 300 免清，预置 300 段
+  const CASES = [
+    { family: 7, flag: 2807, stage: 20, section: 2, join: 35 },
+    { family: 10, flag: 2810, stage: 510, section: 51 },
+    { family: 11, flag: 2811, stage: 20, section: 2, join: 22 },
+    { family: 14, flag: 2814, stage: 300, section: 30 },
+  ];
+  for (const c of CASES) {
+    const { fixture, mod } = setup_endcheck();
+    if (c.join) {
+      join_chara(fixture, c.join, `角色${c.join}`);
+    }
+    fixture.store.set(`exflag:${c.flag}`, c.stage);
+    let called = null;
+    mod.END_FAMILY.implemented.set(c.family, (section) => {
+      called = section;
+    });
+    await mod.run_endcheck();
+    assert.equal(
+      called,
+      c.section,
+      `族 ${c.family} 线值 ${c.stage} 必须以小节 ${c.section} 命中`,
+    );
+  }
+});
+
 test('END 族声明空间：只声明有脚本的四族（7/10/11/14），空间外抛错', async () => {
   const { fixture, mod } = setup_endcheck();
   // 无脚本的族已移出声明空间：对它们的调用就是拼写错误边界，必须抛错
