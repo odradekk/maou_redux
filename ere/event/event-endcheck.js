@@ -479,7 +479,7 @@ async function endcheck_spade(rand = default_rand) {
 /**
  * @ENDCHECKPRINCESS（ENDINGDATA.ERB:353-480）：菲娅线（角色 35）的每日推进。
  *
- * 线值 EX_FLAG:2807：10（初次会面）/ -10（崩坏态）/ 30-120 恋慕 /
+ * 线值 EX_FLAG:2807：10（初次会面）/ -10（崩坏态 → 当天 Bad Ending 占位段）/ 30-120 恋慕 /
  * 130-220 淫乱。:445-447 的 160-170 档是空分支（判定已移到 aftertrain），
  * 保留为空分支。
  */
@@ -516,7 +516,7 @@ function endcheck_princess() {
       (get(`mark:${cid}:1`) === 3 || get(`mark:${cid}:2`) === 3) &&
       talent(0) === 0
     ) {
-      era_exflag.route_35 = -10; // 崩坏态（Bad Ending 触发源）
+      era_exflag.route_35 = -10; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）
     }
   } else if (stage >= 20 && stage < 30) {
     // 素质定线
@@ -782,7 +782,8 @@ async function run_endcheck() {
       if (stage % 10 === 0) {
         // TRYCALLFORM END{族号}_{stage / 10}：整数除法向零截断
         // （Math.trunc）。小节为负合法（菲娅线崩坏态 2807 = -10 →
-        // END7_-1，无定义静默）。空小节 whenMissing 0 = TRYCALL 落空
+        // END7_-1，Bad Ending 占位段，见 ending-scripts.js）。空小节
+        // whenMissing 0 = TRYCALL 落空
         // RESULT = 0 的缺省
         await END_FAMILY.call(family, {
           whenMissing: 0,

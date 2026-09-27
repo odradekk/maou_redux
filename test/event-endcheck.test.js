@@ -10,7 +10,7 @@
  *   4. 分派循环：只巡有脚本的四族（7/10/11/14）、小节 = 线值 / 10、个位
  *      防重播、2801 == 99 短路、空间外抛错；
  *   5. ENDING_N 门槛（2801 == 99 && DAY == 500）；END31 死调用已删（2803
- *      非零静默）；菲娅线 -10 崩坏态无出口（#649 核实钉住，待用户裁定）。
+ *      非零静默）；菲娅线 -10 崩坏态当天命中 Bad Ending 占位演出（#649 用户裁定）。
  */
 
 const assert = require('node:assert/strict');
@@ -585,29 +585,41 @@ test('ENDING_N：2801 == 99 且 DAY == 500 才调用（#404 起演出真身）�
   }
 });
 
-// —— 菲娅线 -10 崩坏态（#649 核实项，钉住现状等用户裁定）——
+// —— 菲娅线 -10 崩坏态（#649 用户裁定：触发 Bad Ending，内容占位）——
 
-test('菲娅线 -10 崩坏态：每日判定与分派均无出口（#649 核实，修复方案待裁定）', async () => {
+test('菲娅线 -10 崩坏态：当天命中 Bad Ending 占位演出、只播一次、线值停在 -9', async () => {
   // 复现：endcheck_princess 的 10-20 档里 MARK:1/2 == 3 且非处女（TALENT:0 == 0）
-  // → 线值置 -10。此后阶梯无 -10 分支、素质互换重置够不着（区间 30 起）、
-  // 分派拼出 END7_-1 无脚本静默——线值永远停在 -10。
+  // → 线值置 -10。当天分派拼出 END7_-1（Bad Ending 占位段：标题 +
+  // 「此处剧情尚未做好」），收尾 += 1 置个位（-10 → -9）只播一次；
+  // -9 无阶梯分支、素质互换重置够不着（区间 30 起），线永停 -9；
+  // 演出不带动任何其他状态（菲娅不离队、其他线不动）。
   const { fixture, mod } = setup_endcheck();
   join_chara(fixture, 35, '菲娅');
   fixture.store.set('exflag:2807', -10);
   await mod.run_endcheck();
-  assert.equal(
-    fixture.store.get('exflag:2807'),
-    -10,
-    '崩坏态日检后线值不得移动',
+  assert.equal(fixture.store.get('exflag:2807'), -9, '演出收尾 += 1 置个位');
+  const texts = fixture.lines_history.filter((line) => line.type === 'text');
+  assert.ok(
+    texts.some((line) => line.text.includes('菲娅线 Bad Ending')),
+    '当天分派必须命中 Bad Ending 占位演出（标题）',
   );
-  // 好感与恋慕素质任意播种再跑两天：没有任何出口
+  assert.ok(
+    texts.some((line) => line.text.includes('此处剧情尚未做好')),
+    '占位文案必须可见',
+  );
+  assert.ok(
+    fixture.era.getAddedCharacters().includes(35),
+    '演出不得让菲娅离队',
+  );
+  // 再跑两天：个位非 0 不重播、线值永停 -9（好感与恋慕素质齐备也无出口）
   fixture.store.set('cflag:35:2', 99999);
   fixture.store.set('talent:35:85', 1);
   await mod.run_endcheck();
   await mod.run_endcheck();
+  assert.equal(fixture.store.get('exflag:2807'), -9, '线值永停 -9');
   assert.equal(
-    fixture.store.get('exflag:2807'),
-    -10,
-    '好感与恋慕素质齐备也无法推进——卡死现状钉住',
+    texts.filter((line) => line.text.includes('菲娅线 Bad Ending')).length,
+    1,
+    'Bad Ending 只播一次（个位守卫）',
   );
 });

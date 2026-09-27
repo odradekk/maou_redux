@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 394; // #649 返工起 +4（M13057-M13060：分派循环丢一族的守卫——四族各自当天命中有表驱动用例）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
+export const COUNT = 397; // #649 菲娅-10裁定起 +3-0（M13056 改写为拆 Bad Ending 收尾；M13061-M13063：负线值守卫/占位标题改写/节号键挪走）；#649 返工起 +4（M13057-M13060：分派循环丢一族的守卫——四族各自当天命中有表驱动用例）；#649 起 +7-2（M13050-M13056 结局缺陷守卫；删反向条目 M214/M218）；#641 起 +1（M12904 EQUIP_COM 链执行守卫）；#615 起 +1（M12249：狂王性别一问的尾换行，SYSTEM ver1.0.3.ERB:902-903 是两条 PRINTL）；#597 起 +10（M12114-M12120：调教后性交/示众台涂鸦/安息日
 // 播报的收尾不产生空行，魔族化两处与取得疯狂播报后的真空行不许删；M12128/M12129：
 // 初调教开场与禁断症状结算收尾的真空行不许删；M12270：角色信息前后成对空行的代表处）；
 // #612 起 +1（M12304：按钮正文补回原作的「- 」分隔符——补回点被改回时对应的
@@ -1167,8 +1167,9 @@ export default [
   {
     desc: 'M8208 ENDCHECKPRINCESS 崩坏态：线值 -10 误写成 -20',
     file: 'ere/event/event-endcheck.js',
-    find: '      era_exflag.route_35 = -10; // 崩坏态（Bad Ending 触发源）',
-    replace: '      era_exflag.route_35 = -20; // 崩坏态（Bad Ending 触发源）',
+    find: '      era_exflag.route_35 = -10; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）',
+    replace:
+      '      era_exflag.route_35 = -20; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）',
     tests: ['event-ending'],
     must_mention: 'MARK:1/2',
   },
@@ -3554,23 +3555,25 @@ export default [
     must_mention: '族 2（无脚本）必须在声明空间外',
   },
   {
-    desc: 'M13056 菲娅线 -10 崩坏态加出口（钉住 #649 核实的无出口现状）',
-    file: 'ere/event/event-endcheck.js',
-    find: `    } else if (cflag(515) === 150) {
-      era_exflag.route_35 = 220; // 22 为菲娅淫乱线完结
-    }
-  }
-  // 尾部 ELSE 空分支`,
-    replace: `    } else if (cflag(515) === 150) {
-      era_exflag.route_35 = 220; // 22 为菲娅淫乱线完结
-    }
-  } else if (stage === -10) {
-    // 变异：崩坏态加了出口
-    era_exflag.route_35 = 10;
-  }
-  // 尾部 ELSE 空分支`,
+    desc: 'M13056 菲娅线 Bad Ending 占位段的收尾 += 1 被拆（-10 重播守卫消失）',
+    file: 'ere/data/ending-scripts.js',
+    find: `    '-1': {
+      steps: [
+        ['d'],
+        ['w', '菲娅线 Bad Ending'],
+        ['w', '此处剧情尚未做好'],
+        ['exflag', 2807, 1],
+      ],
+    },`,
+    replace: `    '-1': {
+      steps: [
+        ['d'],
+        ['w', '菲娅线 Bad Ending'],
+        ['w', '此处剧情尚未做好'],
+      ],
+    },`,
     tests: ['event-endcheck'],
-    must_mention: '崩坏态日检后线值不得移动',
+    must_mention: '演出收尾 += 1 置个位',
   },
   {
     desc: 'M13057 END 分派循环丢族 7（菲娅线当天不再命中）',
@@ -3603,5 +3606,29 @@ export default [
     replace: '    for (const family of [7, 10, 11]) {',
     tests: ['event-endcheck'],
     must_mention: '族 14 线值 300 必须以小节 30 命中',
+  },
+  {
+    desc: 'M13061 END 分派循环负线值守卫（-10 不再分发，Bad Ending 播不出）',
+    file: 'ere/event/event-endcheck.js',
+    find: '      if (stage % 10 === 0) {',
+    replace: '      if (stage % 10 === 0 && stage >= 0) {',
+    tests: ['event-endcheck'],
+    must_mention: '演出收尾 += 1 置个位',
+  },
+  {
+    desc: 'M13062 数据表 END7_-1 的占位标题被改写',
+    file: 'ere/data/ending-scripts.js',
+    find: "        ['w', '菲娅线 Bad Ending'],",
+    replace: "        ['w', '菲娅线 坏结局'],",
+    tests: ['event-endcheck'],
+    must_mention: '当天分派必须命中 Bad Ending 占位演出（标题）',
+  },
+  {
+    desc: "M13063 数据表 END7_-1 的节号键被挪走（'-1' → '-2'，分派查不到）",
+    file: 'ere/data/ending-scripts.js',
+    find: "    '-1': {",
+    replace: "    '-2': {",
+    tests: ['event-endcheck'],
+    must_mention: '演出收尾 += 1 置个位',
   },
 ];
