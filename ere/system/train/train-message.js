@@ -117,14 +117,14 @@ function skin_color(cid) {
  * 射精、1 = 主人射精、2 = 主人大量射精），臂内按 SELECTCOM 分派（122 阴茎
  * 互捅 / 33 股间性交 / 62 双人股间），色名取对象的肌肤素质。
  *
- * 两处源侧形态 1:1 保留、不补字：
- *   - **0 臂的 62 支没有自己的开头**（源侧 33/62 共用 `ELSEIF`，但补前缀的
+ * 两处形态有意保留、不补字：
+ *   - **0 臂的 62 支没有自己的开头**（33/62 共用 `ELSEIF`，但补前缀的
  *     那句 `SIF SELECTCOM == 33` 只覆盖 33），拼出来是「〈对象〉射精出的
  *     白皙肌肤弄脏了…」；
  *   - **0 臂的色名链没有 ELSE**（:44-50），无肌肤素质时整行断在
  *     「〈对象〉射精出的精液、把〈主人〉的」——1 臂与 2 臂的色名链是内层
  *     `PRINT` + 外层 `PRINTL`，无素质时仍出「…的肌肤弄脏了…」，两臂形态
- *     不同，照抄。
+ *     不同，照原样保留。
  */
 function emit_intercrural_ejaculation() {
   const target = era_flag.target;
@@ -550,9 +550,9 @@ function emit_ejaculation_chain() {
  * 之后的场面，并按源侧写回 `TFLAG:31 = 0` / `TFLAG:60 = 0`），否则 =
  * **插着**臂（讲还插在里面时对象的反应，只读不写）。
  *
- * 源侧形态 1:1 保留：插着臂普通档把 `SELECTCOM == 27` 写了两遍（:501，于
+ * 形态有意保留：插着臂普通档把 `SELECTCOM == 27` 写了两遍（:501，于
  * 逻辑无影响）；抽出臂的 34（骑乘位）前缀是「阴茎拔出后、」而 20/22 是
- * 「阴茎拔出后、阴部处、」，两支不同样，照抄。
+ * 「阴茎拔出后、阴部处、」，两支不同样，照原样保留。
  */
 function emit_sex_ejaculation() {
   const target = era_flag.target;
@@ -746,7 +746,7 @@ function emit_sex_orgasm_afterglow() {
  * 尿具 = TEQUIP:22（利尿剂）或 TALENT:57（漏尿癖）。**「放尿」支与「失禁」支
  * 的尿具条件不同**（放尿 = 「29 ≥ 5 且有利尿剂」或「29 ≥ 3 且利尿剂＋漏尿
  * 癖」；失禁 = 「29 ≥ 3 且漏尿癖」或「29 ≥ 1 且利尿剂」），四组衣着共用同一
- * 对判据，1:1 照抄。着ぐるみ两处嵌 @PRINT_CLOTHTYPE_SPECIAL、服支嵌
+ * 对判据，照原样保留。着ぐるみ两处嵌 @PRINT_CLOTHTYPE_SPECIAL、服支嵌
  * _MAIN2——ere 侧取该模块的返回串再拼接（出口形态见 page-clothtype.js 头注）。
  */
 function emit_incontinence() {

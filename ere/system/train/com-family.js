@@ -88,8 +88,8 @@ const com_family = new DispatchFamily('COM', DECLARED_COM_IDS);
  * 实现散在各 COMF 文件（@EQUIP_COM11-19 在道具族、43-49 在 SM 族、53-59 在
  * 特殊族、89 在重度族、100/108 在触手族）——随各自指令族票注册。
  *
- * EQUIP_COM_CHAIN 逐项照抄原作 SIF 链：[TEQUIP 位, EQUIP_COM 号]，两处不是
- * 一一对应（TEQUIP:90 → EQUIP_COM100、TEQUIP:98 → EQUIP_COM108），链序即
+ * EQUIP_COM_CHAIN 逐项对应 source-check.js 的装备 SIF 链：[TEQUIP 位,
+ * EQUIP_COM 号]，两处不是
  * 执行序（各号的写入都落在同一批 SOURCE/UP 格上，顺序影响结果）。
  */
 const EQUIP_COM_CHAIN = [

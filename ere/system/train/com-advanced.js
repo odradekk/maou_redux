@@ -454,7 +454,8 @@ function source120() {
     set_src(cid, 15, 3000);
   }
 
-  // PALAM:13 是源侧原文（COMF20 写 PALAM:5）；本票 1:1 保留
+  // 本条按抑郁（PALAM:13）分档；同族另一条指令的同名分档按欲情（PALAM:5）——
+  // 两处判据不同是既有行为，不统一
   if (palam(cid, 13) < PALAMLV[1]) {
     times_src(cid, 1, 0.6);
     times_src(cid, 3, 0.3);

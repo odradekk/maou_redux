@@ -2,15 +2,15 @@
  * @file 调教指令 200–207「死斗场与怪物」族：@COM200–207 真身 + @COM_ABLE200–207
  * 可用性判定 + TRAIN_MESSAGE 分支（issue #230 / 阶段 4 轴 A J20）。
  *
- * == 本族的三个结构事实（源侧查实） ==
+ * == 本族的三个结构事实 ==
  *
  * 1. **@COM_AFTER_ARENA / @ARENA_SLAVE_POINT / @ARENA_ASSI_POINT 是别族的
- *    前置**：COMF208_触手.ERB（J17 #227）调用前两者。三者随本文件导出
+ *    前置**：触手族（J17 #227）调用前两者。三者随本文件导出
  *    （com_after_arena / arena_slave_point / arena_assi_point），J17 接线时
  *    复用、勿重写。
- * 2. **@EQUIP_COM200（:40-68）是死代码不移植**：全库唯一潜在调用方
- *    SYSTEM_SOURCE.ERB 的装备 SIF 链（:59-120）枚举 11/13-19/43-47/49/53-
- *    59/89/90/98，不含 55——定义了但永不执行。#14 第七批登记。
+ * 2. **装备持续效果位 200 无消费点，不注册**：全库装备 SIF 链
+ *    （source-check.js 按链序遍历）枚举 11/13-19/43-47/49/53-59/89/90/98，
+ *    不含 55——定义了也永不执行。
  * 3. **@COM 返回 0 = 回合作废**（引擎 Process.SystemProc.cs 的 endCallComXX：
  *    RESULT == 0 → 不进 SOURCE_CHECK/EVENTCOMEND、PREVCOM 不推进、回合画面
  *    重开）。本族是全库首批真实 RETURN 0 路径的族（COM201 的「暂时放过」
@@ -25,8 +25,8 @@
  *     （域内属主）；
  *   - 跨域写走门面：BASE:ASSI:0/1（属主 dungeon，COM201 反击支）与
  *     EXP:20/50/52/53（同属 dungeon，怪物射精/扩张）经 chara(cid).dungeon；
- *   - CFLAG:0:9 是**字面角色 0**（魔王等级，源侧与 CFLAG:PLAYER:9 的不对称
- *     1:1 保留：难度按魔王等级缩放、可用性门槛按调教者等级判）。
+ *   - CFLAG:0:9 是**字面角色 0**（魔王等级）。战斗段按魔王等级缩放、可用性
+ *     门槛（CFLAG:PLAYER:9）按调教者等级判——两处等级有意不对称。
  *
  * == 凌辱菜单的记名差异（PR #53 通则，dungeon-setup/com-register 先例） ==
  *
@@ -75,8 +75,8 @@ const MASTER = 0;
 /** PBAND:0（EVENTFIRST 置 4）——ITEM:PBAND 即 ITEM:4 假阳具（持有判定） */
 const PBAND = 4;
 
-// 凌辱标题的主体・动作分隔（COMF201:78 等的 ＜助手・口交＞ 一族）：・ 是
-// 原作样式，逐字照抄——lang-table.js 的 EXEMPT_STRINGS 有本字面量的整串
+// 凌辱标题的主体・动作分隔（＜助手・口交＞ 一族的间隔号）：全角「・」是
+// 标题排版的组成部分——lang-table.js 的 EXEMPT_STRINGS 有本字面量的整串
 // 豁免（#212/#213 的 COMPOUND_SEP 同款处置，动态拼名走本常量）
 const MONSTER_SEP = '・';
 
@@ -123,7 +123,7 @@ async function com200() {
     era.add(`delta:${target}:10`, a * 20); // UP:10（恐怖）
     era.add(`source:${target}:14`, a * 5); // SOURCE:14（逃离）
   }
-  // T = 0 —— 死写（全库无读者，#14 第七批），不移植
+  // T = 0 —— 死写（全库无读者），不移植
   return 1;
 }
 
@@ -146,7 +146,7 @@ async function com_after_arena() {
   }
 
   era.print('＜奴隶陷落＞');
-  era.set('tflag:401', 1); // （全库无读者，1:1 死写保留）
+  era.set('tflag:401', 1); // （全库无读者，陷落旗标照写）
 
   if (era_flag.assi === era_flag.player) {
     // 助手亲自出战且气力 < 上限 1/5 → 助手退却（调教者归还主人）
@@ -253,7 +253,7 @@ function call_insult_com(com) {
 async function com201(rand = default_rand) {
   const target = era_flag.target;
   const assi = era_flag.assi; // SAVESTR:ASSI 的显示名来源
-  // 非助手亲自出战不可执行（与 COM_ABLE201 双保险，1:1 保留）
+  // 非助手亲自出战不可执行（与 COM_ABLE201 双保险）
   if (assi !== era_flag.player) {
     return 0;
   }
@@ -345,7 +345,7 @@ async function com201(rand = default_rand) {
         return 0; // 口交実行不可
       }
       // 死斗场収入（LOSEBASE:0 × 5 + RAND:RESULT；过滤后 RESULT 恒 1，
-      // RAND:1 恒 0——原作算式如此，1:1）
+      // RAND:1 恒 0——按算式照写）
       era.add('tflag:402', lose(target, 0) * 5 + rand(com_result));
     } else if (result === 1) {
       // 助手・胸爱抚（无実行不可检查——COM5 支无結果検査行）
@@ -355,7 +355,7 @@ async function com201(rand = default_rand) {
     } else if (result === 2 && can_vagina) {
       // 助手・背后位
       if (era.get(`talent:${target}:122`)) {
-        return 0; // 対象是男人（菜单已滤，双保险 1:1）
+        return 0; // 対象是男人（菜单已滤，执行侧双保险）
       }
       era.print('＜助手・背后位＞');
       const com_result = await call_insult_com(21);
@@ -399,8 +399,6 @@ async function com201(rand = default_rand) {
  * @property {string} lose_no_stamina 気力 0（或失神）时的文本
  * @property {string} lose_hit 败北追加伤害的文本
  * @property {string} lose_down 気力 < 累计损耗时的倒地文本
- * @property {boolean} [fall_waits=true] 倒地后的＜奴隶陷落＞用 PRINTW（仅
- *   COM204 源是 PRINTL 无等待，false）
  * @property {string} win 奴隶战斗点不低时的文本
  * @property {string} retire 999 的退下文本（前接主人名）
  */
@@ -449,7 +447,6 @@ const MONSTER_CONFIGS = {
     lose_no_stamina: '兽人掰开{t}的双腿，贪婪地嗅着股间的气味。',
     lose_hit: '{t}苦战着兽人的精锐。',
     lose_down: '兽人给予了{t}痛恨一击，击落了她的武器。',
-    fall_waits: false, // PRINTL ＜奴隶陷落＞（其余四体 PRINTW）
     win: '{t}一边躲闪，一边思考如何反击兽人。',
     retire: '让兽人退下了……',
   },
@@ -493,8 +490,8 @@ function monster_extra(cfg, level) {
   return [pick(cfg.extra_lose[0]), pick(cfg.extra_lose[1])];
 }
 
-// 999「暂时放过」的哨兵（与子指令失败 0 / 凌辱成立 1 区分——COM206 的
-// 999 不作废回合，出口与子指令失败不同，见 monster_com）
+// 999「暂时放过」的哨兵（与子指令失败 0 / 凌辱成立 1 区分——monster_com
+// 按它返回 0 作废整条指令，与 COM201 的放过出口一致）
 const RETIRE = Symbol('MONSTER_RETIRE');
 
 /**
@@ -548,7 +545,7 @@ async function monster_insult_menu(cfg, rand) {
           ((era.get(`cflag:${target}:40`) || 0) & 64) !== 0 &&
           era.get('flag:37'))
       ) {
-        return 0; // （按钮已滤显示条件，执行侧双保险 1:1）
+        return 0; // （按钮已滤显示条件，执行侧双保险）
       }
       era.print(`＜${cfg.label}${MONSTER_SEP}背后位＞`);
       const com_result = await call_insult_com(21);
@@ -562,9 +559,8 @@ async function monster_insult_menu(cfg, rand) {
       const com_result = await call_insult_com(27);
       era.add('tflag:402', cfg.income(lose(target, 0)) + rand(com_result));
     } else if (result === 999) {
-      // 暂时放过——出口因文件而异：202-205 源有 RETURN 0（整条
-      // 指令作废）；COM206 缺 RETURN 0（#14 第七批）——照走射精检查并
-      // RETURN 1。两型由 monster_com 按 RETIRE 区分处理
+      // 暂时放过：整条指令作废（monster_com 按 RETIRE 返回 0，
+      // 与 COM201 的放过出口一致）
       era.print(`${chara_callname(MASTER)}${cfg.retire}`);
       await era.waitAnyKey();
       return RETIRE;
@@ -581,8 +577,8 @@ function monster_text(template, target_name) {
 }
 
 /**
- * @COM202–206 的共用主体（五文件同构段；COM206 的三处独有差异——拡張
- * 経験块、999 缺 RETURN 0、陷落行的等待——以 cfg 标记接入）。
+ * @COM202–206 的共用主体（五体同构段；COM206 独有的拡張経験块以 cfg
+ * 标记接入）。
  *
  * @param {number} com 指令号
  * @param {MonsterConfig} cfg
@@ -623,9 +619,7 @@ async function monster_com(com, cfg, rand = default_rand) {
         era.print(monster_text(cfg.lose_down, target_name));
         await era.waitAnyKey();
         era.print('＜奴隶陷落＞');
-        if (cfg.fall_waits !== false) {
-          await era.waitAnyKey(); // PRINTW（COM204 源是 PRINTL，无等待）
-        }
+        await era.waitAnyKey(); // PRINTW（五体统一等键）
       }
     }
   } else {
@@ -644,8 +638,8 @@ async function monster_com(com, cfg, rand = default_rand) {
   if (outcome === 0) {
     return 0; // 子指令失败（:69-70 等的 SIF RESULT == 0 RETURN 0）
   }
-  if (outcome === RETIRE && !cfg.no_999_return) {
-    return 0; // 999 暂时放过（COM206 缺此 RETURN——见 cfg.no_999_return）
+  if (outcome === RETIRE) {
+    return 0; // 999 暂时放过：整条指令作废，不结算怪物射精
   }
 
   // —— COM206 独有：拡張経験（:108-126）——
@@ -802,7 +796,7 @@ async function monster_ejaculation() {
     stain_or(0, 2); // 口
   }
   if (selectcom === 37) {
-    stain_or(0, 8); // 足交（SELECTCOM 37，本族菜单不可达，1:1 保留）
+    stain_or(0, 8); // 足交（SELECTCOM 37 的污渍位——本族菜单不设 37，防御性保留）
   }
   if (selectcom === 21 && e > 0) {
     stain_or(3, 4);
@@ -942,7 +936,7 @@ com_able_family.register(200, async () => {
     return 0;
   }
   // 其余互斥装备（野外/兽奸/使役/触手/淋浴/新妻/浴室/羞耻——
-  // 54/89 与上表重复，源侧冗余 1:1 保留）
+  // 54/89 与上表重复；重复检查无害，保留原链形状）
   if (tequip(54)) {
     return 0;
   }
@@ -987,7 +981,8 @@ com_able_family.register(201, async () => {
 });
 
 // 202-207 共用形状：死斗场中 + 助手调教不可 + （203 起）调教者等级门槛。
-// 等级门槛读 CFLAG:PLAYER:9（与战斗段的 CFLAG:0:9 不对称，1:1 保留）
+// 等级门槛读 CFLAG:PLAYER:9——与战斗段的 CFLAG:0:9 有意不对称：门槛跟
+// 调教者等级走，战斗伤害跟魔王等级走。
 for (const [com, min_level] of [
   [202, 0],
   [203, 20],
@@ -1010,15 +1005,14 @@ for (const [com, min_level] of [
   });
 }
 
-// —— @COM202–206 注册（配置差异见 MONSTER_CONFIGS；206 的两处独有差异
-// （拡張経験块、999 缺 RETURN 0）以标记接入）——
+// —— @COM202–206 注册（配置差异见 MONSTER_CONFIGS；206 独有的拡張経験块
+// 以标记接入）——
 for (const [com, cfg] of Object.entries(MONSTER_CONFIGS)) {
   com_family.register(Number(com), (rand) =>
     monster_com(Number(com), cfg, rand),
   );
 }
 MONSTER_CONFIGS[206].expansion_exp = true; // 拡張経験块（COM206 独有）
-MONSTER_CONFIGS[206].no_999_return = true; // 缺 RETURN 0（#14 第七批）
 
 com_family.register(200, com200);
 com_family.register(201, com201);

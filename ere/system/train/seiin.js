@@ -5,7 +5,7 @@
  * 落地后游玩可达，此前仅测试可驱动）；TFLAG:29 = 绝顶强度
  * （@ECST_CHECK 写，已在库）；TFLAG:899 = 失神中（passout.js 写）——
  * 失神抑制精饮绝顶。FLAG:72 = 系统开关（与 FLAG:70 同形态：全库零写点
- * → 恒开，守卫 1:1 保留）。
+ * → 恒开，守卫照读 flag:72）。
  *
  * 变量语义：TALENT:47 = 喜欢精液；CFLAG:600 = 强制精饮绝顶累计回数；
  * TFLAG:110 = 喜欢精液获得旗（属主 event——写经 game.event 门面）；
@@ -13,8 +13,7 @@
  * EX:13 = 精饮绝顶计数（ex 表，属主 train 直写）；ABL:32 = 精液中毒；
  * SOURCE:5/10/11/13 = 快乐否定 / 屈从 / 饮精 / 中毒源。
  *
- * %SHE()%（:143/:153 等）实参为空 = ARG 0 = MASTER 的代词（passout.js
- * 头注同款怪相，1:1）。
+ * 强制精饮绝顶句的代词取对象角色 she(cid)——按对象的性别显示他/她。
  */
 
 const era = require('#/era-electron');
@@ -185,7 +184,7 @@ async function seiin_compulsion_orgasm(p) {
       `${name_of(cid)}将${era.get('callname:0:-1') ?? ''}射出的精液尽力喝下去了，`,
     );
     era.print('通过持续不断的刺激，');
-    era.print(`强制地让${she(0)}去了……`);
+    era.print(`强制地让${she(cid)}去了……`);
     era.print('异常经验＋１');
     chara(cid).dungeon.异常经验 = chara(cid).dungeon.异常经验 + 1;
   } else {
@@ -195,7 +194,7 @@ async function seiin_compulsion_orgasm(p) {
       `${name_of(cid)}将${era.get('callname:0:-1') ?? ''}射出的精液尽力喝下去了，`,
     );
     era.print('通过持续不断的刺激，');
-    era.print(`强制地让${she(0)}去了……`);
+    era.print(`强制地让${she(cid)}去了……`);
   }
 
   // 达阈值且精液中毒未满 3 → 直接抬到 LV3
