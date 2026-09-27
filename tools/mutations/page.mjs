@@ -3,7 +3,7 @@
 // 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 506; // #643 -1（M11970：病灶 DEBUG_MENU_U 提示已随 #641 删除，变异无行为面）；#641 净 -8（M97、M9723、M11110、M11313/11314/11320/11321/11328/11329、M11573、M11974、M12359 随 trace-check 与判不移植入口删除；+4 M12900/M12901/M12908/M12909 入口删除守卫）；#642 验收 +1（M12942：整屏居中改成左对齐）；#642 返工 -2（M12934/M12935 删：联系方式段整段删除，find 无输出点）+2（M12940/M12941：版本行装饰段与联系方式段复活守卫）；#642 起 -1（M12074 删：致辞钮 9 随名单整段删除，find 无输出点）+6（M12930-M12935：标题画面新游戏信息——硬编码旧名/漏印作者/追加信息与年份守卫拆除/钮 8 复用已删编号 9/联系方式两段互换）；#557 +1（M12359：设置页 [28] 漏 await 的重叠检测直接报错条目）；#615 起 +17（M12240-M12248：print 正文的尾换行——[98]/[99] 确认页两行、RACE_CONFIG 表头/编辑头两行/随机档两个标签、兵器标题与鸡鸡状态回显；M12250-M12253/M12269：完全召唤横幅两行、之间的真空行与 :76 的两个空行、首段短横线与尾随两空格；M12254-M12256：ENEMY_EXIST2 首行空行与空名单分支）；#596 起 +15（M12070-M12080 与 M12087-M12090：print 之后多补的空行普查——能力值提升的两处补回、保有珠一览的真空行删除、个别信息页（有按钮/无按钮两侧）/标题画面/服饰店/献祭出口与名单轮/角色状态块的补回与删除）；#606 起 +9（M12200-M12205：包装入口恒回 0——透传的旧写法复原、恒回 1、1200 分支绕开包装、两支分发都走包装、1 上浮删除、判据错位；返工 M12206-M12208：转职 2 档不结束本回合——内层守卫删除/写成 >= 1/truthy 三种，2 外泄直达名册必须红）；#593 起 +1（M11986：换号页的行快捷键退化为固定编号——同屏核对的登记项失效守卫）；#592 起 +5（M11970-M11974：店内 999 是退出商店——删 return 的旧写法复原、:45 CLEAR_SHOP 的在售位清理、BOUGHT == 0 下界、退出键编号、调试后门仍只走非购物态）；#562 起 +7（M11860-M11863/M11869/M11870/M11873：PRINTLC 与 PRINTBUTTON 的收尾行不产生空行；方格之后那一个是真空行）；#567 起 +1（M11838：故事命名的空输入语义，0 ＝ 空输入）；#563 起 +8（M11720-M11727：ENEMY_EXIST2 名字对齐——静态保留、全角 2 格计宽、两处补齐既不能删也不能退回按字符数计、宽度按全部筛出角色取最长）；#549 起 +1（M11640：设置页 [3] 状态行读位错——自动处刑 e2e 唯一守卫）；#548 起 +5（M11480-M11484：SHOW_FLOOR 真身——LIMIT 钳制、+30 段
+export const COUNT = 510; // #652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+18 新守卫 M13200-M13217）
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -120,9 +120,9 @@ export default [
     file: 'ere/page/page-select-target.js',
     // #395 起 show_list_assistable 复制了同一条件表达式，find 收窄到
     // trainable.forEach 起始的整段（含两行注释）以恰中一处
-    find: '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗——原作缺陷的修正移植，见文件头）\n    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
+    find: '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗（修正了旧版按角色号开窗的错位），见文件头）\n    if (index >= no_page * num_page && index < (no_page + 1) * num_page) {',
     replace:
-      '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗——原作缺陷的修正移植，见文件头）\n    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
+      '  trainable.forEach((cid, index) => {\n    // 显示窗口 [no_page*num_page+1, (no_page+1)*num_page+1)（1 起序号，\n    // 按可训练序号开窗（修正了旧版按角色号开窗的错位），见文件头）\n    if (index > no_page * num_page && index < (no_page + 1) * num_page) {',
     tests: ['page-select-target'],
     must_mention: '翻页',
   },
@@ -481,7 +481,7 @@ export default [
     // 的是判据整支的存在：删掉后新档永远到不了 ENDING_1（循环不停止）
     desc: 'M220 人间界结局判据整支删除（#120 端到端：新档循环永不停止）',
     file: 'ere/page/page-invasion.js',
-    find: '  // 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1\n  if (\n    era_flag.human_realm_invasion >= 10000 &&\n    era_flag.human_realm_fallen === 0\n  ) {\n    // QUIT 是 throw 型（#148，引擎 quit() 抛 Error("quit")）：选 [1] 退出\n    // 时异常在 ending_1 内部炸穿，下面两行不可达——原作 QUIT 后 :1003-1004\n    // 同样不可达，靠的也是异常炸穿而非哨兵短路（旧写法 ended !== 1 是夹具\n    // 降格期发明的机制，#148 拆除；真机上该判断唯一可达的出口只有「正常\n    // 返回 0」——见 event-ending.js 的 JSDoc）。调用链上任何一层都不得\n    // try/catch 吞掉这个异常，夹具同款 throw 由测试钉住\n    await ending_1();\n    era_exflag.prestige = era_exflag.prestige + 10; // EX_FLAG:99 += 10\n    era.print(\'声望+10\'); // PRINTL\n    return;\n  }',
+    find: '  // 人间界：FLAG:81 >= 10000 && FLAG:82 == 0 → ENDING_1\n  if (\n    era_flag.human_realm_invasion >= 10000 &&\n    era_flag.human_realm_fallen === 0\n  ) {\n    // QUIT 是 throw 型（#148，引擎 quit() 抛 Error("quit")）：选 [1] 退出\n    // 时异常在 ending_1 内部炸穿，下面两行不可达——QUIT 之后的收尾同样\n    // 同样不可达，靠的也是异常炸穿而非哨兵短路（旧写法 ended !== 1 是夹具\n    // 降格期发明的机制，#148 拆除；真机上该判断唯一可达的出口只有「正常\n    // 返回 0」——见 event-ending.js 的 JSDoc）。调用链上任何一层都不得\n    // try/catch 吞掉这个异常，夹具同款 throw 由测试钉住\n    await ending_1();\n    era_exflag.prestige = era_exflag.prestige + 10; // EX_FLAG:99 += 10\n    era.print(\'声望+10\'); // PRINTL\n    return;\n  }',
     replace: `  // 变异：人间界判据整支删除
   if (false) {
     return;
@@ -598,15 +598,6 @@ export default [
         }`,
     tests: ['page-save-load'],
     must_mention: 'EX_FLAG:2801 < 10 → 10',
-  },
-  {
-    desc: 'M232 反向钉：把 @SYSTEM_LOADEND 的尾行输出接上读档成功路径（#14 登记的死代码）',
-    file: 'ere/page/page-save-load.js',
-    find: `      if (await era.loadData(result)) {`,
-    replace: `      if (await era.loadData(result)) {
-        era.print('兼容性修正中……'); // 变异：模拟接上 @SYSTEM_LOADEND`,
-    tests: ['page-save-load'],
-    must_mention: '@SYSTEM_LOADEND 是死代码',
   },
   {
     desc: 'M233 存读档指针初始化被删（EVENTFIRST 不再写 -1，#136 返工——fillData 补 0 会冒充 0 号槽）',
@@ -741,17 +732,6 @@ export default [
   }`,
     tests: ['page-dungeon-info'],
     must_mention: '阶层 2 排在阶层 5 前',
-  },
-  {
-    desc: 'M564 SETUP 宝物判定被「修好」（原作 ELSEIF Z > 300 漏掉 300 本身，#14 登记的原作缺陷照抄——修好必须红）',
-    file: 'ere/page/page-dungeon-setup.js',
-    find: '        } else if (z > 300) {\n          // 宝物：Y = X + 340\n          flag_set(floor + 340, z);\n        }',
-    replace: `        } else if (z >= 300) {
-          // 变异：修好了原作缺陷（ELSEIF Z > 300 漏 300）
-          flag_set(floor + 340, z);
-        }`,
-    tests: ['page-dungeon-setup'],
-    must_mention: '原作缺陷照抄',
   },
   {
     desc: 'M565 ROOM_SETUP 设施改造的扣款删除（10000p 双减，:300-301）',
@@ -1768,9 +1748,9 @@ export default [
   {
     desc: 'M9713 天神宫已征服门槛挪走（shrine_stage >= 4 改 > 4，INVASION.ERB:73-76）',
     file: 'ere/page/page-invasion.js',
-    find: "  if (era_exflag.shrine_stage >= 4) {\n    era.printButton('- 巡视淫乱意志的神宫（已征服）', 5); // INVASION.ERB:74\n  } else if (era_exflag.shrine_stage >= 1) {",
+    find: "    if (era_exflag.shrine_stage >= 4) {\n      era.printButton('- 巡视淫乱意志的神宫（已征服）', 5);",
     replace:
-      "  if (era_exflag.shrine_stage > 4) {\n    era.printButton('- 巡视淫乱意志的神宫（已征服）', 5); // INVASION.ERB:74（变异：门槛挪走）\n  } else if (era_exflag.shrine_stage >= 1) {",
+      "    if (era_exflag.shrine_stage > 4) {\n      era.printButton('- 巡视淫乱意志的神宫（已征服）', 5); // 变异：门槛挪走",
     tests: ['page-invasion'],
     must_mention: '[5] 按钮文案',
   },
@@ -1826,7 +1806,7 @@ export default [
     replace:
       '    if (result === 5 && era_exflag.route_33 > 500) { // 变异：拒收判据反向',
     tests: ['page-invasion'],
-    must_mention: '重问耗尽预置输入而不是转发到地区续接',
+    must_mention: '守卫之后的分派一行都不许发生',
   },
   {
     desc: 'M9720 shrine_stage >= 3 副作用门槛挪走（改 > 3，INVASION.ERB:136-137）',
@@ -1867,9 +1847,9 @@ export default [
   {
     desc: 'M9725 天神宫状态条优先级改成和按钮一样（返工#2 P2，INVASION.ERB:45）',
     file: 'ere/page/page-invasion.js',
-    find: "  if (route_33_open) {\n    print_progress_line('天神宫侵攻度', era_exflag.shrine_invasion, 10000);\n  } else if (era_exflag.shrine_stage >= 4) {\n    print_progress_line(\n      '淫乱意志的神宫侵攻度',\n      era_exflag.shrine_invasion,\n      10000,\n    );\n  }",
+    find: "  if (route_33_open) {\n    print_progress_line('天神宫侵攻度', era.get('flag:101') || 0, 10000);\n  } else if (era_exflag.shrine_stage >= 4) {\n    print_progress_line(\n      '淫乱意志的神宫侵攻度',\n      era.get('flag:101') || 0,\n      10000,\n    );\n  }",
     replace:
-      "  if (era_exflag.shrine_stage >= 4) {\n    print_progress_line(\n      '淫乱意志的神宫侵攻度',\n      era_exflag.shrine_invasion,\n      10000,\n    );\n  } else if (route_33_open) {\n    print_progress_line('天神宫侵攻度', era_exflag.shrine_invasion, 10000); // 变异：优先级颠倒\n  }",
+      "  if (era_exflag.shrine_stage >= 4) {\n    print_progress_line(\n      '淫乱意志的神宫侵攻度',\n      era.get('flag:101') || 0,\n      10000,\n    );\n  } else if (route_33_open) {\n    print_progress_line('天神宫侵攻度', era.get('flag:101') || 0, 10000); // 变异：优先级颠倒\n  }",
     tests: ['page-invasion'],
     must_mention: '进度条应渲染',
   },
@@ -2825,7 +2805,7 @@ export default [
     find: '      const gained = Math.trunc(sinkou / 5);',
     replace: '      const gained = Math.trunc(sinkou / 4);',
     tests: ['page-invasion'],
-    must_mention: '无实参检查',
+    must_mention: '胜利经验 SINKOU/5',
   },
   {
     desc: 'M10806 SEIEI 的 FLAG:60 等级补正系数改坏（10 * 改 5 *）',
@@ -3209,7 +3189,7 @@ export default [
     find: '    area: 86,\n    sindo: 87,',
     replace: '    area: 88,\n    sindo: 87, // 变异：AREA 改坏',
     tests: ['page-invasion'],
-    must_mention: '累加进 FLAG:86',
+    must_mention: '1900 + 400：累加进 FLAG:',
   },
   {
     desc: 'M10851 地区表的 SINDO 改坏（精灵族领域 87 → 89，INVASION.ERB:114-115）',
@@ -3217,7 +3197,8 @@ export default [
     find: '    area: 86,\n    sindo: 87,',
     replace: '    area: 86,\n    sindo: 89, // 变异：SINDO 改坏',
     tests: ['page-invasion'],
-    must_mention: '走已征服臂',
+    must_mention:
+      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
   },
   {
     desc: 'M10852 侵攻度累加写到 EX_FLAG 侧（FLAG:AREA → EX_FLAG:AREA）',
@@ -3226,43 +3207,7 @@ export default [
     replace:
       '  era.set(`exflag:${region.area}`, Math.min(next, 10000)); // 变异：写侧换表',
     tests: ['page-invasion'],
-    must_mention: '累加进 FLAG:86',
-  },
-  {
-    desc: 'M10853 侵攻度读点的表判据改坏（AREA > 100 改 > 200，:165/:752-755）',
-    file: 'ere/page/page-invasion.js',
-    find: "  const table = use_exflag && region.area > 100 ? 'exflag' : 'flag';",
-    replace:
-      "  const table = use_exflag && region.area > 200 ? 'exflag' : 'flag'; // 变异：判据改坏",
-    tests: ['page-invasion'],
-    must_mention: '出兵菜单的进度条读 EX_FLAG:101',
-  },
-  {
-    desc: 'M10854 侵攻度读点的表对调（use_exflag 语义反转）',
-    file: 'ere/page/page-invasion.js',
-    find: "  const table = use_exflag && region.area > 100 ? 'exflag' : 'flag';",
-    replace:
-      "  const table = use_exflag && region.area > 100 ? 'flag' : 'exflag'; // 变异：表对调",
-    tests: ['page-invasion'],
-    must_mention: '结果段的进度条读本地区的侵攻度',
-  },
-  {
-    desc: 'M10855 [0] 结果段的进度条改用 EX_FLAG（原作 :664 只写 FLAG:AREA）',
-    file: 'ere/page/page-invasion.js',
-    find: '  // 侵攻度条 + DRAWLINE + WAIT（进度条一律读 FLAG:AREA，:664）\n  era.drawLine();\n  print_progress_line(\n    region.result_label,\n    region_progress(region, false),\n    10000,\n  );',
-    replace:
-      '  // 变异：进度条改读 EX_FLAG\n  era.drawLine();\n  print_progress_line(\n    region.result_label,\n    region_progress(region, true),\n    10000,\n  );',
-    tests: ['page-invasion'],
-    must_mention: '[0] 结果段的进度条一律读 FLAG:AREA',
-  },
-  {
-    desc: 'M10856 [0] 的已征服臂补上天神宫（原作 :624-646 漏列 101）',
-    file: 'ere/page/page-invasion.js',
-    find: 'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90];',
-    replace:
-      'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101]; // 变异：补上 101',
-    tests: ['page-invasion'],
-    must_mention: '落 ELSE 臂',
+    must_mention: '1900 + 400：累加进 FLAG:',
   },
   {
     desc: 'M10857 [2] 结果段的地区名写死人间界（:762-773 的 PRINT 分派丢失）',
@@ -3298,14 +3243,6 @@ export default [
     must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
   },
   {
-    desc: 'M10861 地区表的 KYOTEN 实参改坏（精灵族领域 2 → 4，:987）',
-    file: 'ere/page/page-invasion.js',
-    find: '    ravish_area: 2,\n    kyoten_arg: 2,',
-    replace: '    ravish_area: 2,\n    kyoten_arg: 4, // 变异：KYOTEN 实参改坏',
-    tests: ['page-invasion'],
-    must_mention: 'KYOTEN_EVENT 走 ARG 2 臂',
-  },
-  {
     desc: 'M10862 天神宫补上 KYOTEN 实参（原作 :983-994 没有 101 臂）',
     file: 'ere/page/page-invasion.js',
     find: '    ravish_area: 5,\n    kyoten_arg: null,',
@@ -3320,33 +3257,7 @@ export default [
     find: '    return await start_campaign(rand, CAMPAIGN_REGIONS[result]);',
     replace: '    return await start_campaign(rand); // 变异：地区泛化丢失',
     tests: ['page-invasion'],
-    must_mention: '累加进 FLAG:86',
-  },
-  {
-    desc: 'M10864 三臂的命中判据反转（=== stage 改 !== stage，命中档时反而不打星号）',
-    file: 'ere/page/page-invasion.js',
-    find: '  if (kyoten_next_stage(progress, stage) === stage) {\n    return 0; // 未命中任何档：空转\n  }',
-    replace:
-      '  if (kyoten_next_stage(progress, stage) !== stage) { // 变异：判据反转\n    return 0;\n  }',
-    tests: ['page-invasion'],
-    must_mention: '档内只剩一行星号',
-  },
-  {
-    desc: 'M10865 三臂把推进赋值补回去（原作注释态被「修好」，#14 登记的缺陷）',
-    file: 'ere/page/page-invasion.js',
-    find: '  // 的十处：档内只剩这一行星号（推进赋值被注释，不写回状态字）\n  era.print(BANNER_STAR);',
-    replace:
-      '  // 变异：把推进赋值补回去\n  era.print(BANNER_STAR);\n  era.set(`flag:${arm.stage}`, kyoten_next_stage(progress, stage));',
-    tests: ['page-invasion'],
-    must_mention: '的推进赋值在汉化版被注释',
-  },
-  {
-    desc: 'M10866 精灵臂的征服守卫删掉（:108 `IF FLAG:87 == 0`）',
-    file: 'ere/page/page-invasion.js',
-    find: '  if (arm.guard !== undefined && (era.get(`flag:${arm.guard}`) || 0) !== 0) {\n    return 0;\n  }',
-    replace: '  // 变异：精灵臂的征服守卫删除',
-    tests: ['page-invasion'],
-    must_mention: '精灵臂的 FLAG:87 == 0 守卫',
+    must_mention: '1900 + 400：累加进 FLAG:',
   },
   {
     desc: 'M10867 出兵菜单的地区标签改坏（精灵族领域的侵攻度 → 侵攻度，:156）',
@@ -3482,8 +3393,8 @@ export default [
       '    if (result === 5 && era_exflag.route_33 < 500) { // 变异：上界挪一格',
     tests: ['page-invasion'],
     test_name:
-      '征服后菜单 [5] 拒收判断条件的两侧边界：route_33 = 500 拒收 / 501 放行（:100-101）',
-    must_mention: 'route_33 = 500 仍在拒收侧：不得落进天神宫的出兵菜单',
+      '征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入仍被 result >= 6 || < 0 拒收（INVASION.ERB:102-105）',
+    must_mention: '守卫之后的分派一行都不许发生',
   },
   {
     desc: 'M11480 SHOW_FLOOR 漏 LIMIT 钳制（ARG 直用：0 与 99 不再落到边界层）',
@@ -3526,14 +3437,6 @@ export default [
       '        `${String(count).padStart(2)}只${monstername(base_slot + i)}`, // 变异：对齐反向',
     tests: ['page-shop-floor'],
     must_mention: '怪物行（数量左对齐两位）',
-  },
-  {
-    desc: 'M11490 SHOW_FLOOR 路径的护卫名单退回按实参判断（floor === 10：1-9 层漏掉护卫行——原作判据是全局 X == 10，#548）',
-    file: 'ere/page/page-dungeon-info2.js',
-    find: '  if (x_is_10) {',
-    replace: '  if (floor === 10) { // 变异：退回按实参判断',
-    tests: ['page-shop-floor'],
-    must_mention: '1-9 层也出护卫行',
   },
   {
     desc: 'M11491 护卫行编号丢宽度（[{COUNT,2}] 的右对齐改成 [{COUNT}]，个位编号不再补空格）',
@@ -4097,49 +4000,15 @@ export default [
     tests: ['child-id-collision'],
     must_mention: '必须至少有一轮打角色行',
   },
-  // —— #606：CHARA_INFO_INDIVIDUAL_WAPPED 无 RETURN，RESULT 被清 0（包装入口恒回 0） ——
+  // —— #652：包装入口透传内层返回值（旧写法把内层返回值清 0，#652 改正） ——
   {
-    desc: 'M12200 包装入口改回透传内层返回值（#606 的旧写法复原：原作 :829 的 CALL 后无 RETURN，Emuera 把 RESULT 置 0）',
+    desc: 'M12201 包装入口透传改成恒回 1（#652 改正后任何收尾都被当成回合结束）',
     file: 'ere/page/page-chara-info.js',
-    find: `async function chara_info_individual_wrapped(cid) {
-  await chara_info_individual(cid, number_view_order());
-  return 0;
-}`,
-    replace: `async function chara_info_individual_wrapped(cid) {
-  return chara_info_individual(cid, number_view_order()); // 变异：透传内层返回值
-}`,
-    tests: ['page-chara-info'],
-    must_mention: '内层返回 1 也被清 0',
-  },
-  {
-    desc: 'M12201 包装入口恒回 0 改成恒回 1（1200 视图下任何收尾都结束本回合）',
-    file: 'ere/page/page-chara-info.js',
-    find: `  await chara_info_individual(cid, number_view_order());
-  return 0;`,
+    find: `  return chara_info_individual(cid, number_view_order());`,
     replace: `  await chara_info_individual(cid, number_view_order());
   return 1; // 变异：恒回 1`,
     tests: ['page-chara-info'],
     must_mention: '「返回」回名册、[999] 退出',
-  },
-  {
-    desc: 'M12202 名册 1200 分支绕开包装直调内层（修复前的内联形态，吞 1 语义丢失）',
-    file: 'ere/page/page-chara-info.js',
-    find: `        sort_select === 1200
-          ? await chara_info_individual_wrapped(result)`,
-    replace: `        sort_select === 1200
-          ? await chara_info_individual(result, number_view_order()) // 变异：绕开包装直调内层`,
-    tests: ['page-chara-info'],
-    must_mention: '婚礼之后名册重绘（初始一次 + 回列表一次）',
-  },
-  {
-    desc: 'M12203 名册两支分发都走包装入口（直调内层那条路的 1 也被吞，1300 视图不再结束本回合）',
-    file: 'ere/page/page-chara-info.js',
-    find: `          ? await chara_info_individual_wrapped(result)
-          : await chara_info_individual(result, order);`,
-    replace: `          ? await chara_info_individual_wrapped(result)
-          : await chara_info_individual_wrapped(result); // 变异：两支都走包装`,
-    tests: ['page-chara-info'],
-    must_mention: '直接调内层的视图：返回 1 结束本回合',
   },
   {
     desc: 'M12204 名册删掉「内层返回 1 就结束本回合」的上浮（任何视图都不结束）',
@@ -4760,5 +4629,164 @@ export default [
       "  era.setAlign('left'); // 原作 :20-21 ALIGNMENT CENTER，本屏全部居中",
     tests: ['page-title'],
     must_mention: '标题画面整屏居中：首个 setAlign 必须是 center',
+  },
+  // —— #652：F6 界面缺陷修复的新行为守卫 ——
+  {
+    desc: 'M13200 据点事件三臂恢复星号输出（#652 删掉的反复弹星号复原）',
+    file: 'ere/page/page-invasion.js',
+    find: '  // 精灵/龙/天界三臂：不输出、不推进（见函数头注释）\n  return 0;',
+    replace:
+      '  // 变异：三臂恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
+    tests: ['page-invasion'],
+    must_mention: '三臂空转不打星号',
+  },
+  {
+    desc: 'M13201 侵攻度读点对天神宫读回 EX_FLAG 侧（#652 统一的 FLAG 读点被拆）',
+    file: 'ere/page/page-invasion.js',
+    find: 'function region_progress(region) {\n  return era.get(`flag:${region.area}`) || 0;\n}',
+    replace:
+      'function region_progress(region) {\n  // 变异：天神宫读回 EX_FLAG 侧\n  return era.get(`${region.area > 100 ? "exflag" : "flag"}:${region.area}`) || 0;\n}',
+    tests: ['page-invasion'],
+    must_mention: '出兵菜单的进度条读 FLAG:101',
+  },
+  {
+    desc: 'M13202 [0] 已征服臂漏列天神宫复原（#652 补上的 101 被删掉）',
+    file: 'ere/page/page-invasion.js',
+    find: 'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90, 101];',
+    replace:
+      'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90]; // 变异：漏列 101 复原',
+    tests: ['page-invasion'],
+    must_mention:
+      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
+  },
+  {
+    desc: 'M13203 invasion_check 的天神宫死分支复活（#652 删除的 EX_FLAG:101 判据被接回）',
+    file: 'ere/page/page-invasion.js',
+    find: "    era.print('声望+10'); // PRINTL\n    return;\n  }\n}",
+    replace:
+      "    era.print('声望+10'); // PRINTL\n    return;\n  }\n  // 变异：天神宫组复活\n  if (era_exflag.shrine_invasion >= 10000 && era_exflag.shrine_stage === 0) {\n    await require('#/event/event-ending').end10_55();\n    era_exflag.prestige = era_exflag.prestige + 10;\n    era.print('声望+10'); // PRINTL\n  }\n}",
+    tests: ['event-ending'],
+    must_mention: '空转零输出',
+  },
+  {
+    desc: 'M13204 SEIEI 战斗体第一处退场检查退回无实参（#652 补的实参被删，又判魔王自己）',
+    file: 'ere/page/page-invasion.js',
+    find: '    const first_check = await inv_death_check(yusya, seiei);',
+    replace:
+      '    const first_check = await inv_death_check(0, 0); // 变异：退回无实参判魔王',
+    tests: ['page-invasion'],
+    must_mention: '击溃文案的主语是精锐部队',
+  },
+  {
+    desc: 'M13205 FORT 绕路（INV_TYPE == 3）的平安支删除、恒埋伏（#652 补的 RAND:10 被删）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (choice === 3 && inv_type === 3) {\n    if (rand(10) > 0) {',
+    replace:
+      '  if (choice === 3 && inv_type === 3) {\n    if (false) { // 变异：平安支删除、恒埋伏',
+    tests: ['page-invasion'],
+    must_mention: '平安支 RETURN 0',
+  },
+  {
+    desc: 'M13206 [2] 候选资格的助手可守卫删除（#652 按意图补的淘汰被拆）',
+    file: 'ere/page/page-invasion.js',
+    find: '  // 只有助手可（CFLAG:0 == 2）能带队\n  if ((era.get(`cflag:${cid}:0`) || 0) !== 2) return true;',
+    replace: '  // 变异：助手可守卫删除',
+    tests: ['page-invasion'],
+    must_mention: '资格位空（CFLAG:0 == 0）→ 排除：列表不该渲染',
+  },
+  {
+    desc: 'M13207 征服后菜单 [5] 的渲染守卫删除（#652 外提的 route_33 守卫被拆）',
+    file: 'ere/page/page-invasion.js',
+    find: '  if (era_exflag.route_33 > 500) {\n    if (era_exflag.shrine_stage >= 4) {',
+    replace:
+      '  if (true) { // 变异：渲染守卫删除\n    if (era_exflag.shrine_stage >= 4) {',
+    tests: ['page-invasion'],
+    must_mention: '窗口外键入 5：引擎白名单拒收',
+  },
+  {
+    desc: 'M13208 征服后菜单的天神宫侵攻度条读回 EX_FLAG:101（#652 统一的 FLAG:101 读点被拆）',
+    file: 'ere/page/page-invasion.js',
+    find: "    print_progress_line('天神宫侵攻度', era.get('flag:101') || 0, 10000);",
+    replace:
+      "    print_progress_line('天神宫侵攻度', era_exflag.shrine_invasion, 10000); // 变异：读回 EX_FLAG 侧",
+    tests: ['page-invasion'],
+    must_mention: '进度条读 FLAG:101 = 777',
+  },
+  {
+    desc: 'M13209 SETUP 宝物判定漏 300 复原（#652 改的 z >= 300 被改回 z > 300）',
+    file: 'ere/page/page-dungeon-setup.js',
+    find: '        } else if (z >= 300) {',
+    replace: '        } else if (z > 300) { // 变异：漏 300 复原',
+    tests: ['page-dungeon-setup'],
+    must_mention: '宝物 300 写宝箱槽',
+  },
+  {
+    desc: 'M13210 ENEMY_EXIST2 护卫名单判据改坏（#652 的 floor === 10 被拆，近卫层也不出）',
+    file: 'ere/page/page-dungeon-info2.js',
+    find: '  // 护卫名单：只出在近卫层（floor 10），1-9 层不追加\n  if (floor === 10) {',
+    replace:
+      '  // 变异：护卫名单判据改坏（近卫层也不出）\n  if (floor === 10 && false) {',
+    tests: ['page-dungeon-info', 'page-shop-floor'],
+    must_mention: 'floor 10 追加护卫名单',
+  },
+  {
+    desc: 'M13211 名册 1200 包装入口恢复清 0（#652 的透传被拆，结婚又不结束回合）',
+    file: 'ere/page/page-chara-info.js',
+    find: '  return chara_info_individual(cid, number_view_order());',
+    replace:
+      '  await chara_info_individual(cid, number_view_order()); // 变异：恢复清 0\n  return 0;',
+    tests: ['page-chara-info'],
+    must_mention: '婚礼完成透传内层的 1',
+  },
+  {
+    desc: 'M13212 HEXtoDEC 的 ×16 被改回 ×15（#652 改正的进制位权被拆）',
+    file: 'ere/page/page-chara-info-show.js',
+    find: '  dec[0] = digits[0] * 16 + digits[1];',
+    replace: '  dec[0] = digits[0] * 15 + digits[1]; // 变异：×15 笔误复原',
+    tests: ['chara-info-show'],
+    must_mention: '按 ×16 合成三段',
+  },
+  {
+    desc: 'M13213 SHOW_TALENT 魔虫知识（328）的守卫退回笔误形态（读回 327，#652 改正被拆）',
+    file: 'ere/page/components/chara-talents.js',
+    find: '      { id: 328 },',
+    replace: '      { id: 327 }, // 变异：魔虫知识行换成 327',
+    tests: ['chara-info-show'],
+    must_mention: '只设 328 时照出',
+  },
+  {
+    desc: 'M13214 FORT 绕路（INV_TYPE == 3）的 RAND:10 上界改坏（10 改 5，九成平安变五成）',
+    file: 'ere/page/page-invasion.js',
+    find: '    if (rand(10) > 0) {',
+    replace: '    if (rand(5) > 0) { // 变异：上界改坏',
+    tests: ['page-invasion'],
+    must_mention: '绕路掷的是 RAND:10',
+  },
+  {
+    desc: 'M13215 SEIEI 先制守卫的档位除数改坏（SINKOU/2048 改 /1024，守卫与伤害同档）',
+    file: 'ere/page/page-invasion.js',
+    find: '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 2048) + 1);',
+    replace:
+      '      chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1); // 变异：守卫除数改坏',
+    tests: ['page-invasion'],
+    must_mention: '随机序列耗尽或越界',
+  },
+  {
+    desc: 'M13216 FORT 绕路（INV_TYPE == 3）平安支的体力公式改坏（×9/10 改 ×8/10）',
+    file: 'ere/page/page-invasion.js',
+    find: '      chara(yusya).dungeon.体力 = Math.trunc(\n        (chara(yusya).dungeon.体力 * 9) / 10,\n      );',
+    replace:
+      '      chara(yusya).dungeon.体力 = Math.trunc(\n        (chara(yusya).dungeon.体力 * 8) / 10,\n      ); // 变异：体力公式改坏',
+    tests: ['page-invasion'],
+    must_mention: '体力 ×9/10',
+  },
+  {
+    desc: 'M13217 FORT 绕路（INV_TYPE == 3）平安支的播报把勇者的称呼换成姓名（chara_nickname 改 chara_callname）',
+    file: 'ere/page/page-invasion.js',
+    find: '        `${chara_nickname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`,',
+    replace:
+      '        `${chara_callname(yusya)}绕开${info.fort}向${info.place}进发，因为路途遥远地形复杂耗费了一些体力。`, // 变异：称呼换成姓名',
+    tests: ['page-invasion'],
+    must_mention: '勇者用称呼而不是姓名',
   },
 ];

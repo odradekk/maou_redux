@@ -804,12 +804,12 @@ export default [
     must_mention: 'MODE 1：自由文本',
   },
   {
-    desc: 'M11537 输入的字符串化丢失（input_text 的 String(raw) 改直接回 raw——数字输入存成数值，一人称变 8 而非「8」；#567 起转换收进共享判据，条目随真身搬到 utils/input-text.js）',
+    desc: 'M11537 输入的字符串化丢失（input_text 的 String(raw) 改直接回 raw——数字输入存成数值，一人称变 8 而非「8」；#567 起转换收进共享判断条件，条目随真身搬到 utils/input-text.js）',
     file: 'ere/utils/input-text.js',
     find: '  return String(raw);',
     replace: '  return raw;',
     tests: ['input-text', 'chara-self-call'],
-    must_mention: '非数字串原样、数字字符串化（游戏读到的形态）',
+    must_mention: '非数字串原样、数字字符串化（游戏读到的形式）',
   },
   {
     desc: 'M11538 MODE 1 的自定义命中返回值改坏（return 0 改 return 1）',

@@ -10,8 +10,8 @@ const era = require('#/era-electron');
 class DungeonGame {
   // —— flag ——
   /**
-   * 游戏设定（flag:5 ↔ FLAG:5）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:5 ビット演算
+   * 游戏设定（flag:5）
+   * FLAG:5 ビット演算
    * @returns {number}
    */
   get 游戏设定() {
@@ -25,8 +25,8 @@ class DungeonGame {
   }
 
   /**
-   * 肉便器常识改写（flag:63 ↔ FLAG:63）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:63
+   * 肉便器常识改写（flag:63）
+   * FLAG:63
    * @returns {number}
    */
   get 肉便器常识改写() {
@@ -40,8 +40,8 @@ class DungeonGame {
   }
 
   /**
-   * 迷宫模式（flag:502 ↔ FLAG:502）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt FLAG:502
+   * 迷宫模式（flag:502）
+   * FLAG:502
    * @returns {number}
    */
   get 迷宫模式() {
@@ -56,8 +56,8 @@ class DungeonGame {
 
   // —— tflag ——
   /**
-   * 足交射精或处遇口上（tflag:18 ↔ TFLAG:18）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt TFLAG:18
+   * 足交射精或处遇口上（tflag:18）
+   * TFLAG:18
    * @returns {number}
    */
   get 足交射精或处遇口上() {
@@ -72,8 +72,8 @@ class DungeonGame {
 
   // —— item ——
   /**
-   * 无头骑士（item:171 ↔ ITEM:171）
-   * 源: yml/Item.yml id 171
+   * 无头骑士（item:171）
+   * yml/Item.yml id 171
    * @returns {number}
    */
   get 无头骑士() {
@@ -87,8 +87,8 @@ class DungeonGame {
   }
 
   /**
-   * 吸血鬼（item:172 ↔ ITEM:172）
-   * 源: yml/Item.yml id 172
+   * 吸血鬼（item:172）
+   * yml/Item.yml id 172
    * @returns {number}
    */
   get 吸血鬼() {

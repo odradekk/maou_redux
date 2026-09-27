@@ -1,8 +1,8 @@
 /**
  * @file 异界综合征的调教倍率占位数据。
  *
- * 四个加成函数在原作即为空。Y/Y:0..5 是只供这些函数使用的临时数组，
- * ere 侧显式返回，且不把尚未写下的加成效果虚构进调教结算。
+ * 四个加成函数保持为空：Y/Y:0..5 是只供这些函数使用的临时数组，
+ * ere 侧以返回值显式承载，不把尚未写下的加成效果虚构进调教结算。
  */
 
 'use strict';
@@ -15,8 +15,9 @@ function ikai_benkyou_bonus() {}
 function ikai_sentou_bonus() {}
 
 /**
- * @param {number} cid 角色 ID（原作隐式 TARGET）
- * @returns {{overall: number, factors: number[]}|undefined} 原作临时 Y 数组
+ * @param {number} cid 角色 ID
+ * @returns {{overall: number, factors: number[]}|undefined} factors 承载
+ *   临时数组 Y:0..5 的六项倍率
  */
 function ikai_source_check(cid) {
   const level = chara(cid).train.异界综合征;

@@ -116,7 +116,7 @@ function p_c() {
 function command_button_label(adv, id) {
   if (adv === 64 && id !== 64) {
     // PRINTFORMC %TRAINNAME:64%・%TRAINNAME:L_I%（CSV 静态名）。
-    // ・ 是原作的复合动作分隔样式，逐字照抄——TRAIN_NAME:128-132 与
+    // ・ 是复合动作的分隔样式（沿用训练名表的语序），与
     // SHOW_STATUS 的射精行同款处置（lang-table 整串豁免，见 COMPOUND_SEP）
     return `${era.get('traincommandname:64') ?? ''}${COMPOUND_SEP}${
       era.get(`traincommandname:${id}`) ?? ''

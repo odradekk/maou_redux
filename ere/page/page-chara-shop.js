@@ -151,7 +151,7 @@ function chara_ikai_cost(l_i) {
 /**
  * @CHAR_IKAI_APPEND（:435-449）：把编号 arg 的角色加入并做异界人初始化。
  *
- * `TARGET` 的存还（:437 LOCAL = TARGET → :448 TARGET = LOCAL）1:1 保留：
+ * 暂存 TARGET、初始化后还原的等价写法：
  * ere 侧 target 是可读写的具名状态（era_flag.target）。
  *
  * @param {number} arg 角色预设编号（原作 ARG）

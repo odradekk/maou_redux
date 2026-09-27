@@ -3,8 +3,8 @@
  *
  * 页码臂（`ARG:1`）：
  *   -2 贡品时 / -1 调教时 / 0 首页 / 1 状态 / 2 外观 / 3 素质条件。
- *   4 自我介绍页（SHOW_PERSONAL_INFO）结构性不可达——全库无定义、调用方只传
- *   -2/-1/0-3（#14 判死的证据链见下），case 4 随存根机制一并删除（#638）。
+ *   4 自我介绍页（SHOW_PERSONAL_INFO）无定义、调用方只传 -2/-1/0-3，
+ *   结构性不可达，随 #638 一并删除。
  * **进入即换 TARGET、退出即恢复**（源 :25-26 的 `TARGET = ARG` 与 :320-321 的
  * `TARGET = LOCAL:1`）：@LOOK_INFO 等被调段按 TARGET 取语尾口上，不换的话
  * 调用方（如开局形象确认的 -2 页）会拿魔王的口上编号打出一排语尾占位、
@@ -38,12 +38,9 @@
  *   - **名单轮的 `[100] 返回` 改 [999]（#586）**：预设 100「怪物的女儿」能以
  *     ID 100 加入，与原作的 [100] 撞号后这个角色选不中。选点与备选修法的
  *     理由见 LIST_RETURN 的注释；出口轮不打角色行，它的 [100] 保持原作。
- *   - `CALL SHOW_PERSONAL_INFO(ARG)`（:305，CASE 4）全库无定义——不是
- *     「未移植」，是原作 `SELECTCASE ARG:1` 的这一支结构性不可达（全库没有
- *     任何调用点传 `ARG:1 == 4`；`CHARA_INFO ver1.0.1.ERB:948-949` 的翻页
- *     逻辑把 `NO_SUB_PAGE` 钳在 ≤3）。已按 #14 判死不实现，本文件保留这
- *     一行占位是 1:1 追溯（`page-chara-info.js:690` 的 `case 102` 同样把
- *     `sub_page` 钳在 <3，两处互相印证）。
+ *   - CASE 4（自我介绍页，`CALL SHOW_PERSONAL_INFO`）全库无定义、调用方
+ *     只传 -2/-1/0-3，结构性不可达，随 #638 一并删除（page-chara-info.js
+ *     的 `case 102` 同样把 `sub_page` 钳在 <3，两处互相印证）。
  */
 
 const era = require('#/era-electron');
@@ -146,9 +143,8 @@ const LIST_RETURN = 999;
  * @HEXtoDEC（:1765-1822）：`0xRRGGBB` 拆成三段十进制。
  *
  * `TOSTR hex,hexS` 把颜色整数转成 6 位十六进制串（源里随即逐位 SUBSTRING 并
- * 认 A-F，非十六进制串解释不出那六个 CASE），本实现按同样形态取值。**三段
- * 的合成用的是 ×15 而不是 ×16**（:1818-1820）——原作自身的进制笔误，1:1 保留。
- *
+ * 认 A-F，非十六进制串解释不出那六个 CASE），本实现按同样形态取值。三段按
+ * 十六进制位权合成（×16）。
  * @param {number} hex 颜色整数（源 GETBGCOLOR 的返回值）
  * @param {number[]} dec 输出数组（源 `#DIM REF dec,0` 的 RESULT，写 dec[0..2]）
  */
@@ -162,17 +158,16 @@ function hex_to_dec(hex, dec) {
     const value = Number.parseInt(ch, 16);
     return Number.isNaN(value) ? 0 : value;
   });
-  dec[0] = digits[0] * 15 + digits[1];
-  dec[1] = digits[2] * 15 + digits[3];
-  dec[2] = digits[4] * 15 + digits[5];
+  dec[0] = digits[0] * 16 + digits[1];
+  dec[1] = digits[2] * 16 + digits[3];
+  dec[2] = digits[4] * 16 + digits[5];
 }
 
 /**
  * @ColorJudgmentWorB（:1824-1833）：按背景三段的均值挑白字还是黑字。
  *
- * 均值取 `dec[0..2]`（源 :1827 读 `colorValue:0/:1/:2`），写回的是
- * `dec[1..3]`（:1828/:1830 的多重赋值）——读写错开一位是原作自身的偏移，
- * 1:1 保留（结果仍是三通道同值）。
+ * 均值取 `dec[0..2]`，写回的是 `dec[1..3]`——读写错开一位，结果仍是
+ * 三通道同值。
  *
  * @param {number[]} dec 颜色三段（就地改写）
  * @returns {void}
@@ -241,7 +236,7 @@ async function sacrifice_flow(cid, background) {
     era.setColor(`rgb(${dec[1]},${dec[2]},${dec[3]})`); // SETCOLOR
     era.setAlign('center'); // ALIGNMENT CENTER
     // 横幅第一行：`"-"*16` + `PRINTFORM  魔王之影 『 … 』 ` + `"-"*16` +
-    // `"\s"*2`（尾随两个空格照抄）+ `"\n"*2`——头一个 \n 收行，第二个是
+    // `"\s"*2`（尾随两个空格）+ `"\n"*2`——头一个 \n 收行，第二个是
     // 两行横幅之间的真空行（#615）
     era.print(
       `${dashes()} 魔王之影 『 ${chara_callname(shadow)} 』 ${dashes()}  `,
@@ -522,16 +517,15 @@ async function show_chara_info_body(cid, page, rand, background) {
         // 素质条件页
         show_talent_condition(cid);
         era.drawLine();
-        // 按源序取 TALENTNAME 的 74 / 78 / 75 / 77（弄乳狂、性爱狂、
-        // 尻穴狂、自慰狂——编号不是升序，1:1 保留）
+        // 按 TALENTNAME 的 74 / 78 / 75 / 77 取（弄乳狂、性爱狂、
+        // 尻穴狂、自慰狂——编号不是升序，顺序是既有显示契约）
         era.print(
           `※ ${era.get('talentname:74') ?? ''}、${era.get('talentname:78') ?? ''}、${era.get('talentname:75') ?? ''}、${era.get('talentname:77') ?? ''}每获得一项，其他素质的获得要求便会上升，素质获得后条件将会隐藏；`,
         );
         era.print('※ 润滑与欲情每10000积蓄一点；【威压感】需要调教致死三人');
         break;
-      // case 4（:304-306 自我介绍页）随 #638 删除：SHOW_PERSONAL_INFO 全库无
-      // 定义、调用方只传 -2/-1/0-3，原作结构性不可达（#14 判死，文件头有
-      // 完整证据链）
+      // case 4（自我介绍页，SHOW_PERSONAL_INFO）无定义、调用方只传
+      // -2/-1/0-3，结构性不可达，随 #638 一并删除（证据链见文件头）
       default:
         break;
     }

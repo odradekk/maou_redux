@@ -1,7 +1,7 @@
 /**
  * 奴隶出售流程测试（issue #339）。
  *
- * 接缝 = ere/system/stronghold/sale.js 导出的五个原作函数；通过唯一夹具
+ * 接缝 = ere/system/stronghold/sale.js 导出的五个函数；通过唯一夹具
  * 观察玩家输出、输入、资金与角色除名，不断言模块内部辅助函数。
  */
 
@@ -19,9 +19,9 @@ function seed_world(fixture) {
   era_flag.target = 31;
   era_flag.assi = -1;
   era_flag.money = 100;
-  // 商店轮的入口状态（@EVENTFIRST:27 → event-first.js:109，进店时 @EVENTSHOP
-  // 再置一次）：直调 usershop 的用例必须站在真实入口状态上——夹具存储默认空
-  // 时 era_flag.bought 读回 0，而 0 在店内购物段的判据里是「刚买了 0 号商品」，
+  // 商店轮的入口状态（event-first.js 初始化，进店时 page-shop.js 再置一次）：
+  // 直调 usershop 的用例必须站在真实入口状态上——夹具存储默认空
+  // 时 era_flag.bought 读回 0，而 0 在店内购物段的判断条件里是「刚买了 0 号商品」，
   // #396 接通该段后会吞掉全部输入。
   era_flag.bought = -1;
   fixture.era.beginTrain(...fixture.era.getAddedCharacters());
@@ -150,13 +150,13 @@ test('SALE_CHARA：取消后不结算并返回 -1', async () => {
   assert.equal(await sale_chara(31, { rand: seq([0]) }), -1);
   assert.equal(era_flag.money, 100);
   assert.equal(fixture.store.get('exflag:4444'), undefined);
-  // #612：确认两键的正文照写原作（SELL_CHARA.ERB:422-423）
+  // #612：两键正文带「- 」是有意保留的格式
   assert.deepEqual(
     fixture.lines
       .filter((line) => line.type === 'button')
       .map((line) => line.rendered),
     ['[0] - 好的', '[1] - 不要'],
-    '出售确认两键带「- 」（SELL_CHARA.ERB:422-423）',
+    '出售确认两键带「- 」',
   );
 });
 
@@ -363,7 +363,7 @@ test('CHARA_SALE：确认出售后连续重画，退出时恢复上次调教对�
   assert(!fixture.text_lines().some((line) => line.includes('@CHARA_SALE')));
 });
 
-test('CHARA_SALE：所持金保留原作格式串中的字面量 $', async () => {
+test('CHARA_SALE：所持金保留格式串中的字面量 $', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.set_inputs(999);
@@ -471,9 +471,8 @@ test('CHECK_SELLASSIABLE：回合结束与珠结算两个入口，以及能力�
     !juel.text_lines().some((line) => line.includes('@CHECK_SELLASSIABLE')),
   );
 
-  // 能力提升的出口：@ABILITY_UP_CORE 的 [999] 支（#397 起真身落地——
-  // usershop(105) 改开能力提升菜单，出售资格复核在 CORE 退出时发生，
-  // 原作 SHOP_2.ERB:248 就在那儿）
+  // 能力提升的出口：ability_up_core 的 [999] 支（#397 起真身实现——
+  // usershop(105) 改开能力提升菜单，出售资格复核在 ability_up_core 退出时发生）
   const ability = create_era_fixture();
   seed_world(ability);
   for (const id of [0, 10, 11, 12, 22]) {

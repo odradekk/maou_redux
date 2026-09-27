@@ -23,8 +23,7 @@
  * in_kojo_window，只此一处定义）能拼出的
  * 全部函数名：普通口上 0-39（性格素质 160-179 → LOCAL 100-119）、
  * EX 口上 901-1600（EX_TALENT 101-800 → LOCAL 1001-1700）。空间内缺失
- * 合法（未移植的性格不发一言）；重复注册启动即炸（#14：原作 23 个口上
- * 函数被同名遮蔽的真实事故）。
+ * 合法（未移植的性格不发一言）；重复注册启动即炸（防同名口上互相遮蔽）。
  *
  * == handler 签名（#213 定死的接触面——轴 A 十二张族票与轴 B 二十一张
  *    口上票唯一共用的一张脸，两边都对着它写） ==
@@ -38,14 +37,14 @@
  *     era 表——**只读游戏状态**，跨域写一律走门面（#71）；
  *   - 输出面：台词用 era.printAndWait；除此之外不得有任何输出或等待；
  *   - **七道头部守卫先于任何 SELECTCOM 分支**（实测 EVENT_K3_高貴.ERB
- *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各文件 1:1；
- *     K1 自信家（#232）顺序不同：TEQUIP:55 →（助手调教不跳过）→ TEQUIP:45
+ *     :888-912，K5 同款但顺序互异——守卫集相同、顺序按各 handler
+ *     自家文件；K1 自信家（#232）顺序不同：TEQUIP:55 →（助手调教不跳过）→ TEQUIP:45
  *     → TFLAG:899 → TALENT:9 → TEQUIP:89 → TEQUIP:90。死斗场/兽奸岔真身，
  *     助手调教出台词。契约测试对跳过类守卫逐条置位；助手与专用口上按
- *     各 handler 1:1 拆开。
+ *     各 handler 逐字拆开。
  *   - SELECTCOM 分支：指令族票（轴 A）落地一条 @COM<n> 时，同一编号的
- *     台词分支在各口上 handler 内各自扩展（各文件 1:1，分支序/条件随
- *     ERB 原文）。
+ *     台词分支在各口上 handler 内各自扩展（各 handler 随自家文件，
+ *     分支序/条件照写）。
  *
  * == EX 口上 ==
  *
@@ -85,12 +84,6 @@ const DECLARED_KOJO_COM_IDS = [
 /** @KOJO_MESSAGE_COM_{N}：指令口上族（K3 / K5 / K1） */
 const kojo_message_com_family = new DispatchFamily(
   'KOJO_MESSAGE_COM',
-  DECLARED_KOJO_COM_IDS,
-);
-
-/** @KOJO_EVENT_COM_{N}：指令结束事件口上族；原作注记当前未使用。 */
-const kojo_event_com_family = new DispatchFamily(
-  'KOJO_EVENT_COM',
   DECLARED_KOJO_COM_IDS,
 );
 
@@ -225,18 +218,6 @@ const EVENT_K_DISPATCH_TABLE = [
     flag_guard: true,
     call: ['rand'],
     handler: ['rand'],
-  },
-  {
-    // 恒空转（#14：目标全库 0 个定义；本入口也没有调用点）——照原样移植
-    line: 218,
-    dispatch: 'KOJO_EVENT_COM_',
-    entry: 'kojo_event_com',
-    erb: 'KOJO_EVENT_COM',
-    module: 'kojo/kojo-system',
-    family: 'kojo_event_com_family',
-    flag_guard: false,
-    call: [],
-    handler: [],
   },
   {
     line: 239,
@@ -448,8 +429,8 @@ const EVENT_K_DISPATCH_TABLE = [
 // .test.js 的族名唯一锁。
 
 /**
- * 分发窗口：LOCAL 落在 [100, 140) 或 (1000, ∞) 时才拼名分发——原作各段
- * 逐字同构的那条守卫（@KOJO_MESSAGE_COM / @SELF_KOJO / @KOJO_EVENT_COM /
+ * 分发窗口：LOCAL 落在 [100, 140) 或 (1000, ∞) 时才拼名分发——各入口
+ * 逐字同构的那条守卫（@KOJO_MESSAGE_COM / @SELF_KOJO /
  * @DUNGEON_RYOUZYOKU 的凌辱前与凌辱后两处 / @GOHOUBI_AFTER_KOUJO /
  * @OSIOKI_KOUJO 各段都有它的复写）。
  * 键 = LOCAL - 100，窗口两端因此正好是声明编号空间的两端：普通口上 0-39
@@ -626,34 +607,6 @@ async function kojo_message_markcng(rand) {
   return try_kojo(kojo_message_markcng_family, -1, [rand]);
 }
 
-/**
- * @KOJO_EVENT_COM（:209-219）：指令处理结束时的事件口上入口。
- *
- * **恒空转的死分发（#403 照原样移植，登记在 #14）**：`KOJO_EVENT_COM_{N}`
- * 在**全库 0 个定义**（含 target/ERB/口上/ 全部 22 个口上文件），原作的
- * `TRYCALLFORM` 因此永远打空；函数自身也没有任何调用点（全库 0 处
- * `CALL KOJO_EVENT_COM`）。本入口按 1:1 保留这条派发路径而不是删掉——
- * TRYCALLFORM 的语义是「有就调、没有就跳过」，删掉会改变行为记录
- * （EVENT_K.ERB:203-208 的注释也明写「口上をOFFにしても実行する」）。
- *
- * 守卫集照原作：**无 FLAG:7 总开关守卫**（:209-219 没有 SIF FLAG:7）、
- * **无存在判定**（同段内的 `SIF FLAG:LOCAL == 0 → RETURN 0` 在原作是
- * 注释态）——两者都是 1:1 保留，不是遗漏。缺席语义 = 静默（TRYCALL
- * 落空；目标在原作就不存在，不打占位行）。
- *
- * @returns {Promise<number>} 0（调用方不读）
- */
-async function kojo_event_com() {
-  // 的 LOCAL = GET_KOJO_NUM()（存在判定在原作是注释态，不判）
-  const local = get_kojo_num();
-
-  // 的守卫（:209-219 段）→ TRYCALLFORM KOJO_EVENT_COM_{LOCAL - 100}
-  if (in_kojo_window(local)) {
-    await kojo_event_com_family.call(local - 100, { whenMissing: 0, args: [] });
-  }
-  return 0;
-}
-
 async function benki_koujo(rand) {
   return try_kojo(benki_koujo_family, -1, [rand]);
 }
@@ -823,12 +776,10 @@ module.exports = {
   kojo_handler_id,
   kojo_message_com,
   kojo_message_com_family,
-  kojo_event_com_family,
   kojo_message_palamcng,
   kojo_message_palamcng_family,
   kojo_message_markcng,
   kojo_message_markcng_family,
-  kojo_event_com,
   self_kojo,
   self_kojo_family,
   dog_kojo_family,

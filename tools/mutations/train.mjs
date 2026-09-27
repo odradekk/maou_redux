@@ -959,7 +959,7 @@ export default [
     must_mention: '魔兽种族支（E:307 == 10',
   },
   {
-    desc: 'M808 GET_CLOTHTYPE_MAIN2 未知编号的兜底串错（「服」改空串）',
+    desc: 'M808 get_clothtype_main2 未知编号的默认值错（「服」改空串）',
     file: 'ere/system/cloth-lookup.js',
     find: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '服';",
     replace: "const name = MAIN2_TABLE[cloth_main_type(cid)] ?? '';",
@@ -967,7 +967,7 @@ export default [
     must_mention: '未知编号取默认串',
   },
   {
-    desc: 'M809 GET_CLOTHTYPE_SPECIAL 的 98 号退回繁体残留（#60 简体锁的靶点）',
+    desc: 'M809 get_clothtype_special 的 98 号退回繁体残留（#60 简体锁的目标）',
     file: 'ere/system/cloth-lookup.js',
     find: "  98: '神秘的尿道导管',",
     replace: "  98: '神秘的導尿管',",

@@ -421,7 +421,8 @@ function append_item_slot(state, id) {
  * （item 91）特例：:375 的 SIF ITEM:91 是纯PRINTFORM（不换行），紧接着
  * REPEAT 40 从 ARG:98 == 0 起步——戒指文本与第二网格的首个道具共享同一
  * 输出行（无戒指时该行就是第二网格自己的首行）。append_item_slot 维护
- * 跨段共享的 { line, column } 累积态，1:1 保留这个接续关系。
+ * 跨段共享的 { line, column } 累积态，保留这个接续关系（戒指文本与第二
+ * 网格首行共享同一显示行）。
  */
 function draw_have_items() {
   const knowledge_tags = [

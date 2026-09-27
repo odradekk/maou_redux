@@ -519,8 +519,8 @@ test('候选过滤：非妊娠模式（FLAG:5 位 10 关）把妊娠者挡在列
   //
   // 原作 :308-309 的越界 GOTO INPUT_LOOP1（「翻到妊娠允许再重画」的复制
   // 粘贴事故）因此是引擎死路径：引擎渲染层先拒收，游戏代码拿不到 1，
-  // 翻转分支不可达。按 page-invasion.test.js:177 的裁定，1:1 保留原作
-  // 形态、测试钉「被拦」的引擎等价物（拒收且画面不重绘）。
+  // 翻转分支不可达。按 page-invasion.test.js:177 的裁定保留这个形态、
+  // 测试钉「被拦」的引擎等价物（拒收且画面不重绘）。
   const fixture = setup_fort_world();
   add_pregnant_bess(fixture);
   fixture.reset_inputs(0, 1);

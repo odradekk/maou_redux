@@ -33,24 +33,24 @@ test('转场信号由专门类型承载，不与普通错误混淆', () => {
   const { BeginSignal } = fixture.load_module('system/flow/begin-signal');
 
   // 信号是 Error 子类（要走异常通道），但普通错误绝不是信号——instanceof
-  // 是硬约束里唯一的判据，两边必须分得开，否则「catch 首行重抛」无法既
+  // 是硬约束里唯一的判断依据，两边必须分得开，否则「catch 首行重抛」无法既
   // 放行转场又不吞真错误。
   assert.ok(new BeginSignal('SHOP') instanceof Error);
   assert.ok(!(new Error('普通错误') instanceof BeginSignal));
   assert.ok(!(new TypeError('类型错误') instanceof BeginSignal));
 });
 
-test('STATE 枚举：原作全库 5 种 BEGIN 目标 + ere 侧的 TITLE 入口', () => {
+test('STATE 枚举：5 种 BEGIN 目标 + ere 侧的 TITLE 入口', () => {
   const fixture = create_era_fixture();
   const { STATE } = fixture.load_module('system/flow/begin-signal');
 
-  // 原作 5 种目标（issue #20 核实，括号为原作出现处数），取值 = 原作关键字
+  // 5 种目标（issue #20 核实），取值 = 各状态的 BEGIN 关键字
   assert.equal(STATE.FIRST, 'FIRST');
   assert.equal(STATE.SHOP, 'SHOP');
   assert.equal(STATE.TRAIN, 'TRAIN');
   assert.equal(STATE.AFTERTRAIN, 'AFTERTRAIN');
   assert.equal(STATE.TURNEND, 'TURNEND');
-  // TITLE 是 ere 侧本地扩展（主循环入口；原作无 BEGIN TITLE）
+  // TITLE 是 ere 侧本地扩展（主循环入口，不对应任何 BEGIN 目标）
   assert.equal(STATE.TITLE, 'TITLE');
   // 枚举冻结，防运行期被改
   assert.ok(Object.isFrozen(STATE));

@@ -42,7 +42,7 @@ test('pad_display：左对齐，右侧补 NBSP 到目标显示宽度', () => {
   assert.equal(pad_display('汉字', 4), '汉字');
 });
 
-test('pad_display：已达/超过目标宽时不补、不截断（Emuera %,N,LEFT% 同款）', () => {
+test('pad_display：已达/超过目标宽时不补、不截断（与 %,N,LEFT% 格式同款）', () => {
   assert.equal(pad_display('ABC', 3), 'ABC');
   assert.equal(pad_display('ABCD', 3), 'ABCD');
 });
@@ -74,7 +74,7 @@ test('补位后的整串显示宽度恰等于目标宽（量尺与补位字符�
   assert.equal(display_width(pad_left('5', 7)), 7);
 });
 
-test('slice_display 回归：按显示宽度截断（本票不改它的行为）', () => {
+test('slice_display 回归：按显示宽度截断（这张工单不改它的行为）', () => {
   assert.equal(slice_display('调教自慰经验', 8), '调教自慰');
   assert.equal(slice_display('ABC', 8), 'ABC');
 });

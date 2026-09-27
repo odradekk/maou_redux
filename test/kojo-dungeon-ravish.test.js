@@ -94,6 +94,23 @@ test('13 个函数（12 怪物 + PC_RYOU）分派：各自可调用、输出非�
   }
 });
 
+test('GIANT_RYOU 贯穿分支：显示「阴道扩张经验」写入 EXP:52 私处扩张经验（不是肛门扩张）', async () => {
+  const fixture = await setup_ravish();
+  const mod = fixture_module(fixture);
+  // 第 1 掷喂畏怖口上 pick、第 2 掷 rand_n(4)=0 → 贯穿分支（mon_num = 5）
+  await mod.giant_ryou(31, 5, seq_rand(1, 0));
+  assert.ok(
+    fixture.text_lines().includes('阴道扩张经验+5'),
+    '贯穿分支的显示行',
+  );
+  assert.equal(fixture.store.get('exp:31:52'), 5, 'EXP:52 私处扩张经验 +5');
+  assert.equal(
+    fixture.store.get('exp:31:53') ?? 0,
+    0,
+    'EXP:53 肛门扩张经验不动',
+  );
+});
+
 test('GOBI_KOUJO 行内拼接（女性版）：『猪…』整段一行收语尾（源 :708-:728，#570）', async () => {
   const fixture = await setup_ravish((f) => {
     f.store.set('talent:31:17', 1); // プライド低い → 语尾档 1（喜び）

@@ -1,11 +1,12 @@
 /**
- * 装备系统行为测试（issue #174：@EQUIP_CHECK/@EQUIP_DATABASE 行为/@PRINT_*
- * /@REMOVE_CURSE/@CURSE_EQUIP_RING/@EQUIP_SELECT/@EQUIP_GET/@GET_EQUIP_NUM/
- * @EQUIP_POWERUP/@USEABLE_EQUIPMENT/@WEAPON_RESTORE；#546：@EQUIP_ST_SHOW/
- * @SHOW_BUTTON_EQUIP/@CHECK_ABLE_TO_SHOW_EQUIP）。
+ * 装备系统行为测试（issue #174：equip_check / equip_database /
+ * print_equiptype_weapon / print_equiptype_ring / remove_curse /
+ * curse_equip_ring / equip_select / equip_get / get_equip_num /
+ * equip_powerup / usable_equipment / weapon_restore；#546：
+ * equip_st_show / show_button_equip / check_able_to_show_equip）。
  *
  * 缝 = test/helpers/era-fixture.js。随机源以 rng 参数注入（RAND:N = 0..N-1），
- * 构造确定序列；数据表与 ERB 的逐分支等价在 test/equip-database.test.js。
+ * 构造确定序列；数据表的形状约束在 test/equip-database.test.js。
  */
 
 'use strict';
@@ -32,7 +33,7 @@ function setup_equip() {
   return { fixture, lookup, check, print, curse, select, usable, restore };
 }
 
-test('equip_database：装饰行五列、武装行十三列、附魔增量与强度加成、默认臂重置、负数守卫', () => {
+test('equip_database：装饰行五列、武装行十三列、附魔增量与强度加成、默认分支重置、负数检查', () => {
   const { fixture, lookup } = setup_equip();
   const { equip_database } = lookup;
 
@@ -87,7 +88,7 @@ test('equip_database：装饰行五列、武装行十三列、附魔增量与强
   assert.equal(poison.特殊, 1);
   assert.equal(poison.伤害强化, 90);
 
-  // 默认臂（未知识别号 999 → 黑戒指，存储编号/识别号/强度重置 0，前缀保留）
+  // 默认分支（未知识别号 999 → 黑戒指，存储编号/识别号/强度重置 0，前缀保留）
   const unknown = { 存储编号: 999 };
   assert.equal(equip_database(unknown), true);
   assert.equal(unknown.存储编号, 0);
@@ -97,10 +98,10 @@ test('equip_database：装饰行五列、武装行十三列、附魔增量与强
   assert.equal(unknown.部位, 1);
   const unknown_prefix = { 存储编号: 9 * 100000 + 999 };
   equip_database(unknown_prefix);
-  assert.equal(unknown_prefix.前缀, 9, '默认臂不清前缀（W:17 保留）');
-  assert.equal(unknown_prefix.气力伤害, 120, '默认臂带武装列且受附魔 9 加成');
+  assert.equal(unknown_prefix.前缀, 9, '默认分支不清前缀（W:17 保留）');
+  assert.equal(unknown_prefix.气力伤害, 120, '默认分支带武装列且受附魔 9 加成');
 
-  // 负数守卫（空槽 -1）与 :700 强度加成（装饰行也会算 伤害强化，无人读）
+  // 负数检查（空槽 -1）与强度加成（装饰行也会算 伤害强化，无人读）
   assert.equal(equip_database({ 存储编号: -1 }), false);
   const scaled_ring = { 存储编号: 4 * 1000 + 0 };
   equip_database(scaled_ring);
@@ -121,7 +122,7 @@ test('equip_check：两枚装饰按效果号合计强度；武装与空槽不参
   assert.equal(check.equip_check(-1, 2), 0);
 
   // 武装（550）与弹药（571）不参与；诅咒戒指照常计入
-  store.set('cflag:31:550', 7 + 5 * 1000); // 怪力戒指放武装位（原作也不读）
+  store.set('cflag:31:550', 7 + 5 * 1000); // 怪力戒指放武装位（武装位同样不读）
   store.set('cflag:31:552', 6 + 4 * 1000); // 欲望戒指+4（诅咒、效果 6）
   assert.equal(check.equip_check(31, 7), 0, '武装位不参与 EQUIP_CHECK');
   assert.equal(check.equip_check(31, 6), 4, '诅咒戒指照常合计');
@@ -173,7 +174,7 @@ test('print：前缀 + 名 + 强度后缀共一行，LightSalmon；未知识别�
   assert.equal(
     fixture.text_lines()[4],
     '暗黑戒指',
-    '未知识别号回落暗黑戒指（ELSE 臂）',
+    '未知识别号回落暗黑戒指（ELSE 分支）',
   );
   assert.equal(unknown_r.存储编号, 0);
   assert.equal(unknown_r.强度, 0);
@@ -305,11 +306,11 @@ test('equip_select：宝箱检查、道具消耗、换装与早退各分支', as
   assert.equal(no_swap.fixture.store.get('item:306'), 2, '道具仍被消耗');
 });
 
-test('equip_select：空槽也吃「强度 < 阶层」门（源 :243/:258 左结合）', async () => {
-  // 源 :243 / :258 `W:0 == -1 || RESULT && W:2 < CFLAG:A:501 && W:5 == 0`
-  // ——Emuera 的 && 与 || 同优先级、左结合，读作
+test('equip_select：空槽也要过「强度 < 阶层」检查（左结合求值）', async () => {
+  // 换装条件 `W:0 == -1 || RESULT && W:2 < CFLAG:A:501 && W:5 == 0`
+  // 里 && 与 || 同优先级、左结合，读作
   // `(空槽（-1）|| 有效) && 强度 < 阶层 && 未诅咒`（#517）。
-  // 阶层 0 时 `0 < 0` 判假，两枚空槽都不换装（先例：同族 :911 用的正是
+  // 阶层 0 时 `0 < 0` 判假，两枚空槽都不换装（先例：同族条件用的正是
   // 等价式 `(CFLAG:40 & 17) && FLAG:37`）。
   const { fixture, select } = setup_equip();
   const store = fixture.store;
@@ -517,7 +518,7 @@ test('weapon_restore：装备强化倍率、铁壁、劣化、攻防变动、勋
 
 // #469）：清单核对测试随之移除，同 dungeon-room.test.js 的处置
 
-// —— #546：装备详情显示三函数（其他/EQUIP.ERB:1030-1113）——
+// —— #546：装备详情显示三函数 ——
 
 /** 造带 equip-show 模块的夹具：角色 31（温妮）+ 武装槽可预置 */
 function setup_show() {
@@ -526,7 +527,7 @@ function setup_show() {
   return base;
 }
 
-test('check_able_to_show_equip：五道 OR 的表驱动，返回 1 = 不可见（EQUIP.ERB:1090-1113）', () => {
+test('check_able_to_show_equip：五道 OR 的表驱动，返回 1 = 不可见', () => {
   const table = [
     ['善恶值 1 且其余全不满足 → 1', { 'cflag:31:151': 1 }, 1],
     ['未设善恶值（读得 0 ≤ 0）→ 0', {}, 0],
@@ -548,7 +549,7 @@ test('check_able_to_show_equip：五道 OR 的表驱动，返回 1 = 不可见�
   }
 });
 
-test('show_button_equip：判定放行渲染 [16] 装备情报按钮，不放行零输出（:1074-1087）', () => {
+test('show_button_equip：判定放行渲染 [16] 装备情报按钮，不放行零输出', () => {
   const able = setup_show();
   able.fixture.store.set('cflag:31:151', 0);
   able.show.show_button_equip(16, 31);
@@ -563,7 +564,7 @@ test('show_button_equip：判定放行渲染 [16] 装备情报按钮，不放行
   assert.equal(unable.fixture.lines.length, 0, '不可见时连按钮带文字都不输出');
 });
 
-test('equip_st_show：战锤+2 的状态行，=100 的防御/气力伤害两行不显示（:1030-1071）', () => {
+test('equip_st_show：战锤+2 的状态行，=100 的防御/气力伤害两行不显示', () => {
   const { fixture, show } = setup_show();
   fixture.store.set('cflag:31:550', 47 + 2 * 1000); // 战锤 +2
   assert.equal(show.equip_st_show(31), 2, 'RETURN 2');
@@ -576,7 +577,7 @@ test('equip_st_show：战锤+2 的状态行，=100 的防御/气力伤害两行�
   assert.equal(name_row.content[0].color, 'LightSalmon');
 });
 
-test('equip_st_show：气力回复正负两臂与气力伤害（触手 49 / 法杖 41）', () => {
+test('equip_st_show：气力回复正负两个分支与气力伤害（触手 49 / 法杖 41）', () => {
   const tentacle = setup_show();
   tentacle.fixture.store.set('cflag:31:550', 49); // 触手：气力回复 -10、气力伤害 120
   tentacle.show.equip_st_show(31);
@@ -637,7 +638,7 @@ test('equip_st_show：连击率（匕首 30）与防御伤害（鞭 120）各自
   ]);
 });
 
-test('equip_st_show：空槽（-1）与未知识别号都经名称臂回落 40 号剑', () => {
+test('equip_st_show：空槽（-1）与未知识别号都经名称分支回落 40 号剑', () => {
   for (const stored of [-1, 999, 5]) {
     const { fixture, show } = setup_show();
     fixture.store.set('cflag:31:550', stored);
@@ -651,8 +652,8 @@ test('equip_st_show：空槽（-1）与未知识别号都经名称臂回落 40 �
 });
 
 test('equip_st_show：名称表空名段（53-60）不重置，查表走 ELSE 黑戒指行 → 印 *带有诅咒', () => {
-  // EQUIP_WEAPON_NAMES 的 53-60 是 ''（原作预留空名）而不是 undefined——
-  // 名称臂的「回落 40 号剑」重置不触发；查表落 ELSE 臂（诅咒 1、伤害强化
+  // EQUIP_WEAPON_NAMES 的 53-60 是 ''（预留空名）而不是 undefined——
+  // 名称分支的「回落 40 号剑」重置不触发；查表落 ELSE 分支（诅咒 1、伤害强化
   // 100），名称行是空串、随后印诅咒行（规范审查指出此处可达，#546）
   const { fixture, show } = setup_show();
   fixture.store.set('cflag:31:550', 53);

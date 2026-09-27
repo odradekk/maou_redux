@@ -13,8 +13,8 @@ class InvasionFacade {
   }
 
   /**
-   * 状态（cflag:cid:1 ↔ CFLAG:1）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:1 キャラの状態 0=調教中 1=待機 2=侵攻中 3=迎撃中 4=死亡 12=戦役（SYSTEM ver1.0.3.ERB の CFLAG:A:1 == 12）
+   * 状态（cflag:cid:1）
+   * CFLAG:1 キャラの状態 0=調教中 1=待機 2=侵攻中 3=迎撃中 4=死亡 12=戦役
    * @returns {number}
    */
   get 状态() {
@@ -28,8 +28,8 @@ class InvasionFacade {
   }
 
   /**
-   * 新人（cflag:cid:506 ↔ CFLAG:506）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:506 新人フラグ
+   * 新人（cflag:cid:506）
+   * CFLAG:506 新人フラグ
    * @returns {number}
    */
   get 新人() {
@@ -43,8 +43,8 @@ class InvasionFacade {
   }
 
   /**
-   * 回城标志（cflag:cid:507 ↔ CFLAG:507）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:507 街まで帰還フラグ
+   * 回城标志（cflag:cid:507）
+   * CFLAG:507 街まで帰還フラグ
    * @returns {number}
    */
   get 回城标志() {
@@ -58,8 +58,8 @@ class InvasionFacade {
   }
 
   /**
-   * 存档点（cflag:cid:521 ↔ CFLAG:521）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行419 CFLAG:521 = セーブポイント（2015 补丁起兼作挫折阶层记忆，#103）
+   * 存档点（cflag:cid:521）
+   * CFLAG:521 = セーブポイント（2015 补丁起兼作挫折阶层记忆，#103）
    * @returns {number}
    */
   get 存档点() {

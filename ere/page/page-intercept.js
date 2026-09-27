@@ -35,7 +35,7 @@
  */
 
 'use strict';
-/* eslint-disable no-irregular-whitespace -- 迎击设定的三行按钮正文里的全角空格（原作 :423-438 的 `[0] 出发阶层　　　-` 等），1:1 保留原文标点 */
+/* eslint-disable no-irregular-whitespace -- 迎击设定的三行按钮正文里的全角空格对齐（`[0] 出发阶层　　　-` 等，原文标点保留） */
 
 const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');

@@ -2,7 +2,7 @@
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
 // 分配，只作引用锚点，但全表必须唯一——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 76; // #593 +3（M11983/M11984：同屏固定编号核对——条件键基数进预设段、名单轮插 [7] 探针；M11988：尾段并错轮的漏报，靶文件是核对自己）；#586 +9（M11900-M11902：献祭名单轮的返回编号——撞号复现、打印与判定各自的错位；M11903-M11906、M11907-M11908：十个探针暴露的覆盖缺口——条件键两端、编号基数、勇者档、自身排除、RESTART）；#565 返工 +1（M11633：TARGET 换手删除——语尾回退按调用方取）；#390 建表 60 条；#546 +3（M11544-M11546：SHOW_BLOCK 的 [8] 一人称重设真按钮——快捷键、正文前缀、一人称行补宽）
+export const COUNT = 74; // #652 -2（M8737 删：HEXtoDEC ×15 笔误已改正；M8719 删：SHOW_TALENT 328 守卫的反向钉，笔误已改正）
 // M11900 的 must_mention 在 #593 随核对文案更新（旧核对只认特定写法，已被替换）
 
 const SHOW = 'ere/page/components/chara-info-title.js';
@@ -212,14 +212,6 @@ export default [
     'EX 素质的第二组配色',
   ),
   make(
-    8719,
-    'SHOW_TALENT：328 的守卫由原作笔误的 327 改成 328（「修正」了原作缺陷）',
-    TALENTS,
-    '      { id: 328, guard: (t) => t(327) !== 0 }, // 原作笔误，1:1 保留',
-    '      { id: 328, guard: (t) => t(328) !== 0 }, // 原作笔误，1:1 保留',
-    '原作笔误',
-  ),
-  make(
     8720,
     'SHOW_TALENT：男体的淫核改名判据由 230 改成 231',
     TALENTS,
@@ -360,14 +352,6 @@ export default [
     'STC_SEIIN_CHECK',
   ),
   make(
-    8737,
-    'HEXtoDEC：三段合成由原作的 ×15 改成 ×16（「修正」了源里的进制笔误）',
-    MAIN,
-    '  dec[0] = digits[0] * 15 + digits[1];',
-    '  dec[0] = digits[0] * 16 + digits[1];',
-    'HEXtoDEC',
-  ),
-  make(
     8738,
     'ColorJudgmentWorB：白/黑字的判据由 <= 128 改成 <= 100',
     MAIN,
@@ -489,7 +473,7 @@ export default [
   ),
   make(
     8753,
-    'DISPLAY_WIDTH：全角判据由 > 0xff 改成 > 0x7f',
+    'DISPLAY_WIDTH：全角判断条件由 > 0xff 改成 > 0x7f',
     WIDTH,
     '    width += ch.charCodeAt(0) > 0xff ? 2 : 1;',
     '    width += ch.charCodeAt(0) > 0x7f ? 2 : 1;',
@@ -497,7 +481,7 @@ export default [
   ),
   make(
     8754,
-    'SLICE_DISPLAY：超宽判据由 > 改成 >=（恰好装满时多截一个全角字）',
+    'SLICE_DISPLAY：超宽判断条件由 > 改成 >=（恰好装满时多截一个全角字）',
     WIDTH,
     '    if (used + w > width) break;',
     '    if (used + w >= width) break;',
