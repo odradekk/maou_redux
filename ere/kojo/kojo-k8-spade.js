@@ -1179,12 +1179,12 @@ async function k8_kojo2() {
         chara(target).train.着衣状态 & 28 &&
         chara(target).train.上衣类型 == 1
       ) {
-        // 普段着・スカートタイプ（模板未填写，1:1 保留）
+        // 普段着・スカートタイプ（模板未填写：此装束无台词，保持空输出）
       } else if (
         chara(target).train.着衣状态 & 28 &&
         chara(target).train.上衣类型 == 101
       ) {
-        // 普段着・ズボンタイプ（模板未填写，1:1 保留）
+        // 普段着・ズボンタイプ（模板未填写：此装束无台词，保持空输出）
       } else if (
         chara(target).train.着衣状态 & 28 &&
         chara(target).train.上衣类型 == 209
@@ -1325,12 +1325,12 @@ async function k8_kojo2() {
         chara(target).train.着衣状态 & 28 &&
         chara(target).train.上衣类型 == 1
       ) {
-        // 普段着・スカートタイプ（模板未填写，1:1 保留）
+        // 普段着・スカートタイプ（模板未填写：此装束无台词，保持空输出）
       } else if (
         chara(target).train.着衣状态 & 28 &&
         chara(target).train.上衣类型 == 101
       ) {
-        // 普段着・ズボンタイプ（模板未填写，1:1 保留）
+        // 普段着・ズボンタイプ（模板未填写：此装束无台词，保持空输出）
       } else if (
         chara(target).train.着衣状态 & 28 &&
         chara(target).train.上衣类型 == 209
@@ -1892,9 +1892,8 @@ async function kojo_message_com_8(rand) {
           `${target_name}的肛门下流的收缩着、${player_name}的爱抚使得她的腰不停的晃动着………`,
         );
         kojo.肛门爱抚 = 3; // CFLAG:303 = 3
-      } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 == 2) {
-        // それ以外（爱無し、润滑Lv2未満、A感覚Lv3未満；源 CFLAG:223，非
-        // CFLAG:303，1:1 保留原作寻址）
+      } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // それ以外（爱無し、润滑Lv2未満、A感覚Lv3未満）
         await era.printAndWait(`「咕…呜…不、不要…啊啊…不要啊！」`);
         await era.printAndWait(
           `${player_name}爱抚着${target_name}花蕾般的肛门、而${target_name}则用悲鸣来回应………`,
@@ -2524,12 +2523,12 @@ async function kojo_message_com_8(rand) {
       kojo.自己扒开 = 1; // CFLAG:TARGET:308 = 1
       return 0;
     }
-    // 二回目以降（源作各分支误写为 CFLAG:306，1:1 保留原作寻址）
+    // 二回目以降
     const virgin_hidden =
       era0(`talent:${target}:0`) == 1 && era0(`exp:${target}:0`) == 0; // TALENT:0==1 && EXP:0==0
     if (
       era0(`talent:${target}:76`) == 1 &&
-      (kojo.胸爱抚 <= 4 || game.kojo.口上开关 == 2)
+      (kojo.自己扒开 <= 4 || game.kojo.口上开关 == 2)
     ) {
       // 淫乱
       await era.printAndWait(
@@ -2549,10 +2548,10 @@ async function kojo_message_com_8(rand) {
           `「啊啊…难道说是想看我的处女膜？ 那么…啊啊、再打开一点哦…啊${heart(1)}」`,
         );
       }
-      kojo.胸爱抚 = 5; // CFLAG:306 = 5
+      kojo.自己扒开 = 5; // CFLAG:308 = 5
     } else if (
       era0(`talent:${target}:85`) == 1 &&
-      (kojo.胸爱抚 <= 3 || game.kojo.口上开关 == 2)
+      (kojo.自己扒开 <= 3 || game.kojo.口上开关 == 2)
     ) {
       // 爱慕
       await era.printAndWait(
@@ -2568,10 +2567,10 @@ async function kojo_message_com_8(rand) {
           `「能看我的处女膜吗？呵呵呵、我一直期待着你能把它夺走呢………」`,
         );
       }
-      kojo.胸爱抚 = 4; // CFLAG:306 = 4
+      kojo.自己扒开 = 4; // CFLAG:308 = 4
     } else if (
       era0(`abl:${target}:17`) >= 3 &&
-      (kojo.胸爱抚 <= 2 || game.kojo.口上开关 == 2)
+      (kojo.自己扒开 <= 2 || game.kojo.口上开关 == 2)
     ) {
       // 露出癖Lv3以上
       await era.printAndWait(
@@ -2586,8 +2585,8 @@ async function kojo_message_com_8(rand) {
       if (virgin_hidden) {
         await era.printAndWait(`「唔嗯…也看看我的处女膜…啊啊…！」`);
       }
-      kojo.胸爱抚 = 3; // CFLAG:306 = 3
-    } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+      kojo.自己扒开 = 3; // CFLAG:308 = 3
+    } else if (kojo.自己扒开 <= 1 || game.kojo.口上开关 == 2) {
       // それ以外（爱無し、露出癖Lv3未満）
       await era.printAndWait(
         `「哈啊…哈啊……不用继续摆这个姿势了吧？ 诶、还有5分钟？唔…呜…饶、饶了我吧…啊啊！」`,
@@ -2601,7 +2600,7 @@ async function kojo_message_com_8(rand) {
           `「我的处女膜很漂亮什么的…别说这么明显的假话…啊啊！」`,
         );
       }
-      kojo.胸爱抚 = 2; // CFLAG:306 = 2
+      kojo.自己扒开 = 2; // CFLAG:308 = 2
     }
     return 0;
   } else if (era_flag.selectcom == 8) {
@@ -2714,9 +2713,9 @@ async function kojo_message_com_8(rand) {
       era0(`talent:${target}:85`) == 1 &&
       (kojo.舔肛 <= 3 || game.kojo.口上开关 == 2)
     ) {
-      // 爱慕（源尾附「sao」，为源文件遗留字符，1:1 保留）
+      // 爱慕
       await era.printAndWait(
-        `「不、不行啊…屁股被你…啊…这么舔的话，我…要变得奇怪了…嗯…啊嗯${heart(1)}」sao`,
+        `「不、不行啊…屁股被你…啊…这么舔的话，我…要变得奇怪了…嗯…啊嗯${heart(1)}」`,
       );
       await era.printAndWait(
         `${player_name}舔着${target_name}的肛门，因为舌头扫过一窈窕皱褶而发出甜美的呻吟。`,
@@ -3253,7 +3252,7 @@ async function kojo_message_com_8(rand) {
       kojo.乳头夹 = 4; // CFLAG:316 = 4
     } else if (
       era0(`talent:${target}:78`) == 1 &&
-      (kojo.乳头夹 <= 2 || game.kojo.口上开关 == 2)
+      (kojo.榨乳器 <= 2 || game.kojo.口上开关 == 2)
     ) {
       // 弄乳狂
       await era.printAndWait(
@@ -3317,7 +3316,7 @@ async function kojo_message_com_8(rand) {
       kojo.榨乳器 = 1; // CFLAG:317 = 1
       return 0;
     }
-    // 二回目以降（源作两处误写为 CFLAG:316，1:1 保留原作寻址）
+    // 二回目以降
     if (
       era0(`talent:${target}:76`) == 1 &&
       era0(`talent:${target}:78`) == 1 &&
@@ -3347,9 +3346,9 @@ async function kojo_message_com_8(rand) {
     } else if (
       era0(`talent:${target}:85`) == 1 &&
       era0(`talent:${target}:78`) == 1 &&
-      (kojo.乳头夹 <= 2 || game.kojo.口上开关 == 2)
+      (kojo.榨乳器 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 爱慕+弄乳狂（源作 CFLAG:316，非 CFLAG:317）
+      // 爱慕+弄乳狂
       await era.printAndWait(
         `「我的胸部…明明不好好的给小宝宝是不行的${heart(1)} 这样的被榨取的话${heart(1)}」`,
       );
@@ -3374,9 +3373,9 @@ async function kojo_message_com_8(rand) {
       kojo.榨乳器 = 4; // CFLAG:317 = 4
     } else if (
       era0(`talent:${target}:78`) == 1 &&
-      (kojo.乳头夹 <= 2 || game.kojo.口上开关 == 2)
+      (kojo.榨乳器 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 弄乳狂（源作 CFLAG:316，非 CFLAG:317）
+      // 弄乳狂
       await era.printAndWait(`「啊嗯…啊啊…啊…啊…已、已经…我…不行！」`);
       await era.printAndWait(
         `${target_name}因为被榨乳器强行榨乳的快感而发出了娇喘………`,
@@ -4170,9 +4169,8 @@ async function kojo_message_com_8(rand) {
           await era.printAndWait(
             `「啊啊…你的阴茎是最棒的${heart(1)}不要再拔出来，一直侵犯我吧${heart(1)}」`,
           );
-          // 源作误写：本句结尾多了一个「」」（连续两个右引号，:2473 原文如此，1:1 保真不修正）
           await era.printAndWait(
-            `「啊嗯…啊啊…嗯…嗯…那里…继续插进更深的地方…让我发疯吧${heart(1)}」」`,
+            `「啊嗯…啊啊…嗯…嗯…那里…继续插进更深的地方…让我发疯吧${heart(1)}」`,
           );
         } else {
           await era.printAndWait(
@@ -4360,8 +4358,8 @@ async function kojo_message_com_8(rand) {
     if (kojo.对面座位 == 0) {
       // 初めて
       if (era0(`talent:${target}:0`) == 1) {
-        // 处女：源作本身只有一行空白引号占位，未补台词，1:1 保真不补写
-        await era.printAndWait(`「」`);
+        // 处女（模板未填写：无台词，输出空行）
+        await era.printAndWait('');
       } else if (era0(`talent:${target}:76`) == 1) {
         // 非处女
         await era.printAndWait(
@@ -4618,7 +4616,7 @@ async function kojo_message_com_8(rand) {
     if (kojo.背面座位 == 0) {
       // 初めて
       if (era0(`talent:${target}:0`) == 1) {
-        // 处女：源作本身只有一行空白引号占位，未补台词，1:1 保真不补写
+        // 处女（模板未填写：无台词，输出空行）
         await era.printAndWait(`「」`);
       } else if (era0(`talent:${target}:76`) == 1) {
         // 非处女
@@ -4738,9 +4736,8 @@ async function kojo_message_com_8(rand) {
       }
       if (era0(`tequip:${target}:57`)) {
         if (era0(`abl:${target}:17`) >= 1) {
-          // 源作误写：本句缺失结尾引号「（:2772 原文如此，1:1 保真不补写）
           await era.printAndWait(
-            `「啊啊…阴茎全部插进…我的小穴·里来了…全部…啊啊——${heart(1)}`,
+            `「啊啊…阴茎全部插进…我的小穴·里来了…全部…啊啊——${heart(1)}」`,
           );
           await era.printAndWait(
             `${target_name}因为大镜子映出的自己的姿态而兴奋着……`,
@@ -5513,8 +5510,7 @@ async function kojo_message_com_8(rand) {
       await era.printAndWait(
         `${player_name}抱着${target_name}集中蹂躏着肛门，一次又一次的向上突刺着。`,
       );
-      // 源作误写：本句结尾缺失「」」（右引号，:3167 原文如此，1:1 保真不修正）
-      await era.printAndWait(`「停、停下…求你了…啊…啊啊…呀啊啊啊！`);
+      await era.printAndWait(`「停、停下…求你了…啊…啊啊…呀啊啊啊！」`);
       await era.printAndWait(`未开发的肛门紧紧地包裹着${player_name}的阴茎。`);
       await era.printAndWait(
         `而为了忍耐那份疼痛，${target_name}只能抱着${player_name}………`,
@@ -5524,7 +5520,7 @@ async function kojo_message_com_8(rand) {
     return 0;
   } else if (era_flag.selectcom == 29) {
     // 背面座位肛交 CFLAG:330（结构同 26-28：无处女判定，按 A感覚/ABL:3 分档，二回目细分 7 档；
-    // 首尾各接一段 TEQUIP:57 镜子 + ABL:17 羞耻PLAY 加成，二回目那段源作误写缺失结尾引号）
+    // 首尾各接一段 TEQUIP:57 镜子 + ABL:17 羞耻PLAY 加成）
     if (kojo.背面座位肛交 == 0) {
       // 初めて
       if (era0(`talent:${target}:76`) == 1) {
@@ -5767,22 +5763,20 @@ async function kojo_message_com_8(rand) {
         `${player_name}从后面抱着${target_name}从下往上插着肛门。`,
       );
       await era.printAndWait(`${target_name}发出了好像很痛苦的声音。`);
-      // 源作误写：本句结尾缺失「」」（右引号，:3292 原文如此，1:1 保真不修正）
-      await era.printAndWait(`「啊咕…呜…呜…不、不要…这…样…啊嗯！`);
+      await era.printAndWait(`「啊咕…呜…呜…不、不要…这…样…啊嗯！」`);
       await era.printAndWait(
         `${player_name}一边愉快的听着${target_name}的呻吟、一边开始爱抚乳房和蜜裂………`,
       );
       kojo.背面座位肛交 = 2; // CFLAG:330 = 2
     }
-    // 羞耻PLAY（TEQUIP:57 镜子 + ABL:17 分档，与初めて分支同款；此处源作误写第一档缺失结尾引号）
+    // 羞耻PLAY（TEQUIP:57 镜子 + ABL:17 分档，与初めて分支同款）
     if (
       era0(`tequip:${target}:57`) &&
       era0(`abl:${target}:17`) >= 1 &&
       era0(`talent:${target}:85`)
     ) {
-      // 源作误写：本句缺失结尾引号「」（:3298 原文如此，1:1 保真不修正）
       await era.printAndWait(
-        `「啊啊…我的肛门能把你的全部放进来…我是多么幸福的人啊………${heart(1)}`,
+        `「啊啊…我的肛门能把你的全部放进来…我是多么幸福的人啊………${heart(1)}」`,
       );
       await era.printAndWait(
         `${target_name}看着镜子中映出的自己的痴态，更加兴奋了………`,
@@ -5812,9 +5806,7 @@ async function kojo_message_com_8(rand) {
     }
     return 0;
   } else if (era_flag.selectcom == 30) {
-    // 手淫 CFLAG:331（无 A感覚 分档，按 TALENT/侍奉精神 ABL:16 分档；
-    // 源作误写：二回目以降顶档与次档均写 CFLAG:331 <= 5，:3341 原文如此，1:1 保真不修正——
-    // 顶档 7 与次档 6 因此共用同一守卫，cflag=6 且 FLAG:7 != 2 时会跳过两者直接落到更低档）
+    // 手淫 CFLAG:331（无 A感覚 分档，按 TALENT/侍奉精神 ABL:16 分档）
     if (kojo.手淫 == 0) {
       // 初めて（单层：无 ABL:3 细分）
       if (era0(`talent:${target}:76`) == 1) {
@@ -5853,7 +5845,7 @@ async function kojo_message_com_8(rand) {
     if (
       era0(`talent:${target}:76`) == 1 &&
       era0(`abl:${target}:16`) >= 3 &&
-      (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)
+      (kojo.手淫 <= 6 || game.kojo.口上开关 == 2)
     ) {
       // 淫乱＋侍奉精神Lv3以上（RAND:2 二选一）
       if (rand_n(2) == 0) {
@@ -5936,7 +5928,7 @@ async function kojo_message_com_8(rand) {
       era0(`abl:${target}:16`) >= 3 &&
       (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 侍奉精神Lv3以上（与上一档共用 TALENT:85+ABL:16>=3，仅门槛 CFLAG 不同，源作如此）
+      // 侍奉精神Lv3以上（与上一档共用 TALENT:85+ABL:16>=3，仅门槛 CFLAG 不同）
       await era.printAndWait(
         `「这样就好了吗？………呵呵呵、真的露出了好像很舒服似的脸啊、你」`,
       );
@@ -6444,8 +6436,8 @@ async function kojo_message_com_8(rand) {
               `${target_name}因为破瓜的痛楚和为${player_name}奉上处女的喜悦而后仰着张开了双翼。`,
             );
             await era.printAndWait(
-              `「啊啊啊啊…嗯啊${heart(1)} 啊啊…现在不要动…我会让你舒服起来的…嗯…嗯啊！`,
-            ); // （源作误写：本句缺失结尾引号「」，1:1 保真不修正）
+              `「啊啊啊啊…嗯啊${heart(1)} 啊啊…现在不要动…我会让你舒服起来的…嗯…嗯啊！」`,
+            );
             await era.printAndWait(
               `${player_name}握着${target_name}的腰，用阴茎放出了魔力。`,
             );
@@ -6524,8 +6516,8 @@ async function kojo_message_com_8(rand) {
               `${target_name}因为破瓜的痛楚和为${player_name}奉上处女的喜悦而后仰着。`,
             );
             await era.printAndWait(
-              `「啊啊啊啊…嗯啊${heart(1)} 啊啊…现在不要动…我会让你舒服起来的…嗯…嗯嗯！`,
-            ); // （源作误写：本句缺失结尾引号「」，1:1 保真不修正）
+              `「啊啊啊啊…嗯啊${heart(1)} 啊啊…现在不要动…我会让你舒服起来的…嗯…嗯嗯！」`,
+            );
             await era.printAndWait(
               `看见呼吸困难的${target_name}、${player_name}开始从下面往上突刺。`,
             );
@@ -6544,8 +6536,8 @@ async function kojo_message_com_8(rand) {
             );
             await era.printAndWait(`「啊！啊啊！不、不行！不行啊！」`);
             await era.printAndWait(
-              `平时不会因为这种程度而失去平衡的${target_name}因为长时间的膝曲，沉下了腰`,
-            ); // （源作误写：本句缺失结尾句号，1:1 保真不修正）
+              `平时不会因为这种程度而失去平衡的${target_name}因为长时间的膝曲，沉下了腰。`,
+            );
             await era.printAndWait(`「啊啊啊…啊啊…咕…咦…啊啊啊啊啊！！」`);
             await era.printAndWait(
               `${player_name}没放过这个机会，挺起了腰插了进去、滋的一声直接查到了蜜壶的最深处。当然处女膜也毫不留情的被贯穿、破坏掉了。`,
@@ -6674,8 +6666,8 @@ async function kojo_message_com_8(rand) {
           `「所以就这样一直抱着我…啊…如何？不行吗？嗯${heart(1)} 不行的话，真可惜…啊啊！」`,
         );
         await era.printAndWait(
-          `「那么作为代替，这有现在也好，你要一直插在小学里…啊啊…啊嗯…啊嗯嗯啊${heart(1)}」`,
-        ); // （源作误写："插在小学里"应为"插在小穴里"，1:1 保真不修正）
+          `「那么作为代替，只有现在也好，你要一直插在小穴里…啊啊…啊嗯…啊嗯嗯啊${heart(1)}」`,
+        );
         await era.printAndWait(
           `${target_name}想品味着着阴茎一样，继续动着腰………`,
         );
@@ -6998,11 +6990,9 @@ async function kojo_message_com_8(rand) {
           await era.printAndWait(
             `经由${player_name}的手开发过的${target_name}的肛门轻易的接受了阴茎。`,
           );
-          // 缺失结尾引号（源作误写，1:1 保真）
-          await era.printAndWait(`「啊啊…嗯啊…嗯…啊啊…啊…啊嗯嗯！`);
-          // 行尾多余的句点＋顿号（"……・"，源作误写，1:1 保真）
+          await era.printAndWait(`「啊啊…嗯啊…嗯…啊啊…啊…啊嗯嗯！」`);
           await era.printAndWait(
-            `${player_name}向上挺着腰侵犯着${target_name}肛门……・`,
+            `${player_name}向上挺着腰侵犯着${target_name}肛门……`,
           );
         } else {
           await era.printAndWait(`「咕…全都进来了…啊啊…好…好难受…咕！」`);
@@ -7059,8 +7049,8 @@ async function kojo_message_com_8(rand) {
           `配合着淫乱的腰的动作${target_name}漏出了喘息声。`,
         );
         await era.printAndWait(
-          `「啊嗯…嗯…嗯嗯…嗯啊嗯嗯${heart(1)} 就这样前后懂的话…嗯！子宫的后面被摩擦的感觉…啊嗯${heart(1)}」`,
-        ); // "前后懂的话"应为"前后动的话"（源作误写，1:1 保真）
+          `「啊嗯…嗯…嗯嗯…嗯啊嗯嗯${heart(1)} 就这样前后动的话…嗯！子宫的后面被摩擦的感觉…啊嗯${heart(1)}」`,
+        );
         await era.printAndWait(
           `「嗯！这、这样…插过来的话…啊啊啊啊！啊…啊嗯${heart(1)}」`,
         );
@@ -7108,8 +7098,7 @@ async function kojo_message_com_8(rand) {
         await era.printAndWait(
           `${target_name}的腰不停的动着、每次抬起腰把阴茎往外拔的时候，都会漏出快要融化一样的表情`,
         );
-        // 行尾多余句点（"。。"，源作误写，1:1 保真）
-        await era.printAndWait(`就那样一口气插下去的话腰就会颤抖起来。。`);
+        await era.printAndWait(`就那样一口气插下去的话腰就会颤抖起来。`);
         await era.printAndWait(
           `「啊啊…你的好舒服！腰停不下来了…啊啊…啊嗯嗯啊嗯啊${heart(1)}」`,
         );
@@ -7276,9 +7265,8 @@ async function kojo_message_com_8(rand) {
       await era.printAndWait(
         `「被你打屁股…啊啊…好舒服…啊啊…啊啊啊——${heart(1)}」`,
       );
-      // "辩证这样"应为"变成这样"（源作误写，1:1 保真）
       await era.printAndWait(
-        `「啊嗯…我的身体辩证这样，你要负责任啊…啊嗯…啊啊嗯${heart(1)}」`,
+        `「啊嗯…我的身体变成这样，你要负责任啊…啊嗯…啊啊嗯${heart(1)}」`,
       );
       kojo.打屁股 = 5; // CFLAG:TARGET:341 = 5
     } else if (
@@ -7312,9 +7300,7 @@ async function kojo_message_com_8(rand) {
         `「啊…啊啊…对不起对不起…明明输了还…啊啊…这么屈辱的活着！」`,
       );
       kojo.打屁股 = 3; // CFLAG:TARGET:341 = 3
-      // それ以外分支源作误写用 && 而非 ||（CFLAG:341<=1 && FLAG:7==2）：正常游玩
-      // （FLAG:7!=2）时恒为假，此分支在非口上开关模式下永远不会命中，1:1 保真不修正
-    } else if (kojo.打屁股 <= 1 && game.kojo.口上开关 == 2) {
+    } else if (kojo.打屁股 <= 1 || game.kojo.口上开关 == 2) {
       // それ以外
       await era.printAndWait(`「不更用力的话…啊…不会痛哦…啊嗯」`);
       await era.printAndWait(`${target_name}被打着屁股依然笑着………`);
@@ -7421,9 +7407,7 @@ async function kojo_message_com_8(rand) {
         `${target_name}每次被${player_name}鞭打都会发出娇喘………`,
       );
       kojo.鞭 = 3; // CFLAG:TARGET:342 = 3
-      // それ以外分支源作误写引用了 CFLAG:335（骑乘位）而非 CFLAG:342（鞭）本身，
-      // 1:1 保真不修正——正常游玩下这条判定跟着骑乘位的推进走，与鞭的推进无关
-    } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
+    } else if (kojo.鞭 <= 1 || game.kojo.口上开关 == 2) {
       // それ以外
       await era.printAndWait(
         `「咕…啊啊！呵呵呵…真不愧是这个鞭子，不是一般的疼啊…上次打出来的红肿还这么显眼，看样子消肿还要很长时间」`,
@@ -7831,8 +7815,7 @@ async function kojo_message_com_8(rand) {
           `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,
         );
       } else {
-        // 与上两档"眼神快融化了………"不同，此处缺"了"字（源作误写，1:1 保真）
-        await era.printAndWait(mouth_gag_word + `眼神快融化………`);
+        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);
       }
       kojo.口塞 = 6; // CFLAG:TARGET:346 = 6
     } else if (
@@ -7849,7 +7832,7 @@ async function kojo_message_com_8(rand) {
           `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,
         );
       } else {
-        await era.printAndWait(mouth_gag_word + `眼神快融化………`);
+        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);
       }
       kojo.口塞 = 5; // CFLAG:TARGET:346 = 5
     } else if (
@@ -7883,7 +7866,7 @@ async function kojo_message_com_8(rand) {
           `${target_name}被按上了口塞` + `嘴的缝隙里，漏出了灼热的吐息………`,
         );
       } else {
-        await era.printAndWait(mouth_gag_word + `眼神快融化………`);
+        await era.printAndWait(mouth_gag_word + `眼神快融化了………`);
       }
       kojo.口塞 = 3; // CFLAG:TARGET:346 = 3
     } else if (kojo.口塞 <= 1 || game.kojo.口上开关 == 2) {
@@ -7921,7 +7904,7 @@ async function kojo_message_com_8(rand) {
     }
     return 0;
   } else if (era_flag.selectcom == 46 && era0(`tequip:${target}:46`)) {
-    // 灌肠肛塞 CFLAG:347（開始時，TEQUIP:46 已装；源作无終了時分支，仅此一档）
+    // 灌肠肛塞 CFLAG:347（開始時，TEQUIP:46 已装；无終了時分支，仅此一档）
     if (kojo.灌肠肛塞 == 0) {
       // 初めて
       await era.printAndWait(
@@ -7970,9 +7953,8 @@ async function kojo_message_com_8(rand) {
       (kojo.灌肠肛塞 <= 4 || game.kojo.口上开关 == 2)
     ) {
       // 爱＋A感觉Lv3以上＋受虐狂っ気Lv3以上
-      // "全时灌肠液"应为"全是灌肠液"（源作误写，1:1 保真）
       await era.printAndWait(
-        `「啊…啊嗯嗯！肚子里…全时灌肠液…嗯啊…这样我还有感觉什么的…${heart(1)}」`,
+        `「啊…啊嗯嗯！肚子里…全是灌肠液…嗯啊…这样我还有感觉什么的…${heart(1)}」`,
       );
       await era.printAndWait(
         `${target_name}一边喘着粗气一边感受着灌肠液的刺激。`,
@@ -8248,7 +8230,7 @@ async function kojo_message_com_8(rand) {
       kojo.交谈 = 1; // CFLAG:357 = 1
       return 0;
     }
-    // 二回目以降（源作不更新 CFLAG:357，此后每次都走这里）
+    // 二回目以降（不更新 CFLAG:357，此后每次都走这里）
     if (era0(`tequip:${target}:53`) == 1) {
       // ビデオ自己紹介
       await era.print(`${master_name}催促着${target_name}进行自我介绍、`);
@@ -8264,17 +8246,15 @@ async function kojo_message_com_8(rand) {
         (era0(`talent:${target}:76`) || era0(`abl:${target}:11`) >= 5) &&
         game.event.插着不拔
       ) {
-        // "晃着要"应为"晃着腰"（源作误写，1:1 保真）
-        await era.print(`${target_name}一边晃着要，一边不停的说着猥琐的语言`);
+        await era.print(`${target_name}一边晃着腰，一边不停的说着猥琐的语言`);
         game.kojo.录像内容 |= 2; // TFLAG:32 |= 2
       } else if (
         rand_n(3) == 0 &&
         (era0(`talent:${target}:89`) || era0(`abl:${target}:17`) >= 5)
       ) {
-        // 与 :4633+:4635+:4636 同型（#622；源作「本命」误写 1:1 保留）
         const masturbation = era0(`abl:${target}:31`) >= 3;
         await era.print(
-          `${target_name}把自己的本命和至今为止的性经验` +
+          `${target_name}把自己的本名和至今为止的性经验` +
             (masturbation ? `、甚至自慰时妄想的内容都` : '') +
             `一边微笑一边喋喋不休的讲着……`,
         );
@@ -8431,8 +8411,7 @@ async function kojo_message_com_8(rand) {
       await era.printAndWait(
         `「啊…嗯…啾…啊…一边被你爱抚一边舔着你，好幸福…${heart(1)}」`,
       );
-      // 结尾多一个引号（源作误写，1:1 保真）
-      await era.printAndWait(`「嗯…嗯啾…啾…啾…啾…啊…嗯…再继续…${heart(1)}」」`);
+      await era.printAndWait(`「嗯…嗯啾…啾…啾…啾…啊…嗯…再继续…${heart(1)}」`);
       kojo.六九式 = 4; // CFLAG:364 = 4
     } else if (
       era0(`abl:${target}:16`) >= 3 &&
@@ -8448,9 +8427,9 @@ async function kojo_message_com_8(rand) {
       await era.printAndWait(`「你不能不舔吗…嗯…啊啊…嗯…嗯…啾…♪」`);
       kojo.六九式 = 3; // CFLAG:364 = 3
     } else if (kojo.六九式 <= 1 || game.kojo.口上开关 == 2) {
-      // それ以外（侍奉精神Lv3未満；源作缺失结尾引号，1:1 保真）
+      // それ以外（侍奉精神Lv3未満）
       await era.printAndWait(
-        `「啊…嗯…嗯…啊嗯…嗯啊…嗯…嗯嗯…啾…啾…不、不行啊、这么欺负我的话…啊啊！`,
+        `「啊…嗯…嗯…啊嗯…嗯啊…嗯…嗯嗯…啾…啾…不、不行啊、这么欺负我的话…啊啊！」`,
       );
       await era.printAndWait(
         `${target_name}一边像是要忍耐蜜裂的刺激一样左右摇动着屁股，一边舔着${player_name}的阴茎。`,
@@ -8460,7 +8439,7 @@ async function kojo_message_com_8(rand) {
     }
     return 0;
   } else if (era_flag.selectcom == 80) {
-    // 强制口交 CFLAG:381（初めて 3 档，二回目 4 档，档位结构不对称，源作如此）
+    // 强制口交 CFLAG:381（初めて 3 档，二回目 4 档，档位结构不对称）
     if (kojo.强制口交 == 0) {
       // 初めて
       if (era0(`talent:${target}:76`) == 1) {
@@ -8916,8 +8895,7 @@ async function kojo_message_com_8(rand) {
           `${target_name}因为口腔奉仕而兴奋地发出响声，开始吮吸着${player_name}的阴茎………`,
         );
       } else if (era0(`abl:${target}:16`) >= 3) {
-        // 侍奉精神Lv3以上（源作结尾多一个引号，1:1 保真）
-        await era.printAndWait(`「嗯…嗯啾…啾…啾…♪啾…啾…♪」」`);
+        await era.printAndWait(`「嗯…嗯啾…啾…啾…♪啾…啾…♪」`);
         await era.printAndWait(
           `${target_name}兴奋的发出着响声，吮吸着${player_name}的阴茎………`,
         );
@@ -8964,8 +8942,7 @@ async function kojo_message_com_8(rand) {
       era0(`abl:${target}:16`) >= 3 &&
       (kojo.真空口交 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 侍奉精神Lv3以上（源作结尾多一个引号，1:1 保真）
-      await era.printAndWait(`「嗯…嗯啾…啾…啾…♪啾…啾…♪」」`);
+      await era.printAndWait(`「嗯…嗯啾…啾…啾…♪啾…啾…♪」`);
       await era.printAndWait(
         `${target_name}兴奋的发出着响声，吮吸着${player_name}的阴茎。`,
       );
@@ -8983,7 +8960,7 @@ async function kojo_message_com_8(rand) {
     }
     return 0;
   } else if (era_flag.selectcom == 124) {
-    // 深喉 CFLAG:365（二回目以降四档全部误读 CFLAG:363「真空口交」而非自身 CFLAG:365，源作 bug，1:1 保真）
+    // 深喉 CFLAG:365（二回目以降四档）
     if (kojo.深喉 == 0) {
       // 初めて
       if (era0(`talent:${target}:76`) == 1) {
@@ -9019,9 +8996,9 @@ async function kojo_message_com_8(rand) {
       return 0;
     } else if (
       era0(`talent:${target}:76`) == 1 &&
-      (kojo.真空口交 <= 4 || game.kojo.口上开关 == 2)
+      (kojo.深喉 <= 4 || game.kojo.口上开关 == 2)
     ) {
-      // 二回目以降·淫乱（条件读 CFLAG:363，源作 bug）
+      // 二回目以降·淫乱
       await era.printAndWait(
         `「啊啊…我已经迷上了你的阴茎了…嗯啾…啾…嗯…嗯${heart(1)}」`,
       );
@@ -9034,9 +9011,9 @@ async function kojo_message_com_8(rand) {
       kojo.深喉 = 5; // CFLAG:365 = 5
     } else if (
       era0(`talent:${target}:85`) == 1 &&
-      (kojo.真空口交 <= 3 || game.kojo.口上开关 == 2)
+      (kojo.深喉 <= 3 || game.kojo.口上开关 == 2)
     ) {
-      // 爱慕（条件读 CFLAG:363，源作 bug）
+      // 爱慕
       await era.printAndWait(
         `「啊啊…你的阴茎全都是我的东西…嗯咕…啾…嗯…嗯咕${heart(1)}」`,
       );
@@ -9049,9 +9026,9 @@ async function kojo_message_com_8(rand) {
       kojo.深喉 = 4; // CFLAG:365 = 4
     } else if (
       era0(`abl:${target}:16`) >= 3 &&
-      (kojo.真空口交 <= 2 || game.kojo.口上开关 == 2)
+      (kojo.深喉 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 侍奉精神Lv3以上（条件读 CFLAG:363，源作 bug）
+      // 侍奉精神Lv3以上
       await era.printAndWait(`「嗯…嗯…嗯咕…嗯…嗯咕…嗯～♪」`);
       await era.printAndWait(
         `${target_name}用鼻子喘着气。开始用喉咙深处奉仕${player_name}的阴茎。`,
@@ -9060,8 +9037,8 @@ async function kojo_message_com_8(rand) {
         `「嗯啾…啾…嗯～♪…嗯…你的那个太精神了让我有点困扰…嗯…嗯啾…啾♪」`,
       );
       kojo.深喉 = 3; // CFLAG:365 = 3
-    } else if (kojo.真空口交 <= 1 || game.kojo.口上开关 == 2) {
-      // それ以外（条件读 CFLAG:363，源作 bug）
+    } else if (kojo.深喉 <= 1 || game.kojo.口上开关 == 2) {
+      // それ以外（侍奉精神Lv3未満）
       await era.printAndWait(`「嗯…咕…嗯咕…嗯！」`);
       await era.printAndWait(
         `${target_name}即使像快要吐了一样，也还是用喉咙深处奉仕着${player_name}的阴茎。`,
@@ -9078,7 +9055,7 @@ async function kojo_message_com_8(rand) {
     if (kojo.穿环 == 0) {
       // 初めて
       if (era_flag.assi > 0 && era_flag.assiplay) {
-        // 助手（此档不打印，源作 PRINTFORM 无参数）
+        // 助手（此档不打印，PRINTFORM 无参数）
         await era.print('');
       } else if (era0(`talent:${target}:76`) == 1) {
         // 淫乱
@@ -9240,7 +9217,7 @@ async function kojo_message_com_8(rand) {
       kojo.穿环 = 1; // CFLAG:TARGET:348 = 1
       return 0;
     } else if (era_flag.assi > 0 && era_flag.assiplay) {
-      // 二回目以降·助手（此档不打印，源作 PRINTFORM 无参数；不更新 CFLAG:348）
+      // 二回目以降·助手（此档不打印，PRINTFORM 无参数；不更新 CFLAG:348）
       await era.print('');
     } else if (
       era0(`talent:${target}:76`) == 1 &&
@@ -9410,7 +9387,7 @@ kojo_message_com_family.register(8, kojo_message_com_8);
  * @DOG_KOJO_8（:5446-6245）：兽奸 PLAY 的专用口上（头部守卫 TEQUIP:89 岔入）。
  * 与主 COM_8 同构：SELECTCOM 0/1/5/6/9/21/27/30/31/34/37/43/56 各支 +
  * 牝犬（TALENT:136）分档。**源文全部 PRINTFORMW/PRINTFORML 均为空参数**
- * （汉化版兽奸对白被整段删除，仅保留状态机骨架，逐行核对确认，1:1 保真
+ * （兽奸对白整段未填写，仅保留状态机骨架，逐行核对确认，
  * 不补写台词）；CFLAG 计数器与主 COM_8 对应指令共用同一存储（301=爱抚、
  * 302=舔阴、306=胸爱抚、307=接吻、310=舔肛、322=背后位、328=背后位肛交、
  * 331=手淫、332=口交_奴、335=骑乘位、338=肛门侍奉、344=眼罩、357=交谈，
@@ -9427,7 +9404,7 @@ async function dog_kojo_8(rand) {
   if (era_flag.selectcom == 0) {
     // 兽奸爱撫 CFLAG:301
     if (kojo.爱抚 == 0) {
-      // 初めて（源作空参数，1:1 保真不补写）
+      // 初めて（台词未填写，输出空行）
       if (era0(`mark:${target}:2`) >= 2) {
         await era.printAndWait(''); // 屈服刻印Lv2以上
       } else {
@@ -9723,7 +9700,7 @@ async function dog_kojo_8(rand) {
       era0(`talent:${target}:136`) == 1 &&
       (kojo.背后位 <= 6 || game.kojo.口上开关 == 2)
     ) {
-      // 牝犬（RAND:3 三选一，源作三档均空参数，1:1 保真）
+      // 牝犬（RAND:3 三选一，三档台词均未填写，输出空行）
       if (rand_n(3) == 0) {
         await era.printAndWait('');
       } else if (rand_n(2) == 0) {
@@ -9801,7 +9778,7 @@ async function dog_kojo_8(rand) {
       era0(`abl:${target}:3`) >= 3 &&
       (kojo.背后位肛交 <= 6 || game.kojo.口上开关 == 2)
     ) {
-      // 牝犬＋A感觉Lv3以上（RAND:2 二选一，源作两档均空参数，1:1 保真）
+      // 牝犬＋A感觉Lv3以上（RAND:2 二选一，两档台词均未填写，输出空行）
       if (rand_n(2) == 0) {
         await era.printAndWait('');
       } else {
@@ -9874,7 +9851,7 @@ async function dog_kojo_8(rand) {
       era0(`abl:${target}:16`) >= 3 &&
       (kojo.手淫 <= 6 || game.kojo.口上开关 == 2)
     ) {
-      // 牝犬＋侍奉精神Lv3以上（RAND:2 二选一，1:1 保真）
+      // 牝犬＋侍奉精神Lv3以上（RAND:2 二选一）
       if (rand_n(2) == 0) {
         await era.printAndWait('');
       } else {
@@ -9918,7 +9895,7 @@ async function dog_kojo_8(rand) {
       era0(`abl:${target}:16`) >= 3 &&
       (kojo.手淫 <= 2 || game.kojo.口上开关 == 2)
     ) {
-      // 侍奉精神Lv3以上（源作死区：此档要求 TALENT:85，与上一档条件几乎重复，1:1 保真）
+      // 侍奉精神Lv3以上（要求 TALENT:85，与上一档条件几乎重复，实际不可达）
       await era.printAndWait('');
       kojo.手淫 = 3;
     } else if (kojo.手淫 <= 1 || game.kojo.口上开关 == 2) {
@@ -10025,7 +10002,7 @@ async function dog_kojo_8(rand) {
       era0(`talent:${target}:136`) == 1 &&
       (kojo.骑乘位 <= 6 || game.kojo.口上开关 == 2)
     ) {
-      // 牝犬（RAND:3 三选一，1:1 保真）
+      // 牝犬（RAND:3 三选一）
       if (rand_n(3) == 0) {
         await era.printAndWait('');
       } else if (rand_n(2) == 0) {
@@ -10038,7 +10015,7 @@ async function dog_kojo_8(rand) {
       era0(`talent:${target}:76`) == 1 &&
       (kojo.骑乘位 <= 5 || game.kojo.口上开关 == 2)
     ) {
-      // 淫乱（RAND:4 四选一，1:1 保真）
+      // 淫乱（RAND:4 四选一）
       if (rand_n(4) == 0) {
         await era.printAndWait('');
       } else if (rand_n(3) == 0) {
@@ -10053,7 +10030,7 @@ async function dog_kojo_8(rand) {
       era0(`talent:${target}:85`) == 1 &&
       (kojo.骑乘位 <= 4 || game.kojo.口上开关 == 2)
     ) {
-      // 爱慕（RAND:4 四选一，首档 PRINTFORML，其余 PRINTFORMW，1:1 保真）
+      // 爱慕（RAND:4 四选一，首档 PRINTFORML，其余 PRINTFORMW）
       if (rand_n(4) == 0) {
         await era.print('');
       } else if (rand_n(3) == 0) {
@@ -10069,7 +10046,7 @@ async function dog_kojo_8(rand) {
       era0(`abl:${target}:2`) >= 3 &&
       (kojo.骑乘位 <= 3 || game.kojo.口上开关 == 2)
     ) {
-      // 屈服刻印Lv3＋V感觉Lv3以上（RAND:4 四选一，1:1 保真）
+      // 屈服刻印Lv3＋V感觉Lv3以上（RAND:4 四选一）
       if (rand_n(4) == 0) {
         await era.printAndWait('');
       } else if (rand_n(3) == 0) {
@@ -10089,7 +10066,7 @@ async function dog_kojo_8(rand) {
       await era.printAndWait('');
       kojo.骑乘位 = 3;
     } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) {
-      // それ以外（爱無し、顺从Lv5未満——源作注释误写"顺从"，实际条件是纯 CFLAG 兜底，1:1 保真）
+      // それ以外（爱無し、顺从Lv5未満——注释写"顺从"，实际条件是纯 CFLAG 兜底）
       await era.printAndWait('');
       kojo.骑乘位 = 2;
     }
@@ -10128,7 +10105,7 @@ async function dog_kojo_8(rand) {
       era0(`abl:${target}:16`) >= 5 &&
       (kojo.肛门侍奉 <= 3 || game.kojo.口上开关 == 2)
     ) {
-      // 爱＋侍奉精神Lv5（源作仅一句 PRINTFORML，无 PRINTFORMW 收尾，1:1 保真）
+      // 爱＋侍奉精神Lv5（仅一句 PRINTFORML，无 PRINTFORMW 收尾）
       await era.print('');
       kojo.肛门侍奉 = 4;
     } else if (
@@ -10229,25 +10206,23 @@ async function dog_kojo_8(rand) {
     return 0;
   } else if (era_flag.selectcom == 43 && era0(`tequip:${target}:43`) == 0) {
     // 兽奸眼罩 終了時 CFLAG:444
-    // 源作守卫误读 CFLAG:338（肛门侍奉）而非 CFLAG:444 自身（前三档），仅
-    // 末档正确读 CFLAG:444；写入目标始终是 CFLAG:444，1:1 保真不改正
     if (
       era0(`talent:${target}:136`) == 1 &&
-      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2)
+      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 == 2)
     ) {
       // 牝犬
       await era.printAndWait('');
       kojo.兽奸眼罩 = 4;
     } else if (
       era0(`talent:${target}:76`) == 1 &&
-      (kojo.肛门侍奉 < 3 || game.kojo.口上开关 == 2)
+      (kojo.兽奸眼罩 < 3 || game.kojo.口上开关 == 2)
     ) {
       // 淫乱
       await era.printAndWait('');
       kojo.兽奸眼罩 = 3;
     } else if (
       era0(`talent:${target}:85`) == 1 &&
-      (kojo.肛门侍奉 < 2 || game.kojo.口上开关 == 2)
+      (kojo.兽奸眼罩 < 2 || game.kojo.口上开关 == 2)
     ) {
       // 爱慕
       await era.printAndWait('');
@@ -10279,7 +10254,7 @@ async function dog_kojo_8(rand) {
       kojo.交谈 = 1;
       return 0;
     } else if (era0(`tequip:${target}:53`)) {
-      // 二回目以降·ビデオ自己紹介（源作无摄像分支时直接跳过，不打印任何文本）
+      // 二回目以降·ビデオ自己紹介（无摄像分支时直接跳过，不打印任何文本）
       if (
         era0(`talent:${target}:136`) == 1 &&
         (kojo.交谈 <= 4 || game.kojo.口上开关 == 2)
@@ -10797,8 +10772,8 @@ kojo_message_palamcng_family.register(8, kojo_message_palamcng_8);
 
 /**
  * @KOJO_MESSAGE_MARKCNG_8（:6568-6648）：刻印取得口上。
- * 守卫（:6573-6589）：口塞、失神、兽奸、触手、崩坏、死斗场（源注释掉了助手
- * 调教守卫，:6570-6571，1:1 保真不启用）。苦痛/快乐/屈服/反抗刻印 Lv3
+ * 守卫（:6573-6589）：口塞、失神、兽奸、触手、崩坏、死斗场（助手
+ * 调教守卫未启用）。苦痛/快乐/屈服/反抗刻印 Lv3
  * 取得（CFLAG:297-300，TFLAG:22/23/24/21 == 3）。
  */
 async function kojo_message_markcng_8() {
@@ -10903,9 +10878,9 @@ kojo_message_markcng_family.register(8, kojo_message_markcng_8);
  * @SELF_KOJO_K8（:6649-7072）：事件口上（TFLAG:13 分派）。
  * 1 调教后自慰 / 2 百合PLAY / 3 朝口交 / 4 调教后性交 / 5 夜袭 / 6 卖却 /
  * 11 妊娠发觉 / 12 生产 / 13 育儿室 / 14 亲离 / 999 死亡 / 998 寿命；
- * 末行 TFLAG:13 = 0。死亡/寿命两支源作 PRINTFORMW 均为空（1:1 保真，源作
- * 未填写台词，非转译遗漏）。妊娠发觉/生产两支的「已发觉/已生产」分支与
- * 「首次发觉/生产」分支内容 1:1 重复（源作如此，同 SELECTCOM 87 先例）。
+ * 末行 TFLAG:13 = 0。死亡/寿命两支台词均为空（模板未填写，
+ * 非转译遗漏）。妊娠发觉/生产两支的「已发觉/已生产」分支与
+ * 「首次发觉/生产」分支内容重复（同 SELECTCOM 87 先例）。
  * 卖却分支尾调 SELL_MATURO_K0 已随 #338 接通。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未直接消费，随族签名保留）
@@ -11380,7 +11355,7 @@ async function self_kojo_k8(rand, q) {
       }
       kojo.妊娠发觉 = 1; // CFLAG:271 = 1
     } else {
-      // （与上支内容 1:1 重复，源作如此——第二次通知未改文案）
+      // （与上支内容重复——第二次通知未改文案）
       if (era0(`talent:${target}:9`) === 1) {
         await era.printAndWait(
           `「我的肚子里…有…什么东西？不要…不想怀上怪物的孩子…不要啊啊啊啊啊啊啊啊啊啊」`,
@@ -11467,7 +11442,7 @@ async function self_kojo_k8(rand, q) {
       }
       kojo.生产 = 1; // CFLAG:272 = 1
     } else {
-      // （与上支内容基本重复，源作如此）
+      // （与上支内容基本重复）
       if (era0(`talent:${target}:9`) === 1) {
         await era.printAndWait(
           `「啊啊…啊…我的肚子里…有什么出来了…啊啊啊啊啊啊啊啊」`,
@@ -11485,9 +11460,9 @@ async function self_kojo_k8(rand, q) {
           `${target_name}抱起了孩子，看起来很高兴的笑着………`,
         );
       } else {
-        // その他（源作误写缺失开头「，1:1 保真不修）
+        // その他
         await era.printAndWait(
-          `总觉得很不可思议…就算是这样也舍不得扔掉这个孩子呢」`,
+          `「总觉得很不可思议…就算是这样也舍不得扔掉这个孩子呢」`,
         );
         await era.printAndWait(`${target_name}抱起了孩子，开始哄着他………`);
       }
@@ -11529,7 +11504,7 @@ async function self_kojo_k8(rand, q) {
     kojo.亲离 = 1; // CFLAG:274 = 1
   }
 
-  // 死亡（源作两支 PRINTFORMW 均为空——审查/未填写，1:1 保真）
+  // 死亡（两支台词均为空——模板未填写）
   if (game.train.初吻与自我口上 === 999) {
     if (era0(`talent:${target}:85`)) {
       // 爱慕
@@ -11540,7 +11515,7 @@ async function self_kojo_k8(rand, q) {
     }
   }
 
-  // 寿命による消滅（源作两支 PRINTFORMW 均为空，同上）
+  // 寿命による消滅（两支台词均为空，同上）
   if (game.train.初吻与自我口上 === 998) {
     if (era0(`talent:${target}:85`)) {
       // 爱慕
@@ -11588,7 +11563,7 @@ async function dungeon_ryouzyoku_k8() {
 /**
  * @DUNGEON_RYOUZYOKU_AFTER_K8（:7093-7143）：迷宫凌辱后的一言。
  * 处女支只按 EXP:1 / EXP:22 / EXP:20 三档追加；非处女支多一档 EXP:0（膣），
- * 且 EXP:20 档源作多打了一行孤立的「（:7137），1:1 保真原样保留。
+ * 且 EXP:20 档多出一行孤立的开引号（缺陷，已删除）。
  */
 async function dungeon_ryouzyoku_after_k8() {
   const target = era_flag.target;
@@ -11656,8 +11631,6 @@ async function dungeon_ryouzyoku_after_k8() {
 
     // 精液の味
     if (era0(`exp:${target}:20`) > 20) {
-      // 源作多打了一行孤立的开引号（非处女支独有），1:1 保真原样保留
-      await era.printAndWait(`「`);
       await era.printAndWait(
         `「啊、嗯、嗯、你们的精液又浓又臭…啊啊…比人类的男性的更好吃…嗯嗯嗯………」`,
       );
@@ -11845,9 +11818,8 @@ async function benki_koujo_k8(rand) {
       );
     } else if (era0(`abl:${a}:16`) >= 5) {
       // 侍奉精神Lv5以上
-      // 源作句末多打了一个引号（啊嗯啊」」），1:1 保真原样保留
       await era.printAndWait(
-        `「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」」`,
+        `「啊嗯…恩…啊啊…我没有2个小穴，所以请按照顺序来侵犯…啊…啊嗯啊」`,
       );
     } else {
       // それ以外
@@ -12253,7 +12225,6 @@ async function ntr_koujo_k8(rand, p_arg = 0) {
           `不停的侵犯着${target_name}的蜜壶、${target_name}发出了逞强的声音。`,
       );
       await era.printAndWait(`「啊…嗯…啊啊…狂王大人…啊啊嗯…恩…啊嗯…啊啊！」`);
-      // 源作此行末尾无「………」（同段另一支 :7528 有），1:1 保真不补
       await era.printAndWait(
         `水晶球录下了好几个${target_name}被狂王抱着不停绝顶的画面`,
       );
@@ -12275,9 +12246,9 @@ async function ntr_koujo_k8(rand, p_arg = 0) {
       await era.printAndWait(
         `「啊啊…好舒服啊…给我…给我更多阴茎！啊啊…嗯…好深…好棒♪」`,
       );
-      // 原作是一整行：无后缀 PRINTFORM + IF/ELSE 的 PRINT
+      // 一整行：无后缀 PRINTFORM + IF/ELSE 的 PRINT
       // （互斥两支，各支自带收尾，块后没有共同的收行语句）（#622 补查）。
-      // 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同），1:1 保真
+      // 这一处只判 FLAG:500 == 0（与上文各处的 0 或 2 不同）
       await era.print(
         `${target_name}的蜜裂和肛门被` +
           (game.system.狂王性别 == 0
@@ -12338,7 +12309,7 @@ async function ntr_koujo_k8(rand, p_arg = 0) {
     }
     kojo.NTR_657 = 1; // CFLAG:657 = 1
   } else if (p == 20) {
-    // NTR公開出産（本支不记位，源作如此）
+    // NTR公開出産（本支不记位）
     if (inran_or_aibo) {
       // CFLAG:102 妊娠相手：1 = 主人
       if (chara(target).event.妊娠相手 == 1) {
@@ -12381,7 +12352,7 @@ ntr_koujo_family.register(8, ntr_koujo_k8);
 /**
  * @EXUCUTION_KOUJO_K8（:7606-7620）：处刑口上。
  * TFLAG:16 分四档：4 肉便器刑 / 5 战斗员化 / 6 晒し台刑 / 7 消除记忆解放。
- * 第 7 档源作未填台词（空 PRINTFORMW），1:1 保真出空行。
+ * 第 7 档台词未填写，输出空行。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
@@ -12400,7 +12371,7 @@ async function exucution_koujo_k8(rand) {
     // 晒し台刑
     await era.printAndWait(`「啊…啊啊啊…做了这种事…绝对饶不了你………！」`);
   } else if (game.event.犬射精或处刑口上 == 7) {
-    // 記憶を消して解放する（源作未填台词）
+    // 記憶を消して解放する（台词未填写）
     await era.printAndWait('');
   }
 
@@ -12411,7 +12382,9 @@ async function exucution_koujo_k8(rand) {
  * @MUSEUM_KOUJO_K8（:7623-7655）：博物馆（标本化）口上。
  * TFLAG:500 分十档，只有 0 石化与 1 剥制化有台词，其余八档（21 蜡人形 /
  * 3 人形 / 4 球体关节 / 5 金属 / 6 冰像 / 7 宝石 / 8 家具 / 9 绘画封印）
- * 源作都是空 PRINTFORMW，1:1 保真出空行。档值 21 也照搬（不是笔误的 2）。
+ * 模板未填台词，各出空行。蜡人形档的判据写作 21：博物馆事件的
+ * TFLAG:500 只会落 0–9（蜡像为 2）或隐藏值 100，该分支实际不触发，
+ * 保留占位。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
@@ -12427,7 +12400,7 @@ async function museum_koujo_k8(rand) {
     // 剥製化
     await era.printAndWait(`「死了之后还一直暴露着…呜…呜呜呜………」`);
   } else if (game.event.博物馆口上 == 21) {
-    // 蝋人形化（源作未填台词；档值 21 照搬）
+    // 蝋人形化（模板未填台词；档值 21 实际不触发，见函数头）
     await era.printAndWait('');
   } else if (game.event.博物馆口上 == 3) {
     // 人形化(マネキン)
@@ -12457,7 +12430,7 @@ async function museum_koujo_k8(rand) {
 
 /**
  * @BANISHMENT_KOUJO_K8（:7658-7676）：流放口上（处刑内容见 BANISHMENT.ERB）。
- * TFLAG:510 分五档，只有 0 追放有台词，其余四档源作未填。
+ * TFLAG:510 分五档，只有 0 追放有台词，其余四档未填写。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
@@ -12468,7 +12441,7 @@ async function banishment_koujo_k8(rand) {
     // 追放
     await era.printAndWait(`「这样就自由了…但是、失去力量的我的存在价值………」`);
   } else if (game.event.流放口上 == 1) {
-    // 男体化（源作未填台词）
+    // 男体化（台词未填写）
     await era.printAndWait('');
   } else if (game.event.流放口上 == 2) {
     // 記憶消去
@@ -12487,7 +12460,7 @@ async function banishment_koujo_k8(rand) {
 /**
  * @PUBLIC_EXUCUTION_KOUJO_K8（:7679-7691）：公开处刑口上
  * （处刑内容见 PUBLIC_EXUCUTION.ERB）。TFLAG:520 分三档：0 凌辱处刑 /
- * 1 绞首刑 / 2 魂粉碎（源作未填台词）。
+ * 1 绞首刑 / 2 魂粉碎（台词未填写）。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
@@ -12505,7 +12478,7 @@ async function public_exucution_koujo_k8(rand) {
       `「能不能至少给我套个皮革袋子、我不想漏出可怜的死相…呜…呜呜呜呜………」`,
     );
   } else if (game.event.公开处刑口上 == 2) {
-    // 魂粉砕（源作未填台词）
+    // 魂粉砕（模板未填台词，输出空行）
     await era.printAndWait('');
   }
 
@@ -12515,7 +12488,7 @@ async function public_exucution_koujo_k8(rand) {
 /**
  * @GROTESQUE_KOUJO_K8（:7694-7718）：猎奇处刑口上（内容见 GROTESQUE.ERB）。
  * TFLAG:530 分七档（0 四肢切断 / 1 内脏凌辱 / 2 断头台 / 3 火刑 / 4 食肉 /
- * 5 死灵化 / 6 丧尸化），源作七档全部未填台词，1:1 保真只出空行。
+ * 5 死灵化 / 6 丧尸化），七档台词全部未填写，只出空行。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  */
@@ -12644,11 +12617,10 @@ async function gohoubi_request_koujo_k8(rand) {
  * choice（原作 TFLAG:18）三档：0 放置 PLAY / 1 勋章授与 / 2 兑现要求。
  * 第 2 档再按 CFLAG:504 分十支。
  *
- * 源作在五处写了分岔却两支同文，1:1 保真照搬（各支加注）：
+ * 五处分岔两支同文（各支加注）：
  * 犬·猪·马兽奸的 TALENT:0 处女判、性交的 ABL:2 > ABL:3 膣/肛门判、
  * 乱交的处女判——分岔条件在，两支文字完全一致。
- * :7820 的「十分钟以上１０分以上」是汉化重复，照搬不修。
- * 源作在 CFLAG:504 链末尾写了一个空 ELSE（无输出），移植省略。
+ * CFLAG:504 链末尾有一个空 ELSE（无输出），移植省略。
  *
  * @param {(n: number) => number} [rand] RAND:N 随机源（本函数未消费，随族签名保留）
  * @param {number} [cid] 角色 ID（族签名给的 A；本实现取 era_flag.target，同 K3）
@@ -12672,7 +12644,7 @@ async function gohoubi_after_koujo_k8(rand, cid, choice) {
       // お金を渡す
       await era.printAndWait(`「嗯、勇者捕获的报酬确实收到了」`);
     } else if (gohoubi == 1) {
-      // 犬と獣姦（源作两支同文，1:1 保真）
+      // 犬と獣姦（两支同文）
       if (era0(`talent:${a}:0`) == 1) {
         // 处女
         await era.printAndWait(
@@ -12684,7 +12656,7 @@ async function gohoubi_after_koujo_k8(rand, cid, choice) {
         );
       }
     } else if (gohoubi == 2) {
-      // 豚と獣姦（源作两支同文，1:1 保真）
+      // 豚と獣姦（两支同文）
       if (era0(`talent:${a}:0`) == 1) {
         // 处女
         await era.printAndWait(
@@ -12696,7 +12668,7 @@ async function gohoubi_after_koujo_k8(rand, cid, choice) {
         );
       }
     } else if (gohoubi == 3) {
-      // 馬と獣姦（源作两支同文，1:1 保真）
+      // 馬と獣姦（两支同文）
       if (era0(`talent:${a}:0`) == 1) {
         // 处女
         await era.printAndWait(
@@ -12712,12 +12684,9 @@ async function gohoubi_after_koujo_k8(rand, cid, choice) {
       await era.printAndWait(
         `「嗯…嗯…不行、还想再要点奖励…嗯…嗯呼${heart(1)}」`,
       );
-      // 汉化把「十分钟以上」与「１０分以上」重复写了两遍，1:1 保真不修
-      await era.printAndWait(
-        `就这样${a_name}和你反复的接吻了十分钟以上１０分以上………`,
-      );
+      await era.printAndWait(`就这样${a_name}和你反复的接吻了十分钟以上………`);
     } else if (gohoubi == 5) {
-      // セックス（源作两支同文，1:1 保真）
+      // セックス（两支同文）
       if (era0(`abl:${a}:2`) > era0(`abl:${a}:3`)) {
         // 膣とペニス
         await era.printAndWait(
@@ -12733,7 +12702,7 @@ async function gohoubi_after_koujo_k8(rand, cid, choice) {
       // ザーメン
       await era.printAndWait(`「呵呵、魔王大人的精液是最好的报酬${heart(1)}」`);
     } else if (gohoubi == 7) {
-      // 乱交（源作两支同文，1:1 保真）
+      // 乱交（两支同文）
       if (era0(`talent:${a}:0`) == 1) {
         // 处女
         await era.printAndWait(
@@ -12759,7 +12728,7 @@ async function gohoubi_after_koujo_k8(rand, cid, choice) {
         await era.printAndWait(`「屁股小穴里插着新品阴茎最棒了♪」`);
       }
     }
-    // 源作在此处写了一个空 ELSE（无输出），移植省略
+    // 此处有一个空 ELSE（无输出），移植省略
   }
 
   return 0;
@@ -12859,7 +12828,7 @@ async function osioki_koujo_k8(rand, cid, choice) {
  *
  * ARG:0 五档情绪（1 得意 / 2 生气 / 3 悲伤 / 4 害羞 / 5 窘迫），其余（含 0）
  * 走默认三选一。全部是 bare PRINTFORM——不换行不等待，原作把它接在上一句
- * 尾巴上。默认支的前两支源作同文（都是「啊。」），1:1 保真照搬。
+ * 尾巴上。默认支的前两支同文（都是「啊。」）。
  *
  * @param {number} [arg_0] 原作 ARG:0（情绪编号）
  * @param {(n: number) => number} [rand] RAND:N 随机源
@@ -12887,7 +12856,7 @@ function gobi_koujo_k8(arg_0, rand) {
     if (rand_n(3) == 0) {
       return `啊。`;
     } else if (rand_n(2) == 0) {
-      // 源作与上一支同文，1:1 保真
+      // 与上一支同文
       return `啊。`;
     } else {
       return `什么啊。`;

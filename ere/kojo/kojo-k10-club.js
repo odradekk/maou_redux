@@ -22,11 +22,11 @@
  * P 由外部调用方传入（K1/K3/K5/K7 同族先例），本文件内暂无调用点——与
  * 其余已落地 K 文件同构现状，不属本票缺陷。
  *
- * == 原作缺陷 1:1 保留 ==
+ * == 空台词槽 ==
  *
- * MUSEUM_KOUJO_K10（TFLAG:500 八档）、BANISHMENT_KOUJO_K10（TFLAG:510 四档）、
- * GROTESQUE_KOUJO_K10（TFLAG:530 七档，源注释「内容参照 GROTESQUE.ERB」）均
- * 是空 PRINTFORMW 台词槽，原作留空、非转译缺陷，逐条核对 target/ 后保留。
+ * MUSEUM_KOUJO_K10（TFLAG:500）、BANISHMENT_KOUJO_K10（TFLAG:510）、
+ * GROTESQUE_KOUJO_K10（TFLAG:530）都有未填写正文的台词档（哪些档为空见
+ * 各函数头），这些档输出空行，不代填台词。
  *
  * SELL_MATURO_K0 成熟出售真身已随 #338 接通。
  */
@@ -8228,10 +8228,10 @@ async function kojo_message_com_10(rand) {
 }
 
 /**
- * @DOG_KOJO_10（:4850-5653）：兽奸PLAY专用口上（TEQUIP:89 时由
- * kojo_message_com_10 头部守卫岔入）。爱抚 CFLAG:301 起的分支结构与
- * kojo_message_com_10 同构，:4859/:4862 两处空 PRINTFORMW 是原作缺陷
- * （模板未填），1:1 保留为空字符串输出。
+ * @DOG_KOJO_10：兽奸PLAY专用口上（TEQUIP:89 时由 kojo_message_com_10
+ * 头部守卫岔入）。全篇为未填写正文的模板骨架（与 K9 的 DOG_KOJO_9 同款），
+ * 输出语句全部落为空字符串；爱抚 CFLAG:301 起的分支状态机与
+ * kojo_message_com_10 同构，计数器照常推进。
  */
 async function dog_kojo_10(rand) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -9624,15 +9624,16 @@ async function kojo_message_markcng_10(rand) {
 }
 
 /**
- * @SELF_KOJO_K10（:6031-6478）：事件口上入口（EVENT_AFTERTRAIN 等处的
- * CALL SELF_KOJO）。调教后自慰 CFLAG:261，NTR 调教后自慰 CFLAG:657
- * 每次调用递减一次，归零后停止。局部变量 A（单字母全局变量 A:0，跨
- * 函数共享，见 :5903 PALAMCNG 的写入点）读取射精轮数残留值——1:1 保留
- * 该跨函数依赖，不改写成局部变量。
+ * @SELF_KOJO_K10：事件口上入口（EVENT_AFTERTRAIN 等处调用）。调教后自慰
+ * CFLAG:261，NTR 调教后自慰 CFLAG:657 每次调用递减一次，归零后停止。
+ * A 是跨函数共享的单字母全局变量（a:0）：调教中由
+ * kojo_message_palamcng_10 写入（本回精液量），本函数按单字母全局的语义
+ * 直接读取——当轮调教没写过时读到的是更早一轮的残留值，自慰描写里
+ * 「射精多次后/射精后」等措辞与精液水洼的回数消费的就是这个值，故保留
+ * 跨函数读取、不改成局部变量。
  *
  * @param {(n: number) => number} [rand] RAND:N 的随机源
- * @param {number} [q] 自慰妄想对象（EVENT_AFTERTRAIN :657-665 的 Q：
- *   0 主人 / 1 助手 / 2 野狗）
+ * @param {number} [q] 自慰妄想对象（Q：0 主人 / 1 助手 / 2 野狗）
  */
 async function self_kojo_k10(rand, q) {
   const rand_n = rand ?? ((n) => Math.floor(Math.random() * n));
@@ -10933,8 +10934,8 @@ async function ntr_koujo_k10(rand, P) {
 }
 
 /**
- * @EXUCUTION_KOUJO_K10（:6964-6980）：处刑口上（TFLAG:16）。
- * :6977 空 PRINTFORMW 是原作留空的台词槽（1:1 保留，非缺陷）。
+ * @EXUCUTION_KOUJO_K10：处刑口上（TFLAG:16）。档位 7 是未填写正文的
+ * 台词槽，输出空行。
  */
 async function exucution_koujo_k10(rand) {
   void rand;
@@ -10953,9 +10954,8 @@ async function exucution_koujo_k10(rand) {
 }
 
 /**
- * @MUSEUM_KOUJO_K10（:6981-7015）：博物馆展示口上（TFLAG:500）。
- * :6991/6994/6997/7000/7003/7006/7009/7012 空 PRINTFORMW 是原作留空的
- * 台词槽（1:1 保留，非缺陷）。
+ * @MUSEUM_KOUJO_K10：博物馆展示口上（TFLAG:500）。档位 2-9 是未填写
+ * 正文的台词槽，输出空行。
  */
 async function museum_koujo_k10(rand) {
   void rand;
@@ -10986,9 +10986,8 @@ async function museum_koujo_k10(rand) {
 }
 
 /**
- * @BANISHMENT_KOUJO_K10（:7016-7036）：放逐口上（TFLAG:510）。
- * :7024/7027/7030/7033 空 PRINTFORMW 是原作留空的台词槽（1:1 保留，
- * 非缺陷）。
+ * @BANISHMENT_KOUJO_K10：放逐口上（TFLAG:510）。档位 1-4 是未填写正文的
+ * 台词槽，输出空行。
  */
 async function banishment_koujo_k10(rand) {
   void rand;
@@ -11026,9 +11025,9 @@ async function public_exucution_koujo_k10(rand) {
 }
 
 /**
- * @GROTESQUE_KOUJO_K10（:7052-7078）：猎奇处刑口上（TFLAG:530）。源注释
- * 「内容参照 GROTESQUE.ERB」——内容由通用文件承载，本文件七档全为空
- * PRINTFORMW（1:1 保留，非缺陷）。
+ * @GROTESQUE_KOUJO_K10：猎奇处刑口上（TFLAG:530，取值 0-6 与处刑选项
+ * 一一对应）。七档均为未填写正文的台词槽，输出空行；处刑场景文本由
+ * 通用处刑流程（ere/event/event-grotesque.js）统一输出。
  */
 async function grotesque_koujo_k10(rand) {
   void rand;

@@ -4964,12 +4964,12 @@ test('COM27 初めて：非助手玛奥 + 爱慕按肛门感觉分岔', async ()
   );
 });
 
-test('COM27 二回目：四处淫乱守卫保留误读 COM26 计数器', async () => {
+test('COM27 二回目：淫乱两档判据读本支 CFLAG:328（四处）', async () => {
   const cases = [
-    { assi: true, abl: 3, expected: 3 },
-    { assi: true, abl: 0, expected: 2 },
-    { assi: false, abl: 3, expected: 3 },
-    { assi: false, abl: 0, expected: 2 },
+    { assi: true, abl: 3, expected: 7 },
+    { assi: true, abl: 0, expected: 6 },
+    { assi: false, abl: 3, expected: 7 },
+    { assi: false, abl: 0, expected: 6 },
   ];
   for (const [index, item] of cases.entries()) {
     const fixture = setup_lily((f, era_flag) => {
@@ -4978,7 +4978,7 @@ test('COM27 二回目：四处淫乱守卫保留误读 COM26 计数器', async (
         era_flag.assiplay = 1;
       }
       f.store.set(`cflag:${LILY}:328`, 1);
-      f.store.set(`cflag:${LILY}:327`, 7);
+      f.store.set(`cflag:${LILY}:327`, 7); // 干扰项：正常位肛交计数与本支无关
       f.store.set('flag:7', 1);
       f.store.set(`talent:${LILY}:76`, 1);
       f.store.set(`abl:${LILY}:3`, item.abl);
@@ -4991,7 +4991,12 @@ test('COM27 二回目：四处淫乱守卫保留误读 COM26 计数器', async (
     assert.equal(
       fixture.store.get(`cflag:${LILY}:328`),
       item.expected,
-      `COM27 原作误读 COM26 计数器第 ${index + 1} 处`,
+      `第 ${index + 1} 处：淫乱档判据读 328 推进`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:327`),
+      7,
+      `第 ${index + 1} 处：不动正常位肛交计数`,
     );
   }
 });
@@ -5778,33 +5783,58 @@ test('COM32 二回目：非助手玛奥四档推进', async () => {
   }
 });
 
-test('COM32 二回目：两处淫乱守卫 1:1 误读前一支 CFLAG:332', async () => {
+test('COM32 二回目：淫乱守卫判据读本支 CFLAG:333（助手玛奥 × 非助手玛奥）', async () => {
+  const cases = [
+    { oral: 5, paizuri: 4, fires: true },
+    { oral: 4, paizuri: 5, fires: false },
+  ];
   for (const assi of [false, true]) {
-    const fixture = setup_lily((f, era_flag) => {
+    for (const item of cases) {
+      const fixture = setup_lily((f, era_flag) => {
+        if (assi) {
+          era_flag.assi = MAO;
+          era_flag.assiplay = 1;
+        }
+        f.store.set('flag:7', 1);
+        f.store.set(`talent:${LILY}:76`, 1);
+        f.store.set(`cflag:${LILY}:332`, item.oral); // 干扰项：口交计数与本支无关
+        f.store.set(`cflag:${LILY}:333`, item.paizuri);
+      }, 32);
       if (assi) {
-        era_flag.assi = MAO;
-        era_flag.assiplay = 1;
+        fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+        fixture.era.addCharacter(MAO);
       }
-      f.store.set('flag:7', 1);
-      f.store.set(`talent:${LILY}:76`, 1);
-      f.store.set(`cflag:${LILY}:332`, 4);
-      f.store.set(`cflag:${LILY}:333`, 5);
-    }, 32);
-    if (assi) {
-      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
-      fixture.era.addCharacter(MAO);
+      await speak_com11(fixture, seq_rand());
+      const label = `${assi ? '助手' : '非助手'} 332=${item.oral}/333=${item.paizuri}`;
+      if (item.fires) {
+        assert.notEqual(
+          fixture.text_lines().length,
+          0,
+          `${label}：淫乱档命中出声`,
+        );
+        assert.equal(
+          fixture.store.get(`cflag:${LILY}:333`),
+          5,
+          `${label}：推进到 5`,
+        );
+      } else {
+        assert.deepEqual(
+          fixture.text_lines(),
+          [],
+          `${label}：判据读 333>4 不出声`,
+        );
+        assert.equal(
+          fixture.store.get(`cflag:${LILY}:333`),
+          5,
+          `${label}：计数不动`,
+        );
+      }
+      assert.equal(
+        fixture.store.get(`cflag:${LILY}:332`),
+        item.oral,
+        `${label}：不动口交计数`,
+      );
     }
-    await speak_com11(fixture, seq_rand());
-    assert.equal(
-      fixture.store.get(`cflag:${LILY}:333`),
-      5,
-      `COM32 ${assi ? '助手' : '非助手'}淫乱守卫误读 CFLAG:332`,
-    );
-    assert.notEqual(
-      fixture.text_lines().length,
-      0,
-      `COM32 ${assi ? '助手' : '非助手'}误读仍可输出`,
-    );
   }
 });
 
@@ -7514,15 +7544,56 @@ for (const assistant of [true, false]) {
   });
 }
 
-test('COM124 二回目门槛按原作读取真空口交 CFLAG:363，而非深喉 CFLAG:365', async () => {
-  const fixture = setup_lily((f) => {
-    f.store.set('flag:7', 0);
-    f.store.set(`talent:${LILY}:76`, 1);
-    f.store.set(`cflag:${LILY}:365`, 9);
-    f.store.set(`cflag:${LILY}:363`, 4);
-  }, 124);
-  await speak_com11(fixture, seq_rand());
-  assert.equal(fixture.store.get(`cflag:${LILY}:365`), 5);
+test('COM124 二回目门槛按深喉 CFLAG:365 分档（助手玛奥 × 非助手玛奥）', async () => {
+  // 四臂（淫乱/爱慕/侍奉精神/それ以外）× 助手玛奥/非助手，各自判据读 365
+  const write_of = { lewd: 5, love: 4, serve: 3, other: 2 };
+  const cases = [
+    { assi: true, arm: 'lewd', low365: true },
+    { assi: false, arm: 'lewd', low365: true },
+    { assi: true, arm: 'lewd', low365: false },
+    { assi: false, arm: 'lewd', low365: false },
+    { assi: true, arm: 'love', low365: true },
+    { assi: false, arm: 'love', low365: true },
+    { assi: true, arm: 'serve', low365: true },
+    { assi: false, arm: 'serve', low365: true },
+    { assi: true, arm: 'other', low365: true },
+    { assi: false, arm: 'other', low365: true },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f, era_flag) => {
+      if (item.assi) {
+        era_flag.assi = MAO;
+        era_flag.assiplay = 1;
+      }
+      f.store.set('flag:7', 0);
+      if (item.arm === 'lewd') f.store.set(`talent:${LILY}:76`, 1);
+      if (item.arm === 'love') f.store.set(`talent:${LILY}:85`, 1);
+      if (item.arm === 'serve') f.store.set(`abl:${LILY}:16`, 3);
+      f.store.set(`cflag:${LILY}:365`, item.low365 ? 1 : 5);
+      f.store.set(`cflag:${LILY}:363`, 6);
+    }, 124);
+    if (item.assi) {
+      fixture.seed_chara(MAO, { id: MAO, name: '玛奥', callname: '玛奥' });
+      fixture.era.addCharacter(MAO);
+    }
+    await speak_com11(fixture, seq_rand());
+    if (item.low365) {
+      assert.ok(fixture.text_lines().length > 0, '按 365 门槛命中出声');
+      assert.equal(
+        fixture.store.get(`cflag:${LILY}:365`),
+        write_of[item.arm],
+        '推进到本臂档值',
+      );
+    } else {
+      assert.deepEqual(fixture.text_lines(), [], '越过 365 门槛后静默');
+      assert.equal(fixture.store.get(`cflag:${LILY}:365`), 5);
+    }
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:363`),
+      6,
+      'CFLAG:363 不被本指令读取',
+    );
+  }
 });
 
 // —— SELECTCOM 80（强制口交 CFLAG:381）——
@@ -7738,15 +7809,40 @@ test('DOG_KOJO_11 接吻首吻与普通首次两条入口都推进 CFLAG:307', a
   }
 });
 
-test('DOG_KOJO_11 眼罩取下前三档按原作误读 CFLAG:338，写 CFLAG:444', async () => {
-  const fixture = setup_lily((f) => {
-    f.store.set(`tequip:${LILY}:89`, 1);
-    f.store.set(`talent:${LILY}:136`, 1);
-    f.store.set(`cflag:${LILY}:338`, 0);
-    f.store.set(`cflag:${LILY}:444`, 9);
-  }, 43);
-  await speak_com11(fixture, seq_rand());
-  assert.equal(fixture.store.get(`cflag:${LILY}:444`), 4);
+test('DOG_KOJO_11 眼罩着脱各档判据读 CFLAG:444 自身，不再读 CFLAG:338', async () => {
+  // 三档（牝犬/淫乱/爱慕）各按 444 自身门槛命中；越过门槛后静默
+  const hit_of = { 136: 4, 76: 3, 85: 2 };
+  const cases = [
+    { talent: '136', high: false },
+    { talent: '76', high: false },
+    { talent: '85', high: false },
+    { talent: '76', high: true },
+  ];
+  for (const item of cases) {
+    const fixture = setup_lily((f) => {
+      f.store.set(`tequip:${LILY}:89`, 1);
+      f.store.set(`talent:${LILY}:${item.talent}`, 1);
+      f.store.set(`cflag:${LILY}:444`, item.high ? 5 : 1);
+      f.store.set(`cflag:${LILY}:338`, 5);
+      f.store.set('flag:7', 0); // 关掉总开关旁路，让 CFLAG 门槛真正生效
+    }, 43);
+    await speak_com11(fixture, seq_rand());
+    if (item.high) {
+      assert.deepEqual(fixture.text_lines(), [], '越过 444 门槛后静默');
+      assert.equal(fixture.store.get(`cflag:${LILY}:444`), 5);
+    } else {
+      assert.equal(
+        fixture.store.get(`cflag:${LILY}:444`),
+        hit_of[item.talent],
+        '按 444 门槛命中推进到本档值',
+      );
+    }
+    assert.equal(
+      fixture.store.get(`cflag:${LILY}:338`),
+      5,
+      '338 不被本指令读取',
+    );
+  }
 });
 
 test('DOG_KOJO_11 录像交谈后续牝犬档推进 CFLAG:357=5', async () => {

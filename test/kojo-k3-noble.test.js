@@ -495,16 +495,29 @@ test('肛门爱抚二次以后：淫乱润滑分档 / 爱慕润滑 / それ以�
     const era_flag = f.load_module('era-utils/era-flag');
     era_flag.selectcom = 2;
     f.store.set('cflag:31:303', 1);
-    f.store.set('cflag:31:223', 2); // 原作读 223，已推进则 FLAG:7==1 时不出声
+    f.store.set('cflag:31:223', 2); // 干扰项：首次耻情计数与本支无关
     f.store.set('flag:7', 1);
   });
   await speak_k3(other, seq_rand(0, 0));
-  assert.deepEqual(
-    other.text_lines(),
-    [],
-    '肛门爱抚それ以外读 CFLAG:223：已推进且 FLAG:7==1 时不出声',
+  assert.deepEqual(other.text_lines(), [
+    '「嗯呜~…请，请快住手啊…那种地方不管怎么做都不会…呜啊啊~啊啊~！」',
+  ]);
+  assert.equal(
+    other.store.get('cflag:31:303'),
+    2,
+    'それ以外判据读 CFLAG:303，推进到 2',
   );
-  assert.equal(other.store.get('cflag:31:303'), 1);
+
+  // FLAG:7==1 且 303 已推进到 2：判据读本支计数，不出声
+  const done = await setup_k3((f) => {
+    const era_flag = f.load_module('era-utils/era-flag');
+    era_flag.selectcom = 2;
+    f.store.set('cflag:31:303', 2);
+    f.store.set('flag:7', 1);
+  });
+  await speak_k3(done, seq_rand(0, 0));
+  assert.deepEqual(done.text_lines(), []);
+  assert.equal(done.store.get('cflag:31:303'), 2);
 });
 
 test('自慰首次（CFLAG:304 == 0）：屈辱一句 + 推进到 1', async () => {

@@ -4879,8 +4879,7 @@ async function kojo_message_com_0(rand) {
       kojo.肛门爱抚 = 3;
     } else if (
       // それ以外（爱無し、润滑Lv2未満、A感覚Lv3未満）
-      // 原文门槛是 CFLAG:223，不是 303
-      kojo.首次耻情Lv2 <= 1 ||
+      kojo.肛门爱抚 <= 1 ||
       game.kojo.口上开关 === 2
     ) {
       await era.printAndWait('「不要啊…够了、快住手～！」');
@@ -5366,7 +5365,7 @@ async function kojo_message_com_0(rand) {
     }
 
     // 二回目以降
-    // 原文二次推进写进 CFLAG:306（胸爱抚），不是 308
+
     // 淫乱
     if (
       era.get(`talent:${target}:76`) === 1 &&
@@ -5375,7 +5374,7 @@ async function kojo_message_com_0(rand) {
       await era.printAndWait(
         `「啊哈～…主人～…请再多多的…往里面看吧～…这里已经迫不及待地想被小鸡鸡插来插去了呢${heart(1)}」`,
       );
-      kojo.胸爱抚 = 5;
+      kojo.自己扒开 = 5;
     } else if (
       // 爱慕
       era.get(`talent:${target}:85`) === 1 &&
@@ -5384,18 +5383,18 @@ async function kojo_message_com_0(rand) {
       await era.printAndWait(
         `「啊啊…不要老是盯着这里看嘛…一被主人看着里面…${scf()}、${sc()}…就好有感觉…要变得…奇怪了～」`,
       );
-      kojo.胸爱抚 = 4;
+      kojo.自己扒开 = 4;
     } else if (
       // 露出癖Lv3以上
       (era.get(`abl:${target}:17`) || 0) >= 3 &&
       (kojo.自己扒开 <= 2 || game.kojo.口上开关 === 2)
     ) {
       await era.printAndWait('「啊啊～好有感觉～…小穴被看着好有感觉啊………」');
-      kojo.胸爱抚 = 3;
-    } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 === 2) {
+      kojo.自己扒开 = 3;
+    } else if (kojo.自己扒开 <= 1 || game.kojo.口上开关 === 2) {
       // それ以外（爱無し、露出癖Lv3未満）
       await era.printAndWait('「咕呜～…求你了…别看了…不要看那种地方…」');
-      kojo.胸爱抚 = 2;
+      kojo.自己扒开 = 2;
     }
     return 0;
   }
@@ -7157,7 +7156,7 @@ async function kojo_message_com_0(rand) {
       if (
         era.get(`talent:${target}:76`) === 1 &&
         era.get(`talent:${target}:75`) === 1 &&
-        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+        (kojo.背后位 <= 8 || game.kojo.口上开关 === 2)
       ) {
         if (rand_n(3) === 0) {
           await era.printAndWait(
@@ -7471,7 +7470,7 @@ async function kojo_message_com_0(rand) {
       if (
         era.get(`talent:${target}:76`) === 1 &&
         era.get(`talent:${target}:75`) === 1 &&
-        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+        (kojo.对面座位 <= 8 || game.kojo.口上开关 === 2)
       ) {
         if (rand_n(3) === 0) {
           await era.printAndWait(
@@ -7757,7 +7756,7 @@ async function kojo_message_com_0(rand) {
       if (
         era.get(`talent:${target}:76`) === 1 &&
         era.get(`talent:${target}:75`) === 1 &&
-        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+        (kojo.背面座位 <= 8 || game.kojo.口上开关 === 2)
       ) {
         if (rand_n(3) === 0) {
           await era.printAndWait(
@@ -9070,7 +9069,7 @@ async function kojo_message_com_0(rand) {
       if (
         era.get(`talent:${target}:76`) === 1 &&
         serve >= 5 &&
-        (kojo.口交_奴 <= 5 || game.kojo.口上开关 === 2)
+        (kojo.乳交 <= 5 || game.kojo.口上开关 === 2)
       ) {
         if (rand_n(2) === 0) {
           await era.printAndWait(
@@ -9362,7 +9361,7 @@ async function kojo_message_com_0(rand) {
       if (
         era.get(`talent:${target}:76`) === 1 &&
         era.get(`talent:${target}:75`) === 1 &&
-        (kojo.正常位 <= 8 || game.kojo.口上开关 === 2)
+        (kojo.骑乘位 <= 8 || game.kojo.口上开关 === 2)
       ) {
         if (rand_n(4) === 0) {
           await era.printAndWait(
@@ -10215,7 +10214,7 @@ async function kojo_message_com_0(rand) {
           `然后每鞭打数次${target_name}就会发出一声娇艳的呻吟………`,
         );
         kojo.鞭 = 3;
-      } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 === 2) {
+      } else if (kojo.鞭 <= 1 || game.kojo.口上开关 === 2) {
         await era.printAndWait(`「啊啊～…求你了…快住手吧…求你了…」`);
         await era.printAndWait(`${target_name}泪流满面、祈求饶恕………`);
         kojo.鞭 = 2;
@@ -11799,7 +11798,7 @@ async function kojo_message_com_0(rand) {
     } else {
       if (
         era.get(`talent:${target}:76`) === 1 &&
-        (kojo.真空口交 <= 4 || game.kojo.口上开关 === 2)
+        (kojo.深喉 <= 4 || game.kojo.口上开关 === 2)
       ) {
         await era.printAndWait(
           `${target_name}把阴茎吞入喉咙深处、用嘴唇紧紧含着根部。`,

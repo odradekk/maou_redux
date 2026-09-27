@@ -490,18 +490,63 @@ test('SELECTCOM==7（自己扒开）初回淫乱：推进到 1', async () => {
   assert.equal(fixture.store.get('cflag:20:308'), 1);
 });
 
-test('SELECTCOM==7 二回目淫乱：原作缺陷 1:1（判据读 308、写入 306）', async () => {
-  const fixture = await setup_k12((f) => {
-    f.store.set('cflag:20:308', 1);
-    f.store.set('talent:20:76', 1);
+test('SELECTCOM==7（自己扒开）二回目：四档判据与写入都是 CFLAG:308', async () => {
+  const cases = [
+    {
+      seed: { 'talent:20:76': 1 },
+      text: '「怎么样、我性器的开发情况……♪　想让阴核变的多大呢？」',
+      expected: 5,
+    },
+    {
+      seed: { 'talent:20:85': 1 },
+      text: '「今天也做了记录呢。来展示一下我的性器发生了什么样的变化吧」',
+      expected: 4,
+    },
+    {
+      seed: { 'abl:20:17': 3 },
+      text: '「唔……这可真是、羞耻心都被引出来了……呐」',
+      expected: 3,
+    },
+    {
+      seed: {},
+      text: '「被迫作出这种屈辱的姿势……但我不得不屈服呢」',
+      expected: 2,
+    },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = await setup_k12((f) => {
+      f.store.set('cflag:20:308', 1);
+      f.store.set('cflag:20:306', 6); // 干扰项：胸爱抚计数与本支无关
+      for (const [key, value] of Object.entries(item.seed)) {
+        f.store.set(key, value);
+      }
+    }, 7);
+    await speak_k12(fixture);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [item.text],
+      `第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get('cflag:20:308'),
+      item.expected,
+      `第 ${index + 1} 档推进`,
+    );
+    assert.equal(
+      fixture.store.get('cflag:20:306'),
+      6,
+      `第 ${index + 1} 档不动胸爱抚计数`,
+    );
+  }
+
+  // FLAG:7==1 且 308 已推进到 2：判据读本支计数，不出声
+  const silent = await setup_k12((f) => {
+    f.store.set('cflag:20:308', 2);
+    f.store.set('flag:7', 1);
   }, 7);
-  await speak_k12(fixture);
-  assert.deepEqual(fixture.text_lines(), [
-    '「怎么样、我性器的开发情况……♪　想让阴核变的多大呢？」',
-  ]);
-  // 原作 :806 写 CFLAG:306 = 5（缺陷 1:1，非 308）
-  assert.equal(fixture.store.get('cflag:20:306'), 5);
-  assert.equal(fixture.store.get('cflag:20:308'), 1);
+  await speak_k12(silent);
+  assert.deepEqual(silent.text_lines(), []);
+  assert.equal(silent.store.get('cflag:20:308'), 2);
 });
 
 test('SELECTCOM==8（插入手指）初回屈服刻印Lv3+爱：推进到 1', async () => {
@@ -634,19 +679,46 @@ test('SELECTCOM==21（背后位）妊娠淫乱 RAND=0：推进到 6（人狼尾�
   assert.equal(fixture.store.get('cflag:20:322'), 6);
 });
 
-test('SELECTCOM==27（背后位肛交）二回目淫乱+A感覚Lv3：原作缺陷写 327', async () => {
-  const fixture = await setup_k12((f) => {
-    f.store.set('cflag:20:328', 1);
-    f.store.set('talent:20:76', 1);
-    f.store.set('abl:20:3', 3);
-  }, 27);
-  await speak_k12(fixture, () => 0);
-  // 源 :1855-1863 判据与写入都是 CFLAG:327（原作缺陷 1:1，非 328）
-  assert.deepEqual(fixture.text_lines(), [
-    '「这、这样子好喜欢～！　野生的、非文明的、下流的姿势……像这样地、被操肛门！」',
-  ]);
-  assert.equal(fixture.store.get('cflag:20:327'), 7);
-  assert.equal(fixture.store.get('cflag:20:328'), 1);
+test('SELECTCOM==27（背后位肛交）二回目淫乱：判据与写入都是 CFLAG:328', async () => {
+  const cases = [
+    {
+      abl: 3,
+      text: '「这、这样子好喜欢～！　野生的、非文明的、下流的姿势……像这样地、被操肛门！」',
+      expected: 7,
+    },
+    {
+      abl: 0,
+      text: '「还、还不太习惯呢……有进一步开发的必要呢……」',
+      expected: 6,
+    },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = await setup_k12((f) => {
+      f.store.set('cflag:20:328', 1);
+      f.store.set('cflag:20:327', 7); // 干扰项：正常位肛交计数与本支无关
+      f.store.set('talent:20:76', 1);
+      f.store.set('flag:7', 0); // 关掉总开关旁路，让 CFLAG 门槛真正生效
+      if (item.abl > 0) {
+        f.store.set('abl:20:3', item.abl);
+      }
+    }, 27);
+    await speak_k12(fixture, () => 0);
+    assert.deepEqual(
+      fixture.text_lines(),
+      [item.text],
+      `第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get('cflag:20:328'),
+      item.expected,
+      `第 ${index + 1} 档推进`,
+    );
+    assert.equal(
+      fixture.store.get('cflag:20:327'),
+      7,
+      `第 ${index + 1} 档不动正常位肛交计数`,
+    );
+  }
 });
 
 test('SELECTCOM==30（手淫）爱+侍奉精神Lv5：player 鸡巴四档 RAND=0', async () => {
@@ -663,15 +735,41 @@ test('SELECTCOM==30（手淫）爱+侍奉精神Lv5：player 鸡巴四档 RAND=0'
   );
 });
 
-test('SELECTCOM==32（乳交）原作缺陷：二回目前支判据读 CFLAG:332', async () => {
-  const fixture = await setup_k12((f) => {
-    f.store.set('cflag:20:333', 2);
+test('SELECTCOM==32（乳交）二回目淫乱：判据读 CFLAG:333', async () => {
+  // 淫乱+奉仕Lv5 档：333=1 命中推进到 6（332 是干扰项，判据不读它）
+  const hit = await setup_k12((f) => {
+    f.store.set('cflag:20:333', 1);
+    f.store.set('cflag:20:332', 6);
     f.store.set('talent:20:76', 1);
+    f.store.set('abl:20:16', 5);
+    f.store.set('flag:7', 1);
   }, 32);
-  await speak_k12(fixture);
-  // 源 :2154-2164：前两支判据用 CFLAG:332<=5/<=4（口交_奴计数）
-  assert.deepEqual(fixture.text_lines(), ['「好难啊……你、真的会舒服吗？」']);
-  assert.equal(fixture.store.get('cflag:20:333'), 5);
+  await speak_k12(hit, () => 0);
+  assert.deepEqual(hit.text_lines(), ['「这样挤压着会舒服吗？」']);
+  assert.equal(hit.store.get('cflag:20:333'), 6);
+  assert.equal(hit.store.get('cflag:20:332'), 6, '口交计数器不动');
+
+  // 淫乱无奉仕档：333=2 命中推进到 5
+  const plain = await setup_k12((f) => {
+    f.store.set('cflag:20:333', 2);
+    f.store.set('cflag:20:332', 6);
+    f.store.set('talent:20:76', 1);
+    f.store.set('flag:7', 1);
+  }, 32);
+  await speak_k12(plain);
+  assert.deepEqual(plain.text_lines(), ['「好难啊……你、真的会舒服吗？」']);
+  assert.equal(plain.store.get('cflag:20:333'), 5);
+
+  // FLAG:7==1 且 333 已推进到 5：判据读本支计数，不出声
+  const silent = await setup_k12((f) => {
+    f.store.set('cflag:20:333', 5);
+    f.store.set('cflag:20:332', 1);
+    f.store.set('talent:20:76', 1);
+    f.store.set('flag:7', 1);
+  }, 32);
+  await speak_k12(silent);
+  assert.deepEqual(silent.text_lines(), []);
+  assert.equal(silent.store.get('cflag:20:333'), 5);
 });
 
 test('SELECTCOM==32（乳交）二回目非淫乱 ABL:16>=3：推进到 3', async () => {

@@ -70,17 +70,25 @@ test('EX_TALENT:103 缺席时不进入嘉德调教口上', async () => {
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('调教结束正文因 K902/K903 两个同名 EVENTEND 执行两遍', async () => {
+test('EVENTEND 调教结束正文只执行一次', async () => {
   const fixture = await setup_k903((f) => {
     f.store.set(`base:${CID}:0`, 100);
   });
   const { emit } = fixture.load_module('system/event/registry');
   await emit('EVENTEND');
-  assert.deepEqual(
-    fixture.text_lines(),
-    ['「啊……可恶……已经………………」', '「啊……可恶……已经………………」'],
-    'K902 :422 与 K903 :464 的 EVENTEND 正文各执行一次',
-  );
+  assert.deepEqual(fixture.text_lines(), ['「啊……可恶……已经………………」']);
+});
+
+test('EVENTEND 体力归零时先打印遗言再打印结束语', async () => {
+  const fixture = await setup_k903((f) => {
+    f.store.set(`base:${CID}:0`, 0);
+  });
+  const { emit } = fixture.load_module('system/event/registry');
+  await emit('EVENTEND');
+  assert.deepEqual(fixture.text_lines(), [
+    '「明明……明明……马上就要取代那个老糊涂的……」',
+    '「啊……可恶……已经………………」',
+  ]);
 });
 
 test('CFLAG:201：初调教、屈服 1-3、淫乱、爱慕六档都按源推进，NTR:650 清零', async () => {
@@ -277,6 +285,30 @@ test('SELECTCOM 二次状态：爱抚淫乱推进到 6', async () => {
   assert.equal(fixture.store.get(`cflag:${CID}:301`), 6);
 });
 
+test('SELECTCOM 5 胸部爱抚二次各档推进 CFLAG:306 自身，不碰自己扒开 308', async () => {
+  const cases = [
+    [{ [`talent:${CID}:76`]: 1 }, 5],
+    [{ [`talent:${CID}:85`]: 1 }, 4],
+    [{ [`abl:${CID}:1`]: 3 }, 3],
+    [{}, 2],
+  ];
+  for (const [seed, expected] of cases) {
+    const fixture = await setup_k903((f) => {
+      for (const [address, value] of Object.entries(seed))
+        f.store.set(address, value);
+      f.store.set(`cflag:${CID}:306`, 1);
+      f.store.set(`cflag:${CID}:308`, 9);
+    }, 5);
+    await speak(fixture);
+    assert.equal(fixture.store.get(`cflag:${CID}:306`), expected);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:308`),
+      9,
+      'CFLAG:308（自己扒开）不被本指令写入',
+    );
+  }
+});
+
 test('PALAMCNG：221-229 的九个首超判据各自只置一次', async () => {
   const cases = [
     [221, `palam:${CID}:3`, 600],
@@ -360,38 +392,46 @@ test('SELF_KOJO 通过 peek_aftertrain_q 读取 Q：野狗妄想分支可达', a
   );
 });
 
-test('原作缺陷：303 误读 223、308 错写 306、314 两支同写 6', async () => {
-  const wrong_read = await setup_k903((f) => {
+test('SELECTCOM 2/7/13 计数器自洽：303 兜底读自身、308 二次写自身、314 按 A 感觉分档', async () => {
+  const anal = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:303`, 1);
     f.store.set(`cflag:${CID}:223`, 2);
     f.store.set('flag:7', 1);
   }, 2);
-  await speak(wrong_read);
-  assert.deepEqual(
-    wrong_read.text_lines(),
-    [],
-    'CFLAG:303 的 else 误读 CFLAG:223，223=2 时不出声',
+  await speak(anal);
+  assert.ok(
+    anal.text_lines().some((line) => line.includes('从后面玩弄本宫什么的')),
+    'CFLAG:303=1 时兜底支出声（223 不参与判据）',
   );
+  assert.equal(anal.store.get(`cflag:${CID}:303`), 2, '兜底支推进 CFLAG:303=2');
 
-  const wrong_write = await setup_k903((f) => {
-    f.store.set(`cflag:${CID}:308`, 1);
-    f.store.set(`talent:${CID}:76`, 1);
-  }, 7);
-  await speak(wrong_write);
-  assert.equal(
-    wrong_write.store.get(`cflag:${CID}:306`),
-    5,
-    'CFLAG:308 的淫乱支错写 CFLAG:306',
-  );
-  assert.equal(
-    wrong_write.store.get(`cflag:${CID}:308`),
-    1,
-    'CFLAG:308 本身保持原值',
-  );
+  const spread_cases = [
+    ['淫乱', (f) => f.store.set(`talent:${CID}:76`, 1), 5],
+    ['爱慕', (f) => f.store.set(`talent:${CID}:85`, 1), 4],
+    ['ABL:17>=3', (f) => f.store.set(`abl:${CID}:17`, 3), 3],
+    ['无素质兜底', () => {}, 2],
+  ];
+  for (const [name, seed, expected] of spread_cases) {
+    const fixture = await setup_k903((f) => {
+      f.store.set(`cflag:${CID}:308`, 1);
+      seed(f);
+    }, 7);
+    await speak(fixture);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:308`),
+      expected,
+      `自己扒开${name}档推进 CFLAG:308=${expected}`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:306`) || 0,
+      0,
+      `自己扒开${name}档不写胸爱抚 CFLAG:306`,
+    );
+  }
 
-  for (const [abl, text] of [
-    [3, '有 A 感觉'],
-    [0, '无 A 感觉'],
+  for (const [abl, expected] of [
+    [3, 7],
+    [0, 5],
   ]) {
     const fixture = await setup_k903((f) => {
       f.store.set(`cflag:${CID}:314`, 1);
@@ -402,50 +442,48 @@ test('原作缺陷：303 误读 223、308 错写 306、314 两支同写 6', asyn
     await speak(fixture);
     assert.equal(
       fixture.store.get(`cflag:${CID}:314`),
-      6,
-      `CFLAG:314 ${text}两支均写 6`,
+      expected,
+      `肛门虫淫乱档按 A 感觉分档：ABL:3=${abl} → CFLAG:314=${expected}`,
     );
   }
 });
 
-test('原作缺陷：331 门槛错位、333 误读 332、341 使用 AND、342 误读 335', async () => {
+test('SELECTCOM 30/32/40/41 门槛与计数器自洽：侍奉支不需爱慕、各段读自身计数器', async () => {
   const handjob = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:331`, 2);
     f.store.set(`abl:${CID}:16`, 3);
     f.store.set('flag:7', 1);
   }, 30);
   await speak(handjob);
-  assert.deepEqual(
-    handjob.text_lines(),
-    [],
-    'CFLAG:331 的侍奉精神支错误额外要求 TALENT:85，单有 ABL:16 不出声',
+  assert.ok(
+    handjob.text_lines().some((line) => line.includes('什么都可以做来着')),
+    'CFLAG:331 侍奉精神支单有 ABL:16>=3 即出声',
   );
+  assert.equal(handjob.store.get(`cflag:${CID}:331`), 4, '推进 CFLAG:331=4');
 
-  const breast = await setup_k903((f) => {
+  const paizuri = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:333`, 4);
     f.store.set(`cflag:${CID}:332`, 9);
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set('flag:7', 1);
   }, 32);
-  await speak(breast);
-  assert.deepEqual(
-    breast.text_lines(),
-    [],
-    'CFLAG:333 的淫乱支误读 CFLAG:332=9 后被门槛拦下',
+  await speak(paizuri);
+  assert.ok(
+    paizuri.text_lines().some((line) => line.includes('喜欢用胸部')),
+    'CFLAG:333 淫乱支读 333 自身过门槛（332 不参与）',
   );
+  assert.equal(paizuri.store.get(`cflag:${CID}:333`), 5, '推进 CFLAG:333=5');
 
   const spanking = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:341`, 1);
-    f.store.set('mark:33:0', 3);
-    f.store.set('mark:33:2', 2);
     f.store.set('flag:7', 1);
   }, 40);
   await speak(spanking);
-  assert.deepEqual(
-    spanking.text_lines(),
-    [],
-    'CFLAG:341 苦痛与屈服必须同时 Lv3（AND）',
+  assert.ok(
+    spanking.text_lines().some((line) => line.includes('加倍奉还')),
+    'CFLAG:341 兜底支按 OR 门槛出声',
   );
+  assert.equal(spanking.store.get(`cflag:${CID}:341`), 2, '推进 CFLAG:341=2');
 
   const whip = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:342`, 1);
@@ -453,73 +491,76 @@ test('原作缺陷：331 门槛错位、333 误读 332、341 使用 AND、342 �
     f.store.set('flag:7', 1);
   }, 41);
   await speak(whip);
-  assert.deepEqual(
-    whip.text_lines(),
-    [],
-    'CFLAG:342 的 else 误读 CFLAG:335=9 后被门槛拦下',
+  assert.ok(
+    whip.text_lines().some((line) => line.includes('没……没用的')),
+    'CFLAG:342 兜底支读 342 自身（335 不参与）',
   );
+  assert.equal(whip.store.get(`cflag:${CID}:342`), 2, '推进 CFLAG:342=2');
 });
 
-test('原作缺陷：两处重复 TALENT:74，露出狂分支误读 TALENT:83', async () => {
-  const lewd = await setup_k903((f) => {
-    f.store.set(`cflag:${CID}:201`, 6);
-    f.store.set(`mark:${CID}:2`, 3);
-    f.store.set(`talent:${CID}:76`, 1);
-    f.store.set(`talent:${CID}:75`, 1);
-  });
-  const { k903_kojo2: lewd_kojo } = lewd.load_module('kojo/kojo-k903-garde');
-  await lewd_kojo();
-  assert.equal(
-    lewd.text_lines().some((line) => line.includes('湿嗒嗒')),
-    false,
-    '重复 TALENT:74 压住第二支：湿嗒嗒',
-  );
-
-  const love = await setup_k903((f) => {
-    f.store.set(`cflag:${CID}:201`, 6);
-    f.store.set(`mark:${CID}:2`, 3);
-    f.store.set(`talent:${CID}:85`, 1);
-    f.store.set(`talent:${CID}:75`, 1);
-  });
-  const { k903_kojo2: love_kojo } = love.load_module('kojo/kojo-k903-garde');
-  await love_kojo();
-  assert.equal(
-    love.text_lines().some((line) => line.includes('灵肉交汇')),
-    false,
-    '重复 TALENT:74 压住第二支：灵肉交汇',
-  );
-
-  const exposure = await setup_k903((f) => {
-    f.store.set(`cflag:${CID}:201`, 6);
-    f.store.set(`mark:${CID}:2`, 3);
-    f.store.set(`talent:${CID}:85`, 1);
-    f.store.set(`talent:${CID}:89`, 1);
-  });
-  const { k903_kojo2: exposure_kojo } = exposure.load_module(
-    'kojo/kojo-k903-garde',
-  );
-  await exposure_kojo();
-  assert.equal(
-    exposure.text_lines().some((line) => line.includes('今天会带本宫去哪里玩')),
-    false,
-    '露出狂分支误读 TALENT:83，只有 TALENT:89 时不输出',
-  );
-
-  const lewd_exposure = await setup_k903((f) => {
-    f.store.set(`cflag:${CID}:201`, 6);
-    f.store.set(`mark:${CID}:2`, 3);
-    f.store.set(`talent:${CID}:76`, 1);
-    f.store.set(`talent:${CID}:89`, 1);
-  });
-  const { k903_kojo2: lewd_exposure_kojo } = lewd_exposure.load_module(
-    'kojo/kojo-k903-garde',
-  );
-  await lewd_exposure_kojo();
-  assert.equal(
-    lewd_exposure.text_lines().some((line) => line.includes('早点去外面')),
-    false,
-    '淫乱档的露出狂分支同样误读 TALENT:83',
-  );
+test('KOJO2 开场素质链：自慰狂支不重复挡路，露出狂两支读 TALENT:89', async () => {
+  const cases = [
+    [
+      '淫乱+自慰狂',
+      { 'talent:33:76': 1, 'talent:33:74': 1 },
+      ['爱上这种事', '总之不要让本宫再等了啦'],
+      [],
+    ],
+    ['淫乱+性爱狂', { 'talent:33:76': 1, 'talent:33:75': 1 }, [], ['湿嗒嗒']],
+    [
+      '爱慕+自慰狂',
+      { 'talent:33:85': 1, 'talent:33:74': 1 },
+      ['爱上这种事'],
+      [],
+    ],
+    ['爱慕+性爱狂', { 'talent:33:85': 1, 'talent:33:75': 1 }, [], ['灵肉交汇']],
+    [
+      '爱慕+露出狂',
+      { 'talent:33:85': 1, 'talent:33:89': 1 },
+      ['今天会带本宫去哪里玩么'],
+      [],
+    ],
+    [
+      '淫乱+露出狂',
+      { 'talent:33:76': 1, 'talent:33:89': 1 },
+      ['早点去外面'],
+      [],
+    ],
+    [
+      '爱慕+施虐狂',
+      { 'talent:33:85': 1, 'talent:33:83': 1 },
+      ['来这里躺好'],
+      ['今天会带本宫去哪里玩么'],
+    ],
+    [
+      '淫乱+施虐狂',
+      { 'talent:33:76': 1, 'talent:33:83': 1 },
+      ['来这里躺好'],
+      ['早点去外面'],
+    ],
+  ];
+  for (const [name, seeds, shown, hidden] of cases) {
+    const fixture = await setup_k903((f) => {
+      f.store.set(`cflag:${CID}:201`, 6);
+      f.store.set(`mark:${CID}:2`, 3);
+      for (const [address, value] of Object.entries(seeds))
+        f.store.set(address, value);
+    });
+    const { k903_kojo2 } = fixture.load_module('kojo/kojo-k903-garde');
+    await k903_kojo2();
+    for (const snippet of shown) {
+      assert.ok(
+        fixture.text_lines().some((line) => line.includes(snippet)),
+        `${name}：应出现「${snippet}」`,
+      );
+    }
+    for (const snippet of hidden) {
+      assert.ok(
+        !fixture.text_lines().some((line) => line.includes(snippet)),
+        `${name}：不再出现「${snippet}」`,
+      );
+    }
+  }
 });
 
 test('#625 GOHOUBI_REQUEST 保留 Y=0、兽名与前后文同一行（要求奖赏 1/2/3）', async () => {
@@ -548,18 +589,37 @@ test('#625 GOHOUBI_REQUEST 保留 Y=0、兽名与前后文同一行（要求奖�
   }
 });
 
-test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模板空槽', async () => {
-  const talk = await setup_k903((f) => {
+test('SELECTCOM 56 淫乱二次档读 TALENT:76（摄影与非摄影两支），SELECTCOM:17 无口上槽', async () => {
+  for (const [name, filming] of [
+    ['非摄影', false],
+    ['摄影中', true],
+  ]) {
+    const talk = await setup_k903((f) => {
+      f.store.set(`cflag:${CID}:357`, 2);
+      f.store.set(`talent:${CID}:76`, 1);
+      if (filming) f.store.set(`tequip:${CID}:53`, 1);
+      f.store.set('flag:7', 1);
+    }, 56);
+    await speak(talk);
+    assert.ok(talk.text_lines().length > 0, `${name}：淫乱二次档出声`);
+    assert.equal(
+      talk.store.get(`cflag:${CID}:357`),
+      4,
+      `${name}：推进 CFLAG:357=4`,
+    );
+  }
+
+  const love_talk = await setup_k903((f) => {
     f.store.set(`cflag:${CID}:357`, 2);
-    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`talent:${CID}:85`, 1);
     f.store.set('flag:7', 1);
   }, 56);
-  await speak(talk);
-  assert.deepEqual(
-    talk.text_lines(),
-    [],
-    'CFLAG:357 淫乱二次分支误读 TALENT:85',
+  await speak(love_talk);
+  assert.ok(
+    love_talk.text_lines().some((line) => line.includes('喜欢本宫')),
+    '爱慕二次档仍读 TALENT:85',
   );
+  assert.equal(love_talk.store.get(`cflag:${CID}:357`), 3, '推进 CFLAG:357=3');
 
   const colosseum = await setup_k903((f, era_flag) => {
     f.store.set(`tequip:${CID}:55`, 1);
@@ -567,9 +627,10 @@ test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模�
     era_flag.assiplay = 1;
   }, 27);
   await speak(colosseum);
-  assert.ok(
-    colosseum.text_lines().some((line) => line.includes('」」')),
-    '死斗场原文多余双引号保留',
+  assert.equal(
+    colosseum.text_lines()[0],
+    '「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」',
+    '死斗场 SELECTCOM:27 台词不多余右引号',
   );
 
   const template = await setup_k903(
@@ -580,7 +641,7 @@ test('原作缺陷：357 淫乱条件误读爱慕、死斗场多余引号、模�
   assert.deepEqual(
     template.text_lines(),
     [],
-    '飞机杯段是注释模板空槽，SELECTCOM:17 无输出无状态',
+    'SELECTCOM:17 没有台词槽：无输出无状态',
   );
 });
 
@@ -609,7 +670,7 @@ test('#625 COLOSSEUM_KOJO_903 SC31/21/27：武器名与前后文同一行（三�
     },
     {
       selectcom: 27,
-      quote: '「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」」',
+      quote: '「呜！啊啊啊啊！屁股……屁股…要被弄坏啦！！」',
       head: '嘉德听到悲鸣，更加兴奋了，继续用',
       tail: '毫不留情地蹂躏着嘉德的肛门……',
     },

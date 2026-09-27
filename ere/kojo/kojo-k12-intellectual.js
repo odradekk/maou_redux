@@ -19,13 +19,13 @@
  * 都出声；FLAG:7 == 1 时逐阶段推进。源有 14-18 号指令的整段模板残骸
  * （:1140-1361 全注释），属未填写的模板骨架、非活代码，不落地（K11
  * SELECTCOM 17 同款判定）。爱抚等带怀孕分支（TALENT:153 && CFLAG:111==0）
- * 的指令按源 1:1 保留。
+ * 的指令保留怀孕分支判断。
  *
- * == 原作缺陷 1:1 保留 ==
+ * == 空台词槽 ==
  *
  * MUSEUM_KOUJO_K12（TFLAG:500 分档）、GROTESQUE_KOUJO_K12（TFLAG:530
- * 分档）等空 PRINTFORMW 台词槽原作留空，逐条核对 target/ 后保留；
- * 死斗场 COLOSSEUM_KOJO_12 同构保留空档。
+ * 分档）等空 PRINTFORMW 台词槽未填写，保持空输出；死斗场
+ * COLOSSEUM_KOJO_12 同构保留空档。
  *
  * == 跨文件调用 ==
  *
@@ -35,7 +35,6 @@
  * 顶层漏装遮蔽，K3 的延迟 require 同款先例）。四处的前缀行是 PRINTFORMW
  * （自带换行与等待），名字与后文属新的一行，故按原作拆成两条输出（#599）。
  */
-
 'use strict';
 
 const era = require('#/era-electron');
@@ -981,8 +980,8 @@ async function kojo_message_com_12(rand) {
         await era.printAndWait(
           `「怎么样、${sc()}性器的开发情况……♪　想让阴核变的多大呢？」`,
         );
-        // CFLAG:306  = 5（变量语义：CFLAG 族，306）
-        kojo.胸爱抚 = 5;
+        // CFLAG:308  = 5（变量语义：CFLAG 族，308）
+        kojo.自己扒开 = 5;
       } else if (
         era.get(`talent:${target}:85`) == 1 &&
         (kojo.自己扒开 <= 3 || game.kojo.口上开关 == 2)
@@ -990,21 +989,21 @@ async function kojo_message_com_12(rand) {
         await era.printAndWait(
           `「今天也做了记录呢。来展示一下${sc()}的性器发生了什么样的变化吧」`,
         );
-        // CFLAG:306  = 4（变量语义：CFLAG 族，306）
-        kojo.胸爱抚 = 4;
+        // CFLAG:308  = 4（变量语义：CFLAG 族，308）
+        kojo.自己扒开 = 4;
       } else if (
         era.get(`abl:${target}:17`) >= 3 &&
         (kojo.自己扒开 <= 2 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「唔……这可真是、羞耻心都被引出来了……呐」`);
-        // CFLAG:306  = 3（变量语义：CFLAG 族，306）
-        kojo.胸爱抚 = 3;
-      } else if (kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // CFLAG:308  = 3（变量语义：CFLAG 族，308）
+        kojo.自己扒开 = 3;
+      } else if (kojo.自己扒开 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(
           `「被迫作出这种屈辱的姿势……但${sc()}不得不屈服呢」`,
         );
-        // CFLAG:306  = 2（变量语义：CFLAG 族，306）
-        kojo.胸爱抚 = 2;
+        // CFLAG:308  = 2（变量语义：CFLAG 族，308）
+        kojo.自己扒开 = 2;
       }
       return 0;
     }
@@ -2023,7 +2022,7 @@ async function kojo_message_com_12(rand) {
       if (
         era.get(`talent:${target}:76`) == 1 &&
         era.get(`abl:${target}:3`) >= 3 &&
-        (kojo.正常位肛交 <= 6 || game.kojo.口上开关 == 2)
+        (kojo.背后位肛交 <= 6 || game.kojo.口上开关 == 2)
       ) {
         if (rand_n(3) == 0) {
           await era.printAndWait(
@@ -2038,15 +2037,15 @@ async function kojo_message_com_12(rand) {
             `「再深点插肛门！　${sc()}、好喜欢肛门被穿刺啊……」`,
           );
         }
-        // CFLAG:327  = 7（变量语义：CFLAG 族，327）
-        kojo.正常位肛交 = 7;
+        // CFLAG:328  = 7（变量语义：CFLAG 族，328）
+        kojo.背后位肛交 = 7;
       } else if (
         era.get(`talent:${target}:76`) == 1 &&
-        (kojo.正常位肛交 <= 5 || game.kojo.口上开关 == 2)
+        (kojo.背后位肛交 <= 5 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「还、还不太习惯呢……有进一步开发的必要呢……」`);
-        // CFLAG:327  = 6（变量语义：CFLAG 族，327）
-        kojo.正常位肛交 = 6;
+        // CFLAG:328  = 6（变量语义：CFLAG 族，328）
+        kojo.背后位肛交 = 6;
       } else if (
         era.get(`talent:${target}:85`) == 1 &&
         era.get(`abl:${target}:3`) >= 3 &&
@@ -2411,7 +2410,7 @@ async function kojo_message_com_12(rand) {
       if (
         era.get(`talent:${target}:76`) == 1 &&
         era.get(`abl:${target}:16`) >= 5 &&
-        (kojo.口交_奴 <= 5 || game.kojo.口上开关 == 2)
+        (kojo.乳交 <= 5 || game.kojo.口上开关 == 2)
       ) {
         if (rand_n(2) == 0) {
           await era.printAndWait(`「这样挤压着会舒服吗？」`);
@@ -2422,7 +2421,7 @@ async function kojo_message_com_12(rand) {
         kojo.乳交 = 6;
       } else if (
         era.get(`talent:${target}:76`) == 1 &&
-        (kojo.口交_奴 <= 4 || game.kojo.口上开关 == 2)
+        (kojo.乳交 <= 4 || game.kojo.口上开关 == 2)
       ) {
         await era.printAndWait(`「好难啊……你、真的会舒服吗？」`);
         // CFLAG:333  = 5（变量语义：CFLAG 族，333）
@@ -5212,7 +5211,7 @@ dungeon_attack_family.register(12, dungeon_attack_k12);
 // 类型分档：1 调教后自慰 / 2 百合PLAY / 3 朝口交 / 4 调教后性交 / 5 夜袭 /
 // 6 成熟出售（SELL_MATURO_K0，#338 接通）/ 9-10 妊娠发觉前段 / 11 妊娠发觉 /
 // 12 生产 / 999-998 育儿室·亲离。q 为自慰妄想对象（kojo-system.self_kojo 传）。
-// 空 PRINTFORMW 台词槽源留空，1:1 保留。
+// 空 PRINTFORMW 台词槽未填写，保持空输出。
 async function self_kojo_k12(rand, q) {
   const target = era_flag.target;
   const kojo = chara(target).kojo;
