@@ -37,11 +37,11 @@ const STATE = Object.freeze({
   /** 商店主循环 */
   SHOP: 'SHOP',
   /**
-   * 读档后的商店主循环。ere 侧本地扩展（#137），非 BEGIN 目标：读档由
-   * LOADGLOBAL 钩子显式发起本转场（#115 实测 LOADGLOBAL 即转场时机）。
-   * 与 SHOP 的唯一差别：**读档后不执行 EVENTSHOP 链**——ere 不区分
-   * 隐式/显式进入，以独立状态显式承载来源。处理器见 main-loop.js（同
-   * run_shop，跳过 EVENTSHOP 链）。
+   * 读档后的商店主循环。ere 侧本地扩展（#137），非 BEGIN 目标：读档成功后
+   * 由 page-save-load.js 的 load_game 跑完 EVENTLOAD 链，链里没有处理器
+   * 发起转场时进入本状态。与 SHOP 的唯一差别：**读档后不执行 EVENTSHOP
+   * 链**——用一个独立状态把「读档进入」和「BEGIN SHOP」区分开。处理器见
+   * main-loop.js（同 run_shop，跳过 EVENTSHOP 链）。
    */
   SHOP_AFTER_LOAD: 'SHOP_AFTER_LOAD',
   /** 调教开始 */

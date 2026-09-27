@@ -20,7 +20,7 @@
 
 const { BeginSignal } = require('#/system/flow/begin-signal');
 
-/** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 零使用记录，不实现） */
+/** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 没有用到，不实现） */
 const TIER = Object.freeze({
   PRI: 'PRI',
   NORMAL: 'NORMAL',

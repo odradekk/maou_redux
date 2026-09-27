@@ -133,17 +133,16 @@ const STATE_HANDLERS = {
   [STATE.TITLE]: run_title_page,
   // BEGIN FIRST → EVENTFIRST 事件链。
   // 链无人 BEGIN 时回落进 SHOP：EVENTFIRST 跑完而无转场时默认进商店轮，
-  // 不是报错（#20 验收移交的语义，这张工单实现）。防御性回落——
-  // 真身出口显式 begin(STATE.SHOP)，此行只在未来的处理器们都不发
-  // 信号时兜底。
+  // 不是报错（#20 验收移交的语义）。EVENTFIRST 处理器出口本来就显式
+  // begin(STATE.SHOP)，这里的默认值只在以后的处理器都不发信号时起作用。
   [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
   // BEGIN SHOP → 先调 EVENTSHOP 链一次，随后绘制商店页 →
   // 输入 → 分发循环（ere 侧整体收进
   // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已实现）。
   [STATE.SHOP]: run_shop,
-  // 读档后的商店轮（#137，LOADGLOBAL 钩子显式发起）：同 SHOP 主循环，但**不执行
-  // EVENTSHOP 链**（#137 定案）；
-  // 状态语义见 begin-signal.js 的 SHOP_AFTER_LOAD 注释）
+  // 读档后的商店轮（#137，由 page-save-load.js 的 load_game 发起）：同 SHOP
+  // 主循环，但**不执行 EVENTSHOP 链**（状态语义见 begin-signal.js 的
+  // SHOP_AFTER_LOAD 注释）
   [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),
   // BEGIN TRAIN → 初始化调教数据（ere 侧手写——system/train/train-loop.js，
   // issue #44）→ EVENTTRAIN 链 → 回合循环。
