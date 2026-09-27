@@ -38,10 +38,11 @@ async function condom_settings() {
   }
   const name = era.get(`callname:${cid}:-1`) ?? '';
   era.print(`和${name}做爱要戴套吗？`);
-  // 当前档位标签（与下方三键措辞一一对应；CFLAG:61 未设时按 0 档显示）
-  const setting_label = ['每次都问', '有套就用', '每次都直接来，来个痛快'][
-    era.get(`cflag:${cid}:61`) || 0
-  ];
+  // 当前档位标签（与下方三键措辞一一对应；CFLAG:61 未设时按 0 档显示，
+  // 档位越界时回退空串——不打印 undefined）
+  const setting61 = era.get(`cflag:${cid}:61`) || 0;
+  const setting_label =
+    ['每次都问', '有套就用', '每次都直接来，来个痛快'][setting61] ?? '';
   era.print(`现在：${setting_label}`);
   era.drawLine();
   era.printButton('每次都问', 0);

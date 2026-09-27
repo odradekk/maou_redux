@@ -10433,8 +10433,10 @@ export default [
     desc: 'M13005 尿布洗涤的洗衣状态复辟（CFLAG:47 又置 2——洗过的尿布要购新才回得来）',
     file: 'ere/system/train/cloth.js',
     find: `        // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
+        set_mask(mask() - 16);
         if (worn(cid) & 64) {`,
     replace: `        era.set(\`cflag:\${cid}:47\`, 2); // 变异：洗衣状态复辟
+        set_mask(mask() - 16);
         if (worn(cid) & 64) {`,
     tests: ['cloth-func'],
     must_mention: '洗衣状态不再设置（洗过不留占用）',

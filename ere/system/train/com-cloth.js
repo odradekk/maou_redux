@@ -171,7 +171,7 @@ function com110_able0w(cid, b) {
       return 0;
     }
     if (worn(cid) & BIT_SPECIAL && special_type(cid) <= 50) {
-      return 0; // 同 able0t：尿布支内恒假的双保险
+      return 0; // 同 com110_able0t：尿布支内恒假的双保险
     }
     if (main_type(cid) === 202 && worn(cid) & BIT_SKIRT) {
       return 0;

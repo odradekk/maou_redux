@@ -260,6 +260,7 @@ async function aftertrain_cloth(cid, soiled_mask = undefined) {
         era.print(`（把${name}的尿布拿去洗了）`);
         await era.waitAnyKey();
         // 洗衣状态不再设置：洗涤即时完成，尿布下次着衣即可穿回
+        set_mask(mask() - 16);
         if (worn(cid) & 64) {
           set_worn(cid, worn(cid) - 64);
         }

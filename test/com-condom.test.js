@@ -158,6 +158,7 @@ test('当前设定行跟随 CFLAG:61：档位标签与按钮措辞一一对应',
   await condom.condom_settings();
   assert.ok(fixture.text_lines().includes('现在：有套就用'));
 });
+
 test('[0]/[1]/[2] 各写 CFLAG:61 并回显确认行', async () => {
   for (const [key, label, want] of [
     [0, '每次确认。', 0],

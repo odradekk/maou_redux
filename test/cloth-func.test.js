@@ -286,6 +286,7 @@ test('AFTERTRAIN_CLOTH：尿布换洗分支（同上但选 1）→ 不置洗衣�
   await cloth.aftertrain_cloth(31);
   assert.equal(era_flag.money, 100, '不换新不扣费');
   assert.equal(fixture.store.get('cflag:31:47'), 0, '洗衣状态不再设置（洗过不留占用）');
+  assert.equal(fixture.store.get('tflag:45'), 0, 'TFLAG:45 -= 16（弄脏位照常清）');
   assert.equal(fixture.store.get('cflag:31:40') & SPECIAL, 0, '位 64 剥除');
   cloth.wearing_cloth_able(31);
   assert.equal(
@@ -294,6 +295,7 @@ test('AFTERTRAIN_CLOTH：尿布换洗分支（同上但选 1）→ 不置洗衣�
     '洗后即可经 WEARING_CLOTH_ABLE 穿回',
   );
 });
+
 test('AFTERTRAIN_CLOTH：特别服装洗涤（&16，钱不足或非尿布）→ 不置洗衣状态', async () => {
   const { fixture, cloth } = seed_train_world();
   fixture.store.set('flag:37', 1);
@@ -308,6 +310,7 @@ test('AFTERTRAIN_CLOTH：特别服装洗涤（&16，钱不足或非尿布）→ 
   assert.equal(fixture.store.get('cflag:31:47'), 0, '洗衣状态不再设置');
   assert.equal(fixture.store.get('tflag:45'), 0, 'TFLAG:45 -= 16');
 });
+
 test('AFTERTRAIN_CLOTH：下装丢弃（&8）两截型 → 46=-2、位 8/16 剥除', async () => {
   const { fixture, cloth } = seed_train_world();
   fixture.store.set('flag:37', 1);
@@ -375,6 +378,7 @@ test('AFTERTRAIN_CLOTH：下装洗涤（&4 且 46=0）全身型（41 ≥ 201）�
     '洗后即可经 WEARING_CLOTH_ABLE 穿回',
   );
 });
+
 test('AFTERTRAIN_CLOTH：内裤丢弃（&2）→ 43=-2；洗涤（&1 且 43=0）→ 不置状态', async () => {
   const discard = seed_train_world();
   discard.fixture.store.set('flag:37', 1);
@@ -398,6 +402,7 @@ test('AFTERTRAIN_CLOTH：内裤丢弃（&2）→ 43=-2；洗涤（&1 且 43=0）
     '洗后即可经 WEARING_CLOTH_ABLE 穿回',
   );
 });
+
 test('AFTERTRAIN_CLOTH：上下都不可用 → 类型清零；仅剩内衣 → 类型回落 1；内衣也失 → 0', async () => {
   // 45=-2（上装废弃）与 46=-2（下装废弃）→ 41=0（:370-371）。三条 SIF
   // 顺序执行：41 归零后若内衣在身（40 & 3），紧随的回落 SIF 把它抬回 1——

@@ -281,6 +281,7 @@ test('MILK：E1 判据是蓄积 S——半衰后 B ≤ 上限但 S 越过即喷�
   assert.equal(fixture.store.get('exp:0:54'), 1);
   assert.equal(fixture.store.get('nowex:0:5'), 1);
 });
+
 // —— @COM_AFTER_VAGINA_SEX ——
 
 test('私处经验分档（ABL:2 ≤ 1 → +2；≥ 8 → +5）与性交经验 +1', async () => {
