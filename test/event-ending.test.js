@@ -721,7 +721,11 @@ test('END10_55：天神宫结局演出本体——八行 + 嘉德线 +5、EX_FLA
     5,
     'EX_FLAG:2810 += 5（:485）',
   );
-  assert.equal(fixture.store.get('exflag:99'), 70, '演出本体不写威望（EX_FLAG:99 += 10 是分派层的职责）');
+  assert.equal(
+    fixture.store.get('exflag:99'),
+    70,
+    '演出本体不写威望（EX_FLAG:99 += 10 是分派层的职责）',
+  );
   assert.equal(
     fixture.store.get('exflag:102'),
     undefined,

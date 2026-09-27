@@ -658,7 +658,10 @@ test('SHOW_TALENT：魔虫知识（328）的守卫读自身（#652 改正笔误�
   only327.show_talent(7);
   const line = only327.fixture.text_lines().find((t) => t.includes('技术'));
   assert(line.includes('[淫魔知识]'), '327 自身照出');
-  assert(!line.includes('[魔虫知识]'), '只设 327 时 328 不再连带出（笔误已改正）');
+  assert(
+    !line.includes('[魔虫知识]'),
+    '只设 327 时 328 不再连带出（笔误已改正）',
+  );
 
   const only328 = talent_fixture({
     flag5: 1 << 8,

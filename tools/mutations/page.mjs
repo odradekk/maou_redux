@@ -4647,7 +4647,8 @@ export default [
     desc: 'M13200 据点事件三臂恢复星号输出（#652 删掉的反复弹星号复原）',
     file: 'ere/page/page-invasion.js',
     find: '  // 精灵/龙/天界三臂：不输出、不推进（#652）\n  return 0;',
-    replace: '  // 变异：三臂恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
+    replace:
+      '  // 变异：三臂恢复星号输出\n  era.print(BANNER_STAR);\n  return 0;',
     tests: ['page-invasion'],
     must_mention: '三臂空转不打星号',
   },
@@ -4667,7 +4668,8 @@ export default [
     replace:
       'const MONSTER_CONQUERED_AREAS = [81, 86, 88, 90]; // 变异：漏列 101 复原',
     tests: ['page-invasion'],
-    must_mention: '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
+    must_mention:
+      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
   },
   {
     desc: 'M13203 invasion_check 的天神宫死分支复活（#652 删除的 EX_FLAG:101 判据被接回）',
@@ -4691,7 +4693,8 @@ export default [
     desc: 'M13205 FORT 绕路（INV_TYPE == 3）的平安支删除、恒埋伏（#652 补的 RAND:10 被删）',
     file: 'ere/page/page-invasion.js',
     find: '  if (choice === 3 && inv_type === 3) {\n    if (rand(10) > 0) {',
-    replace: '  if (choice === 3 && inv_type === 3) {\n    if (false) { // 变异：平安支删除、恒埋伏',
+    replace:
+      '  if (choice === 3 && inv_type === 3) {\n    if (false) { // 变异：平安支删除、恒埋伏',
     tests: ['page-invasion'],
     must_mention: '平安支 RETURN 0',
   },
@@ -4707,7 +4710,8 @@ export default [
     desc: 'M13207 征服后菜单 [5] 的渲染守卫删除（#652 外提的 route_33 守卫被拆）',
     file: 'ere/page/page-invasion.js',
     find: '  if (era_exflag.route_33 > 500) {\n    if (era_exflag.shrine_stage >= 4) {',
-    replace: '  if (true) { // 变异：渲染守卫删除\n    if (era_exflag.shrine_stage >= 4) {',
+    replace:
+      '  if (true) { // 变异：渲染守卫删除\n    if (era_exflag.shrine_stage >= 4) {',
     tests: ['page-invasion'],
     must_mention: '窗口外键入 5：引擎白名单拒收',
   },

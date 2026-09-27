@@ -1380,8 +1380,7 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项，渲染与派发
       renders_option: false,
     },
     {
-      label:
-        'shrine_stage=4（已征服）但开放区间外：进度条仍显示，[5] 不渲染',
+      label: 'shrine_stage=4（已征服）但开放区间外：进度条仍显示，[5] 不渲染',
       route_33: 0,
       shrine_stage: 4,
       progress_text: '淫乱意志的神宫侵攻度',
@@ -1426,7 +1425,8 @@ test('征服后菜单渲染：天神宫状态条与 [5] 选项，渲染与派发
       );
       assert(
         progress_cells(fixture).some(
-          (cell) => cell.label === c.progress_text && cell.value === ' 777/10000',
+          (cell) =>
+            cell.label === c.progress_text && cell.value === ' 777/10000',
         ),
         `${c.label}：进度条读 FLAG:101 = 777（不是 EX_FLAG:101 的 555）`,
       );
@@ -1650,7 +1650,11 @@ test('征服后菜单 [5] 守卫的两侧边界：route_33 = 500 不渲染且拒
     /输入不合法/,
     'route_33 = 500 仍在拒收侧：引擎白名单拒收重问',
   );
-  assert.equal(has_five_button(outside), false, 'route_33 = 500 不渲染 [5] 按钮');
+  assert.equal(
+    has_five_button(outside),
+    false,
+    'route_33 = 500 不渲染 [5] 按钮',
+  );
 
   // 501 → 渲染且放行，落进天神宫的出兵菜单（第二枚 [999] 是出兵菜单的返回）。
   // 这一支同时是上面那条「不得落进出兵菜单」的**正面参照**：helper 认得出
@@ -2429,13 +2433,13 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
     20000 + 2048,
     'SINKOU 补正后无反击伤害',
   );
-  assert.equal(
-    fixture.store.get('base:1:1'),
-    20000 + 2048,
-    '气力同',
-  );
+  assert.equal(fixture.store.get('base:1:1'), 20000 + 2048, '气力同');
   // 先制守卫：200 < 100*(2048/2048+1) = 200 不成立 → ELSE 支（防御仍减半）
-  assert.equal(fixture.store.get('cflag:18:12'), 100, '精锐防御减半（承受支同款）');
+  assert.equal(
+    fixture.store.get('cflag:18:12'),
+    100,
+    '精锐防御减半（承受支同款）',
+  );
   // 魔王侧胜利：经验 SINKOU/5 = 409
   assert.equal(
     fixture.store.get('exp:1:80'),
@@ -2443,11 +2447,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
     '退场检查（带实参，判精锐）触发胜利经验',
   );
   assert.equal(fixture.store.get('cflag:1:11'), 100, '勇者攻击不动（无反击）');
-  assert.equal(
-    fixture.store.get('cflag:1:12'),
-    100,
-    '勇者防御不动（无反击）',
-  );
+  assert.equal(fixture.store.get('cflag:1:12'), 100, '勇者防御不动（无反击）');
   // DELCHARA
   assert.ok(
     !fixture.era.getAddedCharacters().includes(18),
@@ -2519,10 +2519,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：第一条退场检查带实参、判精�
     texts.includes('精锐部队被勇者1率领的魔王军击溃了………'),
     '击溃文案的主语是精锐部队（不再是魔王自己）',
   );
-  assert(
-    texts.includes('勇者1获得了409点经验值！'),
-    '胜利经验照常交付',
-  );
+  assert(texts.includes('勇者1获得了409点经验值！'), '胜利经验照常交付');
   assert(
     !texts.includes('精锐部队发起进攻使勇者1率领的魔王军受到了250点伤害！'),
     '反击分支走不到（检查在反击前已判溃）',
@@ -3186,12 +3183,12 @@ test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 /
     1,
     '埋伏支 RETURN 1（RAND:10 掷出 0）',
   );
+  assert.equal(raid_ambushed.store.get('base:1:0'), 5000, '埋伏支不动体力');
   assert.equal(
-    raid_ambushed.store.get('base:1:0'),
-    5000,
-    '埋伏支不动体力',
+    raid_ambushed.store.get('cflag:1:1'),
+    0,
+    'FLAG:5 位 7 关 → 逃回',
   );
-  assert.equal(raid_ambushed.store.get('cflag:1:1'), 0, 'FLAG:5 位 7 关 → 逃回');
   assert(
     raid_ambushed.text_lines().includes('在一番激烈战斗后勇者1终于逃了回来。'),
     '埋伏支逃回文案',
@@ -3200,10 +3197,20 @@ test('FORT [3] 绕路：INV_TYPE == 2 掷 RAND:10、INV_TYPE == 3 九成平安 /
   const raid_captured = make_arm_world();
   raid_captured.store.set('flag:5', 128);
   assert.equal(
-    await run_fort(raid_captured, [2], 3, { sinkou: 100, yusya_i: 1 }, seq([0])),
+    await run_fort(
+      raid_captured,
+      [2],
+      3,
+      { sinkou: 100, yusya_i: 1 },
+      seq([0]),
+    ),
     1,
   );
-  assert.equal(raid_captured.store.get('cflag:1:1'), 9, 'FLAG:5 位 7 开 → 被活捉');
+  assert.equal(
+    raid_captured.store.get('cflag:1:1'),
+    9,
+    'FLAG:5 位 7 开 → 被活捉',
+  );
   assert(
     raid_captured.text_lines().includes('在一番激烈战斗后勇者1还是被活捉了。'),
     'FLAG:5 位 7 开 → 被活捉文案',
@@ -3239,7 +3246,8 @@ test('FORT 的选项渲染：INV_TYPE 0/2/3 三套正文，2/3 才需要输入�
   );
   // `L_CHOICE = RESULT + 1`：键入 2 → L_CHOICE == 3（绕路）；掷 5 → 平安支
   assert(
-    raid.text_lines()
+    raid
+      .text_lines()
       .includes('勇者1绕开城堡向人间界进发，因为路途遥远地形复杂受了一些伤。'),
     ':798 键入 2 到了绕路支（#652 起掷 RAND:10，5 → 平安）',
   );
@@ -4287,11 +4295,7 @@ test('【地区续接·天神宫】[5]：累加与显示同读 FLAG:101（#652 �
   fixture.store.set('flag:81', 2000);
   assert.equal(await run_post_conquest(fixture, [5, 1]), 1);
 
-  assert.equal(
-    fixture.store.get('flag:101'),
-    400,
-    '出兵结算的累加写 FLAG:101',
-  );
+  assert.equal(fixture.store.get('flag:101'), 400, '出兵结算的累加写 FLAG:101');
   assert.equal(
     fixture.store.get('exflag:101'),
     7000,
@@ -4536,11 +4540,7 @@ test('【地区泛化】KYOTEN_EVENT 的 ARG 2/3/4 臂：空转、不推进状�
 
     // 反复调用依旧一行都不打
     await run_kyoten(fixture, arm.arg);
-    assert.equal(
-      star_count(fixture),
-      0,
-      `ARG ${arm.arg}：再次调用仍不输出`,
-    );
+    assert.equal(star_count(fixture), 0, `ARG ${arm.arg}：再次调用仍不输出`);
   }
 
   // 未达首档：同样空转

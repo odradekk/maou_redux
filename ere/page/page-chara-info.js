@@ -662,7 +662,6 @@ async function chara_info() {
   }
 }
 
-
 /**
  * @CHARA_INFO_INDIVIDUAL_WAPPED（:820-832）：SORT_SELECT==1200 视图下打开
  * 个别信息页的入口——原作现建的是 `LOCAL:COUNT = COUNT + 1`（1..CHARANUM）

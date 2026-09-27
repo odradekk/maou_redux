@@ -705,8 +705,9 @@ test('CHARA_INFO：1200 视图（默认）走包装入口——结婚成功的 1
     1,
     '包装入口透传 1：本回合结束（[999] 留在预置输入里不被消费）',
   );
-  const input_count = fixture.inputs_consumed.filter((i) => i.api === 'input')
-    .length;
+  const input_count = fixture.inputs_consumed.filter(
+    (i) => i.api === 'input',
+  ).length;
   assert.equal(input_count, 3, '[999] 未被消费');
 });
 
