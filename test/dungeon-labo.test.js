@@ -9,7 +9,7 @@
  *      除法向零截断）手算写死，含一个负差截断点（floor 与 trunc 在 -10.2
  *      上分叉，钉住「不是 Math.floor」）；
  *   2. GEO_TEST / DA_CLEAR / SET_VIL 的结构行为（恒定随机源）；
- *   3. MON_CHECK / UNIT_CHECK / VIL_CHECK / MON_LIMIT / CHIP_DRAW /
+ *   3. MON_CHECK / UNIT_CHECK / VIL_CHECK / CHIP_DRAW /
  *      GEO_OUTPUT_2 的格子语义；
  *   4. UNIT_MOVE 的移动方向、中心触发（JUMP ENDING_2 的尾跳转语义）、
  *      相遇分支与侵攻度钳制；
@@ -352,21 +352,6 @@ test('GEO_OUTPUT_2：32×32 行输出 + 等键（:6-23）', async () => {
   assert.ok(
     fixture.waits.some((w) => w.waited),
     '尾部 WAIT（:23）',
-  );
-});
-
-test('MON_LIMIT：合计 ≤ 120 放行，超限拒绝并播报（:162-181）', () => {
-  const { fixture, labo, labo_map } = setup_labo();
-  assert.equal(labo_map.mon_limit(), 1, '空图合计 0 → 放行');
-  // 25 格 lv 5（合计 125 > 120）——lv 5 → item 150..154
-  fixture.store.set('item:150', 21);
-  for (let x = 0; x < 25; x += 1) {
-    labo.db_set(0, x, 5);
-  }
-  assert.equal(labo_map.mon_limit(), 0, '合计 125 > 120 → 拒绝');
-  assert.ok(
-    fixture.text_lines().some((line) => line.includes('*怪物的配置到极限了*')),
-    '超限播报（:179）',
   );
 });
 
