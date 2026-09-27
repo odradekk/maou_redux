@@ -2,15 +2,16 @@
  * ere/system/train/train-loop.js 的行为测试（issue #44：调教回合循环的形状
  * ——谁驱动、回调顺序、SELECTCOM 从哪来）。
  *
- * 缝 = test/helpers/era-fixture.js。**回调顺序与 Emuera 一致**是验收项
- *（顺序错了不报错、只会静默改变游戏行为）：用探针处理器固定
- * @SHOW_STATUS → COM_ABLE 扫描 → @SHOW_USERCOM → 输入 → SELECTCOM →
- * NOWEX 清零 → @EVENTCOM → @COMxx → 结算 → @EVENTCOMEND 的完整顺序。
+ * 缝 = test/helpers/era-fixture.js。**回调顺序是验收项**（顺序错了不报错、
+ * 只会静默改变游戏行为）：用探针处理器固定 SHOW_STATUS → COM_ABLE 扫描 →
+ * SHOW_USERCOM → 输入 → SELECTCOM → NOWEX 清零 → EVENTCOM → 指令处理器 →
+ * 结算 → EVENTCOMEND 的完整顺序。
  * 另含：引擎初始化（beginTrain 先于一切火车表写入）、COM_ABLE 未定义即
- * 可执行、@COMxx 未定义重新要求输入、999 经 @USERCOM 退出、AFTERTRAIN
- * 收尾 endTrain，以及「主菜单 → 调教 → 回主菜单」的端到端闭环。
+ * 可执行、指令处理器未定义重新要求输入、999 经 USERCOM 退出、AFTERTRAIN
+ * 收尾 endTrain，以及「主菜单 → 调教 → 回主菜单」的端到端完整流程。
  *
- * 引擎比对：夹具的调教域表守卫（beginTrain 前写 tflag 报错）在此用引擎
+ * 引擎比对：夹具的调教域表检查（beginTrain 前写 tflag 报错）在此用引擎
+ *
  * 自己的寻址代码锁定（app.asar，engine-bundle）——夹具镜像的是这里的证据。
  */
 
@@ -40,7 +41,7 @@ function seed_world(fixture) {
 test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色入列且先于火车表写入', async () => {
   const fixture = create_era_fixture();
   const era_flag = seed_world(fixture);
-  fixture.load_module('event/event-train'); // @EVENTTRAIN 真身（写 TFLAG）
+  fixture.load_module('event/event-train'); // EVENTTRAIN 处理器真身（写 TFLAG）
   fixture.load_module('page/page-usercom'); // 注册 999 → AFTERTRAIN
   fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
@@ -53,15 +54,15 @@ test('引擎初始化：ASSIPLAY/PREVCOM/NEXTCOM 置位，beginTrain 全角色�
   assert.equal(era_flag.nextcom, -1);
   const begin = fixture.calls.find((c) => c.api === 'beginTrain');
   assert.deepEqual(begin.args, [0, 31], 'beginTrain 必须收全部已加入角色');
-  // beginTrain 在 @EVENTTRAIN 之前（引擎行为：建表 → 事件链）。夹具的守卫
+  // beginTrain 在 EVENTTRAIN 之前（引擎行为：建表 → 事件链）。夹具的检查
   // （tflag 写入要求表已开）让顺序颠倒在这里炸——EVENTTRAIN 写 200 个 tflag
   assert(
     fixture.var_writes.some((w) => w.name === 'tflag:0' && w.value === 0),
-    '@EVENTTRAIN 的 TFLAG 清零必须已执行（表已开）',
+    'EVENTTRAIN 的 TFLAG 清零必须已执行（表已开）',
   );
 });
 
-test('BEGIN TRAIN 清空 TSTR:90（Emuera 引擎整族清空的 ere 手动镜像，#212）', async () => {
+test('BEGIN TRAIN 清空 TSTR:90（整族清空的 ere 手动镜像，#212）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.load_module('page/page-usercom'); // 注册 999 → AFTERTRAIN
@@ -84,7 +85,7 @@ test('BEGIN TRAIN 清空 TSTR:90（Emuera 引擎整族清空的 ere 手动镜像
   );
 });
 
-test('回合循环的回调顺序：与 Emuera 逐条一致（探针固定）', async () => {
+test('回合循环的回调顺序：逐条钉死（探针固定）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.era.beginTrain(0, 31); // 探针世界：表已开（run_train 会再调，幂等）
@@ -137,8 +138,8 @@ test('回合循环的回调顺序：与 Emuera 逐条一致（探针固定）', 
     'show_usercom',
     // 输入 999：非指令 → USERCOM（page-usercom 的 999 → BEGIN AFTERTRAIN）
   ]);
-  // SELECTCOM 与 PREVCOM 的来源（写记录为准——包装层的 || 0 兜底会把
-  //「没写」伪装成 0，变异测试抓过的误报通过形态）：
+  // SELECTCOM 与 PREVCOM 的来源（写记录为准——包装层的 || 0 默认值会把
+  //「没写」伪装成 0，变异测试抓过的误报通过写法）：
   const flag_writes = (id) =>
     fixture.var_writes.filter((w) => w.name === id).map((w) => w.value);
   assert.deepEqual(flag_writes('flag:10011'), [0], 'SELECTCOM = 玩家输入');
@@ -187,7 +188,7 @@ test('#213 输入映射：玩家输入是 L_IDX，SELECTCOM 取 L_I（39→40 / 
   fixture.set_inputs(39, 999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
-  assert.deepEqual(probe, ['com_40'], 'L_IDX 39 必须分发到 @COM40');
+  assert.deepEqual(probe, ['com_40'], 'L_IDX 39 必须分发到指令 40');
   const flag_writes = (id) =>
     fixture.var_writes.filter((w) => w.name === id).map((w) => w.value);
   assert.deepEqual(
@@ -203,8 +204,8 @@ test('升格回合：COM8 跳到 COM84 后 PREVCOM 保留回填的 SELECTCOM', a
   seed_world(fixture);
   fixture.load_module('system/flow/main-loop'); // 注册 COM8、CASE 8 与 COM84 真身
   // 直接以最小真实回合驱动：默认目标非处女，COM8 不进确认；CASE 8 命中后
-  // JUMPFORM COM84，COM84 自行回填 SELECTCOM = 84（COMF84_Gスポット刺激.ERB:8）。
-  // 执行回合的前置 PREVCOM 在 @EVENTTRAIN 之后（run_train 的初始化之后）设为
+  // 升格到 COM84 后由 COM84 自行回填 SELECTCOM = 84。
+  // 执行回合的前置 PREVCOM 在 EVENTTRAIN 之后（run_train 的初始化之后）设为
   // 8，避免它被 BEGIN TRAIN 清为 -1。
   const { on } = fixture.load_module('system/event/registry');
   on('EVENTTRAIN', async () => {
@@ -224,14 +225,13 @@ test('升格回合：COM8 跳到 COM84 后 PREVCOM 保留回填的 SELECTCOM', a
   );
 });
 
-test('#213 输入映射：89 跑出穿脱衣服的路由（golden 实证对），未实现 → 重新要求输入', async () => {
+test('#213 输入映射：89 跑出穿脱衣服的路由，未实现 → 重新要求输入', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.load_module('page/page-usercom');
 
-  // 89 = 穿脱衣服的 L_IDX（Train.csv 110，train-natural-log:211
-  // 实证）。COM110 未移植 → 引擎「重新要求输入」：SELECTCOM 已置、无输出、
-  // PREVCOM 不推进、下一输入（999）正常退出
+  // 89 = 穿脱衣服的 L_IDX（Train.csv 110）。指令 110 未实现 → 引擎「重新要求输入」：
+  // SELECTCOM 已置、无输出、PREVCOM 不推进、下一输入（999）正常退出
   fixture.set_inputs(89, 999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
@@ -254,7 +254,7 @@ test('#213 输入映射：89 跑出穿脱衣服的路由（golden 实证对）�
   );
 });
 
-test('#213 输入映射：映射外的编号原样落 @USERCOM（999 出口照常）', async () => {
+test('#213 输入映射：映射外的编号原样落 USERCOM（999 出口照常）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { on } = fixture.load_module('system/event/registry');
@@ -262,7 +262,7 @@ test('#213 输入映射：映射外的编号原样落 @USERCOM（999 出口照�
   const probe = [];
   on('USERCOM', async (result) => probe.push(`usercom(${result})`));
 
-  // 999 在 L_IDX 空间外（0-100）→ @USERCOM 收到原始输入 999 → AFTERTRAIN
+  // 999 在 L_IDX 空间外（0-100）→ USERCOM 收到原始输入 999 → AFTERTRAIN
   fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
@@ -284,10 +284,10 @@ test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#1
   on('EVENTCOM', async () => probe.push('eventcom'));
   on('USERCOM', async (result) => probe.push(`usercom(${result})`));
 
-  // 原用例喂 5 验证「输入走 @USERCOM 而非指令路径」。可执行表驱动按钮
+  // 原用例喂 5 验证「输入走 USERCOM 而非指令路径」。可执行表驱动按钮
   // 渲染：COM_ABLE = 0 的 5 不印按钮，引擎的 input() 只送达已打印按钮的
-  // 快捷键——5 在渲染层就被弹回，@USERCOM 收不到 5（原作 INPUT 收任意
-  // 数字时代的路径在引擎侧不存在）。引擎可达的等价断言＝不渲染 + 拒收
+  // 快捷键——5 在渲染层就被弹回，USERCOM 收不到（本引擎 input() 不接收
+  // 未渲染快捷键的任意数字）。引擎可达的等价断言＝不渲染 + 拒收
   fixture.set_inputs(999);
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
@@ -299,7 +299,7 @@ test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#1
     'COM_ABLE = 0 的指令不得渲染为按钮',
   );
   assert.deepEqual(probe, [
-    'usercom(999)', // 退出键照常走 @USERCOM（→ BEGIN AFTERTRAIN）
+    'usercom(999)', // 退出键照常走 USERCOM（→ BEGIN AFTERTRAIN）
   ]);
   // 全程无指令路径：SELECTCOM 不被写
   assert(
@@ -323,7 +323,7 @@ test('COM_ABLE 返回 0 的指令不渲染按钮：引擎侧即不可送达（#1
   assert(!locked.inputs_consumed.some((e) => e.value === 5), '5 未被送达');
 });
 
-test('@COMxx 未实现：EVENTCOM 后重新要求输入（不结算、不进 EVENTCOMEND）', async () => {
+test('指令处理器未实现：EVENTCOM 后重新要求输入（不结算、不进 EVENTCOMEND）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   const { on } = fixture.load_module('system/event/registry');
@@ -333,7 +333,7 @@ test('@COMxx 未实现：EVENTCOM 后重新要求输入（不结算、不进 EVE
   on('EVENTCOM', async () => probe.push('eventcom'));
   on('EVENTCOMEND', async () => probe.push('eventcomend'));
 
-  fixture.set_inputs(0, 999); // 0 可执行（COM_ABLE 默认）但 @COM0 未实现
+  fixture.set_inputs(0, 999); // 0 可执行（COM_ABLE 默认）但指令 0 未实现
   const { run_train } = fixture.load_module('system/train/train-loop');
   assert.equal(await run_train(), 'AFTERTRAIN');
 
@@ -352,20 +352,20 @@ test('@COMxx 未实现：EVENTCOM 后重新要求输入（不结算、不进 EVE
   assert.notEqual(era_flag.prevcom, 0, '缺失指令不得更新 PREVCOM');
 });
 
-test('999 → @USERCOM → AFTERTRAIN：run_aftertrain 跑 @EVENTEND 并收尾 endTrain', async () => {
+test('999 → USERCOM → AFTERTRAIN：run_aftertrain 跑 EVENTEND 并收尾 endTrain', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.era.beginTrain(0, 31);
   fixture.store.set('base:31:0', 2000); // 存活——死亡分支会跳过其后的珠结算
-  // 失神旗标（TFLAG:860）：@EVENTEND 体内要写 tflag——endTrain 若先跑（删表），
-  // 这笔写入会被守卫拦下（引擎寻址语义），flag:7 落不了盘。以此固定
+  // 失神旗标（TFLAG:860）：EVENTEND 处理器体内要写 tflag——endTrain 若先跑（删表），
+  // 这笔写入会被检查拦下（引擎寻址语义），flag:7 落不了盘。以此固定
   //「链后收尾」的顺序
   fixture.store.set('tflag:860', 1);
   fixture.load_module('event/event-train');
   fixture.load_module('event/event-end');
   fixture.load_module('page/page-usercom');
   // 直接驱动两段状态处理器（主循环接驳在端到端用例证）；第二枚 999 是
-  // @JUEL_CHECK 交互循环的退出键（#47）
+  // JUEL_CHECK 交互循环的退出键（#47）
   fixture.set_inputs(999, 999);
   const { run_train, run_aftertrain } = fixture.load_module(
     'system/train/train-loop',
@@ -373,16 +373,16 @@ test('999 → @USERCOM → AFTERTRAIN：run_aftertrain 跑 @EVENTEND 并收尾 e
 
   assert.equal(await run_train(), 'AFTERTRAIN');
   assert.equal(await run_aftertrain(), 'TURNEND');
-  // @EVENTEND 体内的 tflag 写入成功 = 收尾在其后
+  // EVENTEND 体内的 tflag 写入成功 = 收尾在其后
   assert(
     fixture.var_writes.some((w) => w.name === 'flag:7' && w.value === 1),
-    '@EVENTEND 的失神旗标复位必须发生在 endTrain 之前',
+    'EVENTEND 的失神旗标复位必须发生在 endTrain 之前',
   );
-  // endTrain 在 @EVENTEND 链后收尾（gotjewel 结算 + 删表）
+  // endTrain 在 EVENTEND 链后收尾（gotjewel 结算 + 删表）
   const call_names = fixture.calls.map((c) => c.api);
   assert(call_names.indexOf('endTrain') > call_names.indexOf('beginTrain'));
   assert(fixture.text_lines().includes('调教结束了。'));
-  // @JUEL_CHECK 已是真身（#47）：结算表在 @EVENTEND 链内落地（gotjuel 的
+  // JUEL_CHECK 结算已是真身（#47）：结算表在 EVENTEND 链内实现（gotjuel 的
   // 读写都要求火车表仍在，endTrain 在其后收尾——上一条 tflag 断言同构）
   assert(fixture.text_lines().includes('以上的点数变化了。'));
 });
@@ -392,15 +392,14 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   preset_gamebase(fixture);
   preset_chara_0(fixture);
   preset_chara_1(fixture); // rand ≡ 0 时随机路径掷勇者位 1（#565 起真身）
-  // 初期奴隶由 #50 落地；本用例按工单事实 #12 在测试里播种：EVENTFIRST 链
+  // 初期奴隶由 #50 实现；本用例按工单事实 #12 在测试里播种：EVENTFIRST 链
   // 的 LATER 档追加处理器（#6 语义：BEGIN 后链继续），等价「开局就有奴隶 31」
   fixture.seed_chara(31, { id: 31, name: '温妮', callname: '温妮' });
-  // 体力预设（真实游戏由 Chara31.yml 的 基礎 行落地；@EVENTEND 的死亡判定
+  // 体力预设（真实游戏由 Chara31.yml 的 基礎 行实现；EVENTEND 的死亡判定
   // 读它——无预设时体力 0 会触发死亡删除分支，那不是本用例的目标路径）
   fixture.store.set('base:31:0', 2000);
   // 行动完了预置（#172 起 PARTY_UNITE 真身：回合结算的队伍编成会把它
-  // 复位为 0——占位行时代该断言盯「原作 @PARTY_UNITE，」，真身后改盯
-  // 数据效果）
+  // 复位为 0——占位行时代该断言盯占位文案，真身后改盯数据效果）
   fixture.store.set('cflag:31:530', 1);
   const { on, TIER } = fixture.load_module('system/event/registry');
   on('EVENTFIRST', async () => fixture.era.addCharacter(31), TIER.LATER);
@@ -411,13 +410,13 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   // 确认 [100] 進む + 收下 [2]（rand ≡ 0 掷勇者位 1，preset_chara_1 已种），
   // 随机奴隶顺路入列——选目标输入 31 不受影响，温妮仍由 LATER 档处理器
   // 播种。末尾四枚：菜单 100、选人 31、999 = 调教菜单退出、999 =
-  // @JUEL_CHECK 交互循环退出（#47）
+  // JUEL_CHECK 交互循环退出（#47）
   fixture.set_inputs(1, 1, 2, 0, 0, 100, 2, 100, 31, 999, 999);
   const main = fixture.load_module('main');
 
   // 标题(1) → FIRST（五问 + 随机奴隶生成）→ SHOP → 100 → SELECT_TARGET(31)
-  // → TRAIN 一回合（SHOW_STATUS + 菜单）→ 999 → AFTERTRAIN（@EVENTEND +
-  // @JUEL_CHECK）→ TURNEND → SHOP 重绘 → 下一次 input 队列已空，抛
+  // → TRAIN 一回合（SHOW_STATUS + 菜单）→ 999 → AFTERTRAIN（EVENTEND +
+  // JUEL_CHECK）→ TURNEND → SHOP 重绘 → 下一次 input 队列已空，抛
   // 「预置输入已耗尽」到站
   fixture.override_math_random(() => 0);
   let err;
@@ -432,8 +431,8 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
 
   // 消费序列：标题(1) → 初期奴隶问答(0，#50) → 地下城模式问答(0，#181)
   // → 开场叙事读键 ×7
-  //（@EVENTFIRST）→ 菜单 100 → 选人 31 → PRITRAIN 存根读键 → 999 →
-  // @EVENTEND 读键 → @JUEL_CHECK 的 WAIT 读键 → 999（能力值提高结束）
+  //（EVENTFIRST）→ 菜单 100 → 选人 31 → PRITRAIN 读键 → 999 →
+  // EVENTEND 读键 → JUEL_CHECK 的等键读键 → 999（能力值提高结束）
   assert.deepEqual(fixture.inputs_consumed, [
     { api: 'input', value: 1 }, // 标题「新的猎物」
     { api: 'input', value: 1 }, // 魔王性别「女性」（跳过肉棒尺寸一问）
@@ -442,7 +441,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     { api: 'input', value: 0 }, // #181 地下城模式（普通）
     ...Array.from({ length: 7 }, () => ({ api: 'waitAnyKey' })),
     // RAND_CHARA_MAKE 真身（#565）：形象确认 [100] → SHOW_CHARA_INFO 走
-    // -2 贡品页（:150 原作实参；#565 订正，整页无读键）→ 收下 [2] →
+    // -2 贡品页（#565 订正，整页无读键）→ 收下 [2] →
     // 收下播报读键
     { api: 'input', value: 100 },
     { api: 'input', value: 2 },
@@ -466,7 +465,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
       (line) => line.type === 'button' && line.accelerator === 999,
     ),
   );
-  // 出过调教：@EVENTEND 消息 + 珠结算表（#47）+ 回合结算三档链（#114）+
+  // 出过调教：EVENTEND 消息 + 珠结算表（#47）+ 回合结算三档链（#114）+
   // 回到主菜单（状态行恰两次：100 之前一次、回程重绘一次）
   assert(texts.includes('调教结束了。'));
   assert(texts.includes('以上的点数变化了。'));
@@ -477,18 +476,21 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
         line.accelerator === 999 &&
         line.rendered === '[999] - 能力值提高结束',
     ),
-    '@JUEL_CHECK 的退出键必须是按钮（PR #53）',
+    'JUEL_CHECK 的退出键必须是按钮（PR #53）',
   );
-  // 回合结算三档链已落地（#114）：#PRI 档自 #401 起**零存根**（十个体外
+  // 回合结算三档链已实现（#114）：#PRI 档自 #401 起无占位（十个体外
   // 调用全落真身；本世界 FLAG:34 = 0、金钱不变量成立 → AUTO_BUYING 与
-  // DEBUG_CHECK 都零输出）；「#PRI 档确实跑过」由下方 era_flag.time 的
   // 0→1 断言作证
   assert(
-    !texts.some((line) => line.includes('原作 @AUTO_BUYING，')),
+    !texts.some(
+      (line) => line.includes('AUTO_BUYING') && line.includes('占位'),
+    ),
     'AUTO_BUYING 已是真身（#401），不应再打占位行',
   );
   assert(
-    !texts.some((line) => line.includes('原作 @PARTY_UNITE，')),
+    !texts.some(
+      (line) => line.includes('PARTY_UNITE') && line.includes('占位'),
+    ),
     'PARTY_UNITE 已是真身（#172），不应再打占位行',
   );
   assert.equal(
@@ -501,7 +503,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
     2,
     '主菜单状态行应恰出现两次（去程与回程）',
   );
-  // 闭环后的指针：@EVENTEND 尾部还原为记录值；FLAG:1 = 前回调教目标；
+  // 循环走完后的指针：EVENTEND 尾部还原为记录值；FLAG:1 = 前回调教目标；
   // 体力充足不触发死亡删除（角色仍在场）
   const era_flag = fixture.load_module('era-utils/era-flag');
   assert.equal(era_flag.time, 1, '回合结算应把时段从午前推进到午后（#114）');
@@ -520,7 +522,7 @@ test('端到端：主菜单输入 100 → 选目标 → 调教画面 → 999 →
   assert.equal(fixture.calls.filter((c) => c.api === 'endTrain').length, 2);
 });
 
-// —— 夹具守卫的引擎比对：调教域表的寻址前置条件是真引擎行为 ——
+// —— 夹具检查的引擎比对：调教域表的寻址前置条件是真引擎行为 ——
 
 const { load_engine_bundle } = require('./helpers/engine-bundle');
 
@@ -528,7 +530,7 @@ const engine = load_engine_bundle();
 const engine_test = engine ? test : test.skip;
 
 engine_test(
-  '引擎比对：beginTrain 前 tflag 寻址落到兜底报错，palam 三段静默丢弃',
+  '引擎比对：beginTrain 前 tflag 寻址落到缺省分支报错，palam 三段静默丢弃',
   () => {
     const { set_var } = engine;
     const errors = [];
@@ -545,7 +547,7 @@ engine_test(
         },
       },
     };
-    // 二段 tflag：data.tflag 不存在 → 兜底分支 era.error（引擎原文）
+    // 二段 tflag：data.tflag 不存在 → 缺省分支 era.error（引擎原文）
     assert.throws(() => set_var.call(fake_this, 'tflag:0', 1), /key error/);
     // 三段 palam（角色未入调教）：`if(!this.data[a]||!this.data[a][c])return;`
     // 静默丢弃，不抛错、不建键

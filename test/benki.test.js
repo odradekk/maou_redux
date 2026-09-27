@@ -4,21 +4,21 @@
  * 缝 = test/helpers/era-fixture.js。世界底座：魔王 0 + 温妮（id 31）入列，
  * 温妮带肉便器素质（TALENT:204）与足量体力/气力。覆盖（逐条对应验收清单）：
  *   - 肉便器菜单三段（选择 / 命名 / 取经验）各有测试：
- *     SELECT_BENKI_MENU（RAND:DICE 定值序 + V_ABLE 接线——处女拦截）、
- *     NAME_BENKI_MENU（指令号 → 名字表）、GET_EXP_BENKI_MENU（门槛 +
+ *     select_benki_menu（定值随机序列 + v_able 接入——处女拦截）、
+ *     name_benki_menu（指令号 → 名字表）、get_exp_benki_menu（门槛 +
  *     指令号 → PALAM/经验换算 + JUEL 加算）；
  *   - 日循环里的肉便器事件触发条件（角色素质 TALENT:204）有测试，与
  *     FLAG:83/84 的显示条件互不混淆（FLAG:83/84 不触发 run_benki）；
- *   - @BENKI 的五个行动分派（配信 / 兽奸 / 奉仕 / 同性爱 / 一般）各有
+ *   - run_benki 的五个行动分派（配信 / 兽奸 / 奉仕 / 同性爱 / 一般）各有
  *     输出与结算断言；
  *   - 跨域写走门面（flag:63 经 game.dungeon、exp 属主 dungeon 经
  *     chara(cid).dungeon）——domain-check 判绿；
  *   - TEQUIP 只读不写（#215 建模归 J5）：本文件无 tequip 写入；
- *   - 未加载口上时 BENKI_KOUJO 静默（TRYCALLFORM 落空语义，#565）；K3 真身随 #234。
+ *   - 未加载口上时口上调用静默（未注册函数调用落空的语义，#565）；K3 真身随 #234。
  *
  * 随机源注入：run_benki / select_benki_menu 接受 rand 参数（[0, n) 整数），
- * 测试用定值序固定分支（fs_bitch_looks 的 DICE=2 覆盖与 RAND:4 共用同一
- * 序列，kojo-dungeon-bitch 同款 seq_rand）。
+ * 测试用定值序固定分支（fs_bitch_looks 内部的 2 界抽取与上界 4 的抽取
+ * 共用同一序列，kojo-dungeon-bitch 同款 seq_rand）。
  */
 
 const assert = require('node:assert/strict');
@@ -27,7 +27,7 @@ const { test } = require('node:test');
 const { create_era_fixture } = require('./helpers/era-fixture');
 const { preset_chara_0, join_slave_chara } = require('./helpers/chara');
 
-// RAND:N 定值序：draws 依次被消费，越界取模
+// 定值随机序列：draws 依次被消费，越界取模
 const seq_rand =
   (...draws) =>
   (n) => {
@@ -65,7 +65,7 @@ test('run_benki：非肉便器角色（TALENT:204 == 0）直接返回，无输�
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('run_benki：魔王（角色 0）恒被除外（原作 ARG:0 == 0 RETURN）', async () => {
+test('run_benki：魔王（角色 0）恒被除外', async () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('talent:0:204', 1);
   fixture.store.set('base:0:0', 9999);
@@ -90,7 +90,7 @@ test('run_benki：占用中（CFLAG:1 != 0）或育儿中不结算', async () =>
 
 test('run_benki：FLAG:83/84 不触发肉便器事件——只认角色素质 TALENT:204', async () => {
   // 验收项：日循环的肉便器事件按角色素质判定，与 FLAG:83/84（设施/展品
-  // 计数，只影响按钮与地城概况显示）互不混淆——本票接通后该判定仍然成立
+  // 计数，只影响按钮与地城概况显示）互不混淆——这张工单接通后该判定仍然成立
   //（BENKI 不看 FLAG:83/84）。
   const { fixture, mod } = setup_benki();
   // 有肉便器素质但 FLAG:83/84 为 0 → 事件照常触发
@@ -114,7 +114,7 @@ test('run_benki：FLAG:83/84 置位但无肉便器素质 → 不触发', async (
 
 // —— 菜单三段：选择 ——
 
-test('SELECT_BENKI_MENU：技巧 2 以上且 RAND 命中 → 手淫（30）', () => {
+test('select_benki_menu：技巧 2 以上且随机命中 → 手淫（30）', () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('abl:31:12', 2);
   assert.equal(
@@ -123,9 +123,9 @@ test('SELECT_BENKI_MENU：技巧 2 以上且 RAND 命中 → 手淫（30）', ()
   );
 });
 
-test('SELECT_BENKI_MENU：V_ABLE 接线——处女拦截正常位/后背后，回落后续分支', () => {
+test('select_benki_menu：v_able 接入——处女拦截正常位/后背后，回落后续分支', () => {
   const { fixture, mod } = setup_benki();
-  // 私处感觉 2 + 处女 → V_ABLE = 0，两个 V 分支都不中，A 分支不满足 → 0
+  // 私处感觉 2 + 处女 → v_able = 0，两个 V 分支都不中，A 分支不满足 → 0
   fixture.store.set('abl:31:2', 2);
   fixture.store.set('talent:31:0', 1);
   assert.equal(
@@ -147,7 +147,7 @@ test('SELECT_BENKI_MENU：V_ABLE 接线——处女拦截正常位/后背后，�
   );
 });
 
-test('SELECT_BENKI_MENU：非战斗 ARGS 不参与判定（恒回落 0）', () => {
+test('select_benki_menu：非战斗 args 不参与判定（恒回落 0）', () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('abl:31:12', 9);
   assert.equal(
@@ -158,26 +158,26 @@ test('SELECT_BENKI_MENU：非战斗 ARGS 不参与判定（恒回落 0）', () =
 
 // —— 菜单三段：命名 ——
 
-test('NAME_BENKI_MENU：指令号 → 名字表（SELECTCASE 1:1）', () => {
+test('name_benki_menu：指令号 → 名字表', () => {
   const { mod } = setup_benki();
   assert.equal(mod.name_benki_menu(0), '爱抚');
   assert.equal(mod.name_benki_menu(3), '自慰');
   assert.equal(mod.name_benki_menu(20), '正常位');
   assert.equal(mod.name_benki_menu(31), '口交');
   assert.equal(mod.name_benki_menu(38), '足交');
-  // 表外号（SELECTCASE 无 CASEELSE）→ 空串
+  // 表外号（名字表无对应项）→ 空串
   assert.equal(mod.name_benki_menu(99), '');
 });
 
 // —— 菜单三段：取经验 ——
 
-test('GET_EXP_BENKI_MENU：门槛——非肉便器或非常识改变【战斗】直接返回', async () => {
+test('get_exp_benki_menu：门槛——非肉便器或非常识改变【战斗】直接返回', async () => {
   const { fixture, mod } = setup_benki();
   assert.equal(await mod.get_exp_benki_menu(31, 20), 0);
   assert.deepEqual(fixture.text_lines(), []);
 });
 
-test('GET_EXP_BENKI_MENU：正常位（20）→ 私处经验 + 习得/私处点数 + JUEL 加算', async () => {
+test('get_exp_benki_menu：正常位（20）→ 私处经验 + 习得/私处点数 + JUEL 加算', async () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('talent:31:281', 1); // 常识改变【战斗】
   fixture.store.set('palamname:1', '私处');
@@ -203,7 +203,7 @@ test('GET_EXP_BENKI_MENU：正常位（20）→ 私处经验 + 习得/私处点�
   assert.equal(fixture.store.get('juel:31:7'), 3, 'JUEL:7 习得珠');
 });
 
-test('GET_EXP_BENKI_MENU：手淫（30）→ 无经验行、习得/屈服点数', async () => {
+test('get_exp_benki_menu：手淫（30）→ 无经验行、习得/屈服点数', async () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('talent:31:281', 1);
   fixture.store.set('palamname:6', '屈服');
@@ -223,32 +223,28 @@ test('GET_EXP_BENKI_MENU：手淫（30）→ 无经验行、习得/屈服点数'
   assert.equal(fixture.store.get('juel:31:7'), 5);
 });
 
-// —— @BENKI 的行动分派与结算 ——
+// —— run_benki 的行动分派与结算 ——
 
-test('run_benki：一般分派（フェラ便器）——两段演出 + BENKI_KOUJO 静默 + 珠/经验结算', async () => {
+test('run_benki：一般分派（フェラ便器）——两段演出 + 口上静默 + 珠/经验结算', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0));
   const lines = fixture.text_lines();
-  // 第一段：%FS_BITCH("LOOKS", ARG)%正 + 用嘴来做。
+  // 第一段：fs_bitch_looks 的外观句 + 用嘴来做。
   assert.ok(
     lines.some((l) => l.includes('用嘴来做')),
     'フェラ便器说明',
   );
-  // 第二段：%SAVESTR%在深夜，自己屋子里，任魔族男性将阴茎塞入了口中…
+  // 第二段：name_of 的名字段在深夜，自己屋子里，任魔族男性将阴茎塞入了口中…
   assert.ok(
     lines.some((l) => l.includes('任魔族男性将阴茎塞入了口中')),
     '第二段演出',
   );
-  // 本夹具不加载口上模块：try_kojo 未命中**静默**（原作 TRYCALLFORM
-  // 落空语义，#565 返工第 4 条）——一般分派走公共段 :591 + 一般段 :1310
-  // 两处 CALL，都不得出声；「原作有 ere 无」的真缺口由
+  // 本夹具不加载口上模块：try_kojo 未命中**静默**（未注册函数调用
+  // 落空的语义，#565 返工第 4 条）——一般分派走公共段与一般段两处
+  // 调用，都不得出声；口上函数的真缺口由
   // test/kojo-family-coverage.test.js 的定义集合比对拦
-  const stub_count = lines.filter((l) => l.includes('@BENKI_KOUJO')).length;
-  assert.equal(
-    stub_count,
-    0,
-    '未注册性格静默（原作 TRYCALLFORM 落空，不打占位）',
-  );
+  const stub_count = lines.filter((l) => l.includes('benki_koujo')).length;
+  assert.equal(stub_count, 0, '未注册性格静默（未注册函数调用落空，不打占位）');
   // flag:62 = 6（フェラ便器）、flag:64 = 3（魔族男性）
 
   assert.equal(flag_of(fixture, 62), 6);
@@ -279,7 +275,7 @@ test('run_benki：加载 K3 口上后不打占位行，走常识改写真身', a
   await mod.run_benki(31, seq_rand(0));
   const lines = fixture.text_lines();
   assert.equal(
-    lines.filter((l) => l.includes('@BENKI_KOUJO')).length,
+    lines.filter((l) => l.includes('benki_koujo')).length,
     0,
     'K3 真身不打占位行',
   );
@@ -390,7 +386,7 @@ test('run_benki：FLAG:63 常識改変写经 game.dungeon 门面；62/64 域内�
   assert.equal(fixture.store.get('flag:64'), 0);
 });
 
-test('run_benki：TEQUIP 零写入（本票只读不写，#215 建模归 J5）', async () => {
+test('run_benki：TEQUIP 零写入（这张工单只读不写，#215 建模归 J5）', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0));
   assert.ok(
@@ -399,9 +395,9 @@ test('run_benki：TEQUIP 零写入（本票只读不写，#215 建模归 J5）',
   );
 });
 
-// —— BENKI_PLAYER_NAME ——
+// —— benki_player_name ——
 
-test('BENKI_PLAYER_NAME：读 FLAG:64 返回对象名', () => {
+test('benki_player_name：读 FLAG:64 返回对象名', () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('flag:64', 0);
   assert.equal(
@@ -416,33 +412,29 @@ test('BENKI_PLAYER_NAME：读 FLAG:64 返回对象名', () => {
   assert.equal(mod.benki_player_name(), '');
 });
 
-// —— #595：空行普查（BENKI.ERB 对照） ————
+// —— #595：空行普查 ————
 
-test('#595 run_benki：入口空行＋分割线（:50-51）与收尾空行（:1352 PRINTW）', async () => {
+test('#595 run_benki：入口空行＋分割线与收尾空行（收尾等键）', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0));
-  // 的 PRINTL 落在已收行的空行上（调用方输出均以换行收尾）→ 真空行；
-  // 其后紧跟 :51 的 DRAWLINE
-  assert.equal(
-    fixture.lines[0].type,
-    'text',
-    'BENKI.ERB:50 的真空行在场（函数开头）',
-  );
-  assert.equal(fixture.lines[0].text, '', 'BENKI.ERB:50 的真空行');
-  assert.equal(fixture.lines[1].type, 'divider', ':51 DRAWLINE 紧随');
+  // 函数开头的空内容输出落在已收行的空行上（调用方输出均以换行收尾）→ 真空行；
+  // 其后紧跟分割线
+  assert.equal(fixture.lines[0].type, 'text', '函数开头的真空行在场');
+  assert.equal(fixture.lines[0].text, '', '函数开头的真空行');
+  assert.equal(fixture.lines[1].type, 'divider', '分割线紧随');
 
-  // DRAWLINE 之后的 :1352 PRINTW（空内容）——真空行 + 等键
+  // 分割线之后的收尾空内容输出——真空行 + 等键
   const last = fixture.lines.at(-1);
-  assert.equal(last.type, 'text', 'BENKI.ERB:1352 的真空行在场（收尾）');
-  assert.equal(last.text, '', 'BENKI.ERB:1352 的真空行');
+  assert.equal(last.type, 'text', '收尾的真空行在场');
+  assert.equal(last.text, '', '收尾的真空行');
   assert.equal(
     fixture.waits.at(-1)?.rows_at_wait,
     last.row + 1,
-    '空行之后立即等键（PRINTW）',
+    '空行之后立即等键',
   );
 });
 
-test('#595 一般便器演出：灌满句与名字句逐行相邻（:1223 的 PRINTFORML 只收尾）', async () => {
+test('#595 一般便器演出：灌满句与名字句逐行相邻（收尾输出只结束拼行）', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0));
   const filled = fixture.lines.find((line) =>
@@ -452,25 +444,21 @@ test('#595 一般便器演出：灌满句与名字句逐行相邻（:1223 的 PR
   const next = fixture.lines
     .filter((line) => line.row === filled.row + 1)
     .at(-1);
-  assert.equal(
-    next?.type,
-    'text',
-    'BENKI.ERB:1223 的 PRINTFORML 只收尾 :1221 的拼行，不落空行',
-  );
+  assert.equal(next?.type, 'text', '灌满句的收尾输出只结束拼行，不落空行');
   assert.ok(
     next?.text.startsWith('温妮'),
-    `下一行是 :1224 起的名字句（实际：${next?.text}）`,
+    `下一行是名字句（实际：${next?.text}）`,
   );
 });
 
-// —— #615：CALL BENKI_PLAYER_NAME 之前的 PRINTFORML 必须落行 ————
+// —— #615：benki_player_name 调用之前的收尾输出必须落行 ————
 //
-// 原作 :887 / :951 / :1105 三处都是 `PRINTFORML`（自带换行），CALL 的输出因此
-// 落在下一条显示行的行首。ere 曾把 CALL 前后的输出并进同一次 era.print，
+// 奉仕/同性爱/一般三处清算的收尾输出自带换行，随后调用的输出因此
+// 落在下一条显示行的行首。ere 曾把调用前后的输出并进同一次 era.print，
 // 少了一次换行（#599 审查发现、#615 修正）。行数用 lines 的行序断言，
 // 不用 text_lines 的片段包含——后者对「并进同一行」是假绿。
 
-test('#615 奉仕分派：对象名自成一行，角色名随该行收尾（:887-890）', async () => {
+test('#615 奉仕分派：对象名自成一行，角色名随该行收尾', async () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('abl:31:16', 3); // 侍奉精神 3 → 奉仕分派（flag:64 = 0）
   await mod.run_benki(31, seq_rand(0));
@@ -479,19 +467,19 @@ test('#615 奉仕分派：对象名自成一行，角色名随该行收尾（:88
   const served = rows.findIndex((t) =>
     t?.endsWith('作为侍奉用便器在地下城里服侍着'),
   );
-  assert.ok(served >= 0, `:887 的收行句在场（实际 ${JSON.stringify(rows)}）`);
+  assert.ok(served >= 0, `收行句在场（实际 ${JSON.stringify(rows)}）`);
   assert.equal(
     rows[served + 1],
     '居住在地下城深渊中散发着恶臭的肮脏眷属温妮',
-    ':888 的 CALL 落在下一行行首，:890 的 %SAVESTR% 收同一行',
+    '对象名落在下一行行首，角色名收同一行',
   );
   assert.ok(
     rows[served + 2]?.startsWith('用嘴和手'),
-    ':892 起的穴句行不再带角色名（名字在上一行尾）',
+    '穴句行不再带角色名（名字在上一行尾）',
   );
 });
 
-test('#615 奉仕分派清算：共处理句与「的性欲。+ 传闻」分两行（:951-953）', async () => {
+test('#615 奉仕分派清算：共处理句与「的性欲。+ 传闻」分两行', async () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('abl:31:16', 3);
   fixture.store.set('abl:31:10', 30); // 顺从
@@ -500,18 +488,15 @@ test('#615 奉仕分派清算：共处理句与「的性欲。+ 传闻」分两�
 
   const rows = fixture.lines.map((line) => line.text);
   const clear = rows.findIndex((t) => /^温妮共处理了\d+个底层$/.test(t ?? ''));
-  assert.ok(
-    clear >= 0,
-    `:951 的 PRINTFORML 自成一行（实际 ${JSON.stringify(rows)}）`,
-  );
+  assert.ok(clear >= 0, `共处理句自成一行（实际 ${JSON.stringify(rows)}）`);
   const name_row = rows[clear + 1];
   assert.ok(
     name_row?.startsWith('居住在地下城深渊中散发着恶臭的肮脏眷属的性欲。'),
-    ':952-953 的 CALL 与「的性欲。」落在下一行行首',
+    '对象名与「的性欲。」落在下一行行首',
   );
   assert.ok(
     name_row.length > '居住在地下城深渊中散发着恶臭的肮脏眷属的性欲。'.length,
-    ':956-978 的传闻 PRINTFORML 收同一行（接在「的性欲。」之后）',
+    '传闻收同一行（接在「的性欲。」之后）',
   );
   assert.ok(
     !rows.includes('居住在地下城深渊中散发着恶臭的肮脏眷属的性欲。'),
@@ -519,30 +504,24 @@ test('#615 奉仕分派清算：共处理句与「的性欲。+ 传闻」分两�
   );
 });
 
-test('#615 同性爱分派清算：一共处理句与「的性欲。+ 传闻」分两行（:1105-1107）', async () => {
+test('#615 同性爱分派清算：一共处理句与「的性欲。+ 传闻」分两行', async () => {
   const { fixture, mod } = setup_benki();
   fixture.store.set('abl:31:33', 3); // 百合中毒 3 → 同性爱分派（flag:64 = 9 女淫魔）
   await mod.run_benki(31, seq_rand(0));
 
   const rows = fixture.lines.map((line) => line.text);
   const clear = rows.findIndex((t) => /^温妮一共处理了\d+个$/.test(t ?? ''));
-  assert.ok(
-    clear >= 0,
-    `:1105 的 PRINTFORML 自成一行（实际 ${JSON.stringify(rows)}）`,
-  );
+  assert.ok(clear >= 0, `共处理句自成一行（实际 ${JSON.stringify(rows)}）`);
   const name_row = rows[clear + 1];
   assert.ok(
     name_row?.startsWith('女淫魔的性欲。'),
-    ':1106-1107 的 CALL 与「的性欲。」落在下一行行首',
+    '对象名与「的性欲。」落在下一行行首',
   );
-  assert.ok(
-    name_row.length > '女淫魔的性欲。'.length,
-    ':1109-1132 的传闻 PRINTFORML 收同一行',
-  );
+  assert.ok(name_row.length > '女淫魔的性欲。'.length, '传闻收同一行');
   assert.ok(!rows.includes('女淫魔的性欲。'), '「的性欲。」不单独占一行');
 });
 
-test('#615 一般分派清算：共处理句与「的性欲。+ 传闻」同属一行（:1287-1289）', async () => {
+test('#615 一般分派清算：共处理句与「的性欲。+ 传闻」同属一行', async () => {
   const { fixture, mod } = setup_benki();
   await mod.run_benki(31, seq_rand(0)); // 默认走一般分派（フェラ便器，flag:64 = 3 魔族男性）
 
@@ -552,21 +531,21 @@ test('#615 一般分派清算：共处理句与「的性欲。+ 传闻」同属�
   );
   assert.ok(
     clear >= 0,
-    `:1287 是 PRINTFORM（不换行），清算与传闻同属一行（实际 ${JSON.stringify(rows)}）`,
+    `清算句不换行，清算与传闻同属一行（实际 ${JSON.stringify(rows)}）`,
   );
   const prefix = rows[clear].match(/^温妮共处理了\d+个魔族男性的性欲。/)[0];
   assert.ok(
     rows[clear].length > prefix.length,
-    ':1292-1305 传闻的 PRINTFORML 收同一行（#615：此前拆成两行）',
+    '传闻收同一行（#615：此前拆成两行）',
   );
   assert.ok(!rows.includes('温妮的行为不为人知。'), '传闻不单独占一行');
 });
 
 // —— #620：「奴隷の様子」与前一句同属一条显示行 ————
 //
-// 四个分派的様子块（:765-776、:922-940、:1080-1094、:1235-1260）在原作里都是
-// PRINTFORML——它收尾的是前面名字句/穴句的 PRINTFORM 拼行，整条显示行只换行
-// 一次。ere 曾让様子另起一条 print（多一行）。断言用**整行文本**（前缀分支 ×
+// 四个分派的様子块都是收尾换行的输出——它收尾的是前面名字句/穴句的不换行
+// 拼行，整条显示行只换行一次。ere 曾让様子另起一条 print（多一行）。断言用
+// **整行文本**（前缀分支 ×
 // 様子分支的表驱动交叉）＋反向的「様子不单独占一行」：片段包含对「拆成两行」
 // 是假绿，整行相等才拦得住（#615 同款教训）。
 
@@ -585,10 +564,10 @@ function assert_whole_line(lines, text, label, yousu) {
   );
 }
 
-test('#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行（:741-763 + :765-776）', async () => {
+test('#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行', async () => {
   // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
   const SPOT = '#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行';
-  // 穴句 :743-763 的四条分支（BENKI_MENU:1/2 的组合）
+  // 穴句的四条分支（行动菜单 1/2 槽的组合）
   const holes = [
     {
       label: 'A&V',
@@ -610,8 +589,8 @@ test('#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行（:74
     },
     { label: '奉仕', seed: () => {}, text: '不断摩擦着魔兽的阴茎，' },
   ];
-  // 様子 :765-776 的四条分支；每行自带分派触发（menu:4 >= 3）——「默认」行
-  // 用原作 :163-164 的「兽奸经验 > 50」抬高 menu:4，不碰様子自己的三条条件
+  // 様子的四条分支；每行自带分派触发（menu:4 >= 3）——「默认」行
+  // 用「兽奸经验 > 50」抬高 menu:4，不碰様子自己的三条条件
   const yousu_list = [
     {
       label: '崩坏',
@@ -655,10 +634,10 @@ test('#620 兽奸分派：名字句 + 穴句 + 様子同属一条显示行（:74
   }
 });
 
-test('#620 奉仕分派：穴句 + 様子同属一条显示行（:892-920 + :922-940）', async () => {
+test('#620 奉仕分派：穴句 + 様子同属一条显示行', async () => {
   // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
   const SPOT = '#620 奉仕分派：穴句 + 様子同属一条显示行';
-  // 穴句 :892-920 的四条分支（角色名已在上一行的 :890 收尾）
+  // 穴句的四条分支（角色名已在上一行收尾）
   const holes = [
     {
       label: 'A&V',
@@ -684,7 +663,7 @@ test('#620 奉仕分派：穴句 + 様子同属一条显示行（:892-920 + :922
       text: '用嘴和手',
     },
   ];
-  // 様子 :922-940 的五条分支；常識改変行不需要压 menu:0——外层已置
+  // 様子的五条分支；常識改変行不需要压 menu:0——外层已置
   // abl:31:16 = 3，t283 再加 3 仍落奉仕分派（演出分派顺序 menu:4 → menu:0
   // → menu:3 → else，见 ere/system/train/benki.js 的分派链）
   const yousu_list = [
@@ -699,7 +678,7 @@ test('#620 奉仕分派：穴句 + 様子同属一条显示行（:892-920 + :922
       text: '浮现出被玩坏的痴笑。',
     },
     {
-      // 的 CALL BENKI_PLAYER_NAME 也落在这一行里（FLAG:64 = 0）
+      // 的 benki_player_name 调用也落在这一行里（FLAG:64 = 0）
       label: '侍奉快乐>100',
       seed: (f) => f.store.set('exp:31:21', 101),
       text: '对底层居住在地下城深渊中散发着恶臭的肮脏眷属勃起的阴茎报以勉励式的温柔微笑。',
@@ -733,7 +712,7 @@ test('#620 奉仕分派：穴句 + 様子同属一条显示行（:892-920 + :922
     }
   }
 
-  // 反感污臭（原作 :914-918）夹在 :912 的「将底层种族」与 :920 的「阴茎温柔地
+  // 反感污臭的分句夹在「将底层种族」与「阴茎温柔地
   // 包裹在内，」之间——与五条様子分支照样各属同一条显示行（前缀组合补齐）
   for (const yousu of yousu_list) {
     const { fixture, mod } = setup_benki((f) => {
@@ -751,10 +730,10 @@ test('#620 奉仕分派：穴句 + 様子同属一条显示行（:892-920 + :922
   }
 });
 
-test('#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行（:1054-1078 + :1080-1094）', async () => {
+test('#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行', async () => {
   // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
   const SPOT = '#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行';
-  // 名字句 :1054-1078 的四条组合（扶她 → 前缀「双性人的」+ 条件句尾巴）
+  // 名字句的四条组合（扶她 → 前缀「双性人的」+ 条件句尾巴）
   const names = [
     {
       label: '扶她+萝莉控',
@@ -776,7 +755,7 @@ test('#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行
     },
     { label: '默认', seed: () => {}, text: '温妮被女淫魔诱惑了，' },
   ];
-  // 様子 :1080-1094 的五条分支；常識改変行用 t151「绝不侍奉」把 menu:0 打回 0
+  // 様子的五条分支；常識改変行用 t151「绝不侍奉」把 menu:0 打回 0
   // ——t283 会让 menu:0 += 3，而演出分派顺序是 menu:4 → menu:0 → menu:3 →
   // else，不压住就改走奉仕分派（实测：去掉 t151 后本用例红，实际行落在奉仕的
   // 「用嘴和手将底层种族阴茎温柔地包裹在内，…」上）
@@ -829,10 +808,10 @@ test('#620 同性爱分派：名字句 + 条件句 + 様子同属一条显示行
   }
 });
 
-test('#620 通常分派：名字句 + 様子同属一条显示行（:1224-1232 + :1235-1260）', async () => {
+test('#620 通常分派：名字句 + 様子同属一条显示行', async () => {
   // 变异条目的 must_mention 出处（断言消息前缀，失败输出里逐字出现）
   const SPOT = '#620 通常分派：名字句 + 様子同属一条显示行';
-  // 名字句 :1224-1232 的前缀组合（:1227 悲観的/胆怯、:1231 看轻贞操）
+  // 名字句的前缀组合（悲観的/胆怯、看轻贞操）
   const names = [
     { label: '无前缀', seed: () => {}, text: '温妮' },
     {
@@ -859,7 +838,7 @@ test('#620 通常分派：名字句 + 様子同属一条显示行（:1224-1232 +
       text: '温妮最初是恐惧，之后就主动分开双腿，',
     },
   ];
-  // 様子 :1235-1260 的十分支；常識改変行同同性爱——t151「绝不侍奉」把 menu:0
+  // 様子的十分支；常識改変行同同性爱——t151「绝不侍奉」把 menu:0
   // 打回 0（t283 会让 menu:0 += 3 → 奉仕分派抢在通常之前）
   const yousu_list = [
     {

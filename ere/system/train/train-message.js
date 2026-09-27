@@ -1,51 +1,49 @@
 /**
- * @file 调教文本的公共头与分发族：@TRAIN_MESSAGE_B（指令情景描写，前）与
- * @TRAIN_MESSAGE_A（参数上升反应，后）（issue #213 立分发表——爱抚 0-9
- * 分支随 #219 归 com-caress.js，其余 SELECTCOM 分支随各自指令票在
+ * @file 调教文本的公共头与分发族：train_message_b（指令情景描写，前）与
+ * train_message_a（参数上升反应，后）（issue #213 立分发表——爱抚 0-9
+ * 分支随 #219 归 com-caress.js，其余指令号分支随各自指令工单在
  * com-<族>.js 注册）。
  *
- * 原作 B 在前、A 在后（B 文件头 :10 的调用方注释）；ere 侧同为两次直调：
- * B 由各 @COMn 调（COMF0_愛撫.ERB:11 等），A 由 @SOURCE_CHECK 调
- * （SYSTEM_SOURCE.ERB:478）。
+ * B 在前、A 在后；ere 侧同为两次直调：B 由各调教指令模块调
+ * （com-<族>.js），A 由来源检查调用（ere/event/source-check.js）。
  *
- * == 分发表（#209 裁定 6 / #213 立面） ==
+ * == 分发表（#209 决定 6 / #213 立面） ==
  *
- * 平铺大文件只留公共头做骨架，各族的段跟族票。ere 侧按族建模块
- * （com-<族>.js）：族票把该族的 TRAIN_MESSAGE 分支注册进
+ * 平铺大文件只留公共头做骨架，各族的段跟族工单。ere 侧按族建模块
+ * （com-<族>.js）：族工单把该族的 TRAIN_MESSAGE 分支注册进
  * train_message_b_family / train_message_a_family——声明空间 = 121 段
- * 分发空间（SELECTCOM 经升格可取高级 COM 号，高级号的分支同样在这两张
- * 表里）。空间外 → 显式抛错（SELECTCOM 只会是 121 之一，越界即引擎对接
- * bug，不静默回落）；空间内的缺号 #45 起走存根占位行，#402 收口后全数
- * 有主，#565 起按原作语义归为零输出（无分支的号什么都不打印）。
+ * 分发空间（指令号经升格可取高级号，高级号的分支同样在这两张
+ * 表里）。空间外 → 显式抛错（指令号只会是 121 之一，越界即引擎对接
+ * bug，不静默回落）；空间内的缺号 #45 起走存根占位行，#402 收尾后全数
+ * 有主，#565 起缺号语义归为零输出（无分支的号什么都不打印）。
  * **两张表同住本文件**：A 与 B 是同一套指令号分发的两半，分发骨架、公共头
  * 与公共段都在一处，不另立第二份分发逻辑。
  *
- * 源侧**没有**对应分支的指令号（B 55/110/111、A 43-49/110/111）在文件末尾
- * 显式注册空 handler：源侧链对它们落空（零输出），落占位行反而是错的
+ * **没有**对应分支的指令号（B 55/110/111、A 43-49/110/111）在文件末尾
+ * 显式注册空 handler：它们本来就没有台词（零输出），落占位行反而是错的
  * （同款先例：com-caress.js 的 A 4/6/7/8/9、com-toy.js 的 A 15-19）。
  *
  * == 公共段（#402） ==
  *
- * A 的公共段（源 :31-741）不按 SELECTCOM 分发，而是在分发之前无条件跑：
+ * A 的公共段不按指令号分发，而是在分发之前无条件跑：
  * 股间射精（TFLAG:9）→ 触手（TFLAG:15）→ 狗（TFLAG:16）→ 助手（TFLAG:7）
- * → **射精链**（TFLAG:0/1/18 六档 + 放置 PLAY 末支，一条 IF/ELSEIF 链）
+ * → **射精链**（TFLAG:0/1/18 六档 + 放置 PLAY 末支，一条先后链）
  * → 绝顶（TFLAG:29）→ 性交射精（TFLAG:2，含 CFLAG:113 乳内）。**执行顺序
- * 即输出顺序**，一律照源侧排。
+ * 即输出顺序**，一律按上列次序排。
  *
- * 排版近似：原作连续 `PRINT`/`PRINTFORM` 片段拼成一条可见行，ere 的
- * `print` 一次调用即一行，故本文件把同一行的片段先拼成字符串再一次输出；
- * 源侧未以 `PRINTL` 收尾的断句（如股间射精 0 臂的色名链无 ELSE）在 ere
- * 侧落成一行残缺文本——行数记名差异见各段注释。
+ * 排版近似：era 的 `print` 一次调用即一行、没有续写同一行的等价物，
+ * 故本文件把同一显示行的片段先拼成字符串再一次输出；条件链缺分支导致
+ * 的断句（如股间射精 0 分支的色名链无 ELSE）落成一行残缺文本——行数
+ * 写法差见各段注释。
  *
- * == handler 签名（#219 起，族票照此写）：async (rand) => 0 ==
+ * == handler 签名（#219 起，族工单照此写）：async (rand) => 0 ==
  *
- * rand 是 RAND:N 的随机源（[0, n) 整数，缺省均匀随机，由本文件的两次
+ * rand 是随机源（[0, n) 整数，缺省均匀随机，由本文件的两次
  * dispatch 注入——kojo_message_com / get_adv_com 同款先例）。B 分支 3/4
- * 的 LOCALS 分流（RAND:2 / RAND:3）经它取随机，测试注入定值序固定分支。
+ * 的文案分流经它取随机，测试注入定值序固定分支。
  *
- * 这张票存根/登记（docs/stub-registry.md）：本文件自身不再留存根——A/B
- * 两个函数的全部指令号分支与公共段都已落真身（#402），缺号语义由文件末尾
- * 的空 handler 与族注册表共同保证。
+ * 存根/登记：本文件自身不留存根——A/B 两个函数的全部指令号分支与公共段
+ * 都已落真身（#402），缺号语义由文件末尾的空 handler 与族注册表共同保证。
  */
 
 const era = require('#/era-electron');
@@ -61,7 +59,7 @@ const {
 const { game } = require('#/facade/game');
 
 /**
- * @TRAIN_MESSAGE_B 的分支族（SELECTCOM → 情景描写）。族票在 com-<族>.js
+ * train_message_b 的分支族（指令号 → 情景描写）。族工单在 com-<族>.js
  * 注册：`train_message_b_family.register(<n>, async () => { … })`。
  */
 const train_message_b_family = new DispatchFamily(
@@ -70,20 +68,20 @@ const train_message_b_family = new DispatchFamily(
 );
 
 /**
- * @TRAIN_MESSAGE_A 的分支族（SELECTCOM → 参数上升反应）。
+ * train_message_a 的分支族（指令号 → 参数上升反应）。
  */
 const train_message_a_family = new DispatchFamily(
   'TRAIN_MESSAGE_A',
   DECLARED_COM_IDS,
 );
 
-// 分支缺失的哨兵：#45 起缺号走占位行；#402 收口后空间全数有主，缺号语义
-// 按原作归为零输出（#565 删占位回落），哨兵随之退役。
+// 分支缺失的哨兵：#45 起缺号走占位行；#402 收尾后空间全数有主，缺号语义
+// 归为零输出（#565 删占位回落），哨兵随之退役。
 
-/** RAND:N 随机源（缺省均匀随机；get_adv_com 同款注入形状，#219 起） */
+/** 随机源（[0, n) 整数，缺省均匀随机；get_adv_com 同款注入形状，#219 起） */
 const rand_source = () => (n) => Math.floor(Math.random() * n);
 
-// —— 公共段的读数兜底（未声明下标返回 undefined，#13） ——
+// —— 公共段的读数缺省处理（未声明下标返回 undefined，#13） ——
 
 const tal = (cid, i) => era.get(`talent:${cid}:${i}`) || 0;
 const abl = (cid, i) => era.get(`abl:${cid}:${i}`) || 0;
@@ -93,9 +91,9 @@ const tq = (cid, i) => era.get(`tequip:${cid}:${i}`) || 0;
 const tflag = (i) => era.get(`tflag:${i}`) || 0;
 
 /**
- * 肌肤色素质 → 源侧文案里的色名。三条互斥、按源侧 IF/ELSEIF 链的顺序取首个
- * 命中（:44-49 的 0 臂、:70-76 的 1 臂、:99-105 的 2 臂三处同款顺序——
- * yml/Talent.yml：244 恶魔肌肤 / 253 褐色肌肤 / 255 白皙）。
+ * 肌肤色素质 → 文案里的色名。三条互斥、按 244 → 253 → 255 的顺序取首个
+ * 命中（各消费处同一顺序——yml/Talent.yml：244 恶魔肌肤 / 253 褐色
+ * 肌肤 / 255 白皙）。
  * @param {number} cid
  * @returns {string|undefined} '蓝色' / '褐色' / '白皙'；三者皆无时 undefined
  */
@@ -113,18 +111,16 @@ function skin_color(cid) {
 }
 
 /**
- * 公共段「股间性交射精」（源 :31-110）。外三层按 TFLAG:9 分臂（0 = 对象
- * 射精、1 = 主人射精、2 = 主人大量射精），臂内按 SELECTCOM 分派（122 阴茎
+ * 公共段「股间性交射精」。外三层按 TFLAG:9 分支（0 = 对象
+ * 射精、1 = 主人射精、2 = 主人大量射精），分支内按指令号分派（122 阴茎
  * 互捅 / 33 股间性交 / 62 双人股间），色名取对象的肌肤素质。
  *
- * 两处形态有意保留、不补字：
- *   - **0 臂的 62 支没有自己的开头**（33/62 共用 `ELSEIF`，但补前缀的
- *     那句 `SIF SELECTCOM == 33` 只覆盖 33），拼出来是「〈对象〉射精出的
- *     白皙肌肤弄脏了…」；
- *   - **0 臂的色名链没有 ELSE**（:44-50），无肌肤素质时整行断在
- *     「〈对象〉射精出的精液、把〈主人〉的」——1 臂与 2 臂的色名链是内层
- *     `PRINT` + 外层 `PRINTL`，无素质时仍出「…的肌肤弄脏了…」，两臂形态
- *     不同，照原样保留。
+ * 两处写法有意保留、不补字：
+ *   - **0 分支的 62 支没有自己的开头**（33/62 同走一支，但前缀只补在
+ *     33 上），拼出来是「〈对象〉射精出的白皙肌肤弄脏了…」；
+ *   - **0 分支的色名链没有 ELSE**，无肌肤素质时整行断在
+ *     「〈对象〉射精出的精液、把〈主人〉的」——1 分支与 2 分支的色名链
+ *     在无素质时仍出「…的肌肤弄脏了…」，两分支写法不同，照原样保留。
  */
 function emit_intercrural_ejaculation() {
   const target = era_flag.target;
@@ -147,12 +143,12 @@ function emit_intercrural_ejaculation() {
       return;
     }
     if (selectcom === 33 || selectcom === 62) {
-      // 33 支补「精液、把〈主人〉的」；62 支没有这句（源侧如此）
+      // 33 支补「精液、把〈主人〉的」；62 支没有这句
       const line =
         selectcom === 33 ? `${head}精液、把${chara_callname(player)}的` : head;
       const color = skin_color(target);
       if (color === undefined) {
-        era.print(line); // 断句残留：源侧色名链无 ELSE
+        era.print(line); // 断句残留：色名链无 ELSE
       } else {
         era.print(`${line}${color}肌肤弄脏了…`);
       }
@@ -166,10 +162,10 @@ function emit_intercrural_ejaculation() {
   if (tflag9 !== 1 && tflag9 !== 2) {
     return;
   }
-  const heavy = tflag9 === 2; // 2 臂 = 大量射精，文案逐字不同
+  const heavy = tflag9 === 2; // 2 分支 = 大量射精，文案逐字不同
 
   if (selectcom === 122) {
-    // （1 臂）/ :87-94（2 臂）：主人与对象同为扶她且对象也射了 → 同时射精
+    // 1/2 分支：主人与对象同为扶她且对象也射了 → 同时射精
     const both = tflag10 >= 1 && (tal(player, 122) || tal(player, 121));
     if (both) {
       era.print(
@@ -187,7 +183,7 @@ function emit_intercrural_ejaculation() {
     return;
   }
 
-  // （1 臂）/ :96-109（2 臂）股间性交：33 与 62 各一句，互不排斥
+  // 1/2 分支股间性交：33 与 62 各一句，互不排斥
   if (selectcom === 33) {
     const color = skin_color(target) ?? ''; // 色名链无 ELSE，缺色即空串
     era.print(
@@ -206,10 +202,10 @@ function emit_intercrural_ejaculation() {
 }
 
 /**
- * 公共段「狗射精」（源 :151-161）：TFLAG:16 > 0 时按 SELECTCOM 报灌精部位。
+ * 公共段「狗射精」：TFLAG:16 > 0 时按指令号报灌精部位。
  * 四支互斥（21/34 私处、27 直肠、31 嘴、30 手——手上的收尾句与其余三支
- * 不同），其余指令整段静默。写入方是 調教相關/COMF38_足コキ.ERB:487/:504 与
- * 迷宮/DUNGEON_AFTER.ERB 的处刑口上（两处都在本段之外）。
+ * 不同），其余指令整段静默。本段只读 TFLAG:16；写入在指令与处刑流程
+ * （本段之外）。
  */
 function emit_dog_ejaculation() {
   if (tflag(16) <= 0) {
@@ -229,13 +225,12 @@ function emit_dog_ejaculation() {
 }
 
 /**
- * 公共段「当着对象的面侵犯助手」（源 :165-172）：TFLAG:7 > 0 时落句。
- * 三句都是独立 SIF（1 支与 2 支互斥，羡慕句与前两句并存）。
+ * 公共段「当着对象的面侵犯助手」：TFLAG:7 > 0 时落句。
+ * 三句都是独立条件（1 支与 2 支互斥，羡慕句与前两句并存）。
  *
- * 羡慕句的门 `ABL:11 > 3 || ABL:32 > 2 && TFLAG:899 <= 1` 按 Emuera 的
- * 「&& 与 || 同优先级、左结合」读作 `(ABL:11 > 3 || ABL:32 > 2) && 未失神`
- * （同款读法先例见 com-sm.js 的 A 40-42 三指令共吃失神门）——两项素质任一
- * 满足且未失神才落句。
+ * 羡慕句的检查是 (ABL:11 > 3 || ABL:32 > 2) && TFLAG:899 <= 1——两项
+ * 素质任一满足且未失神才落句（同款条件见 com-sm.js 的 A 40-42 三指令
+ * 共吃失神检查）。
  */
 function emit_assistant_ejaculation() {
   const flag = tflag(7);
@@ -261,16 +256,15 @@ function emit_assistant_ejaculation() {
 }
 
 /**
- * 公共段「口で射精／口で大量射精」（源 :177-324）：TFLAG:0 == 1（普通）与
- * == 2（大量）共用同一张 SELECTCOM 分派——31/125 口交、32 乳交、68 双人口交、
- * 69 六九式、80/124 强制口交、123 乳夹口交、126 手搓口交、127 真空口交。
- * 两臂台词各一套、无归约规律，逐句照两支各抄；支内门 = ABL:32 ≥ 3（精液
+ * 公共段「口で射精／口で大量射精」：TFLAG:0 == 1（普通）与 == 2（大量）
+ * 共用同一张指令号分派——31/125 口交、32 乳交、68 双人口交、69 六九式、
+ * 80/124 强制口交、123 乳夹口交、126 手搓口交、127 真空口交。
+ * 两分支台词各一套、无归约规律，逐句各写；支内检查 = ABL:32 ≥ 3（精液
  * 中毒）、ABL:16 ≥ 3（侍奉精神）、TFLAG:899 ≥ 2（口中失神）、
  * TALENT:110/114（豪乳）、TALENT:109（贫乳）、TALENT:PLAYER:121/122（主人
- * 是否扶她）。乳交支的肌肤色链**无 ELSE**（:191-197 / :271-277）：缺色时
- * 连「的」都不落，1:1。
+ * 是否扶她）。乳交支的肌肤色链**无 ELSE**：缺色时连「的」都不落。
  *
- * @param {boolean} heavy true = TFLAG:0 == 2（大量射精臂）
+ * @param {boolean} heavy true = TFLAG:0 == 2（大量射精分支）
  */
 function emit_mouth_ejaculation(heavy) {
   const target = era_flag.target;
@@ -399,7 +393,7 @@ function emit_mouth_ejaculation(heavy) {
           : `精液注入到${name}的口中了…`,
       );
     }
-    // 两句 SIF 相互独立：主人是男人（122）与主人是扶她（121）各一句，可同落
+    // 两句条件相互独立：主人是男人（122）与主人是扶她（121）各一句，可同落
     if (addicted && tal(era_flag.player, 122)) {
       era.print(
         heavy
@@ -442,11 +436,11 @@ function emit_mouth_ejaculation(heavy) {
 }
 
 /**
- * 公共段「手で射精／手で大量射精」（源 :328-342）：TFLAG:1 == 1/2 两臂，
- * 前缀两句是独立 SIF（EXP:20 == 0 初次精液经验 / ABL:32 > 2 精液中毒），
- * 各带 `TFLAG:899 <= 1` 的门——失神中前缀不落、收尾句照落。
+ * 公共段「手で射精／手で大量射精」：TFLAG:1 == 1/2 两分支，
+ * 前缀两句是独立条件（EXP:20 == 0 初次精液经验 / ABL:32 > 2 精液中毒），
+ * 各带 `TFLAG:899 <= 1` 的检查——失神中前缀不落、收尾句照落。
  *
- * @param {boolean} heavy true = TFLAG:1 == 2（大量射精臂）
+ * @param {boolean} heavy true = TFLAG:1 == 2（大量射精分支）
  */
 function emit_hand_ejaculation(heavy) {
   const target = era_flag.target;
@@ -465,17 +459,16 @@ function emit_hand_ejaculation(heavy) {
 }
 
 /**
- * 公共段「足で射精／足で大量射精」（源 :346-358）：TFLAG:18 == 1/2 两臂，
- * 「带着轻蔑的眼神、」的门 `(TALENT:83 || ABL:20 > 2) && TALENT:85 == 0`
- * ——施虐狂或抖 S 强、且不爱慕（同优先级左结合读法与 :170 同款）。写入方是
- * 調教相關/COMF38_足コキ.ERB:487/:504。
+ * 公共段「足で射精／足で大量射精」：TFLAG:18 == 1/2 两分支，
+ * 「带着轻蔑的眼神、」的检查 `(TALENT:83 || ABL:20 > 2) && TALENT:85 == 0`
+ * ——施虐狂或抖 S 强、且不爱慕。本段只读 TFLAG:18（写入在本段之外）。
  *
- * @param {boolean} heavy true = TFLAG:18 == 2（大量射精臂）
+ * @param {boolean} heavy true = TFLAG:18 == 2（大量射精分支）
  */
 function emit_foot_ejaculation(heavy) {
   const target = era_flag.target;
   const name = chara_callname(target);
-  let line = name; // PRINTFORM
+  let line = name;
   if ((tal(target, 83) || abl(target, 20) > 2) && tal(target, 85) === 0) {
     line += '带着轻蔑的眼神、';
   }
@@ -486,13 +479,13 @@ function emit_foot_ejaculation(heavy) {
 }
 
 /**
- * 放置 PLAY（源 :362-373，射精链的末支）：PALAM:5 ≥ PALAMLV:3 才开口，
- * 三个 SIF 各追加半句后收尾。
+ * 放置 PLAY（射精链的末支）：PALAM:5 ≥ PALAMLV:3 才开口，
+ * 三个条件各追加半句后收尾。
  *
- * **本支的实现位置是 #402 挪的**：原作它是射精链的最后一支（排在绝顶段
- * :377 之前），此前落在 com-special.js 的 A 分发族里——族分发在绝顶段之后
- * 执行，同回合既落「放置 PLAY」又落绝顶时两处行序会颠倒（实机可见）。
- * com-special.js 的 A55 注册随之改为显式无操作，注册保留（占位行语义）。
+ * **本支的实现位置是 #402 挪的**：它在射精链里位于绝顶段之前；#402 之前
+ * 落在 com-special.js 的 A 分发族里——族分发在绝顶段之后执行，同回合既落
+ * 「放置 PLAY」又落绝顶段时两处行序会颠倒（实机可见）。com-special.js 的
+ * A55 注册随之改为显式无操作，注册保留（占位行语义）。
  */
 function emit_idle_play() {
   const target = era_flag.target;
@@ -514,11 +507,11 @@ function emit_idle_play() {
 }
 
 /**
- * 公共段「射精链」（源 :177-373）：一条 IF/ELSEIF 链按 TFLAG:0 → TFLAG:1
- * → TFLAG:18 的顺序吃六种射精旗标（口／手／足各普通与大量两档），末尾一支
- * 是 SELECTCOM == 55 的放置 PLAY。**链语义 = 先命中先落、其余整支跳过**，
- * 所以不能拆成互不相干的段（同回合同时置「口射精」与「手射精」时只有前者
- * 说话；再如口臂对当前指令没有台词时，手臂一样不出声——链已被口臂吃掉）。
+ * 公共段「射精链」：一条先后链按 TFLAG:0 → TFLAG:1 → TFLAG:18 的顺序吃
+ * 六种射精旗标（口／手／足各普通与大量两档），末尾一支是指令号 55 的
+ * 放置 PLAY。**链语义 = 先命中先落、其余整支跳过**，所以不能拆成互不相干
+ * 的段（同回合同时置「口射精」与「手射精」时只有前者说话；再如口分支对
+ * 当前指令没有台词时，手分支一样不出声——链已被口分支吃掉）。
  */
 function emit_ejaculation_chain() {
   if (tflag(0) === 1 || tflag(0) === 2) {
@@ -539,19 +532,19 @@ function emit_ejaculation_chain() {
 }
 
 /**
- * 公共段「性交射精」（源 :456-606）：一条 IF/ELSEIF 链——
- *   1. `CFLAG:113 == 1 && TFLAG:2 == 1 && SELECTCOM == 90` → 乳内射精（普通）；
- *   2. `TFLAG:2 == 1` → 普通档的抽出／插着两臂；
- *   3. `CFLAG:113 == 1 && TFLAG:2 == 2` → 乳内射精（大量，**无指令门**）；
- *   4. `TFLAG:2 == 2` → 大量档的两臂；
- *   5. `ELSE` → 绝顶余韵（TFLAG:29 五档，:592-605）。
+ * 公共段「性交射精」：一条先后链——
+ *   1. `CFLAG:113 == 1 && TFLAG:2 == 1 && selectcom == 90` → 乳内射精（普通）；
+ *   2. `TFLAG:2 == 1` → 普通档的抽出／插着两分支；
+ *   3. `CFLAG:113 == 1 && TFLAG:2 == 2` → 乳内射精（大量，**无指令检查**）；
+ *   4. `TFLAG:2 == 2` → 大量档的两分支；
+ *   5. `TFLAG:2` 非 1/2 → 绝顶余韵（TFLAG:29 五档）。
  *
- * 两臂的分界是 `PALAM:5 < PALAMLV:4 || TFLAG:31`：命中 = **抽出**臂（讲拔出
- * 之后的场面，并按源侧写回 `TFLAG:31 = 0` / `TFLAG:60 = 0`），否则 =
- * **插着**臂（讲还插在里面时对象的反应，只读不写）。
+ * 两分支的分界是 `PALAM:5 < PALAMLV:4 || TFLAG:31`：命中 = **抽出**分支
+ * （讲拔出之后的场面，并写回 `TFLAG:31 = 0` / `TFLAG:60 = 0`），否则 =
+ * **插着**分支（讲还插在里面时对象的反应，只读不写）。
  *
- * 形态有意保留：插着臂普通档把 `SELECTCOM == 27` 写了两遍（:501，于
- * 逻辑无影响）；抽出臂的 34（骑乘位）前缀是「阴茎拔出后、」而 20/22 是
+ * 写法有意保留：插着分支普通档把 `selectcom == 27` 写了两遍（于逻辑
+ * 无影响）；抽出分支的 34（骑乘位）前缀是「阴茎拔出后、」而 20/22 是
  * 「阴茎拔出后、阴部处、」，两支不同样，照原样保留。
  */
 function emit_sex_ejaculation() {
@@ -584,7 +577,7 @@ function emit_sex_ejaculation() {
   const blood = tflag(31); // 本次调教处女丧失（落红）
 
   if (palam(target, 5) < PALAMLV[4] || blood) {
-    // —— 抽出臂（:460-495 / :526-565）——
+    // —— 抽出分支 ——
     const with_blood = (text) =>
       blood ? `${text}渗出了处女的落红、混合着` : text;
     if (selectcom === 20 || selectcom === 22) {
@@ -645,7 +638,7 @@ function emit_sex_ejaculation() {
           : `对准${name}私处内那最敏感的那一点、${player_name}射出了精液…`,
       );
     }
-    // ：抽出臂写回归一（两处跨域写都经 event 域门面：
+    // 抽出分支的写回归一（两处跨域写都经 event 域门面：
     // TFLAG:31 = game.event.本次调教处女丧失、TFLAG:60 = game.event.插着不拔，
     // 后者与 train_message_b 的尾部同一变量）
     game.event.本次调教处女丧失 = 0;
@@ -653,7 +646,7 @@ function emit_sex_ejaculation() {
     return;
   }
 
-  // —— 插着臂（:496-517 / :566-587）——
+  // —— 插着分支 ——
   if (selectcom === 27 && tq(target, 55)) {
     era.print(
       heavy
@@ -706,7 +699,7 @@ function emit_sex_ejaculation() {
 }
 
 /**
- * 性交射精链的 ELSE 支：绝顶余韵（源 :592-605）。`TFLAG:899 <= 1` 才开口，
+ * 性交射精链的其余分支：绝顶余韵。`TFLAG:899 <= 1` 才开口，
  * 内层五档先看「私处滴液」的两支（要求 TFLAG:19 且（蠕虫或插着）且**未
  * 穿衣**——CFLAG:40 的 16（服）与 1（内裤）位都为 0），再看 TFLAG:29 的
  * 9/5/3 三档；同一 TFLAG:29 值下「滴液」支优先，穿衣时回落到普通句。
@@ -735,19 +728,20 @@ function emit_sex_orgasm_afterglow() {
 }
 
 /**
- * 公共段「失禁与放尿」（源 :611-677）：一条 IF/ELSEIF 链。
+ * 公共段「失禁与放尿」：一条先后链。
  *   1. 失神中的两档（TFLAG:899 ≥ 2 × TFLAG:29 ≥ 3 / ≥ 1 × 有用尿具）；
- *   2. 四组衣着形态各两支（放尿 / 失禁）——尿布（CFLAG:42 == 69，且需
+ *   2. 四组衣着状态各两支（放尿 / 失禁）——尿布（CFLAG:42 == 69，且需
  *      CFLAG:40 & 64 的着ぐるみ位）、着ぐるみ（42 == 11，同需 64 位）、
- *      服（& 16，句里嵌 @PRINT_CLOTHTYPE_MAIN2）、内裤（& 1）；
+ *      服（& 16，句里嵌 clothtype_main2_text）、内裤（& 1）；
  *   3. 裸身十档：TFLAG:29 ≥ 7/5/3/1 × 尿具三态（两个都有 / 只利尿剂 /
  *      只漏尿癖）。
  *
  * 尿具 = TEQUIP:22（利尿剂）或 TALENT:57（漏尿癖）。**「放尿」支与「失禁」支
  * 的尿具条件不同**（放尿 = 「29 ≥ 5 且有利尿剂」或「29 ≥ 3 且利尿剂＋漏尿
  * 癖」；失禁 = 「29 ≥ 3 且漏尿癖」或「29 ≥ 1 且利尿剂」），四组衣着共用同一
- * 对判据，照原样保留。着ぐるみ两处嵌 @PRINT_CLOTHTYPE_SPECIAL、服支嵌
- * _MAIN2——ere 侧取该模块的返回串再拼接（出口形态见 page-clothtype.js 头注）。
+ * 对条件，照原样保留。着ぐるみ两处嵌 clothtype_special_text、服支嵌
+ * clothtype_main2_text——取该模块的返回串再拼接（返回值约定见
+ * page-clothtype.js 头注）。
  */
 function emit_incontinence() {
   const target = era_flag.target;
@@ -768,7 +762,7 @@ function emit_incontinence() {
     return;
   }
 
-  // 衣着四组共用的两支判据（:618-676 的四组各写一遍同样的表达式）
+  // 衣着四组共用的两支条件（放尿 / 失禁）
   const burst =
     (orgasms >= 5 && diuretic) || (orgasms >= 3 && diuretic && incontinent);
   const leak = (orgasms >= 3 && incontinent) || (orgasms >= 1 && diuretic);
@@ -847,9 +841,9 @@ function emit_incontinence() {
 }
 
 /**
- * 近亲称谓表（源 :695-714 的五档 × 主人是否男人：TALENT:PLAYER:122）。
+ * 近亲称谓表（五档 × 主人是否男人：TALENT:PLAYER:122）。
  * 键 = TFLAG:14；值 = [主人是男人时的称谓, 主人不是男人时的称谓]。
- * 源侧没有 5 档（表亲系只列了 6），落空档时前半句整个不落。
+ * 没有 5 档（表亲系只列了 6），落空档时前半句整个不落。
  */
 const KIN_TITLES = {
   1: ['父亲', '母亲'],
@@ -860,14 +854,13 @@ const KIN_TITLES = {
 };
 
 /**
- * 公共段「处女丧失与口交清洁」（源 :682-741）：三处 SIF（触手夺处、无射精
+ * 公共段「处女丧失与口交清洁」：三处独立条件（触手夺处、无射精
  * 夺处、野狗夺处）＋一条近亲链（TFLAG:14 × 主人是否男人）＋口交射精后的
- * 清洁段（TFLAG:8）。五段互不排斥，照源侧顺序落。
+ * 清洁段（TFLAG:8）。五段互不排斥，按上列顺序落。
  *
- * 源侧形态 1:1：近亲链的称谓 IF 链**没有 ELSE**（:695-715），TFLAG:14 落空档
- * 时前半句断路、只剩「〈主人〉夺取了她的处女。」；清洁段的两句拼法里
- * `SIF TFLAG:8 == 3` 在「双人口交」与「普通」两臂**之外**（:739），两臂都会
- * 追加那句。
+ * 写法有意保留：近亲链的称谓条件链**没有 ELSE**，TFLAG:14 落空档时前半句
+ * 断路、只剩「〈主人〉夺取了她的处女。」；清洁段里 `TFLAG:8 == 3` 的
+ * 追加句在「双人口交」与「普通」两分支**之外**，两分支都会追加那句。
  */
 function emit_virginity_and_cleanup() {
   const target = era_flag.target;
@@ -924,7 +917,7 @@ function emit_virginity_and_cleanup() {
 }
 
 /**
- * @TRAIN_MESSAGE_B（:12-）。公共头（省略设定 + 点线）后按 SELECTCOM 分发；
+ * train_message_b。公共头（省略设定 + 点线）后按指令号分发；
  * 缺失分支落存根占位行，空间外显式抛错（见文件头「分发表」）。
  *
  * @returns {Promise<void>}
@@ -934,12 +927,12 @@ async function train_message_b() {
   if ((era.get('flag:6') || 0) & 1) {
     return;
   }
-  // CUSTOMDRAWLINE ‥ —— ere 的 drawLine 是实线分隔（'‥' 点线是排版
-  // 近似，记名差异见 issue #45）
+  // 点线分隔 ‥ —— ere 的 drawLine 是实线分隔（'‥' 点线是排版
+  // 近似，写法差见 issue #45）
   era.drawLine();
 
-  // #402 收口后声明空间全数有主（实现或显式无操作），族内缺失不再可能
-  // 发生；即使发生，原作对无分支的号也是零输出，这里不落占位行（#565）。
+  // #402 收尾后声明空间全数有主（实现或显式无操作），族内缺失不再可能
+  // 发生；即使发生，无分支的号也是零输出，这里不落占位行（#565）。
   await train_message_b_family.call(era_flag.selectcom, {
     args: [rand_source()],
   });
@@ -950,8 +943,8 @@ async function train_message_b() {
 }
 
 /**
- * @TRAIN_MESSAGE_A（:15-）。公共头（省略设定 + 点线）后先跑**公共段**
- * （:31-741，见文件头），再按 SELECTCOM 分发（:746-1351）；空间外显式抛错。
+ * train_message_a。公共头（省略设定 + 点线）后先跑**公共段**
+ * （见文件头），再按指令号分发；空间外显式抛错。
  *
  * @returns {Promise<void>}
  */
@@ -960,17 +953,17 @@ async function train_message_a() {
   if ((era.get('flag:6') || 0) & 1) {
     return;
   }
-  // CUSTOMDRAWLINE ‥（排版近似说明同 train_message_b）
+  // 点线分隔 ‥（排版近似说明同 train_message_b）
   era.drawLine();
 
-  // —— 公共段（:31-741，按源侧执行顺序；SELECTCOM 分发在最后 :746 起）——
-  emit_intercrural_ejaculation(); // 股间性交射精（TFLAG:9 三臂）
+  // —— 公共段（按文件头所列顺序执行；指令号分发在最后）——
+  emit_intercrural_ejaculation(); // 股间性交射精（TFLAG:9 三分支）
 
-  // —— 公共头的 TFLAG:15（怪物/触手射精旗标）段（:110-146）——
-  // 源形状 1:1：先两道 SIF（非死斗场触手臂，:113-125），再 IF/ELSEIF 链
-  // （死斗场灌精两臂 :127-141，以及非死斗场触手臂的第二份 :143-145）。
-  // 非死斗场因此双重打印——原作如此，不是漏去重。死斗场命中 IF 链后
-  // ELSEIF 触手臂不再落（内层三支之外的 SELECTCOM 无输出）。
+  // —— 公共头的 TFLAG:15（怪物/触手射精旗标）段 ——
+  // 结构有意保留：先两道独立条件（非死斗场的触手分支），再一条先后链
+  // （死斗场灌精两分支，以及非死斗场触手分支的第二份）。
+  // 非死斗场因此双重打印——有意为之，不是漏去重。死斗场命中链首后
+  // 触手分支不再落（指令号不在内层三支时无输出）。
   const tflag15 = era.get('tflag:15') || 0;
   const tequip55 = era.get(`tequip:${era_flag.target}:55`) || 0;
   const target_name = chara_callname(era_flag.target);
@@ -1000,9 +993,9 @@ async function train_message_a() {
   emit_assistant_ejaculation(); // 当对象的面侵犯助手（TFLAG:7）
   emit_ejaculation_chain(); // 口/手/足射精链 + 放置 PLAY 末支
 
-  // —— 公共绝顶反应（:377-424）——
-  // 这是所有指令共用的 TFLAG:29 消费点，必须先于 SELECTCOM 分支输出；
-  // 原作连续 PRINTFORM/PRINT/PRINTL 组成一条可见行，故在此一次性拼接。
+  // —— 公共绝顶反应 ——
+  // 这是所有指令共用的 TFLAG:29 消费点，必须先于指令号分支输出；
+  // 同一可见行的各片段在此一次性拼接成一条输出。
   const target = era_flag.target;
   const orgasms = era.get('tflag:29') || 0;
   const faint = era.get('tflag:899') || 0;
@@ -1057,7 +1050,7 @@ async function train_message_a() {
 
     // 射精场合的后半（逆强姦／逆肛交／口交 × 普通与大量）：与上面
     // 的绝顶行同属一个 TFLAG:29 块，先落绝顶行再落这一句。TFLAG:31 的落红
-    // 前缀只挂在 24 支上（源侧如此）；25 支的两档文案只差「大量」二字。
+    // 前缀只挂在 24 支上；25 支的两档文案只差「大量」二字。
     const selectcom = era_flag.selectcom;
     if (ejaculates >= 1) {
       const blood = tflag(31);
@@ -1085,22 +1078,20 @@ async function train_message_a() {
   emit_incontinence(); // 失禁与放尿（TFLAG:899 / TFLAG:29 × 衣着）
   emit_virginity_and_cleanup(); // 处女丧失三处 + 近亲链 + 口交清洁
 
-  // 同 B：#402 收口后空间全数有主，缺失语义按原作归为零输出（#565）
+  // 同 B：#402 收尾后空间全数有主，缺失语义归为零输出（#565）
   await train_message_a_family.call(era_flag.selectcom, {
     args: [rand_source()],
   });
 }
 
-// —— 源侧无对应分支的指令号：显式空 handler ——
+// —— 无对应分支的指令号：显式空 handler ——
 //
-// 注册它们的唯一目的是让「源侧无分支 = 零输出」的语义对这些号保持精确
+// 注册它们的唯一目的是让「无分支 = 零输出」的语义对这些号保持精确
 // （缺号回落自 #565 起即零输出，显式注册让「没注册」与「注册为空」可区分：
-// 前者是漏接，后者是源侧本来就没有）。先例见 com-caress.js 的 A 4/6/7/8/9
+// 前者是漏接，后者是本来就没有台词）。先例见 com-caress.js 的 A 4/6/7/8/9
 // 与 com-toy.js 的 A 15-19。
-//   - B：55（源侧 :1953-1980 从 54 直跳 56——原作不调用 B，见
-//     docs/stub-registry.md 的 `TRAIN_MESSAGE_B` 行）、110/111（:2608-2622
-//     从 109 直跳 120）；
-//   - A：43-49（:1208-1276 从 42 直跳 72，43-49 无 A 支）、110/111（同 B）。
+//   - B：55、110/111；
+//   - A：43-49、110/111（同 B）。
 for (const id of [55, 110, 111]) {
   train_message_b_family.register(id, async () => {});
 }

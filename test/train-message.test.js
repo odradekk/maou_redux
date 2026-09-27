@@ -5,14 +5,12 @@
  * 缝 = test/helpers/era-fixture.js。覆盖：
  *   - B 的爱抚描写行（接吻条件、体型/肤色修饰、妊娠行、省略设定短路）；
  *   - A 的快感触感分档（c = delta:0 + delta:14 的六档、逐档边界抽样）与
- *     守卫（TEQUIP:44 / TFLAG:899 / 其他指令落存根占位）；
- *   - A 的公共段（#402：两文件全量补齐——股间射精 TFLAG:9、TFLAG:16/7/18、
+ *     检查（TEQUIP:44 / TFLAG:899 / 其他指令落存根占位）；
  *     口中射精 TFLAG:0、手中射精 TFLAG:1、性交射精 TFLAG:2、失禁 TFLAG:899、
  *     处女丧失/近亲/口交清洁 TFLAG:3/TFLAG:8 与绝顶段的指令子链）。
  *
- * 公共段的断言一律取 text_lines() 的前缀：公共段在 @TRAIN_MESSAGE_A 里先于
- * 指令分发执行（源 :31-741 在 :746 的 SELECTCOM 链之前），前缀逐字比对能
- * 同时拦住「少打一行」与「多打一行」。
+ * 公共段的断言一律取 text_lines() 的前缀：公共段在 train_message_a 里先于
+ * 指令分发执行，前缀逐字比对能同时拦住「少打一行」与「多打一行」。
  */
 
 const assert = require('node:assert/strict');
@@ -48,7 +46,7 @@ function seed_message_world({ assi = -1 } = {}) {
   return { fixture, era_flag, train_message_a, train_message_b };
 }
 
-// —— @TRAIN_MESSAGE_B（爱抚分支） ——
+// —— train_message_b（爱抚分支） ——
 
 test('B 基础行：口净 + 已初吻 → 你轻舔着…的唇、仔细爱抚着…的身体……', async () => {
   const { fixture, era_flag, train_message_b } = seed_message_world();
@@ -136,20 +134,20 @@ test('B 省略设定（FLAG:6 & 1）：整函数短路，无任何输出', async
   assert.equal(fixture.lines.length, 0);
 });
 
-test('B 其他指令（未装载族模块）：零输出（#565 起缺号回落按原作归零）', async () => {
-  // 12 号属 com-toy 族——本测试世界未装载它，族表缺失。原作对无分支的
-  // 号什么都不输出；ere 自 #45 起给缺号打占位行、#565 起还原为零输出
-  // （全量装载后 121 段全数有主，这一形态只在模块未装载的测试世界可达）
+test('B 其他指令（未装载族模块）：零输出（#565 起缺号回落为零）', async () => {
+  // 12 号属 com-toy 族——本测试世界未装载它，族表缺失。无分支的号什么
+  // 都不输出；ere 自 #45 起给缺号打占位行、#565 起还原为零输出（全量
+  // 装载后 121 段全数有主，这一情形只在模块未装载的测试世界可达）
   const { fixture, era_flag, train_message_b } = seed_message_world();
   era_flag.selectcom = 12;
   await train_message_b();
   assert(
-    !fixture.text_lines().some((line) => line.includes('@TRAIN_MESSAGE_B')),
-    '未装载的号不得再出占位行（缺号 = 原作零输出）',
+    !fixture.text_lines().some((line) => line.includes('TRAIN_MESSAGE_B')),
+    '未装载的号不得再出占位文案（缺号 = 零输出）',
   );
 });
 
-// —— @TRAIN_MESSAGE_A（爱抚反应分支） ——
+// —— train_message_a（爱抚反应分支） ——
 
 test('A 六档分档：c = delta:0 + delta:14 逐档取样', async () => {
   // [c, 期望行片段]（c 的档界：<100 / <300 / <1000 / <3000 / <6000 / else）
@@ -208,8 +206,8 @@ test('A 第三档的感情淡薄前缀（TALENT:22）', async () => {
   );
 });
 
-test('A 守卫：TEQUIP:44 / TFLAG:899 > 1 → 整条 IF 链落空，零输出（#565 还原 :746）', async () => {
-  // 对照组：同世界去掉绳子/失神后，:751 起的六档文本正常出现——「零输出」
+test('A 检查：TEQUIP:44 / TFLAG:899 > 1 → 整条 IF 链落空，零输出（#565）', async () => {
+  // 对照组：同世界去掉绳子/失神后，六档文本正常出现——「零输出」
   // 才有区分力（否则删掉整个爱抚分支也能绿）
   const control = seed_message_world();
   control.fixture.store.set('delta:31:0', 50);
@@ -221,9 +219,9 @@ test('A 守卫：TEQUIP:44 / TFLAG:899 > 1 → 整条 IF 链落空，零输出�
     '对照组：无紧缚/失神时爱抚反应正常输出',
   );
 
-  // 原作 :746 的守卫是 `SELECTCOM == 0 && TEQUIP:44 == 0 && TFLAG:899 <= 1`：
+  // 入口条件是 `SELECTCOM == 0 && TEQUIP:44 == 0 && TFLAG:899 <= 1`：
   // 紧缚（TEQUIP:44）或深度失神（TFLAG:899 > 1）时整条 IF/ELSEIF 链无分支
-  // 命中，什么都不输出——此前打的「紧缚/失神中的爱抚反应」占位与原作不符
+  // 命中，什么都不输出——此前打的「紧缚/失神中的爱抚反应」占位与该条件不符
   const rope = seed_message_world();
   rope.fixture.store.set('delta:31:0', 50);
   rope.fixture.store.set('tequip:31:44', 1);
@@ -243,7 +241,7 @@ test('A 守卫：TEQUIP:44 / TFLAG:899 > 1 → 整条 IF 链落空，零输出�
   );
 });
 
-// —— @TRAIN_MESSAGE_A 公共绝顶段（EVENT_TRAIN_MESSAGE_A.ERB:377-424） ——
+// —— train_message_a 公共绝顶段 ——
 
 test('A 公共绝顶：TFLAG:29 在 COM12 专属反应之前输出同一行', async () => {
   const { fixture, era_flag, train_message_a } = seed_message_world();
@@ -260,7 +258,7 @@ test('A 公共绝顶：TFLAG:29 在 COM12 专属反应之前输出同一行', as
   ]);
 });
 
-test('A 公共绝顶：爱液档、终档与 TFLAG:899 守卫逐字生效', async () => {
+test('A 公共绝顶：爱液档、终档与 TFLAG:899 检查逐字生效', async () => {
   const transparent = seed_message_world();
   transparent.fixture.store.set('tflag:29', 5);
   await transparent.train_message_a();
@@ -291,7 +289,7 @@ test('A 公共绝顶：爱液档、终档与 TFLAG:899 守卫逐字生效', asyn
   );
 });
 
-test('A 公共绝顶：母乳、两性人和对象射精按原作拼接', async () => {
+test('A 公共绝顶：母乳、两性人和对象射精的拼接', async () => {
   const milk = seed_message_world();
   milk.fixture.store.set('tflag:29', 5);
   milk.fixture.store.set('tflag:11', 2);
@@ -329,41 +327,41 @@ test('A 公共绝顶：母乳、两性人和对象射精按原作拼接', async 
   );
 });
 
-// —— @TRAIN_MESSAGE_A 公共段：股间性交射精（EVENT_TRAIN_MESSAGE_A.ERB:31-110） ——
+// —— train_message_a 公共段：股间性交射精 ——
 
 /**
  * TFLAG:9 段的维度表：TFLAG:9（0 对象射精 / 1 主人射精 / 2 主人大量射精）
  * × SELECTCOM（122 阴茎互捅 / 33 股间性交 / 62 双人股间 / 其他）× 肌肤色
  * （244 恶魔肌肤 / 253 褐色肌肤 / 255 白皙 / 无）。
  *
- * lines 是源侧逐字拼出的期望行（PRINTFORM 片段按 Emuera 的追加语义拼成一
- * 行，PRINTL 收尾）；`[]` = 该组合下源侧一条 PRINTL 都不落。
+ * lines 是逐字期望行（各片段在实现里拼接成一行）；`[]` = 该组合下
+ * 一行都不落。
  */
 const TF9_CASES = [
   // —— TFLAG:9 == 0：对象射精（仅 122/33/62 有话说，且需 TFLAG:10 ≥ 1）——
   {
-    desc: '0 臂 · 122 · 对象普通射精',
+    desc: '0 分支 · 122 · 对象普通射精',
     t9: 0,
     t10: 1,
     com: 122,
     lines: ['温妮射精出的精液、将你的阴茎用精液一吐为快了…'],
   },
   {
-    desc: '0 臂 · 122 · 对象大量射精（TFLAG:10 ≥ 2 插「大量」）',
+    desc: '0 分支 · 122 · 对象大量射精（TFLAG:10 ≥ 2 插「大量」）',
     t9: 0,
     t10: 2,
     com: 122,
     lines: ['温妮射精出的大量精液、将你的阴茎用精液一吐为快了…'],
   },
   {
-    desc: '0 臂 · 122 · TFLAG:10 == 0 → 整段静默',
+    desc: '0 分支 · 122 · TFLAG:10 == 0 → 整段静默',
     t9: 0,
     t10: 0,
     com: 122,
     lines: [],
   },
   {
-    desc: '0 臂 · 33 · 恶魔肌肤（244）',
+    desc: '0 分支 · 33 · 恶魔肌肤（244）',
     t9: 0,
     t10: 1,
     com: 33,
@@ -371,7 +369,7 @@ const TF9_CASES = [
     lines: ['温妮射精出的精液、把你的蓝色肌肤弄脏了…'],
   },
   {
-    desc: '0 臂 · 33 · 褐色肌肤（253）',
+    desc: '0 分支 · 33 · 褐色肌肤（253）',
     t9: 0,
     t10: 1,
     com: 33,
@@ -379,7 +377,7 @@ const TF9_CASES = [
     lines: ['温妮射精出的精液、把你的褐色肌肤弄脏了…'],
   },
   {
-    desc: '0 臂 · 33 · 白皙（255）',
+    desc: '0 分支 · 33 · 白皙（255）',
     t9: 0,
     t10: 1,
     com: 33,
@@ -387,14 +385,14 @@ const TF9_CASES = [
     lines: ['温妮射精出的精液、把你的白皙肌肤弄脏了…'],
   },
   {
-    desc: '0 臂 · 33 · 无肌肤素质 → 源侧断句残留（1:1）',
+    desc: '0 分支 · 33 · 无肌肤素质 → 断句残留',
     t9: 0,
     t10: 1,
     com: 33,
     lines: ['温妮射精出的精液、把你的'],
   },
   {
-    desc: '0 臂 · 62 · 白皙（无「精液、把…的」前缀 + 第二行）',
+    desc: '0 分支 · 62 · 白皙（无「精液、把…的」前缀 + 第二行）',
     t9: 0,
     t10: 1,
     com: 62,
@@ -402,14 +400,14 @@ const TF9_CASES = [
     lines: ['温妮射精出的白皙肌肤弄脏了…', '射出的精液、把两人的身体都弄脏了…'],
   },
   {
-    desc: '0 臂 · 62 · 无肌肤素质 → 断句残留 + 第二行',
+    desc: '0 分支 · 62 · 无肌肤素质 → 断句残留 + 第二行',
     t9: 0,
     t10: 1,
     com: 62,
     lines: ['温妮射精出的', '射出的精液、把两人的身体都弄脏了…'],
   },
   {
-    desc: '0 臂 · 其他指令 → 整段静默',
+    desc: '0 分支 · 其他指令 → 整段静默',
     t9: 0,
     t10: 2,
     com: 0,
@@ -417,7 +415,7 @@ const TF9_CASES = [
   },
   // —— TFLAG:9 == 1：主人射精 ——
   {
-    desc: '1 臂 · 122 · 主人是扶她 → 两人同时射精',
+    desc: '1 分支 · 122 · 主人是扶她 → 两人同时射精',
     t9: 1,
     t10: 1,
     com: 122,
@@ -425,21 +423,21 @@ const TF9_CASES = [
     lines: ['两人同时射精、对彼此的阴茎用精液一吐为快了…'],
   },
   {
-    desc: '1 臂 · 122 · TFLAG:10 == 0 → 只弄脏对象的阴茎',
+    desc: '1 分支 · 122 · TFLAG:10 == 0 → 只弄脏对象的阴茎',
     t9: 1,
     t10: 0,
     com: 122,
     lines: ['射出的精液、把温妮的阴茎弄脏了…'],
   },
   {
-    desc: '1 臂 · 122 · 对象射了但主人不是扶她 → 仍走主人单独射精',
+    desc: '1 分支 · 122 · 对象射了但主人不是扶她 → 仍走主人单独射精',
     t9: 1,
     t10: 1,
     com: 122,
     lines: ['射出的精液、把温妮的阴茎弄脏了…'],
   },
   {
-    desc: '1 臂 · 122 · 主人是扶她但对象没射 → 仍走主人单独射精',
+    desc: '1 分支 · 122 · 主人是扶她但对象没射 → 仍走主人单独射精',
     t9: 1,
     t10: 0,
     com: 122,
@@ -447,7 +445,7 @@ const TF9_CASES = [
     lines: ['射出的精液、把温妮的阴茎弄脏了…'],
   },
   {
-    desc: '1 臂 · 33 · 白皙',
+    desc: '1 分支 · 33 · 白皙',
     t9: 1,
     t10: 0,
     com: 33,
@@ -455,21 +453,21 @@ const TF9_CASES = [
     lines: ['射出的精液、把温妮的白皙肌肤弄脏了…'],
   },
   {
-    desc: '1 臂 · 33 · 无肌肤素质（色名链无 ELSE，收尾句照落）',
+    desc: '1 分支 · 33 · 无肌肤素质（色名链无 ELSE，收尾句照落）',
     t9: 1,
     t10: 0,
     com: 33,
     lines: ['射出的精液、把温妮的肌肤弄脏了…'],
   },
   {
-    desc: '1 臂 · 62 · 双人股间',
+    desc: '1 分支 · 62 · 双人股间',
     t9: 1,
     t10: 0,
     com: 62,
     lines: ['射出的精液、把两人的身体都弄脏了…'],
   },
   {
-    desc: '1 臂 · 其他指令 → 整段静默',
+    desc: '1 分支 · 其他指令 → 整段静默',
     t9: 1,
     t10: 0,
     com: 0,
@@ -477,7 +475,7 @@ const TF9_CASES = [
   },
   // —— TFLAG:9 == 2：主人大量射精 ——
   {
-    desc: '2 臂 · 122 · 主人是扶她 → 两人同时射精',
+    desc: '2 分支 · 122 · 主人是扶她 → 两人同时射精',
     t9: 2,
     t10: 1,
     com: 122,
@@ -485,14 +483,14 @@ const TF9_CASES = [
     lines: ['两人同时射精、对彼此的阴茎用大量的精液一吐为快…'],
   },
   {
-    desc: '2 臂 · 122 · TFLAG:10 == 0 → 大量精液弄黏对象',
+    desc: '2 分支 · 122 · TFLAG:10 == 0 → 大量精液弄黏对象',
     t9: 2,
     t10: 0,
     com: 122,
     lines: ['你射出大量的精液、把温妮的阴茎搞得黏黏糊糊…'],
   },
   {
-    desc: '2 臂 · 33 · 褐色肌肤',
+    desc: '2 分支 · 33 · 褐色肌肤',
     t9: 2,
     t10: 0,
     com: 33,
@@ -500,14 +498,14 @@ const TF9_CASES = [
     lines: ['温妮的褐色肌肤被射出的大量精液沾满了…'],
   },
   {
-    desc: '2 臂 · 33 · 无肌肤素质（色名链无 ELSE，收尾句照落）',
+    desc: '2 分支 · 33 · 无肌肤素质（色名链无 ELSE，收尾句照落）',
     t9: 2,
     t10: 0,
     com: 33,
     lines: ['温妮的肌肤被射出的大量精液沾满了…'],
   },
   {
-    desc: '2 臂 · 62 · 双人股间',
+    desc: '2 分支 · 62 · 双人股间',
     t9: 2,
     t10: 0,
     com: 62,
@@ -544,7 +542,7 @@ for (const c of TF9_CASES) {
   });
 }
 
-// —— @TRAIN_MESSAGE_A 公共段：狗射精（:151-161）与助手射精（:165-172） ——
+// —— TRAIN_MESSAGE_A 公共段：狗射精与助手射精 ——
 
 /**
  * 狗射精段的维度表：TFLAG:16 > 0 × SELECTCOM（21/34 私处、27 直肠、31 嘴、
@@ -664,7 +662,7 @@ test('A 公共段 · TFLAG:7：羡慕句的门是 (ABL:11 > 3 || ABL:32 > 2) && 
   );
 });
 
-// —— @TRAIN_MESSAGE_A 公共段：射精链（:177-373）——
+// —— TRAIN_MESSAGE_A 公共段：射精链 ——
 //
 // 一条 IF/ELSEIF 链吃六种射精旗标（TFLAG:0 == 1/2 口、TFLAG:1 == 1/2 手、
 // TFLAG:18 == 1/2 足），末尾一支是 SELECTCOM == 55 的放置 PLAY。链的语义
@@ -993,7 +991,7 @@ CHAIN_CASES.forEach((spec, index) => {
         !fixture
           .text_lines()
           .some((line) => line.includes('精液射到温妮的身上了')),
-        '未命中任何臂 → 射精链整段静默',
+        '未命中任何分支 → 射精链整段静默',
       );
     }
   });
@@ -1043,12 +1041,12 @@ test('A 射精链末支 · 放置 PLAY（指令 55）：欲情四档逐档取件
   );
 });
 
-// —— 源侧无分支的指令号：显式无操作（#402） ——
+// —— 无分支的指令号：显式无操作（#402） ——
 //
-// 占位行的语义是「族票未落地」，而这些号在源侧从来就没有分支（B 从 54 直跳
-// 56、从 109 直跳 120；A 从 42 直跳 72），落占位行是错的——源侧它们零输出。
+// 占位文案的语义是「指令未实现」，而这些号从来就没有分支（B 从 54 直跳
+// 56、从 109 直跳 120；A 从 42 直跳 72），落占位文案是错的——它们零输出。
 
-/** 指定指令号跑一遍 A/B，看是否落了占位行 */
+/** 指定指令号跑一遍 A/B，看是否落了占位文案 */
 async function dispatch_marks(fn, id) {
   const { fixture, era_flag } = seed_message_world();
   era_flag.selectcom = id;
@@ -1058,7 +1056,7 @@ async function dispatch_marks(fn, id) {
 }
 
 for (const id of [55, 110, 111]) {
-  test(`B 指令 ${id}：源侧无分支 → 显式无操作，不出占位行`, async () => {
+  test(`B 指令 ${id}：无分支 → 显式无操作，不出占位文案`, async () => {
     assert.equal(
       await dispatch_marks(async ({ load_module }) => {
         const { train_message_b } = load_module('system/train/train-message');
@@ -1070,7 +1068,7 @@ for (const id of [55, 110, 111]) {
 }
 
 for (const id of [43, 45, 49, 110, 111]) {
-  test(`A 指令 ${id}：源侧无分支 → 显式无操作，不出占位行`, async () => {
+  test(`A 指令 ${id}：无分支 → 显式无操作，不出占位文案`, async () => {
     assert.equal(
       await dispatch_marks(async ({ load_module }) => {
         const { train_message_a } = load_module('system/train/train-message');
@@ -1081,7 +1079,7 @@ for (const id of [43, 45, 49, 110, 111]) {
   });
 }
 
-test('对照：族票未装载的号零输出（#565 起缺号回落按原作归零）', async () => {
+test('对照：未装载的号零输出（#565 起缺号回落归零）', async () => {
   // 与前面的显式无操作用例同型（B 12 未装载 com-toy，族表缺失），以
   // 「尚未移植」字样判：显式无操作与缺号回落现在同为零输出，占位文案
   // 整体退出这两条路径
@@ -1093,12 +1091,12 @@ test('对照：族票未装载的号零输出（#565 起缺号回落按原作归
   assert.equal(
     fixture.text_lines().some((line) => line.includes('尚未移植')),
     false,
-    'B 12 未装载 com-toy → 零输出，不得再出占位行',
+    'B 12 未装载 com-toy → 零输出，不得再出占位文案',
   );
 });
 
 test('A 射精链：先命中先落——口胜手、手胜放置 PLAY', async () => {
-  // TFLAG:0 == 1 与 TFLAG:1 == 1 同置（指令 31，口臂有话说）：只落口臂
+  // TFLAG:0 == 1 与 TFLAG:1 == 1 同置（指令 31，口分支有话说）：只落口分支
   const both = seed_message_world();
   both.era_flag.selectcom = 31;
   both.fixture.store.set('tflag:0', 1);
@@ -1113,11 +1111,11 @@ test('A 射精链：先命中先落——口胜手、手胜放置 PLAY', async (
     !both.fixture
       .text_lines()
       .some((line) => line.includes('精液射到温妮的身上了')),
-    '口臂命中后手臂整条跳过（ELSEIF 语义）',
+    '口分支命中后手分支整条跳过（ELSEIF 语义）',
   );
 
-  // 同两旗标、指令 0（口臂对 0 号指令无话）：**手臂一样不出声**——
-  // 链已被口臂吃掉，这正是「先命中先落」与「两段独立」的区别
+  // 同两旗标、指令 0（口分支对 0 号指令无话）：**手分支一样不出声**——
+  // 链已被口分支吃掉，这正是「先命中先落」与「两段独立」的区别
   const silent = seed_message_world();
   silent.fixture.store.set('tflag:0', 1);
   silent.fixture.store.set('tflag:1', 1);
@@ -1127,7 +1125,7 @@ test('A 射精链：先命中先落——口胜手、手胜放置 PLAY', async (
     '温妮把身体扭来扭去、好像没有感觉到快感的样子。',
   ]);
 
-  // TFLAG:1 == 1 与 SELECTCOM == 55 同置：链只落手臂（55 支整条跳过）
+  // TFLAG:1 == 1 与 SELECTCOM == 55 同置：链只落手分支（55 支整条跳过）
   const play = seed_message_world();
   play.era_flag.selectcom = 55;
   play.fixture.store.set('tflag:1', 1);
@@ -1144,15 +1142,15 @@ test('A 射精链：先命中先落——口胜手、手胜放置 PLAY', async (
   );
 });
 
-// —— @TRAIN_MESSAGE_A 公共段：性交射精链（:456-606）——
+// —— TRAIN_MESSAGE_A 公共段：性交射精链 ——
 //
-// 一条 IF/ELSEIF 链：CFLAG:113 乳内射精（TFLAG:2 == 1/2 各一支，1 臂还要求
-// SELECTCOM == 90）→ TFLAG:2 == 1 / == 2 两臂 → ELSE 绝顶余韵（TFLAG:29
-// 分档）。TFLAG:2 的两臂各自再按 `PALAM:5 < PALAMLV:4 || TFLAG:31` 分
+// 一条 IF/ELSEIF 链：CFLAG:113 乳内射精（TFLAG:2 == 1/2 各一支，1 分支还要求
+// SELECTCOM == 90）→ TFLAG:2 == 1 / == 2 两分支 → ELSE 绝顶余韵（TFLAG:29
+// 分档）。TFLAG:2 的两分支各自再按 `PALAM:5 < PALAMLV:4 || TFLAG:31` 分
 // 「抽出」（清 TFLAG:31/60）与「插着」（不清）两张 SELECTCOM 子表。
 
 /**
- * 公共段的前缀判据（#402）：同一世界跑两遍——先按 silence 把公共段调成
+ * 公共段的前缀条件（#402）：同一世界跑两遍——先按 silence 把公共段调成
  * 静默取基线，再按 apply 铺目标态跑一遍，断言输出恰好是「期望行 + 基线」。
  * 既拦「少打一行」也拦「多打一行」。
  */
@@ -1170,7 +1168,7 @@ async function expect_common_lines(world, silence, apply, expected) {
 
 /** TFLAG:2 链的维度表：arm（1 抽出 / 1 插着 / 2 抽出 / 2 插着）× 指令。 */
 const TF2_CASES = [
-  // —— TFLAG:2 == 1 · 抽出臂（PALAM:5 < PALAMLV:4）——
+  // —— TFLAG:2 == 1 · 抽出分支（PALAM:5 < PALAMLV:4）——
   ['1', '抽出', 20, '阴茎拔出后、阴部处精液渗出来了…'],
   ['1', '抽出', 22, '阴茎拔出后、阴部处精液渗出来了…'],
   ['1', '抽出', 21, '阴茎拔出后、阴部处精液滴出来了…'],
@@ -1186,7 +1184,7 @@ const TF2_CASES = [
   ['1', '抽出', 130, '直接对温妮的子宫、注入了热乎乎的精液…'],
   ['1', '抽出', 134, '直接对温妮的子宫、注入了热乎乎的精液…'],
   ['1', '抽出', 120, '对准温妮私处内那最敏感的那一点、你射出了精液…'],
-  // —— TFLAG:2 == 1 · 插着臂（PALAM:5 ≥ PALAMLV:4）——
+  // —— TFLAG:2 == 1 · 插着分支（PALAM:5 ≥ PALAMLV:4）——
   [
     '1',
     '插着',
@@ -1204,7 +1202,7 @@ const TF2_CASES = [
   ['1', '插着', 120, '对准温妮私处内那最敏感的那一点、你射出了精液…'],
   ['1', '插着', 24, '你被精液灌满的私处、轻轻蠕动着、把温妮的阴茎紧紧缠住了…'],
   ['1', '插着', 0, '温妮被精液灌满的私处、轻轻蠕动着、把你的阴茎紧紧缠住了…'],
-  // —— TFLAG:2 == 2 · 抽出臂 ——
+  // —— TFLAG:2 == 2 · 抽出分支 ——
   ['2', '抽出', 20, '阴茎拔出后、阴部处、大量的精液渗出来了…'],
   ['2', '抽出', 21, '阴茎拔出后、阴部处、大量的精液滴出来了…'],
   ['2', '抽出', 26, '从肛门里漏出大量的精液沿着股沟向下流………'],
@@ -1221,7 +1219,7 @@ const TF2_CASES = [
   ],
   ['2', '抽出', 121, '直接对温妮的子宫、注入了大量热乎乎的精液…'],
   ['2', '抽出', 120, '对准温妮私处内那最敏感的那一点、你射出了大量的精液…'],
-  // —— TFLAG:2 == 2 · 插着臂 ——
+  // —— TFLAG:2 == 2 · 插着分支 ——
   [
     '2',
     '插着',
@@ -1279,7 +1277,7 @@ TF2_CASES.forEach(([level, mode, com, lines, opts = {}], index) => {
   });
 });
 
-test('A 性交射精链：抽出臂的落红改写与 TFLAG:31/60 清零', async () => {
+test('A 性交射精链：抽出分支的落红改写与 TFLAG:31/60 清零', async () => {
   // TFLAG:31 置位 → 前缀换成「渗出了处女的落红、混合着」
   const blood = seed_message_world();
   blood.era_flag.selectcom = 20;
@@ -1292,10 +1290,10 @@ test('A 性交射精链：抽出臂的落红改写与 TFLAG:31/60 清零', async
     },
     ['阴茎拔出后、阴部处渗出了处女的落红、混合着精液渗出来了…'],
   );
-  assert.equal(blood.fixture.store.get('tflag:31'), 0, '抽出臂清 TFLAG:31');
-  assert.equal(blood.fixture.store.get('tflag:60'), 0, '抽出臂清 TFLAG:60');
+  assert.equal(blood.fixture.store.get('tflag:31'), 0, '抽出分支清 TFLAG:31');
+  assert.equal(blood.fixture.store.get('tflag:60'), 0, '抽出分支清 TFLAG:60');
 
-  // 大量臂的 24 支：前缀与收尾两句都带落红
+  // 大量分支的 24 支：前缀与收尾两句都带落红
   const heavy = seed_message_world();
   heavy.era_flag.selectcom = 24;
   await expect_common_lines(
@@ -1311,7 +1309,7 @@ test('A 性交射精链：抽出臂的落红改写与 TFLAG:31/60 清零', async
     ],
   );
 
-  // 插着臂**不**清（源侧只有抽出臂写 TFLAG:31/60）
+  // 插着分支**不**清（只有抽出分支写 TFLAG:31/60）
   const kept = seed_message_world();
   kept.era_flag.selectcom = 28;
   kept.fixture.store.set('palam:31:5', 10000);
@@ -1319,10 +1317,10 @@ test('A 性交射精链：抽出臂的落红改写与 TFLAG:31/60 清零', async
   kept.fixture.store.set('tflag:60', 1);
   kept.fixture.lines.length = 0;
   await kept.train_message_a();
-  assert.equal(kept.fixture.store.get('tflag:60'), 1, '插着臂不动 TFLAG:60');
+  assert.equal(kept.fixture.store.get('tflag:60'), 1, '插着分支不动 TFLAG:60');
 });
 
-test('A 性交射精链：乳内射精（CFLAG:113）两支 + 1 臂还要求指令 90', async () => {
+test('A 性交射精链：乳内射精（CFLAG:113）两支 + 1 分支还要求指令 90', async () => {
   const one = seed_message_world();
   one.era_flag.selectcom = 90;
   await expect_common_lines(
@@ -1335,7 +1333,7 @@ test('A 性交射精链：乳内射精（CFLAG:113）两支 + 1 臂还要求指�
     ['你的肉棒在温妮的乳房里激烈的颤抖着、在乳头肉穴的深处释放了精液…'],
   );
 
-  // 1 臂带 CFLAG:113 但指令不是 90 → 落普通臂（源侧首个 IF 要求 SELECTCOM == 90）
+  // 1 分支带 CFLAG:113 但指令不是 90 → 落普通分支（链首条件要求 SELECTCOM == 90）
   const other = seed_message_world();
   other.era_flag.selectcom = 20;
   await expect_common_lines(
@@ -1348,7 +1346,7 @@ test('A 性交射精链：乳内射精（CFLAG:113）两支 + 1 臂还要求指�
     ['阴茎拔出后、阴部处精液渗出来了…'],
   );
 
-  // 2 臂的乳内支没有指令门
+  // 2 分支的乳内支没有指令条件
   const heavy = seed_message_world();
   heavy.era_flag.selectcom = 20;
   await expect_common_lines(
@@ -1365,7 +1363,7 @@ test('A 性交射精链：乳内射精（CFLAG:113）两支 + 1 臂还要求指�
 });
 
 /**
- * 公共绝顶段（:377-424）在「无射精、无母乳、非两性人」的干净世界里的那一行
+ * 公共绝顶段在「无射精、无母乳、非两性人」的干净世界里的那一行
  * ——按 TFLAG:29 分三档（< 5 无爱液、5-8 透明、≥ 9 白浊）。别处要用它把
  * 「绝顶行在公共段之前」这条行序一起断言进去。
  */
@@ -1378,9 +1376,9 @@ function orgasm_line(orgasms) {
 }
 
 /**
- * 性交射精链 ELSE 支（绝顶余韵，:592-605）在干净世界里的那一行——本段
+ * 性交射精链 ELSE 支（绝顶余韵）在干净世界里的那一行——本段
  * TFLAG:2 为 0（没在射精）而 TFLAG:29 ≥ 3 时它先于失禁段输出，凡是靠
- * TFLAG:29 立判据的用例都要把它排进去。「滴液」两支要求 TFLAG:19 且
+ * TFLAG:29 立条件的用例都要把它排进去。「滴液」两支要求 TFLAG:19 且
  * 未穿衣，本文件的用例都不满足，故只按 TFLAG:29 的 9/5/3 三档取件。
  */
 function afterglow_line(orgasms) {
@@ -1392,8 +1390,8 @@ function afterglow_line(orgasms) {
 }
 
 test('A 性交射精链 ELSE 支：绝顶余韵的五档（TFLAG:29 × 私处反应）', async () => {
-  // 公共绝顶段（:377-424）先于本链输出，故断言要连它一起排：[绝顶行, 余韵行]。
-  // 绝顶行逐字来自源 :377-424（本文件别处已有专条，这里用它钉行序）。
+  // 公共绝顶段先于本链输出，故断言要连它一起排：[绝顶行, 余韵行]。
+  // 绝顶行逐字钉死（本文件别处已有专条，这里用它钉行序）。
   // [TFLAG:29, 追加状态, 余韵行（null = 该档不落余韵行）]
   const cases = [
     [2, {}, null],
@@ -1461,9 +1459,9 @@ test('A 性交射精链 ELSE 支：绝顶余韵的五档（TFLAG:29 × 私处反
   }
 });
 
-// —— @TRAIN_MESSAGE_A 公共段：失禁与放尿（:611-677）——
+// —— TRAIN_MESSAGE_A 公共段：失禁与放尿 ——
 //
-// 一条 IF/ELSEIF 链：先是失神中的两档（TFLAG:899 ≥ 2），再是四组衣着形态
+// 一条 IF/ELSEIF 链：先是失神中的两档（TFLAG:899 ≥ 2），再是四组衣着形式
 // （尿布 CFLAG:42 == 69 / 着ぐるみ == 11 / 服 CFLAG:40 & 16 / 内裤 & 1）
 // 各带「放尿」与「失禁」两支，最后是裸身按 TFLAG:29 的十档。
 // 尿具 = TEQUIP:22（利尿剂）或 TALENT:57（漏尿癖）；衣着两组的「放尿」支
@@ -1656,7 +1654,7 @@ URINE_CASES.forEach(([desc, extra, lines], index) => {
         }
       },
       [
-        // 非失神行下公共绝顶段（:377-424）与射精链的余韵支（:592-605）先落
+        // 非失神行下公共绝顶段与射精链的余韵支先落
         ...(fainted
           ? []
           : [
@@ -1669,7 +1667,7 @@ URINE_CASES.forEach(([desc, extra, lines], index) => {
   });
 });
 
-test('A 失禁段：衣着形态的链序（尿布位胜过服位）', async () => {
+test('A 失禁段：衣着形式的链序（尿布位胜过服位）', async () => {
   // CFLAG:40 同时有 64（尿布/着ぐるみ位）与 16（服位）时，链上先命中的是尿布
   const world = seed_message_world();
   await expect_common_lines(
@@ -1693,15 +1691,15 @@ test('A 失禁段：衣着形态的链序（尿布位胜过服位）', async () 
   );
 });
 
-// —— @TRAIN_MESSAGE_A 公共段：处女丧失与口交清洁（:682-741）——
+// —— TRAIN_MESSAGE_A 公共段：处女丧失与口交清洁 ——
 //
-// 三处 SIF 加一条近亲链：触手夺处（TFLAG:15 == 1）、无射精夺处（TFLAG:2 == 0
+// 三处前置判断加一条近亲链：触手夺处（TFLAG:15 == 1）、无射精夺处（TFLAG:2 == 0
 // 且 TFLAG:15 == 0）、近亲夺处（TFLAG:14 的 1/2/3/4/6 × 主人性别）、野狗夺处
 // （TEQUIP:89），再是口交射精后的清洁段（TFLAG:8）。
 
 test('A 处女丧失段：触手夺处（TFLAG:15 == 1）', async () => {
   const world = seed_message_world();
-  // 死斗场旗标置位 → TFLAG:15 段（:115-146）对指令 0 不落行，两侧同态
+  // 死斗场旗标置位 → TFLAG:15 段对指令 0 不落行，两侧同态
   world.fixture.store.set('tequip:31:55', 1);
   await expect_common_lines(
     world,
@@ -1725,7 +1723,7 @@ test('A 处女丧失段：无射精夺处（TFLAG:2 == 0 且 TFLAG:15 == 0）', 
     ['温妮的阴部上、滴出了处女才有的落红…'],
   );
 
-  // TFLAG:2 == 1（本轮有射精）时这一支不发：两侧都置射精态，靶侧只多出
+  // TFLAG:2 == 1（本轮有射精）时这一支不发：两侧都置射精态，目标侧只多出
   // 「把 TFLAG:3 打开」这一步，故期望为空（差一行就红）
   const shot = seed_message_world();
   await expect_common_lines(
@@ -1769,7 +1767,7 @@ test('A 处女丧失段：近亲夺处十支（TFLAG:14 × 主人性别）', asy
         }
       },
       [
-        // 「无射精夺处」那一支（:688-689）与近亲句并存，两侧都是 SIF
+        // 「无射精夺处」那一支与近亲句并存，两侧都是 SIF
         '温妮的阴部上、滴出了处女才有的落红…',
         `温妮被${title}你夺取了她的处女。`,
       ],
@@ -1912,7 +1910,7 @@ test('A 口交清洁段：双人口交支与普通支的四档拼法（TFLAG:8�
   );
 });
 
-// —— @TRAIN_MESSAGE_A 公共绝顶段的射精子链（:427-450）——
+// —— TRAIN_MESSAGE_A 公共绝顶段的射精子链 ——
 
 test('A 绝顶子链：逆强奸/逆肛交/口交 × 普通与大量六支', async () => {
   // [指令, TFLAG:10, TFLAG:31, 期望行]——绝顶行（:377-424）先落
@@ -1979,7 +1977,7 @@ test('A 绝顶子链：逆强奸/逆肛交/口交 × 普通与大量六支', asy
   );
 });
 
-// —— 注册完整性的棘轮（#565 返工第 6 条：缺号零输出后，漏注册不再有占位兜底）——
+// —— 注册完整性的棘轮（#565 返工第 6 条：缺号零输出后，漏注册不再有占位缺省）——
 
 test('A/B 两族装载全部 com-*.js 后 missing() 为空（声明空间全数有主）', () => {
   const fs = require('node:fs');
@@ -1999,11 +1997,11 @@ test('A/B 两族装载全部 com-*.js 后 missing() 为空（声明空间全数�
   assert.deepEqual(
     train_message_a_family.missing(),
     [],
-    'A 族漏注册：缺号已按原作归为零输出，漏掉的指令会静默吞掉整段消息',
+    'A 族漏注册：缺号已归为零输出，漏掉的指令会静默吞掉整段消息',
   );
   assert.deepEqual(
     train_message_b_family.missing(),
     [],
-    'B 族漏注册：同上（源侧无分支的号是显式空注册，不占 missing）',
+    'B 族漏注册：同上（无分支的号是显式空注册，不占 missing）',
   );
 });

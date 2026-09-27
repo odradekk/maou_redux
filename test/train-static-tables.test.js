@@ -1,7 +1,7 @@
 /**
  * @file 调教域静态表的引擎行为测试（issue #43；#640 起只留 yml 侧行为）。
  *
- * 不用夹具（记录层证明不了「引擎接受」），不用自写镜像（会漂移），全部经
+ * 不用夹具（记录层证明不了「引擎接受」），不用自写镜像（会与引擎不一致），全部经
  * test/helpers/engine-bundle.js 驱动 app.asar 里的 parseDataFile 与 eraStart
  * 变量表装载分支（转写），钉住：
  *   1. **Juel 不单独成表**：装载循环里 param/palam 两个文件名落到同一
@@ -9,7 +9,7 @@
  *      受保护表名，警告后不读），寻址层 palam/param/jewel 同查它；
  *   2. **调教指令表叫 traincommand**：train 是引擎弃用表名（装载时警告并
  *      跳过）、trainname 会被寻址层的 name 后缀规则拆成「train 表的名字
- *      查询」而 train 表不存在（寻址落到兜底分支、引擎报 key error in
+ *      查询」而 train 表不存在（寻址落入缺省分支、引擎报 key error in
  *      getter/setter）——#5 的 Train.yml 与 #10 的 TrainName.yml 都是死表。
  *
  * 引擎不在场（无 app.asar）时整文件 skip 并留警告。
@@ -54,7 +54,7 @@ engine_test(
     assert.equal(loader.static_data.palam, undefined);
     assert.equal(loader.static_data.juel['阴核'], 0);
     assert.equal(loader.static_data.juel['否定'], 100);
-    // 开发套件键 k 的缺省前缀是 param（引擎 param/palam 分支原文），不是表名
+    // 开发套件键 k 的缺省前缀是 param（引擎 param/palam 装载分支如此），不是表名
     assert.deepEqual(loader.field_names.juel[0], {
       n: '阴核',
       k: 'param0',
@@ -127,7 +127,7 @@ engine_test(
     };
     // 指令菜单渲染的三种读法：按序号取值、按名称翻序号、按序号取名称。
     // 表名若叫 train（弃用名）产物整个不装载；若叫 trainname（name 后缀
-    // 被寻址层拆解）前两种落到引擎兜底分支报 key error——两者都给不出这三行断言
+    // 被寻址层拆解）前两种落入引擎缺省分支报 key error——两者都给不出这三行断言
     assert.equal(engine.set_var.call(fake_this, 'traincommand:0'), 7);
     assert.equal(
       engine.set_var.call(fake_this, 'traincommand:爱抚'),

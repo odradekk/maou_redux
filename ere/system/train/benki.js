@@ -1,35 +1,33 @@
 /**
- * @file 肉便器系统：@BENKI（全角色每日肉便器业务）、@SELECT_BENKI_MENU /
- * @NAME_BENKI_MENU / @GET_EXP_BENKI_MENU（战斗肉便器三段）与
- * @BENKI_PLAYER_NAME（侍奉对象名）的真身（issue #217，J7）。
+ * @file 肉便器系统：run_benki（全角色每日肉便器业务）、select_benki_menu /
+ * name_benki_menu / get_exp_benki_menu（战斗肉便器三段）与
+ * benki_player_name（侍奉对象名）（issue #217，J7）。
  *
  * == 调用点（全库已查实） ==
  *
- *   - @BENKI 由 @EVENTTURNEND 普通档逐角色调用（SYSTEM ver1.0.3.ERB:729，
- *     ere/system/turnend-settle.js——本票把 stub_line 换成 run_benki）；
- *   - @SELECT_BENKI_MENU / @NAME_BENKI_MENU / @GET_EXP_BENKI_MENU 由
- *     DUNGEON_BATLLE.ERB 的战斗调用（:565/:653/:819/:873，ere/dungeon/
- *     dungeon-battle.js——本票把三个存根换成真身）；
- *   - @BENKI_KOUJO（肉便器口上）由 @BENKI 在五个分支配对后调用（:591/
- *     :808/:982/:1128/:1310）——**属轴 B 的口上票（#210 裁定 2）**，本票
- *   - @BENKI_PLAYER_NAME 是 @BENKI 内部的行内名字函数（读 FLAG:64），
- *     @BENKI_KOUJO 之外的口上文件（K0/K3/K12 等）也会调它读 FLAG:64——
- *     ere 侧真身随本票，口上票直接 require 使用。
+ *   - run_benki 由回合结算的普通档逐角色调用（ere/system/turnend-settle.js）；
+ *   - select_benki_menu / name_benki_menu / get_exp_benki_menu 由地下城
+ *     战斗调用（ere/dungeon/dungeon-battle.js）；
+ *   - benki_koujo（肉便器口上）由 run_benki 在五个分派段各调用一次——
+ *     口上内容归口上工单（#210 决定 2）；
+ *   - benki_player_name 是 run_benki 内部的行内名字函数（读 FLAG:64），
+ *     benki_koujo 之外的口上文件（K0/K3/K12 等）也会调它读 FLAG:64，
+ *     直接 require 使用。
  *
  * == 文本约定 ==
  *
- * 玩家可见文本按 #60 归一简体（源文件繁简混用）。@GET_EXP_BENKI_MENU 的
- * %PALAMNAME:LOCAL% 由 era.get(`palamname:${idx}`) 取引擎静态表列名
- * （page-info-exp 先例；BENKI 写的 0/1/2/5/6/7 全部在 yml/Palam.yml 在册）。
- * 输出行与换行语义：PRINT 不换行、PRINTL/PRINTFORML 换行——同一显示行的
- * 拼接归并为一次 era.print（dungeon-battle 先例）；PRINTW = print + 等键
- * （printAndWait 内部即这两步，夹具统一走 waitAnyKey 观测）。WAIT 在
- * 演出中段出现（:491）——等键与分行照演出原样保留。
+ * 玩家可见文本按 #60 归一简体。get_exp_benki_menu 输出的参数名由
+ * era.get(`palamname:${idx}`) 取引擎静态表列名（page-info-exp 先例；
+ * 写到的 0/1/2/5/6/7 全部在 yml/Palam.yml 在册）。
+ * 输出行与换行语义：era 的 print 每次调用独占一行、没有续写同一行的
+ * 等价物，同一显示行的片段归并为一次输出（dungeon-battle 先例）；输出
+ * 后等键用 printAndWait（内部即输出＋等键两步，夹具统一以 waitAnyKey
+ * 观测）；演出中段另有单独等键点，等键与分行位置照演出原样保留。
  *
  * == 随机源 ==
  *
- * RAND:N → rand_n(N)（[0, n) 整数，缺省均匀随机；SELECT_BENKI_MENU 的
- * RAND:DICE 经参数注入，测试用定值序固定分支——kojo 同款先例）。
+ * 随机数取 [0, n) 整数，缺省均匀随机，经 rand_n 参数注入；select_benki_menu
+ * 的骰子序列同一注入，测试用定值序固定分支——kojo 同款先例。
  *
  * == 域边界（#71 门面） ==
  *
@@ -42,7 +40,7 @@
  *   - flag:62/64 属主 train，域内直写（era.set 裸寻址合法）；
  *   - juel 无所有权产物（#70 未测量）——读写不判定，裸 era.set 即合法
  *     （dungeon-after 先例）。
- *   - **TEQUIP 只读不写**（建模归 J5，#215；本票只有守卫判定读取）。
+ *   - **TEQUIP 只读不写**（建模归 J5，#215；这里只有判定读取）。
  *   - BASE:0/1 只读（体力/气力门槛）。
  */
 
@@ -56,22 +54,22 @@ const { v_able } = require('#/system/train/v-able');
 const { chara_callname } = require('#/utils/callname-utils');
 const { benki_koujo } = require('#/kojo/kojo-system');
 
-/** 原作 RAND:N（0..N-1）的缺省实现 */
+/** 返回 [0, n) 均匀整数的缺省随机源 */
 function default_rand(n) {
   return Math.floor(Math.random() * n);
 }
 
-/** SAVESTR:x 的读数源（#5 决议：本作里 = 名前） */
+/** 名字读取（#5 决议：本作里 = 名前） */
 function name_of(cid) {
   return chara_callname(cid);
 }
 
-/** SHE(ARG) 代词（魔改新增/文本校正.ERB :1-7 的三行纯函数，BENKI 内联同款） */
+/** 第三人称代词（TALENT:122 男人取「他」、否则「她」） */
 function she(cid) {
   return (era.get(`talent:${cid}:122`) || 0) !== 0 ? '他' : '她';
 }
 
-/** 素质读取助手（带 || 0 兜底，#13） */
+/** 素质读取助手（带 || 0 的缺省处理，#13） */
 function t(cid, idx) {
   return era.get(`talent:${cid}:${idx}`) || 0;
 }
@@ -102,25 +100,25 @@ function flag63() {
 }
 
 /**
- * @BENKI（BENKI.ERB:2-1356）：肉便器业务（全角色每回合）。
+ * run_benki：肉便器业务（全角色每回合）。
  *
- * 流程：门槛（角色/素质/体力/状态/育儿）→ 内容与人数清算（BENKI_MENU
- * 8 源 + PLAY 人数）→ 行动分派（配信 / 兽奸 / 奉仕 / 同性爱 / 一般）→
- * 每分派各输出演出、口上（BENKI_KOUJO 存根）、珠/经验结算。
+ * 流程：门槛（角色/素质/体力/状态/育儿）→ 内容与人数清算（menu 8 槽 +
+ * PLAY 人数）→ 行动分派（配信 / 兽奸 / 奉仕 / 同性爱 / 一般）→
+ * 每分派各输出演出、口上（benki_koujo）、珠/经验结算。
  *
- * @param {number} arg 角色 ID（原作 ARG:0）
- * @param {(n: number) => number} [rand_n] RAND:N 随机源（RAND:4 的 PLAY 加算）
- * @returns {Promise<number>} 原作 RETURN 0
+ * @param {number} arg 角色 ID
+ * @param {(n: number) => number} [rand_n] 随机源（[0, n) 整数；人数加算用 rand_n(4)）
+ * @returns {Promise<number>} 恒 0
  */
 async function run_benki(arg, rand_n = default_rand) {
-  // —— :4-6 指针与局部数组 ——
-  const target_pool = era_flag.target; // TARGET_POOL = TARGET
+  // —— 指针暂存与局部数组 ——
+  const target_pool = era_flag.target; // 暂存进入前的 TARGET，出口还原
 
-  // BENKI_MENU（:4 #DIM BENKI_MENU,10）：0 奉仕 / 1 V / 2 A / 3 同性爱 /
-  // 4 兽奸 / 5 露出 / 6 视频 / 7 自慰（8/9 无人消费，照原作留 0）
-  const menu = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; // BENKI_MENU:0 = 0,0,...
+  // 行动菜单数组（10 槽）：0 奉仕 / 1 V / 2 A / 3 同性爱 /
+  // 4 兽奸 / 5 露出 / 6 视频 / 7 自慰（8/9 无人消费，保留为 0）
+  const menu = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  // —— :26-30 魔王除外 / 非肉便器除外 ——
+  // —— 魔王除外 / 非肉便器除外 ——
   if (arg === 0) {
     return 0; // 魔王様は除外
   }
@@ -128,7 +126,7 @@ async function run_benki(arg, rand_n = default_rand) {
     return 0; // 肉便器以外は除外（TALENT:204 肉便器）
   }
 
-  // —— :33-36 気力・体力による制限 ——
+  // —— 気力・体力による制限 ——
   if ((era.get(`base:${arg}:0`) || 0) < 300) {
     return 0; // BASE:0 < 300
   }
@@ -136,26 +134,26 @@ async function run_benki(arg, rand_n = default_rand) {
     return 0; // BASE:1 < 100
   }
 
-  // —— :38-40 調教中以外除去 ——
+  // —— 調教中以外除去 ——
   if ((era.get(`cflag:${arg}:1`) || 0) !== 0) {
     return 0; // CFLAG:1 != 0（占用状态：待机 0/1 之外不结算）
   }
 
-  // 男人除外（源注释态，不移植——1:1 保持不调用）
+  // 男人除外：不调用
   // 育儿中は除外
   if (t(arg, 154)) {
     return 0; // TALENT:育儿中（154）
   }
 
-  // —— :50-52 空行 + 分隔线 ——
-  // BENKI.ERB:50 的裸 PRINTL 落在函数开头（前一条输出已收行）→ 真空行（#595）
+  // —— 空行 + 分隔线 ——
+  // 开头的空内容输出只收尾上一行（前一条输出已收行）→ 真空行（#595）
   era.print('');
   era.drawLine();
 
   // FLAG:62 = -1（行动内容初始）
   era.set('flag:62', -1);
 
-  // —— :62-78 常識改変フラグ（FLAG:63）——属主 dungeon，写走门面 ——
+  // —— 常識改変フラグ（FLAG:63）——属主 dungeon，写走门面 ——
   game.dungeon.肉便器常识改写 = 0; // FLAG:63 = 0
   if (t(arg, 283) > 0) {
     game.dungeon.肉便器常识改写 = 1; // 常識改変【日常】
@@ -164,7 +162,7 @@ async function run_benki(arg, rand_n = default_rand) {
   // 初期人数1人
   let play = 1;
 
-  // —— :94-193 素質による補正 ——
+  // —— 素質による補正 ——
   if (t(arg, 0)) {
     menu[1] -= 20; // 处女（V減少）
   }
@@ -202,7 +200,7 @@ async function run_benki(arg, rand_n = default_rand) {
     menu[1] -= 20; // 私处封印（V減少）
   }
 
-  // —— :132-155 能力値 ——
+  // —— 能力値 ——
   menu[1] += abl(arg, 2); // V感覚（V）
   menu[2] += abl(arg, 3); // A感覚（A）
   menu[6] += abl(arg, 15); // 话术（视频）
@@ -211,7 +209,7 @@ async function run_benki(arg, rand_n = default_rand) {
   menu[3] += abl(arg, 33); // 百合中毒（同性爱）
   menu[4] += abl(arg, 39); // 兽奸中毒（兽奸）
 
-  // —— :149-171 特殊な経験の有無 ——
+  // —— 特殊な経験の有無 ——
   if (exp(arg, 21)) {
     menu[0] += 1; // 侍奉快乐经验（奉仕）
   }
@@ -234,7 +232,7 @@ async function run_benki(arg, rand_n = default_rand) {
     menu[6] += 3; // 50回を超える拍摄经验（视频）
   }
 
-  // —— :174-176 服装による趣向（貞操帯，V減少） ——
+  // —— 服装による趣向（貞操帯，V減少） ——
   if (
     (era.get(`cflag:${arg}:42`) || 0) === 79 &&
     ((era.get(`cflag:${arg}:40`) || 0) & 64) !== 0 &&
@@ -243,7 +241,7 @@ async function run_benki(arg, rand_n = default_rand) {
     menu[1] -= 20; //
   }
 
-  // —— :181-193 常識改変効果 ——
+  // —— 常識改変効果 ——
   if (t(arg, 283) === 1) {
     menu[0] += 3; // 物乞い奉仕（奉仕）
   } else if (t(arg, 283) === 2) {
@@ -256,7 +254,7 @@ async function run_benki(arg, rand_n = default_rand) {
     menu[4] += 3; // 獣姦マニア（兽奸）
   }
 
-  // —— :196-225 共通の PLAY 補正 ——
+  // —— 共通の PLAY 補正 ——
   if (t(arg, 31)) {
     play += 1; // 看轻贞操
   }
@@ -275,9 +273,9 @@ async function run_benki(arg, rand_n = default_rand) {
   play += abl(arg, 21); // 抖M气质
   play += rand_n(4); // ランダムボーナス
 
-  // —— :228-240 プレイ内容の判定（钳位 + 人数加算）——
+  // —— プレイ内容の判定（钳位 + 人数加算）——
   for (let i = 0; i < 10; i += 1) {
-    // BENKI_MENU:(LOCAL:1) 钳 0..9
+    // 各槽钳 0..9
     menu[i] = Math.min(menu[i], 9);
     menu[i] = Math.max(menu[i], 0);
     play += menu[i]; // ついでにボーナス
@@ -286,7 +284,7 @@ async function run_benki(arg, rand_n = default_rand) {
   // 未確定の相手
   era.set('flag:64', -1);
 
-  // —— :243-346 配信分岐（BENKI_MENU:6 >= 3 视频源足 → 配信系）——
+  // —— 配信分派（menu[6] >= 3 视频源足 → 配信系）——
   if (menu[6] >= 3) {
     if (menu[4] >= 3) {
       era.set('flag:62', 7); // 兽奸配信
@@ -328,7 +326,7 @@ async function run_benki(arg, rand_n = default_rand) {
     era.set('flag:62', 6); // その他。フェラ便器
   }
 
-  // —— :393-400 未定の相手を確定 ——
+  // —— 未定の相手を確定 ——
   if (flag64() === -1) {
     if (t(arg, 283) === 1) {
       era.set('flag:64', 8); // 物乞い常識改変
@@ -343,7 +341,7 @@ async function run_benki(arg, rand_n = default_rand) {
     }
   }
 
-  // —— :411-421 自慰系源（BENKI_MENU:7）——
+  // —— 自慰系源（menu[7]）——
   if (t(arg, 60)) {
     menu[7] += 1; // 容易自慰
   }
@@ -355,7 +353,7 @@ async function run_benki(arg, rand_n = default_rand) {
     menu[7] += 1; // 自慰经验
   }
 
-  // —— :426-491 実行（开头演出段）——
+  // —— 実行（开头演出段）——
   // 妊娠系前置（三素质 → 三句）
   const pregnant_head = () => {
     let s = '';
@@ -366,13 +364,13 @@ async function run_benki(arg, rand_n = default_rand) {
       s += '乳房不时胎动着的'; // 乳内妊娠
     }
     if (t(arg, 262)) {
-      s += '性器不时鼓动着的'; // 精巣妊娠（触手 262 复用原作拼写）
+      s += '性器不时鼓动着的'; // 精巣妊娠（文案与触手 262 共用）
     }
     return s;
   };
 
   let line = pregnant_head();
-  // %FS_BITCH("LOOKS", ARG)%正——LOOKS 是本人描写串（#185 真身）
+  // 本人外貌描写串 + 「正」（fs_bitch_looks，#185）
   line += `${fs_bitch_looks(arg, rand_n)}正`;
 
   // 常識改変
@@ -393,7 +391,7 @@ async function run_benki(arg, rand_n = default_rand) {
     play += 1;
   }
 
-  // —— :468-491 説明（～をした）——
+  // —— 説明（～をした）——
   const action = {
     0: '成为了', // 最下層モンスター奉仕（接名字 + 们的肉便器。）
     1: '成为了性欲旺盛的淫魔们当做了性处理工具。',
@@ -413,17 +411,17 @@ async function run_benki(arg, rand_n = default_rand) {
   if (f62 === 0) {
     line += `成为了${benki_player_name()}们的肉便器。`;
   } else {
-    line += action[f62] ?? '自慰着。'; // ELSE 自慰
+    line += action[f62] ?? '自慰着。'; // 其余自慰
   }
   era.print(line);
-  await era.waitAnyKey(); // WAIT
+  await era.waitAnyKey(); // 等键
 
-  // —— :495-577 第二演出段 ——
+  // —— 第二演出段 ——
   line = pregnant_head();
   if (menu[6] >= 3) {
     line += '水晶球播放了，'; //
   }
-  line += `${name_of(arg)}在`; // %SAVESTR:(ARG:0)%在
+  line += `${name_of(arg)}在`;
 
   // いつ？
   line += f62 === 9 ? '人来人往的白天，' : '深夜，';
@@ -476,7 +474,7 @@ async function run_benki(arg, rand_n = default_rand) {
   } else {
     line += '任';
   }
-  line += benki_player_name(); // CALL BENKI_PLAYER_NAME
+  line += benki_player_name();
 
   // どうした？
   if (f62 === 11) {
@@ -499,7 +497,7 @@ async function run_benki(arg, rand_n = default_rand) {
     line += '兴奋地肛交着'; //
   }
 
-  // 结尾（PRINTW = 等待）
+  // 结尾（输出后等键）
   line += menu[6] >= 3 ? '的样子被拍下来了…' : '…';
   era.print(line);
   await era.waitAnyKey();
@@ -512,11 +510,11 @@ async function run_benki(arg, rand_n = default_rand) {
     play = 1;
   }
 
-  // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
+  // 口上前把 TARGET 切到本角色
   era_flag.target = arg;
   await benki_koujo();
 
-  // —— :624-757 配信清算（BENKI_MENU:6 >= 3）——
+  // —— 配信清算（menu[6] >= 3）——
   if (menu[6] >= 3) {
     era.print(`${name_of(arg)}共${clear_line(f62, play)}`);
 
@@ -584,7 +582,7 @@ async function run_benki(arg, rand_n = default_rand) {
 
     // 配信清算段的 JUEL 加算在 juel_settle 内（见下）
   } else if (menu[4] >= 3) {
-    // —— :712-861 兽奸便器分派 ——
+    // —— 兽奸便器分派 ——
     era.set('flag:62', 2); //
     era.set('flag:64', 2); //
 
@@ -611,8 +609,8 @@ async function run_benki(arg, rand_n = default_rand) {
       s += '不断摩擦着魔兽的阴茎，';
       play += menu[0]; // 奉仕ボーナス
     }
-    // 奴隷の様子（:765-776）——上面 :741-763 的名字句 + 穴句是 PRINTFORM
-    // 拼行，由様子的 PRINTFORML 收尾：同一条显示行（#620：此前様子另起一行）
+    // 奴隷の様子——上面的名字句 + 穴句与这句拼成同一条显示行（#620：
+    // 此前様子另起一行）
     s += t(arg, 9)
       ? '浮现出被玩坏的痴笑。' // 崩坏
       : t(arg, 136)
@@ -632,7 +630,7 @@ async function run_benki(arg, rand_n = default_rand) {
     // 噂（兽奸）
     era.print(beast_rumor(arg, play));
 
-    // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
+    // 口上前把 TARGET 切到本角色
     era_flag.target = arg;
     await benki_koujo();
 
@@ -653,7 +651,7 @@ async function run_benki(arg, rand_n = default_rand) {
     chara(arg).dungeon.兽奸经验 += play;
     chara(arg).dungeon.战斗经验 += play;
   } else if (menu[0] >= 3) {
-    // —— :863-1032 奉仕便器分派 ——
+    // —— 奉仕便器分派 ——
     era.set('flag:62', 0); //
     era.set('flag:64', 0); //
 
@@ -674,14 +672,13 @@ async function run_benki(arg, rand_n = default_rand) {
       s += '主动地'; // 献身的ボーナス
       play += 1;
     }
-    // 的 PRINTFORML 自带换行——上面这条拼行到此收尾（#615：此前把
-    // 的 CALL 也并进同一行，少了一次换行）
+    // 这条输出自带换行——上面的拼行到此收尾（#615：此前把随后的
+    // 名字调用也并进同一行，少了一次换行）
     s += '作为侍奉用便器在地下城里服侍着'; //
     era.print(s);
 
-    // CALL BENKI_PLAYER_NAME 落在新行行首，与 :890 的
-    // `PRINTFORML %SAVESTR:(ARG:0)%` 拼成同一条显示行：#615 起角色名随
-    // 这一行收尾，不再起始下一条穴句行
+    // 侍奉对象名落在新行行首，与角色名拼成同一条显示行：#615 起角色名
+    // 随这一行收尾，不再起始下一条穴句行
     era.print(`${benki_player_name()}${name_of(arg)}`);
 
     s = ''; // 段的穴句（角色名已在上一行）
@@ -703,9 +700,8 @@ async function run_benki(arg, rand_n = default_rand) {
       play += 1;
     }
     s += '阴茎温柔地包裹在内，'; //
-    // 奴隷の様子（:922-940）——上面 :892-920 的穴句是 PRINTFORM 拼行，由
-    // 様子的 PRINTFORML 收尾：同一条显示行（#620：此前様子另起一行；
-    // 两组「对底层 + CALL + 文案」也收在这一行里）
+    // 奴隷の様子——上面的穴句与这句拼成同一条显示行（#620：此前様子
+    // 另起一行；两组「对底层 + 对象名 + 文案」也收在这一行里）
     s +=
       flag63() === 1
         ? '一如平常的面带微笑地交欢着……' // 常識改変
@@ -723,15 +719,15 @@ async function run_benki(arg, rand_n = default_rand) {
       play = 1; // 最低一人
     }
 
-    // 的 PRINTFORML 自带换行——清算首行到此收尾（#615：此前把 :952 的
-    // CALL 与 :953 并进了同一行，少了一次换行）
+    // 这条输出自带换行——清算首行到此收尾（#615：此前把对象名与
+    // 「的性欲。」并进了同一行，少了一次换行）
     era.print(`${name_of(arg)}共处理了${play}个底层`);
 
-    // CALL + :953 `PRINTFORM 的性欲。` + :956-978 传闻的 PRINTFORML
-    // ——同一条显示行（传闻接在「的性欲。」之后）
+    // 对象名 + 「的性欲。」 + 传闻拼成同一条显示行（传闻接在
+    // 「的性欲。」之后）
     era.print(`${benki_player_name()}的性欲。${service_rumor(arg, play)}`);
 
-    // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
+    // 口上前把 TARGET 切到本角色
     era_flag.target = arg;
     await benki_koujo();
 
@@ -754,7 +750,7 @@ async function run_benki(arg, rand_n = default_rand) {
     chara(arg).dungeon.精液经验 += play;
     chara(arg).dungeon.战斗经验 += play;
   } else if (menu[3] >= 3) {
-    // —— :1059-1185 同性爱便器分派 ——
+    // —— 同性爱便器分派 ——
     era.set('flag:62', 1); //
     if (t(arg, 142)) {
       era.set('flag:64', 7); // 萝莉控 → 幼い奴隷少女
@@ -788,8 +784,7 @@ async function run_benki(arg, rand_n = default_rand) {
     } else {
       s += `被${benki_player_name()}诱惑了，`; //
     }
-    // 奴隷の様子（:1080-1094）——上面 :1054-1078 的名字句 + 条件句是
-    // PRINTFORM 拼行，由様子的 PRINTFORML 收尾：同一条显示行（#620）
+    // 奴隷の様子——上面的名字句 + 条件句与这句拼成同一条显示行（#620）
     s +=
       flag63() === 1
         ? '一如平常的面带微笑地交欢着……' // 常識改変
@@ -807,14 +802,13 @@ async function run_benki(arg, rand_n = default_rand) {
       play = 1; // 最低一人
     }
 
-    // 的 PRINTFORML 自带换行——清算首行到此收尾（#615，同奉仕分派）
+    // 这条输出自带换行——清算首行到此收尾（#615，同奉仕分派）
     era.print(`${name_of(arg)}一共处理了${play}个`);
 
-    // CALL + :1107 `PRINTFORM 的性欲。` + :1109-1132 传闻的 PRINTFORML
-    // ——同一条显示行
+    // 对象名 + 「的性欲。」 + 传闻拼成同一条显示行
     era.print(`${benki_player_name()}的性欲。${lesbian_rumor(arg, play)}`);
 
-    // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
+    // 口上前把 TARGET 切到本角色
     era_flag.target = arg;
     await benki_koujo();
 
@@ -829,7 +823,7 @@ async function run_benki(arg, rand_n = default_rand) {
     chara(arg).train.百合经验 += play;
     chara(arg).dungeon.战斗经验 += play;
   } else {
-    // —— :1229-1349 一般（両穴/V/A/フェラ）便器分派 ——
+    // —— 一般（両穴/V/A/フェラ）便器分派 ——
     if (menu[1] >= 3 && menu[2] >= 3) {
       era.set('flag:62', 3); // 両穴プレイ
     } else if (menu[1] >= 3) {
@@ -858,8 +852,8 @@ async function run_benki(arg, rand_n = default_rand) {
       s += `${she(arg)}的嘴里灌满了精液。`;
     }
     era.print(s);
-    // BENKI.ERB:1223 的 PRINTFORML（空内容）只收尾上面那条 PRINTFORM 拼行——
-    // 前一条没有换行，故它不是空行，这里不补 println（#595）
+    // 这条空内容输出只收尾上面那条拼行——前一条没有换行，故它不是
+    // 空行，这里不补 println（#595）
 
     s = `${name_of(arg)}`; //
     if (t(arg, 26) || t(arg, 10)) {
@@ -868,9 +862,8 @@ async function run_benki(arg, rand_n = default_rand) {
     if (t(arg, 31)) {
       s += '主动分开双腿，'; // 看轻贞操
     }
-    // 奴隷の様子（:1235-1260，常識改変/崩坏/淫乱/爱慕/精液経験）——上面
-    // 的名字句是 PRINTFORM 拼行，由様子的 PRINTFORML 收尾：
-    // 同一条显示行（#620：此前様子另起一行）
+    // 奴隷の様子（常識改変/崩坏/淫乱/爱慕/精液経験）——上面的名字句与
+    // 这句拼成同一条显示行（#620：此前様子另起一行）
     s +=
       flag63() === 1
         ? '像家常便饭似的一边聊着天一边交欢着……' // 常識改変
@@ -906,13 +899,13 @@ async function run_benki(arg, rand_n = default_rand) {
       play = 1; // 最低一人
     }
 
-    // 是 PRINTFORM（不换行）——共处理句、:1288 的 CALL、:1289 的「的性欲。」
-    // 与 :1292-1305 传闻的 PRINTFORML 同属一条显示行（#615：此前拆成两行）
+    // 共处理句、对象名、「的性欲。」与传闻同属一条显示行（#615：此前
+    // 拆成两行）
     era.print(
       `${name_of(arg)}共处理了${play}个${benki_player_name()}的性欲。${general_rumor(arg, play)}`,
     );
 
-    // A = ARG:0 / TARGET = ARG:0 / CALL BENKI_KOUJO
+    // 口上前把 TARGET 切到本角色
     era_flag.target = arg;
     await benki_koujo();
 
@@ -938,9 +931,9 @@ async function run_benki(arg, rand_n = default_rand) {
     chara(arg).dungeon.战斗经验 += play;
   }
 
-  // 出口：DRAWLINE + PRINTW（空行等待）+ TARGET 还原
-  era.drawLine(); // BENKI.ERB:1351
-  // BENKI.ERB:1352 的 PRINTW 空内容落在 DRAWLINE 已收行之后 → 真空行 + 等键（#595）
+  // 出口：分隔线 + 空行等键 + TARGET 还原
+  era.drawLine();
+  // 这条空内容输出落在分隔线已收行之后 → 真空行 + 等键（#595）
   era.print('');
   await era.waitAnyKey();
   era_flag.target = target_pool;
@@ -949,7 +942,7 @@ async function run_benki(arg, rand_n = default_rand) {
 }
 
 /**
- * 配信清算首行的「共…」句（BENKI.ERB:626-637）。
+ * 配信清算首行的「共…」句。
  * @param {number} f62 FLAG:62（行动内容）
  * @param {number} play 人数
  * @returns {string}
@@ -968,12 +961,11 @@ function clear_line(f62, play) {
 }
 
 /**
- * 配信清算的珠/经验公共块（BENKI.ERB:645-710）。
+ * 配信清算的珠/经验公共块。
  *
- * 阴茎点数（JUEL:0）/ 欲情点数（JUEL:5）/ 耻情点数（JUEL:8）与 V/A 源
- * 的珠加算在此（配信段 :658-660/:696-697，其余分派段各自调 juel_settle
- * 再补 V/A 经验——分派段与配信段的 V/A 珠加算同构，juel_settle 只做
- * 三枚公共珠，V/A 珠在分派段各自的 menu[1]/menu[2] 判断里）。
+ * 阴茎点数（JUEL:0）/ 欲情点数（JUEL:5）/ 耻情点数（JUEL:8）三枚公共珠
+ * 的加算在此；各分派段自己调 juel_settle 再补 V/A 经验——分派段与配信段
+ * 的 V/A 珠加算同构，V/A 珠在分派段各自的 menu[1]/menu[2] 判断里。
  *
  * @param {number} cid 角色 ID
  * @param {number} play 人数
@@ -992,7 +984,7 @@ function juel_settle(cid, play) {
 }
 
 /**
- * 兽奸便器的噂（BENKI.ERB:805-827）。
+ * 兽奸便器的噂。
  * @param {number} cid 角色 ID
  * @param {number} play 人数
  * @returns {string}
@@ -1021,8 +1013,7 @@ function beast_rumor(cid, play) {
 }
 
 /**
- * 奉仕便器的噂（BENKI.ERB:956-978 的 PRINTFORML 分支；#615 订正——原记的区间
- * 是珠结算段，与传闻无关）。
+ * 奉仕便器的噂。
  * @param {number} cid 角色 ID
  * @param {number} play 人数
  * @returns {string}
@@ -1052,8 +1043,7 @@ function service_rumor(cid, play) {
 }
 
 /**
- * 同性爱便器的噂（BENKI.ERB:1109-1132 的 PRINTFORML 分支；#615 订正——原记的
- * 区间是同性爱分派的穴句段，与传闻无关）。
+ * 同性爱便器的噂。
  * @param {number} cid 角色 ID
  * @param {number} play 人数
  * @returns {string}
@@ -1082,7 +1072,7 @@ function lesbian_rumor(cid, play) {
 }
 
 /**
- * 一般（両穴/V/A/フェラ）便器的噂（BENKI.ERB:1375-1403）。
+ * 一般（両穴/V/A/フェラ）便器的噂。
  * @param {number} cid 角色 ID
  * @param {number} play 人数
  * @returns {string}
@@ -1110,9 +1100,9 @@ function general_rumor(cid, play) {
   return `${name}的行为不为人知。`;
 }
 
-/** %FS_BITCH("LOOKS", ARG)% 的等价物（DUNGEON_BITCH_LOG.ERB:162-270，随 #185）。
- *  LOOKS 有 DICE = 2 的随机覆盖（#185 真身），随机源与 run_benki 的 rand
- *  同源注入，测试用定值序固定分支（LOOKS 的 RAND 与 PLAY 的 RAND:4 共用
+/** 本人外貌描写（LOOKS，随 #185）。
+ *  LOOKS 有 2 面骰的随机覆盖（#185 真身），随机源与 run_benki 的 rand
+ *  同源注入，测试用定值序固定分支（LOOKS 的骰子与人数加算的随机共用
  *  同一序列，与 kojo-dungeon-bitch 的先例一致）。 */
 function fs_bitch_looks(cid, rand_n) {
   return require('#/kojo/kojo-dungeon-bitch-log').fs_bitch(
@@ -1123,15 +1113,15 @@ function fs_bitch_looks(cid, rand_n) {
 }
 
 /**
- * @SELECT_BENKI_MENU（BENKI.ERB:1359-1427）：战斗中肉便器的 PLAY 类型选择。
+ * select_benki_menu：战斗中肉便器的 PLAY 类型选择。
  *
  * 以固定概率序列（后判越低概率）从「技巧/奉仕技術/露出癖/奉仕精神/V 感覚/
  * A 感覚」各条件中抽一个调教指令号；全不命中回落 0（爱抚）。
- * 返回 ANSWER = 调教指令号（L_I 空间，与 @COM<n> 同号）。
+ * 返回调教指令号（与各调教指令同号）。
  *
- * @param {number} arg 角色 ID（原作 ARG）
- * @param {string} args 参照内容（原作 ARGS；当前只有 "战斗" 一个消费方）
- * @param {(n: number) => number} [rand_n] RAND:DICE 随机源
+ * @param {number} arg 角色 ID
+ * @param {string} args 参照内容（当前只有 "战斗" 一个消费方）
+ * @param {(n: number) => number} [rand_n] 骰子随机源（[0, n) 整数）
  * @returns {number} 指令号（0-38；缺省 0 爱抚）
  */
 function select_benki_menu(arg, args, rand_n = default_rand) {
@@ -1158,7 +1148,7 @@ function select_benki_menu(arg, args, rand_n = default_rand) {
       answer = 37;
       dice += 1;
     }
-    // V感覚2以上で正常位分岐（CALL V_ABLE——#213 真身接线）
+    // V感覚2以上で正常位分岐（v_able——#213 真身接入）
     if (abl(arg, 2) >= 2 && v_able(arg) === 1 && rand_n(dice) === 0) {
       answer = 20;
       dice += 1;
@@ -1182,7 +1172,7 @@ function select_benki_menu(arg, args, rand_n = default_rand) {
   return answer;
 }
 
-/** @NAME_BENKI_MENU 的指令号 → 名字表（BENKI.ERB:1440-1492 SELECTCASE） */
+/** 指令号 → PLAY 类型名的表 */
 const NAME_BENKI_MENU_TABLE = {
   0: '爱抚',
   1: '舔阴',
@@ -1215,30 +1205,30 @@ const NAME_BENKI_MENU_TABLE = {
 };
 
 /**
- * @NAME_BENKI_MENU（BENKI.ERB:1430-1494）：PLAY 类型名。
+ * name_benki_menu：PLAY 类型名。
  *
- * 原作以 PRINT 拼进攻击演出（「以（名字）进行了诱惑」）；ere 侧为
- * **返回名字串**——Emuera 内联 PRINT 习语的 ere 等价物（#215 裁定 1
- * 同款：GET_CLOTHTYPE 返回串），由调用点拼行。
+ * 调用点把名字拼进攻击演出（「以（名字）进行了诱惑」）；本函数
+ * **返回名字串**而非直接输出，由调用点拼行（#215 决定 1 同款：
+ * page-clothtype 的 clothtype_text 也返回串）。
  *
- * @param {number} arg 指令号（原作 ARG）
- * @returns {string} 类型名（表外号返回空串——原作 SELECTCASE 无 CASEELSE）
+ * @param {number} arg 指令号
+ * @returns {string} 类型名（表外号返回空串，无对应词条即不输出）
  */
 function name_benki_menu(arg) {
   return NAME_BENKI_MENU_TABLE[arg] ?? '';
 }
 
 /**
- * @GET_EXP_BENKI_MENU（BENKI.ERB:1497-1654）：肉便器战斗的经验加成。
+ * get_exp_benki_menu：肉便器战斗的经验加成。
  *
  * 门槛（TALENT:204 肉便器 == 0 / TALENT:281 常识改变【战斗】== 0 → 直接
- * 返回）。按指令号（ARG:1 = PLAY_TYPE）把 PLAY=10 换算成 PALAM 加算
- * （GET_PALAM 数组），逐条输出 %PALAMNAME%+{n}，并全部加进 JUEL。
- * 经验（私处/肛门/口交/自慰）按 CASE 直接 EXP += PLAY/10（整数除法）。
+ * 返回）。按指令号把 PLAY=10 换算成 PALAM 加算（get_palam 数组），逐条
+ * 输出参数名+{n}，并全部加进 JUEL。经验（私处/肛门/口交/自慰）直接
+ * EXP += PLAY/10（整数除法）。
  *
- * @param {number} arg0 角色 ID（原作 ARG:0）
- * @param {number} arg1 指令号（原作 ARG:1）
- * @returns {number} 原作 RETURN 0
+ * @param {number} arg0 角色 ID
+ * @param {number} arg1 指令号
+ * @returns {number} 恒 0
  */
 async function get_exp_benki_menu(arg0, arg1) {
   if (t(arg0, 204) === 0) {
@@ -1251,7 +1241,7 @@ async function get_exp_benki_menu(arg0, arg1) {
   const get_palam = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //
   const play = 10; //
 
-  // SELECTCASE ARG:1（指令号 → PALAM/经验加算）
+  // 按指令号分派（指令号 → PALAM/经验加算）
   switch (arg1) {
     case 0:
       get_palam[7] += Math.floor(play / 10); // 愛撫
@@ -1266,7 +1256,7 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[7] += Math.floor(play / 5); // 自慰
       get_palam[0] += play;
       era.print(`自慰经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.自慰经验 += Math.floor(play / 10);
       break;
     case 4:
@@ -1277,13 +1267,13 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[7] += Math.floor(play / 8); // 秘貝開帳
       get_palam[0] += play;
       era.print(`自慰经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.自慰经验 += Math.floor(play / 10);
       break;
     case 8:
       get_palam[1] += Math.floor(play / 2); // 指挿入れ
       era.print(`私处经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.私处经验 += Math.floor(play / 10);
       break;
     case 9:
@@ -1294,7 +1284,7 @@ async function get_exp_benki_menu(arg0, arg1) {
     case 11:
       get_palam[1] += play; // 壺ワーム
       era.print(`私处经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.私处经验 += Math.floor(play / 10);
       break;
     case 20:
@@ -1304,7 +1294,7 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[7] += Math.floor(play / 3); // 正常位/後背位/対面座位/背面座位
       get_palam[1] += play;
       era.print(`私处经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.私处经验 += Math.floor(play / 10);
       break;
     case 26:
@@ -1314,7 +1304,7 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[7] += Math.floor(play / 3); // 正常位/後背位/対面座位/背面座位アナル
       get_palam[2] += play;
       era.print(`肛门经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.肛门经验 += Math.floor(play / 10);
       break;
     case 30:
@@ -1324,7 +1314,7 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[6] += Math.floor(play / 3);
       if (arg1 === 31) {
         era.print(`口交经验+${Math.floor(play / 10)}`);
-        await era.waitAnyKey(); // PRINTFORMW
+        await era.waitAnyKey(); // 输出后等键
         chara(arg0).dungeon.口交经验 += Math.floor(play / 10);
       }
       break;
@@ -1338,7 +1328,7 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[1] += play;
       get_palam[6] += Math.floor(play / 3);
       era.print(`私处经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.私处经验 += Math.floor(play / 10);
       break;
     case 36:
@@ -1346,7 +1336,7 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[2] += play;
       get_palam[6] += Math.floor(play / 3);
       era.print(`肛门经验+${Math.floor(play / 10)}`);
-      await era.waitAnyKey(); // PRINTFORMW
+      await era.waitAnyKey(); // 输出后等键
       chara(arg0).dungeon.肛门经验 += Math.floor(play / 10);
       break;
     case 37:
@@ -1357,10 +1347,10 @@ async function get_exp_benki_menu(arg0, arg1) {
       get_palam[7] += Math.floor(play / 2); // 足コキ
       break;
     default:
-      break; // CASEELSE 无加算
+      break; // 其余无加算
   }
 
-  // FOR LOCAL,0,15：非零格输出 %PALAMNAME%+{n}，全部加进 JUEL
+  // 逐格：非零输出参数名+{n}，全部加进 JUEL
   for (let i = 0; i < 15; i += 1) {
     if (get_palam[i]) {
       era.print(`${era.get(`palamname:${i}`) ?? ''}+${get_palam[i]}`);
@@ -1375,11 +1365,10 @@ async function get_exp_benki_menu(arg0, arg1) {
 }
 
 /**
- * @BENKI_PLAYER_NAME（BENKI.ERB:1656-1681）：侍奉对象名（读 FLAG:64）。
+ * benki_player_name：侍奉对象名（读 FLAG:64）。
  *
- * 原作以 PRINT 拼进行内文案；ere 侧返回名字串由调用点拼行（同
- * name_benki_menu / GET_CLOTHTYPE 先例）。FLAG:64 未定（-2 或无对应）时
- * 返回空串（原作 IF/ELSEIF 链无 ELSE——不输出）。
+ * 返回名字串由调用点拼行（同 name_benki_menu / clothtype_text 先例）。
+ * FLAG:64 未定（-2 或无对应）时返回空串（无对应词条即不输出）。
  *
  * @returns {string} 对象名
  */

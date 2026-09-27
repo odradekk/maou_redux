@@ -2,31 +2,31 @@
  * @file 失神状态机：失神判定、失神中的计数与文本、恢复时的参数回流、
  * 野外失神的带回处理。
  *
- * TFLAG 簿记（PASSOUT.ERB:4-10 的原注）：
+ * TFLAG 簿记：
  *   - 864-882：失神中的状态保存与计算用（864-865/866-867/877-878 等分位
  *     装备，868-876 精液/污液计数，879-882 特殊装备/媚药利尿/情景/触手）；
  *   - 883-894：失神中的 UP 暂存（883-888 失神瞬间 / 889-894 失神中）；
  *   - 895：本回合是否新触发失神（1 快感 / 2 苦痛 / 3 恐怖 / 4 快感+苦痛 /
  *     6 苦痛+恐怖）；896/897/898：恐怖/绝顶/苦痛的相位（2 失神中 / 3 恢复）；
- *   - 899：失神中的指令执行回数（≥ 1 即失神中——@KOJO_MESSAGE_COM 的
- *     第 4 道守卫读它，#213）。
+ *   - 899：失神中的指令执行回数（≥ 1 即失神中——kojo_message_com_family
+ *     的第 4 道头部检查读它，#213）。
  *
- * 本票在阶段里的位置：TFLAG:899 的**写入路径**（#213 七道守卫的第四道
- * 此前无真实置位者）。passout_check 是唯一写点，测试里有「写入路径 →
- * 守卫」的端到端证明（test/passout.test.js）。
+ * 这张工单在阶段里的位置：TFLAG:899 的**写入路径**（#213 七道检查的
+ * 第四道此前无真实置位者）。passout_check 是唯一写点，测试里有「写入
+ * 路径 → 检查」的端到端证明（test/passout.test.js）。
  *
- * 移植说明（有意偏离，均注明依据）：
- *   - G / X / Y（@PASSOUT_MESSAGE 尾部写给 @PASSOUT_PALAM_UP 读的三个
- *     Emuera 单字母全局）不落表，模块级承载（#214 A/S 同款裁定：跨函数
- *     显式传递的结构，此处跨的是 MESSAGE → PALAM_UP 的调用间隙，且
- *     CFLAG:99 剪裁路径会跳过 MESSAGE——残留旧值是原作行为，模块级
+ * 实现说明（有意偏离，均注明依据）：
+ *   - G / X / Y（passout_message 尾部写给 passout_palam_up 读的三个
+ *     跨函数值）不落表，模块级承载（#214 A/S 同款结论：跨函数
+ *     显式传递的结构，此处跨的是 message → palam_up 的调用间隙，且
+ *     CFLAG:99 剪裁路径会跳过 message——跳过时残留旧值，模块级
  *     let 恰好同构）。
- *   - @PASSOUT_TEXT 恢复分支里被注释掉的 `TFLAG:200 = 12 / CALL
- *     SELF_KOJO`（:275-278，原注「TFLAG:200 が中身違うのでスルー」）
- *     保持注释态——SELF_KOJO 的分发族（SELF_KOJO_K{n}）随第一个
- *     真实调用方（J8 的 EVENT_AFTERTRAIN）落地，本票不注册。
+ *   - passout_text 恢复分支里一段被注释掉的调用（设 TFLAG:200 = 12 后
+ *     调 self_kojo；注记理由「TFLAG:200 が中身違うのでスルー」＝此处
+ *     TFLAG:200 内容不同，跳过）维持不启用——self_kojo 的分发族
+ *     （SELF_KOJO_K{n}）已由 kojo-system.js 承载，这条调用不接。
  *   - 侵犯持续骨架句的代词取对象角色 she(cid)——按对象的性别显示他/她。
- *   - FLAG:70（失神系统开关）全库零写点 → 恒 0 → 系统恒开，守卫照读
+ *   - FLAG:70（失神系统开关）全库零写点 → 恒 0 → 系统恒开，检查照读
  *     flag:70。
  */
 
@@ -34,7 +34,7 @@ const era = require('#/era-electron');
 const era_flag = require('#/era-utils/era-flag');
 const { chara } = require('#/facade/chara');
 
-/** MASTER（Emuera 内置变量）：魔王主角，恒为角色 0（CONTEXT.md） */
+/** MASTER：魔王主角，恒为角色 0（CONTEXT.md） */
 const MASTER = 0;
 
 const tal = (id, i) => era.get(`talent:${id}:${i}`) || 0;
@@ -47,26 +47,26 @@ const add_tflag = (i, v) => era.add(`tflag:${i}`, v);
 const up = (id, i) => era.get(`delta:${id}:${i}`) || 0;
 const add_up = (id, i, v) => era.add(`delta:${id}:${i}`, v);
 const zero_up = (id, i) => era.set(`delta:${id}:${i}`, 0);
-/** %SAVESTR:x% 的名字承载（#5 决议：无 savestr 通道，读 callname） */
+/** 名字承载（#5 决议：无 savestr 通道，读 callname） */
 const name_of = (id) => era.get(`callname:${id}:-1`) ?? '';
 
-/** SHE(ARG) 代词（魔改新增/文本校正.ERB :1-7 的三行纯函数，随本票内联） */
+/** 代词 she：按 TALENT:122 显示他/她（三行纯函数，随这张工单内联） */
 function she(id) {
   return tal(id, 122) ? '他' : '她';
 }
 
-// G/X/Y：@PASSOUT_MESSAGE 尾写、@PASSOUT_PALAM_UP 读（头注——不落表）
+// G/X/Y：passout_message 尾写、passout_palam_up 读（头注——不落表）
 let G = 0; // 精液系计数和（868+869+870+874+875+876）
 let X = 0; // 装备系计数和（取负，867+877+878+866+879+864+865+880+881）
 let Y = 0; // 膣内/肛内精液计数和（871+872）
 
 /**
- * @PASSOUT_CHECK（:14-89）：失神判定。
+ * passout_check：失神判定。
  * 三条触发线：连续强绝顶（Z = NOWEX:0-3 之和 ≥ 16 两回，8% / 60%）、
  * 单回合苦痛 ≥ 7500 或累计 ≥ 15000（50%）、单回合恐怖 ≥ 5000（50%）；
  * 已失神中（TFLAG:899 ≥ 1）不重复触发。恢复判定在尾段（强绝顶 /
  * 苦痛 ≥ 5000 / 执行 4 回）。EXP:65 = 调教失神经验。
- * @param {(n: number) => number} [rand] RAND:N 的随机源
+ * @param {(n: number) => number} [rand] 随机源（须返回 [0, n) 的整数）
  * @returns {Promise<void>}
  */
 async function passout_check(rand) {
@@ -140,7 +140,7 @@ async function passout_check(rand) {
     }
   }
 
-  // 恢复判定（失神次回起；条件满足过一次后每回都判——原注）
+  // 恢复判定（失神次回起；条件满足过一次后每回都判）
   if (tflag(899) >= 2) {
     if (z >= 16 || (tflag(899) >= 2 && up(cid, 9) >= 5000) || tflag(899) >= 4) {
       set_tflag(896, 3);
@@ -152,8 +152,8 @@ async function passout_check(rand) {
 }
 
 /**
- * @PASSOUT_TEXT（:91-283）：失神瞬间的清零 + 每回合的精液/装备计数 +
- * 装备快照（初回）/ 变化检测（次回起，未失神回合同样跑 else 臂）+
+ * passout_text：失神瞬间的清零 + 每回合的精液/装备计数 +
+ * 装备快照（初回）/ 变化检测（次回起，未失神回合同样跑 else 分支）+
  * 失神文案（895 分档 / 恢复 / 依然未醒）。
  * @returns {Promise<void>}
  */
@@ -328,13 +328,13 @@ async function passout_text() {
 
   if (tflag(899) >= 1) {
     // 失神文案（895 分档；口塞 45 时首行台词吞掉）
-    const gagged = () => tequip(cid, 45) === 0; // SIF TEQUIP:45 == 0 才印
+    const gagged = () => tequip(cid, 45) === 0; // TEQUIP:45 == 0 才印
     if (tflag(895) === 1) {
       // 快感失神
       if (gagged()) {
         era.print('「噢哈啊啊啊啊啊啊啊！！…啊啊……哈……喔…♪」');
       }
-      // PASSOUT.ERB:244 的 PRINTFORML（空内容）落在 PASSOUT.ERB:243 已收行之后 → 真空行（#595）
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…绝顶的快感令${name_of(cid)}全身抽搐，当场倒下了，`);
       era.print('因为过于强烈的刺激失去了意识。');
@@ -343,7 +343,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「不行了～～～～！！！…放、放过……我……吧」');
       }
-      // PASSOUT.ERB:250 的 PRINTFORML（空内容）落在 PASSOUT.ERB:249 已收行之后 → 真空行（#595）
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}当场倒下，因为过于强烈的痛楚失去了意识。`);
     } else if (tflag(895) === 3) {
@@ -351,7 +351,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「不行了～～～～！！！…放、放过……我……吧」');
       }
-      // PASSOUT.ERB:255 的 PRINTFORML（空内容）落在 PASSOUT.ERB:254 已收行之后 → 真空行（#595）
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}当场倒下，因为过于强烈的恐惧失去了意识`);
     } else if (tflag(895) === 4) {
@@ -359,7 +359,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「噢哈啊啊啊啊啊啊啊！！…放、放过……我……吧」');
       }
-      // PASSOUT.ERB:260 的 PRINTFORML（空内容）落在 PASSOUT.ERB:259 已收行之后 → 真空行（#595）
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}全身抽搐，当场倒下了，`);
       era.print('被快感和痛楚同时冲击，失去了意识。');
@@ -368,7 +368,7 @@ async function passout_text() {
       if (gagged()) {
         era.print('「不行了～～～～！！！…放、放过……我……吧」');
       }
-      // PASSOUT.ERB:266 的 PRINTFORML（空内容）落在 PASSOUT.ERB:265 已收行之后 → 真空行（#595）
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
       era.print('');
       era.print(`…${name_of(cid)}全身抽搐，当场倒下了，`);
       era.print('受不了无法忍耐的痛楚和恐惧，失去了意识。');
@@ -379,9 +379,9 @@ async function passout_text() {
       if ((era.get(`cflag:${cid}:99`) || 0) === 0) {
         await passout_message();
       }
-      // 原作注释掉的 TFLAG:200 = 12 / CALL SELF_KOJO——头注
+      // 此处原样保留被注释掉的 TFLAG:200 = 12 / 调 SELF_KOJO——头注
     } else {
-      // PASSOUT.ERB:280 的 PRINTFORML（空内容）落在分支外已收行之后 → 真空行（#595）
+      // 空内容输出落在上一行已收行之后 → 真空行（#595）
       era.print('');
       era.print(`${name_of(cid)}依然未醒来。`);
     }
@@ -389,11 +389,11 @@ async function passout_text() {
 }
 
 /**
- * @PASSOUT_MESSAGE（:285-456）：恢复时的大段地の文章。
+ * passout_message：恢复时的大段地の文章。
  * 按 TFLAG:868-882 的计数与 -1 标记选支，从上到下优先：挿しっぱ无 →
  * 处女丧失 → 膣内精液 → 肛内精液 → 触手污液 → 全身精液 → 插入系装备 →
  * 装具 → 被虐具 → 媚药利尿 → 情景 → 触手。尾段写 G/X/Y 给
- * PASSOUT_PALAM_UP（头注）。
+ * passout_palam_up（头注）。
  * @returns {Promise<void>}
  */
 async function passout_message() {
@@ -425,10 +425,10 @@ async function passout_message() {
       era.print(name_of(player));
     }
     era.print('的抽插在持续中……');
-    await era.waitAnyKey(); // PRINTW
+    await era.waitAnyKey();
   }
 
-  // 计数选支（ELSEIF 链，命中即止）
+  // 计数选支（逐条判断，命中即止）
   if (tflag(873) >= 1) {
     // 处女丧失（血 + 精液/污液的混合）
     if (tflag(60) === 1) {
@@ -453,7 +453,7 @@ async function passout_message() {
       era.print('混合着大量的污液，');
     }
     era.print('终于察觉了，');
-    era.print('不知不觉中，处女被夺走，茫然地呆了…'); // PRINTFORMW
+    era.print('不知不觉中，处女被夺走，茫然地呆了…');
     await era.waitAnyKey();
   } else if (tflag(871) >= 1) {
     // 膣内精液
@@ -639,7 +639,7 @@ async function passout_message() {
     await era.waitAnyKey();
   }
 
-  // G/X/Y 结算（PASSOUT_PALAM_UP 读，头注）
+  // G/X/Y 结算（passout_palam_up 读，头注）
   G =
     tflag(868) + tflag(869) + tflag(870) + tflag(874) + tflag(875) + tflag(876);
   X =
@@ -653,11 +653,11 @@ async function passout_message() {
     tflag(880) +
     tflag(881);
   Y = tflag(871) + tflag(872);
-  X = -X; // TIMES X, -1
+  X = -X; // 取负
 }
 
 /**
- * @PASSOUT_PALAM_CHECK（:457-485）：失神中的 UP 暂存。
+ * passout_palam_check：失神中的 UP 暂存。
  * 失神瞬间（895 > 0）的 UP 进 883-888，失神中的进 889-894；
  * UP:4/6-13 清零（UP:9 本来就不进暂存——它是失神的触发线）。
  * @returns {void}
@@ -686,7 +686,7 @@ function passout_palam_check() {
 }
 
 /**
- * @PASSOUT_PALAM_UP（:487-589）：恢复时的参数回流。
+ * passout_palam_up：恢复时的参数回流。
  * 暂存按 (12 - TFLAG:899) 与 (TFLAG:899 - 2) 折算后放大返还
  * （G/X/Y 的乘算、处女丧失 873 的翻倍、刻印/顺从/爱慕的 Z 折扣），
  * 尾段把 896-899 复位。
@@ -709,7 +709,7 @@ function passout_palam_up() {
     e += tflag(893) * (t899 - 2);
     f += tflag(894) * (t899 - 2);
   }
-  // 整数除（Emuera 截断除，正值域同 floor）
+  // 整数除（向零截断，正值域同 floor）
   a = Math.floor(a / 600);
   b = Math.floor(b / 240);
   c = Math.floor(c / 60);
@@ -793,14 +793,14 @@ function passout_palam_up() {
 }
 
 /**
- * @PASSOUT_OUTDOOR（:591-602）：野外 PLAY 中失神 → 解除野外位、带回房间、
+ * passout_outdoor：野外 PLAY 中失神 → 解除野外位、带回房间、
  * 调教者体力气力小损（BASE 0/1 各 -20/-10，钳 0——属主 dungeon 走门面）。
  * @returns {Promise<void>}
  */
 async function passout_outdoor() {
   const cid = era_flag.target;
   era.set(`tequip:${cid}:54`, 0); // 野外 PLAY 解除（属主 train）
-  era.print(`${name_of(cid)}失神了，所以带回了房间…`); // PRINTFORMW
+  era.print(`${name_of(cid)}失神了，所以带回了房间…`);
   await era.waitAnyKey();
   // 调教者的体力/气力（BASE:MASTER:0/1，钳 0）
   chara(MASTER).dungeon.体力 = Math.max(

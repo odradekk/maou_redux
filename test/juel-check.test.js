@@ -1,11 +1,11 @@
 /**
  * ere/system/train/juel-check.js（含 page-ablup / page-info-exp 两个画面
- * 模块）的行为测试（issue #47：@JUEL_CHECK / @JUEL_CHECK_MAIN）。
+ * 模块）的行为测试（issue #47：run_juel_check / juel_check_main）。
  *
- * 缝 = test/helpers/era-fixture.js。期望值全部对着两处真身：
- *   - target/emuera.log:236-260 的黄金样本（结算表 13 行、SHOW_INFO_EXP、
- *     SHOW_JUEL——预置状态复刻样本前态 + 定值随机源，逐字比对）；
- *   - target/ERB/調教相關/TRAIN_MAIN.ERB:552-740 的梯子/加算/相殺语义。
+ * 缝 = test/helpers/era-fixture.js。期望值覆盖两层：
+ *   - 结算表 13 行、SHOW_INFO_EXP、show_juel 的逐字比对（预置状态复刻
+ *     结算前态 + 定值随机源）；
+ *   - 梯子/加算/相殺语义的数值判定。
  *
  * 验收项「13 项参数各有用例」：结算表 13 行每行一个用例（含精确行文与
  * 落账数值——纯数据结算错一格不报错，必须逐项钉）。「不发生重复结算」：
@@ -19,8 +19,8 @@ const { create_era_fixture } = require('./helpers/era-fixture');
 const { join_slave_chara } = require('./helpers/chara');
 const { seed_static_names } = require('./helpers/static-names');
 
-// 世界底座：目标 31（温妮，黄金样本同款）、火车表已开、四张名字表已播。
-// 等级 Lv1 与「初吻未定」是黄金样本温妮的前态（原作角色生成路径置 -1）
+// 世界底座：目标 31（温妮）、火车表已开、四张名字表已播。
+// 等级 Lv1 与「初吻未定」是逐字比对用例的前态（角色生成路径置 -1）
 function seed_world(fixture) {
   join_slave_chara(fixture, 31, '温妮');
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -39,15 +39,15 @@ function seed_world(fixture) {
 const HEADER_INDEX = 0;
 const FOOTER_INDEX = 14;
 
-// 定值随机源（RAND:3 语义：返回池序号 0/1/2）：轮转 0→1→2。恒定单值在
-// 有多个非空池的用例里会永远挑中空池（原作靠 RAND 的随机性保证终止），
+// 定值随机源（三选一：返回池序号 0/1/2）：轮转 0→1→2。恒定单值在
+// 有多个非空池的用例里会永远挑中空池（真随机源靠随机性保证终止），
 // 测试必须轮转
 const rotating_rng = () => {
   let i = 0;
   return () => i++ % 3;
 };
 
-// ———— 梯子（:559-585） ————
+// ———— 梯子 ————
 
 test('palam_to_gain：PALAMLV 默认阈值下的全部 26 个边界', () => {
   const fixture = create_era_fixture();
@@ -77,7 +77,7 @@ test('palam_to_gain：PALAMLV 默认阈值下的全部 26 个边界', () => {
     [149999, 5000],
     [150000, 8000], // < PALAMLV:9（250000）
     [249999, 8000],
-    [250000, 12000], // 梯子外兜底
+    [250000, 12000], // 梯子外的默认值
     [99999999, 12000],
   ];
   for (const [value, gain] of cases) {
@@ -89,7 +89,7 @@ test('palam_to_gain：PALAMLV 默认阈值下的全部 26 个边界', () => {
 
 // 基础行（0/1/2/3/7/12）：( 上次值 + 本次增量 )            = 结果
 // 抵消行（4/5/6/8/9/10/11）：( 上次值 + 本次增量 ) - 抵消量 = 结果。
-// 单行用例里池子全空 → 抵消量恒 0；非零抵消由黄金样本复刻用例覆盖。
+// 单行用例里池子全空 → 抵消量恒 0；非零抵消由逐字比对用例覆盖。
 const ROW_CASES = [
   {
     row: 0,
@@ -240,7 +240,7 @@ test('结算表第 12 行：CSTR:7 定制癖好名替换「癖好」标签', () 
   );
 });
 
-// ———— 相殺（:626-649）与 TFLAG 快照（:615-624） ————
+// ———— 相殺与 TFLAG 快照 ————
 
 test('相殺：否定余量逐轮减半（定值随机源），逐步写序固定', () => {
   const fixture = create_era_fixture();
@@ -252,7 +252,7 @@ test('相殺：否定余量逐轮减半（定值随机源），逐步写序固�
 
   // 每轮扣余量一半（向下取整）：100 → 50 → 25 → 13 → 7 → 4 → 2 → 1 → 0；
   // 余量 1 时半值为 0、改扣 1。逐步写序断言——终态守恒（总量 = 100）对
-  // 取量公式的漂移不敏感，只有中间步能区分
+  // 取量公式的变化不敏感，只有中间步能区分
   assert.deepEqual(
     fixture.var_writes
       .filter((w) => w.name === 'juel:31:100')
@@ -286,7 +286,7 @@ test('相殺：余量取半为 0 且未清零时改扣 1（单点余量路径）
   assert.equal(fixture.store.get('juel:31:6'), 4);
 });
 
-test('相殺两组先后（$LABEL_1 → $LABEL_2）：前组吃满后组不动', () => {
+test('相殺两组先后（恭顺组在前、耻情组在后）：前组吃满后组不动', () => {
   const fixture = create_era_fixture();
   const mod = seed_world(fixture);
   // 否定余量小于第一组容量：全部由恭顺组消化（juel-check_main 的调用序，
@@ -348,10 +348,10 @@ test('职责划分：结算尾部把全部 OWNED 键的 gotjuel 清回 0（引�
       `gotjuel:${key} 必须清零`,
     );
   }
-  // 死存储不落笔（引擎 endTrain 会把非零 gotjuel:3 加进 juel:3、偏离原作）
+  // 死存储不落笔（引擎 endTrain 会把非零 gotjuel:3 加进 juel:3、造成偏差）
   assert(
     !fixture.var_writes.some((w) => w.name === 'gotjuel:31:3'),
-    'GOTJUEL:3（润滑）是原作死存储，ere 侧不得写',
+    'GOTJUEL:3（润滑）是死存储，ere 侧不得写',
   );
 });
 
@@ -384,39 +384,38 @@ engine_test(
   },
 );
 
-// ———— $INPUT_LOOP_1（:443-549） ————
+// ———— 交互循环 ————
 
-test('交互循环：选 999 退出，收尾三查全走真身（#565：CHECK_SPECIALSKIL 接线）', async () => {
+test('交互循环：选 999 退出，收尾三查全走真身（#565：check_specialskil 接入）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  // 让 CHECK_SPECIALSKIL 有可观察产出：异种妊娠经验 20 → 体变检查取得
-  //【同族妊娠不能】（GET_SPECIALTALENT.ERB:740-752，test/event-get-
-  // specialtalent.test.js 同款前态）
+  // 让 check_specialskil 有可观察产出：异种妊娠经验 20 → 体变检查取得
+  //【同族妊娠不能】（test/event-get-specialtalent.test.js 同款前态）
   fixture.store.set('exp:31:62', 20);
   fixture.set_inputs(999);
 
   await fixture.load_module('system/train/juel-check').run_juel_check();
 
   assert.deepEqual(fixture.inputs_consumed, [
-    { api: 'waitAnyKey' }, // WAIT（结算表后的读键）
-    { api: 'input', value: 999 }, // INPUT → :540 退出
+    { api: 'waitAnyKey' }, // 读键（结算表后）
+    { api: 'input', value: 999 }, // 输入 999 退出
   ]);
   assert.ok(
     fixture.text_lines().some((line) => line.includes('生育了太多异种的孩子')),
-    'CHECK_SPECIALSKIL 真身必须真的被调到（体变检查的播报）',
+    'check_specialskil 真身必须真的被调到（体变检查的播报）',
   );
   assert.equal(
     fixture.store.get('talent:31:158'),
     1,
-    ':544 CALL CHECK_SPECIALSKIL, 1 的实参链要落到目标角色',
+    'check_specialskil 的实参链要落到目标角色',
   );
   assert.ok(
-    !fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
-    'CHECK_SPECIALSKIL 已接真身，不应再打占位行',
+    !fixture.text_lines().some((line) => line.includes('check_specialskil')),
+    'check_specialskil 已接真身，不应再打占位行',
   );
   assert.ok(
-    !fixture.text_lines().some((line) => line.includes('@YOKUBO_UP_CHECK')),
-    'YOKUBO_UP_CHECK 已接真身，不应再打占位行',
+    !fixture.text_lines().some((line) => line.includes('yokubo_up_check')),
+    'yokubo_up_check 已接真身，不应再打占位行',
   );
   // [999] 按钮按 PR #53 通则断言 rendered（正文不写编号前缀，引擎拼）
   const exit_button = fixture.lines.find(
@@ -447,7 +446,7 @@ test('交互循环：999 退出后欲情变化检查走真身（压抑清除 + �
 test('交互循环：能力分支走真身、重绘后可再选（进得去出得来）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  // #467 起 ABLUP37 也接了真身（0-4/10-17/20-23/30-33/37/39/40/99 全部落地），
+  // #467 起 ablup37 也接了真身（0-4/10-17/20-23/30-33/37/39/40/99 全部实现），
   // 主循环里已没有「命中占位行」的编号：喂 37 → 真身的子菜单（[0]/[100]）→
   // 喂 100（停止）回主循环 → 999 退出
   fixture.set_inputs(37, 100, 999);
@@ -455,12 +454,12 @@ test('交互循环：能力分支走真身、重绘后可再选（进得去出�
   await fixture.load_module('system/train/juel-check').run_juel_check();
 
   assert(
-    !fixture.text_lines().some((line) => line.includes('@ABLUP37')),
-    'ABLUP37 已落真身，不应再打占位行',
+    !fixture.text_lines().some((line) => line.includes('@ablup37')),
+    'ablup37 已落真身，不应再打占位行',
   );
   assert.ok(
     fixture.text_lines().some((line) => line.includes('卖淫经验')),
-    '真身分支的需求画面应被渲染（ABLUP37 的 D 行）',
+    '真身分支的需求画面应被渲染（decide_ablup37 的 D 行）',
   );
   // 重绘两次首轮：SHOW_INFO_EXP 的等级行每轮一条
   assert.equal(
@@ -470,16 +469,17 @@ test('交互循环：能力分支走真身、重绘后可再选（进得去出�
   );
 });
 
-// 原「交互循环：能力分支命中表兜底」用例（删 handler 戳 @ABLUPxx 占位）已删
-//（#638）：STUBBED_ABLUP_NAMES 与占位回落随存根机制一并删除，兜底分支不再有
-// 实体；ABLUP_IDS 与 ABLUP_HANDLERS 的一一对应由下一文件的分发表覆盖用例钉住。
+// 原「交互循环：能力分支命中表默认回落」用例（删 handler 触发 ABLUP 存根
+// 占位）已删（#638）：STUBBED_ABLUP_NAMES 与占位回落随存根机制一并删除，
+// 默认分支不再有实体；ABLUP_IDS 与 ABLUP_HANDLERS 的一一对应由下一文件的
+// 分发表覆盖用例钉住。
 
 // 原「交互循环：无分支输入静默重绘」用例（喂 7）已删（#130）：7 不是
 // 已打印按钮的快捷键，引擎的 input() 在渲染层就把它弹回——「无分支输入」
 // 在引擎侧不可达（本画面印出的编号全部落在 ABLUP_IDS ∪ {999}）。重绘
 // 机理本身由上一用例（能力尝试 + 退出 → 等级行两轮）覆盖。
 
-test('自动升级（GETBIT(FLAG:5,35)）：不吃 INPUT，AUTO_ABLUP 真身三连生效', async () => {
+test('自动升级（FLAG:5 位 35）：不吃输入，auto_ablup 真身三连生效', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('flag:5', 2 ** 35);
@@ -492,25 +492,25 @@ test('自动升级（GETBIT(FLAG:5,35)）：不吃 INPUT，AUTO_ABLUP 真身三�
     [{ api: 'waitAnyKey' }],
     '自动模式不吃 INPUT',
   );
-  // 三连：目标升一级并打印 ;453-454 的 ASSI 分支由 ASSI <= 0 跳过，
-  // 的 MASTER（角色 0）确实被调到（读过它的 abl:0:0）
+  // 三连：目标升一级并打印；ASSI 分支由 ASSI <= 0 跳过，
+  // MASTER（角色 0）确实被调到（读过它的 abl:0:0）
   assert.equal(fixture.store.get('abl:31:0'), 1);
   assert.equal(fixture.store.get('juel:31:0'), 0);
   assert.ok(
     fixture.text_lines().some((line) => line.includes('温妮的阴蒂感觉变为LV1')),
-    '@AUTO_ABLUP_CORE 的等级行（:264-265）',
+    'auto_ablup_core 的等级行',
   );
   assert.ok(
     fixture.var_reads.some((read) => read.name === 'abl:0:0'),
     'MASTER 那一连确实执行了',
   );
   assert.ok(
-    !fixture.text_lines().some((line) => line.includes('@AUTO_ABLUP')),
-    'AUTO_ABLUP 不再是存根，占位行必须消失',
+    !fixture.text_lines().some((line) => line.includes('auto_ablup')),
+    'auto_ablup 不再是存根，占位行必须消失',
   );
   assert(
-    !fixture.text_lines().some((line) => line.includes('@CHECK_SPECIALSKIL')),
-    'CHECK_SPECIALSKIL 已接真身（#565），占位行必须消失',
+    !fixture.text_lines().some((line) => line.includes('check_specialskil')),
+    'check_specialskil 已接真身（#565），占位行必须消失',
   );
   // 位 34 不得误触发（相邻位防串）
   const other = create_era_fixture();
@@ -519,17 +519,17 @@ test('自动升级（GETBIT(FLAG:5,35)）：不吃 INPUT，AUTO_ABLUP 真身三�
   other.set_inputs(999);
   await other.load_module('system/train/juel-check').run_juel_check();
   assert(
-    !other.text_lines().some((line) => line.includes('@AUTO_ABLUP')),
+    !other.text_lines().some((line) => line.includes('auto_ablup')),
     '位 34 不是自动升级开关',
   );
 });
 
-// ———— 黄金样本比对（target/emuera.log:236-260，前态复刻 + 定值随机源） ————
+// ———— 逐字比对（前态复刻 + 定值随机源） ————
 
-test('黄金样本 :237-253：结算表头与 13 行逐字一致（否定点数 208 抵消 41）', () => {
+test('结算表头与 13 行逐字一致（否定点数 208 抵消 41）', () => {
   const fixture = create_era_fixture();
   const mod = seed_world(fixture);
-  // 前态 = 样本结算前的持有/参数面
+  // 前态 = 结算前的持有/参数面
   fixture.store.set('juel:31:0', 2279); // 阴核保有
   fixture.store.set('juel:31:7', 3); // 习得保有
   fixture.store.set('juel:31:100', 108); // 否定保有
@@ -540,8 +540,8 @@ test('黄金样本 :237-253：结算表头与 13 行逐字一致（否定点数 
   fixture.store.set('palam:31:7', 200); // 习得 → 1（同上）
   fixture.store.set('palam:31:8', 2000); // 耻情 → 20（同欲情档）
   fixture.store.set('palam:31:11', 3000); // 反感 → 100（[3000,6000) 档，汇入否定）
-  // 相殺抽取序（定值随机源，轮转防死循环）：欲情 → 屈服（LABEL_1 清 21），
-  // 耻情整池 20（LABEL_2）——否定的 208 - 21 - 20 = 167，与样本一致
+  // 相殺抽取序（定值随机源，轮转防死循环）：欲情 → 屈服（第一组清 21），
+  // 耻情整池 20（第二组）——否定的 208 - 21 - 20 = 167
   const picks = [1, 2, 0];
   let pick_index = 0;
 
@@ -572,16 +572,16 @@ test('黄金样本 :237-253：结算表头与 13 行逐字一致（否定点数 
     '癖好点数：(\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00 + \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00)\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0= \u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A00|',
     '以上的点数变化了。',
   ]);
-  // 相殺后的账面（SHOW_JUEL 的读数源）
+  // 相殺后的账面（show_juel 的读数源）
   assert.equal(fixture.store.get('juel:31:0'), 3479);
   assert.equal(fixture.store.get('juel:31:7'), 4);
   assert.equal(fixture.store.get('juel:31:100'), 167);
 });
 
-test('黄金样本 :255-256：SHOW_INFO_EXP 的经验行与等级行逐字一致', () => {
+test('SHOW_INFO_EXP 的经验行与等级行逐字一致', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
-  fixture.store.set('exp:31:2', 3); // 绝顶经验 3（样本值）
+  fixture.store.set('exp:31:2', 3); // 绝顶经验 3（逐字比对前态）
   const { show_info_exp } = fixture.load_module('page/page-info-exp');
 
   show_info_exp(31);
@@ -603,7 +603,7 @@ test('SHOW_INFO_EXP：四个经验一行的换行与 8 宽名字列、残行收�
   show_info_exp(31);
 
   // 名字列：私处经验（8 显示宽）不补空格；每个格子自带全角引导空格
-  //（原作每个 PRINTFORM 都以全角空格开头）；LV 公式行照常殿后
+  //（每格文本以全角空格开头）；LV 公式行照常殿后
   assert.deepEqual(fixture.text_lines(), [
     '\u3000私处经验:\u00A0\u00A0\u00A0\u00A010\u3000肛门经验:\u00A0\u00A0\u00A0\u00A011\u3000绝顶经验:\u00A0\u00A0\u00A0\u00A012\u3000射精经验:\u00A0\u00A0\u00A0\u00A013',
     '\u3000性交经验:\u00A0\u00A0\u00A0\u00A015',
@@ -625,7 +625,7 @@ test('SHOW_INFO_EXP：初吻/初体验括号行（两者皆无时不输出）', 
   ]);
 });
 
-test('黄金样本 :258-260：SHOW_JUEL 三行逐字一致（样本的结算后读数）', () => {
+test('show_juel 三行逐字一致（结算后读数）', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('juel:31:0', 3479);
@@ -635,17 +635,17 @@ test('黄金样本 :258-260：SHOW_JUEL 三行逐字一致（样本的结算后�
 
   show_juel(31);
 
-  // 末项恰为 4 的倍数 → PRINTL 补一空行（br），随后是尾部分隔线
+  // 末项恰为 4 的倍数 → 补一空行（br），随后是尾部分隔线
   assert.deepEqual(fixture.text_lines(), [
     ' 阴核点数：\u00A0\u00A03479 私处点数：\u00A0\u00A0\u00A0\u00A0\u00A00 肛门点数：\u00A0\u00A0\u00A0\u00A0\u00A00 乳房点数：\u00A0\u00A0\u00A0\u00A0\u00A00',
     ' 恭顺点数：\u00A0\u00A0\u00A0\u00A0\u00A00 欲情点数：\u00A0\u00A0\u00A0\u00A0\u00A00 屈服点数：\u00A0\u00A0\u00A0\u00A0\u00A00 习得点数：\u00A0\u00A0\u00A0\u00A0\u00A04',
     ' 耻情点数：\u00A0\u00A0\u00A0\u00A0\u00A00 苦痛点数：\u00A0\u00A0\u00A0\u00A0\u00A00 恐怖点数：\u00A0\u00A0\u00A0\u00A0\u00A00 否定点数：\u00A0\u00A0\u00A0167',
   ]);
-  assert.equal(fixture.lines.at(-2).type, 'br', '末行后有空行（:26 PRINTL）');
-  assert.equal(fixture.lines.at(-1).type, 'divider', '尾部点线（:27）');
+  assert.equal(fixture.lines.at(-2).type, 'br', '末行后有空行');
+  assert.equal(fixture.lines.at(-1).type, 'divider', '尾部点线');
 });
 
-test('SHOW_JUEL：男人（TALENT:122）第 0 项显示「阴茎」', () => {
+test('show_juel：男人（TALENT:122）第 0 项显示「阴茎」', () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:122', 1);
@@ -657,19 +657,19 @@ test('SHOW_JUEL：男人（TALENT:122）第 0 项显示「阴茎」', () => {
   assert.ok(fixture.text_lines()[0].startsWith(' 阴茎点数：\u00A0\u00A03479'));
 });
 
-test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别过滤与 [999]', async () => {
+test('show_ablup_select：能力按钮化（PR #53）——编号空间、性别过滤与 [999]', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('abl:31:0', 3);
   fixture.store.set('mark:31:3', 1);
   const { show_ablup_select } = fixture.load_module('page/page-ablup');
 
-  // #467 起本函数是 async（逐行调 DECIDE 打 `*`）
+  // #467 起本函数是 async（逐行调 decide_ablup 打 `*`）
   await show_ablup_select(31);
 
   const buttons = fixture.lines.filter((line) => line.type === 'button');
-  // 样本 :262-268 的条目序（0-3、10-17、20-22、30-33、37、39、99）——女
-  // 性对象（无 TALENT:122）按 :48-49 过滤掉 23 断背气质，样本同款
+  // 条目序（0-3、10-17、20-22、30-33、37、39、99）——女性对象（无
+  // TALENT:122）过滤掉 23 断背气质
   assert.deepEqual(
     buttons.map((b) => b.accelerator),
     [
@@ -677,15 +677,15 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
       37, 39, 99, 999,
     ],
   );
-  // 首条与 [99]：样本的「阴蒂感觉 - LV 3」「反抗刻印 - LV 1」（编号由
+  // 首条与 [99]：「阴蒂感觉 - LV 3」「反抗刻印 - LV 1」（编号由
   // 引擎拼、正文空白折叠——[ 0] 的补位不可再现，见 page-ablup.js 文件头）
   assert.equal(buttons[0].rendered, '[0] 阴蒂感觉 - LV 3');
   assert.equal(buttons.at(-2).rendered, '[99] 反抗刻印 - LV 1');
   assert.equal(buttons.at(-1).rendered, '[999] - 能力值提高结束');
-  // 的两处 PRINTL（每 4 条换行、末行不足 4 也收行）与 :109/:111 同款，
-  // 都只结束所在的按钮行，不产生空行：train-natural-log:945-953 里五行能力
-  // 按钮、[99] 行、尾部分割线与 [999] 行全部逐行相邻（#596）。
-  // 空行的两种形态都算（println 落 br、print('') 落 text 空串）
+  // 每 4 条的收尾换行与末行不足 4 的收行都只结束所在的按钮行，不产生
+  // 空行：train-natural-log 里五行能力按钮、[99] 行、尾部分割线与 [999]
+  // 行全部逐行相邻（#596）。
+  // 空行的两种写法都算（println 落 br、print('') 落 text 空串）
   const blank_line = (line) =>
     line.type === 'br' || (line.type === 'text' && line.text === '');
   const br_count = fixture.lines.filter(blank_line).length;
@@ -693,14 +693,14 @@ test('SHOW_ABLUP_SELECT：能力按钮化（PR #53）——编号空间、性别
   assert.deepEqual(
     fixture.lines.map((line) => line.type),
     Array.from({ length: buttons.length - 1 }, () => 'button').concat([
-      'divider', // CUSTOMDRAWLINE ‥（夹在 [99] 行与 [999] 行之间）
+      'divider', // 点线 ‥（夹在 [99] 行与 [999] 行之间）
       'button', // [999] - 能力值提高结束
     ]),
     '按钮逐行相邻，[99] 行与尾部分割线、[999] 行之间都没有空行',
   );
 });
 
-test('SHOW_ABLUP_SELECT：男无 私处感觉/百合气质/百合中毒，第 0 项改「阴茎感觉」', async () => {
+test('show_ablup_select：男无 私处感觉/百合气质/百合中毒，第 0 项改「阴茎感觉」', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:122', 1);
@@ -721,7 +721,7 @@ test('SHOW_ABLUP_SELECT：男无 私处感觉/百合气质/百合中毒，第 0 
   );
 });
 
-test('SHOW_ABLUP_SELECT：感觉缺失灰显（TALENT:101 & 2 → 阴蒂钮变灰）', async () => {
+test('show_ablup_select：感觉缺失灰显（TALENT:101 & 2 → 阴蒂钮变灰）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('talent:31:101', 2);
@@ -733,7 +733,7 @@ test('SHOW_ABLUP_SELECT：感觉缺失灰显（TALENT:101 & 2 → 阴蒂钮变�
   assert.equal(button.color, '#808080');
 });
 
-test('SHOW_ABLUP_SELECT：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中毒钮', async () => {
+test('show_ablup_select：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中毒钮', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('cstr:31:7', '足交');
@@ -752,9 +752,9 @@ test('SHOW_ABLUP_SELECT：CSTR:7 定制癖好 → 追加 [4] 感觉与 [40] 中�
   );
 });
 
-// ———— @DECIDE_ABLUP 族的 `*` 标记（issue #467） ————
+// ———— decide_ablup 族的 `*` 标记（issue #467） ————
 
-test('SHOW_ABLUP_SELECT：#467 `*` 标记按 DECIDE 结果逐行渲染', async () => {
+test('show_ablup_select：#467 `*` 标记按 decide_ablup 结果逐行渲染', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   // 阴蒂感觉 Lv0 只需 JUEL:0 ≥ 1；反抗刻印 Lv1 需屈服刻印(2)≥反抗刻印(3)、
@@ -783,7 +783,7 @@ test('SHOW_ABLUP_SELECT：#467 `*` 标记按 DECIDE 结果逐行渲染', async (
   assert.equal(rendered(99), '[99] 反抗刻印 - LV 1 *', '两门槛与屈服珠全达标');
 });
 
-test('SHOW_ABLUP_SELECT：#467 满级行不打 `*`（DECIDE 的提前 RETURN 0）', async () => {
+test('show_ablup_select：#467 满级行不打 `*`（decide_ablup 的提前返回 0）', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('abl:31:0', 5); // Lv5 且无[自慰狂] → 需要特殊素质
@@ -798,7 +798,7 @@ test('SHOW_ABLUP_SELECT：#467 满级行不打 `*`（DECIDE 的提前 RETURN 0�
   );
 });
 
-test('SHOW_ABLUP_SELECT：#467 癖好行（[4]／[40]）也按各自 DECIDE 打 `*`', async () => {
+test('show_ablup_select：#467 癖好行（[4]／[40]）也按各自 decide_ablup 打 `*`', async () => {
   const fixture = create_era_fixture();
   seed_world(fixture);
   fixture.store.set('cstr:31:7', '舔'); // 两行只在定制癖好名后才渲染
@@ -819,7 +819,7 @@ test('SHOW_ABLUP_SELECT：#467 癖好行（[4]／[40]）也按各自 DECIDE 打 
 
 // ———— #595：结算表头的收尾空行 ————
 
-test('#595 调教结果表头与表格首行之间不夹空行（:655 的 PRINTL 只收尾拼行）', () => {
+test('#595 调教结果表头与表格首行之间不夹空行（收尾输出只结束拼行）', () => {
   const fixture = create_era_fixture();
   const mod = seed_world(fixture);
 
@@ -831,6 +831,6 @@ test('#595 调教结果表头与表格首行之间不夹空行（:655 的 PRINTL
   assert.equal(
     next?.type,
     'divider',
-    '表头之后直接是 :656 的点线，不补空行（TRAIN_MAIN.ERB:655 只收尾 :652-654 的 PRINTFORM 链）',
+    '表头之后直接是点线，不补空行（收尾输出只结束拼行链）',
   );
 });
