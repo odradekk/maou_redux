@@ -708,7 +708,7 @@ test('肛门爱抚初回（CFLAG:303==0）推进到 1', async () => {
   );
 });
 
-test('肛门爱抚二回目以降：润滑分档 + それ以外读 CFLAG:223（源缺陷 1:1）', async () => {
+test('肛门爱抚二回目以降：润滑分档 + それ以外判据读 CFLAG:303', async () => {
   const whore_wet = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`cflag:${CID}:303`, 1);
@@ -742,20 +742,28 @@ test('肛门爱抚二回目以降：润滑分档 + それ以外读 CFLAG:223（�
 
   const other = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:303`, 1);
-    f.store.set(`cflag:${CID}:223`, 2);
+    f.store.set(`cflag:${CID}:223`, 2); // 干扰项：首次耻情计数与本支无关
     f.store.set('flag:7', 1);
   }, 2);
   await speak_k15(other, seq_rand(0));
-  assert.deepEqual(
-    other.text_lines(),
-    [],
-    '肛门爱抚それ以外读 CFLAG:223：已推进且 FLAG:7==1 时不出声',
+  assert.ok(
+    other.text_lines().some((l) => l.includes('羞愤异常地怒吼')),
+    'それ以外判据读 CFLAG:303：303<=1 命中出声',
   );
   assert.equal(
     other.store.get(`cflag:${CID}:303`),
-    1,
-    'CFLAG:303 状态不动（源读 223 而非 303）',
+    2,
+    'それ以外 → CFLAG:303 = 2',
   );
+
+  // FLAG:7==1 且 303 已推进到 2：判据读本支计数，不出声
+  const done = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:303`, 2);
+    f.store.set('flag:7', 1);
+  }, 2);
+  await speak_k15(done, seq_rand(0));
+  assert.deepEqual(done.text_lines(), []);
+  assert.equal(done.store.get(`cflag:${CID}:303`), 2);
 });
 
 test('自慰初回（CFLAG:304==0）推进到 1', async () => {
@@ -921,7 +929,7 @@ test('接吻调教初回（CFLAG:307==0 无 TFLAG:13）与二回目以降', asyn
   assert.equal(whore.store.get(`cflag:${CID}:307`), 5, '淫乱 → 5');
 });
 
-test('自己扒开初回推进 CFLAG:308=1；二回目以降误写 CFLAG:306（源缺陷 1:1）', async () => {
+test('自己扒开初回推进 CFLAG:308=1；二回目以降读写 CFLAG:308', async () => {
   const first = await setup_k15(undefined, 7);
   await speak_k15(first, seq_rand(0));
   assert.ok(
@@ -930,25 +938,45 @@ test('自己扒开初回推进 CFLAG:308=1；二回目以降误写 CFLAG:306（�
   );
   assert.equal(first.store.get(`cflag:${CID}:308`), 1, '自己扒开初回推进到 1');
 
-  const whore = await setup_k15((f) => {
-    f.store.set(`talent:${CID}:76`, 1);
-    f.store.set(`cflag:${CID}:308`, 1);
+  const cases = [
+    { seed: { [`talent:${CID}:76`]: 1 }, fragment: '看清楚里面', expected: 5 },
+    { seed: { [`talent:${CID}:85`]: 1 }, fragment: '能看清楚吗', expected: 4 },
+    { seed: { [`abl:${CID}:17`]: 3 }, fragment: '再这样盯着看', expected: 3 },
+    { seed: {}, fragment: '够了吧', expected: 2 },
+  ];
+  for (const [index, item] of cases.entries()) {
+    const fixture = await setup_k15((f) => {
+      f.store.set(`cflag:${CID}:308`, 1);
+      f.store.set(`cflag:${CID}:306`, 6); // 干扰项：胸爱抚计数与本支无关
+      for (const [key, value] of Object.entries(item.seed)) {
+        f.store.set(key, value);
+      }
+    }, 7);
+    await speak_k15(fixture, seq_rand(0));
+    assert.ok(
+      fixture.text_lines().some((l) => l.includes(item.fragment)),
+      `第 ${index + 1} 档台词`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:308`),
+      item.expected,
+      `第 ${index + 1} 档推进`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:306`),
+      6,
+      `第 ${index + 1} 档不动胸爱抚计数`,
+    );
+  }
+
+  // FLAG:7==1 且 308 已推进到 2：判据读本支计数，不出声
+  const done = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:308`, 2);
+    f.store.set('flag:7', 1);
   }, 7);
-  await speak_k15(whore, seq_rand(0));
-  assert.ok(
-    whore.text_lines().some((l) => l.includes('看清楚里面')),
-    '自己扒开淫乱台词',
-  );
-  assert.equal(
-    whore.store.get(`cflag:${CID}:306`),
-    5,
-    '源误写 CFLAG:306=5（非 308）',
-  );
-  assert.equal(
-    whore.store.get(`cflag:${CID}:308`),
-    1,
-    'CFLAG:308 保持不变（二回目未写）',
-  );
+  await speak_k15(done, seq_rand(0));
+  assert.deepEqual(done.text_lines(), []);
+  assert.equal(done.store.get(`cflag:${CID}:308`), 2);
 });
 
 test('插入手指 / 舔肛 / 振动宝石：空 PRINTFORMW 仍推进计数器', async () => {
@@ -1303,45 +1331,26 @@ test('手淫 / 口交_奴：初回それ以外 + 二回目淫乱', async () => {
   assert.equal(ow.store.get(`cflag:${CID}:332`), 6, '口交淫乱+奉仕Lv5 → 6');
 });
 
-test('乳交：初回淫乱先写 5 再被外层写成 1；二回目读 CFLAG:332（源缺陷 1:1）', async () => {
+test('乳交：初回推进到 1；二回目判据读 CFLAG:333', async () => {
   const first = await setup_k15((f) => f.store.set(`talent:${CID}:76`, 1), 32);
   await speak_k15(first, seq_rand(0));
   assert.ok(
     first.text_lines().some((l) => l.includes('用胸部摩擦就会硬')),
     '乳交初回淫乱台词',
   );
-  assert.equal(
-    first.store.get(`cflag:${CID}:333`),
-    1,
-    '初回淫乱先写 5 再被 CFLAG:TARGET:333=1 覆盖',
-  );
+  assert.equal(first.store.get(`cflag:${CID}:333`), 1, '乳交初回推进到 1');
 
-  const later = await setup_k15((f) => {
+  // 淫乱+奉仕Lv5 档：333=1 命中推进到 6（332 是干扰项，判据不读它）
+  const hit = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`abl:${CID}:16`, 5);
     f.store.set(`cflag:${CID}:333`, 1);
     f.store.set(`cflag:${CID}:332`, 6);
     f.store.set('flag:7', 1);
   }, 32);
-  await speak_k15(later, seq_rand(0));
+  await speak_k15(hit, seq_rand(0));
   assert.ok(
-    later.text_lines().some((l) => l.includes('在胸部上面')),
-    '二回目淫乱+奉仕Lv5 读 CFLAG:332 失败后落到奉仕Lv3 臂（源 1:1）',
-  );
-  assert.equal(
-    later.store.get(`cflag:${CID}:333`),
-    3,
-    'CFLAG:333 被奉仕Lv3 臂写成 3（源读 332 后掉档）',
-  );
-
-  const later_ok = await setup_k15((f) => {
-    f.store.set(`talent:${CID}:76`, 1);
-    f.store.set(`abl:${CID}:16`, 5);
-    f.store.set(`cflag:${CID}:333`, 1);
-  }, 32);
-  await speak_k15(later_ok, seq_rand(0));
-  assert.ok(
-    later_ok
+    hit
       .text_lines()
       .some(
         (l) =>
@@ -1349,9 +1358,34 @@ test('乳交：初回淫乱先写 5 再被外层写成 1；二回目读 CFLAG:33
           l.includes('变得好大') ||
           l.includes('热腾腾的牛奶'),
       ),
-    'CFLAG:332 未推进时二回目淫乱+奉仕Lv5 仍出声',
+    '二回目淫乱+奉仕Lv5 命中出声',
   );
-  assert.equal(later_ok.store.get(`cflag:${CID}:333`), 6, '命中时写 6');
+  assert.equal(hit.store.get(`cflag:${CID}:333`), 6, '命中时写 6');
+  assert.equal(hit.store.get(`cflag:${CID}:332`), 6, '口交计数器不动');
+
+  // 淫乱无奉仕档：333=1 命中出声但不写计数（本档无写点）
+  const plain = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:333`, 1);
+    f.store.set(`cflag:${CID}:332`, 6);
+    f.store.set('flag:7', 1);
+  }, 32);
+  await speak_k15(plain, seq_rand(0));
+  assert.ok(
+    plain.text_lines().some((l) => l.includes('快点变大哦')),
+    '二回目淫乱无奉仕命中出声',
+  );
+  assert.equal(plain.store.get(`cflag:${CID}:333`), 1, '淫乱无奉仕档不写计数');
+
+  // FLAG:7==1 且 333 已推进到 5：判据读本支计数，不出声
+  const silent = await setup_k15((f) => {
+    f.store.set(`talent:${CID}:76`, 1);
+    f.store.set(`cflag:${CID}:333`, 5);
+    f.store.set('flag:7', 1);
+  }, 32);
+  await speak_k15(silent, seq_rand(0));
+  assert.deepEqual(silent.text_lines(), []);
+  assert.equal(silent.store.get(`cflag:${CID}:333`), 5);
 });
 
 test('股间性交 / 全身擦洗 / 肛门侍奉：空 PRINTFORMW 仍推进', async () => {
@@ -1453,40 +1487,35 @@ test('打屁股（SELECTCOM 40）：初回需 !(淫乱||爱慕)；二回目淫�
   assert.equal(later.store.get(`cflag:${CID}:341`), 2, 'それ以外 → 2');
 });
 
-test('鞭（SELECTCOM 41）：空 PRINTFORMW 仍推进；それ以外读 CFLAG:335（源缺陷 1:1）', async () => {
+test('鞭（SELECTCOM 41）：空 PRINTFORMW 仍推进；それ以外判据读 CFLAG:342', async () => {
   const first = await setup_k15(undefined, 41);
   await speak_k15(first, seq_rand(0));
   assert.ok(first.text_lines().includes(''), '鞭初回空 PRINTFORMW');
   assert.equal(first.store.get(`cflag:${CID}:342`), 1, '鞭初回 → 1');
 
+  // それ以外档：342=1 命中，空 PRINTFORMW 后推进到 2（335 是干扰项，判据不读它）
   const later = await setup_k15((f) => {
     f.store.set(`cflag:${CID}:342`, 1);
     f.store.set(`cflag:${CID}:335`, 6);
     f.store.set('flag:7', 1);
   }, 41);
   await speak_k15(later, seq_rand(0));
-  assert.deepEqual(
-    later.text_lines(),
-    [],
-    '读 CFLAG:335 已 6 且 FLAG:7==1 → 不出声',
-  );
+  assert.deepEqual(later.text_lines(), [''], 'それ以外命中出空行');
   assert.equal(
     later.store.get(`cflag:${CID}:342`),
-    1,
-    'CFLAG:342 不动（源读 335）',
+    2,
+    'それ以外 → CFLAG:342 = 2',
   );
+  assert.equal(later.store.get(`cflag:${CID}:335`), 6, '骑乘位计数器不动');
 
-  const later_ok = await setup_k15((f) => {
-    f.store.set(`cflag:${CID}:342`, 1);
-    f.store.set(`cflag:${CID}:335`, 1);
+  // FLAG:7==1 且 342 已推进到 2：判据读本支计数，不出声
+  const silent = await setup_k15((f) => {
+    f.store.set(`cflag:${CID}:342`, 2);
     f.store.set('flag:7', 1);
   }, 41);
-  await speak_k15(later_ok, seq_rand(0));
-  assert.equal(
-    later_ok.store.get(`cflag:${CID}:342`),
-    2,
-    'CFLAG:335<=1 时写 342=2',
-  );
+  await speak_k15(silent, seq_rand(0));
+  assert.deepEqual(silent.text_lines(), []);
+  assert.equal(silent.store.get(`cflag:${CID}:342`), 2);
 });
 
 test('针 / 眼罩 / 绳子 / 口塞：空 PRINTFORMW 仍推进；着脱写 380/385/386', async () => {
@@ -1665,11 +1694,13 @@ test('乳夹口交 / 口交时自慰 / 手搓口交 / 真空口交 / 六九式 /
   }
 });
 
-test('深喉（SELECTCOM 124）：二回目读 CFLAG:363 写 CFLAG:365（源缺陷 1:1）', async () => {
+// 改写：此用例无代码改动（原登记为读 363 写 365 的缺陷，复核属实）
+test('深喉（SELECTCOM 124）：二回目判据与写入都是 CFLAG:365', async () => {
   const first = await setup_k15(undefined, 124);
   await speak_k15(first, seq_rand(0));
   assert.equal(first.store.get(`cflag:${CID}:365`), 1, '深喉初回 → 1');
 
+  // 淫乱档：365=1 命中推进到 5（363 是干扰项，判据不读它）
   const later = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
     f.store.set(`cflag:${CID}:365`, 1);
@@ -1677,23 +1708,19 @@ test('深喉（SELECTCOM 124）：二回目读 CFLAG:363 写 CFLAG:365（源缺�
     f.store.set('flag:7', 1);
   }, 124);
   await speak_k15(later, seq_rand(0));
-  assert.equal(
-    later.store.get(`cflag:${CID}:365`),
-    1,
-    '读 CFLAG:363 已 6 且 FLAG:7==1 → 全部臂不进，365 保持 1',
-  );
+  assert.equal(later.store.get(`cflag:${CID}:365`), 5, '淫乱 → CFLAG:365 = 5');
+  assert.equal(later.store.get(`cflag:${CID}:363`), 6, '真空口交计数器不动');
 
-  const later_ok = await setup_k15((f) => {
+  // FLAG:7==1 且 365 已推进到 5：判据读本支计数，不出声
+  const silent = await setup_k15((f) => {
     f.store.set(`talent:${CID}:76`, 1);
-    f.store.set(`cflag:${CID}:365`, 1);
+    f.store.set(`cflag:${CID}:365`, 5);
     f.store.set(`cflag:${CID}:363`, 1);
+    f.store.set('flag:7', 1);
   }, 124);
-  await speak_k15(later_ok, seq_rand(0));
-  assert.equal(
-    later_ok.store.get(`cflag:${CID}:365`),
-    5,
-    'CFLAG:363<=4 时淫乱写 5',
-  );
+  await speak_k15(silent, seq_rand(0));
+  assert.deepEqual(silent.text_lines(), []);
+  assert.equal(silent.store.get(`cflag:${CID}:365`), 5);
 });
 
 test('穿环（SELECTCOM 87）：初回助手空 PRINTFORMW；二回目爱慕写 3', async () => {
@@ -1774,7 +1801,18 @@ test('兽奸舔肛写 CFLAG:310；背后位肛交写 CFLAG:328', async () => {
   );
 });
 
-test('兽奸眼罩着脱读 CFLAG:338 写 CFLAG:444（源缺陷 1:1）', async () => {
+test('深喉二回目·真空口交=6 静默（363 与本支无关）', async () => {
+  const fixture = await setup_k15((f) => {
+    f.store.set('flag:7', 0);
+    f.store.set('cflag:31:365', 5);
+    f.store.set('cflag:31:363', 6);
+  }, 124);
+  await speak_k15(fixture);
+  assert.deepEqual(fixture.text_lines(), [], '越过 365 门槛后静默');
+  assert.equal(fixture.store.get('cflag:31:365'), 5);
+});
+
+test('兽奸眼罩着脱：判据与写入都是 CFLAG:444', async () => {
   const first = await setup_k15((f) => {
     f.store.set(`tequip:${CID}:89`, 1);
     f.store.set(`tequip:${CID}:43`, 0);
@@ -1791,6 +1829,7 @@ test('兽奸眼罩着脱读 CFLAG:338 写 CFLAG:444（源缺陷 1:1）', async (
     '兽奸眼罩不写 CFLAG:380',
   );
 
+  // 牝犬档：444=1 命中（< 3）推进到 4（338 是干扰项，判据不读它）
   const later = await setup_k15((f) => {
     f.store.set(`tequip:${CID}:89`, 1);
     f.store.set(`tequip:${CID}:43`, 0);
@@ -1800,11 +1839,8 @@ test('兽奸眼罩着脱读 CFLAG:338 写 CFLAG:444（源缺陷 1:1）', async (
     f.store.set('flag:7', 1);
   }, 43);
   await speak_k15(later, seq_rand(0));
-  assert.equal(
-    later.store.get(`cflag:${CID}:444`),
-    1,
-    '读 CFLAG:338 已 3 且 FLAG:7==1 → 牝犬臂不进，444 保持 1',
-  );
+  assert.equal(later.store.get(`cflag:${CID}:444`), 4, '牝犬 → CFLAG:444 = 4');
+  assert.equal(later.store.get(`cflag:${CID}:338`), 3, '肛门侍奉计数器不动');
 });
 test('兽奸骑乘位空 PRINTFORMW 仍推进；交谈录像牝犬', async () => {
   const ride = await setup_k15((f) => f.store.set(`tequip:${CID}:89`, 1), 34);

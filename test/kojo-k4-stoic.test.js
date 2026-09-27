@@ -8,8 +8,7 @@
  *     爱慕 → 助手无 → K4_KOJO2 二回目以降）与 @EVENTEND 的调教终了分档；
  *   - @KOJO_MESSAGE_COM_4 的头部守卫（K4 只有五道活动守卫：TEQUIP:45 /
  *     TFLAG:899 / TEQUIP:89→DOG_KOJO_4 / TEQUIP:90 / TEQUIP:55→COLOSSEUM；
- *     ASSI 守卫在源 :523 整行注释、TALENT:9 只在 SELF_KOJO——非模板七条，
- *     按源文 1:1 测五道）；
+ *     ASSI 与 TALENT:9 两道守卫在 K4 模板从未成文，不补写——测五道）；
  *   - SELECTCOM 0/1/2/3/5/6/7/8/9/10/11/12/13/14/15/16/19/20/21/22/23/
  *     26/27/28/29/30/31/32/33/34/35/36/37/40/41/42/43/44/45/46/55/56/80
  *     各分支的初回判定与 CFLAG:301–400 计数器推进；
@@ -27,7 +26,7 @@
  *   - 阈值闸 FLAG:7 == 1 时阶段耗尽不出声、== 2 时旁路重出声；
  *   - 成熟出售调用（SELL_MATURO_K0，#338 接通）。
  *
- * K4 与 K3 的区别（按源文 1:1，非缺移植）：COM 头部只有五道守卫；爱抚
+ * K4 与 K3 的区别（模板如此，非缺移植）：COM 头部只有五道守卫；爱抚
  * 二回目以降的「それ以外」档在 FLAG:7 == 2 时**每次**出声（无随机尾，
  * 每次 CFLAG:301 = 2 并 RETURN）；淫乱/爱慕档 CFLAG:301 落到 6/5 后同支
  * 不再重入（除非 FLAG:7 == 2 旁路）。
@@ -309,13 +308,13 @@ test('死斗场（TEQUIP:55）：岔进本文件真身 COLOSSEUM_KOJO_4', async 
   ]);
 });
 
-test('K4 无 ASSI 守卫：助手调教也出声（源 :523 整行注释）', async () => {
+test('K4 无 ASSI 守卫：助手调教也出声', async () => {
   const fixture = await setup_k4((f, era_flag) => {
     era_flag.assi = 31;
     era_flag.assiplay = 1;
   });
   await speak_k4(fixture, seq_rand(0));
-  // 与 K3 不同（K3 有 ASSI 守卫会静默）；K4 的 ASSI 守卫整行注释
+  // 与 K3 不同（K3 有 ASSI 守卫会静默）；K4 的 ASSI 守卫从未成文
   assert.ok(fixture.text_lines().length > 0, 'K4 无 ASSI 守卫，助手调教也出声');
 });
 
@@ -691,10 +690,9 @@ test('GOHOUBI_REQUEST（发情请求）：TFLAG:18 == 1 支出力', async () => 
   );
 });
 
-test('#625 GOHOUBI_REQUEST：保留 Y=0，兽名与前后文同一行（CFLAG:504 1/2/3）', async () => {
-  // 原作 :5259（PRINTFORM）+ :5261/:5263/:5265（IF/ELSEIF 三档）+ :5267
-  // （PRINTFORMW 收行）**是一整行**（#625）。后两档读恒 0 的 Y（源缺陷，见
-  // 函数头注），所以 CFLAG:504 2/3 不补「猪」「马」——整行只有前段与收行
+test('#625 GOHOUBI_REQUEST：兽名与前后文同一行（CFLAG:504 1/2/3，仅 1 狗档有兽名）', async () => {
+  // 一整行结构（#625）：兽名仅 504==1（狗）有词，504==2/3 的兽名臂本就
+  // 不可达已删除，落空串——整行只有前段与收行
   const cases = [
     [1, '狗'],
     [2, ''],
@@ -707,7 +705,7 @@ test('#625 GOHOUBI_REQUEST：保留 Y=0，兽名与前后文同一行（CFLAG:50
     assert.deepEqual(
       fixture.text_lines(),
       [`「拜托了…让我和${beast}交配吧……！」`],
-      `CFLAG:504==${req}：兽名与前后文落在同一行，Y=0 时不补猪/马（#625）`,
+      `CFLAG:504==${req}：兽名与前后文落在同一行（#625）`,
     );
   }
 });

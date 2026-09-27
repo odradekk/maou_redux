@@ -260,6 +260,7 @@ test('KOJO_MESSAGE_COM：全部可达计数器至少推进一个后续档', asyn
     [3, 304, 2],
     [5, 306, 2],
     [6, 307, 2],
+    [7, 308, 2],
     [8, 309, 2],
     [9, 310, 2],
     [10, 311, 2],
@@ -332,13 +333,14 @@ test('KOJO_MESSAGE_COM：全部可达计数器至少推进一个后续档', asyn
   }
 });
 
-test('原作缺陷：SELECTCOM 56 少 ENDIF，使 SELECTCOM 123 不可达', async () => {
+test('SELECTCOM 123 无口上分支：不输出也不推进 CFLAG:360', async () => {
   const fixture = await setup_k19(undefined, 123);
   await speak_k19(fixture);
+  assert.deepEqual(fixture.text_lines(), [], 'SELECTCOM 123 无口上输出');
   assert.equal(
     fixture.store.get(`cflag:${CID}:360`),
     undefined,
-    '原作缺 ENDIF：SELECTCOM 123 的 CFLAG:360 不可达',
+    'SELECTCOM 123 不推进 CFLAG:360',
   );
 });
 
@@ -429,35 +431,56 @@ test('SELF_KOJO 各阶段推进 CFLAG:261–265 与 271–274', async () => {
   }
 });
 
-test('原作缺陷：自己扒开用 308 判首次、二次却推进胸部爱抚 306', async () => {
-  const first = await setup_k19(undefined, 7);
-  await speak_k19(first);
-  assert.equal(first.store.get(`cflag:${CID}:308`), 1, '首次推进 CFLAG:308');
-
-  const repeat = await setup_k19((f) => {
-    f.store.set(`cflag:${CID}:308`, 1);
-    f.store.set(`cflag:${CID}:306`, 0);
-  }, 7);
-  await speak_k19(repeat);
-  assert.equal(
-    repeat.store.get(`cflag:${CID}:308`),
-    1,
-    '二次不再推进 CFLAG:308',
-  );
-  assert.equal(
-    repeat.store.get(`cflag:${CID}:306`),
-    2,
-    '原作缺陷推进 CFLAG:306',
-  );
+test('自己扒开二次各档推进 CFLAG:308 自身，不再碰胸爱抚 306', async () => {
+  const cases = [
+    ['淫乱', (f) => f.store.set(`talent:${CID}:76`, 1), 5],
+    ['爱慕', (f) => f.store.set(`talent:${CID}:85`, 1), 4],
+    ['ABL:17>=3', (f) => f.store.set(`abl:${CID}:17`, 3), 3],
+    ['无素质兜底', () => {}, 2],
+  ];
+  for (const [name, seed, expected] of cases) {
+    const fixture = await setup_k19((f) => {
+      f.store.set(`cflag:${CID}:308`, 1);
+      seed(f);
+    }, 7);
+    await speak_k19(fixture);
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:308`),
+      expected,
+      `${name}档推进 CFLAG:308=${expected}`,
+    );
+    assert.equal(
+      fixture.store.get(`cflag:${CID}:306`) || 0,
+      0,
+      `${name}档不写胸爱抚 CFLAG:306`,
+    );
+  }
 });
 
-test('原作缺陷：MUSEUM 在 TFLAG:500 分派前无条件返回', async () => {
-  const fixture = await setup_k19();
-  const { game } = fixture.load_module('facade/game');
-  game.event.博物馆口上 = 9;
-  const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
-  await museum_koujo_family.call(KEY, { args: [] });
-  assert.equal(fixture.text_lines().length, 1, '无条件 RETURN 后分派段不可达');
+test('MUSEUM 口上不按博物馆口上编号分派：固定低头正文，爱慕加印求慰台词', async () => {
+  const plea =
+    '「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」';
+  const bowed =
+    '菲娅深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。';
+  for (const [love, stage] of [
+    [0, 0],
+    [0, 9],
+    [1, 0],
+    [1, 9],
+  ]) {
+    const fixture = await setup_k19((f) => {
+      if (love) f.store.set(`talent:${CID}:85`, 1);
+    });
+    const { game } = fixture.load_module('facade/game');
+    game.event.博物馆口上 = stage;
+    const { museum_koujo_family } = fixture.load_module('kojo/kojo-system');
+    await museum_koujo_family.call(KEY, { args: [] });
+    assert.deepEqual(
+      fixture.text_lines(),
+      love ? [plea, bowed] : [bowed],
+      `TALENT:85=${love}、博物馆口上=${stage}：输出固定`,
+    );
+  }
 });
 
 test('非调教族：NTR、处刑与语尾均注册并执行关键状态', async () => {

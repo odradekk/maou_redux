@@ -422,8 +422,7 @@ async function kojo_message_com_3(rand) {
     ) {
       // ;;追記者／回数で口上が進む
       if (kojo.爱抚 <= 200) {
-        // ;;快乐刻印Lv3 分档（ELSEIF MARK:2 == 2 在本支门槛
-        // MARK:2 <= 1 下不可达，1:1 保留）
+        // ;;快乐刻印Lv3 分档
         if (mark(1) === 3) {
           await era.printAndWait(
             '「啊嗯~、嗯~……明明…应该…感觉恶心来的……应该感觉、恶心来的呀…！」',
@@ -437,9 +436,6 @@ async function kojo_message_com_3(rand) {
           await era.printAndWait(
             '「嗯呜……呼~、呜…不行……啊~！明明、那么令人恶心……的事情……」',
           );
-        } else if (mark(2) === 2) {
-          // ;屈服刻印Lv2（门槛下死支，1:1 保留）
-          await era.printAndWait('「哈呜…这样的…只是要忍耐而已…而已…嗯~！」');
         } else {
           await era.printAndWait('「感觉真恶心…不要在…这样…触，触碰了…！」');
         }
@@ -656,9 +652,8 @@ async function kojo_message_com_3(rand) {
       await era.printAndWait('「啊呜呜~！…不，不是…才没有感觉…」');
       await era.printAndWait(`「呜嗯啊~！啊~啊啊~哈啊啊啊啊~~${heart(1)}」`);
       kojo.肛门爱抚 = 3;
-    } else if (kojo.首次耻情Lv2 <= 1 || game.kojo.口上开关 === 2) {
+    } else if (kojo.肛门爱抚 <= 1 || game.kojo.口上开关 === 2) {
       // それ以外（爱無し、润滑Lv2未満、A感覚Lv3未満）
-      // 原作读 CFLAG:223（首次耻情Lv2），不是 303——1:1 保留
       await era.printAndWait(
         '「嗯呜~…请，请快住手啊…那种地方不管怎么做都不会…呜啊啊~啊啊~！」',
       );
@@ -6426,9 +6421,9 @@ async function kojo_message_com_3(rand) {
           } else if (era.get(`tequip:${target}:53`) === 1) {
             await era.printAndWait(`「呜呜…别看啊、至少…请不要拍、啊……」`);
           } else {
-            // 原作是一整行：:4810 的 PRINTFORM 不换行（行尾全角
-            // 空格照抄），三支的 PRINTFORMW 各自收行。前缀提到语句外共用，
-            // 各支语句只列本支行号（抽签顺序照原作，#623）
+            // 三条支合成同一行输出：前缀不换行（行尾的全角空格是行
+            // 排版的一部分，保留），三支各自的语句各自收行。前缀为三
+            // 支共用，提到语句外（#623）
             const birth_shown = rand_n(3) === 0;
             const line_head = `「原、原谅我…啊啊啊啊！！${'\u3000'}`;
             if (birth_shown) {

@@ -2,16 +2,8 @@
 /**
  * @file 菲娅口上 K904（issue #250，J40）。
  *
- * 原作缺陷 1:1 保留：@KOJO_MESSAGE_COM_904 的“自己扒开”段（:1199-1226）
- * 以 CFLAG:308 判首次，却在后续各档读写 CFLAG:306；这会与胸部爱抚共用
- * 计数器。移植不修正，变异条目固定此行为。
- * 原作缺陷 1:1 保留：@MUSEUM_KOUJO_K904 在 :6368-6370 无条件 RETURN，故其后
- * 按 TFLAG:500 分派的分支不可达。移植保留原执行顺序，变异条目固定此行为。
- * 原作缺陷 1:1 保留：SELECTCOM 56 段在 :4467-4468 后少一个 ENDIF，导致紧随的
- * SELECTCOM 123 嵌在 56 分支内而不可达；源在 :4526-4527 用额外 ENDIF 恢复层级。
- * 移植不补括号，变异条目固定此行为。
- *
- * 原作未实现：@SINGLE_ENDING_K904（:5792 起）整段仍是注释，不凭空补写。
+ * museum_koujo_k904 不按博物馆口上编号分派：固定输出求慰台词（爱慕时）与低头正文。
+ * 单人结局口上未实现，不凭空补写。
  */
 
 'use strict';
@@ -1705,8 +1697,8 @@ async function kojo_message_com_904(rand) {
             `「就这样子……把肉棒从这里……咕啾咕啾的插进去吧❤」`,
           );
         }
-        // CFLAG:306  = 5（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 5;
+        // CFLAG:308  = 5（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 5;
       } else if (
         era.get(`talent:${target}:85`) == 1 &&
         (chara(target).kojo.自己扒开 <= 3 || game.kojo.口上开关 == 2)
@@ -1720,8 +1712,8 @@ async function kojo_message_com_904(rand) {
           await era.printAndWait(`在小穴里还能看见薄薄的处女膜。`);
           await era.printAndWait(`「是主人的话……就没问题……」`);
         }
-        // CFLAG:306  = 4（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 4;
+        // CFLAG:308  = 4（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 4;
       } else if (
         era.get(`abl:${target}:17`) >= 3 &&
         (chara(target).kojo.自己扒开 <= 2 || game.kojo.口上开关 == 2)
@@ -1732,15 +1724,15 @@ async function kojo_message_com_904(rand) {
           `${target_name}红着脸用小手分开了花瓣，粉嫩的小穴微微开合着，在两边的壁肉之间隐约可以看见一条条银丝。`,
         );
         await era.printAndWait(`小穴微微的颤抖着，流出少许透明的爱液……`);
-        // CFLAG:306  = 3（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 3;
-      } else if (chara(target).kojo.胸爱抚 <= 1 || game.kojo.口上开关 == 2) {
+        // CFLAG:308  = 3（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 3;
+      } else if (chara(target).kojo.自己扒开 <= 1 || game.kojo.口上开关 == 2) {
         await era.printAndWait(`「呜呜……讨厌……不要看……」`);
         await era.printAndWait(
           `${target_name}轻轻抽泣着，不情愿的微微分开了小穴。`,
         );
-        // CFLAG:306  = 2（变量语义：CFLAG 族，306）
-        chara(target).kojo.胸爱抚 = 2;
+        // CFLAG:308  = 2（变量语义：CFLAG 族，308）
+        chara(target).kojo.自己扒开 = 2;
       }
       return 0;
     }
@@ -6920,92 +6912,6 @@ async function kojo_message_com_904(rand) {
         return 0;
       }
     }
-
-    if (era_flag.selectcom == 123) {
-      if (chara(target).kojo.乳夹口交 == 0) {
-        if (era.get(`talent:${target}:76`) == 1) {
-          await era.printAndWait(
-            `「诶嘿嘿……主人的美味的肉棒……${sc()}会好好的让它舒服的哟❤」`,
-          );
-          await era.printAndWait(
-            `${target_name}散发着和稚气的外表不符的色气，用平坦而柔软的小胸部开始摩擦起${master_name}的肉棒来。`,
-          );
-        } else if (era.get(`talent:${target}:85`) == 1) {
-          await era.printAndWait(
-            `「呼啊……主人的那个……还是那么……呜……雄伟的说……」`,
-          );
-          await era.printAndWait(`「嗯～${sc()}会努力让主人变得舒服起来的～」`);
-          await era.printAndWait(
-            `${target_name}微微有些害羞的仰着头看着${master_name}，用平坦而柔软的小胸部开始侍奉起${master_name}的肉棒来。`,
-          );
-        } else if (era.get(`abl:${target}:16`) >= 3) {
-          await era.printAndWait(`「用……用胸部吗……明白了的说……」`);
-          await era.printAndWait(
-            `${target_name}顺从的用平坦而柔软的小胸部开始侍奉起${master_name}的肉棒来。`,
-          );
-        } else {
-          await era.printAndWait(`「呜呜……这……这种事情……呜……讨厌啦……」`);
-          await era.printAndWait(
-            `${target_name}在${master_name}的命令下挂着泪珠不情愿的用平坦而柔软的小胸部摩擦着肉棒。`,
-          );
-        }
-        // CFLAG:360  = 1（变量语义：CFLAG 族，360）
-        chara(target).kojo.乳夹口交 = 1;
-        return 0;
-      } else {
-        if (
-          era.get(`talent:${target}:76`) == 1 &&
-          (chara(target).kojo.乳夹口交 <= 4 || game.kojo.口上开关 == 2)
-        ) {
-          await era.printAndWait(
-            `「诶嘿嘿……主人的肉棒……嗯……好热……好硬……感觉……好棒呢……❤」`,
-          );
-          await era.printAndWait(
-            `「虽然胸部很小，但是这样～这样～嗯……啾哈……呐呐……舒服吗……？❤」`,
-          );
-          await era.printAndWait(
-            `${target_name}的小脸上浮现出色色的表情，一边用平坦而柔软的小胸部开始摩擦起${master_name}的肉棒，一边轻轻舔舐着前端。`,
-          );
-          // CFLAG:360  = 5（变量语义：CFLAG 族，360）
-          chara(target).kojo.乳夹口交 = 5;
-        } else if (
-          era.get(`talent:${target}:85`) == 1 &&
-          (chara(target).kojo.乳夹口交 <= 3 || game.kojo.口上开关 == 2)
-        ) {
-          await era.printAndWait(
-            `「嗯……能侍奉主人什么的……${sc()}很开心的说……」`,
-          );
-          await era.printAndWait(
-            `「呐呐……主人……这样子……感觉怎么样……舒服吗……？」`,
-          );
-          await era.printAndWait(
-            `${target_name}的一边用平坦而柔软的小胸部侍奉着${master_name}的肉棒，一边仰着头询问着${master_name}的感觉。`,
-          );
-        } else if (
-          era.get(`abl:${target}:16`) >= 3 &&
-          (chara(target).kojo.乳夹口交 <= 2 || game.kojo.口上开关 == 2)
-        ) {
-          await era.printAndWait(`「主人……这个力度……可以吗……？」`);
-          await era.printAndWait(`「这种事情……不太擅长呢……」`);
-          await era.printAndWait(
-            `${target_name}乖巧而有些笨拙的用平坦而柔软的小胸部侍奉着${master_name}的肉棒。`,
-          );
-          // CFLAG:360  = 3（变量语义：CFLAG 族，360）
-          chara(target).kojo.乳夹口交 = 3;
-        } else if (
-          chara(target).kojo.乳夹口交 <= 1 ||
-          game.kojo.口上开关 == 2
-        ) {
-          await era.printAndWait(`「呜呜……为什么要做这种事情……呜……真是的……」`);
-          await era.printAndWait(
-            `因为畏惧着${master_name}，${target_name}在挂着泪珠不情愿的用平坦而柔软的小胸部摩擦着肉棒。`,
-          );
-        }
-        // CFLAG:360  = 2（变量语义：CFLAG 族，360）
-        chara(target).kojo.乳夹口交 = 2;
-      }
-      return 0;
-    }
   }
 
   if (era_flag.selectcom == 125) {
@@ -9176,7 +9082,6 @@ async function exucution_koujo_k904() {
 async function museum_koujo_k904() {
   const target = era_flag.target;
   const target_name = chara_callname(target); // %SAVESTR:TARGET%
-  const sc = (cid = target) => self_call(cid);
   if (era.get(`talent:${target}:85`)) {
     await era.printAndWait(
       `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
@@ -9187,78 +9092,6 @@ async function museum_koujo_k904() {
   );
 
   return 0;
-
-  if (game.event.博物馆口上 == 0) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 1) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 2) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 3) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 4) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 5) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 6) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 7) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……就算要死也……没，没什么……好，好怕的……呢……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 8) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……身体不管变成什么样……${sc()}都……都会……努力……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  } else if (game.event.博物馆口上 == 9) {
-    await era.printAndWait(
-      `「如，如果这样能取悦魔王大人的话……身体不管变成什么样……${sc()}都……都会……努力……」`,
-    );
-    await era.printAndWait(
-      `${target_name}深深的低下了头，小小的身体颤抖个不停，努力的不让眼泪流下来。`,
-    );
-  }
 }
 
 // @banishment_koujo_k904
@@ -9556,7 +9389,7 @@ kojo_message_palamcng_family.register(904, kojo_message_palamcng_904);
 kojo_message_markcng_family.register(904, kojo_message_markcng_904);
 self_kojo_family.register(904, self_kojo_k904);
 
-// #625：死斗场接口 @COLOSSEUM_KOJO_904 的调用点在 KOJO_MESSAGE_COM 的
-// `SIF ASSI > 0 && ASSIPLAY → RETURN 0` 之后，运行时不带助手才走到它；助手臂
-// 按 1:1 保留，导出只为行为测试能直达这具真身（同 K2/K4/K903）。
+// #625：colosseum_kojo_904 在 kojo_message_com_904 里的调用点位于助手守卫之后，
+// 带助手时运行时走不到它；导出只为行为测试能直接调用这具真身（同 K2/K4/K903
+// 的既有做法）。
 module.exports = { colosseum_kojo_904 };
