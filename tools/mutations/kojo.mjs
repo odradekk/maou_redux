@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 2673; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13347 守卫，#655（F9）-8+5 后合并计数
+export const COUNT = 2674; // #643 -5…沿革见 git 历史；#654（F8）：删反向变异与 k902 条目 67 条、新增 M13300-M13349 与 M13549，#655（F9）-8+5 后合并计数
 
 export default [
   {
@@ -25428,5 +25428,14 @@ const gohoubi_request_koujo_family = new DispatchFamily(
       '    } else if (kojo.骑乘位 <= 1 || game.kojo.口上开关 == 2) { // 变异：回退误读 335\n      // それ以外\n      await era.printAndWait(\n        `「咕…啊啊！呵呵呵…真不愧是这个鞭子',
     tests: ['kojo-k8-spade'],
     must_mention: 'SELECTCOM 41 鞭，それ以外分支判据读 CFLAG:342 自身',
+  },
+  {
+    desc: 'M13549 K8 SELECTCOM:30 手淫顶档推进上限退回 5，淫乱角色在 6 时无台词（#654 验收）',
+    file: 'ere/kojo/kojo-k8-spade.js',
+    find: '      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 6 || game.kojo.口上开关 == 2)\n    ) {\n      // 淫乱＋侍奉精神Lv3以上（RAND:2 二选一）',
+    replace:
+      '      era0(`abl:${target}:16`) >= 3 &&\n      (kojo.手淫 <= 5 || game.kojo.口上开关 == 2) // 变异：顶档上限退回 5\n    ) {\n      // 淫乱＋侍奉精神Lv3以上（RAND:2 二选一）',
+    tests: ['kojo-k8-spade'],
+    must_mention: '口上开关关闭时顶档仍命中',
   },
 ];

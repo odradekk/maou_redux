@@ -5806,9 +5806,7 @@ async function kojo_message_com_8(rand) {
     }
     return 0;
   } else if (era_flag.selectcom == 30) {
-    // 手淫 CFLAG:331（无 A感覚 分档，按 TALENT/侍奉精神 ABL:16 分档；
-    // 二回目以降顶档与次档共用守卫 CFLAG:331 <= 5：cflag=6 且 FLAG:7 != 2 时
-    // 两档都不命中，直接落到更低档）
+    // 手淫 CFLAG:331（无 A感覚 分档，按 TALENT/侍奉精神 ABL:16 分档）
     if (kojo.手淫 == 0) {
       // 初めて（单层：无 ABL:3 细分）
       if (era0(`talent:${target}:76`) == 1) {
@@ -5847,7 +5845,7 @@ async function kojo_message_com_8(rand) {
     if (
       era0(`talent:${target}:76`) == 1 &&
       era0(`abl:${target}:16`) >= 3 &&
-      (kojo.手淫 <= 5 || game.kojo.口上开关 == 2)
+      (kojo.手淫 <= 6 || game.kojo.口上开关 == 2)
     ) {
       // 淫乱＋侍奉精神Lv3以上（RAND:2 二选一）
       if (rand_n(2) == 0) {

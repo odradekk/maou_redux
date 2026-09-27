@@ -1696,6 +1696,22 @@ test('SELECTCOM 30 手淫，二回目以降·淫乱+侍奉精神Lv3以上 RAND0�
   assert.equal(fixture.store.get('cflag:31:331'), 7, 'CFLAG:331 推进到 7');
 });
 
+test('SELECTCOM 30 手淫：淫乱角色经次档推到 6 后侍奉精神升到 Lv3，口上开关关闭时顶档仍命中，推进到 7', async () => {
+  const fixture = await setup_k8((f) => {
+    f.store.set('cflag:31:331', 6);
+    f.store.set('talent:31:76', 1);
+    f.store.set('abl:31:16', 3);
+    f.store.set('flag:7', 0);
+  }, 30);
+  await speak_k8(fixture, () => 0);
+  assert.deepEqual(fixture.text_lines(), [
+    '「看，你的阴茎勃起的更厉害了、因为我把你弄得更舒服了吧♡」',
+    '银黑桃的左手紧紧握着你阴茎的根部，右手撸动着。',
+    '「啊啊♡啊啊♡ …这么红，好棒…♡」',
+  ]);
+  assert.equal(fixture.store.get('cflag:31:331'), 7, 'CFLAG:331 推进到 7');
+});
+
 test('SELECTCOM 30 手淫，二回目以降·爱+侍奉精神Lv5 RAND1：CFLAG:331 推进到 5', async () => {
   const fixture = await setup_k8((f) => {
     f.store.set('cflag:31:331', 1);
