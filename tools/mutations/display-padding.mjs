@@ -1,6 +1,6 @@
 // 变异条目表切片：对齐补位的 NBSP 化（#577——引擎合并连续半角空格，补位
 // 字符改 U+00A0，中央实现在 ere/utils/display-width.js）。字段与运行方式见
-// tools/mutation-check.mjs 头注释；find 在靶文件里必须恰出现一次。
+// tools/mutation-check.mjs 头注释；find 在目标文件里必须恰出现一次。
 /** 本分片条数（门 1）：增删条目必须同步改它 */
 export const COUNT = 17;
 
@@ -150,15 +150,15 @@ export default [
     must_mention: '能力行的列补位须是 NBSP',
   },
   {
-    desc: 'M12225 结算表 `)` 与 `=` 之间的 12 格补位退回半角空格（JUEL_CHECK :687）',
+    desc: 'M12225 结算表 `)` 与 `=` 之间的 12 格补位退回半角空格（juel-check 的结算表）',
     file: JUEL,
-    find: '      { content: `)${NBSP.repeat(12)}= ` }, // PRINT ) + 12 空格 + "= "',
+    find: '      { content: `)${NBSP.repeat(12)}= ` },',
     replace: '      { content: `)${" ".repeat(12)}= ` }, // 变异：回退半角空格',
     tests: ['juel-check'],
     must_mention: '结算表行的列补位须是 NBSP',
   },
   {
-    desc: 'M12226 ablup14 的 EXP 门槛行 6 格前导退回半角空格（ABLUP14 :50）',
+    desc: 'M12226 ablup14 的 EXP 门槛行 6 格前导退回半角空格',
     file: ABLUP,
     find: "    era.print(`${NBSP.repeat(6)}${era.get('expname:5')}　${exp5}/${b}`);",
     replace:

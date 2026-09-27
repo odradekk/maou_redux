@@ -1,6 +1,6 @@
 // 变异条目表切片：ere/page/（画面与交互组件）。
 // 字段与运行方式见 tools/mutation-check.mjs 头注释。desc 里的 M 编号不人工
-// 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
+// 分配，只作引用基准，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
 export const COUNT = 505; // #685 -5（M565/M566/M570/M12297/M13209 随 page-dungeon-setup.js 删除）；#652 净 +4（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+18 新守卫 M13200-M13217）
@@ -135,13 +135,13 @@ export default [
     must_mention: '育儿室',
   },
   {
-    desc: 'M35 SHOW_JUEL 数值列：右对齐宽 6 改 5',
+    desc: 'M35 show_juel 数值列：右对齐宽 6 改 5',
     file: 'ere/page/page-ablup.js',
-    find: '    row += ` ${name}点数：${pad_left(String(value), 6)}`; // {JUEL,6,RIGHT}',
+    find: '    row += ` ${name}点数：${pad_left(String(value), 6)}`; // 数值右对齐宽 6',
     replace:
       '    row += ` ${name}点数：${pad_left(String(value), 5)}`; // {JUEL,6,RIGHT}',
     tests: ['juel-check'],
-    must_mention: 'SHOW_JUEL 三行',
+    must_mention: 'show_juel 三行',
   },
   {
     desc: 'M36 等级行公式：本级需求 lv*10+10 改 lv*10+5',
@@ -1468,7 +1468,7 @@ export default [
     must_mention: '不列该行',
   },
   {
-    desc: 'M8436 ABILITY_UP 补行判据收紧（< NUM_PAGE + 1 → < NUM_PAGE）',
+    desc: 'M8436 ability_up 补行条件收紧（< NUM_PAGE + 1 → < NUM_PAGE）',
     file: 'ere/page/page-ability-up.js',
     find: '  if (l_lcount < page_size + 1) {',
     replace: '  if (l_lcount < page_size) {',
@@ -1486,13 +1486,13 @@ export default [
   {
     desc: 'M8405 ABILITY_UP 勇者一览的等级门（20 → 21）',
     file: 'ere/page/page-ability-up.js',
-    find: '  const dim = cflag(0, 9) < 20; // SIF CFLAG:0:9 < 20',
+    find: '  const dim = cflag(0, 9) < 20; // CFLAG:0:9 = 魔王等级',
     replace: '  const dim = cflag(0, 9) < 21; // 变异：等级门抬高',
     tests: ['page-ability-up'],
     must_mention: '表头按钮文案与等级门灰显',
   },
   {
-    desc: 'M8406 ABILITY_UP 等级门判据（< 20 → < 21）',
+    desc: 'M8406 ability_up 等级条件（< 20 → < 21）',
     file: 'ere/page/page-ability-up.js',
     find: '        if (result > 990 && result < 999 && cflag(0, 9) < 20) {',
     replace: '        if (result > 990 && result < 999 && cflag(0, 9) < 21) {',
@@ -1526,10 +1526,10 @@ export default [
     must_mention: '999 收尾三件',
   },
   {
-    desc: 'M8410 ABILITY_UP_CORE 不还原 TARGET',
+    desc: 'M8410 ability_up_core 不还原调教目标',
     file: 'ere/page/page-ability-up.js',
-    find: '      era_flag.target = previous_target; // TARGET = T',
-    replace: '      // 变异：不还原 TARGET',
+    find: '      era_flag.target = previous_target;',
+    replace: '      // 变异：不还原 era_flag.target',
     tests: ['page-ability-up'],
     must_mention: '999 收尾三件',
   },
@@ -1542,7 +1542,7 @@ export default [
     must_mention: '999 收尾三件',
   },
   {
-    desc: 'M8412 ABILITY_UP 上一页判据反向（> 0 → >= 0）',
+    desc: 'M8412 ability_up 上一页条件反向（> 0 → >= 0）',
     file: 'ere/page/page-ability-up.js',
     find: '          if (no_page > 0) {\n            no_page -= 1;\n          }',
     replace:
@@ -1551,7 +1551,7 @@ export default [
     must_mention: '翻页（1000/1001）',
   },
   {
-    desc: 'M8413 ABILITY_UP 下一页判据放宽（< max_page → <= max_page）',
+    desc: 'M8413 ability_up 下一页条件放宽（< max_page → <= max_page）',
     file: 'ere/page/page-ability-up.js',
     find: '          if (no_page < max_page) {\n            no_page += 1;\n          }',
     replace:
@@ -3911,7 +3911,7 @@ export default [
     must_mention: '陷阱商店页脚按钮之后不应有空行',
   },
   {
-    desc: 'M11861 能力值提升页脚补回空行（同上，:96 的 PRINTL 只收三个 PRINTLC 那一行）',
+    desc: 'M11861 能力值提升页脚补回空行（空内容输出只收三个标签那一行）',
     file: 'ere/page/page-ability-up.js',
     find: "  era.printButton('- 下一页', 1001);\n  return { menu, page_size, max_page };",
     replace:
@@ -3955,7 +3955,7 @@ export default [
     must_mention: 'COM 菜单与分割线之间恰有一个空行',
   },
   {
-    desc: 'M11873 能力值提升表头补回空行（:56 的 PRINTL 只收尾那两个 PRINTBUTTON，golden 里按钮行与分割线相邻）',
+    desc: 'M11873 能力值提升表头补回空行（空内容输出只收尾那两个按钮，按钮行与分割线相邻）',
     file: 'ere/page/page-ability-up.js',
     find: "  menu_button('勇者一览', MENU_ENEMY, dim);",
     replace:
@@ -4035,7 +4035,7 @@ export default [
   },
   // —— #596：print 之后多补的空行普查（画面侧） ——
   {
-    desc: 'M12070 能力值提升页的按钮行之间补回空行（:81-83 的 PRINTL 只收行，golden 里五行按钮逐行相邻）',
+    desc: 'M12070 能力值提升页的按钮行之间补回空行（五行按钮逐行相邻）',
     file: 'ere/page/page-ablup.js',
     find: "    const mark = (await decide_ablup(cid, count)) === 1 ? ' *' : '';",
     replace:
@@ -4044,7 +4044,7 @@ export default [
     must_mention: '按钮行之间不夹空行',
   },
   {
-    desc: 'M12071 能力值提升页 [999] 之后补回空行（:109/:111 只收行）',
+    desc: 'M12071 能力值提升页 [999] 之后补回空行（空内容输出只收行）',
     file: 'ere/page/page-ablup.js',
     find: "  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）",
     replace:
@@ -4053,9 +4053,10 @@ export default [
     must_mention: '按钮行之间不夹空行',
   },
   {
-    desc: 'M12072 保有珠一览末尾的真空行删除（:26 那一个是真行——空行由它来，不是 :23 的收行）',
+    desc: 'M12072 保有珠一览末尾的真空行删除（那一个空内容输出是真行，不是收行）',
     file: 'ere/page/page-ablup.js',
-    find: '  era.println(); // PRINTL（末组恰为 4 项时补一空行）\n  era.drawLine();',
+    find: `  era.println(); // 末组恰为 4 项时补一空行
+  era.drawLine(); // 点线分割线`,
     replace: '  era.drawLine(); // 变异：:26 的真空行删除',
     tests: ['juel-check'],
     must_mention: '末行后有空行',
@@ -4118,11 +4119,15 @@ export default [
     must_mention: '三个真空行',
   },
   {
-    desc: 'M12080 能力值提升页 [99] 行与尾部分割线之间补回空行（:109 只结束 [40] 中毒行那一行）',
+    desc: 'M12080 能力值提升页 [99] 行与尾部分割线之间补回空行（空内容输出只结束 [40] 行）',
     file: 'ere/page/page-ablup.js',
-    find: "  era.drawLine(); // CUSTOMDRAWLINE ‥\n  era.printButton('- 能力值提高结束', 999);",
-    replace:
-      "  era.println(); // 变异：多补一条空行\n  era.drawLine(); // CUSTOMDRAWLINE ‥\n  era.printButton('- 能力值提高结束', 999);",
+    find: `  // [100] 异界综合征行是调试专用，不绘制
+  // （[99] 行与尾部分割线逐行相邻，不补空行）
+  era.drawLine(); // 点线分割线
+  era.printButton('- 能力值提高结束', 999); // （[999] 前缀由引擎拼）`,
+    replace: `  era.println(); // 变异：多补一条空行
+  era.drawLine(); // 点线分割线
+  era.printButton('- 能力值提高结束', 999);`,
     tests: ['juel-check'],
     must_mention: '按钮行之间不夹空行',
   },

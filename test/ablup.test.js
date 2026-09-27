@@ -30,7 +30,7 @@ function buttons(fixture) {
   return fixture.lines.filter((l) => l.type === 'button');
 }
 
-// ———— get_ablup_state（共用状态文案，ABLUP0～3） ————
+// ———— get_ablup_state（共用状态文案，ablup0～3） ————
 
 test('get_ablup_state：0=OK，各 bit 组合的尾随空格与拼接顺序', () => {
   const fixture = create_era_fixture();
@@ -44,7 +44,7 @@ test('get_ablup_state：0=OK，各 bit 组合的尾随空格与拼接顺序', ()
   assert.equal(get_ablup_state(7), '点数不足 经验不足 能力不足');
 });
 
-// ———— ABLUP0：阴蒂感觉 ————
+// ———— ablup0：阴蒂感觉 ————
 
 test('ablup0：三档终止判定（特殊素质/封锁/已达最高级）', async () => {
   const fixture = create_era_fixture();
@@ -152,7 +152,7 @@ test('ablup0：Lv5-9 梯子字面值（必须自慰狂才能解锁，连带触�
   }
 });
 
-test('ablup0：Lv10-24 复利梯子（逐级 TIMES 截断，不可合并成一次幂运算）', async () => {
+test('ablup0：Lv10-24 复利梯子（逐级倍乘截断，不可合并成一次幂运算）', async () => {
   // 触发复利区间必须 CALC>=1/2/3（上限＝CALC*5+10），因而必然叠加自慰狂
   // ×0.80；挑选 lv14/19/24 恰好落在"其他部位封锁"折扣三档的空隙里
   // （该折扣只在 lv<=20 且 CALC 达到对应门槛时生效），单独验证复利本身
@@ -269,7 +269,7 @@ function era_writes_of(fixture, name) {
   return fixture.var_writes.filter((w) => w.name === name);
 }
 
-// ———— ABLUP1：乳房感觉 ————
+// ———— ablup1：乳房感觉 ————
 
 test('ablup1：两档终止判定（特殊素质/封锁/已达最高级）与成功购买', async () => {
   const blocked = create_era_fixture();
@@ -396,7 +396,7 @@ test('ablup1：点数不足重试后成功购买', async () => {
   );
 });
 
-// ———— ABLUP2：私处感觉 ————
+// ———— ablup2：私处感觉 ————
 
 test('ablup2：男人完全无法访问（最外层直接返回，不输出任何内容）', async () => {
   const fixture = create_era_fixture();
@@ -538,7 +538,7 @@ test('ablup2：私处经验不足单独计为经验不足位（B 门槛与 A 点
   assert.ok(!buttons(fixture)[0].text.includes('点数不足'));
 });
 
-// ———— ABLUP3：肛门感觉 ————
+// ———— ablup3：肛门感觉 ————
 
 test('ablup3：三档终止判定与成功购买（无男人限制）', async () => {
   const blocked = create_era_fixture();
@@ -562,7 +562,7 @@ test('ablup3：三档终止判定与成功购买（无男人限制）', async ()
 
   const male_ok = create_era_fixture();
   const { ablup3: a4 } = seed(male_ok);
-  set_talents(male_ok, { 122: 1 }); // 男人不受限（与 ABLUP2 不同）
+  set_talents(male_ok, { 122: 1 }); // 男人不受限（与 ablup2 不同）
   male_ok.store.set(`juel:${CID}:2`, 1);
   male_ok.store.set(`exp:${CID}:1`, 2);
   male_ok.set_inputs(0);
@@ -621,7 +621,7 @@ test('ablup3：其他部位封锁折扣——A分母15、B分母20不对称', as
   assert.ok(fixture.text_lines().some((t) => t.includes('189')));
 });
 
-// ———— ABLUP4：局部感觉（无 GET_ABLUP_STATE、无部位封锁、硬顶 Lv5） ————
+// ———— ablup4：局部感觉（不用 get_ablup_state、无部位封锁、硬顶 Lv5） ————
 
 test('ablup4：已达MAX（硬顶，无解锁素质可越过）', async () => {
   const fixture = create_era_fixture();
@@ -685,7 +685,7 @@ test('ablup4：点数不足重试提示"条件不足。"；补足后成功购买
   assert.ok(buy.text_lines().includes('局部感觉变为LV1。'));
 });
 
-// ———— ABLUP5：肛门经验门槛能力（JUEL:2 私处点数 + EXP:1 肛门经验） ————
+// ———— ablup5：肛门经验门槛能力（JUEL:2 私处点数 + EXP:1 肛门经验） ————
 
 test('ablup5：已达MAX', async () => {
   const fixture = create_era_fixture();
@@ -769,7 +769,7 @@ test('ablup5：点数不足重试提示"条件不足。"，成功购买等待按
   assert.ok(buy.text_lines().some((t) => t.includes('变为LV1。')));
 });
 
-// ———— ABLUP6：三选项能力（屈服/恭顺/习得），共享顺从门槛与异常经验门槛 ————
+// ———— ablup6：三选项能力（屈服/恭顺/习得），共享顺从门槛与异常经验门槛 ————
 
 test('ablup6：已达MAX', async () => {
   const fixture = create_era_fixture();
@@ -965,7 +965,7 @@ test('ablup6：三个选项各自的"条件不足。请重新输入。"重试文
   assert.equal(retries.length, 2);
 });
 
-// ———— ABLUP7：单选项能力（耻情 JUEL:8），倒错的/爱表现两段折扣 ————
+// ———— ablup7：单选项能力（耻情 JUEL:8），倒错的/爱表现两段折扣 ————
 
 function seed_ablup7_ok(fixture) {
   fixture.store.set(`abl:${CID}:1`, 1); // 满足欲望门槛（乳房感觉，见注释/代码不一致说明）
@@ -1033,7 +1033,7 @@ test('ablup7：欲望门槛（ABL:1）不足计为能力不足，文案始终显
   fixture.set_inputs(100);
   await ablup7(CID);
   assert.ok(fixture.text_lines().includes('乳房感觉1LV以上'));
-  // bit4 带尾随空格（ABLUP7.ERB:106，与 get_ablup_state 的 bit4 不同，本文件
+  // bit4 带尾随空格（与 get_ablup_state 的 bit4 不同，本文件
   // 不能复用那个共用函数——issue #464 审查发现的真实一字符缺陷）
   assert.ok(buttons(fixture)[0].text.endsWith('能力不足 '));
 });
@@ -1102,7 +1102,7 @@ test('ablup7：点数不足重试提示"条件不满足。"；成功购买扣珠
   assert.ok(buy.text_lines().includes('的等级提升到1级了。'));
 });
 
-// ———— ABLUP8：两选项能力，B=0 时选项0 不渲染（无哨兵，引擎层拒收未渲染选项） ————
+// ———— ablup8：两选项能力，B=0 时选项0 不渲染（无哨兵，引擎层拒收未渲染选项） ————
 
 test('ablup8：已达MAX', async () => {
   const fixture = create_era_fixture();
@@ -1283,7 +1283,7 @@ test('ablup8：选项1 屈服点数（JUEL:6）未声明须按不足处理，不
   assert.equal(fixture.store.get(`juel:${CID}:6`), undefined); // 未被倒扣
 });
 
-// ———— ABLUP9：两选项能力，无缺失哨兵缺陷 ————
+// ———— ablup9：两选项能力，无缺失哨兵缺陷 ————
 
 test('ablup9：已达MAX', async () => {
   const fixture = create_era_fixture();
@@ -1418,7 +1418,7 @@ test('ablup9：两个选项各自的"条件不足。"重试文案，隐藏选项
   await assert.rejects(a2(CID), /测试夹具：输入不合法/);
 });
 
-// ———— ABLUP10：顺从（system 域），四轨道 A/B/C/D ————
+// ———— ablup10：顺从（system 域），四轨道 A/B/C/D ————
 
 test('ablup10：两档终止判定（特殊素质/已达最高级）', async () => {
   const fixture = create_era_fixture();
@@ -1519,7 +1519,7 @@ test('ablup10：点数不足时按钮重试提示"未满足条件"（无句号�
   assert.ok(!fixture.text_lines().includes('未满足条件。'));
 });
 
-// ———— ABLUP11：欲望（system 域），单轨道，手写内联状态文案 ————
+// ———— ablup11：欲望（system 域），单轨道，手写内联状态文案 ————
 
 test('ablup11：两档终止判定（特殊素质/已达最高级）', async () => {
   const fixture = create_era_fixture();
@@ -1583,9 +1583,9 @@ test('ablup11：成功购买写入 chara(cid).system.欲望，扣珠、显示变
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
 
-// ———— ABLUP12：技巧（system 域），MASTER 自我训练额外收费 ————
+// ———— ablup12：技巧（system 域），MASTER 自我训练额外收费 ————
 
-test('ablup12：已达最高级；技巧+话术组合上限单行 PRINTFORMW（与 ABLUP13/14 两行不同）', async () => {
+test('ablup12：已达最高级；技巧+话术组合上限单行输出并等待按键（与 ablup13/14 两行不同）', async () => {
   const fixture = create_era_fixture();
   const { ablup12 } = seed(fixture);
   fixture.store.set(`abl:${CID}:12`, 10);
@@ -1601,7 +1601,7 @@ test('ablup12：已达最高级；技巧+话术组合上限单行 PRINTFORMW（�
   assert.ok(capped.text_lines().includes('技巧(8)＋话术(7)上限为15'));
 });
 
-test('ablup12：技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/I 维持清零，等于免费购买', async () => {
+test('ablup12：技巧+话术组合上限突破价足够时，decide 阶段提前返回使 A/I 维持清零，等于免费购买', async () => {
   const fixture = create_era_fixture();
   const { ablup12 } = seed(fixture);
   fixture.store.set(`abl:${CID}:12`, 8);
@@ -1660,9 +1660,9 @@ test('ablup12：自我训练 bit2 用"人数不足"文案显示魔王技巧超�
   );
 });
 
-// ———— ABLUP13：侍奉技术（train 域），与 ABLUP14 共享组合上限 ————
+// ———— ablup13：侍奉技术（train 域），与 ablup14 共享组合上限 ————
 
-test('ablup13：Lv5 靠侍奉精神越过上限；组合上限溢出是两行提示（与 ABLUP12/15 单行不同）', async () => {
+test('ablup13：Lv5 靠侍奉精神越过上限；组合上限溢出是两行提示（与 ablup12/15 单行不同）', async () => {
   const fixture = create_era_fixture();
   const { ablup13 } = seed(fixture);
   fixture.store.set(`abl:${CID}:13`, 5);
@@ -1738,7 +1738,7 @@ test('ablup13：成功购买写入 abl:cid:13（同域直接 era.add），显示
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
 
-// ———— ABLUP14：性交技术（train 域），双值 A/B ————
+// ———— ablup14：性交技术（train 域），双值 A/B ————
 
 test('ablup14：已达最高级；组合上限溢出两行提示', async () => {
   const fixture = create_era_fixture();
@@ -1841,9 +1841,9 @@ test('ablup14：成功购买写入 abl:cid:14，显示变为LV', async () => {
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
 
-// ———— ABLUP15：话术（train 域），三值 A/B/C，bit2 为 AND-of-insufficiency ————
+// ———— ablup15：话术（train 域），三值 A/B/C，bit2 为 AND-of-insufficiency ————
 
-test('ablup15：已达最高级；技巧+话术组合上限单行 PRINTFORMW', async () => {
+test('ablup15：已达最高级；技巧+话术组合上限单行输出并等待按键', async () => {
   const fixture = create_era_fixture();
   const { ablup15 } = seed(fixture);
   fixture.store.set(`abl:${CID}:15`, 10);
@@ -1859,7 +1859,7 @@ test('ablup15：已达最高级；技巧+话术组合上限单行 PRINTFORMW', a
   assert.ok(capped.text_lines().includes('技巧(8)＋话术(7)上限为15'));
 });
 
-test('ablup15：技巧+话术组合上限突破价足够时，DECIDE 提前 RETURN 使 A/B/C/I 维持清零，等于免费购买', async () => {
+test('ablup15：技巧+话术组合上限突破价足够时，decide 阶段提前返回使 A/B/C/I 维持清零，等于免费购买', async () => {
   const fixture = create_era_fixture();
   const { ablup15 } = seed(fixture);
   fixture.store.set(`abl:${CID}:12`, 8);
@@ -1913,7 +1913,7 @@ test('ablup15：成功购买写入 abl:cid:15，显示变为LV', async () => {
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
 
-// ———— ABLUP16：侍奉精神（system 域），三轨道，$INPUT_LOOP+GOTO ————
+// ———— ablup16：侍奉精神（system 域），三轨道 ————
 
 test('ablup16：入口把关用 OR（三项素质任一缺失即挡），全部具备才能越过 Lv5', async () => {
   const fixture = create_era_fixture();
@@ -1939,9 +1939,9 @@ test('ablup16：入口把关用 OR（三项素质任一缺失即挡），全部�
   assert.ok(maxed.text_lines().includes('已达最高级'));
 });
 
-test('ablup16：DECIDE 复核缺一即挡——只缺献身的/只缺爱慕的/只缺盲从的都被拦，三项齐全且可负担则通过', async () => {
-  // 三个用例各自只缺一项素质（另两项都有）、资源全够——OR 形态三者都必须
-  // 被拦；「缺两项才拦」的形态会漏过全部三例，某项漏判的形态漏过对应用例
+test('ablup16：decide_ablup 复核缺一即挡——只缺献身的/只缺爱慕的/只缺盲从的都被拦，三项齐全且可负担则通过', async () => {
+  // 三个用例各自只缺一项素质（另两项都有）、资源全够——OR 写法三者都必须
+  // 被拦；「缺两项才拦」的写法会漏过全部三例，某项漏判的写法漏过对应用例
   for (const missing of [63, 85, 86]) {
     const fixture = create_era_fixture();
     const { decide_ablup } = seed(fixture);
@@ -2034,7 +2034,7 @@ test('ablup16：三个购买路径各自扣对应珠、写入 chara(cid).system.
   }
 });
 
-// ———— ABLUP17：露出癖（system 域），欲望/顺从门槛二选一，唯一带句号的重试文案 ————
+// ———— ablup17：露出癖（system 域），欲望/顺从门槛二选一，唯一带句号的重试文案 ————
 
 test('ablup17：两档终止判定，四项豁免素质任一命中即可越过 Lv5', async () => {
   const fixture = create_era_fixture();
@@ -2106,7 +2106,7 @@ test('ablup17：C(绝顶经验)只在 Lv0→1 生效，D(调教自慰经验)只�
   assert.ok(!lv2.text_lines().some((t) => t.includes('调教自慰经验')));
 });
 
-test('ablup17：重试文案"未满足条件"与 ABLUP10～16 统一（无句号）', async () => {
+test('ablup17：重试文案"未满足条件"与 ablup10～16 统一（无句号）', async () => {
   const fixture = create_era_fixture();
   const { ablup17 } = seed(fixture);
   fixture.set_inputs(0, 100);
@@ -2128,7 +2128,7 @@ test('ablup17：成功购买写入 chara(cid).system.露出癖，扣珠、显示
   assert.ok(fixture.text_lines().some((t) => t.includes('变为LV1。')));
 });
 
-// ———— ABLUP37：卖淫中毒（issue #467） ——
+// ———— ablup37：卖淫中毒（issue #467） ——
 
 test('ablup37：两档终止判定（特殊素质/已达最高级）', async () => {
   const fixture = create_era_fixture();
@@ -2213,11 +2213,11 @@ test('ablup37：F 的素质增减——[容易上瘾]-2、[反抗心]+1', async 
 });
 
 /**
- * ABLUP37 异常经验 F 的素质增减表（ABLUP37.ERB:368-402 的 SIF 行）逐条。
+ * ablup37 异常经验 F 的素质增减表逐条。
  * 基准 F = lv-1（lv=4 → 3），每条只加一项；[疯狂][崩坏]不是增减项而是整块
- * 豁免（:368 的条件），命中时 F 恒为 0、整行不打印。
+ * 豁免，命中时 F 恒为 0、整行不打印。
  */
-const ABLUP37_F_TABLE = [
+const ablup37_f_table = [
   { talent: null, f: 3 }, // 控制组：无增减项
   { talent: 33, f: 2 }, // 开放 -1
   { talent: 70, f: 2 }, // 接受快感 -1（只在 F 表里出现，倍率表没有它）
@@ -2238,8 +2238,8 @@ const ABLUP37_F_TABLE = [
   { talent: 9, f: 0 }, // 崩坏：整块豁免
 ];
 
-test('ablup37：F 的素质增减表逐条（ABLUP37.ERB:368-402 的 SIF 行）', async () => {
-  for (const row of ABLUP37_F_TABLE) {
+test('ablup37：F 的素质增减表逐条', async () => {
+  for (const row of ablup37_f_table) {
     const fixture = create_era_fixture();
     const { ablup37 } = seed(fixture);
     fixture.store.set(`abl:${CID}:37`, 4); // 基准 F = 3
@@ -2265,7 +2265,7 @@ test('ablup37：F 的素质增减表逐条（ABLUP37.ERB:368-402 的 SIF 行）'
   }
 });
 
-test('ablup37：淫乱的 B 轨 ×0.50（其余 ×0.80）——原作不对称倍率', async () => {
+test('ablup37：淫乱的 B 轨 ×0.50（其余 ×0.80）——不对称倍率', async () => {
   const fixture = create_era_fixture();
   const { ablup37 } = seed(fixture);
   set_talents(fixture, { 76: 1 });
@@ -2336,7 +2336,7 @@ test('ablup37：成功购买 +1 级并三轨扣珠', async () => {
   assert.ok(fixture.text_lines().some((t) => t.includes('卖淫中毒变为LV1。')));
 });
 
-// ———— ABLUP39：兽奸中毒（issue #467） ——
+// ———— ablup39：兽奸中毒（issue #467） ——
 
 test('ablup39：两档终止判定（特殊素质/已达最高级）', async () => {
   const fixture = create_era_fixture();
@@ -2376,7 +2376,7 @@ test('ablup39：三重上限（32+33+39>=10）珠不足时三行说明拦截', a
 });
 
 test('ablup39：三重上限时 A/B 覆盖为 lv²×4000（梯子作废；合计 10 与 11 两档）', async () => {
-  // 覆盖价的门槛是 `>= 10`：合计恰好 10 时也必须走覆盖价（原作 :149）
+  // 覆盖价的门槛是 `>= 10`：合计恰好 10 时也必须走覆盖价
   for (const [abl32, abl33] of [
     [6, 4], // 合计 11
     [6, 3], // 合计恰好 10
@@ -2386,7 +2386,7 @@ test('ablup39：三重上限时 A/B 覆盖为 lv²×4000（梯子作废；合计
     fixture.store.set(`abl:${CID}:32`, abl32);
     fixture.store.set(`abl:${CID}:33`, abl33);
     fixture.store.set(`abl:${CID}:39`, 1); // bulk = 1²×4000
-    fixture.store.set(`juel:${CID}:5`, 4000); // 原作判 ||：两珠任一不足即拦，
+    fixture.store.set(`juel:${CID}:5`, 4000); // 判定用 ||：两珠任一不足即拦，
     fixture.store.set(`juel:${CID}:6`, 4000); // 文案写「或」但代码要求都足——照代码
     fixture.store.set(`abl:${CID}:11`, 2);
     fixture.store.set(`exp:${CID}:56`, 100); // 兽奸经验达标（lv1 的 C=100）
@@ -2401,7 +2401,7 @@ test('ablup39：三重上限时 A/B 覆盖为 lv²×4000（梯子作废；合计
 });
 
 test('ablup39：三重上限的拦法是「两珠任一不足即拦」（||，不是 &&）', async () => {
-  // 原作文案写「或……其中一项」，代码判 ||：一颗刚好够、另一颗不足时仍拦。
+  // 提示文案写「或……其中一项」，判定用 ||：一颗刚好够、另一颗不足时仍拦。
   // 只在「一颗够一颗不够」时才与 && 有区别，故两向各跑一遍。
   for (const [juel5, juel6] of [
     [4000, 0],
@@ -2538,7 +2538,7 @@ test('ablup39：成功购买 +1 级并扣欲情/屈服双珠', async () => {
   assert.ok(fixture.text_lines().some((t) => t.includes('兽奸中毒变为LV1。')));
 });
 
-// ———— ABLUP40：局部中毒（issue #467） ——
+// ———— ablup40：局部中毒（issue #467） ——
 
 test('ablup40：已达上限文案是独有的「已达到MAX」', async () => {
   const fixture = create_era_fixture();
@@ -2558,7 +2558,7 @@ test('ablup40：Lv0 需求行——欲望行显示 ABL:39+1（与判定不一致
   assert.ok(fixture.text_lines().includes('欲望LV6以上(现在LV1)')); // 39+1=6，非 40+1
 });
 
-test('ablup40：内联状态文案（非 GET_ABLUP_STATE）与「放弃」按钮', async () => {
+test('ablup40：内联状态文案（非共用 get_ablup_state）与「放弃」按钮', async () => {
   const fixture = create_era_fixture();
   const { ablup40 } = seed(fixture);
   fixture.store.set(`abl:${CID}:11`, 1); // 欲望够（判定位按 ABL:40+1=1）
@@ -2639,7 +2639,7 @@ test('ablup40：成功购买 +1 级扣局部点数（JUEL:15）', async () => {
   assert.ok(fixture.text_lines().some((t) => t.includes('局部中毒变为LV1。')));
 });
 
-// ———— ABLUP99：反抗刻印消去（issue #467） ——
+// ———— ablup99：反抗刻印消去（issue #467） ——
 
 test('ablup99：无刻印时提示并等待', async () => {
   const fixture = create_era_fixture();
@@ -2704,7 +2704,7 @@ test('ablup99：成功消去一级（MARK:3-1）并扣屈服珠，文案显示�
   );
 });
 
-test('ablup99：CORE_ABLUP99 每次只降一级（MARK:3 --）', async () => {
+test('ablup99：core_ablup99 每次只降一级（MARK:3 --）', async () => {
   const fixture = create_era_fixture();
   const { auto_ablup_core } = seed(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
@@ -2719,7 +2719,7 @@ test('ablup99：CORE_ABLUP99 每次只降一级（MARK:3 --）', async () => {
   assert.equal(fixture.store.get(`juel:${CID}:6`), 0);
 });
 
-// ———— ABLUP100：异界综合征消去（issue #467） ——
+// ———— ablup100：异界综合征消去（issue #467） ——
 
 test('ablup100：无综合征时提示并等待', async () => {
   const fixture = create_era_fixture();
@@ -2791,7 +2791,7 @@ test('ablup100：成功消去一级并扣异界经验（EXP:99）', async () => 
   );
 });
 
-// ———— ABL.ERB 本体（issue #467）：@DECIDE_ABLUP 分发 / @AUTO_ABLUP / @USERABLUP ————
+// ———— decide_ablup 分发 / auto_ablup / userablup 本体（issue #467） ————
 
 test('decide_ablup：分发到已登记编号，未登记与表外返回 0', async () => {
   const fixture = create_era_fixture();
@@ -2802,21 +2802,17 @@ test('decide_ablup：分发到已登记编号，未登记与表外返回 0', asy
   assert.equal(
     await decide_ablup(CID, 20),
     0,
-    'ABLUP20 的 DECIDE 尚未落地 → 落空',
+    '编号 20 未登记 decide 分支 → 落空',
   );
   assert.equal(await decide_ablup(CID, 999), 0, '表外编号');
 });
 
-test('decide_ablup：满级与封锁走 DECIDE 的提前 RETURN 0', async () => {
+test('decide_ablup：满级与封锁走提前返回 0', async () => {
   const fixture = create_era_fixture();
   const { decide_ablup } = seed(fixture);
   fixture.store.set(`abl:${CID}:0`, 5);
   fixture.store.set(`juel:${CID}:0`, 999999);
-  assert.equal(
-    await decide_ablup(CID, 0),
-    0,
-    'Lv5 且无[自慰狂] → :139-140 判死',
-  );
+  assert.equal(await decide_ablup(CID, 0), 0, 'Lv5 且无[自慰狂] → 判死');
   set_talents(fixture, { 74: 1 });
   assert.equal(await decide_ablup(CID, 0), 1, '解锁后 Lv5 的 40000 点也够');
 
@@ -2824,20 +2820,24 @@ test('decide_ablup：满级与封锁走 DECIDE 的提前 RETURN 0', async () => 
   const { decide_ablup: d2 } = seed(locked);
   set_talents(locked, { 101: 2 }); // 阴蒂钝感
   locked.store.set(`juel:${CID}:0`, 999999);
-  assert.equal(await d2(CID, 0), 0, '封锁 → :144-145 判死');
+  assert.equal(await d2(CID, 0), 0, '封锁 → 判死');
 });
 
-test('decide_ablup37：组合门槛 ABL:37+ABL:38>=10 是 DECIDE 独有的', async () => {
+test('decide_ablup37：组合门槛 ABL:37+ABL:38>=10 是 decide_ablup 独有的', async () => {
   const fixture = create_era_fixture();
   const { decide_ablup, ablup37 } = seed(fixture);
   fixture.store.set(`abl:${CID}:37`, 1);
-  fixture.store.set(`abl:${CID}:38`, 9); // 合计 10 → DECIDE 判死
+  fixture.store.set(`abl:${CID}:38`, 9); // 合计 10 → decide 阶段判死
   fixture.store.set(`abl:${CID}:11`, 2); // 欲望门槛（lv+1 = 2）
   fixture.store.set(`juel:${CID}:4`, 5000);
   fixture.store.set(`juel:${CID}:5`, 8000);
   fixture.store.set(`juel:${CID}:6`, 2500);
   fixture.store.set(`exp:${CID}:74`, 100);
-  assert.equal(await decide_ablup(CID, 37), 0, 'DECIDE_ABLUP37 :95-96');
+  assert.equal(
+    await decide_ablup(CID, 37),
+    0,
+    'decide_ablup37 的组合门槛应判死',
+  );
   fixture.set_inputs(100);
   await ablup37(CID); // 主流程没有这条门槛（文件头登记）
   assert.equal(buttons(fixture)[0].text, '- 恭顺点数×5000/5000 ……ＯＫ');
@@ -2870,12 +2870,12 @@ test('auto_ablup_core：连升到不能升为止，info 控制等级行', async 
   assert.ok(!quiet.text_lines().some((t) => t.includes('变为LV')));
 });
 
-test('auto_ablup_core：未落地编号（20-33）落空跳过，满级直接返回', async () => {
+test('auto_ablup_core：未实现编号（20-33）落空跳过，满级直接返回', async () => {
   const fixture = create_era_fixture();
   const { auto_ablup_core } = seed(fixture);
   const era_flag = fixture.load_module('era-utils/era-flag');
   era_flag.target = CID;
-  fixture.store.set(`juel:${CID}:7`, 999999); // 珠再多也没有 DECIDE_ABLUP20
+  fixture.store.set(`juel:${CID}:7`, 999999); // 珠再多也没有 20 的 decide 分支
   await auto_ablup_core(20, 1);
   assert.equal(fixture.store.get(`abl:${CID}:20`) ?? 0, 0);
   fixture.store.set(`abl:${CID}:0`, 10);
@@ -2883,7 +2883,7 @@ test('auto_ablup_core：未落地编号（20-33）落空跳过，满级直接返
   assert.equal(fixture.store.get(`abl:${CID}:0`), 10, 'ABL >= 10 直接返回');
 });
 
-test('auto_ablup：ARG 换目标后还原 TARGET；卖淫影响 0 时跳过 37', async () => {
+test('auto_ablup：按参数临时换目标、结束后还原 era_flag.target；卖淫影响 0 时跳过 37', async () => {
   const OTHER = CID + 1;
   const fixture = create_era_fixture();
   const { auto_ablup } = seed(fixture);
@@ -2899,7 +2899,7 @@ test('auto_ablup：ARG 换目标后还原 TARGET；卖淫影响 0 时跳过 37',
   fixture.store.set(`exp:${OTHER}:74`, 100000);
 
   await auto_ablup(OTHER);
-  assert.equal(era_flag.target, CID, 'TARGET 还原');
+  assert.equal(era_flag.target, CID, 'era_flag.target 还原');
   assert.equal(fixture.store.get(`abl:${OTHER}:0`), 1);
   assert.equal(
     fixture.store.get(`abl:${OTHER}:37`) ?? 0,
@@ -2908,7 +2908,7 @@ test('auto_ablup：ARG 换目标后还原 TARGET；卖淫影响 0 时跳过 37',
   );
 
   await auto_ablup(OTHER, { prostitution_effect: 1 });
-  // auto_ablup_core 会一直升到升不动（:267 RESTART），珠给足就连升多级
+  // auto_ablup_core 循环到升不动为止，珠给足就连升多级
   assert.ok(
     (fixture.store.get(`abl:${OTHER}:37`) || 0) >= 1,
     '卖淫影响为 1（正面）时 37 参与自动提升',
@@ -2936,7 +2936,7 @@ test('auto_ablup：卖淫影响缺省读 modsave:0（#547 存储，无参调用�
   );
 });
 
-test('auto_ablup：FLAG:5 位 36 打开时 COUNT > 15 直接 BREAK', async () => {
+test('auto_ablup：FLAG:5 位 36 打开时循环计数 > 15 直接中断', async () => {
   const OTHER = CID + 1;
   const fixture = create_era_fixture();
   const { auto_ablup } = seed(fixture);
@@ -2950,17 +2950,17 @@ test('auto_ablup：FLAG:5 位 36 打开时 COUNT > 15 直接 BREAK', async () =>
   fixture.store.set(`juel:${OTHER}:6`, 100000);
   fixture.store.set(`exp:${OTHER}:74`, 100000);
 
-  // 卖淫影响传 1：37 不再被「负面评价」那条挡掉，只剩位 36 的 BREAK 能拦住它
+  // 卖淫影响传 1：37 不再被「负面评价」那条挡掉，只剩位 36 的中断能拦住它
   await auto_ablup(-1, { prostitution_effect: 1 });
-  assert.equal(fixture.store.get(`abl:${OTHER}:0`), 1, 'COUNT 0 仍提升');
+  assert.equal(fixture.store.get(`abl:${OTHER}:0`), 1, '循环计数 0 仍提升');
   assert.equal(
     fixture.store.get(`abl:${OTHER}:37`) ?? 0,
     0,
-    'COUNT 37 > 15 → BREAK，不提升',
+    '循环计数 37 > 15 → 中断，不提升',
   );
 });
 
-test('userablup：非 999 返回 0；999 调 JUJUN／YOKUBO 两检查并返回 1', async () => {
+test('userablup：非 999 返回 0；999 调 jujun_up_check／yokubo_up_check 两检查并返回 1', async () => {
   const fixture = create_era_fixture();
   const { userablup } = seed(fixture);
   fixture.era.beginTrain(0, CID); // 两个检查在调教域内（TFLAG:25 通道）
@@ -2969,23 +2969,23 @@ test('userablup：非 999 返回 0；999 调 JUJUN／YOKUBO 两检查并返回 1
   assert.equal(await userablup(0), 0);
   assert.equal(await userablup(998), 0);
 
-  // JUJUN_UP_CHECK：顺从 >= 4 且反抗心 + 傲娇 → 反抗心 → 坦率
+  // jujun_up_check：顺从 >= 4 且反抗心 + 傲娇 → 反抗心 → 坦率
   fixture.store.set(`abl:${CID}:10`, 4);
   fixture.store.set(`talent:${CID}:11`, 1);
   fixture.store.set(`talent:${CID}:18`, 1);
-  // YOKUBO_UP_CHECK：欲望 >= 3 且压抑 → 清除压抑 + 否定点数减半
+  // yokubo_up_check：欲望 >= 3 且压抑 → 清除压抑 + 否定点数减半
   fixture.store.set(`abl:${CID}:11`, 3);
   fixture.store.set(`talent:${CID}:32`, 1);
   fixture.store.set(`juel:${CID}:100`, 100);
 
-  assert.equal(await userablup(999), 1, 'BEGIN TURNEND 的转场信号');
+  assert.equal(await userablup(999), 1, '结束本回合的转场信号');
   assert.equal(fixture.store.get(`talent:${CID}:11`), 0, '反抗心失去');
   assert.equal(fixture.store.get(`talent:${CID}:13`), 1, '获得坦率');
   assert.equal(fixture.store.get(`talent:${CID}:32`), 0, '压抑清除');
   assert.equal(fixture.store.get(`juel:${CID}:100`), 50, '否定点数减半');
 });
 
-test('decide_ablup39：上限判据是 32+33+39 >= 30（主流程是 >= 10）', async () => {
+test('decide_ablup39：上限条件是 32+33+39 >= 30（主流程是 >= 10）', async () => {
   const fixture = create_era_fixture();
   const { decide_ablup } = seed(fixture);
   // Lv9：梯子 a/b=300000、c(兽奸经验)=6000；三重上限时 A/B 覆盖为
@@ -2999,12 +2999,12 @@ test('decide_ablup39：上限判据是 32+33+39 >= 30（主流程是 >= 10）', 
   fixture.store.set(`juel:${CID}:6`, 400000);
   fixture.store.set(`exp:${CID}:56`, 6000);
   fixture.store.set(`exp:${CID}:50`, 10); // F = lv-1 = 8
-  assert.equal(await decide_ablup(CID, 39), 1, '合计 27：DECIDE 放行');
-  fixture.store.set(`abl:${CID}:33`, 12); // 合计 30 → :100-102 判死
-  assert.equal(await decide_ablup(CID, 39), 0, '合计 30：DECIDE 判死');
+  assert.equal(await decide_ablup(CID, 39), 1, '合计 27：decide 放行');
+  fixture.store.set(`abl:${CID}:33`, 12); // 合计 30 → 判死
+  assert.equal(await decide_ablup(CID, 39), 0, '合计 30：decide 判死');
 });
 
-// ———— ABLUP20：抖S气质（train 域），单轨道，内联状态文案与全角括号 ————
+// ———— ablup20：抖S气质（train 域），单轨道，内联状态文案与全角括号 ————
 
 test('ablup20：三档终止判定（特殊素质/组合上限/已达最高级）', async () => {
   const fixture = create_era_fixture();
@@ -3030,7 +3030,7 @@ test('ablup20：三档终止判定（特殊素质/组合上限/已达最高级�
   assert.ok(maxed.text_lines().includes('已达最高级'));
 });
 
-test('ablup20：Lv0 梯子字面值与内联状态文案（bit2 无空格、bit4 有空格，与共享 GET_ABLUP_STATE 相反）', async () => {
+test('ablup20：Lv0 梯子字面值与内联状态文案（bit2 无空格、bit4 有空格，与共享 get_ablup_state 相反）', async () => {
   const fixture = create_era_fixture();
   const { ablup20 } = seed(fixture);
   fixture.set_inputs(100);
@@ -3058,7 +3058,7 @@ test('ablup20：欲望门槛行与施虐快乐经验行；异常经验行用全�
 });
 
 test('ablup20：异常经验 C 的两段折扣——戒备森严在赋值前（无效）、淫乱在赋值后（×0.80 生效）', async () => {
-  // Lv4：C=lv-2=2。戒备森严的 TIMES C 在 :175 赋值之前，乘 0 无效 → 仍为 2
+  // Lv4：C=lv-2=2。戒备森严对 C 的倍乘发生在 C 赋值之前，乘 0 无效 → 仍为 2
   const guarded = create_era_fixture();
   const { ablup20: a1 } = seed(guarded);
   guarded.store.set(`abl:${CID}:20`, 4);
@@ -3067,7 +3067,7 @@ test('ablup20：异常经验 C 的两段折扣——戒备森严在赋值前（�
   await a1(CID);
   assert.ok(guarded.text_lines().includes('异常经验2以上（现在0）且'));
 
-  // 淫乱的 TIMES C 在 :175 之后（:279）→ floor(2×0.80)=1
+  // 淫乱对 C 的倍乘发生在 C 赋值之后 → floor(2×0.80)=1
   const lewd = create_era_fixture();
   const { ablup20: a2 } = seed(lewd);
   lewd.store.set(`abl:${CID}:20`, 4);
@@ -3130,7 +3130,7 @@ test('ablup20：条件不足时选 [0] 重试提示"未满足条件"（无句号
   assert.ok(!fixture.text_lines().includes('未满足条件。'));
 });
 
-// ———— ABLUP21：抖M气质（system 域写入），苦痛+欲情 / 苦痛+屈服 双轨道 ————
+// ———— ablup21：抖M气质（system 域写入），苦痛+欲情 / 苦痛+屈服 双轨道 ————
 
 test('ablup21：三档终止判定（特殊素质/组合上限/已达最高级）', async () => {
   const fixture = create_era_fixture();
@@ -3321,9 +3321,9 @@ test('ablup21：Lv4 梯子字面值（D=4300/E=12000/被虐快乐 80）与戒备
   assert.ok(guarded.text_lines().includes('　　　被虐快乐经验　0/160'));
 });
 
-// ———— ABLUP22：百合气质（chara 域写入），男人直接返回，异常经验行在欲望行之前 ————
+// ———— ablup22：百合气质（chara 域写入），男人直接返回，异常经验行在欲望行之前 ————
 
-test('ablup22：男人（TALENT:122）在 DRAWLINE 前直接返回，无任何输出', async () => {
+test('ablup22：男人（TALENT:122）在 era.drawLine 前直接返回，无任何输出', async () => {
   const fixture = create_era_fixture();
   const { ablup22 } = seed(fixture);
   set_talents(fixture, { 122: 1 });
@@ -3397,10 +3397,7 @@ test('ablup22：异常经验行在欲望行之前（与其他 ABLUP 文件相反
   const exp_idx = lines.findIndex((t) => t.includes('异常经验1以上(现在0)且'));
   const abl_idx = lines.findIndex((t) => t.includes('欲望LV4以上(现在LV0)且'));
   assert.ok(exp_idx >= 0 && abl_idx >= 0);
-  assert.ok(
-    exp_idx < abl_idx,
-    '异常经验行应先于欲望行（ABLUP22.ERB:47/50 顺序）',
-  );
+  assert.ok(exp_idx < abl_idx, '异常经验行应先于欲望行');
 });
 
 test('ablup22：素质修正——双性恋×0.50 四元组、男人婆×2.00（百合特有）', async () => {
@@ -3423,7 +3420,7 @@ test('ablup22：素质修正——双性恋×0.50 四元组、男人婆×2.00（
 
   const hater = create_era_fixture();
   const { ablup22: a3 } = seed(hater);
-  set_talents(hater, { 82: 1 }); // 讨厌男人：×0.50（与 ABLUP23 的 ×3.00 相反）
+  set_talents(hater, { 82: 1 }); // 讨厌男人：×0.50（与 ablup23 的 ×3.00 相反）
   hater.store.set(`abl:${CID}:11`, 1);
   hater.set_inputs(100);
   await a3(CID);
@@ -3464,9 +3461,9 @@ test('ablup22：两条购买路径各自扣对应珠、写入 chara(cid).chara.�
   }
 });
 
-// ———— ABLUP23：断背气质（system 域写入），非男人才可用，无欲望门槛 ————
+// ———— ablup23：断背气质（system 域写入），非男人才可用，无欲望门槛 ————
 
-test('ablup23：非男人（TALENT:122==0）在 DRAWLINE 前直接返回；男人才继续', async () => {
+test('ablup23：非男人（TALENT:122==0）在 era.drawLine 前直接返回；男人才继续', async () => {
   const fixture = create_era_fixture();
   const { ablup23 } = seed(fixture);
   await ablup23(CID);
@@ -3522,7 +3519,7 @@ test('ablup23：Lv0 梯子字面值；[1] 用肛门点数；无欲望门槛行',
   assert.ok(!fixture.text_lines().some((t) => t.includes('欲望LV')));
 });
 
-test('ablup23：讨厌男人×3.00（与 ABLUP22 的×0.50 相反）；Lv3 异常经验 E=1', async () => {
+test('ablup23：讨厌男人×3.00（与 ablup22 的×0.50 相反）；Lv3 异常经验 E=1', async () => {
   const hater = create_era_fixture();
   const { ablup23: a1 } = seed(hater);
   set_talents(hater, { 122: 1, 82: 1 });
@@ -3601,7 +3598,7 @@ test('ablup23：Lv4 戒备森严 A/B/C ×2.00（20000→40000、800→1600、500
   assert.ok(fixture.text_lines().includes('　　　断背经验　0/1600'));
 });
 
-// ———— ABLUP30：性交中毒（train 域写入），正常/三倍点数+半经验 双轨道 ————
+// ———— ablup30：性交中毒（train 域写入），正常/三倍点数+半经验 双轨道 ————
 
 test('ablup30：三档终止判定（六项豁免须全有——主流程 OR 拦截）/组合上限三行提示', async () => {
   const fixture = create_era_fixture();
@@ -3644,13 +3641,13 @@ test('ablup30：三档终止判定（六项豁免须全有——主流程 OR 拦
   assert.ok(maxed.text_lines().includes('已达最高级'));
 });
 
-test('ablup30：合计 10-19 且珠够时放行（DECIDE 里 >=20 才 RETURN），照常出需求', async () => {
+test('ablup30：合计 10-19 且珠够时放行（decide 阶段 >=20 才拦），照常出需求', async () => {
   const fixture = create_era_fixture();
   set_talents(fixture, { 85: 1, 76: 1, 63: 1, 70: 1, 75: 1, 77: 1 });
   const { ablup30 } = seed(fixture);
   fixture.store.set(`abl:${CID}:30`, 5);
   fixture.store.set(`abl:${CID}:31`, 5); // 合计 10
-  fixture.store.set(`juel:${CID}:5`, 7500); // 判定查 JUEL:5 ≥ 30²×300（与提示文案错位，原作如此）
+  fixture.store.set(`juel:${CID}:5`, 7500); // 判定查 JUEL:5 ≥ 30²×300（与提示文案错位，保留不一致）
   fixture.store.set(`juel:${CID}:6`, 25000); // 判定查 JUEL:6 ≥ 30²×1000
   fixture.set_inputs(100);
   await ablup30(CID);
@@ -3743,9 +3740,9 @@ test('ablup30：点数不足时两个重试文案（无句号）', async () => {
   assert.equal(count, 2);
 });
 
-// ———— ABLUP31：自慰中毒（train 域写入），自慰/调教自慰经验 双轨道同价 ————
+// ———— ablup31：自慰中毒（train 域写入），自慰/调教自慰经验 双轨道同价 ————
 
-test('ablup31：三档终止判定（六项豁免任一命中即可——与 ABLUP30 的全有相反）', async () => {
+test('ablup31：三档终止判定（六项豁免任一命中即可——与 ablup30 的全有相反）', async () => {
   const fixture = create_era_fixture();
   const { ablup31 } = seed(fixture);
   fixture.store.set(`abl:${CID}:31`, 5);
@@ -3923,9 +3920,9 @@ test('ablup31：两条购买路径扣点相同（JUEL:5/0/8），经验行各查
   }
 });
 
-// ———— ABLUP32：精液中毒（train 域写入），侍奉/欲望门槛按淫乱二选一 ————
+// ———— ablup32：精液中毒（train 域写入），侍奉/欲望门槛按淫乱二选一 ————
 
-test('ablup32：三档终止判定（五项豁免须全无才拦）/拦截阈值 6500 与提示文案 4000 不一致（原作如此）', async () => {
+test('ablup32：三档终止判定（五项豁免须全无才拦）/拦截阈值 6500 与提示文案 4000 不一致（有意保留）', async () => {
   const fixture = create_era_fixture();
   const { ablup32 } = seed(fixture);
   fixture.store.set(`abl:${CID}:32`, 5);
@@ -4110,7 +4107,7 @@ test('ablup32：两条购买路径各自扣对应珠、era.add 写入 abl:32', a
   }
 });
 
-// ———— ABLUP33：百合中毒（train 域写入），欲情/屈服需求同源 A，输入白名单仅 [0][100] ————
+// ———— ablup33：百合中毒（train 域写入），欲情/屈服需求同源 A，输入白名单仅 [0][100] ————
 
 test('ablup33：男人直接返回；三档终止判定（四项豁免须全无才拦）', async () => {
   const male = create_era_fixture();
@@ -4206,7 +4203,7 @@ test('ablup33：Lv0 梯子字面值；欲情/屈服需求同为 A；百合气质
 
   const conservative = create_era_fixture();
   const { ablup33: a3 } = seed(conservative);
-  set_talents(conservative, { 24: 1 }); // 保守的：×1.50（不是 ABLUP22/23 的 ×1.20）
+  set_talents(conservative, { 24: 1 }); // 保守的：×1.50（不是 ablup22/23 的 ×1.20）
   conservative.store.set(`abl:${CID}:22`, 1);
   conservative.set_inputs(100);
   await a3(CID);
@@ -4320,7 +4317,7 @@ test('ablup33：Lv2 异常经验 D=lv-1；成功购买扣三项珠（JUEL:0/5/6�
 
 // ———— 素质倍率 / 异常经验档位 / 门槛比较的表驱动补覆盖（issue #491） ————
 //
-// #466、#467 的用例每函数只抽 1～2 个素质：ABLUP20～33 用到的素质编号里有
+// #466、#467 的用例每函数只抽 1～2 个素质：ablup20～33 用到的素质编号里有
 // 约 27 个一次都没出现过（12/14/15/16/17/20/21/22/23/26/31/32/34/35/36/37/
 // 52/61/64/71/72/84/87/123/127 等），门槛比较也只被零散点到。#466 验收按
 // SOP §5 抽查三处，两处逃逸（ablup20 感情淡薄的 B 轨 ×1.2、ablup21 抵抗的
@@ -4329,14 +4326,13 @@ test('ablup33：Lv2 异常经验 D=lv-1；成功购买扣三项珠（JUEL:0/5/6�
 // 玩家可见行为，故这里按分支逐条列表驱动，把「素质编号」这一维补齐。
 //
 // 期望值一律现算，不抄 ere/system/train/ablup.js：
-//   · 「梯子基值」抄自 target/ERB/ABL/ABLUP<nn>.ERB @DECIDE_ABLUP<nn> 里
-//     `IF ABL:<n> == <lv>` 分支的 A/B/C/D/E 赋值，原文行号写在各行注释里；
-//   · 「素质倍率」抄自同一文件的 TIMES 行，行号同样写在注释里；
-//   · 合成按 TIMES 语义逐次截断（Math.floor(v * m)），不是一次乘完。
+//   · 「梯子基值」是逐等级的 A/B/C/D/E 赋值，「素质倍率」是逐条倍率，
+//     两张表都与 ablup.js 各函数注释里登记的梯子、倍率逐字一致；
+//   · 合成逐次截断（Math.floor(v * m)），不是一次乘完。
 // `refs` 是该等级实际打印的分母，按输出顺序排列；`a*3`、`c/2` 保留原样的
 // `{A*3}`、`{C/2}`，用来核对 [1] 轨与整除半经验的分母。
 
-/** TIMES X, m 的语义：整数乘小数后截断。 */
+/** 倍率乘法的语义：整数乘小数后截断。 */
 const scale = (base, factor) => Math.floor(base * factor);
 
 /** 把同一个倍率摊到多条轨道上，写表时少抄几遍（轨道名见各行 base）。 */
@@ -4382,54 +4378,54 @@ function option_states(fixture) {
 /**
  * 倍率规格：`rows` 每项是一份独立夹具配置（`state` 给出等级与前置素质，
  * `base` 是该等级梯子，`refs` 是该等级打印的分母）；`talents` 是素质编号 →
- * 该素质 TIMES 到的轨道与倍率，未列出的轨道按 ×1。分支互斥的 IF/ELSEIF
- * 两侧各占一行，分别用只带该素质的数据触发。
+ * 该素质乘到的轨道与倍率，未列出的轨道按 ×1。分支互斥的两侧
+ * 各占一行，分别用只带该素质的数据触发。
  */
 const MULTIPLIER_SPECS = [
   {
     id: 20,
-    source: 'ABLUP20.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :120-150（Lv0：A=100、B=5）。C 只在 Lv3/4/7 非零（:174-175），此处不渲染
+      // 梯子（Lv0：A=100、B=5）。C 只在 Lv3/4/7 非零，此处不渲染
       { state: { abl: { 20: 0 } }, base: { a: 100, b: 5 }, refs: ['a', 'b'] },
     ],
     talents: {
-      10: { a: 1.5 }, // 胆怯 :181-183（只乘 A）
-      11: { a: 0.9, b: 0.9 }, // 反抗心 :185-188
-      12: { a: 0.9 }, // 刚强 :189-191（只乘 A）
-      14: { a: 1.2 }, // 文静 :192-194（只乘 A）
-      16: { a: 0.9, b: 0.9 }, // 嚣张 :195-199
-      15: { a: 0.9, b: 0.9 }, // 高姿态 :201-204
-      17: { a: 1.1, b: 1.1 }, // 低姿态（与高姿态互斥）:205-209
-      20: { a: 1.2, b: 1.2 }, // 克制 :211-215
-      21: { a: 1.2, b: 1.2 }, // 冷漠 :216-220
-      22: { a: 1.5, b: 1.2 }, // 感情淡薄 :221-225（A/B 倍率不同）
-      23: { a: 0.9, b: 0.9 }, // 好奇心 :226-230
-      26: { a: 1.1 }, // 悲观的 :231-233（只乘 A）
-      28: { a: 0.9, b: 0.9 }, // 爱表现 :234-238
-      30: { a: 1.1, b: 1.1 }, // 看重贞操 :240-242 的 IF 侧
-      31: { a: 0.95, b: 0.95 }, // 看轻贞操 :244-246 的 ELSEIF 侧
-      32: { a: 0.95, b: 0.95 }, // 压抑 :250-252 的 IF 侧
-      33: { a: 0.9, b: 0.9 }, // 开放 :254-256 的 ELSEIF 侧
-      79: { a: 0.95, b: 0.95 }, // 讨厌男人 or 男人婆 :259-263（OR 两侧各测一次）
+      10: { a: 1.5 }, // 胆怯（只乘 A）
+      11: { a: 0.9, b: 0.9 }, // 反抗心
+      12: { a: 0.9 }, // 刚强（只乘 A）
+      14: { a: 1.2 }, // 文静（只乘 A）
+      16: { a: 0.9, b: 0.9 }, // 嚣张
+      15: { a: 0.9, b: 0.9 }, // 高姿态
+      17: { a: 1.1, b: 1.1 }, // 低姿态（与高姿态互斥）
+      20: { a: 1.2, b: 1.2 }, // 克制
+      21: { a: 1.2, b: 1.2 }, // 冷漠
+      22: { a: 1.5, b: 1.2 }, // 感情淡薄（A/B 倍率不同）
+      23: { a: 0.9, b: 0.9 }, // 好奇心
+      26: { a: 1.1 }, // 悲观的（只乘 A）
+      28: { a: 0.9, b: 0.9 }, // 爱表现
+      30: { a: 1.1, b: 1.1 }, // 看重贞操（互斥）
+      31: { a: 0.95, b: 0.95 }, // 看轻贞操（互斥）
+      32: { a: 0.95, b: 0.95 }, // 压抑（互斥）
+      33: { a: 0.9, b: 0.9 }, // 开放（互斥）
+      79: { a: 0.95, b: 0.95 }, // 讨厌男人 or 男人婆（OR 两侧各测一次）
       82: { a: 0.95, b: 0.95 },
-      40: { a: 1.2, b: 1.2 }, // 害怕疼痛 :266-268 的 IF 侧
-      41: { a: 0.9, b: 0.9 }, // 不惧疼痛 :270-272 的 ELSEIF 侧
-      76: { a: 0.8, b: 0.8 }, // 淫乱 :275-282（C 的 ×0.80 另见上文两段折扣用例）
-      80: { a: 0.8, b: 0.8 }, // 倒错的 :283-287
-      83: { a: 0.5, b: 0.5 }, // 施虐狂 :288-292
-      88: { a: 1.2, b: 1.2 }, // 受虐狂 :293-297
-      84: { a: 0.8, b: 0.8 }, // 嫉妒 :298-302
-      87: { a: 0.8, b: 0.8 }, // 小恶魔 :303-307
-      123: { a: 0.5, b: 0.5 }, // 疯狂 :308-312
-      9: { a: 2.0, b: 2.0 }, // 崩坏 :313-317
+      40: { a: 1.2, b: 1.2 }, // 害怕疼痛（互斥）
+      41: { a: 0.9, b: 0.9 }, // 不惧疼痛（互斥）
+      76: { a: 0.8, b: 0.8 }, // 淫乱（C 的 ×0.80 另见上文两段折扣用例）
+      80: { a: 0.8, b: 0.8 }, // 倒错的
+      83: { a: 0.5, b: 0.5 }, // 施虐狂
+      88: { a: 1.2, b: 1.2 }, // 受虐狂
+      84: { a: 0.8, b: 0.8 }, // 嫉妒
+      87: { a: 0.8, b: 0.8 }, // 小恶魔
+      123: { a: 0.5, b: 0.5 }, // 疯狂
+      9: { a: 2.0, b: 2.0 }, // 崩坏
     },
   },
   {
     id: 21,
-    source: 'ABLUP21.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :161-221。Lv0：A=B=100、C=0、D=E=100（C 不在输出里）
+      // 梯子 Lv0：A=B=100、C=0、D=E=100（C 不在输出里）
       {
         state: { abl: { 21: 0 } },
         base: { a: 100, b: 100, c: 0, d: 100, e: 100, g: 1 },
@@ -4443,41 +4439,41 @@ const MULTIPLIER_SPECS = [
       },
     ],
     talents: {
-      10: spread('abcde', 1.1), // 胆怯 :252-258
-      11: spread('abcde', 1.2), // 反抗心 :260-266
-      12: spread('abcde', 1.2), // 刚强 :268-274
-      16: spread('abcde', 1.2), // 嚣张 :276-282
-      15: spread('abcde', 1.2), // 高姿态 :285-291
-      17: spread('abcde', 0.9), // 低姿态（与高姿态互斥）:292-298
-      20: spread('abcde', 1.2), // 克制 :301-307
-      21: spread('abcde', 1.1), // 冷漠 :309-315
-      22: spread('abcde', 1.5), // 感情淡薄 :317-323
-      24: spread('abcde', 1.2), // 保守的 :325-331
-      26: spread('abcde', 0.9), // 悲观的 :333-339
-      30: spread('abcde', 1.2), // 看重贞操 :342-348
-      31: spread('abcde', 0.9), // 看轻贞操（互斥）:349-355
-      32: spread('abcde', 1.2), // 压抑 :358-364
-      33: spread('abcde', 0.6), // 开放（互斥）:365-371
-      34: spread('abcde', 2.0), // 抵抗 :373-380
-      35: spread('abcde', 0.9), // 害羞 :383-389
-      36: spread('abcde', 1.2), // 不知羞耻（互斥）:390-396
-      40: spread('abcde', 1.1), // 害怕疼痛 :398-405
-      41: spread('abcde', 0.95), // 不惧疼痛（互斥）:406-412
-      70: spread('abcde', 0.9), // 接受快感 :414-421
-      71: spread('abcde', 1.1), // 否定快感（互斥）:422-428
-      76: spread('abcde', 0.8), // 淫乱 :430-437
-      80: spread('abcde', 0.75), // 倒錯的 :438-445
-      83: spread('abcde', 1.2), // 施虐狂 :446-453
-      88: spread('abcde', 0.5), // 受虐狂 :454-461
-      123: spread('abcde', 0.8), // 疯狂 :462-469
-      9: spread('abcde', 2.0), // 崩坏 :470-477
+      10: spread('abcde', 1.1), // 胆怯
+      11: spread('abcde', 1.2), // 反抗心
+      12: spread('abcde', 1.2), // 刚强
+      16: spread('abcde', 1.2), // 嚣张
+      15: spread('abcde', 1.2), // 高姿态
+      17: spread('abcde', 0.9), // 低姿态（与高姿态互斥）
+      20: spread('abcde', 1.2), // 克制
+      21: spread('abcde', 1.1), // 冷漠
+      22: spread('abcde', 1.5), // 感情淡薄
+      24: spread('abcde', 1.2), // 保守的
+      26: spread('abcde', 0.9), // 悲观的
+      30: spread('abcde', 1.2), // 看重贞操
+      31: spread('abcde', 0.9), // 看轻贞操（互斥）
+      32: spread('abcde', 1.2), // 压抑
+      33: spread('abcde', 0.6), // 开放（互斥）
+      34: spread('abcde', 2.0), // 抵抗
+      35: spread('abcde', 0.9), // 害羞
+      36: spread('abcde', 1.2), // 不知羞耻（互斥）
+      40: spread('abcde', 1.1), // 害怕疼痛
+      41: spread('abcde', 0.95), // 不惧疼痛（互斥）
+      70: spread('abcde', 0.9), // 接受快感
+      71: spread('abcde', 1.1), // 否定快感（互斥）
+      76: spread('abcde', 0.8), // 淫乱
+      80: spread('abcde', 0.75), // 倒錯的
+      83: spread('abcde', 1.2), // 施虐狂
+      88: spread('abcde', 0.5), // 受虐狂
+      123: spread('abcde', 0.8), // 疯狂
+      9: spread('abcde', 2.0), // 崩坏
     },
   },
   {
     id: 22,
-    source: 'ABLUP22.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :140-190。Lv0：A=200、B=50、C=0、D=1000；B 行两条轨道各打一次
+      // 梯子 Lv0：A=200、B=50、C=0、D=1000；B 行两条轨道各打一次
       {
         state: { abl: { 22: 0 } },
         base: { a: 200, b: 50, c: 0, d: 1000 },
@@ -4492,27 +4488,27 @@ const MULTIPLIER_SPECS = [
     ],
     clamp: ['a', 'b'], // 「最低でも1回・1個は必要」
     talents: {
-      13: spread('abcd', 0.95), // 坦率 :217-223
-      21: spread('abcd', 1.2), // 冷漠 :224-230
-      23: spread('abcd', 0.95), // 好奇心 :231-237
-      24: spread('abcd', 1.2), // 保守的 :238-244
-      30: spread('abcd', 1.2), // 看重贞操 :246-251
-      31: spread('abcd', 0.95), // 看轻贞操（互斥）:252-258
-      63: spread('abcd', 0.95), // 献身的 :260-266
-      70: spread('abcd', 0.95), // 接受快感 :268-273
-      71: spread('abcd', 1.2), // 否定快感（互斥）:274-280
-      80: spread('abcd', 0.8), // 倒錯的 :282-288
-      79: spread('abcd', 2.0), // 男人婆 :290-296（百合特有加成）
-      81: spread('abcd', 0.5), // 双性恋 :298-304
-      82: spread('abcd', 0.5), // 讨厌男人 :305-311
-      123: spread('abcd', 0.5), // 疯狂 :312-318
+      13: spread('abcd', 0.95), // 坦率
+      21: spread('abcd', 1.2), // 冷漠
+      23: spread('abcd', 0.95), // 好奇心
+      24: spread('abcd', 1.2), // 保守的
+      30: spread('abcd', 1.2), // 看重贞操
+      31: spread('abcd', 0.95), // 看轻贞操（互斥）
+      63: spread('abcd', 0.95), // 献身的
+      70: spread('abcd', 0.95), // 接受快感
+      71: spread('abcd', 1.2), // 否定快感（互斥）
+      80: spread('abcd', 0.8), // 倒錯的
+      79: spread('abcd', 2.0), // 男人婆（百合特有加成）
+      81: spread('abcd', 0.5), // 双性恋
+      82: spread('abcd', 0.5), // 讨厌男人
+      123: spread('abcd', 0.5), // 疯狂
     },
   },
   {
     id: 23,
-    source: 'ABLUP23.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子与 ABLUP22 相同（:136-186）。前置：TALENT:122 必须非 0（:117-118）
+      // 梯子与 ablup22 相同。前置：TALENT:122 必须非 0
       {
         state: { abl: { 23: 0 }, talent: { 122: 1 } },
         base: { a: 200, b: 50, c: 0, d: 1000 },
@@ -4526,26 +4522,26 @@ const MULTIPLIER_SPECS = [
     ],
     clamp: ['a', 'b'],
     talents: {
-      13: spread('abcd', 0.95), // 坦率 :213-219
-      21: spread('abcd', 1.2), // 冷漠 :220-226
-      23: spread('abcd', 0.95), // 好奇心 :227-233
-      24: spread('abcd', 1.2), // 保守的 :234-240
-      30: spread('abcd', 1.2), // 看重贞操 :242-247
-      31: spread('abcd', 0.95), // 看轻贞操（互斥）:248-254
-      82: spread('abcd', 3.0), // 讨厌男人 :256-262（与 ABLUP22 的 ×0.50 相反）
-      63: spread('abcd', 0.95), // 献身的 :263-269
-      70: spread('abcd', 0.95), // 接受快感 :271-277
-      71: spread('abcd', 1.2), // 否定快感（互斥）:277-283
-      80: spread('abcd', 0.8), // 倒錯的 :285-291
-      81: spread('abcd', 0.5), // 双性恋 :292-298
-      123: spread('abcd', 0.5), // 疯狂 :299-305
+      13: spread('abcd', 0.95), // 坦率
+      21: spread('abcd', 1.2), // 冷漠
+      23: spread('abcd', 0.95), // 好奇心
+      24: spread('abcd', 1.2), // 保守的
+      30: spread('abcd', 1.2), // 看重贞操
+      31: spread('abcd', 0.95), // 看轻贞操（互斥）
+      82: spread('abcd', 3.0), // 讨厌男人（与 ablup22 的 ×0.50 相反）
+      63: spread('abcd', 0.95), // 献身的
+      70: spread('abcd', 0.95), // 接受快感
+      71: spread('abcd', 1.2), // 否定快感（互斥）
+      80: spread('abcd', 0.8), // 倒錯的
+      81: spread('abcd', 0.5), // 双性恋
+      123: spread('abcd', 0.5), // 疯狂
     },
   },
   {
     id: 30,
-    source: 'ABLUP30.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :129-169。Lv0：A=3000、B=10000、C=10；[1] 轨为 A*3/B*3/C/2
+      // 梯子 Lv0：A=3000、B=10000、C=10；[1] 轨为 A*3/B*3/C/2
       {
         state: { abl: { 30: 0 } },
         base: { a: 3000, b: 10000, c: 10 },
@@ -4554,32 +4550,32 @@ const MULTIPLIER_SPECS = [
     ],
     clamp: ['a', 'b', 'c'],
     talents: {
-      12: spread('abc', 1.2), // 刚强 :193-197
-      20: spread('abc', 1.2), // 克制 :199-203
-      21: spread('abc', 1.2), // 冷漠 :205-209
-      24: spread('abc', 1.2), // 保守的 :211-215
-      30: spread('abc', 1.2), // 看重贞操 :218-222
-      31: spread('abc', 0.9), // 看轻贞操（互斥）:223-227
-      32: spread('abc', 1.2), // 压抑 :230-234
-      33: spread('abc', 0.8), // 开放（互斥）:235-239
-      34: spread('abc', 1.2), // 抵抗 :242-246
-      35: spread('abc', 1.1), // 害羞 :249-253
-      36: spread('abc', 0.95), // 不知羞耻（互斥）:254-258
-      70: spread('abc', 0.9), // 接受快感 :261-265
-      71: spread('abc', 1.2), // 否定快感（互斥）:266-270
-      72: spread('abc', 0.6), // 容易上瘾 :272-276
-      73: spread('abc', 0.5), // 容易陷落 :278-282
-      76: spread('abc', 0.8), // 淫乱 :284-288
-      87: spread('abc', 0.9), // 小恶魔 :290-294
-      123: spread('abc', 0.8), // 疯狂 :296-300
-      9: spread('abc', 0.8), // 崩坏 :302-306（非 ABLUP20/21 的 ×2.00）
+      12: spread('abc', 1.2), // 刚强
+      20: spread('abc', 1.2), // 克制
+      21: spread('abc', 1.2), // 冷漠
+      24: spread('abc', 1.2), // 保守的
+      30: spread('abc', 1.2), // 看重贞操
+      31: spread('abc', 0.9), // 看轻贞操（互斥）
+      32: spread('abc', 1.2), // 压抑
+      33: spread('abc', 0.8), // 开放（互斥）
+      34: spread('abc', 1.2), // 抵抗
+      35: spread('abc', 1.1), // 害羞
+      36: spread('abc', 0.95), // 不知羞耻（互斥）
+      70: spread('abc', 0.9), // 接受快感
+      71: spread('abc', 1.2), // 否定快感（互斥）
+      72: spread('abc', 0.6), // 容易上瘾
+      73: spread('abc', 0.5), // 容易陷落
+      76: spread('abc', 0.8), // 淫乱
+      87: spread('abc', 0.9), // 小恶魔
+      123: spread('abc', 0.8), // 疯狂
+      9: spread('abc', 0.8), // 崩坏（非 ablup20/21 的 ×2.00）
     },
   },
   {
     id: 31,
-    source: 'ABLUP31.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :150-210。Lv0：A=3000、B=10000、C=1000、D=100、E=20；两条轨道同价
+      // 梯子 Lv0：A=3000、B=10000、C=1000、D=100、E=20；两条轨道同价
       {
         state: { abl: { 31: 0 } },
         base: { a: 3000, b: 10000, c: 1000, d: 100, e: 20 },
@@ -4589,17 +4585,17 @@ const MULTIPLIER_SPECS = [
     clamp: ['a', 'b', 'c', 'd', 'e'],
     talents: {
       // 四项都只乘 A-D，E（[1] 轨调教自慰经验）不受影响
-      60: { a: 0.25, b: 0.25, c: 0.25, d: 0.25 }, // 容易自慰 :252-258
-      72: { a: 0.5, b: 0.5, c: 0.5, d: 0.5 }, // 容易上瘾 :260-266
-      80: { a: 0.75, b: 0.75, c: 0.75, d: 0.75 }, // 倒错的 :268-274
-      76: { a: 0.5, b: 0.5, c: 0.5, d: 0.5 }, // 淫乱化 :276-282
+      60: { a: 0.25, b: 0.25, c: 0.25, d: 0.25 }, // 容易自慰
+      72: { a: 0.5, b: 0.5, c: 0.5, d: 0.5 }, // 容易上瘾
+      80: { a: 0.75, b: 0.75, c: 0.75, d: 0.75 }, // 倒错的
+      76: { a: 0.5, b: 0.5, c: 0.5, d: 0.5 }, // 淫乱化
     },
   },
   {
     id: 32,
-    source: 'ABLUP32.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :143-183。Lv0：A=3000、B=10000、C=10（组合上限 <10，梯子未被覆盖）
+      // 梯子 Lv0：A=3000、B=10000、C=10（组合上限 <10，梯子未被覆盖）
       {
         state: { abl: { 32: 0 } },
         base: { a: 3000, b: 10000, c: 10 },
@@ -4608,31 +4604,31 @@ const MULTIPLIER_SPECS = [
     ],
     clamp: ['a', 'b', 'c'],
     talents: {
-      11: spread('abc', 1.5), // 反抗心 :216-220
-      22: spread('abc', 0.95), // 感情淡薄 :222-226
-      24: spread('abc', 1.2), // 保守的 :228-232
-      32: spread('abc', 1.2), // 压抑 :235-239
-      33: spread('abc', 0.8), // 开放（互斥）:240-244
-      34: spread('abc', 2.0), // 抵抗 :247-251
-      47: spread('abc', 0.5), // 喜欢精液 :254-258
-      52: spread('abc', 0.95), // 擅用舌头 :261-265
-      61: spread('abc', 0.9), // 不怕污臭 :268-272
-      62: spread('abc', 2.0), // 反感污臭（互斥）:273-277
-      64: spread('abc', 0.9), // 不怕脏 :279-283
-      72: spread('abc', 0.5), // 容易上瘾 :286-290
-      73: spread('abc', 0.5), // 容易陷落 :292-296
-      76: spread('abc', 0.9), // 淫乱 :298-302
-      80: spread('abc', 0.75), // 倒错的 :304-308
-      87: spread('abc', 0.95), // 小恶魔 :310-314
-      123: spread('abc', 0.9), // 疯狂 :316-320
-      9: spread('abc', 0.9), // 崩坏 :322-326
+      11: spread('abc', 1.5), // 反抗心
+      22: spread('abc', 0.95), // 感情淡薄
+      24: spread('abc', 1.2), // 保守的
+      32: spread('abc', 1.2), // 压抑
+      33: spread('abc', 0.8), // 开放（互斥）
+      34: spread('abc', 2.0), // 抵抗
+      47: spread('abc', 0.5), // 喜欢精液
+      52: spread('abc', 0.95), // 擅用舌头
+      61: spread('abc', 0.9), // 不怕污臭
+      62: spread('abc', 2.0), // 反感污臭（互斥）
+      64: spread('abc', 0.9), // 不怕脏
+      72: spread('abc', 0.5), // 容易上瘾
+      73: spread('abc', 0.5), // 容易陷落
+      76: spread('abc', 0.9), // 淫乱
+      80: spread('abc', 0.75), // 倒错的
+      87: spread('abc', 0.95), // 小恶魔
+      123: spread('abc', 0.9), // 疯狂
+      9: spread('abc', 0.9), // 崩坏
     },
   },
   {
     id: 33,
-    source: 'ABLUP33.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :126-165。Lv0：A=1200、B=5000、C=300（按钮是 B 阴核，A 供欲情/屈服两行）
+      // 梯子 Lv0：A=1200、B=5000、C=300（按钮是 B 阴核，A 供欲情/屈服两行）
       {
         state: { abl: { 33: 0 } },
         base: { a: 1200, b: 5000, c: 300 },
@@ -4641,36 +4637,36 @@ const MULTIPLIER_SPECS = [
     ],
     clamp: ['a', 'b', 'c'],
     talents: {
-      11: spread('abc', 1.5), // 反抗心 :199-203
-      20: spread('abc', 1.2), // 克制 :205-208
-      21: spread('abc', 1.2), // 冷漠 :211-214
-      24: spread('abc', 1.5), // 保守的 :217-220（非 ABLUP22/23 的 ×1.20）
-      32: spread('abc', 1.2), // 压抑 :224-227
-      33: spread('abc', 0.8), // 开放（互斥）:229-232
-      34: spread('abc', 2.0), // 抵抗 :236-239
-      52: spread('abc', 0.9), // 擅用舌头 :242-245
-      61: spread('abc', 0.95), // 不怕污臭 :248-251
-      63: spread('abc', 0.9), // 献身的 :254-257
-      64: spread('abc', 0.95), // 不怕脏 :260-263
-      70: spread('abc', 0.9), // 接受快感 :267-270
-      71: spread('abc', 1.1), // 否定快感（互斥）:272-275
-      72: spread('abc', 0.5), // 容易上瘾 :278-281
-      73: spread('abc', 0.5), // 容易陷落 :284-287
-      76: spread('abc', 0.75), // 淫乱 :290-293
-      79: spread('abc', 2.0), // 男人婆 :297-300
-      80: spread('abc', 0.75), // 倒错的 :304-307
-      81: spread('abc', 0.5), // 双性恋 :310-313
-      82: spread('abc', 0.5), // 讨厌男人 :316-319
-      87: spread('abc', 0.9), // 小恶魔 :322-325
-      123: spread('abc', 0.5), // 疯狂 :328-331
-      9: spread('abc', 0.8), // 崩坏 :334-337
+      11: spread('abc', 1.5), // 反抗心
+      20: spread('abc', 1.2), // 克制
+      21: spread('abc', 1.2), // 冷漠
+      24: spread('abc', 1.5), // 保守的（非 ablup22/23 的 ×1.20）
+      32: spread('abc', 1.2), // 压抑
+      33: spread('abc', 0.8), // 开放（互斥）
+      34: spread('abc', 2.0), // 抵抗
+      52: spread('abc', 0.9), // 擅用舌头
+      61: spread('abc', 0.95), // 不怕污臭
+      63: spread('abc', 0.9), // 献身的
+      64: spread('abc', 0.95), // 不怕脏
+      70: spread('abc', 0.9), // 接受快感
+      71: spread('abc', 1.1), // 否定快感（互斥）
+      72: spread('abc', 0.5), // 容易上瘾
+      73: spread('abc', 0.5), // 容易陷落
+      76: spread('abc', 0.75), // 淫乱
+      79: spread('abc', 2.0), // 男人婆
+      80: spread('abc', 0.75), // 倒错的
+      81: spread('abc', 0.5), // 双性恋
+      82: spread('abc', 0.5), // 讨厌男人
+      87: spread('abc', 0.9), // 小恶魔
+      123: spread('abc', 0.5), // 疯狂
+      9: spread('abc', 0.8), // 崩坏
     },
   },
   {
     id: 37,
-    source: 'ABLUP37.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :109-160。Lv0：A=2000、B=3000、C=1000、D=50
+      // 梯子 Lv0：A=2000、B=3000、C=1000、D=50
       {
         state: { abl: { 37: 0 } },
         base: { a: 2000, b: 3000, c: 1000, d: 50 },
@@ -4679,38 +4675,38 @@ const MULTIPLIER_SPECS = [
     ],
     clamp: ['a', 'b', 'c', 'd'],
     talents: {
-      11: spread('abcd', 1.5), // 反抗心 :187-191
-      12: spread('abcd', 1.2), // 刚强 :194-198
-      20: spread('abcd', 1.5), // 克制 :201-205
-      24: spread('abcd', 1.5), // 保守的 :208-212
-      26: spread('abcd', 0.9), // 悲观的 :216-220
-      28: spread('abcd', 0.9), // 爱表现 :223-227
-      30: spread('abcd', 2.0), // 看重贞操 :231-235
-      31: spread('abcd', 0.9), // 看轻贞操（互斥）:237-241
-      32: spread('abcd', 1.2), // 压抑 :245-249
-      33: spread('abcd', 0.8), // 开放（互斥）:251-255
-      34: spread('abcd', 2.0), // 抵抗 :259-263
-      35: spread('abcd', 1.1), // 害羞 :267-271
-      36: spread('abcd', 0.9), // 不知羞耻（互斥）:273-277
-      63: spread('abcd', 0.9), // 献身的 :280-284
-      72: spread('abcd', 0.5), // 容易上瘾 :287-291
-      76: { a: 0.8, b: 0.5, c: 0.8, d: 0.8 }, // 淫乱 :294-298（B 轨 ×0.50 与其余 ×0.80 不同，原作如此）
-      82: spread('abcd', 3.0), // 讨厌男人 :301-305
-      85: spread('abcd', 1.5), // 爱慕 :308-312
-      153: spread('abcd', 2.0), // 妊娠 :315-319
-      123: spread('abcd', 0.5), // 疯狂 :322-326
-      9: spread('abcd', 0.8), // 崩坏 :329-333
-      180: spread('abcd', 0.8), // 妓女 :336-340
-      181: spread('abcd', 0.5), // 倾城 :343-347
-      183: spread('abcd', 0.9), // 有常客 :350-354
-      184: spread('abcd', 2.0), // 求爱 :357-361
+      11: spread('abcd', 1.5), // 反抗心
+      12: spread('abcd', 1.2), // 刚强
+      20: spread('abcd', 1.5), // 克制
+      24: spread('abcd', 1.5), // 保守的
+      26: spread('abcd', 0.9), // 悲观的
+      28: spread('abcd', 0.9), // 爱表现
+      30: spread('abcd', 2.0), // 看重贞操
+      31: spread('abcd', 0.9), // 看轻贞操（互斥）
+      32: spread('abcd', 1.2), // 压抑
+      33: spread('abcd', 0.8), // 开放（互斥）
+      34: spread('abcd', 2.0), // 抵抗
+      35: spread('abcd', 1.1), // 害羞
+      36: spread('abcd', 0.9), // 不知羞耻（互斥）
+      63: spread('abcd', 0.9), // 献身的
+      72: spread('abcd', 0.5), // 容易上瘾
+      76: { a: 0.8, b: 0.5, c: 0.8, d: 0.8 }, // 淫乱（B 轨 ×0.50 与其余 ×0.80 不同）
+      82: spread('abcd', 3.0), // 讨厌男人
+      85: spread('abcd', 1.5), // 爱慕
+      153: spread('abcd', 2.0), // 妊娠
+      123: spread('abcd', 0.5), // 疯狂
+      9: spread('abcd', 0.8), // 崩坏
+      180: spread('abcd', 0.8), // 妓女
+      181: spread('abcd', 0.5), // 倾城
+      183: spread('abcd', 0.9), // 有常客
+      184: spread('abcd', 2.0), // 求爱
     },
   },
   {
     id: 39,
-    source: 'ABLUP39.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :107-146。Lv0：A=B=2000、C=30（三中毒合计 <10，A/B 未被突破价覆盖）
+      // 梯子 Lv0：A=B=2000、C=30（三中毒合计 <10，A/B 未被突破价覆盖）
       {
         state: { abl: { 39: 0 } },
         base: { a: 2000, b: 2000, c: 30 },
@@ -4719,63 +4715,63 @@ const MULTIPLIER_SPECS = [
     ],
     clamp: ['a', 'b', 'c'],
     talents: {
-      20: { a: 2.5, b: 2.5, c: 1.5 }, // 克制 :177-181（A/B 与 C 倍率不同）
-      70: { a: 0.75, b: 0.75 }, // 接受快感 :183-186（只乘 A/B，C 不动）
-      71: { a: 1.75, b: 1.75 }, // 否定快感（互斥）:187-189
-      72: spread('abc', 0.5), // 容易上瘾 :192-195
-      80: spread('abc', 0.75), // 倒錯的 :198-201
-      123: spread('abc', 0.5), // 疯狂 :204-207
-      124: spread('abc', 0.8), // 动物耳朵 :210-213
-      136: spread('abc', 0.5), // 牝犬 :216-219
-      85: { a: 1.8, b: 1.8, c: 1.5 }, // 爱慕 :222-225（A/B 与 C 倍率不同）
+      20: { a: 2.5, b: 2.5, c: 1.5 }, // 克制（A/B 与 C 倍率不同）
+      70: { a: 0.75, b: 0.75 }, // 接受快感（只乘 A/B，C 不动）
+      71: { a: 1.75, b: 1.75 }, // 否定快感（互斥）
+      72: spread('abc', 0.5), // 容易上瘾
+      80: spread('abc', 0.75), // 倒錯的
+      123: spread('abc', 0.5), // 疯狂
+      124: spread('abc', 0.8), // 动物耳朵
+      136: spread('abc', 0.5), // 牝犬
+      85: { a: 1.8, b: 1.8, c: 1.5 }, // 爱慕（A/B 与 C 倍率不同）
     },
   },
   {
     id: 40,
-    source: 'ABLUP40.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 梯子 :70-92。Lv0：A=2000（单轨道，按钮分母就是 A）
+      // 梯子 Lv0：A=2000（单轨道，按钮分母就是 A）
       { state: { abl: { 40: 0 } }, base: { a: 2000 }, refs: ['a'] },
     ],
     clamp: ['a'],
     talents: {
-      20: { a: 2.5 }, // 克制 :98-99
-      70: { a: 0.75 }, // 接受快感 :102-103
-      71: { a: 1.75 }, // 否定快感（互斥）:105-106
-      72: { a: 0.5 }, // 容易上瘾 :109-110
-      80: { a: 0.75 }, // 倒錯的 :113-114
-      123: { a: 0.5 }, // 疯狂 :117-118
+      20: { a: 2.5 }, // 克制
+      70: { a: 0.75 }, // 接受快感
+      71: { a: 1.75 }, // 否定快感（互斥）
+      72: { a: 0.5 }, // 容易上瘾
+      80: { a: 0.75 }, // 倒錯的
+      123: { a: 0.5 }, // 疯狂
     },
   },
   {
     id: 99,
-    source: 'ABLUP99.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 刻印阶梯 :98-103。MARK:3=1 → A=5000（门槛 MARK:3 <= 0 在最前面拦空输入）
+      // 刻印阶梯：MARK:3=1 → A=5000（门槛 MARK:3 <= 0 在最前面拦空输入）
       { state: { mark: { 3: 1 } }, base: { a: 5000 }, refs: ['a'] },
     ],
     talents: {
-      12: { a: 3.0 }, // 刚强 :107-108
-      16: { a: 1.5 }, // 嚣张 :112-113
-      13: { a: 0.5 }, // 坦率 :117-118
-      85: { a: 0.5 }, // 爱慕 :122-123
+      12: { a: 3.0 }, // 刚强
+      16: { a: 1.5 }, // 嚣张
+      13: { a: 0.5 }, // 坦率
+      85: { a: 0.5 }, // 爱慕
     },
   },
   {
     id: 100,
-    source: 'ABLUP100.ERB',
+    source: 'ablup.js 文件头注释',
     rows: [
-      // 刻印阶梯 :82-92。MARK:10=1 → A=2000
+      // 刻印阶梯：MARK:10=1 → A=2000
       { state: { mark: { 10: 1 } }, base: { a: 2000 }, refs: ['a'] },
     ],
     talents: {
-      10: { a: 1.2 }, // 胆小 :95-96
-      172: { a: 0.8 }, // 智慧 :100-101
-      12: { a: 1.8 }, // 刚强 :105-106
-      16: { a: 1.2 }, // 嚣张 :110-111
-      13: { a: 0.5 }, // 坦率 :115-116
-      85: { a: 0.5 }, // 爱慕 :120-121
-      76: { a: 0.7 }, // 淫乱 :125-126
+      10: { a: 1.2 }, // 胆小
+      172: { a: 0.8 }, // 智慧
+      12: { a: 1.8 }, // 刚强
+      16: { a: 1.2 }, // 嚣张
+      13: { a: 0.5 }, // 坦率
+      85: { a: 0.5 }, // 爱慕
+      76: { a: 0.7 }, // 淫乱
     },
   },
 ];
@@ -4814,13 +4810,13 @@ for (const spec of MULTIPLIER_SPECS) {
 /**
  * 梯子逐级字面值：MULTIPLIER_SPECS.rows 每函数只给一档（多是 Lv0），其余
  * 档位的数字此前没有用例钉住（#512 的十处自选改错里，ablup37 的 Lv9 D 就
- * 从这里逃逸）。期望值逐字取自 ABLUP<nn>.ERB @DECIDE_ABLUP<nn> 的赋值行。
+ * 从这里逃逸）。期望值逐字取自 ablup.js 各函数注释登记的赋值。
  * Lv5 起有入口把关的函数必须带一个把关素质（37 取 31、39 取 124），它同时
  * 是倍率项，折扣照 MULTIPLIER_SPECS 的因子算，不是另抄一份表。
  */
 const LADDER_SPECS = [
   {
-    id: 37, // ；Lv5 起入口把关（:16）要求 76/31/180 至少有一个
+    id: 37, // Lv5 起入口把关要求 76/31/180 至少有一个
     rows: [
       { lv: 0, base: { a: 2000, b: 3000, c: 1000, d: 50 } },
       { lv: 1, base: { a: 5000, b: 8000, c: 2500, d: 100 } },
@@ -4856,7 +4852,7 @@ const LADDER_SPECS = [
     refs: ['a', 'b', 'c', 'd'],
   },
   {
-    id: 39, // ；Lv5 起入口把关（:16）要求 76/124/136 至少有一个
+    id: 39, // Lv5 起入口把关要求 76/124/136 至少有一个
     rows: [
       { lv: 0, base: { a: 2000, b: 2000, c: 30 } },
       { lv: 1, base: { a: 5000, b: 5000, c: 100 } },
@@ -4872,7 +4868,7 @@ const LADDER_SPECS = [
     refs: ['a', 'b', 'c'],
   },
   {
-    id: 40, // （与 ABLUP39 的 A 同值表，无入口把关）
+    id: 40, // （与 ablup39 的 A 同值表，无入口把关）
     rows: [
       { lv: 0, base: { a: 2000 } },
       { lv: 1, base: { a: 5000 } },
@@ -4914,7 +4910,7 @@ const LADDER_SPECS = [
 ];
 
 for (const spec of LADDER_SPECS) {
-  test(`ablup${spec.id}：梯子逐级字面值（ABLUP${spec.id}.ERB @DECIDE 的赋值行）`, async () => {
+  test(`ablup${spec.id}：梯子逐级字面值`, async () => {
     const factors = MULTIPLIER_SPECS.find((s) => s.id === spec.id).talents;
     for (const row of spec.rows) {
       const fixture = create_era_fixture();
@@ -4943,21 +4939,21 @@ for (const spec of LADDER_SPECS) {
 }
 
 /**
- * 戒备森严（TALENT:27）按 ABL 等级四档。ABLUP20 的 C/D/E 三列在 TIMES 时
+ * 戒备森严（TALENT:27）按 ABL 等级四档。ablup20 的 C/D/E 三列在分档倍乘执行时
  * 尚未赋值（次序残留，见上文两段折扣用例），因此该文件里这一分支
- * 观测不到差异，不列表。ABLUP39 的分档判 ABL:37（复制粘贴残留，保留），
- * 故其四行固定自身等级、只动 ABL:37。ABLUP40 没有这一分支。
+ * 观测不到差异，不列表。ablup39 的分档判 ABL:37（复制粘贴残留，保留），
+ * 故其四行固定自身等级、只动 ABL:37。ablup40 没有这一分支。
  *
  * 行里的 `abl` 是附加状态（默认只写 `abl[spec.id] = row.lv`），目前仅供
- * ABLUP39 写分档所读的 ABL:37。
+ * ablup39 写分档所读的 ABL:37。
  */
 const TIER_SPECS = [
   {
     id: 21,
-    // 梯子 :161-221（Lv3 起 A=B=0，[0] 轨隐藏）；戒备森严 :223-242 作用于
-    // C/D/E 三列。末尾的 g 是绝顶经验需求，全等级恒为 1（:249），不随
-    // 戒备森严变。Lv5 起入口把关（:15）是 OR（10/14/37/88 任一即可），取
-    // 14（文静）——它在本文件里不参与任何 TIMES
+    // 梯子（Lv3 起 A=B=0，[0] 轨隐藏）；戒备森严作用于
+    // C/D/E 三列。末尾的 g 是绝顶经验需求，全等级恒为 1，不随
+    // 戒备森严变。Lv5 起入口把关是 OR（10/14/37/88 任一即可），取
+    // 14（文静）——它在本文件里不参与任何素质倍率
     rows: [
       {
         lv: 3,
@@ -4989,9 +4985,9 @@ const TIER_SPECS = [
   },
   {
     id: 22,
-    // 梯子 :155-157 / :160-162 / :165-167 / :170-172；戒备森严 :193-211 作用于 A/B/C。
-    // Lv5 起入口把关（:18）要求 [开放/倒錯的/双性恋/讨厌男人/疯狂] 至少有一项，
-    // 取 33（开放）——它在本文件里只做豁免，不参与任何 TIMES
+    // 梯子的四档基值逐档列出；戒备森严作用于 A/B/C。
+    // Lv5 起入口把关要求 [开放/倒錯的/双性恋/讨厌男人/疯狂] 至少有一项，
+    // 取 33（开放）——它在本文件里只做豁免，不参与任何素质倍率
     rows: [
       {
         lv: 3,
@@ -5023,9 +5019,9 @@ const TIER_SPECS = [
   },
   {
     id: 23,
-    // 梯子 :136-186（A/B/C）；戒备森严 :188-207。男人限定（:9-11），
-    // 每行都要带 122。Lv5 起入口把关（:18）是 OR，取 33（开放）——
-    // 它在本文件里只做豁免，不参与任何 TIMES
+    // 梯子与戒备森严都作用于 A/B/C。男人限定，
+    // 每行都要带 122。Lv5 起入口把关是 OR，取 33（开放）——
+    // 它在本文件里只做豁免，不参与任何素质倍率
     rows: [
       {
         lv: 3,
@@ -5059,9 +5055,9 @@ const TIER_SPECS = [
   },
   {
     id: 30,
-    // 梯子 :141-156；戒备森严 :172-189 作用于 A/B/C。Lv5 起入口把关（:16）是
-    // **六项任一为 0 即拦**，必须六项全有，其中 [接受快感]（:261-265 ×0.90）
-    // 与 [淫乱]（:284-288 ×0.80）本身也乘 A/B/C，故按原文次序补进 extras
+    // 戒备森严作用于 A/B/C。Lv5 起入口把关是
+    // **六项任一为 0 即拦**，必须六项全有，其中 [接受快感]（×0.90）
+    // 与 [淫乱]（×0.80）本身也乘 A/B/C，故按同一顺序补进 extras
     rows: [
       {
         lv: 3,
@@ -5095,8 +5091,8 @@ const TIER_SPECS = [
   },
   {
     id: 31,
-    // 梯子 :168-191；戒备森严 :213-238 作用于 A-E 五列。Lv5 起入口把关（:16）是
-    // AND（六项全 0 才拦），取 85（爱慕）——它在本文件里不参与任何 TIMES
+    // 戒备森严作用于 A-E 五列。Lv5 起入口把关是
+    // AND（六项全 0 才拦），取 85（爱慕）——它在本文件里不参与任何素质倍率
     rows: [
       {
         lv: 3,
@@ -5128,9 +5124,9 @@ const TIER_SPECS = [
   },
   {
     id: 32,
-    // 梯子 :143-183（A/B/C）；戒备森严 :190-209，作用于覆盖价（:185-188）
-    // 之后的 A/B/C。Lv5 起入口把关（:16）是 OR，取 50（快速学习）——它在本
-    // 文件里不参与任何 TIMES；四行的 32+33+39 都 < 10，不会触发覆盖价
+    // 梯子覆盖 A/B/C；戒备森严作用于覆盖价之后的 A/B/C。
+    // Lv5 起入口把关是 OR，取 50（快速学习）——它在本
+    // 文件里不参与任何素质倍率；四行的 32+33+39 都 < 10，不会触发覆盖价
     rows: [
       {
         lv: 3,
@@ -5162,9 +5158,9 @@ const TIER_SPECS = [
   },
   {
     id: 33,
-    // 梯子 :138-162；戒备森严 :174-192 作用于 A/B/C。Lv5 起入口把关（:112）是
+    // 戒备森严作用于 A/B/C。Lv5 起入口把关是
     // AND（四项全 0 才拦），但四项（76/80/81/82）本身都乘 A/B/C，取 81
-    // （双性恋 ×0.50，:310-313）补进 extras
+    // （双性恋 ×0.50）补进 extras
     rows: [
       {
         lv: 3,
@@ -5198,10 +5194,10 @@ const TIER_SPECS = [
   },
   {
     id: 37,
-    // 梯子 :109-159（A/B/C/D）；戒备森严 :161-184（IF/ELSEIF 互斥，四列同乘）。
-    // Lv5 起入口把关（:16）是 OR，取 31（看轻贞操）——三名豁免者都另有倍率
-    // （31 在 :237-242 的 ELSEIF 全四列 ×0.90，76/180 则不对称地只乘部分
-    // 轨道），31 的这一支按原文次序摊进 extras
+    // 梯子覆盖 A/B/C/D；戒备森严的分档是互斥分支链，各档对四列同乘。
+    // Lv5 起入口把关是 OR，取 31（看轻贞操）——三名豁免者都另有倍率
+    // （31 与 30 互斥、全四列 ×0.90，76/180 则不对称地只乘部分
+    // 轨道），31 的这一支按同一顺序摊进 extras
     rows: [
       {
         lv: 3,
@@ -5235,9 +5231,9 @@ const TIER_SPECS = [
   },
   {
     id: 39,
-    // 梯子 :107-147（A/B/C）；戒备森严 :154-169 按 **ABL:37** 分档（复制
-    // 粘贴残留，见上文专属用例）。四行固定自身 Lv3、只动 ABL:37，
-    // 把分档来源与自身等级分开：gate 3/4/>=5 三档 → ×2.00/×2.50/×3.00
+    // 梯子覆盖 A/B/C；戒备森严按 **ABL:37** 分档（复制粘贴残留，
+    // 见上文专属用例）。四行固定自身 Lv3、只动 ABL:37，
+    // 把分档来源与自身等级分开：ABL:37 的 3/4/>=5 三档 → ×2.00/×2.50/×3.00
     rows: [
       {
         lv: 3,
@@ -5272,7 +5268,7 @@ const TIER_SPECS = [
 ];
 
 for (const spec of TIER_SPECS) {
-  test(`ablup${spec.id}：戒备森严四档逐级（ABLUP${spec.id}.ERB 的 TIMES 行）`, async () => {
+  test(`ablup${spec.id}：戒备森严四档逐级`, async () => {
     for (const row of spec.rows) {
       const fixture = create_era_fixture();
       const module = seed(fixture);
@@ -5312,30 +5308,30 @@ for (const spec of TIER_SPECS) {
 const EXP_REQUIREMENT_SPECS = [
   {
     id: 20,
-    // 梯子 :120-150；豁免名单 :174-175（:175 赋值后才做淫乱折扣，见上文用例）
-    // 前置素质 127 只用于越过 Lv5 入口把关（:15），不在 C 的豁免名单里
+    // 淫乱折扣在豁免名单赋值之后才生效（见上文两段折扣用例）
+    // 前置素质 127 只用于越过 Lv5 入口把关，不在 C 的豁免名单里
     talents: { 127: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 3: 1, 4: 2, 7: 5 },
   },
   {
     id: 21,
-    // ；前置素质 37 只用于越过 Lv5 入口把关（:15）
+    // 前置素质 37 只用于越过 Lv5 入口把关
     talents: { 37: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 3: 1, 4: 2, 7: 5 },
   },
   {
     id: 22,
-    // （ABL:22 >= 3 起，不是 == 3/4/7）；前置素质 82 越过 Lv5 把关（:18）
+    // （ABL:22 >= 3 起，不是 == 3/4/7）；前置素质 82 越过 Lv5 把关
     talents: { 82: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 3: 1, 4: 2, 5: 3, 6: 4, 7: 5, 8: 6, 9: 7 },
   },
   {
     id: 23,
-    // （ABL:23 >= 3 起）；前置素质 122=男人（:117-118）。Lv5 起入口把关
-    // （:121）的名单与 E 的豁免名单（33/80/81/123）**完全相同**，越过把关就必然
+    // （ABL:23 >= 3 起）；前置素质 122=男人。Lv5 起入口把关
+    // 的名单与 E 的豁免名单（33/80/81/123）**完全相同**，越过把关就必然
     // 把 E 清零，故 Lv5 以上 E 恒为 0
     talents: { 122: 1, 82: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -5351,14 +5347,14 @@ const EXP_REQUIREMENT_SPECS = [
   },
   {
     id: 31,
-    // （仅 ABL:31 == 2 时 F=lv-1，注释写「LV2→3、3→4、4→5」但代码只判 ==2）
+    // （仅 ABL:31 == 2 时 F=lv-1，即 F=1——判定只认 ==2，不是 2/3/4 三级都查）
     talents: {},
     levels: [0, 1, 2, 3, 4],
     expected: { 2: 1 },
   },
   {
     id: 32,
-    // （ABL:32 >= 2 起 lv-1）；前置素质 50 越过 Lv5 入口把关（:128）
+    // （ABL:32 >= 2 起 lv-1）；前置素质 50 越过 Lv5 入口把关
     talents: { 50: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8 },
@@ -5374,14 +5370,14 @@ const EXP_REQUIREMENT_SPECS = [
   {
     id: 37,
     // （ABL:37 >= 2 起 lv-1，再做 17 项素质增减表，下限 0）；
-    // 前置素质 31 不在增减表内，只用于越过 Lv5 入口把关（:97）
+    // 前置素质 31 不在增减表内，只用于越过 Lv5 入口把关
     talents: { 31: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
     expected: { 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 7: 6, 8: 7, 9: 8 },
   },
   {
     id: 39,
-    // （ABL:39 >= 2 起 F = lv+1）；前置素质 124 越过 Lv5 入口把关（:98），
+    // （ABL:39 >= 2 起 F = lv+1）；前置素质 124 越过 Lv5 入口把关，
     // 且不在 F 的豁免名单（72/76/136）内
     talents: { 124: 1 },
     levels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -5397,7 +5393,7 @@ const EXP_REQUIREMENT_SPECS = [
 ];
 
 for (const spec of EXP_REQUIREMENT_SPECS) {
-  test(`ablup${spec.id}：异常经验需求的档位逐级（ABLUP${spec.id}.ERB 的赋值行）`, async () => {
+  test(`ablup${spec.id}：异常经验需求的档位逐级`, async () => {
     for (const lv of spec.levels) {
       const fixture = create_era_fixture();
       const module = seed(fixture);
@@ -5424,36 +5420,36 @@ function exp_requirement(fixture) {
 }
 
 /**
- * 「门槛恰好相等必须判为满足」——原作文面是严格小于。每条给一组把其它位
+ * 「门槛恰好相等必须判为满足」——按严格小于理解就反了。每条给一组把其它位
  * 都补齐的状态，只留被测门槛在临界值两侧摆动：`abl:<gate>` 取 `lv` 与
  * `lv + 1` 各跑一次，前者必须点亮能力不足位，后者必须不点亮。
  */
 const GATE_SPECS = [
   {
     id: 20,
-    // `SIF ABL:11 < ABL:20 + 1` → I |= 4；Lv3 的 A/B/C = 3000/120/1
+    // `ABL:11 < ABL:20 + 1` 成立时 I |= 4；Lv3 的 A/B/C = 3000/120/1
     cases: [
       { lv: 3, gate: 11, state: { juel: { 5: 3000 }, exp: { 33: 120 } } },
     ],
   },
   {
     id: 21,
-    // `IF ABL:11 < ABL:21+1` → I/J 同置 4
+    // `ABL:11 < ABL:21+1` 成立时 I/J 同置 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 22,
-    // `IF ABL:11 < ABL:22 + 1` → I/J 同置 4
+    // `ABL:11 < ABL:22 + 1` 成立时 I/J 同置 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 30,
-    // `IF ABL:16 < ABL:30 + 1` → I/J 同置 4
+    // `ABL:16 < ABL:30 + 1` 成立时 I/J 同置 4
     cases: [{ lv: 0, gate: 16, state: {} }],
   },
   {
     id: 31,
-    // `IF ABL:17 < ABL:31 + 1` 与 :297 `IF ABL:0 < ABL:31 + 1` 两道；
+    // `ABL:17 < ABL:31 + 1` 与 `ABL:0 < ABL:31 + 1` 两道；
     // 两道都置能力位，故测其中一道时把另一道补到临界值之上
     cases: [
       { lv: 0, gate: 17, state: { abl: { 0: 1 } } },
@@ -5462,7 +5458,7 @@ const GATE_SPECS = [
   },
   {
     id: 32,
-    // 无淫乱查 ABL:16、:350 有淫乱（TALENT:76）改查 ABL:11
+    // 无淫乱查 ABL:16、有淫乱（TALENT:76）改查 ABL:11
     cases: [
       { lv: 0, gate: 16, state: {} },
       { lv: 0, gate: 11, state: { talent: { 76: 1 } } },
@@ -5470,22 +5466,22 @@ const GATE_SPECS = [
   },
   {
     id: 33,
-    // `IF ABL:22 < ABL:33 + 1` → I |= 4
+    // `ABL:22 < ABL:33 + 1` 成立时 I |= 4
     cases: [{ lv: 0, gate: 22, state: {} }],
   },
   {
     id: 37,
-    // `IF ABL:11 < ABL:37 + 1` → I |= 4
+    // `ABL:11 < ABL:37 + 1` 成立时 I |= 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 39,
-    // `SIF ABL:11 < ABL:39 + 1` → I |= 4（#467 验收逃逸的那一处）
+    // `ABL:11 < ABL:39 + 1` 成立时 I |= 4（#467 验收逃逸的那一处）
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
   {
     id: 40,
-    // `SIF ABL:11 < ABL:40 + 1` → I |= 4
+    // `ABL:11 < ABL:40 + 1` 成立时 I |= 4
     cases: [{ lv: 0, gate: 11, state: {} }],
   },
 ];
@@ -5525,7 +5521,7 @@ for (const spec of GATE_SPECS) {
 }
 
 test('ablup99：两道刻印门槛在临界值两侧（屈服刻印须 >= MARK:3，顺从须 >= MARK:3+2）', async () => {
-  // MARK:3=2 → A=10000（:100-101）、B=MARK:3+2=4（:131）
+  // MARK:3=2 → A=10000、B=MARK:3+2=4
   for (const [mark2, abl10, expected] of [
     [2, 4, 'ＯＫ'], // 两道门槛都取等号，判为满足
     [1, 4, '经验不足 '], // MARK:3 > MARK:2 → I |= 2
@@ -5549,7 +5545,7 @@ test('ablup99：两道刻印门槛在临界值两侧（屈服刻印须 >= MARK:3
   }
 });
 
-test('ablup100：两道门槛同时不满足（M==2）才点亮能力位——OR 关系（原作 :132/:137）', async () => {
+test('ablup100：两道门槛同时不满足（M==2）才点亮能力位——OR 关系', async () => {
   // MARK:10=1 → 感觉门槛 `MARK:10 < C - 5`（C>6 才算不满足）、战斗门槛
   // `MARK:10*10 > CFLAG:9`（即 10>CFLAG:9）。两处各取临界值：C=6 与 CFLAG:9=10
   // 都判为满足；一侧不满足时 M==1，两道同时不满足才 M==2 → 能力不足
@@ -5563,7 +5559,7 @@ test('ablup100：两道门槛同时不满足（M==2）才点亮能力位——OR
     const { ablup100 } = seed(fixture);
     set_state(fixture, {
       mark: { 10: 1 },
-      // C 是 ABL:0～4 五项感觉之和（:131）
+      // C 是 ABL:0～4 五项感觉之和
       abl: { 0: senses },
       cflag: { 9: cflag9 },
       exp: { 99: 2000 }, // A=2000，隔离出点数位
@@ -5578,7 +5574,7 @@ test('ablup100：两道门槛同时不满足（M==2）才点亮能力位——OR
   }
 });
 
-// ———— #595：print 之后多补的空行普查（ABLUPn 的 PRINTL 只收尾拼行） ————
+// ———— #595：print 之后多补的空行普查（ABLUPn 的空内容输出只收尾拼行） ————
 
 const ABLUP_FUNCTIONS = [
   'ablup0',
@@ -5624,7 +5620,7 @@ const ABLUP_REACH_MENU = {
   ablup100: { [`mark:${CID}:10`]: 1 }, // MARK:10 <= 0 直接返回「并没有异界异常反应」
 };
 
-test('#595 ABLUPn：选项按钮与需求行之间没有多补的空行（原作各 PRINTL 只收尾拼行）', async () => {
+test('#595 ABLUPn：选项按钮与需求行之间没有多补的空行（各条空内容输出只收尾拼行）', async () => {
   for (const name of ABLUP_FUNCTIONS) {
     const fixture = create_era_fixture();
     const mod = seed(fixture);
@@ -5644,12 +5640,12 @@ test('#595 ABLUPn：选项按钮与需求行之间没有多补的空行（原作
     assert.deepEqual(
       blanks,
       [],
-      `${name}：ABLUPn 的按钮/需求行之间不得有空行（原作裸 PRINTL 只收尾 PRINTFORM 拼的行）`,
+      `${name}：ABLUPn 的按钮/需求行之间不得有空行（空内容输出只收尾前面拼出的行）`,
     );
   }
 });
 
-test('#595 ablup0：[0] 选项行与 [100] 停止逐行相邻（golden train-natural:959-960）', async () => {
+test('#595 ablup0：[0] 选项行与 [100] 停止逐行相邻', async () => {
   const fixture = create_era_fixture();
   const { ablup0 } = seed(fixture);
   fixture.set_inputs(100);
@@ -5659,7 +5655,7 @@ test('#595 ablup0：[0] 选项行与 [100] 停止逐行相邻（golden train-nat
   assert.equal(
     exit.row - option.row,
     1,
-    '阴核点数行与停止行逐行相邻（ABLUP0.ERB:69 的 PRINTL 只收尾 :64-68 的拼行）',
+    '阴核点数行与停止行逐行相邻（空内容输出只收尾前面拼出的行）',
   );
 });
 
@@ -5670,8 +5666,8 @@ test('#595 ablup2：选项行、经验需求行、停止行逐行相邻（中间
   await ablup2(CID);
   const option = buttons(fixture).find((b) => b.accelerator === 0);
   const exit = buttons(fixture).find((b) => b.accelerator === 100);
-  // ABLUP2.ERB:51 的 PRINTL 收尾 [0] 行，:53 的 PRINTFORML 是独立经验行，
-  // 是 [100]——三行连续，中间没有空行
+  // ablup2 的 [0] 行由空内容输出收尾，随后整行打印的经验需求行独占一行，
+  // 再往下就是 [100]——三行连续，中间没有空行
   const rows_between = fixture.lines.filter(
     (line) => line.row > option.row && line.row < exit.row,
   );
@@ -5698,17 +5694,17 @@ test('#595 ablup6：三档选项按钮（含条件渲染的 [1]/[2]）逐行相�
     assert.equal(
       rendered[i].row - rendered[i - 1].row,
       1,
-      `ABLUP6 的 [${rendered[i - 1].accelerator}] 与 [${rendered[i].accelerator}] 相邻`,
+      `ablup6 的 [${rendered[i - 1].accelerator}] 与 [${rendered[i].accelerator}] 相邻`,
     );
   }
   const exit = buttons(fixture).find((b) => b.accelerator === 100);
   assert.equal(exit.row - rendered.at(-1).row, 1, '末档与放弃行相邻');
 });
 
-test('#612 ablup0：渲染后的正文与 golden 样本逐字一致（train-natural:959-960）', async () => {
+test('#612 ablup0：渲染后的正文逐字钉死（点数不足的两枚按钮）', async () => {
   const fixture = create_era_fixture();
   const { ablup0 } = seed(fixture);
-  // golden 的现场：阴蒂感觉 LV4（需求 20000）、阴核点数 5859 → 点数不足
+  // 现场：阴蒂感觉 LV4（需求 20000）、阴核点数 5859 → 点数不足
   fixture.store.set(`abl:${CID}:0`, 4);
   fixture.store.set(`juel:${CID}:0`, 5859);
   fixture.set_inputs(100);
@@ -5716,7 +5712,7 @@ test('#612 ablup0：渲染后的正文与 golden 样本逐字一致（train-natu
   assert.deepEqual(
     buttons(fixture).map((b) => b.rendered),
     ['[0] - 阴核点数×5859/20000 ……点数不足 ', '[100] - 停止'],
-    '原作的「- 」是正文的一部分，引擎按 showAcc 另外拼 [编号]（ABLUP0.ERB:64-71）',
+    '「- 」是正文的一部分，引擎按 showAcc 另外拼 [编号]',
   );
 });
 
@@ -5735,7 +5731,7 @@ test('#612 ABLUPn：每枚按钮的渲染正文都是「[编号] - 正文」', a
       assert.match(
         text,
         /^\[\d+\] - /,
-        `${name}：原作各 PRINTL [N] - 正文 的「- 」要照写，实得 ${text}`,
+        `${name}：「[N] - 正文」的「- 」要照写，实得 ${text}`,
       );
     }
   }
