@@ -118,8 +118,7 @@ const ABLUP_HANDLERS = {
   100: ablup100,
 };
 
-// PALAMLV の初期値（引擎内置默认值）。page-train.js 持有同源常量，
-// system 侧不 import page，各自持有
+// PALAMLV 各级阈值，与 era-utils/palam-level.js 的 PALAMLV 取值相同
 const PALAMLV = [
   0, 100, 500, 3000, 10000, 30000, 60000, 100000, 150000, 250000,
 ];
