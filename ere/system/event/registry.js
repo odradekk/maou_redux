@@ -1,7 +1,7 @@
 /**
  * @file 事件注册表与调度器（决议 #6，实现于 issue #20）。
  *
- * 本模块是事件函数机制的等价物（引擎行为）；机制出处与语义证据见
+ * 本模块是事件函数机制的等价物（决议 #6）；机制出处与语义证据见
  * 决议 #6 的评论。
  *
  * 同一事件名可挂多个处理器（同一事件的多处
@@ -20,7 +20,7 @@
 
 const { BeginSignal } = require('#/system/flow/begin-signal');
 
-/** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 全库零使用，不实现） */
+/** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 零使用记录，不实现） */
 const TIER = Object.freeze({
   PRI: 'PRI',
   NORMAL: 'NORMAL',
@@ -61,7 +61,7 @@ function on(event_name, handler, tier = TIER.NORMAL) {
  * 调度一个事件：按 PRI → NORMAL → LATER、组内注册序跑完全部处理器。
  *
  * 处理器抛 BeginSignal 时暂存其目标状态并继续链（不中止——#6 用实测日志
- * 证明的引擎语义）；处理器抛其他异常则原样上抛（引擎对脚本错误报错停机）。
+ * 证实的约定语义）；处理器抛其他异常则原样上抛（引擎对脚本错误报错停机）。
  *
  * @param {string} event_name 事件名
  * @param {...any} args 透传给每个处理器的参数

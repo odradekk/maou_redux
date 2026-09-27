@@ -1,8 +1,8 @@
 /**
  * @file BEGIN 转场信号与游戏状态枚举（决议 #6，实现于 issue #20）。
  *
- * BEGIN 指令的真实语义（实测日志与引擎源码双重
- * 确认，见 #6 决议——它推翻了 #3 第 6 节「BEGIN 中止事件链」的旧结论）：
+ * BEGIN 转场的约定语义（决议 #6，实测日志佐证——它推翻了 #3 第 6 节
+ * 「BEGIN 中止事件链」的旧结论）：
  *   1. 结束当前函数，绝不执行 BEGIN 下方的语句；
  *   2. 只**暂存**目标，事件链继续按 #PRI → 普通 → #LATER 跑完剩余处理器；
  *   3. 期间再有 BEGIN 则覆盖暂存值，**最后一个胜出**；
@@ -22,8 +22,8 @@
 /**
  * 游戏状态枚举：BEGIN 的合法目标。
  *
- * 取值 = BEGIN 的关键字。全库只有 5 种目标（issue #20 核实，括号为出现
- * 处数）：TURNEND(8) / SHOP(6) / AFTERTRAIN(6) / FIRST(2) / TRAIN(1)。
+ * 取值 = BEGIN 的关键字。转场目标只有这 5 种（issue #20 定案，本枚举）：
+ * TURNEND / SHOP / AFTERTRAIN / FIRST / TRAIN。
  * 其余目标（TITLE 除外，见下）不用，不列。
  */
 const STATE = Object.freeze({
@@ -32,26 +32,23 @@ const STATE = Object.freeze({
    * 没有 BEGIN TITLE；ere 侧主循环以状态统一承载入口。
    */
   TITLE: 'TITLE',
-  /** 新游戏初始化（进入 EVENTFIRST 事件链，全库 2 处 BEGIN FIRST） */
+  /** 新游戏初始化（进入 EVENTFIRST 事件链） */
   FIRST: 'FIRST',
-  /** 商店主循环（全库 6 处 BEGIN SHOP） */
+  /** 商店主循环 */
   SHOP: 'SHOP',
   /**
-   * 读档后的商店主循环。ere 侧本地扩展（#137），非 BEGIN 目标：引擎的
-   * LOADDATA 自带转场（读档后进 EVENTLOAD 事件链——LOADDATA 与 BEGIN 并列，
-   * 技能 system-flow.md）。与 SHOP 的
-   * 唯一差别：**读档后不执行 EVENTSHOP 链**（system-flow.md 的
-   * 「时机：读档后、BEGIN SHOP 执行后」「读档后不执行 EVENTSHOP」）——
-   * 引擎内建地区分「LOADDATA 隐式进入」与「显式 BEGIN SHOP」，ere 侧没有
-   * 引擎替我们记来源，以独立状态显式承载。处理器见 main-loop.js（同
+   * 读档后的商店主循环。ere 侧本地扩展（#137），非 BEGIN 目标：读档由
+   * LOADGLOBAL 钩子显式发起本转场（#115 实测 LOADGLOBAL 即转场时机）。
+   * 与 SHOP 的唯一差别：**读档后不执行 EVENTSHOP 链**——ere 不区分
+   * 隐式/显式进入，以独立状态显式承载来源。处理器见 main-loop.js（同
    * run_shop，跳过 EVENTSHOP 链）。
    */
   SHOP_AFTER_LOAD: 'SHOP_AFTER_LOAD',
-  /** 调教（全库 1 处 BEGIN TRAIN） */
+  /** 调教开始 */
   TRAIN: 'TRAIN',
-  /** 调教后结算（全库 6 处 BEGIN AFTERTRAIN） */
+  /** 调教后结算 */
   AFTERTRAIN: 'AFTERTRAIN',
-  /** 回合结算（全库 8 处 BEGIN TURNEND） */
+  /** 回合结算 */
   TURNEND: 'TURNEND',
 });
 

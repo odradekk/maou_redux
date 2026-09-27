@@ -9,6 +9,7 @@
  *     （无法区分生成内容与手写内容，宁可报错也不冒险，#10 的教训）；
  *   - #13：引擎对未声明序号返回 undefined 而非 0，且写入会静默建变量进存档。
  *     生成的 getter 一律 `|| 0` 给默认值，底层寻址用数字下标（#5 决议）。
+ *
  * 用法：node tools/gen-wrapper.js [--force]
  *   扫描 yml/ 下的变量表（键为中文显示名、值含 id/name/type 三字段的 yml），
  *   目前只支持渲染一维表白名单（global）。非变量表（如 GameBase.yml）自动跳过；
@@ -348,6 +349,7 @@ function render_wrapper(table, entries, { source_file }) {
     '/**',
     ` * @file ${table} 表的具名访问器初稿（tools/gen-wrapper.js 自 yml/${source_file} 生成）。`,
     ' *',
+    ' * 生成区（GENERATED 标记之间）由脚本维护，重生成加 --force；',
     ' * 标记之外是手写区：变量语义补注、业务方法，重新生成不会触碰（#11 决议）。',
     ' * 变量的含义写进手写区补注（AGENTS.md「变量语义必须注释」）。',
     ' */',

@@ -1,7 +1,7 @@
 /**
  * @file 主循环与转场状态机（决议 #6，实现于 issue #20）。
  *
- * 本模块是引擎主循环/BEGIN 机制的等价物（引擎行为）；
+ * 本模块是主循环与 BEGIN 转场机制的等价物（决议 #6）；
  * 机制出处与语义证据见决议 #6 的评论。
  *
  * 游戏阶段由 BEGIN 切换；ere 侧的两条路径在本模块统一成状态机的边：
@@ -16,7 +16,7 @@
  *
  * 已接入的状态：TITLE / FIRST / SHOP（贯通验证）与 TRAIN / AFTERTRAIN /
  * TURNEND（#44——调教完整流程「主菜单 → 调教 → 回合结算 → 回主菜单」）。其余
- * 目标（无）不存在：全库只有这六种 BEGIN 目标（begin-signal.js）。
+ * 其余目标不存在：转场目标只有这六种（begin-signal.js 的 STATE 枚举）。
  *
  * 【硬约束 #6】本模块的 catch 已按约定首行放行 BeginSignal；业务代码新写
  * 任何 try/catch 都必须同样处理（见 begin-signal.js 文件头）。
@@ -34,7 +34,7 @@ const { run_train, run_aftertrain } = require('#/system/train/train-loop');
 require('#/event/event-first');
 require('#/event/event-train');
 // EVENTTRAIN 的**无属性档**（#401）：与上一个（#PRI 档）
-// 是同一事件的另一份定义，引擎事件函数按 #PRI → 无属性 → #LATER 全部执行，
+// 是同一事件的另一份定义，事件链按 #PRI → 无属性 → #LATER 全部执行，
 // 故两份都要注册；同档内次序 = 这里的装载序
 require('#/event/event-train-normal');
 require('#/event/event-com');
@@ -132,21 +132,21 @@ require('#/kojo/kojo-k902-princess');
 const STATE_HANDLERS = {
   [STATE.TITLE]: run_title_page,
   // BEGIN FIRST → EVENTFIRST 事件链。
-  // 链无人 BEGIN 时默认进 SHOP：引擎在 EVENTFIRST 跑完而无转场时自动
-  // 进入商店轮，不是报错（#20 验收移交的语义，这张工单实现）。防御性保底处理——
+  // 链无人 BEGIN 时回落进 SHOP：EVENTFIRST 跑完而无转场时默认进商店轮，
+  // 不是报错（#20 验收移交的语义，这张工单实现）。防御性回落——
   // 真身出口显式 begin(STATE.SHOP)，此行只在未来的处理器们都不发
-  // 信号时保住引擎行为。
+  // 信号时兜底。
   [STATE.FIRST]: async () => (await emit('EVENTFIRST')) ?? STATE.SHOP,
-  // BEGIN SHOP → 引擎调 EVENTSHOP 链一次，随后绘制商店页 →
+  // BEGIN SHOP → 先调 EVENTSHOP 链一次，随后绘制商店页 →
   // 输入 → 分发循环（ere 侧整体收进
   // page/page-shop.js，主菜单骨架归 issue #23，输入分发归 #24——已实现）。
   [STATE.SHOP]: run_shop,
-  // LOADDATA 后的隐式进入（#137）：同 SHOP 主循环，但**不执行
-  // EVENTSHOP 链**（技能 system-flow.md「读档后不执行 EVENTSHOP」；
+  // 读档后的商店轮（#137，LOADGLOBAL 钩子显式发起）：同 SHOP 主循环，但**不执行
+  // EVENTSHOP 链**（#137 定案）；
   // 状态语义见 begin-signal.js 的 SHOP_AFTER_LOAD 注释）
   [STATE.SHOP_AFTER_LOAD]: () => run_shop({ skip_eventshop: true }),
-  // BEGIN TRAIN → 引擎初始化调教数据 → EVENTTRAIN 链 → 回合循环
-  //（引擎行为，ere 侧手写——system/train/train-loop.js，issue #44）。
+  // BEGIN TRAIN → 初始化调教数据（ere 侧手写——system/train/train-loop.js，
+  // issue #44）→ EVENTTRAIN 链 → 回合循环。
   [STATE.TRAIN]: run_train,
   // BEGIN AFTERTRAIN → EVENTEND 链（尾部
   // BEGIN TURNEND）→ 引擎收尾调教数据（ere 侧 era.endTrain）。
@@ -174,7 +174,7 @@ async function enter_state(state) {
   try {
     const next = await handler();
     if (next === undefined) {
-      // 引擎语义：BEGIN 目标跑完却没发起新 BEGIN 即报错终止（#6 参考实现）
+      // BEGIN 目标跑完却没发起新 BEGIN 即报错终止（决议 #6 的约定）
       throw new Error(`游戏状态 ${state} 结束时没有待跳转状态（缺少 BEGIN）`);
     }
     return next;

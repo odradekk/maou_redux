@@ -1348,19 +1348,17 @@ Object.defineProperty(era_flag, 'communication_hero_level_one', {
 //       event-first.js 的 EVENTFIRST）。
 //   assi       ASSI   助手指针：0=无。开局不显式初始化、留 0。
 //
-// 调教域内置变量（#44 T14 并入；生成区的「↔ FLAG:100xx」注释同样失真，
-// 以此处为准）：
+// 调教域内置变量（#44 T14 并入；生成区注释只写寻址，逐条语义以此处为准）：
 //   assiplay     ASSIPLAY:0  助手是否参与调教：0=主人亲自调教、1=助手调教。
-//       BEGIN TRAIN 时引擎清 0（train-loop.js 的引擎初始化段镜像）。
+//       调教初始化清 0（train-loop.js 初始化段，#44 并入）。
 //   player       PLAYER      当前调教者（视角角色）：EVENTTRAIN 依 ASSIPLAY
 //       置 MASTER 或 ASSI（ere/event/event-train.js）；「交代助手[102]」
 //       「对换调教[112]」分支会切换（随指令票）。
-//   prevcom      PREVCOM:0   上次调教指令编号：BEGIN TRAIN 时引擎置 -1，
-//       指令执行后由引擎更新为 SELECTCOM；「上次的调教指令」行读它
+//   prevcom      PREVCOM:0   上次调教指令编号：调教初始化置 -1（train-loop.js），
+//       指令执行后由脚本更新为 SELECTCOM（train-loop.js）；「上次的调教指令」行读它
 //       （> -1 才显示，ere/page/page-usercom.js）。
-//   nextcom      NEXTCOM:0   下次指令编号：BEGIN TRAIN 时引擎置 -1。平台
-//       侧标注有已知缺陷、不推荐使用（system-flow.md 注意事项 3），ere
-//       侧只镜像初始化，暂无消费者。
+//   nextcom      NEXTCOM:0   下次指令编号：调教初始化置 -1（train-loop.js），
+//       ere 侧只镜像初始化，暂无消费者。
 //   selectcom    SELECTCOM   当前回合玩家选定的指令编号：回合循环的输入
 //       检查设定（train-loop.js），口上与指令实现读它。
 //   target_record  TARGET:1  EVENTTRAIN 记录的调教对象，以备人物切换

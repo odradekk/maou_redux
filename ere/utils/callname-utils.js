@@ -1,9 +1,9 @@
 /**
  * @file 角色显示名的读取助手。
  *
- * 源: 无对应源——SAVESTR:x / NAME:x 在 ere 侧的读数源是 callname 表
- *     （#5 决议），本模块把寻址与空值处理收在一处。先例散见
- *     page-main-menu/page-train/page-select-target/event-comend，#44 起统一。
+ * 角色显示名的读数源是 callname 表（#5 决议），本模块把寻址与空值处理收在
+ * 一处。先例散见 page-main-menu/page-train/page-select-target/event-comend，
+ * #44 起统一。
  *
  * **两个键的归属以引擎为准**（app.asar 的 addCharacter 方法体）：
  *

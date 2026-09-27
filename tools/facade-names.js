@@ -615,7 +615,7 @@ const cstr = {
   // addCharacter 的 initCharaTable 预置 0，行为随之改变（#136 简报事实 3）；
   // 门面命名是代码层动作，不碰 yml。
   99: named('故事名', 'set_story_name 读写（32 字符上限）'),
-  // 加入时名字：角色加入即把预设名抄进 CSTR:1 是全库固定做法（ADDCHARA 后
+  // 加入时名字：角色加入即把预设名抄进 CSTR:1 是各加入路径的固定做法（ADDCHARA 后
   // CSTR:1 = %NAME:A%），#171 H2 的 k_11_lily/k_34_crazylord 沿用；
   // 不进 yml/CStr.yml 的理由同上（预置 0 会顶掉字符串空值语义）
   1: named_tail('加入时名字', 'CSTR:A:1 = %NAME:A%'),
