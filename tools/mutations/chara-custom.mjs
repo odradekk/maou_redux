@@ -21,7 +21,7 @@
 // JOB_FIRST 职业下界、cost 扫描区间两端、and-hair 的素质名补位宽 10），
 // 改动它们同样会有用例变红。
 
-export const COUNT = 88; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）
+export const COUNT = 91; // #392 建表（M8761-M8804）＋ 首轮返工（M8805-M8820）＋ 二轮返工（M9001-M9009）；#567 +6（M11833-M11837/M11843，空输入语义与提示行）；#562 +1（M11865：PRINTLC 页脚不产生空行）；#596 +4（M12083-M12086：性格/发色列表的残行只收行、整行恰满时那一个才是真空行、外观分组末尾不补空行）；#653 +3（M13257-M13259：列表越界放行与为为错字的修复守卫）
 
 export default [
   // —— ere/chara/chara-and-hair.js ——
@@ -98,7 +98,7 @@ export default [
     find: '  const size = 12;',
     replace: '  const size = 11;',
     tests: ['chara-and-hair'],
-    must_mention: '12 号是允许的',
+    must_mention: '列出 1-11 号',
   },
   {
     desc: 'M8770 CHOOSE_HAIRCOLOR 每行项数缺省 6 改 5',
@@ -781,5 +781,30 @@ export default [
       "  era.println(); // 变异：多补一条空行\n  era.setColor(''); // RESETCOLOR（原作的字符色复位）",
     tests: ['chara-custom3'],
     must_mention: '按钮行恰好一行，末尾 PRINTL 不生空行',
+  },
+  // —— #653（F7）：列表越界放行修复守卫 ——
+  {
+    desc: 'M13257 CHOOSE_CHARASTERISTIC 越界判据回退（等于表长又写素质 0）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '    if (result < 0 || result >= size) {',
+    replace: '    if (result < 0 || result > size) {',
+    tests: ['chara-and-hair'],
+    must_mention: '重问后输入 3 → 表内第 3 项',
+  },
+  {
+    desc: 'M13258 CHOOSE_HAIRCOLOR 越界判据回退（12 号无名发色被接受）',
+    file: 'ere/chara/chara-and-hair.js',
+    find: '    if (result < 1 || result >= size) {',
+    replace: '    if (result < 1 || result > size) {',
+    tests: ['chara-and-hair'],
+    must_mention: '重问后输入 4 → 黑发',
+  },
+  {
+    desc: 'M13259 初体验对象的播报改回「为为」错字',
+    file: 'ere/chara/chara-custom2.js',
+    find: 'era.print(`新建人物初体验对象为${sex_name}。`);',
+    replace: 'era.print(`新建人物初体验对象为为${sex_name}。`);',
+    tests: ['chara-custom2'],
+    must_mention: '初体验自定义输入（997）写下名字',
   },
 ];

@@ -3,26 +3,21 @@
  *
  * == 入口 ==
  *
- * 唯一调用点是 DUNGEON_BITCH.ERB:77 的 `CALL 强制肉偿(ARG)`——债务
- * CFLAG:582 < -10000、非处女（!TALENT:0）、!RAND:3 三条同时成立时触发。
- * ere 落在 ere/kojo/kojo-dungeon-bitch.js 的 heroine_bitch（#544 换真身）。
- * 两个模块相互引用：该模块顶层 import 本文件的 forced_payment，本文件对
- * exp_bitch 走**函数内延迟 require**——循环由此在装载期被打断（不这样做
- * 就会在模块初始化时固化半成品导出，dungeon-trap.js:1996 的 #175 先例）。
+ * 唯一调用点是卖春主流程（ere/kojo/kojo-dungeon-bitch.js 的 heroine_bitch）
+ * ——债务 CFLAG:582 < -10000、非处女（!TALENT:0）、!RAND:3 三条同时成立时触发。
+ * 调用方是 ere/kojo/kojo-dungeon-bitch.js 的 heroine_bitch（#544 换真身，
+ * 该模块顶层 import 本文件的 forced_payment）。
  *
- * == 原作缺陷（1:1 保留，登记 #14） ==
+ * == 结算与显示的一致 ==
  *
- *   1. `#DIMS ORAL / ANAL / SEX`（:5-7）只声明、全库无任何赋值点（实测
- *      grep 无写入），所以 `CALL EXP_BITCH(ARG,, ORAL, PLAY)`（:105 无条件
- *      一次，:107/:111 在 `IF TALENT:ARG:122` 两臂内各一次）传进
- *      @EXP_BITCH 的 TYPE 恒为空串（第二实参省略，PLACE 也是空串）——
- *      SELECTCASE 不落任何臂，EXP/JUEL **实际一个也不变**，只有紧跟其后
- *      的 PRINTFORML 声称「经验值上升了{PLAY}」「点数＋…」。#184 的
- *      exp_bitch 真身按 TYPE 分档，本文件按「实参是空串」调用三次，不臆改
- *      为 "ORAL"/"ANAL"/"SEX"；测试钉住「调用三次、TYPE 全空」与「除
- *      EXP:50/70 外 EXP/JUEL 全不变」。
- *   2. 拍片片酬 `COST*1/3 + RAND:100` 在显示（:92）与入账（:95）各求值
- *      一次，RAND:100 因此取两次——片酬显示值与实际入账值不相等。
+ *   1. 经验/点数按文案实际入账：文案声称「口交/精液/卖淫经验、肛门或私处
+ *      经验、性交经验 上升了 PLAY」「肛门或私处点数＋PLAY*10、欲情点数
+ *      ＋PLAY*20、习得点数＋PLAY」，写入逐一对应（男人 TALENT:122 走肛门档，
+ *      非男人走私处档）。此前版本把结算委托给卖春系统的 exp_bitch、但玩法
+ *      参数传的是从未赋值的空串，SELECTCASE 不落任何臂——文案声称的增加
+ *      实际不发生；本文件直接入账，不经 exp_bitch。
+ *   2. 拍片片酬 `COST*1/3 + RAND:100` 只求值一次：显示多少入账多少。此前
+ *      版本显示与入账各取一次随机数，两个金额几乎总不相等。
  *
  * == PRINTFORM 的拼接 ==
  *
@@ -51,8 +46,6 @@ const { karma } = require('#/chara/chara-stats');
 const { expname, palamname } = require('#/kojo/kojo-dungeon-bitch-log');
 const { chara } = require('#/facade/chara');
 const { chara_callname } = require('#/utils/callname-utils');
-
-/** 本文件存根化的原作调用名（#544 起全部接真身，名单已空） */
 
 /** 默认随机源（[0, n) 整数）；测试注入定值序 */
 const default_rand = (n) => Math.floor(Math.random() * n);
@@ -88,8 +81,7 @@ function is_veteran(arg) {
  */
 async function forced_payment(arg, rand = default_rand) {
   const rand_n = rand;
-  // #DIM PLAY（:3）次数 / #DIM COST（:4）抵债额；#DIMS ORAL/ANAL/SEX
-  //（:5-7）恒为空串，见文件头「原作缺陷」1
+  // PLAY = 次数 / COST = 抵债额
   let play = 0;
   let cost = 0;
 
@@ -237,13 +229,12 @@ async function forced_payment(arg, rand = default_rand) {
   if (!rand_n(3)) {
     await era.printAndWait(`${name_of(arg)}用肉体还债的过程被人拍下来了！`);
     // 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:91 SkyBlue 染色未建模）
-    // 显示值：片酬第一次求值（RAND:100 第一次取）
+    // 片酬只求值一次：显示与入账同一个数（RAND:100 只取一次）
     const shown_price = Math.trunc((cost * 1) / 3) + rand_n(100);
     await era.printAndWait(
       `这部淫荡煽情的影像以${shown_price}的金额，被人买下收藏了`,
     );
-    // 入账值：片酬第二次求值（RAND:100 再取一次，原作如此——#14）
-    chara(arg).patch.借款 += Math.trunc((cost * 1) / 3) + rand_n(100);
+    chara(arg).patch.借款 += shown_price;
     // 原作两条 PRINTFORM + PRINTFORMW 拼成一行（#584；:97 LightSalmon 染色未建模）
     await era.printAndWait(`当前欠金变为${debt_of(arg)}点……`);
     era.print(`${name_of(arg)}的${expname(50)}，${expname(70)} 经验值上升了 1`);
@@ -251,13 +242,18 @@ async function forced_payment(arg, rand = default_rand) {
     chara(arg).train.拍摄经验 += 1; // EXP:ARG:70（train 域）
   }
 
-  // 经验/点数结算。TYPE 实参恒为空串（见文件头「原作缺陷」1），
-  // 三次调用都按空串传给 exp_bitch——实际不动 EXP/JUEL，只打印声称变化的文案。
-  // CALL EXP_BITCH(ARG,, ORAL, PLAY)——无条件，在 IF 之前
-  require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);
+  // 经验/点数结算：按上方文案实际入账（文案声称增加多少就写多少）。
+  // 口交/精液/卖淫/性交经验与欲情、习得点数两档共用；第三经验与第一
+  // 点数按 TALENT:122 分档（男人肛门、非男人私处）。
+  chara(arg).dungeon.口交经验 += play; // EXP:ARG:22 口交经验
+  chara(arg).dungeon.精液经验 += play; // EXP:ARG:20 精液经验
+  chara(arg).dungeon.卖淫经验 += play; // EXP:ARG:74 卖淫经验
+  chara(arg).dungeon.性交经验 += play; // EXP:ARG:5 性交经验
+  era.add(`juel:${arg}:5`, play * 20); // JUEL:ARG:5 欲情
+  era.add(`juel:${arg}:7`, play); // JUEL:ARG:7 习得
   if (era.get(`talent:${arg}:122`)) {
-    // CALL EXP_BITCH(ARG,, ANAL, PLAY)（ANAL 恒为空串）
-    require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);
+    chara(arg).dungeon.肛门经验 += play; // EXP:ARG:1 肛门经验
+    era.add(`juel:${arg}:2`, play * 10); // JUEL:ARG:2 肛门
     era.print(
       `${name_of(arg)}的${expname(22)}，${expname(20)}，${expname(74)}，${expname(1)}，${expname(5)}经验值上升了${play}`,
     );
@@ -265,8 +261,8 @@ async function forced_payment(arg, rand = default_rand) {
       `${name_of(arg)}的${palamname(2)}点数＋${play * 10}，${palamname(5)}点数＋${play * 20}，${palamname(7)}点数＋${play}`,
     );
   } else {
-    // CALL EXP_BITCH(ARG,, SEX, PLAY)（SEX 恒为空串）
-    require('#/kojo/kojo-dungeon-bitch').exp_bitch(arg, '', '', play);
+    chara(arg).dungeon.私处经验 += play; // EXP:ARG:0 私处经验
+    era.add(`juel:${arg}:1`, play * 10); // JUEL:ARG:1 私处
     era.print(
       `${name_of(arg)}的${expname(22)}，${expname(20)}，${expname(74)}，${expname(0)}，${expname(5)}经验值上升了${play}`,
     );

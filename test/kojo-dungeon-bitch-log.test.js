@@ -15,11 +15,7 @@
  *   - LOG_AFTER_BITCH 卖春后日志（CHECK 位 → 挑玩法/客 → 调 LOG_BITCH_*）；
  *   - LOG_BITCH_HAND/ORAL/LES/ANAL/SEX 各玩法描写（ABL 分档 + 客台词随机）；
  *   - LOG_BITCH_ANIMAL 兽交（DUNGEON 空 / TOWN 三行固定文）；
- *   - LOG_BITCH_SELF 自慰日志（空壳，1:1）；
- *   - DUNGEON_SEX_LOG/ANAL_LOG/LES_LOG 三个死代码函数（#14：唯一调用方在
- *     DUNGEON_BITCH.ERB SKIP 块内）——函数可调用、按 ARG:0 分档输出，但
- *     全库无活调用点（反向变异守）；
- *
+ *   - LOG_BITCH_SELF 自慰日志（空壳，所有档位无输出）；
  * 随机源注入：与 kojo-dungeon-bitch.js 同款 seq_rand。
  *
  * 注意 LOG_TRY_BITCH 的整行断言（#600）：该函数没有 rand 形参，首段的
@@ -393,8 +389,8 @@ test('LOG_AFTER_BITCH：CHECK bit5（SEX）+ 男性客 → 调 LOG_BITCH_SEX（�
     lines.some((l) => l.includes('进行着性交卖春')),
     '调 LOG_BITCH_SEX',
   );
-  // DUNGEON_SEX_LOG（死代码）兽人分支不输出「进行着性交卖春」——变异把 SEX
-  // 映射换成 dungeon_sex_log 时此断言红（#14 反向变异 M523）
+  // LOG_BITCH_SEX 的特有文本——SEX 玩法必须落到活描写函数，而不是任何
+  // 按客种类分档的台词表
   assert.ok(
     lines.some((l) => l.includes('进行着性交卖春')),
     'LOG_BITCH_SEX 特有文本',
@@ -480,30 +476,6 @@ test('LOG_BITCH_SELF：空壳（1:1，源所有 CASE 无输出）', async () => 
   assert.deepEqual(fixture.text_lines(), [], 'LOG_BITCH_SELF 无输出');
 });
 
-// —— 三个死代码 _LOG 函数（#14） ——
-
-test('DUNGEON_SEX_LOG/ANAL_LOG/LES_LOG：死代码函数可调用、按 ARG:0 分档输出（#14 判定保留）', async () => {
-  const { fixture, mod } = setup_log();
-  // 兽人（ARG:0 == 0）
-  await mod.dungeon_sex_log(0, seq_rand(0));
-  assert.ok(
-    fixture.text_lines().some((l) => l.includes('居然能抱着魔王大人的奴隶')),
-    'SEX_LOG 兽人分档',
-  );
-  // 魔族男人（ARG:0 == 1）
-  await mod.dungeon_anal_log(1, seq_rand(0));
-  assert.ok(
-    fixture.text_lines().some((l) => l.includes('尻穴有感觉的变态')),
-    'ANAL_LOG 魔族男人分档',
-  );
-  // 淫魔（ARG:0 == 0）
-  await mod.dungeon_les_log(0, seq_rand(0));
-  assert.ok(
-    fixture.text_lines().some((l) => l.includes('你的精气，我不客气啦♪')),
-    'LES_LOG 淫魔分档',
-  );
-});
-
 test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BITCH 真身文本）', async () => {
   const { fixture } = setup_log((f) => {
     f.store.set('base:31:0', 500);
@@ -527,28 +499,6 @@ test('【验收】卖春主流程调用日志真身而非占位行（LOG_TRY_BIT
   assert.ok(
     lines.some((l) => l.includes('考虑着出卖肉体的事。')),
     'LOG_TRY_BITCH 真身文本出现',
-  );
-});
-
-// —— #212 返工：魔族少年的性别分档（首版 talent:122 二段恒 undefined，永远走 else 臂）——
-
-test('DUNGEON_ANAL_LOG：魔族少年（ARG:0 == 2）按 TALENT:TARGET:122 分档（两臂分开）', async () => {
-  // rand_n(8) === 0 → 第一子分支 :1850/:1852
-  const { fixture: f1, mod: m1, era_flag: ef1 } = setup_log();
-  ef1.target = 31;
-  await m1.dungeon_anal_log(2, seq_rand(0));
-  assert.ok(
-    f1.text_lines().some((l) => l.includes('姐姐的屁股，真棒')),
-    'TALENT:122 未置位 → 姐姐臂（:1852）',
-  );
-
-  const { fixture: f2, mod: m2, era_flag: ef2 } = setup_log();
-  ef2.target = 31;
-  f2.store.set('talent:31:122', 1); // 男人
-  await m2.dungeon_anal_log(2, seq_rand(0));
-  assert.ok(
-    f2.text_lines().some((l) => l.includes('哥哥的屁股，真棒')),
-    'TALENT:122 置位 → 哥哥臂（:1850）',
   );
 });
 

@@ -13,22 +13,20 @@
  *     @ENDCHECKGODNESS / @ENDCHECKGODNESS_SKY_TEMPLE / @ENDCHECKPRINCESS）
  *     自 #404（N20）起为真身（见下方各函数）；@ENDING_N 演出同票落地
  *     （ere/event/event-ending.js 的 ending_n）。
- *   - TRYCALL END31 死引用：#14 缺陷 3，1:1 保留（见文件尾注释）。
  *
  * 移植说明：
- *   - 原作 GETCHARA(n) 按登记号寻址；ere 侧登记号已扁平化为角色号
+ *   - GETCHARA(n) 按登记号寻址；ere 侧登记号已扁平化为角色号
  *     （#21，addCharacter(17) 后 cid=17），在场判定即列表包含。
  *   - EX_FLAG:2801-2815 读写一律走包装层（era-exflag.js，#113 落表）；
- *     葵希罗线与反叛结局原作错写 FLAG 侧（ENDINGDATA.ERB :30-32/:61-63
- *     与 :130-137，ExFlag.yml 头注有登记），1:1 照写 FLAG 侧（era-flag.js，
- *     本票补表）——读点（ENDCHECKCHARA 的定线与 ENDRESET 的清场）与写点必须同侧，状态机行为
- *     才与原作一致；分派循环读的是 EX_FLAG 侧（族错位缺陷，见下）。
+ *     葵希罗线的定线与清场落 FLAG 侧（era-flag.js 的 route_34，读写同侧
+ *     自洽；族 15 无脚本、不进分派，该线值无消费者）。反叛结局的
+ *     FLAG:2816 写入同样无消费点（死写入，保留）。
  *   - cflag/talent 的读是跨域读，放行（ADR-0002「跨域读放行」），直读
  *     + || 0 兜底（#13：未声明下标读得 undefined）。
  *   - 四条线状态机里的 `SIF` **只护住紧接的下一行**（emuera-basic-agent-guide
  *     references/commands/control-flow.md:19-24，Emuera 忽略缩进）：ENDCHECKSQUARE
- *     :166-168 的计数器清零在分支内无条件执行，不是书写错误——照抄，
- *     见该函数内注释。同理 ENDCHECKGODNESS 各档里的 `SIF DAY:1 …`
+ *     :166-168 的计数器清零在分支内无条件执行，不是书写错误，按现状
+ *     保留，见该函数内注释。同理 ENDCHECKGODNESS 各档里的 `SIF DAY:1 …`
  *     只护住跳档那一行。
  */
 
@@ -52,13 +50,7 @@ function get(name) {
   return era.get(name) || 0;
 }
 
-/**
- * END 族分发注册表：`TRYCALLFORM END{2..15}_{小节}` 的等价物（#7 分发族）。
- * 声明空间与族实现自 #404（N20）起迁到 ere/event/ending-family.js（65 个
- * @END<n> 的数据表执行器），此处按原样 re-export，分派循环与既有调用点不变。
- */
-
-/** 原作 GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
+/** GETCHARA(n) 的等价物：在场返回角色号（= cid，#21 扁平化），不在场 -1 */
 function get_chara(no) {
   return era.getAddedCharacters().includes(no) ? no : -1;
 }
@@ -101,13 +93,13 @@ function endreset() {
   if (get_chara(32) < 0) {
     era_exflag.route_32 = 0;
   }
-  // 嘉德（33）——原作守卫读 EX_FLAG:2814（银黑桃线值，疑为 2810
-  // 的笔误：写入的是 2810；银黑桃线值上界 311，2814 < 500 实际恒真，故
-  // 行为上等价于无守卫，嘉德离队即每天清 2810）。1:1 照抄读 2814，勿修
-  if (get_chara(33) < 0 && era_exflag.route_21 < 500) {
+  // 嘉德（33）——清场守卫读自家线值 2810（原作误读 2814：写入的是 2810；
+  // 银黑桃线值上界 311，2814 < 500 恒真，守卫形同虚设，嘉德离队即每天清
+  // 2810——#649 改正为读 2810，与写入同侧）
+  if (get_chara(33) < 0 && era_exflag.route_33 < 500) {
     era_exflag.route_33 = 0;
   }
-  // 葵希罗（34）——原作错写 FLAG 侧（见文件头），照写 era_flag
+  // 葵希罗（34）——清场落 FLAG 侧（见文件头）
   if (get_chara(34) < 0) {
     era_flag.route_34 = 0;
   }
@@ -163,7 +155,7 @@ function endcheck_main() {
   }
 
   // 反叛判定：威望（EX_FLAG:99）耗尽 → FLAG 侧 2816 置 10。
-  // 原作错写 FLAG 侧（见文件头）；全库无消费点（死代码），1:1 保留写入
+  // 全库无消费点（死写入），保留原状
   if (era_exflag.prestige <= 0) {
     era_flag.rebellion_ending = 10;
   }
@@ -173,7 +165,7 @@ function endcheck_main() {
  * 七角素质定线表（@ENDCHECKCHARA 的同型块，ENDINGDATA.ERB :66-137）。
  * 结构：角色在场 && 线 flag == 0 → TALENT:85 恋慕置 10 / TALENT:76 淫乱
  * 置 20。no = 角色号；holder/name = 线 flag 所在的包装层对象与访问器名
- * （葵希罗在 FLAG 侧——原作错写，见文件头）。src = 源码区间。
+ * （葵希罗线在 FLAG 侧，见文件头）。src = 源码区间。
  */
 const LINE_STARTERS = [
   { no: 17, holder: era_exflag, name: 'route_17', src: ':66-73' }, // 玛奥
@@ -276,7 +268,7 @@ function endcheck_square(rand = default_rand) {
     }
   } else if (stage >= 30 && stage < 40) {
     // ：SIF 只护住 :167 的跳档，:168 的计数器清零在分支内无条件
-    // 执行（Emuera 忽略缩进，本文件头注有据）——照抄，勿「修」成 SIF 块
+    // 执行（Emuera 忽略缩进，本文件头注有据）——状态机的既有行为，保留不扩成 SIF 块
     if (love && get(`abl:${cid}:10`) + get(`abl:${cid}:16`) >= 14) {
       era_exflag.route_22 = 40;
     }
@@ -487,9 +479,9 @@ async function endcheck_spade(rand = default_rand) {
 /**
  * @ENDCHECKPRINCESS（ENDINGDATA.ERB:353-480）：菲娅线（角色 35）的每日推进。
  *
- * 线值 EX_FLAG:2807：10（初次会面）/ -10（崩坏态）/ 30-120 恋慕 /
+ * 线值 EX_FLAG:2807：10（初次会面）/ -10（崩坏态 → 当天 Bad Ending 占位段）/ 30-120 恋慕 /
  * 130-220 淫乱。:445-447 的 160-170 档是空分支（判定已移到 aftertrain），
- * 照抄留空。
+ * 保留为空分支。
  */
 function endcheck_princess() {
   const cid = get_chara(35);
@@ -524,7 +516,7 @@ function endcheck_princess() {
       (get(`mark:${cid}:1`) === 3 || get(`mark:${cid}:2`) === 3) &&
       talent(0) === 0
     ) {
-      era_exflag.route_35 = -10; // 崩坏态（Bad Ending 触发源）
+      era_exflag.route_35 = -10; // 崩坏态：当天分派 END7_-1（Bad Ending 占位段）
     }
   } else if (stage >= 20 && stage < 30) {
     // 素质定线
@@ -595,7 +587,7 @@ function endcheck_princess() {
       era_exflag.route_35 = 120; // 12 为菲娅恋慕线完结
     }
   } else if (stage >= 160 && stage < 170) {
-    // 空分支：该部分判定移动至 aftertrain（照抄留空）
+    // 空分支：该部分判定在 aftertrain（event-aftertrain.js）
   } else if (stage >= 170 && stage < 180) {
     if (cflag(515) < 10) {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
@@ -634,7 +626,7 @@ function endcheck_princess() {
  * @ENDCHECKGODNESS（ENDINGDATA_ADDON1.ERB:1-144）：嘉德线（角色 33）的每日
  * 推进，线值 EX_FLAG:2810。
  *
- * 两处原作未完成区，照抄：
+ * 两片未完成区保留原状：
  *   - :3-24 与 :37-85 整段被 `;` 注释掉（含恋慕线阶梯与 CFLAG:1 == 9 的
  *     离队处置），不移植；
  *   - :98-101 与 :111-116 的 `SIF DAY:1 …` 只护住跳档那一行，计数器累加
@@ -700,7 +692,7 @@ function endcheck_godness() {
       era.set(`cflag:${cid}:515`, cflag(515) + 1);
     }
   } else if (stage >= 150 && stage < 160) {
-    // （`EX_FLAG:2810 == 560` 与本档区间矛盾 → 恒假，原作缺陷，照抄）
+    // （`EX_FLAG:2810 == 560` 与本档区间矛盾 → 恒假，未完成区域的残留条件，保留）
     if (lust && cflag(515) >= 180) {
       if (era_flag.month >= 350 && era_exflag.route_33 === 560) {
         era_exflag.route_33 = 160;
@@ -748,8 +740,8 @@ function endcheck_godness() {
  * 天神宫线。500-510 / 520-530 / 530-540 三档是空分支；540-550 档的 560
  * 转移带 `GETCHARA(33) == 0` 守卫——GETCHARA 返回列表位置（不存在为 -1，
  * 见 emuera-basic-agent-guide references/commands/character.md:136），而
- * 0 号魔王恒占位置 0，故该条件在真机上永不成立、560 不可达。这是原作
- * 未完成区（#102 查明天神宫侵度 EX_FLAG:101 无写入点），照抄不修。
+ * 0 号魔王恒占位置 0，故该条件在真机上永不成立、560 不可达。这是
+ * 未完成区域（#102 查明天神宫侵度 EX_FLAG:101 无写入点），保留原状。
  */
 function endcheck_godness_sky_temple() {
   const stage = era_exflag.route_33;
@@ -776,23 +768,24 @@ async function run_endcheck() {
   endreset();
   // 全局判定（五条线）
   endcheck_main();
-  // LOCAL:1..15 = 各线 flag % 100——死代码：赋值后无任何消费者
-  // （:342 之后的分派直接读 EX_FLAG:(2800+LOCAL)），照搬不模拟（先例：
-  // event-nextday.js 的 :11-12 SIF CONTINUE）
   // 角色线推进
   await endcheck_chara();
-  // 分派循环：EX_FLAG:28xx 十位 = 小节、个位 = 0 才演出（防重播，
-  // 演出函数尾部 += 1 置个位）。2801 == 99（Normal End 已定）时整体短路。
-  // EX_FLAG:(2800+LOCAL) 是动态下标（原作拼名寻址的读侧），直读 + || 0
+  // 分派：只巡有脚本的四族（7 菲娅 / 10 嘉德 / 11 黑方片 / 14 银黑桃；其余
+  // 族全库无脚本，不再遍历——反作弊计数器 2802/2803/2804 与葵希罗线值落进
+  // 2800+线号 区间的每日空转碰撞随之消失）。读各线 EX_FLAG，十位 = 小节、
+  // 个位 = 0 才演出（防重播，演出函数尾部 += 1 置个位）。
+  // 2801 == 99（Normal End 已定）时整体短路。
   if (era_exflag.first_run_deadline !== 99) {
-    for (let local = 2; local < 16; local += 1) {
-      const stage = era.get(`exflag:${2800 + local}`) || 0;
+    for (const family of [7, 10, 11, 14]) {
+      // EX_FLAG:(2800+族号) 是动态下标（原作拼名寻址的读侧），直读 + || 0
+      const stage = era.get(`exflag:${2800 + family}`) || 0;
       if (stage % 10 === 0) {
-        // TRYCALLFORM END{local}_{stage / 10}：Emuera 整数除法向零截断，
-        // 等价 Math.trunc。小节为负合法（菲娅线崩坏态 2807 = -10 →
-        // END7_-1，无定义静默）。实现缺失时 whenMissing 0 = TRYCALL
-        // 落空 RESULT = 0 的缺省
-        await END_FAMILY.call(local, {
+        // TRYCALLFORM END{族号}_{stage / 10}：整数除法向零截断
+        // （Math.trunc）。小节为负合法（菲娅线崩坏态 2807 = -10 →
+        // END7_-1，Bad Ending 占位段，见 ending-scripts.js）。空小节
+        // whenMissing 0 = TRYCALL 落空
+        // RESULT = 0 的缺省
+        await END_FAMILY.call(family, {
           whenMissing: 0,
           args: [Math.trunc(stage / 10)],
         });
@@ -803,9 +796,8 @@ async function run_endcheck() {
   if (era_exflag.first_run_deadline === 99 && era_flag.day_count === 500) {
     await ending_n();
   }
-  // TRYCALL END31——死引用（#14 缺陷 3）：全库无 @END31 定义，
-  // EX_FLAG:2803 非零时原作静默无动作，1:1 保留 = 不实现、勿「修好」。
-  // 2803 的真实消费者是 @DEBUG_CHECK（EVENT_TURNEND.ERB :237-308）
+  // 尾部无 END31 调用：EX_FLAG:2803（失控奴隶号）的消费者是 debug_check
+  // （event-turnend.js），#649 删除了全库无定义的 END31 死引用
 }
 
 module.exports = {

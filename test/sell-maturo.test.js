@@ -113,7 +113,7 @@ async function run_k0_case({
 test('SELL_MATURO_K0：黑市自然态走非魔族低价公厕末路并保存录像标题', async () => {
   const { fixture, api } = seed_world();
   fixture.set_inputs(0);
-  fixture.store.set('talent:0:122', 1); // 原作无参 SHE() 固定读取 0 号角色
+  fixture.store.set('talent:0:122', 1); // 魔王为男性：代词不得跟随 0 号角色
 
   assert.equal(
     await api.sell_maturo_k0(31, { price: 14_430, rand: seq([0]) }),
@@ -122,8 +122,8 @@ test('SELL_MATURO_K0：黑市自然态走非魔族低价公厕末路并保存录
 
   assert(fixture.text_lines().includes('公厕买下温妮之后………'));
   assert(
-    fixture.text_lines().includes('过于残酷的生活让他不到半年便精神崩溃了。'),
-    '原作无参 SHE() 固定读取 0 号角色，1:1 保留为男性代词',
+    fixture.text_lines().includes('过于残酷的生活让她不到半年便精神崩溃了。'),
+    '代词跟随被出售角色（女性），不跟随 0 号角色',
   );
   assert.equal(fixture.store.get('videoarchive:0'), '公众肉便器温妮');
 });
@@ -493,7 +493,16 @@ test('SELL_MATURO_K0：反抗刻印路线覆盖五次随机调用的两侧与全
     [0, 100_000, [0], { 200: 1 }, 100, '角斗士', '作为主谋的温妮一直行踪不明'],
     [0, 100_000, [0], {}, 0, '划桨奴隶'],
     [0, 100_000, [0], { 202: 1 }, 0, '神殿的人柱'],
-    [0, 99_999, [0, 0], {}, 0, '活着的桌子'],
+    [
+      0,
+      99_999,
+      [0, 0],
+      {},
+      0,
+      '活着的桌子',
+      '她的手肘及膝盖以下都被切除',
+      1, // 魔王为男性：代词不得跟随 0 号角色（M13256）
+    ],
     [0, 99_999, [0, 1], {}, 0, '活着的椅子'],
     [0, 99_999, [1], {}, 0, '生物标本'],
     [0, 99_999, [1], { 110: 1 }, 0, '肉品'],
@@ -507,12 +516,14 @@ test('SELL_MATURO_K0：反抗刻印路线覆盖五次随机调用的两侧与全
     level,
     ending,
     expected_text,
+    master_male = 0,
   ] of cases) {
     const { fixture, api } = seed_world();
     fixture.set_inputs(0);
     fixture.store.set('mark:31:3', 3);
     fixture.store.set('talent:31:314', race);
     fixture.store.set('cflag:31:9', level);
+    if (master_male) fixture.store.set('talent:0:122', 1);
     for (const [id, value] of Object.entries(talents)) {
       fixture.store.set(`talent:31:${id}`, value);
     }
@@ -665,20 +676,37 @@ test('SELL_MATURO_K0：找到家人时同步记录末路，录像消费标题暂
   assert.equal(fixture.store.get('tstr:30'), '');
 });
 
-test('SELL_MATURO_K0：原作无参 SHE 按 0 号角色选择代词', async () => {
+test('SELL_MATURO_K0：代词按被出售角色选择，不跟随 0 号角色', async () => {
   const { fixture, api } = seed_world();
   fixture.set_inputs(0);
   fixture.store.set('mark:31:3', 3);
   fixture.store.set('talent:31:314', 9);
   fixture.store.set('talent:31:110', 1);
-  fixture.store.set('talent:0:122', 1);
+  fixture.store.set('talent:0:122', 1); // 魔王为男性：不得据此输出「他」
 
   await api.sell_maturo_k0(31, { price: 99_999, rand: seq([1]) });
 
   assert(
     fixture
       .text_lines()
+      .includes('以恶毒性虐者而闻名的地方领主，将她买下带到肉联厂去了。'),
+    '女性出售对象用「她」',
+  );
+
+  const male = seed_world();
+  male.fixture.set_inputs(0);
+  male.fixture.store.set('mark:31:3', 3);
+  male.fixture.store.set('talent:31:314', 9);
+  male.fixture.store.set('talent:31:110', 1);
+  male.fixture.store.set('talent:31:122', 1); // 出售对象为男性
+
+  await male.api.sell_maturo_k0(31, { price: 99_999, rand: seq([1]) });
+
+  assert(
+    male.fixture
+      .text_lines()
       .includes('以恶毒性虐者而闻名的地方领主，将他买下带到肉联厂去了。'),
+    '男性出售对象用「他」',
   );
 });
 
@@ -941,16 +969,24 @@ test('SELL_MATURO_K1：五处随机分支的两侧均由确定性随机源覆盖
   }
 });
 
-test('SELL_MATURO_K1：原作漏判扶她素质，不进入奶罐分支', async () => {
-  const actual = await run_k1_case({
-    price: 99_999,
-    random: [1], // 恶魔大富豪支
-    talents: { 121: 1, 314: 9 }, // 只有扶她；巨乳、爆乳、超乳均为 0
-    mark: 3,
-  });
-
-  assert.equal(actual.buyer, '恶魔的大富豪买下温妮之后………');
-  assert.equal(actual.ending, '无脑的牝犬温妮');
+test('SELL_MATURO_K1：奶罐判定覆盖巨乳、爆乳、超乳与扶她，无相关素质落牝犬', async () => {
+  const cases = [
+    ['巨乳', { 110: 1, 314: 9 }, '奶罐温妮'],
+    ['爆乳', { 114: 1, 314: 9 }, '奶罐温妮'],
+    ['超乳', { 119: 1, 314: 9 }, '奶罐温妮'],
+    ['扶她', { 121: 1, 314: 9 }, '奶罐温妮'],
+    ['无相关素质', { 314: 9 }, '无脑的牝犬温妮'],
+  ];
+  for (const [label, talents, ending] of cases) {
+    const actual = await run_k1_case({
+      price: 99_999,
+      random: [1], // 恶魔大富豪支
+      talents,
+      mark: 3,
+    });
+    assert.equal(actual.buyer, '恶魔的大富豪买下温妮之后………', label);
+    assert.equal(actual.ending, ending, label);
+  }
 });
 
 test('SELL_MATURO_K1：价格边界与种族、职业素质维度逐项分流', async () => {

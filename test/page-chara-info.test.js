@@ -1195,7 +1195,7 @@ test('case 8（:1062）：[8] 一人称重设走 MODE 1 自定义输入，写入
     .chara_info_individual(1, [1]);
   assert.equal(result, 0);
   assert.ok(
-    printed_includes(fixture, '请输入想设定的第一人称，若不输入择随机设定'),
+    printed_includes(fixture, '请输入想设定的第一人称，若不输入则随机设定'),
     'MODE 1 的提示行印出（1:1 照抄原作）',
   );
   assert.ok(

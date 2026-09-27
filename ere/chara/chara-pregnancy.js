@@ -98,8 +98,8 @@ function template_no_of(cid) {
 
 function child_source_init(child, source) {
   if (!era.addCharacter([child, source])) {
-    // 原作 GB_ADD_GUARD 会抽出 200，但静态预设只有 201–211；按 #14 的
-    // 先 1:1 原则保留这个随机失败出口，不擅自把下界修成 201。
+    // 后代模板必须取自已声明的预设编号（普通 1-16、近卫 201-211）；
+    // 编号落空时明确报错，不生成半成品角色。
     throw new Error(`后代预设角色 ${source} 不存在`);
   }
   if (source >= 17 || source === 0) {
@@ -199,9 +199,8 @@ function n_breast_grow(cid, rand = default_rand) {
 function n_breast_reverse(cid, rand = default_rand) {
   const view = chara(cid).chara;
   if (view.超乳) {
-    // 原作 :925-926 将已为 1 的超乳再次写成 1，是“超乳不退档”的字面
-    // 缺陷；按 #14 的先 1:1 原则保留，不改成 爆乳。
-    view.超乳 = 1;
+    view.超乳 = 0;
+    view.爆乳 = 1;
   } else if (view.爆乳) {
     view.爆乳 = 0;
     view.巨乳 = 1;
@@ -480,13 +479,12 @@ async function gb_add_guard(mother = 0, father = 0, rand = default_rand) {
   const other = mother === 0 ? father : mother;
   const other_template = other > 0 ? template_no_of(other) : other;
   let source;
-  // 原作字面为 RAND:11 + 200，其中 200 没有角色预设；见
-  // child_source_init 的 #14 缺陷说明。
-  if (other_template === -2 || other_template === -3) source = 200 + rand(11);
+  // 野狗/怪物双亲：从 11 个近卫预设（201-211）中随机抽模板
+  if (other_template === -2 || other_template === -3) source = 201 + rand(11);
   else if (other_template < 0) source = 1 + rand(16);
   else if (
     (other_template >= 1 && other_template <= 16) ||
-    (other_template >= 200 && other_template <= 210)
+    (other_template >= 201 && other_template <= 211)
   )
     source = other_template;
   else source = 1 + rand(16);
@@ -496,7 +494,7 @@ async function gb_add_guard(mother = 0, father = 0, rand = default_rand) {
   era.set(`ex_talent:${child}:2`, 1); // EX_TALENT:2 后代
   if (other > 0) {
     era.set(`talent:${child}:319`, era.get(`talent:${other}:319`) || 0); // TALENT:319 种族2
-    if (source >= 200 && source <= 210) era.set(`talent:${child}:322`, source); // TALENT:322 现种族
+    if (source >= 201 && source <= 211) era.set(`talent:${child}:322`, source); // TALENT:322 现种族
   }
   era.set(`talent:${child}:314`, 9); // TALENT:314 种族=魔族
   era.set(`talent:${child}:321`, 9); // TALENT:321 原种族=魔族
@@ -519,7 +517,7 @@ async function gb_add_slave(mother, father, rand = default_rand) {
   const mother_template = template_no_of(mother);
   const source =
     (mother_template >= 1 && mother_template <= 16) ||
-    (mother_template >= 200 && mother_template <= 210)
+    (mother_template >= 201 && mother_template <= 211)
       ? mother_template
       : 1 + rand(16);
   const child = allocate_child_id(source);
@@ -531,7 +529,7 @@ async function gb_add_slave(mother, father, rand = default_rand) {
   era.set(`talent:${child}:321`, race);
   era.set(
     `talent:${child}:322`,
-    source >= 200 && source <= 210
+    source >= 201 && source <= 211
       ? source
       : era.get(`talent:${mother}:322`) || 0,
   );
@@ -689,9 +687,7 @@ async function ninsin_reach_day(cid, rand = default_rand) {
     );
     if (father === -2 || father === -3) {
       era.print(
-        // 原作两处 CALL CHILD_BIRTH_PLACE 都漏传 ARG；用户函数缺省参数为
-        // 0，故非魔王生产也读取 0 号角色。缺陷按 #14 的 1:1 原则保留。
-        `从血泊中醒来的${name_of(cid)}发现自己在昏迷时${child_birth_place_text(0)}生下了孩子……`,
+        `从血泊中醒来的${name_of(cid)}发现自己在昏迷时${child_birth_place_text(cid)}生下了孩子……`,
       );
       await ninsin_give_birth(cid, rand);
       chara(cid).dungeon.体力 = int_div(chara(cid).dungeon.体力, 3);
@@ -712,7 +708,7 @@ async function ninsin_reach_day(cid, rand = default_rand) {
     return 0;
   }
   await era.printAndWait(
-    `${name_of(cid)}平安的${child_birth_place_text(0)}生下了${description}。`,
+    `${name_of(cid)}平安的${child_birth_place_text(cid)}生下了${description}。`,
   );
   era_flag.target = cid;
   await game.train.with_self_kojo_event(12, () =>

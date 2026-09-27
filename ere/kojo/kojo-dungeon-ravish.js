@@ -58,7 +58,7 @@
  *   - **`CALL GOBI_KOUJO` 真身接通（#570）**：语尾口上分派（EVENT_K.ERB 的
  *     @GOBI_KOUJO）返回语尾文字——原作『猪…』整段是一行（PRINTFORM 夹两处
  *     GOBI 后 PRINTFORMW 收尾），ere 一次 print 即一行，故拼成整串一次
- *     printAndWait。分支 TALENT:17（プライド低い）→ 1 / 否则 5，1:1 保留。
+ *     printAndWait。分支 TALENT:17（プライド低い）→ 1 / 否则 5。
  *   - **`Y += 10` / `Y = 10` 是死代码**：Y 是原作全局单字母变量（100000
  *     维），全库无初始化、函数内也无读取者（#183 同款：MAN 版 :862/:868，
  *     本文件 :1622/:1628/:2378）。ere 侧无单字母变量通道，注释保留不落
@@ -69,7 +69,7 @@
  *     通则）：正文不写 [编号]（引擎按 showAcc 拼）、原文的「- 」照写；
  *     两处各两枚——主框架 :21-22 与 @PC_RYOU :2358-2359。原作的
  *     `RESULT < 0 || RESULT >= 2 → GOTO INPUT_LOOP` 随白名单收紧（0/1）
- *     在实机上不可达，1:1 保留结构、不补用例（page-ability-up.js 同款）。
+ *     在实机上不可达，保留结构、不补用例（page-ability-up.js 同款）。
  *   - **`VIRGIN`（#DIM :3）是死变量**：声明并赋值（VIRGIN = TALENT:ARG:0）
  *     后全文件无读取，注释保留不落变量（与 #183 的 Y 同款判定）。
  *   - **`RAND:n` → rand_n(n)**（#117：随机源注入，缺省均匀随机）。
@@ -108,7 +108,7 @@
  *     全局 A/B/C 上下文）——原作此时 B/C 是上一段残留（PC_RYOU 的
  *     分派上下文之外），函数体未消费其 RESULT（后续直接按 TALENT 分支）。
  *     #182 复核判为**死调用**（B/C 在该点无定义读取方、RESULT 无消费），
- *     注释保留不落调用（#14 登记：与原作缺陷同款判定，#103 先例）。
+ *     注释保留不落调用（#103 的同款死调用判定）。
  *   - **`CALL CHECK_STATUS, ARG, 1`（:2930）**：队伍伤势判定（#172 真身，
  *     ere/dungeon/dungeon.js 的 check_status）——返回 8 槽数组，RESULT:7
  *     = 队伍当前状态评级（> 9 时同伴无力救援）。
@@ -460,7 +460,7 @@ async function orc_ryou(arg, mon_num, rand) {
   const c131 = era.get(`cflag:${arg}:131`) || 0;
 
   // 男人の場合（TALENT:122）——本文件只服务女性对象；分派已在
-  // @RYOUZYOKU 按 TALENT:122 分流，此守卫保留 1:1 结构（防御性）
+  // @RYOUZYOKU 按 TALENT:122 分流，此守卫保留结构（防御性）
   if (era.get(`talent:${arg}:122`)) {
     await era.printAndWait('『把这家伙绑起来…』');
     return 0;
@@ -1919,10 +1919,8 @@ async function giant_ryou(arg, mon_num, rand) {
     chara(arg).dungeon.私处经验 += mon_num; // EXP:ARG:0 私处经验
     chara(arg).dungeon.精液经验 += mon_num; // EXP:ARG:20 精液经验
     chara(arg).dungeon.异常经验 += 1; // EXP:ARG:50 异常经验
-    // 原作显示「阴道扩张经验」却写 EXP:53（肛门扩张经验）——显示与
-    // 写入不一致是原作缺陷（#14 登记；MAN 版 :678 显示肛门扩张经验写 EXP:53，
-    // 与女版显示不同、写入同），1:1 保留
-    chara(arg).dungeon.肛门扩张经验 += mon_num; // EXP:ARG:53 肛门扩张经验
+    // 显示「阴道扩张经验」，写入对应 EXP:52 私处扩张经验——显示与入账一致
+    chara(arg).dungeon.私处扩张经验 += mon_num; // EXP:ARG:52 私处扩张经验
   } else if (rand_n(3) === 0) {
     // 舔舐
     await era.printAndWait('『快点啊！』');
@@ -2616,8 +2614,8 @@ async function girl_ryou(arg, mon_num, rand) {
 
   if (mon_num === 1) {
     // 单只女魔族
-    // 原作 IF RAND:3 == 0 / ELSEIF RAND:3 == 0 是重复条件
-    // （第二臂恒不达——死代码，#14 登记）；文本保留、结构并成单条件
+    // 两个分支条件是重复的（IF RAND:3 == 0 / ELSEIF RAND:3 == 0），
+    // 第二臂恒不达——两条文本都并在第一分支，结构收拢成单条件
     if (rand_n(3) === 0) {
       await era.print('『弄得好的话就好好奖励你』');
       await era.print('『那样子弄，完全不舒服嘛』'); // （原作第二臂，恒不达）

@@ -232,7 +232,7 @@ test('CHARA_INFO_UP_LEVEL：确认购买后扣双资金、经验入账并触发�
   );
 });
 
-test('CHARA_INFO_UP_LEVEL：金钱不够不扣款，购买播报恒用魔王名字（原作死代码，#391 登记）', async () => {
+test('CHARA_INFO_UP_LEVEL：金钱不够不扣款，购买播报用被升级角色的名字', async () => {
   {
     const fixture = create_era_fixture();
     add_chara(fixture, 1);
@@ -260,12 +260,12 @@ test('CHARA_INFO_UP_LEVEL：金钱不够不扣款，购买播报恒用魔王名�
 
     await chara_info_up_level(1);
 
-    // LOCALS 三目从未被 PRINTFORMW 读取，播报恒写 NAME:MASTER
+    // 播报主语是被升级的角色（奴隶甲），不写成魔王
     assert.equal(
-      printed_includes(fixture, '你花费了1000G，购买了经验10点'),
+      printed_includes(fixture, '奴隶甲花费了1000G，购买了经验10点'),
       true,
     );
-    assert.equal(printed_includes(fixture, '奴隶甲花费了'), false);
+    assert.equal(printed_includes(fixture, '你花费了'), false);
   }
 });
 

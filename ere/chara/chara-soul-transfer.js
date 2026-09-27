@@ -6,11 +6,10 @@
  * page-chara-info.js）；EVENT/EVENT_NEXTDAY.ERB:50 每角色每日调用
  * @SOUL_DISLOCATION（ere/event/event-nextday.js，本票接真身、原存根撤下）。
  *
- * BODYLOCK 判定不实现（#14 登记）：全库唯一提及它的地方是自身文件内一行
- * 被注释掉的 `;CALL BODYLOCK, ARG`（TRANSFER_SOUL 内，紧邻真正生效的
- * `CALL PERSONALOCK, ARG`），本体还内含两处 `FOR TC, 326, 1` /
- * `FOR TC, 340, 3`（起始值大于结束值，Emuera FOR 循环零次迭代）与残余的
- * `;-----` 注释块自相矛盾的范围注释——原作本身就是一段废弃的历史遗留代码。
+ * BODYLOCK 判定不实现：全库没有生效调用点——唯一提及处是被注释掉的
+ * `;CALL BODYLOCK, ARG`（紧邻真正生效的 `CALL PERSONALOCK, ARG`）；本体自含
+ * 两处零迭代循环（FOR 起始值大于结束值）与失效的范围注释，是自相矛盾的
+ * 废弃段落，无可移植语义。
  *
  * SWAPCHARA 说明（有意偏离，理由如下）：Emuera 的 `SWAPCHARA A, B` 是引擎
  * 内建命令，交换两个角色的全部数据；`ere/` 没有通用的"角色全部变量"枚举
@@ -37,17 +36,15 @@
  * 文件头与该字段的实现 ere/chara/chara-portcflag.js。先前那版在此实现的
  * swap_chara_numbers() 随之删除。
  *
- * 二次互换会互相抵消（原作行为，非移植缺陷，1:1 保留）：TRANSFER_SOUL 先
- * `SWAPCHARA MASTER, ARG` 整表互换 cflag/talent/base/maxbase/abl/ex_talent 等，
- * 随后 CALL TRANSFERAPP 又对同一批字段（CFLAG:9/11-14 等级攻防、婚姻用的
- * CFLAG:601/609、PERSONALOCK 覆盖的大段 TALENT/ABL 区间）逐个再 SWAP 一次——
- * 同一对字段被换了两次，净效果是**这些字段维持原值不变**，只有不在
- * swap_chara() 覆盖范围内的字段（呼び名 callname:-2、灵魂错位 debuff 的最终
- * 赋值）才是真正发生的净变化。「等级/攻防/婚姻状态随身体留下、只有呼び名与
- * 错位素质跟灵魂走」是否为原作本意无法考证，这里不做修正，只如实保留可观测
- * 效果（SAVESTR 是普通 SAVEDATA 字符串数组、SWAPCHARA 不动它，所以
- * target/ERB/魔改新增/角色編號交換.ERB:112-116 才手工换回；NAME/CALLNAME
- * 与覆盖范围见上段）。本文件的 swap_chara() 范围表不含 callname，姓名两槽
+ * 二次互换互相抵消：TRANSFER_SOUL 先 `SWAPCHARA MASTER, ARG` 整表互换
+ * cflag/talent/base/maxbase/abl/ex_talent 等，随后 CALL TRANSFERAPP 又对
+ * 同一批字段（CFLAG:9/11-14 等级攻防、婚姻用的 CFLAG:601/609、PERSONALOCK
+ * 覆盖的大段 TALENT/ABL 区间）逐个再换一次——同一对字段被换了两次，净效果
+ * 是这些字段维持原值，只有不在 swap_chara() 覆盖范围内的字段（呼び名
+ * callname:-2、灵魂错位 debuff 的最终赋值）才真正变化。「等级/攻防/婚姻
+ * 状态随身体留下、只有呼び名与错位素质跟灵魂走」是既定可观测语义。
+ * SAVESTR 是普通 SAVEDATA 字符串数组、SWAPCHARA 不动它（NAME/CALLNAME 与
+ * 覆盖范围见上段）。本文件的 swap_chara() 范围表不含 callname，姓名两槽
  * 由调用方显式处理。
  */
 

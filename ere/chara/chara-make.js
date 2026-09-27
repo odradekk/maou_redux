@@ -359,8 +359,8 @@ async function cm_kj(cid, arg, rand_n) {
 /**
  * @CM_GENDER（:255-294）：性别掷骰。
  *
- * SELECTCASE 冒險者性別（:259）六臂 1:1 保留；变量自 #547 起读
- * era_global.adventurer_gender（global:3，GLOBAL SAVEDATA 跨档共享）。
+ * 性别分派保留全部六臂档（含恒真臂的原判据，保持掷骰次数）；档位读
+ * era_global.adventurer_gender（global:3，跨档共享）。
  *
  * @param {number} cid 角色 ID
  * @param {(n: number) => number} rand_n RAND:N 随机源
@@ -1167,8 +1167,9 @@ async function cm_family_talent(cid, rand_n) {
       }
 
       // 贫乳以下则胸围降一段（女性限定）。第二臂是
-      // `(TALENT:FAMILY_ID:绝壁 && RAND:2) == 0`——括号整体 == 0
-      // （绝壁假或掷 0），与 :918 的 `(超乳) == 0` 不同形，照抄
+      // `(TALENT:FAMILY_ID:绝壁 && RAND:2) == 0`——括号整体判零：
+      // 绝壁假或掷 0 都命中；与升档段第三臂 `f(119) === 0`（只判素质）
+      // 不同形，各自命中面保持原样。
       if ((f(109) && rand_n(4)) || (f(116) && rand_n(2)) === 0) {
         if (!is_male) {
           if ((era.get(`talent:${cid}:119`) || 0) !== 0) {
@@ -1860,12 +1861,9 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
           // 其余输入 → 回到 $INPUT_LOOP_12
         }
 
-        // 前回目标/助手的下标前移——**原作恒空操作，1:1 保留为不
-        // 做**：@ADDCHARA_EX 的第一行就是 `TARGET = ARG`（其他/EXCOM.ERB:6），
-        // 新角色又总在登记序末尾，`FLAG:1/FLAG:2 == TARGET` 与 `> TARGET` 都
-        // 不可能成立。旧移植按角色号比较并 -=1，会把指着村娘（17）的
-        // FLAG:1/2 改成 16（#565 返工第 3 条探针实测）；ere 的角色号也不是
-        // 登记序，调整本身无对应语义。动的是 FLAG:1/FLAG:2（「上一次的
+        // TARGET/ASSI 只按「上一次调教对象/助手」读回，不做下标前移：
+        // 新角色总在登记末尾，前移没有可指的对象；ere 的角色号也不是
+        // 登记序。动的是 FLAG:1/FLAG:2（「上一次的
         // 调教对象」，event-end.js:68-69 的同款槽位），跨域写走 game 域门面
         // （#71；属主域是 event）。
         era_flag.target = game.event.上次调教对象; // TARGET = FLAG:1
@@ -1959,7 +1957,7 @@ async function rand_chara_make(rand, char_make_inport, campaign_slave = false) {
       if (answer === 3 && campaign_slave) {
         // 算了，不选了（仅战役招募场景可选）：删掉后直接返回 0，
         // 不重挑。:169-170 的 TARGET/ASSI 复位与 :136-137（上方已做过一次）
-        // 重复赋同一对值，原作如此，1:1 保留
+        // 重复赋同一对值，无副作用
         party_char_del(newchara); // CALL PARTY_CHAR_DEL
         era.removeCharacter(newchara); // DELCHARA
         cn_rebuild(); // CALL NAME_RESET

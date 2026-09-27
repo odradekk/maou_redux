@@ -172,23 +172,20 @@ function sadomasochism_multiplier(level) {
   return 300;
 }
 
-function update_prostitution_exp_multiplier(exp, talent, prostitution_effect) {
-  if (exp <= 0) {
-    era.set('e:74', 100);
-    return;
-  }
+function prostitution_exp_multiplier(exp, talent, prostitution_effect) {
+  if (exp <= 0) return 100;
   if (prostitution_effect === 0) {
-    let multiplier = exp < 50 ? 40 : 20;
-    if (talent(181)) multiplier = 80;
-    else if (talent(180)) multiplier = 60;
-    era.set('e:74', multiplier);
+    if (talent(181)) return 80;
+    if (talent(180)) return 60;
+    return exp < 50 ? 40 : 20;
   }
   if (prostitution_effect === 1) {
-    let multiplier = exp < 500 ? 120 : 150;
-    if (talent(181)) multiplier = exp > 5000 ? 300 : 250;
-    else if (talent(180)) multiplier = 200;
-    era.set('e:74', multiplier);
+    if (talent(181)) return exp > 5000 ? 300 : 250;
+    if (talent(180)) return 200;
+    return exp < 500 ? 120 : 150;
   }
+  // 卖淫影响 2（无影响）：卖淫经验不参与估价
+  return 100;
 }
 
 function birth_exp_multiplier(exp) {
@@ -315,14 +312,11 @@ function estimate_chara(
   }
 
   const experience_multipliers = Array(75).fill(100);
-  update_prostitution_exp_multiplier(
+  experience_multipliers[74] = prostitution_exp_multiplier(
     experience(74),
     talent,
     prostitution_effect,
   );
-  // 原作缺陷 1:1（#14）：EXP:74 > 0 且卖淫影响为 2 时不写可保存的 E:74，
-  // 因而沿用上次估价的倍率；首次调用读到 0，会把售价直接归零。
-  experience_multipliers[74] = era.get('e:74') || 0;
   price = multiply_percent(price, experience_multipliers[74]);
   experience_multipliers[60] = birth_exp_multiplier(experience(60));
   price = multiply_percent(price, experience_multipliers[60]);

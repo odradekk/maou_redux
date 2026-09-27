@@ -277,9 +277,8 @@ function race_config_value(slot) {
  * 与 :364-373 原样返回人类年龄。那两处的写法是「`SIF ARG:1 == 7` +
  * `RACE_ID = 0`、`SIF ARG:1 == 8` + `RACE_ID = 5`、然后 `RETURN ARG:0`」
  * ——SIF 只约束紧接的那一行，`RETURN ARG:0` 在 IF 体内不受它约束，于是
- * 三个堕落种族编号一律直接返回，两条 `RACE_ID` 赋值是**死代码**。这是原作
- * 缺陷，1:1 保留、不落那两行（同款 SIF 缺陷的既有先例见
- * ere/dungeon/dungeon-room.js 的「原作缺陷 1:1 保留」段，登记 #14）。
+ * 三个堕落种族编号一律直接返回人类年龄，那两条 `RACE_ID` 赋值从未参与
+ * 计算，不落入本函数。
  *
  * 霍比特人（10）与矮人（11）的名称编号跳过了 7-9，故减 3 回到槽 6-7。
  *
@@ -401,10 +400,9 @@ function race_age_generate(human_age, race_no, rand = default_rand) {
  * @HUMAN_AGE_GENERATE（:340-406）：种族年龄 → 人类换算年龄（种族年龄表的
  * 反向换算，月替时随种族年龄 +1 重算 CFLAG:451）。
  *
- * 小数倍档的 `(ARG:0 * 10 + 5) / …` 是原作写死的四舍五入式（先放大十倍加
- * 5 再整除），不是笔误；档位 2 起的三个随机档没有唯一解，原作直接取
- * CFLAG:452——那是**种族年龄**（CFLAG:451 的人类年龄就在调用点，原作没取
- * 它），1:1 保留，不顺手改成 451。
+ * 小数倍档用 `(ARG:0 * 10 + 5) / …` 的整型式做四舍五入；档位 2 起的三个
+ * 随机档没有唯一反解，回落直接取种族年龄（CFLAG:452，调用点手头的是
+ * CFLAG:451 的人类年龄）。
  *
  * @param {number} race_age 种族年龄（ARG:0，调用点传 CFLAG:452）
  * @param {number} cid 角色 ID（ARG:1）
@@ -437,11 +435,9 @@ function human_age_generate(race_age, cid) {
  * [12,35]）→ 近正态取点（±2）→ 家族成员的年龄（见下方分支）→ 后代固定
  * 10 岁。人类年龄 ≤ 14 时补盖未熟（TALENT:135，train 域，经门面写）。
  *
- * **原作 :216-223 的分支比较的是 L_B（成员的角色号）而不是 L_B_TYPE
- * （关系码）**——:215 把关系码取进 L_B_TYPE 后一次也没用。成员角色号恰好
- * 落在 1-8 时才命中约束，这是原作缺陷，1:1 保留（对照 RELATION_FAMILY.ERB
- * 的关系码定义：1 兄 / 2 姊 / 3 弟 / 4 妹 / 5 父 / 6 母 / 7 儿 / 8 娘）。
- *
+ * **家族分支按 rf_all 返回的关系码分档**（1 兄 / 2 姊 → 取小；3 弟 / 4 妹 →
+ * 取大；5 父 / 6 母 → 压到成员年龄 −6 以上；7 儿 / 8 娘 → 抬到成员年龄 + 6），
+ * 对全体家族成员生效。
  * @param {number} cid 角色 ID（ARG）
  * @param {(n: number) => number} [rand] RAND:N 随机源
  * @returns {number[]} [人类换算年龄, 种族年龄]
@@ -455,16 +451,16 @@ function char_age_generate(cid, rand = default_rand) {
   age = Math.max(12, Math.min(35, age)); // LIMIT(EXP_AGE,12,35)
   age = normal_point_pickup(age, rand);
 
-  // 家族成员的年龄（分支判据是 L_B，见函数头注）。rf_all 的第三实参
-  // 对应原作 CALL 的 RETURN_TYPE = 1：成对返回 [成员角色号, 关系码]（L_DATA 同形），
-  // 本循环只取成员号——关系码那一列原作取进 L_B_TYPE 后从未使用
-  for (const [member] of rf_all(cid, -1, true)) {
+  // 家族成员的年龄约束。rf_all 的第三实参对应 RETURN_TYPE = 1 的调用约定：
+  // 成对返回 [成员角色号, 关系码]，分支按关系码分档。
+  for (const [member, relation] of rf_all(cid, -1, true)) {
     const member_age = era.get(`cflag:${member}:451`) || 0; // CFLAG:451 年齢
-    if (member === 1 || member === 2) age = Math.min(age, member_age);
-    else if (member === 3 || member === 4) age = Math.max(age, member_age);
-    else if (member === 5 || member === 6)
+    if (relation === 1 || relation === 2) age = Math.min(age, member_age);
+    else if (relation === 3 || relation === 4) age = Math.max(age, member_age);
+    else if (relation === 5 || relation === 6)
       age = Math.max(10, Math.min(age, member_age - 6));
-    else if (member === 7 || member === 8) age = Math.max(age, member_age + 6);
+    else if (relation === 7 || relation === 8)
+      age = Math.max(age, member_age + 6);
   }
 
   // （stick增加）后代年龄按相当于人类 10 岁设定

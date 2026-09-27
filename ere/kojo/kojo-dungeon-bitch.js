@@ -1,28 +1,17 @@
 /**
  * @file 地下城卖春系统（issue #184，H15）：DUNGEON_BITCH.ERB 二十四函数
  * 中**活代码十二函数**的移植。四组同名（DUNGEON_BITCH / HEROINE_BITCH /
- * DUNGEON_ANIMAL / DUNGEON_WORK）的后一份全在源文件 [SKIPSTART]（:1199）～
- * [SKIPEND]（:3132）预处理块内（块头注释「;旧構文」）——Emuera 的
- * [SKIPSTART]～[SKIPEND] 之间所有行不装载（emuera-basic-agent-guide
- * preprocessor.md），函数不进入函数空间、不构成同名遮蔽（#12 仲裁的先例：
- * #103 的 AGENT.ERB:880～1020 用同一机制禁掉旧版 @CHECK_STATUS 后
- * 「不参与同名仲裁」）。SKIP 块内 12 个旧版函数为原作死代码，不移植，
- * 判定与登记见 issue #14。
- *
- * == 本文件存根化的原作调用名（docs/stub-registry.md 必须收录每一个） ==
- *
- *   无。LOG_* / FS_* 六项随 H16 #185 换真身，强制肉偿随 #544 换真身
- *   （ere/kojo/kojo-forced-payment.js），名单已空。
+ * DUNGEON_ANIMAL / DUNGEON_WORK）的旧版定义全在死代码块（旧構文）里——
+ * 那些函数不进入函数空间、不构成同名遮蔽（#12 仲裁的 AGENT 先例：
+ * 用同一机制禁掉旧版 @CHECK_STATUS 后「不参与同名仲裁」）。SKIP 块内
+ * 12 个旧版函数没有任何活调用方，不移植。
  *
  * == 跨文件调用 ==
  *
- *   强制肉偿（魔改新增/强制肉偿.ERB，:77 调用点）落在 ere/kojo/
- *   kojo-forced-payment.js，本文件顶层 import 它的 forced_payment；它对
- *   exp_bitch 走**函数内延迟 require** 回指本文件——两个模块相互引用，
- *   装载期的循环由那一侧的延迟 require 打断（dungeon-trap.js:1996 先例）。
+ *   强制肉偿落在 ere/kojo/kojo-forced-payment.js（#544），本文件顶层
+ *   import 它的 forced_payment；经验/点数结算在该文件内直接入账。
  *
  * == 随机源 ==
- *
  * 每个函数接受可选的 rand 参数（[0, n) 整数，缺省均匀随机），测试注入
  * 定值序固定随机分支（与 kojo-k3-noble / kojo-system 同款）。RAND:N →
  * rand_n(N)；RAND(min, max) → min + rand_n(max - min)（emuera-basic-agent-guide
@@ -30,8 +19,8 @@
  *
  * == 文本 ==
  *
- * 口上正文统一为简体（issue #60 的归一表裁定，对 1:1 的有意偏离——
- * 源文件汉化本身繁简混用），新增文本受 tools/lang-check.js 检查。
+ * 口上正文统一为简体（issue #60 的归一表裁定），新增文本受
+ * tools/lang-check.js 检查。
  *
  * == #572 复核：@SET_BICH_LEVEL 的裸编号行保持纯文本 ==
  *

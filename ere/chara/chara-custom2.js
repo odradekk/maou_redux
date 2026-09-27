@@ -52,8 +52,9 @@
  *   - **选项升格为按钮**（#572）：@CHARA_FIRST_XP 的六处选项行
  *     （:612/:620-623/:634/:661/:683/:790）与 @CHAR_CUSTOM 的最终确认
  *     （:87）改 `era.printButton`（PR #53 通则，正文不写 [编号] 前缀）。
- *     随之「输入错误，请重新开始」等越界兜底支在实机上不可达，1:1 保留
- *     不补用例——逐处说明见 chara_first_xp 的 JSDoc 与各处注释。
+ *     选项全部按钮化：input() 只回传本轮已打印按钮的快捷键，「输入错误，
+ *     请重新开始」等越界支在实机不可达，保留为防御分支，不为它们造用例
+ *     ——逐处说明见 chara_first_xp 的 JSDoc 与各处注释。
  *     **一处例外**：初吻部位一问（:618-623）保留 `useRule: false`——那四的
  *     显示是有条件的（:619/:621 的 SIF）、受理是无条件的（:625），
  *     收紧白名单会锁死「未显示但原作照收」的 201/301（见该处注释）。
@@ -879,7 +880,7 @@ async function chara_first_xp(cid, rand = default_rand) {
             continue; // GOTO LOOP4
           }
           if (length > 0) {
-            era.print(`新建人物初体验对象为为${sex_name}。`); // （原作「为为」的笔误 1:1）
+            era.print(`新建人物初体验对象为${sex_name}。`);
           } else {
             era.print('随机生成。');
             sex = -1;
@@ -1024,7 +1025,7 @@ async function char_custom(cid, mode, rand = default_rand) {
     // CUSTOMDRAWLINE =（自定义分隔线，无内容）
     era.drawLine();
 
-    // 页眉（原作的制表符 1:1 保留）
+    // 页眉用制表符分段（标题／现价值／页码），\t 保留。
     if (mode === 0) {
       era.print(
         `设定角色属性（${chara_callname(cid)}）\t角色现价值为${price}\t\t<${page + 1}/${PAGE_COUNT}>`,

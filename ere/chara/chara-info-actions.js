@@ -157,10 +157,9 @@ async function chara_info_up_level(cid) {
     return;
   }
   if (result === 0) {
-    // LOCALS 三目（ARG==MASTER ? NAME:MASTER # SAVESTR:ARG）算出后从未被
-    // 读取，下一行的 PRINTFORMW 直接写死 %NAME:MASTER%——原作缺陷 1:1 保留：
-    // 给奴隶提升等级时，播报也说成是「你」花的钱（#14 登记）。
-    await era.printAndWait(`${name_of(0)}花费了${cost}G，购买了经验${need}点`);
+    await era.printAndWait(
+      `${name_of(cid)}花费了${cost}G，购买了经验${need}点`,
+    );
     era_flag.money -= cost;
     era_exflag.legit_money -= cost;
     chara(cid).dungeon.战斗经验 += need;
