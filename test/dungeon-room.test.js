@@ -14,8 +14,8 @@
  *   - @DUNGEON_ROOM_DAY 与 @DUNGEON_SHOP_DAY 两条日结算入口各有测试
  *     （含 event-nextday 的接线）；
  *   - RESULT 契约：店遭遇返回 1 → NO_BATTLE 累加 → 主循环走训练臂；
- *   - 原作缺陷两处 1:1 保留且有测试钉住（FARM 的 SIF 作用域事故、
- *     FARM_RESCUE 的 EXTRA 当角色号）——「不要修好原作缺陷」的守卫。
+ *   - 已修缺陷两处有回归钉（#651）：FARM 卖孩子收入只认 FLAG:614 位 1 且
+ *     只计一次、FARM_RESCUE 按勇者本人状态（CFLAG:1 == 12 不停留）。
  */
 
 const assert = require('node:assert/strict');
@@ -253,9 +253,8 @@ test('日结算·ROOM_DAY：第 1 层商店街与第 2 层牧场都结算，其�
   const zero = () => 0;
   await dungeon_room_day(zero);
 
-  // 商店街：10 × (0 + 5) × 2 = 100；牧场：FLAG:614 = 0（不卖孩子）→
-  // 只计 :629 无条件那笔 50（SIF 作用域事故，见 FARM 用例）；毒沼不结算
-  assert.equal(fixture.store.get('flag:10004'), 150, '税入 100 + 牧场 50');
+  // 商店街：10 × (0 + 5) × 2 = 100；牧场：FLAG:614 = 0（不卖孩子）→ 无现金
+  assert.equal(fixture.store.get('flag:10004'), 100, '税入 100 + 牧场 0');
   const texts = text_lines(fixture);
   assert(
     texts.some((line) =>
@@ -494,9 +493,9 @@ test('牧场·只数累加与播报：FLAG:83 只怪物 += ITEM 槽（:448/:647/
   await dungeon_farm(0, () => 0);
   assert.equal(fixture.store.get('item:100'), 8, 'ITEM:100 += 5（:448/:647）');
   assert.equal(
-    fixture.store.get('flag:10004'),
-    50,
-    '卖孩子收入（:629，无条件）',
+    fixture.store.get('flag:10004') ?? 0,
+    0,
+    '卖孩子关闭（FLAG:614 = 0）时不加钱（:629 已修正）',
   );
   assert(
     text_lines(fixture).some((line) =>
@@ -515,28 +514,24 @@ test('牧场·只数上限 999（:445-446）', async () => {
   assert.equal(fixture.store.get('item:100'), 999, '钳到 999');
 });
 
-test('牧场·SIF 作用域事故 1:1 保留：不卖孩子也计 10G/只，卖孩子时双重计入（#14）', async () => {
-  // SELL_BABY 关（flag:614 = 0）：首计入不发生，:629 的无条件计入仍在
+test('牧场·卖孩子收入与 FLAG:614 位 1 一致：关闭不加、开启只计一次（:627-630）', async () => {
+  // SELL_BABY 关（flag:614 = 0）：出生只数入库存、无现金
   const off = setup_world(502);
   off.store.set('flag:83', 5);
   const { dungeon_farm } = load(off);
   await dungeon_farm(0, () => 0);
-  assert.equal(
-    off.store.get('flag:10004'),
-    50,
-    'FLAG:614 = 0 仍 +50（原作缺陷）',
-  );
+  assert.equal(off.store.get('flag:10004') ?? 0, 0, 'FLAG:614 = 0 不加钱');
 
-  // SELL_BABY 开（flag:614 位 1）：:443 首计入 50 + :629 再计 50 = 100
+  // SELL_BABY 开（flag:614 位 1）：只数折现金 50、只计一次
   const on = setup_world(502);
   on.store.set('flag:83', 5);
   on.store.set('flag:614', 2);
   const { dungeon_farm: farm2 } = load(on);
   await farm2(0, () => 0);
-  assert.equal(on.store.get('flag:10004'), 100, '卖孩子双重计入（原作缺陷）');
+  assert.equal(on.store.get('flag:10004'), 50, '卖孩子只计一次 50');
   assert(
     text_lines(on).some((line) => line.includes('卖了50G')),
-    '卖孩子播报（:628，SIF 只管这一行）',
+    '卖孩子播报（:628）',
   );
 });
 
@@ -547,8 +542,8 @@ test('牧场·挤乳与扶她产出：&1 加奶钱、&2 加 MASTER 经验（:631
   await dungeon_farm(3, () => 0);
   assert.equal(
     fixture.store.get('flag:10004'),
-    55,
-    '无条件 50（:629）+ 挤乳 5（:634）',
+    5,
+    '不卖孩子无现金（:629 已修正）+ 挤乳 5（:634）',
   );
   assert.equal(
     fixture.store.get('exp:0:80'),
@@ -568,32 +563,21 @@ test('牧场·早退：FLAG:83 <= 0 不结算（:428-430）', async () => {
 
 // —— @DUNGEON_FARM_RESCUE（:650-680，勇者到达牧场）——
 
-test('牧场救援·原作缺陷 1:1 保留：实参是 EXTRA，按角色号读 CFLAG:1（#14）', async () => {
-  // EXTRA = 0 → 读 CFLAG:0:1（魔王，0 ≠ 12）→ 救走一只
+test('牧场救援：战役中（CFLAG:1 == 12）的勇者不停留，侵攻中救走一只（:677）', async () => {
+  // 侵攻中（cflag:1:1 = 2，setup 默认）→ 救走一只
   const fixture = setup_world(502, 0);
   fixture.store.set('flag:83', 3);
   const { dungeon_farm_rescue } = load(fixture);
-  await dungeon_farm_rescue(0);
-  assert.equal(fixture.store.get('flag:83'), 2, 'EXTRA = 0 读魔王状态位 → -1');
+  await dungeon_farm_rescue(1);
+  assert.equal(fixture.store.get('flag:83'), 2, '侵攻中的勇者救走一只');
 
-  // EXTRA = 1 → 读 CFLAG:1:1 == 12（战役中的勇者 1）→ 不救
+  // 战役中（cflag:1:1 = 12）→ 不减
   const campaign = setup_world(502, 1);
   campaign.store.set('flag:83', 3);
   campaign.store.set('cflag:1:1', 12);
   const { dungeon_farm_rescue: rescue2 } = load(campaign);
   await rescue2(1);
-  assert.equal(
-    campaign.store.get('flag:83'),
-    3,
-    'EXTRA = 1 恰逢勇者在战役 → 不减',
-  );
-
-  // EXTRA = 2 → 角色号 2 不存在（undefined ≠ 12）→ 救走
-  const ghost = setup_world(502, 2);
-  ghost.store.set('flag:83', 3);
-  const { dungeon_farm_rescue: rescue3 } = load(ghost);
-  await rescue3(2);
-  assert.equal(ghost.store.get('flag:83'), 2, 'EXTRA = 2 读不到角色 → -1');
+  assert.equal(campaign.store.get('flag:83'), 3, '战役中的勇者不停留');
 });
 
 test('牧场救援·早退：FLAG:83 <= 0 直接返回（:669-671）', async () => {
@@ -601,6 +585,21 @@ test('牧场救援·早退：FLAG:83 <= 0 直接返回（:669-671）', async () 
   const { dungeon_farm_rescue } = load(fixture);
   await dungeon_farm_rescue(0);
   assert.equal(fixture.store.get('flag:83') ?? 0, 0);
+});
+
+test('分发·人类牧场（502）：救走判定按勇者本人状态而非扩张位域（:29/:677）', async () => {
+  const fixture = setup_world(502, 2); // extra = 2
+  fixture.seed_chara(2, { id: 2, name: '贝丝', callname: '贝丝' });
+  fixture.era.addCharacter(2);
+  fixture.store.set('cflag:2:1', 12); // 2 号处于战役中（extra=2 时错读它）
+  fixture.store.set('flag:83', 3);
+  const { dungeon_room } = load(fixture);
+  await dungeon_room(1, () => 1); // 店遭遇掷不中
+  assert.equal(
+    fixture.store.get('flag:83'),
+    2,
+    '实参是勇者 1（侵攻中）→ 救走一只（实参回退 extra 则读到 2 号的 12 不救）',
+  );
 });
 
 // —— @DUNGEON_ICE（:683-735，冰室）——

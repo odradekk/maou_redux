@@ -15,7 +15,7 @@
  *   - WAIT → era.waitAnyKey()；一行 32 chip 归并为一次 era.print(段数组)
  *     （labo.js 文件头同款）；
  *   - MON_CHECK 的「兵力不足清 DB」副作用是原作设计（:75，村娘扫荡无兵
- *     怪物），MON_LIMIT 全图扫描时逐格触发——1:1 保留。
+ *     怪物），MON_LIMIT 全图扫描时逐格触发——保留。
  */
 
 const era = require('#/era-electron');

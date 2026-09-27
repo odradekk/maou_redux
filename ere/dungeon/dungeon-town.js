@@ -12,7 +12,7 @@
  *     TARGET 就读（残留值）：FI_FUNDING 的素质/善恶/等级补正、TOWN_HENSAI
  *     的还款比例分档（SELECTCASE CFLAG:151）、TOWN_PT_PARTY 的预算收集
  *     （CFLAG:580）——全部读 era_flag.target 的当前值（flag:10005，可
- *     预置可断言）。1:1 保留原作的怪异：援助金按 TARGET 的出身算而不是
+ *     预置可断言）。保留的怪异行为：援助金按 TARGET 的出身算而不是
  *     每个成员自己的、预算收集对每人都读同一个人的钱袋；
  *   - TOWN_PT_DAYEVENT / TOWN_PT_PARTY 演出段显式 `TARGET = PM:LCOUNT`
  *     （:619/:696）——镜像为 era_flag.target 写（#5 决议第六条）；
@@ -22,12 +22,12 @@
  *     均 Math.trunc（-1234/10 = -123，不是 floor 的 -124）；
  *   - LIMIT(X, min, max) = MIN(MAX(X, min), max)——TOWN_HENSAI 的
  *     LIMIT(LOCAL, 100, 580/2) 在所持金 < 200 时 min > max，结果取 max
- *     （580/2，可 < 100）：先 MAX 后 MIN 的求值序 1:1；
+ *     （580/2，可 < 100）：先 MAX 后 MIN 的求值序；
  *   - ere 无全局 RAND 序列（#117），掷点经注入 rand（缺省 Math.random）；
  *   - PRINT/PRINTFORM 不换行与 PRINTL/PRINTFORML 换行的行拼接归并（引擎
  *     print 每调用一行，dungeon.js 文件头先例）——本文件 SETCOLORBYNAME
  *     的彩色数值段按「行文本 + 数值 + 行尾」拼为一次 print，配色不做；
- *   - 原作注释（;）照抄为 JS 注释，行号锚点保留。
+ *   - 逐段注释保留原样（日文分支标记不译），行号锚点已随全库清理删除。
  */
 
 'use strict';
@@ -468,9 +468,8 @@ async function town_shopping(arg, rand_n = default_rand) {
  *
  * 分支（按队伍最深到达/平均善恶/负债加权）：英雄类素质（自信家 161 /
  * 高贵 163 / 冷静 164 / 恶女 166）直奔 8 层；重度借债（LOAN_MIN ≤ 档 0
- * 或人均收支 ≤ 档 1）时 **GOAL/START 赋值嵌在 FLAG:5&32 调试守卫内**——
- * 正常游玩（守卫关）两值保持 0，LIMIT 后 GOAL = 0、START = 1（第一层
- * 闲逛）：原作缺陷 1:1 保留（登记 #14），ELSEIF 的同守卫条件恒不达；
+ * 或人均收支 ≤ 档 1）直奔深潜（GOAL = FLOOR_MAX + 1，与 1/4 掷点的
+ * INTO_DEEPER 同目标；同守卫的 ELSEIF 分支恒不达，不落地）；
  * 中度借债走浅层（FLOOR_PT/2 与 FLOOR_MIN 取小、至少 1）；无债或各档
  * 掷中（1/4、1/3、1/2）时 INTO_DEEPER（FLOOR_MAX + 1）；其余慎重层
  * （FLOOR_MAX/2 与 FLOOR_PT 取大、至少 1）。
@@ -576,20 +575,15 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
     if (rand_n(4) === 0) {
       into_deeper();
     } else {
-      // **GOAL/START 赋值嵌在 FLAG:5 & 32 守卫内**（原作缺陷，
-      // 登记 #14）：守卫关（正常游玩）时 GOAL/START 保持 0，经下方 LIMIT
-      // 得 GOAL = 0 / START = 1——重度借债实际走「第一层闲逛」而非注释
-      // 宣称的深潜。1:1 保留（#175 M486「不要修好原作缺陷」同款）。
       if (show) {
         era.print(
           '因为欠债实在太多了，抱着一获千金的目的向着比之前更深的阶层前进。',
         );
-        goal = floor_max + 1;
-        start_floor = floor_max + 1;
       }
+      goal = floor_max + 1;
+      start_floor = floor_max + 1;
       // ELSEIF FLAG:5 & 32 && (TALENT:172 智慧 || TALENT:164 冷静 ||
-      // CFLAG:151 >= 100)——恒不达（IF 已含同一守卫；三处均为省略角色号
-      // 的 TARGET 残留读），「第一层闲逛」打印与 GOAL = 0 不落地
+      // CFLAG:151 >= 100)——与 IF 同守卫恒不达，不落地
     }
   } else if (loan_min <= loan_limit[1] || balance_pt <= loan_limit[2]) {
     // 借金そこそこ
@@ -654,16 +648,15 @@ async function town_pt_planning(pm0, pm1, pm2, rand_n) {
  * @TOWN_PT_PARTY（:575-679）：宴会。
  *
  * 预算收集段读的是 **TARGET 残留的 CFLAG:580**（省略角色号——文件头
- * 裁定）：每人份的飲み代全按同一个人的钱袋算（原作「支払いの判定が
- * おかしいっぽかったのを修正」修过的是支付段，收集段仍是 TARGET 读），
- * 支付段则显式扣本人的 580——收集与支付不对称是原作行为，1:1。
+ * 裁定）：每人份的飲み代全按同一个人的钱袋算（支付判定曾修过的是支付段，
+ * 收集段仍是 TARGET 读），支付段则显式扣本人的 580——收集与支付不对称。
  * 无预算（SUMARRAY(COST) == 0）流局：A = PM:0; RETURN 0（TARGET 未动）。
  *
  * お楽しみタイム按 TARGET（此处已显式换手为各成员）的善恶/素质走臂：
  * karma > 50 早睡；karma ≤ 50 恒进第二臂（`CFLAG:151 <= 50` 在该世界
  * 恒真）——其内层按素质走嫖妓（百合气质/扶她/男 → 自动调教三连）或
  * 少年风俗（正太控）或无输出。**祈祷臂（圣女·神官·巫女 + KARMA +1）
- * 与醉睡臂恒不达**（登记 #14，见函数体内注释）。末尾 TARGET 恢复暂存值。
+ * 与醉睡臂恒不达**（见函数体内注释）。末尾 TARGET 恢复暂存值。
  *
  * @param {number} pm0 队长 @param {number} pm1 仲間A @param {number} pm2 仲間B
  * @param {(n: number) => number} rand_n 随机源
@@ -722,8 +715,7 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
       // カルマが高い場合
       era.print('为了备战冒险早早就寝了……');
       // ELSEIF CFLAG:151 > 80 && TALENT:122——恒不达（> 80 蕴含
-      // > 50，上一臂已抓走；原文同为「早早就寝」），1:1 不镜像（page-ablup
-      // 的 COUNT==12 先例），注释留痕
+      // > 50，上一臂已抓走；下文同为「早早就寝」），不镜像，注释留痕
     } else if (karma_v <= 50 || (karma_v <= 80 && man)) {
       const abl22 = era.get(`abl:${t}:22`) || 0; // 百合气质
       if (abl22 > 1 || futanari || man) {
@@ -766,19 +758,17 @@ async function town_pt_party(pm0, pm1, pm2, rand_n) {
         await source_check_auto();
       }
       // ELSEIF TALENT:122 && ABL:23 > 1——**恒不达**（蕴含
-      // TALENT:122，第一臂的 `|| TALENT:122` 已把所有男人抓走；原作者
-      // 的吐槽注释「いっちよ、ただの、この男性勇者やばいじゃないが。。。」
-      // 正说明这条从没跑通过）。内层 IF TALENT:143（少年风俗）/ ELSEIF
-      // ABL:20 > 2（:664 的空 PRINT）随之不可达，1:1 不镜像，注释留痕
+      // TALENT:122，第一臂的 `|| TALENT:122` 已把所有男人抓走）。
+      // 内层 IF TALENT:143（少年风俗）/ ELSEIF
+      // ABL:20 > 2（空 PRINT）随之不可达，不镜像，注释留痕
       //
       // ELSEIF 聖女・神官・巫女（祈祷 + CALL KARMA, TARGET, 1）
       // 与 ELSE 醉睡——**两臂同样恒不达**：臂 1 不中即 karma ≤ 50，而臂 3
       // 的左半 `CFLAG:151 <= 50` 在该世界恒真、臂 3 恒中，臂 4/5 无世界
-      // 可达（原作死代码，登记 #14；`TALENT:315 == 12 || (202 神官 &&
+      // 可达（`TALENT:315 == 12 || (202 神官 &&
       // 122 男 && CFLAG:5 > 100) || (202 && (121 || !122)) || 206 巫女`
-      // 的祈祷条件与「醉醺醺地睡着了」从未执行）。1:1 不镜像（page-ablup
-      // 先例），注释留痕——KARMA +1 的调用点随之不可达，stub-registry
-      // 已注明
+      // 的祈祷条件与「醉醺醺地睡着了」从未执行）。不镜像，注释留痕——
+      // KARMA +1 的调用点随之不可达
     }
   }
 

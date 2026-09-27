@@ -1,7 +1,7 @@
 /**
  * @file 迷宫陷阱（issue #176，阶段 3 H7）：@DUNGEON_TRAP 与全部陷阱段。
  *
- * 原作局部变量语义（:3-13 注释照抄，DUNGEON.ERB :14-22 词汇表）：
+ * 局部变量语义（:3-13 词汇表）：
  *   A = 受陷阱者（调用方掷选）   TRAP_COUNT = 陷阱试行计数
  *   TRAP_NUM = 陷阱的 FLAG 槽号（300-308/310-318/320-328 = 各层 A/B/C）
  *   TRAP_ID = 陷阱的道具编号（60-85、87）   TRAP_NOUSE = 未作动标志
@@ -47,8 +47,7 @@
  *   - CFLAG:503 是位域（门面名「休憩」只覆盖位 0）：位 1 = 诅咒、位 3 =
  *     润滑（ヌルヌル）、位 6 = 落下、位 9 = 欲情——位操作一律裸寻址；
  *   - 诈骗陷阱的数值效果（MONEY/CFLAG:580/582 转移）整体在 FLAG:5 & 32
- *     守卫内（关日志时无任何效果）——魔改原作如此，1:1 保留，缺陷登记
- *     #14；
+ *     守卫内（关日志时整个陷阱不触发）——保留现状；
  *   - RETURN 01（LOVE_BUG :1257）是十进制 1 的前导零写法，非八进制。
  */
 
@@ -122,8 +121,7 @@ async function campaign_trap(trap_num) {
  * @returns {number} 价格
  */
 function trap_price(p) {
-  // 逐条价格（与 yml/Item.yml 的 price 一致——原作的冗余表，
-  // 1:1 保留）
+  // 逐条价格（与 yml/Item.yml 的 price 一致的冗余表，保留）
   const PRICES = {
     60: 10,
     61: 50,
@@ -497,7 +495,7 @@ async function arrow_trap(a, rand_n) {
     return 1;
   } else if (dice >= 80) {
     // 要害（两倍 + 追加）——:283 先印两倍值、:284 再加追加值，
-    // 印追加时 DICE 已含本体（原作的显示口径，1:1 保留）
+    // 印追加时 DICE 已含本体（显示口径如此，保留）
     dice *= 2;
     if (show) {
       era.print(`${name}的要害被射中了，受到${dice}点伤害！ `);
@@ -516,7 +514,7 @@ async function arrow_trap(a, rand_n) {
     }
   } else {
     // ——:298 印追加 {FLAG:85 * 10}（字面，与 :296 的 DICE 相加
-    // 结果一致；1:1 保留字面）
+    // 结果一致；保留字面）
     if (show) {
       era.print(`${name}受到${dice}点的伤害！`);
     }
@@ -1902,7 +1900,7 @@ async function dark_juel_trap(a, rand_n) {
 /**
  * @DEF_DOWN_TRAP（:1349-1364）：攻击效果陷阱（ITEM:82）——防御值弱化
  * （CFLAG:680）。原作段名是「攻撃陣地の罠」、演出写「攻击效果上升」，
- * 实际落到 680（防御）——文案与效果的错位 1:1 保留。
+ * 实际落到 680（防御）——文案与效果的错位保留。
  * @returns {Promise<number>} 原作 RETURN（恒 0）
  */
 async function def_down_trap(a, rand_n) {
@@ -1928,7 +1926,7 @@ async function def_down_trap(a, rand_n) {
 
 /**
  * @ATK_DOWN_TRAP（:1367-1382）：防御效果陷阱（ITEM:83）——伤害值弱化
- * （CFLAG:681）。同款文案错位 1:1 保留。
+ * （CFLAG:681）。同款文案错位保留。
  * @returns {Promise<number>} 原作 RETURN（恒 0）
  */
 async function atk_down_trap(a, rand_n) {
@@ -2010,7 +2008,7 @@ async function all_down_trap(a, rand_n) {
 //    三个剧情段各自按善恶值（CFLAG:151）分档定价，骗来的钱进魔王金库
 //    （MONEY / EX_FLAG:4444 双记）、扣勇者的所持金（CFLAG:580）或购物
 //    预算（CFLAG:582，签借条的场合）。数值效果整体在 FLAG:5 & 32 守卫内
-//    ——关日志时无任何效果，魔改原作如此（1:1 保留，缺陷登记 #14）。——
+//    ——关日志时整个陷阱不触发（演出与数值同在守卫内），保留现状。
 
 /** PRINTDATAL 的随机文本掷选（rand_n(4) 四选一） */
 function pick_data(rand_n, options) {
@@ -2241,8 +2239,7 @@ async function fraud_story3(a, rand_n) {
 
 /**
  * @诈骗陷阱（魔改新增/诈骗陷阱.ERB :3-15）：TRAP_ID 87 的分发体。三分
- * 之一概率各演一段；整个效果（含数值）在 FLAG:5 & 32 守卫内（原作如此，
- * 文件头）。
+ * 之一概率各演一段；整个效果（含数值）在 FLAG:5 & 32 守卫内（文件头）。
  * @returns {Promise<number>} 原作 RETURN 0（恒作动、消耗）
  */
 async function fraud_trap(a, rand_n) {

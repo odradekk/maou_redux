@@ -7,7 +7,7 @@
  *   - Emuera 整数除法向零截断，所有可能非整除的算式统一走 idiv。
  *   - SAVESTR 无引擎通道，沿用战斗模块约定，以 callname 承载名字。
  *   - @SHIELD_MAGIC 没有形参，却声明了私有 TARGET_TYPE；其初值恒 0，三个
- *     分支均不可达。这里保留这个原作缺陷，不把调用者的 target_type 偷渡进去。
+ *     分支均不可达。这里保留这个行为，不把调用者的 target_type 偷渡进去。
  *   - @SLEEP_MAGIC 第 467/545 行读取全局 Y，但两个调用点在施法前都没有为它
  *     建立本次语义；显式状态迁移后按数值默认值 0 保留其输出分支。它不影响数值。
  *   - @TELEPORT_MAGIC 第 431 行把 RAND:100 写进 CFLAG:B:3（公开自慰经验），
@@ -376,16 +376,8 @@ async function energy_bolt_magic(target_type, a, b) {
     damage = magic_bonus_c_to_m(a, get_cflag(a, 9) * 5, b);
     damage -= idiv(e_get(b + 1), 20);
     damage = magic_damage_cap(get_cflag(a, 9), e_get(b + 1), damage, 600);
-    const killed = idiv(damage, e_get(b + 3));
-    if (killed > 0) {
-      // 原作第 585-590 行把 DAMAGE（而非 KILL_MONS）压到怪物数，随后仍按
-      // 未压缩的 KILL_MONS 扣数量和加经验；伤害过量时怪物数因此可以变成负数。
-      if (damage > e_get(b + 99)) {
-        damage = e_get(b + 99);
-      }
-      e_set(b + 99, e_get(b + 99) - killed);
-      add_exp(a, e_get(b + 1) * killed);
-    }
+    // 过量击杀按现存怪物数收口（kill_monsters 内 min）：怪物数不跌破 0
+    const killed = kill_monsters(a, b, damage);
     await print_wait(
       killed <= 0 ? '魔法箭好像完全没有效果' : `魔法箭贯穿了${killed}只怪物！`,
     );

@@ -96,9 +96,8 @@ async function monster_skill(target, skill, user, rand = default_rand) {
     await chara_lv_check(target);
   } else if (skill === 14) {
     const breath = Math.trunc((dmg * 3) / 2);
-    // 源 :143 显示 level * 2，实际 :144 只扣强化后的 1.5 倍；1:1 保留。
     await print_battle_line(
-      `${monster_name}喷出了破坏铠甲的吐息！！（HP-${level * 2} 防御-${palam_down}）`,
+      `${monster_name}喷出了破坏铠甲的吐息！！（HP-${breath} 防御-${palam_down}）`,
     );
     target_view.dungeon.体力 -= breath;
     target_view.dungeon.防御力 -= palam_down;
@@ -295,7 +294,7 @@ async function use_monster_skill(
     await print_battle_line(`${monster_name}用弓箭发动了攻击！！（HP-${dmg}）`);
     target_view.dungeon.体力 -= dmg;
   } else if (skill === 17) {
-    // 源不传类型：精英路径的地形增益仍写 E 数组，1:1 保留。
+    // 不按类型分流：精英路径的地形增益仍写 E 数组，保留。
     await monster_room_skill(target, user);
   } else if (skill === 18) {
     // 源不按类型分流，并继续使用怪物名；精英路径也固定写 E 数组。

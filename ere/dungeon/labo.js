@@ -2,7 +2,7 @@
  * @file 2D 地下城模式的地质数据与实验室菜单（issue #181，阶段 3 H12）：
  * LABO.ERB 十函数。
  *
- * 原作局部变量语义（GEO_TEST :110-128 注释照抄）：
+ * 局部变量语义：
  *   LOCAL:3 = ポイント数（正方形 1 边的顶点数）  LOCAL:4 = 世界のマス数
  *   LOCAL:5/6 = 作業中の x / y   LOCAL:10-15 = 临时/四角 z
  *
@@ -267,7 +267,7 @@ function geo_test(rand) {
  */
 function geo_calc_interp(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7) {
   // 係数設定（SELECTCASE → COS_TABLE；CASEELSE 0——px/py 在 1..7 内，
-  // 0 档是防御分支照抄）
+  // 0 档是防御分支写法）
   const kx = COS_TABLE[arg4] ?? 0; // LOCAL:0 = px
   const ky = COS_TABLE[arg5] ?? 0; // LOCAL:1 = py
 
@@ -362,7 +362,7 @@ async function labo(rand) {
     } else if (result === 6) {
       da_clear();
     } else if (result === 7) {
-      era.printImage('HEART_R'); // PRINT_IMG "HEART_R"（注册名照抄，res/img.csv）
+      era.printImage('HEART_R'); // PRINT_IMG "HEART_R"（注册名沿用，res/img.csv）
       // 的 PRINTL 只结束 :32 的 PRINT_IMG 那一行（PRINT_IMG 不换行），
       // **不是空行**——ere 的 printImage 自成一行（#597）
     } else if (result === 8) {

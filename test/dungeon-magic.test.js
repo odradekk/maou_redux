@@ -211,10 +211,10 @@ test('ENERGY_BOLT_MAGIC 与 FIREBALL_MAGIC：角色法术造成伤害并消灭�
   await magic.energy_bolt_magic(1, 1, 0);
   assert.equal(
     fixture.store.get('e:99'),
-    -99,
-    '魔法箭保留原作未压缩 KILL_MONS 的负怪物数缺陷',
+    0,
+    '魔法箭过量击杀按现存怪物数收口（怪物数不跌破 0）',
   );
-  assert.equal(fixture.store.get('exp:1:80'), 100);
+  assert.equal(fixture.store.get('exp:1:80'), 1, '经验按实杀 1 只结算');
 
   const output = [];
   fixture.era.printAndWait = async (text) => output.push(text);
@@ -226,7 +226,7 @@ test('ENERGY_BOLT_MAGIC 与 FIREBALL_MAGIC：角色法术造成伤害并消灭�
   fixture.store.set('cflag:1:130', -1);
   await magic.fireball_magic(1, 1, 0);
   assert.equal(fixture.store.get('e:99'), 0);
-  assert.equal(fixture.store.get('exp:1:80'), 101);
+  assert.equal(fixture.store.get('exp:1:80'), 2, '魔法箭 1 + 火球 1');
   assert(output.includes('火球术烧尽了1只怪物！'), '过量击杀按现存怪物数播报');
 });
 

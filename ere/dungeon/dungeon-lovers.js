@@ -1164,9 +1164,9 @@ async function settle_love_exp(
   }
   if (love_exp[9] > 0) {
     summary.push(`${era.get('palamname:0') || ''}点数＋${love_exp[9] * 5} `);
-    era.add(`juel:${cid}:0`, 250); // LOCAL 是首个 FOR 结束值 50（原作缺陷）
+    era.add(`juel:${cid}:0`, love_exp[9] * 5);
     summary.push(`${era.get('palamname:14') || ''}点数＋${love_exp[9] * 5} `);
-    era.add(`juel:${cid}:14`, 250); // 同上，不是 LOVE_EXP:9 * 5
+    era.add(`juel:${cid}:14`, love_exp[9] * 5);
   }
   if (love_exp[4] > 0) {
     summary.push(`私处经验＋${love_exp[4]} `);
