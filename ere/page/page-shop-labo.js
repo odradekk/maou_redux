@@ -509,7 +509,7 @@ async function modify_bustdown(rand = default_rand) {
     if (answer !== 0) {
       return 0; // 的 ELSE RETURN 0
     }
-    // 乳房档位递降（同 :358-375：文案与 N_BREAST_REVERSE 不同，同左：档位递降的既有文案）
+    // 乳房档位递降（文案与 N_BREAST_REVERSE 的档位取舍不同：超乳不再升，既有行为）
     if (talent(cid, 119)) {
       era.print(`《${savestr(cid)}获得了【${talentname(114)}】》`);
       chara(cid).chara.超乳 = 0;

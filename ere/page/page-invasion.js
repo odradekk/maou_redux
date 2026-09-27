@@ -50,7 +50,7 @@
  *     查明、ExFlag.yml 头注登记，写侧的重叠保留、由用例钉住；
  *   - [2] 候选判据第三条旧写法 `!CFLAG:COUNT:0 == 2` 按单目 `!` 的最高
  *     优先级读作 `(!CFLAG:COUNT:0) == 2`，恒假、从不淘汰——「助手可不许
- *     带队」的意图从未生效（登记 #14）。#652 改正为按意图判 `== 2` 淘汰，
+ *     带队」的意图从未生效。#652 改正为按意图判 `== 2` 淘汰，
  *     由 `brute_rejected` 的注释与用例钉住；
  *   - SEIEI 战斗体的第一处退场检查旧写法漏了实参、判的是魔王自己，
  *     「魔王侧获得胜利」由魔王被打残触发而非精锐部队倒下。#652 起两处
@@ -60,9 +60,9 @@
  *     状态字恒 0，首档条件每次调用都成立——旧实现保留了骨架形态，档内
  *     只剩一行星号反复弹出（设计意图是「事件开始、只一次」）。#652 起三臂
  *     不再输出任何内容、也不恢复推进，状态字维持原样。三臂随地区续接
- *     （#505）可达：出兵结算尾的 AREA 可取 86/88/90，侵攻度有写入路径，
- *     空转与否的判据仍走 kyoten_next_stage。汉化把 FLAG:94 另挪他用
- *     （人数上限阶梯），CHALLENGE 实际用的是 EX_FLAG:95 位域；
+ *     （#505）可达：出兵结算尾的 AREA 可取 86/88/90，侵攻度有写入路径。
+ *     三臂的状态字（FLAG:94/95/96）没有写点：94 号被挪作「人数上限阶梯」
+ *     的判据，CHALLENGE 用的是 EX_FLAG:95 位域。
  *
  *   - FORT 的 [3] 绕路支（勇者掠夺路线）旧写法从不掷骰，「平安无事
  *     （体力 ×9/10）」支不可达、恒走埋伏并 RETURN 1——#652 改正为与怪物
@@ -163,15 +163,12 @@ const BAR_WIDTH = 16;
  * :680/:683 与 :867/:870/:873/:876/:879）、`kyoten_arg` 是 @KYOTEN_EVENT 的
  * 实参（:984/:987/:990/:993——**没有天神宫臂**，故为 null）。
  *
- * **天神宫的 AREA/SINDO 落在 EX_FLAG 侧，但原作只在两处按 EX_FLAG 处理**：
- * :165（出兵菜单）与 :752-755（`IF AREA <= 100 → BAR FLAG:AREA ELSE BAR
- * EX_FLAG:AREA`，魔力结果段）读 EX_FLAG:101；而 :611-618 的累加与封顶、
- * :664/:860/:970 三处结果段的 `BAR FLAG:AREA`、各结果段的已征服判据
- * `FLAG:SINDO`（SINDO = 102）只认 FLAG 侧。FLAG:101/102 在汉化版里是 K1/K2
- * 的「口上存在标志」（:1006 的人数上限阶梯同源），因此天神宫的累加会覆盖
- * K1 的口上标志、读 FLAG:102 会把 K2 口上的存在当成「已征服」。原作错位，
- * #102 查明、yml/ExFlag.yml 头注登记，1:1 保留、不统一——读点的表选择由
- * `region_progress()` 的 `use_exflag` 参数逐处给出。
+ * 侵攻度读写曾在「哪张表」上不自洽：出兵菜单与魔力结果段读 EX_FLAG:101，
+ * 累加与其余读点写 FLAG:101——而 EX_FLAG:101 没有写点，进度条恒 0。读另
+ * 一张表的分派随 #652 删除（region_progress() 一律读 FLAG 侧，见该函数的
+ * 注释）；写侧保持 FLAG:101/102，与 K1/K2 的「口上存在标志」同槽（yml/
+ * Flag.yml 保留区外的 1xx 段）——累加会覆盖口上标志、读 FLAG:102 会把
+ * 口上的存在当成「已征服」。这个重叠随 #102 登记保留、不另迁槽位。
  */
 const CAMPAIGN_REGIONS = {
   0: {
@@ -315,8 +312,7 @@ function pad_number(value, width) {
   return pad_left(String(value), width);
 }
 
-// @KYOTEN_EVENT 的星号横幅（INVASION_EVENT.ERB:16-22 等十处，逐字抄自原作，
-// 含全角空格的手工对齐）
+// @KYOTEN_EVENT 的星号横幅（含全角空格的手工对齐）
 const BANNER_STAR =
   '*******************************************************************************************';
 const BANNER_BLANK =
@@ -395,10 +391,10 @@ function kyoten_next_stage(progress, stage) {
  * arg == 2/3/4（精灵/龙/天界）三臂只有判定骨架：推进赋值整体被注释，状态字
  * 恒 0，首档条件每次调用都成立——旧实现保留了骨架形态，档内只剩一行星号
  * 反复弹出（设计意图是「事件开始、只一次」）。#652 起三臂不再输出任何
- * 内容、也不恢复推进：状态字维持原样（只有读点），出兵结算的侵攻度照算。
+ * 内容、也不恢复推进：状态字维持原样，出兵结算的侵攻度照算。
  * 三臂随地区续接（#505）可达：出兵结算尾的 AREA 可取 86/88/90，侵攻度有
- * 写入路径，空转与否的判据仍走 kyoten_next_stage。汉化把 FLAG:94 另挪他用
- * （人数上限阶梯），CHALLENGE 实际用的是 EX_FLAG:95 位域。
+ * 写入路径。三臂的状态字（FLAG:94/95/96）没有写点：94 号被挪作「人数上限
+ * 阶梯」的判据，CHALLENGE 用的是 EX_FLAG:95 位域。
  *
  * @param {number} arg 地区编号：1=人间界、2=精灵、3=龙、4=天界（0 与 5 及以上空转）
  * @returns {Promise<0>} 恒 RETURN 0
@@ -706,8 +702,8 @@ async function seiei_battle(area, state, rand) {
     era.drawLine();
 
     // 魔王軍の先制攻撃（会心一击 1/5，倍率 ×4；否则 ×2）。
-    // **两处的档位除数不同**：守卫（:361）是 `SINKOU/2048+1`、伤害式
-    // （:366/:377）是 `SINKOU/1024+1`——原作的不对称，1:1 保留。
+    // **两处的档位除数不同**：守卫是 `SINKOU/2048+1`、伤害式
+    // 是 `SINKOU/1024+1`——不对称的既有行为，有意不统一。
     const strike =
       chara(yusya).dungeon.攻击力 * (Math.trunc(sinkou / 1024) + 1);
     const guard_line =
@@ -1235,10 +1231,9 @@ async function invasion_event_fort(
 }
 
 /**
- * FORT [2]/[3] 路线的输入（$INPUT_LOOP / $INPUT_LOOP2）：只认给定选项号，
- * 其余重问（CLEARLINE 不镜像，见文件头）。选项已渲染成按钮，引擎白名单
- * 先一步挡下未渲染的值，故重问支在真引擎里不可达（与 page-intercept 的
- * 等级门同款处置，1:1 保留）。
+ * FORT [2]/[3] 路线的输入：只认给定选项号，其余重问（整屏重绘，见文件
+ * 头）。选项已渲染成按钮，引擎白名单先一步挡下未渲染的值，故重问支在
+ * 真引擎里不可达（与 page-intercept 的等级门同款处置，结构保留作防御）。
  * @param {number[]} allowed 合法选项号
  * @returns {Promise<number>} 选中的选项号
  */
@@ -1724,7 +1719,7 @@ function printdata(rand, blocks) {
   return blocks[rand(blocks.length)];
 }
 
-/** @MEDAL_BONUS 的十一档补正（:1032-1064 的降序 IF 链：命中即返，不再往下判） */
+/** @MEDAL_BONUS 的十一档补正（降序 IF 链：命中即返，不再往下判） */
 const MEDAL_TIERS = [
   { over: 500, bonus: 160 },
   { over: 250, bonus: 150 },
@@ -1740,16 +1735,14 @@ const MEDAL_TIERS = [
 ];
 
 /**
- * @MEDAL_BONUS（INVASION.ERB:1026-1067）：勋章补正（EXP:ARG:81 分档）。
+ * @MEDAL_BONUS：勋章补正（EXP:ARG:81 分档）。
  *
  * 十一档降序判定，命中即打印 `%CALLNAME:ARG%` +「的勋章补正」+ 一个全角
- * 空格 + `x1.xx`（U+3000，照抄原作 :1033 的对齐）并等键（PRINTFORMW），
- * 返回 100-160 的百分比。未达首档（≤5 枚）返回 100 且不打任何输出
- * （:1030 的 LOCAL 初值）。
+ * 空格 + `x1.xx`（U+3000 对齐）并等键，返回 100-160 的百分比。未达首档
+ * （≤5 枚）返回 100 且不打任何输出。
  *
- * 原作实参 ARG 是角色号：窄路径恒 0（魔王，:593 CALL MEDAL_BONUS,0）；
- * [3] 路线的 :559 已随 #503 接真（传勇者号），[2] 路线的 :439
- * （CALL MEDAL_BONUS,YUSYA_I）随后续出兵票接。
+ * 实参 cid 是角色 ID：缺省调用传 0（魔王）；[3] 路线传勇者号（#503 接
+ * 真），[2] 路线传领军勇者。
  *
  * @param {number} [cid] 角色 ID（EXP 与 CALLNAME 的下标）
  * @returns {Promise<number>} 补正百分比（100-160）
@@ -1814,40 +1807,37 @@ function sengen_video_bonus(result, mode = 0, rand = default_rand) {
 }
 
 /**
- * @SENGEN_VIDEO（INVASION.ERB:1070-1233）：水晶球投放菜单（post_conquest_menu
- * 的 [1000]，:90-92 CALL SENGEN_VIDEO 后 RETURN 0）。
+ * @SENGEN_VIDEO：水晶球投放菜单（post_conquest_menu 的 [1000]，进入后
+ * RETURN 0）。
  *
- * 四档操作：投放（:1096-1119）、雇奸商代理投放（:1120-1163，付 5000G/枚 或
- * 1 枚勋章）、花钱增强流行效果（:1164-1198）、花钱延长流行时间
- * （:1199-1229）；[999] 退出（:1230-1233，含落尾的隐式 RETURN 0）。
+ * 四档操作：投放、雇奸商代理投放（付 5000G/枚 或 1 枚勋章）、花钱增强
+ * 流行效果、花钱延长流行时间；[999] 退出。
  *
- * 循环形态沿用文件头的既有取舍：GOTO INPUT_LOOP 重画整屏（ere 追加式）、
- * GOTO $INPUT_LOOP_TMP<n> 只重问不重画；`PRINTL [n] …` 改 printButton
- * （引擎自动拼 `[n] `，正文不得自带前缀，PR #30）；`{值,N}` 走 pad_number。
+ * 循环形态沿用文件头的既有取舍：回主菜单重画整屏、子画面只重问不重画；
+ * 选项 `PRINTL [n] …` 改 printButton（引擎自动拼 `[n] `，正文不得自带前缀，
+ * PR #30）；`{值,N}` 走 pad_number。
  *
- * 两处原作行为 1:1 保留并在此登记：
- *   - 犒赏段（:1143-1157）的两条按钮渲染条件（`(M*5000) < MONEY`、
- *     `M < EXP:0:81`）与接受条件同式，但支付发生在**加成之后**、判据用的是
- *     `M`（= 投入数）：`M*5000 == MONEY` 或 `M == 勋章数` 时按钮不渲染，
- *     而 ere 的引擎白名单会拒收未渲染的 [1]/[2]，玩家只能重问——原作靠
- *     `GOTO $INPUT_LOOP_TMP2` 空转；
- *   - :1189-1196 的效果增强与 :1218-1227 的时长延长在随机段之后各有一道
- *     封顶（×2 / +5）与一道保底（时长的 `(9013 - M) < 1 → M + 1`，即最小
- *     也涨 1 天）。
+ * 两处行为在此登记：
+ *   - 犒赏段的两条按钮渲染条件（`(M*5000) < MONEY`、`M < EXP:0:81`）与
+ *     接受条件同式，但支付发生在**加成之后**、判据用的是 `M`（= 投入数）：
+ *     `M*5000 == MONEY` 或 `M == 勋章数` 时按钮不渲染，而引擎白名单会拒收
+ *     未渲染的 [1]/[2]，玩家只能重问；
+ *   - 效果增强与时长延长在随机段之后各有一道封顶（×2 / +5）与一道保底
+ *     （时长的 `(9013 - M) < 1 → M + 1`，即最小也涨 1 天）。
  *
  * 三处由引擎形态带出的说明（都不是行为偏离）：
  *   - 六处数值读数走 number_input()：空输入与非数字归一到 0，见该函数的
- *     JSDoc（原作 RESULT 恒为数值，空输入在引擎层就被重问掉）；
- *   - 菜单每轮至少打印 `[999]`，所以 `STOCK == 0 && RESULT != 999`
- *     （:1094-1095）与落尾的空 ELSE（:1230-1233 的末段）在真引擎里都
- *     不可达——白名单外的手工键入送不到游戏层，两支都按原作 1:1 保留；
- *   - 顶栏的 `\t\t` 与 8/1 个前导空格照抄原作（同 page-chara-shop.js 的
- *     `\t\t` 先例）；引擎输出走 HTML 会折叠连续空白，列对齐在实机上不
- *     成立，这是全项目共有的一条表现层差异（比对工具两侧同款归一化）。
+ *     JSDoc（引擎侧空输入会被重问掉，游戏层看不到空值）；
+ *   - 菜单每轮至少打印 `[999]`，所以 `STOCK == 0 && RESULT != 999` 与落尾
+ *     的空 ELSE 在真引擎里都不可达——白名单外的手工键入送不到游戏层，两
+ *     支都按原样保留；
+ *   - 顶栏的 `\t\t` 与前导空格是既有的对齐写法（同 page-chara-shop.js 的
+ *     `\t\t` 先例）；引擎输出走 HTML 会折叠连续空白，列对齐在实机上不成
+ *     立，这是全项目共有的一条表现层差异。
  *
  * @param {(n: number) => number} [rand] 随机源（增强段的 RAND:2/5 与
  *   SENGEN_VIDEO_BONUS 的上界）
- * @returns {Promise<0>} 原作两条出口都 RETURN 0
+ * @returns {Promise<0>} 两条出口都 RETURN 0
  */
 async function sengen_video(rand = default_rand) {
   // $INPUT_LOOP :1073-1095（画在循环头：GOTO INPUT_LOOP 即重画）
@@ -2269,7 +2259,7 @@ async function post_conquest_menu(rand = default_rand) {
     10000,
   );
   // route_33 的开窗区间（501-539 与 541-559，540 是区间里的空档）。窗口
-  // 开着时 [5] 派发放行（route_33 > 500，见下方派发检查）。
+  // 开着时 [5] 可点；派发对一切 route_33 > 500 放行（含 540 空档与 ≥560），
   const route_33_open =
     (era_exflag.route_33 >= 501 && era_exflag.route_33 < 540) ||
     (era_exflag.route_33 >= 541 && era_exflag.route_33 < 560);
@@ -2590,10 +2580,9 @@ async function pick_hero(state, rejected) {
  * 结果段·怪物路线（:620-692，[0] 专用）。
  *
  * 战利品 = SINKOU × 10：已征服的土地（FLAG:SINDO != 0）是「强制征收」且先
- * 按 100000 封顶，未征服是「战利品」且**不封顶**（原作 :647-651 的 ELSE 臂
- * 没有 MIN，两臂的差别是原作现状，1:1）。已征服臂只列了 81/86/88/90
- * （:624/:630/:636/:642），**天神宫落 ELSE** ——原作漏列，见
- * MONSTER_CONQUERED_AREAS。
+ * 按 100000 封顶，未征服是「战利品」且**不封顶**（ELSE 臂没有 MIN，两臂的
+ * 差别是既有行为）。已征服臂的地区见 MONSTER_CONQUERED_AREAS——五个地区
+ * 都在列（#652 补上了原作漏列的天神宫 101）。
  *
  * :686-692 的 5% 抓捕按原作即「等键 → GET_ENEMY → 返回 0 才有犒赏行」。
  *
@@ -2613,7 +2602,7 @@ async function monster_result_section(region, inkou, rand) {
     era_flag.money += sinkou * 10;
     era_exflag.legit_money += sinkou * 10;
   } else {
-    // 未征服（含天神宫的已征服——原作漏列 101 那一臂）
+    // 未征服（五地区含天神宫都已列入已征服臂，走到这里即未征服）
     era.print(`得到了${sinkou * 10}点的战利品！`); // PRINTFORMW
     await era.waitAnyKey();
     era_flag.money += sinkou * 10;
@@ -3110,7 +3099,7 @@ async function start_campaign(rand = default_rand, region = HUMAN_WORLD) {
   await era.waitAnyKey(); // WAIT
   era_exflag.prestige = era_exflag.prestige + 2; // EX_FLAG:99 += 2
   // KYOTEN_EVENT 按 AREA 分派（81/86/88/90 → ARG 1/2/3/4）；
-  // 天神宫不在列——原作没有那一臂（kyoten_arg = null），1:1 不调用
+  // 天神宫不在列（kyoten_arg = null）——不调用
   if (region.kyoten_arg !== null) {
     await kyoten_event(region.kyoten_arg);
   }

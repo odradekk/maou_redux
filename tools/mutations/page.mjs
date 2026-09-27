@@ -3,7 +3,7 @@
 // 分配，只作引用锚点，但全表必须唯一（#295；M117 曾被两票撞号，已改正）
 // ——重号由 gate_shape 随 --verify 秒级核对。
 /** 本分片条数（门 1）：增删条目必须同步改它，理由见 tools/mutation-check.mjs 头注 */
-export const COUNT = 511; // #652 净 +5（-12 删反向/失效：M232、M564、M10853/10854/10855（use_exflag 分派删除）、M10856、M10864/10865/10866、M11490、M12200、M12202；M12201 改挂新代码形态；+17 新守卫 M13200-M13216）
+export const COUNT = 509; // #652 净 +3（-14 删反向/失效：M232、M564、M8737（chara-info-show）、M8719（chara-info-show）、M10853/10854/10855（use_exflag 分派删除）、M10856、M10861（kyoten 臂空转后实参表不可观测）、M10864/10865/10866、M11490、M12200、M12202、M12203（两条分发同源后不可观测）；M12201 改挂新代码形态；+17 新守卫 M13200-M13216）
 // 跳过、设施名表、近卫护卫判据、怪物行对齐）+4（返工轮 M11490-M11493：护卫名单的 X == 10 判据、
 // 编号宽度、ENEMY_EXIST2 首行空行、末尾无参 PRINTW 的空行）；#542 起 +6（M11313/M11314 page-config 的 [26]/[28] 提示、
 // M11320/M11321 page-shop 的 999 提示与存根名单、M11328 page-chara-info 的 [20]
@@ -3197,7 +3197,8 @@ export default [
     find: '    area: 86,\n    sindo: 87,',
     replace: '    area: 86,\n    sindo: 89, // 变异：SINDO 改坏',
     tests: ['page-invasion'],
-    must_mention: 'ELSE 臂不再被已征服的天神宫走到',
+    must_mention:
+      '已征服臂（强制征收 ×10，天神宫自 #652 起不再落 ELSE 战利品臂）',
   },
   {
     desc: 'M10852 侵攻度累加写到 EX_FLAG 侧（FLAG:AREA → EX_FLAG:AREA）',
@@ -3240,14 +3241,6 @@ export default [
     replace: '    ravish_area: 4,\n    kyoten_arg: 2, // 变异：凌辱地区号改坏',
     tests: ['page-invasion'],
     must_mention: '传给 @INVASION_RYOUZYOKU 的地区号',
-  },
-  {
-    desc: 'M10861 地区表的 KYOTEN 实参改坏（精灵族领域 2 → 4，:987）',
-    file: 'ere/page/page-invasion.js',
-    find: '    ravish_area: 2,\n    kyoten_arg: 2,',
-    replace: '    ravish_area: 2,\n    kyoten_arg: 4, // 变异：KYOTEN 实参改坏',
-    tests: ['page-invasion'],
-    must_mention: 'KYOTEN_EVENT 走 ARG 2 臂',
   },
   {
     desc: 'M10862 天神宫补上 KYOTEN 实参（原作 :983-994 没有 101 臂）',
@@ -4016,16 +4009,6 @@ export default [
   return 1; // 变异：恒回 1`,
     tests: ['page-chara-info'],
     must_mention: '「返回」回名册、[999] 退出',
-  },
-  {
-    desc: 'M12203 名册两支分发都走包装入口（直调内层那条路的 1 也被吞，1300 视图不再结束本回合）',
-    file: 'ere/page/page-chara-info.js',
-    find: `          ? await chara_info_individual_wrapped(result)
-          : await chara_info_individual(result, order);`,
-    replace: `          ? await chara_info_individual_wrapped(result)
-          : await chara_info_individual_wrapped(result); // 变异：两支都走包装`,
-    tests: ['page-chara-info'],
-    must_mention: '直接调内层的视图：返回 1 结束本回合',
   },
   {
     desc: 'M12204 名册删掉「内层返回 1 就结束本回合」的上浮（任何视图都不结束）',

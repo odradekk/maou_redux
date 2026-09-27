@@ -30,8 +30,8 @@
  *     「故事名: 99」——登记进名字表的下标会被 addCharacter 的
  *     initCharaTable 预置 0，行为随之改变（简报事实 3 / #136）；门面命名
  *     是代码层动作（tools/facade-names.js），不碰 yml）；
- *   - SAVESTR:TARGET（@SAVEINFO 的调教对象名）→ callname:${target}
- *     （#5 决议：SAVESTR 的名字承载归内置 callname）；
+ *   - SAVESTR:TARGET（@SAVEINFO 的调教对象名）→ chara_callname(target)
+ *     （读 callname:<角色号>:-1；#5 决议：SAVESTR 的名字承载归内置 callname）；
  *   - GETTIMES() → get_times()（`YYYY/MM/DD HH:MM:SS`，技能
  *     in-expression-functions.md）；
  *   - SAVEDATA_TEXT + PUTFORM → 局部字符串拼接（Emuera 的存档备注暂存
@@ -69,8 +69,8 @@
  *   - PRINTBUTTON（现名, CSTR:MASTER:99）（点击把现名预填进输入框）→ 纯
  *     文本 `（现名）` 提示：ere 引擎无「按钮点击预填输入框」能力。
  *   - **故事命名的空输入（:200 `INPUTS`）按 #567 的裁定处理**：0 视为空输入、
- *     走 :207-209 的消名支；提示行**不补**输入 0 的说明——原作文案
- *     「请输入一个名称故事：」不含「不输入」字样，1:1 保留。判断依据见
+ *     走消名支；提示行**不补**输入 0 的说明——提示语本身不含「不输入」字样
+ *     （既有文案）。判断依据见
  *     ere/utils/input-text.js。**#151 的旧结论（消名分支真机双重不可达，
  *     登记为引擎换代失效）随本票作废**：0 就是「不输入」在引擎上的归一形态，
  *     按 #567 的「有原作空输入分支的一律 B」裁定恢复可达。
@@ -104,6 +104,7 @@ const era_flag = require('#/era-utils/era-flag');
 const era_exflag = require('#/era-utils/era-exflag');
 const { input_text } = require('#/utils/input-text');
 const { NBSP, pad_display, pad_left } = require('#/utils/display-width'); // #577：对齐补位 NBSP 化
+const { chara_callname } = require('#/utils/callname-utils');
 
 /**
  * 分页步长：原作 SAVENOS()（「表示するセーブデータ数」配置）的默认值 20。
@@ -239,8 +240,9 @@ function build_save_info() {
   // TARGET >= 1 → ` 正在调教:%SAVESTR:TARGET,14,LEFT% `（首尾各一
   // 半角空格）；ELSE → %"",24%（24 个空格）
   if (era_flag.target >= 1) {
-    // SAVESTR:TARGET → callname（#5 决议，见文件头映射表）
-    const target_name = String(era.get(`callname:${era_flag.target}`) ?? '');
+    // SAVESTR:TARGET → callname 的 -1 下标（#5 决议；引擎里 callname:<号> 不
+    // 带下标读到的是整个名字表对象——必须用 chara_callname 读 -1）
+    const target_name = chara_callname(era_flag.target);
     text += ` 正在调教:${pad_display(target_name, 14)} `;
   } else {
     text += NBSP.repeat(24);

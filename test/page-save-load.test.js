@@ -183,7 +183,9 @@ test('SAVEINFO：日期时段/LV/正在调教段/24 空格/故事名逐段拼接
   fixture.store.set('flag:10003', 0); // TIME = 0 → 午前
   fixture.store.set('cflag:0:9', 5); // 魔王等级
   fixture.store.set('flag:1', 3); // 前回调教目标
-  fixture.store.set('callname:3', '玛奥');
+  // 引擎把 callname 按 <角色号>:<下标> 存（-1 = 呼び名）——旧写法不带下标读
+  // callname:3 会拿到整个名字表对象，存档说明里显出 [object Object]
+  fixture.store.set('callname:3:-1', '玛奥');
   fixture.store.set('cstr:0:99', '魔王城物语');
   const { build_save_info } = load_page(fixture);
 

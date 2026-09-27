@@ -1563,7 +1563,7 @@ test('征服后菜单派发：[5] 拒收清空按钮白名单后，越界输入�
   for (const bad of [6, -1]) {
     const fixture = create_era_fixture();
     make_world(fixture, { fallen: 1 });
-    fixture.store.set('exflag:2810', 0);
+    fixture.store.set('exflag:2810', 500); // 边界：固定码 <= 500 拒收、变异码 < 500 放行
     fixture.store.set('exflag:102', 1);
     const answers = [5, bad];
     fixture.era.input = async () => {
@@ -2413,7 +2413,7 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
   fixture.store.set('maxbase:1:1', 20000);
   fixture.store.set('cflag:1:11', 100); // 攻击
   fixture.store.set('cflag:1:12', 100); // 防御
-  fixture.store.set('base:0:0', 10000); // 魔王体力（首次 _INV_DEATH_CHECK 读 ARG=0）
+  fixture.store.set('base:0:0', 10000); // 魔王体力（本用例不走旧无实参缺陷）
   fixture.store.set('base:0:1', 10000);
   seed_seiei(fixture, 18);
   seed_seiei(fixture, 19);
@@ -2488,6 +2488,41 @@ test('@INVASION_EVENT_SEIEI 战斗体：防御型 18 与血量/攻防套算（:2
     progress_outs(fixture).includes(' 9000/12000'),
     '精锐气力条读的是 :1 号上限（不是体力的 :0）',
   );
+});
+
+test('@INVASION_EVENT_SEIEI 战斗体：精锐反击的伤害 ×5 与防御折半 /3*2（#652 后反击的单测覆盖）', async () => {
+  // 两回合收束的确定世界：SINKOU = 0（不加成勇者体力）→ 先制判据里守卫线 =
+  // 攻击 ×1 = 100，精锐防御 200 恒不小于它 → 两回合都走承受支（不掷会心骰）；
+  // 勇者 HP 600 → 第一回合反击 (150-100)×5 = 250、防御 100/3*2 = 66；第二回合
+  // 反击 (150-66)×5 = 420 把 HP 打穿 → 第二处退场检查判魔王军消灭、RETURN 1。
+  const fixture = create_era_fixture();
+  fixture.store.set('flag:81', 5000);
+  fixture.store.set('flag:82', 0);
+  fixture.store.set('callname:1:-1', '勇者1');
+  fixture.store.set('callname:1:-2', '勇者1');
+  fixture.store.set('base:1:0', 600);
+  fixture.store.set('maxbase:1:0', 20000);
+  fixture.store.set('base:1:1', 600);
+  fixture.store.set('maxbase:1:1', 20000);
+  fixture.store.set('cflag:1:11', 100); // 攻击
+  fixture.store.set('cflag:1:12', 100); // 防御
+  seed_seiei(fixture, 18);
+  seed_seiei(fixture, 19);
+  const state = { sinkou: 0, yusya_i: 1 };
+  const { invasion_event_seiei } = fixture.load_module('page/page-invasion');
+  const ret = await invasion_event_seiei(81, 82, 2, state, seq([2001, 0]));
+  assert.equal(ret, 1, '勇者被消灭：侵攻中止 RETURN 1');
+  const texts = history_texts(fixture);
+  assert(
+    texts.includes('精锐部队发起进攻使勇者1率领的魔王军受到了250点伤害！'),
+    '反击伤害 = (精锐攻击 150 - 勇者防御 100) × 5（M10802 的靶）',
+  );
+  assert(
+    texts.includes('精锐部队发起进攻使勇者1率领的魔王军受到了420点伤害！'),
+    '第二回合按折半后的防御 66 结算（M10803 的靶）',
+  );
+  assert.equal(fixture.store.get('cflag:1:12'), 44, '防御 66/3*2 = 44');
+  assert.equal(fixture.store.get('base:1:0'), -70, 'HP 350 - 420');
 });
 
 test('@INVASION_EVENT_SEIEI 战斗体：第一条退场检查带实参、判精锐部队（#652 改正）', async () => {

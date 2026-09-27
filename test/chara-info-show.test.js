@@ -1226,7 +1226,7 @@ test('SHOW_APPEARACE：阴毛七档 + 白虎（TALENT:125）优先级', () => {
   );
 });
 
-test('SHOW_APPEARACE：TALENT:310 为 0 时行不收（原作自身的显示缺陷，1:1）', () => {
+test('SHOW_APPEARACE：TALENT:310 为 0 时行不收（无 ELSE 兜底的旧版显示缺陷，出口收行是 ere 侧的等价承载）', () => {
   const { fixture, show_appearance } = appearance_fixture({
     cflags: { 40: 0, 1: 1 },
   });
