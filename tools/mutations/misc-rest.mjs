@@ -13,7 +13,7 @@ const tatoo = 'TATOO：只收集 10..19 的非空刺青';
 const draw = 'DRAW_EXT_COMM：两种彩条保留填充宽度';
 const menu_button = 'MENU_BUTTON：前缀、快捷键与明暗参数原样交给引擎';
 const colorbar_boundary = 'PRINT_COLORBAR：超上限、零值与零上限仍保持定宽输出';
-const ikai = 'IKAI_BONUS：异界综合征只生成原作临时倍率';
+const ikai = 'IKAI_BONUS：异界综合征只生成临时倍率';
 const release = 'NTR_VIDEO：脱离分支恢复侵攻状态';
 const virgin = 'NTR_PLAY：处女分支按随机顺序进入肛交或破处';
 const plays = 'NTR_PLAY：兽交与四种常规影像保留各自副作用';
@@ -26,7 +26,7 @@ const sensation_table = 'NTR_VIDEO：感觉出价十档基表与高等级增长'
 const sensation_rules = 'NTR_VIDEO：感觉出价的封锁计数、分档与三种折扣';
 const sensation_limits = 'NTR_VIDEO：感觉戒备倍率、下限与珠经验双门槛';
 const ntr_routes = 'NTR_PLAY：特别服装和私处封印';
-const transport = 'MAOUNET：INPORT_B 按原作字段格式写入通信记录';
+const transport = 'MAOUNET：INPORT_B 按字段格式写入通信记录';
 const menu = 'MAOUNET：菜单可切换通信勇者等级规则并清空公共记录';
 const hooks = 'MAOUNET：据点 888 接入真身';
 const chara_boundary = 'ADDCHARA_EX：16 被守卫拦截，17 从精确下界进入分发';
@@ -209,7 +209,7 @@ export default [
 
   make(
     7239,
-    'NTR 状态守卫反向',
+    'NTR 状态检查反向',
     'ere/system/ntr.js',
     'if (current.invasion.状态 !== 9) return 0;',
     'if (current.invasion.状态 === 9) return 0;',
@@ -1184,7 +1184,7 @@ export default [
   // test/misc-rest.test.js 的「100 号角色能被选中、取消照常可用」用例盯住
   // （test_name 让快路直指它；M11987 更是只有它能发现——既有用例不碰 100 号）。
   {
-    desc: 'M11980 导出菜单的取消键退回原作的 100（与预设 100 的候选行撞号复现）',
+    desc: 'M11980 导出菜单的取消键退回原来的 100（与预设 100 的候选行撞号复现）',
     file: 'ere/system/cross-save-sharing.js',
     find: 'const EXPORT_CANCEL = 999;',
     replace: 'const EXPORT_CANCEL = 100;',

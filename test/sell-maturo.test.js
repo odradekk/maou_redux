@@ -598,7 +598,7 @@ test('SELL_MATURO_K0：状态优先级为反抗刻印、爱慕、淫乱、常态
   assert.equal(lewd.ending, '扩张奴隶温妮');
 });
 
-test('SELL_MATURO_K0：八种职业编号与爱慕十万档的原作例外逐项分流', async () => {
+test('SELL_MATURO_K0：八种职业编号与爱慕十万档的例外逐项分流', async () => {
   const expected = new Map([
     [200, '魔王军将军'],
     [201, '魔界土豪'],

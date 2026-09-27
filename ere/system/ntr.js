@@ -17,8 +17,8 @@ function default_rand(n) {
 
 const times = (value, rate) => Math.trunc(value * rate);
 
-// @DECIDE_ABLUP2/3 在同一算法中以这组序号切换私处/肛门语义。
-// 序号来自 target/ERB/ABL/DECIDE_ABLUP*.ERB；保持为单张语义表，
+// decide_ablup2/3（ere/system/train/ablup.js）在同一算法中以这组序号切换
+// 私处/肛门语义；此处保持为单张语义表，
 // 避免下方各具名访问器在两分支间错配。
 const SENSATION_KIND = Object.freeze({
   vaginal: {
@@ -330,7 +330,7 @@ async function ntr_play(cid, rand = default_rand) {
       }
       if (game.system.狂王性别 === 1) {
         era.print(`${era.get('expname:40') ?? ''}+5`);
-        current.dungeon.私处经验 += 5; // 原作无条件再加一次 EXP:0
+        current.dungeon.私处经验 += 5; // 不论性别再加一次 EXP:0（私处经验）
         current.train.百合经验 += 5;
         era.print(`${era.get('palamname:1') ?? ''}点数＋1000`);
         era.add(`juel:${cid}:1`, 1000); // JUEL:1 = 快感珠
@@ -438,7 +438,7 @@ async function ntr_video(cid, rand = default_rand) {
   if (rand(6) === 0 && current.chara.妊娠 === 0 && cid > 0) {
     era.print(`狂王命令${name_of(cid)}去封印魔王，`);
     await era.printAndWait(`${name_of(cid)}往地下城出发了。`);
-    current.invasion.状态 = 2; // 原作前后重复写同一值
+    current.invasion.状态 = 2; // 与下文重复写同一值
     current.dungeon.侵攻阶层 = 1;
     current.event.侵攻度 = 0;
     current.invasion.状态 = 2;
@@ -474,7 +474,7 @@ async function ntr_video(cid, rand = default_rand) {
   return 0;
 }
 
-/** @NTR_CHILD_BIRTH（NTR.ERB:360-394）：狂王侧的出产影像。 */
+/** ntr_child_birth：狂王侧的出产影像。 */
 async function ntr_child_birth(rand = default_rand) {
   const target = era_flag.target;
   const current = chara(target);

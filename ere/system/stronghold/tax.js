@@ -1,26 +1,25 @@
 /**
- * @file 税収：@TAX_GET。
+ * @file 税収：tax_get。
  *
- * 结算结构（四段，全部累加进 TAX:0；TAX 是原作 #DIM TAX,4 的局部数组，
- * 这里落四个局部量）：威望档位的「魔界支援」（:31-68）→ 土地税 TAX:1
- * （:82）→ 肉便器税 TAX:2（:163）→ 魔王特別税 TAX:3（:205）。末段按黑方片
- * 加成后一并入账 MONEY 与 EX_FLAG:4444（:228-229）。
+ * 结算结构（四段，全部累加进 TAX:0；TAX:N 是四格税额数组的下标——
+ * 合计/土地税/肉便器税/魔王特别税，本文件用四个局部量承接）：威望档位的
+ * 「魔界支援」→ 土地税 TAX:1 → 肉便器税 TAX:2 → 魔王特別税 TAX:3。末段按
+ * 黑方片加成后一并入账 MONEY 与 EX_FLAG:4444。
  *
- * **整数除法**：原作全用 `int / int`（Emuera 截断），本文件逐处 Math.trunc
- * （销售侧 multiply_percent 的同款——ere/system/stronghold/sale.js:113）；
- * 挪成 `/` 的浮点结果会在「单价 × 天数 × 威望 / 100」一类算式上漂移。
+ * **整数除法**：算式一律整数截断，本文件逐处 Math.trunc（销售侧
+ * multiply_percent 的同款，见 ere/system/stronghold/sale.js）；改成 `/` 的
+ * 浮点结果会在「单价 × 天数 × 威望 / 100」一类算式上出偏差。
  *
- * **FLAG:9 的语义**：魔王特別税按 `(FLAG:9 + 100)%` 加成，收完即清零
- * （:205-213）。#395 的「休息」分支写同一个变量（`+5`，税率百分比的累加，
- * 不是税额），两边语义一致：这里是消费点，那里是积累点。属主是 stronghold
- * （ownership/flag-ownership.yml:36），域内写走 game.stronghold.税金修正
+ * **FLAG:9 的语义**：魔王特別税按 `(FLAG:9 + 100)%` 加成，收完即清零。
+ * #395 的「休息」分支写同一个变量（`+5`，税率百分比的累加，不是税额），
+ * 两边语义一致：这里是消费点，那里是积累点。属主是 stronghold
+ * （ownership/flag-ownership.yml），域内写走 game.stronghold.税金修正
  * ——#395 的调用点即此门面，本文件沿用。
  *
  * 有意不镜像的两处（引擎能力缺席，非漏移植）：
- *   - `DRAWLINE` 的 CUSTOMDRAWLINE 字符：原作 TAX.ERB 未设，用默认 `-`；
- *     ere 的 era.drawLine() 是虚线段，线条字符不镜像（#175 先例）。
- *   - 原作 `WAIT` / `PRINTFORMW` 一律读键：era.print + era.waitAnyKey 两步
- *     展开（PRINTFORMW = PRINTFORM + WAIT），行数与等待次数 1:1。
+ *   - 分隔线：era.drawLine() 是虚线段，线条字符不逐字镜像 `-`（#175 先例）。
+ *   - `WAIT` / `PRINTFORMW` 一律读键：era.print + era.waitAnyKey 两步
+ *     展开（PRINTFORMW = PRINTFORM + WAIT），行数与等待次数一致。
  */
 
 'use strict';
@@ -30,20 +29,19 @@ const { game } = require('#/facade/game');
 const era_exflag = require('#/era-utils/era-exflag');
 const era_flag = require('#/era-utils/era-flag');
 
-/** 税収日（:15 `DAY:2 == 10 || DAY:2 == 20 || DAY:2 == 30`） */
+/** 税収日（DAY:2 == 10 || DAY:2 == 20 || DAY:2 == 30） */
 const TAX_DAYS = [10, 20, 30];
 
 /**
- * 魔界からの支援（:41-68）：威望（EX_FLAG:99）档位表。
+ * 魔界からの支援：威望（EX_FLAG:99）档位表。
  *
- * `[上限, 单价, 封顶, 文案]`——原作的五支 IF/ELSEIF 依次是
+ * `[上限, 单价, 封顶, 文案]`——五档条件依次是
  * `<=20 && >=0`、`<=40 && >20`、`<=60 && >40`、`<=80 && >60`、
  * `<=100 && >80`，即「`> 上一档上限`」；整数域上等价于 `> 上限`（首档的
  * `>= 0` 等价于 `> -1`），故统一写成 `prev_max < p <= max` 的扫描。
- * 首档单价 0、不封顶（原作 `TAX:0 = 0` 是赋值而非加法——此处 TAX:0 此刻
- * 恒为 :21 刚清的 0，加上 0 与赋 0 等价；写成 `cap: 0` 会把单价也盖成
- * 不可观测，故照原作留无封顶）；范围外（<0 或 >100）一支都不命中，连文案
- * 都不打——照搬。
+ * 首档单价 0、不封顶——合计此刻是刚清零的 0，加上 0 与赋 0 等价；写成
+ * `cap: 0` 会把单价也盖成不可观测，故留无封顶。范围外（<0 或 >100）一支
+ * 都不命中，连文案都不打。
  */
 const PRESTIGE_BRACKETS = [
   { max: 20, rate: 0, cap: Infinity, label: '威望值是【岌岌可危】' },
@@ -54,13 +52,13 @@ const PRESTIGE_BRACKETS = [
 ];
 
 /**
- * 五块领土（:86-121）。前四块同构——「已征服 → 定值 1200 / 否则侵攻度
+ * 五块领土。前四块同构——「已征服 → 定值 1200 / 否则侵攻度
  * 大于 10 时按 `侵攻度 / 10` 收殖民地税」；第五块只有已征服一支。
  *
- * `conquered` 是已征服的判据值：第一块原作写 `IF FLAG:82`（非零即可），
- * 二至四块写 `== 2`，故前者用 `null` 表示「非零」，其余写死数值。
- * 侵攻度的阈值 10 与除数 10 见 :89-91（同一常量在四块里各写一遍，原作
- * 即如此，不抽公共常量——它们是可以各自被改动的字面量）。
+ * `conquered` 是已征服的判断条件：第一块按「非零」判定（FLAG:82），
+ * 二至四块按 `== 2` 判定，故前者用 `null` 表示「非零」，其余写死数值。
+ * 侵攻度的阈值 10 与除数 10 在四块里各写一遍，不抽公共常量——它们是
+ * 可以各自被改动的字面量。
  */
 const TERRITORIES = [
   {
@@ -106,9 +104,9 @@ const TERRITORIES = [
 ];
 
 /**
- * 地下城税六档（:127-145）：`[等级上限（不含）, 等级单价, 基数]`。
- * 首档原作没有下界（`IF CFLAG:0:9 < 20`），负等级照落首档——不补钳制。
- * 末档是原作的 ELSE（本文件用 Infinity 承接）。
+ * 地下城税六档：`[等级上限（不含）, 等级单价, 基数]`。
+ * 首档没有下界（`CFLAG:0:9 < 20`），负等级照落首档——不补钳制。
+ * 末档承接其余全部等级（本文件用 Infinity 表示无上限）。
  */
 const DUNGEON_TAX_BRACKETS = [
   [20, 50, 100],
@@ -120,10 +118,10 @@ const DUNGEON_TAX_BRACKETS = [
 ];
 
 /**
- * @TAX_GET（:8-230）：税収结算。非税日（:15-19，DAY:2 不是 10/20/30）在
+ * tax_get：税収结算。非税日（DAY:2 不是 10/20/30）在
  * **任何输出之前** `RETURN 0`，一行不打。
  *
- * @returns {Promise<number>} 原作两条出口都 RETURN 0
+ * @returns {Promise<number>} 0（两条出口同值，调用方不读）
  */
 async function tax_get() {
   const date = era_flag.date; // DAY:2 = 日
@@ -238,8 +236,7 @@ async function tax_get() {
 
   // `FOR LOCAL,1,10` + `SIF FLAG:(LOCAL + 349) == 507`：
   // 娼馆街（FLAG:350-358，九个下标、步长 1）每有一处就整体乘 1.1。
-  // TIMES 是「整数 × 小数后截断」（Emuera 命令，emuera 技能
-  // math-etc.md:209-227），命中多次即逐个复合。
+  // TIMES 是「整数 × 小数后截断」的指令，命中多次即逐个复合。
   for (let index = 1; index < 10; index += 1) {
     if ((era.get(`flag:${index + 349}`) || 0) === 507) {
       toilet_tax = Math.trunc(toilet_tax * 1.1);
@@ -283,7 +280,7 @@ async function tax_get() {
   era_flag.money += total; // MONEY += TAX:0
   era_exflag.legit_money += total; // EX_FLAG:4444 += TAX:0
 
-  return 0; // 原作尾的 RETURN 0（两句出口同值，见上方 :8-230 的收尾）
+  return 0; // RETURN 0（两条出口同值）
 }
 
 module.exports = { tax_get };

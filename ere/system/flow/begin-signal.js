@@ -1,14 +1,14 @@
 /**
- * @file BEGIN 转场信号与游戏状态枚举（决议 #6，落地于 issue #20）。
+ * @file BEGIN 转场信号与游戏状态枚举（决议 #6，实现于 issue #20）。
  *
- * 源: Emuera 的 BEGIN 指令。真实语义（emuera.log 与 Emuera 1.824 源码双重
+ * BEGIN 指令的真实语义（实测日志与引擎源码双重
  * 确认，见 #6 决议——它推翻了 #3 第 6 节「BEGIN 中止事件链」的旧结论）：
  *   1. 结束当前函数，绝不执行 BEGIN 下方的语句；
  *   2. 只**暂存**目标，事件链继续按 #PRI → 普通 → #LATER 跑完剩余处理器；
  *   3. 期间再有 BEGIN 则覆盖暂存值，**最后一个胜出**；
  *   4. 整条链跑完、调用栈退出后才提交跳转。
- * 若按 #3 旧理解把 BEGIN 当「异常展开到顶层」，SYSTEM ver1.0.3.ERB:234 起
- * 的 500 余行回合结算会被静默跳过——那种能跑起来、玩到中期才发现数值不对
+ * 若按 #3 旧理解把 BEGIN 当「异常展开到顶层」，本作 500 余行的回合结算
+ * 会被静默跳过——那种能跑起来、玩到中期才发现数值不对
  * 的 bug（#6 的原始动机）。
  *
  * 【硬约束（来源于 #6）】业务代码里任何 try/catch 的首行必须是：
@@ -22,43 +22,43 @@
 /**
  * 游戏状态枚举：BEGIN 的合法目标。
  *
- * 取值 = 原作的关键字。原作全库只有 5 种目标（issue #20 核实，括号为出现
+ * 取值 = BEGIN 的关键字。全库只有 5 种目标（issue #20 核实，括号为出现
  * 处数）：TURNEND(8) / SHOP(6) / AFTERTRAIN(6) / FIRST(2) / TRAIN(1)。
- * 其余目标（TITLE 除外，见下）原作不用，不列。
+ * 其余目标（TITLE 除外，见下）不用，不列。
  */
 const STATE = Object.freeze({
   /**
-   * 标题画面。ere 侧本地扩展，非原作 BEGIN 目标：原作由引擎启动直接进
-   * @SYSTEM_TITLE，没有 BEGIN TITLE；ere 侧主循环以状态统一承载入口。
+   * 标题画面。ere 侧本地扩展，非 BEGIN 目标：启动直接进标题页，
+   * 没有 BEGIN TITLE；ere 侧主循环以状态统一承载入口。
    */
   TITLE: 'TITLE',
-  /** 新游戏初始化（原作 2 处；TITLE ver1.0.8.ERB:103 → SYSTEM ver1.0.3.ERB:1 @EVENTFIRST） */
+  /** 新游戏初始化（进入 EVENTFIRST 事件链，全库 2 处 BEGIN FIRST） */
   FIRST: 'FIRST',
-  /** 商店主循环（原作 6 处 BEGIN SHOP） */
+  /** 商店主循环（全库 6 处 BEGIN SHOP） */
   SHOP: 'SHOP',
   /**
-   * 读档后的商店主循环。ere 侧本地扩展（#137），非原作 BEGIN 目标：原作由
-   * LOADDATA 的引擎转场承载（SYSTEM_DATA.ERB:71 的注释「実行後、@EVENTLOAD
-   * へ遷移」——LOADDATA 与 BEGIN 并列，技能 system-flow.md:26）。与 SHOP 的
-   * 唯一差别：**读档后不执行 @EVENTSHOP**（同文件 51-53 行「时机：读档后、
-   * BEGIN SHOP 执行后」「读档后不执行 @EVENTSHOP」）——原作引擎内建地区分
-   * 「LOADDATA 隐式进入」与「显式 BEGIN SHOP」，ere 侧没有引擎替我们记来源，
-   * 以独立状态显式承载。处理器见 main-loop.js（同 run_shop，跳过
-   * EVENTSHOP 链）。
+   * 读档后的商店主循环。ere 侧本地扩展（#137），非 BEGIN 目标：引擎的
+   * LOADDATA 自带转场（读档后进 EVENTLOAD 事件链——LOADDATA 与 BEGIN 并列，
+   * 技能 system-flow.md）。与 SHOP 的
+   * 唯一差别：**读档后不执行 EVENTSHOP 链**（system-flow.md 的
+   * 「时机：读档后、BEGIN SHOP 执行后」「读档后不执行 EVENTSHOP」）——
+   * 引擎内建地区分「LOADDATA 隐式进入」与「显式 BEGIN SHOP」，ere 侧没有
+   * 引擎替我们记来源，以独立状态显式承载。处理器见 main-loop.js（同
+   * run_shop，跳过 EVENTSHOP 链）。
    */
   SHOP_AFTER_LOAD: 'SHOP_AFTER_LOAD',
-  /** 调教（原作 1 处：SHOP ver1.0.2.ERB:99） */
+  /** 调教（全库 1 处 BEGIN TRAIN） */
   TRAIN: 'TRAIN',
-  /** 调教后结算（原作 6 处） */
+  /** 调教后结算（全库 6 处 BEGIN AFTERTRAIN） */
   AFTERTRAIN: 'AFTERTRAIN',
-  /** 回合结算（原作 8 处） */
+  /** 回合结算（全库 8 处 BEGIN TURNEND） */
   TURNEND: 'TURNEND',
 });
 
 /**
  * BEGIN 的 JS 等价物：携带目标状态的异常信号。
- * 用异常实现「从任意嵌套深度结束当前函数」（原作 BEGIN 可出现在 IF 块
- * 中段，如 TRAIN_MAIN.ERB:283）。
+ * 用异常实现「从任意嵌套深度结束当前函数」（BEGIN 可出现在 IF 块
+ * 中段的任意位置）。
  */
 class BeginSignal extends Error {
   /**

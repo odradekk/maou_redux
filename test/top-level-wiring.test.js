@@ -1,12 +1,12 @@
 /**
- * 跨模块顶层 require 守卫（issue #288）：ere 全树 里对「装载责任属于
+ * 跨模块顶层 require 检查（issue #288）：ere 全树 里对「装载责任属于
  * 主启动图」的族模块的**顶层** require（模块作用域）即红。
  *
- * == 守什么 ==
+ * == 检查什么 ==
  *
  * `ere/system/train/com-*.js` 与 `ere/kojo/kojo-*.js` 靠副作用注册进
  * COM / KOJO 分发族，注册与否全看有没有人 require 它（#274/#282 两把
- * 接线锁的前提）。主启动图（ere/system/flow/main-loop.js）显式 require
+ * 接入锁的前提）。主启动图（ere/system/flow/main-loop.js）显式 require
  * 这些族模块，是「这些族在游戏运行时确实被注册」的唯一保证。
  *
  * 漏洞：某文件若在**模块顶层** `require('#/system/train/com-hardcore')`，
@@ -14,18 +14,18 @@
  * 装上，COM80-90 照常注册。三处同时失明：
  *
  *   - #226 的 M1249（「主启动图删重度调教系注册」）改坏了却没有测试红；
- *   - #274 的 com-family-wiring：判据是「只加载 main-loop 后族里实际有的
+ *   - #274 的 com-family-wiring：判断条件是「只加载 main-loop 后族里实际有的
  *     号 == 源码扫出的号」，间接装上后号照样齐；
  *   - #282 的 kojo-family-wiring：同理。
  *
  * 这不是假想：#233（K2）与 #234（K3）两次都是全量变异抓到 `kojo-*.js`
  * 顶层 require `com-hardcore`，在 #233 已定先例之后重犯。#228 的
- * com-cloth 漏接线（玩家脱不了衣服而全绿）就是同形态藏住的。后面十五张
- * 口上票都要从 com-* 取工具函数，这个形态还会再来。
+ * com-cloth 漏接入（玩家脱不了衣服而全绿）就是同种写法藏住的。后面十五张
+ * 口上票都要从 com-* 取工具函数，这种写法还会再来。
  *
  * == 保护集合：不是黑名单，是「主启动图的装载责任」 ==
  *
- * 判据**不**写成「禁止 kojo 顶层 require com-*」——那太粗，正当的顶层
+ * 判断条件**不**写成「禁止 kojo 顶层 require com-*」——那太粗，正当的顶层
  * 依赖（`#/kojo/kojo-text`、`#/facade/*`、`#/utils/*`，乃至底座
  * `#/kojo/kojo-system` / `#/system/event/registry` / `#/system/flow/begin-signal`
  * ——它们被几十个文件正当顶层 require）不该被拦。
@@ -40,37 +40,37 @@
  *      #282 同款扫描器，已覆盖字面量 / for-of / Object.entries 三种写法，
  *      解析不了就抛）。底座（kojo-system、event/registry、begin-signal、
  *      com-family、train-loop 等无 register 的模块）不进保护集合——它们
- *      被别处顶层 require 是正当的，不削弱接线锁。
+ *      被别处顶层 require 是正当的，不削弱接入锁。
  *
  * 保护集合当前 17 个：12 个 com-* 指令族 + 5 个 kojo-* 口上。新族模块
- * 落地 main-loop 即自动纳入；新口上文件若顶层 require 任一保护模块，
+ * 并入 main-loop 清单即自动纳入；新口上文件若顶层 require 任一保护模块，
  * 锁当场红并点名「哪个文件顶层 require 了哪个族模块」。
  *
- * == 顶层 vs 函数体（本票核心难点） ==
+ * == 顶层 vs 函数体（这张工单的核心难点） ==
  *
  * require 在**模块作用域**（文件顶层、或顶层的 `const {…} = require(...)`）
- * 才拦；在函数体、方法体、回调里的不拦——延迟 require 是正解，守卫必须
+ * 才拦；在函数体、方法体、回调里的不拦——延迟 require 是正解，检查必须
  * 让它们保持绿。扫描器跟踪函数体区间（function / 箭头 / 方法定义引入的
  * 花括号做括号平衡），require 落在任一函数体区间内 = 不拦。
  *
- * 现存四处正确形态（阳性对照，防守卫把正解也拦下）：
+ * 现存四处正确写法（阳性对照，防检查把正解也拦下）：
  *
  *   - `ere/dungeon/dungeon-trap.js` 的 `dark_juel_trap`（函数内 require
  *     dungeon；#402 的 com-service 延迟 require 随公共段合流删除后换的
- *     同类形态。dungeon 不在保护集合，全树守卫本就不会拦它，这格只承担
- *     扫描器分类的回归，不承担「守卫不拦正解」的实证）；
+ *     同类写法。dungeon 不在保护集合，全树检查本就不会拦它，这格只承担
+ *     扫描器分类的回归，不承担「检查不拦正解」的实证）；
  *   - `ere/kojo/kojo-k2-timid.js` 的 `kojo_message_com_2`（函数内 require
  *     com-hardcore，#233 先例）；
  *   - `ere/kojo/kojo-k3-noble.js` 的 `kojo_message_com_3`（函数内 require
  *     com-hardcore，#234 先例）；
  *   - `ere/system/train/com-tentacle.js` 的 `com208`（函数内 require
- *     com-colosseum，原来是顶层，守卫上线即红——与 #233/#234 两次被全量
- *     变异抓到的形态完全同构，只是还没被变异抓到）。
+ *     com-colosseum，原来是顶层，检查上线即红——与 #233/#234 两次被全量
+ *     变异抓到的写法完全同构，只是还没被变异抓到）。
  *
  * 阳性对照按「文件 × target」聚合断言：该文件所有指向该 target 的 require
  * 都在函数体内（#520）。不写生产行号——行号不承载契约，只用于区分同文件
  * 同 target 的多处 require；写死后任何无关增删行都会撞红（#402/#469/#500/
- * #514 四张票记六次，计数口径见 #520）。当前四格都不存在「同 target 顶层
+ * #514 四张票记六次，计数方式见 #520）。当前四格都不存在「同 target 顶层
  * 与函数内并存」（各 target 在各自文件里的顶层出现次数为 0）；若将来出现
  * 这种情形，聚合断言会报出顶层那处，届时再议区分手段。
  *
@@ -88,7 +88,7 @@
  *
  * 本锁只扫主启动图那一张清单，不扫 replay——replay 清单里也是族模块，
  * 但对拍回放是独立世界，别处顶层 require 不影响主启动图的注册语义；
- * 回放侧漏装由 #274 的对账守。
+ * 回放侧漏装由 #274 的对账覆盖。
  */
 
 'use strict';
@@ -503,11 +503,11 @@ function protected_modules() {
 // —— 用例 ——
 
 test('扫描器：正确区分顶层与函数体内 require（现存阳性对照）', () => {
-  // 四处正确形态的延迟 require 必须判「函数体内」（不拦）。按「文件 ×
+  // 四处正确写法的延迟 require 必须判「函数体内」（不拦）。按「文件 ×
   // target」聚合断言：该文件中所有指向 target 的 require 都在函数体内，
   // 且至少存在一处（零处则阳性对照失去意义）。不写生产行号——行号不承载
   // 契约，只用于区分同文件同 target 的多处 require；写死后任何无关增删行
-  // 都会撞红（四张票记六次，计数口径见文件头，#520 解耦）。对照来源见文件头。
+  // 都会撞红（四张票记六次，计数方式见文件头，#520 解耦）。对照来源见文件头。
   const cases = [
     ['ere/dungeon/dungeon-trap.js', '#/dungeon/dungeon'],
     ['ere/kojo/kojo-k2-timid.js', '#/system/train/com-hardcore'],
@@ -573,7 +573,7 @@ test('保护集合：main-loop 清单 ∩ 族注册，底座不进表', () => {
 
 test('全树：主启动图清单里的族模块不被别处顶层 require', () => {
   // 违规时报「顶层 require：ere/xxx.js → #/system/train/com-yyy」——
-  // M2118/M2120 的 must_mention 锚（#288 原编号 M1790/M1791，#295 消重后改号）
+  // M2118/M2120 的 must_mention 定位串（#288 原编号 M1790/M1791，#295 消重后改号）
   const protected_map = protected_modules();
   const violations = [];
   for (const rel of list_js_files('ere')) {
@@ -597,7 +597,7 @@ test('扫描器：解析不了的 require 抛错（不许静默漏过）', () =>
   ]) {
     assert.throws(() => scan_requires(bad), /无法静态解析/, bad);
   }
-  // 正常形态不抛
+  // 正常写法不抛
   assert.doesNotThrow(() =>
     scan_requires("const { x } = require('#/utils/stub-line');"),
   );

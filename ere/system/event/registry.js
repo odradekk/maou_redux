@@ -1,15 +1,15 @@
 /**
- * @file 事件注册表与调度器（决议 #6，落地于 issue #20）。
+ * @file 事件注册表与调度器（决议 #6，实现于 issue #20）。
  *
- * 源: 无单一对应源——本模块是 Emuera 事件函数机制的等价物（引擎行为，非
- * 某个 ERB 函数）；机制出处与语义证据见决议 #6 的评论。
+ * 本模块是事件函数机制的等价物（引擎行为）；机制出处与语义证据见
+ * 决议 #6 的评论。
  *
- * 对应 Emuera 的事件函数机制：同一事件名可挂多个处理器（原作同名函数的多
- * 处定义），emit 时全部执行，顺序分三档，对应原作的三种标记：
+ * 同一事件名可挂多个处理器（同一事件的多处
+ * 定义），emit 时全部执行，顺序分三档：
  *     PRI（#PRI 优先档）/ NORMAL（无标记普通档）/ LATER（#LATER 延后档）
  *
  * 【有意偏离（#6 决议）】同档内的顺序取**注册的书写顺序**（即调用方 require
- * 清单里的书写顺序），而非原作的 NTFS 目录项序——后者随环境变化、不可复
+ * 清单里的书写顺序），不取文件系统的目录项序——后者随环境变化、不可复
  * 现。#PRI 组各口上只写自己的存在标志、互不干涉，本游戏风险低（#6 评估）。
  *
  * BEGIN 语义（#6 推翻 #3 后的版本，本模块是它的运行时验证）：
@@ -20,14 +20,14 @@
 
 const { BeginSignal } = require('#/system/flow/begin-signal');
 
-/** 三档优先级，对应原作 #PRI / 无标记 / #LATER（#SINGLE、#ONLY 全库零使用，不实现） */
+/** 三档优先级：#PRI / 无标记 / #LATER（#SINGLE、#ONLY 全库零使用，不实现） */
 const TIER = Object.freeze({
   PRI: 'PRI',
   NORMAL: 'NORMAL',
   LATER: 'LATER',
 });
 
-// 执行序：优先档 → 普通档 → 延后档（#6 保留原作三档的依据）
+// 执行序：优先档 → 普通档 → 延后档（#6 保留三档的依据）
 const TIER_ORDER = [TIER.PRI, TIER.NORMAL, TIER.LATER];
 
 // 注册表：event_name -> { PRI: 处理器数组, NORMAL: ..., LATER: ... }
@@ -37,7 +37,7 @@ const registry = new Map();
 
 /**
  * 注册事件处理器。
- * @param {string} event_name 事件名（沿用原作函数名，如 'EVENTFIRST'）
+ * @param {string} event_name 事件名（如 'EVENTFIRST'）
  * @param {Function} handler 异步处理器；体内可用 begin() 发起转场
  * @param {string} [tier] TIER 三档之一，默认 NORMAL
  */
@@ -60,8 +60,8 @@ function on(event_name, handler, tier = TIER.NORMAL) {
 /**
  * 调度一个事件：按 PRI → NORMAL → LATER、组内注册序跑完全部处理器。
  *
- * 处理器抛 BeginSignal 时暂存其目标状态并继续链（不中止——#6 用 emuera.log
- * 证明的原作语义）；处理器抛其他异常则原样上抛（对应 Emuera 报错停机）。
+ * 处理器抛 BeginSignal 时暂存其目标状态并继续链（不中止——#6 用实测日志
+ * 证明的引擎语义）；处理器抛其他异常则原样上抛（引擎对脚本错误报错停机）。
  *
  * @param {string} event_name 事件名
  * @param {...any} args 透传给每个处理器的参数
@@ -71,7 +71,7 @@ function on(event_name, handler, tier = TIER.NORMAL) {
 async function emit(event_name, ...args) {
   const chain = registry.get(event_name);
   if (chain === undefined) {
-    // 空链 = 原作事件零定义，静默通过
+    // 空链 = 事件零定义，静默通过
     return undefined;
   }
   let pending; // 待跳转状态：BEGIN 暂存槽，后写覆盖先写（最后一个胜出）

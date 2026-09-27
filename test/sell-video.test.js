@@ -74,7 +74,7 @@ test('VIDEO_MATURO 两入口：开关开启才入库，始终清空 TSTR:30 且�
     '关闭时不入库',
   );
   assert.equal(off.fixture.store.get('tstr:30'), '', '关闭时也清暂存');
-  assert.deepEqual(off.fixture.text_lines(), [], '原作不打印任何东西');
+  assert.deepEqual(off.fixture.text_lines(), [], '关闭时不打印任何东西');
 
   const on = seed_world();
   on.fixture.store.set('exflag:9000', 4); // GETBIT(EX_FLAG:9000, 2)
@@ -225,7 +225,7 @@ test('SELL_VIDEO：内容能力的四档倍率逐档生效，助手编码不改�
   }
 });
 
-test('SELL_VIDEO：全部录像指令的单帧基础价值与原作分支一致', async () => {
+test('SELL_VIDEO：全部录像指令的单帧基础价值逐条锁定', async () => {
   const expected_scores = [
     [0, 50],
     [1, 50],
