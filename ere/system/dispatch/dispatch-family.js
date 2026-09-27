@@ -1,9 +1,8 @@
 /**
- * @file 分族分发注册表（决议 #7，落地于 issue #21）。
+ * @file 分族分发注册表（决议 #7，实现于 issue #21）。
  *
- * 源: Emuera 的 TRYCALLFORM / TRYCALL 拼名调用机制（引擎行为，非某个 ERB
- * 函数）。原作全库 86 处（TRYCALLFORM 57 / JUMPFORM 21 / TRYCALL 3 / CALLF 3 /
- * CALLFORM 2），语义证据见决议 #7 的评论。
+ * 本模块用显式注册表实现按名字拼接调用（TRYCALLFORM / TRYCALL 一类写法，
+ * 决议 #7）；语义证据见决议 #7 的评论。
  *
  * JS 没有运行时拼函数名调用的能力，这些调用改走显式注册表。本类承载一个
  * 「族」——同一前缀的全部实现（如 CHARA_EX_ / COM_ABLE / ABLUP / 口上），
@@ -14,14 +13,15 @@
  * 设计核心：「已声明的编号空间」与「已实现的编号」分开。
  *   - 编号在空间内但未实现 → 合法缺失，返回**调用点**指定的 whenMissing；
  *   - 编号在空间外 → 拼写错误，抛错。
- * 原作的 TRYCALL 对两者同样静默跳过、无法区分——分开是移植的有意增强，
+ * TRYCALL 的语义对「空间内未实现」与「空间外拼错」同样静默跳过、无法
+ * 区分——按声明空间分开处理是移植的有意增强，
  * 也是 #7 要求的错误处理边界。
  *
- * 缺失值必须由调用点传入、不能由注册表统一规定：#7 实测原作同一族的四个
- * 调用点各不相同（ABL.ERB:255 预置 -1、CAMPAIGN_ROOM:163 预置 0、
- * COMSEQ_TRAIN:219 预置 1、COMSEQ_SHOW:131 不预置、读上一轮 RESULT 残留）。
+ * 缺失值必须由调用点传入、不能由注册表统一规定：#7 实测同一族的四个
+ * 调用点各不相同（有的预置 -1、有的预置 0、有的预置 1、有的不预置、
+ * 读上一轮 RESULT 残留）。
  * 硬编码进注册表就会在某处悄悄改变游戏行为。whenMissing 默认 0 只对应
- * TRYCALL 落空时 RESULT = 0 的缺省，调用点应按原作各自显式给值。
+ * TRYCALL 落空时 RESULT = 0 的缺省，调用点应各自显式给值。
  *
  * 【命名例外】declaredIds / whenMissing 保持 camelCase 而非仓库的 snake_case
  * 约定：接口形状由 #7 决议定死，且决议中各子系统的迁移示例（kojo /
@@ -40,7 +40,7 @@
  */
 class DispatchFamily {
   /**
-   * @param {string} name 族名（沿用原作函数前缀，如 'CHARA_EX'），用于报错定位
+   * @param {string} name 族名（对应函数前缀，如 'CHARA_EX'），用于报错定位
    * @param {Iterable<number>} declaredIds 声明的编号空间（合法编号的全集，
    *   离线生成——运行时不能扫描文件，dev-guides/18-tools.md 的依赖限制）
    */
@@ -48,16 +48,16 @@ class DispatchFamily {
     if (typeof name !== 'string' || name === '') {
       throw new TypeError('DispatchFamily 的族名必须是非空字符串');
     }
-    /** 族名（原作函数前缀） */
+    /** 族名（函数前缀） */
     this.name = name;
-    /** 声明的编号空间：编号合法性的唯一判据 */
+    /** 声明的编号空间：编号合法性的唯一判断条件 */
     this.declared = new Set(declaredIds);
     /** 已实现的编号 → 处理函数 */
     this.implemented = new Map();
   }
 
   /**
-   * 注册一个实现（对应原作一处 @定义；发生在族模块顶层）。
+   * 注册一个实现（发生在族模块顶层）。
    * @param {number} id 编号，必须在声明空间内
    * @param {Function} fn 实现，参数由 call 的 args 透传，返回值经 await 交回
    * @throws {Error} 编号在声明空间外（拼写错误）
@@ -94,7 +94,7 @@ class DispatchFamily {
    * @param {number} id 编号
    * @param {object} [options]
    * @param {any} [options.whenMissing=0] 编号在空间内但未实现时返回的值；
-   *   **由调用点按原作各自声明**（四个同族调用点缺失语义各不相同，见文件头）
+   *   **由调用点各自声明**（四个同族调用点缺失语义各不相同，见文件头）
    * @param {any[]} [options.args] 透传给实现的参数
    * @returns {Promise<any>} 实现的返回值（已 await），或 whenMissing
    * @throws {Error} 编号在声明空间外——这是拼写错误，不是缺失

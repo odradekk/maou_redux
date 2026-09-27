@@ -75,17 +75,17 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   // #176（迷宫陷阱）补 1 个：582（patch 借款）
   // #182（迷宫凌辱）补 2 个：130/131（dungeon 凌辱畏怖记忆/计数）
   // #181（2D 地下城）补 2 个：510/511（event X/Y 坐标）
-  // #179（H10 升级）补 1 个：9（chara 等级——@ST_UP 的写点跨域走门面）
-  // #177（迷宫房间）补 1 个：500（stronghold 迷宫内行动——ROOM_BUILD
-  // 清扩张指令的写方）
-  // #215（J5 服装）补 1 个：42（chara 特别服装类型——AFTERTRAIN_CLOTH 的
+  // #179（H10 升级）补 1 个：9（chara 等级——能力升级判定的写点跨域走门面）
+  // #177（迷宫房间）补 1 个：500（stronghold 迷宫内行动——迷宫房间扩张
+  // 指令的写方）
+  // #215（J5 服装）补 1 个：42（chara 特别服装类型——事后服装处理的
   // train 跨域写走门面）
-  // #216（J6 跨族共用）补 1 个：102（event 妊娠相手——COM_AFTER_ANAL_SEX
-  // 的肛交怀孕对象判定写点）
-  // #228（J18 着装脱衣）补 1 个：44（stronghold 胸罩状态——COM111 撕胸罩
-  // 的 CFLAG:44 = -3 跨域写走门面）；#221（J11）补 101/103/104（system）
+  // #216（J6 跨族共用）补 1 个：102（event 妊娠相手——肛交指令的
+  // 怀孕对象判定写点）
+  // #228（J18 着装脱衣）补 1 个：44（stronghold 胸罩状态——撕胸罩指令的
+  // CFLAG:44 = -3 跨域写走门面）；#221（J11）补 101/103/104（system）
   // 与 106/107（dungeon）的射精结算计数；#333 补 105（dungeon 客）与
-  // 108（system 狂王）；#343 补 3（train 公开自慰经验，MAGIC.ERB 的
+  // 108（system 狂王）；#343 补 3（train 公开自慰经验指令的
   // 跨域写点）。
   // #232（J22 K1）补 3 个：7（train 穿环位域）、504（stronghold 要求奖赏）、
   // 602（chara 结婚爱情）
@@ -96,20 +96,20 @@ test('口上域切片：cflag 属主 kojo 的下标恰好是命名表的 110 条
   // 处刑标签——拘束台解放跨域清位）。
   // #397（N13 据点列表与裁缝）补 5 个：43/47/48（train 内裤状态 / 特别服装
   // 状态 / 内裤穿着期间）与 49（stronghold 贞操带钥匙已丢弃）、505（dungeon
-  // 勇者击破数）——SHOP_TAILOR.ERB 与 SHOP_2.ERB 的这些写点是跨域写，
-  // domain-check 指出门面此前没有访问器，本票按 #71 裁定三补名。
+  // 勇者击破数）——裁缝与据点商店界面的这些写点是跨域写，
+  // domain-check 指出门面此前没有访问器，这张工单按 #71 结论三补名。
   // #390（N6 角色信息显示链）补 1 个：820（chara 影の寿命——献祭完成分支
   // 的 CFLAG:shadow:820 = 666666 是 page 域的跨域写）。
-  // #398（N14 秘密实验室）补 4 个：71（stronghold 处女膜已再生——SHOJO_SAISEI
-  // 的 CFLAG:T:71 += 1）、420（chara 命名检查——SUMMON_SLAVE 的召唤落位）、
-  // 454/455（chara 体重/胸围——胸围重算的 CHAR_SIZE_GENERATE 返回值回写）
-  // ——SHOP_LABO 的这三处写都是 page 域的跨域写，domain-check 要求门面具名。
+  // #398（N14 秘密实验室）补 4 个：71（stronghold 处女膜已再生——再生处理的
+  // CFLAG:T:71 += 1）、420（chara 命名检查——召唤落位）、
+  // 454/455（chara 体重/胸围——胸围重算的返回值回写）
+  // ——秘密实验室的这三处写都是 page 域的跨域写，domain-check 要求门面具名。
   // #399（N15 三个商店）补 1 个：999（stronghold 异界召唤标记——
-  // SHOP_CHARA.ERB:123-124 的成交写是 page 域的跨域写，同款补名）。
-  // #469（Q12 战役）补 1 个：520（dungeon 目标阶层——CAMPAIGN_MENU 派遣时
+  // 异界召唤成交分支的成交写是 page 域的跨域写，同款补名）。
+  // #469（Q12 战役）补 1 个：520（dungeon 目标阶层——战役派遣菜单
   // 的归零写点，page 域跨域写走门面）。
-  // #470（Q13 侵略残余）补 1 个：571（dungeon 弹药——ARCANA_BATTLE 对人
-  // 决斗开局补 15 发的写点在 invasion 域，跨域写走门面）。
+  // #470（Q13 侵略残余）补 1 个：571（dungeon 弹药——对人决斗
+  // 开局补 15 发的写点在 invasion 域，跨域写走门面）。
   const NON_KOJO_NAMED = [
     0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 31, 32, 40, 41, 42,
     43, 44, 45, 46, 47, 48, 49, 50, 61, 70, 71, 81, 82, 101, 102, 103, 104, 105,
@@ -164,15 +164,16 @@ test('二维模板带角色参数：getter/setter 走 cflag:cid:id，未初始�
     kind: 'chara',
     domain: 'kojo',
     table: 'cflag',
-    entries: [{ index: 301, name: '爱抚', source: 'EVENT_KXX :340' }],
+    entries: [{ index: 301, name: '爱抚', note: 'CFLAG:301 = 爱抚' }],
   });
   assert.ok(section.includes('class KojoFacade'));
   assert.ok(section.includes('this.cid'));
   assert.ok(section.includes('return era.get(`cflag:${this.cid}:301`) || 0;'));
   assert.ok(section.includes('era.set(`cflag:${this.cid}:301`, v);'));
   assert.ok(section.includes('爱抚'));
-  assert.ok(section.includes('CFLAG:301'));
-  assert.ok(section.includes('EVENT_KXX 行340'));
+  assert.ok(section.includes('CFLAG:301 = 爱抚'));
+  assert.ok(!section.includes('↔'), '不再写旧引擎侧寻址');
+  assert.ok(!section.includes('源:'), '不再写出处标注');
   assert.ok(!section.includes('Proxy'));
 });
 
@@ -181,7 +182,7 @@ test('一维模板：game.domain.field 形状，无角色参数', () => {
     kind: 'game',
     domain: 'kojo',
     table: 'flag',
-    entries: [{ index: 7, name: '口上开关', source: 'FLAG:7' }],
+    entries: [{ index: 7, name: '口上开关', note: 'FLAG:7' }],
   });
   assert.ok(section.includes("return era.get('flag:7') || 0;"));
   assert.ok(section.includes("era.set('flag:7', v);"));
@@ -196,7 +197,7 @@ test('字段只出现在属主域：跨域读走属主门面，不复制到读�
     kind: 'game',
     domain: 'kojo',
     table: 'flag',
-    entries: [{ index: 7, name: '口上开关', source: 'FLAG:7' }],
+    entries: [{ index: 7, name: '口上开关', note: 'FLAG:7' }],
   });
   assert.ok(!section.includes('显示模式'));
   assert.ok(!section.includes('flag:36'));
@@ -207,13 +208,13 @@ test('新文件骨架可编译、含标记、按角色 ID 缓存单例', () => {
     kind: 'chara',
     domain: 'kojo',
     table: 'cflag',
-    entries: [{ index: 301, name: '爱抚', source: 'KXX' }],
+    entries: [{ index: 301, name: '爱抚', note: 'CFLAG:301 = 爱抚' }],
   });
   const second = render_wrapper({
     kind: 'chara',
     domain: 'kojo',
     table: 'cflag',
-    entries: [{ index: 301, name: '爱抚', source: 'KXX' }],
+    entries: [{ index: 301, name: '爱抚', note: 'CFLAG:301 = 爱抚' }],
   });
   assert.equal(first, second);
   assert.ok(!first.includes('\r'));
@@ -318,30 +319,30 @@ test('尾部条目分区（named_tail，#170）：同表既有条目之后发射
   // 补名时的合并隔离手段，机制见 gen-facade.js entries_for 的稳定分区
   const expected_tails = {
     // #171 起 dungeon 尾追加 580（所持金）、chara 域新增 6/151（#170/#174
-    // 未曾给 chara 补过 cflag 尾，本票起有）；#172（H3 迷宫主循环）追加
+    // 未曾给 chara 补过 cflag 尾，这张工单起有）；#172（H3 迷宫主循环）追加
     // chara 601（结婚对象）、event 50（贞操带钥匙）、invasion 521（存档点）；
     // #176（H7 陷阱）追加 patch 582（借款——诈骗陷阱的借条债）；
-    // #181（2D 地下城）追加 event 510/511（X/Y 坐标，UNIT_MOVE 落笔）；
-    // #215（J5 服装）追加 chara 42（特别服装类型——AFTERTRAIN_CLOTH 的
+    // #181（2D 地下城）追加 event 510/511（X/Y 坐标，unit_move 落笔）；
+    // #215（J5 服装）追加 chara 42（特别服装类型——事后服装处理的
     // train 跨域写走门面）；#391 追加 chara 700（收藏——角色信息页收藏
     // 切换跨域写）、patch 777（待处刑标签——拘束台解放跨域清位）；
     // #397（N13）追加 train 43/47/48（内裤状态 / 特别服装状态 / 内裤穿着
     // 期间）、dungeon 505（勇者击破数），并首次给 stronghold 补 cflag 尾
-    // 49（贞操带钥匙已丢弃）——三处都是 SHOP_TAILOR/SHOP_2 的跨域写点；
+    // 49（贞操带钥匙已丢弃）——三处都是商店界面的跨域写点；
     // #390 追加 chara 820（影の寿命——献祭完成分支的跨域写走门面）；
-    // #398 追加 chara 420/454/455（SHOP_LABO 的召唤命名检查与胸围重算回写）
-    // #470 追加 453/456/457（身高/腰围/臀围——ARCANA_FORT 的 RESULT 回写）
+    // #398 追加 chara 420/454/455（秘密实验室的召唤命名检查与胸围重算回写）
+    // #470 追加 453/456/457（身高/腰围/臀围——占卜结算的 RESULT 回写）
     chara: [6, 42, 151, 420, 453, 454, 455, 456, 457, 601, 602, 700, 820],
     dungeon: [
       11, 12, 105, 106, 107, 112, 501, 505, 508, 571, 580, 606, 607, 608, 610,
     ],
     event: [31, 50, 110, 111, 502, 510, 511, 667],
-    // #470（Q13）追加 dungeon 571（弹药——ARCANA_BATTLE 的 invasion 跨域写）
+    // #470（Q13）追加 dungeon 571（弹药——对人决斗的 invasion 跨域写）
     invasion: [521],
     patch: [120, 582, 777],
     // stronghold 域此前不在本表（#397 顺带补上：它的 cflag 尾块一直存在，
-    // 只是没人核过——49 是本票新增）
-    // #398 追加 stronghold 71（SHOP_LABO 的处女膜已再生）
+    // 只是没人核过——49 是这张工单新增）
+    // #398 追加 stronghold 71（秘密实验室的处女膜已再生）
     stronghold: [44, 49, 70, 71, 493, 495, 496, 498, 500, 504],
     train: [
       3, 5, 7, 15, 16, 32, 40, 41, 43, 45, 46, 47, 48, 61, 81, 82, 113, 491,
@@ -501,14 +502,16 @@ test('两源合流：yml 列名进二维门面，跳过的缺口不进产物', (
   assert.ok(system_text.includes('era.get(`abl:${this.cid}:10`)'));
   assert.ok(system_text.includes('get 苦痛刻印()'));
   assert.ok(system_text.includes('era.set(`mark:${this.cid}:0`, v);'));
-  assert.ok(system_text.includes('源: yml/Mark.yml id 0'));
+  assert.ok(system_text.includes(' * 苦痛刻印（mark:cid:0）'));
+  assert.ok(!system_text.includes('yml/Mark.yml id'), 'yml 来源不写出处注释');
   // talent 的妊娠切片随 #133 文件级归属从 system 挪进 chara 域
-  //（NINSIN.ERB 改归 chara，talent 妊娠素质区段属主随之）
+  //（妊娠判定改归 chara，talent 妊娠素质区段属主随之）
   assert.ok(read('chara-chara.js').includes('get 妊娠()'));
   assert.ok(!system_text.includes('get 妊娠()'));
-  // 手补缺口：mark:4 原作无列名，出处指向 ERB
+  // 手补缺口：mark:4 yml 无列名，语义来自刻印取得检查
   assert.ok(system_text.includes('get 反抗刻印履历()'));
   assert.ok(system_text.includes('era.set(`mark:${this.cid}:4`, v);'));
+  assert.ok(system_text.includes('MARK:4'));
   // dungeon 域：exp 切片（yml 列名）
   const dungeon_text = read('chara-dungeon.js');
   assert.ok(dungeon_text.includes('get 绝顶经验()'));
@@ -547,42 +550,42 @@ test('两源合流：yml 列名进二维门面，跳过的缺口不进产物', (
         item.index === 281 &&
         item.domain === 'chara',
     ),
-    'yml 列名不是合法标识符 → 跳过（#71 裁定三同款）',
+    'yml 列名不是合法标识符 → 跳过（#71 结论三同款）',
   );
   assert.ok(!chara_text.includes('常识改变'));
   assert.ok(!chara_text.includes('村娘'), '全角字母列名同款跳过');
   assert.ok(!train_text.includes('abl:5'), '缺名下标不进产物');
 });
 
-test('两源合流：同一下标两源名字不一致即报错；一致时手写出处胜出', () => {
+test('两源合流：同一下标两源名字不一致即报错；一致时手写注释保留', () => {
   const gen = require('../tools/gen-facade');
   const names = require('../tools/facade-names');
   // 注入冲突：abl:10 的 yml 列名是「顺从」
-  names.NAMES.abl = { 10: { name: '服从', source: '测试注入' } };
+  names.NAMES.abl = { 10: { name: '服从', note: '测试注入' } };
   assert.throws(() => gen.merged_name('abl', 10), /两源名字不一致 abl:10/);
-  // 名字一致：手写（更精）出处胜出
-  names.NAMES.abl = { 10: { name: '顺从', source: '测试注入的更精出处' } };
+  // 名字一致：手写注释保留
+  names.NAMES.abl = { 10: { name: '顺从', note: '测试注入的手写注释' } };
   const merged = gen.merged_name('abl', 10);
   assert.equal(merged.name, '顺从');
-  assert.equal(merged.source, '测试注入的更精出处');
+  assert.equal(merged.note, '测试注入的手写注释');
   delete names.NAMES.abl;
-  // 纯 yml 来源：默认出处指向 yml 名字表
+  // 纯 yml 来源：无手写注释
   const yml_only = gen.merged_name('mark', 0);
   assert.equal(yml_only.name, '苦痛刻印');
-  assert.equal(yml_only.source, 'yml/Mark.yml id 0');
+  assert.equal(yml_only.note, undefined);
 });
 
 test('移植自建表门面：delta/deltabase 归 train，读写落对寻址', () => {
   const fixture = create_era_fixture();
   const { chara } = fixture.load_module('facade/chara');
-  fixture.era.beginTrain(31); // 调教域表在 beginTrain 前不可寻址（引擎守卫）
+  fixture.era.beginTrain(31); // 调教域表在 beginTrain 前不可寻址（引擎检查）
   assert.equal(chara(31).train.阴核增量, 0);
   chara(31).train.阴核增量 = 12;
   assert.equal(fixture.store.get('delta:31:0'), 12);
   assert.equal(chara(31).train.阴核增量, 12);
   chara(31).train.体力损耗 = -20;
   assert.equal(fixture.store.get('deltabase:31:0'), -20);
-  // 属主裁定的可观测面：delta 只出现在 train 域切片
+  // 属主结论的可观测面：delta 只出现在 train 域切片
   const system_text = fs.readFileSync(
     path.join(REPO_ROOT, 'ere', 'facade', 'chara-system.js'),
     'utf8',

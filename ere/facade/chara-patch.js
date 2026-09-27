@@ -14,8 +14,8 @@ class PatchFacade {
 
   // —— cflag ——
   /**
-   * 卖春积极性（cflag:cid:120 ↔ CFLAG:120）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行331 CFLAG:120 売春への積極性
+   * 卖春积极性（cflag:cid:120）
+   * CFLAG:120 売春への積極性
    * @returns {number}
    */
   get 卖春积极性() {
@@ -29,8 +29,8 @@ class PatchFacade {
   }
 
   /**
-   * 借款（cflag:cid:582 ↔ CFLAG:582）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行459 CFLAG:582 = 現在の借金（マイナス）——勇者资产闭环第三槽
+   * 借款（cflag:cid:582）
+   * CFLAG:582 = 現在の借金（マイナス）——勇者资产流程的第三槽
    * @returns {number}
    */
   get 借款() {
@@ -44,8 +44,8 @@ class PatchFacade {
   }
 
   /**
-   * 待处刑标签（cflag:cid:777 ↔ CFLAG:777）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行490 CFLAG:777 = 待處刑標籤
+   * 待处刑标签（cflag:cid:777）
+   * CFLAG:777 = 待處刑標籤
    * @returns {number}
    */
   get 待处刑标签() {
@@ -60,8 +60,7 @@ class PatchFacade {
 
   // —— talent ——
   /**
-   * 不怕脏（talent:cid:64 ↔ TALENT:64）
-   * 源: yml/Talent.yml id 64
+   * 不怕脏（talent:cid:64）
    * @returns {number}
    */
   get 不怕脏() {

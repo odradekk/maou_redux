@@ -1,11 +1,11 @@
 /**
- * @file 宝箱装备选择：@EQUIP_SELECT。
+ * @file 宝箱装备选择：equip_select。
  *
  * 勇者开宝箱换装：宝箱道具号按阶层存 FLAG:(阶层+339)；战役中
- * （CFLAG:1 == 12）改由 @CAMPAIGN_EQUIP_SELECT 决定（#469 起真身，
+ * （CFLAG:1 == 12）改由 campaign_equip_select 决定（#469 起真身，
  * DispatchFamily 声明空间 {1}，战役 1 实现在 page-campaign-1.js）。
  * 两枚装饰槽（CFLAG:551/552）里，空槽（-1）或强度低于阶层且未诅咒的，
- * 经 @REMOVE_CURSE 换新；产物是装饰（W:7 == 1）才装上。
+ * 经 remove_curse 换新；产物是装饰（W:7 == 1）才装上。
  */
 
 'use strict';
@@ -19,7 +19,7 @@ const { equip_ring_spans } = require('#/system/equip/equip-print');
 const { remove_curse } = require('#/system/equip/equip-curse');
 
 /**
- * @CAMPAIGN_EQUIP_SELECT_{FLAG:400} 族：战役迷宫的指轮宝箱（#469，
+ * campaign_equip_select 族：战役迷宫的指轮宝箱（#469，
  * 决议 #7）。键是 FLAG:400，声明空间 {1}（page-campaign.js 文件头同款
  * 依据）；实现在 ere/page/page-campaign-1.js 注册。
  */
@@ -29,9 +29,8 @@ const campaign_equip_select_family = new DispatchFamily(
 );
 
 /**
- * @CAMPAIGN_EQUIP_SELECT（CAMPAIGN_EVENT.ERB:215-223）：战役迷宫的指轮
- * 宝箱道具号。
- * @param {number} floor 阶层（原作 ARG:0，EQUIP.ERB:218 传 CFLAG:A:501）
+ * campaign_equip_select：战役迷宫的指轮宝箱道具号。
+ * @param {number} floor 阶层（调用点传 CFLAG:A:501）
  * @returns {Promise<number>} 道具号（FLAG:400 < 1 时恒 0）
  */
 async function campaign_equip_select(floor) {
@@ -51,10 +50,10 @@ function default_rand(n) {
 }
 
 /**
- * @EQUIP_SELECT（:206-271）。
- * @param {number} cid 角色（原作 A；阶层取 CFLAG:A:501）
- * @param {(n: number) => number} [rng] RAND:N 注入点（传给 @REMOVE_CURSE）
- * @returns {Promise<number>} RESULT：恒 0（原作三处出口都是 RETURN 0）
+ * equip_select。
+ * @param {number} cid 角色（阶层取 CFLAG:A:501）
+ * @param {(n: number) => number} [rng] RAND:N 注入点（传给 remove_curse）
+ * @returns {Promise<number>} RESULT：恒 0（三处出口都是 RETURN 0）
  */
 async function equip_select(cid, rng = default_rand) {
   // SIF A < 0 RETURN 0
@@ -88,10 +87,10 @@ async function equip_select(cid, rng = default_rand) {
   era.print('勇者发现了宝箱！'); // PRINTW
   await era.waitAnyKey();
 
-  // W:2（强度）/ W:5（诅咒）是原作**全局 W 数组**的残留列：@EQUIP_DATABASE
-  // 命中才写、空槽短路时不写，于是守卫读到的可能是上一次调用的旧值。ere 侧的
+  // W:2（强度）/ W:5（诅咒）是全局 W 数组的残留列：equip_database
+  // 命中才写、空槽短路时不写，于是检查读到的可能是上一次调用的旧值。ere 侧的
   // 装备记录按次新建（ere/data/equip-database.js 文件头），这里按「会话起点的
-  // W = 0」起算、并让两个槽共享同一份记录——同一调用内的残留行为与原作一致，
+  // W = 0」起算、并让两个槽共享同一份记录——第二个槽能读到第一个槽留下的值，
   // 跨调用的外部残留不建模。
   const w = { 备注: x, 强度: 0, 诅咒: 0 }; // W:8 = X
   const floor = era.get(`cflag:${cid}:501`) || 0; // CFLAG:A:501（阶层）
@@ -103,7 +102,7 @@ async function equip_select(cid, rng = default_rand) {
     const found = equip_database(w);
 
     // `W:0 == -1 || RESULT && W:2 < CFLAG:A:501 && W:5 == 0` 按
-    // Emuera 的「&& 与 || 同优先级、左结合」读作
+    // 「&& 与 || 同优先级、左结合」读作
     // `(空槽 || 有效) && 强度 < 阶层 && 未诅咒`——空槽不是无条件放行，后两项
     // 照样要过（#517）。
     if ((w.存储编号 === -1 || found) && w.强度 < floor && w.诅咒 === 0) {
@@ -111,7 +110,7 @@ async function equip_select(cid, rng = default_rand) {
       // RESULT && W:7 == 1（装饰）才装上
       if (equipped && w.部位 === 1) {
         chara(cid).event[field] = w.存储编号;
-        // PRINT 勇者把 + PRINT_EQUIPTYPE_RING + PRINTW 装备上了。
+        // 「勇者把 + 戒指名 + 装备上了。」整行一次输出，随后读键
         era.print(['勇者把', ...equip_ring_spans(w), '装备上了。']);
         await era.waitAnyKey();
         return 0;

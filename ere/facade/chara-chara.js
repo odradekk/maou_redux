@@ -14,8 +14,8 @@ class CharaFacade {
 
   // —— cflag ——
   /**
-   * 好感度（cflag:cid:2 ↔ CFLAG:2）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行261 CFLAG:2 主人による調教経験(好感度)
+   * 好感度（cflag:cid:2）
+   * CFLAG:2 主人による調教経験(好感度)
    * @returns {number}
    */
   get 好感度() {
@@ -29,8 +29,8 @@ class CharaFacade {
   }
 
   /**
-   * 等级（cflag:cid:9 ↔ CFLAG:9）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:9 レベル（LVUP.ERB の CFLAG:(ARG:0)行9）
+   * 等级（cflag:cid:9）
+   * CFLAG:9 レベル
    * @returns {number}
    */
   get 等级() {
@@ -44,8 +44,8 @@ class CharaFacade {
   }
 
   /**
-   * 基础攻击（cflag:cid:13 ↔ CFLAG:13）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:13 基礎攻撃力
+   * 基础攻击（cflag:cid:13）
+   * CFLAG:13 基礎攻撃力
    * @returns {number}
    */
   get 基础攻击() {
@@ -59,8 +59,8 @@ class CharaFacade {
   }
 
   /**
-   * 基础防御（cflag:cid:14 ↔ CFLAG:14）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:14 基礎防御力
+   * 基础防御（cflag:cid:14）
+   * CFLAG:14 基礎防御力
    * @returns {number}
    */
   get 基础防御() {
@@ -74,8 +74,8 @@ class CharaFacade {
   }
 
   /**
-   * 年龄（cflag:cid:451 ↔ CFLAG:451）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:451 年齢（人間換算，HUMAN_AGE_GENERATE の結果）
+   * 年龄（cflag:cid:451）
+   * CFLAG:451 年齢（人間換算，human_age_generate の結果）
    * @returns {number}
    */
   get 年龄() {
@@ -89,8 +89,8 @@ class CharaFacade {
   }
 
   /**
-   * 种族年龄（cflag:cid:452 ↔ CFLAG:452）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:452 種族年齢（月替わりの年齢加算はこちら）
+   * 种族年龄（cflag:cid:452）
+   * CFLAG:452 種族年齢（月替わりの年齢加算はこちら）
    * @returns {number}
    */
   get 种族年龄() {
@@ -104,8 +104,8 @@ class CharaFacade {
   }
 
   /**
-   * 武装（cflag:cid:550 ↔ CFLAG:550）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt CFLAG:550～559 装備品枠——武装（存储编号，EQUIP.ERB:35）
+   * 武装（cflag:cid:550）
+   * CFLAG:550～559 装備品枠——武装（存储编号）
    * @returns {number}
    */
   get 武装() {
@@ -119,8 +119,8 @@ class CharaFacade {
   }
 
   /**
-   * 随机名编号（cflag:cid:6 ↔ CFLAG:6）
-   * 源: target/ERB/EVENT/ENTER_ENEMY.ERB 行303 CFLAG:A:6 = RAND:80（ランダム名前決定）
+   * 随机名编号（cflag:cid:6）
+   * CFLAG:A:6 = RAND:80（ランダム名前決定）
    * @returns {number}
    */
   get 随机名编号() {
@@ -134,8 +134,8 @@ class CharaFacade {
   }
 
   /**
-   * 特别服装类型（cflag:cid:42 ↔ CFLAG:42）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行296 CFLAG:42 特別コスチュームのタイプ（詳細は FUNC_CLOTH.ERB）
+   * 特别服装类型（cflag:cid:42）
+   * CFLAG:42 特別コスチュームのタイプ（类型名见 ere/page/page-clothtype.js 的 clothtype_special_text）
    * @returns {number}
    */
   get 特别服装类型() {
@@ -149,8 +149,8 @@ class CharaFacade {
   }
 
   /**
-   * 善恶值（cflag:cid:151 ↔ CFLAG:151）
-   * 源: target/ERB/EVENT/ENTER_ENEMY.ERB 行101-103 善悪値調整（< -100 钳到 -100）
+   * 善恶值（cflag:cid:151）
+   * 善悪値調整（< -100 钳到 -100）
    * @returns {number}
    */
   get 善恶值() {
@@ -164,8 +164,8 @@ class CharaFacade {
   }
 
   /**
-   * 命名检查（cflag:cid:420 ↔ CFLAG:420）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行357 CFLAG:420 = 命名チェック(フラグON時はユーザー設定ネーム)
+   * 命名检查（cflag:cid:420）
+   * CFLAG:420 = 命名チェック(フラグON時はユーザー設定ネーム)
    * @returns {number}
    */
   get 命名检查() {
@@ -179,8 +179,8 @@ class CharaFacade {
   }
 
   /**
-   * 身高（cflag:cid:453 ↔ CFLAG:453）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行363 CFLAG:453 = 身長
+   * 身高（cflag:cid:453）
+   * CFLAG:453 = 身長
    * @returns {number}
    */
   get 身高() {
@@ -194,8 +194,8 @@ class CharaFacade {
   }
 
   /**
-   * 体重（cflag:cid:454 ↔ CFLAG:454）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行364 CFLAG:454 = 体重
+   * 体重（cflag:cid:454）
+   * CFLAG:454 = 体重
    * @returns {number}
    */
   get 体重() {
@@ -209,8 +209,8 @@ class CharaFacade {
   }
 
   /**
-   * 胸围（cflag:cid:455 ↔ CFLAG:455）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行365 CFLAG:455 = B
+   * 胸围（cflag:cid:455）
+   * CFLAG:455 = B
    * @returns {number}
    */
   get 胸围() {
@@ -224,8 +224,8 @@ class CharaFacade {
   }
 
   /**
-   * 腰围（cflag:cid:456 ↔ CFLAG:456）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行366 CFLAG:456 = W
+   * 腰围（cflag:cid:456）
+   * CFLAG:456 = W
    * @returns {number}
    */
   get 腰围() {
@@ -239,8 +239,8 @@ class CharaFacade {
   }
 
   /**
-   * 臀围（cflag:cid:457 ↔ CFLAG:457）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行367 CFLAG:457 = H
+   * 臀围（cflag:cid:457）
+   * CFLAG:457 = H
    * @returns {number}
    */
   get 臀围() {
@@ -254,8 +254,8 @@ class CharaFacade {
   }
 
   /**
-   * 结婚对象（cflag:cid:601 ↔ CFLAG:601）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行464 CFLAG:601 = 結婚相手
+   * 结婚对象（cflag:cid:601）
+   * CFLAG:601 = 結婚相手
    * @returns {number}
    */
   get 结婚对象() {
@@ -269,8 +269,8 @@ class CharaFacade {
   }
 
   /**
-   * 结婚爱情（cflag:cid:602 ↔ CFLAG:602）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行465 CFLAG:602 = 結婚愛情
+   * 结婚爱情（cflag:cid:602）
+   * CFLAG:602 = 結婚愛情
    * @returns {number}
    */
   get 结婚爱情() {
@@ -284,8 +284,8 @@ class CharaFacade {
   }
 
   /**
-   * 收藏（cflag:cid:700 ↔ CFLAG:700）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行489 CFLAG:700 = お気に入りフラグ
+   * 收藏（cflag:cid:700）
+   * CFLAG:700 = お気に入りフラグ
    * @returns {number}
    */
   get 收藏() {
@@ -299,8 +299,8 @@ class CharaFacade {
   }
 
   /**
-   * 寿命（cflag:cid:820 ↔ CFLAG:820）
-   * 源: target/資料_非必要無須解壓/eramaouフラグまとめ.txt 行499 CFLAG:820 = 影の寿命
+   * 寿命（cflag:cid:820）
+   * CFLAG:820 = 影の寿命
    * @returns {number}
    */
   get 寿命() {
@@ -315,8 +315,8 @@ class CharaFacade {
 
   // —— cstr ——
   /**
-   * 加入时名字（cstr:cid:1 ↔ CSTR:1）
-   * 源: target/ERB/EVENT/ENTER_ENEMY.ERB 行198 CSTR:A:1 = %NAME:A%（SYSTEM 同款惯例）
+   * 加入时名字（cstr:cid:1）
+   * CSTR:A:1 = %NAME:A%
    * @returns {string}
    */
   get 加入时名字() {
@@ -331,8 +331,7 @@ class CharaFacade {
 
   // —— talent ——
   /**
-   * 处女（talent:cid:0 ↔ TALENT:0）
-   * 源: yml/Talent.yml id 0
+   * 处女（talent:cid:0）
    * @returns {number}
    */
   get 处女() {
@@ -346,8 +345,7 @@ class CharaFacade {
   }
 
   /**
-   * 胆怯（talent:cid:10 ↔ TALENT:10）
-   * 源: yml/Talent.yml id 10
+   * 胆怯（talent:cid:10）
    * @returns {number}
    */
   get 胆怯() {
@@ -361,8 +359,7 @@ class CharaFacade {
   }
 
   /**
-   * 刚强（talent:cid:12 ↔ TALENT:12）
-   * 源: yml/Talent.yml id 12
+   * 刚强（talent:cid:12）
    * @returns {number}
    */
   get 刚强() {
@@ -376,8 +373,7 @@ class CharaFacade {
   }
 
   /**
-   * 坦率（talent:cid:13 ↔ TALENT:13）
-   * 源: yml/Talent.yml id 13
+   * 坦率（talent:cid:13）
    * @returns {number}
    */
   get 坦率() {
@@ -391,8 +387,7 @@ class CharaFacade {
   }
 
   /**
-   * 文静（talent:cid:14 ↔ TALENT:14）
-   * 源: yml/Talent.yml id 14
+   * 文静（talent:cid:14）
    * @returns {number}
    */
   get 文静() {
@@ -406,8 +401,7 @@ class CharaFacade {
   }
 
   /**
-   * 高姿态（talent:cid:15 ↔ TALENT:15）
-   * 源: yml/Talent.yml id 15
+   * 高姿态（talent:cid:15）
    * @returns {number}
    */
   get 高姿态() {
@@ -421,8 +415,7 @@ class CharaFacade {
   }
 
   /**
-   * 嚣张（talent:cid:16 ↔ TALENT:16）
-   * 源: yml/Talent.yml id 16
+   * 嚣张（talent:cid:16）
    * @returns {number}
    */
   get 嚣张() {
@@ -436,8 +429,7 @@ class CharaFacade {
   }
 
   /**
-   * 低姿态（talent:cid:17 ↔ TALENT:17）
-   * 源: yml/Talent.yml id 17
+   * 低姿态（talent:cid:17）
    * @returns {number}
    */
   get 低姿态() {
@@ -451,8 +443,7 @@ class CharaFacade {
   }
 
   /**
-   * 傲娇（talent:cid:18 ↔ TALENT:18）
-   * 源: yml/Talent.yml id 18
+   * 傲娇（talent:cid:18）
    * @returns {number}
    */
   get 傲娇() {
@@ -466,8 +457,7 @@ class CharaFacade {
   }
 
   /**
-   * 好奇心（talent:cid:23 ↔ TALENT:23）
-   * 源: yml/Talent.yml id 23
+   * 好奇心（talent:cid:23）
    * @returns {number}
    */
   get 好奇心() {
@@ -481,8 +471,7 @@ class CharaFacade {
   }
 
   /**
-   * 保守的（talent:cid:24 ↔ TALENT:24）
-   * 源: yml/Talent.yml id 24
+   * 保守的（talent:cid:24）
    * @returns {number}
    */
   get 保守的() {
@@ -496,8 +485,7 @@ class CharaFacade {
   }
 
   /**
-   * 乐观的（talent:cid:25 ↔ TALENT:25）
-   * 源: yml/Talent.yml id 25
+   * 乐观的（talent:cid:25）
    * @returns {number}
    */
   get 乐观的() {
@@ -511,8 +499,7 @@ class CharaFacade {
   }
 
   /**
-   * 爱表现（talent:cid:28 ↔ TALENT:28）
-   * 源: yml/Talent.yml id 28
+   * 爱表现（talent:cid:28）
    * @returns {number}
    */
   get 爱表现() {
@@ -526,8 +513,7 @@ class CharaFacade {
   }
 
   /**
-   * 看轻贞操（talent:cid:31 ↔ TALENT:31）
-   * 源: yml/Talent.yml id 31
+   * 看轻贞操（talent:cid:31）
    * @returns {number}
    */
   get 看轻贞操() {
@@ -541,8 +527,7 @@ class CharaFacade {
   }
 
   /**
-   * 开放（talent:cid:33 ↔ TALENT:33）
-   * 源: yml/Talent.yml id 33
+   * 开放（talent:cid:33）
    * @returns {number}
    */
   get 开放() {
@@ -556,8 +541,7 @@ class CharaFacade {
   }
 
   /**
-   * 害羞（talent:cid:35 ↔ TALENT:35）
-   * 源: yml/Talent.yml id 35
+   * 害羞（talent:cid:35）
    * @returns {number}
    */
   get 害羞() {
@@ -571,8 +555,7 @@ class CharaFacade {
   }
 
   /**
-   * 不知羞耻（talent:cid:36 ↔ TALENT:36）
-   * 源: yml/Talent.yml id 36
+   * 不知羞耻（talent:cid:36）
    * @returns {number}
    */
   get 不知羞耻() {
@@ -586,8 +569,7 @@ class CharaFacade {
   }
 
   /**
-   * 把柄（talent:cid:37 ↔ TALENT:37）
-   * 源: yml/Talent.yml id 37
+   * 把柄（talent:cid:37）
    * @returns {number}
    */
   get 把柄() {
@@ -601,8 +583,7 @@ class CharaFacade {
   }
 
   /**
-   * 害怕疼痛（talent:cid:40 ↔ TALENT:40）
-   * 源: yml/Talent.yml id 40
+   * 害怕疼痛（talent:cid:40）
    * @returns {number}
    */
   get 害怕疼痛() {
@@ -616,8 +597,7 @@ class CharaFacade {
   }
 
   /**
-   * 不惧疼痛（talent:cid:41 ↔ TALENT:41）
-   * 源: yml/Talent.yml id 41
+   * 不惧疼痛（talent:cid:41）
    * @returns {number}
    */
   get 不惧疼痛() {
@@ -631,8 +611,7 @@ class CharaFacade {
   }
 
   /**
-   * 容易湿（talent:cid:42 ↔ TALENT:42）
-   * 源: yml/Talent.yml id 42
+   * 容易湿（talent:cid:42）
    * @returns {number}
    */
   get 容易湿() {
@@ -646,8 +625,7 @@ class CharaFacade {
   }
 
   /**
-   * 不易湿（talent:cid:43 ↔ TALENT:43）
-   * 源: yml/Talent.yml id 43
+   * 不易湿（talent:cid:43）
    * @returns {number}
    */
   get 不易湿() {
@@ -661,8 +639,7 @@ class CharaFacade {
   }
 
   /**
-   * 眼镜（talent:cid:48 ↔ TALENT:48）
-   * 源: yml/Talent.yml id 48
+   * 眼镜（talent:cid:48）
    * @returns {number}
    */
   get 眼镜() {
@@ -676,8 +653,7 @@ class CharaFacade {
   }
 
   /**
-   * 快速学习（talent:cid:50 ↔ TALENT:50）
-   * 源: yml/Talent.yml id 50
+   * 快速学习（talent:cid:50）
    * @returns {number}
    */
   get 快速学习() {
@@ -691,8 +667,7 @@ class CharaFacade {
   }
 
   /**
-   * 学习缓慢（talent:cid:51 ↔ TALENT:51）
-   * 源: yml/Talent.yml id 51
+   * 学习缓慢（talent:cid:51）
    * @returns {number}
    */
   get 学习缓慢() {
@@ -706,8 +681,7 @@ class CharaFacade {
   }
 
   /**
-   * 容易自慰（talent:cid:60 ↔ TALENT:60）
-   * 源: yml/Talent.yml id 60
+   * 容易自慰（talent:cid:60）
    * @returns {number}
    */
   get 容易自慰() {
@@ -721,8 +695,7 @@ class CharaFacade {
   }
 
   /**
-   * 不怕污臭（talent:cid:61 ↔ TALENT:61）
-   * 源: yml/Talent.yml id 61
+   * 不怕污臭（talent:cid:61）
    * @returns {number}
    */
   get 不怕污臭() {
@@ -736,8 +709,7 @@ class CharaFacade {
   }
 
   /**
-   * 反感污臭（talent:cid:62 ↔ TALENT:62）
-   * 源: yml/Talent.yml id 62
+   * 反感污臭（talent:cid:62）
    * @returns {number}
    */
   get 反感污臭() {
@@ -751,8 +723,7 @@ class CharaFacade {
   }
 
   /**
-   * 献身的（talent:cid:63 ↔ TALENT:63）
-   * 源: yml/Talent.yml id 63
+   * 献身的（talent:cid:63）
    * @returns {number}
    */
   get 献身的() {
@@ -766,8 +737,7 @@ class CharaFacade {
   }
 
   /**
-   * 抵抗诱惑（talent:cid:69 ↔ TALENT:69）
-   * 源: yml/Talent.yml id 69
+   * 抵抗诱惑（talent:cid:69）
    * @returns {number}
    */
   get 抵抗诱惑() {
@@ -781,8 +751,7 @@ class CharaFacade {
   }
 
   /**
-   * 接受快感（talent:cid:70 ↔ TALENT:70）
-   * 源: yml/Talent.yml id 70
+   * 接受快感（talent:cid:70）
    * @returns {number}
    */
   get 接受快感() {
@@ -796,8 +765,7 @@ class CharaFacade {
   }
 
   /**
-   * 容易上瘾（talent:cid:72 ↔ TALENT:72）
-   * 源: yml/Talent.yml id 72
+   * 容易上瘾（talent:cid:72）
    * @returns {number}
    */
   get 容易上瘾() {
@@ -811,8 +779,7 @@ class CharaFacade {
   }
 
   /**
-   * 容易陷落（talent:cid:73 ↔ TALENT:73）
-   * 源: yml/Talent.yml id 73
+   * 容易陷落（talent:cid:73）
    * @returns {number}
    */
   get 容易陷落() {
@@ -826,8 +793,7 @@ class CharaFacade {
   }
 
   /**
-   * 倒错的（talent:cid:80 ↔ TALENT:80）
-   * 源: yml/Talent.yml id 80
+   * 倒错的（talent:cid:80）
    * @returns {number}
    */
   get 倒错的() {
@@ -841,8 +807,7 @@ class CharaFacade {
   }
 
   /**
-   * 双性恋（talent:cid:81 ↔ TALENT:81）
-   * 源: yml/Talent.yml id 81
+   * 双性恋（talent:cid:81）
    * @returns {number}
    */
   get 双性恋() {
@@ -856,8 +821,7 @@ class CharaFacade {
   }
 
   /**
-   * 小恶魔（talent:cid:87 ↔ TALENT:87）
-   * 源: yml/Talent.yml id 87
+   * 小恶魔（talent:cid:87）
    * @returns {number}
    */
   get 小恶魔() {
@@ -871,8 +835,7 @@ class CharaFacade {
   }
 
   /**
-   * 魅惑（talent:cid:91 ↔ TALENT:91）
-   * 源: yml/Talent.yml id 91
+   * 魅惑（talent:cid:91）
    * @returns {number}
    */
   get 魅惑() {
@@ -886,8 +849,7 @@ class CharaFacade {
   }
 
   /**
-   * 魁梧（talent:cid:99 ↔ TALENT:99）
-   * 源: yml/Talent.yml id 99
+   * 魁梧（talent:cid:99）
    * @returns {number}
    */
   get 魁梧() {
@@ -901,8 +863,7 @@ class CharaFacade {
   }
 
   /**
-   * 娇小（talent:cid:100 ↔ TALENT:100）
-   * 源: yml/Talent.yml id 100
+   * 娇小（talent:cid:100）
    * @returns {number}
    */
   get 娇小() {
@@ -916,8 +877,7 @@ class CharaFacade {
   }
 
   /**
-   * 阴蒂钝感（talent:cid:101 ↔ TALENT:101）
-   * 源: yml/Talent.yml id 101
+   * 阴蒂钝感（talent:cid:101）
    * @returns {number}
    */
   get 阴蒂钝感() {
@@ -931,8 +891,7 @@ class CharaFacade {
   }
 
   /**
-   * 阴蒂敏感（talent:cid:102 ↔ TALENT:102）
-   * 源: yml/Talent.yml id 102
+   * 阴蒂敏感（talent:cid:102）
    * @returns {number}
    */
   get 阴蒂敏感() {
@@ -946,8 +905,7 @@ class CharaFacade {
   }
 
   /**
-   * 私处钝感（talent:cid:103 ↔ TALENT:103）
-   * 源: yml/Talent.yml id 103
+   * 私处钝感（talent:cid:103）
    * @returns {number}
    */
   get 私处钝感() {
@@ -961,8 +919,7 @@ class CharaFacade {
   }
 
   /**
-   * 私处敏感（talent:cid:104 ↔ TALENT:104）
-   * 源: yml/Talent.yml id 104
+   * 私处敏感（talent:cid:104）
    * @returns {number}
    */
   get 私处敏感() {
@@ -976,8 +933,7 @@ class CharaFacade {
   }
 
   /**
-   * 肛门钝感（talent:cid:105 ↔ TALENT:105）
-   * 源: yml/Talent.yml id 105
+   * 肛门钝感（talent:cid:105）
    * @returns {number}
    */
   get 肛门钝感() {
@@ -991,8 +947,7 @@ class CharaFacade {
   }
 
   /**
-   * 肛门敏感（talent:cid:106 ↔ TALENT:106）
-   * 源: yml/Talent.yml id 106
+   * 肛门敏感（talent:cid:106）
    * @returns {number}
    */
   get 肛门敏感() {
@@ -1006,8 +961,7 @@ class CharaFacade {
   }
 
   /**
-   * 乳房钝感（talent:cid:107 ↔ TALENT:107）
-   * 源: yml/Talent.yml id 107
+   * 乳房钝感（talent:cid:107）
    * @returns {number}
    */
   get 乳房钝感() {
@@ -1021,8 +975,7 @@ class CharaFacade {
   }
 
   /**
-   * 乳房敏感（talent:cid:108 ↔ TALENT:108）
-   * 源: yml/Talent.yml id 108
+   * 乳房敏感（talent:cid:108）
    * @returns {number}
    */
   get 乳房敏感() {
@@ -1036,8 +989,7 @@ class CharaFacade {
   }
 
   /**
-   * 贫乳（talent:cid:109 ↔ TALENT:109）
-   * 源: yml/Talent.yml id 109
+   * 贫乳（talent:cid:109）
    * @returns {number}
    */
   get 贫乳() {
@@ -1051,8 +1003,7 @@ class CharaFacade {
   }
 
   /**
-   * 巨乳（talent:cid:110 ↔ TALENT:110）
-   * 源: yml/Talent.yml id 110
+   * 巨乳（talent:cid:110）
    * @returns {number}
    */
   get 巨乳() {
@@ -1066,8 +1017,7 @@ class CharaFacade {
   }
 
   /**
-   * 快速回复（talent:cid:111 ↔ TALENT:111）
-   * 源: yml/Talent.yml id 111
+   * 快速回复（talent:cid:111）
    * @returns {number}
    */
   get 快速回复() {
@@ -1081,8 +1031,7 @@ class CharaFacade {
   }
 
   /**
-   * 回复缓慢（talent:cid:112 ↔ TALENT:112）
-   * 源: yml/Talent.yml id 112
+   * 回复缓慢（talent:cid:112）
    * @returns {number}
    */
   get 回复缓慢() {
@@ -1096,8 +1045,7 @@ class CharaFacade {
   }
 
   /**
-   * 爆乳（talent:cid:114 ↔ TALENT:114）
-   * 源: yml/Talent.yml id 114
+   * 爆乳（talent:cid:114）
    * @returns {number}
    */
   get 爆乳() {
@@ -1111,8 +1059,7 @@ class CharaFacade {
   }
 
   /**
-   * 肥胖（talent:cid:115 ↔ TALENT:115）
-   * 源: yml/Talent.yml id 115
+   * 肥胖（talent:cid:115）
    * @returns {number}
    */
   get 肥胖() {
@@ -1126,8 +1073,7 @@ class CharaFacade {
   }
 
   /**
-   * 绝壁（talent:cid:116 ↔ TALENT:116）
-   * 源: yml/Talent.yml id 116
+   * 绝壁（talent:cid:116）
    * @returns {number}
    */
   get 绝壁() {
@@ -1141,8 +1087,7 @@ class CharaFacade {
   }
 
   /**
-   * 治疗（talent:cid:117 ↔ TALENT:117）
-   * 源: yml/Talent.yml id 117
+   * 治疗（talent:cid:117）
    * @returns {number}
    */
   get 治疗() {
@@ -1156,8 +1101,7 @@ class CharaFacade {
   }
 
   /**
-   * 鼓舞（talent:cid:118 ↔ TALENT:118）
-   * 源: yml/Talent.yml id 118
+   * 鼓舞（talent:cid:118）
    * @returns {number}
    */
   get 鼓舞() {
@@ -1171,8 +1115,7 @@ class CharaFacade {
   }
 
   /**
-   * 超乳（talent:cid:119 ↔ TALENT:119）
-   * 源: yml/Talent.yml id 119
+   * 超乳（talent:cid:119）
    * @returns {number}
    */
   get 超乳() {
@@ -1186,8 +1129,7 @@ class CharaFacade {
   }
 
   /**
-   * 扶她（talent:cid:121 ↔ TALENT:121）
-   * 源: yml/Talent.yml id 121
+   * 扶她（talent:cid:121）
    * @returns {number}
    */
   get 扶她() {
@@ -1201,8 +1143,7 @@ class CharaFacade {
   }
 
   /**
-   * 男人（talent:cid:122 ↔ TALENT:122）
-   * 源: yml/Talent.yml id 122
+   * 男人（talent:cid:122）
    * @returns {number}
    */
   get 男人() {
@@ -1216,8 +1157,7 @@ class CharaFacade {
   }
 
   /**
-   * 动物耳朵（talent:cid:124 ↔ TALENT:124）
-   * 源: yml/Talent.yml id 124
+   * 动物耳朵（talent:cid:124）
    * @returns {number}
    */
   get 动物耳朵() {
@@ -1231,8 +1171,7 @@ class CharaFacade {
   }
 
   /**
-   * 母乳体质（talent:cid:130 ↔ TALENT:130）
-   * 源: yml/Talent.yml id 130
+   * 母乳体质（talent:cid:130）
    * @returns {number}
    */
   get 母乳体质() {
@@ -1246,8 +1185,7 @@ class CharaFacade {
   }
 
   /**
-   * 幼稚（talent:cid:132 ↔ TALENT:132）
-   * 源: yml/Talent.yml id 132
+   * 幼稚（talent:cid:132）
    * @returns {number}
    */
   get 幼稚() {
@@ -1261,8 +1199,7 @@ class CharaFacade {
   }
 
   /**
-   * 早泄（talent:cid:133 ↔ TALENT:133）
-   * 源: yml/Talent.yml id 133
+   * 早泄（talent:cid:133）
    * @returns {number}
    */
   get 早泄() {
@@ -1276,8 +1213,7 @@ class CharaFacade {
   }
 
   /**
-   * 软弱（talent:cid:134 ↔ TALENT:134）
-   * 源: yml/Talent.yml id 134
+   * 软弱（talent:cid:134）
    * @returns {number}
    */
   get 软弱() {
@@ -1291,8 +1227,7 @@ class CharaFacade {
   }
 
   /**
-   * 兽类（talent:cid:137 ↔ TALENT:137）
-   * 源: yml/Talent.yml id 137
+   * 兽类（talent:cid:137）
    * @returns {number}
    */
   get 兽类() {
@@ -1306,8 +1241,7 @@ class CharaFacade {
   }
 
   /**
-   * 恋母情结（talent:cid:140 ↔ TALENT:140）
-   * 源: yml/Talent.yml id 140
+   * 恋母情结（talent:cid:140）
    * @returns {number}
    */
   get 恋母情结() {
@@ -1321,8 +1255,7 @@ class CharaFacade {
   }
 
   /**
-   * 恋父情结（talent:cid:141 ↔ TALENT:141）
-   * 源: yml/Talent.yml id 141
+   * 恋父情结（talent:cid:141）
    * @returns {number}
    */
   get 恋父情结() {
@@ -1336,8 +1269,7 @@ class CharaFacade {
   }
 
   /**
-   * 萝莉控（talent:cid:142 ↔ TALENT:142）
-   * 源: yml/Talent.yml id 142
+   * 萝莉控（talent:cid:142）
    * @returns {number}
    */
   get 萝莉控() {
@@ -1351,8 +1283,7 @@ class CharaFacade {
   }
 
   /**
-   * 正太控（talent:cid:143 ↔ TALENT:143）
-   * 源: yml/Talent.yml id 143
+   * 正太控（talent:cid:143）
    * @returns {number}
    */
   get 正太控() {
@@ -1366,8 +1297,7 @@ class CharaFacade {
   }
 
   /**
-   * 不受洗脑（talent:cid:152 ↔ TALENT:152）
-   * 源: yml/Talent.yml id 152
+   * 不受洗脑（talent:cid:152）
    * @returns {number}
    */
   get 不受洗脑() {
@@ -1381,8 +1311,7 @@ class CharaFacade {
   }
 
   /**
-   * 妊娠（talent:cid:153 ↔ TALENT:153）
-   * 源: yml/Talent.yml id 153
+   * 妊娠（talent:cid:153）
    * @returns {number}
    */
   get 妊娠() {
@@ -1396,8 +1325,7 @@ class CharaFacade {
   }
 
   /**
-   * 育儿中（talent:cid:154 ↔ TALENT:154）
-   * 源: yml/Talent.yml id 154
+   * 育儿中（talent:cid:154）
    * @returns {number}
    */
   get 育儿中() {
@@ -1411,8 +1339,7 @@ class CharaFacade {
   }
 
   /**
-   * 母性（talent:cid:155 ↔ TALENT:155）
-   * 源: yml/Talent.yml id 155
+   * 母性（talent:cid:155）
    * @returns {number}
    */
   get 母性() {
@@ -1426,8 +1353,7 @@ class CharaFacade {
   }
 
   /**
-   * 父性（talent:cid:156 ↔ TALENT:156）
-   * 源: yml/Talent.yml id 156
+   * 父性（talent:cid:156）
    * @returns {number}
    */
   get 父性() {
@@ -1441,8 +1367,7 @@ class CharaFacade {
   }
 
   /**
-   * 人妻（talent:cid:157 ↔ TALENT:157）
-   * 源: yml/Talent.yml id 157
+   * 人妻（talent:cid:157）
    * @returns {number}
    */
   get 人妻() {
@@ -1456,8 +1381,7 @@ class CharaFacade {
   }
 
   /**
-   * 异种婚姻（talent:cid:159 ↔ TALENT:159）
-   * 源: yml/Talent.yml id 159
+   * 异种婚姻（talent:cid:159）
    * @returns {number}
    */
   get 异种婚姻() {
@@ -1471,8 +1395,7 @@ class CharaFacade {
   }
 
   /**
-   * 慈爱（talent:cid:160 ↔ TALENT:160）
-   * 源: yml/Talent.yml id 160
+   * 慈爱（talent:cid:160）
    * @returns {number}
    */
   get 慈爱() {
@@ -1486,8 +1409,7 @@ class CharaFacade {
   }
 
   /**
-   * 自信家（talent:cid:161 ↔ TALENT:161）
-   * 源: yml/Talent.yml id 161
+   * 自信家（talent:cid:161）
    * @returns {number}
    */
   get 自信家() {
@@ -1501,8 +1423,7 @@ class CharaFacade {
   }
 
   /**
-   * 懦弱（talent:cid:162 ↔ TALENT:162）
-   * 源: yml/Talent.yml id 162
+   * 懦弱（talent:cid:162）
    * @returns {number}
    */
   get 懦弱() {
@@ -1516,8 +1437,7 @@ class CharaFacade {
   }
 
   /**
-   * 高贵（talent:cid:163 ↔ TALENT:163）
-   * 源: yml/Talent.yml id 163
+   * 高贵（talent:cid:163）
    * @returns {number}
    */
   get 高贵() {
@@ -1531,8 +1451,7 @@ class CharaFacade {
   }
 
   /**
-   * 冷静（talent:cid:164 ↔ TALENT:164）
-   * 源: yml/Talent.yml id 164
+   * 冷静（talent:cid:164）
    * @returns {number}
    */
   get 冷静() {
@@ -1546,8 +1465,7 @@ class CharaFacade {
   }
 
   /**
-   * 恶女（talent:cid:166 ↔ TALENT:166）
-   * 源: yml/Talent.yml id 166
+   * 恶女（talent:cid:166）
    * @returns {number}
    */
   get 恶女() {
@@ -1561,8 +1479,7 @@ class CharaFacade {
   }
 
   /**
-   * 智慧（talent:cid:172 ↔ TALENT:172）
-   * 源: yml/Talent.yml id 172
+   * 智慧（talent:cid:172）
    * @returns {number}
    */
   get 智慧() {
@@ -1576,8 +1493,7 @@ class CharaFacade {
   }
 
   /**
-   * 庇护者（talent:cid:173 ↔ TALENT:173）
-   * 源: yml/Talent.yml id 173
+   * 庇护者（talent:cid:173）
    * @returns {number}
    */
   get 庇护者() {
@@ -1591,8 +1507,7 @@ class CharaFacade {
   }
 
   /**
-   * 精英（talent:cid:220 ↔ TALENT:220）
-   * 源: yml/Talent.yml id 220
+   * 精英（talent:cid:220）
    * @returns {number}
    */
   get 精英() {
@@ -1606,8 +1521,7 @@ class CharaFacade {
   }
 
   /**
-   * 战术（talent:cid:240 ↔ TALENT:240）
-   * 源: yml/Talent.yml id 240
+   * 战术（talent:cid:240）
    * @returns {number}
    */
   get 战术() {
@@ -1621,8 +1535,7 @@ class CharaFacade {
   }
 
   /**
-   * 魔术（talent:cid:241 ↔ TALENT:241）
-   * 源: yml/Talent.yml id 241
+   * 魔术（talent:cid:241）
    * @returns {number}
    */
   get 魔术() {
@@ -1636,8 +1549,7 @@ class CharaFacade {
   }
 
   /**
-   * 法术（talent:cid:242 ↔ TALENT:242）
-   * 源: yml/Talent.yml id 242
+   * 法术（talent:cid:242）
    * @returns {number}
    */
   get 法术() {
@@ -1651,8 +1563,7 @@ class CharaFacade {
   }
 
   /**
-   * 奇袭（talent:cid:243 ↔ TALENT:243）
-   * 源: yml/Talent.yml id 243
+   * 奇袭（talent:cid:243）
    * @returns {number}
    */
   get 奇袭() {
@@ -1666,8 +1577,7 @@ class CharaFacade {
   }
 
   /**
-   * 恶魔肌肤（talent:cid:244 ↔ TALENT:244）
-   * 源: yml/Talent.yml id 244
+   * 恶魔肌肤（talent:cid:244）
    * @returns {number}
    */
   get 恶魔肌肤() {
@@ -1681,8 +1591,7 @@ class CharaFacade {
   }
 
   /**
-   * 恶魔翅膀（talent:cid:245 ↔ TALENT:245）
-   * 源: yml/Talent.yml id 245
+   * 恶魔翅膀（talent:cid:245）
    * @returns {number}
    */
   get 恶魔翅膀() {
@@ -1696,8 +1605,7 @@ class CharaFacade {
   }
 
   /**
-   * 恶魔尾巴（talent:cid:246 ↔ TALENT:246）
-   * 源: yml/Talent.yml id 246
+   * 恶魔尾巴（talent:cid:246）
    * @returns {number}
    */
   get 恶魔尾巴() {
@@ -1711,8 +1619,7 @@ class CharaFacade {
   }
 
   /**
-   * 恶魔眼睛（talent:cid:247 ↔ TALENT:247）
-   * 源: yml/Talent.yml id 247
+   * 恶魔眼睛（talent:cid:247）
    * @returns {number}
    */
   get 恶魔眼睛() {
@@ -1726,8 +1633,7 @@ class CharaFacade {
   }
 
   /**
-   * 肌肉型（talent:cid:248 ↔ TALENT:248）
-   * 源: yml/Talent.yml id 248
+   * 肌肉型（talent:cid:248）
    * @returns {number}
    */
   get 肌肉型() {
@@ -1741,8 +1647,7 @@ class CharaFacade {
   }
 
   /**
-   * 铁壁（talent:cid:249 ↔ TALENT:249）
-   * 源: yml/Talent.yml id 249
+   * 铁壁（talent:cid:249）
    * @returns {number}
    */
   get 铁壁() {
@@ -1756,8 +1661,7 @@ class CharaFacade {
   }
 
   /**
-   * 咒术（talent:cid:250 ↔ TALENT:250）
-   * 源: yml/Talent.yml id 250
+   * 咒术（talent:cid:250）
    * @returns {number}
    */
   get 咒术() {
@@ -1771,8 +1675,7 @@ class CharaFacade {
   }
 
   /**
-   * 忍术（talent:cid:251 ↔ TALENT:251）
-   * 源: yml/Talent.yml id 251
+   * 忍术（talent:cid:251）
    * @returns {number}
    */
   get 忍术() {
@@ -1786,8 +1689,7 @@ class CharaFacade {
   }
 
   /**
-   * 先制（talent:cid:252 ↔ TALENT:252）
-   * 源: yml/Talent.yml id 252
+   * 先制（talent:cid:252）
    * @returns {number}
    */
   get 先制() {
@@ -1801,8 +1703,7 @@ class CharaFacade {
   }
 
   /**
-   * 褐色肌肤（talent:cid:253 ↔ TALENT:253）
-   * 源: yml/Talent.yml id 253
+   * 褐色肌肤（talent:cid:253）
    * @returns {number}
    */
   get 褐色肌肤() {
@@ -1816,8 +1717,7 @@ class CharaFacade {
   }
 
   /**
-   * 魔之刻印（talent:cid:254 ↔ TALENT:254）
-   * 源: yml/Talent.yml id 254
+   * 魔之刻印（talent:cid:254）
    * @returns {number}
    */
   get 魔之刻印() {
@@ -1831,8 +1731,7 @@ class CharaFacade {
   }
 
   /**
-   * 白皙（talent:cid:255 ↔ TALENT:255）
-   * 源: yml/Talent.yml id 255
+   * 白皙（talent:cid:255）
    * @returns {number}
    */
   get 白皙() {
@@ -1846,8 +1745,7 @@ class CharaFacade {
   }
 
   /**
-   * 虚弱（talent:cid:256 ↔ TALENT:256）
-   * 源: yml/Talent.yml id 256
+   * 虚弱（talent:cid:256）
    * @returns {number}
    */
   get 虚弱() {
@@ -1861,8 +1759,7 @@ class CharaFacade {
   }
 
   /**
-   * 魔法耐性（talent:cid:257 ↔ TALENT:257）
-   * 源: yml/Talent.yml id 257
+   * 魔法耐性（talent:cid:257）
    * @returns {number}
    */
   get 魔法耐性() {
@@ -1876,8 +1773,7 @@ class CharaFacade {
   }
 
   /**
-   * 俊足（talent:cid:258 ↔ TALENT:258）
-   * 源: yml/Talent.yml id 258
+   * 俊足（talent:cid:258）
    * @returns {number}
    */
   get 俊足() {
@@ -1891,8 +1787,7 @@ class CharaFacade {
   }
 
   /**
-   * 独眼（talent:cid:259 ↔ TALENT:259）
-   * 源: yml/Talent.yml id 259
+   * 独眼（talent:cid:259）
    * @returns {number}
    */
   get 独眼() {
@@ -1906,8 +1801,7 @@ class CharaFacade {
   }
 
   /**
-   * 额头天眼（talent:cid:260 ↔ TALENT:260）
-   * 源: yml/Talent.yml id 260
+   * 额头天眼（talent:cid:260）
    * @returns {number}
    */
   get 额头天眼() {
@@ -1921,8 +1815,7 @@ class CharaFacade {
   }
 
   /**
-   * 史莱姆（talent:cid:261 ↔ TALENT:261）
-   * 源: yml/Talent.yml id 261
+   * 史莱姆（talent:cid:261）
    * @returns {number}
    */
   get 史莱姆() {
@@ -1936,8 +1829,7 @@ class CharaFacade {
   }
 
   /**
-   * 触手（talent:cid:262 ↔ TALENT:262）
-   * 源: yml/Talent.yml id 262
+   * 触手（talent:cid:262）
    * @returns {number}
    */
   get 触手() {
@@ -1951,8 +1843,7 @@ class CharaFacade {
   }
 
   /**
-   * 小人体型（talent:cid:263 ↔ TALENT:263）
-   * 源: yml/Talent.yml id 263
+   * 小人体型（talent:cid:263）
    * @returns {number}
    */
   get 小人体型() {
@@ -1966,8 +1857,7 @@ class CharaFacade {
   }
 
   /**
-   * 角（talent:cid:264 ↔ TALENT:264）
-   * 源: yml/Talent.yml id 264
+   * 角（talent:cid:264）
    * @returns {number}
    */
   get 角() {
@@ -1981,8 +1871,7 @@ class CharaFacade {
   }
 
   /**
-   * 使役（talent:cid:265 ↔ TALENT:265）
-   * 源: yml/Talent.yml id 265
+   * 使役（talent:cid:265）
    * @returns {number}
    */
   get 使役() {
@@ -1996,8 +1885,7 @@ class CharaFacade {
   }
 
   /**
-   * 私处封印（talent:cid:273 ↔ TALENT:273）
-   * 源: yml/Talent.yml id 273
+   * 私处封印（talent:cid:273）
    * @returns {number}
    */
   get 私处封印() {
@@ -2011,8 +1899,7 @@ class CharaFacade {
   }
 
   /**
-   * 火之能力者（talent:cid:275 ↔ TALENT:275）
-   * 源: yml/Talent.yml id 275
+   * 火之能力者（talent:cid:275）
    * @returns {number}
    */
   get 火之能力者() {
@@ -2026,8 +1913,7 @@ class CharaFacade {
   }
 
   /**
-   * 冰之能力者（talent:cid:276 ↔ TALENT:276）
-   * 源: yml/Talent.yml id 276
+   * 冰之能力者（talent:cid:276）
    * @returns {number}
    */
   get 冰之能力者() {
@@ -2041,8 +1927,7 @@ class CharaFacade {
   }
 
   /**
-   * 雷之能力者（talent:cid:277 ↔ TALENT:277）
-   * 源: yml/Talent.yml id 277
+   * 雷之能力者（talent:cid:277）
    * @returns {number}
    */
   get 雷之能力者() {
@@ -2056,8 +1941,7 @@ class CharaFacade {
   }
 
   /**
-   * 光之能力者（talent:cid:278 ↔ TALENT:278）
-   * 源: yml/Talent.yml id 278
+   * 光之能力者（talent:cid:278）
    * @returns {number}
    */
   get 光之能力者() {
@@ -2071,8 +1955,7 @@ class CharaFacade {
   }
 
   /**
-   * 暗之能力者（talent:cid:279 ↔ TALENT:279）
-   * 源: yml/Talent.yml id 279
+   * 暗之能力者（talent:cid:279）
    * @returns {number}
    */
   get 暗之能力者() {
@@ -2086,8 +1969,7 @@ class CharaFacade {
   }
 
   /**
-   * 冒渎者（talent:cid:282 ↔ TALENT:282）
-   * 源: yml/Talent.yml id 282
+   * 冒渎者（talent:cid:282）
    * @returns {number}
    */
   get 冒渎者() {
@@ -2101,8 +1983,7 @@ class CharaFacade {
   }
 
   /**
-   * 担保人（talent:cid:290 ↔ TALENT:290）
-   * 源: yml/Talent.yml id 290
+   * 担保人（talent:cid:290）
    * @returns {number}
    */
   get 担保人() {
@@ -2116,8 +1997,7 @@ class CharaFacade {
   }
 
   /**
-   * 初心者（talent:cid:291 ↔ TALENT:291）
-   * 源: yml/Talent.yml id 291
+   * 初心者（talent:cid:291）
    * @returns {number}
    */
   get 初心者() {
@@ -2131,8 +2011,7 @@ class CharaFacade {
   }
 
   /**
-   * 头发颜色（talent:cid:300 ↔ TALENT:300）
-   * 源: yml/Talent.yml id 300
+   * 头发颜色（talent:cid:300）
    * @returns {number}
    */
   get 头发颜色() {
@@ -2146,8 +2025,7 @@ class CharaFacade {
   }
 
   /**
-   * 头发状态（talent:cid:301 ↔ TALENT:301）
-   * 源: yml/Talent.yml id 301
+   * 头发状态（talent:cid:301）
    * @returns {number}
    */
   get 头发状态() {
@@ -2161,8 +2039,7 @@ class CharaFacade {
   }
 
   /**
-   * 头发长度（talent:cid:302 ↔ TALENT:302）
-   * 源: yml/Talent.yml id 302
+   * 头发长度（talent:cid:302）
    * @returns {number}
    */
   get 头发长度() {
@@ -2176,8 +2053,7 @@ class CharaFacade {
   }
 
   /**
-   * 头发修剪方式（talent:cid:303 ↔ TALENT:303）
-   * 源: yml/Talent.yml id 303
+   * 头发修剪方式（talent:cid:303）
    * @returns {number}
    */
   get 头发修剪方式() {
@@ -2191,8 +2067,7 @@ class CharaFacade {
   }
 
   /**
-   * 发型（talent:cid:304 ↔ TALENT:304）
-   * 源: yml/Talent.yml id 304
+   * 发型（talent:cid:304）
    * @returns {number}
    */
   get 发型() {
@@ -2206,8 +2081,7 @@ class CharaFacade {
   }
 
   /**
-   * 目（talent:cid:305 ↔ TALENT:305）
-   * 源: yml/Talent.yml id 305
+   * 目（talent:cid:305）
    * @returns {number}
    */
   get 目() {
@@ -2221,8 +2095,7 @@ class CharaFacade {
   }
 
   /**
-   * 瞳色（talent:cid:306 ↔ TALENT:306）
-   * 源: yml/Talent.yml id 306
+   * 瞳色（talent:cid:306）
    * @returns {number}
    */
   get 瞳色() {
@@ -2236,8 +2109,7 @@ class CharaFacade {
   }
 
   /**
-   * 唇（talent:cid:307 ↔ TALENT:307）
-   * 源: yml/Talent.yml id 307
+   * 唇（talent:cid:307）
    * @returns {number}
    */
   get 唇() {
@@ -2251,8 +2123,7 @@ class CharaFacade {
   }
 
   /**
-   * 体型（talent:cid:308 ↔ TALENT:308）
-   * 源: yml/Talent.yml id 308
+   * 体型（talent:cid:308）
    * @returns {number}
    */
   get 体型() {
@@ -2266,8 +2137,7 @@ class CharaFacade {
   }
 
   /**
-   * 乳头（talent:cid:309 ↔ TALENT:309）
-   * 源: yml/Talent.yml id 309
+   * 乳头（talent:cid:309）
    * @returns {number}
    */
   get 乳头() {
@@ -2281,8 +2151,7 @@ class CharaFacade {
   }
 
   /**
-   * 阴毛状态（talent:cid:310 ↔ TALENT:310）
-   * 源: yml/Talent.yml id 310
+   * 阴毛状态（talent:cid:310）
    * @returns {number}
    */
   get 阴毛状态() {
@@ -2296,8 +2165,7 @@ class CharaFacade {
   }
 
   /**
-   * 阴毛生长极限（talent:cid:311 ↔ TALENT:311）
-   * 源: yml/Talent.yml id 311
+   * 阴毛生长极限（talent:cid:311）
    * @returns {number}
    */
   get 阴毛生长极限() {
@@ -2311,8 +2179,7 @@ class CharaFacade {
   }
 
   /**
-   * 魅力点（talent:cid:312 ↔ TALENT:312）
-   * 源: yml/Talent.yml id 312
+   * 魅力点（talent:cid:312）
    * @returns {number}
    */
   get 魅力点() {
@@ -2326,8 +2193,7 @@ class CharaFacade {
   }
 
   /**
-   * 癖（talent:cid:313 ↔ TALENT:313）
-   * 源: yml/Talent.yml id 313
+   * 癖（talent:cid:313）
    * @returns {number}
    */
   get 癖() {
@@ -2341,8 +2207,7 @@ class CharaFacade {
   }
 
   /**
-   * 种族（talent:cid:314 ↔ TALENT:314）
-   * 源: yml/Talent.yml id 314
+   * 种族（talent:cid:314）
    * @returns {number}
    */
   get 种族() {
@@ -2356,8 +2221,7 @@ class CharaFacade {
   }
 
   /**
-   * 成为勇者前的生活（talent:cid:315 ↔ TALENT:315）
-   * 源: yml/Talent.yml id 315
+   * 成为勇者前的生活（talent:cid:315）
    * @returns {number}
    */
   get 成为勇者前的生活() {
@@ -2371,8 +2235,7 @@ class CharaFacade {
   }
 
   /**
-   * 成为勇者的契机（talent:cid:316 ↔ TALENT:316）
-   * 源: yml/Talent.yml id 316
+   * 成为勇者的契机（talent:cid:316）
    * @returns {number}
    */
   get 成为勇者的契机() {
@@ -2386,8 +2249,7 @@ class CharaFacade {
   }
 
   /**
-   * 喜欢的东西（talent:cid:317 ↔ TALENT:317）
-   * 源: yml/Talent.yml id 317
+   * 喜欢的东西（talent:cid:317）
    * @returns {number}
    */
   get 喜欢的东西() {
@@ -2401,8 +2263,7 @@ class CharaFacade {
   }
 
   /**
-   * 阴茎的状态（talent:cid:318 ↔ TALENT:318）
-   * 源: yml/Talent.yml id 318
+   * 阴茎的状态（talent:cid:318）
    * @returns {number}
    */
   get 阴茎的状态() {
@@ -2416,8 +2277,7 @@ class CharaFacade {
   }
 
   /**
-   * 种族2（talent:cid:319 ↔ TALENT:319）
-   * 源: yml/Talent.yml id 319
+   * 种族2（talent:cid:319）
    * @returns {number}
    */
   get 种族2() {
@@ -2431,8 +2291,7 @@ class CharaFacade {
   }
 
   /**
-   * 家族构成（talent:cid:320 ↔ TALENT:320）
-   * 源: yml/Talent.yml id 320
+   * 家族构成（talent:cid:320）
    * @returns {number}
    */
   get 家族构成() {
@@ -2446,8 +2305,7 @@ class CharaFacade {
   }
 
   /**
-   * 原种族（talent:cid:321 ↔ TALENT:321）
-   * 源: yml/Talent.yml id 321
+   * 原种族（talent:cid:321）
    * @returns {number}
    */
   get 原种族() {
@@ -2461,8 +2319,7 @@ class CharaFacade {
   }
 
   /**
-   * 现种族（talent:cid:322 ↔ TALENT:322）
-   * 源: yml/Talent.yml id 322
+   * 现种族（talent:cid:322）
    * @returns {number}
    */
   get 现种族() {
@@ -2476,8 +2333,7 @@ class CharaFacade {
   }
 
   /**
-   * 乳内妊娠（talent:cid:341 ↔ TALENT:341）
-   * 源: yml/Talent.yml id 341
+   * 乳内妊娠（talent:cid:341）
    * @returns {number}
    */
   get 乳内妊娠() {
@@ -2491,8 +2347,7 @@ class CharaFacade {
   }
 
   /**
-   * 精巢妊娠（talent:cid:342 ↔ TALENT:342）
-   * 源: yml/Talent.yml id 342
+   * 精巢妊娠（talent:cid:342）
    * @returns {number}
    */
   get 精巢妊娠() {
@@ -2506,8 +2361,7 @@ class CharaFacade {
   }
 
   /**
-   * 肛内妊娠（talent:cid:343 ↔ TALENT:343）
-   * 源: yml/Talent.yml id 343
+   * 肛内妊娠（talent:cid:343）
    * @returns {number}
    */
   get 肛内妊娠() {
@@ -2521,8 +2375,7 @@ class CharaFacade {
   }
 
   /**
-   * 口内妊娠（talent:cid:344 ↔ TALENT:344）
-   * 源: yml/Talent.yml id 344
+   * 口内妊娠（talent:cid:344）
    * @returns {number}
    */
   get 口内妊娠() {
@@ -2536,8 +2389,7 @@ class CharaFacade {
   }
 
   /**
-   * 粘液捕获（talent:cid:471 ↔ TALENT:471）
-   * 源: yml/Talent.yml id 471
+   * 粘液捕获（talent:cid:471）
    * @returns {number}
    */
   get 粘液捕获() {
@@ -2551,8 +2403,7 @@ class CharaFacade {
   }
 
   /**
-   * 落穴捕获（talent:cid:472 ↔ TALENT:472）
-   * 源: yml/Talent.yml id 472
+   * 落穴捕获（talent:cid:472）
    * @returns {number}
    */
   get 落穴捕获() {
@@ -2566,8 +2417,7 @@ class CharaFacade {
   }
 
   /**
-   * 藤蔓捕获（talent:cid:473 ↔ TALENT:473）
-   * 源: yml/Talent.yml id 473
+   * 藤蔓捕获（talent:cid:473）
    * @returns {number}
    */
   get 藤蔓捕获() {
@@ -2581,8 +2431,7 @@ class CharaFacade {
   }
 
   /**
-   * 铠破坏（talent:cid:474 ↔ TALENT:474）
-   * 源: yml/Talent.yml id 474
+   * 铠破坏（talent:cid:474）
    * @returns {number}
    */
   get 铠破坏() {
@@ -2596,8 +2445,7 @@ class CharaFacade {
   }
 
   /**
-   * 再生（talent:cid:476 ↔ TALENT:476）
-   * 源: yml/Talent.yml id 476
+   * 再生（talent:cid:476）
    * @returns {number}
    */
   get 再生() {
@@ -2611,8 +2459,7 @@ class CharaFacade {
   }
 
   /**
-   * 迷惑（talent:cid:478 ↔ TALENT:478）
-   * 源: yml/Talent.yml id 478
+   * 迷惑（talent:cid:478）
    * @returns {number}
    */
   get 迷惑() {
@@ -2626,8 +2473,7 @@ class CharaFacade {
   }
 
   /**
-   * 吐息（talent:cid:479 ↔ TALENT:479）
-   * 源: yml/Talent.yml id 479
+   * 吐息（talent:cid:479）
    * @returns {number}
    */
   get 吐息() {
@@ -2641,8 +2487,7 @@ class CharaFacade {
   }
 
   /**
-   * 诱惑（talent:cid:481 ↔ TALENT:481）
-   * 源: yml/Talent.yml id 481
+   * 诱惑（talent:cid:481）
    * @returns {number}
    */
   get 诱惑() {
@@ -2656,8 +2501,7 @@ class CharaFacade {
   }
 
   /**
-   * 魔力吸取（talent:cid:485 ↔ TALENT:485）
-   * 源: yml/Talent.yml id 485
+   * 魔力吸取（talent:cid:485）
    * @returns {number}
    */
   get 魔力吸取() {
@@ -2672,8 +2516,7 @@ class CharaFacade {
 
   // —— abl ——
   /**
-   * 百合气质（abl:cid:22 ↔ ABL:22）
-   * 源: yml/Abl.yml id 22
+   * 百合气质（abl:cid:22）
    * @returns {number}
    */
   get 百合气质() {
@@ -2688,8 +2531,7 @@ class CharaFacade {
 
   // —— exp ——
   /**
-   * 生育经验（exp:cid:60 ↔ EXP:60）
-   * 源: yml/Exp.yml id 60
+   * 生育经验（exp:cid:60）
    * @returns {number}
    */
   get 生育经验() {
@@ -2703,8 +2545,7 @@ class CharaFacade {
   }
 
   /**
-   * 异种妊娠经验（exp:cid:62 ↔ EXP:62）
-   * 源: yml/Exp.yml id 62
+   * 异种妊娠经验（exp:cid:62）
    * @returns {number}
    */
   get 异种妊娠经验() {

@@ -1,5 +1,5 @@
 /**
- * @file 诅咒装备的解除与制造：@REMOVE_CURSE、@CURSE_EQUIP_RING。
+ * @file 诅咒装备的解除与制造：remove_curse、curse_equip_ring。
  *
  * 随机源以参数注入（RAND:N 语义 = 返回 0..N-1 的整数；juel-check 的先例），
  * 生产路径不传参、默认 Math.random。
@@ -42,8 +42,8 @@ const UNCURSED_RING_TABLE = [
 ];
 
 /**
- * 诅咒戒指制造阶梯（:171-189，D = RAND:100）。
- * [上界（不含）, 识别号]；ELSE 臂回到 13（:187-188）。
+ * 诅咒戒指制造阶梯（D = RAND:100）。
+ * [上界（不含）, 识别号]；全不中的分支取 13。
  */
 const CURSED_RING_TABLE = [
   [20, 13],
@@ -67,10 +67,10 @@ function pick_ring(table, d, fallback) {
 }
 
 /**
- * @REMOVE_CURSE（:89-155）：解咒 w.备注（W:8）指定的道具，产物写回 w。
- * 解咒者是 cid（原作 A），阶层取 CFLAG:A:501。
+ * remove_curse：解咒 w.备注（W:8）指定的道具，产物写回 w。
+ * 解咒者是 cid，阶层取 CFLAG:A:501。
  *
- * RESULT 语义（:93 注释）：0 = 不装备，1 = 装备（含解咒失败——失败时保留
+ * RESULT 语义：0 = 不装备，1 = 装备（含解咒失败——失败时保留
  * 原诅咒品、调用方照样装上）。
  *
  * @param {object} w 装备记录（备注 = 道具号；产物经存储编号/识别号/强度回传）
@@ -132,8 +132,8 @@ async function remove_curse(w, cid, rng = default_rand) {
 }
 
 /**
- * @CURSE_EQUIP_RING（:157-203）：把装饰戒指（ITEM:300）逐个制成诅咒戒指，
- * 最多 10 个。产物经 @EQUIP_GET 入包（道具号 300+识别号）。
+ * curse_equip_ring：把装饰戒指（ITEM:300）逐个制成诅咒戒指，
+ * 最多 10 个。产物经 equip_get 入包（道具号 300+识别号）。
  *
  * @param {(n: number) => number} [rng] RAND:N 注入点
  * @returns {Promise<number>} RESULT：0 = 库存耗尽（一个都没做），1 = 执行过
@@ -154,10 +154,10 @@ async function curse_equip_ring(rng = default_rand) {
     const w = { 存储编号: pick_ring(CURSED_RING_TABLE, d, 13), 强度: 0 };
 
     // 你把装饰戒指制造成<戒指名>了（一次 print 共一行——引擎每次
-    // print 调用即结束一行，ERB 的连续 PRINT 须合并成片段数组）
+    // print 调用即结束一行，连续 PRINT 须合并成片段数组）
     era.print(['你把装饰戒指制造成', ...equip_ring_spans(w), '了']);
 
-    // CALL EQUIP_GET
+    // equip_get
     equip_get(w);
   }
 

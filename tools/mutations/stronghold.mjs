@@ -297,7 +297,7 @@ export default [
     must_mention: '录像书架：备份写首个空位',
   },
   {
-    desc: 'M6676 SELL_VIDEO 末项指令基础价值漂移',
+    desc: 'M6676 SELL_VIDEO 末项指令基础价值不一致',
     file: 'ere/system/stronghold/sell-video.js',
     find: '[134, 1500, 30, { 2: 3 }, { 3: 3 }],',
     replace: '[134, 1501, 30, { 2: 3 }, { 3: 3 }],',
@@ -313,7 +313,7 @@ export default [
     must_mention: '录像书架按 8/24 宽度',
   },
   {
-    desc: 'M6678 SELL_VIDEO 末项指令的内容能力索引漂移',
+    desc: 'M6678 SELL_VIDEO 末项指令的内容能力索引不一致',
     file: 'ere/system/stronghold/sell-video.js',
     find: '[134, 1500, 30, { 2: 3 }, { 3: 3 }],',
     replace: '[134, 1500, 31, { 2: 3 }, { 3: 3 }],',
@@ -976,12 +976,12 @@ export default [
     must_mention: '抖M气质三级可单独满足出售门槛',
   },
   {
-    desc: 'M7700 CHARA_SALE 所持金漏掉原作字面量 $（#338 返工）',
+    desc: 'M7700 CHARA_SALE 所持金漏掉字面量 $（#338 返工）',
     file: 'ere/system/stronghold/sale.js',
     find: '    era.print(`所持金：$${era_flag.money}点`);',
     replace: '    era.print(`所持金：${era_flag.money}点`);',
     tests: ['sale-chara'],
-    must_mention: '所持金保留原作格式串中的字面量 $',
+    must_mention: '所持金保留格式串中的字面量 $',
   },
   {
     desc: 'M8086 TAX_GET 税日字面量改错（10/20/30 → 10/20/31）',
@@ -1042,7 +1042,7 @@ export default [
     must_mention: '五块领土 × 三态',
   },
   {
-    desc: 'M8093 TAX_GET 卖春堡垒判据改错（FLAG:92 == 15 → == 14）',
+    desc: 'M8093 TAX_GET 卖春堡垒判断条件改错（FLAG:92 == 15 → == 14）',
     file: 'ere/system/stronghold/tax.js',
     find: '    conquered: 15,',
     replace: '    conquered: 14,',
@@ -1101,7 +1101,7 @@ export default [
     must_mention: 'FLAG:350-358 等于 507',
   },
   {
-    desc: 'M8100 TAX_GET 娼馆判据值改错（507 → 508）',
+    desc: 'M8100 TAX_GET 娼馆判断条件值改错（507 → 508）',
     file: 'ere/system/stronghold/tax.js',
     find: '=== 507) {',
     replace: '=== 508) {',
@@ -1157,7 +1157,7 @@ export default [
     must_mention: 'WISH 三档判据整表驱动',
   },
   {
-    desc: 'M8440 GOHOUBI_REQUEST 6→4 降级判据错位（121 → 120）',
+    desc: 'M8440 GOHOUBI_REQUEST 6→4 降级判断条件错位（121 → 120）',
     file: 'ere/system/stronghold/gohoubi-request.js',
     find: '    if (wish === 6 && talent(0, 121) === 0 && talent(0, 122) === 0) {',
     replace:
@@ -2082,7 +2082,7 @@ export default [
   {
     desc: 'M12306 出售确认的 [0] 好的丢掉「- 」',
     file: 'ere/system/stronghold/sale.js',
-    find: "era.printButton('- 好的', 0); // SELL_CHARA.ERB:422",
+    find: "era.printButton('- 好的', 0);",
     replace: "era.printButton('好的', 0); // 变异：丢掉「- 」",
     tests: ['sale-chara'],
     must_mention: '出售确认两键带「- 」',
