@@ -9410,9 +9410,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
     {
       desc: 'M4674 DOG_KOJO_11 骑乘位首次状态写错（#242）',
       file: 'ere/kojo/kojo-k11-lily.js',
-      find: '      kojo.骑乘位 = 1;\n      return 0;\n    } else {\n      if (assi_mao) {',
+      find: '      kojo.骑乘位 = 1;\n      return 0;\n    } else {\n      if (\n        era.get(`talent:${target}:136`) === 1 &&',
       replace:
-        '      kojo.骑乘位 =99;\n      return 0;\n    } else {\n      if (assi_mao) {',
+        '      kojo.骑乘位 =99;\n      return 0;\n    } else {\n      if (\n        era.get(`talent:${target}:136`) === 1 &&',
       tests: ['kojo-k11-lily'],
       must_mention: '十三个 SELECTCOM 首次状态均推进到 1',
     },
@@ -17771,9 +17771,9 @@ const { arena_slave_point, com_after_arena } = require('#/system/train/com-colos
   {
     desc: 'M3527 K15 接吻调教首次状态推进写错（=1 改 2，#246）',
     file: 'ere/kojo/kojo-k15-clever.js',
-    find: '      kojo.接吻 = 1;\n      return 0;\n    } else {\n      if (\n        era0(`talent:${target}:136`) == 1 &&',
+    find: '      kojo.接吻 = 1;\n      return 0;\n    } else {\n      if (\n        era0(`talent:${target}:76`) == 1 &&',
     replace:
-      '      kojo.接吻 =2;\n      return 0;\n    } else {\n      if (\n        era0(`talent:${target}:136`) == 1 &&',
+      '      kojo.接吻 =2;\n      return 0;\n    } else {\n      if (\n        era0(`talent:${target}:76`) == 1 &&',
     tests: ['kojo-k15-clever'],
     must_mention: '调教初回推进到 1',
   },
