@@ -139,7 +139,7 @@
 - 一组选项按钮之后**不再补空行**；只有真正要空行时才写 `era.println()` / `era.print('')`，多补一条就是多出来的空行（#562）。
 - 想在一行排多个按钮时，每个按钮仍各占一行。少数界面用 `era.setAlign('center')` 或 `printButton` 的 `align` 近似列感（`ere/page/page-item-shop.js` 与 `page-shop-trap.js` 的页脚就是这种写法）。
 
-**选项按钮的正文以 - 开头**，引擎拼出 [N] 前缀后显示为 [N] - 正文。例外不逐处改齐：剪发菜单的分隔符是 ---/--（re/system/train/com-assistant.js）；部位菜单（lock_feeling，re/page/page-shop-labo.js）的选项不带破折号；空存档槽的 ---- 整串是正文（re/page/page-save-load.js）；列表页脚的翻页键不带破折号。
+**选项按钮的正文以 `- ` 开头**，引擎拼出 `[N] ` 前缀后显示为 `[N] - 正文`。例外不逐处改齐：剪发菜单的分隔符是 `---`/`--`（`ere/system/train/com-assistant.js`）；部位菜单（`block_feeling`，`ere/page/page-shop-labo.js`）的选项不带破折号；空存档槽的 `----` 整串是正文（`ere/page/page-save-load.js`）；列表页脚的翻页键不带破折号。
 
 **对齐补位用 U+00A0（不换行空格），不用半角空格（#577）。** 引擎渲染层对文本行没有 `white-space` 设置，连续半角空格按浏览器默认规则合并成一个——模板串里的空格补位在实机上全部失效。对齐补位一律走 `#/utils/display-width` 的 `pad_display` / `pad_left`（补位字符 U+00A0，源码以 `\u00A0` 转义或 `NBSP` 常量书写，不写裸字符）；引擎等宽字体下 U+00A0 占 1 个半角宽。两条边界：
 
